@@ -135,7 +135,7 @@ struct menulocal
   int statusb, ruler, scrollbar, ctoolbar, ptoolbar, show_cross, showtip, preserve_width;
   int hist_size, info_size;
   double bg_r, bg_g, bg_b;
-  int focus_frame_type, use_opacity;
+  int focus_frame_type, use_opacity, select_data;
 #ifdef WINDOWS
   int emf_dpi;
 #endif

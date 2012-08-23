@@ -697,8 +697,11 @@ CmOutputPrinter(int select_file, int show_dialog)
 
   delobj(graobj, id);
   delobj(g2wobj, g2wid);
-}
 
+  if (select_file) {
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
+  }
+}
 
 void
 CmOutputDriver(void)
@@ -712,7 +715,7 @@ CmOutputDriver(void)
   if (Menulock || Globallock)
     return;
 
-  if (! SetFileHidden())
+  if (Menulocal.select_data && ! SetFileHidden())
     return;
 
   FileAutoScale();
@@ -746,6 +749,10 @@ CmOutputDriver(void)
     ResetStatusBar();
   }
   delobj(g2wobj, g2wid);
+
+  if (Menulocal.select_data) {
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
+  }
 }
 
 void
@@ -858,7 +865,7 @@ CmPrintGRAFile(void)
     return;
   }
 
-  if (! SetFileHidden())
+  if (Menulocal.select_data && ! SetFileHidden())
     return;
 
   FileAutoScale();
@@ -888,6 +895,10 @@ CmPrintGRAFile(void)
   draw_gra(graobj, id, _("Making GRA file."), TRUE);
   delobj(graobj, id);
   delobj(g2wobj, g2wid);
+
+  if (Menulocal.select_data) {
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
+  }
 }
 
 static void
@@ -958,7 +969,7 @@ CmOutputImage(int type)
     return;
   }
 
-  if (! SetFileHidden())
+  if (Menulocal.select_data && ! SetFileHidden())
     return;
 
   FileAutoScale();
@@ -1009,6 +1020,10 @@ CmOutputImage(int type)
   draw_gra(graobj, id, _("Drawing."), TRUE);
   delobj(graobj, id);
   delobj(g2wobj, g2wid);
+
+  if (Menulocal.select_data) {
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
+  }
 }
 
 #ifdef WINDOWS
@@ -1046,7 +1061,7 @@ CmOutputEMF(int type)
     }
   }
 
-  if (! SetFileHidden())
+  if (Menulocal.select_data && ! SetFileHidden())
     return;
 
   FileAutoScale();
@@ -1078,6 +1093,10 @@ CmOutputEMF(int type)
   draw_gra(graobj, id, _("Drawing."), TRUE);
   delobj(graobj, id);
   delobj(g2wobj, g2wid);
+
+  if (Menulocal.select_data) {
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
+  }
 }
 #endif
 

@@ -224,23 +224,24 @@ static struct menu_config MenuConfigScript[] = {
 };
 
 static struct menu_config MenuConfigMisc[] = {
-  {"editor",		MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.editor},
-  {"browser",		MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.browser},
-  {"help_browser",	MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.help_browser},
-  {"coordwin_font",	MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.coordwin_font},
-  {"infowin_font",	MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.infowin_font},
-  {"file_preview_font",	MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.file_preview_font},
-  {"change_directory",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.changedirectory},
-  {"save_path",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.savepath},
-  {"save_with_data",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.savewithdata},
-  {"save_with_merge",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.savewithmerge},
-  {"expand_dir",	MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.expanddir},
-  {"expand",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.expand},
-  {"ignore_path",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.ignorepath},
-  {"history_size",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.hist_size},
-  {"infowin_size",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.info_size},
-  {"data_head_lines",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.data_head_lines},
-  {"use_opacity",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.use_opacity},
+  {"editor",			MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.editor},
+  {"browser",			MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.browser},
+  {"help_browser",		MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.help_browser},
+  {"coordwin_font",		MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.coordwin_font},
+  {"infowin_font",		MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.infowin_font},
+  {"file_preview_font",		MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.file_preview_font},
+  {"change_directory",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.changedirectory},
+  {"save_path",			MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.savepath},
+  {"save_with_data",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.savewithdata},
+  {"save_with_merge",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.savewithmerge},
+  {"expand_dir",		MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.expanddir},
+  {"expand",			MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.expand},
+  {"ignore_path",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.ignorepath},
+  {"history_size",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.hist_size},
+  {"infowin_size",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.info_size},
+  {"data_head_lines",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.data_head_lines},
+  {"use_opacity",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.use_opacity},
+  {"select_data_on_export",	MENU_CONFIG_TYPE_BOOL,    NULL, &Menulocal.select_data},
   {NULL},
 };
 
@@ -1146,6 +1147,7 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   Menulocal.grid = 200;
   Menulocal.data_head_lines = 20;
   Menulocal.use_opacity = FALSE;
+  Menulocal.select_data = TRUE;
   Menulocal.local = local;
 
   Menulocal.png_dpi = 72;

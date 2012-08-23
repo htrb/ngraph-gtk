@@ -1498,40 +1498,57 @@ SetFileHidden(void)
   struct objlist *fobj;
   int lastinst;
   struct narray farray, ifarray;
-  int i, a, num, *array;
+  int i, a, r, num, inum, *array;
 
-  if ((fobj = chkobject("file")) == NULL)
+  fobj = chkobject("file");
+  if (fobj == NULL) {
     return 1;
-  lastinst = chkobjlastinst(fobj);
-  if (lastinst >= 0) {
-    arrayinit(&ifarray, sizeof(int));
-    for (i = 0; i <= lastinst; i++) {
-      getobj(fobj, "hidden", i, 0, NULL, &a);
-      if (!a)
-	arrayadd(&ifarray, &i);
-    }
-    SelectDialog(&DlgSelect, fobj, FileCB, (struct narray *) &farray,
-		 (struct narray *) &ifarray);
-    if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
-      a = TRUE;
-      for (i = 0; i <= lastinst; i++) {
-	putobj(fobj, "hidden", i, &a);
-      }
-      num = arraynum(&farray);
-      array = arraydata(&farray);
-      a = FALSE;
-      for (i = 0; i < num; i++) {
-	putobj(fobj, "hidden", array[i], &a);
-      }
-    } else {
-      arraydel(&ifarray);
-      arraydel(&farray);
-      return 0;
-    }
-    arraydel(&ifarray);
-    arraydel(&farray);
   }
-  return 1;
+
+  lastinst = chkobjlastinst(fobj);
+  if (lastinst < 0) {
+    return 1;
+  }
+
+  arrayinit(&ifarray, sizeof(int));
+  for (i = 0; i <= lastinst; i++) {
+    getobj(fobj, "hidden", i, 0, NULL, &a);
+    if (!a) {
+      arrayadd(&ifarray, &i);
+    }
+  }
+
+  r = 0;
+  SelectDialog(&DlgSelect, fobj, FileCB, &farray, &ifarray);
+  if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
+    a = TRUE;
+    for (i = 0; i <= lastinst; i++) {
+      putobj(fobj, "hidden", i, &a);
+    }
+    num = arraynum(&farray);
+    array = arraydata(&farray);
+    a = FALSE;
+    for (i = 0; i < num; i++) {
+      putobj(fobj, "hidden", array[i], &a);
+    }
+
+    inum = arraynum(&ifarray);
+    if (inum != num) {
+      set_graph_modified();
+    } else {
+      for (i = 0; i < num; i++) {
+	if (arraynget_int(&ifarray, i) != array[i]) {
+	  set_graph_modified();
+	  break;
+	}
+      }
+    }
+    r = 1;
+  }
+
+  arraydel(&ifarray);
+  arraydel(&farray);
+  return r;
 }
 
 int

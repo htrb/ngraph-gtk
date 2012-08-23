@@ -33,6 +33,7 @@ expand_dir=./
 expand=1
 ignore_path=0
 editor=notepad
+select_data_on_export=0
 coordwin_font=Courier New 12
 infowin_font=Courier New 10
 file_preview_font=Courier New 10

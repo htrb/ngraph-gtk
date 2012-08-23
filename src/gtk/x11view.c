@@ -5589,6 +5589,10 @@ Draw(int SelectFile)
   ProgressDialogFinalize();
 
   gdk_window_invalidate_rect(d->gdk_win, NULL, TRUE);
+
+  if (SelectFile) {
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
+  }
 }
 
 static void

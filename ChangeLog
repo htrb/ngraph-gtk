@@ -1,3 +1,26 @@
+2012-08-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11opt.c (MiscDialogSetupItem, MiscDialogSetup)
+	(MiscDialogClose): add UI for "Menulocal.select_data".
+
+	* src/gtk/x11view.c (Draw): call "FileWinUpdate()".
+
+	* src/gtk/x11dialg.h (MiscDialog): add member "select_data".
+
+	* src/gtk/ox11menu.h (menulocal): add member "select_data".
+
+	* src/gtk/ox11menu.c (menuinit): initialize
+	"Menulocal.select_data".
+
+	* src/gtk/x11print.c (CmOutputPrinter, CmOutputDriver)
+	(CmPrintGRAFile, CmOutputImage, CmOutputEMF): call
+	"FileWinUpdate()".
+	(CmOutputDriver, CmPrintGRAFile, CmOutputImage, CmOutputEMF):
+	check "Menulocal.select_data".
+
+	* src/gtk/x11commn.c (SetFileHidden): call "set_graph_modified()"
+	if necessary.
+
 2012-08-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11gui.c (get_filename_with_ext): added.
