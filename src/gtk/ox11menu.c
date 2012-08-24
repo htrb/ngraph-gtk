@@ -39,6 +39,7 @@
 
 #include "ngraph.h"
 #include "object.h"
+#include "odraw.h"
 #include "ioutil.h"
 #include "shell.h"
 #include "nstring.h"
@@ -208,7 +209,6 @@ static struct menu_config MenuConfig[] = {
   {"script_console",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.scriptconsole},
   {"addin_console",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.addinconsole},
   {"show_tip",			MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.showtip},
-  {"expand_to_fullpath",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.expandtofullpath},
   {"character_map",		MENU_CONFIG_TYPE_CHARMAP, menu_config_set_char_map, &Menulocal.char_map},
   {NULL},
 };
@@ -236,7 +236,7 @@ static struct menu_config MenuConfigMisc[] = {
   {"save_with_merge",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.savewithmerge},
   {"expand_dir",		MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.expanddir},
   {"expand",			MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.expand},
-  {"ignore_path",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.ignorepath},
+  {"load_path",			MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.loadpath},
   {"history_size",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.hist_size},
   {"infowin_size",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.info_size},
   {"data_head_lines",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.data_head_lines},
@@ -1128,7 +1128,7 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   Menulocal.exwin_use_external = TRUE;
   Menulocal.expand = 1;
   Menulocal.expanddir = g_strdup("./");
-  Menulocal.expandtofullpath = TRUE;
+  Menulocal.loadpath = SAVE_PATH_FULL;
   Menulocal.ngpfilelist = gtk_recent_manager_get_default();
   Menulocal.GRAobj = chkobject("gra");
   Menulocal.hist_size = 1000;

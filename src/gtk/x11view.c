@@ -430,7 +430,7 @@ graph_dropped(char *fname)
     if (!CheckSave())
       return 0;
 
-    LoadNgpFile(fname, Menulocal.ignorepath, Menulocal.expand,
+    LoadNgpFile(fname, Menulocal.loadpath, Menulocal.expand,
 		Menulocal.expanddir, FALSE, "-f");
     load = TRUE;
   }

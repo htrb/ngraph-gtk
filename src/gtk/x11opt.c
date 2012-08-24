@@ -1243,7 +1243,7 @@ MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
   if (Menulocal.expanddir)
     gtk_entry_set_text(GTK_ENTRY(d->expanddir), Menulocal.expanddir);
 
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->ignorepath), Menulocal.ignorepath);
+  combo_box_set_active(d->loadpath, Menulocal.loadpath);
 
   spin_entry_set_val(d->hist_size, Menulocal.hist_size);
   spin_entry_set_val(d->info_size, Menulocal.info_size);
@@ -1341,10 +1341,10 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     i = 0;
     w = combo_box_create();
     add_widget_to_table(table, w, _("_Path:"), FALSE, i++);
-    d->path = w;
     for (j = 0; pathchar[j]; j++) {
-      combo_box_append_text(d->path, _(pathchar[j]));
+      combo_box_append_text(w, _(pathchar[j]));
     }
+    d->path = w;
 
     w = gtk_check_button_new_with_mnemonic(_("include _Data file"));
     d->datafile = w;
@@ -1375,9 +1375,12 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, _("_Expand directory:"), TRUE, i++);
     d->expanddir = w;
 
-    w = gtk_check_button_new_with_mnemonic(_("_Ignore file path"));
-    add_widget_to_table(table, w, NULL, FALSE, i++);
-    d->ignorepath = w;
+    w = combo_box_create();
+    add_widget_to_table(table, w, _("_Path:"), FALSE, i++);
+    for (j = 0; pathchar[j]; j++) {
+      combo_box_append_text(w, _(pathchar[j]));
+    }
+    d->loadpath = w;
 
     gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(vbox2), frame, TRUE, TRUE, 4);
@@ -1555,8 +1558,7 @@ MiscDialogClose(GtkWidget *w, void *data)
     }
   }
 
-  Menulocal.ignorepath =
-    gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->ignorepath));
+  Menulocal.loadpath = combo_box_get_active(d->loadpath);
 
   a = spin_entry_get_val(d->hist_size);
   if (a <= HIST_SIZE_MAX && a > 0)

@@ -1,3 +1,21 @@
+2012-08-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (graph_dropped): use "loadpath" instead of
+	"ignorepath".
+
+	* src/gtk/x11menu.c (application): use "loadpath" instead of
+	"ignorepath".
+
+	* src/gtk/x11commn.c (LoadNgpFile): use "loadpath" instead of
+	"ignorepath" and "expandtofullpath".
+
+	* src/gtk/x11opt.c (MiscDialogSetupItem, MiscDialogSetup)
+	(MiscDialogClose): use "loadpath" instead of "ignorepath".
+
+	* src/gtk/x11graph.c (LoadDialogSetup, LoadDialogClose)
+	(CmGraphLoad, CmGraphHistory): use "load_path" instead of
+	"ignore_path".
+
 2012-08-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11opt.c (MiscDialogSetupItem, MiscDialogSetup)

@@ -1,3 +1,4 @@
+
 [Ngraph]
 # terminal=gnome-terminal -x LIBDIRDEF/terminal
 # terminal=rxvt -e LIBDIRDEF/terminal
@@ -8,7 +9,6 @@ history_size=1000
 [x11menu]
 script_console=0
 addin_console=0
-expand_to_fullpath=1
 status_bar=1
 show_tip=1
 scrollbar=1
@@ -29,11 +29,11 @@ infowin_size=1000
 background_color=ffffff
 change_directory=1
 save_path=0
+load_path=1
 save_with_data=0
 save_with_merge=0
 expand_dir=./
 expand=1
-ignore_path=0
 editor=gedit
 select_data_on_export=0
 coordwin_font=Courier New 12

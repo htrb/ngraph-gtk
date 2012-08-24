@@ -1096,7 +1096,7 @@ ToBasename(void)
 
 
 void
-LoadNgpFile(char *file, int ignorepath, int expand, char *exdir,
+LoadNgpFile(char *file, int loadpath, int expand, char *exdir,
 	    int console, char *option)
 {
   struct objlist *sys;
@@ -1213,10 +1213,16 @@ LoadNgpFile(char *file, int ignorepath, int expand, char *exdir,
     AddNgpFileList(name);
     reset_graph_modified();
 
-    if (ignorepath) {
+    switch (loadpath) {
+    case SAVE_PATH_BASE:
       ToBasename();
-    } else if (Menulocal.expandtofullpath) {
+      break;
+    case SAVE_PATH_RELATIVE:
+      ToRalativePath();
+      break;
+    case SAVE_PATH_FULL:
       ToFullPath();
+      break;
     }
     InfoWinClear();
   }

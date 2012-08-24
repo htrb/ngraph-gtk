@@ -932,6 +932,7 @@ LoadDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   GtkWidget *w, *vbox;
   struct LoadDialog *d;
+  int j;
 
   d = (struct LoadDialog *) data;
   if (makewidget) {
@@ -949,14 +950,19 @@ LoadDialogSetup(GtkWidget *wi, void *data, int makewidget)
     item_setup(vbox, w, _("_Dir:"), FALSE);
     d->dir = w;
 
-    w = gtk_check_button_new_with_mnemonic(_("_Ignore file path"));
-    d->ignore_path = w;
+    w = combo_box_create();
+    item_setup(vbox, w, _("_Path:"), FALSE);
+    for (j = 0; pathchar[j] != NULL; j++) {
+      combo_box_append_text(w, _(pathchar[j]));
+    }
+    d->load_path = w;
+
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
 
     gtk_box_pack_start(GTK_BOX(d->vbox), vbox, FALSE, FALSE, 4);
   }
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->expand_file), d->expand);
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->ignore_path), d->ignorepath);
+  combo_box_set_active(d->load_path, d->loadpath);
   gtk_entry_set_text(GTK_ENTRY(d->dir), d->exdir);
 }
 
@@ -973,7 +979,7 @@ LoadDialogClose(GtkWidget *w, void *data)
   s = gtk_entry_get_text(GTK_ENTRY(d->dir));
   g_free(d->exdir);
   d->exdir = g_strdup(s);
-  d->ignorepath = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->ignore_path));
+  d->loadpath = combo_box_get_active(d->load_path);
 }
 
 void
@@ -983,7 +989,7 @@ LoadDialog(struct LoadDialog *data)
   data->CloseWindow = LoadDialogClose;
   data->expand = Menulocal.expand;
   data->exdir = g_strdup(Menulocal.expanddir);
-  data->ignorepath = Menulocal.ignorepath;
+  data->loadpath = Menulocal.loadpath;
 }
 
 static void
@@ -1053,6 +1059,9 @@ SaveDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     w = combo_box_create();
     item_setup(vbox, w, _("_Path:"), FALSE);
+    for (j = 0; pathchar[j] != NULL; j++) {
+      combo_box_append_text(w, _(pathchar[j]));
+    }
     d->path = w;
 
     w = gtk_check_button_new_with_mnemonic(_("_Include data file"));
@@ -1064,9 +1073,6 @@ SaveDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
 
     gtk_box_pack_start(GTK_BOX(d->vbox), vbox, FALSE, FALSE, 4);
-
-    for (j = 0; pathchar[j] != NULL; j++)
-      combo_box_append_text(d->path, _(pathchar[j]));
   }
   combo_box_set_active(d->path, Menulocal.savepath);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->include_data), Menulocal.savewithdata);
@@ -1161,7 +1167,7 @@ CmGraphLoad(GtkAction *w, gpointer client_data)
     } else {
       LoadDialog(&DlgLoad);
       if (DialogExecute(TopLevel, &DlgLoad) == IDOK) {
-	LoadNgpFile(file, DlgLoad.ignorepath, DlgLoad.expand,
+	LoadNgpFile(file, DlgLoad.loadpath, DlgLoad.expand,
 		    DlgLoad.exdir, Menulocal.scriptconsole, "-f");
       }
       g_free(DlgLoad.exdir);
@@ -1296,7 +1302,7 @@ CmGraphHistory(GtkRecentChooser *w, gpointer client_data)
   LoadDialog(&DlgLoad);
 
   if (DialogExecute(TopLevel, &DlgLoad) == IDOK) {
-    LoadNgpFile(fname, DlgLoad.ignorepath, DlgLoad.expand,
+    LoadNgpFile(fname, DlgLoad.loadpath, DlgLoad.expand,
 		DlgLoad.exdir, Menulocal.scriptconsole, "-f");
   }
   g_free(DlgLoad.exdir);

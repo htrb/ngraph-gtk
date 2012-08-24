@@ -3360,7 +3360,7 @@ application(char *file)
       if ((strcmp0(ext, "PRM") == 0) || (strcmp0(ext, "prm") == 0)) {
 	LoadPrmFile(file);
       } else if ((strcmp0(ext, "NGP") == 0) || (strcmp0(ext, "ngp") == 0)) {
-	LoadNgpFile(file, Menulocal.ignorepath, Menulocal.expand, Menulocal.expanddir, FALSE, NULL);
+	LoadNgpFile(file, Menulocal.loadpath, Menulocal.expand, Menulocal.expanddir, FALSE, NULL);
       }
     }
   }

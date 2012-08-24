@@ -128,7 +128,7 @@ struct menulocal
   int coordheight, coordwidth, coordx, coordy, coordopen;
   int exwindpi, exwinwidth, exwinheight, exwin_use_external;
   char *fileopendir, *graphloaddir, *expanddir, *coordwin_font, *infowin_font, *file_preview_font;
-  int expand, ignorepath, expandtofullpath, changedirectory, savehistory;
+  int expand, loadpath, expandtofullpath, changedirectory, savehistory;
   int savepath, savewithdata, savewithmerge;
   GtkRecentManager *ngpfilelist;
   int scriptconsole, addinconsole;

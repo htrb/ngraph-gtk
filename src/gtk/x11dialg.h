@@ -405,10 +405,10 @@ struct LoadDialog
 {
   DIALOG_PROTOTYPE;
   /****** local member *******/
-  GtkWidget *expand_file, *ignore_path, *dir;
+  GtkWidget *expand_file, *load_path, *dir;
   int expand;
   char *exdir;
-  int ignorepath;
+  int loadpath;
   int Id;
 };
 void LoadDialog(struct LoadDialog *data);
@@ -528,7 +528,7 @@ struct MiscDialog
   DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *editor, *directory, *path, *datafile,
-    *expand, *expanddir, *ignorepath, *mergefile, *coordwin_font, *infowin_font,
+    *expand, *expanddir, *loadpath, *mergefile, *coordwin_font, *infowin_font,
     *file_preview_font, *hist_size, *info_size, *data_head_lines, *help_browser,
     *browser, *use_opacity, *select_data;
   struct objlist *Obj;
