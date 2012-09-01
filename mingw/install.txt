@@ -62,8 +62,8 @@ ngraph-gtk-6.06.06.tar.gz
 
 9. Compile and install Ngraph-gtk
 
-tar xf ngraph-gtk-6.06.06.tar.gz
-cd ngraph-gtk-6.06.06
+tar xf ngraph-gtk-6.06.07.tar.gz
+cd ngraph-gtk-6.06.07
 sh mingw/windows.sh
 
 Ngraph-gtk will be installed in C:\ngraph-gtk if there are no error
