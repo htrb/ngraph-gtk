@@ -1214,13 +1214,10 @@ LoadNgpFile(char *file, int loadpath, int expand, char *exdir,
     reset_graph_modified();
 
     switch (loadpath) {
-    case SAVE_PATH_BASE:
+    case LOAD_PATH_BASE:
       ToBasename();
       break;
-    case SAVE_PATH_RELATIVE:
-      ToRalativePath();
-      break;
-    case SAVE_PATH_FULL:
+    case LOAD_PATH_FULL:
       ToFullPath();
       break;
     }

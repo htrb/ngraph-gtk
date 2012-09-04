@@ -1,3 +1,15 @@
+2012-09-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11opt.c (MiscDialogSetup): use "LoadPathStr".
+
+	* src/gtk/x11commn.c (LoadNgpFile): use "LOAD_PATH_FULL" and
+	"LOAD_PATH_BASE".
+
+	* src/gtk/x11graph.h (LOAD_PATH_TYPE): added.
+
+	* src/gtk/x11graph.c (LoadPathStr): added.
+	(LoadDialogSetup): use "LoadPathStr".
+
 2012-08-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (graph_dropped): use "loadpath" instead of

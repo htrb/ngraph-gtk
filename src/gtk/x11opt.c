@@ -1377,8 +1377,8 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     w = combo_box_create();
     add_widget_to_table(table, w, _("_Path:"), FALSE, i++);
-    for (j = 0; pathchar[j]; j++) {
-      combo_box_append_text(w, _(pathchar[j]));
+    for (j = 0; LoadPathStr[j]; j++) {
+      combo_box_append_text(w, _(LoadPathStr[j]));
     }
     d->loadpath = w;
 

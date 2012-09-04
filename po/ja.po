@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2012-09-01 13:24+0900\n"
+"POT-Creation-Date: 2012-09-04 11:21+0900\n"
 "PO-Revision-Date: 2012-08-23 17:23+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -477,12 +477,12 @@ msgstr "NGPファイルの保存"
 msgid "Saving `%.128s'."
 msgstr "保存中 `%.128s'."
 
-#: src/gtk/x11commn.c:1184 src/gtk/x11commn.c:1269
+#: src/gtk/x11commn.c:1184 src/gtk/x11commn.c:1266
 #, c-format
 msgid "Loading `%.128s'."
 msgstr "読込中 `%.128s'."
 
-#: src/gtk/x11commn.c:1386
+#: src/gtk/x11commn.c:1383
 msgid ""
 "This graph is modified.\n"
 "Save this graph?"
@@ -490,28 +490,28 @@ msgstr ""
 "このグラフは変更されています.\n"
 "保存しますか?"
 
-#: src/gtk/x11commn.c:1387
+#: src/gtk/x11commn.c:1384
 msgid "Confirm"
 msgstr "確認"
 
-#: src/gtk/x11commn.c:1567
+#: src/gtk/x11commn.c:1564
 msgid "Ngraph.ini is not found."
 msgstr "Ngraph.ini が見つかりません."
 
-#: src/gtk/x11commn.c:1570
+#: src/gtk/x11commn.c:1567
 msgid "Ngraph.ini is write protected."
 msgstr "Ngraph.ini に書き込めませんでした."
 
-#: src/gtk/x11commn.c:1585
+#: src/gtk/x11commn.c:1582
 #, c-format
 msgid "Install `Ngraph.ini' to %s ?"
 msgstr "/%s に 'Ngraph.ini' をインストールしますか?"
 
-#: src/gtk/x11commn.c:1589
+#: src/gtk/x11commn.c:1586
 msgid "Ngraph.ini could not be copied."
 msgstr "Ngraph.ini をコピーできませんでした."
 
-#: src/gtk/x11commn.c:1729
+#: src/gtk/x11commn.c:1726
 msgid "error"
 msgstr "エラー"
 
@@ -643,7 +643,7 @@ msgstr "用紙"
 msgid "drawobj"
 msgstr "描画オブジェクト"
 
-#: src/gtk/x11dialg.c:203 src/gtk/x11graph.c:863
+#: src/gtk/x11dialg.c:203 src/gtk/x11graph.c:870
 msgid "directory"
 msgstr "現在のディレクトリ"
 
@@ -1067,104 +1067,116 @@ msgstr "色 1"
 msgid "Color 2"
 msgstr "色 2"
 
-#: src/gtk/x11graph.c:67
+#: src/gtk/x11graph.c:60 src/odraw.c:56
+msgid "unchange"
+msgstr "変更しない"
+
+#: src/gtk/x11graph.c:61 src/odraw.c:57
+msgid "full"
+msgstr "フルパス"
+
+#: src/gtk/x11graph.c:62 src/odraw.c:59
+msgid "base"
+msgstr "ファイル名のみ"
+
+#: src/gtk/x11graph.c:74
 msgid "Custom"
 msgstr "任意"
 
-#: src/gtk/x11graph.c:76
+#: src/gtk/x11graph.c:83
 msgid "Letter P (215.90x279.40)"
 msgstr "レター P (215.90x279.40)"
 
-#: src/gtk/x11graph.c:77
+#: src/gtk/x11graph.c:84
 msgid "Letter L (279.40x215.90)"
 msgstr "レター L (279.40x215.90)"
 
-#: src/gtk/x11graph.c:78
+#: src/gtk/x11graph.c:85
 msgid "Legal  P (215.90x355.60)"
 msgstr "リーガル P (215.90x355.60)"
 
-#: src/gtk/x11graph.c:79
+#: src/gtk/x11graph.c:86
 msgid "Legal  L (355.60x215.90)"
 msgstr "リーガル L (355.60x215.90)"
 
-#: src/gtk/x11graph.c:173
+#: src/gtk/x11graph.c:180
 msgid "paper _Width:"
 msgstr "用紙幅(_W):"
 
-#: src/gtk/x11graph.c:178
+#: src/gtk/x11graph.c:185
 msgid "paper _Height:"
 msgstr "用紙高さ(_H):"
 
-#: src/gtk/x11graph.c:182
+#: src/gtk/x11graph.c:189
 msgid "_Paper:"
 msgstr "用紙(_P):"
 
-#: src/gtk/x11graph.c:191
+#: src/gtk/x11graph.c:198
 msgid "_Left margin:"
 msgstr "左マージン(_L):"
 
-#: src/gtk/x11graph.c:196
+#: src/gtk/x11graph.c:203
 msgid "_Top margin:"
 msgstr "上マージン(_T):"
 
-#: src/gtk/x11graph.c:200
+#: src/gtk/x11graph.c:207
 msgid "paper _Zoom:"
 msgstr "拡大率(_Z):"
 
-#: src/gtk/x11graph.c:659
+#: src/gtk/x11graph.c:666
 msgid "Object"
 msgstr "オブジェクト"
 
-#: src/gtk/x11graph.c:676 src/gtk/x11menu.c:443
+#: src/gtk/x11graph.c:683 src/gtk/x11menu.c:443
 msgid "_Draw order"
 msgstr "描画順(_D)"
 
-#: src/gtk/x11graph.c:706
+#: src/gtk/x11graph.c:713
 msgid "_Insert"
 msgstr "挿入(_I)"
 
-#: src/gtk/x11graph.c:758
+#: src/gtk/x11graph.c:765
 msgid "_Objects"
 msgstr "オブジェクト(_O)"
 
-#: src/gtk/x11graph.c:865
+#: src/gtk/x11graph.c:872
 msgid "_Select Dir:"
 msgstr "ディレクトリ選択(_S):"
 
-#: src/gtk/x11graph.c:867
+#: src/gtk/x11graph.c:874
 msgid "Current Dir:"
 msgstr "現在のディレクトリ:"
 
-#: src/gtk/x11graph.c:945
+#: src/gtk/x11graph.c:952
 msgid "_Expand included file"
 msgstr "データファイルの展開(データ込 NGP ファイル) (_E)"
 
-#: src/gtk/x11graph.c:950
+#: src/gtk/x11graph.c:957
 msgid "_Dir:"
 msgstr "ディレクトリ(_D):"
 
-#: src/gtk/x11graph.c:954 src/gtk/x11graph.c:1061 src/gtk/x11opt.c:1343
+#: src/gtk/x11graph.c:961 src/gtk/x11graph.c:1068 src/gtk/x11opt.c:1343
 #: src/gtk/x11opt.c:1379
 msgid "_Path:"
 msgstr "パス情報(_P):"
 
-#: src/gtk/x11graph.c:1009
+#: src/gtk/x11graph.c:1016
 msgid "_Ignore file path"
 msgstr "パス情報無視(_I)"
 
-#: src/gtk/x11graph.c:1067
+#: src/gtk/x11graph.c:1074
 msgid "_Include data file"
 msgstr "データファイルを含める(_I)"
 
-#: src/gtk/x11graph.c:1071
+#: src/gtk/x11graph.c:1078
 msgid "_Include merge file"
 msgstr "合成ファイルを含める(_I)"
 
-#: src/gtk/x11graph.c:1160 src/gtk/x11menu.c:281
+#: src/gtk/x11graph.c:1167 src/gtk/x11menu.c:281
 msgid "Load NGP file"
 msgstr "NGPファイルを開く"
 
-#: src/gtk/x11graph.c:1357
+#: src/gtk/x11graph.c:1364
 msgid ""
 "Ngraph is the program to create scientific 2-dimensional graphs for "
 "researchers and engineers."
@@ -2505,21 +2517,9 @@ msgstr ""
 "%s\n"
 "  エラーの起きた場所: %s"
 
-#: src/odraw.c:56
-msgid "unchange"
-msgstr "変更しない"
-
-#: src/odraw.c:57
-msgid "full"
-msgstr "フルパス"
-
 #: src/odraw.c:58
 msgid "relative"
 msgstr "相対パス"
-
-#: src/odraw.c:59
-msgid "base"
-msgstr "ファイル名のみ"
 
 #: src/odraw.c:71
 msgid "miter"

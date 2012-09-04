@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.06.07\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2012-09-01 13:24+0900\n"
+"POT-Creation-Date: 2012-09-04 11:21+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -450,39 +450,39 @@ msgstr ""
 msgid "Saving `%.128s'."
 msgstr ""
 
-#: src/gtk/x11commn.c:1184 src/gtk/x11commn.c:1269
+#: src/gtk/x11commn.c:1184 src/gtk/x11commn.c:1266
 #, c-format
 msgid "Loading `%.128s'."
 msgstr ""
 
-#: src/gtk/x11commn.c:1386
+#: src/gtk/x11commn.c:1383
 msgid ""
 "This graph is modified.\n"
 "Save this graph?"
 msgstr ""
 
-#: src/gtk/x11commn.c:1387
+#: src/gtk/x11commn.c:1384
 msgid "Confirm"
 msgstr ""
 
-#: src/gtk/x11commn.c:1567
+#: src/gtk/x11commn.c:1564
 msgid "Ngraph.ini is not found."
 msgstr ""
 
-#: src/gtk/x11commn.c:1570
+#: src/gtk/x11commn.c:1567
 msgid "Ngraph.ini is write protected."
 msgstr ""
 
-#: src/gtk/x11commn.c:1585
+#: src/gtk/x11commn.c:1582
 #, c-format
 msgid "Install `Ngraph.ini' to %s ?"
 msgstr ""
 
-#: src/gtk/x11commn.c:1589
+#: src/gtk/x11commn.c:1586
 msgid "Ngraph.ini could not be copied."
 msgstr ""
 
-#: src/gtk/x11commn.c:1729
+#: src/gtk/x11commn.c:1726
 msgid "error"
 msgstr ""
 
@@ -614,7 +614,7 @@ msgstr ""
 msgid "drawobj"
 msgstr ""
 
-#: src/gtk/x11dialg.c:203 src/gtk/x11graph.c:863
+#: src/gtk/x11dialg.c:203 src/gtk/x11graph.c:870
 msgid "directory"
 msgstr ""
 
@@ -1038,104 +1038,116 @@ msgstr ""
 msgid "Color 2"
 msgstr ""
 
-#: src/gtk/x11graph.c:67
+#: src/gtk/x11graph.c:60 src/odraw.c:56
+msgid "unchange"
+msgstr ""
+
+#: src/gtk/x11graph.c:61 src/odraw.c:57
+msgid "full"
+msgstr ""
+
+#: src/gtk/x11graph.c:62 src/odraw.c:59
+msgid "base"
+msgstr ""
+
+#: src/gtk/x11graph.c:74
 msgid "Custom"
 msgstr ""
 
-#: src/gtk/x11graph.c:76
+#: src/gtk/x11graph.c:83
 msgid "Letter P (215.90x279.40)"
 msgstr ""
 
-#: src/gtk/x11graph.c:77
+#: src/gtk/x11graph.c:84
 msgid "Letter L (279.40x215.90)"
 msgstr ""
 
-#: src/gtk/x11graph.c:78
+#: src/gtk/x11graph.c:85
 msgid "Legal  P (215.90x355.60)"
 msgstr ""
 
-#: src/gtk/x11graph.c:79
+#: src/gtk/x11graph.c:86
 msgid "Legal  L (355.60x215.90)"
 msgstr ""
 
-#: src/gtk/x11graph.c:173
+#: src/gtk/x11graph.c:180
 msgid "paper _Width:"
 msgstr ""
 
-#: src/gtk/x11graph.c:178
+#: src/gtk/x11graph.c:185
 msgid "paper _Height:"
 msgstr ""
 
-#: src/gtk/x11graph.c:182
+#: src/gtk/x11graph.c:189
 msgid "_Paper:"
 msgstr ""
 
-#: src/gtk/x11graph.c:191
+#: src/gtk/x11graph.c:198
 msgid "_Left margin:"
 msgstr ""
 
-#: src/gtk/x11graph.c:196
+#: src/gtk/x11graph.c:203
 msgid "_Top margin:"
 msgstr ""
 
-#: src/gtk/x11graph.c:200
+#: src/gtk/x11graph.c:207
 msgid "paper _Zoom:"
 msgstr ""
 
-#: src/gtk/x11graph.c:659
+#: src/gtk/x11graph.c:666
 msgid "Object"
 msgstr ""
 
-#: src/gtk/x11graph.c:676 src/gtk/x11menu.c:443
+#: src/gtk/x11graph.c:683 src/gtk/x11menu.c:443
 msgid "_Draw order"
 msgstr ""
 
-#: src/gtk/x11graph.c:706
+#: src/gtk/x11graph.c:713
 msgid "_Insert"
 msgstr ""
 
-#: src/gtk/x11graph.c:758
+#: src/gtk/x11graph.c:765
 msgid "_Objects"
 msgstr ""
 
-#: src/gtk/x11graph.c:865
+#: src/gtk/x11graph.c:872
 msgid "_Select Dir:"
 msgstr ""
 
-#: src/gtk/x11graph.c:867
+#: src/gtk/x11graph.c:874
 msgid "Current Dir:"
 msgstr ""
 
-#: src/gtk/x11graph.c:945
+#: src/gtk/x11graph.c:952
 msgid "_Expand included file"
 msgstr ""
 
-#: src/gtk/x11graph.c:950
+#: src/gtk/x11graph.c:957
 msgid "_Dir:"
 msgstr ""
 
-#: src/gtk/x11graph.c:954 src/gtk/x11graph.c:1061 src/gtk/x11opt.c:1343
+#: src/gtk/x11graph.c:961 src/gtk/x11graph.c:1068 src/gtk/x11opt.c:1343
 #: src/gtk/x11opt.c:1379
 msgid "_Path:"
 msgstr ""
 
-#: src/gtk/x11graph.c:1009
+#: src/gtk/x11graph.c:1016
 msgid "_Ignore file path"
 msgstr ""
 
-#: src/gtk/x11graph.c:1067
+#: src/gtk/x11graph.c:1074
 msgid "_Include data file"
 msgstr ""
 
-#: src/gtk/x11graph.c:1071
+#: src/gtk/x11graph.c:1078
 msgid "_Include merge file"
 msgstr ""
 
-#: src/gtk/x11graph.c:1160 src/gtk/x11menu.c:281
+#: src/gtk/x11graph.c:1167 src/gtk/x11menu.c:281
 msgid "Load NGP file"
 msgstr ""
 
-#: src/gtk/x11graph.c:1357
+#: src/gtk/x11graph.c:1364
 msgid ""
 "Ngraph is the program to create scientific 2-dimensional graphs for "
 "researchers and engineers."
@@ -2469,20 +2481,8 @@ msgid ""
 "  the error is found at: %s"
 msgstr ""
 
-#: src/odraw.c:56
-msgid "unchange"
-msgstr ""
-
-#: src/odraw.c:57
-msgid "full"
-msgstr ""
-
 #: src/odraw.c:58
 msgid "relative"
-msgstr ""
-
-#: src/odraw.c:59
-msgid "base"
 msgstr ""
 
 #: src/odraw.c:71

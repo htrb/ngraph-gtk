@@ -56,6 +56,13 @@
 
 #define PAPER_SIZE_MIN 1000
 
+char *LoadPathStr[] = {
+  N_("unchange"),
+  N_("full"),
+  N_("base"),
+  NULL,
+};
+
 struct pagelisttype
 {
   char *paper, *name;
@@ -952,8 +959,8 @@ LoadDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     w = combo_box_create();
     item_setup(vbox, w, _("_Path:"), FALSE);
-    for (j = 0; pathchar[j] != NULL; j++) {
-      combo_box_append_text(w, _(pathchar[j]));
+    for (j = 0; LoadPathStr[j]; j++) {
+      combo_box_append_text(w, _(LoadPathStr[j]));
     }
     d->load_path = w;
 

@@ -21,6 +21,8 @@
  *
  */
 
+#ifndef X11GRAPH_HEADER
+
 void CmGraphQuit(GtkAction *w, gpointer client_data);
 void CmGraphNewMenu(GtkAction *w, gpointer client_data);
 void CmGraphHistory(GtkRecentChooser *w, gpointer client_data);
@@ -35,3 +37,13 @@ void CmGraphSwitch(GtkAction *w, gpointer client_data);
 void CmGraphPage(GtkAction *w, gpointer client_data);
 
 int set_paper_type(int w, int h);
+
+enum LOAD_PATH_TYPE {
+  LOAD_PATH_UNCHANGE,
+  LOAD_PATH_FULL,
+  LOAD_PATH_BASE,
+};
+
+extern char *LoadPathStr[];
+
+#endif	/* X11GRAPH_HEADER */
