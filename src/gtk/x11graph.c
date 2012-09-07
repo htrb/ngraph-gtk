@@ -964,8 +964,6 @@ LoadDialogSetup(GtkWidget *wi, void *data, int makewidget)
     }
     d->load_path = w;
 
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-
     gtk_box_pack_start(GTK_BOX(d->vbox), vbox, FALSE, FALSE, 4);
   }
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->expand_file), d->expand);

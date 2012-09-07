@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.06.07\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2012-09-04 11:21+0900\n"
+"POT-Creation-Date: 2012-09-07 19:27+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1126,28 +1126,28 @@ msgstr ""
 msgid "_Dir:"
 msgstr ""
 
-#: src/gtk/x11graph.c:961 src/gtk/x11graph.c:1068 src/gtk/x11opt.c:1343
+#: src/gtk/x11graph.c:961 src/gtk/x11graph.c:1066 src/gtk/x11opt.c:1343
 #: src/gtk/x11opt.c:1379
 msgid "_Path:"
 msgstr ""
 
-#: src/gtk/x11graph.c:1016
+#: src/gtk/x11graph.c:1014
 msgid "_Ignore file path"
 msgstr ""
 
-#: src/gtk/x11graph.c:1074
+#: src/gtk/x11graph.c:1072
 msgid "_Include data file"
 msgstr ""
 
-#: src/gtk/x11graph.c:1078
+#: src/gtk/x11graph.c:1076
 msgid "_Include merge file"
 msgstr ""
 
-#: src/gtk/x11graph.c:1167 src/gtk/x11menu.c:281
+#: src/gtk/x11graph.c:1165 src/gtk/x11menu.c:281
 msgid "Load NGP file"
 msgstr ""
 
-#: src/gtk/x11graph.c:1364
+#: src/gtk/x11graph.c:1362
 msgid ""
 "Ngraph is the program to create scientific 2-dimensional graphs for "
 "researchers and engineers."
