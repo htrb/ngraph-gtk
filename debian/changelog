@@ -1,8 +1,10 @@
-ngraph-gtk (6.06.07-1) unreleased; urgency=low
+ngraph-gtk (6.06.07-1~exp1) experimental; urgency=low
 
-  * New upstream release.
+  * New upstream release
+  * debian/rules
+   - disable silent rule for checking hardening flags
 
- -- Ito Hiroyuki <ZXB01226@nifty.com>  Sat, 01 Sep 2012 09:16:03 +0900
+ -- Koichi Akabe <vbkaisetsu@gmail.com>  Sat, 08 Sep 2012 10:09:03 +0900
 
 ngraph-gtk (6.06.06-1) unstable; urgency=low
 
