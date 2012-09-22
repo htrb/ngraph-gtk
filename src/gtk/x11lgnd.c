@@ -3526,6 +3526,7 @@ start_editing_common(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar
 
   sel = tree_view_get_selected_row_int_from_path(d->text, path_str, &iter, MARK_LIST_COL_ID);
   if (sel < 0) {
+    menu_lock(FALSE);
     return -1;
   }
 
@@ -3538,10 +3539,12 @@ static void
 start_editing_mark(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path_str, gpointer user_data)
 {
   struct obj_list_data *d;
+  int sel;
 
   d = (struct obj_list_data *) user_data;
 
-  if (start_editing_common(renderer, editable, path_str, user_data)) {
+  sel = start_editing_common(renderer, editable, path_str, user_data);
+  if (sel < 0) {
     return;
   }
 
@@ -3694,6 +3697,7 @@ start_editing_font(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *
 
   sel = tree_view_get_selected_row_int_from_path(d->text, path, &iter, TEXT_LIST_COL_ID);
   if (sel < 0) {
+    menu_lock(FALSE);
     return;
   }
 

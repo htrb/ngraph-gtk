@@ -1,3 +1,10 @@
+2012-09-21  Hroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11lgnd.c (start_editing_common, start_editing_font):
+	call "menu_lock()" if the variable "sel" is negative.
+	(start_editing_mark): the function "start_editing_common()" is
+	failed if the return value is nagative.
+
 2012-09-07  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11graph.c (LoadDialogSetup): remove redundant call of

@@ -1,4 +1,4 @@
-ngraph-gtk (6.06.07-1~exp1) experimental; urgency=low
+ngraph-gtk (6.06.07-1) experimental; urgency=low
 
   * New upstream release
   * debian/rules
