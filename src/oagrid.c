@@ -334,7 +334,7 @@ static int
 agriddraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   int GC, clip, zoom, back;
-  int i, fr, fg, fb, fa, lm, tm, w, h, r, grid_x, grid_y;
+  int i, fr, fg, fb, fa, w, h, r, grid_x, grid_y;
   char *axisx, *axisy;
   struct axis_prm ax_prm,  ay_prm;
   struct axis_pos ax_pos,  ay_pos;
@@ -381,7 +381,7 @@ agriddraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
     return (r > 0) ? 1 : 0;
   }
 
-  GRAregion(GC, &lm, &tm, &w, &h, &zoom);
+  GRAregion(GC, &w, &h, &zoom);
   GRAview(GC, 0, 0, w * 10000.0 / zoom, h * 10000.0 / zoom, clip);
 
   if (back && draw_background(obj, inst, GC, &ax_pos, &ay_pos)) {

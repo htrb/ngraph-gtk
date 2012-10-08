@@ -111,7 +111,7 @@ void GRAdellist(int GC,int n);
 struct objlist *GRAgetlist(int GC,int *oid,char **field,int n);
 int GRAdraw(int GC,char code,int *cpar,char *cstr);
 int GRAinit(int GC,int leftm,int topm,int width,int height,int zoom);
-void GRAregion(int GC,int *leftm,int *topm,int *width,int *height,int *zoom);
+void GRAregion(int GC,int *width,int *height,int *zoom);
 int GRAend(int GC);
 void GRAview(int GC,int x1,int y1,int x2,int y2,int clip);
 void GRAwindow(int GC,double minx,double miny,double maxx,double maxy);

@@ -150,7 +150,7 @@ static int
 textdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int GC;
-  int x,y,pt,space,dir,fr,fg,fb,fa,tm,lm,w,h,scriptsize,raw;
+  int x,y,pt,space,dir,fr,fg,fb,fa,w,h,scriptsize,raw;
   char *font;
   char *text;
   int clip,zoom,style;
@@ -173,7 +173,7 @@ textdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   _getobj(obj,"font",inst,&font);
   _getobj(obj,"clip",inst,&clip);
   _getobj(obj,"style",inst,&style);
-  GRAregion(GC,&lm,&tm,&w,&h,&zoom);
+  GRAregion(GC,&w,&h,&zoom);
   GRAview(GC,0,0,w*10000.0/zoom,h*10000.0/zoom,clip);
   GRAcolor(GC,fr,fg,fb, fa);
   GRAmoveto(GC,x,y);

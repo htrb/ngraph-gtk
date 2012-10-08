@@ -93,7 +93,7 @@ static int
 rectdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int GC;
-  int x1,y1,x2,y2,width,ifill,stroke,fr,fg,fb,fa,br,bg,bb,ba,tm,lm,w,h;
+  int x1,y1,x2,y2,width,ifill,stroke,fr,fg,fb,fa,br,bg,bb,ba,w,h;
   struct narray *style;
   int snum,*sdata;
   int clip,zoom;
@@ -119,7 +119,7 @@ rectdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 
   snum=arraynum(style);
   sdata=arraydata(style);
-  GRAregion(GC,&lm,&tm,&w,&h,&zoom);
+  GRAregion(GC,&w,&h,&zoom);
   GRAview(GC,0,0,w*10000.0/zoom,h*10000.0/zoom,clip);
 
   if (ifill) {

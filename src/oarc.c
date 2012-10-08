@@ -84,7 +84,7 @@ static int
 arcdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int GC;
-  int x,y,rx,ry,angle1,angle2,width,ifill,fr,fg,fb,fa,tm,lm,w,h,stroke,close_path,br,bg,bb, ba, join, miter;
+  int x,y,rx,ry,angle1,angle2,width,ifill,fr,fg,fb,fa,w,h,stroke,close_path,br,bg,bb, ba, join, miter;
   int pieslice;
   struct narray *style;
   int snum,*sdata;
@@ -123,7 +123,7 @@ arcdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 
   snum=arraynum(style);
   sdata=arraydata(style);
-  GRAregion(GC,&lm,&tm,&w,&h,&zoom);
+  GRAregion(GC,&w,&h,&zoom);
   GRAview(GC,0,0,w*10000.0/zoom,h*10000.0/zoom,clip);
 
   if (ifill) {

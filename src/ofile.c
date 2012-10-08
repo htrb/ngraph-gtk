@@ -5261,7 +5261,7 @@ f2ddraw(struct objlist *obj, N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   int snum, *style;
   struct f2ddata *fp;
   int rcode;
-  int tm, lm, w, h, clip, zoom;
+  int w, h, clip, zoom;
   char *fit, *field;
   char *file;
 
@@ -5310,7 +5310,7 @@ f2ddraw(struct objlist *obj, N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   if (set_const_all(fp))
     return 1;
 
-  GRAregion(GC, &lm, &tm, &w, &h, &zoom);
+  GRAregion(GC, &w, &h, &zoom);
   GRAview(GC, 0, 0, w*10000.0/zoom, h*10000.0/zoom, clip);
   switch (type) {
   case PLOT_TYPE_MARK:

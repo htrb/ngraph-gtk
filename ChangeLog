@@ -1,3 +1,11 @@
+2012-10-08  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gra.c (GRAinit, GRAreopen): "GRAClist[GC].width" and
+	"GRAClist[GC].height" is as same as paper width.
+	(GRAregion): remove unused parameters.
+	(GRAregion): calculate width and height depend on
+	"GRAClist[GC].topm" and "GRAClist[GC].leftm".
+
 2012-09-21  Hroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11lgnd.c (start_editing_common, start_editing_font):

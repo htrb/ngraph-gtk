@@ -563,7 +563,7 @@ draw_fill(struct objlist *obj, N_VALUE *inst, int GC, int *points2, int num)
 static int 
 arrowdraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  int GC, lm, tm, w, h, intp, i, j, num, close_path;
+  int GC, w, h, intp, i, j, num, close_path;
   struct narray *points;
   int *points2, *pdata;
   int x0, y0, x1, y1, type, stroke, fill, clip, zoom;
@@ -627,7 +627,7 @@ arrowdraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
     return 0;
   }
 
-  GRAregion(GC, &lm, &tm, &w, &h, &zoom);
+  GRAregion(GC, &w, &h, &zoom);
   GRAview(GC, 0, 0, w * 10000.0 / zoom, h * 10000.0 / zoom, clip);
 
   if (fill) {

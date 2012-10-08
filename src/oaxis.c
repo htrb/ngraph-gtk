@@ -2831,7 +2831,7 @@ static int
 axisdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int GC;
-  int fr, fg, fb, fa, lm, tm, w, h, bline;
+  int fr, fg, fb, fa, w, h, bline;
   struct narray *style;
   int snum, *sdata;
   int clip, zoom;
@@ -2872,7 +2872,7 @@ axisdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   aconf.x1=aconf.x0+nround(aconf.length*cos(aconf.dir));
   aconf.y1=aconf.y0-nround(aconf.length*sin(aconf.dir));
 
-  GRAregion(GC,&lm,&tm,&w,&h,&zoom);
+  GRAregion(GC,&w,&h,&zoom);
   GRAview(GC,0,0,w*10000.0/zoom,h*10000.0/zoom,clip);
   GRAcolor(GC,fr,fg,fb, fa);
 

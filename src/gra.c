@@ -256,8 +256,8 @@ GRAreopen(int GC)
   cpar[0]=5;
   cpar[1]=GRAClist[GC].leftm;
   cpar[2]=GRAClist[GC].topm;
-  cpar[3]=GRAClist[GC].width+GRAClist[GC].leftm;
-  cpar[4]=GRAClist[GC].height+GRAClist[GC].topm;
+  cpar[3]=GRAClist[GC].width;
+  cpar[4]=GRAClist[GC].height;
   cpar[5]=nround(GRAClist[GC].zoom*10000);
 
   if (GRAdraw(GC,code,cpar,NULL))
@@ -742,21 +742,39 @@ GRAinit(int GC,int leftm,int topm,int width,int height,int zoom)
   r = GRAdraw(GC,code,cpar,NULL);
   GRAClist[GC].leftm=leftm;
   GRAClist[GC].topm=topm;
-  GRAClist[GC].width=width-leftm;
-  GRAClist[GC].height=height-topm;
+  GRAClist[GC].width=width;
+  GRAClist[GC].height=height;
   GRAClist[GC].zoom=zoom/10000.0;
 
   return (r && GRAClist[GC].output != -1) ? ERROPEN: 0;
 }
 
 void 
-GRAregion(int GC,int *leftm,int *topm,int *width,int *height,int *zoom)
+GRAregion(int GC, int *width, int *height, int *zoom)
 {
-  *leftm=GRAClist[GC].leftm;
-  *topm=GRAClist[GC].topm;
-  *width=GRAClist[GC].width;
-  *height=GRAClist[GC].height;
-  *zoom=GRAClist[GC].zoom*10000;
+  if (width) {
+    if (GRAClist[GC].leftm < 0) {
+      *width = GRAClist[GC].width;
+    } else if (GRAClist[GC].leftm > GRAClist[GC].width) {
+      *width = 0;
+    } else{
+      *width = GRAClist[GC].width - GRAClist[GC].leftm;
+    }
+  }
+
+  if (height) {
+    if (GRAClist[GC].topm < 0) {
+      *height = GRAClist[GC].height;
+    } else if (GRAClist[GC].topm > GRAClist[GC].height) {
+      *height = 0;
+    } else{
+      *height = GRAClist[GC].height - GRAClist[GC].topm;
+    }
+  }
+
+  if (zoom) {
+    *zoom=GRAClist[GC].zoom*10000;
+  }
 }
 
 #ifdef COMPILE_UNUSED_FUNCTIONS
