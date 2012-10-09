@@ -1,3 +1,8 @@
+2012-10-09  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11graph.c (PageDialogSetup): left and top margin can be
+	nagative.
+
 2012-10-08  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gra.c (GRAinit, GRAreopen): "GRAClist[GC].width" and

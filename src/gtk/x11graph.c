@@ -194,12 +194,12 @@ PageDialogSetup(GtkWidget *wi, void *data, int makewidget)
       combo_box_append_text(d->paper, _(pagelist[j].paper));
     }
 
-    w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, FALSE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, FALSE, TRUE);
     add_widget_to_table(table, w, _("_Left margin:"), FALSE, i++);
     d->leftmargin = w;
 
 
-    w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, FALSE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, FALSE, TRUE);
     add_widget_to_table(table, w, _("_Top margin:"), FALSE, i++);
     d->topmargin = w;
 
