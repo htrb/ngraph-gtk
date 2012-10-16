@@ -397,6 +397,7 @@ add_child_geometry_to_array(struct menu_config *cfg, struct narray *conf)
   buf = (char *) g_malloc(BUF_SIZE);
   if (buf) {
     sub_window_save_geometry(stat->win);
+    sub_window_save_visibility(stat->win);
     snprintf(buf, BUF_SIZE, "%s=%d,%d,%d,%d,%d",
 	     cfg->name, *data[0], *data[1], *data[2], *data[3], *data[4]);
     arrayadd(conf, &buf);
@@ -407,10 +408,9 @@ static void
 add_geometry_to_array(struct menu_config *cfg, struct narray *conf)
 {
   char *buf;
-  GdkWindowState state;
   gint x, y, w, h;
 
-  get_window_geometry(TopLevel, &x, &y, &w, &h, &state);
+  get_window_geometry(TopLevel, &x, &y, &w, &h);
 
   Menulocal.menux = x;
   Menulocal.menuy = y;

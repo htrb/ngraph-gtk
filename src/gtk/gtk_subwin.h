@@ -52,6 +52,7 @@ GtkWidget *tree_sub_window_create(struct SubWin *d, char *title, int page_num, i
 void sub_window_set_geometry(struct SubWin *d, int resize);
 void sub_window_save_geometry(struct SubWin *d);
 void sub_window_set_visibility(struct SubWin *d, int state);
+void sub_window_save_visibility(struct SubWin *d);
 //GtkWidget *sub_window_get_nth_content(struct LegendWin *d, int n);
 
 void set_editable_cell_renderer_cb(struct obj_list_data *d, int i, n_list_store *list, GCallback end);

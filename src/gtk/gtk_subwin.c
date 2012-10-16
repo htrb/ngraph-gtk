@@ -502,53 +502,68 @@ get_geometry(struct SubWin *d, int *x, int *y, int *w, int *h)
 }
 
 static void
-set_geometry(struct SubWin *d, int x, int y, int w, int h, GdkWindowState state)
+set_geometry(struct SubWin *d, int x, int y, int w, int h)
 {
-  int s;
-
-  s = ! (state & GDK_WINDOW_STATE_WITHDRAWN);
-
   switch (d->type) {
   case TypeFileWin:
     Menulocal.filewidth = w;
     Menulocal.fileheight = h;
     Menulocal.filex = x;
     Menulocal.filey = y;
-    Menulocal.fileopen = s;
     break;
   case TypeAxisWin:
     Menulocal.axiswidth = w;
     Menulocal.axisheight = h;
     Menulocal.axisx = x;
     Menulocal.axisy = y;
-    Menulocal.axisopen = s;
     break;
   case TypeLegendWin:
     Menulocal.legendwidth = w;
     Menulocal.legendheight = h;
     Menulocal.legendx = x;
     Menulocal.legendy = y;
-    Menulocal.legendopen = s;
     break;
   case TypeMergeWin:
     Menulocal.mergewidth = w;
     Menulocal.mergeheight = h;
     Menulocal.mergex = x;
     Menulocal.mergey = y;
-    Menulocal.mergeopen = s;
     break;
   case TypeInfoWin:
     Menulocal.dialogwidth = w;
     Menulocal.dialogheight = h;
     Menulocal.dialogx = x;
     Menulocal.dialogy = y;
-    Menulocal.dialogopen = s;
     break;
   case TypeCoordWin:
     Menulocal.coordwidth = w;
     Menulocal.coordheight = h;
     Menulocal.coordx = x;
     Menulocal.coordy = y;
+    break;
+  }
+}
+
+static void
+set_visibility(struct SubWin *d, int s)
+{
+  switch (d->type) {
+  case TypeFileWin:
+    Menulocal.fileopen = s;
+    break;
+  case TypeAxisWin:
+    Menulocal.axisopen = s;
+    break;
+  case TypeLegendWin:
+    Menulocal.legendopen = s;
+    break;
+  case TypeMergeWin:
+    Menulocal.mergeopen = s;
+    break;
+  case TypeInfoWin:
+    Menulocal.dialogopen = s;
+    break;
+  case TypeCoordWin:
     Menulocal.coordopen = s;
     break;
   }
@@ -594,18 +609,47 @@ sub_window_set_geometry(struct SubWin *d, int resize)
     gtk_window_resize(GTK_WINDOW(d->Win), w, h);
 }
 
+static int
+get_window_visibility(struct SubWin *d)
+{
+  GdkWindow *win;
+  GdkWindowState state;
+
+  if (d->Win == NULL) {
+    return 0;
+  }
+
+  win = gtk_widget_get_window(d->Win);
+  if (win == NULL) {
+    return 0;
+  }
+
+  state = gdk_window_get_state(win);
+
+  return ! (state & GDK_WINDOW_STATE_WITHDRAWN);
+}
+
 void
 sub_window_save_geometry(struct SubWin *d)
 {
   gint x, y, x0, y0, w, h;
-  GdkWindowState state;
 
-  if (d->Win && gtk_widget_get_window(d->Win)) {
-    gtk_window_get_position(GTK_WINDOW(TopLevel), &x0, &y0);
-    get_window_geometry(d->Win, &x, &y, &w, &h, &state);
-
-    set_geometry(d, x - x0, y - y0, w, h, state);
+  if (! get_window_visibility(d)) {
+    return;
   }
+
+  gtk_window_get_position(GTK_WINDOW(TopLevel), &x0, &y0);
+  get_window_geometry(d->Win, &x, &y, &w, &h);
+  set_geometry(d, x - x0, y - y0, w, h);
+}
+
+void
+sub_window_save_visibility(struct SubWin *d)
+{
+  int state;
+
+  state = get_window_visibility(d);
+  set_visibility(d, state);
 }
 
 static void

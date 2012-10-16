@@ -1,3 +1,19 @@
+2012-10-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_subwin.c (set_geometry): don't save state.
+	(set_visibility, sub_window_save_visibility)
+	(get_window_visibility): added.
+	(sub_window_save_geometry): check return value of the function
+	"get_window_visibility()".
+
+	* src/gtk/x11gui.c (get_window_geometry): don't call
+	"gdk_window_get_state()".
+
+	* src/gtk/ox11menu.c (add_child_geometry_to_array): call
+	"sub_window_save_visibility()".
+
+	* src/gtk/x11menu.c (destroy_sub_windows): hide window before destroy.
+
 2012-10-09  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11graph.c (PageDialogSetup): left and top margin can be

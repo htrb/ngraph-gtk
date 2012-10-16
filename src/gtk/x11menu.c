@@ -2782,23 +2782,35 @@ create_sub_windows(void)
 static void
 destroy_sub_windows(void)
 {
-  if (NgraphApp.FileWin.Win)
+  if (NgraphApp.FileWin.Win) {
+    window_action_set_active(TypeFileWin, FALSE);
     gtk_widget_destroy(NgraphApp.FileWin.Win);
+  }
 
-  if (NgraphApp.AxisWin.Win)
+  if (NgraphApp.AxisWin.Win) {
+    window_action_set_active(TypeAxisWin, FALSE);
     gtk_widget_destroy(NgraphApp.AxisWin.Win);
+  }
 
-  if (NgraphApp.LegendWin.Win)
+  if (NgraphApp.LegendWin.Win) {
+    window_action_set_active(TypeLegendWin, FALSE);
     gtk_widget_destroy(NgraphApp.LegendWin.Win);
+  }
 
-  if (NgraphApp.MergeWin.Win)
+  if (NgraphApp.MergeWin.Win) {
+    window_action_set_active(TypeMergeWin, FALSE);
     gtk_widget_destroy(NgraphApp.MergeWin.Win);
+  }
 
-  if (NgraphApp.InfoWin.Win)
+  if (NgraphApp.InfoWin.Win) {
+    window_action_set_active(TypeInfoWin, FALSE);
     gtk_widget_destroy(NgraphApp.InfoWin.Win);
+  }
 
-  if (NgraphApp.CoordWin.Win)
+  if (NgraphApp.CoordWin.Win) {
+    window_action_set_active(TypeCoordWin, FALSE);
     gtk_widget_destroy(NgraphApp.CoordWin.Win);
+  }
 }
 
 #ifdef WINDOWS

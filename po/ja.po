@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2012-09-21 16:51-0500\n"
+"POT-Creation-Date: 2012-10-16 15:41+0900\n"
 "PO-Revision-Date: 2012-08-23 17:23+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -2030,15 +2030,15 @@ msgstr "ビューアズーム"
 msgid "Viewer Zoom-In (+CONTROL: Zoom-Out +SHIFT: Centering)"
 msgstr "ビューアのズームイン (+CONTROL:ズームアウト +SHIFT:センタリング)"
 
-#: src/gtk/x11menu.c:3586
+#: src/gtk/x11menu.c:3598
 msgid "Error:"
 msgstr "エラー:"
 
-#: src/gtk/x11menu.c:3636
+#: src/gtk/x11menu.c:3648
 msgid "Question"
 msgstr "質問"
 
-#: src/gtk/x11menu.c:3693
+#: src/gtk/x11menu.c:3705
 #, c-format
 msgid "Executing `%.128s'."
 msgstr "実行中 `%.128s'."

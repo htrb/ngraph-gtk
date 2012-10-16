@@ -1103,12 +1103,8 @@ nGetSaveFileName(GtkWidget * parent,
 }
 
 void
-get_window_geometry(GtkWidget *win, gint *x, gint *y, gint *w, gint *h, GdkWindowState *state)
+get_window_geometry(GtkWidget *win, gint *x, gint *y, gint *w, gint *h)
 {
-  if (state) {
-    *state = gdk_window_get_state(gtk_widget_get_window(win));
-  }
-
   gtk_window_get_size(GTK_WINDOW(win), w, h);
   gtk_window_get_position(GTK_WINDOW(win), x, y);
 }
