@@ -1,3 +1,9 @@
+2012-10-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* initfile/Ngraph.ini.win: change initial size of main-window.
+
+	* initfile/Ngraph.ini.in: set initial size of sub-windows.
+
 2012-10-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_subwin.c (set_geometry): don't save state.
