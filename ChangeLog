@@ -1,3 +1,11 @@
+2012-10-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* test/math_test_new.dat: add tests for the functions "EQ()" and
+	"NEQ()".
+
+	* src/math/math_basic_function.c (compare_double_with_prec): fix
+	calculation.
+
 2012-10-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* initfile/Ngraph.ini.win: change initial size of main-window.

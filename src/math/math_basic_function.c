@@ -1406,22 +1406,37 @@ math_func_ge(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 static int
 compare_double_with_prec(double a, double b, int prec)
 {
-  double eps;
+  double scale, ia, ib;
+  int order, order_a, order_b;
 
   if (a == b) {
     return 1;
   }
 
-  if (prec < 1 || prec > 15) {
+  if (prec < 1 || prec > 34) {	/* long double (IEEE754-2008 binary128) */
     return 0;
   }
 
-  eps = pow(0.1, prec) * 9;
-  if (a == 0.0) {
-    return (fabs(b) < eps);
+  if (a == 0.0 || b == 0.0) {
+    return 0;
   }
 
-  return (fabs(a - b) < eps * fabs(a));
+  order_a = floor(log10(fabs(a)));
+  order_b = floor(log10(fabs(b)));
+
+  if (fabs(order_a - order_b) > 1) {
+    return 0;
+  }
+
+  order = (order_a > order_b) ? order_a : order_b;
+
+  scale = pow(10, - order);
+  ia = a * scale;
+  ib = b * scale;
+
+  scale = pow(10, prec - 1);
+
+  return fabs(ia * scale - ib * scale) < 0.5;
 }
 
 int
