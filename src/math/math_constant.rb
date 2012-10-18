@@ -42,6 +42,8 @@ EOF
 
 File.open("#{ARGV[1]}.c", "w") { |f|
   f.puts <<EOF
+#include "config.h"
+
 #include <string.h>
 
 #include "math_expression.h"

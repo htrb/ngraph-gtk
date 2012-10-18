@@ -1,3 +1,23 @@
+2012-10-19  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/math/math_constant.c: include "config.h".
+
+	* src/math/math_operator.rb: convert integer to string (for Ruby 1.9).
+
+	* src/math/math_expression.c: include "config.h".
+
+	* src/math/math_parser.c: include "config.h".
+
+	* src/math/math_equation.c: include "config.h".
+
+	* src/math/math_error.c: include "config.h".
+
+	* src/math/math_scanner.c: include "config.h".
+
+	* src/math/math_equation.c: include "config.h".
+
+	* src/math/math_constant.rb: include "config.h".
+
 2012-10-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* test/math_test_new.dat: add tests for the functions "EQ()" and

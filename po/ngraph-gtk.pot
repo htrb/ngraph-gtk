@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.06.07\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2012-10-16 15:41+0900\n"
+"POT-Creation-Date: 2012-10-19 08:25+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2394,87 +2394,87 @@ msgstr ""
 msgid "Open"
 msgstr ""
 
-#: src/math/math_error.c:13
+#: src/math/math_error.c:15
 msgid "syntax error, unexpected end of equation."
 msgstr ""
 
-#: src/math/math_error.c:14
+#: src/math/math_error.c:16
 msgid "syntax error, function definition cannot be nested."
 msgstr ""
 
-#: src/math/math_error.c:15
+#: src/math/math_error.c:17
 msgid "syntax error, unexpected operator."
 msgstr ""
 
-#: src/math/math_error.c:16
+#: src/math/math_error.c:18
 msgid "syntax error, unexpected token."
 msgstr ""
 
-#: src/math/math_error.c:17
+#: src/math/math_error.c:19
 msgid "syntax error, wrong number of arguments."
 msgstr ""
 
-#: src/math/math_error.c:18
+#: src/math/math_error.c:20
 msgid "syntax error, unexpected end of equation, expecting ')'."
 msgstr ""
 
-#: src/math/math_error.c:19
+#: src/math/math_error.c:21
 msgid "syntax error, unexpected end of equation, expecting '}'."
 msgstr ""
 
-#: src/math/math_error.c:20
+#: src/math/math_error.c:22
 msgid "syntax error, unexpected end of equation, expecting ']'."
 msgstr ""
 
-#: src/math/math_error.c:21
+#: src/math/math_error.c:23
 msgid "syntax error, invalid function definition."
 msgstr ""
 
-#: src/math/math_error.c:22
+#: src/math/math_error.c:24
 msgid "syntax error, constant cannot be defined in a function definition."
 msgstr ""
 
-#: src/math/math_error.c:23
+#: src/math/math_error.c:25
 msgid "error, invalid parameter."
 msgstr ""
 
-#: src/math/math_error.c:24
+#: src/math/math_error.c:26
 msgid ""
 "error, a parameter cannot be used in a user function or a constant "
 "definition."
 msgstr ""
 
-#: src/math/math_error.c:25
+#: src/math/math_error.c:27
 msgid "error, unknown function."
 msgstr ""
 
-#: src/math/math_error.c:26
+#: src/math/math_error.c:28
 msgid "error, cannot allocate enough memory."
 msgstr ""
 
-#: src/math/math_error.c:27
+#: src/math/math_error.c:29
 msgid "error, unknown error."
 msgstr ""
 
-#: src/math/math_error.c:28
+#: src/math/math_error.c:30
 msgid ""
 "error, the function cannot be used in a user function or a constant "
 "definition."
 msgstr ""
 
-#: src/math/math_error.c:29
+#: src/math/math_error.c:31
 msgid "error, the constant is already defined."
 msgstr ""
 
-#: src/math/math_error.c:30
+#: src/math/math_error.c:32
 msgid "error, calculation error."
 msgstr ""
 
-#: src/math/math_error.c:82 src/math/math_error.c:90 src/math/math_error.c:108
-#: src/math/math_error.c:116 src/math/math_error.c:124
-#: src/math/math_error.c:132 src/math/math_error.c:140
-#: src/math/math_error.c:148 src/math/math_error.c:156
-#: src/math/math_error.c:164 src/math/math_error.c:172
+#: src/math/math_error.c:84 src/math/math_error.c:92 src/math/math_error.c:110
+#: src/math/math_error.c:118 src/math/math_error.c:126
+#: src/math/math_error.c:134 src/math/math_error.c:142
+#: src/math/math_error.c:150 src/math/math_error.c:158
+#: src/math/math_error.c:166 src/math/math_error.c:174
 #, c-format
 msgid ""
 "%s\n"

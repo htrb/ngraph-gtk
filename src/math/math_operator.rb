@@ -8,7 +8,7 @@ IO.foreach(ARGV[0]) { |l|
   l.chomp!
   next if (l.length < 1)
   ope.push(l[0])
-  ope_str.push(l.split) 
+  ope_str.push(l.split)
 }
 
 ope_str = ope_str.uniq.sort {|a, b| b[0].length - a[0].length}
@@ -37,6 +37,8 @@ EOF
 
 File.open("#{ARGV[1]}.c", "w") { |f|
   f.puts <<EOF
+#include "config.h"
+
 #include <string.h>
 #include "math_operator.h"
 
@@ -55,7 +57,8 @@ EOF
 
   f.puts("static char OpeChar[#{N}] = {")
   N.times {|i|
-    f.puts(ope.include?(i) ? "  1,  /* #{i.chr} */" : "  0,")
+    c = sprintf("%c", i)
+    f.puts(ope.include?(c) ? "  1,  /* #{i.chr} */" : "  0,")
   }
   f.puts("};")
 

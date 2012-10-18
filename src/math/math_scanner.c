@@ -3,6 +3,8 @@
  * 
  */
 
+#include "config.h"
+
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
@@ -116,7 +118,7 @@ math_scanner_get_token(const char *str, const char **rstr)
     return get_array_prefix(str, rstr);
   } else if (c == EOEQ_CHAR_OPT || c == EOEQ_CHAR || c == '\0') {
     return get_eoeq(str, rstr);
-  } 
+  }
 
   return get_unknown(str, rstr);
 }
