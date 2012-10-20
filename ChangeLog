@@ -1,5 +1,8 @@
 2012-10-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* doc/html/ja/math.html: add explanation of the functions "eq",
+	"neq", "ge", "gt", "le" and "lt".
+
 	* test/math_test_new.dat: add tests for the functions "eq", "neq",
 	"ge", "gt", "le" and "lt".
 
