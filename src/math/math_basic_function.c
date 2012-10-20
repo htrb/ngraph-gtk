@@ -34,6 +34,7 @@
 #define MATH_FUNCTION_MEMORY_NUM 65536
 static MathValue *Memory = NULL;
 
+static int compare_double_with_prec(long double a, long double b, int prec);
 
 int
 math_func_time(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
@@ -1366,20 +1367,34 @@ math_func_not(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
 int
 math_func_lt(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  int prec, r;
+
   MATH_CHECK_ARG(rval, exp->buf[0]);
   MATH_CHECK_ARG(rval, exp->buf[1]);
+  MATH_CHECK_ARG(rval, exp->buf[2]);
 
-  rval->val = (exp->buf[0].val.val < exp->buf[1].val.val);
+  prec = exp->buf[2].val.val;
+
+  r = compare_double_with_prec(exp->buf[0].val.val, exp->buf[1].val.val, prec);
+  rval->val = (r < 0) ? 1 : 0;
+
   return 0;
 }
 
 int
 math_func_le(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  int prec, r;
+
   MATH_CHECK_ARG(rval, exp->buf[0]);
   MATH_CHECK_ARG(rval, exp->buf[1]);
+  MATH_CHECK_ARG(rval, exp->buf[2]);
 
-  rval->val = (exp->buf[0].val.val <= exp->buf[1].val.val);
+  prec = exp->buf[2].val.val;
+
+  r = compare_double_with_prec(exp->buf[0].val.val, exp->buf[1].val.val, prec);
+  rval->val = (r <= 0) ? 1 : 0;
+
   return 0;
 }
 
@@ -1396,53 +1411,7 @@ math_func_or(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 int
 math_func_ge(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  MATH_CHECK_ARG(rval, exp->buf[0]);
-  MATH_CHECK_ARG(rval, exp->buf[1]);
-
-  rval->val = (exp->buf[0].val.val >= exp->buf[1].val.val);
-  return 0;
-}
-
-static int
-compare_double_with_prec(double a, double b, int prec)
-{
-  double scale, ia, ib;
-  int order, order_a, order_b;
-
-  if (a == b) {
-    return 1;
-  }
-
-  if (prec < 1 || prec > 34) {	/* long double (IEEE754-2008 binary128) */
-    return 0;
-  }
-
-  if (a == 0.0 || b == 0.0) {
-    return 0;
-  }
-
-  order_a = floor(log10(fabs(a)));
-  order_b = floor(log10(fabs(b)));
-
-  if (fabs(order_a - order_b) > 1) {
-    return 0;
-  }
-
-  order = (order_a > order_b) ? order_a : order_b;
-
-  scale = pow(10, - order);
-  ia = a * scale;
-  ib = b * scale;
-
-  scale = pow(10, prec - 1);
-
-  return fabs(ia * scale - ib * scale) < 0.5;
-}
-
-int
-math_func_eq(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
-{
-  int prec;
+  int prec, r;
 
   MATH_CHECK_ARG(rval, exp->buf[0]);
   MATH_CHECK_ARG(rval, exp->buf[1]);
@@ -1450,7 +1419,87 @@ math_func_eq(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 
   prec = exp->buf[2].val.val;
 
-  rval->val = compare_double_with_prec(exp->buf[0].val.val, exp->buf[1].val.val, prec);
+  r = compare_double_with_prec(exp->buf[0].val.val, exp->buf[1].val.val, prec);
+  rval->val = (r >= 0) ? 1 : 0;
+
+  return 0;
+}
+
+static int
+compare_double_with_prec(long double a, long double b, int prec)
+{
+  long double scale, r, dif;
+  int order, order_a, order_b;
+
+  if (a == b) {
+    return 0;
+  }
+
+  if (prec < 1 || prec > 34) {	/* long double (IEEE754-2008 binary128) */
+    return (a > b) ? 1 : -1;
+  }
+
+  if (a == 0.0 || b == 0.0) {
+    return (a > b) ? 1 : -1;
+  }
+
+  if ((a > 0 && b < 0) || (a < 0 && b > 0)) {
+    return (a > b) ? 1 : -1;
+  }
+
+#if HAVE_FLOORL && HAVE_LOG10L && HAVE_FABSL
+  order_a = floorl(log10l(fabsl(a)));
+  order_b = floorl(log10l(fabsl(b)));
+#else  /* HAVE_FLOORL && HAVE_LOG10L && HAVE_FABSL */
+  order_a = floor(log10(fabs(a)));
+  order_b = floor(log10(fabs(b)));
+#endif
+
+  if (order_a - order_b > 1) {
+    return 1;
+  } else if (order_a - order_b < -1) {
+    return -1;
+  }
+
+  order = (order_a > order_b) ? order_a : order_b;
+
+#if HAVE_POWL
+  scale = powl(10, - order);
+#else  /* HAVE_POWL */
+  scale = pow(10, - order);
+#endif
+  dif = a *scale - b * scale;
+
+#if HAVE_POWL
+  scale = powl(10, prec - 1);
+#else  /* HAVE_POWL */
+  scale = pow(10, prec - 1);
+#endif
+
+  r = dif * scale;
+
+  if (r >= 0.5) {
+    return 1;
+  } else if (r <= -0.5) {
+    return -1;
+  }
+
+  return 0;
+}
+
+int
+math_func_eq(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int prec, r;
+
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+  MATH_CHECK_ARG(rval, exp->buf[1]);
+  MATH_CHECK_ARG(rval, exp->buf[2]);
+
+  prec = exp->buf[2].val.val;
+
+  r = compare_double_with_prec(exp->buf[0].val.val, exp->buf[1].val.val, prec);
+  rval->val = (r == 0) ? 1 : 0;
 
   return 0;
 }
@@ -1458,7 +1507,7 @@ math_func_eq(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 int
 math_func_neq(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  int prec;
+  int prec, r;
 
   MATH_CHECK_ARG(rval, exp->buf[0]);
   MATH_CHECK_ARG(rval, exp->buf[1]);
@@ -1466,7 +1515,8 @@ math_func_neq(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
 
   prec = exp->buf[2].val.val;
 
-  rval->val = ! compare_double_with_prec(exp->buf[0].val.val, exp->buf[1].val.val, prec);
+  r = compare_double_with_prec(exp->buf[0].val.val, exp->buf[1].val.val, prec);
+  rval->val = (r != 0) ? 1 : 0;
 
   return 0;
 }
@@ -1552,10 +1602,17 @@ math_func_hn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 int
 math_func_gt(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  int prec, r;
+
   MATH_CHECK_ARG(rval, exp->buf[0]);
   MATH_CHECK_ARG(rval, exp->buf[1]);
+  MATH_CHECK_ARG(rval, exp->buf[2]);
 
-  rval->val = (exp->buf[0].val.val > exp->buf[1].val.val);
+  prec = exp->buf[2].val.val;
+
+  r = compare_double_with_prec(exp->buf[0].val.val, exp->buf[1].val.val, prec);
+  rval->val = (r > 0) ? 1 : 0;
+
   return 0;
 }
 

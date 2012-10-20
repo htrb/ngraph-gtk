@@ -52,10 +52,10 @@ mjd2wday	1	0	0	NULL
 mjd2yday	1	0	0	NULL
 eq		3	0	0	NULL
 neq		3	0	0	NULL
-ge		2	0	0	NULL
-gt		2	0	0	NULL
-le		2	0	0	NULL
-lt		2	0	0	NULL
+ge		3	0	0	NULL
+gt		3	0	0	NULL
+le		3	0	0	NULL
+lt		3	0	0	NULL
 not		1	0	0	NULL
 or		2	0	0	NULL
 and		2	0	0	NULL

@@ -1,3 +1,24 @@
+2012-10-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* test/math_test_new.dat: add tests for the functions "eq", "neq",
+	"ge", "gt", "le" and "lt".
+
+	* doc/html/ja/math.html: update explanation of the functions "eq",
+	"neq", "ge", "gt", "le" and "lt".
+
+	* src/math/math_function.rb: fix invarid expression for case
+	statement.
+
+	* src/math/math_function.h.in: increase number of arguments for
+	the functions "ge", "gt", "le" and "lt".
+
+	* src/math/math_basic_function.c (math_func_lt, math_func_le)
+	(math_func_ge, math_func_gt): use "compare_double_with_prec()".
+	(compare_double_with_prec): use "long double".
+
+	* configure.in (AC_CHECK_FUNCS): check functions "log10l", "fabsl"
+	and "floorl".
+
 2012-10-19  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/math/math_constant.c: include "config.h".

@@ -38,9 +38,9 @@ int math_add_basic_function(MathEquation *eq);
 EOF
   func_str.each {|s|
     case (s.length)
-    when 5:
+    when 5
         f.puts("int math_func_#{s[0]}(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);")
-    when 6:
+    when 6
         f.puts("#ifdef HAVE_LIBGSL")
         f.puts("int math_func_#{s[0]}(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);")
         f.puts("#endif")
@@ -118,11 +118,11 @@ EOF
       f.print("      ptr[#{i}] = ")
       f.puts(
              case (v)
-             when "0":
+             when "0"
                  "MATH_FUNCTION_ARG_TYPE_DOUBLE;"
-             when "1":
+             when "1"
                  "MATH_FUNCTION_ARG_TYPE_ARRAY;"
-             when "2":
+             when "2"
                  "MATH_FUNCTION_ARG_TYPE_PROC;"
              end
              )

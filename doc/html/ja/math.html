@@ -378,12 +378,12 @@
 </ul>
 </p>
 <table border=1>
- <tr><td>EQ(x,y,prec)</td><td>x＝y のとき真(=1)。prec で比較の精度を指定できる (prec == 0 は完全一致) 。</td></tr>
- <tr><td>NEQ(x,y,preq)</td><td>x≠y のとき真(=1)。prec で比較の精度を指定できる (prec == 0 は完全一致) 。</td></tr>
- <tr><td>GE(x,y)</td><td>x≧y のとき真(=1)</td></tr>
- <tr><td>GT(x,y)</td><td>x＞y のとき真(=1)</td></tr>
- <tr><td>LE(x,y)</td><td>x≦y のとき真(=1)</td></tr>
- <tr><td>LT(x,y)</td><td>x＜y のとき真(=1)</td></tr>
+ <tr><td>EQ(x,y,prec)</td><td>x＝y のとき真(=1)。prec で比較の桁数を指定できる (prec == 0 は完全一致) 。</td></tr>
+ <tr><td>NEQ(x,y,prec)</td><td>x≠y のとき真(=1)。prec で比較の桁数を指定できる (prec == 0 は完全一致) 。</td></tr>
+ <tr><td>GE(x,y,prec)</td><td>x≧y のとき真(=1)。prec で比較の桁数を指定できる (prec == 0 は桁数指定なし) 。</td></tr>
+ <tr><td>GT(x,y,prec)</td><td>x＞y のとき真(=1)。prec で比較の桁数を指定できる (prec == 0 は桁数指定なし) 。</td></tr>
+ <tr><td>LE(x,y,prec)</td><td>x≦y のとき真(=1)。prec で比較の桁数を指定できる (prec == 0 は桁数指定なし) 。</td></tr>
+ <tr><td>LT(x,y,prec)</td><td>x＜y のとき真(=1)。prec で比較の桁数を指定できる (prec == 0 は桁数指定なし) 。</td></tr>
  <tr><td>NOT(x)</td><td>x＝0 のとき真(=1)</td></tr>
  <tr><td>OR(x,y)</td><td>(x≠0) or (y≠0) のとき真(=1)</td></tr>
  <tr><td>AND(x,y)</td><td>(x≠0) and (y≠0) のとき真(=1)</td></tr>
@@ -440,7 +440,7 @@
  <tr><td>MARKTYPE(x)</td><td>マークの種類をXに設定</td></tr>
  <tr><td>IF(x,ex1,ex2)</td><td>x ≠ 0 のとき ex1, x = 0 のとき ex2</td></tr>
  <tr><td>UNLESS(x,ex1,ex2)</td><td>x ≠ 0 のとき ex2, x = 0 のとき ex1 </td></tr>
- <tr><td>FOR(m,begin,end,step,ex)</td><td>第mメモリの値に begin から end まで step で 値を設定し、ex を繰り返す。
+ <tr><td>FOR(m,begin,end,step,ex)</td><td>第mメモリーの値に begin から end まで step で 値を設定し、ex を繰り返す。
 				      m が負の時はメモリーへの設定は行われない</td></tr>
  <tr><td>PROG1(arg1,arg2,...)</td><td>引数を評価し、最初の引数の値を返す</td></tr>
  <tr><td>PROG2(arg1,arg2,...)</td><td>引数を評価し、2 番目の引数の値を返す</td></tr>
@@ -464,7 +464,7 @@
  <tr><td>  </td><td>+ - (正負の符号)</td></tr>
  <tr><td>  </td><td>* / \</td></tr>
  <tr><td>  </td><td>+ -</td></tr>
- <tr><td>  </td><td>&lt; &lt: &gt; &gt;:</td></tr>
+ <tr><td>  </td><td>&lt; &lt;: &gt; &gt;:</td></tr>
  <tr><td>  </td><td>:: !:</td></tr>
  <tr><td>  </td><td>&amp;&amp;</td></tr>
  <tr><td>↓</td><td>||</td></tr>
@@ -494,12 +494,12 @@
       <br>
       </li>
 
- <li><b>メモリ関数 M(), RM() 使用例</b>
+ <li><b>メモリー関数 M(), RM() 使用例</b>
       <br>
       <br>
-      M() はメモリへの代入、RM() は読みだしです。全ての数式変換でメモりは
+      M() はメモリーへの代入、RM() は読みだしです。全ての数式変換でメモリーは
       共有されるため、データファイル間での値の受け渡しに利用できます。メ
-      モリは 65536 個 (0〜65535) まで利用できます。また、未使用のメモリは
+      モリーは 65536 個 (0〜65535) まで利用できます。また、未使用のメモリーは
       0 に初期化されています。
       <br>
       </li>
