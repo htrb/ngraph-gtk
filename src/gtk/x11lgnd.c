@@ -3615,11 +3615,6 @@ select_line_type(GtkComboBox *w, gpointer user_data)
     return;
   }
 
-  sel = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(w), "user-data"));
-  if (sel < 0) {
-    return;
-  }
-
   getobj(d->obj, "type", sel, 0, NULL, &type);
   getobj(d->obj, "interpolation", sel, 0, NULL, &interpolation);
 
@@ -3743,6 +3738,33 @@ edited_font(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer us
   set_graph_modified();
 }
 
+static void
+select_text(GtkWidget *w, gpointer user_data)
+{
+#if GTK_CHECK_VERSION(2, 20, 0)
+  gboolean canceled;
+
+  g_object_get(w, "editing-canceled", &canceled, NULL);
+  if (! canceled) {
+    entry_completion_append(NgraphApp.legend_text_list, gtk_entry_get_text(GTK_ENTRY(w)));
+  }
+#endif
+
+  gtk_entry_set_completion(GTK_ENTRY(w), NULL);
+}
+
+static void
+start_editing_text(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path_str, gpointer user_data)
+{
+  if (GTK_IS_ENTRY(editable)) {
+    entry_completion_set_entry(NgraphApp.legend_text_list, GTK_WIDGET(editable));
+    g_object_set_data(G_OBJECT(editable), "user-data", renderer);
+    g_signal_connect(editable, "editing-done", G_CALLBACK(select_text), user_data);
+  }
+
+  return;
+}
+
 void
 CmLegendWindow(GtkToggleAction *action, gpointer client_data)
 {
@@ -3853,6 +3875,7 @@ CmLegendWindow(GtkToggleAction *action, gpointer client_data)
 #ifdef TEXT_LIST_USE_FONT_FAMILY
 	gtk_tree_view_column_add_attribute(col, renderer, "family", TEXT_LIST_COL_FONT_FAMILY);
 #endif
+	g_signal_connect_after(renderer, "editing-started", G_CALLBACK(start_editing_text), data);
       }
       g_list_free(list);
       break;

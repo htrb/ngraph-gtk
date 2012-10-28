@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2012-10-19 08:25+0900\n"
+"POT-Creation-Date: 2012-10-28 20:26+0900\n"
 "PO-Revision-Date: 2012-08-23 17:23+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -1389,23 +1389,23 @@ msgstr "塗りつぶし色"
 msgid "Close path"
 msgstr "パスを閉じる"
 
-#: src/gtk/x11lgnd.c:3777
+#: src/gtk/x11lgnd.c:3799
 msgid "path"
 msgstr "パス"
 
-#: src/gtk/x11lgnd.c:3778 src/ofile.c:164
+#: src/gtk/x11lgnd.c:3800 src/ofile.c:164
 msgid "rectangle"
 msgstr "矩形"
 
-#: src/gtk/x11lgnd.c:3779
+#: src/gtk/x11lgnd.c:3801
 msgid "arc"
 msgstr "円"
 
-#: src/gtk/x11lgnd.c:3780 src/ofile.c:157
+#: src/gtk/x11lgnd.c:3802 src/ofile.c:157
 msgid "mark"
 msgstr "マーク"
 
-#: src/gtk/x11lgnd.c:3781
+#: src/gtk/x11lgnd.c:3803
 msgid "text"
 msgstr "テキスト"
 

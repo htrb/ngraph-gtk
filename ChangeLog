@@ -1,3 +1,16 @@
+2012-10-28  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_subwin.c (get_cell_renderer_from_tree_view): added.
+	(set_combo_cell_renderer_cb, set_obj_cell_renderer_cb)
+	(set_editable_cell_renderer_cb): use
+	"get_cell_renderer_from_tree_view()".
+
+	* src/gtk/x11lgnd.c (select_line_type): remove redundant call of
+	the function "g_object_get_data()".
+	(select_text, start_editing_text): added.
+	(CmLegendWindow): connect the function "start_editing_text()"
+	to the signal "editing-started".
+
 2012-10-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* doc/html/ja/math.html: add explanation of the functions "eq",

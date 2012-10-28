@@ -361,15 +361,25 @@ set_cell_renderer_cb(struct obj_list_data *d, int n, n_list_store *list, GtkWidg
   }
 }
 
-void
-set_editable_cell_renderer_cb(struct obj_list_data *d, int i, n_list_store *list, GCallback end)
+static GtkCellRenderer *
+get_cell_renderer_from_tree_view(GtkWidget *view, int i)
 {
   GtkTreeViewColumn *col;
   GtkCellRenderer *rend;
-  GtkTreeView *view;
   GList *glist;
 
-  view = GTK_TREE_VIEW(d->text);
+  col = gtk_tree_view_get_column(GTK_TREE_VIEW(view), i);
+  glist = gtk_cell_layout_get_cells(GTK_CELL_LAYOUT(col));
+  rend = GTK_CELL_RENDERER(glist->data);
+  g_list_free(glist);
+
+  return rend;
+}
+
+void
+set_editable_cell_renderer_cb(struct obj_list_data *d, int i, n_list_store *list, GCallback end)
+{
+  GtkCellRenderer *rend;
 
   if (list == NULL || end == NULL || i < 0)
     return;
@@ -377,10 +387,7 @@ set_editable_cell_renderer_cb(struct obj_list_data *d, int i, n_list_store *list
   if (! list[i].editable)
     return;
 
-  col = gtk_tree_view_get_column(view, i);
-  glist = gtk_cell_layout_get_cells(GTK_CELL_LAYOUT(col));
-  rend = GTK_CELL_RENDERER(glist->data);
-  g_list_free(glist);
+  rend = get_cell_renderer_from_tree_view(d->text, i);
 
   if (list[i].edited_id) {
     g_signal_handler_disconnect(rend, list[i].edited_id);
@@ -391,12 +398,7 @@ set_editable_cell_renderer_cb(struct obj_list_data *d, int i, n_list_store *list
 void
 set_combo_cell_renderer_cb(struct obj_list_data *d, int i, n_list_store *list, GCallback start, GCallback end)
 {
-  GtkTreeViewColumn *col;
   GtkCellRenderer *rend;
-  GtkTreeView *view;
-  GList *glist;
-
-  view = GTK_TREE_VIEW(d->text);
 
   if (list == NULL || i < 0)
     return;
@@ -404,10 +406,7 @@ set_combo_cell_renderer_cb(struct obj_list_data *d, int i, n_list_store *list, G
   if (! list[i].editable || (list[i].type != G_TYPE_ENUM && list[i].type != G_TYPE_PARAM))
     return;
 
-  col = gtk_tree_view_get_column(view, i);
-  glist = gtk_cell_layout_get_cells(GTK_CELL_LAYOUT(col));
-  rend = GTK_CELL_RENDERER(glist->data);
-  g_list_free(glist);
+  rend = get_cell_renderer_from_tree_view(d->text, i);
 
   if (list[i].edited_id) {
     g_signal_handler_disconnect(rend, list[i].edited_id);
@@ -428,12 +427,7 @@ set_combo_cell_renderer_cb(struct obj_list_data *d, int i, n_list_store *list, G
 void
 set_obj_cell_renderer_cb(struct obj_list_data *d, int i, n_list_store *list, GCallback start)
 {
-  GtkTreeViewColumn *col;
   GtkCellRenderer *rend;
-  GtkTreeView *view;
-  GList *glist;
-
-  view = GTK_TREE_VIEW(d->text);
 
   if (list == NULL || i < 0)
     return;
@@ -441,10 +435,7 @@ set_obj_cell_renderer_cb(struct obj_list_data *d, int i, n_list_store *list, GCa
   if (! list[i].editable || list[i].type != G_TYPE_OBJECT)
     return;
 
-  col = gtk_tree_view_get_column(view, i);
-  glist = gtk_cell_layout_get_cells(GTK_CELL_LAYOUT(col));
-  rend = GTK_CELL_RENDERER(glist->data);
-  g_list_free(glist);
+  rend = get_cell_renderer_from_tree_view(d->text, i);
 
   if (start)
     g_signal_connect(rend, "editing-started", G_CALLBACK(start), d);

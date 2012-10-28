@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.06.07\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2012-10-19 08:25+0900\n"
+"POT-Creation-Date: 2012-10-28 20:26+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1356,23 +1356,23 @@ msgstr ""
 msgid "Close path"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3777
+#: src/gtk/x11lgnd.c:3799
 msgid "path"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3778 src/ofile.c:164
+#: src/gtk/x11lgnd.c:3800 src/ofile.c:164
 msgid "rectangle"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3779
+#: src/gtk/x11lgnd.c:3801
 msgid "arc"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3780 src/ofile.c:157
+#: src/gtk/x11lgnd.c:3802 src/ofile.c:157
 msgid "mark"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3781
+#: src/gtk/x11lgnd.c:3803
 msgid "text"
 msgstr ""
 
