@@ -1854,7 +1854,7 @@ getdataarray(char *buf, int maxdim, double *count, MathValue *data, char *ifs, i
   char st;
   double val;
   int i;
-  int dim;
+  int dim, hex;
 
   (*count)++;
   dim=0;
@@ -1862,6 +1862,7 @@ getdataarray(char *buf, int maxdim, double *count, MathValue *data, char *ifs, i
   data[dim].type = MATH_VALUE_NORMAL;
   po=buf;
   while (*po!='\0') {
+    hex = FALSE;
     if (dim>=maxdim) return 0;
     if (csv) {
       for (;(*po==' ');po++);
@@ -1879,8 +1880,16 @@ getdataarray(char *buf, int maxdim, double *count, MathValue *data, char *ifs, i
 #else
         for (po2=po;(*po2!='\0') && ! CHECK_IFS(ifs, *po2) && (*po2!=' ');po2++) {
 	  *po2=toupper(*po2);
-	  if (*po == 'D')
-	    *po = 'e';
+	  switch (*po2) {
+	  case 'X':
+	    hex = TRUE;
+	    break;
+	  case 'D':
+	    if (! hex) {
+	      *po2 = 'e';
+	    }
+	    break;
+	  }
 	}
 #endif
         val=strtod(po,&endptr);
@@ -1912,8 +1921,16 @@ getdataarray(char *buf, int maxdim, double *count, MathValue *data, char *ifs, i
 #else
       for (po2=po;(*po2!='\0') && ! CHECK_IFS(ifs, *po2);po2++) {
         *po2=toupper(*po2);
-	if (*po == 'D')
-	  *po = 'e';
+	switch (*po2) {
+	case 'X':
+	  hex = TRUE;
+	  break;
+	case 'D':
+	  if (! hex) {
+	    *po2 = 'e';
+	  }
+	  break;
+	}
       }
 #endif
       val=strtod(po,&endptr);

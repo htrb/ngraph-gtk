@@ -297,10 +297,6 @@ getrelativepath(const char *name)
   return str;
 }
 
-#if 0
-} /* dummy */
-#endif
-
 char *
 get_utf8_filename(const char *name)
 {

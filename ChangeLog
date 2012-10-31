@@ -1,3 +1,11 @@
+2012-10-31  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/ofile.c (getdataarray): 'D' can be used as a prefix for a
+	decimal exponent. Accept hexadecimal number.
+
+	* src/otext.c (USE_UTF8): removed.
+	(text_set_text): remove code for shift-jis.
+
 2012-10-28  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_subwin.c (get_cell_renderer_from_tree_view): added.

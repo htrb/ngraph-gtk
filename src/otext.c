@@ -30,11 +30,6 @@
 
 #include "common.h"
 
-#define USE_UTF8 1
-#ifdef USE_UTF8
-#include <glib.h>
-#endif
-
 #include "ngraph.h"
 #include "object.h"
 #include "gra.h"
@@ -462,7 +457,6 @@ textmatch(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 static int 
 text_set_text(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
-#if USE_UTF8
   char *str, *ptr;
   gsize len;
 
@@ -496,25 +490,6 @@ text_set_text(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **ar
 
   error(obj, ERR_INVALID_STR);
   return 1;
-#else
-  char *ptr;
-
-  if (argv[2] == NULL) {
-    return 0;
-  }
-
-  if (g_utf8_validate(argv[2], -1, NULL)) {
-    ptr = utf8_to_sjis(argv[2]);
-    if (ptr == NULL) {
-      return 0;
-    }
-
-    g_free(argv[2]);
-    argv[2] = ptr;
-  }
-
-  return textgeometry(obj, inst, rval, argc, argv);
-#endif
 }
 
 static struct objtable text[] = {
