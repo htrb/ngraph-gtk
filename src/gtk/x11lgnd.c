@@ -3825,6 +3825,7 @@ CmLegendWindow(GtkToggleAction *action, gpointer client_data)
 
     str = g_strdup_printf("%s%c%s", PIXMAPDIR, DIRSEP, icon_files[i]);
     icons[i] = gtk_image_new_from_file(str);
+    gtk_widget_set_tooltip_text(GTK_WIDGET(icons[i]), _(legendlist[i]));
     g_free(str);
   }
 

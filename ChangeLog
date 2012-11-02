@@ -1,3 +1,7 @@
+2012-11-02  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11lgnd.c (CmLegendWindow): add tooltip to icons.
+
 2012-10-31  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ofile.c (getdataarray): 'D' can be used as a prefix for a
