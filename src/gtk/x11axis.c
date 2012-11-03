@@ -109,7 +109,6 @@ static struct subwin_popup_list Popup_list[] = {
 #define POPUP_ITEM_DOWN 10
 #define POPUP_ITEM_BOTTOM 11
 
-#define CB_BUF_SIZE 128
 #define ID_BUF_SIZE 16
 #define TITLE_BUF_SIZE 128
 

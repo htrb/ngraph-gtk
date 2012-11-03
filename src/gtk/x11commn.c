@@ -53,7 +53,6 @@
 #include "x11commn.h"
 #include "x11info.h"
 
-#define MESSAGE_BUF_SIZE 4096
 #define COMMENT_BUF_SIZE 1024
 
 static GtkWidget *ProgressDialog = NULL;

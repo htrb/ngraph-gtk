@@ -1,7 +1,18 @@
 2012-11-03  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11bitmp.c (ICON_WIDTH, ICON_HEIGHT): removed.
+
+	* src/gtk/x11commn.c (MESSAGE_BUF_SIZE): removed.
+
+	* src/gtk/x11opt.c (BUF_SIZE): removed.
+
+	* src/gtk/x11file.c (CB_BUF_SIZE): removed.
+
+	* src/gtk/x11axis.c (CB_BUF_SIZE): removed.
+
 	* src/gtk/x11lgnd.c (CmLegendWindow): use ""struct legend_data
 	legend_data[]".
+	(CB_BUF_SIZE): removed.
 
 2012-11-02  Ito Hiroyuki  <ZXB01226 at nifty.com>
 

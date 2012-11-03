@@ -53,7 +53,6 @@
 #include "x11cood.h"
 #include "x11info.h"
 
-#define BUF_SIZE 64
 #define MESSAGE_BUF_SIZE 4096
 
 #define WIN_SIZE_MIN 100

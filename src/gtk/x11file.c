@@ -141,7 +141,6 @@ static struct subwin_popup_list Popup_list[] = {
 #define POPUP_ITEM_BOTTOM 15
 
 #define FITSAVE "fit.ngp"
-#define CB_BUF_SIZE 128
 
 enum MATH_FNC_TYPE {
   TYPE_MATH_X = 0,

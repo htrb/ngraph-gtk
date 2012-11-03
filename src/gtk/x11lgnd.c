@@ -61,8 +61,6 @@
 #include "x11commn.h"
 
 #define ARROW_VIEW_SIZE 160
-#define CB_BUF_SIZE 128
-#define LEGENDNUM 5
 
 static n_list_store Plist[] = {
   {" ",            G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden"},
@@ -3773,14 +3771,15 @@ CmLegendWindow(GtkToggleAction *action, gpointer client_data)
   struct obj_list_data *data;
   GList *list;
   GtkTreeViewColumn *col;
-  GtkWidget *icons[LEGENDNUM];
-  struct legend_data legend_data[] = {
+#define LEGENDNUM 5
+  struct legend_data legend_data[LEGENDNUM] = {
     {"ngraph_line.png", PathListUpdate, LegendWinPathUpdate, N_("path"),      &DlgLegendArrow},
     {"ngraph_rect.png", RectListUpdate, LegendWinRectUpdate, N_("rectangle"), &DlgLegendRect},
     {"ngraph_arc.png",  ArcListUpdate,  LegendWinArcUpdate,  N_("arc"),       &DlgLegendArc},
     {"ngraph_mark.png", MarkListUpdate, LegendWinMarkUpdate, N_("mark"),      &DlgLegendMark},
     {"ngraph_text.png", TextListUpdate, LegendWinTextUpdate, N_("text"),      &DlgLegendText},
   };
+  GtkWidget *icons[LEGENDNUM];
 
   d = &(NgraphApp.LegendWin);
 

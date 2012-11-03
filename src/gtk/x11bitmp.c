@@ -21,9 +21,6 @@
  *
  */
 
-#define ICON_WIDTH 48
-#define ICON_HEIGHT 48
-
 #include "gtk_common.h"
 
 const gchar *Icon_xpm[] = {
