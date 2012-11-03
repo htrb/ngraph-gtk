@@ -241,14 +241,6 @@ static void arc_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row
 static void mark_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row);
 static void text_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row);
 
-static struct LegendDialog *Ldlg[] = {
-  &DlgLegendArrow,
-  &DlgLegendRect,
-  &DlgLegendArc,
-  &DlgLegendMark,
-  &DlgLegendText,
-};
-
 enum LegendType {
   LegendTypePath = 0,
   LegendTypeRect,
@@ -3765,6 +3757,14 @@ start_editing_text(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *
   return;
 }
 
+struct legend_data {
+  char *icon_file;
+  void (* update_func) (struct obj_list_data *, int);
+  void (* update_dialog_func) (struct obj_list_data *, int, int);
+  char *name;
+  struct LegendDialog *dialog;
+};
+
 void
 CmLegendWindow(GtkToggleAction *action, gpointer client_data)
 {
@@ -3774,33 +3774,12 @@ CmLegendWindow(GtkToggleAction *action, gpointer client_data)
   GList *list;
   GtkTreeViewColumn *col;
   GtkWidget *icons[LEGENDNUM];
-  char *icon_files[] = {
-    "ngraph_line.png",
-    "ngraph_rect.png",
-    "ngraph_arc.png",
-    "ngraph_mark.png",
-    "ngraph_text.png",
-  };
-  void (* UpdateFuncArray[]) (struct obj_list_data *, int) = {
-    PathListUpdate,
-    RectListUpdate,
-    ArcListUpdate,
-    MarkListUpdate,
-    TextListUpdate,
-  };
-  void (* UpdateDialogFuncArray[]) (struct obj_list_data *, int, int) = {
-    LegendWinPathUpdate,
-    LegendWinRectUpdate,
-    LegendWinArcUpdate,
-    LegendWinMarkUpdate,
-    LegendWinTextUpdate,
-  };
-  char *legendlist[] = {
-    N_("path"),
-    N_("rectangle"),
-    N_("arc"),
-    N_("mark"),
-    N_("text"),
+  struct legend_data legend_data[] = {
+    {"ngraph_line.png", PathListUpdate, LegendWinPathUpdate, N_("path"),      &DlgLegendArrow},
+    {"ngraph_rect.png", RectListUpdate, LegendWinRectUpdate, N_("rectangle"), &DlgLegendRect},
+    {"ngraph_arc.png",  ArcListUpdate,  LegendWinArcUpdate,  N_("arc"),       &DlgLegendArc},
+    {"ngraph_mark.png", MarkListUpdate, LegendWinMarkUpdate, N_("mark"),      &DlgLegendMark},
+    {"ngraph_text.png", TextListUpdate, LegendWinTextUpdate, N_("text"),      &DlgLegendText},
   };
 
   d = &(NgraphApp.LegendWin);
@@ -3823,9 +3802,9 @@ CmLegendWindow(GtkToggleAction *action, gpointer client_data)
   for (i = 0; i < LEGENDNUM; i++) {
     char *str;
 
-    str = g_strdup_printf("%s%c%s", PIXMAPDIR, DIRSEP, icon_files[i]);
+    str = g_strdup_printf("%s%c%s", PIXMAPDIR, DIRSEP, legend_data[i].icon_file);
     icons[i] = gtk_image_new_from_file(str);
-    gtk_widget_set_tooltip_text(GTK_WIDGET(icons[i]), _(legendlist[i]));
+    gtk_widget_set_tooltip_text(GTK_WIDGET(icons[i]), _(legend_data[i].name));
     g_free(str);
   }
 
@@ -3833,11 +3812,11 @@ CmLegendWindow(GtkToggleAction *action, gpointer client_data)
 
   data = d->data.data;
   for (i = 0; i < LEGENDNUM; i++) {
-    data->update = UpdateFuncArray[i];
-    data->dialog = Ldlg[i];
-    data->setup_dialog = UpdateDialogFuncArray[i];
+    data->update = legend_data[i].update_func;
+    data->dialog = legend_data[i].dialog;
+    data->setup_dialog = legend_data[i].update_dialog_func;
     data->ev_key = NULL;
-    data->obj = chkobject(legendlist[i]);
+    data->obj = chkobject(legend_data[i].name);
 
     sub_win_create_popup_menu(data, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
     switch (i) {
