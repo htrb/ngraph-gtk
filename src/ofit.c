@@ -284,7 +284,7 @@ enum FitError {
 };
 
 static void
-display_equation(char *equation)
+display_equation(const char *equation)
 {
   if (equation == NULL)
     return;
@@ -294,7 +294,7 @@ display_equation(char *equation)
   ndisplaydialog("\n");
 }
 
-enum FitError 
+enum FitError
 fitpoly(struct fitlocal *fitlocal,
 	enum FIT_OBJ_TYPE type,int dimension,int through,double x0,double y0,
 	double *data,int num,int disp,int weight,double *wdata)
@@ -311,7 +311,7 @@ fitpoly(struct fitlocal *fitlocal,
   double yy,y1,y2,derror,sy,correlation,wt,sum;
   vector b,x1,x2,coe;
   matrix m;
-  char *equation;
+  GString *equation;
   char buf[1024];
 
   if (type == FIT_TYPE_POLY) dim=dimension+1;
@@ -375,33 +375,34 @@ fitpoly(struct fitlocal *fitlocal,
   fitlocal->correlation=correlation;
   fitlocal->num=num;
 
-#define EQUATION_BUF_SIZE 512
-  if ((equation=g_malloc(EQUATION_BUF_SIZE))==NULL) return FitError_Fatal;
-  equation[0]='\0';
-  j=0;
+  equation = g_string_new("");
+  if (equation == NULL) {
+    return FitError_Fatal;
+  }
 
   switch (type) {
   case FIT_TYPE_POLY:
-    for (i = dim - 1; i > 0; i--) 
-      j += snprintf(equation + j, EQUATION_BUF_SIZE - j,
-		    (i == dim - 1) ? "%.15e*X^%d" : "%+.15e*X^%d",
-		    coe[i], i);
-    snprintf(equation + j, EQUATION_BUF_SIZE - j, "%+.15e", coe[0]);
+    for (i = dim - 1; i > 0; i--) {
+      g_string_append_printf(equation,
+			     (i == dim - 1) ? "%.15e*X^%d" : "%+.15e*X^%d",
+			     coe[i], i);
+    }
+    g_string_append_printf(equation, "%+.15e", coe[0]);
     break;
   case FIT_TYPE_POW:
-    sprintf(equation, "exp(%.15e)*X^%.15e", coe[0], coe[1]);
+    g_string_printf(equation, "exp(%.15e)*X^%.15e", coe[0], coe[1]);
     break;
   case FIT_TYPE_EXP:
-    sprintf(equation, "exp(%.15e*X%+.15e)", coe[1], coe[0]);
+    g_string_printf(equation, "exp(%.15e*X%+.15e)", coe[1], coe[0]);
     break;
   case  FIT_TYPE_LOG:
-    sprintf(equation, "%.15e*Ln(X)%+.15e", coe[1], coe[0]);
+    g_string_printf(equation, "%.15e*Ln(X)%+.15e", coe[1], coe[0]);
     break;
   case FIT_TYPE_USER:
     /* never reached */
     break;
   }
-  fitlocal->equation = equation;
+  fitlocal->equation = g_string_free(equation, FALSE);
 
   if (disp) {
     i=0;
@@ -434,7 +435,7 @@ fitpoly(struct fitlocal *fitlocal,
       i+=sprintf(buf+i,"|r| or |R| = -------------\n");
     ndisplaydialog(buf);
 
-    display_equation(equation);
+    display_equation(fitlocal->equation);
   }
 
 
@@ -458,7 +459,7 @@ fituser(struct objlist *obj,struct fitlocal *fitlocal,char *func,
          FitError_Fatal
 */
 {
-  int ecode, prev_char, equation_length;
+  int ecode, prev_char;
   int *needdata;
   int tbl[10],dim,n,count,rcode,err,err2,err3;
   double yy,y,y1,y2,y3,sy,spx,spy,dxx,dxxc,xx,derror,correlation;
@@ -466,8 +467,8 @@ fituser(struct objlist *obj,struct fitlocal *fitlocal,char *func,
   MathValue par[10], par2[10], var;
   MathEquationParametar *prm;
   matrix m;
-  int i,j,k,pnum;
-  char *equation;
+  int i,j,k;
+  GString *equation;
   char buf[1024];
   double wt,sum;
 /*
@@ -734,63 +735,57 @@ errexit:
     fitlocal->derror=derror;
     fitlocal->correlation=correlation;
     fitlocal->num=n;
-    pnum=0;
-    for (i=0;func[i]!='\0';i++) {
-      if (func[i]=='%') {
-        pnum++;
-        i+=2;
-      }
-    }
-    equation_length = strlen(func) + 25 * pnum + 1;
-    equation=g_malloc(equation_length);
-    if (equation == NULL)
+
+    equation = g_string_sized_new(256);
+    if (equation == NULL) {
       return FitError_Fatal;
-    j = 0;
+    }
+
     prev_char = '\0';
     for (i = 0; func[i] != '\0'; i++) {
       double val;
       char *format;
+      int prm_index;
 
       switch (func[i]) {
       case '%':
         if (isdigit(func[i + 1]) && isdigit(func[i + 2]) && isdigit(func[i + 3])) {
-          pnum = (func[i + 1] - '0') * 100 + (func[i + 2] - '0') * 10 + (func[i + 3] - '0');
+          prm_index = (func[i + 1] - '0') * 100 + (func[i + 2] - '0') * 10 + (func[i + 3] - '0');
           i += 3;
         } else if (isdigit(func[i + 1]) && isdigit(func[i + 2])) {
-          pnum = (func[i + 1] - '0') * 10 + (func[i + 2] - '0');
+          prm_index = (func[i + 1] - '0') * 10 + (func[i + 2] - '0');
           i += 2;
         } else {
-          pnum = (func[i + 1] - '0');
+          prm_index = (func[i + 1] - '0');
           i += 1;
         }
 
-	val = par[pnum].val;
+	val = par[prm_index].val;
 	switch (prev_char) {
 	case '-':
 	  val = - val;
 	  /* fall-through */
 	case '+':
-	  j--;
+	  g_string_truncate(equation, equation->len - 1);
 	  format = "%+.15e";
 	  break;
 	default:
 	  format = "%.15e";
 	}
 	prev_char = '\0';
-	j += snprintf(equation + j, equation_length - j, format, val);
+	g_string_append_printf(equation, format, val);
 	break;
       case ' ':
 	break;
       default:
-        equation[j] = toupper(func[i]);
 	prev_char = func[i];
-        j++;
+	g_string_append_c(equation, toupper(prev_char));
       }
     }
-    equation[j] = '\0';
-    fitlocal->equation = equation;
+
+    fitlocal->equation = g_string_free(equation, FALSE);
     if (disp) {
-      display_equation(equation);
+      display_equation(fitlocal->equation);
     }
   }
   return ecode;

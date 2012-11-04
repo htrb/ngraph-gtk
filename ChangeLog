@@ -1,3 +1,8 @@
+2012-11-04  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/ofit.c (fitpoly, fituser): use "GString" to show calclated
+	equation.
+
 2012-11-03  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11bitmp.c (ICON_WIDTH, ICON_HEIGHT): removed.
