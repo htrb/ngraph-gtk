@@ -294,7 +294,93 @@ display_equation(const char *equation)
   ndisplaydialog("\n");
 }
 
-enum FitError
+static int
+show_poly_equation(struct fitlocal *fitlocal, enum FIT_OBJ_TYPE type, vector coe)
+{
+  GString *equation;
+  int i;
+
+  equation = g_string_new("");
+  if (equation == NULL) {
+    return 1;
+  }
+
+  switch (type) {
+  case FIT_TYPE_POLY:
+    for (i = fitlocal->dim - 1; i > 0; i--) {
+      g_string_append_printf(equation,
+			     (i == fitlocal->dim - 1) ? "%.7e*X^%d" : "%+.7e*X^%d",
+			     coe[i], i);
+    }
+    g_string_append_printf(equation, "%+.7e", coe[0]);
+    break;
+  case FIT_TYPE_POW:
+    g_string_printf(equation, "exp(%.7e)*X^%.7e", coe[0], coe[1]);
+    break;
+  case FIT_TYPE_EXP:
+    g_string_printf(equation, "exp(%.7e*X%+.7e)", coe[1], coe[0]);
+    break;
+  case  FIT_TYPE_LOG:
+    g_string_printf(equation, "%.7e*Ln(X)%+.7e", coe[1], coe[0]);
+    break;
+  case FIT_TYPE_USER:
+    /* never reached */
+    break;
+  }
+  fitlocal->equation = g_string_free(equation, FALSE);
+
+  return 0;
+}
+
+static int
+show_poly_result(struct fitlocal *fitlocal, enum FIT_OBJ_TYPE type, vector coe, int num)
+{
+  int j;
+  GString *info;
+
+  info = g_string_new("");
+  if (info == NULL) {
+    return 1;
+  }
+
+  g_string_append_printf(info, "--------\nfit:%d (^%d)\n", fitlocal->id, fitlocal->oid);
+  switch (type) {
+  case FIT_TYPE_POLY:
+    g_string_append_printf(info,"Eq: %%0i*X^i (i=0-%d)\n\n", fitlocal->dim - 1);
+    break;
+  case FIT_TYPE_POW:
+    g_string_append(info,"Eq: exp(%00)*X^%01\n\n");
+    break;
+  case FIT_TYPE_EXP:
+    g_string_append(info,"Eq: exp(%01*X+%00)\n\n");
+    break;
+  case FIT_TYPE_LOG:
+    g_string_append(info,"Eq: %01*Ln(X)+%00\n\n");
+    break;
+  case FIT_TYPE_USER:
+    /* never reached */
+    break;
+  }
+  for (j = 0; j < fitlocal->dim; j++) {
+    g_string_append_printf(info, "       %%0%d = %+.7e\n", j, coe[j]);
+  }
+  g_string_append_c(info, '\n');
+  g_string_append_printf(info, "    points = %d\n", fitlocal->num);
+  g_string_append_printf(info, "    <DY^2> = %+.7e\n", fitlocal->derror);
+  if (fitlocal->correlation >= 0) {
+    g_string_append_printf(info, "|r| or |R| = %+.7e\n", fitlocal->correlation);
+  } else {
+    g_string_append(info, "|r| or |R| = -------------\n");
+  }
+  ndisplaydialog(info->str);
+  g_string_free(info, TRUE);
+
+  display_equation(fitlocal->equation);
+
+  return 0;
+}
+
+static enum FitError
 fitpoly(struct fitlocal *fitlocal,
 	enum FIT_OBJ_TYPE type,int dimension,int through,double x0,double y0,
 	double *data,int num,int disp,int weight,double *wdata)
@@ -311,8 +397,6 @@ fitpoly(struct fitlocal *fitlocal,
   double yy,y1,y2,derror,sy,correlation,wt,sum;
   vector b,x1,x2,coe;
   matrix m;
-  GString *equation;
-  char buf[1024];
 
   if (type == FIT_TYPE_POLY) dim=dimension+1;
   else dim=2;
@@ -375,75 +459,111 @@ fitpoly(struct fitlocal *fitlocal,
   fitlocal->correlation=correlation;
   fitlocal->num=num;
 
-  equation = g_string_new("");
-  if (equation == NULL) {
+  if (show_poly_equation(fitlocal, type, coe)) {
     return FitError_Fatal;
   }
 
-  switch (type) {
-  case FIT_TYPE_POLY:
-    for (i = dim - 1; i > 0; i--) {
-      g_string_append_printf(equation,
-			     (i == dim - 1) ? "%.15e*X^%d" : "%+.15e*X^%d",
-			     coe[i], i);
-    }
-    g_string_append_printf(equation, "%+.15e", coe[0]);
-    break;
-  case FIT_TYPE_POW:
-    g_string_printf(equation, "exp(%.15e)*X^%.15e", coe[0], coe[1]);
-    break;
-  case FIT_TYPE_EXP:
-    g_string_printf(equation, "exp(%.15e*X%+.15e)", coe[1], coe[0]);
-    break;
-  case  FIT_TYPE_LOG:
-    g_string_printf(equation, "%.15e*Ln(X)%+.15e", coe[1], coe[0]);
-    break;
-  case FIT_TYPE_USER:
-    /* never reached */
-    break;
-  }
-  fitlocal->equation = g_string_free(equation, FALSE);
-
-  if (disp) {
-    i=0;
-    i += sprintf(buf + i, "--------\nfit:%d (^%d)\n", fitlocal->id, fitlocal->oid);
-    switch (type) {
-    case FIT_TYPE_POLY:
-      i += sprintf(buf+i,"Eq: %%0i*X^i (i=0-%d)\n\n",dim-1);
-      break;
-    case FIT_TYPE_POW:
-      i += sprintf(buf + i,"Eq: exp(%%00)*X^%%01\n\n");
-      break;
-    case FIT_TYPE_EXP:
-      i += sprintf(buf + i,"Eq: exp(%%01*X+%%00)\n\n");
-      break;
-    case FIT_TYPE_LOG:
-      i += sprintf(buf + i,"Eq: %%01*Ln(X)+%%00\n\n");
-      break;
-    case FIT_TYPE_USER:
-      /* never reached */
-      break;
-    }
-    for (j=0;j<dim;j++)
-      i+=sprintf(buf+i,"       %%0%d = %+.7e\n",j,coe[j]);
-    i+=sprintf(buf+i,"\n");
-    i+=sprintf(buf+i,"    points = %d\n",num);
-    i+=sprintf(buf+i,"    <DY^2> = %+.7e\n",derror);
-    if (correlation>=0)
-      i+=sprintf(buf+i,"|r| or |R| = %+.7e\n",correlation);
-    else
-      i+=sprintf(buf+i,"|r| or |R| = -------------\n");
-    ndisplaydialog(buf);
-
-    display_equation(fitlocal->equation);
+  if (disp && show_poly_result(fitlocal, type, coe, derror)) {
+    return FitError_Fatal;
   }
 
 
   return FitError_Success;
 }
 
-enum FitError 
-fituser(struct objlist *obj,struct fitlocal *fitlocal,char *func,
+static int
+show_user_result(struct fitlocal *fitlocal, const char *func, int dim, int *tbl, MathValue *par, int n, double dxxc, double derror, double correlation)
+{
+  GString *info;
+  int j;
+
+  info = g_string_sized_new(1024);
+  if (info == NULL) {
+    return 1;
+  }
+  g_string_append_printf(info, "--------\nfit:%d (^%d)\n", fitlocal->id, fitlocal->oid);
+  g_string_append(info, "Eq: User defined\n");
+  g_string_append_printf(info, "    %s\n\n", func);
+  for (j = 0; j < dim; j++) {
+    g_string_append_printf(info, "       %%0%d = %+.7e\n", tbl[j],  par[tbl[j]].val);
+  }
+  g_string_append_c(info, '\n');
+  g_string_append_printf(info, "    points = %d\n", n);
+  g_string_append_printf(info, "     delta = %+.7e\n", dxxc);
+  g_string_append_printf(info, "    <DY^2> = %+.7e\n", derror);
+  if (correlation >= 0) {
+    g_string_append_printf(info, "|r| or |R| = %+.7e\n", correlation);
+  } else {
+    g_string_append(info, "|r| or |R| = -------------\n");
+  }
+  ndisplaydialog(info->str);
+  g_string_free(info, TRUE);
+  return 0;
+}
+
+static int
+show_user_equation(struct fitlocal *fitlocal, const char *func, MathValue *par, int disp)
+{
+  int i, prev_char;
+  GString *equation;
+
+  equation = g_string_sized_new(256);
+  if (equation == NULL) {
+    return 1;
+  }
+
+  prev_char = '\0';
+  for (i = 0; func[i] != '\0'; i++) {
+    double val;
+    char *format;
+    int prm_index;
+
+    switch (func[i]) {
+    case '%':
+      if (isdigit(func[i + 1]) && isdigit(func[i + 2]) && isdigit(func[i + 3])) {
+	prm_index = (func[i + 1] - '0') * 100 + (func[i + 2] - '0') * 10 + (func[i + 3] - '0');
+	i += 3;
+      } else if (isdigit(func[i + 1]) && isdigit(func[i + 2])) {
+	prm_index = (func[i + 1] - '0') * 10 + (func[i + 2] - '0');
+	i += 2;
+      } else {
+	prm_index = (func[i + 1] - '0');
+	i += 1;
+      }
+
+      val = par[prm_index].val;
+      switch (prev_char) {
+      case '-':
+	val = - val;
+	/* fall-through */
+      case '+':
+	g_string_truncate(equation, equation->len - 1);
+	format = "%+.7e";
+	break;
+      default:
+	format = "%.7e";
+      }
+      prev_char = '\0';
+      g_string_append_printf(equation, format, val);
+      break;
+    case ' ':
+      break;
+    default:
+      prev_char = func[i];
+      g_string_append_c(equation, toupper(prev_char));
+    }
+  }
+
+  fitlocal->equation = g_string_free(equation, FALSE);
+  if (disp) {
+    display_equation(fitlocal->equation);
+  }
+
+  return 0;
+}
+
+static enum FitError 
+fituser(struct objlist *obj,struct fitlocal *fitlocal, const char *func,
 	int deriv,double converge,double *data,int num,int disp,
 	int weight,double *wdata)
 /*
@@ -459,7 +579,7 @@ fituser(struct objlist *obj,struct fitlocal *fitlocal,char *func,
          FitError_Fatal
 */
 {
-  int ecode, prev_char;
+  int ecode;
   int *needdata;
   int tbl[10],dim,n,count,rcode,err,err2,err3;
   double yy,y,y1,y2,y3,sy,spx,spy,dxx,dxxc,xx,derror,correlation;
@@ -468,7 +588,6 @@ fituser(struct objlist *obj,struct fitlocal *fitlocal,char *func,
   MathEquationParametar *prm;
   matrix m;
   int i,j,k;
-  GString *equation;
   char buf[1024];
   double wt,sum;
 /*
@@ -709,83 +828,21 @@ repeat:
 
   } while ((dxxc>xx*converge/100) && ((xx>1e-6) || (dxxc>1e-6*converge/100)));
 
-  if (disp) {
-    i=0;
-    i += sprintf(buf + i, "--------\nfit:%d (^%d)\n", fitlocal->id, fitlocal->oid);
-    i+=sprintf(buf+i,"Eq: User defined\n");
-    i+=sprintf(buf+i,"    %s\n\n", func);
-    for (j=0;j<dim;j++) {
-      i += sprintf(buf+i,"       %%0%d = %+.7e\n",tbl[j], par[tbl[j]].val);
-    }
-    i+=sprintf(buf+i,"\n");
-    i+=sprintf(buf+i,"    points = %d\n",n);
-    i+=sprintf(buf+i,"     delta = %+.7e\n",dxxc);
-    i+=sprintf(buf+i,"    <DY^2> = %+.7e\n",derror);
-    if (correlation>=0)
-      i+=sprintf(buf+i,"|r| or |R| = %+.7e\n",correlation);
-    else
-      i+=sprintf(buf+i,"|r| or |R| = -------------\n");
-    ndisplaydialog(buf);
+  if (disp && show_user_result(fitlocal, func, dim, tbl, par, n, dxxc, derror, correlation)) {;
+    return FitError_Fatal;
   }
 
 errexit:
   if ((ecode==FitError_Success) || (ecode==FitError_Range)) {
-    for (i = 0; i < 10; i++) fitlocal->coe[i] = par[i].val;
+    for (i = 0; i < 10; i++) {
+      fitlocal->coe[i] = par[i].val;
+    }
     fitlocal->dim=dim;
     fitlocal->derror=derror;
     fitlocal->correlation=correlation;
     fitlocal->num=n;
-
-    equation = g_string_sized_new(256);
-    if (equation == NULL) {
-      return FitError_Fatal;
-    }
-
-    prev_char = '\0';
-    for (i = 0; func[i] != '\0'; i++) {
-      double val;
-      char *format;
-      int prm_index;
-
-      switch (func[i]) {
-      case '%':
-        if (isdigit(func[i + 1]) && isdigit(func[i + 2]) && isdigit(func[i + 3])) {
-          prm_index = (func[i + 1] - '0') * 100 + (func[i + 2] - '0') * 10 + (func[i + 3] - '0');
-          i += 3;
-        } else if (isdigit(func[i + 1]) && isdigit(func[i + 2])) {
-          prm_index = (func[i + 1] - '0') * 10 + (func[i + 2] - '0');
-          i += 2;
-        } else {
-          prm_index = (func[i + 1] - '0');
-          i += 1;
-        }
-
-	val = par[prm_index].val;
-	switch (prev_char) {
-	case '-':
-	  val = - val;
-	  /* fall-through */
-	case '+':
-	  g_string_truncate(equation, equation->len - 1);
-	  format = "%+.15e";
-	  break;
-	default:
-	  format = "%.15e";
-	}
-	prev_char = '\0';
-	g_string_append_printf(equation, format, val);
-	break;
-      case ' ':
-	break;
-      default:
-	prev_char = func[i];
-	g_string_append_c(equation, toupper(prev_char));
-      }
-    }
-
-    fitlocal->equation = g_string_free(equation, FALSE);
-    if (disp) {
-      display_equation(fitlocal->equation);
+    if (show_user_equation(fitlocal, func, par, disp)) {
+      ecode = FitError_Fatal;
     }
   }
   return ecode;
@@ -1041,10 +1098,10 @@ fitcalc(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
     math_equation_free(eq);
     return 1;
   }
- 
+
   r = math_equation_calculate(eq, &val);
   math_equation_free(eq);
-  
+
   if (r) {
     return 1;
   }

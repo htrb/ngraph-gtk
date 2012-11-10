@@ -1,3 +1,15 @@
+2012-11-10  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/ofit.c (show_poly_equation, show_poly_result)
+	(show_user_result, show_user_equation): added.
+	(fitpoly): use "show_poly_equation()" and "show_poly_result()".
+	(fituser): use "show_user_equation()" and "show_user_result()".
+
+2012-11-06  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/ofit.c (fitpoly, fituser): use "GString" to show fitting
+	results.
+
 2012-11-04  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/ofit.c (fitpoly, fituser): use "GString" to show calclated
