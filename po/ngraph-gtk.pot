@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.06.07\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2012-11-04 22:06+0900\n"
+"POT-Creation-Date: 2012-11-29 18:21+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -170,7 +170,7 @@ msgstr ""
 msgid "_Background Color:"
 msgstr ""
 
-#: src/gtk/x11axis.c:402 src/gtk/x11lgnd.c:3240 src/gtk/gtk_widget.c:1097
+#: src/gtk/x11axis.c:402 src/gtk/x11lgnd.c:3240 src/gtk/gtk_widget.c:1101
 msgid "Color"
 msgstr ""
 
@@ -1030,11 +1030,11 @@ msgstr ""
 msgid "Type"
 msgstr ""
 
-#: src/gtk/x11file.c:4639 src/gtk/x11lgnd.c:3207 src/gtk/gtk_widget.c:1104
+#: src/gtk/x11file.c:4639 src/gtk/x11lgnd.c:3207 src/gtk/gtk_widget.c:1108
 msgid "Color 1"
 msgstr ""
 
-#: src/gtk/x11file.c:4653 src/gtk/x11lgnd.c:3216 src/gtk/gtk_widget.c:1111
+#: src/gtk/x11file.c:4653 src/gtk/x11lgnd.c:3216 src/gtk/gtk_widget.c:1115
 msgid "Color 2"
 msgstr ""
 
@@ -2382,11 +2382,11 @@ msgstr ""
 msgid "Pick a Color"
 msgstr ""
 
-#: src/gtk/gtk_widget.c:1083
+#: src/gtk/gtk_widget.c:1087
 msgid "Stroke Color"
 msgstr ""
 
-#: src/gtk/gtk_widget.c:1090
+#: src/gtk/gtk_widget.c:1094
 msgid "Fill Color"
 msgstr ""
 

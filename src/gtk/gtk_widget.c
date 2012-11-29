@@ -879,9 +879,13 @@ create_text_view_with_line_number(GtkWidget **v)
 {
   GtkWidget *view, *ln, *swin, *hs, *vs;
   GtkAdjustment *hadj, *vadj;
+  GtkTextBuffer *buf;
 
-  view = gtk_text_view_new_with_buffer(NULL);
-  ln = gtk_text_view_new_with_buffer(NULL);
+  buf = gtk_text_buffer_new(NULL);
+  view = gtk_text_view_new_with_buffer(buf);
+
+  buf = gtk_text_buffer_new(NULL);
+  ln = gtk_text_view_new_with_buffer(buf);
 
   set_linumber_color(ln, 0xCC00, 0xCC00, 0xCC00);
 

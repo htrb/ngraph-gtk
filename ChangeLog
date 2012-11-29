@@ -1,3 +1,13 @@
+2012-11-29  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_ruler.c (ruler_new): connect the function
+	"nruler_parent_set()" to the signal "parent-set".
+	(nruler_parent_set): added.
+
+	* src/gtk/gtk_widget.c (create_text_view_with_line_number): call "gtk_text_buffer_new()".
+
+	* src/gtk/gtk_subwin.c (text_sub_window_create): call "gtk_text_buffer_new()".
+
 2012-11-10  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/ofit.c (show_poly_equation, show_poly_result)

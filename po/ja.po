@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2012-11-04 22:06+0900\n"
+"POT-Creation-Date: 2012-11-29 18:21+0900\n"
 "PO-Revision-Date: 2012-08-23 17:23+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -197,7 +197,7 @@ msgstr "背景色(_B)"
 msgid "_Background Color:"
 msgstr "背景色(_B):"
 
-#: src/gtk/x11axis.c:402 src/gtk/x11lgnd.c:3240 src/gtk/gtk_widget.c:1097
+#: src/gtk/x11axis.c:402 src/gtk/x11lgnd.c:3240 src/gtk/gtk_widget.c:1101
 msgid "Color"
 msgstr "色"
 
@@ -1059,11 +1059,11 @@ msgstr "データファイル作成中"
 msgid "Type"
 msgstr "タイプ"
 
-#: src/gtk/x11file.c:4639 src/gtk/x11lgnd.c:3207 src/gtk/gtk_widget.c:1104
+#: src/gtk/x11file.c:4639 src/gtk/x11lgnd.c:3207 src/gtk/gtk_widget.c:1108
 msgid "Color 1"
 msgstr "色 1"
 
-#: src/gtk/x11file.c:4653 src/gtk/x11lgnd.c:3216 src/gtk/gtk_widget.c:1111
+#: src/gtk/x11file.c:4653 src/gtk/x11lgnd.c:3216 src/gtk/gtk_widget.c:1115
 msgid "Color 2"
 msgstr "色 2"
 
@@ -2416,11 +2416,11 @@ msgstr "設定のコピー(_C)"
 msgid "Pick a Color"
 msgstr "色の選択"
 
-#: src/gtk/gtk_widget.c:1083
+#: src/gtk/gtk_widget.c:1087
 msgid "Stroke Color"
 msgstr "ストローク色"
 
-#: src/gtk/gtk_widget.c:1090
+#: src/gtk/gtk_widget.c:1094
 msgid "Fill Color"
 msgstr "塗りつぶし色"
 

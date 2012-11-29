@@ -77,6 +77,7 @@ static void nruler_draw_pos(Nruler *ruler, GtkWidget *widget, cairo_t *cr);
 static gboolean nruler_expose(GtkWidget *widget, cairo_t *cr, gpointer user_data);
 static void nruler_get_preferred_width(GtkWidget *widget, gint *minimal_width, gint *natural_width);
 static void nruler_get_preferred_height(GtkWidget *widget, gint *minimal_height, gint *natural_height);
+static void nruler_parent_set(GtkWidget *widget, GtkWidget *old_parent, gpointer user_data);
 #else	/* GTK_CHECK_VERSION(3, 0, 0) */
 static void nruler_draw_pos(Nruler *ruler, GtkWidget *widget);
 static gboolean nruler_expose(GtkWidget *widget, GdkEventExpose *event, gpointer user_data);
@@ -102,11 +103,11 @@ ruler_new(int orientation)
   g_object_set_data(G_OBJECT(w), RULER_DATA_KEY, ruler);
 
 #if GTK_CHECK_VERSION(3, 0, 0)
-  g_signal_connect(w, "draw", G_CALLBACK(nruler_expose), ruler);
-
   widget_class = GTK_WIDGET_GET_CLASS(w);
   widget_class->get_preferred_width = nruler_get_preferred_width;
   widget_class->get_preferred_height = nruler_get_preferred_height;
+  g_signal_connect(w, "parent-set", G_CALLBACK(nruler_parent_set), ruler);
+  g_signal_connect(w, "draw", G_CALLBACK(nruler_expose), ruler);
 #else	/* GTK_CHECK_VERSION(3, 0, 0) */
   g_signal_connect(w, "expose-event", G_CALLBACK(nruler_expose), ruler);
   g_signal_connect(w, "size-request", G_CALLBACK(nruler_size_request), ruler);
@@ -239,6 +240,50 @@ get_thickness(GtkWidget *widget, GtkStyleContext *style, gint *xt, gint *yt)
 
   *xt = xthickness;
   *yt = ythickness;
+}
+
+static void
+nruler_parent_set(GtkWidget *widget, GtkWidget *old_parent, gpointer user_data)
+{
+  int i;
+  GtkStyleContext *parent_style;
+  GtkWidget *parent;
+  GdkRGBA color;
+  GtkStateFlags flags[] = {
+    GTK_STATE_FLAG_NORMAL,
+    GTK_STATE_FLAG_ACTIVE,
+    GTK_STATE_FLAG_PRELIGHT,
+    GTK_STATE_FLAG_SELECTED,
+    GTK_STATE_FLAG_INSENSITIVE,
+    GTK_STATE_FLAG_INCONSISTENT,
+    GTK_STATE_FLAG_FOCUSED,
+    GTK_STATE_FLAG_BACKDROP};
+
+  parent = gtk_widget_get_parent(widget);
+
+  if (parent == NULL) {
+    return;
+  }
+
+  parent_style = gtk_widget_get_style_context(parent);
+
+  for (i = 0; i < (int) (sizeof(flags) / sizeof(*flags)); i++) {
+    gtk_style_context_get_background_color(parent_style, flags[i], &color);
+    color.alpha = 1;
+
+    gtk_widget_override_background_color(widget, flags[i], &color);
+
+    if (color.red + color.green + color.blue > 1.5) {
+      color.red = 0;
+      color.green = 0;
+      color.blue = 0;
+    } else {
+      color.red = 1;
+      color.green = 1;
+      color.blue = 1;
+    }
+    gtk_widget_override_color(widget, flags[i], &color);
+  }
 }
 #endif	/* GTK_CHECK_VERSION(3, 0, 0) */
 

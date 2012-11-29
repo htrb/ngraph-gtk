@@ -1345,8 +1345,10 @@ GtkWidget *
 text_sub_window_create(struct SubWin *d, char *title, const char **xpm, const char **xpm2)
 {
   GtkWidget *view, *swin;
+  GtkTextBuffer *buf;
 
-  view = gtk_text_view_new_with_buffer(NULL);
+  buf = gtk_text_buffer_new(NULL);
+  view = gtk_text_view_new_with_buffer(buf);
   gtk_text_view_set_editable(GTK_TEXT_VIEW(view), FALSE);
   gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(view), FALSE);
 
