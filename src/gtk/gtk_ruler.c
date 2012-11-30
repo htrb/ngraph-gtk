@@ -243,21 +243,35 @@ get_thickness(GtkWidget *widget, GtkStyleContext *style, gint *xt, gint *yt)
 }
 
 static void
+nruler_set_style(GtkStyleContext *stylecontext, gpointer user_data)
+{
+  GtkWidget *widget;
+  GdkRGBA color;
+
+  widget = GTK_WIDGET(user_data);
+
+  gtk_style_context_get_background_color(stylecontext, GTK_STATE_FLAG_NORMAL, &color);
+  color.alpha = 1.0;
+  gtk_widget_override_background_color(widget, GTK_STATE_FLAG_NORMAL, &color);
+
+  if (color.red + color.green + color.blue > 1.5) {
+    color.red = 0;
+    color.green = 0;
+    color.blue = 0;
+  } else {
+    color.red = 1;
+    color.green = 1;
+    color.blue = 1;
+  }
+
+  gtk_widget_override_color(widget, GTK_STATE_FLAG_NORMAL, &color);
+}
+
+static void
 nruler_parent_set(GtkWidget *widget, GtkWidget *old_parent, gpointer user_data)
 {
-  int i;
-  GtkStyleContext *parent_style;
   GtkWidget *parent;
-  GdkRGBA color;
-  GtkStateFlags flags[] = {
-    GTK_STATE_FLAG_NORMAL,
-    GTK_STATE_FLAG_ACTIVE,
-    GTK_STATE_FLAG_PRELIGHT,
-    GTK_STATE_FLAG_SELECTED,
-    GTK_STATE_FLAG_INSENSITIVE,
-    GTK_STATE_FLAG_INCONSISTENT,
-    GTK_STATE_FLAG_FOCUSED,
-    GTK_STATE_FLAG_BACKDROP};
+  GtkStyleContext *style;
 
   parent = gtk_widget_get_parent(widget);
 
@@ -265,25 +279,8 @@ nruler_parent_set(GtkWidget *widget, GtkWidget *old_parent, gpointer user_data)
     return;
   }
 
-  parent_style = gtk_widget_get_style_context(parent);
-
-  for (i = 0; i < (int) (sizeof(flags) / sizeof(*flags)); i++) {
-    gtk_style_context_get_background_color(parent_style, flags[i], &color);
-    color.alpha = 1;
-
-    gtk_widget_override_background_color(widget, flags[i], &color);
-
-    if (color.red + color.green + color.blue > 1.5) {
-      color.red = 0;
-      color.green = 0;
-      color.blue = 0;
-    } else {
-      color.red = 1;
-      color.green = 1;
-      color.blue = 1;
-    }
-    gtk_widget_override_color(widget, flags[i], &color);
-  }
+  style = gtk_widget_get_style_context(parent);
+  g_signal_connect(style, "changed", G_CALLBACK(nruler_set_style), widget);
 }
 #endif	/* GTK_CHECK_VERSION(3, 0, 0) */
 
@@ -438,8 +435,8 @@ nruler_draw_ticks(Nruler *ruler, GtkWidget *widget)
   GdkRGBA color;
 #else
   GtkStyle *style;
-#endif
   GtkStateType state;
+#endif
 
   if (! gtk_widget_is_drawable(widget)) {
     return;
@@ -450,13 +447,13 @@ nruler_draw_ticks(Nruler *ruler, GtkWidget *widget)
   }
 
   gtk_widget_get_allocation(widget, &allocation);
-  state = gtk_widget_get_state(widget);
 #if GTK_CHECK_VERSION(3, 0, 0)
   style = gtk_widget_get_style_context(widget);
   get_thickness(widget, style, &xthickness, &ythickness);
   xthickness /= 2;
   ythickness /= 2;
 #else	/* GTK_CHECK_VERSION(3, 0, 0) */
+  state = gtk_widget_get_state(widget);
   style = gtk_widget_get_style(widget);
   xthickness = style->xthickness;
   ythickness = style->ythickness;
@@ -498,7 +495,7 @@ nruler_draw_ticks(Nruler *ruler, GtkWidget *widget)
 #endif	/* GTK_CHECK_VERSION(3, 0, 0) */
 
 #if GTK_CHECK_VERSION(3, 0, 0)
-  gtk_style_context_get_color(style, state, &color);
+  gtk_style_context_get_color(style, GTK_STATE_NORMAL, &color);
   gdk_cairo_set_source_rgba(cr, &color);
 #else
   gdk_cairo_set_source_color(cr, &style->fg[state]);
@@ -655,17 +652,17 @@ nruler_draw_pos(Nruler *ruler, GtkWidget *widget)
   GtkStyleContext *style;
   GdkRGBA color;
 #else	/* GTK_CHECK_VERSION(3, 0, 0) */
+  GtkStateType state;
   GtkStyle *style;
   cairo_t *cr;
 #endif	/* GTK_CHECK_VERSION(3, 0, 0) */
-  GtkStateType state;
 
 #if GTK_CHECK_VERSION(3, 0, 0)
   style = gtk_widget_get_style_context(widget);
 #else	/* GTK_CHECK_VERSION(3, 0, 0) */
   style = gtk_widget_get_style(widget);
-#endif	/* GTK_CHECK_VERSION(3, 0, 0) */
   state = gtk_widget_get_state(widget);
+#endif	/* GTK_CHECK_VERSION(3, 0, 0) */
   gtk_widget_get_allocation(widget, &allocation);
 
   if (! gtk_widget_is_drawable(widget)) {
@@ -738,7 +735,7 @@ nruler_draw_pos(Nruler *ruler, GtkWidget *widget)
   }
 
 #if GTK_CHECK_VERSION(3, 0, 0)
-  gtk_style_context_get_color(style, state, &color);
+  gtk_style_context_get_color(style, GTK_STATE_NORMAL, &color);
   gdk_cairo_set_source_rgba(cr, &color);
 #else	/* GTK_CHECK_VERSION(3, 0, 0) */
   gdk_cairo_set_source_color(cr, &style->fg[state]);

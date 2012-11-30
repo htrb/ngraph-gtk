@@ -79,7 +79,7 @@ static n_list_store Flist[] = {
   {N_("final"),	G_TYPE_INT,     TRUE, TRUE,  "final_line", INT_MIN, INT_MAX,    1,    10},
   {N_("num"), 	G_TYPE_INT,     TRUE, FALSE, "data_num"},
   {"^#",	G_TYPE_INT,     TRUE, FALSE, "oid"},
-  {"masked",	G_TYPE_STRING,  FALSE, FALSE, "masked"},
+  {"masked",	G_TYPE_INT,     FALSE, FALSE, "masked"},
 };
 
 enum {
@@ -4317,9 +4317,9 @@ get_axis_obj_str(struct objlist *obj, int id, char *field)
 static void
 file_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
 {
-  int cx;
+  int cx, style;
   unsigned int i;
-  char buf[256], *color;
+  char buf[256];
   struct narray *mask, *move;
   char *file, *bfile, *axis;
   GdkPixbuf *pixbuf = NULL;
@@ -4331,9 +4331,9 @@ file_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
       getobj(d->obj, "move_data", row, 0, NULL, &move);
       getobj(d->obj, "file", row, 0, NULL, &file);
       if ((arraynum(mask) != 0) || (arraynum(move) != 0)) {
-	color = "blue";
+	style = PANGO_STYLE_ITALIC;
       } else {
-	color = "black";
+	style = PANGO_STYLE_NORMAL;
       }
       bfile = getbasename(file);
       if (bfile) {
@@ -4342,7 +4342,7 @@ file_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
       } else {
 	list_store_set_string(GTK_WIDGET(d->text), iter, i, "....................");
       }
-      list_store_set_string(GTK_WIDGET(d->text), iter, FILE_WIN_COL_MASKED, color);
+      list_store_set_int(GTK_WIDGET(d->text), iter, FILE_WIN_COL_MASKED, style);
       break;
     case FILE_WIN_COL_TYPE:
       pixbuf = draw_type_pixbuf(d->obj, row);
@@ -5028,7 +5028,7 @@ CmFileWindow(GtkToggleAction *action, gpointer client_data)
     if (list->data) {
       GtkCellRenderer *renderer;
       renderer = list->data;
-      gtk_tree_view_column_add_attribute(col, renderer, "foreground", FILE_WIN_COL_MASKED);
+      gtk_tree_view_column_add_attribute(col, renderer, "style", FILE_WIN_COL_MASKED);
     }
     g_list_free(list);
   }

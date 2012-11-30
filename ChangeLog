@@ -1,3 +1,17 @@
+2012-11-30  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_ruler.c (nruler_set_style): added.
+	(nruler_parent_set): connect the function "nruler_set_style" to
+	the signal "changed".
+	(nruler_draw_ticks, nruler_draw_pos): always use the color
+	correspond to "GTK_STATE_NORMAL".
+
+	* src/gtk/x11file.c (Flist): type of the "masked" column is now
+	"G_TYPE_INT".
+	(file_list_set_val): set style instead of color to distinguish
+	masked or mobed data.
+	(CmFileWindow): "masked" column is correspond to "style" property.
+
 2012-11-29  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_ruler.c (ruler_new): connect the function
