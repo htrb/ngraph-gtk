@@ -597,19 +597,27 @@ nruler_draw_ticks(Nruler *ruler, GtkWidget *widget)
 static void
 nruler_get_color(GtkStyleContext *style, GdkRGBA *fg, GdkRGBA *bg)
 {
-  gtk_style_context_get_background_color(style, GTK_STATE_FLAG_NORMAL, bg);
-  bg->alpha = 1.0;
+  GdkRGBA color;
 
-  if (bg->red + bg->green + bg->blue > 1.5) {
-    fg->red = 0.0;
-    fg->green = 0.0;
-    fg->blue = 0.0;
-  } else {
-    fg->red = 1.0;
-    fg->green = 1.0;
-    fg->blue = 1.0;
+  gtk_style_context_get_background_color(style, GTK_STATE_FLAG_NORMAL, &color);
+  color.alpha = 1.0;
+
+  if (bg) {
+    *bg = color;
   }
-  fg->alpha = 1.0;
+
+  if (fg) {
+    if (color.red + color.green + color.blue > 1.5) {
+      fg->red = 0.0;
+      fg->green = 0.0;
+      fg->blue = 0.0;
+    } else {
+      fg->red = 1.0;
+      fg->green = 1.0;
+      fg->blue = 1.0;
+    }
+    fg->alpha = 1.0;
+  }
 }
 #endif	/* GTK_CHECK_VERSION(3, 0, 0) */
 
@@ -629,7 +637,7 @@ nruler_draw_pos(Nruler *ruler, GtkWidget *widget)
   GtkAllocation allocation;
 #if GTK_CHECK_VERSION(3, 0, 0)
   GtkStyleContext *style;
-  GdkRGBA bg, fg;
+  GdkRGBA fg;
 #else	/* GTK_CHECK_VERSION(3, 0, 0) */
   GtkStateType state;
   GtkStyle *style;
@@ -714,7 +722,7 @@ nruler_draw_pos(Nruler *ruler, GtkWidget *widget)
   }
 
 #if GTK_CHECK_VERSION(3, 0, 0)
-  nruler_get_color(style, &fg, &bg);
+  nruler_get_color(style, &fg, NULL);
   gdk_cairo_set_source_rgba(cr, &fg);
 #else	/* GTK_CHECK_VERSION(3, 0, 0) */
   gdk_cairo_set_source_color(cr, &style->fg[state]);
