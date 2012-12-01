@@ -771,8 +771,6 @@ main(int argc, char **argv)
 #if ! GLIB_CHECK_VERSION(2, 32, 0)
   g_thread_init(NULL);
 #endif
-  gdk_threads_init();
-  gdk_threads_enter();
 
 #if EOF == -1
   char_type_buf_init();

@@ -1,3 +1,13 @@
+2012-12-01  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_ruler.c (nruler_set_style, nruler_parent_set):
+	removed.
+	(nruler_get_color): added.
+	(nruler_draw_pos, nruler_draw_ticks): use "nruler_get_color()".
+
+	* src/gtk/main.c (main): dan't call "gdk_threads_init()" and
+	"gdk_threads_enter()".
+
 2012-11-30  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_ruler.c (nruler_set_style): added.
