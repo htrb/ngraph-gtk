@@ -5,8 +5,8 @@ How to make Ngraph-gtk on Windows with MinGW
 
 http://sourceforge.net/projects/mingw/files/
 
-Download mingw-get-inst-20111118.exe
-Execute mingw-get-inst-20111118.exe
+Download mingw-get-inst-20120426.exe
+Execute mingw-get-inst-20120426.exe
 Check "MSYS Basic System" and "MinGW Developer Toolkit"
 
 
