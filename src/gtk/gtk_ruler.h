@@ -3,8 +3,7 @@
 
 #include <gtk/gtk.h>
 
-GtkWidget *hruler_new(void);
-GtkWidget *vruler_new(void);
+GtkWidget *nruler_new(GtkOrientation orientation);
 void nruler_set_range(GtkWidget *ruler, double lower, double upper);
 void nruler_set_position(GtkWidget *ruler, double position);
 

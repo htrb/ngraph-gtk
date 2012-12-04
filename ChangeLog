@@ -1,3 +1,24 @@
+2012-12-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (draw_paper_frame): the origin of the
+	rectangle is 0 is the version of GTK+ is less than "2.22".
+
+	* src/gtk/gtk_common.h (CAIRO_COORDINATE_OFFSET): always defined as "1".
+
+	* src/gtk/gtk_ruler.c (_Nruler): add member "widget" and "parent".
+	(nruler_new): change name from "ruler_new".
+	(nruler_new): use "GtkFrame".
+	(nruler_make_pixmap): add argument "parent".
+	(nruler_draw_ticks): don't draw frame.
+
+	* src/gtk/x11menu.c (setupwindow): use "nruler_new()".
+
+2012-12-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_ruler.c (nruler_get_preferred_width)
+	(nruler_get_preferred_height, nruler_size_request, hruler_new)
+	(vruler_new): removed.
+
 2012-12-01  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_ruler.c (nruler_set_style, nruler_parent_set):

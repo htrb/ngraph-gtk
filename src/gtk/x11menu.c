@@ -2508,8 +2508,8 @@ setupwindow(void)
   NgraphApp.Viewer.HScroll = gtk_hscrollbar_new(NULL);
   NgraphApp.Viewer.VScroll = gtk_vscrollbar_new(NULL);
 #endif
-  NgraphApp.Viewer.HRuler = hruler_new();
-  NgraphApp.Viewer.VRuler = vruler_new();
+  NgraphApp.Viewer.HRuler = nruler_new(GTK_ORIENTATION_HORIZONTAL);
+  NgraphApp.Viewer.VRuler = nruler_new(GTK_ORIENTATION_VERTICAL);
   NgraphApp.Viewer.Win = gtk_drawing_area_new();
 
 #if GTK_CHECK_VERSION(3, 4, 0)

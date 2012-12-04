@@ -31,11 +31,7 @@
 #define gtk_hscale_new_with_range(min, max, step) gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, min, max, step)
 #endif
 
-#if GTK_CHECK_VERSION(2, 22, 0)
 #define CAIRO_COORDINATE_OFFSET 1
-#else
-#define CAIRO_COORDINATE_OFFSET 0
-#endif
 
 #ifndef GDK_KEY_BackSpace
 #define GDK_KEY_BackSpace GDK_BackSpace

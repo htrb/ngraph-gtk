@@ -5538,7 +5538,11 @@ draw_paper_frame(void)
   cairo_set_source_rgb(cr, 0, 0, 0);
   cairo_set_line_width(cr, 1);
   cairo_set_dash(cr, NULL, 0, 0);
+#if GTK_CHECK_VERSION(2, 22, 0)
   cairo_rectangle(cr, CAIRO_COORDINATE_OFFSET, CAIRO_COORDINATE_OFFSET, w, h);
+#else
+  cairo_rectangle(cr, 0, 0, w, h);
+#endif
   cairo_stroke(cr);
   cairo_restore(cr);
 }
