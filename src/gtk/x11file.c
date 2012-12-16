@@ -4971,7 +4971,7 @@ init_dnd(struct SubWin *d)
     {"text/uri-list", 0, DROP_TYPE_FILE},
   };
 
-  widget = d->Win;
+  widget = d->data.data->text;
 
   gtk_drag_dest_set(widget, GTK_DEST_DEFAULT_ALL, target, sizeof(target) / sizeof(*target), GDK_ACTION_COPY);
   g_signal_connect(widget, "drag-data-received", G_CALLBACK(drag_drop_cb), NULL);
