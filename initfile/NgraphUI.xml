@@ -72,6 +72,7 @@
       <menuitem name="Merge window" action="ViewToggleMergeWindowAction"/>
       <menuitem name="Coordinate window" action="ViewToggleCoordinateWindowAction"/>
       <menuitem name="Information window" action="ViewToggleInformationWindowAction"/>
+      <menuitem name="Single window mode" action="ViewToggleSingleWindowModeAction"/>
       <separator/>
       <menuitem name="ViewDefaultWindowConfig" action="ViewDefaultWindowConfigAction"/>
       <separator/>

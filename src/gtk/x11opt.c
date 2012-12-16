@@ -107,6 +107,8 @@ DefaultDialogSetup(GtkWidget *wi, void *data, int makewidget)
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->external_driver), FALSE);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->addin_script), FALSE);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->misc), FALSE);
+
+  gtk_widget_set_sensitive(d->child_geometry, ! Menulocal.single_window_mode);
 }
 
 static int

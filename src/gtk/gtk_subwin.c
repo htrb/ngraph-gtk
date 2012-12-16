@@ -596,8 +596,9 @@ sub_window_set_geometry(struct SubWin *d, int resize)
 
   gtk_window_set_default_size(GTK_WINDOW(d->Win), w, h);
 
-  if (resize)
+  if (resize) {
     gtk_window_resize(GTK_WINDOW(d->Win), w, h);
+  }
 }
 
 static int
@@ -625,7 +626,7 @@ sub_window_save_geometry(struct SubWin *d)
 {
   gint x, y, x0, y0, w, h;
 
-  if (! get_window_visibility(d)) {
+  if (Menulocal.single_window_mode || ! get_window_visibility(d)) {
     return;
   }
 
@@ -1277,7 +1278,7 @@ hide_minimize_menu_item(GtkWidget *widget, gpointer user_data)
 #endif
 
 static GtkWidget *
-sub_window_create(struct SubWin *d, char *title, GtkWidget *swin, const char **xpm, const char **xpm2)
+sub_window_create(struct SubWin *d, const char *title, GtkWidget *swin, const char **xpm, const char **xpm2)
 {
   GtkWidget *dlg;
   GdkPixbuf *icon;
@@ -1342,7 +1343,7 @@ sub_window_create(struct SubWin *d, char *title, GtkWidget *swin, const char **x
 }
 
 GtkWidget *
-text_sub_window_create(struct SubWin *d, char *title, const char **xpm, const char **xpm2)
+text_sub_window_create(struct SubWin *d, const char *title, const char **xpm, const char **xpm2)
 {
   GtkWidget *view, *swin;
   GtkTextBuffer *buf;
@@ -1362,7 +1363,7 @@ text_sub_window_create(struct SubWin *d, char *title, const char **xpm, const ch
 }
 
 GtkWidget *
-label_sub_window_create(struct SubWin *d, char *title, const char **xpm, const char **xpm2)
+label_sub_window_create(struct SubWin *d, const char *title, const char **xpm, const char **xpm2)
 {
   GtkWidget *label, *swin;
 
@@ -1421,7 +1422,7 @@ list_widget_create(struct SubWin *d, int lisu_num, n_list_store *list, int can_f
 }
 
 GtkWidget *
-list_sub_window_create(struct SubWin *d, char *title, int lisu_num, n_list_store *list, const char **xpm, const char **xpm2)
+list_sub_window_create(struct SubWin *d, const char *title, int lisu_num, n_list_store *list, const char **xpm, const char **xpm2)
 {
   GtkWidget *swin;
   struct obj_list_data *data;
@@ -1433,7 +1434,7 @@ list_sub_window_create(struct SubWin *d, char *title, int lisu_num, n_list_store
 }
 
 GtkWidget *
-tree_sub_window_create(struct SubWin *d, char *title, int page_num, int *lisu_num, n_list_store **list, GtkWidget **icons, const char **xpm, const char **xpm2)
+tree_sub_window_create(struct SubWin *d, const char *title, int page_num, int *lisu_num, n_list_store **list, GtkWidget **icons, const char **xpm, const char **xpm2)
 {
   GtkWidget *tab, *swin;
   int i;

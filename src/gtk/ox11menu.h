@@ -136,6 +136,7 @@ struct menulocal
   int hist_size, info_size;
   double bg_r, bg_g, bg_b;
   int focus_frame_type, use_opacity, select_data;
+  int side_pane1_pos, side_pane2_pos, side_pane3_pos, main_pane_pos, single_window_mode;
 #ifdef WINDOWS
   int emf_dpi;
 #endif

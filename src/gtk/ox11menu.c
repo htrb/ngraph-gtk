@@ -275,6 +275,11 @@ static struct menu_config MenuConfigOthers[] = {
   {"ps_version",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.ps_version},
   {"svg_version",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.svg_version},
   {"palette",		MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.Palette},
+  {"main_pane",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.main_pane_pos},
+  {"side_pane1",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.side_pane1_pos},
+  {"side_pane2",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.side_pane2_pos},
+  {"side_pane3",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.side_pane3_pos},
+  {"single_window_mode",MENU_CONFIG_TYPE_BOOL,    NULL, &Menulocal.single_window_mode},
   {NULL},
 };
 
@@ -1137,6 +1142,11 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   Menulocal.bg_g = 1.0;
   Menulocal.bg_b = 1.0;
   Menulocal.focus_frame_type = N_LINE_TYPE_DOT;
+  Menulocal.main_pane_pos = 400;
+  Menulocal.side_pane1_pos = 300;
+  Menulocal.side_pane2_pos = 200;
+  Menulocal.side_pane3_pos = 200;
+  Menulocal.single_window_mode = FALSE;
 
   arrayinit(&(Menulocal.drawrable), sizeof(char *));
   menuadddrawrable(chkobject("draw"), &(Menulocal.drawrable));

@@ -73,14 +73,16 @@ CoordWinSetCoord(int x, int y)
   double a;
   char *name;
   struct SubWin *d;
-  static GString *str;
+  static GString *str = NULL;
   static int lock = FALSE;
 
   d = &(NgraphApp.CoordWin);
 
   obj = chkobject("axis");
 
-  if (d->Win == NULL || ! GTK_WIDGET_VISIBLE(d->Win) || obj == NULL || d->data.text == NULL) {
+  if (d->Win == NULL ||
+      obj == NULL ||
+      d->data.text == NULL) {
     return;
   }
 
@@ -94,8 +96,10 @@ CoordWinSetCoord(int x, int y)
   if (str == NULL) {
     str = g_string_new("");
     gtk_label_set_text(GTK_LABEL(d->data.text), "");
-    lock = FALSE;
-    return;
+    if (str == NULL) {
+      lock = FALSE;
+      return;
+    }
   }
 
   g_string_printf(str, "(X:%6.2f  Y:%6.2f)", x / 100.0, y / 100.0);
@@ -112,7 +116,7 @@ CoordWinSetCoord(int x, int y)
     if (type == AXIS_TYPE_MJD) {
       char *s;
 
-      s = nstrftime("  %F %T", a);
+      s = nstrftime("\n        %F %T", a);
       if (s) {
 	g_string_append(str, s);
 	g_free(s);

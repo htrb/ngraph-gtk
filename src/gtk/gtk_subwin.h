@@ -45,10 +45,10 @@ struct NgraphActionEntry {
   GdkModifierType accel_mods;
 };
 
-GtkWidget *label_sub_window_create(struct SubWin *d, char *title, const char **xpm, const char **xpm2);
-GtkWidget *text_sub_window_create(struct SubWin *d, char *title, const char **xpm, const char **xpm2);
-GtkWidget *list_sub_window_create(struct SubWin *d, char *title, int lisu_num, n_list_store *list, const char **xpm, const char **xpm2);
-GtkWidget *tree_sub_window_create(struct SubWin *d, char *title, int page_num, int *lisu_num, n_list_store **list, GtkWidget **icons, const char **xpm, const char **xpm2);
+GtkWidget *label_sub_window_create(struct SubWin *d, const char *title, const char **xpm, const char **xpm2);
+GtkWidget *text_sub_window_create(struct SubWin *d, const char *title, const char **xpm, const char **xpm2);
+GtkWidget *list_sub_window_create(struct SubWin *d, const char *title, int lisu_num, n_list_store *list, const char **xpm, const char **xpm2);
+GtkWidget *tree_sub_window_create(struct SubWin *d, const char *title, int page_num, int *lisu_num, n_list_store **list, GtkWidget **icons, const char **xpm, const char **xpm2);
 void sub_window_set_geometry(struct SubWin *d, int resize);
 void sub_window_save_geometry(struct SubWin *d);
 void sub_window_set_visibility(struct SubWin *d, int state);
