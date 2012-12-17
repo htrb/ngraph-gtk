@@ -1065,22 +1065,25 @@ set_hidden_state(struct obj_list_data *d, int hide)
 static void
 popup_menu_position(GtkMenu *menu, gint *x, gint *y, gboolean *push_in, gpointer user_data)
 {
-  struct SubWin *d;
+  GtkWidget *w;
+  GdkWindow *gdk_win;
 
-  d = user_data;
+  w = user_data;
 
-  gtk_window_get_position(GTK_WINDOW(d->Win), x, y);
+  gdk_win = gtk_widget_get_window(w);
+  gdk_window_get_origin(gdk_win, x, y);
 }
 
 static void
 do_popup(GdkEventButton *event, struct obj_list_data *d)
 {
   int button, event_time;
-  GtkMenuPositionFunc func = NULL;
+  GtkMenuPositionFunc func;
 
   if (event) {
     button = event->button;
     event_time = event->time;
+    func = NULL;
   } else {
     button = 0;
     event_time = gtk_get_current_event_time();
@@ -1094,8 +1097,7 @@ do_popup(GdkEventButton *event, struct obj_list_data *d)
     d->select = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
   }
 
-  gtk_menu_popup(GTK_MENU(d->popup), NULL, NULL, func, d,
-		 button, event_time);
+  gtk_menu_popup(GTK_MENU(d->popup), NULL, NULL, func, d->text, button, event_time);
 }
 
 static gboolean

@@ -1,3 +1,15 @@
+2012-12-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (popup_menu_position): use the function
+	"gdk_window_get_origin()" to get the position.
+	(ViewerWinSetup): the function "ev_popup_menu()" is connect to the
+	signal "popup-menu".
+	(ev_popup_menu): added.
+
+	* src/gtk/gtk_subwin.c (popup_menu_position): use the function
+	"gdk_window_get_origin()" to get the position.
+	(do_popup): data for the positon function is "d->text".
+
 2012-12-16  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (init_dnd): destination of DnD is listsore

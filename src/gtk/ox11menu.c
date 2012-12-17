@@ -1142,9 +1142,9 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   Menulocal.bg_g = 1.0;
   Menulocal.bg_b = 1.0;
   Menulocal.focus_frame_type = N_LINE_TYPE_DOT;
-  Menulocal.main_pane_pos = 400;
+  Menulocal.main_pane_pos = 600;
   Menulocal.side_pane1_pos = 300;
-  Menulocal.side_pane2_pos = 200;
+  Menulocal.side_pane2_pos = 500;
   Menulocal.side_pane3_pos = 200;
   Menulocal.single_window_mode = FALSE;
 

@@ -1087,6 +1087,18 @@ menu_activate(GtkMenuShell *menushell, gpointer user_data)
   }
 }
 
+static gboolean
+ev_popup_menu(GtkWidget *w, gpointer client_data)
+{
+  struct Viewer *d;
+
+  if (Menulock || Globallock) return TRUE;
+
+  d = (struct Viewer *) client_data;
+  do_popup(NULL, d);
+  return TRUE;
+}
+
 void
 ViewerWinSetup(void)
 {
@@ -1168,6 +1180,7 @@ ViewerWinSetup(void)
   g_signal_connect(d->Win, "scroll-event", G_CALLBACK(ViewerEvScroll), d);
   g_signal_connect(d->Win, "key-press-event", G_CALLBACK(ViewerEvKeyDown), d);
   g_signal_connect(d->Win, "key-release-event", G_CALLBACK(ViewerEvKeyUp), d);
+  g_signal_connect(d->Win, "popup-menu", G_CALLBACK(ev_popup_menu), d);
 
   g_signal_connect(d->menu, "selection-done", G_CALLBACK(menu_activate), d);
 }
@@ -4541,19 +4554,10 @@ static void
 popup_menu_position(GtkMenu *menu, gint *x, gint *y, gboolean *push_in, gpointer user_data)
 {
   struct Viewer *d;
-  int cx, cy;
 
   d = (struct Viewer *) user_data;
 
-#if GTK_CHECK_VERSION(2, 24, 0)
-  gdk_window_get_position(d->gdk_win, &cx, &cy);
-#else
-  gdk_window_get_geometry(d->gdk_win, &cx, &cy, NULL, NULL, NULL);
-#endif
-  gtk_window_get_position(GTK_WINDOW(TopLevel), x, y);
-
-  *x += cx;
-  *y += cy;
+  gdk_window_get_origin(d->gdk_win, x, y);
 }
 
 int
