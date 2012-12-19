@@ -1,3 +1,8 @@
+2012-12-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_ruler.c (nruler_destroy): destroy or unref
+	"ruler->backing_store".
+
 2012-12-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (popup_menu_position): use the function
@@ -10,15 +15,13 @@
 	"gdk_window_get_origin()" to get the position.
 	(do_popup): data for the positon function is "d->text".
 
-2012-12-16  Hiroyuki Ito  <ZXB01226 at nifty.com>
+2012-12-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (init_dnd): destination of DnD is listsore
 	widget.
 
 	* src/gtk/x11merge.c (init_dnd): destination of DnD is listsore
 	widget.
-
-2012-12-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11cood.c (CoordWinSetCoord): the variable "str" should
 	be initialized as "NULL".

@@ -175,6 +175,13 @@ nruler_destroy(GtkWidget *widget, gpointer user_data)
 
   ruler = (Nruler *) user_data;
   if (ruler) {
+    if (ruler->backing_store) {
+#if GTK_CHECK_VERSION(3, 0, 0)
+      cairo_surface_destroy(ruler->backing_store);
+#else
+      g_object_unref(ruler->backing_store);
+#endif
+    }
     g_free(ruler);
   }
 
