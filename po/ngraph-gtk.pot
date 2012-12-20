@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.06.08\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2012-12-17 15:21+0900\n"
+"POT-Creation-Date: 2012-12-20 18:22+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/gtk/ox11menu.c:1963
+#: src/gtk/ox11menu.c:1979
 msgid "Unsaved Graph"
 msgstr ""
 
@@ -518,7 +518,7 @@ msgstr ""
 msgid "auto"
 msgstr ""
 
-#: src/gtk/x11dialg.c:122
+#: src/gtk/x11dialg.c:122 src/gtk/x11menu.c:2677 src/gtk/x11menu.c:2680
 msgid "data"
 msgstr ""
 
@@ -1014,27 +1014,27 @@ msgstr ""
 msgid "Add Data file"
 msgstr ""
 
-#: src/gtk/x11file.c:4484
+#: src/gtk/x11file.c:4488
 msgid "Data file"
 msgstr ""
 
-#: src/gtk/x11file.c:4490
+#: src/gtk/x11file.c:4494
 msgid "Making data file"
 msgstr ""
 
-#: src/gtk/x11file.c:4491
+#: src/gtk/x11file.c:4495
 msgid "Making data file."
 msgstr ""
 
-#: src/gtk/x11file.c:4629
+#: src/gtk/x11file.c:4633
 msgid "Type"
 msgstr ""
 
-#: src/gtk/x11file.c:4639 src/gtk/x11lgnd.c:3207 src/gtk/gtk_widget.c:1108
+#: src/gtk/x11file.c:4643 src/gtk/x11lgnd.c:3207 src/gtk/gtk_widget.c:1108
 msgid "Color 1"
 msgstr ""
 
-#: src/gtk/x11file.c:4653 src/gtk/x11lgnd.c:3216 src/gtk/gtk_widget.c:1115
+#: src/gtk/x11file.c:4657 src/gtk/x11lgnd.c:3216 src/gtk/gtk_widget.c:1115
 msgid "Color 2"
 msgstr ""
 
@@ -2004,15 +2004,15 @@ msgstr ""
 msgid "Viewer Zoom-In (+CONTROL: Zoom-Out +SHIFT: Centering)"
 msgstr ""
 
-#: src/gtk/x11menu.c:3939
+#: src/gtk/x11menu.c:4075
 msgid "Error:"
 msgstr ""
 
-#: src/gtk/x11menu.c:3989
+#: src/gtk/x11menu.c:4125
 msgid "Question"
 msgstr ""
 
-#: src/gtk/x11menu.c:4046
+#: src/gtk/x11menu.c:4182
 #, c-format
 msgid "Executing `%.128s'."
 msgstr ""
@@ -2398,7 +2398,7 @@ msgstr ""
 msgid "Fill Color"
 msgstr ""
 
-#: src/gtk/gtk_subwin.c:58
+#: src/gtk/gtk_subwin.c:61
 msgid "Open"
 msgstr ""
 

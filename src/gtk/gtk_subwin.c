@@ -40,6 +40,7 @@ file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointe
   struct obj_list_data *d;
   int sel, num;
   char *file, *ext;
+  GtkWidget *parent;
 
   d = user_data;
 
@@ -55,7 +56,9 @@ file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointe
     getobj(d->obj, "ext", sel, 0, NULL, &ext);
   }
 
-  if (nGetOpenFileName(d->parent->Win, _("Open"), ext, NULL, gtk_entry_get_text(w),
+  parent = (Menulocal.single_window_mode) ? TopLevel : d->parent->Win;
+
+  if (nGetOpenFileName(parent, _("Open"), ext, NULL, gtk_entry_get_text(w),
 		       &file, TRUE, Menulocal.changedirectory) == IDOK && file) {
     if (file) {
       gtk_entry_set_text(w, file);
@@ -678,22 +681,8 @@ sub_window_set_visibility(struct SubWin *d, int state)
 
   if (state) {
     if (! gtk_widget_get_realized(d->Win)) {
-      struct obj_list_data *ptr;
       sub_window_show_all(d);
       sub_window_set_geometry(d, TRUE);
-      switch (d->type) {
-      case TypeFileWin:
-      case TypeAxisWin:
-      case TypeMergeWin:
-      case TypeLegendWin:
-	for (ptr = d->data.data; ptr; ptr = ptr->next) {
-	  ptr->update(ptr, TRUE);
-	}
-	break;
-      case TypeCoordWin:
-      case TypeInfoWin:
-	break;
-      }
     }
     sub_window_show(d);
   } else {
@@ -901,6 +890,7 @@ static void
 update(struct obj_list_data *d)
 {
   int sel, ret, num;
+  GtkWidget *parent;
 
   if (Menulock || Globallock)
     return;
@@ -913,9 +903,11 @@ update(struct obj_list_data *d)
     return;
   }
 
+  parent = (Menulocal.single_window_mode) ? TopLevel : d->parent->Win;
+
   d->setup_dialog(d, sel, -1);
   d->select = sel;
-  if ((ret = DialogExecute(d->parent->Win, d->dialog)) == IDDELETE) {
+  if ((ret = DialogExecute(parent, d->dialog)) == IDDELETE) {
     if (d->delete) {
       d->delete(d, sel);
     } else {
@@ -1279,6 +1271,29 @@ hide_minimize_menu_item(GtkWidget *widget, gpointer user_data)
 }
 #endif
 
+static void
+swin_realized(GtkWidget *widget, gpointer user_data)
+{
+  struct SubWin *d;
+  struct obj_list_data *ptr;
+
+  d = (struct SubWin *) user_data;
+
+  switch (d->type) {
+  case TypeFileWin:
+  case TypeAxisWin:
+  case TypeMergeWin:
+  case TypeLegendWin:
+    for (ptr = d->data.data; ptr; ptr = ptr->next) {
+      ptr->update(ptr, TRUE);
+    }
+    break;
+  case TypeCoordWin:
+  case TypeInfoWin:
+    break;
+  }
+}
+
 static GtkWidget *
 sub_window_create(struct SubWin *d, const char *title, GtkWidget *swin, const char **xpm, const char **xpm2)
 {
@@ -1338,6 +1353,8 @@ sub_window_create(struct SubWin *d, const char *title, GtkWidget *swin, const ch
   g_signal_connect(dlg, "delete-event", G_CALLBACK(cb_del), d);
   g_signal_connect(dlg, "destroy", G_CALLBACK(cb_destroy), d);
   g_signal_connect(dlg, "key-press-event", G_CALLBACK(ev_sub_win_key_down), d);
+
+  g_signal_connect(swin, "realize", G_CALLBACK(swin_realized), d);
 
   gtk_widget_show_all(swin);
 

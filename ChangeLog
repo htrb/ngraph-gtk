@@ -1,3 +1,43 @@
+2012-12-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11lgnd.c (CmLegendWindow): use icon file macros.
+	(CmLegendWindow): add data for the key "ngraph_object_data" to
+	widgets of inside of tabs.
+
+	* src/gtk/x11menu.c (ActionEntry, window_to_tab, multi_to_single):
+	use icon file macros.
+	(window_to_tab): add parameter "tip".
+	(tab_info_compare, init_tab_info, save_tab_position_sub)
+	(save_tab_position): added.
+	(multi_to_single): restore tab positions.
+	(single_to_multi): call function "save_tab_position()".
+	(single_to_multi): enable popup of tabs.
+	(create_action_group): use icon file macros.
+	(application): call function "save_tab_position()".
+
+	* src/gtk/ox11menu.h (menulocal): add member related to tabs used
+	in the single window mode.
+
+	* src/gtk/ox11menu.c (MenuConfigOthers): add settings related to
+	tabs used in the single window mode.
+	(menuinit): initialize settings related to tabs used in the single
+	window mode.
+
+	* src/gtk/gtk_subwin.c (file_select, update): parent window is
+	depend on the setting "Menulocal.single_window_mode".
+	(swin_realized): added.
+	(sub_window_create): connect "realize" signal to the function
+	"swin_realized()".
+	(sub_window_set_visibility): don't update content in this
+	function.
+
+	* src/gtk/x11file.c (FileWinFileUpdate, FileWinFit): parent window
+	is depend on the setting "Menulocal.single_window_mode".
+
+	* src/gtk/x11bitmp.h: add macros for icon files.
+
+	* src/ioutil.h (DIRSEP_STR): added.
+
 2012-12-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_ruler.c (nruler_destroy): destroy or unref

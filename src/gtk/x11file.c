@@ -3910,6 +3910,7 @@ static void
 FileWinFileUpdate(struct obj_list_data *d)
 {
   int sel, ret, num;
+  GtkWidget *parent;
 
   if (Menulock || Globallock)
     return;
@@ -3920,7 +3921,8 @@ FileWinFileUpdate(struct obj_list_data *d)
     d->setup_dialog(d, sel, FALSE);
     d->select = sel;
 
-    ret = DialogExecute(d->parent->Win, d->dialog);
+    parent = (Menulocal.single_window_mode) ? TopLevel : d->parent->Win;
+    ret = DialogExecute(parent, d->dialog);
     if (ret == IDDELETE) {
       delete_file_obj(d, sel);
       d->select = -1;
@@ -4002,6 +4004,7 @@ FileWinFit(struct obj_list_data *d)
   char *fit;
   int sel, idnum, fitid = 0, ret, num;
   struct narray iarray;
+  GtkWidget *parent;
 
   if (Menulock || Globallock)
     return;
@@ -4040,7 +4043,8 @@ FileWinFit(struct obj_list_data *d)
   if (fit == NULL)
     return;
 
-  ret = execute_fit_dialog(d->parent->Win, d->obj, sel, fitobj, fitid);
+  parent = (Menulocal.single_window_mode) ? TopLevel : d->parent->Win;
+  ret = execute_fit_dialog(parent, d->obj, sel, fitobj, fitid);
 
   if (ret == IDDELETE) {
     delobj(fitobj, fitid);

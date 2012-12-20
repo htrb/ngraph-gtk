@@ -66,7 +66,7 @@
 #if GTK_CHECK_VERSION(2, 24, 0)
 #define SIDE_PANE_TAB_ID "side_pane"
 #else
-#define SIDE_PANE_TAB_ID 1
+static char *SIDE_PANE_TAB_ID = "side_pane";
 #endif
 int Menulock = FALSE, DnDLock = FALSE;
 struct NgraphApp NgraphApp;
@@ -239,7 +239,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     G_CALLBACK(CmGraphNewMenu),
     MenuIdGraphNewFrame,
-    "ngraph_frame.png",
+    NGRAPH_FRAME_ICON_FILE,
     "<Ngraph>/Graph/New graph/Frame graph",
   },
   {
@@ -251,7 +251,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     G_CALLBACK(CmGraphNewMenu),
     MenuIdGraphNewSection,
-    "ngraph_section.png",
+    NGRAPH_SECTION_ICON_FILE,
     "<Ngraph>/Graph/New graph/Section graph",
   },
   {
@@ -263,7 +263,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     G_CALLBACK(CmGraphNewMenu),
     MenuIdGraphNewCross,
-    "ngraph_cross.png",
+    NGRAPH_CROSS_ICON_FILE,
     "<Ngraph>/Graph/New graph/Cross graph",
   },
   {
@@ -662,7 +662,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     G_CALLBACK(CmEditMenuCB),
     MenuIdAlignLeft,
-    "ngraph_align_l.png",
+    NGRAPH_ALIGN_L_ICON_FILE,
     "<Ngraph>/Edit/Align/Left",
   },
   {
@@ -674,7 +674,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     G_CALLBACK(CmEditMenuCB),
     MenuIdAlignRight,
-    "ngraph_align_r.png",
+    NGRAPH_ALIGN_R_ICON_FILE,
     "<Ngraph>/Edit/Align/Right",
   },
   {
@@ -686,7 +686,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     G_CALLBACK(CmEditMenuCB),
     MenuIdAlignVCenter,
-    "ngraph_align_vc.png",
+    NGRAPH_ALIGN_VC_ICON_FILE,
     "<Ngraph>/Edit/Align/Vertical center",
   },
   {
@@ -698,7 +698,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     G_CALLBACK(CmEditMenuCB),
     MenuIdAlignTop,
-    "ngraph_align_t.png",
+    NGRAPH_ALIGN_T_ICON_FILE,
     "<Ngraph>/Edit/Align/Top",
   },
   {
@@ -710,7 +710,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     G_CALLBACK(CmEditMenuCB),
     MenuIdAlignBottom,
-    "ngraph_align_b.png",
+    NGRAPH_ALIGN_B_ICON_FILE,
     "<Ngraph>/Edit/Align/Bottom",
   },
   {
@@ -722,7 +722,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     G_CALLBACK(CmEditMenuCB),
     MenuIdAlignHCenter,
-    "ngraph_align_hc.png",
+    NGRAPH_ALIGN_HC_ICON_FILE,
     "<Ngraph>/Edit/Align/Horizontal center",
   },
   {
@@ -810,7 +810,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     N_("Activate Data Window"),
     G_CALLBACK(CmFileWindow),
     0,
-    "ngraph_filewin.png",
+    NGRAPH_FILEWIN_ICON_FILE,
     "<Ngraph>/View/Data Window",
     GDK_KEY_F3,
     0,
@@ -824,7 +824,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     N_("Activate Axis Window"),
     G_CALLBACK(CmAxisWindow),
     0,
-    "ngraph_axiswin.png",
+    NGRAPH_AXISWIN_ICON_FILE,
     "<Ngraph>/View/Axis Window",
     GDK_KEY_F4,
     0,
@@ -838,7 +838,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     N_("Activate Legend Window"),
     G_CALLBACK(CmLegendWindow),
     0,
-    "ngraph_legendwin.png",
+    NGRAPH_LEGENDWIN_ICON_FILE,
     "<Ngraph>/View/Legend Window",
     GDK_KEY_F5,
     0,
@@ -852,7 +852,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     N_("Activate Merge Window"),
     G_CALLBACK(CmMergeWindow),
     0,
-    "ngraph_mergewin.png",
+    NGRAPH_MERGEWIN_ICON_FILE,
     "<Ngraph>/View/Merge Window",
     GDK_KEY_F6,
     0,
@@ -866,7 +866,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     N_("Activate Coordinate Window"),
     G_CALLBACK(CmCoordinateWindow),
     0,
-    "ngraph_coordwin.png",
+    NGRAPH_COORDWIN_ICON_FILE,
     "<Ngraph>/View/Coordinate Window",
     GDK_KEY_F7,
     0,
@@ -880,7 +880,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     N_("Activate Information Window"),
     G_CALLBACK(CmInformationWindow),
     0,
-    "ngraph_infowin.png",
+    NGRAPH_INFOWIN_ICON_FILE,
     "<Ngraph>/View/Information Window",
     GDK_KEY_F8,
     0,
@@ -894,7 +894,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     N_("Draw on Viewer Window"),
     G_CALLBACK(CmViewerDraw),
     TRUE,
-    "ngraph_draw.png",
+    NGRAPH_DRAW_ICON_FILE,
     "<Ngraph>/View/Draw",
     GDK_KEY_d,
     GDK_CONTROL_MASK,
@@ -908,7 +908,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     N_("Draw on Viewer Window"),
     G_CALLBACK(CmViewerDraw),
     FALSE,
-    "ngraph_draw.png",
+    NGRAPH_DRAW_ICON_FILE,
     "<Ngraph>/View/DrawDirect",
   },
   {
@@ -1116,7 +1116,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     N_("Set Math Transformation"),
     G_CALLBACK(CmFileMath),
     0,
-    "ngraph_math.png",
+    NGRAPH_MATH_ICON_FILE,
     "<Ngraph>/Data/Math",
   },
   {
@@ -1135,7 +1135,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     G_CALLBACK(CmAxisNewFrame),
     0,
-    "ngraph_frame.png",
+    NGRAPH_FRAME_ICON_FILE,
     "<Ngraph>/Axis/Add/Frame graph",
   },
   {
@@ -1147,7 +1147,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     G_CALLBACK(CmAxisNewSection),
     0,
-    "ngraph_section.png",
+    NGRAPH_SECTION_ICON_FILE,
     "<Ngraph>/Axis/Add/Section graph",
   },
   {
@@ -1159,7 +1159,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     G_CALLBACK(CmAxisNewCross),
     0,
-    "ngraph_cross.png",
+    NGRAPH_CROSS_ICON_FILE,
     "<Ngraph>/Axis/Add/Cross graph",
   },
   {
@@ -1171,7 +1171,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     G_CALLBACK(CmAxisNewSingle),
     0,
-    "ngraph_single.png",
+    NGRAPH_SINGLE_ICON_FILE,
     "<Ngraph>/Axis/Add/Single axis",
   },
   {
@@ -1220,7 +1220,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     N_("Clear Scale"),
     G_CALLBACK(CmAxisClear),
     0,
-    "ngraph_scale.png",
+    NGRAPH_SCALE_ICON_FILE,
     "<Ngraph>/Axis/Scale Clear",
     GDK_KEY_c,
     GDK_SHIFT_MASK | GDK_CONTROL_MASK,
@@ -1325,7 +1325,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     NULL,
     0,
-    "ngraph_line.png",
+    NGRAPH_LINE_ICON_FILE,
   },
   {
     ACTION_TYPE_NORMAL,
@@ -1336,7 +1336,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     NULL,
     0,
-    "ngraph_rect.png",
+    NGRAPH_RECT_ICON_FILE,
   },
   {
     ACTION_TYPE_NORMAL,
@@ -1347,7 +1347,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     NULL,
     0,
-    "ngraph_arc.png",
+    NGRAPH_ARC_ICON_FILE,
   },
   {
     ACTION_TYPE_NORMAL,
@@ -1358,7 +1358,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     NULL,
     0,
-    "ngraph_mark.png",
+    NGRAPH_MARK_ICON_FILE,
   },
   {
     ACTION_TYPE_NORMAL,
@@ -1369,7 +1369,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     NULL,
     0,
-    "ngraph_text.png",
+    NGRAPH_TEXT_ICON_FILE,
   },
   {
     ACTION_TYPE_NORMAL,
@@ -1648,7 +1648,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     N_("Legend and Axis Pointer (+SHIFT: Multi select / +CONTROL: Horizontal/Vertical +SHIFT: Fine)"),
     G_CALLBACK(CmViewerButtonArm),
     PointB,
-    "ngraph_point.png",
+    NGRAPH_POINT_ICON_FILE,
   },
   {
     ACTION_TYPE_RADIO,
@@ -1659,7 +1659,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     N_("Legend Pointer (+SHIFT: Multi select / +CONTROL: Horizontal/Vertical +SHIFT: Fine)"),
     G_CALLBACK(CmViewerButtonArm),
     LegendB,
-    "ngraph_legendpoint.png",
+    NGRAPH_LEGENDPOINT_ICON_FILE,
   },
   {
     ACTION_TYPE_RADIO,
@@ -1670,7 +1670,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     N_("Axis Pointer (+SHIFT: Multi select / +CONTROL: Horizontal/Vertical +SHIFT: Fine)"),
     G_CALLBACK(CmViewerButtonArm),
     AxisB,
-    "ngraph_axispoint.png",
+    NGRAPH_AXISPOINT_ICON_FILE,
   },
   {
     ACTION_TYPE_RADIO,
@@ -1681,7 +1681,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     N_("Data Pointer"),
     G_CALLBACK(CmViewerButtonArm),
     DataB,
-    "ngraph_datapoint.png",
+    NGRAPH_DATAPOINT_ICON_FILE,
   },
   {
     ACTION_TYPE_RADIO,
@@ -1692,7 +1692,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     N_("New Legend Path (+SHIFT: Fine +CONTROL: snap angle)"),
     G_CALLBACK(CmViewerButtonArm),
     PathB,
-    "ngraph_line.png",
+    NGRAPH_LINE_ICON_FILE,
   },
   {
     ACTION_TYPE_RADIO,
@@ -1703,7 +1703,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     N_("New Legend Rectangle (+SHIFT: Fine +CONTROL: square integer ratio rectangle)"),
     G_CALLBACK(CmViewerButtonArm),
     RectB,
-    "ngraph_rect.png",
+    NGRAPH_RECT_ICON_FILE,
   },
   {
     ACTION_TYPE_RADIO,
@@ -1714,7 +1714,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     N_("New Legend Arc (+SHIFT: Fine +CONTROL: circle or integer ratio ellipse)"),
     G_CALLBACK(CmViewerButtonArm),
     ArcB,
-    "ngraph_arc.png",
+    NGRAPH_ARC_ICON_FILE,
   },
   {
     ACTION_TYPE_RADIO,
@@ -1725,7 +1725,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     N_("New Legend Mark (+SHIFT: Fine)"),
     G_CALLBACK(CmViewerButtonArm),
     MarkB,
-    "ngraph_mark.png",
+    NGRAPH_MARK_ICON_FILE,
   },
   {
     ACTION_TYPE_RADIO,
@@ -1736,7 +1736,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     N_("New Legend Text (+SHIFT: Fine)"),
     G_CALLBACK(CmViewerButtonArm),
     TextB,
-    "ngraph_text.png",
+    NGRAPH_TEXT_ICON_FILE,
   },
   {
     ACTION_TYPE_RADIO,
@@ -1747,7 +1747,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     N_("New Legend Gaussian (+SHIFT: Fine +CONTROL: integer ratio)"),
     G_CALLBACK(CmViewerButtonArm),
     GaussB,
-    "ngraph_gauss.png",
+    NGRAPH_GAUSS_ICON_FILE,
   },
   {
     ACTION_TYPE_RADIO,
@@ -1758,7 +1758,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     N_("New Frame Graph (+SHIFT: Fine +CONTROL: integer ratio)"),
     G_CALLBACK(CmViewerButtonArm),
     FrameB,
-    "ngraph_frame.png",
+    NGRAPH_FRAME_ICON_FILE,
   },
   {
     ACTION_TYPE_RADIO,
@@ -1769,7 +1769,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     N_("New Section Graph (+SHIFT: Fine +CONTROL: integer ratio)"),
     G_CALLBACK(CmViewerButtonArm),
     SectionB,
-    "ngraph_section.png",
+    NGRAPH_SECTION_ICON_FILE,
   },
   {
     ACTION_TYPE_RADIO,
@@ -1780,7 +1780,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     N_("New Cross Graph (+SHIFT: Fine +CONTROL: integer ratio)"),
     G_CALLBACK(CmViewerButtonArm),
     CrossB,
-    "ngraph_cross.png",
+    NGRAPH_CROSS_ICON_FILE,
   },
   {
     ACTION_TYPE_RADIO,
@@ -1791,7 +1791,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     N_("New Single Axis (+SHIFT: Fine +CONTROL: snap angle)"),
     G_CALLBACK(CmViewerButtonArm),
     SingleB,
-    "ngraph_single.png",
+    NGRAPH_SINGLE_ICON_FILE,
   },
   {
     ACTION_TYPE_RADIO,
@@ -1802,7 +1802,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     N_("Axis Trimming (+SHIFT: Fine)"),
     G_CALLBACK(CmViewerButtonArm),
     TrimB,
-    "ngraph_trimming.png",
+    NGRAPH_TRIMMING_ICON_FILE,
   },
   {
     ACTION_TYPE_RADIO,
@@ -1813,7 +1813,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     N_("Evaluate Data Point"),
     G_CALLBACK(CmViewerButtonArm),
     EvalB,
-    "ngraph_eval.png",
+    NGRAPH_EVAL_ICON_FILE,
   },
   {
     ACTION_TYPE_RADIO,
@@ -1824,7 +1824,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     N_("Viewer Zoom-In (+CONTROL: Zoom-Out +SHIFT: Centering)"),
     G_CALLBACK(CmViewerButtonArm),
     ZoomB,
-    "ngraph_zoom.png",
+    NGRAPH_ZOOM_ICON_FILE,
   },
 };
 
@@ -2507,10 +2507,9 @@ set_window_action_visibility(int visibility)
 #define OBJ_ID_KEY "ngraph_object_id"
 
 static void
-window_to_tab(struct SubWin *win, GtkWidget *tab, const char *icon_file)
+window_to_tab(struct SubWin *win, GtkWidget *tab, const char *icon_file, const char *tip)
 {
   GtkWidget *w, *icon, *dialog;
-  char *str;
   int obj_id;
 
   obj_id = chkobjectid(win->data.data->obj);
@@ -2521,13 +2520,13 @@ window_to_tab(struct SubWin *win, GtkWidget *tab, const char *icon_file)
   g_object_set_data(G_OBJECT(w), OBJ_ID_KEY, GINT_TO_POINTER(obj_id));
   gtk_container_remove(GTK_CONTAINER(dialog), w);
 
-  str = g_strdup_printf("%s%c%s", PIXMAPDIR, DIRSEP, icon_file);
-  icon = gtk_image_new_from_file(str);
-  g_free(str);
+  icon = gtk_image_new_from_file(icon_file);
+  gtk_widget_set_tooltip_text(icon, tip);
 
   gtk_notebook_append_page(GTK_NOTEBOOK(tab), w, icon);
   gtk_notebook_set_tab_detachable(GTK_NOTEBOOK(tab), w, TRUE);
   gtk_notebook_set_tab_reorderable(GTK_NOTEBOOK(tab), w, TRUE);
+  gtk_notebook_set_menu_label_text(GTK_NOTEBOOK(tab), w, tip);
 }
 
 static void
@@ -2559,36 +2558,165 @@ set_pane_position(void)
   gtk_paned_set_position(GTK_PANED(NgraphApp.Viewer.side_pane2), Menulocal.side_pane2_pos);
 }
 
+struct obj_tab_info {
+  int tab, order;
+  int *conf;
+  int obj_id;
+  const char *obj_name;
+};
+
+static int
+tab_info_compare(const void * a, const void * b)
+{
+  const struct obj_tab_info *info_a, *info_b;
+
+  info_a = (const struct obj_tab_info *) a;
+  info_b = (const struct obj_tab_info *) b;
+
+  return info_a->order + info_a->tab * 100 - info_b->order - info_b->tab * 100;
+}
+
+static void
+init_tab_info(struct obj_tab_info *info, int n)
+{
+  int i, position;
+  struct objlist *obj;
+
+  for (i = 0; i < n; i++) {
+    position = *info[i].conf;
+    if (position > 99) {
+      info[i].tab = 1;
+    } else {
+      info[i].tab = 0;
+    }
+    obj = chkobject(info[i].obj_name);
+    info[i].obj_id = chkobjectid(obj);
+    info[i].order = position % 100;
+  }
+
+  qsort(info, n, sizeof(*info), tab_info_compare);
+}
+
+static void
+save_tab_position_sub(GtkWidget *tab, struct obj_tab_info *tab_info, int offset)
+{
+  int i, n, obj_id;
+  GtkWidget *w;
+
+  n = gtk_notebook_get_n_pages(GTK_NOTEBOOK(tab));
+  for (i = 0; i < n; i++){
+    w = gtk_notebook_get_nth_page(GTK_NOTEBOOK(tab), i);
+    obj_id = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(w), OBJ_ID_KEY));
+    if (obj_id == tab_info->obj_id) {
+      *tab_info->conf = offset + i;
+      break;
+    }
+  }
+}
+
+static void
+save_tab_position(void)
+{
+  int i, n;
+  GtkWidget *tab;
+  struct obj_tab_info tab_info[] = {
+    {0, 0, &Menulocal.file_tab,      0, "file"},
+    {0, 0, &Menulocal.axis_tab,      0, "axis"},
+    {0, 0, &Menulocal.merge_tab,     0, "merge"},
+    {0, 0, &Menulocal.path_tab,      0, "path"},
+    {0, 0, &Menulocal.rectangle_tab, 0, "rectangle"},
+    {0, 0, &Menulocal.arc_tab,       0, "arc"},
+    {0, 0, &Menulocal.mark_tab,      0, "mark"},
+    {0, 0, &Menulocal.text_tab,      0, "text"},
+  };
+
+  n = sizeof(tab_info) / sizeof(*tab_info);
+  init_tab_info(tab_info, n);
+
+  for (i = 0; i < n; i++) {
+    tab = gtk_paned_get_child1(GTK_PANED(NgraphApp.Viewer.side_pane1));
+    save_tab_position_sub(tab, tab_info + i, 0);
+
+    tab = gtk_paned_get_child2(GTK_PANED(NgraphApp.Viewer.side_pane1));
+    save_tab_position_sub(tab, tab_info + i, 100);
+  }
+}
+
 static void
 multi_to_single(void)
 {
-  int i, n, obj_id, height, width;
+  int i, j, n, tab_n, obj_id, height, width;
   struct obj_list_data *obj_data;
-  GtkWidget *tab, *icon, *w, *tab2;
+  GtkWidget *legend_tab, *icon, *w, *tab;
+  struct obj_tab_info tab_info[] = {
+    {0, 0, &Menulocal.file_tab,      0, "file"},
+    {0, 0, &Menulocal.axis_tab,      0, "axis"},
+    {0, 0, &Menulocal.merge_tab,     0, "merge"},
+    {0, 0, &Menulocal.path_tab,      0, "path"},
+    {0, 0, &Menulocal.rectangle_tab, 0, "rectangle"},
+    {0, 0, &Menulocal.arc_tab,       0, "arc"},
+    {0, 0, &Menulocal.mark_tab,      0, "mark"},
+    {0, 0, &Menulocal.text_tab,      0, "text"},
+  };
 
-  tab2 = gtk_paned_get_child1(GTK_PANED(NgraphApp.Viewer.side_pane1));
-  window_to_tab(&NgraphApp.FileWin, tab2, "ngraph_filewin.png");
+  tab_n = sizeof(tab_info) / sizeof(*tab_info);
+  init_tab_info(tab_info, tab_n);
 
-  tab2 = gtk_paned_get_child2(GTK_PANED(NgraphApp.Viewer.side_pane1));
-  window_to_tab(&NgraphApp.AxisWin, tab2, "ngraph_axiswin.png");
-  window_to_tab(&NgraphApp.MergeWin, tab2, "ngraph_mergewin.png");
+  legend_tab =  gtk_bin_get_child(GTK_BIN(NgraphApp.LegendWin.Win));
 
-  tab =  gtk_bin_get_child(GTK_BIN(NgraphApp.LegendWin.Win));
-  obj_data = NgraphApp.LegendWin.data.data;
-  tab2 = gtk_paned_get_child1(GTK_PANED(NgraphApp.Viewer.side_pane1));
-  n = gtk_notebook_get_n_pages(GTK_NOTEBOOK(tab));
-  for (i = 0; i < n; i++) {
-    obj_id = chkobjectid(obj_data->obj);
-    w = gtk_notebook_get_nth_page(GTK_NOTEBOOK(tab), 0);
-    icon = gtk_notebook_get_tab_label(GTK_NOTEBOOK(tab), w);
-    g_object_ref(w);
-    g_object_ref(icon);
-    g_object_set_data(G_OBJECT(w), OBJ_ID_KEY, GINT_TO_POINTER(obj_id));
-    gtk_notebook_remove_page(GTK_NOTEBOOK(tab), 0);
-    gtk_notebook_append_page(GTK_NOTEBOOK(tab2), w, icon);
-    gtk_notebook_set_tab_detachable(GTK_NOTEBOOK(tab2), w, TRUE);
-    gtk_notebook_set_tab_reorderable(GTK_NOTEBOOK(tab2), w, TRUE);
-    obj_data = obj_data->next;
+  for (j = 0; j < tab_n; j++) {
+    if (tab_info[j].tab > 0) {
+      tab = gtk_paned_get_child2(GTK_PANED(NgraphApp.Viewer.side_pane1));
+    } else {
+      tab = gtk_paned_get_child1(GTK_PANED(NgraphApp.Viewer.side_pane1));
+    }
+    if (strcmp(tab_info[j].obj_name, "file") == 0) {
+#ifdef WINDOWS
+      char *str;
+      str = g_strdup_printf("%s%s", PIXMAPDIR, NGRAPH_FILEWIN_ICON_FILE);
+      window_to_tab(&NgraphApp.FileWin, tab, str, _("data"));
+      g_free(str);
+#else
+      window_to_tab(&NgraphApp.FileWin, tab, NGRAPH_FILEWIN_ICON_FILE, _("data"));
+#endif
+    } else if (strcmp(tab_info[j].obj_name, "axis") == 0) {
+#ifdef WINDOWS
+      char *str;
+      str = g_strdup_printf("%s%s", PIXMAPDIR, NGRAPH_AXISWIN_ICON_FILE);
+      window_to_tab(&NgraphApp.AxisWin, tab, str, _(tab_info[j].obj_name));
+      g_free(str);
+#else
+      window_to_tab(&NgraphApp.AxisWin, tab, NGRAPH_AXISWIN_ICON_FILE, _(tab_info[j].obj_name));
+#endif
+    } else if (strcmp(tab_info[j].obj_name, "merge") == 0) {
+#ifdef WINDOWS
+      char *str;
+      str = g_strdup_printf("%s%s", PIXMAPDIR, NGRAPH_MERGEWIN_ICON_FILE);
+      window_to_tab(&NgraphApp.MergeWin, tab, str, _(tab_info[j].obj_name));
+      g_free(str);
+#else
+      window_to_tab(&NgraphApp.MergeWin, tab, NGRAPH_MERGEWIN_ICON_FILE, _(tab_info[j].obj_name));
+#endif
+    } else {
+      n = gtk_notebook_get_n_pages(GTK_NOTEBOOK(legend_tab));
+      for (i = 0; i < n; i++) {
+	w = gtk_notebook_get_nth_page(GTK_NOTEBOOK(legend_tab), i);
+	icon = gtk_notebook_get_tab_label(GTK_NOTEBOOK(legend_tab), w);
+	obj_data = g_object_get_data(G_OBJECT(icon), "ngraph_object_data");
+	obj_id = chkobjectid(obj_data->obj);
+	if (obj_id == tab_info[j].obj_id) {
+	  g_object_ref(w);
+	  g_object_ref(icon);
+	  g_object_set_data(G_OBJECT(w), OBJ_ID_KEY, GINT_TO_POINTER(obj_id));
+	  gtk_notebook_remove_page(GTK_NOTEBOOK(legend_tab), i);
+	  gtk_notebook_append_page(GTK_NOTEBOOK(tab), w, icon);
+	  gtk_notebook_set_tab_detachable(GTK_NOTEBOOK(tab), w, TRUE);
+	  gtk_notebook_set_tab_reorderable(GTK_NOTEBOOK(tab), w, TRUE);
+	  gtk_notebook_set_menu_label_text(GTK_NOTEBOOK(tab), w, _(tab_info[j].obj_name));
+	  break;
+	}
+      }
+    }
   }
 
   w =  gtk_bin_get_child(GTK_BIN(NgraphApp.CoordWin.Win));
@@ -2672,6 +2800,8 @@ single_to_multi(void)
   int obj_id, width, height;
   GtkWidget *tab, *w, *tab2, *tab3;
   struct obj_list_data *obj_data;
+
+  save_tab_position();
 
   set_window_action_visibility(TRUE);
   get_pane_position();
@@ -2836,21 +2966,23 @@ setupwindow(void)
   NgraphApp.Viewer.side_pane1 = vpane1;
 
   w = gtk_notebook_new();
+  gtk_notebook_popup_enable(GTK_NOTEBOOK(w));
   gtk_notebook_set_tab_pos(GTK_NOTEBOOK(w), GTK_POS_LEFT);
 #if GTK_CHECK_VERSION(2, 24, 0)
   gtk_notebook_set_group_name(GTK_NOTEBOOK(w), SIDE_PANE_TAB_ID);
 #else
-  gtk_notebook_set_group_id(GTK_NOTEBOOK(w), SIDE_PANE_TAB_ID);
+  gtk_notebook_set_group(GTK_NOTEBOOK(w), SIDE_PANE_TAB_ID);
 #endif
   gtk_notebook_set_scrollable(GTK_NOTEBOOK(w), TRUE);
   gtk_paned_add1(GTK_PANED(vpane1), w);
 
   w = gtk_notebook_new();
+  gtk_notebook_popup_enable(GTK_NOTEBOOK(w));
   gtk_notebook_set_tab_pos(GTK_NOTEBOOK(w), GTK_POS_LEFT);
 #if GTK_CHECK_VERSION(2, 24, 0)
   gtk_notebook_set_group_name(GTK_NOTEBOOK(w), SIDE_PANE_TAB_ID);
 #else
-  gtk_notebook_set_group_id(GTK_NOTEBOOK(w), SIDE_PANE_TAB_ID);
+  gtk_notebook_set_group(GTK_NOTEBOOK(w), SIDE_PANE_TAB_ID);
 #endif
   gtk_notebook_set_scrollable(GTK_NOTEBOOK(w), TRUE);
   gtk_paned_add2(GTK_PANED(vpane1), w);
@@ -3549,11 +3681,14 @@ create_action_group(struct NgraphActionEntry *entry, int n)
 
     if (entry[i].icon) {
       GIcon *icon;
-      char *file;
-
-      file = g_strdup_printf("%s%c%s", PIXMAPDIR, DIRSEP, entry[i].icon);
-      icon = g_icon_new_for_string(file, NULL);
-      g_free(file);
+#ifdef WINDOWS
+      char *str;
+      str = g_strdup_printf("%s%s", PIXMAPDIR, entry[i].icon);
+      icon = g_icon_new_for_string(str, NULL);
+      g_free(str);
+#else
+      icon = g_icon_new_for_string(entry[i].icon, NULL);
+#endif
       if (icon) {
 	gtk_action_set_gicon(action, icon);
       }
@@ -3735,6 +3870,7 @@ application(char *file)
   terminated = AppMainLoop();
 
   if (Menulocal.single_window_mode) {
+    save_tab_position();
     get_pane_position();
     menu_save_config(SAVE_CONFIG_TYPE_GEOMETRY);
   }

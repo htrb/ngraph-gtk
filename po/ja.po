@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2012-12-17 15:21+0900\n"
+"POT-Creation-Date: 2012-12-20 18:22+0900\n"
 "PO-Revision-Date: 2012-12-16 11:26+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/gtk/ox11menu.c:1963
+#: src/gtk/ox11menu.c:1979
 msgid "Unsaved Graph"
 msgstr "新規グラフ"
 
@@ -547,7 +547,7 @@ msgstr "一点二鎖線"
 msgid "auto"
 msgstr "自動"
 
-#: src/gtk/x11dialg.c:122
+#: src/gtk/x11dialg.c:122 src/gtk/x11menu.c:2677 src/gtk/x11menu.c:2680
 msgid "data"
 msgstr "データ"
 
@@ -1043,27 +1043,27 @@ msgstr "新規作成"
 msgid "Add Data file"
 msgstr "データの追加"
 
-#: src/gtk/x11file.c:4484
+#: src/gtk/x11file.c:4488
 msgid "Data file"
 msgstr "データの保存"
 
-#: src/gtk/x11file.c:4490
+#: src/gtk/x11file.c:4494
 msgid "Making data file"
 msgstr "データファイル作成中"
 
-#: src/gtk/x11file.c:4491
+#: src/gtk/x11file.c:4495
 msgid "Making data file."
 msgstr "データファイル作成中"
 
-#: src/gtk/x11file.c:4629
+#: src/gtk/x11file.c:4633
 msgid "Type"
 msgstr "タイプ"
 
-#: src/gtk/x11file.c:4639 src/gtk/x11lgnd.c:3207 src/gtk/gtk_widget.c:1108
+#: src/gtk/x11file.c:4643 src/gtk/x11lgnd.c:3207 src/gtk/gtk_widget.c:1108
 msgid "Color 1"
 msgstr "色 1"
 
-#: src/gtk/x11file.c:4653 src/gtk/x11lgnd.c:3216 src/gtk/gtk_widget.c:1115
+#: src/gtk/x11file.c:4657 src/gtk/x11lgnd.c:3216 src/gtk/gtk_widget.c:1115
 msgid "Color 2"
 msgstr "色 2"
 
@@ -2038,15 +2038,15 @@ msgstr "ビューアズーム"
 msgid "Viewer Zoom-In (+CONTROL: Zoom-Out +SHIFT: Centering)"
 msgstr "ビューアのズームイン (+CONTROL:ズームアウト +SHIFT:センタリング)"
 
-#: src/gtk/x11menu.c:3939
+#: src/gtk/x11menu.c:4075
 msgid "Error:"
 msgstr "エラー:"
 
-#: src/gtk/x11menu.c:3989
+#: src/gtk/x11menu.c:4125
 msgid "Question"
 msgstr "質問"
 
-#: src/gtk/x11menu.c:4046
+#: src/gtk/x11menu.c:4182
 #, c-format
 msgid "Executing `%.128s'."
 msgstr "実行中 `%.128s'."
@@ -2432,7 +2432,7 @@ msgstr "ストローク色"
 msgid "Fill Color"
 msgstr "塗りつぶし色"
 
-#: src/gtk/gtk_subwin.c:58
+#: src/gtk/gtk_subwin.c:61
 msgid "Open"
 msgstr "開く"
 

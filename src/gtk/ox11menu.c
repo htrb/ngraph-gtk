@@ -280,6 +280,14 @@ static struct menu_config MenuConfigOthers[] = {
   {"side_pane2",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.side_pane2_pos},
   {"side_pane3",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.side_pane3_pos},
   {"single_window_mode",MENU_CONFIG_TYPE_BOOL,    NULL, &Menulocal.single_window_mode},
+  {"file_tab",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.file_tab},
+  {"axis_tab",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.axis_tab},
+  {"merge_tab",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.merge_tab},
+  {"path_tab",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.path_tab},
+  {"rectangle_tab",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.rectangle_tab},
+  {"arc_tab",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.arc_tab},
+  {"mark_tab",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.mark_tab},
+  {"text_tab",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.text_tab},
   {NULL},
 };
 
@@ -1147,6 +1155,14 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   Menulocal.side_pane2_pos = 500;
   Menulocal.side_pane3_pos = 200;
   Menulocal.single_window_mode = FALSE;
+  Menulocal.file_tab = 0;
+  Menulocal.axis_tab = 100;
+  Menulocal.merge_tab = 101;
+  Menulocal.path_tab = 1;
+  Menulocal.rectangle_tab = 2;
+  Menulocal.arc_tab = 3;
+  Menulocal.mark_tab = 4;
+  Menulocal.text_tab = 5;
 
   arrayinit(&(Menulocal.drawrable), sizeof(char *));
   menuadddrawrable(chkobject("draw"), &(Menulocal.drawrable));

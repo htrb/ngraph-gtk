@@ -31,6 +31,7 @@
 #include <stdio.h>
 
 #define DIRSEP '/'
+#define DIRSEP_STR "/"
 #define CONFSEP "/"
 #define CONFTOP "/"
 #define NOHANDLE -1

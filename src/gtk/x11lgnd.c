@@ -3773,11 +3773,11 @@ CmLegendWindow(GtkToggleAction *action, gpointer client_data)
   GtkTreeViewColumn *col;
 #define LEGENDNUM 5
   struct legend_data legend_data[LEGENDNUM] = {
-    {"ngraph_line.png", PathListUpdate, LegendWinPathUpdate, N_("path"),      &DlgLegendArrow},
-    {"ngraph_rect.png", RectListUpdate, LegendWinRectUpdate, N_("rectangle"), &DlgLegendRect},
-    {"ngraph_arc.png",  ArcListUpdate,  LegendWinArcUpdate,  N_("arc"),       &DlgLegendArc},
-    {"ngraph_mark.png", MarkListUpdate, LegendWinMarkUpdate, N_("mark"),      &DlgLegendMark},
-    {"ngraph_text.png", TextListUpdate, LegendWinTextUpdate, N_("text"),      &DlgLegendText},
+    {NGRAPH_LINE_ICON_FILE, PathListUpdate, LegendWinPathUpdate, N_("path"),      &DlgLegendArrow},
+    {NGRAPH_RECT_ICON_FILE, RectListUpdate, LegendWinRectUpdate, N_("rectangle"), &DlgLegendRect},
+    {NGRAPH_ARC_ICON_FILE,  ArcListUpdate,  LegendWinArcUpdate,  N_("arc"),       &DlgLegendArc},
+    {NGRAPH_MARK_ICON_FILE, MarkListUpdate, LegendWinMarkUpdate, N_("mark"),      &DlgLegendMark},
+    {NGRAPH_TEXT_ICON_FILE, TextListUpdate, LegendWinTextUpdate, N_("text"),      &DlgLegendText},
   };
   GtkWidget *icons[LEGENDNUM];
 
@@ -3799,12 +3799,15 @@ CmLegendWindow(GtkToggleAction *action, gpointer client_data)
   }
 
   for (i = 0; i < LEGENDNUM; i++) {
+#ifdef WINDOWS
     char *str;
-
-    str = g_strdup_printf("%s%c%s", PIXMAPDIR, DIRSEP, legend_data[i].icon_file);
+    str = g_strdup_printf("%s%s", PIXMAPDIR, legend_data[i].icon_file);
     icons[i] = gtk_image_new_from_file(str);
-    gtk_widget_set_tooltip_text(GTK_WIDGET(icons[i]), _(legend_data[i].name));
     g_free(str);
+#else
+    icons[i] = gtk_image_new_from_file(legend_data[i].icon_file);
+#endif
+    gtk_widget_set_tooltip_text(GTK_WIDGET(icons[i]), _(legend_data[i].name));
   }
 
   tree_sub_window_create(d, "Legend Window", LEGENDNUM, Llist_num, Llist, icons, Legendwin_xpm, Legendwin48_xpm);
@@ -3816,6 +3819,8 @@ CmLegendWindow(GtkToggleAction *action, gpointer client_data)
     data->setup_dialog = legend_data[i].update_dialog_func;
     data->ev_key = NULL;
     data->obj = chkobject(legend_data[i].name);
+
+    g_object_set_data(G_OBJECT(icons[i]), "ngraph_object_data", data);
 
     sub_win_create_popup_menu(data, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
     switch (i) {
