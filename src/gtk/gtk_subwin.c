@@ -1458,8 +1458,10 @@ tree_sub_window_create(struct SubWin *d, const char *title, int page_num, int *l
   GtkWidget *tab, *swin;
   int i;
   struct obj_list_data *data, *prev;
+  char *str;
 
   tab = gtk_notebook_new();
+  gtk_notebook_popup_enable(GTK_NOTEBOOK(tab));
 
   prev = NULL;
   for (i = 0; i < page_num; i++) {
@@ -1470,6 +1472,9 @@ tree_sub_window_create(struct SubWin *d, const char *title, int page_num, int *l
       d->data.data = data;
     }
     gtk_notebook_append_page(GTK_NOTEBOOK(tab), swin, icons[i]);
+    str = gtk_widget_get_tooltip_text(icons[i]);
+    gtk_notebook_set_menu_label_text(GTK_NOTEBOOK(tab), swin, str);
+    g_free(str);
     prev = data;
   }
   gtk_notebook_set_current_page(GTK_NOTEBOOK(tab), 0);
