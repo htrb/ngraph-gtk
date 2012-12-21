@@ -54,6 +54,7 @@ extwin_height=600
 use_external_viewer=0
 history_size=1000
 palette=black:white:gray50:red:purple:blue:light blue:green:yellow:orange:lavender:brown:goldenrod4:dodger blue:pink:light green:gray10:gray30:gray75:gray90
+single_window_mode=1
 
 [gra2cairo]
 font=Sans-serif,arial,ms pgothic,browallia new,mingliu,simhei,gulimche,kartika,latha,mangal,raavi,Sylfaen,Microsoft Sans Serif
