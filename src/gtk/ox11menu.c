@@ -1774,6 +1774,10 @@ mx_show_win(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **
 {
   unsigned int win;
 
+  if (Menulocal.single_window_mode) {
+    return 0;
+  }
+
   if (TopLevel == NULL) {
     error(obj, ERR_MENU_GUI);
     return 1;
@@ -1791,6 +1795,10 @@ mx_hide_win(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **
 {
   unsigned int win;
 
+  if (Menulocal.single_window_mode) {
+    return 0;
+  }
+
   if (TopLevel == NULL) {
     error(obj, ERR_MENU_GUI);
     return 1;
@@ -1807,6 +1815,10 @@ static int
 mx_toggle_win(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   int win;
+
+  if (Menulocal.single_window_mode) {
+    return 0;
+  }
 
   if (TopLevel == NULL) {
     error(obj, ERR_MENU_GUI);

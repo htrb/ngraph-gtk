@@ -1,3 +1,8 @@
+2012-12-27  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/ox11menu.c (mx_show_win, mx_hide_win, mx_toggle_win):
+	check "Menulocal.single_window_mode".
+
 2012-12-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_subwin.c (tree_sub_window_create): call
