@@ -3869,14 +3869,16 @@ application(char *file)
 
   terminated = AppMainLoop();
 
-  if (Menulocal.single_window_mode) {
-    save_tab_position();
-    get_pane_position();
-    menu_save_config(SAVE_CONFIG_TYPE_GEOMETRY);
+  if (CheckIniFile()) {
+    if (Menulocal.single_window_mode) {
+      save_tab_position();
+      get_pane_position();
+      menu_save_config(SAVE_CONFIG_TYPE_GEOMETRY);
+    }
+    save_entry_history();
+    menu_save_config(SAVE_CONFIG_TYPE_TOGGLE_VIEW |
+		     SAVE_CONFIG_TYPE_OTHERS);
   }
-  save_entry_history();
-  menu_save_config(SAVE_CONFIG_TYPE_TOGGLE_VIEW |
-		   SAVE_CONFIG_TYPE_OTHERS);
 
   set_newobj_cb(NULL);
   set_delobj_cb(NULL);
