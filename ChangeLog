@@ -1,3 +1,11 @@
+2013-01-01  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* addin/fitrslt.c (savescript, caption_toggled, set_parameter):
+	use GtkTreeModel.
+	(text_edited, caption_edited, value_edited): added.
+	(create_caption_frame): use GtkTreeView widgret.
+	(VERSION): 1.00.02
+
 2012-12-28  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (application): call "CheckIniFile()" before

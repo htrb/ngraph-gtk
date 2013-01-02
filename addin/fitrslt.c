@@ -12,7 +12,7 @@
 #include "addin_common.h"
 
 #define NAME    "Fitrslt"
-#define VERSION "1.00.01"
+#define VERSION "1.00.02"
 
 #define POS_X    50.00
 #define POS_Y    50.00
@@ -21,7 +21,7 @@
 #define POS_MIN   -1000
 #define POS_MAX    1000
 
-#define ACCURACY     5
+#define ACCURACY     51
 #define DIVISION   100
 
 #define ADD_PLUS FALSE
@@ -31,6 +31,12 @@
 #define LINE_BUF_SIZE 1024
 #define PRM_NUM       10
 
+enum {
+  COLUMN_CHECK,
+  COLUMN_PRM,
+  COLUMN_CAPTION,
+  COLUMN_VAL,
+};
 
 struct fit_data {
   int file_id;
@@ -49,7 +55,7 @@ struct caption_widget {
 struct fit_prm {
   GtkWidget *window, *x,*y, *add_plus, *accuracy, *expand, *frame, *combo;
   struct font_prm font;
-  struct caption_widget caption[PRM_NUM];
+  GtkWidget *caption;
   const char *script;
   struct fit_data *data;
   int posx, posy, fit_num;
@@ -129,7 +135,9 @@ savescript(struct fit_prm *prm)
 {
   char *cap, *val;
   FILE *f;
-  int frame, height, textpt, gx, gy, posx, posy, h_inc, i;
+  int frame, height, textpt, gx, gy, posx, posy, h_inc, i, draw;
+  GtkTreeModel *model;
+  GtkTreeIter iter;
 
   if (prm->script == NULL) {
     return 0;
@@ -152,16 +160,21 @@ savescript(struct fit_prm *prm)
 
   h_inc = ceil(height * 1.2 / 100) * 100;
 
+  model = gtk_tree_view_get_model(GTK_TREE_VIEW(prm->caption));
+  if (! gtk_tree_model_get_iter_first(model, &iter)) {
+    return 1;
+  }
   for (i = 0; i < PRM_NUM; i++) {
-    if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(prm->caption[i].check))) {
+    gtk_tree_model_get(model, &iter, COLUMN_CHECK, &draw, COLUMN_CAPTION, &cap, COLUMN_VAL, &val, -1);
+    if (draw) {
       gx = posx;
-      cap = get_text_from_entry(prm->caption[i].caption);
-      val = get_text_from_entry(prm->caption[i].val);
       makescript(f, prm, gx, gy, height, cap, val);
       gy += h_inc;
-
-      g_free(cap);
-      g_free(val);
+    }
+    g_free(cap);
+    g_free(val);
+    if (! gtk_tree_model_iter_next(model, &iter)) {
+      break;
     }
   }
 
@@ -305,25 +318,12 @@ create_position_frame(struct fit_prm *prm)
 }
 
 static void
-caption_toggled(GtkToggleButton *togglebutton, gpointer user_data)
-{
-  int state;
-  struct caption_widget *caption;
-
-  caption = (struct caption_widget *) user_data;
-
-  state = gtk_toggle_button_get_active(togglebutton);
-
-  gtk_widget_set_sensitive(caption->label, state);
-  gtk_widget_set_sensitive(caption->caption, state);
-  gtk_widget_set_sensitive(caption->val, state);
-}
-
-static void
 set_parameter(struct fit_prm *prm)
 {
   int i, j, accuracy, expand, add_plus, dim[PRM_NUM];
   char buf[LINE_BUF_SIZE], fmt[LINE_BUF_SIZE];
+  GtkTreeModel *model;
+  GtkTreeIter iter;
 
   i = gtk_combo_box_get_active(GTK_COMBO_BOX(prm->combo));
 
@@ -352,8 +352,12 @@ set_parameter(struct fit_prm *prm)
     }
   }
 
+  model = gtk_tree_view_get_model(GTK_TREE_VIEW(prm->caption));
+  if (! gtk_tree_model_get_iter_first(model, &iter)) {
+    return;
+  }
+
   for (j = 0; j < PRM_NUM; j++) {
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(prm->caption[j].check), dim[j]);
     snprintf(fmt, sizeof(fmt),
 	     "%%#%s.%dg",
 	     add_plus ? "+" : "",
@@ -369,7 +373,11 @@ set_parameter(struct fit_prm *prm)
 	       prm->data[i].id,
 	       j);
     }
-    gtk_entry_set_text(GTK_ENTRY(prm->caption[j].val), buf);
+    gtk_list_store_set(GTK_LIST_STORE(model), &iter, COLUMN_CHECK, dim[j], COLUMN_VAL, buf, -1);
+
+    if (! gtk_tree_model_iter_next(model, &iter)) {
+      break;
+    }
   }
 }
 
@@ -382,46 +390,113 @@ file_changed(GtkWidget *widget, gpointer user_data)
   set_parameter(prm);
 }
 
+static void
+text_edited(GtkCellRenderer *renderer, gchar *path, gchar *new_text, struct fit_prm *prm, int column)
+{
+  GtkTreeModel *model;
+  GtkTreeIter iter;
+  GtkTreeView *view;
+
+  view = GTK_TREE_VIEW(prm->caption);
+  model = gtk_tree_view_get_model(view);
+
+  if (! gtk_tree_model_get_iter_from_string(model, &iter, path)) {
+    return;
+  }
+
+  gtk_list_store_set(GTK_LIST_STORE(model), &iter, column, new_text, -1);
+}
+
+static void
+caption_edited(GtkCellRenderer *renderer, gchar *path, gchar *new_text, gpointer user_data)
+{
+  text_edited(renderer, path, new_text, (struct fit_prm *) user_data, COLUMN_CAPTION);
+}
+
+static void
+value_edited(GtkCellRenderer *renderer, gchar *path, gchar *new_text, gpointer user_data)
+{
+  text_edited(renderer, path, new_text, (struct fit_prm *) user_data, COLUMN_VAL);
+}
+
+static void
+caption_toggled(GtkCellRendererToggle *cell_renderer, gchar *path, gpointer user_data)
+{
+  struct fit_prm *prm;
+  GtkTreeView *view;
+  GtkTreeModel *model;
+  GtkTreeIter iter;
+  gboolean v;
+
+  prm = (struct fit_prm *) user_data;
+  view = GTK_TREE_VIEW(prm->caption);
+  model = gtk_tree_view_get_model(view);
+
+  if (! gtk_tree_model_get_iter_from_string(model, &iter, path)) {
+    return;
+  }
+
+  gtk_tree_model_get(model, &iter, COLUMN_CHECK, &v, -1);
+
+  v = !v;
+
+  gtk_list_store_set(GTK_LIST_STORE(model), &iter, COLUMN_CHECK, v, -1);
+}
+
+struct text_column {
+  char *title;
+  int editable;
+  void (* func)(GtkCellRenderer *, gchar *, gchar *, gpointer);
+};
+
 static GtkWidget *
 create_caption_frame(struct fit_prm *prm)
 {
-  GtkWidget *frame, *table, *w, *label, *hbox;
-  int i;
-  char buf[LINE_BUF_SIZE];
-  struct caption_widget *caption;
+  GtkListStore *list;
+  GtkCellRenderer *renderer;
+  GtkTreeViewColumn *col;
+  GtkTreeIter iter;
+  GtkWidget *tview, *hbox, *frame;
+  int i, n;
+  struct text_column text_column[] = {
+    {"prm",     FALSE, NULL},
+    {"caption", TRUE,  caption_edited},
+    {"result",  TRUE,  value_edited},
+  };
+  char buf1[64], buf2[64];
 
-  frame = gtk_frame_new("caption");
+  n = sizeof(text_column) / sizeof(*text_column);
 
-#if GTK_CHECK_VERSION(3, 4, 0)
-  table = gtk_grid_new();
-#else
-  table = gtk_table_new(1, 4, FALSE);
-#endif
+  list = gtk_list_store_new(n + 1, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
+  tview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(list));
+  gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(tview), TRUE);
+  gtk_tree_view_set_grid_lines(GTK_TREE_VIEW(tview), GTK_TREE_VIEW_GRID_LINES_VERTICAL);
 
-  for (i = 0; i < PRM_NUM; i++) {
-    caption = prm->caption + i;
+  renderer = gtk_cell_renderer_toggle_new();
+  col = gtk_tree_view_column_new_with_attributes("", renderer, "active", 0, NULL);
+  g_object_set(renderer, "mode", GTK_CELL_RENDERER_MODE_ACTIVATABLE, NULL);
+  g_signal_connect(renderer, "toggled", G_CALLBACK(caption_toggled), prm);
+  gtk_tree_view_append_column(GTK_TREE_VIEW(tview), col);
 
-    snprintf(buf, sizeof(buf), "%%0_%d ", i);
-    w = gtk_check_button_new_with_mnemonic(buf);
-    g_signal_connect(w, "toggled", G_CALLBACK(caption_toggled), caption);
-    add_widget_to_table_sub(table, w, NULL, FALSE, 0, 1, i);
-    caption->check = w;
-
-    snprintf(buf, sizeof(buf), "\\%%%02d: ", i);
-    w = create_text_entry(TRUE);
-    label = add_widget_to_table_sub(table, w, "caption:", TRUE, 1, 1, i);
-    gtk_entry_set_text(GTK_ENTRY(w), buf);
-    caption->label = label;
-    caption->caption = w;
-
-    w = create_text_entry(TRUE);
-    add_widget_to_table_sub(table, w, NULL, TRUE, 3, 1, i);
-    caption->val = w;
-
-    caption_toggled(GTK_TOGGLE_BUTTON(caption->check), caption);
+  for (i = 0; i < n; i++) {
+    renderer = gtk_cell_renderer_text_new();
+    col = gtk_tree_view_column_new_with_attributes(text_column[i].title, renderer, "text", i + 1, "sensitive", 0, NULL);
+    if (text_column[i].editable) {
+      g_object_set(renderer, "editable", TRUE, NULL);
+      g_signal_connect(renderer, "edited", G_CALLBACK(text_column[i].func), prm);
+    }
+    gtk_tree_view_append_column(GTK_TREE_VIEW(tview), col);
   }
 
-  gtk_container_add(GTK_CONTAINER(frame), table);
+  for (i = 0; i < PRM_NUM; i++) {
+    snprintf(buf1, sizeof(buf1), "%%%02d", i);
+    snprintf(buf2, sizeof(buf2), "\\%%%02d: ", i);
+    gtk_list_store_append(list, &iter);
+    gtk_list_store_set(list, &iter, COLUMN_PRM, buf1, COLUMN_CAPTION, buf2, -1);
+  }
+
+  frame = gtk_frame_new(NULL);
+  gtk_container_add(GTK_CONTAINER(frame), tview);
 
 #if GTK_CHECK_VERSION(3, 0, 0)
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
@@ -430,6 +505,8 @@ create_caption_frame(struct fit_prm *prm)
 #endif
 
   gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 4);
+
+  prm->caption = tview;
 
   return hbox;
 }
@@ -516,7 +593,7 @@ create_widgets(GtkWidget *vbox, struct fit_prm *prm)
 {
   GtkWidget *w;
 
-  w = create_title(NAME " version " VERSION, "fitting results ---> legend-text");
+  w = create_title(NAME " version " VERSION, "fitting results -> legend text");
   gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 0);
 
   w = create_control(vbox, prm);
@@ -573,9 +650,9 @@ main(int argc, char **argv)
   }
 
   mainwin = gtk_dialog_new_with_buttons(NAME, NULL, 0,
-					GTK_STOCK_OK,   
+					GTK_STOCK_OK,
 					GTK_RESPONSE_ACCEPT,
-					GTK_STOCK_CANCEL,   
+					GTK_STOCK_CANCEL,
 					GTK_RESPONSE_REJECT,
 					NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(mainwin), GTK_RESPONSE_ACCEPT);
