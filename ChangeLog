@@ -1,3 +1,9 @@
+2013-01-04  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* addin/fitrslt.c (get_opt): check "argv[i]".
+
+	* addin/legend.c (get_opt): check "argv[i]".
+
 2013-01-01  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* addin/fitrslt.c (savescript, caption_toggled, set_parameter):

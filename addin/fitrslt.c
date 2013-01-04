@@ -608,10 +608,14 @@ get_opt(int argc, char **argv, struct fit_prm *prm)
   for (i = 1; i < argc; i++) {
     if (strcmp(argv[i], "-x") == 0) {
       i++;
-      prm->posx = atoi(argv[i]);
+      if (argv[i]) {
+	prm->posx = atoi(argv[i]);
+      }
     } else if (strcmp(argv[i], "-y") == 0) {
       i++;
-      prm->posy = atoi(argv[i]);
+      if (argv[i]) {
+	prm->posy = atoi(argv[i]);
+      }
     } else if (data_file == NULL) {
       data_file = argv[i];
     } else {
