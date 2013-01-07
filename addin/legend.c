@@ -545,10 +545,8 @@ create_file_frame(struct file_prm *prm)
 
   list = gtk_list_store_new(n + 1, G_TYPE_BOOLEAN, G_TYPE_INT, G_TYPE_STRING, G_TYPE_INT, G_TYPE_INT, G_TYPE_STRING);
   tview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(list));
-  gtk_widget_set_size_request(GTK_WIDGET(tview), -1, 200);
   gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(tview), TRUE);
   gtk_tree_view_set_grid_lines(GTK_TREE_VIEW(tview), GTK_TREE_VIEW_GRID_LINES_VERTICAL);
-
 
   renderer = gtk_cell_renderer_toggle_new();
   col = gtk_tree_view_column_new_with_attributes("", renderer, "active", 0, NULL);
@@ -558,7 +556,7 @@ create_file_frame(struct file_prm *prm)
 
   for (i = 0; i < n; i++) {
     renderer = gtk_cell_renderer_text_new();
-    col = gtk_tree_view_column_new_with_attributes(title[i], renderer, "text", i + 1, NULL);
+    col = gtk_tree_view_column_new_with_attributes(title[i], renderer, "text", i + 1, "sensitive", 0, NULL);
     gtk_tree_view_append_column(GTK_TREE_VIEW(tview), col);
   }
   g_object_set(renderer, "editable", TRUE, NULL);
@@ -567,6 +565,7 @@ create_file_frame(struct file_prm *prm)
   swin = gtk_scrolled_window_new(NULL, NULL);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   gtk_container_add(GTK_CONTAINER(swin), tview);
+  gtk_widget_set_size_request(GTK_WIDGET(swin), -1, 300);
 
   frame = gtk_frame_new(NULL);
   gtk_container_add(GTK_CONTAINER(frame), swin);
@@ -594,10 +593,10 @@ create_control(GtkWidget *box, struct file_prm *prm)
   hbox = gtk_hbox_new(FALSE, 4);
 #endif
   w = create_option_frame(prm);
-  gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
+  gtk_box_pack_start(GTK_BOX(hbox), w, TRUE, TRUE, 4);
 
   w = create_geometry_frame(prm);
-  gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
+  gtk_box_pack_start(GTK_BOX(hbox), w, TRUE, TRUE, 4);
 
   w = create_font_frame(&prm->font);
   gtk_box_pack_start(GTK_BOX(hbox), w, TRUE, TRUE, 4);

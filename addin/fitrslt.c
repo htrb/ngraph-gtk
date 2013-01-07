@@ -224,6 +224,7 @@ create_spin_button(const char *title, double min, double max, double inc, double
   g_object_set(label, "margin", GINT_TO_POINTER(4), NULL);
 
   w = gtk_spin_button_new_with_range(min, max, inc);
+  gtk_widget_set_margin_right(w, 4);
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), init);
   gtk_label_set_mnemonic_widget(GTK_LABEL(label), w);
   gtk_widget_set_hexpand(w, TRUE);
@@ -569,13 +570,13 @@ create_control(GtkWidget *box, struct fit_prm *prm)
   hbox = gtk_hbox_new(FALSE, 4);
 #endif
   w = create_format_frame(prm);
-  gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
+  gtk_box_pack_start(GTK_BOX(hbox), w, TRUE, TRUE, 4);
 
   w = create_position_frame(prm);
-  gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
+  gtk_box_pack_start(GTK_BOX(hbox), w, TRUE, TRUE, 4);
 
   w = create_font_frame(&prm->font);
-  gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
+  gtk_box_pack_start(GTK_BOX(hbox), w, TRUE, TRUE, 4);
 
   gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 4);
 

@@ -3766,7 +3766,7 @@ struct legend_data {
 void
 CmLegendWindow(GtkToggleAction *action, gpointer client_data)
 {
-  int i, state;
+  int i, j, n, state;
   struct SubWin *d;
   struct obj_list_data *data;
   GList *list;
@@ -3780,6 +3780,7 @@ CmLegendWindow(GtkToggleAction *action, gpointer client_data)
     {NGRAPH_TEXT_ICON_FILE, TextListUpdate, LegendWinTextUpdate, N_("text"),      &DlgLegendText},
   };
   GtkWidget *icons[LEGENDNUM];
+  int noexpand_text_colmns[] = {TEXT_LIST_COL_X, TEXT_LIST_COL_Y, TEXT_LIST_COL_PT, TEXT_LIST_COL_DIR};
 
   d = &(NgraphApp.LegendWin);
 
@@ -3862,6 +3863,11 @@ CmLegendWindow(GtkToggleAction *action, gpointer client_data)
 	g_signal_connect_after(renderer, "editing-started", G_CALLBACK(start_editing_text), data);
       }
       g_list_free(list);
+      n = sizeof(noexpand_text_colmns) / sizeof(*noexpand_text_colmns);
+      for (j = 0; j < n; j++) {
+	col = gtk_tree_view_get_column(GTK_TREE_VIEW(data->text), noexpand_text_colmns[j]);
+	gtk_tree_view_column_set_expand(col, FALSE);
+      }
       break;
     }
     data = data->next;

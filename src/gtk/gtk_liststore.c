@@ -107,6 +107,9 @@ create_column(n_list_store *list, int i)
 
       }
     }
+    if (list[i].editable) {
+      gtk_tree_view_column_set_expand(col, TRUE);
+    }
     break;
   case G_TYPE_OBJECT:
     renderer = gtk_cell_renderer_pixbuf_new();
@@ -146,7 +149,7 @@ create_column(n_list_store *list, int i)
     col = gtk_tree_view_column_new_with_attributes(_(list[i].title), renderer,
 						     "text", i, NULL);
     gtk_tree_view_column_set_resizable(col, TRUE);
-    if (list[i].ellipsize != PANGO_ELLIPSIZE_NONE) {
+    if (list[i].ellipsize != PANGO_ELLIPSIZE_NONE || list[i].editable) {
       gtk_tree_view_column_set_expand(col, TRUE);
     }
   }

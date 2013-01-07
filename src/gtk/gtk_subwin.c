@@ -1411,6 +1411,7 @@ list_widget_create(struct SubWin *d, int lisu_num, n_list_store *list, int can_f
 {
   struct obj_list_data *data;
   GtkWidget *lstor, *swin;
+  GList *rend_list, *col_list, *col;
 
   data = g_malloc0(sizeof(*data));
   data->select = -1;
@@ -1434,6 +1435,16 @@ list_widget_create(struct SubWin *d, int lisu_num, n_list_store *list, int can_f
   swin = gtk_scrolled_window_new(NULL, NULL);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   gtk_container_add(GTK_CONTAINER(swin), lstor);
+
+  col_list = gtk_tree_view_get_columns(GTK_TREE_VIEW(lstor));
+  for (col = g_list_next(col_list); col; col = g_list_next(col)) {
+    rend_list = gtk_cell_layout_get_cells(GTK_CELL_LAYOUT(col->data));
+    gtk_tree_view_column_add_attribute(GTK_TREE_VIEW_COLUMN(col->data),
+				       GTK_CELL_RENDERER(rend_list->data),
+				       "sensitive", 0);
+    g_list_free(rend_list);
+  }
+  g_list_free(col_list);
 
   *w = swin;
 

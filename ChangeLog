@@ -1,3 +1,26 @@
+2013-01-07  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* addin/legend.c (create_file_frame): not set hight of tree view
+	but scrolled window.
+	(create_file_frame): sensitivity of columns are depend of the
+	state of top column.
+	(create_control): setting frames are expandable.
+
+	* addin/fitrslt.c (create_spin_button): set margin of spin button
+	widget.
+	(create_control): setting frames are expandable.
+
+	* addin/addin_common.c (create_font_frame): table widget is
+	expandable
+
+	* src/gtk/gtk_subwin.c (list_widget_create): sensitivity of
+	columns are depend of the state of top column.
+
+	* src/gtk/gtk_liststore.c (create_column): expand some editable
+	columns.
+
+	* src/gtk/x11lgnd.c (CmLegendWindow): don't expand some columns.
+
 2013-01-04  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* addin/fitrslt.c (get_opt): check "argv[i]".
