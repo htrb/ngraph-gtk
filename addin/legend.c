@@ -129,6 +129,7 @@ loaddatalist(struct file_prm *prm, const char *datalist)
     }
     for (j = 0; j < i; j++) {
       if ((g_strcmp0(prm->data[i].file, prm->data[j].file) == 0) &&
+	  (prm->data[i].show == prm->data[j].show) &&
 	  (prm->data[i].x == prm->data[j].x) &&
 	  (prm->data[i].y == prm->data[j].y) &&
 	  (g_strcmp0(prm->data[i].math_x, prm->data[j].math_x) == 0) &&
@@ -285,7 +286,7 @@ savescript(struct file_prm *prm)
   gy = posy;
 
   for (i = 0; i < prm->file_num; i++) {
-    if ((( prm->data[i].mix == -1) || (! mix )) && prm->data[i].show) {
+    if (((prm->data[i].mix == -1) || (! mix )) && prm->data[i].show) {
       gx = posx;
       if (type) {
         makescript(f, &prm->data[i], gx, gy, width, height);

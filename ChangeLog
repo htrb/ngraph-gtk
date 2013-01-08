@@ -1,3 +1,8 @@
+2013-01-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* addin/legend.c (loaddatalist): check "hidden" field of data
+	instances.
+
 2013-01-07  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* addin/legend.c (create_file_frame): not set hight of tree view
