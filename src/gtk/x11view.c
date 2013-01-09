@@ -392,14 +392,14 @@ PasteObjectsFromClipboard(void)
     gtk_clipboard_request_text(clip, paste_cb, NULL);
 #if GTK_CHECK_VERSION(3, 4, 0)
     device = gtk_get_current_event_device(); /* fix-me: is there any other appropriate way to get the device? */
-    if (device) {
+    if (device && gdk_device_get_source(device) != GDK_SOURCE_KEYBOARD) {
       gdk_window_get_device_position(d->gdk_win, device, &x, &y, NULL);
       set_mouse_cursor_hover(d, x, y);
     }
 #else
     gtk_widget_get_pointer(d->Win, &x, &y);
-#endif
     set_mouse_cursor_hover(d, x, y);
+#endif
   }
 }
 
