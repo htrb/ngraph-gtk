@@ -80,8 +80,16 @@ enum_font_cb(ENUMLOGFONTEXW *lpelfe, NEWTEXTMETRICEXW *lpntme, DWORD FontType, L
   int char_set, i;
   struct gra2emf_fontmap *fontmap;
 
-  if (FontType != TRUETYPE_FONTTYPE) {
-    return 1;
+  if (lpelfe == NULL || lpntme == NULL || lParam == NULL) {
+    return 0;
+  }
+
+  if (FontType == 0) {
+    return 0;			/* this check may necessary to avoid crash on Windows8 */
+  }
+
+  if (FontType & ~(TRUETYPE_FONTTYPE | RASTER_FONTTYPE | DEVICE_FONTTYPE)) {
+    return 0;			/* this check may necessary to avoid crash on Windows8 */
   }
 
   if (lpntme->ntmTm.tmWeight != FW_NORMAL || lpntme->ntmTm.tmItalic) {
@@ -610,7 +618,7 @@ check_fonts(struct gra2emf_local *local, HDC hdc, const char *alias, const char 
   }
 
   fontmap_append(local, alias, fontmap);
-   /* fontmap_append() should be called befor EnumFontFamiliesExW() when compiled with -O2 option */
+   /* fontmap_append() should be called before EnumFontFamiliesExW() when compiled with -O2 option */
 
   EnumFontFamiliesExW(hdc, &logfont, (FONTENUMPROCW) enum_font_cb, (LPARAM) fontmap, 0);
 }

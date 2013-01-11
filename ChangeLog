@@ -1,3 +1,8 @@
+2013-01-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/ogra2emf.c (enum_font_cb): check argument "FontType" and
+	return with 0 if necessary.
+
 2013-01-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (PasteObjectsFromClipboard): check source
