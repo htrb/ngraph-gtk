@@ -49,7 +49,7 @@ static char *gra2emf_errorlist[]={
 struct gra2emf_fontmap
 {
   char *name;
-  int char_set[CHAR_SET_NUM];
+  int char_set[CHAR_SET_NUM + 1];
   struct gra2emf_fontmap *next;
 };
 
@@ -97,13 +97,9 @@ enum_font_cb(ENUMLOGFONTEXW *lpelfe, NEWTEXTMETRICEXW *lpntme, DWORD FontType, L
   }
 
   fontmap = (struct gra2emf_fontmap *) lParam;
-  if (fontmap == NULL) {
-    return 1;
-  }
-
   char_set = lpntme->ntmTm.tmCharSet;
 
-  for (i = 0; i < CHAR_SET_NUM - 1; i++) {
+  for (i = 0; i < CHAR_SET_NUM; i++) {
     if (fontmap->char_set[i] < 0) {
       fontmap->char_set[i] = char_set;
       fontmap->char_set[i + 1] = -1;
