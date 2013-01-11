@@ -65,6 +65,9 @@
 #define SCROLL_INC 20
 #define POINT_ERROR 4
 
+#define ZOOM_SPEED_NORMAL 1.4
+#define ZOOM_SPEED_LITTLE 1.1
+
 enum object_move_type {
   OBJECT_MOVE_TYPE_TOP,
   OBJECT_MOVE_TYPE_UP,
@@ -2806,7 +2809,7 @@ mouse_down_move_data(struct Viewer *d)
 #define VIEWER_DPI_MAX 620
 #define VIEWER_DPI_MIN  20
 
-#define ANIM_DIV 10
+#define ANIM_DIV 1
 static void
 show_zoom_animation(struct Viewer *d, TPoint *point, double zoom)
 {
@@ -2890,7 +2893,7 @@ show_move_animation(struct Viewer *d, int x, int y)
 #endif	/* SHOW_MOVE_ANIMATION */
 
 static void
-mouse_down_zoom(unsigned int state, TPoint *point, struct Viewer *d, int zoom_out)
+mouse_down_zoom2(unsigned int state, TPoint *point, struct Viewer *d, int zoom_out, double factor)
 {
   static double saved_dpi_d = -1;
   static double saved_dpi_i = -1;
@@ -2922,7 +2925,7 @@ mouse_down_zoom(unsigned int state, TPoint *point, struct Viewer *d, int zoom_ou
     saved_dpi_d = vdpi;
   }
 
-  dpi = (zoom_out) ? saved_dpi_d / sqrt(2) : saved_dpi_d * sqrt(2);
+  dpi = (zoom_out) ? saved_dpi_d / factor : saved_dpi_d * factor;
   if (dpi < VIEWER_DPI_MIN) {
     saved_dpi_i = VIEWER_DPI_MIN;
     message_beep(TopLevel);
@@ -2949,6 +2952,18 @@ mouse_down_zoom(unsigned int state, TPoint *point, struct Viewer *d, int zoom_ou
 
  End:
   ZoomLock = FALSE;
+}
+
+static void
+mouse_down_zoom(unsigned int state, TPoint *point, struct Viewer *d, int zoom_out)
+{
+  mouse_down_zoom2(state, point, d, zoom_out, ZOOM_SPEED_NORMAL);
+}
+
+static void
+mouse_down_zoom_little(unsigned int state, TPoint *point, struct Viewer *d, int zoom_out)
+{
+  mouse_down_zoom2(state, point, d, zoom_out, ZOOM_SPEED_LITTLE);
 }
 
 static void
@@ -4645,14 +4660,14 @@ ViewerEvScroll(GtkWidget *w, GdkEventScroll *e, gpointer client_data)
   switch (e->direction) {
   case GDK_SCROLL_UP:
     if (e->state & GDK_CONTROL_MASK) {
-      mouse_down_zoom(0, &point, d, FALSE);
+      mouse_down_zoom_little(0, &point, d, FALSE);
     } else {
       range_increment(d->VScroll, -SCROLL_INC);
     }
     return TRUE;
   case GDK_SCROLL_DOWN:
     if (e->state & GDK_CONTROL_MASK) {
-      mouse_down_zoom(0, &point, d, TRUE);
+      mouse_down_zoom_little(0, &point, d, TRUE);
     } else {
       range_increment(d->VScroll, SCROLL_INC);
     }
@@ -4667,7 +4682,7 @@ ViewerEvScroll(GtkWidget *w, GdkEventScroll *e, gpointer client_data)
   case GDK_SCROLL_SMOOTH:
     if (gdk_event_get_scroll_deltas((GdkEvent *) e, &x, &y)) {
       if ((e->state & GDK_CONTROL_MASK) && y != 0) {
-	mouse_down_zoom(0, &point, d, y > 0);
+	mouse_down_zoom_little(0, &point, d, y > 0);
       } else {
 	range_increment(d->HScroll, x * SCROLL_INC);
 	range_increment(d->VScroll, y * SCROLL_INC);

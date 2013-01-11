@@ -1,5 +1,9 @@
 2013-01-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11view.c (ZOOM_SPEED_LITTLE, ZOOM_SPEED_NORMAL)
+	(mouse_down_zoom_little, mouse_down_zoom2): added.
+	(ViewerEvScroll): use "mouse_down_zoom_little()".
+
 	* src/gtk/ogra2emf.c (enum_font_cb): check argument "FontType" and
 	return with 0 if necessary.
 
