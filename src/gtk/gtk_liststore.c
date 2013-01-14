@@ -74,7 +74,11 @@ create_column(n_list_store *list, int i)
   case G_TYPE_UINT64:
   case G_TYPE_FLOAT:
   case G_TYPE_DOUBLE:
+#if GTK_CHECK_VERSION(3, 8, 0)
     renderer = gtk_cell_renderer_spin_new();
+#else
+    renderer = gtk_cell_renderer_text_new();
+#endif
     col = gtk_tree_view_column_new_with_attributes(_(list[i].title), renderer,
 						   "text", i, NULL);
     gtk_tree_view_column_set_resizable(col, TRUE);
@@ -83,6 +87,7 @@ create_column(n_list_store *list, int i)
       if (list[i].type == G_TYPE_DOUBLE || list[i].type == G_TYPE_FLOAT) {
 	g_object_set((GObject *) renderer,
 		     "editable", list[i].editable,
+#if GTK_CHECK_VERSION(3, 8, 0)
 		     "adjustment", gtk_adjustment_new(0,
 						      list[i].min / 100.0,
 						      list[i].max / 100.0,
@@ -90,11 +95,13 @@ create_column(n_list_store *list, int i)
 						      list[i].page / 100.0,
 						      0),
 		     "digits", 2,
+#endif
 		     NULL);
 	g_object_set_data(G_OBJECT(renderer), "user-data", &list[i]);
       } else {
 	g_object_set((GObject *) renderer,
 		     "editable", list[i].editable,
+#if GTK_CHECK_VERSION(3, 8, 0)
 		     "adjustment", gtk_adjustment_new(0,
 						      list[i].min,
 						      list[i].max,
@@ -102,6 +109,7 @@ create_column(n_list_store *list, int i)
 						      list[i].page,
 						      0),
 		     "digits", 0,
+#endif
 		     NULL);
 	g_object_set_data(G_OBJECT(renderer), "user-data", &list[i]);
 
