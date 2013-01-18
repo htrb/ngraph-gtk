@@ -1274,24 +1274,11 @@ hide_minimize_menu_item(GtkWidget *widget, gpointer user_data)
 static void
 swin_realized(GtkWidget *widget, gpointer user_data)
 {
-  struct SubWin *d;
   struct obj_list_data *ptr;
 
-  d = (struct SubWin *) user_data;
+  ptr = (struct obj_list_data *) user_data;
 
-  switch (d->type) {
-  case TypeFileWin:
-  case TypeAxisWin:
-  case TypeMergeWin:
-  case TypeLegendWin:
-    for (ptr = d->data.data; ptr; ptr = ptr->next) {
-      ptr->update(ptr, TRUE);
-    }
-    break;
-  case TypeCoordWin:
-  case TypeInfoWin:
-    break;
-  }
+  ptr->update(ptr, TRUE);
 }
 
 static GtkWidget *
@@ -1353,8 +1340,6 @@ sub_window_create(struct SubWin *d, const char *title, GtkWidget *swin, const ch
   g_signal_connect(dlg, "delete-event", G_CALLBACK(cb_del), d);
   g_signal_connect(dlg, "destroy", G_CALLBACK(cb_destroy), d);
   g_signal_connect(dlg, "key-press-event", G_CALLBACK(ev_sub_win_key_down), d);
-
-  g_signal_connect(swin, "realize", G_CALLBACK(swin_realized), d);
 
   gtk_widget_show_all(swin);
 
@@ -1446,6 +1431,8 @@ list_widget_create(struct SubWin *d, int lisu_num, n_list_store *list, int can_f
   }
   g_list_free(col_list);
 
+  g_signal_connect(swin, "realize", G_CALLBACK(swin_realized), data);
+
   *w = swin;
 
   return data;
@@ -1490,7 +1477,7 @@ tree_sub_window_create(struct SubWin *d, const char *title, int page_num, int *l
   }
   gtk_notebook_set_current_page(GTK_NOTEBOOK(tab), 0);
 
-  return sub_window_create((struct SubWin *)d, title, tab, xpm, xpm2);
+  return sub_window_create(d, title, tab, xpm, xpm2);
 }
 
 gboolean

@@ -1,3 +1,13 @@
+2013-01-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_subwin.c (swin_realized): type of the "user_data" is
+	"struct obj_list_data *".
+	(list_widget_create): "realize" signal is connected to the
+	function "swin_realized()".
+	(sub_window_create): don't call "g_signal_connect()" to the
+	variable "swin".
+	(tree_sub_window_create): remove redundant cast to "struct SubWin *".
+
 2013-01-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_liststore.c (create_column): don't use
