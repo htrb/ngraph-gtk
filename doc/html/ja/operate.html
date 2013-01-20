@@ -24,7 +24,10 @@
 Ngraph で使用するウィンドウを説明します。<br>
 <br>
 <table border=1>
-<tr><td>Viewer Window</td><td>グラフが表示されているウィンドウです。マウスによる各種設定ができます</td></tr>
+<tr><td>Main Window</td><td>グラフが表示されているウィンドウです。マウスによる各種設定ができます</td></tr>
+</table>
+<p>シングルウィンドウモードでない場合は下記のウィンドウも表示・非表示を切り替えて使用できます。</p>
+<table border=1>
 <tr><td>Data Window</td><td><img src="../img/windata.png" width="20" height="20" alt="">を押すと開かれるウィンドウです。データファイルのパラメタを一覧表示します</td></tr>
 <tr><td>Axis Window</td><td><img src="../img/winaxis.png" width="20" height="20" alt="">を押すと開かれるウィンドウです。軸のパラメタを一覧表示します</td></tr>
 <tr><td>Legend Window</td><td><img src="../img/winlgnd.png" width="20" height="20" alt="">を押すと開かれるウィンドウです。凡例のパラメタを一覧表示します</td></tr>
@@ -49,6 +52,7 @@ Ngraph で使用するウィンドウを説明します。<br>
 <br>
 <br>
 
+<p>次のボタンはシングルウィンドウモードの場合は表示されません。</p>
 <table border=1>
 <tr><td><img src="../img/windata.png" width="20" height="20" alt=""></td><td>Data Window を開きます</td></tr>
 <tr><td><img src="../img/winaxis.png" width="20" height="20" alt=""></td><td>Axis Window を開きます</td></tr>
@@ -72,7 +76,7 @@ Ngraph で使用するウィンドウを説明します。<br>
 </table>
 <br>
 
-Viewer Windowで使用可能なコントロールボタン<br>
+使用可能なコントロールボタン<br>
 <br>
 
 次のボタンは Viewer Window でのマウス操作モードを設定します。<br>
@@ -109,7 +113,7 @@ Viewer Windowで使用可能なコントロールボタン<br>
 <h2><a href="#TOP">マウスによる操作</a></h2>
 <br>
 <div>
-Data Window, Axis Window, Legend Window, Merge Window のパラメタ一覧ウィンドウでは...
+Data タブ, Axis タブ, 各種 Legend タブ, Merge タブのパラメタ一覧では...
 <ul>
  <li> 左ボタンクリックでフォーカスします。
  <li> 左ボタンのダブルクリックでダイアログボックスをオープンします。
@@ -119,7 +123,7 @@ Data Window, Axis Window, Legend Window, Merge Window のパラメタ一覧ウ�
       開かずに、直接設定の変更が出来ます。
 </ul>
 <br>
-グリッド： Viewer Windowでは，凡例や軸の新規作成, 移動はグリッドに沿って行われます。
+グリッド： グラフ上では，凡例や軸の新規作成, 移動はグリッドに沿って行われます。
 <ul>
 <li>グリッドの大きさは [設定]-[ビューア] で行います。
 <li>SHIFTキー押下中はグリッドが解除されます。
@@ -127,18 +131,18 @@ Data Window, Axis Window, Legend Window, Merge Window のパラメタ一覧ウ�
 <br>
 オブジェクトの選択
 <ul>
-<li> Viewer WindowでLegendや軸の選択を行うときには選択したいグラフィックス
+<li> グラフ上でLegendや軸の選択を行うときには選択したいグラフィックス
      オブジェクトに有ったマウスモードを選び(コントロールボタン 
      <img SRC="../img/bpoint.png" width="20" height="20" alt="">
      <img SRC="../img/blgndpo.png" width="20" height="20" alt="">
      <img SRC="../img/baxispo.png" width="20" height="20" alt="">
      のいずれかを選びます)、マウスでクリックするか、囲むようにして選択します。
-<li> Viewer WindowでLegendや軸の選択を行うときに、それらが込み合っていてマ
-     ウスでの個別選択が困難な時には、Legend Window、Axis Windowで選択した
-     いオブジェクトを選び[Space]を押します(あるいはポップアップメニューを
-     出して"Focus"メニューを選びます)。すると、対応するグラフィックスオブ
-     ジェクトがViewer Window上で選択状態になります。SHIFT キーを押しなが
-     ら [SPACE] を押すことで複数のオブジェクトを選択状態に出来ます。
+<li> グラフ上でLegendや軸の選択を行うときに、それらが込み合っていてマウス
+     での個別選択が困難な時には、各種 Legend タブ、Axis タブで選択したい
+     オブジェクトを選び[Space]を押します(あるいはポップアップメニューを出
+     して"Focus"メニューを選びます)。すると、対応するグラフィックスオブジェ
+     クトがグラフ上で選択状態になります。SHIFT キーを押しながら [SPACE]
+     を押すことで複数のオブジェクトを選択状態に出来ます。
 </ul>
 <br>
 複数点からなる凡例の作成
