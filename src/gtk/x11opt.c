@@ -1408,7 +1408,7 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->hist_size = w;
 
     w = create_spin_entry(1, INFOWIN_SIZE_MAX, 1, FALSE, TRUE);
-    add_widget_to_table(table, w, _("_Length of information window:"), FALSE, i++);
+    add_widget_to_table(table, w, _("_Length of information view:"), FALSE, i++);
     d->info_size = w;
 
     w = create_spin_entry(0, SPIN_ENTRY_MAX, 1, FALSE, TRUE);
@@ -1428,11 +1428,11 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     i = 0;
     w = gtk_font_button_new();
-    add_widget_to_table(table, w, _("_Coordinate window:"), FALSE, i++);
+    add_widget_to_table(table, w, _("_Coordinate view:"), FALSE, i++);
     d->coordwin_font = w;
 
     w = gtk_font_button_new();
-    add_widget_to_table(table, w, _("_Information window:"), FALSE, i++);
+    add_widget_to_table(table, w, _("_Information view:"), FALSE, i++);
     d->infowin_font = w;
 
     w = gtk_font_button_new();

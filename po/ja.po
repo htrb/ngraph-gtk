@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2013-01-14 16:43+0900\n"
-"PO-Revision-Date: 2012-12-16 11:26+0900\n"
+"POT-Creation-Date: 2013-01-20 21:06+0900\n"
+"PO-Revision-Date: 2013-01-20 21:17+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja_JP\n"
@@ -2245,20 +2245,20 @@ msgid "_Size of completion history:"
 msgstr "補完履歴のサイズ(_S):"
 
 #: src/gtk/x11opt.c:1411
-msgid "_Length of information window:"
-msgstr "information window の行数(_L):"
+msgid "_Length of information view:"
+msgstr "information 表示の行数(_L):"
 
 #: src/gtk/x11opt.c:1415
 msgid "_Length of data preview:"
 msgstr "データプレビューの行数(_L):"
 
 #: src/gtk/x11opt.c:1431
-msgid "_Coordinate window:"
-msgstr "_Coordinate window:"
+msgid "_Coordinate view:"
+msgstr "_Coordinate 表示:"
 
 #: src/gtk/x11opt.c:1435
-msgid "_Information window:"
-msgstr "_Information window:"
+msgid "_Information view:"
+msgstr "_Information 表示:"
 
 #: src/gtk/x11opt.c:1439
 msgid "data _Preview:"
