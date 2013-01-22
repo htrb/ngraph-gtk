@@ -110,6 +110,22 @@ GdkCursorType Cursor[] = {
 static void clear_information(GtkAction *w, gpointer user_data);
 static void toggle_view_cb(GtkToggleAction *action, gpointer data);
 
+struct actions {
+  const char *name;
+  GtkAction *action;
+  enum {
+    FOCUS_TYPE_1 = 0,
+    FOCUS_TYPE_2,
+    FOCUS_TYPE_3,
+    FOCUS_TYPE_4,
+    FOCUS_TYPE_5,
+    FOCUS_TYPE_6,
+    FOCUS_TYPE_NUM,
+  } type;
+};
+
+static void set_action_sensitivity(struct actions *actions, int *focus_type, int n);
+
 enum {
   RECENT_TYPE_GRAPH,
   RECENT_TYPE_DATA,
@@ -584,6 +600,19 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     "<Ngraph>/Edit/Delete",
     GDK_KEY_Delete,
+  },
+  {
+    ACTION_TYPE_NORMAL,
+    "EditDuplicateAction",
+    NULL,
+    N_("_Duplicate"),
+    NULL,
+    NULL,
+    G_CALLBACK(CmEditMenuCB),
+    MenuIdEditDuplicate,
+    NULL,
+    "<Ngraph>/Edit/Duplicate",
+    GDK_KEY_Insert,
   },
   {
     ACTION_TYPE_NORMAL,
@@ -2037,26 +2066,23 @@ create_addin_menu(void)
   gtk_widget_show_all(menu);
 }
 
-void
-set_focus_sensitivity(const struct Viewer *d)
+static void
+set_action_sensitivity(struct actions *actions, int *focus_type, int n)
+{
+  int i;
+
+  for (i = 0; i < n; i++) {
+    gtk_action_set_sensitive(actions[i].action, focus_type[actions[i].type]);
+  }
+}
+
+static void
+set_focus_sensitivity_sub(const struct Viewer *d, int insensitive)
 {
   int num, type;
   GtkClipboard *clip;
   gboolean state;
-  unsigned int i;
-  struct actions {
-    const char *name;
-    GtkAction *action;
-    enum {
-      FOCUS_TYPE_1 = 0,
-      FOCUS_TYPE_2,
-      FOCUS_TYPE_3,
-      FOCUS_TYPE_4,
-      FOCUS_TYPE_5,
-      FOCUS_TYPE_6,
-      FOCUS_TYPE_NUM,
-    } type;
-  } actions[] = {
+  struct actions actions[] = {
     {"EditCutAction"		, NULL, FOCUS_TYPE_1},
     {"EditCopyAction"		, NULL, FOCUS_TYPE_1},
     {"EditRotateCCWAction"	, NULL, FOCUS_TYPE_2},
@@ -2064,6 +2090,7 @@ set_focus_sensitivity(const struct Viewer *d)
     {"EditFlipVActiopn"		, NULL, FOCUS_TYPE_3},
     {"EditFlipHAction"		, NULL, FOCUS_TYPE_3},
     {"EditDeleteAction"		, NULL, FOCUS_TYPE_4},
+    {"EditDuplicateAction"	, NULL, FOCUS_TYPE_4},
     {"EditAlignLeftAction"	, NULL, FOCUS_TYPE_4},
     {"EditAlignRightAction"	, NULL, FOCUS_TYPE_4},
     {"EditAlignHCenterAction"	, NULL, FOCUS_TYPE_4},
@@ -2078,16 +2105,29 @@ set_focus_sensitivity(const struct Viewer *d)
     {"PopupUpdateAction"	, NULL, FOCUS_TYPE_4},
   };
   struct actions edit_paste_action = {"EditPasteAction", NULL};
-  int focus_type[FOCUS_TYPE_NUM];
+  int focus_type[FOCUS_TYPE_NUM], i, n;
+
+  n = sizeof(actions) / sizeof(*actions);
 
   if (actions[0].action == NULL) {
-    for (i = 0; i < sizeof(actions) / sizeof(*actions); i++) {
+    for (i = 0; i < n; i++) {
       actions[i].action = gtk_action_group_get_action(ActionGroup, actions[i].name);
     }
     edit_paste_action.action = gtk_action_group_get_action(ActionGroup, edit_paste_action.name);
   }
 
   num = check_focused_obj_type(d, &type);
+
+  if (insensitive) {
+    focus_type[FOCUS_TYPE_1] = FALSE;
+    focus_type[FOCUS_TYPE_2] = FALSE;
+    focus_type[FOCUS_TYPE_3] = FALSE;
+    focus_type[FOCUS_TYPE_4] = FALSE;
+    focus_type[FOCUS_TYPE_5] = FALSE;
+    focus_type[FOCUS_TYPE_6] = FALSE;
+    set_action_sensitivity(actions, focus_type, n);
+    return;
+  }
 
   focus_type[FOCUS_TYPE_1] = (! (type & FOCUS_OBJ_TYPE_AXIS) && (type & (FOCUS_OBJ_TYPE_MERGE | FOCUS_OBJ_TYPE_LEGEND)));
   focus_type[FOCUS_TYPE_2] = (! (type & FOCUS_OBJ_TYPE_MERGE) && (type & (FOCUS_OBJ_TYPE_AXIS | FOCUS_OBJ_TYPE_LEGEND)));
@@ -2108,9 +2148,7 @@ set_focus_sensitivity(const struct Viewer *d)
     focus_type[FOCUS_TYPE_6] = (id < last_id);
   }
 
-  for (i = 0; i < sizeof(actions) / sizeof(*actions); i++) {
-    gtk_action_set_sensitive(actions[i].action, focus_type[actions[i].type]);
-  }
+  set_action_sensitivity(actions, focus_type, n);
 
   clip = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
   state = gtk_clipboard_wait_is_text_available(clip);
@@ -2123,6 +2161,18 @@ set_focus_sensitivity(const struct Viewer *d)
   default:
     gtk_action_set_sensitive(edit_paste_action.action, FALSE);
   }
+}
+
+void
+set_focus_insensitive(const struct Viewer *d)
+{
+  set_focus_sensitivity_sub(d, TRUE);
+}
+
+void
+set_focus_sensitivity(const struct Viewer *d)
+{
+  set_focus_sensitivity_sub(d, FALSE);
 }
 
 static void

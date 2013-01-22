@@ -1450,6 +1450,8 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
   gtk_window_set_title(GTK_WINDOW(wi), title);
 
   if (makewidget) {
+    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_DELETE, IDDELETE);
+
 #if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
 #else
@@ -4535,6 +4537,7 @@ filewin_ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
   switch (e->keyval) {
   case GDK_KEY_Delete:
     FileWinFileDelete(d);
+    UnFocus();
     break;
   case GDK_KEY_Return:
     if (e->state & GDK_SHIFT_MASK) {
@@ -4542,21 +4545,26 @@ filewin_ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
     }
 
     FileWinFileUpdate(d);
+    UnFocus();
     break;
   case GDK_KEY_Insert:
-    if (e->state & GDK_SHIFT_MASK)
+    if (e->state & GDK_SHIFT_MASK) {
       FileWinFileCopy2(d);
-    else
+    } else {
       FileWinFileCopy(d);
+    }
+    UnFocus();
     break;
   case GDK_KEY_space:
     if (e->state & GDK_CONTROL_MASK)
       return FALSE;
 
     FileWinFileDraw(d);
+    UnFocus();
     break;
   case GDK_KEY_F:
     FileWinFit(d);
+    UnFocus();
     break;
   default:
     return FALSE;

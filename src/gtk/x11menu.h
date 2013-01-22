@@ -41,6 +41,7 @@ enum MenuID {
   MenuIdEditCopy,
   MenuIdEditPaste,
   MenuIdEditDelete,
+  MenuIdEditDuplicate,
   MenuIdAlignLeft,
   MenuIdAlignVCenter,
   MenuIdAlignRight,
@@ -242,6 +243,7 @@ void set_draw_lock(int lock);
 int find_gra2gdk_inst(struct objlist **o, N_VALUE **i, struct objlist **ro, int *routput, struct gra2cairo_local **rlocal);
 void set_axis_undo_button_sensitivity(int state);
 void set_modified_state(int state);
+void set_focus_insensitive(const struct Viewer *d);
 void set_focus_sensitivity(const struct Viewer *d);
 void window_action_set_active(enum SubWinType type, int state);
 void window_action_toggle(enum SubWinType type);

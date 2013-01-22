@@ -1955,7 +1955,8 @@ ShowFocusFrame(cairo_t *cr, const struct Viewer *d)
   }
 
   restorestdio(&save);
-  set_focus_sensitivity(d);
+  /* set_focus_sensitivity(d); */
+  /* set_focus_sensitivity() is now called in add_focus_obj(). */
 }
 
 static void
@@ -4824,9 +4825,6 @@ ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data)
   case GDK_KEY_space:
     CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
     return TRUE;
-  case GDK_KEY_Insert:
-    ViewCopy();
-    return TRUE;
   case GDK_KEY_Page_Up:
     range_increment(d->VScroll, -SCROLL_INC * 4);
     return TRUE;
@@ -5206,6 +5204,8 @@ add_focus_obj(struct narray *focusobj, struct objlist *obj, int oid)
   focus->oid = oid;
   arrayadd(focusobj, &focus);
 
+  set_focus_sensitivity(&NgraphApp.Viewer);
+
   return TRUE;
 }
 
@@ -5295,7 +5295,9 @@ Focus(struct objlist *fobj, int id, int add)
   d->allclear = FALSE;
   UpdateAll();
   d->ShowFrame = TRUE;
-  gtk_widget_grab_focus(d->Win);
+
+  /* this is inconvenient when one use single window mode. */
+  /* gtk_widget_grab_focus(d->Win); */
 
   restorestdio(&save);
 }
@@ -6308,6 +6310,9 @@ CmEditMenuCB(GtkAction *w, gpointer client_data)
     break;
   case MenuIdEditDelete:
     ViewDelete();
+    break;
+  case MenuIdEditDuplicate:
+    ViewCopy();
     break;
   case MenuIdAlignLeft:
     AlignFocusedObj(VIEW_ALIGN_LEFT);

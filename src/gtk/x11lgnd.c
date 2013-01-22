@@ -2383,8 +2383,9 @@ CmOptionTextDef(GtkAction *w, gpointer client_data)
     }
     delobj(obj, id);
     UpdateAll2();
-    if (! modified)
+    if (! modified) {
       reset_graph_modified();
+    }
   }
 }
 

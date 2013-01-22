@@ -1,3 +1,35 @@
+2013-01-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_subwin.c (copy, delete, move_top, move_last)
+	(move_up, move_down, hidden): call "UnFocus()".
+	(list_focused, list_unfocused): added.
+	(list_widget_create): use "focus-in-event" and "focus-in-event" to
+	improve behavior of single window mode.
+
+	* src/gtk/x11file.c (FitDialogSetup): add delete button to the
+	dialog.
+	(filewin_ev_key_down): call "UnFocus()".
+
+	* src/gtk/x11view.c (ShowFocusFrame): don't call
+	"set_focus_sensitivity()".
+	(ViewerEvKeyDown): "DGK_KEY_Insert" is not handled.
+	(Focus): don't call "gtk_widget_grab_focus()".
+	(CmEditMenuCB): add case "MenuIdEditDuplicate".
+
+	* src/gtk/x11axis.c (axiswin_delete_axis): call "UnFocus()".
+
+	* src/gtk/x11menu.c (set_action_sensitivity)
+	(set_focus_sensitivity_sub, set_focus_insensitive): added.
+	(set_focus_sensitivity): use "set_focus_sensitivity_sub()".
+
+	* initfile/NgraphUI.xml.win: add "EditDuplicate" item.
+
+	* initfile/NgraphUI.xml: add "EditDuplicate" item.
+
+2013-01-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (FitDialogSetup): add delete button.
+
 2013-01-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_subwin.c (swin_realized): type of the "user_data" is
@@ -853,7 +885,7 @@
 	SubWin *" to "struct obj_list_data *".
 	(do_popup): accepts legend window.
 	(sub_window_create): remove last parameter.
-	(sub_window_create): dont create scrolled window.
+	(sub_window_create): don't create scrolled window.
 	(text_sub_window_create, label_sub_window_create): create scrolled
 	window.
 	(list_widget_create): added.
@@ -953,7 +985,7 @@
 
 2012-06-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/gtk/x11axis.c (baseline_tab_create): dont call
+	* src/gtk/x11axis.c (baseline_tab_create): don't call
 	"gtk_widget_set_size_request()".
 
 	* src/gtk/x11menu.c (setupwindow): call "gtk_toolbar_set_style()"
@@ -3320,7 +3352,7 @@
 	(create_action_group): added.
 	(CmReloadWindowConfig): use "window_action_set_active".
 
-	* src/gtk/x11opt.c (PrefScriptDialogClose): dont update "add-in"
+	* src/gtk/x11opt.c (PrefScriptDialogClose): don't update "add-in"
 	menu.
 
 	* src/gtk/x11graph.c (CmGraphHistory): check "uri" is NULL or not.
@@ -4378,7 +4410,7 @@
 	(GRAexpandtext): use "case" statement.
 	(GRAdrawtext, GRAtextextent): add format command "\B", "\I" and
 	"\N".
-	(GRAtextextent, GRAtextextentraw): dont check "kanji" code.
+	(GRAtextextent, GRAtextextentraw): don't check "kanji" code.
 	(GRAinputold): convert argument of the "S" command Shift-JI to
 	UTF-8.
 
@@ -4446,7 +4478,7 @@
 	settings.
 	(set_font_from_font_selection_dialog): remove settings related to
 	font type.
-	(PrefFontDialogSetup): dont show the style of the font.
+	(PrefFontDialogSetup): don't show the style of the font.
 
 	* src/gtk/x11merge.c (MergeDialogSetupItem, MergeDialogSetup)
 	(MergeDialogClose): remove japanese specified settings.
@@ -9060,7 +9092,6 @@
 
 	* src/gtk/ox11menu.h: add prototype of "get_graph_modified",
 	"reset_graph_modified" and "set_graph_modified".
-	
 
 	* src/gtk/ox11menu.c (get_graph_modified, reset_graph_modified)
 	(set_graph_modified): add
@@ -9391,7 +9422,6 @@
 
 	* src/gtk/main.c (main): check return value of "newobj()" and
 	"chkobjinst()".
-	
 
 2008-11-12  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
@@ -9571,7 +9601,6 @@
 
 	* initfile/.Ngraph (check_set): added.
 	* initfile/.Ngraph: use check_set to initialize file object.
-	
 
 2008-09-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
@@ -9812,7 +9841,6 @@
 	* src/gtk/x11view.c (Focus): remove
 	'gtk_toggle_tool_button_set_active()'.
 	(check_focused_obj): now return index of found item.
-	(Focus): remove gtk_toggle_tool_button_set_active().
 	(ShowPoints): draw arc when 'd->Mode == ArcB'.
 	(calc_snap_angle, calc_integer_ratio, SQRT3): added.
 	(ViewerEvMouseMove): call calc_snap_angle() or

@@ -44,6 +44,7 @@
       <menuitem name="EditCopy" action="EditCopyAction"/>
       <menuitem name="EditPaste" action="EditPasteAction"/>
       <menuitem name="EditDelete" action="EditDeleteAction"/>
+      <menuitem name="EditDuplicate" action="EditDuplicateAction"/>
       <separator/>
       <menu name="EditOrder" action="EditOrderAction">
         <menuitem name="EditOrderTop" action="EditOrderTopAction"/>
@@ -211,6 +212,7 @@
     <menuitem name="EditCopy" action="EditCopyAction"/>
     <menuitem name="EditPaste" action="EditPasteAction"/>
     <menuitem name="EditDelete" action="EditDeleteAction"/>
+    <menuitem name="EditDuplicate" action="EditDuplicateAction"/>
     <separator/>
     <menuitem name="PopupUpdate" action="PopupUpdateAction"/>
     <separator/>

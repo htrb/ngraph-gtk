@@ -3249,6 +3249,7 @@ axiswin_delete_axis(struct obj_list_data *d)
   if (Menulock || Globallock)
     return;
 
+  UnFocus();
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), AXIS_WIN_COL_ID);
   num = chkobjlastinst(d->obj);
 

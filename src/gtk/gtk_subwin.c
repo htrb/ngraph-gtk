@@ -762,6 +762,8 @@ copy(struct obj_list_data *d)
   if (Menulock || Globallock)
     return;
 
+  UnFocus();
+
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
   num = chkobjlastinst(d->obj);
 
@@ -790,6 +792,8 @@ delete(struct obj_list_data *d)
   if (sel < 0 || sel > num) {
     return;
   }
+
+  UnFocus();
 
   if (d->delete) {
     d->delete(d, sel);
@@ -826,6 +830,8 @@ move_top(struct obj_list_data *d)
     return;
   }
 
+  UnFocus();
+
   movetopobj(d->obj, sel);
   d->select = 0;
   d->update(d, FALSE);
@@ -839,6 +845,8 @@ move_last(struct obj_list_data *d)
 
   if (Menulock || Globallock)
     return;
+
+  UnFocus();
 
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
   num = chkobjlastinst(d->obj);
@@ -859,6 +867,9 @@ move_up(struct obj_list_data *d)
 
   if (Menulock || Globallock)
     return;
+
+  UnFocus();
+
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
   num = chkobjlastinst(d->obj);
   if ((sel >= 1) && (sel <= num)) {
@@ -876,6 +887,9 @@ move_down(struct obj_list_data *d)
 
   if (Menulock || Globallock)
     return;
+
+  UnFocus();
+
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
   num = chkobjlastinst(d->obj);
   if ((sel >= 0) && (sel < num)) {
@@ -1021,6 +1035,8 @@ hidden(struct obj_list_data *d)
   if (sel < 0 || sel > num) {
     return;
   }
+
+  UnFocus();
 
   getobj(d->obj, "hidden", sel, 0, NULL, &hidden);
   hidden = hidden ? FALSE : TRUE;
@@ -1391,6 +1407,20 @@ label_sub_window_create(struct SubWin *d, const char *title, const char **xpm, c
   return sub_window_create(d, title, swin, xpm, xpm2);
 }
 
+static gboolean
+list_focused(GtkWidget *widget, GdkEvent *ev, gpointer user_data)
+{
+  set_focus_insensitive(&NgraphApp.Viewer);
+  return FALSE;
+}
+
+static gboolean
+list_unfocused(GtkWidget *widget, GdkEvent *ev, gpointer user_data)
+{
+  set_focus_sensitivity(&NgraphApp.Viewer);
+  return FALSE;
+}
+
 static struct obj_list_data *
 list_widget_create(struct SubWin *d, int lisu_num, n_list_store *list, int can_focus, GtkWidget **w)
 {
@@ -1413,6 +1443,10 @@ list_widget_create(struct SubWin *d, int lisu_num, n_list_store *list, int can_f
   g_signal_connect(lstor, "button-press-event", G_CALLBACK(ev_button_down), data);
   g_signal_connect(lstor, "button-release-event", G_CALLBACK(ev_button_up), data);
   g_signal_connect(lstor, "key-press-event", G_CALLBACK(ev_key_down), data);
+
+  /* to handle key-press-event correctly in single window mode */
+  g_signal_connect(lstor, "focus-in-event", G_CALLBACK(list_focused), NULL);
+  g_signal_connect(lstor, "focus-out-event", G_CALLBACK(list_unfocused), NULL);
 
   gtk_tree_view_set_enable_search(GTK_TREE_VIEW(lstor), TRUE);
   gtk_tree_view_set_search_column(GTK_TREE_VIEW(lstor), COL_ID);
