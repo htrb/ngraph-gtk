@@ -4011,7 +4011,7 @@ FileWinFit(struct obj_list_data *d)
   if (Menulock || Globallock)
     return;
 
-  sel = d->select;
+  sel = list_store_get_selected_int(GTK_WIDGET(d->text), FILE_WIN_COL_ID);
   num = chkobjlastinst(d->obj);
 
   if (sel < 0 || sel > num)
@@ -4562,9 +4562,11 @@ filewin_ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
     FileWinFileDraw(d);
     UnFocus();
     break;
-  case GDK_KEY_F:
-    FileWinFit(d);
-    UnFocus();
+  case GDK_KEY_f:
+    if (e->state & GDK_CONTROL_MASK) {
+      FileWinFit(d);
+      UnFocus();
+    }
     break;
   default:
     return FALSE;

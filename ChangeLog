@@ -1,3 +1,8 @@
+2013-01-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (FileWinFit): use "list_store_get_selected_int()".
+	(filewin_ev_key_down): check "GDK_CONTROL_MASK" for the case "GDK_KEY_f".
+
 2013-01-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_subwin.c (copy, delete, move_top, move_last)
