@@ -1,3 +1,25 @@
+2013-01-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* initfile/NgraphUI.xml.win: add "Sidebar" menu.
+
+	* initfile/NgraphUI.xml: add "Sidebar" menu.
+
+	* src/gtk/ox11menu.h (menulocal): add member "sidebar".
+
+	* src/gtk/x11menu.h (MenuID): add id "MenuIdToggleSidebar".
+
+	* src/gtk/x11menu.c (ActionEntry): add "ViewSidebarAction".
+	(ActionEntry): change shortcut key of "cross bar" menu from "+" to
+	"^g",
+	(set_window_action_visibility): set visibility of
+	"ViewSidebarAction".
+	(multi_to_single): check "Menulocal.sidebar".0
+	(toggle_view_cb): handle "MenuIdToggleSidebar".
+	(application): hide only "NgraphApp.Viewer.side_pane1".
+
+	* src/gtk/ox11menu.c (MenuConfigToggleView): add sidebar setting.
+	(menuinit): initialize "Menulocal.sidebar".
+
 2013-01-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (FileWinFit): use "list_store_get_selected_int()".

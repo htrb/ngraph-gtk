@@ -132,7 +132,7 @@ struct menulocal
   int savepath, savewithdata, savewithmerge;
   GtkRecentManager *ngpfilelist;
   int scriptconsole, addinconsole;
-  int statusb, ruler, scrollbar, ctoolbar, ptoolbar, show_cross, showtip, preserve_width;
+  int statusbar, sidebar, ruler, scrollbar, ctoolbar, ptoolbar, show_cross, showtip, preserve_width;
   int hist_size, info_size;
   double bg_r, bg_g, bg_b;
   int focus_frame_type, use_opacity, select_data;

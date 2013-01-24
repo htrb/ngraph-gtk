@@ -79,6 +79,7 @@
       <separator/>
       <menuitem name="ViewClearInformationWindow" action="ViewClearInformationWindowAction"/>
       <separator/>
+      <menuitem name="ViewSidebar" action="ViewSidebarAction"/>
       <menuitem name="ViewStatusbar" action="ViewStatusbarAction"/>
       <menuitem name="ViewRuler" action="ViewRulerAction"/>
       <menuitem name="ViewScrollbar" action="ViewScrollbarAction"/>

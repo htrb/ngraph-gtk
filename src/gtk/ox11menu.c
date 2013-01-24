@@ -259,7 +259,8 @@ static struct menu_config MenuConfigViewer[] = {
 
 static struct menu_config MenuConfigToggleView[] = {
   {"viewer_show_ruler",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.ruler},
-  {"status_bar",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.statusb},
+  {"sidebar",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.sidebar},
+  {"status_bar",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.statusbar},
   {"scrollbar",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.scrollbar},
   {"command_toolbar",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.ctoolbar},
   {"pointer_toolbar",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.ptoolbar},
@@ -1124,7 +1125,8 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
     = Menulocal.menuheight = Menulocal.menuwidth = DEFAULT_GEOMETRY;
   initwindowconfig();
   Menulocal.showtip = TRUE;
-  Menulocal.statusb = TRUE;
+  Menulocal.sidebar = TRUE;
+  Menulocal.statusbar = TRUE;
   Menulocal.ruler = TRUE;
   Menulocal.scrollbar = TRUE;
   Menulocal.ptoolbar = TRUE;

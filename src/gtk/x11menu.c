@@ -980,15 +980,27 @@ static struct NgraphActionEntry ActionEntry[] = {
   },
   {
     ACTION_TYPE_TOGGLE,
-    "ViewStatusbarAction",
+    "ViewSidebarAction",
     NULL,
-    N_("_Status bar"),
+    N_("_Sidebar"),
     NULL,
     NULL,
     G_CALLBACK(toggle_view_cb),
-    MenuIdToggleStatusBar,
+    MenuIdToggleSidebar,
     NULL,
-    "<Ngraph>/View/Status bar",
+    "<Ngraph>/View/Sidebar",
+  },
+  {
+    ACTION_TYPE_TOGGLE,
+    "ViewStatusbarAction",
+    NULL,
+    N_("_Statusbar"),
+    NULL,
+    NULL,
+    G_CALLBACK(toggle_view_cb),
+    MenuIdToggleStatusbar,
+    NULL,
+    "<Ngraph>/View/Statusbar",
   },
   {
     ACTION_TYPE_TOGGLE,
@@ -1049,8 +1061,8 @@ static struct NgraphActionEntry ActionEntry[] = {
     MenuIdToggleCrossGauge,
     NULL,
     "<Ngraph>/View/cross Gauge",
-    GDK_KEY_plus,
-    0,
+    GDK_KEY_g,
+    GDK_CONTROL_MASK,
   },
   {
     ACTION_TYPE_NORMAL,
@@ -2536,7 +2548,7 @@ get_toolbar(GtkUIManager *ui, const gchar *path, GCallback btn_press_func)
 static void
 set_window_action_visibility(int visibility)
 {
-  char *name[] = {
+  char *name1[] = {
     "ViewToggleDataWindowAction",
     "ViewToggleAxisWindowAction",
     "ViewToggleLegendWindowAction",
@@ -2545,12 +2557,20 @@ set_window_action_visibility(int visibility)
     "ViewToggleCoordinateWindowAction",
     "ViewDefaultWindowConfigAction",
   };
+  char *name2[] = {
+    "ViewSidebarAction",
+  };
   GtkAction *action;
   unsigned int i;
 
-  for (i = 0; i < sizeof(name) / sizeof(*name); i++) {
-    action = gtk_action_group_get_action(ActionGroup, name[i]);
+  for (i = 0; i < sizeof(name1) / sizeof(*name1); i++) {
+    action = gtk_action_group_get_action(ActionGroup, name1[i]);
     gtk_action_set_visible(action, visibility);
+  }
+
+  for (i = 0; i < sizeof(name2) / sizeof(*name2); i++) {
+    action = gtk_action_group_get_action(ActionGroup, name2[i]);
+    gtk_action_set_visible(action, ! visibility);
   }
 }
 
@@ -2684,10 +2704,10 @@ save_tab_position(void)
   init_tab_info(tab_info, n);
 
   for (i = 0; i < n; i++) {
-    tab = gtk_paned_get_child1(GTK_PANED(NgraphApp.Viewer.side_pane1));
+    tab = gtk_paned_get_child1(GTK_PANED(NgraphApp.Viewer.side_pane2));
     save_tab_position_sub(tab, tab_info + i, 0);
 
-    tab = gtk_paned_get_child2(GTK_PANED(NgraphApp.Viewer.side_pane1));
+    tab = gtk_paned_get_child2(GTK_PANED(NgraphApp.Viewer.side_pane2));
     save_tab_position_sub(tab, tab_info + i, 100);
   }
 }
@@ -2716,9 +2736,9 @@ multi_to_single(void)
 
   for (j = 0; j < tab_n; j++) {
     if (tab_info[j].tab > 0) {
-      tab = gtk_paned_get_child2(GTK_PANED(NgraphApp.Viewer.side_pane1));
+      tab = gtk_paned_get_child2(GTK_PANED(NgraphApp.Viewer.side_pane2));
     } else {
-      tab = gtk_paned_get_child1(GTK_PANED(NgraphApp.Viewer.side_pane1));
+      tab = gtk_paned_get_child1(GTK_PANED(NgraphApp.Viewer.side_pane2));
     }
     if (strcmp(tab_info[j].obj_name, "file") == 0) {
 #ifdef WINDOWS
@@ -2782,9 +2802,9 @@ multi_to_single(void)
   set_window_action_visibility(FALSE);
   set_pane_position();
 
-  gtk_widget_show(NgraphApp.Viewer.side_pane1);
-  gtk_widget_show(NgraphApp.Viewer.side_pane2);
-  gtk_widget_show(NgraphApp.Viewer.side_pane3);
+  if (Menulocal.sidebar) {
+    gtk_widget_show(NgraphApp.Viewer.side_pane1);
+  }
 
   window_action_set_active(TypeFileWin, FALSE);
   window_action_set_active(TypeAxisWin, FALSE);
@@ -2856,16 +2876,16 @@ single_to_multi(void)
   set_window_action_visibility(TRUE);
   get_pane_position();
 
-  tab2 = gtk_paned_get_child2(GTK_PANED(NgraphApp.Viewer.side_pane1));
+  tab2 = gtk_paned_get_child2(GTK_PANED(NgraphApp.Viewer.side_pane2));
   check_move_widget(tab2);
 
-  tab2 = gtk_paned_get_child1(GTK_PANED(NgraphApp.Viewer.side_pane1));
+  tab2 = gtk_paned_get_child1(GTK_PANED(NgraphApp.Viewer.side_pane2));
   check_move_widget(tab2);
 
   obj_data = NgraphApp.LegendWin.data.data;
   tab =  gtk_bin_get_child(GTK_BIN(NgraphApp.LegendWin.Win));
-  tab2 = gtk_paned_get_child2(GTK_PANED(NgraphApp.Viewer.side_pane1));
-  tab3 = gtk_paned_get_child1(GTK_PANED(NgraphApp.Viewer.side_pane1));
+  tab2 = gtk_paned_get_child2(GTK_PANED(NgraphApp.Viewer.side_pane2));
+  tab3 = gtk_paned_get_child1(GTK_PANED(NgraphApp.Viewer.side_pane2));
   for (; obj_data; obj_data = obj_data->next) {
     obj_id = chkobjectid(obj_data->obj);
     check_move_legend_widget(tab, tab2, obj_id);
@@ -2883,8 +2903,6 @@ single_to_multi(void)
   gtk_container_add(GTK_CONTAINER(NgraphApp.InfoWin.Win), w);
 
   gtk_widget_hide(NgraphApp.Viewer.side_pane1);
-  gtk_widget_hide(NgraphApp.Viewer.side_pane2);
-  gtk_widget_hide(NgraphApp.Viewer.side_pane3);
 
   if (Menulocal.single_window_mode) {
     gtk_window_get_size(GTK_WINDOW(TopLevel), &width, &height);
@@ -3009,11 +3027,11 @@ setupwindow(void)
 #endif
 
 #if GTK_CHECK_VERSION(3, 2, 0)
-  vpane1 = gtk_paned_new(GTK_ORIENTATION_VERTICAL);
+  vpane2 = gtk_paned_new(GTK_ORIENTATION_VERTICAL);
 #else
-  vpane1 = gtk_vpaned_new();
+  vpane2 = gtk_vpaned_new();
 #endif
-  NgraphApp.Viewer.side_pane1 = vpane1;
+  NgraphApp.Viewer.side_pane2 = vpane2;
 
   w = gtk_notebook_new();
   gtk_notebook_popup_enable(GTK_NOTEBOOK(w));
@@ -3024,7 +3042,7 @@ setupwindow(void)
   gtk_notebook_set_group(GTK_NOTEBOOK(w), SIDE_PANE_TAB_ID);
 #endif
   gtk_notebook_set_scrollable(GTK_NOTEBOOK(w), TRUE);
-  gtk_paned_add1(GTK_PANED(vpane1), w);
+  gtk_paned_add1(GTK_PANED(vpane2), w);
 
   w = gtk_notebook_new();
   gtk_notebook_popup_enable(GTK_NOTEBOOK(w));
@@ -3035,7 +3053,7 @@ setupwindow(void)
   gtk_notebook_set_group(GTK_NOTEBOOK(w), SIDE_PANE_TAB_ID);
 #endif
   gtk_notebook_set_scrollable(GTK_NOTEBOOK(w), TRUE);
-  gtk_paned_add2(GTK_PANED(vpane1), w);
+  gtk_paned_add2(GTK_PANED(vpane2), w);
 
 #if GTK_CHECK_VERSION(3, 2, 0)
   hpane2 = gtk_paned_new(GTK_ORIENTATION_HORIZONTAL);
@@ -3045,13 +3063,13 @@ setupwindow(void)
   NgraphApp.Viewer.side_pane3 = hpane2;
 
 #if GTK_CHECK_VERSION(3, 2, 0)
-  vpane2 = gtk_paned_new(GTK_ORIENTATION_VERTICAL);
+  vpane1 = gtk_paned_new(GTK_ORIENTATION_VERTICAL);
 #else
-  vpane2 = gtk_vpaned_new();
+  vpane1 = gtk_vpaned_new();
 #endif
-  gtk_paned_pack1(GTK_PANED(vpane2), vpane1, TRUE, TRUE);
-  gtk_paned_pack2(GTK_PANED(vpane2), hpane2, FALSE, TRUE);
-  NgraphApp.Viewer.side_pane2 = vpane2;
+  gtk_paned_pack1(GTK_PANED(vpane1), vpane2, TRUE, TRUE);
+  gtk_paned_pack2(GTK_PANED(vpane1), hpane2, FALSE, TRUE);
+  NgraphApp.Viewer.side_pane1 = vpane1;
 
 #if GTK_CHECK_VERSION(3, 2, 0)
   hpane1 = gtk_paned_new(GTK_ORIENTATION_HORIZONTAL);
@@ -3059,7 +3077,7 @@ setupwindow(void)
   hpane1 = gtk_hpaned_new();
 #endif
   gtk_paned_add1(GTK_PANED(hpane1), vbox);
-  gtk_paned_add2(GTK_PANED(hpane1), vpane2);
+  gtk_paned_add2(GTK_PANED(hpane1), vpane1);
   NgraphApp.Viewer.main_pane = hpane1;
 
   gtk_box_pack_start(GTK_BOX(hbox), table, TRUE, TRUE, 0);
@@ -3399,8 +3417,12 @@ toggle_view_cb(GtkToggleAction *action, gpointer data)
   state = gtk_toggle_action_get_active(action);
 
   switch (type) {
-  case MenuIdToggleStatusBar:
-    Menulocal.statusb = state;
+  case MenuIdToggleSidebar:
+    Menulocal.sidebar = state;
+    w1 = NgraphApp.Viewer.side_pane1;
+    break;
+  case MenuIdToggleStatusbar:
+    Menulocal.statusbar = state;
     w1 = NgraphApp.Message;
    break;
   case MenuIdToggleRuler:
@@ -3455,7 +3477,8 @@ set_widget_visibility(void)
     int *state;
     const char *name;
   } id_array[] = {
-    {&Menulocal.statusb,    "ViewStatusbarAction"},
+    {&Menulocal.sidebar,    "ViewSidebarAction"},
+    {&Menulocal.statusbar,  "ViewStatusbarAction"},
     {&Menulocal.ruler,      "ViewRulerAction"},
     {&Menulocal.scrollbar,  "ViewScrollbarAction"},
     {&Menulocal.ctoolbar,   "ViewCommandToolbarAction"},
@@ -3913,8 +3936,6 @@ application(char *file)
     set_toggle_action("ViewToggleSingleWindowModeAction", TRUE);
   } else {
     gtk_widget_hide(NgraphApp.Viewer.side_pane1);
-    gtk_widget_hide(NgraphApp.Viewer.side_pane2);
-    gtk_widget_hide(NgraphApp.Viewer.side_pane3);
   }
 
   terminated = AppMainLoop();
