@@ -600,7 +600,7 @@ new text
 	text::B=0
 	text::clip=true
 	text::redraw_flag=true
-	text::text='peak-1: (%pf{%+#.4g %{fit:0:%02}},  %pf{%+#.4g %{fit:0:calc %{fit:0:%02}}})'
+	text::text='peak-1: (%pf{%+#.4g %{fit:0:%02}},  %pf{%+#.4g %{fit:0:fit_calc %{fit:0:%02}}})'
 	text::x=14000
 	text::y=6164
 	text::pt=1600
@@ -618,7 +618,7 @@ new text
 	text::B=0
 	text::clip=true
 	text::redraw_flag=true
-	text::text='peak-2: (%pf{%+#.4g %{fit:0:%05}},  %pf{%+#.4g %{fit:0:calc %{fit:0:%05}}})'
+	text::text='peak-2: (%pf{%+#.4g %{fit:0:%05}},  %pf{%+#.4g %{fit:0:fit_calc %{fit:0:%05}}})'
 	text::x=14000
 	text::y=6840
 	text::pt=1600
@@ -636,7 +636,7 @@ new text
 	text::B=0
 	text::clip=true
 	text::redraw_flag=true
-	text::text='peak-1: (%pf{%+#.4g %{fit:1:%02}},  %pf{%+#.4g %{fit:1:calc %{fit:1:%02}}})'
+	text::text='peak-1: (%pf{%+#.4g %{fit:1:%02}},  %pf{%+#.4g %{fit:1:fit_calc %{fit:1:%02}}})'
 	text::x=14000
 	text::y=11164
 	text::pt=1600
@@ -654,7 +654,7 @@ new text
 	text::B=0
 	text::clip=true
 	text::redraw_flag=true
-	text::text='peak-2: (%pf{%+#.4g %{fit:1:%05}},  %pf{%+#.4g %{fit:1:calc %{fit:1:%05}}})'
+	text::text='peak-2: (%pf{%+#.4g %{fit:1:%05}},  %pf{%+#.4g %{fit:1:fit_calc %{fit:1:%05}}})'
 	text::x=14000
 	text::y=11840
 	text::pt=1600
