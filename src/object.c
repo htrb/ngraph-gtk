@@ -45,7 +45,7 @@
 
 #define USE_HASH 1
 
-#define OBJ_MAX 100
+#define OBJ_MAX 1024
 #define INST_MAX 32767
 
 static struct objlist *objroot=NULL;
@@ -1297,7 +1297,7 @@ addobject(char *name,char *alias,char *parentname,char *ver,
   struct objlist *objcur,*objprev,*objnew,*parent, *ptr;
   int i,offset;
   NHASH tbl_hash = NULL;
-  static int id = 0;
+  static int id = 1;
 
   if (id >= OBJ_MAX) {
     error3(NULL, ERROBJNUM, id);

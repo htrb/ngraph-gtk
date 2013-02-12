@@ -122,7 +122,16 @@ Legend textダイアログボックスのTextで文字列中に制御文字を�
 <tr><td>%{file:X:dsigy}</td><td>ファイルXの標準偏差(y)</td></tr>
 <tr>
  <td>
-  %{file:X:calc:a}
+  %{file:X:fit_prm:n}
+ </td>
+ <td>
+  ファイルXのプロットタイプが Fit のとき、フィットの結果 f(x) に対して
+  %0n を返す。
+ </td>
+</tr>
+<tr>
+ <td>
+  %{file:X:fit_calc:a}
  </td>
  <td>
   ファイルXのプロットタイプが Fit のとき、フィットの結果 f(x) に対して
@@ -131,7 +140,7 @@ Legend textダイアログボックスのTextで文字列中に制御文字を�
 </tr>
 <tr>
  <td>
-  %{file:X:newton:a b}
+  %{file:X:fit_newton:a b}
  </td>
  <td>
   ファイルXのプロットタイプが Fit のとき、フィットの結果 f(x) に対して

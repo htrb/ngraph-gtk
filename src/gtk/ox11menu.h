@@ -38,15 +38,6 @@
 extern int Globallock;
 extern struct savedstdio GtkIOSave;
 
-extern void mgtkdisplaydialog(const char *str);
-extern void mgtkdisplaystatus(const char *str);
-extern int mgtkputstderr(const char *s);
-extern int mgtkprintfstderr(char *fmt, ...);
-extern int mgtkputstdout(const char *s);
-extern int mgtkprintfstdout(char *fmt, ...);
-extern int mgtkinterrupt(void);
-extern int mgtkinputyn(const char *mes);
-
 enum paper_id {
   PAPER_ID_A3,
   PAPER_ID_A4,
@@ -183,6 +174,8 @@ int mgtkputstderr(const char *s);
 int mgtkprintfstderr(char *fmt, ...);
 int mgtkinterrupt(void);
 int mgtkinputyn(const char *mes);
+int mgtkputstdout(const char *s);
+int mgtkprintfstdout(char *fmt, ...);
 void initwindowconfig(void);
 int mgtkwindowconfig(void);
 void menuadddrawrable(struct objlist *parent, struct narray *drawrable);

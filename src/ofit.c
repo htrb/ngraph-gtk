@@ -60,6 +60,7 @@
 #define ERRNEGATIVEWEIGHT 112
 #define ERRCONVERGE 113
 #define ERR_INCONSISTENT_DATA_NUM 114
+#define ERRINTERRUPT 115
 
 static char *fiterrorlist[]={
   "syntax error.",
@@ -93,7 +94,7 @@ static char *fittypechar[]={
 struct fitlocal {
   int id, oid;
   MathEquation *codedf[10];
-  MathEquation *codef;
+  MathEquation *codef, *result_code;
   int dim;
   double coe[11];
   int num;
@@ -122,6 +123,7 @@ fitinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 
   if ((fitlocal=g_malloc(sizeof(struct fitlocal)))==NULL) return 1;
   fitlocal->codef=NULL;
+  fitlocal->result_code = NULL;
   for (i=0;i<10;i++) fitlocal->codedf[i]=NULL;
   fitlocal->equation=NULL;
   fitlocal->oid = oid;
@@ -142,8 +144,34 @@ fitdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   _getobj(obj,"_local",inst,&fitlocal);
   g_free(fitlocal->equation);
   math_equation_free(fitlocal->codef);
+  math_equation_free(fitlocal->result_code);
   for (i = 0; i < 10; i++)
     math_equation_free(fitlocal->codedf[i]);
+  return 0;
+}
+
+static int
+set_equation(struct objlist *obj, N_VALUE *inst, struct fitlocal *fitlocal, char *equation)
+{
+  int r;
+  char *old_equation;
+
+  _getobj(obj, "equation", inst, &old_equation);
+
+  r = _putobj(obj, "equation", inst, equation);
+  if (r) {
+    return 1;
+  }
+
+  if (old_equation) {
+    g_free(old_equation);
+  }
+
+  if (fitlocal && fitlocal->result_code) {
+    math_equation_free(fitlocal->result_code);
+    fitlocal->result_code = NULL;
+  }
+
   return 0;
 }
 
@@ -162,13 +190,27 @@ show_eqn_error(struct objlist *obj, MathEquation *code, char *math, char *field,
 }
 
 static int 
+fitequation(struct objlist *obj,N_VALUE *inst,N_VALUE *rval, int argc,char **argv)
+{
+  struct fitlocal *fitlocal;
+
+  _getobj(obj,"_local",inst,&fitlocal);
+
+  if (fitlocal->result_code) {
+    math_equation_free(fitlocal->result_code);
+    fitlocal->result_code = NULL;
+  }
+
+  return 0;
+}
+
+static int 
 fitput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
            int argc,char **argv)
 {
   char *field;
   char *math;
   struct fitlocal *fitlocal;
-  char *equation;
   MathEquation *code;
   int rcode;
 
@@ -231,9 +273,7 @@ fitput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
       fitlocal->codedf[field[10] - '0'] = code;
     }
   }
-  _getobj(obj,"equation",inst,&equation);
-  if (_putobj(obj,"equation",inst,NULL)) return 1;
-  g_free(equation);
+  if (set_equation(obj, inst, fitlocal, NULL)) return 1;
   return 0;
 }
 
@@ -865,12 +905,11 @@ fitfit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   int weight,anum;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
-  _getobj(obj,"equation",inst,&equation);
-  g_free(equation);
-  if (_putobj(obj,"equation",inst,NULL)) return 1;
+  _getobj(obj,"_local",inst,&fitlocal);
+  if (set_equation(obj, inst, fitlocal, NULL)) return 1;
   equation = g_strdup("undef");
   if (equation == NULL) return 1;
-  if (_putobj(obj,"equation",inst,equation)) {
+  if (set_equation(obj, inst, fitlocal, equation)) {
     g_free(equation);
     return 1;
   }
@@ -887,7 +926,6 @@ fitfit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
     if (_putobj(obj, prm, inst, &pp)) return 1;
   }
 
-  _getobj(obj,"_local",inst,&fitlocal);
   _getobj(obj,"type",inst,&type);
   _getobj(obj,"through_point",inst,&through);
   _getobj(obj,"point_x",inst,&x0);
@@ -1037,6 +1075,9 @@ fitfit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
       ecode = ERRCONVERGE;
       break;
     */
+  case FitError_Interrupt:
+    ecode = ERRINTERRUPT;
+    break;
   default:
     ecode = 0;
   }
@@ -1053,62 +1094,64 @@ fitfit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
     if (_putobj(obj, prm, inst, &(fitlocal->coe[i]))) return 1;
   }
 
-  _getobj(obj,"equation",inst,&equation);
-  if (_putobj(obj,"equation",inst,fitlocal->equation)) return 1;
-  g_free(equation);
-  fitlocal->equation=NULL;
+  if (set_equation(obj, inst, fitlocal, fitlocal->equation)) return 1;
+  fitlocal->equation = NULL;
+
   return 0;
 }
 
 static int 
 fitcalc(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
-  MathEquation *eq;
   MathValue val;
   int r;
-  char *equation, *ptr, buf[32];
+  char *equation;
   double x;
+  struct fitlocal *fitlocal;
 
   if (_exeparent(obj, argv[1], inst, rval, argc, argv)) return 1;
 
-  g_free(rval->str);
-  rval->str=NULL;
+  rval->d = 0;
 
   x = * (double *) argv[2];
 
-  _getobj(obj, "equation", inst, &equation);
-  if (equation == NULL)
-    return 0;
+  _getobj(obj,"_local",inst,&fitlocal);
+  if (fitlocal->result_code == NULL) {
+    MathEquation *eq;
+    _getobj(obj, "equation", inst, &equation);
+    if (equation == NULL) {
+      return 0;
+    }
 
-  eq = math_equation_basic_new();
-  if (eq == NULL) {
-    return 1;
-  }
+    eq = math_equation_basic_new();
+    if (eq == NULL) {
+      return 1;
+    }
 
-  if (math_equation_add_var(eq, "X") != 0) {
-    math_equation_free(eq);
-    return 1;
+    if (math_equation_add_var(eq, "X") != 0) {
+      math_equation_free(eq);
+      return 1;
+    }
+
+    if (math_equation_parse(eq, equation)) {
+      math_equation_free(eq);
+      return 1;
+    }
+
+    math_equation_optimize(eq);
+    fitlocal->result_code = eq;
   }
 
   val.val = x;
   val.type = MATH_VALUE_NORMAL;
-  math_equation_set_var(eq, 0, &val);
+  math_equation_set_var(fitlocal->result_code, 0, &val);
 
-  if (math_equation_parse(eq, equation)) {
-    math_equation_free(eq);
-    return 1;
-  }
-
-  r = math_equation_calculate(eq, &val);
-  math_equation_free(eq);
-
+  r = math_equation_calculate(fitlocal->result_code, &val);
   if (r) {
     return 1;
   }
 
-  snprintf(buf, sizeof(buf), "%.15e", val.val);
-  ptr = g_strdup(buf);
-  rval->str = ptr;
+  rval->d = val.val;
 
   return 0;
 }
@@ -1128,7 +1171,7 @@ static struct objtable fit[] = {
   {"through_point",NBOOL,NREAD|NWRITE,fitput,NULL,0},
   {"point_x",NDOUBLE,NREAD|NWRITE,fitput,NULL,0},
   {"point_y",NDOUBLE,NREAD|NWRITE,fitput,NULL,0},
-  {"equation",NSTR,NREAD|NWRITE,NULL,NULL,0},
+  {"equation",NSTR,NREAD|NWRITE,fitequation,NULL,0},
 
   {"poly_dimension",NINT,NREAD|NWRITE,fitput,NULL,0},
 
@@ -1172,7 +1215,7 @@ static struct objtable fit[] = {
   {"display",NBOOL,NREAD|NWRITE,NULL,NULL,0},
 
   {"fit",NVFUNC,NREAD|NEXEC,fitfit,"da",0},
-  {"calc",NSFUNC,NREAD|NEXEC,fitcalc,"d",0},
+  {"calc",NDFUNC,NREAD|NEXEC,fitcalc,"d",0},
   {"_local",NPOINTER,0,NULL,NULL,0},
 };
 

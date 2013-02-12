@@ -187,8 +187,8 @@ struct savedstdio {
 
 extern struct savedstdio stdiosave;
 
-extern int seputs(const char *s);
-extern int seprintf(char *fmt,...);
+int seputs(const char *s);
+int seprintf(char *fmt,...);
 
 void error(struct objlist *obj,int code);
 void error2(struct objlist *obj,int code, const char *mes);

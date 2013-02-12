@@ -1,3 +1,50 @@
+2013-02-12  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/ofit.c (fitlocal): add member "result_code".
+	(fitinit): initialize "fitlocal->result_code".
+	(fitdone): free "fitlocal->result_code".
+	(set_equation, fitequation): added.
+	(fitput, fitfit): use "set_equation()".
+	(fitfit): check case "FitError_Interrupt".
+	(fitcalc): use "fitlocal->result_code".
+	(fitcalc): returned value is not string but double.
+
+	* src/ofile.c (MATH_CONST_MASK): add "MATH_CONST_FILE_OBJ",
+	"MATH_CONST_PATH_OBJ", MATH_CONST_RECT_OBJ, "MATH_CONST_ARC_OBJ",
+	"MATH_CONST_MARK_OBJ" and "MATH_CONST_TEXT_OBJ".
+	(FIT_FIELD_PREFIX, file_obj_color_alpha, file_objcolor)
+	(file_objalpha): added.
+	(file_color): now first argument of the "COLOR()" function accepts
+	"8" and "9".
+	(file_fit_calc, file_fit_prm): added.
+	(file_func): add functions "FIT_CALC", "FIT_PRM", "OBJ_COLOR" and
+	"OBJ_ALPHA".
+	(ofile_create_math_equation): add constants "FILE_OBJ",
+	"PATH_OBJ", "RECT_OBJ", "ARC_OBJ", "MARK_OBJ" and "TEXT_OBJ".
+	(set_const): initialize constants "FILE_OBJ", "PATH_OBJ",
+	"RECT_OBJ", "ARC_OBJ", "MARK_OBJ" and "TEXT_OBJ".
+	(newton): don't check the number of the iteration is 1 or not ("i
+	= 1").
+	(solve_equation): add prefix to the fields.
+	(solve_equation): the error message is not set to the returned
+	string.
+	(calc_fit_equation): added.
+	(calc_equation): use "calc_fit_equation()".
+	(calc_equation): the error message is not set to the returned
+	string.
+	(get_fit_parameter): added.
+	(file2d): add fields "fit_prm". change name of the fields
+	"newton", "bisection" and "calc".
+
+	* src/gtk/x11file.c (MathDialogSetup): initialize "d->Mode" whine
+	"makewidget" is true
+	(MathDialog): don't modify "data->Mode".
+
+	* src/gtk/x11view.c (Draw): call "FitClear()" after call
+	"FileAutoScale()".
+
+	* src/object.c (addobject): object id is start from 1.
+
 2013-01-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* initfile/NgraphUI.xml.win: add "Sidebar" menu.

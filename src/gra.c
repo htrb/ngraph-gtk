@@ -1749,8 +1749,11 @@ GRAexpandobj(char **s)
   }
 
   for (i=0;i<anum;i++) {
-    if (schkobjfield(obj,id[i],field,arg,&ret,TRUE,FALSE,FALSE)!=0)
+    if (schkobjfield(obj,id[i],field,arg,&ret,TRUE,FALSE,FALSE)!=0) {
+      /* limittype must be TRUE because checking "bbox" field of the
+	 same text object causes infinite loop */
       goto errexit;
+    }
     for (j=0;ret[j]!='\0';j++) {
       if ((ret[j]=='%') || (ret[j]=='\\')
        || (ret[j]=='_') || (ret[j]=='^') || (ret[j]=='@')) {

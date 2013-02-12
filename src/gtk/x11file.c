@@ -537,6 +537,8 @@ MathDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->ok_button = GTK_STOCK_CLOSE;
 
     gtk_window_set_default_size(GTK_WINDOW(wi), -1, 300);
+
+    d->Mode = 0;
   }
 
   MathDialogSetupItem(wi, d);
@@ -553,7 +555,6 @@ MathDialog(struct MathDialog *data, struct objlist *obj)
   data->SetupWindow = MathDialogSetup;
   data->CloseWindow = MathDialogClose;
   data->Obj = obj;
-  data->Mode = 0;
 }
 
 static void

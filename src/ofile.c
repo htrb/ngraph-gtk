@@ -84,6 +84,12 @@ enum {
   MATH_CONST_HSKIP,
   MATH_CONST_RSTEP,
   MATH_CONST_FLINE,
+  MATH_CONST_FILE_OBJ,
+  MATH_CONST_PATH_OBJ,
+  MATH_CONST_RECT_OBJ,
+  MATH_CONST_ARC_OBJ,
+  MATH_CONST_MARK_OBJ,
+  MATH_CONST_TEXT_OBJ,
   MATH_CONST_D,
   MATH_CONST_N,
   MATH_CONST_SIZE,
@@ -229,6 +235,7 @@ static NHASH FileConfigHash = NULL;
 #define USE_BUF_PTR  1
 #define USE_RING_BUF 2
 #define BUF_TYPE     USE_BUF_PTR
+#define FIT_FIELD_PREFIX "fit_"
 
 #define USE_MEMMOVE 1
 
@@ -340,7 +347,7 @@ struct f2dlocal {
 
 static int set_data_progress(struct f2ddata *fp);
 static int getminmaxdata(struct f2ddata *fp, struct f2dlocal *local);
-MathEquation *ofile_create_math_equation(int *id, int use_prm, int use_fprm, int use_const, int usr_func, int use_fobj_func);
+static int calc_fit_equation(struct objlist *obj, N_VALUE *inst, double x, double *y);
 
 #if BUF_TYPE == USE_RING_BUF
 int 
@@ -383,6 +390,122 @@ check_ifs_init(struct f2ddata *fp)
 #define CHECK_IFS(buf, ch) (buf[(unsigned char) ch] & 1)
 #define CHECK_REMARK(buf, ch) (buf[(unsigned char) ch] & 2)
 
+#define FILE_OBJ_COLOR_COLOR 0
+#define FILE_OBJ_COLOR_ALPHA 1
+
+struct object_color_type {
+  char *name;
+  enum {
+    COLOR_TYPE_MARK,
+    COLOR_TYPE_PATH,
+    COLOR_TYPE_TEXT,
+  } color_type;
+};
+
+static int
+file_obj_color_alpha(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval, int type)
+{
+  struct f2ddata *fp;
+  struct objlist *obj;
+  int id, object_id, color_type;
+  struct object_color_type obj_names[] = {
+    {"file", COLOR_TYPE_MARK},
+    {"path", COLOR_TYPE_PATH},
+    {"rectangle", COLOR_TYPE_PATH},
+    {"arc", COLOR_TYPE_PATH},
+    {"mark", COLOR_TYPE_MARK},
+    {"text", COLOR_TYPE_TEXT},
+  };
+  unsigned int i;
+
+  *rval = exp->buf[0].val;
+
+  if (exp->buf[0].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[1].val.type != MATH_VALUE_NORMAL) {
+    return 0;
+  }
+
+  fp = math_equation_get_user_data(eq);
+  if (fp == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  id = exp->buf[0].val.val;
+  object_id = exp->buf[1].val.val;
+
+  if (object_id == 0) {
+    object_id = chkobjectid(fp->obj);
+  }
+
+  obj = NULL;
+  color_type = COLOR_TYPE_TEXT;
+  for (i = 0; i < sizeof(obj_names) / sizeof(*obj_names); i++) {
+    obj = getobject(obj_names[i].name);
+    if (obj && object_id == chkobjectid(obj)) {
+      color_type = obj_names[i].color_type;
+      break;
+    }
+    obj = NULL;
+  }
+
+  if (obj == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  if (chkobjinst(obj, id) == NULL) {
+    return 0;
+  }
+
+  switch (color_type) {
+  case COLOR_TYPE_MARK:
+    if (type == FILE_OBJ_COLOR_COLOR) {
+      getobj(obj, "R2", id, 0, NULL, &fp->color2.r);
+      getobj(obj, "G2", id, 0, NULL, &fp->color2.g);
+      getobj(obj, "B2", id, 0, NULL, &fp->color2.b);
+    } else {
+      getobj(obj, "A2", id, 0, NULL, &fp->color2.a);
+    }
+  case COLOR_TYPE_TEXT:			/* fall-through */
+    if (type == FILE_OBJ_COLOR_COLOR) {
+      getobj(obj, "R", id, 0, NULL, &fp->color.r);
+      getobj(obj, "G", id, 0, NULL, &fp->color.g);
+      getobj(obj, "B", id, 0, NULL, &fp->color.b);
+    } else {
+      getobj(obj, "A", id, 0, NULL, &fp->color.a);
+    }
+    break;
+  case COLOR_TYPE_PATH:
+    if (type == FILE_OBJ_COLOR_COLOR) {
+      getobj(obj, "stroke_R", id, 0, NULL, &fp->color.r);
+      getobj(obj, "stroke_G", id, 0, NULL, &fp->color.g);
+      getobj(obj, "stroke_B", id, 0, NULL, &fp->color.b);
+      getobj(obj, "fill_R", id, 0, NULL, &fp->color2.r);
+      getobj(obj, "fill_G", id, 0, NULL, &fp->color2.g);
+      getobj(obj, "fill_B", id, 0, NULL, &fp->color2.b);
+    } else {
+      getobj(obj, "stroke_A", id, 0, NULL, &fp->color.a);
+      getobj(obj, "fill_A", id, 0, NULL, &fp->color2.a);
+    }
+    break;
+  }
+
+  return 0;
+}
+
+static int
+file_objcolor(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  return file_obj_color_alpha(exp, eq, rval, FILE_OBJ_COLOR_COLOR);
+}
+
+static int
+file_objalpha(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  return file_obj_color_alpha(exp, eq, rval, FILE_OBJ_COLOR_ALPHA);
+}
+
 static int
 file_color(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
@@ -411,10 +534,12 @@ file_color(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
     return 1;
   }
 #else
-  if (val < 0) {
-    val = 0;
-  } else if (val > 255) {
-    val = 255;
+  if (color < 8) {
+    if (val < 0) {
+      val = 0;
+    } else if (val > 255) {
+      val = 255;
+    }
   }
 #endif
 
@@ -442,6 +567,16 @@ file_color(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
     break;
   case 7:
     fp->color2.r = fp->color2.g = fp->color2.b = val;
+    break;
+  case 8:
+    fp->color.r = ((val >> 16) & 0xff);
+    fp->color.g = ((val >> 8) & 0xff);
+    fp->color.b = (val & 0xff);
+    break;
+  case 9:
+    fp->color2.r = ((val >> 16) & 0xff);
+    fp->color2.g = ((val >> 8) & 0xff);
+    fp->color2.b = (val & 0xff);
     break;
   default:
     rval->type = MATH_VALUE_ERROR;
@@ -712,12 +847,99 @@ file_marktype(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
   return 0;
 }
 
+static int
+file_fit_calc(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  struct f2ddata *fp;
+  int file_id, r;
+  double x, y;
+  N_VALUE *inst;
+
+  rval->val = 0;
+
+  if (exp->buf[0].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[1].val.type != MATH_VALUE_NORMAL) {
+    return 0;
+  }
+
+  fp = math_equation_get_user_data(eq);
+  if (fp == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  file_id = exp->buf[0].val.val;
+  x = exp->buf[1].val.val;
+
+  inst = chkobjinst(fp->obj, file_id);
+  if (inst == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+    
+  r = calc_fit_equation(fp->obj, inst, x, &y);
+
+  if (r) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  rval->val = y;
+  rval->type = MATH_VALUE_NORMAL;
+
+  return 0;
+}
+
+static int
+file_fit_prm(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  struct f2ddata *fp;
+  int file_id, prm, r;
+  char *argv[2], *ptr;
+  struct savedstdio save;
+
+  rval->val = 0;
+
+  if (exp->buf[0].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[1].val.type != MATH_VALUE_NORMAL) {
+    return 0;
+  }
+
+  fp = math_equation_get_user_data(eq);
+  if (fp == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  file_id = exp->buf[0].val.val;
+  prm = exp->buf[1].val.val;
+
+  argv[0] = (char *) &prm;
+  argv[1] = NULL;
+  ignorestdio(&save);
+  r = getobj(fp->obj, "fit_prm", file_id, 1, argv, &ptr);
+  restorestdio(&save);
+  if (r < 0 || ptr == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  rval->val = atof(ptr);
+  rval->type = MATH_VALUE_NORMAL;
+
+  return 0;
+}
+
 struct funcs {
   char *name;
   struct math_function_parameter prm;
 };
 
 static struct funcs file_func[] = {
+  {"FIT_CALC", {2, 0, 0, file_fit_calc,   NULL, NULL, NULL, NULL}},
+  {"FIT_PRM",  {2, 0, 0, file_fit_prm,   NULL, NULL, NULL, NULL}},
+  {"OBJ_ALPHA", {2, 0, 0, file_objalpha, NULL, NULL, NULL, NULL}},
+  {"OBJ_COLOR", {2, 0, 0, file_objcolor, NULL, NULL, NULL, NULL}},
   {"COLOR",    {2, 0, 0, file_color,    NULL, NULL, NULL, NULL}},
   {"ALPHA",    {2, 0, 0, file_alpha,    NULL, NULL, NULL, NULL}},
   {"RGB",      {3, 0, 0, file_rgb,      NULL, NULL, NULL, NULL}},
@@ -1538,6 +1760,12 @@ ofile_create_math_equation(int *id, int use_prm, int use_fprm, int use_const, in
     "HSKIP",
     "RSTEP",
     "FLINE",
+    "FILE_OBJ",
+    "PATH_OBJ",
+    "RECT_OBJ",
+    "ARC_OBJ",
+    "MARK_OBJ",
+    "TEXT_OBJ",
     "%D",
     "%N",
   };
@@ -2166,9 +2394,22 @@ set_var(MathEquation *eq, const MathValue *x, const MathValue *y)
   math_equation_set_var(eq, 1, y);
 }
 
+struct obj_name_const {
+  char *obj_name;
+  int const_id;
+};
+
 static int
 set_const(MathEquation *eq, int *const_id, int need2pass, struct f2ddata *fp, int first)
 {
+  struct obj_name_const obj_names[] = {
+    {"file",      MATH_CONST_FILE_OBJ},
+    {"path",      MATH_CONST_PATH_OBJ},
+    {"rectangle", MATH_CONST_RECT_OBJ},
+    {"arc",       MATH_CONST_ARC_OBJ},
+    {"mark",      MATH_CONST_MARK_OBJ},
+    {"text",      MATH_CONST_TEXT_OBJ},
+  };
   MathValue val;
   int i;
 
@@ -2275,6 +2516,19 @@ set_const(MathEquation *eq, int *const_id, int need2pass, struct f2ddata *fp, in
   val.val = i;
   val.type = MATH_VALUE_NORMAL;
   math_equation_set_const(eq, const_id[MATH_CONST_FLINE], &val);
+
+  for (i = 0; i < (int) (sizeof(obj_names) / sizeof(*obj_names)); i++) {
+    struct objlist *obj;
+
+    obj = chkobject(obj_names[i].obj_name);
+    if (obj == NULL) {
+      continue;
+    }
+
+    val.val = chkobjectid(obj);
+    val.type = MATH_VALUE_NORMAL;
+    math_equation_set_const(eq, const_id[obj_names[i].const_id], &val);
+  }
 
   return math_equation_optimize(eq);
 }
@@ -7896,7 +8150,7 @@ newton(MathEquation *eq, double *xx, double y)
     } while (fabs(fx) > fabs(fx_prev));
 
     n++;
-    if (n > MAX_ITERATION || (i == 1 && compare_double(x, x_prev))) {
+    if (n > MAX_ITERATION || (x == x_prev)) {
       break;
     }
   }
@@ -7910,7 +8164,7 @@ solve_equation(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **a
 {
   MathEquation *eq = NULL;
   int r, n, type, fit_id;
-  char *equation, *ptr, *fit;
+  char *equation, *fit, prefix[] = FIT_FIELD_PREFIX;
   N_VALUE *fit_inst;
   double a, b, x, y, tolerance, *data;
   struct narray *darray;
@@ -7960,7 +8214,7 @@ solve_equation(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **a
     return 1;
   }
 
-  if (argv[1][0] == 'b') {
+  if (argv[1][sizeof(prefix) - 1] == 'b') {
     if (n < 2) {
       error(obj, ERR_SMALL_ARGS);
       math_equation_free(eq);
@@ -7984,11 +8238,40 @@ solve_equation(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **a
   math_equation_free(eq);
 
   if (r) {
-    ptr = g_strdup(f2derrorlist[ERRCONVERGE - 100]);
-  } else {
-    ptr = g_strdup_printf("%.15e", x);
+    error(obj, ERRCONVERGE);
+    return 1;
   }
-  rval->str = ptr;
+  rval->str = g_strdup_printf("%.15e", x);
+
+  return 0;
+}
+
+static int
+calc_fit_equation(struct objlist *obj, N_VALUE *inst, double x, double *y)
+{
+  int type, fit_id;
+  char *fit;
+  N_VALUE *fit_inst;
+  struct objlist *fit_obj;
+  char *fit_argv[2];
+
+  *y = 0;
+
+  _getobj(obj, "type", inst, &type);
+  _getobj(obj, "fit", inst, &fit);
+
+  if (type != PLOT_TYPE_FIT) {
+    return ERR_INVALID_TYPE;
+  }
+
+  fit_id = get_fit_obj_id(fit, &fit_obj, &fit_inst);
+  if (fit_id < 0) {
+    return ERRNOFITINST;
+  }
+
+  fit_argv[0] = (char *) &x;
+  fit_argv[1] = NULL;
+  getobj(fit_obj, "calc", fit_id, 1, fit_argv, y);
 
   return 0;
 }
@@ -7996,13 +8279,42 @@ solve_equation(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **a
 static int 
 calc_equation(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
-  MathEquation *eq;
-  MathValue val;
-  int r, type, fit_id;
-  char *equation, *ptr, *fit;
+  int r;
+  double x, y;
+
+  if (_exeparent(obj, argv[1], inst, rval, argc, argv)) return 1;
+
+  g_free(rval->str);
+  rval->str = NULL;
+
+  x = * (double *) argv[2];
+  r = calc_fit_equation(obj, inst, x, &y);
+
+  switch (r) {
+  case 0:
+    break;
+  case ERR_INVALID_TYPE:
+  case ERRNOFITINST:
+    error(obj, ERR_INVALID_TYPE);
+    return 1;
+  default:
+    break;
+  }
+
+  rval->str = g_strdup_printf("%.15e", y);
+
+  return 0;
+}
+
+static int 
+get_fit_parameter(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
+{
+  int type, fit_id, i;
+  char *fit;
   N_VALUE *fit_inst;
-  double x;
   struct objlist *fit_obj;
+  char prm_str[] = "%00";
+  double val;
 
   if (_exeparent(obj, argv[1], inst, rval, argc, argv)) return 1;
 
@@ -8023,37 +8335,18 @@ calc_equation(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **ar
     return -1;
   }
 
-  if (_getobj(fit_obj, "equation", fit_inst, &equation)) {
+  i = * (int *) argv[2];
+  if (i < 0 || i > 9) {
+    error(obj, ERR_INVALID_PARAM);
+    return 1;
+  }
+  prm_str[2] += i;
+
+  if (_getobj(fit_obj, prm_str, fit_inst, &val)) {
     return -1;
   }
 
-  x = * (double *) argv[2];
-
-  eq = ofile_create_math_equation(NULL, FALSE, FALSE, FALSE, FALSE, FALSE);
-  if (eq == NULL) {
-    return 1;
-  }
-
-  r = math_equation_parse(eq, equation);
-  if (r) {
-    math_equation_free(eq);
-    return 1;
-  }
-
-  val.val = x;
-  val.type = MATH_VALUE_NORMAL;
-  math_equation_set_var(eq, 0, &val);
-
-  r = math_equation_calculate(eq, &val);
-  if (r) {
-    ptr = math_err_get_error_message(eq, equation, r);
-  }
-  math_equation_free(eq);
-
-  if (! r) {
-    ptr = g_strdup_printf("%.15e", val.val);
-  }
-  rval->str = ptr;
+  rval->str = g_strdup_printf("%.15e", val);
 
   return 0;
 }
@@ -8173,9 +8466,10 @@ static struct objtable file2d[] = {
   {"save_config",NVFUNC,NREAD|NEXEC,f2dsaveconfig,NULL,0},
   {"output_file",NVFUNC,NREAD|NEXEC,f2doutputfile,"sib",0},
   {"modified",NVFUNC,NEXEC,update_field,NULL,0},
-  {"newton",NSFUNC,NREAD|NEXEC,solve_equation,"da",0},
-  {"bisection",NSFUNC,NREAD|NEXEC,solve_equation,"da",0},
-  {"calc",NSFUNC,NREAD|NEXEC,calc_equation,"d",0},
+  {FIT_FIELD_PREFIX "newton",NSFUNC,NREAD|NEXEC,solve_equation,"da",0},
+  {FIT_FIELD_PREFIX "bisection",NSFUNC,NREAD|NEXEC,solve_equation,"da",0},
+  {FIT_FIELD_PREFIX "calc",NSFUNC,NREAD|NEXEC,calc_equation,"d",0},
+  {FIT_FIELD_PREFIX "prm",NSFUNC,NREAD|NEXEC,get_fit_parameter,"i",0},
   {"_local",NPOINTER,0,NULL,NULL,0},
 };
 

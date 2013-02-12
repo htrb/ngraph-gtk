@@ -5580,9 +5580,9 @@ Draw(int SelectFile)
 
   ProgressDialogCreate(_("Scaling"));
 
-  FitClear();
   FileAutoScale();
   AdjustAxis();
+  FitClear();
 
   SetStatusBar(_("Drawing."));
   ProgressDialogSetTitle(_("Drawing"));

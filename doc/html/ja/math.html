@@ -126,6 +126,12 @@
  <tr><td>HSKIP</td><td>「先頭スキップ行」に指定された行数</td></tr>
  <tr><td>RSTEP</td><td>「読込ステップ行」に指定された行数</td></tr>
  <tr><td>FLINE</td><td>「最終行」に指定された行数</td></tr>
+ <tr><td>FILE_OBJ</td><td>file オブジェクトのオブジェクト ID</td></tr>
+ <tr><td>PATH_OBJ</td><td>path オブジェクトのオブジェクト ID</td></tr>
+ <tr><td>RECT_OBJ</td><td>rectangle オブジェクトのオブジェクト ID</td></tr>
+ <tr><td>ARC_OBJ</td><td>arc オブジェクトのオブジェクト ID</td></tr>
+ <tr><td>MARK_OBJ</td><td>mark オブジェクトのオブジェクト ID</td></tr>
+ <tr><td>TEXT_OBJ</td><td>text オブジェクトのオブジェクト ID</td></tr>
  <tr><td>%D</td><td>データファイルの番号</td></tr>
  <tr><td>%N</td><td>データファイルの数</td></tr>
 </table>
@@ -411,6 +417,20 @@
 <br>
 <h3>その他の関数</h3>
 <table border=1>
+ <tr>
+  <td>FIT_PRM(id,x)</td>
+  <td>
+   ID が id の file オブジェクトのプロットタイプが fit のとき、対応す
+   る fit object のフィールド "%0x" の値。
+  </td>
+ </tr>
+ <tr>
+  <td>FIT_CALC(id,x)</td>
+  <td>
+   ID が id の file オブジェクトのプロットタイプが fit のとき、対応する
+   fit 結果 f(x) を計算する。
+  </td>
+ </tr>
  <tr><td>ISNORMAL(x)</td><td>x が通常の数値の場合真</td></tr>
  <tr><td>ISBREAK(x)</td><td>x が BREAK の場合真</td></tr>
  <tr><td>ISCONT(x)</td><td>x が CONT の場合真</td></tr>
@@ -429,9 +449,23 @@
  <tr><td>COLOR(5,x)</td><td>G2値を x (0≦x＜256)に設定</td></tr>
  <tr><td>COLOR(6,x)</td><td>B2値を x (0≦x＜256)に設定</td></tr>
  <tr><td>COLOR(7,x)</td><td>R2, G2, B2 値を x (0≦x＜256)に設定</td></tr>
+ <tr><td>COLOR(8,x)</td><td>x を 6 桁の 16 進数として、 2 桁ずつ R, G, B 値に設定</td></tr>
+ <tr><td>COLOR(9,x)</td><td>x を 6 桁の 16 進数として、 2 桁ずつ R2, G2, B2 値に設定</td></tr>
+ <tr><td>OBJ_COLOR(id, FILE_OBJ), OBJ_COLOR(id)</td><td>R, G, B, R2, G2, B2 値を ID が id の file オブジェクトと同じ値にする。</td></tr>
+ <tr><td>OBJ_COLOR(id, PATH_OBJ)</td><td>R, G, B, R2, G2, B2 値を ID が id の path オブジェクトの stroke_R, stroke_G, stroke_B, fill_R, fill_G, fill_B と同じ値にする。</td></tr>
+ <tr><td>OBJ_COLOR(id, RECT_OBJ)</td><td>R, G, B, R2, G2, B2 値を ID が id の rectangle オブジェクトの stroke_R, stroke_G, stroke_B, fill_R, fill_G, fill_B と同じ値にする。</td></tr>
+ <tr><td>OBJ_COLOR(id, ARC_OBJ)</td><td>R, G, B, R2, G2, B2 値を ID が id の arc オブジェクトの stroke_R, stroke_G, stroke_B, fill_R, fill_G, fill_B と同じ値にする。</td></tr>
+ <tr><td>OBJ_COLOR(id, MARK_OBJ)</td><td>R, G, B, R2, G2, B2 値を ID が id の mark オブジェクトと同じ値にする。</td></tr>
+ <tr><td>OBJ_COLOR(id, TEXT_OBJ)</td><td>R, G, B 値を ID が id の text オブジェクトと同じ値にする。</td></tr>
  <tr><td>ALPHA(x)</td><td>A, A2 値を x (0≦x＜256)に設定</td></tr>
  <tr><td>ALPHA(x,1)</td><td>A 値を x (0≦x＜256)に設定</td></tr>
  <tr><td>ALPHA(x,2)</td><td>A2 値を x (0≦x＜256)に設定</td></tr>
+ <tr><td>OBJ_ALPHA(id, FILE_OBJ), OBJ_ALPHA(id)</td><td>A, A2 値を ID が id の file オブジェクトと同じ値にする。</td></tr>
+ <tr><td>OBJ_ALPHA(id, PATH_OBJ)</td><td>A, A2 値を ID が id の path オブジェクトの stroke_A, fill_A と同じ値にする。</td></tr>
+ <tr><td>OBJ_ALPHA(id, RECT_OBJ)</td><td>A, A2 値を ID が id の rectangle オブジェクトの stroke_A, fill_A と同じ値にする。</td></tr>
+ <tr><td>OBJ_ALPHA(id, ARC_OBJ)</td><td>A, A2 値を ID が id の arc オブジェクトの stroke_A, fill_A と同じ値にする。</td></tr>
+ <tr><td>OBJ_ALPHA(id, MARK_OBJ)</td><td>A, A2 値を ID が id の mark オブジェクトと同じ値にする。</td></tr>
+ <tr><td>OBJ_ALPHA(id, TEXT_OBJ)</td><td>A 値を ID が id の text オブジェクトと同じ値にする。</td></tr>
  <tr><td>RGB(r,g,b)</td><td>色のRGB値をそれぞれ r, g, b (0≦r,g,b≦1)に設定</td></tr>
  <tr><td>RGB2(r,g,b)</td><td>R2, G2, B2, の値を r, g, b (0≦r,g,b≦1)から設定</td></tr>
  <tr><td>HSB(h,s,b)</td><td>色のHSB値をそれぞれ h, s, b (0≦h,s,b≦1)に設定</td></tr>
@@ -634,6 +668,46 @@
       </p>
       のように使います。
       <br>
+
+ <li><b>関数 OBJ_COLOR() 使用例</b>
+      <p>
+      file, path, rectangle, arc, mark, text の各オブジェクトの設定色を描
+      画色にします。いくつかのフィッティング結果をもとにフィッティングパラメー
+      タをグラフにするような場合、
+      <pre>
+      OBJ_COLOR(%00)=FIT_PRM(%00,1)
+      </pre>
+      のようにして、フィッティングとプロットの色を揃えることができます。
+      </p>
+
+ <li><b>関数 FIT_PRM(),  FIT_CALC() 使用例</b>
+      <p>
+      フィッティングの結果からそのパラメータや、フィッティング式の計算を
+      行う関数です。
+      </p>
+      <p>
+      いくつかの１次フィットからその傾きをプロットしたい場合、
+      <pre>
+      FIT_PRM(X,1)
+      </pre>
+      のようにします。この時 X はフィッティングプロットにした file オブジェ
+      クトのインスタンス ID です。
+      </p>
+
+      <p>
+      いくつかの１次ドリフトのあるでデータからドリフト成分を引いてプロッ
+      トしたい場合、
+      <pre>
+      Y-FIT_CALC(0,X)
+      </pre>
+      のようにします。
+      </p>
+
+      <p>
+      これらの関数はフィッティングの結果が確定しないと計算に失敗します。
+      ファイルの描画順に注意してください。また、初回のプロットでオートス
+      ケールに反映されないことがあります。
+      </p>
 
  <li><b>関数 PROG1(), PROG2(), PROGN() 使用例</b>
       <p>
