@@ -1,3 +1,19 @@
+2013-02-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* addin/ps2gra.nsc: use "get" command to obtain returned value of
+	"dialog::yesno".
+
+	* src/ofit.c (fitput, fitcalc): use
+	"ofile_create_math_equation()".
+
+	* src/ofile.c (file_fit_calc, file_fit_prm): don't use
+	"math_equation_get_user_data()".
+	(FitFunc, add_fit_func): added.
+	(ofile_create_math_equation): add 7th parameter "use_fit_func".
+	(ofile_create_math_equation): 2nd parameter represents the digit
+	of prm.
+	(ofile_calc_fit_equation): added.
+
 2013-02-12  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ofit.c (fitlocal): add member "result_code".

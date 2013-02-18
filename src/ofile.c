@@ -850,10 +850,9 @@ file_marktype(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
 static int
 file_fit_calc(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  struct f2ddata *fp;
   int file_id, r;
   double x, y;
-  N_VALUE *inst;
+  static struct objlist *file_obj = NULL;
 
   rval->val = 0;
 
@@ -862,8 +861,11 @@ file_fit_calc(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
     return 0;
   }
 
-  fp = math_equation_get_user_data(eq);
-  if (fp == NULL) {
+  if (file_obj == NULL) {
+    file_obj = getobject("file");
+  }
+
+  if (file_obj == NULL) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
   }
@@ -871,14 +873,7 @@ file_fit_calc(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
   file_id = exp->buf[0].val.val;
   x = exp->buf[1].val.val;
 
-  inst = chkobjinst(fp->obj, file_id);
-  if (inst == NULL) {
-    rval->type = MATH_VALUE_ERROR;
-    return 1;
-  }
-    
-  r = calc_fit_equation(fp->obj, inst, x, &y);
-
+  r = ofile_calc_fit_equation(file_obj, file_id, x, &y);
   if (r) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
@@ -893,10 +888,10 @@ file_fit_calc(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
 static int
 file_fit_prm(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  struct f2ddata *fp;
   int file_id, prm, r;
   char *argv[2], *ptr;
   struct savedstdio save;
+  static struct objlist *file_obj = NULL;
 
   rval->val = 0;
 
@@ -905,8 +900,11 @@ file_fit_prm(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
     return 0;
   }
 
-  fp = math_equation_get_user_data(eq);
-  if (fp == NULL) {
+  if (file_obj == NULL) {
+    file_obj = getobject("file");
+  }
+
+  if (file_obj == NULL) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
   }
@@ -917,7 +915,7 @@ file_fit_prm(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
   argv[0] = (char *) &prm;
   argv[1] = NULL;
   ignorestdio(&save);
-  r = getobj(fp->obj, "fit_prm", file_id, 1, argv, &ptr);
+  r = getobj(file_obj, "fit_prm", file_id, 1, argv, &ptr);
   restorestdio(&save);
   if (r < 0 || ptr == NULL) {
     rval->type = MATH_VALUE_ERROR;
@@ -935,9 +933,12 @@ struct funcs {
   struct math_function_parameter prm;
 };
 
-static struct funcs file_func[] = {
+static struct funcs FitFunc[] = {
   {"FIT_CALC", {2, 0, 0, file_fit_calc,   NULL, NULL, NULL, NULL}},
   {"FIT_PRM",  {2, 0, 0, file_fit_prm,   NULL, NULL, NULL, NULL}},
+};
+
+static struct funcs FileFunc[] = {
   {"OBJ_ALPHA", {2, 0, 0, file_objalpha, NULL, NULL, NULL, NULL}},
   {"OBJ_COLOR", {2, 0, 0, file_objcolor, NULL, NULL, NULL, NULL}},
   {"COLOR",    {2, 0, 0, file_color,    NULL, NULL, NULL, NULL}},
@@ -954,8 +955,19 @@ static int
 add_file_func(MathEquation *eq) {
   unsigned int i;
 
-  for (i = 0; i < sizeof(file_func) / sizeof(*file_func); i++) {
-    if (math_equation_add_func(eq, file_func[i].name, &file_func[i].prm) == NULL)
+  for (i = 0; i < sizeof(FileFunc) / sizeof(*FileFunc); i++) {
+    if (math_equation_add_func(eq, FileFunc[i].name, &FileFunc[i].prm) == NULL)
+      return 1;
+  }
+  return 0;
+}
+
+static int
+add_fit_func(MathEquation *eq) {
+  unsigned int i;
+
+  for (i = 0; i < sizeof(FitFunc) / sizeof(*FitFunc); i++) {
+    if (math_equation_add_func(eq, FitFunc[i].name, &FitFunc[i].prm) == NULL)
       return 1;
   }
   return 0;
@@ -1533,7 +1545,7 @@ set_equation(struct f2dlocal *f2dlocal, MathEquation **eq, const char *f, const 
   }
 
   for (i = 0; i < EQUATION_NUM; i++) {
-    eq[i] = ofile_create_math_equation(f2dlocal->const_id, TRUE, TRUE, TRUE, TRUE, TRUE);
+    eq[i] = ofile_create_math_equation(f2dlocal->const_id, 3, TRUE, TRUE, TRUE, TRUE, TRUE);
   }
 
   for (i = 0; i < EQUATION_NUM; i++) {
@@ -1726,7 +1738,7 @@ f2dsaveconfig(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **ar
 }
 
 MathEquation *
-ofile_create_math_equation(int *id, int use_prm, int use_fprm, int use_const, int usr_func, int use_fobj_func)
+ofile_create_math_equation(int *id, int prm_digit, int use_fprm, int use_const, int usr_func, int use_fobj_func, int use_fit_func)
 {
   MathEquation *code;
   unsigned int i;
@@ -1774,8 +1786,8 @@ ofile_create_math_equation(int *id, int use_prm, int use_fprm, int use_const, in
   if (code == NULL)
     return NULL;
 
-  if (use_prm) {
-    if (math_equation_add_parameter(code, 0, 1, 3, MATH_EQUATION_PARAMETAR_USE_ID)) {
+  if (prm_digit > 0) {
+    if (math_equation_add_parameter(code, 0, 1, prm_digit, MATH_EQUATION_PARAMETAR_USE_ID)) {
       math_equation_free(code);
       return NULL;
     }
@@ -1819,6 +1831,10 @@ ofile_create_math_equation(int *id, int use_prm, int use_fprm, int use_const, in
 
   if (use_fobj_func) {
     add_file_func(code);
+  }
+
+  if (use_fit_func) {
+    add_fit_func(code);
   }
 
   return code;
@@ -5172,7 +5188,7 @@ calc_weight(struct objlist *obj, struct f2dlocal *f2dlocal, struct f2ddata *fp, 
   int emerr, emserr, emnonum, emig, emng, two_pass, maxdim, ddstat, rcode, datanum2, i, j;
   int const_id[MATH_CONST_SIZE];
 
-  code = ofile_create_math_equation(const_id, TRUE, FALSE, TRUE, FALSE, FALSE);
+  code = ofile_create_math_equation(const_id, 3, FALSE, TRUE, FALSE, FALSE, TRUE);
   if (code == NULL) {
     return 1;
   }
@@ -5363,7 +5379,7 @@ draw_fit(struct objlist *obj, struct f2ddata *fp,
     min=fp->axmin2;
     max=fp->axmax2;
   } else if (min==max) return 0;
-  code = ofile_create_math_equation(NULL, FALSE, FALSE, FALSE, FALSE, FALSE);
+  code = ofile_create_math_equation(NULL, 0, FALSE, FALSE, FALSE, FALSE, TRUE);
   if (code == NULL) {
     return 1;
   }
@@ -8197,7 +8213,7 @@ solve_equation(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **a
   n = arraynum(darray);
   data = arraydata(darray);
 
-  eq = ofile_create_math_equation(NULL, FALSE, FALSE, FALSE, FALSE, FALSE);
+  eq = ofile_create_math_equation(NULL, 0, FALSE, FALSE, FALSE, FALSE, TRUE);
   if (eq == NULL) {
     return 1;
   }
@@ -8244,6 +8260,19 @@ solve_equation(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **a
   rval->str = g_strdup_printf("%.15e", x);
 
   return 0;
+}
+
+int
+ofile_calc_fit_equation(struct objlist *obj, int id, double x, double *y)
+{
+  N_VALUE *inst;
+
+  inst = chkobjinst(obj, id);
+  if (inst == NULL) {
+    return ERRNOFITINST;
+  }
+    
+  return calc_fit_equation(obj, inst, x, y);
 }
 
 static int

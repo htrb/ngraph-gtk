@@ -43,7 +43,7 @@ gra_file="`pwd`/`basename $ps_file .$1`.gra"
 if [ -e "$gra_file" ]
 then
   new dialog
-  response=${dialog::yesno:"The file '$gra_file' already exists. Do you want to replace it?"}
+  response=`get dialog -field yesno:"The file '$gra_file' already exists. Do you want to replace it?"`
   del dialog
   if [ x"$response" != "x1" ]
   then

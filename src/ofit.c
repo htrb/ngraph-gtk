@@ -225,17 +225,8 @@ fitput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
     if (math!=NULL) {
       MathEquationParametar *prm;
 
-      code = math_equation_basic_new();
-      if (code == NULL)
-	return 1;
-
-      if (math_equation_add_parameter(code, 0, 1, 2, MATH_EQUATION_PARAMETAR_USE_ID)) {
-	math_equation_free(code);
-	return 1;
-      }
-
-      if (math_equation_add_var(code, "X") != 0) {
-	math_equation_free(code);
+      code = ofile_create_math_equation(NULL, 2, FALSE, FALSE, FALSE, FALSE, TRUE);
+      if (code == NULL) {
 	return 1;
       }
 
@@ -297,7 +288,7 @@ fit_put_weight_func(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
     return 0;
   }
 
-  code = ofile_create_math_equation(NULL, TRUE, FALSE, TRUE, FALSE, FALSE);
+  code = ofile_create_math_equation(NULL, 3, FALSE, TRUE, FALSE, FALSE, TRUE);
   if (code == NULL)
     return 1;
 
@@ -1123,13 +1114,8 @@ fitcalc(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
       return 0;
     }
 
-    eq = math_equation_basic_new();
+    eq = ofile_create_math_equation(NULL, 0, FALSE, FALSE, FALSE, FALSE, TRUE);
     if (eq == NULL) {
-      return 1;
-    }
-
-    if (math_equation_add_var(eq, "X") != 0) {
-      math_equation_free(eq);
       return 1;
     }
 
