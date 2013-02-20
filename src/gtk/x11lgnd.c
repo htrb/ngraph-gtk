@@ -3187,32 +3187,6 @@ enum LEGEND_COMBO_ITEM {
 };
 
 static void
-add_line_style_item(GtkTreeStore *list, GtkTreeIter *iter)
-{
-  GtkTreeIter child;
-  int i;
-
-  gtk_tree_store_append(list, iter, NULL);
-  gtk_tree_store_set(list, iter,
-		     OBJECT_COLUMN_TYPE_STRING, _("Line style"),
-		     OBJECT_COLUMN_TYPE_PIXBUF, NULL,
-		     OBJECT_COLUMN_TYPE_INT, LEGEND_COMBO_ITEM_NONE,
-		     OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, FALSE,
-		     OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
-		     -1);
-  for (i = 0; FwLineStyle[i].name; i++) {
-    gtk_tree_store_append(list, &child, iter);
-    gtk_tree_store_set(list, &child,
-		       OBJECT_COLUMN_TYPE_STRING, _(FwLineStyle[i].name),
-		       OBJECT_COLUMN_TYPE_PIXBUF, NULL,
-		       OBJECT_COLUMN_TYPE_INT, LEGEND_COMBO_ITEM_STYLE,
-		       OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, FALSE,
-		       OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
-		       -1);
-  }
-}
-
-static void
 create_mark_color_combo_box(GtkWidget *cbox, struct objlist *obj)
 {
   int count;
@@ -3235,7 +3209,7 @@ create_mark_color_combo_box(GtkWidget *cbox, struct objlist *obj)
 		     -1);
   combo_box_create_mark(cbox, &iter, LEGEND_COMBO_ITEM_MARK);
 
-  add_line_style_item(list, &iter);
+  add_line_style_item_to_cbox(list, &iter, LEGEND_COMBO_ITEM_STYLE);
 
   gtk_tree_store_append(list, &iter, NULL);
   gtk_tree_store_set(list, &iter,
@@ -3302,7 +3276,7 @@ create_color_combo_box(GtkWidget *cbox, struct objlist *obj, int id)
 			   -1);
       }
   } else {
-    add_line_style_item(list, &iter);
+    add_line_style_item_to_cbox(list, &iter, LEGEND_COMBO_ITEM_STYLE);
 
     getobj(obj, "stroke", id, 0, NULL, &state);
     gtk_tree_store_append(list, &iter, NULL);
@@ -3356,35 +3330,13 @@ create_color_combo_box(GtkWidget *cbox, struct objlist *obj, int id)
 			 -1);
  
     }
-
-  }
-}
-
-static void
-select_line_style(struct obj_list_data *d, GtkTreeStore *list, GtkTreeIter *iter, int sel)
-{
-  GtkTreePath *path;
-  int i, *indices;
-
-  path = gtk_tree_model_get_path(GTK_TREE_MODEL(list), iter);
-  if (path == NULL) {
-    return;
-  }
-  indices = gtk_tree_path_get_indices(path);
-  if (indices == NULL) {
-    gtk_tree_path_free(path);
-  }
-  i = indices[1];
-  gtk_tree_path_free(path);
-  if (chk_sputobjfield(d->obj, sel, "style", FwLineStyle[i].list) != 0) {
-    return;
   }
 }
 
 static void
 select_type(GtkComboBox *w, gpointer user_data)
 {
-  int sel, col_type, mark_type, b, c, *ary, found, depth;
+  int sel, col_type, mark_type, idx, *ary, found, depth, active, style;
   struct obj_list_data *d;
   GtkTreeStore *list;
   GtkTreeIter iter;
@@ -3408,20 +3360,26 @@ select_type(GtkComboBox *w, gpointer user_data)
   path = gtk_tree_model_get_path(GTK_TREE_MODEL(list), &iter);
   ary = gtk_tree_path_get_indices(path);
   depth = gtk_tree_path_get_depth(path);
-  b = c = -1;
+  idx = -1;
 
   switch (depth) {
   case 2:
-    b = ary[1];
+    idx = ary[1];
   case 1:
     break;
   default:
+    gtk_tree_path_free(path);
     return;
   }
 
   gtk_tree_path_free(path);
 
   switch (col_type) {
+  case LEGEND_COMBO_ITEM_COLOR_0:
+    if (select_obj_color(d->obj, sel, OBJ_FIELD_COLOR_TYPE_0)) {
+      return;
+    }
+    break;
   case LEGEND_COMBO_ITEM_COLOR_1:
     if (select_obj_color(d->obj, sel, OBJ_FIELD_COLOR_TYPE_1)) {
       return;
@@ -3435,51 +3393,13 @@ select_type(GtkComboBox *w, gpointer user_data)
   case LEGEND_COMBO_ITEM_MARK:
     getobj(d->obj, "type", sel, 0, NULL, &mark_type);
 
-    if (b == mark_type)
+    if (idx == mark_type)
       return;
 
-    putobj(d->obj, "type", sel, &b);
+    putobj(d->obj, "type", sel, &idx);
     break;
   case LEGEND_COMBO_ITEM_STYLE:
-    select_line_style(d, list, &iter, sel);
-    break;
-  default:
-    return;
-  }
-
-
-  d->select = sel;
-  d->update(d, FALSE);
-  set_graph_modified();
-}
-
-static void
-select_color(GtkComboBox *w, gpointer user_data)
-{
-  int sel, col_type, found, active, style;
-  struct obj_list_data *d;
-  GtkTreeStore *list;
-  GtkTreeIter iter;
-
-  menu_lock(FALSE);
-
-  d = (struct obj_list_data *) user_data;
-
-  sel = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(w), "user-data"));
-  if (sel < 0) {
-    return;
-  }
-
-  list = GTK_TREE_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(w)));
-  found = gtk_combo_box_get_active_iter(w, &iter);
-  if (! found)
-    return;
-
-  gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_INT, &col_type, -1);
-
-  switch (col_type) {
-  case LEGEND_COMBO_ITEM_COLOR_0:
-    if (select_obj_color(d->obj, sel, OBJ_FIELD_COLOR_TYPE_0)) {
+    if (idx >= 0 && chk_sputobjfield(d->obj, sel, "style", FwLineStyle[idx].list) != 0) {
       return;
     }
     break;
@@ -3507,9 +3427,6 @@ select_color(GtkComboBox *w, gpointer user_data)
     gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);
     active = ! active;
     putobj(d->obj, "close_path", sel, &active);
-    break;
-  case LEGEND_COMBO_ITEM_STYLE:
-    select_line_style(d, list, &iter, sel);
     break;
   case LEGEND_COMBO_ITEM_STYLE_BOLD:
     gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);
@@ -3589,7 +3506,7 @@ start_editing_color(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar 
 
   create_color_combo_box(GTK_WIDGET(editable), d->obj, sel);
   gtk_widget_show(GTK_WIDGET(editable));
-  g_signal_connect(editable, "editing-done", G_CALLBACK(select_color), user_data);
+  g_signal_connect(editable, "editing-done", G_CALLBACK(select_type), user_data);
 
  return;
 }

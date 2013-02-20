@@ -12,7 +12,7 @@
 #include "addin_common.h"
 
 #define NAME    "Fitrslt"
-#define VERSION "1.00.02"
+#define VERSION "1.00.03"
 
 #define POS_X    50.00
 #define POS_Y    50.00

@@ -4623,6 +4623,7 @@ enum FILE_COMBO_ITEM {
   FILE_COMBO_ITEM_TYPE,
   FILE_COMBO_ITEM_MARK,
   FILE_COMBO_ITEM_INTP,
+  FILE_COMBO_ITEM_LINESTYLE,
 };
 
 
@@ -4648,6 +4649,8 @@ create_type_color_combo_box(GtkWidget *cbox, struct objlist *obj, int type)
 		     OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
 		     -1);
   create_type_combo_box(cbox, obj, &parent);
+
+  add_line_style_item_to_cbox(list, &parent, FILE_COMBO_ITEM_LINESTYLE);
 
   gtk_tree_store_append(list, &parent, NULL);
   gtk_tree_store_set(list, &parent,
@@ -4719,7 +4722,7 @@ create_type_combo_box(GtkWidget *cbox, struct objlist *obj, GtkTreeIter *parent)
 static void
 select_type(GtkComboBox *w, gpointer user_data)
 {
-  int sel, col_type, type, mark_type, curve_type, b, c, *ary, found, depth;
+  int sel, col_type, type, mark_type, curve_type, idx[2], *ary, found, depth;
   struct objlist *obj;
   struct obj_list_data *d;
   GtkTreeStore *list;
@@ -4746,13 +4749,13 @@ select_type(GtkComboBox *w, gpointer user_data)
   path = gtk_tree_model_get_path(GTK_TREE_MODEL(list), &iter);
   ary = gtk_tree_path_get_indices(path);
   depth = gtk_tree_path_get_depth(path);
-  b = c = -1;
+  idx[0] = idx[1] = -1;
 
   switch (depth) {
   case 3:
-    c = ary[2];
-  case 2:
-    b = ary[1];
+    idx[1] = ary[2];
+  case 2:			/* fall-through */
+    idx[0] = ary[1];
   case 1:
     break;
   default:
@@ -4773,37 +4776,41 @@ select_type(GtkComboBox *w, gpointer user_data)
     }
     break;
   case FILE_COMBO_ITEM_TYPE:
-    if (b < 0 || b == type) {
+    if (idx[0] < 0 || idx[0] == type) {
       return;
     }
-    putobj(obj, "type", sel, &b);
+    putobj(obj, "type", sel, idx);
     break;
   case FILE_COMBO_ITEM_MARK:
     getobj(obj, "mark_type", sel, 0, NULL, &mark_type);
 
-    if (c < 0)
-      c = mark_type;
+    if (idx[1] < 0)
+      idx[1] = mark_type;
 
-    if (b == type && c == mark_type)
+    if (idx[0] == type && idx[1] == mark_type)
       return;
 
-    putobj(obj, "mark_type", sel, &c);
-    putobj(obj, "type", sel, &b);
+    putobj(obj, "mark_type", sel, idx + 1);
+    putobj(obj, "type", sel, idx);
 
     break;
   case FILE_COMBO_ITEM_INTP:
     getobj(obj, "interpolation", sel, 0, NULL, &curve_type);
 
-    if (c < 0)
-      c = curve_type;
+    if (idx[1] < 0)
+      idx[1] = curve_type;
 
-    if (b == type && c == curve_type)
+    if (idx[0] == type && idx[1] == curve_type)
       return;
 
-    putobj(obj, "interpolation", sel, &c);
-    putobj(obj, "type", sel, &b);
+    putobj(obj, "interpolation", sel, idx + 1);
+    putobj(obj, "type", sel, idx);
 
     break;
+  case FILE_COMBO_ITEM_LINESTYLE:
+    if (idx[0] >= 0 && chk_sputobjfield(d->obj, sel, "line_style", FwLineStyle[idx[0]].list) != 0) {
+      return;
+    }
   default:
     return;
   }

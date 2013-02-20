@@ -8,6 +8,8 @@
 
 #include "gtk_liststore.h"
 
+#include "x11dialg.h"
+
 GtkWidget *
 create_object_cbox(void)
 {
@@ -35,6 +37,32 @@ create_object_cbox(void)
   g_object_set(cbox, "has-frame", FALSE, NULL);
 
   return cbox;
+}
+
+void
+add_line_style_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, int column_id)
+{
+  GtkTreeIter child;
+  int i;
+
+  gtk_tree_store_append(list, iter, NULL);
+  gtk_tree_store_set(list, iter,
+		     OBJECT_COLUMN_TYPE_STRING, _("Line style"),
+		     OBJECT_COLUMN_TYPE_PIXBUF, NULL,
+		     OBJECT_COLUMN_TYPE_INT, -1,
+		     OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, FALSE,
+		     OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
+		     -1);
+  for (i = 0; FwLineStyle[i].name; i++) {
+    gtk_tree_store_append(list, &child, iter);
+    gtk_tree_store_set(list, &child,
+		       OBJECT_COLUMN_TYPE_STRING, _(FwLineStyle[i].name),
+		       OBJECT_COLUMN_TYPE_PIXBUF, NULL,
+		       OBJECT_COLUMN_TYPE_INT, column_id,
+		       OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, FALSE,
+		       OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
+		       -1);
+  }
 }
 
 GtkCellEditable *

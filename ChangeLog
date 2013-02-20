@@ -1,5 +1,17 @@
 2013-02-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11file.c (create_type_color_combo_box): use
+	"add_line_style_item_to_cbox()".
+	(select_type): add case for "FILE_COMBO_ITEM_LINESTYLE".
+
+	* src/gtk/gtk_liststore.c (add_line_style_item_to_cbox): added.
+
+	* src/gtk/x11lgnd.c (select_color, select_line_style): removed.
+	(create_mark_color_combo_box, create_color_combo_box): use
+	"add_line_style_item_to_cbox()".
+	(select_type): handle all legend objects.
+	(start_editing_color): use "select_type()" as a callback function.
+
 	* addin/fitrslt.c (set_parameter): use "file::fit_prm".
 	(ACCURACY): defined as 7
 

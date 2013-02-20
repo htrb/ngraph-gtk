@@ -25,6 +25,7 @@ typedef struct _list_store {
 } n_list_store;
 
 GtkWidget *create_object_cbox(void);
+void add_line_style_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, int column_id);
 
 GtkWidget *list_store_create(int n, n_list_store *list);
 
