@@ -1,3 +1,21 @@
+2013-02-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* addin/fitrslt.c (set_parameter): use "file::fit_prm".
+	(ACCURACY): defined as 7
+
+2013-02-19  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11lgnd.c (add_line_style_item): added.
+	(create_mark_color_combo_box, create_color_combo_box): use
+	"add_line_style_item()".
+	(select_line_style): added.
+	(select_type, select_color): use "select_line_style()".
+
+	* mingw/windows.sh: create "$PKG_DIR/lib".
+
+	* mingw/gtkrc (msw-combobox-thickness): set
+	"GtkComboBox::appears-as-list" as 0.
+
 2013-02-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* addin/ps2gra.nsc: use "get" command to obtain returned value of

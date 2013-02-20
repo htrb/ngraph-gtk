@@ -33,7 +33,7 @@ make
 
 make install
 
-mkdir -p $PKG_DIR/share/icons
+mkdir -p $PKG_DIR/share/icons $PKG_DIR/lib
 
 rm $PKG_DIR/bin/terminal.exe
 
@@ -51,6 +51,7 @@ then
 fi
 
 cp $WIN_PATH/gtkrc         $PKG_DIR/share/themes/MS-Windows/gtk-2.0
+cp $WIN_PATH/gtkrc         $PKG_DIR/share/themes/Raleigh/gtk-2.0
 cp $WIN_PATH/pango.aliases $PKG_DIR/etc/pango
 cp $WIN_PATH/ngraph.ico    $PKG_DIR/share/icons
 cp $WIN_PATH/associate.bat $PKG_DIR

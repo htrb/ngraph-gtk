@@ -21,7 +21,7 @@
 #define POS_MIN   -1000
 #define POS_MAX    1000
 
-#define ACCURACY     51
+#define ACCURACY     7
 #define DIVISION   100
 
 #define ADD_PLUS FALSE
@@ -369,9 +369,9 @@ set_parameter(struct fit_prm *prm)
 	       prm->data[i].prm[j]);
     } else {
       snprintf(buf, sizeof(buf),
-	       "%%pf{%s %%{fit:%d:%%%02d}}",
+	       "%%pf{%s %%{file:%d:fit_prm:%d}}",
 	       fmt,
-	       prm->data[i].id,
+	       prm->data[i].file_id,
 	       j);
     }
     gtk_list_store_set(GTK_LIST_STORE(model), &iter, COLUMN_CHECK, dim[j], COLUMN_VAL, buf, -1);
