@@ -1037,7 +1037,7 @@ text_view_with_line_number_set_font(GtkWidget *view, const gchar *font)
 }
 
 void
-combo_box_create_mark(GtkWidget *cbox, GtkTreeIter *parent, int col_id)
+combo_box_create_mark(GtkWidget *cbox, GtkTreeIter *parent, int col_id, int type)
 {
   int j;
   GtkTreeStore *list;
@@ -1062,7 +1062,9 @@ combo_box_create_mark(GtkWidget *cbox, GtkTreeIter *parent, int col_id)
 			 OBJECT_COLUMN_TYPE_STRING, buf,
 			 OBJECT_COLUMN_TYPE_PIXBUF, pixbuf,
 			 OBJECT_COLUMN_TYPE_INT, col_id,
-			 OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, FALSE,
+			 OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, TRUE,
+			 OBJECT_COLUMN_TYPE_TOGGLE_IS_RADIO, TRUE,
+			 OBJECT_COLUMN_TYPE_TOGGLE, j == type,
 			 -1);
       g_object_unref(pixbuf);
     }

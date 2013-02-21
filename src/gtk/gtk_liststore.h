@@ -5,13 +5,17 @@
 #ifndef _GTK_LISTSTORE_HEADER
 #define _GTK_LISTSTORE_HEADER
 
+#include "object.h"
+
 enum OBJECT_COLUMN_TYPE {
   OBJECT_COLUMN_TYPE_TOGGLE,
   OBJECT_COLUMN_TYPE_STRING,
   OBJECT_COLUMN_TYPE_PIXBUF,
   OBJECT_COLUMN_TYPE_INT,
   OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE,
+  OBJECT_COLUMN_TYPE_TOGGLE_IS_RADIO,
   OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE,
+  OBJECT_COLUMN_TYPE_NUM,
 };
 
 typedef struct _list_store {
@@ -25,7 +29,7 @@ typedef struct _list_store {
 } n_list_store;
 
 GtkWidget *create_object_cbox(void);
-void add_line_style_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, int column_id);
+void add_line_style_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *parent, int column_id, struct objlist *obj, char *field, int id);
 
 GtkWidget *list_store_create(int n, n_list_store *list);
 

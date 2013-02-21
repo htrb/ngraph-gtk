@@ -752,7 +752,6 @@ SetWidgetFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
     return;
   }
 
-
   if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_SPIN_BUTTON)) {
     SetSpinFromObjField(w, Obj, Id, field);
   } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_ENTRY)) {

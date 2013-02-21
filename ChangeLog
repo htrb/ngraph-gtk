@@ -1,3 +1,32 @@
+2013-02-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (ViewerWinClose): assign NULL to freed member.
+
+	* src/gtk/gtk_liststore.c (create_object_cbox): use
+	"OBJECT_COLUMN_TYPE_NUM" for the function "gtk_tree_store_new()".
+	(add_line_style_item_to_cbox): add 3rd, 5th, 6rh and 7th
+	parameters.
+
+	* src/gtk/gtk_liststore.h (OBJECT_COLUMN_TYPE): add
+	"OBJECT_COLUMN_TYPE_TOGGLE_IS_RADIO" and "OBJECT_COLUMN_TYPE_NUM".
+
+	* src/gtk/x11file.c (FileDialogType): set sensitivity of the
+	widgets to set "line style" and "line width".
+	(create_type_color_combo_box): add 4th parameter.
+	(create_type_combo_box): add 3rd parameter.
+
+	* src/gtk/gtk_widget.c (combo_box_create_mark): add 4th parameter.
+
+	* src/gtk/x11lgnd.c (LEGEND_COMBO_ITEM): add
+	"LEGEND_COMBO_ITEM_FILL_EVEN_ODD" and
+	"LEGEND_COMBO_ITEM_FILL_WINDING".
+	(create_mark_color_combo_box): add 3rd parameter.
+	(create_fill_rule_combo_box): added.
+	(create_color_combo_box): some menus are placed as a child menu.
+	(set_bool_field, set_stroke, set_fill): added.
+	(select_type): use "set_stroke()" and "set_fill()". set
+	"fill_rule" field.
+
 2013-02-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (create_type_color_combo_box): use

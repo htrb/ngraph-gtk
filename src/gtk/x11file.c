@@ -110,7 +110,7 @@ static void file_fit_popup_func(GtkMenuItem *w, gpointer client_data);
 static void file_edit_popup_func(GtkMenuItem *w, gpointer client_data);
 static void file_draw_popup_func(GtkMenuItem *w, gpointer client_data);
 static void FileDialogType(GtkWidget *w, gpointer client_data);
-static void create_type_combo_box(GtkWidget *cbox, struct objlist *obj, GtkTreeIter *parent);
+static void create_type_combo_box(GtkWidget *cbox, struct objlist *obj, int id, GtkTreeIter *parent);
 static gboolean func_entry_focused(GtkWidget *w, GdkEventFocus *event, gpointer user_data);
 
 static struct subwin_popup_list Popup_list[] = {
@@ -2865,6 +2865,8 @@ FileDialogType(GtkWidget *w, gpointer client_data)
   set_widget_sensitivity_with_label(d->miter, TRUE);
   set_widget_sensitivity_with_label(d->join, TRUE);
   set_widget_sensitivity_with_label(d->fit, TRUE);
+  set_widget_sensitivity_with_label(d->style, TRUE);
+  set_widget_sensitivity_with_label(d->width, TRUE);
 
   switch (type) {
   case PLOT_TYPE_MARK:
@@ -2887,9 +2889,17 @@ FileDialogType(GtkWidget *w, gpointer client_data)
     set_widget_sensitivity_with_label(d->size, FALSE);
     set_widget_sensitivity_with_label(d->fit, FALSE);
     break;
-  case PLOT_TYPE_POLYGON_SOLID_FILL:
   case PLOT_TYPE_DIAGONAL:
   case PLOT_TYPE_RECTANGLE:
+    set_widget_sensitivity_with_label(d->mark_btn, FALSE);
+    set_widget_sensitivity_with_label(d->curve, FALSE);
+    set_widget_sensitivity_with_label(d->col2, FALSE);
+    set_widget_sensitivity_with_label(d->size, FALSE);
+    set_widget_sensitivity_with_label(d->miter, FALSE);
+    set_widget_sensitivity_with_label(d->join, FALSE);
+    set_widget_sensitivity_with_label(d->fit, FALSE);
+    break;
+  case PLOT_TYPE_POLYGON_SOLID_FILL:
   case PLOT_TYPE_RECTANGLE_SOLID_FILL:
     set_widget_sensitivity_with_label(d->mark_btn, FALSE);
     set_widget_sensitivity_with_label(d->curve, FALSE);
@@ -2898,6 +2908,8 @@ FileDialogType(GtkWidget *w, gpointer client_data)
     set_widget_sensitivity_with_label(d->miter, FALSE);
     set_widget_sensitivity_with_label(d->join, FALSE);
     set_widget_sensitivity_with_label(d->fit, FALSE);
+    set_widget_sensitivity_with_label(d->style, FALSE);
+    set_widget_sensitivity_with_label(d->width, FALSE);
     break;
   case PLOT_TYPE_ARROW:
     set_widget_sensitivity_with_label(d->mark_btn, FALSE);
@@ -2934,6 +2946,13 @@ FileDialogType(GtkWidget *w, gpointer client_data)
     break;
   case PLOT_TYPE_BAR_X:
   case PLOT_TYPE_BAR_Y:
+    set_widget_sensitivity_with_label(d->mark_btn, FALSE);
+    set_widget_sensitivity_with_label(d->curve, FALSE);
+    set_widget_sensitivity_with_label(d->col2, FALSE);
+    set_widget_sensitivity_with_label(d->miter, FALSE);
+    set_widget_sensitivity_with_label(d->join, FALSE);
+    set_widget_sensitivity_with_label(d->fit, FALSE);
+    break;
   case PLOT_TYPE_BAR_SOLID_FILL_X:
   case PLOT_TYPE_BAR_SOLID_FILL_Y:
     set_widget_sensitivity_with_label(d->mark_btn, FALSE);
@@ -2942,6 +2961,8 @@ FileDialogType(GtkWidget *w, gpointer client_data)
     set_widget_sensitivity_with_label(d->miter, FALSE);
     set_widget_sensitivity_with_label(d->join, FALSE);
     set_widget_sensitivity_with_label(d->fit, FALSE);
+    set_widget_sensitivity_with_label(d->style, FALSE);
+    set_widget_sensitivity_with_label(d->width, FALSE);
     break;
   case PLOT_TYPE_BAR_FILL_X:
   case PLOT_TYPE_BAR_FILL_Y:
@@ -4628,7 +4649,7 @@ enum FILE_COMBO_ITEM {
 
 
 static void
-create_type_color_combo_box(GtkWidget *cbox, struct objlist *obj, int type)
+create_type_color_combo_box(GtkWidget *cbox, struct objlist *obj, int type, int id)
 {
   int count;
   GtkTreeStore *list;
@@ -4648,9 +4669,29 @@ create_type_color_combo_box(GtkWidget *cbox, struct objlist *obj, int type)
 		     OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, FALSE,
 		     OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
 		     -1);
-  create_type_combo_box(cbox, obj, &parent);
+  create_type_combo_box(cbox, obj, id, &parent);
 
-  add_line_style_item_to_cbox(list, &parent, FILE_COMBO_ITEM_LINESTYLE);
+  switch (type) {
+  case PLOT_TYPE_MARK:
+  case PLOT_TYPE_LINE:
+  case PLOT_TYPE_POLYGON:
+  case PLOT_TYPE_CURVE:
+  case PLOT_TYPE_DIAGONAL:
+  case PLOT_TYPE_ARROW:
+  case PLOT_TYPE_RECTANGLE:
+  case PLOT_TYPE_RECTANGLE_FILL:
+  case PLOT_TYPE_ERRORBAR_X:
+  case PLOT_TYPE_ERRORBAR_Y:
+  case PLOT_TYPE_STAIRCASE_X:
+  case PLOT_TYPE_STAIRCASE_Y:
+  case PLOT_TYPE_BAR_X:
+  case PLOT_TYPE_BAR_Y:
+  case PLOT_TYPE_BAR_FILL_X:
+  case PLOT_TYPE_BAR_FILL_Y:
+  case PLOT_TYPE_FIT:
+    add_line_style_item_to_cbox(list, &parent, NULL, FILE_COMBO_ITEM_LINESTYLE, obj, "line_style", id);
+    break;
+  }
 
   gtk_tree_store_append(list, &parent, NULL);
   gtk_tree_store_set(list, &parent,
@@ -4679,15 +4720,20 @@ create_type_color_combo_box(GtkWidget *cbox, struct objlist *obj, int type)
 }
 
 static void
-create_type_combo_box(GtkWidget *cbox, struct objlist *obj, GtkTreeIter *parent)
+create_type_combo_box(GtkWidget *cbox, struct objlist *obj, int id, GtkTreeIter *parent)
 {
   char **enumlist, **curvelist;
   unsigned int i;
-  int j;
+  int j, type, interpolation, mark;
   GtkTreeStore *list;
 
   enumlist = (char **) chkobjarglist(obj, "type");
   list = GTK_TREE_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(cbox)));
+
+  type = interpolation = -1;
+  getobj(obj, "type", id, 0, NULL, &type);
+  getobj(obj, "mark_type", id, 0, NULL, &mark);
+  getobj(obj, "interpolation", id, 0, NULL, &interpolation);
 
   for (i = 0; enumlist[i] && enumlist[i][0]; i++) {
     GtkTreeIter iter, child;
@@ -4697,12 +4743,14 @@ create_type_combo_box(GtkWidget *cbox, struct objlist *obj, GtkTreeIter *parent)
 		       OBJECT_COLUMN_TYPE_STRING, _(enumlist[i]),
 		       OBJECT_COLUMN_TYPE_PIXBUF, NULL,
 		       OBJECT_COLUMN_TYPE_INT, FILE_COMBO_ITEM_TYPE,
-		       OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, FALSE,
+		       OBJECT_COLUMN_TYPE_TOGGLE, type == (int) i,
+		       OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, TRUE,
+		       OBJECT_COLUMN_TYPE_TOGGLE_IS_RADIO, TRUE,
 		       OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
 		       -1);
 
     if (strcmp(enumlist[i], "mark") == 0) {
-      combo_box_create_mark(cbox, &iter, FILE_COMBO_ITEM_MARK);
+      combo_box_create_mark(cbox, &iter, FILE_COMBO_ITEM_MARK, mark);
     } else if (strcmp(enumlist[i], "curve") == 0) {
       curvelist = (char **) chkobjarglist(obj, "interpolation");
       for (j = 0; curvelist[j] && curvelist[j][0]; j++) {
@@ -4711,7 +4759,9 @@ create_type_combo_box(GtkWidget *cbox, struct objlist *obj, GtkTreeIter *parent)
 			   OBJECT_COLUMN_TYPE_STRING, _(curvelist[j]),
 			   OBJECT_COLUMN_TYPE_PIXBUF, NULL,
 			   OBJECT_COLUMN_TYPE_INT, FILE_COMBO_ITEM_INTP,
-			   OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, FALSE,
+			   OBJECT_COLUMN_TYPE_TOGGLE, j == interpolation,
+			   OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, TRUE,
+			   OBJECT_COLUMN_TYPE_TOGGLE_IS_RADIO, TRUE,
 			   OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
 			   -1);
       }
@@ -4847,7 +4897,7 @@ start_editing_type(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *
     return;
 
   getobj(obj, "type", sel, 0, NULL, &type);
-  create_type_color_combo_box(GTK_WIDGET(cbox), obj, type);
+  create_type_color_combo_box(GTK_WIDGET(cbox), obj, type, sel);
 
   g_signal_connect(cbox, "editing-done", G_CALLBACK(select_type), d);
   gtk_widget_show(GTK_WIDGET(cbox));

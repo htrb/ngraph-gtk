@@ -1199,6 +1199,9 @@ ViewerWinClose(void)
   arrayfree2(d->focusobj);
   arrayfree2(d->points);
 
+  d->focusobj = NULL;
+  d->points = NULL;
+
   if (region) {
 #if GTK_CHECK_VERSION(3, 0, 0)
     cairo_region_destroy(region);

@@ -5,7 +5,6 @@
 #include <stdlib.h>
 
 #include "gtk_common.h"
-
 #include "gtk_liststore.h"
 
 #include "x11dialg.h"
@@ -17,7 +16,7 @@ create_object_cbox(void)
   GtkCellRenderer *rend;
   GtkWidget *cbox;
 
-  model = GTK_TREE_MODEL(gtk_tree_store_new(6, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_OBJECT, G_TYPE_INT, G_TYPE_BOOLEAN, G_TYPE_BOOLEAN));
+  model = GTK_TREE_MODEL(gtk_tree_store_new(OBJECT_COLUMN_TYPE_NUM, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_OBJECT, G_TYPE_INT, G_TYPE_BOOLEAN, G_TYPE_BOOLEAN, G_TYPE_BOOLEAN));
   cbox = gtk_combo_box_new_with_model(model);
 
   rend = gtk_cell_renderer_toggle_new();
@@ -40,12 +39,25 @@ create_object_cbox(void)
 }
 
 void
-add_line_style_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, int column_id)
+add_line_style_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *parent, int column_id, struct objlist *obj, char *field, int id)
 {
   GtkTreeIter child;
-  int i;
+  int i, j;
+  char *str, *ptr;
 
-  gtk_tree_store_append(list, iter, NULL);
+  sgetobjfield(obj, id, field, NULL, &ptr, FALSE, FALSE, FALSE);
+  if (ptr == NULL) {
+    str = g_strdup("");
+  } else {
+    str = g_strdup(ptr);
+    g_free(ptr);
+  }
+
+  if (str == NULL) {
+    return;
+  }
+
+  gtk_tree_store_append(list, iter, parent);
   gtk_tree_store_set(list, iter,
 		     OBJECT_COLUMN_TYPE_STRING, _("Line style"),
 		     OBJECT_COLUMN_TYPE_PIXBUF, NULL,
@@ -54,15 +66,19 @@ add_line_style_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, int column_id
 		     OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
 		     -1);
   for (i = 0; FwLineStyle[i].name; i++) {
+    j = ! strcmp(str, FwLineStyle[i].list);
     gtk_tree_store_append(list, &child, iter);
     gtk_tree_store_set(list, &child,
 		       OBJECT_COLUMN_TYPE_STRING, _(FwLineStyle[i].name),
 		       OBJECT_COLUMN_TYPE_PIXBUF, NULL,
 		       OBJECT_COLUMN_TYPE_INT, column_id,
-		       OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, FALSE,
+		       OBJECT_COLUMN_TYPE_TOGGLE, j,
+		       OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, TRUE,
+		       OBJECT_COLUMN_TYPE_TOGGLE_IS_RADIO, TRUE,
 		       OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
 		       -1);
   }
+  g_free(str);
 }
 
 GtkCellEditable *

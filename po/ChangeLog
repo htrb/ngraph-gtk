@@ -1,3 +1,7 @@
+2013-02-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* POTFILES.in: add "src/gtk/gtk_liststore.c".
+
 2008-05-27  gettextize  <bug-gnu-gettext@gnu.org>
 
 	* Makefile.in.in: New file, from gettext-0.17.
