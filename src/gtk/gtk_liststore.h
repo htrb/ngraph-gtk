@@ -28,8 +28,16 @@ typedef struct _list_store {
   gulong edited_id;
 } n_list_store;
 
-GtkWidget *create_object_cbox(void);
-void add_line_style_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *parent, int column_id, struct objlist *obj, char *field, int id);
+void init_object_combo_box(GtkWidget *cbox);
+
+void add_separator_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *parent);
+void add_line_style_item_to_cbox(GtkTreeStore *list, GtkTreeIter *parent, int column_id, struct objlist *obj, const char *field, int id);
+void add_bool_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *parent, int column_id, struct objlist *obj, const char *field, int id, const char *title);
+void add_mark_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *parent, int column_id, struct objlist *obj, const char *field, int id);
+void add_enum_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *parent, int column_id, struct objlist *obj, const char *field, int id);
+void add_font_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *parent, int column_id, struct objlist *obj, const char *field, int id);
+void add_text_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *parent, int column_id, const char *title, int is_radio, int active);
+void add_font_style_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *parent, int column_id_bold, int column_id_italic, struct objlist *obj, const char *field, int id);
 
 GtkWidget *list_store_create(int n, n_list_store *list);
 

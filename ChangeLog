@@ -1,3 +1,55 @@
+2013-02-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_widget.c (combo_box_create_mark): removed.
+	(select_obj_color): handle case for
+	"OBJ_FIELD_COLOR_TYPE_AXIS_BASE",
+	"OBJ_FIELD_COLOR_TYPE_AXIS_GAUGE" and
+	"OBJ_FIELD_COLOR_TYPE_AXIS_NUM".
+
+	* src/gtk/x11lgnd.c (text_list_set_val): set color of the text
+	column.
+	(create_mark_color_combo_box): use "add_text_combo_item_to_cbox()"
+	and "add_mark_combo_item_to_cbox()".
+	(create_fill_rule_combo_box): removed.
+	(create_color_combo_box): use "add_bool_combo_item_to_cbox()",
+	"add_line_style_item_to_cbox()", "add_text_combo_item_to_cbox()"
+	and "add_enum_combo_item_to_cbox()".
+	(select_type): dant handle the case "LEGEND_COMBO_ITEM_COLOR_0".
+	(select_line_type): now the ComboBox use "GtkTreeStore".
+	(start_editing_line_type): use "init_object_combo_box()".
+	(select_font): added.
+	(start_editing_font): use "init_object_combo_box()".
+	(edited_font): only call "menu_lock()".
+	(CmLegendWindow): set "foreground" column.
+
+	* src/gtk/gtk_liststore.c (combo_box_separator_func)
+	(init_object_combo_box, create_object_tree_model)
+	(add_separator_combo_item_to_cbox, add_font_combo_item_to_cbox)
+	(add_font_style_combo_item_to_cbox, add_text_combo_item_to_cbox)
+	(add_mark_combo_item_to_cbox, add_enum_combo_item_to_cbox)
+	(add_bool_combo_item_to_cbox, add_line_style_item_to_cbox): added.
+	(create_object_cbox): use "create_object_tree_model()".
+	(create_column): use "create_object_tree_model()" for the case
+	"G_TYPE_PARAM".
+
+	* src/gtk/x11dialg.c (SetFontListFromObj): type of the lase
+	parameter is "const char *".
+
+	* src/gtk/x11file.c (create_type_color_combo_box): use
+	"create_type_combo_item()" and "add_text_combo_item_to_cbox()".
+	(create_type_combo_item): use "add_text_combo_item_to_cbox()".
+	(create_type_combo_item): added.
+	(create_type_combo_box): removed.
+	(select_axis): use "gtk_tree_model_get()" to get active item.
+	(start_editing): use "init_object_combo_box()" and
+	"add_text_combo_item_to_cbox()".
+
+	* src/gtk/x11axis.c (AXIS_COMBO_ITEM, create_base_combo_item)
+	(create_gauge_combo_item, create_num_combo_item)
+	(create_type_combo_box, select_type, start_editing_type)
+	(type_edited): added.
+	(CmAxisWindow): call "set_combo_cell_renderer_cb()".
+
 2013-02-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (ViewerWinClose): assign NULL to freed member.

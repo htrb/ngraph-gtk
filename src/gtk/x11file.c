@@ -110,7 +110,7 @@ static void file_fit_popup_func(GtkMenuItem *w, gpointer client_data);
 static void file_edit_popup_func(GtkMenuItem *w, gpointer client_data);
 static void file_draw_popup_func(GtkMenuItem *w, gpointer client_data);
 static void FileDialogType(GtkWidget *w, gpointer client_data);
-static void create_type_combo_box(GtkWidget *cbox, struct objlist *obj, int id, GtkTreeIter *parent);
+static void create_type_combo_item(GtkTreeStore *list, struct objlist *obj, int id);
 static gboolean func_entry_focused(GtkWidget *w, GdkEventFocus *event, gpointer user_data);
 
 static struct subwin_popup_list Popup_list[] = {
@@ -4653,7 +4653,6 @@ create_type_color_combo_box(GtkWidget *cbox, struct objlist *obj, int type, int 
 {
   int count;
   GtkTreeStore *list;
-  GtkTreeIter parent;
 
   count = combo_box_get_num(cbox);
   if (count > 0)
@@ -4661,15 +4660,7 @@ create_type_color_combo_box(GtkWidget *cbox, struct objlist *obj, int type, int 
 
   list = GTK_TREE_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(cbox)));
 
-  gtk_tree_store_append(list, &parent, NULL);
-  gtk_tree_store_set(list, &parent,
-		     OBJECT_COLUMN_TYPE_STRING, _("Type"),
-		     OBJECT_COLUMN_TYPE_PIXBUF, NULL,
-		     OBJECT_COLUMN_TYPE_INT, FILE_COMBO_ITEM_TYPE, 
-		     OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, FALSE,
-		     OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
-		     -1);
-  create_type_combo_box(cbox, obj, id, &parent);
+  create_type_combo_item(list, obj, id);
 
   switch (type) {
   case PLOT_TYPE_MARK:
@@ -4689,82 +4680,49 @@ create_type_color_combo_box(GtkWidget *cbox, struct objlist *obj, int type, int 
   case PLOT_TYPE_BAR_FILL_X:
   case PLOT_TYPE_BAR_FILL_Y:
   case PLOT_TYPE_FIT:
-    add_line_style_item_to_cbox(list, &parent, NULL, FILE_COMBO_ITEM_LINESTYLE, obj, "line_style", id);
+    add_line_style_item_to_cbox(list, NULL, FILE_COMBO_ITEM_LINESTYLE, obj, "line_style", id);
     break;
   }
 
-  gtk_tree_store_append(list, &parent, NULL);
-  gtk_tree_store_set(list, &parent,
-		     OBJECT_COLUMN_TYPE_STRING, _("Color 1"),
-		     OBJECT_COLUMN_TYPE_PIXBUF, NULL,
-		     OBJECT_COLUMN_TYPE_INT, FILE_COMBO_ITEM_COLOR_1,
-		     OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, FALSE,
-		     OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
-		     -1);
+  add_text_combo_item_to_cbox(list, NULL, NULL, FILE_COMBO_ITEM_COLOR_1, _("Color 1"), FALSE, FALSE);
 
   switch (type) {
   case PLOT_TYPE_MARK:
   case PLOT_TYPE_RECTANGLE_FILL:
   case PLOT_TYPE_BAR_FILL_X:
   case PLOT_TYPE_BAR_FILL_Y:
-    gtk_tree_store_append(list, &parent, NULL);
-    gtk_tree_store_set(list, &parent,
-		       OBJECT_COLUMN_TYPE_STRING, _("Color 2"),
-		       OBJECT_COLUMN_TYPE_PIXBUF, NULL,
-		       OBJECT_COLUMN_TYPE_INT, FILE_COMBO_ITEM_COLOR_2,
-		       OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, FALSE,
-		       OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
-		       -1);
+    add_text_combo_item_to_cbox(list, NULL, NULL, FILE_COMBO_ITEM_COLOR_2, _("Color 2"), FALSE, FALSE);
     break;
   }
 }
 
 static void
-create_type_combo_box(GtkWidget *cbox, struct objlist *obj, int id, GtkTreeIter *parent)
+create_type_combo_item(GtkTreeStore *list, struct objlist *obj, int id)
 {
-  char **enumlist, **curvelist;
-  unsigned int i;
-  int j, type, interpolation, mark;
-  GtkTreeStore *list;
+  char **enumlist;
+  int i, type;
+  GtkTreeIter parent, iter;
+
+  gtk_tree_store_append(list, &parent, NULL);
+  gtk_tree_store_set(list, &parent,
+		     OBJECT_COLUMN_TYPE_STRING, _("Type"),
+		     OBJECT_COLUMN_TYPE_PIXBUF, NULL,
+		     OBJECT_COLUMN_TYPE_INT, FILE_COMBO_ITEM_TYPE, 
+		     OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, FALSE,
+		     OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
+		     -1);
 
   enumlist = (char **) chkobjarglist(obj, "type");
-  list = GTK_TREE_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(cbox)));
 
-  type = interpolation = -1;
+  type = -1;
   getobj(obj, "type", id, 0, NULL, &type);
-  getobj(obj, "mark_type", id, 0, NULL, &mark);
-  getobj(obj, "interpolation", id, 0, NULL, &interpolation);
 
   for (i = 0; enumlist[i] && enumlist[i][0]; i++) {
-    GtkTreeIter iter, child;
-
-    gtk_tree_store_append(list, &iter, parent);
-    gtk_tree_store_set(list, &iter,
-		       OBJECT_COLUMN_TYPE_STRING, _(enumlist[i]),
-		       OBJECT_COLUMN_TYPE_PIXBUF, NULL,
-		       OBJECT_COLUMN_TYPE_INT, FILE_COMBO_ITEM_TYPE,
-		       OBJECT_COLUMN_TYPE_TOGGLE, type == (int) i,
-		       OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, TRUE,
-		       OBJECT_COLUMN_TYPE_TOGGLE_IS_RADIO, TRUE,
-		       OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
-		       -1);
-
+    add_text_combo_item_to_cbox(list, &iter, &parent, FILE_COMBO_ITEM_TYPE, _(enumlist[i]), TRUE,  type == i);
     if (strcmp(enumlist[i], "mark") == 0) {
-      combo_box_create_mark(cbox, &iter, FILE_COMBO_ITEM_MARK, mark);
+      add_mark_combo_item_to_cbox(list, NULL, &iter, FILE_COMBO_ITEM_MARK, obj, "mark_type", id);
     } else if (strcmp(enumlist[i], "curve") == 0) {
-      curvelist = (char **) chkobjarglist(obj, "interpolation");
-      for (j = 0; curvelist[j] && curvelist[j][0]; j++) {
-	gtk_tree_store_append(list, &child, &iter);
-	gtk_tree_store_set(list, &child,
-			   OBJECT_COLUMN_TYPE_STRING, _(curvelist[j]),
-			   OBJECT_COLUMN_TYPE_PIXBUF, NULL,
-			   OBJECT_COLUMN_TYPE_INT, FILE_COMBO_ITEM_INTP,
-			   OBJECT_COLUMN_TYPE_TOGGLE, j == interpolation,
-			   OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, TRUE,
-			   OBJECT_COLUMN_TYPE_TOGGLE_IS_RADIO, TRUE,
-			   OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
-			   -1);
-      }
+      add_enum_combo_item_to_cbox(list, NULL, &iter, FILE_COMBO_ITEM_INTP, obj, "interpolation", id);
     }
   }
 }
@@ -4909,8 +4867,10 @@ start_editing_type(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *
 static void
 select_axis(GtkComboBox *w, gpointer user_data, char *axis)
 {
+  GtkTreeStore *list;
+  GtkTreeIter iter;
   char buf[64];
-  int j, sel;
+  int j, sel, found;
   struct obj_list_data *d;
 
   sel = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(w), "user-data"));
@@ -4919,8 +4879,12 @@ select_axis(GtkComboBox *w, gpointer user_data, char *axis)
 
   d = (struct obj_list_data *) user_data;
 
-  j = combo_box_get_active(GTK_WIDGET(w));
+  list = GTK_TREE_STORE(gtk_combo_box_get_model(w));
+  found = gtk_combo_box_get_active_iter(w, &iter);
+  if (! found)
+    return;
 
+  gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_INT, &j, -1);
   if (j < 0)
     return;
 
@@ -4946,6 +4910,7 @@ static void
 start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path, gpointer user_data, int axis)
 {
   GtkTreeIter iter;
+  GtkTreeStore *list;
   struct obj_list_data *d;
   GtkComboBox *cbox;
   int lastinst, j, sel, id = 0, is_oid;
@@ -4964,26 +4929,32 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
   cbox = GTK_COMBO_BOX(editable);
   g_object_set_data(G_OBJECT(cbox), "user-data", GINT_TO_POINTER(sel));
 
-  combo_box_clear(GTK_WIDGET(cbox));
+  init_object_combo_box(GTK_WIDGET(editable));
+  list = GTK_TREE_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(editable)));
+  gtk_tree_store_clear(list);
+
   aobj = getobject("axis");
-  lastinst = chkobjlastinst(aobj);
-  for (j = 0; j <= lastinst; j++) {
-    getobj(aobj, "group", j, 0, NULL, &name);
-    name = CHK_STR(name);
-    combo_box_append_text(GTK_WIDGET(cbox), name);
-  }
 
   name = get_axis_obj_str(d->obj, sel, (axis == AXIS_X) ? "axis_x" : "axis_y");
   if (name) {
     is_oid = (name[0] == '^');
     id = strtol(name + is_oid, &ptr, 10);
     if (*ptr == '\0') {
-      if (is_oid)
+      if (is_oid) {
 	id = chkobjoid(aobj, id);
-
-      combo_box_set_active(GTK_WIDGET(cbox), id);
+      }
     }
     g_free(name);
+  }
+
+  lastinst = chkobjlastinst(aobj);
+  for (j = 0; j <= lastinst; j++) {
+    getobj(aobj, "group", j, 0, NULL, &name);
+    name = CHK_STR(name);
+    add_text_combo_item_to_cbox(list, &iter, NULL, j, name, TRUE, j == id);
+    if (j == id) {
+      gtk_combo_box_set_active_iter(cbox, &iter);
+    }
   }
 
   d->select = -1;

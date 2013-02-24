@@ -21,6 +21,8 @@
  * 
  */
 
+#include "object.h" 
+
 #ifndef GRA_HEADER
 #define GRA_HEADER
 

@@ -59,7 +59,7 @@ static n_list_store Alist[] = {
   {N_("min"),  G_TYPE_STRING,  TRUE, TRUE,  "min"},
   {N_("max"),  G_TYPE_STRING,  TRUE, TRUE,  "max"},
   {N_("inc"),  G_TYPE_STRING,  TRUE, TRUE,  "inc"},
-  {N_("type"), G_TYPE_ENUM,    TRUE, TRUE,  "type"},
+  {N_("type"), G_TYPE_PARAM,   TRUE, TRUE,  "type"},
   {"x",        G_TYPE_DOUBLE,  TRUE, TRUE,  "x", - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
   {"y",        G_TYPE_DOUBLE,  TRUE, TRUE,  "y", - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
   {N_("dir"),  G_TYPE_DOUBLE,  TRUE, TRUE,  "direction",        0,          36000, 100, 1500},
@@ -3241,6 +3241,350 @@ inc_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer use
   axis_prm_edited_common((struct obj_list_data *) user_data, "inc", str);
 }
 
+enum AXIS_COMBO_ITEM {
+  AXIS_COMBO_ITEM_SCALE,
+
+  AXIS_COMBO_ITEM_BASE_DRAW,
+  AXIS_COMBO_ITEM_BASE_COLOR,
+  AXIS_COMBO_ITEM_BASE_STYLE,
+  AXIS_COMBO_ITEM_BASE_ARROW,
+  AXIS_COMBO_ITEM_BASE_WAVE,
+
+  AXIS_COMBO_ITEM_GAUGE_POS,
+  AXIS_COMBO_ITEM_GAUGE_COLOR,
+  AXIS_COMBO_ITEM_GAUGE_STYLE,
+
+  AXIS_COMBO_ITEM_NUM_POS,
+  AXIS_COMBO_ITEM_NUM_ALIGN,
+  AXIS_COMBO_ITEM_NUM_DIR,
+  AXIS_COMBO_ITEM_NUM_LOG,
+  AXIS_COMBO_ITEM_NUM_NO_ZERO,
+  AXIS_COMBO_ITEM_NUM_COLOR,
+  AXIS_COMBO_ITEM_NUM_FONT,
+  AXIS_COMBO_ITEM_NUM_BOLD,
+  AXIS_COMBO_ITEM_NUM_ITALIC,
+};
+
+static void
+create_base_combo_item(GtkTreeStore *list, GtkTreeIter *parent, struct objlist *obj, int id)
+{
+  GtkTreeIter iter, child;
+
+  gtk_tree_store_append(list, &iter, parent);
+  gtk_tree_store_set(list, &iter,
+		     OBJECT_COLUMN_TYPE_STRING, _("Baseline"),
+		     OBJECT_COLUMN_TYPE_PIXBUF, NULL,
+		     OBJECT_COLUMN_TYPE_INT, -1, 
+		     OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, FALSE,
+		     OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
+		     -1);
+
+  add_bool_combo_item_to_cbox(list, NULL, &iter, AXIS_COMBO_ITEM_BASE_DRAW, obj, "baseline", id, _("Draw"));
+  add_line_style_item_to_cbox(list, &iter, AXIS_COMBO_ITEM_BASE_STYLE, obj, "style", id);
+
+  add_text_combo_item_to_cbox(list, &child, &iter, -1, _("Arrow"), FALSE, FALSE);
+  add_enum_combo_item_to_cbox(list, NULL, &child, AXIS_COMBO_ITEM_BASE_ARROW, obj, "arrow", id);
+
+  add_text_combo_item_to_cbox(list, &child, &iter, -1, _("Wave"), FALSE, FALSE);
+  add_enum_combo_item_to_cbox(list, NULL, &child, AXIS_COMBO_ITEM_BASE_WAVE, obj, "wave", id);
+
+  add_text_combo_item_to_cbox(list, NULL, &iter, AXIS_COMBO_ITEM_BASE_COLOR, _("Color"), FALSE, FALSE);
+
+}
+
+static void
+create_gauge_combo_item(GtkTreeStore *list, GtkTreeIter *parent, struct objlist *obj, int id)
+{
+  GtkTreeIter iter, child;
+
+  gtk_tree_store_append(list, &iter, parent);
+  gtk_tree_store_set(list, &iter,
+		     OBJECT_COLUMN_TYPE_STRING, _("Gauge"),
+		     OBJECT_COLUMN_TYPE_PIXBUF, NULL,
+		     OBJECT_COLUMN_TYPE_INT, -1, 
+		     OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, FALSE,
+		     OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
+		     -1);
+
+  add_text_combo_item_to_cbox(list, &child, &iter, -1, _("Position"), FALSE, FALSE);
+  add_enum_combo_item_to_cbox(list, NULL, &child, AXIS_COMBO_ITEM_GAUGE_POS, obj, "gauge", id);
+
+  add_line_style_item_to_cbox(list, &iter, AXIS_COMBO_ITEM_GAUGE_STYLE, obj, "gauge_style", id);
+  add_text_combo_item_to_cbox(list, NULL, &iter, AXIS_COMBO_ITEM_GAUGE_COLOR, _("Color"), FALSE, FALSE);
+}
+
+static void
+create_num_combo_item(GtkTreeStore *list, GtkTreeIter *parent, struct objlist *obj, int id)
+{
+  GtkTreeIter iter, child;
+
+  gtk_tree_store_append(list, &iter, parent);
+  gtk_tree_store_set(list, &iter,
+		     OBJECT_COLUMN_TYPE_STRING, _("Numbering"),
+		     OBJECT_COLUMN_TYPE_PIXBUF, NULL,
+		     OBJECT_COLUMN_TYPE_INT, -1,
+		     OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, FALSE,
+		     OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
+		     -1);
+
+  add_text_combo_item_to_cbox(list, &child, &iter, -1, _("Position"), FALSE, FALSE);
+  add_enum_combo_item_to_cbox(list, NULL, &child, AXIS_COMBO_ITEM_NUM_POS, obj, "num", id);
+
+  add_text_combo_item_to_cbox(list, &child, &iter, -1, _("Align"), FALSE, FALSE);
+  add_enum_combo_item_to_cbox(list, NULL, &child, AXIS_COMBO_ITEM_NUM_ALIGN, obj, "num_align", id);
+
+  add_text_combo_item_to_cbox(list, &child, &iter, -1, _("Direction"), FALSE, FALSE);
+  add_enum_combo_item_to_cbox(list, NULL, &child, AXIS_COMBO_ITEM_NUM_DIR, obj, "num_direction", id);
+
+  add_text_combo_item_to_cbox(list, &child, &iter, -1, _("Font"), FALSE, FALSE);
+  add_font_combo_item_to_cbox(list, NULL, &child, AXIS_COMBO_ITEM_NUM_FONT, obj, "num_font", id);
+
+  add_separator_combo_item_to_cbox(list, NULL, &child);
+
+  add_font_style_combo_item_to_cbox(list, NULL, &child, AXIS_COMBO_ITEM_NUM_BOLD, AXIS_COMBO_ITEM_NUM_ITALIC, obj, "num_font_style", id);
+
+  add_text_combo_item_to_cbox(list, NULL, &iter, AXIS_COMBO_ITEM_NUM_COLOR, _("Color"), FALSE, FALSE);
+
+  add_bool_combo_item_to_cbox(list, NULL, &iter, AXIS_COMBO_ITEM_NUM_LOG, obj, "num_log_pow", id, _("Log power"));
+  add_bool_combo_item_to_cbox(list, NULL, &iter, AXIS_COMBO_ITEM_NUM_NO_ZERO, obj, "num_no_zero", id, _("No zero"));
+}
+
+static void
+create_type_combo_box(GtkWidget *cbox, struct objlist *obj, int id)
+{
+  GtkTreeStore *list;
+  GtkTreeIter iter;
+
+  list = GTK_TREE_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(cbox)));
+  gtk_tree_store_clear(list);
+
+  add_text_combo_item_to_cbox(list, &iter, NULL, -1, _("Scale"), FALSE, FALSE);
+  add_enum_combo_item_to_cbox(list, NULL, &iter, AXIS_COMBO_ITEM_SCALE, obj, "type", id);
+
+  create_base_combo_item(list, NULL, obj, id);
+  create_gauge_combo_item(list, NULL, obj, id);
+  create_num_combo_item(list, NULL, obj, id);
+}
+
+static void
+select_type(GtkComboBox *w, gpointer user_data)
+{
+  int sel, col_type, type, idx, *ary, found, depth, active;
+  struct objlist *obj;
+  struct obj_list_data *d;
+  GtkTreeStore *list;
+  GtkTreeIter iter;
+  GtkTreePath *path;
+  char *font, *ptr;
+
+  menu_lock(FALSE);
+
+  d = (struct obj_list_data *) user_data;
+
+  sel = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(w), "user-data"));
+  if (sel < 0)
+    return;
+
+  obj = getobject("axis");
+
+  list = GTK_TREE_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(w)));
+  found = gtk_combo_box_get_active_iter(w, &iter);
+  if (! found)
+    return;
+
+  gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_INT, &col_type, -1);
+  path = gtk_tree_model_get_path(GTK_TREE_MODEL(list), &iter);
+  ary = gtk_tree_path_get_indices(path);
+  depth = gtk_tree_path_get_depth(path);
+
+  if (depth > 0) {
+    idx = ary[depth - 1];
+  } else {
+    return;
+  }
+
+  gtk_tree_path_free(path);
+
+  switch (col_type) {
+  case AXIS_COMBO_ITEM_SCALE:
+    getobj(d->obj, "type", sel, 0, NULL, &type);
+    if (idx < 0 || type == idx) {
+      return;
+    }
+    putobj(d->obj, "type", sel, &idx);
+    break;
+  case AXIS_COMBO_ITEM_BASE_DRAW:
+    gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);
+    active = ! active;
+    putobj(d->obj, "baseline", sel, &active);
+    break;
+  case AXIS_COMBO_ITEM_BASE_COLOR:
+    if (select_obj_color(obj, sel, OBJ_FIELD_COLOR_TYPE_AXIS_BASE)) {
+      return;
+    }
+    break;
+  case AXIS_COMBO_ITEM_BASE_STYLE:
+    if (idx < 0 || chk_sputobjfield(d->obj, sel, "style", FwLineStyle[idx].list) != 0) {
+      return;
+    }
+    if (! get_graph_modified()) {
+      return;
+    }
+    break;
+  case AXIS_COMBO_ITEM_BASE_ARROW:
+    getobj(d->obj, "arrow", sel, 0, NULL, &type);
+    if (idx < 0 || type == idx) {
+      return;
+    }
+    putobj(d->obj, "arrow", sel, &idx);
+    break;
+  case AXIS_COMBO_ITEM_BASE_WAVE:
+    getobj(d->obj, "wave", sel, 0, NULL, &type);
+    if (idx < 0 || type == idx) {
+      return;
+    }
+    putobj(d->obj, "wave", sel, &idx);
+    break;
+  case AXIS_COMBO_ITEM_GAUGE_POS:
+    getobj(d->obj, "gauge", sel, 0, NULL, &type);
+    if (idx < 0 || type == idx) {
+      return;
+    }
+    putobj(d->obj, "gauge", sel, &idx);
+    break;
+  case AXIS_COMBO_ITEM_GAUGE_COLOR:
+    if (select_obj_color(obj, sel, OBJ_FIELD_COLOR_TYPE_AXIS_GAUGE)) {
+      return;
+    }
+    break;
+  case AXIS_COMBO_ITEM_GAUGE_STYLE:
+    if (idx < 0 || chk_sputobjfield(d->obj, sel, "gauge_style", FwLineStyle[idx].list) != 0) {
+      return;
+    }
+    if (! get_graph_modified()) {
+      return;
+    }
+    break;
+  case AXIS_COMBO_ITEM_NUM_POS:
+    getobj(d->obj, "num", sel, 0, NULL, &type);
+    if (idx < 0 || type == idx) {
+      return;
+    }
+    putobj(d->obj, "num", sel, &idx);
+    break;
+  case AXIS_COMBO_ITEM_NUM_ALIGN:
+    getobj(d->obj, "num_align", sel, 0, NULL, &type);
+    if (idx < 0 || type == idx) {
+      return;
+    }
+    putobj(d->obj, "num_align", sel, &idx);
+    break;
+  case AXIS_COMBO_ITEM_NUM_DIR:
+    getobj(d->obj, "num_direction", sel, 0, NULL, &type);
+    if (idx < 0 || type == idx) {
+      return;
+    }
+    putobj(d->obj, "num_direction", sel, &idx);
+    break;
+  case AXIS_COMBO_ITEM_NUM_LOG:
+    gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);
+    active = ! active;
+    putobj(d->obj, "num_log_pow", sel, &active);
+    break;
+  case AXIS_COMBO_ITEM_NUM_NO_ZERO:
+    gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);
+    active = ! active;
+    putobj(d->obj, "num_no_zero", sel, &active);
+    break;
+  case AXIS_COMBO_ITEM_NUM_COLOR:
+    if (select_obj_color(obj, sel, OBJ_FIELD_COLOR_TYPE_AXIS_NUM)) {
+      return;
+    }
+    break;
+  case AXIS_COMBO_ITEM_NUM_FONT:
+    gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_STRING, &font, -1);
+    getobj(d->obj, "num_font", sel, 0, NULL, &ptr);
+    if (g_strcmp0(font, ptr) == 0) {
+      g_free(font);
+      return;
+    }
+    putobj(d->obj, "num_font", sel, font);
+    break;
+  case AXIS_COMBO_ITEM_NUM_BOLD:
+    gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);
+    getobj(d->obj, "num_font_style", sel, 0, NULL, &type);
+    idx = (type & GRA_FONT_STYLE_ITALIC) | (active ? 0 : GRA_FONT_STYLE_BOLD);
+    putobj(d->obj, "num_font_style", sel, &idx);
+    break;
+  case AXIS_COMBO_ITEM_NUM_ITALIC:
+    gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);
+    getobj(d->obj, "num_font_style", sel, 0, NULL, &type);
+    idx = (type & GRA_FONT_STYLE_BOLD) | (active ? 0 : GRA_FONT_STYLE_ITALIC);
+    putobj(d->obj, "num_font_style", sel, &idx);
+    break;
+  default:
+    return;
+  }
+
+
+  d->select = sel;
+  d->update(d, FALSE);
+  set_graph_modified();
+}
+
+static void
+start_editing_type(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path, gpointer user_data)
+{
+  GtkTreeIter iter;
+  struct obj_list_data *d;
+  GtkWidget *cbox;
+  int sel;
+  struct objlist *obj;
+
+  menu_lock(TRUE);
+
+  d = (struct obj_list_data *) user_data;
+
+  sel = tree_view_get_selected_row_int_from_path(d->text, path, &iter, AXIS_WIN_COL_ID);
+  if (sel < 0) {
+    return;
+  }
+
+  cbox = GTK_WIDGET(editable);
+  g_object_set_data(G_OBJECT(cbox), "user-data", GINT_TO_POINTER(sel));
+
+  init_object_combo_box(cbox);
+
+  obj = getobject("axis");
+  if (obj == NULL) {
+    return;
+  }
+  create_type_combo_box(cbox, obj, sel);
+
+  g_signal_connect(cbox, "editing-done", G_CALLBACK(select_type), d);
+  gtk_widget_show(cbox);
+
+  return;
+}
+
+static void
+type_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_data, char *axis)
+{
+  struct obj_list_data *d;
+
+  menu_lock(FALSE);
+  return;
+
+
+  d = (struct obj_list_data *) user_data;
+
+  if (str == NULL || d->select < 0)
+    return;
+
+  d->update(d, FALSE);
+  set_graph_modified();
+}
+
 static void
 axiswin_delete_axis(struct obj_list_data *d)
 {
@@ -3450,6 +3794,8 @@ CmAxisWindow(GtkToggleAction *action, gpointer client_data)
   set_editable_cell_renderer_cb(d->data.data, AXIS_WIN_COL_MIN, Alist, G_CALLBACK(min_edited));
   set_editable_cell_renderer_cb(d->data.data, AXIS_WIN_COL_MAX, Alist, G_CALLBACK(max_edited));
   set_editable_cell_renderer_cb(d->data.data, AXIS_WIN_COL_INC, Alist, G_CALLBACK(inc_edited));
+
+  set_combo_cell_renderer_cb(d->data.data, AXIS_WIN_COL_TYPE, Alist, G_CALLBACK(start_editing_type), G_CALLBACK(type_edited));
 
   list_store_set_align(GTK_WIDGET(d->data.data->text), AXIS_WIN_COL_MIN, 1.0);
   list_store_set_align(GTK_WIDGET(d->data.data->text), AXIS_WIN_COL_MAX, 1.0);

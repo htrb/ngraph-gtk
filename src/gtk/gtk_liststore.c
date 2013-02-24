@@ -4,25 +4,50 @@
 
 #include <stdlib.h>
 
+#include "gra.h"
+
 #include "gtk_common.h"
 #include "gtk_liststore.h"
 
 #include "x11dialg.h"
 
-GtkWidget *
-create_object_cbox(void)
-{
-  GtkTreeModel *model;
-  GtkCellRenderer *rend;
-  GtkWidget *cbox;
 
-  model = GTK_TREE_MODEL(gtk_tree_store_new(OBJECT_COLUMN_TYPE_NUM, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_OBJECT, G_TYPE_INT, G_TYPE_BOOLEAN, G_TYPE_BOOLEAN, G_TYPE_BOOLEAN));
-  cbox = gtk_combo_box_new_with_model(model);
+static gboolean
+combo_box_separator_func(GtkTreeModel *model, GtkTreeIter *iter, gpointer data)
+{
+  char *str;
+  int r;
+
+  gtk_tree_model_get(model, iter, OBJECT_COLUMN_TYPE_STRING, &str, -1);
+  r = ! str;
+
+  if (str) {
+    g_free(str);
+  }
+
+  return r;
+}
+
+void
+init_object_combo_box(GtkWidget *cbox)
+{
+  GtkCellRenderer *rend;
+  GtkTreeViewRowSeparatorFunc func;
+
+  func = gtk_combo_box_get_row_separator_func(GTK_COMBO_BOX(cbox));
+  if (func == NULL) {
+    gtk_combo_box_set_row_separator_func(GTK_COMBO_BOX(cbox), combo_box_separator_func, NULL, NULL);
+  }
+
+  gtk_cell_layout_clear(GTK_CELL_LAYOUT(cbox));
 
   rend = gtk_cell_renderer_toggle_new();
   gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(cbox), rend, FALSE);
-  gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "active",  OBJECT_COLUMN_TYPE_TOGGLE);
-  gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "visible", OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE);
+  gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(cbox), rend,
+				 "active", OBJECT_COLUMN_TYPE_TOGGLE,
+				 "visible", OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE,
+				 "radio", OBJECT_COLUMN_TYPE_TOGGLE_IS_RADIO,
+				 NULL);
 
   rend = gtk_cell_renderer_text_new();
   gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(cbox), rend, FALSE);
@@ -31,17 +56,204 @@ create_object_cbox(void)
   rend = gtk_cell_renderer_pixbuf_new();
   gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(cbox), rend, FALSE);
   gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "pixbuf", OBJECT_COLUMN_TYPE_PIXBUF);
+}
 
+static GtkTreeModel *
+create_object_tree_model(void)
+{
+  return GTK_TREE_MODEL(gtk_tree_store_new(OBJECT_COLUMN_TYPE_NUM, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_OBJECT, G_TYPE_INT, G_TYPE_BOOLEAN, G_TYPE_BOOLEAN, G_TYPE_BOOLEAN));
+}
 
+static GtkWidget *
+create_object_cbox(void)
+{
+  GtkTreeModel *model;
+  GtkWidget *cbox;
+
+  model = create_object_tree_model();
+  cbox = gtk_combo_box_new_with_model(model);
+
+  init_object_combo_box(cbox);
   g_object_set(cbox, "has-frame", FALSE, NULL);
 
   return cbox;
 }
 
 void
-add_line_style_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *parent, int column_id, struct objlist *obj, char *field, int id)
+add_separator_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *parent)
 {
-  GtkTreeIter child;
+  add_text_combo_item_to_cbox(list, iter, parent, -1, NULL, FALSE, FALSE);
+}
+
+void
+add_font_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *parent, int column_id, struct objlist *obj, const char *field, int id)
+{
+  struct fontmap *fcur;
+  char *font;
+  int match;
+
+  getobj(obj, field, id, 0, NULL, &font);
+
+  fcur = Gra2cairoConf->fontmap_list_root;
+  while (fcur) {
+    match = ! g_strcmp0(font, fcur->fontalias);
+    add_text_combo_item_to_cbox(list, iter, parent, column_id, fcur->fontalias, TRUE, match);
+    fcur = fcur->next;
+  }
+}
+
+void
+add_font_style_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *parent, int column_id_bold, int column_id_italic, struct objlist *obj, const char *field, int id)
+{
+  int style;
+  GtkTreeIter locl_iter;
+
+  if (iter == NULL) {
+    iter = &locl_iter;
+  }
+
+  getobj(obj, field, id, 0, NULL, &style);
+  gtk_tree_store_append(list, iter, parent);
+  gtk_tree_store_set(list, iter,
+		     OBJECT_COLUMN_TYPE_TOGGLE, style & GRA_FONT_STYLE_BOLD,
+		     OBJECT_COLUMN_TYPE_STRING, _("Bold"),
+		     OBJECT_COLUMN_TYPE_PIXBUF, NULL,
+		     OBJECT_COLUMN_TYPE_INT, column_id_bold,
+		     OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, TRUE,
+		     OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
+		     -1);
+
+  gtk_tree_store_append(list, iter, parent);
+  gtk_tree_store_set(list, iter,
+		     OBJECT_COLUMN_TYPE_TOGGLE, style & GRA_FONT_STYLE_ITALIC,
+		     OBJECT_COLUMN_TYPE_STRING, _("Italic"),
+		     OBJECT_COLUMN_TYPE_PIXBUF, NULL,
+		     OBJECT_COLUMN_TYPE_INT, column_id_italic,
+		     OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, TRUE,
+		     OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
+		     -1);
+}
+
+void
+add_text_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *parent, int column_id, const char *title, int is_radio, int active)
+{
+  GtkTreeIter locl_iter;
+
+  if (iter == NULL) {
+    iter = &locl_iter;
+  }
+
+  gtk_tree_store_append(list, iter, parent);
+  gtk_tree_store_set(list, iter,
+		     OBJECT_COLUMN_TYPE_STRING, title,
+		     OBJECT_COLUMN_TYPE_PIXBUF, NULL,
+		     OBJECT_COLUMN_TYPE_INT, column_id,
+		     OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, is_radio,
+		     OBJECT_COLUMN_TYPE_TOGGLE_IS_RADIO, is_radio,
+		     OBJECT_COLUMN_TYPE_TOGGLE, active,
+		     OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
+		     -1);
+}
+
+void
+add_mark_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *parent, int column_id, struct objlist *obj, const char *field, int id)
+{
+  int j, type;
+  GtkTreeIter locl_iter;
+
+  if (iter == NULL) {
+    iter = &locl_iter;
+  }
+
+  type = -1;
+  getobj(obj, field, id, 0, NULL, &type);
+
+
+  for (j = 0; j < MARK_TYPE_NUM; j++) {
+    GdkPixbuf *pixbuf;
+#if GTK_CHECK_VERSION(3, 0, 0)
+    pixbuf = gdk_pixbuf_get_from_surface(NgraphApp.markpix[j],
+					 0, 0, MARK_PIX_SIZE, MARK_PIX_SIZE);
+#else
+    pixbuf = gdk_pixbuf_get_from_drawable(NULL, NgraphApp.markpix[j], NULL, 0, 0, 0, 0, -1, -1);
+#endif
+    if (pixbuf) {
+      char buf[64];
+
+      gtk_tree_store_append(list, iter, parent);
+      snprintf(buf, sizeof(buf), "%02d ", j);
+      gtk_tree_store_set(list, iter,
+			 OBJECT_COLUMN_TYPE_STRING, buf,
+			 OBJECT_COLUMN_TYPE_PIXBUF, pixbuf,
+			 OBJECT_COLUMN_TYPE_INT, column_id,
+			 OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, TRUE,
+			 OBJECT_COLUMN_TYPE_TOGGLE_IS_RADIO, TRUE,
+			 OBJECT_COLUMN_TYPE_TOGGLE, j == type,
+			 -1);
+      g_object_unref(pixbuf);
+    }
+  }
+}
+
+void
+add_enum_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *parent, int column_id, struct objlist *obj, const char *field, int id)
+{
+  GtkTreeIter locl_iter;
+  char **enum_array;
+  int state, i;
+
+  if (iter == NULL) {
+    iter = &locl_iter;
+  }
+
+  getobj(obj, field, id, 0, NULL, &state);
+  enum_array = (char **) chkobjarglist(obj, field);
+  if (enum_array == NULL) {
+    return;
+  }
+
+  for (i = 0; enum_array[i] && enum_array[i][0]; i++) {
+    gtk_tree_store_append(list, iter, parent);
+    gtk_tree_store_set(list, iter,
+		       OBJECT_COLUMN_TYPE_STRING, _(enum_array[i]),
+		       OBJECT_COLUMN_TYPE_PIXBUF, NULL,
+		       OBJECT_COLUMN_TYPE_INT, column_id,
+		       OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, TRUE,
+		       OBJECT_COLUMN_TYPE_TOGGLE_IS_RADIO, TRUE,
+		       OBJECT_COLUMN_TYPE_TOGGLE, i == state,
+		       OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
+		       -1);
+  }
+}
+
+void
+add_bool_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *parent, int column_id, struct objlist *obj, const char *field, int id, const char *title)
+{
+  GtkTreeIter locl_iter;
+  int state;
+
+  if (iter == NULL) {
+    iter = &locl_iter;
+  }
+
+  getobj(obj, field, id, 0, NULL, &state);
+
+  gtk_tree_store_append(list, iter, parent);
+  gtk_tree_store_set(list, iter,
+		     OBJECT_COLUMN_TYPE_STRING, title,
+		     OBJECT_COLUMN_TYPE_PIXBUF, NULL,
+		     OBJECT_COLUMN_TYPE_INT, column_id,
+		     OBJECT_COLUMN_TYPE_TOGGLE, state,
+		     OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, TRUE,
+		     OBJECT_COLUMN_TYPE_TOGGLE_IS_RADIO, FALSE,
+		     OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
+		     -1);
+}
+
+void
+add_line_style_item_to_cbox(GtkTreeStore *list, GtkTreeIter *parent, int column_id, struct objlist *obj, const char *field, int id)
+{
+  GtkTreeIter iter, child;
   int i, j;
   char *str, *ptr;
 
@@ -57,8 +269,8 @@ add_line_style_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *
     return;
   }
 
-  gtk_tree_store_append(list, iter, parent);
-  gtk_tree_store_set(list, iter,
+  gtk_tree_store_append(list, &iter, parent);
+  gtk_tree_store_set(list, &iter,
 		     OBJECT_COLUMN_TYPE_STRING, _("Line style"),
 		     OBJECT_COLUMN_TYPE_PIXBUF, NULL,
 		     OBJECT_COLUMN_TYPE_INT, -1,
@@ -67,7 +279,7 @@ add_line_style_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *
 		     -1);
   for (i = 0; FwLineStyle[i].name; i++) {
     j = ! strcmp(str, FwLineStyle[i].list);
-    gtk_tree_store_append(list, &child, iter);
+    gtk_tree_store_append(list, &child, &iter);
     gtk_tree_store_set(list, &child,
 		       OBJECT_COLUMN_TYPE_STRING, _(FwLineStyle[i].name),
 		       OBJECT_COLUMN_TYPE_PIXBUF, NULL,
@@ -177,6 +389,18 @@ create_column(n_list_store *list, int i)
 						   "pixbuf", i, NULL);
     break;
   case G_TYPE_PARAM:
+    renderer = gtk_cell_renderer_combo_new();
+    model = create_object_tree_model();
+    g_object_set((GObject *) renderer,
+		 "has-entry", FALSE,
+		 "model", model,
+		 "text-column", OBJECT_COLUMN_TYPE_STRING,
+		 "editable", list[i].editable,
+		 NULL);
+    g_object_set_data(G_OBJECT(renderer), "user-data", &list[i]);
+    col = gtk_tree_view_column_new_with_attributes(_(list[i].title), renderer,
+						   "text", i, NULL);
+    break;
   case G_TYPE_ENUM:
     renderer = gtk_cell_renderer_combo_new();
     model = GTK_TREE_MODEL(gtk_list_store_new(1, G_TYPE_STRING));

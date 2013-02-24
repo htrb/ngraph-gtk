@@ -1036,41 +1036,6 @@ text_view_with_line_number_set_font(GtkWidget *view, const gchar *font)
   pango_font_description_free(desc);
 }
 
-void
-combo_box_create_mark(GtkWidget *cbox, GtkTreeIter *parent, int col_id, int type)
-{
-  int j;
-  GtkTreeStore *list;
-  GtkTreeIter child;
-
-  list = GTK_TREE_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(cbox)));
-
-  for (j = 0; j < MARK_TYPE_NUM; j++) {
-    GdkPixbuf *pixbuf;
-#if GTK_CHECK_VERSION(3, 0, 0)
-    pixbuf = gdk_pixbuf_get_from_surface(NgraphApp.markpix[j],
-					 0, 0, MARK_PIX_SIZE, MARK_PIX_SIZE);
-#else
-    pixbuf = gdk_pixbuf_get_from_drawable(NULL, NgraphApp.markpix[j], NULL, 0, 0, 0, 0, -1, -1);
-#endif
-    if (pixbuf) {
-      char buf[64];
-
-      gtk_tree_store_append(list, &child, parent);
-      snprintf(buf, sizeof(buf), "%02d ", j);
-      gtk_tree_store_set(list, &child,
-			 OBJECT_COLUMN_TYPE_STRING, buf,
-			 OBJECT_COLUMN_TYPE_PIXBUF, pixbuf,
-			 OBJECT_COLUMN_TYPE_INT, col_id,
-			 OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, TRUE,
-			 OBJECT_COLUMN_TYPE_TOGGLE_IS_RADIO, TRUE,
-			 OBJECT_COLUMN_TYPE_TOGGLE, j == type,
-			 -1);
-      g_object_unref(pixbuf);
-    }
-  }
-}
-
 int
 select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type)
 {
@@ -1119,6 +1084,27 @@ select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type)
     getobj(obj, "G2", id, 0, NULL, &g);
     getobj(obj, "B2", id, 0, NULL, &b);
     getobj(obj, "A2", id, 0, NULL, &a);
+    break;
+  case OBJ_FIELD_COLOR_TYPE_AXIS_BASE:
+    title = _("Axis baseline color");
+    getobj(obj, "R", id, 0, NULL, &r);
+    getobj(obj, "G", id, 0, NULL, &g);
+    getobj(obj, "B", id, 0, NULL, &b);
+    getobj(obj, "A", id, 0, NULL, &a);
+    break;
+  case OBJ_FIELD_COLOR_TYPE_AXIS_GAUGE:
+    title = _("Axis gauge color");
+    getobj(obj, "gauge_R", id, 0, NULL, &r);
+    getobj(obj, "gauge_G", id, 0, NULL, &g);
+    getobj(obj, "gauge_B", id, 0, NULL, &b);
+    getobj(obj, "gauge_A", id, 0, NULL, &a);
+    break;
+  case OBJ_FIELD_COLOR_TYPE_AXIS_NUM:
+    title = _("Axis numbering color");
+    getobj(obj, "num_R", id, 0, NULL, &r);
+    getobj(obj, "num_G", id, 0, NULL, &g);
+    getobj(obj, "num_B", id, 0, NULL, &b);
+    getobj(obj, "num_A", id, 0, NULL, &a);
     break;
   default:
     return 1;
@@ -1195,6 +1181,7 @@ select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type)
     break;
   case OBJ_FIELD_COLOR_TYPE_0:
   case OBJ_FIELD_COLOR_TYPE_1:
+  case OBJ_FIELD_COLOR_TYPE_AXIS_BASE:
     putobj(obj, "R", id, &rr);
     putobj(obj, "G", id, &gg);
     putobj(obj, "B", id, &bb);
@@ -1205,6 +1192,18 @@ select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type)
     putobj(obj, "G2", id, &gg);
     putobj(obj, "B2", id, &bb);
     putobj(obj, "A2", id, &aa);
+    break;
+  case OBJ_FIELD_COLOR_TYPE_AXIS_GAUGE:
+    putobj(obj, "gauge_R", id, &rr);
+    putobj(obj, "gauge_G", id, &gg);
+    putobj(obj, "gauge_B", id, &bb);
+    putobj(obj, "gauge_A", id, &aa);
+    break;
+  case OBJ_FIELD_COLOR_TYPE_AXIS_NUM:
+    putobj(obj, "num_R", id, &rr);
+    putobj(obj, "num_G", id, &gg);
+    putobj(obj, "num_B", id, &bb);
+    putobj(obj, "num_A", id, &aa);
     break;
   default:
     return 1;

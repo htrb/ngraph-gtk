@@ -55,7 +55,7 @@ void SetTextFromObjPoints(GtkWidget *w, struct objlist *Obj, int Id, char *field
 int SetObjFieldFromStyle(GtkWidget *w, struct objlist *Obj, int Id, char *field);
 void SetStyleFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field);
 int SetObjAxisFieldFromWidget(GtkWidget *w, struct objlist *obj, int id, char *field);
-struct compatible_font_info *SetFontListFromObj(GtkWidget *w, struct objlist *obj, int id, char *name);
+struct compatible_font_info *SetFontListFromObj(GtkWidget *w, struct objlist *obj, int id, const char *name);
 void SetObjFieldFromFontList(GtkWidget *w, struct objlist *obj, int id, char *name);
 void set_color(GtkWidget *w, struct objlist *obj, int id, char *prefix);
 void set_color2(GtkWidget *w, struct objlist *obj, int id);

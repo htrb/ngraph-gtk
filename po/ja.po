@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2013-02-21 19:16+0900\n"
-"PO-Revision-Date: 2013-02-21 18:27+0900\n"
+"POT-Creation-Date: 2013-02-24 15:33+0900\n"
+"PO-Revision-Date: 2013-02-24 14:12+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja_JP\n"
@@ -197,8 +197,9 @@ msgstr "背景色(_B)"
 msgid "_Background Color:"
 msgstr "背景色(_B):"
 
-#: src/gtk/x11axis.c:402 src/gtk/x11lgnd.c:3286 src/gtk/x11lgnd.c:3329
-#: src/gtk/x11lgnd.c:3360 src/gtk/gtk_widget.c:1103
+#: src/gtk/x11axis.c:402 src/gtk/x11axis.c:3291 src/gtk/x11axis.c:3313
+#: src/gtk/x11axis.c:3346 src/gtk/x11lgnd.c:3225 src/gtk/x11lgnd.c:3231
+#: src/gtk/x11lgnd.c:3655 src/gtk/gtk_widget.c:1068
 msgid "Color"
 msgstr "色"
 
@@ -270,7 +271,7 @@ msgstr "参照軸(_R):"
 msgid "_Auto scale margin:"
 msgstr "オートスケール余白(_A):"
 
-#: src/gtk/x11axis.c:1375
+#: src/gtk/x11axis.c:1375 src/gtk/x11axis.c:3361
 msgid "Scale"
 msgstr "スケール"
 
@@ -287,7 +288,7 @@ msgstr "線種(_S):"
 msgid "_Line Width:"
 msgstr "線幅(_W):"
 
-#: src/gtk/x11axis.c:1511
+#: src/gtk/x11axis.c:1511 src/gtk/x11axis.c:3275
 msgid "Baseline"
 msgstr "軸基線"
 
@@ -303,7 +304,7 @@ msgstr "長さ(_A):"
 msgid "_Arrow width:"
 msgstr "幅(_A):"
 
-#: src/gtk/x11axis.c:1542
+#: src/gtk/x11axis.c:1542 src/gtk/x11axis.c:3285
 msgid "Arrow"
 msgstr "矢印"
 
@@ -315,7 +316,7 @@ msgstr "長さ(_W):"
 msgid "_Wave width:"
 msgstr "線幅(_W):"
 
-#: src/gtk/x11axis.c:1566
+#: src/gtk/x11axis.c:1566 src/gtk/x11axis.c:3288
 msgid "Wave"
 msgstr "波型"
 
@@ -368,7 +369,8 @@ msgstr "並行シフト量(_P):"
 msgid "shift (_N):"
 msgstr "垂直シフト量(_N):"
 
-#: src/gtk/x11axis.c:2007 src/gtk/x11axis.c:2352
+#: src/gtk/x11axis.c:2007 src/gtk/x11axis.c:2352 src/gtk/x11axis.c:3309
+#: src/gtk/x11axis.c:3330
 msgid "Position"
 msgstr "位置"
 
@@ -424,7 +426,8 @@ msgstr "スクリプトサイズ(_S):"
 msgid "_Font:"
 msgstr "フォント(_F):"
 
-#: src/gtk/x11axis.c:2209 src/gtk/x11dialg.c:239 src/gtk/x11opt.c:1422
+#: src/gtk/x11axis.c:2209 src/gtk/x11axis.c:3339 src/gtk/x11dialg.c:239
+#: src/gtk/x11lgnd.c:3653 src/gtk/x11opt.c:1422
 msgid "Font"
 msgstr "フォント"
 
@@ -468,6 +471,34 @@ msgstr "フォント(_F)"
 #: src/gtk/x11axis.c:2406
 msgid "_Position"
 msgstr "位置(_P)"
+
+#: src/gtk/x11axis.c:3282 src/gtk/x11menu.c:922 src/gtk/x11menu.c:936
+msgid "Draw"
+msgstr "描画"
+
+#: src/gtk/x11axis.c:3302
+msgid "Gauge"
+msgstr "目盛線"
+
+#: src/gtk/x11axis.c:3323
+msgid "Numbering"
+msgstr "目盛数字"
+
+#: src/gtk/x11axis.c:3333
+msgid "Align"
+msgstr "位置合わせ"
+
+#: src/gtk/x11axis.c:3336
+msgid "Direction"
+msgstr "方向"
+
+#: src/gtk/x11axis.c:3348
+msgid "Log power"
+msgstr "ベキ形式(ログ)"
+
+#: src/gtk/x11axis.c:3349
+msgid "No zero"
+msgstr "ゼロ非表示"
 
 #: src/gtk/x11commn.c:973 src/gtk/x11menu.c:327
 msgid "Save NGP file"
@@ -1056,17 +1087,17 @@ msgstr "データファイル作成中"
 msgid "Making data file."
 msgstr "データファイル作成中"
 
-#: src/gtk/x11file.c:4666
-msgid "Type"
-msgstr "タイプ"
-
-#: src/gtk/x11file.c:4698 src/gtk/x11lgnd.c:3220 src/gtk/gtk_widget.c:1110
+#: src/gtk/x11file.c:4687 src/gtk/x11lgnd.c:3206 src/gtk/gtk_widget.c:1075
 msgid "Color 1"
 msgstr "色 1"
 
-#: src/gtk/x11file.c:4712 src/gtk/x11lgnd.c:3229 src/gtk/gtk_widget.c:1117
+#: src/gtk/x11file.c:4694 src/gtk/x11lgnd.c:3207 src/gtk/gtk_widget.c:1082
 msgid "Color 2"
 msgstr "色 2"
+
+#: src/gtk/x11file.c:4708
+msgid "Type"
+msgstr "タイプ"
 
 #: src/gtk/x11graph.c:60 src/odraw.c:56
 msgid "unchange"
@@ -1244,11 +1275,11 @@ msgstr "扇型"
 msgid "font"
 msgstr "フォント"
 
-#: src/gtk/x11lgnd.c:179
+#: src/gtk/x11lgnd.c:178
 msgid "pt"
 msgstr "ポイント"
 
-#: src/gtk/x11lgnd.c:180
+#: src/gtk/x11lgnd.c:179
 msgid "direction"
 msgstr "方向"
 
@@ -1354,51 +1385,43 @@ msgstr "テキスト %d"
 msgid "_Text:"
 msgstr "テキスト(_T):"
 
-#: src/gtk/x11lgnd.c:3208 src/gtk/x11menu.c:1764 src/gtk/x11menu.c:1765
+#: src/gtk/x11lgnd.c:3203 src/gtk/x11menu.c:1764 src/gtk/x11menu.c:1765
 msgid "Mark"
 msgstr "マーク"
 
-#: src/gtk/x11lgnd.c:3249
-msgid "Fill rule"
-msgstr "ルール"
-
-#: src/gtk/x11lgnd.c:3298
-msgid "Bold"
-msgstr "太字"
-
-#: src/gtk/x11lgnd.c:3308
-msgid "Italic"
-msgstr "斜体"
-
-#: src/gtk/x11lgnd.c:3320
+#: src/gtk/x11lgnd.c:3223
 msgid "Stroke"
 msgstr "ストローク"
 
-#: src/gtk/x11lgnd.c:3339
+#: src/gtk/x11lgnd.c:3227
 msgid "Close path"
 msgstr "パスを閉じる"
 
-#: src/gtk/x11lgnd.c:3351
+#: src/gtk/x11lgnd.c:3230
 msgid "Fill"
 msgstr "塗りつぶし"
 
-#: src/gtk/x11lgnd.c:3805
+#: src/gtk/x11lgnd.c:3234
+msgid "Fill rule"
+msgstr "ルール"
+
+#: src/gtk/x11lgnd.c:3712
 msgid "path"
 msgstr "パス"
 
-#: src/gtk/x11lgnd.c:3806 src/ofile.c:170
+#: src/gtk/x11lgnd.c:3713 src/ofile.c:170
 msgid "rectangle"
 msgstr "矩形"
 
-#: src/gtk/x11lgnd.c:3807
+#: src/gtk/x11lgnd.c:3714
 msgid "arc"
 msgstr "円"
 
-#: src/gtk/x11lgnd.c:3808 src/ofile.c:163
+#: src/gtk/x11lgnd.c:3715 src/ofile.c:163
 msgid "mark"
 msgstr "マーク"
 
-#: src/gtk/x11lgnd.c:3809
+#: src/gtk/x11lgnd.c:3716
 msgid "text"
 msgstr "テキスト"
 
@@ -1690,10 +1713,6 @@ msgstr "Coordinate Windowをアクティブにする"
 #: src/gtk/x11menu.c:909
 msgid "Activate Information Window"
 msgstr "Information Windowをアクティブにする"
-
-#: src/gtk/x11menu.c:922 src/gtk/x11menu.c:936
-msgid "Draw"
-msgstr "描画"
 
 #: src/gtk/x11menu.c:923 src/gtk/x11menu.c:937
 msgid "Draw on Viewer Window"
@@ -2421,19 +2440,40 @@ msgstr "設定のコピー(_C)"
 msgid "Pick a Color"
 msgstr "色の選択"
 
-#: src/gtk/gtk_widget.c:1089
+#: src/gtk/gtk_widget.c:1054
 msgid "Stroke Color"
 msgstr "ストローク色"
 
-#: src/gtk/gtk_widget.c:1096
+#: src/gtk/gtk_widget.c:1061
 msgid "Fill Color"
 msgstr "塗りつぶし色"
+
+#: src/gtk/gtk_widget.c:1089
+#, fuzzy
+msgid "Axis baseline color"
+msgstr "軸基線の色"
+
+#: src/gtk/gtk_widget.c:1096
+msgid "Axis gauge color"
+msgstr "目盛線の色"
+
+#: src/gtk/gtk_widget.c:1103
+msgid "Axis numbering color"
+msgstr "目盛数字の色"
 
 #: src/gtk/gtk_subwin.c:61
 msgid "Open"
 msgstr "開く"
 
-#: src/gtk/gtk_liststore.c:62
+#: src/gtk/gtk_liststore.c:119
+msgid "Bold"
+msgstr "太字"
+
+#: src/gtk/gtk_liststore.c:129
+msgid "Italic"
+msgstr "斜体"
+
+#: src/gtk/gtk_liststore.c:274
 msgid "Line style"
 msgstr "線種"
 
@@ -3009,14 +3049,8 @@ msgstr "ワインディング"
 #~ msgid "Axis Position"
 #~ msgstr "位置"
 
-#~ msgid "Axis Numbering"
-#~ msgstr "目盛数字"
-
 #~ msgid "Axis Font"
 #~ msgstr "フォント"
-
-#~ msgid "Axis Gauge"
-#~ msgstr "目盛線"
 
 #~ msgid "_Baseline ..."
 #~ msgstr "軸基線(_B)..."

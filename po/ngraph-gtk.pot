@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.06.08\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2013-02-21 19:16+0900\n"
+"POT-Creation-Date: 2013-02-24 15:33+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -170,8 +170,9 @@ msgstr ""
 msgid "_Background Color:"
 msgstr ""
 
-#: src/gtk/x11axis.c:402 src/gtk/x11lgnd.c:3286 src/gtk/x11lgnd.c:3329
-#: src/gtk/x11lgnd.c:3360 src/gtk/gtk_widget.c:1103
+#: src/gtk/x11axis.c:402 src/gtk/x11axis.c:3291 src/gtk/x11axis.c:3313
+#: src/gtk/x11axis.c:3346 src/gtk/x11lgnd.c:3225 src/gtk/x11lgnd.c:3231
+#: src/gtk/x11lgnd.c:3655 src/gtk/gtk_widget.c:1068
 msgid "Color"
 msgstr ""
 
@@ -243,7 +244,7 @@ msgstr ""
 msgid "_Auto scale margin:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1375
+#: src/gtk/x11axis.c:1375 src/gtk/x11axis.c:3361
 msgid "Scale"
 msgstr ""
 
@@ -260,7 +261,7 @@ msgstr ""
 msgid "_Line Width:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1511
+#: src/gtk/x11axis.c:1511 src/gtk/x11axis.c:3275
 msgid "Baseline"
 msgstr ""
 
@@ -276,7 +277,7 @@ msgstr ""
 msgid "_Arrow width:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1542
+#: src/gtk/x11axis.c:1542 src/gtk/x11axis.c:3285
 msgid "Arrow"
 msgstr ""
 
@@ -288,7 +289,7 @@ msgstr ""
 msgid "_Wave width:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1566
+#: src/gtk/x11axis.c:1566 src/gtk/x11axis.c:3288
 msgid "Wave"
 msgstr ""
 
@@ -341,7 +342,8 @@ msgstr ""
 msgid "shift (_N):"
 msgstr ""
 
-#: src/gtk/x11axis.c:2007 src/gtk/x11axis.c:2352
+#: src/gtk/x11axis.c:2007 src/gtk/x11axis.c:2352 src/gtk/x11axis.c:3309
+#: src/gtk/x11axis.c:3330
 msgid "Position"
 msgstr ""
 
@@ -397,7 +399,8 @@ msgstr ""
 msgid "_Font:"
 msgstr ""
 
-#: src/gtk/x11axis.c:2209 src/gtk/x11dialg.c:239 src/gtk/x11opt.c:1422
+#: src/gtk/x11axis.c:2209 src/gtk/x11axis.c:3339 src/gtk/x11dialg.c:239
+#: src/gtk/x11lgnd.c:3653 src/gtk/x11opt.c:1422
 msgid "Font"
 msgstr ""
 
@@ -440,6 +443,34 @@ msgstr ""
 
 #: src/gtk/x11axis.c:2406
 msgid "_Position"
+msgstr ""
+
+#: src/gtk/x11axis.c:3282 src/gtk/x11menu.c:922 src/gtk/x11menu.c:936
+msgid "Draw"
+msgstr ""
+
+#: src/gtk/x11axis.c:3302
+msgid "Gauge"
+msgstr ""
+
+#: src/gtk/x11axis.c:3323
+msgid "Numbering"
+msgstr ""
+
+#: src/gtk/x11axis.c:3333
+msgid "Align"
+msgstr ""
+
+#: src/gtk/x11axis.c:3336
+msgid "Direction"
+msgstr ""
+
+#: src/gtk/x11axis.c:3348
+msgid "Log power"
+msgstr ""
+
+#: src/gtk/x11axis.c:3349
+msgid "No zero"
 msgstr ""
 
 #: src/gtk/x11commn.c:973 src/gtk/x11menu.c:327
@@ -1027,16 +1058,16 @@ msgstr ""
 msgid "Making data file."
 msgstr ""
 
-#: src/gtk/x11file.c:4666
-msgid "Type"
-msgstr ""
-
-#: src/gtk/x11file.c:4698 src/gtk/x11lgnd.c:3220 src/gtk/gtk_widget.c:1110
+#: src/gtk/x11file.c:4687 src/gtk/x11lgnd.c:3206 src/gtk/gtk_widget.c:1075
 msgid "Color 1"
 msgstr ""
 
-#: src/gtk/x11file.c:4712 src/gtk/x11lgnd.c:3229 src/gtk/gtk_widget.c:1117
+#: src/gtk/x11file.c:4694 src/gtk/x11lgnd.c:3207 src/gtk/gtk_widget.c:1082
 msgid "Color 2"
+msgstr ""
+
+#: src/gtk/x11file.c:4708
+msgid "Type"
 msgstr ""
 
 #: src/gtk/x11graph.c:60 src/odraw.c:56
@@ -1211,11 +1242,11 @@ msgstr ""
 msgid "font"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:179
+#: src/gtk/x11lgnd.c:178
 msgid "pt"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:180
+#: src/gtk/x11lgnd.c:179
 msgid "direction"
 msgstr ""
 
@@ -1321,51 +1352,43 @@ msgstr ""
 msgid "_Text:"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3208 src/gtk/x11menu.c:1764 src/gtk/x11menu.c:1765
+#: src/gtk/x11lgnd.c:3203 src/gtk/x11menu.c:1764 src/gtk/x11menu.c:1765
 msgid "Mark"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3249
-msgid "Fill rule"
-msgstr ""
-
-#: src/gtk/x11lgnd.c:3298
-msgid "Bold"
-msgstr ""
-
-#: src/gtk/x11lgnd.c:3308
-msgid "Italic"
-msgstr ""
-
-#: src/gtk/x11lgnd.c:3320
+#: src/gtk/x11lgnd.c:3223
 msgid "Stroke"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3339
+#: src/gtk/x11lgnd.c:3227
 msgid "Close path"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3351
+#: src/gtk/x11lgnd.c:3230
 msgid "Fill"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3805
+#: src/gtk/x11lgnd.c:3234
+msgid "Fill rule"
+msgstr ""
+
+#: src/gtk/x11lgnd.c:3712
 msgid "path"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3806 src/ofile.c:170
+#: src/gtk/x11lgnd.c:3713 src/ofile.c:170
 msgid "rectangle"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3807
+#: src/gtk/x11lgnd.c:3714
 msgid "arc"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3808 src/ofile.c:163
+#: src/gtk/x11lgnd.c:3715 src/ofile.c:163
 msgid "mark"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3809
+#: src/gtk/x11lgnd.c:3716
 msgid "text"
 msgstr ""
 
@@ -1656,10 +1679,6 @@ msgstr ""
 
 #: src/gtk/x11menu.c:909
 msgid "Activate Information Window"
-msgstr ""
-
-#: src/gtk/x11menu.c:922 src/gtk/x11menu.c:936
-msgid "Draw"
 msgstr ""
 
 #: src/gtk/x11menu.c:923 src/gtk/x11menu.c:937
@@ -2387,19 +2406,39 @@ msgstr ""
 msgid "Pick a Color"
 msgstr ""
 
-#: src/gtk/gtk_widget.c:1089
+#: src/gtk/gtk_widget.c:1054
 msgid "Stroke Color"
 msgstr ""
 
-#: src/gtk/gtk_widget.c:1096
+#: src/gtk/gtk_widget.c:1061
 msgid "Fill Color"
+msgstr ""
+
+#: src/gtk/gtk_widget.c:1089
+msgid "Axis baseline color"
+msgstr ""
+
+#: src/gtk/gtk_widget.c:1096
+msgid "Axis gauge color"
+msgstr ""
+
+#: src/gtk/gtk_widget.c:1103
+msgid "Axis numbering color"
 msgstr ""
 
 #: src/gtk/gtk_subwin.c:61
 msgid "Open"
 msgstr ""
 
-#: src/gtk/gtk_liststore.c:62
+#: src/gtk/gtk_liststore.c:119
+msgid "Bold"
+msgstr ""
+
+#: src/gtk/gtk_liststore.c:129
+msgid "Italic"
+msgstr ""
+
+#: src/gtk/gtk_liststore.c:274
 msgid "Line style"
 msgstr ""
 

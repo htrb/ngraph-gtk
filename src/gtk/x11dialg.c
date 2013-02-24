@@ -1196,7 +1196,7 @@ SetListFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 }
 
 struct compatible_font_info *
-SetFontListFromObj(GtkWidget *w, struct objlist *obj, int id, char *name)
+SetFontListFromObj(GtkWidget *w, struct objlist *obj, int id, const char *name)
 {
   int j, selfont;
   struct fontmap *fcur;
