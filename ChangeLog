@@ -1,3 +1,51 @@
+2013-02-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/shellcm.c (cmget): check returned value via 3rd argument of
+	the function "sgetobjfield()".
+
+	* src/gtk/gtk_liststore.c (add_line_style_item_to_cbox): don't
+	duplicate returned value via 3rd argument of the function
+	"sgetobjfield()".
+
+	* src/gtk/x11axis.c (Popup_list): remove "Show" item from the
+	pop-up menu.
+	(popup_show_cb): remove case for "POPUP_ITEM_HIDE".
+	(AxisCB, AxisHistoryCB, GridDialogSetupItem)
+	(scale_tab_setup_item, position_tab_setup_item)
+	(axis_list_set_val): check returned value via 3rd argument of the
+	function "sgetobjfield()".
+
+	* src/gtk/x11merge.c (Popup_list): remove "Show" item from the
+	pop-up menu.
+	(popup_show_cb): remove case for "POPUP_ITEM_HIDE".
+
+	* src/gtk/x11lgnd.c (Popup_list): remove "Show" item from the
+	pop-up menu.
+	(legend_dialog_setup_item, path_list_set_val): check returned
+	value via 3rd argument of the function "sgetobjfield()".
+	(popup_show_cb): remove case for "POPUP_ITEM_HIDE".
+
+	* src/gtk/x11file.c (Flist): remove "Show" and "Fit" items from
+	the pop-up menu.
+	(FitCB, load_tab_setup_item, file_setup_item)
+	(FileDialogSetupItem, get_axis_obj_str): check returned value via
+	3rd argument of the function "sgetobjfield()".
+	(FileDialogSetupItem): remove 4th parameter.
+	(show_fit_dialog): added.
+	(FileDialogFit): use "show_fit_dialog()".
+	(file_fit_popup_func): removed.
+	(popup_show_cb): remove cases for "POPUP_ITEM_HIDE" and
+	"POPUP_ITEM_FIT".
+	(start_editing): don't show radio buttom on the combo-box.
+	(add_fit_combo_item_to_cbox): added.
+	(create_type_color_combo_box): use "add_fit_combo_item_to_cbox()".
+	(select_type): show fitting dialog when the plot type fit is
+	selected and the fit field of the file instance is not set.
+	(select_type): add case for "FILE_COMBO_ITEM_FIT
+
+	* src/gtk/gtk_subwin.c (start_editing): check returned value via
+	3rd argument of the function "sgetobjfield()".
+
 2013-02-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_widget.c (combo_box_create_mark): removed.

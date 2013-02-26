@@ -255,16 +255,9 @@ add_line_style_item_to_cbox(GtkTreeStore *list, GtkTreeIter *parent, int column_
 {
   GtkTreeIter iter, child;
   int i, j;
-  char *str, *ptr;
+  char *str;
 
-  sgetobjfield(obj, id, field, NULL, &ptr, FALSE, FALSE, FALSE);
-  if (ptr == NULL) {
-    str = g_strdup("");
-  } else {
-    str = g_strdup(ptr);
-    g_free(ptr);
-  }
-
+  sgetobjfield(obj, id, field, NULL, &str, FALSE, FALSE, FALSE);
   if (str == NULL) {
     return;
   }
@@ -330,7 +323,7 @@ create_column(n_list_store *list, int i)
   case G_TYPE_UINT64:
   case G_TYPE_FLOAT:
   case G_TYPE_DOUBLE:
-#if GTK_CHECK_VERSION(3, 8, 0)
+#if GTK_CHECK_VERSION(3, 8, 0) || ! GTK_CHECK_VERSION(3, 0, 0)
     renderer = gtk_cell_renderer_spin_new();
 #else
     renderer = gtk_cell_renderer_text_new();

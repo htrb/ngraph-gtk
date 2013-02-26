@@ -1017,8 +1017,10 @@ cmget(struct nshell*nshell,int argc,char **argv)
           }
           if (multi && !noid) printfstdout("%d: ",id);
           if (!nofield) printfstdout("%.256s:",field);
-          putstdout(valstr);
-          g_free(valstr);
+	  if (valstr) {
+	    putstdout(valstr);
+	    g_free(valstr);
+	  }
         }
       }
     } else {
@@ -1035,8 +1037,10 @@ cmget(struct nshell*nshell,int argc,char **argv)
             printfstdout("%.256s:",field);
             g_free(field);
           }
-          putstdout(valstr);
-          g_free(valstr);
+	  if (valstr) {
+	    putstdout(valstr);
+	    g_free(valstr);
+	  }
         }
       }
     }

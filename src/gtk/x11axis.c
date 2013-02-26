@@ -91,7 +91,6 @@ static struct subwin_popup_list Popup_list[] = {
   {GTK_STOCK_DELETE,      G_CALLBACK(axis_delete_popup_func), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {NULL, NULL, 0, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
   {N_("_Focus"),          G_CALLBACK(list_sub_window_focus), FALSE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {N_("_Show"),           G_CALLBACK(list_sub_window_hide), FALSE, NULL, POP_UP_MENU_ITEM_TYPE_CHECK},
   {GTK_STOCK_CLEAR,       G_CALLBACK(axiswin_scale_clear), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {GTK_STOCK_PROPERTIES,  G_CALLBACK(list_sub_window_update), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {NULL, NULL, 0, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
@@ -103,11 +102,10 @@ static struct subwin_popup_list Popup_list[] = {
 
 #define POPUP_ITEM_NUM (sizeof(Popup_list) / sizeof(*Popup_list))
 
-#define POPUP_ITEM_HIDE 4
-#define POPUP_ITEM_TOP 8
-#define POPUP_ITEM_UP 9
-#define POPUP_ITEM_DOWN 10
-#define POPUP_ITEM_BOTTOM 11
+#define POPUP_ITEM_TOP 7
+#define POPUP_ITEM_UP 8
+#define POPUP_ITEM_DOWN 9
+#define POPUP_ITEM_BOTTOM 10
 
 #define ID_BUF_SIZE 16
 #define TITLE_BUF_SIZE 128
@@ -167,8 +165,10 @@ AxisCB(struct objlist *obj, int id)
   getobj(obj, "group", id, 0, NULL, &name);
   name = CHK_STR(name);
   sgetobjfield(obj, id, "type", NULL, &valstr, FALSE, FALSE, FALSE);
-  s = g_strdup_printf("%-10s %.6s %s:%.2f", name, _(valstr), _("dir"), dir / 100.0);
-  g_free(valstr);
+  if (valstr) {
+    s = g_strdup_printf("%-10s %.6s %s:%.2f", name, _(valstr), _("dir"), dir / 100.0);
+    g_free(valstr);
+  }
 
   return s;
 }
@@ -191,8 +191,10 @@ AxisHistoryCB(struct objlist *obj, int id)
 
   name = CHK_STR(name);
   sgetobjfield(obj, id, "type", NULL, &valstr, FALSE, FALSE, FALSE);
-  s = g_strdup_printf("%-10s %.6s %s:%.2f", name, _(valstr), _("dir"), dir / 100.0);
-  g_free(valstr);
+  if (valstr) {
+    s = g_strdup_printf("%-10s %.6s %s:%.2f", name, _(valstr), _("dir"), dir / 100.0);
+    g_free(valstr);
+  }
 
   return s;
 }
@@ -245,20 +247,24 @@ GridDialogSetupItem(GtkWidget *w, struct GridDialog *d, int id)
   }
 
   sgetobjfield(d->Obj, id, "axis_x", NULL, &valstr, FALSE, FALSE, FALSE);
-  for (i = 0; (valstr[i] != '\0') && (valstr[i] != ':'); i++);
-  if (valstr[i] == ':') {
-    i++;
+  if (valstr) {
+    for (i = 0; (valstr[i] != '\0') && (valstr[i] != ':'); i++);
+    if (valstr[i] == ':') {
+      i++;
+    }
+    combo_box_entry_set_text(d->axisx, valstr + i);
+    g_free(valstr);
   }
-  combo_box_entry_set_text(d->axisx, valstr + i);
-  g_free(valstr);
 
   sgetobjfield(d->Obj, id, "axis_y", NULL, &valstr, FALSE, FALSE, FALSE);
-  for (i = 0; (valstr[i] != '\0') && (valstr[i] != ':'); i++);
-  if (valstr[i] == ':') {
-    i++;
+  if (valstr) {
+    for (i = 0; (valstr[i] != '\0') && (valstr[i] != ':'); i++);
+    if (valstr[i] == ':') {
+      i++;
+    }
+    combo_box_entry_set_text(d->axisy, valstr + i);
+    g_free(valstr);
   }
-  combo_box_entry_set_text(d->axisy, valstr + i);
-  g_free(valstr);
 
   SetWidgetFromObjField(d->draw_x, d->Obj, id, "grid_x");
   SetWidgetFromObjField(d->draw_y, d->Obj, id, "grid_y");
@@ -1153,13 +1159,14 @@ scale_tab_setup_item(struct AxisDialog *d, int id)
   }
 
   sgetobjfield(d->Obj, id, "reference", NULL, &valstr, FALSE, FALSE, FALSE);
-  for (i = 0; (valstr[i] != '\0') && (valstr[i] != ':'); i++);
-  if (valstr[i] == ':') {
-    i++;
+  if (valstr) {
+    for (i = 0; (valstr[i] != '\0') && (valstr[i] != ':'); i++);
+    if (valstr[i] == ':') {
+      i++;
+    }
+    combo_box_entry_set_text(d->ref, valstr + i);
+    g_free(valstr);
   }
-  combo_box_entry_set_text(d->ref, valstr + i);
-  g_free(valstr);
-
   SetWidgetFromObjField(d->margin, d->Obj, id, "auto_scale_margin");
 }
 
@@ -2278,12 +2285,14 @@ position_tab_setup_item(struct AxisDialog *axis, int id)
   }
 
   sgetobjfield(axis->Obj, id, "adjust_axis", NULL, &valstr, FALSE, FALSE, FALSE);
-  for (i = 0; (valstr[i] != '\0') && (valstr[i] != ':'); i++);
-  if (valstr[i] == ':')
-    i++;
+  if (valstr) {
+    for (i = 0; (valstr[i] != '\0') && (valstr[i] != ':'); i++);
+    if (valstr[i] == ':')
+      i++;
 
-  combo_box_entry_set_text(d->adjust, valstr + i);
-  g_free(valstr);
+    combo_box_entry_set_text(d->adjust, valstr + i);
+    g_free(valstr);
+  }
 
   SetWidgetFromObjField(d->adjustpos, axis->Obj, id, "adjust_position");
 }
@@ -2999,8 +3008,10 @@ axis_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
       break;
     case AXIS_WIN_COL_TYPE:
       sgetobjfield(d->obj, row, "type", NULL, &valstr, FALSE, FALSE, FALSE);
-      list_store_set_string(GTK_WIDGET(d->text), iter, i, _(valstr));
-      g_free(valstr);
+      if (valstr) {
+	list_store_set_string(GTK_WIDGET(d->text), iter, i, _(valstr));
+	g_free(valstr);
+      }
       break;
     case AXIS_WIN_COL_INC:
       getobj(d->obj, "inc", row, 0, NULL, &inc);
@@ -3101,12 +3112,6 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
     case POPUP_ITEM_BOTTOM:
       gtk_widget_set_sensitive(d->popup_item[i], sel >= 0 && sel < num);
       break;
-    case POPUP_ITEM_HIDE:
-      if (sel >= 0 && sel <= num) {
-	int hidden;
-	getobj(d->obj, "hidden", sel, 0, NULL, &hidden);
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(d->popup_item[i]), ! hidden);
-      }
     default:
       gtk_widget_set_sensitive(d->popup_item[i], sel >= 0 && sel <= num);
     }
@@ -3279,7 +3284,9 @@ create_base_combo_item(GtkTreeStore *list, GtkTreeIter *parent, struct objlist *
 		     OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
 		     -1);
 
+#if GTK_CHECK_VERSION(3, 0, 0)
   add_bool_combo_item_to_cbox(list, NULL, &iter, AXIS_COMBO_ITEM_BASE_DRAW, obj, "baseline", id, _("Draw"));
+#endif
   add_line_style_item_to_cbox(list, &iter, AXIS_COMBO_ITEM_BASE_STYLE, obj, "style", id);
 
   add_text_combo_item_to_cbox(list, &child, &iter, -1, _("Arrow"), FALSE, FALSE);
@@ -3289,6 +3296,9 @@ create_base_combo_item(GtkTreeStore *list, GtkTreeIter *parent, struct objlist *
   add_enum_combo_item_to_cbox(list, NULL, &child, AXIS_COMBO_ITEM_BASE_WAVE, obj, "wave", id);
 
   add_text_combo_item_to_cbox(list, NULL, &iter, AXIS_COMBO_ITEM_BASE_COLOR, _("Color"), FALSE, FALSE);
+#if ! GTK_CHECK_VERSION(3, 0, 0)
+  add_bool_combo_item_to_cbox(list, NULL, &iter, AXIS_COMBO_ITEM_BASE_DRAW, obj, "baseline", id, _("Draw"));
+#endif
 
 }
 

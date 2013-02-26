@@ -106,7 +106,6 @@ static void file_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int ro
 static void file_delete_popup_func(GtkMenuItem *w, gpointer client_data);
 static void file_copy2_popup_func(GtkMenuItem *w, gpointer client_data);
 static void file_copy_popup_func(GtkMenuItem *w, gpointer client_data);
-static void file_fit_popup_func(GtkMenuItem *w, gpointer client_data);
 static void file_edit_popup_func(GtkMenuItem *w, gpointer client_data);
 static void file_draw_popup_func(GtkMenuItem *w, gpointer client_data);
 static void FileDialogType(GtkWidget *w, gpointer client_data);
@@ -121,10 +120,8 @@ static struct subwin_popup_list Popup_list[] = {
   {GTK_STOCK_CLOSE,           G_CALLBACK(file_delete_popup_func), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {NULL, NULL, 0, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
   {N_("_Draw"),               G_CALLBACK(file_draw_popup_func), FALSE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {N_("_Show"),               G_CALLBACK(list_sub_window_hide), FALSE, NULL, POP_UP_MENU_ITEM_TYPE_CHECK},
   {GTK_STOCK_PROPERTIES,      G_CALLBACK(list_sub_window_update), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {GTK_STOCK_EDIT,            G_CALLBACK(file_edit_popup_func), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {N_("_Fit"),                G_CALLBACK(file_fit_popup_func), FALSE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {NULL, NULL, 0, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
   {GTK_STOCK_GOTO_TOP,        G_CALLBACK(list_sub_window_move_top), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {GTK_STOCK_GO_UP,           G_CALLBACK(list_sub_window_move_up), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
@@ -133,12 +130,10 @@ static struct subwin_popup_list Popup_list[] = {
 };
 
 #define POPUP_ITEM_NUM (sizeof(Popup_list) / sizeof(*Popup_list))
-#define POPUP_ITEM_HIDE 7
-#define POPUP_ITEM_FIT 10
-#define POPUP_ITEM_TOP 12
-#define POPUP_ITEM_UP 13
-#define POPUP_ITEM_DOWN 14
-#define POPUP_ITEM_BOTTOM 15
+#define POPUP_ITEM_TOP 10
+#define POPUP_ITEM_UP 11
+#define POPUP_ITEM_DOWN 12
+#define POPUP_ITEM_BOTTOM 13
 
 #define FITSAVE "fit.ngp"
 
@@ -731,14 +726,15 @@ FitCB(struct objlist *obj, int id)
 
   getobj(obj, "profile", id, 0, NULL, &profile);
 
+  valstr = NULL;
   if (profile == NULL) {
     char *tmp;
 
     sgetobjfield(obj, id, "type", NULL, &tmp, FALSE, FALSE, FALSE);
-    valstr = g_strdup(_(tmp));
-    g_free(tmp);
-  } else {
-    valstr = NULL;
+    if (tmp) {
+      valstr = g_strdup(_(tmp));
+      g_free(tmp);
+    }
   }
 
   return valstr;
@@ -2117,10 +2113,18 @@ load_tab_setup_item(struct FileDialog *d, int id)
   SetWidgetFromObjField(d->load.readstep, d->Obj, id, "read_step");
   SetWidgetFromObjField(d->load.finalline, d->Obj, id, "final_line");
   SetWidgetFromObjField(d->load.remark, d->Obj, id, "remark");
+  SetWidgetFromObjField(d->load.csv, d->Obj, id, "csv");
   sgetobjfield(d->Obj, id, "ifs", NULL, &ifs, FALSE, FALSE, FALSE);
+  if (ifs == NULL) {
+    return;
+  }
 
   l = strlen(ifs);
   s = g_malloc(l * 2 + 1);
+  if (s == NULL) {
+    g_free(ifs);
+    return;
+  }
   j = 0;
   for (i = 0; i < l; i++) {
     if (ifs[i] == '\t') {
@@ -2137,7 +2141,6 @@ load_tab_setup_item(struct FileDialog *d, int id)
   gtk_entry_set_text(GTK_ENTRY(d->load.ifs), s);
   g_free(s);
   g_free(ifs);
-  SetWidgetFromObjField(d->load.csv, d->Obj, id, "csv");
 }
 
 static void
@@ -2555,20 +2558,23 @@ file_setup_item(struct FileDialog *d, int id)
   SetWidgetFromObjField(d->xcol, d->Obj, id, "x");
 
   sgetobjfield(d->Obj, id, "axis_x", NULL, &valstr, FALSE, FALSE, FALSE);
-  for (i = 0; (valstr[i] != '\0') && (valstr[i] != ':'); i++);
-  if (valstr[i] == ':')
-    i++;
-  combo_box_entry_set_text(d->xaxis, valstr + i);
-  g_free(valstr);
-
+  if (valstr) {
+    for (i = 0; (valstr[i] != '\0') && (valstr[i] != ':'); i++);
+    if (valstr[i] == ':')
+      i++;
+    combo_box_entry_set_text(d->xaxis, valstr + i);
+    g_free(valstr);
+  }
   SetWidgetFromObjField(d->ycol, d->Obj, id, "y");
 
   sgetobjfield(d->Obj, id, "axis_y", NULL, &valstr, FALSE, FALSE, FALSE);
-  for (i = 0; (valstr[i] != '\0') && (valstr[i] != ':'); i++);
-  if (valstr[i] == ':')
-    i++;
-  combo_box_entry_set_text(d->yaxis, valstr + i);
-  g_free(valstr);
+  if (valstr) {
+    for (i = 0; (valstr[i] != '\0') && (valstr[i] != ':'); i++);
+    if (valstr[i] == ':')
+      i++;
+    combo_box_entry_set_text(d->yaxis, valstr + i);
+    g_free(valstr);
+  }
 }
 
 static void
@@ -2616,7 +2622,7 @@ plot_tab_setup_item(struct FileDialog *d, int id)
 }
 
 static void
-FileDialogSetupItem(GtkWidget *w, struct FileDialog *d, int file, int id)
+FileDialogSetupItem(GtkWidget *w, struct FileDialog *d, int file)
 {
   char *valstr;
   int i;
@@ -2629,20 +2635,18 @@ FileDialogSetupItem(GtkWidget *w, struct FileDialog *d, int file, int id)
   file_setup_item(d, d->Id);
 
   if (file) {
-    SetWidgetFromObjField(d->file, d->Obj, id, "file");
+    SetWidgetFromObjField(d->file, d->Obj, d->Id, "file");
     gtk_editable_set_position(GTK_EDITABLE(d->file), -1);
   }
 
-  if (id == d->Id) {
-    sgetobjfield(d->Obj, id, "fit", NULL, &valstr, FALSE, FALSE, FALSE);
+  sgetobjfield(d->Obj, d->Id, "fit", NULL, &valstr, FALSE, FALSE, FALSE);
+  if (valstr) {
     for (i = 0; (valstr[i] != '\0') && (valstr[i] != ':'); i++);
     if (valstr[i] == ':') {
       i++;
     }
     set_fit_button_label(d->fit, valstr + i);
     g_free(valstr);
-  } else {
-    set_fit_button_label(d->fit, NULL);
   }
 
   gtk_widget_set_sensitive(d->apply_all, d->multi_open);
@@ -2690,35 +2694,31 @@ execute_fit_dialog(GtkWidget *w, struct objlist *fileobj, int fileid, struct obj
   return ret;
 }
 
-static void
-FileDialogFit(GtkWidget *w, gpointer client_data)
+static int
+show_fit_dialog(struct objlist *obj, int id, GtkWidget *parent)
 {
-  struct FileDialog *d;
-  struct objlist *fitobj, *obj;
+  struct objlist *fitobj, *robj;
   char *fit;
   N_VALUE *inst;
-  int i, idnum, fitid = 0, fitoid, ret, create = FALSE;
+  int idnum, fitid = 0, fitoid, ret, create = FALSE;
   struct narray iarray;
-  char *valstr;
-
-  d = (struct FileDialog *) client_data;
 
   if ((fitobj = chkobject("fit")) == NULL)
-    return;
+    return -1;
 
-  if (getobj(d->Obj, "fit", d->Id, 0, NULL, &fit) == -1)
-    return;
+  if (getobj(obj, "fit", id, 0, NULL, &fit) == -1)
+    return -1;
 
   if (fit) {
     arrayinit(&iarray, sizeof(int));
-    if (getobjilist(fit, &obj, &iarray, FALSE, NULL))
-      return;
+    if (getobjilist(fit, &robj, &iarray, FALSE, NULL))
+      return -1;
 
     idnum = arraynum(&iarray);
-    if ((obj != fitobj) || (idnum < 1)) {
-      if (putobj(d->Obj, "fit", d->Id, NULL) == -1) {
+    if ((robj != fitobj) || (idnum < 1)) {
+      if (putobj(obj, "fit", id, NULL) == -1) {
 	arraydel(&iarray);
-	return;
+	return -1;
       }
     } else {
       fitid = arraylast_int(&iarray);
@@ -2733,16 +2733,16 @@ FileDialogFit(GtkWidget *w, gpointer client_data)
     _getobj(fitobj, "oid", inst, &fitoid);
 
     if ((fit = mkobjlist(fitobj, NULL, fitoid, NULL, TRUE)) == NULL)
-      return;
+      return -1;
 
-    if (putobj(d->Obj, "fit", d->Id, fit) == -1) {
+    if (putobj(obj, "fit", id, fit) == -1) {
       g_free(fit);
-      return;
+      return -1;
     }
     create = TRUE;
   }
 
-  ret = execute_fit_dialog(d->widget, d->Obj, d->Id, fitobj, fitid);
+  ret = execute_fit_dialog(parent, obj, id, fitobj, fitid);
 
   switch (ret) {
   case IDCANCEL:
@@ -2750,23 +2750,38 @@ FileDialogFit(GtkWidget *w, gpointer client_data)
       break;
   case IDDELETE:
     delobj(fitobj, fitid);
-    putobj(d->Obj, "fit", d->Id, NULL);
+    putobj(obj, "fit", id, NULL);
     if (! create)
       set_graph_modified();
     break;
   case IDOK:
-    combo_box_set_active(d->type, PLOT_TYPE_FIT);
     if (create)
       set_graph_modified();
     break;
   }
 
+  return ret;
+}
+
+static void
+FileDialogFit(GtkWidget *w, gpointer client_data)
+{
+  struct FileDialog *d;
+  int i;
+  char *valstr;
+
+  d = (struct FileDialog *) client_data;
+
+  show_fit_dialog(d->Obj, d->Id, d->widget);
+
   sgetobjfield(d->Obj, d->Id, "fit", NULL, &valstr, FALSE, FALSE, FALSE);
-  for (i = 0; (valstr[i] != '\0') && (valstr[i] != ':'); i++);
-  if (valstr[i] == ':')
-    i++;
-  set_fit_button_label(d->fit, valstr + i);
-  g_free(valstr);
+  if (valstr) {
+    for (i = 0; (valstr[i] != '\0') && (valstr[i] != ':'); i++);
+    if (valstr[i] == ':')
+      i++;
+    set_fit_button_label(d->fit, valstr + i);
+    g_free(valstr);
+  }
 }
 
 static void
@@ -2807,7 +2822,7 @@ FileDialogOption(GtkWidget *w, gpointer client_data)
 
   d = (struct FileDialog *) client_data;
   exeobj(d->Obj, "load_settings", d->Id, 0, NULL);
-  FileDialogSetupItem(d->widget, d, FALSE, d->Id);
+  FileDialogSetupItem(d->widget, d, FALSE);
 }
 
 static void
@@ -3272,7 +3287,7 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
   argv[1] = NULL;
   getobj(d->Obj, "head_lines", d->Id, 1, argv, &s);
   set_headlines(d, s);
-  FileDialogSetupItem(wi, d, TRUE, d->Id);
+  FileDialogSetupItem(wi, d, TRUE);
 }
 
 static int
@@ -4076,16 +4091,6 @@ FileWinFit(struct obj_list_data *d)
   }
 }
 
-static void
-file_fit_popup_func(GtkMenuItem *w, gpointer client_data)
-{
-  struct obj_list_data *d;
-
-  d = (struct obj_list_data *) client_data;
-  FileWinFit(d);
-}
-
-
 static GdkPixbuf *
 draw_type_pixbuf(struct objlist *obj, int i)
 {
@@ -4334,6 +4339,10 @@ get_axis_obj_str(struct objlist *obj, int id, char *field)
   int j;
 
   sgetobjfield(obj, id, field, NULL, &valstr, FALSE, FALSE, FALSE);
+  if (valstr == NULL) {
+    return NULL;
+  }
+
   for (j = 0; (valstr[j] != '\0') && (valstr[j] != ':'); j++);
   if (valstr[j] == ':') j++;
   tmp = g_strdup(valstr + j);
@@ -4596,14 +4605,12 @@ filewin_ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
   return TRUE;
 }
 
-
 static void
 popup_show_cb(GtkWidget *widget, gpointer user_data)
 {
   int sel, num;
   unsigned int i;
   struct obj_list_data *d;
-  char *fit;
 
   d = (struct obj_list_data *) user_data;
 
@@ -4611,13 +4618,6 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
   num = chkobjlastinst(d->obj);
   for (i = 1; i < POPUP_ITEM_NUM; i++) {
     switch (i) {
-    case POPUP_ITEM_FIT:
-      fit = NULL;
-      if (sel >= 0) {
-	getobj(d->obj, "fit", sel, 0, NULL, &fit);
-      }
-      gtk_widget_set_sensitive(d->popup_item[i], fit != NULL);
-      break;
     case POPUP_ITEM_TOP:
     case POPUP_ITEM_UP:
       gtk_widget_set_sensitive(d->popup_item[i], sel > 0 && sel <= num);
@@ -4626,12 +4626,6 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
     case POPUP_ITEM_BOTTOM:
       gtk_widget_set_sensitive(d->popup_item[i], sel >= 0 && sel < num);
       break;
-    case POPUP_ITEM_HIDE:
-      if (sel >= 0 && sel <= num) {
-	int hidden;
-	getobj(d->obj, "hidden", sel, 0, NULL, &hidden);
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(d->popup_item[i]), ! hidden);
-      }
     default:
       gtk_widget_set_sensitive(d->popup_item[i], sel >= 0 && sel <= num);
     }
@@ -4645,8 +4639,34 @@ enum FILE_COMBO_ITEM {
   FILE_COMBO_ITEM_MARK,
   FILE_COMBO_ITEM_INTP,
   FILE_COMBO_ITEM_LINESTYLE,
+  FILE_COMBO_ITEM_FIT,
 };
 
+
+static void
+add_fit_combo_item_to_cbox(GtkTreeStore *list, struct objlist *obj, int id)
+{
+  char *valstr, buf[1024];
+  int i;
+
+  sgetobjfield(obj, id, "fit", NULL, &valstr, FALSE, FALSE, FALSE);
+  if (valstr == NULL) {
+    return;
+  }
+
+  for (i = 0; (valstr[i] != '\0') && (valstr[i] != ':'); i++);
+  if (valstr[i] == ':') {
+    i++;
+  }
+  if (valstr[i]) {
+    snprintf(buf, sizeof(buf), "Fit:%s", valstr + i);
+  } else {
+    snprintf(buf, sizeof(buf), "Fit:%s", _("Create"));
+  }
+  g_free(valstr);
+
+  add_text_combo_item_to_cbox(list, NULL, NULL, FILE_COMBO_ITEM_FIT, buf, FALSE, FALSE);
+}
 
 static void
 create_type_color_combo_box(GtkWidget *cbox, struct objlist *obj, int type, int id)
@@ -4693,6 +4713,10 @@ create_type_color_combo_box(GtkWidget *cbox, struct objlist *obj, int type, int 
   case PLOT_TYPE_BAR_FILL_Y:
     add_text_combo_item_to_cbox(list, NULL, NULL, FILE_COMBO_ITEM_COLOR_2, _("Color 2"), FALSE, FALSE);
     break;
+  }
+
+  if (type == PLOT_TYPE_FIT) {
+    add_fit_combo_item_to_cbox(list, obj, id);
   }
 }
 
@@ -4788,6 +4812,19 @@ select_type(GtkComboBox *w, gpointer user_data)
       return;
     }
     putobj(obj, "type", sel, idx);
+    if (idx[0] == PLOT_TYPE_FIT) {
+      char *fit;
+      int ret;
+
+      getobj(obj, "fit", sel, 0, NULL, &fit);
+      if (fit == NULL) {
+	ret = show_fit_dialog(obj, sel, (Menulocal.single_window_mode) ? TopLevel : d->parent->Win);
+	if (ret != IDOK) {
+	  putobj(obj, "type", sel, &type);
+	  return;
+	}
+      }
+    }
     break;
   case FILE_COMBO_ITEM_MARK:
     getobj(obj, "mark_type", sel, 0, NULL, &mark_type);
@@ -4819,10 +4856,12 @@ select_type(GtkComboBox *w, gpointer user_data)
     if (idx[0] >= 0 && chk_sputobjfield(d->obj, sel, "line_style", FwLineStyle[idx[0]].list) != 0) {
       return;
     }
+  case FILE_COMBO_ITEM_FIT:
+    show_fit_dialog(obj, sel, (Menulocal.single_window_mode) ? TopLevel : d->parent->Win);
+    break;
   default:
     return;
   }
-
 
   d->select = sel;
   d->update(d, FALSE);
@@ -4951,7 +4990,7 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
   for (j = 0; j <= lastinst; j++) {
     getobj(aobj, "group", j, 0, NULL, &name);
     name = CHK_STR(name);
-    add_text_combo_item_to_cbox(list, &iter, NULL, j, name, TRUE, j == id);
+    add_text_combo_item_to_cbox(list, &iter, NULL, j, name, FALSE, FALSE);
     if (j == id) {
       gtk_combo_box_set_active_iter(cbox, &iter);
     }

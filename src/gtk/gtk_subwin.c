@@ -179,8 +179,10 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
 	}
 #endif
 	sgetobjfield(d->obj, sel, list->name, NULL, &valstr, FALSE, FALSE, FALSE);
-	gtk_entry_set_text(GTK_ENTRY(editable), CHK_STR(valstr));
-	g_free(valstr);
+	if (valstr) {
+	  gtk_entry_set_text(GTK_ENTRY(editable), CHK_STR(valstr));
+	  g_free(valstr);
+	}
       }
 #if GTK_CHECK_VERSION(3, 0, 0) && ! GTK_CHECK_VERSION(3, 2, 0)
       /* this code may need to avoid a bug of GTK+ 3.0 */

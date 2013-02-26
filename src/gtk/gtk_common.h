@@ -62,6 +62,8 @@
 #define GDK_KEY_c GDK_c
 #define GDK_KEY_d GDK_d
 #define GDK_KEY_e GDK_e
+#define GDK_KEY_f GDK_f
+#define GDK_KEY_g GDK_g
 #define GDK_KEY_o GDK_o
 #define GDK_KEY_p GDK_p
 #define GDK_KEY_plus GDK_plus

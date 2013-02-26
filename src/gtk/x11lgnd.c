@@ -216,7 +216,6 @@ static struct subwin_popup_list Popup_list[] = {
   {GTK_STOCK_DELETE,      G_CALLBACK(list_sub_window_delete), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {NULL, NULL, 0, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
   {N_("_Focus"),          G_CALLBACK(list_sub_window_focus), FALSE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {N_("_Show"),           G_CALLBACK(list_sub_window_hide), FALSE, NULL, POP_UP_MENU_ITEM_TYPE_CHECK},
   {GTK_STOCK_PROPERTIES,  G_CALLBACK(list_sub_window_update), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {NULL, NULL, 0, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
   {GTK_STOCK_GOTO_TOP,    G_CALLBACK(list_sub_window_move_top), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
@@ -226,11 +225,10 @@ static struct subwin_popup_list Popup_list[] = {
 };
 
 #define POPUP_ITEM_NUM (sizeof(Popup_list) / sizeof(*Popup_list))
-#define POPUP_ITEM_HIDE 4
-#define POPUP_ITEM_TOP 7
-#define POPUP_ITEM_UP 8
-#define POPUP_ITEM_DOWN 9
-#define POPUP_ITEM_BOTTOM 10
+#define POPUP_ITEM_TOP 6
+#define POPUP_ITEM_UP 7
+#define POPUP_ITEM_DOWN 8
+#define POPUP_ITEM_BOTTOM 9
 
 static void LegendDialogCopy(struct LegendDialog *d);
 static void path_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row);
@@ -607,8 +605,10 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
   if (d->text) {
     char *buf;
     sgetobjfield(d->Obj,id,"text",NULL,&buf,FALSE,FALSE,FALSE);
-    gtk_entry_set_text(GTK_ENTRY(d->text), buf);
-    g_free(buf);
+    if (buf) {
+      gtk_entry_set_text(GTK_ENTRY(d->text), buf);
+      g_free(buf);
+    }
   }
 
   if (d->font && d->font_bold && d->font_italic)
@@ -2664,8 +2664,10 @@ path_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
       break;
     case PATH_LIST_COL_ARROW:
       sgetobjfield(d->obj, row, d->list[i].name, NULL, &valstr, FALSE, FALSE, FALSE);
-      list_store_set_string(GTK_WIDGET(d->text), iter, i, _(valstr));
-      g_free(valstr);
+      if (valstr) {
+	list_store_set_string(GTK_WIDGET(d->text), iter, i, _(valstr));
+	g_free(valstr);
+      }
       break;
     case PATH_LIST_COL_COLOR:
       pixbuf = draw_color_pixbuf(d->obj, row, OBJ_FIELD_COLOR_TYPE_STROKE, 40);
@@ -2996,12 +2998,6 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
       }
       gtk_widget_set_sensitive(d->popup_item[i], m >= 0 && m < last_id);
       break;
-    case POPUP_ITEM_HIDE:
-      if (m >= 0) {
-	int hidden;
-	getobj(d->obj, "hidden", m, 0, NULL, &hidden);
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(d->popup_item[i]), ! hidden);
-      }
     default:
       gtk_widget_set_sensitive(d->popup_item[i], m >= 0);
     }
@@ -3482,12 +3478,9 @@ select_line_type(GtkComboBox *w, gpointer user_data)
   depth = gtk_tree_path_get_depth(path);
   idx = -1;
 
-  if (depth < 1) {
-    gtk_tree_path_free(path);
-    return;
+  if (depth > 1) {
+    idx = ary[depth - 1];
   }
-
-  idx = ary[depth - 1];
   gtk_tree_path_free(path);
 
   getobj(d->obj, "type", sel, 0, NULL, &type);
@@ -3500,7 +3493,7 @@ select_line_type(GtkComboBox *w, gpointer user_data)
     }
     break;
   case LEGEND_PATH_LINE_TYPE_CURVE: 
-    if (type == PATH_TYPE_CURVE && (idx ==0 || idx == interpolation)) {
+    if (type == PATH_TYPE_CURVE && (idx < 0 || idx == interpolation)) {
       return;
     }
   }
