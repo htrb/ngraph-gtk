@@ -956,7 +956,7 @@ points_setup(struct LegendDialog *d)
   gtk_tree_selection_set_mode(sel, GTK_SELECTION_MULTIPLE);
 
   for (i = 0; i < POINTS_DIMENSION; i++) {
-#if GTK_CHECK_VERSION(3, 8, 0)
+#if GTK_CHECK_VERSION(3, 8, 0) || ! GTK_CHECK_VERSION(3, 0, 0)
     renderer = gtk_cell_renderer_spin_new();
 #else
     renderer = gtk_cell_renderer_text_new();
@@ -964,7 +964,7 @@ points_setup(struct LegendDialog *d)
     g_object_set((GObject *) renderer,
 		 "xalign", 1.0,
 		 "editable", TRUE,
-#if GTK_CHECK_VERSION(3, 8, 0)
+#if GTK_CHECK_VERSION(3, 8, 0) || ! GTK_CHECK_VERSION(3, 0, 0)
 		 "adjustment", gtk_adjustment_new(0,
 						  -SPIN_ENTRY_MAX / 100.0,
 						  SPIN_ENTRY_MAX / 100.0,

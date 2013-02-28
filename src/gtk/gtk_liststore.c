@@ -336,7 +336,7 @@ create_column(n_list_store *list, int i)
       if (list[i].type == G_TYPE_DOUBLE || list[i].type == G_TYPE_FLOAT) {
 	g_object_set((GObject *) renderer,
 		     "editable", list[i].editable,
-#if GTK_CHECK_VERSION(3, 8, 0)
+#if GTK_CHECK_VERSION(3, 8, 0) || ! GTK_CHECK_VERSION(3, 0, 0)
 		     "adjustment", gtk_adjustment_new(0,
 						      list[i].min / 100.0,
 						      list[i].max / 100.0,
@@ -350,7 +350,7 @@ create_column(n_list_store *list, int i)
       } else {
 	g_object_set((GObject *) renderer,
 		     "editable", list[i].editable,
-#if GTK_CHECK_VERSION(3, 8, 0)
+#if GTK_CHECK_VERSION(3, 8, 0) || ! GTK_CHECK_VERSION(3, 0, 0)
 		     "adjustment", gtk_adjustment_new(0,
 						      list[i].min,
 						      list[i].max,
