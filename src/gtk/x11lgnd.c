@@ -3196,11 +3196,11 @@ create_mark_color_combo_box(GtkWidget *cbox, struct objlist *obj, int id)
 
   list = GTK_TREE_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(cbox)));
 
-  add_text_combo_item_to_cbox(list, &iter, NULL, -1, _("Mark"), FALSE, FALSE);
+  add_text_combo_item_to_cbox(list, &iter, NULL, -1, -1, _("Mark"), TOGGLE_NONE, FALSE);
   add_mark_combo_item_to_cbox(list, NULL, &iter, LEGEND_COMBO_ITEM_MARK, obj, "type", id);
 
-  add_text_combo_item_to_cbox(list, NULL, NULL, LEGEND_COMBO_ITEM_COLOR_1, _("Color 1"), FALSE, FALSE);
-  add_text_combo_item_to_cbox(list, NULL, NULL, LEGEND_COMBO_ITEM_COLOR_2, _("Color 2"), FALSE, FALSE);
+  add_text_combo_item_to_cbox(list, NULL, NULL, LEGEND_COMBO_ITEM_COLOR_1, -1, _("Color 1"), TOGGLE_NONE, FALSE);
+  add_text_combo_item_to_cbox(list, NULL, NULL, LEGEND_COMBO_ITEM_COLOR_2, -1, _("Color 2"), TOGGLE_NONE, FALSE);
 }
 
 static void
@@ -3216,20 +3216,33 @@ create_color_combo_box(GtkWidget *cbox, struct objlist *obj, int id)
 
   list = GTK_TREE_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(cbox)));
 
+#if GTK_CHECK_VERSION(3, 0, 0)
   add_bool_combo_item_to_cbox(list, &iter, NULL, LEGEND_COMBO_ITEM_TOGGLE_STROKE, obj, "stroke", id, _("Stroke"));
+#else
+  add_text_combo_item_to_cbox(list, &iter, NULL, -1, -1, _("Stroke"), TOGGLE_NONE, FALSE);
+#endif
   add_line_style_item_to_cbox(list, &iter, LEGEND_COMBO_ITEM_STYLE, obj, "style", id);
-  add_text_combo_item_to_cbox(list, NULL, &iter, LEGEND_COMBO_ITEM_COLOR_STROKE, _("Color"), FALSE, FALSE);
+  add_text_combo_item_to_cbox(list, NULL, &iter, LEGEND_COMBO_ITEM_COLOR_STROKE, -1, _("Color"), TOGGLE_NONE, FALSE);
   if (chkobjfield(obj, "close_path") == 0) {
     add_bool_combo_item_to_cbox(list, NULL, &iter, LEGEND_COMBO_ITEM_CLOSE_PATH, obj, "close_path", id, _("Close path"));
   }
+#if ! GTK_CHECK_VERSION(3, 0, 0)
+  add_bool_combo_item_to_cbox(list, NULL, &iter, LEGEND_COMBO_ITEM_TOGGLE_STROKE, obj, "stroke", id, _("Draw"));
+#endif
 
+#if GTK_CHECK_VERSION(3, 0, 0)
   add_bool_combo_item_to_cbox(list, &iter, NULL, LEGEND_COMBO_ITEM_TOGGLE_FILL, obj, "fill", id, _("Fill"));
-  add_text_combo_item_to_cbox(list, NULL, &iter, LEGEND_COMBO_ITEM_COLOR_FILL, _("Color"), FALSE, FALSE);
-
+#else
+  add_text_combo_item_to_cbox(list, &iter, NULL, -1, -1, _("Fill"), TOGGLE_NONE, FALSE);
+#endif
+  add_text_combo_item_to_cbox(list, NULL, &iter, LEGEND_COMBO_ITEM_COLOR_FILL, -1, _("Color"), TOGGLE_NONE, FALSE);
   if (chkobjfield(obj, "fill_rule") == 0) {
-    add_text_combo_item_to_cbox(list, &parent, &iter, LEGEND_COMBO_ITEM_COLOR_FILL, _("Fill rule"), FALSE, FALSE);
+    add_text_combo_item_to_cbox(list, &parent, &iter, -1, -1, _("Fill rule"), TOGGLE_NONE, FALSE);
     add_enum_combo_item_to_cbox(list, NULL, &parent, LEGEND_COMBO_ITEM_FILL_RULE, obj, "fill_rule", id);
   }
+#if ! GTK_CHECK_VERSION(3, 0, 0)
+  add_bool_combo_item_to_cbox(list, NULL, &iter, LEGEND_COMBO_ITEM_TOGGLE_FILL, obj, "fill", id, _("Draw"));
+#endif
 }
 
 static int
@@ -3265,11 +3278,10 @@ set_fill(struct objlist *obj, int id, int fill)
 static void
 select_type(GtkComboBox *w, gpointer user_data)
 {
-  int sel, col_type, mark_type, idx, *ary, found, depth, active, style, modified, fill_rule;
+  int sel, col_type, mark_type, enum_id, found, active, style, modified, fill_rule;
   struct obj_list_data *d;
   GtkTreeStore *list;
   GtkTreeIter iter;
-  GtkTreePath *path;
 
   menu_lock(FALSE);
 
@@ -3286,18 +3298,10 @@ select_type(GtkComboBox *w, gpointer user_data)
     return;
   }
 
-  gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_INT, &col_type, -1);
-  path = gtk_tree_model_get_path(GTK_TREE_MODEL(list), &iter);
-  ary = gtk_tree_path_get_indices(path);
-  depth = gtk_tree_path_get_depth(path);
-
-  switch (depth < 1) {
-    gtk_tree_path_free(path);
-    return;
-  }
-
-  idx = ary[depth - 1];
-  gtk_tree_path_free(path);
+  gtk_tree_model_get(GTK_TREE_MODEL(list), &iter,
+		     OBJECT_COLUMN_TYPE_INT, &col_type,
+		     OBJECT_COLUMN_TYPE_ENUM, &enum_id,
+		     -1);
 
   switch (col_type) {
   case LEGEND_COMBO_ITEM_COLOR_1:
@@ -3312,14 +3316,17 @@ select_type(GtkComboBox *w, gpointer user_data)
     break;
   case LEGEND_COMBO_ITEM_MARK:
     getobj(d->obj, "type", sel, 0, NULL, &mark_type);
-    if (idx == mark_type) {
+    if (enum_id == mark_type) {
       return;
     }
-    putobj(d->obj, "type", sel, &idx);
+    putobj(d->obj, "type", sel, &enum_id);
     break;
   case LEGEND_COMBO_ITEM_STYLE:
     modified = set_stroke(d->obj, sel, TRUE);
-    if (idx >= 0 && chk_sputobjfield(d->obj, sel, "style", FwLineStyle[idx].list) != 0 && ! modified) {
+    if (enum_id < 0 || enum_id >= FwNumStyleNum) {
+      return;
+    }
+    if (chk_sputobjfield(d->obj, sel, "style", FwLineStyle[enum_id].list) != 0 && ! modified) {
       return;
     }
     if (! modified && ! get_graph_modified()) {
@@ -3349,10 +3356,10 @@ select_type(GtkComboBox *w, gpointer user_data)
   case LEGEND_COMBO_ITEM_FILL_RULE:
     modified = set_fill(d->obj, sel, TRUE);
     getobj(d->obj, "fill_rule", sel, 0, NULL, &fill_rule);
-    if ((idx < 0 || fill_rule == idx) && ! modified) {
+    if (fill_rule == enum_id && ! modified) {
       return;
     }
-    fill_rule = idx;
+    fill_rule = enum_id;
     putobj(d->obj, "fill_rule", sel, &fill_rule);
     break;
   case LEGEND_COMBO_ITEM_CLOSE_PATH:
@@ -3454,10 +3461,9 @@ static void
 select_line_type(GtkComboBox *w, gpointer user_data)
 {
   struct obj_list_data *d;
-  int sel, type, interpolation, idx, col_type, *ary, depth, found;
+  int sel, type, interpolation, enum_id, col_type, found;
   GtkTreeIter iter;
   GtkTreeStore *list;
-  GtkTreePath *path;
 
   d = (struct obj_list_data *) user_data;
 
@@ -3472,16 +3478,10 @@ select_line_type(GtkComboBox *w, gpointer user_data)
     return;
   }
 
-  gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_INT, &col_type, -1);
-  path = gtk_tree_model_get_path(GTK_TREE_MODEL(list), &iter);
-  ary = gtk_tree_path_get_indices(path);
-  depth = gtk_tree_path_get_depth(path);
-  idx = -1;
-
-  if (depth > 1) {
-    idx = ary[depth - 1];
-  }
-  gtk_tree_path_free(path);
+  gtk_tree_model_get(GTK_TREE_MODEL(list), &iter,
+		     OBJECT_COLUMN_TYPE_INT, &col_type,
+		     OBJECT_COLUMN_TYPE_ENUM, &enum_id,
+		     -1);
 
   getobj(d->obj, "type", sel, 0, NULL, &type);
   getobj(d->obj, "interpolation", sel, 0, NULL, &interpolation);
@@ -3493,15 +3493,18 @@ select_line_type(GtkComboBox *w, gpointer user_data)
     }
     break;
   case LEGEND_PATH_LINE_TYPE_CURVE: 
-    if (type == PATH_TYPE_CURVE && (idx < 0 || idx == interpolation)) {
+    if (type == PATH_TYPE_CURVE && enum_id == interpolation) {
       return;
     }
+    break;
+  default:
+    return;
   }
 
   putobj(d->obj, "type", sel, &col_type);
 
-  if (idx >= 0) {
-    putobj(d->obj, "interpolation", sel, &idx);
+  if (enum_id >= 0) {
+    putobj(d->obj, "interpolation", sel, &enum_id);
   }
 
   d->select = sel;
@@ -3535,11 +3538,11 @@ start_editing_line_type(GtkCellRenderer *renderer, GtkCellEditable *editable, gc
   getobj(d->obj, "type", sel, 0, NULL, &type);
 
   enumlist = (char **) chkobjarglist(d->obj, "type");
-  add_text_combo_item_to_cbox(list, &iter, NULL, LEGEND_PATH_LINE_TYPE_LINE, _(enumlist[0]), TRUE, type == PATH_TYPE_LINE);
+  add_text_combo_item_to_cbox(list, &iter, NULL, LEGEND_PATH_LINE_TYPE_LINE, -1, _(enumlist[0]), TOGGLE_RADIO, type == PATH_TYPE_LINE);
   if (type == PATH_TYPE_LINE) {
     gtk_combo_box_set_active_iter(GTK_COMBO_BOX(editable), &iter);
   }
-  add_text_combo_item_to_cbox(list, &iter, NULL, LEGEND_PATH_LINE_TYPE_CURVE, _(enumlist[1]), TRUE, type == PATH_TYPE_CURVE);
+  add_text_combo_item_to_cbox(list, &iter, NULL, LEGEND_PATH_LINE_TYPE_CURVE, -1, _(enumlist[1]), TOGGLE_RADIO, type == PATH_TYPE_CURVE);
   if (type == PATH_TYPE_CURVE) {
     gtk_combo_box_set_active_iter(GTK_COMBO_BOX(editable), &iter);
   }
@@ -3643,9 +3646,9 @@ start_editing_font(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *
   list = GTK_TREE_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(editable)));
   gtk_tree_store_clear(list);
 
-  add_text_combo_item_to_cbox(list, &iter, NULL, -1, _("Font"), FALSE, FALSE);
+  add_text_combo_item_to_cbox(list, &iter, NULL, -1, -1, _("Font"), TOGGLE_NONE, FALSE);
   add_font_combo_item_to_cbox(list, NULL, &iter, LEGEND_COMBO_ITEM_FONT, d->obj, "font", sel);
-  add_text_combo_item_to_cbox(list, NULL, NULL, LEGEND_COMBO_ITEM_COLOR_0, _("Color"), FALSE, FALSE);
+  add_text_combo_item_to_cbox(list, NULL, NULL, LEGEND_COMBO_ITEM_COLOR_0, -1, _("Color"), TOGGLE_NONE, FALSE);
   add_font_style_combo_item_to_cbox(list, NULL, NULL, LEGEND_COMBO_ITEM_STYLE_BOLD, LEGEND_COMBO_ITEM_STYLE_ITALIC, d->obj, "style", sel);
 
   g_signal_connect(editable, "editing-done", G_CALLBACK(select_font), user_data);

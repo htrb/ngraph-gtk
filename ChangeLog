@@ -1,3 +1,29 @@
+2013-03-01  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11axis.c (select_type): use "OBJECT_COLUMN_TYPE_ENUM".
+
+	* src/gtk/x11file.c (select_type): use "OBJECT_COLUMN_TYPE_ENUM".
+
+	* src/gtk/x11lgnd.c (select_type, select_line_type): use
+	"OBJECT_COLUMN_TYPE_ENUM".
+
+	* src/gtk/gtk_liststore.c (add_text_combo_item_to_cbox): use
+	"TOGGLE_TYPE". add parameter "enum_id".
+	(add_enum_combo_item_to_cbox, add_bool_combo_item_to_cbox)
+	(add_line_style_item_to_cbox, add_font_style_combo_item_to_cbox):
+	use "add_text_combo_item_to_cbox()".
+
+	* src/gtk/gtk_liststore.h (TOGGLE_TYPE): added.
+	(OBJECT_COLUMN_TYPE): add "OBJECT_COLUMN_TYPE_ENUM".
+
+2013-02-28  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11lgnd.c (points_setup): check the version of GTK+ to
+	avoid the bug (Bug 691592).
+
+	* src/gtk/gtk_liststore.c (create_column): check the version of
+	GTK+ to avoid the bug (Bug 691592).
+
 2013-02-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/shellcm.c (cmget): check returned value via 3rd argument of

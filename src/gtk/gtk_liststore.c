@@ -61,7 +61,7 @@ init_object_combo_box(GtkWidget *cbox)
 static GtkTreeModel *
 create_object_tree_model(void)
 {
-  return GTK_TREE_MODEL(gtk_tree_store_new(OBJECT_COLUMN_TYPE_NUM, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_OBJECT, G_TYPE_INT, G_TYPE_BOOLEAN, G_TYPE_BOOLEAN, G_TYPE_BOOLEAN));
+  return GTK_TREE_MODEL(gtk_tree_store_new(OBJECT_COLUMN_TYPE_NUM, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_OBJECT, G_TYPE_INT, G_TYPE_INT, G_TYPE_BOOLEAN, G_TYPE_BOOLEAN, G_TYPE_BOOLEAN));
 }
 
 static GtkWidget *
@@ -82,7 +82,7 @@ create_object_cbox(void)
 void
 add_separator_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *parent)
 {
-  add_text_combo_item_to_cbox(list, iter, parent, -1, NULL, FALSE, FALSE);
+  add_text_combo_item_to_cbox(list, iter, parent, -1, -1, NULL, TOGGLE_NONE, FALSE);
 }
 
 void
@@ -97,7 +97,7 @@ add_font_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *
   fcur = Gra2cairoConf->fontmap_list_root;
   while (fcur) {
     match = ! g_strcmp0(font, fcur->fontalias);
-    add_text_combo_item_to_cbox(list, iter, parent, column_id, fcur->fontalias, TRUE, match);
+    add_text_combo_item_to_cbox(list, iter, parent, column_id, -1, fcur->fontalias, TOGGLE_RADIO, match);
     fcur = fcur->next;
   }
 }
@@ -106,36 +106,15 @@ void
 add_font_style_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *parent, int column_id_bold, int column_id_italic, struct objlist *obj, const char *field, int id)
 {
   int style;
-  GtkTreeIter locl_iter;
-
-  if (iter == NULL) {
-    iter = &locl_iter;
-  }
 
   getobj(obj, field, id, 0, NULL, &style);
-  gtk_tree_store_append(list, iter, parent);
-  gtk_tree_store_set(list, iter,
-		     OBJECT_COLUMN_TYPE_TOGGLE, style & GRA_FONT_STYLE_BOLD,
-		     OBJECT_COLUMN_TYPE_STRING, _("Bold"),
-		     OBJECT_COLUMN_TYPE_PIXBUF, NULL,
-		     OBJECT_COLUMN_TYPE_INT, column_id_bold,
-		     OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, TRUE,
-		     OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
-		     -1);
 
-  gtk_tree_store_append(list, iter, parent);
-  gtk_tree_store_set(list, iter,
-		     OBJECT_COLUMN_TYPE_TOGGLE, style & GRA_FONT_STYLE_ITALIC,
-		     OBJECT_COLUMN_TYPE_STRING, _("Italic"),
-		     OBJECT_COLUMN_TYPE_PIXBUF, NULL,
-		     OBJECT_COLUMN_TYPE_INT, column_id_italic,
-		     OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, TRUE,
-		     OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
-		     -1);
+  add_text_combo_item_to_cbox(list, iter, parent, column_id_bold, -1, _("Bold"), TOGGLE_CHECK, style & GRA_FONT_STYLE_BOLD);
+  add_text_combo_item_to_cbox(list, iter, parent, column_id_italic, -1, _("Italic"), TOGGLE_CHECK, style & GRA_FONT_STYLE_ITALIC);
 }
 
 void
-add_text_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *parent, int column_id, const char *title, int is_radio, int active)
+add_text_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *parent, int column_id, int enum_id, const char *title, enum TOGGLE_TYPE type, int active)
 {
   GtkTreeIter locl_iter;
 
@@ -148,10 +127,11 @@ add_text_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *
 		     OBJECT_COLUMN_TYPE_STRING, title,
 		     OBJECT_COLUMN_TYPE_PIXBUF, NULL,
 		     OBJECT_COLUMN_TYPE_INT, column_id,
-		     OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, is_radio,
-		     OBJECT_COLUMN_TYPE_TOGGLE_IS_RADIO, is_radio,
+		     OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, type != TOGGLE_NONE,
+		     OBJECT_COLUMN_TYPE_TOGGLE_IS_RADIO, type == TOGGLE_RADIO,
 		     OBJECT_COLUMN_TYPE_TOGGLE, active,
 		     OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
+		     OBJECT_COLUMN_TYPE_ENUM, enum_id,
 		     -1);
 }
 
@@ -189,6 +169,7 @@ add_mark_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *
 			 OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, TRUE,
 			 OBJECT_COLUMN_TYPE_TOGGLE_IS_RADIO, TRUE,
 			 OBJECT_COLUMN_TYPE_TOGGLE, j == type,
+			 OBJECT_COLUMN_TYPE_ENUM, j,
 			 -1);
       g_object_unref(pixbuf);
     }
@@ -198,13 +179,8 @@ add_mark_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *
 void
 add_enum_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *parent, int column_id, struct objlist *obj, const char *field, int id)
 {
-  GtkTreeIter locl_iter;
   char **enum_array;
   int state, i;
-
-  if (iter == NULL) {
-    iter = &locl_iter;
-  }
 
   getobj(obj, field, id, 0, NULL, &state);
   enum_array = (char **) chkobjarglist(obj, field);
@@ -213,16 +189,7 @@ add_enum_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *
   }
 
   for (i = 0; enum_array[i] && enum_array[i][0]; i++) {
-    gtk_tree_store_append(list, iter, parent);
-    gtk_tree_store_set(list, iter,
-		       OBJECT_COLUMN_TYPE_STRING, _(enum_array[i]),
-		       OBJECT_COLUMN_TYPE_PIXBUF, NULL,
-		       OBJECT_COLUMN_TYPE_INT, column_id,
-		       OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, TRUE,
-		       OBJECT_COLUMN_TYPE_TOGGLE_IS_RADIO, TRUE,
-		       OBJECT_COLUMN_TYPE_TOGGLE, i == state,
-		       OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
-		       -1);
+    add_text_combo_item_to_cbox(list, iter, parent, column_id, i, _(enum_array[i]), TOGGLE_RADIO, i == state);
   }
 }
 
@@ -238,23 +205,14 @@ add_bool_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *
 
   getobj(obj, field, id, 0, NULL, &state);
 
-  gtk_tree_store_append(list, iter, parent);
-  gtk_tree_store_set(list, iter,
-		     OBJECT_COLUMN_TYPE_STRING, title,
-		     OBJECT_COLUMN_TYPE_PIXBUF, NULL,
-		     OBJECT_COLUMN_TYPE_INT, column_id,
-		     OBJECT_COLUMN_TYPE_TOGGLE, state,
-		     OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, TRUE,
-		     OBJECT_COLUMN_TYPE_TOGGLE_IS_RADIO, FALSE,
-		     OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
-		     -1);
+  add_text_combo_item_to_cbox(list, iter, parent, column_id, -1, title, TOGGLE_CHECK, state);
 }
 
 void
 add_line_style_item_to_cbox(GtkTreeStore *list, GtkTreeIter *parent, int column_id, struct objlist *obj, const char *field, int id)
 {
-  GtkTreeIter iter, child;
-  int i, j;
+  GtkTreeIter iter;
+  int i, active;
   char *str;
 
   sgetobjfield(obj, id, field, NULL, &str, FALSE, FALSE, FALSE);
@@ -262,26 +220,10 @@ add_line_style_item_to_cbox(GtkTreeStore *list, GtkTreeIter *parent, int column_
     return;
   }
 
-  gtk_tree_store_append(list, &iter, parent);
-  gtk_tree_store_set(list, &iter,
-		     OBJECT_COLUMN_TYPE_STRING, _("Line style"),
-		     OBJECT_COLUMN_TYPE_PIXBUF, NULL,
-		     OBJECT_COLUMN_TYPE_INT, -1,
-		     OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, FALSE,
-		     OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
-		     -1);
+  add_text_combo_item_to_cbox(list, &iter, parent, -1, -1, _("Line style"), TOGGLE_NONE, FALSE);
   for (i = 0; FwLineStyle[i].name; i++) {
-    j = ! strcmp(str, FwLineStyle[i].list);
-    gtk_tree_store_append(list, &child, &iter);
-    gtk_tree_store_set(list, &child,
-		       OBJECT_COLUMN_TYPE_STRING, _(FwLineStyle[i].name),
-		       OBJECT_COLUMN_TYPE_PIXBUF, NULL,
-		       OBJECT_COLUMN_TYPE_INT, column_id,
-		       OBJECT_COLUMN_TYPE_TOGGLE, j,
-		       OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, TRUE,
-		       OBJECT_COLUMN_TYPE_TOGGLE_IS_RADIO, TRUE,
-		       OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
-		       -1);
+    active = ! strcmp(str, FwLineStyle[i].list);
+    add_text_combo_item_to_cbox(list, NULL, &iter, column_id, i, _(FwLineStyle[i].name), TOGGLE_RADIO, active);
   }
   g_free(str);
 }

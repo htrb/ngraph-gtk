@@ -4665,7 +4665,7 @@ add_fit_combo_item_to_cbox(GtkTreeStore *list, struct objlist *obj, int id)
   }
   g_free(valstr);
 
-  add_text_combo_item_to_cbox(list, NULL, NULL, FILE_COMBO_ITEM_FIT, buf, FALSE, FALSE);
+  add_text_combo_item_to_cbox(list, NULL, NULL, FILE_COMBO_ITEM_FIT, -1, buf, TOGGLE_NONE, FALSE);
 }
 
 static void
@@ -4704,14 +4704,14 @@ create_type_color_combo_box(GtkWidget *cbox, struct objlist *obj, int type, int 
     break;
   }
 
-  add_text_combo_item_to_cbox(list, NULL, NULL, FILE_COMBO_ITEM_COLOR_1, _("Color 1"), FALSE, FALSE);
+  add_text_combo_item_to_cbox(list, NULL, NULL, FILE_COMBO_ITEM_COLOR_1, -1, _("Color 1"), TOGGLE_NONE, FALSE);
 
   switch (type) {
   case PLOT_TYPE_MARK:
   case PLOT_TYPE_RECTANGLE_FILL:
   case PLOT_TYPE_BAR_FILL_X:
   case PLOT_TYPE_BAR_FILL_Y:
-    add_text_combo_item_to_cbox(list, NULL, NULL, FILE_COMBO_ITEM_COLOR_2, _("Color 2"), FALSE, FALSE);
+    add_text_combo_item_to_cbox(list, NULL, NULL, FILE_COMBO_ITEM_COLOR_2, -1, _("Color 2"), TOGGLE_NONE, FALSE);
     break;
   }
 
@@ -4742,7 +4742,7 @@ create_type_combo_item(GtkTreeStore *list, struct objlist *obj, int id)
   getobj(obj, "type", id, 0, NULL, &type);
 
   for (i = 0; enumlist[i] && enumlist[i][0]; i++) {
-    add_text_combo_item_to_cbox(list, &iter, &parent, FILE_COMBO_ITEM_TYPE, _(enumlist[i]), TRUE,  type == i);
+    add_text_combo_item_to_cbox(list, &iter, &parent, FILE_COMBO_ITEM_TYPE, i, _(enumlist[i]), TOGGLE_RADIO,  type == i);
     if (strcmp(enumlist[i], "mark") == 0) {
       add_mark_combo_item_to_cbox(list, NULL, &iter, FILE_COMBO_ITEM_MARK, obj, "mark_type", id);
     } else if (strcmp(enumlist[i], "curve") == 0) {
@@ -4754,12 +4754,11 @@ create_type_combo_item(GtkTreeStore *list, struct objlist *obj, int id)
 static void
 select_type(GtkComboBox *w, gpointer user_data)
 {
-  int sel, col_type, type, mark_type, curve_type, idx[2], *ary, found, depth;
+  int sel, col_type, type, mark_type, curve_type, enum_id, found;
   struct objlist *obj;
   struct obj_list_data *d;
   GtkTreeStore *list;
   GtkTreeIter iter;
-  GtkTreePath *path;
 
   menu_lock(FALSE);
 
@@ -4777,24 +4776,10 @@ select_type(GtkComboBox *w, gpointer user_data)
   if (! found)
     return;
 
-  gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_INT, &col_type, -1);
-  path = gtk_tree_model_get_path(GTK_TREE_MODEL(list), &iter);
-  ary = gtk_tree_path_get_indices(path);
-  depth = gtk_tree_path_get_depth(path);
-  idx[0] = idx[1] = -1;
-
-  switch (depth) {
-  case 3:
-    idx[1] = ary[2];
-  case 2:			/* fall-through */
-    idx[0] = ary[1];
-  case 1:
-    break;
-  default:
-    return;
-  }
-
-  gtk_tree_path_free(path);
+  gtk_tree_model_get(GTK_TREE_MODEL(list), &iter,
+		     OBJECT_COLUMN_TYPE_INT, &col_type,
+		     OBJECT_COLUMN_TYPE_ENUM, &enum_id,
+		     -1);
 
   switch (col_type) {
   case FILE_COMBO_ITEM_COLOR_1:
@@ -4808,11 +4793,11 @@ select_type(GtkComboBox *w, gpointer user_data)
     }
     break;
   case FILE_COMBO_ITEM_TYPE:
-    if (idx[0] < 0 || idx[0] == type) {
+    if (enum_id == type) {
       return;
     }
-    putobj(obj, "type", sel, idx);
-    if (idx[0] == PLOT_TYPE_FIT) {
+    putobj(obj, "type", sel, &enum_id);
+    if (enum_id == PLOT_TYPE_FIT) {
       char *fit;
       int ret;
 
@@ -4828,32 +4813,31 @@ select_type(GtkComboBox *w, gpointer user_data)
     break;
   case FILE_COMBO_ITEM_MARK:
     getobj(obj, "mark_type", sel, 0, NULL, &mark_type);
-
-    if (idx[1] < 0)
-      idx[1] = mark_type;
-
-    if (idx[0] == type && idx[1] == mark_type)
+    if (type == PLOT_TYPE_MARK && enum_id == mark_type)
       return;
 
-    putobj(obj, "mark_type", sel, idx + 1);
-    putobj(obj, "type", sel, idx);
+    putobj(obj, "mark_type", sel, &enum_id);
+
+    type = PLOT_TYPE_MARK;
+    putobj(obj, "type", sel, &type);
 
     break;
   case FILE_COMBO_ITEM_INTP:
     getobj(obj, "interpolation", sel, 0, NULL, &curve_type);
-
-    if (idx[1] < 0)
-      idx[1] = curve_type;
-
-    if (idx[0] == type && idx[1] == curve_type)
+    if (type == PLOT_TYPE_CURVE && enum_id == curve_type)
       return;
 
-    putobj(obj, "interpolation", sel, idx + 1);
-    putobj(obj, "type", sel, idx);
+    putobj(obj, "interpolation", sel, &enum_id);
+
+    type = PLOT_TYPE_CURVE;
+    putobj(obj, "type", sel, &type);
 
     break;
   case FILE_COMBO_ITEM_LINESTYLE:
-    if (idx[0] >= 0 && chk_sputobjfield(d->obj, sel, "line_style", FwLineStyle[idx[0]].list) != 0) {
+    if (enum_id < 0 || enum_id >= FwNumStyleNum) {
+      return;
+    }
+    if (chk_sputobjfield(d->obj, sel, "line_style", FwLineStyle[enum_id].list) != 0) {
       return;
     }
   case FILE_COMBO_ITEM_FIT:
@@ -4990,7 +4974,7 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
   for (j = 0; j <= lastinst; j++) {
     getobj(aobj, "group", j, 0, NULL, &name);
     name = CHK_STR(name);
-    add_text_combo_item_to_cbox(list, &iter, NULL, j, name, FALSE, FALSE);
+    add_text_combo_item_to_cbox(list, &iter, NULL, j, -1, name, TOGGLE_NONE, FALSE);
     if (j == id) {
       gtk_combo_box_set_active_iter(cbox, &iter);
     }

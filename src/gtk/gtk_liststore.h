@@ -7,11 +7,18 @@
 
 #include "object.h"
 
+enum TOGGLE_TYPE {
+  TOGGLE_NONE,
+  TOGGLE_CHECK,
+  TOGGLE_RADIO,
+};
+
 enum OBJECT_COLUMN_TYPE {
   OBJECT_COLUMN_TYPE_TOGGLE,
   OBJECT_COLUMN_TYPE_STRING,
   OBJECT_COLUMN_TYPE_PIXBUF,
   OBJECT_COLUMN_TYPE_INT,
+  OBJECT_COLUMN_TYPE_ENUM,
   OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE,
   OBJECT_COLUMN_TYPE_TOGGLE_IS_RADIO,
   OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE,
@@ -36,7 +43,7 @@ void add_bool_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeI
 void add_mark_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *parent, int column_id, struct objlist *obj, const char *field, int id);
 void add_enum_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *parent, int column_id, struct objlist *obj, const char *field, int id);
 void add_font_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *parent, int column_id, struct objlist *obj, const char *field, int id);
-void add_text_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *parent, int column_id, const char *title, int is_radio, int active);
+void add_text_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *parent, int column_id, int enum_id, const char *title, enum TOGGLE_TYPE type, int active);
 void add_font_style_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *parent, int column_id_bold, int column_id_italic, struct objlist *obj, const char *field, int id);
 
 GtkWidget *list_store_create(int n, n_list_store *list);

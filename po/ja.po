@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2013-02-26 18:32+0900\n"
+"POT-Creation-Date: 2013-03-01 11:44+0900\n"
 "PO-Revision-Date: 2013-02-24 14:12+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -193,8 +193,8 @@ msgid "_Background Color:"
 msgstr "背景色(_B):"
 
 #: src/gtk/x11axis.c:408 src/gtk/x11axis.c:3298 src/gtk/x11axis.c:3323
-#: src/gtk/x11axis.c:3356 src/gtk/x11lgnd.c:3221 src/gtk/x11lgnd.c:3227
-#: src/gtk/x11lgnd.c:3648 src/gtk/gtk_widget.c:1068
+#: src/gtk/x11axis.c:3356 src/gtk/x11lgnd.c:3225 src/gtk/x11lgnd.c:3238
+#: src/gtk/x11lgnd.c:3651 src/gtk/gtk_widget.c:1068
 msgid "Color"
 msgstr "色"
 
@@ -422,7 +422,7 @@ msgid "_Font:"
 msgstr "フォント(_F):"
 
 #: src/gtk/x11axis.c:2216 src/gtk/x11axis.c:3349 src/gtk/x11dialg.c:239
-#: src/gtk/x11lgnd.c:3646 src/gtk/x11opt.c:1422
+#: src/gtk/x11lgnd.c:3649 src/gtk/x11opt.c:1422
 msgid "Font"
 msgstr "フォント"
 
@@ -467,8 +467,8 @@ msgstr "フォント(_F)"
 msgid "_Position"
 msgstr "位置(_P)"
 
-#: src/gtk/x11axis.c:3288 src/gtk/x11axis.c:3300 src/gtk/x11menu.c:922
-#: src/gtk/x11menu.c:936
+#: src/gtk/x11axis.c:3288 src/gtk/x11axis.c:3300 src/gtk/x11lgnd.c:3230
+#: src/gtk/x11lgnd.c:3244 src/gtk/x11menu.c:922 src/gtk/x11menu.c:936
 msgid "Draw"
 msgstr "描画"
 
@@ -1381,39 +1381,39 @@ msgstr "テキスト(_T):"
 msgid "Mark"
 msgstr "マーク"
 
-#: src/gtk/x11lgnd.c:3219
+#: src/gtk/x11lgnd.c:3220 src/gtk/x11lgnd.c:3222
 msgid "Stroke"
 msgstr "ストローク"
 
-#: src/gtk/x11lgnd.c:3223
+#: src/gtk/x11lgnd.c:3227
 msgid "Close path"
 msgstr "パスを閉じる"
 
-#: src/gtk/x11lgnd.c:3226
+#: src/gtk/x11lgnd.c:3234 src/gtk/x11lgnd.c:3236
 msgid "Fill"
 msgstr "塗りつぶし"
 
-#: src/gtk/x11lgnd.c:3230
+#: src/gtk/x11lgnd.c:3240
 msgid "Fill rule"
 msgstr "ルール"
 
-#: src/gtk/x11lgnd.c:3705
+#: src/gtk/x11lgnd.c:3708
 msgid "path"
 msgstr "パス"
 
-#: src/gtk/x11lgnd.c:3706 src/ofile.c:170
+#: src/gtk/x11lgnd.c:3709 src/ofile.c:170
 msgid "rectangle"
 msgstr "矩形"
 
-#: src/gtk/x11lgnd.c:3707
+#: src/gtk/x11lgnd.c:3710
 msgid "arc"
 msgstr "円"
 
-#: src/gtk/x11lgnd.c:3708 src/ofile.c:163
+#: src/gtk/x11lgnd.c:3711 src/ofile.c:163
 msgid "mark"
 msgstr "マーク"
 
-#: src/gtk/x11lgnd.c:3709
+#: src/gtk/x11lgnd.c:3712
 msgid "text"
 msgstr "テキスト"
 
@@ -2457,15 +2457,15 @@ msgstr "目盛数字の色"
 msgid "Open"
 msgstr "開く"
 
-#: src/gtk/gtk_liststore.c:119
+#: src/gtk/gtk_liststore.c:112
 msgid "Bold"
 msgstr "太字"
 
-#: src/gtk/gtk_liststore.c:129
+#: src/gtk/gtk_liststore.c:113
 msgid "Italic"
 msgstr "斜体"
 
-#: src/gtk/gtk_liststore.c:267
+#: src/gtk/gtk_liststore.c:223
 msgid "Line style"
 msgstr "線種"
 
