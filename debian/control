@@ -3,9 +3,8 @@ Section: graphics
 Priority: extra
 Maintainer: Koichi Akabe <vbkaisetsu@gmail.com>
 Uploaders: Ito Hiroyuki <ZXB01226@nifty.com>
-DM-Upload-Allowed: yes
 Build-Depends: debhelper (>= 9.0.0), libgtk-3-dev, libgsl0-dev, libreadline6-dev, ruby
-Standards-Version: 3.9.3
+Standards-Version: 3.9.4
 Homepage: http://homepage3.nifty.com/slokar/ngraph/ngraph-gtk.html
 
 Package: ngraph-gtk
