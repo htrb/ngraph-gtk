@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
 "POT-Creation-Date: 2013-03-02 14:07+0900\n"
-"PO-Revision-Date: 2013-03-02 17:04+0900\n"
+"PO-Revision-Date: 2013-03-02 17:17+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja_JP\n"
@@ -2441,7 +2441,6 @@ msgid "Fill Color"
 msgstr "塗りつぶし色"
 
 #: src/gtk/gtk_widget.c:1089
-#, fuzzy
 msgid "Axis baseline color"
 msgstr "軸基線の色"
 
