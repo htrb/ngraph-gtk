@@ -163,6 +163,8 @@ AxisCB(struct objlist *obj, int id)
 
   getobj(obj, "direction", id, 0, NULL, &dir);
   getobj(obj, "group", id, 0, NULL, &name);
+
+  s = NULL;
   name = CHK_STR(name);
   sgetobjfield(obj, id, "type", NULL, &valstr, FALSE, FALSE, FALSE);
   if (valstr) {
@@ -176,8 +178,7 @@ AxisCB(struct objlist *obj, int id)
 char *
 AxisHistoryCB(struct objlist *obj, int id)
 {
-  char *s, *valstr, *name;
-  int dir, num;
+  int num;
   struct narray *array;
 
   getobj(obj, "scale_history", id, 0, NULL, &array);
@@ -186,17 +187,7 @@ AxisHistoryCB(struct objlist *obj, int id)
   if (num == 0)
     return NULL;
 
-  getobj(obj, "group", id, 0, NULL, &name);
-  getobj(obj, "direction", id, 0, NULL, &dir);
-
-  name = CHK_STR(name);
-  sgetobjfield(obj, id, "type", NULL, &valstr, FALSE, FALSE, FALSE);
-  if (valstr) {
-    s = g_strdup_printf("%-10s %.6s %s:%.2f", name, _(valstr), _("dir"), dir / 100.0);
-    g_free(valstr);
-  }
-
-  return s;
+  return AxisCB(obj, id);
 }
 
 static char *

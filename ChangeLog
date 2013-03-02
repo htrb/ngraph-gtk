@@ -1,5 +1,8 @@
 2013-03-02  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11axis.c (AxisCB): initialize the variable "s".
+	(AxisHistoryCB): use "AxisCB()".
+
 	* src/gtk/ox11menu.c (menuinit): fix initial value of
 	"Menulocal.side_pane1_pos" and "Menulocal.side_pane2_pos".
 
