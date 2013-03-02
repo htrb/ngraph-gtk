@@ -3278,7 +3278,7 @@ set_fill(struct objlist *obj, int id, int fill)
 static void
 select_type(GtkComboBox *w, gpointer user_data)
 {
-  int sel, col_type, mark_type, enum_id, found, active, style, modified, fill_rule;
+  int sel, col_type, mark_type, enum_id, found, active, style, modified, fill_rule, r;
   struct obj_list_data *d;
   GtkTreeStore *list;
   GtkTreeIter iter;
@@ -3334,14 +3334,34 @@ select_type(GtkComboBox *w, gpointer user_data)
     }
     break;
   case LEGEND_COMBO_ITEM_COLOR_STROKE:
-    modified = set_stroke(d->obj, sel, TRUE);
-    if (select_obj_color(d->obj, sel, OBJ_FIELD_COLOR_TYPE_STROKE) && ! modified) {
+    r = select_obj_color(d->obj, sel, OBJ_FIELD_COLOR_TYPE_STROKE);
+    switch (r) {
+    case SELECT_OBJ_COLOR_DIFFERENT:
+      set_stroke(d->obj, sel, TRUE);
+      break;
+    case SELECT_OBJ_COLOR_SAME:
+      if (! set_stroke(d->obj, sel, TRUE)) {
+	return;
+      }
+      break;
+    case SELECT_OBJ_COLOR_ERROR:
+    case SELECT_OBJ_COLOR_CANCEL:
       return;
     }
     break;
   case LEGEND_COMBO_ITEM_COLOR_FILL:
-    modified = set_fill(d->obj, sel, TRUE);
-    if (select_obj_color(d->obj, sel, OBJ_FIELD_COLOR_TYPE_FILL) && ! modified) {
+    r = select_obj_color(d->obj, sel, OBJ_FIELD_COLOR_TYPE_FILL);
+    switch (r) {
+    case SELECT_OBJ_COLOR_DIFFERENT:
+      set_fill(d->obj, sel, TRUE);
+      break;
+    case SELECT_OBJ_COLOR_SAME:
+      if (! set_fill(d->obj, sel, TRUE)) {
+	return;
+      }
+      break;
+    case SELECT_OBJ_COLOR_ERROR:
+    case SELECT_OBJ_COLOR_CANCEL:
       return;
     }
     break;

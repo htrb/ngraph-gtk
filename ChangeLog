@@ -1,5 +1,11 @@
 2013-03-02  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/gtk_widget.c (select_obj_color): change type of the
+	return value.
+
+	* src/gtk/x11lgnd.c (select_type): check returned value of the
+	function "select_obj_color()"
+
 	* src/gtk/x11axis.c (AxisCB): initialize the variable "s".
 	(AxisHistoryCB): use "AxisCB()".
 

@@ -1036,7 +1036,7 @@ text_view_with_line_number_set_font(GtkWidget *view, const gchar *font)
   pango_font_description_free(desc);
 }
 
-int
+enum SELECT_OBJ_COLOR_RESULT
 select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type)
 {
   GtkWidget *dlg;
@@ -1107,7 +1107,7 @@ select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type)
     getobj(obj, "num_A", id, 0, NULL, &a);
     break;
   default:
-    return 1;
+    return SELECT_OBJ_COLOR_ERROR;
   }
 
   if (! Menulocal.use_opacity) {
@@ -1130,7 +1130,7 @@ select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type)
   gtk_widget_destroy(dlg);
 
   if (response != GTK_RESPONSE_OK) {
-    return 1;
+    return SELECT_OBJ_COLOR_CANCEL;
   }
 
   rr = nround(color.red * 255);
@@ -1157,7 +1157,7 @@ select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type)
   gtk_widget_destroy(dlg);
 
   if (response != GTK_RESPONSE_OK) {
-    return 1;
+    return SELECT_OBJ_COLOR_CANCEL;
   }
 
   rr = (color.red >> 8);
@@ -1206,8 +1206,8 @@ select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type)
     putobj(obj, "num_A", id, &aa);
     break;
   default:
-    return 1;
+    return SELECT_OBJ_COLOR_ERROR;
   }
 
-  return rr == r && gg == g && bb == b && aa == a;
+  return (rr == r && gg == g && bb == b && aa == a) ? SELECT_OBJ_COLOR_SAME : SELECT_OBJ_COLOR_DIFFERENT;
 }
