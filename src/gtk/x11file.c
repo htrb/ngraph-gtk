@@ -4640,6 +4640,7 @@ enum FILE_COMBO_ITEM {
   FILE_COMBO_ITEM_INTP,
   FILE_COMBO_ITEM_LINESTYLE,
   FILE_COMBO_ITEM_FIT,
+  FILE_COMBO_ITEM_CLIP,
 };
 
 
@@ -4718,6 +4719,8 @@ create_type_color_combo_box(GtkWidget *cbox, struct objlist *obj, int type, int 
   if (type == PLOT_TYPE_FIT) {
     add_fit_combo_item_to_cbox(list, obj, id);
   }
+
+  add_bool_combo_item_to_cbox(list, NULL, NULL, FILE_COMBO_ITEM_CLIP, obj, "data_clip", id, _("Clip"));
 }
 
 static void
@@ -4754,7 +4757,7 @@ create_type_combo_item(GtkTreeStore *list, struct objlist *obj, int id)
 static void
 select_type(GtkComboBox *w, gpointer user_data)
 {
-  int sel, col_type, type, mark_type, curve_type, enum_id, found;
+  int sel, col_type, type, mark_type, curve_type, enum_id, found, active;
   struct objlist *obj;
   struct obj_list_data *d;
   GtkTreeStore *list;
@@ -4842,6 +4845,11 @@ select_type(GtkComboBox *w, gpointer user_data)
     }
   case FILE_COMBO_ITEM_FIT:
     show_fit_dialog(obj, sel, (Menulocal.single_window_mode) ? TopLevel : d->parent->Win);
+    break;
+  case FILE_COMBO_ITEM_CLIP:
+    gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);
+    active = ! active;
+    putobj(d->obj, "data_clip", sel, &active);
     break;
   default:
     return;

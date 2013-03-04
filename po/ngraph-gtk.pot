@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.06.09\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2013-03-02 22:28+0900\n"
+"POT-Creation-Date: 2013-03-04 13:44+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -932,7 +932,7 @@ msgstr ""
 msgid "_Y math:"
 msgstr ""
 
-#: src/gtk/x11file.c:2588 src/gtk/x11file.c:3279 src/gtk/x11file.c:4664
+#: src/gtk/x11file.c:2588 src/gtk/x11file.c:3279 src/gtk/x11file.c:4665
 #, c-format
 msgid "Create"
 msgstr ""
@@ -1050,15 +1050,19 @@ msgstr ""
 msgid "Making data file."
 msgstr ""
 
-#: src/gtk/x11file.c:4707 src/gtk/x11lgnd.c:3202 src/gtk/gtk_widget.c:1075
+#: src/gtk/x11file.c:4708 src/gtk/x11lgnd.c:3202 src/gtk/gtk_widget.c:1075
 msgid "Color 1"
 msgstr ""
 
-#: src/gtk/x11file.c:4714 src/gtk/x11lgnd.c:3203 src/gtk/gtk_widget.c:1082
+#: src/gtk/x11file.c:4715 src/gtk/x11lgnd.c:3203 src/gtk/gtk_widget.c:1082
 msgid "Color 2"
 msgstr ""
 
-#: src/gtk/x11file.c:4732
+#: src/gtk/x11file.c:4723
+msgid "Clip"
+msgstr ""
+
+#: src/gtk/x11file.c:4735
 msgid "Type"
 msgstr ""
 

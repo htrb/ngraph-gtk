@@ -1,3 +1,9 @@
+2013-03-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (select_type): add case for
+	"FILE_COMBO_ITEM_CLIP".
+	(create_type_color_combo_box): add "clip" combo-item.
+
 2013-03-02  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_widget.c (select_obj_color): change type of the
