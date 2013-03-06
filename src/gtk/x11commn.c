@@ -746,15 +746,17 @@ FitClear(void)
     return;
   for (i = 0; i <= chkobjlastinst(obj); i++) {
     getobj(obj, "fit", i, 0, NULL, &fit);
-    if (fit != NULL) {
-      arrayinit(&iarray, sizeof(int));
-      if (getobjilist(fit, &fitobj, &iarray, FALSE, NULL) == 0) {
-	anum = arraynum(&iarray);
-	if (anum >= 1) {
-	  id = arraylast_int(&iarray);
-	  getobj(obj, "hidden", i, 0, NULL, &hidden);
-	  if (!hidden)
-	    putobj(fitobj, "equation", id, NULL);
+    if (fit == NULL) {
+      continue;
+    }
+    arrayinit(&iarray, sizeof(int));
+    if (getobjilist(fit, &fitobj, &iarray, FALSE, NULL) == 0) {
+      anum = arraynum(&iarray);
+      if (anum >= 1) {
+	id = arraylast_int(&iarray);
+	getobj(obj, "hidden", i, 0, NULL, &hidden);
+	if (! hidden) {
+	  putobj(fitobj, "equation", id, NULL);
 	}
       }
       arraydel(&iarray);
