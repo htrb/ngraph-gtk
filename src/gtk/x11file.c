@@ -4843,6 +4843,7 @@ select_type(GtkComboBox *w, gpointer user_data)
     if (chk_sputobjfield(d->obj, sel, "line_style", FwLineStyle[enum_id].list) != 0) {
       return;
     }
+    break;
   case FILE_COMBO_ITEM_FIT:
     show_fit_dialog(obj, sel, (Menulocal.single_window_mode) ? TopLevel : d->parent->Win);
     break;

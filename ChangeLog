@@ -1,5 +1,8 @@
 2013-03-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11file.c (select_type): add "break" statement for the
+	case "FILE_COMBO_ITEM_LINESTYLE:".
+
 	* src/gtk/x11commn.c (FitClear): fix indent.
 
 2013-03-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
