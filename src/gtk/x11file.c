@@ -4091,13 +4091,64 @@ FileWinFit(struct obj_list_data *d)
   }
 }
 
+#define MARK_PIX_LINE_WIDTH 1
+
+static void
+set_line_style(struct objlist *obj, int id, int ggc)
+{
+  struct narray *line_style;
+  int n;
+
+  getobj(obj, "line_style", id, 0, NULL, &line_style);
+  n = arraynum(line_style);
+  if (n > 0) {
+    int i, *style, *ptr;
+    style = g_malloc(sizeof(*style) * n);
+    if (style == NULL) {
+      GRAlinestyle(ggc, 0, NULL, MARK_PIX_LINE_WIDTH, 0, 0, 1000);
+      return;
+    }
+    ptr = arraydata(line_style);
+    for (i = 0; i < n; i++) {
+      style[i] = ptr[i] / 40;
+    }
+    GRAlinestyle(ggc, n, style, MARK_PIX_LINE_WIDTH, 0, 0, 1000);
+    g_free(style);
+  } else {
+    GRAlinestyle(ggc, 0, NULL, MARK_PIX_LINE_WIDTH, 0, 0, 1000);
+  }
+}
+
+#define CURVE_POINTS_MAX 7
+
+static void
+draw_curve(int ggc, double *spx, double *spy, int spnum, int spcond)
+{
+  double spz[CURVE_POINTS_MAX], spc[6][CURVE_POINTS_MAX], spc2[6];
+  int j, k;
+
+  for (j = 0; j < CURVE_POINTS_MAX; j++) {
+    spz[j] = j;
+  }
+
+  spline(spz, spx, spc[0], spc[1], spc[2], spnum, spcond, spcond, 0, 0);
+  spline(spz, spy, spc[3], spc[4], spc[5], spnum, spcond, spcond, 0, 0);
+  GRAcurvefirst(ggc, 0, NULL, NULL, NULL, splinedif, splineint, NULL, spx[0], spy[0]);
+  for (j = 0; j < spnum - 1; j++) {
+    for (k = 0; k < 6; k++) {
+      spc2[k] = spc[k][j];
+    }
+    if (!GRAcurve(ggc, spc2, spx[j], spy[j])) break;
+  }
+}
+
 static GdkPixbuf *
 draw_type_pixbuf(struct objlist *obj, int i)
 {
-  int j, k, ggc, fr, fg, fb, fr2, fg2, fb2,
-    type, width = 40, height = 20, poly[14], marktype,
+  int ggc, fr, fg, fb, fr2, fg2, fb2,
+    type, w, width = 40, height = 20, poly[14], marktype,
     intp, spcond, spnum, lockstate, found, output;
-  double spx[7], spy[7], spz[7], spc[6][7], spc2[6];
+  double spx[CURVE_POINTS_MAX], spy[CURVE_POINTS_MAX];
 #if GTK_CHECK_VERSION(3, 0, 0)
   cairo_surface_t *pix;
 #else
@@ -4147,35 +4198,35 @@ draw_type_pixbuf(struct objlist *obj, int i)
   }
   GRAview(ggc, 0, 0, width, height, 0);
   GRAcolor(ggc, fr, fg, fb, 255);
-  GRAlinestyle(ggc, 0, NULL, 1, 0, 0, 1000);
+  set_line_style(obj, i, ggc);
 
   switch (type) {
   case PLOT_TYPE_MARK:
     getobj(obj, "mark_type", i, 0, NULL, &marktype);
-    GRAmark(ggc, marktype, height / 2, height / 2, height - 2,
+    GRAmark(ggc, marktype, width / 2, height / 2, height - 2,
 	    fr, fg, fb, 255, fr2, fg2, fb2, 255);
     break;
   case PLOT_TYPE_LINE:
-    GRAline(ggc, 1, height / 2, height - 1, height / 2);
+    GRAline(ggc, 1, height / 2, width - 1, height / 2);
     break;
   case PLOT_TYPE_POLYGON:
   case PLOT_TYPE_POLYGON_SOLID_FILL:
     poly[0] = 1;
     poly[1] = height / 2;
 
-    poly[2] = height / 4;
+    poly[2] = width / 4;
     poly[3] = 1;
 
-    poly[4] = height * 3 / 4;
+    poly[4] = width * 3 / 4;
     poly[5] = height - 1;
 
-    poly[6] = height - 1;
+    poly[6] = width - 1;
     poly[7] = height / 2;
 
-    poly[8] = height * 3 / 4;
+    poly[8] = width * 3 / 4;
     poly[9] = 1;
 
-    poly[10] = height / 4;
+    poly[10] = width / 4;
     poly[11] = height - 1;
 
     poly[12] = 1;
@@ -4183,12 +4234,14 @@ draw_type_pixbuf(struct objlist *obj, int i)
     GRAdrawpoly(ggc, 7, poly, (type == PLOT_TYPE_POLYGON) ? 0: 2);
     break;
   case PLOT_TYPE_CURVE:
+    getobj(obj, "interpolation", i, 0, NULL, &intp);
+    w = (intp >= 2) ? height : width;
     spx[0] = 1;
-    spx[1] = height / 3 + 1;
-    spx[2] = height * 2 / 3;
-    spx[3] = height - 1;
-    spx[4] = height * 2 / 3;
-    spx[5] = height / 3 + 1;
+    spx[1] = w / 3 + 1;
+    spx[2] = w * 2 / 3;
+    spx[3] = w - 1;
+    spx[4] = w * 2 / 3;
+    spx[5] = w / 3 + 1;
     spx[6] = 1;
 
     spy[0] = height / 2;
@@ -4198,9 +4251,7 @@ draw_type_pixbuf(struct objlist *obj, int i)
     spy[4] = 1;
     spy[5] = height - 1;
     spy[6] = height / 2;
-    for (j = 0; j < 7; j++)
-      spz[j] = j;
-    getobj(obj, "interpolation", i, 0, NULL, &intp);
+
     if ((intp == 0) || (intp == 2)) {
       spcond = SPLCND2NDDIF;
       spnum = 4;
@@ -4208,105 +4259,109 @@ draw_type_pixbuf(struct objlist *obj, int i)
       spcond = SPLCNDPERIODIC;
       spnum = 7;
     }
-    spline(spz, spx, spc[0], spc[1], spc[2], spnum, spcond, spcond, 0, 0);
-    spline(spz, spy, spc[3], spc[4], spc[5], spnum, spcond, spcond, 0, 0);
+
+    draw_curve(ggc, spx, spy, spnum, spcond);
     if (intp >= 2) {
       GRAmoveto(ggc, height, height * 3 / 4);
       GRAtextstyle(ggc, "Serif", GRA_FONT_STYLE_NORMAL, 52, 0, 0);
       GRAouttext(ggc, "B");
     }
-    GRAcurvefirst(ggc, 0, NULL, NULL, NULL, splinedif, splineint, NULL, spx[0], spy[0]);
-    for (j = 0; j < spnum - 1; j++) {
-      for (k = 0; k < 6; k++) {
-	spc2[k] = spc[k][j];
-      }
-      if (!GRAcurve(ggc, spc2, spx[j], spy[j])) break;
-    }
     break;
   case PLOT_TYPE_DIAGONAL:
-    GRAline(ggc, 1, height - 1, height - 1, 1);
+    GRAline(ggc, 1, height - 1, width - 1, 1);
     break;
   case PLOT_TYPE_ARROW:
     spx[0] = 1;
     spy[0] = height - 1;
 
-    spx[1] = height - 1;
+    spx[1] = width - 1;
     spy[1] = 1;
 
-    GRAline(ggc, 1, height - 1, height - 1, 1);
-    poly[0] = height - 6;
+    GRAline(ggc, 1, height - 1, width - 1, 1);
+    poly[0] = width - 8;
     poly[1] = 1;
 	
-    poly[2] = height - 1;
+    poly[2] = width - 1;
     poly[3] = 1;
 
-    poly[4] = height - 1;
+    poly[4] = width - 5;
     poly[5] = 6;
     GRAdrawpoly(ggc, 3, poly, 1);
     break;
   case PLOT_TYPE_RECTANGLE:
-    GRArectangle(ggc, 1, height - 1, height - 1, 1, 0);
+    GRArectangle(ggc, 1, height - 1, width - 1, 1, 0);
     break;
   case PLOT_TYPE_RECTANGLE_FILL:
     GRAcolor(ggc, fr2, fg2, fb2, 255);
-    GRArectangle(ggc, 1, height - 1, height - 1, 1, 1);
+    GRArectangle(ggc, 1, height - 1, width - 1, 1, 1);
     GRAcolor(ggc, fr, fg, fb, 255);
-    GRArectangle(ggc, 1, height - 1, height - 1, 1, 0);
+    GRArectangle(ggc, 1, height - 1, width - 1, 1, 0);
     break;
   case PLOT_TYPE_RECTANGLE_SOLID_FILL:
-    GRArectangle(ggc, 1, height - 1, height - 1, 1, 1);
+    GRArectangle(ggc, 1, height - 1, width - 1, 1, 1);
     break;
   case PLOT_TYPE_ERRORBAR_X:
-    GRAline(ggc, 1, height / 2, height - 1, height / 2);
+    GRAline(ggc, 1, height / 2, width - 1, height / 2);
     GRAline(ggc, 1, height / 4, 1, height * 3 / 4);
-    GRAline(ggc, height - 1, height / 4, height - 1, height * 3 / 4);
+    GRAline(ggc, width - 1, height / 4, width - 1, height * 3 / 4);
     break;
   case PLOT_TYPE_ERRORBAR_Y:
-    GRAline(ggc, height / 2, 1, height / 2, height - 1);
-    GRAline(ggc, height / 4, 1, height * 3 / 4, 1);
-    GRAline(ggc, height / 4, height -1, height * 3 / 4, height - 1);
+    GRAline(ggc, width / 2, 1, width / 2, height - 1);
+    GRAline(ggc, width * 3 / 8, 1, width * 5 / 8, 1);
+    GRAline(ggc, width * 3 / 8, height -1, width * 5 / 8, height - 1);
     break;
   case PLOT_TYPE_STAIRCASE_X:
     GRAmoveto(ggc, 1, height - 1);
-    GRAlineto(ggc, height / 4, height - 1);
-    GRAlineto(ggc, height / 4, height / 2);
-    GRAlineto(ggc, height * 3 / 4, height / 2);
-    GRAlineto(ggc, height * 3 / 4, 1);
-    GRAlineto(ggc, height - 1, 1);
+    GRAlineto(ggc, width / 4, height - 1);
+    GRAlineto(ggc, width / 4, height / 2);
+    GRAlineto(ggc, width * 3 / 4, height / 2);
+    GRAlineto(ggc, width * 3 / 4, 1);
+    GRAlineto(ggc, width - 1, 1);
     break;
   case PLOT_TYPE_STAIRCASE_Y:
     GRAmoveto(ggc, 1, height - 1);
     GRAlineto(ggc, 1, height / 2 + 1);
-    GRAlineto(ggc, height / 2, height / 2 + 1);
-    GRAlineto(ggc, height / 2, height / 4);
-    GRAlineto(ggc, height - 1, height / 4);
-    GRAlineto(ggc, height - 1, 1);
+    GRAlineto(ggc, width / 2, height / 2 + 1);
+    GRAlineto(ggc, width / 2, height / 4);
+    GRAlineto(ggc, width - 1, height / 4);
+    GRAlineto(ggc, width - 1, 1);
     break;
   case PLOT_TYPE_BAR_X:
-    GRArectangle(ggc, 1, height / 4, height - 1, height * 3 / 4, 0);
+    GRArectangle(ggc, 1, height / 4, width - 1, height * 3 / 4, 0);
     break;
   case PLOT_TYPE_BAR_Y:
-    GRArectangle(ggc, height / 4, 1, height * 3/ 4, height - 1, 0);
+    GRArectangle(ggc, width * 3 / 8, 1, width * 5 / 8, height - 1, 0);
     break;
   case PLOT_TYPE_BAR_FILL_X:
     GRAcolor(ggc, fr2, fg2, fb2, 255);
-    GRArectangle(ggc, 1, height / 4, height - 1, height * 3 / 4, 1);
+    GRArectangle(ggc, 1, height / 4, width - 1, height * 3 / 4, 1);
     GRAcolor(ggc, fr, fg, fb, 255);
-    GRArectangle(ggc, 1, height / 4, height - 1, height * 3 / 4, 0);
+    GRArectangle(ggc, 1, height / 4, width - 1, height * 3 / 4, 0);
     break;
   case PLOT_TYPE_BAR_FILL_Y:
     GRAcolor(ggc, fr2, fg2, fb2, 255);
-    GRArectangle(ggc, height / 4, 1, height * 3/ 4, height - 1, 1);
+    GRArectangle(ggc, width * 3 / 8, 1, width * 5 / 8, height - 1, 1);
     GRAcolor(ggc, fr, fg, fb, 255);
-    GRArectangle(ggc, height / 4, 1, height * 3/ 4, height - 1, 0);
+    GRArectangle(ggc, width * 3 / 8, 1, width * 5 / 8, height - 1, 0);
     break;
   case PLOT_TYPE_BAR_SOLID_FILL_X:
-    GRArectangle(ggc, 1, height / 4, height - 1, height * 3 / 4, 1);
+    GRArectangle(ggc, 1, height / 4, width - 1, height * 3 / 4, 1);
     break;
   case PLOT_TYPE_BAR_SOLID_FILL_Y:
-    GRArectangle(ggc, height / 3, 1, height * 3 / 4, height - 1, 1);
+    GRArectangle(ggc, width * 3 / 8, 1, width * 5 / 8, height - 1, 1);
     break;
   case PLOT_TYPE_FIT:
+    spx[0] = width * 3 / 6 - 1;
+    spx[1] = width * 4 / 6 - 1;
+    spx[2] = width * 5 / 6 - 1;
+    spx[3] = width - 1;
+
+    spy[0] = height - 1;
+    spy[1] = height / 3;
+    spy[2] = height * 2 / 3;
+    spy[3] = 1;
+
+    draw_curve(ggc, spx, spy, 4, SPLCND2NDDIF);
     GRAmoveto(ggc, 1, height * 3 / 4);
     GRAtextstyle(ggc, "Serif", GRA_FONT_STYLE_NORMAL, 52, 0, 0);
     GRAouttext(ggc, "fit");
@@ -4841,6 +4896,9 @@ select_type(GtkComboBox *w, gpointer user_data)
       return;
     }
     if (chk_sputobjfield(d->obj, sel, "line_style", FwLineStyle[enum_id].list) != 0) {
+      return;
+    }
+    if (! get_graph_modified()) {
       return;
     }
     break;

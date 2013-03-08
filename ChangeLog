@@ -1,3 +1,13 @@
+2013-03-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (MARK_PIX_LINE_WIDTH, set_line_style)
+	(CURVE_POINTS_MAX, draw_curve): added.
+	(draw_type_pixbuf): use "MARK_PIX_LINE_WIDTH", "set_line_style()",
+	"CURVE_POINTS_MAX" and "draw_curve()".
+	(draw_type_pixbuf): update image.
+	(select_type): check if the graph is modified or not after call
+	the function "chk_sputobjfield()".
+
 2013-03-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (select_type): add "break" statement for the
