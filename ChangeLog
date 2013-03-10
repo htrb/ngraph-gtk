@@ -104,7 +104,7 @@
 	(create_type_color_combo_box): use "add_fit_combo_item_to_cbox()".
 	(select_type): show fitting dialog when the plot type fit is
 	selected and the fit field of the file instance is not set.
-	(select_type): add case for "FILE_COMBO_ITEM_FIT
+	(select_type): add case for "FILE_COMBO_ITEM_FIT".
 
 	* src/gtk/gtk_subwin.c (start_editing): check returned value via
 	3rd argument of the function "sgetobjfield()".
@@ -379,8 +379,8 @@
 
 	* addin/legend.c (create_file_frame): not set hight of tree view
 	but scrolled window.
-	(create_file_frame): sensitivity of columns are depend of the
-	state of top column.
+	(create_file_frame): sensitivity of columns are depend on the
+	state of the top column.
 	(create_control): setting frames are expandable.
 
 	* addin/fitrslt.c (create_spin_button): set margin of spin button
@@ -426,7 +426,7 @@
 
 	* src/gtk/gtk_subwin.c (tree_sub_window_create): call
 	"gtk_notebook_popup_enable()".
-	(tree_sub_window_create): set text labet of the popup menu.
+	(tree_sub_window_create): set text label of the popup menu.
 
 2012-12-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
