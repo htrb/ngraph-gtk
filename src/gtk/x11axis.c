@@ -3524,7 +3524,6 @@ select_type(GtkComboBox *w, gpointer user_data)
     return;
   }
 
-
   d->select = sel;
   d->update(d, FALSE);
   set_graph_modified();
@@ -3563,24 +3562,6 @@ start_editing_type(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *
   gtk_widget_show(cbox);
 
   return;
-}
-
-static void
-type_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_data, char *axis)
-{
-  struct obj_list_data *d;
-
-  menu_lock(FALSE);
-  return;
-
-
-  d = (struct obj_list_data *) user_data;
-
-  if (str == NULL || d->select < 0)
-    return;
-
-  d->update(d, FALSE);
-  set_graph_modified();
 }
 
 static void
@@ -3793,7 +3774,7 @@ CmAxisWindow(GtkToggleAction *action, gpointer client_data)
   set_editable_cell_renderer_cb(d->data.data, AXIS_WIN_COL_MAX, Alist, G_CALLBACK(max_edited));
   set_editable_cell_renderer_cb(d->data.data, AXIS_WIN_COL_INC, Alist, G_CALLBACK(inc_edited));
 
-  set_combo_cell_renderer_cb(d->data.data, AXIS_WIN_COL_TYPE, Alist, G_CALLBACK(start_editing_type), G_CALLBACK(type_edited));
+  set_combo_cell_renderer_cb(d->data.data, AXIS_WIN_COL_TYPE, Alist, G_CALLBACK(start_editing_type), NULL);
 
   list_store_set_align(GTK_WIDGET(d->data.data->text), AXIS_WIN_COL_MIN, 1.0);
   list_store_set_align(GTK_WIDGET(d->data.data->text), AXIS_WIN_COL_MAX, 1.0);

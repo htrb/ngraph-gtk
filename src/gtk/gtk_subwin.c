@@ -207,6 +207,12 @@ static void
 cancel_editing(GtkCellRenderer *renderer, gpointer user_data)
 {
   menu_lock(FALSE);
+
+  if (user_data) {
+    struct obj_list_data *d;
+    d = (struct obj_list_data *) user_data;
+    gtk_widget_grab_focus(d->text);
+  }
 }
 
 static void
@@ -247,6 +253,8 @@ enum_cb(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_d
   menu_lock(FALSE);
 
   d = (struct obj_list_data *) user_data;
+
+  gtk_widget_grab_focus(d->text);
 
   if (str == NULL || d->select < 0)
     return;
@@ -355,7 +363,7 @@ set_cell_renderer_cb(struct obj_list_data *d, int n, n_list_store *list, GtkWidg
     case G_TYPE_ENUM:
       list[i].edited_id = g_signal_connect(rend, "edited", G_CALLBACK(enum_cb), d);
       g_signal_connect(rend, "editing-started", G_CALLBACK(start_editing), d);
-      g_signal_connect(rend, "editing-canceled", G_CALLBACK(cancel_editing), NULL);
+      g_signal_connect(rend, "editing-canceled", G_CALLBACK(cancel_editing), d);
       break;
     case G_TYPE_STRING:
       list[i].edited_id = g_signal_connect(rend, "edited", G_CALLBACK(string_cb), d);
@@ -400,6 +408,17 @@ set_editable_cell_renderer_cb(struct obj_list_data *d, int i, n_list_store *list
   list[i].edited_id = g_signal_connect(rend, "edited", G_CALLBACK(end), d);
 }
 
+static void
+combo_edited_cb(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_data)
+{
+  struct obj_list_data *d;
+
+  menu_lock(FALSE);
+
+  d = (struct obj_list_data *) user_data;
+  gtk_widget_grab_focus(d->text);
+}
+
 void
 set_combo_cell_renderer_cb(struct obj_list_data *d, int i, n_list_store *list, GCallback start, GCallback end)
 {
@@ -420,13 +439,13 @@ set_combo_cell_renderer_cb(struct obj_list_data *d, int i, n_list_store *list, G
   if (end) {
     list[i].edited_id = g_signal_connect(rend, "edited", G_CALLBACK(end), d);
   } else {
-    list[i].edited_id = g_signal_connect(rend, "edited", G_CALLBACK(string_cb), d);
+    list[i].edited_id = g_signal_connect(rend, "edited", G_CALLBACK(combo_edited_cb), d);
   }
 
   if (start)
     g_signal_connect(rend, "editing-started", G_CALLBACK(start), d);
 
-  g_signal_connect(rend, "editing-canceled", G_CALLBACK(cancel_editing), NULL);
+  g_signal_connect(rend, "editing-canceled", G_CALLBACK(cancel_editing), d);
 }
 
 void
@@ -445,7 +464,7 @@ set_obj_cell_renderer_cb(struct obj_list_data *d, int i, n_list_store *list, GCa
   if (start)
     g_signal_connect(rend, "editing-started", G_CALLBACK(start), d);
 
-  g_signal_connect(rend, "editing-canceled", G_CALLBACK(cancel_editing), NULL);
+  g_signal_connect(rend, "editing-canceled", G_CALLBACK(cancel_editing), d);
 }
 
 static void

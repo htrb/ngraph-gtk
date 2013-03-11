@@ -3287,6 +3287,8 @@ select_type(GtkComboBox *w, gpointer user_data)
 
   d = (struct obj_list_data *) user_data;
 
+  gtk_widget_grab_focus(d->text);
+
   sel = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(w), "user-data"));
   if (sel < 0) {
     return;
@@ -3471,7 +3473,6 @@ start_editing_color(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar 
  return;
 }
 
-
 enum LEGEND_PATH_LINE_TYPE {
   LEGEND_PATH_LINE_TYPE_LINE,
   LEGEND_PATH_LINE_TYPE_CURVE,
@@ -3575,12 +3576,6 @@ start_editing_line_type(GtkCellRenderer *renderer, GtkCellEditable *editable, gc
 }
 
 static void
-edited_line_type(GtkCellRenderer *cell_renderer, gchar *path_str, gchar *str, gpointer user_data)
-{
-  menu_lock(FALSE);
-}
-
-static void
 select_font(GtkComboBox *w, gpointer user_data)
 {
   int sel, col_type, found, active, style;
@@ -3672,12 +3667,6 @@ start_editing_font(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *
   add_font_style_combo_item_to_cbox(list, NULL, NULL, LEGEND_COMBO_ITEM_STYLE_BOLD, LEGEND_COMBO_ITEM_STYLE_ITALIC, d->obj, "style", sel);
 
   g_signal_connect(editable, "editing-done", G_CALLBACK(select_font), user_data);
-}
-
-static void
-edited_font(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_data)
-{
-  menu_lock(FALSE);
 }
 
 static void
@@ -3778,7 +3767,7 @@ CmLegendWindow(GtkToggleAction *action, gpointer client_data)
     sub_win_create_popup_menu(data, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
     switch (i) {
     case LegendTypePath:
-      set_combo_cell_renderer_cb(data, PATH_LIST_COL_TYPE, Llist[i], G_CALLBACK(start_editing_line_type), G_CALLBACK(edited_line_type));
+      set_combo_cell_renderer_cb(data, PATH_LIST_COL_TYPE, Llist[i], G_CALLBACK(start_editing_line_type), NULL);
       set_editable_cell_renderer_cb(data, PATH_LIST_COL_X, Llist[i], G_CALLBACK(pos_x_edited));
       set_editable_cell_renderer_cb(data, PATH_LIST_COL_Y, Llist[i], G_CALLBACK(pos_y_edited));
       set_obj_cell_renderer_cb(data, PATH_LIST_COL_COLOR, Llist[i], G_CALLBACK(start_editing_color));
@@ -3797,7 +3786,7 @@ CmLegendWindow(GtkToggleAction *action, gpointer client_data)
       set_obj_cell_renderer_cb(data, MARK_LIST_COL_MARK, Llist[i], G_CALLBACK(start_editing_mark));
       break;
     case LegendTypeText:
-      set_combo_cell_renderer_cb(data, TEXT_LIST_COL_FONT, Llist[i], G_CALLBACK(start_editing_font), G_CALLBACK(edited_font));
+      set_combo_cell_renderer_cb(data, TEXT_LIST_COL_FONT, Llist[i], G_CALLBACK(start_editing_font), NULL);
       col = gtk_tree_view_get_column(GTK_TREE_VIEW(data->text), TEXT_LIST_COL_TEXT);
       list = gtk_cell_layout_get_cells(GTK_CELL_LAYOUT(col));
       if (list == NULL) {

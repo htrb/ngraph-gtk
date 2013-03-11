@@ -1,3 +1,29 @@
+2013-03-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11axis.c (type_edited): removed.
+	(CmAxisWindow): the 5th argument of the function
+	"set_combo_cell_renderer_cb()" is "NULL".
+
+	* src/gtk/x11lgnd.c (select_type): call "gtk_widget_grab_focus()".
+	(edited_line_type, edited_font): removed.
+	(CmLegendWindow): the 5th argument of the function
+	"set_combo_cell_renderer_cb()" is "NULL".
+
+	* src/gtk/gtk_subwin.c (cancel_editing, enum_cb): call
+	"gtk_widget_grab_focus()".
+	(set_cell_renderer_cb): the 4th argument of the function
+	"g_signal_connect()" for the "editing-canceled" signal is "d" when
+	tha case is "G_TYPE_ENUM".
+	(combo_edited_cb): added.
+	(set_combo_cell_renderer_cb): use "combo_edited_cb()" as the
+	default call-back for the signal "edited".
+	(set_combo_cell_renderer_cb, set_obj_cell_renderer_cb): the 4th
+	argument of the function "g_signal_connect()" for the
+	"editing-canceled" signal is "d"
+
+	* src/gtk/x11file.c (select_type, edited_axis): call
+	"gtk_widget_grab_focus()".
+
 2013-03-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (MARK_PIX_LINE_WIDTH, set_line_style)

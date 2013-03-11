@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.06.09\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2013-03-08 17:24+0900\n"
+"POT-Creation-Date: 2013-03-11 18:06+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -167,7 +167,7 @@ msgstr ""
 
 #: src/gtk/x11axis.c:399 src/gtk/x11axis.c:3289 src/gtk/x11axis.c:3314
 #: src/gtk/x11axis.c:3347 src/gtk/x11lgnd.c:3225 src/gtk/x11lgnd.c:3238
-#: src/gtk/x11lgnd.c:3671 src/gtk/gtk_widget.c:1068
+#: src/gtk/x11lgnd.c:3666 src/gtk/gtk_widget.c:1068
 msgid "Color"
 msgstr ""
 
@@ -395,7 +395,7 @@ msgid "_Font:"
 msgstr ""
 
 #: src/gtk/x11axis.c:2207 src/gtk/x11axis.c:3340 src/gtk/x11dialg.c:239
-#: src/gtk/x11lgnd.c:3669 src/gtk/x11opt.c:1422
+#: src/gtk/x11lgnd.c:3664 src/gtk/x11opt.c:1422
 msgid "Font"
 msgstr ""
 
@@ -1368,23 +1368,23 @@ msgstr ""
 msgid "Fill rule"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3728
+#: src/gtk/x11lgnd.c:3717
 msgid "path"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3729 src/ofile.c:170
+#: src/gtk/x11lgnd.c:3718 src/ofile.c:170
 msgid "rectangle"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3730
+#: src/gtk/x11lgnd.c:3719
 msgid "arc"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3731 src/ofile.c:163
+#: src/gtk/x11lgnd.c:3720 src/ofile.c:163
 msgid "mark"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3732
+#: src/gtk/x11lgnd.c:3721
 msgid "text"
 msgstr ""
 

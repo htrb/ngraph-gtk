@@ -4822,6 +4822,8 @@ select_type(GtkComboBox *w, gpointer user_data)
 
   d = (struct obj_list_data *) user_data;
 
+  gtk_widget_grab_focus(d->text);
+
   sel = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(w), "user-data"));
   if (sel < 0)
     return;
@@ -4950,7 +4952,6 @@ start_editing_type(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *
   g_signal_connect(cbox, "editing-done", G_CALLBACK(select_type), d);
   gtk_widget_show(GTK_WIDGET(cbox));
 
-
   return;
 }
 
@@ -5071,6 +5072,8 @@ edited_axis(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer us
   menu_lock(FALSE);
 
   d = (struct obj_list_data *) user_data;
+
+  gtk_widget_grab_focus(d->text);
 
   if (str == NULL || d->select < 0)
     return;
