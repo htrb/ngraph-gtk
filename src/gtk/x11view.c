@@ -386,8 +386,9 @@ PasteObjectsFromClipboard(void)
 
   d = &NgraphApp.Viewer;
 
-  if (d->Mode != PointB && d->Mode != LegendB)
+  if (d->Mode != PointB && d->Mode != LegendB) {
     return;
+  }
 
   clip = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
   if (gtk_clipboard_wait_is_text_available(clip)) {

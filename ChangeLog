@@ -1,3 +1,14 @@
+2013-03-12  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (menu_lock): call "set_focus_insensitive()" or
+	"set_focus_sensitivity()".
+	(set_focus_sensitivity_sub): set sensitivity of "EditPasteAction".
+
+	* src/gtk/gtk_subwin.c (start_editing): call "UnFocus()" before
+	call "menu_lock()".
+	(list_unfocused): call "set_focus_sensitivity()" only when
+	"Menulock" is false.
+
 2013-03-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11axis.c (type_edited): removed.

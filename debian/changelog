@@ -1,8 +1,8 @@
-ngraph-gtk (6.06.09-1) experimental; urgency=low
+ngraph-gtk (6.06.09-1~exp1) experimental; urgency=low
 
   * New upstream release
 
- -- Hiroyuki Ito <ZXB01226@nifty.com>  Sun, 02 Dec 2012 10:09:03 +0900
+ -- Koichi Akabe <vbkaisetsu@gmail.com>  Sun, 10 Mar 2013 00:00:11 +0900 
 
 ngraph-gtk (6.06.08-1~exp1) experimental; urgency=low
 

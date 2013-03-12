@@ -1886,6 +1886,7 @@ get_current_window(void)
 void
 menu_lock(int lock)
 {
+  GtkWidget *w;
   static int count = 0;
 
   if (lock) {
@@ -1901,14 +1902,20 @@ menu_lock(int lock)
     count = 0;
   }
 
-  if (NgraphApp.Viewer.menu) {
-    GtkWidget *w;
+  if (NgraphApp.Viewer.menu == NULL) {
+    return;
+  }
 
-    gtk_widget_set_sensitive(NgraphApp.Viewer.menu, ! Menulock);
-    w = gtk_paned_get_child1(GTK_PANED(NgraphApp.Viewer.main_pane));
-    if (w) {
-      gtk_widget_set_sensitive(w, ! Menulock);
-    }
+  gtk_widget_set_sensitive(NgraphApp.Viewer.menu, ! Menulock);
+  w = gtk_paned_get_child1(GTK_PANED(NgraphApp.Viewer.main_pane));
+  if (w) {
+    gtk_widget_set_sensitive(w, ! Menulock);
+  }
+
+  if (Menulock) {
+    set_focus_insensitive(&NgraphApp.Viewer);
+  } else {
+    set_focus_sensitivity(&NgraphApp.Viewer);
   }
 }
 
@@ -2138,6 +2145,8 @@ set_focus_sensitivity_sub(const struct Viewer *d, int insensitive)
     focus_type[FOCUS_TYPE_5] = FALSE;
     focus_type[FOCUS_TYPE_6] = FALSE;
     set_action_sensitivity(actions, focus_type, n);
+
+    gtk_action_set_sensitive(edit_paste_action.action, FALSE);
     return;
   }
 
@@ -3500,7 +3509,7 @@ static void
 check_instance(struct objlist *obj)
 {
   unsigned int i;
-  struct actions {
+  struct {
     const char *name;
     GtkAction *action;
     const char *objname;

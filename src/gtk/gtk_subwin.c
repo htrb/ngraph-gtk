@@ -134,9 +134,10 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
   n_list_store *list;
   struct obj_list_data *d;
 
+  UnFocus();			/* "UnFocus()" must be called before
+				   "menu_lock()" to ensure that some
+				   actions are insensitive. */
   menu_lock(TRUE);
-
-  UnFocus();
 
   d = user_data;
 
@@ -1438,7 +1439,9 @@ list_focused(GtkWidget *widget, GdkEvent *ev, gpointer user_data)
 static gboolean
 list_unfocused(GtkWidget *widget, GdkEvent *ev, gpointer user_data)
 {
-  set_focus_sensitivity(&NgraphApp.Viewer);
+  if (! Menulock) {
+    set_focus_sensitivity(&NgraphApp.Viewer);
+  }
   return FALSE;
 }
 
