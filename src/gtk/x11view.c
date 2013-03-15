@@ -1959,8 +1959,6 @@ ShowFocusFrame(cairo_t *cr, const struct Viewer *d)
   }
 
   restorestdio(&save);
-  /* set_focus_sensitivity(d); */
-  /* set_focus_sensitivity() is now called in add_focus_obj(). */
 }
 
 static void
@@ -4813,7 +4811,7 @@ ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data)
   struct Viewer *d;
 
   if (Menulock || Globallock)
-    return FALSE;
+    goto EXIT_PRAPAGATE;
 
   d = (struct Viewer *) client_data;
 
@@ -4825,7 +4823,7 @@ ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data)
       UnFocus();
     }
     gtk_radio_action_set_current_value(NgraphApp.viewb, DefaultMode);
-    return FALSE;
+    goto EXIT_PRAPAGATE;
   case GDK_KEY_space:
     CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
     return TRUE;
@@ -4866,6 +4864,9 @@ ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data)
   default:
     break;
   }
+
+ EXIT_PRAPAGATE:
+  set_focus_sensitivity(d);
   return FALSE;
 }
 
@@ -5208,8 +5209,6 @@ add_focus_obj(struct narray *focusobj, struct objlist *obj, int oid)
   focus->oid = oid;
   arrayadd(focusobj, &focus);
 
-  set_focus_sensitivity(&NgraphApp.Viewer);
-
   return TRUE;
 }
 
@@ -5217,7 +5216,6 @@ static void
 clear_focus_obj(const struct Viewer *d)
 {
   arraydel2(d->focusobj);
-  set_focus_sensitivity(d);
 }
 
 void

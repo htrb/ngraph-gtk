@@ -25,26 +25,6 @@ struct subwin_popup_list {
   enum pop_up_menu_item_type type;
 };
 
-struct NgraphActionEntry {
-  enum {
-    ACTION_TYPE_NORMAL,
-    ACTION_TYPE_TOGGLE,
-    ACTION_TYPE_RADIO,
-    ACTION_TYPE_RECENT,
-  } type;
-  const gchar *name;
-  const gchar *stock_id;
-  const gchar *label;
-  const gchar *tooltip;
-  gchar *caption;
-  GCallback callback;
-  int user_data;
-  const char *icon;
-  const char *accel_path;
-  guint accel_key;
-  GdkModifierType accel_mods;
-};
-
 GtkWidget *label_sub_window_create(struct SubWin *d, const char *title, const char **xpm, const char **xpm2);
 GtkWidget *text_sub_window_create(struct SubWin *d, const char *title, const char **xpm, const char **xpm2);
 GtkWidget *list_sub_window_create(struct SubWin *d, const char *title, int lisu_num, n_list_store *list, const char **xpm, const char **xpm2);

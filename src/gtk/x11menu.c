@@ -131,6 +131,26 @@ enum {
   RECENT_TYPE_DATA,
 };
 
+struct NgraphActionEntry {
+  enum {
+    ACTION_TYPE_NORMAL,
+    ACTION_TYPE_TOGGLE,
+    ACTION_TYPE_RADIO,
+    ACTION_TYPE_RECENT,
+  } type;
+  const gchar *name;
+  const gchar *stock_id;
+  const gchar *label;
+  const gchar *tooltip;
+  gchar *caption;
+  GCallback callback;
+  int user_data;
+  const char *icon;
+  const char *accel_path;
+  guint accel_key;
+  GdkModifierType accel_mods;
+};
+
 static struct NgraphActionEntry ActionEntry[] = {
   {
     ACTION_TYPE_NORMAL,
@@ -1911,12 +1931,6 @@ menu_lock(int lock)
   if (w) {
     gtk_widget_set_sensitive(w, ! Menulock);
   }
-
-  if (Menulock) {
-    set_focus_insensitive(&NgraphApp.Viewer);
-  } else {
-    set_focus_sensitivity(&NgraphApp.Viewer);
-  }
 }
 
 void
@@ -2927,9 +2941,19 @@ single_to_multi(void)
 }
 
 static void
+edit_menu_shown(GtkWidget *w, gpointer user_data)
+{
+  struct Viewer *d;
+
+  d = (struct Viewer *) user_data;
+
+  set_focus_sensitivity(d);
+}
+
+static void
 setupwindow(void)
 {
-  GtkWidget *w, *hbox, *hbox2, *vbox, *vbox2, *table, *hpane1, *hpane2, *vpane1, *vpane2;
+  GtkWidget *w, *hbox, *hbox2, *vbox, *vbox2, *table, *hpane1, *hpane2, *vpane1, *vpane2, *item;
 
 #if GTK_CHECK_VERSION(3, 0, 0)
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
@@ -2970,6 +2994,15 @@ setupwindow(void)
 #endif
 
   NgraphApp.Viewer.popup = gtk_ui_manager_get_widget(NgraphUi, "/ViewerPopup");
+  g_signal_connect(NgraphApp.Viewer.popup, "show", G_CALLBACK(edit_menu_shown), &NgraphApp.Viewer);
+
+  item = gtk_ui_manager_get_widget(NgraphUi, "/MenuBar/EditMenu");
+  if (item) {
+    w = gtk_menu_item_get_submenu(GTK_MENU_ITEM(item));
+    if (w) {
+      g_signal_connect(w, "show", G_CALLBACK(edit_menu_shown), &NgraphApp.Viewer);
+    }
+  }
 #if GTK_CHECK_VERSION(3, 2, 0)
   NgraphApp.Viewer.HScroll = gtk_scrollbar_new(GTK_ORIENTATION_HORIZONTAL, NULL);
   NgraphApp.Viewer.VScroll = gtk_scrollbar_new(GTK_ORIENTATION_VERTICAL, NULL);

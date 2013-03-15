@@ -1,3 +1,20 @@
+2013-03-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (ViewerEvKeyDown): call
+	"set_focus_sensitivity()" when the signal is propagated further.
+	(add_focus_obj, clear_focus_obj): don't call
+	"set_focus_sensitivity()".
+
+	* src/gtk/gtk_subwin.c (start_editing): the function "UnFocus()"
+	don't have to be called before "menu_lock()".
+	(list_unfocused): removed.
+
+	* src/gtk/x11menu.c (menu_lock): don't call
+	"set_focus_insensitive()" and "set_focus_sensitivity()".
+	(edit_menu_shown): added.
+	(setupwindow): "edit_menu_shown()" is connected to the
+	"show"signal of the popup menu and edit menu.
+
 2013-03-12  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (menu_lock): call "set_focus_insensitive()" or

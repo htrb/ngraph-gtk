@@ -134,10 +134,8 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
   n_list_store *list;
   struct obj_list_data *d;
 
-  UnFocus();			/* "UnFocus()" must be called before
-				   "menu_lock()" to ensure that some
-				   actions are insensitive. */
   menu_lock(TRUE);
+  UnFocus();
 
   d = user_data;
 
@@ -1436,15 +1434,6 @@ list_focused(GtkWidget *widget, GdkEvent *ev, gpointer user_data)
   return FALSE;
 }
 
-static gboolean
-list_unfocused(GtkWidget *widget, GdkEvent *ev, gpointer user_data)
-{
-  if (! Menulock) {
-    set_focus_sensitivity(&NgraphApp.Viewer);
-  }
-  return FALSE;
-}
-
 static struct obj_list_data *
 list_widget_create(struct SubWin *d, int lisu_num, n_list_store *list, int can_focus, GtkWidget **w)
 {
@@ -1470,7 +1459,6 @@ list_widget_create(struct SubWin *d, int lisu_num, n_list_store *list, int can_f
 
   /* to handle key-press-event correctly in single window mode */
   g_signal_connect(lstor, "focus-in-event", G_CALLBACK(list_focused), NULL);
-  g_signal_connect(lstor, "focus-out-event", G_CALLBACK(list_unfocused), NULL);
 
   gtk_tree_view_set_enable_search(GTK_TREE_VIEW(lstor), TRUE);
   gtk_tree_view_set_search_column(GTK_TREE_VIEW(lstor), COL_ID);
