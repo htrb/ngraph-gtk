@@ -2374,6 +2374,7 @@ CmOptionTextDef(GtkAction *w, gpointer client_data)
   id = newobj(obj);
   if (id >= 0) {
     int modified;
+
     modified = get_graph_modified();
     LegendTextDefDialog(&DlgLegendTextDef, obj, id);
     if (DialogExecute(TopLevel, &DlgLegendTextDef) == IDOK) {

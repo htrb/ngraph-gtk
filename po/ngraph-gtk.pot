@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.06.09\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2013-03-15 10:37+0900\n"
+"POT-Creation-Date: 2013-03-19 15:56+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -166,8 +166,8 @@ msgid "_Background Color:"
 msgstr ""
 
 #: src/gtk/x11axis.c:399 src/gtk/x11axis.c:3289 src/gtk/x11axis.c:3314
-#: src/gtk/x11axis.c:3347 src/gtk/x11lgnd.c:3225 src/gtk/x11lgnd.c:3238
-#: src/gtk/x11lgnd.c:3666 src/gtk/gtk_widget.c:1068
+#: src/gtk/x11axis.c:3347 src/gtk/x11lgnd.c:3226 src/gtk/x11lgnd.c:3239
+#: src/gtk/x11lgnd.c:3667 src/gtk/gtk_widget.c:1068
 msgid "Color"
 msgstr ""
 
@@ -395,7 +395,7 @@ msgid "_Font:"
 msgstr ""
 
 #: src/gtk/x11axis.c:2207 src/gtk/x11axis.c:3340 src/gtk/x11dialg.c:239
-#: src/gtk/x11lgnd.c:3664 src/gtk/x11opt.c:1422
+#: src/gtk/x11lgnd.c:3665 src/gtk/x11opt.c:1422
 msgid "Font"
 msgstr ""
 
@@ -440,8 +440,8 @@ msgstr ""
 msgid "_Position"
 msgstr ""
 
-#: src/gtk/x11axis.c:3279 src/gtk/x11axis.c:3291 src/gtk/x11lgnd.c:3230
-#: src/gtk/x11lgnd.c:3244 src/gtk/x11menu.c:942 src/gtk/x11menu.c:956
+#: src/gtk/x11axis.c:3279 src/gtk/x11axis.c:3291 src/gtk/x11lgnd.c:3231
+#: src/gtk/x11lgnd.c:3245 src/gtk/x11menu.c:942 src/gtk/x11menu.c:956
 msgid "Draw"
 msgstr ""
 
@@ -932,7 +932,7 @@ msgstr ""
 msgid "_Y math:"
 msgstr ""
 
-#: src/gtk/x11file.c:2588 src/gtk/x11file.c:3279 src/gtk/x11file.c:4720
+#: src/gtk/x11file.c:2588 src/gtk/x11file.c:3279 src/gtk/x11file.c:4721
 #, c-format
 msgid "Create"
 msgstr ""
@@ -1038,31 +1038,31 @@ msgstr ""
 msgid "Add Data file"
 msgstr ""
 
-#: src/gtk/x11file.c:4576
+#: src/gtk/x11file.c:4577
 msgid "Data file"
 msgstr ""
 
-#: src/gtk/x11file.c:4582
+#: src/gtk/x11file.c:4583
 msgid "Making data file"
 msgstr ""
 
-#: src/gtk/x11file.c:4583
+#: src/gtk/x11file.c:4584
 msgid "Making data file."
 msgstr ""
 
-#: src/gtk/x11file.c:4763 src/gtk/x11lgnd.c:3202 src/gtk/gtk_widget.c:1075
+#: src/gtk/x11file.c:4764 src/gtk/x11lgnd.c:3203 src/gtk/gtk_widget.c:1075
 msgid "Color 1"
 msgstr ""
 
-#: src/gtk/x11file.c:4770 src/gtk/x11lgnd.c:3203 src/gtk/gtk_widget.c:1082
+#: src/gtk/x11file.c:4771 src/gtk/x11lgnd.c:3204 src/gtk/gtk_widget.c:1082
 msgid "Color 2"
 msgstr ""
 
-#: src/gtk/x11file.c:4778
+#: src/gtk/x11file.c:4779
 msgid "Clip"
 msgstr ""
 
-#: src/gtk/x11file.c:4790
+#: src/gtk/x11file.c:4791
 msgid "Type"
 msgstr ""
 
@@ -1348,43 +1348,43 @@ msgstr ""
 msgid "_Text:"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3199 src/gtk/x11menu.c:1784 src/gtk/x11menu.c:1785
+#: src/gtk/x11lgnd.c:3200 src/gtk/x11menu.c:1784 src/gtk/x11menu.c:1785
 msgid "Mark"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3220 src/gtk/x11lgnd.c:3222
+#: src/gtk/x11lgnd.c:3221 src/gtk/x11lgnd.c:3223
 msgid "Stroke"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3227
+#: src/gtk/x11lgnd.c:3228
 msgid "Close path"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3234 src/gtk/x11lgnd.c:3236
+#: src/gtk/x11lgnd.c:3235 src/gtk/x11lgnd.c:3237
 msgid "Fill"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3240
+#: src/gtk/x11lgnd.c:3241
 msgid "Fill rule"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3717
+#: src/gtk/x11lgnd.c:3718
 msgid "path"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3718 src/ofile.c:170
+#: src/gtk/x11lgnd.c:3719 src/ofile.c:170
 msgid "rectangle"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3719
+#: src/gtk/x11lgnd.c:3720
 msgid "arc"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3720 src/ofile.c:163
+#: src/gtk/x11lgnd.c:3721 src/ofile.c:163
 msgid "mark"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3721
+#: src/gtk/x11lgnd.c:3722
 msgid "text"
 msgstr ""
 
