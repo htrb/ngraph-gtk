@@ -122,12 +122,12 @@ struct FileDialog
   GtkWidget *file, *load_settings, *fit, *xcol, *xaxis, *ycol, *yaxis,
     *type, *mark_btn, *curve, *col1, *col2,
     *clip, *style, *size, *miter, *join,
-    *comment_box, *file_box, *fit_table, *width, *apply_all, *comment_view;
+    *comment_box, *file_box, *fit_table, *width, *apply_all, *comment_view, *comment_table;
   GtkNotebook *tab;
   struct objlist *Obj;
   int Id;
   struct MarkDialog mark;
-  int R, G, B, R2, G2, B2, alpha, multi_open, fit_row;
+  int R, G, B, R2, G2, B2, alpha, multi_open, fit_row, initialized;
   struct FileMath math;
   struct FileLoad load;
   struct FileMask mask;

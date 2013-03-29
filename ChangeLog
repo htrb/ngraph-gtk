@@ -1,3 +1,16 @@
+2013-03-29  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11dialg.h (FileDialog): add members "comment_table" and
+	"initialized".
+
+	* src/gtk/x11file.c (decode_ifs_text, set_headline_table)
+	(create_preview_table): added.
+	(load_tab_set_value): use "decode_ifs_text()".
+	(FileDialogSetupCommon): use "GtkGrid" when the version of GTK+ is
+	greater or equal to "3.0.0".
+	(FileDialogSetup): add table preview.
+	(FileDialogClose, FileDialog): set "d->initialize" as FALSE.
+
 2013-03-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (ViewerEvKeyDown): call

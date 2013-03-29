@@ -2209,12 +2209,30 @@ load_tab_create(struct FileDialog *d)
   return vbox;
 }
 
+static void
+decode_ifs_text(GString *s, const char *ifs)
+{
+  int i, l;
+
+  l = strlen(ifs);
+  for (i = 0; i < l; i++) {
+    if ((ifs[i] == '\\') && (ifs[i + 1] == 't')) {
+      g_string_append_c(s, 0x09);
+      i++;
+    } else if (ifs[i] == '\\') {
+      g_string_append_c(s, '\\');
+      i++;
+    } else {
+      g_string_append_c(s, ifs[i]);
+    }
+  }
+}
+
 static int
 load_tab_set_value(struct FileDialog *d)
 {
   const char *ifs;
   char *obuf;
-  unsigned int i, l;
   GString *s;
 
   if (SetObjFieldFromWidget(d->load.headskip, d->Obj, d->Id, "head_skip"))
@@ -2231,19 +2249,7 @@ load_tab_set_value(struct FileDialog *d)
 
   ifs = gtk_entry_get_text(GTK_ENTRY(d->load.ifs));
   s = g_string_new("");
-
-  l = strlen(ifs);
-  for (i = 0; i < l; i++) {
-    if ((ifs[i] == '\\') && (ifs[i + 1] == 't')) {
-      g_string_append_c(s, 0x09);
-      i++;
-    } else if (ifs[i] == '\\') {
-      g_string_append_c(s, '\\');
-      i++;
-    } else {
-      g_string_append_c(s, ifs[i]);
-    }
-  }
+  decode_ifs_text(s, ifs);
 
   sgetobjfield(d->Obj, d->Id, "ifs", NULL, &obuf, FALSE, FALSE, FALSE);
   if (obuf == NULL || strcmp(s->str, obuf)) {
@@ -3157,7 +3163,8 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
   add_copy_button_to_box(vbox2, G_CALLBACK(file_settings_copy), d, "file");
 
 #if GTK_CHECK_VERSION(3, 0, 0)
-  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
+  hbox = gtk_grid_new();
+  gtk_grid_set_column_spacing(GTK_GRID(hbox), 4);
 #else
   hbox = gtk_hbox_new(FALSE, 4);
 #endif
@@ -3165,8 +3172,12 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
   frame = gtk_frame_new(NULL);
   gtk_container_add(GTK_CONTAINER(frame), vbox2);
 
-
+#if GTK_CHECK_VERSION(3, 0, 0)
+  gtk_widget_set_hexpand(frame, FALSE);
+  gtk_grid_attach(GTK_GRID(hbox), frame, 0, 0, 1, 1);
+#else
   gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 0);
+#endif
   gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
 
   notebook = gtk_notebook_new();
@@ -3193,7 +3204,7 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
 }
 
 static void
-set_headlines(struct FileDialog *d, char *s)
+set_headlines(struct FileDialog *d, const char *s)
 {
   gboolean valid;
   const gchar *ptr;
@@ -3222,10 +3233,248 @@ set_headlines(struct FileDialog *d, char *s)
   }
 }
 
+#define CHECK_TERMINATE(ch) ((ch) == '\0' || (ch) == '\n')
+#define CHECK_IFS(ifs, ch) (strchr(ifs, ch))
+
+static const char *
+parse_data_line(struct narray *array, const char *str, const char *ifs, const char *comment, int csv, int skip)
+{
+  const char *po;
+  int len;
+  char *tmp;
+
+  if (str == NULL) {
+    return NULL;
+  }
+
+  if (strchr(comment, *str)) {
+    skip = TRUE;
+  }
+
+  po = str;
+  while (! CHECK_TERMINATE(*po)) {
+    if (csv) {
+      for (; *po == ' '; po++);
+      if (CHECK_TERMINATE(*po)) break;
+      if (CHECK_IFS(ifs, *po)) {
+        po++;
+	if (! skip) {
+	  tmp = g_strdup("");
+	  if (tmp) {
+	    arrayadd(array, tmp);
+	  }
+	}
+      } else {
+	len = 0;
+        for (; (! CHECK_TERMINATE(po[len])) && ! CHECK_IFS(ifs, po[len]) && (po[len] != ' '); len++) ;
+	if (! skip) {
+	  tmp = g_strndup(po, len);
+	  if (tmp) {
+	    arrayadd(array, tmp);
+	  }
+	}
+	po += len;
+	for (; (*po == ' '); po++);
+	if (CHECK_IFS(ifs, *po)) po++;
+      }
+    } else {
+      len = 0;
+      for (; (! CHECK_TERMINATE(po[len])) && ! CHECK_IFS(ifs, po[len]); len++) ;
+      if (! skip) {
+	tmp = g_strndup(po, len);
+	if (tmp) {
+	  arrayadd(array, &tmp);
+	}
+      }
+      po += len;
+      for (; (! CHECK_TERMINATE(*po)) && CHECK_IFS(ifs, *po); po++);
+      if (CHECK_TERMINATE(*po)) break;
+    }
+  }
+
+  if (*po == '\n') {
+    po++;
+  }
+
+  return (*po) ? po : NULL;
+}
+
+#define MAX_COLS 100
+
+static void
+set_headline_table(struct FileDialog *d, char *s, int max_lines)
+{
+  struct narray **lines;
+  int i, j, n, x, y, skip, step, max_col, csv, append;
+  const char *tmp, *remark, *po;
+  GString *ifs;
+  GtkListStore *model;
+  PangoFontDescription *desc;
+
+  if (! d->initialized) {
+    return;
+  }
+
+  desc = pango_font_description_from_string(Menulocal.file_preview_font);
+  gtk_widget_override_font(d->comment_table, NULL);
+  gtk_widget_override_font(d->comment_table, desc);
+  pango_font_description_free(desc);
+
+  lines = g_malloc0(sizeof(*lines) * max_lines);
+  if (lines == NULL) {
+    return;
+  }
+
+  skip = spin_entry_get_val(d->load.headskip);
+  if (skip < 0) {
+    skip = 0;
+  }
+
+  step = spin_entry_get_val(d->load.readstep);
+  if (step < 1) {
+    step = 1;
+  }
+
+  x = spin_entry_get_val(d->xcol);
+  y = spin_entry_get_val(d->ycol);
+
+  csv = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->load.csv));
+
+  remark = gtk_entry_get_text(GTK_ENTRY(d->load.remark));
+  if (remark == NULL) {
+    remark = "";
+  }
+
+  tmp = gtk_entry_get_text(GTK_ENTRY(d->load.ifs));
+  if (tmp == NULL) {
+    tmp = "";
+  }
+
+  ifs = g_string_new("");
+  decode_ifs_text(ifs, tmp);
+
+  po = s;
+  j = 0;
+  for (i = 0; i < max_lines; i++) {
+    append = (i >= skip || ((i - skip) % step));
+    if (append) {
+      lines[j] = arraynew(sizeof(char *));
+      if (lines[j] == NULL) {
+	break;
+      }
+    }
+    po = parse_data_line(lines[j], po, ifs->str, remark, csv, ! append);
+    if (po == NULL) {
+      break;
+    }
+    if (append) {
+      j++;
+    }
+  }
+  g_string_free(ifs, TRUE);
+
+  n = max_col = 0;
+  for (i = 0; lines[i]; i++) {
+    n++;
+    j = arraynum(lines[i]);
+    if (j > max_col) {
+      max_col = j;
+    }
+  }
+  max_col++;
+
+  if (n == 0 || max_col == 0) {
+    goto exit;
+  }
+
+  model = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(d->comment_table)));
+  gtk_list_store_clear(model);
+
+  for (i = 0; i < MAX_COLS; i++) {
+    char buf[32];
+    GtkTreeViewColumn *col;
+
+    col = gtk_tree_view_get_column(GTK_TREE_VIEW(d->comment_table), i);
+
+    if (i == x || i == y) {
+      snprintf(buf, sizeof(buf), "%s%s%s (%%%d)",
+	       (i == x) ? "X" : "",
+	       (i == x && i == y) ? " " : "",
+	       (i == y) ? "Y" : "",
+	       i);
+    } else {
+      snprintf(buf, sizeof(buf), "%%%d", i);
+    }
+    gtk_tree_view_column_set_title(col, buf);
+    gtk_tree_view_column_set_visible(col, TRUE);
+    //    gtk_tree_view_column_set_visible(col, i < max_col);
+  }
+
+  for (i = 0; i < n; i++) {
+    char buf[64];
+    GtkTreeIter iter;
+    int m;
+
+    gtk_list_store_append(model, &iter);
+    m = arraynum(lines[i]);
+    snprintf(buf, sizeof(buf), "%d", i + 1);
+    gtk_list_store_set(model, &iter, 0, buf, -1);
+    for (j = 0; j < m; j++) {
+      gtk_list_store_set(model, &iter, j + 1, arraynget_str(lines[i], j), -1);
+    }
+  }
+
+ exit:
+  for (i = 0; i < n; i++) {
+    arrayfree2(lines[i]);
+  }
+  g_free(lines);
+}
+
+static GtkWidget *
+create_preview_table(void)
+{
+  GtkWidget *view;
+  GtkListStore *model;
+  GType *types;
+  int i;
+
+  view = gtk_tree_view_new();
+  gtk_tree_view_set_grid_lines(GTK_TREE_VIEW(view), GTK_TREE_VIEW_GRID_LINES_BOTH);
+  types = g_malloc(sizeof(*types) * MAX_COLS);
+  if (types == NULL) {
+    return NULL;
+  }
+
+  for (i = 0; i < MAX_COLS; i++) {
+    types[i] = G_TYPE_STRING;
+  }
+  model = gtk_list_store_newv(MAX_COLS, types);
+  g_free(types);
+
+  gtk_tree_view_set_model(GTK_TREE_VIEW(view), GTK_TREE_MODEL(model));
+
+  for (i = 0; i < MAX_COLS; i++) {
+    char buf[32];
+    GtkCellRenderer *cell;
+    GtkTreeViewColumn *column;
+
+    snprintf(buf, sizeof(buf), "%%%d", i);
+    cell = gtk_cell_renderer_text_new();
+    column = gtk_tree_view_column_new_with_attributes(buf, cell, "text", i, NULL);
+    g_object_set((GObject *) cell, "xalign", (gfloat) 1.0, NULL);
+    gtk_tree_view_column_set_alignment(column, 0.5);
+    gtk_tree_view_column_set_sizing(column, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
+    gtk_tree_view_append_column(GTK_TREE_VIEW(view), column);
+  }
+
+  return view;
+}
+
 static void
 FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *hbox, *view, *label;
+  GtkWidget *w, *hbox, *view, *label, *swin;
   struct FileDialog *d;
   int line;
   char title[20], *argv[2], *s;
@@ -3271,11 +3520,27 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
     label = gtk_label_new_with_mnemonic(_("_Move"));
     d->move.tab_id = gtk_notebook_append_page(d->tab, w, label);
 
-    view = create_text_view_with_line_number(&d->comment_view);
-    w = gtk_frame_new(NULL);
-    gtk_container_add(GTK_CONTAINER(w), view);
-    gtk_box_pack_start(GTK_BOX(d->comment_box), w, TRUE, TRUE, 0);
+    w = gtk_notebook_new();
 
+    view = create_text_view_with_line_number(&d->comment_view);
+    label = gtk_label_new_with_mnemonic(_("_Plain"));
+    gtk_notebook_append_page(GTK_NOTEBOOK(w), view, label);
+
+    view = create_preview_table();
+    if (view) {
+      label = gtk_label_new_with_mnemonic(_("_Table"));
+      swin = gtk_scrolled_window_new(NULL, NULL);
+      gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+      gtk_container_add(GTK_CONTAINER(swin), view);
+      gtk_notebook_append_page(GTK_NOTEBOOK(w), swin, label);
+    }
+    d->comment_table = view;
+
+#if GTK_CHECK_VERSION(3, 0, 0)
+    gtk_grid_attach(GTK_GRID(d->comment_box), w, 1, 0, 1, 1);
+#else
+    gtk_box_pack_start(GTK_BOX(d->comment_box), w, TRUE, TRUE, 0);
+#endif
     w = gtk_button_new_with_label(_("Create"));
     add_widget_to_table(d->fit_table, w, _("_Fit:"), FALSE, d->fit_row);
     d->fit = w;
@@ -3286,8 +3551,10 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
   argv[0] = (char *) &line;
   argv[1] = NULL;
   getobj(d->Obj, "head_lines", d->Id, 1, argv, &s);
-  set_headlines(d, s);
   FileDialogSetupItem(wi, d, TRUE);
+  d->initialized = TRUE;
+  set_headlines(d, s);
+  set_headline_table(d, s, line);
 }
 
 static int
@@ -3397,6 +3664,7 @@ FileDialogClose(GtkWidget *w, void *data)
     return;
   }
 
+  d->initialized = FALSE;
   d->ret = ret;
 }
 
@@ -3412,6 +3680,7 @@ FileDialog(struct obj_list_data *data, int id, int multi)
   d->Obj = data->obj;
   d->Id = id;
   d->multi_open = multi > 0;
+  d->initialized = FALSE;
 }
 
 static void
