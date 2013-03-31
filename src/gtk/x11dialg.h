@@ -132,6 +132,7 @@ struct FileDialog
   struct FileLoad load;
   struct FileMask mask;
   struct FileMove move;
+  char *head_lines;
 };
 
 void FileDialog(struct obj_list_data *data, int id, int multi);

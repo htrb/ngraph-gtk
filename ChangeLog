@@ -1,3 +1,11 @@
+2013-03-31  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11dialg.h (FileDialog): add member "head_linese."
+
+	* src/gtk/x11file.c (set_headline_table_header, update_table)
+	(update_table_header): added.
+	(FileDialogSetup): use "set_headline_table_header()".
+
 2013-03-29  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11dialg.h (FileDialog): add members "comment_table" and
