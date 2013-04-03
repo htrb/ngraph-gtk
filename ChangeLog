@@ -1,3 +1,12 @@
+2013-04-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (parse_data_line): remove 6th parameter.
+	(create_preview_table): use "GtkTreeModelFilter".
+	(update_table_visibility): added.
+
+	* src/ofile.c (getdataarray): set terminator at the end of the
+	column.
+
 2013-03-31  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11dialg.h (FileDialog): add member "head_linese."

@@ -2097,7 +2097,7 @@ getdataarray(char *buf, int maxdim, double *count, MathValue *data, char *ifs, i
   char *po,*po2,*endptr;
   char st;
   double val;
-  int i;
+  int i, ch;
   int dim, hex;
 
   (*count)++;
@@ -2136,7 +2136,10 @@ getdataarray(char *buf, int maxdim, double *count, MathValue *data, char *ifs, i
 	  }
 	}
 #endif
+	ch = *po2;
+	*po2 = '\0';
         val=strtod(po,&endptr);
+	*po2 = ch;
         if (endptr>=po2) {
 	  if (check_infinite(val)) {
 	    st = MATH_VALUE_NAN;
@@ -2177,12 +2180,15 @@ getdataarray(char *buf, int maxdim, double *count, MathValue *data, char *ifs, i
 	}
       }
 #endif
+      ch = *po2;
+      *po2 = '\0';
       val=strtod(po,&endptr);
+      *po2 = ch;
       if (endptr>=po2) {
 	if (check_infinite(val)) {
 	  st = MATH_VALUE_NAN;
 	} else {
-	  st=MATH_VALUE_NORMAL;
+	  st = MATH_VALUE_NORMAL;
 	}
       } else {
         if (((po2-po)==1) && (*po=='|')) st=MATH_VALUE_CONT;

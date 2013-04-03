@@ -3233,10 +3233,12 @@ set_headlines(struct FileDialog *d, const char *s)
 }
 
 #define CHECK_TERMINATE(ch) ((ch) == '\0' || (ch) == '\n')
-#define CHECK_IFS(ifs, ch) (strchr(ifs, ch))
+#define CHECK_CHR(ifs, ch) (ch && strchr(ifs, ch))
+#define CHECK_VISIBILITY(i, skip, step, remark, c)    (! CHECK_CHR(remark, c) && (i >= skip && ! ((i - skip) % step)))
+
 
 static const char *
-parse_data_line(struct narray *array, const char *str, const char *ifs, const char *comment, int csv, int skip)
+parse_data_line(struct narray *array, const char *str, const char *ifs, const char *comment, int csv)
 {
   const char *po;
   int len;
@@ -3246,45 +3248,35 @@ parse_data_line(struct narray *array, const char *str, const char *ifs, const ch
     return NULL;
   }
 
-  if (strchr(comment, *str)) {
-    skip = TRUE;
-  }
-
   po = str;
   while (! CHECK_TERMINATE(*po)) {
     if (csv) {
       for (; *po == ' '; po++);
       if (CHECK_TERMINATE(*po)) break;
-      if (CHECK_IFS(ifs, *po)) {
+      if (CHECK_CHR(ifs, *po)) {
         po++;
-	if (! skip) {
-	  tmp = g_strdup("");
-	  if (tmp) {
-	    arrayadd(array, &tmp);
-	  }
+	tmp = g_strdup("");
+	if (tmp) {
+	  arrayadd(array, &tmp);
 	}
       } else {
 	len = 0;
-        for (; (! CHECK_TERMINATE(po[len])) && ! CHECK_IFS(ifs, po[len]) && (po[len] != ' '); len++) ;
-	if (! skip) {
-	  tmp = g_strndup(po, len);
-	  if (tmp) {
-	    arrayadd(array, &tmp);
-	  }
-	}
-	po += len;
-	for (; (*po == ' '); po++);
-	if (CHECK_IFS(ifs, *po)) po++;
-      }
-    } else {
-      for (; (! CHECK_TERMINATE(*po)) && CHECK_IFS(ifs, *po); po++);
-      len = 0;
-      for (; (! CHECK_TERMINATE(po[len])) && ! CHECK_IFS(ifs, po[len]); len++) ;
-      if (! skip) {
+        for (; (! CHECK_TERMINATE(po[len])) && ! CHECK_CHR(ifs, po[len]) && (po[len] != ' '); len++) ;
 	tmp = g_strndup(po, len);
 	if (tmp) {
 	  arrayadd(array, &tmp);
 	}
+	po += len;
+	for (; (*po == ' '); po++);
+	if (CHECK_CHR(ifs, *po)) po++;
+      }
+    } else {
+      for (; (! CHECK_TERMINATE(*po)) && CHECK_CHR(ifs, *po); po++);
+      len = 0;
+      for (; (! CHECK_TERMINATE(po[len])) && ! CHECK_CHR(ifs, po[len]); len++) ;
+      tmp = g_strndup(po, len);
+      if (tmp) {
+	arrayadd(array, &tmp);
       }
       po += len;
       if (CHECK_TERMINATE(*po)) break;
@@ -3299,6 +3291,10 @@ parse_data_line(struct narray *array, const char *str, const char *ifs, const ch
 }
 
 #define MAX_COLS 100
+#define HEADLINE_FIRST_CHAR_COLUMN (MAX_COLS + 0)
+#define HEADLINE_LINE_NUM_COLUMN   (MAX_COLS + 1)
+#define HEADLINE_VISIBILITY_COLUMN (MAX_COLS + 2)
+#define HEADLINE_COLUMN_NUM        (MAX_COLS + 3)
 
 static void
 set_headline_table_header(struct FileDialog *d)
@@ -3403,21 +3399,16 @@ set_headline_table_header(struct FileDialog *d)
 static void
 set_headline_table(struct FileDialog *d, char *s, int max_lines)
 {
-  struct narray **lines;
-  int i, j, n, skip, step, max_col, csv, append;
+  struct narray *lines;
+  int i, j, l, n, skip, step, csv;
   const char *tmp, *remark, *po;
   GString *ifs;
+  GtkTreeModel *filter;
   GtkListStore *model;
-  PangoFontDescription *desc;
 
   if (! d->initialized || s == NULL || max_lines < 1) {
     return;
   }
-
-  desc = pango_font_description_from_string(Menulocal.file_preview_font);
-  gtk_widget_override_font(d->comment_table, NULL);
-  gtk_widget_override_font(d->comment_table, desc);
-  pango_font_description_free(desc);
 
   lines = g_malloc0(sizeof(*lines) * max_lines);
   if (lines == NULL) {
@@ -3450,82 +3441,85 @@ set_headline_table(struct FileDialog *d, char *s, int max_lines)
   decode_ifs_text(ifs, tmp);
 
   po = s;
-  j = 0;
-  for (i = 0; i < max_lines; i++) {
-    append = (i >= skip && ! ((i - skip) % step));
-    if (append) {
-      lines[j] = arraynew(sizeof(char *));
-      if (lines[j] == NULL) {
-	break;
-      }
-    }
-    po = parse_data_line(lines[j], po, ifs->str, remark, csv, ! append);
+  for (n = 0; n < max_lines; n++) {
+    arrayinit(lines + n, sizeof(char *));
+    po = parse_data_line(lines + n, po, ifs->str, remark, csv);
     if (po == NULL) {
+      n++;
       break;
-    }
-    if (append) {
-      j++;
     }
   }
   g_string_free(ifs, TRUE);
-
-  n = max_col = 0;
-  for (i = 0; lines[i]; i++) {
-    n++;
-    j = arraynum(lines[i]);
-    if (j > max_col) {
-      max_col = j;
-    }
-  }
-  max_col++;
-
-  if (n == 0 || max_col == 0) {
+  if (n == 0) {
     goto exit;
   }
 
-  model = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(d->comment_table)));
+  filter = gtk_tree_view_get_model(GTK_TREE_VIEW(d->comment_table));
+  model = GTK_LIST_STORE(gtk_tree_model_filter_get_model(GTK_TREE_MODEL_FILTER(filter)));
   gtk_list_store_clear(model);
+  gtk_tree_view_set_model(GTK_TREE_VIEW(d->comment_table), NULL);
 
+  l = 1;
   for (i = 0; i < n; i++) {
-    char buf[64];
     GtkTreeIter iter;
-    int m;
+    int m, c, v;
+    const char *str;
 
     gtk_list_store_append(model, &iter);
-    m = arraynum(lines[i]);
-    snprintf(buf, sizeof(buf), "%d", i + 1);
-    gtk_list_store_set(model, &iter, 0, buf, -1);
+    m = arraynum(lines + i);
     for (j = 0; j < m; j++) {
-      gtk_list_store_set(model, &iter, j + 1, arraynget_str(lines[i], j), -1);
+      gtk_list_store_set(model, &iter, j + 1, arraynget_str(lines + i, j), -1);
+    }
+    str = arraynget_str(lines + i, 0);
+    c = (str) ? str[0] : 0;
+    v = CHECK_VISIBILITY(i, skip, step, remark, c);
+    gtk_list_store_set(model, &iter,
+		       0, l,
+		       HEADLINE_LINE_NUM_COLUMN, i,
+		       HEADLINE_FIRST_CHAR_COLUMN, c,
+		       HEADLINE_VISIBILITY_COLUMN, v, -1);
+    if (v) {
+      l++;
     }
   }
 
+  gtk_tree_view_set_model(GTK_TREE_VIEW(d->comment_table), GTK_TREE_MODEL(filter));
+
  exit:
   for (i = 0; i < n; i++) {
-    arrayfree2(lines[i]);
+    arraydel2(lines + i);
   }
   g_free(lines);
 }
 
 static GtkWidget *
-create_preview_table(void)
+create_preview_table(struct FileDialog *d)
 {
   GtkWidget *view;
-  GtkListStore *model;
+  GtkListStore *child_model;
+  GtkTreeModel *model;
   GType *types;
   int i;
 
   view = gtk_tree_view_new();
   gtk_tree_view_set_grid_lines(GTK_TREE_VIEW(view), GTK_TREE_VIEW_GRID_LINES_BOTH);
-  types = g_malloc(sizeof(*types) * MAX_COLS);
+  types = g_malloc(sizeof(*types) * HEADLINE_COLUMN_NUM);
   if (types == NULL) {
     return NULL;
   }
 
-  for (i = 0; i < MAX_COLS; i++) {
+  for (i = 1; i < MAX_COLS; i++) {
     types[i] = G_TYPE_STRING;
   }
-  model = gtk_list_store_newv(MAX_COLS, types);
+  types[0] = G_TYPE_INT;
+  types[HEADLINE_LINE_NUM_COLUMN] = G_TYPE_INT;
+  types[HEADLINE_FIRST_CHAR_COLUMN] = G_TYPE_INT;
+  types[HEADLINE_VISIBILITY_COLUMN] = G_TYPE_BOOLEAN;
+
+  child_model = gtk_list_store_newv(HEADLINE_COLUMN_NUM, types);
+  model = gtk_tree_model_filter_new(GTK_TREE_MODEL(child_model), NULL);
+  gtk_tree_model_filter_set_visible_column(GTK_TREE_MODEL_FILTER(model), HEADLINE_VISIBILITY_COLUMN);
+
   g_free(types);
 
   gtk_tree_view_set_model(GTK_TREE_VIEW(view), GTK_TREE_MODEL(model));
@@ -3557,6 +3551,55 @@ update_table(GtkEditable *editable, gpointer user_data)
 }
 
 static void
+update_table_visibility(GtkEditable *editable, gpointer user_data)
+{
+  struct FileDialog *d;
+  GtkTreeModel *filter, *model;
+  GtkTreeIter iter;
+  const char *remark;
+  int skip, step, ln, fc, v, i;
+
+  d = (struct FileDialog *) user_data;
+
+  skip = spin_entry_get_val(d->load.headskip);
+  if (skip < 0) {
+    skip = 0;
+  }
+
+  step = spin_entry_get_val(d->load.readstep);
+  if (step < 1) {
+    step = 1;
+  }
+
+  remark = gtk_entry_get_text(GTK_ENTRY(d->load.remark));
+  if (remark == NULL) {
+    remark = "";
+  }
+
+  filter = gtk_tree_view_get_model(GTK_TREE_VIEW(d->comment_table));
+  model = gtk_tree_model_filter_get_model(GTK_TREE_MODEL_FILTER(filter));
+
+  if (! gtk_tree_model_get_iter_first(model, &iter)) {
+    return;
+  }
+
+  i = 1;
+  do {
+    gtk_tree_model_get(model, &iter,
+		       HEADLINE_LINE_NUM_COLUMN, &ln,
+		       HEADLINE_FIRST_CHAR_COLUMN, &fc, -1);
+
+    v = CHECK_VISIBILITY(ln, skip, step, remark, fc);
+    gtk_list_store_set(GTK_LIST_STORE(model), &iter,
+		       0, i,
+		       HEADLINE_VISIBILITY_COLUMN, v, -1);
+    if (v) {
+      i++;
+    }
+  } while (gtk_tree_model_iter_next(model, &iter));
+}
+
+static void
 update_table_header(GtkEditable *editable, gpointer user_data)
 {
   struct FileDialog *d;
@@ -3572,6 +3615,7 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
   struct FileDialog *d;
   int line;
   char title[20], *argv[2], *s;
+  PangoFontDescription *desc;
 
   d = (struct FileDialog *) data;
 
@@ -3616,11 +3660,7 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     w = gtk_notebook_new();
 
-    view = create_text_view_with_line_number(&d->comment_view);
-    label = gtk_label_new_with_mnemonic(_("_Plain"));
-    gtk_notebook_append_page(GTK_NOTEBOOK(w), view, label);
-
-    view = create_preview_table();
+    view = create_preview_table(d);
     if (view) {
       label = gtk_label_new_with_mnemonic(_("_Table"));
       swin = gtk_scrolled_window_new(NULL, NULL);
@@ -3630,11 +3670,17 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
     }
     d->comment_table = view;
 
-    g_signal_connect(d->load.remark, "changed", G_CALLBACK(update_table), d);
+    view = create_text_view_with_line_number(&d->comment_view);
+    label = gtk_label_new_with_mnemonic(_("_Plain"));
+    gtk_notebook_append_page(GTK_NOTEBOOK(w), view, label);
+
     g_signal_connect(d->load.ifs, "changed", G_CALLBACK(update_table), d);
     g_signal_connect(d->load.csv, "toggled", G_CALLBACK(update_table), d);
-    g_signal_connect(d->load.readstep, "changed", G_CALLBACK(update_table), d);
-    g_signal_connect(d->load.headskip, "changed", G_CALLBACK(update_table), d);
+
+    g_signal_connect(d->load.remark, "changed", G_CALLBACK(update_table_visibility), d);
+    g_signal_connect(d->load.readstep, "changed", G_CALLBACK(update_table_visibility), d);
+    g_signal_connect(d->load.headskip, "changed", G_CALLBACK(update_table_visibility), d);
+
     g_signal_connect(d->xcol, "changed", G_CALLBACK(update_table_header), d);
     g_signal_connect(d->ycol, "changed", G_CALLBACK(update_table_header), d);
     g_signal_connect(d->type, "changed", G_CALLBACK(update_table_header), d);
@@ -3655,6 +3701,17 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
   argv[1] = NULL;
   getobj(d->Obj, "head_lines", d->Id, 1, argv, &s);
   FileDialogSetupItem(wi, d, TRUE);
+
+  desc = pango_font_description_from_string(Menulocal.file_preview_font);
+#if GTK_CHECK_VERSION(3, 0, 0)
+  gtk_widget_override_font(d->comment_table, NULL);
+  gtk_widget_override_font(d->comment_table, desc);
+#else
+  gtk_widget_modify_font(d->comment_table, NULL);
+  gtk_widget_modify_font(d->comment_table, desc);
+#endif
+  pango_font_description_free(desc);
+
   d->initialized = TRUE;
   set_headlines(d, s);
   set_headline_table_header(d);
