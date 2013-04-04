@@ -1,3 +1,8 @@
+2013-04-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (set_headline_table, create_preview_table)
+	(update_table_visibility): don't use "GtkTreeModelFilter".
+
 2013-04-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (parse_data_line): remove 6th parameter.

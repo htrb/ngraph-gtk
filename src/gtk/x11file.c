@@ -3294,7 +3294,8 @@ parse_data_line(struct narray *array, const char *str, const char *ifs, const ch
 #define HEADLINE_FIRST_CHAR_COLUMN (MAX_COLS + 0)
 #define HEADLINE_LINE_NUM_COLUMN   (MAX_COLS + 1)
 #define HEADLINE_VISIBILITY_COLUMN (MAX_COLS + 2)
-#define HEADLINE_COLUMN_NUM        (MAX_COLS + 3)
+#define HEADLINE_ELLIPSIZE_COLUMN  (MAX_COLS + 3)
+#define HEADLINE_COLUMN_NUM        (MAX_COLS + 4)
 
 static void
 set_headline_table_header(struct FileDialog *d)
@@ -3390,7 +3391,6 @@ set_headline_table_header(struct FileDialog *d)
       g_string_append_printf(str, "%%%d", i);
     }
     gtk_tree_view_column_set_title(col, str->str);
-    gtk_tree_view_column_set_visible(col, TRUE);
     //    gtk_tree_view_column_set_visible(col, i < max_col);
   }
   g_string_free(str, TRUE);
@@ -3403,7 +3403,6 @@ set_headline_table(struct FileDialog *d, char *s, int max_lines)
   int i, j, l, n, skip, step, csv;
   const char *tmp, *remark, *po;
   GString *ifs;
-  GtkTreeModel *filter;
   GtkListStore *model;
 
   if (! d->initialized || s == NULL || max_lines < 1) {
@@ -3454,8 +3453,7 @@ set_headline_table(struct FileDialog *d, char *s, int max_lines)
     goto exit;
   }
 
-  filter = gtk_tree_view_get_model(GTK_TREE_VIEW(d->comment_table));
-  model = GTK_LIST_STORE(gtk_tree_model_filter_get_model(GTK_TREE_MODEL_FILTER(filter)));
+  model = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(d->comment_table)));
   gtk_list_store_clear(model);
   gtk_tree_view_set_model(GTK_TREE_VIEW(d->comment_table), NULL);
 
@@ -3477,13 +3475,15 @@ set_headline_table(struct FileDialog *d, char *s, int max_lines)
 		       0, l,
 		       HEADLINE_LINE_NUM_COLUMN, i,
 		       HEADLINE_FIRST_CHAR_COLUMN, c,
-		       HEADLINE_VISIBILITY_COLUMN, v, -1);
+		       HEADLINE_VISIBILITY_COLUMN, v,
+		       HEADLINE_ELLIPSIZE_COLUMN, (v) ? PANGO_ELLIPSIZE_NONE : PANGO_ELLIPSIZE_END,
+		       -1);
     if (v) {
       l++;
     }
   }
 
-  gtk_tree_view_set_model(GTK_TREE_VIEW(d->comment_table), GTK_TREE_MODEL(filter));
+  gtk_tree_view_set_model(GTK_TREE_VIEW(d->comment_table), GTK_TREE_MODEL(model));
 
  exit:
   for (i = 0; i < n; i++) {
@@ -3496,8 +3496,7 @@ static GtkWidget *
 create_preview_table(struct FileDialog *d)
 {
   GtkWidget *view;
-  GtkListStore *child_model;
-  GtkTreeModel *model;
+  GtkListStore *model;
   GType *types;
   int i;
 
@@ -3515,10 +3514,9 @@ create_preview_table(struct FileDialog *d)
   types[HEADLINE_LINE_NUM_COLUMN] = G_TYPE_INT;
   types[HEADLINE_FIRST_CHAR_COLUMN] = G_TYPE_INT;
   types[HEADLINE_VISIBILITY_COLUMN] = G_TYPE_BOOLEAN;
+  types[HEADLINE_ELLIPSIZE_COLUMN] = G_TYPE_INT;
 
-  child_model = gtk_list_store_newv(HEADLINE_COLUMN_NUM, types);
-  model = gtk_tree_model_filter_new(GTK_TREE_MODEL(child_model), NULL);
-  gtk_tree_model_filter_set_visible_column(GTK_TREE_MODEL_FILTER(model), HEADLINE_VISIBILITY_COLUMN);
+  model = gtk_list_store_newv(HEADLINE_COLUMN_NUM, types);
 
   g_free(types);
 
@@ -3531,7 +3529,15 @@ create_preview_table(struct FileDialog *d)
 
     snprintf(buf, sizeof(buf), "%%%d", i);
     cell = gtk_cell_renderer_text_new();
-    column = gtk_tree_view_column_new_with_attributes(buf, cell, "text", i, NULL);
+    column = gtk_tree_view_column_new_with_attributes(buf, cell,
+						      "text", i,
+						      "sensitive", HEADLINE_VISIBILITY_COLUMN,
+						      "ellipsize", HEADLINE_ELLIPSIZE_COLUMN,
+						      NULL);
+    if (i == 0) {
+      gtk_tree_view_column_add_attribute(column, cell, "visible", HEADLINE_VISIBILITY_COLUMN);
+    }
+
     g_object_set((GObject *) cell, "xalign", (gfloat) 1.0, NULL);
     gtk_tree_view_column_set_alignment(column, 0.5);
     gtk_tree_view_column_set_sizing(column, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
@@ -3554,7 +3560,7 @@ static void
 update_table_visibility(GtkEditable *editable, gpointer user_data)
 {
   struct FileDialog *d;
-  GtkTreeModel *filter, *model;
+  GtkTreeModel *model;
   GtkTreeIter iter;
   const char *remark;
   int skip, step, ln, fc, v, i;
@@ -3576,8 +3582,7 @@ update_table_visibility(GtkEditable *editable, gpointer user_data)
     remark = "";
   }
 
-  filter = gtk_tree_view_get_model(GTK_TREE_VIEW(d->comment_table));
-  model = gtk_tree_model_filter_get_model(GTK_TREE_MODEL_FILTER(filter));
+  model = gtk_tree_view_get_model(GTK_TREE_VIEW(d->comment_table));
 
   if (! gtk_tree_model_get_iter_first(model, &iter)) {
     return;
@@ -3592,7 +3597,9 @@ update_table_visibility(GtkEditable *editable, gpointer user_data)
     v = CHECK_VISIBILITY(ln, skip, step, remark, fc);
     gtk_list_store_set(GTK_LIST_STORE(model), &iter,
 		       0, i,
-		       HEADLINE_VISIBILITY_COLUMN, v, -1);
+		       HEADLINE_VISIBILITY_COLUMN, v,
+		       HEADLINE_ELLIPSIZE_COLUMN, (v) ? PANGO_ELLIPSIZE_NONE : PANGO_ELLIPSIZE_END,
+		       -1);
     if (v) {
       i++;
     }

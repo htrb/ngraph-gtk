@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.06.09\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2013-04-03 12:36+0900\n"
+"POT-Creation-Date: 2013-04-04 11:47+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -932,7 +932,7 @@ msgstr ""
 msgid "_Y math:"
 msgstr ""
 
-#: src/gtk/x11file.c:2594 src/gtk/x11file.c:3693 src/gtk/x11file.c:5157
+#: src/gtk/x11file.c:2594 src/gtk/x11file.c:3700 src/gtk/x11file.c:5164
 #, c-format
 msgid "Create"
 msgstr ""
@@ -997,80 +997,80 @@ msgstr ""
 msgid "This file contain invalid UTF-8 strings."
 msgstr ""
 
-#: src/gtk/x11file.c:3622
+#: src/gtk/x11file.c:3629
 #, c-format
 msgid "Data %d"
 msgstr ""
 
-#: src/gtk/x11file.c:3626
+#: src/gtk/x11file.c:3633
 msgid "_Apply all"
 msgstr ""
 
-#: src/gtk/x11file.c:3635 src/gtk/x11merge.c:137 src/gtk/x11print.c:170
+#: src/gtk/x11file.c:3642 src/gtk/x11merge.c:137 src/gtk/x11print.c:170
 msgid "_File:"
 msgstr ""
 
-#: src/gtk/x11file.c:3638
+#: src/gtk/x11file.c:3645
 msgid "_Load settings"
 msgstr ""
 
-#: src/gtk/x11file.c:3643 src/gtk/x11menu.c:208
+#: src/gtk/x11file.c:3650 src/gtk/x11menu.c:208
 msgid "_Edit"
 msgstr ""
 
-#: src/gtk/x11file.c:3654 src/gtk/x11view.c:966
+#: src/gtk/x11file.c:3661 src/gtk/x11view.c:966
 msgid "_Mask"
 msgstr ""
 
-#: src/gtk/x11file.c:3658 src/gtk/x11view.c:967
+#: src/gtk/x11file.c:3665 src/gtk/x11view.c:967
 msgid "_Move"
 msgstr ""
 
-#: src/gtk/x11file.c:3665
+#: src/gtk/x11file.c:3672
 msgid "_Table"
 msgstr ""
 
-#: src/gtk/x11file.c:3674
+#: src/gtk/x11file.c:3681
 msgid "_Plain"
 msgstr ""
 
-#: src/gtk/x11file.c:3694
+#: src/gtk/x11file.c:3701
 msgid "_Fit:"
 msgstr ""
 
-#: src/gtk/x11file.c:3981
+#: src/gtk/x11file.c:3988
 msgid "Data new"
 msgstr ""
 
-#: src/gtk/x11file.c:4025 src/gtk/x11menu.c:1105
+#: src/gtk/x11file.c:4032 src/gtk/x11menu.c:1105
 msgid "Add Data file"
 msgstr ""
 
-#: src/gtk/x11file.c:5013
+#: src/gtk/x11file.c:5020
 msgid "Data file"
 msgstr ""
 
-#: src/gtk/x11file.c:5019
+#: src/gtk/x11file.c:5026
 msgid "Making data file"
 msgstr ""
 
-#: src/gtk/x11file.c:5020
+#: src/gtk/x11file.c:5027
 msgid "Making data file."
 msgstr ""
 
-#: src/gtk/x11file.c:5200 src/gtk/x11lgnd.c:3203 src/gtk/gtk_widget.c:1075
+#: src/gtk/x11file.c:5207 src/gtk/x11lgnd.c:3203 src/gtk/gtk_widget.c:1075
 msgid "Color 1"
 msgstr ""
 
-#: src/gtk/x11file.c:5207 src/gtk/x11lgnd.c:3204 src/gtk/gtk_widget.c:1082
+#: src/gtk/x11file.c:5214 src/gtk/x11lgnd.c:3204 src/gtk/gtk_widget.c:1082
 msgid "Color 2"
 msgstr ""
 
-#: src/gtk/x11file.c:5215
+#: src/gtk/x11file.c:5222
 msgid "Clip"
 msgstr ""
 
-#: src/gtk/x11file.c:5227
+#: src/gtk/x11file.c:5234
 msgid "Type"
 msgstr ""
 
