@@ -3386,7 +3386,10 @@ set_headline_table_header(struct FileDialog *d)
     }
 
     if (str->len) {
-      g_string_append_printf(str, " (%%%d)", i);
+      if (str->str[str->len - 1] != ' ') {
+	g_string_append_c(str, ' ');
+      }
+      g_string_append_printf(str, "(%%%d)", i);
     } else {
       g_string_append_printf(str, "%%%d", i);
     }

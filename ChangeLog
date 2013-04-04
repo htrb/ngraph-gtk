@@ -2,6 +2,7 @@
 
 	* src/gtk/x11file.c (set_headline_table, create_preview_table)
 	(update_table_visibility): don't use "GtkTreeModelFilter".
+	(set_headline_table_header): check space of the cilumn header.
 
 2013-04-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
