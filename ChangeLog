@@ -1,3 +1,8 @@
+2013-04-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (ViewerEvLButtonUp): call
+	"set_focus_sensitivity()".
+
 2013-04-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (set_headline_table, create_preview_table)
