@@ -30,6 +30,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <math.h>
+#include <ctype.h>
 
 #include "gtk_entry_completion.h"
 #include "gtk_liststore.h"
@@ -2222,7 +2223,7 @@ decode_ifs_text(GString *s, const char *ifs)
     } else if (ifs[i] == '\\') {
       g_string_append_c(s, '\\');
       i++;
-    } else {
+    } else if (isascii(ifs[i])) {
       g_string_append_c(s, ifs[i]);
     }
   }
@@ -3236,13 +3237,33 @@ set_headlines(struct FileDialog *d, const char *s)
 #define CHECK_CHR(ifs, ch) (ch && strchr(ifs, ch))
 #define CHECK_VISIBILITY(i, skip, step, remark, c)    (! CHECK_CHR(remark, c) && (i >= skip && ! ((i - skip) % step)))
 
+static void
+check_add_str(struct narray *array, const char *str, int len)
+{
+  int valid;
+  char *ptr;
+
+  valid = g_utf8_validate(str, len, NULL);
+
+  if (valid) {
+    ptr = g_strndup(str, len);
+    arrayadd(array, &ptr);
+  } else {
+    ptr = g_locale_to_utf8(str, len, NULL, NULL, NULL);
+    if (ptr == NULL) {
+      ptr = g_strdup("");
+    }
+    if (ptr) {
+      arrayadd(array, &ptr);
+    }
+  }
+}
 
 static const char *
 parse_data_line(struct narray *array, const char *str, const char *ifs, const char *comment, int csv)
 {
   const char *po;
   int len;
-  char *tmp;
 
   if (str == NULL) {
     return NULL;
@@ -3255,17 +3276,11 @@ parse_data_line(struct narray *array, const char *str, const char *ifs, const ch
       if (CHECK_TERMINATE(*po)) break;
       if (CHECK_CHR(ifs, *po)) {
         po++;
-	tmp = g_strdup("");
-	if (tmp) {
-	  arrayadd(array, &tmp);
-	}
+	check_add_str(array, "", 0);
       } else {
 	len = 0;
         for (; (! CHECK_TERMINATE(po[len])) && ! CHECK_CHR(ifs, po[len]) && (po[len] != ' '); len++) ;
-	tmp = g_strndup(po, len);
-	if (tmp) {
-	  arrayadd(array, &tmp);
-	}
+	check_add_str(array, po, len);
 	po += len;
 	for (; (*po == ' '); po++);
 	if (CHECK_CHR(ifs, *po)) po++;
@@ -3274,10 +3289,7 @@ parse_data_line(struct narray *array, const char *str, const char *ifs, const ch
       for (; (! CHECK_TERMINATE(*po)) && CHECK_CHR(ifs, *po); po++);
       len = 0;
       for (; (! CHECK_TERMINATE(po[len])) && ! CHECK_CHR(ifs, po[len]); len++) ;
-      tmp = g_strndup(po, len);
-      if (tmp) {
-	arrayadd(array, &tmp);
-      }
+      check_add_str(array, po, len);
       po += len;
       if (CHECK_TERMINATE(*po)) break;
     }
@@ -3473,6 +3485,7 @@ set_headline_table(struct FileDialog *d, char *s, int max_lines)
     }
     str = arraynget_str(lines + i, 0);
     c = (str) ? str[0] : 0;
+    c = isascii(c) ? c : 0;
     v = CHECK_VISIBILITY(i, skip, step, remark, c);
     gtk_list_store_set(model, &iter,
 		       0, l,

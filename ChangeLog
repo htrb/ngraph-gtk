@@ -1,3 +1,11 @@
+2013-04-06  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (decode_ifs_text): accepts ascii character only.
+	(check_add_str): added.
+	(parse_data_line): use "check_add_str()".
+	(set_headline_table): only ascii character can be accepted as
+	mark.
+
 2013-04-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (ViewerEvLButtonUp): call
