@@ -2086,18 +2086,59 @@ f2dput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval, int argc,char **argv)
   return 0;
 }
 
-static int 
-getdataarray(char *buf, int maxdim, double *count, MathValue *data, char *ifs, int csv)
+#define ACCEPT_PARTIAL_VAL 0
+
+static double
+get_value_from_str(char *po, char *po2, int *type)
+{
+  char *endptr;
+  int st, ch;
+  double val;
+
+  ch = *po2;
+  *po2 = '\0';
+  val=strtod(po,&endptr);
+  *po2 = ch;
+  if (endptr>=po2) {
+    if (check_infinite(val)) {
+      st = MATH_VALUE_NAN;
+    } else {
+      st=MATH_VALUE_NORMAL;
+    }
+#if ACCEPT_PARTIAL_VAL
+  } else if (endptr == NULL) {
+#else
+  } else {
+#endif
+    if (((po2-po)==1) && (*po=='|')) st=MATH_VALUE_CONT;
+    else if (((po2-po)==1) && (*po=='=')) st=MATH_VALUE_BREAK;
+    else if (((po2-po)==3) && (strncmp(po,"NAN",3)==0)) st=MATH_VALUE_NAN;
+    else if (((po2-po)==5) && (strncmp(po,"UNDEF",5)==0)) st=MATH_VALUE_UNDEF;
+    else if (((po2-po)==4) && (strncmp(po,"CONT",4)==0)) st=MATH_VALUE_CONT;
+    else if (((po2-po)==5) && (strncmp(po,"BREAK",5)==0)) st=MATH_VALUE_BREAK;
+    else st=MATH_VALUE_NONUM;
+#if ACCEPT_PARTIAL_VAL
+  } else {
+    st=MATH_VALUE_NORMAL;
+#endif
+  }
+
+  *type = st;
+  return val;
+}
+
+static int
+getdataarray(char *buf, int maxdim, double *count, MathValue *data, const char *ifs, int csv)
 {
 /*
    return: 0 no error
           -1 fatal error
            1 too small column
 */
-  char *po,*po2,*endptr;
-  char st;
+  char *po, *po2;
+  int st;
   double val;
-  int i, ch;
+  int i;
   int dim, hex;
 
   (*count)++;
@@ -2136,25 +2177,7 @@ getdataarray(char *buf, int maxdim, double *count, MathValue *data, char *ifs, i
 	  }
 	}
 #endif
-	ch = *po2;
-	*po2 = '\0';
-        val=strtod(po,&endptr);
-	*po2 = ch;
-        if (endptr>=po2) {
-	  if (check_infinite(val)) {
-	    st = MATH_VALUE_NAN;
-	  } else {
-	    st=MATH_VALUE_NORMAL;
-	  }
-	} else {
-          if (((po2-po)==1) && (*po=='|')) st=MATH_VALUE_CONT;
-          else if (((po2-po)==1) && (*po=='=')) st=MATH_VALUE_BREAK;
-          else if (((po2-po)==3) && (strncmp(po,"NAN",3)==0)) st=MATH_VALUE_NAN;
-          else if (((po2-po)==5) && (strncmp(po,"UNDEF",5)==0)) st=MATH_VALUE_UNDEF;
-          else if (((po2-po)==4) && (strncmp(po,"CONT",4)==0)) st=MATH_VALUE_CONT;
-          else if (((po2-po)==5) && (strncmp(po,"BREAK",5)==0)) st=MATH_VALUE_BREAK;
-          else st=MATH_VALUE_NONUM;
-        }
+	val = get_value_from_str(po, po2, &st);
         for (;(*po2==' ');po2++);
         if (CHECK_IFS(ifs, *po2)) po2++;
      }
@@ -2180,25 +2203,7 @@ getdataarray(char *buf, int maxdim, double *count, MathValue *data, char *ifs, i
 	}
       }
 #endif
-      ch = *po2;
-      *po2 = '\0';
-      val=strtod(po,&endptr);
-      *po2 = ch;
-      if (endptr>=po2) {
-	if (check_infinite(val)) {
-	  st = MATH_VALUE_NAN;
-	} else {
-	  st = MATH_VALUE_NORMAL;
-	}
-      } else {
-        if (((po2-po)==1) && (*po=='|')) st=MATH_VALUE_CONT;
-        else if (((po2-po)==1) && (*po=='=')) st=MATH_VALUE_BREAK;
-        else if (((po2-po)==3) && (strncmp(po,"NAN",3)==0)) st=MATH_VALUE_NAN;
-        else if (((po2-po)==5) && (strncmp(po,"UNDEF",5)==0)) st=MATH_VALUE_UNDEF;
-        else if (((po2-po)==4) && (strncmp(po,"CONT",4)==0)) st=MATH_VALUE_CONT;
-        else if (((po2-po)==5) && (strncmp(po,"BREAK",5)==0)) st=MATH_VALUE_BREAK;
-        else st=MATH_VALUE_NONUM;
-      }
+      val = get_value_from_str(po, po2, &st);
     }
     po=po2;
     dim++;

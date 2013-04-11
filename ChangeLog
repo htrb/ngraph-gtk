@@ -1,3 +1,13 @@
+2013-04-11  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (check_add_str): use "〓" if the character is
+	not printable.
+	(set_headline_table): use "g_ascii_isprint()" and
+	"g_ascii_isspace()".
+
+	* src/ofile.c (get_value_from_str): added.
+	(getdataarray): use 'get_value_from_str()'.
+
 2013-04-06  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (decode_ifs_text): accepts ascii character only.

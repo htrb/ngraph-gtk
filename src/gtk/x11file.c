@@ -3251,7 +3251,21 @@ check_add_str(struct narray *array, const char *str, int len)
   } else {
     ptr = g_locale_to_utf8(str, len, NULL, NULL, NULL);
     if (ptr == NULL) {
-      ptr = g_strdup("");
+      GString *s;
+      int i;
+
+      s = g_string_new("");
+      if (s == NULL) {
+	return;
+      }
+      for (i = 0; i < len; i++) {
+	if (g_ascii_isprint(str[i]) || g_ascii_isspace(str[i])) {
+	  g_string_append_c(s, str[i]);
+	} else {
+	  g_string_append(s, "〓");
+	}
+      }
+      ptr = g_string_free(s, FALSE);
     }
     if (ptr) {
       arrayadd(array, &ptr);
@@ -3485,7 +3499,7 @@ set_headline_table(struct FileDialog *d, char *s, int max_lines)
     }
     str = arraynget_str(lines + i, 0);
     c = (str) ? str[0] : 0;
-    c = isascii(c) ? c : 0;
+    c = (g_ascii_isprint(str[i]) || g_ascii_isspace(str[i])) ? c : 0;
     v = CHECK_VISIBILITY(i, skip, step, remark, c);
     gtk_list_store_set(model, &iter,
 		       0, l,
