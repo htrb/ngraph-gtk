@@ -1,3 +1,8 @@
+2013-04-13  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/ofile.c (get_value_from_str): accepts space character around
+	the value.
+
 2013-04-11  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (check_add_str): use "〓" if the character is

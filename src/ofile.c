@@ -2095,32 +2095,84 @@ get_value_from_str(char *po, char *po2, int *type)
   int st, ch;
   double val;
 
+  if (po == po2) {
+    *type = MATH_VALUE_NONUM;
+    return 0;
+  }
+
   ch = *po2;
   *po2 = '\0';
-  val=strtod(po,&endptr);
+  val = strtod(po, &endptr);
   *po2 = ch;
-  if (endptr>=po2) {
+  if (endptr >= po2) {
     if (check_infinite(val)) {
       st = MATH_VALUE_NAN;
     } else {
-      st=MATH_VALUE_NORMAL;
+      st = MATH_VALUE_NORMAL;
     }
-#if ACCEPT_PARTIAL_VAL
-  } else if (endptr == NULL) {
-#else
+  } else if (endptr != po) {
+    if (g_ascii_isspace(*endptr)) {
+      if (check_infinite(val)) {
+	st = MATH_VALUE_NAN;
+      } else {
+	st = MATH_VALUE_NORMAL;
+      }
+    } else {
+      st = MATH_VALUE_NONUM;
+    }
   } else {
-#endif
-    if (((po2-po)==1) && (*po=='|')) st=MATH_VALUE_CONT;
-    else if (((po2-po)==1) && (*po=='=')) st=MATH_VALUE_BREAK;
-    else if (((po2-po)==3) && (strncmp(po,"NAN",3)==0)) st=MATH_VALUE_NAN;
-    else if (((po2-po)==5) && (strncmp(po,"UNDEF",5)==0)) st=MATH_VALUE_UNDEF;
-    else if (((po2-po)==4) && (strncmp(po,"CONT",4)==0)) st=MATH_VALUE_CONT;
-    else if (((po2-po)==5) && (strncmp(po,"BREAK",5)==0)) st=MATH_VALUE_BREAK;
-    else st=MATH_VALUE_NONUM;
-#if ACCEPT_PARTIAL_VAL
-  } else {
-    st=MATH_VALUE_NORMAL;
-#endif
+    char *top, *bottom;
+    top = po;
+    bottom = po2;
+    for (; top < bottom; top++) {
+      if (! g_ascii_isspace(*top)) {
+	break;
+      }
+    }
+    for (; top < bottom; bottom--) {
+      if (! g_ascii_isspace(*(bottom - 1))) {
+	break;
+      }
+    }
+    switch (bottom - top) {
+    case 1:
+      switch (*top) {
+      case '|':
+	st = MATH_VALUE_CONT;
+	break;
+      case '=':
+	st = MATH_VALUE_BREAK;
+	break;
+      default:
+	st = MATH_VALUE_NONUM;
+      }
+      break;
+    case 3:
+      if (strncmp(top, "NAN", 3) == 0) {
+	st = MATH_VALUE_NAN;
+      } else {
+	st = MATH_VALUE_NONUM;
+      }
+      break;
+    case 4:
+      if (strncmp(top, "CONT", 4) == 0) {
+	st = MATH_VALUE_CONT;
+      } else {
+	st = MATH_VALUE_NONUM;
+      }
+      break;
+    case 5:
+      if (strncmp(top, "UNDEF", 5) == 0) {
+	st = MATH_VALUE_UNDEF;
+      } else if (strncmp(top, "BREAK", 5) == 0) {
+	st = MATH_VALUE_BREAK;
+      } else {
+	st = MATH_VALUE_NONUM;
+      }
+      break;
+    default:
+      st = MATH_VALUE_NONUM;
+    }
   }
 
   *type = st;
