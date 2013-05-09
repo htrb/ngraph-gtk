@@ -4812,10 +4812,10 @@ ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data)
 {
   struct Viewer *d;
 
+  d = (struct Viewer *) client_data;
+
   if (Menulock || Globallock)
     goto EXIT_PRAPAGATE;
-
-  d = (struct Viewer *) client_data;
 
   switch (e->keyval) {
   case GDK_KEY_Escape:
