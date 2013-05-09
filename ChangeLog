@@ -1,5 +1,9 @@
 2013-05-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* debian/patches/series: remove "01_replace_to_free_fonts.patch".
+
+	* initfile/Ngraph.ini.in: use "Liberation" fonts as default.
+
 	* src/gtk/x11view.c (ViewerEvKeyDown): initialize the variable "d"
 	first.
 
