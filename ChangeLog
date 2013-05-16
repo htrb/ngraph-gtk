@@ -1,3 +1,12 @@
+2013-05-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/math/math_expression.c (optimize_div_expression): check if
+	the right hand side of the operator is zero or not.
+	(calc): compare with "0.0" (not "0").
+
+	* src/gtk/x11file.c (set_headline_table): remark character is
+	located at the top of a line.
+
 2013-05-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* debian/patches/series: remove "01_replace_to_free_fonts.patch".

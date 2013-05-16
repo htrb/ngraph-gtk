@@ -1176,6 +1176,9 @@ optimize_div_expression(MathExpression *exp, int *err)
       new_exp->u.bin.left = NULL;
       math_expression_free(new_exp);
       new_exp = left;
+    } else if (right->u.value.val == 0.0) {
+      right->u.value.val = right->u.value.val;
+      new_exp->type = MATH_EXPRESSION_TYPE_DIV;
     } else {
       right->u.value.val = 1.0 / right->u.value.val;
       new_exp->type = MATH_EXPRESSION_TYPE_MUL;
@@ -1502,7 +1505,7 @@ calc(MathExpression *exp, MathValue *val)
     }
     MATH_CHECK_VAL(val, left);
     MATH_CHECK_VAL(val, right);
-    if (right.val == 0) {
+    if (right.val == 0.0) {
       if (left.val < 0) {
 	val->val = - HUGE_VAL;
       } else if (left.val > 0) {
@@ -1524,7 +1527,7 @@ calc(MathExpression *exp, MathValue *val)
     }
     MATH_CHECK_VAL(val, left);
     MATH_CHECK_VAL(val, right);
-    if (right.val == 0) {
+    if (right.val == 0.0) {
       return 1;
     }
     val->val = fmod(left.val, right.val);

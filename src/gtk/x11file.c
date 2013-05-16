@@ -3498,8 +3498,11 @@ set_headline_table(struct FileDialog *d, char *s, int max_lines)
       gtk_list_store_set(model, &iter, j + 1, arraynget_str(lines + i, j), -1);
     }
     str = arraynget_str(lines + i, 0);
-    c = (str) ? str[0] : 0;
-    c = (g_ascii_isprint(str[i]) || g_ascii_isspace(str[i])) ? c : 0;
+    if (str) {
+      c = (g_ascii_isprint(str[0]) || g_ascii_isspace(str[0])) ? str[0] : 0;
+    } else {
+      c = 0;
+    }
     v = CHECK_VISIBILITY(i, skip, step, remark, c);
     gtk_list_store_set(model, &iter,
 		       0, l,
