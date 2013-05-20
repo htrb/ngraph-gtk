@@ -28,9 +28,6 @@ static struct math_token *get_eoeq(const char *str, const char ** rstr);
 static struct math_token *get_ope(const char *str, const char ** rstr);
 static struct math_token *get_num(const char *str, const char ** rstr);
 
-#define EOEQ_CHAR_OPT '='
-#define EOEQ_CHAR ';'
-
 struct reserved {
   char *name;
   enum MATH_TOKEN_TYPE type;
@@ -98,7 +95,7 @@ math_scanner_get_token(const char *str, const char **rstr)
     str++;
 
   c = str[0];
-  if (c == EOEQ_CHAR_OPT || c == EOEQ_CHAR || c == '\0') {
+  if (c == '\0') {
     return get_eoeq(str, rstr);
   } else  if (isdigit(c) || c == '.') {
     return get_num(str, rstr);
@@ -116,8 +113,6 @@ math_scanner_get_token(const char *str, const char **rstr)
     return get_comma(str, rstr);
   } else if (c == '@') {
     return get_array_prefix(str, rstr);
-  } else if (c == EOEQ_CHAR_OPT || c == EOEQ_CHAR || c == '\0') {
-    return get_eoeq(str, rstr);
   }
 
   return get_unknown(str, rstr);
@@ -223,18 +218,20 @@ get_ope(const char *str,  const char ** rstr)
   int len;
   enum MATH_OPERATOR_TYPE ope;
 
-  tok = create_token(str, MATH_TOKEN_TYPE_OPERATOR);
-  if (tok == NULL) {
-    return NULL;
-  }
-
   ope = math_scanner_check_ope_str(str, &len);
-  if (ope == MATH_OPERATOR_TYPE_UNKNOWN) {
-    tok->type = MATH_TOKEN_TYPE_UNKNOWN;
-    return tok;
+  switch (ope) {
+  case MATH_OPERATOR_TYPE_EOEQ:
+    tok = create_token(str, MATH_TOKEN_TYPE_EOEQ);
+    break;
+  case MATH_OPERATOR_TYPE_UNKNOWN:
+    tok = create_token(str, MATH_TOKEN_TYPE_UNKNOWN);
+    break;
+  default:
+    tok = create_token(str, MATH_TOKEN_TYPE_OPERATOR);
+    if (tok) {
+      tok->data.op = ope;
+    }
   }
-
-  tok->data.op = ope;
 
   *rstr = str + len;
 

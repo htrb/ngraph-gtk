@@ -586,6 +586,7 @@ create_variable_assign_expression(MathEquation *eq, enum MATH_OPERATOR_TYPE op,
 {
   MathExpression *exp, *bin;
 
+  bin = NULL;
   switch (op) {
   case MATH_OPERATOR_TYPE_ASSIGN:
     break;

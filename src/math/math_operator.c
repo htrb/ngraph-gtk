@@ -10,18 +10,30 @@ struct ope_str {
 };
 
 static struct ope_str OpeStr[] = {
-  {"^:", 2, MATH_OPERATOR_TYPE_POW_ASSIGN},
-  {"\\:", 2, MATH_OPERATOR_TYPE_MOD_ASSIGN},
-  {"/:", 2, MATH_OPERATOR_TYPE_DIV_ASSIGN},
-  {"*:", 2, MATH_OPERATOR_TYPE_MUL_ASSIGN},
-  {"+:", 2, MATH_OPERATOR_TYPE_PLUS_ASSIGN},
-  {"-:", 2, MATH_OPERATOR_TYPE_MINUS_ASSIGN},
-  {"&&", 2, MATH_OPERATOR_TYPE_AND},
-  {"||", 2, MATH_OPERATOR_TYPE_OR},
   {"!:", 2, MATH_OPERATOR_TYPE_NE},
-  {"::", 2, MATH_OPERATOR_TYPE_EQ},
+  {"^=", 2, MATH_OPERATOR_TYPE_POW_ASSIGN},
+  {"^:", 2, MATH_OPERATOR_TYPE_POW_ASSIGN},
+  {"\\=", 2, MATH_OPERATOR_TYPE_MOD_ASSIGN},
+  {"\\:", 2, MATH_OPERATOR_TYPE_MOD_ASSIGN},
+  {"/=", 2, MATH_OPERATOR_TYPE_DIV_ASSIGN},
+  {"/:", 2, MATH_OPERATOR_TYPE_DIV_ASSIGN},
+  {"*=", 2, MATH_OPERATOR_TYPE_MUL_ASSIGN},
+  {":=", 2, MATH_OPERATOR_TYPE_ASSIGN},
+  {"*:", 2, MATH_OPERATOR_TYPE_MUL_ASSIGN},
+  {"+=", 2, MATH_OPERATOR_TYPE_PLUS_ASSIGN},
   {">:", 2, MATH_OPERATOR_TYPE_GE},
+  {">=", 2, MATH_OPERATOR_TYPE_GE},
   {"<:", 2, MATH_OPERATOR_TYPE_LE},
+  {"<=", 2, MATH_OPERATOR_TYPE_LE},
+  {"::", 2, MATH_OPERATOR_TYPE_EQ},
+  {"==", 2, MATH_OPERATOR_TYPE_EQ},
+  {"+:", 2, MATH_OPERATOR_TYPE_PLUS_ASSIGN},
+  {"!=", 2, MATH_OPERATOR_TYPE_NE},
+  {"||", 2, MATH_OPERATOR_TYPE_OR},
+  {"&&", 2, MATH_OPERATOR_TYPE_AND},
+  {"-:", 2, MATH_OPERATOR_TYPE_MINUS_ASSIGN},
+  {"-=", 2, MATH_OPERATOR_TYPE_MINUS_ASSIGN},
+  {"-", 1, MATH_OPERATOR_TYPE_MINUS},
   {"<", 1, MATH_OPERATOR_TYPE_LT},
   {">", 1, MATH_OPERATOR_TYPE_GT},
   {":", 1, MATH_OPERATOR_TYPE_ASSIGN},
@@ -31,7 +43,8 @@ static struct ope_str OpeStr[] = {
   {"/", 1, MATH_OPERATOR_TYPE_DIV},
   {"*", 1, MATH_OPERATOR_TYPE_MUL},
   {"+", 1, MATH_OPERATOR_TYPE_PLUS},
-  {"-", 1, MATH_OPERATOR_TYPE_MINUS},
+  {"=", 1, MATH_OPERATOR_TYPE_EOEQ},
+  {";", 1, MATH_OPERATOR_TYPE_EOEQ},
 };
 
 static char OpeChar[256] = {
@@ -94,9 +107,9 @@ static char OpeChar[256] = {
   0,
   0,
   1,  /* : */
-  0,
+  1,  /* ; */
   1,  /* < */
-  0,
+  1,  /* = */
   1,  /* > */
   0,
   0,

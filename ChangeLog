@@ -1,5 +1,18 @@
 2013-05-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/math/math_parser.c (create_variable_assign_expression):
+	initialize the variable "bin".
+
+	* src/math/math_scanner.c (math_scanner_get_token, get_ope): EOEQ
+	is treated as an operator.
+
+	* src/math/math_operator.h.in: add operators ":=", "==", ">=",
+	"<=", "!=", "-=", "+=", "*=", "/=", "\=" and "^=". EOEQ is treated
+	as an operator.
+
+	* src/math/math_operator.rb: accept multiple representations for
+	one operator.
+
 	* src/osarray.c (ERROUTBOUND): added
 	(sarrayerrorlist): add error message for the error "ERROUTBOUND".
 	(sarrayget, sarrayput, sarraysns, sarraydel): show error message

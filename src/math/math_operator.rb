@@ -22,8 +22,10 @@ File.open("#{ARGV[1]}.h", "w") { |f|
 
 enum MATH_OPERATOR_TYPE {
 EOF
-  ope_str.each {|s|
-    f.puts("  #{OPE_PREFIX}_#{s[1]},")
+  ope_str.map {|s|
+    s[1]
+  }.uniq.sort.each { |s|
+    f.puts("  #{OPE_PREFIX}_#{s},")
   }
   f.puts("  #{OPE_PREFIX}_UNKNOWN\n};\n\n")
 
