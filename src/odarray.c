@@ -38,9 +38,11 @@
 #define OVERSION "1.00.00"
 
 #define ERRILNAME 100
+#define ERROUTBOUND		101
 
 static char *darrayerrorlist[]={
-""
+  "",
+  "array index is out of array bounds.",
 };
 
 #define ERRNUM (sizeof(darrayerrorlist) / sizeof(*darrayerrorlist))
@@ -70,11 +72,15 @@ darrayget(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   _getobj(obj,"@",inst,&array);
   num = oarray_get_index(array, num);
   if (num < 0) {
+    error(obj, ERROUTBOUND);
     return 1;
   }
 
   po=(double *)arraynget(array,num);
-  if (po==NULL) return 1;
+  if (po==NULL) {
+    error(obj, ERROUTBOUND);
+    return 1;
+  }
   rval->d=*po;
   return 0;
 }
@@ -91,6 +97,7 @@ darrayput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   _getobj(obj,"@",inst,&array);
   num = oarray_get_index(array, num);
   if (num < 0) {
+    error(obj, ERROUTBOUND);
     return 1;
   }
   if (arrayput(array,&val,num)==NULL) return 1;
@@ -167,6 +174,7 @@ darrayins(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 
   num = oarray_get_index(array, num);
   if (num < 0) {
+    error(obj, ERROUTBOUND);
     return 1;
   }
 
@@ -237,10 +245,14 @@ darraydel(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 
   num = oarray_get_index(array, num);
   if (num < 0) {
+    error(obj, ERROUTBOUND);
     return 1;
   }
 
-  if (arrayndel(array,num)==NULL) return 1;
+  if (arrayndel(array,num)==NULL) {
+    error(obj, ERROUTBOUND);
+    return 1;
+  }
   if (arraynum(array)==0) {
     arrayfree(array);
     if (_putobj(obj,"@",inst,NULL)) return 1;

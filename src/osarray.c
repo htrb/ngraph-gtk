@@ -36,9 +36,11 @@
 #define OVERSION "1.00.00"
 
 #define ERRREGEXP		100
+#define ERROUTBOUND		101
 
 static char *sarrayerrorlist[]={
   "invalid regular expression."
+  "array index is out of array bounds.",
 };
 
 #define DEFAULT_DELIMITER "\\s+"
@@ -101,11 +103,15 @@ sarrayget(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   _getobj(obj,"@",inst,&array);
   num = oarray_get_index(array, num);
   if (num < 0) {
+    error(obj, ERROUTBOUND);
     return 1;
   }
 
   po=(char **)arraynget(array,num);
-  if (po==NULL) return 1;
+  if (po==NULL) {
+    error(obj, ERROUTBOUND);
+    return 1;
+  }
   if ((buf=g_malloc(strlen(*po)+1))==NULL) return 1;
   strcpy(buf,*po);
   rval->str=buf;
@@ -124,6 +130,7 @@ sarrayput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   _getobj(obj,"@",inst,&array);
   num = oarray_get_index(array, num);
   if (num < 0) {
+    error(obj, ERROUTBOUND);
     return 1;
   }
   if (arrayput2(array,&val,num)==NULL) return 1;
@@ -203,6 +210,7 @@ sarrayins(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   }
   num = oarray_get_index(array, num);
   if (num < 0) {
+    error(obj, ERROUTBOUND);
     return 1;
   }
 
@@ -275,9 +283,13 @@ sarraydel(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   if (array==NULL) return 1;
   num = oarray_get_index(array, num);
   if (num < 0) {
+    error(obj, ERROUTBOUND);
     return 1;
   }
-  if (arrayndel2(array,num)==NULL) return 1;
+  if (arrayndel2(array,num)==NULL) {
+    error(obj, ERROUTBOUND);
+    return 1;
+  }
   if (arraynum(array)==0) {
     arrayfree2(array);
     if (_putobj(obj,"@",inst,NULL)) return 1;

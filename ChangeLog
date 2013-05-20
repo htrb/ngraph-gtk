@@ -1,3 +1,20 @@
+2013-05-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/osarray.c (ERROUTBOUND): added
+	(sarrayerrorlist): add error message for the error "ERROUTBOUND".
+	(sarrayget, sarrayput, sarraysns, sarraydel): show error message
+	for the error "ERROUTBOUND".
+
+	* src/odarray.c (ERROUTBOUND): added
+	(darrayerrorlist): add error message for the error "ERROUTBOUND".
+	(darrayget, darrayput, darraydns, darraydel): show error message
+	for the error "ERROUTBOUND".
+
+	* src/oiarray.c (ERROUTBOUND): added.
+	(iarrayerrorlist): add error message for the error "ERROUTBOUND".
+	(iarrayget, iarrayput, iarrayins, iarraydel): show error message
+	for the error "ERROUTBOUND".
+
 2013-05-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/math/math_expression.c (optimize_div_expression): check if
