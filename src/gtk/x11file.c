@@ -3348,6 +3348,7 @@ set_headline_table_header(struct FileDialog *d)
     if (i == x) {
       switch (type) {
       case PLOT_TYPE_DIAGONAL:
+      case PLOT_TYPE_ARROW:
       case PLOT_TYPE_RECTANGLE:
       case PLOT_TYPE_RECTANGLE_FILL:
       case PLOT_TYPE_RECTANGLE_SOLID_FILL:
@@ -3359,10 +3360,11 @@ set_headline_table_header(struct FileDialog *d)
     } else if (i == x + 1) {
       switch (type) {
       case PLOT_TYPE_DIAGONAL:
+      case PLOT_TYPE_ARROW:
       case PLOT_TYPE_RECTANGLE:
       case PLOT_TYPE_RECTANGLE_FILL:
       case PLOT_TYPE_RECTANGLE_SOLID_FILL:
-	g_string_append(str, "X2");
+	g_string_append(str, "Y1");
 	break;
       case PLOT_TYPE_ERRORBAR_X:
 	g_string_append(str, "Ex1");
@@ -3383,10 +3385,11 @@ set_headline_table_header(struct FileDialog *d)
     if (i == y) {
       switch (type) {
       case PLOT_TYPE_DIAGONAL:
+      case PLOT_TYPE_ARROW:
       case PLOT_TYPE_RECTANGLE:
       case PLOT_TYPE_RECTANGLE_FILL:
       case PLOT_TYPE_RECTANGLE_SOLID_FILL:
-	g_string_append(str, "Y1");
+	g_string_append(str, "X2");
 	break;
       default:
 	g_string_append(str, "Y");
@@ -3394,6 +3397,7 @@ set_headline_table_header(struct FileDialog *d)
     } else if (i == y + 1) {
       switch (type) {
       case PLOT_TYPE_DIAGONAL:
+      case PLOT_TYPE_ARROW:
       case PLOT_TYPE_RECTANGLE:
       case PLOT_TYPE_RECTANGLE_FILL:
       case PLOT_TYPE_RECTANGLE_SOLID_FILL:

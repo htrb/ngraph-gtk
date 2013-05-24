@@ -1,3 +1,8 @@
+2013-05-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (set_headline_table_header): fix title of the
+	table.
+
 2013-05-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/math/math_parser.c (create_variable_assign_expression):
