@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2013-05-16 18:48+0900\n"
+"POT-Creation-Date: 2013-05-23 16:22+0900\n"
 "PO-Revision-Date: 2013-05-13 17:39+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -961,7 +961,7 @@ msgstr "_X 変換数式:"
 msgid "_Y math:"
 msgstr "_Y 変換数式:"
 
-#: src/gtk/x11file.c:2595 src/gtk/x11file.c:3733 src/gtk/x11file.c:5197
+#: src/gtk/x11file.c:2595 src/gtk/x11file.c:3737 src/gtk/x11file.c:5201
 #, c-format
 msgid "Create"
 msgstr "作成"
@@ -1026,80 +1026,80 @@ msgstr "変換数式(_M)"
 msgid "This file contain invalid UTF-8 strings."
 msgstr "ファイルに不正な UTF-8 文字列が含まれています."
 
-#: src/gtk/x11file.c:3662
+#: src/gtk/x11file.c:3666
 #, c-format
 msgid "Data %d"
 msgstr "データ %d"
 
-#: src/gtk/x11file.c:3666
+#: src/gtk/x11file.c:3670
 msgid "_Apply all"
 msgstr "全てに適用(_A)"
 
-#: src/gtk/x11file.c:3675 src/gtk/x11merge.c:137 src/gtk/x11print.c:170
+#: src/gtk/x11file.c:3679 src/gtk/x11merge.c:137 src/gtk/x11print.c:170
 msgid "_File:"
 msgstr "ファイル名(_F):"
 
-#: src/gtk/x11file.c:3678
+#: src/gtk/x11file.c:3682
 msgid "_Load settings"
 msgstr "ファイルから設定読込(_L)"
 
-#: src/gtk/x11file.c:3683 src/gtk/x11menu.c:208
+#: src/gtk/x11file.c:3687 src/gtk/x11menu.c:208
 msgid "_Edit"
 msgstr "編集(_E)"
 
-#: src/gtk/x11file.c:3694 src/gtk/x11view.c:966
+#: src/gtk/x11file.c:3698 src/gtk/x11view.c:966
 msgid "_Mask"
 msgstr "マスク(_M)"
 
-#: src/gtk/x11file.c:3698 src/gtk/x11view.c:967
+#: src/gtk/x11file.c:3702 src/gtk/x11view.c:967
 msgid "_Move"
 msgstr "移動(_M)"
 
-#: src/gtk/x11file.c:3705
+#: src/gtk/x11file.c:3709
 msgid "_Table"
 msgstr "表(_T) "
 
-#: src/gtk/x11file.c:3714
+#: src/gtk/x11file.c:3718
 msgid "_Plain"
 msgstr ""
 
-#: src/gtk/x11file.c:3734
+#: src/gtk/x11file.c:3738
 msgid "_Fit:"
 msgstr "フィット(_F):"
 
-#: src/gtk/x11file.c:4021
+#: src/gtk/x11file.c:4025
 msgid "Data new"
 msgstr "新規作成"
 
-#: src/gtk/x11file.c:4065 src/gtk/x11menu.c:1105
+#: src/gtk/x11file.c:4069 src/gtk/x11menu.c:1105
 msgid "Add Data file"
 msgstr "データの追加"
 
-#: src/gtk/x11file.c:5053
+#: src/gtk/x11file.c:5057
 msgid "Data file"
 msgstr "データの保存"
 
-#: src/gtk/x11file.c:5059
+#: src/gtk/x11file.c:5063
 msgid "Making data file"
 msgstr "データファイル作成中"
 
-#: src/gtk/x11file.c:5060
+#: src/gtk/x11file.c:5064
 msgid "Making data file."
 msgstr "データファイル作成中"
 
-#: src/gtk/x11file.c:5240 src/gtk/x11lgnd.c:3203 src/gtk/gtk_widget.c:1075
+#: src/gtk/x11file.c:5244 src/gtk/x11lgnd.c:3203 src/gtk/gtk_widget.c:1075
 msgid "Color 1"
 msgstr "色 1"
 
-#: src/gtk/x11file.c:5247 src/gtk/x11lgnd.c:3204 src/gtk/gtk_widget.c:1082
+#: src/gtk/x11file.c:5251 src/gtk/x11lgnd.c:3204 src/gtk/gtk_widget.c:1082
 msgid "Color 2"
 msgstr "色 2"
 
-#: src/gtk/x11file.c:5255
+#: src/gtk/x11file.c:5259
 msgid "Clip"
 msgstr "クリップ"
 
-#: src/gtk/x11file.c:5267
+#: src/gtk/x11file.c:5271
 msgid "Type"
 msgstr "タイプ"
 

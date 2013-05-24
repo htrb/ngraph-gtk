@@ -253,17 +253,17 @@
  <tr><td>\</td><td>実数乗算の乗余</td></tr>
  <tr><td>^</td><td>ベキ乗</td></tr>
  <tr><td>!</td><td>階乗(引数は 169 以下の正の整数)</td></tr>
- <tr><td>:</td><td>代入</td></tr>
- <tr><td>-:</td><td>自己代入</td></tr>
- <tr><td>+:</td><td>自己代入</td></tr>
- <tr><td>*:</td><td>自己代入</td></tr>
- <tr><td>/:</td><td>自己代入</td></tr>
- <tr><td>\:</td><td>自己代入</td></tr>
- <tr><td>^:</td><td>自己代入</td></tr>
- <tr><td>::</td><td>比較 (C の == に対応) </td></tr>
- <tr><td>!:</td><td>比較 (C の != に対応) </td></tr>
- <tr><td>&lt;:</td><td>比較 (C の &lt;= に対応) </td></tr>
- <tr><td>&gt;:</td><td>比較 (C の &gt;= に対応) </td></tr>
+ <tr><td>:=</td><td>代入</td></tr>
+ <tr><td>-=</td><td>自己代入</td></tr>
+ <tr><td>+=</td><td>自己代入</td></tr>
+ <tr><td>*=</td><td>自己代入</td></tr>
+ <tr><td>/=</td><td>自己代入</td></tr>
+ <tr><td>\=</td><td>自己代入</td></tr>
+ <tr><td>^=</td><td>自己代入</td></tr>
+ <tr><td>==</td><td>比較</td></tr>
+ <tr><td>!=</td><td>比較</td></tr>
+ <tr><td>&lt;=</td><td>比較</td></tr>
+ <tr><td>&gt;=</td><td>比較</td></tr>
  <tr><td>&lt;</td><td>比較</td></tr>
  <tr><td>&gt;</td><td>比較</td></tr>
  <tr><td>&amp;&amp;</td><td>論理積</td></tr>
@@ -304,7 +304,7 @@
 <h3>変換関数</h3>
 <table border=1>
  <tr><td>ABS(x)</td><td>絶対値</td></tr>
- <tr><td>SIGN(x)</td><td>正負の符号</td></tr>
+ <tr><td>SIGN(x)</td><td>正負の符号 (x < 0 で -1、x >= 0 で 1) </td></tr>
  <tr><td>INT(x)</td><td>0に向かって切捨てた整数部</td></tr>
  <tr><td>GAUSS(x)</td><td>ガウスの記号[ ] ([n]はnを越えない最大の整数)</td></tr>
  <tr><td>FRAC(x)</td><td>小数部</td></tr>
@@ -498,11 +498,11 @@
  <tr><td>  </td><td>+ - (正負の符号)</td></tr>
  <tr><td>  </td><td>* / \</td></tr>
  <tr><td>  </td><td>+ -</td></tr>
- <tr><td>  </td><td>&lt; &lt;: &gt; &gt;:</td></tr>
- <tr><td>  </td><td>:: !:</td></tr>
+ <tr><td>  </td><td>&lt; &lt;= &gt; &gt;=</td></tr>
+ <tr><td>  </td><td>== !=</td></tr>
  <tr><td>  </td><td>&amp;&amp;</td></tr>
  <tr><td>↓</td><td>||</td></tr>
- <tr><td>低</td><td>:(+:, -: ... )</td></tr>
+ <tr><td>低</td><td>:=(+=, -= ... )</td></tr>
 </table>
 </div>
 
@@ -514,18 +514,20 @@
 <h2><a href="#TOP">数式変換の使用例</a></h2>
 <br>
 <ul>
- <li><b>= 使用例</b>
-      <br>
-      <br>
-      =  は式の終端を示しますが、さらに続けて別の式を書くことができます。
+ <li><b>; 使用例</b>
+      <p>
+      ;  は式の終端を示しますが、さらに続けて別の式を書くことができます。
       式の値は一番最後の式の値になります。
       例えば、長い式が何度も現れるとき変数への代入と組み合わせて
-      <p>
-      a:...式...= ... a .... =
+      <pre>
+      a:=...式...; ... a ....;
+      </pre>
+      のようにすれば同じ式は１度書くだけですみます。また式最後の ; は省略できます。
       </p>
-      のようにすれば同じ式は１度書くだけですみます。また式最後の = は省略できます。
-      <br>
-      <br>
+      <p>
+      (従来は式の終端として "=" が使われていましたが version 6.06.10 以降
+      は ";" を推奨とします。)
+      </p>
       </li>
 
  <li><b>メモリー関数 M(), RM() 使用例</b>
@@ -657,14 +659,14 @@
       <p>
       MARKSIZE(%03)
       </p>
-      とします。ただこれですと、プロットされるデータも %03 となりますので、前述の = を使って
+      とします。ただこれですと、プロットされるデータも %03 となりますので、前述の ; を使って
       <p>
-      MARKSIZE(%03)=Y
+      MARKSIZE(%03);Y
       </p>
       とするのが正しい使い方です。
       COLOR()関数も同様で
       <p>
-      COLOR(3,%03)=Y
+      COLOR(3,%03);Y
       </p>
       のように使います。
       <br>
@@ -675,7 +677,7 @@
       画色にします。例えばいくつかのフィッティング結果をもとにフィッティ
       ングパラメータをグラフにするような場合、
       <pre>
-      OBJ_COLOR(X)=FIT_PRM(X,1)
+      OBJ_COLOR(X);FIT_PRM(X,1)
       </pre>
       のようにして、フィッティングとプロットの色を揃えることができます。
       この時 X はフィッティングプロットにした file オブジェクトのインスタ
@@ -720,7 +722,7 @@
       きいことを仮定) 。
       </p>
       <p>
-      IF(X - A &lt; 1, PROGN(B +: Y, N +: 1, CONT), PROG1(IF(N, B / N, CONT), B : Y, N : 1, A : X))
+      IF(X - A &lt; 1, PROGN(B += Y, N += 1, CONT), PROG1(IF(N, B / N, CONT), B := Y, N := 1, A := X))
       </p>
       </li>
 </ul>

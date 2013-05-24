@@ -1,5 +1,10 @@
 2013-05-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* doc/html/ja/math.html: update document.
+
+	* src/math/math_basic_function.c (math_func_for): use variables
+	"start", "stop" and "step".
+
 	* src/gtk/x11file.c (set_headline_table_header): fix title of the
 	table.
 
@@ -51,12 +56,12 @@
 	* src/gtk/x11view.c (ViewerEvKeyDown): initialize the variable "d"
 	first.
 
-2013-04-13  Hiroyuki Ito  <ZXB01226 at nifty.com>
+2013-04-13  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ofile.c (get_value_from_str): accepts space character around
 	the value.
 
-2013-04-11  Hiroyuki Ito  <ZXB01226 at nifty.com>
+2013-04-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (check_add_str): use "〓" if the character is
 	not printable.
@@ -66,7 +71,7 @@
 	* src/ofile.c (get_value_from_str): added.
 	(getdataarray): use 'get_value_from_str()'.
 
-2013-04-06  Hiroyuki Ito  <ZXB01226 at nifty.com>
+2013-04-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (decode_ifs_text): accepts ascii character only.
 	(check_add_str): added.
@@ -94,7 +99,7 @@
 	* src/ofile.c (getdataarray): set terminator at the end of the
 	column.
 
-2013-03-31  Hiroyuki Ito  <ZXB01226 at nifty.com>
+2013-03-31  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11dialg.h (FileDialog): add member "head_linese."
 
@@ -569,13 +574,13 @@
 
 	* src/gtk/x11lgnd.c (CmLegendWindow): don't expand some columns.
 
-2013-01-04  Hiroyuki Ito  <ZXB01226 at nifty.com>
+2013-01-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* addin/fitrslt.c (get_opt): check "argv[i]".
 
 	* addin/legend.c (get_opt): check "argv[i]".
 
-2013-01-01  Hiroyuki Ito  <ZXB01226 at nifty.com>
+2013-01-01  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* addin/fitrslt.c (savescript, caption_toggled, set_parameter):
 	use GtkTreeModel.
@@ -765,24 +770,24 @@
 
 	* src/gtk/gtk_subwin.c (text_sub_window_create): call "gtk_text_buffer_new()".
 
-2012-11-10  Hiroyuki Ito  <ZXB01226 at nifty.com>
+2012-11-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ofit.c (show_poly_equation, show_poly_result)
 	(show_user_result, show_user_equation): added.
 	(fitpoly): use "show_poly_equation()" and "show_poly_result()".
 	(fituser): use "show_user_equation()" and "show_user_result()".
 
-2012-11-06  Hiroyuki Ito  <ZXB01226 at nifty.com>
+2012-11-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ofit.c (fitpoly, fituser): use "GString" to show fitting
 	results.
 
-2012-11-04  Hiroyuki Ito  <ZXB01226 at nifty.com>
+2012-11-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ofit.c (fitpoly, fituser): use "GString" to show calclated
 	equation.
 
-2012-11-03  Hiroyuki Ito  <ZXB01226 at nifty.com>
+2012-11-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11bitmp.c (ICON_WIDTH, ICON_HEIGHT): removed.
 
@@ -847,7 +852,7 @@
 	* configure.in (AC_CHECK_FUNCS): check functions "log10l", "fabsl"
 	and "floorl".
 
-2012-10-19  Hiroyuki Ito  <ZXB01226 at nifty.com>
+2012-10-19  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/math/math_constant.c: include "config.h".
 
@@ -897,12 +902,12 @@
 
 	* src/gtk/x11menu.c (destroy_sub_windows): hide window before destroy.
 
-2012-10-09  Hiroyuki Ito  <ZXB01226 at nifty.com>
+2012-10-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11graph.c (PageDialogSetup): left and top margin can be
 	nagative.
 
-2012-10-08  Hiroyuki Ito  <ZXB01226 at nifty.com>
+2012-10-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gra.c (GRAinit, GRAreopen): "GRAClist[GC].width" and
 	"GRAClist[GC].height" is as same as paper width.
@@ -910,7 +915,7 @@
 	(GRAregion): calculate width and height depend on
 	"GRAClist[GC].topm" and "GRAClist[GC].leftm".
 
-2012-09-21  Hroyuki Ito  <ZXB01226 at nifty.com>
+2012-09-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11lgnd.c (start_editing_common, start_editing_font):
 	call "menu_lock()" if the variable "sel" is negative.
@@ -1050,7 +1055,7 @@
 	* src/gtk/main.c (interruptconsole, reset_fifo, consolesave)
 	(consolefd): not used if the os is Windows.
 
-2012-08-12  Hiroyuki Ito  <ZXB01226 at nifty.com>
+2012-08-12  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/shell.c (set_shell_args): added.
 
@@ -1059,7 +1064,7 @@
 	* src/shellcm.c (cmset): use "set_shell_args()".
 	(cmset): options "--" and "-" work as same as bash.
 
-2012-08-11  Hiroyuki Ito  <ZXB01226 at nifty.com>
+2012-08-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/shellcm.c (cmset): "--" means the last argument.
 
@@ -1132,12 +1137,12 @@
 	(gra2cairo_remove_fontmap, gra2cairo_get_compatible_font_info):
 	type of the argument is "const char *".
 
-2012-07-29  Hiroyuki Ito  <ZXB01226 at nifty.com>
+2012-07-29  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/ogra2cairo.c (add_font_map): added.
 	(create_font_map): use "add_font_map()".
 
-2012-07-28  Hiroyuki Ito  <ZXB01226 at nifty.com>
+2012-07-28  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/ogra2emf.c (gra2emf_output): call "SetPolyFillMode()" to
 	set fill mode.
@@ -1224,7 +1229,7 @@
 	(open_emf): use display device as referencs DC. use
 	"SetWorldTransform()" to scale image.
 
-2012-07-06  Hiroyuki Ito  <ZXB01226 at nifty.com>
+2012-07-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11lgnd.c (path_list_set_val): set columns
 	"PATH_LIST_COL_X", "PATH_LIST_COL_Y" and "PATH_LIST_COL_POINTS" at
@@ -1313,7 +1318,7 @@
 	(f2dload_sub): use "get_filename_last_index()" instead of
 	"getitok2()".
 
-2012-06-24  Hiroyuki Ito  <ZXB01226 at nifty.com>
+2012-06-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11lgnd.c (get_points): only get first point.
 	(path_list_set_property, text_list_set_property): removed.
@@ -1455,7 +1460,7 @@
 	installed.
 	(AC_CHECK_HEADERS): check "readline/readline.h"
 
-2012-06-16  Hroyuki Ito  <ZXB01226 at nifty.com>
+2012-06-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11opt.c (SetScriptDialogSetupItem): addin selection
 	combobox is always available.
@@ -1496,7 +1501,7 @@
 	* src/gtk/ox11menu.c (mx_clear): call "cairo_reset_clip()" before
 	call "cairo_paint()".
 
-2012-06-11  Hiroyuki Ito  <ZXB01226 at nifty.com>
+2012-06-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* zsh/Makefile.am (dist_zsh_DATA): use "dist_" prefix.
 
@@ -1531,11 +1536,11 @@
 
 	* addin/fig2gra.nsc (fig2gra): print creator comment.
 
-2012-06-06  Koichi Akabe <vbkaisetsu at gmail.com>
+2012-06-06  Koichi Akabe  <vbkaisetsu at gmail.com>
 
 	* demo/Makefile.am (CLEANFILES): add "demo6.ngp"
 
-2012-06-05  Koichi Akabe <vbkaisetsu at gmail.com>
+2012-06-05  Koichi Akabe  <vbkaisetsu at gmail.com>
 
 	* debian/ngraph-gtk.install: add scalable icons.
 
@@ -1557,7 +1562,7 @@
 
 	* icons/scalable/Makefile.am: added.
 
-2012-06-03  Hiroyuki Ito  <ZXB01226 at nifty.com>
+2012-06-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* addin/fig2gra.nsc (fig2gra): accepts dummy option "-dummy".
 
@@ -1761,7 +1766,7 @@
 	(math_func_srand): use "g_random_set_seed()".
 	(create_random_buf): removed.
 
-2012-05-01  Hiroyuki Ito  <ZXB01226 at nifty.com>
+2012-05-01  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (show_zoom_animation, show_move_animation):
 	don't call "gdk_window_invalidate_rect()".
@@ -1787,7 +1792,7 @@
 	* src/gtk/x11view.c (ChangeDPI): use "nround()" to avoid floating
 	point error when calculating scroll position.
 
-2012-04-22  Hiroyuki Ito  <ZXB01226 at nifty.com>
+2012-04-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/shell.c (remove_duplicate_history): added.
 	(shget): combine multi-line input.
@@ -1802,7 +1807,7 @@
 	* src/shellux.c (SleepThread): argument of the function "Sleep()"
 	is milliseconds.
 
-2012-04-14  Hiroyuki Ito  <ZXB01226 at nifty.com>
+2012-04-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* misc/ngraph.keys: filename is changed from "ngraph.key".
 
@@ -1818,7 +1823,7 @@
 	(barout): use "draw_rect()" instead of "GRAdrawpoly()" when draw
 	outline of the bar.
 
-2012-04-07  Hiroyuki Ito  <ZXB01226 at nifty.com>
+2012-04-07  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ofile.c (poly_add_elements): fix calculation to avoid
 	influence of floating point error.
@@ -1925,7 +1930,7 @@
 	the function "getobj()".
 	(mx_addin_list_append): don't modify sarray object.
 
-2012-03-27  Hroyuki Ito  <ZXB01226 at nifty.com>
+2012-03-27  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/main.c (set_dir_defs): use function "g_locale_to_utf8()"
 	instead of "g_locale_from_utf8()".
@@ -1936,7 +1941,7 @@
 	* src/gtk/x11opt.c (remove_char): added.
 	(SetScriptDialogSetupItem): use "remove_char()".
 
-2012-03-25  Hiroyuki Ito  <ZXB01226 at nifty.com>
+2012-03-25  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11opt.c (SetScriptDialogSetupItem): use basename of the
 	add-ins as add-in combo-box.
@@ -2148,7 +2153,7 @@
 
 	* src/gtk/Makefile.am (libngraph_la_CFLAGS): remove option "-D_FORTIFY_SOURCE".
 
-2012-02-09  Hroyuki Ito  <hito@strecker.nict.go.jp>
+2012-02-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* addin/legend.c (savescript): add font style setting.
 
@@ -2220,7 +2225,7 @@
 	(set_widget_sensitivity_with_label): added.
 	(get_widget): removed.
 
-2012-01-22  Hiroyuki Ito  <ZXB01226 at nifty.com>
+2012-01-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (FileDialogType): set sensitivity of widgets
 	"d->fit" and "d->fit_label".
@@ -2228,7 +2233,7 @@
 
 	* src/gtk/x11dialg.h (FileDialog): add member "fit_label".
 
-2012-01-21  Hiroyuki Ito  <ZXB01226 at nifty.com>
+2012-01-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11dialg.h (FitDialog): add member "usr_def_prm_tbl".
 
@@ -2322,7 +2327,7 @@
 	"alpha" member of the structure "GdkRGBA". The range of each
 	member of the structure "GdkRGBA" is from 0.0 to 1.0.
 
-2011-12-18  Hiroyuki Ito  <ZXB01226 at nifty.com>
+2011-12-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* addin/fitrslt.c (makescript, savescript): use "iarray" object to
 	calculate the maximum length of the text.
@@ -2334,7 +2339,7 @@
 	(savescript): use "iarray" object to calculate the maximum length
 	of the text.
 
-2011-12-14  Hiroyuki Ito  <ZXB01226 at nifty.com>
+2011-12-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* addin/legend.c (savescript): fix font setting.
 
@@ -2358,7 +2363,7 @@
 
 	* initfile/NgraphUI.xml.win: remove "View Clear" button.
 
-2011-12-06  Hroyuki Ito  <ZXB01226 at nifty.com>
+2011-12-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* misc/ngraph.1: escape '-'.
 
@@ -2373,7 +2378,7 @@
 	"DataOpenAction" and "MergeOpenAction" to "DataAddAction" and
 	"MergeAddAction" respectively.
 
-2011-12-05  Hroyuki Ito  <ZXB01226 at nifty.com>
+2011-12-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (FitDialogSetup, FileDialogSetup): remove
 	"Delete" button from dialog.
@@ -2420,7 +2425,7 @@
 
 	* MAKEFILE.am (SUBDIRS): add "icons" and "misc".
 
-2011-11-21  Koichi Akabe <vbkaisetsu at gmail.com>
+2011-11-21  Koichi Akabe  <vbkaisetsu at gmail.com>
 
 	* debian/rules: updated for debian repository.
 
@@ -2704,7 +2709,7 @@
 	* src/gtk/gtk_subwin.c (sub_window_minimize)
 	(sub_window_restore_state): removed.
 
-2011-08-07  Hiroyuki Ito  <ZXB01226 at nifty.com>
+2011-08-07  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_subwin.c (ev_sub_win_key_down): use
 	"window_action_set_active()" instead of "gtk_widget_hide()".
@@ -2768,7 +2773,7 @@
 	* src/oregexp.c (regexp_match): call "g_match_info_free()" when
 	the function "g_regex_match()" returns false.
 
-2011-07-18  Hiroyuki Ito  <ZXB01226 at nifty.com>
+2011-07-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/oiarray.c (oarray_get_index, oarray_create_math)
 	(iarray_map): added.
@@ -2789,12 +2794,12 @@
 
 	* test/darray_test.nsc: add tests for "get" and "map" fields.
 
-2011-07-16  Hiroyuki Ito  <ZXB01226 at nifty.com>
+2011-07-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/oint.c (int_times, int_inc, int_dec): added.
 	(oint): add fields "times", "inc" and "dec".
 
-2011-07-13  Hiroyuki Ito  <ZXB01226 at nifty.com>
+2011-07-13  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* addin/ps2gra.nsc: remove automatically created files.
 
@@ -2810,7 +2815,7 @@
 
 	* src/gtk/x11view.c (ncopyobj): don't copy "name" field.
 
-2011-07-12  Hiroyuki Ito  <ZXB01226 at nifty.com>
+2011-07-12  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/osystem.c (nsystem): type of the field "pid" is "NINT".
 
@@ -2849,7 +2854,7 @@
 
 	* src/math/math_function.h.in: add function "time()".
 
-2011-07-10  Hiroyuki Ito  <ZXB01226 at nifty.com>
+2011-07-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/object.c (add_arg_object, getargument): accept character ","
 	as a string of an id list.
@@ -2871,7 +2876,7 @@
 
 	* src/gtk/gtk_widget.h (SPIN_ENTRY_MAX): change limit to 1000000.
 
-2011-07-02  Hiroyuki Ito  <ZXB01226 at nifty.com>
+2011-07-02  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11gui.c (message_box): limit length of an error
 	message.
@@ -2923,7 +2928,7 @@
 	* src/gtk/x11file.c (FileDialogSetupItem): cursor will be set
 	after the last character.
 
-2011-06-15  Shijo Nagao <shijo.nagao at ntnu.no>
+2011-06-15  Shijo Nagao  <shijo.nagao at ntnu.no>
 
 	* src/gtk/ox11menu.c (mx_show_lib_version): use macro
 	"GSL_VERSION" if available.

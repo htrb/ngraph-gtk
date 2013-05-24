@@ -2381,7 +2381,7 @@ int
 math_func_for(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   int n, r;
-  double v;
+  double v, start, stop, step;
   MathFunctionArgument *argv;
 
   if (Memory == NULL && init_memory()) {
@@ -2396,7 +2396,11 @@ math_func_for(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
   MATH_CHECK_ARG(rval, argv[3]);
 
   n = argv[0].val.val;
-  if (n >= MATH_FUNCTION_MEMORY_NUM || (argv[2].val.val - argv[1].val.val) * argv[3].val.val <= 0) {
+  start = argv[1].val.val;
+  stop = argv[2].val.val;
+  step = argv[3].val.val;
+
+  if (n >= MATH_FUNCTION_MEMORY_NUM || (stop - start) * step <= 0) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
   }
@@ -2406,7 +2410,7 @@ math_func_for(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
   }
 
   rval->val = 0;
-  for (v = argv[1].val.val; (argv[3].val.val < 0) ?  (v >= argv[2].val.val) : (v <= argv[2].val.val); v += argv[3].val.val) {
+  for (v = start; (step < 0) ?  (v >= stop) : (v <= stop); v += step) {
     if (n >= 0) {
       Memory[n].val = v;
     }
