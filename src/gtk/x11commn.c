@@ -71,14 +71,14 @@ OpenGRA(void)
   int i, id, otherGC;
   char *device, *name, *name_str = "viewer";
   struct narray *drawrable;
+  N_VALUE *gra_inst;
 
-  if ((Menulocal.GRAinst =
-       chkobjinstoid(Menulocal.GRAobj, Menulocal.GRAoid)) != NULL)
+  gra_inst = chkobjinstoid(Menulocal.GRAobj, Menulocal.GRAoid);
+  if (gra_inst) {
     return;
+  }
 
-  /* search closed gra object */
-  if (chkobjinstoid(Menulocal.GRAobj, Menulocal.GRAoid) == NULL)
-    CloseGRA();
+  CloseGRA();
 
   for (i = chkobjlastinst(Menulocal.GRAobj); i >= 0; i--) {
     getobj(Menulocal.GRAobj, "GC", i, 0, NULL, &otherGC);
@@ -90,8 +90,8 @@ OpenGRA(void)
     /* closed gra object is not found. generate new gra object */
 
     id = newobj(Menulocal.GRAobj);
-    Menulocal.GRAinst = chkobjinst(Menulocal.GRAobj, id);
-    _getobj(Menulocal.GRAobj, "oid", Menulocal.GRAinst, &(Menulocal.GRAoid));
+    gra_inst = chkobjinst(Menulocal.GRAobj, id);
+    _getobj(Menulocal.GRAobj, "oid", gra_inst, &(Menulocal.GRAoid));
 
     /* set page settings */
     putobj(Menulocal.GRAobj, "paper_width", id, &(Menulocal.PaperWidth));
@@ -104,8 +104,8 @@ OpenGRA(void)
     /* find closed gra object */
 
     id = i;
-    Menulocal.GRAinst = chkobjinst(Menulocal.GRAobj, id);
-    _getobj(Menulocal.GRAobj, "oid", Menulocal.GRAinst, &(Menulocal.GRAoid));
+    gra_inst = chkobjinst(Menulocal.GRAobj, id);
+    _getobj(Menulocal.GRAobj, "oid", gra_inst, &(Menulocal.GRAoid));
 
     /* get page settings */
     CheckPage();
@@ -130,15 +130,22 @@ OpenGRA(void)
 void
 CheckPage(void)
 {
-  _getobj(Menulocal.GRAobj, "paper_width", Menulocal.GRAinst,
+  N_VALUE *gra_inst;
+
+  gra_inst = chkobjinstoid(Menulocal.GRAobj, Menulocal.GRAoid);
+  if (gra_inst == NULL) {
+    return;
+  }
+
+  _getobj(Menulocal.GRAobj, "paper_width", gra_inst,
 	  &(Menulocal.PaperWidth));
-  _getobj(Menulocal.GRAobj, "paper_height", Menulocal.GRAinst,
+  _getobj(Menulocal.GRAobj, "paper_height", gra_inst,
 	  &(Menulocal.PaperHeight));
-  _getobj(Menulocal.GRAobj, "left_margin", Menulocal.GRAinst,
+  _getobj(Menulocal.GRAobj, "left_margin", gra_inst,
 	  &(Menulocal.LeftMargin));
-  _getobj(Menulocal.GRAobj, "top_margin", Menulocal.GRAinst,
+  _getobj(Menulocal.GRAobj, "top_margin", gra_inst,
 	  &(Menulocal.TopMargin));
-  _getobj(Menulocal.GRAobj, "zoom", Menulocal.GRAinst,
+  _getobj(Menulocal.GRAobj, "zoom", gra_inst,
 	  &(Menulocal.PaperZoom));
 
   set_paper_type(Menulocal.PaperWidth, Menulocal.PaperHeight);
@@ -165,18 +172,17 @@ void
 CloseGRA(void)
 {
   int id;
+  N_VALUE *gra_inst;
 
-  if ((Menulocal.GRAinst =
-       chkobjinstoid(Menulocal.GRAobj, Menulocal.GRAoid)) == NULL)
+  gra_inst = chkobjinstoid(Menulocal.GRAobj, Menulocal.GRAoid);
+  if (gra_inst == NULL) {
     return;
-
-  if (chkobjinstoid(Menulocal.GRAobj, Menulocal.GRAoid) != NULL) {
-    _getobj(Menulocal.GRAobj, "id", Menulocal.GRAinst, &id);
-    exeobj(Menulocal.GRAobj, "close", id, 0, NULL);
-    delobj(Menulocal.GRAobj, id);
-    Menulocal.GRAinst = NULL;
-    Menulocal.GRAoid = -1;
   }
+
+  _getobj(Menulocal.GRAobj, "id", gra_inst, &id);
+  exeobj(Menulocal.GRAobj, "close", id, 0, NULL);
+  delobj(Menulocal.GRAobj, id);
+  Menulocal.GRAoid = -1;
 }
 
 void
@@ -193,8 +199,7 @@ ChangeGRA(void)
 
   if (i == -1) {
     /* closed gra is not find. maintain present gra object */
-    if ((Menulocal.GRAinst =
-	 chkobjinstoid(Menulocal.GRAobj, Menulocal.GRAoid)) == NULL) {
+    if (chkobjinstoid(Menulocal.GRAobj, Menulocal.GRAoid) == NULL) {
       ChangePage();
     }
   } else {
@@ -240,10 +245,11 @@ SetPageSettingsToGRA(void)
 
     num = arraynum(&(Menulocal.drawrable));
 
-    for (j = 0; j < num; j++)
+    for (j = 0; j < num; j++) {
       arrayadd2(drawrable, (char **) arraynget(&(Menulocal.drawrable), j));
+    }
 
-    _putobj(obj, "draw_obj", inst, &drawrable);
+    _putobj(obj, "draw_obj", inst, drawrable);
   }
 }
 

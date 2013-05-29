@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.06.09\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2013-05-23 16:22+0900\n"
+"POT-Creation-Date: 2013-05-29 16:24+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,15 +21,15 @@ msgstr ""
 msgid "Unsaved Graph"
 msgstr ""
 
-#: src/gtk/ox11dlg.c:535
+#: src/gtk/ox11dlg.c:571
 msgid "Open file"
 msgstr ""
 
-#: src/gtk/ox11dlg.c:583
+#: src/gtk/ox11dlg.c:619
 msgid "Open files"
 msgstr ""
 
-#: src/gtk/ox11dlg.c:631
+#: src/gtk/ox11dlg.c:667
 msgid "Save file"
 msgstr ""
 
@@ -469,48 +469,48 @@ msgstr ""
 msgid "No zero"
 msgstr ""
 
-#: src/gtk/x11commn.c:975 src/gtk/x11menu.c:347
+#: src/gtk/x11commn.c:981 src/gtk/x11menu.c:347
 msgid "Save NGP file"
 msgstr ""
 
-#: src/gtk/x11commn.c:999 src/gtk/x11opt.c:1945
+#: src/gtk/x11commn.c:1005 src/gtk/x11opt.c:1945
 #, c-format
 msgid "Saving `%.128s'."
 msgstr ""
 
-#: src/gtk/x11commn.c:1185 src/gtk/x11commn.c:1267
+#: src/gtk/x11commn.c:1191 src/gtk/x11commn.c:1273
 #, c-format
 msgid "Loading `%.128s'."
 msgstr ""
 
-#: src/gtk/x11commn.c:1384
+#: src/gtk/x11commn.c:1390
 msgid ""
 "This graph is modified.\n"
 "Save this graph?"
 msgstr ""
 
-#: src/gtk/x11commn.c:1385
+#: src/gtk/x11commn.c:1391
 msgid "Confirm"
 msgstr ""
 
-#: src/gtk/x11commn.c:1565
+#: src/gtk/x11commn.c:1571
 msgid "Ngraph.ini is not found."
 msgstr ""
 
-#: src/gtk/x11commn.c:1568
+#: src/gtk/x11commn.c:1574
 msgid "Ngraph.ini is write protected."
 msgstr ""
 
-#: src/gtk/x11commn.c:1583
+#: src/gtk/x11commn.c:1589
 #, c-format
 msgid "Install `Ngraph.ini' to %s ?"
 msgstr ""
 
-#: src/gtk/x11commn.c:1587
+#: src/gtk/x11commn.c:1593
 msgid "Ngraph.ini could not be copied."
 msgstr ""
 
-#: src/gtk/x11commn.c:1727
+#: src/gtk/x11commn.c:1733
 msgid "error"
 msgstr ""
 
@@ -1193,11 +1193,11 @@ msgstr ""
 msgid "Error"
 msgstr ""
 
-#: src/gtk/x11gui.c:772 src/gtk/x11gui.c:950
+#: src/gtk/x11gui.c:817 src/gtk/x11gui.c:995
 msgid "All"
 msgstr ""
 
-#: src/gtk/x11gui.c:873 src/gtk/x11opt.c:1938
+#: src/gtk/x11gui.c:918 src/gtk/x11opt.c:1938
 #, c-format
 msgid ""
 "`%s'\n"
@@ -1205,11 +1205,11 @@ msgid ""
 "Overwrite existing file?"
 msgstr ""
 
-#: src/gtk/x11gui.c:927
+#: src/gtk/x11gui.c:972
 msgid "_Change current directory"
 msgstr ""
 
-#: src/gtk/x11gui.c:938
+#: src/gtk/x11gui.c:983
 #, c-format
 msgid "%s file (*.%s)"
 msgstr ""
@@ -2372,25 +2372,25 @@ msgstr ""
 msgid "Making GRA file."
 msgstr ""
 
-#: src/gtk/x11view.c:1270 src/gtk/x11view.c:1272
+#: src/gtk/x11view.c:1269 src/gtk/x11view.c:1271
 #, c-format
 msgid "Searching for data."
 msgstr ""
 
-#: src/gtk/x11view.c:1377
+#: src/gtk/x11view.c:1376
 #, c-format
 msgid "Evaluating."
 msgstr ""
 
-#: src/gtk/x11view.c:1386
+#: src/gtk/x11view.c:1385
 msgid "Evaluating"
 msgstr ""
 
-#: src/gtk/x11view.c:2806
+#: src/gtk/x11view.c:2805
 msgid "Data points are moved."
 msgstr ""
 
-#: src/gtk/x11view.c:4060
+#: src/gtk/x11view.c:4059
 msgid "Moving data points is canceled."
 msgstr ""
 
@@ -2721,7 +2721,7 @@ msgstr ""
 msgid "bar_solid_fill_y"
 msgstr ""
 
-#: src/ogra.c:418
+#: src/ogra.c:437
 #, c-format
 msgid "drawing %s (%.1f%%)"
 msgstr ""

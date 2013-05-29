@@ -77,7 +77,7 @@ struct gtklocal
   cairo_surface_t *surface;
   GdkWindow *window;
   char *title;
-  int redraw;
+  int redraw, fit, frame;
   unsigned int windpi;
   int PaperWidth, PaperHeight;
   double bg_r, bg_g, bg_b;
@@ -211,6 +211,48 @@ ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
   return FALSE;
 }
 
+void
+size_allocate(GtkWidget *widget, GdkRectangle *allocation, gpointer user_data)
+{
+  struct gtklocal *local;
+  double w, h, rh, rw, ratio;
+  int pw, ph, dpi;
+
+  local = (struct gtklocal *) user_data;
+  if (local == NULL) {
+    return;
+  }
+
+  if (! local->fit) {
+    return;
+  }
+
+  w = allocation->width;
+  h = allocation->height;
+
+  pw = local->PaperWidth;
+  ph = local->PaperHeight;
+
+  if (pw < 1 || ph < 1) {
+    return;
+  }
+
+  rw = w / pw;
+  rh = h / ph;
+
+  ratio = (rh > rw) ? rw : rh;
+  dpi = ratio * DPI_MAX;
+
+  local->windpi = dpi;
+  local->local->pixel_dot_x =
+    local->local->pixel_dot_y = ratio;
+
+  _putobj(local->obj, "dpi", local->inst, &dpi);
+
+  gtkchangedpi(local);
+
+}
+
 static int
 gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
@@ -232,6 +274,8 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   gtklocal->inst = inst;
   gtklocal->title = NULL;
   gtklocal->mainwin = NULL;
+  gtklocal->fit = FALSE;
+  gtklocal->frame = TRUE;
 
   if (_putobj(obj, "_gtklocal", inst, gtklocal))
     goto errexit;
@@ -241,6 +285,13 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
 
   if (_getobj(obj, "_local", inst, &local))
     goto errexit;
+
+  if (_getobj(obj, "fit", inst, &gtklocal->fit))
+    goto errexit;
+
+  if (_getobj(obj, "frame", inst, &gtklocal->frame))
+    goto errexit;
+
 
   gtklocal->PaperWidth = 0;
   gtklocal->PaperHeight = 0;
@@ -299,6 +350,10 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   gtk_container_add(GTK_CONTAINER(gtklocal->mainwin), scrolled_window);
 
   gtklocal->View = gtk_drawing_area_new();
+#if GTK_CHECK_VERSION(3, 0, 0)
+  gtk_widget_set_halign(gtklocal->View, GTK_ALIGN_CENTER);
+  gtk_widget_set_valign(gtklocal->View, GTK_ALIGN_CENTER);
+#endif
 
 #if GTK_CHECK_VERSION(3, 0, 0)
   g_signal_connect(gtklocal->View, "draw",
@@ -307,6 +362,9 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   g_signal_connect(gtklocal->View, "expose-event",
 		   G_CALLBACK(gtkevpaint), gtklocal);
 #endif
+
+  g_signal_connect(gtklocal->mainwin, "size-allocate",
+		   G_CALLBACK(size_allocate), gtklocal);
 
   gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW
 					(scrolled_window), gtklocal->View);
@@ -434,6 +492,29 @@ gtkpresent(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
 }
 
 static int
+gtkfullscreen(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  struct gtklocal *local;
+  int state;
+
+  if (_exeparent(obj, argv[1], inst, rval, argc, argv))
+    return 1;
+
+  if (_getobj(obj, "_gtklocal", inst, &local))
+    return 1;
+
+  state = *(int *) argv[2];
+
+  if (state) {
+    gtk_window_fullscreen(GTK_WINDOW(local->mainwin));
+  } else {
+    gtk_window_unfullscreen(GTK_WINDOW(local->mainwin));
+  }
+
+  return 0;
+}
+
+static int
 gtkflush(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct gtklocal *local;
@@ -550,7 +631,7 @@ gtkchangedpi(struct gtklocal *gtklocal)
     pw = cairo_image_surface_get_width(pixmap);
 
     if (pw != width || ph != height) {
-      g_object_unref(G_OBJECT(pixmap));
+      cairo_surface_destroy(pixmap);
       pixmap = NULL;
     }
   }
@@ -581,7 +662,7 @@ gtkMakeRuler(cairo_t *cr, struct gtklocal *gtklocal)
   width = gtklocal->PaperWidth;
   height = gtklocal->PaperHeight;
 
-  if (width == 0 || height == 0 || gtklocal->surface == NULL)
+  if (width == 0 || height == 0 || gtklocal->surface == NULL || ! gtklocal->frame)
     return;
 
   cairo_save(cr);
@@ -627,12 +708,16 @@ gtk_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
 static int
 gtk_set_dpi(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  int dpi;
+  int dpi, fit;
   struct gtklocal *local;
 
   dpi = abs(*(int *) argv[2]);
 
   _getobj(obj, "_gtklocal", inst, &local);
+
+  fit = FALSE;
+  local->fit = FALSE;
+  _putobj(obj, "fit", inst, &fit);
 
   if (dpi < 1)
     dpi = 1;
@@ -645,6 +730,39 @@ gtk_set_dpi(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **
   *(int *) argv[2] = dpi;
 
   gtkchangedpi(local);
+
+  return 0;
+}
+
+static int
+gtk_set_fit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  int fit;
+  struct gtklocal *local;
+
+  _getobj(obj, "_gtklocal", inst, &local);
+
+  fit = *(int *) argv[2];
+
+  local->fit = fit;
+
+  if (fit) {
+    GtkAllocation allocation;
+    gtk_widget_get_allocation(local->mainwin, &allocation);
+    size_allocate(local->mainwin, &allocation, local);
+  }
+
+  return 0;
+}
+
+static int
+gtk_set_frame(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  struct gtklocal *local;
+
+  _getobj(obj, "_gtklocal", inst, &local);
+
+  local->frame = *(int *) argv[2];
 
   return 0;
 }
@@ -687,10 +805,13 @@ static struct objtable gra2gtk[] = {
   {"dpiy", NINT, NREAD | NWRITE, gtk_set_dpi, NULL, 0},
   {"width", NINT, NREAD | NWRITE, gtk_set_size, NULL, 0},
   {"height", NINT, NREAD | NWRITE, gtk_set_size, NULL, 0},
+  {"fit", NBOOL, NREAD | NWRITE, gtk_set_fit, NULL, 0},
+  {"frame", NBOOL, NREAD | NWRITE, gtk_set_frame, NULL, 0},
   {"expose", NVFUNC, NREAD | NEXEC, gtkredraw, "", 0},
   {"flush", NVFUNC, NREAD | NEXEC, gtkflush, "", 0},
   {"clear", NVFUNC, NREAD | NEXEC, gtkclear, "", 0},
   {"present", NVFUNC, NREAD | NEXEC, gtkpresent, "", 0},
+  {"fullscreen", NVFUNC, NREAD | NEXEC, gtkfullscreen, "i", 0},
   {"BR", NINT, NREAD | NWRITE, gtkbr, NULL, 0},
   {"BG", NINT, NREAD | NWRITE, gtkbg, NULL, 0},
   {"BB", NINT, NREAD | NWRITE, gtkbb, NULL, 0},

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2013-05-23 16:22+0900\n"
+"POT-Creation-Date: 2013-05-29 16:24+0900\n"
 "PO-Revision-Date: 2013-05-13 17:39+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -19,15 +19,15 @@ msgstr ""
 msgid "Unsaved Graph"
 msgstr "新規グラフ"
 
-#: src/gtk/ox11dlg.c:535
+#: src/gtk/ox11dlg.c:571
 msgid "Open file"
 msgstr "ファイルを開く"
 
-#: src/gtk/ox11dlg.c:583
+#: src/gtk/ox11dlg.c:619
 msgid "Open files"
 msgstr "ファイルを開く"
 
-#: src/gtk/ox11dlg.c:631
+#: src/gtk/ox11dlg.c:667
 msgid "Save file"
 msgstr "別名で保存"
 
@@ -496,21 +496,21 @@ msgstr "ベキ形式(ログ)"
 msgid "No zero"
 msgstr "ゼロ非表示"
 
-#: src/gtk/x11commn.c:975 src/gtk/x11menu.c:347
+#: src/gtk/x11commn.c:981 src/gtk/x11menu.c:347
 msgid "Save NGP file"
 msgstr "NGPファイルの保存"
 
-#: src/gtk/x11commn.c:999 src/gtk/x11opt.c:1945
+#: src/gtk/x11commn.c:1005 src/gtk/x11opt.c:1945
 #, c-format
 msgid "Saving `%.128s'."
 msgstr "保存中 `%.128s'."
 
-#: src/gtk/x11commn.c:1185 src/gtk/x11commn.c:1267
+#: src/gtk/x11commn.c:1191 src/gtk/x11commn.c:1273
 #, c-format
 msgid "Loading `%.128s'."
 msgstr "読込中 `%.128s'."
 
-#: src/gtk/x11commn.c:1384
+#: src/gtk/x11commn.c:1390
 msgid ""
 "This graph is modified.\n"
 "Save this graph?"
@@ -518,28 +518,28 @@ msgstr ""
 "このグラフは変更されています.\n"
 "保存しますか?"
 
-#: src/gtk/x11commn.c:1385
+#: src/gtk/x11commn.c:1391
 msgid "Confirm"
 msgstr "確認"
 
-#: src/gtk/x11commn.c:1565
+#: src/gtk/x11commn.c:1571
 msgid "Ngraph.ini is not found."
 msgstr "Ngraph.ini が見つかりません."
 
-#: src/gtk/x11commn.c:1568
+#: src/gtk/x11commn.c:1574
 msgid "Ngraph.ini is write protected."
 msgstr "Ngraph.ini に書き込めませんでした."
 
-#: src/gtk/x11commn.c:1583
+#: src/gtk/x11commn.c:1589
 #, c-format
 msgid "Install `Ngraph.ini' to %s ?"
 msgstr "%s に 'Ngraph.ini' をインストールしますか?"
 
-#: src/gtk/x11commn.c:1587
+#: src/gtk/x11commn.c:1593
 msgid "Ngraph.ini could not be copied."
 msgstr "Ngraph.ini をコピーできませんでした."
 
-#: src/gtk/x11commn.c:1727
+#: src/gtk/x11commn.c:1733
 msgid "error"
 msgstr "エラー"
 
@@ -1224,11 +1224,11 @@ msgstr ""
 msgid "Error"
 msgstr "エラー"
 
-#: src/gtk/x11gui.c:772 src/gtk/x11gui.c:950
+#: src/gtk/x11gui.c:817 src/gtk/x11gui.c:995
 msgid "All"
 msgstr "全てのファイル"
 
-#: src/gtk/x11gui.c:873 src/gtk/x11opt.c:1938
+#: src/gtk/x11gui.c:918 src/gtk/x11opt.c:1938
 #, c-format
 msgid ""
 "`%s'\n"
@@ -1238,11 +1238,11 @@ msgstr ""
 "'%s' というファイルは既に存在します.\n"
 "上書きしてもよろしいですか?"
 
-#: src/gtk/x11gui.c:927
+#: src/gtk/x11gui.c:972
 msgid "_Change current directory"
 msgstr "カレントディレクトリを移動(_C)"
 
-#: src/gtk/x11gui.c:938
+#: src/gtk/x11gui.c:983
 #, c-format
 msgid "%s file (*.%s)"
 msgstr "%s ファイル (*.%s)"
@@ -2406,25 +2406,25 @@ msgstr "合成ファイルの保存"
 msgid "Making GRA file."
 msgstr "合成ファイル作成中"
 
-#: src/gtk/x11view.c:1270 src/gtk/x11view.c:1272
+#: src/gtk/x11view.c:1269 src/gtk/x11view.c:1271
 #, c-format
 msgid "Searching for data."
 msgstr "データ検索中"
 
-#: src/gtk/x11view.c:1377
+#: src/gtk/x11view.c:1376
 #, c-format
 msgid "Evaluating."
 msgstr "データ評価中"
 
-#: src/gtk/x11view.c:1386
+#: src/gtk/x11view.c:1385
 msgid "Evaluating"
 msgstr "データ評価中"
 
-#: src/gtk/x11view.c:2806
+#: src/gtk/x11view.c:2805
 msgid "Data points are moved."
 msgstr "データは移動されました."
 
-#: src/gtk/x11view.c:4060
+#: src/gtk/x11view.c:4059
 msgid "Moving data points is canceled."
 msgstr "データの移動はキャンセルされました."
 
@@ -2757,7 +2757,7 @@ msgstr "実横棒"
 msgid "bar_solid_fill_y"
 msgstr "実縦棒"
 
-#: src/ogra.c:418
+#: src/ogra.c:437
 #, c-format
 msgid "drawing %s (%.1f%%)"
 msgstr "%s 描画中 (%.1f%%)"

@@ -468,6 +468,51 @@ DialogRadio(GtkWidget *parent, const char *title, const char *caption, struct na
 }
 
 int
+DialogButton(GtkWidget *parent, const char *title, const char *caption, struct narray *array, int *x, int *y)
+{
+  GtkWidget *dlg;
+  gint res_id;
+  char **d;
+  int i, anum;
+
+  d = arraydata(array);
+  anum = arraynum(array);
+
+  if (anum < 1) {
+    return -1;
+  }
+
+  dlg = gtk_dialog_new();
+  for (i = 0; i < anum; i++) {
+    if (d[i] && g_utf8_validate(d[i], -1, NULL)) {
+      gtk_dialog_add_button(GTK_DIALOG(dlg), d[i], i);
+    }
+  }
+
+  if (title && g_utf8_validate(title, -1, NULL)) {
+    gtk_window_set_title(GTK_WINDOW(dlg), title);
+  }
+
+  if (caption && g_utf8_validate(caption, -1, NULL)) {
+    GtkWidget *box, *label;
+    box = gtk_dialog_get_content_area(GTK_DIALOG(dlg));
+    label = gtk_label_new(caption);
+    gtk_box_pack_start(GTK_BOX(box), label, TRUE, TRUE, 4);
+  }
+
+  gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
+
+  set_dialog_position(dlg, x, y);
+  gtk_widget_show_all(dlg);
+  res_id = ndialog_run(dlg);
+  get_dialog_position(dlg, x, y);
+  gtk_widget_destroy(dlg);
+  reset_event();
+
+  return res_id;
+}
+
+int
 DialogCombo(GtkWidget *parent, const char *title, const char *caption, struct narray *array, int sel, char **r, int *x, int *y)
 {
   GtkWidget *dlg, *combo;

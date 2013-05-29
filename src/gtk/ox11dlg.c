@@ -227,6 +227,42 @@ get_sarray_argument(struct narray *sarray)
 }
 
 static int
+dlgbutton(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  char *title, *caption;
+  int rcode, x, y;
+  struct narray *sarray;
+
+  sarray = get_sarray_argument((struct narray *) argv[2]);
+  if (arraynum(sarray) == 0) {
+    return -1;
+  }
+
+  if (_getobj(obj, "title", inst, &title)) {
+    title = NULL;
+  }
+
+  if (_getobj(obj, "caption", inst, &caption)) {
+    caption = NULL;
+  }
+
+  if (_getobj(obj, "x", inst, &x)) {
+    x = -1;
+  }
+
+  if (_getobj(obj, "y", inst, &y)) {
+    y = -1;
+  }
+
+  rcode = DialogButton(DLGTopLevel, (title) ? title : "Buttons", caption, sarray, &x, &y);
+
+  _putobj(obj, "x", inst, &x);
+  _putobj(obj, "y", inst, &y);
+
+  return rcode;
+}
+
+static int
 dlgradio(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   char *title, *caption;
@@ -656,6 +692,7 @@ static struct objtable dialog[] = {
   {"input", NSFUNC, NREAD | NEXEC, dlginput, "s", 0},
   {"radio", NIFUNC, NREAD | NEXEC, dlgradio, "sa", 0},
   {"check", NIAFUNC, NREAD | NEXEC, dlgcheck, "sa", 0},
+  {"button", NSFUNC, NREAD | NEXEC, dlgbutton, "sa", 0},
   {"combo", NSFUNC, NREAD | NEXEC, dlgcombo, "sa", 0},
   {"combo_entry", NSFUNC, NREAD | NEXEC, dlgcombo, "sa", 0},
   {"double_entry", NSFUNC, NREAD | NEXEC, dlgspin, "dddd", 0},

@@ -100,7 +100,6 @@ struct menulocal
   N_VALUE *inst;
   struct objlist *GRAobj;
   int GRAoid;
-  N_VALUE *GRAinst;
   int GC;
   int PaperWidth, PaperHeight, PaperLandscape;
   char *PaperName, *Palette;

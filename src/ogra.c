@@ -47,12 +47,13 @@ static char *GRAerrorlist[]={
   "no instance for output device",
   "illegal graphics context",
   "gra is now opened.",
-  "gra is closed."
+  "gra is closed.",
 };
 
 #define ERRNUM (sizeof(GRAerrorlist) / sizeof(*GRAerrorlist))
 
 static void set_progress_val(int i, int n, char *name);
+static int oGRAclose(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv);
 
 static int 
 oGRAinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
@@ -132,6 +133,19 @@ oGRAputdevice(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
   return 0;
 }
 
+static int
+close_gc(struct objlist *obj, N_VALUE *inst, int GC)
+{
+  GRAclose(GC);
+  GC = -1;
+
+  if (_putobj(obj, "GC", inst, &GC)) {
+    return 1;
+  }
+
+  return 0;
+}
+
 static int 
 oGRAopen(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
@@ -182,6 +196,8 @@ oGRAopen(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
       return 1;
     }
 
+    robj = NULL;
+
     if (!chkobjfield(dobj,"_output")) {
       if ((output=getobjtblpos(dobj,"_output",&robj))==-1) return 1;
     } else output=-1;
@@ -197,6 +213,11 @@ oGRAopen(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
     if (!chkobjfield(dobj,"_chardescent")) {
       if ((chardescent=getobjtblpos(dobj,"_chardescent",&robj))==-1) return 1;
     } else chardescent=-1;
+
+    if (robj == NULL) {
+      error2(obj, ERROPEN, device);
+      return -1;
+    }
 
     if (!chkobjfield(dobj,"_list")) {
       int  offset;
@@ -248,6 +269,7 @@ oGRAopen(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   r = GRAinit(GC,leftm,topm,width,height,zoom);
   if (r) {
     error2(obj,ERROPEN,device);
+    close_gc(obj, inst, GC);
     return r;
   }
 
@@ -262,10 +284,7 @@ oGRAclose(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 
   _getobj(obj,"GC",inst,&GC);
   GRAend(GC);
-  GRAclose(GC);
-  GC=-1;
-  if (_putobj(obj,"GC",inst,&GC)) return 1;
-  return 0;
+  return close_gc(obj, inst, GC);
 }
 
 static int 

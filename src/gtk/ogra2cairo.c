@@ -1457,59 +1457,26 @@ void *
 addgra2cairo()
 /* addgra2cairoile() returns NULL on error */
 {
-  int errcode[] = {
-    CAIRO_STATUS_SUCCESS,
-    CAIRO_STATUS_NO_MEMORY,
-    CAIRO_STATUS_INVALID_RESTORE,
-    CAIRO_STATUS_INVALID_POP_GROUP,
-    CAIRO_STATUS_NO_CURRENT_POINT,
-    CAIRO_STATUS_INVALID_MATRIX,
-    CAIRO_STATUS_INVALID_STATUS,
-    CAIRO_STATUS_NULL_POINTER,
-    CAIRO_STATUS_INVALID_STRING,
-    CAIRO_STATUS_INVALID_PATH_DATA,
-    CAIRO_STATUS_READ_ERROR,
-    CAIRO_STATUS_WRITE_ERROR,
-    CAIRO_STATUS_SURFACE_FINISHED,
-    CAIRO_STATUS_SURFACE_TYPE_MISMATCH,
-    CAIRO_STATUS_PATTERN_TYPE_MISMATCH,
-    CAIRO_STATUS_INVALID_CONTENT,
-    CAIRO_STATUS_INVALID_FORMAT,
-    CAIRO_STATUS_INVALID_VISUAL,
-    CAIRO_STATUS_FILE_NOT_FOUND,
-    CAIRO_STATUS_INVALID_DASH,
-    CAIRO_STATUS_INVALID_DSC_COMMENT,
-    CAIRO_STATUS_INVALID_INDEX,
-    CAIRO_STATUS_CLIP_NOT_REPRESENTABLE,
-#ifdef CAIRO_STATUS_TEMP_FILE_ERROR
-    CAIRO_STATUS_TEMP_FILE_ERROR,
-#endif
-#ifdef CAIRO_STATUS_INVALID_STRIDE
-    CAIRO_STATUS_INVALID_STRIDE,
-#endif
-  };
-  unsigned int i, n;
+  int i;
 
   if (CompatibleFontHash == NULL) {
     CompatibleFontHash = nhash_new();
     if (CompatibleFontHash == NULL) {
       return NULL;
     }
-    for (i = 0; i < sizeof(CompatibleFont) / sizeof(*CompatibleFont); i++) {
+    for (i = 0; i < (int) (sizeof(CompatibleFont) / sizeof(*CompatibleFont)); i++) {
       nhash_set_int(CompatibleFontHash, CompatibleFont[i].old_name, i);
     }
   }
 
   if (Gra2CairoErrMsgs == NULL) {
-    n = sizeof(errcode) / sizeof(*errcode);
+    Gra2CairoErrMsgs = g_malloc(sizeof(*Gra2CairoErrMsgs) * CAIRO_STATUS_LAST_STATUS);
+    Gra2CairoErrMsgNum = CAIRO_STATUS_LAST_STATUS;
 
-    Gra2CairoErrMsgs = g_malloc(sizeof(*Gra2CairoErrMsgs) * n);
-    Gra2CairoErrMsgNum = n;
-
-    for (i = 0; i < n; i++) {
-      Gra2CairoErrMsgs[i] = g_strdup(cairo_status_to_string(errcode[i]));
+    for (i = 0; i < CAIRO_STATUS_LAST_STATUS; i++) {
+      Gra2CairoErrMsgs[i] = g_strdup(cairo_status_to_string(i));
     }
   }
 
-  return addobject(NAME, NULL, PARENT, OVERSION, TBLNUM, gra2cairo, n, Gra2CairoErrMsgs, NULL, NULL);
+  return addobject(NAME, NULL, PARENT, OVERSION, TBLNUM, gra2cairo, Gra2CairoErrMsgNum, Gra2CairoErrMsgs, NULL, NULL);
 }

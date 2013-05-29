@@ -1112,7 +1112,6 @@ ViewerWinSetup(void)
   d = &NgraphApp.Viewer;
   d->gdk_win = gtk_widget_get_window(d->Win);
   Menulocal.GRAoid = -1;
-  Menulocal.GRAinst = NULL;
   d->Mode = PointB;
   d->Capture = FALSE;
   d->MoveData = FALSE;
@@ -5576,6 +5575,7 @@ void
 Draw(int SelectFile)
 {
   struct Viewer *d;
+  N_VALUE *gra_inst;
 
   d = &NgraphApp.Viewer;
 
@@ -5601,13 +5601,14 @@ Draw(int SelectFile)
   }
   region = NULL;
 
-  if (chkobjinstoid(Menulocal.GRAobj, Menulocal.GRAoid) != NULL) {
+  gra_inst = chkobjinstoid(Menulocal.GRAobj, Menulocal.GRAoid);
+  if (gra_inst != NULL) {
     d->ignoreredraw = TRUE;
-    _exeobj(Menulocal.GRAobj, "clear", Menulocal.GRAinst, 0, NULL);
+    _exeobj(Menulocal.GRAobj, "clear", gra_inst, 0, NULL);
     //    reset_event();
     /* XmUpdateDisplay(d->Win); */
-    _exeobj(Menulocal.GRAobj, "draw", Menulocal.GRAinst, 0, NULL);
-    _exeobj(Menulocal.GRAobj, "flush", Menulocal.GRAinst, 0, NULL);
+    _exeobj(Menulocal.GRAobj, "draw", gra_inst, 0, NULL);
+    _exeobj(Menulocal.GRAobj, "flush", gra_inst, 0, NULL);
     d->ignoreredraw = FALSE;
   }
 
@@ -5627,9 +5628,12 @@ Draw(int SelectFile)
 static void
 Clear(void)
 {
-  if (chkobjinstoid(Menulocal.GRAobj, Menulocal.GRAoid) != NULL) {
+  N_VALUE *gra_inst;
+
+  gra_inst = chkobjinstoid(Menulocal.GRAobj, Menulocal.GRAoid);
+  if (gra_inst != NULL) {
     UnFocus();
-    _exeobj(Menulocal.GRAobj, "clear", Menulocal.GRAinst, 0, NULL);
+    _exeobj(Menulocal.GRAobj, "clear", gra_inst, 0, NULL);
     ReopenGC();
   }
   InfoWinClear();
