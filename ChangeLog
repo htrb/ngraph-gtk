@@ -1,3 +1,7 @@
+2013-05-31  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/ox11dlg.c (dlgbutton): set "rval->str".
+
 2013-05-29  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ogra.c (close_gc): added.

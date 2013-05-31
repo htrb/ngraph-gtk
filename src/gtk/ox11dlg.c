@@ -254,12 +254,23 @@ dlgbutton(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
     y = -1;
   }
 
+  g_free(rval->str);
+  rval->str = NULL;
+
   rcode = DialogButton(DLGTopLevel, (title) ? title : "Buttons", caption, sarray, &x, &y);
 
   _putobj(obj, "x", inst, &x);
   _putobj(obj, "y", inst, &y);
 
-  return rcode;
+  if (rcode >= 0) {
+    const char *str;
+    str = arraynget_str(sarray, rcode);
+    if (str) {
+      rval->str = g_strdup(str);
+    }
+  }
+
+  return 0;
 }
 
 static int
