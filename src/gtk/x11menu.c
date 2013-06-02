@@ -3982,6 +3982,11 @@ application(char *file)
 
   terminated = AppMainLoop();
 
+  if (Menulocal.single_window_mode) {
+    set_toggle_action("ViewToggleSingleWindowModeAction", FALSE);
+    Menulocal.single_window_mode = TRUE;
+  }
+
   if (CheckIniFile()) {
     if (Menulocal.single_window_mode) {
       save_tab_position();

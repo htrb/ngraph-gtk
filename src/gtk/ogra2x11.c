@@ -80,6 +80,7 @@ struct gtklocal
   int redraw, fit, frame;
   unsigned int windpi;
   int PaperWidth, PaperHeight;
+  int keyval;
   double bg_r, bg_g, bg_b;
   struct gra2cairo_local *local;
 };
@@ -199,11 +200,12 @@ ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
 
   e = (GdkEventKey *)event;
 
+  gtklocal->keyval = e->keyval;
+
   switch (e->keyval) {
   case GDK_KEY_w:
     if (e->state & GDK_CONTROL_MASK) {
-      gtk_widget_destroy(gtklocal->mainwin);
-      gtklocal->mainwin = NULL;
+      gtkclose(w, NULL, NULL);
       return TRUE;
     }
     return FALSE;
@@ -796,6 +798,35 @@ gtk_set_size(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char *
   return 0;
 }
 
+static int
+gtk_wait_key(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  struct gtklocal *local;
+  char *name;
+
+  _getobj(obj, "_gtklocal", inst, &local);
+
+  g_free(rval->str);
+  rval->str = NULL;
+
+  if (local->mainwin == NULL) {
+    return 1;
+  }
+
+  local->keyval = 0;
+  while (! local->keyval) {
+    gtk_evloop(NULL, NULL, NULL, 0, NULL);
+    msleep(100);
+  }
+
+  name = gdk_keyval_name(local->keyval);
+  if (name) {
+    rval->str = g_strdup(name);
+  }
+
+  return 0;
+}
+
 static struct objtable gra2gtk[] = {
   {"init", NVFUNC, NEXEC, gtkinit, NULL, 0},
   {"done", NVFUNC, NEXEC, gtkdone, NULL, 0},
@@ -815,6 +846,7 @@ static struct objtable gra2gtk[] = {
   {"BR", NINT, NREAD | NWRITE, gtkbr, NULL, 0},
   {"BG", NINT, NREAD | NWRITE, gtkbg, NULL, 0},
   {"BB", NINT, NREAD | NWRITE, gtkbb, NULL, 0},
+  {"wait_key",NSFUNC, NREAD | NEXEC, gtk_wait_key, "", 0},
   {"_gtklocal", NPOINTER, 0, NULL, NULL, 0},
   {"_output", NVFUNC, 0, gtk_output, NULL, 0},
   {"_strwidth", NIFUNC, 0, gra2cairo_strwidth, NULL, 0},

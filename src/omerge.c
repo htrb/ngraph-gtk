@@ -185,7 +185,7 @@ mergeredraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
   _getobj(obj,"redraw_num", inst, &dmax);
   _getobj(obj,"line_num", inst, &line_num);
 
-  if (redrawf && line_num > 0 && line_num < dmax * 10) {
+  if (redrawf && line_num > 0 && (dmax == 0 || line_num < dmax * 10)) {
     mergedraw(obj,inst,rval,argc,argv);
   } else {
     _getobj(obj,"GC",inst,&GC);

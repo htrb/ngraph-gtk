@@ -1,3 +1,20 @@
+2013-06-02  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/ofile.c (f2dredraw): redraw when the variable "dmax" equal
+	to zero.
+
+	* src/gtk/ogra2x11.c (ev_key_down): save "e->keyval".
+	(ev_key_down): use "gtkclose()" to close the window.
+	(gtk_wait_key): added.
+	(gra2gtk): add "wait_key" field.
+
+	* src/gtk/x11menu.c (application): call "set_toggle_action()"
+	after call "AppMainLoop()" when "Menulocal.single_window_mode" is
+	true.
+
+	* src/omerge.c (mergeredraw): redraw when the variable "dmax"
+	equal to zero.
+
 2013-05-31  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/ox11dlg.c (dlgbutton): set "rval->str".

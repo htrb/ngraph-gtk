@@ -5985,7 +5985,7 @@ f2dredraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   _getobj(obj,"redraw_num",inst,&dmax);
   _getobj(obj, "type", inst, &type);
 
-  if (num > 0 && (num <= dmax || type == PLOT_TYPE_FIT) && redrawf) {
+  if (num > 0 && (dmax == 0 || num <= dmax || type == PLOT_TYPE_FIT) && redrawf) {
     f2ddraw(obj,inst,rval,argc,argv);
   } else {
     _getobj(obj,"GC",inst,&GC);
