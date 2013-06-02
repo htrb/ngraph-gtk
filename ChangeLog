@@ -8,9 +8,8 @@
 	(gtk_wait_key): added.
 	(gra2gtk): add "wait_key" field.
 
-	* src/gtk/x11menu.c (application): call "set_toggle_action()"
-	after call "AppMainLoop()" when "Menulocal.single_window_mode" is
-	true.
+	* src/gtk/x11menu.c (application): call "multi_to_single()" if
+	necessary.
 
 	* src/omerge.c (mergeredraw): redraw when the variable "dmax"
 	equal to zero.

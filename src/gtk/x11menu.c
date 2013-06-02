@@ -3975,17 +3975,16 @@ application(char *file)
   set_delobj_cb(check_instance);
 
   if (Menulocal.single_window_mode) {
+    Menulocal.single_window_mode = FALSE;
     set_toggle_action("ViewToggleSingleWindowModeAction", TRUE);
+    if (! Menulocal.single_window_mode) {
+      multi_to_single();
+    }
   } else {
     gtk_widget_hide(NgraphApp.Viewer.side_pane1);
   }
 
   terminated = AppMainLoop();
-
-  if (Menulocal.single_window_mode) {
-    set_toggle_action("ViewToggleSingleWindowModeAction", FALSE);
-    Menulocal.single_window_mode = TRUE;
-  }
 
   if (CheckIniFile()) {
     if (Menulocal.single_window_mode) {
