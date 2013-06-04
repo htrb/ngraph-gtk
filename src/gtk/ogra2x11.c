@@ -68,6 +68,16 @@ static char *gtkerrorlist[] = {
 
 #define ERRNUM (sizeof(gtkerrorlist)/sizeof(*gtkerrorlist))
 
+struct action_type
+{
+  enum {
+    ACTION_TYPE_NONE,
+    ACTION_TYPE_KEY,
+    ACTION_TYPE_BUTTON,
+    ACTION_TYPE_SCROLL,
+  } type;
+  int val;
+};
 
 struct gtklocal
 {
@@ -81,7 +91,7 @@ struct gtklocal
   int redraw, fit, frame;
   unsigned int windpi;
   int PaperWidth, PaperHeight;
-  int keyval;
+  struct action_type action;
   double bg_r, bg_g, bg_b;
   struct gra2cairo_local *local;
 };
@@ -201,7 +211,8 @@ ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
 
   e = (GdkEventKey *)event;
 
-  gtklocal->keyval = e->keyval;
+  gtklocal->action.type = ACTION_TYPE_KEY;
+  gtklocal->action.val = e->keyval;
 
   switch (e->keyval) {
   case GDK_KEY_w:
@@ -276,6 +287,41 @@ cursor_moved(GtkWidget *widget, GdkEvent  *event, gpointer user_data)
   return FALSE;
 }
 
+static gboolean
+button_released(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
+{
+  struct gtklocal *gtklocal;
+
+  gtklocal = (struct gtklocal *) user_data;
+
+  gtklocal->action.type = ACTION_TYPE_BUTTON;
+  gtklocal->action.val = event->button;
+
+  return FALSE;
+}
+
+static gboolean
+scrolled(GtkWidget *widget, GdkEventScroll *event, gpointer user_data)
+{
+  struct gtklocal *gtklocal;
+
+  gtklocal = (struct gtklocal *) user_data;
+
+  switch (event->direction) {
+  case GDK_SCROLL_UP:
+  case GDK_SCROLL_DOWN:
+  case GDK_SCROLL_LEFT:
+  case GDK_SCROLL_RIGHT:
+    gtklocal->action.type = ACTION_TYPE_SCROLL;
+    gtklocal->action.val = event->direction;
+    break;
+  case GDK_SCROLL_SMOOTH:
+    break;
+  }
+
+  return FALSE;
+}
+
 static int
 gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
@@ -300,6 +346,8 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   gtklocal->fit = FALSE;
   gtklocal->frame = TRUE;
   gtklocal->blank_cursor = NULL;
+  gtklocal->action.type = ACTION_TYPE_NONE;
+  gtklocal->action.val = 0;
 
   if (_putobj(obj, "_gtklocal", inst, gtklocal))
     goto errexit;
@@ -315,7 +363,6 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
 
   if (_getobj(obj, "frame", inst, &gtklocal->frame))
     goto errexit;
-
 
   gtklocal->PaperWidth = 0;
   gtklocal->PaperHeight = 0;
@@ -401,8 +448,10 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   gtklocal->window = win;
   gtklocal->redraw = TRUE;
 
-  gtk_widget_add_events(gtklocal->mainwin, GDK_POINTER_MOTION_MASK);
+  gtk_widget_add_events(gtklocal->mainwin, GDK_POINTER_MOTION_MASK | GDK_BUTTON_RELEASE_MASK | GDK_BUTTON_PRESS_MASK);
   g_signal_connect(gtklocal->mainwin, "motion-notify-event", G_CALLBACK(cursor_moved), gtklocal);
+  g_signal_connect(gtklocal->mainwin, "button-release-event", G_CALLBACK(button_released), gtklocal);
+  g_signal_connect(gtklocal->mainwin, "scroll-event", G_CALLBACK(scrolled), gtklocal);
 
   if (chkobjfield(obj, "_evloop")) {
     goto errexit;
@@ -832,7 +881,7 @@ gtk_set_size(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char *
 }
 
 static int
-gtk_wait_key(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+gtkwait_action(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct gtklocal *local;
   char *name;
@@ -851,15 +900,41 @@ gtk_wait_key(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char *
     gdk_window_set_cursor(gtk_widget_get_window(local->mainwin), local->blank_cursor);
   }
 
-  local->keyval = 0;
-  while (! local->keyval) {
+  local->action.type = ACTION_TYPE_NONE;
+  local->action.val = 0;
+  while (local->action.type == ACTION_TYPE_NONE) {
     gtk_evloop(NULL, NULL, NULL, 0, NULL);
     msleep(100);
   }
 
-  name = gdk_keyval_name(local->keyval);
-  if (name) {
-    rval->str = g_strdup(name);
+  switch (local->action.type) {
+  case ACTION_TYPE_NONE:
+    break;
+  case ACTION_TYPE_KEY:
+    name = gdk_keyval_name(local->action.val);
+    if (name) {
+      rval->str = g_strdup(name);
+    }
+    break;
+  case ACTION_TYPE_BUTTON:
+    rval->str = g_strdup_printf("button%d", local->action.val);
+    break;
+  case ACTION_TYPE_SCROLL:
+    switch (local->action.val) {
+    case GDK_SCROLL_UP:
+      rval->str = g_strdup("scroll_up");
+      break;
+    case GDK_SCROLL_DOWN:
+      rval->str = g_strdup("scroll_down");
+      break;
+    case GDK_SCROLL_LEFT:
+      rval->str = g_strdup("scroll_left");
+      break;
+    case GDK_SCROLL_RIGHT:
+      rval->str = g_strdup("scroll_right");
+      break;
+    }
+    break;
   }
 
   return 0;
@@ -884,7 +959,7 @@ static struct objtable gra2gtk[] = {
   {"BR", NINT, NREAD | NWRITE, gtkbr, NULL, 0},
   {"BG", NINT, NREAD | NWRITE, gtkbg, NULL, 0},
   {"BB", NINT, NREAD | NWRITE, gtkbb, NULL, 0},
-  {"wait_key",NSFUNC, NREAD | NEXEC, gtk_wait_key, "", 0},
+  {"wait_action",NSFUNC, NREAD | NEXEC, gtkwait_action, "", 0},
   {"_gtklocal", NPOINTER, 0, NULL, NULL, 0},
   {"_output", NVFUNC, 0, gtk_output, NULL, 0},
   {"_strwidth", NIFUNC, 0, gra2cairo_strwidth, NULL, 0},

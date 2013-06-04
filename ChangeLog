@@ -1,3 +1,11 @@
+2013-06-05  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/ogra2x11.c (gtkwait_action): renamed from "wait_key()".
+	(action_type, button_released, scrolled): added.
+	(gtklocal): use "struct action_type".
+	(gtkinit): add event handler for signals "button-release-event"
+	and "scroll-event".
+
 2013-06-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gra.c (GRAcolor): don't change the color when an argument is
