@@ -199,7 +199,6 @@ get_parent_window(GtkWidget *w)
 }
 
 
-#if USE_ENTRY_ICON
 static void
 entry_icon_file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointer user_data)
 {
@@ -222,9 +221,6 @@ entry_icon_file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *eve
     g_free(file);
   }
 }
-#else
-GCallback entry_icon_file_select = NULL;
-#endif
 
 GtkWidget *
 create_file_entry_with_cb(GCallback cb, gpointer data)
@@ -233,10 +229,8 @@ create_file_entry_with_cb(GCallback cb, gpointer data)
 
   w = create_text_entry(TRUE, TRUE);
 
-#if USE_ENTRY_ICON
   gtk_entry_set_icon_from_stock(GTK_ENTRY(w), GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_OPEN);
   g_signal_connect(w, "icon-release", cb, data);
-#endif
 
   return w;
 }
@@ -247,7 +241,6 @@ create_file_entry(struct objlist *obj)
   return create_file_entry_with_cb(G_CALLBACK(entry_icon_file_select), obj);
 }
 
-#if USE_ENTRY_ICON
 static void
 direction_icon_released(GtkEntry *entry, GtkEntryIconPosition pos, GdkEvent *event, gpointer user_data)
 {
@@ -284,14 +277,12 @@ direction_icon_released(GtkEntry *entry, GtkEntryIconPosition pos, GdkEvent *eve
 
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(entry), val);
 }
-#endif
 
 GtkWidget *
 create_direction_entry(void)
 {
   GtkWidget *w;
 
-#if USE_ENTRY_ICON
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_ANGLE, FALSE, TRUE);
 #if GTK_CHECK_VERSION(3, 4, 0)
   gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 1.2, -1);
@@ -301,9 +292,6 @@ create_direction_entry(void)
   gtk_entry_set_icon_from_stock(GTK_ENTRY(w), GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_GO_UP);
   gtk_entry_set_icon_from_stock(GTK_ENTRY(w), GTK_ENTRY_ICON_PRIMARY, GTK_STOCK_GO_DOWN);
   g_signal_connect(w, "icon-release", G_CALLBACK(direction_icon_released), NULL);
-#else
-  w = create_spin_entry_type(SPIN_BUTTON_TYPE_ANGLE, TRUE, TRUE);
-#endif
 
   return w;
 }

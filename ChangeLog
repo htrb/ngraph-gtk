@@ -1,3 +1,22 @@
+2013-06-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gra.c (GRAcolor): don't change the color when an argument is
+	negative.
+	(GRAdrawtext, GRAtextextent): add "C" and "A" parameter.
+
+	* src/gtk/ogra2x11.c (gtklocal): add member "blank_cursor".
+	(cursor_moved): added.
+	(gtkinit): initialize "gtklocal->blank_cursor".
+	(gtkinit): the "motion-notify-event" signal is connected to the
+	function "cursor_moved()".
+	(gtkdone): unref "gtklocal->blank_cursor" if necessary.
+	(gtk_wait_key): set mouse cursor invisible.
+
+	* src/gtk/gtk_common.h (SE_ENTRY_ICON): removed.
+
+	* configure.in (GTK2_REQUIRED_VERSION, GLIB_REQUIRED_VERSION):
+	changed from "2.14.0" to "2.16.0".
+
 2013-06-02  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/ofile.c (f2dredraw): redraw when the variable "dmax" equal

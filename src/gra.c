@@ -865,22 +865,22 @@ GRAcolor(int GC, int fr, int fg, int fb, int fa)
   if (fr > 255) {
     fr = 255;
   } else if (fr < 0) {
-    fr = 0;
+    fr = GRAClist[GC].fr;
   }
   if (fg > 255) {
     fg = 255;
   } else if (fg < 0) {
-    fg = 0;
+    fg = GRAClist[GC].fg;
   }
   if (fb > 255) {
     fb = 255;
   } else if (fb < 0) {
-    fb = 0;
+    fb = GRAClist[GC].fb;
   }
   if (fa > 255) {
     fa = 255;
   } else if (fa < 0) {
-    fa = 0;
+    fa = GRAClist[GC].fa;
   }
   code = 'G';
   cpar[0] = 4;
@@ -2259,7 +2259,7 @@ GRAdrawtext(int GC, char *s, char *font, int style,
       ptr++;
       break;
     case '%':
-      if ((ptr[1]!='\0') && (strchr("FJSPXY", toupper(ptr[1]))!=NULL) && (ptr[2]=='{')) {
+      if ((ptr[1]!='\0') && (strchr("FJSPXYCA", toupper(ptr[1]))!=NULL) && (ptr[2]=='{')) {
         for (i = 3; ptr[i] != '\0' && ptr[i] != '}'; i++);
         if (ptr[i] == '}') {
 	  tok=g_malloc(i - 2);
@@ -2296,6 +2296,32 @@ GRAdrawtext(int GC, char *s, char *font, int style,
               val=strtol(tok, &endptr, 10);
               if (endptr[0]=='\0') GRAmoverel(GC, 0, (int) (val * 100 * 25.4 / 72.0));
               g_free(tok);
+              break;
+            case 'C':
+	      {
+		char *tmp_ptr;
+
+		tmp_ptr = tok;
+		while (*tmp_ptr == '#' || g_ascii_isspace(*tmp_ptr)) {
+		  tmp_ptr++;
+		}
+		val = strtol(tmp_ptr, &endptr, 16);
+		if (endptr[0]=='\0') {
+		  GRAcolor(GC,
+			   (val >> 16) & 0xff,
+			   (val >> 8) & 0xff,
+			   val & 0xff,
+			   -1);
+		}
+		g_free(tok);
+	      }
+              break;
+            case 'A':
+	      val = strtol(tok, &endptr, 10);
+	      if (endptr[0]=='\0') {
+		GRAcolor(GC, -1, -1, -1, val);
+	      }
+	      g_free(tok);
               break;
             }
           }
@@ -2560,7 +2586,7 @@ GRAtextextent(char *s, char *font, int style,
       j++;
       break;
     case '%':
-      if (c[j + 1] != '\0' && strchr("FJSPXY", toupper(c[j + 1])) && c[j + 2] == '{') {
+      if (c[j + 1] != '\0' && strchr("FJSPXYCA", toupper(c[j + 1])) && c[j + 2] == '{') {
         for (i = j + 3; c[i] != '\0' && c[i] != '}'; i++);
         if (c[i] == '}') {
 	  tok = g_malloc(i - j - 2);
@@ -2576,6 +2602,9 @@ GRAtextextent(char *s, char *font, int style,
               font2 = tok;
               break;
             case 'J':
+            case 'C':
+            case 'A':
+              g_free(tok);
               break;
             case 'S':
               val = strtol(tok, &endptr, 10);

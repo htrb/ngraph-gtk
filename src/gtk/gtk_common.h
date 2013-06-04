@@ -9,8 +9,6 @@
 
 #include "common.h"
 
-#define USE_ENTRY_ICON GTK_CHECK_VERSION(2, 16, 0)
-
 #ifndef GTK_WIDGET_VISIBLE
 #define GTK_WIDGET_VISIBLE(w) gtk_widget_get_visible(w)
 #endif

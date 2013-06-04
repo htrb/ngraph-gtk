@@ -27,10 +27,11 @@ Ngraphでは異なるオペレーティングシステムとの互換性を考�
 インストール時に定義されているフォントマッピング<br>
 <br>
 <table border=1>
- <tr><th>Ngraph定義名</th><th>フォント名</th></tr>
- <tr><td>Serif</td><td>Times New Roman</td></tr>
- <tr><td>Sans-serif</td><td>Arial</td></tr>
- <tr><td>Monospace</td><td>Courier New</td></tr>
+ <tr><th rowspan="2">Ngraph定義名</th><th colspan="2">フォント名</th></tr>
+ <tr><th>Windows</th><th>それ以外</th>
+ <tr><td>Serif</td><td>Times New Roman</td><td>Liberation Sans</td></tr>
+ <tr><td>Sans-serif</td><td>Arial</td><td>Liberation Serif</td></tr>
+ <tr><td>Monospace</td><td>Courier New</td><td>Liberation Mono</td></tr>
 </table>
 </div>
 
@@ -69,6 +70,8 @@ Legend textダイアログボックスのTextで文字列中に制御文字を�
 <tr><td>%P{整数}</td><td>文字間隔をポイントで指定する</td></tr>
 <tr><td>%X{整数}</td><td>カレントポイントを右方向に移動させる量をポイントで指定する</td></tr>
 <tr><td>%Y{整数}</td><td>カレントポイントを下方向に移動させる量をポイントで指定する</td></tr>
+<tr><td>%C{整数}</td><td>文字の色を16進形式で指定する。</td></tr>
+<tr><td>%A{整数}</td><td>文字の不透明度 (0-255) を指定する。</td></tr>
 </table><br>
 <br>
 <b>数式</b>

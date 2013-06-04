@@ -2448,11 +2448,7 @@ create_toolbar_box(GtkWidget *box, GtkWidget *t, GtkOrientation o)
 
   gtk_toolbar_set_style(GTK_TOOLBAR(t), GTK_TOOLBAR_ICONS);
   gtk_toolbar_set_show_arrow(GTK_TOOLBAR(t), TRUE);
-#if GTK_CHECK_VERSION(2, 16, 0)
   gtk_orientable_set_orientation(GTK_ORIENTABLE(t), o);
-#else
-  gtk_toolbar_set_orientation(GTK_TOOLBAR(t), o);
-#endif
   w = gtk_handle_box_new();
   g_signal_connect(w, "child-attached", G_CALLBACK(detach_toolbar), GINT_TO_POINTER(TRUE));
   g_signal_connect(w, "child-detached", G_CALLBACK(detach_toolbar), GINT_TO_POINTER(FALSE));

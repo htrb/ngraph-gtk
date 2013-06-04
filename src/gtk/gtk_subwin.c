@@ -33,7 +33,6 @@ static void modify_numeric(struct obj_list_data *d, char *field, int val);
 static void modify_string(struct obj_list_data *d, char *field, char *str);
 static void toggle_boolean(struct obj_list_data *d, char *field, int sel);
 
-#if USE_ENTRY_ICON
 static void
 file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointer user_data)
 {
@@ -67,7 +66,6 @@ file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointe
     }
   }
 }
-#endif
 
 #if GTK_CHECK_VERSION(3, 0, 0) && ! GTK_CHECK_VERSION(3, 2, 0)
 static gboolean
@@ -171,12 +169,10 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
       } else {
 	char *valstr;
 
-#if USE_ENTRY_ICON
 	if (strcmp(list->name, "file") == 0) {
 	  gtk_entry_set_icon_from_stock(GTK_ENTRY(editable), GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_OPEN);
 	  g_signal_connect(editable, "icon-release", G_CALLBACK(file_select), d);
 	}
-#endif
 	sgetobjfield(d->obj, sel, list->name, NULL, &valstr, FALSE, FALSE, FALSE);
 	if (valstr) {
 	  gtk_entry_set_text(GTK_ENTRY(editable), CHK_STR(valstr));

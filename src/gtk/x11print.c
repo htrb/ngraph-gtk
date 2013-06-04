@@ -116,7 +116,6 @@ DriverDialogSelectCB(GtkWidget *wi, gpointer client_data)
   }
 }
 
-#if USE_ENTRY_ICON
 static void
 DriverDialogBrowseCB(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointer user_data)
 {
@@ -134,9 +133,6 @@ DriverDialogBrowseCB(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event
   }
   g_free(file);
 }
-#else
-GCallback DriverDialogBrowseCB = NULL;
-#endif
 
 static void
 DriverDialogSetup(GtkWidget *wi, void *data, int makewidget)

@@ -278,7 +278,6 @@ SetScriptDialogSetupItem(GtkWidget *w, struct SetScriptDialog *d)
   }
 }
 
-#if USE_ENTRY_ICON
 static void
 SetScriptDialogBrowse(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointer user_data)
 {
@@ -290,9 +289,6 @@ SetScriptDialogBrowse(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *even
   }
   g_free(file);
 }
-#else
-GCallback SetScriptDialogBrowse = NULL;
-#endif
 
 static void
 SetScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
@@ -520,7 +516,6 @@ SetDriverDialogSetupItem(GtkWidget *w, struct SetDriverDialog *d)
   gtk_entry_set_text(GTK_ENTRY(d->ext), CHK_STR(d->Driver->ext));
 }
 
-#if USE_ENTRY_ICON
 static void
 SetDriverDialogBrowse(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointer user_data)
 {
@@ -534,9 +529,6 @@ SetDriverDialogBrowse(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *even
   }
   g_free(file);
 }
-#else
-GCallback SetDriverDialogBrowse = NULL;
-#endif
 
 static void
 SetDriverDialogSetup(GtkWidget *wi, void *data, int makewidget)
@@ -1267,7 +1259,6 @@ MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->select_data), Menulocal.select_data);
 }
 
-#if USE_ENTRY_ICON
 static void
 set_file_in_entry(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointer user_data)
 {
@@ -1281,9 +1272,6 @@ set_file_in_entry(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, g
   }
   g_free(file);
 }
-#else
-GCallback set_file_in_entry = NULL;
-#endif
 
 static void
 MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)

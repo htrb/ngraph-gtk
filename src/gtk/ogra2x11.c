@@ -72,6 +72,7 @@ static char *gtkerrorlist[] = {
 struct gtklocal
 {
   struct objlist *obj;
+  GdkCursor *blank_cursor;
   N_VALUE *inst;
   GtkWidget *mainwin, *View;
   cairo_surface_t *surface;
@@ -255,6 +256,26 @@ size_allocate(GtkWidget *widget, GdkRectangle *allocation, gpointer user_data)
 
 }
 
+static gboolean
+cursor_moved(GtkWidget *widget, GdkEvent  *event, gpointer user_data)
+{
+  struct gtklocal *gtklocal;
+
+  gtklocal = (struct gtklocal *) user_data;
+
+  if (gtklocal->blank_cursor) {
+    gdk_window_set_cursor(gtk_widget_get_window(gtklocal->mainwin), NULL);
+#if GTK_CHECK_VERSION(3, 0, 0)
+    g_object_unref(gtklocal->blank_cursor);
+#else
+    gdk_cursor_unref(gtklocal->blank_cursor);
+#endif
+    gtklocal->blank_cursor = NULL;
+  }
+
+  return FALSE;
+}
+
 static int
 gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
@@ -278,6 +299,7 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   gtklocal->mainwin = NULL;
   gtklocal->fit = FALSE;
   gtklocal->frame = TRUE;
+  gtklocal->blank_cursor = NULL;
 
   if (_putobj(obj, "_gtklocal", inst, gtklocal))
     goto errexit;
@@ -379,6 +401,9 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   gtklocal->window = win;
   gtklocal->redraw = TRUE;
 
+  gtk_widget_add_events(gtklocal->mainwin, GDK_POINTER_MOTION_MASK);
+  g_signal_connect(gtklocal->mainwin, "motion-notify-event", G_CALLBACK(cursor_moved), gtklocal);
+
   if (chkobjfield(obj, "_evloop")) {
     goto errexit;
   }
@@ -425,6 +450,14 @@ gtkdone(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
 
   if (_getobj(obj, "_gtklocal", inst, &gtklocal))
     return 1;
+
+  if (gtklocal->blank_cursor) {
+#if GTK_CHECK_VERSION(3, 0, 0)
+    g_object_unref(gtklocal->blank_cursor);
+#else
+    gdk_cursor_unref(gtklocal->blank_cursor);
+#endif
+  }
 
   if (gtklocal->mainwin != NULL) {
     gtk_widget_destroy(gtklocal->mainwin);
@@ -811,6 +844,11 @@ gtk_wait_key(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char *
 
   if (local->mainwin == NULL) {
     return 1;
+  }
+
+  if (local->blank_cursor == NULL) {
+    local->blank_cursor = gdk_cursor_new(GDK_BLANK_CURSOR);
+    gdk_window_set_cursor(gtk_widget_get_window(local->mainwin), local->blank_cursor);
   }
 
   local->keyval = 0;
