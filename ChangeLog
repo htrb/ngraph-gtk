@@ -1,3 +1,8 @@
+2013-06-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/object.h (objlist): type of the member "root" and "root2"
+	should be "N_VALUE *".
+
 2013-06-05  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/ogra2x11.c (gtkwait_action): renamed from "wait_key()".

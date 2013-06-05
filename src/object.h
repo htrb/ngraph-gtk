@@ -79,8 +79,8 @@ struct objlist {
     int size;
     int errnum;
     char **errtable;
-    void *root;
-    void *root2;
+    N_VALUE *root;
+    N_VALUE *root2;
     int lastinst2;
     struct objlist *parent;
     struct objlist *next, *child;
