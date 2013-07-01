@@ -259,10 +259,7 @@ LegendGaussDialogPaint(GtkWidget *w, GdkEventExpose *event, gpointer client_data
       }
     }
     _GRAclose(GC);
-    if (local->linetonum && local->cairo) {
-      cairo_stroke(local->cairo);
-      local->linetonum = 0;
-    }
+    gra2cairo_draw_path(local);
   }
 
 #if GTK_CHECK_VERSION(3, 0, 0)

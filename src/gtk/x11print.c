@@ -525,9 +525,7 @@ draw_gra(struct objlist *graobj, int id, char *msg, int close)
 
   ProgressDialogFinalize();
   ResetStatusBar();
-  if (NgraphApp.Viewer.gdk_win) {
-    gdk_window_invalidate_rect(NgraphApp.Viewer.gdk_win, NULL, FALSE);
-  }
+  main_window_redraw();
 }
 
 static void

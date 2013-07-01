@@ -69,7 +69,7 @@
 static char *SIDE_PANE_TAB_ID = "side_pane";
 #endif
 int Menulock = FALSE, DnDLock = FALSE;
-struct NgraphApp NgraphApp;
+struct NgraphApp NgraphApp = {0};
 GtkWidget *TopLevel = NULL;
 GtkAccelGroup *AccelGroup = NULL;
 
@@ -4011,6 +4011,7 @@ application(char *file)
   NgraphApp.FileName = NULL;
 
   gtk_widget_destroy(TopLevel);
+  NgraphApp.Viewer.Win = NULL;
   CurrentWindow = TopLevel = PToolbar = CToolbar = NULL;
 
   free_markpixmap();
@@ -4096,10 +4097,13 @@ NSetCursor(unsigned int type)
 {
   GdkWindow *win;
 
-  if (NgraphApp.cursor == NULL || CursorType == type)
+  if (NgraphApp.Viewer.Win == NULL || NgraphApp.cursor == NULL || CursorType == type)
     return;
 
-  win = NgraphApp.Viewer.gdk_win;
+  win = gtk_widget_get_window(NgraphApp.Viewer.Win);
+  if (win == NULL) {
+    return;
+  }
 
   CursorType = type;
 
@@ -4319,7 +4323,7 @@ script_exec(GtkWidget *w, gpointer client_data)
   UpdateAll2();
 
   delobj(shell, newid);
-  gdk_window_invalidate_rect(NgraphApp.Viewer.gdk_win, NULL, FALSE);
+  main_window_redraw();
 }
 
 static void

@@ -1,3 +1,44 @@
+2013-06-27  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (PasteObjectsFromClipboard): check "d->Win".
+	(PasteObjectsFromClipboard, ShowCrossGauge, show_zoom_animation)
+	(show_move_animation, mouse_move_scroll, ViewerEvMouseMove)
+	(popup_menu_position, SetHRuler, SetVRuler, create_pix): use
+	"gtk_widget_get_window()".
+	(move_focus_frame, ViewerEvVScroll, ViewerEvHScroll)
+	(ViewerWinUpdate, ChangeDPI, Draw): use "main_window_redraw()".
+
+2013-06-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/ogra2cairo.c (gra2cairo_draw_path): check
+	"local->cairo".
+
+	* src/gtk/x11file.c (draw_type_pixbuf): use
+	"gra2cairo_draw_path()".
+	(CmFileSaveData): use "main_window_redraw()".
+
+	* src/gtk/x11lgnd.c (draw_color_pixbuf): use
+	"gra2cairo_draw_path()".
+
+	* src/gtk/ogra2gtkprint.c (gra2gtkprint_done): use
+	"gra2cairo_draw_path()".
+
+	* src/gtk/ox11menu.c (main_window_redraw): added.
+	(mx_redraw, mxdpi, mxclear): use "gra2cairo_draw_path()".
+	(mxflush): use "gra2cairo_draw_path()".
+
+	* src/gtk/ogra2x11.c (gtklocal): remove member "win".
+	(redraw_window): added.
+	(gtkclear, gtkflush, gtkredraw): use "redraw_window()".
+
+	* src/gtk/x11menu.h (Viewer): remove member "gdk_win".
+
+	* src/gtk/x11menu.c (NSetCursor): check "NgraphApp.Viewer.Win" and
+	use "gtk_widget_get_window()".
+	(script_exec): use "main_window_redraw()".
+
+	* src/gtk/x11print.c (draw_gra): use "main_window_redraw()".
+
 2013-06-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/object.h (objlist): type of the member "root" and "root2"

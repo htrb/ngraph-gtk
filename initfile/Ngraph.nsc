@@ -68,6 +68,13 @@ clear_viewer() {
     fi
 }
 
+copy_gra_settings() {
+    if exist -q gra:viewer
+    then
+	cpy gra:viewer,$1 draw_obj left_margin top_margin zoom paper_width paper_height
+    fi
+}
+
 save_image() {
     check_file "$1"
     clear_viewer
@@ -434,6 +441,7 @@ do
 
 	    new gra2file name=OUTPUT
 	    new gra name=OUTPUT
+	    copy_gra_settings OUTPUT
 	    gra2file::file=`basename $2 .ngp`.gra
 	    gra:OUTPUT:device=gra2file:OUTPUT
 	    gra:OUTPUT:open

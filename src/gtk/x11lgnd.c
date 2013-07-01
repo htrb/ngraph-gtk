@@ -2615,10 +2615,7 @@ draw_color_pixbuf(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type, i
   }
 
   _GRAclose(ggc);
-  if (local->linetonum && local->cairo) {
-    cairo_stroke(local->cairo);
-    local->linetonum = 0;
-  }
+  gra2cairo_draw_path(local);
 
 #if GTK_CHECK_VERSION(3, 0, 0)
   pixbuf = gdk_pixbuf_get_from_surface(pix, 0, 0, width, height);
@@ -2850,10 +2847,7 @@ draw_mark_pixbuf(struct objlist *obj, int i)
 	  fr, fg, fb, 255, fr2, fg2, fb2, 255);
 
   _GRAclose(ggc);
-  if (local->linetonum && local->cairo) {
-    cairo_stroke(local->cairo);
-    local->linetonum = 0;
-  }
+  gra2cairo_draw_path(local);
 
 #if GTK_CHECK_VERSION(3, 0, 0)
   pixbuf = gdk_pixbuf_get_from_surface(pix, 0, 0, width, height);

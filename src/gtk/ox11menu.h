@@ -182,5 +182,6 @@ int get_graph_modified(void);
 void set_graph_modified(void);
 void reset_graph_modified(void);
 int menu_save_config(int type);
+void main_window_redraw(void);
 
 #endif

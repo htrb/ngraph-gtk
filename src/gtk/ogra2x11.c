@@ -329,7 +329,6 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
 {
   struct gtklocal *gtklocal;
   struct gra2cairo_local *local;
-  GdkWindow *win;
   struct objlist *robj;
   int idn, oid, width, height;
   GtkWidget *scrolled_window = NULL;
@@ -444,10 +443,7 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
 
   gtk_widget_show_all(gtklocal->mainwin);
 
-  win = gtk_widget_get_window(gtklocal->View);
-
   gtklocal->surface= NULL;
-  gtklocal->window = win;
   gtklocal->redraw = TRUE;
 
   gtk_widget_add_events(gtklocal->mainwin, GDK_POINTER_MOTION_MASK | GDK_BUTTON_RELEASE_MASK | GDK_BUTTON_PRESS_MASK);
@@ -512,6 +508,7 @@ gtkdone(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
 
   if (gtklocal->mainwin != NULL) {
     gtk_widget_destroy(gtklocal->mainwin);
+    gtklocal->mainwin = NULL;
     while (gtk_events_pending()) {
       gtk_main_iteration();
     }
@@ -541,6 +538,23 @@ clear_pixmap(struct gtklocal *local)
   cairo_destroy(cr);
 }
 
+static void
+redraw_window(struct gtklocal *local)
+{
+  GdkWindow *win;
+
+  if (local->View == NULL) {
+    return;
+  }
+
+  win = gtk_widget_get_window(local->View);
+  if (win == NULL) {
+    return;
+  }
+
+  gdk_window_invalidate_rect(win, NULL, TRUE);
+}
+
 static int
 gtkclear(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
@@ -553,8 +567,7 @@ gtkclear(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
     return 1;
 
   clear_pixmap(local);
-
-  gdk_window_invalidate_rect(local->window, NULL, TRUE);
+  redraw_window(local);
 
   return 0;
 }
@@ -611,7 +624,8 @@ gtkflush(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   if (_getobj(obj, "_gtklocal", inst, &local))
     return 1;
 
-  gdk_window_invalidate_rect(local->window, NULL, TRUE);
+  redraw_window(local);
+
   return 0;
 }
 
@@ -676,7 +690,7 @@ gtkredraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
   if (_getobj(obj, "_gtklocal", inst, &gtklocal))
     return 1;
 
-  gdk_window_invalidate_rect(gtklocal->window, NULL, TRUE);
+  redraw_window(gtklocal);
   return 0;
 }
 

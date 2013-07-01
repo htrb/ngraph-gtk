@@ -4850,10 +4850,7 @@ draw_type_pixbuf(struct objlist *obj, int i)
   }
 
   _GRAclose(ggc);
-  if (local->linetonum && local->cairo) {
-    cairo_stroke(local->cairo);
-    local->linetonum = 0;
-  }
+  gra2cairo_draw_path(local);
 
 #if GTK_CHECK_VERSION(3, 0, 0)
   pixbuf = gdk_pixbuf_get_from_surface(pix, 0, 0, width, height);
@@ -5080,7 +5077,7 @@ CmFileSaveData(GtkAction *w, gpointer client_data)
   }
   ProgressDialogFinalize();
   ResetStatusBar();
-  gdk_window_invalidate_rect(NgraphApp.Viewer.gdk_win, NULL, FALSE);
+  main_window_redraw();
 
   arraydel(&farray);
   g_free(file);

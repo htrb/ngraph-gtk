@@ -1433,6 +1433,22 @@ mx_data_head_lines(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 }
 
 void
+main_window_redraw(void)
+{
+  GdkWindow *win;
+  if (NgraphApp.Viewer.Win == NULL) {
+    return;
+  }
+
+  win = gtk_widget_get_window(NgraphApp.Viewer.Win);
+  if(win == NULL) {
+    return;
+  }
+
+  gdk_window_invalidate_rect(win, NULL, FALSE);
+}
+
+void
 mx_redraw(struct objlist *obj, N_VALUE *inst)
 {
   int n;
@@ -1451,9 +1467,7 @@ mx_redraw(struct objlist *obj, N_VALUE *inst)
   mxflush(obj, inst, NULL, 0, NULL);
   draw_paper_frame();
 
-  if (NgraphApp.Viewer.gdk_win) {
-    gdk_window_invalidate_rect(NgraphApp.Viewer.gdk_win, NULL, TRUE);
-  }
+  main_window_redraw();
 }
 
 void
@@ -1507,9 +1521,8 @@ mxdpi(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
     Menulocal.local->pixel_dot_y = dpi / (DPI_MAX * 1.0);
   *(int *) argv[2] = dpi;
 
-  if (NgraphApp.Viewer.gdk_win) {
-    gdk_window_invalidate_rect(NgraphApp.Viewer.gdk_win, NULL, TRUE);
-  }
+  main_window_redraw();
+
   return 0;
 }
 
@@ -1523,14 +1536,13 @@ mxflush(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
     return 1;
   }
 
-  if (Menulocal.local->linetonum && Menulocal.local->cairo) {
-    cairo_stroke(Menulocal.local->cairo);
-    Menulocal.local->linetonum = 0;
-  }
+  if (Menulocal.local->cairo) {
+    gra2cairo_draw_path(Menulocal.local);
 
-  surface = cairo_get_target(Menulocal.local->cairo);
-  if (surface) {
-    cairo_surface_flush(surface);
+    surface = cairo_get_target(Menulocal.local->cairo);
+    if (surface) {
+      cairo_surface_flush(surface);
+    }
   }
 
   return 0;
@@ -1576,11 +1588,9 @@ mxclear(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
 
   mx_clear(NULL);
 
-  if (NgraphApp.Viewer.gdk_win) {
-    gdk_window_invalidate_rect(NgraphApp.Viewer.gdk_win, NULL, TRUE);
-  }
+  main_window_redraw();
 
-return 0;
+  return 0;
 }
 
 static int

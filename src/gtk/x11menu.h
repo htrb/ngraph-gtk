@@ -131,7 +131,6 @@ enum pop_up_menu_item_type {
 struct Viewer
 {
   GtkWidget *Win;
-  GdkWindow *gdk_win;
   GtkWidget *menu, *VScroll, *HScroll, *popup, *VRuler, *HRuler, *side_pane1, *side_pane2, *side_pane3, *main_pane;
   int ShowFrame, ShowLine, ShowRect;
   int Capture, MoveData, KeyMask;

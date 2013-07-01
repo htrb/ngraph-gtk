@@ -575,7 +575,7 @@ gra2cairo_init(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char
 void
 gra2cairo_draw_path(struct gra2cairo_local *local)
 {
-  if (local->linetonum) {
+  if (local->cairo && local->linetonum) {
     double x, y;
 
     cairo_get_current_point(local->cairo, &x, &y);

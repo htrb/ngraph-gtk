@@ -49,12 +49,9 @@ gra2gtkprint_done(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, c
 
   _getobj(obj, "_local", inst, &local);
 
-  if (local) {
-    if (local->linetonum && local->cairo) {
-      cairo_stroke(local->cairo);
-      local->linetonum = 0;
-    }
-    local->cairo = NULL;
+  if (local && local->cairo) {
+    gra2cairo_draw_path(local);
+    local->cairo = NULL;	/* the instance of cairo is created by GtkPrintContext */
   }
 
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv))

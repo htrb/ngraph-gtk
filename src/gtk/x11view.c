@@ -383,10 +383,11 @@ PasteObjectsFromClipboard(void)
 #if GTK_CHECK_VERSION(3, 4, 0)
   GdkDevice *device;
 #endif
+  GdkWindow *win;
 
   d = &NgraphApp.Viewer;
 
-  if (d->Mode != PointB && d->Mode != LegendB) {
+  if (d->Win == NULL || (d->Mode != PointB && d->Mode != LegendB)) {
     return;
   }
 
@@ -397,8 +398,11 @@ PasteObjectsFromClipboard(void)
 #if GTK_CHECK_VERSION(3, 4, 0)
     device = gtk_get_current_event_device(); /* fix-me: is there any other appropriate way to get the device? */
     if (device && gdk_device_get_source(device) != GDK_SOURCE_KEYBOARD) {
-      gdk_window_get_device_position(d->gdk_win, device, &x, &y, NULL);
-      set_mouse_cursor_hover(d, x, y);
+      win = gtk_widget_get_window(d->Win);
+      if (win) {
+	gdk_window_get_device_position(win, device, &x, &y, NULL);
+	set_mouse_cursor_hover(d, x, y);
+      }
     }
 #else
     gtk_widget_get_pointer(d->Win, &x, &y);
@@ -1108,9 +1112,9 @@ ViewerWinSetup(void)
 {
   struct Viewer *d;
   int x, y, width, height;
+  GdkWindow *win;
 
   d = &NgraphApp.Viewer;
-  d->gdk_win = gtk_widget_get_window(d->Win);
   Menulocal.GRAoid = -1;
   d->Mode = PointB;
   d->Capture = FALSE;
@@ -1135,12 +1139,13 @@ ViewerWinSetup(void)
   OpenGC();
   OpenGRA();
   SetScroller();
-  gdk_window_get_position(d->gdk_win, &x, &y);
+  win = gtk_widget_get_window(NgraphApp.Viewer.Win);
+  gdk_window_get_position(win, &x, &y);
 #if GTK_CHECK_VERSION(2, 24, 0)
-  width = gdk_window_get_width(d->gdk_win);
-  height = gdk_window_get_height(d->gdk_win);
+  width = gdk_window_get_width(win);
+  height = gdk_window_get_height(win);
 #else
-  gdk_drawable_get_size(d->gdk_win, &width, &height);
+  gdk_drawable_get_size(win, &width, &height);
 #endif
   d->cx = width / 2;
   d->cy = height / 2;
@@ -2493,16 +2498,22 @@ ShowCrossGauge(cairo_t *cr, const struct Viewer *d)
 {
   int x, y, width, height;
   double zoom;
+  GdkWindow *win;
 
   cairo_set_source_rgb(cr, GRAY, GRAY, GRAY);
   cairo_set_dash(cr, NULL, 0, 0);
   //  cairo_set_operator(cr, CAIRO_OPERATOR_DIFFERENCE);
 
+  win = gtk_widget_get_window(d->Win);
+  if (win == NULL) {
+    return;
+  }
+
 #if GTK_CHECK_VERSION(2, 24, 0)
-  width = gdk_window_get_width(d->gdk_win);
-  height = gdk_window_get_height(d->gdk_win);
+  width = gdk_window_get_width(win);
+  height = gdk_window_get_height(win);
 #else
-  gdk_drawable_get_size(d->gdk_win, &width, &height);
+  gdk_drawable_get_size(win, &width, &height);
 #endif
 
   zoom = Menulocal.PaperZoom / 10000.0;
@@ -2820,8 +2831,14 @@ show_zoom_animation(struct Viewer *d, TPoint *point, double zoom)
   cairo_t *cr;
   int i;
   double inc, z;
+  GdkWindow *win;
 
-  cr = gdk_cairo_create(d->gdk_win);
+  win = gtk_widget_get_window(d->Win);
+  if (win == NULL) {
+    return;
+  }
+
+  cr = gdk_cairo_create(win);
   inc = (zoom - 1) / ANIM_DIV;
 
   pattern = cairo_pattern_create_for_surface(Menulocal.pix);
@@ -2854,12 +2871,18 @@ show_move_animation(struct Viewer *d, int x, int y)
   cairo_t *cr;
   int i, n;
   double incx, incy;
+  GdkWindow *win;
+
+  win = gtk_widget_get_window(d->Win);
+  if (win == NULL) {
+    return;
+  }
 
   if (abs(x) < 1 && abs(y) < 1) {
     return;
   }
 
-  cr = gdk_cairo_create(d->gdk_win);
+  cr = gdk_cairo_create(win);
 
   n = abs(x) / 4;
   if (abs(y) / 4 > n) {
@@ -4410,12 +4433,18 @@ static void
 mouse_move_scroll(TPoint *point, const struct Viewer *d)
 {
   int h, w;
+  GdkWindow *win;
+
+  win = gtk_widget_get_window(d->Win);
+  if (win == NULL) {
+    return;
+  }
 
 #if GTK_CHECK_VERSION(2, 24, 0)
-  w = gdk_window_get_width(d->gdk_win);
-  h = gdk_window_get_height(d->gdk_win);
+  w = gdk_window_get_width(win);
+  h = gdk_window_get_height(win);
 #else
-  gdk_window_get_geometry(d->gdk_win, NULL, NULL, &w, &h, NULL);
+  gdk_window_get_geometry(win, NULL, NULL, &w, &h, NULL);
 #endif
   if (point->y > h) {
     range_increment(d->VScroll, SCROLL_INC);
@@ -4464,7 +4493,11 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
   int dx, dy;
   double zoom;
 
-  if (Menulock || Globallock || ! d->gdk_win) {
+  if (Menulock || Globallock) {
+    return FALSE;
+  }
+
+  if (gtk_widget_get_window(d->Win) == NULL) {
     return FALSE;
   }
 
@@ -4573,10 +4606,16 @@ static void
 popup_menu_position(GtkMenu *menu, gint *x, gint *y, gboolean *push_in, gpointer user_data)
 {
   struct Viewer *d;
+  GdkWindow *win;
 
   d = (struct Viewer *) user_data;
 
-  gdk_window_get_origin(d->gdk_win, x, y);
+  win = gtk_widget_get_window(d->Win);
+  if (win == NULL) {
+    return;
+  }
+
+  gdk_window_get_origin(win, x, y);
 }
 
 int
@@ -4782,7 +4821,7 @@ move_focus_frame(GdkEventKey *e, struct Viewer *d)
     d->FrameOfsY += dy / zoom;
     d->MouseMode = MOUSEDRAG;
     set_drag_info(d);
-    gdk_window_invalidate_rect(d->gdk_win, NULL, TRUE);
+    main_window_redraw();
   }
 }
 
@@ -5064,7 +5103,7 @@ ViewerEvVScroll(GtkRange *range, gpointer user_data)
 
   d->vscroll = gtk_range_get_value(range);
   SetVRuler(d);
-  gdk_window_invalidate_rect(d->gdk_win, NULL, TRUE);
+  main_window_redraw();
 }
 
 static void
@@ -5076,7 +5115,7 @@ ViewerEvHScroll(GtkRange *range, gpointer user_data)
 
   d->hscroll = gtk_range_get_value(range);
   SetHRuler(d);
-  gdk_window_invalidate_rect(d->gdk_win, NULL, TRUE);
+  main_window_redraw();
 }
 
 void
@@ -5123,7 +5162,7 @@ ViewerWinUpdate(void)
   }
 
   PaintLock = lock_state;
-  gdk_window_invalidate_rect(d->gdk_win, NULL, TRUE);
+  main_window_redraw();
 
   d->allclear = TRUE;
 }
@@ -5133,11 +5172,17 @@ SetHRuler(const struct Viewer *d)
 {
   gdouble x1, x2, zoom;
   int width;
+  GdkWindow *win;
+
+  win = gtk_widget_get_window(d->Win);
+  if (win == NULL) {
+    return;
+  }
 
 #if GTK_CHECK_VERSION(2, 24, 0)
-  width = gdk_window_get_width(d->gdk_win);
+  width = gdk_window_get_width(win);
 #else
-  gdk_drawable_get_size(d->gdk_win, &width, NULL);
+  gdk_drawable_get_size(win, &width, NULL);
 #endif
   zoom = Menulocal.PaperZoom / 10000.0;
   x1 = N2GTK_RULER_METRIC(calc_mouse_x(0, zoom, d));
@@ -5151,11 +5196,17 @@ SetVRuler(const struct Viewer *d)
 {
   gdouble  y1, y2, zoom;
   int height;
+  GdkWindow *win;
+
+  win = gtk_widget_get_window(d->Win);
+  if (win == NULL) {
+    return;
+  }
 
 #if GTK_CHECK_VERSION(2, 24, 0)
-  height = gdk_window_get_height(d->gdk_win);
+  height = gdk_window_get_height(win);
 #else
-  gdk_drawable_get_size(d->gdk_win, NULL, &height);
+  gdk_drawable_get_size(win, NULL, &height);
 #endif
   zoom = Menulocal.PaperZoom / 10000.0;
   y1 = N2GTK_RULER_METRIC(calc_mouse_y(0, zoom, d));
@@ -5390,7 +5441,6 @@ OpenGC(void)
   if (height == 0)
     height = 1;
 
-  NgraphApp.Viewer.gdk_win = gtk_widget_get_window(NgraphApp.Viewer.Win);
   create_pix(width, height);
 
   Menulocal.region = NULL;
@@ -5504,7 +5554,7 @@ ChangeDPI(void)
     }
   }
 
-  gdk_window_invalidate_rect(d->gdk_win, NULL, TRUE);
+  main_window_redraw();
 
   SetHRuler(d);
   SetVRuler(d);
@@ -5618,7 +5668,7 @@ Draw(int SelectFile)
 
   ProgressDialogFinalize();
 
-  gdk_window_invalidate_rect(d->gdk_win, NULL, TRUE);
+  main_window_redraw();
 
   if (SelectFile) {
     FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
