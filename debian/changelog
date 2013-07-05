@@ -1,14 +1,22 @@
+ngraph-gtk (6.06.10-2) unreleased; urgency=low
+
+  * testing
+
+ -- Ito Hiroyuki <ZXB01226@nifty.com>  Fri, 5 Jul 2013 09:16:03 +0900
+
 ngraph-gtk (6.06.10-1) unstable; urgency=low
 
   * New upstream release
+  * debian/patch/01_replace_to_free_fonts.patch
+   - removed because it was merged to the upstream
 
- -- Ito Hiroyuki <ZXB01226@nifty.com>  Sat, 8 Jun 2013 09:16:03 +0900
+ -- Koichi Akabe <vbkaisetsu@gmail.com>  Thu, 20 Jun 2013 14:21:39 +0900
 
 ngraph-gtk (6.06.09-1~exp1) experimental; urgency=low
 
   * New upstream release
 
- -- Koichi Akabe <vbkaisetsu@gmail.com>  Sun, 10 Mar 2013 00:00:11 +0900 
+ -- Koichi Akabe <vbkaisetsu@gmail.com>  Sun, 10 Mar 2013 00:00:11 +0900
 
 ngraph-gtk (6.06.08-1~exp1) experimental; urgency=low
 

@@ -1,3 +1,16 @@
+2013-07-05  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (application): check thestate of
+	"ViewToggleSingleWindowModeAction".
+
+	* src/gtk/main.c (main): the "-i" option with no filename means
+	to execute a console.
+
+	* src/gtk/gtk_subwin.c (start_editing): the function
+	"spin_button_size_allocated()" is connected to the "size-allocate"
+	signal.
+	(spin_button_size_allocated): added.
+
 2013-06-27  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (PasteObjectsFromClipboard): check "d->Win".

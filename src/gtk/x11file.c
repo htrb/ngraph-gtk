@@ -5638,7 +5638,7 @@ CmFileWindow(GtkToggleAction *action, gpointer client_data)
 
   col = gtk_tree_view_get_column(GTK_TREE_VIEW(d->data.data->text), FILE_WIN_COL_FILE);
   list = gtk_cell_layout_get_cells(GTK_CELL_LAYOUT(col));
-  if (list){ 
+  if (list) {
     if (list->data) {
       GtkCellRenderer *renderer;
       renderer = list->data;

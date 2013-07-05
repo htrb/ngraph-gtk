@@ -964,23 +964,25 @@ main(int argc, char **argv)
     exit(1);
   }
 
-  for (i = 1; i < argc; i++) {
-    if (argv[i][0] != '-' || argv[i][1] != 'i' || i >= argc - 1) {
-      break;
-    }
+  i = 1;
+  if (argc > 1 && strcmp(argv[1], "-i") == 0) {
     i++;
-    inifile = g_strdup(argv[i]);
-    if (inifile == NULL) {
-      exit(1);
+    if (argc > 2) {
+      inifile = g_strdup(argv[2]);
+      if (inifile == NULL) {
+	exit(1);
+      }
+      changefilename(inifile);
+      i++;
+    } else {
+      inifile = NULL;
     }
-    changefilename(inifile);
-  }
-
-  if (inifile == NULL) {
-    if (findfilename(homedir, CONFTOP, INIT_SCRIPT))
+  } else {
+    if (findfilename(homedir, CONFTOP, INIT_SCRIPT)) {
       inifile = getfilename(homedir, CONFTOP, INIT_SCRIPT);
-    else if (findfilename(confdir, CONFTOP, INIT_SCRIPT))
+    } else if (findfilename(confdir, CONFTOP, INIT_SCRIPT)) {
       inifile = getfilename(confdir, CONFTOP, INIT_SCRIPT);
+    }
   }
 
   if (inifile) {

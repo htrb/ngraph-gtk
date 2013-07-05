@@ -70,7 +70,7 @@ static n_list_store Plist[] = {
   {N_("color"),    G_TYPE_OBJECT,  TRUE, TRUE,  "color"},
   {"x",            G_TYPE_DOUBLE,  TRUE, TRUE,  "x", - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
   {"y",            G_TYPE_DOUBLE,  TRUE, TRUE,  "y", - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {N_("width"),    G_TYPE_DOUBLE,  TRUE, TRUE,  "width",                0, SPIN_ENTRY_MAX,  20,  100},
+  {N_("width"),    G_TYPE_DOUBLE,  TRUE, TRUE,  "width",            0, SPIN_ENTRY_MAX,  20,  100},
   {N_("points"),   G_TYPE_INT,     TRUE, FALSE, "points"},
   {"^#",           G_TYPE_INT,     TRUE, FALSE, "oid"},
 };

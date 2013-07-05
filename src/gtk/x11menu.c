@@ -3971,10 +3971,14 @@ application(char *file)
   set_delobj_cb(check_instance);
 
   if (Menulocal.single_window_mode) {
-    Menulocal.single_window_mode = FALSE;
-    set_toggle_action("ViewToggleSingleWindowModeAction", TRUE);
-    if (! Menulocal.single_window_mode) {
+    GtkAction *action;
+    int active;
+    action = gtk_action_group_get_action(ActionGroup, "ViewToggleSingleWindowModeAction");
+    active = gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action));
+    if (active) {
       multi_to_single();
+    } else {
+      set_toggle_action("ViewToggleSingleWindowModeAction", TRUE);
     }
   } else {
     gtk_widget_hide(NgraphApp.Viewer.side_pane1);
