@@ -1,3 +1,9 @@
+2013-07-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_subwin.c (start_editing)
+	(spin_button_size_allocated): the function "start_editing()" is
+	called when the version of GTK+ is greater or equal to "3.8.0".
+
 2013-07-05  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (application): check thestate of
