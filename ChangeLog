@@ -1,5 +1,19 @@
 2013-07-12  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11file.c (create_user_fit_frame): use
+	"gtk_container_add()" instead of
+	"gtk_scrolled_window_add_with_viewport()" when the version of GTK+
+	is greater or equal to "3.8.0".
+
+	* src/gtk/ogra2x11.c (gtkinit): use "gtk_container_add()" instead
+	of "gtk_scrolled_window_add_with_viewport()" when the version of
+	GTK+ is greater or equal to "3.8.0".
+
+	* src/gtk/gtk_subwin.c (label_sub_window_create): use
+	"gtk_container_add()" instead of
+	"gtk_scrolled_window_add_with_viewport()" when the version of GTK+
+	is greater or equal to "3.8.0".
+
 	* initfile/Ngraph.ini.in (help_browser): use "xdg-open" instead of
 	"yelp".
 
