@@ -28,6 +28,7 @@
 #include "gtk_common.h"
 #include "gtk_ruler.h"
 #include "mathfn.h"
+#include "x11menu.h"
 
 #include <math.h>
 #include <string.h>
@@ -490,7 +491,7 @@ nruler_get_color(Nruler *ruler, GdkRGBA *fg, GdkRGBA *bg)
   GdkRGBA color;
   GtkStyleContext *style;
 
-  style = gtk_widget_get_style_context(ruler->parent);
+  style = gtk_widget_get_style_context(TopLevel);
   gtk_style_context_get_background_color(style, GTK_STATE_FLAG_NORMAL, &color);
   color.alpha = 1.0;
 
@@ -499,6 +500,7 @@ nruler_get_color(Nruler *ruler, GdkRGBA *fg, GdkRGBA *bg)
   }
 
   if (fg) {
+#if 0
     if (color.red + color.green + color.blue > 1.5) {
       fg->red = 0.0;
       fg->green = 0.0;
@@ -509,6 +511,9 @@ nruler_get_color(Nruler *ruler, GdkRGBA *fg, GdkRGBA *bg)
       fg->blue = 1.0;
     }
     fg->alpha = 1.0;
+#else
+    gtk_style_context_get_color(style, GTK_STATE_FLAG_NORMAL, fg);
+#endif
   }
 }
 #else
