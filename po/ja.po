@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2013-07-12 17:02+0900\n"
-"PO-Revision-Date: 2013-05-13 17:39+0900\n"
+"POT-Creation-Date: 2013-07-13 14:22+0900\n"
+"PO-Revision-Date: 2013-07-13 14:14+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja_JP\n"
@@ -193,8 +193,8 @@ msgid "_Background Color:"
 msgstr "背景色(_B):"
 
 #: src/gtk/x11axis.c:399 src/gtk/x11axis.c:3289 src/gtk/x11axis.c:3314
-#: src/gtk/x11axis.c:3347 src/gtk/x11lgnd.c:3220 src/gtk/x11lgnd.c:3233
-#: src/gtk/x11lgnd.c:3661 src/gtk/gtk_widget.c:1056
+#: src/gtk/x11axis.c:3347 src/gtk/x11lgnd.c:3228 src/gtk/x11lgnd.c:3241
+#: src/gtk/x11lgnd.c:3669 src/gtk/gtk_widget.c:1056
 msgid "Color"
 msgstr "色"
 
@@ -422,7 +422,7 @@ msgid "_Font:"
 msgstr "フォント(_F):"
 
 #: src/gtk/x11axis.c:2207 src/gtk/x11axis.c:3340 src/gtk/x11dialg.c:239
-#: src/gtk/x11lgnd.c:3659 src/gtk/x11opt.c:1410
+#: src/gtk/x11lgnd.c:3667 src/gtk/x11opt.c:1410
 msgid "Font"
 msgstr "フォント"
 
@@ -467,8 +467,8 @@ msgstr "フォント(_F)"
 msgid "_Position"
 msgstr "位置(_P)"
 
-#: src/gtk/x11axis.c:3279 src/gtk/x11axis.c:3291 src/gtk/x11lgnd.c:3225
-#: src/gtk/x11lgnd.c:3239 src/gtk/x11menu.c:942 src/gtk/x11menu.c:956
+#: src/gtk/x11axis.c:3279 src/gtk/x11axis.c:3291 src/gtk/x11lgnd.c:3233
+#: src/gtk/x11lgnd.c:3247 src/gtk/x11menu.c:942 src/gtk/x11menu.c:956
 msgid "Draw"
 msgstr "描画"
 
@@ -1087,11 +1087,11 @@ msgstr "データファイル作成中"
 msgid "Making data file."
 msgstr "データファイル作成中"
 
-#: src/gtk/x11file.c:5245 src/gtk/x11lgnd.c:3197 src/gtk/gtk_widget.c:1063
+#: src/gtk/x11file.c:5245 src/gtk/x11lgnd.c:3205 src/gtk/gtk_widget.c:1063
 msgid "Color 1"
 msgstr "色 1"
 
-#: src/gtk/x11file.c:5252 src/gtk/x11lgnd.c:3198 src/gtk/gtk_widget.c:1070
+#: src/gtk/x11file.c:5252 src/gtk/x11lgnd.c:3206 src/gtk/gtk_widget.c:1070
 msgid "Color 2"
 msgstr "色 2"
 
@@ -1380,52 +1380,52 @@ msgstr "スクリプトサイズ(_S):"
 msgid "_Raw"
 msgstr "_Raw"
 
-#: src/gtk/x11lgnd.c:1951
+#: src/gtk/x11lgnd.c:1959
 #, c-format
 msgid "Legend text %d"
 msgstr "テキスト %d"
 
-#: src/gtk/x11lgnd.c:1993
+#: src/gtk/x11lgnd.c:2001
 msgid "_Text:"
 msgstr "テキスト(_T):"
 
-#: src/gtk/x11lgnd.c:3194 src/gtk/x11menu.c:1784 src/gtk/x11menu.c:1785
+#: src/gtk/x11lgnd.c:3202 src/gtk/x11menu.c:1784 src/gtk/x11menu.c:1785
 msgid "Mark"
 msgstr "マーク"
 
-#: src/gtk/x11lgnd.c:3215 src/gtk/x11lgnd.c:3217
+#: src/gtk/x11lgnd.c:3223 src/gtk/x11lgnd.c:3225
 msgid "Stroke"
 msgstr "ストローク"
 
-#: src/gtk/x11lgnd.c:3222
+#: src/gtk/x11lgnd.c:3230
 msgid "Close path"
 msgstr "パスを閉じる"
 
-#: src/gtk/x11lgnd.c:3229 src/gtk/x11lgnd.c:3231
+#: src/gtk/x11lgnd.c:3237 src/gtk/x11lgnd.c:3239
 msgid "Fill"
 msgstr "塗りつぶし"
 
-#: src/gtk/x11lgnd.c:3235
+#: src/gtk/x11lgnd.c:3243
 msgid "Fill rule"
 msgstr "ルール"
 
-#: src/gtk/x11lgnd.c:3712
+#: src/gtk/x11lgnd.c:3720
 msgid "path"
 msgstr "パス"
 
-#: src/gtk/x11lgnd.c:3713 src/ofile.c:170
+#: src/gtk/x11lgnd.c:3721 src/ofile.c:170
 msgid "rectangle"
 msgstr "矩形"
 
-#: src/gtk/x11lgnd.c:3714
+#: src/gtk/x11lgnd.c:3722
 msgid "arc"
 msgstr "円"
 
-#: src/gtk/x11lgnd.c:3715 src/ofile.c:163
+#: src/gtk/x11lgnd.c:3723 src/ofile.c:163
 msgid "mark"
 msgstr "マーク"
 
-#: src/gtk/x11lgnd.c:3716
+#: src/gtk/x11lgnd.c:3724
 msgid "text"
 msgstr "テキスト"
 
@@ -2294,7 +2294,7 @@ msgstr "不透明度を使う(_U)"
 
 #: src/gtk/x11opt.c:1449
 msgid "_Show select data dialog on exporting"
-msgstr "エクスポート時にデータ選択ダイアログを表示 (_S) "
+msgstr "エクスポート時にデータ選択ダイアログを表示(_S) "
 
 #: src/gtk/x11opt.c:1639
 msgid "use _External previewer"

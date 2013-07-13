@@ -1,3 +1,12 @@
+2013-07-13  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11lgnd.c (create_character_view): don't set the number
+	of columns when the version of GTK+ is greater or equal to
+	"3.8.0".
+	(create_character_view): call
+	"gtk_icon_view_set_activate_on_single_click()" when the version of
+	GTK+ is greater or equal to "3.8.0".
+
 2013-07-12  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (create_user_fit_frame): use
