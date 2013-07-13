@@ -14,9 +14,6 @@
 	"gtk_scrolled_window_add_with_viewport()" when the version of GTK+
 	is greater or equal to "3.8.0".
 
-	* initfile/Ngraph.ini.in (help_browser): use "xdg-open" instead of
-	"yelp".
-
 	* src/gtk/gtk_ruler.c (nruler_get_color): use "TopLevel" to get
 	the default color.
 
