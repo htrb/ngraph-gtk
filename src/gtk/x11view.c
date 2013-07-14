@@ -382,8 +382,8 @@ PasteObjectsFromClipboard(void)
   struct Viewer *d;
 #if GTK_CHECK_VERSION(3, 4, 0)
   GdkDevice *device;
-#endif
   GdkWindow *win;
+#endif
 
   d = &NgraphApp.Viewer;
 
