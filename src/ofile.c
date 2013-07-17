@@ -4165,7 +4165,7 @@ markout(struct objlist *obj,struct f2ddata *fp,int GC, int width,int snum,int *s
   int gx,gy;
 
   emerr=emnonum=emig=emng=FALSE;
-  GRAlinestyle(GC,snum,style,width,0,0,1000);
+  GRAlinestyle(GC,snum,style,width,GRA_LINE_CAP_BUTT,GRA_LINE_JOIN_MITER,1000);
   while (getdata(fp)==0) {
     if ((fp->dxstat==MATH_VALUE_NORMAL) && (fp->dystat==MATH_VALUE_NORMAL) &&
 	(getposition(fp,fp->dx,fp->dy,&gx,&gy)==0)) {
@@ -4190,9 +4190,9 @@ lineout(struct objlist *obj,struct f2ddata *fp,int GC,
 
   emerr=emnonum=emig=emng=FALSE;
 #if EXPAND_DOTTED_LINE
-  GRAlinestyle(GC,0,NULL,width,0,join,miter);
+  GRAlinestyle(GC,0,NULL,width,GRA_LINE_CAP_BUTT,join,miter);
 #else
-  GRAlinestyle(GC, snum, style, width, 0, join, miter);
+  GRAlinestyle(GC, snum, style, width, GRA_LINE_CAP_BUTT, join, miter);
 #endif
   first=TRUE;
   while (getdata(fp)==0) {
@@ -4581,9 +4581,9 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
 
   emerr=emnonum=emig=emng=FALSE;
 #if EXPAND_DOTTED_LINE
-  GRAlinestyle(GC,0,NULL,width,0,join,miter);
+  GRAlinestyle(GC,0,NULL,width,GRA_LINE_CAP_BUTT,join,miter);
 #else
-  GRAlinestyle(GC, snum, style, width, 0, join, miter);
+  GRAlinestyle(GC, snum, style, width, GRA_LINE_CAP_BUTT, join, miter);
 #endif
   switch (intp) {
   case INTERPOLATION_TYPE_SPLINE:
@@ -4840,8 +4840,8 @@ rectout(struct objlist *obj,struct f2ddata *fp,int GC,
   headlen=72426;
   headwidth=60000;
 
-  if (type == PLOT_TYPE_DIAGONAL) GRAlinestyle(GC,snum,style,width,0,0,1000);
-  else GRAlinestyle(GC,snum,style,width,2,0,1000);
+  if (type == PLOT_TYPE_DIAGONAL) GRAlinestyle(GC,snum,style,width,GRA_LINE_CAP_BUTT,GRA_LINE_JOIN_MITER,1000);
+  else GRAlinestyle(GC,snum,style,width,GRA_LINE_CAP_PROJECTING,GRA_LINE_JOIN_MITER,1000);
   while (getdata(fp)==0) {
     GRAcolor(GC,fp->col.r,fp->col.g,fp->col.b, fp->col.a);
     if ((fp->dxstat==MATH_VALUE_NORMAL) && (fp->dystat==MATH_VALUE_NORMAL)
@@ -4961,7 +4961,7 @@ errorbarout(struct objlist *obj,struct f2ddata *fp,int GC,
   int size;
 
   emerr=emnonum=emig=emng=FALSE;
-  GRAlinestyle(GC,snum,style,width,0,0,1000);
+  GRAlinestyle(GC,snum,style,width,GRA_LINE_CAP_BUTT,GRA_LINE_JOIN_MITER,1000);
   while (getdata(fp)==0) {
     size=fp->marksize0/2;
     GRAcolor(GC,fp->col.r,fp->col.g,fp->col.b, fp->col.a);
@@ -5036,9 +5036,9 @@ stairout(struct objlist *obj,struct f2ddata *fp,int GC,
 
   emerr=emnonum=emig=emng=FALSE;
 #if EXPAND_DOTTED_LINE
-  GRAlinestyle(GC,0,NULL,width,0,join,miter);
+  GRAlinestyle(GC,0,NULL,width,GRA_LINE_CAP_BUTT,join,miter);
 #else
-  GRAlinestyle(GC, snum, style, width, 0, join, miter);
+  GRAlinestyle(GC, snum, style, width, GRA_LINE_CAP_BUTT, join, miter);
 #endif
   num=0;
   while (getdata(fp)==0) {
@@ -5152,7 +5152,7 @@ barout(struct objlist *obj,struct f2ddata *fp,int GC,
   int ap[8];
 
   emerr=emnonum=emig=emng=FALSE;
-  if (type <= PLOT_TYPE_BAR_FILL_Y) GRAlinestyle(GC,snum,style,width,2,0,1000);
+  if (type <= PLOT_TYPE_BAR_FILL_Y) GRAlinestyle(GC,snum,style,width,GRA_LINE_CAP_PROJECTING,GRA_LINE_JOIN_MITER,1000);
   while (getdata(fp)==0) {
     size=fp->marksize0/2;
     if (fp->dxstat != MATH_VALUE_NORMAL ||
@@ -5461,9 +5461,9 @@ draw_fit(struct objlist *obj, struct f2ddata *fp,
 
   GRAcolor(GC,fp->fg.r,fp->fg.g,fp->fg.b, fp->fg.a);
 #if EXPAND_DOTTED_LINE
-  GRAlinestyle(GC,0,NULL,width,0,join,miter);
+  GRAlinestyle(GC,0,NULL,width,GRA_LINE_CAP_BUTT,join,miter);
 #else
-  GRAlinestyle(GC, snum, style, width, 0, join, miter);
+  GRAlinestyle(GC, snum, style, width, GRA_LINE_CAP_BUTT, join, miter);
 #endif
   num=0;
   count=0;

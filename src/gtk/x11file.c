@@ -1791,6 +1791,7 @@ move_tab_create(struct FileDialog *d)
   list_store_set_selection_mode(w, GTK_SELECTION_MULTIPLE);
   d->move.list = w;
   gtk_container_add(GTK_CONTAINER(swin), w);
+  set_widget_margin(swin, WIDGET_MARGIN_TOP | WIDGET_MARGIN_BOTTOM);
 
 #if GTK_CHECK_VERSION(3, 4, 0)
   table = gtk_grid_new();
@@ -1838,6 +1839,7 @@ move_tab_create(struct FileDialog *d)
 
   w = gtk_frame_new(NULL);
   gtk_container_add(GTK_CONTAINER(w), hbox);
+  set_widget_margin(w, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
 
 #if GTK_CHECK_VERSION(3, 0, 0)
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
@@ -2037,6 +2039,7 @@ mask_tab_create(struct FileDialog *d)
   list_store_set_selection_mode(w, GTK_SELECTION_MULTIPLE);
   d->mask.list = w;
   gtk_container_add(GTK_CONTAINER(swin), w);
+  set_widget_margin(swin, WIDGET_MARGIN_TOP | WIDGET_MARGIN_BOTTOM);
 
   w = gtk_button_new_from_stock(GTK_STOCK_ADD);
   add_widget_to_table(table, w, "", FALSE, i++);
@@ -2062,6 +2065,7 @@ mask_tab_create(struct FileDialog *d)
 
   frame = gtk_frame_new(NULL);
   gtk_container_add(GTK_CONTAINER(frame), hbox);
+  set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
 
 #if GTK_CHECK_VERSION(3, 0, 0)
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
@@ -2201,6 +2205,7 @@ load_tab_create(struct FileDialog *d)
 
   frame = gtk_frame_new(NULL);
   gtk_container_add(GTK_CONTAINER(frame), table);
+  set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
 
 #if GTK_CHECK_VERSION(3, 0, 0)
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
@@ -2362,6 +2367,7 @@ math_tab_create(struct FileDialog *d)
 
   frame = gtk_frame_new(NULL);
   gtk_container_add(GTK_CONTAINER(frame), table);
+  set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
 
 #if GTK_CHECK_VERSION(3, 0, 0)
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
@@ -3105,6 +3111,7 @@ plot_tab_create(GtkWidget *parent, struct FileDialog *d)
 
   w = gtk_frame_new(NULL);
   gtk_container_add(GTK_CONTAINER(w), hbox);
+  set_widget_margin(w, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
 
 #if GTK_CHECK_VERSION(3, 0, 0)
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
@@ -4590,17 +4597,17 @@ set_line_style(struct objlist *obj, int id, int ggc)
     int i, *style, *ptr;
     style = g_malloc(sizeof(*style) * n);
     if (style == NULL) {
-      GRAlinestyle(ggc, 0, NULL, MARK_PIX_LINE_WIDTH, 0, 0, 1000);
+      GRAlinestyle(ggc, 0, NULL, MARK_PIX_LINE_WIDTH, GRA_LINE_CAP_BUTT, GRA_LINE_JOIN_MITER, 1000);
       return;
     }
     ptr = arraydata(line_style);
     for (i = 0; i < n; i++) {
       style[i] = ptr[i] / 40;
     }
-    GRAlinestyle(ggc, n, style, MARK_PIX_LINE_WIDTH, 0, 0, 1000);
+    GRAlinestyle(ggc, n, style, MARK_PIX_LINE_WIDTH, GRA_LINE_CAP_BUTT, GRA_LINE_JOIN_MITER, 1000);
     g_free(style);
   } else {
-    GRAlinestyle(ggc, 0, NULL, MARK_PIX_LINE_WIDTH, 0, 0, 1000);
+    GRAlinestyle(ggc, 0, NULL, MARK_PIX_LINE_WIDTH, GRA_LINE_CAP_BUTT, GRA_LINE_JOIN_MITER, 1000);
   }
 }
 
@@ -5176,6 +5183,7 @@ enum FILE_COMBO_ITEM {
   FILE_COMBO_ITEM_MARK,
   FILE_COMBO_ITEM_INTP,
   FILE_COMBO_ITEM_LINESTYLE,
+  FILE_COMBO_ITEM_JOIN,
   FILE_COMBO_ITEM_FIT,
   FILE_COMBO_ITEM_CLIP,
 };
@@ -5211,6 +5219,7 @@ create_type_color_combo_box(GtkWidget *cbox, struct objlist *obj, int type, int 
 {
   int count;
   GtkTreeStore *list;
+  GtkTreeIter parent;
 
   count = combo_box_get_num(cbox);
   if (count > 0)
@@ -5239,6 +5248,18 @@ create_type_color_combo_box(GtkWidget *cbox, struct objlist *obj, int type, int 
   case PLOT_TYPE_BAR_FILL_Y:
   case PLOT_TYPE_FIT:
     add_line_style_item_to_cbox(list, NULL, FILE_COMBO_ITEM_LINESTYLE, obj, "line_style", id);
+    break;
+  }
+
+  switch (type) {
+  case PLOT_TYPE_LINE:
+  case PLOT_TYPE_POLYGON:
+  case PLOT_TYPE_CURVE:
+  case PLOT_TYPE_STAIRCASE_X:
+  case PLOT_TYPE_STAIRCASE_Y:
+  case PLOT_TYPE_FIT:
+    add_text_combo_item_to_cbox(list, &parent, NULL, -1, -1, _("Join"), TOGGLE_NONE, FALSE);
+    add_enum_combo_item_to_cbox(list, NULL, &parent, FILE_COMBO_ITEM_JOIN, obj, "line_join", id);
     break;
   }
 
@@ -5294,7 +5315,7 @@ create_type_combo_item(GtkTreeStore *list, struct objlist *obj, int id)
 static void
 select_type(GtkComboBox *w, gpointer user_data)
 {
-  int sel, col_type, type, mark_type, curve_type, enum_id, found, active;
+  int sel, col_type, type, mark_type, curve_type, enum_id, found, active, join;
   struct objlist *obj;
   struct obj_list_data *d;
   GtkTreeStore *list;
@@ -5388,6 +5409,14 @@ select_type(GtkComboBox *w, gpointer user_data)
     break;
   case FILE_COMBO_ITEM_FIT:
     show_fit_dialog(obj, sel, (Menulocal.single_window_mode) ? TopLevel : d->parent->Win);
+    break;
+  case FILE_COMBO_ITEM_JOIN:
+    gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_ENUM, &enum_id, -1);
+    getobj(d->obj, "line_join", sel, 0, NULL, &join);
+    if (join == enum_id) {
+      return;
+    }
+    putobj(d->obj, "line_join", sel, &enum_id);
     break;
   case FILE_COMBO_ITEM_CLIP:
     gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);

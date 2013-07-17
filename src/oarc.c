@@ -134,7 +134,7 @@ arcdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 
   if (stroke) {
     GRAcolor(GC,fr,fg,fb, fa);
-    GRAlinestyle(GC, snum, sdata, width, 0, join, miter);
+    GRAlinestyle(GC, snum, sdata, width, GRA_LINE_CAP_BUTT, join, miter);
     GRAcircle(GC, x, y, rx, ry, angle1, angle2,
 	      (close_path) ? ((pieslice) ? 3 : 4) : 0);
   }

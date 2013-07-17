@@ -2320,7 +2320,7 @@ create_markpixmap(GtkWidget *win)
 		       robj, inst, output, -1, -1, -1, NULL, local);
 	if (gra >= 0) {
 	  GRAview(gra, 0, 0, MARK_PIX_SIZE, MARK_PIX_SIZE, 0);
-	  GRAlinestyle(gra, 0, NULL, 1, 0, 0, 1000);
+	  GRAlinestyle(gra, 0, NULL, 1, GRA_LINE_CAP_BUTT, GRA_LINE_JOIN_MITER, 1000);
 	  GRAmark(gra, i,
 		  MARK_PIX_SIZE / 2, MARK_PIX_SIZE / 2,
 		  MARK_PIX_SIZE - 4,

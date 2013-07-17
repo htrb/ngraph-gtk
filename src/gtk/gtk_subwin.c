@@ -128,15 +128,17 @@ static void
 spin_button_size_allocated(GtkWidget *widget, GdkRectangle *allocation, gpointer user_data)
 {
   GtkRequisition requisition;
+  GdkRectangle new_allocation;
 
   gtk_widget_get_preferred_size(widget, &requisition, NULL);
   if (requisition.width <= allocation->width) {
     return;
   }
 
-  allocation->x -= (requisition.width - allocation->width) / 2;
-  allocation->width = requisition.width;
-  gtk_widget_size_allocate(widget, allocation);
+  new_allocation = *allocation;
+  new_allocation.x -= (requisition.width - allocation->width) / 2;
+  new_allocation.width = requisition.width;
+  gtk_widget_size_allocate(widget, &new_allocation);
 }
 #endif
 

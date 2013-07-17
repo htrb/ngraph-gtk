@@ -183,7 +183,7 @@ LegendGaussDialogPaint(GtkWidget *w, GdkEventExpose *event, gpointer client_data
   if (d->alloc) {
     GC = _GRAopen("gra2gdk", "_output",
 		  robj, inst, output, -1, -1, -1, NULL, local);
-    GRAlinestyle(GC, 0, NULL, 1, 0, 0, 1000);
+    GRAlinestyle(GC, 0, NULL, 1, GRA_LINE_CAP_BUTT, GRA_LINE_JOIN_MITER, 1000);
     if (GC >= 0) {
       GRAview(GC, minx, miny, maxx, maxy, 1);
 
@@ -462,6 +462,7 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
 #else
     w = gtk_hscale_new_with_range(10, DIV_MAX, 1);
 #endif
+    set_scale_mark(w, GTK_POS_BOTTOM, 20, 20);
     add_widget_to_table(table, w, _("_Division:"), TRUE, i++);
     g_signal_connect(w, "value-changed", G_CALLBACK(LegendGaussDialogDiv), d);
     d->div = w;
@@ -509,6 +510,7 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
 #else
     w = gtk_hscale_new_with_range(0, SCALE_V_MAX, 1);
 #endif
+    set_scale_mark(w, GTK_POS_BOTTOM, 100, 200);
     g_signal_connect(w, "value-changed", G_CALLBACK(LegendGaussDialogScaleV), d);
     d->scv = w;
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 0);
@@ -529,6 +531,7 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
 #else
     w = gtk_hscale_new_with_range(- SCALE_H_MAX, SCALE_H_MAX, 1);
 #endif
+    set_scale_mark(w, GTK_POS_TOP, -100, 25);
     g_signal_connect(w, "value-changed", G_CALLBACK(LegendGaussDialogScaleH), d);
     d->sch = w;
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 0);
@@ -686,7 +689,8 @@ LegendGaussDialog(struct LegendGaussDialog *data,
     data->alloc = FALSE;
 
   for (i = 0; i < 6; i++) {
-    if ((spc[i] = (double *) g_malloc(sizeof(double) * 201)) == NULL) {
+    spc[i] = (double *) g_malloc(sizeof(double) * (DIV_MAX + 1));
+    if (spc[i] == NULL) {
       data->alloc = FALSE;
     }
   }

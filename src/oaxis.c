@@ -2641,7 +2641,7 @@ draw_gauge(struct objlist *obj,N_VALUE *inst, int GC, struct axis_config *aconf)
 	len=len3;
 	wid=wid3;
       }
-      GRAlinestyle(GC,snum,sdata,wid,0,0,1000);
+      GRAlinestyle(GC,snum,sdata,wid,GRA_LINE_CAP_BUTT,GRA_LINE_JOIN_MITER,1000);
       if ((gauge==1) || (gauge==2)) {
 	gx1=gx0-len*sin(aconf->dir);
 	gy1=gy0-len*cos(aconf->dir);
@@ -2734,7 +2734,7 @@ draw_wave(struct objlist *obj, N_VALUE *inst, struct axis_config *aconf, int GC)
       error(obj,ERRAXISSPL);
       return 1;
     }
-    GRAlinestyle(GC,0,NULL,wwidth,0,0,1000);
+    GRAlinestyle(GC,0,NULL,wwidth,GRA_LINE_CAP_BUTT,GRA_LINE_JOIN_MITER,1000);
     GRAcurvefirst(GC,0,NULL,NULL,NULL,splinedif,splineint,NULL,wx[0],wy[0]);
     for (i=0;i<4;i++) {
       c[0]=wxc1[i];
@@ -2768,7 +2768,7 @@ draw_wave(struct objlist *obj, N_VALUE *inst, struct axis_config *aconf, int GC)
       error(obj,ERRAXISSPL);
       return 1;
     }
-    GRAlinestyle(GC,0,NULL,wwidth,0,0,1000);
+    GRAlinestyle(GC,0,NULL,wwidth,GRA_LINE_CAP_BUTT,GRA_LINE_JOIN_MITER,1000);
     GRAcurvefirst(GC,0,NULL,NULL,NULL,splinedif,splineint,NULL,wx[0],wy[0]);
     for (i=0;i<4;i++) {
       c[0]=wxc1[i];
@@ -2807,7 +2807,7 @@ draw_arrow(struct objlist *obj, N_VALUE *inst, struct axis_config *aconf, int GC
     ap[3]=nround(aconf->y0+dy*alen);
     ap[4]=nround(aconf->x0+dy*awid);
     ap[5]=nround(aconf->y0-dx*awid);
-    GRAlinestyle(GC,0,NULL,1,0,0,1000);
+    GRAlinestyle(GC,0,NULL,1,GRA_LINE_CAP_BUTT,GRA_LINE_JOIN_MITER,1000);
     GRAdrawpoly(GC,3,ap,1);
   }
 
@@ -2820,7 +2820,7 @@ draw_arrow(struct objlist *obj, N_VALUE *inst, struct axis_config *aconf, int GC
     ap[3]=nround(aconf->y1+dy*alen);
     ap[4]=nround(aconf->x1+dy*awid);
     ap[5]=nround(aconf->y1-dx*awid);
-    GRAlinestyle(GC,0,NULL,1,0,0,1000);
+    GRAlinestyle(GC,0,NULL,1,GRA_LINE_CAP_BUTT,GRA_LINE_JOIN_MITER,1000);
     GRAdrawpoly(GC,3,ap,1);
   }
 
@@ -2877,7 +2877,7 @@ axisdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   GRAcolor(GC,fr,fg,fb, fa);
 
   if (bline) {
-    GRAlinestyle(GC,snum,sdata,aconf.width,2,0,1000);
+    GRAlinestyle(GC,snum,sdata,aconf.width,GRA_LINE_CAP_PROJECTING,GRA_LINE_JOIN_MITER,1000);
     GRAline(GC,aconf.x0,aconf.y0,aconf.x1,aconf.y1);
   }
 

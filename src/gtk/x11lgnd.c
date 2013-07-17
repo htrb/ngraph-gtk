@@ -989,29 +989,31 @@ points_setup(struct LegendDialog *d)
   }
 
 #if GTK_CHECK_VERSION(3, 0, 0)
-  vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
+  vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 #else
   vbox = gtk_vbox_new(FALSE, 4);
 #endif
 
   label = gtk_label_new_with_mnemonic(_("_Points:"));
+  set_widget_margin(label, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT | WIDGET_MARGIN_TOP | WIDGET_MARGIN_BOTTOM);
 #if GTK_CHECK_VERSION(3, 4, 0)
   gtk_widget_set_halign(label, GTK_ALIGN_START);
 #else
   gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 #endif
   gtk_label_set_mnemonic_widget(GTK_LABEL(label), tree_view);
-  gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 2);
+  gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 
   swin = gtk_scrolled_window_new(NULL, NULL);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(swin), GTK_SHADOW_ETCHED_IN);
   gtk_container_set_border_width(GTK_CONTAINER(swin), 2);
+  set_widget_margin(swin, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT | WIDGET_MARGIN_BOTTOM);
   gtk_container_add(GTK_CONTAINER(swin), tree_view);
-  gtk_box_pack_start(GTK_BOX(vbox), swin, TRUE, TRUE, 2);
+  gtk_box_pack_start(GTK_BOX(vbox), swin, TRUE, TRUE, 0);
 
 #if GTK_CHECK_VERSION(3, 0, 0)
-  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 #else
   hbox = gtk_hbox_new(FALSE, 4);
 #endif
@@ -1025,6 +1027,7 @@ points_setup(struct LegendDialog *d)
   g_signal_connect(sel, "changed", G_CALLBACK(set_delete_button_sensitivity), btn);
   gtk_widget_set_sensitive(btn, FALSE);
   gtk_box_pack_start(GTK_BOX(hbox), btn, FALSE, FALSE, 4);
+  set_widget_margin(hbox, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT | WIDGET_MARGIN_BOTTOM);
 
   gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
 
@@ -1341,6 +1344,8 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
 #else
     w = gtk_hscale_new_with_range(10, 170, 1);
 #endif
+    set_scale_mark(w, GTK_POS_BOTTOM, 15, 15);
+
     g_signal_connect(w, "value-changed", G_CALLBACK(LegendArrowDialogScaleL), d);
     g_signal_connect(w, "format-value", G_CALLBACK(format_value_degree), NULL);
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
@@ -1361,11 +1366,13 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
 #else
     w = gtk_hscale_new_with_range(100, 2000, 1);
 #endif
+    set_scale_mark(w, GTK_POS_TOP, 200, 200);
     g_signal_connect(w, "value-changed", G_CALLBACK(LegendArrowDialogScaleW), d);
     g_signal_connect(w, "format-value", G_CALLBACK(format_value_percent), NULL);
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
     d->arrow_width = w;
 
+    set_widget_margin(vbox, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
     gtk_box_pack_start(GTK_BOX(hbox2), vbox, FALSE, FALSE, 0);
 
     w = gtk_check_button_new_with_mnemonic(_("_Stroke"));
@@ -1375,6 +1382,7 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
     frame = gtk_frame_new(NULL);
     gtk_frame_set_label_widget(GTK_FRAME(frame), w);
     gtk_container_add(GTK_CONTAINER(frame), hbox2);
+    set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT | WIDGET_MARGIN_BOTTOM);
     gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 0);
 
 #if GTK_CHECK_VERSION(3, 4, 0)
@@ -1397,6 +1405,7 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
     frame = gtk_frame_new(NULL);
     gtk_frame_set_label_widget(GTK_FRAME(frame), w);
     gtk_container_add(GTK_CONTAINER(frame), table);
+    set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT | WIDGET_MARGIN_BOTTOM);
     gtk_box_pack_start(GTK_BOX(vbox2), frame, TRUE, TRUE, 0);
 
     frame = gtk_frame_new(NULL);
@@ -1494,6 +1503,7 @@ LegendRectDialogSetup(GtkWidget *wi, void *data, int makewidget)
     frame = gtk_frame_new(NULL);
     gtk_frame_set_label_widget(GTK_FRAME(frame), w);
     gtk_container_add(GTK_CONTAINER(frame), table);
+    set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT | WIDGET_MARGIN_BOTTOM);
     gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
 
 #if GTK_CHECK_VERSION(3, 4, 0)
@@ -1512,6 +1522,7 @@ LegendRectDialogSetup(GtkWidget *wi, void *data, int makewidget)
     frame = gtk_frame_new(NULL);
     gtk_frame_set_label_widget(GTK_FRAME(frame), w);
     gtk_container_add(GTK_CONTAINER(frame), table);
+    set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT | WIDGET_MARGIN_BOTTOM);
     gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 
     frame = gtk_frame_new(NULL);
@@ -1637,6 +1648,7 @@ LegendArcDialogSetup(GtkWidget *wi, void *data, int makewidget)
     frame = gtk_frame_new(NULL);
     gtk_frame_set_label_widget(GTK_FRAME(frame), w);
     gtk_container_add(GTK_CONTAINER(frame), table);
+    set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT | WIDGET_MARGIN_BOTTOM);
     gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
 
 
@@ -1656,6 +1668,7 @@ LegendArcDialogSetup(GtkWidget *wi, void *data, int makewidget)
     frame = gtk_frame_new(NULL);
     gtk_frame_set_label_widget(GTK_FRAME(frame), w);
     gtk_container_add(GTK_CONTAINER(frame), table);
+    set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT | WIDGET_MARGIN_BOTTOM);
     gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 
     frame = gtk_frame_new(NULL);
@@ -2573,10 +2586,10 @@ draw_color_pixbuf(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type, i
     for (i = 0; i < n; i++) {
       style[i] = ptr[i] / 30;
     }
-    GRAlinestyle(ggc, n, style, 4, 0, 0, 1000);
+    GRAlinestyle(ggc, n, style, 4, GRA_LINE_CAP_BUTT, GRA_LINE_JOIN_MITER, 1000);
     g_free(style);
   } else {
-    GRAlinestyle(ggc, 0, NULL, 4, 0, 0, 1000);
+    GRAlinestyle(ggc, 0, NULL, 4, GRA_LINE_CAP_BUTT, GRA_LINE_JOIN_MITER, 1000);
   }
 
   if (type == OBJ_FIELD_COLOR_TYPE_STROKE) {
@@ -2848,7 +2861,7 @@ draw_mark_pixbuf(struct objlist *obj, int i)
   }
   GRAview(ggc, 0, 0, width, height, 0);
   GRAcolor(ggc, fr, fg, fb, 255);
-  GRAlinestyle(ggc, 0, NULL, 1, 0, 0, 1000);
+  GRAlinestyle(ggc, 0, NULL, 1, GRA_LINE_CAP_BUTT, GRA_LINE_JOIN_MITER, 1000);
 
   getobj(obj, "type", i, 0, NULL, &marktype);
   GRAmark(ggc, marktype, height / 2, height / 2, height - 2,
@@ -3183,6 +3196,7 @@ enum LEGEND_COMBO_ITEM {
   LEGEND_COMBO_ITEM_STYLE_BOLD,
   LEGEND_COMBO_ITEM_STYLE_ITALIC,
   LEGEND_COMBO_ITEM_FILL_RULE,
+  LEGEND_COMBO_ITEM_JOIN,
   LEGEND_COMBO_ITEM_NONE,
 };
 
@@ -3201,6 +3215,7 @@ create_mark_color_combo_box(GtkWidget *cbox, struct objlist *obj, int id)
 
   add_text_combo_item_to_cbox(list, &iter, NULL, -1, -1, _("Mark"), TOGGLE_NONE, FALSE);
   add_mark_combo_item_to_cbox(list, NULL, &iter, LEGEND_COMBO_ITEM_MARK, obj, "type", id);
+  add_line_style_item_to_cbox(list, NULL, LEGEND_COMBO_ITEM_STYLE, obj, "style", id);
 
   add_text_combo_item_to_cbox(list, NULL, NULL, LEGEND_COMBO_ITEM_COLOR_1, -1, _("Color 1"), TOGGLE_NONE, FALSE);
   add_text_combo_item_to_cbox(list, NULL, NULL, LEGEND_COMBO_ITEM_COLOR_2, -1, _("Color 2"), TOGGLE_NONE, FALSE);
@@ -3225,6 +3240,10 @@ create_color_combo_box(GtkWidget *cbox, struct objlist *obj, int id)
   add_text_combo_item_to_cbox(list, &iter, NULL, -1, -1, _("Stroke"), TOGGLE_NONE, FALSE);
 #endif
   add_line_style_item_to_cbox(list, &iter, LEGEND_COMBO_ITEM_STYLE, obj, "style", id);
+  if (chkobjfield(obj, "join") == 0) {
+    add_text_combo_item_to_cbox(list, &parent, &iter, -1, -1, _("Join"), TOGGLE_NONE, FALSE);
+    add_enum_combo_item_to_cbox(list, NULL, &parent, LEGEND_COMBO_ITEM_JOIN, obj, "join", id);
+  }
   add_text_combo_item_to_cbox(list, NULL, &iter, LEGEND_COMBO_ITEM_COLOR_STROKE, -1, _("Color"), TOGGLE_NONE, FALSE);
   if (chkobjfield(obj, "close_path") == 0) {
     add_bool_combo_item_to_cbox(list, NULL, &iter, LEGEND_COMBO_ITEM_CLOSE_PATH, obj, "close_path", id, _("Close path"));
@@ -3281,7 +3300,7 @@ set_fill(struct objlist *obj, int id, int fill)
 static void
 select_type(GtkComboBox *w, gpointer user_data)
 {
-  int sel, col_type, mark_type, enum_id, found, active, style, modified, fill_rule, r;
+  int sel, col_type, mark_type, enum_id, found, active, style, modified, fill_rule, join, r;
   struct obj_list_data *d;
   GtkTreeStore *list;
   GtkTreeIter iter;
@@ -3386,6 +3405,13 @@ select_type(GtkComboBox *w, gpointer user_data)
     }
     fill_rule = enum_id;
     putobj(d->obj, "fill_rule", sel, &fill_rule);
+    break;
+  case LEGEND_COMBO_ITEM_JOIN:
+    getobj(d->obj, "join", sel, 0, NULL, &join);
+    if (join == enum_id) {
+      return;
+    }
+    putobj(d->obj, "join", sel, &enum_id);
     break;
   case LEGEND_COMBO_ITEM_CLOSE_PATH:
     gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);

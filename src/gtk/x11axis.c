@@ -1372,6 +1372,7 @@ scale_tab_create(struct AxisDialog *d)
 
   frame = gtk_frame_new(_("Scale"));
   gtk_container_add(GTK_CONTAINER(frame), table);
+  set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
 
 #if GTK_CHECK_VERSION(3, 0, 0)
   parent_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
@@ -1477,7 +1478,7 @@ baseline_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   d = &dd->base;
 
 #if GTK_CHECK_VERSION(3, 0, 0)
-  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 #else
   hbox = gtk_hbox_new(FALSE, 4);
 #endif
@@ -1508,8 +1509,8 @@ baseline_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 
   frame = gtk_frame_new(_("Baseline"));
   gtk_container_add(GTK_CONTAINER(frame), table);
+  set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
   gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
-
 
 #if GTK_CHECK_VERSION(3, 4, 0)
   table = gtk_grid_new();
@@ -1539,6 +1540,7 @@ baseline_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 
   frame = gtk_frame_new(_("Arrow"));
   gtk_container_add(GTK_CONTAINER(frame), table);
+  set_widget_margin(frame, WIDGET_MARGIN_RIGHT);
   gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
 
 
@@ -1563,6 +1565,7 @@ baseline_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 
   frame = gtk_frame_new(_("Wave"));
   gtk_container_add(GTK_CONTAINER(frame), table);
+  set_widget_margin(frame, WIDGET_MARGIN_RIGHT);
   gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 
   gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
@@ -1699,6 +1702,7 @@ gauge_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 
   frame = gtk_frame_new(_("Range"));
   gtk_container_add(GTK_CONTAINER(frame), table);
+  set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
   gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
 
 
@@ -1731,6 +1735,7 @@ gauge_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 
   frame = gtk_frame_new(_("Style"));
   gtk_container_add(GTK_CONTAINER(frame), table);
+  set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
   gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 
 #if GTK_CHECK_VERSION(3, 0, 0)
@@ -1939,7 +1944,7 @@ numbering_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   d = &dd->numbering;
 
 #if GTK_CHECK_VERSION(3, 0, 0)
-  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 #else
@@ -1975,6 +1980,7 @@ numbering_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 
   frame = gtk_frame_new(_("Range"));
   gtk_container_add(GTK_CONTAINER(frame), table);
+  set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
   gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
 
 
@@ -2004,6 +2010,7 @@ numbering_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 
   frame = gtk_frame_new(_("Position"));
   gtk_container_add(GTK_CONTAINER(frame), table);
+  set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
   gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 
   gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
@@ -2051,6 +2058,7 @@ numbering_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 
   frame = gtk_frame_new(_("Format"));
   gtk_container_add(GTK_CONTAINER(frame), table);
+  set_widget_margin(frame, WIDGET_MARGIN_RIGHT);
 
   gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
 
@@ -2206,6 +2214,7 @@ font_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 
   frame = gtk_frame_new(_("Font"));
   gtk_container_add(GTK_CONTAINER(frame), table);
+  set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
 
 #if GTK_CHECK_VERSION(3, 0, 0)
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
@@ -2351,6 +2360,7 @@ position_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 
   frame = gtk_frame_new(_("Position"));
   gtk_container_add(GTK_CONTAINER(frame), table);
+  set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
 
 #if GTK_CHECK_VERSION(3, 0, 0)
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);

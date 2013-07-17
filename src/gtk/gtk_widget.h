@@ -41,6 +41,13 @@ enum SELECT_OBJ_COLOR_RESULT {
   SELECT_OBJ_COLOR_CANCEL,
 };
 
+enum WIDGET_MARGIN {
+  WIDGET_MARGIN_LEFT = 1,
+  WIDGET_MARGIN_RIGHT = 2,
+  WIDGET_MARGIN_TOP = 4,
+  WIDGET_MARGIN_BOTTOM = 8,
+};
+
 GtkWidget *create_spin_entry_type(enum SPIN_BUTTON_TYPE type, int set_default_size, int set_default_action);
 GtkWidget *create_spin_entry(int min, int max, int inc, int set_default_size, int set_default_action);
 void spin_entry_set_val(GtkWidget *entry, int val);
@@ -67,5 +74,7 @@ void text_view_with_line_number_set_font(GtkWidget *view, const gchar *font);
 void set_widget_sensitivity_with_label(GtkWidget *w, gboolean state);
 void combo_box_create_mark(GtkWidget *cbox, GtkTreeIter *parent, int col_id, int type);
 enum SELECT_OBJ_COLOR_RESULT select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type);
+void set_widget_margin(GtkWidget *w, int margin_pos);
+void set_scale_mark(GtkWidget *scale, GtkPositionType pos, int start, int inc);
 
 #endif

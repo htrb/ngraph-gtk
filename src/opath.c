@@ -497,7 +497,7 @@ draw_stroke(struct objlist *obj, N_VALUE *inst, int GC, int *points2, int *pdata
   sdata = arraydata(style);
 
   GRAcolor(GC, fr, fg, fb, fa);
-  GRAlinestyle(GC, snum, sdata, width, 0, join, miter);
+  GRAlinestyle(GC, snum, sdata, width, GRA_LINE_CAP_BUTT, join, miter);
 
   x0 = points2[0];
   y0 = points2[1];
@@ -535,12 +535,12 @@ draw_stroke(struct objlist *obj, N_VALUE *inst, int GC, int *points2, int *pdata
   }
 
   if (head == ARROW_POSITION_BEGIN || head == ARROW_POSITION_BOTH) {
-    GRAlinestyle(GC, 0, NULL, 1, 0, join, miter);
+    GRAlinestyle(GC, 0, NULL, 1, GRA_LINE_CAP_BUTT, join, miter);
     GRAdrawpoly(GC, 3, ap, 1);
   }
 
   if (head == ARROW_POSITION_END || head == ARROW_POSITION_BOTH) {
-    GRAlinestyle(GC, 0, NULL, 1, 0, join, miter);
+    GRAlinestyle(GC, 0, NULL, 1, GRA_LINE_CAP_BUTT, join, miter);
     GRAdrawpoly(GC, 3, ap2, 1);
   }
 }

@@ -1,3 +1,43 @@
+2013-07-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11lgnd.c (LegendArrowDialogSetup): use
+	"set_scale_mark()".
+	(points_setup, LegendArrowDialogSetup, LegendRectDialogSetup)
+	(LegendArcDialogSetup): use "set_widget_margin()".
+	(create_color_combo_box, select_type): the field "line_join" can
+	be modified from a combo-box.
+	(create_mark_color_combo_box): call
+	"add_line_style_item_to_cbox()".
+
+	* src/gtk/x11lgndx.c (LegendGaussDialogSetup): use
+	"set_scale_mark()".
+
+	* src/gtk/gtk_widget.h (WIDGET_MARGIN): added.
+
+	* src/gtk/gtk_widget.c (set_widget_margin, set_scale_mark): added.
+
+	* src/gtk/gtk_subwin.c (spin_button_size_allocated): use variable
+	"new_allocation".
+
+	* src/gtk/x11file.c (move_tab_create, mask_tab_create)
+	(load_tab_create, math_tab_create): use "set_widget_margin()".
+	(create_type_color_combo_box, select_type): the field "line_join"
+	can be modified from the combo-box.
+
+	* src/gtk/x11axis.c (scale_tab_create, baseline_tab_create)
+	(gauge_tab_create, numbering_tab_create, font_tab_create)
+	(position_tab_create): use "set_widget_margin()".
+
+	* src/gra.h (GRA_LINE_JOIN, GRA_LINE_CAP): added.
+
+	* src/gra.c (GRAlinestyle): type of 5th and 6th parameters are
+	"enum GRA_LINE_CAP" and "enum GRA_LINE_JOIN" respectively.
+
+2013-07-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11lgnd.c (create_mark_color_combo_box): call
+	"add_line_style_item_to_cbox()".
+
 2013-07-13  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11lgnd.c (create_character_view): don't set the number
@@ -26,15 +66,9 @@
 	* src/gtk/gtk_ruler.c (nruler_get_color): use "TopLevel" to get
 	the default color.
 
-2013-07-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
-
-	* src/gtk/gtk_subwin.c (start_editing)
-	(spin_button_size_allocated): the function "start_editing()" is
-	called when the version of GTK+ is greater or equal to "3.8.0".
-
 2013-07-05  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
-	* src/gtk/x11menu.c (application): check thestate of
+	* src/gtk/x11menu.c (application): check the state of
 	"ViewToggleSingleWindowModeAction".
 
 	* src/gtk/main.c (main): the "-i" option with no filename means

@@ -129,7 +129,7 @@ rectdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 
   if (stroke) {
     GRAcolor(GC,fr,fg,fb, fa);
-    GRAlinestyle(GC,snum,sdata,width,0,0,1000);
+    GRAlinestyle(GC,snum,sdata,width,GRA_LINE_CAP_BUTT,GRA_LINE_JOIN_MITER,1000);
     GRArectangle(GC,x1,y1,x2,y2,0);
   }
 

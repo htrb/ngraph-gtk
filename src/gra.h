@@ -83,10 +83,23 @@ struct cmatchtype {
   int match;
 };
 
-#define GRA_FONT_STYLE_NORMAL 0
-#define GRA_FONT_STYLE_BOLD   1
-#define GRA_FONT_STYLE_ITALIC 2
+enum GRA_FONT_STYLE {
+  GRA_FONT_STYLE_NORMAL = 0,
+  GRA_FONT_STYLE_BOLD   = 1,
+  GRA_FONT_STYLE_ITALIC = 2,
+};
 
+enum GRA_LINE_CAP {
+  GRA_LINE_CAP_BUTT = 0,
+  GRA_LINE_CAP_ROUND = 1,
+  GRA_LINE_CAP_PROJECTING = 2,
+};
+
+enum GRA_LINE_JOIN {
+  GRA_LINE_JOIN_MITER = 0,
+  GRA_LINE_JOIN_ROUND = 1,
+  GRA_LINE_JOIN_BEVEL = 2,
+};
 
 extern struct greektbltype greektable[48];
 int _GRAopencallback(directfunc direct,struct narray **list,void *local);
@@ -118,7 +131,7 @@ int GRAend(int GC);
 void GRAview(int GC,int x1,int y1,int x2,int y2,int clip);
 void GRAwindow(int GC,double minx,double miny,double maxx,double maxy);
 void GRAlinestyle(int GC,int num,int *type,
-                  int width,int cap,int join,int miter);
+                  int width,enum GRA_LINE_CAP cap,enum GRA_LINE_JOIN join,int miter);
 void GRAcolor(int GC, int fr, int fg, int fb, int fa);
 void GRAmoveto(int GC,int x,int y);
 void GRAline(int GC,int x0,int y0,int x1,int y1);

@@ -289,7 +289,7 @@ draw_grid_line(struct objlist *obj, int GC,
     if (wid == 0)
       continue;
 
-    GRAlinestyle(GC, snum, sdata, wid, 0, 0, 1000);
+    GRAlinestyle(GC, snum, sdata, wid, GRA_LINE_CAP_BUTT, GRA_LINE_JOIN_MITER, 1000);
 
     x0 = x + (po - a1_prm->min) * a1_pos->len_x / (a1_prm->max - a1_prm->min);
     y0 = y - (po - a1_prm->min) * a1_pos->len_y / (a1_prm->max - a1_prm->min);

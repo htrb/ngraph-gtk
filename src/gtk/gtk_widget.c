@@ -11,6 +11,57 @@
 #include "x11menu.h"
 #include "x11gui.h"
 
+void
+set_widget_margin(GtkWidget *w, int margin_pos)
+{
+#if GTK_CHECK_VERSION(3, 0, 0)
+  if (margin_pos & WIDGET_MARGIN_LEFT) {
+    gtk_widget_set_margin_left(w, 4);
+  }
+
+  if (margin_pos & WIDGET_MARGIN_RIGHT) {
+    gtk_widget_set_margin_right(w, 4);
+  }
+
+  if (margin_pos & WIDGET_MARGIN_BOTTOM) {
+    gtk_widget_set_margin_bottom(w, 4);
+  }
+
+  if (margin_pos & WIDGET_MARGIN_TOP) {
+    gtk_widget_set_margin_top(w, 4);
+  }
+#endif
+}
+
+void
+set_scale_mark(GtkWidget *scale, GtkPositionType pos, int start, int inc)
+{
+  int max, val;
+  GtkAdjustment *adj;
+
+  adj = gtk_range_get_adjustment(GTK_RANGE(scale));
+  max = gtk_adjustment_get_upper(adj);
+
+  for (val = start; val <=max; val += inc) {
+    gtk_scale_add_mark(GTK_SCALE(scale), val, pos, NULL);
+  }
+
+  switch (pos) {
+  case GTK_POS_BOTTOM:
+    gtk_scale_set_value_pos(GTK_SCALE(scale), GTK_POS_TOP);
+    break;
+  case GTK_POS_TOP:
+    gtk_scale_set_value_pos(GTK_SCALE(scale), GTK_POS_BOTTOM);
+    break;
+  case GTK_POS_LEFT:
+    gtk_scale_set_value_pos(GTK_SCALE(scale), GTK_POS_RIGHT);
+    break;
+  case GTK_POS_RIGHT:
+    gtk_scale_set_value_pos(GTK_SCALE(scale), GTK_POS_LEFT);
+    break;
+  }
+}
+
 GtkWidget *
 get_mnemonic_label(GtkWidget *w)
 {
