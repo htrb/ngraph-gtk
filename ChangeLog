@@ -1,3 +1,10 @@
+2013-07-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gra.h (GRA_FILL_MODE): added.
+
+	* src/gra.c (GRAdrawpoly): type of the 4th parameter is "enum
+	GRA_FILL_MODE".
+
 2013-07-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11lgnd.c (LegendArrowDialogSetup): use
@@ -32,11 +39,6 @@
 
 	* src/gra.c (GRAlinestyle): type of 5th and 6th parameters are
 	"enum GRA_LINE_CAP" and "enum GRA_LINE_JOIN" respectively.
-
-2013-07-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
-
-	* src/gtk/x11lgnd.c (create_mark_color_combo_box): call
-	"add_line_style_item_to_cbox()".
 
 2013-07-13  Hiroyuki Ito  <ZXB01226 at nifty.com>
 

@@ -4723,7 +4723,7 @@ draw_type_pixbuf(struct objlist *obj, int i)
 
     poly[12] = 1;
     poly[13] = height / 2;
-    GRAdrawpoly(ggc, 7, poly, (type == PLOT_TYPE_POLYGON) ? 0: 2);
+    GRAdrawpoly(ggc, 7, poly, (type == PLOT_TYPE_POLYGON) ? GRA_FILL_MODE_NONE : GRA_FILL_MODE_WINDING);
     break;
   case PLOT_TYPE_CURVE:
     getobj(obj, "interpolation", i, 0, NULL, &intp);
@@ -4778,7 +4778,7 @@ draw_type_pixbuf(struct objlist *obj, int i)
 
     poly[4] = width - 5;
     poly[5] = 6;
-    GRAdrawpoly(ggc, 3, poly, 1);
+    GRAdrawpoly(ggc, 3, poly, GRA_FILL_MODE_EVEN_ODD);
     break;
   case PLOT_TYPE_RECTANGLE:
     GRArectangle(ggc, 1, height - 1, width - 1, 1, 0);

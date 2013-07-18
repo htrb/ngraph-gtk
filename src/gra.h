@@ -101,6 +101,12 @@ enum GRA_LINE_JOIN {
   GRA_LINE_JOIN_BEVEL = 2,
 };
 
+enum GRA_FILL_MODE {
+  GRA_FILL_MODE_NONE = 0,
+  GRA_FILL_MODE_EVEN_ODD = 1,
+  GRA_FILL_MODE_WINDING = 2,
+};
+
 extern struct greektbltype greektable[48];
 int _GRAopencallback(directfunc direct,struct narray **list,void *local);
 int _GRAopen(char *objname,char *outputname,
@@ -138,7 +144,7 @@ void GRAline(int GC,int x0,int y0,int x1,int y1);
 void GRAlineto(int GC,int x,int y);
 void GRAcircle(int GC,int x,int y,int rx,int ry,int cs,int ce,int fil);
 void GRArectangle(int GC,int x0,int y0,int x1,int y1,int fil);
-void GRAdrawpoly(int GC,int num,int *point,int fil);
+void GRAdrawpoly(int GC,int num,int *point,enum GRA_FILL_MODE fil);
 void GRAlines(int GC,int num,int *point);
 void GRAmark(int GC,int type,int x0,int y0,int size,
 	     int fr,int fg,int fb, int fa, int br,int bg,int bb, int ba);

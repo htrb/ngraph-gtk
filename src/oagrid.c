@@ -325,7 +325,7 @@ draw_background(struct objlist *obj, N_VALUE *inst, int GC, struct axis_pos *ax,
   pos[6] = pos[0] + ay->len_x;
   pos[7] = pos[1] - ay->len_y;
 
-  GRAdrawpoly(GC, 4, pos, 1);
+  GRAdrawpoly(GC, 4, pos, GRA_FILL_MODE_EVEN_ODD);
 
   return 0;
 }

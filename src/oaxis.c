@@ -2808,7 +2808,7 @@ draw_arrow(struct objlist *obj, N_VALUE *inst, struct axis_config *aconf, int GC
     ap[4]=nround(aconf->x0+dy*awid);
     ap[5]=nround(aconf->y0-dx*awid);
     GRAlinestyle(GC,0,NULL,1,GRA_LINE_CAP_BUTT,GRA_LINE_JOIN_MITER,1000);
-    GRAdrawpoly(GC,3,ap,1);
+    GRAdrawpoly(GC,3,ap,GRA_FILL_MODE_EVEN_ODD);
   }
 
   if ((arrow==ARROW_POSITION_END) || (arrow==ARROW_POSITION_BOTH)) {
@@ -2821,7 +2821,7 @@ draw_arrow(struct objlist *obj, N_VALUE *inst, struct axis_config *aconf, int GC
     ap[4]=nround(aconf->x1+dy*awid);
     ap[5]=nround(aconf->y1-dx*awid);
     GRAlinestyle(GC,0,NULL,1,GRA_LINE_CAP_BUTT,GRA_LINE_JOIN_MITER,1000);
-    GRAdrawpoly(GC,3,ap,1);
+    GRAdrawpoly(GC,3,ap,GRA_FILL_MODE_EVEN_ODD);
   }
 
   return 0;

@@ -4488,7 +4488,7 @@ draw_polygon(struct narray *pos, int GC)
   ap = (int *) arraydata(pos);
   n = arraynum(pos);
   if (n > 4) {
-    GRAdrawpoly(GC, n / 2, ap, 2);
+    GRAdrawpoly(GC, n / 2, ap, GRA_FILL_MODE_WINDING);
   }
 
 #if 0
@@ -4883,7 +4883,7 @@ rectout(struct objlist *obj,struct f2ddata *fp,int GC,
               ap[4]=nround(ax0+dy/len*awidth);
               ap[5]=nround(ay0-dx/len*awidth);
               GRAline(GC,gx0,gy0,ax0,ay0);
-              GRAdrawpoly(GC,3,ap,1);
+              GRAdrawpoly(GC,3,ap,GRA_FILL_MODE_EVEN_ODD);
             }
           } else GRAline(GC,gx0,gy0,gx1,gy1);
         }
@@ -4901,7 +4901,7 @@ rectout(struct objlist *obj,struct f2ddata *fp,int GC,
 	  f2dtransf(x0, y1, ap + 2, ap + 3, fp);
 	  f2dtransf(x1, y1, ap + 4, ap + 5, fp);
 	  f2dtransf(x1, y0, ap + 6, ap + 7, fp);
-	  GRAdrawpoly(GC, 4, ap, 1);
+	  GRAdrawpoly(GC, 4, ap, GRA_FILL_MODE_EVEN_ODD);
         }
         if (type == PLOT_TYPE_RECTANGLE_FILL) {
 	  GRAcolor(GC,fp->col.r,fp->col.g,fp->col.b, fp->col.a);
@@ -5189,11 +5189,11 @@ barout(struct objlist *obj,struct f2ddata *fp,int GC,
 	break;
       case PLOT_TYPE_BAR_SOLID_FILL_X:
 	GRAcolor(GC,fp->col.r,fp->col.g,fp->col.b, fp->col.a);
-	GRAdrawpoly(GC,4,ap,1);
+	GRAdrawpoly(GC,4,ap,GRA_FILL_MODE_EVEN_ODD);
 	break;
       case PLOT_TYPE_BAR_FILL_X:
 	GRAcolor(GC, fp->col2.r, fp->col2.g, fp->col2.b, fp->col2.a);
-	GRAdrawpoly(GC,4,ap,1);
+	GRAdrawpoly(GC,4,ap,GRA_FILL_MODE_EVEN_ODD);
 	GRAcolor(GC,fp->col.r,fp->col.g,fp->col.b, fp->col.a);
 	draw_rect(GC, ap, x1, fp->dx, x0, 0);
 	break;
@@ -5226,11 +5226,11 @@ barout(struct objlist *obj,struct f2ddata *fp,int GC,
 	break;
       case PLOT_TYPE_BAR_SOLID_FILL_Y:
 	GRAcolor(GC,fp->col.r,fp->col.g,fp->col.b, fp->col.a);
-	GRAdrawpoly(GC,4,ap,1);
+	GRAdrawpoly(GC,4,ap,GRA_FILL_MODE_EVEN_ODD);
 	break;
       case PLOT_TYPE_BAR_FILL_Y:
 	GRAcolor(GC, fp->col2.r, fp->col2.g, fp->col2.b, fp->col2.a);
-	GRAdrawpoly(GC,4,ap,1);
+	GRAdrawpoly(GC,4,ap,GRA_FILL_MODE_EVEN_ODD);
 	GRAcolor(GC,fp->col.r,fp->col.g,fp->col.b, fp->col.a);
 	draw_rect(GC, ap, y1, fp->dy, y0, 0);
 	break;

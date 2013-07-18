@@ -2622,7 +2622,7 @@ draw_color_pixbuf(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type, i
       pos[6] = width - 2;
       pos[7] = height - 2;
       if (close_path) {
-	GRAdrawpoly(ggc, 4, pos, 0);
+	GRAdrawpoly(ggc, 4, pos, GRA_FILL_MODE_NONE);
       } else {
 	GRAlines(ggc, 4, pos);
       }
