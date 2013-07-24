@@ -154,6 +154,8 @@ MergeDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(d->vbox), frame, TRUE, TRUE, 4);
 
     add_copy_button_to_box(GTK_WIDGET(d->vbox), G_CALLBACK(MergeDialogCopy), d, "merge");
+
+    gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
   MergeDialogSetupItem(d, TRUE, d->Id);
 }

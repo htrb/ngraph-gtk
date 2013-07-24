@@ -166,6 +166,7 @@ DriverDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, _("_File:"), TRUE, i++);
 
     gtk_box_pack_start(GTK_BOX(d->vbox), table, FALSE, FALSE, 4);
+    gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
 
   combo_box_clear(d->driver);
@@ -257,6 +258,7 @@ OutputDataDialogSetup(GtkWidget *wi, void *data, int makewidget)
 #endif
     item_setup(hbox, w, _("_Div:"), TRUE);
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
+    gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
   OutputDataDialogSetupItem(wi, d);
 }
@@ -286,13 +288,13 @@ static void
 OutputImageDialogSetupItem(GtkWidget *w, struct OutputImageDialog *d)
 {
   int i;
-  GtkWidget *vlabel;
+  GtkWidget *vlabel, *window;
+  GtkRequisition minimum_size;
 
   vlabel = get_mnemonic_label(d->version);
 
   gtk_label_set_text(GTK_LABEL(vlabel), "");
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->use_opacity), FALSE);
-  gtk_widget_set_sensitive(d->version, TRUE); /* fix-me: this code may need to avoid GKT+3 bug. */
 
   combo_box_clear(d->version);
   switch (d->DlgType) {
@@ -301,11 +303,9 @@ OutputImageDialogSetupItem(GtkWidget *w, struct OutputImageDialog *d)
     for (i = 0; PsVersion[i]; i++) {
       combo_box_append_text(d->version, PsVersion[i]);
     }
-    set_widget_sensitivity_with_label(d->dpi, FALSE);
-
-    gtk_widget_set_sensitive(d->version, TRUE);
-    gtk_widget_set_sensitive(vlabel, TRUE);
-    gtk_widget_set_sensitive(d->t2p, TRUE);
+    set_widget_visibility_with_label(d->dpi, FALSE);
+    set_widget_visibility_with_label(d->version, TRUE);
+    gtk_widget_set_visible(d->t2p, TRUE);
 
     gtk_label_set_markup_with_mnemonic(GTK_LABEL(vlabel), _("_PostScript Version:"));
 
@@ -313,28 +313,20 @@ OutputImageDialogSetupItem(GtkWidget *w, struct OutputImageDialog *d)
     combo_box_set_active(d->version, Menulocal.ps_version);
     break;
   case MenuIdOutputPNGFile:
-    combo_box_append_text(d->version, "--------");
-
-    set_widget_sensitivity_with_label(d->dpi, TRUE);
-    gtk_widget_set_sensitive(d->version, FALSE);
-    gtk_widget_set_sensitive(vlabel, FALSE);
-    gtk_widget_set_sensitive(d->t2p, FALSE);
+    set_widget_visibility_with_label(d->dpi, TRUE);
+    set_widget_visibility_with_label(d->version, FALSE);
+    gtk_widget_set_visible(d->t2p, FALSE);
 
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(d->dpi), Menulocal.png_dpi);
-    combo_box_set_active(d->version, 0);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->use_opacity), Menulocal.use_opacity);
 
     break;
   case MenuIdOutputPDFFile:
-    combo_box_append_text(d->version, "--------");
-
-    set_widget_sensitivity_with_label(d->dpi, FALSE);
-    gtk_widget_set_sensitive(d->version, FALSE);
-    gtk_widget_set_sensitive(vlabel, FALSE);
-    gtk_widget_set_sensitive(d->t2p, TRUE);
+    set_widget_visibility_with_label(d->dpi, FALSE);
+    set_widget_visibility_with_label(d->version, FALSE);
+    gtk_widget_set_visible(d->t2p, TRUE);
 
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(d->dpi), 72);
-    combo_box_set_active(d->version, 0);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->use_opacity), Menulocal.use_opacity);
     break;
   case MenuIdOutputSVGFile:
@@ -342,10 +334,9 @@ OutputImageDialogSetupItem(GtkWidget *w, struct OutputImageDialog *d)
       combo_box_append_text(d->version, SvgVersion[i]);
     }
 
-    set_widget_sensitivity_with_label(d->dpi, FALSE);
-    gtk_widget_set_sensitive(d->version, TRUE);
-    gtk_widget_set_sensitive(vlabel, TRUE);
-    gtk_widget_set_sensitive(d->t2p, TRUE);
+    set_widget_visibility_with_label(d->dpi, FALSE);
+    set_widget_visibility_with_label(d->version, TRUE);
+    gtk_widget_set_visible(d->t2p, TRUE);
 
     gtk_label_set_markup_with_mnemonic(GTK_LABEL(vlabel), _("_SVG Version:"));
 
@@ -355,17 +346,18 @@ OutputImageDialogSetupItem(GtkWidget *w, struct OutputImageDialog *d)
     break;
 #ifdef CAIRO_HAS_WIN32_SURFACE
   case MenuIdOutputCairoEMFFile:
-    combo_box_append_text(d->version, "--------");
-
-    set_widget_sensitivity_with_label(d->dpi, TRUE);
-    gtk_widget_set_sensitive(d->version, FALSE);
-    gtk_widget_set_sensitive(vlabel, FALSE);
-    gtk_widget_set_sensitive(d->t2p, TRUE);
-
+    set_widget_visibility_with_label(d->dpi, TRUE);
+    set_widget_visibility_with_label(d->version, FALSE);
+    gtk_widget_set_visible(d->t2p, FALSE);
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(d->dpi), Menulocal.emf_dpi);
-    combo_box_set_active(d->version, 0);
     break;
 #endif	/* CAIRO_HAS_WIN32_SURFACE */
+  }
+
+  window = gtk_widget_get_parent(GTK_WIDGET(d->vbox));
+  if (GTK_IS_WINDOW(window)) {
+    gtk_widget_get_preferred_size(GTK_WIDGET(d->vbox), &minimum_size, NULL);
+    gtk_window_resize(GTK_WINDOW(window), minimum_size.width, minimum_size.height);
   }
 }
 
@@ -395,6 +387,7 @@ OutputImageDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = combo_box_create();
     d->version = w;
     item_setup(GTK_WIDGET(d->vbox), w, "", FALSE);
+    gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
 
   switch (d->DlgType) {

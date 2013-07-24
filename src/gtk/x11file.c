@@ -166,6 +166,7 @@ MathTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->label = item_setup(hbox, w, _("_Math:"), TRUE);
     d->list = w;
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
+    gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
 
   switch (d->Mode) {
@@ -534,6 +535,8 @@ MathDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_window_set_default_size(GTK_WINDOW(wi), -1, 300);
 
+    gtk_widget_show_all(GTK_WIDGET(d->vbox));
+
     d->Mode = 0;
   }
 
@@ -566,6 +569,7 @@ FitLoadDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = combo_box_create();
     d->list = w;
     gtk_box_pack_start(GTK_BOX(d->vbox), w, FALSE, FALSE, 4);
+    gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
   combo_box_clear(d->list);
   for (i = d->Sid; i <= chkobjlastinst(d->Obj); i++) {
@@ -628,6 +632,7 @@ FitSaveDialogSetup(GtkWidget *wi, void *data, int makewidget)
     item_setup(hbox, w, _("_Profile:"), TRUE);
     d->profile = w;
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
+    gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
   combo_box_clear(d->profile);
   for (i = d->Sid; i <= chkobjlastinst(d->Obj); i++) {
@@ -1597,6 +1602,8 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect(d->type, "changed", G_CALLBACK(FitDialogSetSensitivity), d);
     g_signal_connect(d->through_point, "toggled", G_CALLBACK(FitDialogSetSensitivity), d);
     g_signal_connect(d->derivatives, "toggled", G_CALLBACK(FitDialogSetSensitivity), d);
+
+    gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
 
   FitDialogSetupItem(wi, d, d->Id);
@@ -2525,6 +2532,8 @@ MarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
     gtk_box_pack_start(GTK_BOX(d->vbox), vbox, FALSE, FALSE, 4);
 #endif
+
+    gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
 
   d->cb_respond = FALSE;
@@ -3749,6 +3758,7 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(d->fit_table, w, _("_Fit:"), FALSE, d->fit_row);
     d->fit = w;
     g_signal_connect(w, "clicked", G_CALLBACK(FileDialogFit), d);
+    gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
 
   line = Menulocal.data_head_lines;
@@ -3924,6 +3934,7 @@ FileDefDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     FileDialogSetupCommon(wi, d);
     gtk_notebook_set_tab_pos(d->tab, GTK_POS_TOP);
+    gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
   FileDialogDefSetupItem(wi, d, d->Id);
 }

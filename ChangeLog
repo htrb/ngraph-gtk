@@ -1,3 +1,64 @@
+2013-07-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11merge.c (MergeDialogSetup): call
+	"gtk_widget_show_all()".
+
+	* src/gtk/x11axis.c (GridDialogSetup, SectionDialogSetup)
+	(CrossDialogSetup, ZoomDialogSetup, AxisDialogSetup): call
+	"gtk_widget_show_all()".
+
+	* src/gtk/gtk_widget.c (set_widget_visibility_with_label): added.
+	(set_scroll_visibility): use "gtk_widget_set_visible()" instead of
+	"gtk_widget_show()" and "gtk_widget_hide()".
+
+	* src/gtk/x11print.c (DriverDialogSetup, OutputDataDialogSetup)
+	(OutputImageDialogSetup): call "gtk_widget_show_all()".
+	(OutputImageDialogSetupItem): hide unused widgets and reset window
+	size.
+
+	* src/gtk/x11lgnd.c (LegendArrowDialogSetup)
+	(LegendRectDialogSetup, LegendArcDialogSetup)
+	(LegendMarkDialogSetup, LegendTextDialogSetup)
+	(LegendTextDefDialogSetup): call "gtk_widget_show_all()".
+
+	* src/gtk/x11menu.c (toggle_view_cb): use
+	"gtk_widget_set_visible()" instead of "gtk_widget_show()" and
+	"gtk_widget_hide()".
+	(InputYN): use "get_current_window()".
+
+	* src/gtk/x11graph.c (PageDialogSetup, SwitchDialogSetup)
+	(DirectoryDialogSetup, LoadDialogSetup, PrmDialogSetup)
+	(SaveDialogSetup): call "gtk_widget_show_all()".
+
+	* src/gtk/x11lgndx.c (LegendGaussDialogSetup): call
+	"gtk_widget_show_all()".
+
+	* src/gtk/x11dialg.c (SelectDialogSetup, CopyDialogSetup): call
+	"gtk_widget_show_all()".
+
+	* src/gtk/x11file.c (MathTextDialogSetup, MathDialogSetup)
+	(FitLoadDialogSetup, FitSaveDialogSetup, FitDialogSetup)
+	(MarkDialogSetup, FileDialogSetup, FileDefDialogSetup): call
+	"gtk_widget_show_all()".
+
+	* src/gtk/x11view.c (EvalDialogSetup): call
+	"gtk_widget_show_all()".
+
+	* src/gtk/x11opt.c (DefaultDialogSetup, SetScriptDialogSetup)
+	(PrefScriptDialogSetup, SetDriverDialogSetup)
+	(PrefDriverDialogSetup, FontSettingDialogSetup)
+	(PrefFontDialogSetup, MiscDialogSetup, ExViewerDialogSetup)
+	(ViewerDialogSetup): call "gtk_widget_show_all()".
+	(DefaultDialogSetup): use "gtk_widget_set_visible()" instead of
+	"gtk_widget_set_sensitive()".
+
+	* src/gtk/x11gui.c (DialogExecute): use "gtk_widget_show()"
+	instead of "gtk_widget_show_all()".
+
+2013-07-24  Koichi Akabe <vbkaisetsu at gmail.com>
+
+	* misc/ngraph.desktop (Keywords): added.
+
 2013-07-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gra.h (GRA_FILL_MODE): added.

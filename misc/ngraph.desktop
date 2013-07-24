@@ -10,3 +10,4 @@ Type=Application
 Version=1.0
 Categories=GTK;GNOME;Graphics;
 MimeType=application/x-ngraph;application/x-ngraph-graphic
+Keywords=graph;scientific;chart;calculation;

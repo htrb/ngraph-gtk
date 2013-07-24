@@ -208,6 +208,7 @@ PageDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->paperzoom = w;
 
     gtk_box_pack_start(GTK_BOX(d->vbox), table, FALSE, FALSE, 4);
+    gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
   PageDialogSetupItem(wi, d);
 }
@@ -780,6 +781,7 @@ SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 4);
     gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 4);
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
+    gtk_widget_show_all(GTK_WIDGET(d->vbox));
 
     d->btn_lock = FALSE;
   }
@@ -895,6 +897,7 @@ DirectoryDialogSetup(GtkWidget *wi, void *data, int makewidget)
 #endif
 
     gtk_box_pack_start(GTK_BOX(d->vbox), table, FALSE, FALSE, 4);
+    gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
 
   cwd = ngetcwd();
@@ -965,6 +968,7 @@ LoadDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->load_path = w;
 
     gtk_box_pack_start(GTK_BOX(d->vbox), vbox, FALSE, FALSE, 4);
+    gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->expand_file), d->expand);
   combo_box_set_active(d->load_path, d->loadpath);
@@ -1016,6 +1020,7 @@ PrmDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
 
     gtk_box_pack_start(GTK_BOX(d->vbox), vbox, FALSE, FALSE, 4);
+    gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
   getobj(d->Obj, "ignore_path", d->Id, 0, NULL, &a);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->ignore_path), a);
@@ -1078,6 +1083,7 @@ SaveDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
 
     gtk_box_pack_start(GTK_BOX(d->vbox), vbox, FALSE, FALSE, 4);
+    gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
   combo_box_set_active(d->path, Menulocal.savepath);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->include_data), Menulocal.savewithdata);

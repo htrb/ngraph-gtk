@@ -1005,6 +1005,8 @@ EvalDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->ok_button = GTK_STOCK_CLOSE;
 
     gtk_window_set_default_size(GTK_WINDOW(wi), 540, 400);
+
+    gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
   EvalDialogSetupItem(wi, d);
 }

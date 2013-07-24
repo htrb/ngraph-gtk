@@ -538,6 +538,7 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 0);
+    gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
   LegendGaussDialogSetupItem(wi, d, d->Id);
 }

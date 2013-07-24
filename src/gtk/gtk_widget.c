@@ -109,6 +109,31 @@ set_widget_sensitivity_with_label(GtkWidget *w, gboolean state)
   }
 }
 
+void
+set_widget_visibility_with_label(GtkWidget *w, gboolean state)
+{
+  GtkWidget *label;
+
+  if(w == NULL) {
+    return;
+  }
+
+  if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_LABEL)) {
+    label = w;
+    w = gtk_label_get_mnemonic_widget(GTK_LABEL(w));
+  } else {
+    label = get_mnemonic_label(w);
+  }
+
+  if (w) {
+    gtk_widget_set_visible(w, state);
+  }
+
+  if (label) {
+    gtk_widget_set_visible(label, state);
+  }
+}
+
 GtkWidget *
 add_widget_to_table_sub(GtkWidget *table, GtkWidget *w, char *title, int expand, int col, int width, int col_max, int n)
 {
@@ -819,11 +844,7 @@ set_scroll_visibility(GtkWidget *scroll)
   max = gtk_adjustment_get_upper(adj);
   page = gtk_adjustment_get_page_size(adj);
 
-  if (max - min > page) {
-    gtk_widget_show(scroll);
-  } else {
-    gtk_widget_hide(scroll);
-  }
+  gtk_widget_set_visible(scroll, max - min > page);
 }
 
 static void

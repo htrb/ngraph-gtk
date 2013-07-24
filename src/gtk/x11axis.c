@@ -419,6 +419,7 @@ GridDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(d->vbox), frame, FALSE, FALSE, 4);
 
     add_copy_button_to_box(GTK_WIDGET(d->vbox), G_CALLBACK(grid_copy_clicked), d, "axisgrid");
+    gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
 
   GridDialogSetupItem(wi, d, d->Id);
@@ -756,6 +757,7 @@ SectionDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 4);
 
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
+    gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
 
   SectionDialogSetupItem(wi, d);
@@ -959,6 +961,7 @@ CrossDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 4);
 
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
+    gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
   CrossDialogSetupItem(wi, d);
 }
@@ -1050,6 +1053,7 @@ ZoomDialogSetup(GtkWidget *wi, void *data, int makewidget)
     item_setup(vbox, w, _("_Zoom:"), TRUE);
     d->zoom_entry = w;
     gtk_box_pack_start(GTK_BOX(d->vbox), vbox, FALSE, FALSE, 4);
+    gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
   ZoomDialogSetupItem(wi, d);
 }
@@ -2417,6 +2421,7 @@ AxisDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->position.tab_id = gtk_notebook_append_page(GTK_NOTEBOOK(notebook), w, label);
 
     gtk_box_pack_start(GTK_BOX(d->vbox), notebook, TRUE, TRUE, 4);
+    gtk_widget_show_all(GTK_WIDGET(d->vbox));
 
     d->tab = GTK_NOTEBOOK(notebook);
   }

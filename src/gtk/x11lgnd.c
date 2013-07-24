@@ -1416,6 +1416,8 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_copy_button_to_box(GTK_WIDGET(d->vbox), G_CALLBACK(legend_copy_clicked), d, "path");
 
     d->prop_cb = LegendLineCB;
+
+    gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
   legend_dialog_setup_item(wi, d, d->Id);
 }
@@ -1533,6 +1535,8 @@ LegendRectDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_copy_button_to_box(GTK_WIDGET(d->vbox), G_CALLBACK(legend_copy_clicked), d, "rectangle");
 
     d->prop_cb = LegendRectCB;
+
+    gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
   legend_dialog_setup_item(wi, d, d->Id);
 }
@@ -1679,6 +1683,8 @@ LegendArcDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_copy_button_to_box(GTK_WIDGET(d->vbox), G_CALLBACK(legend_copy_clicked), d, "arc");
 
     d->prop_cb = LegendArcCB;
+
+    gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
   legend_dialog_setup_item(wi, d, d->Id);
 }
@@ -1775,6 +1781,8 @@ LegendMarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_copy_button_to_box(GTK_WIDGET(d->vbox), G_CALLBACK(legend_copy_clicked), d, "mark");
 
     d->prop_cb = LegendArcCB;
+
+    gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
 
   legend_dialog_setup_item(wi, d, d->Id);
@@ -2027,6 +2035,8 @@ LegendTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_copy_button_to_box(GTK_WIDGET(d->vbox), G_CALLBACK(legend_copy_clicked), d, "text");
 
     d->prop_cb = LegendTextCB;
+
+    gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
   legend_dialog_setup_item(wi, d, d->Id);
   entry_completion_set_entry(NgraphApp.legend_text_list, d->text);
@@ -2066,6 +2076,8 @@ LegendTextDefDialogSetup(GtkWidget *w, void *data, int makewidget)
     add_copy_button_to_box(GTK_WIDGET(d->vbox), G_CALLBACK(legend_copy_clicked), d, "text");
 
     d->prop_cb = LegendTextCB;
+
+    gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
   legend_dialog_setup_item(w, d, d->Id);
 }

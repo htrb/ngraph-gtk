@@ -72,6 +72,7 @@ GtkWidget *create_text_view_with_line_number(GtkWidget **v);
 void text_view_with_line_number_set_text(GtkWidget *view, const gchar *str);
 void text_view_with_line_number_set_font(GtkWidget *view, const gchar *font);
 void set_widget_sensitivity_with_label(GtkWidget *w, gboolean state);
+void set_widget_visibility_with_label(GtkWidget *w, gboolean state);
 void combo_box_create_mark(GtkWidget *cbox, GtkTreeIter *parent, int col_id, int type);
 enum SELECT_OBJ_COLOR_RESULT select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type);
 void set_widget_margin(GtkWidget *w, int margin_pos);

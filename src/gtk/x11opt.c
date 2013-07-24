@@ -99,6 +99,7 @@ DefaultDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = gtk_check_button_new_with_mnemonic(_("_Miscellaneous"));
     d->misc = w;
     gtk_box_pack_start(GTK_BOX(d->vbox), w, FALSE, FALSE, 4);
+    gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->geometry), FALSE);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->child_geometry), FALSE);
@@ -108,7 +109,8 @@ DefaultDialogSetup(GtkWidget *wi, void *data, int makewidget)
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->addin_script), FALSE);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->misc), FALSE);
 
-  gtk_widget_set_sensitive(d->child_geometry, ! Menulocal.single_window_mode);
+  gtk_widget_set_visible(d->geometry, ! Menulocal.single_window_mode);
+  gtk_widget_set_visible(d->child_geometry, ! Menulocal.single_window_mode);
 }
 
 static int
@@ -329,6 +331,7 @@ SetScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->description = w;
 
     gtk_box_pack_start(GTK_BOX(d->vbox), table, FALSE, FALSE, 4);
+    gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
   SetScriptDialogSetupItem(wi, d);
 }
@@ -479,6 +482,7 @@ PrefScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_SAVE, IDSAVE);
     PrefScriptDialogCreateWidgets(d, NULL, sizeof(list) / sizeof(*list), list);
     gtk_window_set_default_size(GTK_WINDOW(wi), 400, 300);
+    gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
   PrefScriptDialogSetupItem(d);
 }
@@ -563,6 +567,7 @@ SetDriverDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->ext = w;
 
     gtk_box_pack_start(GTK_BOX(d->vbox), table, FALSE, FALSE, 4);
+    gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
   SetDriverDialogSetupItem(wi, d);
 }
@@ -682,6 +687,7 @@ PrefDriverDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_SAVE, IDSAVE);
     PrefDriverDialogCreateWidgets(d, NULL, sizeof(list) / sizeof(*list), list);
     gtk_window_set_default_size(GTK_WINDOW(wi), 400, 300);
+    gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
   PrefDriverDialogSetupItem(d);
 }
@@ -977,6 +983,7 @@ FontSettingDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_container_add(GTK_CONTAINER(frame), hbox);
 
     gtk_box_pack_start(GTK_BOX(d->vbox), frame, TRUE, TRUE, 4);
+    gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
 
   FontSettingDialogSetupItem(wi, d);
@@ -1188,6 +1195,7 @@ PrefFontDialogSetup(GtkWidget *wi, void *data, int makewidget)
 #endif
     PrefFontDialogCreateWidgets(d, vbox, sizeof(list) / sizeof(*list), list);
     gtk_window_set_default_size(GTK_WINDOW(wi), 550, 300);
+    gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
   PrefFontDialogSetupItem(d);
 }
@@ -1456,6 +1464,7 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_box_pack_start(GTK_BOX(hbox2), vbox2, FALSE, FALSE, 4);
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox2, TRUE, TRUE, 4);
+    gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
   MiscDialogSetupItem(wi, d);
 }
@@ -1658,6 +1667,7 @@ ExViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->height = w;
 
     gtk_box_pack_start(GTK_BOX(d->vbox), table, FALSE, FALSE, 4);
+    gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
   ExViewerDialogSetupItem(wi, d);
 }
@@ -1809,6 +1819,7 @@ ViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->data_num = w;
 
     gtk_box_pack_start(GTK_BOX(d->vbox), table, FALSE, FALSE, 4);
+    gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
   ViewerDialogSetupItem(wi, d);
 }

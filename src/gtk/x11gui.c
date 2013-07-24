@@ -190,7 +190,7 @@ DialogExecute(GtkWidget *parent, void *dialog)
   data->widget = dlg;
   data->ret = IDLOOP;
 
-  gtk_widget_show_all(dlg);
+  gtk_widget_show(dlg);
   win_ptr = get_current_window();
   set_current_window(dlg);
   if (data->focus)

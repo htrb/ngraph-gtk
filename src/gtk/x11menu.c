@@ -3490,20 +3490,11 @@ toggle_view_cb(GtkToggleAction *action, gpointer data)
     return;
   }
 
-  if (state) {
-    if (w1) {
-      gtk_widget_show(w1);
-    }
-    if (w2) {
-      gtk_widget_show(w2);
-    }
-  } else {
-    if (w1) {
-      gtk_widget_hide(w1);
-    }
-    if (w2) {
-      gtk_widget_hide(w2);
-    }
+  if (w1) {
+    gtk_widget_set_visible(w1, state);
+  }
+  if (w2) {
+    gtk_widget_set_visible(w2, state);
   }
 }
 
@@ -4245,7 +4236,7 @@ InputYN(const char *mes)
 {
   int ret;
 
-  ret = message_box((CurrentWindow) ? CurrentWindow : TopLevel, mes, _("Question"), RESPONS_YESNO);
+  ret = message_box(get_current_window(), mes, _("Question"), RESPONS_YESNO);
   UpdateAll2();
   return (ret == IDYES) ? TRUE : FALSE;
 }
