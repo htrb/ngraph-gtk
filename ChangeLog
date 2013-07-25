@@ -1,3 +1,8 @@
+2013-07-25  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/shell.c (get_security): added.
+	(cmdtable): add "load_plugin" command.
+
 2013-07-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11merge.c (MergeDialogSetup): call
