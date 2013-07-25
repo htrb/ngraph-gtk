@@ -1,5 +1,9 @@
 2013-07-25  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/plugins.h: added (experimental).
+
+	* src/plugins.c: added (experimental).
+
 	* src/shell.c (get_security): added.
 	(cmdtable): add "load_plugin" command.
 

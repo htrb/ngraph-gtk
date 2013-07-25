@@ -123,7 +123,7 @@ am_ngraph_OBJECTS = ngraph-axis.$(OBJEXT) ngraph-nconfig.$(OBJEXT) \
 	ngraph-shell.$(OBJEXT) ngraph-shellcm.$(OBJEXT) \
 	ngraph-shellux.$(OBJEXT) ngraph-spline.$(OBJEXT) \
 	ngraph-nhash.$(OBJEXT) ngraph-strconv.$(OBJEXT) \
-	ngraph-oio.$(OBJEXT)
+	ngraph-oio.$(OBJEXT) ngraph-plugins.$(OBJEXT)
 ngraph_OBJECTS = $(am_ngraph_OBJECTS)
 am__DEPENDENCIES_1 =
 ngraph_DEPENDENCIES = gtk/libngraph.la math/libmath.la \
@@ -407,7 +407,8 @@ ngraph_SOURCES = axis.c axis.h nconfig.c nconfig.h gra.c gra.h		\
 	oroot.c oroot.h osarray.c oshell.c oregexp.c ostring.c		\
 	osystem.c otext.c otext.h opath.c opath.h shell.c shell.h	\
 	shellcm.c shellcm.h shellux.c shellux.h spline.c spline.h	\
-	common.h nhash.h nhash.c strconv.c strconv.h oio.c gettext.h
+	common.h nhash.h nhash.c strconv.c strconv.h oio.c plugins.c	\
+	plugins.h gettext.h
 
 terminal_SOURCES = terminal.c
 ngraph_LDADD = gtk/libngraph.la math/libmath.la $(READLINE_LIBS) $(GTK_LIBS) $(GLIB_LIBS) $(GSL_LIBS)
@@ -600,6 +601,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-ostring.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-osystem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-otext.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-plugins.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-shell.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-shellcm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-shellux.Po@am__quote@
@@ -1257,6 +1259,20 @@ ngraph-oio.obj: oio.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='oio.c' object='ngraph-oio.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -c -o ngraph-oio.obj `if test -f 'oio.c'; then $(CYGPATH_W) 'oio.c'; else $(CYGPATH_W) '$(srcdir)/oio.c'; fi`
+
+ngraph-plugins.o: plugins.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -MT ngraph-plugins.o -MD -MP -MF $(DEPDIR)/ngraph-plugins.Tpo -c -o ngraph-plugins.o `test -f 'plugins.c' || echo '$(srcdir)/'`plugins.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ngraph-plugins.Tpo $(DEPDIR)/ngraph-plugins.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='plugins.c' object='ngraph-plugins.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -c -o ngraph-plugins.o `test -f 'plugins.c' || echo '$(srcdir)/'`plugins.c
+
+ngraph-plugins.obj: plugins.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -MT ngraph-plugins.obj -MD -MP -MF $(DEPDIR)/ngraph-plugins.Tpo -c -o ngraph-plugins.obj `if test -f 'plugins.c'; then $(CYGPATH_W) 'plugins.c'; else $(CYGPATH_W) '$(srcdir)/plugins.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ngraph-plugins.Tpo $(DEPDIR)/ngraph-plugins.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='plugins.c' object='ngraph-plugins.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -c -o ngraph-plugins.obj `if test -f 'plugins.c'; then $(CYGPATH_W) 'plugins.c'; else $(CYGPATH_W) '$(srcdir)/plugins.c'; fi`
 
 terminal-terminal.o: terminal.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(terminal_CFLAGS) $(CFLAGS) -MT terminal-terminal.o -MD -MP -MF $(DEPDIR)/terminal-terminal.Tpo -c -o terminal-terminal.o `test -f 'terminal.c' || echo '$(srcdir)/'`terminal.c
