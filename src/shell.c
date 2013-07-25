@@ -620,7 +620,6 @@ struct cmdtabletype cmdtable[] = {
                   {"sleep",    cmsleep},
                   {"test",     cmtest},
                   {"which",    cmwhich},
-                  {"load_plugin", cmload},
                  };
 
 int CMDNUM = sizeof(cmdtable) / sizeof(*cmdtable);

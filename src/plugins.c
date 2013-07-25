@@ -6,29 +6,11 @@
 #define USE_HASH 1
 
 #include "ngraph.h"
+#include "ngraph_plugin_shell.h"
 #include "object.h"
 #include "shell.h"
 
-typedef int (* plugin_init_func) (const char *message);
-typedef int (* plugin_shell_init) (int argc, char *argv[]);
-typedef int (* plugin_shell_done) (int argc, char *argv[]);
-typedef int (* plugin_shell_shell) (int argc, char *argv[]);
-
-struct plugin {
-  GModule *module;
-  char *name;
-  plugin_shell_init shell_init;
-  plugin_shell_done shell_done;
-  plugin_shell_shell shell_shell;
-  struct plugin *next;
-};
-
-static int plugin_init(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv);
-static int plugin_init(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv);
-static int plugin_done(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv);
-static int plugin_shell(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv);
-
-#define NAME "shell"
+#define NAME "plugin_shell"
 #define PARENT "object"
 #define OVERSION   "1.00.00"
 #define MAXCLINE 256
@@ -43,100 +25,15 @@ static char *sherrorlist[]={
   "no such file",
 };
 
-#define ERRNUM (sizeof(sherrorlist) / sizeof(*sherrorlist))
-
-static struct objtable PluginShellPrototype[] = {
-  {"init", NVFUNC, NEXEC, plugin_init, NULL, 0},
-  {"done", NVFUNC, NEXEC, plugin_done, NULL, 0},
-  {"next", NPOINTER, 0, NULL, NULL, 0},
-  {"shell", NVFUNC, NREAD|NEXEC, plugin_shell, "sa", 0},
-  {"security", NVFUNC, 0, NULL, "b", 0},
-  {"_local", NPOINTER, 0, NULL, NULL, 0},
+struct plugin_shell {
+  GModule *module;
+  char *name;
+  plugin_shell_init shell_init;
+  plugin_shell_done shell_done;
+  plugin_shell_shell shell_shell;
+  int lock;
+  void *user_data;
 };
-
-#define TBLNUM (sizeof(PluginShellPrototype) / sizeof(*PluginShellPrototype))
-
-static struct plugin *PluginList = NULL;
-
-static int
-check_loaded(const char *name)
-{
-  struct plugin *cur;
-
-  for (cur = PluginList; cur; cur = cur->next) {
-    if (g_strcmp0(name, cur->name) == 0) {
-      return 1;
-    }
-  }
-
-  return 0;
-}
-
-static int
-add_plugin(GModule *module, const char *name, plugin_shell_init shell_init, plugin_shell_done shell_done, plugin_shell_shell shell_shell)
-{
-  struct plugin *cur, *next;
-  char *copy_name;
-
-  copy_name = g_strdup(name);
-  if (copy_name == NULL) {
-    return 1;
-  }
-
-  if (PluginList == NULL) {
-    PluginList = g_malloc0(sizeof(struct plugin));
-    if (PluginList == NULL) {
-      g_free(copy_name);
-      return 1;
-    }
-    cur = PluginList;
-  } else {
-    for (cur = PluginList; cur->next; cur = cur->next) {
-      ;
-    }
-    next = g_malloc0(sizeof(struct plugin));
-    if (next == NULL) {
-      g_free(copy_name);
-      return 1;
-    }
-    cur->next = next;
-    cur = next;
-  }
-
-  cur->name = copy_name;
-  cur->module = module;
-  cur->shell_init = shell_init;
-  cur->shell_done = shell_done;
-  cur->shell_shell = shell_shell;
-  cur->next = NULL;
-
-  return 0;
-}
-
-static void *
-add_plugin_shell(const char *name)
-{
-  static struct objtable *plugin_shell;
-  unsigned int i;
-  char *copy_name;
-
-  copy_name = g_strdup(name);
-  if (copy_name == NULL) {
-    return NULL;
-  }
-
-  plugin_shell = g_malloc(sizeof(PluginShellPrototype));
-  if (plugin_shell == NULL) {
-    g_free(copy_name);
-    return NULL;
-  }
-
-  for (i = 0; i < TBLNUM; i++) {
-    plugin_shell[i] = PluginShellPrototype[i];
-  }
-  
-  return addobject(copy_name, NULL, PARENT, OVERSION, TBLNUM, plugin_shell, ERRNUM, sherrorlist, NULL, NULL);
-}
 
 static int
 get_symbol(GModule *module, const char *format, const char *name, gpointer *symbol)
@@ -154,11 +51,10 @@ get_symbol(GModule *module, const char *format, const char *name, gpointer *symb
   return 0;
 }
 
-static int
-load_plugin(const char *name)
+static GModule *
+load_plugin(char *name, struct plugin_shell *shlocal)
 {
   GModule *module;
-  plugin_init_func plugin_init;
   plugin_shell_init shell_init;
   plugin_shell_done shell_done;
   plugin_shell_shell shell_shell;
@@ -166,45 +62,83 @@ load_plugin(const char *name)
 
   module = g_module_open(name, 0);
   if (module == NULL) {
-    return 1;
-  }
-
-  r = get_symbol(module, "ngraph_plugin_init_%s", name, (gpointer *) &plugin_init);
-  if (! r || plugin_init == NULL) {
-    g_module_close(module);
-    return 1;
+    return NULL;
   }
 
   r = get_symbol(module, "ngraph_plugin_shell_init_%s", name, (gpointer *) &shell_init);
   if (! r || shell_init == NULL) {
     g_module_close(module);
-    return 1;
+    return NULL;
   }
 
   r = get_symbol(module, "ngraph_plugin_shell_done_%s", name, (gpointer *) &shell_done);
   if (! r || shell_init == NULL) {
     g_module_close(module);
-    return 1;
+    return NULL;
   }
 
   r = get_symbol(module, "ngraph_plugin_shell_shell_%s", name, (gpointer *) &shell_shell);
   if (! r || shell_init == NULL) {
     g_module_close(module);
+    return NULL;
+  }
+
+  shlocal->name = name;
+  shlocal->module = module;
+  shlocal->shell_shell = shell_shell;
+  shlocal->shell_init = shell_init;
+  shlocal->shell_done = shell_done;
+
+  return module;
+}
+
+
+static int 
+plugin_shell_open(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  char *name;
+  GModule *module;
+  struct plugin_shell *shlocal;
+
+  if (argv[2] == NULL) {
     return 1;
   }
 
-  if (plugin_init("test")) {
-    g_module_close(module);
+  _getobj(obj, "_local", inst, &shlocal);
+  if (shlocal == NULL) {
     return 1;
   }
 
-  if (add_plugin(module, name, shell_init, shell_done, shell_shell)) {
-    g_module_close(module);
+  name = g_strdup(argv[2]);
+  if (name == NULL) {
     return 1;
   }
 
-  if (add_plugin_shell(name) == NULL) {
+  module = load_plugin(name, shlocal);
+  if (module == NULL) {
+    g_free(name);
     return 1;
+  }
+
+  return 0;
+}
+
+static int 
+plugin_shell_close(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  struct plugin_shell *shlocal;
+
+  _getobj(obj, "_local", inst, &shlocal);
+  if (shlocal == NULL) {
+    return 1;
+  }
+
+  if (shlocal->module) {
+    g_module_close(shlocal->module);
+    shlocal->module = NULL;
+    shlocal->shell_init = NULL;
+    shlocal->shell_done = NULL;
+    shlocal->shell_shell = NULL;
   }
 
   return 0;
@@ -213,43 +147,268 @@ load_plugin(const char *name)
 static int 
 plugin_init(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
+  struct plugin_shell *shlocal;
+
+  if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv)) return 1;
+  shlocal = g_malloc0(sizeof(struct plugin_shell));
+  if (shlocal == NULL) return 1;
+  if (_putobj(obj, "_local", inst, shlocal)) {
+    g_free(shlocal);
+    return 1;
+  }
+
+  shlocal->lock = 0;
+
   return 0;
 }
 
 static int 
-plugin_done(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
+plugin_done(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  struct plugin_shell *shlocal;
+
+  _getobj(obj, "_local", inst, &shlocal);
+  if (shlocal == NULL) {
+    return 1;
+  }
+
+  plugin_shell_close(obj, inst, rval, argc, argv);
+
+  g_free(shlocal);
+
+  return 0;
+}
+
+static int 
+plugin_shell_exec(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  struct plugin_shell *shlocal;
+
+  _getobj(obj, "_local", inst, &shlocal);
+  if (shlocal == NULL) {
+    return 1;
+  }
+
+  if (shlocal->module == NULL ||
+      shlocal->shell_init == NULL ||
+      shlocal->shell_done == NULL ||
+      shlocal->shell_shell == NULL) {
+    return 1;
+  }
+
+  if (shlocal->lock) {
+    return 1;
+  }
+
+  shlocal->lock = TRUE;
+
+  shlocal->shell_init(shlocal);
+  shlocal->shell_done(shlocal);
+
+  shlocal->lock = FALSE;
+
+  return 0;
+}
+
+#define ERRNUM (sizeof(sherrorlist) / sizeof(*sherrorlist))
+
+static struct objtable PluginShell[] = {
+  {"init", NVFUNC, NEXEC, plugin_init, NULL, 0},
+  {"done", NVFUNC, NEXEC, plugin_done, NULL, 0},
+  {"next", NPOINTER, 0, NULL, NULL, 0},
+  {"shell", NVFUNC, NREAD|NEXEC, plugin_shell_exec, "sa", 0},
+  {"security", NBOOL, 0, NULL, "b", 0},
+  {"open", NVFUNC, NREAD|NEXEC, plugin_shell_open, "s", 0},
+  {"close", NVFUNC, NREAD|NEXEC, plugin_shell_close, "", 0},
+  {"_local", NPOINTER, 0, NULL, NULL, 0},
+};
+
+#define TBLNUM (sizeof(PluginShell) / sizeof(*PluginShell))
+
+void *
+add_plugin_shell(const char *name)
+{
+  return addobject(NAME, NULL, PARENT, OVERSION, TBLNUM, PluginShell, ERRNUM, sherrorlist, NULL, NULL);
+}
+
+/*****************************************************/
+
+void
+ngraph_plugin_shell_set_user_data(struct plugin_shell *shlocal, void *user_data)
+{
+  if (shlocal == NULL) {
+    return;
+  }
+  shlocal->user_data = user_data;
+}
+
+void *
+ngraph_plugin_shell_get_user_data(struct plugin_shell *shlocal)
+{
+  if (shlocal == NULL) {
+    return NULL;
+  }
+  return shlocal->user_data;
+}
+
+int
+ngraph_plugin_shell_putobj(struct objlist *obj, const char *vname, int id, void *val)
 {
   return 0;
 }
 
-static int 
-plugin_shell(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
+int 
+ngraph_plugin_shell_getobj(struct objlist *obj, const char *vname, int id, int argc, char **argv, void *val)
+{
+  return 0;
+}
+
+int 
+ngraph_plugin_shell_exeobj(struct objlist *obj, const char *vname, int id, int argc, char **argv)
+{
+  return 0;
+}
+
+struct objlist *
+ngraph_plugin_shell_getobject(const char *name)
+{
+  return NULL;
+}
+
+int 
+ngraph_plugin_shell_getid_by_name(struct objlist *obj, const char *name)
+{
+  return 0;
+}
+
+int 
+ngraph_plugin_shell_getid_by_oid(struct objlist *obj, int oid)
+{
+  return 0;
+}
+
+int 
+ngraph_plugin_shell_move_top(struct objlist *obj, int id)
+{
+  return 0;
+}
+
+int 
+ngraph_plugin_shell_move_last(struct objlist *obj, int id)
+{
+  return 0;
+}
+
+int 
+ngraph_plugin_shell_move_up(struct objlist *obj, int id)
+{
+  return 0;
+}
+
+int 
+ngraph_plugin_shell_move_down(struct objlist *obj, int id)
+{
+  return 0;
+}
+
+int 
+ngraph_plugin_shell_exchange(struct objlist *obj, int id1, int id2)
+{
+  return 0;
+}
+
+int 
+ngraph_plugin_shell_copy(struct objlist *obj, int id_dest, int id_src)
+{
+  return 0;
+}
+
+int 
+ngraph_plugin_shell_new(struct objlist *obj)
+{
+  return 0;
+}
+
+int 
+ngraph_plugin_shell_del(struct objlist *obj, int id)
+{
+  return 0;
+}
+
+int 
+ngraph_plugin_shell_exist(struct objlist *obj, int id)
+{
+  return 0;
+}
+
+const char *
+ngraph_plugin_shell_get_obj_name(const char *name)
+{
+  return NULL;
+}
+
+char *
+ngraph_plugin_shell_get_obj_fields(const char *name)
+{
+  return 0;
+}
+
+const char *
+ngraph_plugin_shell_get_obj_parent(const char *name)
+{
+  return NULL;
+}
+
+const char *
+ngraph_plugin_shell_get_obj_version(const char *name)
+{
+  return NULL;
+}
+
+int
+ngraph_plugin_shell_get_obj_id(const char *name)
 {
   return 0;
 }
 
 int
-cmload(struct nshell *nshell,int argc,char **argv)
+ngraph_plugin_shell_get_obj_size(const char *name)
 {
-  if (get_security()) {
-    sherror4(argv[0], ERRSECURITY);
-    return 1;
-  }
-
-  if (argc < 2) {
-    sherror4(argv[0], ERRSMLARG);
-    return 1;
-  }
-
-  if (check_loaded(argv[1])) {
-    printfstdout("'%s' is already loaded.\n", argv[1]);
-    return 1;
-  }
-
-  if (load_plugin(argv[1])) {
-    printfstdout("cannot load module '%s'.\n", argv[1]);
-    return 1;
-  }
-
   return 0;
 }
+
+int
+ngraph_plugin_shell_get_obj_current(const char *name)
+{
+  return 0;
+}
+
+int
+ngraph_plugin_shell_get_obj_last(const char *name)
+{
+  return 0;
+}
+
+int
+ngraph_plugin_shell_get_obj_inst_num(const char *name)
+{
+  return 0;
+}
+
+char *
+ngraph_plugin_shell_derive(const char *name)
+{
+  return NULL;
+}
+
+char *
+ngraph_plugin_shell_derive_inst(const char *name)
+{
+  return NULL;
+}
+
+/*
+
+derive [-instance] object
+
+ */

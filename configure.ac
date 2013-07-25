@@ -38,7 +38,7 @@ AC_CHECK_LIB([readline], [rl_completion_matches],
 
 AM_PATH_GLIB_2_0($GLIB_REQUIRED_VERSION,,
   [AC_MSG_ERROR(Test for GLib failed.)],
-  gobject gthread)
+  gobject gthread gmodule)
 
 dnl GLIB_LIBS_WITH_GTHREAD="$GLIB_LIBS"
 dnl AC_SUBST(GLIB_LIBS_WITH_GTHREAD)

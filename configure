@@ -14604,7 +14604,7 @@ fi
 
 
   pkg_config_args=glib-2.0
-  for module in . gobject gthread
+  for module in . gobject gthread gmodule
   do
       case "$module" in
          gmodule)
