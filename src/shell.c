@@ -135,6 +135,7 @@ static int MultiLine = FALSE;
 #include "shell.h"
 #include "shellcm.h"
 #include "shellux.h"
+#include "plugins.h"
 #include "math/math_equation.h"
 
 #define TEMPPFX "NGS"
@@ -236,6 +237,12 @@ void
 set_security(int state)
 {
   Security = state;
+}
+
+int
+get_security(void)
+{
+  return Security;
 }
 
 static void 
@@ -613,6 +620,7 @@ struct cmdtabletype cmdtable[] = {
                   {"sleep",    cmsleep},
                   {"test",     cmtest},
                   {"which",    cmwhich},
+                  {"load_plugin", cmload},
                  };
 
 int CMDNUM = sizeof(cmdtable) / sizeof(*cmdtable);

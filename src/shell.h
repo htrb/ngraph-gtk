@@ -170,6 +170,7 @@ int printfconsole(char *fmt,...);
 void ngraphenvironment(struct nshell *nshell);
 int msleep(int ms);
 void set_security(int state);
+int get_security(void);
 void set_environ(void);
 int set_signal(int signal, int flags, void (*handler)(int));
 void set_childhandler(void);
