@@ -12,17 +12,27 @@
 
 #define NAME "plugin_shell"
 #define PARENT "object"
-#define OVERSION   "1.00.00"
+#define OVERSION "1.00.00"
 #define MAXCLINE 256
 
-#define ERRRUN 100
-#define ERRNOCL 101
-#define ERRFILEFIND 102
+#define ERRMEM 100
+#define ERRRUN 101
+#define ERRNOCL 102
+#define ERRFILEFIND 103
+#define ERRLOAD 104
+#define ERRLOADED 105
+#define ERRNOLOAD 106
+#define ERRINIT 107
 
-static char *sherrorlist[]={
+static char *sherrorlist[] = {
+  "cannot allocate enough memory",
   "already running.",
   "no command string is specified.",
   "no such file",
+  "connnot load module",
+  "the module is already loaded",
+  "a module is not loaded",
+  "connnot initialize the shell",
 };
 
 struct plugin_shell {
@@ -101,6 +111,7 @@ plugin_shell_open(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, c
   struct plugin_shell *shlocal;
 
   if (argv[2] == NULL) {
+    error(obj, ERRNOCL);
     return 1;
   }
 
@@ -109,13 +120,20 @@ plugin_shell_open(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, c
     return 1;
   }
 
+  if (shlocal->module) {
+    error2(obj, ERRLOADED, shlocal->name);
+    return 1;
+  }
+
   name = g_strdup(argv[2]);
   if (name == NULL) {
+    error(obj, ERRMEM);
     return 1;
   }
 
   module = load_plugin(name, shlocal);
   if (module == NULL) {
+    error2(obj, ERRLOAD, name);
     g_free(name);
     return 1;
   }
@@ -133,25 +151,37 @@ plugin_shell_close(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, 
     return 1;
   }
 
-  if (shlocal->module) {
-    g_module_close(shlocal->module);
-    shlocal->module = NULL;
-    shlocal->shell_init = NULL;
-    shlocal->shell_done = NULL;
-    shlocal->shell_shell = NULL;
+  if (shlocal->module == NULL) {
+    error(obj, ERRNOLOAD);
+    return 1;
+  }
+
+  g_module_close(shlocal->module);
+  shlocal->module = NULL;
+  shlocal->shell_init = NULL;
+  shlocal->shell_done = NULL;
+  shlocal->shell_shell = NULL;
+
+  if (shlocal->name) {
+    g_free(shlocal->name);
+    shlocal->name = NULL;
   }
 
   return 0;
 }
 
 static int 
-plugin_init(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
+plugin_init(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct plugin_shell *shlocal;
 
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv)) return 1;
   shlocal = g_malloc0(sizeof(struct plugin_shell));
-  if (shlocal == NULL) return 1;
+  if (shlocal == NULL) {
+    error(obj, ERRMEM);
+    return 1;
+  }
+
   if (_putobj(obj, "_local", inst, shlocal)) {
     g_free(shlocal);
     return 1;
@@ -172,17 +202,72 @@ plugin_done(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **
     return 1;
   }
 
-  plugin_shell_close(obj, inst, rval, argc, argv);
+  if (shlocal->lock) {
+    error(obj, ERRRUN);
+    return 1;
+  }
+
+  if (shlocal->module) {
+    plugin_shell_close(obj, inst, rval, argc, argv);
+  }
 
   g_free(shlocal);
 
   return 0;
 }
 
+static void
+free_argv(int argc, char **argv)
+{
+  int i;
+
+  for (i = 0; i < argc; i ++) {
+    if (argv[i]) {
+      g_free(argv[i]);
+      argv[i] = NULL;
+    }
+  }
+  g_free(argv);
+}
+
+static char **
+allocate_argv(const char *name, int argc, char * const *argv)
+{
+  int i, new_argc;
+  char **new_argv;
+
+  new_argc = argc + 2;
+  new_argv = g_malloc0(sizeof(*new_argv) * new_argc);
+  if (new_argv == NULL) {
+    return NULL;
+  }
+
+  new_argv[0] = g_strdup(name);
+  if (new_argv[0] == NULL) {
+    free_argv(new_argc, new_argv);
+    return NULL;
+  }
+
+  for (i = 1; i < new_argc - 1; i++) {
+    new_argv[i] = g_strdup(argv[i]);
+    if (new_argv[i] == NULL) {
+      free_argv(new_argc, new_argv);
+      return NULL;
+    }
+  }
+
+  new_argv[i] = NULL;
+
+  return new_argv;
+}
+
+
 static int 
 plugin_shell_exec(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct plugin_shell *shlocal;
+  char **new_argv;
+  int r;
 
   _getobj(obj, "_local", inst, &shlocal);
   if (shlocal == NULL) {
@@ -193,21 +278,36 @@ plugin_shell_exec(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, c
       shlocal->shell_init == NULL ||
       shlocal->shell_done == NULL ||
       shlocal->shell_shell == NULL) {
+    error(obj, ERRNOLOAD);
     return 1;
   }
 
   if (shlocal->lock) {
+    error(obj, ERRRUN);
+    return 1;
+  }
+
+  new_argv = allocate_argv(shlocal->name, argc - 2, argv + 2);
+  if (new_argv == NULL) {
+    error(obj, ERRMEM);
     return 1;
   }
 
   shlocal->lock = TRUE;
 
-  shlocal->shell_init(shlocal);
+  if (shlocal->shell_init(shlocal)) {
+    error(obj, ERRINIT);
+    free_argv(argc - 1, new_argv);
+    shlocal->lock = FALSE;
+    return 1;
+  }
+  r = shlocal->shell_shell(shlocal, argc - 1, new_argv);
   shlocal->shell_done(shlocal);
 
+  free_argv(argc - 1, new_argv);
   shlocal->lock = FALSE;
 
-  return 0;
+  return r;
 }
 
 #define ERRNUM (sizeof(sherrorlist) / sizeof(*sherrorlist))
@@ -252,163 +352,237 @@ ngraph_plugin_shell_get_user_data(struct plugin_shell *shlocal)
 }
 
 int
-ngraph_plugin_shell_putobj(struct objlist *obj, const char *vname, int id, void *val)
+ngraph_plugin_shell_putobj(struct objlist *obj, const char *vname, int id, ngraph_value *val)
 {
-  return 0;
+  int r, type;
+
+  type = chkobjfieldtype(obj, vname);
+  r = putobj(obj, vname, id, val);
+
+  return r;
 }
 
-int 
-ngraph_plugin_shell_getobj(struct objlist *obj, const char *vname, int id, int argc, char **argv, void *val)
+int
+ngraph_plugin_shell_getobj(struct objlist *obj, const char *vname, int id, ngraph_arg *arg, ngraph_value *val)
 {
-  return 0;
+  int r, type, argc;
+  char **argv;
+
+  type = chkobjfieldtype(obj, vname);
+  r = getobj(obj, vname, id, argc, argv, val);
+
+  return r;
 }
 
-int 
-ngraph_plugin_shell_exeobj(struct objlist *obj, const char *vname, int id, int argc, char **argv)
+int
+ngraph_plugin_shell_exeobj(struct objlist *obj, const char *vname, int id, ngraph_arg *arg)
 {
-  return 0;
+  int r, type, argc;
+  char **argv;
+
+  type = chkobjfieldtype(obj, vname);
+  r = exeobj(obj, vname, id, argc, argv);
+
+  return r;
 }
 
 struct objlist *
-ngraph_plugin_shell_getobject(const char *name)
+ngraph_plugin_shell_get_object(const char *name)
 {
-  return NULL;
+  return getobject(name);
 }
 
-int 
-ngraph_plugin_shell_getid_by_name(struct objlist *obj, const char *name)
+int *
+ngraph_plugin_shell_get_id_by_str(struct objlist *obj, const char *name)
 {
-  return 0;
+  struct narray iarray;
+  struct objlist *obj2;
+  int *id_ary, *adata, anum, i, r;
+  char *tmp, *objname;
+
+  if (obj == NULL) {
+    return NULL;
+  }
+
+  objname = chkobjectname(obj);
+  if (objname == NULL) {
+    return NULL;
+  }
+
+  tmp = g_strdup_printf("%s:%s", objname, name);
+
+  arrayinit(&iarray,sizeof(int));
+  r = chkobjilist(tmp, &obj2, &iarray, TRUE, NULL);
+  g_free(tmp);
+  if (r) {
+    arraydel(&iarray);
+    return NULL;
+  }
+
+  anum = arraynum(&iarray);
+  adata = arraydata(&iarray);
+
+  id_ary = g_malloc(sizeof(*id_ary) * (anum + 1));
+  if (id_ary == NULL) {
+    arraydel(&iarray);
+    return NULL;
+  }
+
+  for (i = 0; i < anum; i++) {
+    id_ary[i] = adata[i];
+  }
+  id_ary[i] = -1;
+  arraydel(&iarray);
+
+  return id_ary;
 }
 
-int 
-ngraph_plugin_shell_getid_by_oid(struct objlist *obj, int oid)
+int
+ngraph_plugin_shell_get_id_by_oid(struct objlist *obj, int oid)
 {
-  return 0;
+  return chkobjoid(obj, oid);
 }
 
-int 
+int
 ngraph_plugin_shell_move_top(struct objlist *obj, int id)
 {
-  return 0;
+  return movetopobj(obj, id);
 }
 
-int 
+int
 ngraph_plugin_shell_move_last(struct objlist *obj, int id)
 {
-  return 0;
+  return movelastobj(obj, id);
 }
 
-int 
+int
 ngraph_plugin_shell_move_up(struct objlist *obj, int id)
 {
-  return 0;
+  return moveupobj(obj, id);
 }
 
-int 
+int
 ngraph_plugin_shell_move_down(struct objlist *obj, int id)
 {
-  return 0;
+  return movedownobj(obj, id);
 }
 
-int 
+int
 ngraph_plugin_shell_exchange(struct objlist *obj, int id1, int id2)
 {
-  return 0;
+  return exchobj(obj, id1, id2);
 }
 
-int 
-ngraph_plugin_shell_copy(struct objlist *obj, int id_dest, int id_src)
-{
-  return 0;
-}
-
-int 
+int
 ngraph_plugin_shell_new(struct objlist *obj)
 {
-  return 0;
+  return newobj(obj);
 }
 
-int 
+int
 ngraph_plugin_shell_del(struct objlist *obj, int id)
 {
-  return 0;
+  return delobj(obj, id);
 }
 
-int 
+int
 ngraph_plugin_shell_exist(struct objlist *obj, int id)
 {
-  return 0;
+  int last;
+
+  if (obj == NULL) {
+    return -1;
+  }
+
+  last = chkobjlastinst(obj);
+  if (id < 0 || id > last) {
+    return -1;
+  }
+
+  return id;
 }
 
 const char *
-ngraph_plugin_shell_get_obj_name(const char *name)
+ngraph_plugin_shell_get_obj_name(struct objlist *obj)
 {
-  return NULL;
+  return chkobjectname(obj);
 }
 
-char *
-ngraph_plugin_shell_get_obj_fields(const char *name)
+int
+ngraph_plugin_shell_get_obj_field_num(struct objlist *obj)
 {
-  return 0;
+  return chkobjfieldnum(obj);
 }
 
 const char *
-ngraph_plugin_shell_get_obj_parent(const char *name)
+ngraph_plugin_shell_get_obj_field(struct objlist *obj, int i)
 {
-  return NULL;
+  return chkobjfieldname(obj, i);;
+}
+
+int
+ngraph_plugin_shell_get_obj_field_permission(struct objlist *obj, const char *field)
+{
+  return chkobjperm(obj, field);
+}
+
+int
+ngraph_plugin_shell_get_obj_field_type(struct objlist *obj, const char *field)
+{
+  return chkobjfieldtype(obj, field);
 }
 
 const char *
-ngraph_plugin_shell_get_obj_version(const char *name)
+ngraph_plugin_shell_get_obj_field_args(struct objlist *obj, const char *field)
 {
-  return NULL;
+  return chkobjarglist(obj, field);
+}
+
+struct objlist *
+ngraph_plugin_shell_get_obj_parent(struct objlist *obj)
+{
+  return chkobjparent(obj);
+}
+
+const char *
+ngraph_plugin_shell_get_obj_version(struct objlist *obj)
+{
+  return chkobjver(obj);
 }
 
 int
-ngraph_plugin_shell_get_obj_id(const char *name)
+ngraph_plugin_shell_get_obj_id(struct objlist *obj)
 {
-  return 0;
+  return chkobjectid(obj);;
 }
 
 int
-ngraph_plugin_shell_get_obj_size(const char *name)
+ngraph_plugin_shell_get_obj_size(struct objlist *obj)
 {
-  return 0;
+  return chkobjsize(obj);
 }
 
 int
-ngraph_plugin_shell_get_obj_current(const char *name)
+ngraph_plugin_shell_get_obj_current_id(struct objlist *obj)
 {
-  return 0;
+  return chkobjcurinst(obj);
 }
 
 int
-ngraph_plugin_shell_get_obj_last(const char *name)
+ngraph_plugin_shell_get_obj_last_id(struct objlist *obj)
 {
-  return 0;
+  return chkobjlastinst(obj);
 }
 
-int
-ngraph_plugin_shell_get_obj_inst_num(const char *name)
+struct objlist *
+ngraph_plugin_shell_get_obj_next(struct objlist *obj)
 {
-  return 0;
+  return obj->next;
 }
 
-char *
-ngraph_plugin_shell_derive(const char *name)
+struct objlist *
+ngraph_plugin_shell_get_obj_child(struct objlist *obj)
 {
-  return NULL;
+  return obj->child;
 }
 
-char *
-ngraph_plugin_shell_derive_inst(const char *name)
-{
-  return NULL;
-}
-
-/*
-
-derive [-instance] object
-
- */

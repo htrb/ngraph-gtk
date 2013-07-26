@@ -1,3 +1,10 @@
+2013-07-26  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/object.c (chkobjarglist): type of the returned value "const
+	char *".
+	(getargument, freeargument): type of second parameter is "const
+	char *".
+
 2013-07-25  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/plugins.h: added (experimental).

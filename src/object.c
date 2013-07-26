@@ -1965,7 +1965,7 @@ chkobjproc(struct objlist *obj,char *name)
 }
 #endif /* COMPILE_UNUSED_FUNCTIONS */
 
-char *
+const char *
 chkobjarglist(struct objlist *obj, const char *name)
 {
   int namen,type;
@@ -3637,7 +3637,8 @@ getvaluestr(struct objlist *obj,const char *field,void *val,int cr,int quote)
 {
   struct narray *array;
   void *po;
-  char *bval,*arglist;
+  char *bval;
+  const char *arglist;
   unsigned int k;
   int i;
   int type;
@@ -4036,7 +4037,7 @@ get_array_argument(int type, char *val, struct narray **array)
 }
 
 static int 
-getargument(int type, char *arglist, char *val, int *argc, char ***rargv)
+getargument(int type, const char *arglist, char *val, int *argc, char ***rargv)
 {
   char **argv, *p, *s, **sargv;
   int i,err, r, sargc;
@@ -4434,7 +4435,7 @@ errexit:
 #endif
 
 static void 
-freeargument(int type,char *arglist,int argc,char **argv,int full)
+freeargument(int type,const char *arglist,int argc,char **argv,int full)
 {
   int i;
 
@@ -4487,7 +4488,7 @@ schkobjfield(struct objlist *obj,int id, const char *field, char *arg,
   int err;
   char *val;
   int argc2,type;
-  char *arglist;
+    const char *arglist;
   char **argv2;
   char value[8];
   char *po;
@@ -4530,7 +4531,7 @@ sgetobjfield(struct objlist *obj,int id, const char *field,char *arg,
   int err;
   char *val;
   int argc2,type;
-  char *arglist;
+  const char *arglist;
   char **argv2;
   char value[8];
   char *po;
@@ -4657,7 +4658,7 @@ int
 sputobjfield(struct objlist *obj,int id, const char *field,char *arg)
 {
   char *val;
-  char *arglist;
+  const char *arglist;
   int err,type;
   int argc2;
   char **argv2;
@@ -4743,7 +4744,7 @@ sexeobjfield(struct objlist *obj,int id,char *field,char *arg)
   char *val;
   int err,type;
   int argc2;
-  char *arglist;
+  const char *arglist;
   char **argv2;
   int rcode;
 

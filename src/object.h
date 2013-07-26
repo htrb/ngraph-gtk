@@ -272,7 +272,7 @@ char *chkobjfieldname(struct objlist *obj,int num);
 int chkobjfield(struct objlist *obj, const char *name);
 int chkobjperm(struct objlist *obj, const char *name);
 int chkobjfieldtype(struct objlist *obj, const char *name);
-char *chkobjarglist(struct objlist *obj, const char *name);
+const char *chkobjarglist(struct objlist *obj, const char *name);
 
 struct objlist *getobject(const char *name);
 char *getobjver(const char *name);
