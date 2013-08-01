@@ -38,11 +38,14 @@ static char *sherrorlist[] = {
 struct plugin_shell {
   GModule *module;
   char *name;
-  plugin_shell_init shell_init;
-  plugin_shell_done shell_done;
   plugin_shell_shell shell_shell;
-  int lock;
+  int deleted;
   void *user_data;
+};
+
+struct shlocal {
+  struct plugin_shell *shell;
+  int lock;
 };
 
 static int
@@ -61,45 +64,29 @@ get_symbol(GModule *module, const char *format, const char *name, gpointer *symb
   return 0;
 }
 
-static GModule *
-load_plugin(char *name, struct plugin_shell *shlocal)
+static int
+load_plugin(char *name, struct plugin_shell *shell)
 {
   GModule *module;
-  plugin_shell_init shell_init;
-  plugin_shell_done shell_done;
   plugin_shell_shell shell_shell;
   int r;
 
   module = g_module_open(name, 0);
   if (module == NULL) {
-    return NULL;
-  }
-
-  r = get_symbol(module, "ngraph_plugin_shell_init_%s", name, (gpointer *) &shell_init);
-  if (! r || shell_init == NULL) {
-    g_module_close(module);
-    return NULL;
-  }
-
-  r = get_symbol(module, "ngraph_plugin_shell_done_%s", name, (gpointer *) &shell_done);
-  if (! r || shell_init == NULL) {
-    g_module_close(module);
-    return NULL;
+    return 1;
   }
 
   r = get_symbol(module, "ngraph_plugin_shell_shell_%s", name, (gpointer *) &shell_shell);
-  if (! r || shell_init == NULL) {
+  if (! r) {
     g_module_close(module);
-    return NULL;
+    return 1;
   }
 
-  shlocal->name = name;
-  shlocal->module = module;
-  shlocal->shell_shell = shell_shell;
-  shlocal->shell_init = shell_init;
-  shlocal->shell_done = shell_done;
+  shell->name = name;
+  shell->module = module;
+  shell->shell_shell = shell_shell;
 
-  return module;
+  return 0;
 }
 
 
@@ -107,8 +94,8 @@ static int
 plugin_shell_open(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   char *name;
-  GModule *module;
-  struct plugin_shell *shlocal;
+  struct shlocal *shlocal;
+  struct plugin_shell *shell;
 
   if (argv[2] == NULL) {
     error(obj, ERRNOCL);
@@ -120,23 +107,58 @@ plugin_shell_open(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, c
     return 1;
   }
 
-  if (shlocal->module) {
-    error2(obj, ERRLOADED, shlocal->name);
+  if (shlocal->shell) {
+    error2(obj, ERRLOADED, shlocal->shell->name);
+    return 1;
+  }
+
+  shell = g_malloc0(sizeof(struct plugin_shell));
+  if (shell == NULL) {
+    error(obj, ERRMEM);
     return 1;
   }
 
   name = g_strdup(argv[2]);
   if (name == NULL) {
+    g_free(shell);
     error(obj, ERRMEM);
     return 1;
   }
 
-  module = load_plugin(name, shlocal);
-  if (module == NULL) {
+  if (load_plugin(name, shell)) {
     error2(obj, ERRLOAD, name);
     g_free(name);
+    g_free(shell);
     return 1;
   }
+
+  shlocal->shell = shell;
+
+  return 0;
+}
+
+static int
+close_shell(struct objlist *obj, struct plugin_shell *shell)
+{
+  if (shell == NULL) {
+    return 0;
+  }
+
+  if (shell->module == NULL) {
+    error(obj, ERRNOLOAD);
+    return 1;
+  }
+
+  g_module_close(shell->module);
+  shell->module = NULL;
+  shell->shell_shell = NULL;
+
+  if (shell->name) {
+    g_free(shell->name);
+    shell->name = NULL;
+  }
+
+  g_free(shell);
 
   return 0;
 }
@@ -144,28 +166,20 @@ plugin_shell_open(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, c
 static int 
 plugin_shell_close(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  struct plugin_shell *shlocal;
+  struct shlocal *shlocal;
 
   _getobj(obj, "_local", inst, &shlocal);
   if (shlocal == NULL) {
     return 1;
   }
 
-  if (shlocal->module == NULL) {
-    error(obj, ERRNOLOAD);
+  if (shlocal->lock) {
+    error(obj, ERRRUN);
     return 1;
   }
 
-  g_module_close(shlocal->module);
-  shlocal->module = NULL;
-  shlocal->shell_init = NULL;
-  shlocal->shell_done = NULL;
-  shlocal->shell_shell = NULL;
-
-  if (shlocal->name) {
-    g_free(shlocal->name);
-    shlocal->name = NULL;
-  }
+  close_shell(obj, shlocal->shell);
+  shlocal->shell = NULL;
 
   return 0;
 }
@@ -173,10 +187,12 @@ plugin_shell_close(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, 
 static int 
 plugin_init(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  struct plugin_shell *shlocal;
+  struct shlocal *shlocal;
+  struct plugin_shell *shell;
 
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv)) return 1;
-  shlocal = g_malloc0(sizeof(struct plugin_shell));
+
+  shlocal = g_malloc0(sizeof(struct shlocal));
   if (shlocal == NULL) {
     error(obj, ERRMEM);
     return 1;
@@ -195,20 +211,25 @@ plugin_init(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **
 static int 
 plugin_done(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  struct plugin_shell *shlocal;
+  struct plugin_shell *shell;
+  struct shlocal *shlocal;
+
 
   _getobj(obj, "_local", inst, &shlocal);
   if (shlocal == NULL) {
     return 1;
   }
 
-  if (shlocal->lock) {
-    error(obj, ERRRUN);
-    return 1;
+  shell = shlocal->shell;
+  if (shell == NULL) {
+    g_free(shlocal);
+    return 0;
   }
 
-  if (shlocal->module) {
-    plugin_shell_close(obj, inst, rval, argc, argv);
+  if (shlocal->lock) {
+    shell->deleted = TRUE;
+  } else {
+    close_shell(obj, shell);
   }
 
   g_free(shlocal);
@@ -265,19 +286,20 @@ allocate_argv(const char *name, int argc, char * const *argv)
 static int 
 plugin_shell_exec(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  struct plugin_shell *shlocal;
+  struct plugin_shell *shell;
+  struct shlocal *shlocal;
   char **new_argv;
   int r;
 
   _getobj(obj, "_local", inst, &shlocal);
-  if (shlocal == NULL) {
+  if (shlocal == NULL || shlocal->shell == NULL) {
     return 1;
   }
 
-  if (shlocal->module == NULL ||
-      shlocal->shell_init == NULL ||
-      shlocal->shell_done == NULL ||
-      shlocal->shell_shell == NULL) {
+  shell = shlocal->shell;
+
+  if (shell->module == NULL ||
+      shell->shell_shell == NULL) {
     error(obj, ERRNOLOAD);
     return 1;
   }
@@ -287,7 +309,7 @@ plugin_shell_exec(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, c
     return 1;
   }
 
-  new_argv = allocate_argv(shlocal->name, argc - 2, argv + 2);
+  new_argv = allocate_argv(shell->name, argc - 2, argv + 2);
   if (new_argv == NULL) {
     error(obj, ERRMEM);
     return 1;
@@ -295,17 +317,15 @@ plugin_shell_exec(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, c
 
   shlocal->lock = TRUE;
 
-  if (shlocal->shell_init(shlocal)) {
-    error(obj, ERRINIT);
-    free_argv(argc - 1, new_argv);
+  r = shell->shell_shell(shell, argc - 1, new_argv);
+
+  if (shell->deleted) {
+    close_shell(obj, shell);
+  } else {
     shlocal->lock = FALSE;
-    return 1;
   }
-  r = shlocal->shell_shell(shlocal, argc - 1, new_argv);
-  shlocal->shell_done(shlocal);
 
   free_argv(argc - 1, new_argv);
-  shlocal->lock = FALSE;
 
   return r;
 }
@@ -362,6 +382,17 @@ ngraph_plugin_shell_putobj(struct objlist *obj, const char *vname, int id, ngrap
   return r;
 }
 
+static void *
+allocate_obj_arg(struct objlist *obj, const char vname, ngraph_arg *arg)
+{
+  int n;
+  const char *arglist;
+
+  n = arg->num;
+  arglist = chkobjarglist(obj, name);
+
+}
+
 int
 ngraph_plugin_shell_getobj(struct objlist *obj, const char *vname, int id, ngraph_arg *arg, ngraph_value *val)
 {
@@ -369,6 +400,8 @@ ngraph_plugin_shell_getobj(struct objlist *obj, const char *vname, int id, ngrap
   char **argv;
 
   type = chkobjfieldtype(obj, vname);
+
+
   r = getobj(obj, vname, id, argc, argv, val);
 
   return r;

@@ -30,8 +30,6 @@ typedef union _ngraph_value {
   struct ngraph_array ary;
 } ngraph_value;
 
-typedef int (* plugin_shell_init) (struct plugin_shell *shell);
-typedef int (* plugin_shell_done) (struct plugin_shell *shell);
 typedef int (* plugin_shell_shell) (struct plugin_shell *shell, int argc, char *argv[]);
 
 struct objlist *ngraph_plugin_shell_get_object(const char *name);
