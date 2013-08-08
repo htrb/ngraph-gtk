@@ -188,7 +188,6 @@ static int
 plugin_init(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct shlocal *shlocal;
-  struct plugin_shell *shell;
 
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv)) return 1;
 
@@ -371,38 +370,354 @@ ngraph_plugin_shell_get_user_data(struct plugin_shell *shlocal)
   return shlocal->user_data;
 }
 
+union ngraph_val {
+  int i;
+  double d;
+  char *str;
+  struct narray *ary;;
+};
+
+static struct narray *
+allocate_iarray(ngraph_arg *arg)
+{
+  struct narray *array, *ptr;
+  int i;
+
+  if (arg->num < 1) {
+    return NULL;
+  }
+
+  array = arraynew(sizeof(int));
+  if (array == NULL) {
+    return NULL;
+  }
+
+  for (i = 0; i < arg->num; i++) {
+    ptr = arrayadd(array, &arg->ary[i].i);
+    if (ptr == NULL) {
+      arrayfree(array);
+      return NULL;
+    }
+  }
+
+  return array;
+}
+
+static struct narray *
+allocate_darray(ngraph_arg *arg)
+{
+  struct narray *array, *ptr;
+  int i;
+
+  if (arg->num < 1) {
+    return NULL;
+  }
+
+  array = arraynew(sizeof(double));
+  if (array == NULL) {
+    return NULL;
+  }
+
+  for (i = 0; i < arg->num; i++) {
+    ptr = arrayadd(array, &arg->ary[i].d);
+    if (ptr == NULL) {
+      arrayfree(array);
+      return NULL;
+    }
+  }
+
+  return array;
+}
+
+static struct narray *
+allocate_sarray(ngraph_arg *arg)
+{
+  struct narray *array, *ptr;
+  int i;
+
+  if (arg->num < 1) {
+    return NULL;
+  }
+
+  array = arraynew(sizeof(char *));
+  if (array == NULL) {
+    return NULL;
+  }
+
+  for (i = 0; i < arg->num; i++) {
+    ptr = arrayadd2(array, &arg->ary[i].str);
+    if (ptr == NULL) {
+      arrayfree(array);
+      return NULL;
+    }
+  }
+
+  return array;
+}
+
 int
 ngraph_plugin_shell_putobj(struct objlist *obj, const char *vname, int id, ngraph_value *val)
 {
   int r, type;
+  void *valp;
+  struct narray *array;
+
+  r = -1;
 
   type = chkobjfieldtype(obj, vname);
-  r = putobj(obj, vname, id, val);
+  switch (type) {
+  case NVOID:
+  case NLABEL:
+  case NVFUNC:
+    valp = NULL;
+    r = putobj(obj, vname, id, valp);
+    break;
+  case NSFUNC:
+  case NSTR:
+  case NOBJ:
+    if (val->str) {
+      valp = g_strdup(val->str);
+    } else {
+      valp = NULL;
+    }
+    r = putobj(obj, vname, id, valp);
+    break;
+  case NPOINTER:		/* these fields may not be writable */
+  case NBFUNC:
+  case NIFUNC:
+  case NDFUNC:
+  case NIAFUNC:
+  case NDAFUNC:
+  case NSAFUNC:
+    valp = NULL;
+    r = putobj(obj, vname, id, valp);
+    break;
+  case NBOOL:
+  case NINT:
+  case NENUM:
+    valp = &val->i;
+    r = putobj(obj, vname, id, valp);
+    break;
+  case NDOUBLE:
+    valp = &val->d;
+    r = putobj(obj, vname, id, valp);
+    break;
+  case NIARRAY:
+    array = allocate_iarray(val->ary);
+    r = putobj(obj, vname, id, array);
+    if (r < 0) {
+      arrayfree(array);
+    }
+    break;
+  case NDARRAY:
+    array = allocate_darray(val->ary);
+    r = putobj(obj, vname, id, array);
+    if (r < 0) {
+      arrayfree(array);
+    }
+    break;
+  case NSARRAY:
+    array = allocate_sarray(val->ary);
+    r = putobj(obj, vname, id, array);
+    if (r < 0) {
+      arrayfree2(array);
+    }
+    break;
+  }
 
   return r;
 }
 
-static void *
-allocate_obj_arg(struct objlist *obj, const char vname, ngraph_arg *arg)
+static char **
+allocate_obj_arg(struct objlist *obj, const char *vname, ngraph_arg *arg)
 {
-  int n;
+  int i, n, num, is_a;
+  const char *arglist;
+  char **ary;
+
+  num = arg->num;
+  if (num < 1) {
+    return NULL;
+  }
+
+  ary = g_malloc0(sizeof(*ary) * (num + 1));
+  if (ary == NULL) {
+    return NULL;
+  }
+
+  arglist = chkobjarglist(obj, vname);
+  if (arglist == NULL) {
+    return NULL;
+  }
+
+  n = 0;
+  for (i = 0; arglist[i]; i++) {
+    if (n >= num) {
+      break;
+    }
+
+    is_a = (arglist[i + 1]== 'a');
+
+    switch (arglist[i]) {
+    case 'b':
+    case 'c':
+      ary[n] = (char *) &arg->ary[n].i;
+      break;
+    case 'i':
+      if (is_a) {
+	ary[n] = (char *) allocate_iarray(arg->ary[n].ary);
+      } else {
+	ary[n] = (char *) &arg->ary[n].i;
+      }
+      break;
+    case 'd':
+      if (is_a) {
+	ary[n] = (char *) allocate_darray(arg->ary[n].ary);
+      } else {
+	ary[n] = (char *) &arg->ary[n].d;
+      }
+      break;
+    case 's':
+      if (is_a) {
+	ary[n] = (char *) allocate_sarray(arg->ary[n].ary);
+      } else {
+	ary[n] = arg->ary[n].str;
+      }
+      break;
+    case 'p':
+      ary[n] = NULL;
+      break;
+    case 'o':
+      ary[n] = arg->ary[n].str;
+      break;
+    }
+
+    if (is_a) {
+      i++;
+    }
+    n++;
+  }
+
+  return ary;
+}
+
+static void
+free_obj_arg(char **ary, struct objlist *obj, const char *vname, ngraph_arg *arg)
+{
+  int i, n, num, is_a;
   const char *arglist;
 
-  n = arg->num;
-  arglist = chkobjarglist(obj, name);
+  num = arg->num;
+  if (num < 1) {
+    return;
+  }
 
+  arglist = chkobjarglist(obj, vname);
+  if (arglist == NULL) {
+    return;
+  }
+
+  n = 0;
+  for (i = 0; arglist[i]; i++) {
+    if (n >= num) {
+      break;
+    }
+
+    is_a = (arglist[i + 1]== 'a');
+
+    switch (arglist[i]) {
+    case 'b':
+    case 'c':
+      break;
+    case 'i':
+    case 'd':
+      if (is_a) {
+	arrayfree((struct narray *) ary[n]);
+      }
+      break;
+    case 's':
+      if (is_a) {
+	arrayfree2((struct narray *) ary[n]);
+      } else {
+	g_free(ary[n]);
+      }
+      break;
+    case 'p':
+      break;
+    case 'o': 
+      g_free(ary[n]);
+      break;
+    }
+
+    if (is_a) {
+      i++;
+    }
+    n++;
+  }
+
+  g_free(ary);
+
+  return;
 }
 
 int
-ngraph_plugin_shell_getobj(struct objlist *obj, const char *vname, int id, ngraph_arg *arg, ngraph_value *val)
+ngraph_plugin_shell_getobj(struct objlist *obj, const char *vname, int id, ngraph_arg *arg, ngraph_returned_value *val)
 {
   int r, type, argc;
   char **argv;
+  union ngraph_val nval;
 
   type = chkobjfieldtype(obj, vname);
 
+  argc = arg->num;
+  argv = allocate_obj_arg(obj, vname, arg);
 
-  r = getobj(obj, vname, id, argc, argv, val);
+  r = getobj(obj, vname, id, argc, argv, &nval);
+
+  free_obj_arg(argv, obj, vname, arg);
+  if (r < 0) {
+    return r;
+  }
+
+  switch (type) {
+  case NVOID:
+  case NLABEL:
+  case NVFUNC:
+    break;
+  case NSFUNC:
+  case NSTR:
+  case NOBJ:
+    val->str = nval.str;
+    break;
+  case NPOINTER:		/* these fields may not be writable */
+    break;
+  case NBFUNC:
+  case NIFUNC:
+  case NBOOL:
+  case NINT:
+  case NENUM:
+    val->i = nval.i;
+    break;
+  case NDFUNC:
+  case NDOUBLE:
+    val->d = nval.d;
+    break;
+  case NIAFUNC:
+  case NIARRAY:
+    val->ary.num = arraynum(nval.ary);
+    val->ary.data.ia = arraydata(nval.ary);
+    break;
+  case NDAFUNC:
+  case NDARRAY:
+    val->ary.num = arraynum(nval.ary);
+    val->ary.data.da = arraydata(nval.ary);
+    break;
+  case NSAFUNC:
+  case NSARRAY:
+    val->ary.num = arraynum(nval.ary);
+    val->ary.data.sa = arraydata(nval.ary);
+    break;
+  }
 
   return r;
 }
@@ -410,11 +725,15 @@ ngraph_plugin_shell_getobj(struct objlist *obj, const char *vname, int id, ngrap
 int
 ngraph_plugin_shell_exeobj(struct objlist *obj, const char *vname, int id, ngraph_arg *arg)
 {
-  int r, type, argc;
+  int r, argc;
   char **argv;
 
-  type = chkobjfieldtype(obj, vname);
+  argc = arg->num;
+  argv = allocate_obj_arg(obj, vname, arg);
+
   r = exeobj(obj, vname, id, argc, argv);
+
+  free_obj_arg(argv, obj, vname, arg);
 
   return r;
 }

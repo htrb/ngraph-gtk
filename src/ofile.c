@@ -6190,8 +6190,9 @@ f2dsettings(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
         break;
       case 'd':
         for (i = PLOT_TYPE_FIT; i >= 0; i--) {
-          if (strncmp(f2dtypechar[i], po + 2, strlen(f2dtypechar[i])) == 0)
+          if (strncmp(f2dtypechar[i], po + 2, strlen(f2dtypechar[i])) == 0) {
 	    break;
+	  }
 	}
         if ((i==-1) ||
 	    ((i == PLOT_TYPE_MARK) && (po[2+4]!=',')) ||

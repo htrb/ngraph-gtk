@@ -15,9 +15,9 @@ struct ngraph_array {
   union array {
     int *i;
     double *d;
-    char *s;
-    union _ngraph_value *val;
-  } ary;
+    char *str;
+    struct ngraph_array *ary;
+  } ary[1];
 };
 
 typedef struct ngraph_array ngraph_arg;
@@ -27,8 +27,22 @@ typedef union _ngraph_value {
   double d;
   char *str;
   struct ngraph_obj obj;
-  struct ngraph_array ary;
+  ngraph_arg *ary;
 } ngraph_value;
+
+typedef union _ngraph_returned_value {
+  int i;
+  double d;
+  const char *str;
+  struct {
+    int num;
+    union {
+      const int *ia;
+      const double *da;
+      const char * const *sa;
+    } data;
+  } ary;
+} ngraph_returned_value;
 
 typedef int (* plugin_shell_shell) (struct plugin_shell *shell, int argc, char *argv[]);
 
@@ -36,7 +50,7 @@ struct objlist *ngraph_plugin_shell_get_object(const char *name);
 void *ngraph_plugin_shell_get_user_data(struct plugin_shell *shlocal);
 void ngraph_plugin_shell_set_user_data(struct plugin_shell *shlocal, void *user_data);
 int ngraph_plugin_shell_putobj(struct objlist *obj, const char *vname, int id, ngraph_value *val);
-int ngraph_plugin_shell_getobj(struct objlist *obj, const char *vname, int id, ngraph_arg *arg, ngraph_value *val);
+int ngraph_plugin_shell_getobj(struct objlist *obj, const char *vname, int id, ngraph_arg *arg, ngraph_returned_value *val);
 int ngraph_plugin_shell_exeobj(struct objlist *obj, const char *vname, int id, ngraph_arg *arg);
 int *ngraph_plugin_shell_get_id_by_str(struct objlist *obj, const char *name);
 int ngraph_plugin_shell_get_id_by_oid(struct objlist *obj, int oid);
