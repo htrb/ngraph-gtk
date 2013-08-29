@@ -550,52 +550,58 @@ allocate_obj_arg(struct objlist *obj, const char *vname, ngraph_arg *arg)
     return NULL;
   }
 
-  n = 0;
-  for (i = 0; arglist[i]; i++) {
-    if (n >= num) {
-      break;
+  if (arglist[0] == '\0') {
+    for (i = 0; i < num; i++) {
+      ary[i] = arg->ary[i].str;
     }
+  } else {
+    n = 0;
+    for (i = 0; arglist[i]; i++) {
+      if (n >= num) {
+	break;
+      }
 
-    is_a = (arglist[i + 1]== 'a');
+      is_a = (arglist[i + 1]== 'a');
 
-    switch (arglist[i]) {
-    case 'b':
-    case 'c':
-      ary[n] = (char *) &arg->ary[n].i;
-      break;
-    case 'i':
-      if (is_a) {
-	ary[n] = (char *) allocate_iarray(arg->ary[n].ary);
-      } else {
+      switch (arglist[i]) {
+      case 'b':
+      case 'c':
 	ary[n] = (char *) &arg->ary[n].i;
-      }
-      break;
-    case 'd':
-      if (is_a) {
-	ary[n] = (char *) allocate_darray(arg->ary[n].ary);
-      } else {
-	ary[n] = (char *) &arg->ary[n].d;
-      }
-      break;
-    case 's':
-      if (is_a) {
-	ary[n] = (char *) allocate_sarray(arg->ary[n].ary);
-      } else {
+	break;
+      case 'i':
+	if (is_a) {
+	  ary[n] = (char *) allocate_iarray(arg->ary[n].ary);
+	} else {
+	  ary[n] = (char *) &arg->ary[n].i;
+	}
+	break;
+      case 'd':
+	if (is_a) {
+	  ary[n] = (char *) allocate_darray(arg->ary[n].ary);
+	} else {
+	  ary[n] = (char *) &arg->ary[n].d;
+	}
+	break;
+      case 's':
+	if (is_a) {
+	  ary[n] = (char *) allocate_sarray(arg->ary[n].ary);
+	} else {
+	  ary[n] = arg->ary[n].str;
+	}
+	break;
+      case 'p':
+	ary[n] = NULL;
+	break;
+      case 'o':
 	ary[n] = arg->ary[n].str;
+	break;
       }
-      break;
-    case 'p':
-      ary[n] = NULL;
-      break;
-    case 'o':
-      ary[n] = arg->ary[n].str;
-      break;
-    }
 
-    if (is_a) {
-      i++;
+      if (is_a) {
+	i++;
+      }
+      n++;
     }
-    n++;
   }
 
   return ary;
