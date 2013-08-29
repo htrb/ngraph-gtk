@@ -299,14 +299,13 @@ mergestore(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
       g_free(base);
       return 1;
     }
-    if ((buf=g_malloc(strlen(file)+50))==NULL) {
+    buf = g_strdup_printf("merge::load_data '%s' '%s %s' <<'[EOF]'", base, date, time);
+    g_free(base);
+    if (buf == NULL) {
       fclose(mergelocal->storefd);
       mergelocal->storefd=NULL;
-      g_free(base);
       return 1;
     }
-    sprintf(buf,"merge::load_data '%s' '%s %s' <<'[EOF]'",base,date,time);
-    g_free(base);
     rval->str=buf;
     return 0;
   } else {
@@ -405,13 +404,11 @@ mergestoredum(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **ar
     _getobj(obj,"date",inst,&date);
     _getobj(obj,"time",inst,&time);
     if ((base=getbasename(file))==NULL) return 1;
-    if ((buf=g_malloc(strlen(file)+50))==NULL) {
-      mergelocal->storefd=NULL;
-      g_free(base);
+    buf = g_strdup_printf("merge::load_dummy '%s' '%s %s'\n", base, date, time);
+    g_free(base);
+    if (buf == NULL) {
       return 1;
     }
-    sprintf(buf,"merge::load_dummy '%s' '%s %s'\n",base,date,time);
-    g_free(base);
     rval->str=buf;
     mergelocal->endstore=TRUE;
     return 0;

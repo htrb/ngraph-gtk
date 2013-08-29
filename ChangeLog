@@ -1,3 +1,11 @@
+2013-08-28  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/ofile.c (f2dstore, f2dstoredum): bug fix: use
+	"g_strdup_printf()" instead of "g_malloc()" and "sprintf()".
+
+	* src/omerge.c (mergestore, mergestoredum): bug fix: use
+	"g_strdup_printf()" instead of "g_malloc()" and "sprintf()".
+
 2013-07-26  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/object.c (chkobjarglist): type of the returned value "const

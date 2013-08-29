@@ -7372,7 +7372,7 @@ f2dstore(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct f2dlocal *f2dlocal;
   char *file,*base,*date,*time;
-  int style;
+  int style, r;
   char *buf;
   char *argv2[2];
 
@@ -7382,7 +7382,9 @@ f2dstore(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   if (f2dlocal->endstore) {
     f2dlocal->endstore=FALSE;
     return 1;
-  } else if (f2dlocal->storefd==NULL) {
+  }
+
+  if (f2dlocal->storefd == NULL) {
     _getobj(obj,"file",inst,&file);
     if (file==NULL) return 1;
     style=3;
@@ -7400,30 +7402,29 @@ f2dstore(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
       g_free(base);
       return 1;
     }
-    if ((buf=g_malloc(strlen(file)+50))==NULL) {
+    buf = g_strdup_printf("file::load_data '%s' '%s %s' <<'[EOF]'", base, date, time);
+    g_free(base);
+    if (buf == NULL) {
       fclose(f2dlocal->storefd);
       f2dlocal->storefd=NULL;
-      g_free(base);
       return 1;
     }
-    sprintf(buf,"file::load_data '%s' '%s %s' <<'[EOF]'",base,date,time);
-    g_free(base);
     rval->str=buf;
-    return 0;
   } else {
-    if (fgetline(f2dlocal->storefd,&buf)!=0) {
+    r = fgetline(f2dlocal->storefd, &buf);
+    if (r) {
       fclose(f2dlocal->storefd);
       f2dlocal->storefd=NULL;
       buf = g_strdup("[EOF]\n");
       if (buf == NULL) return 1;
       f2dlocal->endstore=TRUE;
       rval->str=buf;
-      return 0;
     } else {
       rval->str=buf;
-      return 0;
     }
   }
+
+  return 0;
 }
 
 static int
@@ -7599,13 +7600,11 @@ f2dstoredum(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
     _getobj(obj,"date",inst,&date);
     _getobj(obj,"time",inst,&time);
     if ((base=getbasename(file))==NULL) return 1;
-    if ((buf=g_malloc(strlen(file)+50))==NULL) {
-      f2dlocal->storefd=NULL;
-      g_free(base);
+    buf = g_strdup_printf("file::load_dummy '%s' '%s %s'\n", base, date, time);
+    g_free(base);
+    if (buf == NULL) {
       return 1;
     }
-    sprintf(buf,"file::load_dummy '%s' '%s %s'\n",base,date,time);
-    g_free(base);
     rval->str=buf;
     f2dlocal->endstore=TRUE;
     return 0;
