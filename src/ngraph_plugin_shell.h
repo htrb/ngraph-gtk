@@ -13,8 +13,8 @@ struct ngraph_obj {
 struct ngraph_array {
   int num;
   union array {
-    int *i;
-    double *d;
+    int i;
+    double d;
     char *str;
     struct ngraph_array *ary;
   } ary[1];

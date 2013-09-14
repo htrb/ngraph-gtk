@@ -1,3 +1,10 @@
+2013-09-14  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* plugins/: added.
+
+	* src/shellcm.c (dispfield): fix representation of "char*" and
+	"void*".
+
 2013-08-28  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ofile.c (f2dstore, f2dstoredum): bug fix: use

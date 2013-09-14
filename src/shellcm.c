@@ -647,7 +647,7 @@ dispfield(struct objlist *obj,char *name)
 {
   int j,ftype;
   char perm[4],type[10];
-  char *alist;
+  const char *alist;
   char **enumlist;
 
   ftype=chkobjfieldtype(obj,name);
@@ -663,7 +663,7 @@ dispfield(struct objlist *obj,char *name)
   case NPOINTER: strcpy(type,"void*"); break;
   case NIARRAY:  strcpy(type,"int[]"); break;
   case NDARRAY:  strcpy(type,"double[]"); break;
-  case NSARRAY:  strcpy(type,"*char[]"); break;
+  case NSARRAY:  strcpy(type,"char*[]"); break;
   case NENUM:    strcpy(type,"enum("); break;
   case NOBJ:     strcpy(type,"obj"); break;
   case NLABEL:   strcpy(type,"label"); break;
@@ -674,10 +674,10 @@ dispfield(struct objlist *obj,char *name)
 #endif
   case NIFUNC:   strcpy(type,"int("); break;
   case NDFUNC:   strcpy(type,"double("); break;
-  case NSFUNC:   strcpy(type,"*char("); break;
+  case NSFUNC:   strcpy(type,"char*("); break;
   case NIAFUNC:  strcpy(type,"int[]("); break;
   case NDAFUNC:  strcpy(type,"double[]("); break;
-  case NSAFUNC:  strcpy(type,"*char[]("); break;
+  case NSAFUNC:  strcpy(type,"char*[]("); break;
   default:      strcpy(type,"unknown"); break;
   }
   if (chkobjperm(obj,name) & NREAD) perm[0]='r';
@@ -701,8 +701,8 @@ dispfield(struct objlist *obj,char *name)
 #endif
           case 'i': printfstdout(" int"); break;
           case 'd': printfstdout(" double"); break;
-          case 's': printfstdout(" char *"); break;
-          case 'p': printfstdout(" void *"); break;
+          case 's': printfstdout(" char*"); break;
+          case 'p': printfstdout(" void*"); break;
           case 'o': printfstdout(" obj"); break;
           }
           if (alist[j+1]=='a') {
