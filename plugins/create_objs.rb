@@ -31,12 +31,12 @@ class NgraphObj
                      ]
 
   FUNC_FIELD_COMMON = <<EOF
-  struct ngraph_object *obj;
+  struct ngraph_instance *inst;
   ngraph_arg *carg;
   int r;
 
-  obj = check_id(self);
-  if (obj == NULL) {
+  inst = check_id(self);
+  if (inst == NULL) {
     return Qnil;
   }
 EOF
@@ -376,6 +376,7 @@ EOF
   end
 
   def create_arguments(args)
+    array = false
     @cfile.print(%Q!  rb_scan_args(argc, argv, "0#{args.size}", !)
     args.size.times { |i|
       @cfile.print("arg + #{i}")
@@ -400,12 +401,16 @@ EOF
         @cfile.puts("  carg->ary[#{i}].i = RTEST(arg[#{i}]) ? 1 : 0;")
       when "int[]"
         @cfile.puts("  carg->ary[#{i}].ary = allocate_iarray(&tmpstr, arg[#{i}]);")
+        array = true
       when "double[]"
         @cfile.puts("  carg->ary[#{i}].ary = allocate_darray(&tmpstr, arg[#{i}]);")
+        array = true
       when "char*[]"
         @cfile.puts("  carg->ary[#{i}].ary = allocate_sarray(&tmpstr, arg[#{i}]);")
+        array = true
       end
     }
+    array
   end
 
   def create_finalize_arguments(args)
@@ -424,7 +429,7 @@ EOF
     @cfile.puts(FUNC_FIELD_COMMON)
     @cfile.puts <<EOF
   carg = allocate_sarray(&tmpstr, argv);
-  r = ngraph_plugin_shell_getobj(obj->obj, "#{field}", obj->id, carg, &rval);
+  r = ngraph_plugin_shell_getobj(inst->obj, "#{field}", inst->id, carg, &rval);
   rb_free_tmp_buffer(&tmpstr);
   if (r < 0) {
     return Qnil;
@@ -452,7 +457,7 @@ EOF
     @cfile.puts(FUNC_FIELD_COMMON)
     @cfile.puts <<EOF
   carg = allocate_sarray(&tmpstr, argv);
-  r = ngraph_plugin_shell_getobj(obj->obj, "#{field}", obj->id, carg, &rval);
+  r = ngraph_plugin_shell_getobj(inst->obj, "#{field}", inst->id, carg, &rval);
   rb_free_tmp_buffer(&tmpstr);
   if (r < 0) {
     return Qnil;
@@ -472,10 +477,11 @@ EOF
     create_func_type(func, args)
     @cfile.puts(FUNC_FIELD_VAL)
     @cfile.puts(FUNC_FIELD_COMMON)
-    create_arguments(args)
+    array = create_arguments(args)
 
+    @cfile.puts(%Q!  r = ngraph_plugin_shell_getobj(inst->obj, "#{field}", inst->id, carg, &rval);!)
+    @cfile.puts(%Q!  rb_free_tmp_buffer(&tmpstr);!) if (array)
     @cfile.puts <<EOF
-  r = ngraph_plugin_shell_getobj(obj->obj, "#{field}", obj->id, carg, &rval);
   if (r < 0) {
     return Qnil;
   }
@@ -488,10 +494,11 @@ EOF
   def create_void_func_with_args(func, field, args)
     create_func_type(func, args)
     @cfile.puts(FUNC_FIELD_COMMON)
-    create_arguments(args)
+    array = create_arguments(args)
 
+    @cfile.puts(%Q!  r = ngraph_plugin_shell_exeobj(inst->obj, "#{field}", inst->id, carg);!)
+    @cfile.puts(%Q!  rb_free_tmp_buffer(&tmpstr);!) if (array)
     @cfile.puts <<EOF
-  r = ngraph_plugin_shell_exeobj(obj->obj, "#{field}", obj->id, carg);
   if (r < 0) {
     return Qnil;
   }
@@ -505,10 +512,11 @@ EOF
     create_func_type(func, args)
     @cfile.puts(FUNC_FIELD_ARY)
     @cfile.puts(FUNC_FIELD_COMMON)
-    create_arguments(args)
+    array = create_arguments(args)
 
+    @cfile.puts(%Q!  r = ngraph_plugin_shell_getobj(inst->obj, "#{field}", inst->id, carg, &rval);!)
+    @cfile.puts(%Q!  rb_free_tmp_buffer(&tmpstr);!) if (array)
     @cfile.puts <<EOF
-  r = ngraph_plugin_shell_getobj(obj->obj, "#{field}", obj->id, carg, &rval);
   if (r < 0) {
     return Qnil;
   }
@@ -724,15 +732,6 @@ end
 
 objs = []
 File.open(ARGV[1], "w") { |cfile|
-  cfile.puts <<'EOF'
-#include <ruby.h>
-#include <stdio.h>
-#include <gmodule.h>
-
-#include "../src/ngraph_plugin_shell.h"
-
-#include "ruby_common.c"
-EOF
   File.open(ARGV[0], "r") { |file|
     while (l = file.gets)
       str_ary = l.chomp.split
@@ -749,33 +748,9 @@ EOF
       objs.push(obj)
     end
   }
-  cfile.puts <<EOF
-int
-ngraph_plugin_shell_shell_libruby(struct plugin_shell *shell, int argc, char *argv[])
-{
-  VALUE ngraph_module;
-  int state;
-
-  if (! Initialized) {
-    printf("initialized\\n");
-    ruby_init();
-    Initialized = TRUE;
-
-    ngraph_module = rb_define_module("Ngraph");
-EOF
+  cfile.puts("static void\ncreate_ngraph_classes(VALUE ngraph_module)\n{")
   objs.each {|obj|
-    cfile.puts("    create_#{obj.name}_object(ngraph_module);")
+    cfile.puts("  create_#{obj.name}_object(ngraph_module);")
   }
-  cfile.puts <<EOF
-  }
-
-  state = ruby_run_node(ruby_options(argc, argv));
-  if (state)
-  {
-    printf("some errors are occurred\\n");
-  }
-
-  return 0;
-}
-EOF
+  cfile.puts("}")
 }

@@ -1,30 +1,36 @@
+#include <ruby.h>
+#include <stdio.h>
+#include <gmodule.h>
+
+#include "../src/ngraph_plugin_shell.h"
+
 static int Initialized = FALSE;
 
 #define VAL2INT(val) (NIL_P(val) ? 0 : NUM2INT(val))
 #define VAL2DBL(val) (NIL_P(val) ? 0.0 : NUM2DBL(val))
 #define VAL2STR(val) (NIL_P(val) ? NULL : StringValuePtr(val))
 
-struct ngraph_object {
+struct ngraph_instance {
   int id, oid;
   struct objlist *obj;
 };
 
 static void
-ngraph_object_free(struct ngraph_object *obj)
+ngraph_object_free(struct ngraph_instance *inst)
 {
-  free(obj);
+  free(inst);
 }
 
 static VALUE
 ngraph_inst_method_equal(VALUE klass1, VALUE klass2)
 {
-  struct ngraph_object *obj1, *obj2;
+  struct ngraph_instance *inst1, *inst2;
 
-  Data_Get_Struct(klass1, struct ngraph_object, obj1);
-  Data_Get_Struct(klass2, struct ngraph_object, obj2);
+  Data_Get_Struct(klass1, struct ngraph_instance, inst1);
+  Data_Get_Struct(klass2, struct ngraph_instance, inst2);
 
-  if (obj1->obj == obj2->obj &&
-      obj1->oid == obj2->oid) {
+  if (inst1->obj == inst2->obj &&
+      inst1->oid == inst2->oid) {
     return Qtrue;
   }
 
@@ -34,19 +40,19 @@ ngraph_inst_method_equal(VALUE klass1, VALUE klass2)
 static VALUE
 ngraph_inst_method_compare(VALUE klass1, VALUE klass2)
 {
-  struct ngraph_object *obj1, *obj2;
+  struct ngraph_instance *inst1, *inst2;
   int r;
 
-  Data_Get_Struct(klass1, struct ngraph_object, obj1);
-  Data_Get_Struct(klass2, struct ngraph_object, obj2);
+  Data_Get_Struct(klass1, struct ngraph_instance, inst1);
+  Data_Get_Struct(klass2, struct ngraph_instance, inst2);
 
-  if (obj1->obj != obj2->obj) {
+  if (inst1->obj != inst2->obj) {
     return Qnil;
   }
 
-  if (obj1->oid == obj2->oid) {
+  if (inst1->oid == inst2->oid) {
     r = 0;
-  } else if (obj1->oid > obj2->oid) {
+  } else if (inst1->oid > inst2->oid) {
     r = 1;
   } else {
     r = -1;
@@ -55,38 +61,38 @@ ngraph_inst_method_compare(VALUE klass1, VALUE klass2)
   return INT2FIX(r);
 }
 
-static struct ngraph_object *
+static struct ngraph_instance *
 check_id(VALUE klass)
 {
-  struct ngraph_object *obj;
+  struct ngraph_instance *inst;
   int id, r;
   ngraph_arg arg;
   ngraph_returned_value oid;
 
-  Data_Get_Struct(klass, struct ngraph_object, obj);
+  Data_Get_Struct(klass, struct ngraph_instance, inst);
 
   arg.num = 0;
-  r = ngraph_plugin_shell_getobj(obj->obj, "oid", obj->id, &arg, &oid);
+  r = ngraph_plugin_shell_getobj(inst->obj, "oid", inst->id, &arg, &oid);
 
-  if (r >= 0 && obj->oid == oid.i) {
-    return obj;
+  if (r >= 0 && inst->oid == oid.i) {
+    return inst;
   }
 
   if (r < 0) {
-    obj->id = -1;
+    inst->id = -1;
     return NULL;
   }
 
-  id = ngraph_plugin_shell_get_id_by_oid(obj->obj, obj->oid);
-  obj->id = id;
+  id = ngraph_plugin_shell_get_id_by_oid(inst->obj, inst->oid);
+  inst->id = id;
 
-  return obj;
+  return inst;
 }
 
 static VALUE
 obj_get(VALUE klass, VALUE id_value, const char *name)
 {
-  struct ngraph_object *obj;
+  struct ngraph_instance *inst;
   struct objlist *nobj;
   ngraph_returned_value oid;
   ngraph_arg arg;
@@ -106,13 +112,13 @@ obj_get(VALUE klass, VALUE id_value, const char *name)
     return Qnil;
   }
 
-  new_inst = Data_Make_Struct(klass, struct ngraph_object, NULL, ngraph_object_free, obj);
+  new_inst = Data_Make_Struct(klass, struct ngraph_instance, NULL, ngraph_object_free, inst);
 
-  obj->obj = nobj;
-  obj->id = id;
+  inst->obj = nobj;
+  inst->id = id;
   arg.num = 0;
-  ngraph_plugin_shell_getobj(obj->obj, "oid", obj->id, &arg, &oid);
-  obj->oid = oid.i;
+  ngraph_plugin_shell_getobj(inst->obj, "oid", inst->id, &arg, &oid);
+  inst->oid = oid.i;
 
   return new_inst;
 }
@@ -176,16 +182,16 @@ static VALUE
 ngraph_inst_method_del(VALUE self)
 {
   int id;
-  struct ngraph_object *obj;
+  struct ngraph_instance *inst;
 
-  obj = check_id(self);
-  if (obj == NULL) {
+  inst = check_id(self);
+  if (inst == NULL) {
     return Qnil;
   }
 
-  id = obj->id;
-  obj->id = -1;
-  ngraph_plugin_shell_del(obj->obj, id);
+  id = inst->id;
+  inst->id = -1;
+  ngraph_plugin_shell_del(inst->obj, id);
 
   return INT2FIX(id);
 }
@@ -211,18 +217,18 @@ obj_new(VALUE klass, const char *name)
 static VALUE
 inst_get_int(VALUE self, const char *field)
 {
-  struct ngraph_object *obj;
+  struct ngraph_instance *inst;
   ngraph_returned_value num;
   ngraph_arg carg;
   int r;
 
-  obj = check_id(self);
-  if (obj == NULL) {
+  inst = check_id(self);
+  if (inst == NULL) {
     return Qnil;
   }
 
   carg.num = 0;
-  r = ngraph_plugin_shell_getobj(obj->obj, field, obj->id, &carg, &num);
+  r = ngraph_plugin_shell_getobj(inst->obj, field, inst->id, &carg, &num);
   if (r < 0) {
     return Qnil;
   }
@@ -233,18 +239,18 @@ inst_get_int(VALUE self, const char *field)
 static VALUE
 inst_get_double(VALUE self, const char *field)
 {
-  struct ngraph_object *obj;
+  struct ngraph_instance *inst;
   ngraph_returned_value num;
   ngraph_arg carg;
   int r;
 
-  obj = check_id(self);
-  if (obj == NULL) {
+  inst = check_id(self);
+  if (inst == NULL) {
     return Qnil;
   }
 
   carg.num = 0;
-  r = ngraph_plugin_shell_getobj(obj->obj, field, obj->id, &carg, &num);
+  r = ngraph_plugin_shell_getobj(inst->obj, field, inst->id, &carg, &num);
   if (r < 0) {
     return Qnil;
   }
@@ -255,19 +261,19 @@ inst_get_double(VALUE self, const char *field)
 static VALUE
 inst_get_bool(VALUE self, const char *field)
 {
-  struct ngraph_object *obj;
+  struct ngraph_instance *inst;
   ngraph_returned_value num;
   ngraph_arg carg;
   VALUE val;
   int r;
 
-  obj = check_id(self);
-  if (obj == NULL) {
+  inst = check_id(self);
+  if (inst == NULL) {
     return Qnil;
   }
 
   carg.num = 0;
-  r = ngraph_plugin_shell_getobj(obj->obj, field, obj->id, &carg, &num);
+  r = ngraph_plugin_shell_getobj(inst->obj, field, inst->id, &carg, &num);
   if (r < 0) {
     return Qnil;
   }
@@ -280,19 +286,19 @@ inst_get_bool(VALUE self, const char *field)
 static VALUE
 inst_get_str(VALUE self, const char *field)
 {
-  struct ngraph_object *obj;
+  struct ngraph_instance *inst;
   ngraph_returned_value str;
   ngraph_arg carg;
   const char *cstr;
   int r;
 
-  obj = check_id(self);
-  if (obj == NULL) {
+  inst = check_id(self);
+  if (inst == NULL) {
     return Qnil;
   }
 
   carg.num = 0;
-  r = ngraph_plugin_shell_getobj(obj->obj, field, obj->id, &carg, &str);
+  r = ngraph_plugin_shell_getobj(inst->obj, field, inst->id, &carg, &str);
   if (r < 0) {
     return Qnil;
   }
@@ -309,17 +315,17 @@ inst_get_str(VALUE self, const char *field)
 static VALUE
 inst_put_int(VALUE self, VALUE arg, const char *field)
 {
-  struct ngraph_object *obj;
+  struct ngraph_instance *inst;
   ngraph_value num;
   int r;
 
-  obj = check_id(self);
-  if (obj == NULL) {
+  inst = check_id(self);
+  if (inst == NULL) {
     return Qnil;
   }
 
   num.i = NUM2INT(arg);
-  r = ngraph_plugin_shell_putobj(obj->obj, field, obj->id, &num);
+  r = ngraph_plugin_shell_putobj(inst->obj, field, inst->id, &num);
   if (r < 0) {
     return Qnil;
   }
@@ -330,17 +336,17 @@ inst_put_int(VALUE self, VALUE arg, const char *field)
 static VALUE
 inst_put_double(VALUE self, VALUE arg, const char *field)
 {
-  struct ngraph_object *obj;
+  struct ngraph_instance *inst;
   ngraph_value num;
   int r;
 
-  obj = check_id(self);
-  if (obj == NULL) {
+  inst = check_id(self);
+  if (inst == NULL) {
     return Qnil;
   }
 
   num.d = NUM2DBL(arg);
-  r = ngraph_plugin_shell_putobj(obj->obj, field, obj->id, &num);
+  r = ngraph_plugin_shell_putobj(inst->obj, field, inst->id, &num);
   if (r < 0) {
     return Qnil;
   }
@@ -351,17 +357,17 @@ inst_put_double(VALUE self, VALUE arg, const char *field)
 static VALUE
 inst_put_bool(VALUE self, VALUE arg, const char *field)
 {
-  struct ngraph_object *obj;
+  struct ngraph_instance *inst;
   ngraph_value num;
   int r;
 
-  obj = check_id(self);
-  if (obj == NULL) {
+  inst = check_id(self);
+  if (inst == NULL) {
     return Qnil;
   }
 
   num.i = RTEST(arg) ? 1 : 0;
-  r = ngraph_plugin_shell_putobj(obj->obj, field, obj->id, &num);
+  r = ngraph_plugin_shell_putobj(inst->obj, field, inst->id, &num);
   if (r < 0) {
     return Qnil;
   }
@@ -372,12 +378,12 @@ inst_put_bool(VALUE self, VALUE arg, const char *field)
 static VALUE
 inst_put_enum(VALUE self, VALUE arg, const char *field, int max)
 {
-  struct ngraph_object *obj;
+  struct ngraph_instance *inst;
   ngraph_value num;
   int r;
 
-  obj = check_id(self);
-  if (obj == NULL) {
+  inst = check_id(self);
+  if (inst == NULL) {
     return Qnil;
   }
 
@@ -386,7 +392,7 @@ inst_put_enum(VALUE self, VALUE arg, const char *field, int max)
     return Qnil;
   }
 
-  r = ngraph_plugin_shell_putobj(obj->obj, field, obj->id, &num);
+  r = ngraph_plugin_shell_putobj(inst->obj, field, inst->id, &num);
   if (r < 0) {
     return Qnil;
   }
@@ -397,12 +403,12 @@ inst_put_enum(VALUE self, VALUE arg, const char *field, int max)
 static VALUE
 inst_put_str(VALUE self, VALUE arg, const char *field)
 {
-  struct ngraph_object *obj;
+  struct ngraph_instance *inst;
   ngraph_value str;
   int r;
 
-  obj = check_id(self);
-  if (obj == NULL) {
+  inst = check_id(self);
+  if (inst == NULL) {
     return Qnil;
   }
 
@@ -411,7 +417,7 @@ inst_put_str(VALUE self, VALUE arg, const char *field)
   } else {
     str.str = StringValuePtr(arg);
   }
-  r = ngraph_plugin_shell_putobj(obj->obj, field, obj->id, &str);
+  r = ngraph_plugin_shell_putobj(inst->obj, field, inst->id, &str);
   if (r < 0) {
     return Qnil;
   }
@@ -423,12 +429,12 @@ static VALUE
 inst_put_iarray(VALUE self, VALUE arg, const char *field)
 {
   VALUE tmpstr;
-  struct ngraph_object *obj;
+  struct ngraph_instance *inst;
   ngraph_value ary;
   int num, i, r;
 
-  obj = check_id(self);
-  if (obj == NULL) {
+  inst = check_id(self);
+  if (inst == NULL) {
     return Qnil;
   }
 
@@ -448,7 +454,7 @@ inst_put_iarray(VALUE self, VALUE arg, const char *field)
     }
   }
 
-  r = ngraph_plugin_shell_putobj(obj->obj, field, obj->id, &ary);
+  r = ngraph_plugin_shell_putobj(inst->obj, field, inst->id, &ary);
 
   if (ary.ary) {
     rb_free_tmp_buffer(&tmpstr);
@@ -464,19 +470,19 @@ inst_put_iarray(VALUE self, VALUE arg, const char *field)
 static VALUE
 inst_get_iarray(VALUE self, const char *field)
 {
-  struct ngraph_object *obj;
+  struct ngraph_instance *inst;
   ngraph_returned_value cary;
   ngraph_arg carg;
   VALUE ary;
   int i, r;
 
-  obj = check_id(self);
-  if (obj == NULL) {
+  inst = check_id(self);
+  if (inst == NULL) {
     return Qnil;
   }
 
   carg.num = 0;
-  r = ngraph_plugin_shell_getobj(obj->obj, field, obj->id, &carg, &cary);
+  r = ngraph_plugin_shell_getobj(inst->obj, field, inst->id, &carg, &cary);
   if (r < 0) {
     return Qnil;
   }
@@ -493,12 +499,12 @@ static VALUE
 inst_put_darray(VALUE self, VALUE arg, const char *field)
 {
   VALUE tmpstr;
-  struct ngraph_object *obj;
+  struct ngraph_instance *inst;
   ngraph_value ary;
   int num, i, r;
 
-  obj = check_id(self);
-  if (obj == NULL) {
+  inst = check_id(self);
+  if (inst == NULL) {
     return Qnil;
   }
 
@@ -518,7 +524,7 @@ inst_put_darray(VALUE self, VALUE arg, const char *field)
     }
   }
 
-  r = ngraph_plugin_shell_putobj(obj->obj, field, obj->id, &ary);
+  r = ngraph_plugin_shell_putobj(inst->obj, field, inst->id, &ary);
 
   if (ary.ary) {
     rb_free_tmp_buffer(&tmpstr);
@@ -534,19 +540,19 @@ inst_put_darray(VALUE self, VALUE arg, const char *field)
 static VALUE
 inst_get_darray(VALUE self, const char *field)
 {
-  struct ngraph_object *obj;
+  struct ngraph_instance *inst;
   ngraph_returned_value cary;
   ngraph_arg carg;
   VALUE ary;
   int i, r;
 
-  obj = check_id(self);
-  if (obj == NULL) {
+  inst = check_id(self);
+  if (inst == NULL) {
     return Qnil;
   }
 
   carg.num = 0;
-  r = ngraph_plugin_shell_getobj(obj->obj, field, obj->id, &carg, &cary);
+  r = ngraph_plugin_shell_getobj(inst->obj, field, inst->id, &carg, &cary);
   if (r < 0) {
     return Qnil;
   }
@@ -562,13 +568,13 @@ inst_get_darray(VALUE self, const char *field)
 static VALUE
 inst_put_sarray(VALUE self, VALUE arg, const char *field)
 {
-  struct ngraph_object *obj;
+  struct ngraph_instance *inst;
   ngraph_value ary;
   int num, i, r;
   VALUE str, tmpstr;
 
-  obj = check_id(self);
-  if (obj == NULL) {
+  inst = check_id(self);
+  if (inst == NULL) {
     return Qnil;
   }
 
@@ -589,7 +595,7 @@ inst_put_sarray(VALUE self, VALUE arg, const char *field)
     }
   }
 
-  r = ngraph_plugin_shell_putobj(obj->obj, field, obj->id, &ary);
+  r = ngraph_plugin_shell_putobj(inst->obj, field, inst->id, &ary);
 
   if (ary.ary) {
     rb_free_tmp_buffer(&tmpstr);
@@ -605,19 +611,19 @@ inst_put_sarray(VALUE self, VALUE arg, const char *field)
 static VALUE
 inst_get_sarray(VALUE self, const char *field)
 {
-  struct ngraph_object *obj;
+  struct ngraph_instance *inst;
   ngraph_returned_value cary;
   ngraph_arg carg;
   VALUE ary;
   int i, r;
 
-  obj = check_id(self);
-  if (obj == NULL) {
+  inst = check_id(self);
+  if (inst == NULL) {
     return Qnil;
   }
 
   carg.num = 0;
-  r = ngraph_plugin_shell_getobj(obj->obj, field, obj->id, &carg, &cary);
+  r = ngraph_plugin_shell_getobj(inst->obj, field, inst->id, &carg, &cary);
   if (r < 0) {
     return Qnil;
   }
@@ -633,17 +639,17 @@ inst_get_sarray(VALUE self, const char *field)
 static VALUE
 inst_exe_void_func(VALUE self, const char *field)
 {
-  struct ngraph_object *obj;
+  struct ngraph_instance *inst;
   ngraph_arg carg;
   int r;
 
-  obj = check_id(self);
-  if (obj == NULL) {
+  inst = check_id(self);
+  if (inst == NULL) {
     return Qnil;
   }
 
   carg.num = 0;
-  r = ngraph_plugin_shell_exeobj(obj->obj, field, obj->id, &carg);
+  r = ngraph_plugin_shell_exeobj(inst->obj, field, inst->id, &carg);
   if (r < 0) {
     return Qnil;
   }
@@ -738,17 +744,17 @@ allocate_sarray(volatile VALUE *tmpstr, VALUE arg)
 static VALUE
 exe_void_func_argv(VALUE self, VALUE argv, const char *field)
 {
-  struct ngraph_object *obj;
+  struct ngraph_instance *inst;
   ngraph_arg *carg;
   int r;
   VALUE tmpstr;
 
-  obj = check_id(self);
-  if (obj == NULL) {
+  inst = check_id(self);
+  if (inst == NULL) {
     return Qnil;
   }
   carg = allocate_sarray(&tmpstr, argv);
-  r = ngraph_plugin_shell_exeobj(obj->obj, field, obj->id, carg);
+  r = ngraph_plugin_shell_exeobj(inst->obj, field, inst->id, carg);
   rb_free_tmp_buffer(&tmpstr);
   if (r < 0) {
     return Qnil;
@@ -761,21 +767,60 @@ static VALUE
 get_str_func_argv(VALUE self, VALUE argv, const char *field)
 {
   ngraph_returned_value rval;
-  struct ngraph_object *obj;
+  struct ngraph_instance *inst;
   ngraph_arg *carg;
   int r;
   VALUE tmpstr;
 
-  obj = check_id(self);
-  if (obj == NULL) {
+  inst = check_id(self);
+  if (inst == NULL) {
     return Qnil;
   }
   carg = allocate_sarray(&tmpstr, argv);
-  r = ngraph_plugin_shell_getobj(obj->obj, field, obj->id, carg, &rval);
+  r = ngraph_plugin_shell_getobj(inst->obj, field, inst->id, carg, &rval);
   rb_free_tmp_buffer(&tmpstr);
   if (r < 0) {
     return Qnil;
   }
 
   return rb_str_new2(rval.str ? rval.str : "");
+}
+
+#include "ruby_ngraph.c"
+
+int
+ngraph_plugin_shell_shell_libruby(struct plugin_shell *shell, int argc, char *argv[])
+{
+  VALUE ngraph_module;
+  int state;
+
+  if (! Initialized) {
+    printf("initialized\n");
+    ruby_init();
+    ruby_script("Embedded Ruby on Ngraph");
+    ruby_init_loadpath();
+    Initialized = TRUE;
+
+    ngraph_module = rb_define_module("Ngraph");
+
+    create_ngraph_classes(ngraph_module);
+  }
+
+  rb_load_protect(rb_str_new2(argv[1]), 1, &state);
+  printf("%s\n", argv[0]);
+  if (state)
+  {
+    printf("some errors are occurred\n");
+  }
+  rb_gc_start();
+  return 0;
+}
+
+void
+g_module_unload(GModule *module)
+{
+  if (Initialized) {
+    ruby_finalize();
+    printf("unloaded\n");
+  }
 }

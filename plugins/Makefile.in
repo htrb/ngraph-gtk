@@ -127,8 +127,8 @@ am__uninstall_files_from_dir = { \
 am__installdirs = "$(DESTDIR)$(pkglibdir)"
 LTLIBRARIES = $(pkglib_LTLIBRARIES)
 libruby_la_LIBADD =
-nodist_libruby_la_OBJECTS = libruby_la-ruby.lo
-libruby_la_OBJECTS = $(nodist_libruby_la_OBJECTS)
+am_libruby_la_OBJECTS = libruby_la-ruby.lo
+libruby_la_OBJECTS = $(am_libruby_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
@@ -170,8 +170,8 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(nodist_libruby_la_SOURCES)
-DIST_SOURCES =
+SOURCES = $(libruby_la_SOURCES)
+DIST_SOURCES = $(libruby_la_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -348,12 +348,12 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = getobj.nsc create_objs.rb ruby_common.c
+EXTRA_DIST = getobj.nsc create_objs.rb
 pkglib_LTLIBRARIES = libruby.la
-nodist_libruby_la_SOURCES = ruby.c
-BUILT_SOURCES = ${nodist_libruby_la_SOURCES}
+libruby_la_SOURCES = ruby.c
+BUILT_SOURCES = ruby_ngraph.c
 libruby_la_CFLAGS = $(GTK_CFLAGS) -I.. -I /usr/include/ruby-1.9.1/ -I /usr/include/ruby-1.9.1/x86_64-linux -lruby-1.9.1
-CLEANFILES = obj.txt ruby.c
+CLEANFILES = obj.txt ruby_ngraph.c
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -685,8 +685,8 @@ uninstall-am: uninstall-pkglibLTLIBRARIES
 obj.txt: ../src/ngraph
 	../src/ngraph -i getobj.nsc > obj.txt
 
-ruby.c: obj.txt $(EXTRA_DIST)
-	ruby create_objs.rb obj.txt ruby.c
+ruby_ngraph.c: obj.txt $(EXTRA_DIST)
+	ruby create_objs.rb obj.txt ruby_ngraph.c
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
