@@ -795,7 +795,6 @@ ngraph_plugin_shell_shell_libruby(struct plugin_shell *shell, int argc, char *ar
   int state;
 
   if (! Initialized) {
-    printf("initialized\n");
     ruby_init();
     ruby_script("Embedded Ruby on Ngraph");
     ruby_init_loadpath();
@@ -807,7 +806,6 @@ ngraph_plugin_shell_shell_libruby(struct plugin_shell *shell, int argc, char *ar
   }
 
   rb_load_protect(rb_str_new2(argv[1]), 1, &state);
-  printf("%s\n", argv[0]);
   if (state)
   {
     printf("some errors are occurred\n");
@@ -821,6 +819,5 @@ g_module_unload(GModule *module)
 {
   if (Initialized) {
     ruby_finalize();
-    printf("unloaded\n");
   }
 }
