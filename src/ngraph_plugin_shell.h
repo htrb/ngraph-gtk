@@ -1,6 +1,39 @@
 #ifndef NGRAPH_PLUGIN_SHELL_HEADER
 #define NGRAPH_PLUGIN_SHELL_HEADER
 
+#define NVOID 0
+#define NBOOL 1
+#if USE_NCHAR
+#define NCHAR 2
+#endif
+#define NINT 3
+#define NDOUBLE 4
+#define NSTR 5
+#define NPOINTER 6
+#define NIARRAY 7
+#define NDARRAY 8
+#define NSARRAY 9
+#define NENUM 10
+#define NOBJ  11
+#if USE_LABEL
+#define NLABEL 12
+#endif
+#define NVFUNC 20
+#define NBFUNC 21
+#if USE_NCHAR
+#define NCFUNC 22
+#endif
+#define NIFUNC 23
+#define NDFUNC 24
+#define NSFUNC 25
+#define NIAFUNC 26
+#define NDAFUNC 27
+#define NSAFUNC 28
+
+#define NREAD 1
+#define NWRITE 2
+#define NEXEC 4
+
 struct plugin_shell;
 struct objlist;
 union _ngraph_value;

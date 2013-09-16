@@ -475,7 +475,9 @@ ngraph_plugin_shell_putobj(struct objlist *obj, const char *vname, int id, ngrap
   type = chkobjfieldtype(obj, vname);
   switch (type) {
   case NVOID:
+#if USE_LABEL
   case NLABEL:
+#endif
   case NVFUNC:
     valp = NULL;
     r = putobj(obj, vname, id, valp);
@@ -545,6 +547,7 @@ allocate_obj_arg(struct objlist *obj, const char *vname, ngraph_arg *arg)
 
   num = arg->num;
   if (num < 1) {
+    /* If the type of the field is NENUM the number of the argument is 0. */
     return NULL;
   }
 
@@ -692,7 +695,9 @@ ngraph_plugin_shell_getobj(struct objlist *obj, const char *vname, int id, ngrap
 
   switch (type) {
   case NVOID:
+#if USE_LABEL
   case NLABEL:
+#endif
   case NVFUNC:
     break;
   case NSFUNC:
@@ -736,8 +741,13 @@ ngraph_plugin_shell_getobj(struct objlist *obj, const char *vname, int id, ngrap
 int
 ngraph_plugin_shell_exeobj(struct objlist *obj, const char *vname, int id, ngraph_arg *arg)
 {
-  int r, argc;
+  int r, argc, type;
   char **argv;
+
+  type = chkobjfieldtype(obj, vname);
+  if (type < NVFUNC) {
+    return -1;
+  }
 
   argc = arg->num;
   argv = allocate_obj_arg(obj, vname, arg);

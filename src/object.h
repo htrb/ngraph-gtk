@@ -27,6 +27,7 @@
 #define TEXT_SIZE_MIN 500
 
 #include "nhash.h"
+#include "ngraph_plugin_shell.h"
 
 struct objlist;
 struct objtable;
@@ -106,37 +107,6 @@ struct loopproc {
   N_VALUE *inst;
   void *local;
 };
-
-#define NVOID 0
-#define NBOOL 1
-#if USE_NCHAR
-#define NCHAR 2
-#endif
-#define NINT 3
-#define NDOUBLE 4
-#define NSTR 5
-#define NPOINTER 6
-#define NIARRAY 7
-#define NDARRAY 8
-#define NSARRAY 9
-#define NENUM 10
-#define NOBJ  11
-#define NLABEL 12
-#define NVFUNC 20
-#define NBFUNC 21
-#if USE_NCHAR
-#define NCFUNC 22
-#endif
-#define NIFUNC 23
-#define NDFUNC 24
-#define NSFUNC 25
-#define NIAFUNC 26
-#define NDAFUNC 27
-#define NSAFUNC 28
-
-#define NREAD 1
-#define NWRITE 2
-#define NEXEC 4
 
 #define ERRUNKNOWN 0
 #define ERRHEAP 1

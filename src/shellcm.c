@@ -666,7 +666,9 @@ dispfield(struct objlist *obj,char *name)
   case NSARRAY:  strcpy(type,"char*[]"); break;
   case NENUM:    strcpy(type,"enum("); break;
   case NOBJ:     strcpy(type,"obj"); break;
+#if USE_NLABEL
   case NLABEL:   strcpy(type,"label"); break;
+#endif
   case NVFUNC:   strcpy(type,"void("); break;
   case NBFUNC:   strcpy(type,"bool("); break;
 #if USE_NCHAR

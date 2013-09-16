@@ -1390,7 +1390,9 @@ addobject(char *name,char *alias,char *parentname,char *ver,
     table[i].offset=offset;
     switch (table[i].type) {
     case NVOID:
+#if USE_LABEL
     case NLABEL:
+#endif
     case NVFUNC:
       break;
     default:
@@ -2474,7 +2476,9 @@ _putobj(struct objlist *obj, const char *vname,N_VALUE *inst,void *val)
   idp=chkobjoffset2(robj,idn);
   switch (robj->table[idn].type) {
   case NVOID:
+#if USE_LABEL
   case NLABEL:
+#endif
   case NVFUNC:
     break;
   case NBOOL: case NBFUNC:
@@ -2552,7 +2556,9 @@ putobj(struct objlist *obj, const char *vname,int id,void *val)
 
   switch (robj->table[idn].type) {
   case NVOID:
+#if USE_LABEL
   case NLABEL:
+#endif
   case NVFUNC:
     break;
   case NBOOL:
@@ -2583,7 +2589,11 @@ _getobj(struct objlist *obj, const char *vname,N_VALUE *inst,void *val)
   if ((idn=getobjtblpos(obj,vname,&robj))==-1) return -1;
   idp=chkobjoffset2(robj,idn);
   switch (robj->table[idn].type) {
-  case NVOID: case NLABEL: case NVFUNC:
+  case NVOID:
+#if USE_LABEL
+  case NLABEL:
+#endif
+  case NVFUNC:
     break;
   case NBOOL: case NBFUNC:
   case NINT:  case NIFUNC:
@@ -2650,7 +2660,11 @@ getobj(struct objlist *obj, const char *vname,int id,
     if (rcode!=0) return -1;
   }
   switch (robj->table[idn].type) {
-  case NVOID: case NLABEL: case NVFUNC:
+  case NVOID:
+#if USE_LABEL
+  case NLABEL:
+#endif
+  case NVFUNC:
     break;
   case NBOOL: case NBFUNC:
   case NINT: case NIFUNC:
@@ -2806,7 +2820,9 @@ copyobj(struct objlist *obj, const char *vname,int did,int sid)
   if (getobj(obj,vname,sid,0,NULL,po)==-1) return -1;
   switch (robj->table[idn].type) {
   case NVOID:
+#if USE_LABEL
   case NLABEL:
+#endif
   case NBOOL:
   case NINT:
 #if USE_NCHAR
