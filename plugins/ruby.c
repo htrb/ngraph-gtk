@@ -90,6 +90,66 @@ check_id(VALUE klass)
 }
 
 static VALUE
+ngraph_inst_method_move_up(VALUE klass)
+{
+  struct ngraph_instance *inst;
+
+  inst = check_id(klass);
+  if (inst == NULL) {
+    return Qnil;
+  }
+
+  inst->id = ngraph_plugin_shell_move_up(inst->obj, inst->id);
+
+  return klass;
+}
+
+static VALUE
+ngraph_inst_method_move_down(VALUE klass)
+{
+  struct ngraph_instance *inst;
+
+  inst = check_id(klass);
+  if (inst == NULL) {
+    return Qnil;
+  }
+
+  inst->id = ngraph_plugin_shell_move_down(inst->obj, inst->id);
+
+  return klass;
+}
+
+static VALUE
+ngraph_inst_method_move_top(VALUE klass)
+{
+  struct ngraph_instance *inst;
+
+  inst = check_id(klass);
+  if (inst == NULL) {
+    return Qnil;
+  }
+
+  inst->id = ngraph_plugin_shell_move_top(inst->obj, inst->id);
+
+  return klass;
+}
+
+static VALUE
+ngraph_inst_method_move_last(VALUE klass)
+{
+  struct ngraph_instance *inst;
+
+  inst = check_id(klass);
+  if (inst == NULL) {
+    return Qnil;
+  }
+
+  inst->id = ngraph_plugin_shell_move_last(inst->obj, inst->id);
+
+  return klass;
+}
+
+static VALUE
 obj_get(VALUE klass, VALUE id_value, const char *name)
 {
   struct ngraph_instance *inst;
@@ -121,6 +181,52 @@ obj_get(VALUE klass, VALUE id_value, const char *name)
   inst->oid = oid.i;
 
   return new_inst;
+}
+
+static VALUE
+obj_field_args(VALUE klass, VALUE field, const char *name)
+{
+  struct objlist *nobj;
+  const char* args;
+  int type;
+
+  nobj = ngraph_plugin_shell_get_object(name);
+  type = ngraph_plugin_shell_get_obj_field_type(nobj, StringValuePtr(field));
+  if (type < 20) {
+    return Qnil;
+  }
+  args = ngraph_plugin_shell_get_obj_field_args(nobj, StringValuePtr(field));
+  if (args == NULL) {
+    args = "";
+  } else if (args[0] == '\0') {
+    args = "void";
+  }
+
+  return rb_str_new2(args);
+}
+
+static VALUE
+obj_field_type(VALUE klass, VALUE field, const char *name)
+{
+  struct objlist *nobj;
+  int type;
+
+  nobj = ngraph_plugin_shell_get_object(name);
+  type = ngraph_plugin_shell_get_obj_field_type(nobj, StringValuePtr(field));
+
+  return INT2FIX(type);
+}
+
+static VALUE
+obj_field_permission(VALUE klass, VALUE field, const char *name)
+{
+  struct objlist *nobj;
+  int perm;
+
+  nobj = ngraph_plugin_shell_get_object(name);
+  perm = ngraph_plugin_shell_get_obj_field_permission(nobj, StringValuePtr(field));
+
+  return INT2FIX(perm);
 }
 
 static VALUE
@@ -786,7 +892,101 @@ get_str_func_argv(VALUE self, VALUE argv, const char *field)
   return rb_str_new2(rval.str ? rval.str : "");
 }
 
+static void
+add_obj_name_const(VALUE klass, struct objlist *nobj, const char *name)
+{
+  const char *obj_name;
+  VALUE val, str;
+
+  if (nobj == NULL) {
+    val = Qnil;
+  } else {
+    obj_name = ngraph_plugin_shell_get_obj_name(nobj);
+    str = rb_str_new2(obj_name);
+    rb_funcall(str, rb_to_id(rb_str_new2("capitalize!")), 0);
+    val = ID2SYM(rb_to_id(str));
+  }
+  rb_define_const(klass, name, val);
+}
+
+static void
+add_obj_const(VALUE klass, const char *name)
+{
+  struct objlist *nobj, *next, *child, *parent;
+  const char *str;
+  VALUE val;
+
+  nobj = ngraph_plugin_shell_get_object(name);
+  next = ngraph_plugin_shell_get_obj_next(nobj);
+  child = ngraph_plugin_shell_get_obj_child(nobj);
+  parent = ngraph_plugin_shell_get_obj_parent(nobj);
+
+  str = ngraph_plugin_shell_get_obj_version(nobj);
+  val = rb_str_new2(str);
+  OBJ_FREEZE(val);
+  rb_define_const(klass, "VERSION", val);
+
+  add_obj_name_const(klass, parent, "PARENT");
+  add_obj_name_const(klass, next, "NEXT");
+  add_obj_name_const(klass, child, "CHILD");
+}
+
+static void
+setup_obj_common(VALUE obj)
+{
+  rb_extend_object(obj, rb_mEnumerable);
+  rb_include_module(obj, rb_mComparable);
+  rb_define_method(obj, "del", ngraph_inst_method_del, 0);
+  rb_define_method(obj, "===", ngraph_inst_method_equal, 1);
+  rb_define_method(obj, "<=>", ngraph_inst_method_compare, 1);
+  rb_define_method(obj, "move_up", ngraph_inst_method_move_up, 0);
+  rb_define_method(obj, "move_down", ngraph_inst_method_move_down, 0);
+  rb_define_method(obj, "move_top", ngraph_inst_method_move_top, 0);
+  rb_define_method(obj, "move_last", ngraph_inst_method_move_last, 0);
+}
+
 #include "ruby_ngraph.c"
+
+static void
+add_common_const(VALUE ngraph_module)
+{
+  VALUE type, attr;
+
+  type = rb_define_module_under(ngraph_module, "FIELD_TYPE");
+#if USE_NCHAR
+  rb_define_const(type, "CHAR", INT2FIX(NCHAR));
+#endif
+  rb_define_const(type, "VOID", INT2FIX(NVOID));
+  rb_define_const(type, "BOOL", INT2FIX(NBOOL));
+  rb_define_const(type, "INT", INT2FIX(NINT));
+  rb_define_const(type, "DOUBLE", INT2FIX(NDOUBLE));
+  rb_define_const(type, "STR", INT2FIX(NSTR));
+  rb_define_const(type, "POINTER", INT2FIX(NPOINTER));
+  rb_define_const(type, "IARRAY", INT2FIX(NIARRAY));
+  rb_define_const(type, "DARRAY", INT2FIX(NDARRAY));
+  rb_define_const(type, "SARRAY", INT2FIX(NSARRAY));
+  rb_define_const(type, "ENUM", INT2FIX(NENUM));
+  rb_define_const(type, "OBJ", INT2FIX(NOBJ));
+#if USE_LABEL
+  rb_define_const(type, "LABEL", INT2FIX(NLABEL));
+#endif
+  rb_define_const(type, "VFUNC", INT2FIX(NVFUNC));
+  rb_define_const(type, "BFUNC", INT2FIX(NBFUNC));
+#if USE_NCHAR
+  rb_define_const(type, "CFUNC", INT2FIX(NCFUNC));
+#endif
+  rb_define_const(type, "IFUNC", INT2FIX(NIFUNC));
+  rb_define_const(type, "DFUNC", INT2FIX(NDFUNC));
+  rb_define_const(type, "SFUNC", INT2FIX(NSFUNC));
+  rb_define_const(type, "IAFUNC", INT2FIX(NIAFUNC));
+  rb_define_const(type, "DAFUNC", INT2FIX(NDAFUNC));
+  rb_define_const(type, "SAFUNC", INT2FIX(NSAFUNC));
+
+  attr = rb_define_module_under(ngraph_module, "FIELD_PERMISSION");
+  rb_define_const(attr, "READ", INT2FIX(NREAD));
+  rb_define_const(attr, "WRITE", INT2FIX(NWRITE));
+  rb_define_const(attr, "EXEC", INT2FIX(NEXEC));
+}
 
 int
 ngraph_plugin_shell_shell_libruby(struct plugin_shell *shell, int argc, char *argv[])
@@ -801,7 +1001,7 @@ ngraph_plugin_shell_shell_libruby(struct plugin_shell *shell, int argc, char *ar
     Initialized = TRUE;
 
     ngraph_module = rb_define_module("Ngraph");
-
+    add_common_const(ngraph_module);
     create_ngraph_classes(ngraph_module);
   }
 

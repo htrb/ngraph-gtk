@@ -21,13 +21,16 @@ class Enum
 end
 
 class NgraphObj
-  attr_reader :name
+  attr_reader :name, :fields
   SINGLETON_METHOD = [
                       ["new", "new", 0],
                       ["[]", "get", 1],
                       ["del", "del", 1],
                       ["each", "each", 0],
                       ["size", "size", 0],
+                      ["get_field_args", "field_args", 1],
+                      ["get_field_type", "field_type", 1],
+                      ["get_field_permission", "field_permission", 1],
                      ]
 
   FUNC_FIELD_COMMON = <<EOF
@@ -49,12 +52,14 @@ EOF
   int i;
 EOF
 
-  def initialize(name, cfile, version)
+  def initialize(name, cfile, version, parent)
     @name = name
     @fields = []
+    @methods = []
     @enum = {}
     @cfile = cfile
     @version = version
+    @parent = (parent == "(null)") ? nil : parent
   end
 
   def add_singleton_method_func(method, func, argc)
@@ -89,6 +94,7 @@ static void
 create_#{@name}_object(VALUE ngraph_module)
 {
   VALUE obj;
+  VALUE fields, field;
 #{(@enum.size > 0) ? "  VALUE module;" : ""}
   obj = rb_define_class_under(ngraph_module, "#{@name.capitalize}", rb_cObject);
 EOF
@@ -96,104 +102,78 @@ EOF
       @cfile.puts(%Q!  rb_define_singleton_method(obj, "#{method}", #{@name}_#{func}, #{argc});!)
     }
     @cfile.puts <<EOF
-  rb_define_const(obj, "VERSION", rb_str_new2("#{@version}"));
-  rb_extend_object(obj, rb_mEnumerable);
-  rb_include_module(obj, rb_mComparable);
-  rb_define_method(obj, "del", ngraph_inst_method_del, 0);
-  rb_define_method(obj, "===", ngraph_inst_method_equal, 1);
-  rb_define_method(obj, "<=>", ngraph_inst_method_compare, 1);
+  add_obj_const(obj, "#{@name}");
+  setup_obj_common(obj);
+
+  fields = rb_ary_new2(#{@fields.size});
+  rb_define_const(obj, "FIELDS", fields);
 EOF
 
-    @fields.each { |field|
-      @cfile.puts %Q!  rb_define_method(obj, "#{field.name}", #{field.func}, #{field.argc});!
+    @fields.each_with_index { |field, i|
+      @cfile.puts(%Q!  field = rb_str_new2("#{field}");!)
+      @cfile.puts("  OBJ_FREEZE(field);")
+      @cfile.puts("  rb_ary_store(fields, #{i}, field);")
+    }
+    @cfile.puts("  OBJ_FREEZE(fields);")
+    @methods.each { |field|
+      @cfile.puts(%Q!  rb_define_method(obj, "#{field.name}", #{field.func}, #{field.argc});!)
     }
     @enum.each { |key, val|
-      @cfile.puts %Q!  module = rb_define_module_under(obj, "#{val.module}");!
+      @cfile.puts(%Q!  module = rb_define_module_under(obj, "#{val.module}");!)
       val.enum.each_with_index { |enum, i|
-        @cfile.puts %Q!  rb_define_const(module, "#{enum}", INT2FIX(#{i}));!
+        @cfile.puts(%Q!  rb_define_const(module, "#{enum}", INT2FIX(#{i}));!)
       }
     }
     @cfile.puts("}")
   end
 
-  def create_put_str_func(func, field)
+  def create_rw_field_func(func, rw, type, field)
+    if (rw == "put")
+      parm = ", VALUE arg"
+      arg = ", arg"
+    else
+      arg = ""
+      parm = ""
+    end
     @cfile.puts <<EOF
 static VALUE
-#{func}(VALUE self, VALUE arg)
+#{func}(VALUE self#{parm})
 {
-  return inst_put_str(self, arg, "#{field}");
+  return inst_#{rw}_#{type}(self#{arg}, "#{field}");
 }
 EOF
+  end
+
+  def create_put_str_func(func, field)
+    create_rw_field_func(func, "put", "str", field)
   end
 
   def create_get_str_func(func, field)
-    @cfile.puts <<EOF
-static VALUE
-#{func}(VALUE self)
-{
-  return inst_get_str(self, "#{field}");
-}
-EOF
+    create_rw_field_func(func, "get", "str", field)
   end
 
   def create_put_int_func(func, field)
-    @cfile.puts <<EOF
-static VALUE
-#{func}(VALUE self, VALUE arg)
-{
-  return inst_put_int(self, arg, "#{field}");
-}
-EOF
+    create_rw_field_func(func, "put", "int", field)
   end
 
   def create_get_int_func(func, field)
-    @cfile.puts <<EOF
-static VALUE
-#{func}(VALUE self)
-{
-  return inst_get_int(self, "#{field}");
-}
-EOF
+    create_rw_field_func(func, "get", "int", field)
   end
 
   def create_put_double_func(func, field)
-    @cfile.puts <<EOF
-static VALUE
-#{func}(VALUE self, VALUE arg)
-{
-  return inst_put_double(self, arg, "#{field}");
-}
-EOF
+    create_rw_field_func(func, "put", "double", field)
   end
 
   def create_get_double_func(func, field)
-    @cfile.puts <<EOF
-static VALUE
-#{func}(VALUE self)
-{
-  return inst_get_double(self, "#{field}");
-}
-EOF
+    create_rw_field_func(func, "get", "double", field)
   end
 
   def create_put_bool_func(func, field)
-    @cfile.puts <<EOF
-static VALUE
-#{func}(VALUE self, VALUE arg)
-{
-  return inst_put_bool(self, arg, "#{field}");
-}
-EOF
+    create_rw_field_func(func, "put", "bool", field)
   end
 
   def create_get_bool_func(func, field)
-    @cfile.puts <<EOF
-static VALUE
-#{func}(VALUE self)
-{
-  return inst_get_bool(self, "#{field}");
-}
-EOF
+    create_rw_field_func(func, "get", "bool", field)
   end
 
   def create_put_enum_func(func, field, enum)
@@ -214,73 +194,31 @@ EOF
   end
 
   def create_get_enum_func(func, field)
-    @cfile.puts <<EOF
-static VALUE
-#{func}(VALUE self)
-{
-  return inst_get_int(self, "#{field}");
-}
-EOF
+    create_rw_field_func(func, "get", "int", field)
   end
 
   def create_put_int_array_func(func, field)
-    @cfile.puts <<EOF
-static VALUE
-#{func}(VALUE self, VALUE arg)
-{
-  return inst_put_iarray(self, arg, "#{field}");
-}
-EOF
+    create_rw_field_func(func, "put", "iarray", field)
   end
 
   def create_get_int_array_func(func, field)
-    @cfile.puts <<EOF
-static VALUE
-#{func}(VALUE self)
-{
-  return inst_get_iarray(self, "#{field}");
-}
-EOF
+    create_rw_field_func(func, "get", "iarray", field)
   end
 
   def create_put_double_array_func(func, field)
-    @cfile.puts <<EOF
-static VALUE
-#{func}(VALUE self, VALUE arg)
-{
-  return inst_put_darray(self, arg, "#{field}");
-}
-EOF
+    create_rw_field_func(func, "put", "darray", field)
   end
 
   def create_get_double_array_func(func, field)
-    @cfile.puts <<EOF
-static VALUE
-#{func}(VALUE self)
-{
-  return inst_get_darray(self, "#{field}");
-}
-EOF
+    create_rw_field_func(func, "get", "darray", field)
   end
 
   def create_put_str_array_func(func, field)
-    @cfile.puts <<EOF
-static VALUE
-#{func}(VALUE self, VALUE arg)
-{
-  return inst_put_sarray(self, arg, "#{field}");
-}
-EOF
+    create_rw_field_func(func, "put", "sarray", field)
   end
 
   def create_get_str_array_func(func, field)
-    @cfile.puts <<EOF
-static VALUE
-#{func}(VALUE self)
-{
-  return inst_get_sarray(self, "#{field}");
-}
-EOF
+    create_rw_field_func(func, "get", "sarray", field)
   end
 
   def field2method(field)
@@ -317,7 +255,7 @@ EOF
       create_put_str_array_func(func, field)
     end
     field = Field.new("#{method}=", func, 1)
-    @fields.push(field)
+    @methods.push(field)
   end
 
   def add_get_method(ary)
@@ -348,7 +286,7 @@ EOF
       create_get_str_array_func(func, field)
     end
     field = Field.new("#{method}", func, 0)
-    @fields.push(field)
+    @methods.push(field)
   end
 
   def create_void_exe_func(func, field)
@@ -682,7 +620,7 @@ EOF
       add_void_func(func, field, argc, args)
     end
     field = Field.new("#{method}", func, argc)
-    @fields.push(field)
+    @methods.push(field)
   end
 
   def add_method(ary)
@@ -694,25 +632,23 @@ EOF
     when "r-x"
       add_func_method(ary)
     when "rw-"
-      if (ary[2][0] != "%")
-        add_put_method(ary)
-        add_get_method(ary)
-      end
+      add_put_method(ary)
+      add_get_method(ary)
     end
   end
 end
 
-def create_obj_funcs(file, cfile, name, version)
-  obj = NgraphObj.new(name, cfile, version)
+def create_obj_funcs(file, cfile, name, version, parent)
+  obj = NgraphObj.new(name, cfile, version, parent)
   while (true)
     ary = file.gets.chomp.split
     case ary[0]
     when "#"
       break
     when "---"
-      next
+      # can't access
     when "--x"
-      next
+      # can't execute
     when "r--"
       obj.add_method(ary)
     when "-w-"
@@ -724,8 +660,8 @@ def create_obj_funcs(file, cfile, name, version)
     else
       next
     end
+    obj.fields.push(ary[1])
   end
-
   obj.create_obj
   obj
 end
@@ -741,16 +677,29 @@ File.open(ARGV[1], "w") { |cfile|
         next
       when "version:"
         version = str_ary[1]
+        next
+      when "parent:"
+        parent = str_ary[1]
       else
         next
       end
-      obj = create_obj_funcs(file, cfile, name, version)
+      obj = create_obj_funcs(file, cfile, name, version, parent)
       objs.push(obj)
     end
   }
-  cfile.puts("static void\ncreate_ngraph_classes(VALUE ngraph_module)\n{")
-  objs.each {|obj|
+  cfile.puts <<EOF
+static void
+create_ngraph_classes(VALUE ngraph_module)
+{
+  VALUE objs;
+
+  objs = rb_ary_new2(#{objs.size});
+  rb_define_const(ngraph_module, "OBJECTS", objs);
+EOF
+  objs.each_with_index {|obj, i|
     cfile.puts("  create_#{obj.name}_object(ngraph_module);")
+    cfile.puts(%Q!  rb_ary_store(objs, #{i}, ID2SYM(rb_to_id(rb_str_new2("#{obj.name.capitalize}"))));!)
   }
+  cfile.puts("  OBJ_FREEZE(objs);")
   cfile.puts("}")
 }

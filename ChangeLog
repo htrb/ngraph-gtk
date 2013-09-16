@@ -1,3 +1,16 @@
+2013-09-16  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/plugins.c (ngraph_plugin_shell_exeobj): check type of the
+	field.
+
+	* src/shellcm.c (dispfield): the macro "NLABEL" is not used.
+
+	* src/object.c (addobject, _putobj, putobj, _getobj, getobj)
+	(copyobj): the macro "NLABEL" is not used.
+
+	* src/object.h: macro for field type and permission definitions
+	are moved to the file "ngraph_plugin_shell.h".
+
 2013-09-14  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* plugins/: added.
