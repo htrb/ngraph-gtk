@@ -1,3 +1,9 @@
+2013-09-18  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/ox11dlg.c (dlgspin): fix case for "double_entry".
+	(dialog): type of "double_entry" and "integer_entry" is "NDFUNC"
+	and "NIFUNC" respectively.
+
 2013-09-16  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/plugins.c (ngraph_plugin_shell_exeobj): check type of the

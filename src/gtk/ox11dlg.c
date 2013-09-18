@@ -391,9 +391,6 @@ dlgspin(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   locksave = Globallock;
   Globallock = TRUE;
 
-  g_free(rval->str);
-  rval->str = NULL;
-
   if (_getobj(obj, "title", inst, &title)) {
     title = NULL;
   }
@@ -418,7 +415,7 @@ dlgspin(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
     inc = * (double *) argv[4];
     r = * (double *) argv[5];
     break;
-  case'i':
+  case 'i':
     min = * (int *) argv[2];
     max = * (int *) argv[3];
     inc = * (int *) argv[4];
@@ -439,17 +436,16 @@ dlgspin(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   }
 
   switch (type) {
-  case 'f':
-    rval->str = g_strdup_printf("%.15e", r);
+  case 'd':
+    rval->d = r;
     break;
-  case'i':
-    rval->str = g_strdup_printf("%d", (int) r);
+  case 'i':
+    rval->i = nround(r);
     break;
   default:
     Globallock = locksave;
     return 1;
   }
-
   Globallock = locksave;
 
   return 0;
@@ -686,7 +682,7 @@ dlggetsavefile(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
   }
 
   Globallock = locksave;
-  return (ret == IDOK)?0:1;
+  return (ret == IDOK) ? 0 : 1;
 }
 
 static struct objtable dialog[] = {
@@ -706,9 +702,9 @@ static struct objtable dialog[] = {
   {"button", NSFUNC, NREAD | NEXEC, dlgbutton, "sa", 0},
   {"combo", NSFUNC, NREAD | NEXEC, dlgcombo, "sa", 0},
   {"combo_entry", NSFUNC, NREAD | NEXEC, dlgcombo, "sa", 0},
-  {"double_entry", NSFUNC, NREAD | NEXEC, dlgspin, "dddd", 0},
-  {"integer_entry", NSFUNC, NREAD | NEXEC, dlgspin, "iiii", 0},
-  {"beep", NVFUNC, NREAD | NEXEC, dlgbeep, NULL, 0},
+  {"double_entry", NDFUNC, NREAD | NEXEC, dlgspin, "dddd", 0},
+  {"integer_entry", NIFUNC, NREAD | NEXEC, dlgspin, "iiii", 0},
+  {"beep", NVFUNC, NREAD | NEXEC, dlgbeep, "", 0},
   {"get_open_file", NSFUNC, NREAD | NEXEC, dlggetopenfile, "sa", 0},
   {"get_open_files", NSAFUNC, NREAD | NEXEC, dlggetopenfiles, "sa", 0},
   {"get_save_file", NSFUNC, NREAD | NEXEC, dlggetsavefile, "sa", 0},
