@@ -12,10 +12,10 @@ new regexp
 new sarray
 new io
 
-echo "menu::get_ui" > $TMP_NGP
+echo "get menu: -field get_ui" > $TMP_NGP
 menu::menu $TMP_NGP > $UI_FILE
 
-echo "menu::get_accel_map" > $TMP_NGP
+echo "get menu: -field get_accel_map" > $TMP_NGP
 menu::menu $TMP_NGP > $TMP_FILE
 
 

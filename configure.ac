@@ -4,7 +4,7 @@ AC_INIT(ngraph, 6.06.11, ZXB01226@nifty.com, ngraph-gtk)
 
 AC_CONFIG_SRCDIR(src/gtk/main.c)
 AM_INIT_AUTOMAKE
-
+LT_INIT
 AC_PROG_LIBTOOL
 
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
@@ -18,23 +18,31 @@ dnl Checks for programs.
 AC_PROG_CC
 AM_PROG_CC_C_O
 AC_PROG_INSTALL
+AC_PROG_SED
+AC_PROG_MKDIR_P
 
 AC_CHECK_PROG(RM, rm, yes, no)
-AC_CHECK_PROG(MKDIR, mkdir, yes, no)
-AC_CHECK_PROG(RUBY, ruby, yes, no)
 
-# Checks for gettext.
+dnl Checks for gettext.
 ALL_LINGUAS="ja"
 AM_GNU_GETTEXT([external])
 
-# Checks for libraries.
+dnl Checks for libraries.
 AC_CHECK_LIB([m], [sqrt])
 AC_CHECK_LIB([readline], [rl_completion_matches],
 			  [
-			  AC_DEFINE([HAVE_LIBREADLINE], 1, [have readline Library])
+			  AC_DEFINE([HAVE_LIBREADLINE], 1, [have readline library])
 			  READLINE_LIBS=-lreadline
 			  AC_SUBST(READLINE_LIBS)
 			  ])
+
+dnl Checks for ruby
+AC_CHECK_PROG(RUBY, ruby, yes, no)
+if test $RUBY = yes; then
+    [ruby_incrudedir=`ruby -e 'puts(RbConfig::CONFIG["rubyhdrdir"])'`]
+    AC_CHECK_FILE($ruby_incrudedir/ruby.h, [have_ruby_dev=yes])
+fi
+AM_CONDITIONAL(HAVE_RUBY_DEV, test x$have_ruby_dev = xyes)
 
 AM_PATH_GLIB_2_0($GLIB_REQUIRED_VERSION,,
   [AC_MSG_ERROR(Test for GLib failed.)],
@@ -73,6 +81,7 @@ AC_FUNC_CLOSEDIR_VOID
 AC_FUNC_ERROR_AT_LINE
 AC_FUNC_FORK
 AC_FUNC_MALLOC
+AC_FUNC_ALLOCA
 AC_FUNC_MKTIME
 AC_FUNC_REALLOC
 AC_TYPE_SIGNAL

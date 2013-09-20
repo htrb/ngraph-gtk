@@ -1,3 +1,77 @@
+2013-09-20  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* plugins/Makefile.am: check develop environment of Ruby.
+
+	* initfile/save_ui_file.nsc: use "get" commend to get
+	informations.
+
+	* initfile/Ngraph.nsc (NULL_DEVICE): use "get" commend to show
+	version of the libraries.
+
+	* configure.ac: call LT_INIT, check develop environment of Ruby.
+
+	* src/plugins.c (plugin_shell_exec): check security.
+	(ngraph_plugin_shell_err_puts, ngraph_plugin_shell_puts)
+	(ngraph_plugin_shell_get_inst): added.
+
+	* src/otext.c (test): type of argument of the field "save_config"
+	is "void".
+
+	* src/osystem.c (nsystem): type of argument of the field
+	"temp_file" is "void".
+
+	* src/ostring.c (ostring): type of argument of some fields are
+	"void".
+
+	* src/osarray.c (osarray): type of argument of some fields are
+	"void".
+
+	* src/oregexp.c (oregexp): type of argument of some fields are
+	"void".
+
+	* src/oprm.c (prm): type of argument of the field "load" is
+	"void".
+
+	* src/omerge.c (merge): type of argument of some fields are
+	"void".
+
+	* src/omath.c (math): type of argument of the field "clear" is
+	"void".
+
+	* src/oiarray.c (oiarray): type of argument of some fields are
+	"void".
+
+	* src/ofile.c (file2d): type of argument of some fields are
+	"void".
+
+	* src/odarray.c (odarray): type of argument of some fields are
+	"void".
+
+	* src/oaxis.c (draw_numbering, numbering): type of the last
+	parameter is "struct narray *".
+	(draw_numbering): use "g_strdup_printf()" when the parameter
+	"array" is not NULL.
+	(axis_get_numbering): type of field is "NSAFUNC".
+	(axis): type of the argument of fields "scale_push", "scale_pop",
+	"clear", "adjust", "tight", "group_manager" and "get_numbering"
+	are "void".
+
+	* src/oagrid.c (agrid): type of "tight" field is "void (void)".
+
+	* src/gtk/x11menu.c (get_ui_definition): name is changed from
+	"show_ui_definition()".
+
+	* src/gtk/x11gui.c (DialogInput, DialogRadio, DialogCombo)
+	(DialogComboEntry, DialogSpinEntry, DialogCheck): chang order of
+	buttons.
+
+	* src/gtk/ox11menu.c (mx_get_ui, mx_get_accel_map)
+	(mx_show_lib_version, mx_get_locale): type of the fields is
+	changed from "NVFUNC" to "NSFUNC".
+	(mx_get_active): added.
+	(gtkmenu): add "active" field, change type of some fields from
+	"NVFUNC" to "NSFUNC".
+
 2013-09-18  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/ox11dlg.c (dlgspin): fix case for "double_entry".

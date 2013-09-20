@@ -2,9 +2,27 @@
 #include <stdio.h>
 #include <gmodule.h>
 
+#include "config.h"
 #include "../src/ngraph_plugin_shell.h"
 
+/* AIX requires this to be the first thing in the file.  */
+#ifndef __GNUC__
+# if HAVE_ALLOCA_H
+#  include <alloca.h>
+# else
+#  ifdef _AIX
+ #pragma alloca
+#  else
+#   ifndef alloca /* predefined by HP cc +Olibcalls */
+char *alloca ();
+#   endif
+#  endif
+# endif
+#endif
+
 static int Initialized = FALSE;
+static VALUE NgraphClass, NgraphModule;
+static ID Uniq, Argv;
 
 #define VAL2INT(val) (NIL_P(val) ? 0 : NUM2INT(val))
 #define VAL2DBL(val) (NIL_P(val) ? 0.0 : NUM2DBL(val))
@@ -26,6 +44,10 @@ ngraph_inst_method_equal(VALUE klass1, VALUE klass2)
 {
   struct ngraph_instance *inst1, *inst2;
 
+  if (! rb_obj_is_kind_of(klass2, NgraphClass)) {
+    return Qnil;
+  }
+
   Data_Get_Struct(klass1, struct ngraph_instance, inst1);
   Data_Get_Struct(klass2, struct ngraph_instance, inst2);
 
@@ -42,6 +64,10 @@ ngraph_inst_method_compare(VALUE klass1, VALUE klass2)
 {
   struct ngraph_instance *inst1, *inst2;
   int r;
+
+  if (! rb_obj_is_kind_of(klass2, NgraphClass)) {
+    return Qnil;
+  }
 
   Data_Get_Struct(klass1, struct ngraph_instance, inst1);
   Data_Get_Struct(klass2, struct ngraph_instance, inst2);
@@ -150,6 +176,66 @@ ngraph_inst_method_move_last(VALUE klass)
 }
 
 static VALUE
+ngraph_inst_method_exchange(VALUE self, VALUE arg)
+{
+  struct ngraph_instance *inst1, *inst2;
+  int id, r;
+
+  inst1 = check_id(self);
+  if (inst1 == NULL) {
+    return Qnil;
+  }
+
+  if (! rb_obj_is_kind_of(arg, NgraphClass)) {
+    return Qnil;
+  }
+
+  inst2 = check_id(arg);
+  if (inst2 == NULL) {
+    return Qnil;
+  }
+
+  if (inst1->obj != inst2->obj) {
+    return Qnil;
+  }
+
+  r = ngraph_plugin_shell_exchange(inst1->obj, inst1->id, inst2->id);
+  if (r < 0) {
+    return Qnil;
+  }
+
+  id = inst1->id;
+  inst1->id = inst2->id;
+  inst2->id = id;
+
+  return self;
+}
+
+static VALUE
+ngraph_inst_method_to_str(VALUE klass)
+{
+  struct ngraph_instance *inst;
+  const char *name;
+  char *str;
+  VALUE rstr;
+
+  inst = check_id(klass);
+  if (inst == NULL) {
+    return Qnil;
+  }
+
+  name = ngraph_plugin_shell_get_obj_name(inst->obj);
+  str = g_strdup_printf("%s:%d", name, inst->id);
+  if (str == NULL) {
+    return Qnil;
+  }
+  rstr = rb_str_new2(str);
+  g_free(str);
+
+  return rstr;
+}
+
+static VALUE
 obj_get(VALUE klass, VALUE id_value, const char *name)
 {
   struct ngraph_instance *inst;
@@ -250,6 +336,92 @@ obj_each(VALUE klass, const char *name)
 }
 
 static VALUE
+obj_move_up(VALUE klass, VALUE arg, const char *name)
+{
+  struct objlist *nobj;
+  int id, r;
+
+  nobj = ngraph_plugin_shell_get_object(name);
+  id = NUM2INT(arg);
+
+  r = ngraph_plugin_shell_move_up(nobj, id);
+  if (r < 0) {
+    return Qnil;
+  }
+
+  return klass;
+}
+
+static VALUE
+obj_move_down(VALUE klass, VALUE arg, const char *name)
+{
+  struct objlist *nobj;
+  int id, r;
+
+  nobj = ngraph_plugin_shell_get_object(name);
+  id = NUM2INT(arg);
+
+  r = ngraph_plugin_shell_move_down(nobj, id);
+  if (r < 0) {
+    return Qnil;
+  }
+
+  return klass;
+}
+
+static VALUE
+obj_move_top(VALUE klass, VALUE arg, const char *name)
+{
+  struct objlist *nobj;
+  int id, r;
+
+  nobj = ngraph_plugin_shell_get_object(name);
+  id = NUM2INT(arg);
+
+  r = ngraph_plugin_shell_move_top(nobj, id);
+  if (r < 0) {
+    return Qnil;
+  }
+
+  return klass;
+}
+
+static VALUE
+obj_move_last(VALUE klass, VALUE arg, const char *name)
+{
+  struct objlist *nobj;
+  int id, r;
+
+  nobj = ngraph_plugin_shell_get_object(name);
+  id = NUM2INT(arg);
+
+  r = ngraph_plugin_shell_move_last(nobj, id);
+  if (r < 0) {
+    return Qnil;
+  }
+
+  return klass;
+}
+
+static VALUE
+obj_exchange(VALUE klass, VALUE arg1, VALUE arg2, const char *name)
+{
+  struct objlist *nobj;
+  int id1, id2, r;
+
+  nobj = ngraph_plugin_shell_get_object(name);
+  id1 = NUM2INT(arg1);
+  id2 = NUM2INT(arg2);
+
+  r = ngraph_plugin_shell_exchange(nobj, id1, id2);
+  if (r < 0) {
+    return Qnil;
+  }
+
+  return klass;
+}
+
+static VALUE
 obj_size(VALUE klass, const char *name)
 {
   struct objlist *nobj;
@@ -257,8 +429,21 @@ obj_size(VALUE klass, const char *name)
 
   nobj = ngraph_plugin_shell_get_object(name);
   n = ngraph_plugin_shell_get_obj_last_id(nobj);
+  n = (n >= 0) ? n + 1 : 0;
 
   return INT2FIX(n);
+}
+
+static VALUE
+obj_exist(VALUE klass, const char *name)
+{
+  struct objlist *nobj;
+  int n;
+
+  nobj = ngraph_plugin_shell_get_object(name);
+  n = ngraph_plugin_shell_get_obj_last_id(nobj);
+
+  return (n >= 0) ? Qtrue : Qfalse;
 }
 
 static VALUE
@@ -303,6 +488,18 @@ ngraph_inst_method_del(VALUE self)
 }
 
 static VALUE
+obj_new_with_block_body(VALUE arg)
+{
+  return rb_yield(arg);
+}
+
+static VALUE
+obj_new_with_block_ensure(VALUE arg)
+{
+  return ngraph_inst_method_del(arg);
+}
+
+static VALUE
 obj_new(VALUE klass, const char *name)
 {
   VALUE new_inst;
@@ -316,6 +513,10 @@ obj_new(VALUE klass, const char *name)
   }
 
   new_inst = obj_get(klass, INT2FIX(r), name);
+
+  if (RTEST(rb_block_given_p())) {
+    new_inst = rb_ensure(obj_new_with_block_body, new_inst, obj_new_with_block_ensure, new_inst);
+  }
 
   return new_inst;
 }
@@ -395,7 +596,6 @@ inst_get_str(VALUE self, const char *field)
   struct ngraph_instance *inst;
   ngraph_returned_value str;
   ngraph_arg carg;
-  const char *cstr;
   int r;
 
   inst = check_id(self);
@@ -409,13 +609,61 @@ inst_get_str(VALUE self, const char *field)
     return Qnil;
   }
 
-  if (str.str == NULL) {
-    cstr = "";
-  } else {
-    cstr = str.str;
+  if (str.str) {
+    return rb_str_new2(str.str);
   }
 
-  return rb_str_new2(cstr);
+  return Qnil;
+}
+
+static VALUE
+inst_get_obj(VALUE self, const char *field)
+{
+  struct ngraph_instance *inst;
+  ngraph_returned_value str;
+  ngraph_arg carg;
+  const char *name;
+  int r, id;
+  struct objlist *obj;
+  char *buf;
+  VALUE klass;
+
+  inst = check_id(self);
+  if (inst == NULL) {
+    return Qnil;
+  }
+
+  carg.num = 0;
+  r = ngraph_plugin_shell_getobj(inst->obj, field, inst->id, &carg, &str);
+  if (r < 0) {
+    return Qnil;
+  }
+
+  if (str.str == NULL) {
+    return Qnil;
+  }
+
+  obj = ngraph_plugin_shell_get_inst(str.str, &id);
+  if (obj == NULL) {
+    return Qnil;
+  }
+
+  name = ngraph_plugin_shell_get_obj_name(obj);
+  if (name == NULL) {
+    return Qnil;
+  }
+
+  buf = g_strdup(name);
+  if (buf == NULL) {
+    return Qnil;
+  }
+  buf[0] = g_ascii_toupper(buf[0]);
+
+  klass = rb_const_get(NgraphModule, rb_to_id(rb_str_new2(buf)));
+
+  g_free(buf);
+
+  return obj_get(klass, INT2FIX(id), name);
 }
 
 static VALUE
@@ -524,6 +772,46 @@ inst_put_str(VALUE self, VALUE arg, const char *field)
     str.str = StringValuePtr(arg);
   }
   r = ngraph_plugin_shell_putobj(inst->obj, field, inst->id, &str);
+  if (r < 0) {
+    return Qnil;
+  }
+
+  return arg;
+}
+
+static VALUE
+inst_put_obj(VALUE self, VALUE arg, const char *field)
+{
+  struct ngraph_instance *inst1, *inst2;
+  ngraph_value str;
+  char buf[256], *ptr;
+  const char *name;
+  int r;
+
+  if (! NIL_P(arg)) {
+    if (! rb_obj_is_kind_of(arg, NgraphClass)) {
+      return Qnil;
+    }
+
+    inst2 = check_id(arg);
+    if (inst2 == NULL) {
+      return Qnil;
+    }
+
+    name = ngraph_plugin_shell_get_obj_name(inst2->obj);
+    snprintf(buf, sizeof(buf), "%s:^%d", name, inst2->oid);
+    ptr = buf;
+  } else {
+    ptr = NULL;
+  }
+
+  inst1 = check_id(self);
+  if (inst1 == NULL) {
+    return Qnil;
+  }
+
+  str.str = ptr;
+  r = ngraph_plugin_shell_putobj(inst1->obj, field, inst1->id, &str);
   if (r < 0) {
     return Qnil;
   }
@@ -848,6 +1136,137 @@ allocate_sarray(volatile VALUE *tmpstr, VALUE arg)
 }
 
 static VALUE
+create_obj_arg(VALUE args)
+{
+  int i, n;
+  VALUE arg, str, uniq_args;
+  struct ngraph_instance *inst;
+  struct objlist *obj = NULL;
+  const char *name;
+  char buf[256];
+
+  uniq_args = rb_funcall(args, Uniq, 0);
+  n = RARRAY_LEN(uniq_args);
+  str = rb_str_new2("");
+  for (i = 0; i < n; i++) {
+    arg = rb_ary_entry(uniq_args, i);
+    if (! rb_obj_is_kind_of(arg, NgraphClass)) {
+      return Qnil;
+    }
+
+    inst = check_id(arg);
+    if (inst == NULL) {
+      return Qnil;
+    }
+
+    if (obj == NULL) {
+      obj = inst->obj;
+      name = ngraph_plugin_shell_get_obj_name(inst->obj);
+      rb_str_cat2(str, name);
+    } else if (obj != inst->obj) {
+      return Qnil;
+    }
+    snprintf(buf, sizeof(buf), "%c%d", (i) ? ',' : ':', inst->id);
+    rb_str_cat2(str, buf);
+  }
+  return str;
+}
+
+static VALUE
+obj_func_obj(VALUE self, VALUE argv, const char *field, int type)
+{
+  VALUE arg, rstr, val;
+  int i;
+  struct ngraph_instance *inst;
+  ngraph_arg carg;
+  int argc, r;
+  ngraph_returned_value rval;
+  char *str;
+
+  inst = check_id(self);
+  if (inst == NULL) {
+    return Qnil;
+  }
+
+  argc = RARRAY_LEN(argv);
+  if (argc < 1) {
+    str = NULL;
+  } else {
+    arg = rb_ary_entry(argv, 0);
+    if (RB_TYPE_P(arg, T_ARRAY)) {
+      if (argc > 1) {
+	return Qnil;
+      }
+      rstr = create_obj_arg(arg);
+    } else {
+      rstr = create_obj_arg(argv);
+    }
+    if (NIL_P(rstr)) {
+      return Qnil;
+    }
+    str = StringValuePtr(rstr);
+  }
+
+  carg.num = 1;
+  carg.ary[0].str = str;
+  if (type == NVFUNC) {
+    r = ngraph_plugin_shell_exeobj(inst->obj, field, inst->id, &carg);
+  } else {
+    r = ngraph_plugin_shell_getobj(inst->obj, field, inst->id, &carg, &rval);
+  }
+  if (r < 0) {
+    return Qnil;
+  }
+
+  switch (type) {
+  case NVFUNC:
+    val = self;
+    break;
+  case NBFUNC:
+    val = (rval.i) ? Qtrue : Qfalse;
+    break;
+#if USE_NCHAR
+  case NCFUNC:
+#endif
+  case NIFUNC:
+    val = INT2NUM(rval.i);
+    break;
+  case NDFUNC:
+    val = rb_float_new(rval.d);
+    break;
+  case NSFUNC:
+    if (rval.str == NULL) {
+      val = Qnil;
+    } else {
+      val = rb_str_new2(rval.str);
+    }
+    break;
+  case NIAFUNC:
+    val = rb_ary_new2(rval.ary.num);
+    for (i = 0; i < rval.ary.num; i++) {
+      rb_ary_store(val, i, INT2NUM(rval.ary.data.ia[i]));
+    }
+    break;
+  case NDAFUNC:
+    val = rb_ary_new2(rval.ary.num);
+    for (i = 0; i < rval.ary.num; i++) {
+      rb_ary_store(val, i, rb_float_new(rval.ary.data.da[i]));
+    }
+    break;
+  case NSAFUNC:
+    val = rb_ary_new2(rval.ary.num);
+    for (i = 0; i < rval.ary.num; i++) {
+      rb_ary_store(val, i, rb_str_new2(rval.ary.data.sa[i]));
+    }
+    break;
+  default:
+    val = Qnil;
+  }
+
+  return val;
+}
+
+static VALUE
 exe_void_func_argv(VALUE self, VALUE argv, const char *field)
 {
   struct ngraph_instance *inst;
@@ -869,6 +1288,7 @@ exe_void_func_argv(VALUE self, VALUE argv, const char *field)
   return self;
 }
 
+#if 0
 static VALUE
 get_str_func_argv(VALUE self, VALUE argv, const char *field)
 {
@@ -891,6 +1311,7 @@ get_str_func_argv(VALUE self, VALUE argv, const char *field)
 
   return rb_str_new2(rval.str ? rval.str : "");
 }
+#endif
 
 static void
 add_obj_name_const(VALUE klass, struct objlist *nobj, const char *name)
@@ -943,6 +1364,18 @@ setup_obj_common(VALUE obj)
   rb_define_method(obj, "move_down", ngraph_inst_method_move_down, 0);
   rb_define_method(obj, "move_top", ngraph_inst_method_move_top, 0);
   rb_define_method(obj, "move_last", ngraph_inst_method_move_last, 0);
+  rb_define_method(obj, "exchange", ngraph_inst_method_exchange, 1);
+  rb_define_method(obj, "to_s", ngraph_inst_method_to_str, 0);
+}
+
+static void
+store_field_names(VALUE fields, const char *name)
+{
+  VALUE field;
+
+  field = rb_str_new2(name);
+  OBJ_FREEZE(field);
+  rb_ary_push(fields, field);
 }
 
 #include "ruby_ngraph.c"
@@ -988,11 +1421,32 @@ add_common_const(VALUE ngraph_module)
   rb_define_const(attr, "EXEC", INT2FIX(NEXEC));
 }
 
+static VALUE
+ngraph_class_new(VALUE self)
+{
+  rb_raise(rb_eNotImpError, "creation of instance is forbidden.");
+  return Qnil;
+}
+
+static VALUE
+ngraph_puts(VALUE module, VALUE str)
+{
+  ngraph_plugin_shell_puts(StringValuePtr(str));
+  return Qnil;
+}
+
+static VALUE
+ngraph_err_puts(VALUE module, VALUE str)
+{
+  ngraph_plugin_shell_err_puts(StringValuePtr(str));
+  return Qnil;
+}
+
 int
 ngraph_plugin_shell_shell_libruby(struct plugin_shell *shell, int argc, char *argv[])
 {
-  VALUE ngraph_module;
-  int state;
+  int state, i;
+  VALUE r_argv;
 
   if (! Initialized) {
     ruby_init();
@@ -1000,15 +1454,33 @@ ngraph_plugin_shell_shell_libruby(struct plugin_shell *shell, int argc, char *ar
     ruby_init_loadpath();
     Initialized = TRUE;
 
-    ngraph_module = rb_define_module("Ngraph");
-    add_common_const(ngraph_module);
-    create_ngraph_classes(ngraph_module);
+    NgraphModule = rb_define_module("Ngraph");
+    rb_define_singleton_method(NgraphModule, "puts", ngraph_puts, 1);
+    rb_define_singleton_method(NgraphModule, "err_puts", ngraph_err_puts, 1);
+
+    NgraphClass = rb_define_class_under(NgraphModule, "NgraphObject", rb_cObject);
+    rb_define_method(NgraphClass, "initialize", ngraph_class_new, 0);
+    add_common_const(NgraphModule);
+    create_ngraph_classes(NgraphModule, NgraphClass);
+
+    Uniq = rb_to_id(rb_str_new2("uniq"));
+    Argv = rb_to_id(rb_str_new2("ARGV"));
+  }
+
+  r_argv = rb_const_get(rb_mKernel, Argv);
+  rb_ary_clear(r_argv);
+  for (i = 2; i < argc; i++) {
+    rb_ary_push(r_argv, rb_str_new2(argv[i]));
   }
 
   rb_load_protect(rb_str_new2(argv[1]), 1, &state);
   if (state)
   {
-    printf("some errors are occurred\n");
+    VALUE errinfo, errstr;
+    errinfo = rb_errinfo();
+    errstr = rb_obj_as_string(errinfo);
+
+    ngraph_plugin_shell_err_puts(StringValuePtr(errstr));
   }
   rb_gc_start();
   return 0;
@@ -1019,5 +1491,7 @@ g_module_unload(GModule *module)
 {
   if (Initialized) {
     ruby_finalize();
+    NgraphClass = 0;
+    NgraphModule = 0;
   }
 }

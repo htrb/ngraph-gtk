@@ -473,7 +473,7 @@ do
 	    then
 		echo
 		echo "  library:"
-		menu::lib_version '    '
+		get menu: -field lib_version '    '
 	    fi
 	    echo
 	    del system:0

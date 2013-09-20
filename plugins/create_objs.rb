@@ -22,15 +22,25 @@ end
 
 class NgraphObj
   attr_reader :name, :fields
+  attr_accessor :abstruct
   SINGLETON_METHOD = [
                       ["new", "new", 0],
                       ["[]", "get", 1],
                       ["del", "del", 1],
                       ["each", "each", 0],
                       ["size", "size", 0],
-                      ["get_field_args", "field_args", 1],
-                      ["get_field_type", "field_type", 1],
-                      ["get_field_permission", "field_permission", 1],
+                      ["move_up", "move_up", 1],
+                      ["move_down", "move_down", 1],
+                      ["move_top", "move_top", 1],
+                      ["move_last", "move_last", 1],
+                      ["exchange", "exchange", 2],
+                     ]
+
+  SINGLETON_METHOD2 = [
+                       ["exist?", "exist", 0],
+                       ["get_field_args", "field_args", 1],
+                       ["get_field_type", "field_type", 1],
+                       ["get_field_permission", "field_permission", 1],
                      ]
 
   FUNC_FIELD_COMMON = <<EOF
@@ -60,6 +70,8 @@ EOF
     @cfile = cfile
     @version = version
     @parent = (parent == "(null)") ? nil : parent
+    @abstruct = false
+    @func = ""
   end
 
   def add_singleton_method_func(method, func, argc)
@@ -86,38 +98,49 @@ EOF
   end
 
   def create_obj
-    SINGLETON_METHOD.each { |method, func, argc|
+    unless (@abstruct)
+      @cfile.puts(@func)
+      SINGLETON_METHOD.each { |method, func, argc|
+        add_singleton_method_func(method, func, argc)
+      }
+    end
+    SINGLETON_METHOD2.each { |method, func, argc|
       add_singleton_method_func(method, func, argc)
     }
     @cfile.puts <<EOF
 static void
-create_#{@name}_object(VALUE ngraph_module)
+create_#{@name}_object(VALUE ngraph_module, VALUE ngraph_class)
 {
   VALUE obj;
-  VALUE fields, field;
+  VALUE fields;
 #{(@enum.size > 0) ? "  VALUE module;" : ""}
-  obj = rb_define_class_under(ngraph_module, "#{@name.capitalize}", rb_cObject);
+  obj = rb_define_class_under(ngraph_module, "#{@name.capitalize}", ngraph_class);
 EOF
-    SINGLETON_METHOD.each { |method, func, argc|
+    unless (@abstruct)
+      SINGLETON_METHOD.each { |method, func, argc|
+        @cfile.puts(%Q!  rb_define_singleton_method(obj, "#{method}", #{@name}_#{func}, #{argc});!)
+      }
+    end
+    SINGLETON_METHOD2.each { |method, func, argc|
       @cfile.puts(%Q!  rb_define_singleton_method(obj, "#{method}", #{@name}_#{func}, #{argc});!)
     }
+    @cfile.puts("  setup_obj_common(obj);") unless (@abstruct)
     @cfile.puts <<EOF
   add_obj_const(obj, "#{@name}");
-  setup_obj_common(obj);
 
   fields = rb_ary_new2(#{@fields.size});
   rb_define_const(obj, "FIELDS", fields);
 EOF
 
     @fields.each_with_index { |field, i|
-      @cfile.puts(%Q!  field = rb_str_new2("#{field}");!)
-      @cfile.puts("  OBJ_FREEZE(field);")
-      @cfile.puts("  rb_ary_store(fields, #{i}, field);")
+      @cfile.puts(%Q!  store_field_names(fields, "#{field}");!)
     }
     @cfile.puts("  OBJ_FREEZE(fields);")
-    @methods.each { |field|
-      @cfile.puts(%Q!  rb_define_method(obj, "#{field.name}", #{field.func}, #{field.argc});!)
-    }
+    unless (@abstruct)
+      @methods.each { |field|
+        @cfile.puts(%Q!  rb_define_method(obj, "#{field.name}", #{field.func}, #{field.argc});!)
+      }
+    end
     @enum.each { |key, val|
       @cfile.puts(%Q!  module = rb_define_module_under(obj, "#{val.module}");!)
       val.enum.each_with_index { |enum, i|
@@ -135,13 +158,21 @@ EOF
       arg = ""
       parm = ""
     end
-    @cfile.puts <<EOF
+    @func += <<EOF
 static VALUE
 #{func}(VALUE self#{parm})
 {
   return inst_#{rw}_#{type}(self#{arg}, "#{field}");
 }
 EOF
+  end
+
+  def create_put_obj_func(func, field)
+    create_rw_field_func(func, "put", "obj", field)
+  end
+
+  def create_get_obj_func(func, field)
+    create_rw_field_func(func, "get", "obj", field)
   end
 
   def create_put_str_func(func, field)
@@ -177,7 +208,7 @@ EOF
   end
 
   def create_put_enum_func(func, field, enum)
-    @cfile.puts <<EOF
+    @func += <<EOF
 static VALUE
 #{func}(VALUE self, VALUE arg)
 {
@@ -240,7 +271,7 @@ EOF
     when "double"
       create_put_double_func(func, field)
     when "obj"
-      create_put_str_func(func, field)
+      create_put_obj_func(func, field)
     when "char*"
       create_put_str_func(func, field)
     when "enum("
@@ -266,12 +297,13 @@ EOF
     case type
     when "bool"
       create_get_bool_func(func, field)
+      method += "?"
     when "int"
       create_get_int_func(func, field)
     when "double"
       create_get_double_func(func, field)
     when "obj"
-      create_get_str_func(func, field)
+      create_get_obj_func(func, field)
     when "char*"
       create_get_str_func(func, field)
     when "enum("
@@ -290,7 +322,7 @@ EOF
   end
 
   def create_void_exe_func(func, field)
-    @cfile.puts <<EOF
+    @func += <<EOF
 static VALUE
 #{func}(VALUE self)
 {
@@ -307,44 +339,43 @@ EOF
   end
 
   def create_func_type(func, args)
-    @cfile.print("static VALUE\n#{func}(int argc, VALUE *argv, VALUE self)")
-    @cfile.puts("\n{")
-    @cfile.puts("  VALUE arg[#{args.size}];")
-    @cfile.puts("  VALUE tmpstr;") if (args.find {|s| s[-1] == "]"})
+    @func += ("static VALUE\n#{func}(int argc, VALUE *argv, VALUE self)\n{\n")
+    @func += ("  VALUE arg[#{args.size}];\n")
+    @func += ("  VALUE tmpstr;\n") if (args.find {|s| s[-1] == "]"})
   end
 
   def create_arguments(args)
     array = false
-    @cfile.print(%Q!  rb_scan_args(argc, argv, "0#{args.size}", !)
+    @func += (%Q!  rb_scan_args(argc, argv, "0#{args.size}", !)
     args.size.times { |i|
-      @cfile.print("arg + #{i}")
+      @func += ("arg + #{i}")
       if (i == args.size - 1)
-        @cfile.puts(");")
+        @func += (");\n")
       else
-        @cfile.print(", ")
+        @func += (", ")
       end
     }
-    @cfile.puts("  carg = alloca(sizeof(*carg) + sizeof(union array) * #{args.size});")
-    @cfile.puts("  if (carg == NULL) {\n    return Qnil;\n  }")
-    @cfile.puts("  carg->num = #{args.size};")
+    @func += ("  carg = alloca(sizeof(*carg) + sizeof(union array) * #{args.size});\n")
+    @func += ("  if (carg == NULL) {\n    return Qnil;\n  }\n")
+    @func += ("  carg->num = #{args.size};\n")
     args.each_with_index { |arg, i|
       case arg
       when "int"
-        @cfile.puts("  carg->ary[#{i}].i = VAL2INT(arg[#{i}]);")
+        @func += ("  carg->ary[#{i}].i = VAL2INT(arg[#{i}]);\n")
       when "double"
-        @cfile.puts("  carg->ary[#{i}].d = VAL2DBL(arg[#{i}]);")
+        @func += ("  carg->ary[#{i}].d = VAL2DBL(arg[#{i}]);\n")
       when "char*"
-        @cfile.puts("  carg->ary[#{i}].str = VAL2STR(arg[#{i}]);")
+        @func += ("  carg->ary[#{i}].str = VAL2STR(arg[#{i}]);\n")
       when "bool"
-        @cfile.puts("  carg->ary[#{i}].i = RTEST(arg[#{i}]) ? 1 : 0;")
+        @func += ("  carg->ary[#{i}].i = RTEST(arg[#{i}]) ? 1 : 0;\n")
       when "int[]"
-        @cfile.puts("  carg->ary[#{i}].ary = allocate_iarray(&tmpstr, arg[#{i}]);")
+        @func += ("  carg->ary[#{i}].ary = allocate_iarray(&tmpstr, arg[#{i}]);\n")
         array = true
       when "double[]"
-        @cfile.puts("  carg->ary[#{i}].ary = allocate_darray(&tmpstr, arg[#{i}]);")
+        @func += ("  carg->ary[#{i}].ary = allocate_darray(&tmpstr, arg[#{i}]);\n")
         array = true
       when "char*[]"
-        @cfile.puts("  carg->ary[#{i}].ary = allocate_sarray(&tmpstr, arg[#{i}]);")
+        @func += ("  carg->ary[#{i}].ary = allocate_sarray(&tmpstr, arg[#{i}]);\n")
         array = true
       end
     }
@@ -355,17 +386,17 @@ EOF
     args.each_with_index { |arg, i|
       case arg
       when "int[]", "double[]", "char*[]"
-        @cfile.puts("  if (carg->ary[#{i}].ary) {\n    rb_free_tmp_buffer(&tmpstr);\n  }")
+        @func += ("  if (carg->ary[#{i}].ary) {\n    rb_free_tmp_buffer(&tmpstr);\n  }\n")
       end
     }
   end
 
   def create_val_func_with_argv(func, field, comv)
-    @cfile.puts("static VALUE\n#{func}(VALUE self, VALUE argv)\n{")
-    @cfile.puts("  VALUE tmpstr;")
-    @cfile.puts(FUNC_FIELD_VAL)
-    @cfile.puts(FUNC_FIELD_COMMON)
-    @cfile.puts <<EOF
+    @func += ("static VALUE\n#{func}(VALUE self, VALUE argv)\n{")
+    @func += ("  VALUE tmpstr;\n")
+    @func += (FUNC_FIELD_VAL)
+    @func += (FUNC_FIELD_COMMON)
+    @func += <<EOF
   carg = allocate_sarray(&tmpstr, argv);
   r = ngraph_plugin_shell_getobj(inst->obj, "#{field}", inst->id, carg, &rval);
   rb_free_tmp_buffer(&tmpstr);
@@ -379,7 +410,7 @@ EOF
   end
 
   def create_void_func_with_argv(func, field)
-    @cfile.puts <<EOF
+    @func += <<EOF
 static VALUE
 #{func}(VALUE self, VALUE argv)
 {
@@ -389,11 +420,11 @@ EOF
   end
 
   def create_array_func_with_argv(func, field, comv)
-    @cfile.puts("static VALUE\n#{func}(VALUE self, VALUE argv)\n{")
-    @cfile.puts("  VALUE tmpstr;")
-    @cfile.puts(FUNC_FIELD_ARY)
-    @cfile.puts(FUNC_FIELD_COMMON)
-    @cfile.puts <<EOF
+    @func += ("static VALUE\n#{func}(VALUE self, VALUE argv)\n{")
+    @func += ("  VALUE tmpstr;\n")
+    @func += (FUNC_FIELD_ARY)
+    @func += (FUNC_FIELD_COMMON)
+    @func += <<EOF
   carg = allocate_sarray(&tmpstr, argv);
   r = ngraph_plugin_shell_getobj(inst->obj, "#{field}", inst->id, carg, &rval);
   rb_free_tmp_buffer(&tmpstr);
@@ -413,13 +444,13 @@ EOF
 
   def create_val_func_with_args(func, field, args, comv)
     create_func_type(func, args)
-    @cfile.puts(FUNC_FIELD_VAL)
-    @cfile.puts(FUNC_FIELD_COMMON)
+    @func += (FUNC_FIELD_VAL)
+    @func += (FUNC_FIELD_COMMON)
     array = create_arguments(args)
 
-    @cfile.puts(%Q!  r = ngraph_plugin_shell_getobj(inst->obj, "#{field}", inst->id, carg, &rval);!)
-    @cfile.puts(%Q!  rb_free_tmp_buffer(&tmpstr);!) if (array)
-    @cfile.puts <<EOF
+    @func += (%Q!  r = ngraph_plugin_shell_getobj(inst->obj, "#{field}", inst->id, carg, &rval);\n!)
+    @func += (%Q!  rb_free_tmp_buffer(&tmpstr);\n!) if (array)
+    @func += <<EOF
   if (r < 0) {
     return Qnil;
   }
@@ -431,12 +462,12 @@ EOF
 
   def create_void_func_with_args(func, field, args)
     create_func_type(func, args)
-    @cfile.puts(FUNC_FIELD_COMMON)
+    @func += (FUNC_FIELD_COMMON)
     array = create_arguments(args)
 
-    @cfile.puts(%Q!  r = ngraph_plugin_shell_exeobj(inst->obj, "#{field}", inst->id, carg);!)
-    @cfile.puts(%Q!  rb_free_tmp_buffer(&tmpstr);!) if (array)
-    @cfile.puts <<EOF
+    @func += (%Q!  r = ngraph_plugin_shell_exeobj(inst->obj, "#{field}", inst->id, carg);\n!)
+    @func += (%Q!  rb_free_tmp_buffer(&tmpstr);\n!) if (array)
+    @func += <<EOF
   if (r < 0) {
     return Qnil;
   }
@@ -448,13 +479,13 @@ EOF
 
   def create_array_func_with_args(func, field, args, comv)
     create_func_type(func, args)
-    @cfile.puts(FUNC_FIELD_ARY)
-    @cfile.puts(FUNC_FIELD_COMMON)
+    @func += (FUNC_FIELD_ARY)
+    @func += (FUNC_FIELD_COMMON)
     array = create_arguments(args)
 
-    @cfile.puts(%Q!  r = ngraph_plugin_shell_getobj(inst->obj, "#{field}", inst->id, carg, &rval);!)
-    @cfile.puts(%Q!  rb_free_tmp_buffer(&tmpstr);!) if (array)
-    @cfile.puts <<EOF
+    @func += (%Q!  r = ngraph_plugin_shell_getobj(inst->obj, "#{field}", inst->id, carg, &rval);\n!)
+    @func += (%Q!  rb_free_tmp_buffer(&tmpstr);\n!) if (array)
+    @func += <<EOF
   if (r < 0) {
     return Qnil;
   }
@@ -498,7 +529,7 @@ EOF
   end
 
   def create_str_func_with_argv(func, field)
-    @cfile.puts <<EOF
+    @func += <<EOF
 static VALUE
 #{func}(VALUE self, VALUE argv)
 {
@@ -508,6 +539,7 @@ EOF
   end
 
   def add_bool_func(func, field, argc, args)
+    field
     case (argc)
     when 0
       create_get_bool_func(func, field)
@@ -595,30 +627,64 @@ EOF
     end
   end
 
+  def add_func_obj(type, func, field, args)
+    rtype = case type
+            when "bool("
+              "NBFUNC"
+            when "int("
+              "NIFUNC"
+            when "char*("
+              "NSFUNC"
+            when "int[]("
+              "NIAFUNC"
+            when "double[]("
+              "NDAFUNC"
+            when "char*[]("
+              "NSAFUNC"
+            when "void("
+              "NVFUNC"
+            else
+              "NVFUNC"
+            end
+    @func += <<EOF
+static VALUE
+#{func}(VALUE self, VALUE argv)
+{
+  return obj_func_obj(self, argv, "#{field}", #{rtype});
+}
+EOF
+  end
+
   def add_func_method(ary)
     field = ary[1]
     type = ary[2]
     method = field2method(field)
     func = "#{@name}_field_#{method}"
     argc, args = check_args(ary)
-    case type
-    when "bool("
-      add_bool_func(func, field, argc, args)
-    when "int("
-      add_int_func(func, field, argc, args)
-    when "double("
-      add_double_func(func, field, argc, args)
-    when "char*("
-      add_str_func(func, field, argc, args)
-    when "int[]("
-      add_int_array_func(func, field, argc, args)
-    when "double[]("
-      add_double_array_func(func, field, argc, args)
-    when "char*[]("
-      add_str_array_func(func, field, argc, args)
-    when "void("
-      add_void_func(func, field, argc, args)
+    if (ary[3] == "obj")
+      argc = -2;
+      add_func_obj(type, func, field, args)
+    else
+      case type
+      when "bool("
+        add_bool_func(func, field, argc, args)
+      when "int("
+        add_int_func(func, field, argc, args)
+      when "double("
+        add_double_func(func, field, argc, args)
+      when "char*("
+        add_str_func(func, field, argc, args)
+      when "int[]("
+        add_int_array_func(func, field, argc, args)
+      when "double[]("
+        add_double_array_func(func, field, argc, args)
+      when "char*[]("
+        add_str_array_func(func, field, argc, args)
+      when "void("
+        add_void_func(func, field, argc, args)
+      end
     end
+    method += "?" if (type == "bool(")
     field = Field.new("#{method}", func, argc)
     @methods.push(field)
   end
@@ -646,13 +712,13 @@ def create_obj_funcs(file, cfile, name, version, parent)
     when "#"
       break
     when "---"
-      # can't access
+      obj.abstruct = true if (ary[1] == "init")
     when "--x"
       # can't execute
     when "r--"
       obj.add_method(ary)
     when "-w-"
-      obj.add_method(ary)
+#      obj.add_method(ary)
     when "r-x"
       obj.add_method(ary)
     when "rw-"
@@ -689,7 +755,7 @@ File.open(ARGV[1], "w") { |cfile|
   }
   cfile.puts <<EOF
 static void
-create_ngraph_classes(VALUE ngraph_module)
+create_ngraph_classes(VALUE ngraph_module, VALUE ngraph_class)
 {
   VALUE objs;
 
@@ -697,9 +763,9 @@ create_ngraph_classes(VALUE ngraph_module)
   rb_define_const(ngraph_module, "OBJECTS", objs);
 EOF
   objs.each_with_index {|obj, i|
-    cfile.puts("  create_#{obj.name}_object(ngraph_module);")
-    cfile.puts(%Q!  rb_ary_store(objs, #{i}, ID2SYM(rb_to_id(rb_str_new2("#{obj.name.capitalize}"))));!)
+    cfile.puts("  create_#{obj.name}_object(ngraph_module, ngraph_class);\n")
+    cfile.puts(%Q!  rb_ary_store(objs, #{i}, ID2SYM(rb_to_id(rb_str_new2("#{obj.name.capitalize}"))));\n!)
   }
-  cfile.puts("  OBJ_FREEZE(objs);")
+  cfile.puts("  OBJ_FREEZE(objs);\n")
   cfile.puts("}")
 }
