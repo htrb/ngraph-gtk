@@ -247,7 +247,7 @@ void set_focus_insensitive(const struct Viewer *d);
 void set_focus_sensitivity(const struct Viewer *d);
 void window_action_set_active(enum SubWinType type, int state);
 void window_action_toggle(enum SubWinType type);
-void show_ui_definition(void);
+char *get_ui_definition(void);
 void create_addin_menu(void);
 void create_recent_data_menu(void);
 

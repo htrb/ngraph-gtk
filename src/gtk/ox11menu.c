@@ -1847,7 +1847,10 @@ mx_toggle_win(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char 
 static int
 mx_get_ui(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  show_ui_definition();
+  if (rval->str) {
+    g_free(rval->str);
+  }
+  rval->str = get_ui_definition();
 
   return 0;
 }
@@ -1858,6 +1861,12 @@ mx_get_accel_map(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, ch
   FILE *fp;
   int fd;
   char buf[1024], *ptr;
+  GString *str;
+
+  if (rval->str) {
+    g_free(rval->str);
+  }
+  rval->str = NULL;
 
   fp = tmpfile();
 
@@ -1871,11 +1880,14 @@ mx_get_accel_map(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, ch
 
   rewind(fp);
 
+  str = g_string_new("");
   while ((ptr = fgets(buf, sizeof(buf), fp))) {
     buf[sizeof(buf) - 1] = '\0';
-    printfstdout("%s", buf);
+    g_string_append(str, buf);
   }
   fclose(fp);
+
+  rval->str = g_string_free(str, FALSE);
 
   return 0;
 }
@@ -1892,10 +1904,17 @@ static int
 mx_show_lib_version(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   char *h;
+  GString *str;
+
+  if (rval->str) {
+    g_free(rval->str);
+  }
+  rval->str = NULL;
 
   h = CHK_STR(argv[2]);
 
-  printfstdout("%sGTK+\n"
+  str = g_string_new("");
+  g_string_append_printf(str, "%sGTK+\n"
 	       "%s compile: %d.%d.%d\n"
 	       "%s  linked: %d.%d.%d\n"
 	       "\n",
@@ -1909,7 +1928,7 @@ mx_show_lib_version(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 	       gtk_minor_version,
 	       gtk_micro_version);
 
-  printfstdout("%sGLib\n"
+  g_string_append_printf(str, "%sGLib\n"
 	       "%s compile: %d.%d.%d\n"
 	       "%s  linked: %d.%d.%d\n"
 	       "\n",
@@ -1923,7 +1942,7 @@ mx_show_lib_version(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 	       glib_minor_version,
 	       glib_micro_version);
 
-  printfstdout("%sCairo\n"
+  g_string_append_printf(str, "%sCairo\n"
 	       "%s compile: %s\n"
 	       "%s  linked: %s\n"
 	       "\n",
@@ -1933,7 +1952,7 @@ mx_show_lib_version(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 	       h,
 	       cairo_version_string());
 
-  printfstdout("%sPango\n"
+  g_string_append_printf(str, "%sPango\n"
 	       "%s compile: %s\n"
 	       "%s  linked: %s\n",
 	       h,
@@ -1943,8 +1962,8 @@ mx_show_lib_version(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 	       pango_version_string());
 
 #ifdef HAVE_READLINE_READLINE_H
-  printfstdout("\n");
-  printfstdout("%sreadline\n"
+  g_string_append(str, "\n");
+  g_string_append_printf(str, "%sreadline\n"
 	       "%s compile: %d.%d\n"
 	       "%s  linked: %s\n",
 	       h,
@@ -1956,8 +1975,8 @@ mx_show_lib_version(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 #endif
 
 #ifdef HAVE_LIBGSL
-  printfstdout("\n");
-  printfstdout("%sGSL\n"
+  g_string_append(str, "\n");
+  g_string_append_printf(str, "%sGSL\n"
 #ifdef GSL_VERSION
 	       "%s compile: %s\n"
 #else  /* GSL_VERSION */
@@ -1975,6 +1994,8 @@ mx_show_lib_version(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 	       h,
 	       gsl_version);
 #endif	/* HAVE_LIBGSL */
+
+  rval->str = g_string_free(str, FALSE);
 
   return 0;
 }
@@ -2072,8 +2093,27 @@ mx_get_locale(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char 
 {
   const char *locale;
 
+  if (rval->str) {
+    g_free(rval->str);
+  }
+  rval->str = NULL;
+
   locale = n_getlocale();
-  printfstdout("%s\n", CHK_STR(locale));
+  if (locale) {
+    rval->str = g_strdup(locale);
+  }
+
+  return 0;
+}
+
+static int
+mx_get_active(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  if (TopLevel) {
+    rval->i = TRUE;
+  } else {
+    rval->i = FALSE;
+  }
 
   return 0;
 }
@@ -2246,12 +2286,13 @@ static struct objtable gtkmenu[] = {
   {"show_window", NVFUNC, NREAD | NEXEC, mx_show_win, "i", 0},
   {"hide_window", NVFUNC, NREAD | NEXEC, mx_hide_win, "i", 0},
   {"toggle_window", NVFUNC, NREAD | NEXEC, mx_toggle_win, "i", 0},
-  {"get_ui", NVFUNC, NREAD | NEXEC, mx_get_ui, "", 0},
-  {"get_accel_map", NVFUNC, NREAD | NEXEC, mx_get_accel_map, "", 0},
-  {"lib_version", NVFUNC, NREAD | NEXEC, mx_show_lib_version, "s", 0},
+  {"get_ui", NSFUNC, NREAD | NEXEC, mx_get_ui, "", 0},
+  {"get_accel_map", NSFUNC, NREAD | NEXEC, mx_get_accel_map, "", 0},
+  {"lib_version", NSFUNC, NREAD | NEXEC, mx_show_lib_version, "s", 0},
   {"focus", NVFUNC, NREAD | NEXEC, mx_focus_obj, "o", 0},
   {"unfocus", NVFUNC, NREAD | NEXEC, mx_unfocus_obj, "", 0},
-  {"locale", NVFUNC, NREAD | NEXEC, mx_get_locale, "", 0},
+  {"locale", NSFUNC, NREAD | NEXEC, mx_get_locale, "", 0},
+  {"active", NBFUNC, NREAD | NEXEC, mx_get_active, "", 0},
   {"addin_list_append", NVFUNC, NREAD | NEXEC, mx_addin_list_append, "o", 0},
   {"_evloop", NVFUNC, 0, mx_evloop, NULL, 0},
 };

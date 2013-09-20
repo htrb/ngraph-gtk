@@ -3817,12 +3817,14 @@ create_action_group(struct NgraphActionEntry *entry, int n)
   return action_group;
 }
 
-void
-show_ui_definition(void)
+char *
+get_ui_definition(void)
 {
-  if (NgraphUi) {
-    printfstdout("%s", gtk_ui_manager_get_ui(NgraphUi));
+  if (NgraphUi == NULL) {
+    return NULL;
   }
+
+  return gtk_ui_manager_get_ui(NgraphUi);
 }
 
 int
