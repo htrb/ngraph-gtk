@@ -366,7 +366,7 @@ agriddraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
 
     snprintf(buf, sizeof(buf), "style%d", i + 1);
     _getobj(obj, buf, inst, &st);
-   
+
     gprm.snum[i] = arraynum(st);
     gprm.sdata[i] = arraydata(st);
   }
@@ -434,7 +434,7 @@ static struct objtable agrid[] = {
   {"BB",NINT,NREAD|NWRITE,NULL,NULL,0},
   {"BA",NINT,NREAD|NWRITE,NULL,NULL,0},
   {"draw",NVFUNC,NREAD|NEXEC,agriddraw,"i",0},
-  {"tight",NVFUNC,NREAD|NEXEC,agridtight,NULL,0},
+  {"tight",NVFUNC,NREAD|NEXEC,agridtight,"",0},
 };
 
 #define TBLNUM (sizeof(agrid) / sizeof(*agrid))

@@ -339,7 +339,7 @@ oarray_seq(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   return 0;
 }
 
-int 
+int
 oarray_reverse_seq(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct narray *array;
@@ -757,25 +757,25 @@ static struct objtable oiarray[] = {
   {"put",NVFUNC,NREAD|NEXEC,iarrayput,"ii",0},
   {"add",NVFUNC,NREAD|NEXEC,iarrayadd,"i",0},
   {"push",NVFUNC,NREAD|NEXEC,iarrayadd,"i",0},
-  {"pop",NIFUNC,NREAD|NEXEC,iarraypop,NULL,0},
+  {"pop",NIFUNC,NREAD|NEXEC,iarraypop,"",0},
   {"ins",NVFUNC,NREAD|NEXEC,iarrayins,"ii",0},
   {"unshift",NVFUNC,NREAD|NEXEC,iarrayunshift,"i",0},
-  {"shift",NIFUNC,NREAD|NEXEC,iarrayshift,NULL,0},
+  {"shift",NIFUNC,NREAD|NEXEC,iarrayshift,"",0},
   {"del",NVFUNC,NREAD|NEXEC,iarraydel,"i",0},
   {"join",NSFUNC,NREAD|NEXEC,iarrayjoin,"s",0},
-  {"sort",NVFUNC,NREAD|NEXEC,iarraysort,NULL,0},
-  {"rsort",NVFUNC,NREAD|NEXEC,iarrayrsort,NULL,0},
-  {"uniq",NVFUNC,NREAD|NEXEC,iarrayuniq,NULL,0},
-  {"sum", NIFUNC, NREAD|NEXEC, iarray_sum, NULL, 0},
-  {"average", NDFUNC, NREAD|NEXEC, iarray_average, NULL, 0},
-  {"sdev", NDFUNC, NREAD|NEXEC, iarray_sdev, NULL, 0},
-  {"RMS", NDFUNC, NREAD|NEXEC, iarray_rms, NULL, 0},
-  {"min", NIFUNC, NREAD|NEXEC, iarray_min, NULL, 0},
-  {"max", NIFUNC, NREAD|NEXEC, iarray_max, NULL, 0},
-  {"num", NIFUNC, NREAD|NEXEC, oarray_num, NULL, 0},
-  {"seq", NSFUNC, NREAD|NEXEC, oarray_seq, NULL, 0},
-  {"rseq", NSFUNC, NREAD|NEXEC, oarray_reverse_seq, NULL, 0},
-  {"reverse", NVFUNC, NREAD|NEXEC, oarray_reverse, NULL, 0},
+  {"sort",NVFUNC,NREAD|NEXEC,iarraysort,"",0},
+  {"rsort",NVFUNC,NREAD|NEXEC,iarrayrsort,"",0},
+  {"uniq",NVFUNC,NREAD|NEXEC,iarrayuniq,"",0},
+  {"sum", NIFUNC, NREAD|NEXEC, iarray_sum, "", 0},
+  {"average", NDFUNC, NREAD|NEXEC, iarray_average, "", 0},
+  {"sdev", NDFUNC, NREAD|NEXEC, iarray_sdev, "", 0},
+  {"RMS", NDFUNC, NREAD|NEXEC, iarray_rms, "", 0},
+  {"min", NIFUNC, NREAD|NEXEC, iarray_min, "", 0},
+  {"max", NIFUNC, NREAD|NEXEC, iarray_max, "", 0},
+  {"num", NIFUNC, NREAD|NEXEC, oarray_num, "", 0},
+  {"seq", NSFUNC, NREAD|NEXEC, oarray_seq, "", 0},
+  {"rseq", NSFUNC, NREAD|NEXEC, oarray_reverse_seq, "", 0},
+  {"reverse", NVFUNC, NREAD|NEXEC, oarray_reverse, "", 0},
   {"slice", NVFUNC, NREAD|NEXEC, oarray_slice, "ii", 0},
   {"map", NVFUNC, NREAD|NEXEC, iarray_map, "s", 0},
 };

@@ -87,7 +87,7 @@ mlocalclear(struct mlocal *mlocal,int memory)
 
 static int 
 minit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
-{  
+{
   struct mlocal *mlocal;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
@@ -355,7 +355,7 @@ static struct objtable math[] = {
   {"z",NDOUBLE,NREAD|NWRITE,mparam,NULL,0},
   {"status",NENUM,NREAD,NULL,matherrorchar,0},
   {"calc",NDFUNC,NREAD|NEXEC,mcalc,"da",0},
-  {"clear",NVFUNC,NREAD|NEXEC,mclear,NULL,0},
+  {"clear",NVFUNC,NREAD|NEXEC,mclear,"",0},
   {"_local",NPOINTER,0,NULL,NULL,0},
 };
 

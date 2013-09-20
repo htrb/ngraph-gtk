@@ -332,9 +332,9 @@ static struct objtable oregexp[] = {
   {"match", NIFUNC,  NREAD|NEXEC, regexp_match,"s",  0},
   {"replace", NSFUNC,NREAD|NEXEC, regexp_replace,"ss",0},
   {"get",   NSFUNC,  NREAD|NEXEC, regexp_get,  "ii", 0},
-  {"num",   NIFUNC,  NREAD|NEXEC, regexp_num,  NULL, 0},
-  {"seq",   NSFUNC,  NREAD|NEXEC, regexp_seq,  NULL, 0},
-  {"rseq",  NSFUNC,  NREAD|NEXEC, regexp_rseq, NULL, 0},
+  {"num",   NIFUNC,  NREAD|NEXEC, regexp_num,  "", 0},
+  {"seq",   NSFUNC,  NREAD|NEXEC, regexp_seq,  "", 0},
+  {"rseq",  NSFUNC,  NREAD|NEXEC, regexp_rseq, "", 0},
   {"_local",NPOINTER,0,           NULL,        NULL, 0},
 };
 

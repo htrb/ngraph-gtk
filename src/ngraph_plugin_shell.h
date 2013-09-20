@@ -110,5 +110,8 @@ int ngraph_plugin_shell_get_obj_current_id(struct objlist *obj);
 int ngraph_plugin_shell_get_obj_last_id(struct objlist *obj);
 struct objlist *ngraph_plugin_shell_get_obj_next(struct objlist *obj);
 struct objlist *ngraph_plugin_shell_get_obj_child(struct objlist *obj);
+struct objlist *ngraph_plugin_shell_get_inst(const char *str, int *id);
+int ngraph_plugin_shell_puts(const char *s);
+int ngraph_plugin_shell_err_puts(const char *s);
 
 #endif

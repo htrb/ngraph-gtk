@@ -8,6 +8,7 @@
 #include "ngraph.h"
 #include "ngraph_plugin_shell.h"
 #include "object.h"
+#include "mathfn.h"
 #include "shell.h"
 
 #define NAME "plugin_shell"
@@ -23,6 +24,7 @@
 #define ERRLOADED 105
 #define ERRNOLOAD 106
 #define ERRINIT 107
+#define ERRSECURTY 108
 
 static char *sherrorlist[] = {
   "cannot allocate enough memory",
@@ -33,6 +35,7 @@ static char *sherrorlist[] = {
   "the module is already loaded",
   "a module is not loaded",
   "connnot initialize the shell",
+  "the method is forbidden for the security",
 };
 
 struct plugin_shell {
@@ -303,6 +306,11 @@ plugin_shell_exec(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, c
     return 1;
   }
 
+  if (get_security()) {
+    error2(obj, ERRSECURTY, shlocal->shell->name);
+    return 1;
+  }
+
   shell = shlocal->shell;
 
   if (shell->module == NULL ||
@@ -342,7 +350,6 @@ plugin_shell_exec(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, c
 static struct objtable PluginShell[] = {
   {"init", NVFUNC, NEXEC, plugin_init, NULL, 0},
   {"done", NVFUNC, NEXEC, plugin_done, NULL, 0},
-  {"next", NPOINTER, 0, NULL, NULL, 0},
   {"shell", NVFUNC, NREAD|NEXEC, plugin_shell_exec, NULL, 0},
   {"security", NBOOL, 0, NULL, "b", 0},
   {"open", NVFUNC, NREAD|NEXEC, plugin_shell_open, "s", 0},
@@ -551,17 +558,17 @@ allocate_obj_arg(struct objlist *obj, const char *vname, ngraph_arg *arg)
     return NULL;
   }
 
+  arglist = chkobjarglist(obj, vname);
+  if (arglist && arglist[0] == '\0') {
+    return NULL;
+  }
+
   ary = g_malloc0(sizeof(*ary) * (num + 1));
   if (ary == NULL) {
     return NULL;
   }
 
-  arglist = chkobjarglist(obj, vname);
   if (arglist == NULL) {
-    return NULL;
-  }
-
-  if (arglist[0] == '\0') {
     for (i = 0; i < num; i++) {
       ary[i] = arg->ary[i].str;
     }
@@ -959,3 +966,32 @@ ngraph_plugin_shell_get_obj_child(struct objlist *obj)
   return obj->child;
 }
 
+struct objlist *
+ngraph_plugin_shell_get_inst(const char *str, int *id)
+{
+  struct narray iarray;
+  struct objlist *obj;
+
+  arrayinit(&iarray, sizeof(int));
+  if (getobjilist((char *) str, &obj, &iarray, FALSE, NULL)) {
+    return NULL;
+  }
+
+  *id = arraylast_int(&iarray);
+
+  arraydel(&iarray);
+
+  return obj;
+}
+
+int
+ngraph_plugin_shell_puts(const char *s)
+{
+  return putstdout(s);
+}
+
+int
+ngraph_plugin_shell_err_puts(const char *s)
+{
+  return putstderr(s);
+}

@@ -2136,7 +2136,7 @@ draw_numbering(struct objlist *obj, N_VALUE *inst, struct axislocal *alocal,
 	       int nnum, int numcount, int begin, int autonorm, int nozero,
 	       int logpow, const char *format, double norm,
 	       const char *head, int headlen, const char *tail, const char *date_format,
-	       int hx0, int hy0, int hx1, int hy1, int draw)
+	       int hx0, int hy0, int hx1, int hy1, struct narray *array)
 {
   int fx0,fy0,fx1,fy1,px0,px1,py0,py1;
   int dlx,dly,dlx2,dly2,maxlen;
@@ -2292,11 +2292,13 @@ draw_numbering(struct objlist *obj, N_VALUE *inst, struct axislocal *alocal,
 	    px1 = 0;
 	    py1 = 0;
 	  }
-	  if (draw) {
+	  if (array == NULL) {
 	    GRAmoveto(GC,gx0-px1,gy0-py1);
 	    GRAdrawtext(GC,text,font->font,font->style,font->pt,font->space,ndirection,font->scriptsize);
 	  } else {
-	    printfstdout("%5d %5d %5d %.14E %.14E\n", gx0 - px1, gy0 - py1, ndirection, value, po);
+	    char *s;
+	    s = g_strdup_printf("%5d %5d %5d %.14E %.14E", gx0 - px1, gy0 - py1, ndirection, value, po);
+	    arrayadd(array, &s);
 	  }
 	  g_free(text);
 	}
@@ -2311,7 +2313,7 @@ draw_numbering(struct objlist *obj, N_VALUE *inst, struct axislocal *alocal,
     }
   }
 
-  if (norm != 1 && draw) {
+  if (norm != 1 && array == NULL) {
     draw_numbering_normalize(GC, side, aconf, font, norm, maxlen, sx, sy, dlx2, dly2, ndir, nndir, ndirection);
   }
 
@@ -2394,7 +2396,7 @@ get_step(struct axislocal *alocal, int step, int *begin)
 }
 
 static int
-numbering(struct objlist *obj, N_VALUE *inst, int GC, struct axis_config *aconf, int draw)
+numbering(struct objlist *obj, N_VALUE *inst, int GC, struct axis_config *aconf, struct narray *array)
 {
   int fr,fg,fb,fa;
   int side, begin,step,nnum,numcount,cstep;
@@ -2550,7 +2552,7 @@ numbering(struct objlist *obj, N_VALUE *inst, int GC, struct axis_config *aconf,
 		   side, align, ndir, ilenmax, plen, aconf, &font, step, nnum,
 		   numcount, begin, autonorm, nozero, logpow, format,
 		   norm, head, headlen, tail, date_format,
-		   hx0, hy0, hx1, hy1, draw);
+		   hx0, hy0, hx1, hy1, array);
   }
 
   return 0;
@@ -2898,7 +2900,7 @@ axisdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 
   get_axis_parameter(obj, inst, &aconf);
   if (aconf.min != aconf.max && aconf.inc != 0) {
-    numbering(obj, inst, GC, &aconf, TRUE);
+    numbering(obj, inst, GC, &aconf, NULL);
   }
 
 exit:
@@ -2912,9 +2914,13 @@ axis_get_numbering(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, 
   int GC;
   int hidden;
   struct axis_config aconf;
+  struct narray *array;
 
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv))
     return 1;
+
+  arrayfree2(rval->array);
+  rval->array = NULL;
 
   _getobj(obj, "hidden", inst, &hidden);
   if (hidden)
@@ -2936,7 +2942,12 @@ axis_get_numbering(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, 
 
   get_axis_parameter(obj, inst, &aconf);
   if (aconf.min != aconf.max && aconf.inc != 0) {
-    numbering(obj, inst, GC, &aconf, FALSE);
+    array = arraynew(sizeof(char *));
+    if (array == NULL) {
+      return 1;
+    }
+    numbering(obj, inst, GC, &aconf, array);
+    rval->array = array;
   }
 
   return 0;
@@ -3846,14 +3857,14 @@ static struct objtable axis[] = {
   {"num_B",NINT,NREAD|NWRITE,NULL,NULL,0},
   {"num_A",NINT,NREAD|NWRITE,NULL,NULL,0},
   {"num_date_format",NSTR,NREAD|NWRITE,NULL,NULL,0},
-  {"scale_push",NVFUNC,NREAD|NEXEC,axisscalepush,NULL,0},
-  {"scale_pop",NVFUNC,NREAD|NEXEC,axisscalepop,NULL,0},
+  {"scale_push",NVFUNC,NREAD|NEXEC,axisscalepush,"",0},
+  {"scale_pop",NVFUNC,NREAD|NEXEC,axisscalepop,"",0},
   {"scale_history",NDARRAY,NREAD,NULL,NULL,0},
   {"scale",NVFUNC,NREAD|NEXEC,axisscale,"ddi",0},
   {"auto_scale",NVFUNC,NREAD|NEXEC,axisautoscale,"o",0},
   {"get_auto_scale",NDAFUNC,NREAD|NEXEC,axisgetautoscale,"o",0},
-  {"clear",NVFUNC,NREAD|NEXEC,axisclear,NULL,0},
-  {"adjust",NVFUNC,NREAD|NEXEC,axisadjust,NULL,0},
+  {"clear",NVFUNC,NREAD|NEXEC,axisclear,"",0},
+  {"adjust",NVFUNC,NREAD|NEXEC,axisadjust,"",0},
   {"draw",NVFUNC,NREAD|NEXEC,axisdraw,"i",0},
   {"bbox",NIAFUNC,NREAD|NEXEC,axisbbox,"",0},
   {"move",NVFUNC,NREAD|NEXEC,axismove,"ii",0},
@@ -3863,12 +3874,12 @@ static struct objtable axis[] = {
   {"zooming",NVFUNC,NREAD|NEXEC,axiszoom,"iiii",0},
   {"match",NBFUNC,NREAD|NEXEC,axismatch,"iiiii",0},
   {"coordinate",NDFUNC,NREAD|NEXEC,axiscoordinate,"ii",0},
-  {"tight",NVFUNC,NREAD|NEXEC,axistight,NULL,0},
+  {"tight",NVFUNC,NREAD|NEXEC,axistight,"",0},
   {"grouping",NVFUNC,NREAD|NEXEC,axisgrouping,"ia",0},
   {"default_grouping",NVFUNC,NREAD|NEXEC,axisdefgrouping,"ia",0},
   {"group_position",NVFUNC,NREAD|NEXEC,axisgrouppos,"ia",0},
-  {"group_manager",NIFUNC,NREAD|NEXEC,axismanager,NULL,0},
-  {"get_numbering",NVFUNC,NREAD|NEXEC,axis_get_numbering,NULL,0},
+  {"group_manager",NIFUNC,NREAD|NEXEC,axismanager,"",0},
+  {"get_numbering",NSAFUNC,NREAD|NEXEC,axis_get_numbering,"",0},
   {"save",NSFUNC,NREAD|NEXEC,axissave,"sa",0},
 
   /* following fields exist for backward compatibility */

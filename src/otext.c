@@ -516,7 +516,7 @@ static struct objtable text[] = {
   {"rotate",NVFUNC,NREAD|NEXEC,textrotate,"iiii",0},
   {"zooming",NVFUNC,NREAD|NEXEC,textzoom,"iiii",0},
   {"match",NBFUNC,NREAD|NEXEC,textmatch,"iiiii",0},
-  {"save_config",NVFUNC,NREAD|NEXEC,textsaveconfig,NULL,0},
+  {"save_config",NVFUNC,NREAD|NEXEC,textsaveconfig,"",0},
 
   /* following fields exist for backward compatibility */
   {"jfont",NSTR,NWRITE,textgeometry,NULL,0},

@@ -1718,7 +1718,7 @@ static struct objtable prm[] = {
   {"next",NPOINTER,0,NULL,NULL,0},
   {"file",NSTR,NREAD|NWRITE,NULL,NULL,0},
   {"ignore_path",NBOOL,NREAD|NWRITE,NULL,NULL,0},
-  {"load",NVFUNC,NREAD|NEXEC,prmload,NULL,0},
+  {"load",NVFUNC,NREAD|NEXEC,prmload,"",0},
 };
 
 #define TBLNUM (sizeof(prm) / sizeof(*prm))

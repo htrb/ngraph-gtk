@@ -375,7 +375,7 @@ static struct objtable nsystem[] = {
   {"pid",NINT,NREAD,NULL,NULL,0},
   {"time",NSFUNC,NREAD|NEXEC,systime,"i",0},
   {"date",NSFUNC,NREAD|NEXEC,sysdate,"i",0},
-  {"temp_file",NSFUNC,NREAD|NEXEC,systemp,NULL,0},
+  {"temp_file",NSFUNC,NREAD|NEXEC,systemp,"",0},
   {"temp_list",NSARRAY,NREAD,NULL,NULL,0},
   {"unlink_temp_file",NVFUNC,NREAD|NEXEC,sysunlink,NULL,0},
   {"hide_instance",NVFUNC,NREAD|NEXEC,syshideinstance,"sa",0},
