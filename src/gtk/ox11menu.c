@@ -1903,7 +1903,8 @@ mx_get_accel_map(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, ch
 static int
 mx_show_lib_version(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  char *h;
+  char *s, h[256];
+  int i, n;
   GString *str;
 
   if (rval->str) {
@@ -1911,7 +1912,16 @@ mx_show_lib_version(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
   }
   rval->str = NULL;
 
-  h = CHK_STR(argv[2]);
+  n = 0;
+  s = argv[2];
+  if (s) {
+    n = s[0] - '0';
+    n = (n < (int) sizeof(h) - 1) ? n : (int) sizeof(h) - 1;
+  }
+  for (i = 0; i < n; i++) {
+    h[i] = ' ';
+  }
+  h[i] = '\0';
 
   str = g_string_new("");
   g_string_append_printf(str, "%sGTK+\n"
@@ -2288,7 +2298,7 @@ static struct objtable gtkmenu[] = {
   {"toggle_window", NVFUNC, NREAD | NEXEC, mx_toggle_win, "i", 0},
   {"get_ui", NSFUNC, NREAD | NEXEC, mx_get_ui, "", 0},
   {"get_accel_map", NSFUNC, NREAD | NEXEC, mx_get_accel_map, "", 0},
-  {"lib_version", NSFUNC, NREAD | NEXEC, mx_show_lib_version, "s", 0},
+  {"lib_version", NSFUNC, NREAD | NEXEC, mx_show_lib_version, NULL, 0},
   {"focus", NVFUNC, NREAD | NEXEC, mx_focus_obj, "o", 0},
   {"unfocus", NVFUNC, NREAD | NEXEC, mx_unfocus_obj, "", 0},
   {"locale", NSFUNC, NREAD | NEXEC, mx_get_locale, "", 0},

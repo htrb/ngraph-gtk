@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.06.11\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2013-07-22 16:08+0900\n"
+"POT-Creation-Date: 2013-09-21 07:11+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,19 +17,19 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/gtk/ox11menu.c:2003
+#: src/gtk/ox11menu.c:2034
 msgid "Unsaved Graph"
 msgstr ""
 
-#: src/gtk/ox11dlg.c:582
+#: src/gtk/ox11dlg.c:578
 msgid "Open file"
 msgstr ""
 
-#: src/gtk/ox11dlg.c:630
+#: src/gtk/ox11dlg.c:626
 msgid "Open files"
 msgstr ""
 
-#: src/gtk/ox11dlg.c:678
+#: src/gtk/ox11dlg.c:674
 msgid "Save file"
 msgstr ""
 
@@ -2028,15 +2028,15 @@ msgstr ""
 msgid "Viewer Zoom-In (+CONTROL: Zoom-Out +SHIFT: Centering)"
 msgstr ""
 
-#: src/gtk/x11menu.c:4189
+#: src/gtk/x11menu.c:4191
 msgid "Error:"
 msgstr ""
 
-#: src/gtk/x11menu.c:4239
+#: src/gtk/x11menu.c:4241
 msgid "Question"
 msgstr ""
 
-#: src/gtk/x11menu.c:4296
+#: src/gtk/x11menu.c:4298
 #, c-format
 msgid "Executing `%.128s'."
 msgstr ""

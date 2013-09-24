@@ -1,3 +1,8 @@
+2013-09-24  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/ox11menu.c (mx_show_lib_version): the first argument of
+	the field means indent width.
+
 2013-09-20  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* plugins/Makefile.am: check develop environment of Ruby.

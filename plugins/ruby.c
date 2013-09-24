@@ -1288,7 +1288,6 @@ exe_void_func_argv(VALUE self, VALUE argv, const char *field)
   return self;
 }
 
-#if 0
 static VALUE
 get_str_func_argv(VALUE self, VALUE argv, const char *field)
 {
@@ -1311,7 +1310,6 @@ get_str_func_argv(VALUE self, VALUE argv, const char *field)
 
   return rb_str_new2(rval.str ? rval.str : "");
 }
-#endif
 
 static void
 add_obj_name_const(VALUE klass, struct objlist *nobj, const char *name)

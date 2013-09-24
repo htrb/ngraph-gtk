@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2013-07-22 16:08+0900\n"
+"POT-Creation-Date: 2013-09-21 07:11+0200\n"
 "PO-Revision-Date: 2013-07-17 11:18+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -15,19 +15,19 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/gtk/ox11menu.c:2003
+#: src/gtk/ox11menu.c:2034
 msgid "Unsaved Graph"
 msgstr "新規グラフ"
 
-#: src/gtk/ox11dlg.c:582
+#: src/gtk/ox11dlg.c:578
 msgid "Open file"
 msgstr "ファイルを開く"
 
-#: src/gtk/ox11dlg.c:630
+#: src/gtk/ox11dlg.c:626
 msgid "Open files"
 msgstr "ファイルを開く"
 
-#: src/gtk/ox11dlg.c:678
+#: src/gtk/ox11dlg.c:674
 msgid "Save file"
 msgstr "別名で保存"
 
@@ -2062,15 +2062,15 @@ msgstr "ビューアズーム"
 msgid "Viewer Zoom-In (+CONTROL: Zoom-Out +SHIFT: Centering)"
 msgstr "ビューアのズームイン (+CONTROL:ズームアウト +SHIFT:センタリング)"
 
-#: src/gtk/x11menu.c:4189
+#: src/gtk/x11menu.c:4191
 msgid "Error:"
 msgstr "エラー:"
 
-#: src/gtk/x11menu.c:4239
+#: src/gtk/x11menu.c:4241
 msgid "Question"
 msgstr "質問"
 
-#: src/gtk/x11menu.c:4296
+#: src/gtk/x11menu.c:4298
 #, c-format
 msgid "Executing `%.128s'."
 msgstr "実行中 `%.128s'."
