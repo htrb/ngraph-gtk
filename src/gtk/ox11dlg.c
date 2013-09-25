@@ -31,6 +31,7 @@
 
 #include "ngraph.h"
 #include "object.h"
+#include "mathfn.h"
 #include "nstring.h"
 #include "ioutil.h"
 #include "ox11menu.h"

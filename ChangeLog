@@ -1,3 +1,7 @@
+2013-09-25  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/ox11dlg.c: include "mathfn.h".
+
 2013-09-24  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/ox11menu.c (mx_show_lib_version): the first argument of
