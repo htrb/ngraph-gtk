@@ -3,7 +3,7 @@ Section: graphics
 Priority: extra
 Maintainer: Koichi Akabe <vbkaisetsu@gmail.com>
 Uploaders: Ito Hiroyuki <ZXB01226@nifty.com>
-Build-Depends: debhelper (>= 9.0.0), libgtk-3-dev, libgsl0-dev, libreadline6-dev, ruby
+Build-Depends: debhelper (>= 9.0.0), libgtk-3-dev, libgsl0-dev, libreadline6-dev, ruby, ruby1.9.1-dev
 Standards-Version: 3.9.4
 Homepage: http://homepage3.nifty.com/slokar/ngraph/ngraph-gtk.html
 
@@ -86,3 +86,26 @@ Description: documents of Ngraph-gtk
  postscript.
  .
  This package contains document files.
+
+Package: ngraph-gtk-dev
+Architecture: all
+Depends:
+Recommends: ngraph-gtk
+Description: Header files for compiling plugins for Ngraph-gtk
+ Ngraph is the program to create scientific 2-dimensional graphs for
+ researchers and engineers. This program can create advanced graphs
+ which can't be created by spreadsheets. Graphs can be exported to
+ postscript.
+ .
+ This package contains header files.
+
+Package: ngraph-gtk-plugin-ruby
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends} ngraph-gtk
+Description: Plugins for compiling plugins for Ngraph-gtk
+ Ngraph is the program to create scientific 2-dimensional graphs for
+ researchers and engineers. This program can create advanced graphs
+ which can't be created by spreadsheets. Graphs can be exported to
+ postscript.
+ .
+ This package contains plugin files.

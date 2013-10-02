@@ -12,8 +12,10 @@ ngraph_SOURCES = axis.c axis.h nconfig.c nconfig.h gra.c gra.h		\
 	oroot.c oroot.h osarray.c oshell.c oregexp.c ostring.c		\
 	osystem.c otext.c otext.h opath.c opath.h shell.c shell.h	\
 	shellcm.c shellcm.h shellux.c shellux.h spline.c spline.h	\
-	common.h nhash.h nhash.c strconv.c strconv.h oio.c plugins.c	\
-	plugins.h gettext.h ngraph_plugin_shell.h
+	common.h nhash.h nhash.c strconv.c strconv.h oio.c oplugin.c	\
+	oplugin.h gettext.h
+
+include_HEADERS = ngraph_plugin.h
 
 pkglibexec_PROGRAMS = terminal
 terminal_SOURCES = terminal.c

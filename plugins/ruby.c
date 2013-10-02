@@ -3,7 +3,7 @@
 #include <gmodule.h>
 
 #include "config.h"
-#include "../src/ngraph_plugin_shell.h"
+#include "../src/ngraph_plugin.h"
 
 /* AIX requires this to be the first thing in the file.  */
 #ifndef __GNUC__
@@ -98,7 +98,7 @@ check_id(VALUE klass)
   Data_Get_Struct(klass, struct ngraph_instance, inst);
 
   arg.num = 0;
-  r = ngraph_plugin_shell_getobj(inst->obj, "oid", inst->id, &arg, &oid);
+  r = ngraph_plugin_getobj(inst->obj, "oid", inst->id, &arg, &oid);
 
   if (r >= 0 && inst->oid == oid.i) {
     return inst;
@@ -109,7 +109,7 @@ check_id(VALUE klass)
     return NULL;
   }
 
-  id = ngraph_plugin_shell_get_id_by_oid(inst->obj, inst->oid);
+  id = ngraph_plugin_get_id_by_oid(inst->obj, inst->oid);
   inst->id = id;
 
   return inst;
@@ -125,7 +125,7 @@ ngraph_inst_method_move_up(VALUE klass)
     return Qnil;
   }
 
-  inst->id = ngraph_plugin_shell_move_up(inst->obj, inst->id);
+  inst->id = ngraph_plugin_move_up(inst->obj, inst->id);
 
   return klass;
 }
@@ -140,7 +140,7 @@ ngraph_inst_method_move_down(VALUE klass)
     return Qnil;
   }
 
-  inst->id = ngraph_plugin_shell_move_down(inst->obj, inst->id);
+  inst->id = ngraph_plugin_move_down(inst->obj, inst->id);
 
   return klass;
 }
@@ -155,7 +155,7 @@ ngraph_inst_method_move_top(VALUE klass)
     return Qnil;
   }
 
-  inst->id = ngraph_plugin_shell_move_top(inst->obj, inst->id);
+  inst->id = ngraph_plugin_move_top(inst->obj, inst->id);
 
   return klass;
 }
@@ -170,7 +170,7 @@ ngraph_inst_method_move_last(VALUE klass)
     return Qnil;
   }
 
-  inst->id = ngraph_plugin_shell_move_last(inst->obj, inst->id);
+  inst->id = ngraph_plugin_move_last(inst->obj, inst->id);
 
   return klass;
 }
@@ -199,7 +199,7 @@ ngraph_inst_method_exchange(VALUE self, VALUE arg)
     return Qnil;
   }
 
-  r = ngraph_plugin_shell_exchange(inst1->obj, inst1->id, inst2->id);
+  r = ngraph_plugin_exchange(inst1->obj, inst1->id, inst2->id);
   if (r < 0) {
     return Qnil;
   }
@@ -224,7 +224,7 @@ ngraph_inst_method_to_str(VALUE klass)
     return Qnil;
   }
 
-  name = ngraph_plugin_shell_get_obj_name(inst->obj);
+  name = ngraph_plugin_get_obj_name(inst->obj);
   str = g_strdup_printf("%s:%d", name, inst->id);
   if (str == NULL) {
     return Qnil;
@@ -247,8 +247,8 @@ obj_get(VALUE klass, VALUE id_value, const char *name)
 
   id = NUM2INT(id_value);
 
-  nobj = ngraph_plugin_shell_get_object(name);
-  n = ngraph_plugin_shell_get_obj_last_id(nobj);
+  nobj = ngraph_plugin_get_object(name);
+  n = ngraph_plugin_get_obj_last_id(nobj);
 
   if (id < 0) {
     id = n + id + 1;
@@ -263,7 +263,7 @@ obj_get(VALUE klass, VALUE id_value, const char *name)
   inst->obj = nobj;
   inst->id = id;
   arg.num = 0;
-  ngraph_plugin_shell_getobj(inst->obj, "oid", inst->id, &arg, &oid);
+  ngraph_plugin_getobj(inst->obj, "oid", inst->id, &arg, &oid);
   inst->oid = oid.i;
 
   return new_inst;
@@ -276,12 +276,12 @@ obj_field_args(VALUE klass, VALUE field, const char *name)
   const char* args;
   int type;
 
-  nobj = ngraph_plugin_shell_get_object(name);
-  type = ngraph_plugin_shell_get_obj_field_type(nobj, StringValuePtr(field));
+  nobj = ngraph_plugin_get_object(name);
+  type = ngraph_plugin_get_obj_field_type(nobj, StringValuePtr(field));
   if (type < 20) {
     return Qnil;
   }
-  args = ngraph_plugin_shell_get_obj_field_args(nobj, StringValuePtr(field));
+  args = ngraph_plugin_get_obj_field_args(nobj, StringValuePtr(field));
   if (args == NULL) {
     args = "";
   } else if (args[0] == '\0') {
@@ -297,8 +297,8 @@ obj_field_type(VALUE klass, VALUE field, const char *name)
   struct objlist *nobj;
   int type;
 
-  nobj = ngraph_plugin_shell_get_object(name);
-  type = ngraph_plugin_shell_get_obj_field_type(nobj, StringValuePtr(field));
+  nobj = ngraph_plugin_get_object(name);
+  type = ngraph_plugin_get_obj_field_type(nobj, StringValuePtr(field));
 
   return INT2FIX(type);
 }
@@ -309,8 +309,8 @@ obj_field_permission(VALUE klass, VALUE field, const char *name)
   struct objlist *nobj;
   int perm;
 
-  nobj = ngraph_plugin_shell_get_object(name);
-  perm = ngraph_plugin_shell_get_obj_field_permission(nobj, StringValuePtr(field));
+  nobj = ngraph_plugin_get_object(name);
+  perm = ngraph_plugin_get_obj_field_permission(nobj, StringValuePtr(field));
 
   return INT2FIX(perm);
 }
@@ -322,9 +322,9 @@ obj_each(VALUE klass, const char *name)
   int i, n;
   VALUE inst, id;
 
-  nobj = ngraph_plugin_shell_get_object(name);
-  n = ngraph_plugin_shell_get_obj_last_id(nobj);
-  name = ngraph_plugin_shell_get_obj_name(nobj);
+  nobj = ngraph_plugin_get_object(name);
+  n = ngraph_plugin_get_obj_last_id(nobj);
+  name = ngraph_plugin_get_obj_name(nobj);
 
   for (i = 0; i <= n; i++) {
     id = INT2FIX(i);
@@ -341,10 +341,10 @@ obj_move_up(VALUE klass, VALUE arg, const char *name)
   struct objlist *nobj;
   int id, r;
 
-  nobj = ngraph_plugin_shell_get_object(name);
+  nobj = ngraph_plugin_get_object(name);
   id = NUM2INT(arg);
 
-  r = ngraph_plugin_shell_move_up(nobj, id);
+  r = ngraph_plugin_move_up(nobj, id);
   if (r < 0) {
     return Qnil;
   }
@@ -358,10 +358,10 @@ obj_move_down(VALUE klass, VALUE arg, const char *name)
   struct objlist *nobj;
   int id, r;
 
-  nobj = ngraph_plugin_shell_get_object(name);
+  nobj = ngraph_plugin_get_object(name);
   id = NUM2INT(arg);
 
-  r = ngraph_plugin_shell_move_down(nobj, id);
+  r = ngraph_plugin_move_down(nobj, id);
   if (r < 0) {
     return Qnil;
   }
@@ -375,10 +375,10 @@ obj_move_top(VALUE klass, VALUE arg, const char *name)
   struct objlist *nobj;
   int id, r;
 
-  nobj = ngraph_plugin_shell_get_object(name);
+  nobj = ngraph_plugin_get_object(name);
   id = NUM2INT(arg);
 
-  r = ngraph_plugin_shell_move_top(nobj, id);
+  r = ngraph_plugin_move_top(nobj, id);
   if (r < 0) {
     return Qnil;
   }
@@ -392,10 +392,10 @@ obj_move_last(VALUE klass, VALUE arg, const char *name)
   struct objlist *nobj;
   int id, r;
 
-  nobj = ngraph_plugin_shell_get_object(name);
+  nobj = ngraph_plugin_get_object(name);
   id = NUM2INT(arg);
 
-  r = ngraph_plugin_shell_move_last(nobj, id);
+  r = ngraph_plugin_move_last(nobj, id);
   if (r < 0) {
     return Qnil;
   }
@@ -409,11 +409,11 @@ obj_exchange(VALUE klass, VALUE arg1, VALUE arg2, const char *name)
   struct objlist *nobj;
   int id1, id2, r;
 
-  nobj = ngraph_plugin_shell_get_object(name);
+  nobj = ngraph_plugin_get_object(name);
   id1 = NUM2INT(arg1);
   id2 = NUM2INT(arg2);
 
-  r = ngraph_plugin_shell_exchange(nobj, id1, id2);
+  r = ngraph_plugin_exchange(nobj, id1, id2);
   if (r < 0) {
     return Qnil;
   }
@@ -427,8 +427,8 @@ obj_size(VALUE klass, const char *name)
   struct objlist *nobj;
   int n;
 
-  nobj = ngraph_plugin_shell_get_object(name);
-  n = ngraph_plugin_shell_get_obj_last_id(nobj);
+  nobj = ngraph_plugin_get_object(name);
+  n = ngraph_plugin_get_obj_last_id(nobj);
   n = (n >= 0) ? n + 1 : 0;
 
   return INT2FIX(n);
@@ -440,8 +440,8 @@ obj_exist(VALUE klass, const char *name)
   struct objlist *nobj;
   int n;
 
-  nobj = ngraph_plugin_shell_get_object(name);
-  n = ngraph_plugin_shell_get_obj_last_id(nobj);
+  nobj = ngraph_plugin_get_object(name);
+  n = ngraph_plugin_get_obj_last_id(nobj);
 
   return (n >= 0) ? Qtrue : Qfalse;
 }
@@ -453,8 +453,8 @@ obj_del(VALUE klass, VALUE id_value, const char *name)
   struct objlist *nobj;
 
   id = NUM2INT(id_value);
-  nobj = ngraph_plugin_shell_get_object(name);
-  n = ngraph_plugin_shell_get_obj_last_id(nobj);
+  nobj = ngraph_plugin_get_object(name);
+  n = ngraph_plugin_get_obj_last_id(nobj);
 
   if (id < 0) {
     id = n + id + 1;
@@ -464,7 +464,7 @@ obj_del(VALUE klass, VALUE id_value, const char *name)
     return Qnil;
   }
 
-  ngraph_plugin_shell_del(nobj, id);
+  ngraph_plugin_del(nobj, id);
 
   return klass;
 }
@@ -482,7 +482,7 @@ ngraph_inst_method_del(VALUE self)
 
   id = inst->id;
   inst->id = -1;
-  ngraph_plugin_shell_del(inst->obj, id);
+  ngraph_plugin_del(inst->obj, id);
 
   return INT2FIX(id);
 }
@@ -506,8 +506,8 @@ obj_new(VALUE klass, const char *name)
   struct objlist *nobj;
   int r;
 
-  nobj = ngraph_plugin_shell_get_object(name);
-  r = ngraph_plugin_shell_new(nobj);
+  nobj = ngraph_plugin_get_object(name);
+  r = ngraph_plugin_new(nobj);
   if (r < 0) {
     return Qnil;
   }
@@ -535,7 +535,7 @@ inst_get_int(VALUE self, const char *field)
   }
 
   carg.num = 0;
-  r = ngraph_plugin_shell_getobj(inst->obj, field, inst->id, &carg, &num);
+  r = ngraph_plugin_getobj(inst->obj, field, inst->id, &carg, &num);
   if (r < 0) {
     return Qnil;
   }
@@ -557,7 +557,7 @@ inst_get_double(VALUE self, const char *field)
   }
 
   carg.num = 0;
-  r = ngraph_plugin_shell_getobj(inst->obj, field, inst->id, &carg, &num);
+  r = ngraph_plugin_getobj(inst->obj, field, inst->id, &carg, &num);
   if (r < 0) {
     return Qnil;
   }
@@ -580,7 +580,7 @@ inst_get_bool(VALUE self, const char *field)
   }
 
   carg.num = 0;
-  r = ngraph_plugin_shell_getobj(inst->obj, field, inst->id, &carg, &num);
+  r = ngraph_plugin_getobj(inst->obj, field, inst->id, &carg, &num);
   if (r < 0) {
     return Qnil;
   }
@@ -604,7 +604,7 @@ inst_get_str(VALUE self, const char *field)
   }
 
   carg.num = 0;
-  r = ngraph_plugin_shell_getobj(inst->obj, field, inst->id, &carg, &str);
+  r = ngraph_plugin_getobj(inst->obj, field, inst->id, &carg, &str);
   if (r < 0) {
     return Qnil;
   }
@@ -634,7 +634,7 @@ inst_get_obj(VALUE self, const char *field)
   }
 
   carg.num = 0;
-  r = ngraph_plugin_shell_getobj(inst->obj, field, inst->id, &carg, &str);
+  r = ngraph_plugin_getobj(inst->obj, field, inst->id, &carg, &str);
   if (r < 0) {
     return Qnil;
   }
@@ -643,12 +643,12 @@ inst_get_obj(VALUE self, const char *field)
     return Qnil;
   }
 
-  obj = ngraph_plugin_shell_get_inst(str.str, &id);
+  obj = ngraph_plugin_get_inst(str.str, &id);
   if (obj == NULL) {
     return Qnil;
   }
 
-  name = ngraph_plugin_shell_get_obj_name(obj);
+  name = ngraph_plugin_get_obj_name(obj);
   if (name == NULL) {
     return Qnil;
   }
@@ -679,7 +679,7 @@ inst_put_int(VALUE self, VALUE arg, const char *field)
   }
 
   num.i = NUM2INT(arg);
-  r = ngraph_plugin_shell_putobj(inst->obj, field, inst->id, &num);
+  r = ngraph_plugin_putobj(inst->obj, field, inst->id, &num);
   if (r < 0) {
     return Qnil;
   }
@@ -700,7 +700,7 @@ inst_put_double(VALUE self, VALUE arg, const char *field)
   }
 
   num.d = NUM2DBL(arg);
-  r = ngraph_plugin_shell_putobj(inst->obj, field, inst->id, &num);
+  r = ngraph_plugin_putobj(inst->obj, field, inst->id, &num);
   if (r < 0) {
     return Qnil;
   }
@@ -721,7 +721,7 @@ inst_put_bool(VALUE self, VALUE arg, const char *field)
   }
 
   num.i = RTEST(arg) ? 1 : 0;
-  r = ngraph_plugin_shell_putobj(inst->obj, field, inst->id, &num);
+  r = ngraph_plugin_putobj(inst->obj, field, inst->id, &num);
   if (r < 0) {
     return Qnil;
   }
@@ -746,7 +746,7 @@ inst_put_enum(VALUE self, VALUE arg, const char *field, int max)
     return Qnil;
   }
 
-  r = ngraph_plugin_shell_putobj(inst->obj, field, inst->id, &num);
+  r = ngraph_plugin_putobj(inst->obj, field, inst->id, &num);
   if (r < 0) {
     return Qnil;
   }
@@ -771,7 +771,7 @@ inst_put_str(VALUE self, VALUE arg, const char *field)
   } else {
     str.str = StringValuePtr(arg);
   }
-  r = ngraph_plugin_shell_putobj(inst->obj, field, inst->id, &str);
+  r = ngraph_plugin_putobj(inst->obj, field, inst->id, &str);
   if (r < 0) {
     return Qnil;
   }
@@ -798,7 +798,7 @@ inst_put_obj(VALUE self, VALUE arg, const char *field)
       return Qnil;
     }
 
-    name = ngraph_plugin_shell_get_obj_name(inst2->obj);
+    name = ngraph_plugin_get_obj_name(inst2->obj);
     snprintf(buf, sizeof(buf), "%s:^%d", name, inst2->oid);
     ptr = buf;
   } else {
@@ -811,7 +811,7 @@ inst_put_obj(VALUE self, VALUE arg, const char *field)
   }
 
   str.str = ptr;
-  r = ngraph_plugin_shell_putobj(inst1->obj, field, inst1->id, &str);
+  r = ngraph_plugin_putobj(inst1->obj, field, inst1->id, &str);
   if (r < 0) {
     return Qnil;
   }
@@ -848,7 +848,7 @@ inst_put_iarray(VALUE self, VALUE arg, const char *field)
     }
   }
 
-  r = ngraph_plugin_shell_putobj(inst->obj, field, inst->id, &ary);
+  r = ngraph_plugin_putobj(inst->obj, field, inst->id, &ary);
 
   if (ary.ary) {
     rb_free_tmp_buffer(&tmpstr);
@@ -876,7 +876,7 @@ inst_get_iarray(VALUE self, const char *field)
   }
 
   carg.num = 0;
-  r = ngraph_plugin_shell_getobj(inst->obj, field, inst->id, &carg, &cary);
+  r = ngraph_plugin_getobj(inst->obj, field, inst->id, &carg, &cary);
   if (r < 0) {
     return Qnil;
   }
@@ -918,7 +918,7 @@ inst_put_darray(VALUE self, VALUE arg, const char *field)
     }
   }
 
-  r = ngraph_plugin_shell_putobj(inst->obj, field, inst->id, &ary);
+  r = ngraph_plugin_putobj(inst->obj, field, inst->id, &ary);
 
   if (ary.ary) {
     rb_free_tmp_buffer(&tmpstr);
@@ -946,7 +946,7 @@ inst_get_darray(VALUE self, const char *field)
   }
 
   carg.num = 0;
-  r = ngraph_plugin_shell_getobj(inst->obj, field, inst->id, &carg, &cary);
+  r = ngraph_plugin_getobj(inst->obj, field, inst->id, &carg, &cary);
   if (r < 0) {
     return Qnil;
   }
@@ -989,7 +989,7 @@ inst_put_sarray(VALUE self, VALUE arg, const char *field)
     }
   }
 
-  r = ngraph_plugin_shell_putobj(inst->obj, field, inst->id, &ary);
+  r = ngraph_plugin_putobj(inst->obj, field, inst->id, &ary);
 
   if (ary.ary) {
     rb_free_tmp_buffer(&tmpstr);
@@ -1017,7 +1017,7 @@ inst_get_sarray(VALUE self, const char *field)
   }
 
   carg.num = 0;
-  r = ngraph_plugin_shell_getobj(inst->obj, field, inst->id, &carg, &cary);
+  r = ngraph_plugin_getobj(inst->obj, field, inst->id, &carg, &cary);
   if (r < 0) {
     return Qnil;
   }
@@ -1043,7 +1043,7 @@ inst_exe_void_func(VALUE self, const char *field)
   }
 
   carg.num = 0;
-  r = ngraph_plugin_shell_exeobj(inst->obj, field, inst->id, &carg);
+  r = ngraph_plugin_exeobj(inst->obj, field, inst->id, &carg);
   if (r < 0) {
     return Qnil;
   }
@@ -1161,7 +1161,7 @@ create_obj_arg(VALUE args)
 
     if (obj == NULL) {
       obj = inst->obj;
-      name = ngraph_plugin_shell_get_obj_name(inst->obj);
+      name = ngraph_plugin_get_obj_name(inst->obj);
       rb_str_cat2(str, name);
     } else if (obj != inst->obj) {
       return Qnil;
@@ -1210,9 +1210,9 @@ obj_func_obj(VALUE self, VALUE argv, const char *field, int type)
   carg.num = 1;
   carg.ary[0].str = str;
   if (type == NVFUNC) {
-    r = ngraph_plugin_shell_exeobj(inst->obj, field, inst->id, &carg);
+    r = ngraph_plugin_exeobj(inst->obj, field, inst->id, &carg);
   } else {
-    r = ngraph_plugin_shell_getobj(inst->obj, field, inst->id, &carg, &rval);
+    r = ngraph_plugin_getobj(inst->obj, field, inst->id, &carg, &rval);
   }
   if (r < 0) {
     return Qnil;
@@ -1279,7 +1279,7 @@ exe_void_func_argv(VALUE self, VALUE argv, const char *field)
     return Qnil;
   }
   carg = allocate_sarray(&tmpstr, argv);
-  r = ngraph_plugin_shell_exeobj(inst->obj, field, inst->id, carg);
+  r = ngraph_plugin_exeobj(inst->obj, field, inst->id, carg);
   rb_free_tmp_buffer(&tmpstr);
   if (r < 0) {
     return Qnil;
@@ -1302,7 +1302,7 @@ get_str_func_argv(VALUE self, VALUE argv, const char *field)
     return Qnil;
   }
   carg = allocate_sarray(&tmpstr, argv);
-  r = ngraph_plugin_shell_getobj(inst->obj, field, inst->id, carg, &rval);
+  r = ngraph_plugin_getobj(inst->obj, field, inst->id, carg, &rval);
   rb_free_tmp_buffer(&tmpstr);
   if (r < 0) {
     return Qnil;
@@ -1320,7 +1320,7 @@ add_obj_name_const(VALUE klass, struct objlist *nobj, const char *name)
   if (nobj == NULL) {
     val = Qnil;
   } else {
-    obj_name = ngraph_plugin_shell_get_obj_name(nobj);
+    obj_name = ngraph_plugin_get_obj_name(nobj);
     str = rb_str_new2(obj_name);
     rb_funcall(str, rb_to_id(rb_str_new2("capitalize!")), 0);
     val = ID2SYM(rb_to_id(str));
@@ -1335,12 +1335,12 @@ add_obj_const(VALUE klass, const char *name)
   const char *str;
   VALUE val;
 
-  nobj = ngraph_plugin_shell_get_object(name);
-  next = ngraph_plugin_shell_get_obj_next(nobj);
-  child = ngraph_plugin_shell_get_obj_child(nobj);
-  parent = ngraph_plugin_shell_get_obj_parent(nobj);
+  nobj = ngraph_plugin_get_object(name);
+  next = ngraph_plugin_get_obj_next(nobj);
+  child = ngraph_plugin_get_obj_child(nobj);
+  parent = ngraph_plugin_get_obj_parent(nobj);
 
-  str = ngraph_plugin_shell_get_obj_version(nobj);
+  str = ngraph_plugin_get_obj_version(nobj);
   val = rb_str_new2(str);
   OBJ_FREEZE(val);
   rb_define_const(klass, "VERSION", val);
@@ -1429,19 +1429,19 @@ ngraph_class_new(VALUE self)
 static VALUE
 ngraph_puts(VALUE module, VALUE str)
 {
-  ngraph_plugin_shell_puts(StringValuePtr(str));
+  ngraph_plugin_puts(StringValuePtr(str));
   return Qnil;
 }
 
 static VALUE
 ngraph_err_puts(VALUE module, VALUE str)
 {
-  ngraph_plugin_shell_err_puts(StringValuePtr(str));
+  ngraph_plugin_err_puts(StringValuePtr(str));
   return Qnil;
 }
 
 int
-ngraph_plugin_shell_shell_libruby(struct plugin_shell *shell, int argc, char *argv[])
+ngraph_plugin_shell_libruby(struct plugin_shell *shell, int argc, char *argv[])
 {
   int state, i;
   VALUE r_argv;
@@ -1478,7 +1478,7 @@ ngraph_plugin_shell_shell_libruby(struct plugin_shell *shell, int argc, char *ar
     errinfo = rb_errinfo();
     errstr = rb_obj_as_string(errinfo);
 
-    ngraph_plugin_shell_err_puts(StringValuePtr(errstr));
+    ngraph_plugin_err_puts(StringValuePtr(errstr));
   }
   rb_gc_start();
   return 0;

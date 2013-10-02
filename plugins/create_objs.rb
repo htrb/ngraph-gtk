@@ -398,7 +398,7 @@ EOF
     @func += (FUNC_FIELD_COMMON)
     @func += <<EOF
   carg = allocate_sarray(&tmpstr, argv);
-  r = ngraph_plugin_shell_getobj(inst->obj, "#{field}", inst->id, carg, &rval);
+  r = ngraph_plugin_getobj(inst->obj, "#{field}", inst->id, carg, &rval);
   rb_free_tmp_buffer(&tmpstr);
   if (r < 0) {
     return Qnil;
@@ -426,7 +426,7 @@ EOF
     @func += (FUNC_FIELD_COMMON)
     @func += <<EOF
   carg = allocate_sarray(&tmpstr, argv);
-  r = ngraph_plugin_shell_getobj(inst->obj, "#{field}", inst->id, carg, &rval);
+  r = ngraph_plugin_getobj(inst->obj, "#{field}", inst->id, carg, &rval);
   rb_free_tmp_buffer(&tmpstr);
   if (r < 0) {
     return Qnil;
@@ -448,7 +448,7 @@ EOF
     @func += (FUNC_FIELD_COMMON)
     array = create_arguments(args)
 
-    @func += (%Q!  r = ngraph_plugin_shell_getobj(inst->obj, "#{field}", inst->id, carg, &rval);\n!)
+    @func += (%Q!  r = ngraph_plugin_getobj(inst->obj, "#{field}", inst->id, carg, &rval);\n!)
     @func += (%Q!  rb_free_tmp_buffer(&tmpstr);\n!) if (array)
     @func += <<EOF
   if (r < 0) {
@@ -465,7 +465,7 @@ EOF
     @func += (FUNC_FIELD_COMMON)
     array = create_arguments(args)
 
-    @func += (%Q!  r = ngraph_plugin_shell_exeobj(inst->obj, "#{field}", inst->id, carg);\n!)
+    @func += (%Q!  r = ngraph_plugin_exeobj(inst->obj, "#{field}", inst->id, carg);\n!)
     @func += (%Q!  rb_free_tmp_buffer(&tmpstr);\n!) if (array)
     @func += <<EOF
   if (r < 0) {
@@ -483,7 +483,7 @@ EOF
     @func += (FUNC_FIELD_COMMON)
     array = create_arguments(args)
 
-    @func += (%Q!  r = ngraph_plugin_shell_getobj(inst->obj, "#{field}", inst->id, carg, &rval);\n!)
+    @func += (%Q!  r = ngraph_plugin_getobj(inst->obj, "#{field}", inst->id, carg, &rval);\n!)
     @func += (%Q!  rb_free_tmp_buffer(&tmpstr);\n!) if (array)
     @func += <<EOF
   if (r < 0) {

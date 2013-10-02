@@ -135,7 +135,6 @@ static int MultiLine = FALSE;
 #include "shell.h"
 #include "shellcm.h"
 #include "shellux.h"
-#include "plugins.h"
 #include "math/math_equation.h"
 
 #define TEMPPFX "NGS"

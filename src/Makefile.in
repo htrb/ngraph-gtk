@@ -14,6 +14,7 @@
 
 @SET_MAKE@
 
+
 VPATH = @srcdir@
 am__is_gnu_make = test -n '$(MAKEFILE_LIST)' && test -n '$(MAKELEVEL)'
 am__make_running_with_option = \
@@ -82,7 +83,8 @@ bin_PROGRAMS = ngraph$(EXEEXT)
 pkglibexec_PROGRAMS = terminal$(EXEEXT)
 subdir = src
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
-	$(top_srcdir)/mkinstalldirs $(top_srcdir)/depcomp
+	$(top_srcdir)/mkinstalldirs $(top_srcdir)/depcomp \
+	$(include_HEADERS)
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/gettext.m4 \
 	$(top_srcdir)/m4/gsl.m4 $(top_srcdir)/m4/iconv.m4 \
@@ -99,7 +101,8 @@ mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(pkglibexecdir)"
+am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(pkglibexecdir)" \
+	"$(DESTDIR)$(includedir)"
 PROGRAMS = $(bin_PROGRAMS) $(pkglibexec_PROGRAMS)
 am_ngraph_OBJECTS = ngraph-axis.$(OBJEXT) ngraph-nconfig.$(OBJEXT) \
 	ngraph-gra.$(OBJEXT) ngraph-ioutil.$(OBJEXT) \
@@ -123,7 +126,7 @@ am_ngraph_OBJECTS = ngraph-axis.$(OBJEXT) ngraph-nconfig.$(OBJEXT) \
 	ngraph-shell.$(OBJEXT) ngraph-shellcm.$(OBJEXT) \
 	ngraph-shellux.$(OBJEXT) ngraph-spline.$(OBJEXT) \
 	ngraph-nhash.$(OBJEXT) ngraph-strconv.$(OBJEXT) \
-	ngraph-oio.$(OBJEXT) ngraph-plugins.$(OBJEXT)
+	ngraph-oio.$(OBJEXT) ngraph-oplugin.$(OBJEXT)
 ngraph_OBJECTS = $(am_ngraph_OBJECTS)
 am__DEPENDENCIES_1 =
 ngraph_DEPENDENCIES = gtk/libngraph.la math/libmath.la \
@@ -191,6 +194,34 @@ am__can_run_installinfo = \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
+am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
+am__vpath_adj = case $$p in \
+    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
+    *) f=$$p;; \
+  esac;
+am__strip_dir = f=`echo $$p | sed -e 's|^.*/||'`;
+am__install_max = 40
+am__nobase_strip_setup = \
+  srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*|]/\\\\&/g'`
+am__nobase_strip = \
+  for p in $$list; do echo "$$p"; done | sed -e "s|$$srcdirstrip/||"
+am__nobase_list = $(am__nobase_strip_setup); \
+  for p in $$list; do echo "$$p $$p"; done | \
+  sed "s| $$srcdirstrip/| |;"' / .*\//!s/ .*/ ./; s,\( .*\)/[^/]*$$,\1,' | \
+  $(AWK) 'BEGIN { files["."] = "" } { files[$$2] = files[$$2] " " $$1; \
+    if (++n[$$2] == $(am__install_max)) \
+      { print $$2, files[$$2]; n[$$2] = 0; files[$$2] = "" } } \
+    END { for (dir in files) print dir, files[dir] }'
+am__base_list = \
+  sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
+  sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
+am__uninstall_files_from_dir = { \
+  test -z "$$files" \
+    || { test ! -d "$$dir" && test ! -f "$$dir" && test ! -r "$$dir"; } \
+    || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
+         $(am__cd) "$$dir" && rm -f $$files; }; \
+  }
+HEADERS = $(include_HEADERS)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
 am__recursive_targets = \
@@ -407,9 +438,10 @@ ngraph_SOURCES = axis.c axis.h nconfig.c nconfig.h gra.c gra.h		\
 	oroot.c oroot.h osarray.c oshell.c oregexp.c ostring.c		\
 	osystem.c otext.c otext.h opath.c opath.h shell.c shell.h	\
 	shellcm.c shellcm.h shellux.c shellux.h spline.c spline.h	\
-	common.h nhash.h nhash.c strconv.c strconv.h oio.c plugins.c	\
-	plugins.h gettext.h ngraph_plugin_shell.h
+	common.h nhash.h nhash.c strconv.c strconv.h oio.c oplugin.c	\
+	oplugin.h gettext.h
 
+include_HEADERS = ngraph_plugin.h
 terminal_SOURCES = terminal.c
 ngraph_LDADD = gtk/libngraph.la math/libmath.la $(READLINE_LIBS) $(GTK_LIBS) $(GLIB_LIBS) $(GSL_LIBS)
 ngraph_CFLAGS = $(GTK_CFLAGS) $(GSL_CFLAGS) -I.. -DCCNAME='"'$(CC)'"'
@@ -592,6 +624,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-omath.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-omerge.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-opath.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-oplugin.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-oprm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-orect.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-oregexp.Po@am__quote@
@@ -601,7 +634,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-ostring.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-osystem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-otext.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-plugins.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-shell.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-shellcm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-shellux.Po@am__quote@
@@ -1260,19 +1292,19 @@ ngraph-oio.obj: oio.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -c -o ngraph-oio.obj `if test -f 'oio.c'; then $(CYGPATH_W) 'oio.c'; else $(CYGPATH_W) '$(srcdir)/oio.c'; fi`
 
-ngraph-plugins.o: plugins.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -MT ngraph-plugins.o -MD -MP -MF $(DEPDIR)/ngraph-plugins.Tpo -c -o ngraph-plugins.o `test -f 'plugins.c' || echo '$(srcdir)/'`plugins.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ngraph-plugins.Tpo $(DEPDIR)/ngraph-plugins.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='plugins.c' object='ngraph-plugins.o' libtool=no @AMDEPBACKSLASH@
+ngraph-oplugin.o: oplugin.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -MT ngraph-oplugin.o -MD -MP -MF $(DEPDIR)/ngraph-oplugin.Tpo -c -o ngraph-oplugin.o `test -f 'oplugin.c' || echo '$(srcdir)/'`oplugin.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ngraph-oplugin.Tpo $(DEPDIR)/ngraph-oplugin.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='oplugin.c' object='ngraph-oplugin.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -c -o ngraph-plugins.o `test -f 'plugins.c' || echo '$(srcdir)/'`plugins.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -c -o ngraph-oplugin.o `test -f 'oplugin.c' || echo '$(srcdir)/'`oplugin.c
 
-ngraph-plugins.obj: plugins.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -MT ngraph-plugins.obj -MD -MP -MF $(DEPDIR)/ngraph-plugins.Tpo -c -o ngraph-plugins.obj `if test -f 'plugins.c'; then $(CYGPATH_W) 'plugins.c'; else $(CYGPATH_W) '$(srcdir)/plugins.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ngraph-plugins.Tpo $(DEPDIR)/ngraph-plugins.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='plugins.c' object='ngraph-plugins.obj' libtool=no @AMDEPBACKSLASH@
+ngraph-oplugin.obj: oplugin.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -MT ngraph-oplugin.obj -MD -MP -MF $(DEPDIR)/ngraph-oplugin.Tpo -c -o ngraph-oplugin.obj `if test -f 'oplugin.c'; then $(CYGPATH_W) 'oplugin.c'; else $(CYGPATH_W) '$(srcdir)/oplugin.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ngraph-oplugin.Tpo $(DEPDIR)/ngraph-oplugin.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='oplugin.c' object='ngraph-oplugin.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -c -o ngraph-plugins.obj `if test -f 'plugins.c'; then $(CYGPATH_W) 'plugins.c'; else $(CYGPATH_W) '$(srcdir)/plugins.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -c -o ngraph-oplugin.obj `if test -f 'oplugin.c'; then $(CYGPATH_W) 'oplugin.c'; else $(CYGPATH_W) '$(srcdir)/oplugin.c'; fi`
 
 terminal-terminal.o: terminal.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(terminal_CFLAGS) $(CFLAGS) -MT terminal-terminal.o -MD -MP -MF $(DEPDIR)/terminal-terminal.Tpo -c -o terminal-terminal.o `test -f 'terminal.c' || echo '$(srcdir)/'`terminal.c
@@ -1293,6 +1325,27 @@ mostlyclean-libtool:
 
 clean-libtool:
 	-rm -rf .libs _libs
+install-includeHEADERS: $(include_HEADERS)
+	@$(NORMAL_INSTALL)
+	@list='$(include_HEADERS)'; test -n "$(includedir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(includedir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(includedir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_HEADER) $$files '$(DESTDIR)$(includedir)'"; \
+	  $(INSTALL_HEADER) $$files "$(DESTDIR)$(includedir)" || exit $$?; \
+	done
+
+uninstall-includeHEADERS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(include_HEADERS)'; test -n "$(includedir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(includedir)'; $(am__uninstall_files_from_dir)
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run 'make' without going through this Makefile.
@@ -1450,10 +1503,10 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-recursive
-all-am: Makefile $(PROGRAMS)
+all-am: Makefile $(PROGRAMS) $(HEADERS)
 installdirs: installdirs-recursive
 installdirs-am:
-	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(pkglibexecdir)"; do \
+	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(pkglibexecdir)" "$(DESTDIR)$(includedir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-recursive
@@ -1509,7 +1562,7 @@ info: info-recursive
 
 info-am:
 
-install-data-am:
+install-data-am: install-includeHEADERS
 
 install-dvi: install-dvi-recursive
 
@@ -1555,7 +1608,8 @@ ps: ps-recursive
 
 ps-am:
 
-uninstall-am: uninstall-binPROGRAMS uninstall-pkglibexecPROGRAMS
+uninstall-am: uninstall-binPROGRAMS uninstall-includeHEADERS \
+	uninstall-pkglibexecPROGRAMS
 
 .MAKE: $(am__recursive_targets) install-am install-strip
 
@@ -1567,13 +1621,14 @@ uninstall-am: uninstall-binPROGRAMS uninstall-pkglibexecPROGRAMS
 	html-am info info-am install install-am install-binPROGRAMS \
 	install-data install-data-am install-dvi install-dvi-am \
 	install-exec install-exec-am install-html install-html-am \
-	install-info install-info-am install-man install-pdf \
-	install-pdf-am install-pkglibexecPROGRAMS install-ps \
-	install-ps-am install-strip installcheck installcheck-am \
-	installdirs installdirs-am maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags tags-am uninstall uninstall-am uninstall-binPROGRAMS \
+	install-includeHEADERS install-info install-info-am \
+	install-man install-pdf install-pdf-am \
+	install-pkglibexecPROGRAMS install-ps install-ps-am \
+	install-strip installcheck installcheck-am installdirs \
+	installdirs-am maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-compile mostlyclean-generic \
+	mostlyclean-libtool pdf pdf-am ps ps-am tags tags-am uninstall \
+	uninstall-am uninstall-binPROGRAMS uninstall-includeHEADERS \
 	uninstall-pkglibexecPROGRAMS
 
 
