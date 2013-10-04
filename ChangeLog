@@ -1,5 +1,7 @@
 2013-10-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* plugins/Makefile.am (ngraphplugindir): change install directory.
+
 	* initfile/Ngraph.nsc: check "${NGRAPHCONF}/init.d".
 
 	* initfile/10append_addins.nsc: mobed from "Ngraph.nsc".

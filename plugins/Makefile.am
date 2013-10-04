@@ -1,10 +1,11 @@
 extra_dist_common = getobj.nsc create_objs.rb
 
 if HAVE_RUBY_DEV
+  ngraphplugindir = $(pkglibdir)/plugins
   RUBY_INCRUDEDIR = `ruby -e 'puts(RbConfig::CONFIG["rubyhdrdir"])'`
   RUBY_ARCH = `ruby -e 'puts(RbConfig::CONFIG["arch"])'`
   BUILT_SOURCES = ruby_ngraph.c
-  pkglib_LTLIBRARIES = libruby.la
+  ngraphplugin_LTLIBRARIES = libruby.la
   libruby_la_SOURCES = ruby.c
   libruby_la_CFLAGS = $(GTK_CFLAGS) -I.. -I $(RUBY_INCRUDEDIR) -I $(RUBY_INCRUDEDIR)/$(RUBY_ARCH)
   libruby_la_LDFLAGS = -avoid-version -disable-static --mode=link -module `ruby -e 'puts(RbConfig::CONFIG["LIBRUBYARG_SHARED"])'`
