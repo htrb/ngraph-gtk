@@ -1,0 +1,51 @@
+if exist -q menu
+then
+    new regexp name=ADDIN
+    regexp:ADDIN:@='^#\s*Description:\s*(.+)'
+
+    new regexp name=COMMENT
+    regexp:COMMENT:@='^#'
+
+    new io name=ADDIN
+    io:ADDIN:mode="r"
+
+    new sarray name=ADDIN
+    sarray::delimiter=","
+
+    for addin in "${system::home_dir}"/*.nsc "${system::data_dir}"/addin/*.nsc
+    do
+	if [ -f "$addin" ]
+	then
+	    io:ADDIN:open "$addin"
+	    while l=`get io -field gets`
+	    do
+		if regexp:COMMENT:match "$l"
+		then
+		    if regexp:ADDIN:match "$l"
+		    then
+			sarray:ADDIN:split "${regexp:ADDIN:get:'0 1'}"
+			if [ ${sarray:ADDIN:num} -gt 3 ]
+			then
+			    new sarray name=TMP
+			    sarray:TMP:push "${sarray:ADDIN:shift}"
+			    sarray:TMP:push "${sarray:ADDIN:shift}"
+			    sarray:TMP:push "${sarray:ADDIN:join:','}"
+			    cpy sarray:TMP,ADDIN @
+			    del sarray:TMP
+			fi
+			sarray:ADDIN:unshift "$addin"
+			menu::addin_list_append sarray:ADDIN
+		    fi
+		else
+		    break
+		fi
+	    done
+	    io:ADDIN:close
+	fi
+    done
+
+    del regexp:ADDIN
+    del regexp:COMMENT
+    del io:ADDIN
+    del sarray:ADDIN
+fi

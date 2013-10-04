@@ -1,3 +1,9 @@
+2013-10-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* initfile/Ngraph.nsc: check "${NGRAPHCONF}/init.d".
+
+	* initfile/10append_addins.nsc: mobed from "Ngraph.nsc".
+
 2013-09-25  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/ox11dlg.c: include "mathfn.h".
