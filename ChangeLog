@@ -1,3 +1,26 @@
+2013-10-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/osystem.c (nsystem): add field "plugin_dir".
+
+	* src/oplugin.c (plugin_file, plugin_name): added.
+	(plugin_open): check multiple loading.
+
+	* src/gtk/ox11menu.c (menuinit): check "OpenApplication()" first.
+
+	* src/gtk/main.c (set_dir_defs, main): initialize "PLUGINDIR"
+	settings.
+
+	* src/gtk/dir_defs.h.in: add "PLUGINDIR" definition.
+
+	* plugins/ruby.c (ngraph_plugin_close_ruby): 0
+	(ngraph_plugin_open_ruby): added.
+	(ngraph_plugin_exec_ruby): change name.
+
+	* plugins/create_objs.rb (NgraphObj): add instants variable
+	"singleton".
+
+	* pathconv.sh (LIBDIR): add "LIBDIR" definition.
+
 2013-10-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* plugins/Makefile.am (ngraphplugindir): change install directory.

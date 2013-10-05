@@ -125,6 +125,8 @@ sysdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   g_free(s);
   _getobj(obj,"lib_dir",inst,&s);
   g_free(s);
+  _getobj(obj,"plugin_dir",inst,&s);
+  g_free(s);
   _getobj(obj,"home_dir",inst,&s);
   g_free(s);
   _getobj(obj,"cwd",inst,&s);
@@ -371,6 +373,7 @@ static struct objtable nsystem[] = {
   {"data_dir",NSTR,NREAD,NULL,NULL,0},
   {"doc_dir",NSTR,NREAD,NULL,NULL,0},
   {"lib_dir",NSTR,NREAD,NULL,NULL,0},
+  {"plugin_dir",NSTR,NREAD,NULL,NULL,0},
   {"home_dir",NSTR,NREAD,NULL,NULL,0},
   {"pid",NINT,NREAD,NULL,NULL,0},
   {"time",NSFUNC,NREAD|NEXEC,systime,"i",0},

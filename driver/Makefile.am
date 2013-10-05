@@ -12,7 +12,7 @@ bin_SCRIPTS = ngp2
 # 	sh ../pathconv.sh "$(docdir)" "$(pkgdatadir)" "$(ngraphconfdir)" dir_defs.h.in
 
 ngp2: ngp2.in Makefile
-	sh ../pathconv.sh "$(bindir)" "$(docdir)" "$(pkglibexecdir)" "$(pkgdatadir)" "$(ngraphconfdir)" "$(pixmapdir)" ngp2.in
+	sh ../pathconv.sh "$(bindir)" "$(docdir)" "$(pkglibexecdir)" "$(pkglibdir)" "$(pkgdatadir)" "$(ngraphconfdir)" "$(pixmapdir)" ngp2.in
 
 # gra2ps_SOURCES = gra2ps.c
 # nodist_gra2ps_SOURCES = dir_defs.h

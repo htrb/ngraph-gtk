@@ -1441,28 +1441,40 @@ ngraph_err_puts(VALUE module, VALUE str)
 }
 
 int
-ngraph_plugin_shell_libruby(struct plugin_shell *shell, int argc, char *argv[])
+ngraph_plugin_open_ruby(struct ngraph_plugin *plugin)
+{
+  if (Initialized) {
+    return 0;
+  }
+
+  ruby_init();
+  ruby_script("Embedded Ruby on Ngraph");
+  ruby_init_loadpath();
+  Initialized = TRUE;
+
+  NgraphModule = rb_define_module("Ngraph");
+  rb_define_singleton_method(NgraphModule, "puts", ngraph_puts, 1);
+  rb_define_singleton_method(NgraphModule, "err_puts", ngraph_err_puts, 1);
+
+  NgraphClass = rb_define_class_under(NgraphModule, "NgraphObject", rb_cObject);
+  rb_define_method(NgraphClass, "initialize", ngraph_class_new, 0);
+  add_common_const(NgraphModule);
+  create_ngraph_classes(NgraphModule, NgraphClass);
+
+  Uniq = rb_to_id(rb_str_new2("uniq"));
+  Argv = rb_to_id(rb_str_new2("ARGV"));
+
+  return 0;
+}
+
+int
+ngraph_plugin_exec_ruby(struct ngraph_plugin *plugin, int argc, char *argv[])
 {
   int state, i;
   VALUE r_argv;
 
   if (! Initialized) {
-    ruby_init();
-    ruby_script("Embedded Ruby on Ngraph");
-    ruby_init_loadpath();
-    Initialized = TRUE;
-
-    NgraphModule = rb_define_module("Ngraph");
-    rb_define_singleton_method(NgraphModule, "puts", ngraph_puts, 1);
-    rb_define_singleton_method(NgraphModule, "err_puts", ngraph_err_puts, 1);
-
-    NgraphClass = rb_define_class_under(NgraphModule, "NgraphObject", rb_cObject);
-    rb_define_method(NgraphClass, "initialize", ngraph_class_new, 0);
-    add_common_const(NgraphModule);
-    create_ngraph_classes(NgraphModule, NgraphClass);
-
-    Uniq = rb_to_id(rb_str_new2("uniq"));
-    Argv = rb_to_id(rb_str_new2("ARGV"));
+    return 1;
   }
 
   r_argv = rb_const_get(rb_mKernel, Argv);
@@ -1472,8 +1484,7 @@ ngraph_plugin_shell_libruby(struct plugin_shell *shell, int argc, char *argv[])
   }
 
   rb_load_protect(rb_str_new2(argv[1]), 1, &state);
-  if (state)
-  {
+  if (state) {
     VALUE errinfo, errstr;
     errinfo = rb_errinfo();
     errstr = rb_obj_as_string(errinfo);
@@ -1481,11 +1492,12 @@ ngraph_plugin_shell_libruby(struct plugin_shell *shell, int argc, char *argv[])
     ngraph_plugin_err_puts(StringValuePtr(errstr));
   }
   rb_gc_start();
+
   return 0;
 }
 
 void
-g_module_unload(GModule *module)
+ngraph_plugin_close_ruby(struct ngraph_plugin *plugin)
 {
   if (Initialized) {
     ruby_finalize();

@@ -41,7 +41,7 @@
 #ifdef LOCALEDIR
 #undef LOCALEDIR
 #endif	/* LOCALEDIR */
-char *DOCDIR, *NDATADIR, *ADDINDIR, *LIBDIR, *CONFDIR, *LOCALEDIR, *PIXMAPDIR;
+char *DOCDIR, *NDATADIR, *ADDINDIR, *LIBDIR, *PLUGINDIR, *CONFDIR, *LOCALEDIR, *PIXMAPDIR;
 #endif	/* WINDOWS */
 
 #include "dir_defs.h"
@@ -107,7 +107,7 @@ void *addaxis(void);
 void *addagrid(void);
 void *addprm(void);
 void *addpath(void);
-void *add_plugin_shell(void);
+void *addplugin(void);
 
 void *addgra2gtk(void);
 void *addmenu(void);
@@ -194,7 +194,7 @@ static void * ( * obj_add_func_ary[]) (void) = {
   addtext,
   addmenu,
   adddialog,
-  add_plugin_shell,
+  addplugin,
 #ifdef WINDOWS
   addgra2emf,
 #endif
@@ -709,6 +709,7 @@ set_dir_defs(char *app)
 
   DOCDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "doc");
   LIBDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "bin");
+  PLUGINDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "bin/plugin");
   NDATADIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share");
   ADDINDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/addin");
   CONFDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "etc");
@@ -749,7 +750,7 @@ n_getlocale(void)
 int
 main(int argc, char **argv)
 {
-  char *homedir, *datadir, *docdir, *libdir, *confdir, *inifile, *loginshell;
+  char *homedir, *datadir, *docdir, *libdir, *plugindir, *confdir, *inifile, *loginshell;
   const char *home;
   N_VALUE *inst;
   struct objlist *sys, *obj, *lobj;
@@ -822,6 +823,10 @@ main(int argc, char **argv)
   if (libdir == NULL)
     exit(1);
 
+  plugindir = g_strdup(PLUGINDIR);
+  if (plugindir == NULL)
+    exit(1);
+
   docdir = g_strdup(DOCDIR);
   if (docdir == NULL)
     exit(1);
@@ -885,6 +890,8 @@ main(int argc, char **argv)
     exit(1);
   if (_putobj(sys, "lib_dir", inst, libdir))
     exit(1);
+  if (_putobj(sys, "plugin_dir", inst, plugindir))
+    exit(1);
   if (_putobj(sys, "home_dir", inst, homedir))
     exit(1);
 
@@ -895,6 +902,8 @@ main(int argc, char **argv)
   if (_getobj(sys, "doc_dir", inst, &docdir) == -1)
     exit(1);
   if (_getobj(sys, "lib_dir", inst, &libdir) == -1)
+    exit(1);
+  if (_getobj(sys, "plugin_dir", inst, &plugindir) == -1)
     exit(1);
   if (_getobj(sys, "home_dir", inst, &homedir) == -1)
     exit(1);

@@ -22,21 +22,24 @@ end
 
 class NgraphObj
   attr_reader :name, :fields
-  attr_accessor :abstruct
+  attr_accessor :abstruct, :singleton
   SINGLETON_METHOD = [
                       ["new", "new", 0],
                       ["[]", "get", 1],
                       ["del", "del", 1],
                       ["each", "each", 0],
                       ["size", "size", 0],
-                      ["move_up", "move_up", 1],
-                      ["move_down", "move_down", 1],
-                      ["move_top", "move_top", 1],
-                      ["move_last", "move_last", 1],
-                      ["exchange", "exchange", 2],
                      ]
 
   SINGLETON_METHOD2 = [
+                       ["move_up", "move_up", 1],
+                       ["move_down", "move_down", 1],
+                       ["move_top", "move_top", 1],
+                       ["move_last", "move_last", 1],
+                       ["exchange", "exchange", 2],
+                      ]
+
+  SINGLETON_METHOD3 = [
                        ["exist?", "exist", 0],
                        ["get_field_args", "field_args", 1],
                        ["get_field_type", "field_type", 1],
@@ -71,6 +74,7 @@ EOF
     @version = version
     @parent = (parent == "(null)") ? nil : parent
     @abstruct = false
+    @singleton = false
     @func = ""
   end
 
@@ -103,8 +107,13 @@ EOF
       SINGLETON_METHOD.each { |method, func, argc|
         add_singleton_method_func(method, func, argc)
       }
+      unless (@singleton)
+        SINGLETON_METHOD2.each { |method, func, argc|
+          add_singleton_method_func(method, func, argc)
+        }
+      end
     end
-    SINGLETON_METHOD2.each { |method, func, argc|
+    SINGLETON_METHOD3.each { |method, func, argc|
       add_singleton_method_func(method, func, argc)
     }
     @cfile.puts <<EOF
@@ -120,8 +129,13 @@ EOF
       SINGLETON_METHOD.each { |method, func, argc|
         @cfile.puts(%Q!  rb_define_singleton_method(obj, "#{method}", #{@name}_#{func}, #{argc});!)
       }
+      unless (@singleton)
+        SINGLETON_METHOD2.each { |method, func, argc|
+          @cfile.puts(%Q!  rb_define_singleton_method(obj, "#{method}", #{@name}_#{func}, #{argc});!)
+        }
+      end
     end
-    SINGLETON_METHOD2.each { |method, func, argc|
+    SINGLETON_METHOD3.each { |method, func, argc|
       @cfile.puts(%Q!  rb_define_singleton_method(obj, "#{method}", #{@name}_#{func}, #{argc});!)
     }
     @cfile.puts("  setup_obj_common(obj);") unless (@abstruct)
@@ -706,8 +720,10 @@ end
 
 def create_obj_funcs(file, cfile, name, version, parent)
   obj = NgraphObj.new(name, cfile, version, parent)
+  singleton = true
   while (true)
     ary = file.gets.chomp.split
+    singleton = false if (ary[1] == "next")
     case ary[0]
     when "#"
       break
@@ -718,7 +734,8 @@ def create_obj_funcs(file, cfile, name, version, parent)
     when "r--"
       obj.add_method(ary)
     when "-w-"
-#      obj.add_method(ary)
+      #      obj.add_method(ary)
+      # only used for backword compatibility.
     when "r-x"
       obj.add_method(ary)
     when "rw-"
@@ -728,6 +745,7 @@ def create_obj_funcs(file, cfile, name, version, parent)
     end
     obj.fields.push(ary[1])
   end
+  obj.singleton = singleton
   obj.create_obj
   obj
 end

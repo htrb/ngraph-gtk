@@ -1109,6 +1109,11 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   struct gra2cairo_local *local;
   int i;
 
+  if (!OpenApplication()) {
+    error(obj, ERR_MENU_DISPLAY);
+    goto errexit;
+  }
+
   if (_exeparent(obj, (char *) argv[1], inst, rval, argc, argv)) {
     return 1;
   }
@@ -1232,11 +1237,6 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
 #if ! GTK_CHECK_VERSION(3, 4, 0)
   set_palette();
 #endif
-
-  if (!OpenApplication()) {
-    error(obj, ERR_MENU_DISPLAY);
-    goto errexit;
-  }
 
   return 0;
 

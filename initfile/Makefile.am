@@ -11,7 +11,7 @@ nodist_ngraphconf_DATA = Ngraph.ini
 EXTRA_DIST = Ngraph.ini.in Ngraph.ini.win NgraphUI.xml.win save_ui_file.nsc
 
 Ngraph.ini: Ngraph.ini.in Makefile
-	sh ../pathconv.sh "$(bindir)" "$(docdir)" "$(pkglibexecdir)" "$(pkgdatadir)" "$(ngraphconfdir)" "$(pixmapdir)" Ngraph.ini.in
+	sh ../pathconv.sh "$(bindir)" "$(docdir)" "$(pkglibexecdir)" "$(pkglibdir)" "$(pkgdatadir)" "$(ngraphconfdir)" "$(pixmapdir)" Ngraph.ini.in
 
 update_ui_file:
 	../src/ngraph -i save_ui_file.nsc $(UI_FILE) $(ACCEL_FILE)

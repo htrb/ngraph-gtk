@@ -34,7 +34,7 @@
 #define NWRITE 2
 #define NEXEC 4
 
-struct plugin_shell;
+struct ngraph_plugin;
 struct objlist;
 union _ngraph_value;
 
@@ -77,11 +77,14 @@ typedef union _ngraph_returned_value {
   } ary;
 } ngraph_returned_value;
 
-typedef int (* plugin_shell_shell) (struct plugin_shell *shell, int argc, char *argv[]);
+typedef int (* ngraph_plugin_exec) (struct ngraph_plugin *plugin, int argc, char *argv[]);
+typedef int (* ngraph_plugin_open) (struct ngraph_plugin *plugin);
+typedef void (* ngraph_plugin_close) (struct ngraph_plugin *plugin);
+
 
 struct objlist *ngraph_plugin_get_object(const char *name);
-void *ngraph_plugin_get_user_data(struct plugin_shell *shlocal);
-void ngraph_plugin_set_user_data(struct plugin_shell *shlocal, void *user_data);
+void *ngraph_plugin_get_user_data(struct ngraph_plugin *shlocal);
+void ngraph_plugin_set_user_data(struct ngraph_plugin *shlocal, void *user_data);
 int ngraph_plugin_putobj(struct objlist *obj, const char *vname, int id, ngraph_value *val);
 int ngraph_plugin_getobj(struct objlist *obj, const char *vname, int id, ngraph_arg *arg, ngraph_returned_value *val);
 int ngraph_plugin_exeobj(struct objlist *obj, const char *vname, int id, ngraph_arg *arg);
