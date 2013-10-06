@@ -157,6 +157,8 @@ plugin_open(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **
   struct ngraph_plugin *plugin;
   int r, loaded;
 
+  rval->i = 0;
+
   if (argv[2] == NULL) {
     error(obj, ERRNOCL);
     return 1;
@@ -200,6 +202,7 @@ plugin_open(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **
   }
 
   r = plugin->open(plugin);
+  rval->i = r;
   if (r) {
     error2(obj, ERRINIT, name);
     g_free(name);
@@ -369,6 +372,8 @@ plugin_exec(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **
   char **new_argv;
   int r;
 
+  rval->i = 0;
+
   _getobj(obj, "_local", inst, &shlocal);
   if (shlocal == NULL || shlocal->plugin == NULL) {
     return 1;
@@ -401,6 +406,7 @@ plugin_exec(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **
   shlocal->lock = TRUE;
 
   r = plugin->exec(plugin, argc - 1, new_argv);
+  rval->i = r;
 
   if (plugin->deleted) {
     close_plugin(obj, plugin);
@@ -459,9 +465,9 @@ static struct objtable Plugin[] = {
   {"init", NVFUNC, NEXEC, plugin_init, NULL, 0},
   {"done", NVFUNC, NEXEC, plugin_done, NULL, 0},
   {"next", NPOINTER, 0, NULL, NULL, 0},
-  {"exec", NVFUNC, NREAD|NEXEC, plugin_exec, NULL, 0},
+  {"exec", NIFUNC, NREAD|NEXEC, plugin_exec, NULL, 0},
   {"security", NBOOL, 0, NULL, "b", 0},
-  {"open", NVFUNC, NREAD|NEXEC, plugin_open, "s", 0},
+  {"open", NIFUNC, NREAD|NEXEC, plugin_open, "s", 0},
   {"close", NVFUNC, NREAD|NEXEC, plugin_close, "", 0},
   {"module_name", NSFUNC, NREAD|NEXEC, plugin_name, "", 0},
   {"module_file", NSFUNC, NREAD|NEXEC, plugin_file, "", 0},

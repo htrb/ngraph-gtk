@@ -1,3 +1,8 @@
+2013-10-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/oplugin.c (Plugin): type of the fields "open" and "exec" are
+	NIFUNC.
+
 2013-10-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/osystem.c (nsystem): add field "plugin_dir".
