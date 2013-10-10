@@ -193,6 +193,80 @@ static int writepo;
 static int storeshhandle(struct nshell *nshell,int fd, char **readbuf,int *readbyte,int *readpo);
 static void restoreshhandle(struct nshell *nshell,int fd, char *readbuf,int readbyte,int readpo);
 
+static int Timeout;
+
+#ifndef WINDOWS
+
+static void 
+cmsleeptimeout(int sig)
+{
+  Timeout=TRUE;
+}
+
+void
+nsleep(int a)
+{
+  if (a < 1) {
+    return;
+  }
+
+  if (has_eventloop()) {
+#ifdef SIGALRM
+    Timeout=FALSE;
+    set_signal(SIGALRM, 0, cmsleeptimeout);
+    alarm(a);
+    while (!Timeout) {
+      eventloop();
+      msleep(10);
+    }
+    alarm(0);
+    set_signal(SIGALRM, 0, SIG_IGN);
+#else  /* SIGALRM */
+    sleep(a);
+#endif	/* SIGALRM */
+  } else {
+    sleep(a);
+  }
+}
+
+#else  /* WINDOWS */
+
+typedef struct {
+  int Sleep;
+  int Second;
+} ThreadParam;
+
+DWORD WINAPI
+SleepThread(LPVOID lpvThreadParam)
+{
+  ThreadParam *pTH;
+
+  pTH = (ThreadParam *)lpvThreadParam;
+  Sleep(pTH->Second * 1000);
+  pTH->Sleep = FALSE;
+  return 0;
+}
+
+int
+nsleep(int a)
+{
+  char *arg,*endptr;
+  ThreadParam TH;
+  DWORD IDThread;
+
+  if (a < 1) {
+    return;
+  }
+
+  TH.Sleep = TRUE;
+  TH.Second = a;
+  CreateThread(NULL, 0, SleepThread, &TH, 0, &IDThread);
+  while (TH.Sleep) eventloop();
+
+  return 0;
+}
+#endif	/* WINDOWS */
+
 void
 set_environ(void)
 {

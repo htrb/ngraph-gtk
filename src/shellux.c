@@ -49,16 +49,6 @@ cmfalse(struct nshell *nshell,int argc,char **argv)
   return 1;
 }
 
-#ifndef WINDOWS
-
-int Timeout;
-
-static void 
-cmsleeptimeout(int sig)
-{
-  Timeout=TRUE;
-}
-
 int 
 cmsleep(struct nshell *nshell,int argc,char **argv)
 {
@@ -75,68 +65,11 @@ cmsleep(struct nshell *nshell,int argc,char **argv)
     sherror3(argv[0],ERRNUMERIC,arg);
     return ERRNUMERIC;
   }
-  if (has_eventloop()) {
-#ifdef SIGALRM
-    Timeout=FALSE;
-    set_signal(SIGALRM, 0, cmsleeptimeout);
-    alarm(a);
-    while (!Timeout) {
-      eventloop();
-      msleep(10);
-    }
-    alarm(0);
-    set_signal(SIGALRM, 0, SIG_IGN);
-#else  /* SIGALRM */
-    sleep(a);
-#endif	/* SIGALRM */
-  } else {
-    sleep(a);
-  }
+
+  nsleep(a);
+
   return 0;
 }
-
-#else  /* WINDOWS */
-
-typedef struct {
-  int Sleep;
-  int Second;
-} ThreadParam;
-
-DWORD WINAPI SleepThread(LPVOID lpvThreadParam)
-{
-  ThreadParam *pTH;
-
-  pTH=(ThreadParam *)lpvThreadParam;
-  Sleep(pTH->Second * 1000);
-  pTH->Sleep=FALSE;
-  return 0;
-}
-
-int cmsleep(struct nshell *nshell,int argc,char **argv)
-{
-  int a;
-  char *arg,*endptr;
-  ThreadParam TH;
-  DWORD IDThread;
-
-  if (argc<2) {
-    sherror4(argv[0],ERRSMLARG);
-    return ERRSMLARG;
-  }
-  arg=argv[1];
-  a=strtol(arg,&endptr,10);
-  if (endptr[0]!='\0') {
-    sherror3(argv[0],ERRNUMERIC,arg);
-    return ERRNUMERIC;
-  }
-  TH.Sleep=TRUE;
-  TH.Second=a;
-  CreateThread(NULL,0,SleepThread,&TH,0,&IDThread);
-  while (TH.Sleep) eventloop();
-  return 0;
-}
-
-#endif	/* WINDOWS */
 
 static int 
 testexpand(int pre,int *oppo,int *numpo,
