@@ -1,5 +1,7 @@
 2013-10-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* test/sarray_test.nsc: add test for "put" and "ins" fields.
+
 	* addin/timer.nsc: fix name of text object and field name of color
 	of rectanble object.
 

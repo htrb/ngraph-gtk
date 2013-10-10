@@ -72,4 +72,24 @@ sarray::reverse
 s="${sarray::join}"
 show_result "slice" "$s" "2,3,4"
 
+sarray::@="0 9 8 7 6 5 4 3 2 1"
+sarray::put -4 -4
+s="${sarray::join}"
+show_result "put" "$s" "0,9,8,7,6,5,-4,3,2,1"
+
+sarray::@="0 9 8 7 6 5 4 3 2 1"
+sarray::put 4 -4
+s="${sarray::join}"
+show_result "put" "$s" "0,9,8,7,-4,5,4,3,2,1"
+
+sarray::@="0 9 8 7 6 5 4 3 2 1"
+sarray::ins -4 100
+s="${sarray::join}"
+show_result "ins" "$s" "0,9,8,7,6,5,100,4,3,2,1"
+
+sarray::@="0 9 8 7 6 5 4 3 2 1"
+sarray::ins 4 100
+s="${sarray::join}"
+show_result "ins" "$s" "0,9,8,7,100,6,5,4,3,2,1"
+
 del system
