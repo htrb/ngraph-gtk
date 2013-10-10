@@ -1,5 +1,11 @@
 2013-10-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/oplugin.c (allocate_iarray, allocate_darray)
+	(allocate_sarray): check if the "arg" is NULL or not.
+	(ngraph_plugin_get_instances_by_str, ngraph_plugin_sleep)
+	(ngraph_plugin_get_obj_root): added.
+	(ngraph_plugin_get_inst): removed.
+
 	* test/sarray_test.nsc: add test for "put" and "ins" fields.
 
 	* addin/timer.nsc: fix name of text object and field name of color

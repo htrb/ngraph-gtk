@@ -131,7 +131,8 @@ ngraph_OBJECTS = $(am_ngraph_OBJECTS)
 am__DEPENDENCIES_1 =
 ngraph_DEPENDENCIES = gtk/libngraph.la math/libmath.la \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
@@ -342,6 +343,7 @@ MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
 MSGFMT_015 = @MSGFMT_015@
 MSGMERGE = @MSGMERGE@
+M_LIBS = @M_LIBS@
 NM = @NM@
 NMEDIT = @NMEDIT@
 OBJDUMP = @OBJDUMP@
@@ -443,7 +445,7 @@ ngraph_SOURCES = axis.c axis.h nconfig.c nconfig.h gra.c gra.h		\
 
 include_HEADERS = ngraph_plugin.h
 terminal_SOURCES = terminal.c
-ngraph_LDADD = gtk/libngraph.la math/libmath.la $(READLINE_LIBS) $(GTK_LIBS) $(GLIB_LIBS) $(GSL_LIBS)
+ngraph_LDADD = gtk/libngraph.la math/libmath.la $(M_LIBS) $(READLINE_LIBS) $(GTK_LIBS) $(GLIB_LIBS) $(GSL_LIBS)
 ngraph_CFLAGS = $(GTK_CFLAGS) $(GSL_CFLAGS) -I.. -DCCNAME='"'$(CC)'"'
 terminal_CFLAGS = $(GTK_CFLAGS)
 all: all-recursive

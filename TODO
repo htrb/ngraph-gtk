@@ -1,4 +1,6 @@
-* init.d 導入、ruby plugin 登録初期化スクリプト提供
+* ruby plugin の配列引数で、配列以外の単一引数も受け付けるようにする。
+
+* ruby plugin 登録初期化スクリプト提供
 
 * legend 配下のオブジェクトに hsb などのフィールドを追加する。
 

@@ -48,7 +48,7 @@ struct ngraph_array {
   union array {
     int i;
     double d;
-    char *str;
+    const char *str;
     struct ngraph_array *ary;
   } ary[1];
 };
@@ -58,8 +58,7 @@ typedef struct ngraph_array ngraph_arg;
 typedef union _ngraph_value {
   int i;
   double d;
-  char *str;
-  struct ngraph_obj obj;
+  const char *str;
   ngraph_arg *ary;
 } ngraph_value;
 
@@ -88,7 +87,7 @@ void ngraph_plugin_set_user_data(struct ngraph_plugin *shlocal, void *user_data)
 int ngraph_plugin_putobj(struct objlist *obj, const char *vname, int id, ngraph_value *val);
 int ngraph_plugin_getobj(struct objlist *obj, const char *vname, int id, ngraph_arg *arg, ngraph_returned_value *val);
 int ngraph_plugin_exeobj(struct objlist *obj, const char *vname, int id, ngraph_arg *arg);
-int *ngraph_plugin_get_id_by_str(struct objlist *obj, const char *name);
+int *ngraph_plugin_get_instances_by_str(struct objlist **obj, const char *str);
 int ngraph_plugin_get_id_by_oid(struct objlist *obj, int oid);
 int ngraph_plugin_move_top(struct objlist *obj, int id);
 int ngraph_plugin_move_last(struct objlist *obj, int id);
@@ -106,6 +105,7 @@ int ngraph_plugin_get_obj_field_type(struct objlist *obj, const char *field);
 const char *ngraph_plugin_get_obj_field_args(struct objlist *obj, const char *field);
 const char *ngraph_plugin_get_obj_field(struct objlist *obj, int i);
 struct objlist *ngraph_plugin_get_obj_parent(struct objlist *obj);
+struct objlist *ngraph_plugin_get_obj_root(void);
 const char *ngraph_plugin_get_obj_version(struct objlist *obj);
 int ngraph_plugin_get_obj_id(struct objlist *obj);
 int ngraph_plugin_get_obj_size(struct objlist *obj);
@@ -113,8 +113,8 @@ int ngraph_plugin_get_obj_current_id(struct objlist *obj);
 int ngraph_plugin_get_obj_last_id(struct objlist *obj);
 struct objlist *ngraph_plugin_get_obj_next(struct objlist *obj);
 struct objlist *ngraph_plugin_get_obj_child(struct objlist *obj);
-struct objlist *ngraph_plugin_get_inst(const char *str, int *id);
 int ngraph_plugin_puts(const char *s);
 int ngraph_plugin_err_puts(const char *s);
+void ngraph_plugin_sleep(int t);
 
 #endif

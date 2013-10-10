@@ -20,7 +20,7 @@ include_HEADERS = ngraph_plugin.h
 pkglibexec_PROGRAMS = terminal
 terminal_SOURCES = terminal.c
 
-ngraph_LDADD = gtk/libngraph.la math/libmath.la $(READLINE_LIBS) $(GTK_LIBS) $(GLIB_LIBS) $(GSL_LIBS)
+ngraph_LDADD = gtk/libngraph.la math/libmath.la $(M_LIBS) $(READLINE_LIBS) $(GTK_LIBS) $(GLIB_LIBS) $(GSL_LIBS)
 
 ngraph_CFLAGS = $(GTK_CFLAGS) $(GSL_CFLAGS) -I.. -DCCNAME='"'$(CC)'"'
 

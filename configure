@@ -660,6 +660,7 @@ HAVE_RUBY_DEV_FALSE
 HAVE_RUBY_DEV_TRUE
 RUBY
 READLINE_LIBS
+M_LIBS
 POSUB
 LTLIBINTL
 LIBINTL
@@ -14568,11 +14569,9 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_m_sqrt" >&5
 $as_echo "$ac_cv_lib_m_sqrt" >&6; }
 if test "x$ac_cv_lib_m_sqrt" = xyes; then :
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_LIBM 1
-_ACEOF
 
-  LIBS="-lm $LIBS"
+		  M_LIBS=-lm
+
 
 fi
 

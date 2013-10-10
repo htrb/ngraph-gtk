@@ -497,7 +497,7 @@ union ngraph_val {
   int i;
   double d;
   char *str;
-  struct narray *ary;;
+  struct narray *ary;
 };
 
 static struct narray *
@@ -505,6 +505,10 @@ allocate_iarray(ngraph_arg *arg)
 {
   struct narray *array, *ptr;
   int i;
+
+  if (arg == NULL) {
+    return NULL;
+  }
 
   if (arg->num < 1) {
     return NULL;
@@ -532,6 +536,10 @@ allocate_darray(ngraph_arg *arg)
   struct narray *array, *ptr;
   int i;
 
+  if (arg == NULL) {
+    return NULL;
+  }
+
   if (arg->num < 1) {
     return NULL;
   }
@@ -558,6 +566,10 @@ allocate_sarray(ngraph_arg *arg)
   struct narray *array, *ptr;
   int i;
 
+  if (arg == NULL) {
+    return NULL;
+  }
+
   if (arg->num < 1) {
     return NULL;
   }
@@ -568,7 +580,7 @@ allocate_sarray(ngraph_arg *arg)
   }
 
   for (i = 0; i < arg->num; i++) {
-    ptr = arrayadd2(array, &arg->ary[i].str);
+    ptr = arrayadd2(array, arg->ary[i].str);
     if (ptr == NULL) {
       arrayfree(array);
       return NULL;
@@ -653,12 +665,12 @@ ngraph_plugin_putobj(struct objlist *obj, const char *vname, int id, ngraph_valu
   return r;
 }
 
-static char **
+static const char **
 allocate_obj_arg(struct objlist *obj, const char *vname, ngraph_arg *arg)
 {
   int i, n, num, is_a;
   const char *arglist;
-  char **ary;
+  const char **ary;
 
   num = arg->num;
   if (num < 1) {
@@ -734,7 +746,7 @@ allocate_obj_arg(struct objlist *obj, const char *vname, ngraph_arg *arg)
 }
 
 static void
-free_obj_arg(char **ary, struct objlist *obj, const char *vname, ngraph_arg *arg)
+free_obj_arg(const char **ary, struct objlist *obj, const char *vname, ngraph_arg *arg)
 {
   int i, n, num, is_a;
   const char *arglist;
@@ -793,7 +805,7 @@ int
 ngraph_plugin_getobj(struct objlist *obj, const char *vname, int id, ngraph_arg *arg, ngraph_returned_value *val)
 {
   int r, type, argc;
-  char **argv;
+  const char **argv;
   union ngraph_val nval;
 
   type = chkobjfieldtype(obj, vname);
@@ -801,7 +813,7 @@ ngraph_plugin_getobj(struct objlist *obj, const char *vname, int id, ngraph_arg 
   argc = arg->num;
   argv = allocate_obj_arg(obj, vname, arg);
 
-  r = getobj(obj, vname, id, argc, argv, &nval);
+  r = getobj(obj, vname, id, argc, (char **) argv, &nval);
 
   free_obj_arg(argv, obj, vname, arg);
   if (r < 0) {
@@ -857,7 +869,7 @@ int
 ngraph_plugin_exeobj(struct objlist *obj, const char *vname, int id, ngraph_arg *arg)
 {
   int r, argc, type;
-  char **argv;
+  const char **argv;
 
   type = chkobjfieldtype(obj, vname);
   if (type < NVFUNC) {
@@ -867,7 +879,7 @@ ngraph_plugin_exeobj(struct objlist *obj, const char *vname, int id, ngraph_arg 
   argc = arg->num;
   argv = allocate_obj_arg(obj, vname, arg);
 
-  r = exeobj(obj, vname, id, argc, argv);
+  r = exeobj(obj, vname, id, argc, (char **) argv);
 
   free_obj_arg(argv, obj, vname, arg);
 
@@ -881,27 +893,23 @@ ngraph_plugin_get_object(const char *name)
 }
 
 int *
-ngraph_plugin_get_id_by_str(struct objlist *obj, const char *name)
+ngraph_plugin_get_instances_by_str(struct objlist **obj, const char *str)
 {
   struct narray iarray;
-  struct objlist *obj2;
   int *id_ary, *adata, anum, i, r;
-  char *tmp, *objname;
 
   if (obj == NULL) {
     return NULL;
   }
 
-  objname = chkobjectname(obj);
-  if (objname == NULL) {
+  *obj = NULL;
+
+  if (str == NULL) {
     return NULL;
   }
 
-  tmp = g_strdup_printf("%s:%s", objname, name);
-
   arrayinit(&iarray,sizeof(int));
-  r = chkobjilist(tmp, &obj2, &iarray, TRUE, NULL);
-  g_free(tmp);
+  r = chkobjilist((char *) str, obj, &iarray, TRUE, NULL);
   if (r) {
     arraydel(&iarray);
     return NULL;
@@ -910,7 +918,7 @@ ngraph_plugin_get_id_by_str(struct objlist *obj, const char *name)
   anum = arraynum(&iarray);
   adata = arraydata(&iarray);
 
-  id_ary = g_malloc(sizeof(*id_ary) * (anum + 1));
+  id_ary = malloc(sizeof(*id_ary) * (anum + 1));
   if (id_ary == NULL) {
     arraydel(&iarray);
     return NULL;
@@ -1005,7 +1013,7 @@ ngraph_plugin_get_obj_field_num(struct objlist *obj)
 const char *
 ngraph_plugin_get_obj_field(struct objlist *obj, int i)
 {
-  return chkobjfieldname(obj, i);;
+  return chkobjfieldname(obj, i);
 }
 
 int
@@ -1032,6 +1040,12 @@ ngraph_plugin_get_obj_parent(struct objlist *obj)
   return chkobjparent(obj);
 }
 
+struct objlist *
+ngraph_plugin_get_obj_root(void)
+{
+  return chkobjroot();
+}
+
 const char *
 ngraph_plugin_get_obj_version(struct objlist *obj)
 {
@@ -1041,7 +1055,7 @@ ngraph_plugin_get_obj_version(struct objlist *obj)
 int
 ngraph_plugin_get_obj_id(struct objlist *obj)
 {
-  return chkobjectid(obj);;
+  return chkobjectid(obj);
 }
 
 int
@@ -1074,24 +1088,6 @@ ngraph_plugin_get_obj_child(struct objlist *obj)
   return obj->child;
 }
 
-struct objlist *
-ngraph_plugin_get_inst(const char *str, int *id)
-{
-  struct narray iarray;
-  struct objlist *obj;
-
-  arrayinit(&iarray, sizeof(int));
-  if (getobjilist((char *) str, &obj, &iarray, FALSE, NULL)) {
-    return NULL;
-  }
-
-  *id = arraylast_int(&iarray);
-
-  arraydel(&iarray);
-
-  return obj;
-}
-
 int
 ngraph_plugin_puts(const char *s)
 {
@@ -1103,3 +1099,10 @@ ngraph_plugin_err_puts(const char *s)
 {
   return putstderr(s);
 }
+
+void
+ngraph_plugin_sleep(int t)
+{
+  nsleep(t);
+}
+

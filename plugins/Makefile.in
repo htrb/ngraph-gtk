@@ -265,6 +265,7 @@ MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
 MSGFMT_015 = @MSGFMT_015@
 MSGMERGE = @MSGMERGE@
+M_LIBS = @M_LIBS@
 NM = @NM@
 NMEDIT = @NMEDIT@
 OBJDUMP = @OBJDUMP@
@@ -357,7 +358,7 @@ extra_dist_common = getobj.nsc create_objs.rb
 @HAVE_RUBY_DEV_TRUE@BUILT_SOURCES = ruby_ngraph.c
 @HAVE_RUBY_DEV_TRUE@ngraphplugin_LTLIBRARIES = libruby.la
 @HAVE_RUBY_DEV_TRUE@libruby_la_SOURCES = ruby.c
-@HAVE_RUBY_DEV_TRUE@libruby_la_CFLAGS = $(GTK_CFLAGS) -I.. -I $(RUBY_INCRUDEDIR) -I $(RUBY_INCRUDEDIR)/$(RUBY_ARCH)
+@HAVE_RUBY_DEV_TRUE@libruby_la_CFLAGS = -I.. -I $(RUBY_INCRUDEDIR) -I $(RUBY_INCRUDEDIR)/$(RUBY_ARCH)
 @HAVE_RUBY_DEV_TRUE@libruby_la_LDFLAGS = -avoid-version -disable-static --mode=link -module `ruby -e 'puts(RbConfig::CONFIG["LIBRUBYARG_SHARED"])'`
 @HAVE_RUBY_DEV_FALSE@extra_dist = $(extra_dist_common) ruby.c
 @HAVE_RUBY_DEV_TRUE@extra_dist = $(extra_dist_common)

@@ -116,18 +116,20 @@ calc_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 am_fft_OBJECTS = fft.$(OBJEXT)
 fft_OBJECTS = $(am_fft_OBJECTS)
-fft_LDADD = $(LDADD)
+fft_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_fitrslt_OBJECTS = fitrslt-fitrslt.$(OBJEXT) \
 	fitrslt-addin_common.$(OBJEXT)
 fitrslt_OBJECTS = $(am_fitrslt_OBJECTS)
-fitrslt_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+fitrslt_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 fitrslt_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(fitrslt_CFLAGS) \
 	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 am_legend_OBJECTS = legend-legend.$(OBJEXT) \
 	legend-addin_common.$(OBJEXT)
 legend_OBJECTS = $(am_legend_OBJECTS)
-legend_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+legend_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 legend_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(legend_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
@@ -288,6 +290,7 @@ MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
 MSGFMT_015 = @MSGFMT_015@
 MSGMERGE = @MSGMERGE@
+M_LIBS = @M_LIBS@
 NM = @NM@
 NMEDIT = @NMEDIT@
 OBJDUMP = @OBJDUMP@
@@ -384,11 +387,12 @@ calc_CFLAGS = $(GTK_CFLAGS) $(APP_CFLAGS)
 calc_LDADD = $(GTK_LIBS) $(GLIB_LIBS)
 fitrslt_SOURCES = fitrslt.c addin_common.c addin_common.h
 fitrslt_CFLAGS = $(GTK_CFLAGS) $(APP_CFLAGS)
-fitrslt_LDADD = $(GTK_LIBS) $(GLIB_LIBS)
+fitrslt_LDADD = $(M_LIBS) $(GTK_LIBS) $(GLIB_LIBS)
 legend_SOURCES = legend.c addin_common.c addin_common.h
 legend_CFLAGS = $(GTK_CFLAGS) $(APP_CFLAGS)
-legend_LDADD = $(GTK_LIBS) $(GLIB_LIBS)
+legend_LDADD = $(M_LIBS) $(GTK_LIBS) $(GLIB_LIBS)
 fft_SOURCES = fft.c
+fft_LDADD = $(M_LIBS)
 all: all-am
 
 .SUFFIXES:

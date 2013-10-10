@@ -7,7 +7,7 @@ if HAVE_RUBY_DEV
   BUILT_SOURCES = ruby_ngraph.c
   ngraphplugin_LTLIBRARIES = libruby.la
   libruby_la_SOURCES = ruby.c
-  libruby_la_CFLAGS = $(GTK_CFLAGS) -I.. -I $(RUBY_INCRUDEDIR) -I $(RUBY_INCRUDEDIR)/$(RUBY_ARCH)
+  libruby_la_CFLAGS = -I.. -I $(RUBY_INCRUDEDIR) -I $(RUBY_INCRUDEDIR)/$(RUBY_ARCH)
   libruby_la_LDFLAGS = -avoid-version -disable-static --mode=link -module `ruby -e 'puts(RbConfig::CONFIG["LIBRUBYARG_SHARED"])'`
   extra_dist = $(extra_dist_common)
 else
