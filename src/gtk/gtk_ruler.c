@@ -366,7 +366,7 @@ nruler_draw_ticks(Nruler *ruler, GtkWidget *widget)
     cairo_rectangle(cr, allocation.width - 1, 0, 1, allocation.height);
   }
   upper = ruler->upper / Metric.pixels_per_unit;
-  lower = ruler->lower / Metric.pixels_per_unit;;
+  lower = ruler->lower / Metric.pixels_per_unit;
 
   if (upper - lower == 0) {
     goto out;

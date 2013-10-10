@@ -252,7 +252,7 @@ CREATE_NAME(Pref, DialogCreateWidgets)(struct CREATE_NAME(Pref, Dialog) *d, GtkW
   g_signal_connect(d->list, "key-press-event", G_CALLBACK(CREATE_NAME(Pref, ListDefailtCb)), d);
   gtk_container_add(GTK_CONTAINER(swin), w);
 
-  sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(w));;
+  sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(w));
   g_signal_connect(sel, "changed", G_CALLBACK(CREATE_NAME(Pref, ListSelCb)), d);
 
   w = gtk_frame_new(NULL);

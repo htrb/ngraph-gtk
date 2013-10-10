@@ -156,7 +156,7 @@ mjd2gd(double mjd, struct tm *tm)
   /* Date */
 #if 1
   /* http://en.wikipedia.org/wiki/Julian_day */
-  int j, g, dg, c, dc, b, db, a, da, y, m, d, Y, M, D;;
+  int j, g, dg, c, dc, b, db, a, da, y, m, d, Y, M, D;
 
   j = floor(mjd + 2400000.5 + 0.5 + 32044);
   g = j / 146097;

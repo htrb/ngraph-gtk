@@ -944,7 +944,7 @@ FontSettingDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->list = w;
     gtk_container_add(GTK_CONTAINER(swin), w);
 
-    sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(w));;
+    sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(w));
     g_signal_connect(sel, "changed", G_CALLBACK(AlternativeFontListSelCb), d);
 
     gtk_box_pack_start(GTK_BOX(hbox), swin, TRUE, TRUE, 4);
