@@ -562,7 +562,7 @@ init_graobj(struct objlist *graobj, int id, char *dev_name, int dev_oid)
     n = arraynum(&(Menulocal.drawrable));
     for (i = 0; i < n; i++) {
       arrayadd2(drawrable,
-		(char **) arraynget(&(Menulocal.drawrable), i));
+		*(char **) arraynget(&(Menulocal.drawrable), i));
     }
   } else {
     drawrable = NULL;

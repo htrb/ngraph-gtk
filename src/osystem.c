@@ -251,7 +251,7 @@ systemp(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   }
   close(fd);
 
-  arrayadd2(array,&tmpfil);
+  arrayadd2(array,tmpfil);
   rval->str=tmpfil;
   return 0;
 }

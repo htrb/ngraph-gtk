@@ -1,3 +1,10 @@
+2013-10-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/object.c (arrayadd, arrayins, arrayput): type of the second
+	parameter is "const void *".
+	(arrayadd2, arrayins2, arrayput2): type of the second parameter is
+	"const char *".
+
 2013-10-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/oplugin.c (Plugin): type of the fields "open" and "exec" are

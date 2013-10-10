@@ -114,7 +114,7 @@ OpenGRA(void)
   if (arraynum(&(Menulocal.drawrable)) > 0) {
     drawrable = arraynew(sizeof(char *));
     for (j = 0; j < arraynum(&(Menulocal.drawrable)); j++) {
-      arrayadd2(drawrable, (char **) arraynget(&(Menulocal.drawrable), j));
+      arrayadd2(drawrable, *(char **)arraynget(&(Menulocal.drawrable), j));
     }
   } else {
     drawrable = NULL;
@@ -246,7 +246,7 @@ SetPageSettingsToGRA(void)
     num = arraynum(&(Menulocal.drawrable));
 
     for (j = 0; j < num; j++) {
-      arrayadd2(drawrable, (char **) arraynget(&(Menulocal.drawrable), j));
+      arrayadd2(drawrable, *(char **) arraynget(&(Menulocal.drawrable), j));
     }
 
     _putobj(obj, "draw_obj", inst, drawrable);
@@ -279,7 +279,7 @@ GetPageSettingsFromGRA(void)
     num = arraynum(drawrable);
 
     for (j = 0; j < num; j++) {
-      arrayadd2(&(Menulocal.drawrable), (char **) arraynget(drawrable, j));
+      arrayadd2(&(Menulocal.drawrable), *(char **) arraynget(drawrable, j));
     }
   }
 

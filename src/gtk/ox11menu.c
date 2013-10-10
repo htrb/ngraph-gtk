@@ -1016,7 +1016,7 @@ menuadddrawrable(struct objlist *parent, struct narray *drawrable)
   while (ocur) {
     if (chkobjparent(ocur) == parent) {
       name = chkobjectname(ocur);
-      arrayadd2(drawrable, &name);
+      arrayadd2(drawrable, name);
       menuadddrawrable(ocur, drawrable);
     }
     ocur = ocur->next;

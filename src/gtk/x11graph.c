@@ -838,7 +838,7 @@ SwitchDialogClose(GtkWidget *w, void *data)
       buf = (char **) arraynget(&(d->drawrable),
 				arraynget_int(&(d->idrawrable), j));
       if ((*buf) != NULL)
-	arrayadd2(&(Menulocal.drawrable), buf);
+	arrayadd2(&(Menulocal.drawrable), *buf);
     }
   }
   arraydel2(&(d->drawrable));

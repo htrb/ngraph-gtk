@@ -423,7 +423,7 @@ arrayfree2(struct narray *array)
 }
 
 struct narray *
-arrayadd(struct narray *array,void *val)
+arrayadd(struct narray *array,const void *val)
 {
   int size,base;
   char *data;
@@ -444,7 +444,7 @@ arrayadd(struct narray *array,void *val)
 }
 
 struct narray *
-arrayadd2(struct narray *array,char **val)
+arrayadd2(struct narray *array,const char *val)
 {
   int size;
   char **data;
@@ -452,15 +452,15 @@ arrayadd2(struct narray *array,char **val)
 
   if (array == NULL)
     return NULL;
-  if (*val == NULL) {
+  if (val == NULL) {
     return NULL;
   } else {
-    s = g_malloc(strlen(*val) + 1);
+    s = g_malloc(strlen(val) + 1);
     if (s == NULL) {
       arraydel2(array);
       return NULL;
     }
-    strcpy(s, *val);
+    strcpy(s, val);
   }
   if (array->num == array->size) {
     size = array->size+ALLOCSIZE;
@@ -479,7 +479,7 @@ arrayadd2(struct narray *array,char **val)
 }
 
 struct narray *
-arrayins(struct narray *array,void *val,unsigned int idx)
+arrayins(struct narray *array,const void *val,unsigned int idx)
 {
   unsigned int i;
   int size,base;
@@ -504,7 +504,7 @@ arrayins(struct narray *array,void *val,unsigned int idx)
 }
 
 struct narray *
-arrayins2(struct narray *array, char **val, unsigned int idx)
+arrayins2(struct narray *array, const char *val, unsigned int idx)
 {
   unsigned int i;
   int size;
@@ -519,11 +519,11 @@ arrayins2(struct narray *array, char **val, unsigned int idx)
     return NULL;
   }
 
-  if (*val == NULL) {
+  if (val == NULL) {
     return NULL;
   }
 
-  s = g_strdup(*val);
+  s = g_strdup(val);
   if (s == NULL) {
     arraydel2(array);
     return NULL;
@@ -717,7 +717,7 @@ arrayndel2(struct narray *array,unsigned int idx)
 }
 
 struct narray *
-arrayput(struct narray *array,void *val,unsigned int idx)
+arrayput(struct narray *array,const void *val,unsigned int idx)
 {
   int base;
   char *data;
@@ -731,7 +731,7 @@ arrayput(struct narray *array,void *val,unsigned int idx)
 }
 
 struct narray *
-arrayput2(struct narray *array, char **val, unsigned int idx)
+arrayput2(struct narray *array, const char *val, unsigned int idx)
 {
   char *s;
   char **data;
@@ -743,11 +743,11 @@ arrayput2(struct narray *array, char **val, unsigned int idx)
   if (idx >= array->num) {
     return NULL;
   }
-  if (*val == NULL){
+  if (val == NULL){
     return NULL;
   }
 
-  s = g_strdup(*val);
+  s = g_strdup(val);
   if (s == NULL) {
     arraydel2(array);
     return NULL;
@@ -2649,7 +2649,7 @@ getobj(struct objlist *obj, const char *vname,int id,
       return -1;
     }
     for (i=0;i<argc;i++) {
-      if (arg_add(&argv2,((char **)argv)[i])==NULL) {
+      if (arg_add(&argv2,argv[i])==NULL) {
         g_free(argv2);
         return -1;
       }
@@ -2866,7 +2866,7 @@ copyobj(struct objlist *obj, const char *vname,int did,int sid)
     } else {
       if ((array=arraynew(arraybase(*(struct narray **)po)))==NULL) return -1;
       for (i=0;i<arraynum(*(struct narray **)po);i++) {
-        if (arrayadd2(array,arraynget(*(struct narray **)po,i))==NULL) {
+        if (arrayadd2(array,*(char **) arraynget(*(struct narray **)po,i))==NULL) {
           arrayfree2(array);
           return -1;
         }
@@ -3904,7 +3904,7 @@ add_arg_sarray(struct narray **sary, int argc, char **argv)
   }
 
   for (i = 0; i < argc; i++) {
-    if (arrayadd2(array, argv + i) == NULL) {
+    if (arrayadd2(array, argv[i]) == NULL) {
       arrayfree2(array);
       return -1;
     }
@@ -4324,7 +4324,7 @@ getargument(int type,char *arglist, char *val,int *argc, char ***rargv)
         if (array==NULL) {
           if ((array=arraynew(sizeof(char *)))==NULL) goto errexit;
         }
-        if (arrayadd2(array,&s2)==NULL) goto errexit;
+        if (arrayadd2(array,s2)==NULL) goto errexit;
       } else {
         if ((p=g_malloc(strlen(s2)+1))==NULL) goto errexit;
         strcpy(p,s2);

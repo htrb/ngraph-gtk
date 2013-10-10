@@ -133,7 +133,7 @@ sarrayput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
     error(obj, ERROUTBOUND);
     return 1;
   }
-  if (arrayput2(array,&val,num)==NULL) return 1;
+  if (arrayput2(array,val,num)==NULL) return 1;
   return 0;
 }
 
@@ -150,7 +150,7 @@ sarrayadd(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
     return 1;
   }
 
-  if (arrayadd2(array,&val)==NULL) return 1;
+  if (arrayadd2(array,val)==NULL) return 1;
   return 0;
 }
 
@@ -214,7 +214,7 @@ sarrayins(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
     return 1;
   }
 
-  if (arrayins2(array,&val,num)==NULL) return 1;
+  if (arrayins2(array,val,num)==NULL) return 1;
   return 0;
 }
 
@@ -231,7 +231,7 @@ sarrayunshift(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **ar
     return 1;
   }
 
-  if (arrayins2(array, &val, 0)==NULL) {
+  if (arrayins2(array, val, 0)==NULL) {
     return 1;
   }
 

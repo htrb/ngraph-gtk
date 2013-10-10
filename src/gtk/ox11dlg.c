@@ -211,7 +211,7 @@ get_sarray_argument(struct narray *sarray)
       argv[1] = NULL;
       getobj(saobj, "get", id, 1, argv, &ptr);
 
-      if (arrayadd2(sarray, &ptr) == NULL)
+      if (arrayadd2(sarray, ptr) == NULL)
 	goto End;
     }
   }
