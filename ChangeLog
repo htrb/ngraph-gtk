@@ -1,5 +1,12 @@
 2013-10-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* addin/timer.nsc: fix name of text object and field name of color
+	of rectanble object.
+
+	* addin/text-in.nsc: fix horizontal alignment.
+
+	* addin/fig2gra.rb (Fig2Gra): added.
+
 	* src/shellux.c (cmsleep): use "nsleep()".
 
 	* src/shell.c (nsleep, cmsleeptimeout, SleepThread): added.

@@ -16,7 +16,7 @@ then
     exit
 fi
 
-for inst in timer:timer int:timer
+for inst in text:timer int:timer
 do
     if exist -q $inst
     then
@@ -66,8 +66,8 @@ do
     text:timer:text="%{system::time:0}\&\n$m:$s\&"
 
     rectangle:timer_bar:x2="$BAR_W*${int:timer:@}/$T+${rectangle:timer:x1}"
-    rectangle:timer_bar:G="255*${int:timer:@}/$T"
-    rectangle:timer_bar:R="255*(1-${int:timer:@}/$T)"
+    rectangle:timer_bar:fill_G="255*${int:timer:@}/$T"
+    rectangle:timer_bar:fill_R="255*(1-${int:timer:@}/$T)"
 
     gra::clear
     gra::draw

@@ -89,7 +89,7 @@ do
     text::y=0
     text::text=`get file:$ID -field column:"${file::line} ${COLUMN}"`
     iarray:BBOX:@="${text::bbox}"
-    text::x="${file::coord_x}+$SHIFTX-ABS(${iarray:BBOX:get:2}-${iarray:BBOX:get:0})/2*$ALIGN"
+    text::x="${file::coord_x}+$SHIFTX-ABS(${iarray:BBOX:get:2}-${iarray:BBOX:get:0})/2*(2-$ALIGN)"
     text::y="${file::coord_y}+$SHIFTY+ABS(${iarray:BBOX:get:3}-${iarray:BBOX:get:1})/2-${iarray:BBOX:get:3}+$OFFSET*100"
 done
 menu::modified=true
