@@ -970,6 +970,12 @@ ngraph_plugin_exchange(struct objlist *obj, int id1, int id2)
 }
 
 int
+ngraph_plugin_copy(struct objlist *obj, int dist, int src)
+{
+  return copy_obj_field(obj, dist, src, NULL);
+}
+
+int
 ngraph_plugin_new(struct objlist *obj)
 {
   return newobj(obj);
@@ -1105,4 +1111,3 @@ ngraph_plugin_sleep(int t)
 {
   nsleep(t);
 }
-

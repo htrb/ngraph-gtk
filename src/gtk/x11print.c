@@ -288,8 +288,11 @@ static void
 OutputImageDialogSetupItem(GtkWidget *w, struct OutputImageDialog *d)
 {
   int i;
-  GtkWidget *vlabel, *window;
+  GtkWidget *vlabel;
+#if GTK_CHECK_VERSION(3, 0, 0)
+  GtkWidget *window;
   GtkRequisition minimum_size;
+#endif
 
   vlabel = get_mnemonic_label(d->version);
 
@@ -354,11 +357,13 @@ OutputImageDialogSetupItem(GtkWidget *w, struct OutputImageDialog *d)
 #endif	/* CAIRO_HAS_WIN32_SURFACE */
   }
 
+#if GTK_CHECK_VERSION(3, 0, 0)
   window = gtk_widget_get_parent(GTK_WIDGET(d->vbox));
   if (GTK_IS_WINDOW(window)) {
     gtk_widget_get_preferred_size(GTK_WIDGET(d->vbox), &minimum_size, NULL);
     gtk_window_resize(GTK_WINDOW(window), minimum_size.width, minimum_size.height);
   }
+#endif
 }
 
 static void

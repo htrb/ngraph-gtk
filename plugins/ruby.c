@@ -1,7 +1,25 @@
 #include <ruby.h>
+#include <ruby/encoding.h>
 #include <stdio.h>
 #include <ctype.h>
- 
+
+#ifdef HAVE_ALLOCA_H
+# include <alloca.h>
+#elif defined __GNUC__
+# define alloca __builtin_alloca
+#elif defined _AIX
+# define alloca __alloca
+#elif defined _MSC_VER
+# include <malloc.h>
+# define alloca _alloca
+#else
+# include <stddef.h>
+# ifdef  __cplusplus
+extern "C"
+# endif
+void *alloca (size_t);
+#endif
+
 #include "config.h"
 #include "../src/ngraph_plugin.h"
 
@@ -18,6 +36,10 @@
 static int Initialized = FALSE;
 static VALUE NgraphClass, NgraphModule;
 static ID Uniq, Argv;
+
+static char *DummyArgv[] = {"ngraph_ruby", NULL};
+static char **DummyArgvPtr = DummyArgv;
+static int DummyArgc = 1;
 
 #define VAL2INT(val) (NIL_P(val) ? 0 : NUM2INT(val))
 #define VAL2DBL(val) (NIL_P(val) ? 0.0 : NUM2DBL(val))
@@ -187,27 +209,38 @@ ngraph_inst_method_move_last(VALUE klass)
   return klass;
 }
 
+static int
+check_inst_args(VALUE self, VALUE arg, const char *field, struct ngraph_instance **inst1, struct ngraph_instance **inst2)
+{
+  *inst1 = check_id(self);
+  if (*inst1 == NULL) {
+    return 1;
+  }
+
+  if (! rb_obj_is_kind_of(arg, NgraphClass)) {
+    rb_raise(rb_eArgError, "%s#%s: illegal type of the argument (%s).", rb_obj_classname(self), field, rb_obj_classname(arg));
+  }
+
+  *inst2 = check_id(arg);
+  if (*inst2 == NULL) {
+    return 1;
+  }
+
+  if ((*inst1)->obj != (*inst2)->obj) {
+    rb_raise(rb_eArgError, "%s#%s: illegal type of the argument (%s).", rb_obj_classname(self), field, rb_obj_classname(arg));
+  }
+
+  return 0;
+}
+
 static VALUE
 ngraph_inst_method_exchange(VALUE self, VALUE arg)
 {
   struct ngraph_instance *inst1, *inst2;
   int id, r;
 
-  inst1 = check_id(self);
-  if (inst1 == NULL) {
-    return Qnil;
-  }
-
-  if (! rb_obj_is_kind_of(arg, NgraphClass)) {
-    return Qnil;
-  }
-
-  inst2 = check_id(arg);
-  if (inst2 == NULL) {
-    return Qnil;
-  }
-
-  if (inst1->obj != inst2->obj) {
+  r = check_inst_args(self, arg, "exchange", &inst1, &inst2);
+  if (r) {
     return Qnil;
   }
 
@@ -219,6 +252,25 @@ ngraph_inst_method_exchange(VALUE self, VALUE arg)
   id = inst1->id;
   inst1->id = inst2->id;
   inst2->id = id;
+
+  return self;
+}
+
+static VALUE
+ngraph_inst_method_copy(VALUE self, VALUE arg)
+{
+  struct ngraph_instance *inst1, *inst2;
+  int r;
+
+  r = check_inst_args(self, arg, "copy", &inst1, &inst2);
+  if (r) {
+    return Qnil;
+  }
+
+  r = ngraph_plugin_copy(inst1->obj, inst1->id, inst2->id);
+  if (r < 0) {
+    return Qnil;
+  }
 
   return self;
 }
@@ -297,13 +349,12 @@ obj_get_from_str(VALUE klass, VALUE arg, const char *name)
 
   str = StringValueCStr(arg);
   l = strlen(str) + strlen(name) + 2;
-  buf = malloc(l);
+  buf = alloca(l);
   if (buf == NULL) {
-    rb_raise(rb_eNoMemError, "%s: cannot allocate enough memory.", rb_obj_classname(klass));
+    rb_raise(rb_eSysStackError, "%s: cannot allocate enough memory.", rb_obj_classname(klass));
   }
   snprintf(buf, l, "%s:%s", name, str);
   obj_ids.ids = ngraph_plugin_get_instances_by_str(&obj_ids.obj, buf);
-  free(buf);
   if (obj_ids.ids == NULL) {
     return rb_ary_new();
   }
@@ -401,7 +452,7 @@ obj_field_permission(VALUE klass, VALUE field, const char *name)
 static VALUE
 get_ngraph_obj(const char *name)
 {
-  char buf[256];
+  char buf[64];
 
   strncpy(buf, name, sizeof(buf) - 1);
   buf[sizeof(buf) - 1] = '\0';
@@ -563,6 +614,24 @@ obj_exchange(VALUE klass, VALUE arg1, VALUE arg2, const char *name)
   id2 = NUM2INT(arg2);
 
   r = ngraph_plugin_exchange(nobj, id1, id2);
+  if (r < 0) {
+    return Qnil;
+  }
+
+  return klass;
+}
+
+static VALUE
+obj_copy(VALUE klass, VALUE arg1, VALUE arg2, const char *name)
+{
+  struct objlist *nobj;
+  int id1, id2, r;
+
+  nobj = ngraph_plugin_get_object(name);
+  id1 = NUM2INT(arg1);
+  id2 = NUM2INT(arg2);
+
+  r = ngraph_plugin_copy(nobj, id1, id2);
   if (r < 0) {
     return Qnil;
   }
@@ -939,7 +1008,7 @@ inst_put_obj(VALUE self, VALUE arg, const char *field)
 {
   struct ngraph_instance *inst1, *inst2;
   ngraph_value str;
-  char buf[256];
+  char buf[128];
   const char *name, *ptr;
   int *ids;
   struct objlist *obj;
@@ -1505,17 +1574,15 @@ static void
 add_obj_name_const(VALUE klass, struct objlist *nobj, const char *name)
 {
   const char *obj_name;
-  char *str;
+  char str[64];
   VALUE val;
 
   if (nobj == NULL) {
     val = Qnil;
   } else {
     obj_name = ngraph_plugin_get_obj_name(nobj);
-    str = strdup(obj_name);
-    if (str == NULL) {
-      rb_raise(rb_eNoMemError, "%s: cannot allocate enough memory.", rb_obj_classname(klass));
-    }
+    strncpy(str, obj_name, sizeof(str) - 1);
+    str[sizeof(str) - 1] = '\0';
     str[0] = toupper(str[0]);
     val = ID2SYM(rb_intern(str));
   }
@@ -1567,6 +1634,7 @@ setup_obj_common(VALUE obj)
   rb_define_method(obj, "exchange", ngraph_inst_method_exchange, 1);
   rb_define_method(obj, "to_s", ngraph_inst_method_to_str, 0);
   rb_define_method(obj, "rcode", ngraph_inst_method_rcode, 0);
+  rb_define_method(obj, "copy", ngraph_inst_method_copy, 1);
 }
 
 static void
@@ -1680,9 +1748,11 @@ ngraph_plugin_open_ruby(struct ngraph_plugin *plugin)
     return 0;
   }
 
+  ruby_sysinit(&DummyArgc, &DummyArgvPtr);
   ruby_init();
   ruby_script("Embedded Ruby on Ngraph");
   ruby_init_loadpath();
+  rb_enc_find_index("encdb");	/* http://www.artonx.org/diary/20090206.html */
   Initialized = TRUE;
 
   NgraphModule = rb_define_module("Ngraph");

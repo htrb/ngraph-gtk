@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2013-10-02 11:35+0900\n"
+"POT-Creation-Date: 2013-10-10 18:59+0900\n"
 "PO-Revision-Date: 2013-07-17 11:18+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -1622,7 +1622,7 @@ msgstr "EMF としてクリップボードにコピー"
 msgid "Print preview"
 msgstr "印刷プレビュー"
 
-#: src/gtk/x11menu.c:522 src/gtk/x11menu.c:523 src/gtk/x11print.c:676
+#: src/gtk/x11menu.c:522 src/gtk/x11menu.c:523 src/gtk/x11print.c:681
 msgid "Print"
 msgstr "印刷"
 
@@ -2292,7 +2292,7 @@ msgstr "データプレビュー(_P):"
 msgid "_Check \"change current directory\""
 msgstr "\"カレントディレクトリを移動\"をチェック(_C)"
 
-#: src/gtk/x11opt.c:1453 src/gtk/x11print.c:377
+#: src/gtk/x11opt.c:1453 src/gtk/x11print.c:382
 msgid "_Use opacity"
 msgstr "不透明度を使う(_U)"
 
@@ -2344,69 +2344,69 @@ msgstr "Ngraph.ngp として保存"
 msgid "External Driver Output"
 msgstr "外部ドライバ出力"
 
-#: src/gtk/x11print.c:310
+#: src/gtk/x11print.c:313
 msgid "_PostScript Version:"
 msgstr "ポストスクリプトレベル(_P):"
 
-#: src/gtk/x11print.c:341
+#: src/gtk/x11print.c:344
 msgid "_SVG Version:"
 msgstr "_SVG バージョン:"
 
-#: src/gtk/x11print.c:373
+#: src/gtk/x11print.c:378
 msgid "_Convert texts to paths"
 msgstr "テキストをパスに変換(_C)"
 
-#: src/gtk/x11print.c:395
+#: src/gtk/x11print.c:400
 msgid "Cairo PS Output"
 msgstr "Cairo PS 出力"
 
-#: src/gtk/x11print.c:398
+#: src/gtk/x11print.c:403
 msgid "Cairo EPS Output"
 msgstr "Cairo EPS 出力"
 
-#: src/gtk/x11print.c:401
+#: src/gtk/x11print.c:406
 msgid "Cairo PNG Output"
 msgstr "Cairo PNG 出力"
 
-#: src/gtk/x11print.c:404
+#: src/gtk/x11print.c:409
 msgid "Cairo PDF Output"
 msgstr "Cairo PDF 出力"
 
-#: src/gtk/x11print.c:407
+#: src/gtk/x11print.c:412
 msgid "Cairo SVG Output"
 msgstr "Cairo SVG 出力"
 
-#: src/gtk/x11print.c:411
+#: src/gtk/x11print.c:416
 msgid "Cairo EMF Output"
 msgstr "Cairo EMF 出力"
 
-#: src/gtk/x11print.c:544
+#: src/gtk/x11print.c:549
 msgid "Printing."
 msgstr "印刷中"
 
-#: src/gtk/x11print.c:675
+#: src/gtk/x11print.c:680
 #, c-format
 msgid "Printing error: %s"
 msgstr "印刷エラー: %s"
 
-#: src/gtk/x11print.c:727
+#: src/gtk/x11print.c:732
 msgid "Spawning external driver."
 msgstr "外部ドライバに出力中"
 
-#: src/gtk/x11print.c:733 src/gtk/x11print.c:1007 src/gtk/x11print.c:1080
+#: src/gtk/x11print.c:738 src/gtk/x11print.c:1012 src/gtk/x11print.c:1085
 #: src/gtk/x11view.c:5643
 msgid "Drawing."
 msgstr "描画中"
 
-#: src/gtk/x11print.c:800
+#: src/gtk/x11print.c:805
 msgid "Spawning external viewer."
 msgstr "外部ビューアに出力中"
 
-#: src/gtk/x11print.c:842
+#: src/gtk/x11print.c:847
 msgid "GRA file"
 msgstr "合成ファイルの保存"
 
-#: src/gtk/x11print.c:882
+#: src/gtk/x11print.c:887
 msgid "Making GRA file."
 msgstr "合成ファイル作成中"
 

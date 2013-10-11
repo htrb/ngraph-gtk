@@ -51,6 +51,7 @@ class NgraphObj
                        ["move_top", "move_top", 1],
                        ["move_last", "move_last", 1],
                        ["exchange", "exchange", 2],
+                       ["copy", "copy", 2],
                       ]
 
   SINGLETON_METHOD3 = [
@@ -410,7 +411,7 @@ class NgraphObj
       end
     }
     @func += ("  carg = alloca(sizeof(*carg) + sizeof(union array) * #{args.size});\n")
-    @func += ("  if (carg == NULL) {\n    return Qnil;\n  }\n")
+    @func += (%Q!  if (carg == NULL) {\n    rb_raise(rb_eSysStackError, "%s: cannot allocate enough memory.", rb_obj_classname(self));\n  }\n!)
     @func += ("  carg->num = #{args.size};\n")
     args.each_with_index { |arg, i|
       case arg

@@ -193,9 +193,9 @@ static int writepo;
 static int storeshhandle(struct nshell *nshell,int fd, char **readbuf,int *readbyte,int *readpo);
 static void restoreshhandle(struct nshell *nshell,int fd, char *readbuf,int readbyte,int readpo);
 
-static int Timeout;
-
 #ifndef WINDOWS
+
+static int Timeout;
 
 static void 
 cmsleeptimeout(int sig)
@@ -247,10 +247,9 @@ SleepThread(LPVOID lpvThreadParam)
   return 0;
 }
 
-int
+void
 nsleep(int a)
 {
-  char *arg,*endptr;
   ThreadParam TH;
   DWORD IDThread;
 
@@ -263,7 +262,7 @@ nsleep(int a)
   CreateThread(NULL, 0, SleepThread, &TH, 0, &IDThread);
   while (TH.Sleep) eventloop();
 
-  return 0;
+  return;
 }
 #endif	/* WINDOWS */
 
