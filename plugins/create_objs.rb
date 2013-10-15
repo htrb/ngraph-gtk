@@ -453,7 +453,7 @@ class NgraphObj
     @func += (FUNC_FIELD_COMMON)
     @func += <<-EOF
 	  carg = allocate_sarray(self, &tmpstr, argv, "#{field}");
-	  inst->rcode = ngraph_plugin_getobj(inst->obj, "#{field}", inst->id, carg, &rval);
+	  inst->rcode = ngraph_getobj(inst->obj, "#{field}", inst->id, carg, &rval);
 	  rb_free_tmp_buffer(&tmpstr);
 	  if (inst->rcode < 0) {
 	    return Qnil;
@@ -481,7 +481,7 @@ class NgraphObj
     @func += (FUNC_FIELD_COMMON)
     @func += <<-EOF
 	  carg = allocate_sarray(self, &tmpstr, argv, "#{field}");
-	  inst->rcode = ngraph_plugin_getobj(inst->obj, "#{field}", inst->id, carg, &rval);
+	  inst->rcode = ngraph_getobj(inst->obj, "#{field}", inst->id, carg, &rval);
 	  rb_free_tmp_buffer(&tmpstr);
 	  if (inst->rcode < 0) {
 	    return Qnil;
@@ -503,7 +503,7 @@ class NgraphObj
     @func += (FUNC_FIELD_COMMON)
     array = create_arguments(field, args)
 
-    @func += (%Q!  inst->rcode = ngraph_plugin_getobj(inst->obj, "#{field}", inst->id, carg, &rval);\n!)
+    @func += (%Q!  inst->rcode = ngraph_getobj(inst->obj, "#{field}", inst->id, carg, &rval);\n!)
     @func += (%Q!  rb_free_tmp_buffer(&tmpstr);\n!) if (array)
     @func += <<-EOF
 	  if (inst->rcode < 0) {
@@ -520,7 +520,7 @@ class NgraphObj
     @func += (FUNC_FIELD_COMMON)
     array = create_arguments(field, args)
 
-    @func += (%Q!  inst->rcode = ngraph_plugin_exeobj(inst->obj, "#{field}", inst->id, carg);\n!)
+    @func += (%Q!  inst->rcode = ngraph_exeobj(inst->obj, "#{field}", inst->id, carg);\n!)
     @func += (%Q!  rb_free_tmp_buffer(&tmpstr);\n!) if (array)
     @func += <<-EOF
 	  if (inst->rcode < 0) {
@@ -538,7 +538,7 @@ class NgraphObj
     @func += (FUNC_FIELD_COMMON)
     array = create_arguments(field, args)
 
-    @func += (%Q!  inst->rcode = ngraph_plugin_getobj(inst->obj, "#{field}", inst->id, carg, &rval);\n!)
+    @func += (%Q!  inst->rcode = ngraph_getobj(inst->obj, "#{field}", inst->id, carg, &rval);\n!)
     @func += (%Q!  rb_free_tmp_buffer(&tmpstr);\n!) if (array)
     @func += <<-EOF
 	  if (inst->rcode < 0) {

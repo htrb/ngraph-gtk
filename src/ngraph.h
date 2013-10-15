@@ -1,5 +1,5 @@
-#ifndef NGRAPH_PLUGIN_HEADER
-#define NGRAPH_PLUGIN_HEADER
+#ifndef NGRAPH_HEADER
+#define NGRAPH_HEADER
 
 #define NVOID 0
 #define NBOOL 1
@@ -83,38 +83,39 @@ typedef void (* ngraph_plugin_close) (struct ngraph_plugin *plugin);
 
 void *ngraph_plugin_get_user_data(struct ngraph_plugin *shlocal);
 void ngraph_plugin_set_user_data(struct ngraph_plugin *shlocal, void *user_data);
-int ngraph_plugin_putobj(struct objlist *obj, const char *vname, int id, ngraph_value *val);
-int ngraph_plugin_getobj(struct objlist *obj, const char *vname, int id, ngraph_arg *arg, ngraph_returned_value *val);
-int ngraph_plugin_exeobj(struct objlist *obj, const char *vname, int id, ngraph_arg *arg);
-int ngraph_plugin_get_id_by_oid(struct objlist *obj, int oid);
-int ngraph_plugin_move_top(struct objlist *obj, int id);
-int ngraph_plugin_move_last(struct objlist *obj, int id);
-int ngraph_plugin_move_up(struct objlist *obj, int id);
-int ngraph_plugin_move_down(struct objlist *obj, int id);
-int ngraph_plugin_exchange(struct objlist *obj, int id1, int id2);
-int ngraph_plugin_copy(struct objlist *obj, int id_dest, int id_src);
-int ngraph_plugin_new(struct objlist *obj);
-int ngraph_plugin_del(struct objlist *obj, int id);
-int ngraph_plugin_exist(struct objlist *obj, int id);
-int ngraph_plugin_get_obj_field_num(struct objlist *obj);
-int ngraph_plugin_get_obj_field_permission(struct objlist *obj, const char *field);
-int ngraph_plugin_get_obj_field_type(struct objlist *obj, const char *field);
-const char *ngraph_plugin_get_obj_name(struct objlist *obj);
-const char *ngraph_plugin_get_obj_field_args(struct objlist *obj, const char *field);
-const char *ngraph_plugin_get_obj_field(struct objlist *obj, int i);
-const char *ngraph_plugin_get_obj_version(struct objlist *obj);
-struct objlist *ngraph_plugin_get_object(const char *name);
-struct objlist *ngraph_plugin_get_obj_parent(struct objlist *obj);
-struct objlist *ngraph_plugin_get_obj_root(void);
-struct objlist *ngraph_plugin_get_obj_next(struct objlist *obj);
-struct objlist *ngraph_plugin_get_obj_child(struct objlist *obj);
-struct objlist *ngraph_plugin_get_instances_by_str(const char *str, int *n, int **ids);
-int ngraph_plugin_get_obj_id(struct objlist *obj);
-int ngraph_plugin_get_obj_size(struct objlist *obj);
-int ngraph_plugin_get_obj_current_id(struct objlist *obj);
-int ngraph_plugin_get_obj_last_id(struct objlist *obj);
-int ngraph_plugin_puts(const char *s);
-int ngraph_plugin_err_puts(const char *s);
-void ngraph_plugin_sleep(int t);
+
+int ngraph_putobj(struct objlist *obj, const char *vname, int id, ngraph_value *val);
+int ngraph_getobj(struct objlist *obj, const char *vname, int id, ngraph_arg *arg, ngraph_returned_value *val);
+int ngraph_exeobj(struct objlist *obj, const char *vname, int id, ngraph_arg *arg);
+int ngraph_get_id_by_oid(struct objlist *obj, int oid);
+int ngraph_move_top(struct objlist *obj, int id);
+int ngraph_move_last(struct objlist *obj, int id);
+int ngraph_move_up(struct objlist *obj, int id);
+int ngraph_move_down(struct objlist *obj, int id);
+int ngraph_exchange(struct objlist *obj, int id1, int id2);
+int ngraph_copy(struct objlist *obj, int id_dest, int id_src);
+int ngraph_new(struct objlist *obj);
+int ngraph_del(struct objlist *obj, int id);
+int ngraph_exist(struct objlist *obj, int id);
+int ngraph_get_obj_field_num(struct objlist *obj);
+int ngraph_get_obj_field_permission(struct objlist *obj, const char *field);
+int ngraph_get_obj_field_type(struct objlist *obj, const char *field);
+const char *ngraph_get_obj_name(struct objlist *obj);
+const char *ngraph_get_obj_field_args(struct objlist *obj, const char *field);
+const char *ngraph_get_obj_field(struct objlist *obj, int i);
+const char *ngraph_get_obj_version(struct objlist *obj);
+struct objlist *ngraph_get_object(const char *name);
+struct objlist *ngraph_get_obj_parent(struct objlist *obj);
+struct objlist *ngraph_get_obj_root(void);
+struct objlist *ngraph_get_obj_next(struct objlist *obj);
+struct objlist *ngraph_get_obj_child(struct objlist *obj);
+struct objlist *ngraph_get_instances_by_str(const char *str, int *n, int **ids);
+int ngraph_get_obj_id(struct objlist *obj);
+int ngraph_get_obj_size(struct objlist *obj);
+int ngraph_get_obj_current_id(struct objlist *obj);
+int ngraph_get_obj_last_id(struct objlist *obj);
+int ngraph_puts(const char *s);
+int ngraph_err_puts(const char *s);
+void ngraph_sleep(int t);
 
 #endif
