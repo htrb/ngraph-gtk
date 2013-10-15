@@ -5,9 +5,10 @@
 #ifndef _GTK_SUBWIN_HEADER
 #define _GTK_SUBWIN_HEADER
 
+#include "common.h"
+
 #include "gtk_liststore.h"
 
-#include "ngraph.h"
 #include "object.h"
 #include "ogra2cairo.h"
 #include "x11menu.h"

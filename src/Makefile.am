@@ -4,9 +4,9 @@ bin_PROGRAMS = ngraph
 
 ngraph_SOURCES = axis.c axis.h nconfig.c nconfig.h gra.c gra.h		\
 	ioutil.c ioutil.h mathcode.c mathcode.h mathfn.c mathfn.h	\
-	ngraph.h nstring.c nstring.h ntime.c ntime.h oagrid.c oarc.c	\
-	oarc.h oaxis.c object.c object.h odarray.c odouble.c odraw.c	\
-	odraw.h ofile.c ofile.h ofit.c ofit.h ogra.c ogra.h ogra2.c	\
+	nstring.c nstring.h ntime.c ntime.h oagrid.c oarc.c oarc.h	\
+	oaxis.c object.c object.h odarray.c odouble.c odraw.c odraw.h	\
+	ofile.c ofile.h ofit.c ofit.h ogra.c ogra.h ogra2.c		\
 	ogra2fil.c ogra2nul.c ogra2prn.c oiarray.c oiarray.h oint.c	\
 	olegend.c olegend.h omark.c omath.c omerge.c oprm.c orect.c	\
 	oroot.c oroot.h osarray.c oshell.c oregexp.c ostring.c		\
@@ -15,7 +15,7 @@ ngraph_SOURCES = axis.c axis.h nconfig.c nconfig.h gra.c gra.h		\
 	common.h nhash.h nhash.c strconv.c strconv.h oio.c oplugin.c	\
 	oplugin.h gettext.h
 
-include_HEADERS = ngraph_plugin.h
+include_HEADERS = ngraph.h
 
 pkglibexec_PROGRAMS = terminal
 terminal_SOURCES = terminal.c

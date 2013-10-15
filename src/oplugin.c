@@ -5,7 +5,7 @@
 
 #define USE_HASH 1
 
-#include "ngraph_plugin.h"
+#include "ngraph.h"
 #include "object.h"
 #include "mathfn.h"
 #include "shell.h"

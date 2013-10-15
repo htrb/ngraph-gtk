@@ -27,7 +27,7 @@
 #define TEXT_SIZE_MIN 500
 
 #include "nhash.h"
-#include "ngraph_plugin.h"
+#include "ngraph.h"
 
 struct objlist;
 struct objtable;

@@ -24,7 +24,7 @@
 #ifndef GTK_MENU_HEADER
 #define GTK_MENU_HEADER
 
-#include "ngraph.h"
+#include "common.h"
 #include "gtk_liststore.h"
 #include "ogra2cairo.h"
 

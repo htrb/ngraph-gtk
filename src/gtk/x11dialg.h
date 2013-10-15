@@ -24,10 +24,11 @@
 #ifndef GTK_DIALOG_HEADER
 #define GTK_DIALOG_HEADER
 
+#include "common.h"
+
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
 
-#include "ngraph.h"
 #include "object.h"
 #include "ogra2cairo.h"
 #include "x11menu.h"
