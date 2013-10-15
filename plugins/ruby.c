@@ -51,7 +51,7 @@ struct ngraph_instance {
 };
 
 struct obj_ids {
-  int *ids;
+  int *ids, num;
   struct objlist *obj;
 };
 
@@ -310,7 +310,7 @@ static VALUE
 str2inst_get_ary(VALUE data1)
 {
   const char *name;
-  int i;
+  int i, n;
   VALUE ary, obj, klass;
   struct obj_ids *obj_ids;
 
@@ -318,8 +318,9 @@ str2inst_get_ary(VALUE data1)
 
   name = ngraph_plugin_get_obj_name(obj_ids->obj);
   klass = get_ngraph_obj(name);
-  ary = rb_ary_new();
-  for (i = 0; obj_ids->ids[i] >= 0; i++) {
+  ary = rb_ary_new2(obj_ids->num);
+  n = obj_ids->num;
+  for (i = 0; i < n; i++) {
     obj = obj_get(klass, INT2FIX(obj_ids->ids[i]), name);
     rb_ary_push(ary, obj);
   }
@@ -354,8 +355,8 @@ obj_get_from_str(VALUE klass, VALUE arg, const char *name)
     rb_raise(rb_eSysStackError, "%s: cannot allocate enough memory.", rb_obj_classname(klass));
   }
   snprintf(buf, l, "%s:%s", name, str);
-  obj_ids.ids = ngraph_plugin_get_instances_by_str(&obj_ids.obj, buf);
-  if (obj_ids.ids == NULL) {
+  obj_ids.obj = ngraph_plugin_get_instances_by_str(buf, &obj_ids.num, &obj_ids.ids);
+  if (obj_ids.obj == NULL) {
     return rb_ary_new();
   }
 
@@ -520,17 +521,22 @@ obj_each(VALUE klass, const char *name)
 {
   struct objlist *nobj;
   int i, n;
-  VALUE inst, id;
+  VALUE inst, id, ary;
 
   nobj = ngraph_plugin_get_object(name);
-  n = ngraph_plugin_get_obj_last_id(nobj);
-  name = ngraph_plugin_get_obj_name(nobj);
+  n = ngraph_plugin_get_obj_last_id(nobj) + 1;
+  if (n < 1) {
+    return klass;
+  }
 
-  for (i = 0; i <= n; i++) {
+  name = ngraph_plugin_get_obj_name(nobj);
+  ary = rb_ary_new2(n);
+  for (i = 0; i < n; i++) {
     id = INT2FIX(i);
     inst = obj_get(klass, id, name);
-    rb_yield(inst);
+    rb_ary_store(ary, i, inst);
   }
+  rb_ary_each(ary);
 
   return klass;
 }
@@ -665,10 +671,43 @@ obj_exist(VALUE klass, const char *name)
 }
 
 static VALUE
+obj_del_from_str(VALUE klass, VALUE arg, const char *name)
+{
+  const char *str;
+  int i, l, *ids, n;
+  char *buf;
+  struct objlist *obj;
+
+  str = StringValueCStr(arg);
+  l = strlen(str) + strlen(name) + 2;
+  buf = malloc(l);
+  if (buf == NULL) {
+    rb_raise(rb_eNoMemError, "%s: cannot allocate enough memory.", rb_obj_classname(klass));
+  }
+  snprintf(buf, l, "%s:%s", name, str);
+  obj = ngraph_plugin_get_instances_by_str(buf, &n, &ids);
+  free(buf);
+  if (obj == NULL) {
+    return klass;
+  }
+
+  for (i = n - 1;  i >= 0; i--) {
+    ngraph_plugin_del(obj, ids[i]);
+  }
+  free(ids);
+
+  return klass;
+}
+
+static VALUE
 obj_del(VALUE klass, VALUE id_value, const char *name)
 {
   int id, n;
   struct objlist *nobj;
+
+  if (RB_TYPE_P(id_value, T_STRING)) {
+    return obj_del_from_str(klass, id_value, name);
+  }
 
   id = NUM2INT(id_value);
   nobj = ngraph_plugin_get_object(name);
@@ -855,7 +894,7 @@ inst_get_obj(VALUE self, const char *field)
   ngraph_returned_value str;
   ngraph_arg carg;
   const char *name;
-  int i, id, *ids;
+  int id, n, *ids;
   struct objlist *obj;
   VALUE klass;
 
@@ -874,15 +913,12 @@ inst_get_obj(VALUE self, const char *field)
     return Qnil;
   }
 
-  ids = ngraph_plugin_get_instances_by_str(&obj, str.str);
-  if (ids == NULL) {
+  obj = ngraph_plugin_get_instances_by_str(str.str, &n, &ids);
+  if (obj == NULL) {
     return Qnil;
   }
 
-  id = ids[0];
-  for (i = 0; ids[i] >= 0; i++) {
-    id = ids[i];
-  }
+  id = ids[n - 1];
   free(ids);
 
   name = ngraph_plugin_get_obj_name(obj);
@@ -1019,8 +1055,8 @@ inst_put_obj(VALUE self, VALUE arg, const char *field)
     break;
   case T_STRING:
     ptr = StringValueCStr(arg);
-    ids = ngraph_plugin_get_instances_by_str(&obj, ptr);
-    if (ids == NULL) {
+    obj = ngraph_plugin_get_instances_by_str(ptr, NULL, &ids);
+    if (obj == NULL) {
       rb_raise(rb_eArgError, "%s#%s: illegal instance representation (%s).", rb_obj_classname(self), field, ptr);
     }
     free(ids);
@@ -1731,8 +1767,8 @@ ngraph_str2inst(VALUE module, VALUE arg)
 
   str = StringValueCStr(arg);
 
-  obj_ids.ids = ngraph_plugin_get_instances_by_str(&obj_ids.obj, str);
-  if (obj_ids.ids == NULL) {
+  obj_ids.obj = ngraph_plugin_get_instances_by_str(str, &obj_ids.num, &obj_ids.ids);
+  if (obj_ids.obj == NULL) {
     return Qnil;
   }
 

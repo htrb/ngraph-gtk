@@ -1,3 +1,7 @@
+2013-10-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* plugins/ruby.c (obj_del_from_str): added.
+
 2013-10-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/oplugin.c (ngraph_plugin_copy): added.

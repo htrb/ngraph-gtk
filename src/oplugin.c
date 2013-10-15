@@ -892,24 +892,29 @@ ngraph_plugin_get_object(const char *name)
   return getobject(name);
 }
 
-int *
-ngraph_plugin_get_instances_by_str(struct objlist **obj, const char *str)
+struct objlist *
+ngraph_plugin_get_instances_by_str(const char *str, int *n, int **ids)
 {
   struct narray iarray;
   int *id_ary, *adata, anum, i, r;
+  struct objlist *obj;
 
-  if (obj == NULL) {
+  if (n) {
+    *n = 0;
+  }
+
+  if (ids == NULL) {
     return NULL;
   }
 
-  *obj = NULL;
+  *ids = NULL;
 
   if (str == NULL) {
     return NULL;
   }
 
   arrayinit(&iarray,sizeof(int));
-  r = chkobjilist((char *) str, obj, &iarray, TRUE, NULL);
+  r = chkobjilist((char *) str, &obj, &iarray, TRUE, NULL);
   if (r) {
     arraydel(&iarray);
     return NULL;
@@ -930,7 +935,13 @@ ngraph_plugin_get_instances_by_str(struct objlist **obj, const char *str)
   id_ary[i] = -1;
   arraydel(&iarray);
 
-  return id_ary;
+  if (n) {
+    *n = anum;
+  }
+
+  *ids = id_ary;
+
+  return obj;
 }
 
 int
