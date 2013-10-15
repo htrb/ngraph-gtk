@@ -32,7 +32,6 @@
 #include <limits.h>
 #include <glib.h>
 
-#include "ngraph.h"
 #include "nstring.h"
 #include "object.h"
 #include "mathfn.h"

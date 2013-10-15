@@ -26,7 +26,6 @@
 
 #include <stdlib.h>
 #include <ctype.h>
-#include "ngraph.h"
 #include "object.h"
 
 #define NAME "double"

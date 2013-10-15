@@ -25,7 +25,6 @@
 
 #include <math.h>
 
-#include "ngraph.h"
 #include "ntime.h"
 #include "object.h"
 #include "axis.h"

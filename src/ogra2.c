@@ -27,7 +27,6 @@
 #include <ctype.h>
 #include <glib.h>
 
-#include "ngraph.h"
 #include "object.h"
 
 #define NAME "gra2"

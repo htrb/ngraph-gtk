@@ -16,7 +16,6 @@
 #include "object.h"
 #include "gra.h"
 #include "main.h"
-#include "ngraph.h"
 #include "nstring.h"
 #include "object.h"
 #include "ioutil.h"

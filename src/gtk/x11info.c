@@ -23,7 +23,6 @@
 
 #include "gtk_common.h"
 
-#include "ngraph.h"
 #include "object.h"
 
 #include "gtk_subwin.h"

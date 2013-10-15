@@ -30,7 +30,6 @@
 #include <signal.h>
 #include <time.h>
 
-#include "ngraph.h"
 #include "nstring.h"
 #include "object.h"
 #include "ioutil.h"

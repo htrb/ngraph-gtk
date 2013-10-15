@@ -30,7 +30,6 @@
 #include <string.h>
 #include <glib.h>
 
-#include "ngraph.h"
 #include "object.h"
 #include "ioutil.h"
 #include "ogra.h"

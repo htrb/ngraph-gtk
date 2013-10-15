@@ -28,7 +28,6 @@
 #include <math.h>
 #include <glib.h>
 
-#include "ngraph.h"
 #include "object.h"
 #include "gra.h"
 #include "spline.h"

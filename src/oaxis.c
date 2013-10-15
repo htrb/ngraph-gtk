@@ -10,7 +10,6 @@
 
 #include "common.h"
 
-#include "ngraph.h"
 #include "nhash.h"
 #include "ntime.h"
 #include "ioutil.h"

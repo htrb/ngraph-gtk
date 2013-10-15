@@ -38,7 +38,6 @@
 #include <unistd.h>
 
 #include "strconv.h"
-#include "ngraph.h"
 #include "mathfn.h"
 #include "ntime.h"
 #include "object.h"

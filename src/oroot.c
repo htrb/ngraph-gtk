@@ -28,7 +28,6 @@
 #include <ctype.h>
 #include <string.h>
 #include <glib.h>
-#include "ngraph.h"
 #include "object.h"
 #include "nstring.h"
 #include "oroot.h"

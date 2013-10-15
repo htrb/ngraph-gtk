@@ -29,7 +29,6 @@
 #include <string.h>
 #include <glib.h>
 
-#include "ngraph.h"
 #include "object.h"
 #include "mathcode.h"
 #include "mathfn.h"

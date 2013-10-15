@@ -28,13 +28,5 @@
 
 #include <glib.h>
 
-#define MARK_TYPE_NUM 90
-
-int printfconsole(char *fmt,...);
-int putconsole(const char *s);
-int printfconsole(char *fmt,...);
-void displaydialog(const char *str);
-void displaystatus(const char *str);
-void pausewindowconsole(char *title,char *str);
 
 #endif	/* NGRAPH_HEADER */

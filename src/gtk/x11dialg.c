@@ -30,7 +30,6 @@
 #include <limits.h>
 #include <ctype.h>
 
-#include "ngraph.h"
 #include "object.h"
 #include "mathfn.h"
 #include "nstring.h"

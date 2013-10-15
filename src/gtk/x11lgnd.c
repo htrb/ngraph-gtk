@@ -33,7 +33,6 @@
 #include "strconv.h"
 #include "ioutil.h"
 
-#include "ngraph.h"
 #include "object.h"
 #include "gra.h"
 #include "ogra2cairo.h"

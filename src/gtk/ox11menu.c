@@ -37,7 +37,6 @@
 #include <fcntl.h>
 #include <errno.h>
 
-#include "ngraph.h"
 #include "object.h"
 #include "odraw.h"
 #include "ioutil.h"

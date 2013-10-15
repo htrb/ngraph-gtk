@@ -29,7 +29,6 @@
 #include <unistd.h>
 #include <math.h>
 
-#include "ngraph.h"
 #include "object.h"
 #include "gra.h"
 #include "ofile.h"

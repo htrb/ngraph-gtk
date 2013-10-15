@@ -16,7 +16,6 @@
 #include <cairo/cairo-svg.h>
 
 #include "mathfn.h"
-#include "ngraph.h"
 #include "object.h"
 #include "ioutil.h"
 

@@ -128,7 +128,6 @@ static int MultiLine = FALSE;
 
 #define USE_HASH 1
 
-#include "ngraph.h"
 #include "object.h"
 #include "nstring.h"
 #include "ioutil.h"

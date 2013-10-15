@@ -33,7 +33,6 @@
 #include <glib.h>
 #include <unistd.h>
 
-#include "ngraph.h"
 #include "object.h"
 #include "nstring.h"
 #include "ntime.h"

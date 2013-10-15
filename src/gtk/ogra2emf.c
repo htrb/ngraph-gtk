@@ -13,7 +13,6 @@
 
 #include "gtk_common.h"
 
-#include "ngraph.h"
 #include "object.h"
 #include "nstring.h"
 #include "ioutil.h"

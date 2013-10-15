@@ -30,7 +30,6 @@
 #include <math.h>
 #include <glib.h>
 
-#include "ngraph.h"
 #include "nstring.h"
 #include "ioutil.h"
 #include "object.h"

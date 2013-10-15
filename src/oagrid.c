@@ -26,7 +26,7 @@
 #include <math.h>
 #include <string.h>
 #include <stdio.h>
-#include "ngraph.h"
+#include "common.h"
 #include "object.h"
 #include "mathfn.h"
 #include "gra.h"

@@ -27,7 +27,6 @@
 #include <ctype.h>
 #include <string.h>
 
-#include "ngraph.h"
 #include "object.h"
 #include "oiarray.h"
 

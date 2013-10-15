@@ -45,7 +45,6 @@ char *DOCDIR, *NDATADIR, *ADDINDIR, *LIBDIR, *PLUGINDIR, *CONFDIR, *LOCALEDIR, *
 #endif	/* WINDOWS */
 
 #include "dir_defs.h"
-#include "ngraph.h"
 #include "object.h"
 #include "ioutil.h"
 #include "nstring.h"

@@ -28,7 +28,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "ngraph.h"
 #include "object.h"
 #include "ioutil.h"
 #include "nstring.h"

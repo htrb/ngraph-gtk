@@ -4,7 +4,6 @@
 #include <ctype.h>
 #include <string.h>
 
-#include "ngraph.h"
 #include "object.h"
 
 #define NAME "regexp"

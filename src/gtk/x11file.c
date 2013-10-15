@@ -38,7 +38,6 @@
 #include "gtk_combo.h"
 #include "gtk_widget.h"
 
-#include "ngraph.h"
 #include "shell.h"
 #include "object.h"
 #include "ioutil.h"

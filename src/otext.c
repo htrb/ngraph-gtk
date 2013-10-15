@@ -30,7 +30,6 @@
 
 #include "common.h"
 
-#include "ngraph.h"
 #include "object.h"
 #include "gra.h"
 #include "oroot.h"

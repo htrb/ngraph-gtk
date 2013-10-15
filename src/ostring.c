@@ -25,7 +25,6 @@
 
 #include <stdlib.h>
 #include <ctype.h>
-#include "ngraph.h"
 #include "object.h"
 #include "nstring.h"
 

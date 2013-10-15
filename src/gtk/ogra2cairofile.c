@@ -19,7 +19,6 @@
 #endif	/* CAIRO_HAS_WIN32_SURFACE */
 
 #include "mathfn.h"
-#include "ngraph.h"
 #include "object.h"
 #include "ioutil.h"
 
