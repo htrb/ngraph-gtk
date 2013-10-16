@@ -1,3 +1,17 @@
+2013-10-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/oplugin.c (load_plugin): check interrupt function.
+	(plugin_done): call interrupt function when the plugin is locked.
+
+	* plugins/ruby.c (obj_get_from_str, obj_del_from_str): use
+	"rb_sprintf()".
+	(ngraph_plugin_exec_ruby): show detail information aobut the
+	error.
+	(ngraph_plugin_interrupt_ruby): added.
+
+	* src/gtk/ogra2x11.c (gra2gtk): argument of the "fullscreen" field
+	is boolean.
+
 2013-10-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ngraph_plugin.h: renamed to "ngraph.h".

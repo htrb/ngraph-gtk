@@ -343,19 +343,12 @@ static VALUE
 obj_get_from_str(VALUE klass, VALUE arg, const char *name)
 {
   const char *str;
-  int l;
-  char *buf;
   struct obj_ids obj_ids;
-  VALUE ary;
+  VALUE ary, inst;
 
   str = StringValueCStr(arg);
-  l = strlen(str) + strlen(name) + 2;
-  buf = alloca(l);
-  if (buf == NULL) {
-    rb_raise(rb_eSysStackError, "%s: cannot allocate enough memory.", rb_obj_classname(klass));
-  }
-  snprintf(buf, l, "%s:%s", name, str);
-  obj_ids.obj = ngraph_get_instances_by_str(buf, &obj_ids.num, &obj_ids.ids);
+  inst = rb_sprintf("%s:%s", name, str);
+  obj_ids.obj = ngraph_get_instances_by_str(StringValueCStr(inst), &obj_ids.num, &obj_ids.ids);
   if (obj_ids.obj == NULL) {
     return rb_ary_new();
   }
@@ -674,19 +667,13 @@ static VALUE
 obj_del_from_str(VALUE klass, VALUE arg, const char *name)
 {
   const char *str;
-  int i, l, *ids, n;
-  char *buf;
+  int i, *ids, n;
   struct objlist *obj;
+  VALUE inst;
 
   str = StringValueCStr(arg);
-  l = strlen(str) + strlen(name) + 2;
-  buf = malloc(l);
-  if (buf == NULL) {
-    rb_raise(rb_eNoMemError, "%s: cannot allocate enough memory.", rb_obj_classname(klass));
-  }
-  snprintf(buf, l, "%s:%s", name, str);
-  obj = ngraph_get_instances_by_str(buf, &n, &ids);
-  free(buf);
+  inst = rb_sprintf("%s:%s", name, str);
+  obj = ngraph_get_instances_by_str(StringValueCStr(inst), &n, &ids);
   if (obj == NULL) {
     return klass;
   }
@@ -1824,13 +1811,24 @@ ngraph_plugin_exec_ruby(struct ngraph_plugin *plugin, int argc, char *argv[])
     rb_ary_push(r_argv, rb_tainted_str_new2(argv[i]));
   }
 
+  ruby_script(argv[1]);
   rb_load_protect(rb_str_new2(argv[1]), 1, &state);
   if (state) {
-    VALUE errinfo, errstr;
+    VALUE errinfo, errstr, errat;
+    int n, i;
+
     errinfo = rb_errinfo();
     errstr = rb_obj_as_string(errinfo);
-
     ngraph_err_puts(StringValueCStr(errstr));
+    errat = rb_funcall(errinfo, rb_intern("backtrace"), 0);
+    if (! NIL_P(errat)) {
+      n = RARRAY_LEN(errat);
+      for (i = 0; i < n; i ++) {
+	errstr = rb_str_new2("\tfrom ");
+	rb_str_append(errstr, rb_ary_entry(errat, i));
+	ngraph_err_puts(StringValueCStr(errstr));
+      }
+    }
   }
   rb_gc_start();
 
@@ -1844,5 +1842,13 @@ ngraph_plugin_close_ruby(struct ngraph_plugin *plugin)
     ruby_finalize();
     NgraphClass = 0;
     NgraphModule = 0;
+  }
+}
+
+void
+ngraph_plugin_interrupt_ruby(struct ngraph_plugin *plugin)
+{
+  if (Initialized) {
+    rb_exit(0);
   }
 }

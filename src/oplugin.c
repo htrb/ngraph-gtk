@@ -43,7 +43,7 @@ struct ngraph_plugin {
   GModule *module;
   ngraph_plugin_exec exec;
   ngraph_plugin_open open;
-  ngraph_plugin_close close;
+  ngraph_plugin_close close, interrupt;
   int deleted;
   void *user_data;
   char *name;
@@ -66,6 +66,7 @@ get_symbol(GModule *module, const char *format, const char *name, gpointer *symb
   r = g_module_symbol(module, func, symbol);
   g_free(func);
   if (! r || symbol == NULL) {
+    putstderr(g_module_error());
     return 1;
   }
 
@@ -91,7 +92,7 @@ load_plugin(struct objlist *obj, N_VALUE *inst, const char *name, struct ngraph_
   GModule *module;
   ngraph_plugin_exec np_exec;
   ngraph_plugin_open np_open;
-  ngraph_plugin_close np_close;
+  ngraph_plugin_close np_close, np_interrupt;
   int r, i, loaded;
   char *basename, *module_file, *plugin_path;
   struct objlist *sysobj;
@@ -126,6 +127,7 @@ load_plugin(struct objlist *obj, N_VALUE *inst, const char *name, struct ngraph_
   module = g_module_open(module_file, 0);
   if (module == NULL) {
     error2(obj, ERRLOAD, name);
+    putstderr(g_module_error());
     goto ErrorExit;
   }
 
@@ -150,6 +152,9 @@ load_plugin(struct objlist *obj, N_VALUE *inst, const char *name, struct ngraph_
     goto ErrorExit;
   }
 
+  np_interrupt = NULL;
+  r = get_symbol(module, "ngraph_plugin_interrupt_%s", basename, (gpointer *) &np_interrupt);
+
   plugin->name = g_strdup(basename);
   if (plugin->name == NULL) {
     error(obj, ERRMEM);
@@ -166,6 +171,7 @@ load_plugin(struct objlist *obj, N_VALUE *inst, const char *name, struct ngraph_
   plugin->exec = np_exec;
   plugin->open = np_open;
   plugin->close = np_close;
+  plugin->interrupt = np_interrupt;
 
   put_read_only_str(obj, inst, "module_name", basename);
   put_read_only_str(obj, inst, "module_file", module_file);
@@ -334,6 +340,9 @@ plugin_done(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **
   }
 
   if (shlocal->lock) {
+    if (plugin->interrupt) {
+      plugin->interrupt(plugin);
+    }
     plugin->deleted = TRUE;
   } else {
     close_plugin(obj, inst, plugin);
@@ -590,7 +599,7 @@ allocate_sarray(ngraph_arg *arg)
 }
 
 int
-ngraph_plugin_putobj(struct objlist *obj, const char *vname, int id, ngraph_value *val)
+ngraph_putobj(struct objlist *obj, const char *vname, int id, ngraph_value *val)
 {
   int r, type;
   void *valp;
@@ -801,7 +810,7 @@ free_obj_arg(const char **ary, struct objlist *obj, const char *vname, ngraph_ar
 }
 
 int
-ngraph_plugin_getobj(struct objlist *obj, const char *vname, int id, ngraph_arg *arg, ngraph_returned_value *val)
+ngraph_getobj(struct objlist *obj, const char *vname, int id, ngraph_arg *arg, ngraph_returned_value *val)
 {
   int r, type, argc;
   const char **argv;
@@ -865,7 +874,7 @@ ngraph_plugin_getobj(struct objlist *obj, const char *vname, int id, ngraph_arg 
 }
 
 int
-ngraph_plugin_exeobj(struct objlist *obj, const char *vname, int id, ngraph_arg *arg)
+ngraph_exeobj(struct objlist *obj, const char *vname, int id, ngraph_arg *arg)
 {
   int r, argc, type;
   const char **argv;
@@ -886,13 +895,13 @@ ngraph_plugin_exeobj(struct objlist *obj, const char *vname, int id, ngraph_arg 
 }
 
 struct objlist *
-ngraph_plugin_get_object(const char *name)
+ngraph_get_object(const char *name)
 {
   return getobject(name);
 }
 
 struct objlist *
-ngraph_plugin_get_instances_by_str(const char *str, int *n, int **ids)
+ngraph_get_instances_by_str(const char *str, int *n, int **ids)
 {
   struct narray iarray;
   int *id_ary, *adata, anum, i, r;
@@ -944,61 +953,61 @@ ngraph_plugin_get_instances_by_str(const char *str, int *n, int **ids)
 }
 
 int
-ngraph_plugin_get_id_by_oid(struct objlist *obj, int oid)
+ngraph_get_id_by_oid(struct objlist *obj, int oid)
 {
   return chkobjoid(obj, oid);
 }
 
 int
-ngraph_plugin_move_top(struct objlist *obj, int id)
+ngraph_move_top(struct objlist *obj, int id)
 {
   return movetopobj(obj, id);
 }
 
 int
-ngraph_plugin_move_last(struct objlist *obj, int id)
+ngraph_move_last(struct objlist *obj, int id)
 {
   return movelastobj(obj, id);
 }
 
 int
-ngraph_plugin_move_up(struct objlist *obj, int id)
+ngraph_move_up(struct objlist *obj, int id)
 {
   return moveupobj(obj, id);
 }
 
 int
-ngraph_plugin_move_down(struct objlist *obj, int id)
+ngraph_move_down(struct objlist *obj, int id)
 {
   return movedownobj(obj, id);
 }
 
 int
-ngraph_plugin_exchange(struct objlist *obj, int id1, int id2)
+ngraph_exchange(struct objlist *obj, int id1, int id2)
 {
   return exchobj(obj, id1, id2);
 }
 
 int
-ngraph_plugin_copy(struct objlist *obj, int dist, int src)
+ngraph_copy(struct objlist *obj, int dist, int src)
 {
   return copy_obj_field(obj, dist, src, NULL);
 }
 
 int
-ngraph_plugin_new(struct objlist *obj)
+ngraph_new(struct objlist *obj)
 {
   return newobj(obj);
 }
 
 int
-ngraph_plugin_del(struct objlist *obj, int id)
+ngraph_del(struct objlist *obj, int id)
 {
   return delobj(obj, id);
 }
 
 int
-ngraph_plugin_exist(struct objlist *obj, int id)
+ngraph_exist(struct objlist *obj, int id)
 {
   int last;
 
@@ -1015,109 +1024,109 @@ ngraph_plugin_exist(struct objlist *obj, int id)
 }
 
 const char *
-ngraph_plugin_get_obj_name(struct objlist *obj)
+ngraph_get_obj_name(struct objlist *obj)
 {
   return chkobjectname(obj);
 }
 
 int
-ngraph_plugin_get_obj_field_num(struct objlist *obj)
+ngraph_get_obj_field_num(struct objlist *obj)
 {
   return chkobjfieldnum(obj);
 }
 
 const char *
-ngraph_plugin_get_obj_field(struct objlist *obj, int i)
+ngraph_get_obj_field(struct objlist *obj, int i)
 {
   return chkobjfieldname(obj, i);
 }
 
 int
-ngraph_plugin_get_obj_field_permission(struct objlist *obj, const char *field)
+ngraph_get_obj_field_permission(struct objlist *obj, const char *field)
 {
   return chkobjperm(obj, field);
 }
 
 int
-ngraph_plugin_get_obj_field_type(struct objlist *obj, const char *field)
+ngraph_get_obj_field_type(struct objlist *obj, const char *field)
 {
   return chkobjfieldtype(obj, field);
 }
 
 const char *
-ngraph_plugin_get_obj_field_args(struct objlist *obj, const char *field)
+ngraph_get_obj_field_args(struct objlist *obj, const char *field)
 {
   return chkobjarglist(obj, field);
 }
 
 struct objlist *
-ngraph_plugin_get_obj_parent(struct objlist *obj)
+ngraph_get_obj_parent(struct objlist *obj)
 {
   return chkobjparent(obj);
 }
 
 struct objlist *
-ngraph_plugin_get_obj_root(void)
+ngraph_get_obj_root(void)
 {
   return chkobjroot();
 }
 
 const char *
-ngraph_plugin_get_obj_version(struct objlist *obj)
+ngraph_get_obj_version(struct objlist *obj)
 {
   return chkobjver(obj);
 }
 
 int
-ngraph_plugin_get_obj_id(struct objlist *obj)
+ngraph_get_obj_id(struct objlist *obj)
 {
   return chkobjectid(obj);
 }
 
 int
-ngraph_plugin_get_obj_size(struct objlist *obj)
+ngraph_get_obj_size(struct objlist *obj)
 {
   return chkobjsize(obj);
 }
 
 int
-ngraph_plugin_get_obj_current_id(struct objlist *obj)
+ngraph_get_obj_current_id(struct objlist *obj)
 {
   return chkobjcurinst(obj);
 }
 
 int
-ngraph_plugin_get_obj_last_id(struct objlist *obj)
+ngraph_get_obj_last_id(struct objlist *obj)
 {
   return chkobjlastinst(obj);
 }
 
 struct objlist *
-ngraph_plugin_get_obj_next(struct objlist *obj)
+ngraph_get_obj_next(struct objlist *obj)
 {
   return obj->next;
 }
 
 struct objlist *
-ngraph_plugin_get_obj_child(struct objlist *obj)
+ngraph_get_obj_child(struct objlist *obj)
 {
   return obj->child;
 }
 
 int
-ngraph_plugin_puts(const char *s)
+ngraph_puts(const char *s)
 {
   return putstdout(s);
 }
 
 int
-ngraph_plugin_err_puts(const char *s)
+ngraph_err_puts(const char *s)
 {
   return putstderr(s);
 }
 
 void
-ngraph_plugin_sleep(int t)
+ngraph_sleep(int t)
 {
   nsleep(t);
 }

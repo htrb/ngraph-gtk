@@ -974,7 +974,7 @@ static struct objtable gra2gtk[] = {
   {"flush", NVFUNC, NREAD | NEXEC, gtkflush, "", 0},
   {"clear", NVFUNC, NREAD | NEXEC, gtkclear, "", 0},
   {"present", NVFUNC, NREAD | NEXEC, gtkpresent, "", 0},
-  {"fullscreen", NVFUNC, NREAD | NEXEC, gtkfullscreen, "i", 0},
+  {"fullscreen", NVFUNC, NREAD | NEXEC, gtkfullscreen, "b", 0},
   {"BR", NINT, NREAD | NWRITE, gtkbr, NULL, 0},
   {"BG", NINT, NREAD | NWRITE, gtkbg, NULL, 0},
   {"BB", NINT, NREAD | NWRITE, gtkbb, NULL, 0},
