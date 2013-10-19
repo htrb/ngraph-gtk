@@ -42,7 +42,7 @@ text_obj.each {|str|
     f.puts('\]')
     f.puts('\end{document}')
   }
-  
+
   menu.echo(`#{TEX_COMMAND} #{TEX_OPTION} "#{tex_file}"`)
   menu.echo("---------------")
   menu.echo
@@ -64,7 +64,7 @@ text_obj.each {|str|
 
   gra_file = "#{Dir.pwd}/#{merge_name}.gra"
   fig2gra = Fig2Gra.new
-  fig2gra.convert(fig_file, gra_file) 
+  fig2gra.convert(fig_file, gra_file)
   unless (FileTest.readable?(gra_file))
     Ngraph.err_puts("Faital error occurred while executing fig2gra.")
     File.delete(*Dir.glob("#{TEX_FILE}.*"))

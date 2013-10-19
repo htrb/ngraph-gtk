@@ -1808,17 +1808,21 @@ ngraph_plugin_exec_ruby(struct ngraph_plugin *plugin, int argc, char *argv[])
   if (state) {
     VALUE errinfo, errstr, errat;
     int n, i;
+    const char *cstr;
 
     errinfo = rb_errinfo();
     errstr = rb_obj_as_string(errinfo);
-    ngraph_err_puts(StringValueCStr(errstr));
-    errat = rb_funcall(errinfo, rb_intern("backtrace"), 0);
-    if (! NIL_P(errat)) {
-      n = RARRAY_LEN(errat);
-      for (i = 0; i < n; i ++) {
-	errstr = rb_str_new2("\tfrom ");
-	rb_str_append(errstr, rb_ary_entry(errat, i));
-	ngraph_err_puts(StringValueCStr(errstr));
+    cstr = StringValueCStr(errstr);
+    if (strcmp(cstr, "exit")) {
+      ngraph_err_puts(cstr);
+      errat = rb_funcall(errinfo, rb_intern("backtrace"), 0);
+      if (! NIL_P(errat)) {
+	n = RARRAY_LEN(errat);
+	for (i = 0; i < n; i ++) {
+	  errstr = rb_str_new2("\tfrom ");
+	  rb_str_append(errstr, rb_ary_entry(errat, i));
+	  ngraph_err_puts(StringValueCStr(errstr));
+	}
       }
     }
   }

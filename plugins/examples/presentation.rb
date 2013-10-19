@@ -161,7 +161,7 @@ class Presentation
     path
   end
 
-  def title_add(str) 
+  def title_add(str)
     text = Ngraph::Text.new
     text.name = "TITLE"
     text.text = str

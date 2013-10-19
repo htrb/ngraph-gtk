@@ -18,14 +18,15 @@ end
 system = Ngraph::System[0]
 menu = Ngraph::Menu[0]
 gra = Ngraph::Gra.current
+gra = Ngraph::Gra[0] unless (gra)
 
-t = nil
-Ngraph::Dialog.new {|dialog|
+t = Ngraph::Dialog.new {|dialog|
   dialog.title = "Countdown timer"
   dialog.caption = "Countdown (minutes):"
-  t = dialog.integer_entry(1, 120, 1, 30) * 60
+  dialog.integer_entry(1, 120, 1, 30)
 }
 exit unless (t)
+t *=  60
 
 Ngraph::Text.del("timer")
 

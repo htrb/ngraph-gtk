@@ -117,7 +117,7 @@ class Ngp2
     tmpfile = @system.temp_file
 
     case @format
-#===================================================================== = 
+#======================================================================
 # options
 #
 # tmpfile : temporary file (automatically deleted).
@@ -145,7 +145,7 @@ class Ngp2
     else
       save_gra("#{ngp_name}.gra")
     end
-#===================================================================== = 
+#======================================================================
     @system.unlink_temp_file(tmpfile)
 
     Dir.chdir(@pwd) if (@chdir)
