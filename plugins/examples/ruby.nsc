@@ -1,0 +1,5 @@
+new plugin
+plugin::open ruby
+plugin::exec $*
+plugin::close
+del system
