@@ -1327,21 +1327,44 @@ inst_exe_void_func(VALUE self, const char *field)
   return self;
 }
 
+static VALUE
+get_array_arg(VALUE self, const char *field, VALUE arg, int *num)
+{
+  int n;
+  VALUE ary, val;
+
+  if (NIL_P(arg)) {
+    *num = 0;
+    return Qnil;
+  }
+
+  if (!RB_TYPE_P(arg, T_ARRAY)) {
+    rb_raise(rb_eArgError, "%s#%s: the argument must be an Array", rb_obj_classname(self), field);
+  }
+
+  n = RARRAY_LEN(arg);
+  ary = arg;
+
+  if (n == 1) {
+    val = rb_ary_entry(arg, 0);
+    if (RB_TYPE_P(val, T_ARRAY)) {
+      ary = val;
+      n = RARRAY_LEN(val);
+    }
+  }
+
+  *num = n;
+  return ary;
+}
+
 static struct ngraph_array *
 allocate_iarray(VALUE self, volatile VALUE *tmpstr, VALUE arg, const char *field)
 {
   struct ngraph_array *narray;
   int i, num;
+  VALUE ary;
 
-  if (NIL_P(arg)) {
-    num = 0;
-  } else {
-    if (!RB_TYPE_P(arg, T_ARRAY)) {
-      rb_raise(rb_eArgError, "%s#%s: the argument must be an Array", rb_obj_classname(self), field);
-    }
-
-    num = RARRAY_LEN(arg);
-  }
+  ary = get_array_arg(self, field, arg, &num);
 
   narray = rb_alloc_tmp_buffer(tmpstr, sizeof(*narray) + sizeof(union array) * num);
   if (narray == NULL) {
@@ -1350,7 +1373,7 @@ allocate_iarray(VALUE self, volatile VALUE *tmpstr, VALUE arg, const char *field
 
   narray->num = num;
   for (i = 0; i < num; i++) {
-    narray->ary[i].i = NUM2INT(rb_ary_entry(arg, i));
+    narray->ary[i].i = NUM2INT(rb_ary_entry(ary, i));
   }
 
   return narray;
@@ -1361,16 +1384,9 @@ allocate_darray(VALUE self, volatile VALUE *tmpstr, VALUE arg, const char *field
 {
   struct ngraph_array *narray;
   int i, num;
+  VALUE ary;
 
-  if (NIL_P(arg)) {
-    num = 0;
-  } else {
-    if (!RB_TYPE_P(arg, T_ARRAY)) {
-      rb_raise(rb_eArgError, "%s#%s: the argument must be an Array", rb_obj_classname(self), field);
-    }
-
-    num = RARRAY_LEN(arg);
-  }
+  ary = get_array_arg(self, field, arg, &num);
 
   narray = rb_alloc_tmp_buffer(tmpstr, sizeof(*narray) + sizeof(union array) * num);
   if (narray == NULL) {
@@ -1379,7 +1395,7 @@ allocate_darray(VALUE self, volatile VALUE *tmpstr, VALUE arg, const char *field
 
   narray->num = num;
   for (i = 0; i < num; i++) {
-    narray->ary[i].d = NUM2DBL(rb_ary_entry(arg, i));
+    narray->ary[i].d = NUM2DBL(rb_ary_entry(ary, i));
   }
 
   return narray;
@@ -1391,21 +1407,18 @@ allocate_sarray(VALUE self, volatile VALUE *tmpstr, VALUE arg, const char *field
   struct ngraph_array *narray;
   int i, num;
   VALUE str;
+  VALUE ary;
 
-  if (NIL_P(arg)) {
-    num = 0;
-  } else {
-    if (!RB_TYPE_P(arg, T_ARRAY)) {
-      rb_raise(rb_eArgError, "%s#%s: the argument must be an Array", rb_obj_classname(self), field);
-    }
+  ary = get_array_arg(self, field, arg, &num);
 
-    num = RARRAY_LEN(arg);
-  }
   narray = rb_alloc_tmp_buffer(tmpstr, sizeof(*narray) + sizeof(union array) * num);
+  if (narray == NULL) {
+    return NULL;
+  }
 
   narray->num = num;
   for (i = 0; i < num; i++) {
-    str = rb_ary_entry(arg, i);
+    str = rb_ary_entry(ary, i);
     narray->ary[i].str = StringValueCStr(str);
   }
 
@@ -1548,27 +1561,6 @@ obj_func_obj(VALUE self, VALUE argv, const char *field, int type)
   }
 
   return val;
-}
-
-static VALUE
-exe_void_func_argv(VALUE self, VALUE argv, const char *field)
-{
-  struct ngraph_instance *inst;
-  ngraph_arg *carg;
-  VALUE tmpstr;
-
-  inst = check_id(self);
-  if (inst == NULL) {
-    return Qnil;
-  }
-  carg = allocate_sarray(self, &tmpstr, argv, field);
-  inst->rcode = ngraph_exeobj(inst->obj, field, inst->id, carg);
-  rb_free_tmp_buffer(&tmpstr);
-  if (inst->rcode < 0) {
-    return Qnil;
-  }
-
-  return self;
 }
 
 static VALUE

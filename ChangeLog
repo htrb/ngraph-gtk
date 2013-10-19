@@ -1,3 +1,9 @@
+2013-10-19  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* plugins/ruby.c (get_array_arg): added.
+	(allocate_iarray, allocate_darray, allocate_sarray): use
+	"get_array_arg()".
+
 2013-10-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/oplugin.c (load_plugin): check interrupt function.

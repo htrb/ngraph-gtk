@@ -64,7 +64,6 @@ class NgraphObj
 
   FUNC_FIELD_COMMON = <<-EOF
 	  struct ngraph_instance *inst;
-	  ngraph_arg *carg;
 
 	  inst = check_id(self);
 	  if (inst == NULL) {
@@ -388,15 +387,27 @@ class NgraphObj
 
   def check_args(ary)
     n = ary.size - 4
-    return [-2, []] if (n == 0)
-    return [0, []] if (ary[3] == "void")
-    return [-1, ary[3, n]]
+    case (n)
+    when 0
+      [-2, []]
+    when 1
+      if (ary[3][-1] == "]")
+        [-2, ary[3, n]]
+      elsif (ary[3] == "void")
+        [0, []]
+      else
+        [-1, ary[3, n]]
+      end
+    else
+      [-1, ary[3, n]]
+    end
   end
 
   def create_func_type(func, args)
-    @func += ("static VALUE\n#{func}(int argc, VALUE *argv, VALUE self)\n{\n")
-    @func += ("  VALUE arg[#{args.size}];\n")
-    @func += ("  VALUE tmpstr;\n") if (args.find {|s| s[-1] == "]"})
+    @func += "static VALUE\n#{func}(int argc, VALUE *argv, VALUE self)\n{\n"
+    @func += "  VALUE arg[#{args.size}];\n"
+    @func += "  VALUE tmpstr;\n" if (args.find {|s| s[-1] == "]"})
+    @func += "  ngraph_arg *carg;\n"
   end
 
   def create_arguments(field, args)
@@ -446,14 +457,35 @@ class NgraphObj
     }
   end
 
-  def create_val_func_with_argv(func, field, comv)
-    @func += ("static VALUE\n#{func}(VALUE self, VALUE argv)\n{")
+  def add_arg_array(arg, field)
+    unless (arg)
+      @func += %Q!  carg = allocate_sarray(self, &tmpstr, argv, "#{field}");\n!
+      return
+    end
+
+    case (arg)
+    when "int[]"
+      @func += %Q!  carg.ary[0].ary = allocate_iarray(self, &tmpstr, argv, "#{field}");\n!
+    when "double[]"
+      @func += %Q!  carg.ary[0].ary = allocate_darray(self, &tmpstr, argv, "#{field}");\n!
+    when "char*[]"
+      @func += %Q!  carg.ary[0].ary = allocate_sarray(self, &tmpstr, argv, "#{field}");\n!
+    else
+      @func += %Q!  carg.ary[0].ary = allocate_sarray(self, &tmpstr, argv, "#{field}");\n!
+    end
+    @func += "  carg.num = 1;\n"
+  end
+
+  def create_val_func_with_argv(func, field, args, comv)
+    varg = (args.size == 0)
+    @func += ("static VALUE\n#{func}(VALUE self, VALUE argv)\n{\n")
     @func += ("  VALUE tmpstr;\n")
     @func += (FUNC_FIELD_VAL)
+    @func += "  ngraph_arg #{(varg) ? '*' : ''}carg;\n"
     @func += (FUNC_FIELD_COMMON)
+    add_arg_array(args[0], field)
     @func += <<-EOF
-	  carg = allocate_sarray(self, &tmpstr, argv, "#{field}");
-	  inst->rcode = ngraph_getobj(inst->obj, "#{field}", inst->id, carg, &rval);
+	  inst->rcode = ngraph_getobj(inst->obj, "#{field}", inst->id, #{varg ? '' : '&'}carg, &rval);
 	  rb_free_tmp_buffer(&tmpstr);
 	  if (inst->rcode < 0) {
 	    return Qnil;
@@ -464,24 +496,44 @@ class NgraphObj
 	EOF
   end
 
-  def create_void_func_with_argv(func, field)
+  def create_void_func_with_argv(func, field, args)
+    varg = (args.size == 0)
     @func += <<-EOF
 	static VALUE
 	#{func}(VALUE self, VALUE argv)
 	{
-	  return exe_void_func_argv(self, argv, "#{field}");
+	  struct ngraph_instance *inst;
+	  ngraph_arg #{(varg) ? '*' : ''}carg;
+	  VALUE tmpstr;
+
+	  inst = check_id(self);
+	  if (inst == NULL) {
+	    return Qnil;
+	  }
+	EOF
+    add_arg_array(args[0], field)
+    @func += <<-EOF
+	  inst->rcode = ngraph_exeobj(inst->obj, "#{field}", inst->id, #{varg ? '' : '&'}carg);
+	  rb_free_tmp_buffer(&tmpstr);
+	  if (inst->rcode < 0) {
+	    return Qnil;
+	  }
+
+	  return self;
 	}
 	EOF
   end
 
-  def create_array_func_with_argv(func, field, comv)
+  def create_array_func_with_argv(func, field, args, comv)
+    varg = (args.size == 0)
     @func += ("static VALUE\n#{func}(VALUE self, VALUE argv)\n{")
     @func += ("  VALUE tmpstr;\n")
     @func += (FUNC_FIELD_ARY)
+    @func += "  ngraph_arg #{(varg) ? '*' : ''}carg;\n"
     @func += (FUNC_FIELD_COMMON)
+    add_arg_array(args[0], field)
     @func += <<-EOF
-	  carg = allocate_sarray(self, &tmpstr, argv, "#{field}");
-	  inst->rcode = ngraph_getobj(inst->obj, "#{field}", inst->id, carg, &rval);
+	  inst->rcode = ngraph_getobj(inst->obj, "#{field}", inst->id, #{varg ? '' : '&'}carg, &rval);
 	  rb_free_tmp_buffer(&tmpstr);
 	  if (inst->rcode < 0) {
 	    return Qnil;
@@ -571,19 +623,19 @@ class NgraphObj
     create_val_func_with_args(func, field, args, 'rb_tainted_str_new2(rval.str ? rval.str : "")')
   end
 
-  def create_bool_func_with_argv(func, field)
-    create_val_func_with_argv(func, field, 'rval.i ? Qtrue : Qfalse')
+  def create_bool_func_with_argv(func, field, args)
+    create_val_func_with_argv(func, field, args, 'rval.i ? Qtrue : Qfalse')
   end
 
-  def create_int_func_with_argv(func, field)
-    create_val_func_with_argv(func, field, 'INT2NUM(rval.i)')
+  def create_int_func_with_argv(func, field, args)
+    create_val_func_with_argv(func, field, args, 'INT2NUM(rval.i)')
   end
 
-  def create_double_func_with_argv(func, field)
-    create_val_func_with_argv(func, field, 'rb_float_new(rval.d)')
+  def create_double_func_with_argv(func, field, args)
+    create_val_func_with_argv(func, field, args, 'rb_float_new(rval.d)')
   end
 
-  def create_str_func_with_argv(func, field)
+  def create_str_func_with_argv(func, field, args)
     @func += <<-EOF
 	static VALUE
 	#{func}(VALUE self, VALUE argv)
@@ -594,12 +646,11 @@ class NgraphObj
   end
 
   def add_bool_func(func, field, argc, args)
-    field
     case (argc)
     when 0
       create_get_bool_func(func, field)
     when -2
-      create_bool_func_with_argv(func, field)
+      create_bool_func_with_argv(func, field, args)
     else
       create_bool_func_with_args(func, field, args)
     end
@@ -610,7 +661,7 @@ class NgraphObj
     when 0
       create_get_int_func(func, field)
     when -2
-      create_int_func_with_argv(func, field)
+      create_int_func_with_argv(func, field, args)
     else
       create_int_func_with_args(func, field, args)
     end
@@ -621,7 +672,7 @@ class NgraphObj
     when 0
       create_get_double_func(func, field)
     when -2
-      create_double_func_with_argv(func, field)
+      create_double_func_with_argv(func, field, args)
     else
       create_double_func_with_args(func, field, args)
     end
@@ -632,7 +683,7 @@ class NgraphObj
     when 0
       create_get_str_func(func, field)
     when -2
-      create_str_func_with_argv(func, field)
+      create_str_func_with_argv(func, field, args)
     else
       create_str_func_with_args(func, field, args)
     end
@@ -643,7 +694,7 @@ class NgraphObj
     when 0
       create_get_int_array_func(func, field)
     when -2
-      create_array_func_with_argv(func, field, 'INT2NUM(rval.ary.data.ia[i])')
+      create_array_func_with_argv(func, field, args, 'INT2NUM(rval.ary.data.ia[i])')
     else
       create_array_func_with_args(func, field, args, 'INT2NUM(rval.ary.data.ia[i])')
     end
@@ -654,7 +705,7 @@ class NgraphObj
     when 0
       create_get_double_array_func(func, field)
     when -2
-      create_array_func_with_argv(func, field, 'rb_float_new(rval.ary.data.da[i])')
+      create_array_func_with_argv(func, field, args, 'rb_float_new(rval.ary.data.da[i])')
     else
       create_array_func_with_args(func, field, args, 'rb_float_new(rval.ary.data.da[i])')
     end
@@ -665,7 +716,7 @@ class NgraphObj
     when 0
       create_get_str_array_func(func, field)
     when -2
-      create_array_func_with_argv(func, field, 'rb_tainted_str_new2(rval.ary.data.sa[i] ? rval.ary.data.sa[i] : "")')
+      create_array_func_with_argv(func, field, args, 'rb_tainted_str_new2(rval.ary.data.sa[i] ? rval.ary.data.sa[i] : "")')
     else
       create_array_func_with_args(func, field, args, 'rb_tainted_str_new2(rval.ary.data.sa[i] ? rval.ary.data.sa[i] : "")')
     end
@@ -676,7 +727,7 @@ class NgraphObj
     when 0
       create_void_exe_func(func, field)
     when -2
-      create_void_func_with_argv(func, field)
+      create_void_func_with_argv(func, field, args)
     else
       create_void_func_with_args(func, field, args)
     end
