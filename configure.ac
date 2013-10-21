@@ -5,6 +5,7 @@ AC_INIT(ngraph, 6.06.12, ZXB01226@nifty.com, ngraph-gtk)
 AC_CONFIG_SRCDIR(src/gtk/main.c)
 AM_INIT_AUTOMAKE
 LT_INIT
+AC_LIBTOOL_WIN32_DLL
 AC_PROG_LIBTOOL
 
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])

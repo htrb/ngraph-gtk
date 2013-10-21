@@ -31,10 +31,10 @@ static char *sherrorlist[] = {
   "already running.",
   "no command string is specified.",
   "no such file",
-  "connnot load module",
+  "cannot load module",
   "the module is already loaded",
   "a module is not loaded",
-  "connnot initialize the plugin",
+  "cannot initialize the plugin",
   "the method is forbidden for the security",
   "invalid module",
 };

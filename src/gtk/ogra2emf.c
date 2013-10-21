@@ -79,7 +79,7 @@ enum_font_cb(ENUMLOGFONTEXW *lpelfe, NEWTEXTMETRICEXW *lpntme, DWORD FontType, L
   int char_set, i;
   struct gra2emf_fontmap *fontmap;
 
-  if (lpelfe == NULL || lpntme == NULL || lParam == NULL) {
+  if (lpelfe == NULL || lpntme == NULL || lParam == 0) {
     return 0;
   }
 

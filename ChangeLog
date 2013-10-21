@@ -1,3 +1,7 @@
+2013-10-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* configure.ac: add "AC_LIBTOOL_WIN32_DLL".
+
 2013-10-19  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* plugins/ruby.c (ngraph_plugin_exec_ruby): check error string.

@@ -708,7 +708,7 @@ set_dir_defs(char *app)
 
   DOCDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "doc");
   LIBDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "bin");
-  PLUGINDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "bin/plugin");
+  PLUGINDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "lib/plugins");
   NDATADIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share");
   ADDINDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/addin");
   CONFDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "etc");
