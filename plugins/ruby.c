@@ -1799,9 +1799,13 @@ ngraph_plugin_exec_ruby(struct ngraph_plugin *plugin, int argc, char *argv[])
     return 1;
   }
 
+  if (argc < 2) {
+    return 0;
+  }
+
   r_argv = rb_const_get(rb_mKernel, Argv);
   rb_ary_clear(r_argv);
-  for (i = 2; i < argc; i++) {
+  for (i = 1; i < argc; i++) {
     rb_ary_push(r_argv, rb_tainted_str_new2(argv[i]));
   }
 
@@ -1840,13 +1844,11 @@ ngraph_plugin_close_ruby(struct ngraph_plugin *plugin)
     ruby_finalize();
     NgraphClass = 0;
     NgraphModule = 0;
+    Initialized = FALSE;
   }
 }
 
 void
 ngraph_plugin_interrupt_ruby(struct ngraph_plugin *plugin)
 {
-  if (Initialized) {
-    rb_exit(0);
-  }
 }

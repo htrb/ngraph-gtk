@@ -2,11 +2,11 @@ EXTRA_DIST = dir_defs.h.in
 
 AM_CPPFLAGS = -DLOCALEDIR=\""@localedir@"\"
 
-noinst_LTLIBRARIES = libngraph.la
+noinst_LTLIBRARIES = libngraphui.la
 
-nodist_libngraph_la_SOURCES = dir_defs.h
+nodist_libngraphui_la_SOURCES = dir_defs.h
 
-libngraph_la_SOURCES = gtk_common.h gtk_combo.c gtk_combo.h		\
+libngraphui_la_SOURCES = gtk_common.h gtk_combo.c gtk_combo.h		\
 	gtk_entry_completion.c gtk_entry_completion.h gtk_liststore.c	\
 	gtk_liststore.h gtk_subwin.c gtk_subwin.h main.c main.h		\
 	ogra2x11.c ogra2cairo.c ogra2emf.c ogra2cairo.h			\
@@ -20,7 +20,7 @@ libngraph_la_SOURCES = gtk_common.h gtk_combo.c gtk_combo.h		\
 	x11opt_proto.h x11print.c x11print.h x11view.c x11view.h	\
 	gtk_widget.c gtk_widget.h gtk_ruler.c gtk_ruler.h
 
-BUILT_SOURCES = ${nodist_libngraph_la_SOURCES}
+BUILT_SOURCES = ${nodist_libngraphui_la_SOURCES}
 
 ngraphconfdir = $(sysconfdir)/$(PACKAGE)
 pixmapdir = $(datadir)/pixmaps/$(PACKAGE)
@@ -28,8 +28,8 @@ pixmapdir = $(datadir)/pixmaps/$(PACKAGE)
 dir_defs.h: dir_defs.h.in Makefile
 	sh ../../pathconv.sh "$(bindir)" "$(docdir)" "$(pkglibexecdir)" "$(pkglibdir)" "$(pkgdatadir)" "$(ngraphconfdir)" "$(pixmapdir)" dir_defs.h.in
 
-libngraph_la_LDFLAGS = -static
+libngraphui_la_LDFLAGS = -static
 
-libngraph_la_CFLAGS = $(GTK_CFLAGS) -I.. -I../math
+libngraphui_la_CFLAGS = $(GTK_CFLAGS) -I.. -I../math
 
 CLEANFILES = dir_defs.h

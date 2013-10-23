@@ -1,5 +1,12 @@
+for i in `object plugin -instances`
+do
+    if [ `get plugin:$i -field module_name` = "ruby" ]
+    then
+	plugin:$i:exec $*
+	exit
+    fi
+done
+
 new plugin
 plugin::open ruby
 plugin::exec $*
-plugin::close
-del system

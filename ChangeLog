@@ -1,3 +1,9 @@
+2013-10-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/Makefile.am (noinst_LTLIBRARIES): use convenience library.
+
+	* plugins/ruby.c (ngraph_plugin_exec_ruby): check "argc".
+
 2013-10-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* mingw/windows_make.sed: change "$(pkglibdir)".

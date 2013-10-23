@@ -98,34 +98,35 @@ CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 LTLIBRARIES = $(noinst_LTLIBRARIES)
-libngraph_la_LIBADD =
-am_libngraph_la_OBJECTS = libngraph_la-gtk_combo.lo \
-	libngraph_la-gtk_entry_completion.lo \
-	libngraph_la-gtk_liststore.lo libngraph_la-gtk_subwin.lo \
-	libngraph_la-main.lo libngraph_la-ogra2x11.lo \
-	libngraph_la-ogra2cairo.lo libngraph_la-ogra2emf.lo \
-	libngraph_la-ogra2cairofile.lo libngraph_la-ogra2gtkprint.lo \
-	libngraph_la-ogra2gdk.lo libngraph_la-ox11dlg.lo \
-	libngraph_la-ox11menu.lo libngraph_la-x11axis.lo \
-	libngraph_la-x11bitmp.lo libngraph_la-x11commn.lo \
-	libngraph_la-x11cood.lo libngraph_la-x11dialg.lo \
-	libngraph_la-x11file.lo libngraph_la-x11graph.lo \
-	libngraph_la-x11gui.lo libngraph_la-x11info.lo \
-	libngraph_la-x11lgnd.lo libngraph_la-x11lgndx.lo \
-	libngraph_la-x11menu.lo libngraph_la-x11merge.lo \
-	libngraph_la-x11opt.lo libngraph_la-x11print.lo \
-	libngraph_la-x11view.lo libngraph_la-gtk_widget.lo \
-	libngraph_la-gtk_ruler.lo
-nodist_libngraph_la_OBJECTS =
-libngraph_la_OBJECTS = $(am_libngraph_la_OBJECTS) \
-	$(nodist_libngraph_la_OBJECTS)
+libngraphui_la_LIBADD =
+am_libngraphui_la_OBJECTS = libngraphui_la-gtk_combo.lo \
+	libngraphui_la-gtk_entry_completion.lo \
+	libngraphui_la-gtk_liststore.lo libngraphui_la-gtk_subwin.lo \
+	libngraphui_la-main.lo libngraphui_la-ogra2x11.lo \
+	libngraphui_la-ogra2cairo.lo libngraphui_la-ogra2emf.lo \
+	libngraphui_la-ogra2cairofile.lo \
+	libngraphui_la-ogra2gtkprint.lo libngraphui_la-ogra2gdk.lo \
+	libngraphui_la-ox11dlg.lo libngraphui_la-ox11menu.lo \
+	libngraphui_la-x11axis.lo libngraphui_la-x11bitmp.lo \
+	libngraphui_la-x11commn.lo libngraphui_la-x11cood.lo \
+	libngraphui_la-x11dialg.lo libngraphui_la-x11file.lo \
+	libngraphui_la-x11graph.lo libngraphui_la-x11gui.lo \
+	libngraphui_la-x11info.lo libngraphui_la-x11lgnd.lo \
+	libngraphui_la-x11lgndx.lo libngraphui_la-x11menu.lo \
+	libngraphui_la-x11merge.lo libngraphui_la-x11opt.lo \
+	libngraphui_la-x11print.lo libngraphui_la-x11view.lo \
+	libngraphui_la-gtk_widget.lo libngraphui_la-gtk_ruler.lo
+nodist_libngraphui_la_OBJECTS =
+libngraphui_la_OBJECTS = $(am_libngraphui_la_OBJECTS) \
+	$(nodist_libngraphui_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
-libngraph_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(libngraph_la_CFLAGS) \
-	$(CFLAGS) $(libngraph_la_LDFLAGS) $(LDFLAGS) -o $@
+libngraphui_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
+	$(libngraphui_la_CFLAGS) $(CFLAGS) $(libngraphui_la_LDFLAGS) \
+	$(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -160,8 +161,8 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(libngraph_la_SOURCES) $(nodist_libngraph_la_SOURCES)
-DIST_SOURCES = $(libngraph_la_SOURCES)
+SOURCES = $(libngraphui_la_SOURCES) $(nodist_libngraphui_la_SOURCES)
+DIST_SOURCES = $(libngraphui_la_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -342,9 +343,9 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 EXTRA_DIST = dir_defs.h.in
 AM_CPPFLAGS = -DLOCALEDIR=\""@localedir@"\"
-noinst_LTLIBRARIES = libngraph.la
-nodist_libngraph_la_SOURCES = dir_defs.h
-libngraph_la_SOURCES = gtk_common.h gtk_combo.c gtk_combo.h		\
+noinst_LTLIBRARIES = libngraphui.la
+nodist_libngraphui_la_SOURCES = dir_defs.h
+libngraphui_la_SOURCES = gtk_common.h gtk_combo.c gtk_combo.h		\
 	gtk_entry_completion.c gtk_entry_completion.h gtk_liststore.c	\
 	gtk_liststore.h gtk_subwin.c gtk_subwin.h main.c main.h		\
 	ogra2x11.c ogra2cairo.c ogra2emf.c ogra2cairo.h			\
@@ -358,11 +359,11 @@ libngraph_la_SOURCES = gtk_common.h gtk_combo.c gtk_combo.h		\
 	x11opt_proto.h x11print.c x11print.h x11view.c x11view.h	\
 	gtk_widget.c gtk_widget.h gtk_ruler.c gtk_ruler.h
 
-BUILT_SOURCES = ${nodist_libngraph_la_SOURCES}
+BUILT_SOURCES = ${nodist_libngraphui_la_SOURCES}
 ngraphconfdir = $(sysconfdir)/$(PACKAGE)
 pixmapdir = $(datadir)/pixmaps/$(PACKAGE)
-libngraph_la_LDFLAGS = -static
-libngraph_la_CFLAGS = $(GTK_CFLAGS) -I.. -I../math
+libngraphui_la_LDFLAGS = -static
+libngraphui_la_CFLAGS = $(GTK_CFLAGS) -I.. -I../math
 CLEANFILES = dir_defs.h
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
@@ -411,8 +412,8 @@ clean-noinstLTLIBRARIES:
 	  rm -f $${locs}; \
 	}
 
-libngraph.la: $(libngraph_la_OBJECTS) $(libngraph_la_DEPENDENCIES) $(EXTRA_libngraph_la_DEPENDENCIES) 
-	$(AM_V_CCLD)$(libngraph_la_LINK)  $(libngraph_la_OBJECTS) $(libngraph_la_LIBADD) $(LIBS)
+libngraphui.la: $(libngraphui_la_OBJECTS) $(libngraphui_la_DEPENDENCIES) $(EXTRA_libngraphui_la_DEPENDENCIES) 
+	$(AM_V_CCLD)$(libngraphui_la_LINK)  $(libngraphui_la_OBJECTS) $(libngraphui_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -420,37 +421,37 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-gtk_combo.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-gtk_entry_completion.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-gtk_liststore.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-gtk_ruler.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-gtk_subwin.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-gtk_widget.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-main.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-ogra2cairo.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-ogra2cairofile.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-ogra2emf.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-ogra2gdk.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-ogra2gtkprint.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-ogra2x11.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-ox11dlg.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-ox11menu.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-x11axis.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-x11bitmp.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-x11commn.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-x11cood.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-x11dialg.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-x11file.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-x11graph.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-x11gui.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-x11info.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-x11lgnd.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-x11lgndx.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-x11menu.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-x11merge.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-x11opt.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-x11print.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-x11view.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraphui_la-gtk_combo.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraphui_la-gtk_entry_completion.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraphui_la-gtk_liststore.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraphui_la-gtk_ruler.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraphui_la-gtk_subwin.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraphui_la-gtk_widget.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraphui_la-main.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraphui_la-ogra2cairo.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraphui_la-ogra2cairofile.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraphui_la-ogra2emf.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraphui_la-ogra2gdk.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraphui_la-ogra2gtkprint.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraphui_la-ogra2x11.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraphui_la-ox11dlg.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraphui_la-ox11menu.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraphui_la-x11axis.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraphui_la-x11bitmp.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraphui_la-x11commn.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraphui_la-x11cood.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraphui_la-x11dialg.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraphui_la-x11file.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraphui_la-x11graph.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraphui_la-x11gui.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraphui_la-x11info.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraphui_la-x11lgnd.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraphui_la-x11lgndx.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraphui_la-x11menu.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraphui_la-x11merge.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraphui_la-x11opt.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraphui_la-x11print.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraphui_la-x11view.Plo@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -473,222 +474,222 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
 
-libngraph_la-gtk_combo.lo: gtk_combo.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-gtk_combo.lo -MD -MP -MF $(DEPDIR)/libngraph_la-gtk_combo.Tpo -c -o libngraph_la-gtk_combo.lo `test -f 'gtk_combo.c' || echo '$(srcdir)/'`gtk_combo.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraph_la-gtk_combo.Tpo $(DEPDIR)/libngraph_la-gtk_combo.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gtk_combo.c' object='libngraph_la-gtk_combo.lo' libtool=yes @AMDEPBACKSLASH@
+libngraphui_la-gtk_combo.lo: gtk_combo.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -MT libngraphui_la-gtk_combo.lo -MD -MP -MF $(DEPDIR)/libngraphui_la-gtk_combo.Tpo -c -o libngraphui_la-gtk_combo.lo `test -f 'gtk_combo.c' || echo '$(srcdir)/'`gtk_combo.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraphui_la-gtk_combo.Tpo $(DEPDIR)/libngraphui_la-gtk_combo.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gtk_combo.c' object='libngraphui_la-gtk_combo.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-gtk_combo.lo `test -f 'gtk_combo.c' || echo '$(srcdir)/'`gtk_combo.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -c -o libngraphui_la-gtk_combo.lo `test -f 'gtk_combo.c' || echo '$(srcdir)/'`gtk_combo.c
 
-libngraph_la-gtk_entry_completion.lo: gtk_entry_completion.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-gtk_entry_completion.lo -MD -MP -MF $(DEPDIR)/libngraph_la-gtk_entry_completion.Tpo -c -o libngraph_la-gtk_entry_completion.lo `test -f 'gtk_entry_completion.c' || echo '$(srcdir)/'`gtk_entry_completion.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraph_la-gtk_entry_completion.Tpo $(DEPDIR)/libngraph_la-gtk_entry_completion.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gtk_entry_completion.c' object='libngraph_la-gtk_entry_completion.lo' libtool=yes @AMDEPBACKSLASH@
+libngraphui_la-gtk_entry_completion.lo: gtk_entry_completion.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -MT libngraphui_la-gtk_entry_completion.lo -MD -MP -MF $(DEPDIR)/libngraphui_la-gtk_entry_completion.Tpo -c -o libngraphui_la-gtk_entry_completion.lo `test -f 'gtk_entry_completion.c' || echo '$(srcdir)/'`gtk_entry_completion.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraphui_la-gtk_entry_completion.Tpo $(DEPDIR)/libngraphui_la-gtk_entry_completion.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gtk_entry_completion.c' object='libngraphui_la-gtk_entry_completion.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-gtk_entry_completion.lo `test -f 'gtk_entry_completion.c' || echo '$(srcdir)/'`gtk_entry_completion.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -c -o libngraphui_la-gtk_entry_completion.lo `test -f 'gtk_entry_completion.c' || echo '$(srcdir)/'`gtk_entry_completion.c
 
-libngraph_la-gtk_liststore.lo: gtk_liststore.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-gtk_liststore.lo -MD -MP -MF $(DEPDIR)/libngraph_la-gtk_liststore.Tpo -c -o libngraph_la-gtk_liststore.lo `test -f 'gtk_liststore.c' || echo '$(srcdir)/'`gtk_liststore.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraph_la-gtk_liststore.Tpo $(DEPDIR)/libngraph_la-gtk_liststore.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gtk_liststore.c' object='libngraph_la-gtk_liststore.lo' libtool=yes @AMDEPBACKSLASH@
+libngraphui_la-gtk_liststore.lo: gtk_liststore.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -MT libngraphui_la-gtk_liststore.lo -MD -MP -MF $(DEPDIR)/libngraphui_la-gtk_liststore.Tpo -c -o libngraphui_la-gtk_liststore.lo `test -f 'gtk_liststore.c' || echo '$(srcdir)/'`gtk_liststore.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraphui_la-gtk_liststore.Tpo $(DEPDIR)/libngraphui_la-gtk_liststore.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gtk_liststore.c' object='libngraphui_la-gtk_liststore.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-gtk_liststore.lo `test -f 'gtk_liststore.c' || echo '$(srcdir)/'`gtk_liststore.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -c -o libngraphui_la-gtk_liststore.lo `test -f 'gtk_liststore.c' || echo '$(srcdir)/'`gtk_liststore.c
 
-libngraph_la-gtk_subwin.lo: gtk_subwin.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-gtk_subwin.lo -MD -MP -MF $(DEPDIR)/libngraph_la-gtk_subwin.Tpo -c -o libngraph_la-gtk_subwin.lo `test -f 'gtk_subwin.c' || echo '$(srcdir)/'`gtk_subwin.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraph_la-gtk_subwin.Tpo $(DEPDIR)/libngraph_la-gtk_subwin.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gtk_subwin.c' object='libngraph_la-gtk_subwin.lo' libtool=yes @AMDEPBACKSLASH@
+libngraphui_la-gtk_subwin.lo: gtk_subwin.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -MT libngraphui_la-gtk_subwin.lo -MD -MP -MF $(DEPDIR)/libngraphui_la-gtk_subwin.Tpo -c -o libngraphui_la-gtk_subwin.lo `test -f 'gtk_subwin.c' || echo '$(srcdir)/'`gtk_subwin.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraphui_la-gtk_subwin.Tpo $(DEPDIR)/libngraphui_la-gtk_subwin.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gtk_subwin.c' object='libngraphui_la-gtk_subwin.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-gtk_subwin.lo `test -f 'gtk_subwin.c' || echo '$(srcdir)/'`gtk_subwin.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -c -o libngraphui_la-gtk_subwin.lo `test -f 'gtk_subwin.c' || echo '$(srcdir)/'`gtk_subwin.c
 
-libngraph_la-main.lo: main.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-main.lo -MD -MP -MF $(DEPDIR)/libngraph_la-main.Tpo -c -o libngraph_la-main.lo `test -f 'main.c' || echo '$(srcdir)/'`main.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraph_la-main.Tpo $(DEPDIR)/libngraph_la-main.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='main.c' object='libngraph_la-main.lo' libtool=yes @AMDEPBACKSLASH@
+libngraphui_la-main.lo: main.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -MT libngraphui_la-main.lo -MD -MP -MF $(DEPDIR)/libngraphui_la-main.Tpo -c -o libngraphui_la-main.lo `test -f 'main.c' || echo '$(srcdir)/'`main.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraphui_la-main.Tpo $(DEPDIR)/libngraphui_la-main.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='main.c' object='libngraphui_la-main.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-main.lo `test -f 'main.c' || echo '$(srcdir)/'`main.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -c -o libngraphui_la-main.lo `test -f 'main.c' || echo '$(srcdir)/'`main.c
 
-libngraph_la-ogra2x11.lo: ogra2x11.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-ogra2x11.lo -MD -MP -MF $(DEPDIR)/libngraph_la-ogra2x11.Tpo -c -o libngraph_la-ogra2x11.lo `test -f 'ogra2x11.c' || echo '$(srcdir)/'`ogra2x11.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraph_la-ogra2x11.Tpo $(DEPDIR)/libngraph_la-ogra2x11.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='ogra2x11.c' object='libngraph_la-ogra2x11.lo' libtool=yes @AMDEPBACKSLASH@
+libngraphui_la-ogra2x11.lo: ogra2x11.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -MT libngraphui_la-ogra2x11.lo -MD -MP -MF $(DEPDIR)/libngraphui_la-ogra2x11.Tpo -c -o libngraphui_la-ogra2x11.lo `test -f 'ogra2x11.c' || echo '$(srcdir)/'`ogra2x11.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraphui_la-ogra2x11.Tpo $(DEPDIR)/libngraphui_la-ogra2x11.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='ogra2x11.c' object='libngraphui_la-ogra2x11.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-ogra2x11.lo `test -f 'ogra2x11.c' || echo '$(srcdir)/'`ogra2x11.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -c -o libngraphui_la-ogra2x11.lo `test -f 'ogra2x11.c' || echo '$(srcdir)/'`ogra2x11.c
 
-libngraph_la-ogra2cairo.lo: ogra2cairo.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-ogra2cairo.lo -MD -MP -MF $(DEPDIR)/libngraph_la-ogra2cairo.Tpo -c -o libngraph_la-ogra2cairo.lo `test -f 'ogra2cairo.c' || echo '$(srcdir)/'`ogra2cairo.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraph_la-ogra2cairo.Tpo $(DEPDIR)/libngraph_la-ogra2cairo.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='ogra2cairo.c' object='libngraph_la-ogra2cairo.lo' libtool=yes @AMDEPBACKSLASH@
+libngraphui_la-ogra2cairo.lo: ogra2cairo.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -MT libngraphui_la-ogra2cairo.lo -MD -MP -MF $(DEPDIR)/libngraphui_la-ogra2cairo.Tpo -c -o libngraphui_la-ogra2cairo.lo `test -f 'ogra2cairo.c' || echo '$(srcdir)/'`ogra2cairo.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraphui_la-ogra2cairo.Tpo $(DEPDIR)/libngraphui_la-ogra2cairo.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='ogra2cairo.c' object='libngraphui_la-ogra2cairo.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-ogra2cairo.lo `test -f 'ogra2cairo.c' || echo '$(srcdir)/'`ogra2cairo.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -c -o libngraphui_la-ogra2cairo.lo `test -f 'ogra2cairo.c' || echo '$(srcdir)/'`ogra2cairo.c
 
-libngraph_la-ogra2emf.lo: ogra2emf.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-ogra2emf.lo -MD -MP -MF $(DEPDIR)/libngraph_la-ogra2emf.Tpo -c -o libngraph_la-ogra2emf.lo `test -f 'ogra2emf.c' || echo '$(srcdir)/'`ogra2emf.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraph_la-ogra2emf.Tpo $(DEPDIR)/libngraph_la-ogra2emf.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='ogra2emf.c' object='libngraph_la-ogra2emf.lo' libtool=yes @AMDEPBACKSLASH@
+libngraphui_la-ogra2emf.lo: ogra2emf.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -MT libngraphui_la-ogra2emf.lo -MD -MP -MF $(DEPDIR)/libngraphui_la-ogra2emf.Tpo -c -o libngraphui_la-ogra2emf.lo `test -f 'ogra2emf.c' || echo '$(srcdir)/'`ogra2emf.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraphui_la-ogra2emf.Tpo $(DEPDIR)/libngraphui_la-ogra2emf.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='ogra2emf.c' object='libngraphui_la-ogra2emf.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-ogra2emf.lo `test -f 'ogra2emf.c' || echo '$(srcdir)/'`ogra2emf.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -c -o libngraphui_la-ogra2emf.lo `test -f 'ogra2emf.c' || echo '$(srcdir)/'`ogra2emf.c
 
-libngraph_la-ogra2cairofile.lo: ogra2cairofile.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-ogra2cairofile.lo -MD -MP -MF $(DEPDIR)/libngraph_la-ogra2cairofile.Tpo -c -o libngraph_la-ogra2cairofile.lo `test -f 'ogra2cairofile.c' || echo '$(srcdir)/'`ogra2cairofile.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraph_la-ogra2cairofile.Tpo $(DEPDIR)/libngraph_la-ogra2cairofile.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='ogra2cairofile.c' object='libngraph_la-ogra2cairofile.lo' libtool=yes @AMDEPBACKSLASH@
+libngraphui_la-ogra2cairofile.lo: ogra2cairofile.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -MT libngraphui_la-ogra2cairofile.lo -MD -MP -MF $(DEPDIR)/libngraphui_la-ogra2cairofile.Tpo -c -o libngraphui_la-ogra2cairofile.lo `test -f 'ogra2cairofile.c' || echo '$(srcdir)/'`ogra2cairofile.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraphui_la-ogra2cairofile.Tpo $(DEPDIR)/libngraphui_la-ogra2cairofile.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='ogra2cairofile.c' object='libngraphui_la-ogra2cairofile.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-ogra2cairofile.lo `test -f 'ogra2cairofile.c' || echo '$(srcdir)/'`ogra2cairofile.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -c -o libngraphui_la-ogra2cairofile.lo `test -f 'ogra2cairofile.c' || echo '$(srcdir)/'`ogra2cairofile.c
 
-libngraph_la-ogra2gtkprint.lo: ogra2gtkprint.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-ogra2gtkprint.lo -MD -MP -MF $(DEPDIR)/libngraph_la-ogra2gtkprint.Tpo -c -o libngraph_la-ogra2gtkprint.lo `test -f 'ogra2gtkprint.c' || echo '$(srcdir)/'`ogra2gtkprint.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraph_la-ogra2gtkprint.Tpo $(DEPDIR)/libngraph_la-ogra2gtkprint.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='ogra2gtkprint.c' object='libngraph_la-ogra2gtkprint.lo' libtool=yes @AMDEPBACKSLASH@
+libngraphui_la-ogra2gtkprint.lo: ogra2gtkprint.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -MT libngraphui_la-ogra2gtkprint.lo -MD -MP -MF $(DEPDIR)/libngraphui_la-ogra2gtkprint.Tpo -c -o libngraphui_la-ogra2gtkprint.lo `test -f 'ogra2gtkprint.c' || echo '$(srcdir)/'`ogra2gtkprint.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraphui_la-ogra2gtkprint.Tpo $(DEPDIR)/libngraphui_la-ogra2gtkprint.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='ogra2gtkprint.c' object='libngraphui_la-ogra2gtkprint.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-ogra2gtkprint.lo `test -f 'ogra2gtkprint.c' || echo '$(srcdir)/'`ogra2gtkprint.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -c -o libngraphui_la-ogra2gtkprint.lo `test -f 'ogra2gtkprint.c' || echo '$(srcdir)/'`ogra2gtkprint.c
 
-libngraph_la-ogra2gdk.lo: ogra2gdk.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-ogra2gdk.lo -MD -MP -MF $(DEPDIR)/libngraph_la-ogra2gdk.Tpo -c -o libngraph_la-ogra2gdk.lo `test -f 'ogra2gdk.c' || echo '$(srcdir)/'`ogra2gdk.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraph_la-ogra2gdk.Tpo $(DEPDIR)/libngraph_la-ogra2gdk.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='ogra2gdk.c' object='libngraph_la-ogra2gdk.lo' libtool=yes @AMDEPBACKSLASH@
+libngraphui_la-ogra2gdk.lo: ogra2gdk.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -MT libngraphui_la-ogra2gdk.lo -MD -MP -MF $(DEPDIR)/libngraphui_la-ogra2gdk.Tpo -c -o libngraphui_la-ogra2gdk.lo `test -f 'ogra2gdk.c' || echo '$(srcdir)/'`ogra2gdk.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraphui_la-ogra2gdk.Tpo $(DEPDIR)/libngraphui_la-ogra2gdk.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='ogra2gdk.c' object='libngraphui_la-ogra2gdk.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-ogra2gdk.lo `test -f 'ogra2gdk.c' || echo '$(srcdir)/'`ogra2gdk.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -c -o libngraphui_la-ogra2gdk.lo `test -f 'ogra2gdk.c' || echo '$(srcdir)/'`ogra2gdk.c
 
-libngraph_la-ox11dlg.lo: ox11dlg.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-ox11dlg.lo -MD -MP -MF $(DEPDIR)/libngraph_la-ox11dlg.Tpo -c -o libngraph_la-ox11dlg.lo `test -f 'ox11dlg.c' || echo '$(srcdir)/'`ox11dlg.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraph_la-ox11dlg.Tpo $(DEPDIR)/libngraph_la-ox11dlg.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='ox11dlg.c' object='libngraph_la-ox11dlg.lo' libtool=yes @AMDEPBACKSLASH@
+libngraphui_la-ox11dlg.lo: ox11dlg.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -MT libngraphui_la-ox11dlg.lo -MD -MP -MF $(DEPDIR)/libngraphui_la-ox11dlg.Tpo -c -o libngraphui_la-ox11dlg.lo `test -f 'ox11dlg.c' || echo '$(srcdir)/'`ox11dlg.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraphui_la-ox11dlg.Tpo $(DEPDIR)/libngraphui_la-ox11dlg.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='ox11dlg.c' object='libngraphui_la-ox11dlg.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-ox11dlg.lo `test -f 'ox11dlg.c' || echo '$(srcdir)/'`ox11dlg.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -c -o libngraphui_la-ox11dlg.lo `test -f 'ox11dlg.c' || echo '$(srcdir)/'`ox11dlg.c
 
-libngraph_la-ox11menu.lo: ox11menu.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-ox11menu.lo -MD -MP -MF $(DEPDIR)/libngraph_la-ox11menu.Tpo -c -o libngraph_la-ox11menu.lo `test -f 'ox11menu.c' || echo '$(srcdir)/'`ox11menu.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraph_la-ox11menu.Tpo $(DEPDIR)/libngraph_la-ox11menu.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='ox11menu.c' object='libngraph_la-ox11menu.lo' libtool=yes @AMDEPBACKSLASH@
+libngraphui_la-ox11menu.lo: ox11menu.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -MT libngraphui_la-ox11menu.lo -MD -MP -MF $(DEPDIR)/libngraphui_la-ox11menu.Tpo -c -o libngraphui_la-ox11menu.lo `test -f 'ox11menu.c' || echo '$(srcdir)/'`ox11menu.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraphui_la-ox11menu.Tpo $(DEPDIR)/libngraphui_la-ox11menu.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='ox11menu.c' object='libngraphui_la-ox11menu.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-ox11menu.lo `test -f 'ox11menu.c' || echo '$(srcdir)/'`ox11menu.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -c -o libngraphui_la-ox11menu.lo `test -f 'ox11menu.c' || echo '$(srcdir)/'`ox11menu.c
 
-libngraph_la-x11axis.lo: x11axis.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-x11axis.lo -MD -MP -MF $(DEPDIR)/libngraph_la-x11axis.Tpo -c -o libngraph_la-x11axis.lo `test -f 'x11axis.c' || echo '$(srcdir)/'`x11axis.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraph_la-x11axis.Tpo $(DEPDIR)/libngraph_la-x11axis.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='x11axis.c' object='libngraph_la-x11axis.lo' libtool=yes @AMDEPBACKSLASH@
+libngraphui_la-x11axis.lo: x11axis.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -MT libngraphui_la-x11axis.lo -MD -MP -MF $(DEPDIR)/libngraphui_la-x11axis.Tpo -c -o libngraphui_la-x11axis.lo `test -f 'x11axis.c' || echo '$(srcdir)/'`x11axis.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraphui_la-x11axis.Tpo $(DEPDIR)/libngraphui_la-x11axis.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='x11axis.c' object='libngraphui_la-x11axis.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-x11axis.lo `test -f 'x11axis.c' || echo '$(srcdir)/'`x11axis.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -c -o libngraphui_la-x11axis.lo `test -f 'x11axis.c' || echo '$(srcdir)/'`x11axis.c
 
-libngraph_la-x11bitmp.lo: x11bitmp.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-x11bitmp.lo -MD -MP -MF $(DEPDIR)/libngraph_la-x11bitmp.Tpo -c -o libngraph_la-x11bitmp.lo `test -f 'x11bitmp.c' || echo '$(srcdir)/'`x11bitmp.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraph_la-x11bitmp.Tpo $(DEPDIR)/libngraph_la-x11bitmp.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='x11bitmp.c' object='libngraph_la-x11bitmp.lo' libtool=yes @AMDEPBACKSLASH@
+libngraphui_la-x11bitmp.lo: x11bitmp.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -MT libngraphui_la-x11bitmp.lo -MD -MP -MF $(DEPDIR)/libngraphui_la-x11bitmp.Tpo -c -o libngraphui_la-x11bitmp.lo `test -f 'x11bitmp.c' || echo '$(srcdir)/'`x11bitmp.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraphui_la-x11bitmp.Tpo $(DEPDIR)/libngraphui_la-x11bitmp.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='x11bitmp.c' object='libngraphui_la-x11bitmp.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-x11bitmp.lo `test -f 'x11bitmp.c' || echo '$(srcdir)/'`x11bitmp.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -c -o libngraphui_la-x11bitmp.lo `test -f 'x11bitmp.c' || echo '$(srcdir)/'`x11bitmp.c
 
-libngraph_la-x11commn.lo: x11commn.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-x11commn.lo -MD -MP -MF $(DEPDIR)/libngraph_la-x11commn.Tpo -c -o libngraph_la-x11commn.lo `test -f 'x11commn.c' || echo '$(srcdir)/'`x11commn.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraph_la-x11commn.Tpo $(DEPDIR)/libngraph_la-x11commn.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='x11commn.c' object='libngraph_la-x11commn.lo' libtool=yes @AMDEPBACKSLASH@
+libngraphui_la-x11commn.lo: x11commn.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -MT libngraphui_la-x11commn.lo -MD -MP -MF $(DEPDIR)/libngraphui_la-x11commn.Tpo -c -o libngraphui_la-x11commn.lo `test -f 'x11commn.c' || echo '$(srcdir)/'`x11commn.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraphui_la-x11commn.Tpo $(DEPDIR)/libngraphui_la-x11commn.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='x11commn.c' object='libngraphui_la-x11commn.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-x11commn.lo `test -f 'x11commn.c' || echo '$(srcdir)/'`x11commn.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -c -o libngraphui_la-x11commn.lo `test -f 'x11commn.c' || echo '$(srcdir)/'`x11commn.c
 
-libngraph_la-x11cood.lo: x11cood.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-x11cood.lo -MD -MP -MF $(DEPDIR)/libngraph_la-x11cood.Tpo -c -o libngraph_la-x11cood.lo `test -f 'x11cood.c' || echo '$(srcdir)/'`x11cood.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraph_la-x11cood.Tpo $(DEPDIR)/libngraph_la-x11cood.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='x11cood.c' object='libngraph_la-x11cood.lo' libtool=yes @AMDEPBACKSLASH@
+libngraphui_la-x11cood.lo: x11cood.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -MT libngraphui_la-x11cood.lo -MD -MP -MF $(DEPDIR)/libngraphui_la-x11cood.Tpo -c -o libngraphui_la-x11cood.lo `test -f 'x11cood.c' || echo '$(srcdir)/'`x11cood.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraphui_la-x11cood.Tpo $(DEPDIR)/libngraphui_la-x11cood.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='x11cood.c' object='libngraphui_la-x11cood.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-x11cood.lo `test -f 'x11cood.c' || echo '$(srcdir)/'`x11cood.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -c -o libngraphui_la-x11cood.lo `test -f 'x11cood.c' || echo '$(srcdir)/'`x11cood.c
 
-libngraph_la-x11dialg.lo: x11dialg.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-x11dialg.lo -MD -MP -MF $(DEPDIR)/libngraph_la-x11dialg.Tpo -c -o libngraph_la-x11dialg.lo `test -f 'x11dialg.c' || echo '$(srcdir)/'`x11dialg.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraph_la-x11dialg.Tpo $(DEPDIR)/libngraph_la-x11dialg.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='x11dialg.c' object='libngraph_la-x11dialg.lo' libtool=yes @AMDEPBACKSLASH@
+libngraphui_la-x11dialg.lo: x11dialg.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -MT libngraphui_la-x11dialg.lo -MD -MP -MF $(DEPDIR)/libngraphui_la-x11dialg.Tpo -c -o libngraphui_la-x11dialg.lo `test -f 'x11dialg.c' || echo '$(srcdir)/'`x11dialg.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraphui_la-x11dialg.Tpo $(DEPDIR)/libngraphui_la-x11dialg.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='x11dialg.c' object='libngraphui_la-x11dialg.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-x11dialg.lo `test -f 'x11dialg.c' || echo '$(srcdir)/'`x11dialg.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -c -o libngraphui_la-x11dialg.lo `test -f 'x11dialg.c' || echo '$(srcdir)/'`x11dialg.c
 
-libngraph_la-x11file.lo: x11file.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-x11file.lo -MD -MP -MF $(DEPDIR)/libngraph_la-x11file.Tpo -c -o libngraph_la-x11file.lo `test -f 'x11file.c' || echo '$(srcdir)/'`x11file.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraph_la-x11file.Tpo $(DEPDIR)/libngraph_la-x11file.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='x11file.c' object='libngraph_la-x11file.lo' libtool=yes @AMDEPBACKSLASH@
+libngraphui_la-x11file.lo: x11file.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -MT libngraphui_la-x11file.lo -MD -MP -MF $(DEPDIR)/libngraphui_la-x11file.Tpo -c -o libngraphui_la-x11file.lo `test -f 'x11file.c' || echo '$(srcdir)/'`x11file.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraphui_la-x11file.Tpo $(DEPDIR)/libngraphui_la-x11file.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='x11file.c' object='libngraphui_la-x11file.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-x11file.lo `test -f 'x11file.c' || echo '$(srcdir)/'`x11file.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -c -o libngraphui_la-x11file.lo `test -f 'x11file.c' || echo '$(srcdir)/'`x11file.c
 
-libngraph_la-x11graph.lo: x11graph.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-x11graph.lo -MD -MP -MF $(DEPDIR)/libngraph_la-x11graph.Tpo -c -o libngraph_la-x11graph.lo `test -f 'x11graph.c' || echo '$(srcdir)/'`x11graph.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraph_la-x11graph.Tpo $(DEPDIR)/libngraph_la-x11graph.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='x11graph.c' object='libngraph_la-x11graph.lo' libtool=yes @AMDEPBACKSLASH@
+libngraphui_la-x11graph.lo: x11graph.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -MT libngraphui_la-x11graph.lo -MD -MP -MF $(DEPDIR)/libngraphui_la-x11graph.Tpo -c -o libngraphui_la-x11graph.lo `test -f 'x11graph.c' || echo '$(srcdir)/'`x11graph.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraphui_la-x11graph.Tpo $(DEPDIR)/libngraphui_la-x11graph.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='x11graph.c' object='libngraphui_la-x11graph.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-x11graph.lo `test -f 'x11graph.c' || echo '$(srcdir)/'`x11graph.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -c -o libngraphui_la-x11graph.lo `test -f 'x11graph.c' || echo '$(srcdir)/'`x11graph.c
 
-libngraph_la-x11gui.lo: x11gui.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-x11gui.lo -MD -MP -MF $(DEPDIR)/libngraph_la-x11gui.Tpo -c -o libngraph_la-x11gui.lo `test -f 'x11gui.c' || echo '$(srcdir)/'`x11gui.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraph_la-x11gui.Tpo $(DEPDIR)/libngraph_la-x11gui.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='x11gui.c' object='libngraph_la-x11gui.lo' libtool=yes @AMDEPBACKSLASH@
+libngraphui_la-x11gui.lo: x11gui.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -MT libngraphui_la-x11gui.lo -MD -MP -MF $(DEPDIR)/libngraphui_la-x11gui.Tpo -c -o libngraphui_la-x11gui.lo `test -f 'x11gui.c' || echo '$(srcdir)/'`x11gui.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraphui_la-x11gui.Tpo $(DEPDIR)/libngraphui_la-x11gui.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='x11gui.c' object='libngraphui_la-x11gui.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-x11gui.lo `test -f 'x11gui.c' || echo '$(srcdir)/'`x11gui.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -c -o libngraphui_la-x11gui.lo `test -f 'x11gui.c' || echo '$(srcdir)/'`x11gui.c
 
-libngraph_la-x11info.lo: x11info.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-x11info.lo -MD -MP -MF $(DEPDIR)/libngraph_la-x11info.Tpo -c -o libngraph_la-x11info.lo `test -f 'x11info.c' || echo '$(srcdir)/'`x11info.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraph_la-x11info.Tpo $(DEPDIR)/libngraph_la-x11info.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='x11info.c' object='libngraph_la-x11info.lo' libtool=yes @AMDEPBACKSLASH@
+libngraphui_la-x11info.lo: x11info.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -MT libngraphui_la-x11info.lo -MD -MP -MF $(DEPDIR)/libngraphui_la-x11info.Tpo -c -o libngraphui_la-x11info.lo `test -f 'x11info.c' || echo '$(srcdir)/'`x11info.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraphui_la-x11info.Tpo $(DEPDIR)/libngraphui_la-x11info.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='x11info.c' object='libngraphui_la-x11info.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-x11info.lo `test -f 'x11info.c' || echo '$(srcdir)/'`x11info.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -c -o libngraphui_la-x11info.lo `test -f 'x11info.c' || echo '$(srcdir)/'`x11info.c
 
-libngraph_la-x11lgnd.lo: x11lgnd.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-x11lgnd.lo -MD -MP -MF $(DEPDIR)/libngraph_la-x11lgnd.Tpo -c -o libngraph_la-x11lgnd.lo `test -f 'x11lgnd.c' || echo '$(srcdir)/'`x11lgnd.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraph_la-x11lgnd.Tpo $(DEPDIR)/libngraph_la-x11lgnd.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='x11lgnd.c' object='libngraph_la-x11lgnd.lo' libtool=yes @AMDEPBACKSLASH@
+libngraphui_la-x11lgnd.lo: x11lgnd.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -MT libngraphui_la-x11lgnd.lo -MD -MP -MF $(DEPDIR)/libngraphui_la-x11lgnd.Tpo -c -o libngraphui_la-x11lgnd.lo `test -f 'x11lgnd.c' || echo '$(srcdir)/'`x11lgnd.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraphui_la-x11lgnd.Tpo $(DEPDIR)/libngraphui_la-x11lgnd.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='x11lgnd.c' object='libngraphui_la-x11lgnd.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-x11lgnd.lo `test -f 'x11lgnd.c' || echo '$(srcdir)/'`x11lgnd.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -c -o libngraphui_la-x11lgnd.lo `test -f 'x11lgnd.c' || echo '$(srcdir)/'`x11lgnd.c
 
-libngraph_la-x11lgndx.lo: x11lgndx.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-x11lgndx.lo -MD -MP -MF $(DEPDIR)/libngraph_la-x11lgndx.Tpo -c -o libngraph_la-x11lgndx.lo `test -f 'x11lgndx.c' || echo '$(srcdir)/'`x11lgndx.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraph_la-x11lgndx.Tpo $(DEPDIR)/libngraph_la-x11lgndx.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='x11lgndx.c' object='libngraph_la-x11lgndx.lo' libtool=yes @AMDEPBACKSLASH@
+libngraphui_la-x11lgndx.lo: x11lgndx.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -MT libngraphui_la-x11lgndx.lo -MD -MP -MF $(DEPDIR)/libngraphui_la-x11lgndx.Tpo -c -o libngraphui_la-x11lgndx.lo `test -f 'x11lgndx.c' || echo '$(srcdir)/'`x11lgndx.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraphui_la-x11lgndx.Tpo $(DEPDIR)/libngraphui_la-x11lgndx.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='x11lgndx.c' object='libngraphui_la-x11lgndx.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-x11lgndx.lo `test -f 'x11lgndx.c' || echo '$(srcdir)/'`x11lgndx.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -c -o libngraphui_la-x11lgndx.lo `test -f 'x11lgndx.c' || echo '$(srcdir)/'`x11lgndx.c
 
-libngraph_la-x11menu.lo: x11menu.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-x11menu.lo -MD -MP -MF $(DEPDIR)/libngraph_la-x11menu.Tpo -c -o libngraph_la-x11menu.lo `test -f 'x11menu.c' || echo '$(srcdir)/'`x11menu.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraph_la-x11menu.Tpo $(DEPDIR)/libngraph_la-x11menu.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='x11menu.c' object='libngraph_la-x11menu.lo' libtool=yes @AMDEPBACKSLASH@
+libngraphui_la-x11menu.lo: x11menu.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -MT libngraphui_la-x11menu.lo -MD -MP -MF $(DEPDIR)/libngraphui_la-x11menu.Tpo -c -o libngraphui_la-x11menu.lo `test -f 'x11menu.c' || echo '$(srcdir)/'`x11menu.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraphui_la-x11menu.Tpo $(DEPDIR)/libngraphui_la-x11menu.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='x11menu.c' object='libngraphui_la-x11menu.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-x11menu.lo `test -f 'x11menu.c' || echo '$(srcdir)/'`x11menu.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -c -o libngraphui_la-x11menu.lo `test -f 'x11menu.c' || echo '$(srcdir)/'`x11menu.c
 
-libngraph_la-x11merge.lo: x11merge.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-x11merge.lo -MD -MP -MF $(DEPDIR)/libngraph_la-x11merge.Tpo -c -o libngraph_la-x11merge.lo `test -f 'x11merge.c' || echo '$(srcdir)/'`x11merge.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraph_la-x11merge.Tpo $(DEPDIR)/libngraph_la-x11merge.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='x11merge.c' object='libngraph_la-x11merge.lo' libtool=yes @AMDEPBACKSLASH@
+libngraphui_la-x11merge.lo: x11merge.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -MT libngraphui_la-x11merge.lo -MD -MP -MF $(DEPDIR)/libngraphui_la-x11merge.Tpo -c -o libngraphui_la-x11merge.lo `test -f 'x11merge.c' || echo '$(srcdir)/'`x11merge.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraphui_la-x11merge.Tpo $(DEPDIR)/libngraphui_la-x11merge.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='x11merge.c' object='libngraphui_la-x11merge.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-x11merge.lo `test -f 'x11merge.c' || echo '$(srcdir)/'`x11merge.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -c -o libngraphui_la-x11merge.lo `test -f 'x11merge.c' || echo '$(srcdir)/'`x11merge.c
 
-libngraph_la-x11opt.lo: x11opt.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-x11opt.lo -MD -MP -MF $(DEPDIR)/libngraph_la-x11opt.Tpo -c -o libngraph_la-x11opt.lo `test -f 'x11opt.c' || echo '$(srcdir)/'`x11opt.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraph_la-x11opt.Tpo $(DEPDIR)/libngraph_la-x11opt.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='x11opt.c' object='libngraph_la-x11opt.lo' libtool=yes @AMDEPBACKSLASH@
+libngraphui_la-x11opt.lo: x11opt.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -MT libngraphui_la-x11opt.lo -MD -MP -MF $(DEPDIR)/libngraphui_la-x11opt.Tpo -c -o libngraphui_la-x11opt.lo `test -f 'x11opt.c' || echo '$(srcdir)/'`x11opt.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraphui_la-x11opt.Tpo $(DEPDIR)/libngraphui_la-x11opt.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='x11opt.c' object='libngraphui_la-x11opt.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-x11opt.lo `test -f 'x11opt.c' || echo '$(srcdir)/'`x11opt.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -c -o libngraphui_la-x11opt.lo `test -f 'x11opt.c' || echo '$(srcdir)/'`x11opt.c
 
-libngraph_la-x11print.lo: x11print.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-x11print.lo -MD -MP -MF $(DEPDIR)/libngraph_la-x11print.Tpo -c -o libngraph_la-x11print.lo `test -f 'x11print.c' || echo '$(srcdir)/'`x11print.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraph_la-x11print.Tpo $(DEPDIR)/libngraph_la-x11print.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='x11print.c' object='libngraph_la-x11print.lo' libtool=yes @AMDEPBACKSLASH@
+libngraphui_la-x11print.lo: x11print.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -MT libngraphui_la-x11print.lo -MD -MP -MF $(DEPDIR)/libngraphui_la-x11print.Tpo -c -o libngraphui_la-x11print.lo `test -f 'x11print.c' || echo '$(srcdir)/'`x11print.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraphui_la-x11print.Tpo $(DEPDIR)/libngraphui_la-x11print.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='x11print.c' object='libngraphui_la-x11print.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-x11print.lo `test -f 'x11print.c' || echo '$(srcdir)/'`x11print.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -c -o libngraphui_la-x11print.lo `test -f 'x11print.c' || echo '$(srcdir)/'`x11print.c
 
-libngraph_la-x11view.lo: x11view.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-x11view.lo -MD -MP -MF $(DEPDIR)/libngraph_la-x11view.Tpo -c -o libngraph_la-x11view.lo `test -f 'x11view.c' || echo '$(srcdir)/'`x11view.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraph_la-x11view.Tpo $(DEPDIR)/libngraph_la-x11view.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='x11view.c' object='libngraph_la-x11view.lo' libtool=yes @AMDEPBACKSLASH@
+libngraphui_la-x11view.lo: x11view.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -MT libngraphui_la-x11view.lo -MD -MP -MF $(DEPDIR)/libngraphui_la-x11view.Tpo -c -o libngraphui_la-x11view.lo `test -f 'x11view.c' || echo '$(srcdir)/'`x11view.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraphui_la-x11view.Tpo $(DEPDIR)/libngraphui_la-x11view.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='x11view.c' object='libngraphui_la-x11view.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-x11view.lo `test -f 'x11view.c' || echo '$(srcdir)/'`x11view.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -c -o libngraphui_la-x11view.lo `test -f 'x11view.c' || echo '$(srcdir)/'`x11view.c
 
-libngraph_la-gtk_widget.lo: gtk_widget.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-gtk_widget.lo -MD -MP -MF $(DEPDIR)/libngraph_la-gtk_widget.Tpo -c -o libngraph_la-gtk_widget.lo `test -f 'gtk_widget.c' || echo '$(srcdir)/'`gtk_widget.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraph_la-gtk_widget.Tpo $(DEPDIR)/libngraph_la-gtk_widget.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gtk_widget.c' object='libngraph_la-gtk_widget.lo' libtool=yes @AMDEPBACKSLASH@
+libngraphui_la-gtk_widget.lo: gtk_widget.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -MT libngraphui_la-gtk_widget.lo -MD -MP -MF $(DEPDIR)/libngraphui_la-gtk_widget.Tpo -c -o libngraphui_la-gtk_widget.lo `test -f 'gtk_widget.c' || echo '$(srcdir)/'`gtk_widget.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraphui_la-gtk_widget.Tpo $(DEPDIR)/libngraphui_la-gtk_widget.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gtk_widget.c' object='libngraphui_la-gtk_widget.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-gtk_widget.lo `test -f 'gtk_widget.c' || echo '$(srcdir)/'`gtk_widget.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -c -o libngraphui_la-gtk_widget.lo `test -f 'gtk_widget.c' || echo '$(srcdir)/'`gtk_widget.c
 
-libngraph_la-gtk_ruler.lo: gtk_ruler.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-gtk_ruler.lo -MD -MP -MF $(DEPDIR)/libngraph_la-gtk_ruler.Tpo -c -o libngraph_la-gtk_ruler.lo `test -f 'gtk_ruler.c' || echo '$(srcdir)/'`gtk_ruler.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraph_la-gtk_ruler.Tpo $(DEPDIR)/libngraph_la-gtk_ruler.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gtk_ruler.c' object='libngraph_la-gtk_ruler.lo' libtool=yes @AMDEPBACKSLASH@
+libngraphui_la-gtk_ruler.lo: gtk_ruler.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -MT libngraphui_la-gtk_ruler.lo -MD -MP -MF $(DEPDIR)/libngraphui_la-gtk_ruler.Tpo -c -o libngraphui_la-gtk_ruler.lo `test -f 'gtk_ruler.c' || echo '$(srcdir)/'`gtk_ruler.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraphui_la-gtk_ruler.Tpo $(DEPDIR)/libngraphui_la-gtk_ruler.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gtk_ruler.c' object='libngraphui_la-gtk_ruler.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-gtk_ruler.lo `test -f 'gtk_ruler.c' || echo '$(srcdir)/'`gtk_ruler.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -c -o libngraphui_la-gtk_ruler.lo `test -f 'gtk_ruler.c' || echo '$(srcdir)/'`gtk_ruler.c
 
 mostlyclean-libtool:
 	-rm -f *.lo

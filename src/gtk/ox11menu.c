@@ -78,7 +78,7 @@
 
 
 static char *menuerrorlist[] = {
-  "already running.",
+  "running.",
   "cannot open the display.",
   "cannot open the file",
   "the GUI is not active",

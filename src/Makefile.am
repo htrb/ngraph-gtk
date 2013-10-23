@@ -1,8 +1,8 @@
 SUBDIRS = gtk math
 
-bin_PROGRAMS = ngraph
+noinst_LTLIBRARIES = libngraph.la
 
-ngraph_SOURCES = axis.c axis.h nconfig.c nconfig.h gra.c gra.h		\
+libngraph_la_SOURCES = axis.c axis.h nconfig.c nconfig.h gra.c gra.h	\
 	ioutil.c ioutil.h mathcode.c mathcode.h mathfn.c mathfn.h	\
 	nstring.c nstring.h ntime.c ntime.h oagrid.c oarc.c oarc.h	\
 	oaxis.c object.c object.h odarray.c odouble.c odraw.c odraw.h	\
@@ -15,13 +15,16 @@ ngraph_SOURCES = axis.c axis.h nconfig.c nconfig.h gra.c gra.h		\
 	common.h nhash.h nhash.c strconv.c strconv.h oio.c oplugin.c	\
 	gettext.h
 
-include_HEADERS = ngraph.h
+libngraph_la_CFLAGS = $(GTK_CFLAGS) $(GSL_CFLAGS) -I.. -DCCNAME='"'$(CC)'"'
+libngraph_la_LIBADD = gtk/libngraphui.la math/libmath.la $(M_LIBS) $(READLINE_LIBS) $(GTK_LIBS) $(GLIB_LIBS) $(GSL_LIBS)
+
+bin_PROGRAMS = ngraph
+ngraph_SOURCES = 
+ngraph_LDADD = libngraph.la
+
 
 pkglibexec_PROGRAMS = terminal
 terminal_SOURCES = terminal.c
-
-ngraph_LDADD = gtk/libngraph.la math/libmath.la $(M_LIBS) $(READLINE_LIBS) $(GTK_LIBS) $(GLIB_LIBS) $(GSL_LIBS)
-
-ngraph_CFLAGS = $(GTK_CFLAGS) $(GSL_CFLAGS) -I.. -DCCNAME='"'$(CC)'"'
-
 terminal_CFLAGS = $(GTK_CFLAGS)
+
+include_HEADERS = ngraph.h
