@@ -1,3 +1,22 @@
+2013-10-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/oplugin.c (Plugin): remove field "_local" and add field
+	"lock".
+
+	* src/Makefile.am (ngraph_LDFLAGS): added.
+
+	* src/ngraph_export.map: added.
+
+2013-10-25  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/ogra2emf.c (check_fonts): use "EnumFontFamiliesEx()"
+	instead of "EnumFontFamiliesExW()" befcase the program is clashed
+	when call "EnumFontFamiliesExW()" on Windows8 64bit.
+
+	* mingw/windows.sh: create ruby plugin.
+
+	* mingw/libruby.def: added.
+
 2013-10-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/Makefile.am (noinst_LTLIBRARIES): use convenience library.

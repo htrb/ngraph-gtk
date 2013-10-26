@@ -44,17 +44,16 @@ struct ngraph_plugin {
   ngraph_plugin_exec exec;
   ngraph_plugin_open open;
   ngraph_plugin_close close, interrupt;
-  int deleted;
+  int deleted, id;
   void *user_data;
-  char *name;
+  char *name, *file;
 };
 
 struct shlocal {
   struct ngraph_plugin *plugin;
   int lock;
 };
-
-static NHASH Loaded = NULL;
+static NHASH Plugins = NULL;
 
 static int
 get_symbol(GModule *module, const char *format, const char *name, gpointer *symbol)
@@ -65,45 +64,25 @@ get_symbol(GModule *module, const char *format, const char *name, gpointer *symb
   func = g_strdup_printf(format, name);
   r = g_module_symbol(module, func, symbol);
   g_free(func);
-  if (! r || symbol == NULL) {
-    putstderr(g_module_error());
-    return 1;
-  }
 
-  return 0;
-}
-
-static void
-put_read_only_str(struct objlist *obj, N_VALUE *inst, const char *field, char *val)
-{
-  char *str;
-
-  str = NULL;
-  _getobj(obj, field, inst, &str);
-  if (str) {
-    g_free(str);
-  }
-  _putobj(obj, field, inst, val);
+  return ! r;
 }
 
 static int
 load_plugin(struct objlist *obj, N_VALUE *inst, const char *name, struct ngraph_plugin *plugin)
 {
   GModule *module;
+  void *loaded;
   ngraph_plugin_exec np_exec;
   ngraph_plugin_open np_open;
   ngraph_plugin_close np_close, np_interrupt;
-  int r, i, loaded;
+  int r, i, id;
   char *basename, *module_file, *plugin_path;
   struct objlist *sysobj;
 
   module = NULL;
   module_file = NULL;
   basename = NULL;
-  if (plugin->name) {
-    g_free(plugin->name);
-    plugin->name = NULL;
-  }
 
   basename = getbasename(name);
   for (i = 0; basename[i]; i++) {
@@ -113,7 +92,7 @@ load_plugin(struct objlist *obj, N_VALUE *inst, const char *name, struct ngraph_
     }
   }
 
-  r = nhash_get_int(Loaded, basename, &loaded);
+  r = nhash_get_ptr(Plugins, basename, &loaded);
   if (r == 0 && loaded) {
     error2(obj, ERRLOADED, basename);
     goto ErrorExit;
@@ -139,42 +118,31 @@ load_plugin(struct objlist *obj, N_VALUE *inst, const char *name, struct ngraph_
   }
 
   np_open = NULL;
-  r = get_symbol(module, "ngraph_plugin_open_%s", basename, (gpointer *) &np_open);
-  if (r) {
-    error2(obj, ERRINVALID, name);
-    goto ErrorExit;
-  }
+  get_symbol(module, "ngraph_plugin_open_%s", basename, (gpointer *) &np_open);
 
   np_close = NULL;
-  r = get_symbol(module, "ngraph_plugin_close_%s", basename, (gpointer *) &np_close);
-  if (r) {
-    error2(obj, ERRINVALID, name);
-    goto ErrorExit;
-  }
+  get_symbol(module, "ngraph_plugin_close_%s", basename, (gpointer *) &np_close);
 
   np_interrupt = NULL;
-  r = get_symbol(module, "ngraph_plugin_interrupt_%s", basename, (gpointer *) &np_interrupt);
+  get_symbol(module, "ngraph_plugin_interrupt_%s", basename, (gpointer *) &np_interrupt);
 
-  plugin->name = g_strdup(basename);
-  if (plugin->name == NULL) {
-    error(obj, ERRMEM);
-    goto ErrorExit;
-  }
 
-  r = nhash_set_int(Loaded, basename, TRUE);
+  r = nhash_set_ptr(Plugins, basename, plugin);
   if (r) {
     error(obj, ERRMEM);
     goto ErrorExit;
   }
 
+  _getobj(obj, "id", inst, &id);
+
+  plugin->name = basename;
+  plugin->file = module_file;
   plugin->module = module;
   plugin->exec = np_exec;
   plugin->open = np_open;
   plugin->close = np_close;
   plugin->interrupt = np_interrupt;
-
-  put_read_only_str(obj, inst, "module_name", basename);
-  put_read_only_str(obj, inst, "module_file", module_file);
+  plugin->id = id;
 
   return 0;
 
@@ -185,17 +153,34 @@ load_plugin(struct objlist *obj, N_VALUE *inst, const char *name, struct ngraph_
 
   g_free(module_file);
   g_free(basename);
-  g_free(plugin->name);
 
   return 1;
 }
 
+static struct ngraph_plugin *
+get_plugin(struct objlist *obj, N_VALUE *inst)
+{
+  const char *name;
+  void *ptr;
+  int r;
+
+  _getobj(obj, "module_name", inst, &name);
+  if (name == NULL) {
+    return NULL;
+  }
+
+  r = nhash_get_ptr(Plugins, name, &ptr);
+  if (r) {
+    return NULL;
+  }
+
+  return ptr;
+}
 
 static int 
 plugin_open(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   char *name;
-  struct shlocal *shlocal;
   struct ngraph_plugin *plugin;
   int r;
 
@@ -206,17 +191,32 @@ plugin_open(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **
     return 1;
   }
 
-  _getobj(obj, "_local", inst, &shlocal);
-  if (shlocal == NULL) {
-    return 1;
-  }
-
-  if (shlocal->plugin) {
-    error2(obj, ERRLOADED, shlocal->plugin->name);
-    return 1;
-  }
-
   name = argv[2];
+
+  plugin = get_plugin(obj, inst);
+#ifdef WINDOWS
+  if (plugin) {
+    if (plugin->id >= 0) {
+      error2(obj, ERRLOADED, plugin->name);
+      return 1;
+    }
+  } else {
+    plugin = g_malloc0(sizeof(struct ngraph_plugin));
+    if (plugin == NULL) {
+      error(obj, ERRMEM);
+      return 1;
+    }
+
+    if (load_plugin(obj, inst, name, plugin)) {
+      g_free(plugin);
+      return 1;
+    }
+  }
+#else
+  if (plugin) {
+    error2(obj, ERRLOADED, plugin->name);
+    return 1;
+  }
 
   plugin = g_malloc0(sizeof(struct ngraph_plugin));
   if (plugin == NULL) {
@@ -228,16 +228,20 @@ plugin_open(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **
     g_free(plugin);
     return 1;
   }
+#endif
 
-  r = plugin->open(plugin);
-  rval->i = r;
-  if (r) {
-    error2(obj, ERRINIT, name);
-    g_free(plugin);
-    return 1;
+  _putobj(obj, "module_name", inst, plugin->name);
+  _putobj(obj, "module_file", inst, plugin->file);
+
+  if (plugin->open) {
+    r = plugin->open(plugin);
+    rval->i = r;
+    if (r) {
+      error2(obj, ERRINIT, name);
+      g_free(plugin);
+      return 1;
+    }
   }
-
-  shlocal->plugin = plugin;
 
   return 0;
 }
@@ -245,35 +249,43 @@ plugin_open(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **
 static int
 close_plugin(struct objlist *obj, N_VALUE *inst, struct ngraph_plugin *plugin)
 {
-  if (plugin == NULL) {
-    return 0;
-  }
-
   if (plugin->module == NULL) {
     error(obj, ERRNOLOAD);
     return 1;
   }
 
-  plugin->close(plugin);
-
+#ifdef WINDOWS
+  plugin->id = -1;
+#else
+  if (plugin->close) {
+    plugin->close(plugin);
+  }
   g_module_close(plugin->module);
   plugin->module = NULL;
   plugin->exec = NULL;
   plugin->open = NULL;
   plugin->close = NULL;
+#endif
 
+  if (inst) {
+    _putobj(obj, "module_name", inst, NULL);
+    _putobj(obj, "module_file", inst, NULL);
+  }
+
+#ifndef WINDOWS
   if (plugin->name) {
-    nhash_set_int(Loaded, plugin->name, FALSE);
     g_free(plugin->name);
     plugin->name = NULL;
   }
 
-  if (inst) {
-    put_read_only_str(obj, inst, "module_name", NULL);
-    put_read_only_str(obj, inst, "module_file", NULL);
+  if (plugin->file) {
+    g_free(plugin->file);
+    plugin->name = NULL;
   }
 
   g_free(plugin);
+  nhash_set_ptr(Plugins, plugin->name, NULL);
+#endif
 
   return 0;
 }
@@ -281,43 +293,43 @@ close_plugin(struct objlist *obj, N_VALUE *inst, struct ngraph_plugin *plugin)
 static int
 plugin_close(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  struct shlocal *shlocal;
+  struct ngraph_plugin *plugin;
+  int lock;
 
-  _getobj(obj, "_local", inst, &shlocal);
-  if (shlocal == NULL) {
+  plugin = get_plugin(obj, inst);
+  if (plugin == NULL) {
+    error(obj, ERRNOLOAD);
     return 1;
   }
 
-  if (shlocal->lock) {
+  _getobj(obj, "lock", inst, &lock);
+  if (lock) {
     error(obj, ERRRUN);
     return 1;
   }
 
-  close_plugin(obj, inst, shlocal->plugin);
-  shlocal->plugin = NULL;
+  close_plugin(obj, inst, plugin);
 
   return 0;
 }
 
 static int
+plugin_lock(struct objlist *obj, N_VALUE *inst, int state)
+{
+  int lock;
+
+  lock = state;
+  return _putobj(obj, "lock", inst, &lock);
+}
+
+static int
 plugin_init(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  struct shlocal *shlocal;
-
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv)) return 1;
 
-  shlocal = g_malloc0(sizeof(struct shlocal));
-  if (shlocal == NULL) {
-    error(obj, ERRMEM);
+  if (plugin_lock(obj, inst, FALSE)) {
     return 1;
   }
-
-  if (_putobj(obj, "_local", inst, shlocal)) {
-    g_free(shlocal);
-    return 1;
-  }
-
-  shlocal->lock = 0;
 
   return 0;
 }
@@ -326,27 +338,24 @@ static int
 plugin_done(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct ngraph_plugin *plugin;
-  struct shlocal *shlocal;
+  int lock;
 
+  plugin = get_plugin(obj, inst);
 
-  _getobj(obj, "_local", inst, &shlocal);
-  if (shlocal == NULL) {
-    return 1;
-  }
-
-  plugin = shlocal->plugin;
-  if (plugin == NULL) {
-    return 0;
-  }
-
-  if (shlocal->lock) {
-    if (plugin->interrupt) {
-      plugin->interrupt(plugin);
+  if (plugin) {
+    _getobj(obj, "lock", inst, &lock);
+    if (lock) {
+      if (plugin->interrupt) {
+	plugin->interrupt(plugin);
+      }
+      plugin->deleted = TRUE;
+    } else {
+      close_plugin(obj, inst, plugin);
     }
-    plugin->deleted = TRUE;
-  } else {
-    close_plugin(obj, inst, plugin);
   }
+
+  _putobj(obj, "module_name", inst, NULL);
+  _putobj(obj, "module_file", inst, NULL);
 
   return 0;
 }
@@ -401,23 +410,21 @@ static int
 plugin_exec(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct ngraph_plugin *plugin;
-  struct shlocal *shlocal;
   char **new_argv;
-  int r;
+  int r, lock;
 
   rval->i = 0;
 
-  _getobj(obj, "_local", inst, &shlocal);
-  if (shlocal == NULL || shlocal->plugin == NULL) {
+  plugin = get_plugin(obj, inst);
+  if (plugin == NULL) {
+    error(obj, ERRNOLOAD);
     return 1;
   }
 
   if (get_security()) {
-    error2(obj, ERRSECURTY, shlocal->plugin->name);
+    error2(obj, ERRSECURTY, plugin->name);
     return 1;
   }
-
-  plugin = shlocal->plugin;
 
   if (plugin->module == NULL ||
       plugin->exec == NULL) {
@@ -425,7 +432,8 @@ plugin_exec(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **
     return 1;
   }
 
-  if (shlocal->lock) {
+  _getobj(obj, "lock", inst, &lock);
+  if (lock) {
     error(obj, ERRRUN);
     return 1;
   }
@@ -436,15 +444,15 @@ plugin_exec(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **
     return 1;
   }
 
-  shlocal->lock = TRUE;
+  plugin_lock(obj, inst, TRUE);
 
   r = plugin->exec(plugin, argc - 1, new_argv);
   rval->i = r;
 
   if (plugin->deleted) {
     close_plugin(obj, NULL, plugin);
-  } else {
-    shlocal->lock = FALSE;
+  } else { 
+    plugin_lock(obj, inst, FALSE);
   }
 
   free_argv(argc - 1, new_argv);
@@ -463,7 +471,7 @@ static struct objtable Plugin[] = {
   {"close", NVFUNC, NREAD|NEXEC, plugin_close, "", 0},
   {"module_name", NSTR, NREAD, NULL, NULL, 0},
   {"module_file", NSTR, NREAD, NULL, NULL, 0},
-  {"_local", NPOINTER, 0, NULL, NULL, 0},
+  {"lock", NBOOL, NREAD, NULL, NULL, 0},
 };
 
 #define TBLNUM (sizeof(Plugin) / sizeof(*Plugin))
@@ -471,9 +479,9 @@ static struct objtable Plugin[] = {
 void *
 addplugin(void)
 {
-  if (Loaded == NULL) {
-    Loaded = nhash_new();
-    if (Loaded == NULL) {
+  if (Plugins == NULL) {
+    Plugins = nhash_new();
+    if (Plugins == NULL) {
       return NULL;
     }
   }
@@ -484,21 +492,21 @@ addplugin(void)
 /*****************************************************/
 
 void
-ngraph_plugin_set_user_data(struct ngraph_plugin *shlocal, void *user_data)
+ngraph_plugin_set_user_data(struct ngraph_plugin *plugin, void *user_data)
 {
-  if (shlocal == NULL) {
+  if (plugin == NULL) {
     return;
   }
-  shlocal->user_data = user_data;
+  plugin->user_data = user_data;
 }
 
 void *
-ngraph_plugin_get_user_data(struct ngraph_plugin *shlocal)
+ngraph_plugin_get_user_data(struct ngraph_plugin *plugin)
 {
-  if (shlocal == NULL) {
+  if (plugin == NULL) {
     return NULL;
   }
-  return shlocal->user_data;
+  return plugin->user_data;
 }
 
 union ngraph_val {

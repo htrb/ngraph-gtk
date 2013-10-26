@@ -89,7 +89,7 @@ Description: documents of Ngraph-gtk
 
 Package: ngraph-gtk-dev
 Architecture: all
-Depends:
+Depends: ${misc:Depends}
 Recommends: ngraph-gtk
 Description: Header files for compiling plugins for Ngraph-gtk
  Ngraph is the program to create scientific 2-dimensional graphs for
@@ -101,7 +101,7 @@ Description: Header files for compiling plugins for Ngraph-gtk
 
 Package: ngraph-gtk-plugin-ruby
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends} ngraph-gtk
+Depends: ${shlibs:Depends}, ${misc:Depends}, ngraph-gtk
 Description: Ruby plugin for Ngraph-gtk
  Ngraph is the program to create scientific 2-dimensional graphs for
  researchers and engineers. This program can create advanced graphs

@@ -41,26 +41,37 @@ extract all files in C:\mingw
 
 http://www.gnu.org/software/gsl/
 
-gsl-1.15.tar.gz
+gsl-1.16.tar.gz
 
 
 7. Compile and install GSL
 
-tar xf gsl-1.15.tar.gz
-cd gsl-1.15
+tar xf gsl-1.16.tar.gz
+cd gsl-1.16
 ./configure --prefix=/mingw
 make
 make install
 
 
-8. Get Ngraph-gtk
+8. Get and install Ruby
+
+get Ruby installer from http://rubyinstaller.org/
+
+http://dl.bintray.com/oneclick/rubyinstaller/rubyinstaller-2.0.0-p247.exe
+
+execute rubyinstaller-2.0.0-p247.exe
+
+Check "Add Ruby executables to your PATH"
+
+
+9. Get Ngraph-gtk
 
 http://sourceforge.net/projects/ngraph-gtk/files/
 
 ngraph-gtk-6.06.12.tar.gz
 
 
-9. Compile and install Ngraph-gtk
+10. Compile and install Ngraph-gtk
 
 tar xf ngraph-gtk-6.06.12.tar.gz
 cd ngraph-gtk-6.06.12

@@ -36,6 +36,9 @@
 #define ERRFOPEN 100
 #define ERREMF   101
 
+#define USE_EnumFontFamiliesExW 0
+/* FixMe: the program will be crashed when use EnumLogFontExW */
+
 static char *gra2emf_errorlist[]={
   "I/O error: open file",
   "EMF error",
@@ -74,7 +77,11 @@ static void draw_lines(struct gra2emf_local *local);
 static int close_emf(struct gra2emf_local *local, const char *fname);
 
 static int
+#if USE_EnumFontFamiliesExW
 enum_font_cb(ENUMLOGFONTEXW *lpelfe, NEWTEXTMETRICEXW *lpntme, DWORD FontType, LPARAM lParam)
+#else
+enum_font_cb(ENUMLOGFONTEX *lpelfe, NEWTEXTMETRICEX *lpntme, DWORD FontType, LPARAM lParam)
+#endif
 {
   int char_set, i;
   struct gra2emf_fontmap *fontmap;
@@ -586,15 +593,23 @@ fontmap_append(struct gra2emf_local *local, const char *font_name, struct gra2em
 static void
 check_fonts(struct gra2emf_local *local, HDC hdc, const char *alias, const char *font_name)
 {
+#if USE_EnumFontFamiliesExW
   LOGFONTW logfont;
+#else
+  LOGFONT logfont;
+#endif
+  glong len, size;
   gunichar2 *ustr;
   struct gra2emf_fontmap *fontmap;
 
-  ustr = g_utf8_to_utf16(font_name, -1, NULL, NULL, NULL);
+  ustr = g_utf8_to_utf16(font_name, -1, NULL, &len, NULL);
+  len *= 2;
 
   logfont.lfCharSet = DEFAULT_CHARSET;
   logfont.lfPitchAndFamily = 0;
-  wcsncpy(logfont.lfFaceName, ustr, LF_FACESIZE - 1);
+  size = (len > LF_FACESIZE - 2) ? LF_FACESIZE - 2: len;
+  memcpy(logfont.lfFaceName, ustr, size);
+  memset(((char *) logfont.lfFaceName) + size, 0, 2);
 
   g_free(ustr);
 
@@ -615,7 +630,11 @@ check_fonts(struct gra2emf_local *local, HDC hdc, const char *alias, const char 
   fontmap_append(local, alias, fontmap);
    /* fontmap_append() should be called before EnumFontFamiliesExW() when compiled with -O2 option */
 
+#if USE_EnumFontFamiliesExW
   EnumFontFamiliesExW(hdc, &logfont, (FONTENUMPROCW) enum_font_cb, (LPARAM) fontmap, 0);
+#else
+  EnumFontFamiliesEx(hdc, &logfont, (FONTENUMPROC) enum_font_cb, (LPARAM) fontmap, 0);
+#endif
 }
 
 static int

@@ -146,6 +146,9 @@ PROGRAMS = $(bin_PROGRAMS) $(pkglibexec_PROGRAMS)
 am_ngraph_OBJECTS =
 ngraph_OBJECTS = $(am_ngraph_OBJECTS)
 ngraph_DEPENDENCIES = libngraph.la
+ngraph_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(ngraph_LDFLAGS) $(LDFLAGS) -o $@
 am_terminal_OBJECTS = terminal-terminal.$(OBJEXT)
 terminal_OBJECTS = $(am_terminal_OBJECTS)
 terminal_LDADD = $(LDADD)
@@ -451,12 +454,13 @@ libngraph_la_SOURCES = axis.c axis.h nconfig.c nconfig.h gra.c gra.h	\
 	osystem.c otext.c otext.h opath.c opath.h shell.c shell.h	\
 	shellcm.c shellcm.h shellux.c shellux.h spline.c spline.h	\
 	common.h nhash.h nhash.c strconv.c strconv.h oio.c oplugin.c	\
-	gettext.h
+	gettext.h ngraph_export.map
 
 libngraph_la_CFLAGS = $(GTK_CFLAGS) $(GSL_CFLAGS) -I.. -DCCNAME='"'$(CC)'"'
 libngraph_la_LIBADD = gtk/libngraphui.la math/libmath.la $(M_LIBS) $(READLINE_LIBS) $(GTK_LIBS) $(GLIB_LIBS) $(GSL_LIBS)
 ngraph_SOURCES = 
 ngraph_LDADD = libngraph.la
+ngraph_LDFLAGS = -rdynamic -Wl,--version-script,ngraph_export.map
 terminal_SOURCES = terminal.c
 terminal_CFLAGS = $(GTK_CFLAGS)
 include_HEADERS = ngraph.h
@@ -609,7 +613,7 @@ clean-pkglibexecPROGRAMS:
 
 ngraph$(EXEEXT): $(ngraph_OBJECTS) $(ngraph_DEPENDENCIES) $(EXTRA_ngraph_DEPENDENCIES) 
 	@rm -f ngraph$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(ngraph_OBJECTS) $(ngraph_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(ngraph_LINK) $(ngraph_OBJECTS) $(ngraph_LDADD) $(LIBS)
 
 terminal$(EXEEXT): $(terminal_OBJECTS) $(terminal_DEPENDENCIES) $(EXTRA_terminal_DEPENDENCIES) 
 	@rm -f terminal$(EXEEXT)

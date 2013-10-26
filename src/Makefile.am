@@ -13,7 +13,7 @@ libngraph_la_SOURCES = axis.c axis.h nconfig.c nconfig.h gra.c gra.h	\
 	osystem.c otext.c otext.h opath.c opath.h shell.c shell.h	\
 	shellcm.c shellcm.h shellux.c shellux.h spline.c spline.h	\
 	common.h nhash.h nhash.c strconv.c strconv.h oio.c oplugin.c	\
-	gettext.h
+	gettext.h ngraph_export.map
 
 libngraph_la_CFLAGS = $(GTK_CFLAGS) $(GSL_CFLAGS) -I.. -DCCNAME='"'$(CC)'"'
 libngraph_la_LIBADD = gtk/libngraphui.la math/libmath.la $(M_LIBS) $(READLINE_LIBS) $(GTK_LIBS) $(GLIB_LIBS) $(GSL_LIBS)
@@ -21,7 +21,7 @@ libngraph_la_LIBADD = gtk/libngraphui.la math/libmath.la $(M_LIBS) $(READLINE_LI
 bin_PROGRAMS = ngraph
 ngraph_SOURCES = 
 ngraph_LDADD = libngraph.la
-
+ngraph_LDFLAGS = -rdynamic -Wl,--version-script,ngraph_export.map
 
 pkglibexec_PROGRAMS = terminal
 terminal_SOURCES = terminal.c
