@@ -1,3 +1,8 @@
+2013-10-27  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* plugins/create_objs.rb (NgraphObj#create_str_func_with_argv):
+	use "create_val_func_with_argv()".
+
 2013-10-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/oplugin.c (Plugin): remove field "_local" and add field

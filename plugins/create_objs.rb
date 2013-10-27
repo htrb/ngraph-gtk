@@ -636,13 +636,7 @@ class NgraphObj
   end
 
   def create_str_func_with_argv(func, field, args)
-    @func += <<-EOF
-	static VALUE
-	#{func}(VALUE self, VALUE argv)
-	{
-	  return get_str_func_argv(self, argv, "#{field}");
-	}
-	EOF
+    create_val_func_with_argv(func, field, args, 'rb_tainted_str_new2(rval.str ? rval.str : "")')
   end
 
   def add_bool_func(func, field, argc, args)

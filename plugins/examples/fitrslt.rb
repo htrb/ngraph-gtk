@@ -11,7 +11,6 @@ Y = 5000      # top-left of the legend to be inserted.
 
 fitdata = []
 sys = Ngraph::System[0]
-gra = Ngraph::Gra.current
 
 Ngraph::File.each {|file|
   fitdata.push(file) if (file.type == Ngraph::File::Type::FIT && file.fit)
@@ -53,9 +52,12 @@ if (FileTest.size?(script))
   Ngraph::Shell.new {|shell|
     shell.shell(script)
   }
-  gra.clear
-  gra.draw
-  gra.flush
+  gra = Ngraph::Gra.current
+  if (gra)
+    gra.clear
+    gra.draw
+    gra.flush
+  end
 end
 sys.unlink_temp_file(script)
 sys.unlink_temp_file(datalist)
