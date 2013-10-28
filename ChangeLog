@@ -1,3 +1,9 @@
+2013-10-28  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* configure.ac: check linker option.
+
+	* acinclude.m4: added.
+
 2013-10-27  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* plugins/create_objs.rb (NgraphObj#create_str_func_with_argv):

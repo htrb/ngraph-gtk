@@ -19,9 +19,9 @@ libngraph_la_CFLAGS = $(GTK_CFLAGS) $(GSL_CFLAGS) -I.. -DCCNAME='"'$(CC)'"'
 libngraph_la_LIBADD = gtk/libngraphui.la math/libmath.la $(M_LIBS) $(READLINE_LIBS) $(GTK_LIBS) $(GLIB_LIBS) $(GSL_LIBS)
 
 bin_PROGRAMS = ngraph
-ngraph_SOURCES = 
+ngraph_SOURCES =
 ngraph_LDADD = libngraph.la
-ngraph_LDFLAGS = -rdynamic -Wl,--version-script,ngraph_export.map
+ngraph_LDFLAGS = $(RDYNAMIC) $(VER_SCRIPT)
 
 pkglibexec_PROGRAMS = terminal
 terminal_SOURCES = terminal.c

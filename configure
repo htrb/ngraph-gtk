@@ -659,6 +659,8 @@ PKG_CONFIG
 HAVE_RUBY_DEV_FALSE
 HAVE_RUBY_DEV_TRUE
 RUBY
+VER_SCRIPT
+RDYNAMIC
 READLINE_LIBS
 M_LIBS
 POSUB
@@ -14918,6 +14920,52 @@ $as_echo "#define HAVE_LIBREADLINE 1" >>confdefs.h
 
 
 fi
+
+
+	CFLAGS="$CFLAGS -Werror -rdynamic"
+	cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  RDYNAMIC="-rdynamic"
+else
+  RDYNAMIC=""
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+	CFLAGS="$_save_cflags"
+
+
+
+	CFLAGS="$CFLAGS -Werror -rdynamic"
+	cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  VER_SCRIPT="-Wl,--version-script,ngraph_export.map"
+else
+  VER_SCRIPT=""
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+	CFLAGS="$_save_cflags"
+
 
 
 # Extract the first word of "ruby", so it can be a program name with args.

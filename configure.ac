@@ -40,6 +40,12 @@ AC_CHECK_LIB([readline], [rl_completion_matches],
 			  AC_SUBST(READLINE_LIBS)
 			  ])
 
+dnl Check for -rdynamic option
+NGRAPH_CC_TRY_LINK_FLAG([RDYNAMIC], [-rdynamic])
+
+dnl Check for version script
+NGRAPH_CC_TRY_LINK_FLAG([VER_SCRIPT], [-Wl,--version-script,ngraph_export.map])
+
 dnl Checks for ruby
 AC_CHECK_PROG(RUBY, ruby, yes, no)
 if test $RUBY = yes; then
