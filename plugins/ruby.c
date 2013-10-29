@@ -61,6 +61,24 @@ static VALUE get_ngraph_obj(const char *name);
 static VALUE str2inst_get_ary(VALUE data1);
 static VALUE str2inst_ensure(VALUE data2);
 static VALUE obj_get(VALUE klass, VALUE id_value, const char *name);
+static VALUE tainted_utf8_str_new(const char *str);
+
+static VALUE
+tainted_utf8_str_new(const char *str)
+{
+  size_t l;
+  VALUE s;
+
+  if (str == NULL) {
+    return Qnil;
+  }
+
+  l = strlen(str);
+  s = rb_enc_str_new(str, l, rb_utf8_encoding());
+  rb_obj_taint(s);
+
+  return s;
+}
 
 static void
 ngraph_object_free(struct ngraph_instance *inst)
@@ -869,11 +887,7 @@ inst_get_str(VALUE self, const char *field)
     return Qnil;
   }
 
-  if (str.str) {
-    return rb_tainted_str_new2(str.str);
-  }
-
-  return Qnil;
+  return tainted_utf8_str_new(str.str);
 }
 
 static VALUE
@@ -1303,7 +1317,7 @@ inst_get_sarray(VALUE self, const char *field)
 
   ary = rb_ary_new2(cary.ary.num);
   for (i = 0; i < cary.ary.num; i++) {
-    rb_ary_store(ary, i, rb_tainted_str_new2(cary.ary.data.sa[i]));
+    rb_ary_store(ary, i, tainted_utf8_str_new(cary.ary.data.sa[i]));
   }
 
   return ary;
@@ -1534,11 +1548,7 @@ obj_func_obj(VALUE self, VALUE argv, const char *field, int type)
     val = rb_float_new(rval.d);
     break;
   case NSFUNC:
-    if (rval.str == NULL) {
-      val = Qnil;
-    } else {
-      val = rb_tainted_str_new2(rval.str);
-    }
+    val = tainted_utf8_str_new(rval.str);
     break;
   case NIAFUNC:
     val = rb_ary_new2(rval.ary.num);
@@ -1555,7 +1565,7 @@ obj_func_obj(VALUE self, VALUE argv, const char *field, int type)
   case NSAFUNC:
     val = rb_ary_new2(rval.ary.num);
     for (i = 0; i < rval.ary.num; i++) {
-      rb_ary_store(val, i, rb_tainted_str_new2(rval.ary.data.sa[i]));
+      rb_ary_store(val, i, tainted_utf8_str_new(rval.ary.data.sa[i]));
     }
     break;
   default:
@@ -1585,7 +1595,7 @@ get_str_func_argv(VALUE self, VALUE argv, const char *field)
     return Qnil;
   }
 
-  return rb_tainted_str_new2(rval.str ? rval.str : "");
+  return tainted_utf8_str_new(rval.str ? rval.str : "");
 }
 #endif
 
