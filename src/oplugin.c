@@ -1,5 +1,6 @@
 #include "common.h"
 
+#include <stdlib.h>
 #include <glib.h>
 #include <gmodule.h>
 

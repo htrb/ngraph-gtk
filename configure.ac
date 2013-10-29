@@ -29,9 +29,9 @@ ALL_LINGUAS="ja"
 AM_GNU_GETTEXT([external])
 
 dnl Checks for libraries.
-AC_CHECK_LIB([m], [sqrt], [
-		  M_LIBS=-lm
-		  AC_SUBST(M_LIBS)
+AC_SEARCH_LIBS(sqrt, m, [
+		    M_LIBS=-lm
+		    AC_SUBST(M_LIBS)
 		  ])
 AC_CHECK_LIB([readline], [rl_completion_matches],
 			  [

@@ -1,3 +1,8 @@
+2013-10-29  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* configure.ac: use "AC_SEARCH_LIBS" instead of "AC_CHECK_LIB" to
+	find math functions in "AC_CHECK_FUNCS".
+
 2013-10-28  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* configure.ac: check linker option.
