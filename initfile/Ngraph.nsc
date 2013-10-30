@@ -474,11 +474,14 @@ if [ $SAVE_NGP = 1 ]; then
     del system:0
 fi
 
+pwd=`pwd`
+cd "$NGRAPHCONF"
 new shell name=init_d
-for nsc in ${NGRAPHCONF}/init.d/[0-9][0-9]*.nsc
+for nsc in init.d/[0-9][0-9]*.nsc
 do
     shell:init_d:shell "$nsc"
 done
 del shell:init_d
+cd "$pwd"
 
 unset usage check_file clear_viewer save_image check_set load_graph append_addin_list LOADSETTINGS SHOW_DIALOG XAXIS YAXIS

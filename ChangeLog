@@ -1,5 +1,8 @@
 2013-10-30  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* plugins/ruby.c (ngraph_plugin_open_ruby): set default encodings
+	and require some libraries.
+
 	* plugins/create_objs.rb (NgraphObj#create_str_func_with_args)
 	(NgraphObj#create_str_func_with_argv)
 	(NgraphObj#add_str_array_func): use "tainted_utf8_str_new()".

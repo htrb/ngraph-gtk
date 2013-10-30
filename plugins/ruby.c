@@ -1773,6 +1773,8 @@ ngraph_str2inst(VALUE module, VALUE arg)
 int
 ngraph_plugin_open_ruby(struct ngraph_plugin *plugin)
 {
+  rb_encoding *enc;
+
   if (Initialized) {
     return 0;
   }
@@ -1782,6 +1784,14 @@ ngraph_plugin_open_ruby(struct ngraph_plugin *plugin)
   ruby_script("Embedded Ruby on Ngraph");
   ruby_init_loadpath();
   rb_enc_find_index("encdb");	/* http://www.artonx.org/diary/20090206.html */
+  enc = rb_locale_encoding();
+  if (enc) {
+    rb_enc_set_default_external(rb_enc_from_encoding(enc));
+  }
+  rb_enc_set_default_internal(rb_enc_from_encoding(rb_utf8_encoding()));
+  rb_require("enc/encdb");
+  rb_require("enc/trans/transdb");
+  rb_require("rubygems");
   Initialized = TRUE;
 
   NgraphModule = rb_define_module("Ngraph");
