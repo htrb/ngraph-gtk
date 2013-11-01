@@ -1,3 +1,8 @@
+2013-11-01  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/math/math_basic_function.c (math_func_dif): returned value
+	is 0 if the type of saved value is not "MATH_VALUE_NORMAL".
+
 2013-10-30  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* plugins/ruby.c (ngraph_plugin_open_ruby): set default encodings

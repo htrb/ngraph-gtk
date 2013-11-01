@@ -2674,7 +2674,11 @@ math_func_dif(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
 {
   if (exp->buf[0].val.type == MATH_VALUE_NORMAL) {
     MathValue *ptr = eq->pos_func_buf + exp->pos_id;
-    rval->val = exp->buf[0].val.val - ptr->val;
+    if (ptr->type == MATH_VALUE_NORMAL) {
+      rval->val = exp->buf[0].val.val - ptr->val;
+    } else {
+      rval->val = 0;
+    }
     rval->type = ptr->type;
     *ptr = exp->buf[0].val;
   } else {
