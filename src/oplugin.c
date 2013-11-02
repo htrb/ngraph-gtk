@@ -18,7 +18,7 @@
 
 #define ERRMEM 100
 #define ERRRUN 101
-#define ERRNOCL 102
+#define ERRNOMODULE 102
 #define ERRFILEFIND 103
 #define ERRLOAD 104
 #define ERRLOADED 105
@@ -30,7 +30,7 @@
 static char *sherrorlist[] = {
   "cannot allocate enough memory",
   "already running.",
-  "no command string is specified.",
+  "no module name is specified.",
   "no such file",
   "cannot load module",
   "the module is already loaded",
@@ -69,6 +69,26 @@ get_symbol(GModule *module, const char *format, const char *name, gpointer *symb
   return ! r;
 }
 
+static char *
+get_plugin_name(const char *str)
+{
+  char *basename;
+  int i;
+
+  basename = getbasename(str);
+  if (basename == NULL) {
+    return NULL;
+  }
+  for (i = 0; basename[i]; i++) {
+    if (basename[i] == '.') {
+      basename[i] = '\0';
+      break;
+    }
+  }
+
+  return basename;
+}
+
 static int
 load_plugin(struct objlist *obj, N_VALUE *inst, const char *name, struct ngraph_plugin *plugin)
 {
@@ -85,12 +105,10 @@ load_plugin(struct objlist *obj, N_VALUE *inst, const char *name, struct ngraph_
   module_file = NULL;
   basename = NULL;
 
-  basename = getbasename(name);
-  for (i = 0; basename[i]; i++) {
-    if (basename[i] == '.') {
-      basename[i] = '\0';
-      break;
-    }
+  basename = get_plugin_name(name);
+  if (basename == NULL) {
+    error(obj, ERRLOAD);
+    return 1;
   }
 
   r = nhash_get_ptr(Plugins, basename, &loaded);
@@ -159,16 +177,10 @@ load_plugin(struct objlist *obj, N_VALUE *inst, const char *name, struct ngraph_
 }
 
 static struct ngraph_plugin *
-get_plugin(struct objlist *obj, N_VALUE *inst)
+get_plugin_from_name(const char *name)
 {
-  const char *name;
   void *ptr;
   int r;
-
-  _getobj(obj, "module_name", inst, &name);
-  if (name == NULL) {
-    return NULL;
-  }
 
   r = nhash_get_ptr(Plugins, name, &ptr);
   if (r) {
@@ -176,6 +188,19 @@ get_plugin(struct objlist *obj, N_VALUE *inst)
   }
 
   return ptr;
+}
+
+static struct ngraph_plugin *
+get_plugin(struct objlist *obj, N_VALUE *inst)
+{
+  const char *name;
+
+  _getobj(obj, "module_name", inst, &name);
+  if (name == NULL) {
+    return NULL;
+  }
+
+  return get_plugin_from_name(name);
 }
 
 static int 
@@ -188,19 +213,25 @@ plugin_open(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **
   rval->i = 0;
 
   if (argv[2] == NULL) {
-    error(obj, ERRNOCL);
+    error(obj, ERRNOMODULE);
     return 1;
   }
 
-  name = argv[2];
+  name = get_plugin_name(argv[2]);
+  if (name == NULL) {
+    error(obj, ERRNOMODULE);
+    return 1;
+  }
+  plugin = get_plugin_from_name(name);
+  g_free(name);
 
-  plugin = get_plugin(obj, inst);
 #ifdef WINDOWS
   if (plugin) {
     if (plugin->id >= 0) {
       error2(obj, ERRLOADED, plugin->name);
       return 1;
     }
+    _getobj(obj, "id", inst, &plugin->id);
   } else {
     plugin = g_malloc0(sizeof(struct ngraph_plugin));
     if (plugin == NULL) {
@@ -208,7 +239,7 @@ plugin_open(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **
       return 1;
     }
 
-    if (load_plugin(obj, inst, name, plugin)) {
+    if (load_plugin(obj, inst, argv[2], plugin)) {
       g_free(plugin);
       return 1;
     }
@@ -225,7 +256,7 @@ plugin_open(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **
     return 1;
   }
 
-  if (load_plugin(obj, inst, name, plugin)) {
+  if (load_plugin(obj, inst, argv[2], plugin)) {
     g_free(plugin);
     return 1;
   }
@@ -238,7 +269,7 @@ plugin_open(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **
     r = plugin->open(plugin);
     rval->i = r;
     if (r) {
-      error2(obj, ERRINIT, name);
+      error2(obj, ERRINIT, argv[2]);
       g_free(plugin);
       return 1;
     }
