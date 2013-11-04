@@ -190,7 +190,9 @@ gtkclose(GtkWidget *widget, GdkEvent *event, gpointer user_data)
     _getobj(obj, "_gtklocal", inst, &local);
     if (local->mainwin == widget) {
       _getobj(obj, "id", inst, &id);
-      delobj(obj, id);
+      if (delobj(obj, id) < 0) {
+	return TRUE;
+      }
       break;
     }
   }
