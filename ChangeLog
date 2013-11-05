@@ -1,7 +1,6 @@
-2013-11-04  Hiroyuki Ito  <ZXB01226 at nifty.com>
+2013-11-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/gtk/ogra2x11.c (gtkclose): check returned value of the
-	function "delobj()".
+	* src/gtk/ogra2x11.c (gtkclose): always returns "TRUE".
 
 2013-11-02  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
