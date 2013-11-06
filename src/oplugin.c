@@ -641,7 +641,8 @@ allocate_sarray(ngraph_arg *arg)
 int
 ngraph_putobj(struct objlist *obj, const char *vname, int id, ngraph_value *val)
 {
-  int r, type;
+  enum ngraph_object_field_type type;
+  int r;
   void *valp;
   struct narray *array;
 
@@ -657,7 +658,6 @@ ngraph_putobj(struct objlist *obj, const char *vname, int id, ngraph_value *val)
     valp = NULL;
     r = putobj(obj, vname, id, valp);
     break;
-  case NSFUNC:
   case NSTR:
   case NOBJ:
     if (val->str) {
@@ -666,11 +666,15 @@ ngraph_putobj(struct objlist *obj, const char *vname, int id, ngraph_value *val)
       valp = NULL;
     }
     r = putobj(obj, vname, id, valp);
+    if (r < 0 && valp) {
+      g_free(valp);
+    }
     break;
   case NPOINTER:		/* these fields may not be writable */
   case NBFUNC:
   case NIFUNC:
   case NDFUNC:
+  case NSFUNC:
   case NIAFUNC:
   case NDAFUNC:
   case NSAFUNC:
@@ -852,7 +856,8 @@ free_obj_arg(const char **ary, struct objlist *obj, const char *vname, ngraph_ar
 int
 ngraph_getobj(struct objlist *obj, const char *vname, int id, ngraph_arg *arg, ngraph_returned_value *val)
 {
-  int r, type, argc;
+  int r, argc;
+  enum ngraph_object_field_type type;
   const char **argv;
   union ngraph_val nval;
 
@@ -916,7 +921,8 @@ ngraph_getobj(struct objlist *obj, const char *vname, int id, ngraph_arg *arg, n
 int
 ngraph_exeobj(struct objlist *obj, const char *vname, int id, ngraph_arg *arg)
 {
-  int r, argc, type;
+  int r, argc;
+  enum ngraph_object_field_type type;
   const char **argv;
 
   type = chkobjfieldtype(obj, vname);
@@ -1087,7 +1093,7 @@ ngraph_get_obj_field_permission(struct objlist *obj, const char *field)
   return chkobjperm(obj, field);
 }
 
-int
+enum ngraph_object_field_type
 ngraph_get_obj_field_type(struct objlist *obj, const char *field)
 {
   return chkobjfieldtype(obj, field);

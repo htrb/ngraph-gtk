@@ -1,34 +1,36 @@
 #ifndef NGRAPH_HEADER
 #define NGRAPH_HEADER
 
-#define NVOID 0
-#define NBOOL 1
+enum ngraph_object_field_type {
+  NVOID = 0,
+  NBOOL = 1,
 #if USE_NCHAR
-#define NCHAR 2
+  NCHAR = 2,
 #endif
-#define NINT 3
-#define NDOUBLE 4
-#define NSTR 5
-#define NPOINTER 6
-#define NIARRAY 7
-#define NDARRAY 8
-#define NSARRAY 9
-#define NENUM 10
-#define NOBJ  11
+  NINT = 3,
+  NDOUBLE = 4,
+  NSTR = 5,
+  NPOINTER = 6,
+  NIARRAY = 7,
+  NDARRAY = 8,
+  NSARRAY = 9,
+  NENUM = 10,
+  NOBJ = 11,
 #if USE_LABEL
-#define NLABEL 12
+  NLABEL = 12,
 #endif
-#define NVFUNC 20
-#define NBFUNC 21
+  NVFUNC = 20,
+  NBFUNC = 21,
 #if USE_NCHAR
-#define NCFUNC 22
+  NCFUNC = 22,
 #endif
-#define NIFUNC 23
-#define NDFUNC 24
-#define NSFUNC 25
-#define NIAFUNC 26
-#define NDAFUNC 27
-#define NSAFUNC 28
+  NIFUNC = 23,
+  NDFUNC = 24,
+  NSFUNC = 25,
+  NIAFUNC = 26,
+  NDAFUNC = 27,
+  NSAFUNC = 28,
+};
 
 #define NREAD 1
 #define NWRITE 2
@@ -99,7 +101,7 @@ int ngraph_del(struct objlist *obj, int id);
 int ngraph_exist(struct objlist *obj, int id);
 int ngraph_get_obj_field_num(struct objlist *obj);
 int ngraph_get_obj_field_permission(struct objlist *obj, const char *field);
-int ngraph_get_obj_field_type(struct objlist *obj, const char *field);
+enum ngraph_object_field_type ngraph_get_obj_field_type(struct objlist *obj, const char *field);
 const char *ngraph_get_obj_name(struct objlist *obj);
 const char *ngraph_get_obj_field_args(struct objlist *obj, const char *field);
 const char *ngraph_get_obj_field(struct objlist *obj, int i);

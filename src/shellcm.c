@@ -644,7 +644,8 @@ objdisp(struct objlist *root,struct objlist *parent,int *tab)
 static void 
 dispfield(struct objlist *obj,char *name)
 {
-  int j,ftype;
+  int j;
+  enum ngraph_object_field_type ftype;
   char perm[4],type[10];
   const char *alist;
   char **enumlist;

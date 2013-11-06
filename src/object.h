@@ -59,7 +59,7 @@ typedef
 
 struct objtable {
     char *name;
-    int type;
+    enum ngraph_object_field_type type;
     int attrib;
     Proc proc;
     void *arglist;
@@ -241,7 +241,7 @@ int chkobjfieldnum(struct objlist *obj);
 char *chkobjfieldname(struct objlist *obj,int num);
 int chkobjfield(struct objlist *obj, const char *name);
 int chkobjperm(struct objlist *obj, const char *name);
-int chkobjfieldtype(struct objlist *obj, const char *name);
+enum ngraph_object_field_type chkobjfieldtype(struct objlist *obj, const char *name);
 const char *chkobjarglist(struct objlist *obj, const char *name);
 
 struct objlist *getobject(const char *name);

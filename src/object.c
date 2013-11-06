@@ -1943,7 +1943,7 @@ chkobjperm(struct objlist *obj, const char *name)
   return robj->table[idn].attrib;
 }
 
-int 
+enum ngraph_object_field_type
 chkobjfieldtype(struct objlist *obj, const char *name)
 /* chkobjperm() returns VOID on error */
 {
@@ -1969,7 +1969,8 @@ chkobjproc(struct objlist *obj,char *name)
 const char *
 chkobjarglist(struct objlist *obj, const char *name)
 {
-  int namen,type;
+  int namen;
+  enum ngraph_object_field_type type;
   struct objlist *robj;
   char *arglist;
 
@@ -3656,7 +3657,7 @@ getvaluestr(struct objlist *obj,const char *field,void *val,int cr,int quote)
   const char *arglist;
   unsigned int k;
   int i;
-  int type;
+  enum ngraph_object_field_type type;
   GString *str;
 
   str = g_string_sized_new(64);
@@ -4502,8 +4503,9 @@ schkobjfield(struct objlist *obj,int id, const char *field, char *arg,
 {
   int err;
   char *val;
-  int argc2,type;
-    const char *arglist;
+  int argc2;
+  enum ngraph_object_field_type type;
+  const char *arglist;
   char **argv2;
   char value[8];
   char *po;
@@ -4545,7 +4547,8 @@ sgetobjfield(struct objlist *obj,int id, const char *field,char *arg,
 {
   int err;
   char *val;
-  int argc2,type;
+  int argc2;
+  enum ngraph_object_field_type type;
   const char *arglist;
   char **argv2;
   char value[8];
@@ -4674,7 +4677,8 @@ sputobjfield(struct objlist *obj,int id, const char *field,char *arg)
 {
   char *val;
   const char *arglist;
-  int err,type;
+  int err;
+  enum ngraph_object_field_type type;
   int argc2;
   char **argv2;
 
@@ -4757,7 +4761,8 @@ static int
 sexeobjfield(struct objlist *obj,int id,char *field,char *arg)
 {
   char *val;
-  int err,type;
+  int err;
+  enum ngraph_object_field_type type;
   int argc2;
   const char *arglist;
   char **argv2;
@@ -4872,7 +4877,8 @@ obj_do_tighten(struct objlist *obj, N_VALUE *inst, const char *field)
 int 
 copy_obj_field(struct objlist *obj, int dist, int src, char **ignore_field)
 {
-  int perm, type, ignore, j;
+  int perm, ignore, j;
+  enum ngraph_object_field_type type;
   char *field, **ptr;
 
   for (j = 0; j < chkobjfieldnum(obj); j++) {

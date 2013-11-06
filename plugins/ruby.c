@@ -422,7 +422,7 @@ obj_field_args(VALUE klass, VALUE field, const char *name)
 {
   struct objlist *nobj;
   const char* args;
-  int type;
+  enum ngraph_object_field_type type;
 
   nobj = ngraph_get_object(name);
   type = ngraph_get_obj_field_type(nobj, StringValueCStr(field));
@@ -443,7 +443,7 @@ static VALUE
 obj_field_type(VALUE klass, VALUE field, const char *name)
 {
   struct objlist *nobj;
-  int type;
+  enum ngraph_object_field_type type;
 
   nobj = ngraph_get_object(name);
   type = ngraph_get_obj_field_type(nobj, StringValueCStr(field));
