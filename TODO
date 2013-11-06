@@ -1,5 +1,3 @@
-* windows 用 plugin 提供
-
 * ruby plugin 登録初期化スクリプト提供
 
 * legend 配下のオブジェクトに hsb などのフィールドを追加する。
