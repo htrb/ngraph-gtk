@@ -108,4 +108,4 @@ Description: Ruby plugin for Ngraph-gtk
  which can't be created by spreadsheets. Graphs can be exported to
  postscript.
  .
- This package contains plugin files.
+ This package contains a plugin to run Ruby script.
