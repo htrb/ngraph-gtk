@@ -7,6 +7,7 @@
 
 GtkWidget *combo_box_create(void);
 GtkWidget *combo_box_entry_create(void);
+void combo_box_entry_set_width(GtkWidget *cbox, int width);
 void combo_box_entry_set_text(GtkWidget *cbox, char *str);
 const char *combo_box_entry_get_text(GtkWidget *cbox);
 int combo_box_get_active(GtkWidget *cbox);

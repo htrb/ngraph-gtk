@@ -1,12 +1,10 @@
 #ifndef GTK_WIDGET_HEADER
 #define GTK_WIDGET_HEADER
 
+#include "object.h"
+
 #define SPIN_ENTRY_MAX 1000000
-#if GTK_CHECK_VERSION(3, 4, 0)
-#define NUM_ENTRY_WIDTH 160
-#else
-#define NUM_ENTRY_WIDTH 80
-#endif
+#define NUM_ENTRY_WIDTH 11
 
 enum SPIN_BUTTON_TYPE {
   SPIN_BUTTON_TYPE_WIDTH,

@@ -6,6 +6,7 @@
 
 #include <string.h>
 
+#include "gtk_widget.h"
 #include "gtk_combo.h"
 
 static void
@@ -73,6 +74,12 @@ const char *
 combo_box_entry_get_text(GtkWidget *cbox)
 {
   return gtk_entry_get_text(GTK_ENTRY(gtk_bin_get_child(GTK_BIN(cbox))));
+}
+
+void
+combo_box_entry_set_width(GtkWidget *cbox, int width)
+{
+  return gtk_entry_set_width_chars(GTK_ENTRY(gtk_bin_get_child(GTK_BIN(cbox))), width);
 }
 
 void

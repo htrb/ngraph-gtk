@@ -360,11 +360,7 @@ create_direction_entry(void)
   GtkWidget *w;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_ANGLE, FALSE, TRUE);
-#if GTK_CHECK_VERSION(3, 4, 0)
-  gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 1.2, -1);
-#else
-  gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 1.5, -1);
-#endif
+  gtk_entry_set_width_chars(GTK_ENTRY(w), NUM_ENTRY_WIDTH);
   gtk_entry_set_icon_from_stock(GTK_ENTRY(w), GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_GO_UP);
   gtk_entry_set_icon_from_stock(GTK_ENTRY(w), GTK_ENTRY_ICON_PRIMARY, GTK_STOCK_GO_DOWN);
   g_signal_connect(w, "icon-release", G_CALLBACK(direction_icon_released), NULL);
@@ -380,11 +376,13 @@ create_text_entry(int set_default_size, int set_default_action)
   GtkWidget *w;
 
   w = gtk_entry_new();
-  if (set_default_size)
-    gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH, -1);
+  if (set_default_size) {
+    gtk_entry_set_width_chars(GTK_ENTRY(w), NUM_ENTRY_WIDTH);
+  }
 
-  if (set_default_action)
+  if (set_default_action) {
     gtk_entry_set_activates_default(GTK_ENTRY(w), TRUE);
+  }
 
   return w;
 }
@@ -536,11 +534,13 @@ _create_spin_entry(enum SPIN_BUTTON_TYPE type, double min, double max,
   gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(w), FALSE);
   gtk_spin_button_set_digits(GTK_SPIN_BUTTON(w), (numeric) ? 0 : 2);
 
-  if (set_default_size)
-    gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH, -1);
+  if (set_default_size) {
+    gtk_entry_set_width_chars(GTK_ENTRY(w), NUM_ENTRY_WIDTH);
+  }
 
-  if (set_default_action)
+  if (set_default_action) {
     gtk_entry_set_activates_default(GTK_ENTRY(w), TRUE);
+  }
 
   g_object_set_data(G_OBJECT(w), "user-data", GINT_TO_POINTER(type));
 

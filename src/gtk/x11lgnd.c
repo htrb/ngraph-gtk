@@ -1042,7 +1042,7 @@ style_setup(struct LegendDialog *d, GtkWidget *table, int i)
   GtkWidget *w;
 
   w = combo_box_entry_create();
-  gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 1.5, -1);
+  combo_box_entry_set_width(w, NUM_ENTRY_WIDTH);
   d->style = w;
   add_widget_to_table(table, w, _("Line _Style:"), TRUE, i);
 }

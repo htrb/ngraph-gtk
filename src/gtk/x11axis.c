@@ -1365,7 +1365,7 @@ scale_tab_create(struct AxisDialog *d)
 
   w = combo_box_entry_create();
   add_widget_to_table(table, w, _("_Ref:"), FALSE, i++);
-  gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 1.5, -1);
+  combo_box_entry_set_width(w, NUM_ENTRY_WIDTH);
   g_signal_connect(w, "changed", G_CALLBACK(AxisDialogRef), d);
   d->ref = w;
 
@@ -1498,7 +1498,7 @@ baseline_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   d->baseline = w;
 
   w = combo_box_entry_create();
-  gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 1.5, -1);
+  combo_box_entry_set_width(w, NUM_ENTRY_WIDTH);
   add_widget_to_table(table, w, _("Line _Style:"), TRUE, i++);
   d->style = w;
 
@@ -1694,12 +1694,12 @@ gauge_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   d->gauge = w;
 
   w = create_text_entry(FALSE, TRUE);
-  gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 3, -1);
+  gtk_entry_set_width_chars(GTK_ENTRY(w), NUM_ENTRY_WIDTH * 2);
   add_widget_to_table(table, w, _("_Min:"), TRUE, j++);
   d->min = w;
 
   w = create_text_entry(FALSE, TRUE);
-  gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 3, -1);
+  gtk_entry_set_width_chars(GTK_ENTRY(w), NUM_ENTRY_WIDTH * 2);
   add_widget_to_table(table, w, _("_Max:"), TRUE, j++);
   d->max = w;
 
@@ -2347,11 +2347,7 @@ position_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   d->direction = w;
 
   w = combo_box_entry_create();
-#if GTK_CHECK_VERSION(3, 4, 0)
-  gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH, -1);
-#else
-  gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 2, -1);
-#endif
+  combo_box_entry_set_width(w, NUM_ENTRY_WIDTH);
   g_signal_connect(w, "changed", G_CALLBACK(AxisDialogRef), dd);
   add_widget_to_table(table, w, _("_Adjust:"), FALSE, i++);
   d->adjust = w;

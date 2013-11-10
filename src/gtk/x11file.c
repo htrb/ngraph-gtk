@@ -621,7 +621,7 @@ FitSaveDialogSetup(GtkWidget *wi, void *data, int makewidget)
 			   NULL);
 
     w = combo_box_entry_create();
-    gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 1.5, -1);
+    combo_box_entry_set_width(w, 20);
 
 #if GTK_CHECK_VERSION(3, 0, 0)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
@@ -3091,7 +3091,7 @@ plot_tab_create(GtkWidget *parent, struct FileDialog *d)
 
   i = 0;
   w = combo_box_entry_create();
-  gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 1.5, -1);
+  combo_box_entry_set_width(w, NUM_ENTRY_WIDTH);
   add_widget_to_table(table, w, _("Line _Style:"), TRUE, i++);
   d->style = w;
 
@@ -3154,7 +3154,7 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
   d->xcol = w;
 
   w = combo_box_entry_create();
-  gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH, -1);
+  combo_box_entry_set_width(w, NUM_ENTRY_WIDTH);
   item_setup(hbox, w, _("_X axis:"), TRUE);
   d->xaxis = w;
   g_signal_connect(w, "changed", G_CALLBACK(FileDialogAxis), d);
@@ -3173,7 +3173,7 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
   d->ycol = w;
 
   w = combo_box_entry_create();
-  gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH, -1);
+  combo_box_entry_set_width(w, NUM_ENTRY_WIDTH);
   item_setup(hbox, w, _("_Y axis:"), TRUE);
   d->yaxis = w;
   g_signal_connect(w, "changed", G_CALLBACK(FileDialogAxis), d);

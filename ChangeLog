@@ -1,3 +1,23 @@
+2013-11-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11axis.c (gauge_tab_create): use
+	"gtk_entry_set_width_chars()".
+
+	* src/gtk/gtk_widget.c (create_direction_entry)
+	(create_text_entry, _create_spin_entry):use
+	"gtk_entry_set_width_chars()".
+
+	* src/gtk/x11lgnd.c (style_setup): use
+	"combo_box_entry_set_width()".
+
+	* src/gtk/x11file.c (FitSaveDialogSetup, plot_tab_create)
+	(FileDialogSetupCommon): use "combo_box_entry_set_width()".
+
+	* src/gtk/x11axis.c (scale_tab_create, position_tab_create): use
+	"combo_box_entry_set_width()".
+
+	* src/gtk/gtk_combo.c (combo_box_entry_set_width): added.
+
 2013-11-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/oplugin.c (ngraph_get_obj_field_type): type of the returned
