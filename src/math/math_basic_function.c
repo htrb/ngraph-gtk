@@ -2687,3 +2687,26 @@ math_func_dif(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
 
   return 0;
 }
+
+int
+math_func_fmod(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int prec, r;
+  double x, y, m;
+
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+  MATH_CHECK_ARG(rval, exp->buf[1]);
+
+  x = exp->buf[0].val.val;
+  y = exp->buf[1].val.val;
+
+  if (y == 0.0) {
+    rval->type = MATH_VALUE_NAN;
+    rval->val = 0.0;
+    return 0;
+  }
+
+  rval->val = fmod(x, y);
+
+  return 0;
+}
