@@ -8557,6 +8557,8 @@ static struct objtable file2d[] = {
   {"save_config",NVFUNC,NREAD|NEXEC,f2dsaveconfig,"",0},
   {"output_file",NVFUNC,NREAD|NEXEC,f2doutputfile,"sib",0},
   {"modified",NVFUNC,NEXEC,update_field,"",0},
+  {"hsb",NVFUNC,NREAD|NEXEC,put_hsb,"ddd",0},
+  {"hsb2",NVFUNC,NREAD|NEXEC,put_hsb2,"ddd",0},
   {FIT_FIELD_PREFIX "newton",NSFUNC,NREAD|NEXEC,solve_equation,"da",0},
   {FIT_FIELD_PREFIX "bisection",NSFUNC,NREAD|NEXEC,solve_equation,"da",0},
   {FIT_FIELD_PREFIX "calc",NSFUNC,NREAD|NEXEC,calc_equation,"d",0},

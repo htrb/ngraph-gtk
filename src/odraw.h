@@ -63,5 +63,10 @@ extern char *arrowchar[];
 
 int pathsave(struct objlist *obj,N_VALUE *inst,N_VALUE *rval, int argc,char **argv);
 int clear_bbox(struct objlist *obj, N_VALUE *inst);
+int put_hsb_color(struct objlist *obj, N_VALUE *inst, int argc, char **argv, char *format);
+int put_fill_hsb(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv);
+int put_stroke_hsb(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv);
+int put_hsb(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv);
+int put_hsb2(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv);
 
 #endif

@@ -558,6 +558,8 @@ static struct objtable rect[] = {
   {"zooming",NVFUNC,NREAD|NEXEC,rectzoom,"iiii",0},
   {"match",NBFUNC,NREAD|NEXEC,rectmatch,"iiiii",0},
 
+  {"fill_hsb", NVFUNC, NREAD|NEXEC, put_fill_hsb,"ddd",0},
+  {"stroke_hsb", NVFUNC, NREAD|NEXEC, put_stroke_hsb,"ddd",0},
 
   /* following fields exist for backward compatibility */
   {"frame",NBOOL,NWRITE,rect_frame,NULL,0},

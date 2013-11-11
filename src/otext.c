@@ -517,6 +517,8 @@ static struct objtable text[] = {
   {"match",NBFUNC,NREAD|NEXEC,textmatch,"iiiii",0},
   {"save_config",NVFUNC,NREAD|NEXEC,textsaveconfig,"",0},
 
+  {"hsb", NVFUNC, NREAD|NEXEC, put_hsb,"ddd",0},
+
   /* following fields exist for backward compatibility */
   {"jfont",NSTR,NWRITE,textgeometry,NULL,0},
 };

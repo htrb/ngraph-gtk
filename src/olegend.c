@@ -42,21 +42,21 @@ static char *legenderrorlist[]={
 
 #define ERRNUM (sizeof(legenderrorlist) / sizeof(*legenderrorlist))
 
-static int 
+static int
 legendinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {  
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
-static int 
+static int
 legenddone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
-int 
+int
 legendgeometry(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
                    int argc,char **argv)
 {
@@ -66,7 +66,7 @@ legendgeometry(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
   return 0;
 }
 
-int 
+int
 legendmatch(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy,err;
@@ -128,7 +128,7 @@ legendmatch(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
   return 0;
 }
 
-int 
+int
 legendbbox(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy;
@@ -179,7 +179,7 @@ legendbbox(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-int 
+int
 legendmove(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *points;
@@ -228,7 +228,7 @@ flip(int pivot, enum FLIP_DIRECTION dir, int *x, int *y)
   }
 }
 
-int 
+int
 legendrotate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *points;
@@ -263,7 +263,7 @@ legendrotate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **arg
   return 0;
 }
 
-int 
+int
 legendflip(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *points;
@@ -298,7 +298,7 @@ legendflip(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-int 
+int
 legendchange(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *points;
@@ -323,7 +323,7 @@ legendchange(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **arg
   return 0;
 }
 
-int 
+int
 legendzoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *points,*style;
@@ -364,8 +364,8 @@ legendzoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-int 
-put_color_for_backward_compatibility(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,  int argc, char **argv)
+int
+put_color_for_backward_compatibility(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   int col, val;
 

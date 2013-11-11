@@ -147,7 +147,7 @@
 <div>
 <table border=1>
  <tr>
-  <td>const x:exp</td>
+  <td>const x:=exp</td>
   <td>
    x は英字で始まり英数字または _ から構成される文字列、exp は任意の数式。<br>
    <ul>
@@ -250,7 +250,7 @@
 <table border=1>
  <tr><td>-+</td><td>符号</td></tr>
  <tr><td>+ - * /</td><td>四則演算</td></tr>
- <tr><td>\</td><td>実数乗算の乗余</td></tr>
+ <tr><td>\</td><td>浮動小数点剰余</td></tr>
  <tr><td>^</td><td>ベキ乗</td></tr>
  <tr><td>!</td><td>階乗(引数は 169 以下の正の整数)</td></tr>
  <tr><td>:=</td><td>代入</td></tr>
@@ -332,6 +332,7 @@
  <tr><td>ASINH(x)</td><td>逆ハイパボリックサイン</td></tr>
  <tr><td>ACOSH(x)</td><td>逆ハイパボリックコサイン</td></tr>
  <tr><td>ATANH(x)</td><td>逆ハイパボリックタンジェント</td></tr>
+ <tr><td>FMOD(x, y)</td><td>x を y で割った浮動小数点剰余</td></tr>
 </table>
 <br>
 <h3>特殊関数</h3>
@@ -699,8 +700,9 @@
       </p>
 
       <p>
-      また、いくつかの１次ドリフトのあるでデータからドリフト成分を引いて
-      プロットしたい場合、
+      また、１次ドリフトのあるデータからドリフト成分を引いてプロットし
+      たい場合 (id が 0 の file オブジェクトでフィッティングを行ってい
+      るとして)、
       <pre>
       Y-FIT_CALC(0,X)
       </pre>

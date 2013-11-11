@@ -1,5 +1,25 @@
 2013-11-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/otext.c (text): add field "hsb".
+
+	* src/orect.c (rect): add fields "fill_hsb" and "stroke_hsb".
+
+	* src/opath.c (arrow): add fields "fill_hsb" and "stroke_hsb".
+
+	* src/omark.c (mark): add fields "hsb" and "hsb2".
+
+	* src/ofile.c (file2d): add fields "hsb" and "hsb2".
+
+	* src/odraw.c (put_hsb_color, put_fill_hsb, put_stroke_hsb)
+	(put_hsb, put_hsb2): added.
+
+	* src/oaxis.c (put_gauge_hsb, put_num_hsb): added.
+	(axis): add fields "gauge_hsb", "num_hsb" and "hsb".
+
+	* src/oarc.c (arc): add fields "fill_hsb" and "stroke_hsb".
+
+	* src/oagrid.c (agrid): add field "hsb".
+
 	* src/math/math_basic_function.c (math_func_fmod): added.
 
 2013-11-10  Ito Hiroyuki  <ZXB01226 at nifty.com>

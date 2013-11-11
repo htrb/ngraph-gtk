@@ -575,6 +575,8 @@ static struct objtable arc[] = {
   {"zooming",NVFUNC,NREAD|NEXEC,arczoom,"iiii",0},
   {"match",NBFUNC,NREAD|NEXEC,arcmatch,"iiiii",0},
 
+  {"fill_hsb", NVFUNC, NREAD|NEXEC, put_fill_hsb,"ddd",0},
+  {"stroke_hsb", NVFUNC, NREAD|NEXEC, put_stroke_hsb,"ddd",0},
 
   /* following fields exist for backward compatibility */
   {"R",NINT,NWRITE,put_color_for_backward_compatibility,NULL,0},

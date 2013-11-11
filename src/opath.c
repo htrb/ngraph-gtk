@@ -1080,6 +1080,8 @@ static struct objtable arrow[] = {
   {"zooming", NVFUNC, NREAD|NEXEC, curve_zoom, "iiii", 0},
   {"match", NBFUNC, NREAD|NEXEC, curvematch, "iiiii", 0},
 
+  {"fill_hsb", NVFUNC, NREAD|NEXEC, put_fill_hsb,"ddd",0},
+  {"stroke_hsb", NVFUNC, NREAD|NEXEC, put_stroke_hsb,"ddd",0},
 
   /* following fields exist for backward compatibility */
   {"R", NINT, NWRITE, put_color_for_backward_compatibility, NULL, 0},

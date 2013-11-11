@@ -229,6 +229,73 @@ clear_bbox(struct objlist *obj, N_VALUE *inst)
   return 0;
 }
 
+int
+put_hsb_color(struct objlist *obj, N_VALUE *inst, int argc, char **argv, char *format)
+{
+  double h, s, b;
+  int rr, gg, bb;
+  char buf[64];
+
+  h =  * (double *) argv[2];
+  s =  * (double *) argv[3];
+  b =  * (double *) argv[4];
+
+  if (h < 0) {
+    h = 0;
+  } else if (h > 1) {
+    h = 1;
+  }
+
+  if (s < 0) {
+    s = 0;
+  } else if (s > 1) {
+    s = 1;
+  }
+
+  if (b < 0) {
+    b = 0;
+  } else if (b > 1) {
+    b = 1;
+  }
+
+  HSB2RGB(h, s, b, &rr, &gg, &bb);
+
+  snprintf(buf, sizeof(buf), format, 'R');
+  _putobj(obj, buf, inst, &rr);
+
+  snprintf(buf, sizeof(buf), format, 'G');
+  _putobj(obj, buf, inst, &gg);
+
+  snprintf(buf, sizeof(buf), format, 'B');
+  _putobj(obj, buf, inst, &bb);
+
+  return 0;
+}
+
+int
+put_fill_hsb(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  return put_hsb_color(obj, inst, argc, argv, "fill_%c");
+}
+
+int
+put_stroke_hsb(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  return put_hsb_color(obj, inst, argc, argv, "stroke_%c");
+}
+
+int
+put_hsb(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  return put_hsb_color(obj, inst, argc, argv, "%c");
+}
+
+int
+put_hsb2(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  return put_hsb_color(obj, inst, argc, argv, "%c2");
+}
+
 static struct objtable draw[] = {
   {"init",NVFUNC,0,drawinit,NULL,0},
   {"done",NVFUNC,0,drawdone,NULL,0},

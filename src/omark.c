@@ -551,6 +551,9 @@ static struct objtable mark[] = {
   {"flip",NVFUNC,NREAD|NEXEC,markflip,"iii",0},
   {"zooming",NVFUNC,NREAD|NEXEC,markzoom,"iiii",0},
   {"match",NBFUNC,NREAD|NEXEC,markmatch,"iiiii",0},
+
+  {"hsb",NVFUNC,NREAD|NEXEC,put_hsb,"ddd",0},
+  {"hsb2",NVFUNC,NREAD|NEXEC,put_hsb2,"ddd",0},
 };
 
 #define TBLNUM (sizeof(mark) / sizeof(*mark))
