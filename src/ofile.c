@@ -1140,7 +1140,7 @@ opendata(struct objlist *obj,N_VALUE *inst,
   int *data2;
   double ip1,ip2;
   int dataclip;
-  GStatBuf stat_buf;
+  struct stat stat_buf;
   struct axis_prm ax_prm, ay_prm;
 
   _getobj(obj,"id",inst,&fid);

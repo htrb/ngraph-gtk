@@ -11,8 +11,8 @@
 	* src/shellux.c (testexpand): use "GStatBuf" instead of "struct
 	stat".
 
-	* src/ofile.c (opendata, f2dtime, f2ddate, get_mtime): use
-	"GStatBuf" instead of "struct stat".
+	* src/ofile.c (f2dtime, f2ddate, get_mtime): use "GStatBuf"
+	instead of "struct stat".
 	(f2dstat, f2dstat2): use "g_strdup_printf()" instead of
 	"snprintf()".
 	(f2dstore, f2dstoredum): use default date and time if the date and
