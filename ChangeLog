@@ -1,5 +1,7 @@
 2013-11-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* mingw/windows.sh (DEFS): define "_USE_32BIT_TIME_T".
+
 	* src/gtk/x11gui.c (fsok): use "GStatBuf" instead of "struct
 	stat".
 
