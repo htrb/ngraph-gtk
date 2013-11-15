@@ -77,7 +77,7 @@ testexpand(int pre,int *oppo,int *numpo,
   int argnum;
   int d1,d2;
   char *endptr1,*endptr2;
-  struct stat buf;
+  GStatBuf buf;
 
   while ((*oppo>=0) && (pre<=prebuf[*oppo])) {
     if (strchr("!nzdefrswx",opbuf[*oppo])!=NULL) argnum=1;

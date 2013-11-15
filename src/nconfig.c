@@ -122,7 +122,7 @@ openconfig(char *section)
   struct objlist *sys;
   char *libdir,*s,*homedir,*homeconf,*libconf,*buf;
   FILE *fp;
-  struct stat homestat,libstat;
+  GStatBuf homestat,libstat;
 
   if ((sys=getobject("system"))==NULL) return NULL;
   if (getobj(sys,"home_dir",0,0,NULL,&homedir)==-1) return NULL;
@@ -522,7 +522,7 @@ writecheckconfig(void)
 /* not find: 0 */
   struct objlist *sys;
   char *s,*libdir,*homedir,*homeconf,*libconf;
-  struct stat homestat,libstat;
+  GStatBuf homestat,libstat;
   int dir,ret;
 
   if ((sys=getobject("system"))==NULL) return 0;
@@ -577,7 +577,7 @@ copyconfig(void)
   char *libname,*homename,*bak;
   FILE *libfp,*homefp;
   int r;
-  struct stat sbuf;
+  GStatBuf sbuf;
 
   if ((sys=getobject("system"))==NULL) return FALSE;
   if (getobj(sys,"home_dir",0,0,NULL,&homedir)==-1) return FALSE;

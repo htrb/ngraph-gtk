@@ -1,5 +1,32 @@
 2013-11-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11gui.c (fsok): use "GStatBuf" instead of "struct
+	stat".
+
+	* src/omerge.c (mergetime, mergedate): use "GStatBuf" instead of
+	"struct stat".
+	(mergestore, mergestoredum): use default date and time if the date
+	and time are not available.
+
+	* src/shellux.c (testexpand): use "GStatBuf" instead of "struct
+	stat".
+
+	* src/ofile.c (opendata, f2dtime, f2ddate, get_mtime): use
+	"GStatBuf" instead of "struct stat".
+	(f2dstat, f2dstat2): use "g_strdup_printf()" instead of
+	"snprintf()".
+	(f2dstore, f2dstoredum): use default date and time if the date and
+	time are not available.
+
+	* src/nconfig.c (openconfig, writecheckconfig, copyconfig): use
+	"GStatBuf" instead of "struct stat".
+
+	* src/ioutil.c (getfilename, findfilename): type of all parameters
+	are "cost char *".
+	(findfilename): use "GStatBuf" instead of "struct stat".
+	(nstat): type of the second parameter is "GStatBuf *".
+	(nstat): use bottom 4 bytes of time data on windows.
+
 	* acinclude.m4: save "CFLAGS".
 
 2013-11-11  Ito Hiroyuki  <ZXB01226 at nifty.com>

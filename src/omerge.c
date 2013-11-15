@@ -235,7 +235,7 @@ static int
 mergetime(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   char *file;
-  struct stat buf;
+  GStatBuf buf;
   int style;
 
   g_free(rval->str);
@@ -252,7 +252,7 @@ static int
 mergedate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   char *file;
-  struct stat buf;
+  GStatBuf buf;
   int style;
 
   g_free(rval->str);
@@ -292,7 +292,13 @@ mergestore(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
     argv2[1]=NULL;
     if (_exeobj(obj,"time",inst,1,argv2)) return 1;
     _getobj(obj,"date",inst,&date);
+    if(date == NULL) {
+      date = "1-1-1970";
+    }
     _getobj(obj,"time",inst,&time);
+    if(time == NULL) {
+      time = "00:00:00";
+    }
     if ((base=getbasename(file))==NULL) return 1;
     if ((mergelocal->storefd=nfopen(file,"rt"))==NULL) {
       g_free(base);
@@ -401,7 +407,13 @@ mergestoredum(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **ar
     argv2[1]=NULL;
     if (_exeobj(obj,"time",inst,1,argv2)) return 1;
     _getobj(obj,"date",inst,&date);
+    if(date == NULL) {
+      date = "1-1-1970";
+    }
     _getobj(obj,"time",inst,&time);
+    if(time == NULL) {
+      time = "00:00:00";
+    }
     if ((base=getbasename(file))==NULL) return 1;
     buf = g_strdup_printf("merge::load_dummy '%s' '%s %s'\n", base, date, time);
     g_free(base);

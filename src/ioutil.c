@@ -398,7 +398,7 @@ getextention(char *name)
 }
 
 char *
-getfilename(char *dir,char *sep,char *file)
+getfilename(const char *dir, const char *sep, const char *file)
 {
   char *s;
   unsigned int dir_len;
@@ -421,11 +421,11 @@ getfilename(char *dir,char *sep,char *file)
 }
 
 int 
-findfilename(char *dir,char *sep,char *file)
+findfilename(const char *dir, const char *sep, const char *file)
 {
   char *s;
   int find;
-  struct stat buf;
+  GStatBuf buf;
 
   if ((s=getfilename(dir,sep,file))==NULL) return FALSE;
   if ((naccess(s,R_OK)==0) && (nstat(s,&buf)==0)) {
@@ -803,7 +803,7 @@ nisatty(int fd)
 }
 
 int
-nstat(const gchar *filename, struct stat *buf)
+nstat(const gchar *filename, GStatBuf *buf)
 {
   int r;
   char *tmp;
@@ -816,8 +816,14 @@ nstat(const gchar *filename, struct stat *buf)
     return -1;
   }
 
-  r =  g_stat(tmp, buf);
+  r = g_stat(tmp, buf);
   g_free(tmp);
+
+#ifdef WINDOWS			/* fix me: it's necessary on MinGW. Why? */
+  buf->st_atime &= 0xffffffff;
+  buf->st_ctime &= 0xffffffff;
+  buf->st_mtime &= 0xffffffff;
+#endif
 
   return r;
 }

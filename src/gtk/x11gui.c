@@ -799,7 +799,7 @@ fsok(GtkWidget *dlg)
   char *file, *file2, **farray;
   const char *filter_name;
   int i, k, len, n;
-  struct stat buf;
+  GStatBuf buf;
   GSList *top, *list;
   GtkFileFilter *filter;
 

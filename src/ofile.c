@@ -1140,7 +1140,7 @@ opendata(struct objlist *obj,N_VALUE *inst,
   int *data2;
   double ip1,ip2;
   int dataclip;
-  struct stat stat_buf;
+  GStatBuf stat_buf;
   struct axis_prm ax_prm, ay_prm;
 
   _getobj(obj,"id",inst,&fid);
@@ -6426,7 +6426,7 @@ static int
 f2dtime(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   char *file;
-  struct stat buf;
+  GStatBuf buf;
   int style;
 
   g_free(rval->str);
@@ -6443,7 +6443,7 @@ static int
 f2ddate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   char *file;
-  struct stat buf;
+  GStatBuf buf;
   int style;
 
   g_free(rval->str);
@@ -6702,7 +6702,7 @@ f2dclosedataraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
 static time_t 
 get_mtime(struct objlist *obj, N_VALUE *inst, time_t *mtime)
 {
-  struct stat buf;
+  GStatBuf buf;
   int r;
   char *file;
 
@@ -6730,7 +6730,7 @@ f2dstat(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
   double minx,maxx,miny,maxy;
   double sumx,sumxx,sumy,sumyy;
   char *field;
-  char str[32], *ptr;
+  char *ptr;
   time_t mtime;
 
   g_free(rval->str);
@@ -6920,27 +6920,27 @@ f2dstat(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
     f2dlocal->mtime_stat = mtime;
 
  End:
+  ptr = NULL;
   if (strcmp(field, "dnum") == 0) {
-    snprintf(str, sizeof(str), "%d", dnum);
+    ptr = g_strdup_printf("%d", dnum);
   } else if (strcmp(field,"dminx")==0) {
-    snprintf(str, sizeof(str), "%.15e", minx);
+    ptr = g_strdup_printf("%.15e", minx);
   } else if (strcmp(field,"dmaxx")==0) {
-    snprintf(str, sizeof(str), "%.15e", maxx);
+    ptr = g_strdup_printf("%.15e", maxx);
   } else if (strcmp(field,"dminy")==0) {
-    snprintf(str, sizeof(str), "%.15e", miny);
+    ptr = g_strdup_printf("%.15e", miny);
   } else if (strcmp(field,"dmaxy")==0) {
-    snprintf(str, sizeof(str), "%.15e", maxy);
+    ptr = g_strdup_printf("%.15e", maxy);
   } else if (strcmp(field,"davx")==0) {
-    snprintf(str, sizeof(str), "%.15e", sumx);
+    ptr = g_strdup_printf("%.15e", sumx);
   } else if (strcmp(field,"davy")==0) {
-    snprintf(str, sizeof(str), "%.15e", sumy);
+    ptr = g_strdup_printf("%.15e", sumy);
   } else if (strcmp(field,"dsigx")==0) {
-    snprintf(str, sizeof(str), "%.15e", sumxx);
+    ptr = g_strdup_printf("%.15e", sumxx);
   } else if (strcmp(field,"dsigy")==0) {
-    snprintf(str, sizeof(str), "%.15e", sumyy);
+    ptr = g_strdup_printf("%.15e", sumyy);
   }
 
-  ptr = g_strdup(str);
   if (ptr == NULL) return -1;
 
   rval->str = ptr;
@@ -6959,7 +6959,7 @@ f2dstat2(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
   double dx,dy,d2,d3;
   int find;
   char *field;
-  char str[32], *ptr;
+  char *ptr;
 
   g_free(rval->str);
   rval->str=NULL;
@@ -7010,18 +7010,20 @@ f2dstat2(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
   closedata(fp, f2dlocal);
   if (!find) return -1;
 
+  ptr = NULL;
   if (strcmp(field,"dx")==0) {
-    snprintf(str, sizeof(str), "%.15e", dx);
+    ptr = g_strdup_printf("%.15e", dx);
   } else if (strcmp(field,"dy")==0) {
-    snprintf(str, sizeof(str), "%.15e", dy);
+    ptr = g_strdup_printf("%.15e", dy);
   } else if (strcmp(field,"d2")==0) {
-    snprintf(str, sizeof(str), "%.15e", d2);
+    ptr = g_strdup_printf("%.15e", d2);
   } else if (strcmp(field,"d3")==0) {
-    snprintf(str, sizeof(str), "%.15e", d3);
+    ptr = g_strdup_printf("%.15e", d3);
   }
 
-  ptr = g_strdup(str);
-  if (ptr == NULL) return -1;
+  if (ptr == NULL) {
+    return -1;
+  }
 
   rval->str = ptr;
   return 0;
@@ -7395,7 +7397,13 @@ f2dstore(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
     argv2[1]=NULL;
     if (_exeobj(obj,"time",inst,1,argv2)) return 1;
     _getobj(obj,"date",inst,&date);
+    if(date == NULL) {
+      date = "1-1-1970";
+    }
     _getobj(obj,"time",inst,&time);
+    if(time == NULL) {
+      time = "00:00:00";
+    }
     if ((base=getbasename(file))==NULL) return 1;
     if ((f2dlocal->storefd=nfopen(file,"rt"))==NULL) {
       g_free(base);
@@ -7597,7 +7605,13 @@ f2dstoredum(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
     argv2[1]=NULL;
     if (_exeobj(obj,"time",inst,1,argv2)) return 1;
     _getobj(obj,"date",inst,&date);
+    if(date == NULL) {
+      date = "1-1-1970";
+    }
     _getobj(obj,"time",inst,&time);
+    if(time == NULL) {
+      time = "00:00:00";
+    }
     if ((base=getbasename(file))==NULL) return 1;
     buf = g_strdup_printf("file::load_dummy '%s' '%s %s'\n", base, date, time);
     g_free(base);
