@@ -1,3 +1,7 @@
+2013-11-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* acinclude.m4: save "CFLAGS".
+
 2013-11-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/otext.c (text): add field "hsb".
