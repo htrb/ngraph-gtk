@@ -27,7 +27,6 @@
 	are "cost char *".
 	(findfilename): use "GStatBuf" instead of "struct stat".
 	(nstat): type of the second parameter is "GStatBuf *".
-	(nstat): use bottom 4 bytes of time data on windows.
 
 	* acinclude.m4: save "CFLAGS".
 

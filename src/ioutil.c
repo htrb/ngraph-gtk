@@ -819,12 +819,6 @@ nstat(const gchar *filename, GStatBuf *buf)
   r = g_stat(tmp, buf);
   g_free(tmp);
 
-#ifdef WINDOWS			/* fix me: it's necessary on MinGW. Why? */
-  buf->st_atime &= 0xffffffff;
-  buf->st_ctime &= 0xffffffff;
-  buf->st_mtime &= 0xffffffff;
-#endif
-
   return r;
 }
 
