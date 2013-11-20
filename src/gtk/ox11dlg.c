@@ -35,7 +35,7 @@
 #include "ioutil.h"
 #include "ox11menu.h"
 
-#include "main.h"
+#include "init.h"
 #include "x11gui.h"
 
 #define NAME "dialog"

@@ -41,7 +41,7 @@
 #include "nconfig.h"
 #include "shell.h"
 
-#include "main.h"
+#include "init.h"
 #include "x11menu.h"
 #include "x11gui.h"
 #include "ogra2x11.h"

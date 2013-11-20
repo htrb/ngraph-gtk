@@ -32,7 +32,7 @@
 #include "gtk_widget.h"
 #include "gtk_ruler.h"
 
-#include "main.h"
+#include "init.h"
 #include "x11bitmp.h"
 #include "x11dialg.h"
 #include "ogra2cairo.h"

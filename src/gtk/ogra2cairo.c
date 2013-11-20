@@ -15,7 +15,7 @@
 #include "mathfn.h"
 #include "object.h"
 #include "gra.h"
-#include "main.h"
+#include "init.h"
 #include "nstring.h"
 #include "object.h"
 #include "ioutil.h"

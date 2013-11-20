@@ -37,7 +37,7 @@
 #include "nstring.h"
 #include "odraw.h"
 
-#include "main.h"
+#include "init.h"
 #include "x11dialg.h"
 #include "ox11menu.h"
 #include "x11menu.h"

@@ -42,7 +42,7 @@
 #include "odraw.h"
 #include "nconfig.h"
 
-#include "main.h"
+#include "init.h"
 #include "gtk_widget.h"
 #include "x11gui.h"
 #include "x11graph.h"

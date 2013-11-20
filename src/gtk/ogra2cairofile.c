@@ -22,7 +22,7 @@
 #include "object.h"
 #include "ioutil.h"
 
-#include "main.h"
+#include "init.h"
 #include "x11gui.h"
 #include "ogra2cairo.h"
 #include "ogra2cairofile.h"

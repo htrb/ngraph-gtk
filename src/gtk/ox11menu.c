@@ -52,7 +52,7 @@
 #include "gtk_widget.h"
 #include "gtk_subwin.h"
 
-#include "main.h"
+#include "init.h"
 #include "ogra2cairo.h"
 #include "ogra2x11.h"
 #include "ox11menu.h"
