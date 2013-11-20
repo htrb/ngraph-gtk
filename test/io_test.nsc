@@ -83,5 +83,3 @@ else
     echo "OK. (popen)"
 fi
 io::close
-
-del system

@@ -41,6 +41,3 @@ do
     io::close
     shift
 done
-
-
-del system
