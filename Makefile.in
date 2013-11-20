@@ -285,9 +285,11 @@ LD = @LD@
 LDFLAGS = @LDFLAGS@
 LIBICONV = @LIBICONV@
 LIBINTL = @LIBINTL@
+LIBNGRAPH_VERSION = @LIBNGRAPH_VERSION@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
+LIBTOOL_DEPS = @LIBTOOL_DEPS@
 LIPO = @LIPO@
 LN_S = @LN_S@
 LTLIBICONV = @LTLIBICONV@
@@ -320,7 +322,6 @@ PKG_CONFIG_PATH = @PKG_CONFIG_PATH@
 POSUB = @POSUB@
 POW_LIB = @POW_LIB@
 RANLIB = @RANLIB@
-RDYNAMIC = @RDYNAMIC@
 READLINE_LIBS = @READLINE_LIBS@
 RM = @RM@
 RUBY = @RUBY@
@@ -330,7 +331,6 @@ SHELL = @SHELL@
 STRIP = @STRIP@
 USE_NLS = @USE_NLS@
 VERSION = @VERSION@
-VER_SCRIPT = @VER_SCRIPT@
 XGETTEXT = @XGETTEXT@
 XGETTEXT_015 = @XGETTEXT_015@
 XGETTEXT_EXTRA_OPTIONS = @XGETTEXT_EXTRA_OPTIONS@
@@ -392,7 +392,6 @@ EXTRA_DIST = config.rpath pathconv.sh
 doc_DATA = README AUTHORS ChangeLog NEWS COPYING
 SUBDIRS = po m4 src initfile driver addin demo doc zsh test mingw pixmap icons misc plugins
 ACLOCAL_AMFLAGS = -I m4
-LIBTOOL_DEPS = @LIBTOOL_DEPS@
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -897,6 +896,8 @@ uninstall-am: uninstall-docDATA
 	mostlyclean-libtool pdf pdf-am ps ps-am tags tags-am uninstall \
 	uninstall-am uninstall-docDATA
 
+libtool: $(LIBTOOL_DEPS)
+	$(SHELL) ./config.status --recheck
 
 test_all:
 	(cd test; $(MAKE) test)

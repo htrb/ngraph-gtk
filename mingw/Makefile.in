@@ -171,9 +171,11 @@ LD = @LD@
 LDFLAGS = @LDFLAGS@
 LIBICONV = @LIBICONV@
 LIBINTL = @LIBINTL@
+LIBNGRAPH_VERSION = @LIBNGRAPH_VERSION@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
+LIBTOOL_DEPS = @LIBTOOL_DEPS@
 LIPO = @LIPO@
 LN_S = @LN_S@
 LTLIBICONV = @LTLIBICONV@
@@ -206,7 +208,6 @@ PKG_CONFIG_PATH = @PKG_CONFIG_PATH@
 POSUB = @POSUB@
 POW_LIB = @POW_LIB@
 RANLIB = @RANLIB@
-RDYNAMIC = @RDYNAMIC@
 READLINE_LIBS = @READLINE_LIBS@
 RM = @RM@
 RUBY = @RUBY@
@@ -216,7 +217,6 @@ SHELL = @SHELL@
 STRIP = @STRIP@
 USE_NLS = @USE_NLS@
 VERSION = @VERSION@
-VER_SCRIPT = @VER_SCRIPT@
 XGETTEXT = @XGETTEXT@
 XGETTEXT_015 = @XGETTEXT_015@
 XGETTEXT_EXTRA_OPTIONS = @XGETTEXT_EXTRA_OPTIONS@
@@ -273,9 +273,8 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = gtkrc pango.aliases windows.sh windows_demo.sed		\
-	windows_make.sed windows_resource.rc ngraph.ico associate.bat	\
-	echo.nsc libruby.def
+EXTRA_DIST = gtkrc pango.aliases windows.sh windows_demo.sed	\
+	windows_make.sed associate.bat echo.nsc
 
 all: all-am
 

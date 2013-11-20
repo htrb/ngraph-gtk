@@ -80,8 +80,11 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
+@OS_WIN32_TRUE@am__append_1 = ngraph_resource.o
+@OS_WIN32_TRUE@am__append_2 = -no-undefined -export-symbols ngraph.def -Wl,libngraph_resource.o
+@OS_WIN32_FALSE@am__append_3 = -rdynamic -Wl,--version-script,ngraph_export.map
+@OS_WIN32_FALSE@pkglibexec_PROGRAMS = terminal$(EXEEXT)
 bin_PROGRAMS = ngraph$(EXEEXT)
-pkglibexec_PROGRAMS = terminal$(EXEEXT)
 subdir = src
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/mkinstalldirs $(top_srcdir)/depcomp \
@@ -103,7 +106,36 @@ mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-LTLIBRARIES = $(noinst_LTLIBRARIES)
+am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
+am__vpath_adj = case $$p in \
+    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
+    *) f=$$p;; \
+  esac;
+am__strip_dir = f=`echo $$p | sed -e 's|^.*/||'`;
+am__install_max = 40
+am__nobase_strip_setup = \
+  srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*|]/\\\\&/g'`
+am__nobase_strip = \
+  for p in $$list; do echo "$$p"; done | sed -e "s|$$srcdirstrip/||"
+am__nobase_list = $(am__nobase_strip_setup); \
+  for p in $$list; do echo "$$p $$p"; done | \
+  sed "s| $$srcdirstrip/| |;"' / .*\//!s/ .*/ ./; s,\( .*\)/[^/]*$$,\1,' | \
+  $(AWK) 'BEGIN { files["."] = "" } { files[$$2] = files[$$2] " " $$1; \
+    if (++n[$$2] == $(am__install_max)) \
+      { print $$2, files[$$2]; n[$$2] = 0; files[$$2] = "" } } \
+    END { for (dir in files) print dir, files[dir] }'
+am__base_list = \
+  sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
+  sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
+am__uninstall_files_from_dir = { \
+  test -z "$$files" \
+    || { test ! -d "$$dir" && test ! -f "$$dir" && test ! -r "$$dir"; } \
+    || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
+         $(am__cd) "$$dir" && rm -f $$files; }; \
+  }
+am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)" \
+	"$(DESTDIR)$(pkglibexecdir)" "$(DESTDIR)$(includedir)"
+LTLIBRARIES = $(lib_LTLIBRARIES)
 am__DEPENDENCIES_1 =
 libngraph_la_DEPENDENCIES = gtk/libngraphui.la math/libmath.la \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -131,7 +163,8 @@ am_libngraph_la_OBJECTS = libngraph_la-axis.lo libngraph_la-nconfig.lo \
 	libngraph_la-shell.lo libngraph_la-shellcm.lo \
 	libngraph_la-shellux.lo libngraph_la-spline.lo \
 	libngraph_la-nhash.lo libngraph_la-strconv.lo \
-	libngraph_la-oio.lo libngraph_la-oplugin.lo
+	libngraph_la-oio.lo libngraph_la-oplugin.lo \
+	libngraph_la-ngraph_api.lo
 libngraph_la_OBJECTS = $(am_libngraph_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -139,17 +172,14 @@ am__v_lt_0 = --silent
 am__v_lt_1 = 
 libngraph_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(libngraph_la_CFLAGS) \
-	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(pkglibexecdir)" \
-	"$(DESTDIR)$(includedir)"
+	$(CFLAGS) $(libngraph_la_LDFLAGS) $(LDFLAGS) -o $@
 PROGRAMS = $(bin_PROGRAMS) $(pkglibexec_PROGRAMS)
-am_ngraph_OBJECTS =
+am_ngraph_OBJECTS = main.$(OBJEXT)
 ngraph_OBJECTS = $(am_ngraph_OBJECTS)
-ngraph_DEPENDENCIES = libngraph.la
-ngraph_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
-	$(ngraph_LDFLAGS) $(LDFLAGS) -o $@
-am_terminal_OBJECTS = terminal-terminal.$(OBJEXT)
+am__DEPENDENCIES_2 = $(am__append_1)
+ngraph_DEPENDENCIES = $(am__DEPENDENCIES_2)
+am__terminal_SOURCES_DIST = terminal.c
+@OS_WIN32_FALSE@am_terminal_OBJECTS = terminal-terminal.$(OBJEXT)
 terminal_OBJECTS = $(am_terminal_OBJECTS)
 terminal_LDADD = $(LDADD)
 terminal_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
@@ -192,7 +222,7 @@ am__v_CCLD_1 =
 SOURCES = $(libngraph_la_SOURCES) $(ngraph_SOURCES) \
 	$(terminal_SOURCES)
 DIST_SOURCES = $(libngraph_la_SOURCES) $(ngraph_SOURCES) \
-	$(terminal_SOURCES)
+	$(am__terminal_SOURCES_DIST)
 RECURSIVE_TARGETS = all-recursive check-recursive cscopelist-recursive \
 	ctags-recursive dvi-recursive html-recursive info-recursive \
 	install-data-recursive install-dvi-recursive \
@@ -206,33 +236,6 @@ am__can_run_installinfo = \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
-am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
-am__vpath_adj = case $$p in \
-    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
-    *) f=$$p;; \
-  esac;
-am__strip_dir = f=`echo $$p | sed -e 's|^.*/||'`;
-am__install_max = 40
-am__nobase_strip_setup = \
-  srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*|]/\\\\&/g'`
-am__nobase_strip = \
-  for p in $$list; do echo "$$p"; done | sed -e "s|$$srcdirstrip/||"
-am__nobase_list = $(am__nobase_strip_setup); \
-  for p in $$list; do echo "$$p $$p"; done | \
-  sed "s| $$srcdirstrip/| |;"' / .*\//!s/ .*/ ./; s,\( .*\)/[^/]*$$,\1,' | \
-  $(AWK) 'BEGIN { files["."] = "" } { files[$$2] = files[$$2] " " $$1; \
-    if (++n[$$2] == $(am__install_max)) \
-      { print $$2, files[$$2]; n[$$2] = 0; files[$$2] = "" } } \
-    END { for (dir in files) print dir, files[dir] }'
-am__base_list = \
-  sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
-  sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
-am__uninstall_files_from_dir = { \
-  test -z "$$files" \
-    || { test ! -d "$$dir" && test ! -f "$$dir" && test ! -r "$$dir"; } \
-    || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
-         $(am__cd) "$$dir" && rm -f $$files; }; \
-  }
 HEADERS = $(include_HEADERS)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
@@ -341,9 +344,11 @@ LD = @LD@
 LDFLAGS = @LDFLAGS@
 LIBICONV = @LIBICONV@
 LIBINTL = @LIBINTL@
+LIBNGRAPH_VERSION = @LIBNGRAPH_VERSION@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
+LIBTOOL_DEPS = @LIBTOOL_DEPS@
 LIPO = @LIPO@
 LN_S = @LN_S@
 LTLIBICONV = @LTLIBICONV@
@@ -376,7 +381,6 @@ PKG_CONFIG_PATH = @PKG_CONFIG_PATH@
 POSUB = @POSUB@
 POW_LIB = @POW_LIB@
 RANLIB = @RANLIB@
-RDYNAMIC = @RDYNAMIC@
 READLINE_LIBS = @READLINE_LIBS@
 RM = @RM@
 RUBY = @RUBY@
@@ -386,7 +390,6 @@ SHELL = @SHELL@
 STRIP = @STRIP@
 USE_NLS = @USE_NLS@
 VERSION = @VERSION@
-VER_SCRIPT = @VER_SCRIPT@
 XGETTEXT = @XGETTEXT@
 XGETTEXT_015 = @XGETTEXT_015@
 XGETTEXT_EXTRA_OPTIONS = @XGETTEXT_EXTRA_OPTIONS@
@@ -443,8 +446,16 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-SUBDIRS = gtk math
-noinst_LTLIBRARIES = libngraph.la
+SUBDIRS = gtk math	
+EXTRA_DIST = ngraph_export.map ngraph_resource.rc libngraph_resource.rc ngraph.ico
+libngraph_ldflags = -version-info $(LIBNGRAPH_VERSION) -export-dynamic \
+	$(am__append_2) $(am__append_3)
+ngraph_ldadd = -lngraph $(am__append_1)
+@OS_WIN32_TRUE@BUILT_SOURCES = ngraph.def libngraph_resource.o ngraph_resource.o
+@OS_WIN32_TRUE@CLEANFILES = $(BUILT_SOURCES)
+@OS_WIN32_FALSE@terminal_SOURCES = terminal.c
+@OS_WIN32_FALSE@terminal_CFLAGS = $(GTK_CFLAGS)
+lib_LTLIBRARIES = libngraph.la
 libngraph_la_SOURCES = axis.c axis.h nconfig.c nconfig.h gra.c gra.h	\
 	ioutil.c ioutil.h mathcode.c mathcode.h mathfn.c mathfn.h	\
 	nstring.c nstring.h ntime.c ntime.h oagrid.c oarc.c oarc.h	\
@@ -456,20 +467,19 @@ libngraph_la_SOURCES = axis.c axis.h nconfig.c nconfig.h gra.c gra.h	\
 	osystem.c otext.c otext.h opath.c opath.h shell.c shell.h	\
 	shellcm.c shellcm.h shellux.c shellux.h spline.c spline.h	\
 	common.h nhash.h nhash.c strconv.c strconv.h oio.c oplugin.c	\
-	gettext.h ngraph_export.map
+	gettext.h ngraph_api.c
 
 libngraph_la_CFLAGS = $(GTK_CFLAGS) $(GSL_CFLAGS) -I.. -DCCNAME='"'$(CC)'"'
 libngraph_la_LIBADD = gtk/libngraphui.la math/libmath.la $(M_LIBS) $(READLINE_LIBS) $(GTK_LIBS) $(GLIB_LIBS) $(GSL_LIBS)
-ngraph_SOURCES = 
-ngraph_LDADD = libngraph.la
-ngraph_LDFLAGS = $(RDYNAMIC) $(VER_SCRIPT)
-terminal_SOURCES = terminal.c
-terminal_CFLAGS = $(GTK_CFLAGS)
+libngraph_la_LDFLAGS = $(libngraph_ldflags)
+ngraph_SOURCES = main.c
+ngraph_LDADD = $(ngraph_ldadd)
 include_HEADERS = ngraph.h
-all: all-recursive
+all: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
 .SUFFIXES:
-.SUFFIXES: .c .lo .o .obj
+.SUFFIXES: .c .lo .o .obj .rc
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -501,9 +511,33 @@ $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
 
-clean-noinstLTLIBRARIES:
-	-test -z "$(noinst_LTLIBRARIES)" || rm -f $(noinst_LTLIBRARIES)
-	@list='$(noinst_LTLIBRARIES)'; \
+install-libLTLIBRARIES: $(lib_LTLIBRARIES)
+	@$(NORMAL_INSTALL)
+	@list='$(lib_LTLIBRARIES)'; test -n "$(libdir)" || list=; \
+	list2=; for p in $$list; do \
+	  if test -f $$p; then \
+	    list2="$$list2 $$p"; \
+	  else :; fi; \
+	done; \
+	test -z "$$list2" || { \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(libdir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(libdir)" || exit 1; \
+	  echo " $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$list2 '$(DESTDIR)$(libdir)'"; \
+	  $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$list2 "$(DESTDIR)$(libdir)"; \
+	}
+
+uninstall-libLTLIBRARIES:
+	@$(NORMAL_UNINSTALL)
+	@list='$(lib_LTLIBRARIES)'; test -n "$(libdir)" || list=; \
+	for p in $$list; do \
+	  $(am__strip_dir) \
+	  echo " $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=uninstall rm -f '$(DESTDIR)$(libdir)/$$f'"; \
+	  $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=uninstall rm -f "$(DESTDIR)$(libdir)/$$f"; \
+	done
+
+clean-libLTLIBRARIES:
+	-test -z "$(lib_LTLIBRARIES)" || rm -f $(lib_LTLIBRARIES)
+	@list='$(lib_LTLIBRARIES)'; \
 	locs=`for p in $$list; do echo $$p; done | \
 	      sed 's|^[^/]*$$|.|; s|/[^/]*$$||; s|$$|/so_locations|' | \
 	      sort -u`; \
@@ -513,7 +547,7 @@ clean-noinstLTLIBRARIES:
 	}
 
 libngraph.la: $(libngraph_la_OBJECTS) $(libngraph_la_DEPENDENCIES) $(EXTRA_libngraph_la_DEPENDENCIES) 
-	$(AM_V_CCLD)$(libngraph_la_LINK)  $(libngraph_la_OBJECTS) $(libngraph_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(libngraph_la_LINK) -rpath $(libdir) $(libngraph_la_OBJECTS) $(libngraph_la_LIBADD) $(LIBS)
 install-binPROGRAMS: $(bin_PROGRAMS)
 	@$(NORMAL_INSTALL)
 	@list='$(bin_PROGRAMS)'; test -n "$(bindir)" || list=; \
@@ -615,7 +649,7 @@ clean-pkglibexecPROGRAMS:
 
 ngraph$(EXEEXT): $(ngraph_OBJECTS) $(ngraph_DEPENDENCIES) $(EXTRA_ngraph_DEPENDENCIES) 
 	@rm -f ngraph$(EXEEXT)
-	$(AM_V_CCLD)$(ngraph_LINK) $(ngraph_OBJECTS) $(ngraph_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(ngraph_OBJECTS) $(ngraph_LDADD) $(LIBS)
 
 terminal$(EXEEXT): $(terminal_OBJECTS) $(terminal_DEPENDENCIES) $(EXTRA_terminal_DEPENDENCIES) 
 	@rm -f terminal$(EXEEXT)
@@ -633,6 +667,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-mathcode.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-mathfn.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-nconfig.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-ngraph_api.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-nhash.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-nstring.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-ntime.Plo@am__quote@
@@ -673,6 +708,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-shellux.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-spline.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-strconv.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/terminal-terminal.Po@am__quote@
 
 .c.o:
@@ -1018,6 +1054,13 @@ libngraph_la-oplugin.lo: oplugin.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-oplugin.lo `test -f 'oplugin.c' || echo '$(srcdir)/'`oplugin.c
 
+libngraph_la-ngraph_api.lo: ngraph_api.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-ngraph_api.lo -MD -MP -MF $(DEPDIR)/libngraph_la-ngraph_api.Tpo -c -o libngraph_la-ngraph_api.lo `test -f 'ngraph_api.c' || echo '$(srcdir)/'`ngraph_api.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraph_la-ngraph_api.Tpo $(DEPDIR)/libngraph_la-ngraph_api.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='ngraph_api.c' object='libngraph_la-ngraph_api.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-ngraph_api.lo `test -f 'ngraph_api.c' || echo '$(srcdir)/'`ngraph_api.c
+
 terminal-terminal.o: terminal.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(terminal_CFLAGS) $(CFLAGS) -MT terminal-terminal.o -MD -MP -MF $(DEPDIR)/terminal-terminal.Tpo -c -o terminal-terminal.o `test -f 'terminal.c' || echo '$(srcdir)/'`terminal.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/terminal-terminal.Tpo $(DEPDIR)/terminal-terminal.Po
@@ -1214,14 +1257,18 @@ distdir: $(DISTFILES)
 	  fi; \
 	done
 check-am: all-am
-check: check-recursive
+check: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) check-recursive
 all-am: Makefile $(LTLIBRARIES) $(PROGRAMS) $(HEADERS)
+install-binPROGRAMS: install-libLTLIBRARIES
+
 installdirs: installdirs-recursive
 installdirs-am:
-	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(pkglibexecdir)" "$(DESTDIR)$(includedir)"; do \
+	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(pkglibexecdir)" "$(DESTDIR)$(includedir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
-install: install-recursive
+install: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) install-recursive
 install-exec: install-exec-recursive
 install-data: install-data-recursive
 uninstall: uninstall-recursive
@@ -1243,6 +1290,7 @@ install-strip:
 mostlyclean-generic:
 
 clean-generic:
+	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
@@ -1251,11 +1299,11 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
+	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
 clean: clean-recursive
 
-clean-am: clean-binPROGRAMS clean-generic clean-libtool \
-	clean-noinstLTLIBRARIES clean-pkglibexecPROGRAMS \
-	mostlyclean-am
+clean-am: clean-binPROGRAMS clean-generic clean-libLTLIBRARIES \
+	clean-libtool clean-pkglibexecPROGRAMS mostlyclean-am
 
 distclean: distclean-recursive
 	-rm -rf ./$(DEPDIR)
@@ -1281,7 +1329,8 @@ install-dvi: install-dvi-recursive
 
 install-dvi-am:
 
-install-exec-am: install-binPROGRAMS install-pkglibexecPROGRAMS
+install-exec-am: install-binPROGRAMS install-libLTLIBRARIES \
+	install-pkglibexecPROGRAMS
 
 install-html: install-html-recursive
 
@@ -1322,28 +1371,37 @@ ps: ps-recursive
 ps-am:
 
 uninstall-am: uninstall-binPROGRAMS uninstall-includeHEADERS \
-	uninstall-pkglibexecPROGRAMS
+	uninstall-libLTLIBRARIES uninstall-pkglibexecPROGRAMS
 
-.MAKE: $(am__recursive_targets) install-am install-strip
+.MAKE: $(am__recursive_targets) all check install install-am \
+	install-strip
 
 .PHONY: $(am__recursive_targets) CTAGS GTAGS TAGS all all-am check \
-	check-am clean clean-binPROGRAMS clean-generic clean-libtool \
-	clean-noinstLTLIBRARIES clean-pkglibexecPROGRAMS cscopelist-am \
-	ctags ctags-am distclean distclean-compile distclean-generic \
-	distclean-libtool distclean-tags distdir dvi dvi-am html \
-	html-am info info-am install install-am install-binPROGRAMS \
-	install-data install-data-am install-dvi install-dvi-am \
-	install-exec install-exec-am install-html install-html-am \
-	install-includeHEADERS install-info install-info-am \
-	install-man install-pdf install-pdf-am \
-	install-pkglibexecPROGRAMS install-ps install-ps-am \
-	install-strip installcheck installcheck-am installdirs \
-	installdirs-am maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool pdf pdf-am ps ps-am tags tags-am uninstall \
-	uninstall-am uninstall-binPROGRAMS uninstall-includeHEADERS \
+	check-am clean clean-binPROGRAMS clean-generic \
+	clean-libLTLIBRARIES clean-libtool clean-pkglibexecPROGRAMS \
+	cscopelist-am ctags ctags-am distclean distclean-compile \
+	distclean-generic distclean-libtool distclean-tags distdir dvi \
+	dvi-am html html-am info info-am install install-am \
+	install-binPROGRAMS install-data install-data-am install-dvi \
+	install-dvi-am install-exec install-exec-am install-html \
+	install-html-am install-includeHEADERS install-info \
+	install-info-am install-libLTLIBRARIES install-man install-pdf \
+	install-pdf-am install-pkglibexecPROGRAMS install-ps \
+	install-ps-am install-strip installcheck installcheck-am \
+	installdirs installdirs-am maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
+	tags tags-am uninstall uninstall-am uninstall-binPROGRAMS \
+	uninstall-includeHEADERS uninstall-libLTLIBRARIES \
 	uninstall-pkglibexecPROGRAMS
 
+
+@OS_WIN32_TRUE@.rc.o:
+@OS_WIN32_TRUE@	windres -o $@ $<
+
+@OS_WIN32_TRUE@ngraph.def: oplugin.c ngraph_api.c
+@OS_WIN32_TRUE@	echo "EXPORTS" > $@
+@OS_WIN32_TRUE@	cat $^ | grep '^ngraph_' | sed 's/[^a-z0-9_].*//' >> $@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

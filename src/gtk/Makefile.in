@@ -103,9 +103,8 @@ libngraphui_la_LIBADD =
 am_libngraphui_la_OBJECTS = libngraphui_la-gtk_combo.lo \
 	libngraphui_la-gtk_entry_completion.lo \
 	libngraphui_la-gtk_liststore.lo libngraphui_la-gtk_subwin.lo \
-	libngraphui_la-main.lo libngraphui_la-ogra2x11.lo \
-	libngraphui_la-ogra2cairo.lo libngraphui_la-ogra2emf.lo \
-	libngraphui_la-ogra2cairofile.lo \
+	libngraphui_la-ogra2x11.lo libngraphui_la-ogra2cairo.lo \
+	libngraphui_la-ogra2emf.lo libngraphui_la-ogra2cairofile.lo \
 	libngraphui_la-ogra2gtkprint.lo libngraphui_la-ogra2gdk.lo \
 	libngraphui_la-ox11dlg.lo libngraphui_la-ox11menu.lo \
 	libngraphui_la-x11axis.lo libngraphui_la-x11bitmp.lo \
@@ -116,7 +115,8 @@ am_libngraphui_la_OBJECTS = libngraphui_la-gtk_combo.lo \
 	libngraphui_la-x11lgndx.lo libngraphui_la-x11menu.lo \
 	libngraphui_la-x11merge.lo libngraphui_la-x11opt.lo \
 	libngraphui_la-x11print.lo libngraphui_la-x11view.lo \
-	libngraphui_la-gtk_widget.lo libngraphui_la-gtk_ruler.lo
+	libngraphui_la-gtk_widget.lo libngraphui_la-gtk_ruler.lo \
+	libngraphui_la-init.lo
 nodist_libngraphui_la_OBJECTS =
 libngraphui_la_OBJECTS = $(am_libngraphui_la_OBJECTS) \
 	$(nodist_libngraphui_la_OBJECTS)
@@ -242,9 +242,11 @@ LD = @LD@
 LDFLAGS = @LDFLAGS@
 LIBICONV = @LIBICONV@
 LIBINTL = @LIBINTL@
+LIBNGRAPH_VERSION = @LIBNGRAPH_VERSION@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
+LIBTOOL_DEPS = @LIBTOOL_DEPS@
 LIPO = @LIPO@
 LN_S = @LN_S@
 LTLIBICONV = @LTLIBICONV@
@@ -277,7 +279,6 @@ PKG_CONFIG_PATH = @PKG_CONFIG_PATH@
 POSUB = @POSUB@
 POW_LIB = @POW_LIB@
 RANLIB = @RANLIB@
-RDYNAMIC = @RDYNAMIC@
 READLINE_LIBS = @READLINE_LIBS@
 RM = @RM@
 RUBY = @RUBY@
@@ -287,7 +288,6 @@ SHELL = @SHELL@
 STRIP = @STRIP@
 USE_NLS = @USE_NLS@
 VERSION = @VERSION@
-VER_SCRIPT = @VER_SCRIPT@
 XGETTEXT = @XGETTEXT@
 XGETTEXT_015 = @XGETTEXT_015@
 XGETTEXT_EXTRA_OPTIONS = @XGETTEXT_EXTRA_OPTIONS@
@@ -350,17 +350,17 @@ noinst_LTLIBRARIES = libngraphui.la
 nodist_libngraphui_la_SOURCES = dir_defs.h
 libngraphui_la_SOURCES = gtk_common.h gtk_combo.c gtk_combo.h		\
 	gtk_entry_completion.c gtk_entry_completion.h gtk_liststore.c	\
-	gtk_liststore.h gtk_subwin.c gtk_subwin.h main.c main.h		\
-	ogra2x11.c ogra2cairo.c ogra2emf.c ogra2cairo.h			\
-	ogra2cairofile.c ogra2gtkprint.c ogra2cairofile.h ogra2x11.h	\
-	ogra2gdk.c ogra2gdk.h ox11dlg.c ox11menu.c ox11menu.h		\
-	x11axis.c x11axis.h x11bitmp.c x11bitmp.h x11commn.c		\
-	x11commn.h x11cood.c x11cood.h x11dialg.c x11dialg.h		\
-	x11file.c x11file.h x11graph.c x11graph.h x11gui.c x11gui.h	\
-	x11info.c x11info.h x11lgnd.c x11lgnd.h x11lgndx.c x11menu.c	\
-	x11menu.h x11merge.c x11merge.h x11opt.c x11opt.h		\
-	x11opt_proto.h x11print.c x11print.h x11view.c x11view.h	\
-	gtk_widget.c gtk_widget.h gtk_ruler.c gtk_ruler.h
+	gtk_liststore.h gtk_subwin.c gtk_subwin.h ogra2x11.c		\
+	ogra2cairo.c ogra2emf.c ogra2cairo.h ogra2cairofile.c		\
+	ogra2gtkprint.c ogra2cairofile.h ogra2x11.h ogra2gdk.c		\
+	ogra2gdk.h ox11dlg.c ox11menu.c ox11menu.h x11axis.c		\
+	x11axis.h x11bitmp.c x11bitmp.h x11commn.c x11commn.h		\
+	x11cood.c x11cood.h x11dialg.c x11dialg.h x11file.c x11file.h	\
+	x11graph.c x11graph.h x11gui.c x11gui.h x11info.c x11info.h	\
+	x11lgnd.c x11lgnd.h x11lgndx.c x11menu.c x11menu.h x11merge.c	\
+	x11merge.h x11opt.c x11opt.h x11opt_proto.h x11print.c		\
+	x11print.h x11view.c x11view.h gtk_widget.c gtk_widget.h	\
+	gtk_ruler.c gtk_ruler.h init.c init.h
 
 BUILT_SOURCES = ${nodist_libngraphui_la_SOURCES}
 ngraphconfdir = $(sysconfdir)/$(PACKAGE)
@@ -430,7 +430,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraphui_la-gtk_ruler.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraphui_la-gtk_subwin.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraphui_la-gtk_widget.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraphui_la-main.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraphui_la-init.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraphui_la-ogra2cairo.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraphui_la-ogra2cairofile.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraphui_la-ogra2emf.Plo@am__quote@
@@ -504,13 +504,6 @@ libngraphui_la-gtk_subwin.lo: gtk_subwin.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gtk_subwin.c' object='libngraphui_la-gtk_subwin.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -c -o libngraphui_la-gtk_subwin.lo `test -f 'gtk_subwin.c' || echo '$(srcdir)/'`gtk_subwin.c
-
-libngraphui_la-main.lo: main.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -MT libngraphui_la-main.lo -MD -MP -MF $(DEPDIR)/libngraphui_la-main.Tpo -c -o libngraphui_la-main.lo `test -f 'main.c' || echo '$(srcdir)/'`main.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraphui_la-main.Tpo $(DEPDIR)/libngraphui_la-main.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='main.c' object='libngraphui_la-main.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -c -o libngraphui_la-main.lo `test -f 'main.c' || echo '$(srcdir)/'`main.c
 
 libngraphui_la-ogra2x11.lo: ogra2x11.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -MT libngraphui_la-ogra2x11.lo -MD -MP -MF $(DEPDIR)/libngraphui_la-ogra2x11.Tpo -c -o libngraphui_la-ogra2x11.lo `test -f 'ogra2x11.c' || echo '$(srcdir)/'`ogra2x11.c
@@ -693,6 +686,13 @@ libngraphui_la-gtk_ruler.lo: gtk_ruler.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gtk_ruler.c' object='libngraphui_la-gtk_ruler.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -c -o libngraphui_la-gtk_ruler.lo `test -f 'gtk_ruler.c' || echo '$(srcdir)/'`gtk_ruler.c
+
+libngraphui_la-init.lo: init.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -MT libngraphui_la-init.lo -MD -MP -MF $(DEPDIR)/libngraphui_la-init.Tpo -c -o libngraphui_la-init.lo `test -f 'init.c' || echo '$(srcdir)/'`init.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraphui_la-init.Tpo $(DEPDIR)/libngraphui_la-init.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='init.c' object='libngraphui_la-init.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -c -o libngraphui_la-init.lo `test -f 'init.c' || echo '$(srcdir)/'`init.c
 
 mostlyclean-libtool:
 	-rm -f *.lo
