@@ -1,3 +1,13 @@
+2013-11-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* plugins/libruby.def: moved from "mingw/"
+
+	* plugins/libruby_resource.rc: added
+
+	* src/ngraph_resource.rc: moved from "mingw/windows_resource.rc".
+
+	* src/libngraph_resource.rc: added.
+
 2013-11-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* mingw/windows.sh (DEFS): define "_USE_32BIT_TIME_T".
