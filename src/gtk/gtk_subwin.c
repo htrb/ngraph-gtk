@@ -13,7 +13,7 @@
 #include "nstring.h"
 #include "mathfn.h"
 
-#include "main.h"
+#include "init.h"
 #include "ox11menu.h"
 #include "x11menu.h"
 #include "x11view.h"

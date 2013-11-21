@@ -1,5 +1,5 @@
 /*
- * $Id: main.c,v 1.47 2010-03-04 08:30:17 hito Exp $
+ * $id: main.c,v 1.47 2010-03-04 08:30:17 hito Exp $
  *
  * This file is part of "Ngraph for X11".
  *
@@ -50,6 +50,7 @@ char *DOCDIR, *NDATADIR, *ADDINDIR, *LIBDIR, *PLUGINDIR, *CONFDIR, *LOCALEDIR, *
 #include "nstring.h"
 #include "nconfig.h"
 #include "shell.h"
+#include "init.h"
 
 #ifdef HAVE_READLINE_READLINE_H
 #include <readline/readline.h>
@@ -60,13 +61,12 @@ char *DOCDIR, *NDATADIR, *ADDINDIR, *LIBDIR, *PLUGINDIR, *CONFDIR, *LOCALEDIR, *
 #include "ogra2cairo.h"
 #include <assert.h>
 static char **attempt_shell_completion(char *text, int start, int end);
+char *HistoryFile = NULL;
 #define HIST_SIZE 100
 #define HIST_FILE "shell_history"
 #endif	/* HAVE_READLINE_READLINE_H */
 
 #define SYSCONF "[Ngraph]"
-
-#define INIT_SCRIPT "Ngraph.nsc"
 
 static char *systemname, *locale;
 static int consolefdout, consolefdin, ConsoleAc = FALSE;
@@ -119,7 +119,6 @@ void resizeconsole(int col, int row);
 
 // XtAppContext Application=NULL;
 char *AppName = "Ngraph", *AppClass = "Ngraph", *Home;
-#if ! GTK_CHECK_VERSION(3, 0, 0)
 char *License = "\
 This program is free software; you can redistribute it and/or modify \
 it under the terms of the GNU General Public License as published by \
@@ -135,7 +134,6 @@ You should have received a copy of the GNU General Public License \
 along with this program; if not, write to the Free Software \
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA\
 ";
-#endif
 
 char *Auther[] = {
   "Satoshi ISHIZAKA",
@@ -747,23 +745,16 @@ n_getlocale(void)
 }
 
 int
-main(int argc, char **argv)
+n_initialize(int *argc, char ***argv)
 {
-  char *homedir, *datadir, *docdir, *libdir, *plugindir, *confdir, *inifile, *loginshell;
+  char *homedir, *datadir, *docdir, *libdir, *plugindir, *confdir;
   const char *home;
   N_VALUE *inst;
-  struct objlist *sys, *obj, *lobj;
+  struct objlist *sys;
   unsigned int j;
-  int i, r;
-  char *sarg[2];
-  struct narray sarray;
-  int id;
-  int allocnow, allocconsole = FALSE;
-  struct narray iarray;
-  char *arg;
+  int allocconsole = FALSE;
 #ifdef HAVE_READLINE_READLINE_H
   int history_size = HIST_SIZE;
-  char *history_file = NULL;
 #endif
 
 #if USE_MEM_PROFILE
@@ -785,11 +776,11 @@ main(int argc, char **argv)
 #if ! GTK_CHECK_VERSION(2, 24, 0)
   gtk_set_locale();
 #endif
-  OpenDisplay = gtk_init_check(&argc, &argv);
+  OpenDisplay = gtk_init_check(argc, argv);
   g_set_application_name(AppName);
 
 #ifdef WINDOWS
-  set_dir_defs(argv[0]);
+  set_dir_defs((*argv)[0]);
 #endif	/* WINDOWS */
 
   if (init_cmd_tbl()) {
@@ -915,7 +906,6 @@ main(int argc, char **argv)
       exit(1);
   }
 
-  loginshell = NULL;
 #ifdef HAVE_READLINE_READLINE_H
   load_config(sys, inst, &allocconsole, &history_size);
   rl_readline_name = "ngraph";
@@ -923,9 +913,9 @@ main(int argc, char **argv)
   rl_attempted_completion_function = (CPPFunction *) attempt_shell_completion;
   rl_completion_entry_function = NULL;
 
-  history_file = g_strdup_printf("%s/%s", homedir, HIST_FILE);
-  if (history_file) {
-    read_history(history_file);
+  HistoryFile = g_strdup_printf("%s/%s", homedir, HIST_FILE);
+  if (HistoryFile) {
+    read_history(HistoryFile);
   }
   using_history();
   stifle_history(history_size);
@@ -963,94 +953,17 @@ main(int argc, char **argv)
   }
 #endif
 
-  inifile = NULL;
-  obj = getobject("shell");
-  if (obj == NULL) {
-    exit(1);
-  }
+  return 0;
+}
 
-  id = newobj(obj);
-  if (id < 0) {
-    exit(1);
-  }
-
-  i = 1;
-  if (argc > 1 && strcmp(argv[1], "-i") == 0) {
-    i++;
-    if (argc > 2) {
-      inifile = g_strdup(argv[2]);
-      if (inifile == NULL) {
-	exit(1);
-      }
-      changefilename(inifile);
-      i++;
-    } else {
-      inifile = NULL;
-    }
-  } else {
-    if (findfilename(homedir, CONFTOP, INIT_SCRIPT)) {
-      inifile = getfilename(homedir, CONFTOP, INIT_SCRIPT);
-    } else if (findfilename(confdir, CONFTOP, INIT_SCRIPT)) {
-      inifile = getfilename(confdir, CONFTOP, INIT_SCRIPT);
-    }
-  }
-
-  if (inifile) {
-    arrayinit(&sarray, sizeof(char *));
-    if (arrayadd(&sarray, &inifile) == NULL)
-      exit(1);
-    for (; i < argc; i++)
-      if (arrayadd(&sarray, &(argv[i])) == NULL)
-	exit(1);
-    sarg[0] = (char *) &sarray;
-    sarg[1] = NULL;
-    r = exeobj(obj, "shell", id, 1, sarg);
-    arraydel(&sarray);
-    g_free(inifile);
-
-    if (r) {
-      exit(1);
-    }
-  }
-
-  if (getobj(sys, "login_shell", 0, 0, NULL, &loginshell)) {
-    exit(1);
-  }
-
-  do {
-    if (_putobj(sys, "login_shell", inst, NULL))
-      exit(1);
-    if (loginshell == NULL) {
-      allocnow = nallocconsole();
-      exeobj(obj, "shell", id, 0, NULL);
-      if (allocnow)
-	nfreeconsole();
-    } else {
-      arrayinit(&iarray, sizeof(int));
-      arg = loginshell;
-      if (getobjilist2(&arg, &lobj, &iarray, TRUE)) {
-	return -1;
-      }
-      arraydel(&iarray);
-      if (lobj == obj) {
-	allocnow = nallocconsole();
-      } else {
-	allocnow = FALSE;
-      }
-      sexeobj(loginshell);
-      if (allocnow) {
-	nfreeconsole();
-      }
-    }
-    g_free(loginshell);
-    if (getobj(sys, "login_shell", 0, 0, NULL, &loginshell)) {
-      exit(1);
-    }
-  } while (loginshell != NULL);
+void
+n_finalize(void)
+{
 #ifdef HAVE_READLINE_READLINE_H
-  if (history_file != NULL) {
-    write_history(history_file);
-    g_free(history_file);
+  if (HistoryFile != NULL) {
+    write_history(HistoryFile);
+    g_free(HistoryFile);
+    HistoryFile = NULL;
   }
 #endif
 
@@ -1061,8 +974,6 @@ main(int argc, char **argv)
 #endif
 
   g_free(terminal);
-  delobj(getobject("system"), 0);
-  return 0;
 }
 
 #ifdef HAVE_READLINE_READLINE_H
@@ -1495,7 +1406,7 @@ get_file_list(const char *path, int type, int mode)
 {
   GDir *dir;
   const char *ent;
-  struct stat statbuf;
+  GStatBuf statbuf;
   struct mylist *list = NULL, *list_next = list;
   char *full_path_name;
 

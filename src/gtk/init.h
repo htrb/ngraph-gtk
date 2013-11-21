@@ -1,10 +1,7 @@
-#ifndef _MAIN_HEADER
-#define _MAIN_HEADER
+#ifndef _INIT_HEADER
+#define _INIT_HEADER
 
-extern char *AppName, *AppClass, *Auther[], *Translator, *Documenter[];
-#if ! GTK_CHECK_VERSION(3, 0, 0)
-extern char *License;
-#endif
+extern char *AppName, *AppClass, *Auther[], *Translator, *Documenter[], *License;
 
 #define NGRAPH_GRAPH_MIME "application/x-ngraph"
 #define NGRAPH_DATA_MIME  "text/plain"
@@ -17,5 +14,8 @@ void nforegroundconsole(void);
 void hide_console(void);
 void resotre_console(void);
 const char *n_getlocale(void);
+
+int n_initialize(int *argc, char ***argv);
+void n_finalize(void);
 
 #endif
