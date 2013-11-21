@@ -1,5 +1,18 @@
 2013-11-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11view.c (create_axis, ViewCopyAxis): use
+	"g_strdup_printf()".
+
+	* src/gtk/x11commn.c (axis_move_each_obj): use
+	"g_strdup_printf()".
+
+	* src/gtk/x11axis.c (SectionDialogGrid, CmAxisNewSection): use
+	"g_strdup_printf()".
+
+	* src/gtk/ox11menu.c (add_str_with_int_to_array)
+	(add_child_geometry_to_array, add_geometry_to_array)
+	(add_color_to_array): use "g_strdup_printf()".
+
 	* src/gtk/init.c (my_sprintf): removed.
 	(get_file_list): use "g_strdup_printf()".
 

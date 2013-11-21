@@ -390,9 +390,8 @@ add_str_with_int_to_array(struct menu_config *cfg, struct narray *conf)
 {
   char *buf;
 
-  buf = (char *) g_malloc(BUF_SIZE);
+  buf = g_strdup_printf("%s=%d", cfg->name, * (int *) cfg->data);
   if (buf) {
-    snprintf(buf, BUF_SIZE, "%s=%d", cfg->name, * (int *) cfg->data);
     arrayadd(conf, &buf);
   }
 }
@@ -407,12 +406,11 @@ add_child_geometry_to_array(struct menu_config *cfg, struct narray *conf)
   stat = cfg->data;
   data = stat->stat;
 
-  buf = (char *) g_malloc(BUF_SIZE);
+  buf = g_strdup_printf("%s=%d,%d,%d,%d,%d",
+			cfg->name, *data[0], *data[1], *data[2], *data[3], *data[4]);
   if (buf) {
     sub_window_save_geometry(stat->win);
     sub_window_save_visibility(stat->win);
-    snprintf(buf, BUF_SIZE, "%s=%d,%d,%d,%d,%d",
-	     cfg->name, *data[0], *data[1], *data[2], *data[3], *data[4]);
     arrayadd(conf, &buf);
   }
 }
@@ -430,12 +428,11 @@ add_geometry_to_array(struct menu_config *cfg, struct narray *conf)
   Menulocal.menuwidth = w;
   Menulocal.menuheight = h;
 
-  buf = (char *) g_malloc(BUF_SIZE);
+  buf = g_strdup_printf("%s=%d,%d,%d,%d",
+			cfg->name,
+			Menulocal.menux, Menulocal.menuy,
+			Menulocal.menuwidth, Menulocal.menuheight);
   if (buf) {
-    snprintf(buf, BUF_SIZE, "%s=%d,%d,%d,%d",
-	     cfg->name,
-	     Menulocal.menux, Menulocal.menuy,
-	     Menulocal.menuwidth, Menulocal.menuheight);
     arrayadd(conf, &buf);
   }
 }
@@ -444,13 +441,12 @@ static void
 add_color_to_array(struct menu_config *cfg, struct narray *conf)
 {
   char *buf;
-  buf = (char *) g_malloc(BUF_SIZE);
+  buf = g_strdup_printf("%s=%02x%02x%02x",
+			cfg->name,
+			(int) (Menulocal.bg_r * 255),
+			(int) (Menulocal.bg_g * 255),
+			(int) (Menulocal.bg_b * 255));
   if (buf) {
-    snprintf(buf, BUF_SIZE, "%s=%02x%02x%02x",
-	     cfg->name,
-	     (int) (Menulocal.bg_r * 255),
-	     (int) (Menulocal.bg_g * 255),
-	     (int) (Menulocal.bg_b * 255));
     arrayadd(conf, &buf);
   }
 }

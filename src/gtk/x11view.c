@@ -3940,18 +3940,14 @@ create_axis(struct Viewer *d)
 	idg = newobj(obj2);
 	if (idg >= 0) {
 	  getobj(obj, "oid", idx, 0, NULL, &oidx);
-
-	  ref = g_malloc(ID_BUF_SIZE);
+	  ref = g_strdup_printf("axis:^%d", oidx);
 	  if (ref) {
-	    snprintf(ref, ID_BUF_SIZE, "axis:^%d", oidx);
 	    putobj(obj2, "axis_x", idg, ref);
 	  }
 
 	  getobj(obj, "oid", idy, 0, NULL, &oidy);
-
-	  ref = g_malloc(ID_BUF_SIZE);
+	  ref = g_strdup_printf("axis:^%d", oidy);
 	  if (ref) {
-	    snprintf(ref, ID_BUF_SIZE, "axis:^%d", oidy);
 	    putobj(obj2, "axis_y", idg, ref);
 	  }
 	}
@@ -6121,9 +6117,8 @@ ViewCopyAxis(struct objlist *obj, int id, struct FocusObj *focus, N_VALUE *inst)
 	ncopyobj(obj, idu2, idu);
 	inst2 = chkobjinst(obj, idu2);
 	if (idx2 >= 0) {
-	  axisx = (char *) g_malloc(ID_BUF_SIZE);
+	  axisx = g_strdup_printf("axis:^%d", oidx);
 	  if (axisx) {
-	    snprintf(axisx, ID_BUF_SIZE, "axis:^%d", oidx);
 	    putobj(obj, "reference", idu2, axisx);
 	  }
 	}
@@ -6138,9 +6133,8 @@ ViewCopyAxis(struct objlist *obj, int id, struct FocusObj *focus, N_VALUE *inst)
 	ncopyobj(obj, idr2, idr);
 	inst2 = chkobjinst(obj, idr2);
 	if (idy2 >= 0) {
-	  axisy = (char *) g_malloc(ID_BUF_SIZE);
+	  axisy = g_strdup_printf("axis:^%d", oidy);
 	  if(axisy) {
-	    snprintf(axisy, ID_BUF_SIZE, "axis:^%d", oidy);
 	    putobj(obj, "reference", idr2, axisy);
 	  }
 	}
@@ -6181,16 +6175,14 @@ ViewCopyAxis(struct objlist *obj, int id, struct FocusObj *focus, N_VALUE *inst)
 	  ncopyobj(dobj, idg2, idg);
 	  inst2 = chkobjinst(dobj, idg2);
 	  if (idx2 >= 0 && idu2 >= 0) {
-	    axisx = (char *) g_malloc(ID_BUF_SIZE);
+	    axisx = g_strdup_printf("axis:^%d", oidx);
 	    if (axisx) {
-	      snprintf(axisx, ID_BUF_SIZE, "axis:^%d", oidx);
 	      putobj(dobj, "axis_x", idg2, axisx);
 	    }
 	  }
 	  if (idy2 >= 0 && idr2 >= 0) {
-	    axisy = (char *) g_malloc(ID_BUF_SIZE);
+	    axisy = g_strdup_printf("axis:^%d", oidy);
 	    if (axisy) {
-	      snprintf(axisy, ID_BUF_SIZE, "axis:^%d", oidy);
 	      putobj(dobj, "axis_y", idg2, axisy);
 	    }
 	  }
@@ -6237,14 +6229,12 @@ ViewCopyAxis(struct objlist *obj, int id, struct FocusObj *focus, N_VALUE *inst)
       }
 
       if (idx2 >= 0 && idy2 >= 0) {
-	axisy = (char *) g_malloc(ID_BUF_SIZE);
+	axisy = g_strdup_printf("axis:^%d", oidy);
 	if (axisy) {
-	  snprintf(axisy, ID_BUF_SIZE, "axis:^%d", oidy);
 	  putobj(obj, "adjust_axis", idx2, axisy);
 	}
-	axisx = (char *) g_malloc(ID_BUF_SIZE);
+	axisx = g_strdup_printf("axis:^%d", oidx);
 	if (axisx) {
-	  snprintf(axisx, ID_BUF_SIZE, "axis:^%d", oidx);
 	  putobj(obj, "adjust_axis", idy2, axisx);
 	}
       }

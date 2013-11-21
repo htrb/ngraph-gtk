@@ -576,14 +576,14 @@ SectionDialogGrid(GtkWidget *w, gpointer client_data)
   d = (struct SectionDialog *) client_data;
   if (*(d->IDG) == -1) {
     if ((*(d->IDG) = newobj(d->Obj2)) >= 0) {
-      if ((ref = (char *) g_malloc(ID_BUF_SIZE)) != NULL) {
-	getobj(d->Obj, "oid", d->IDX, 0, NULL, &oidx);
-	snprintf(ref, ID_BUF_SIZE, "axis:^%d", oidx);
+      getobj(d->Obj, "oid", d->IDX, 0, NULL, &oidx);
+      ref = g_strdup_printf("axis:^%d", oidx);
+      if (ref) {
 	putobj(d->Obj2, "axis_x", *(d->IDG), ref);
       }
-      if ((ref = (char *) g_malloc(ID_BUF_SIZE)) != NULL) {
-	getobj(d->Obj, "oid", d->IDY, 0, NULL, &oidy);
-	snprintf(ref, ID_BUF_SIZE, "axis:^%d", oidy);
+      getobj(d->Obj, "oid", d->IDY, 0, NULL, &oidy);
+      ref = g_strdup_printf("axis:^%d", oidy);
+      if (ref) {
 	putobj(d->Obj2, "axis_y", *(d->IDG), ref);
       }
       create = TRUE;
@@ -2627,13 +2627,13 @@ CmAxisNewSection(GtkAction *w, gpointer client_data)
   arraydel(&group);
   if (idg >= 0) {
     getobj(obj, "oid", idx, 0, NULL, &oidx);
-    if ((ref = (char *) g_malloc(ID_BUF_SIZE)) != NULL) {
-      snprintf(ref, ID_BUF_SIZE, "axis:^%d", oidx);
+    ref = g_strdup_printf("axis:^%d", oidx);
+    if (ref) {
       putobj(obj2, "axis_x", idg, ref);
     }
     getobj(obj, "oid", idy, 0, NULL, &oidy);
-    if ((ref = (char *) g_malloc(ID_BUF_SIZE)) != NULL) {
-      snprintf(ref, ID_BUF_SIZE, "axis:^%d", oidy);
+    ref = g_strdup_printf("axis:^%d", oidy);
+    if (ref) {
       putobj(obj2, "axis_y", idg, ref);
     }
   }

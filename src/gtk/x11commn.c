@@ -454,10 +454,8 @@ axis_move_each_obj(char *axis_str, int i, struct objlist *obj, int id1, int id2)
       if (aid >= id2)
 	aid++;
     }
-    len = strlen(chkobjectname(aobj)) + 10;
-    axis2 = (char *) g_malloc(len);
+    axis2 = g_strdup_printf("%s:%d", chkobjectname(aobj), aid);
     if (axis2) {
-      snprintf(axis2, len, "%s:%d", chkobjectname(aobj), aid);
       putobj(obj, axis_str, i, axis2);
     }
   }
