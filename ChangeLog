@@ -1,5 +1,16 @@
 2013-11-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/math/math_basic_function.c (math_func_fmod): remove unused
+	variables.
+
+	* debian/ngraph-gtk.install: install "libngraph".
+
+	* mingw/windows.sh: now some processes are automatically done.
+
+	* src/gtk/init.c: added (renamed from main.c).
+
+	* src/gtk/init.h: added (renamed from main.h).
+
 	* configure.ac: add "LIBNGRAPH_VERSION" and "AC_CANONICAL_HOST",
 	check OS type.
 

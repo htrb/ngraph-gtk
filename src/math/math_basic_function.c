@@ -2691,8 +2691,7 @@ math_func_dif(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
 int
 math_func_fmod(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  int prec, r;
-  double x, y, m;
+  double x, y;
 
   MATH_CHECK_ARG(rval, exp->buf[0]);
   MATH_CHECK_ARG(rval, exp->buf[1]);
