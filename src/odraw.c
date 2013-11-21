@@ -35,6 +35,7 @@
 #include "oroot.h"
 #include "odraw.h"
 #include "nstring.h"
+#include "mathfn.h"
 
 #define NAME "draw"
 #define PARENT "object"

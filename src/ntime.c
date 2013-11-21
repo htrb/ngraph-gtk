@@ -41,81 +41,77 @@ char *
 ndate(time_t *timep,int style)
 {
   struct tm *ltime;
-  char c[32];
+  char *c;
 
   ltime=localtime(timep);
+  if (ltime == NULL) {
+    return NULL;
+  }
   switch (style) {
   case 1:
-    snprintf(c, sizeof(c),
-	     "%d-%d-%d",
-	     ltime->tm_mon + 1, ltime->tm_mday, 1900 + ltime->tm_year);
+    c = g_strdup_printf("%d-%d-%d",
+			ltime->tm_mon + 1, ltime->tm_mday, 1900 + ltime->tm_year);
     break;
   case 2:
-    snprintf(c, sizeof(c),
-	     "%s %d %d",
-	     monthstr[ltime->tm_mon], ltime->tm_mday, 1900 + ltime->tm_year);
+    c = g_strdup_printf("%s %d %d",
+			monthstr[ltime->tm_mon], ltime->tm_mday, 1900 + ltime->tm_year);
     break;
   case 3:
-    snprintf(c, sizeof(c),
-	     "%d-%d-%d",
-	     ltime->tm_mday, ltime->tm_mon + 1, 1900 + ltime->tm_year);
+    c = g_strdup_printf("%d-%d-%d",
+			ltime->tm_mday, ltime->tm_mon + 1, 1900 + ltime->tm_year);
     break;
   case 4:
-    snprintf(c, sizeof(c),
-	     "%d/%d/%d", ltime->tm_mon + 1, ltime->tm_mday, 1900 + ltime->tm_year);
+    c = g_strdup_printf("%d/%d/%d",
+			ltime->tm_mon + 1, ltime->tm_mday, 1900 + ltime->tm_year);
     break;
   default:
-    snprintf(c, sizeof(c),
-	     "%s %s %d %d",
-	     weekstr[ltime->tm_wday], monthstr[ltime->tm_mon], ltime->tm_mday, 1900 + ltime->tm_year);
+    c = g_strdup_printf("%s %s %d %d",
+			weekstr[ltime->tm_wday], monthstr[ltime->tm_mon], ltime->tm_mday, 1900 + ltime->tm_year);
     break;
   }
 
-  return g_strdup(c);
+  return c;
 }
 
 char *
 ntime(time_t *timep,int style)
 {
   struct tm *ltime;
-  char c[32];
+  char *c;
 
   ltime=localtime(timep);
+  if (ltime == NULL) {
+    return NULL;
+  }
   switch (style) {
   case 1:
     if (ltime->tm_hour<12)
-      snprintf(c, sizeof(c),
-	       "%02d:%02d:%02d am",
-	       ltime->tm_hour, ltime->tm_min, ltime->tm_sec);
+      c = g_strdup_printf("%02d:%02d:%02d am",
+			  ltime->tm_hour, ltime->tm_min, ltime->tm_sec);
     else
-      snprintf(c, sizeof(c),
-	       "%02d:%02d:%02d pm",
-	       ltime->tm_hour - 12, ltime->tm_min, ltime->tm_sec);
+      c = g_strdup_printf("%02d:%02d:%02d pm",
+			  ltime->tm_hour - 12, ltime->tm_min, ltime->tm_sec);
     break;
   case 2:
-    snprintf(c, sizeof(c),
-	     "%02d:%02d",
-	     ltime->tm_hour, ltime->tm_min);
+    c = g_strdup_printf("%02d:%02d",
+			ltime->tm_hour, ltime->tm_min);
     break;
   case 3:
     if (ltime->tm_hour<12) {
-      snprintf(c, sizeof(c),
-	       "%02d:%02d am",
-	       ltime->tm_hour, ltime->tm_min);
+      c = g_strdup_printf("%02d:%02d am",
+			  ltime->tm_hour, ltime->tm_min);
     } else {
-      snprintf(c, sizeof(c),
-	       "%02d:%02d pm",
-	       ltime->tm_hour - 12, ltime->tm_min);
+      c = g_strdup_printf("%02d:%02d pm",
+			  ltime->tm_hour - 12, ltime->tm_min);
     }
     break;
   default:
-    snprintf(c, sizeof(c),
-	     "%02d:%02d:%02d",
-	     ltime->tm_hour, ltime->tm_min, ltime->tm_sec);
+    c = g_strdup_printf("%02d:%02d:%02d",
+			ltime->tm_hour, ltime->tm_min, ltime->tm_sec);
     break;
   }
 
-  return g_strdup(c);
+  return c;
 }
 
 int 

@@ -109,12 +109,11 @@ obj_load_config(struct objlist *obj, N_VALUE *inst, char *title, NHASH hash)
 static void
 obj_save_config_numeric(struct objlist *obj, N_VALUE *inst, char *field, struct narray *conf)
 {
-  char buf[1024], *str;
+  char *str;
   int val;
 
   _getobj(obj, field, inst, &val);
-  snprintf(buf, sizeof(buf), "%s=%d", field, val);
-  str = g_strdup(buf);
+  str = g_strdup_printf("%s=%d", field, val);
   if (str) {
     arrayadd(conf, &str);
   }
@@ -124,15 +123,11 @@ void
 obj_save_config_string(struct objlist *obj, N_VALUE *inst, char *field, struct narray *conf)
 {
   char *buf, *val;
-  int len;
 
   _getobj(obj, field, inst, &val);
-  val = CHK_STR(val);
 
-  len = strlen(field) + strlen(val) + 2;
-  buf = g_malloc(len);
+  buf = g_strdup_printf("%s=%s", field, CHK_STR(val));
   if (buf) {
-    snprintf(buf, len, "%s=%s", field, val);
     arrayadd(conf, &buf);
   }
 }

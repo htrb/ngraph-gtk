@@ -228,7 +228,7 @@ axisinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   int len1,wid1,len2,wid2,len3,wid3;
   int pt,sx,sy,logpow,scriptsize;
   int autonorm,num,gnum,margin;
-  char *font,*format,*group,*name, buf[256];
+  char *font,*format,*group,*name;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   width=40;
@@ -286,13 +286,11 @@ axisinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   if (_putobj(obj,"num_font",inst,font)) goto errexit;
 
   gnum = axisuniqgroup(obj,'a');
-  snprintf(buf, sizeof(buf), "a_%d",gnum);
-  group = g_strdup(buf);
+  group = g_strdup_printf("a_%d", gnum);
   if (group == NULL) goto errexit;
   if (_putobj(obj,"group",inst,group)) goto errexit;
 
-  snprintf(buf, sizeof(buf), "a_%d",gnum);
-  name = g_strdup(buf);
+  name = g_strdup_printf("a_%d",gnum);
   if (name == NULL) goto errexit;
   if (_putobj(obj,"name",inst,name)) goto errexit;
 
@@ -316,12 +314,11 @@ axisdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   get_axis_group_type(obj, inst, inst_array, TRUE);
   for (i = 0; i < INST_ARRAY_NUM; i++) {
     if (inst_array[i] && inst_array[i] != inst) {
-      char buf[64], *group, *group2;
+      char *group, *group2;
       int gnum;
 
       gnum = axisuniqgroup(obj,'a');
-      snprintf(buf, sizeof(buf), "a_%d",gnum);
-      group = g_strdup(buf);
+      group = g_strdup_printf("a_%d", gnum);
       if (group == NULL)
 	break;
 
@@ -3311,11 +3308,10 @@ axistight(struct objlist *obj,N_VALUE *inst,N_VALUE *rval, int argc,char **argv)
   return 0;
 }
 
-#define BUF_SIZE 64
 static void
 set_group(struct objlist *obj, int gnum, int id, char axis, char type)
 {
-  char *group, *group2, buf[BUF_SIZE];
+  char *group, *group2;
   N_VALUE *inst2;
 
   inst2 = chkobjinst(obj, id);
@@ -3323,15 +3319,14 @@ set_group(struct objlist *obj, int gnum, int id, char axis, char type)
     return;
   }
 
-  snprintf(buf, sizeof(buf), "%c%c%d", type, axis, gnum);
-  group = g_strdup(buf);
+  group = g_strdup_printf("%c%c%d", type, axis, gnum);
   if (group) {
     _getobj(obj, "group", inst2, &group2);
     g_free(group2);
     _putobj(obj, "group", inst2, group);
   }
 
-  group = g_strdup(buf);
+  group = g_strdup_printf("%c%c%d", type, axis, gnum);
   if (group) {
     _getobj(obj, "name", inst2, &group2);
     g_free(group2);
@@ -3490,14 +3485,13 @@ static void
 axis_default_set(struct objlist *obj, int id, int oid, char *field, char *conf)
 {
   N_VALUE *inst2;
-  char *ref, *ref2, buf[BUF_SIZE];
+  char *ref, *ref2;
 
   inst2 = chkobjinst(obj, id);
   if (inst2 == NULL)
     return;
 
-  snprintf(buf, sizeof(buf), "axis:^%d", oid);
-  ref = g_strdup(buf);
+  ref = g_strdup_printf("axis:^%d", oid);
   if (ref == NULL)
     return;
 

@@ -45,24 +45,21 @@ struct ngraph_obj {
   int id;
 };
 
-struct ngraph_array {
-  int num;
-  union array {
-    int i;
-    double d;
-    const char *str;
-    struct ngraph_array *ary;
-  } ary[1];
-};
-
+struct ngraph_array;
 typedef struct ngraph_array ngraph_arg;
 
 typedef union _ngraph_value {
   int i;
   double d;
   const char *str;
-  ngraph_arg *ary;
+  struct ngraph_array *ary;
 } ngraph_value;
+
+struct ngraph_array {
+  int num;
+  union _ngraph_value ary[1];
+};
+
 
 typedef union _ngraph_returned_value {
   int i;
@@ -85,6 +82,13 @@ typedef void (* ngraph_plugin_close) (struct ngraph_plugin *plugin);
 
 void *ngraph_plugin_get_user_data(struct ngraph_plugin *shlocal);
 void ngraph_plugin_set_user_data(struct ngraph_plugin *shlocal, void *user_data);
+
+int ngraph_initialize(int *argc, char ***argv);
+void ngraph_finalize(void);
+char *ngraph_get_init_file(const char *init_script);
+int ngraph_console_allocate(void);
+void ngraph_console_free(void);
+int ngraph_exec_loginshell(char *loginshell, struct objlist *obj, int id);
 
 int ngraph_putobj(struct objlist *obj, const char *vname, int id, ngraph_value *val);
 int ngraph_getobj(struct objlist *obj, const char *vname, int id, ngraph_arg *arg, ngraph_returned_value *val);
@@ -119,5 +123,8 @@ int ngraph_get_obj_last_id(struct objlist *obj);
 int ngraph_puts(const char *s);
 int ngraph_err_puts(const char *s);
 void ngraph_sleep(int t);
+void *ngraph_malloc(size_t size);
+void ngraph_free(void *ptr);
+char *ngraph_strdup(const char *str);
 
 #endif

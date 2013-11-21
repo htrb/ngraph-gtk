@@ -3741,6 +3741,11 @@ getvaluestr(struct objlist *obj,const char *field,void *val,int cr,int quote)
   case NENUM:
     g_string_append_printf(str,"%s",((char **)arglist)[*(int *)po]);
     break;
+  case NVOID:
+  case NPOINTER:
+  case NVFUNC:
+    /* nothing to do (may be ...) */
+    break;
   }
   if (cr) {
     g_string_append_c(str, '\n');
