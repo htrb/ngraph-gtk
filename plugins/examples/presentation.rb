@@ -411,7 +411,7 @@ class Presentation
       end
     }
 
-    Ngraph::System[0].del if (page.size < 1)
+    exit if (page.size < 1)
     page
   end
 

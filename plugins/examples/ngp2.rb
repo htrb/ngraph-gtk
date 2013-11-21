@@ -172,7 +172,7 @@ def show_usage
   puts("    -png          output Portable Network Graphics")
   puts("    -h, --help    show this usage")
   puts
-  Ngraph::System[0].del
+  exit
 end
 
 ngp2 = Ngp2.new
@@ -206,5 +206,3 @@ ARGV.each {|ngp_file|
 }
 
 puts
-
-Ngraph::System[0].del
