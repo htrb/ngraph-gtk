@@ -80,12 +80,6 @@ tainted_utf8_str_new(const char *str)
   return s;
 }
 
-static void
-ngraph_object_free(struct ngraph_instance *inst)
-{
-  free(inst);
-}
-
 static VALUE
 ngraph_inst_method_equal(VALUE klass1, VALUE klass2)
 {
@@ -354,7 +348,7 @@ str2inst_ensure(VALUE data2)
   int *ids;
 
   ids = (int *) data2;
-  free(ids);
+  ngraph_free(ids);
 
   return Qnil;
 }
@@ -405,7 +399,7 @@ obj_get(VALUE klass, VALUE id_value, const char *name)
     return Qnil;
   }
 
-  new_inst = Data_Make_Struct(klass, struct ngraph_instance, NULL, ngraph_object_free, inst);
+  new_inst = Data_Make_Struct(klass, struct ngraph_instance, 0, -1, inst);
 
   inst->obj = nobj;
   inst->id = id;
@@ -701,7 +695,7 @@ obj_del_from_str(VALUE klass, VALUE arg, const char *name)
   for (i = n - 1;  i >= 0; i--) {
     ngraph_del(obj, ids[i]);
   }
-  free(ids);
+  ngraph_free(ids);
 
   return klass;
 }
@@ -922,7 +916,7 @@ inst_get_obj(VALUE self, const char *field)
   }
 
   id = ids[n - 1];
-  free(ids);
+  ngraph_free(ids);
 
   name = ngraph_get_obj_name(obj);
   if (name == NULL) {
@@ -1062,7 +1056,7 @@ inst_put_obj(VALUE self, VALUE arg, const char *field)
     if (obj == NULL) {
       rb_raise(rb_eArgError, "%s#%s: illegal instance representation (%s).", rb_obj_classname(self), field, ptr);
     }
-    free(ids);
+    ngraph_free(ids);
     break;
   default:
     if (! rb_obj_is_kind_of(arg, NgraphClass)) {
@@ -1122,7 +1116,7 @@ inst_put_iarray(VALUE self, VALUE arg, const char *field)
 
   ary.ary = NULL;
   if (num > 0) {
-    ary.ary = rb_alloc_tmp_buffer(&tmpstr, sizeof(*ary.ary) + sizeof(union array) * num);
+    ary.ary = rb_alloc_tmp_buffer(&tmpstr, sizeof(*ary.ary) + sizeof(ngraph_value) * num);
     ary.ary->num = num;
     if (ary.ary) {
       for (i = 0; i < num; i++) {
@@ -1197,7 +1191,7 @@ inst_put_darray(VALUE self, VALUE arg, const char *field)
 
   ary.ary = NULL;
   if (num > 0) {
-    ary.ary = rb_alloc_tmp_buffer(&tmpstr, sizeof(*ary.ary) + sizeof(union array) * num);
+    ary.ary = rb_alloc_tmp_buffer(&tmpstr, sizeof(*ary.ary) + sizeof(ngraph_value) * num);
     ary.ary->num = num;
     if (ary.ary) {
       for (i = 0; i < num; i++) {
@@ -1272,7 +1266,7 @@ inst_put_sarray(VALUE self, VALUE arg, const char *field)
 
   ary.ary = NULL;
   if (num > 0) {
-    ary.ary =  rb_alloc_tmp_buffer(&tmpstr, sizeof(*ary.ary) + sizeof(union array) * num);
+    ary.ary =  rb_alloc_tmp_buffer(&tmpstr, sizeof(*ary.ary) + sizeof(ngraph_value) * num);
     ary.ary->num = num;
     if (ary.ary) {
       for (i = 0; i < num; i++) {
@@ -1382,7 +1376,7 @@ allocate_iarray(VALUE self, volatile VALUE *tmpstr, VALUE arg, const char *field
 
   ary = get_array_arg(self, field, arg, &num);
 
-  narray = rb_alloc_tmp_buffer(tmpstr, sizeof(*narray) + sizeof(union array) * num);
+  narray = rb_alloc_tmp_buffer(tmpstr, sizeof(*narray) + sizeof(ngraph_value) * num);
   if (narray == NULL) {
     return NULL;
   }
@@ -1404,7 +1398,7 @@ allocate_darray(VALUE self, volatile VALUE *tmpstr, VALUE arg, const char *field
 
   ary = get_array_arg(self, field, arg, &num);
 
-  narray = rb_alloc_tmp_buffer(tmpstr, sizeof(*narray) + sizeof(union array) * num);
+  narray = rb_alloc_tmp_buffer(tmpstr, sizeof(*narray) + sizeof(ngraph_value) * num);
   if (narray == NULL) {
     return NULL;
   }
@@ -1427,7 +1421,7 @@ allocate_sarray(VALUE self, volatile VALUE *tmpstr, VALUE arg, const char *field
 
   ary = get_array_arg(self, field, arg, &num);
 
-  narray = rb_alloc_tmp_buffer(tmpstr, sizeof(*narray) + sizeof(union array) * num);
+  narray = rb_alloc_tmp_buffer(tmpstr, sizeof(*narray) + sizeof(ngraph_value) * num);
   if (narray == NULL) {
     return NULL;
   }

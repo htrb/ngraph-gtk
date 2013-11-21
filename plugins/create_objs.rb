@@ -421,7 +421,7 @@ class NgraphObj
         @func += (", ")
       end
     }
-    @func += ("  carg = alloca(sizeof(*carg) + sizeof(union array) * #{args.size});\n")
+    @func += ("  carg = alloca(sizeof(*carg) + sizeof(ngraph_value) * #{args.size});\n")
     @func += (%Q!  if (carg == NULL) {\n    rb_raise(rb_eSysStackError, "%s: cannot allocate enough memory.", rb_obj_classname(self));\n  }\n!)
     @func += ("  carg->num = #{args.size};\n")
     args.each_with_index { |arg, i|

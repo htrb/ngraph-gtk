@@ -1,5 +1,28 @@
 2013-11-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* plugins/ruby.c (str2inst_ensure, obj_del_from_str)
+	(inst_get_obj, inst_put_obj): use "ngraph_free()".
+	(obj_get): don't use "ngraph_object_free()".
+
+	* src/main.c: added.
+
+	* src/ngraph_api.c: added.
+
+	* src/ntime.c (ndate, ntime): use "g_strdup_printf()".
+
+	* src/oaxis.c (axisinit, axisdone, set_group, axis_default_set):
+	use "g_strdup_printf()".
+
+	* src/object.c (getvaluestr): add case for "NVOID", "NPOINTER" and
+	"NVFUNC".
+
+	* src/odraw.c: include "mathfn.h".
+
+	* src/oplugin.c: api functions are moved to "ngraph_api.c".
+
+	* src/oroot.c (obj_save_config_numeric, obj_save_config_string):
+	use "g_strdup_printf()".
+
 	* src/math/math_basic_function.c (math_func_fmod): remove unused
 	variables.
 

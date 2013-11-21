@@ -365,8 +365,7 @@ extra_dist_common = getobj.nsc create_objs.rb libruby.def libruby_resource.rc
 @HAVE_RUBY_DEV_TRUE@ngraphplugin_LTLIBRARIES = libruby.la
 @HAVE_RUBY_DEV_TRUE@libruby_la_SOURCES = ruby.c
 @HAVE_RUBY_DEV_TRUE@libruby_la_CFLAGS = -I.. -I $(RUBY_INCRUDEDIR) -I $(RUBY_INCRUDEDIR)/$(RUBY_ARCH)
-@HAVE_RUBY_DEV_TRUE@libruby_ldflags = -L../src -avoid-version \
-@HAVE_RUBY_DEV_TRUE@	-disable-static --mode=link -module \
+@HAVE_RUBY_DEV_TRUE@libruby_ldflags = -L../src -avoid-version -module \
 @HAVE_RUBY_DEV_TRUE@	-lngraph `ruby -e \
 @HAVE_RUBY_DEV_TRUE@	'puts(RbConfig::CONFIG["LIBRUBYARG_SHARED"])'` \
 @HAVE_RUBY_DEV_TRUE@	$(am__append_1)

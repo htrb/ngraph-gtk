@@ -1,14 +1,22 @@
-extra_dist_common = getobj.nsc create_objs.rb
+extra_dist_common = getobj.nsc create_objs.rb libruby.def libruby_resource.rc
 
 if HAVE_RUBY_DEV
   ngraphplugindir = $(pkglibdir)/plugins
   RUBY_INCRUDEDIR = `ruby -e 'puts(RbConfig::CONFIG["rubyhdrdir"])'`
   RUBY_ARCH = `ruby -e 'puts(RbConfig::CONFIG["arch"])'`
-  BUILT_SOURCES = ruby_ngraph.c
+  built_sources = ruby_ngraph.c
   ngraphplugin_LTLIBRARIES = libruby.la
   libruby_la_SOURCES = ruby.c
   libruby_la_CFLAGS = -I.. -I $(RUBY_INCRUDEDIR) -I $(RUBY_INCRUDEDIR)/$(RUBY_ARCH)
-  libruby_la_LDFLAGS = -avoid-version -disable-static --mode=link -module `ruby -e 'puts(RbConfig::CONFIG["LIBRUBYARG_SHARED"])'`
+  libruby_ldflags = -L../src -avoid-version -module -lngraph `ruby -e 'puts(RbConfig::CONFIG["LIBRUBYARG_SHARED"])'`
+if OS_WIN32
+  libruby_ldflags += -no-undefined -L`ruby -e 'puts(RbConfig::CONFIG["libdir"])'` -export-symbols libruby.def -Wl,libruby_resource.o
+  built_sources += libruby_resource.o
+
+.rc.o:
+	windres -o $@ $<
+endif
+  libruby_la_LDFLAGS = $(libruby_ldflags)
   extra_dist = $(extra_dist_common)
 else
   extra_dist = $(extra_dist_common) ruby.c
@@ -22,4 +30,5 @@ obj.txt: ../src/ngraph
 ruby_ngraph.c: obj.txt $(EXTRA_DIST)
 	ruby create_objs.rb obj.txt ruby_ngraph.c
 
-CLEANFILES = obj.txt ruby_ngraph.c
+BUILT_SOURCES = $(built_sources)
+CLEANFILES = obj.txt $(BUILT_SOURCES)
