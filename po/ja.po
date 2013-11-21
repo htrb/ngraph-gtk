@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2013-11-19 16:31+0900\n"
+"POT-Creation-Date: 2013-11-21 15:42+0900\n"
 "PO-Revision-Date: 2013-07-17 11:18+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/gtk/ox11menu.c:2033
+#: src/gtk/ox11menu.c:2029
 msgid "Unsaved Graph"
 msgstr "新規グラフ"
 
@@ -496,21 +496,21 @@ msgstr "ベキ形式(ログ)"
 msgid "No zero"
 msgstr "ゼロ非表示"
 
-#: src/gtk/x11commn.c:980 src/gtk/x11menu.c:346
+#: src/gtk/x11commn.c:978 src/gtk/x11menu.c:346
 msgid "Save NGP file"
 msgstr "NGPファイルの保存"
 
-#: src/gtk/x11commn.c:1004 src/gtk/x11opt.c:1943
+#: src/gtk/x11commn.c:1002 src/gtk/x11opt.c:1943
 #, c-format
 msgid "Saving `%.128s'."
 msgstr "保存中 `%.128s'."
 
-#: src/gtk/x11commn.c:1190 src/gtk/x11commn.c:1272
+#: src/gtk/x11commn.c:1188 src/gtk/x11commn.c:1270
 #, c-format
 msgid "Loading `%.128s'."
 msgstr "読込中 `%.128s'."
 
-#: src/gtk/x11commn.c:1389
+#: src/gtk/x11commn.c:1387
 msgid ""
 "This graph is modified.\n"
 "Save this graph?"
@@ -518,28 +518,28 @@ msgstr ""
 "このグラフは変更されています.\n"
 "保存しますか?"
 
-#: src/gtk/x11commn.c:1390
+#: src/gtk/x11commn.c:1388
 msgid "Confirm"
 msgstr "確認"
 
-#: src/gtk/x11commn.c:1570
+#: src/gtk/x11commn.c:1568
 msgid "Ngraph.ini is not found."
 msgstr "Ngraph.ini が見つかりません."
 
-#: src/gtk/x11commn.c:1573
+#: src/gtk/x11commn.c:1571
 msgid "Ngraph.ini is write protected."
 msgstr "Ngraph.ini に書き込めませんでした."
 
-#: src/gtk/x11commn.c:1588
+#: src/gtk/x11commn.c:1586
 #, c-format
 msgid "Install `Ngraph.ini' to %s ?"
 msgstr "%s に 'Ngraph.ini' をインストールしますか?"
 
-#: src/gtk/x11commn.c:1592
+#: src/gtk/x11commn.c:1590
 msgid "Ngraph.ini could not be copied."
 msgstr "Ngraph.ini をコピーできませんでした."
 
-#: src/gtk/x11commn.c:1732
+#: src/gtk/x11commn.c:1730
 msgid "error"
 msgstr "エラー"
 
@@ -2394,7 +2394,7 @@ msgid "Spawning external driver."
 msgstr "外部ドライバに出力中"
 
 #: src/gtk/x11print.c:737 src/gtk/x11print.c:1011 src/gtk/x11print.c:1084
-#: src/gtk/x11view.c:5642
+#: src/gtk/x11view.c:5638
 msgid "Drawing."
 msgstr "描画中"
 
@@ -2428,15 +2428,15 @@ msgstr "データ評価中"
 msgid "Data points are moved."
 msgstr "データは移動されました."
 
-#: src/gtk/x11view.c:4083
+#: src/gtk/x11view.c:4079
 msgid "Moving data points is canceled."
 msgstr "データの移動はキャンセルされました."
 
-#: src/gtk/x11view.c:5636
+#: src/gtk/x11view.c:5632
 msgid "Scaling"
 msgstr "軸スケール設定中"
 
-#: src/gtk/x11view.c:5643
+#: src/gtk/x11view.c:5639
 msgid "Drawing"
 msgstr "描画中"
 

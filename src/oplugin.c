@@ -44,7 +44,6 @@ struct ngraph_plugin {
   ngraph_plugin_open open;
   ngraph_plugin_close close, interrupt;
   int deleted, id;
-  void *user_data;
   char *name, *file;
 };
 
@@ -517,22 +516,4 @@ addplugin(void)
   }
 
   return addobject(NAME, NULL, PARENT, OVERSION, TBLNUM, Plugin, ERRNUM, sherrorlist, NULL, NULL);
-}
-
-void
-ngraph_plugin_set_user_data(struct ngraph_plugin *plugin, void *user_data)
-{
-  if (plugin == NULL) {
-    return;
-  }
-  plugin->user_data = user_data;
-}
-
-void *
-ngraph_plugin_get_user_data(struct ngraph_plugin *plugin)
-{
-  if (plugin == NULL) {
-    return NULL;
-  }
-  return plugin->user_data;
 }

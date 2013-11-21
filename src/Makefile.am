@@ -15,7 +15,7 @@ CLEANFILES = $(BUILT_SOURCES)
 .rc.o:
 	windres -o $@ $<
 
-ngraph.def: oplugin.c ngraph_api.c
+ngraph.def: ngraph_api.c
 	echo "EXPORTS" > $@
 	cat $^ | grep '^ngraph_' | sed 's/[^a-z0-9_].*//' >> $@
 else

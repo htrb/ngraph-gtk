@@ -1398,7 +1398,7 @@ uninstall-am: uninstall-binPROGRAMS uninstall-includeHEADERS \
 @OS_WIN32_TRUE@.rc.o:
 @OS_WIN32_TRUE@	windres -o $@ $<
 
-@OS_WIN32_TRUE@ngraph.def: oplugin.c ngraph_api.c
+@OS_WIN32_TRUE@ngraph.def: ngraph_api.c
 @OS_WIN32_TRUE@	echo "EXPORTS" > $@
 @OS_WIN32_TRUE@	cat $^ | grep '^ngraph_' | sed 's/[^a-z0-9_].*//' >> $@
 

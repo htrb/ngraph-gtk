@@ -99,7 +99,7 @@ get_login_shell(struct objlist *sys)
   arg.num = 0;
   arg.ary[0].str = NULL;
 
-  if (ngraph_getobj(sys, "login_shell", 0, &arg, &rval)) {
+  if (ngraph_getobj(sys, "login_shell", 0, &arg, &rval) < 0) {
     exit(1);
   }
 
@@ -148,7 +148,7 @@ main(int argc, char **argv)
     ngraph_value val;
 
     val.str = NULL;
-    if (ngraph_putobj(sys, "login_shell", 0, &val)) {
+    if (ngraph_putobj(sys, "login_shell", 0, &val) < 0) {
       exit(1);
     }
 

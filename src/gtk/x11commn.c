@@ -434,7 +434,7 @@ axis_move_each_obj(char *axis_str, int i, struct objlist *obj, int id1, int id2)
   int spc, aid;
   char *axis, *axis2;
   struct narray iarray;
-  int anum, len;
+  int anum;
 
   if (getobj(obj, axis_str, i, 0, NULL, &axis) < 0 || axis == NULL)
     return;
