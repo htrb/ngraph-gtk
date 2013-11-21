@@ -60,7 +60,6 @@
 #include "x11commn.h"
 #include "x11merge.h"
 
-#define ID_BUF_SIZE 16
 #define SCROLL_INC 20
 #define POINT_ERROR 4
 

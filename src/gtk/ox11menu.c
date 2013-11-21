@@ -330,8 +330,6 @@ static struct menu_config *MenuConfigArrray[] = {
 
 static NHASH MenuConfigHash = NULL;
 
-#define BUF_SIZE 64
-
 #if ! GTK_CHECK_VERSION(3, 4, 0)
 static void
 get_palette(void)

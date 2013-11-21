@@ -106,7 +106,6 @@ static struct subwin_popup_list Popup_list[] = {
 #define POPUP_ITEM_DOWN 9
 #define POPUP_ITEM_BOTTOM 10
 
-#define ID_BUF_SIZE 16
 #define TITLE_BUF_SIZE 128
 
 static void axis_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row);
