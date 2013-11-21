@@ -1,5 +1,8 @@
 2013-11-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/init.c (my_sprintf): removed.
+	(get_file_list): use "g_strdup_printf()".
+
 	* plugins/ruby.c (str2inst_ensure, obj_del_from_str)
 	(inst_get_obj, inst_put_obj): use "ngraph_free()".
 	(obj_get): don't use "ngraph_object_free()".

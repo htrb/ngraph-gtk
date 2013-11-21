@@ -1006,7 +1006,6 @@ static void mylist_free(struct mylist *list);
 static int mylist_num(const struct mylist *list);
 static struct mylist *get_file_list(const char *path, int type, int mode);
 static struct mylist *get_exec_file_list(void);
-static int my_sprintf(char **str, char *format, ...);
 
 static char **
 attempt_shell_completion(char *text, int start, int end)
@@ -1414,58 +1413,26 @@ get_file_list(const char *path, int type, int mode)
     return NULL;
   }
   while ((ent = g_dir_read_name(dir)) != NULL) {
-    if (my_sprintf(&full_path_name, "%s/%s", path, ent) < 0) {
-      if (list != NULL)
+    full_path_name = g_strdup_printf("%s/%s", path, ent);
+    if (full_path_name == NULL) {
+      if (list != NULL) {
 	mylist_free(list);
+      }
       list = NULL;
       break;
     }
     nstat(full_path_name, &statbuf);
     if ((statbuf.st_mode & type) && (statbuf.st_mode & mode)) {
       list_next = mylist_add(list_next, ent);
-      if (list == NULL)
+      if (list == NULL) {
 	list = list_next;
+      }
     }
   }
 
   g_dir_close(dir);
 
   return list;
-}
-
-#define BUF_UNIT   256
-
-static int
-my_sprintf(char **str, char *format, ...)
-{
-  va_list arg;
-  static int buf_size = BUF_UNIT;
-  static char *buf = NULL;
-  int len;
-
-  if (buf == NULL && (buf = g_malloc(buf_size)) == NULL) {
-    return -1;
-  }
-
-  va_start(arg, format);
-  len = vsnprintf(buf, buf_size, format, arg) + 1;
-  va_end(arg);
-  if (len > buf_size) {
-    char *tmp;
-    int size;
-    size = (len / BUF_UNIT + 1) * BUF_UNIT;
-    tmp = g_realloc(buf, size);
-    if (tmp == NULL) {
-      return -1;
-    }
-    buf = tmp;
-    buf_size = size;
-    va_start(arg, format);
-    len = vsnprintf(buf, buf_size, format, arg) + 1;
-    va_end(arg);
-  }
-  *str = buf;
-  return len;
 }
 
 static struct mylist *
