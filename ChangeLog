@@ -1,3 +1,9 @@
+2013-11-22  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/Makefile.am (libngraphui_la_LDFLAGS): removed.
+
+	* src/math/Makefile.am (libmath_la_LDFLAGS): removed.
+
 2013-11-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/oplugin.c (ngraph_plugin_set_user_data)

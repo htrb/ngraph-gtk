@@ -1,4 +1,4 @@
-SUBDIRS = gtk math	
+SUBDIRS = gtk math
 
 EXTRA_DIST = ngraph_export.map ngraph_resource.rc libngraph_resource.rc ngraph.ico
 

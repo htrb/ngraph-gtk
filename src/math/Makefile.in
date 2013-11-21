@@ -112,7 +112,7 @@ am__v_lt_0 = --silent
 am__v_lt_1 = 
 libmath_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(libmath_la_CFLAGS) \
-	$(CFLAGS) $(libmath_la_LDFLAGS) $(LDFLAGS) -o $@
+	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -343,7 +343,6 @@ EXTRA_DIST = math_operator.h.in math_operator.rb math_constant.h.in	\
 BUILT_SOURCES = math_operator.h math_operator.c math_constant.h	\
 	math_constant.c math_function.h math_function.c
 
-libmath_la_LDFLAGS = -static
 libmath_la_CFLAGS = $(GTK_CFLAGS) -I..
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am

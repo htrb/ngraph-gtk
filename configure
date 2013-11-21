@@ -11912,10 +11912,7 @@ test -z "$OBJDUMP" && OBJDUMP=objdump
 
 
 
-enable_dlopen=yes
-
-
-
+#AC_LIBTOOL_DLOPEN
 
 
 

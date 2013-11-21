@@ -444,7 +444,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-SUBDIRS = gtk math	
+SUBDIRS = gtk math
 EXTRA_DIST = ngraph_export.map ngraph_resource.rc libngraph_resource.rc ngraph.ico
 libngraph_ldflags = -version-info $(LIBNGRAPH_VERSION) $(M_LIBS) \
 	$(READLINE_LIBS) $(GTK_LIBS) $(GLIB_LIBS) $(GSL_LIBS) \
