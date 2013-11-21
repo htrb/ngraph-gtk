@@ -1,5 +1,6 @@
 etc
 usr/bin
+usr/lib/*/lib*
 usr/lib/*/ngraph-gtk/terminal
 usr/share/icons
 usr/share/ngraph-gtk/demo
