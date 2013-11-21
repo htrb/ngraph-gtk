@@ -1,3 +1,14 @@
+2013-11-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* configure.ac: add "LIBNGRAPH_VERSION" and "AC_CANONICAL_HOST",
+	check OS type.
+
+	* acinclude.m4: remove macro.
+
+	* Makefile.am (libtool): added.
+
+	* test/: now "del system" is not necessary to end interpreter.
+
 2013-11-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* plugins/libruby.def: moved from "mingw/"

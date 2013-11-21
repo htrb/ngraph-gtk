@@ -80,9 +80,9 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-@OS_WIN32_TRUE@am__append_1 = ngraph_resource.o
-@OS_WIN32_TRUE@am__append_2 = -no-undefined -export-symbols ngraph.def -Wl,libngraph_resource.o
-@OS_WIN32_FALSE@am__append_3 = -rdynamic -Wl,--version-script,ngraph_export.map
+@OS_WIN32_TRUE@am__append_1 = -no-undefined -export-symbols ngraph.def -Wl,libngraph_resource.o
+@OS_WIN32_TRUE@am__append_2 = -Wl,ngraph_resource.o
+@OS_WIN32_FALSE@am__append_3 = -Wl,--version-script,ngraph_export.map
 @OS_WIN32_FALSE@pkglibexec_PROGRAMS = terminal$(EXEEXT)
 bin_PROGRAMS = ngraph$(EXEEXT)
 subdir = src
@@ -136,11 +136,7 @@ am__uninstall_files_from_dir = { \
 am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)" \
 	"$(DESTDIR)$(pkglibexecdir)" "$(DESTDIR)$(includedir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
-am__DEPENDENCIES_1 =
-libngraph_la_DEPENDENCIES = gtk/libngraphui.la math/libmath.la \
-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1)
+libngraph_la_DEPENDENCIES = gtk/libngraphui.la math/libmath.la
 am_libngraph_la_OBJECTS = libngraph_la-axis.lo libngraph_la-nconfig.lo \
 	libngraph_la-gra.lo libngraph_la-ioutil.lo \
 	libngraph_la-mathcode.lo libngraph_la-mathfn.lo \
@@ -176,8 +172,10 @@ libngraph_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 PROGRAMS = $(bin_PROGRAMS) $(pkglibexec_PROGRAMS)
 am_ngraph_OBJECTS = main.$(OBJEXT)
 ngraph_OBJECTS = $(am_ngraph_OBJECTS)
-am__DEPENDENCIES_2 = $(am__append_1)
-ngraph_DEPENDENCIES = $(am__DEPENDENCIES_2)
+ngraph_LDADD = $(LDADD)
+ngraph_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(ngraph_LDFLAGS) $(LDFLAGS) -o $@
 am__terminal_SOURCES_DIST = terminal.c
 @OS_WIN32_FALSE@am_terminal_OBJECTS = terminal-terminal.$(OBJEXT)
 terminal_OBJECTS = $(am_terminal_OBJECTS)
@@ -448,9 +446,10 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 SUBDIRS = gtk math	
 EXTRA_DIST = ngraph_export.map ngraph_resource.rc libngraph_resource.rc ngraph.ico
-libngraph_ldflags = -version-info $(LIBNGRAPH_VERSION) -export-dynamic \
-	$(am__append_2) $(am__append_3)
-ngraph_ldadd = -lngraph $(am__append_1)
+libngraph_ldflags = -version-info $(LIBNGRAPH_VERSION) $(M_LIBS) \
+	$(READLINE_LIBS) $(GTK_LIBS) $(GLIB_LIBS) $(GSL_LIBS) \
+	$(am__append_1) $(am__append_3)
+ngraph_ldflags = -lngraph $(am__append_2)
 @OS_WIN32_TRUE@BUILT_SOURCES = ngraph.def libngraph_resource.o ngraph_resource.o
 @OS_WIN32_TRUE@CLEANFILES = $(BUILT_SOURCES)
 @OS_WIN32_FALSE@terminal_SOURCES = terminal.c
@@ -470,10 +469,10 @@ libngraph_la_SOURCES = axis.c axis.h nconfig.c nconfig.h gra.c gra.h	\
 	gettext.h ngraph_api.c
 
 libngraph_la_CFLAGS = $(GTK_CFLAGS) $(GSL_CFLAGS) -I.. -DCCNAME='"'$(CC)'"'
-libngraph_la_LIBADD = gtk/libngraphui.la math/libmath.la $(M_LIBS) $(READLINE_LIBS) $(GTK_LIBS) $(GLIB_LIBS) $(GSL_LIBS)
+libngraph_la_LIBADD = gtk/libngraphui.la math/libmath.la
 libngraph_la_LDFLAGS = $(libngraph_ldflags)
 ngraph_SOURCES = main.c
-ngraph_LDADD = $(ngraph_ldadd)
+ngraph_LDFLAGS = $(ngraph_ldflags)
 include_HEADERS = ngraph.h
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
@@ -649,7 +648,7 @@ clean-pkglibexecPROGRAMS:
 
 ngraph$(EXEEXT): $(ngraph_OBJECTS) $(ngraph_DEPENDENCIES) $(EXTRA_ngraph_DEPENDENCIES) 
 	@rm -f ngraph$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(ngraph_OBJECTS) $(ngraph_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(ngraph_LINK) $(ngraph_OBJECTS) $(ngraph_LDADD) $(LIBS)
 
 terminal$(EXEEXT): $(terminal_OBJECTS) $(terminal_DEPENDENCIES) $(EXTRA_terminal_DEPENDENCIES) 
 	@rm -f terminal$(EXEEXT)

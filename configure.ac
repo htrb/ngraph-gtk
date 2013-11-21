@@ -1,12 +1,33 @@
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT(ngraph, 6.06.12, ZXB01226@nifty.com, ngraph-gtk)
+AC_INIT(ngraph, 6.06.13, ZXB01226@nifty.com, ngraph-gtk)
 
-AC_CONFIG_SRCDIR(src/gtk/main.c)
+LIBNGRAPH_VERSION=0:0:0
+AC_SUBST(LIBNGRAPH_VERSION)
+
+AC_CANONICAL_HOST
+
+AC_MSG_CHECKING([for native Win32])
+case "$host" in
+  *-*-mingw*)
+    os_win32=yes
+    ;;
+  *)
+    os_win32=no
+    ;;
+esac
+AC_MSG_RESULT([$os_win32])
+AM_CONDITIONAL(OS_WIN32, test "$os_win32" = "yes")
+
+AC_CONFIG_SRCDIR(src/main.c)
+AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE
 LT_INIT
 AC_LIBTOOL_WIN32_DLL
+AC_LIBTOOL_DLOPEN
 AC_PROG_LIBTOOL
+
+AC_SUBST(LIBTOOL_DEPS)
 
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 
@@ -39,12 +60,6 @@ AC_CHECK_LIB([readline], [rl_completion_matches],
 			  READLINE_LIBS=-lreadline
 			  AC_SUBST(READLINE_LIBS)
 			  ])
-
-dnl Check for -rdynamic option
-NGRAPH_CC_TRY_LINK_FLAG([RDYNAMIC], [-rdynamic])
-
-dnl Check for version script
-NGRAPH_CC_TRY_LINK_FLAG([VER_SCRIPT], [-Wl,--version-script,ngraph_export.map])
 
 dnl Checks for ruby
 AC_CHECK_PROG(RUBY, ruby, yes, no)
