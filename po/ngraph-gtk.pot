@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ngraph-gtk 6.06.12\n"
+"Project-Id-Version: ngraph-gtk 6.06.13\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2013-11-10 10:07+0900\n"
+"POT-Creation-Date: 2013-11-19 16:31+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,7 +34,7 @@ msgid "Save file"
 msgstr ""
 
 #: src/gtk/ogra2cairo.c:45 src/gtk/x11axis.c:1148 src/gtk/x11axis.c:2283
-#: src/odraw.c:84 src/oaxis.c:71 src/oaxis.c:86
+#: src/odraw.c:85 src/oaxis.c:71 src/oaxis.c:86
 msgid "none"
 msgstr ""
 
@@ -1078,15 +1078,15 @@ msgstr ""
 msgid "Type"
 msgstr ""
 
-#: src/gtk/x11graph.c:59 src/odraw.c:55
+#: src/gtk/x11graph.c:59 src/odraw.c:56
 msgid "unchange"
 msgstr ""
 
-#: src/gtk/x11graph.c:60 src/odraw.c:56
+#: src/gtk/x11graph.c:60 src/odraw.c:57
 msgid "full"
 msgstr ""
 
-#: src/gtk/x11graph.c:61 src/odraw.c:58
+#: src/gtk/x11graph.c:61 src/odraw.c:59
 msgid "base"
 msgstr ""
 
@@ -2537,47 +2537,47 @@ msgid ""
 "  the error is found at: %s"
 msgstr ""
 
-#: src/odraw.c:57
+#: src/odraw.c:58
 msgid "relative"
 msgstr ""
 
-#: src/odraw.c:70
+#: src/odraw.c:71
 msgid "miter"
 msgstr ""
 
-#: src/odraw.c:71
+#: src/odraw.c:72
 msgid "round"
 msgstr ""
 
-#: src/odraw.c:72
+#: src/odraw.c:73
 msgid "bevel"
 msgstr ""
 
-#: src/odraw.c:85
+#: src/odraw.c:86
 msgid "end"
 msgstr ""
 
-#: src/odraw.c:86
+#: src/odraw.c:87
 msgid "begin"
 msgstr ""
 
-#: src/odraw.c:87 src/oaxis.c:72
+#: src/odraw.c:88 src/oaxis.c:72
 msgid "both"
 msgstr ""
 
-#: src/odraw.c:92
+#: src/odraw.c:93
 msgid "spline"
 msgstr ""
 
-#: src/odraw.c:93
+#: src/odraw.c:94
 msgid "spline_close"
 msgstr ""
 
-#: src/odraw.c:94
+#: src/odraw.c:95
 msgid "bspline"
 msgstr ""
 
-#: src/odraw.c:95
+#: src/odraw.c:96
 msgid "bspline_close"
 msgstr ""
 

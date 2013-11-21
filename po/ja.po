@@ -6,11 +6,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2013-11-10 10:07+0900\n"
+"POT-Creation-Date: 2013-11-19 16:31+0900\n"
 "PO-Revision-Date: 2013-07-17 11:18+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
-"Language: ja_JP\n"
+"Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -32,7 +32,7 @@ msgid "Save file"
 msgstr "別名で保存"
 
 #: src/gtk/ogra2cairo.c:45 src/gtk/x11axis.c:1148 src/gtk/x11axis.c:2283
-#: src/odraw.c:84 src/oaxis.c:71 src/oaxis.c:86
+#: src/odraw.c:85 src/oaxis.c:71 src/oaxis.c:86
 msgid "none"
 msgstr "なし"
 
@@ -1107,15 +1107,15 @@ msgstr "クリップ"
 msgid "Type"
 msgstr "タイプ"
 
-#: src/gtk/x11graph.c:59 src/odraw.c:55
+#: src/gtk/x11graph.c:59 src/odraw.c:56
 msgid "unchange"
 msgstr "変更しない"
 
-#: src/gtk/x11graph.c:60 src/odraw.c:56
+#: src/gtk/x11graph.c:60 src/odraw.c:57
 msgid "full"
 msgstr "フルパス"
 
-#: src/gtk/x11graph.c:61 src/odraw.c:58
+#: src/gtk/x11graph.c:61 src/odraw.c:59
 msgid "base"
 msgstr "ファイル名のみ"
 
@@ -2573,47 +2573,47 @@ msgstr ""
 "%s\n"
 "  エラーの起きた場所: %s"
 
-#: src/odraw.c:57
+#: src/odraw.c:58
 msgid "relative"
 msgstr "相対パス"
 
-#: src/odraw.c:70
+#: src/odraw.c:71
 msgid "miter"
 msgstr "角結合"
 
-#: src/odraw.c:71
+#: src/odraw.c:72
 msgid "round"
 msgstr "丸結合"
 
-#: src/odraw.c:72
+#: src/odraw.c:73
 msgid "bevel"
 msgstr "斜結合"
 
-#: src/odraw.c:85
+#: src/odraw.c:86
 msgid "end"
 msgstr "終点"
 
-#: src/odraw.c:86
+#: src/odraw.c:87
 msgid "begin"
 msgstr "始点"
 
-#: src/odraw.c:87 src/oaxis.c:72
+#: src/odraw.c:88 src/oaxis.c:72
 msgid "both"
 msgstr "両方"
 
-#: src/odraw.c:92
+#: src/odraw.c:93
 msgid "spline"
 msgstr "スプライン"
 
-#: src/odraw.c:93
+#: src/odraw.c:94
 msgid "spline_close"
 msgstr "閉スプライン"
 
-#: src/odraw.c:94
+#: src/odraw.c:95
 msgid "bspline"
 msgstr "Bスプライン"
 
-#: src/odraw.c:95
+#: src/odraw.c:96
 msgid "bspline_close"
 msgstr "閉Bスプライン"
 
