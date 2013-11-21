@@ -19,15 +19,8 @@ then
     if [ -f $RUBY_DLL ]
     then
 	HAVE_RUBY=1
-	sed 's/noinst/lib/' src/Makefile.am > $TMPFILE
-	mv $TMPFILE src/Makefile.am
-
-	aclocal -I m4 && automake && autoconf
     fi
 fi
-
-
-(cd $WIN_PATH; windres -o ../src/windows_resource.o windows_resource.rc)
 
 CFLAGS="$DEFS $CCOPT" ./configure --prefix=$PKG_DIR --libexecdir=$PKG_DIR/lib
 
@@ -37,9 +30,6 @@ do
     mv $TMPFILE $makefile
 done
 
-sed 's/ngraph_LDADD =/ngraph_LDADD = windows_resource.o/' src/Makefile > $TMPFILE
-mv $TMPFILE src/Makefile
-
 for demo in demo/*.ngp.in
 do
     sed -f $WIN_PATH/windows_demo.sed $demo > $TMPFILE
@@ -48,23 +38,12 @@ done
 
 make
 
-if [ $HAVE_RUBY = "1" ]
-then
-    sed 's/allow_undefined_flag="unsupported"/allow_undefined_flag="supported"/' libtool > $TMPFILE
-    mv $TMPFILE libtool
-
-    rm src/libngraph.la
-    make
-fi
-
 (cd initfile; cp Ngraph.ini.win Ngraph.ini; cp NgraphUI.xml.win NgraphUI.xml)
 
 make install
 
 
 mkdir -p $PKG_DIR/share/icons $PKG_DIR/lib/plugins
-
-rm $PKG_DIR/bin/terminal.exe
 
 cp /mingw/bin/*.dll       $PKG_DIR/bin
 cp -r /mingw/share/locale $PKG_DIR/share
@@ -82,14 +61,12 @@ fi
 cp $WIN_PATH/gtkrc         $PKG_DIR/share/themes/MS-Windows/gtk-2.0
 cp $WIN_PATH/gtkrc         $PKG_DIR/share/themes/Raleigh/gtk-2.0
 cp $WIN_PATH/pango.aliases $PKG_DIR/etc/pango
-cp $WIN_PATH/ngraph.ico    $PKG_DIR/share/icons
 cp $WIN_PATH/associate.bat $PKG_DIR
 cp $WIN_PATH/echo.nsc      $PKG_DIR
+cp src/ngraph.ico          $PKG_DIR/share/icons
 
 if [ $HAVE_RUBY = "1" ]
 then
-    dllwrap -def mingw/libruby.def --target i386-mingw32 -o libruby.dll plugins/.libs/libruby.a src/.libs/libngraph.dll.a "$RUBY_DLL"
-
-    cp libruby.dll $PKG_DIR/lib/plugins
+    mv $PKG_DIR/bin/plugins/libruby.dll $PKG_DIR/lib/plugins
     rm -rf $PKG_DIR/bin/plugins
 fi
