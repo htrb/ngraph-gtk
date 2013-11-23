@@ -8,6 +8,10 @@ SUBDIRS = po m4 src initfile driver addin demo doc zsh test mingw pixmap icons m
 
 ACLOCAL_AMFLAGS = -I m4
 
+if OS_WIN32
+AM_CFLAGS = -mms-bitfields
+endif
+
 LIBTOOL_DEPS = @LIBTOOL_DEPS@
 libtool: $(LIBTOOL_DEPS)
 	$(SHELL) ./config.status --recheck

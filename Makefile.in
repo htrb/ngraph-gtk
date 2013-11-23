@@ -392,6 +392,7 @@ EXTRA_DIST = config.rpath pathconv.sh
 doc_DATA = README AUTHORS ChangeLog NEWS COPYING
 SUBDIRS = po m4 src initfile driver addin demo doc zsh test mingw pixmap icons misc plugins
 ACLOCAL_AMFLAGS = -I m4
+@OS_WIN32_TRUE@AM_CFLAGS = -mms-bitfields
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 

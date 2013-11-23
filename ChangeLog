@@ -1,3 +1,11 @@
+2013-11-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* Makefile.am (AM_CFLAGS): added.
+
+	* src/shell.c (cmdexec, system_bg): use "g_thread_new()" instead
+	of "g_thread_create()" when the version of glib is greater or
+	equal to 2.32.
+
 2013-11-22  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/Makefile.am (libngraphui_la_LDFLAGS): removed.
