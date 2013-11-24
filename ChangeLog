@@ -1,3 +1,15 @@
+2013-11-24  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/ngraph_api.c (ngraph_save_shell_history): added.
+
+	* src/gtk/init.c (n_save_shell_history): added.
+	(n_finalize): use "n_save_shell_history()".
+	(n_initialize): check already initialized or not.
+
+	* plugins/ruby.c (ngraph_save_hist): added.
+	(ngraph_plugin_open_ruby): add singleton method
+	"save_shell_history".
+
 2013-11-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* Makefile.am (AM_CFLAGS): added.

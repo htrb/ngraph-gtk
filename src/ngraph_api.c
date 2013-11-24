@@ -720,6 +720,12 @@ ngraph_initialize(int *argc, char ***argv)
 }
 
 void
+ngraph_save_shell_history(void)
+{
+  n_save_shell_history();
+}
+
+void
 ngraph_finalize(void)
 {
   n_finalize();

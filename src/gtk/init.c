@@ -71,6 +71,7 @@ char *HistoryFile = NULL;
 static char *systemname, *locale;
 static int consolefdout, consolefdin, ConsoleAc = FALSE;
 static int consolecol = 80, consolerow = 25;
+static int Initialized = FALSE;
 
 void *addobjectroot(void);
 void *addint(void);
@@ -279,7 +280,7 @@ resizeconsole(int col, int row)
 {
 }
 
-static char *terminal = NULL;
+static char *Terminal = NULL;
 
 #ifdef WINDOWS
 static HWND ConsoleHandle = NULL;
@@ -413,7 +414,7 @@ exec_console(char *fifo_in, char *fifo_out)
       char buf[256], *s2, *s;
       int len;
 
-      snprintf(buf, sizeof(buf), "%s %s %s", terminal, fifo_in, fifo_out);
+      snprintf(buf, sizeof(buf), "%s %s %s", Terminal, fifo_in, fifo_out);
       argv = NULL;
       s = buf;
       while ((s2 = getitok2(&s, &len, " \t")) != NULL) {
@@ -444,7 +445,7 @@ nallocconsole(void)
   if (ConsoleAc)
     return FALSE;
 
-  if (terminal == NULL)
+  if (Terminal == NULL)
     return FALSE;
 
   snprintf(fifo_in, sizeof(fifo_in) - 1, "/tmp/nterm1_%d", getpid());
@@ -668,7 +669,7 @@ load_config(struct objlist *sys, N_VALUE *inst, int *allocconsole)
 	g_free(f1);
 #endif
       } else if (strcmp(tok, "terminal") == 0) {
-	terminal = getitok2(&s2, &len, "");
+	Terminal = getitok2(&s2, &len, "");
       } else {
 	fprintf(stderr, "(%s): configuration '%s' in section %s is not used.\n", AppName, tok, SYSCONF);
       }
@@ -756,6 +757,10 @@ n_initialize(int *argc, char ***argv)
 #ifdef HAVE_READLINE_READLINE_H
   int history_size = HIST_SIZE;
 #endif
+
+  if (Initialized) {
+    return 0;
+  }
 
 #if USE_MEM_PROFILE
   g_mem_set_vtable(glib_mem_profiler_table);
@@ -953,7 +958,17 @@ n_initialize(int *argc, char ***argv)
   }
 #endif
 
+  Initialized = TRUE;
+
   return 0;
+}
+
+void
+n_save_shell_history(void)
+{
+  if (HistoryFile) {
+    write_history(HistoryFile);
+  }
 }
 
 void
@@ -961,7 +976,7 @@ n_finalize(void)
 {
 #ifdef HAVE_READLINE_READLINE_H
   if (HistoryFile != NULL) {
-    write_history(HistoryFile);
+    n_save_shell_history();
     g_free(HistoryFile);
     HistoryFile = NULL;
   }
@@ -973,7 +988,10 @@ n_finalize(void)
   }
 #endif
 
-  g_free(terminal);
+  if (Terminal) {
+    g_free(Terminal);
+    Terminal = NULL;
+  }
 }
 
 #ifdef HAVE_READLINE_READLINE_H

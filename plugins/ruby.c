@@ -1764,6 +1764,14 @@ ngraph_str2inst(VALUE module, VALUE arg)
   return ary;
 }
 
+static VALUE
+ngraph_save_hist(VALUE module)
+{
+  ngraph_save_shell_history();
+
+  return Qnil;
+}
+
 int
 ngraph_plugin_open_ruby(struct ngraph_plugin *plugin)
 {
@@ -1793,6 +1801,7 @@ ngraph_plugin_open_ruby(struct ngraph_plugin *plugin)
   rb_define_singleton_method(NgraphModule, "err_puts", nputerr, 1);
   rb_define_singleton_method(NgraphModule, "sleep", nsleep, 1);
   rb_define_singleton_method(NgraphModule, "str2inst", ngraph_str2inst, 1);
+  rb_define_singleton_method(NgraphModule, "save_shell_history", ngraph_save_hist, 0);
 
   NgraphClass = rb_define_class_under(NgraphModule, "NgraphObject", rb_cObject);
   rb_define_method(NgraphClass, "initialize", ngraph_class_new, 0);

@@ -84,6 +84,7 @@ void *ngraph_plugin_get_user_data(struct ngraph_plugin *shlocal);
 void ngraph_plugin_set_user_data(struct ngraph_plugin *shlocal, void *user_data);
 
 int ngraph_initialize(int *argc, char ***argv);
+void ngraph_save_shell_history(void);
 void ngraph_finalize(void);
 char *ngraph_get_init_file(const char *init_script);
 int ngraph_console_allocate(void);
