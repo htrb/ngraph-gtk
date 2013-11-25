@@ -1,3 +1,18 @@
+2013-11-25  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* plugins/ruby.c: many functions are moved to
+	"plugins/ruby/ngraph.c".
+
+	* plugins/ruby/ngraph.c: added.
+
+	* plugins/ruby/getobj.nsc: moved from "plugins/".
+
+	* plugins/ruby/extconf.rb: added.
+
+	* plugins/ruby/create_objs.rb: moved from "plugins/".
+
+	* plugins/ruby/Makefile.am: added.
+
 2013-11-24  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/ngraph_api.c (ngraph_save_shell_history): added.

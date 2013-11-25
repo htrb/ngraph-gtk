@@ -42,7 +42,7 @@ make
 
 make install
 
-mkdir -p $PKG_DIR/share/icons $PKG_DIR/lib/plugins
+mkdir -p $PKG_DIR/share/icons $PKG_DIR/lib/plugins $PKG_DIR/lib/ruby
 
 cp /mingw/bin/*.dll             $PKG_DIR/bin
 cp -r /mingw/share/locale       $PKG_DIR/share
@@ -67,6 +67,7 @@ cp $WIN_PATH/pango.aliases $PKG_DIR/etc/pango
 cp $WIN_PATH/associate.bat $PKG_DIR
 cp $WIN_PATH/echo.nsc      $PKG_DIR
 cp src/ngraph.ico          $PKG_DIR/share/icons
+cp plugins/ruby/ngraph.so  $PKG_DIR/lib/ruby
 
 if [ $HAVE_RUBY = "1" ]
 then

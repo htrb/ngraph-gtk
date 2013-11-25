@@ -1,10 +1,12 @@
-extra_dist_common = getobj.nsc create_objs.rb libruby.def libruby_resource.rc
+SUBDIRS = ruby
+
+extra_dist_common = libruby.def libruby_resource.rc
 
 if HAVE_RUBY_DEV
   ngraphplugindir = $(pkglibdir)/plugins
   RUBY_INCRUDEDIR = `ruby -e 'puts(RbConfig::CONFIG["rubyhdrdir"])'`
   RUBY_ARCH = `ruby -e 'puts(RbConfig::CONFIG["arch"])'`
-  built_sources = ruby_ngraph.c
+  built_sources =
   ngraphplugin_LTLIBRARIES = libruby.la
   libruby_la_SOURCES = ruby.c
   libruby_la_CFLAGS = -I.. -I $(RUBY_INCRUDEDIR) -I $(RUBY_INCRUDEDIR)/$(RUBY_ARCH)
@@ -24,11 +26,5 @@ endif
 
 EXTRA_DIST = $(extra_dist)
 
-obj.txt: ../src/ngraph
-	../src/ngraph -i getobj.nsc > obj.txt
-
-ruby_ngraph.c: obj.txt $(EXTRA_DIST)
-	ruby create_objs.rb obj.txt ruby_ngraph.c
-
 BUILT_SOURCES = $(built_sources)
-CLEANFILES = obj.txt $(BUILT_SOURCES)
+CLEANFILES = $(BUILT_SOURCES)

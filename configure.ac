@@ -135,9 +135,10 @@ AC_CONFIG_FILES([Makefile \
 		 doc/html/ja/Makefile \
 		 doc/html/ja/tutorial/Makefile \
 		 doc/html/ja/dialogs/Makefile \
-		 zsh/Makefile
-		 test/Makefile
-		 plugins/Makefile
+		 zsh/Makefile \
+		 test/Makefile \
+		 plugins/Makefile \
+		 plugins/ruby/Makefile \
 		 mingw/Makefile \
 		 pixmap/Makefile \
 		 icons/Makefile \
