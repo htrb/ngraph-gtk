@@ -1,7 +1,7 @@
 EXTRA_DIST = create_objs.rb extconf.rb getobj.nsc ngraph.c
 
 if HAVE_RUBY_DEV
-libngraph.so: ngraph.c ruby_ngraph.h
+ngraph.so: ngraph.c ruby_ngraph.h
 	mv Makefile Makefile.org
 	ruby extconf.rb
 	make
@@ -10,7 +10,7 @@ libngraph.so: ngraph.c ruby_ngraph.h
 
 if OS_WIN32
 else
-install-data-local: libngraph.so
+install-data-local: ngraph.so
 	make -f Makefile.ruby install
 endif
 
@@ -20,6 +20,6 @@ obj.txt: getobj.nsc
 ruby_ngraph.h: obj.txt
 	ruby create_objs.rb obj.txt ruby_ngraph.h
 
-  BUILT_SOURCES = libngraph.so
+  BUILT_SOURCES = ngraph.so
   CLEANFILES = mkmf.log obj.txt ruby_ngraph.h ngraph.so Makefile.ruby
 endif

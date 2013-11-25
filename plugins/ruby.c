@@ -21,14 +21,71 @@ static char *DummyArgv[] = {"ngraph_ruby", NULL};
 static char **DummyArgvPtr = DummyArgv;
 static int DummyArgc = 1;
 
+#ifdef WINDOWS
+static char *
+get_ext_name(void)
+{
+  int n, i;
+  struct objlist *sys;
+  char *ext_name, *plugin_path, ext_basename[] = "ngraph.so";
+  ngraph_returned_value val;
+  ngraph_arg arg;
+
+  sys = ngraph_get_object("system");
+  if (sys == NULL) {
+    return NULL;
+  }
+
+  arg.num = 0;
+  ngraph_getobj(sys, "plugin_dir", 0, &arg, &val);
+  if (val.str == NULL) {
+    return NULL;
+  }
+
+  plugin_path = strdup(val.str);
+  if (plugin_path == NULL) {
+    return NULL;
+  }
+
+  n = strlen(plugin_path);
+  for (i = n - 1; i >= 0; i++) {
+    if (plugin_path[i] == '/') {
+      plugin_path[i] = '\0';
+      break;
+    }
+  }
+
+  ext_name = malloc(n + sizeof(ext_basename) + 1);
+  if (ext_name == NULL) {
+    free(plugin_path);
+    return NULL;
+  }
+  sprintf(ext_name, "%s/%s", plugin_path, ext_basename);
+
+  free(plugin_path);
+
+  return ext_name;
+}
+#endif
+
 int
 ngraph_plugin_open_ruby(struct ngraph_plugin *plugin)
 {
   rb_encoding *enc;
+#ifdef WINDOWS
+  char *ext_name;
+#endif
 
   if (Initialized) {
     return 0;
   }
+
+#ifdef WINDOWS
+  ext_name = get_ext_name();
+  if (ext_name == NULL) {
+    return 1;
+  }
+#endif
 
   ruby_sysinit(&DummyArgc, &DummyArgvPtr);
   ruby_init();
@@ -45,7 +102,12 @@ ngraph_plugin_open_ruby(struct ngraph_plugin *plugin)
   rb_require("rubygems");
   Initialized = TRUE;
 
+#ifdef WINDOWS
+  rb_require(ext_name);
+  free(ext_name);
+#else
   rb_require("ngraph");
+#endif
 
   Argv = rb_intern("ARGV");
 

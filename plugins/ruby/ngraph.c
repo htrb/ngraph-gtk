@@ -1751,8 +1751,6 @@ ngraph_save_hist(VALUE module)
 void
 Init_ngraph(void)
 {
-  VALUE loaded;
-
   ngraph_initialize(&DummyArgc, &DummyArgvPtr);
 
   NgraphModule = rb_define_module("Ngraph");

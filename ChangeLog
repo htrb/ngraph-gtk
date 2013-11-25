@@ -2,6 +2,8 @@
 
 	* plugins/ruby.c: many functions are moved to
 	"plugins/ruby/ngraph.c".
+	(get_ext_name): added.
+	(ngraph_plugin_exec_ruby): use "get_ext_name()" on Windows.
 
 	* plugins/ruby/ngraph.c: added.
 
