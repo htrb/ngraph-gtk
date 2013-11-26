@@ -109,3 +109,14 @@ Description: Ruby plugin for Ngraph-gtk
  postscript.
  .
  This package contains a plugin to run Ruby script.
+
+Package: ruby-ngraph
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ngraph-gtk
+Description: Library for using ngraph-gtk Ruby programs
+ This library provides an API to use ngraph-gtk. Ngraph is the program
+ to create scientific 2-dimensional graphs for researchers and
+ engineers. This program can create advanced graphs which can't be
+ created by spreadsheets. Graphs can be exported to postscript.
+ .
+ This package contains a library for using ngraph-gtk Ruby programs.

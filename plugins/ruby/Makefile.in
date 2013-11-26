@@ -13,7 +13,6 @@
 # PARTICULAR PURPOSE.
 
 @SET_MAKE@
-
 VPATH = @srcdir@
 am__is_gnu_make = test -n '$(MAKEFILE_LIST)' && test -n '$(MAKELEVEL)'
 am__make_running_with_option = \
@@ -78,11 +77,9 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-@HAVE_RUBY_DEV_TRUE@@OS_WIN32_TRUE@am__append_1 = -no-undefined -L`ruby -e 'puts(RbConfig::CONFIG["libdir"])'` -export-symbols libruby.def -Wl,libruby_resource.o
-@HAVE_RUBY_DEV_TRUE@@OS_WIN32_TRUE@am__append_2 = libruby_resource.o
-subdir = plugins
+subdir = plugins/ruby
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
-	$(top_srcdir)/mkinstalldirs $(top_srcdir)/depcomp
+	$(top_srcdir)/mkinstalldirs
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/gettext.m4 \
 	$(top_srcdir)/m4/gsl.m4 $(top_srcdir)/m4/gtk-2.0.m4 \
@@ -100,47 +97,6 @@ mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
-am__vpath_adj = case $$p in \
-    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
-    *) f=$$p;; \
-  esac;
-am__strip_dir = f=`echo $$p | sed -e 's|^.*/||'`;
-am__install_max = 40
-am__nobase_strip_setup = \
-  srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*|]/\\\\&/g'`
-am__nobase_strip = \
-  for p in $$list; do echo "$$p"; done | sed -e "s|$$srcdirstrip/||"
-am__nobase_list = $(am__nobase_strip_setup); \
-  for p in $$list; do echo "$$p $$p"; done | \
-  sed "s| $$srcdirstrip/| |;"' / .*\//!s/ .*/ ./; s,\( .*\)/[^/]*$$,\1,' | \
-  $(AWK) 'BEGIN { files["."] = "" } { files[$$2] = files[$$2] " " $$1; \
-    if (++n[$$2] == $(am__install_max)) \
-      { print $$2, files[$$2]; n[$$2] = 0; files[$$2] = "" } } \
-    END { for (dir in files) print dir, files[dir] }'
-am__base_list = \
-  sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
-  sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
-am__uninstall_files_from_dir = { \
-  test -z "$$files" \
-    || { test ! -d "$$dir" && test ! -f "$$dir" && test ! -r "$$dir"; } \
-    || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
-         $(am__cd) "$$dir" && rm -f $$files; }; \
-  }
-am__installdirs = "$(DESTDIR)$(ngraphplugindir)"
-LTLIBRARIES = $(ngraphplugin_LTLIBRARIES)
-libruby_la_LIBADD =
-am__libruby_la_SOURCES_DIST = ruby.c
-@HAVE_RUBY_DEV_TRUE@am_libruby_la_OBJECTS = libruby_la-ruby.lo
-libruby_la_OBJECTS = $(am_libruby_la_OBJECTS)
-AM_V_lt = $(am__v_lt_@AM_V@)
-am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
-am__v_lt_0 = --silent
-am__v_lt_1 = 
-libruby_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(libruby_la_CFLAGS) \
-	$(CFLAGS) $(libruby_la_LDFLAGS) $(LDFLAGS) -o $@
-@HAVE_RUBY_DEV_TRUE@am_libruby_la_rpath = -rpath $(ngraphplugindir)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -153,30 +109,8 @@ AM_V_at = $(am__v_at_@AM_V@)
 am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
 am__v_at_0 = @
 am__v_at_1 = 
-DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
-depcomp = $(SHELL) $(top_srcdir)/depcomp
-am__depfiles_maybe = depfiles
-am__mv = mv -f
-COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
-	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
-	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
-	$(AM_CFLAGS) $(CFLAGS)
-AM_V_CC = $(am__v_CC_@AM_V@)
-am__v_CC_ = $(am__v_CC_@AM_DEFAULT_V@)
-am__v_CC_0 = @echo "  CC      " $@;
-am__v_CC_1 = 
-CCLD = $(CC)
-LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-AM_V_CCLD = $(am__v_CCLD_@AM_V@)
-am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
-am__v_CCLD_0 = @echo "  CCLD    " $@;
-am__v_CCLD_1 = 
-SOURCES = $(libruby_la_SOURCES)
-DIST_SOURCES = $(am__libruby_la_SOURCES_DIST)
+SOURCES =
+DIST_SOURCES =
 RECURSIVE_TARGETS = all-recursive check-recursive cscopelist-recursive \
 	ctags-recursive dvi-recursive html-recursive info-recursive \
 	install-data-recursive install-dvi-recursive \
@@ -400,30 +334,15 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-SUBDIRS = ruby
-extra_dist_common = libruby.def libruby_resource.rc
-@HAVE_RUBY_DEV_TRUE@ngraphplugindir = $(pkglibdir)/plugins
-@HAVE_RUBY_DEV_TRUE@RUBY_INCRUDEDIR = `ruby -e 'puts(RbConfig::CONFIG["rubyhdrdir"])'`
-@HAVE_RUBY_DEV_TRUE@RUBY_ARCH = `ruby -e 'puts(RbConfig::CONFIG["arch"])'`
-@HAVE_RUBY_DEV_TRUE@built_sources = $(am__append_2)
-@HAVE_RUBY_DEV_TRUE@ngraphplugin_LTLIBRARIES = libruby.la
-@HAVE_RUBY_DEV_TRUE@libruby_la_SOURCES = ruby.c
-@HAVE_RUBY_DEV_TRUE@libruby_la_CFLAGS = -I.. -I $(RUBY_INCRUDEDIR) -I $(RUBY_INCRUDEDIR)/$(RUBY_ARCH)
-@HAVE_RUBY_DEV_TRUE@libruby_ldflags = -L../src -avoid-version -module \
-@HAVE_RUBY_DEV_TRUE@	-lngraph `ruby -e \
-@HAVE_RUBY_DEV_TRUE@	'puts(RbConfig::CONFIG["LIBRUBYARG_SHARED"])'` \
-@HAVE_RUBY_DEV_TRUE@	$(am__append_1)
-@HAVE_RUBY_DEV_TRUE@libruby_la_LDFLAGS = $(libruby_ldflags)
-@HAVE_RUBY_DEV_FALSE@extra_dist = $(extra_dist_common) ruby.c
-@HAVE_RUBY_DEV_TRUE@extra_dist = $(extra_dist_common)
-EXTRA_DIST = $(extra_dist)
-BUILT_SOURCES = $(built_sources)
-CLEANFILES = $(BUILT_SOURCES)
+SUBDIRS = lib
+EXTRA_DIST = create_objs.rb extconf.rb getobj.nsc ngraph.c
+@HAVE_RUBY_DEV_TRUE@ruby_ext = ngraph.$(RUBY_DLEXT)
+@HAVE_RUBY_DEV_TRUE@BUILT_SOURCES = $(ruby_ext)
+@HAVE_RUBY_DEV_TRUE@CLEANFILES = mkmf.log obj.txt ruby_ngraph.h $(ruby_ext) Makefile.ruby
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
 .SUFFIXES:
-.SUFFIXES: .c .lo .o .obj .rc
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -433,9 +352,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu plugins/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu plugins/ruby/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu plugins/Makefile
+	  $(AUTOMAKE) --gnu plugins/ruby/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -454,80 +373,6 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
-
-install-ngraphpluginLTLIBRARIES: $(ngraphplugin_LTLIBRARIES)
-	@$(NORMAL_INSTALL)
-	@list='$(ngraphplugin_LTLIBRARIES)'; test -n "$(ngraphplugindir)" || list=; \
-	list2=; for p in $$list; do \
-	  if test -f $$p; then \
-	    list2="$$list2 $$p"; \
-	  else :; fi; \
-	done; \
-	test -z "$$list2" || { \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(ngraphplugindir)'"; \
-	  $(MKDIR_P) "$(DESTDIR)$(ngraphplugindir)" || exit 1; \
-	  echo " $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$list2 '$(DESTDIR)$(ngraphplugindir)'"; \
-	  $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$list2 "$(DESTDIR)$(ngraphplugindir)"; \
-	}
-
-uninstall-ngraphpluginLTLIBRARIES:
-	@$(NORMAL_UNINSTALL)
-	@list='$(ngraphplugin_LTLIBRARIES)'; test -n "$(ngraphplugindir)" || list=; \
-	for p in $$list; do \
-	  $(am__strip_dir) \
-	  echo " $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=uninstall rm -f '$(DESTDIR)$(ngraphplugindir)/$$f'"; \
-	  $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=uninstall rm -f "$(DESTDIR)$(ngraphplugindir)/$$f"; \
-	done
-
-clean-ngraphpluginLTLIBRARIES:
-	-test -z "$(ngraphplugin_LTLIBRARIES)" || rm -f $(ngraphplugin_LTLIBRARIES)
-	@list='$(ngraphplugin_LTLIBRARIES)'; \
-	locs=`for p in $$list; do echo $$p; done | \
-	      sed 's|^[^/]*$$|.|; s|/[^/]*$$||; s|$$|/so_locations|' | \
-	      sort -u`; \
-	test -z "$$locs" || { \
-	  echo rm -f $${locs}; \
-	  rm -f $${locs}; \
-	}
-
-libruby.la: $(libruby_la_OBJECTS) $(libruby_la_DEPENDENCIES) $(EXTRA_libruby_la_DEPENDENCIES) 
-	$(AM_V_CCLD)$(libruby_la_LINK) $(am_libruby_la_rpath) $(libruby_la_OBJECTS) $(libruby_la_LIBADD) $(LIBS)
-
-mostlyclean-compile:
-	-rm -f *.$(OBJEXT)
-
-distclean-compile:
-	-rm -f *.tab.c
-
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libruby_la-ruby.Plo@am__quote@
-
-.c.o:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ $<
-
-.c.obj:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
-
-.c.lo:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
-
-libruby_la-ruby.lo: ruby.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libruby_la_CFLAGS) $(CFLAGS) -MT libruby_la-ruby.lo -MD -MP -MF $(DEPDIR)/libruby_la-ruby.Tpo -c -o libruby_la-ruby.lo `test -f 'ruby.c' || echo '$(srcdir)/'`ruby.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libruby_la-ruby.Tpo $(DEPDIR)/libruby_la-ruby.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='ruby.c' object='libruby_la-ruby.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libruby_la_CFLAGS) $(CFLAGS) -c -o libruby_la-ruby.lo `test -f 'ruby.c' || echo '$(srcdir)/'`ruby.c
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -692,12 +537,9 @@ distdir: $(DISTFILES)
 check-am: all-am
 check: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) check-recursive
-all-am: Makefile $(LTLIBRARIES)
+all-am: Makefile
 installdirs: installdirs-recursive
 installdirs-am:
-	for dir in "$(DESTDIR)$(ngraphplugindir)"; do \
-	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
-	done
 install: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) install-recursive
 install-exec: install-exec-recursive
@@ -731,16 +573,15 @@ maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
 	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
+@HAVE_RUBY_DEV_FALSE@install-data-local:
+@OS_WIN32_TRUE@install-data-local:
 clean: clean-recursive
 
-clean-am: clean-generic clean-libtool clean-ngraphpluginLTLIBRARIES \
-	mostlyclean-am
+clean-am: clean-generic clean-libtool mostlyclean-am
 
 distclean: distclean-recursive
-	-rm -rf ./$(DEPDIR)
 	-rm -f Makefile
-distclean-am: clean-am distclean-compile distclean-generic \
-	distclean-tags
+distclean-am: clean-am distclean-generic distclean-tags
 
 dvi: dvi-recursive
 
@@ -754,7 +595,7 @@ info: info-recursive
 
 info-am:
 
-install-data-am: install-ngraphpluginLTLIBRARIES
+install-data-am: install-data-local
 
 install-dvi: install-dvi-recursive
 
@@ -783,14 +624,12 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-recursive
-	-rm -rf ./$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
 mostlyclean: mostlyclean-recursive
 
-mostlyclean-am: mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool
+mostlyclean-am: mostlyclean-generic mostlyclean-libtool
 
 pdf: pdf-recursive
 
@@ -800,30 +639,40 @@ ps: ps-recursive
 
 ps-am:
 
-uninstall-am: uninstall-ngraphpluginLTLIBRARIES
+uninstall-am:
 
 .MAKE: $(am__recursive_targets) all check install install-am \
 	install-strip
 
 .PHONY: $(am__recursive_targets) CTAGS GTAGS TAGS all all-am check \
-	check-am clean clean-generic clean-libtool \
-	clean-ngraphpluginLTLIBRARIES cscopelist-am ctags ctags-am \
-	distclean distclean-compile distclean-generic \
-	distclean-libtool distclean-tags distdir dvi dvi-am html \
-	html-am info info-am install install-am install-data \
-	install-data-am install-dvi install-dvi-am install-exec \
+	check-am clean clean-generic clean-libtool cscopelist-am ctags \
+	ctags-am distclean distclean-generic distclean-libtool \
+	distclean-tags distdir dvi dvi-am html html-am info info-am \
+	install install-am install-data install-data-am \
+	install-data-local install-dvi install-dvi-am install-exec \
 	install-exec-am install-html install-html-am install-info \
-	install-info-am install-man install-ngraphpluginLTLIBRARIES \
-	install-pdf install-pdf-am install-ps install-ps-am \
-	install-strip installcheck installcheck-am installdirs \
-	installdirs-am maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-compile mostlyclean-generic \
+	install-info-am install-man install-pdf install-pdf-am \
+	install-ps install-ps-am install-strip installcheck \
+	installcheck-am installdirs installdirs-am maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-generic \
 	mostlyclean-libtool pdf pdf-am ps ps-am tags tags-am uninstall \
-	uninstall-am uninstall-ngraphpluginLTLIBRARIES
+	uninstall-am
 
+@HAVE_RUBY_DEV_TRUE@$(ruby_ext): ngraph.c ruby_ngraph.h
+@HAVE_RUBY_DEV_TRUE@	mv Makefile Makefile.org
+@HAVE_RUBY_DEV_TRUE@	ruby extconf.rb $(prefix) --with-ngraph-include="../../src" --with-ngraph-lib="../../src/.libs"
+@HAVE_RUBY_DEV_TRUE@	make
+@HAVE_RUBY_DEV_TRUE@	mv Makefile Makefile.ruby
+@HAVE_RUBY_DEV_TRUE@	mv Makefile.org Makefile
 
-@HAVE_RUBY_DEV_TRUE@@OS_WIN32_TRUE@.rc.o:
-@HAVE_RUBY_DEV_TRUE@@OS_WIN32_TRUE@	windres -o $@ $<
+@HAVE_RUBY_DEV_TRUE@@OS_WIN32_FALSE@install-data-local: $(ruby_ext)
+@HAVE_RUBY_DEV_TRUE@@OS_WIN32_FALSE@	make -f Makefile.ruby install
+
+@HAVE_RUBY_DEV_TRUE@obj.txt: getobj.nsc
+@HAVE_RUBY_DEV_TRUE@	../../src/ngraph -i getobj.nsc > obj.txt
+
+@HAVE_RUBY_DEV_TRUE@ruby_ngraph.h: obj.txt
+@HAVE_RUBY_DEV_TRUE@	ruby create_objs.rb obj.txt ruby_ngraph.h
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

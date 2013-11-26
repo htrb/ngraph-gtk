@@ -15,7 +15,7 @@
 
 static char *DummyArgv[] = {"ngraph_ruby", NULL};
 static char **DummyArgvPtr = DummyArgv;
-static int DummyArgc = 1;
+static int DummyArgc = 1, Initialized = FALSE;
 static VALUE NgraphClass, NgraphModule;
 static ID Uniq, Argv;
 
@@ -1748,10 +1748,32 @@ ngraph_save_hist(VALUE module)
   return Qnil;
 }
 
+static VALUE
+ruby_ngraph_init(VALUE module, VALUE arg)
+{
+  char *str;
+
+  if (Initialized) {
+    return Qnil;
+  }
+
+  if (! NIL_P(arg)) {
+    str = strdup(StringValueCStr(arg));
+    if (str) {
+      DummyArgv[0] = str;
+    }
+  }
+
+  ngraph_initialize(&DummyArgc, &DummyArgvPtr);
+
+  create_ngraph_classes(module, NgraphClass);
+
+  return Qnil;
+}
+
 void
 Init_ngraph(void)
 {
-  ngraph_initialize(&DummyArgc, &DummyArgvPtr);
 
   NgraphModule = rb_define_module("Ngraph");
   rb_define_singleton_method(NgraphModule, "puts", nputs, 1);
@@ -1759,11 +1781,11 @@ Init_ngraph(void)
   rb_define_singleton_method(NgraphModule, "sleep", nsleep, 1);
   rb_define_singleton_method(NgraphModule, "str2inst", ngraph_str2inst, 1);
   rb_define_singleton_method(NgraphModule, "save_shell_history", ngraph_save_hist, 0);
+  rb_define_singleton_method(NgraphModule, "ngraph_initialize", ruby_ngraph_init, 1);
 
   NgraphClass = rb_define_class_under(NgraphModule, "NgraphObject", rb_cObject);
   rb_define_method(NgraphClass, "initialize", ngraph_class_new, 0);
   add_common_const(NgraphModule);
-  create_ngraph_classes(NgraphModule, NgraphClass);
 
   Uniq = rb_intern("uniq");
   Argv = rb_intern("ARGV");

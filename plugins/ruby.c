@@ -21,13 +21,13 @@ static char *DummyArgv[] = {"ngraph_ruby", NULL};
 static char **DummyArgvPtr = DummyArgv;
 static int DummyArgc = 1;
 
-#ifdef WINDOWS
+#ifdef __MINGW32__
 static char *
 get_ext_name(void)
 {
   int n, i;
   struct objlist *sys;
-  char *ext_name, *plugin_path, ext_basename[] = "ngraph.so";
+  char *ext_name, *plugin_path, ext_basename[] = "ruby/ngraph.rb";
   ngraph_returned_value val;
   ngraph_arg arg;
 
@@ -48,7 +48,7 @@ get_ext_name(void)
   }
 
   n = strlen(plugin_path);
-  for (i = n - 1; i >= 0; i++) {
+  for (i = n - 1; i >= 0; i--) {
     if (plugin_path[i] == '/') {
       plugin_path[i] = '\0';
       break;
@@ -72,7 +72,7 @@ int
 ngraph_plugin_open_ruby(struct ngraph_plugin *plugin)
 {
   rb_encoding *enc;
-#ifdef WINDOWS
+#ifdef __MINGW32__
   char *ext_name;
 #endif
 
@@ -80,7 +80,7 @@ ngraph_plugin_open_ruby(struct ngraph_plugin *plugin)
     return 0;
   }
 
-#ifdef WINDOWS
+#ifdef __MINGW32__
   ext_name = get_ext_name();
   if (ext_name == NULL) {
     return 1;
@@ -102,7 +102,7 @@ ngraph_plugin_open_ruby(struct ngraph_plugin *plugin)
   rb_require("rubygems");
   Initialized = TRUE;
 
-#ifdef WINDOWS
+#ifdef __MINGW32__
   rb_require(ext_name);
   free(ext_name);
 #else
@@ -162,7 +162,7 @@ ngraph_plugin_exec_ruby(struct ngraph_plugin *plugin, int argc, char *argv[])
   return 0;
 }
 
-#ifndef WINDOWS
+#ifndef __MINGW32__
 void
 ngraph_plugin_close_ruby(struct ngraph_plugin *plugin)
 {

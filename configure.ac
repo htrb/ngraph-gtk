@@ -68,6 +68,8 @@ AC_CHECK_PROG(RUBY, ruby, yes, no)
 if test $RUBY = yes; then
     [ruby_incrudedir=`ruby -e 'puts(RbConfig::CONFIG["rubyhdrdir"])'`]
     AC_CHECK_FILE($ruby_incrudedir/ruby.h, [have_ruby_dev=yes])
+    [RUBY_DLEXT=`ruby -e 'puts(RbConfig::CONFIG["DLEXT"])'`]
+    AC_SUBST(RUBY_DLEXT)
 fi
 AM_CONDITIONAL(HAVE_RUBY_DEV, test x$have_ruby_dev = xyes)
 
@@ -139,6 +141,7 @@ AC_CONFIG_FILES([Makefile \
 		 test/Makefile \
 		 plugins/Makefile \
 		 plugins/ruby/Makefile \
+		 plugins/ruby/lib/Makefile \
 		 mingw/Makefile \
 		 pixmap/Makefile \
 		 icons/Makefile \

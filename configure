@@ -658,6 +658,7 @@ PKG_CONFIG_PATH
 PKG_CONFIG
 HAVE_RUBY_DEV_FALSE
 HAVE_RUBY_DEV_TRUE
+RUBY_DLEXT
 RUBY
 READLINE_LIBS
 M_LIBS
@@ -15032,6 +15033,8 @@ if eval test \"x\$"$as_ac_File"\" = x"yes"; then :
   have_ruby_dev=yes
 fi
 
+    RUBY_DLEXT=`ruby -e 'puts(RbConfig::CONFIG["DLEXT"])'`
+
 fi
  if test x$have_ruby_dev = xyes; then
   HAVE_RUBY_DEV_TRUE=
@@ -18257,7 +18260,7 @@ fi
 done
 
 
-ac_config_files="$ac_config_files Makefile src/Makefile src/gtk/Makefile src/math/Makefile driver/Makefile addin/Makefile po/Makefile.in m4/Makefile demo/Makefile initfile/Makefile doc/Makefile doc/html/Makefile doc/html/img/Makefile doc/html/ja/Makefile doc/html/ja/tutorial/Makefile doc/html/ja/dialogs/Makefile zsh/Makefile test/Makefile plugins/Makefile plugins/ruby/Makefile mingw/Makefile pixmap/Makefile icons/Makefile icons/scalable/Makefile icons/scalable/apps/Makefile icons/scalable/mimetypes/Makefile misc/Makefile"
+ac_config_files="$ac_config_files Makefile src/Makefile src/gtk/Makefile src/math/Makefile driver/Makefile addin/Makefile po/Makefile.in m4/Makefile demo/Makefile initfile/Makefile doc/Makefile doc/html/Makefile doc/html/img/Makefile doc/html/ja/Makefile doc/html/ja/tutorial/Makefile doc/html/ja/dialogs/Makefile zsh/Makefile test/Makefile plugins/Makefile plugins/ruby/Makefile plugins/ruby/lib/Makefile mingw/Makefile pixmap/Makefile icons/Makefile icons/scalable/Makefile icons/scalable/apps/Makefile icons/scalable/mimetypes/Makefile misc/Makefile"
 
 
 ac_config_headers="$ac_config_headers config.h"
@@ -19307,6 +19310,7 @@ do
     "test/Makefile") CONFIG_FILES="$CONFIG_FILES test/Makefile" ;;
     "plugins/Makefile") CONFIG_FILES="$CONFIG_FILES plugins/Makefile" ;;
     "plugins/ruby/Makefile") CONFIG_FILES="$CONFIG_FILES plugins/ruby/Makefile" ;;
+    "plugins/ruby/lib/Makefile") CONFIG_FILES="$CONFIG_FILES plugins/ruby/lib/Makefile" ;;
     "mingw/Makefile") CONFIG_FILES="$CONFIG_FILES mingw/Makefile" ;;
     "pixmap/Makefile") CONFIG_FILES="$CONFIG_FILES pixmap/Makefile" ;;
     "icons/Makefile") CONFIG_FILES="$CONFIG_FILES icons/Makefile" ;;

@@ -1,3 +1,24 @@
+2013-11-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* plugins/ruby/ngraph.c (ruby_ngraph_init): added.
+	(Init_ngraph): add singleton method "ngraph_initialize".
+
+	* plugins/ruby/extconf.rb: check first argument.
+
+	* plugins/ruby/Makefile.am (ruby_ext): use "RUBY_DLEXT."
+
+	* debian/ruby-ngraph.install: added.
+
+	* debian/control (Package): add ruby-ngraph package.
+
+	* configure.ac: set "RUBY_DLEXT".
+
+	* plugins/ruby/lib/ngraph.rb.win: added.
+
+	* plugins/ruby/lib/ngraph.rb: added.
+
+	* plugins/ruby/lib/Makefile.am: added.
+
 2013-11-25  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* plugins/ruby.c: many functions are moved to

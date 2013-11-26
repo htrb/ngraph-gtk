@@ -67,10 +67,11 @@ cp $WIN_PATH/pango.aliases $PKG_DIR/etc/pango
 cp $WIN_PATH/associate.bat $PKG_DIR
 cp $WIN_PATH/echo.nsc      $PKG_DIR
 cp src/ngraph.ico          $PKG_DIR/share/icons
-cp plugins/ruby/ngraph.so  $PKG_DIR/lib/ruby
 
 if [ $HAVE_RUBY = "1" ]
 then
+    cp plugins/ruby/ngraph.so  $PKG_DIR/lib/ruby
+    cp plugins/ruby/lib/ngraph.rb.win  $PKG_DIR/lib/ruby/ngraph.rb
     mv $PKG_DIR/bin/plugins/libruby.dll $PKG_DIR/lib/plugins
     rm -rf $PKG_DIR/bin/plugins
 fi
