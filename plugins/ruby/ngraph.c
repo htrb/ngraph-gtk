@@ -1817,12 +1817,17 @@ ruby_ngraph_init(VALUE module, VALUE arg)
 
   create_ngraph_classes(module, NgraphClass);
 
+  Initialized = TRUE;
+
   return Qnil;
 }
 
 void
 Init_ngraph(void)
 {
+  if (Initialized) {
+    return;
+  }
 
   NgraphModule = rb_define_module("Ngraph");
   rb_define_singleton_method(NgraphModule, "puts", nputs, 1);

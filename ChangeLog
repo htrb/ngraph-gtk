@@ -1,5 +1,8 @@
 2013-11-27  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* plugins/ruby/ngraph.c (ruby_ngraph_init): set "Initialized".
+	(Init_ngraph): check "Initialized".
+
 	* src/ngraph_api.c (ngraph_exec_loginshell): return returned valu
 	of the function "exeobj()" or "sexeobj()".
 
