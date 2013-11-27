@@ -1749,6 +1749,55 @@ ngraph_save_hist(VALUE module)
 }
 
 static VALUE
+ruby_ngraph_init_file(VALUE module, VALUE arg)
+{
+  char *file;
+  const char *init_file;
+  size_t len;
+
+  init_file = StringValueCStr(arg);
+  file = ngraph_get_init_file(init_file);
+  if (file == NULL) {
+    return Qnil;
+  }
+
+  len = strlen(file);
+
+  return rb_enc_str_new(file, len, rb_utf8_encoding());
+}
+
+static VALUE
+ruby_ngraph_exec_loginshell(VALUE module, VALUE cmd, VALUE nobj)
+{
+  int r;
+  const char *str;
+  char *loginshell;
+  static struct ngraph_instance *inst;
+
+  if (! rb_obj_is_kind_of(nobj, NgraphClass)) {
+    rb_raise(rb_eArgError, "%s: illegal type of the argument (%s).", rb_obj_classname(module), rb_obj_classname(nobj));
+  }
+
+  if (NIL_P(cmd)) {
+    loginshell = NULL;
+  } else {
+    str = StringValueCStr(cmd);
+    loginshell = strdup(str);
+    if (loginshell == NULL) {
+      rb_raise(rb_eNoMemError, "%s: cannot allocate enough memory.", rb_obj_classname(module));
+    }
+  }
+
+  inst = check_id(nobj);
+  r = ngraph_exec_loginshell(loginshell, inst->obj, inst->id);
+  if (loginshell) {
+    free(loginshell);
+  }
+
+  return INT2FIX(r);
+}
+
+static VALUE
 ruby_ngraph_init(VALUE module, VALUE arg)
 {
   char *str;
@@ -1782,6 +1831,8 @@ Init_ngraph(void)
   rb_define_singleton_method(NgraphModule, "str2inst", ngraph_str2inst, 1);
   rb_define_singleton_method(NgraphModule, "save_shell_history", ngraph_save_hist, 0);
   rb_define_singleton_method(NgraphModule, "ngraph_initialize", ruby_ngraph_init, 1);
+  rb_define_singleton_method(NgraphModule, "get_initialize_file", ruby_ngraph_init_file, 1);
+  rb_define_singleton_method(NgraphModule, "execute_loginshell", ruby_ngraph_exec_loginshell, 2);
 
   NgraphClass = rb_define_class_under(NgraphModule, "NgraphObject", rb_cObject);
   rb_define_method(NgraphClass, "initialize", ngraph_class_new, 0);

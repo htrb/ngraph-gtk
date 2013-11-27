@@ -6,6 +6,7 @@
 #
 # Description: _Calc...,making a data file,
 
+require 'ngraph'
 sys = Ngraph::System[0]
 script = sys.temp_file
 system("#{sys.lib_dir}/calc #{script}")

@@ -79,16 +79,10 @@ typedef int (* ngraph_plugin_exec) (struct ngraph_plugin *plugin, int argc, char
 typedef int (* ngraph_plugin_open) (struct ngraph_plugin *plugin);
 typedef void (* ngraph_plugin_close) (struct ngraph_plugin *plugin);
 
-
-void *ngraph_plugin_get_user_data(struct ngraph_plugin *shlocal);
-void ngraph_plugin_set_user_data(struct ngraph_plugin *shlocal, void *user_data);
-
 int ngraph_initialize(int *argc, char ***argv);
 void ngraph_save_shell_history(void);
 void ngraph_finalize(void);
-char *ngraph_get_init_file(const char *init_script);
-int ngraph_console_allocate(void);
-void ngraph_console_free(void);
+char *ngraph_get_init_file(const char *init_file);
 int ngraph_exec_loginshell(char *loginshell, struct objlist *obj, int id);
 
 int ngraph_putobj(struct objlist *obj, const char *vname, int id, ngraph_value *val);

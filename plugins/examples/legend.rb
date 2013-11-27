@@ -4,6 +4,8 @@
 #
 # Description: _Legend...,automatic legend generator,
 
+require 'ngraph'
+
 X = 5000      # top-left of the legend to be inserted.
 Y = 5000      # top-left of the legend to be inserted.
 WIDTH = 2000  # width of "type" field.

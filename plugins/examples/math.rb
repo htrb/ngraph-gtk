@@ -2,6 +2,8 @@
 #
 # Description: _Math...,calculator,
 
+require 'ngraph'
+
 menu = Ngraph::Menu[0]
 Ngraph::Math.new {|math|
   Ngraph::Dialog.new {|dialog|

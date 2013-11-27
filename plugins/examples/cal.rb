@@ -1,5 +1,7 @@
 # Description: _Calendar,show calendar in the information window,
 
+require 'ngraph'
+
 lang = ENV["LANG"]
 if (lang && lang =~ /UTF-?8/i)
     locale = lang
@@ -20,7 +22,11 @@ Ngraph::Dialog.new {|dialog|
 exit unless (m)
 
 menu = Ngraph::Menu[0]
-menu.show_window(5)
-menu.echo
-menu.echo(`LANG="#{locale}" /usr/bin/cal -3 -h #{m} #{y}`)
-menu.echo
+if (menu)
+  menu.show_window(5)
+  menu.echo
+  menu.echo(`LANG="#{locale}" /usr/bin/cal -3 -h #{m} #{y}`)
+  menu.echo
+else
+  puts(`LANG="#{locale}" /usr/bin/cal -3 -h #{m} #{y}`)
+end

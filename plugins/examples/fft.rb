@@ -3,6 +3,8 @@
 #
 # Description: _FFT...,Fast Fourier Transform,
 
+require 'ngraph'
+
 sys = Ngraph::System[0]
 menu = Ngraph::Menu[0]
 dialog = Ngraph::Dialog.new

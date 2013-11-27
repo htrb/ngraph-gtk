@@ -6,6 +6,8 @@
 #
 # Description: _Fit result...,insert fitting results as legend-text,
 
+require 'ngraph'
+
 X = 5000      # top-left of the legend to be inserted.
 Y = 5000      # top-left of the legend to be inserted.
 

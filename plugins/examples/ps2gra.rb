@@ -2,6 +2,8 @@
 # Description: import _EPS...,Import Encapsulated PostScript image,eps
 # Description: import _PDF...,Import Portable Document Format image,pdf
 
+require 'ngraph'
+
 PSTOEDIT_COMMAND = "pstoedit"
 PSTOEDIT_OPTION = "-q -flat 0.1 -nc -ssp -dt"
 

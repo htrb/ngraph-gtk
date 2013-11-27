@@ -3,6 +3,7 @@
 # This script inserts a column as legend-text.
 #
 # Description: _Text in...,inserts a column as legend-text,
+require 'ngraph'
 
 SHIFTX = 0         # ammount of the shift from plotted data-points.
 SHIFTY = 0         # ammount of the shift from plotted data-points.

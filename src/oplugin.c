@@ -434,7 +434,6 @@ allocate_argv(const char *name, int argc, char * const *argv)
   return new_argv;
 }
 
-
 static int
 plugin_exec(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {

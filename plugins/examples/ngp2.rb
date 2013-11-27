@@ -1,3 +1,5 @@
+require 'ngraph'
+
 class Ngp2
   NULL_DEVICE = "/dev/null"
   AUTO_SCALE = 1

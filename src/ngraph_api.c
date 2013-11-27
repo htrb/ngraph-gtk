@@ -644,12 +644,12 @@ ngraph_sleep(int t)
 }
 
 char *
-ngraph_get_init_file(const char *init_script)
+ngraph_get_init_file(const char *init_file)
 {
   char *homedir, *confdir, *inifile;;
   struct objlist *sys;
 
-  if (init_script == NULL) {
+  if (init_file == NULL) {
     return NULL;
   }
 
@@ -658,10 +658,10 @@ ngraph_get_init_file(const char *init_script)
   getobj(sys, "conf_dir", 0, 0, NULL, &confdir);
 
   inifile = NULL;
-  if (findfilename(homedir, CONFTOP, init_script)) {
-    inifile = getfilename(homedir, CONFTOP, init_script);
-  } else if (findfilename(confdir, CONFTOP, init_script)) {
-    inifile = getfilename(confdir, CONFTOP, init_script);
+  if (findfilename(homedir, CONFTOP, init_file)) {
+    inifile = getfilename(homedir, CONFTOP, init_file);
+  } else if (findfilename(confdir, CONFTOP, init_file)) {
+    inifile = getfilename(confdir, CONFTOP, init_file);
   }
 
   return inifile;
@@ -670,14 +670,14 @@ ngraph_get_init_file(const char *init_script)
 int
 ngraph_exec_loginshell(char *loginshell, struct objlist *obj, int id)
 {
-  int allocnow;
+  int r, allocnow;
   struct objlist *lobj;
   struct narray iarray;
   char *arg;
 
   if (loginshell == NULL) {
     allocnow = nallocconsole();
-    exeobj(obj, "shell", id, 0, NULL);
+    r = exeobj(obj, "shell", id, 0, NULL);
     if (allocnow) {
       nfreeconsole();
     }
@@ -693,24 +693,13 @@ ngraph_exec_loginshell(char *loginshell, struct objlist *obj, int id)
     } else {
       allocnow = FALSE;
     }
-    sexeobj(loginshell);
+    r = sexeobj(loginshell);
     if (allocnow) {
-      ngraph_console_allocate();
+      nallocconsole();
     }
   }
-  return 0;
-}
 
-int
-ngraph_console_allocate(void)
-{
-  return nallocconsole();
-}
-
-void
-ngraph_console_free(void)
-{
-  nfreeconsole();
+  return r;
 }
 
 int

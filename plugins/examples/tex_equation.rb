@@ -1,4 +1,5 @@
 # Description: Te_X equation,import TeX equation as GRA,
+require 'ngraph'
 
 TEX_COMMAND = "pdflatex"
 TEX_OPTION = "-halt-on-error"

@@ -1,3 +1,13 @@
+2013-11-27  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/ngraph_api.c (ngraph_exec_loginshell): return returned valu
+	of the function "exeobj()" or "sexeobj()".
+
+	* plugins/ruby/ngraph.c (ruby_ngraph_exec_loginshell)
+	(ruby_ngraph_init_file): added.
+	(Init_ngraph): add singleton methods "get_initialize_file" and
+	"execute_loginshell".
+
 2013-11-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* plugins/ruby/ngraph.c (ruby_ngraph_init): added.

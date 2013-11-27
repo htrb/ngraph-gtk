@@ -1,3 +1,5 @@
+require 'ngraph'
+
 class Presentation
   PDF_PREFIX = "_npresentation_tmp_"
 

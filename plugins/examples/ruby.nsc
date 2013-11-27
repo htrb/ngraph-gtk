@@ -1,3 +1,5 @@
+require 'ngraph'
+
 for i in `object plugin -instances`
 do
     if [ `get plugin:$i -field module_name` = "ruby" ]

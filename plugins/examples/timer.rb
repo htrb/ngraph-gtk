@@ -1,4 +1,5 @@
 # Description: _Timer,Countdown timer,
+require 'ngraph'
 
 BAR_X = 1000
 BAR_Y = 19000

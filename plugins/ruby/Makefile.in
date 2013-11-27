@@ -338,7 +338,7 @@ SUBDIRS = lib
 EXTRA_DIST = create_objs.rb extconf.rb getobj.nsc ngraph.c
 @HAVE_RUBY_DEV_TRUE@ruby_ext = ngraph.$(RUBY_DLEXT)
 @HAVE_RUBY_DEV_TRUE@BUILT_SOURCES = $(ruby_ext)
-@HAVE_RUBY_DEV_TRUE@CLEANFILES = mkmf.log obj.txt ruby_ngraph.h $(ruby_ext) Makefile.ruby
+@HAVE_RUBY_DEV_TRUE@CLEANFILES = mkmf.log obj.txt ruby_ngraph.h $(ruby_ext) Makefile.ruby ngraph.o
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 

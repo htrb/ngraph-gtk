@@ -7,6 +7,8 @@
 #
 # Description: _Append...,append NGP file,
 
+require 'ngraph'
+
 file = ""
 if (ARGV.size > 0)
   file = ARGV[0]
