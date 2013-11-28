@@ -3,16 +3,19 @@
 require 'ngraph'
 
 shell = Ngraph::Shell.new
+sys = Ngraph::System[0]
 
 if (ARGV[0] == '-i')
-  init_script = ARGV[1]
+  ARGV.shift
+  init_script = ARGV.shift
 else
   init_script = Ngraph.get_initialize_file("Ngraph.nsc")
 end
 
 if (init_script)
-  shell.shell(init_script) 
-  Ngraph.execute_loginshell(Ngraph::System[0].login_shell, shell)
+  ARGV.unshift(init_script)
+  shell.shell(ARGV) 
+  Ngraph.execute_loginshell(sys.login_shell, shell) if (sys.login_shell)
 else
   Ngraph.execute_loginshell(nil, shell)
 end

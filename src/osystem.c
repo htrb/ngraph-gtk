@@ -33,6 +33,7 @@
 
 #include "nstring.h"
 #include "object.h"
+#include "shell.h"
 #include "ioutil.h"
 #include "ntime.h"
 
@@ -48,8 +49,10 @@
 #define EMAIL     "ZXB01226@nifty.com"
 #define WEB       "http://sourceforge.net/projects/ngraph-gtk/"
 
-#define ERRNODIR   100
-#define ERRTMPFILE 101
+#define ERRSYSNODIR   100
+#define ERRSYSTMPFILE 101
+#define ERRSYSSECURTY 102
+#define ERRSYSMEM     103
 
 
 void resizeconsole(int col,int row);
@@ -58,9 +61,14 @@ extern int consolecol,consolerow;
 static char *syserrorlist[]={
   "no such directory"
   "can't create temporary file"
+  "the method is forbidden for the security",
+  "cannot allocate enough memory",
 };
 
 #define ERRNUM (sizeof(syserrorlist) / sizeof(*syserrorlist))
+
+static ngraph_ext_shell_func ExtShellFunc = NULL;
+static NHASH ProhibitedPlugins = NULL;
 
 static int 
 sysinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
@@ -140,6 +148,8 @@ sysdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   g_free(s);
   _getobj(obj,"temp_file",inst,&s);
   g_free(s);
+  _getobj(obj,"ext_shell_name", inst, &s);
+  g_free(s);
   _getobj(obj,"temp_list",inst,&array);
   n = arraynum(array);
   if (n > 0) {
@@ -181,13 +191,13 @@ syscwd(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   wd=argv[2];
   if (wd!=NULL) {
     if (nchdir(wd)!=0) {
-      error2(obj,ERRNODIR,wd);
+      error2(obj,ERRSYSNODIR,wd);
       return 1;
     }
   } else {
     if ((home=g_getenv("HOME"))!=NULL) {
       if (nchdir(home)!=0) {
-        error2(obj,ERRNODIR,home);
+        error2(obj,ERRSYSNODIR,home);
         return 1;
       }
     }
@@ -245,7 +255,7 @@ systemp(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 
   fd = n_mkstemp(NULL, pfx, &tmpfil);
   if (fd < 0) {
-    error(obj, ERRTMPFILE);
+    error(obj, ERRSYSTMPFILE);
     return 1;
   }
   close(fd);
@@ -343,6 +353,93 @@ systemresize(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **arg
   return 0;
 }
 
+static int
+ext_shell_exec(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  char **new_argv;
+  int r;
+
+  rval->i = 0;
+
+  if (ExtShellFunc == NULL) {
+    return 0;
+  }
+
+  if (argc < 3) {
+    return 0;
+  }
+
+  if (get_security()) {
+    error(obj, ERRSYSSECURTY);
+    return 1;
+  }
+
+  new_argv = allocate_argv(argc - 2, argv + 2);
+  if (new_argv == NULL) {
+    error(obj, ERRSYSMEM);
+    return 1;
+  }
+
+  r = ExtShellFunc(argc - 2, new_argv);
+  rval->i = r;
+
+  free_argv(argc - 1, new_argv);
+
+  return r;
+}
+
+static int
+system_check_prohibited_plugin(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  int i, r;
+
+  rval->i = 0;
+
+  r = nhash_get_int(ProhibitedPlugins, argv[2], &i);
+  if (r == 0 && i) {
+    rval->i = TRUE;
+  }
+
+  return 0;
+}
+
+void
+system_set_ext_shell(const char *name, ngraph_ext_shell_func func)
+{
+  char *str, *ptr;
+  struct objlist *obj;
+  N_VALUE *inst;
+
+  if (name == NULL || func == NULL) {
+    return;
+  }
+
+  obj = getobject("system");
+  if (obj == NULL) {
+    return;
+  }
+
+  inst = getobjinst(obj, 0);
+  if (inst == NULL) {
+    return;
+  }
+
+  str = g_strdup(name);
+  if (str == NULL) {
+    return;
+  }
+
+  _getobj(obj,"ext_shell_name", inst, &ptr);
+  if (ptr) {
+    g_free(ptr);
+  }
+
+  _putobj(obj,"ext_shell_name", inst, str);
+  ExtShellFunc = func;
+
+  nhash_set_int(ProhibitedPlugins, name, TRUE);
+}
+
 #if USE_MEM_PROFILE
 static int 
 system_mem_profile(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
@@ -383,6 +480,9 @@ static struct objtable nsystem[] = {
   {"hide_instance",NVFUNC,NREAD|NEXEC,syshideinstance,"sa",0},
   {"recover_instance",NVFUNC,NREAD|NEXEC,sysrecoverinstance,"sa",0},
   {"resize",NVFUNC,NREAD|NEXEC,systemresize,"ia",0},
+  {"ext_shell", NIFUNC, NREAD|NEXEC, ext_shell_exec, NULL, 0},
+  {"ext_shell_name",NSTR, NREAD, NULL, NULL, 0},
+  {"prohibited_plugin", NBFUNC, NREAD|NEXEC, system_check_prohibited_plugin, "s", 0},
 #if USE_MEM_PROFILE
   {"mem_profile",NVFUNC,NREAD|NEXEC,system_mem_profile,"",0},
 #endif
@@ -394,6 +494,10 @@ void *
 addsystem()
 /* addsystem() returns NULL on error */
 {
+  ProhibitedPlugins = nhash_new();
+  if (ProhibitedPlugins == NULL) {
+    return NULL;
+  }
   return addobject(NAME,NULL,PARENT,VERSION,TBLNUM,nsystem,ERRNUM,syserrorlist,NULL,NULL);
 }
 

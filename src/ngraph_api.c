@@ -737,3 +737,9 @@ ngraph_strdup(const char *str)
 {
   return g_strdup(str);
 }
+
+void
+ngraph_set_ext_shell(const char *name, ngraph_ext_shell_func func)
+{
+  system_set_ext_shell(name, func);
+}

@@ -1,3 +1,29 @@
+2013-11-28  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/osystem.c (ext_shell_exec, system_check_prohibited_plugin)
+	(system_set_ext_shell): added.
+	(nsystem): add fields "ext_shell", "ext_shell_name" and
+	"prohibited_plugin".
+	(addsystem): initialize "ProhibitedPlugins".
+
+	* src/oplugin.c (load_plugin): check prohibited plugins.
+
+	* src/object.c (allocate_argv, free_argv): added.
+
+	* src/ngraph_api.c (ngraph_set_ext_shell): added.
+
+	* plugins/ruby_common.h: added.
+
+	* plugins/ruby.c (ngraph_plugin_open_ruby, get_ext_name): require
+	"ngraph.so" instead of "ngraph.rb".
+	(ngraph_plugin_open_ruby): call "Ngraph#ngraph_initialize".
+	(ngraph_plugin_exec_ruby): use "load_script()".
+
+	* plugins/ruby/ngraph.c (ruby_ngraph_exec_loginshell): use
+	"ALLOCA_N()" and "strcpy()" instead of "strdup()".
+	(ruby_ngraph_init): add 3rd parameter and call
+	"ngraph_set_ext_shell()" ic necessary.
+
 2013-11-27  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* plugins/ruby/ngraph.c (ruby_ngraph_init): set "Initialized".

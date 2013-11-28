@@ -15,11 +15,11 @@
 #define FALSE 0
 
 static int Initialized = FALSE;
-static ID Argv;
-
 static char *DummyArgv[] = {"ngraph_ruby", NULL};
 static char **DummyArgvPtr = DummyArgv;
 static int DummyArgc = 1;
+
+#include "ruby_common.h"
 
 #ifdef __MINGW32__
 static char *
@@ -27,7 +27,7 @@ get_ext_name(void)
 {
   int n, i;
   struct objlist *sys;
-  char *ext_name, *plugin_path, ext_basename[] = "ruby/ngraph.rb";
+  char *ext_name, *plugin_path, ext_basename[] = "ruby/ngraph.so";
   ngraph_returned_value val;
   ngraph_arg arg;
 
@@ -72,6 +72,7 @@ int
 ngraph_plugin_open_ruby(struct ngraph_plugin *plugin)
 {
   rb_encoding *enc;
+  VALUE ngraph_module;
 #ifdef __MINGW32__
   char *ext_name;
 #endif
@@ -106,10 +107,11 @@ ngraph_plugin_open_ruby(struct ngraph_plugin *plugin)
   rb_require(ext_name);
   free(ext_name);
 #else
-  rb_require("ngraph");
+  rb_require("ngraph.so");
 #endif
 
-  Argv = rb_intern("ARGV");
+  ngraph_module = rb_const_get(rb_mKernel, rb_intern("Ngraph"));
+  rb_funcall(ngraph_module, rb_intern("ngraph_initialize"), 2, Qnil, Qfalse);
 
   return 0;
 }
@@ -128,36 +130,8 @@ ngraph_plugin_exec_ruby(struct ngraph_plugin *plugin, int argc, char *argv[])
     return 0;
   }
 
-  r_argv = rb_const_get(rb_mKernel, Argv);
-  rb_ary_clear(r_argv);
-  for (i = 2; i < argc; i++) {
-    rb_ary_push(r_argv, rb_tainted_str_new2(argv[i]));
-  }
-
   ruby_script(argv[1]);
-  rb_load_protect(rb_str_new2(argv[1]), 1, &state);
-  if (state) {
-    VALUE errinfo, errstr, errat;
-    int n, i;
-    const char *cstr;
-
-    errinfo = rb_errinfo();
-    errstr = rb_obj_as_string(errinfo);
-    cstr = StringValueCStr(errstr);
-    if (strcmp(cstr, "exit")) {
-      ngraph_err_puts(cstr);
-      errat = rb_funcall(errinfo, rb_intern("backtrace"), 0);
-      if (! NIL_P(errat)) {
-	n = RARRAY_LEN(errat);
-	for (i = 0; i < n; i ++) {
-	  errstr = rb_str_new2("\tfrom ");
-	  rb_str_append(errstr, rb_ary_entry(errat, i));
-	  ngraph_err_puts(StringValueCStr(errstr));
-	}
-      }
-    }
-  }
-  rb_gc_start();
+  load_script(argc - 1, argv + 1);
 
   return 0;
 }

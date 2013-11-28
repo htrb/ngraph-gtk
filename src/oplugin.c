@@ -24,6 +24,7 @@
 #define ERRINIT 107
 #define ERRSECURTY 108
 #define ERRINVALID 109
+#define ERRPROHIBITED 110
 
 static char *sherrorlist[] = {
   "cannot allocate enough memory",
@@ -36,6 +37,7 @@ static char *sherrorlist[] = {
   "cannot initialize the plugin",
   "the method is forbidden for the security",
   "invalid module",
+  "the module is prohibited",
 };
 
 struct ngraph_plugin {
@@ -95,7 +97,7 @@ load_plugin(struct objlist *obj, N_VALUE *inst, const char *name, struct ngraph_
   ngraph_plugin_open np_open;
   ngraph_plugin_close np_close, np_interrupt;
   int r, id;
-  char *basename, *module_file, *plugin_path;
+  char *basename, *module_file, *plugin_path, *argv[2];
   struct objlist *sysobj;
 
   module = NULL;
@@ -116,6 +118,15 @@ load_plugin(struct objlist *obj, N_VALUE *inst, const char *name, struct ngraph_
 
   plugin_path = NULL;
   sysobj = getobject("system");
+
+  argv[0] = basename;
+  argv[1] = NULL;
+  getobj(sysobj, "prohibited_plugin", 0, 1, argv, &r);
+  if (r) {
+    error2(obj, ERRPROHIBITED, basename);
+    goto ErrorExit;
+  }
+
   getobj(sysobj, "plugin_dir", 0, 0, NULL, &plugin_path);
 
   module_file = g_module_build_path(plugin_path, basename);
@@ -389,56 +400,11 @@ plugin_done(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **
   return 0;
 }
 
-static void
-free_argv(int argc, char **argv)
-{
-  int i;
-
-  for (i = 0; i < argc; i ++) {
-    if (argv[i]) {
-      g_free(argv[i]);
-      argv[i] = NULL;
-    }
-  }
-  g_free(argv);
-}
-
-static char **
-allocate_argv(const char *name, int argc, char * const *argv)
-{
-  int i, new_argc;
-  char **new_argv;
-
-  new_argc = argc + 2;
-  new_argv = g_malloc0(sizeof(*new_argv) * new_argc);
-  if (new_argv == NULL) {
-    return NULL;
-  }
-
-  new_argv[0] = g_strdup(name);
-  if (new_argv[0] == NULL) {
-    free_argv(new_argc, new_argv);
-    return NULL;
-  }
-
-  for (i = 0; i < argc; i++) {
-    new_argv[i + 1] = g_strdup(argv[i]);
-    if (new_argv[i + 1] == NULL) {
-      free_argv(new_argc, new_argv);
-      return NULL;
-    }
-  }
-
-  new_argv[i + 1] = NULL;
-
-  return new_argv;
-}
-
 static int
 plugin_exec(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct ngraph_plugin *plugin;
-  char **new_argv;
+  char **new_argv, *tmp;
   int r, lock;
 
   rval->i = 0;
@@ -466,7 +432,10 @@ plugin_exec(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **
     return 1;
   }
 
-  new_argv = allocate_argv(plugin->name, argc - 2, argv + 2);
+  tmp = argv[1];
+  argv[1] = plugin->name;
+  new_argv = allocate_argv(argc - 1, argv + 1);
+  argv[1] = tmp;
   if (new_argv == NULL) {
     error(obj, ERRMEM);
     return 1;

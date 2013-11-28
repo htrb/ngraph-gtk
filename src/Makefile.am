@@ -36,10 +36,10 @@ libngraph_la_SOURCES = axis.c axis.h nconfig.c nconfig.h gra.c gra.h	\
 	ogra2fil.c ogra2nul.c ogra2prn.c oiarray.c oiarray.h oint.c	\
 	olegend.c olegend.h omark.c omath.c omerge.c oprm.c orect.c	\
 	oroot.c oroot.h osarray.c oshell.c oregexp.c ostring.c		\
-	osystem.c otext.c otext.h opath.c opath.h shell.c shell.h	\
-	shellcm.c shellcm.h shellux.c shellux.h spline.c spline.h	\
-	common.h nhash.h nhash.c strconv.c strconv.h oio.c oplugin.c	\
-	gettext.h ngraph_api.c
+	osystem.c osystem.h otext.c otext.h opath.c opath.h shell.c	\
+	shell.h shellcm.c shellcm.h shellux.c shellux.h spline.c	\
+	spline.h common.h nhash.h nhash.c strconv.c strconv.h oio.c	\
+	oplugin.c gettext.h ngraph_api.c
 
 libngraph_la_CFLAGS = $(GTK_CFLAGS) $(GSL_CFLAGS) -I.. -DCCNAME='"'$(CC)'"'
 libngraph_la_LIBADD = gtk/libngraphui.la math/libmath.la

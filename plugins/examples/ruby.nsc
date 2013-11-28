@@ -1,4 +1,8 @@
-require 'ngraph'
+if [ "x${system:0:ext_shell_name}" = "xruby" ]
+then
+    system:0:ext_shell $*
+    exit
+fi
 
 for i in `object plugin -instances`
 do

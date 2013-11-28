@@ -1770,6 +1770,7 @@ static VALUE
 ruby_ngraph_exec_loginshell(VALUE module, VALUE cmd, VALUE nobj)
 {
   int r;
+  size_t len;
   const char *str;
   char *loginshell;
   static struct ngraph_instance *inst;
@@ -1782,23 +1783,24 @@ ruby_ngraph_exec_loginshell(VALUE module, VALUE cmd, VALUE nobj)
     loginshell = NULL;
   } else {
     str = StringValueCStr(cmd);
-    loginshell = strdup(str);
+    len = strlen(str) + 1;
+    loginshell = ALLOCA_N(char, len);
     if (loginshell == NULL) {
-      rb_raise(rb_eNoMemError, "%s: cannot allocate enough memory.", rb_obj_classname(module));
+      rb_raise(rb_eSysStackError, "%s: cannot allocate enough memory.", rb_obj_classname(module));
     }
+    strcpy(loginshell, str);
   }
 
   inst = check_id(nobj);
   r = ngraph_exec_loginshell(loginshell, inst->obj, inst->id);
-  if (loginshell) {
-    free(loginshell);
-  }
 
   return INT2FIX(r);
 }
 
+#include "../ruby_common.h"
+
 static VALUE
-ruby_ngraph_init(VALUE module, VALUE arg)
+ruby_ngraph_init(VALUE module, VALUE arg, VALUE set_shell)
 {
   char *str;
 
@@ -1814,10 +1816,13 @@ ruby_ngraph_init(VALUE module, VALUE arg)
   }
 
   ngraph_initialize(&DummyArgc, &DummyArgvPtr);
-
   create_ngraph_classes(module, NgraphClass);
 
   Initialized = TRUE;
+
+  if (RTEST(set_shell)) {
+    ngraph_set_ext_shell("ruby", load_script);
+  }
 
   return Qnil;
 }
@@ -1835,7 +1840,7 @@ Init_ngraph(void)
   rb_define_singleton_method(NgraphModule, "sleep", nsleep, 1);
   rb_define_singleton_method(NgraphModule, "str2inst", ngraph_str2inst, 1);
   rb_define_singleton_method(NgraphModule, "save_shell_history", ngraph_save_hist, 0);
-  rb_define_singleton_method(NgraphModule, "ngraph_initialize", ruby_ngraph_init, 1);
+  rb_define_singleton_method(NgraphModule, "ngraph_initialize", ruby_ngraph_init, 2);
   rb_define_singleton_method(NgraphModule, "get_initialize_file", ruby_ngraph_init_file, 1);
   rb_define_singleton_method(NgraphModule, "execute_loginshell", ruby_ngraph_exec_loginshell, 2);
 
