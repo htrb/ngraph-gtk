@@ -6,6 +6,7 @@
 #include "object.h"
 #include "mathfn.h"
 #include "shell.h"
+#include "osystem.h"
 
 union ngraph_val {
   int i;

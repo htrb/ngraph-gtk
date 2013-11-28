@@ -119,9 +119,6 @@ ngraph_plugin_open_ruby(struct ngraph_plugin *plugin)
 int
 ngraph_plugin_exec_ruby(struct ngraph_plugin *plugin, int argc, char *argv[])
 {
-  int state, i;
-  VALUE r_argv;
-
   if (! Initialized) {
     return 1;
   }
