@@ -47,7 +47,7 @@
 
 static char *drawerrorlist[]={
   "illegal graphics context",
-  "graphics context is not opened"
+  "graphics context is not opened",
 };
 
 #define ERRNUM (sizeof(drawerrorlist) / sizeof(*drawerrorlist))

@@ -207,9 +207,6 @@ void arrayrsort_str(struct narray *array);
 void arraysort_str(struct narray *array);
 void arrayuniq_str(struct narray *array);
 
-void free_argv(int argc, char **argv);
-char **allocate_argv(int argc, char * const *argv);
-
 int getargc(char **arg);
 char **arg_add(char ***arg,void *ptr);
 void arg_del(char **arg);

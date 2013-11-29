@@ -38,7 +38,7 @@
 #define MODIFY_MARK_TYPE 0
 
 static char *markerrorlist[]={
-  ""
+  "",
 };
 
 #define ERRNUM (sizeof(markerrorlist) / sizeof(*markerrorlist))

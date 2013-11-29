@@ -1061,45 +1061,6 @@ arrayuniq_str(struct narray *array)
   }
 }
 
-void
-free_argv(int argc, char **argv)
-{
-  int i;
-
-  for (i = 0; i < argc; i ++) {
-    if (argv[i]) {
-      g_free(argv[i]);
-      argv[i] = NULL;
-    }
-  }
-  g_free(argv);
-}
-
-char **
-allocate_argv(int argc, char * const *argv)
-{
-  int i, new_argc;
-  char **new_argv;
-
-  new_argc = argc + 1;
-  new_argv = g_malloc0(sizeof(*new_argv) * new_argc);
-  if (new_argv == NULL) {
-    return NULL;
-  }
-
-  for (i = 0; i < argc; i++) {
-    new_argv[i] = g_strdup(argv[i]);
-    if (new_argv[i] == NULL) {
-      free_argv(new_argc, new_argv);
-      return NULL;
-    }
-  }
-
-  new_argv[i] = NULL;
-
-  return new_argv;
-}
-
 #define ARGBUFNUM 32
 
 int 

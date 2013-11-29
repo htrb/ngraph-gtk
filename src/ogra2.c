@@ -36,7 +36,7 @@
 #define ERRLOCK 100
 
 static char *gra2errorlist[]={
-  "device is locked"
+  "device is locked",
 };
 
 #define ERRNUM (sizeof(gra2errorlist) / sizeof(*gra2errorlist))

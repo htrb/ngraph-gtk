@@ -8,7 +8,7 @@ if HAVE_RUBY_DEV
   RUBY_ARCH = `ruby -e 'puts(RbConfig::CONFIG["arch"])'`
   built_sources =
   ngraphplugin_LTLIBRARIES = libruby.la
-  libruby_la_SOURCES = ruby.c ruby_common.h
+  libruby_la_SOURCES = ruby.c
   libruby_la_CFLAGS = -I.. -I $(RUBY_INCRUDEDIR) -I $(RUBY_INCRUDEDIR)/$(RUBY_ARCH)
   libruby_ldflags = -L../src -avoid-version -module -lngraph `ruby -e 'puts(RbConfig::CONFIG["LIBRUBYARG_SHARED"])'`
 if OS_WIN32
@@ -21,7 +21,7 @@ endif
   libruby_la_LDFLAGS = $(libruby_ldflags)
   extra_dist = $(extra_dist_common)
 else
-  extra_dist = $(extra_dist_common) ruby.c ruby_common.h
+  extra_dist = $(extra_dist_common) ruby.c
 endif
 
 EXTRA_DIST = $(extra_dist)

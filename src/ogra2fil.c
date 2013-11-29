@@ -39,7 +39,7 @@
 #define ERRFOPEN 100
 
 static char *gra2ferrorlist[]={
-  "I/O error: open file"
+  "I/O error: open file",
 };
 
 #define ERRNUM (sizeof(gra2ferrorlist) / sizeof(*gra2ferrorlist))

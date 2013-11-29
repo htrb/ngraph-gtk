@@ -44,7 +44,7 @@
 
 #define ERRSPL  100
 static char *patherrorlist[]={
-  "error: spline interpolation."
+  "error: spline interpolation.",
 };
 
 #define ERRNUM (sizeof(patherrorlist) / sizeof(*patherrorlist))

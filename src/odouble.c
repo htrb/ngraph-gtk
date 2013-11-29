@@ -35,7 +35,7 @@
 #define ERRILNAME 100
 
 static char *doubleerrorlist[]={
-""
+  "",
 };
 
 #define ERRNUM (sizeof(doubleerrorlist) / sizeof(*doubleerrorlist))

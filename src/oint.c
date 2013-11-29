@@ -34,7 +34,7 @@
 #define ERRILNAME 100
 
 static char *interrorlist[]={
-""
+  "",
 };
 
 #define ERRNUM (sizeof(interrorlist) / sizeof(*interrorlist))

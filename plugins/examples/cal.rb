@@ -15,11 +15,15 @@ y = date.year
 
 Ngraph::Dialog.new {|dialog|
   dialog.title = "Calendar"
-  dialog.caption = "select MONTH"
-  m = dialog.integer_entry(1, 12, 1, m)
-}
 
-exit unless (m)
+  dialog.caption = "select Year"
+  y = dialog.integer_entry(0, 9999, 1, y)
+  exit unless (y)
+
+  dialog.caption = "select Month"
+  m = dialog.integer_entry(1, 12, 1, m)
+  exit unless (m)
+}
 
 menu = Ngraph::Menu[0]
 if (menu)

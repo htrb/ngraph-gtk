@@ -1,4 +1,4 @@
 #ifndef OSYSTEM_HEADER
 #define OSYSTEM_HEADER
-void system_set_ext_shell(const char *name, ngraph_ext_shell_func func);
+int system_set_exec_func(const char *name, ngraph_plugin_exec func);
 #endif

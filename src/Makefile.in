@@ -159,8 +159,7 @@ am_libngraph_la_OBJECTS = libngraph_la-axis.lo libngraph_la-nconfig.lo \
 	libngraph_la-shell.lo libngraph_la-shellcm.lo \
 	libngraph_la-shellux.lo libngraph_la-spline.lo \
 	libngraph_la-nhash.lo libngraph_la-strconv.lo \
-	libngraph_la-oio.lo libngraph_la-oplugin.lo \
-	libngraph_la-ngraph_api.lo
+	libngraph_la-oio.lo libngraph_la-ngraph_api.lo
 libngraph_la_OBJECTS = $(am_libngraph_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -467,7 +466,7 @@ libngraph_la_SOURCES = axis.c axis.h nconfig.c nconfig.h gra.c gra.h	\
 	osystem.c osystem.h otext.c otext.h opath.c opath.h shell.c	\
 	shell.h shellcm.c shellcm.h shellux.c shellux.h spline.c	\
 	spline.h common.h nhash.h nhash.c strconv.c strconv.h oio.c	\
-	oplugin.c gettext.h ngraph_api.c
+	gettext.h ngraph_api.c
 
 libngraph_la_CFLAGS = $(GTK_CFLAGS) $(GSL_CFLAGS) -I.. -DCCNAME='"'$(CC)'"'
 libngraph_la_LIBADD = gtk/libngraphui.la math/libmath.la
@@ -693,7 +692,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-omath.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-omerge.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-opath.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-oplugin.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-oprm.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-orect.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-oregexp.Plo@am__quote@
@@ -1046,13 +1044,6 @@ libngraph_la-oio.lo: oio.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='oio.c' object='libngraph_la-oio.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-oio.lo `test -f 'oio.c' || echo '$(srcdir)/'`oio.c
-
-libngraph_la-oplugin.lo: oplugin.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-oplugin.lo -MD -MP -MF $(DEPDIR)/libngraph_la-oplugin.Tpo -c -o libngraph_la-oplugin.lo `test -f 'oplugin.c' || echo '$(srcdir)/'`oplugin.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraph_la-oplugin.Tpo $(DEPDIR)/libngraph_la-oplugin.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='oplugin.c' object='libngraph_la-oplugin.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-oplugin.lo `test -f 'oplugin.c' || echo '$(srcdir)/'`oplugin.c
 
 libngraph_la-ngraph_api.lo: ngraph_api.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-ngraph_api.lo -MD -MP -MF $(DEPDIR)/libngraph_la-ngraph_api.Tpo -c -o libngraph_la-ngraph_api.lo `test -f 'ngraph_api.c' || echo '$(srcdir)/'`ngraph_api.c

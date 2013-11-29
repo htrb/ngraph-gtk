@@ -38,7 +38,7 @@
 #define ERROUTBOUND		101
 
 static char *sarrayerrorlist[]={
-  "invalid regular expression."
+  "invalid regular expression.",
   "array index is out of array bounds.",
 };
 

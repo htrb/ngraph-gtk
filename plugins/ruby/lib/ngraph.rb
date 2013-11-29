@@ -1,3 +1,3 @@
 if (require 'ngraph.so')
-  Ngraph::ngraph_initialize(nil, true)
+  Ngraph::ngraph_initialize(nil)
 end

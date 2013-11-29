@@ -75,10 +75,9 @@ typedef union _ngraph_returned_value {
   } ary;
 } ngraph_returned_value;
 
-typedef int (* ngraph_plugin_exec) (struct ngraph_plugin *plugin, int argc, char *argv[]);
-typedef int (* ngraph_plugin_open) (struct ngraph_plugin *plugin);
-typedef void (* ngraph_plugin_close) (struct ngraph_plugin *plugin);
-typedef int (* ngraph_ext_shell_func) (int argc, char *argv[]);
+typedef int (* ngraph_plugin_exec) (int argc, char *argv[]);
+typedef int (* ngraph_plugin_open) (void);
+typedef int (* ngraph_plugin_close) (void);
 
 int ngraph_initialize(int *argc, char ***argv);
 void ngraph_save_shell_history(void);
@@ -122,6 +121,6 @@ void ngraph_sleep(int t);
 void *ngraph_malloc(size_t size);
 void ngraph_free(void *ptr);
 char *ngraph_strdup(const char *str);
-void ngraph_set_ext_shell(const char *name, ngraph_ext_shell_func func);
+int ngraph_set_exec_func(const char *name, ngraph_plugin_exec func);
 
 #endif

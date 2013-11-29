@@ -668,7 +668,7 @@ uninstall-am:
 @HAVE_RUBY_DEV_TRUE@@OS_WIN32_FALSE@install-data-local: $(ruby_ext)
 @HAVE_RUBY_DEV_TRUE@@OS_WIN32_FALSE@	make -f Makefile.ruby install
 
-@HAVE_RUBY_DEV_TRUE@obj.txt: getobj.nsc
+@HAVE_RUBY_DEV_TRUE@obj.txt: getobj.nsc ../../src/libngraph.la
 @HAVE_RUBY_DEV_TRUE@	../../src/ngraph -i getobj.nsc > obj.txt
 
 @HAVE_RUBY_DEV_TRUE@ruby_ngraph.h: obj.txt

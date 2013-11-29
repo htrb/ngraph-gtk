@@ -49,7 +49,7 @@
 #define ERR_INVALID_STR   100
 
 static char *texterrorlist[]={
-  "invalid string."
+  "invalid string.",
 };
 
 #define ERRNUM (sizeof(texterrorlist) / sizeof(*texterrorlist))

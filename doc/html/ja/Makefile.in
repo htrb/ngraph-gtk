@@ -733,7 +733,7 @@ uninstall-am: uninstall-dist_htmlDATA uninstall-nodist_htmlDATA
 	uninstall-dist_htmlDATA uninstall-nodist_htmlDATA
 
 
-object.html: ../../../src/ngraph object.html.in ../objlist.nsc
+object.html: ../../../src/libngraph.la object.html.in ../objlist.nsc
 	cat object.html.in > object.html
 	../../../src/ngraph -i ../objlist.nsc >> object.html
 

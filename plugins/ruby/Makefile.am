@@ -17,7 +17,7 @@ install-data-local: $(ruby_ext)
 	make -f Makefile.ruby install
 endif
 
-obj.txt: getobj.nsc
+obj.txt: getobj.nsc ../../src/libngraph.la
 	../../src/ngraph -i getobj.nsc > obj.txt
 
 ruby_ngraph.h: obj.txt

@@ -37,7 +37,7 @@
 #define OVERSION  "1.00.00"
 
 static char *recterrorlist[]={
-  ""
+  "",
 };
 
 #define ERRNUM (sizeof(recterrorlist) / sizeof(*recterrorlist))

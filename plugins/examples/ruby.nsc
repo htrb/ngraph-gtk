@@ -1,18 +1,1 @@
-if [ "x${system:0:ext_shell_name}" = "xruby" ]
-then
-    system:0:ext_shell $*
-    exit
-fi
-
-for i in `object plugin -instances`
-do
-    if [ `get plugin:$i -field module_name` = "ruby" ]
-    then
-	plugin:$i:exec $*
-	exit
-    fi
-done
-
-new plugin
-plugin::open ruby
-plugin::exec $*
+system:0:plugin_exec ruby $*

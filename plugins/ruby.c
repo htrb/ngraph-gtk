@@ -19,15 +19,13 @@ static char *DummyArgv[] = {"ngraph_ruby", NULL};
 static char **DummyArgvPtr = DummyArgv;
 static int DummyArgc = 1;
 
-#include "ruby_common.h"
-
 #ifdef __MINGW32__
 static char *
 get_ext_name(void)
 {
   int n, i;
   struct objlist *sys;
-  char *ext_name, *plugin_path, ext_basename[] = "ruby/ngraph.so";
+  char *ext_name, *plugin_path, ext_basename[] = "ruby/ngraph.rb";
   ngraph_returned_value val;
   ngraph_arg arg;
 
@@ -69,10 +67,9 @@ get_ext_name(void)
 #endif
 
 int
-ngraph_plugin_open_ruby(struct ngraph_plugin *plugin)
+ngraph_plugin_open_ruby(void)
 {
   rb_encoding *enc;
-  VALUE ngraph_module;
 #ifdef __MINGW32__
   char *ext_name;
 #endif
@@ -107,39 +104,16 @@ ngraph_plugin_open_ruby(struct ngraph_plugin *plugin)
   rb_require(ext_name);
   free(ext_name);
 #else
-  rb_require("ngraph.so");
+  rb_require("ngraph.rb");
 #endif
 
-  ngraph_module = rb_const_get(rb_mKernel, rb_intern("Ngraph"));
-  rb_funcall(ngraph_module, rb_intern("ngraph_initialize"), 2, Qnil, Qfalse);
-
   return 0;
 }
 
-int
-ngraph_plugin_exec_ruby(struct ngraph_plugin *plugin, int argc, char *argv[])
-{
-  if (! Initialized) {
-    return 1;
-  }
-
-  if (argc < 2) {
-    return 0;
-  }
-
-  ruby_script(argv[1]);
-  load_script(argc - 1, argv + 1);
-
-  return 0;
-}
-
-#ifndef __MINGW32__
 void
-ngraph_plugin_close_ruby(struct ngraph_plugin *plugin)
+ngraph_plugin_close_ruby(void)
 {
   if (Initialized) {
     ruby_finalize();
-    Initialized = FALSE;
   }
 }
-#endif

@@ -1797,10 +1797,51 @@ ruby_ngraph_exec_loginshell(VALUE module, VALUE cmd, VALUE nobj)
   return INT2FIX(r);
 }
 
-#include "../ruby_common.h"
+static int
+load_script(int argc, char **argv)
+{
+  VALUE r_argv;
+  int state, i;
+
+  if (argc < 1) {
+    return 0;
+  }
+
+  r_argv = rb_const_get(rb_mKernel, rb_intern("ARGV"));
+  rb_ary_clear(r_argv);
+  for (i = 1; i < argc; i++) {
+    rb_ary_push(r_argv, rb_tainted_str_new2(argv[i]));
+  }
+
+  rb_load_protect(rb_str_new2(argv[0]), 1, &state);
+  if (state) {
+    VALUE errinfo, errstr, errat;
+    int n, i;
+    const char *cstr;
+
+    errinfo = rb_errinfo();
+    errstr = rb_obj_as_string(errinfo);
+    cstr = StringValueCStr(errstr);
+    if (strcmp(cstr, "exit")) {
+      ngraph_err_puts(cstr);
+      errat = rb_funcall(errinfo, rb_intern("backtrace"), 0);
+      if (! NIL_P(errat)) {
+	n = RARRAY_LEN(errat);
+	for (i = 0; i < n; i ++) {
+	  errstr = rb_str_new2("\tfrom ");
+	  rb_str_append(errstr, rb_ary_entry(errat, i));
+	  ngraph_err_puts(StringValueCStr(errstr));
+	}
+      }
+    }
+  }
+  rb_gc_start();
+
+  return 0;
+}
 
 static VALUE
-ruby_ngraph_init(VALUE module, VALUE arg, VALUE set_shell)
+ruby_ngraph_init(VALUE module, VALUE arg)
 {
   char *str;
 
@@ -1820,9 +1861,7 @@ ruby_ngraph_init(VALUE module, VALUE arg, VALUE set_shell)
 
   Initialized = TRUE;
 
-  if (RTEST(set_shell)) {
-    ngraph_set_ext_shell("ruby", load_script);
-  }
+  ngraph_set_exec_func("ruby", load_script);
 
   return Qnil;
 }
@@ -1840,7 +1879,7 @@ Init_ngraph(void)
   rb_define_singleton_method(NgraphModule, "sleep", nsleep, 1);
   rb_define_singleton_method(NgraphModule, "str2inst", ngraph_str2inst, 1);
   rb_define_singleton_method(NgraphModule, "save_shell_history", ngraph_save_hist, 0);
-  rb_define_singleton_method(NgraphModule, "ngraph_initialize", ruby_ngraph_init, 2);
+  rb_define_singleton_method(NgraphModule, "ngraph_initialize", ruby_ngraph_init, 1);
   rb_define_singleton_method(NgraphModule, "get_initialize_file", ruby_ngraph_init_file, 1);
   rb_define_singleton_method(NgraphModule, "execute_loginshell", ruby_ngraph_exec_loginshell, 2);
 

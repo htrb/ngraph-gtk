@@ -41,7 +41,7 @@
 #define OVERSION  "1.00.00"
 
 static char *arcerrorlist[]={
- ""
+  "",
 };
 
 #define ERRNUM (sizeof(arcerrorlist) / sizeof(*arcerrorlist))

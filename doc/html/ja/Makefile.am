@@ -9,7 +9,7 @@ EXTRA_DIST = object.html.in intro.html.in script.html.in
 
 htmldir = $(docdir)/html/ja
 
-object.html: ../../../src/ngraph object.html.in ../objlist.nsc
+object.html: ../../../src/libngraph.la object.html.in ../objlist.nsc
 	cat object.html.in > object.html
 	../../../src/ngraph -i ../objlist.nsc >> object.html
 

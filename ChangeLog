@@ -1,3 +1,24 @@
+2013-11-29  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* plugins/ruby.c (ngraph_plugin_exec_ruby): removed.
+
+	* src/osystem.h: added.
+
+	* src/osarray.c (sarrayerrorlist): bug fix: add ',' as the needed.
+
+	* src/osystem.c (syserrorlist): bug fix: add ',' as the needed.
+	(close_module, get_symbol, get_plugin_name, load_plugin_sub)
+	(get_plugin_from_name, load_plugin, system_plugin_load)
+	(free_argv, allocate_argv, system_plugin_exec)
+	(system_plugin_get_module): added (moved from "oplugin.c").
+	(sysdone): unload modules.
+
+	* src/oplugin.c: removed.
+
+	* plugins/ruby/ngraph.c (load_script): added.
+	(ruby_ngraph_init): the function "ngraph_set_exec_func()" is
+	always called.
+
 2013-11-28  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/osystem.c (ext_shell_exec, system_check_prohibited_plugin)
@@ -8,16 +29,7 @@
 
 	* src/oplugin.c (load_plugin): check prohibited plugins.
 
-	* src/object.c (allocate_argv, free_argv): added.
-
-	* src/ngraph_api.c (ngraph_set_ext_shell): added.
-
-	* plugins/ruby_common.h: added.
-
-	* plugins/ruby.c (ngraph_plugin_open_ruby, get_ext_name): require
-	"ngraph.so" instead of "ngraph.rb".
-	(ngraph_plugin_open_ruby): call "Ngraph#ngraph_initialize".
-	(ngraph_plugin_exec_ruby): use "load_script()".
+	* src/ngraph_api.c (ngraph_set_exec_func): added.
 
 	* plugins/ruby/ngraph.c (ruby_ngraph_exec_loginshell): use
 	"ALLOCA_N()" and "strcpy()" instead of "strdup()".

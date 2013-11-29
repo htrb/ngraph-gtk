@@ -30,6 +30,7 @@
 #include <glib.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <gmodule.h>
 
 #include "nstring.h"
 #include "object.h"
@@ -49,26 +50,51 @@
 #define EMAIL     "ZXB01226@nifty.com"
 #define WEB       "http://sourceforge.net/projects/ngraph-gtk/"
 
-#define ERRSYSNODIR   100
-#define ERRSYSTMPFILE 101
-#define ERRSYSSECURTY 102
-#define ERRSYSMEM     103
-
+#define ERRSYSNODIR    100
+#define ERRSYSTMPFILE  101
+#define ERRSYSSECURTY  102
+#define ERRSYSMEM      103
+#define ERRSYSNOMODULE 104
+#define ERRSYSLOAD     105
+#define ERRSYSLOADED   106
+#define ERRSYSNOLOAD   107
+#define ERRSYSINIT     108
+#define ERRSYSINVALID  109
+#define ERRSYSNOTEXECUTABLE 110
+#define ERRSYSLOCKED   111
+#define ERRSYSSMALLARGS 112
 
 void resizeconsole(int col,int row);
 extern int consolecol,consolerow;
 
 static char *syserrorlist[]={
-  "no such directory"
-  "can't create temporary file"
+  "no such directory",
+  "can't create temporary file",
   "the method is forbidden for the security",
   "cannot allocate enough memory",
+  "no module name is specified.",
+  "cannot load module",
+  "the module is already loaded",
+  "a module is not loaded",
+  "cannot initialize the plugin",
+  "invalid module",
+  "not executable",
+  "the module is locked",
+  "too small number of arguments.",
 };
 
 #define ERRNUM (sizeof(syserrorlist) / sizeof(*syserrorlist))
 
-static ngraph_ext_shell_func ExtShellFunc = NULL;
-static NHASH ProhibitedPlugins = NULL;
+struct ngraph_plugin {
+  GModule *module;
+  ngraph_plugin_exec exec;
+  ngraph_plugin_open open;
+  ngraph_plugin_close close;
+  char *file;
+  int lock;
+};
+
+static NHASH Plugins = NULL;
 
 static int 
 sysinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
@@ -106,6 +132,27 @@ sysinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
+static int
+close_module(struct nhash *hash, void *data)
+{
+  struct ngraph_plugin *plugin;
+
+  plugin = (struct ngraph_plugin *) hash->val.p;
+  if (plugin->close) {
+    plugin->close();
+  }
+  if (plugin->file) {
+    g_free(plugin->file);
+  }
+  if (plugin->module) {
+    g_module_close(plugin->module);
+  }
+  g_free(plugin);
+  hash->val.p = NULL;
+
+  return 0;
+}
+
 static int 
 sysdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
@@ -116,6 +163,10 @@ sysdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   struct objlist *objectcur,*objectdel;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
+
+  nhash_each(Plugins, close_module, NULL);
+  nhash_clear(Plugins);
+
   objcur=chkobjroot();
   while (objcur!=NULL) {
     if (objcur!=obj) {
@@ -148,8 +199,6 @@ sysdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   g_free(s);
   _getobj(obj,"temp_file",inst,&s);
   g_free(s);
-  _getobj(obj,"ext_shell_name", inst, &s);
-  g_free(s);
   _getobj(obj,"temp_list",inst,&array);
   n = arraynum(array);
   if (n > 0) {
@@ -177,6 +226,8 @@ sysdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   }
   g_free(inst);
   g_free(argv);
+
+  nhash_free(Plugins);
 
   exit(0);
   return 0;
@@ -354,18 +405,235 @@ systemresize(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **arg
 }
 
 static int
-ext_shell_exec(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+get_symbol(GModule *module, const char *format, const char *name, gpointer *symbol)
 {
+  char *func;
+  int r;
+
+  func = g_strdup_printf(format, name);
+  r = g_module_symbol(module, func, symbol);
+  g_free(func);
+
+  return ! r;
+}
+
+static char *
+get_plugin_name(const char *str)
+{
+  char *basename;
+  int i;
+
+  basename = getbasename(str);
+  if (basename == NULL) {
+    return NULL;
+  }
+  for (i = 0; basename[i]; i++) {
+    if (basename[i] == '.') {
+      basename[i] = '\0';
+      break;
+    }
+  }
+
+  return basename;
+}
+
+static int
+load_plugin_sub(struct objlist *obj, N_VALUE *inst, const char *name, struct ngraph_plugin *plugin)
+{
+  GModule *module;
+  void *loaded;
+  ngraph_plugin_open np_open;
+  ngraph_plugin_close np_close;
+  int r;
+  char *basename, *module_file, *plugin_path;
+  struct objlist *sysobj;
+
+  module = NULL;
+  module_file = NULL;
+  basename = NULL;
+
+  basename = get_plugin_name(name);
+  if (basename == NULL) {
+    error(obj, ERRSYSLOAD);
+    return 1;
+  }
+
+  r = nhash_get_ptr(Plugins, basename, &loaded);
+  if (r == 0 && loaded) {
+    error2(obj, ERRSYSLOADED, basename);
+    goto ErrorExit;
+  }
+
+  plugin_path = NULL;
+  sysobj = getobject("system");
+  getobj(sysobj, "plugin_dir", 0, 0, NULL, &plugin_path);
+
+  module_file = g_module_build_path(plugin_path, basename);
+  module = g_module_open(module_file, 0);
+  if (module == NULL) {
+    putstderr(g_module_error());
+    error2(obj, ERRSYSLOAD, name);
+    goto ErrorExit;
+  }
+
+  np_open = NULL;
+  get_symbol(module, "ngraph_plugin_open_%s", basename, (gpointer *) &np_open);
+
+  np_close = NULL;
+  get_symbol(module, "ngraph_plugin_close_%s", basename, (gpointer *) &np_close);
+
+  r = nhash_set_ptr(Plugins, basename, plugin);
+  if (r) {
+    error(obj, ERRSYSMEM);
+    goto ErrorExit;
+  }
+
+  g_free(basename);
+
+  plugin->file = module_file;
+  plugin->module = module;
+  plugin->exec = NULL;
+  plugin->open = np_open;
+  plugin->close = np_close;
+
+  return 0;
+
+ ErrorExit:
+  if (module) {
+    g_module_close(module);
+  }
+
+  g_free(module_file);
+  g_free(basename);
+
+  return 1;
+}
+
+static struct ngraph_plugin *
+get_plugin_from_name(const char *name)
+{
+  void *ptr;
+  int r;
+
+  r = nhash_get_ptr(Plugins, name, &ptr);
+  if (r) {
+    return NULL;
+  }
+
+  return ptr;
+}
+
+struct ngraph_plugin *
+load_plugin(struct objlist *obj, N_VALUE *inst, const char *arg, int *rval)
+{
+  char *name;
+  struct ngraph_plugin *plugin;
+  int r;
+
+  if (arg == NULL) {
+    error(obj, ERRSYSNOMODULE);
+    return NULL;
+  }
+
+  name = get_plugin_name(arg);
+  if (name == NULL) {
+    error(obj, ERRSYSNOMODULE);
+    return NULL;
+  }
+  plugin = get_plugin_from_name(name);
+  g_free(name);
+
+  if (plugin) {
+    error2(obj, ERRSYSLOADED, name);
+    return NULL;
+  }
+
+  plugin = g_malloc0(sizeof(struct ngraph_plugin));
+  if (plugin == NULL) {
+    error(obj, ERRSYSMEM);
+    return NULL;
+  }
+
+  if (load_plugin_sub(obj, inst, arg, plugin)) {
+    g_free(plugin);
+    return NULL;
+  }
+
+  if (plugin->open) {
+    r = plugin->open();
+    if (rval) {
+      *rval = r;
+    }
+    if (r) {
+      error2(obj, ERRSYSINIT, arg);
+      return NULL;
+    }
+  }
+
+  return plugin;
+}
+
+static int 
+system_plugin_load(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  struct ngraph_plugin *plugin;
+
+  rval->i = 0;
+  plugin = load_plugin(obj, inst, argv[2], &rval->i);
+
+  return (plugin) ? 0 : 1;
+}
+
+static void
+free_argv(int argc, char **argv)
+{
+  int i;
+
+  for (i = 0; i < argc; i ++) {
+    if (argv[i]) {
+      g_free(argv[i]);
+      argv[i] = NULL;
+    }
+  }
+  g_free(argv);
+}
+
+static char **
+allocate_argv(int argc, char * const *argv)
+{
+  int i, new_argc;
+  char **new_argv;
+
+  new_argc = argc + 1;
+  new_argv = g_malloc0(sizeof(*new_argv) * new_argc);
+  if (new_argv == NULL) {
+    return NULL;
+  }
+
+  for (i = 0; i < argc; i++) {
+    new_argv[i] = g_strdup(argv[i]);
+    if (new_argv[i] == NULL) {
+      free_argv(new_argc, new_argv);
+      return NULL;
+    }
+  }
+
+  new_argv[i] = NULL;
+
+  return new_argv;
+}
+
+static int
+system_plugin_exec(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  struct ngraph_plugin *plugin;
   char **new_argv;
   int r;
 
   rval->i = 0;
 
-  if (ExtShellFunc == NULL) {
-    return 0;
-  }
-
-  if (argc < 3) {
+  if (argc < 4) {
+    error2(obj, ERRSYSSMALLARGS, argv[1]);
     return 0;
   }
 
@@ -373,71 +641,126 @@ ext_shell_exec(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char
     error(obj, ERRSYSSECURTY);
     return 1;
   }
+ 
+  plugin = get_plugin_from_name(argv[2]);
+  if (plugin == NULL) {
+    plugin = load_plugin(obj, inst, argv[2], NULL);
+    if (plugin == NULL) {
+      return 1;
+    }
+  }
 
-  new_argv = allocate_argv(argc - 2, argv + 2);
+  if (plugin->exec == NULL) {
+    error2(obj, ERRSYSNOTEXECUTABLE, argv[2]);
+    return 1;
+  }
+
+  if (plugin->lock) {
+    error2(obj, ERRSYSLOCKED, argv[2]);
+    return 1;
+  }
+
+  new_argv = allocate_argv(argc - 3, argv + 3);
   if (new_argv == NULL) {
     error(obj, ERRSYSMEM);
     return 1;
   }
 
-  r = ExtShellFunc(argc - 2, new_argv);
+  plugin->lock = TRUE;
+  r = plugin->exec(argc - 3, new_argv);
+  plugin->lock = FALSE;
   rval->i = r;
 
-  free_argv(argc - 1, new_argv);
+  free_argv(argc - 3, new_argv);
 
   return r;
 }
 
 static int
-system_check_prohibited_plugin(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+system_plugin_get_module(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  int i, r;
+  struct ngraph_plugin *plugin;
 
-  rval->i = 0;
+  g_free(rval->str);
+  rval->str = NULL;
 
-  r = nhash_get_int(ProhibitedPlugins, argv[2], &i);
-  if (r == 0 && i) {
-    rval->i = TRUE;
+  if (argv[2] == NULL) {
+    return 1;
+  }
+
+  plugin = get_plugin_from_name(argv[2]);
+  if (plugin == NULL) {
+    error(obj, ERRSYSNOLOAD);
+    return 1;
+  }
+
+  if (plugin->file) {
+    rval->str = g_strdup(plugin->file);
+  } else {
+    rval->str = g_strdup("internal");
   }
 
   return 0;
 }
 
-void
-system_set_ext_shell(const char *name, ngraph_ext_shell_func func)
+static int
+list_module(struct nhash *hash, void *data)
 {
-  char *str, *ptr;
-  struct objlist *obj;
-  N_VALUE *inst;
+  struct narray *array;
+  const char *name;
+
+  array = (struct narray *) data;
+  name = hash->key;
+
+  arrayadd2(array, name);
+
+  return 0;
+}
+
+static int
+system_plugin_modules(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  struct narray *array;
+
+  arrayfree2(rval->array);
+  rval->array = NULL;
+
+  array = arraynew(sizeof(char *));
+  if (array == NULL) {
+    error(obj, ERRSYSMEM);
+    return 1;
+  }
+  rval->array = array;
+
+  nhash_each(Plugins, list_module, array);
+
+  return 0;
+}
+
+int
+system_set_exec_func(const char *name, ngraph_plugin_exec func)
+{
+  struct ngraph_plugin *plugin;
+  int r;
 
   if (name == NULL || func == NULL) {
-    return;
+    return 1;
   }
 
-  obj = getobject("system");
-  if (obj == NULL) {
-    return;
+  plugin = get_plugin_from_name(name);
+  if (plugin == NULL) {
+    plugin = g_malloc0(sizeof(struct ngraph_plugin));
+    if (plugin == NULL) {
+      return 1;
+    }
+    r = nhash_set_ptr(Plugins, name, plugin);
+    if (r) {
+      return 1;
+    }
   }
 
-  inst = getobjinst(obj, 0);
-  if (inst == NULL) {
-    return;
-  }
-
-  str = g_strdup(name);
-  if (str == NULL) {
-    return;
-  }
-
-  _getobj(obj,"ext_shell_name", inst, &ptr);
-  if (ptr) {
-    g_free(ptr);
-  }
-
-  _putobj(obj,"ext_shell_name", inst, str);
-  ExtShellFunc = func;
-
-  nhash_set_int(ProhibitedPlugins, name, TRUE);
+  plugin->exec = func;
+  return 0;
 }
 
 #if USE_MEM_PROFILE
@@ -480,9 +803,10 @@ static struct objtable nsystem[] = {
   {"hide_instance",NVFUNC,NREAD|NEXEC,syshideinstance,"sa",0},
   {"recover_instance",NVFUNC,NREAD|NEXEC,sysrecoverinstance,"sa",0},
   {"resize",NVFUNC,NREAD|NEXEC,systemresize,"ia",0},
-  {"ext_shell", NIFUNC, NREAD|NEXEC, ext_shell_exec, NULL, 0},
-  {"ext_shell_name",NSTR, NREAD, NULL, NULL, 0},
-  {"prohibited_plugin", NBFUNC, NREAD|NEXEC, system_check_prohibited_plugin, "s", 0},
+  {"plugin_load", NIFUNC, NREAD|NEXEC, system_plugin_load, "s", 0},
+  {"plugin_exec",NIFUNC, NREAD|NEXEC, system_plugin_exec, NULL, 0},
+  {"plugin_module",NSFUNC, NREAD|NEXEC, system_plugin_get_module, "s", 0},
+  {"plugins",NSAFUNC, NREAD|NEXEC, system_plugin_modules, "", 0},
 #if USE_MEM_PROFILE
   {"mem_profile",NVFUNC,NREAD|NEXEC,system_mem_profile,"",0},
 #endif
@@ -494,8 +818,8 @@ void *
 addsystem()
 /* addsystem() returns NULL on error */
 {
-  ProhibitedPlugins = nhash_new();
-  if (ProhibitedPlugins == NULL) {
+  Plugins = nhash_new();
+  if (Plugins == NULL) {
     return NULL;
   }
   return addobject(NAME,NULL,PARENT,VERSION,TBLNUM,nsystem,ERRNUM,syserrorlist,NULL,NULL);

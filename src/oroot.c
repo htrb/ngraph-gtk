@@ -40,7 +40,7 @@
 #define ERRILNAME 100
 
 static char *rooterrorlist[]={
-     "illegal instance name"
+  "illegal instance name",
 };
 
 #define ERRNUM (sizeof(rooterrorlist) / sizeof(*rooterrorlist))

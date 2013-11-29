@@ -54,7 +54,7 @@ static char *mergeerrorlist[]={
   "GRA file is not specified.",
   "I/O error: open file",
   "not GRA file",
-  "illegal GRA format"
+  "illegal GRA format",
 };
 
 #define ERRNUM (sizeof(mergeerrorlist) / sizeof(*mergeerrorlist))
