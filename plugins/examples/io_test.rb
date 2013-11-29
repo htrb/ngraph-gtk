@@ -58,7 +58,7 @@ Ngraph::Io.new {|io|
   io.getc
 
   # eof test
-  if io.eof?
+  if io.eof
   then
     puts("OK. (eof)")
   else

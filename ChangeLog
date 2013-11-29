@@ -1,5 +1,7 @@
 2013-11-29  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* plugins/ruby/create_objs.rb: don't add '?' to some methods.
+
 	* plugins/ruby.c (ngraph_plugin_exec_ruby): removed.
 
 	* src/osystem.h: added.

@@ -387,7 +387,7 @@ class Presentation
   end
 
   def toggle_frame
-    @gra2gtk.frame = ! @gra2gtk.frame?
+    @gra2gtk.frame = ! @gra2gtk.frame
   end
 
   def read_data(file)

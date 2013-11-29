@@ -22,7 +22,7 @@ File.open(datalist, "w") {|f|
   Ngraph::File.each {|file|
     f.puts(file.file)
     f.puts(file.id)
-    f.puts(file.hidden?.to_s)
+    f.puts(file.hidden.to_s)
     f.puts(file.x)
     f.puts(file.y)
     f.puts(Ngraph::File::Type[file.type])

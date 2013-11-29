@@ -1,5 +1,7 @@
 #! /usr/bin/ruby
 
+ADD_QUESTION_MARK_TO_BOOL_FIELD = false
+
 class Field
   attr_reader :name, :func, :argc
 
@@ -351,7 +353,7 @@ class NgraphObj
     case type
     when "bool"
       create_get_bool_func(func, field)
-      method += "?"
+      method += "?" if (ADD_QUESTION_MARK_TO_BOOL_FIELD)
     when "int"
       create_get_int_func(func, field)
     when "double"
@@ -784,7 +786,9 @@ class NgraphObj
         add_void_func(func, field, argc, args)
       end
     end
-    method += "?" if (type == "bool(")
+    if (ADD_QUESTION_MARK_TO_BOOL_FIELD)
+      method += "?" if (type == "bool(")
+    end
     field = Field.new("#{method}", func, argc)
     @methods.push(field)
   end
