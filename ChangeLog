@@ -1,3 +1,7 @@
+2013-12-01  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* plugins/ruby/lib/ngraph/ngp2.rb: added.
+
 2013-11-29  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* plugins/ruby/create_objs.rb: don't add '?' to some methods.

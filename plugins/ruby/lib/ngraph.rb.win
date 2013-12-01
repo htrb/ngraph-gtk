@@ -6,3 +6,5 @@ ENV['PATH'] += ";#{win_bin_path}" unless (ENV.find(win_bin_path))
 if (require "#{rb_path}/ngraph.so")
   Ngraph::ngraph_initialize(bin_path + "/ngraph.exe")
 end
+
+require '#{rb_path}/ngp2'

@@ -70,8 +70,9 @@ cp src/ngraph.ico          $PKG_DIR/share/icons
 
 if [ $HAVE_RUBY = "1" ]
 then
-    cp plugins/ruby/ngraph.so  $PKG_DIR/lib/ruby
-    cp plugins/ruby/lib/ngraph.rb.win  $PKG_DIR/lib/ruby/ngraph.rb
+    cp plugins/ruby/ngraph.so           $PKG_DIR/lib/ruby
+    cp plugins/ruby/lib/ngraph.rb.win   $PKG_DIR/lib/ruby/ngraph.rb
+    cp plugins/ruby/lib/ngraph/*.rb     $PKG_DIR/lib/ruby/
     mv $PKG_DIR/bin/plugins/libruby.dll $PKG_DIR/lib/plugins
     rm -rf $PKG_DIR/bin/plugins
 fi

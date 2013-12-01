@@ -1,4 +1,3 @@
-#! /usr/bin/ngraph
 require 'ngraph'
 
 test_str = "test str..."

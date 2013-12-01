@@ -18260,7 +18260,7 @@ fi
 done
 
 
-ac_config_files="$ac_config_files Makefile src/Makefile src/gtk/Makefile src/math/Makefile driver/Makefile addin/Makefile po/Makefile.in m4/Makefile demo/Makefile initfile/Makefile doc/Makefile doc/html/Makefile doc/html/img/Makefile doc/html/ja/Makefile doc/html/ja/tutorial/Makefile doc/html/ja/dialogs/Makefile zsh/Makefile test/Makefile plugins/Makefile plugins/ruby/Makefile plugins/ruby/lib/Makefile mingw/Makefile pixmap/Makefile icons/Makefile icons/scalable/Makefile icons/scalable/apps/Makefile icons/scalable/mimetypes/Makefile misc/Makefile"
+ac_config_files="$ac_config_files Makefile src/Makefile src/gtk/Makefile src/math/Makefile driver/Makefile addin/Makefile po/Makefile.in m4/Makefile demo/Makefile initfile/Makefile doc/Makefile doc/html/Makefile doc/html/img/Makefile doc/html/ja/Makefile doc/html/ja/tutorial/Makefile doc/html/ja/dialogs/Makefile zsh/Makefile test/Makefile plugins/Makefile plugins/ruby/Makefile plugins/ruby/lib/Makefile plugins/ruby/lib/ngraph/Makefile mingw/Makefile pixmap/Makefile icons/Makefile icons/scalable/Makefile icons/scalable/apps/Makefile icons/scalable/mimetypes/Makefile misc/Makefile"
 
 
 ac_config_headers="$ac_config_headers config.h"
@@ -19311,6 +19311,7 @@ do
     "plugins/Makefile") CONFIG_FILES="$CONFIG_FILES plugins/Makefile" ;;
     "plugins/ruby/Makefile") CONFIG_FILES="$CONFIG_FILES plugins/ruby/Makefile" ;;
     "plugins/ruby/lib/Makefile") CONFIG_FILES="$CONFIG_FILES plugins/ruby/lib/Makefile" ;;
+    "plugins/ruby/lib/ngraph/Makefile") CONFIG_FILES="$CONFIG_FILES plugins/ruby/lib/ngraph/Makefile" ;;
     "mingw/Makefile") CONFIG_FILES="$CONFIG_FILES mingw/Makefile" ;;
     "pixmap/Makefile") CONFIG_FILES="$CONFIG_FILES pixmap/Makefile" ;;
     "icons/Makefile") CONFIG_FILES="$CONFIG_FILES icons/Makefile" ;;
