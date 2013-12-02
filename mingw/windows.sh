@@ -42,7 +42,7 @@ make
 
 make install
 
-mkdir -p $PKG_DIR/share/icons $PKG_DIR/lib/plugins $PKG_DIR/lib/ruby
+mkdir -p $PKG_DIR/share/icons $PKG_DIR/lib/plugins
 
 cp /mingw/bin/*.dll             $PKG_DIR/bin
 cp -r /mingw/share/locale       $PKG_DIR/share
@@ -70,6 +70,7 @@ cp src/ngraph.ico          $PKG_DIR/share/icons
 
 if [ $HAVE_RUBY = "1" ]
 then
+    mkdir -p $PKG_DIR/lib/ruby/ngraph
     cp plugins/ruby/ngraph.so           $PKG_DIR/lib/ruby
     cp plugins/ruby/lib/ngraph.rb.win   $PKG_DIR/lib/ruby/ngraph.rb
     cp plugins/ruby/lib/ngraph/*.rb     $PKG_DIR/lib/ruby/
