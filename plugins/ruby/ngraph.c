@@ -17,7 +17,7 @@ static char *DummyArgv[] = {"ngraph_ruby", NULL};
 static char **DummyArgvPtr = DummyArgv;
 static int DummyArgc = 1, Initialized = FALSE;
 static VALUE NgraphClass, NgraphModule;
-static ID Uniq, Argv;
+static ID Uniq;
 
 #define VAL2INT(val) (NIL_P(val) ? 0 : NUM2INT(val))
 #define VAL2DBL(val) (NIL_P(val) ? 0.0 : NUM2DBL(val))
@@ -1888,5 +1888,4 @@ Init_ngraph(void)
   add_common_const(NgraphModule);
 
   Uniq = rb_intern("uniq");
-  Argv = rb_intern("ARGV");
 }

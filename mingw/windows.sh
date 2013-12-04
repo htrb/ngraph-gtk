@@ -6,9 +6,10 @@ WIN_PATH=mingw
 
 HAVE_RUBY="0"
 
-DEFS="-D _USE_32BIT_TIME_T -D_FORTIFY_SOURCE -DGTK_DISABLE_DEPRECATED=1 -DGDK_DISABLE_DEPRECATED=1 -DGDK_PIXBUF_DISABLE_DEPRECATED=1 -DG_DISABLE_DEPRECATED=1 -DGTK_DISABLE_SINGLE_INCLUDES=1 -DG_DISABLE_SINGLE_INCLUDES=1 -DGDK_PIXBUF_DISABLE_SINGLE_INCLUDES=1 -DGSL_DISABLE_DEPRECATED=1"
+DEFS="-D _USE_32BIT_TIME_T -D_FORTIFY_SOURCE -DGDK_DISABLE_DEPRECATED=1 -DGDK_PIXBUF_DISABLE_DEPRECATED=1 -DG_DISABLE_DEPRECATED=1 -DGTK_DISABLE_SINGLE_INCLUDES=1 -DG_DISABLE_SINGLE_INCLUDES=1 -DGDK_PIXBUF_DISABLE_SINGLE_INCLUDES=1 -DGSL_DISABLE_DEPRECATED=1"
+# DEFS="$DEFS -DGTK_DISABLE_DEPRECATED=1"
 
-CCOPT="-march=i686 -Wall -Wextra -Wpointer-arith -Wstrict-aliasing -Wno-unused-parameter -Wno-missing-field-initializers -Wdeprecated-declarations -g"
+CCOPT="-march=i686 -Wall -Wextra -Wpointer-arith -Wstrict-aliasing -Wno-unused-parameter -Wno-missing-field-initializers -Wno-deprecated-declarations -g"
 
 if which ruby
 then
@@ -73,7 +74,7 @@ then
     mkdir -p $PKG_DIR/lib/ruby/ngraph
     cp plugins/ruby/ngraph.so           $PKG_DIR/lib/ruby
     cp plugins/ruby/lib/ngraph.rb.win   $PKG_DIR/lib/ruby/ngraph.rb
-    cp plugins/ruby/lib/ngraph/*.rb     $PKG_DIR/lib/ruby/
+    cp plugins/ruby/lib/ngraph/*.rb     $PKG_DIR/lib/ruby/ngraph
     mv $PKG_DIR/bin/plugins/libruby.dll $PKG_DIR/lib/plugins
     rm -rf $PKG_DIR/bin/plugins
 fi
