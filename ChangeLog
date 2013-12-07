@@ -1,3 +1,11 @@
+2013-12-07  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* plugins/ruby/ngraph.c (load_script): use File#expand_path to get
+	full path name of the script.
+
+	* plugins/ruby.c (ngraph_plugin_open_ruby): check returned value
+	of th function "rb_require()".
+
 2013-12-01  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* plugins/ruby/lib/ngraph/ngp2.rb: added.

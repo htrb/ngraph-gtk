@@ -73,6 +73,7 @@ ngraph_plugin_open_ruby(void)
 #ifdef __MINGW32__
   char *ext_name;
 #endif
+  VALUE result;
 
   if (Initialized) {
     return 0;
@@ -101,13 +102,13 @@ ngraph_plugin_open_ruby(void)
   Initialized = TRUE;
 
 #ifdef __MINGW32__
-  rb_require(ext_name);
+  result = rb_require(ext_name);
   free(ext_name);
 #else
-  rb_require("ngraph.rb");
+  result = rb_require("ngraph.rb");
 #endif
 
-  return 0;
+  return ! RTEST(result);
 }
 
 void

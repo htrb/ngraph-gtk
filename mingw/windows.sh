@@ -49,12 +49,12 @@ cp /mingw/bin/*.dll             $PKG_DIR/bin
 cp -r /mingw/share/locale       $PKG_DIR/share
 cp -r /mingw/share/themes       $PKG_DIR/share
 cp -r /mingw/share/glib-2.0     $PKG_DIR/share
-cp -r /mingw/share/fontconfig   $PKG_DIR/share
 cp -r /mingw/etc/gtk-3.0        $PKG_DIR/etc
 cp -r /mingw/etc/pango          $PKG_DIR/etc
 cp -r /mingw/etc/fonts          $PKG_DIR/etc
 cp -r /mingw/lib/gtk-3.0        $PKG_DIR/lib
 cp -r /mingw/lib/gdk-pixbuf-2.0 $PKG_DIR/lib
+cp -r /mingw/lib/pango          $PKG_DIR/lib
 
 HICOLOR_ICONS="/mingw/share/icons/hicolor"
 if [ -d "$HICOLOR_ICONS" ]

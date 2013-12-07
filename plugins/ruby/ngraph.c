@@ -17,7 +17,7 @@ static char *DummyArgv[] = {"ngraph_ruby", NULL};
 static char **DummyArgvPtr = DummyArgv;
 static int DummyArgc = 1, Initialized = FALSE;
 static VALUE NgraphClass, NgraphModule;
-static ID Uniq;
+static ID Uniq, ExpandPath;
 
 #define VAL2INT(val) (NIL_P(val) ? 0 : NUM2INT(val))
 #define VAL2DBL(val) (NIL_P(val) ? 0.0 : NUM2DBL(val))
@@ -1800,7 +1800,7 @@ ruby_ngraph_exec_loginshell(VALUE module, VALUE cmd, VALUE nobj)
 static int
 load_script(int argc, char **argv)
 {
-  VALUE r_argv;
+  VALUE r_argv, fname;
   int state, i;
 
   if (argc < 1) {
@@ -1813,7 +1813,8 @@ load_script(int argc, char **argv)
     rb_ary_push(r_argv, rb_tainted_str_new2(argv[i]));
   }
 
-  rb_load_protect(rb_str_new2(argv[0]), 1, &state);
+  fname = rb_funcall(rb_cFile, ExpandPath, 1, rb_str_new2(argv[0]));
+  rb_load_protect(fname, 1, &state);
   if (state) {
     VALUE errinfo, errstr, errat;
     int n, i;
@@ -1873,6 +1874,9 @@ Init_ngraph(void)
     return;
   }
 
+  Uniq = rb_intern("uniq");
+  ExpandPath = rb_intern("expand_path");
+
   NgraphModule = rb_define_module("Ngraph");
   rb_define_singleton_method(NgraphModule, "puts", nputs, 1);
   rb_define_singleton_method(NgraphModule, "err_puts", nputerr, 1);
@@ -1886,6 +1890,4 @@ Init_ngraph(void)
   NgraphClass = rb_define_class_under(NgraphModule, "NgraphObject", rb_cObject);
   rb_define_method(NgraphClass, "initialize", ngraph_class_new, 0);
   add_common_const(NgraphModule);
-
-  Uniq = rb_intern("uniq");
 }
