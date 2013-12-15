@@ -11,6 +11,7 @@ struct font_prm {
 };
 
 GtkWidget *create_text_entry(int set_default_action);
+GtkWidget *create_spin_button(double min, double max, double inc, double init, int digit);
 GtkWidget *add_widget_to_table_sub(GtkWidget *table, GtkWidget *w, char *title, int expand, int col, int width, int n);
 int warning_dialog(GtkWidget *parent, const char *msg, const char *str);
 char *get_text_from_entry(GtkWidget *entry);

@@ -29,6 +29,21 @@ create_text_entry(int set_default_action)
 }
 
 GtkWidget *
+create_spin_button(double min, double max, double inc, double init, int digit)
+{
+  GtkWidget *w;
+
+  w = gtk_spin_button_new_with_range(min, max, inc);
+  gtk_entry_set_alignment(GTK_ENTRY(w), 1.0);
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), init);
+  if (digit > 0) {
+    gtk_spin_button_set_digits(GTK_SPIN_BUTTON(w), digit);
+  }
+
+  return w;
+}
+
+GtkWidget *
 add_widget_to_table_sub(GtkWidget *table, GtkWidget *w, char *title, int expand, int col, int width, int n)
 {
   GtkWidget *label;
@@ -216,21 +231,15 @@ create_font_frame(struct font_prm *prm)
   add_widget_to_table_sub(table, w, "_Font:", TRUE, 0, 1, j++);
   prm->font = w;
 
-  w = gtk_spin_button_new_with_range(6, 100, 1);
-  gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), FONT_PT);
-  gtk_spin_button_set_digits(GTK_SPIN_BUTTON(w), 2);
+  w = create_spin_button(6, 100, 1, FONT_PT, 2);
   add_widget_to_table_sub(table, w, "_Pt:", TRUE, 0, 1, j++);
   prm->pt = w;
 
-  w = gtk_spin_button_new_with_range(0, 100, 1);
-  gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), FONT_SPACE);
-  gtk_spin_button_set_digits(GTK_SPIN_BUTTON(w), 2);
+  w = create_spin_button(0, 100, 1, FONT_SPACE, 2);
   add_widget_to_table_sub(table, w, "_Space:", TRUE, 0, 1, j++);
   prm->space = w;
 
-  w = gtk_spin_button_new_with_range(10, 100, 10);
-  gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), FONT_SCRIPT);
-  gtk_spin_button_set_digits(GTK_SPIN_BUTTON(w), 2);
+  w = create_spin_button(10, 100, 10, FONT_SCRIPT, 2);
   add_widget_to_table_sub(table, w, "_Script:", TRUE, 0, 1, j++);
   prm->script = w;
 

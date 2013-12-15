@@ -212,7 +212,7 @@ savescript(struct fit_prm *prm)
 }
 
 static GtkWidget *
-create_spin_button(const char *title, double min, double max, double inc, double init, GtkWidget **hbox)
+my_create_spin_button(const char *title, double min, double max, double inc, double init, GtkWidget **hbox)
 {
   GtkWidget *w, *label;
 
@@ -223,9 +223,8 @@ create_spin_button(const char *title, double min, double max, double inc, double
   label = gtk_label_new_with_mnemonic(title);
   g_object_set(label, "margin", GINT_TO_POINTER(4), NULL);
 
-  w = gtk_spin_button_new_with_range(min, max, inc);
+  w = create_spin_button(min, max, inc, init, 0);
   gtk_widget_set_margin_right(w, 4);
-  gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), init);
   gtk_label_set_mnemonic_widget(GTK_LABEL(label), w);
   gtk_widget_set_hexpand(w, TRUE);
   gtk_widget_set_halign(w, GTK_ALIGN_FILL);
@@ -237,8 +236,7 @@ create_spin_button(const char *title, double min, double max, double inc, double
   label = gtk_label_new_with_mnemonic(title);
   gtk_box_pack_start(GTK_BOX(*hbox), label, FALSE, FALSE, 4);
 
-  w = gtk_spin_button_new_with_range(min, max, inc);
-  gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), init);
+  w = create_spin_button(min, max, inc, init, 0);
   gtk_label_set_mnemonic_widget(GTK_LABEL(label), w);
   gtk_box_pack_start(GTK_BOX(*hbox), w, TRUE, TRUE, 4);
 #endif
@@ -276,7 +274,7 @@ create_format_frame(struct fit_prm *prm)
   prm->frame = w;
 
 
-  w = create_spin_button("_Accuracy:", 1, 15, 1, ACCURACY, &hbox);
+  w = my_create_spin_button("_Accuracy:", 1, 15, 1, ACCURACY, &hbox);
   gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 2);
   prm->accuracy = w;
 
@@ -301,15 +299,11 @@ create_position_frame(struct fit_prm *prm)
 #endif
 
   j = 0;
-  w = gtk_spin_button_new_with_range(POS_MIN, POS_MAX, POS_INC);
-  gtk_spin_button_set_digits(GTK_SPIN_BUTTON(w), 2);
-  gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), prm->posx / 100.0);
+  w = create_spin_button(POS_MIN, POS_MAX, POS_INC, prm->posx / 100.0, 2);
   add_widget_to_table_sub(table, w, "_X:", TRUE, 0, 1, j++);
   prm->x = w;
 
-  w = gtk_spin_button_new_with_range(POS_MIN, POS_MAX, POS_INC);
-  gtk_spin_button_set_digits(GTK_SPIN_BUTTON(w), 2);
-  gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), prm->posy / 100.0);
+  w = create_spin_button(POS_MIN, POS_MAX, POS_INC, prm->posy / 100.0, 2);
   add_widget_to_table_sub(table, w, "_Y:", TRUE, 0, 1, j++);
   prm->y = w;
 

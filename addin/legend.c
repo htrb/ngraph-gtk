@@ -414,21 +414,15 @@ create_geometry_frame(struct file_prm *prm)
 #endif
 
   j = 0;
-  w = gtk_spin_button_new_with_range(POS_MIN, POS_MAX, POS_INC);
-  gtk_spin_button_set_digits(GTK_SPIN_BUTTON(w), 2);
-  gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), prm->posx / 100.0);
+  w = create_spin_button(POS_MIN, POS_MAX, POS_INC, prm->posx / 100.0, 2);
   add_widget_to_table_sub(table, w, "_X:", TRUE, 0, 1, j++);
   prm->x = w;
 
-  w = gtk_spin_button_new_with_range(POS_MIN, POS_MAX, POS_INC);
-  gtk_spin_button_set_digits(GTK_SPIN_BUTTON(w), 2);
-  gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), prm->posy / 100.0);
+  w = create_spin_button(POS_MIN, POS_MAX, POS_INC, prm->posy / 100.0, 2);
   add_widget_to_table_sub(table, w, "_Y:", TRUE, 0, 1, j++);
   prm->y = w;
 
-  w = gtk_spin_button_new_with_range(1, 100, 10);
-  gtk_spin_button_set_digits(GTK_SPIN_BUTTON(w), 2);
-  gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), prm->w / 100.0);
+  w = create_spin_button(1, 100, 10, prm->w / 100.0, 2);
   add_widget_to_table_sub(table, w, "_Width:", TRUE, 0, 1, j++);
   prm->width = w;
 
