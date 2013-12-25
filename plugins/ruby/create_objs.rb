@@ -487,7 +487,7 @@ class NgraphObj
     @func += (FUNC_FIELD_COMMON)
     add_arg_array(args[0], field)
     @func += <<-EOF
-	  inst->rcode = ngraph_getobj(inst->obj, "#{field}", inst->id, #{varg ? '' : '&'}carg, &rval);
+	  inst->rcode = ngraph_object_get(inst->obj, "#{field}", inst->id, #{varg ? '' : '&'}carg, &rval);
 	  rb_free_tmp_buffer(&tmpstr);
 	  if (inst->rcode < 0) {
 	    return Qnil;
@@ -515,7 +515,7 @@ class NgraphObj
 	EOF
     add_arg_array(args[0], field)
     @func += <<-EOF
-	  inst->rcode = ngraph_exeobj(inst->obj, "#{field}", inst->id, #{varg ? '' : '&'}carg);
+	  inst->rcode = ngraph_object_exe(inst->obj, "#{field}", inst->id, #{varg ? '' : '&'}carg);
 	  rb_free_tmp_buffer(&tmpstr);
 	  if (inst->rcode < 0) {
 	    return Qnil;
@@ -535,7 +535,7 @@ class NgraphObj
     @func += (FUNC_FIELD_COMMON)
     add_arg_array(args[0], field)
     @func += <<-EOF
-	  inst->rcode = ngraph_getobj(inst->obj, "#{field}", inst->id, #{varg ? '' : '&'}carg, &rval);
+	  inst->rcode = ngraph_object_get(inst->obj, "#{field}", inst->id, #{varg ? '' : '&'}carg, &rval);
 	  rb_free_tmp_buffer(&tmpstr);
 	  if (inst->rcode < 0) {
 	    return Qnil;
@@ -557,7 +557,7 @@ class NgraphObj
     @func += (FUNC_FIELD_COMMON)
     array = create_arguments(field, args)
 
-    @func += (%Q!  inst->rcode = ngraph_getobj(inst->obj, "#{field}", inst->id, carg, &rval);\n!)
+    @func += (%Q!  inst->rcode = ngraph_object_get(inst->obj, "#{field}", inst->id, carg, &rval);\n!)
     @func += (%Q!  rb_free_tmp_buffer(&tmpstr);\n!) if (array)
     @func += <<-EOF
 	  if (inst->rcode < 0) {
@@ -574,7 +574,7 @@ class NgraphObj
     @func += (FUNC_FIELD_COMMON)
     array = create_arguments(field, args)
 
-    @func += (%Q!  inst->rcode = ngraph_exeobj(inst->obj, "#{field}", inst->id, carg);\n!)
+    @func += (%Q!  inst->rcode = ngraph_object_exe(inst->obj, "#{field}", inst->id, carg);\n!)
     @func += (%Q!  rb_free_tmp_buffer(&tmpstr);\n!) if (array)
     @func += <<-EOF
 	  if (inst->rcode < 0) {
@@ -592,7 +592,7 @@ class NgraphObj
     @func += (FUNC_FIELD_COMMON)
     array = create_arguments(field, args)
 
-    @func += (%Q!  inst->rcode = ngraph_getobj(inst->obj, "#{field}", inst->id, carg, &rval);\n!)
+    @func += (%Q!  inst->rcode = ngraph_object_get(inst->obj, "#{field}", inst->id, carg, &rval);\n!)
     @func += (%Q!  rb_free_tmp_buffer(&tmpstr);\n!) if (array)
     @func += <<-EOF
 	  if (inst->rcode < 0) {

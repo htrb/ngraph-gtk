@@ -79,7 +79,7 @@ exec_init_script(int argc, char **argv, struct objlist *obj, int id)
   sarg.num = 1;
   sarg.ary[0].ary = sarray;
 
-  r = ngraph_exeobj(obj, "shell", id, &sarg);
+  r = ngraph_object_exe(obj, "shell", id, &sarg);
 
   ngraph_free(sarray);
   ngraph_free(inifile);
@@ -99,7 +99,7 @@ get_login_shell(struct objlist *sys)
   arg.num = 0;
   arg.ary[0].str = NULL;
 
-  if (ngraph_getobj(sys, "login_shell", 0, &arg, &rval) < 0) {
+  if (ngraph_object_get(sys, "login_shell", 0, &arg, &rval) < 0) {
     exit(1);
   }
 
@@ -129,7 +129,7 @@ main(int argc, char **argv)
     exit(1);
   }
 
-  id = ngraph_new(obj);
+  id = ngraph_object_new(obj);
   if (id < 0) {
     exit(1);
   }
@@ -148,7 +148,7 @@ main(int argc, char **argv)
     ngraph_value val;
 
     val.str = NULL;
-    if (ngraph_putobj(sys, "login_shell", 0, &val) < 0) {
+    if (ngraph_object_put(sys, "login_shell", 0, &val) < 0) {
       exit(1);
     }
 
@@ -163,6 +163,6 @@ main(int argc, char **argv)
 #endif
   ngraph_finalize();
 
-  ngraph_del(sys, 0);
+  ngraph_object_del(sys, 0);
   return 0;
 }

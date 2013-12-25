@@ -106,7 +106,7 @@ allocate_sarray(ngraph_arg *arg)
 }
 
 int
-ngraph_putobj(struct objlist *obj, const char *vname, int id, ngraph_value *val)
+ngraph_object_put(struct objlist *obj, const char *vname, int id, ngraph_value *val)
 {
   enum ngraph_object_field_type type;
   int r;
@@ -321,7 +321,7 @@ free_obj_arg(const char **ary, struct objlist *obj, const char *vname, ngraph_ar
 }
 
 int
-ngraph_getobj(struct objlist *obj, const char *vname, int id, ngraph_arg *arg, ngraph_returned_value *val)
+ngraph_object_get(struct objlist *obj, const char *vname, int id, ngraph_arg *arg, ngraph_returned_value *val)
 {
   int r, argc;
   enum ngraph_object_field_type type;
@@ -386,7 +386,7 @@ ngraph_getobj(struct objlist *obj, const char *vname, int id, ngraph_arg *arg, n
 }
 
 int
-ngraph_exeobj(struct objlist *obj, const char *vname, int id, ngraph_arg *arg)
+ngraph_object_exe(struct objlist *obj, const char *vname, int id, ngraph_arg *arg)
 {
   int r, argc;
   enum ngraph_object_field_type type;
@@ -414,7 +414,7 @@ ngraph_get_object(const char *name)
 }
 
 struct objlist *
-ngraph_get_instances_by_str(const char *str, int *n, int **ids)
+ngraph_get_object_instances_by_str(const char *str, int *n, int **ids)
 {
   struct narray iarray;
   int *id_ary, *adata, anum, i, r;
@@ -466,61 +466,61 @@ ngraph_get_instances_by_str(const char *str, int *n, int **ids)
 }
 
 int
-ngraph_get_id_by_oid(struct objlist *obj, int oid)
+ngraph_object_get_id_by_oid(struct objlist *obj, int oid)
 {
   return chkobjoid(obj, oid);
 }
 
 int
-ngraph_move_top(struct objlist *obj, int id)
+ngraph_object_move_top(struct objlist *obj, int id)
 {
   return movetopobj(obj, id);
 }
 
 int
-ngraph_move_last(struct objlist *obj, int id)
+ngraph_object_move_last(struct objlist *obj, int id)
 {
   return movelastobj(obj, id);
 }
 
 int
-ngraph_move_up(struct objlist *obj, int id)
+ngraph_object_move_up(struct objlist *obj, int id)
 {
   return moveupobj(obj, id);
 }
 
 int
-ngraph_move_down(struct objlist *obj, int id)
+ngraph_object_move_down(struct objlist *obj, int id)
 {
   return movedownobj(obj, id);
 }
 
 int
-ngraph_exchange(struct objlist *obj, int id1, int id2)
+ngraph_object_exchange(struct objlist *obj, int id1, int id2)
 {
   return exchobj(obj, id1, id2);
 }
 
 int
-ngraph_copy(struct objlist *obj, int dist, int src)
+ngraph_object_copy(struct objlist *obj, int dist, int src)
 {
   return copy_obj_field(obj, dist, src, NULL);
 }
 
 int
-ngraph_new(struct objlist *obj)
+ngraph_object_new(struct objlist *obj)
 {
   return newobj(obj);
 }
 
 int
-ngraph_del(struct objlist *obj, int id)
+ngraph_object_del(struct objlist *obj, int id)
 {
   return delobj(obj, id);
 }
 
 int
-ngraph_exist(struct objlist *obj, int id)
+ngraph_object_exist(struct objlist *obj, int id)
 {
   int last;
 
@@ -537,91 +537,91 @@ ngraph_exist(struct objlist *obj, int id)
 }
 
 const char *
-ngraph_get_obj_name(struct objlist *obj)
+ngraph_get_object_name(struct objlist *obj)
 {
   return chkobjectname(obj);
 }
 
 int
-ngraph_get_obj_field_num(struct objlist *obj)
+ngraph_get_object_field_num(struct objlist *obj)
 {
   return chkobjfieldnum(obj);
 }
 
 const char *
-ngraph_get_obj_field(struct objlist *obj, int i)
+ngraph_get_object_field(struct objlist *obj, int i)
 {
   return chkobjfieldname(obj, i);
 }
 
 int
-ngraph_get_obj_field_permission(struct objlist *obj, const char *field)
+ngraph_get_object_field_permission(struct objlist *obj, const char *field)
 {
   return chkobjperm(obj, field);
 }
 
 enum ngraph_object_field_type
-ngraph_get_obj_field_type(struct objlist *obj, const char *field)
+ngraph_get_object_field_type(struct objlist *obj, const char *field)
 {
   return chkobjfieldtype(obj, field);
 }
 
 const char *
-ngraph_get_obj_field_args(struct objlist *obj, const char *field)
+ngraph_get_object_field_args(struct objlist *obj, const char *field)
 {
   return chkobjarglist(obj, field);
 }
 
 struct objlist *
-ngraph_get_obj_parent(struct objlist *obj)
+ngraph_get_parent_object(struct objlist *obj)
 {
   return chkobjparent(obj);
 }
 
 struct objlist *
-ngraph_get_obj_root(void)
+ngraph_get_root_object(void)
 {
   return chkobjroot();
 }
 
 const char *
-ngraph_get_obj_version(struct objlist *obj)
+ngraph_get_object_version(struct objlist *obj)
 {
   return chkobjver(obj);
 }
 
 int
-ngraph_get_obj_id(struct objlist *obj)
+ngraph_get_object_id(struct objlist *obj)
 {
   return chkobjectid(obj);
 }
 
 int
-ngraph_get_obj_size(struct objlist *obj)
+ngraph_get_object_size(struct objlist *obj)
 {
   return chkobjsize(obj);
 }
 
 int
-ngraph_get_obj_current_id(struct objlist *obj)
+ngraph_get_object_current_id(struct objlist *obj)
 {
   return chkobjcurinst(obj);
 }
 
 int
-ngraph_get_obj_last_id(struct objlist *obj)
+ngraph_get_object_last_id(struct objlist *obj)
 {
   return chkobjlastinst(obj);
 }
 
 struct objlist *
-ngraph_get_obj_next(struct objlist *obj)
+ngraph_get_next_object(struct objlist *obj)
 {
   return obj->next;
 }
 
 struct objlist *
-ngraph_get_obj_child(struct objlist *obj)
+ngraph_get_child_object(struct objlist *obj)
 {
   return obj->child;
 }

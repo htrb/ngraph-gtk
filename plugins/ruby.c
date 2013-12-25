@@ -35,7 +35,7 @@ get_ext_name(void)
   }
 
   arg.num = 0;
-  ngraph_getobj(sys, "plugin_dir", 0, &arg, &val);
+  ngraph_object_get(sys, "plugin_dir", 0, &arg, &val);
   if (val.str == NULL) {
     return NULL;
   }

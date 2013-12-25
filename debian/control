@@ -88,6 +88,7 @@ Description: documents of Ngraph-gtk
  This package contains document files.
 
 Package: ngraph-gtk-dev
+Section: libdevel
 Architecture: all
 Depends: ${misc:Depends}
 Recommends: ngraph-gtk
@@ -111,6 +112,7 @@ Description: Ruby plugin for Ngraph-gtk
  This package contains a plugin to run Ruby script.
 
 Package: ruby-ngraph
+Section: ruby
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, ngraph-gtk
 Description: Library for using ngraph-gtk Ruby programs
@@ -119,4 +121,4 @@ Description: Library for using ngraph-gtk Ruby programs
  engineers. This program can create advanced graphs which can't be
  created by spreadsheets. Graphs can be exported to postscript.
  .
- This package contains a library for using ngraph-gtk Ruby programs.
+ This package contains a library for using ngraph-gtk in Ruby programs.
