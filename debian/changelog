@@ -1,14 +1,30 @@
+ngraph-gtk (6.06.13-3) unstable; urgency=low
+
+  * preperation for next release.
+
+ -- Ito Hiroyuki <ZXB01226@nifty.com>  Wed, 1 Nov 2014 09:16:03 +0900
+
+ngraph-gtk (6.06.13-2) unstable; urgency=medium
+   
+  * debian/upstream-signing-key.pgp
+  * debian/watch
+  * debian/source/include-binaries
+   - add upstream signing key to verify upstream source code
+  * debian/control
+   - bump Standards-Version to 3.9.5
+
+ -- Koichi Akabe <vbkaisetsu@gmail.com>  Sun, 29 Dec 2013 11:22:16 +0900
+
 ngraph-gtk (6.06.13-1) unstable; urgency=low
 
-  * preperation for next release.
+  * New upstream release
+  * debian/control
+   - add ngraph-gtk-dev, ngraph-gtk-plugin-ruby packages
+  * add following install files for new packages
+   - ngraph-gtk-dev.install
+   - ngraph-gtk-plugin-ruby.install
 
- -- Ito Hiroyuki <ZXB01226@nifty.com>  Tue, 19 Nov 2013 09:16:03 +0900
-
-ngraph-gtk (6.06.12-1) unstable; urgency=low
-
-  * preperation for next release.
-
- -- Ito Hiroyuki <ZXB01226@nifty.com>  Sat, 19 Oct 2013 09:16:03 +0900
+ -- Koichi Akabe <vbkaisetsu@gmail.com>  Fri, 13 Dec 2013 20:20:42 +0900
 
 ngraph-gtk (6.06.11-1) unstable; urgency=low
 
