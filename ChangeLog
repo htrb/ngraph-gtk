@@ -1,3 +1,7 @@
+2014-02-01  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/object.c (obj_do_tighten_all): added.
+
 2014-01-28  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* addin/fft.c (save_data, read_data): added.

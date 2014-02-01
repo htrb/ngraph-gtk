@@ -36,7 +36,11 @@
 #include "mathfn.h"
 #include "oroot.h"
 #include "ofit.h"
+#ifdef USE_PLOT_OBJ
+#include "oplot.h"
+#else
 #include "ofile.h"
+#endif
 
 #include "math/math_equation.h"
 

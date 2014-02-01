@@ -46,7 +46,11 @@
 #include "gra.h"
 #include "spline.h"
 #include "nconfig.h"
+#ifdef USE_PLOT_OBJ
+#include "oplot.h"
+#else
 #include "ofile.h"
+#endif
 #include "ofit.h"
 
 #include "math_equation.h"

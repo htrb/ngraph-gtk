@@ -4879,6 +4879,41 @@ obj_do_tighten(struct objlist *obj, N_VALUE *inst, const char *field)
   arraydel(&iarray);
 }
 
+void
+obj_do_tighten_all(struct objlist *obj, N_VALUE *inst, const char *field)
+{
+  char *dest, *ptr;
+  struct narray iarray;
+  struct objlist *dobj;
+  int anum, id, oid, i;
+  GString *dest2;
+
+  if (_getobj(obj, field, inst, &dest))
+    return;
+
+  if (dest == NULL)
+    return;
+
+  dest2 = g_string_sized_new(1024);
+  if (dest2 == NULL) {
+    return;
+  }
+  arrayinit(&iarray, sizeof(int));
+  if (! getobjilist(dest, &dobj, &iarray, FALSE, NULL)) {
+    anum = arraynum(&iarray);
+    g_string_printf(dest2, "%s:", chkobjectname(dobj));
+    for (i = 0; i < anum; i++) {
+      id = arraynget_int(&iarray, i);
+      if (getobj(dobj, "oid", id, 0, NULL, &oid) != -1) {
+	g_string_append_printf(dest2, "%s^%d", (i == 0) ? "" : ",", oid);
+      }
+    }
+    ptr = g_string_free(dest2, FALSE);
+    _putobj(obj, field, inst, ptr);
+  }
+  arraydel(&iarray);
+}
+
 int 
 copy_obj_field(struct objlist *obj, int dist, int src, char **ignore_field)
 {

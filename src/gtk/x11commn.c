@@ -38,7 +38,11 @@
 #include "ioutil.h"
 #include "shell.h"
 #include "nstring.h"
+#ifdef USE_PLOT_OBJ
+#include "oplot.h"
+#else
 #include "ofile.h"
+#endif
 #include "odraw.h"
 #include "nconfig.h"
 

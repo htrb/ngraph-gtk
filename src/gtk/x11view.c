@@ -31,7 +31,11 @@
 
 #include "object.h"
 #include "gra.h"
+#ifdef USE_PLOT_OBJ
+#include "oplot.h"
+#else
 #include "ofile.h"
+#endif
 #include "olegend.h"
 #include "oarc.h"
 #include "opath.h"

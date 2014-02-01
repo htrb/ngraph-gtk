@@ -1,11 +1,11 @@
-ngraph-gtk (6.06.13-3) unstable; urgency=low
+ngraph-gtk (6.06.13-4) unstable; urgency=low
 
   * preperation for next release.
 
  -- Ito Hiroyuki <ZXB01226@nifty.com>  Wed, 1 Nov 2014 09:16:03 +0900
 
 ngraph-gtk (6.06.13-2) unstable; urgency=medium
-   
+
   * debian/upstream-signing-key.pgp
   * debian/watch
   * debian/source/include-binaries

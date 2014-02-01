@@ -303,6 +303,7 @@ int sexefield(struct objlist *obj,int id,char *arg);
 int sexeobj(char *arg);
 int has_eventloop(void);
 void obj_do_tighten(struct objlist *obj, N_VALUE *inst,  const char *field);
+void obj_do_tighten_all(struct objlist *obj, N_VALUE *inst, const char *field);
 int getobjilist2(char **s,struct objlist **obj,struct narray *iarray,int def);
 void delchildobj(struct objlist *parent);
 int vinterrupt(void);

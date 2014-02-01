@@ -5,6 +5,8 @@
 #include "config.h"
 #endif
 
+// #define USE_PLOT_OBJ
+
 #ifdef HAVE_GETTEXT
 
 #define DEFAULT_TEXT_DOMAIN PACKAGE
