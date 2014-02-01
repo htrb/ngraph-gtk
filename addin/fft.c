@@ -10,66 +10,119 @@
 
 #define PI 3.141592653589793
 
-#define MAXP 16
-#define MAXDATA 65536
+#define MAXP 24
+#define MAXDATA (1 << MAXP)
 
-double fr[MAXDATA],fi[MAXDATA],gr[MAXDATA],gi[MAXDATA];
-double workr[MAXDATA/2],worki[MAXDATA/2];
+double fr[MAXDATA], fi[MAXDATA], gr[MAXDATA], gi[MAXDATA];
+double workr[MAXDATA / 2], worki[MAXDATA / 2];
 
-void fft(int p,int num);
+static void fft(int p,int num);
+static int read_data(const char *fname1, int *n, int *p, double *min, double *max);
+static int save_data(const char *fname2, int n, int p, double minx, double maxx);
 
-int main(int argc,char **argv)
+int
+main(int argc,char **argv)
 {
   char *fname1,*fname2;
-  FILE *fp1,*fp2;
-  int n,p,num,i;
-  double x,y,minx,maxx,dx;
+  int n, p, num;
+  double minx, maxx;
 
-  if (argc<3) {
-    fprintf(stderr,"usage: fft input output");
+  if (argc < 3) {
+    fprintf(stderr, "usage: fft input output");
     exit(1);
   }
-  fname1=argv[1];
-  fname2=argv[2];
-  if ((fp1=fopen(fname1,"rt"))==NULL) {
-    fprintf(stderr,"error: open (%s)",fname1);
+  fname1 = argv[1];
+  fname2 = argv[2];
+
+  num = read_data(fname1, &p, &n, &minx, &maxx);
+  if (num < 0) {
+    fprintf(stderr, "error: open (%s)", fname1);
+    exit(1);
+  } else if (num < 2) {
+    fprintf(stderr, "error: too small number of data");
     exit(1);
   }
-  if ((fp2=fopen(fname2,"wt"))==NULL) {
-    fprintf(stderr,"error: open (%s)",fname2);
+
+  if (save_data(fname2, n, p, minx, maxx)) {
+    fprintf(stderr, "error: open (%s)", fname2);
     exit(1);
   }
-  num=0;
-  n=1;
-  p=0;
-  while (fscanf(fp1,"%lf%lf",&x,&y)==2) {
-    if (num==0) minx=x;
-    fr[num]=y;
-    fi[num]=0;
-    num++;
-    if (num==(n*2)) {
-      n*=2;
-      p++;
-      if (p==MAXP) break;
-      maxx=x;
-    }
-  }
-  if (num<2) {
-    fprintf(stderr,"error: too small number of data");
-    exit(1);
-  }
-  fft(p,n);
-  dx=(n-1)/(maxx-minx)/n;
-  for (i=n/2;i<n;i++)
-    fprintf(fp2,"%f %f %f\n",dx*(i-n),gr[i],gi[i]);
-  for (i=0;i<n/2;i++)
-    fprintf(fp2,"%f %f %f\n",dx*i,gr[i],gi[i]);
-  fclose(fp1);
-  fclose(fp2);
+
   return 0;
 }
 
-void fft(int p,int n)
+static int
+save_data(const char *fname2, int n, int p, double minx, double maxx)
+{
+  FILE *fp2;
+  double dx;
+  int i;
+
+  fp2 = fopen(fname2, "wt");
+  if (fp2 == NULL) {
+    return 1;
+  }
+
+  fft(p, n);
+  dx = (n - 1) / (maxx - minx) / n;
+  for (i = n / 2; i < n; i++) {
+    fprintf(fp2, "%f %f %f\n", dx * (i - n), gr[i], gi[i]);
+  }
+  for (i = 0; i < n / 2; i++) {
+    fprintf(fp2, "%f %f %f\n", dx * i, gr[i], gi[i]);
+  }
+  fclose(fp2);
+
+  return 0;
+}
+
+static int
+read_data(const char *fname1, int *fft_n, int *fft_p, double *min, double *max)
+{
+  FILE *fp1;
+  int num, n, p;
+  double x, y, minx, maxx;
+
+  fp1 = fopen(fname1, "rt");
+  if (fp1 == NULL) {
+    return -1;
+  }
+
+  num = 0;
+  n = 1;
+  p = 0;
+  maxx = 0;
+  minx = 0;
+
+  while (fscanf(fp1, "%lf%lf", &x, &y) == 2) {
+    if (num == 0) {
+      minx = x;
+    }
+    fr[num] = y;
+    fi[num] = 0;
+    num++;
+    if (num == (n*2)) {
+      n *= 2;
+      p++;
+      if (p == MAXP) {
+	break;
+      }
+      maxx=x;
+    }
+  }
+
+  fclose(fp1);
+
+  *fft_n = n;
+  *fft_p = p;
+  *min = minx;
+  *max = maxx;
+
+  return num;
+}
+
+static void
+fft(int p,int n)
 {
   int i,j,k,l,l1,l2,m,n2;
   double ar,ai,br,bi;

@@ -1,3 +1,9 @@
+2014-01-28  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* addin/fft.c (save_data, read_data): added.
+	(main): use "save_data()" and "read_data()".
+	(MAXP): changed from 16 to 24.
+
 2013-12-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* addin/legend.c (create_geometry_frame): use
