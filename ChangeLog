@@ -1,3 +1,10 @@
+2014-02-02  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/odarray.c (calc_sum, calc_square_sum): removed.
+	(cache_data): added.
+	(darray_sum, darray_average, darray_rms, darray_sdev)
+	(darray_min, darray_max): use "cache_data()".
+
 2014-02-01  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/object.c (obj_do_tighten_all): added.

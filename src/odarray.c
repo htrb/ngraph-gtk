@@ -44,12 +44,29 @@ static char *darrayerrorlist[]={
   "array index is out of array bounds.",
 };
 
+struct darray_local {
+  double sum, ssum, min, max;
+  int num;
+  int modified;
+};
+
 #define ERRNUM (sizeof(darrayerrorlist) / sizeof(*darrayerrorlist))
 
 static int 
 darrayinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
+  struct darray_local *local;
+
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
+
+  local = g_malloc0(sizeof(*local));
+  if (local == NULL) {
+    return 1;
+  }
+ 
+  local->modified = TRUE;
+ _putobj(obj, "_local", inst, local);
+
   return 0;
 }
 
@@ -90,6 +107,10 @@ darrayput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   struct narray *array;
   int num;
   double val;
+  struct darray_local *local;
+
+  _getobj(obj, "_local", inst, &local);
+  local->modified = TRUE;
 
   num=*(int *)argv[2];
   val=*(double *)argv[3];
@@ -108,6 +129,10 @@ darrayadd(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
   double val;
+  struct darray_local *local;
+
+  _getobj(obj, "_local", inst, &local);
+  local->modified = TRUE;
 
   val=*(double *)argv[2];
 
@@ -126,6 +151,10 @@ darraypop(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   struct narray *array;
   double val;
   int n;
+  struct darray_local *local;
+
+  _getobj(obj, "_local", inst, &local);
+  local->modified = TRUE;
 
   rval->d = 0.0;
 
@@ -162,6 +191,10 @@ darrayins(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   struct narray *array;
   int num;
   double val;
+  struct darray_local *local;
+
+  _getobj(obj, "_local", inst, &local);
+  local->modified = TRUE;
 
   num=*(int *)argv[2];
   val=*(double *)argv[3];
@@ -186,6 +219,10 @@ darrayunshift(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **ar
 {
   struct narray *array;
   double val;
+  struct darray_local *local;
+
+  _getobj(obj, "_local", inst, &local);
+  local->modified = TRUE;
 
   val = * (double *) argv[2];
 
@@ -206,6 +243,10 @@ darrayshift(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
 {
   struct narray *array;
   double val;
+  struct darray_local *local;
+
+  _getobj(obj, "_local", inst, &local);
+  local->modified = TRUE;
 
   rval->d = 0;
 
@@ -237,6 +278,10 @@ darraydel(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
   int num;
+  struct darray_local *local;
+
+  _getobj(obj, "_local", inst, &local);
+  local->modified = TRUE;
 
   num=*(int *)argv[2];
   _getobj(obj,"@",inst,&array);
@@ -287,6 +332,10 @@ static int
 darrayuniq(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc, char **argv)
 {
   struct narray *array;
+  struct darray_local *local;
+
+  _getobj(obj, "_local", inst, &local);
+  local->modified = TRUE;
 
   _getobj(obj, "@", inst, &array);
 
@@ -303,6 +352,10 @@ darrayjoin(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   int i, n;
   char *sep, *ptr;
   double val;
+  struct darray_local *local;
+
+  _getobj(obj, "_local", inst, &local);
+  local->modified = TRUE;
 
   g_free(rval->str);
   rval->str = NULL;
@@ -341,54 +394,54 @@ darrayjoin(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   return 0;
 }
 
-static double
-calc_sum(const double *d, int n)
+static void
+cache_data(struct objlist *obj, N_VALUE *inst, struct darray_local *local)
 {
-  double sum;
-  int i;
+  struct narray *array;
+  double min, max, sum, ssum, *data;
+  int i, n;
 
+  _getobj(obj, "@", inst, &array);
+  n = arraynum(array);
+  data = arraydata(array);
+  min = 0;
+  max = 0;
   sum = 0;
-
-  for (i = 0; i < n; i++) {
-    sum += d[i];
+  ssum = 0;
+  if (n > 0) {
+    min = max = data[0];
+    for (i = 0; i < n; i++) {
+      sum += data[i];
+      ssum += data[i] * data[i];
+      if (data[i] < min) {
+	min = data[i];
+      } else if (data[i] > max) {
+	max = data[i];
+      }
+    }
   }
 
-  return sum;
-}
-
-static double
-calc_square_sum(const double *d, int n)
-{
-  double sum;
-  int i;
-
-  sum = 0;
-
-  for (i = 0; i < n; i++) {
-    sum += d[i] * d[i];
-  }
-
-  return sum;
+  local->num = n;
+  local->min = min;
+  local->max = max;
+  local->sum = sum;
+  local->ssum = ssum;
+  local->modified = FALSE;
 }
 
 static int 
 darray_sum(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  struct narray *array;
-  int n;
-  double *data;
+  struct darray_local *local;
 
   rval->d = 0;
 
-  _getobj(obj, "@", inst, &array);
-  n = arraynum(array);
-  if (n == 0) {
-    return 0;
+  _getobj(obj, "_local", inst, &local);
+  if (local->modified) {
+    cache_data(obj, inst, local);
   }
 
-  data = arraydata(array);
-
-  rval->d = calc_sum(data, n);
+  rval->d = local->sum;
 
   return 0;
 }
@@ -396,22 +449,20 @@ darray_sum(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
 static int 
 darray_average(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  struct narray *array;
-  int n;
-  double val, *data;
+  struct darray_local *local;
 
   rval->d = 0;
 
-  _getobj(obj, "@", inst, &array);
-  n = arraynum(array);
-  if (n == 0) {
+  _getobj(obj, "_local", inst, &local);
+  if (local->modified) {
+    cache_data(obj, inst, local);
+  }
+
+  if (local->num == 0) {
     return 0;
   }
 
-  data = arraydata(array);
-
-  val = calc_sum(data, n);
-  rval->d = val / n;
+  rval->d = local->sum / local->num;
 
   return 0;
 }
@@ -419,22 +470,20 @@ darray_average(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char
 static int
 darray_rms(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  struct narray *array;
-  int n;
-  double val, *data;
+  struct darray_local *local;
 
   rval->d = 0;
 
-  _getobj(obj, "@", inst, &array);
-  n = arraynum(array);
-  if (n == 0) {
+  _getobj(obj, "_local", inst, &local);
+  if (local->modified) {
+    cache_data(obj, inst, local);
+  }
+
+  if (local->num == 0) {
     return 0;
   }
 
-  data = arraydata(array);
-
-  val = calc_square_sum(data, n);
-  rval->d = sqrt(val / n);
+  rval->d = sqrt(local->ssum / local->num);
 
   return 0;
 }
@@ -442,22 +491,24 @@ darray_rms(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
 static int
 darray_sdev(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  struct narray *array;
+  double sum, ssum, val;
   int n;
-  double sum, ssum, val, *data;
+  struct darray_local *local;
 
   rval->d = 0;
 
-  _getobj(obj, "@", inst, &array);
-  n = arraynum(array);
+  _getobj(obj, "_local", inst, &local);
+  if (local->modified) {
+    cache_data(obj, inst, local);
+  }
+
+  n = local->num;
   if (n == 0) {
     return 0;
   }
 
-  data = arraydata(array);
-
-  sum = calc_sum(data, n);
-  ssum = calc_square_sum(data, n);
+  sum = local->sum;
+  ssum = local->ssum;
 
   sum /= n;
   val = ssum / n - sum * sum;
@@ -470,28 +521,16 @@ darray_sdev(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **
 static int
 darray_min(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  struct narray *array;
-  int i, n;
-  double val, *data;
+  struct darray_local *local;
 
   rval->d = 0;
 
-  _getobj(obj, "@", inst, &array);
-  n = arraynum(array);
-  if (n == 0) {
-    return 1;
+  _getobj(obj, "_local", inst, &local);
+  if (local->modified) {
+    cache_data(obj, inst, local);
   }
 
-  data = arraydata(array);
-
-  val = data[0];
-  for (i = 1; i < n; i++) {
-    if (data[i] < val) {
-      val = data[i];
-    }
-  }
-
-  rval->d = val;
+  rval->d = local->min;
 
   return 0;
 }
@@ -499,28 +538,16 @@ darray_min(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
 static int
 darray_max(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  struct narray *array;
-  int i, n;
-  double val, *data;
+  struct darray_local *local;
 
   rval->d = 0;
 
-  _getobj(obj, "@", inst, &array);
-  n = arraynum(array);
-  if (n == 0) {
-    return 1;
+  _getobj(obj, "_local", inst, &local);
+  if (local->modified) {
+    cache_data(obj, inst, local);
   }
 
-  data = arraydata(array);
-
-  val = data[0];
-  for (i = 1; i < n; i++) {
-    if (data[i] > val) {
-      val = data[i];
-    }
-  }
-
-  rval->d = val;
+  rval->d = local->max;
 
   return 0;
 }
@@ -596,6 +623,7 @@ static struct objtable odarray[] = {
   {"reverse", NVFUNC, NREAD|NEXEC, oarray_reverse, "", 0},
   {"slice", NVFUNC, NREAD|NEXEC, oarray_slice, "ii", 0},
   {"map", NVFUNC, NREAD|NEXEC, darray_map, "s", 0},
+  {"_local", NPOINTER, 0, NULL, NULL, 0},
 };
 
 #define TBLNUM (sizeof(odarray) / sizeof(*odarray))
