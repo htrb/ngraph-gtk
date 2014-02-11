@@ -1,5 +1,9 @@
 2014-02-11  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/oplot.h: added.
+
+	* src/oplot.c: added.
+
 	* src/gtk/x11view.c (ViewerEvLButtonUp): call
 	"gtk_widget_queue_draw()".
 
