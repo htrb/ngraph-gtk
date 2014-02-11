@@ -3522,6 +3522,8 @@ ViewerEvLButtonUp(unsigned int state, TPoint *point, struct Viewer *d)
       if (d->Mode & POINT_TYPE_POINT) {
 	d->allclear = FALSE;
 	UpdateAll();
+      } else {
+	gtk_widget_queue_draw(d->Win);
       }
       break;
     case MOUSENONE:
