@@ -1,5 +1,7 @@
 2014-02-13  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* doc/html/ja/text.html: update document.
+
 	* src/gtk/x11file.c (draw_type_pixbuf, file_list_set_val): support
 	sourece type "function" and "array".
 
