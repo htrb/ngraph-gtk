@@ -4664,6 +4664,11 @@ draw_type_pixbuf(struct objlist *obj, int i)
   struct objlist *gobj, *robj;
   N_VALUE *inst;
   struct gra2cairo_local *local;
+#ifdef USE_PLOT_OBJ
+  int src;
+
+  getobj(obj, "source", i, 0, NULL, &src);
+#endif
 
   lockstate = Globallock;
   Globallock = TRUE;
@@ -4687,6 +4692,11 @@ draw_type_pixbuf(struct objlist *obj, int i)
 
 
   getobj(obj, "type", i, 0, NULL, &type);
+#ifdef USE_PLOT_OBJ
+  if (src == PLOT_SOURCE_FUNC) {
+    type = PLOT_TYPE_LINE;
+  }
+#endif
   getobj(obj, "R", i, 0, NULL, &fr);
   getobj(obj, "G", i, 0, NULL, &fg);
   getobj(obj, "B", i, 0, NULL, &fb);
@@ -4918,18 +4928,58 @@ file_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
   struct narray *mask, *move;
   char *file, *bfile, *axis;
   GdkPixbuf *pixbuf = NULL;
+#ifdef USE_PLOT_OBJ
+  int src;
+  char *ary, *math_x, *math_y;
+
+  getobj(d->obj, "source", row, 0, NULL, &src);
+#endif
 
   for (i = 0; i < FILE_WIN_COL_NUM; i++) {
     switch (i) {
     case FILE_WIN_COL_FILE:
       getobj(d->obj, "mask", row, 0, NULL, &mask);
       getobj(d->obj, "move_data", row, 0, NULL, &move);
-      getobj(d->obj, "file", row, 0, NULL, &file);
       if ((arraynum(mask) != 0) || (arraynum(move) != 0)) {
 	style = PANGO_STYLE_ITALIC;
       } else {
 	style = PANGO_STYLE_NORMAL;
       }
+      list_store_set_int(GTK_WIDGET(d->text), iter, FILE_WIN_COL_MASKED, style);
+#ifdef USE_PLOT_OBJ
+      switch (src) {
+      case PLOT_SOURCE_FILE:
+	getobj(d->obj, "file", row, 0, NULL, &file);
+	bfile = getbasename(file);
+	if (bfile) {
+	  list_store_set_string(GTK_WIDGET(d->text), iter, i, bfile);
+	  g_free(bfile);
+	} else {
+	  list_store_set_string(GTK_WIDGET(d->text), iter, i, "....................");
+	}
+	break;
+      case PLOT_SOURCE_FUNC:
+	getobj(d->obj, "math_x", row, 0, NULL, &math_x);
+	getobj(d->obj, "math_y", row, 0, NULL, &math_y);
+	if (math_y) {
+	  list_store_set_string(GTK_WIDGET(d->text), iter, i, math_y);
+	} else if (math_x) {
+	  list_store_set_string(GTK_WIDGET(d->text), iter, i, math_x);
+	} else {
+	  list_store_set_string(GTK_WIDGET(d->text), iter, i, "....................");
+	}
+	break;
+      case PLOT_SOURCE_ARRAY:
+	getobj(d->obj, "array", row, 0, NULL, &ary);
+	if (ary) {
+	  list_store_set_string(GTK_WIDGET(d->text), iter, i, ary);
+	} else {
+	  list_store_set_string(GTK_WIDGET(d->text), iter, i, "....................");
+	}
+	break;
+      }
+#else
+      getobj(d->obj, "file", row, 0, NULL, &file);
       bfile = getbasename(file);
       if (bfile) {
 	list_store_set_string(GTK_WIDGET(d->text), iter, i, CHK_STR(bfile));
@@ -4937,7 +4987,7 @@ file_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
       } else {
 	list_store_set_string(GTK_WIDGET(d->text), iter, i, "....................");
       }
-      list_store_set_int(GTK_WIDGET(d->text), iter, FILE_WIN_COL_MASKED, style);
+#endif
       break;
     case FILE_WIN_COL_TYPE:
       pixbuf = draw_type_pixbuf(d->obj, row);

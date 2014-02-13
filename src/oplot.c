@@ -129,6 +129,7 @@ enum {
 #define ERR_INVALID_PARAM	124
 #define ERRCONVERGE	125
 #define ERR_INVALID_SOURCE	126
+#define ERR_INVALID_OBJ	127
 
 static char *f2derrorlist[]={
   "file is not specified.",
@@ -158,6 +159,7 @@ static char *f2derrorlist[]={
   "invalid parameter.",
   "convergence error.",
   "invalid source.",
+  "invalid object.",
 };
 
 #define ERRNUM (sizeof(f2derrorlist) / sizeof(*f2derrorlist))
@@ -1139,7 +1141,7 @@ get_axis_prm(struct objlist *obj, N_VALUE *inst, int axis, struct axis_prm *prm)
   return aid;
 }
 
-static void
+static int
 open_array(char *objstr, struct array_prm *ary)
 {
   int i, n, dnum, id;
@@ -1147,26 +1149,30 @@ open_array(char *objstr, struct array_prm *ary)
   struct objlist *dobj, *obj;
 
   dobj = getobject("darray");
-  ary->obj = dobj;
+  ary->obj = NULL;
   ary->col_num = 0;
   ary->data_num = 0;
   memset(ary->id, 0, sizeof(ary->id));
   memset(ary->ary, 0, sizeof(ary->ary));
 
+  if (objstr == NULL) {
+    return 1;
+  }
+
   arrayinit(&iarray, sizeof(int));
   if (getobjilist(objstr, &obj, &iarray, FALSE, NULL)) {
-    return;
+    return 1;
   }
 
   if (obj != dobj) {
     arraydel(&iarray);
-    return;
+    return 1;
   }
 
   n = arraynum(&iarray);
   if (n < 1) {
     arraydel(&iarray);
-    return;
+    return 1;
   }
 
   if (n > FILE_OBJ_MAXCOL) {
@@ -1186,7 +1192,10 @@ open_array(char *objstr, struct array_prm *ary)
   }
   arraydel(&iarray);
 
+  ary->obj = obj;
   ary->col_num = n;
+
+  return 0;
 }
 
 static struct f2ddata *
@@ -9266,6 +9275,19 @@ get_fit_parameter(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char 
   return 0;
 }
 
+static int 
+set_array(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  struct array_prm ary;
+
+  if (argv[2] && open_array(argv[2], &ary)) {
+    error2(obj, ERR_INVALID_OBJ, argv[2]);
+    return 1;
+  }
+
+  return 0;
+}
+
 static struct objtable file2d[] = {
   {"init",NVFUNC,NEXEC,f2dinit,NULL,0},
   {"done",NVFUNC,NEXEC,f2ddone,NULL,0},
@@ -9400,7 +9422,7 @@ static struct objtable file2d[] = {
   {"func_interpolation", NBOOL,NREAD|NWRITE,NULL,NULL,0},
   /* for array */
 
-  {"array",NOBJ,NREAD|NWRITE,NULL,NULL,0},
+  {"array",NOBJ,NREAD|NWRITE,set_array,NULL,0},
 };
 
 #define TBLNUM (sizeof(file2d) / sizeof(*file2d))

@@ -2054,7 +2054,7 @@ GRAdrawtext(int GC, char *s, char *font, int style,
   int len, scmovex, scmovey, scriptf, scx_max, scy_max, scdist_max;
   char *endptr;
   char *font2;
-  int size2, space2, style2;
+  int size2, space2, style2, vspace;
   char *font3;
   int size3, space3, style3;
   int i, k, x, y, val, x0, y0, x1, y1;
@@ -2075,6 +2075,7 @@ GRAdrawtext(int GC, char *s, char *font, int style,
   si = sin(dir * MPI / 18000);
   x0 = GRAClist[GC].cpx;
   y0 = GRAClist[GC].cpy;
+  vspace = 0;
  
   str = g_string_sized_new(128);
   if (str == NULL) {
@@ -2176,7 +2177,7 @@ GRAdrawtext(int GC, char *s, char *font, int style,
         space2 = space3;
       }
       x0 += scx_max;
-      y0 += scy_max;
+      y0 += scy_max + vspace;
       scdist_max = 0;
       scx_max = 0;
       scy_max = 0;
@@ -2259,7 +2260,7 @@ GRAdrawtext(int GC, char *s, char *font, int style,
       ptr++;
       break;
     case '%':
-      if ((ptr[1]!='\0') && (strchr("FJSPXYCA", toupper(ptr[1]))!=NULL) && (ptr[2]=='{')) {
+      if ((ptr[1]!='\0') && ( strchr("FJSPNXYCA", toupper(ptr[1]))!=NULL) && (ptr[2]=='{')) {
         for (i = 3; ptr[i] != '\0' && ptr[i] != '}'; i++);
         if (ptr[i] == '}') {
 	  tok=g_malloc(i - 2);
@@ -2285,6 +2286,11 @@ GRAdrawtext(int GC, char *s, char *font, int style,
             case 'P':
               val=strtol(tok, &endptr, 10);
               if (endptr[0]=='\0') space2=val * 100;
+              g_free(tok);
+              break;
+            case 'N':
+              val=strtol(tok, &endptr, 10);
+              if (endptr[0]=='\0') vspace=val * 100;
               g_free(tok);
               break;
             case 'X':
@@ -2384,7 +2390,7 @@ GRAtextextent(char *s, char *font, int style,
   int w, h, d, len, scmovey, scriptf, scy_max;
   char *endptr;
   char *font2;
-  int size2, space2, style2;
+  int size2, space2, style2, vspace;
   char *font3;
   int size3, space3, style3;
   int i, j, k, y, val, x0, y0;
@@ -2419,6 +2425,7 @@ GRAtextextent(char *s, char *font, int style,
   scriptf = 0;
   scmovey = 0;
   scy_max = 0;
+  vspace = 0;
 
   len = strlen(c);
 
@@ -2518,7 +2525,7 @@ GRAtextextent(char *s, char *font, int style,
         size2 = size3;
         space2 = space3;
       }
-      y0 += scy_max;
+      y0 += scy_max + vspace;
       scmovey = 0;
       scy_max = 0;
       if (! raw && alignlen) {
@@ -2586,7 +2593,7 @@ GRAtextextent(char *s, char *font, int style,
       j++;
       break;
     case '%':
-      if (c[j + 1] != '\0' && strchr("FJSPXYCA", toupper(c[j + 1])) && c[j + 2] == '{') {
+      if (c[j + 1] != '\0' && strchr("FJSPNXYCA", toupper(c[j + 1])) && c[j + 2] == '{') {
         for (i = j + 3; c[i] != '\0' && c[i] != '}'; i++);
         if (c[i] == '}') {
 	  tok = g_malloc(i - j - 2);
@@ -2617,6 +2624,13 @@ GRAtextextent(char *s, char *font, int style,
               val = strtol(tok, &endptr, 10);
               if (endptr[0] == '\0') {
 		space2 = val * 100;
+	      }
+              g_free(tok);
+              break;
+            case 'N':
+              val = strtol(tok, &endptr, 10);
+              if (endptr[0] == '\0') {
+		vspace = val * 100;
 	      }
               g_free(tok);
               break;
