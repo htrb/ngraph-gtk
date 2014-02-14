@@ -1,3 +1,9 @@
+2014-02-15  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* plugins/Makefile.am (libruby_ldflags): don't link aginst libngraph.
+
+	* configure.ac: use "AC_CHECK_LIB" to check libm.
+
 2014-02-14  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (file_list_set_val)

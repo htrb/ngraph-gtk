@@ -6056,7 +6056,7 @@ f2dcolumn(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
                 for (;(*po2==' ');po2++);
                 if (strchr(ifs,*po2)!=NULL) po2++;
                 po=po2;
-              }  
+              }
             }
           } else {
             for (;(*po!='\0') && (strchr(ifs,*po)!=NULL);po++);

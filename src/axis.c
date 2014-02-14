@@ -136,7 +136,7 @@ getaxispositionfirst(struct axislocal *alocal)
     alocal->countm=1;
     alocal->dposs=1.0/alocal->countsend;
     alocal->counts=1;
-  }    
+  }
   alocal->count=0;
 }
 

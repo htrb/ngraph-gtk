@@ -350,7 +350,7 @@ curve_expand_points(struct objlist *obj, N_VALUE *inst, int intp, struct narray 
       if (! curve_expand(c, c[0], c[4], bsplinedif, bsplineint, expand_points)) {
 	return 0;
       }
-    }      
+    }
 
     for (j = 0; j < 2; j++) {
       bspline(j + 3, bs1 + j + 2, c);
