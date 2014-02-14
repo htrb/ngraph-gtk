@@ -42,7 +42,6 @@ file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointe
 
   d = user_data;
 
-
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
   num = chkobjlastinst(d->obj);
   if (sel < 0 || sel > num) {

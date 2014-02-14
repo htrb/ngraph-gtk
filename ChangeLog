@@ -1,3 +1,10 @@
+2014-02-14  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (file_list_set_val)
+	(create_type_color_combo_box, select_type, select_axis): support
+	sourece type.
+	(set_source_attribute): added.
+
 2014-02-13  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* doc/html/ja/text.html: update document.
