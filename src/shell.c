@@ -2026,7 +2026,7 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
             goto errexit;
           }
           nlseek(stdoutfd(),0L,SEEK_SET);
-          while ((byte=nread(stdoutfd(),writebuf,WRITEBUFSIZE-1))>0)  {
+          while ((byte=nread(stdoutfd(),writebuf,WRITEBUFSIZE-1))>0) {
             writebuf[byte]='\0';
             if ((sb=nstrcat(sb,writebuf))==NULL) {
               nredirect2(1,sout2);

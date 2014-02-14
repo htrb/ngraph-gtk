@@ -2341,7 +2341,7 @@ GRAdrawtext(int GC, char *s, char *font, int style,
   }
 
 errexit:
-  if  (str) {
+  if (str) {
     g_string_free(str, TRUE);
   }
   g_free(c);

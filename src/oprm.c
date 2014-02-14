@@ -1183,7 +1183,7 @@ prmload(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
         putobj(pobj,"type",cid,&d10);
         cmobj=pobj;
         cmid=cid;
-      } else if  (d3>=26) {
+      } else if (d3>=26) {
         if ((rid=newobj(robj))==-1) goto errexit;
         putobj(robj,"x1",rid,&(gx[0]));
         putobj(robj,"y1",rid,&(gy[0]));
