@@ -1,3 +1,12 @@
+2014-02-25  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (single_to_multi): set
+	"Menulocal.single_window_mode" true before call
+	"CmReloadWindowConfig()".
+
+	* src/gtk/gtk_subwin.c (sub_window_set_visibility): check
+	"Menulocal.single_window_mode".
+
 2014-02-15  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* plugins/Makefile.am (libruby_ldflags): don't link aginst libngraph.

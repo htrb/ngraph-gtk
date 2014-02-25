@@ -2930,9 +2930,9 @@ single_to_multi(void)
     gtk_window_resize(GTK_WINDOW(TopLevel), width, height);
   }
 
-  CmReloadWindowConfig(NULL, NULL);
-
   Menulocal.single_window_mode = FALSE;
+
+  CmReloadWindowConfig(NULL, NULL);
 }
 
 static void

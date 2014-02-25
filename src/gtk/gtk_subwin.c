@@ -715,7 +715,7 @@ sub_window_set_visibility(struct SubWin *d, int state)
     return;
   }
 
-  if (state) {
+  if (state && ! Menulocal.single_window_mode) {
     if (! gtk_widget_get_realized(d->Win)) {
       sub_window_show_all(d);
       sub_window_set_geometry(d, TRUE);
