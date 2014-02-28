@@ -187,7 +187,7 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
 	char *valstr;
 
 	if (strcmp(list->name, "file") == 0) {
-	  gtk_entry_set_icon_from_stock(GTK_ENTRY(editable), GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_OPEN);
+	  gtk_entry_set_icon_from_icon_name(GTK_ENTRY(editable), GTK_ENTRY_ICON_SECONDARY, "document-open");
 	  g_signal_connect(editable, "icon-release", G_CALLBACK(file_select), d);
 	}
 	sgetobjfield(d->obj, sel, list->name, NULL, &valstr, FALSE, FALSE, FALSE);
@@ -1683,11 +1683,7 @@ sub_win_create_popup_menu(struct obj_list_data *d, int n, struct subwin_popup_li
   for (i = 0; i < n; i++) {
     switch (list[i].type) {
     case POP_UP_MENU_ITEM_TYPE_NORMAL:
-      if (list[i].use_stock) {
-	item = gtk_image_menu_item_new_from_stock(list[i].title, list[i].accel_group);
-      } else {
-	item = gtk_menu_item_new_with_mnemonic(_(list[i].title));
-      }
+      item = gtk_menu_item_new_with_mnemonic(_(list[i].title));
       g_signal_connect(item, "activate", list[i].func, d);
       break;
     case POP_UP_MENU_ITEM_TYPE_CHECK:

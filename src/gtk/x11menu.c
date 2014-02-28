@@ -316,7 +316,7 @@ static struct NgraphActionEntry ActionEntry[] = {
   {
     ACTION_TYPE_NORMAL,
     "GraphLoadAction",
-    GTK_STOCK_OPEN,
+    "document-open",
     N_("_Load graph"),
     N_("Load NGP"),
     N_("Load NGP file"),
@@ -340,8 +340,8 @@ static struct NgraphActionEntry ActionEntry[] = {
   {
     ACTION_TYPE_NORMAL,
     "GraphSaveAction",
-    GTK_STOCK_SAVE,
-    NULL,
+    "document-save",
+    N_("_Save"),
     N_("Save NGP"),
     N_("Save NGP file"),
     G_CALLBACK(CmGraphOverWrite),
@@ -354,8 +354,8 @@ static struct NgraphActionEntry ActionEntry[] = {
   {
     ACTION_TYPE_NORMAL,
     "GraphSaveAsAction",
-    GTK_STOCK_SAVE_AS,
-    NULL,
+    "document-save-as",
+    N_("Save _As"),
     N_("Save NGP"),
     NULL,
     G_CALLBACK(CmGraphSave),
@@ -492,8 +492,8 @@ static struct NgraphActionEntry ActionEntry[] = {
   {
     ACTION_TYPE_NORMAL,
     "GraphPageSetupAction",
-    GTK_STOCK_PAGE_SETUP,
-    NULL,
+    "document-page-setup",
+    N_("Page Set_up"),
     NULL,
     NULL,
     G_CALLBACK(CmGraphPage),
@@ -504,8 +504,8 @@ static struct NgraphActionEntry ActionEntry[] = {
   {
     ACTION_TYPE_NORMAL,
     "GraphPrintPreviewAction",
-    GTK_STOCK_PRINT_PREVIEW,
     NULL,
+    N_("Pre_view"),
     N_("Print preview"),
     N_("Print preview"),
     G_CALLBACK(CmOutputViewerB),
@@ -516,8 +516,8 @@ static struct NgraphActionEntry ActionEntry[] = {
   {
     ACTION_TYPE_NORMAL,
     "GraphPrintAction",
-    GTK_STOCK_PRINT,
-    NULL,
+    "document-print",
+    N_("_Print"),
     N_("Print"),
     N_("Print"),
     G_CALLBACK(CmOutputPrinterB),
@@ -554,8 +554,8 @@ static struct NgraphActionEntry ActionEntry[] = {
   {
     ACTION_TYPE_NORMAL,
     "GraphQuitAction",
-    GTK_STOCK_QUIT,
-    NULL,
+    "application-exit",
+    N_("_Quit"),
     NULL,
     NULL,
     G_CALLBACK(CmGraphQuit),
@@ -568,8 +568,8 @@ static struct NgraphActionEntry ActionEntry[] = {
   {
     ACTION_TYPE_NORMAL,
     "EditCutAction",
-    GTK_STOCK_CUT,
     NULL,
+    "Cu_t",
     NULL,
     NULL,
     G_CALLBACK(CmEditMenuCB),
@@ -582,8 +582,8 @@ static struct NgraphActionEntry ActionEntry[] = {
   {
     ACTION_TYPE_NORMAL,
     "EditCopyAction",
-    GTK_STOCK_COPY,
     NULL,
+    N_("_Copy"),
     NULL,
     NULL,
     G_CALLBACK(CmEditMenuCB),
@@ -596,8 +596,8 @@ static struct NgraphActionEntry ActionEntry[] = {
   {
     ACTION_TYPE_NORMAL,
     "EditPasteAction",
-    GTK_STOCK_PASTE,
     NULL,
+    N_("_Paste"),
     NULL,
     NULL,
     G_CALLBACK(CmEditMenuCB),
@@ -610,8 +610,8 @@ static struct NgraphActionEntry ActionEntry[] = {
   {
     ACTION_TYPE_NORMAL,
     "EditDeleteAction",
-    GTK_STOCK_DELETE,
     NULL,
+    N_("_Delete"),
     NULL,
     NULL,
     G_CALLBACK(CmEditMenuCB),
@@ -644,8 +644,8 @@ static struct NgraphActionEntry ActionEntry[] = {
   {
     ACTION_TYPE_NORMAL,
     "EditOrderTopAction",
-    GTK_STOCK_GOTO_TOP,
-    NULL,
+    "go-top",
+    N_("_Top"),
     NULL,
     NULL,
     G_CALLBACK(CmEditMenuCB),
@@ -658,8 +658,8 @@ static struct NgraphActionEntry ActionEntry[] = {
   {
     ACTION_TYPE_NORMAL,
     "EditOrderUpAction",
-    GTK_STOCK_GO_UP,
-    NULL,
+    "go-up",
+    N_("_Up"),
     NULL,
     NULL,
     G_CALLBACK(CmEditMenuCB),
@@ -670,8 +670,8 @@ static struct NgraphActionEntry ActionEntry[] = {
   {
     ACTION_TYPE_NORMAL,
     "EditOrderDownAction",
-    GTK_STOCK_GO_DOWN,
-    NULL,
+    "go-down",
+    N_("_Down"),
     NULL,
     NULL,
     G_CALLBACK(CmEditMenuCB),
@@ -682,8 +682,8 @@ static struct NgraphActionEntry ActionEntry[] = {
   {
     ACTION_TYPE_NORMAL,
     "EditOrderBottomAction",
-    GTK_STOCK_GOTO_BOTTOM,
-    NULL,
+    "go-bottom",
+    N_("_Bottom"),
     NULL,
     NULL,
     G_CALLBACK(CmEditMenuCB),
@@ -705,7 +705,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     ACTION_TYPE_NORMAL,
     "EditAlignLeftAction",
     NULL,
-    N_("_Left"),
+    N_("Align _Left"),
     NULL,
     NULL,
     G_CALLBACK(CmEditMenuCB),
@@ -717,7 +717,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     ACTION_TYPE_NORMAL,
     "EditAlignRightAction",
     NULL,
-    N_("_Right"),
+    N_("Align _Right"),
     NULL,
     NULL,
     G_CALLBACK(CmEditMenuCB),
@@ -729,7 +729,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     ACTION_TYPE_NORMAL,
     "EditAlignVCenterAction",
     NULL,
-    N_("_Vertical center"),
+    N_("Align _Vertical Center"),
     NULL,
     NULL,
     G_CALLBACK(CmEditMenuCB),
@@ -741,7 +741,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     ACTION_TYPE_NORMAL,
     "EditAlignTopAction",
     NULL,
-    N_("_Top"),
+    N_("Align _Top"),
     NULL,
     NULL,
     G_CALLBACK(CmEditMenuCB),
@@ -753,7 +753,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     ACTION_TYPE_NORMAL,
     "EditAlignBottomAction",
     NULL,
-    N_("_Bottom"),
+    N_("Align _Bottom"),
     NULL,
     NULL,
     G_CALLBACK(CmEditMenuCB),
@@ -765,7 +765,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     ACTION_TYPE_NORMAL,
     "EditAlignHCenterAction",
     NULL,
-    N_("_Horizontal center"),
+    N_("Align _Horizontal Center"),
     NULL,
     NULL,
     G_CALLBACK(CmEditMenuCB),
@@ -962,8 +962,8 @@ static struct NgraphActionEntry ActionEntry[] = {
   {
     ACTION_TYPE_NORMAL,
     "ViewClearAction",
-    GTK_STOCK_CLEAR,
-    NULL,
+    "edit-clear",
+    N_("_Clear"),
     N_("Clear Image"),
     N_("Clear Viewer Window"),
     G_CALLBACK(CmViewerClear),
@@ -1098,7 +1098,7 @@ static struct NgraphActionEntry ActionEntry[] = {
   {
     ACTION_TYPE_NORMAL,
     "DataAddAction",
-    GTK_STOCK_FILE,
+    "text-x-generic",
     N_("_Add"),
     N_("Add Data"),
     N_("Add Data file"),
@@ -1122,8 +1122,8 @@ static struct NgraphActionEntry ActionEntry[] = {
   {
     ACTION_TYPE_NORMAL,
     "DataPropertyAction",
-    GTK_STOCK_PROPERTIES,
-    NULL,
+    "document-properties",
+    N_("_Properties"),
     NULL,
     NULL,
     G_CALLBACK(CmFileUpdate),
@@ -1134,8 +1134,8 @@ static struct NgraphActionEntry ActionEntry[] = {
   {
     ACTION_TYPE_NORMAL,
     "DataCloseAction",
-    GTK_STOCK_CLOSE,
-    NULL,
+    "window-close",
+    N_("_Close"),
     NULL,
     NULL,
     G_CALLBACK(CmFileClose),
@@ -1146,8 +1146,8 @@ static struct NgraphActionEntry ActionEntry[] = {
   {
     ACTION_TYPE_NORMAL,
     "DataEditAction",
-    GTK_STOCK_EDIT,
     NULL,
+    N_("_Edit"),
     NULL,
     NULL,
     G_CALLBACK(CmFileEdit),
@@ -1182,8 +1182,8 @@ static struct NgraphActionEntry ActionEntry[] = {
   {
     ACTION_TYPE_NORMAL,
     "AxisAddAction",
-    GTK_STOCK_ADD,
-    NULL,
+    "list-add",
+    N_("_Add"),
     NULL,
   },
   {
@@ -1237,8 +1237,8 @@ static struct NgraphActionEntry ActionEntry[] = {
   {
     ACTION_TYPE_NORMAL,
     "AxisPropertyAction",
-    GTK_STOCK_PROPERTIES,
-    NULL,
+    "document-properties",
+    N_("_Properties"),
     NULL,
     NULL,
     G_CALLBACK(CmAxisUpdate),
@@ -1249,8 +1249,8 @@ static struct NgraphActionEntry ActionEntry[] = {
   {
     ACTION_TYPE_NORMAL,
     "AxisDeleteAction",
-    GTK_STOCK_DELETE,
     NULL,
+    N_("_Delete"),
     NULL,
     NULL,
     G_CALLBACK(CmAxisDel),
@@ -1288,7 +1288,7 @@ static struct NgraphActionEntry ActionEntry[] = {
   {
     ACTION_TYPE_NORMAL,
     "AxisScaleUndoAction",
-    GTK_STOCK_UNDO,
+    "edit-undo",
     N_("Scale _Undo"),
     N_("Scale Undo"),
     N_("Undo Scale Settings"),
@@ -1307,8 +1307,8 @@ static struct NgraphActionEntry ActionEntry[] = {
   {
     ACTION_TYPE_NORMAL,
     "AxisGridNewAction",
-    GTK_STOCK_ADD,
-    NULL,
+    "list-add",
+    N_("_Add"),
     NULL,
     NULL,
     G_CALLBACK(CmAxisGridNew),
@@ -1319,8 +1319,8 @@ static struct NgraphActionEntry ActionEntry[] = {
   {
     ACTION_TYPE_NORMAL,
     "AxisGridPropertyAction",
-    GTK_STOCK_PROPERTIES,
-    NULL,
+    "document-properties",
+    N_("_Properties"),
     NULL,
     NULL,
     G_CALLBACK(CmAxisGridUpdate),
@@ -1331,8 +1331,8 @@ static struct NgraphActionEntry ActionEntry[] = {
   {
     ACTION_TYPE_NORMAL,
     "AxisGridDeleteAction",
-    GTK_STOCK_DELETE,
     NULL,
+    N_("_Delete"),
     NULL,
     NULL,
     G_CALLBACK(CmAxisGridDel),
@@ -1343,8 +1343,8 @@ static struct NgraphActionEntry ActionEntry[] = {
   {
     ACTION_TYPE_NORMAL,
     "MergeAddAction",
-    GTK_STOCK_ADD,
-    NULL,
+    "list-add",
+    N_("_Add"),
     NULL,
     NULL,
     G_CALLBACK(CmMergeOpen),
@@ -1355,8 +1355,8 @@ static struct NgraphActionEntry ActionEntry[] = {
   {
     ACTION_TYPE_NORMAL,
     "MergePropertyAction",
-    GTK_STOCK_PROPERTIES,
-    NULL,
+    "document-properties",
+    N_("_Properties"),
     NULL,
     NULL,
     G_CALLBACK(CmMergeUpdate),
@@ -1367,8 +1367,8 @@ static struct NgraphActionEntry ActionEntry[] = {
   {
     ACTION_TYPE_NORMAL,
     "MergeCloseAction",
-    GTK_STOCK_CLOSE,
-    NULL,
+    "window-close",
+    N_("_Close"),
     NULL,
     NULL,
     G_CALLBACK(CmMergeClose),
@@ -1434,8 +1434,8 @@ static struct NgraphActionEntry ActionEntry[] = {
   {
     ACTION_TYPE_NORMAL,
     "LegendPathPropertyAction",
-    GTK_STOCK_PROPERTIES,
-    NULL,
+    "document-properties",
+    N_("_Properties"),
     NULL,
     NULL,
     G_CALLBACK(CmLineUpdate),
@@ -1446,8 +1446,8 @@ static struct NgraphActionEntry ActionEntry[] = {
   {
     ACTION_TYPE_NORMAL,
     "LegendPathDeleteAction",
-    GTK_STOCK_DELETE,
     NULL,
+    N_("_Delete"),
     NULL,
     NULL,
     G_CALLBACK(CmLineDel),
@@ -1458,8 +1458,8 @@ static struct NgraphActionEntry ActionEntry[] = {
   {
     ACTION_TYPE_NORMAL,
     "LegendRectanglePropertyAction",
-    GTK_STOCK_PROPERTIES,
-    NULL,
+    "document-properties",
+    N_("_Properties"),
     NULL,
     NULL,
     G_CALLBACK(CmRectUpdate),
@@ -1470,8 +1470,8 @@ static struct NgraphActionEntry ActionEntry[] = {
   {
     ACTION_TYPE_NORMAL,
     "LegendRectangleDeleteAction",
-    GTK_STOCK_DELETE,
     NULL,
+    N_("_Delete"),
     NULL,
     NULL,
     G_CALLBACK(CmRectDel),
@@ -1483,8 +1483,8 @@ static struct NgraphActionEntry ActionEntry[] = {
   {
     ACTION_TYPE_NORMAL,
     "LegendArcPropertyAction",
-    GTK_STOCK_PROPERTIES,
-    NULL,
+    "document-properties",
+    N_("_Properties"),
     NULL,
     NULL,
     G_CALLBACK(CmArcUpdate),
@@ -1495,8 +1495,8 @@ static struct NgraphActionEntry ActionEntry[] = {
   {
     ACTION_TYPE_NORMAL,
     "LegendArcDeleteAction",
-    GTK_STOCK_DELETE,
     NULL,
+    N_("_Delete"),
     NULL,
     NULL,
     G_CALLBACK(CmArcDel),
@@ -1507,8 +1507,8 @@ static struct NgraphActionEntry ActionEntry[] = {
   {
     ACTION_TYPE_NORMAL,
     "LegendMarkPropertyAction",
-    GTK_STOCK_PROPERTIES,
-    NULL,
+    "document-properties",
+    N_("_Properties"),
     NULL,
     NULL,
     G_CALLBACK(CmMarkUpdate),
@@ -1519,8 +1519,8 @@ static struct NgraphActionEntry ActionEntry[] = {
   {
     ACTION_TYPE_NORMAL,
     "LegendMarkDeleteAction",
-    GTK_STOCK_DELETE,
     NULL,
+    N_("_Delete"),
     NULL,
     NULL,
     G_CALLBACK(CmMarkDel),
@@ -1531,8 +1531,8 @@ static struct NgraphActionEntry ActionEntry[] = {
   {
     ACTION_TYPE_NORMAL,
     "LegendTextPropertyAction",
-    GTK_STOCK_PROPERTIES,
-    NULL,
+    "document-properties",
+    N_("_Properties"),
     NULL,
     NULL,
     G_CALLBACK(CmTextUpdate),
@@ -1543,8 +1543,8 @@ static struct NgraphActionEntry ActionEntry[] = {
   {
     ACTION_TYPE_NORMAL,
     "LegendTextDeleteAction",
-    GTK_STOCK_DELETE,
     NULL,
+    N_("_Delete"),
     NULL,
     NULL,
     G_CALLBACK(CmTextDel),
@@ -1663,8 +1663,8 @@ static struct NgraphActionEntry ActionEntry[] = {
   {
     ACTION_TYPE_NORMAL,
     "HelpHelpAction",
-    GTK_STOCK_HELP,
-    NULL,
+    "help-browser",
+    N_("_Help"),
     NULL,
     NULL,
     G_CALLBACK(CmHelpHelp),
@@ -1677,8 +1677,8 @@ static struct NgraphActionEntry ActionEntry[] = {
   {
     ACTION_TYPE_NORMAL,
     "HelpAboutAction",
-    GTK_STOCK_ABOUT,
-    NULL,
+    "help-about",
+    N_("_About"),
     NULL,
     NULL,
     G_CALLBACK(CmHelpAbout),
@@ -1689,8 +1689,8 @@ static struct NgraphActionEntry ActionEntry[] = {
   {
     ACTION_TYPE_NORMAL,
     "PopupUpdateAction",
-    GTK_STOCK_PROPERTIES,
-    NULL,
+    "document-properties",
+    N_("_Properties"),
     NULL,
     NULL,
     G_CALLBACK(ViewerUpdateCB),
@@ -3706,19 +3706,19 @@ create_action_group(struct NgraphActionEntry *entry, int n)
       action = gtk_action_new(entry[i].name,
 			      _(entry[i].label),
 			      _(entry[i].tooltip),
-			      entry[i].stock_id);
+			      NULL);
       break;
     case ACTION_TYPE_TOGGLE:
       action = GTK_ACTION(gtk_toggle_action_new(entry[i].name,
 						_(entry[i].label),
 						_(entry[i].tooltip),
-						entry[i].stock_id));
+						NULL));
       break;
     case ACTION_TYPE_RADIO:
       action = GTK_ACTION(gtk_radio_action_new(entry[i].name,
 					       _(entry[i].label),
 					       _(entry[i].tooltip),
-					       entry[i].stock_id,
+					       NULL,
 					       radio_index++));
       gtk_radio_action_set_group(GTK_RADIO_ACTION(action), group);
       group = gtk_radio_action_get_group(GTK_RADIO_ACTION(action));
@@ -3728,7 +3728,7 @@ create_action_group(struct NgraphActionEntry *entry, int n)
       action = gtk_recent_action_new_for_manager(entry[i].name,
 						 _(entry[i].label),
 						 _(entry[i].tooltip),
-						 entry[i].stock_id,
+						 NULL,
 						 Menulocal.ngpfilelist);
 
       filter = gtk_recent_filter_new();
@@ -3778,6 +3778,10 @@ create_action_group(struct NgraphActionEntry *entry, int n)
       default:
 	g_signal_connect(action, "activate", G_CALLBACK(entry[i].callback), GINT_TO_POINTER(entry[i].user_data));
       }
+    }
+
+    if (entry[i].stock_id) {
+      gtk_action_set_icon_name(action, entry[i].stock_id);
     }
 
     if (entry[i].icon) {

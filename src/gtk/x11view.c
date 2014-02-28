@@ -989,11 +989,12 @@ EvalDialogSetup(GtkWidget *wi, void *data, int makewidget)
 #else
     hbox = gtk_hbox_new(FALSE, 4);
 #endif
-    w = gtk_button_new_from_stock(GTK_STOCK_SELECT_ALL);
+    w = gtk_button_new_with_mnemonic(_("Select _All"));
+    set_button_icon(w, "edit-select-all");
     g_signal_connect(w, "clicked", G_CALLBACK(tree_store_select_all_cb), d->list);
     gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
 
-    w = gtk_button_new_from_stock(GTK_STOCK_COPY);
+    w = gtk_button_new_with_mnemonic(_("_Copy"));
     g_signal_connect(w, "clicked", G_CALLBACK(eval_dialog_copy_selected), d->list);
     gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
     gtk_widget_set_sensitive(w, FALSE);
@@ -1004,7 +1005,7 @@ EvalDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
 
     d->show_cancel = FALSE;
-    d->ok_button = GTK_STOCK_CLOSE;
+    d->ok_button = _("_Close");
 
     gtk_window_set_default_size(GTK_WINDOW(wi), 540, 400);
 

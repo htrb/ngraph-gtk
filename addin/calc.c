@@ -315,9 +315,9 @@ main(int argc, char **argv)
   gtk_init(&argc, &argv);
 
   mainwin = gtk_dialog_new_with_buttons(NAME, NULL, 0,
-					GTK_STOCK_OK,   
+					"_OK",   
 					GTK_RESPONSE_ACCEPT,
-					GTK_STOCK_CANCEL,   
+					"_Cancel",   
 					GTK_RESPONSE_REJECT,
 					NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(mainwin), GTK_RESPONSE_ACCEPT);

@@ -210,17 +210,17 @@ static n_list_store *Llist[] = {Plist, Rlist, Alist, Mlist, Tlist};
 static int Llist_num[] = {PATH_LIST_COL_NUM, RECT_LIST_COL_NUM, ARC_LIST_COL_NUM, MARK_LIST_COL_NUM, TEXT_LIST_COL_NUM};
 
 static struct subwin_popup_list Popup_list[] = {
-  {N_("_Duplicate"),      G_CALLBACK(list_sub_window_copy), FALSE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("_Duplicate"),   G_CALLBACK(list_sub_window_copy), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   //  {N_("duplicate _Behind"),   G_CALLBACK(list_sub_window_copy), FALSE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {GTK_STOCK_DELETE,      G_CALLBACK(list_sub_window_delete), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {NULL, NULL, 0, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
-  {N_("_Focus"),          G_CALLBACK(list_sub_window_focus), FALSE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {GTK_STOCK_PROPERTIES,  G_CALLBACK(list_sub_window_update), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {NULL, NULL, 0, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
-  {GTK_STOCK_GOTO_TOP,    G_CALLBACK(list_sub_window_move_top), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {GTK_STOCK_GO_UP,       G_CALLBACK(list_sub_window_move_up), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {GTK_STOCK_GO_DOWN,     G_CALLBACK(list_sub_window_move_down), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {GTK_STOCK_GOTO_BOTTOM, G_CALLBACK(list_sub_window_move_last), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("_Delete"),      G_CALLBACK(list_sub_window_delete), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {NULL, NULL, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
+  {N_("_Focus"),       G_CALLBACK(list_sub_window_focus), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("_Properties"),  G_CALLBACK(list_sub_window_update), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {NULL, NULL, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
+  {N_("_Top"),    G_CALLBACK(list_sub_window_move_top), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("_Up"),     G_CALLBACK(list_sub_window_move_up), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("_Down"),   G_CALLBACK(list_sub_window_move_down), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("_Bottom"), G_CALLBACK(list_sub_window_move_last), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
 };
 
 #define POPUP_ITEM_NUM (sizeof(Popup_list) / sizeof(*Popup_list))
@@ -1017,11 +1017,12 @@ points_setup(struct LegendDialog *d)
   hbox = gtk_hbox_new(FALSE, 4);
 #endif
 
-  btn = gtk_button_new_from_stock(GTK_STOCK_ADD);
+  btn = gtk_button_new_with_mnemonic(_("_Add"));
+  set_button_icon(btn, "list-add");
   g_signal_connect(btn, "clicked", G_CALLBACK(insert_column), tree_view);
   gtk_box_pack_start(GTK_BOX(hbox), btn, FALSE, FALSE, 4);
 
-  btn = gtk_button_new_from_stock(GTK_STOCK_DELETE);
+  btn = gtk_button_new_with_mnemonic(_("_Delete"));
   g_signal_connect(btn, "clicked", G_CALLBACK(list_store_remove_selected_cb), tree_view);
   g_signal_connect(sel, "changed", G_CALLBACK(set_delete_button_sensitivity), btn);
   gtk_widget_set_sensitive(btn, FALSE);
@@ -1260,7 +1261,7 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     init_legend_dialog_widget_member(d);
 
-    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_DELETE, IDDELETE);
+    gtk_dialog_add_button(GTK_DIALOG(wi), _("_Delete"), IDDELETE);
 
 #if GTK_CHECK_VERSION(3, 0, 0)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
@@ -1445,7 +1446,7 @@ LegendRectDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     init_legend_dialog_widget_member(d);
 
-    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_DELETE, IDDELETE);
+    gtk_dialog_add_button(GTK_DIALOG(wi), _("_Delete"), IDDELETE);
 
 #if GTK_CHECK_VERSION(3, 0, 0)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
@@ -1564,7 +1565,7 @@ LegendArcDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     init_legend_dialog_widget_member(d);
 
-    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_DELETE, IDDELETE);
+    gtk_dialog_add_button(GTK_DIALOG(wi), _("_Delete"), IDDELETE);
 
 #if GTK_CHECK_VERSION(3, 0, 0)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
@@ -1722,7 +1723,7 @@ LegendMarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     init_legend_dialog_widget_member(d);
 
-    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_DELETE, IDDELETE);
+    gtk_dialog_add_button(GTK_DIALOG(wi), _("_Delete"), IDDELETE);
 
 #if GTK_CHECK_VERSION(3, 0, 0)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
@@ -1827,13 +1828,13 @@ legend_dialog_setup_sub(struct LegendDialog *d, GtkWidget *table, int i)
   btn_box = gtk_hbutton_box_new();
 #endif
   gtk_box_set_spacing(GTK_BOX(btn_box), 10);
-  w = gtk_check_button_new_with_label("gtk-bold");
-  gtk_button_set_use_stock(GTK_BUTTON(w), TRUE);
+  w = gtk_check_button_new_with_mnemonic(_("_Bold"));
+  set_button_icon(w, "format-text-bold");
   d->font_bold = w;
   gtk_box_pack_start(GTK_BOX(btn_box), w, FALSE, FALSE, 0);
 
-  w = gtk_check_button_new_with_label("gtk-italic");
-  gtk_button_set_use_stock(GTK_BUTTON(w), TRUE);
+  w = gtk_check_button_new_with_mnemonic(_("_Italic"));
+  set_button_icon(w, "format-text-italic");
   d->font_italic = w;
   gtk_box_pack_start(GTK_BOX(btn_box), w, FALSE, FALSE, 0);
 
@@ -1982,7 +1983,7 @@ LegendTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     init_legend_dialog_widget_member(d);
 
-    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_DELETE, IDDELETE);
+    gtk_dialog_add_button(GTK_DIALOG(wi), _("_Delete"), IDDELETE);
 
 #if GTK_CHECK_VERSION(3, 0, 0)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);

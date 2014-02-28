@@ -125,20 +125,20 @@ static void create_type_combo_item(GtkTreeStore *list, struct objlist *obj, int 
 static gboolean func_entry_focused(GtkWidget *w, GdkEventFocus *event, gpointer user_data);
 
 static struct subwin_popup_list Popup_list[] = {
-  {GTK_STOCK_ADD,             G_CALLBACK(CmFileOpen), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {NULL, NULL, 0, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
-  {N_("_Duplicate"),          G_CALLBACK(file_copy_popup_func), FALSE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {N_("duplicate _Behind"),   G_CALLBACK(file_copy2_popup_func), FALSE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {GTK_STOCK_CLOSE,           G_CALLBACK(file_delete_popup_func), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {NULL, NULL, 0, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
-  {N_("_Draw"),               G_CALLBACK(file_draw_popup_func), FALSE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {GTK_STOCK_PROPERTIES,      G_CALLBACK(list_sub_window_update), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {GTK_STOCK_EDIT,            G_CALLBACK(file_edit_popup_func), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {NULL, NULL, 0, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
-  {GTK_STOCK_GOTO_TOP,        G_CALLBACK(list_sub_window_move_top), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {GTK_STOCK_GO_UP,           G_CALLBACK(list_sub_window_move_up), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {GTK_STOCK_GO_DOWN,         G_CALLBACK(list_sub_window_move_down), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {GTK_STOCK_GOTO_BOTTOM,     G_CALLBACK(list_sub_window_move_last), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("_Add"),             G_CALLBACK(CmFileOpen), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {NULL, NULL, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
+  {N_("_Duplicate"),          G_CALLBACK(file_copy_popup_func), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("duplicate _Behind"),   G_CALLBACK(file_copy2_popup_func), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("_Close"),           G_CALLBACK(file_delete_popup_func), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {NULL, NULL, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
+  {N_("_Draw"),            G_CALLBACK(file_draw_popup_func), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("_Properties"),      G_CALLBACK(list_sub_window_update), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("_Edit"),            G_CALLBACK(file_edit_popup_func), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {NULL, NULL, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
+  {N_("_Top"),        G_CALLBACK(list_sub_window_move_top), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("_Up"),         G_CALLBACK(list_sub_window_move_up), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("_Down"),       G_CALLBACK(list_sub_window_move_down), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("_Bottom"),     G_CALLBACK(list_sub_window_move_last), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
 };
 
 #define POPUP_ITEM_NUM (sizeof(Popup_list) / sizeof(*Popup_list))
@@ -528,12 +528,13 @@ MathDialogSetup(GtkWidget *wi, void *data, int makewidget)
     hbox = gtk_hbox_new(FALSE, 4);
 #endif
 
-    w = gtk_button_new_from_stock(GTK_STOCK_SELECT_ALL);
+    w = gtk_button_new_with_mnemonic(_("Select _All"));
+    set_button_icon(w, "edit-select-all");
     g_signal_connect(w, "clicked", G_CALLBACK(list_store_select_all_cb), d->list);
     gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
     set_sensitivity_by_row_num(d->list, w);
 
-    w = gtk_button_new_from_stock(GTK_STOCK_EDIT);
+    w = gtk_button_new_with_mnemonic(_("_Edit"));
     g_signal_connect(w, "clicked", G_CALLBACK(MathDialogList), d);
     gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
@@ -542,7 +543,7 @@ MathDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(d->vbox), vbox, TRUE, TRUE, 4);
 
     d->show_cancel = FALSE;
-    d->ok_button = GTK_STOCK_CLOSE;
+    d->ok_button = _("_Close");
 
     gtk_window_set_default_size(GTK_WINDOW(wi), -1, 300);
 
@@ -629,7 +630,7 @@ FitSaveDialogSetup(GtkWidget *wi, void *data, int makewidget)
   d = (struct FitSaveDialog *) data;
   if (makewidget) {
     gtk_dialog_add_buttons(GTK_DIALOG(wi),
-			   GTK_STOCK_DELETE, IDDELETE,
+			   _("_Delete"), IDDELETE,
 			   NULL);
 
     w = combo_box_entry_create();
@@ -1468,7 +1469,7 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
   gtk_window_set_title(GTK_WINDOW(wi), title);
 
   if (makewidget) {
-    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_DELETE, IDDELETE);
+    gtk_dialog_add_button(GTK_DIALOG(wi), _("_Delete"), IDDELETE);
 
 #if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
@@ -1595,7 +1596,8 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect(w, "clicked", G_CALLBACK(FitDialogLoad), d);
     gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
 
-    w = gtk_button_new_from_stock(GTK_STOCK_SAVE);
+    w = gtk_button_new_with_mnemonic(_("_Save"));
+    set_button_icon(w, "document-save");
     g_signal_connect(w, "clicked", G_CALLBACK(FitDialogSave), d);
     gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
 
@@ -1833,16 +1835,19 @@ move_tab_create(struct FileDialog *d)
   add_widget_to_table(table, w, "_Y:", FALSE, i++);
   d->move.y = w;
 
-  w = gtk_button_new_from_stock(GTK_STOCK_ADD);
+  w = gtk_button_new_with_mnemonic(_("_Add"));
+  set_button_icon(w, "list-add");
   add_widget_to_table(table, w, "", FALSE, i++);
   g_signal_connect(w, "clicked", G_CALLBACK(FileMoveDialogAdd), d);
 
-  w = gtk_button_new_from_stock(GTK_STOCK_REMOVE);
+  w = gtk_button_new_with_mnemonic(_("_Remove"));
+  set_button_icon(w, "list-remove");
   add_widget_to_table(table, w, NULL, FALSE, i++);
   g_signal_connect(w, "clicked", G_CALLBACK(FileMoveDialogRemove), d);
   set_sensitivity_by_selection(d->move.list, w);
 
-  w = gtk_button_new_from_stock(GTK_STOCK_SELECT_ALL);
+  w = gtk_button_new_with_mnemonic(_("Select _All"));
+  set_button_icon(w, "edit-select-all");
   add_widget_to_table(table, w, NULL, FALSE, i++);
   g_signal_connect(w, "clicked", G_CALLBACK(list_store_select_all_cb), d->move.list);
   set_sensitivity_by_row_num(d->move.list, w);
@@ -2059,16 +2064,19 @@ mask_tab_create(struct FileDialog *d)
   gtk_container_add(GTK_CONTAINER(swin), w);
   set_widget_margin(swin, WIDGET_MARGIN_TOP | WIDGET_MARGIN_BOTTOM);
 
-  w = gtk_button_new_from_stock(GTK_STOCK_ADD);
+  w = gtk_button_new_with_mnemonic(_("_Add"));
+  set_button_icon(w, "list-add");
   add_widget_to_table(table, w, "", FALSE, i++);
   g_signal_connect(w, "clicked", G_CALLBACK(FileMaskDialogAdd), d);
 
-  w = gtk_button_new_from_stock(GTK_STOCK_REMOVE);
+  w = gtk_button_new_with_mnemonic(_("_Remove"));
+  set_button_icon(w, "list-remove");
   add_widget_to_table(table, w, NULL, FALSE, i++);
   g_signal_connect(w, "clicked", G_CALLBACK(FileMaskDialogRemove), d);
   set_sensitivity_by_selection(d->mask.list, w);
 
-  w = gtk_button_new_from_stock(GTK_STOCK_SELECT_ALL);
+  w = gtk_button_new_with_mnemonic(_("Select _All"));
+  set_button_icon(w, "edit-select-all");
   add_widget_to_table(table, w, NULL, FALSE, i++);
   g_signal_connect(w, "clicked", G_CALLBACK(list_store_select_all_cb), d->mask.list);
   set_sensitivity_by_row_num(d->mask.list, w);

@@ -705,7 +705,8 @@ SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
     vbox = gtk_vbox_new(FALSE, 4);
 #endif
 
-    w = gtk_button_new_from_stock(GTK_STOCK_ADD);
+    w = gtk_button_new_with_mnemonic(_("_Add"));
+    set_button_icon(w, "list-add");
     g_signal_connect(w, "clicked", G_CALLBACK(SwitchDialogAdd), d);
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
     d->add = w;
@@ -722,27 +723,32 @@ SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
 #endif
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
 
-    w = gtk_button_new_from_stock(GTK_STOCK_GOTO_TOP);
+    w = gtk_button_new_with_mnemonic(_("_Top"));
+    set_button_icon(w, "go-top");
     g_signal_connect(w, "clicked", G_CALLBACK(SwitchDialogTop), d);
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
     d->top =w;
 
-    w = gtk_button_new_from_stock(GTK_STOCK_GO_UP);
+    w = gtk_button_new_with_mnemonic(_("_Up"));
+    set_button_icon(w, "go-up");
     g_signal_connect(w, "clicked", G_CALLBACK(SwitchDialogUp), d);
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
     d->up = w;
 
-    w = gtk_button_new_from_stock(GTK_STOCK_GO_DOWN);
+    w = gtk_button_new_with_mnemonic(_("_Down"));
+    set_button_icon(w, "go-down");
     g_signal_connect(w, "clicked", G_CALLBACK(SwitchDialogDown), d);
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
     d->down = w;
 
-    w = gtk_button_new_from_stock(GTK_STOCK_GOTO_BOTTOM);
+    w = gtk_button_new_with_mnemonic(_("_Bottom"));
+    set_button_icon(w, "go-bottom");
     g_signal_connect(w, "clicked", G_CALLBACK(SwitchDialogLast), d);
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
     d->bottom = w;
 
-    w = gtk_button_new_from_stock(GTK_STOCK_REMOVE);
+    w = gtk_button_new_with_mnemonic(("_Remove"));
+    set_button_icon(w, "list-remove");
     g_signal_connect(w, "clicked", G_CALLBACK(SwitchDialogRemove), d);
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
     d->del = w;

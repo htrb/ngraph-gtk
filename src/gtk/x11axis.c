@@ -86,17 +86,17 @@ static void AxisWinAxisDown(GtkWidget *w, gpointer client_data);
 static void AxisWinAxisLast(GtkWidget *w, gpointer client_data);
 
 static struct subwin_popup_list Popup_list[] = {
-  {N_("_Duplicate"),      G_CALLBACK(list_sub_window_copy), FALSE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {GTK_STOCK_DELETE,      G_CALLBACK(axis_delete_popup_func), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {NULL, NULL, 0, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
-  {N_("_Focus"),          G_CALLBACK(list_sub_window_focus), FALSE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {GTK_STOCK_CLEAR,       G_CALLBACK(axiswin_scale_clear), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {GTK_STOCK_PROPERTIES,  G_CALLBACK(list_sub_window_update), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {NULL, NULL, 0, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
-  {GTK_STOCK_GOTO_TOP,    G_CALLBACK(AxisWinAxisTop), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {GTK_STOCK_GO_UP,       G_CALLBACK(AxisWinAxisUp), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {GTK_STOCK_GO_DOWN,     G_CALLBACK(AxisWinAxisDown), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {GTK_STOCK_GOTO_BOTTOM, G_CALLBACK(AxisWinAxisLast), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("_Duplicate"),  G_CALLBACK(list_sub_window_copy), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("_Delete"),     G_CALLBACK(axis_delete_popup_func), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {NULL, NULL, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
+  {N_("_Focus"),      G_CALLBACK(list_sub_window_focus), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("_Clear"),      G_CALLBACK(axiswin_scale_clear), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("_Properties"), G_CALLBACK(list_sub_window_update), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {NULL, NULL, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
+  {N_("_Top"),        G_CALLBACK(AxisWinAxisTop), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("_Up"),         G_CALLBACK(AxisWinAxisUp), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("_Down"),       G_CALLBACK(AxisWinAxisDown), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("_Bottom"),     G_CALLBACK(AxisWinAxisLast), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
 };
 
 #define POPUP_ITEM_NUM (sizeof(Popup_list) / sizeof(*Popup_list))
@@ -1343,7 +1343,7 @@ scale_tab_create(struct AxisDialog *d)
   hbox = gtk_hbox_new(FALSE, 12);
 #endif
 
-  w = gtk_button_new_from_stock(GTK_STOCK_CLEAR);
+  w = gtk_button_new_with_mnemonic(_("_Clear"));
   g_signal_connect(w, "clicked", G_CALLBACK(AxisDialogClear), d);
   gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 0);
 
@@ -2198,13 +2198,13 @@ font_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   btn_box = gtk_hbutton_box_new();
 #endif
   gtk_box_set_spacing(GTK_BOX(btn_box), 10);
-  w = gtk_check_button_new_with_label("gtk-bold");
-  gtk_button_set_use_stock(GTK_BUTTON(w), TRUE);
+  w = gtk_check_button_new_with_mnemonic(_("_Bold"));
+  set_button_icon(w, "format-text-bold");
   d->font_bold = w;
   gtk_box_pack_start(GTK_BOX(btn_box), w, FALSE, FALSE, 0);
 
-  w = gtk_check_button_new_with_label("gtk-italic");
-  gtk_button_set_use_stock(GTK_BUTTON(w), TRUE);
+  w = gtk_check_button_new_with_label(_("_Italic"));
+  set_button_icon(w, "format-text-italic");
   d->font_italic = w;
   gtk_box_pack_start(GTK_BOX(btn_box), w, FALSE, FALSE, 0);
 

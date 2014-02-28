@@ -1,3 +1,93 @@
+2014-02-28  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (EvalDialogSetup): use
+	"gtk_check_button_new_with_mnemonic()" and "set_button_icon()"
+	instead of "gtk_button_new_from_stock()".
+	(EvalDialogSetup): don't use "GtkStockItem".
+
+	* src/gtk/x11opt_proto.h (CREATE_NAME): use
+	"gtk_check_button_new_with_mnemonic()" and "set_button_icon()"
+	instead of "gtk_button_new_from_stock()".
+	(CREATE_NAME): don't use "GtkStockItem".
+
+	* src/gtk/x11opt.c (PrefScriptDialogSetup)
+	(PrefDriverDialogSetup, PrefFontDialogSetup, MiscDialogSetup)
+	(ExViewerDialogSetup, ViewerDialogSetup): don't use
+	"GtkStockItem".
+	(FontSettingDialogSetup): use
+	"gtk_check_button_new_with_mnemonic()" and "set_button_icon()"
+	instead of "gtk_button_new_from_stock()".
+
+	* src/gtk/x11merge.c (Popup_list): don't use "GtkStockItem".
+
+	* src/gtk/x11menu.c (ActionEntry): don't use "GtkStockItem".
+	(create_action_group): use "gtk_action_set_icon_name()";
+
+	* src/gtk/x11lgnd.c (Popup_list): don't use "GtkStockItem".
+	(points_setup, legend_dialog_setup_sub): use
+	"gtk_check_button_new_with_mnemonic()" and "set_button_icon()"
+	instead of "gtk_button_new_from_stock()".
+	(LegendTextDialogSetup, LegendArrowDialogSetup)
+	(LegendRectDialogSetup, LegendArcDialogSetup)
+	(LegendMarkDialogSetup): don't use "GtkStockItem".
+
+	* src/gtk/x11gui.c (DialogExecute, message_box, DialogInput)
+	(DialogRadio, DialogCombo, DialogComboEntry, DialogSpinEntry)
+	(DialogCheck, nGetOpenFileNameMulti, nGetSaveFileName): don't use
+	"GtkStockItem".
+
+	* src/gtk/x11graph.c (SwitchDialogSetup): use
+	"gtk_check_button_new_with_mnemonic()" and "set_button_icon()"
+	instead of "gtk_button_new_from_stock()".
+
+	* src/gtk/x11file.c (Popup_list): don't use "GtkStockItem."
+	(MathDialogSetup, FitDialogSetup)
+	(move_tab_create,mask_tab_create): use
+	"gtk_check_button_new_with_mnemonic()" and "set_button_icon()"
+	instead of "gtk_button_new_from_stock()".
+	(MathDialogSetup, FitSaveDialogSetup, FitDialogSetup): don't use
+	"GtkStockItem".
+
+	* src/gtk/x11dialg.c (SelectDialogSetup): use
+	"gtk_check_button_new_with_mnemonic()" and "set_button_icon()"
+	instead of "gtk_button_new_from_stock()".
+
+	* src/gtk/x11commn.c (ProgressDialogCreate): use
+	"gtk_check_button_new_with_mnemonic()" and "set_button_icon()"
+	instead of "gtk_button_new_from_stock()".
+
+	* src/gtk/x11axis.c (Popup_list): don't use "GtkStockItem".
+	(scale_tab_create): use "gtk_button_new_with_mnemonic()" instead
+	of "gtk_button_new_from_stock()".
+	(font_tab_create): use "gtk_check_button_new_with_mnemonic()" and
+	"set_button_icon()" instead of "gtk_check_button_new_with_label()"
+	and "gtk_button_set_use_stock()".
+
+	* src/gtk/gtk_widget.c (set_button_icon): added.
+	(create_file_entry_with_cb, create_direction_entry): use
+	"gtk_entry_set_icon_from_icon_name()" instead of
+	"gtk_entry_set_icon_from_stock()".
+
+	* src/gtk/gtk_subwin.h (subwin_popup_list): remove member
+	"use_stock".
+
+	* src/gtk/gtk_subwin.c (start_editing): use
+	"gtk_entry_set_icon_from_icon_name()" instead of
+	"gtk_entry_set_icon_from_stock()".
+	(sub_win_create_popup_menu): use
+	"gtk_menu_item_new_with_mnemonic()" instead of
+	"gtk_image_menu_item_new_from_stock()".
+
+	* initfile/NgraphUI.xml: remove preview tool button.
+
+	* initfile/Ngraph.ini.in (browser): don't use "yelp".
+
+	* addin/legend.c (main): don't use "GtkStockItem".
+
+	* addin/fitrslt.c (main): don't use "GtkStockItem".
+
+	* addin/calc.c (main): don't use "GtkStockItem".
+
 2014-02-25  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (single_to_multi): set

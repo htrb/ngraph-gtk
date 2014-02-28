@@ -478,7 +478,7 @@ PrefScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct PrefScriptDialog *) data;
   if (makewidget) {
-    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_SAVE, IDSAVE);
+    gtk_dialog_add_button(GTK_DIALOG(wi), _("_Save"), IDSAVE);
     PrefScriptDialogCreateWidgets(d, NULL, sizeof(list) / sizeof(*list), list);
     gtk_window_set_default_size(GTK_WINDOW(wi), 400, 300);
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
@@ -683,7 +683,7 @@ PrefDriverDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct PrefDriverDialog *) data;
   if (makewidget) {
-    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_SAVE, IDSAVE);
+    gtk_dialog_add_button(GTK_DIALOG(wi), _("_Save"), IDSAVE);
     PrefDriverDialogCreateWidgets(d, NULL, sizeof(list) / sizeof(*list), list);
     gtk_window_set_default_size(GTK_WINDOW(wi), 400, 300);
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
@@ -954,23 +954,27 @@ FontSettingDialogSetup(GtkWidget *wi, void *data, int makewidget)
     vbox = gtk_vbox_new(FALSE, 4);
 #endif
 
-    w = gtk_button_new_from_stock(GTK_STOCK_ADD);
+    w= gtk_button_new_with_mnemonic(_("_Add"));
+    set_button_icon(w, "list-add");
     g_signal_connect(w, "clicked", G_CALLBACK(FontSettingDialogAddAlternative), d);
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
 
-    w = gtk_button_new_from_stock(GTK_STOCK_REMOVE);
+    w = gtk_button_new_with_mnemonic(_("_Remove"));
+    set_button_icon(w, "list-remove");
     g_signal_connect(w, "clicked", G_CALLBACK(FontSettingDialogRemoveAlternative), d);
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
     gtk_widget_set_sensitive(w, FALSE);
     d->del_b = w;
 
-    w = gtk_button_new_from_stock(GTK_STOCK_GO_DOWN);
+    w = gtk_button_new_with_mnemonic(_("_Down"));
+    set_button_icon(w, "go-down");
     g_signal_connect(w, "clicked", G_CALLBACK(FontSettingDialogDownAlternative), d);
     gtk_box_pack_end(GTK_BOX(vbox), w, FALSE, FALSE, 4);
     gtk_widget_set_sensitive(w, FALSE);
     d->down_b = w;
 
-    w = gtk_button_new_from_stock(GTK_STOCK_GO_UP);
+    w = gtk_button_new_with_mnemonic(_("_Up"));
+    set_button_icon(w, "go-up");
     g_signal_connect(w, "clicked", G_CALLBACK(FontSettingDialogUpAlternative), d);
     gtk_box_pack_end(GTK_BOX(vbox), w, FALSE, FALSE, 4);
     gtk_widget_set_sensitive(w, FALSE);
@@ -1185,7 +1189,7 @@ PrefFontDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct PrefFontDialog *) data;
   if (makewidget) {
-    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_SAVE, IDSAVE);
+    gtk_dialog_add_button(GTK_DIALOG(wi), _("_Save"), IDSAVE);
 
 #if GTK_CHECK_VERSION(3, 0, 0)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
@@ -1290,8 +1294,8 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
   d = (struct MiscDialog *) data;
   if (makewidget) {
     d->show_cancel = FALSE;
-    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_CANCEL, IDCANCEL);
-    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_SAVE, IDSAVE);
+    gtk_dialog_add_button(GTK_DIALOG(wi), _("_Cancel"), IDCANCEL);
+    gtk_dialog_add_button(GTK_DIALOG(wi), _("_Save"), IDSAVE);
 
 #if GTK_CHECK_VERSION(3, 0, 0)
     hbox2 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
@@ -1634,8 +1638,8 @@ ExViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
   d = (struct ExViewerDialog *) data;
   if (makewidget) {
     d->show_cancel = FALSE;
-    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_CANCEL, IDCANCEL);
-    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_SAVE, IDSAVE);
+    gtk_dialog_add_button(GTK_DIALOG(wi), _("_Cancel"), IDCANCEL);
+    gtk_dialog_add_button(GTK_DIALOG(wi), _("_Save"), IDSAVE);
 
 #if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
@@ -1764,8 +1768,8 @@ ViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
   d = (struct ViewerDialog *) data;
   if (makewidget) {
     d->show_cancel = FALSE;
-    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_CANCEL, IDCANCEL);
-    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_SAVE, IDSAVE);
+    gtk_dialog_add_button(GTK_DIALOG(wi), _("_Cancel"), IDCANCEL);
+    gtk_dialog_add_button(GTK_DIALOG(wi), _("_Save"), IDSAVE);
 
 #if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();

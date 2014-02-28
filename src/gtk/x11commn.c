@@ -1694,7 +1694,8 @@ ProgressDialogCreate(char *title)
 #else
   hbox = gtk_hbox_new(FALSE, 4);
 #endif
-  btn = gtk_button_new_from_stock(GTK_STOCK_STOP);
+  btn = gtk_button_new_with_mnemonic(_("_Stop"));
+  set_button_icon(btn, "process-stop");
   g_signal_connect(btn, "clicked", G_CALLBACK(stop_btn_clicked), NULL);
 
   gtk_box_pack_end(GTK_BOX(hbox), btn, FALSE, FALSE, 4);

@@ -167,14 +167,14 @@ DialogExecute(GtkWidget *parent, void *dialog)
     data->widget = dlg;
     data->vbox = GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dlg)));
     data->show_cancel = TRUE;
-    data->ok_button = GTK_STOCK_OK;
+    data->ok_button = _("_OK");
 
     gtk_window_set_title(GTK_WINDOW(dlg), _(data->resource));
 
     data->SetupWindow(dlg, data, TRUE);
 
     if (data->show_cancel) {
-      gtk_dialog_add_button(GTK_DIALOG(dlg), GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
+      gtk_dialog_add_button(GTK_DIALOG(dlg), _("_Cancel"), GTK_RESPONSE_CANCEL);
     }
 
     gtk_dialog_add_button(GTK_DIALOG(dlg), data->ok_button, GTK_RESPONSE_OK);
@@ -308,7 +308,7 @@ message_box(GtkWidget * parent, const char *message, const char *title, int mode
 
   if (mode == RESPONS_YESNOCANCEL) {
     gtk_dialog_add_button(GTK_DIALOG(dlg),
-			  GTK_STOCK_CANCEL,
+			  _("_Cancel"),
 			  GTK_RESPONSE_CANCEL);
   }
 
@@ -355,8 +355,8 @@ DialogInput(GtkWidget * parent, const char *title, const char *mes, const char *
   dlg = gtk_dialog_new_with_buttons(title,
 				    GTK_WINDOW(parent),
 				    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-				    GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-				    GTK_STOCK_OK, GTK_RESPONSE_OK,
+				    _("_Cancel"), GTK_RESPONSE_CANCEL,
+				    _("_OK"), GTK_RESPONSE_OK,
 				    NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
   gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
@@ -415,8 +415,8 @@ DialogRadio(GtkWidget *parent, const char *title, const char *caption, struct na
   dlg = gtk_dialog_new_with_buttons(title,
 				    GTK_WINDOW(parent),
 				    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-				    GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-				    GTK_STOCK_OK, GTK_RESPONSE_OK,
+				    _("_Cancel"), GTK_RESPONSE_CANCEL,
+				    _("_OK"), GTK_RESPONSE_OK,
 				    NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
   gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
@@ -530,8 +530,8 @@ DialogCombo(GtkWidget *parent, const char *title, const char *caption, struct na
   dlg = gtk_dialog_new_with_buttons(title,
 				    GTK_WINDOW(parent),
 				    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-				    GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-				    GTK_STOCK_OK, GTK_RESPONSE_OK,
+				    _("_Cancel"), GTK_RESPONSE_CANCEL,
+				    _("_OK"), GTK_RESPONSE_OK,
 				    NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
   gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
@@ -597,8 +597,8 @@ DialogComboEntry(GtkWidget *parent, const char *title, const char *caption, stru
   dlg = gtk_dialog_new_with_buttons(title,
 				    GTK_WINDOW(parent),
 				    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-				    GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-				    GTK_STOCK_OK, GTK_RESPONSE_OK,
+				    _("_Cancel"), GTK_RESPONSE_CANCEL,
+				    _("_OK"), GTK_RESPONSE_OK,
 				    NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
   gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
@@ -659,8 +659,8 @@ DialogSpinEntry(GtkWidget *parent, const char *title, const char *caption, doubl
   dlg = gtk_dialog_new_with_buttons(title,
 				    GTK_WINDOW(parent),
 				    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-				    GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-				    GTK_STOCK_OK, GTK_RESPONSE_OK,
+				    _("_Cancel"), GTK_RESPONSE_CANCEL,
+				    _("_OK"), GTK_RESPONSE_OK,
 				    NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
   gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
@@ -730,8 +730,8 @@ DialogCheck(GtkWidget *parent, const char *title, const char *caption, struct na
   dlg = gtk_dialog_new_with_buttons(title,
 				    GTK_WINDOW(parent),
 				    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-				    GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-				    GTK_STOCK_OK, GTK_RESPONSE_OK,
+				    _("_Cancel"), GTK_RESPONSE_CANCEL,
+				    _("_OK"), GTK_RESPONSE_OK,
 				    NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
   gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
@@ -966,7 +966,7 @@ FileSelectionDialog(GtkWidget *parent, int type, char *stock)
   dlg = gtk_file_chooser_dialog_new(data->title,
 				    GTK_WINDOW(data->parent),
 				    type,
-				    GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+				    _("_Cancel"), GTK_RESPONSE_CANCEL,
 				    stock, GTK_RESPONSE_ACCEPT,
 				    NULL);
   rc = gtk_check_button_new_with_mnemonic(_("_Change current directory"));
@@ -1067,7 +1067,7 @@ nGetOpenFileNameMulti(GtkWidget * parent,
   FileSelection.overwrite = FALSE;
   FileSelection.multi = TRUE;
   FileSelection.changedir = TRUE;
-  ret = FileSelectionDialog(parent, GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_OPEN);
+  ret = FileSelectionDialog(parent, GTK_FILE_CHOOSER_ACTION_OPEN, _("_Open"));
   if (ret == IDOK) {
     *file = FileSelection.file;
     if (FileSelection.chdir && init_dir && nchdir(*init_dir)) {
@@ -1102,7 +1102,7 @@ nGetOpenFileName(GtkWidget *parent,
 			    (exist) ?
 			    GTK_FILE_CHOOSER_ACTION_OPEN :
 			    GTK_FILE_CHOOSER_ACTION_SAVE,
-			    GTK_STOCK_OPEN);
+			    _("_Open"));
   if (ret == IDOK) {
     *file = FileSelection.file[0];
     g_free(FileSelection.file);
@@ -1133,7 +1133,7 @@ nGetSaveFileName(GtkWidget * parent,
   FileSelection.overwrite = overwrite;
   FileSelection.multi = FALSE;
   FileSelection.changedir = TRUE;
-  ret = FileSelectionDialog(parent, GTK_FILE_CHOOSER_ACTION_SAVE, GTK_STOCK_SAVE);
+  ret = FileSelectionDialog(parent, GTK_FILE_CHOOSER_ACTION_SAVE, _("_Save"));
   if (ret == IDOK) {
     *file = FileSelection.file[0];
     g_free(FileSelection.file);

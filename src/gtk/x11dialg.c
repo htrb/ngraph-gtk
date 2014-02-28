@@ -340,7 +340,8 @@ SelectDialogSetup(GtkWidget *wi, void *data, int makewidget)
 #else
     hbox = gtk_hbox_new(FALSE, 4);
 #endif
-    w = gtk_button_new_from_stock(GTK_STOCK_SELECT_ALL);
+    w = gtk_button_new_with_mnemonic(_("Select _All"));
+    set_button_icon(w, "edit-select-all");
     g_signal_connect(w, "clicked", G_CALLBACK(list_store_select_all_cb), d->list);
     gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);

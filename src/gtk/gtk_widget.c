@@ -12,6 +12,14 @@
 #include "x11gui.h"
 
 void
+set_button_icon(GtkWidget *w, const char *icon_name)
+{
+  GtkWidget *icon;
+  icon = gtk_image_new_from_icon_name(icon_name, GTK_ICON_SIZE_BUTTON);
+  gtk_button_set_image(GTK_BUTTON(w), icon);
+}
+
+void
 set_widget_margin(GtkWidget *w, int margin_pos)
 {
 #if GTK_CHECK_VERSION(3, 0, 0)
@@ -305,7 +313,7 @@ create_file_entry_with_cb(GCallback cb, gpointer data)
 
   w = create_text_entry(TRUE, TRUE);
 
-  gtk_entry_set_icon_from_stock(GTK_ENTRY(w), GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_OPEN);
+  gtk_entry_set_icon_from_icon_name(GTK_ENTRY(w), GTK_ENTRY_ICON_SECONDARY, "document-open");
   g_signal_connect(w, "icon-release", cb, data);
 
   return w;
@@ -361,8 +369,8 @@ create_direction_entry(void)
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_ANGLE, FALSE, TRUE);
   gtk_entry_set_width_chars(GTK_ENTRY(w), NUM_ENTRY_WIDTH);
-  gtk_entry_set_icon_from_stock(GTK_ENTRY(w), GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_GO_UP);
-  gtk_entry_set_icon_from_stock(GTK_ENTRY(w), GTK_ENTRY_ICON_PRIMARY, GTK_STOCK_GO_DOWN);
+  gtk_entry_set_icon_from_icon_name(GTK_ENTRY(w), GTK_ENTRY_ICON_SECONDARY, "go-up");
+  gtk_entry_set_icon_from_icon_name(GTK_ENTRY(w), GTK_ENTRY_ICON_PRIMARY, "go-down");
   g_signal_connect(w, "icon-release", G_CALLBACK(direction_icon_released), NULL);
 
   return w;

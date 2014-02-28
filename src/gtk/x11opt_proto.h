@@ -266,29 +266,34 @@ CREATE_NAME(Pref, DialogCreateWidgets)(struct CREATE_NAME(Pref, Dialog) *d, GtkW
   }
   vbox = gtk_vbox_new(FALSE, 4);
 
-  w = gtk_button_new_from_stock(GTK_STOCK_ADD);
+  w= gtk_button_new_with_mnemonic(_("_Add"));
+  set_button_icon(w, "list-add");
   g_signal_connect(w, "clicked", G_CALLBACK(CREATE_NAME(Pref, DialogAdd)), d);
   gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
 
-  w = gtk_button_new_from_stock(GTK_STOCK_PREFERENCES);
+  w = gtk_button_new_with_mnemonic(_("_Preferences"));
+  set_button_icon(w, "preferences-system");
   g_signal_connect(w, "clicked", G_CALLBACK(CREATE_NAME(Pref, DialogUpdate)), d);
   gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
   gtk_widget_set_sensitive(w, FALSE);
   d->update_b = w;
 
-  w = gtk_button_new_from_stock(GTK_STOCK_REMOVE);
+  w = gtk_button_new_with_mnemonic(_("_Remove"));
+  set_button_icon(w, "list-remove");
   g_signal_connect(w, "clicked", G_CALLBACK(CREATE_NAME(Pref, DialogRemove)), d);
   gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
   gtk_widget_set_sensitive(w, FALSE);
   d->del_b = w;
 
-  w = gtk_button_new_from_stock(GTK_STOCK_GO_DOWN);
+  w = gtk_button_new_with_mnemonic(_("_Down"));
+  set_button_icon(w, "go-down");
   g_signal_connect(w, "clicked", G_CALLBACK(CREATE_NAME(Pref, DialogDown)), d);
   gtk_box_pack_end(GTK_BOX(vbox), w, FALSE, FALSE, 4);
   gtk_widget_set_sensitive(w, FALSE);
   d->down_b = w;
 
-  w = gtk_button_new_from_stock(GTK_STOCK_GO_UP);
+  w = gtk_button_new_with_mnemonic(_("_Up"));
+  set_button_icon(w, "go-up");
   g_signal_connect(w, "clicked", G_CALLBACK(CREATE_NAME(Pref, DialogUp)), d);
   gtk_box_pack_end(GTK_BOX(vbox), w, FALSE, FALSE, 4);
   gtk_widget_set_sensitive(w, FALSE);
@@ -299,7 +304,7 @@ CREATE_NAME(Pref, DialogCreateWidgets)(struct CREATE_NAME(Pref, Dialog) *d, GtkW
   gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
 
   d->show_cancel = FALSE;
-  d->ok_button = GTK_STOCK_CLOSE;
+  d->ok_button = _("_Close");
 }
 
 #undef LIST_TYPE
