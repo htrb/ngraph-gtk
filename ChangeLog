@@ -1,3 +1,12 @@
+2014-03-01  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_widget.h (NUM_ENTRY_WIDTH): change width from 11 to
+	12.
+
+	* src/gtk/x11axis.c (font_tab_create): use
+	"gtk_check_button_new_with_mnemonic()" instead of
+	"gtk_check_button_new_with_label()".
+
 2014-02-28  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (EvalDialogSetup): use

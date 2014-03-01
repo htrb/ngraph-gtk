@@ -2203,7 +2203,7 @@ font_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   d->font_bold = w;
   gtk_box_pack_start(GTK_BOX(btn_box), w, FALSE, FALSE, 0);
 
-  w = gtk_check_button_new_with_label(_("_Italic"));
+  w = gtk_check_button_new_with_mnemonic(_("_Italic"));
   set_button_icon(w, "format-text-italic");
   d->font_italic = w;
   gtk_box_pack_start(GTK_BOX(btn_box), w, FALSE, FALSE, 0);

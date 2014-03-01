@@ -4,7 +4,7 @@
 #include "object.h"
 
 #define SPIN_ENTRY_MAX 1000000
-#define NUM_ENTRY_WIDTH 11
+#define NUM_ENTRY_WIDTH 12
 
 enum SPIN_BUTTON_TYPE {
   SPIN_BUTTON_TYPE_WIDTH,
