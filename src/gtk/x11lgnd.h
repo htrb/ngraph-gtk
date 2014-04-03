@@ -37,5 +37,5 @@ void CmMarkDel(GtkAction *w, gpointer client_data);
 void CmTextUpdate(GtkAction *w, gpointer client_data);
 void CmTextDel(GtkAction *w, gpointer client_data);
 
-void CmLegendWindow(GtkToggleAction *action, gpointer client_data);
+void LegendWinState(struct SubWin *d, int state);
 void CmOptionTextDef(GtkAction *w, gpointer client_data);

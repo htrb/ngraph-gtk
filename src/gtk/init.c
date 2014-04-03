@@ -913,7 +913,7 @@ n_initialize(int *argc, char ***argv)
   load_config(sys, inst, &allocconsole, &history_size);
   rl_readline_name = "ngraph";
   rl_completer_word_break_characters = " \t\n\"'@><;|&({}`";
-  rl_attempted_completion_function = (CPPFunction *) attempt_shell_completion;
+  rl_attempted_completion_function = (rl_completion_func_t *) attempt_shell_completion;
   rl_completion_entry_function = NULL;
 
   HistoryFile = g_strdup_printf("%s/%s", homedir, HIST_FILE);

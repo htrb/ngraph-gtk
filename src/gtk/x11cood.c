@@ -134,19 +134,8 @@ CoordWinUpdate(int clear)
 }
 
 void
-CmCoordinateWindow(GtkToggleAction *action, gpointer client_data)
+CoordWinState(struct SubWin *d, int state)
 {
-  struct SubWin *d;
-  int state;
-
-  d = &(NgraphApp.CoordWin);
-
-  if (action) {
-    state = gtk_toggle_action_get_active(action);
-  } else {
-    state = TRUE;
-  }
-
   if (d->Win) {
     sub_window_set_visibility(d, state);
     return;

@@ -24,5 +24,5 @@
 void InfoWinClear(void);
 void InfoWinUpdate(int clear);
 void InfoWinDrawInfoText(const char *str);
-void CmInformationWindow(GtkToggleAction *action, gpointer data);
 void InfoWinSetFont(char *font);
+void InfoWinState(struct SubWin *d, int state);

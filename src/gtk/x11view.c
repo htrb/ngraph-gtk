@@ -109,7 +109,7 @@ static cairo_region_t *region = NULL;
 #else
 static GdkRegion *region = NULL;
 #endif
-static int PaintLock = FALSE, ZoomLock = FALSE, DefaultMode = 0, KeepMouseMode = FALSE;
+static int PaintLock = FALSE, ZoomLock = FALSE, KeepMouseMode = FALSE;
 
 #define EVAL_NUM_MAX 5000
 static struct evaltype EvalList[EVAL_NUM_MAX];
@@ -144,7 +144,6 @@ static void do_popup(GdkEventButton *event, struct Viewer *d);
 static int check_focused_obj(struct narray *focusobj, struct objlist *fobj, int oid);
 static int get_mouse_cursor_type(struct Viewer *d, int x, int y);
 static void reorder_object(enum object_move_type type);
-static void move_data_cancel(struct Viewer *d, gboolean show_message);
 static void SetHRuler(const struct Viewer *d);
 static void SetVRuler(const struct Viewer *d);
 static void clear_focus_obj(const struct Viewer *d);
@@ -2028,7 +2027,7 @@ AlignFocusedObj(int align)
     case VIEW_ALIGN_LEFT:
       dx = minx - bbox[0];
       break;
-    case VIEW_ALIGN_VCENTER:
+    case VIEW_ALIGN_HCENTER:
       dx = (maxx + minx - bbox[2] - bbox[0]) / 2;
       break;
     case VIEW_ALIGN_RIGHT:
@@ -2037,7 +2036,7 @@ AlignFocusedObj(int align)
     case VIEW_ALIGN_TOP:
       dy = miny - bbox[1];
       break;
-    case VIEW_ALIGN_HCENTER:
+    case VIEW_ALIGN_VCENTER:
       dy = (maxy + miny - bbox[3] - bbox[1]) / 2;
       break;
     case VIEW_ALIGN_BOTTOM:
@@ -4067,13 +4066,13 @@ ViewerEvLButtonDblClk(unsigned int state, TPoint *point, struct Viewer *d)
   }
 
   if ((d->Mode & POINT_TYPE_DRAW_ALL) && ! KeepMouseMode) {
-    gtk_radio_action_set_current_value(NgraphApp.viewb, DefaultMode);
+    set_pointer_mode(-1);
   }
 
   return TRUE;
 }
 
-static void
+void
 move_data_cancel(struct Viewer *d, gboolean show_message)
 {
   arraydel(&SelList);
@@ -4865,7 +4864,7 @@ ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data)
     } else {
       UnFocus();
     }
-    gtk_radio_action_set_current_value(NgraphApp.viewb, DefaultMode);
+    set_pointer_mode(-1);
     goto EXIT_PRAPAGATE;
   case GDK_KEY_space:
     CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
@@ -6412,61 +6411,4 @@ CmEditMenuCB(GtkAction *w, gpointer client_data)
     reorder_object(OBJECT_MOVE_TYPE_LAST);
     break;
   }
-}
-
-void
-CmViewerButtonArm(GtkAction *action, gpointer client_data)
-{
-  int mode = PointB;
-  struct Viewer *d;
-
-  d = &NgraphApp.Viewer;
-
-  if (! gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action))) {
-    return;
-  }
-
-  mode = GPOINTER_TO_INT(client_data);
-
-  UnFocus();
-
-  switch (mode) {
-  case PointB:
-    DefaultMode = 0;
-    NSetCursor(GDK_LEFT_PTR);
-    break;
-  case LegendB:
-    DefaultMode = 1;
-    NSetCursor(GDK_LEFT_PTR);
-    break;
-  case AxisB:
-    DefaultMode = 2;
-    NSetCursor(GDK_LEFT_PTR);
-    break;
-  case DataB:
-    DefaultMode = 3;
-    NSetCursor(GDK_LEFT_PTR);
-    break;
-  case TrimB:
-  case EvalB:
-    NSetCursor(GDK_LEFT_PTR);
-    break;
-  case TextB:
-    NSetCursor(GDK_XTERM);
-    break;
-  case ZoomB:
-    NSetCursor(GDK_TARGET);
-    break;
-  default:
-    NSetCursor(GDK_PENCIL);
-  }
-  NgraphApp.Viewer.Mode = mode;
-  NgraphApp.Viewer.Capture = FALSE;
-  NgraphApp.Viewer.MouseMode = MOUSENONE;
-
-  if (d->MoveData) {
-    move_data_cancel(d, TRUE);
-  }
-
-  gtk_widget_queue_draw(d->Win);
 }

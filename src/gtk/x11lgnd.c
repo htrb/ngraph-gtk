@@ -3746,10 +3746,9 @@ struct legend_data {
 };
 
 void
-CmLegendWindow(GtkToggleAction *action, gpointer client_data)
+LegendWinState(struct SubWin *d, int state)
 {
-  int i, j, n, state;
-  struct SubWin *d;
+  int i, j, n;
   struct obj_list_data *data;
   GList *list;
   GtkTreeViewColumn *col;
@@ -3763,14 +3762,6 @@ CmLegendWindow(GtkToggleAction *action, gpointer client_data)
   };
   GtkWidget *icons[LEGENDNUM];
   int noexpand_text_colmns[] = {TEXT_LIST_COL_X, TEXT_LIST_COL_Y, TEXT_LIST_COL_PT, TEXT_LIST_COL_DIR};
-
-  d = &(NgraphApp.LegendWin);
-
-  if (action) {
-    state = gtk_toggle_action_get_active(action);
-  } else {
-    state = TRUE;
-  }
 
   if (d->Win) {
     sub_window_set_visibility(d, state);

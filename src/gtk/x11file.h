@@ -39,8 +39,8 @@ void CmFileEdit(GtkAction *w, gpointer client_data);
 void CmFileMath(GtkAction *w, gpointer client_data);
 void CmFileSaveData(GtkAction *w, gpointer client_data);
 
-void CmFileWindow(GtkToggleAction *action, gpointer client_data);
-void FileWindowUnmap(GtkWidget *w, gpointer client_data);
+void FileWinState(struct SubWin *d, int state);
+
 void CmOptionFileDef(GtkAction *w, gpointer client_data);
 int update_file_obj_multi(struct objlist *obj, struct narray *farray, int newfile);
 void copy_file_obj_field(struct objlist *obj, int id, int sel, int copy_filename);

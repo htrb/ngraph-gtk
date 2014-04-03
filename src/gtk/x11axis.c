@@ -3745,19 +3745,8 @@ axiswin_ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
 }
 
 void
-CmAxisWindow(GtkToggleAction *action, gpointer client_data)
+AxisWinState(struct SubWin *d, int state)
 {
-  struct SubWin *d;
-  int state;
-
-  d = &(NgraphApp.AxisWin);
-
-  if (action) {
-    state = gtk_toggle_action_get_active(action);
-  } else {
-    state = TRUE;
-  }
-
   if (d->Win) {
     sub_window_set_visibility(d, state);
     return;

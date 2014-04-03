@@ -108,19 +108,8 @@ InfoWinUpdate(int clear)
 }
 
 void
-CmInformationWindow(GtkToggleAction *action, gpointer data)
+InfoWinState(struct SubWin *d, int state)
 {
-  struct SubWin *d;
-  int state;
-
-  d = &(NgraphApp.InfoWin);
-
-  if (action) {
-    state = gtk_toggle_action_get_active(action);
-  } else {
-    state = TRUE;
-  }
-
   if (d->Win) {
     sub_window_set_visibility(d, state);
     return;

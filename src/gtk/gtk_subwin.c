@@ -689,6 +689,8 @@ sub_window_hide(struct SubWin *d)
   if (d->Win) {
     sub_window_save_geometry(d);
     gtk_widget_hide(d->Win);
+    d->visible = FALSE;
+    set_toggle_action_widget_state(d->action_widget_id, FALSE);
   }
 }
 
@@ -697,6 +699,8 @@ sub_window_show(struct SubWin *d)
 {
   if (d->Win) {
     gtk_window_present(GTK_WINDOW(d->Win));
+    d->visible = TRUE;
+    set_toggle_action_widget_state(d->action_widget_id, TRUE);
   }
 }
 
@@ -744,7 +748,7 @@ cb_del(GtkWidget *w, GdkEvent *event, gpointer user_data)
   struct SubWin *d;
 
   d = (struct SubWin *) user_data;
-  window_action_set_active(d->type, FALSE);
+  set_subwindow_state(d->type, SUBWIN_STATE_HIDE);
 
   return TRUE;
 }
@@ -1296,11 +1300,10 @@ ev_sub_win_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
 
   e = (GdkEventKey *)event;
 
-
   switch (e->keyval) {
   case GDK_KEY_w:
     if (e->state & GDK_CONTROL_MASK) {
-      window_action_set_active(d->type, FALSE);
+      set_subwindow_state(d->type, SUBWIN_STATE_HIDE);
       return TRUE;
     }
     return FALSE;

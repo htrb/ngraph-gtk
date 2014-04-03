@@ -1,3 +1,80 @@
+2014-04-03  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (AlignFocusedObj): swap "VIEW_ALIGN_HCENTER"
+	and "VIEW_ALIGN_VCENTER".
+	(ViewerEvLButtonDblClk, ViewerEvKeyDown): use "set_pointer_mode()"
+	instead of "gtk_radio_action_set_current_value()".
+
+	* src/gtk/x11merge.c (MergeWinState): renamed from "CmMergeWindow".
+
+	* src/gtk/x11menu.c (set_pointer_mode, init_action_widget_list)
+	(set_action_widget_sensitivity, set_subwin_state)
+	(set_toggle_action_widget_state, create_toolbar)
+	(create_menu_sub, create_menu, create_popup, toggle_subwindow)
+	(set_subwindow_state): added.
+	(CmViewerButtonArm): moved from "x11view.c".
+	(set_axis_undo_button_sensitivity): use
+	"set_action_widget_sensitivity()".
+	(create_addin_menu): don't use "gtk_ui_manager_get_widget()".
+	(set_action_sensitivity): removed.
+	(set_focus_sensitivity_sub, set_window_action_visibility): don't
+	use "GtkAction".
+	(multi_to_single, destroy_sub_windows): call
+	"set_subwindow_state()" instead of "window_action_set_active()".
+	(setupwindow): don't use "GTkUIManager".
+	(init_ngraph_app_struct): initialize member valiables
+	"action_widget_id" and "state_func".
+	(create_sub_windows): use "set_subwindow_state()".
+	(set_modified_state): use set_action_widget_sensitivity()".
+	(toggle_view_cb): inhibit recursive call.
+	(set_widget_visibility): use "set_toggle_action_widget_state()".
+	(check_instance): use "set_action_widget_sensitivity()".
+	(application): don't use "GTkUIManager" and "GtkAction".
+	(CmReloadWindowConfig): use "set_subwindow_state()" instead of
+	"window_action_set_active()".
+	(CmToggleSingleWindowMode): use "gtk_check_menu_item_get_active()"
+	instead of "gtk_toggle_tool_button_get_active()".
+
+	* src/gtk/x11lgnd.c (LegendWinState): renamed from "CmLegendWindow".
+
+	* src/gtk/x11info.c (InfoWinState): renamed from "CmInformationWindow".
+
+	* src/gtk/x11file.c (FileWinState): renamed from "CmFileWindow".
+
+	* src/gtk/x11cood.c (CoordWinState): renamed from "CmCoordinateWindow".
+
+	* src/gtk/x11axis.c (AxisWinState): renamed from "CmAxisWindow".
+
+	* src/gtk/ox11menu.c (mx_show_win, mx_hide_win, mx_toggle_win):
+	call "set_subwindow_state()" instead of
+	"window_action_set_active()".
+	(mx_get_ui): removed.
+	(gtkmenu): remove field "get_ui".
+
+	* src/gtk/init.c (n_initialize): use "rl_completion_func_t *"
+	instead of "CPPFunction *".
+
+	* src/gtk/gtk_subwin.c (sub_window_hide, sub_window_show): set
+	"visible" member variable and call
+	"set_toggle_action_widget_state()".
+	(cb_del, ev_sub_win_key_down): call "set_subwindow_state()"
+	instead of "window_action_set_active()".
+
+2014-04-02  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (create_ui_from_file, set_toolbar_caption)
+	(set_btn_press_cb, get_toolbar, create_action_group)
+	(create_action_widget, init_action_widget_list): removed.
+
+2014-04-01  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (window_action_toggle)
+	(window_action_set_active, set_toggle_action): removed.
+
+2014-03-27  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (set_gdk_color): removed.
+
 2014-03-01  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_widget.h (NUM_ENTRY_WIDTH): change width from 11 to

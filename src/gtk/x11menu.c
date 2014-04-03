@@ -72,20 +72,26 @@ struct NgraphApp NgraphApp = {0};
 GtkWidget *TopLevel = NULL;
 GtkAccelGroup *AccelGroup = NULL;
 
-static GtkActionGroup *ActionGroup = NULL;
 static GtkWidget *CurrentWindow = NULL, *CToolbar = NULL, *PToolbar = NULL;
 static enum {APP_CONTINUE, APP_QUIT, APP_QUIT_FORCE} Hide_window = APP_CONTINUE;
 static int DrawLock = FALSE;
 static unsigned int CursorType;
-static GtkUIManager *NgraphUi;
 
 #if USE_EXT_DRIVER
 static GtkWidget *ExtDrvOutMenu = NULL
 #endif
 
+struct MenuItem;
+struct ToolItem;
+
 static void CmReloadWindowConfig(GtkAction *w, gpointer user_data);
-static void CmToggleSingleWindowMode(GtkToggleAction *action, gpointer client_data);
+static void CmToggleSingleWindowMode(GtkCheckMenuItem *action, gpointer client_data);
 static void script_exec(GtkWidget *w, gpointer client_data);
+static void create_menu(GtkWidget *w, struct MenuItem *item);
+static void create_popup(GtkWidget *parent, struct MenuItem *item);
+static GtkWidget *create_toolbar(struct ToolItem *item, int n);
+static void CmViewerButtonArm(GtkToggleToolButton *action, gpointer client_data);
+static void toggle_subwindow(GtkWidget *action, gpointer client_data);
 
 GdkCursorType Cursor[] = {
   GDK_LEFT_PTR,
@@ -107,1788 +113,3010 @@ GdkCursorType Cursor[] = {
 #define CURSOR_TYPE_NUM (sizeof(Cursor) / sizeof(*Cursor))
 
 static void clear_information(GtkAction *w, gpointer user_data);
-static void toggle_view_cb(GtkToggleAction *action, gpointer data);
+static void toggle_view_cb(GtkCheckMenuItem *action, gpointer data);
+
+enum FOCUS_TYPE {
+  FOCUS_TYPE_1 = 0,
+  FOCUS_TYPE_2,
+  FOCUS_TYPE_3,
+  FOCUS_TYPE_4,
+  FOCUS_TYPE_5,
+  FOCUS_TYPE_6,
+  FOCUS_TYPE_NUM,
+};
 
 struct actions {
   const char *name;
   GtkAction *action;
-  enum {
-    FOCUS_TYPE_1 = 0,
-    FOCUS_TYPE_2,
-    FOCUS_TYPE_3,
-    FOCUS_TYPE_4,
-    FOCUS_TYPE_5,
-    FOCUS_TYPE_6,
-    FOCUS_TYPE_NUM,
-  } type;
+  enum FOCUS_TYPE type;
 };
 
-static void set_action_sensitivity(struct actions *actions, int *focus_type, int n);
+enum ACTION_TYPE {
+  ACTION_TYPE_FILE,
+  ACTION_TYPE_AXIS,
+  ACTION_TYPE_GRID,
+  ACTION_TYPE_PATH,
+  ACTION_TYPE_ARC,
+  ACTION_TYPE_RECTANGLE,
+  ACTION_TYPE_MARK,
+  ACTION_TYPE_TEXT,
+  ACTION_TYPE_MERGE,
+  ACTION_TYPE_FOCUS_EDIT1,
+  ACTION_TYPE_FOCUS_EDIT2,
+  ACTION_TYPE_FOCUS_EDIT_PASTE,
+  ACTION_TYPE_FOCUS_ROTATE,
+  ACTION_TYPE_FOCUS_FLIP,
+  ACTION_TYPE_FOCUS_UP,
+  ACTION_TYPE_FOCUS_DOWN,
+  ACTION_TYPE_AXIS_UNDO,
+  ACTION_TYPE_MULTI_WINDOW,
+  ACTION_TYPE_SINGLE_WINDOW,
+  ACTION_TYPE_MODIFIED,
+  ACTION_TYPE_NONE,
+};
+
+struct ActionWidget {
+  GtkWidget *menu, *popup;
+  GtkToolItem *tool;
+  enum ACTION_TYPE type;
+};
+
+enum ActionWidgetIndex {
+  GraphSaveAction,
+  EditMenuAction,
+  EditCutAction,
+  EditCopyAction,
+  EditRotateCCWAction,
+  EditRotateCWAction,
+  EditFlipVAction,
+  EditFlipHAction,
+  EditDeleteAction,
+  EditDuplicateAction,
+  EditAlignLeftAction,
+  EditAlignRightAction,
+  EditAlignHCenterAction,
+  EditAlignTopAction,
+  EditAlignBottomAction,
+  EditAlignVCenterAction,
+  EditOrderTopAction,
+  EditOrderUpAction,
+  EditOrderDownAction,
+  EditOrderBottomAction,
+  PopupUpdateAction,
+  EditPasteAction,
+  DataWindowAction,
+  AxisWindowAction,
+  LegendWindowAction,
+  MergeWindowAction,
+  CoordWindowAction,
+  InfoWindowAction,
+  DefaultWindowAction,
+  ViewSidebarAction,
+  ViewStatusbarAction,
+  ViewRulerAction,
+  ViewScrollbarAction,
+  ViewCommandToolbarAction,
+  ViewToolboxAction,
+  ViewCrossGaugeAction,
+  SingleWindowAction,
+  SingleWindowSeparator,
+  DataPropertyAction,
+  DataCloseAction,
+  DataEditAction,
+  DataSaveAction,
+  DataMathAction,
+  AxisPropertyAction,
+  AxisDeleteAction,
+  AxisScaleZoomAction,
+  AxisScaleClearAction,
+  AxisGridPropertyAction,
+  AxisGridDeleteAction,
+  AxisScaleUndoAction,
+  LegendPathPropertyAction,
+  LegendPathDeleteAction,
+  LegendRectanglePropertyAction,
+  LegendRectangleDeleteAction,
+  LegendArcPropertyAction,
+  LegendArcDeleteAction,
+  LegendMarkPropertyAction,
+  LegendMarkDeleteAction,
+  LegendTextPropertyAction,
+  LegendTextDeleteAction,
+  MergePropertyAction,
+  MergeCloseAction,
+  AddinAction,
+  PointerModeBoth,
+  PointerModeLegend,
+  PointerModeAxis,
+  PointerModeData,
+  ActionWidgetNum,
+};
+
+struct ActionWidget ActionWidget[ActionWidgetNum];
+static int DefaultMode = PointerModeBoth;
 
 enum {
   RECENT_TYPE_GRAPH,
   RECENT_TYPE_DATA,
 };
 
-struct NgraphActionEntry {
+struct ToolItem {
   enum {
-    ACTION_TYPE_NORMAL,
-    ACTION_TYPE_TOGGLE,
-    ACTION_TYPE_RADIO,
-    ACTION_TYPE_RECENT,
+    TOOL_TYPE_NORMAL,
+    TOOL_TYPE_TOGGLE,
+    TOOL_TYPE_TOGGLE2,
+    TOOL_TYPE_RADIO,
+    TOOL_TYPE_SEPARATOR,
   } type;
-  const gchar *name;
-  const gchar *stock_id;
-  const gchar *label;
-  const gchar *tooltip;
-  gchar *caption;
-  GCallback callback;
-  int user_data;
+  const char *label;
+  const char *tip;
+  const char *caption;
   const char *icon;
+  const char *icon_file;
   const char *accel_path;
   guint accel_key;
   GdkModifierType accel_mods;
+  struct MenuItem *child;
+  GCallback callback;
+  int user_data;
+  struct ActionWidget *action;
 };
 
-static struct NgraphActionEntry ActionEntry[] = {
+struct ToolItem PointerToolbar[] = {
   {
-    ACTION_TYPE_NORMAL,
-    "GraphMenuAction",
+    TOOL_TYPE_RADIO,
+    N_("Point"),
+    N_("Pointer"),
+    N_("Legend and Axis Pointer (+SHIFT: Multi select / +CONTROL: Horizontal/Vertical +SHIFT: Fine)"),
     NULL,
-    N_("_Graph"),
-    NULL,
-    NULL,
-    NULL,
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "GraphNewMenuAction",
-    NULL,
-    N_("_New graph"),
-    NULL,
-    NULL,
+    NGRAPH_POINT_ICON_FILE,
     NULL,
     0,
-    NULL,
-    NULL,
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "GraphExportMenuAction",
-    NULL,
-    N_("_Export image"),
-    NULL,
-    NULL,
-    NULL,
     0,
     NULL,
-    NULL,
+    G_CALLBACK(CmViewerButtonArm),
+    PointB,
+    ActionWidget + PointerModeBoth,
   },
   {
-    ACTION_TYPE_NORMAL,
-    "GraphAddinMenuAction",
+    TOOL_TYPE_RADIO,
+    N_("Legend"),
+    N_("Legend Pointer"),
+    N_("Legend Pointer (+SHIFT: Multi select / +CONTROL: Horizontal/Vertical +SHIFT: Fine)"),
     NULL,
-    N_("_Add-in"),
+    NGRAPH_LEGENDPOINT_ICON_FILE,
     NULL,
+    0,
+    0,
     NULL,
+    G_CALLBACK(CmViewerButtonArm),
+    LegendB,
+    ActionWidget + PointerModeLegend,
   },
   {
-    ACTION_TYPE_NORMAL,
-    "GraphAddinSubMenuAction",
+    TOOL_TYPE_RADIO,
+    N_("Axis"),
+    N_("Axis Pointer"),
+    N_("Axis Pointer (+SHIFT: Multi select / +CONTROL: Horizontal/Vertical +SHIFT: Fine)"),
     NULL,
-    N_("_Add-in"),
+    NGRAPH_AXISPOINT_ICON_FILE,
     NULL,
+    0,
+    0,
     NULL,
+    G_CALLBACK(CmViewerButtonArm),
+    AxisB,
+    ActionWidget + PointerModeAxis,
   },
   {
-    ACTION_TYPE_NORMAL,
-    "EditMenuAction",
+    TOOL_TYPE_RADIO,
+    N_("Data"),
+    N_("Data Pointer"),
+    N_("Data Pointer"),
     NULL,
-    N_("_Edit"),
+    NGRAPH_DATAPOINT_ICON_FILE,
     NULL,
+    0,
+    0,
     NULL,
+    G_CALLBACK(CmViewerButtonArm),
+    DataB,
+    ActionWidget + PointerModeData,
   },
   {
-    ACTION_TYPE_NORMAL,
-    "ViewMenuAction",
-    NULL,
-    N_("_View"),
-    NULL,
-    NULL,
+    TOOL_TYPE_SEPARATOR,
   },
   {
-    ACTION_TYPE_NORMAL,
-    "DataMenuAction",
+    TOOL_TYPE_RADIO,
+    N_("Path"),
+    N_("Path"),
+    N_("New Legend Path (+SHIFT: Fine +CONTROL: snap angle)"),
     NULL,
-    N_("_Data"),
+    NGRAPH_LINE_ICON_FILE,
     NULL,
+    0,
+    0,
     NULL,
-    NULL
+    G_CALLBACK(CmViewerButtonArm),
+    PathB,
   },
   {
-    ACTION_TYPE_NORMAL,
-    "AxisMenuAction",
+    TOOL_TYPE_RADIO,
+    N_("Rectangle"),
+    N_("Rectangle"),
+    N_("New Legend Rectangle (+SHIFT: Fine +CONTROL: square integer ratio rectangle)"),
     NULL,
-    N_("_Axis"),
+    NGRAPH_RECT_ICON_FILE,
     NULL,
+    0,
+    0,
     NULL,
+    G_CALLBACK(CmViewerButtonArm),
+    RectB,
   },
   {
-    ACTION_TYPE_NORMAL,
-    "LegendMenuAction",
+    TOOL_TYPE_RADIO,
+    N_("Arc"),
+    N_("Arc"),
+    N_("New Legend Arc (+SHIFT: Fine +CONTROL: circle or integer ratio ellipse)"),
     NULL,
-    N_("_Legend"),
+    NGRAPH_ARC_ICON_FILE,
     NULL,
+    0,
+    0,
     NULL,
+    G_CALLBACK(CmViewerButtonArm),
+    ArcB,
   },
   {
-    ACTION_TYPE_NORMAL,
-    "MergeMenuAction",
+    TOOL_TYPE_RADIO,
+    N_("Mark"),
+    N_("Mark"),
+    N_("New Legend Mark (+SHIFT: Fine)"),
     NULL,
-    N_("_Merge"),
+    NGRAPH_MARK_ICON_FILE,
     NULL,
+    0,
+    0,
     NULL,
+    G_CALLBACK(CmViewerButtonArm),
+    MarkB,
   },
   {
-    ACTION_TYPE_NORMAL,
-    "PreferenceMenuAction",
+    TOOL_TYPE_RADIO,
+    N_("Text"),
+    N_("Text"),
+    N_("New Legend Text (+SHIFT: Fine)"),
     NULL,
-    N_("_Preference"),
+    NGRAPH_TEXT_ICON_FILE,
     NULL,
+    0,
+    0,
     NULL,
+    G_CALLBACK(CmViewerButtonArm),
+    TextB,
   },
   {
-    ACTION_TYPE_NORMAL,
-    "HelpMenuAction",
-    NULL,
-    N_("_Help"),
-    NULL,
-    NULL,
+    TOOL_TYPE_SEPARATOR,
   },
   {
-    ACTION_TYPE_NORMAL,
-    "GraphNewFrameAction",
+    TOOL_TYPE_RADIO,
+    N_("Gauss"),
+    N_("Gaussian"),
+    N_("New Legend Gaussian (+SHIFT: Fine +CONTROL: integer ratio)"),
     NULL,
-    N_("_Frame graph"),
-    N_("Create frame graph"),
+    NGRAPH_GAUSS_ICON_FILE,
     NULL,
-    G_CALLBACK(CmGraphNewMenu),
-    MenuIdGraphNewFrame,
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmViewerButtonArm),
+    GaussB,
+  },
+  {
+    TOOL_TYPE_RADIO,
+    N_("Frame axis"),
+    N_("Frame Graph"),
+    N_("New Frame Graph (+SHIFT: Fine +CONTROL: integer ratio)"),
+    NULL,
     NGRAPH_FRAME_ICON_FILE,
-    "<Ngraph>/Graph/New graph/Frame graph",
+    NULL,
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmViewerButtonArm),
+    FrameB,
   },
   {
-    ACTION_TYPE_NORMAL,
-    "GraphNewSectionAction",
+    TOOL_TYPE_RADIO,
+    N_("Section axis"),
+    N_("Section Graph"),
+    N_("New Section Graph (+SHIFT: Fine +CONTROL: integer ratio)"),
     NULL,
-    N_("_Section graph"),
-    N_("Create section graph"),
-    NULL,
-    G_CALLBACK(CmGraphNewMenu),
-    MenuIdGraphNewSection,
     NGRAPH_SECTION_ICON_FILE,
-    "<Ngraph>/Graph/New graph/Section graph",
+    NULL,
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmViewerButtonArm),
+    SectionB,
   },
   {
-    ACTION_TYPE_NORMAL,
-    "GraphNewCrossAction",
+    TOOL_TYPE_RADIO,
+    N_("Cross axis"),
+    N_("Cross Graph"),
+    N_("New Cross Graph (+SHIFT: Fine +CONTROL: integer ratio)"),
     NULL,
-    N_("_Cross graph"),
-    N_("Create cross graph"),
-    NULL,
-    G_CALLBACK(CmGraphNewMenu),
-    MenuIdGraphNewCross,
     NGRAPH_CROSS_ICON_FILE,
-    "<Ngraph>/Graph/New graph/Cross graph",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "GraphNewClearAction",
     NULL,
-    N_("_All clear"),
-    N_("Clear graph"),
-    NULL,
-    G_CALLBACK(CmGraphNewMenu),
-    MenuIdGraphAllClear,
-    NULL,
-    "<Ngraph>/Graph/New graph/All clear",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "GraphLoadAction",
-    "document-open",
-    N_("_Load graph"),
-    N_("Load NGP"),
-    N_("Load NGP file"),
-    G_CALLBACK(CmGraphLoad),
+    0,
     0,
     NULL,
-    "<Ngraph>/Graph/Load graph",
-    GDK_KEY_r,
-    GDK_CONTROL_MASK
+    G_CALLBACK(CmViewerButtonArm),
+    CrossB,
   },
   {
-    ACTION_TYPE_RECENT,
-    "GraphRecentAction",
+    TOOL_TYPE_RADIO,
+    N_("Single axis"),
+    N_("Single Axis"),
+    N_("New Single Axis (+SHIFT: Fine +CONTROL: snap angle)"),
     NULL,
-    N_("_Recent graphs"),
+    NGRAPH_SINGLE_ICON_FILE,
     NULL,
-    NULL,
-    NULL,
-    RECENT_TYPE_GRAPH,
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "GraphSaveAction",
-    "document-save",
-    N_("_Save"),
-    N_("Save NGP"),
-    N_("Save NGP file"),
-    G_CALLBACK(CmGraphOverWrite),
+    0,
     0,
     NULL,
-    "<Ngraph>/Graph/Save",
-    GDK_KEY_s,
-    GDK_CONTROL_MASK
+    G_CALLBACK(CmViewerButtonArm),
+    SingleB,
   },
   {
-    ACTION_TYPE_NORMAL,
-    "GraphSaveAsAction",
-    "document-save-as",
-    N_("Save _As"),
-    N_("Save NGP"),
+    TOOL_TYPE_SEPARATOR,
+  },
+  {
+    TOOL_TYPE_RADIO,
+    N_("Trimming"),
+    N_("Axis Trimming"),
+    N_("Axis Trimming (+SHIFT: Fine)"),
     NULL,
-    G_CALLBACK(CmGraphSave),
+    NGRAPH_TRIMMING_ICON_FILE,
+    NULL,
+    0,
     0,
     NULL,
-    "<Ngraph>/Graph/SaveAs",
-    GDK_KEY_s,
-    GDK_CONTROL_MASK | GDK_SHIFT_MASK
+    G_CALLBACK(CmViewerButtonArm),
+    TrimB,
   },
   {
-    ACTION_TYPE_NORMAL,
-    "GraphExportGRAAction",
+    TOOL_TYPE_RADIO,
+    N_("Evaluate"),
+    N_("Evaluate Data"),
+    N_("Evaluate Data Point"),
     NULL,
-    N_("_GRA file"),
-    N_("Export as GRA file"),
+    NGRAPH_EVAL_ICON_FILE,
     NULL,
-    G_CALLBACK(CmOutputMenu),
-    MenuIdOutputGRAFile,
-    NULL,
-    "<Ngraph>/Graph/Export image/GRA File",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "GraphExportPSAction",
-    NULL,
-    N_("_PS file"),
-    N_("Export as PostScript file"),
-    NULL,
-    G_CALLBACK(CmOutputMenu),
-    MenuIdOutputPSFile,
-    NULL,
-    "<Ngraph>/Graph/Export image/PS File",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "GraphExportEPSAction",
-    NULL,
-    N_("_EPS file"),
-    N_("Export as Encapsulate PostScript file"),
-    NULL,
-    G_CALLBACK(CmOutputMenu),
-    MenuIdOutputEPSFile,
-    NULL,
-    "<Ngraph>/Graph/Export image/EPS File",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "GraphExportPDFAction",
-    NULL,
-    N_("P_DF file"),
-    N_("Export as Portable Document Format"),
-    NULL,
-    G_CALLBACK(CmOutputMenu),
-    MenuIdOutputPDFFile,
-    NULL,
-    "<Ngraph>/Graph/Export image/PDF File",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "GraphExportSVGAction",
-    NULL,
-    N_("_SVG file"),
-    N_("Export as Scalable Vector Graphics file"),
-    NULL,
-    G_CALLBACK(CmOutputMenu),
-    MenuIdOutputSVGFile,
-    NULL,
-    "<Ngraph>/Graph/Export image/SVG File",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "GraphExportPNGAction",
-    NULL,
-    N_("P_NG file"),
-    N_("Export as Portable Network Graphics  file"),
-    NULL,
-    G_CALLBACK(CmOutputMenu),
-    MenuIdOutputPNGFile,
-    NULL,
-    "<Ngraph>/Graph/Export image/PNG File",
-  },
-#ifdef CAIRO_HAS_WIN32_SURFACE
-  {
-    ACTION_TYPE_NORMAL,
-    "GraphExportCairoEMFAction",
-    NULL,
-    N_("_EMF file"),
-    N_("Export as Windows Enhanced Metafile"),
-    NULL,
-    G_CALLBACK(CmOutputMenu),
-    MenuIdOutputCairoEMFFile,
-    NULL,
-    "<Ngraph>/Graph/Export image/EMF File (cairo)",
-  },
-#endif	/* CAIRO_HAS_WIN32_SURFACE */
-#ifdef WINDOWS
-  {
-    ACTION_TYPE_NORMAL,
-    "GraphExportEMFFileAction",
-    NULL,
-    N_("_EMF file"),
-    N_("Export as Windows Enhanced Metafile"),
-    NULL,
-    G_CALLBACK(CmOutputMenu),
-    MenuIdOutputEMFFile,
-    NULL,
-    "<Ngraph>/Graph/Export image/EMF File",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "GraphExportEMFClipboardAction",
-    NULL,
-    N_("_Clipboard (EMF)"),
-    N_("Copy to the clipboard as Windows Enhanced Metafile "),
-    NULL,
-    G_CALLBACK(CmOutputMenu),
-    MenuIdOutputEMFClipboard,
-    NULL,
-    "<Ngraph>/Graph/Export image/Clipboard",
-  },
-#endif	/* WINDOWS */
-  {
-    ACTION_TYPE_NORMAL,
-    "GraphDrawOrderAction",
-    NULL,
-    N_("_Draw order"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmGraphSwitch),
+    0,
     0,
     NULL,
-    "<Ngraph>/Graph/Draw order",
+    G_CALLBACK(CmViewerButtonArm),
+    EvalB,
   },
   {
-    ACTION_TYPE_NORMAL,
-    "GraphPageSetupAction",
-    "document-page-setup",
-    N_("Page Set_up"),
+    TOOL_TYPE_RADIO,
+    N_("Zoom"),
+    N_("Viewer Zoom"),
+    N_("Viewer Zoom-In (+CONTROL: Zoom-Out +SHIFT: Centering)"),
     NULL,
+    NGRAPH_ZOOM_ICON_FILE,
     NULL,
-    G_CALLBACK(CmGraphPage),
+    0,
     0,
     NULL,
-    "<Ngraph>/Graph/Page",
+    G_CALLBACK(CmViewerButtonArm),
+    ZoomB,
   },
+};
+
+struct ToolItem CommandToolbar[] = {
   {
-    ACTION_TYPE_NORMAL,
-    "GraphPrintPreviewAction",
-    NULL,
-    N_("Pre_view"),
-    N_("Print preview"),
-    N_("Print preview"),
-    G_CALLBACK(CmOutputViewerB),
-    0,
-    NULL,
-    "<Ngraph>/Graph/Print preview",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "GraphPrintAction",
-    "document-print",
-    N_("_Print"),
-    N_("Print"),
-    N_("Print"),
-    G_CALLBACK(CmOutputPrinterB),
-    0,
-    NULL,
-    "<Ngraph>/Graph/Print",
-    GDK_KEY_p,
-    GDK_CONTROL_MASK,
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "GraphCurrentDirectoryAction",
-    NULL,
-    N_("_Current directory"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmGraphDirectory),
-    0,
-    NULL,
-    "<Ngraph>/Graph/Current directory",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "GraphShellAction",
-    NULL,
-    N_("_Ngraph shell"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmGraphShell),
-    0,
-    NULL,
-    "<Ngraph>/Graph/Ngraph shell",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "GraphQuitAction",
-    "application-exit",
-    N_("_Quit"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmGraphQuit),
-    0,
-    NULL,
-    "<Ngraph>/Graph/Quit",
-    GDK_KEY_q,
-    GDK_CONTROL_MASK,
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "EditCutAction",
-    NULL,
-    "Cu_t",
-    NULL,
-    NULL,
-    G_CALLBACK(CmEditMenuCB),
-    MenuIdEditCut,
-    NULL,
-    "<Ngraph>/Edit/Cut",
-    GDK_KEY_x,
-    GDK_CONTROL_MASK,
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "EditCopyAction",
-    NULL,
-    N_("_Copy"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmEditMenuCB),
-    MenuIdEditCopy,
-    NULL,
-    "<Ngraph>/Edit/Copy",
-    GDK_KEY_c,
-    GDK_CONTROL_MASK,
- },
-  {
-    ACTION_TYPE_NORMAL,
-    "EditPasteAction",
-    NULL,
-    N_("_Paste"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmEditMenuCB),
-    MenuIdEditPaste,
-    NULL,
-    "<Ngraph>/Edit/Paste",
-    GDK_KEY_v,
-    GDK_CONTROL_MASK,
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "EditDeleteAction",
-    NULL,
-    N_("_Delete"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmEditMenuCB),
-    MenuIdEditDelete,
-    NULL,
-    "<Ngraph>/Edit/Delete",
-    GDK_KEY_Delete,
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "EditDuplicateAction",
-    NULL,
-    N_("_Duplicate"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmEditMenuCB),
-    MenuIdEditDuplicate,
-    NULL,
-    "<Ngraph>/Edit/Duplicate",
-    GDK_KEY_Insert,
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "EditOrderAction",
-    NULL,
-    N_("draw _Order"),
-    NULL,
-    NULL,
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "EditOrderTopAction",
-    "go-top",
-    N_("_Top"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmEditMenuCB),
-    MenuIdEditOrderTop,
-    NULL,
-    "<Ngraph>/Edit/draw Order/Top",
-    GDK_KEY_Home,
-    GDK_SHIFT_MASK,
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "EditOrderUpAction",
-    "go-up",
-    N_("_Up"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmEditMenuCB),
-    MenuIdEditOrderUp,
-    NULL,
-    "<Ngraph>/Edit/draw Order/Up",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "EditOrderDownAction",
-    "go-down",
-    N_("_Down"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmEditMenuCB),
-    MenuIdEditOrderDown,
-    NULL,
-    "<Ngraph>/Edit/draw Order/Down",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "EditOrderBottomAction",
-    "go-bottom",
-    N_("_Bottom"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmEditMenuCB),
-    MenuIdEditOrderBottom,
-    NULL,
-    "<Ngraph>/Edit/draw Order/Bottom",
-    GDK_KEY_End,
-    GDK_SHIFT_MASK,
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "EditAlignAction",
-    NULL,
-    N_("_Align"),
-    NULL,
-    NULL,
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "EditAlignLeftAction",
-    NULL,
-    N_("Align _Left"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmEditMenuCB),
-    MenuIdAlignLeft,
-    NGRAPH_ALIGN_L_ICON_FILE,
-    "<Ngraph>/Edit/Align/Left",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "EditAlignRightAction",
-    NULL,
-    N_("Align _Right"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmEditMenuCB),
-    MenuIdAlignRight,
-    NGRAPH_ALIGN_R_ICON_FILE,
-    "<Ngraph>/Edit/Align/Right",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "EditAlignVCenterAction",
-    NULL,
-    N_("Align _Vertical Center"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmEditMenuCB),
-    MenuIdAlignVCenter,
-    NGRAPH_ALIGN_VC_ICON_FILE,
-    "<Ngraph>/Edit/Align/Vertical center",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "EditAlignTopAction",
-    NULL,
-    N_("Align _Top"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmEditMenuCB),
-    MenuIdAlignTop,
-    NGRAPH_ALIGN_T_ICON_FILE,
-    "<Ngraph>/Edit/Align/Top",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "EditAlignBottomAction",
-    NULL,
-    N_("Align _Bottom"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmEditMenuCB),
-    MenuIdAlignBottom,
-    NGRAPH_ALIGN_B_ICON_FILE,
-    "<Ngraph>/Edit/Align/Bottom",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "EditAlignHCenterAction",
-    NULL,
-    N_("Align _Horizontal Center"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmEditMenuCB),
-    MenuIdAlignHCenter,
-    NGRAPH_ALIGN_HC_ICON_FILE,
-    "<Ngraph>/Edit/Align/Horizontal center",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "EditRotateAction",
-    NULL,
-    N_("_Rotate"),
-    NULL,
-    NULL,
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "EditRotateCWAction",
-    NULL,
-    N_("rotate _90 degree clockwise"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmEditMenuCB),
-    MenuIdEditRotateCW,
-    NULL,
-    "<Ngraph>/Edit/RotateCW",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "EditRotateCCWAction",
-    NULL,
-    N_("rotate 9_0 degree counter-clockwise"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmEditMenuCB),
-    MenuIdEditRotateCCW,
-    NULL,
-    "<Ngraph>/Edit/RotateCCW",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "EditFlipAction",
-    NULL,
-    N_("_Flip"),
-    NULL,
-    NULL,
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "EditFlipHAction",
-    NULL,
-    N_("flip _Horizontally"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmEditMenuCB),
-    MenuIdEditFlipHorizontally,
-    NULL,
-    "<Ngraph>/Edit/FlipHorizontally",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "EditFlipVActiopn",
-    NULL,
-    N_("flip _Vertically"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmEditMenuCB),
-    MenuIdEditFlipVertically,
-    NULL,
-    "<Ngraph>/Edit/FlipVertically",
-  },
-  {
-    ACTION_TYPE_TOGGLE,
-    "ViewToggleSingleWindowModeAction",
-    NULL,
-    N_("Single window mode"),
-    N_("Single window mode"),
-    N_("Toggle single window mode"),
-    G_CALLBACK(CmToggleSingleWindowMode),
-    0,
-    NULL,
-    "<Ngraph>/View/Single window mode",
-  },
-  {
-    ACTION_TYPE_TOGGLE,
-    "ViewToggleDataWindowAction",
-    NULL,
+    TOOL_TYPE_TOGGLE2,
     "Data Window",
     "Data Window",
     N_("Activate Data Window"),
-    G_CALLBACK(CmFileWindow),
-    0,
+    NULL,
     NGRAPH_FILEWIN_ICON_FILE,
     "<Ngraph>/View/Data Window",
     GDK_KEY_F3,
     0,
+    NULL,
+    G_CALLBACK(toggle_subwindow),
+    TypeFileWin,
+    ActionWidget + DataWindowAction,
   },
   {
-    ACTION_TYPE_TOGGLE,
-    "ViewToggleAxisWindowAction",
-    NULL,
+    TOOL_TYPE_TOGGLE2,
     "Axis Window",
     "Axis Window",
     N_("Activate Axis Window"),
-    G_CALLBACK(CmAxisWindow),
-    0,
+    NULL,
     NGRAPH_AXISWIN_ICON_FILE,
     "<Ngraph>/View/Axis Window",
     GDK_KEY_F4,
     0,
+    NULL,
+    G_CALLBACK(toggle_subwindow),
+    TypeAxisWin,
+    ActionWidget + AxisWindowAction,
   },
   {
-    ACTION_TYPE_TOGGLE,
-    "ViewToggleLegendWindowAction",
-    NULL,
+    TOOL_TYPE_TOGGLE2,
     "Legend Window",
     "Legend Window",
     N_("Activate Legend Window"),
-    G_CALLBACK(CmLegendWindow),
-    0,
+    NULL,
     NGRAPH_LEGENDWIN_ICON_FILE,
     "<Ngraph>/View/Legend Window",
     GDK_KEY_F5,
     0,
+    NULL,
+    G_CALLBACK(toggle_subwindow),
+    TypeLegendWin,
+    ActionWidget + LegendWindowAction,
   },
   {
-    ACTION_TYPE_TOGGLE,
-    "ViewToggleMergeWindowAction",
-    NULL,
+    TOOL_TYPE_TOGGLE2,
     "Merge Window",
     "Merge Window",
     N_("Activate Merge Window"),
-    G_CALLBACK(CmMergeWindow),
-    0,
+    NULL,
     NGRAPH_MERGEWIN_ICON_FILE,
     "<Ngraph>/View/Merge Window",
     GDK_KEY_F6,
     0,
+    NULL,
+    G_CALLBACK(toggle_subwindow),
+    TypeMergeWin,
+    ActionWidget + MergeWindowAction,
   },
   {
-    ACTION_TYPE_TOGGLE,
-    "ViewToggleCoordinateWindowAction",
-    NULL,
+    TOOL_TYPE_TOGGLE2,
     "Coordinate Window",
     "Coordinate Window",
     N_("Activate Coordinate Window"),
-    G_CALLBACK(CmCoordinateWindow),
-    0,
+    NULL,
     NGRAPH_COORDWIN_ICON_FILE,
     "<Ngraph>/View/Coordinate Window",
     GDK_KEY_F7,
     0,
+    NULL,
+    G_CALLBACK(toggle_subwindow),
+    TypeCoordWin,
+    ActionWidget + CoordWindowAction,
   },
   {
-    ACTION_TYPE_TOGGLE,
-    "ViewToggleInformationWindowAction",
-    NULL,
+    TOOL_TYPE_TOGGLE2,
     "Information Window",
     "Information Window",
     N_("Activate Information Window"),
-    G_CALLBACK(CmInformationWindow),
-    0,
+    NULL,
     NGRAPH_INFOWIN_ICON_FILE,
     "<Ngraph>/View/Information Window",
     GDK_KEY_F8,
     0,
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "ViewDrawAction",
     NULL,
-    N_("_Draw"),
-    N_("Draw"),
-    N_("Draw on Viewer Window"),
-    G_CALLBACK(CmViewerDraw),
-    TRUE,
-    NGRAPH_DRAW_ICON_FILE,
-    "<Ngraph>/View/Draw",
-    GDK_KEY_d,
-    GDK_CONTROL_MASK,
+    G_CALLBACK(toggle_subwindow),
+    TypeInfoWin,
+    ActionWidget + InfoWindowAction,
   },
   {
-    ACTION_TYPE_NORMAL,
-    "ViewDrawDirectAction",
+    TOOL_TYPE_SEPARATOR,
     NULL,
-    N_("_Draw"),
-    N_("Draw"),
-    N_("Draw on Viewer Window"),
-    G_CALLBACK(CmViewerDraw),
-    FALSE,
-    NGRAPH_DRAW_ICON_FILE,
-    "<Ngraph>/View/DrawDirect",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "ViewClearAction",
-    "edit-clear",
-    N_("_Clear"),
-    N_("Clear Image"),
-    N_("Clear Viewer Window"),
-    G_CALLBACK(CmViewerClear),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    0,
     0,
     NULL,
-    "<Ngraph>/View/Clear",
-    GDK_KEY_e,
-    GDK_CONTROL_MASK,
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "ViewDefaultWindowConfigAction",
     NULL,
-    N_("default _Window config"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmReloadWindowConfig),
     0,
-    NULL,
-    "<Ngraph>/View/default Window config",
+    ActionWidget + SingleWindowSeparator,
   },
   {
-    ACTION_TYPE_NORMAL,
-    "ViewClearInformationWindowAction",
-    NULL,
-    N_("_Clear information view"),
-    NULL,
-    NULL,
-    G_CALLBACK(clear_information),
-    0,
-    NULL,
-    "<Ngraph>/View/Clear information window",
-  },
-  {
-    ACTION_TYPE_TOGGLE,
-    "ViewSidebarAction",
-    NULL,
-    N_("_Sidebar"),
-    NULL,
-    NULL,
-    G_CALLBACK(toggle_view_cb),
-    MenuIdToggleSidebar,
-    NULL,
-    "<Ngraph>/View/Sidebar",
-  },
-  {
-    ACTION_TYPE_TOGGLE,
-    "ViewStatusbarAction",
-    NULL,
-    N_("_Statusbar"),
-    NULL,
-    NULL,
-    G_CALLBACK(toggle_view_cb),
-    MenuIdToggleStatusbar,
-    NULL,
-    "<Ngraph>/View/Statusbar",
-  },
-  {
-    ACTION_TYPE_TOGGLE,
-    "ViewRulerAction",
-    NULL,
-    N_("_Ruler"),
-    NULL,
-    NULL,
-    G_CALLBACK(toggle_view_cb),
-    MenuIdToggleRuler,
-    NULL,
-    "<Ngraph>/View/Ruler",
-  },
-  {
-    ACTION_TYPE_TOGGLE,
-    "ViewScrollbarAction",
-    NULL,
-    N_("_Scrollbar"),
-    NULL,
-    NULL,
-    G_CALLBACK(toggle_view_cb),
-    MenuIdToggleScrollbar,
-    NULL,
-    "<Ngraph>/View/Scrollbar",
-  },
-  {
-    ACTION_TYPE_TOGGLE,
-    "ViewCommandToolbarAction",
-    NULL,
-    N_("_Command toolbar"),
-    NULL,
-    NULL,
-    G_CALLBACK(toggle_view_cb),
-    MenuIdToggleCToolbar,
-    NULL,
-    "<Ngraph>/View/Command toolbar",
-  },
-  {
-    ACTION_TYPE_TOGGLE,
-    "ViewToolboxAction",
-    NULL,
-    N_("_Toolbox"),
-    NULL,
-    NULL,
-    G_CALLBACK(toggle_view_cb),
-    MenuIdTogglePToolbar,
-    NULL,
-    "<Ngraph>/View/Toolbox",
-  },
-  {
-    ACTION_TYPE_TOGGLE,
-    "ViewCrossGaugeAction",
-    NULL,
-    N_("cross _Gauge"),
-    NULL,
-    NULL,
-    G_CALLBACK(toggle_view_cb),
-    MenuIdToggleCrossGauge,
-    NULL,
-    "<Ngraph>/View/cross Gauge",
-    GDK_KEY_g,
-    GDK_CONTROL_MASK,
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "DataNewAction",
-    NULL,
-    N_("_New"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmFileNew),
-    0,
-    NULL,
-    "<Ngraph>/Data/New",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "DataAddAction",
-    "text-x-generic",
+    TOOL_TYPE_NORMAL,
     N_("_Add"),
     N_("Add Data"),
     N_("Add Data file"),
-    G_CALLBACK(CmFileOpen),
-    0,
+    "text-x-generic",
     NULL,
     "<Ngraph>/Data/Add",
     GDK_KEY_o,
     GDK_CONTROL_MASK,
-  },
-  {
-    ACTION_TYPE_RECENT,
-    "DataRecentAction",
     NULL,
-    N_("_Recent data"),
-    NULL,
-    NULL,
-    NULL,
-    RECENT_TYPE_DATA,
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "DataPropertyAction",
-    "document-properties",
-    N_("_Properties"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmFileUpdate),
+    G_CALLBACK(CmFileOpen),
     0,
-    NULL,
-    "<Ngraph>/Data/Property",
   },
   {
-    ACTION_TYPE_NORMAL,
-    "DataCloseAction",
-    "window-close",
-    N_("_Close"),
+    TOOL_TYPE_SEPARATOR,
     NULL,
+  },
+  {
+    TOOL_TYPE_NORMAL,
+    N_("_Load graph"),
+    N_("Load NGP"),
+    N_("Load NGP file"),
+    "document-open",
     NULL,
-    G_CALLBACK(CmFileClose),
+    "<Ngraph>/Graph/Load graph",
+    GDK_KEY_r,
+    GDK_CONTROL_MASK,
+    NULL,
+    G_CALLBACK(CmGraphLoad),
+  },
+  {
+    TOOL_TYPE_NORMAL,
+    N_("_Save"),
+    N_("Save NGP"),
+    N_("Save NGP file"),
+    "document-save",
+    NULL,
+    "<Ngraph>/Graph/Save",
+    GDK_KEY_s,
+    GDK_CONTROL_MASK,
+    NULL,
+    G_CALLBACK(CmGraphOverWrite),
     0,
-    NULL,
-    "<Ngraph>/Data/Close",
+    ActionWidget + GraphSaveAction,
   },
   {
-    ACTION_TYPE_NORMAL,
-    "DataEditAction",
-    NULL,
-    N_("_Edit"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmFileEdit),
-    0,
-    NULL,
-    "<Ngraph>/Data/Edit",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "DataSaveAction",
-    NULL,
-    N_("_Save data"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmFileSaveData),
-    0,
-    NULL,
-    "<Ngraph>/Data/Save data",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "DataMathAction",
-    NULL,
-    N_("_Math Transformation"),
-    N_("Math Transformation"),
-    N_("Set Math Transformation"),
-    G_CALLBACK(CmFileMath),
-    0,
-    NGRAPH_MATH_ICON_FILE,
-    "<Ngraph>/Data/Math",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "AxisAddAction",
-    "list-add",
-    N_("_Add"),
+    TOOL_TYPE_SEPARATOR,
     NULL,
   },
   {
-    ACTION_TYPE_NORMAL,
-    "AxisAddFrameAction",
-    NULL,
-    N_("_Frame graph"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmAxisNewFrame),
-    0,
-    NGRAPH_FRAME_ICON_FILE,
-    "<Ngraph>/Axis/Add/Frame graph",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "AxisAddSectionAction",
-    NULL,
-    N_("_Section graph"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmAxisNewSection),
-    0,
-    NGRAPH_SECTION_ICON_FILE,
-    "<Ngraph>/Axis/Add/Section graph",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "AxisAddCrossAction",
-    NULL,
-    N_("_Cross graph"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmAxisNewCross),
-    0,
-    NGRAPH_CROSS_ICON_FILE,
-    "<Ngraph>/Axis/Add/Cross graph",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "AxisAddSingleAction",
-    NULL,
-    N_("Single _Axis"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmAxisNewSingle),
-    0,
-    NGRAPH_SINGLE_ICON_FILE,
-    "<Ngraph>/Axis/Add/Single axis",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "AxisPropertyAction",
-    "document-properties",
-    N_("_Properties"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmAxisUpdate),
-    0,
-    NULL,
-    "<Ngraph>/Axis/Property",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "AxisDeleteAction",
-    NULL,
-    N_("_Delete"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmAxisDel),
-    0,
-    NULL,
-    "<Ngraph>/Axis/Delete",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "AxisScaleZoomAction",
-    NULL,
-    N_("Scale _Zoom"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmAxisZoom),
-    0,
-    NULL,
-    "<Ngraph>/Axis/Scale Zoom",
-  },
-
-  {
-    ACTION_TYPE_NORMAL,
-    "AxisScaleClearAction",
-    NULL,
+    TOOL_TYPE_NORMAL,
     N_("Scale _Clear"),
     N_("Clear Scale"),
     N_("Clear Scale"),
-    G_CALLBACK(CmAxisClear),
-    0,
+    NULL,
     NGRAPH_SCALE_ICON_FILE,
-    "<Ngraph>/Axis/Scale Clear",
+    "<Ngraph>/Edit/Copy",
     GDK_KEY_c,
     GDK_SHIFT_MASK | GDK_CONTROL_MASK,
+    NULL,
+    G_CALLBACK(CmAxisClear),
+    0,
+    ActionWidget + AxisScaleClearAction,
   },
   {
-    ACTION_TYPE_NORMAL,
-    "AxisScaleUndoAction",
-    "edit-undo",
+    TOOL_TYPE_NORMAL,
+    N_("_Draw"),
+    N_("Draw"),
+    N_("Draw on Viewer Window"),
+    NULL,
+    NGRAPH_DRAW_ICON_FILE,
+    "<Ngraph>/View/Draw",
+    GDK_KEY_d,
+    GDK_CONTROL_MASK,
+    NULL,
+    G_CALLBACK(CmViewerDraw),
+    FALSE,
+  },
+  {
+    TOOL_TYPE_NORMAL,
+    N_("_Print"),
+    N_("Print"),
+    N_("Print"),
+    "document-print",
+    NULL,
+    "<Ngraph>/Graph/Print",
+    GDK_KEY_p,
+    GDK_CONTROL_MASK,
+    NULL,
+    G_CALLBACK(CmOutputPrinterB),
+  },
+  {
+    TOOL_TYPE_SEPARATOR,
+    NULL,
+  },
+  {
+    TOOL_TYPE_NORMAL,
+    N_("_Math Transformation"),
+    N_("Math Transformation"),
+    N_("Set Math Transformation"),
+    NULL,
+    NGRAPH_MATH_ICON_FILE,
+    NULL,
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmFileMath),
+    0,
+    ActionWidget + DataMathAction,
+  },
+  {
+    TOOL_TYPE_NORMAL,
     N_("Scale _Undo"),
     N_("Scale Undo"),
     N_("Undo Scale Settings"),
+    "edit-undo",
+    NULL,
+    NULL,
+    0,
+    0,
+    NULL,
     G_CALLBACK(CmAxisScaleUndo),
     0,
-    NULL,
-    "<Ngraph>/Axis/Scale Undo",
+    ActionWidget + AxisScaleUndoAction,
   },
-  {
-    ACTION_TYPE_NORMAL,
-    "AxisGridAction",
-    NULL,
-    N_("_Grid"),
-    NULL,
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "AxisGridNewAction",
-    "list-add",
-    N_("_Add"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmAxisGridNew),
-    0,
-    NULL,
-    "<Ngraph>/Axis/Grid/Add",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "AxisGridPropertyAction",
-    "document-properties",
-    N_("_Properties"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmAxisGridUpdate),
-    0,
-    NULL,
-    "<Ngraph>/Axis/Grid/Property",
- },
-  {
-    ACTION_TYPE_NORMAL,
-    "AxisGridDeleteAction",
-    NULL,
-    N_("_Delete"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmAxisGridDel),
-    0,
-    NULL,
-    "<Ngraph>/Axis/Grid/Delete",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "MergeAddAction",
-    "list-add",
-    N_("_Add"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmMergeOpen),
-    0,
-    NULL,
-    "<Ngraph>/Merge/Add",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "MergePropertyAction",
-    "document-properties",
-    N_("_Properties"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmMergeUpdate),
-    0,
-    NULL,
-   "<Ngraph>/Merge/Property",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "MergeCloseAction",
-    "window-close",
-    N_("_Close"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmMergeClose),
-    0,
-    NULL,
-    "<Ngraph>/Merge/Close",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "LegendPathMenuAction",
-    NULL,
-    N_("_Path"),
-    NULL,
-    NULL,
-    NULL,
-    0,
-    NGRAPH_LINE_ICON_FILE,
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "LegendRectangleMenuAction",
-    NULL,
-    N_("_Rectangle"),
-    NULL,
-    NULL,
-    NULL,
-    0,
-    NGRAPH_RECT_ICON_FILE,
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "LegendArcMenuAction",
-    NULL,
-    N_("_Arc"),
-    NULL,
-    NULL,
-    NULL,
-    0,
-    NGRAPH_ARC_ICON_FILE,
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "LegendMarkMenuAction",
-    NULL,
-    N_("_Mark"),
-    NULL,
-    NULL,
-    NULL,
-    0,
-    NGRAPH_MARK_ICON_FILE,
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "LegendTextMenuAction",
-    NULL,
-    N_("_Text"),
-    NULL,
-    NULL,
-    NULL,
-    0,
-    NGRAPH_TEXT_ICON_FILE,
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "LegendPathPropertyAction",
-    "document-properties",
-    N_("_Properties"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmLineUpdate),
-    0,
-    NULL,
-    "<Ngraph>/Legend/Path/Property",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "LegendPathDeleteAction",
-    NULL,
-    N_("_Delete"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmLineDel),
-    0,
-    NULL,
-    "<Ngraph>/Legend/Path/Delete",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "LegendRectanglePropertyAction",
-    "document-properties",
-    N_("_Properties"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmRectUpdate),
-    0,
-    NULL,
-    "<Ngraph>/Legend/Rectangle/Property",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "LegendRectangleDeleteAction",
-    NULL,
-    N_("_Delete"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmRectDel),
-    0,
-    NULL,
-    "<Ngraph>/Legend/Rectangle/Delete",
-  },
+};
 
+struct MenuItem {
+  enum {
+    MENU_TYPE_NORMAL,
+    MENU_TYPE_TOGGLE,
+    MENU_TYPE_TOGGLE2,
+    MENU_TYPE_RADIO,
+    MENU_TYPE_RECENT_GRAPH,
+    MENU_TYPE_RECENT_DATA,
+    MENU_TYPE_SEPARATOR,
+    MENU_TYPE_END,
+  } type;
+  const char *label;
+  const char *tip;
+  const char *caption;
+  const char *icon;
+  const char *icon_file;
+  const char *accel_path;
+  guint accel_key;
+  GdkModifierType accel_mods;
+  struct MenuItem *child;
+  GCallback callback;
+  int user_data;
+  struct ActionWidget *action;
+};
+
+struct MenuItem HelpMenu[] = {
   {
-    ACTION_TYPE_NORMAL,
-    "LegendArcPropertyAction",
-    "document-properties",
-    N_("_Properties"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmArcUpdate),
-    0,
-    NULL,
-    "<Ngraph>/Legend/Arc/Property",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "LegendArcDeleteAction",
-    NULL,
-    N_("_Delete"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmArcDel),
-    0,
-    NULL,
-    "<Ngraph>/Legend/Arc/Delete",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "LegendMarkPropertyAction",
-    "document-properties",
-    N_("_Properties"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmMarkUpdate),
-    0,
-    NULL,
-    "<Ngraph>/Legend/Mark/Property",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "LegendMarkDeleteAction",
-    NULL,
-    N_("_Delete"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmMarkDel),
-    0,
-    NULL,
-    "<Ngraph>/Legend/Mark/Delete",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "LegendTextPropertyAction",
-    "document-properties",
-    N_("_Properties"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmTextUpdate),
-    0,
-    NULL,
-    "<Ngraph>/Legend/Text/Property",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "LegendTextDeleteAction",
-    NULL,
-    N_("_Delete"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmTextDel),
-    0,
-    NULL,
-    "<Ngraph>/Legend/Text/Delete",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "PreferenceViewerAction",
-    NULL,
-    N_("_Viewer"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmOptionViewer),
-    0,
-    NULL,
-    "<Ngraph>/Preference/Viewer",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "PreferenceExternalViewerAction",
-    NULL,
-    N_("_External viewer"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmOptionExtViewer),
-    0,
-    NULL,
-    "<Ngraph>/Preference/External Viewer",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "PreferenceFontAction",
-    NULL,
-    N_("_Font aliases"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmOptionPrefFont),
-    0,
-    NULL,
-    "<Ngraph>/Preference/Font aliases",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "PreferenceAddinAction",
-    NULL,
-    N_("_Add-in script"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmOptionScript),
-    0,
-    NULL,
-    "<Ngraph>/Preference/Addin Script",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "PreferenceMiscAction",
-    NULL,
-    N_("_Miscellaneous"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmOptionMisc),
-    0,
-    NULL,
-    "<Ngraph>/Preference/Miscellaneous",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "PreferenceSaveSettingAction",
-    NULL,
-    N_("save as default (_Settings)"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmOptionSaveDefault),
-    0,
-    NULL,
-    "<Ngraph>/Preference/save as default (Settings)",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "PreferenceSaveGraphAction",
-    NULL,
-    N_("save as default (_Graph)"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmOptionSaveNgp),
-    0,
-    NULL,
-    "<Ngraph>/Preference/save as default (Graph)",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "PreferenceDataDefaultAction",
-    NULL,
-    N_("_Data file default"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmOptionFileDef),
-    0,
-    NULL,
-    "<Ngraph>/Preference/Data file default",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "PreferenceTextDefaultAction",
-    NULL,
-    N_("_Legend text default"),
-    NULL,
-    NULL,
-    G_CALLBACK(CmOptionTextDef),
-    0,
-    NULL,
-    "<Ngraph>/Preference/Legend text default",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "HelpHelpAction",
-    "help-browser",
+    MENU_TYPE_NORMAL,
     N_("_Help"),
     NULL,
     NULL,
-    G_CALLBACK(CmHelpHelp),
-    0,
+    "help-browser",
     NULL,
     "<Ngraph>/Help/Help",
     GDK_KEY_F1,
     0,
+    NULL,
+    G_CALLBACK(CmHelpHelp),
   },
   {
-    ACTION_TYPE_NORMAL,
-    "HelpAboutAction",
-    "help-about",
+    MENU_TYPE_NORMAL,
     N_("_About"),
     NULL,
     NULL,
-    G_CALLBACK(CmHelpAbout),
-    0,
+    "help-about",
     NULL,
     "<Ngraph>/Help/About",
-  },
-  {
-    ACTION_TYPE_NORMAL,
-    "PopupUpdateAction",
-    "document-properties",
-    N_("_Properties"),
-    NULL,
-    NULL,
-    G_CALLBACK(ViewerUpdateCB),
+    0,
     0,
     NULL,
-    "<Ngraph>/Popup/Update",
-    GDK_KEY_Return,
+    G_CALLBACK(CmHelpAbout),
   },
   {
-    ACTION_TYPE_RADIO,
-    "ToolboxPointAction",
-    NULL,
-    N_("Point"),
-    N_("Pointer"),
-    N_("Legend and Axis Pointer (+SHIFT: Multi select / +CONTROL: Horizontal/Vertical +SHIFT: Fine)"),
-    G_CALLBACK(CmViewerButtonArm),
-    PointB,
-    NGRAPH_POINT_ICON_FILE,
-  },
-  {
-    ACTION_TYPE_RADIO,
-    "ToolboxLegendAction",
-    NULL,
-    N_("Legend"),
-    N_("Legend Pointer"),
-    N_("Legend Pointer (+SHIFT: Multi select / +CONTROL: Horizontal/Vertical +SHIFT: Fine)"),
-    G_CALLBACK(CmViewerButtonArm),
-    LegendB,
-    NGRAPH_LEGENDPOINT_ICON_FILE,
-  },
-  {
-    ACTION_TYPE_RADIO,
-    "ToolboxAxisAction",
-    NULL,
-    N_("Axis"),
-    N_("Axis Pointer"),
-    N_("Axis Pointer (+SHIFT: Multi select / +CONTROL: Horizontal/Vertical +SHIFT: Fine)"),
-    G_CALLBACK(CmViewerButtonArm),
-    AxisB,
-    NGRAPH_AXISPOINT_ICON_FILE,
-  },
-  {
-    ACTION_TYPE_RADIO,
-    "ToolboxDataAction",
-    NULL,
-    N_("Data"),
-    N_("Data Pointer"),
-    N_("Data Pointer"),
-    G_CALLBACK(CmViewerButtonArm),
-    DataB,
-    NGRAPH_DATAPOINT_ICON_FILE,
-  },
-  {
-    ACTION_TYPE_RADIO,
-    "ToolboxPathAction",
-    NULL,
-    N_("Path"),
-    N_("Path"),
-    N_("New Legend Path (+SHIFT: Fine +CONTROL: snap angle)"),
-    G_CALLBACK(CmViewerButtonArm),
-    PathB,
-    NGRAPH_LINE_ICON_FILE,
-  },
-  {
-    ACTION_TYPE_RADIO,
-    "ToolboxRectangleAction",
-    NULL,
-    N_("Rectangle"),
-    N_("Rectangle"),
-    N_("New Legend Rectangle (+SHIFT: Fine +CONTROL: square integer ratio rectangle)"),
-    G_CALLBACK(CmViewerButtonArm),
-    RectB,
-    NGRAPH_RECT_ICON_FILE,
-  },
-  {
-    ACTION_TYPE_RADIO,
-    "ToolboxArcAction",
-    NULL,
-    N_("Arc"),
-    N_("Arc"),
-    N_("New Legend Arc (+SHIFT: Fine +CONTROL: circle or integer ratio ellipse)"),
-    G_CALLBACK(CmViewerButtonArm),
-    ArcB,
-    NGRAPH_ARC_ICON_FILE,
-  },
-  {
-    ACTION_TYPE_RADIO,
-    "ToolboxMarkAction",
-    NULL,
-    N_("Mark"),
-    N_("Mark"),
-    N_("New Legend Mark (+SHIFT: Fine)"),
-    G_CALLBACK(CmViewerButtonArm),
-    MarkB,
-    NGRAPH_MARK_ICON_FILE,
-  },
-  {
-    ACTION_TYPE_RADIO,
-    "ToolboxTextAction",
-    NULL,
-    N_("Text"),
-    N_("Text"),
-    N_("New Legend Text (+SHIFT: Fine)"),
-    G_CALLBACK(CmViewerButtonArm),
-    TextB,
-    NGRAPH_TEXT_ICON_FILE,
-  },
-  {
-    ACTION_TYPE_RADIO,
-    "ToolboxGaussAction",
-    NULL,
-    N_("Gauss"),
-    N_("Gaussian"),
-    N_("New Legend Gaussian (+SHIFT: Fine +CONTROL: integer ratio)"),
-    G_CALLBACK(CmViewerButtonArm),
-    GaussB,
-    NGRAPH_GAUSS_ICON_FILE,
-  },
-  {
-    ACTION_TYPE_RADIO,
-    "ToolboxFrameAction",
-    NULL,
-    N_("Frame axis"),
-    N_("Frame Graph"),
-    N_("New Frame Graph (+SHIFT: Fine +CONTROL: integer ratio)"),
-    G_CALLBACK(CmViewerButtonArm),
-    FrameB,
-    NGRAPH_FRAME_ICON_FILE,
-  },
-  {
-    ACTION_TYPE_RADIO,
-    "ToolboxSectionAction",
-    NULL,
-    N_("Section axis"),
-    N_("Section Graph"),
-    N_("New Section Graph (+SHIFT: Fine +CONTROL: integer ratio)"),
-    G_CALLBACK(CmViewerButtonArm),
-    SectionB,
-    NGRAPH_SECTION_ICON_FILE,
-  },
-  {
-    ACTION_TYPE_RADIO,
-    "ToolboxCrossAction",
-    NULL,
-    N_("Cross axis"),
-    N_("Cross Graph"),
-    N_("New Cross Graph (+SHIFT: Fine +CONTROL: integer ratio)"),
-    G_CALLBACK(CmViewerButtonArm),
-    CrossB,
-    NGRAPH_CROSS_ICON_FILE,
-  },
-  {
-    ACTION_TYPE_RADIO,
-    "ToolboxSingleAction",
-    NULL,
-    N_("Single axis"),
-    N_("Single Axis"),
-    N_("New Single Axis (+SHIFT: Fine +CONTROL: snap angle)"),
-    G_CALLBACK(CmViewerButtonArm),
-    SingleB,
-    NGRAPH_SINGLE_ICON_FILE,
-  },
-  {
-    ACTION_TYPE_RADIO,
-    "ToolboxTrimmingAction",
-    NULL,
-    N_("Trimming"),
-    N_("Axis Trimming"),
-    N_("Axis Trimming (+SHIFT: Fine)"),
-    G_CALLBACK(CmViewerButtonArm),
-    TrimB,
-    NGRAPH_TRIMMING_ICON_FILE,
-  },
-  {
-    ACTION_TYPE_RADIO,
-    "ToolboxEvaluateAction",
-    NULL,
-    N_("Evaluate"),
-    N_("Evaluate Data"),
-    N_("Evaluate Data Point"),
-    G_CALLBACK(CmViewerButtonArm),
-    EvalB,
-    NGRAPH_EVAL_ICON_FILE,
-  },
-  {
-    ACTION_TYPE_RADIO,
-    "ToolboxZoomAction",
-    NULL,
-    N_("Zoom"),
-    N_("Viewer Zoom"),
-    N_("Viewer Zoom-In (+CONTROL: Zoom-Out +SHIFT: Centering)"),
-    G_CALLBACK(CmViewerButtonArm),
-    ZoomB,
-    NGRAPH_ZOOM_ICON_FILE,
+    MENU_TYPE_END,
   },
 };
 
-GdkColor white, gray;
+struct MenuItem PreferenceMenu[] = {
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Viewer"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/Preference/Viewer",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmOptionViewer),
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_External viewer"),
+    NULL,
+    NULL,
+    NULL,
+    NULL, 
+    "<Ngraph>/Preference/External Viewer",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmOptionExtViewer),
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Font aliases"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/Preference/Font aliases",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmOptionPrefFont),
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Add-in script"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/Preference/Addin Script",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmOptionScript),
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Miscellaneous"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/Preference/Miscellaneous",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmOptionMisc),
+  },
+  {
+    MENU_TYPE_SEPARATOR,
+    NULL,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("save as default (_Settings)"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/Preference/save as default (Settings)",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmOptionSaveDefault),
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("save as default (_Graph)"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/Preference/save as default (Graph)",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmOptionSaveNgp),
+  },
+  {
+    MENU_TYPE_SEPARATOR,
+    NULL,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Data file default"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/Preference/Data file default",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmOptionFileDef),
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Legend text default"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/Preference/Legend text default",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmOptionTextDef),
+  },
+  {
+    MENU_TYPE_END,
+  },
+};
+
+struct MenuItem MergeMenu[] = {
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Add"),
+    NULL,
+    NULL,
+    "list-add",
+    NULL,
+    "<Ngraph>/Merge/Add",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmMergeOpen),
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Properties"),
+    NULL,
+    NULL,
+    "document-properties",
+    NULL,
+   "<Ngraph>/Merge/Property",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmMergeUpdate),
+    0,
+    ActionWidget + MergePropertyAction
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Close"),
+    NULL,
+    NULL,
+    "window-close",
+    NULL,
+    "<Ngraph>/Merge/Close",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmMergeClose),
+    0,
+    ActionWidget + MergeCloseAction
+  },
+  {
+    MENU_TYPE_END,
+  },
+};
+
+struct MenuItem LegendTextleMenu[] = {
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Properties"),
+    NULL,
+    NULL,
+    "document-properties",
+    NULL,
+    "<Ngraph>/Legend/Text/Property",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmTextUpdate),
+    0,
+    ActionWidget + LegendTextPropertyAction,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Delete"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/Legend/Text/Delete",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmTextDel),
+    0,
+    ActionWidget + LegendTextDeleteAction,
+  },
+  {
+    MENU_TYPE_END,
+  },
+};
+
+struct MenuItem LegendMarkleMenu[] = {
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Properties"),
+    NULL,
+    NULL,
+    "document-properties",
+    NULL,
+    "<Ngraph>/Legend/Mark/Property",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmMarkUpdate),
+    0,
+    ActionWidget + LegendMarkPropertyAction,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Delete"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/Legend/Mark/Delete",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmMarkDel),
+    0,
+    ActionWidget + LegendMarkDeleteAction,
+  },
+  {
+    MENU_TYPE_END,
+  },
+};
+
+struct MenuItem LegendArcMenu[] = {
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Properties"),
+    NULL,
+    NULL,
+    "document-properties",
+    NULL,
+    "<Ngraph>/Legend/Arc/Property",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmArcUpdate),
+    0,
+    ActionWidget + LegendArcPropertyAction,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Delete"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/Legend/Arc/Delete",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmArcDel),
+    0,
+    ActionWidget + LegendArcDeleteAction,
+  },
+  {
+    MENU_TYPE_END,
+  },
+};
+
+struct MenuItem LegendRectangleMenu[] = {
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Properties"),
+    NULL,
+    NULL,
+    "document-properties",
+    NULL,
+    "<Ngraph>/Legend/Rectangle/Property",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmRectUpdate),
+    0,
+    ActionWidget + LegendRectanglePropertyAction,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Delete"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/Legend/Rectangle/Delete",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmRectDel),
+    0,
+    ActionWidget + LegendRectangleDeleteAction,
+  },
+  {
+    MENU_TYPE_END,
+  },
+};
+
+struct MenuItem LegendPathMenu[] = {
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Properties"),
+    NULL,
+    NULL,
+    "document-properties",
+    NULL,
+    "<Ngraph>/Legend/Path/Property",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmLineUpdate),
+    0,
+    ActionWidget + LegendPathPropertyAction,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Delete"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/Legend/Path/Delete",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmLineDel),
+    0,
+    ActionWidget + LegendPathDeleteAction,
+  },
+  {
+    MENU_TYPE_END,
+  },
+};
+
+struct MenuItem LegendMenu[] = {
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Path"),
+    NULL,
+    NULL,
+    NULL,
+    NGRAPH_LINE_ICON_FILE,
+    NULL,
+    0,
+    0,
+    LegendPathMenu,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Rectangle"),
+    NULL,
+    NULL,
+    NULL,
+    NGRAPH_RECT_ICON_FILE,
+    NULL,
+    0,
+    0,
+    LegendRectangleMenu,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Arc"),
+    NULL,
+    NULL,
+    NULL,
+    NGRAPH_ARC_ICON_FILE,
+    NULL,
+    0,
+    0,
+    LegendArcMenu,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Mark"),
+    NULL,
+    NULL,
+    NULL,
+    NGRAPH_MARK_ICON_FILE,
+    NULL,
+    0,
+    0,
+    LegendMarkleMenu,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Text"),
+    NULL,
+    NULL,
+    NULL,
+    NGRAPH_TEXT_ICON_FILE,
+    NULL,
+    0,
+    0,
+    LegendTextleMenu,
+  },
+  {
+    MENU_TYPE_END,
+  },
+};
+
+struct MenuItem AxisGridMenu[] = {
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Add"),
+    NULL,
+    NULL,
+    "list-add",
+    NULL,
+    "<Ngraph>/Axis/Grid/Add",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmAxisGridNew),
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Properties"),
+    NULL,
+    NULL,
+    "document-properties",
+    NULL,
+    "<Ngraph>/Axis/Grid/Property",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmAxisGridUpdate),
+    0,
+    ActionWidget + AxisGridPropertyAction,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Delete"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/Axis/Grid/Delete",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmAxisGridDel),
+    0,
+    ActionWidget + AxisGridDeleteAction,
+  },
+  {
+    MENU_TYPE_END,
+  },
+};
+
+struct MenuItem AxisAddMenu[] = {
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Frame graph"),
+    NULL,
+    NULL,
+    NULL,
+    NGRAPH_FRAME_ICON_FILE,
+    "<Ngraph>/Axis/Add/Frame graph",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmAxisNewFrame),
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Section graph"),
+    NULL,
+    NULL,
+    NULL,
+    NGRAPH_SECTION_ICON_FILE,
+    "<Ngraph>/Axis/Add/Section graph",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmAxisNewSection),
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Cross graph"),
+    NULL,
+    NULL,
+    NULL,
+    NGRAPH_CROSS_ICON_FILE,
+    "<Ngraph>/Axis/Add/Cross graph",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmAxisNewCross),
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("Single _Axis"),
+    NULL,
+    NULL,
+    NULL,
+    NGRAPH_SINGLE_ICON_FILE,
+    "<Ngraph>/Axis/Add/Single axis",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmAxisNewSingle),
+  },
+  {
+    MENU_TYPE_END,
+  },
+};
+
+struct MenuItem AxisMenu[] = {
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Add"),
+    NULL,
+    NULL,
+    "list-add",
+    NULL,
+    NULL,
+    0,
+    0,
+    AxisAddMenu,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Properties"),
+    NULL,
+    NULL,
+    "document-properties",
+    NULL,
+    "<Ngraph>/Axis/Property",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmAxisUpdate),
+    0,
+    ActionWidget + AxisPropertyAction,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Delete"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/Axis/Delete",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmAxisDel),
+    0,
+    ActionWidget + AxisDeleteAction,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("Scale _Zoom"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/Axis/Scale Zoom",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmAxisZoom),
+    0,
+    ActionWidget + AxisScaleZoomAction,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("Scale _Clear"),
+    N_("Clear Scale"),
+    N_("Clear Scale"),
+    NULL,
+    NGRAPH_SCALE_ICON_FILE,
+    "<Ngraph>/Axis/Scale Clear",
+    GDK_KEY_c,
+    GDK_SHIFT_MASK | GDK_CONTROL_MASK,
+    NULL,
+    G_CALLBACK(CmAxisClear),
+    0,
+    ActionWidget + AxisScaleClearAction,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("Scale _Undo"),
+    N_("Scale Undo"),
+    N_("Undo Scale Settings"),
+    "edit-undo",
+    NULL,
+    "<Ngraph>/Axis/Scale Undo",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmAxisScaleUndo),
+    0,
+    ActionWidget + AxisScaleUndoAction,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Grid"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    0,
+    0,
+    AxisGridMenu,
+  },
+  {
+    MENU_TYPE_END,
+  },
+};
+
+struct MenuItem DataMenu[] = {
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Add"),
+    N_("Add Data"),
+    N_("Add Data file"),
+    "text-x-generic",
+    NULL,
+    "<Ngraph>/Data/Add",
+    GDK_KEY_o,
+    GDK_CONTROL_MASK,
+    NULL,
+    G_CALLBACK(CmFileOpen),
+    0,
+  },
+  {
+    MENU_TYPE_RECENT_DATA,
+    N_("_Recent data"),
+    NULL,
+  },
+  {
+    MENU_TYPE_SEPARATOR,
+    NULL,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Properties"),
+    NULL,
+    NULL,
+    "document-properties",
+    NULL,
+    "<Ngraph>/Data/Property",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmFileUpdate),
+    0,
+    ActionWidget + DataPropertyAction,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Close"),
+    NULL,
+    NULL,
+    "window-close",
+    NULL,
+    "<Ngraph>/Data/Close",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmFileClose),
+    0,
+    ActionWidget + DataCloseAction,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Edit"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/Data/Edit",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmFileEdit),
+    0,
+    ActionWidget + DataEditAction,
+  },
+  {
+    MENU_TYPE_SEPARATOR,
+    NULL,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Save data"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/Data/Save data",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmFileSaveData),
+    0,
+    ActionWidget + DataSaveAction,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Math Transformation"),
+    N_("Math Transformation"),
+    N_("Set Math Transformation"),
+    NULL,
+    NGRAPH_MATH_ICON_FILE,
+    "<Ngraph>/Data/Math",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmFileMath),
+    0,
+    ActionWidget + DataMathAction,
+  },
+  {
+    MENU_TYPE_END,
+  },
+};
+
+struct MenuItem ViewMenu[] = {
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Draw"),
+    N_("Draw"),
+    N_("Draw on Viewer Window"),
+    NULL,
+    NGRAPH_DRAW_ICON_FILE,
+    "<Ngraph>/View/Draw",
+    GDK_KEY_d,
+    GDK_CONTROL_MASK,
+    NULL,
+    G_CALLBACK(CmViewerDraw),
+    TRUE,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Clear"),
+    N_("Clear Image"),
+    N_("Clear Viewer Window"),
+    "edit-clear",
+    NULL,
+    "<Ngraph>/View/Clear",
+    GDK_KEY_e,
+    GDK_CONTROL_MASK,
+    NULL,
+    G_CALLBACK(CmViewerClear),
+    0,
+  },
+  {
+    MENU_TYPE_SEPARATOR,
+    NULL,
+  },
+  {
+    MENU_TYPE_TOGGLE2,
+    "Data Window",
+    "Data Window",
+    N_("Activate Data Window"),
+    NULL,
+    NGRAPH_FILEWIN_ICON_FILE,
+    "<Ngraph>/View/Data Window",
+    GDK_KEY_F3,
+    0,
+    NULL,
+    G_CALLBACK(toggle_subwindow),
+    TypeFileWin,
+    ActionWidget + DataWindowAction,
+  },
+  {
+    MENU_TYPE_TOGGLE2,
+    "Axis Window",
+    "Axis Window",
+    N_("Activate Axis Window"),
+    NULL,
+    NGRAPH_AXISWIN_ICON_FILE,
+    "<Ngraph>/View/Axis Window",
+    GDK_KEY_F4,
+    0,
+    NULL,
+    G_CALLBACK(toggle_subwindow),
+    TypeAxisWin,
+    ActionWidget + AxisWindowAction,
+  },
+  {
+    MENU_TYPE_TOGGLE2,
+    "Legend Window",
+    "Legend Window",
+    N_("Activate Legend Window"),
+    NULL,
+    NGRAPH_LEGENDWIN_ICON_FILE,
+    "<Ngraph>/View/Legend Window",
+    GDK_KEY_F5,
+    0,
+    NULL,
+    G_CALLBACK(toggle_subwindow),
+    TypeLegendWin,
+    ActionWidget + LegendWindowAction,
+  },
+  {
+    MENU_TYPE_TOGGLE2,
+    "Merge Window",
+    "Merge Window",
+    N_("Activate Merge Window"),
+    NULL,
+    NGRAPH_MERGEWIN_ICON_FILE,
+    "<Ngraph>/View/Merge Window",
+    GDK_KEY_F6,
+    0,
+    NULL,
+    G_CALLBACK(toggle_subwindow),
+    TypeMergeWin,
+    ActionWidget + MergeWindowAction,
+  },
+  {
+    MENU_TYPE_TOGGLE2,
+    "Coordinate Window",
+    "Coordinate Window",
+    N_("Activate Coordinate Window"),
+    NULL,
+    NGRAPH_COORDWIN_ICON_FILE,
+    "<Ngraph>/View/Coordinate Window",
+    GDK_KEY_F7,
+    0,
+    NULL,
+    G_CALLBACK(toggle_subwindow),
+    TypeCoordWin,
+    ActionWidget + CoordWindowAction,
+  },
+  {
+    MENU_TYPE_TOGGLE2,
+    "Information Window",
+    "Information Window",
+    N_("Activate Information Window"),
+    NULL,
+    NGRAPH_INFOWIN_ICON_FILE,
+    "<Ngraph>/View/Information Window",
+    GDK_KEY_F8,
+    0,
+    NULL,
+    G_CALLBACK(toggle_subwindow),
+    TypeInfoWin,
+    ActionWidget + InfoWindowAction,
+  },
+ {
+    MENU_TYPE_TOGGLE,
+    N_("Single window mode"),
+    N_("Single window mode"),
+    N_("Toggle single window mode"),
+    NULL,
+    NULL,
+    NULL,
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmToggleSingleWindowMode),
+    0,
+    ActionWidget + SingleWindowAction,
+  },
+  {
+    MENU_TYPE_SEPARATOR,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    0,
+    0,
+    NULL,
+    NULL,
+    0,
+    ActionWidget + SingleWindowSeparator,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("default _Window config"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/View/default Window config",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmReloadWindowConfig),
+    0,
+    ActionWidget + DefaultWindowAction,
+  },
+  {
+    MENU_TYPE_SEPARATOR,
+    NULL,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Clear information view"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/View/Clear information window",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(clear_information),
+  },
+  {
+    MENU_TYPE_SEPARATOR,
+    NULL,
+  },
+  {
+    MENU_TYPE_TOGGLE,
+    N_("_Sidebar"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/View/Sidebar",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(toggle_view_cb),
+    MenuIdToggleSidebar,
+    ActionWidget + ViewSidebarAction,
+  },
+  {
+    MENU_TYPE_TOGGLE,
+    N_("_Statusbar"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/View/Statusbar",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(toggle_view_cb),
+    MenuIdToggleStatusbar,
+    ActionWidget + ViewStatusbarAction,
+  },
+  {
+    MENU_TYPE_TOGGLE,
+    N_("_Ruler"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/View/Ruler",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(toggle_view_cb),
+    MenuIdToggleRuler,
+    ActionWidget + ViewRulerAction,
+  },
+  {
+    MENU_TYPE_TOGGLE,
+    N_("_Scrollbar"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/View/Scrollbar",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(toggle_view_cb),
+    MenuIdToggleScrollbar,
+    ActionWidget + ViewScrollbarAction,
+  },
+  {
+    MENU_TYPE_TOGGLE,
+    N_("_Command toolbar"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/View/Command toolbar",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(toggle_view_cb),
+    MenuIdToggleCToolbar,
+    ActionWidget + ViewCommandToolbarAction,
+  },
+  {
+    MENU_TYPE_TOGGLE,
+    N_("_Toolbox"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/View/Toolbox",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(toggle_view_cb),
+    MenuIdTogglePToolbar,
+    ActionWidget + ViewToolboxAction,
+  },
+  {
+    MENU_TYPE_TOGGLE,
+    N_("cross _Gauge"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/View/cross Gauge",
+    GDK_KEY_g,
+    GDK_CONTROL_MASK,
+    NULL,
+    G_CALLBACK(toggle_view_cb),
+    MenuIdToggleCrossGauge,
+    ActionWidget + ViewCrossGaugeAction,
+  },
+  {
+    MENU_TYPE_END,
+  },
+};
+
+struct MenuItem EditOrderMenu[] = {
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Top"),
+    NULL,
+    NULL,
+    "go-top",
+    NULL,
+    "<Ngraph>/Edit/draw Order/Top",
+    GDK_KEY_Home,
+    GDK_SHIFT_MASK,
+    NULL,
+    G_CALLBACK(CmEditMenuCB),
+    MenuIdEditOrderTop,
+    ActionWidget + EditOrderTopAction,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Up"),
+    NULL,
+    NULL,
+    "go-up",
+    NULL,
+    "<Ngraph>/Edit/draw Order/Up",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmEditMenuCB),
+    MenuIdEditOrderUp,
+    ActionWidget + EditOrderUpAction,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Down"),
+    NULL,
+    NULL,
+    "go-down",
+    NULL,
+    "<Ngraph>/Edit/draw Order/Down",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmEditMenuCB),
+    MenuIdEditOrderDown,
+    ActionWidget + EditOrderDownAction,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Bottom"),
+    NULL,
+    NULL,
+    "go-bottom",
+    NULL,
+    "<Ngraph>/Edit/draw Order/Bottom",
+    GDK_KEY_End,
+    GDK_SHIFT_MASK,
+    NULL,
+    G_CALLBACK(CmEditMenuCB),
+    MenuIdEditOrderBottom,
+    ActionWidget + EditOrderBottomAction,
+  },
+  {
+    MENU_TYPE_END,
+  },
+};
+
+struct MenuItem EditAlignMenu[] = {
+  {
+    MENU_TYPE_NORMAL,
+    N_("Align _Left"),
+    NULL,
+    NULL,
+    NULL,
+    NGRAPH_ALIGN_L_ICON_FILE,
+    "<Ngraph>/Edit/Align/Left",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmEditMenuCB),
+    MenuIdAlignLeft,
+    ActionWidget + EditAlignLeftAction,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("Align _Horizontal Center"),
+    NULL,
+    NULL,
+    NULL,
+    NGRAPH_ALIGN_HC_ICON_FILE,
+    "<Ngraph>/Edit/Align/Horizontal center",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmEditMenuCB),
+    MenuIdAlignHCenter,
+    ActionWidget + EditAlignHCenterAction,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("Align _Right"),
+    NULL,
+    NULL,
+    NULL,
+    NGRAPH_ALIGN_R_ICON_FILE,
+    "<Ngraph>/Edit/Align/Right",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmEditMenuCB),
+    MenuIdAlignRight,
+    ActionWidget + EditAlignRightAction,
+  },
+  {
+    MENU_TYPE_SEPARATOR,
+    NULL,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("Align _Top"),
+    NULL,
+    NULL,
+    NULL,
+    NGRAPH_ALIGN_T_ICON_FILE,
+    "<Ngraph>/Edit/Align/Top",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmEditMenuCB),
+    MenuIdAlignTop,
+    ActionWidget + EditAlignTopAction,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("Align _Vertical Center"),
+    NULL,
+    NULL,
+    NULL,
+    NGRAPH_ALIGN_VC_ICON_FILE,
+    "<Ngraph>/Edit/Align/Vertical center",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmEditMenuCB),
+    MenuIdAlignVCenter,
+    ActionWidget + EditAlignVCenterAction,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("Align _Bottom"),
+    NULL,
+    NULL,
+    NULL,
+    NGRAPH_ALIGN_B_ICON_FILE,
+    "<Ngraph>/Edit/Align/Bottom",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmEditMenuCB),
+    MenuIdAlignBottom,
+    ActionWidget + EditAlignBottomAction,
+  },
+  {
+    MENU_TYPE_END,
+  },
+};
+
+struct MenuItem EditMenu[] = {
+  {
+    MENU_TYPE_NORMAL,
+    N_("Cu_t"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/Edit/Cut",
+    GDK_KEY_x,
+    GDK_CONTROL_MASK,
+    NULL,
+    G_CALLBACK(CmEditMenuCB),
+    MenuIdEditCut,
+    ActionWidget + EditCutAction,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Copy"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/Edit/Copy",
+    GDK_KEY_c,
+    GDK_CONTROL_MASK,
+    NULL,
+    G_CALLBACK(CmEditMenuCB),
+    MenuIdEditCopy,
+    ActionWidget + EditCopyAction,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Paste"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/Edit/Paste",
+    GDK_KEY_v,
+    GDK_CONTROL_MASK,
+    NULL,
+    G_CALLBACK(CmEditMenuCB),
+    MenuIdEditPaste,
+    ActionWidget + EditPasteAction,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Delete"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/Edit/Delete",
+    GDK_KEY_Delete,
+    0,
+    NULL,
+    G_CALLBACK(CmEditMenuCB),
+    MenuIdEditDelete,
+    ActionWidget + EditDeleteAction,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Duplicate"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/Edit/Duplicate",
+    GDK_KEY_Insert,
+    0,
+    NULL,
+    G_CALLBACK(CmEditMenuCB),
+    MenuIdEditDuplicate,
+    ActionWidget + EditDuplicateAction,
+  },
+  {
+    MENU_TYPE_SEPARATOR,
+    NULL,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("draw _Order"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    0,
+    0,
+    EditOrderMenu,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Align"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    0,
+    0,
+    EditAlignMenu,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("rotate _90 degree clockwise"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/Edit/RotateCW",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmEditMenuCB),
+    MenuIdEditRotateCW,
+    ActionWidget + EditRotateCWAction,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("rotate 9_0 degree counter-clockwise"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/Edit/RotateCCW",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmEditMenuCB),
+    MenuIdEditRotateCCW,
+    ActionWidget + EditRotateCCWAction,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("flip _Horizontally"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/Edit/FlipHorizontally",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmEditMenuCB),
+    MenuIdEditFlipHorizontally,
+    ActionWidget + EditFlipHAction,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("flip _Vertically"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/Edit/FlipVertically",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmEditMenuCB),
+    MenuIdEditFlipVertically,
+    ActionWidget + EditFlipVAction,
+  },
+  {
+    MENU_TYPE_END,
+  },
+};
+
+struct MenuItem GraphNewMenu[] = {
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Frame graph"),
+    N_("Create frame graph"),
+    NULL,
+    NULL,
+    NGRAPH_FRAME_ICON_FILE,
+    "<Ngraph>/Graph/New graph/Frame graph",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmGraphNewMenu),
+    MenuIdGraphNewFrame,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Section graph"),
+    N_("Create section graph"),
+    NULL,
+    NULL,
+    NGRAPH_SECTION_ICON_FILE,
+    "<Ngraph>/Graph/New graph/Section graph",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmGraphNewMenu),
+    MenuIdGraphNewSection,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Cross graph"),
+    N_("Create cross graph"),
+    NULL,
+    NULL,
+    NGRAPH_CROSS_ICON_FILE,
+    "<Ngraph>/Graph/New graph/Cross graph",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmGraphNewMenu),
+    MenuIdGraphNewCross,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_All clear"),
+    N_("Clear graph"),
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/Graph/New graph/All clear",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmGraphNewMenu),
+    MenuIdGraphAllClear,
+  },
+  {
+    MENU_TYPE_END,
+  },
+};
+
+struct MenuItem GraphExportMenu[] = {
+  {
+    MENU_TYPE_NORMAL,
+    N_("_GRA file"),
+    N_("Export as GRA file"),
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/Graph/Export image/GRA File",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmOutputMenu),
+    MenuIdOutputGRAFile,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_PS file"),
+    N_("Export as PostScript file"),
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/Graph/Export image/PS File",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmOutputMenu),
+    MenuIdOutputPSFile,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_EPS file"),
+    N_("Export as Encapsulate PostScript file"),
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/Graph/Export image/EPS File",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmOutputMenu),
+    MenuIdOutputEPSFile,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("P_DF file"),
+    N_("Export as Portable Document Format"),
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/Graph/Export image/PDF File",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmOutputMenu),
+    MenuIdOutputPDFFile,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_SVG file"),
+    N_("Export as Scalable Vector Graphics file"),
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/Graph/Export image/SVG File",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmOutputMenu),
+    MenuIdOutputSVGFile,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("P_NG file"),
+    N_("Export as Portable Network Graphics  file"),
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/Graph/Export image/PNG File",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmOutputMenu),
+    MenuIdOutputPNGFile,
+  },
+#ifdef WINDOWS
+  {
+    MENU_TYPE_NORMAL,
+    N_("_EMF file"),
+    N_("Export as Windows Enhanced Metafile"),
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/Graph/Export image/EMF File",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmOutputMenu),
+    MenuIdOutputEMFFile,
+  },
+  {
+    MENU_TYPE_SEPARATOR,
+    NULL,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Clipboard (EMF)"),
+    N_("Copy to the clipboard as Windows Enhanced Metafile "),
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/Graph/Export image/Clipboard",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmOutputMenu),
+    MenuIdOutputEMFClipboard,
+  },
+#endif	/* WINDOWS */
+  {
+    MENU_TYPE_END,
+  },
+};
+
+struct MenuItem GraphMenu[] = {
+  {
+    MENU_TYPE_NORMAL,
+    N_("_New graph"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    0,
+    0,
+    GraphNewMenu,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Load graph"),
+    N_("Load NGP"),
+    N_("Load NGP file"),
+    "document-open",
+    NULL,
+    "<Ngraph>/Graph/Load graph",
+    GDK_KEY_r,
+    GDK_CONTROL_MASK,
+    NULL,
+    G_CALLBACK(CmGraphLoad),
+  },
+  {
+    MENU_TYPE_RECENT_GRAPH,
+    N_("_Recent graphs"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+  },
+  {
+    MENU_TYPE_SEPARATOR,
+    NULL,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Save"),
+    N_("Save NGP"),
+    N_("Save NGP file"),
+    "document-save",
+    NULL,
+    "<Ngraph>/Graph/Save",
+    GDK_KEY_s,
+    GDK_CONTROL_MASK,
+    NULL,
+    G_CALLBACK(CmGraphOverWrite),
+    0,
+    ActionWidget + GraphSaveAction,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("Save _As"),
+    N_("Save NGP"),
+    NULL,
+    "document-save-as",
+    NULL,
+    "<Ngraph>/Graph/SaveAs",
+    GDK_KEY_s,
+    GDK_CONTROL_MASK | GDK_SHIFT_MASK,
+    NULL,
+    G_CALLBACK(CmGraphSave),
+    0,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Export image"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    0,
+    0,
+    GraphExportMenu,
+  },
+  {
+    MENU_TYPE_SEPARATOR,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Draw order"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/Graph/Draw order",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmGraphSwitch),
+  },
+  {
+    MENU_TYPE_SEPARATOR,
+    NULL,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("Page Set_up"),
+    NULL,
+    NULL,
+    "document-page-setup", 
+    NULL,
+    "<Ngraph>/Graph/Page",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmGraphPage),
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("Pre_view"),
+    N_("Print preview"),
+    N_("Print preview"),
+    NULL,
+    NULL,
+    "<Ngraph>/Graph/Print preview",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmOutputViewerB),
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Print"),
+    N_("Print"),
+    N_("Print"),
+    "document-print",
+    NULL,
+    "<Ngraph>/Graph/Print",
+    GDK_KEY_p,
+    GDK_CONTROL_MASK,
+    NULL,
+    G_CALLBACK(CmOutputPrinterB),
+  },
+  {
+    MENU_TYPE_SEPARATOR,
+    NULL,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Current directory"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/Graph/Current directory",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmGraphDirectory),
+  },
+  {
+    MENU_TYPE_SEPARATOR,
+    NULL,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Ngraph shell"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/Graph/Ngraph shell",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmGraphShell),
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Add-in"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    0,
+    0,
+    NULL,
+    NULL,
+    0,
+    ActionWidget + AddinAction,
+  },
+  {
+    MENU_TYPE_SEPARATOR,
+    NULL,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Quit"),
+    NULL,
+    NULL,
+    "application-exit",
+    NULL,
+    "<Ngraph>/Graph/Quit",
+    GDK_KEY_q,
+    GDK_CONTROL_MASK,
+    NULL,
+    G_CALLBACK(CmGraphQuit),
+  },
+  {
+    MENU_TYPE_END,
+  },
+};
+
+struct MenuItem MainMenu[] = {
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Graph"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    0,
+    0,
+    GraphMenu,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Edit"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    0,
+    0,
+    EditMenu,
+    NULL,
+    0,
+    ActionWidget + EditMenuAction,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_View"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    0,
+    0,
+    ViewMenu,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Data"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    0,
+    0,
+    DataMenu,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Axis"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    0,
+    0,
+    AxisMenu,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Legend"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    0,
+    0,
+    LegendMenu,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Merge"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    0,
+    0,
+    MergeMenu,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Preference"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    0,
+    0,
+    PreferenceMenu,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Help"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    0,
+    0,
+    HelpMenu,
+  },
+  {
+    MENU_TYPE_END,
+  },
+};
+
+struct MenuItem PopupRotateMenu[] = {
+  {
+    MENU_TYPE_NORMAL,
+    N_("rotate _90 degree clockwise"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmEditMenuCB),
+    MenuIdEditRotateCW,
+    ActionWidget + EditRotateCWAction,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("rotate 9_0 degree counter-clockwise"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmEditMenuCB),
+    MenuIdEditRotateCCW,
+    ActionWidget + EditRotateCCWAction,
+  },
+  {
+    MENU_TYPE_END,
+  },
+};
+
+struct MenuItem PopupFlipMenu[] = {
+  {
+    MENU_TYPE_NORMAL,
+    N_("flip _Horizontally"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmEditMenuCB),
+    MenuIdEditFlipHorizontally,
+    ActionWidget + EditFlipHAction,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("flip _Vertically"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmEditMenuCB),
+    MenuIdEditFlipVertically,
+    ActionWidget + EditFlipVAction,
+  },
+  {
+    MENU_TYPE_END,
+  },
+};
+
+struct MenuItem PopupMenu[] = {
+  {
+    MENU_TYPE_NORMAL,
+    "Cu_t",
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmEditMenuCB),
+    MenuIdEditCut,
+    ActionWidget + EditCutAction,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Copy"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmEditMenuCB),
+    MenuIdEditCopy,
+    ActionWidget + EditCopyAction,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Paste"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmEditMenuCB),
+    MenuIdEditPaste,
+    ActionWidget + EditPasteAction,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Delete"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmEditMenuCB),
+    MenuIdEditDelete,
+    ActionWidget + EditDeleteAction,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Duplicate"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmEditMenuCB),
+    MenuIdEditDuplicate,
+    ActionWidget + EditDuplicateAction,
+  },
+  {
+    MENU_TYPE_SEPARATOR,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Properties"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/Popup/Update",
+    GDK_KEY_Return,
+    0,
+    NULL,
+    G_CALLBACK(ViewerUpdateCB),
+    0,
+    ActionWidget + PopupUpdateAction,
+  },
+  {
+    MENU_TYPE_SEPARATOR,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Align"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    0,
+    0,
+    EditAlignMenu,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Rotate"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    0,
+    0,
+    PopupRotateMenu,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Flip"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    0,
+    0,
+    PopupFlipMenu,
+  },
+  {
+    MENU_TYPE_SEPARATOR,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Top"),
+    NULL,
+    NULL,
+    "go-top",
+    NULL,
+    NULL,
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmEditMenuCB),
+    MenuIdEditOrderTop,
+    ActionWidget + EditOrderTopAction,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Up"),
+    NULL,
+    NULL,
+    "go-up",
+    NULL,
+    NULL,
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmEditMenuCB),
+    MenuIdEditOrderUp,
+    ActionWidget + EditOrderUpAction,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Down"),
+    NULL,
+    NULL,
+    "go-down",
+    NULL,
+    NULL,
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmEditMenuCB),
+    MenuIdEditOrderDown,
+    ActionWidget + EditOrderDownAction,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Bottom"),
+    NULL,
+    NULL,
+    "go-bottom",
+    NULL,
+    NULL,
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmEditMenuCB),
+    MenuIdEditOrderBottom,
+    ActionWidget + EditOrderBottomAction,
+  },
+  {
+    MENU_TYPE_SEPARATOR,
+  },
+  {
+    MENU_TYPE_TOGGLE,
+    N_("cross _Gauge"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    0,
+    0,
+    NULL,
+    G_CALLBACK(toggle_view_cb),
+    MenuIdToggleCrossGauge,
+    ActionWidget + ViewCrossGaugeAction,
+  },
+  {
+    MENU_TYPE_END,
+  },
+};
+
+
+void
+set_pointer_mode(int id)
+{
+  if (id < 0) {
+    id = DefaultMode;
+  }
+
+  switch (id) {
+  case PointerModeBoth:
+  case PointerModeLegend:
+  case PointerModeAxis:
+  case PointerModeData:
+    gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(ActionWidget[id].tool), TRUE);
+    break;
+  }
+}
+
+static void
+init_action_widget_list(void)
+{
+  int i;
+
+  for (i = 0; i < ActionWidgetNum; i++) {
+    ActionWidget[i].menu = NULL;
+    ActionWidget[i].tool = NULL;
+    ActionWidget[i].popup = NULL;
+    switch (i) {
+    case GraphSaveAction:
+      ActionWidget[i].type = ACTION_TYPE_MODIFIED;
+      break;
+    case EditCutAction:
+    case EditCopyAction:
+      ActionWidget[i].type = ACTION_TYPE_FOCUS_EDIT1;
+      break;
+    case EditRotateCCWAction:
+    case EditRotateCWAction:
+      ActionWidget[i].type = ACTION_TYPE_FOCUS_ROTATE;
+      break;
+    case EditFlipVAction:
+    case EditFlipHAction:
+      ActionWidget[i].type = ACTION_TYPE_FOCUS_FLIP;
+      break;
+    case EditDeleteAction:
+    case EditDuplicateAction:
+    case EditAlignLeftAction:
+    case EditAlignRightAction:
+    case EditAlignHCenterAction:
+    case EditAlignTopAction:
+    case EditAlignBottomAction:
+    case EditAlignVCenterAction:
+    case PopupUpdateAction:
+      ActionWidget[i].type = ACTION_TYPE_FOCUS_EDIT2;
+      break;
+    case EditOrderTopAction:
+    case EditOrderUpAction:
+      ActionWidget[i].type = ACTION_TYPE_FOCUS_UP;
+      break;
+    case EditOrderDownAction:
+    case EditOrderBottomAction:
+      ActionWidget[i].type = ACTION_TYPE_FOCUS_DOWN;
+      break;
+    case EditPasteAction:
+      ActionWidget[i].type = ACTION_TYPE_FOCUS_EDIT_PASTE;
+      break;
+    case DataWindowAction:
+    case AxisWindowAction:
+    case LegendWindowAction:
+    case MergeWindowAction:
+    case CoordWindowAction:
+    case InfoWindowAction:
+    case DefaultWindowAction:
+    case SingleWindowSeparator:
+      ActionWidget[i].type = ACTION_TYPE_MULTI_WINDOW;
+      break;
+    case ViewSidebarAction:
+      ActionWidget[i].type = ACTION_TYPE_SINGLE_WINDOW;
+      break;
+    case DataPropertyAction:
+    case DataCloseAction:
+    case DataEditAction:
+    case DataSaveAction:
+    case DataMathAction:
+      ActionWidget[i].type = ACTION_TYPE_FILE;
+      break;
+    case AxisPropertyAction:
+    case AxisDeleteAction:
+    case AxisScaleZoomAction:
+    case AxisScaleClearAction:
+      ActionWidget[i].type = ACTION_TYPE_AXIS;
+      break;
+    case AxisGridPropertyAction:
+    case AxisGridDeleteAction:
+      ActionWidget[i].type = ACTION_TYPE_GRID;
+      break;
+    case AxisScaleUndoAction:
+      ActionWidget[i].type = ACTION_TYPE_AXIS_UNDO;
+      break;
+    case LegendPathPropertyAction:
+    case LegendPathDeleteAction:
+      ActionWidget[i].type = ACTION_TYPE_PATH;
+      break;
+    case LegendRectanglePropertyAction:
+    case LegendRectangleDeleteAction:
+      ActionWidget[i].type = ACTION_TYPE_RECTANGLE;
+      break; 
+   case LegendArcPropertyAction:
+    case LegendArcDeleteAction:
+      ActionWidget[i].type = ACTION_TYPE_ARC;
+      break;
+    case LegendMarkPropertyAction:
+    case LegendMarkDeleteAction:
+      ActionWidget[i].type = ACTION_TYPE_MARK;
+      break;
+    case LegendTextPropertyAction:
+    case LegendTextDeleteAction:
+      ActionWidget[i].type = ACTION_TYPE_TEXT;
+      break;
+    case MergePropertyAction:
+    case MergeCloseAction:
+      ActionWidget[i].type = ACTION_TYPE_MERGE;
+      break;
+    default:
+      ActionWidget[i].type = ACTION_TYPE_NONE;
+    }
+  }
+}
 
 void
 set_current_window(GtkWidget *w)
@@ -1932,15 +3160,24 @@ menu_lock(int lock)
   }
 }
 
+static void
+set_action_widget_sensitivity(int id, int state)
+{
+  if (ActionWidget[id].menu) {
+    gtk_widget_set_sensitive(ActionWidget[id].menu, state);
+  }
+  if (ActionWidget[id].tool) {
+    gtk_widget_set_sensitive(GTK_WIDGET(ActionWidget[id].tool), state);
+  }
+  if (ActionWidget[id].popup) {
+    gtk_widget_set_sensitive(ActionWidget[id].popup, state);
+  }
+}
+
 void
 set_axis_undo_button_sensitivity(int state)
 {
-  static GtkAction *axis_undo = NULL;
-
-  if (axis_undo == NULL){
-    axis_undo = gtk_action_group_get_action(ActionGroup, "AxisScaleUndoAction");
-  }
-  gtk_action_set_sensitive(axis_undo, state);
+  set_action_widget_sensitivity(AxisScaleUndoAction, state);
 }
 
 void
@@ -2063,7 +3300,7 @@ create_addin_menu(void)
   GtkWidget *menu, *item, *parent;
   struct script *fcur;
 
-  parent = gtk_ui_manager_get_widget(NgraphUi, "/MenuBar/GraphMenu/GraphAddin");
+  parent = ActionWidget[AddinAction].menu;
   if (parent == NULL) {
     return;
   }
@@ -2099,77 +3336,14 @@ create_addin_menu(void)
 }
 
 static void
-set_action_sensitivity(struct actions *actions, int *focus_type, int n)
-{
-  int i;
-
-  for (i = 0; i < n; i++) {
-    gtk_action_set_sensitive(actions[i].action, focus_type[actions[i].type]);
-  }
-}
-
-static void
 set_focus_sensitivity_sub(const struct Viewer *d, int insensitive)
 {
-  int num, type;
+  int i, num, type, state, up_state, down_state;
   GtkClipboard *clip;
-  gboolean state;
-  struct actions actions[] = {
-    {"EditCutAction"		, NULL, FOCUS_TYPE_1},
-    {"EditCopyAction"		, NULL, FOCUS_TYPE_1},
-    {"EditRotateCCWAction"	, NULL, FOCUS_TYPE_2},
-    {"EditRotateCWAction"	, NULL, FOCUS_TYPE_2},
-    {"EditFlipVActiopn"		, NULL, FOCUS_TYPE_3},
-    {"EditFlipHAction"		, NULL, FOCUS_TYPE_3},
-    {"EditDeleteAction"		, NULL, FOCUS_TYPE_4},
-    {"EditDuplicateAction"	, NULL, FOCUS_TYPE_4},
-    {"EditAlignLeftAction"	, NULL, FOCUS_TYPE_4},
-    {"EditAlignRightAction"	, NULL, FOCUS_TYPE_4},
-    {"EditAlignHCenterAction"	, NULL, FOCUS_TYPE_4},
-    {"EditAlignTopAction"	, NULL, FOCUS_TYPE_4},
-    {"EditAlignBottomAction"	, NULL, FOCUS_TYPE_4},
-    {"EditAlignVCenterAction"	, NULL, FOCUS_TYPE_4},
-    {"EditOrderTopAction"	, NULL, FOCUS_TYPE_5},
-    {"EditOrderUpAction"	, NULL, FOCUS_TYPE_5},
-    {"EditOrderDownAction"	, NULL, FOCUS_TYPE_6},
-    {"EditOrderBottomAction"	, NULL, FOCUS_TYPE_6},
-
-    {"PopupUpdateAction"	, NULL, FOCUS_TYPE_4},
-  };
-  struct actions edit_paste_action = {"EditPasteAction", NULL};
-  int focus_type[FOCUS_TYPE_NUM], i, n;
-
-  n = sizeof(actions) / sizeof(*actions);
-
-  if (actions[0].action == NULL) {
-    for (i = 0; i < n; i++) {
-      actions[i].action = gtk_action_group_get_action(ActionGroup, actions[i].name);
-    }
-    edit_paste_action.action = gtk_action_group_get_action(ActionGroup, edit_paste_action.name);
-  }
 
   num = check_focused_obj_type(d, &type);
 
-  if (insensitive) {
-    focus_type[FOCUS_TYPE_1] = FALSE;
-    focus_type[FOCUS_TYPE_2] = FALSE;
-    focus_type[FOCUS_TYPE_3] = FALSE;
-    focus_type[FOCUS_TYPE_4] = FALSE;
-    focus_type[FOCUS_TYPE_5] = FALSE;
-    focus_type[FOCUS_TYPE_6] = FALSE;
-    set_action_sensitivity(actions, focus_type, n);
-
-    gtk_action_set_sensitive(edit_paste_action.action, FALSE);
-    return;
-  }
-
-  focus_type[FOCUS_TYPE_1] = (! (type & FOCUS_OBJ_TYPE_AXIS) && (type & (FOCUS_OBJ_TYPE_MERGE | FOCUS_OBJ_TYPE_LEGEND)));
-  focus_type[FOCUS_TYPE_2] = (! (type & FOCUS_OBJ_TYPE_MERGE) && (type & (FOCUS_OBJ_TYPE_AXIS | FOCUS_OBJ_TYPE_LEGEND)));
-  focus_type[FOCUS_TYPE_3] = (! (type & (FOCUS_OBJ_TYPE_MERGE | FOCUS_OBJ_TYPE_TEXT)) && (type & (FOCUS_OBJ_TYPE_AXIS | FOCUS_OBJ_TYPE_LEGEND)));
-  focus_type[FOCUS_TYPE_4] = (num > 0);
-  focus_type[FOCUS_TYPE_5] = FALSE;
-  focus_type[FOCUS_TYPE_6] = FALSE;
-
+  up_state = down_state = FALSE;
   if (num == 1 && (type & (FOCUS_OBJ_TYPE_LEGEND | FOCUS_OBJ_TYPE_MERGE))) {
     int id, last_id;
     struct FocusObj *focus;
@@ -2178,22 +3352,71 @@ set_focus_sensitivity_sub(const struct Viewer *d, int insensitive)
     id = chkobjoid(focus->obj, focus->oid);
     last_id = chkobjlastinst(focus->obj);
 
-    focus_type[FOCUS_TYPE_5] = (id > 0);
-    focus_type[FOCUS_TYPE_6] = (id < last_id);
+    up_state = (id > 0);
+    down_state = (id < last_id);
   }
 
-  set_action_sensitivity(actions, focus_type, n);
-
-  clip = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
-  state = gtk_clipboard_wait_is_text_available(clip);
-
-  switch (d->Mode) {
-  case PointB:
-  case LegendB:
-    gtk_action_set_sensitive(edit_paste_action.action, state);
-    break;
-  default:
-    gtk_action_set_sensitive(edit_paste_action.action, FALSE);
+  for (i = 0; i < ActionWidgetNum; i++) {
+    switch (ActionWidget[i].type) {
+    case ACTION_TYPE_FOCUS_EDIT1:
+      if (insensitive) {
+	state = FALSE;
+      } else {
+	state = (! (type & FOCUS_OBJ_TYPE_AXIS) && (type & (FOCUS_OBJ_TYPE_MERGE | FOCUS_OBJ_TYPE_LEGEND)));
+      }
+      set_action_widget_sensitivity(i, state);
+      break;
+    case ACTION_TYPE_FOCUS_EDIT2:
+      if (insensitive) {
+	state = FALSE;
+      } else {
+	state = (! (type & FOCUS_OBJ_TYPE_MERGE) && (type & (FOCUS_OBJ_TYPE_AXIS | FOCUS_OBJ_TYPE_LEGEND)));
+      }
+      set_action_widget_sensitivity(i, state);
+      break;
+    case ACTION_TYPE_FOCUS_EDIT_PASTE:
+      if (insensitive) {
+	state = FALSE;
+      } else {
+	clip = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
+	state = gtk_clipboard_wait_is_text_available(clip);
+	switch (d->Mode) {
+	case PointB:
+	case LegendB:
+	  break;
+	default:
+	  state = FALSE;
+	}
+      }
+      set_action_widget_sensitivity(i, state);
+      break;
+    case ACTION_TYPE_FOCUS_ROTATE:
+      if (insensitive) {
+	state = FALSE;
+      } else {
+	state = (! (type & FOCUS_OBJ_TYPE_MERGE) && (type & (FOCUS_OBJ_TYPE_AXIS | FOCUS_OBJ_TYPE_LEGEND)));
+      }
+      set_action_widget_sensitivity(i, state);
+      break;
+    case ACTION_TYPE_FOCUS_FLIP:
+      if (insensitive) {
+	state = FALSE;
+      } else {
+	state = (! (type & (FOCUS_OBJ_TYPE_MERGE | FOCUS_OBJ_TYPE_TEXT)) && (type & (FOCUS_OBJ_TYPE_AXIS | FOCUS_OBJ_TYPE_LEGEND)));
+      }
+      set_action_widget_sensitivity(i, state);
+      break;
+    case ACTION_TYPE_FOCUS_UP:
+      state = up_state;
+      set_action_widget_sensitivity(i, state);
+      break; 
+    case ACTION_TYPE_FOCUS_DOWN:
+      state = down_state;
+      set_action_widget_sensitivity(i, state);
+      break;
+    default:
+      continue;
+    }
   }
 }
 
@@ -2251,35 +3474,6 @@ read_keymap_file(void)
     gtk_accel_map_load(filename);
   }
   g_free(filename);
-}
-
-static int
-create_ui_from_file(const gchar *ui_file)
-{
-  GError *err;
-  char *home, *filename;
-  int id;
-
-  home = get_home();
-  if (home) {
-    filename = g_strdup_printf("%s/%s", home, ui_file);
-    if (naccess(filename, R_OK) == 0) {
-      id = gtk_ui_manager_add_ui_from_file(NgraphUi, filename, &err);
-      g_free(filename);
-      return id;
-    }
-    g_free(filename);
-  }
-
-  filename = g_strdup_printf("%s/%s", CONFDIR, ui_file);
-  if (naccess(filename, R_OK) == 0) {
-    id = gtk_ui_manager_add_ui_from_file(NgraphUi, filename, &err);
-    g_free(filename);
-    return id;
-  }
-  g_free(filename);
-
-  return -1;
 }
 
 static void
@@ -2498,97 +3692,28 @@ create_message_box(GtkWidget **label1, GtkWidget **label2)
 }
 
 static void
-set_toolbar_caption(GtkToolItem *item)
-{
-  GtkAction *action;
-  const gchar *caption;
-
-  action = gtk_activatable_get_related_action(GTK_ACTIVATABLE(item));
-  if (action == NULL) {
-    return;
-  }
-
-  caption = g_object_get_data(G_OBJECT(action), "caption");
-  if (caption == NULL) {
-    return;
-  }
-
-  g_signal_connect(gtk_bin_get_child(GTK_BIN(item)),
-		   "enter-notify-event",
-		   G_CALLBACK(tool_button_enter_leave_cb),
-		   _(caption));
-
-  g_signal_connect(gtk_bin_get_child(GTK_BIN(item)),
-		   "leave-notify-event",
-		   G_CALLBACK(tool_button_enter_leave_cb), NULL);
-}
-
-static void
-set_btn_press_cb(GtkToolItem *item, GCallback btn_press_func)
-{
-  GtkAction *action;
-
-  action = gtk_activatable_get_related_action(GTK_ACTIVATABLE(item));
-  if (action == NULL) {
-    return;
-  }
-
-  g_signal_connect(gtk_bin_get_child(GTK_BIN(item)),
-		   "button-press-event",
-		   btn_press_func, NULL);
-}
-
-static GtkWidget *
-get_toolbar(GtkUIManager *ui, const gchar *path, GCallback btn_press_func)
-{
-  GtkWidget *w;
-  GtkToolItem *item;
-  int n, i;
-
-  w = gtk_ui_manager_get_widget(ui, path);
-  if (w == NULL) {
-    return NULL;
-  }
-
-  n = gtk_toolbar_get_n_items(GTK_TOOLBAR(w));
-  for (i = 0; i < n; i++) {
-    item = gtk_toolbar_get_nth_item(GTK_TOOLBAR(w), i);
-    set_toolbar_caption(item);
-
-    if (btn_press_func) {
-      set_btn_press_cb(item, btn_press_func);
-    }
-  }
-
-  return w;
-}
-
-static void
 set_window_action_visibility(int visibility)
 {
-  char *name1[] = {
-    "ViewToggleDataWindowAction",
-    "ViewToggleAxisWindowAction",
-    "ViewToggleLegendWindowAction",
-    "ViewToggleMergeWindowAction",
-    "ViewToggleInformationWindowAction",
-    "ViewToggleCoordinateWindowAction",
-    "ViewDefaultWindowConfigAction",
-  };
-  char *name2[] = {
-    "ViewSidebarAction",
-  };
-  GtkAction *action;
-  unsigned int i;
+  int i, state;
 
-  for (i = 0; i < sizeof(name1) / sizeof(*name1); i++) {
-    action = gtk_action_group_get_action(ActionGroup, name1[i]);
-    gtk_action_set_visible(action, visibility);
-  }
+  for (i = 0; i < ActionWidgetNum; i++) {
+    if (ActionWidget[i].type == ACTION_TYPE_SINGLE_WINDOW) {
+      state = ! visibility;
+    } else if (ActionWidget[i].type == ACTION_TYPE_MULTI_WINDOW) {
+      state = visibility;
+    } else {
+      continue;
+    }
 
-  for (i = 0; i < sizeof(name2) / sizeof(*name2); i++) {
-    action = gtk_action_group_get_action(ActionGroup, name2[i]);
-    gtk_action_set_visible(action, ! visibility);
+    if (ActionWidget[i].menu) {
+      gtk_widget_set_visible(ActionWidget[i].menu, state);
+    }
+    if (ActionWidget[i].tool) {
+      gtk_widget_set_visible(GTK_WIDGET(ActionWidget[i].tool), state);
+    }
+    if (ActionWidget[i].popup) {
+      gtk_widget_set_visible(ActionWidget[i].popup, state);
+    }
   }
 }
 
@@ -2824,11 +3949,12 @@ multi_to_single(void)
     gtk_widget_show(NgraphApp.Viewer.side_pane1);
   }
 
-  window_action_set_active(TypeFileWin, FALSE);
-  window_action_set_active(TypeAxisWin, FALSE);
-  window_action_set_active(TypeLegendWin, FALSE);
-  window_action_set_active(TypeInfoWin, FALSE);
-  window_action_set_active(TypeCoordWin, FALSE);
+  set_subwindow_state(TypeFileWin, SUBWIN_STATE_HIDE);
+  set_subwindow_state(TypeAxisWin, SUBWIN_STATE_HIDE);
+  set_subwindow_state(TypeLegendWin, SUBWIN_STATE_HIDE);
+  set_subwindow_state(TypeMergeWin, SUBWIN_STATE_HIDE);
+  set_subwindow_state(TypeCoordWin, SUBWIN_STATE_HIDE);
+  set_subwindow_state(TypeInfoWin, SUBWIN_STATE_HIDE);
 
   if (! Menulocal.single_window_mode) {
     gtk_window_get_size(GTK_WINDOW(TopLevel), &width, &height);
@@ -2948,7 +4074,7 @@ edit_menu_shown(GtkWidget *w, gpointer user_data)
 static void
 setupwindow(void)
 {
-  GtkWidget *w, *hbox, *hbox2, *vbox, *vbox2, *table, *hpane1, *hpane2, *vpane1, *vpane2, *item;
+  GtkWidget *w, *hbox, *hbox2, *vbox, *vbox2, *table, *hpane1, *hpane2, *vpane1, *vpane2;
 
 #if GTK_CHECK_VERSION(3, 0, 0)
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
@@ -2962,14 +4088,13 @@ setupwindow(void)
   hbox2 = gtk_hbox_new(FALSE, 0);
 #endif
 
-  w = gtk_ui_manager_get_widget(NgraphUi, "/MenuBar");
-  if (w) {
-    gtk_box_pack_start(GTK_BOX(vbox2), w, FALSE, FALSE, 0);
-  }
+  w = gtk_menu_bar_new();
+  create_menu(w, MainMenu);
+  gtk_box_pack_start(GTK_BOX(vbox2), w, FALSE, FALSE, 0);
   read_keymap_file();
   NgraphApp.Viewer.menu = w;
 
-  w = get_toolbar(NgraphUi, "/CommandToolBar", NULL);
+  w = create_toolbar(CommandToolbar, sizeof(CommandToolbar) / sizeof(*CommandToolbar));
 #if GTK_CHECK_VERSION(3, 4, 0)
   CToolbar = w;
   gtk_toolbar_set_style(GTK_TOOLBAR(w), GTK_TOOLBAR_ICONS);
@@ -2978,7 +4103,7 @@ setupwindow(void)
   CToolbar = create_toolbar_box(vbox, w, GTK_ORIENTATION_HORIZONTAL);
 #endif
 
-  w = get_toolbar(NgraphUi, "/ToolBox", G_CALLBACK(CmViewerButtonPressed));
+  w = create_toolbar(PointerToolbar, sizeof(PointerToolbar) / sizeof(*PointerToolbar));
 #if GTK_CHECK_VERSION(3, 4, 0)
   PToolbar = w;
   gtk_orientable_set_orientation(GTK_ORIENTABLE(w), GTK_ORIENTATION_VERTICAL);
@@ -2988,16 +4113,14 @@ setupwindow(void)
   PToolbar = create_toolbar_box(hbox, w, GTK_ORIENTATION_VERTICAL);
 #endif
 
-  NgraphApp.Viewer.popup = gtk_ui_manager_get_widget(NgraphUi, "/ViewerPopup");
+  w = gtk_menu_new();
+  gtk_menu_set_accel_group(GTK_MENU(w), AccelGroup);
+  create_popup(w, PopupMenu);
+  NgraphApp.Viewer.popup = w;
+  gtk_widget_show_all(w);
   g_signal_connect(NgraphApp.Viewer.popup, "show", G_CALLBACK(edit_menu_shown), &NgraphApp.Viewer);
+  g_signal_connect(ActionWidget[EditMenuAction].menu, "show", G_CALLBACK(edit_menu_shown), &NgraphApp.Viewer);
 
-  item = gtk_ui_manager_get_widget(NgraphUi, "/MenuBar/EditMenu");
-  if (item) {
-    w = gtk_menu_item_get_submenu(GTK_MENU_ITEM(item));
-    if (w) {
-      g_signal_connect(w, "show", G_CALLBACK(edit_menu_shown), &NgraphApp.Viewer);
-    }
-  }
 #if GTK_CHECK_VERSION(3, 2, 0)
   NgraphApp.Viewer.HScroll = gtk_scrollbar_new(GTK_ORIENTATION_HORIZONTAL, NULL);
   NgraphApp.Viewer.VScroll = gtk_scrollbar_new(GTK_ORIENTATION_VERTICAL, NULL);
@@ -3187,14 +4310,6 @@ defaultwindowconfig(void)
 }
 
 static void
-set_gdk_color(GdkColor *col, int r, int g, int b)
-{
-  col->red = r << 8;
-  col->green = g << 8;
-  col->blue = b << 8;
-}
-
-static void
 load_hist_file(GtkEntryCompletion *list, char *home, char *name)
 {
   char *filename;
@@ -3272,21 +4387,33 @@ init_ngraph_app_struct(void)
 
   memset(&NgraphApp.FileWin, 0, sizeof(NgraphApp.FileWin));
   NgraphApp.FileWin.type = TypeFileWin;
+  NgraphApp.FileWin.action_widget_id = DataWindowAction;
+  NgraphApp.FileWin.state_func = FileWinState;
 
   memset(&NgraphApp.AxisWin, 0, sizeof(NgraphApp.AxisWin));
   NgraphApp.AxisWin.type = TypeAxisWin;
+  NgraphApp.AxisWin.action_widget_id = AxisWindowAction;
+  NgraphApp.AxisWin.state_func = AxisWinState;
 
   memset(&NgraphApp.LegendWin, 0, sizeof(NgraphApp.LegendWin));
   NgraphApp.LegendWin.type = TypeLegendWin;
+  NgraphApp.LegendWin.action_widget_id = LegendWindowAction;
+  NgraphApp.LegendWin.state_func = LegendWinState;
 
   memset(&NgraphApp.MergeWin, 0, sizeof(NgraphApp.MergeWin));
   NgraphApp.MergeWin.type = TypeMergeWin;
+  NgraphApp.MergeWin.action_widget_id = MergeWindowAction;
+  NgraphApp.MergeWin.state_func = MergeWinState;
 
   memset(&NgraphApp.InfoWin, 0, sizeof(NgraphApp.InfoWin));
   NgraphApp.InfoWin.type = TypeInfoWin;
+  NgraphApp.InfoWin.action_widget_id = InfoWindowAction;
+  NgraphApp.InfoWin.state_func = InfoWinState;
 
   memset(&NgraphApp.CoordWin, 0, sizeof(NgraphApp.CoordWin));
   NgraphApp.CoordWin.type = TypeCoordWin;
+  NgraphApp.CoordWin.action_widget_id = CoordWindowAction;
+  NgraphApp.CoordWin.state_func = CoordWinState;
 
   NgraphApp.legend_text_list = NULL;
   NgraphApp.x_math_list = NULL;
@@ -3298,74 +4425,66 @@ init_ngraph_app_struct(void)
 }
 
 static void
+set_subwin_state(void)
+{
+  NgraphApp.InfoWin.visible = Menulocal.single_window_mode && Menulocal.dialogopen;
+  NgraphApp.CoordWin.visible = Menulocal.single_window_mode && Menulocal.coordopen;
+  NgraphApp.MergeWin.visible = Menulocal.single_window_mode && Menulocal.mergeopen;
+  NgraphApp.LegendWin.visible = Menulocal.single_window_mode && Menulocal.legendopen;
+  NgraphApp.AxisWin.visible = Menulocal.single_window_mode && Menulocal.axisopen;
+  NgraphApp.FileWin.visible = Menulocal.single_window_mode && Menulocal.fileopen;
+}
+
+static void
 create_sub_windows(void)
 {
-  CmInformationWindow(NULL, NULL);
-  CmCoordinateWindow(NULL, NULL);
-  CmMergeWindow(NULL, NULL);
-  CmLegendWindow(NULL, NULL);
-  CmAxisWindow(NULL, NULL);
-  CmFileWindow(NULL, NULL);
+  set_subwindow_state(TypeFileWin, SUBWIN_STATE_SHOW);
+  set_subwindow_state(TypeAxisWin, SUBWIN_STATE_SHOW);
+  set_subwindow_state(TypeLegendWin, SUBWIN_STATE_SHOW);
+  set_subwindow_state(TypeMergeWin, SUBWIN_STATE_SHOW);
+  set_subwindow_state(TypeCoordWin, SUBWIN_STATE_SHOW);
+  set_subwindow_state(TypeInfoWin, SUBWIN_STATE_SHOW);
 
-  if (Menulocal.single_window_mode) {
-    return;
-  }
+  set_subwin_state();
 
-  if (Menulocal.dialogopen) {
-    window_action_set_active(TypeInfoWin, TRUE);
-  }
-
-  if (Menulocal.coordopen) {
-    window_action_set_active(TypeCoordWin, TRUE);
-  }
-
-  if (Menulocal.mergeopen) {
-    window_action_set_active(TypeMergeWin, TRUE);
-  }
-
-  if (Menulocal.legendopen) {
-    window_action_set_active(TypeLegendWin, TRUE);
-  }
-
-  if (Menulocal.axisopen) {
-    window_action_set_active(TypeAxisWin, TRUE);
-  }
-
-  if (Menulocal.fileopen) {
-    window_action_set_active(TypeFileWin, TRUE);
-  }
+  set_subwindow_state(TypeFileWin, (Menulocal.fileopen) ? SUBWIN_STATE_SHOW : SUBWIN_STATE_HIDE);
+  set_subwindow_state(TypeAxisWin, (Menulocal.axisopen) ? SUBWIN_STATE_SHOW : SUBWIN_STATE_HIDE);
+  set_subwindow_state(TypeLegendWin, (Menulocal.legendopen) ? SUBWIN_STATE_SHOW : SUBWIN_STATE_HIDE);
+  set_subwindow_state(TypeMergeWin, (Menulocal.mergeopen) ? SUBWIN_STATE_SHOW : SUBWIN_STATE_HIDE);
+  set_subwindow_state(TypeCoordWin, (Menulocal.coordopen) ? SUBWIN_STATE_SHOW : SUBWIN_STATE_HIDE);
+  set_subwindow_state(TypeInfoWin, (Menulocal.dialogopen) ? SUBWIN_STATE_SHOW : SUBWIN_STATE_HIDE);
 }
 
 static void
 destroy_sub_windows(void)
 {
   if (NgraphApp.FileWin.Win) {
-    window_action_set_active(TypeFileWin, FALSE);
+    set_subwindow_state(TypeFileWin, SUBWIN_STATE_HIDE);
     gtk_widget_destroy(NgraphApp.FileWin.Win);
   }
 
   if (NgraphApp.AxisWin.Win) {
-    window_action_set_active(TypeAxisWin, FALSE);
+    set_subwindow_state(TypeAxisWin, SUBWIN_STATE_HIDE);
     gtk_widget_destroy(NgraphApp.AxisWin.Win);
   }
 
   if (NgraphApp.LegendWin.Win) {
-    window_action_set_active(TypeLegendWin, FALSE);
+    set_subwindow_state(TypeLegendWin, SUBWIN_STATE_HIDE);
     gtk_widget_destroy(NgraphApp.LegendWin.Win);
   }
 
   if (NgraphApp.MergeWin.Win) {
-    window_action_set_active(TypeMergeWin, FALSE);
+    set_subwindow_state(TypeMergeWin, SUBWIN_STATE_HIDE);
     gtk_widget_destroy(NgraphApp.MergeWin.Win);
   }
 
   if (NgraphApp.InfoWin.Win) {
-    window_action_set_active(TypeInfoWin, FALSE);
+    set_subwindow_state(TypeInfoWin, SUBWIN_STATE_HIDE);
     gtk_widget_destroy(NgraphApp.InfoWin.Win);
   }
 
   if (NgraphApp.CoordWin.Win) {
-    window_action_set_active(TypeCoordWin, FALSE);
+    set_subwindow_state(TypeCoordWin, SUBWIN_STATE_HIDE);
     gtk_widget_destroy(NgraphApp.CoordWin.Win);
   }
 }
@@ -3432,26 +4551,27 @@ change_window_state_cb(GtkWidget *widget, GdkEventWindowState *event, gpointer u
 void
 set_modified_state(int state)
 {
-  static GtkAction *save_action = NULL;
-
-  if (save_action == NULL){
-    save_action = gtk_action_group_get_action(ActionGroup, "GraphSaveAction");
-  }
-  gtk_action_set_sensitive(save_action, state);
+  set_action_widget_sensitivity(GraphSaveAction, state);
 }
 
 static void
-toggle_view_cb(GtkToggleAction *action, gpointer data)
+toggle_view_cb(GtkCheckMenuItem *action, gpointer data)
 {
-  int type, state;
+  int type, state, lock = FALSE;
   GtkWidget *w1 = NULL, *w2 = NULL;
+
+  if (lock) {
+    return;
+  }
+
+  lock = TRUE;
 
   type = GPOINTER_TO_INT(data);
 
   if (action == NULL) {
     return;
   }
-  state = gtk_toggle_action_get_active(action);
+  state = gtk_check_menu_item_get_active(action);
 
   switch (type) {
   case MenuIdToggleSidebar:
@@ -3486,6 +4606,8 @@ toggle_view_cb(GtkToggleAction *action, gpointer data)
   }
 
   if (type == MenuIdToggleCrossGauge) {
+    set_toggle_action_widget_state(ViewCrossGaugeAction, state);
+    lock = FALSE;
     return;
   }
 
@@ -3495,31 +4617,54 @@ toggle_view_cb(GtkToggleAction *action, gpointer data)
   if (w2) {
     gtk_widget_set_visible(w2, state);
   }
+
+  lock = FALSE;
+}
+
+void
+set_toggle_action_widget_state(int id, int state)
+{
+  if (ActionWidget[id].menu) {
+    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(ActionWidget[id].menu), state);
+  }
+  if (ActionWidget[id].popup) {
+    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(ActionWidget[id].popup), state);
+  }
+  if (ActionWidget[id].tool) {
+    gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(ActionWidget[id].tool), state);
+  }
 }
 
 static void
 set_widget_visibility(void)
 {
-  unsigned int i;
-  struct {
-    int *state;
-    const char *name;
-  } id_array[] = {
-    {&Menulocal.sidebar,    "ViewSidebarAction"},
-    {&Menulocal.statusbar,  "ViewStatusbarAction"},
-    {&Menulocal.ruler,      "ViewRulerAction"},
-    {&Menulocal.scrollbar,  "ViewScrollbarAction"},
-    {&Menulocal.ctoolbar,   "ViewCommandToolbarAction"},
-    {&Menulocal.ptoolbar,   "ViewToolboxAction"},
-    {&Menulocal.show_cross, "ViewCrossGaugeAction"},
-  };
-  GtkToggleAction *action;
+  int i;
 
-  for (i = 0; i < sizeof (id_array) / sizeof(*id_array); i++) {
-    action = GTK_TOGGLE_ACTION(gtk_action_group_get_action(ActionGroup, id_array[i].name));
-    if (action) {
-      gtk_toggle_action_set_active(action, *id_array[i].state);
-      gtk_toggle_action_toggled(action);
+  for (i = 0; i < ActionWidgetNum; i++) {
+    switch (i) {
+    case ViewSidebarAction:
+      set_toggle_action_widget_state(i, Menulocal.sidebar);
+      break;
+    case ViewStatusbarAction:
+      set_toggle_action_widget_state(i, Menulocal.statusbar);
+      break;
+    case ViewRulerAction:
+      set_toggle_action_widget_state(i, Menulocal.ruler);
+      break;
+    case ViewScrollbarAction:
+      set_toggle_action_widget_state(i, Menulocal.scrollbar);
+      break;
+    case ViewCommandToolbarAction:
+      set_toggle_action_widget_state(i, Menulocal.ctoolbar);
+      break;
+    case ViewToolboxAction:
+      set_toggle_action_widget_state(i, Menulocal.ptoolbar);
+      break;
+    case ViewCrossGaugeAction:
+      set_toggle_action_widget_state(i, Menulocal.show_cross);
+      break;
+    default:
+      continue;
     }
   }
 }
@@ -3527,56 +4672,59 @@ set_widget_visibility(void)
 static void
 check_instance(struct objlist *obj)
 {
-  unsigned int i;
-  struct {
-    const char *name;
-    GtkAction *action;
-    const char *objname;
-    struct objlist *obj;
-  } actions[] = {
-    {"DataPropertyAction", NULL, "file", NULL},
-    {"DataCloseAction", NULL, "file", NULL},
-    {"DataEditAction", NULL, "file", NULL},
-    {"DataSaveAction", NULL, "file", NULL},
-    {"DataMathAction", NULL, "file", NULL},
+  int i;
+  struct objlist *dobj;
 
-    {"AxisPropertyAction", NULL, "axis", NULL},
-    {"AxisDeleteAction", NULL, "axis", NULL},
-    {"AxisScaleZoomAction", NULL, "axis", NULL},
-    {"AxisScaleClearAction", NULL, "axis", NULL},
-
-    {"AxisGridPropertyAction", NULL, "axisgrid", NULL},
-    {"AxisGridDeleteAction", NULL, "axisgrid", NULL},
-
-    {"LegendPathPropertyAction", NULL, "path", NULL},
-    {"LegendPathDeleteAction", NULL, "path", NULL},
-
-    {"LegendRectanglePropertyAction", NULL, "rectangle", NULL},
-    {"LegendRectangleDeleteAction", NULL, "rectangle", NULL},
-
-    {"LegendArcPropertyAction", NULL, "arc", NULL},
-    {"LegendArcDeleteAction", NULL, "arc", NULL},
-
-    {"LegendMarkPropertyAction", NULL, "mark", NULL},
-    {"LegendMarkDeleteAction", NULL, "mark", NULL},
-
-    {"LegendTextPropertyAction", NULL, "text", NULL},
-    {"LegendTextDeleteAction", NULL, "text", NULL},
-
-    {"MergePropertyAction", NULL, "merge", NULL},
-    {"MergeCloseAction", NULL, "merge", NULL},
-  };
-
-  if (actions[0].action == NULL) {
-    for (i = 0; i < sizeof(actions) / sizeof(*actions); i++) {
-      actions[i].action = gtk_action_group_get_action(ActionGroup, actions[i].name);
-      actions[i].obj = chkobject(actions[i].objname);
+  for (i = 0; i < ActionWidgetNum; i++) {
+    dobj = NULL;
+    switch (i) {
+    case DataPropertyAction:
+    case DataCloseAction:
+    case DataEditAction:
+    case DataSaveAction:
+    case DataMathAction:
+      dobj = chkobject("file");
+      break;
+    case AxisPropertyAction:
+    case AxisDeleteAction:
+    case AxisScaleZoomAction:
+    case AxisScaleClearAction:
+      dobj = chkobject("axis");
+      break;
+    case AxisGridPropertyAction:
+    case AxisGridDeleteAction:
+      dobj = chkobject("axisgrid");
+      break;
+    case LegendPathPropertyAction:
+    case LegendPathDeleteAction:
+      dobj = chkobject("path");
+      break;
+    case LegendRectanglePropertyAction:
+    case LegendRectangleDeleteAction:
+      dobj = chkobject("rectangle");
+      break;
+    case LegendArcPropertyAction:
+    case LegendArcDeleteAction:
+      dobj = chkobject("arc");
+      break;
+    case LegendMarkPropertyAction:
+    case LegendMarkDeleteAction:
+      dobj = chkobject("mark");
+      break;
+    case LegendTextPropertyAction:
+    case LegendTextDeleteAction:
+      dobj = chkobject("text");
+      break;
+    case MergePropertyAction:
+    case MergeCloseAction:
+      dobj = chkobject("merge");
+      break;
+    default:
+      continue;
     }
-  }
 
-  for (i = 0; i < sizeof(actions) / sizeof(*actions); i++) {
-    if (actions[i].obj == obj) {
-      gtk_action_set_sensitive(actions[i].action, obj->lastinst >= 0);
+    if (obj == dobj) {
+      set_action_widget_sensitivity(i, obj->lastinst >= 0);
     }
   }
 }
@@ -3594,64 +4742,6 @@ check_exist_instances(struct objlist *parent)
     }
     ocur = ocur->next;
   }
-}
-
-static void
-set_toggle_action(const char *name, int state)
-{
-  GtkAction *action;
-
-  if (name == NULL) {
-    return;
-  }
-  action = gtk_action_group_get_action(ActionGroup, name);
-
-  if (action) {
-    if (state < 0) {
-      int active;
-      active = gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action));
-      gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(action), ! active);
-    } else {
-      gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(action), state);
-    }
-  }
-}
-
-void
-window_action_set_active(enum SubWinType type, int state)
-{
-  char *name;
-
-  switch (type) {
-  case TypeFileWin:
-    name = "ViewToggleDataWindowAction";
-    break;
-  case TypeAxisWin:
-    name = "ViewToggleAxisWindowAction";
-    break;
-  case TypeLegendWin:
-    name = "ViewToggleLegendWindowAction";
-    break;
-  case TypeMergeWin:
-    name = "ViewToggleMergeWindowAction";
-    break;
-  case TypeInfoWin:
-    name = "ViewToggleInformationWindowAction";
-    break;
-  case TypeCoordWin:
-    name = "ViewToggleCoordinateWindowAction";
-    break;
-  default:
-    name = NULL;
-  }
-
-  set_toggle_action(name, state);
-}
-
-void
-window_action_toggle(enum SubWinType type)
-{
-  window_action_set_active(type, -1);
 }
 
 gboolean
@@ -3688,152 +4778,217 @@ recent_filter(const GtkRecentFilterInfo *filter_info, gpointer user_data)
   return FALSE;
 }
 
-static GtkActionGroup *
-create_action_group(struct NgraphActionEntry *entry, int n)
+static GtkWidget *
+create_recent_menu(int type)
 {
-  int i, radio_index = 0;
-  GSList *group = NULL;
   GtkRecentFilter *filter;
-  GtkActionGroup *action_group;
+  GtkWidget *submenu;
 
-  NgraphUi = gtk_ui_manager_new();
-  action_group = gtk_action_group_new("Ngraph");
+  submenu = gtk_recent_chooser_menu_new_for_manager(Menulocal.ngpfilelist);
+  filter = gtk_recent_filter_new();
+  gtk_recent_filter_add_custom(filter,
+			       GTK_RECENT_FILTER_URI |
+			       GTK_RECENT_FILTER_MIME_TYPE |
+			       GTK_RECENT_FILTER_APPLICATION,
+			       recent_filter,
+			       GINT_TO_POINTER(type),
+			       NULL);
 
-  for (i = 0; i < n; i++) {
-    GtkAction *action;
-    switch (entry[i].type) {
-    case ACTION_TYPE_NORMAL:
-      action = gtk_action_new(entry[i].name,
-			      _(entry[i].label),
-			      _(entry[i].tooltip),
-			      NULL);
-      break;
-    case ACTION_TYPE_TOGGLE:
-      action = GTK_ACTION(gtk_toggle_action_new(entry[i].name,
-						_(entry[i].label),
-						_(entry[i].tooltip),
-						NULL));
-      break;
-    case ACTION_TYPE_RADIO:
-      action = GTK_ACTION(gtk_radio_action_new(entry[i].name,
-					       _(entry[i].label),
-					       _(entry[i].tooltip),
-					       NULL,
-					       radio_index++));
-      gtk_radio_action_set_group(GTK_RADIO_ACTION(action), group);
-      group = gtk_radio_action_get_group(GTK_RADIO_ACTION(action));
-      NgraphApp.viewb = GTK_RADIO_ACTION(action);
-      break;
-    case ACTION_TYPE_RECENT:
-      action = gtk_recent_action_new_for_manager(entry[i].name,
-						 _(entry[i].label),
-						 _(entry[i].tooltip),
-						 NULL,
-						 Menulocal.ngpfilelist);
+  gtk_recent_chooser_menu_set_show_numbers(GTK_RECENT_CHOOSER_MENU(submenu), TRUE);
 
-      filter = gtk_recent_filter_new();
-      gtk_recent_filter_add_custom(filter,
-				   GTK_RECENT_FILTER_URI |
-				   GTK_RECENT_FILTER_MIME_TYPE |
-				   GTK_RECENT_FILTER_APPLICATION,
-				   recent_filter,
-				   GINT_TO_POINTER(entry[i].user_data),
-				   NULL);
-
-      gtk_recent_action_set_show_numbers(GTK_RECENT_ACTION(action), TRUE);
-
-      gtk_recent_chooser_add_filter(GTK_RECENT_CHOOSER(action), filter);
-      gtk_recent_chooser_set_filter(GTK_RECENT_CHOOSER(action), filter);
-      gtk_recent_chooser_set_show_tips(GTK_RECENT_CHOOSER(action), TRUE);
-      gtk_recent_chooser_set_show_icons(GTK_RECENT_CHOOSER(action), FALSE);
-      gtk_recent_chooser_set_local_only(GTK_RECENT_CHOOSER(action), TRUE);
+  gtk_recent_chooser_add_filter(GTK_RECENT_CHOOSER(submenu), filter);
+  gtk_recent_chooser_set_filter(GTK_RECENT_CHOOSER(submenu), filter);
+  gtk_recent_chooser_set_show_tips(GTK_RECENT_CHOOSER(submenu), TRUE);
+  gtk_recent_chooser_set_show_icons(GTK_RECENT_CHOOSER(submenu), FALSE);
+  gtk_recent_chooser_set_local_only(GTK_RECENT_CHOOSER(submenu), TRUE);
 #ifndef WINDOWS
-      gtk_recent_chooser_set_show_not_found(GTK_RECENT_CHOOSER(action), FALSE);
+  gtk_recent_chooser_set_show_not_found(GTK_RECENT_CHOOSER(submenu), FALSE);
 #endif
-      gtk_recent_chooser_set_sort_type(GTK_RECENT_CHOOSER(action), GTK_RECENT_SORT_MRU);
-      gtk_recent_chooser_set_limit(GTK_RECENT_CHOOSER(action), 10);
+  gtk_recent_chooser_set_sort_type(GTK_RECENT_CHOOSER(submenu), GTK_RECENT_SORT_MRU);
+  gtk_recent_chooser_set_limit(GTK_RECENT_CHOOSER(submenu), 10);
 
-      switch (entry[i].user_data) {
-      case RECENT_TYPE_GRAPH:
-	g_signal_connect(GTK_RECENT_CHOOSER(action), "item-activated", G_CALLBACK(CmGraphHistory), NULL);
-	break;
-      case RECENT_TYPE_DATA:
-	g_signal_connect(GTK_RECENT_CHOOSER(action), "item-activated", G_CALLBACK(CmFileHistory), NULL);
-	break;
+  return submenu;
+}
+
+static GtkWidget *
+create_toolbar(struct ToolItem *item, int n)
+{
+  int i;
+  GSList *list;
+  GtkToolItem *widget;
+  GtkWidget *toolbar, *icon;
+
+  toolbar = gtk_toolbar_new();
+  list = NULL;
+  icon = NULL;
+  for (i = 0; i < n; i++) {
+    if (item[i].icon) {
+      icon = gtk_image_new_from_icon_name(item[i].icon, GTK_ICON_SIZE_SMALL_TOOLBAR);
+    } else if (item[i].icon_file) {
+#ifdef WINDOWS
+      char *str;
+      str = g_strdup_printf("%s%s", PIXMAPDIR, item[i].icon_file);
+      icon = gtk_image_new_from_file(str);
+      g_free(str);
+#else
+      icon = gtk_image_new_from_file(item[i].icon_file);
+#endif
+    }
+
+    switch (item[i].type) {
+    case TOOL_TYPE_SEPARATOR:
+      widget = gtk_separator_tool_item_new();
+      gtk_separator_tool_item_set_draw(GTK_SEPARATOR_TOOL_ITEM(widget), TRUE);
+      break;
+    case TOOL_TYPE_NORMAL:
+      widget = gtk_tool_button_new(icon, _(item[i].label));
+      break;
+    case TOOL_TYPE_TOGGLE:
+    case TOOL_TYPE_TOGGLE2:
+      widget = gtk_toggle_tool_button_new();
+      if (icon) {
+	gtk_tool_button_set_icon_widget(GTK_TOOL_BUTTON(widget), icon);
+      }
+      break;
+    case TOOL_TYPE_RADIO:
+      widget = gtk_radio_tool_button_new(list);
+      list = gtk_radio_tool_button_get_group(GTK_RADIO_TOOL_BUTTON(widget));
+      if (icon) {
+	gtk_tool_button_set_icon_widget(GTK_TOOL_BUTTON(widget), icon);
       }
       break;
     default:
-      action = NULL;
+      widget = NULL;
     }
 
-    if (action == NULL) {
+    if (widget == NULL) {
       continue;
     }
 
-    if (entry[i].callback) {
-      switch (entry[i].type) {
-      case ACTION_TYPE_TOGGLE:
-	g_signal_connect(action, "toggled", G_CALLBACK(entry[i].callback), GINT_TO_POINTER(entry[i].user_data));
+    if (item[i].callback) {
+      switch (item[i].type) {
+      case TOOL_TYPE_TOGGLE:
+	g_signal_connect(widget, "toggled", G_CALLBACK(item[i].callback), GINT_TO_POINTER(item[i].user_data));
 	break;
       default:
-	g_signal_connect(action, "activate", G_CALLBACK(entry[i].callback), GINT_TO_POINTER(entry[i].user_data));
+	g_signal_connect(widget, "clicked", G_CALLBACK(item[i].callback), GINT_TO_POINTER(item[i].user_data));
       }
     }
 
-    if (entry[i].stock_id) {
-      gtk_action_set_icon_name(action, entry[i].stock_id);
+    if (item[i].tip) {
+      gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(widget), item[i].tip);
     }
 
-    if (entry[i].icon) {
-      GIcon *icon;
-#ifdef WINDOWS
-      char *str;
-      str = g_strdup_printf("%s%s", PIXMAPDIR, entry[i].icon);
-      icon = g_icon_new_for_string(str, NULL);
-      g_free(str);
-#else
-      icon = g_icon_new_for_string(entry[i].icon, NULL);
-#endif
-      if (icon) {
-	gtk_action_set_gicon(action, icon);
-      }
+    if (item[i].caption) {
+      g_signal_connect(gtk_bin_get_child(GTK_BIN(widget)),
+		       "enter-notify-event",
+		       G_CALLBACK(tool_button_enter_leave_cb),
+		       _(item[i].caption));
+
+      g_signal_connect(gtk_bin_get_child(GTK_BIN(widget)),
+		       "leave-notify-event",
+		       G_CALLBACK(tool_button_enter_leave_cb), NULL);
     }
 
-    if (entry[i].accel_path) {
-      gtk_action_set_accel_path(action, entry[i].accel_path);
-
-      if (entry[i].accel_key) {
-	gtk_accel_map_add_entry(entry[i].accel_path, entry[i].accel_key, entry[i].accel_mods);
-      }
+    if (item[i].action) {
+      item[i].action->tool = widget;
     }
 
-    if (entry[i].caption) {
-      g_object_set_data(G_OBJECT(action), "caption", entry[i].caption);
-    }
-
-    gtk_action_group_add_action(action_group, action);
+    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(widget), -1);
   }
-  gtk_action_group_set_translation_domain(action_group, NULL);
 
-  gtk_ui_manager_insert_action_group(NgraphUi, action_group, 0);
-
-  return action_group;
+  return toolbar;
 }
 
-char *
-get_ui_definition(void)
+static void
+create_menu_sub(GtkWidget *parent, struct MenuItem *item, int popup)
 {
-  if (NgraphUi == NULL) {
-    return NULL;
-  }
+  int i;
+  GtkWidget *menu, *widget, *submenu;
 
-  return gtk_ui_manager_get_ui(NgraphUi);
+  for (i = 0; item[i].type != MENU_TYPE_END; i++) {
+    switch (item[i].type) {
+    case MENU_TYPE_SEPARATOR:
+      widget = gtk_separator_menu_item_new();
+      break;
+    case MENU_TYPE_NORMAL:
+      widget = gtk_menu_item_new_with_mnemonic(_(item[i].label));
+      break;
+    case MENU_TYPE_TOGGLE:
+    case MENU_TYPE_TOGGLE2:
+      widget = gtk_check_menu_item_new_with_mnemonic(_(item[i].label));
+      break;
+    case MENU_TYPE_RECENT_GRAPH:
+      widget = gtk_menu_item_new_with_mnemonic(_(item[i].label));
+      submenu = create_recent_menu(RECENT_TYPE_GRAPH);
+      g_signal_connect(GTK_RECENT_CHOOSER(submenu), "item-activated", G_CALLBACK(CmGraphHistory), NULL);
+      gtk_menu_item_set_submenu(GTK_MENU_ITEM(widget), submenu);
+      break;
+    case MENU_TYPE_RECENT_DATA:
+      widget = gtk_menu_item_new_with_mnemonic(_(item[i].label));
+      submenu = create_recent_menu(RECENT_TYPE_DATA);
+      g_signal_connect(GTK_RECENT_CHOOSER(submenu), "item-activated", G_CALLBACK(CmFileHistory), NULL);
+      gtk_menu_item_set_submenu(GTK_MENU_ITEM(widget), submenu);
+      break;
+    default:
+      widget = NULL;
+    }
+
+    if (widget == NULL) {
+      continue;
+    }
+
+    if (item[i].callback) {
+      switch (item[i].type) {
+      case MENU_TYPE_TOGGLE:
+	g_signal_connect(widget, "toggled", G_CALLBACK(item[i].callback), GINT_TO_POINTER(item[i].user_data));
+	break;
+      default:
+	g_signal_connect(widget, "activate", G_CALLBACK(item[i].callback), GINT_TO_POINTER(item[i].user_data));
+      }
+    }
+
+    if (item[i].accel_path) {
+      gtk_accel_map_add_entry(item[i].accel_path, item[i].accel_key, item[i].accel_mods);
+      gtk_menu_item_set_accel_path(GTK_MENU_ITEM(widget), item[i].accel_path);
+    }
+
+    if (item[i].child) {
+      menu = gtk_menu_new();
+      gtk_menu_set_accel_group(GTK_MENU(menu), AccelGroup);
+      gtk_menu_shell_set_take_focus(GTK_MENU_SHELL(menu), TRUE);
+      create_menu(menu, item[i].child);
+      gtk_menu_item_set_submenu(GTK_MENU_ITEM(widget), menu);
+    }
+
+    if (item[i].action) {
+      if (popup) {
+	item[i].action->popup = widget;
+      } else {
+	item[i].action->menu = widget;
+      }
+    }
+
+    gtk_menu_shell_append(GTK_MENU_SHELL(parent), widget);
+  }
+}
+
+static void
+create_menu(GtkWidget *parent, struct MenuItem *item)
+{
+  create_menu_sub(parent, item, FALSE);
+}
+
+static void
+create_popup(GtkWidget *parent, struct MenuItem *item)
+{
+  create_menu_sub(parent, item, TRUE);
 }
 
 int
 application(char *file)
 {
-  int i, terminated, ui_id;
+  int i, terminated;
   struct objlist *aobj;
   int x, y, width, height, w, h;
   GdkScreen *screen;
@@ -3841,6 +4996,7 @@ application(char *file)
   if (TopLevel)
     return 1;
 
+  init_action_widget_list();
   init_ngraph_app_struct();
 
   screen = gdk_screen_get_default();
@@ -3874,15 +5030,10 @@ application(char *file)
   gtk_window_set_default_size(GTK_WINDOW(TopLevel), width, height);
   gtk_window_move(GTK_WINDOW(TopLevel), x, y);
 
-  if (ActionGroup == NULL) {
-    ActionGroup = create_action_group(ActionEntry, sizeof(ActionEntry) / sizeof(*ActionEntry));
+  if (AccelGroup == NULL) {
+    AccelGroup = gtk_accel_group_new();
   }
-
-  ui_id = create_ui_from_file(UI_FILE);
-  gtk_ui_manager_ensure_update(NgraphUi);
-  AccelGroup = gtk_ui_manager_get_accel_group(NgraphUi);
   gtk_window_add_accel_group(GTK_WINDOW(TopLevel), AccelGroup);
-  create_addin_menu();
 
 #ifdef WINDOWS
   g_signal_connect(TopLevel, "window-state-event", G_CALLBACK(change_window_state_cb), NULL);
@@ -3890,15 +5041,13 @@ application(char *file)
   g_signal_connect(TopLevel, "delete-event", G_CALLBACK(CloseCallback), NULL);
   g_signal_connect(TopLevel, "destroy-event", G_CALLBACK(CloseCallback), NULL);
 
-  set_gdk_color(&white, 255, 255, 255);
-  set_gdk_color(&gray,  0xaa, 0xaa, 0xaa);
-
   create_icon();
   initdialog();
 
   gtk_widget_show_all(GTK_WIDGET(TopLevel));
   reset_event();
   setupwindow();
+  create_addin_menu();
 
   NgraphApp.FileName = NULL;
 
@@ -3967,15 +5116,7 @@ application(char *file)
   set_delobj_cb(check_instance);
 
   if (Menulocal.single_window_mode) {
-    GtkAction *action;
-    int active;
-    action = gtk_action_group_get_action(ActionGroup, "ViewToggleSingleWindowModeAction");
-    active = gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action));
-    if (active) {
-      multi_to_single();
-    } else {
-      set_toggle_action("ViewToggleSingleWindowModeAction", TRUE);
-    }
+    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(ActionWidget[SingleWindowAction].menu), TRUE);
   } else {
     gtk_widget_hide(NgraphApp.Viewer.side_pane1);
   }
@@ -3995,8 +5136,6 @@ application(char *file)
 
   set_newobj_cb(NULL);
   set_delobj_cb(NULL);
-
-  gtk_ui_manager_remove_ui(NgraphUi, ui_id);
 
 #ifndef WINDOWS
   set_signal(SIGTERM, 0, SIG_DFL);
@@ -4331,14 +5470,6 @@ CmReloadWindowConfig(GtkAction *w, gpointer user_data)
 {
   gint x, y, w0, h0;
 
-  window_action_set_active(TypeInfoWin, FALSE);
-  window_action_set_active(TypeCoordWin, FALSE);
-  window_action_set_active(TypeMergeWin, FALSE);
-  window_action_set_active(TypeLegendWin, FALSE);
-  window_action_set_active(TypeMergeWin, FALSE);
-  window_action_set_active(TypeAxisWin, FALSE);
-  window_action_set_active(TypeFileWin, FALSE);
-
   initwindowconfig();
   mgtkwindowconfig();
 
@@ -4353,43 +5484,43 @@ CmReloadWindowConfig(GtkAction *w, gpointer user_data)
   defaultwindowconfig();
 
   if (Menulocal.dialogopen) {
-    window_action_set_active(TypeInfoWin, TRUE);
+    set_subwindow_state(TypeInfoWin, (Menulocal.dialogopen) ? SUBWIN_STATE_SHOW : SUBWIN_STATE_HIDE);
     sub_window_set_geometry(&(NgraphApp.InfoWin), TRUE);
   }
 
   if (Menulocal.coordopen) {
-    window_action_set_active(TypeCoordWin, TRUE);
+    set_subwindow_state(TypeCoordWin, (Menulocal.coordopen) ? SUBWIN_STATE_SHOW : SUBWIN_STATE_HIDE);
     sub_window_set_geometry(&(NgraphApp.CoordWin), TRUE);
   }
 
   if (Menulocal.mergeopen) {
-    window_action_set_active(TypeMergeWin, TRUE);
+    set_subwindow_state(TypeMergeWin, (Menulocal.mergeopen) ? SUBWIN_STATE_SHOW : SUBWIN_STATE_HIDE);
     sub_window_set_geometry(&(NgraphApp.MergeWin), TRUE);
   }
 
   if (Menulocal.legendopen) {
-    window_action_set_active(TypeLegendWin, TRUE);
+    set_subwindow_state(TypeLegendWin, (Menulocal.legendopen) ? SUBWIN_STATE_SHOW : SUBWIN_STATE_HIDE);
     sub_window_set_geometry(&(NgraphApp.LegendWin), TRUE);
   }
 
   if (Menulocal.axisopen) {
-    window_action_set_active(TypeAxisWin, TRUE);
+    set_subwindow_state(TypeAxisWin, (Menulocal.axisopen) ? SUBWIN_STATE_SHOW : SUBWIN_STATE_HIDE);
     sub_window_set_geometry(&(NgraphApp.AxisWin), TRUE);
   }
 
   if (Menulocal.fileopen) {
-    window_action_set_active(TypeFileWin, TRUE);
+    set_subwindow_state(TypeFileWin, (Menulocal.fileopen) ? SUBWIN_STATE_SHOW : SUBWIN_STATE_HIDE);
     sub_window_set_geometry(&(NgraphApp.FileWin), TRUE);
   }
 }
 
 static void
-CmToggleSingleWindowMode(GtkToggleAction *action, gpointer client_data)
+CmToggleSingleWindowMode(GtkCheckMenuItem *action, gpointer client_data)
 {
   int state;
 
   if (action) {
-    state = gtk_toggle_action_get_active(action);
+    state = gtk_check_menu_item_get_active(action);
   } else {
     state = TRUE;
   }
@@ -4399,4 +5530,120 @@ CmToggleSingleWindowMode(GtkToggleAction *action, gpointer client_data)
   } else {
     single_to_multi();
   }
+}
+
+static void
+CmViewerButtonArm(GtkToggleToolButton *action, gpointer client_data)
+{
+  int mode = PointB;
+  struct Viewer *d;
+
+  d = &NgraphApp.Viewer;
+
+  if (! gtk_toggle_tool_button_get_active(action)) {
+    return;
+  }
+
+  mode = GPOINTER_TO_INT(client_data);
+
+  UnFocus();
+
+  switch (mode) {
+  case PointB:
+    DefaultMode = PointerModeBoth;
+    NSetCursor(GDK_LEFT_PTR);
+    break;
+  case LegendB:
+    DefaultMode = PointerModeLegend;
+    NSetCursor(GDK_LEFT_PTR);
+    break;
+  case AxisB:
+    DefaultMode = PointerModeAxis;
+    NSetCursor(GDK_LEFT_PTR);
+    break;
+  case DataB:
+    DefaultMode = PointerModeData;
+    NSetCursor(GDK_LEFT_PTR);
+    break;
+  case TrimB:
+  case EvalB:
+    NSetCursor(GDK_LEFT_PTR);
+    break;
+  case TextB:
+    NSetCursor(GDK_XTERM);
+    break;
+  case ZoomB:
+    NSetCursor(GDK_TARGET);
+    break;
+  default:
+    NSetCursor(GDK_PENCIL);
+  }
+  NgraphApp.Viewer.Mode = mode;
+  NgraphApp.Viewer.Capture = FALSE;
+  NgraphApp.Viewer.MouseMode = MOUSENONE;
+
+  if (d->MoveData) {
+    move_data_cancel(d, TRUE);
+  }
+
+  gtk_widget_queue_draw(d->Win);
+}
+
+static void
+toggle_subwindow(GtkWidget *action, gpointer client_data)
+{
+  int id;
+
+  id = GPOINTER_TO_INT(client_data);
+  set_subwindow_state(id, SUBWIN_STATE_TOGGLE);
+}
+
+void
+set_subwindow_state(enum SubWinType id, enum subwin_state state)
+{
+  struct SubWin *d;
+  static int lock = FALSE;
+
+  if (lock) {
+    return;
+  }
+
+  lock = TRUE;
+
+  switch (id) {
+  case TypeFileWin:
+    d = &NgraphApp.FileWin;
+    break;
+  case TypeAxisWin:
+    d = &NgraphApp.AxisWin;
+    break;
+  case TypeLegendWin:
+    d = &NgraphApp.LegendWin;
+    break;
+  case TypeMergeWin:
+    d = &NgraphApp.MergeWin;
+    break;
+  case TypeCoordWin:
+    d = &NgraphApp.CoordWin;
+    break;
+  case TypeInfoWin:
+    d = &NgraphApp.InfoWin;
+    break;
+  default:
+    return;
+  }
+
+  switch (state) {
+  case SUBWIN_STATE_SHOW:
+    d->state_func(d, TRUE);
+    break;
+  case SUBWIN_STATE_HIDE:
+    d->state_func(d, FALSE);
+    break;
+  case SUBWIN_STATE_TOGGLE:
+    d->state_func(d, ! d->visible);
+    break;
+  }
+
+  lock = FALSE;
 }

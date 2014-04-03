@@ -5771,19 +5771,8 @@ set_source_attribute(struct SubWin *d, const char *attr, int target_column, int 
 }
 
 void
-CmFileWindow(GtkToggleAction *action, gpointer client_data)
+FileWinState(struct SubWin *d, int state)
 {
-  struct SubWin *d;
-  int state;
-
-  d = &(NgraphApp.FileWin);
-
-  if (action) {
-    state = gtk_toggle_action_get_active(action);
-  } else {
-    state = TRUE;
-  }
-
   if (d->Win) {
     sub_window_set_visibility(d, state);
     return;

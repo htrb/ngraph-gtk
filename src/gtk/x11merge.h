@@ -25,4 +25,4 @@ void MergeWinUpdate(struct obj_list_data *d, int clear);
 void CmMergeOpen(GtkAction *w, gpointer client_data);
 void CmMergeClose(GtkAction *w, gpointer client_data);
 void CmMergeUpdate(GtkAction *w, gpointer client_data);
-void CmMergeWindow(GtkToggleAction *action, gpointer client_data);
+void MergeWinState(struct SubWin *d, int state);

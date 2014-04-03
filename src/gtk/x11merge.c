@@ -407,19 +407,8 @@ init_dnd(struct SubWin *d)
 }
 
 void
-CmMergeWindow(GtkToggleAction *action, gpointer client_data)
+MergeWinState(struct SubWin *d, int state)
 {
-  struct SubWin *d;
-  int state;
-
-  d = &(NgraphApp.MergeWin);
-
-  if (action) {
-    state = gtk_toggle_action_get_active(action);
-  } else {
-    state = TRUE;
-  }
-
   if (d->Win) {
     sub_window_set_visibility(d, state);
     return;

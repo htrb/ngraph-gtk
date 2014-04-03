@@ -1790,7 +1790,7 @@ mx_show_win(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **
 
   win = * (unsigned int *) (argv[2]);
 
-  window_action_set_active(win, TRUE);
+  set_subwindow_state(win, SUBWIN_STATE_SHOW);
 
   return 0;
 }
@@ -1811,7 +1811,7 @@ mx_hide_win(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **
 
   win = * (unsigned int *) (argv[2]);
 
-  window_action_set_active(win, FALSE);
+  set_subwindow_state(win, SUBWIN_STATE_HIDE);
 
   return 0;
 }
@@ -1832,18 +1832,7 @@ mx_toggle_win(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char 
 
   win = * (int *) (argv[2]);
 
-  window_action_toggle(win);
-
-  return 0;
-}
-
-static int
-mx_get_ui(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
-{
-  if (rval->str) {
-    g_free(rval->str);
-  }
-  rval->str = get_ui_definition();
+  set_subwindow_state(win, SUBWIN_STATE_TOGGLE);
 
   return 0;
 }
@@ -2289,7 +2278,6 @@ static struct objtable gtkmenu[] = {
   {"show_window", NVFUNC, NREAD | NEXEC, mx_show_win, "i", 0},
   {"hide_window", NVFUNC, NREAD | NEXEC, mx_hide_win, "i", 0},
   {"toggle_window", NVFUNC, NREAD | NEXEC, mx_toggle_win, "i", 0},
-  {"get_ui", NSFUNC, NREAD | NEXEC, mx_get_ui, "", 0},
   {"get_accel_map", NSFUNC, NREAD | NEXEC, mx_get_accel_map, "", 0},
   {"lib_version", NSFUNC, NREAD | NEXEC, mx_show_lib_version, NULL, 0},
   {"focus", NVFUNC, NREAD | NEXEC, mx_focus_obj, "o", 0},
