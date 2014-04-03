@@ -1,5 +1,11 @@
 2014-04-03  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11lgnd.c (LegendWinState): show "text::text" field as a
+	tool-tip.
+
+	* src/gtk/x11file.c (FileWinState, file_list_set_val): show
+	"file::file" field as a tool-tip.
+
 	* src/gtk/x11view.c (AlignFocusedObj): swap "VIEW_ALIGN_HCENTER"
 	and "VIEW_ALIGN_VCENTER".
 	(ViewerEvLButtonDblClk, ViewerEvKeyDown): use "set_pointer_mode()"

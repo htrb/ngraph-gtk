@@ -3841,6 +3841,7 @@ LegendWinState(struct SubWin *d, int state)
 	col = gtk_tree_view_get_column(GTK_TREE_VIEW(data->text), noexpand_text_colmns[j]);
 	gtk_tree_view_column_set_expand(col, FALSE);
       }
+      gtk_tree_view_set_tooltip_column(GTK_TREE_VIEW(data->text), TEXT_LIST_COL_TEXT);
       break;
     }
     data = data->next;

@@ -84,6 +84,7 @@ static n_list_store Flist[] = {
   {N_("num"), 	G_TYPE_INT,     TRUE, FALSE, "data_num"},
   {"^#",	G_TYPE_INT,     TRUE, FALSE, "oid"},
   {"masked",	G_TYPE_INT,     FALSE, FALSE, "masked"},
+  {"tip",	G_TYPE_STRING,  FALSE, FALSE, "file"},
 #ifdef USE_PLOT_OBJ
   {"not_func",	G_TYPE_INT,     FALSE, FALSE, "source"},
   {"is_file",	G_TYPE_INT,     FALSE, FALSE, "source"},
@@ -107,6 +108,7 @@ enum {
   FILE_WIN_COL_DNUM,
   FILE_WIN_COL_OID,
   FILE_WIN_COL_MASKED,
+  FILE_WIN_COL_TIP,
 #ifdef USE_PLOT_OBJ
   FILE_WIN_COL_NOT_FUNC,
   FILE_WIN_COL_IS_FILE,
@@ -4942,7 +4944,7 @@ file_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
   unsigned int i;
   char buf[256];
   struct narray *mask, *move;
-  char *file, *bfile, *axis;
+  char *str, *file, *bfile, *axis;
   GdkPixbuf *pixbuf = NULL;
 #ifdef USE_PLOT_OBJ
   int src;
@@ -4974,6 +4976,31 @@ file_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
 
   for (i = 0; i < FILE_WIN_COL_NUM; i++) {
     switch (i) {
+    case FILE_WIN_COL_TIP:
+      str = NULL;
+#ifdef USE_PLOT_OBJ
+      switch (src) {
+      case PLOT_SOURCE_FILE:
+	getobj(d->obj, "file", row, 0, NULL, &str);
+	break;
+      case PLOT_SOURCE_FUNC:
+	getobj(d->obj, "math_x", row, 0, NULL, &math_x);
+	getobj(d->obj, "math_y", row, 0, NULL, &math_y);
+	if (math_y) {
+	  str = math_y;
+	} else if (math_x) {
+	  str = math_x;
+	}
+	break;
+      case PLOT_SOURCE_ARRAY:
+	getobj(d->obj, "array", row, 0, NULL, &str);
+	break;
+      }
+#else
+      getobj(d->obj, "file", row, 0, NULL, &str);
+#endif
+      list_store_set_string(GTK_WIDGET(d->text), iter, i, (str) ? str : "");
+      break;
     case FILE_WIN_COL_FILE:
 #ifdef USE_PLOT_OBJ
       switch (src) {
@@ -5800,7 +5827,7 @@ FileWinState(struct SubWin *d, int state)
 
   gtk_tree_view_set_enable_search(GTK_TREE_VIEW(d->data.data->text), TRUE);
   gtk_tree_view_set_search_column(GTK_TREE_VIEW(d->data.data->text), FILE_WIN_COL_FILE);
-  gtk_tree_view_set_tooltip_column(GTK_TREE_VIEW(d->data.data->text), FILE_WIN_COL_FILE);
+  gtk_tree_view_set_tooltip_column(GTK_TREE_VIEW(d->data.data->text), FILE_WIN_COL_TIP);
 
   set_source_attribute(d, "style", FILE_WIN_COL_FILE, FILE_WIN_COL_MASKED);
 
