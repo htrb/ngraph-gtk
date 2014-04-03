@@ -1,6 +1,7 @@
-; ngraph GtkAccelMap rc-file         -*- scheme -*-
+; lt-ngraph GtkAccelMap rc-file         -*- scheme -*-
 ; this file is an automated accelerator map dump
 ;
+
 ; (gtk_accel_path "<Ngraph>/Axis/Add/Cross graph" "")
 ; (gtk_accel_path "<Ngraph>/Axis/Add/Frame graph" "")
 ; (gtk_accel_path "<Ngraph>/Axis/Add/Section graph" "")
@@ -28,6 +29,7 @@
 ; (gtk_accel_path "<Ngraph>/Edit/Copy" "<Primary>c")
 ; (gtk_accel_path "<Ngraph>/Edit/Cut" "<Primary>x")
 ; (gtk_accel_path "<Ngraph>/Edit/Delete" "Delete")
+; (gtk_accel_path "<Ngraph>/Edit/Duplicate" "Insert")
 ; (gtk_accel_path "<Ngraph>/Edit/FlipHorizontally" "")
 ; (gtk_accel_path "<Ngraph>/Edit/FlipVertically" "")
 ; (gtk_accel_path "<Ngraph>/Edit/Paste" "<Primary>v")
@@ -94,7 +96,8 @@
 ; (gtk_accel_path "<Ngraph>/View/Merge Window" "F6")
 ; (gtk_accel_path "<Ngraph>/View/Ruler" "")
 ; (gtk_accel_path "<Ngraph>/View/Scrollbar" "")
-; (gtk_accel_path "<Ngraph>/View/Status bar" "")
+; (gtk_accel_path "<Ngraph>/View/Sidebar" "")
+; (gtk_accel_path "<Ngraph>/View/Statusbar" "")
 ; (gtk_accel_path "<Ngraph>/View/Toolbox" "")
-; (gtk_accel_path "<Ngraph>/View/cross Gauge" "plus")
+; (gtk_accel_path "<Ngraph>/View/cross Gauge" "<Primary>g")
 ; (gtk_accel_path "<Ngraph>/View/default Window config" "")

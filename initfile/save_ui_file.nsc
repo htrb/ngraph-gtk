@@ -1,7 +1,6 @@
 #! /usr/bin/ngraph
 
-UI_FILE=$1
-MAP_FILE=$2
+MAP_FILE=$1
 
 TMP_FILE=${system::temp_file}
 
@@ -11,9 +10,6 @@ new menu
 new regexp
 new sarray
 new io
-
-echo "get menu: -field get_ui" > $TMP_NGP
-menu::menu $TMP_NGP > $UI_FILE
 
 echo "get menu: -field get_accel_map" > $TMP_NGP
 menu::menu $TMP_NGP > $TMP_FILE
@@ -46,29 +42,6 @@ for i in ${sarray::seq}
 do
     get sarray -field get:$i >> $MAP_FILE
 done
-
-
-echo -n > $UI_FILE.win
-
-regexp::@='name="GraphExportPNG"'
-io::open "$UI_FILE"
-
-while true
-do
-    s="${io::gets}"
-    if io::eof
-    then
-	break
-    fi
-
-    echo "$s" >> $UI_FILE.win
-
-    if regexp::match "$s"
-    then
-	echo '        <menuitem name="GraphExportEMF" action="GraphExportEMFAction"/>' >> $UI_FILE.win
-    fi
-done
-io::close
 
 rm $TMP_NGP
 
