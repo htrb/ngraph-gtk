@@ -1,5 +1,13 @@
 2014-04-04  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11file.c (MarkDialogSetup): use
+	"gtk_widget_set_margin_start()" and "gtk_widget_set_margin_end()"
+	when the version of GTK+ is greater or equal to 3.12.
+
+	* src/gtk/gtk_widget.c (set_widget_margin): use
+	"gtk_widget_set_margin_start()" and "gtk_widget_set_margin_end()"
+	when the version of GTK+ is greater or equal to 3.12.
+
 	* plugins/Makefile.am (RUBY_ARCH_INCLUDEDIR): added.
 
 2014-04-03  Hiroyuki Ito  <ZXB01226 at nifty.com>

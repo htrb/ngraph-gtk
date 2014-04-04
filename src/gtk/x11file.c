@@ -2523,8 +2523,13 @@ MarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
     grid = gtk_grid_new();
     gtk_grid_set_column_spacing(GTK_GRID(grid), 8);
     gtk_grid_set_row_spacing(GTK_GRID(grid), 8);
+#if GTK_CHECK_VERSION(3, 12, 0)
+    gtk_widget_set_margin_end(grid, 4);
+    gtk_widget_set_margin_start(grid, 4);
+#else
     gtk_widget_set_margin_right(grid, 4);
     gtk_widget_set_margin_left(grid, 4);
+#endif
     for (type = 0; type < MARK_TYPE_NUM; type++) {
       w = gtk_toggle_button_new();
       button_set_mark_image(w, type);
