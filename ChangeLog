@@ -1,3 +1,7 @@
+2014-04-04  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* plugins/Makefile.am (RUBY_ARCH_INCLUDEDIR): added.
+
 2014-04-03  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11lgnd.c (LegendWinState): show "text::text" field as a

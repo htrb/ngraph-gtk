@@ -403,12 +403,12 @@ top_srcdir = @top_srcdir@
 SUBDIRS = ruby
 extra_dist_common = libruby.def libruby_resource.rc
 @HAVE_RUBY_DEV_TRUE@ngraphplugindir = $(pkglibdir)/plugins
-@HAVE_RUBY_DEV_TRUE@RUBY_INCRUDEDIR = `ruby -e 'puts(RbConfig::CONFIG["rubyhdrdir"])'`
-@HAVE_RUBY_DEV_TRUE@RUBY_ARCH = `ruby -e 'puts(RbConfig::CONFIG["arch"])'`
+@HAVE_RUBY_DEV_TRUE@RUBY_INCLUDEDIR = `ruby -e 'puts(RbConfig::CONFIG["rubyhdrdir"])'`
+@HAVE_RUBY_DEV_TRUE@RUBY_ARCH_INCLUDEDIR = `ruby -e 'c=RbConfig::CONFIG; s="rubyarchhdrdir"; puts(if (c[s]) then c[s]; else c["rubyhdrdir"] + "/" + c["arch"] + "/"; end)'`
 @HAVE_RUBY_DEV_TRUE@built_sources = $(am__append_2)
 @HAVE_RUBY_DEV_TRUE@ngraphplugin_LTLIBRARIES = libruby.la
 @HAVE_RUBY_DEV_TRUE@libruby_la_SOURCES = ruby.c
-@HAVE_RUBY_DEV_TRUE@libruby_la_CFLAGS = -I.. -I $(RUBY_INCRUDEDIR) -I $(RUBY_INCRUDEDIR)/$(RUBY_ARCH)
+@HAVE_RUBY_DEV_TRUE@libruby_la_CFLAGS = -I.. -I $(RUBY_INCLUDEDIR) -I $(RUBY_ARCH_INCLUDEDIR)
 @HAVE_RUBY_DEV_TRUE@libruby_ldflags = -L../src -avoid-version -module \
 @HAVE_RUBY_DEV_TRUE@	`ruby -e \
 @HAVE_RUBY_DEV_TRUE@	'puts(RbConfig::CONFIG["LIBRUBYARG_SHARED"])'` \
