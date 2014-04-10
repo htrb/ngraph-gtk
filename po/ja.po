@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.06.13\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
 "POT-Creation-Date: 2014-04-09 16:33+0900\n"
-"PO-Revision-Date: 2014-04-03 16:13+0900\n"
+"PO-Revision-Date: 2014-04-10 18:41+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja\n"
@@ -671,7 +671,7 @@ msgstr "フィット設定保存"
 
 #: src/gtk/x11dialg.c:152
 msgid "Frame/Section Graph"
-msgstr "方眼グラフ"
+msgstr "フレーム/方眼グラフ"
 
 #: src/gtk/x11dialg.c:155 src/gtk/x11menu.c:447
 msgid "Cross Graph"
