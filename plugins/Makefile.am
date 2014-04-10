@@ -14,7 +14,7 @@ if HAVE_RUBY_DEV
 if OS_WIN32
   libruby_ldflags += -no-undefined -L`ruby -e 'puts(RbConfig::CONFIG["libdir"])'` -export-symbols libruby.def -Wl,libruby_resource.o
   built_sources += libruby_resource.o
-
+  libruby_la_LIBADD = -lngraph
 .rc.o:
 	windres -o $@ $<
 endif

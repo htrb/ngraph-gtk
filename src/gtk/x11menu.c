@@ -738,8 +738,13 @@ struct ToolItem CommandToolbar[] = {
     N_("Scale _Undo"),
     N_("Scale Undo"),
     N_("Undo Scale Settings"),
+#ifdef WINDOWS
+    NULL,
+    NGRAPH_UNDO_ICON_FILE,
+#else
     "edit-undo",
     NULL,
+#endif
     NULL,
     0,
     0,
@@ -781,7 +786,11 @@ struct MenuItem HelpMenu[] = {
     N_("_Help"),
     NULL,
     NULL,
+#ifdef WINDOWS
+    NULL,
+#else
     "help-browser",
+#endif
     NULL,
     "<Ngraph>/Help/Help",
     GDK_KEY_F1,
@@ -1418,8 +1427,13 @@ struct MenuItem AxisMenu[] = {
     N_("Scale _Undo"),
     N_("Scale Undo"),
     N_("Undo Scale Settings"),
+#ifdef WINDOWS
+    NULL,
+    NGRAPH_UNDO_ICON_FILE,
+#else
     "edit-undo",
     NULL,
+#endif
     "<Ngraph>/Axis/Scale Undo",
     0,
     0,
@@ -2477,7 +2491,11 @@ struct MenuItem GraphMenu[] = {
     N_("Page Set_up"),
     NULL,
     NULL,
+#ifdef WINDOWS
+    NULL,
+#else
     "document-page-setup", 
+#endif
     NULL,
     "<Ngraph>/Graph/Page",
     0,
@@ -3378,11 +3396,11 @@ set_focus_sensitivity_sub(const struct Viewer *d, int insensitive)
       if (insensitive) {
 	state = FALSE;
       } else {
-	clip = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
-	state = gtk_clipboard_wait_is_text_available(clip);
 	switch (d->Mode) {
 	case PointB:
 	case LegendB:
+	  clip = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
+	  state = gtk_clipboard_wait_is_text_available(clip);
 	  break;
 	default:
 	  state = FALSE;
@@ -4825,14 +4843,7 @@ create_toolbar(struct ToolItem *item, int n)
     if (item[i].icon) {
       icon = gtk_image_new_from_icon_name(item[i].icon, GTK_ICON_SIZE_SMALL_TOOLBAR);
     } else if (item[i].icon_file) {
-#ifdef WINDOWS
-      char *str;
-      str = g_strdup_printf("%s%s", PIXMAPDIR, item[i].icon_file);
-      icon = gtk_image_new_from_file(str);
-      g_free(str);
-#else
-      icon = gtk_image_new_from_file(item[i].icon_file);
-#endif
+      icon = create_image_from_file(item[i].icon_file);
     }
 
     switch (item[i].type) {
@@ -4912,7 +4923,20 @@ create_menu_sub(GtkWidget *parent, struct MenuItem *item, int popup)
       widget = gtk_separator_menu_item_new();
       break;
     case MENU_TYPE_NORMAL:
+#if GTK_CHECK_VERSION(3, 10, 0)
       widget = gtk_menu_item_new_with_mnemonic(_(item[i].label));
+#else
+      widget = gtk_image_menu_item_new_with_mnemonic(_(item[i].label));
+      if (item[i].icon) {
+	GtkWidget *icon;
+	icon = gtk_image_new_from_icon_name(item[i].icon, GTK_ICON_SIZE_MENU);
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(widget), icon);
+      } else if (item[i].icon_file) {
+	GtkWidget *icon;
+	icon = create_image_from_file(item[i].icon_file);
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(widget), icon);
+      }
+#endif
       break;
     case MENU_TYPE_TOGGLE:
     case MENU_TYPE_TOGGLE2:
@@ -4957,7 +4981,7 @@ create_menu_sub(GtkWidget *parent, struct MenuItem *item, int popup)
       menu = gtk_menu_new();
       gtk_menu_set_accel_group(GTK_MENU(menu), AccelGroup);
       gtk_menu_shell_set_take_focus(GTK_MENU_SHELL(menu), TRUE);
-      create_menu(menu, item[i].child);
+      create_menu_sub(menu, item[i].child, popup);
       gtk_menu_item_set_submenu(GTK_MENU_ITEM(widget), menu);
     }
 

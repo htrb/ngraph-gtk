@@ -1,3 +1,12 @@
+2014-04-10  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (create_toolbar, create_menu_sub): use
+	"create_image_from_file()".
+
+	* src/gtk/x11lgnd.c (LegendWinState): use "create_image_from_file()".
+
+	* src/gtk/gtk_widget.c (create_image_from_file): added.
+
 2014-04-04  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (MarkDialogSetup): use

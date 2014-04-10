@@ -58,6 +58,7 @@ void spin_entry_set_inc(GtkWidget *w, int inc, int page);
 char *entry_get_filename(GtkWidget *w);
 int entry_set_filename(GtkWidget *w, char *filename);
 
+GtkWidget *create_image_from_file(const char *file);
 GtkWidget *create_color_button(GtkWidget *win);
 GtkWidget *create_text_entry(int set_default_size, int set_default_action);
 GtkWidget *create_file_entry(struct objlist *obj);

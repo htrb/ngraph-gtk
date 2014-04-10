@@ -10,6 +10,22 @@
 #include "ox11menu.h"
 #include "x11menu.h"
 #include "x11gui.h"
+#include "dir_defs.h"
+
+GtkWidget *
+create_image_from_file(const char *file)
+{
+  GtkWidget *img;
+#ifdef WINDOWS
+    char *str;
+    str = g_strdup_printf("%s%s", PIXMAPDIR, file);
+    img = gtk_image_new_from_file(str);
+    g_free(str);
+#else
+    img = gtk_image_new_from_file(file);
+#endif
+    return img;
+}
 
 void
 set_button_icon(GtkWidget *w, const char *icon_name)

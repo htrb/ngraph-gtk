@@ -129,7 +129,7 @@ am__uninstall_files_from_dir = { \
   }
 am__installdirs = "$(DESTDIR)$(ngraphplugindir)"
 LTLIBRARIES = $(ngraphplugin_LTLIBRARIES)
-libruby_la_LIBADD =
+libruby_la_DEPENDENCIES =
 am__libruby_la_SOURCES_DIST = ruby.c
 @HAVE_RUBY_DEV_TRUE@am_libruby_la_OBJECTS = libruby_la-ruby.lo
 libruby_la_OBJECTS = $(am_libruby_la_OBJECTS)
@@ -413,6 +413,7 @@ extra_dist_common = libruby.def libruby_resource.rc
 @HAVE_RUBY_DEV_TRUE@	`ruby -e \
 @HAVE_RUBY_DEV_TRUE@	'puts(RbConfig::CONFIG["LIBRUBYARG_SHARED"])'` \
 @HAVE_RUBY_DEV_TRUE@	$(am__append_1)
+@HAVE_RUBY_DEV_TRUE@@OS_WIN32_TRUE@libruby_la_LIBADD = -lngraph
 @HAVE_RUBY_DEV_TRUE@libruby_la_LDFLAGS = $(libruby_ldflags)
 @HAVE_RUBY_DEV_FALSE@extra_dist = $(extra_dist_common) ruby.c
 @HAVE_RUBY_DEV_TRUE@extra_dist = $(extra_dist_common)
@@ -820,7 +821,6 @@ uninstall-am: uninstall-ngraphpluginLTLIBRARIES
 	mostlyclean mostlyclean-compile mostlyclean-generic \
 	mostlyclean-libtool pdf pdf-am ps ps-am tags tags-am uninstall \
 	uninstall-am uninstall-ngraphpluginLTLIBRARIES
-
 
 @HAVE_RUBY_DEV_TRUE@@OS_WIN32_TRUE@.rc.o:
 @HAVE_RUBY_DEV_TRUE@@OS_WIN32_TRUE@	windres -o $@ $<

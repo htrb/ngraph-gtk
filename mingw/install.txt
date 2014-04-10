@@ -8,17 +8,17 @@ http://sourceforge.net/projects/mingw/files/
 Download mingw-get-setup.exe
 Execute mingw-get-setup.exe
 
-rename fstab.sample to fstab in the folder C:/MinGW/msys/etc/
+rename fstab.sample to fstab in the folder C:/MinGW/msys/1.0/etc/
 
 2. Get GTK+
 
 download
 
-http://win32builder.gnome.org/gtk+-bundle_3.6.4-20130921_win32.zip
+gtk+-bundle_2.22.1-20101227_win32.zip
 
-form
+from
 
-http://www.gtk.org/download/win32.php
+http://ftp.gnome.org/pub/gnome/binaries/win32/gtk+/2.22/
 
 
 3. Install GTK+
@@ -59,9 +59,9 @@ make install
 
 get Ruby installer from http://rubyinstaller.org/
 
-http://dl.bintray.com/oneclick/rubyinstaller/rubyinstaller-2.0.0-p247.exe
+http://dl.bintray.com/oneclick/rubyinstaller/rubyinstaller-2.0.0-p451.exe
 
-execute rubyinstaller-2.0.0-p247.exe
+execute rubyinstaller-2.0.0-p451.exe
 
 Check "Add Ruby executables to your PATH"
 

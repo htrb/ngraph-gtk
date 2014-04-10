@@ -79,3 +79,4 @@ extern const gchar *Mergewin48_xpm[];
 #define NGRAPH_TEXT_ICON_FILE		ICON_FILE(ngraph_text.png)
 #define NGRAPH_TRIMMING_ICON_FILE	ICON_FILE(ngraph_trimming.png)
 #define NGRAPH_ZOOM_ICON_FILE		ICON_FILE(ngraph_zoom.png)
+#define NGRAPH_UNDO_ICON_FILE		ICON_FILE(ngraph_undo.png)

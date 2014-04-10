@@ -3773,14 +3773,7 @@ LegendWinState(struct SubWin *d, int state)
   }
 
   for (i = 0; i < LEGENDNUM; i++) {
-#ifdef WINDOWS
-    char *str;
-    str = g_strdup_printf("%s%s", PIXMAPDIR, legend_data[i].icon_file);
-    icons[i] = gtk_image_new_from_file(str);
-    g_free(str);
-#else
-    icons[i] = gtk_image_new_from_file(legend_data[i].icon_file);
-#endif
+    icons[i] = create_image_from_file(legend_data[i].icon_file);
     gtk_widget_set_tooltip_text(GTK_WIDGET(icons[i]), _(legend_data[i].name));
   }
 

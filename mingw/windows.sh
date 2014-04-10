@@ -6,10 +6,9 @@ WIN_PATH=mingw
 
 HAVE_RUBY="0"
 
-DEFS="-D _USE_32BIT_TIME_T -D_FORTIFY_SOURCE -DGDK_DISABLE_DEPRECATED=1 -DGDK_PIXBUF_DISABLE_DEPRECATED=1 -DG_DISABLE_DEPRECATED=1 -DGTK_DISABLE_SINGLE_INCLUDES=1 -DG_DISABLE_SINGLE_INCLUDES=1 -DGDK_PIXBUF_DISABLE_SINGLE_INCLUDES=1 -DGSL_DISABLE_DEPRECATED=1"
-# DEFS="$DEFS -DGTK_DISABLE_DEPRECATED=1"
+DEFS="-D _USE_32BIT_TIME_T -D_FORTIFY_SOURCE -DGDK_DISABLE_DEPRECATED=1 -DGDK_PIXBUF_DISABLE_DEPRECATED=1 -DG_DISABLE_DEPRECATED=1 -DGTK_DISABLE_SINGLE_INCLUDES=1 -DG_DISABLE_SINGLE_INCLUDES=1 -DGDK_PIXBUF_DISABLE_SINGLE_INCLUDES=1 -DGSL_DISABLE_DEPRECATED=1 -DGTK_DISABLE_DEPRECATED=1"
 
-CCOPT="-march=i686 -Wall -Wextra -Wpointer-arith -Wstrict-aliasing -Wno-unused-parameter -Wno-missing-field-initializers -Wno-deprecated-declarations -g"
+CCOPT="-march=i686 -Wall -Wextra -Wpointer-arith -Wstrict-aliasing -Wno-unused-parameter -Wno-missing-field-initializers -Wdeprecated-declarations -g"
 
 if which ruby
 then
@@ -39,22 +38,18 @@ done
 
 make
 
-(cd initfile; cp Ngraph.ini.win Ngraph.ini; cp NgraphUI.xml.win NgraphUI.xml)
+(cd initfile; cp Ngraph.ini.win Ngraph.ini)
 
 make install
 
 mkdir -p $PKG_DIR/share/icons $PKG_DIR/lib/plugins
 
-cp /mingw/bin/*.dll             $PKG_DIR/bin
-cp -r /mingw/share/locale       $PKG_DIR/share
-cp -r /mingw/share/themes       $PKG_DIR/share
-cp -r /mingw/share/glib-2.0     $PKG_DIR/share
-cp -r /mingw/etc/gtk-3.0        $PKG_DIR/etc
-cp -r /mingw/etc/pango          $PKG_DIR/etc
-cp -r /mingw/etc/fonts          $PKG_DIR/etc
-cp -r /mingw/lib/gtk-3.0        $PKG_DIR/lib
-cp -r /mingw/lib/gdk-pixbuf-2.0 $PKG_DIR/lib
-cp -r /mingw/lib/pango          $PKG_DIR/lib
+cp /mingw/bin/*.dll       $PKG_DIR/bin
+cp -r /mingw/share/locale $PKG_DIR/share
+cp -r /mingw/share/themes $PKG_DIR/share
+cp -r /mingw/etc/gtk-2.0  $PKG_DIR/etc
+cp -r /mingw/etc/pango    $PKG_DIR/etc
+cp -r /mingw/lib/gtk-2.0  $PKG_DIR/lib
 
 HICOLOR_ICONS="/mingw/share/icons/hicolor"
 if [ -d "$HICOLOR_ICONS" ]
@@ -62,8 +57,8 @@ then
     cp -r "$HICOLOR_ICONS" $PKG_DIR/share/icons
 fi
 
-#cp $WIN_PATH/gtkrc         $PKG_DIR/share/themes/MS-Windows/gtk-2.0
-#cp $WIN_PATH/gtkrc         $PKG_DIR/share/themes/Raleigh/gtk-2.0
+cp $WIN_PATH/gtkrc         $PKG_DIR/share/themes/MS-Windows/gtk-2.0
+cp $WIN_PATH/gtkrc         $PKG_DIR/share/themes/Raleigh/gtk-2.0
 cp $WIN_PATH/pango.aliases $PKG_DIR/etc/pango
 cp $WIN_PATH/associate.bat $PKG_DIR
 cp $WIN_PATH/echo.nsc      $PKG_DIR
