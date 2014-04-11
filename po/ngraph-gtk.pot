@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.06.14\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2014-04-09 16:33+0900\n"
+"POT-Creation-Date: 2014-04-11 10:56+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -75,7 +75,7 @@ msgid "len"
 msgstr ""
 
 #: src/gtk/x11axis.c:89 src/gtk/x11file.c:132 src/gtk/x11lgnd.c:213
-#: src/gtk/x11menu.c:2098 src/gtk/x11menu.c:2855 src/gtk/x11merge.c:69
+#: src/gtk/x11menu.c:2098 src/gtk/x11menu.c:2955 src/gtk/x11merge.c:69
 msgid "_Duplicate"
 msgstr ""
 
@@ -85,7 +85,7 @@ msgstr ""
 #: src/gtk/x11lgnd.c:1986 src/gtk/x11menu.c:1017 src/gtk/x11menu.c:1053
 #: src/gtk/x11menu.c:1089 src/gtk/x11menu.c:1125 src/gtk/x11menu.c:1161
 #: src/gtk/x11menu.c:1276 src/gtk/x11menu.c:1382 src/gtk/x11menu.c:2083
-#: src/gtk/x11menu.c:2840
+#: src/gtk/x11menu.c:2940
 msgid "_Delete"
 msgstr ""
 
@@ -101,30 +101,30 @@ msgstr ""
 #: src/gtk/x11menu.c:966 src/gtk/x11menu.c:1002 src/gtk/x11menu.c:1038
 #: src/gtk/x11menu.c:1074 src/gtk/x11menu.c:1110 src/gtk/x11menu.c:1146
 #: src/gtk/x11menu.c:1261 src/gtk/x11menu.c:1367 src/gtk/x11menu.c:1488
-#: src/gtk/x11menu.c:2873
+#: src/gtk/x11menu.c:2973
 msgid "_Properties"
 msgstr ""
 
 #: src/gtk/x11axis.c:96 src/gtk/x11file.c:140 src/gtk/x11graph.c:726
-#: src/gtk/x11lgnd.c:220 src/gtk/x11menu.c:1872 src/gtk/x11menu.c:2930
+#: src/gtk/x11lgnd.c:220 src/gtk/x11menu.c:1872 src/gtk/x11menu.c:3030
 #: src/gtk/x11merge.c:75
 msgid "_Top"
 msgstr ""
 
 #: src/gtk/x11axis.c:97 src/gtk/x11file.c:141 src/gtk/x11graph.c:732
-#: src/gtk/x11lgnd.c:221 src/gtk/x11menu.c:1887 src/gtk/x11menu.c:2945
+#: src/gtk/x11lgnd.c:221 src/gtk/x11menu.c:1887 src/gtk/x11menu.c:3045
 #: src/gtk/x11merge.c:76 src/gtk/x11opt.c:976
 msgid "_Up"
 msgstr ""
 
 #: src/gtk/x11axis.c:98 src/gtk/x11file.c:142 src/gtk/x11graph.c:738
-#: src/gtk/x11lgnd.c:222 src/gtk/x11menu.c:1902 src/gtk/x11menu.c:2960
+#: src/gtk/x11lgnd.c:222 src/gtk/x11menu.c:1902 src/gtk/x11menu.c:3060
 #: src/gtk/x11merge.c:77 src/gtk/x11opt.c:969
 msgid "_Down"
 msgstr ""
 
 #: src/gtk/x11axis.c:99 src/gtk/x11file.c:143 src/gtk/x11graph.c:744
-#: src/gtk/x11lgnd.c:223 src/gtk/x11menu.c:1917 src/gtk/x11menu.c:2975
+#: src/gtk/x11lgnd.c:223 src/gtk/x11menu.c:1917 src/gtk/x11menu.c:3075
 #: src/gtk/x11merge.c:78
 msgid "_Bottom"
 msgstr ""
@@ -604,7 +604,7 @@ msgstr ""
 msgid "auto"
 msgstr ""
 
-#: src/gtk/x11dialg.c:121 src/gtk/x11menu.c:3908 src/gtk/x11menu.c:3911
+#: src/gtk/x11dialg.c:121 src/gtk/x11menu.c:4008 src/gtk/x11menu.c:4011
 msgid "data"
 msgstr ""
 
@@ -1934,31 +1934,31 @@ msgstr ""
 msgid "_Toolbox"
 msgstr ""
 
-#: src/gtk/x11menu.c:1851 src/gtk/x11menu.c:2993
+#: src/gtk/x11menu.c:1851 src/gtk/x11menu.c:3093
 msgid "cross _Gauge"
 msgstr ""
 
-#: src/gtk/x11menu.c:1938
+#: src/gtk/x11menu.c:1938 src/gtk/x11menu.c:2795
 msgid "Align _Left"
 msgstr ""
 
-#: src/gtk/x11menu.c:1953
+#: src/gtk/x11menu.c:1953 src/gtk/x11menu.c:2810
 msgid "Align _Horizontal Center"
 msgstr ""
 
-#: src/gtk/x11menu.c:1968
+#: src/gtk/x11menu.c:1968 src/gtk/x11menu.c:2825
 msgid "Align _Right"
 msgstr ""
 
-#: src/gtk/x11menu.c:1987
+#: src/gtk/x11menu.c:1987 src/gtk/x11menu.c:2844
 msgid "Align _Top"
 msgstr ""
 
-#: src/gtk/x11menu.c:2002
+#: src/gtk/x11menu.c:2002 src/gtk/x11menu.c:2859
 msgid "Align _Vertical Center"
 msgstr ""
 
-#: src/gtk/x11menu.c:2017
+#: src/gtk/x11menu.c:2017 src/gtk/x11menu.c:2874
 msgid "Align _Bottom"
 msgstr ""
 
@@ -1966,11 +1966,11 @@ msgstr ""
 msgid "Cu_t"
 msgstr ""
 
-#: src/gtk/x11menu.c:2053 src/gtk/x11menu.c:2810 src/gtk/x11view.c:996
+#: src/gtk/x11menu.c:2053 src/gtk/x11menu.c:2910 src/gtk/x11view.c:996
 msgid "_Copy"
 msgstr ""
 
-#: src/gtk/x11menu.c:2068 src/gtk/x11menu.c:2825
+#: src/gtk/x11menu.c:2068 src/gtk/x11menu.c:2925
 msgid "_Paste"
 msgstr ""
 
@@ -1978,7 +1978,7 @@ msgstr ""
 msgid "draw _Order"
 msgstr ""
 
-#: src/gtk/x11menu.c:2129 src/gtk/x11menu.c:2891
+#: src/gtk/x11menu.c:2129 src/gtk/x11menu.c:2991
 msgid "_Align"
 msgstr ""
 
@@ -2154,23 +2154,23 @@ msgstr ""
 msgid "_Preference"
 msgstr ""
 
-#: src/gtk/x11menu.c:2903
+#: src/gtk/x11menu.c:3003
 msgid "_Rotate"
 msgstr ""
 
-#: src/gtk/x11menu.c:2915
+#: src/gtk/x11menu.c:3015
 msgid "_Flip"
 msgstr ""
 
-#: src/gtk/x11menu.c:5357
+#: src/gtk/x11menu.c:5457
 msgid "Error:"
 msgstr ""
 
-#: src/gtk/x11menu.c:5407
+#: src/gtk/x11menu.c:5507
 msgid "Question"
 msgstr ""
 
-#: src/gtk/x11menu.c:5464
+#: src/gtk/x11menu.c:5564
 #, c-format
 msgid "Executing `%.128s'."
 msgstr ""

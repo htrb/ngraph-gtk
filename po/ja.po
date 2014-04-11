@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.06.13\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2014-04-09 16:33+0900\n"
+"POT-Creation-Date: 2014-04-11 10:56+0900\n"
 "PO-Revision-Date: 2014-04-10 18:41+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -73,7 +73,7 @@ msgid "len"
 msgstr "長さ"
 
 #: src/gtk/x11axis.c:89 src/gtk/x11file.c:132 src/gtk/x11lgnd.c:213
-#: src/gtk/x11menu.c:2098 src/gtk/x11menu.c:2855 src/gtk/x11merge.c:69
+#: src/gtk/x11menu.c:2098 src/gtk/x11menu.c:2955 src/gtk/x11merge.c:69
 msgid "_Duplicate"
 msgstr "複製(_D)"
 
@@ -83,7 +83,7 @@ msgstr "複製(_D)"
 #: src/gtk/x11lgnd.c:1986 src/gtk/x11menu.c:1017 src/gtk/x11menu.c:1053
 #: src/gtk/x11menu.c:1089 src/gtk/x11menu.c:1125 src/gtk/x11menu.c:1161
 #: src/gtk/x11menu.c:1276 src/gtk/x11menu.c:1382 src/gtk/x11menu.c:2083
-#: src/gtk/x11menu.c:2840
+#: src/gtk/x11menu.c:2940
 msgid "_Delete"
 msgstr "削除(_D)"
 
@@ -99,30 +99,30 @@ msgstr "クリア(_C)"
 #: src/gtk/x11menu.c:966 src/gtk/x11menu.c:1002 src/gtk/x11menu.c:1038
 #: src/gtk/x11menu.c:1074 src/gtk/x11menu.c:1110 src/gtk/x11menu.c:1146
 #: src/gtk/x11menu.c:1261 src/gtk/x11menu.c:1367 src/gtk/x11menu.c:1488
-#: src/gtk/x11menu.c:2873
+#: src/gtk/x11menu.c:2973
 msgid "_Properties"
 msgstr "プロパティ(_P)"
 
 #: src/gtk/x11axis.c:96 src/gtk/x11file.c:140 src/gtk/x11graph.c:726
-#: src/gtk/x11lgnd.c:220 src/gtk/x11menu.c:1872 src/gtk/x11menu.c:2930
+#: src/gtk/x11lgnd.c:220 src/gtk/x11menu.c:1872 src/gtk/x11menu.c:3030
 #: src/gtk/x11merge.c:75
 msgid "_Top"
 msgstr "先頭へ(_T)"
 
 #: src/gtk/x11axis.c:97 src/gtk/x11file.c:141 src/gtk/x11graph.c:732
-#: src/gtk/x11lgnd.c:221 src/gtk/x11menu.c:1887 src/gtk/x11menu.c:2945
+#: src/gtk/x11lgnd.c:221 src/gtk/x11menu.c:1887 src/gtk/x11menu.c:3045
 #: src/gtk/x11merge.c:76 src/gtk/x11opt.c:976
 msgid "_Up"
 msgstr "上へ(_U)"
 
 #: src/gtk/x11axis.c:98 src/gtk/x11file.c:142 src/gtk/x11graph.c:738
-#: src/gtk/x11lgnd.c:222 src/gtk/x11menu.c:1902 src/gtk/x11menu.c:2960
+#: src/gtk/x11lgnd.c:222 src/gtk/x11menu.c:1902 src/gtk/x11menu.c:3060
 #: src/gtk/x11merge.c:77 src/gtk/x11opt.c:969
 msgid "_Down"
 msgstr "下へ(_D)"
 
 #: src/gtk/x11axis.c:99 src/gtk/x11file.c:143 src/gtk/x11graph.c:744
-#: src/gtk/x11lgnd.c:223 src/gtk/x11menu.c:1917 src/gtk/x11menu.c:2975
+#: src/gtk/x11lgnd.c:223 src/gtk/x11menu.c:1917 src/gtk/x11menu.c:3075
 #: src/gtk/x11merge.c:78
 msgid "_Bottom"
 msgstr "最後へ(_B)"
@@ -633,7 +633,7 @@ msgstr "一点二鎖線"
 msgid "auto"
 msgstr "自動"
 
-#: src/gtk/x11dialg.c:121 src/gtk/x11menu.c:3908 src/gtk/x11menu.c:3911
+#: src/gtk/x11dialg.c:121 src/gtk/x11menu.c:4008 src/gtk/x11menu.c:4011
 msgid "data"
 msgstr "データ"
 
@@ -1968,31 +1968,31 @@ msgstr "コマンドツールバー(_C)"
 msgid "_Toolbox"
 msgstr "ツールボックス(_T)"
 
-#: src/gtk/x11menu.c:1851 src/gtk/x11menu.c:2993
+#: src/gtk/x11menu.c:1851 src/gtk/x11menu.c:3093
 msgid "cross _Gauge"
 msgstr "クロスゲージ(_G)"
 
-#: src/gtk/x11menu.c:1938
+#: src/gtk/x11menu.c:1938 src/gtk/x11menu.c:2795
 msgid "Align _Left"
 msgstr "左揃え(_L)"
 
-#: src/gtk/x11menu.c:1953
+#: src/gtk/x11menu.c:1953 src/gtk/x11menu.c:2810
 msgid "Align _Horizontal Center"
 msgstr "横中央揃え(_H)"
 
-#: src/gtk/x11menu.c:1968
+#: src/gtk/x11menu.c:1968 src/gtk/x11menu.c:2825
 msgid "Align _Right"
 msgstr "右揃え(_R)"
 
-#: src/gtk/x11menu.c:1987
+#: src/gtk/x11menu.c:1987 src/gtk/x11menu.c:2844
 msgid "Align _Top"
 msgstr "上端揃え(_T)"
 
-#: src/gtk/x11menu.c:2002
+#: src/gtk/x11menu.c:2002 src/gtk/x11menu.c:2859
 msgid "Align _Vertical Center"
 msgstr "縦中央揃え(_V)"
 
-#: src/gtk/x11menu.c:2017
+#: src/gtk/x11menu.c:2017 src/gtk/x11menu.c:2874
 msgid "Align _Bottom"
 msgstr "下端揃え(_B)"
 
@@ -2000,11 +2000,11 @@ msgstr "下端揃え(_B)"
 msgid "Cu_t"
 msgstr "切り取り(_T)"
 
-#: src/gtk/x11menu.c:2053 src/gtk/x11menu.c:2810 src/gtk/x11view.c:996
+#: src/gtk/x11menu.c:2053 src/gtk/x11menu.c:2910 src/gtk/x11view.c:996
 msgid "_Copy"
 msgstr "コピー(_C)"
 
-#: src/gtk/x11menu.c:2068 src/gtk/x11menu.c:2825
+#: src/gtk/x11menu.c:2068 src/gtk/x11menu.c:2925
 msgid "_Paste"
 msgstr "貼り付け(_P)"
 
@@ -2012,7 +2012,7 @@ msgstr "貼り付け(_P)"
 msgid "draw _Order"
 msgstr "描画順(_O)"
 
-#: src/gtk/x11menu.c:2129 src/gtk/x11menu.c:2891
+#: src/gtk/x11menu.c:2129 src/gtk/x11menu.c:2991
 msgid "_Align"
 msgstr "位置合わせ(_A)"
 
@@ -2188,23 +2188,23 @@ msgstr "合成(_M)"
 msgid "_Preference"
 msgstr "設定(_P)"
 
-#: src/gtk/x11menu.c:2903
+#: src/gtk/x11menu.c:3003
 msgid "_Rotate"
 msgstr "回転(_R)"
 
-#: src/gtk/x11menu.c:2915
+#: src/gtk/x11menu.c:3015
 msgid "_Flip"
 msgstr "反転(_F)"
 
-#: src/gtk/x11menu.c:5357
+#: src/gtk/x11menu.c:5457
 msgid "Error:"
 msgstr "エラー:"
 
-#: src/gtk/x11menu.c:5407
+#: src/gtk/x11menu.c:5507
 msgid "Question"
 msgstr "質問"
 
-#: src/gtk/x11menu.c:5464
+#: src/gtk/x11menu.c:5564
 #, c-format
 msgid "Executing `%.128s'."
 msgstr "実行中 `%.128s'."
