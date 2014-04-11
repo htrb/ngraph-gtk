@@ -786,10 +786,10 @@ struct MenuItem HelpMenu[] = {
     N_("_Help"),
     NULL,
     NULL,
-#ifdef WINDOWS
-    NULL,
-#else
+#if GTK_CHECK_VERSION(3, 10, 0)
     "help-browser",
+#else
+    NULL,
 #endif
     NULL,
     "<Ngraph>/Help/Help",
@@ -1427,12 +1427,12 @@ struct MenuItem AxisMenu[] = {
     N_("Scale _Undo"),
     N_("Scale Undo"),
     N_("Undo Scale Settings"),
-#ifdef WINDOWS
-    NULL,
-    NGRAPH_UNDO_ICON_FILE,
-#else
+#if GTK_CHECK_VERSION(3, 10, 0)
     "edit-undo",
     NULL,
+#else
+    NULL,
+    NGRAPH_UNDO_ICON_FILE,
 #endif
     "<Ngraph>/Axis/Scale Undo",
     0,
@@ -2491,10 +2491,10 @@ struct MenuItem GraphMenu[] = {
     N_("Page Set_up"),
     NULL,
     NULL,
-#ifdef WINDOWS
-    NULL,
-#else
+#if GTK_CHECK_VERSION(3, 10, 0)
     "document-page-setup", 
+#else
+    NULL,
 #endif
     NULL,
     "<Ngraph>/Graph/Page",
