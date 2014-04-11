@@ -358,7 +358,6 @@ MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
 MSGFMT_015 = @MSGFMT_015@
 MSGMERGE = @MSGMERGE@
-M_LIBS = @M_LIBS@
 NM = @NM@
 NMEDIT = @NMEDIT@
 OBJDUMP = @OBJDUMP@
@@ -447,7 +446,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 SUBDIRS = gtk math
 EXTRA_DIST = ngraph_export.map ngraph_resource.rc libngraph_resource.rc ngraph.ico
-libngraph_ldflags = -version-info $(LIBNGRAPH_VERSION) $(M_LIBS) \
+libngraph_ldflags = -version-info $(LIBNGRAPH_VERSION) \
 	$(READLINE_LIBS) $(GTK_LIBS) $(GLIB_LIBS) $(GSL_LIBS) \
 	$(am__append_1) $(am__append_3)
 ngraph_ldflags = -lngraph $(am__append_2)

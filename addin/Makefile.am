@@ -14,11 +14,11 @@ calc_LDADD = $(GTK_LIBS) $(GLIB_LIBS)
 
 fitrslt_SOURCES = fitrslt.c addin_common.c addin_common.h
 fitrslt_CFLAGS = $(GTK_CFLAGS) $(APP_CFLAGS)
-fitrslt_LDADD =  $(M_LIBS) $(GTK_LIBS) $(GLIB_LIBS)
+fitrslt_LDADD = $(GTK_LIBS) $(GLIB_LIBS)
 
 legend_SOURCES = legend.c addin_common.c addin_common.h
 legend_CFLAGS = $(GTK_CFLAGS) $(APP_CFLAGS)
-legend_LDADD =  $(M_LIBS) $(GTK_LIBS) $(GLIB_LIBS)
+legend_LDADD = $(GTK_LIBS) $(GLIB_LIBS)
 
 fft_SOURCES = fft.c
-fft_LDADD = $(M_LIBS)
+fft_LDADD =

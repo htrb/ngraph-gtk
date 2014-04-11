@@ -2,7 +2,7 @@ SUBDIRS = gtk math
 
 EXTRA_DIST = ngraph_export.map ngraph_resource.rc libngraph_resource.rc ngraph.ico
 
-libngraph_ldflags = -version-info $(LIBNGRAPH_VERSION) $(M_LIBS) $(READLINE_LIBS) $(GTK_LIBS) $(GLIB_LIBS) $(GSL_LIBS)
+libngraph_ldflags = -version-info $(LIBNGRAPH_VERSION) $(READLINE_LIBS) $(GTK_LIBS) $(GLIB_LIBS) $(GSL_LIBS)
 ngraph_ldflags = -lngraph
 
 if OS_WIN32

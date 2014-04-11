@@ -661,7 +661,6 @@ HAVE_RUBY_DEV_TRUE
 RUBY_DLEXT
 RUBY
 READLINE_LIBS
-M_LIBS
 POSUB
 LTLIBINTL
 LIBINTL
@@ -14910,9 +14909,11 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_m_sqrt" >&5
 $as_echo "$ac_cv_lib_m_sqrt" >&6; }
 if test "x$ac_cv_lib_m_sqrt" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBM 1
+_ACEOF
 
-		      M_LIBS=-lm
-
+  LIBS="-lm $LIBS"
 
 fi
 
@@ -15246,13 +15247,10 @@ int
 main ()
 {
   unsigned int major, minor, micro;
-  char *tmp_version;
 
   fclose (fopen ("conf.glibtest", "w"));
 
-  /* HP/UX 9 (%@#!) writes to sscanf strings */
-  tmp_version = g_strdup("$min_glib_version");
-  if (sscanf(tmp_version, "%u.%u.%u", &major, &minor, &micro) != 3) {
+  if (sscanf("$min_glib_version", "%u.%u.%u", &major, &minor, &micro) != 3) {
      printf("%s, bad version string\n", "$min_glib_version");
      exit(1);
    }
