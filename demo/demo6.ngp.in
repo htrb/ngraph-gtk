@@ -572,7 +572,7 @@ new file
 	file::interpolation=spline
 	file::fit=
 	file::math_x=
-	file::math_y='HSB(%03, 1, 1)=Y'
+	file::math_y='HSB(%03, 1, 1);Y'
 	file::func_f=
 	file::func_g=
 	file::func_h=
@@ -664,7 +664,7 @@ new file
 	file::interpolation=spline
 	file::fit=
 	file::math_x='0'
-	file::math_y='HSB((Y-1)/MAXY, 1, 1)=MAXY-Y'
+	file::math_y='HSB((Y-1)/MAXY, 1, 1);MAXY-Y'
 	file::func_f=
 	file::func_g=
 	file::func_h=
