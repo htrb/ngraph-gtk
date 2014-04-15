@@ -69,11 +69,10 @@ int putobj_stroke_color(GtkWidget *w, struct objlist *obj, int id);
 int chk_sputobjfield(struct objlist *obj, int id, char *field, char *str);
 const char *get_style_string(struct objlist *obj, int id, char *field);
 
-#define DIALOG_PROTOTYPE GtkWidget *parent, *widget, *focus;\
+#define DIALOG_PROTOTYPE GtkWidget *parent, *widget, *focus, *ok_button;	\
   GtkBox *vbox;\
   int ret, show_cancel;\
   char *resource;\
-  const char *ok_button;\
   void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);\
   void (*CloseWindow) (GtkWidget *w, void *data);\
 

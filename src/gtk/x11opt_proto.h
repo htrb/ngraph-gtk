@@ -304,7 +304,7 @@ CREATE_NAME(Pref, DialogCreateWidgets)(struct CREATE_NAME(Pref, Dialog) *d, GtkW
   gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
 
   d->show_cancel = FALSE;
-  d->ok_button = _("_Close");
+  gtk_button_set_label(GTK_BUTTON(d->ok_button), _("_Close"));
 }
 
 #undef LIST_TYPE

@@ -1,3 +1,23 @@
+2014-04-15  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11opt_proto.h: use "gtk_button_set_label()".
+
+	* src/gtk/x11view.c (EvalDialogSetup): use
+	"gtk_button_set_label()".
+
+	* src/gtk/x11opt.c (MiscDialogSetup, ExViewerDialogSetup)
+	(ViewerDialogSetup): use "GTK_RESPONSE_CANCEL" instead of
+	"IDCANCEL".
+
+	* src/gtk/x11gui.c (DialogExecute): use
+	"gtk_dialog_new_with_buttons()" instead of "gtk_dialog_new()".
+	(DialogInput, DialogRadio, DialogCombo, DialogComboEntry)
+	(DialogSpinEntry, DialogCheck): add "GTK_DIALOG_USE_HEADER_BAR"
+	flag.
+
+	* src/gtk/x11file.c (MathDialogSetup): use
+	"gtk_button_set_label()".
+
 2014-04-10  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (create_toolbar, create_menu_sub): use

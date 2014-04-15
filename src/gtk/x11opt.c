@@ -1294,7 +1294,7 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
   d = (struct MiscDialog *) data;
   if (makewidget) {
     d->show_cancel = FALSE;
-    gtk_dialog_add_button(GTK_DIALOG(wi), _("_Cancel"), IDCANCEL);
+    gtk_dialog_add_button(GTK_DIALOG(wi), _("_Cancel"), GTK_RESPONSE_CANCEL);
     gtk_dialog_add_button(GTK_DIALOG(wi), _("_Save"), IDSAVE);
 
 #if GTK_CHECK_VERSION(3, 0, 0)
@@ -1638,7 +1638,7 @@ ExViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
   d = (struct ExViewerDialog *) data;
   if (makewidget) {
     d->show_cancel = FALSE;
-    gtk_dialog_add_button(GTK_DIALOG(wi), _("_Cancel"), IDCANCEL);
+    gtk_dialog_add_button(GTK_DIALOG(wi), _("_Cancel"), GTK_RESPONSE_CANCEL);
     gtk_dialog_add_button(GTK_DIALOG(wi), _("_Save"), IDSAVE);
 
 #if GTK_CHECK_VERSION(3, 4, 0)
@@ -1768,7 +1768,7 @@ ViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
   d = (struct ViewerDialog *) data;
   if (makewidget) {
     d->show_cancel = FALSE;
-    gtk_dialog_add_button(GTK_DIALOG(wi), _("_Cancel"), IDCANCEL);
+    gtk_dialog_add_button(GTK_DIALOG(wi), _("_Cancel"), GTK_RESPONSE_CANCEL);
     gtk_dialog_add_button(GTK_DIALOG(wi), _("_Save"), IDSAVE);
 
 #if GTK_CHECK_VERSION(3, 4, 0)
