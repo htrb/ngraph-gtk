@@ -181,6 +181,7 @@ static n_list_store Tlist[] = {
   {"style",         G_TYPE_INT,     FALSE, FALSE, "style"},
   {"weight",        G_TYPE_INT,     FALSE, FALSE, "weight"},
   {"color",         G_TYPE_STRING,  FALSE, FALSE, "color"},
+  {"bgcolor",       G_TYPE_STRING,  FALSE, FALSE, "bgcolor"},
 #ifdef TEXT_LIST_USE_FONT_FAMILY
   {"font_family",   G_TYPE_STRING,  FALSE, FALSE, "font_family"},
 #endif
@@ -200,6 +201,7 @@ enum TEXT_LIST_COL {
   TEXT_LIST_COL_STYLE,
   TEXT_LIST_COL_WEIGHT,
   TEXT_LIST_COL_COLOR,
+  TEXT_LIST_COL_BGCOLOR,
 #ifdef TEXT_LIST_USE_FONT_FAMILY
   TEXT_LIST_COL_FONT_FAMILY,
 #endif
@@ -2976,7 +2978,14 @@ text_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
       getobj(d->obj, "R", row, 0, NULL, &r);
       getobj(d->obj, "G", row, 0, NULL, &g);
       getobj(d->obj, "B", row, 0, NULL, &b);
-      snprintf(buf, sizeof(buf), "#%02x%02x%02x", r & 0xff, g & 0xff, b &0xff);
+      snprintf(buf, sizeof(buf), "#%02x%02x%02x", r & 0xff, g & 0xff, b & 0xff);
+      list_store_set_string(d->text, iter, i, buf);
+      break;
+    case TEXT_LIST_COL_BGCOLOR:
+      snprintf(buf, sizeof(buf), "#%02x%02x%02x",
+	       ((int) (Menulocal.bg_r * 255)) & 0xff,
+	       ((int) (Menulocal.bg_g * 255)) & 0xff,
+	       ((int) (Menulocal.bg_b * 255)) & 0xff);
       list_store_set_string(d->text, iter, i, buf);
       break;
     case TEXT_LIST_COL_X:
@@ -3826,6 +3835,7 @@ LegendWinState(struct SubWin *d, int state)
 	gtk_tree_view_column_add_attribute(col, renderer, "family", TEXT_LIST_COL_FONT_FAMILY);
 #endif
 	gtk_tree_view_column_add_attribute(col, renderer, "foreground", TEXT_LIST_COL_COLOR);
+	gtk_tree_view_column_add_attribute(col, renderer, "background", TEXT_LIST_COL_BGCOLOR);
 	g_signal_connect_after(renderer, "editing-started", G_CALLBACK(start_editing_text), data);
       }
       g_list_free(list);

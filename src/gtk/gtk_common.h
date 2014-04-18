@@ -13,6 +13,8 @@
 #define GTK_WIDGET_VISIBLE(w) gtk_widget_get_visible(w)
 #endif
 
+#define USE_HEADER_BAR 0
+
 #if GTK_CHECK_VERSION(2, 18, 0)
 #define GTK_WIDGET_SET_CAN_FOCUS(w) gtk_widget_set_can_focus(w, TRUE)
 #else

@@ -131,7 +131,7 @@ ndialog_run(GtkWidget *dlg)
 int
 DialogExecute(GtkWidget *parent, void *dialog)
 {
-  GtkWidget *dlg, *win_ptr;
+  GtkWidget *dlg, *win_ptr, *btn;
   struct DialogType *data;
   gint res_id, lockstate;
 
@@ -154,11 +154,11 @@ DialogExecute(GtkWidget *parent, void *dialog)
   if (data->widget == NULL) {
     dlg = gtk_dialog_new_with_buttons(_(data->resource),
 				      GTK_WINDOW(parent),
-#if GTK_CHECK_VERSION(3, 12, 0)
+#if GTK_CHECK_VERSION(3, 12, 0) && USE_HEADER_BAR
 				      GTK_DIALOG_USE_HEADER_BAR |
 #endif
 				      GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-				      _("_OK"), GTK_RESPONSE_OK,
+				      _("_Cancel"), GTK_RESPONSE_CANCEL,
 				      NULL);
 
     gtk_window_set_resizable(GTK_WINDOW(dlg), TRUE);
@@ -171,14 +171,17 @@ DialogExecute(GtkWidget *parent, void *dialog)
     data->widget = dlg;
     data->vbox = GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dlg)));
     data->show_cancel = TRUE;
-    data->ok_button = gtk_dialog_get_widget_for_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
+    data->ok_button = _("_OK");
 
     gtk_window_set_title(GTK_WINDOW(dlg), _(data->resource));
 
     data->SetupWindow(dlg, data, TRUE);
 
-    if (data->show_cancel) {
-      gtk_dialog_add_button(GTK_DIALOG(dlg), _("_Cancel"), GTK_RESPONSE_CANCEL);
+    gtk_dialog_add_button(GTK_DIALOG(dlg), data->ok_button, GTK_RESPONSE_OK);
+
+    if (! data->show_cancel) {
+      btn = gtk_dialog_get_widget_for_response(GTK_DIALOG(dlg), GTK_RESPONSE_CANCEL);
+      gtk_widget_hide(btn);
     }
 
     gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
@@ -276,6 +279,9 @@ message_box(GtkWidget * parent, const char *message, const char *title, int mode
 
   switch (mode) {
   case RESPONS_YESNOCANCEL:
+    dlg_button = GTK_BUTTONS_CANCEL;
+    dlg_type = GTK_MESSAGE_QUESTION;
+    break;
   case RESPONS_YESNO:
     dlg_button = GTK_BUTTONS_YES_NO;
     dlg_type = GTK_MESSAGE_QUESTION;
@@ -300,19 +306,15 @@ message_box(GtkWidget * parent, const char *message, const char *title, int mode
 
   switch (mode) {
   case RESPONS_YESNOCANCEL:
-  case RESPONS_YESNO:
+    gtk_dialog_add_button(GTK_DIALOG(dlg), _("_No"), GTK_RESPONSE_NO);
+    gtk_dialog_add_button(GTK_DIALOG(dlg), _("_Yes"), GTK_RESPONSE_YES);
+  case RESPONS_YESNO:		/* fall-through */
     gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_YES);
     break;
   }
 
   gtk_window_set_title(GTK_WINDOW(dlg), title);
   gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
-
-  if (mode == RESPONS_YESNOCANCEL) {
-    gtk_dialog_add_button(GTK_DIALOG(dlg),
-			  _("_Cancel"),
-			  GTK_RESPONSE_CANCEL);
-  }
 
   gtk_widget_show_all(dlg);
   res_id = ndialog_run(dlg);
@@ -356,7 +358,7 @@ DialogInput(GtkWidget * parent, const char *title, const char *mes, const char *
 
   dlg = gtk_dialog_new_with_buttons(title,
 				    GTK_WINDOW(parent),
-#if GTK_CHECK_VERSION(3, 12, 0)
+#if GTK_CHECK_VERSION(3, 12, 0) && USE_HEADER_BAR
 				    GTK_DIALOG_USE_HEADER_BAR |
 #endif
 				    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -419,7 +421,7 @@ DialogRadio(GtkWidget *parent, const char *title, const char *caption, struct na
 
   dlg = gtk_dialog_new_with_buttons(title,
 				    GTK_WINDOW(parent),
-#if GTK_CHECK_VERSION(3, 12, 0)
+#if GTK_CHECK_VERSION(3, 12, 0) && USE_HEADER_BAR
 				    GTK_DIALOG_USE_HEADER_BAR |
 #endif
 				    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -537,7 +539,7 @@ DialogCombo(GtkWidget *parent, const char *title, const char *caption, struct na
 
   dlg = gtk_dialog_new_with_buttons(title,
 				    GTK_WINDOW(parent),
-#if GTK_CHECK_VERSION(3, 12, 0)
+#if GTK_CHECK_VERSION(3, 12, 0) && USE_HEADER_BAR
 				    GTK_DIALOG_USE_HEADER_BAR |
 #endif
 				    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -607,7 +609,7 @@ DialogComboEntry(GtkWidget *parent, const char *title, const char *caption, stru
 
   dlg = gtk_dialog_new_with_buttons(title,
 				    GTK_WINDOW(parent),
-#if GTK_CHECK_VERSION(3, 12, 0)
+#if GTK_CHECK_VERSION(3, 12, 0) && USE_HEADER_BAR
 				    GTK_DIALOG_USE_HEADER_BAR |
 #endif
 				    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -672,7 +674,7 @@ DialogSpinEntry(GtkWidget *parent, const char *title, const char *caption, doubl
 
   dlg = gtk_dialog_new_with_buttons(title,
 				    GTK_WINDOW(parent),
-#if GTK_CHECK_VERSION(3, 12, 0)
+#if GTK_CHECK_VERSION(3, 12, 0) && USE_HEADER_BAR
 				    GTK_DIALOG_USE_HEADER_BAR |
 #endif
 				    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -746,7 +748,7 @@ DialogCheck(GtkWidget *parent, const char *title, const char *caption, struct na
 
   dlg = gtk_dialog_new_with_buttons(title,
 				    GTK_WINDOW(parent),
-#if GTK_CHECK_VERSION(3, 12, 0)
+#if GTK_CHECK_VERSION(3, 12, 0) && USE_HEADER_BAR
 				    GTK_DIALOG_USE_HEADER_BAR |
 #endif
 				    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,

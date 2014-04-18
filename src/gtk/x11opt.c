@@ -1231,8 +1231,10 @@ MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
   if (Menulocal.help_browser)
     gtk_entry_set_text(GTK_ENTRY(d->help_browser), Menulocal.help_browser);
 
+#if ! GTK_CHECK_VERSION(3, 0, 0)
   if (Menulocal.browser)
     gtk_entry_set_text(GTK_ENTRY(d->browser), Menulocal.browser);
+#endif
 
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->directory), Menulocal.changedirectory);
 
@@ -1293,8 +1295,6 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct MiscDialog *) data;
   if (makewidget) {
-    d->show_cancel = FALSE;
-    gtk_dialog_add_button(GTK_DIALOG(wi), _("_Cancel"), GTK_RESPONSE_CANCEL);
     gtk_dialog_add_button(GTK_DIALOG(wi), _("_Save"), IDSAVE);
 
 #if GTK_CHECK_VERSION(3, 0, 0)
@@ -1322,9 +1322,11 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, _("_Help browser:"), TRUE, i++);
     d->help_browser = w;
 
+#if ! GTK_CHECK_VERSION(3, 0, 0)
     w = create_file_entry_with_cb(G_CALLBACK(set_file_in_entry), d);
     add_widget_to_table(table, w, _("_Web browser:"), TRUE, i++);
     d->browser = w;
+#endif
 
     gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
@@ -1532,7 +1534,9 @@ MiscDialogClose(GtkWidget *w, void *data)
 
   set_program_name(d->editor, &Menulocal.editor);
   set_program_name(d->help_browser, &Menulocal.help_browser);
+#if ! GTK_CHECK_VERSION(3, 0, 0)
   set_program_name(d->browser, &Menulocal.browser);
+#endif
 
   Menulocal.changedirectory =
     gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->directory));
@@ -1637,8 +1641,6 @@ ExViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct ExViewerDialog *) data;
   if (makewidget) {
-    d->show_cancel = FALSE;
-    gtk_dialog_add_button(GTK_DIALOG(wi), _("_Cancel"), GTK_RESPONSE_CANCEL);
     gtk_dialog_add_button(GTK_DIALOG(wi), _("_Save"), IDSAVE);
 
 #if GTK_CHECK_VERSION(3, 4, 0)
@@ -1767,8 +1769,6 @@ ViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct ViewerDialog *) data;
   if (makewidget) {
-    d->show_cancel = FALSE;
-    gtk_dialog_add_button(GTK_DIALOG(wi), _("_Cancel"), GTK_RESPONSE_CANCEL);
     gtk_dialog_add_button(GTK_DIALOG(wi), _("_Save"), IDSAVE);
 
 #if GTK_CHECK_VERSION(3, 4, 0)

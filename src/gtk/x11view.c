@@ -1004,7 +1004,7 @@ EvalDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
 
     d->show_cancel = FALSE;
-    gtk_button_set_label(GTK_BUTTON(d->ok_button), _("_Close"));
+    d->ok_button = _("_Close");
 
     gtk_window_set_default_size(GTK_WINDOW(wi), 540, 400);
 

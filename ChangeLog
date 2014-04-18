@@ -1,9 +1,23 @@
+2014-04-18  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11opt.c (MiscDialogSetupItem, MiscDialogSetup)
+	(MiscDialogClose): don't use "Menulocal.browser" when ter version
+	of GTK+ is greater or equal to "3.0.0".
+
+	* src/gtk/x11gui.c (message_box): change order ob buttons in the
+	case of "RESPONS_YESNOCANCEL".
+
+	* debian/ruby-ngraph.install: install "usr/lib/*/ruby/*".
+
+2014-04-16  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11lgnd.c (Tlist): add "bgcolor" column.
+	(text_list_set_val, LegendWinState): set background color of the
+	text column.
+
+	* src/gtk/gtk_common.h (USE_HEADER_BAR): added.
+
 2014-04-15  Hiroyuki Ito  <ZXB01226 at nifty.com>
-
-	* src/gtk/x11opt_proto.h: use "gtk_button_set_label()".
-
-	* src/gtk/x11view.c (EvalDialogSetup): use
-	"gtk_button_set_label()".
 
 	* src/gtk/x11opt.c (MiscDialogSetup, ExViewerDialogSetup)
 	(ViewerDialogSetup): use "GTK_RESPONSE_CANCEL" instead of
@@ -14,9 +28,6 @@
 	(DialogInput, DialogRadio, DialogCombo, DialogComboEntry)
 	(DialogSpinEntry, DialogCheck): add "GTK_DIALOG_USE_HEADER_BAR"
 	flag.
-
-	* src/gtk/x11file.c (MathDialogSetup): use
-	"gtk_button_set_label()".
 
 2014-04-10  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
