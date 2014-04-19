@@ -1,7 +1,16 @@
 # -*- coding: utf-8 -*-
 
 require 'rubygems'
-require 'raspell'
+
+begin
+  require 'raspella'
+rescue LoadError
+  Ngraph::Dialog.new {|dialog|
+    dialog.title = "spell check"
+    dialog.message("Cannot load 'raspell'.")
+    exit
+  }
+end
 
 class NgraphSpellchecker
   def initialize

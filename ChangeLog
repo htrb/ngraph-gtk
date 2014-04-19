@@ -1,3 +1,7 @@
+2014-04-19  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* addin/spell_check.rb: handle "LoadError".
+
 2014-04-18  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11opt.c (MiscDialogSetupItem, MiscDialogSetup)
