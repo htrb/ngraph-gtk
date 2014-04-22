@@ -418,7 +418,7 @@ get_symbol(GModule *module, const char *format, const char *name, gpointer *symb
 }
 
 static char *
-get_plugin_name(const char *str)
+get_basename(const char *str)
 {
   char *basename;
   int i;
@@ -437,6 +437,21 @@ get_plugin_name(const char *str)
   return basename;
 }
 
+static char *
+get_plugin_name(const char *name)
+{
+  struct objlist *sysobj;
+  char *module_file, *plugin_path;
+
+  plugin_path = NULL;
+  sysobj = getobject("system");
+  getobj(sysobj, "plugin_dir", 0, 0, NULL, &plugin_path);
+
+  module_file = g_module_build_path(plugin_path, name);
+
+  return module_file;
+}
+
 static int
 load_plugin_sub(struct objlist *obj, N_VALUE *inst, const char *name, struct ngraph_plugin *plugin)
 {
@@ -445,30 +460,18 @@ load_plugin_sub(struct objlist *obj, N_VALUE *inst, const char *name, struct ngr
   ngraph_plugin_open np_open;
   ngraph_plugin_close np_close;
   int r;
-  char *basename, *module_file, *plugin_path;
-  struct objlist *sysobj;
+  char *module_file;
 
   module = NULL;
   module_file = NULL;
-  basename = NULL;
 
-  basename = get_plugin_name(name);
-  if (basename == NULL) {
-    error(obj, ERRSYSLOAD);
-    return 1;
-  }
-
-  r = nhash_get_ptr(Plugins, basename, &loaded);
+  r = nhash_get_ptr(Plugins, name, &loaded);
   if (r == 0 && loaded) {
-    error2(obj, ERRSYSLOADED, basename);
+    error2(obj, ERRSYSLOADED, name);
     goto ErrorExit;
   }
 
-  plugin_path = NULL;
-  sysobj = getobject("system");
-  getobj(sysobj, "plugin_dir", 0, 0, NULL, &plugin_path);
-
-  module_file = g_module_build_path(plugin_path, basename);
+  module_file = get_plugin_name(name);
   module = g_module_open(module_file, 0);
   if (module == NULL) {
     putstderr(g_module_error());
@@ -477,18 +480,17 @@ load_plugin_sub(struct objlist *obj, N_VALUE *inst, const char *name, struct ngr
   }
 
   np_open = NULL;
-  get_symbol(module, "ngraph_plugin_open_%s", basename, (gpointer *) &np_open);
+  get_symbol(module, "ngraph_plugin_open_%s", name, (gpointer *) &np_open);
 
   np_close = NULL;
-  get_symbol(module, "ngraph_plugin_close_%s", basename, (gpointer *) &np_close);
+  get_symbol(module, "ngraph_plugin_close_%s", name, (gpointer *) &np_close);
 
-  r = nhash_set_ptr(Plugins, basename, plugin);
+  r = nhash_set_ptr(Plugins, name, plugin);
   if (r) {
     error(obj, ERRSYSMEM);
     goto ErrorExit;
   }
 
-  g_free(basename);
 
   plugin->file = module_file;
   plugin->module = module;
@@ -504,7 +506,6 @@ load_plugin_sub(struct objlist *obj, N_VALUE *inst, const char *name, struct ngr
   }
 
   g_free(module_file);
-  g_free(basename);
 
   return 1;
 }
@@ -535,29 +536,32 @@ load_plugin(struct objlist *obj, N_VALUE *inst, const char *arg, int *rval)
     return NULL;
   }
 
-  name = get_plugin_name(arg);
+  name = get_basename(arg);
   if (name == NULL) {
     error(obj, ERRSYSNOMODULE);
     return NULL;
   }
   plugin = get_plugin_from_name(name);
-  g_free(name);
 
   if (plugin) {
     error2(obj, ERRSYSLOADED, name);
+    g_free(name);
     return NULL;
   }
 
   plugin = g_malloc0(sizeof(struct ngraph_plugin));
   if (plugin == NULL) {
+    g_free(name);
     error(obj, ERRSYSMEM);
     return NULL;
   }
 
-  if (load_plugin_sub(obj, inst, arg, plugin)) {
+  if (load_plugin_sub(obj, inst, name, plugin)) {
+    g_free(name);
     g_free(plugin);
     return NULL;
   }
+  g_free(name);
 
   if (plugin->open) {
     r = plugin->open();
@@ -582,6 +586,33 @@ system_plugin_load(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, 
   plugin = load_plugin(obj, inst, argv[2], &rval->i);
 
   return (plugin) ? 0 : 1;
+}
+
+static int 
+system_plugin_check(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  char *name, *module_file;
+
+  name = get_basename(argv[2]);
+  if (name == NULL) {
+    return 1;
+  }
+
+  module_file = get_plugin_name(name);
+  g_free(name);
+
+  if (module_file == NULL) {
+    return 1;
+  }
+
+  if (naccess(module_file, R_OK)) {
+    g_free(module_file);
+    return 1;
+  }
+
+  g_free(module_file);
+
+  return 0;
 }
 
 static void
@@ -803,6 +834,7 @@ static struct objtable nsystem[] = {
   {"hide_instance",NVFUNC,NREAD|NEXEC,syshideinstance,"sa",0},
   {"recover_instance",NVFUNC,NREAD|NEXEC,sysrecoverinstance,"sa",0},
   {"resize",NVFUNC,NREAD|NEXEC,systemresize,"ia",0},
+  {"plugin_check", NIFUNC, NREAD|NEXEC, system_plugin_check, "s", 0},
   {"plugin_load", NIFUNC, NREAD|NEXEC, system_plugin_load, "s", 0},
   {"plugin_exec",NIFUNC, NREAD|NEXEC, system_plugin_exec, NULL, 0},
   {"plugin_module",NSFUNC, NREAD|NEXEC, system_plugin_get_module, "s", 0},
