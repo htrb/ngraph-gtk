@@ -79,12 +79,13 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
+@HAVE_RUBY_DEV_TRUE@am__append_1 = $(ruby_addins)
 pkglibexec_PROGRAMS = fft$(EXEEXT) calc$(EXEEXT) fitrslt$(EXEEXT) \
 	legend$(EXEEXT)
 subdir = addin
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/mkinstalldirs $(top_srcdir)/depcomp \
-	$(dist_addin_DATA)
+	$(am__dist_addin_DATA_DIST)
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/gettext.m4 \
 	$(top_srcdir)/m4/gsl.m4 $(top_srcdir)/m4/gtk-2.0.m4 \
@@ -175,6 +176,10 @@ am__can_run_installinfo = \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
+am__dist_addin_DATA_DIST = append.nsc calc.nsc fft.nsc fitrslt.nsc \
+	legend.nsc math.nsc text-in.nsc cal.nsc tex_equation.nsc \
+	ps2gra.nsc fig2gra.nsc timer.nsc fig2gra.rb ruby.nsc \
+	spellchecker.rb
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -379,10 +384,12 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 addindir = $(pkgdatadir)/addin
-dist_addin_DATA = append.nsc calc.nsc fft.nsc fitrslt.nsc legend.nsc	\
-	math.nsc text-in.nsc cal.nsc tex_equation.nsc ps2gra.nsc	\
-	fig2gra.nsc timer.nsc fig2gra.rb
-
+addins = append.nsc calc.nsc fft.nsc fitrslt.nsc legend.nsc math.nsc \
+	text-in.nsc cal.nsc tex_equation.nsc ps2gra.nsc fig2gra.nsc \
+	timer.nsc fig2gra.rb $(am__append_1)
+ruby_addins = ruby.nsc spellchecker.rb
+@HAVE_RUBY_DEV_FALSE@EXTRA_DIST = $(ruby_addins)
+dist_addin_DATA = $(addins)
 APP_CFLAGS = 
 calc_SOURCES = calc.c addin_common.c addin_common.h
 calc_CFLAGS = $(GTK_CFLAGS) $(APP_CFLAGS)

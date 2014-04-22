@@ -1,8 +1,18 @@
 addindir = $(pkgdatadir)/addin
 
-dist_addin_DATA = append.nsc calc.nsc fft.nsc fitrslt.nsc legend.nsc	\
+addins = append.nsc calc.nsc fft.nsc fitrslt.nsc legend.nsc	\
 	math.nsc text-in.nsc cal.nsc tex_equation.nsc ps2gra.nsc	\
 	fig2gra.nsc timer.nsc fig2gra.rb
+
+ruby_addins = ruby.nsc spellchecker.rb
+
+if HAVE_RUBY_DEV
+  addins += $(ruby_addins)
+else
+  EXTRA_DIST = $(ruby_addins)
+endif
+
+dist_addin_DATA = $(addins)
 
 APP_CFLAGS = 
 

@@ -224,7 +224,11 @@ my_create_spin_button(const char *title, double min, double max, double inc, dou
   g_object_set(label, "margin", GINT_TO_POINTER(4), NULL);
 
   w = create_spin_button(min, max, inc, init, 0);
+#if GTK_CHECK_VERSION(3, 12, 0)
+  gtk_widget_set_margin_end(w, 4);
+#else
   gtk_widget_set_margin_right(w, 4);
+#endif
   gtk_label_set_mnemonic_widget(GTK_LABEL(label), w);
   gtk_widget_set_hexpand(w, TRUE);
   gtk_widget_set_halign(w, GTK_ALIGN_FILL);
@@ -649,10 +653,10 @@ main(int argc, char **argv)
   }
 
   mainwin = gtk_dialog_new_with_buttons(NAME, NULL, 0,
-					"_OK",
-					GTK_RESPONSE_ACCEPT,
 					"_Cancel",
 					GTK_RESPONSE_REJECT,
+					"_OK",
+					GTK_RESPONSE_ACCEPT,
 					NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(mainwin), GTK_RESPONSE_ACCEPT);
   prm.window = mainwin;

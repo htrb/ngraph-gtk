@@ -674,10 +674,10 @@ main(int argc, char **argv)
   }
 
   mainwin = gtk_dialog_new_with_buttons(NAME, NULL, 0,
-					"_Ok",   
-					GTK_RESPONSE_ACCEPT,
 					"_Cancel",   
 					GTK_RESPONSE_REJECT,
+					"_Ok",   
+					GTK_RESPONSE_ACCEPT,
 					NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(mainwin), GTK_RESPONSE_ACCEPT);
   prm.window = mainwin;

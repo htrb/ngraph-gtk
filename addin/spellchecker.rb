@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
+# Description: _Spell check,check spelling of legend text,
 
 require 'rubygems'
 
 begin
-  require 'raspella'
+  require 'raspell'
 rescue LoadError
   Ngraph::Dialog.new {|dialog|
     dialog.title = "spell check"
@@ -55,7 +56,7 @@ class NgraphSpellchecker
 
     nest = 0
     len = original_string.size
-    while (i < len)
+    while (i < len - 1)
       i += 1
       chr = original_string[i]
       break unless (chr)
