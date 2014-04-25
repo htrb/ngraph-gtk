@@ -15,7 +15,7 @@ end
 
 class NgraphSpellchecker
   def initialize
-    @speller = Aspell.new
+    @speller = Aspell.new("en_US")
     @speller.suggestion_mode = Aspell::NORMAL
     @speller.set_option("ignore-case", "true")
 
@@ -24,13 +24,18 @@ class NgraphSpellchecker
 
     @ignore = {}
     @apply = {}
+
+    @modified = false
   end
 
   def focused
     return nil unless (@menu)
     inst = @menu.focused("text")
-    return nil if (inst.empty?)
-    inst
+    if (inst.empty?)
+      nil 
+    else
+      inst.map {|inst| Ngraph.str2inst(inst)[0]}
+    end
   end
 
   begin
@@ -50,10 +55,11 @@ class NgraphSpellchecker
       label = Gtk::Label.new(caption)
 
       dialog = Gtk::Dialog.new(:title => title,
-                               :buttons => [["_Ignore all", IGNORE_ALL],
-                                            ["_Ignore", IGNORE],
-                                            ["_Apply all", APPLY_ALL],
-                                            ["_Apply", APPLY]])
+                               :buttons => [["_Abort",      ABORT],
+                                            ["_Ignore all", IGNORE_ALL],
+                                            ["_Ignore",     IGNORE],
+                                            ["_Apply all",  APPLY_ALL],
+                                            ["_Apply",      APPLY]])
       dialog.default_response = Gtk::ResponseType::APPLY
       dialog.content_area.pack_start(label)
       dialog.content_area.pack_start(combo)
@@ -102,7 +108,7 @@ class NgraphSpellchecker
         str = dialog.combo_entry(@speller.suggest(word))
         @ignore[word] = true unless (str)
       }
-      str
+      str || word
     end
   end
 
@@ -159,7 +165,7 @@ class NgraphSpellchecker
   end
 
   def check_word(original_string, id, modified_string, word)
-    str = nil
+    str = word
     str = spell_check(original_string, id, word) if (word.size > 1)
     if (str)
       modified_string << str
@@ -167,6 +173,7 @@ class NgraphSpellchecker
       modified_string << word
     end
     word.clear
+    str
   end
 
   def check(text)
@@ -176,11 +183,12 @@ class NgraphSpellchecker
 
     len = original_string.size
     i = 0
+    r = true
     while (i < len)
       c = original_string[i]
       case (c)
       when '\\'
-        check_word(original_string, text.id, modified_string, word)
+        r = check_word(original_string, text.id, modified_string, word)
         modified_string << c
         i += 1
         c = original_string[i]
@@ -189,43 +197,65 @@ class NgraphSpellchecker
           i += 1
         end
       when '%'
-        check_word(original_string, text.id, modified_string, word)
+        r = check_word(original_string, text.id, modified_string, word)
         modified_string << c
         i = skip_prm(original_string, i, modified_string)
       when @alphabet
         word << c
         i += 1
-        check_word(original_string, text.id, modified_string, word) if (i >= len)
+        r = check_word(original_string, text.id, modified_string, word) if (i >= len)
       else
-        check_word(original_string, text.id, modified_string, word)
+        r = check_word(original_string, text.id, modified_string, word)
         modified_string << c
         i += 1
+      end
+      unless (r)
+        lest = original_string[i, len - i]
+        modified_string << lest if (lest)
+        break
       end
     end
 
     if (original_string != modified_string)
       text.text = modified_string
-      @menu.modified = true if (@menu)
+      @modified = true
+    end
+    r
+  end
+
+  def check_inst(inst)
+    inst.each {|text|
+      break unless (check(text))
+    }
+  end
+
+  def check_all
+    Ngraph::Text.each {|text|
+      break unless (check(text))
+    }
+  end
+
+  def run
+    inst = focused
+    if (inst)
+      check_inst(inst)
+    else
+      check_all
+    end
+    finalize
+  end
+
+  def finalize
+    Ngraph::Dialog.new {|dialog|
+      dialog.title = "spell check"
+      str = dialog.message("Spell check completed.")
+    }
+    if (@menu && @modified)
+      @menu.modified = true
+      @menu.draw
     end
   end
 end
 
 checker = NgraphSpellchecker.new
-
-focused = checker.focused
-if (focused)
-  focused.each {|inst|
-    Ngraph.str2inst(inst).each {|text|
-      checker.check(text)
-    }
-  }
-else
-  Ngraph::Text.each {|text|
-    checker.check(text)
-  }
-end
-
-Ngraph::Dialog.new {|dialog|
-  dialog.title = "spell check"
-  str = dialog.message("Spell check completed.")
-}
+checker.run

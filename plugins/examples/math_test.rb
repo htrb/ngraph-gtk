@@ -17,7 +17,7 @@ ARGV.each {|file|
     d = l.chomp.split("#")
 
     eqn = d[0]
-    if (d[1] =~ /^[0-9].*/)
+    if (d[1] =~ /^-?[0-9].*/)
       val = check_val(d[1].to_f, Ngraph::Math::Status::NOERR)
     else
       val = d[1]
