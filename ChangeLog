@@ -1,3 +1,27 @@
+2014-05-01  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/oaxis.c (calc_numbering_value, get_axis_math)
+	(alloc_axis_math, free_axis_math, num_put_math): added.
+	(numformat): use "calc_numbering_value()".
+	(axisdraw, axis_get_numbering): use "alloc_axis_math()" and
+	"free_axis_math()".
+	(axis): add field "num_math".
+	(axisdraw): don't call "get_axis_parameter()" twice when
+	"aconf.code" is not NULL.
+
+	* src/gtk/x11axis.c (Alist): add "num_math" column.
+	(numbering_tab_set_value): save "num_math"field.
+	(numbering_tab_setup_item): setup "num_math".
+	(numbering_tab_create): add widget to set "num_math" field.
+	(axis_list_set_val): set style depend on "num_math" field.
+	(AxisWinState): min, max and inc column refer "num_math" column as
+	the font style.
+
+	* src/gtk/x11file.c (FileWinState): use "set_cell_attribute_source()".
+	(set_source_attribute): removed.
+
+	* src/gtk/gtk_subwin.c (set_cell_attribute_source): added.
+
 2014-04-25  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* addin/spellchecker.rb: add "About" button.

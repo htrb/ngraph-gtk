@@ -5780,28 +5780,6 @@ init_dnd(struct SubWin *d)
   g_signal_connect(widget, "drag-data-received", G_CALLBACK(drag_drop_cb), NULL);
 }
 
-static void
-set_source_attribute(struct SubWin *d, const char *attr, int target_column, int source_column)
-{
-  GList *list;
-  GtkTreeViewColumn *col;
-  GtkCellRenderer *renderer;
-
-  col = gtk_tree_view_get_column(GTK_TREE_VIEW(d->data.data->text), target_column);
-  list = gtk_cell_layout_get_cells(GTK_CELL_LAYOUT(col));
-  if (list == NULL) {
-    return;
-  }
-
-  if (list->data == NULL) {
-    return;
-  }
-
-  renderer = list->data;
-  gtk_tree_view_column_add_attribute(col, renderer, attr, source_column);
-  g_list_free(list);
-}
-
 void
 FileWinState(struct SubWin *d, int state)
 {
@@ -5834,17 +5812,17 @@ FileWinState(struct SubWin *d, int state)
   gtk_tree_view_set_search_column(GTK_TREE_VIEW(d->data.data->text), FILE_WIN_COL_FILE);
   gtk_tree_view_set_tooltip_column(GTK_TREE_VIEW(d->data.data->text), FILE_WIN_COL_TIP);
 
-  set_source_attribute(d, "style", FILE_WIN_COL_FILE, FILE_WIN_COL_MASKED);
+  set_cell_attribute_source(d, "style", FILE_WIN_COL_FILE, FILE_WIN_COL_MASKED);
 
 #ifdef USE_PLOT_OBJ
-  set_source_attribute(d, "visible", FILE_WIN_COL_X, FILE_WIN_COL_NOT_FUNC);
-  set_source_attribute(d, "visible", FILE_WIN_COL_Y, FILE_WIN_COL_NOT_FUNC);
-  set_source_attribute(d, "visible", FILE_WIN_COL_SIZE, FILE_WIN_COL_NOT_FUNC);
-  set_source_attribute(d, "visible", FILE_WIN_COL_SKIP, FILE_WIN_COL_NOT_FUNC);
-  set_source_attribute(d, "visible", FILE_WIN_COL_STEP, FILE_WIN_COL_NOT_FUNC);
-  set_source_attribute(d, "visible", FILE_WIN_COL_FINAL, FILE_WIN_COL_NOT_FUNC);
-  set_source_attribute(d, "visible", FILE_WIN_COL_DNUM, FILE_WIN_COL_NOT_FUNC);
+  set_cell_attribute_source(d, "visible", FILE_WIN_COL_X, FILE_WIN_COL_NOT_FUNC);
+  set_cell_attribute_source(d, "visible", FILE_WIN_COL_Y, FILE_WIN_COL_NOT_FUNC);
+  set_cell_attribute_source(d, "visible", FILE_WIN_COL_SIZE, FILE_WIN_COL_NOT_FUNC);
+  set_cell_attribute_source(d, "visible", FILE_WIN_COL_SKIP, FILE_WIN_COL_NOT_FUNC);
+  set_cell_attribute_source(d, "visible", FILE_WIN_COL_STEP, FILE_WIN_COL_NOT_FUNC);
+  set_cell_attribute_source(d, "visible", FILE_WIN_COL_FINAL, FILE_WIN_COL_NOT_FUNC);
+  set_cell_attribute_source(d, "visible", FILE_WIN_COL_DNUM, FILE_WIN_COL_NOT_FUNC);
 
-  set_source_attribute(d, "editable", FILE_WIN_COL_FILE, FILE_WIN_COL_IS_FILE);
+  set_cell_attribute_source(d, "editable", FILE_WIN_COL_FILE, FILE_WIN_COL_IS_FILE);
 #endif
 }

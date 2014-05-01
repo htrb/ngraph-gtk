@@ -32,6 +32,28 @@ static void modify_numeric(struct obj_list_data *d, char *field, int val);
 static void modify_string(struct obj_list_data *d, char *field, char *str);
 static void toggle_boolean(struct obj_list_data *d, char *field, int sel);
 
+void
+set_cell_attribute_source(struct SubWin *d, const char *attr, int target_column, int source_column)
+{
+  GList *list;
+  GtkTreeViewColumn *col;
+  GtkCellRenderer *renderer;
+
+  col = gtk_tree_view_get_column(GTK_TREE_VIEW(d->data.data->text), target_column);
+  list = gtk_cell_layout_get_cells(GTK_CELL_LAYOUT(col));
+  if (list == NULL) {
+    return;
+  }
+
+  if (list->data == NULL) {
+    return;
+  }
+
+  renderer = list->data;
+  gtk_tree_view_column_add_attribute(col, renderer, attr, source_column);
+  g_list_free(list);
+}
+
 static void
 file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointer user_data)
 {

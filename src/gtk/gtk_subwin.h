@@ -38,6 +38,7 @@ void sub_window_save_visibility(struct SubWin *d);
 void set_editable_cell_renderer_cb(struct obj_list_data *d, int i, n_list_store *list, GCallback end);
 void set_combo_cell_renderer_cb(struct obj_list_data *d, int col, n_list_store *list, GCallback start, GCallback end);
 void set_obj_cell_renderer_cb(struct obj_list_data *d, int col, n_list_store *list, GCallback start);
+void set_cell_attribute_source(struct SubWin *d, const char *attr, int target_column, int source_column);
 
 gboolean list_sub_window_must_rebuild(struct obj_list_data *d);
 void list_sub_window_build(struct obj_list_data *d, list_sub_window_set_val_func func);
