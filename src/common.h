@@ -6,7 +6,7 @@
 #endif
 
 // #define USE_PLOT_OBJ
-// #define USE_AXIS_MATH
+#define USE_AXIS_MATH
 
 #ifdef HAVE_GETTEXT
 

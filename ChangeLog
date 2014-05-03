@@ -1,3 +1,8 @@
+2014-05-03  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/oaxis.c (get_reference_parameter): keep original axis type
+	when the typeboth axis are linear or MJD.
+
 2014-05-01  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/oaxis.c (calc_numbering_value, get_axis_math)

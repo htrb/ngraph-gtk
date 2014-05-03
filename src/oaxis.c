@@ -2788,6 +2788,7 @@ get_reference_parameter(struct objlist *obj, N_VALUE *inst,  struct axis_config 
   struct objlist *aobj;
   int anum, id;
   struct narray iarray;
+  int type;
 
   _getobj(obj,"reference",inst, &axis);
   if (axis == NULL)
@@ -2797,6 +2798,8 @@ get_reference_parameter(struct objlist *obj, N_VALUE *inst,  struct axis_config 
   if (getobjilist(axis,&aobj,&iarray,FALSE,NULL))
     return 1;
 
+  type = aconf->type;
+
   anum=arraynum(&iarray);
   if (anum>0) {
     id=arraylast_int(&iarray);
@@ -2805,6 +2808,13 @@ get_reference_parameter(struct objlist *obj, N_VALUE *inst,  struct axis_config 
       get_axis_parameter(aobj, inst1, aconf);
     }
   }
+
+  if ((aconf->type == AXIS_TYPE_LINEAR ||
+       aconf->type == AXIS_TYPE_MJD) &&
+      (type == AXIS_TYPE_LINEAR ||
+       type == AXIS_TYPE_MJD)) {
+    aconf->type = type;
+  }	/* AXIS_TYPE_LINEAR and AXIS_TYPE_MJD are compatible each other */
 
   return 0;
 }

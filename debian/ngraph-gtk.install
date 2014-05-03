@@ -1,4 +1,10 @@
-etc
+etc/ngraph-gtk/Ngraph.ini
+etc/ngraph-gtk/Ngraph.ngp
+etc/ngraph-gtk/Ngraph.nsc
+etc/ngraph-gtk/accel_map
+etc/ngraph-gtk/fit.ngp
+etc/ngraph-gtk/init.d/10append_addins.nsc
+etc/ngraph-gtk/zsh/*
 usr/bin
 usr/lib/*/lib*
 usr/lib/*/ngraph-gtk/terminal

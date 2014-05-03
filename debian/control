@@ -74,6 +74,17 @@ Description: tex-equation addin of Ngraph-gtk
  This package contains addin of ngraph-gtk to convert legend text as
  TeX equation to GRA.
 
+Package: ngraph-gtk-addin-spellcheck
+Architecture: all
+Depends: ${misc:Depends}, ngraph-gtk, ngraph-gtk-plugin-ruby, raspell, ruby
+Description: spell check addin of Ngraph-gtk
+ Ngraph is the program to create scientific 2-dimensional graphs for
+ researchers and engineers. This program can create advanced graphs
+ which can't be created by spreadsheets. Graphs can be exported to
+ postscript.
+ .
+ This package contains addin of ngraph-gtk to check spell of legend texts.
+
 Package: ngraph-gtk-doc
 Section: doc
 Architecture: all
