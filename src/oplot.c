@@ -1,24 +1,24 @@
-/* 
+/*
  * $Id: ofile.c,v 1.113 2010-03-04 08:30:16 hito Exp $
- * 
+ *
  * This file is part of "Ngraph for X11".
- * 
+ *
  * Copyright (C) 2002, Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
- * 
+ *
  * "Ngraph for X11" is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * "Ngraph for X11" is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  */
 
 #include <stdio.h>
@@ -371,7 +371,7 @@ static int getminmaxdata(struct f2ddata *fp, struct f2dlocal *local);
 static int calc_fit_equation(struct objlist *obj, N_VALUE *inst, double x, double *y);
 
 #if BUF_TYPE == USE_RING_BUF
-int 
+int
 ring_buf_index(struct f2ddata *fp, int i)
 {
   int n;
@@ -380,7 +380,7 @@ ring_buf_index(struct f2ddata *fp, int i)
 }
 #endif
 
-static void 
+static void
 check_ifs_init(struct f2ddata *fp)
 {
   char *ifs, *remark;
@@ -1554,7 +1554,7 @@ opendata(struct objlist *obj,N_VALUE *inst,
   return fp;
 }
 
-static void 
+static void
 reopendata(struct f2ddata *fp)
 {
   if (fp->fd) {
@@ -1581,7 +1581,7 @@ reopendata(struct f2ddata *fp)
   fp->marktype=fp->marktype0;
 }
 
-static void 
+static void
 closedata(struct f2ddata *fp, struct f2dlocal *f2dlocal)
 {
   int j,num2,*data2;
@@ -1814,7 +1814,7 @@ put_func(struct objlist *obj, N_VALUE *inst, struct f2dlocal *f2dlocal, char *fi
   return rcode;
 }
 
-static int 
+static int
 f2dputmath(struct objlist *obj,N_VALUE *inst,char *field,char *math)
 {
   int rcode, src;
@@ -1829,7 +1829,7 @@ f2dputmath(struct objlist *obj,N_VALUE *inst,char *field,char *math)
   }
 
   if (src == PLOT_SOURCE_FUNC) {
-    f2dlocal->maxdimx = 0; 
+    f2dlocal->maxdimx = 0;
     f2dlocal->maxdimy = 0;
     return 0;
   }
@@ -1862,7 +1862,7 @@ f2dputmath(struct objlist *obj,N_VALUE *inst,char *field,char *math)
   return 0;
 }
 
-static int 
+static int
 set_math_config(struct objlist *obj, N_VALUE *inst, char *field, char *str)
 {
   char *f1;
@@ -1877,13 +1877,13 @@ set_math_config(struct objlist *obj, N_VALUE *inst, char *field, char *str)
   return 0;
 }
 
-static int 
+static int
 f2dloadconfig(struct objlist *obj,N_VALUE *inst)
 {
   return obj_load_config(obj, inst, F2DCONF, FileConfigHash);
 }
 
-static int 
+static int
 f2dsaveconfig(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   return obj_save_config(obj, inst, F2DCONF, FileConfig, sizeof(FileConfig) / sizeof(*FileConfig));
@@ -1992,7 +1992,7 @@ ofile_create_math_equation(int *id, int prm_digit, int use_fprm, int use_const, 
   return code;
 }
 
-static int 
+static int
 f2dinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int x,y,rstep,final,msize,r2,g2,b2,a2,lwidth,miter,src;
@@ -2132,7 +2132,7 @@ errexit:
   return 1;
 }
 
-static int 
+static int
 f2ddone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct f2dlocal *f2dlocal;
@@ -2149,8 +2149,8 @@ f2ddone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
-f2dfile(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, 
+static int
+f2dfile(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
 	int argc, char **argv)
 {
   struct objlist *sys;
@@ -2190,7 +2190,7 @@ f2dfile(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
   return 0;
 }
 
-static int 
+static int
 f2dbasename(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
                 int argc,char **argv)
 {
@@ -2205,7 +2205,7 @@ f2dbasename(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
   return 0;
 }
 
-static int 
+static int
 f2dput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval, int argc,char **argv)
 {
   char *field;
@@ -2424,7 +2424,7 @@ getdataarray(char *buf, int maxdim, double *count, MathValue *data, const char *
 }
 
 
-static int 
+static int
 hskipdata(struct f2ddata *fp)
 {
   int skip,rcode;
@@ -3159,7 +3159,7 @@ getdata_sub1(struct f2ddata *fp, int fnumx, int fnumy, int *needx, int *needy,
   return 0;
 }
 
-static int 
+static int
 getdata(struct f2ddata *fp)
 /*
   return -1: fatal error
@@ -3446,7 +3446,7 @@ getdata(struct f2ddata *fp)
 }
 
 
-static int 
+static int
 getdata2(struct f2ddata *fp, MathEquation *code, int maxdim, double *dd, int *ddstat)
 /*
   return -1: fatal error
@@ -3511,7 +3511,7 @@ getdata2(struct f2ddata *fp, MathEquation *code, int maxdim, double *dd, int *dd
   return 0;
 }
 
-static int 
+static int
 getdataraw(struct f2ddata *fp, int maxdim, MathValue *data)
 /*
   return -1: fatal error
@@ -3670,7 +3670,7 @@ check_mtime(struct f2ddata *fp, struct f2dlocal *local)
 }
 
 
-static int 
+static int
 getminmaxdata(struct f2ddata *fp, struct f2dlocal *local)
 /*
   return -1: fatal error
@@ -3885,7 +3885,7 @@ getminmaxdata(struct f2ddata *fp, struct f2dlocal *local)
   return 0;
 }
 
-static int 
+static int
 getposition(struct f2ddata *fp,double x,double y,int *gx,int *gy)
 /*
   return -1: unable to transform
@@ -3990,7 +3990,7 @@ get_pos_sub(struct f2ddata *fp, double *val, int atype)
   return 0;
 }
 
-static int 
+static int
 getposition2(struct f2ddata *fp,int axtype,int aytype,double *x,double *y)
 /*
   return -1: unable to transform
@@ -4012,7 +4012,7 @@ getposition2(struct f2ddata *fp,int axtype,int aytype,double *x,double *y)
   return 0;
 }
 
-static void 
+static void
 f2dtransf(double x,double y,int *gx,int *gy,void *local)
 {
   struct f2ddata *fp;
@@ -4046,7 +4046,7 @@ f2dtransf(double x,double y,int *gx,int *gy,void *local)
   }
 }
 
-static int 
+static int
 f2dlineclipf(double *x0,double *y0,double *x1,double *y1,void *local)
 {
   double a,xl,yl,xg,yg;
@@ -4099,7 +4099,7 @@ f2dlineclipf(double *x0,double *y0,double *x1,double *y1,void *local)
   return 0;
 }
 
-static int 
+static int
 f2drectclipf(double *x0,double *y0,double *x1,double *y1,void *local)
 {
   double xl,yl,xg,yg;
@@ -4145,7 +4145,7 @@ f2drectclipf(double *x0,double *y0,double *x1,double *y1,void *local)
   return 0;
 }
 
-static void 
+static void
 f2dsplinedif(double d,double c[],
 	     double *dx,double *dy,double *ddx,double *ddy,void *local)
 {
@@ -4159,7 +4159,7 @@ f2dsplinedif(double d,double c[],
   (*ddy)*=fp->ratey;
 }
 
-static void 
+static void
 f2dbsplinedif(double d,double c[],
 	      double *dx,double *dy,double *ddx,double *ddy,void *local)
 {
@@ -4173,7 +4173,7 @@ f2dbsplinedif(double d,double c[],
   (*ddy)*=fp->ratey;
 }
 
-static void 
+static void
 f2derror(struct objlist *obj,struct f2ddata *fp,int code,char *s)
 {
   char buf[256];
@@ -4191,7 +4191,7 @@ f2derror(struct objlist *obj,struct f2ddata *fp,int code,char *s)
   error2(obj,code,buf);
 }
 
-static void 
+static void
 errordisp(struct objlist *obj,
 	  struct f2ddata *fp,
 	  int *emerr,int *emnonum,int *emig,int *emng)
@@ -4269,7 +4269,7 @@ errordisp(struct objlist *obj,
   }
 }
 
-static void 
+static void
 errordisp2(struct objlist *obj,
 	   struct f2ddata *fp,
 	   int *emerr,int *emnonum,int *emig,int *emng,
@@ -4369,7 +4369,7 @@ dataadd(double dx,double dy,double dz,
   return *x;
 }
 
-static int 
+static int
 markout(struct objlist *obj,struct f2ddata *fp,int GC, int width,int snum,int *style)
 {
   int emerr,emnonum,emig,emng;
@@ -4390,7 +4390,7 @@ markout(struct objlist *obj,struct f2ddata *fp,int GC, int width,int snum,int *s
   return 0;
 }
 
-static int 
+static int
 lineout(struct objlist *obj,struct f2ddata *fp,int GC,
 	int width,int snum,int *style,
 	int join,int miter,int close)
@@ -4775,7 +4775,7 @@ polyout(struct objlist *obj, struct f2ddata *fp, int GC)
   g_free(c1); g_free(c2); g_free(c3);		\
   g_free(c4); g_free(c5); g_free(c6);
 
-static int 
+static int
 curveout(struct objlist *obj,struct f2ddata *fp,int GC,
 	 int width,int snum,int *style,
 	 int join,int miter,int intp)
@@ -5037,7 +5037,7 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
   return 0;
 }
 
-static int 
+static int
 rectout(struct objlist *obj,struct f2ddata *fp,int GC,
 	int width,int snum,int *style,int type)
 {
@@ -5162,7 +5162,7 @@ rectout(struct objlist *obj,struct f2ddata *fp,int GC,
   return 0;
 }
 
-static int 
+static int
 errorbarout(struct objlist *obj,struct f2ddata *fp,int GC,
 	    int width,int snum,int *style,int type)
 {
@@ -5236,7 +5236,7 @@ errorbarout(struct objlist *obj,struct f2ddata *fp,int GC,
   return 0;
 }
 
-static int 
+static int
 stairout(struct objlist *obj,struct f2ddata *fp,int GC,
 	 int width,int snum,int *style,
 	 int join,int miter,int type)
@@ -5352,7 +5352,7 @@ draw_rect(int GC, int *ap, double v0, double v1, double v2, double v3)
   }
 }
 
-static int 
+static int
 barout(struct objlist *obj,struct f2ddata *fp,int GC,
        int width,int snum,int *style,int type)
 {
@@ -5367,7 +5367,7 @@ barout(struct objlist *obj,struct f2ddata *fp,int GC,
   while (getdata(fp)==0) {
     size=fp->marksize0/2;
     if (fp->dxstat != MATH_VALUE_NORMAL ||
-	fp->dystat != MATH_VALUE_NORMAL || 
+	fp->dystat != MATH_VALUE_NORMAL ||
 	getposition2(fp,fp->axtype,fp->aytype,&(fp->dx),&(fp->dy))) {
       errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
       continue;
@@ -5453,7 +5453,7 @@ barout(struct objlist *obj,struct f2ddata *fp,int GC,
   return 0;
 }
 
-static int 
+static int
 calc_weight(struct objlist *obj, struct f2dlocal *f2dlocal, struct f2ddata *fp, const char *weight, struct narray *data, struct narray *index)
 {
   MathEquation *code;
@@ -5544,7 +5544,7 @@ calc_fit(struct objlist *obj, struct f2dlocal *f2dlocal, struct f2ddata *fp, str
 
   for (i = 0; getdata(fp)==0; i++) {
     if ((fp->dxstat==MATH_VALUE_NORMAL) && (fp->dystat==MATH_VALUE_NORMAL)) {
-      if (arrayadd(&data, &fp->dx) == NULL || 
+      if (arrayadd(&data, &fp->dx) == NULL ||
 	  arrayadd(&data, &fp->dy) == NULL ||
 	  arrayadd(&index, &i) == NULL) {
 	arraydel(&index);
@@ -5612,7 +5612,7 @@ draw_interpolation(struct f2ddata *fp, int GC, int num, int snum, int *style,
       spline(z, y, c4, c5, c6, num, spcond, spcond, 0, 0)) {
     return -1;
   }
-  GRAcurvefirst(GC, snum, style, f2dlineclipf, f2dtransf, 
+  GRAcurvefirst(GC, snum, style, f2dlineclipf, f2dtransf,
 		f2dsplinedif, splineint, fp, x[0], y[0]);
   for (j = 0; j < num - 1; j++) {
     c[0] = c1[j];
@@ -5773,7 +5773,7 @@ get_fit_obj_id(char *fit, struct objlist **fitobj, N_VALUE **inst)
   return id;
 }
 
-static int 
+static int
 fitout(struct objlist *obj,struct f2dlocal *f2dlocal,
        struct f2ddata *fp,int GC,
        int width,int snum,int *style,
@@ -5857,7 +5857,7 @@ get_func_value(struct f2dlocal *f2dlocal, double x, double *dx, double *dy)
   return 0;
 }
 
-static int 
+static int
 funcout(struct objlist *obj, N_VALUE *inst, struct f2dlocal *f2dlocal,
 	struct f2ddata *fp,int GC, int width,int snum,int *style, int join,int miter)
 {
@@ -5950,7 +5950,7 @@ funcout(struct objlist *obj, N_VALUE *inst, struct f2dlocal *f2dlocal,
   return 0;
 }
 
-static int 
+static int
 f2ddraw(struct objlist *obj, N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct f2dlocal *f2dlocal;
@@ -6094,7 +6094,7 @@ f2ddraw(struct objlist *obj, N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 f2dgetcoord(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   double x,y;
@@ -6200,7 +6200,7 @@ f2dgetcoord(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
   return 0;
 }
 
-static int 
+static int
 f2devaluate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct f2dlocal *f2dlocal;
@@ -6352,7 +6352,7 @@ f2devaluate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
   return 0;
 }
 
-static int 
+static int
 f2dredraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int redrawf, num, dmax, type;
@@ -6374,7 +6374,7 @@ f2dredraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 f2dcolumn_file(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   char *file,*ifs;
@@ -6496,7 +6496,7 @@ f2dcolumn_array(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **
   return 0;
 }
 
-static int 
+static int
 f2dcolumn(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int r, src;
@@ -6516,7 +6516,7 @@ f2dcolumn(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return r;
 }
 
-static int 
+static int
 f2dhead_file(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int cline, line;
@@ -6568,7 +6568,7 @@ f2dhead_file(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **arg
   return 0;
 }
 
-static int 
+static int
 f2dhead(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int r, src;
@@ -6587,7 +6587,7 @@ f2dhead(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return r;
 }
 
-static int 
+static int
 f2dsettings_file(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   char *file;
@@ -6874,7 +6874,7 @@ f2dsettings_file(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char *
   return 0;
 }
 
-static int 
+static int
 f2dsettings(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int r, src;
@@ -6893,7 +6893,7 @@ f2dsettings(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
   return r;
 }
 
-static int 
+static int
 f2dtime(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   char *file;
@@ -6917,7 +6917,7 @@ f2dtime(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 f2ddate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   char *file;
@@ -6941,7 +6941,7 @@ f2ddate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static void 
+static void
 f2dsettbl(N_VALUE *inst,struct f2dlocal *f2dlocal,struct f2ddata *fp)
 {
   int gx,gy,g2,g3;
@@ -7008,7 +7008,7 @@ f2dsettbl(N_VALUE *inst,struct f2dlocal *f2dlocal,struct f2ddata *fp)
   inst[f2dlocal->iline].i=fp->dline;
 }
 
-static int 
+static int
 f2dopendata(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct f2dlocal *f2dlocal;
@@ -7048,7 +7048,7 @@ f2dopendata(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
   return 0;
 }
 
-static int 
+static int
 f2dgetdata(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct f2dlocal *f2dlocal;
@@ -7074,7 +7074,7 @@ f2dgetdata(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 f2dclosedata(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
                  int argc,char **argv)
 {
@@ -7092,7 +7092,7 @@ f2dclosedata(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
   return 0;
 }
 
-static int 
+static int
 f2dopendataraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct f2dlocal *f2dlocal;
@@ -7128,7 +7128,7 @@ f2dopendataraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **a
   return 0;
 }
 
-static int 
+static int
 f2dgetdataraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct f2dlocal *f2dlocal;
@@ -7188,7 +7188,7 @@ f2dgetdataraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **ar
   return 0;
 }
 
-static int 
+static int
 f2dclosedataraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
                  int argc,char **argv)
 {
@@ -7203,7 +7203,7 @@ f2dclosedataraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
   return 0;
 }
 
-static time_t 
+static time_t
 get_mtime(struct objlist *obj, N_VALUE *inst, time_t *mtime)
 {
   GStatBuf buf;
@@ -7211,7 +7211,7 @@ get_mtime(struct objlist *obj, N_VALUE *inst, time_t *mtime)
   char *file;
 
   _getobj(obj, "file", inst, &file);
-  
+
   if (file == NULL)
     return 1;
 
@@ -7474,7 +7474,7 @@ f2dstat_file(struct objlist *obj,N_VALUE *inst, struct f2dlocal *f2dlocal, struc
   return 0;
 }
 
-static int 
+static int
 f2dstat(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
 	int argc,char **argv)
 {
@@ -7502,7 +7502,7 @@ f2dstat(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
   case PLOT_SOURCE_ARRAY:
     f2dstat_array(obj, inst, &stat_x, &stat_y, &dnum);
     break;
-  case PLOT_SOURCE_FUNC: 
+  case PLOT_SOURCE_FUNC:
     error(obj, ERR_INVALID_SOURCE);
     return 1;
     break;
@@ -7549,7 +7549,7 @@ f2dstat(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
   return 0;
 }
 
-static int 
+static int
 f2dstat2(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
 	 int argc,char **argv)
 {
@@ -7874,7 +7874,7 @@ f2dboundings(struct objlist *obj,N_VALUE *inst,N_VALUE *rval, int argc,char **ar
   return 0;
 }
 
-static int 
+static int
 f2dbounding(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
 	    int argc,char **argv)
 {
@@ -7985,7 +7985,7 @@ save_fit(GString *s, char *fit, struct objlist *obj, N_VALUE *inst, N_VALUE *rva
   return 0;
 }
 
-static int 
+static int
 f2dsave(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct narray *array, *array2;
@@ -8006,7 +8006,7 @@ f2dsave(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
     }
   }
 
-  _getobj(obj, "fit", inst, &fit); 
+  _getobj(obj, "fit", inst, &fit);
   if (fit == NULL) {
     return pathsave(obj, inst, rval, argc, argv);
   }
@@ -8046,7 +8046,7 @@ f2dsave(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   return 0;
 }
 
-static int 
+static int
 f2dstore_file(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct f2dlocal *f2dlocal;
@@ -8112,7 +8112,7 @@ f2dstore_file(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **ar
   return 0;
 }
 
-static int 
+static int
 f2dstore(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int r, src;
@@ -8275,7 +8275,7 @@ f2dload_file(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **arg
   return 0;
 }
 
-static int 
+static int
 f2dload(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int r, src;
@@ -8294,7 +8294,7 @@ f2dload(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return r;
 }
 
-static int 
+static int
 f2dstoredum(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct f2dlocal *f2dlocal;
@@ -8340,14 +8340,14 @@ f2dstoredum(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
   }
 }
 
-static int 
+static int
 f2dloaddum(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   char *s = argv[2];
   return f2dload_sub(obj, inst, &s, NULL, NULL);
 }
 
-static int 
+static int
 f2dtight(struct objlist *obj,N_VALUE *inst,N_VALUE *rval, int argc,char **argv)
 {
   obj_do_tighten(obj, inst, "axis_x");
@@ -8358,7 +8358,7 @@ f2dtight(struct objlist *obj,N_VALUE *inst,N_VALUE *rval, int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 curveoutfile(struct objlist *obj,struct f2ddata *fp,FILE *fp2,
                  int intp,int div)
 {
@@ -8745,7 +8745,7 @@ save_data_func(struct objlist *obj, N_VALUE *inst, struct f2dlocal *f2dlocal,
   return r;
 }
 
-static int 
+static int
 f2doutputfile(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
                   int argc,char **argv)
 {
@@ -8779,7 +8779,7 @@ f2doutputfile(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
   return r;
 }
 
-static int 
+static int
 update_field(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct f2dlocal *f2dlocal;
@@ -8791,7 +8791,7 @@ update_field(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char *
   return 0;
 }
 
-static int 
+static int
 accept_ascii_only(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   char *str;
@@ -8816,7 +8816,7 @@ accept_ascii_only(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, c
   return 0;
 }
 
-static int 
+static int
 update_mask(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
@@ -8829,14 +8829,14 @@ update_mask(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
   return 0;
 }
 
-static int 
+static int
 foputabs(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   update_field(obj, inst, rval, argc, argv);
   return oputabs(obj, inst, rval, argc, argv);
 }
 
-static int 
+static int
 foputge1(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   update_field(obj, inst, rval, argc, argv);
@@ -9050,7 +9050,7 @@ newton(MathEquation *eq, double *xx, double y)
   return n >= MAX_ITERATION;
 }
 
-static int 
+static int
 solve_equation(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   MathEquation *eq = NULL;
@@ -9152,7 +9152,7 @@ ofile_calc_fit_equation(struct objlist *obj, int id, double x, double *y)
   if (inst == NULL) {
     return ERRNOFITINST;
   }
-    
+
   return calc_fit_equation(obj, inst, x, y);
 }
 
@@ -9191,7 +9191,7 @@ calc_fit_equation(struct objlist *obj, N_VALUE *inst, double x, double *y)
   return 0;
 }
 
-static int 
+static int
 calc_equation(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int r;
@@ -9224,7 +9224,7 @@ calc_equation(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **ar
   return 0;
 }
 
-static int 
+static int
 get_fit_parameter(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int src, type, fit_id, i;
@@ -9275,7 +9275,7 @@ get_fit_parameter(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char 
   return 0;
 }
 
-static int 
+static int
 set_array(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct array_prm ary;
