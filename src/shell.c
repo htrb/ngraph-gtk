@@ -615,7 +615,7 @@ shputstderr(const char *s)
 #endif	/* WINDOWS */
 
 static int 
-shprintfstdout(char *fmt,...)
+shprintfstdout(const char *fmt,...)
 {
   int len;
   char *buf;
@@ -637,7 +637,7 @@ shprintfstdout(char *fmt,...)
 
 #ifdef COMPILE_UNUSED_FUNCTIONS
 static int 
-shprintfstderr(char *fmt,...)
+shprintfstderr(const char *fmt,...)
 {
   int len;
   char buf[1024];

@@ -125,7 +125,7 @@ struct nshell {
   int deleted;
   int (*sgetstdin)();
   int (*sputstdout)(const char *s);
-  int (*sprintfstdout)(char *fmt,...);
+  int (*sprintfstdout)(const char *fmt,...);
 };
 
 extern int CMDNUM;
@@ -167,7 +167,7 @@ int setshelloption(struct nshell *nshell,char *opt);
 int getshelloption(struct nshell *nshell,char opt);
 int set_shell_args(struct nshell *nshell, int j, const char *argv0, int argc, char **argv);
 void setshellargument(struct nshell *nshell,int argc,char **argv);
-int printfconsole(char *fmt,...);
+int printfconsole(const char *fmt,...);
 void ngraphenvironment(struct nshell *nshell);
 int msleep(int ms);
 void set_security(int state);

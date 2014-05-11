@@ -1,5 +1,27 @@
 2014-05-11  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/shell.c (shprintfstdout, shprintfstderr): type of the first
+	parameter is "const char *".
+
+	* src/ogra.c (set_progress_val): type of the last parameter is
+	"const char *".
+
+	* src/object.c (vnprintf, seprintf): type of the first parameter
+	is "const char *".
+	(registerevloop): type of the first and second parameters are
+	"const char *".
+
+	* src/ngraph_api.c (ngraph_get_object_alias): added.
+
+	* src/gtk/ox11menu.c (mgtkprintfstdout, mgtkprintfstderr): type of
+	the first parameter is "const char *".
+
+	* src/gtk/init.c (printfconsole): type of the first parameter is
+	"const char *".
+
+	* src/gra.c (_GRAopen, GRAopen, GRAaddlist, GRAinslist): type of
+	some parameters are "const char *".
+
 	* plugins/ruby/create_objs.rb (NgraphObj): now "alias" name can be
 	used as an object.
 

@@ -5,9 +5,6 @@
 #include "config.h"
 #endif
 
-// #define USE_PLOT_OBJ
-#define USE_AXIS_MATH
-
 #ifdef HAVE_GETTEXT
 
 #define DEFAULT_TEXT_DOMAIN PACKAGE
@@ -47,11 +44,10 @@
 
 #define MARK_TYPE_NUM 90
 
-int printfconsole(char *fmt,...);
+int printfconsole(const char *fmt,...);
 int putconsole(const char *s);
-int printfconsole(char *fmt,...);
+int printfconsole(const char *fmt,...);
 void displaydialog(const char *str);
 void displaystatus(const char *str);
-void pausewindowconsole(char *title,char *str);
 
 #endif	/* COMMON_HEADER */
