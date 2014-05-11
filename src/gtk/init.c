@@ -218,7 +218,7 @@ putconsole(const char *s)
 }
 
 int
-printfconsole(char *fmt, ...)
+printfconsole(const char *fmt, ...)
 {
   int len;
   char buf[1024];

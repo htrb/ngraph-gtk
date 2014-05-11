@@ -542,6 +542,12 @@ ngraph_get_object_name(struct objlist *obj)
   return chkobjectname(obj);
 }
 
+const char *
+ngraph_get_object_alias(struct objlist *obj)
+{
+  return chkobjectalias(obj);
+}
+
 int
 ngraph_get_object_field_num(struct objlist *obj)
 {

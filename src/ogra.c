@@ -51,7 +51,7 @@ static char *GRAerrorlist[]={
 
 #define ERRNUM (sizeof(GRAerrorlist) / sizeof(*GRAerrorlist))
 
-static void set_progress_val(int i, int n, char *name);
+static void set_progress_val(int i, int n, const char *name);
 static int oGRAclose(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv);
 
 static int 
@@ -355,7 +355,7 @@ oGRAdrawparent(struct objlist *parent, char **oGRAargv)
 {
   struct objlist *ocur;
   int i,instnum;
-  char *objname;
+  const char *objname;
 
   ocur=chkobjroot();
   while (ocur!=NULL) {
@@ -383,7 +383,8 @@ oGRAdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   int GC;
   struct objlist *draw;
   struct narray *array;
-  char **drawrable, *objname;
+  char **drawrable;
+  const char *objname;
   char *oGRAargv[2];
   int j,i,anum,instnum;
 
@@ -423,7 +424,7 @@ oGRAdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 }
 
 static void
-set_progress_val(int i, int n, char *name)
+set_progress_val(int i, int n, const char *name)
 {
   double frac;
   char msgbuf[1024];

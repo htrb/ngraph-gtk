@@ -1003,7 +1003,7 @@ void
 menuadddrawrable(struct objlist *parent, struct narray *drawrable)
 {
   struct objlist *ocur;
-  char *name;
+  const char *name;
 
   ocur = chkobjroot();
   while (ocur) {
@@ -1285,7 +1285,7 @@ mgtkputstdout(const char *s)
 }
 
 int
-mgtkprintfstderr(char *fmt, ...)
+mgtkprintfstderr(const char *fmt, ...)
 {
   int len;
   char buf[1024];
@@ -1299,7 +1299,7 @@ mgtkprintfstderr(char *fmt, ...)
 }
 
 int
-mgtkprintfstdout(char *fmt, ...)
+mgtkprintfstdout(const char *fmt, ...)
 {
   int len;
   char buf[1024];
@@ -1631,7 +1631,8 @@ static int
 mx_get_focused(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   int num, i, id;
-  char *name, *ptr;
+  const char *name;
+  char *ptr;
   struct narray *oarray, *sarray;
   struct Viewer *d;
   struct FocusObj **focus;

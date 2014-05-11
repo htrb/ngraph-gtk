@@ -61,8 +61,8 @@ int Globallock=FALSE;
 int (*getstdin)(void);
 int (*putstdout)(const char *s);
 int (*putstderr)(const char *s);
-int (*printfstdout)(char *fmt,...);
-int (*printfstderr)(char *fmt,...);
+int (*printfstdout)(const char *fmt,...);
+int (*printfstderr)(const char *fmt,...);
 int (*ninterrupt)(void);
 int (*inputyn)(const char *mes);
 void (*ndisplaydialog)(const char *str);
@@ -210,7 +210,7 @@ vputs(const char *s)
 }
 
 static int 
-vnprintf(char *fmt,...)
+vnprintf(const char *fmt,...)
 {
   return 0;
 }
@@ -222,7 +222,7 @@ seputs(const char *s)
 }
 
 int 
-seprintf(char *fmt,...)
+seprintf(const char *fmt,...)
 {
   int code;
   va_list ap;
@@ -1126,7 +1126,7 @@ arg_del(char **arg)
 }
 
 void 
-registerevloop(char *objname, char *evname,
+registerevloop(const char *objname, const char *evname,
                     struct objlist *obj,int idn,N_VALUE *inst,
                     void *local)
 {
@@ -1206,8 +1206,8 @@ eventloop(void)
   ignorestdio(NULL);
   lpcur=looproot;
   while (lpcur!=NULL) {
-    argv[0]=lpcur->objname;
-    argv[1]=lpcur->evname;
+    argv[0]= (char *) lpcur->objname;
+    argv[1]= (char *) lpcur->evname;
     argv[2]=lpcur->local;
     argv[3]=NULL;
     loopnext=lpcur->next;
@@ -1525,14 +1525,14 @@ chkobject(const char *name)
 #endif
 }
 
-char *
+const char *
 chkobjectname(struct objlist *obj)
 {
   if (obj==NULL) return NULL;
   return obj->name;
 }
 
-char *
+const char *
 chkobjectalias(struct objlist *obj)
 {
   if (obj==NULL) return NULL;
@@ -4763,7 +4763,7 @@ sputobj(char *arg)
 }
 
 static int 
-sexeobjfield(struct objlist *obj,int id,char *field,char *arg)
+sexeobjfield(struct objlist *obj,int id,const char *field,char *arg)
 {
   char *val;
   int err;

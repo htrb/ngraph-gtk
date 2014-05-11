@@ -100,8 +100,8 @@ struct narray {
 struct loopproc;
 struct loopproc {
   struct loopproc *next;
-  char *objname;
-  char *evname;
+  const char *objname;
+  const char *evname;
   struct objlist *obj;
   int idn;
   N_VALUE *inst;
@@ -136,8 +136,8 @@ struct loopproc {
 extern int (*getstdin)(void);
 extern int (*putstdout)(const char *s);
 extern int (*putstderr)(const char *s);
-extern int (*printfstdout)(char *fmt,...);
-extern int (*printfstderr)(char *fmt,...);
+extern int (*printfstdout)(const char *fmt,...);
+extern int (*printfstderr)(const char *fmt,...);
 extern int (*ninterrupt)(void);
 extern int (*inputyn)(const char *mes);
 extern void (*ndisplaydialog)(const char *str);
@@ -147,8 +147,8 @@ struct savedstdio {
   int (*getstdin)(void);
   int (*putstdout)(const char *s);
   int (*putstderr)(const char *s);
-  int (*printfstdout)(char *fmt,...);
-  int (*printfstderr)(char *fmt,...);
+  int (*printfstdout)(const char *fmt,...);
+  int (*printfstderr)(const char *fmt,...);
   int (*ninterrupt)(void);
   int (*inputyn)(const char *mes);
   void (*ndisplaydialog)(const char *str);
@@ -158,7 +158,7 @@ struct savedstdio {
 extern struct savedstdio stdiosave;
 
 int seputs(const char *s);
-int seprintf(char *fmt,...);
+int seprintf(const char *fmt,...);
 
 void error(struct objlist *obj,int code);
 void error2(struct objlist *obj,int code, const char *mes);
@@ -211,7 +211,7 @@ int getargc(char **arg);
 char **arg_add(char ***arg,void *ptr);
 void arg_del(char **arg);
 
-void registerevloop(char *objname, char *evname,
+void registerevloop(const char *objname, const char *evname,
                     struct objlist *obj,int idn,N_VALUE *inst,void *local);
 void unregisterevloop(struct objlist *obj,int idn,N_VALUE *inst);
 void eventloop(void);
@@ -224,8 +224,8 @@ void hideinstance(struct objlist *obj);
 void recoverinstance(struct objlist *obj);
 struct objlist *chkobject(const char *name);
 int chkobjectid(struct objlist *obj);
-char *chkobjectname(struct objlist *obj);
-char *chkobjectalias(struct objlist *obj);
+const char *chkobjectname(struct objlist *obj);
+const char *chkobjectalias(struct objlist *obj);
 struct objlist *chkobjparent(struct objlist *obj);
 int chkobjchild(struct objlist *parent,struct objlist *child);
 char *chkobjver(struct objlist *obj);
