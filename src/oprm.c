@@ -528,7 +528,7 @@ prmload(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   _getobj(obj,"file",inst,&file);
   _getobj(obj,"ignore_path",inst,&ignorepath);
   str4[4]='\0';
-  if ((fobj=getobject("file"))==NULL) return 1;
+  if ((fobj=getobject("plot"))==NULL) return 1;
   if ((fitobj=getobject("fit"))==NULL) return 1;
   if ((aobj=getobject("axis"))==NULL) return 1;
   if ((agdobj=getobject("axisgrid"))==NULL) return 1;
