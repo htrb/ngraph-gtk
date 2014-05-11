@@ -81,7 +81,7 @@ class NgraphObj
 	  int i;
 	EOF
 
-  def initialize(name, cfile, version, parent)
+  def initialize(name, aliases, cfile, version, parent)
     @name = name
     @fields = []
     @methods = []
@@ -92,6 +92,11 @@ class NgraphObj
     @abstruct = false
     @singleton = false
     @func = ""
+    @alias = if (aliases)
+               aliases.split(":").map {|s| s.capitalize}
+             else
+               []
+             end
   end
 
   def put_indented_str(s)
@@ -165,6 +170,9 @@ class NgraphObj
 	#{(@enum.size > 0) ? "  VALUE module;" : ""}
 	  obj = rb_define_class_under(ngraph_module, "#{@name.capitalize}", ngraph_class);
 	EOF
+    @alias.each {|name|
+      @cfile.puts(%Q!  rb_define_const(ngraph_module, "#{name}", obj);!)
+    }
     unless (@abstruct)
       SINGLETON_METHOD.each { |method, func, argc|
         @cfile.puts(%Q!  rb_define_singleton_method(obj, "#{method}", #{@name}_#{func}, #{argc});!)
@@ -808,8 +816,8 @@ class NgraphObj
   end
 end
 
-def create_obj_funcs(file, cfile, name, version, parent)
-  obj = NgraphObj.new(name, cfile, version, parent)
+def create_obj_funcs(file, cfile, name, aliases, version, parent)
+  obj = NgraphObj.new(name, aliases, cfile, version, parent)
   singleton = true
   while (true)
     ary = file.gets.chomp.split
@@ -849,6 +857,9 @@ File.open(ARGV[1], "w") { |cfile|
       when "object:"
         name = str_ary[1]
         next
+      when "alias:"
+        aliases = str_ary[1]
+        next
       when "version:"
         version = str_ary[1]
         next
@@ -857,7 +868,7 @@ File.open(ARGV[1], "w") { |cfile|
       else
         next
       end
-      obj = create_obj_funcs(file, cfile, name, version, parent)
+      obj = create_obj_funcs(file, cfile, name, aliases, version, parent)
       objs.push(obj)
     end
   }

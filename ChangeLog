@@ -1,5 +1,8 @@
 2014-05-11  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* plugins/ruby/create_objs.rb (NgraphObj): now "alias" name can be
+	used as an object.
+
 	* src/gtk/x11axis.c (AxisDialogFile, file_button_show): use "plot"
 	object.
 
