@@ -64,9 +64,7 @@ static n_list_store Alist[] = {
   {N_("dir"),  G_TYPE_DOUBLE,  TRUE, TRUE,  "direction",        0,          36000, 100, 1500},
   {N_("len"),  G_TYPE_DOUBLE,  TRUE, TRUE,  "length", - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
   {"^#",       G_TYPE_INT,     TRUE, FALSE, "oid"},
-#ifdef USE_AXIS_MATH
   {"num_math", G_TYPE_INT,     FALSE, FALSE, "num_math"},
-#endif
 };
 
 enum {
@@ -82,9 +80,7 @@ enum {
   AXIS_WIN_COL_DIR,
   AXIS_WIN_COL_LEN,
   AXIS_WIN_COL_OID,
-#ifdef USE_AXIS_MATH
   AXIS_WIN_COL_MATH,
-#endif
   AXIS_WIN_COL_NUM,
 };
 
@@ -1193,7 +1189,7 @@ AxisDialogFile(GtkWidget *w, gpointer client_data)
 
   d = (struct AxisDialog *) client_data;
 
-  fobj = chkobject("file");
+  fobj = chkobject("plot");
   if (fobj == NULL)
     return;
 
@@ -1296,7 +1292,7 @@ file_button_show(GtkWidget *widget, gpointer user_data)
   int n;
 
   if (file == NULL) {
-    file = chkobject("file");
+    file = chkobject("plot");
   }
 
   if (file == NULL)
@@ -1856,10 +1852,8 @@ numbering_tab_set_value(struct AxisDialog *axis)
   if (SetObjFieldFromWidget(d->norm, axis->Obj, axis->Id, "num_auto_norm"))
     return 1;
 
-#ifdef USE_AXIS_MATH
   if (SetObjFieldFromWidget(d->math, axis->Obj, axis->Id, "num_math"))
     return 1;
-#endif
 
   return 0;
 }
@@ -1923,9 +1917,7 @@ numbering_tab_setup_item(struct AxisDialog *axis, int id)
 
   SetWidgetFromObjField(d->norm, axis->Obj, id, "num_auto_norm");
 
-#ifdef USE_AXIS_MATH
   SetWidgetFromObjField(d->math, axis->Obj, id, "num_math");
-#endif
 }
 
 static void
@@ -2077,11 +2069,9 @@ numbering_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   add_widget_to_table(table, w, NULL, FALSE, i++);
   d->no_zero = w;
 
-#ifdef USE_AXIS_MATH
   w = create_text_entry(FALSE, TRUE);
   add_widget_to_table(table, w, _("numbering _Math:"), TRUE, i++);
   d->math = w;
-#endif
 
   frame = gtk_frame_new(_("Format"));
   gtk_container_add(GTK_CONTAINER(frame), table);
@@ -3004,9 +2994,7 @@ axis_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
   unsigned int i;
   double min, max, inc;
   char buf[256], *valstr;
-#ifdef USE_AXIS_MATH
   int style;
-#endif
 
   for (i = 0; i < AXIS_WIN_COL_NUM; i++) {
     switch (i) {
@@ -3055,7 +3043,6 @@ axis_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
       cx = ! cx;
       list_store_set_val(GTK_WIDGET(d->text), iter, i, Alist[i].type, &cx);
       break;
-#ifdef USE_AXIS_MATH
     case AXIS_WIN_COL_MATH:
       getobj(d->obj, Alist[i].name, row, 0, NULL, &valstr);
       if (valstr) {
@@ -3065,7 +3052,6 @@ axis_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
       }
       list_store_set_int(GTK_WIDGET(d->text), iter, i, style);
       break;
-#endif
     default:
       if (Alist[i].type == G_TYPE_DOUBLE) {
 	getobj(d->obj, Alist[i].name, row, 0, NULL, &cx);
@@ -3811,12 +3797,10 @@ AxisWinState(struct SubWin *d, int state)
   set_editable_cell_renderer_cb(d->data.data, AXIS_WIN_COL_MAX, Alist, G_CALLBACK(max_edited));
   set_editable_cell_renderer_cb(d->data.data, AXIS_WIN_COL_INC, Alist, G_CALLBACK(inc_edited));
 
-#ifdef USE_AXIS_MATH
   set_cell_attribute_source(d, "style", AXIS_WIN_COL_NAME, AXIS_WIN_COL_MATH);
   set_cell_attribute_source(d, "style", AXIS_WIN_COL_MIN, AXIS_WIN_COL_MATH);
   set_cell_attribute_source(d, "style", AXIS_WIN_COL_MAX, AXIS_WIN_COL_MATH);
   set_cell_attribute_source(d, "style", AXIS_WIN_COL_INC, AXIS_WIN_COL_MATH);
-#endif
 
   set_combo_cell_renderer_cb(d->data.data, AXIS_WIN_COL_TYPE, Alist, G_CALLBACK(start_editing_type), NULL);
 

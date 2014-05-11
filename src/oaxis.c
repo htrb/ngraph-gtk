@@ -41,9 +41,7 @@
 #define ERRMINMAX 104
 #define ERRFORMAT 105
 #define ERRGROUPING 106
-#ifdef USE_AXIS_MATH
 #define ERRNUMMATH 107
-#endif
 
 static char *axiserrorlist[]={
   "illegal axis type.",
@@ -53,9 +51,7 @@ static char *axiserrorlist[]={
   "illegal value of min/max/inc.",
   "illegal format.",
   "illegal grouping type.",
-#ifdef USE_AXIS_MATH
   "error in math:",
-#endif
 };
 
 #define ERRNUM (sizeof(axiserrorlist) / sizeof(*axiserrorlist))
@@ -1592,9 +1588,7 @@ struct axis_config {
   int length, width;
   int direction;		/* direction in degree multiplied 100 */
   double dir;			/* direction in radian */
-#ifdef USE_AXIS_MATH
   MathEquation *code;
-#endif
 };
 
 
@@ -2005,7 +1999,6 @@ get_axis_gauge_num_str(const char *format, double a)
   return g_string_free(num, FALSE);
 }
 
-#ifdef USE_AXIS_MATH
 static double
 calc_numbering_value(const struct axis_config *aconf, double po)
 {
@@ -2025,7 +2018,6 @@ calc_numbering_value(const struct axis_config *aconf, double po)
 
   return po;
 }
-#endif
 
 static double
 numformat(char **text, int *nlen, const char *format,
@@ -2043,20 +2035,12 @@ numformat(char **text, int *nlen, const char *format,
 
   if ((! logpow && (alocal->atype == AXISLOGBIG || alocal->atype == AXISLOGNORM)) ||
       (alocal->atype == AXISLOGSMALL)) {
-#ifdef USE_AXIS_MATH
     po = calc_numbering_value(aconf, po);
-#endif
     a = pow(10.0, po);
   } else if (alocal->atype == AXISINVERSE) {
-#ifdef USE_AXIS_MATH
     a = calc_numbering_value(aconf, 1.0 / po);
-#else
-    a = 1.0 / po;
-#endif
   } else {
-#ifdef USE_AXIS_MATH
     po = calc_numbering_value(aconf, po);
-#endif
     a = po / norm;
   }
 
@@ -2489,11 +2473,7 @@ numbering(struct objlist *obj, N_VALUE *inst, int GC, struct axis_config *aconf,
   step = get_step(&alocal, step, &begin);
 
   norm = 1;
-  if (alocal.atype == AXISNORMAL
-#ifdef USE_AXIS_MATH
-      && aconf->code == NULL
-#endif
-      ) {
+  if (alocal.atype == AXISNORMAL && aconf->code == NULL) {
     double abs_pos;
     abs_pos = fabs(alocal.dposm);
     if (abs_pos >= pow(10.0, (double) autonorm) ||
@@ -2714,7 +2694,6 @@ get_axis_parameter(struct objlist *obj, N_VALUE *inst, struct axis_config *aconf
   return 0;
 }
 
-#ifdef USE_AXIS_MATH
 static MathEquation *
 get_axis_math(struct objlist *obj, const char *math)
 {
@@ -2778,7 +2757,6 @@ free_axis_math(struct axis_config *aconf)
   aconf->code = NULL;
   return 0;
 }
-#endif
 
 static int
 get_reference_parameter(struct objlist *obj, N_VALUE *inst,  struct axis_config *aconf)
@@ -2958,9 +2936,7 @@ axisdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   int hidden, hidden2;
   struct axis_config aconf;
 
-#ifdef USE_AXIS_MATH
   aconf.code = NULL;
-#endif
 
   _getobj(obj,"hidden",inst,&hidden);
   hidden2=FALSE;
@@ -2995,9 +2971,7 @@ axisdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   aconf.dir=aconf.direction/18000.0*MPI;
   aconf.x1=aconf.x0+nround(aconf.length*cos(aconf.dir));
   aconf.y1=aconf.y0-nround(aconf.length*sin(aconf.dir));
-#ifdef USE_AXIS_MATH
   alloc_axis_math(obj, inst, &aconf);
-#endif
 
   GRAregion(GC,&w,&h,&zoom);
   GRAview(GC,0,0,w*10000.0/zoom,h*10000.0/zoom,clip);
@@ -3023,21 +2997,15 @@ axisdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
     goto exit;
   }
 
-#ifdef USE_AXIS_MATH
   if (aconf.code == NULL) {
     get_axis_parameter(obj, inst, &aconf);
   }
-#else
-  get_axis_parameter(obj, inst, &aconf);
-#endif
   if (aconf.min != aconf.max && aconf.inc != 0) {
     numbering(obj, inst, GC, &aconf, NULL);
   }
 
 exit:
-#ifdef USE_AXIS_MATH
   free_axis_math(&aconf);
-#endif
   GRAaddlist(GC,obj,inst,(char *)argv[0],(char *)argv[1]);
   return 0;
 }
@@ -3073,25 +3041,19 @@ axis_get_numbering(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, 
   aconf.dir = aconf.direction / 18000.0 * MPI;
   aconf.x1 = aconf.x0+nround(aconf.length * cos(aconf.dir));
   aconf.y1 = aconf.y0-nround(aconf.length * sin(aconf.dir));
-#ifdef USE_AXIS_MATH
   alloc_axis_math(obj, inst, &aconf);
-#endif
 
   get_axis_parameter(obj, inst, &aconf);
   if (aconf.min != aconf.max && aconf.inc != 0) {
     array = arraynew(sizeof(char *));
     if (array == NULL) {
-#ifdef USE_AXIS_MATH
       free_axis_math(&aconf);
-#endif
       return 1;
     }
     numbering(obj, inst, GC, &aconf, array);
     rval->array = array;
   }
-#ifdef USE_AXIS_MATH
   free_axis_math(&aconf);
-#endif
 
   return 0;
 }
@@ -3932,7 +3894,6 @@ anumdirput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval, int argc,char **argv
   return 0;
 }
 
-#ifdef USE_AXIS_MATH
 static int 
 num_put_math(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
@@ -3959,7 +3920,6 @@ num_put_math(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **arg
 
   return 1;
 }
-#endif
 
 static int
 put_gauge_hsb(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
@@ -4038,9 +3998,7 @@ static struct objtable axis[] = {
   {"num_B",NINT,NREAD|NWRITE,NULL,NULL,0},
   {"num_A",NINT,NREAD|NWRITE,NULL,NULL,0},
   {"num_date_format",NSTR,NREAD|NWRITE,NULL,NULL,0},
-#ifdef USE_AXIS_MATH
   {"num_math",NSTR,NREAD|NWRITE,num_put_math,NULL,0},
-#endif
   {"scale_push",NVFUNC,NREAD|NEXEC,axisscalepush,"",0},
   {"scale_pop",NVFUNC,NREAD|NEXEC,axisscalepop,"",0},
   {"scale_history",NDARRAY,NREAD,NULL,NULL,0},
