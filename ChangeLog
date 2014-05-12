@@ -1,5 +1,10 @@
 2014-05-12  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11dialg.h (FileDialog): add members "min", "max, "div"
+	and "sourece".
+
+	* src/gtk/x11dialg.c: add "DlgFunc" and "DlgArray".
+
 	* src/gtk/x11commn.c (AxisDel2, AxisMove, FitClear)
 	(DeleteDrawable, SaveParent, get_save_opt, FileAutoScale)
 	(SetFileHidden): use "plot" object.

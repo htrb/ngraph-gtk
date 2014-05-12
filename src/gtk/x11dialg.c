@@ -61,6 +61,8 @@ char *FwNumStyle[] =
 int FwNumStyleNum = sizeof(FwNumStyle) / sizeof(*FwNumStyle);
 
 struct FileDialog DlgFile;
+struct FileDialog DlgFunc;
+struct FileDialog DlgArray;
 struct FileDialog DlgFileDef;
 struct EvalDialog DlgEval;
 struct MathDialog DlgMath;
@@ -118,10 +120,22 @@ initdialog(void)
 {
   DlgFile.widget = NULL;
   DlgFile.focus = NULL;
-  DlgFile.resource = N_("data");
+  DlgFile.resource = N_("file");
   DlgFile.mark.widget = NULL;
   DlgFile.mark.focus = NULL;
   DlgFile.mark.resource = N_("mark selection");
+  DlgFunc.widget = NULL;
+  DlgFunc.focus = NULL;
+  DlgFunc.resource = N_("function");
+  DlgFunc.mark.widget = NULL;
+  DlgFunc.mark.focus = NULL;
+  DlgFunc.mark.resource = NULL;
+  DlgArray.widget = NULL;
+  DlgArray.focus = NULL;
+  DlgArray.resource = N_("array");
+  DlgArray.mark.widget = NULL;
+  DlgArray.mark.focus = NULL;
+  DlgArray.mark.resource = NULL;
   DlgFileDef.widget = NULL;
   DlgFileDef.focus = NULL;
   DlgFileDef.resource = N_("data default");

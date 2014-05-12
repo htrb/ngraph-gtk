@@ -121,11 +121,11 @@ struct FileDialog
   /****** local member *******/
   GtkWidget *file, *load_settings, *fit, *xcol, *xaxis, *ycol, *yaxis,
     *type, *mark_btn, *curve, *col1, *col2,
-    *clip, *style, *size, *miter, *join,
+    *clip, *style, *size, *miter, *join, *min, *max, *div,
     *comment_box, *file_box, *fit_table, *width, *apply_all, *comment_view, *comment_table;
   GtkNotebook *tab;
   struct objlist *Obj;
-  int Id;
+  int Id, source;
   struct MarkDialog mark;
   int R, G, B, R2, G2, B2, alpha, multi_open, fit_row, initialized;
   struct FileMath math;
@@ -602,6 +602,8 @@ void OutputImageDialog(struct OutputImageDialog *data, int type);
 
 
 extern struct FileDialog DlgFile;
+extern struct FileDialog DlgFunc;
+extern struct FileDialog DlgArray;
 extern struct FileDialog DlgFileDef;
 extern struct EvalDialog DlgEval;
 extern struct MathDialog DlgMath;
