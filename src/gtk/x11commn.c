@@ -38,11 +38,7 @@
 #include "ioutil.h"
 #include "shell.h"
 #include "nstring.h"
-#ifdef USE_PLOT_OBJ
 #include "oplot.h"
-#else
-#include "ofile.h"
-#endif
 #include "odraw.h"
 #include "nconfig.h"
 
@@ -55,6 +51,7 @@
 #include "x11menu.h"
 #include "x11commn.h"
 #include "x11info.h"
+#include "x11file.h"
 
 #define COMMENT_BUF_SIZE 1024
 
@@ -353,7 +350,7 @@ AxisDel2(int id)
     }
   }
 
-  obj = getobject("file");
+  obj = getobject("plot");
   if (obj == NULL) {
     return;
   }
@@ -472,7 +469,7 @@ AxisMove(int id1, int id2)
   struct objlist *obj;
   int i;
 
-  if ((obj = getobject("file")) == NULL)
+  if ((obj = getobject("plot")) == NULL)
     return;
 
   for (i = 0; i <= chkobjlastinst(obj); i++) {
@@ -668,25 +665,38 @@ AxisNameToGroup(void)		/* this function may exist for compatibility with older v
   arraydel(&iarray);
 }
 
-void
-FitDel(struct objlist *obj, int id)
+static void
+field_obj_del(struct objlist *obj, int id, const char *field)
 {
   char *fit;
   struct objlist *fitobj;
-  int fitid, idnum;
+  int fitid, idnum, i;
   struct narray iarray;
 
-  if ((getobj(obj, "fit", id, 0, NULL, &fit) >= 0) && (fit != NULL)) {
+  if ((getobj(obj, field, id, 0, NULL, &fit) >= 0) && (fit != NULL)) {
     arrayinit(&iarray, sizeof(int));
     if (getobjilist(fit, &fitobj, &iarray, FALSE, NULL) == 0) {
       idnum = arraynum(&iarray);
-      if (idnum >= 1) {
-	fitid = arraylast_int(&iarray);
+      arraysort_int(&iarray);
+      for (i = idnum - 1; i >= 0; i--) {
+	fitid = arraynget_int(&iarray, i);
 	delobj(fitobj, fitid);
       }
     }
     arraydel(&iarray);
   }
+}
+
+void
+FitDel(struct objlist *obj, int id)
+{
+  field_obj_del(obj, id, "fit");
+}
+
+void
+ArrayDel(struct objlist *obj, int id)
+{
+  field_obj_del(obj, id, "array");
 }
 
 void
@@ -747,7 +757,7 @@ FitClear(void)
 
   if (Menulock || Globallock)
     return;
-  if ((obj = chkobject("file")) == NULL)
+  if ((obj = chkobject("plot")) == NULL)
     return;
   if ((fitobj = chkobject("fit")) == NULL)
     return;
@@ -777,7 +787,7 @@ DeleteDrawable(void)
   struct objlist *fileobj, *drawobj;
   int i;
 
-  if ((fileobj = chkobject("file")) != NULL) {
+  if ((fileobj = chkobject("plot")) != NULL) {
     for (i = 0; i <= chkobjlastinst(fileobj); i++)
       FitDel(fileobj, i);
   }
@@ -803,7 +813,7 @@ SaveParent(int hFile, struct objlist *parent, int storedata,
 	  getobj(ocur, "save", i, 0, NULL, &s);
 	  nwrite(hFile, s, strlen(s));
 	  nwrite(hFile, "\n", 1);
-	  if (storedata && (ocur == chkobject("file"))) {
+	  if (storedata && (ocur == chkobject("plot"))) {
 	    getobj(ocur, "file", i, 0, NULL, &fname);
 	    if (fname != NULL) {
 	      for (j = i - 1; j >= 0; j--) {
@@ -929,7 +939,7 @@ get_save_opt(int *sdata, int *smerge, int *path)
   *sdata = FALSE;
   *smerge = FALSE;
 
-  fobj = chkobject("file");
+  fobj = chkobject("plot");
   mobj = chkobject("merge");
 
   fnum = (fobj) ? chkobjlastinst(fobj) : -1;
@@ -1306,7 +1316,7 @@ FileAutoScale(void)
   int refother;
   GString *str;
 
-  if ((fobj = chkobject("file")) == NULL)
+  if ((fobj = chkobject("plot")) == NULL)
     return;
 
   lastinst = chkobjlastinst(fobj);
@@ -1488,19 +1498,61 @@ free_console(int allocnow)
   ninterrupt = mgtkinterrupt;
 }
 
-char *
-FileCB(struct objlist *obj, int id)
+static char *
+get_plot_cb_str(struct objlist *obj, int id, int source)
 {
-  char *valstr, *file, *s;
+  char *valstr, *s;
+  const char *str;
 
-  getobj(obj, "file", id, 0, NULL, &file);
-  valstr = getbasename(file);
-  s = g_strdup_printf("%s", (valstr) ? valstr : "....................");
-  if (valstr != NULL) {
-    g_free(valstr);
+  str = get_plot_info_str(obj, id, source);
+  if (str == NULL) {
+    return g_strdup("....................");
+  }
+
+  if (source == PLOT_SOURCE_FILE) {
+    valstr = getbasename(str);
+    s = g_strdup_printf("%s", (valstr) ? valstr : "....................");
+    if (valstr != NULL) {
+      g_free(valstr);
+    }
+  } else {
+    s = g_strdup(str);
   }
 
   return s;
+}
+
+char *
+FileCB(struct objlist *obj, int id)
+{
+  int source;
+
+  getobj(obj, "source", id, 0, NULL, &source);
+  return get_plot_cb_str(obj, id, source);
+}
+
+char *
+PlotFileCB(struct objlist *obj, int id)
+{
+  int source;
+
+  getobj(obj, "source", id, 0, NULL, &source);
+  if (source != PLOT_SOURCE_FILE) {
+    return NULL;
+  }
+  return get_plot_cb_str(obj, id, source);
+}
+
+char *
+PlotFileArrayCB(struct objlist *obj, int id)
+{
+  int source;
+
+  getobj(obj, "source", id, 0, NULL, &source);
+  if (source == PLOT_SOURCE_FUNC) {
+    return NULL;
+  }
+  return get_plot_cb_str(obj, id, source);
 }
 
 int
@@ -1511,7 +1563,7 @@ SetFileHidden(void)
   struct narray farray, ifarray;
   int i, a, r, num, inum, *array;
 
-  fobj = chkobject("file");
+  fobj = chkobject("plot");
   if (fobj == NULL) {
     return 1;
   }

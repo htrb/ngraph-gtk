@@ -32,6 +32,7 @@ void AxisMove(int id1, int id2);
 void AdjustAxis(void);
 void FitCopy(struct objlist *obj, int did, int sid);
 void FitDel(struct objlist *obj, int id);
+void ArrayDel(struct objlist *obj, int id);
 void FitClear(void);
 void LoadPrmFile(char *File);
 void LoadNgpFile(char *File, int ignorepath, int expand,
@@ -47,6 +48,8 @@ int CheckIniFile(void);
 int allocate_console(void);
 void free_console(int allocnow);
 char *FileCB(struct objlist *obj, int id);
+char *PlotFileCB(struct objlist *obj, int id);
+char *PlotFileArrayCB(struct objlist *obj, int id);
 int SetFileHidden(void);
 void ProgressDialogCreate(char *title);
 void ProgressDialogSetTitle(char *title);

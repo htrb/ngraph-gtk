@@ -1,3 +1,22 @@
+2014-05-12  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11commn.c (AxisDel2, AxisMove, FitClear)
+	(DeleteDrawable, SaveParent, get_save_opt, FileAutoScale)
+	(SetFileHidden): use "plot" object.
+	(field_obj_del, get_plot_cb_str, ArrayDel, PlotFileCB)
+	(PlotFileArrayCB): added.
+	(FileCB): use "get_plot_cb_str()".
+	(FitDel): use "field_obj_del()".
+
+	* src/gtk/x11view.c (ViewerWinFileUpdate, Evaluate)
+	(mouse_down_move_data, data_dropped): use "plot" object.
+	(ViewerWinSetup): call "gtk_menu_attach_to_widget()".
+
+	* src/gtk/x11opt.c (CmOptionSaveNgp): use "plot" object.
+
+	* src/gtk/gtk_subwin.c (create_popup_menu_sub): added.
+	(sub_win_create_popup_menu): use "create_popup_menu_sub()".
+
 2014-05-11  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/shell.c (shprintfstdout, shprintfstderr): type of the first
