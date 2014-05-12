@@ -31,11 +31,7 @@
 
 #include "object.h"
 #include "gra.h"
-#ifdef USE_PLOT_OBJ
 #include "oplot.h"
-#else
-#include "ofile.h"
-#endif
 #include "olegend.h"
 #include "oarc.h"
 #include "opath.h"
@@ -618,7 +614,7 @@ data_dropped(char **filenames, int num, int file_type)
   int i, id0, type, ret;
   struct objlist *obj, *mobj;
 
-  obj = chkobject("file");
+  obj = chkobject("plot");
   if (obj == NULL) {
     return 1;
   }
@@ -1186,6 +1182,8 @@ ViewerWinSetup(void)
 			GDK_KEY_RELEASE_MASK);
   GTK_WIDGET_SET_CAN_FOCUS(d->Win);
 
+  gtk_menu_attach_to_widget(GTK_MENU(d->popup), GTK_WIDGET(d->Win), NULL);
+
   g_signal_connect(d->Win, "button-press-event", G_CALLBACK(ViewerEvButtonDown), d);
   g_signal_connect(d->Win, "button-release-event", G_CALLBACK(ViewerEvButtonUp), d);
   g_signal_connect(d->Win, "motion-notify-event", G_CALLBACK(ViewerEvMouseMotion), d);
@@ -1261,7 +1259,7 @@ ViewerWinFileUpdate(int x1, int y1, int x2, int y2, int err)
   argv[5] = (char *) &limit;
   argv[6] = NULL;
 
-  fileobj = chkobject("file");
+  fileobj = chkobject("plot");
   if (! fileobj)
     goto End;
 
@@ -1377,7 +1375,7 @@ Evaluate(int x1, int y1, int x2, int y2, int err, struct Viewer *d)
   argv[5] = (char *) &limit;
   argv[6] = NULL;
 
-  if ((fileobj = chkobject("file")) == NULL)
+  if ((fileobj = chkobject("plot")) == NULL)
     return;
 
   ignorestdio(&save);
@@ -2719,7 +2717,7 @@ mouse_down_move_data(struct Viewer *d)
   char *axis, *argv[3];
   int *ptr;
 
-  fileobj = chkobject("file");
+  fileobj = chkobject("plot");
   if (fileobj == NULL)
     goto ErrEnd;
 
