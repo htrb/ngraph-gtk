@@ -1692,20 +1692,14 @@ ev_popup_menu(GtkWidget *w, gpointer client_data)
   return TRUE;
 }
 
-GtkWidget *
-sub_win_create_popup_menu(struct obj_list_data *d, int n, struct subwin_popup_list *list, GCallback cb)
+static GtkWidget *
+create_popup_menu_sub(struct obj_list_data *d, int top, struct subwin_popup_list *list)
 {
-  GtkWidget *menu, *item;
-  int i = 0;
-
-  if (d->popup_item)
-    g_free(d->popup_item);
-
-  d->popup_item = g_malloc(sizeof(GtkWidget *) * n);
-
+  GtkWidget *menu, *item, *submenu;
+  int i;
   menu = gtk_menu_new();
 
-  for (i = 0; i < n; i++) {
+  for (i = 0; list[i].type != POP_UP_MENU_ITEM_TYPE_END; i++) {
     switch (list[i].type) {
     case POP_UP_MENU_ITEM_TYPE_NORMAL:
       item = gtk_menu_item_new_with_mnemonic(_(list[i].title));
@@ -1715,14 +1709,36 @@ sub_win_create_popup_menu(struct obj_list_data *d, int n, struct subwin_popup_li
       item = gtk_check_menu_item_new_with_mnemonic(_(list[i].title));
       g_signal_connect(item, "toggled", list[i].func, d);
       break;
+    case POP_UP_MENU_ITEM_TYPE_MENU:
+      item = gtk_menu_item_new_with_mnemonic(_(list[i].title));
+      submenu = create_popup_menu_sub(d, FALSE, list[i].submenu);
+      gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), submenu);
+      break;
     case POP_UP_MENU_ITEM_TYPE_SEPARATOR:
     default:
       item = gtk_separator_menu_item_new();
       break;
     }
-    d->popup_item[i] = item;
+    if (top) {
+      d->popup_item[i] = item;
+    }
     gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
   }
+
+  return menu;
+}
+
+GtkWidget *
+sub_win_create_popup_menu(struct obj_list_data *d, int n, struct subwin_popup_list *list, GCallback cb)
+{
+  GtkWidget *menu;
+
+  if (d->popup_item)
+    g_free(d->popup_item);
+
+  d->popup_item = g_malloc(sizeof(GtkWidget *) * n);
+
+  menu = create_popup_menu_sub(d, TRUE, list);
 
   d->popup = menu;
   gtk_widget_show_all(menu);

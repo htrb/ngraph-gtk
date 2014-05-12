@@ -21,7 +21,7 @@ typedef void (* list_sub_window_set_val_func) (struct obj_list_data *d, GtkTreeI
 struct subwin_popup_list {
   char *title;
   GCallback func;
-  GtkAccelGroup *accel_group;
+  struct subwin_popup_list *submenu;
   enum pop_up_menu_item_type type;
 };
 

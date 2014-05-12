@@ -103,9 +103,10 @@ static struct subwin_popup_list Popup_list[] = {
   {N_("_Up"),         G_CALLBACK(AxisWinAxisUp), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {N_("_Down"),       G_CALLBACK(AxisWinAxisDown), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {N_("_Bottom"),     G_CALLBACK(AxisWinAxisLast), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {NULL, NULL, NULL, POP_UP_MENU_ITEM_TYPE_END},
 };
 
-#define POPUP_ITEM_NUM (sizeof(Popup_list) / sizeof(*Popup_list))
+#define POPUP_ITEM_NUM (sizeof(Popup_list) / sizeof(*Popup_list) - 1)
 
 #define POPUP_ITEM_TOP 7
 #define POPUP_ITEM_UP 8
