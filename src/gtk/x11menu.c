@@ -58,7 +58,8 @@
 #define FUNCTION_HISTORY "function_history"
 #define FIT_HISTORY      "fit_history"
 #define KEYMAP_FILE      "accel_map"
-#define UI_FILE          "NgraphUI.xml"
+#define FUNC_MATH_HISTORY   "func_math_history"
+#define FUNC_FUNC_HISTORY   "func_func_history"
 
 #define USE_EXT_DRIVER 0
 
@@ -89,7 +90,7 @@ static void CmToggleSingleWindowMode(GtkCheckMenuItem *action, gpointer client_d
 static void script_exec(GtkWidget *w, gpointer client_data);
 static void create_menu(GtkWidget *w, struct MenuItem *item);
 static void create_popup(GtkWidget *parent, struct MenuItem *item);
-static GtkWidget *create_toolbar(struct ToolItem *item, int n);
+static GtkWidget *create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb);
 static void CmViewerButtonArm(GtkToggleToolButton *action, gpointer client_data);
 static void toggle_subwindow(GtkWidget *action, gpointer client_data);
 
@@ -1459,20 +1460,52 @@ struct MenuItem AxisMenu[] = {
   },
 };
 
-struct MenuItem DataMenu[] = {
+struct MenuItem PlotAddMenu[] = {
   {
     MENU_TYPE_NORMAL,
-    N_("_Add"),
-    N_("Add Data"),
-    N_("Add Data file"),
+    N_("_Data"),
+    N_("Add data file"),
+    N_("Add data file"),
     "text-x-generic",
     NULL,
-    "<Ngraph>/Data/Add",
+    "<Ngraph>/Data/Add/Data",
     GDK_KEY_o,
     GDK_CONTROL_MASK,
     NULL,
     G_CALLBACK(CmFileOpen),
     0,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Function"),
+    N_("Add function plot"),
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/Data/Add/Function",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmFuncAdd),
+    0,
+  },
+  {
+    MENU_TYPE_END,
+  },
+};
+
+struct MenuItem DataMenu[] = {
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Add"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    0,
+    0,
+    PlotAddMenu,
   },
   {
     MENU_TYPE_RECENT_DATA,
@@ -4212,7 +4245,7 @@ setupwindow(void)
   read_keymap_file();
   NgraphApp.Viewer.menu = w;
 
-  w = create_toolbar(CommandToolbar, sizeof(CommandToolbar) / sizeof(*CommandToolbar));
+  w = create_toolbar(CommandToolbar, sizeof(CommandToolbar) / sizeof(*CommandToolbar), NULL);
 #if GTK_CHECK_VERSION(3, 4, 0)
   CToolbar = w;
   gtk_toolbar_set_style(GTK_TOOLBAR(w), GTK_TOOLBAR_ICONS);
@@ -4221,7 +4254,7 @@ setupwindow(void)
   CToolbar = create_toolbar_box(vbox, w, GTK_ORIENTATION_HORIZONTAL);
 #endif
 
-  w = create_toolbar(PointerToolbar, sizeof(PointerToolbar) / sizeof(*PointerToolbar));
+  w = create_toolbar(PointerToolbar, sizeof(PointerToolbar) / sizeof(*PointerToolbar), G_CALLBACK(CmViewerButtonPressed));
 #if GTK_CHECK_VERSION(3, 4, 0)
   PToolbar = w;
   gtk_orientable_set_orientation(GTK_ORIENTABLE(w), GTK_ORIENTATION_VERTICAL);
@@ -4801,7 +4834,7 @@ check_instance(struct objlist *obj)
     case DataEditAction:
     case DataSaveAction:
     case DataMathAction:
-      dobj = chkobject("file");
+      dobj = chkobject("plot");
       break;
     case AxisPropertyAction:
     case AxisDeleteAction:
@@ -4929,7 +4962,7 @@ create_recent_menu(int type)
 }
 
 static GtkWidget *
-create_toolbar(struct ToolItem *item, int n)
+create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
 {
   int i;
   GSList *list;
@@ -4966,6 +4999,9 @@ create_toolbar(struct ToolItem *item, int n)
       list = gtk_radio_tool_button_get_group(GTK_RADIO_TOOL_BUTTON(widget));
       if (icon) {
 	gtk_tool_button_set_icon_widget(GTK_TOOL_BUTTON(widget), icon);
+      }
+      if (btn_press_cb) {
+	g_signal_connect(gtk_bin_get_child(GTK_BIN(widget)), "button-press-event", btn_press_cb, NULL);
       }
       break;
     default:

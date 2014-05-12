@@ -1,5 +1,9 @@
 2014-05-12  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11menu.c (create_toolbar): add 3rd parameter.
+	(check_instance): use "plot" object.
+	(PlotAddMenu): added.
+
 	* src/gtk/x11dialg.h (FileDialog): add members "min", "max, "div"
 	and "sourece".
 
