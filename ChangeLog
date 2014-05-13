@@ -1,5 +1,26 @@
 2014-05-13  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/oplot.c (file_fit_calc, file_fit_prm): use "plot" object.
+	(add_file_prm): added.
+	(opendata): check "src" and use "add_file_prm()".
+	(f2dputmath): strip math string.
+	(f2dinit): initialize "max", "min" and "div" field.
+	(draw_fit): check "code->exp".
+	(draw_fit): check "val.type" instead of the returned value of the
+	function "math_equation_calculate()".
+	(get_func_value): check "f2dlocal->codex[0]->exp" and
+	"f2dlocal->codey[0]->exp".
+	(funcout): initialize cnstant of the equation.
+	(save_data_func): check "val.type", "f2dlocal->codex[0]->exp" and
+	"f2dlocal->codey[0]->exp".
+	(solve_equation): check "eq->exp".
+
+	* src/ofit.c (fituser): check "var.type" instead of the returned
+	value of the function "math_equation_calculate()".
+
+	* src/math/math_equation.c (math_equation_calculate): check and
+	initalize the parmetar "val".
+
 	* src/gtk/x11file.c (add_menu_list): added.
 	(move_tab_copy, mask_tab_copy): use "PlotFileArrayCB".
 	(load_tab_setup_item): check "d->source".

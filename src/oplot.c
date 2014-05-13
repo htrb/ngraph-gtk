@@ -34,9 +34,6 @@
 #include <unistd.h>
 
 #include "common.h"
-
-#ifdef USE_PLOT_OBJ
-
 #include "nhash.h"
 #include "object.h"
 #include "ioutil.h"
@@ -275,14 +272,6 @@ struct f2ddata_buf {
 };
 
 #define EQUATION_NUM 3
-
-struct array_prm
-{
-  struct objlist *obj;
-  int data_num, col_num;
-  int id[FILE_OBJ_MAXCOL];
-  struct narray *ary[FILE_OBJ_MAXCOL];
-};
 
 struct f2ddata {
   struct objlist *obj;
@@ -883,7 +872,7 @@ file_fit_calc(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
   }
 
   if (file_obj == NULL) {
-    file_obj = getobject("file");
+    file_obj = getobject("plot");
   }
 
   if (file_obj == NULL) {
@@ -922,7 +911,7 @@ file_fit_prm(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
   }
 
   if (file_obj == NULL) {
-    file_obj = getobject("file");
+    file_obj = getobject("plot");
   }
 
   if (file_obj == NULL) {
@@ -1141,7 +1130,7 @@ get_axis_prm(struct objlist *obj, N_VALUE *inst, int axis, struct axis_prm *prm)
   return aid;
 }
 
-static int
+int
 open_array(char *objstr, struct array_prm *ary)
 {
   int i, n, dnum, id;
@@ -1198,6 +1187,40 @@ open_array(char *objstr, struct array_prm *ary)
   return 0;
 }
 
+static void
+add_file_prm(struct f2ddata *fp, MathEquationParametar *prm)
+{
+  int i, j, id, num2, *data2;
+  N_VALUE *inst1;
+
+  if (prm == NULL) {
+    return;
+  }
+
+  for (i = 0; i < prm->id_num; i++) {
+    id = prm->id[i] / 1000;
+    if (id == fp->id) {
+      if (fp->maxdim < (prm->id[i] % 1000)) {
+	fp->maxdim = prm->id[i] % 1000;
+      }
+    } else if (id <= chkobjlastinst(fp->obj)) {
+      num2 = arraynum(&(fp->fileopen));
+      data2 = arraydata(&(fp->fileopen));
+      for (j = 0; j < num2; j++) {
+	if (id == data2[j]) {
+	  break;
+	}
+      }
+      if (j == num2) {
+	inst1 = chkobjinst(fp->obj, id);
+	if (inst1 && _exeobj(fp->obj, "opendata_raw", inst1, 0, NULL) == 0) {
+	  arrayadd(&fp->fileopen, &id);
+	}
+      }
+    }
+  }
+}
+
 static struct f2ddata *
 opendata(struct objlist *obj,N_VALUE *inst,
 	 struct f2dlocal *f2dlocal,int axis,int raw)
@@ -1211,12 +1234,10 @@ opendata(struct objlist *obj,N_VALUE *inst,
   struct narray *mask;
   struct narray *move,*movex,*movey;
   struct f2ddata *fp;
-  int i,j;
-  int axid,ayid,id;
-  N_VALUE *inst1;
+  int i;
+  int axid,ayid;
   int marksize,marktype;
-  int num2,prev_datanum;
-  int *data2;
+  int prev_datanum;
   double ip1,ip2;
   int dataclip;
   struct stat stat_buf;
@@ -1488,7 +1509,7 @@ opendata(struct objlist *obj,N_VALUE *inst,
   fp->marktype=marktype;
   fp->ignore=fp->negative=FALSE;
   arrayinit(&(fp->fileopen),sizeof(int));
-  if (!raw && src != PLOT_SOURCE_FUNC) {
+  if (!raw) {
     MathEquationParametar *prm;
 
     if (fp->codex[0] && fp->codex[0]->exp) {
@@ -1497,27 +1518,8 @@ opendata(struct objlist *obj,N_VALUE *inst,
 	fp->fnumx = prm->id_num;
 	fp->needx = prm->id;
       }
-    }
-    for (i = 0; i < fp->fnumx; i++) {
-      id = fp->needx[i] / 1000;
-      if (id == fp->id) {
-        if (fp->maxdim < (fp->needx[i] % 1000)) {
-	  fp->maxdim = fp->needx[i] % 1000;
-	}
-      } else if (id <= chkobjlastinst(fp->obj)) {
-        num2 = arraynum(&(fp->fileopen));
-        data2 = arraydata(&(fp->fileopen));
-        for (j = 0; j < num2; j++) {
-	  if (id == data2[j]) {
-	    break;
-	  }
-	}
-        if (j == num2) {
-	  inst1 = chkobjinst(fp->obj, id);
-          if (inst1 && _exeobj(fp->obj, "opendata_raw", inst1, 0, NULL) == 0) {
-	    arrayadd(&fp->fileopen, &id);
-	  }
-        }
+      if (src != PLOT_SOURCE_FUNC) {
+	add_file_prm(fp, prm);
       }
     }
 
@@ -1527,27 +1529,8 @@ opendata(struct objlist *obj,N_VALUE *inst,
 	fp->fnumy = prm->id_num;
 	fp->needy = prm->id;
       }
-    }
-    for (i = 0; i < fp->fnumy; i++) {
-      id = fp->needy[i] / 1000;
-      if (id == fp->id) {
-        if (fp->maxdim < (fp->needy[i] % 1000)) {
-	  fp->maxdim = fp->needy[i] % 1000;
-	}
-      } else if (id <= chkobjlastinst(fp->obj)) {
-        num2 = arraynum(&(fp->fileopen));
-        data2 = arraydata(&(fp->fileopen));
-        for (j = 0; j < num2; j++) {
-	  if (id == data2[j]) {
-	    break;
-	  }
-	}
-        if (j == num2) {
-	  inst1 = chkobjinst(fp->obj, id);
-          if (inst1 && _exeobj(fp->obj, "opendata_raw", inst1, 0, NULL) == 0) {
-	    arrayadd(&fp->fileopen, &id);
-          }
-        }
+      if (src != PLOT_SOURCE_FUNC) {
+	add_file_prm(fp, prm);
       }
     }
   }
@@ -1677,11 +1660,7 @@ set_equation(struct f2dlocal *f2dlocal, MathEquation **eq, const char *f, const 
   }
 
   for (i = 0; i < EQUATION_NUM; i++) {
-    if (is_func) {
-      eq[i] = ofile_create_math_equation(f2dlocal->const_id, 0, FALSE, FALSE, TRUE, FALSE, TRUE);
-    } else {
-      eq[i] = ofile_create_math_equation(f2dlocal->const_id, 3, TRUE,  TRUE,  TRUE, TRUE,  TRUE);
-    }
+    eq[i] = ofile_create_math_equation(f2dlocal->const_id, 3, TRUE, TRUE, TRUE, TRUE,  TRUE);
   }
 
   for (i = 0; i < EQUATION_NUM; i++) {
@@ -1823,40 +1802,40 @@ f2dputmath(struct objlist *obj,N_VALUE *inst,char *field,char *math)
   _getobj(obj,"_local",inst,&f2dlocal);
   _getobj(obj,"source",inst,&src);
 
+  if (math) {
+    g_strstrip(math);
+    if (math[0] == '\0') {
+      math = NULL;
+    }
+  }
+
   rcode = put_func(obj, inst, f2dlocal, field, math);
   if (rcode) {
     return 1;
   }
 
-  if (src == PLOT_SOURCE_FUNC) {
+  if (strcmp(field,"math_x")==0) {
     f2dlocal->maxdimx = 0;
+    if (f2dlocal->codex[0]) {
+      MathEquationParametar *prm;
+
+      prm = math_equation_get_parameter(f2dlocal->codex[0], 0, NULL);
+      if (prm == NULL) {
+	return 1;
+      }
+
+      f2dlocal->maxdimx = prm->id_max;
+    }
+  } else if (strcmp(field,"math_y")==0) {
     f2dlocal->maxdimy = 0;
-    return 0;
-  }
+    if (f2dlocal->codey[0]) {
+      MathEquationParametar *prm;
 
-  if ((strcmp(field,"math_x")==0) || (strcmp(field,"math_y")==0)) {
-    if (field[5]=='x') {
-      f2dlocal->maxdimx = 0;
-      if (f2dlocal->codex[0]) {
-	MathEquationParametar *prm;
-
-	prm = math_equation_get_parameter(f2dlocal->codex[0], 0, NULL);
-	if (prm == NULL)
-	  return 1;
-
-	f2dlocal->maxdimx = prm->id_max;
+      prm = math_equation_get_parameter(f2dlocal->codey[0], 0, NULL);
+      if (prm == NULL) {
+	return 1;
       }
-    } else {
-      f2dlocal->maxdimy = 0;
-      if (f2dlocal->codey[0]) {
-	MathEquationParametar *prm;
-
-	prm = math_equation_get_parameter(f2dlocal->codey[0], 0, NULL);
-	if (prm == NULL)
-	  return 1;
-
-	f2dlocal->maxdimy = prm->id_max;
-      }
+      f2dlocal->maxdimy = prm->id_max;
     }
   }
   return 0;
@@ -1995,10 +1974,11 @@ ofile_create_math_equation(int *id, int prm_digit, int use_fprm, int use_const, 
 static int
 f2dinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
-  int x,y,rstep,final,msize,r2,g2,b2,a2,lwidth,miter,src;
+  int x,y,rstep,final,msize,r2,g2,b2,a2,lwidth,miter,src,div;
   char *s1,*s2,*s3,*s4;
   struct f2dlocal *f2dlocal;
   int stat,minmaxstat,dataclip,num,ljoin;
+  double min,max;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   src=PLOT_SOURCE_FILE;
@@ -2018,6 +1998,9 @@ f2dinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   minmaxstat=MATH_VALUE_UNDEF;
   dataclip=TRUE;
   ljoin = JOIN_TYPE_BEVEL;
+  div = 512;
+  min = 1;
+  max = 10;
   if (_putobj(obj,"source",inst,&src)) return 1;
   if (_putobj(obj,"x",inst,&x)) return 1;
   if (_putobj(obj,"y",inst,&y)) return 1;
@@ -2041,6 +2024,9 @@ f2dinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   if (_putobj(obj,"stat_miny",inst,&minmaxstat)) return 1;
   if (_putobj(obj,"stat_maxy",inst,&minmaxstat)) return 1;
   if (_putobj(obj,"data_clip",inst,&dataclip)) return 1;
+  if (_putobj(obj,"func_min",inst,&min)) return 1;
+  if (_putobj(obj,"func_max",inst,&max)) return 1;
+  if (_putobj(obj,"func_div",inst,&div)) return 1;
 
   s1 = s2 = s3 = s4 = NULL;
   f2dlocal=NULL;
@@ -2456,7 +2442,6 @@ hskipdata(struct f2ddata *fp)
     fp->line = fp->hskip;
     break;
   case PLOT_SOURCE_FUNC:
-    fp->line = fp->hskip;
     break;
   }
   return 0;
@@ -3113,6 +3098,9 @@ get_data_from_source(struct f2ddata *fp, int maxdim, MathValue *gdata)
       return 1;
     }
     n = (fp->array_data.col_num > fp->maxdim) ? fp->maxdim : fp->array_data.col_num;
+    fp->count++;
+    gdata[0].val = fp->count;
+    gdata[0].type = MATH_VALUE_NORMAL;
     for (i = 0; i < n; i++) {
       array_data(gdata + i + 1, fp->array_data.ary[i], fp->line);
     }
@@ -5670,6 +5658,11 @@ draw_fit(struct objlist *obj, struct f2ddata *fp,
     return 1;
   }
 
+  if (code->exp == NULL) {
+    math_equation_free(code);
+    return 1;
+  }
+
   GRAcolor(GC,fp->fg.r,fp->fg.g,fp->fg.b, fp->fg.a);
 #if EXPAND_DOTTED_LINE
   GRAlinestyle(GC,0,NULL,width,GRA_LINE_CAP_BUTT,join,miter);
@@ -5687,10 +5680,10 @@ draw_fit(struct objlist *obj, struct f2ddata *fp,
     val.val = dx;
     val.type = MATH_VALUE_NORMAL;
     math_equation_set_var(code, 0, &val);
-    rcode = math_equation_calculate(code, &val);
+    math_equation_calculate(code, &val);
     dy = val.val;
     if (interpolation) {
-      if ((rcode==MATH_VALUE_NORMAL)
+      if ((val.type==MATH_VALUE_NORMAL)
       && (getposition2(fp,fp->axtype,fp->aytype,&dx,&dy)==0)) {
         if (dataadd(dx,dy,count,0,0,0,255,&num,
                     &x,&y,&z,&r,&g,&b,&a,&c1,&c2,&c3,&c4,&c5,&c6)==NULL) {
@@ -5712,7 +5705,7 @@ draw_fit(struct objlist *obj, struct f2ddata *fp,
         r=g=b=a=NULL;
       }
     } else {
-      if ((rcode==MATH_VALUE_NORMAL) && (getposition2(fp,fp->axtype,fp->aytype,&dx,&dy)==0)) {
+      if ((val.type==MATH_VALUE_NORMAL) && (getposition2(fp,fp->axtype,fp->aytype,&dx,&dy)==0)) {
         if (first) {
           GRAcurvefirst(GC,snum,style,f2dlineclipf,f2dtransf,NULL,NULL,fp,dx,dy);
           first=FALSE;
@@ -5723,7 +5716,7 @@ draw_fit(struct objlist *obj, struct f2ddata *fp,
 	first=TRUE;
       }
     }
-    if ((!emerr) && (rcode!=MATH_VALUE_NORMAL) && (rcode!=MATH_VALUE_UNDEF)) {
+    if ((!emerr) && (val.type!=MATH_VALUE_NORMAL) && (val.type!=MATH_VALUE_UNDEF)) {
       error(obj,ERRMERR);
       emerr=TRUE;
     }
@@ -5832,24 +5825,26 @@ get_func_value(struct f2dlocal *f2dlocal, double x, double *dx, double *dy)
 
   *dx = x;
   *dy = x;
-  if (f2dlocal->codex[0]) {
+  if (f2dlocal->codex[0] && f2dlocal->codex[0]->exp) {
     val.val = x;
     val.type = MATH_VALUE_NORMAL;
     math_equation_set_var(f2dlocal->codex[0], 0, &val);
+    math_equation_set_var(f2dlocal->codex[0], 1, &val);
     rcode = math_equation_calculate(f2dlocal->codex[0], &val);
     *dx = val.val;
-    if (rcode != MATH_VALUE_NORMAL && rcode != MATH_VALUE_UNDEF) {
+    if (val.type != MATH_VALUE_NORMAL && val.type != MATH_VALUE_UNDEF) {
       return rcode;
     }
   }
 
-  if (f2dlocal->codey[0]) {
+  if (f2dlocal->codey[0] && f2dlocal->codey[0]->exp) {
     val.val = x;
     val.type = MATH_VALUE_NORMAL;
     math_equation_set_var(f2dlocal->codey[0], 0, &val);
+    math_equation_set_var(f2dlocal->codey[0], 1, &val);
     rcode = math_equation_calculate(f2dlocal->codey[0], &val);
     *dy = val.val;
-    if (rcode != MATH_VALUE_NORMAL && rcode != MATH_VALUE_UNDEF) {
+    if (val.type != MATH_VALUE_NORMAL && val.type != MATH_VALUE_UNDEF) {
       return rcode;
     }
   }
@@ -5877,6 +5872,26 @@ funcout(struct objlist *obj, N_VALUE *inst, struct f2dlocal *f2dlocal,
   if (_getobj(obj, "func_interpolation", inst, &interpolation)) {
     return -1;
   }
+
+  fp->minx.val = min;
+  fp->minx.type = MATH_VALUE_NORMAL;
+
+  fp->miny.val = min;
+  fp->miny.type = MATH_VALUE_NORMAL;
+
+  fp->maxx.val = max;
+  fp->maxx.type = MATH_VALUE_NORMAL;
+
+  fp->maxy.val = max;
+  fp->maxy.type = MATH_VALUE_NORMAL;
+
+  fp->num = div;
+
+  set_const(fp->codex[0], fp->const_id, TRUE, fp, TRUE);
+  set_const(fp->codey[0], fp->const_id, TRUE, fp, TRUE);
+
+  math_equation_set_user_data(fp->codex[0], fp);
+  math_equation_set_user_data(fp->codey[0], fp);
 
   GRAcolor(GC, fp->fg.r, fp->fg.g, fp->fg.b, fp->fg.a);
 #if EXPAND_DOTTED_LINE
@@ -6205,7 +6220,7 @@ f2devaluate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
 {
   struct f2dlocal *f2dlocal;
   struct f2ddata *fp;
-  char *file;
+  char *str;
   struct narray *array;
   int gx0,gy0,gx1,gy1,num,limit;
   int minx,miny,maxx,maxy,err;
@@ -6218,13 +6233,24 @@ f2devaluate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
   rval->array=array;
 
   _getobj(obj,"source", inst, &src);
-  if (src == PLOT_SOURCE_FUNC) {
+  switch (src) {
+  case PLOT_SOURCE_FILE:
+    _getobj(obj, "file", inst, &str);
+    if (str == NULL) {
+      return 0;
+    }
+    break;
+  case PLOT_SOURCE_FUNC:
     return 0;
+  case PLOT_SOURCE_ARRAY:
+    _getobj(obj, "array", inst, &str);
+    if (str == NULL) {
+      return 0;
+    }
+    break;
   }
 
   _getobj(obj,"_local",inst,&f2dlocal);
-  _getobj(obj,"file",inst,&file);
-  if (file==NULL) return 0;
   if ((fp=opendata(obj,inst,f2dlocal,TRUE,FALSE))==NULL) return 1;
   if (fp->need2pass || fp->final < -1) {
     if (getminmaxdata(fp, f2dlocal)==-1) {
@@ -8710,24 +8736,24 @@ save_data_func(struct objlist *obj, N_VALUE *inst, struct f2dlocal *f2dlocal,
     t = min + inc * i;
     dx = t;
     dy = t;
-    if (f2dlocal->codex[0]) {
+    if (f2dlocal->codex[0] && f2dlocal->codex[0]->exp) {
       val.val = t;
       val.type = MATH_VALUE_NORMAL;
       math_equation_set_var(f2dlocal->codex[0], 0, &val);
       rcode = math_equation_calculate(f2dlocal->codex[0], &val);
       dx = val.val;
-      if ((rcode!=MATH_VALUE_NORMAL) && (rcode!=MATH_VALUE_UNDEF)) {
+      if ((val.type!=MATH_VALUE_NORMAL) && (val.type!=MATH_VALUE_UNDEF)) {
 	continue;
       }
     }
 
-    if (f2dlocal->codey[0]) {
+    if (f2dlocal->codey[0] && f2dlocal->codey[0]->exp) {
       val.val = t;
       val.type = MATH_VALUE_NORMAL;
       math_equation_set_var(f2dlocal->codey[0], 0, &val);
       rcode = math_equation_calculate(f2dlocal->codey[0], &val);
       dy = val.val;
-      if ((rcode!=MATH_VALUE_NORMAL) && (rcode!=MATH_VALUE_UNDEF)) {
+      if ((val.type!=MATH_VALUE_NORMAL) && (val.type!=MATH_VALUE_UNDEF)) {
 	continue;
       }
     }
@@ -9111,6 +9137,11 @@ solve_equation(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **a
     return 1;
   }
 
+  if (eq->exp == NULL) {
+    math_equation_free(eq);
+    return 1;
+  }
+
   if (argv[1][sizeof(prefix) - 1] == 'b') {
     if (n < 2) {
       error(obj, ERR_SMALL_ARGS);
@@ -9418,7 +9449,7 @@ static struct objtable file2d[] = {
 
   {"func_min", NDOUBLE,NREAD|NWRITE,NULL,NULL,0},
   {"func_max", NDOUBLE,NREAD|NWRITE,NULL,NULL,0},
-  {"func_div", NINT,NREAD|NWRITE,NULL,NULL,0},
+  {"func_div", NINT,NREAD|NWRITE,oputge1,NULL,0},
   {"func_interpolation", NBOOL,NREAD|NWRITE,NULL,NULL,0},
   /* for array */
 
@@ -9448,4 +9479,3 @@ addfile(void)
 
   return addobject(NAME,ALIAS,PARENT,OVERSION,TBLNUM,file2d,ERRNUM,f2derrorlist,NULL,NULL);
 }
-#endif	/* USE_PLOT_OBJ */

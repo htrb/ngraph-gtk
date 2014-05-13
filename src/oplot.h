@@ -42,8 +42,17 @@ enum axis_instance_field_type{
 
 #include "math/math_equation.h"
 
+struct array_prm
+{
+  struct objlist *obj;
+  int data_num, col_num;
+  int id[FILE_OBJ_MAXCOL];
+  struct narray *ary[FILE_OBJ_MAXCOL];
+};
+
 MathEquation *ofile_create_math_equation(int *id, int prm_digit, int use_fprm, int use_const, int usr_func, int use_fobj_func, int use_fit_func);
 int get_axis_id(struct objlist *obj, N_VALUE *inst, struct objlist **aobj, int axis);
 int ofile_calc_fit_equation(struct objlist *obj, int id, double x, double *y);
+int open_array(char *objstr, struct array_prm *ary);
 
 #endif
