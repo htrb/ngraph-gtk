@@ -36,11 +36,7 @@
 #include "mathfn.h"
 #include "oroot.h"
 #include "ofit.h"
-#ifdef USE_PLOT_OBJ
 #include "oplot.h"
-#else
-#include "ofile.h"
-#endif
 
 #include "math/math_equation.h"
 
@@ -707,18 +703,18 @@ fituser(struct objlist *obj,struct fitlocal *fitlocal, const char *func,
       var.type = MATH_VALUE_NORMAL;
       math_equation_set_parameter_data(fitlocal->codef, 0, par);
       math_equation_set_var(fitlocal->codef, 0, &var);
-      rcode = math_equation_calculate(fitlocal->codef, &var);
+      math_equation_calculate(fitlocal->codef, &var);
       y1 = var.val;
-      if (rcode!=MATH_VALUE_NORMAL) err=TRUE;
+      if (var.type!=MATH_VALUE_NORMAL) err=TRUE;
       if (deriv) {
         for (j=0;j<dim;j++) {
 	  var.val = spx;
 	  var.type = MATH_VALUE_NORMAL;
 	  math_equation_set_parameter_data(fitlocal->codedf[tbl[j]], 0, par);
 	  math_equation_set_var(fitlocal->codedf[tbl[j]], 0, &var);
-	  rcode = math_equation_calculate(fitlocal->codedf[tbl[j]], &var);
+	  math_equation_calculate(fitlocal->codedf[tbl[j]], &var);
 	  x2[j] = var.val;
-	  if (rcode!=MATH_VALUE_NORMAL) err=TRUE;
+	  if (var.type!=MATH_VALUE_NORMAL) err=TRUE;
         }
       } else {
         for (j=0;j<dim;j++) {
@@ -730,9 +726,9 @@ fituser(struct objlist *obj,struct fitlocal *fitlocal, const char *func,
 	  var.type = MATH_VALUE_NORMAL;
 	  math_equation_set_parameter_data(fitlocal->codef, 0, par2);
 	  math_equation_set_var(fitlocal->codef, 0, &var);
-	  rcode = math_equation_calculate(fitlocal->codef, &var);
+	  math_equation_calculate(fitlocal->codef, &var);
 	  x2[j] = var.val;
-	  if (rcode!=MATH_VALUE_NORMAL) err=TRUE;
+	  if (var.type!=MATH_VALUE_NORMAL) err=TRUE;
           x2[j]=(x2[j]-y1)/dxx;
         }
       }

@@ -298,7 +298,7 @@ free_array_buf(MathEquationArray *buf, int num)
   g_free(buf);
 }
 
-void 
+void
 math_equation_free(MathEquation *eq)
 {
   if (eq == NULL)
@@ -338,7 +338,7 @@ math_equation_free(MathEquation *eq)
   g_free(eq);
 }
 
-int 
+int
 math_equation_optimize(MathEquation *eq)
 {
   int err;
@@ -367,18 +367,21 @@ math_equation_optimize(MathEquation *eq)
   return err;
 }
 
-int 
+int
 math_equation_calculate(MathEquation *eq, MathValue *val)
 {
   int r;
 
+  if (val == NULL) {
+    return 1;
+  }
+
+  val->val = 0;
+  val->type = MATH_VALUE_ERROR;
+
   if ((eq == NULL) || (eq->exp == NULL) ||
       (eq->cnum > 0 && eq->cbuf == NULL) ||
       (eq->vnum > 0 && eq->vbuf == NULL)) {
-    if (val) {
-      val->val = 0;
-      val->type = MATH_VALUE_ERROR;
-    }
     return 1;
   }
 
@@ -570,7 +573,7 @@ free_parameter(MathEquation *eq)
   }
 }
 
-int 
+int
 math_equation_add_pos_func(MathEquation *eq, struct math_function_parameter *fprm)
 {
   int n;
@@ -668,7 +671,7 @@ optimize_func(NHASH func)
   return;
 }
 
-void 
+void
 math_equation_remove_func(MathEquation *eq, const char *name)
 {
   int r;
@@ -857,7 +860,7 @@ math_equation_get_func(MathEquation *eq, const char *name)
   return (struct math_function_parameter *) ptr;
 }
 
-int 
+int
 math_equation_add_const(MathEquation *eq, const char *name, const MathValue *val)
 {
   int i, r;
@@ -883,12 +886,12 @@ math_equation_add_const(MathEquation *eq, const char *name, const MathValue *val
   return i;
 }
 
-int 
+int
 math_equation_add_const_definition(MathEquation *eq, const char *name, MathExpression *exp, int *err)
 {
   int i, r;
   MathValue val;
- 
+
   if (eq == NULL)
     return -1;
 
@@ -973,7 +976,7 @@ expand_stack(MathEquation *eq, int size)
 }
 
 
-int 
+int
 math_equation_add_var(MathEquation *eq, const char *name)
 {
   int i, r;
@@ -1007,7 +1010,7 @@ math_equation_add_var(MathEquation *eq, const char *name)
   return i;
 }
 
-int 
+int
 math_equation_set_const_by_name(MathEquation *eq, const char *name, const MathValue *val)
 {
   int i, r;
@@ -1075,7 +1078,7 @@ math_equation_get_const_name(MathEquation *eq, int idx)
   return v.name;
 }
 
-int 
+int
 math_equation_set_const(MathEquation *eq, int idx, const MathValue *val)
 {
   if (eq->cbuf == NULL || idx >= eq->cnum || idx < 0) {
@@ -1089,7 +1092,7 @@ math_equation_set_const(MathEquation *eq, int idx, const MathValue *val)
 
 
 
-int 
+int
 math_equation_set_var(MathEquation *eq, int idx, const MathValue *val)
 {
   if (eq->vbuf == NULL || idx + eq->stack_ofst >= eq->stack_end) {
@@ -1102,7 +1105,7 @@ math_equation_set_var(MathEquation *eq, int idx, const MathValue *val)
 }
 
 
-int 
+int
 math_equation_get_const_by_name(MathEquation *eq, const char *name, MathValue *val)
 {
   int i, r;
@@ -1125,7 +1128,7 @@ math_equation_get_const_by_name(MathEquation *eq, const char *name, MathValue *v
   return i;
 }
 
-int 
+int
 math_equation_get_const(MathEquation *eq, int idx, MathValue *val)
 {
   if (eq->cbuf == NULL || idx >= eq->cnum) {
@@ -1226,7 +1229,7 @@ math_equation_call_user_func(MathFunctionCallExpression *exp, MathEquation *eq, 
   return r;
 }
 
-int 
+int
 math_equation_check_var(MathEquation *eq, const char *name)
 {
   int r, i;
@@ -1244,7 +1247,7 @@ math_equation_check_var(MathEquation *eq, const char *name)
   return i;
 }
 
-int 
+int
 math_equation_get_var(MathEquation *eq, int idx, MathValue *val)
 {
   if (eq->vbuf == NULL || idx + eq->stack_ofst >= eq->stack_end) {
@@ -1276,7 +1279,7 @@ math_equation_get_array_name(MathEquation *eq, int index)
   return NULL;
 }
 
-int 
+int
 math_equation_check_array(MathEquation *eq, const char *name)
 {
   int r, i;
@@ -1368,7 +1371,7 @@ check_array(MathEquation *eq, int id, int index)
       /* error: cannot allocate enough memory */
       return -1;
     }
-   
+
     memset(ptr + ary->num, 0, sizeof(*ptr) * (n - ary->num));
 
     ary->data = ptr;
@@ -1421,7 +1424,7 @@ math_equation_get_array(MathEquation *eq, int array)
   return &eq->array_buf[array];
 }
 
-void 
+void
 math_equation_set_user_data(MathEquation *eq, void *user_data)
 {
   if (eq) {
@@ -1507,7 +1510,7 @@ struct search_const {
   int *constant, n, r;
 };
 
-static int 
+static int
 check_counst_in_func(struct nhash *hash, void *ptr)
 {
   int r;
