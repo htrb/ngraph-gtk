@@ -100,6 +100,7 @@ int ngraph_object_del(struct objlist *obj, int id);
 int ngraph_object_exist(struct objlist *obj, int id);
 
 const char *ngraph_get_object_name(struct objlist *obj);
+const char *ngraph_get_object_alias(struct objlist *obj);
 const char *ngraph_get_object_field_args(struct objlist *obj, const char *field);
 const char *ngraph_get_object_field(struct objlist *obj, int i);
 const char *ngraph_get_object_version(struct objlist *obj);

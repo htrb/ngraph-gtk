@@ -611,7 +611,7 @@ fituser(struct objlist *obj,struct fitlocal *fitlocal, const char *func,
 {
   int ecode;
   int *needdata;
-  int tbl[10],dim,n,count,rcode,err,err2,err3;
+  int tbl[10],dim,n,count,err,err2,err3;
   double yy,y,y1,y2,y3,sy,spx,spy,dxx,dxxc,xx,derror,correlation;
   double b[10],x2[10],parerr[10];
   MathValue par[10], par2[10], var;

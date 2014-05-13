@@ -22,6 +22,6 @@ src/math/math_error.c
 src/odraw.c
 src/oaxis.c
 src/ofit.c
-src/ofile.c
+src/oplot.c
 src/ogra.c
 src/opath.c
