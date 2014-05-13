@@ -1,3 +1,44 @@
+2014-05-13  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (add_menu_list): added.
+	(move_tab_copy, mask_tab_copy): use "PlotFileArrayCB".
+	(load_tab_setup_item): check "d->source".
+	(load_tab_copy): use "PlotFileArrayCB".
+	(load_tab_create, load_tab_set_value): check "d->source".
+	(math_tab_copy): use "PlotFileArrayCB".
+	(math_common_widgets_create): added.
+	(math_tab_create): use "math_common_widgets_create()".
+	(math_set_value_common): added.
+	(math_tab_set_value): use "math_set_value_common()".
+	(set_axis_combo_box, plot_axis_setup_item): added.
+	(file_setup_item): use "plot_axis_setup_item()".
+	(FileDialogSetupItem): check "d->source".
+	(plot_tab_copy, file_settings_copy): use "PlotFileArrayCB".
+	(FileDialogSetupCommon): use default width for the deta clumn
+	entries.
+	(CHECK_VISIBILITY_ARRAY): added.
+	(set_headline_table_array): added.
+	(update_table_visibility): check "d->source".
+	(FileDialogSetup): change title of the dialog.
+	(ArrayDialogSetup, FuncDialogSetupItem, FuncDialogSetup)
+	(ArrayDialogClose, FuncDialogClose): added.
+	(FileDialog): check "d->source".
+	(CmFileHistory): use "data->dialog" instead of "&DlgFile".
+	(CmFileNew): use "plot" object.
+	(CmFileNew): use "data->dialog" instead of "&DlgFile".
+	(CmFuncAdd): added.
+	(CmFileOpen): use "plot" object.
+	(update_file_obj_multi): use "data->dialog" instead of "&DlgFile".
+	(CmFileUpdate): use "plot" object.
+	(check_plot_obj_file): added.
+	(CmFileEdit): use "plot" object, "PlotFileCB" and
+	"check_plot_obj_file()".
+	(CmOptionFileDef): use "plot" object.
+	(get_plot_info_str): added.
+	(file_list_set_val): use "get_plot_info_str()".
+	(CmFileMath, GetDrawFiles, CmFileSaveData, select_type)
+	(start_editing_type, FileWinState): use "plot" object.
+
 2014-05-12  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (create_toolbar): add 3rd parameter.
