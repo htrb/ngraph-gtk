@@ -66,6 +66,7 @@ loaddatalist(struct fit_prm *prm, const char *datalist)
 {
   FILE *f;
   int i, j, fitnum;
+  char *source, *file, *array;
 
   if (datalist == NULL) {
     return 1;
@@ -86,13 +87,22 @@ loaddatalist(struct fit_prm *prm, const char *datalist)
   prm->fit_num = fitnum;
   for (i = 0; i < fitnum; i++) {
     prm->data[i].file_id = fgets_int(f);
-    prm->data[i].file = fgets_str(f);
+
+    source = fgets_str(f);
+    file = fgets_str(f);
+    array = fgets_str(f);
+
     prm->data[i].id = fgets_int(f);
     prm->data[i].type = fgets_str(f);
     prm->data[i].poly = fgets_int(f);
     prm->data[i].userfunc = fgets_str(f);
     for (j = 0; j < PRM_NUM; j++) {
       prm->data[i].prm[j] = fgets_double(f);
+    }
+    if (g_strcmp0(source, "array") == 0) {
+      prm->data[i].file = array;
+    } else {
+      prm->data[i].file = file;
     }
   }
   fclose(f);

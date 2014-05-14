@@ -10,11 +10,11 @@ X=5000      # top-left of the legend to be inserted.
 Y=5000      # top-left of the legend to be inserted.
 WIDTH=2000  # width of "type" field.
 
-if [ `object file -instance` != 0 ]
+if [ `object plot -instance` != 0 ]
 then
     DATALIST=${system:0:temp_file}
-    object file -instance > "$DATALIST"
-    get file:0-! -id -field file id hidden x y type mark_type mark_size line_width line_style R G B R2 G2 B2 math_x math_y >> "$DATALIST"
+    object plot -instance > "$DATALIST"
+    get plot:0-! -id -field source file array id hidden x y type mark_type mark_size line_width line_style R G B R2 G2 B2 math_x math_y >> "$DATALIST"
     SCRIPT=${system:0:temp_file}
     "${NGRAPHLIB}/legend" -x ${X} -y ${Y} -w ${WIDTH} "$DATALIST" "$SCRIPT"
     if [ -s "$SCRIPT" ];

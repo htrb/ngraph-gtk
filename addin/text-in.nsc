@@ -10,7 +10,7 @@ PT=2000          # Size
 FONT=Sans-serif  # Font
 DIR=0            # Direction
 
-if [ `object file -instance` = 0 ]
+if [ `object plot -instance` = 0 ]
 then
     new dialog
     dialog::beep
@@ -22,9 +22,12 @@ fi
 new dialog
 
 new sarray name=FILES
-for i in `object file -instances`
+for i in `object plot -instances`
 do
-    sarray:FILES:push `get file:$i -field id file`
+    if [ `get plot:$i -field source` != "function"]
+    then
+	sarray:FILES:push `get plot:$i -field id file`
+    fi
 done
 dialog::title="select data"
 dialog::caption="select data object"
@@ -68,8 +71,8 @@ del dialog
 
 new iarray name=BBOX
 new int name=NAME @=0
-exe file:$ID opendatac
-while file::getdata
+exe plot:$ID opendatac
+while plot::getdata
 do
     int:NAME:inc
     TEXT_NAME=in_${ID}_${int:NAME:@}
@@ -79,20 +82,20 @@ do
     else
 	new text name=$TEXT_NAME
 	text::pt=$PT
-	text::R=${file::R}
-	text::G=${file::G}
-	text::B=${file::B}
+	text::R=${plot::R}
+	text::G=${plot::G}
+	text::B=${plot::B}
 	text::font=$FONT
 	text::direction=$DIR
     fi
     text::x=0
     text::y=0
-    text::text=`get file:$ID -field column:"${file::line} ${COLUMN}"`
+    text::text=`get plot:$ID -field column:"${plot::line} ${COLUMN}"`
     iarray:BBOX:@="${text::bbox}"
-    text::x="${file::coord_x}+$SHIFTX-ABS(${iarray:BBOX:get:2}-${iarray:BBOX:get:0})/2*(2-$ALIGN)"
-    text::y="${file::coord_y}+$SHIFTY+ABS(${iarray:BBOX:get:3}-${iarray:BBOX:get:1})/2-${iarray:BBOX:get:3}+$OFFSET*100"
+    text::x="${plot::coord_x}+$SHIFTX-ABS(${iarray:BBOX:get:2}-${iarray:BBOX:get:0})/2*(2-$ALIGN)"
+    text::y="${plot::coord_y}+$SHIFTY+ABS(${iarray:BBOX:get:3}-${iarray:BBOX:get:1})/2-${iarray:BBOX:get:3}+$OFFSET*100"
 done
 menu::modified=true
-file::closedata
+plot::closedata
 del int:NAME
 del iarray:BBOX

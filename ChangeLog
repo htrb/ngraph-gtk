@@ -1,3 +1,27 @@
+2014-05-14  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* addin/fitrslt.c (loaddatalist): get and check "source" and
+	"array" fields.
+
+	* addin/text-in.nsc: use "plot" object and check "source" field.
+
+	* addin/legend.nsc: use "plot" object and save "source" and
+	"array" fields.
+
+	* addin/legend.c (loaddatalist): get and check "source" and
+	"array" fields.
+	(set_parameter): set 3rd column based on "source" field.
+
+	* addin/fitrslt.nsc: use "plot" object and save "source" and
+	"array" fields.
+
+	* addin/fft.nsc: use "plot" object.
+
+	* addin/append.nsc: use "plot" object.
+
+	* addin/Makefile.am (addins, pkglibexec_PROGRAMS): remove "calc"
+	addin.
+
 2014-05-13  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/oplot.c (file_fit_calc, file_fit_prm): use "plot" object.

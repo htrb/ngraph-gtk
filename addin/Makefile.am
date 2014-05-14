@@ -1,8 +1,8 @@
 addindir = $(pkgdatadir)/addin
 
-addins = append.nsc calc.nsc fft.nsc fitrslt.nsc legend.nsc	\
-	math.nsc text-in.nsc cal.nsc tex_equation.nsc ps2gra.nsc	\
-	fig2gra.nsc timer.nsc fig2gra.rb
+addins = append.nsc fft.nsc fitrslt.nsc legend.nsc math.nsc		\
+	text-in.nsc cal.nsc tex_equation.nsc ps2gra.nsc fig2gra.nsc	\
+	timer.nsc fig2gra.rb
 
 ruby_addins = ruby.nsc spellchecker.rb
 
@@ -16,11 +16,7 @@ dist_addin_DATA = $(addins)
 
 APP_CFLAGS = 
 
-pkglibexec_PROGRAMS = fft calc fitrslt legend
-
-calc_SOURCES = calc.c addin_common.c addin_common.h
-calc_CFLAGS = $(GTK_CFLAGS) $(APP_CFLAGS)
-calc_LDADD = $(GTK_LIBS) $(GLIB_LIBS)
+pkglibexec_PROGRAMS = fft fitrslt legend
 
 fitrslt_SOURCES = fitrslt.c addin_common.c addin_common.h
 fitrslt_CFLAGS = $(GTK_CFLAGS) $(APP_CFLAGS)

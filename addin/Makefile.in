@@ -80,8 +80,7 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 @HAVE_RUBY_DEV_TRUE@am__append_1 = $(ruby_addins)
-pkglibexec_PROGRAMS = fft$(EXEEXT) calc$(EXEEXT) fitrslt$(EXEEXT) \
-	legend$(EXEEXT)
+pkglibexec_PROGRAMS = fft$(EXEEXT) fitrslt$(EXEEXT) legend$(EXEEXT)
 subdir = addin
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/mkinstalldirs $(top_srcdir)/depcomp \
@@ -105,23 +104,17 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(pkglibexecdir)" "$(DESTDIR)$(addindir)"
 PROGRAMS = $(pkglibexec_PROGRAMS)
-am_calc_OBJECTS = calc-calc.$(OBJEXT) calc-addin_common.$(OBJEXT)
-calc_OBJECTS = $(am_calc_OBJECTS)
-am__DEPENDENCIES_1 =
-calc_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+am_fft_OBJECTS = fft.$(OBJEXT)
+fft_OBJECTS = $(am_fft_OBJECTS)
+fft_DEPENDENCIES =
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
-calc_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(calc_CFLAGS) $(CFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-am_fft_OBJECTS = fft.$(OBJEXT)
-fft_OBJECTS = $(am_fft_OBJECTS)
-fft_DEPENDENCIES =
 am_fitrslt_OBJECTS = fitrslt-fitrslt.$(OBJEXT) \
 	fitrslt-addin_common.$(OBJEXT)
 fitrslt_OBJECTS = $(am_fitrslt_OBJECTS)
+am__DEPENDENCIES_1 =
 fitrslt_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 fitrslt_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(fitrslt_CFLAGS) \
@@ -167,19 +160,16 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(calc_SOURCES) $(fft_SOURCES) $(fitrslt_SOURCES) \
-	$(legend_SOURCES)
-DIST_SOURCES = $(calc_SOURCES) $(fft_SOURCES) $(fitrslt_SOURCES) \
-	$(legend_SOURCES)
+SOURCES = $(fft_SOURCES) $(fitrslt_SOURCES) $(legend_SOURCES)
+DIST_SOURCES = $(fft_SOURCES) $(fitrslt_SOURCES) $(legend_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
-am__dist_addin_DATA_DIST = append.nsc calc.nsc fft.nsc fitrslt.nsc \
-	legend.nsc math.nsc text-in.nsc cal.nsc tex_equation.nsc \
-	ps2gra.nsc fig2gra.nsc timer.nsc fig2gra.rb ruby.nsc \
-	spellchecker.rb
+am__dist_addin_DATA_DIST = append.nsc fft.nsc fitrslt.nsc legend.nsc \
+	math.nsc text-in.nsc cal.nsc tex_equation.nsc ps2gra.nsc \
+	fig2gra.nsc timer.nsc fig2gra.rb ruby.nsc spellchecker.rb
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -384,16 +374,13 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 addindir = $(pkgdatadir)/addin
-addins = append.nsc calc.nsc fft.nsc fitrslt.nsc legend.nsc math.nsc \
+addins = append.nsc fft.nsc fitrslt.nsc legend.nsc math.nsc \
 	text-in.nsc cal.nsc tex_equation.nsc ps2gra.nsc fig2gra.nsc \
 	timer.nsc fig2gra.rb $(am__append_1)
 ruby_addins = ruby.nsc spellchecker.rb
 @HAVE_RUBY_DEV_FALSE@EXTRA_DIST = $(ruby_addins)
 dist_addin_DATA = $(addins)
 APP_CFLAGS = 
-calc_SOURCES = calc.c addin_common.c addin_common.h
-calc_CFLAGS = $(GTK_CFLAGS) $(APP_CFLAGS)
-calc_LDADD = $(GTK_LIBS) $(GLIB_LIBS)
 fitrslt_SOURCES = fitrslt.c addin_common.c addin_common.h
 fitrslt_CFLAGS = $(GTK_CFLAGS) $(APP_CFLAGS)
 fitrslt_LDADD = $(GTK_LIBS) $(GLIB_LIBS)
@@ -486,10 +473,6 @@ clean-pkglibexecPROGRAMS:
 	echo " rm -f" $$list; \
 	rm -f $$list
 
-calc$(EXEEXT): $(calc_OBJECTS) $(calc_DEPENDENCIES) $(EXTRA_calc_DEPENDENCIES) 
-	@rm -f calc$(EXEEXT)
-	$(AM_V_CCLD)$(calc_LINK) $(calc_OBJECTS) $(calc_LDADD) $(LIBS)
-
 fft$(EXEEXT): $(fft_OBJECTS) $(fft_DEPENDENCIES) $(EXTRA_fft_DEPENDENCIES) 
 	@rm -f fft$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(fft_OBJECTS) $(fft_LDADD) $(LIBS)
@@ -508,8 +491,6 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/calc-addin_common.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/calc-calc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fft.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fitrslt-addin_common.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fitrslt-fitrslt.Po@am__quote@
@@ -536,34 +517,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
-
-calc-calc.o: calc.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(calc_CFLAGS) $(CFLAGS) -MT calc-calc.o -MD -MP -MF $(DEPDIR)/calc-calc.Tpo -c -o calc-calc.o `test -f 'calc.c' || echo '$(srcdir)/'`calc.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/calc-calc.Tpo $(DEPDIR)/calc-calc.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='calc.c' object='calc-calc.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(calc_CFLAGS) $(CFLAGS) -c -o calc-calc.o `test -f 'calc.c' || echo '$(srcdir)/'`calc.c
-
-calc-calc.obj: calc.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(calc_CFLAGS) $(CFLAGS) -MT calc-calc.obj -MD -MP -MF $(DEPDIR)/calc-calc.Tpo -c -o calc-calc.obj `if test -f 'calc.c'; then $(CYGPATH_W) 'calc.c'; else $(CYGPATH_W) '$(srcdir)/calc.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/calc-calc.Tpo $(DEPDIR)/calc-calc.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='calc.c' object='calc-calc.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(calc_CFLAGS) $(CFLAGS) -c -o calc-calc.obj `if test -f 'calc.c'; then $(CYGPATH_W) 'calc.c'; else $(CYGPATH_W) '$(srcdir)/calc.c'; fi`
-
-calc-addin_common.o: addin_common.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(calc_CFLAGS) $(CFLAGS) -MT calc-addin_common.o -MD -MP -MF $(DEPDIR)/calc-addin_common.Tpo -c -o calc-addin_common.o `test -f 'addin_common.c' || echo '$(srcdir)/'`addin_common.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/calc-addin_common.Tpo $(DEPDIR)/calc-addin_common.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='addin_common.c' object='calc-addin_common.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(calc_CFLAGS) $(CFLAGS) -c -o calc-addin_common.o `test -f 'addin_common.c' || echo '$(srcdir)/'`addin_common.c
-
-calc-addin_common.obj: addin_common.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(calc_CFLAGS) $(CFLAGS) -MT calc-addin_common.obj -MD -MP -MF $(DEPDIR)/calc-addin_common.Tpo -c -o calc-addin_common.obj `if test -f 'addin_common.c'; then $(CYGPATH_W) 'addin_common.c'; else $(CYGPATH_W) '$(srcdir)/addin_common.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/calc-addin_common.Tpo $(DEPDIR)/calc-addin_common.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='addin_common.c' object='calc-addin_common.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(calc_CFLAGS) $(CFLAGS) -c -o calc-addin_common.obj `if test -f 'addin_common.c'; then $(CYGPATH_W) 'addin_common.c'; else $(CYGPATH_W) '$(srcdir)/addin_common.c'; fi`
 
 fitrslt-fitrslt.o: fitrslt.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(fitrslt_CFLAGS) $(CFLAGS) -MT fitrslt-fitrslt.o -MD -MP -MF $(DEPDIR)/fitrslt-fitrslt.Tpo -c -o fitrslt-fitrslt.o `test -f 'fitrslt.c' || echo '$(srcdir)/'`fitrslt.c

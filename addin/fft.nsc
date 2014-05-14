@@ -27,26 +27,26 @@ else
     exit
 fi
 
-new file
-file::x=1
-file::y=2
-file::file="$DEST_FILE"
-file::type=line
-file::B=255
+new plot
+plot::x=1
+plot::y=2
+plot::file="$DEST_FILE"
+plot::type=line
+plot::B=255
 
-new file
-file::file="$DEST_FILE"
-file::x=1
-file::y=3
-file::type=line
-file::R=255
+new plot
+plot::file="$DEST_FILE"
+plot::x=1
+plot::y=3
+plot::type=line
+plot::R=255
 
-new file
-file::file="$DEST_FILE"
-file::x=1
-file::y=2
-file::type=staircase_x
-file::math_y='SQRT(%02^2+%03^2)'
+new plot
+plot::file="$DEST_FILE"
+plot::x=1
+plot::y=2
+plot::type=staircase_x
+plot::math_y='SQRT(%02^2+%03^2)'
 menu::modified=true
 
 del dialog

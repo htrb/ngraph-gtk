@@ -29,9 +29,15 @@
 #define COLUMN_ID      1
 #define COLUMN_CAPTION 5
 
+enum {
+  PLOT_SOURCE_FILE,
+  PLOT_SOURCE_ARRAY,
+  PLOT_SOURCE_FUNC,
+};
+
 struct file_data {
-  char *file, *math_x, *math_y, *type, *caption, *style;
-  int id, x, y, mark, size, width, r, g, b, r2, g2, b2, show, mix;
+  char *file, *array, *math_x, *math_y, *type, *caption, *style;
+  int id, source, x, y, mark, size, width, r, g, b, r2, g2, b2, show, mix;
 };
 
 struct caption_widget {
@@ -96,7 +102,16 @@ loaddatalist(struct file_prm *prm, const char *datalist)
   prm->data = g_malloc(sizeof(*prm->data) * filenum);
   prm->file_num = filenum;
   for (i = 0; i < filenum; i++) {
+    str = fgets_str(f);
+    if (g_strcmp0(str, "array") == 0) {
+      prm->data[i].source = PLOT_SOURCE_ARRAY;
+    } else if (g_strcmp0(str, "function") == 0) {
+      prm->data[i].source = PLOT_SOURCE_FUNC;
+    } else {
+      prm->data[i].source = PLOT_SOURCE_FILE;
+    }
     prm->data[i].file = fgets_str(f);
+    prm->data[i].array = fgets_str(f);
     prm->data[i].id = fgets_int(f);
 
     hidden = fgets_str(f);
@@ -119,16 +134,33 @@ loaddatalist(struct file_prm *prm, const char *datalist)
     prm->data[i].math_x = fgets_str(f);
     prm->data[i].math_y = fgets_str(f);
     prm->data[i].mix = -1;
-    if (prm->data[i].file) {
-      file = g_path_get_basename(prm->data[i].file);
+    str = NULL;
+    file = NULL;
+    if (prm->data[i].source == PLOT_SOURCE_ARRAY) {
+      if (prm->data[i].array) {
+	file = g_strdup(prm->data[i].array);
+	str = escape_char(file, "_^@%\\", "\\");
+      }
+    } else if (prm->data[i].source == PLOT_SOURCE_FUNC) {
+      file = g_strdup_printf("X=%s; Y=%s",
+			     (prm->data[i].math_x[0]) ? prm->data[i].math_x : "X",
+			     (prm->data[i].math_y[0]) ? prm->data[i].math_y : "Y");
       str = escape_char(file, "_^@%\\", "\\");
-      prm->data[i].caption = str;
-      g_free(file);
+      prm->data[i].type = "line";
     } else {
-      prm->data[i].caption = NULL;
+      if (prm->data[i].file) {
+	file = g_path_get_basename(prm->data[i].file);
+	str = escape_char(file, "_^@%\\", "\\");
+      }
+    }
+    prm->data[i].caption = str;
+    if (file) {
+      g_free(file);
     }
     for (j = 0; j < i; j++) {
-      if ((g_strcmp0(prm->data[i].file, prm->data[j].file) == 0) &&
+      if ((prm->data[i].source == prm->data[j].source) &&
+	  (g_strcmp0(prm->data[i].file, prm->data[j].file) == 0) &&
+	  (g_strcmp0(prm->data[i].array, prm->data[j].array) == 0) &&
 	  (prm->data[i].show == prm->data[j].show) &&
 	  (prm->data[i].x == prm->data[j].x) &&
 	  (prm->data[i].y == prm->data[j].y) &&
@@ -435,7 +467,7 @@ static void
 set_parameter(struct file_prm *prm)
 {
   int i, mix;
-  char *basename;
+  char *caption;
   GtkTreeIter iter;
   GtkListStore *list;
 
@@ -451,16 +483,22 @@ set_parameter(struct file_prm *prm)
     }
     gtk_list_store_append(list, &iter);
 
-    basename = g_path_get_basename(prm->data[i].file);
+    if (prm->data[i].source == PLOT_SOURCE_ARRAY) {
+      caption = g_strdup(prm->data[i].array);
+    } else if (prm->data[i].source == PLOT_SOURCE_FUNC) {
+      caption = g_strdup("function");
+    } else {
+      caption = g_path_get_basename(prm->data[i].file);
+    }
     gtk_list_store_set(list, &iter,
 		       0, prm->data[i].show,
 		       1, prm->data[i].id,
-		       2, basename,
+		       2, caption,
 		       3, prm->data[i].x,
 		       4, prm->data[i].y,
 		       5, prm->data[i].caption,
 		       -1);
-    g_free(basename);
+    g_free(caption);
   }
 }
 
@@ -534,7 +572,7 @@ create_file_frame(struct file_prm *prm)
   GtkTreeViewColumn *col;
   GtkWidget *tview, *hbox, *swin, *frame;
   int i, n;
-  char *title[] = {"#", "File", "x", "y", "Caption"};
+  char *title[] = {"#", "Source", "x", "y", "Caption"};
 
   n = sizeof(title) / sizeof(*title);
 
@@ -674,9 +712,9 @@ main(int argc, char **argv)
   }
 
   mainwin = gtk_dialog_new_with_buttons(NAME, NULL, 0,
-					"_Cancel",   
+					"_Cancel",
 					GTK_RESPONSE_REJECT,
-					"_Ok",   
+					"_Ok",
 					GTK_RESPONSE_ACCEPT,
 					NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(mainwin), GTK_RESPONSE_ACCEPT);
