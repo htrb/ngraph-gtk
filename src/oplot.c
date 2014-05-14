@@ -8710,7 +8710,7 @@ static int
 save_data_func(struct objlist *obj, N_VALUE *inst, struct f2dlocal *f2dlocal,
 	       struct f2ddata *fp, const char *file, int append)
 {
-  int rcode, r, i, div;
+  int r, i, div;
   double min, max, t, dx, dy, inc;
   MathValue val;
   FILE *fp2;
@@ -8740,7 +8740,7 @@ save_data_func(struct objlist *obj, N_VALUE *inst, struct f2dlocal *f2dlocal,
       val.val = t;
       val.type = MATH_VALUE_NORMAL;
       math_equation_set_var(f2dlocal->codex[0], 0, &val);
-      rcode = math_equation_calculate(f2dlocal->codex[0], &val);
+      math_equation_calculate(f2dlocal->codex[0], &val);
       dx = val.val;
       if ((val.type!=MATH_VALUE_NORMAL) && (val.type!=MATH_VALUE_UNDEF)) {
 	continue;
@@ -8751,7 +8751,7 @@ save_data_func(struct objlist *obj, N_VALUE *inst, struct f2dlocal *f2dlocal,
       val.val = t;
       val.type = MATH_VALUE_NORMAL;
       math_equation_set_var(f2dlocal->codey[0], 0, &val);
-      rcode = math_equation_calculate(f2dlocal->codey[0], &val);
+      math_equation_calculate(f2dlocal->codey[0], &val);
       dy = val.val;
       if ((val.type!=MATH_VALUE_NORMAL) && (val.type!=MATH_VALUE_UNDEF)) {
 	continue;

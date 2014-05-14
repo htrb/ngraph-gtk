@@ -1,5 +1,8 @@
 2014-05-14  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/oplot.c (save_data_func): don't check returned value of the
+	function "math_equation_calculate()".
+
 	* addin/fitrslt.c (loaddatalist): get and check "source" and
 	"array" fields.
 
