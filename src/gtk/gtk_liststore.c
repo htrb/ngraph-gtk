@@ -13,6 +13,56 @@
 
 
 static gboolean
+tree_view_set_tooltip_query_cb(GtkWidget  *widget,
+			       gint        x,
+			       gint        y,
+			       gboolean    keyboard_tip,
+			       GtkTooltip *tooltip,
+			       gpointer    data)
+{
+  char *str;
+  GtkTreeIter iter;
+  GtkTreePath *path;
+  GtkTreeModel *model;
+  GtkTreeView *tree_view = GTK_TREE_VIEW(widget);
+  int column;
+
+  if (!gtk_tree_view_get_tooltip_context(GTK_TREE_VIEW(widget),
+					 &x, &y,
+					 keyboard_tip,
+					 &model, &path, &iter)) {
+    return FALSE;
+  }
+
+  column = GPOINTER_TO_INT(data);
+  if (column < 0) {
+    return FALSE;
+  }
+
+  str = NULL;
+  gtk_tree_model_get(model, &iter, column, &str, -1);
+  if (str == NULL) {
+    return FALSE;
+  }
+
+  gtk_tooltip_set_text(tooltip, str);
+  gtk_tree_view_set_tooltip_row(tree_view, tooltip, path);
+
+  g_free(str);
+  gtk_tree_path_free(path);
+
+  return TRUE;
+}
+
+void
+tree_view_set_tooltip_column(GtkTreeView *tree_view, gint column)
+{
+  g_signal_connect(tree_view, "query-tooltip",
+		   G_CALLBACK(tree_view_set_tooltip_query_cb), GINT_TO_POINTER(column));
+  gtk_widget_set_has_tooltip(GTK_WIDGET(tree_view), TRUE);
+}
+
+static gboolean
 combo_box_separator_func(GtkTreeModel *model, GtkTreeIter *iter, gpointer data)
 {
   char *str;

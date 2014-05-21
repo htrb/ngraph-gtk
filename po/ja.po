@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.06.13\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2014-05-13 08:59+0200\n"
+"POT-Creation-Date: 2014-05-21 18:03+0900\n"
 "PO-Revision-Date: 2014-05-10 07:50+0200\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -641,8 +641,8 @@ msgstr "一点二鎖線"
 msgid "auto"
 msgstr "自動"
 
-#: src/gtk/x11dialg.c:123 src/gtk/x11file.c:69 src/gtk/x11merge.c:52
-#: src/gtk/x11opt.c:475 src/oplot.c:165
+#: src/gtk/x11dialg.c:123 src/gtk/x11merge.c:52 src/gtk/x11opt.c:475
+#: src/oplot.c:165
 msgid "file"
 msgstr "ファイル"
 
@@ -826,6 +826,11 @@ msgstr "全て(_A)"
 #: src/gtk/x11file.c:2080 src/gtk/x11view.c:987
 msgid "Select _All"
 msgstr "すべて選択(_A)"
+
+#: src/gtk/x11file.c:69
+#, fuzzy
+msgid "file/function"
+msgstr "関数"
 
 #: src/gtk/x11file.c:72
 msgid "ax"
@@ -2663,15 +2668,15 @@ msgstr "目盛数字の色"
 msgid "Open"
 msgstr "開く"
 
-#: src/gtk/gtk_liststore.c:112
+#: src/gtk/gtk_liststore.c:162
 msgid "Bold"
 msgstr "太字"
 
-#: src/gtk/gtk_liststore.c:113
+#: src/gtk/gtk_liststore.c:163
 msgid "Italic"
 msgstr "斜体"
 
-#: src/gtk/gtk_liststore.c:223
+#: src/gtk/gtk_liststore.c:273
 msgid "Line style"
 msgstr "線種"
 

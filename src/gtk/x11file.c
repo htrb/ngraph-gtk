@@ -66,7 +66,7 @@
 static n_list_store Flist[] = {
   {" ",	        G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden"},
   {"#",		G_TYPE_INT,     TRUE, FALSE, "id"},
-  {N_("file"),	G_TYPE_STRING,  TRUE, TRUE,  "file"},
+  {N_("file/function"),	G_TYPE_STRING,  TRUE, TRUE,  "file", 0, 0, 0, 0, PANGO_ELLIPSIZE_END},
   {"x   ",	G_TYPE_INT,     TRUE, TRUE,  "x",  0, 999, 1, 10},
   {"y   ",	G_TYPE_INT,     TRUE, TRUE,  "y",  0, 999, 1, 10},
   {N_("ax"),	G_TYPE_PARAM,   TRUE, TRUE,  "axis_x"},
@@ -1873,7 +1873,7 @@ move_tab_create(struct FileDialog *d)
 #endif
   gtk_box_pack_start(GTK_BOX(vbox), w, TRUE, TRUE, 4);
 
-  add_copy_button_to_box(vbox, G_CALLBACK(move_tab_copy), d, "file");
+  add_copy_button_to_box(vbox, G_CALLBACK(move_tab_copy), d, "plot");
 
   return vbox;
 }
@@ -2102,7 +2102,7 @@ mask_tab_create(struct FileDialog *d)
 #endif
   gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 4);
 
-  add_copy_button_to_box(vbox, G_CALLBACK(mask_tab_copy), d, "file");
+  add_copy_button_to_box(vbox, G_CALLBACK(mask_tab_copy), d, "plot");
 
   return vbox;
 }
@@ -2248,7 +2248,7 @@ load_tab_create(struct FileDialog *d)
 #endif
   gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 4);
 
-  add_copy_button_to_box(vbox, G_CALLBACK(load_tab_copy), d, "file");
+  add_copy_button_to_box(vbox, G_CALLBACK(load_tab_copy), d, "plot");
 
   return vbox;
 }
@@ -2424,7 +2424,7 @@ math_tab_create(struct FileDialog *d)
 #endif
   gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 4);
 
-  add_copy_button_to_box(vbox, G_CALLBACK(math_tab_copy), d, "file");
+  add_copy_button_to_box(vbox, G_CALLBACK(math_tab_copy), d, "plot");
 
   return vbox;
 }
@@ -3194,7 +3194,7 @@ plot_tab_create(GtkWidget *parent, struct FileDialog *d)
 #endif
   gtk_box_pack_start(GTK_BOX(vbox), w, TRUE, TRUE, 4);
 
-  add_copy_button_to_box(vbox, G_CALLBACK(plot_tab_copy), d, "file");
+  add_copy_button_to_box(vbox, G_CALLBACK(plot_tab_copy), d, "plot");
 
   return vbox;
 }
@@ -3246,7 +3246,7 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
 
   gtk_box_pack_start(GTK_BOX(vbox2), hbox, FALSE, FALSE, 4);
 
-  add_copy_button_to_box(vbox2, G_CALLBACK(file_settings_copy), d, "file");
+  add_copy_button_to_box(vbox2, G_CALLBACK(file_settings_copy), d, "plot");
 
 #if GTK_CHECK_VERSION(3, 0, 0)
   hbox = gtk_grid_new();
@@ -6238,7 +6238,7 @@ FileWinState(struct SubWin *d, int state)
 
   gtk_tree_view_set_enable_search(GTK_TREE_VIEW(d->data.data->text), TRUE);
   gtk_tree_view_set_search_column(GTK_TREE_VIEW(d->data.data->text), FILE_WIN_COL_FILE);
-  gtk_tree_view_set_tooltip_column(GTK_TREE_VIEW(d->data.data->text), FILE_WIN_COL_TIP);
+  tree_view_set_tooltip_column(GTK_TREE_VIEW(d->data.data->text), FILE_WIN_COL_TIP);
 
   set_cell_attribute_source(d, "style", FILE_WIN_COL_FILE, FILE_WIN_COL_MASKED);
 

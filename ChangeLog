@@ -1,3 +1,16 @@
+2014-05-21  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11merge.c (MergeWinState): use "tree_view_set_tooltip_column()".
+
+	* src/gtk/x11lgnd.c (LegendWinState): use "tree_view_set_tooltip_column()".
+
+	* src/gtk/x11file.c (FileWinState): use "tree_view_set_tooltip_column()".
+
+	* src/gtk/x11axis.c (AxisWinState): use "tree_view_set_tooltip_column()".
+
+	* src/gtk/gtk_liststore.c (tree_view_set_tooltip_column)
+	(tree_view_set_tooltip_query_cb): added.
+
 2014-05-14  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/oplot.c (save_data_func): don't check returned value of the

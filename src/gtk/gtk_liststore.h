@@ -35,6 +35,9 @@ typedef struct _list_store {
   gulong edited_id;
 } n_list_store;
 
+
+void tree_view_set_tooltip_column(GtkTreeView *tree_view, gint column);
+
 void init_object_combo_box(GtkWidget *cbox);
 
 void add_separator_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *parent);
