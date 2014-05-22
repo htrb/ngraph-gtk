@@ -247,6 +247,8 @@ struct ToolItem {
     TOOL_TYPE_TOGGLE,
     TOOL_TYPE_TOGGLE2,
     TOOL_TYPE_RADIO,
+    TOOL_TYPE_RECENT_GRAPH,
+    TOOL_TYPE_RECENT_DATA,
     TOOL_TYPE_SEPARATOR,
   } type;
   const char *label;
@@ -624,7 +626,7 @@ struct ToolItem CommandToolbar[] = {
     ActionWidget + SingleWindowSeparator,
   },
   {
-    TOOL_TYPE_NORMAL,
+    TOOL_TYPE_RECENT_DATA,
     N_("_Add"),
     N_("Add Data"),
     N_("Add Data file"),
@@ -642,7 +644,7 @@ struct ToolItem CommandToolbar[] = {
     NULL,
   },
   {
-    TOOL_TYPE_NORMAL,
+    TOOL_TYPE_RECENT_GRAPH,
     N_("_Load graph"),
     N_("Load NGP"),
     N_("Load NGP file"),
@@ -1463,7 +1465,7 @@ struct MenuItem AxisMenu[] = {
 struct MenuItem PlotAddMenu[] = {
   {
     MENU_TYPE_NORMAL,
-    N_("_Data"),
+    N_("_File"),
     N_("Add data file"),
     N_("Add data file"),
     "text-x-generic",
@@ -1533,10 +1535,10 @@ struct MenuItem DataMenu[] = {
   },
   {
     MENU_TYPE_NORMAL,
-    N_("_Close"),
+    N_("_Delete"),
     NULL,
     NULL,
-    "window-close",
+    NULL,
     NULL,
     "<Ngraph>/Data/Close",
     0,
@@ -4958,6 +4960,15 @@ create_recent_menu(int type)
   gtk_recent_chooser_set_sort_type(GTK_RECENT_CHOOSER(submenu), GTK_RECENT_SORT_MRU);
   gtk_recent_chooser_set_limit(GTK_RECENT_CHOOSER(submenu), 10);
 
+  switch (type) {
+  case RECENT_TYPE_GRAPH:
+    g_signal_connect(GTK_RECENT_CHOOSER(submenu), "item-activated", G_CALLBACK(CmGraphHistory), NULL);
+    break;
+  case RECENT_TYPE_DATA:
+    g_signal_connect(GTK_RECENT_CHOOSER(submenu), "item-activated", G_CALLBACK(CmFileHistory), NULL);
+    break;
+  }
+
   return submenu;
 }
 
@@ -4967,7 +4978,7 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
   int i;
   GSList *list;
   GtkToolItem *widget;
-  GtkWidget *toolbar, *icon;
+  GtkWidget *toolbar, *icon, *menu;
 
   toolbar = gtk_toolbar_new();
   list = NULL;
@@ -4986,6 +4997,16 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
       break;
     case TOOL_TYPE_NORMAL:
       widget = gtk_tool_button_new(icon, _(item[i].label));
+      break;
+    case TOOL_TYPE_RECENT_GRAPH:
+      widget = gtk_menu_tool_button_new(icon, _(item[i].label));
+      menu = create_recent_menu(RECENT_TYPE_GRAPH);
+      gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(widget), menu);
+      break;
+    case TOOL_TYPE_RECENT_DATA:
+      widget = gtk_menu_tool_button_new(icon, _(item[i].label));
+      menu = create_recent_menu(RECENT_TYPE_DATA);
+      gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(widget), menu);
       break;
     case TOOL_TYPE_TOGGLE:
     case TOOL_TYPE_TOGGLE2:
@@ -5081,13 +5102,11 @@ create_menu_sub(GtkWidget *parent, struct MenuItem *item, int popup)
     case MENU_TYPE_RECENT_GRAPH:
       widget = gtk_menu_item_new_with_mnemonic(_(item[i].label));
       submenu = create_recent_menu(RECENT_TYPE_GRAPH);
-      g_signal_connect(GTK_RECENT_CHOOSER(submenu), "item-activated", G_CALLBACK(CmGraphHistory), NULL);
       gtk_menu_item_set_submenu(GTK_MENU_ITEM(widget), submenu);
       break;
     case MENU_TYPE_RECENT_DATA:
       widget = gtk_menu_item_new_with_mnemonic(_(item[i].label));
       submenu = create_recent_menu(RECENT_TYPE_DATA);
-      g_signal_connect(GTK_RECENT_CHOOSER(submenu), "item-activated", G_CALLBACK(CmFileHistory), NULL);
       gtk_menu_item_set_submenu(GTK_MENU_ITEM(widget), submenu);
       break;
     default:

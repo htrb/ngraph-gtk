@@ -1,4 +1,26 @@
+2014-05-22  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11axis.c (Popup_list): add "_Add" sub menu.
+
+	* src/gtk/gtk_subwin.c (ev_button_up): removed.
+	(ev_button_down): a popup menu is shown when the button3 is
+	pressed.
+
+	* src/gtk/x11file.c (popup_show_cb): check "source" field.
+
 2014-05-21  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11merge.c (Popup_list): use "_Delete" instead of
+	"_Close".
+
+	* src/gtk/x11file.c (Popup_list): use "_Delete" instead of
+	"_Close".
+
+	* src/gtk/x11menu.c (create_recent_menu): call "g_signal_connect()".
+	(create_toolbar): handle "TOOL_TYPE_RECENT_GRAPH" and
+	"TOOL_TYPE_RECENT_GRAPH".
+	(create_menu_sub): don't call "g_signal_connect()" for
+	"GtkRecentChooserMenu".
 
 	* src/gtk/x11merge.c (MergeWinState): use "tree_view_set_tooltip_column()".
 

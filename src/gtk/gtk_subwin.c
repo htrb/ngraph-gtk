@@ -1201,24 +1201,6 @@ ev_button_down(GtkWidget *w, GdkEventButton *event,  gpointer user_data)
       return TRUE;
     }
     break;
-  }
-
-  return FALSE;
-}
-
-static gboolean
-ev_button_up(GtkWidget *w, GdkEventButton *event,  gpointer user_data)
-{
-  struct obj_list_data *d;
-
-  if (Menulock || Globallock) return FALSE;
-
-  g_return_val_if_fail(w != NULL, FALSE);
-  g_return_val_if_fail(event != NULL, FALSE);
-
-  d = user_data;
-
-  switch (event->button) {
   case 3:
     if (d->popup) {
       do_popup(event, d);
@@ -1499,7 +1481,6 @@ list_widget_create(struct SubWin *d, int lisu_num, n_list_store *list, int can_f
   set_cell_renderer_cb(data, lisu_num, list, lstor);
 
   g_signal_connect(lstor, "button-press-event", G_CALLBACK(ev_button_down), data);
-  g_signal_connect(lstor, "button-release-event", G_CALLBACK(ev_button_up), data);
   g_signal_connect(lstor, "key-press-event", G_CALLBACK(ev_key_down), data);
 
   /* to handle key-press-event correctly in single window mode */

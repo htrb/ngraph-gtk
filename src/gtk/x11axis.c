@@ -91,7 +91,17 @@ static void AxisWinAxisUp(GtkWidget *w, gpointer client_data);
 static void AxisWinAxisDown(GtkWidget *w, gpointer client_data);
 static void AxisWinAxisLast(GtkWidget *w, gpointer client_data);
 
+static struct subwin_popup_list add_menu_list[] = {
+  {N_("_Frame graph"), G_CALLBACK(CmAxisNewFrame), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("_Section graph"), G_CALLBACK(CmAxisNewSection), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("_Cross graph"), G_CALLBACK(CmAxisNewCross), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("Single _Axis"), G_CALLBACK(CmAxisNewSingle), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {NULL, NULL, NULL, POP_UP_MENU_ITEM_TYPE_END},
+};
+
 static struct subwin_popup_list Popup_list[] = {
+  {N_("_Add"),        NULL, add_menu_list, POP_UP_MENU_ITEM_TYPE_MENU},
+  {NULL, NULL, NULL,  POP_UP_MENU_ITEM_TYPE_SEPARATOR},
   {N_("_Duplicate"),  G_CALLBACK(list_sub_window_copy), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {N_("_Delete"),     G_CALLBACK(axis_delete_popup_func), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {NULL, NULL, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
@@ -108,10 +118,10 @@ static struct subwin_popup_list Popup_list[] = {
 
 #define POPUP_ITEM_NUM (sizeof(Popup_list) / sizeof(*Popup_list) - 1)
 
-#define POPUP_ITEM_TOP 7
-#define POPUP_ITEM_UP 8
-#define POPUP_ITEM_DOWN 9
-#define POPUP_ITEM_BOTTOM 10
+#define POPUP_ITEM_TOP 9
+#define POPUP_ITEM_UP 10
+#define POPUP_ITEM_DOWN 11
+#define POPUP_ITEM_BOTTOM 12
 
 #define TITLE_BUF_SIZE 128
 
@@ -3128,7 +3138,7 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
 
   sel = d->select;
   num = chkobjlastinst(d->obj);
-  for (i = 0; i < POPUP_ITEM_NUM; i++) {
+  for (i = 1; i < POPUP_ITEM_NUM; i++) {
     switch (i) {
     case POPUP_ITEM_TOP:
     case POPUP_ITEM_UP:

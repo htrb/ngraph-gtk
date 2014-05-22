@@ -119,33 +119,34 @@ static void create_type_combo_item(GtkTreeStore *list, struct objlist *obj, int 
 static gboolean func_entry_focused(GtkWidget *w, GdkEventFocus *event, gpointer user_data);
 
 static struct subwin_popup_list add_menu_list[] = {
-  {N_("_File"),     G_CALLBACK(CmFileOpen), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {N_("_Function"), G_CALLBACK(CmFuncAdd),  NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("_File"),      G_CALLBACK(CmFileOpen), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("_Function"),  G_CALLBACK(CmFuncAdd),  NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {NULL, NULL, NULL, POP_UP_MENU_ITEM_TYPE_END},
 };
 
 static struct subwin_popup_list Popup_list[] = {
-  {N_("_Add"),             NULL, add_menu_list, POP_UP_MENU_ITEM_TYPE_MENU},
-  {NULL, NULL, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
-  {N_("_Duplicate"),          G_CALLBACK(file_copy_popup_func), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("_Add"),        NULL, add_menu_list, POP_UP_MENU_ITEM_TYPE_MENU},
+  {NULL, NULL, NULL,  POP_UP_MENU_ITEM_TYPE_SEPARATOR},
+  {N_("_Duplicate"),  G_CALLBACK(file_copy_popup_func), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {N_("duplicate _Behind"),   G_CALLBACK(file_copy2_popup_func), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {N_("_Close"),           G_CALLBACK(file_delete_popup_func), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {NULL, NULL, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
-  {N_("_Draw"),            G_CALLBACK(file_draw_popup_func), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {N_("_Properties"),      G_CALLBACK(list_sub_window_update), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {N_("_Edit"),            G_CALLBACK(file_edit_popup_func), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {NULL, NULL, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
+  {N_("_Delete"),     G_CALLBACK(file_delete_popup_func), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {NULL, NULL, NULL,  POP_UP_MENU_ITEM_TYPE_SEPARATOR},
+  {N_("_Draw"),       G_CALLBACK(file_draw_popup_func), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("_Properties"), G_CALLBACK(list_sub_window_update), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("_Edit"),       G_CALLBACK(file_edit_popup_func), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {NULL, NULL, NULL,  POP_UP_MENU_ITEM_TYPE_SEPARATOR},
   {N_("_Top"),        G_CALLBACK(list_sub_window_move_top), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {N_("_Up"),         G_CALLBACK(list_sub_window_move_up), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {N_("_Down"),       G_CALLBACK(list_sub_window_move_down), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {N_("_Bottom"),     G_CALLBACK(list_sub_window_move_last), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {NULL, NULL, NULL, POP_UP_MENU_ITEM_TYPE_END},
+  {NULL, NULL, NULL,  POP_UP_MENU_ITEM_TYPE_END},
 };
 
 #define POPUP_ITEM_NUM (sizeof(Popup_list) / sizeof(*Popup_list) - 1)
-#define POPUP_ITEM_TOP 10
-#define POPUP_ITEM_UP 11
-#define POPUP_ITEM_DOWN 12
+#define POPUP_ITEM_EDIT    8
+#define POPUP_ITEM_TOP    10
+#define POPUP_ITEM_UP     11
+#define POPUP_ITEM_DOWN   12
 #define POPUP_ITEM_BOTTOM 13
 
 #define FITSAVE "fit.ngp"
@@ -4574,6 +4575,8 @@ CmFileOpen(GtkAction *w, gpointer client_data)
   struct objlist *obj;
   struct narray farray;
 
+  printf("CmFileOpen\n");
+
   if (Menulock || Globallock)
     return;
 
@@ -5729,7 +5732,7 @@ filewin_ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
 static void
 popup_show_cb(GtkWidget *widget, gpointer user_data)
 {
-  int sel, num;
+  int sel, num, source;
   unsigned int i;
   struct obj_list_data *d;
 
@@ -5746,6 +5749,14 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
     case POPUP_ITEM_DOWN:
     case POPUP_ITEM_BOTTOM:
       gtk_widget_set_sensitive(d->popup_item[i], sel >= 0 && sel < num);
+      break;
+    case POPUP_ITEM_EDIT:
+      if (sel >= 0 && sel <= num) {
+	getobj(d->obj, "source", sel, 0, NULL, &source);
+	gtk_widget_set_sensitive(d->popup_item[i], source == PLOT_SOURCE_FILE);
+      } else {
+	gtk_widget_set_sensitive(d->popup_item[i], FALSE);
+      }
       break;
     default:
       gtk_widget_set_sensitive(d->popup_item[i], sel >= 0 && sel <= num);
