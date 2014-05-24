@@ -2893,12 +2893,10 @@ plot_tab_copy(GtkButton *btn, gpointer user_data)
 void
 copy_file_obj_field(struct objlist *obj, int id, int sel, int copy_filename)
 {
-  char *field[] = {"name", "fit", NULL, NULL};
+  char *field[] = {"name", "fit", "file", "array", NULL};
 
-  if (! copy_filename) {
-    int i;
-    i = sizeof(field) / sizeof(*field) - 2;
-    field[i] = "file";
+  if (copy_filename) {
+    field[2] = NULL;
   }
 
   copy_obj_field(obj, id, sel, field);

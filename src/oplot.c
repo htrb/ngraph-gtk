@@ -6028,7 +6028,7 @@ f2ddraw(struct objlist *obj, N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   if (src == PLOT_SOURCE_FUNC) {
     funcout(obj, inst, f2dlocal, fp, GC, lwidth, snum, style, ljoin, lmiter);
     closedata(fp, f2dlocal);
-    return 0;
+    goto FinishDrawing;
   }
 
   if (fp->need2pass || fp->final < -1) {
@@ -6105,6 +6105,7 @@ f2ddraw(struct objlist *obj, N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   if (rcode == -1)
     return 1;
 
+ FinishDrawing:
   GRAaddlist(GC, obj, inst, (char *) argv[0], "redraw");
   return 0;
 }
@@ -6381,16 +6382,19 @@ f2devaluate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
 static int
 f2dredraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
-  int redrawf, num, dmax, type;
+  int redrawf, num, dmax, type, source;
   int GC;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
+  _getobj(obj,"source",inst,&source);
   _getobj(obj,"redraw_flag",inst,&redrawf);
   _getobj(obj,"data_num",inst,&num);
   _getobj(obj,"redraw_num",inst,&dmax);
   _getobj(obj, "type", inst, &type);
 
   if (num > 0 && (dmax == 0 || num <= dmax || type == PLOT_TYPE_FIT) && redrawf) {
+    f2ddraw(obj,inst,rval,argc,argv);
+  } else if (source == PLOT_SOURCE_FUNC && redrawf) {
     f2ddraw(obj,inst,rval,argc,argv);
   } else {
     _getobj(obj,"GC",inst,&GC);

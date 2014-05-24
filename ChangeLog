@@ -1,3 +1,12 @@
+2014-05-24  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/oplot.c (f2ddraw): add label "FinishDrawing" and use "goto"
+	instead of "return 0".
+	(f2dredraw): check "source" field.
+
+	* src/gtk/x11file.c (copy_file_obj_field): ignore not only "file"
+	but also "array" field.
+
 2014-05-22  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11axis.c (Popup_list): add "_Add" sub menu.
