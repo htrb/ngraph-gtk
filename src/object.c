@@ -3656,7 +3656,7 @@ getvaluestr(struct objlist *obj,const char *field,void *val,int cr,int quote)
   char *bval;
   const char *arglist;
   unsigned int k;
-  int i;
+  int i, n;
   enum ngraph_object_field_type type;
   GString *str;
 
@@ -3703,7 +3703,8 @@ getvaluestr(struct objlist *obj,const char *field,void *val,int cr,int quote)
     if (array==NULL) break;
     else {
       if (quote) g_string_append_printf(str,"'");
-      for (k=0;k<arraynum(array);k++) {
+      n = arraynum(array);
+      for (k=0;k<n;k++) {
         if (k!=0) g_string_append_printf(str," %d",arraynget_int(array,k));
         else g_string_append_printf(str,"%d",arraynget_int(array,k));
       }
@@ -3715,7 +3716,8 @@ getvaluestr(struct objlist *obj,const char *field,void *val,int cr,int quote)
     if (array==NULL) break;
     else {
       if (quote) g_string_append_printf(str,"'");
-      for (k=0;k<arraynum(array);k++) {
+      n = arraynum(array);
+      for (k=0;k<n;k++) {
         if (k!=0) g_string_append_printf(str," %.15e",arraynget_double(array,k));
         else g_string_append_printf(str,"%.15e",arraynget_double(array,k));
       }

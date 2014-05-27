@@ -1,3 +1,7 @@
+2014-05-27  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/oplot.c (f2dstat_file): add parameter "field".
+
 2014-05-24  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/oplot.c (f2ddraw): add label "FinishDrawing" and use "goto"

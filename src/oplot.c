@@ -7308,14 +7308,13 @@ f2dstat_array(struct objlist *obj, N_VALUE *inst, struct data_stat *stat_x, stru
 }
 
 static int
-f2dstat_file(struct objlist *obj,N_VALUE *inst, struct f2dlocal *f2dlocal, struct data_stat *stat_x,
+f2dstat_file(struct objlist *obj,N_VALUE *inst, const char *field, struct f2dlocal *f2dlocal, struct data_stat *stat_x,
 	     struct data_stat *stat_y, int *num)
 {
   int rcode, interrupt;
   int dnum,minxstat,maxxstat,minystat,maxystat;
   double minx,maxx,miny,maxy;
   double sumx,sumxx,sumy,sumyy;
-  char *field;
   time_t mtime;
   struct f2ddata *fp;
 
@@ -7527,7 +7526,7 @@ f2dstat(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
   r = 0;
   switch (src) {
   case PLOT_SOURCE_FILE:
-    r = f2dstat_file(obj, inst, f2dlocal, &stat_x, &stat_y, &dnum);
+    r = f2dstat_file(obj, inst, field, f2dlocal, &stat_x, &stat_y, &dnum);
     break;
   case PLOT_SOURCE_ARRAY:
     f2dstat_array(obj, inst, &stat_x, &stat_y, &dnum);
