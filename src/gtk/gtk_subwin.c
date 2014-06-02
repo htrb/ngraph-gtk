@@ -1151,11 +1151,9 @@ do_popup(GdkEventButton *event, struct obj_list_data *d)
   GtkMenuPositionFunc func;
 
   if (event) {
-    button = event->button;
     event_time = event->time;
     func = NULL;
   } else {
-    button = 0;
     event_time = gtk_get_current_event_time();
     func = popup_menu_position;
   }
@@ -1167,6 +1165,10 @@ do_popup(GdkEventButton *event, struct obj_list_data *d)
     d->select = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
   }
 
+  /* If the menu popup was initiated by something other than a mouse
+     button press, such as a mouse button release or a keypress,
+     button should be 0. */
+  button = 0;
   gtk_menu_popup(GTK_MENU(d->popup), NULL, NULL, func, d->text, button, event_time);
 }
 
@@ -1191,9 +1193,6 @@ ev_button_down(GtkWidget *w, GdkEventButton *event,  gpointer user_data)
 
   d = user_data;
 
-  if (d->ev_button && d->ev_button(w, event, user_data))
-    return TRUE;
-
   switch (event->button) {
   case 1:
     if (event->type == GDK_2BUTTON_PRESS) {
@@ -1201,6 +1200,24 @@ ev_button_down(GtkWidget *w, GdkEventButton *event,  gpointer user_data)
       return TRUE;
     }
     break;
+  }
+
+  return FALSE;
+}
+
+static gboolean
+ev_button_up(GtkWidget *w, GdkEventButton *event,  gpointer user_data)
+{
+  struct obj_list_data *d;
+
+  if (Menulock || Globallock) return FALSE;
+
+  g_return_val_if_fail(w != NULL, FALSE);
+  g_return_val_if_fail(event != NULL, FALSE);
+
+  d = user_data;
+
+  switch (event->button) {
   case 3:
     if (d->popup) {
       do_popup(event, d);
@@ -1481,6 +1498,7 @@ list_widget_create(struct SubWin *d, int lisu_num, n_list_store *list, int can_f
   set_cell_renderer_cb(data, lisu_num, list, lstor);
 
   g_signal_connect(lstor, "button-press-event", G_CALLBACK(ev_button_down), data);
+  g_signal_connect(lstor, "button-release-event", G_CALLBACK(ev_button_up), data);
   g_signal_connect(lstor, "key-press-event", G_CALLBACK(ev_key_down), data);
 
   /* to handle key-press-event correctly in single window mode */

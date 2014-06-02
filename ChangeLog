@@ -1,3 +1,11 @@
+2014-06-02  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.h (obj_list_data): remove member "ev_button".
+
+	* src/gtk/gtk_subwin.c (do_popup): "button" argument is always
+	zero because this function is called from "button-release-event"
+	or "key-press-event".
+
 2014-05-27  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/oplot.c (f2dstat_file): add parameter "field".
@@ -14,10 +22,6 @@
 2014-05-22  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11axis.c (Popup_list): add "_Add" sub menu.
-
-	* src/gtk/gtk_subwin.c (ev_button_up): removed.
-	(ev_button_down): a popup menu is shown when the button3 is
-	pressed.
 
 	* src/gtk/x11file.c (popup_show_cb): check "source" field.
 
