@@ -1,5 +1,11 @@
 2014-06-02  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* plugins/ruby/Makefile.am (obj.txt): set "XDG_RUNTIME_DIR" when
+	execute "ngraph".
+
+	* doc/html/ja/Makefile.am (object.html): set "XDG_RUNTIME_DIR"
+	when execute "ngraph".
+
 	* src/gtk/x11menu.h (obj_list_data): remove member "ev_button".
 
 	* src/gtk/gtk_subwin.c (do_popup): "button" argument is always
