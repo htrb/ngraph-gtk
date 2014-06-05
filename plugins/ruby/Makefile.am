@@ -18,7 +18,7 @@ install-data-local: $(ruby_ext)
 endif
 
 obj.txt: getobj.nsc ../../src/libngraph.la
-	XDG_RUNTIME_DIR=./ ../../src/ngraph -i getobj.nsc > obj.txt
+	../../src/ngraph -i getobj.nsc > obj.txt
 
 ruby_ngraph.h: obj.txt
 	ruby create_objs.rb obj.txt ruby_ngraph.h

@@ -668,7 +668,7 @@ uninstall-am:
 @HAVE_RUBY_DEV_TRUE@@OS_WIN32_FALSE@	make -f Makefile.ruby install
 
 @HAVE_RUBY_DEV_TRUE@obj.txt: getobj.nsc ../../src/libngraph.la
-@HAVE_RUBY_DEV_TRUE@	XDG_RUNTIME_DIR=./ ../../src/ngraph -i getobj.nsc > obj.txt
+@HAVE_RUBY_DEV_TRUE@	../../src/ngraph -i getobj.nsc > obj.txt
 
 @HAVE_RUBY_DEV_TRUE@ruby_ngraph.h: obj.txt
 @HAVE_RUBY_DEV_TRUE@	ruby create_objs.rb obj.txt ruby_ngraph.h

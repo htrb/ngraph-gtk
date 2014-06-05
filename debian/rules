@@ -1,8 +1,11 @@
+
 #!/usr/bin/make -f
 # -*- makefile -*-
 
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
+
+export XDG_RUNTIME_DIR=/tmp
 
 %:
 	dh $@ --with autoreconf

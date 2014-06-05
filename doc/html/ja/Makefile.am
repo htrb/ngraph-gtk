@@ -11,7 +11,7 @@ htmldir = $(docdir)/html/ja
 
 object.html: ../../../src/libngraph.la object.html.in ../objlist.nsc
 	cat object.html.in > object.html
-	XDG_RUNTIME_DIR=./ ../../../src/ngraph -i ../objlist.nsc >> object.html
+	../../../src/ngraph -i ../objlist.nsc >> object.html
 
 intro.html: intro.html.in Makefile
 	sh ../../../pathconv.sh "$(bindir)" "$(docdir)" "$(pkglibexecdir)" "$(pkglibdir)" "$(pkgdatadir)" "$(ngraphconfdir)" "$(pixmapdir)" intro.html.in
