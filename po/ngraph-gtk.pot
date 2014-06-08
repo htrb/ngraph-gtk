@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.06.14\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2014-05-23 13:57+0900\n"
+"POT-Creation-Date: 2014-06-04 11:59+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -556,52 +556,52 @@ msgstr ""
 msgid "No zero"
 msgstr ""
 
-#: src/gtk/x11commn.c:992 src/gtk/x11menu.c:663 src/gtk/x11menu.c:2467
+#: src/gtk/x11commn.c:1173 src/gtk/x11menu.c:663 src/gtk/x11menu.c:2467
 msgid "Save NGP file"
 msgstr ""
 
-#: src/gtk/x11commn.c:1016 src/gtk/x11opt.c:1947
+#: src/gtk/x11commn.c:1197 src/gtk/x11opt.c:1947
 #, c-format
 msgid "Saving `%.128s'."
 msgstr ""
 
-#: src/gtk/x11commn.c:1202 src/gtk/x11commn.c:1284
+#: src/gtk/x11commn.c:1383 src/gtk/x11commn.c:1465
 #, c-format
 msgid "Loading `%.128s'."
 msgstr ""
 
-#: src/gtk/x11commn.c:1401
+#: src/gtk/x11commn.c:1582
 msgid ""
 "This graph is modified.\n"
 "Save this graph?"
 msgstr ""
 
-#: src/gtk/x11commn.c:1402
+#: src/gtk/x11commn.c:1583
 msgid "Confirm"
 msgstr ""
 
-#: src/gtk/x11commn.c:1624
+#: src/gtk/x11commn.c:1805
 msgid "Ngraph.ini is not found."
 msgstr ""
 
-#: src/gtk/x11commn.c:1627
+#: src/gtk/x11commn.c:1808
 msgid "Ngraph.ini is write protected."
 msgstr ""
 
-#: src/gtk/x11commn.c:1642
+#: src/gtk/x11commn.c:1823
 #, c-format
 msgid "Install `Ngraph.ini' to %s ?"
 msgstr ""
 
-#: src/gtk/x11commn.c:1646
+#: src/gtk/x11commn.c:1827
 msgid "Ngraph.ini could not be copied."
 msgstr ""
 
-#: src/gtk/x11commn.c:1749
+#: src/gtk/x11commn.c:1930
 msgid "_Stop"
 msgstr ""
 
-#: src/gtk/x11commn.c:1787
+#: src/gtk/x11commn.c:1968
 msgid "error"
 msgstr ""
 
@@ -1062,7 +1062,7 @@ msgid "_Y smooth:"
 msgstr ""
 
 #: src/gtk/x11file.c:2678 src/gtk/x11file.c:3887 src/gtk/x11file.c:3975
-#: src/gtk/x11file.c:5796
+#: src/gtk/x11file.c:5797
 #, c-format
 msgid "Create"
 msgstr ""
@@ -1180,43 +1180,43 @@ msgstr ""
 msgid "Plot %d (Function)"
 msgstr ""
 
-#: src/gtk/x11file.c:4505
+#: src/gtk/x11file.c:4506
 msgid "Data new"
 msgstr ""
 
-#: src/gtk/x11file.c:4585 src/gtk/x11menu.c:632
+#: src/gtk/x11file.c:4586 src/gtk/x11menu.c:632
 msgid "Add Data file"
 msgstr ""
 
-#: src/gtk/x11file.c:5643
+#: src/gtk/x11file.c:5644
 msgid "Data file"
 msgstr ""
 
-#: src/gtk/x11file.c:5649
+#: src/gtk/x11file.c:5650
 msgid "Making data file"
 msgstr ""
 
-#: src/gtk/x11file.c:5650
+#: src/gtk/x11file.c:5651
 msgid "Making data file."
 msgstr ""
 
-#: src/gtk/x11file.c:5852 src/gtk/x11lgnd.c:3266
+#: src/gtk/x11file.c:5853 src/gtk/x11lgnd.c:3266
 msgid "Join"
 msgstr ""
 
-#: src/gtk/x11file.c:5857 src/gtk/x11lgnd.c:3242 src/gtk/gtk_widget.c:1169
+#: src/gtk/x11file.c:5858 src/gtk/x11lgnd.c:3242 src/gtk/gtk_widget.c:1169
 msgid "Color 1"
 msgstr ""
 
-#: src/gtk/x11file.c:5864 src/gtk/x11lgnd.c:3243 src/gtk/gtk_widget.c:1176
+#: src/gtk/x11file.c:5865 src/gtk/x11lgnd.c:3243 src/gtk/gtk_widget.c:1176
 msgid "Color 2"
 msgstr ""
 
-#: src/gtk/x11file.c:5872
+#: src/gtk/x11file.c:5873
 msgid "Clip"
 msgstr ""
 
-#: src/gtk/x11file.c:5884
+#: src/gtk/x11file.c:5885
 msgid "Type"
 msgstr ""
 

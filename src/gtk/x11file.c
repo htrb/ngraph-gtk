@@ -4432,6 +4432,7 @@ delete_file_obj(struct obj_list_data *data, int id)
 {
   FitDel(data->obj, id);
   delobj(data->obj, id);
+  /* don't delete darray object */
 }
 
 void

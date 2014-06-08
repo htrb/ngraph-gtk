@@ -3655,8 +3655,8 @@ getvaluestr(struct objlist *obj,const char *field,void *val,int cr,int quote)
   void *po;
   char *bval;
   const char *arglist;
-  unsigned int k;
-  int i, n;
+  unsigned int k, n;
+  int i;
   enum ngraph_object_field_type type;
   GString *str;
 

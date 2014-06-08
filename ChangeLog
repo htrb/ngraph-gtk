@@ -1,3 +1,12 @@
+2014-06-08  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/oplot.c (open_array): check maximum value of the id.
+
+	* src/gtk/x11commn.c (del_darray): added.
+	(DeleteDrawable): call "del_darray()".
+	(store_file, save_array, save_merge, save_plot): added.
+	(SaveParent): use "save_plot()" and "save_merge()".
+
 2014-06-05  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* debian/rules (XDG_RUNTIME_DIR): set environment variable

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.06.13\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2014-05-23 13:57+0900\n"
+"POT-Creation-Date: 2014-06-04 11:59+0900\n"
 "PO-Revision-Date: 2014-05-21 18:40+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -583,21 +583,21 @@ msgstr "ベキ形式(ログ)"
 msgid "No zero"
 msgstr "ゼロ非表示"
 
-#: src/gtk/x11commn.c:992 src/gtk/x11menu.c:663 src/gtk/x11menu.c:2467
+#: src/gtk/x11commn.c:1173 src/gtk/x11menu.c:663 src/gtk/x11menu.c:2467
 msgid "Save NGP file"
 msgstr "NGPファイルの保存"
 
-#: src/gtk/x11commn.c:1016 src/gtk/x11opt.c:1947
+#: src/gtk/x11commn.c:1197 src/gtk/x11opt.c:1947
 #, c-format
 msgid "Saving `%.128s'."
 msgstr "保存中 `%.128s'."
 
-#: src/gtk/x11commn.c:1202 src/gtk/x11commn.c:1284
+#: src/gtk/x11commn.c:1383 src/gtk/x11commn.c:1465
 #, c-format
 msgid "Loading `%.128s'."
 msgstr "読込中 `%.128s'."
 
-#: src/gtk/x11commn.c:1401
+#: src/gtk/x11commn.c:1582
 msgid ""
 "This graph is modified.\n"
 "Save this graph?"
@@ -605,32 +605,32 @@ msgstr ""
 "このグラフは変更されています.\n"
 "保存しますか?"
 
-#: src/gtk/x11commn.c:1402
+#: src/gtk/x11commn.c:1583
 msgid "Confirm"
 msgstr "確認"
 
-#: src/gtk/x11commn.c:1624
+#: src/gtk/x11commn.c:1805
 msgid "Ngraph.ini is not found."
 msgstr "Ngraph.ini が見つかりません."
 
-#: src/gtk/x11commn.c:1627
+#: src/gtk/x11commn.c:1808
 msgid "Ngraph.ini is write protected."
 msgstr "Ngraph.ini に書き込めませんでした."
 
-#: src/gtk/x11commn.c:1642
+#: src/gtk/x11commn.c:1823
 #, c-format
 msgid "Install `Ngraph.ini' to %s ?"
 msgstr "%s に 'Ngraph.ini' をインストールしますか?"
 
-#: src/gtk/x11commn.c:1646
+#: src/gtk/x11commn.c:1827
 msgid "Ngraph.ini could not be copied."
 msgstr "Ngraph.ini をコピーできませんでした."
 
-#: src/gtk/x11commn.c:1749
+#: src/gtk/x11commn.c:1930
 msgid "_Stop"
 msgstr "停止(_S)"
 
-#: src/gtk/x11commn.c:1787
+#: src/gtk/x11commn.c:1968
 msgid "error"
 msgstr "エラー"
 
@@ -1091,7 +1091,7 @@ msgid "_Y smooth:"
 msgstr "_Y 隣接平均:"
 
 #: src/gtk/x11file.c:2678 src/gtk/x11file.c:3887 src/gtk/x11file.c:3975
-#: src/gtk/x11file.c:5796
+#: src/gtk/x11file.c:5797
 #, c-format
 msgid "Create"
 msgstr "作成"
@@ -1209,43 +1209,43 @@ msgstr "配列(_A):"
 msgid "Plot %d (Function)"
 msgstr "プロット %d (関数)"
 
-#: src/gtk/x11file.c:4505
+#: src/gtk/x11file.c:4506
 msgid "Data new"
 msgstr "新規作成"
 
-#: src/gtk/x11file.c:4585 src/gtk/x11menu.c:632
+#: src/gtk/x11file.c:4586 src/gtk/x11menu.c:632
 msgid "Add Data file"
 msgstr "データの追加"
 
-#: src/gtk/x11file.c:5643
+#: src/gtk/x11file.c:5644
 msgid "Data file"
 msgstr "データの保存"
 
-#: src/gtk/x11file.c:5649
+#: src/gtk/x11file.c:5650
 msgid "Making data file"
 msgstr "データファイル作成中"
 
-#: src/gtk/x11file.c:5650
+#: src/gtk/x11file.c:5651
 msgid "Making data file."
 msgstr "データファイル作成中"
 
-#: src/gtk/x11file.c:5852 src/gtk/x11lgnd.c:3266
+#: src/gtk/x11file.c:5853 src/gtk/x11lgnd.c:3266
 msgid "Join"
 msgstr "ジョイン"
 
-#: src/gtk/x11file.c:5857 src/gtk/x11lgnd.c:3242 src/gtk/gtk_widget.c:1169
+#: src/gtk/x11file.c:5858 src/gtk/x11lgnd.c:3242 src/gtk/gtk_widget.c:1169
 msgid "Color 1"
 msgstr "色 1"
 
-#: src/gtk/x11file.c:5864 src/gtk/x11lgnd.c:3243 src/gtk/gtk_widget.c:1176
+#: src/gtk/x11file.c:5865 src/gtk/x11lgnd.c:3243 src/gtk/gtk_widget.c:1176
 msgid "Color 2"
 msgstr "色 2"
 
-#: src/gtk/x11file.c:5872
+#: src/gtk/x11file.c:5873
 msgid "Clip"
 msgstr "クリップ"
 
-#: src/gtk/x11file.c:5884
+#: src/gtk/x11file.c:5885
 msgid "Type"
 msgstr "タイプ"
 

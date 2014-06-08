@@ -781,88 +781,269 @@ FitClear(void)
   }
 }
 
+static void
+del_darray(struct objlist *plot_obj)
+{
+  char *array;
+  int i, j, n, id, last;
+  struct array_prm ary;
+  struct narray *id_array;
+  struct objlist *darray_obj;
+
+  darray_obj = chkobject("darray");
+  if (darray_obj == NULL) {
+    return;
+  }
+
+  last = chkobjlastinst(plot_obj);
+  if (last < 0) {
+    return;
+  }
+
+  id_array = arraynew(sizeof(int));
+  if (id_array == NULL) {
+    return;
+  }
+
+  for (i = 0; i <= last; i++) {
+    getobj(plot_obj, "array", i, 0, NULL, &array);
+    if (array == NULL) {
+      continue;
+    }
+    open_array(array, &ary);
+    for (j = 0; j < ary.col_num; j++) {
+      arrayadd(id_array, &ary.id[j]);
+    }
+  }
+
+  arraysort_int(id_array);
+  arrayuniq_int(id_array);
+
+  n = arraynum(id_array);
+  for (i = 0; i < n; i++) {
+    id = arraynget_int(id_array, n - 1 - i);
+    delobj(darray_obj, id);
+  }
+  arrayfree(id_array);
+}
+
 void
 DeleteDrawable(void)
 {
   struct objlist *fileobj, *drawobj;
   int i;
 
-  if ((fileobj = chkobject("plot")) != NULL) {
-    for (i = 0; i <= chkobjlastinst(fileobj); i++)
+  fileobj = chkobject("plot");
+  if (fileobj) {
+    for (i = 0; i <= chkobjlastinst(fileobj); i++) {
       FitDel(fileobj, i);
+    }
+    del_darray(fileobj);
   }
-  if ((drawobj = chkobject("draw")) != NULL)
+
+  drawobj = chkobject("draw");
+  if (drawobj) {
     delchildobj(drawobj);
+  }
+}
+
+static void
+store_file(struct objlist *ocur, int hFile, int i)
+{
+  char *s, *fname, *fname2;
+  int j;
+  N_VALUE *inst;
+
+  getobj(ocur, "file", i, 0, NULL, &fname);
+  if (fname == NULL) {
+    return;
+  }
+
+  for (j = i - 1; j >= 0; j--) {
+    getobj(ocur, "file", j, 0, NULL, &fname2);
+    if ((fname2 != NULL) && (strcmp0(fname, fname2) == 0)) {
+      break;
+    }
+  }
+  inst = chkobjinst(ocur, i);
+  if (j == -1) {
+    while (_exeobj(ocur, "store_data", inst, 0, NULL) == 0) {
+      _getobj(ocur, "store_data", inst, &s);
+      nwrite(hFile, s, strlen(s));
+      nwrite(hFile, "\n", 1);
+    }
+  } else {
+    while (_exeobj(ocur, "store_dummy", inst, 0, NULL) == 0) {
+      _getobj(ocur, "store_dummy", inst, &s);
+      nwrite(hFile, s, strlen(s));
+      nwrite(hFile, "\n", 1);
+    }
+  }
+}
+
+static void
+save_array(struct objlist *ocur, int hFile, int i, GString *str)
+{
+  char *s, *array, *array2, iarray_str[] = "iarray:!:push ${darray:!:oid}\n\n";
+  int j, k, l, n, id;
+  struct array_prm ary, ary2;
+  struct narray *id_array;
+
+  getobj(ocur, "array", i, 0, NULL, &array);
+  if (array == NULL) {
+    return;
+  }
+
+  id_array = arraynew(sizeof(int));
+  for (j = 0; j < i; j++) {
+    getobj(ocur, "array", j, 0, NULL, &array2);
+    if (array2 == NULL) {
+      continue;
+    }
+    open_array(array2, &ary2);
+    for (k = 0; k < ary2.col_num; k++) {
+      n = arraynum(id_array);
+      for (l = 0; l < n; l++) {
+	id = arraynget_int(id_array, l);
+	if (id == ary2.id[k]) {
+	  break;
+	}
+      }
+      if (l == n) {
+	arrayadd(id_array, &ary2.id[k]);
+      }
+    }
+  }
+
+  open_array(array, &ary);
+  for (k = 0; k < ary.col_num; k++) {
+    n = arraynum(id_array);
+    for (l = 0; l < n; l++) {
+      id = arraynget_int(id_array, l);
+      if (id == ary2.id[k]) {
+	break;
+      }
+    }
+    if (l == n) {
+      arrayadd(id_array, &ary.id[k]);
+      if (getobj(ary.obj, "save", ary.id[k], 0, NULL, &s) != -1) {
+	nwrite(hFile, s, strlen(s));
+	nwrite(hFile, "\n", 1);
+	nwrite(hFile, iarray_str, sizeof(iarray_str) - 1);
+      }
+    }
+    g_string_append_printf(str, "%s^${iarray:!:get:%d}", (k == 0) ? "darray:\"" : ",", l);
+  }
+  arrayfree(id_array);
+}
+
+static void
+save_merge(struct objlist *ocur, int hFile, int storemerge, int i)
+{
+  char *s;
+
+  getobj(ocur, "save", i, 0, NULL, &s);
+  nwrite(hFile, s, strlen(s));
+  nwrite(hFile, "\n", 1);
+  if (storemerge) {
+    store_file(ocur, hFile, i);
+  }
+}
+
+static void
+save_plot(struct objlist *ocur, int hFile, int storedata, int i, int *array_plot)
+{
+  char *s;
+  int source, argc;
+  char *argv2[3], **argv;
+  struct narray *array;
+  GString *str;
+
+  str = NULL;
+  argc = 0;
+  argv = NULL;
+  array = NULL;
+  getobj(ocur, "source", i, 0, NULL, &source);
+  switch (source) {
+  case PLOT_SOURCE_FILE:
+    break;
+  case PLOT_SOURCE_ARRAY:
+    array = arraynew(sizeof(char *));
+    if (array == NULL) {
+      error(NULL, ERRHEAP);
+      return;
+    }
+    s = "array";
+    arrayadd(array, &s);
+    argv2[0] = (char *) array;
+    argv2[1] = NULL;
+
+    argv = argv2;
+    argc = 1;
+
+    str = g_string_new("\tplot::array=");
+    if (str == NULL) {
+      error(NULL, ERRHEAP);
+      return;
+    }
+    if (! *array_plot) {
+      char iarray_str[] = "new iarray\n\n";
+      *array_plot = TRUE;
+      nwrite(hFile, iarray_str, sizeof(iarray_str) - 1);
+    }
+    save_array(ocur, hFile, i, str);
+    break;
+  case PLOT_SOURCE_FUNC:
+    break;
+  }
+
+  getobj(ocur, "save", i, argc, argv, &s);
+  nwrite(hFile, s, strlen(s));
+  if (storedata) {
+    store_file(ocur, hFile, i);
+  }
+
+  if (array) {
+    arrayfree(array);
+  }
+
+  if (str) {
+    nwrite(hFile, str->str, str->len);
+    nwrite(hFile, "\"\n", 2);
+    g_string_free(str, TRUE);
+  }
+  nwrite(hFile, "\n", 1);
 }
 
 static void
 SaveParent(int hFile, struct objlist *parent, int storedata,
 	   int storemerge)
 {
-  struct objlist *ocur;
-  int i, j, instnum;
+  struct objlist *ocur, *oplot, *omerge;
+  int i, instnum, array_plot;
   char *s;
-  N_VALUE *inst;
-  char *fname, *fname2;
 
   ocur = chkobjroot();
-  while (ocur != NULL) {
+  oplot = chkobject("plot");
+  omerge = chkobject("merge");
+  array_plot = FALSE;
+  while (ocur) {
     if (chkobjparent(ocur) == parent) {
       if ((instnum = chkobjlastinst(ocur)) != -1) {
 	for (i = 0; i <= instnum; i++) {
-	  getobj(ocur, "save", i, 0, NULL, &s);
-	  nwrite(hFile, s, strlen(s));
-	  nwrite(hFile, "\n", 1);
-	  if (storedata && (ocur == chkobject("plot"))) {
-	    getobj(ocur, "file", i, 0, NULL, &fname);
-	    if (fname != NULL) {
-	      for (j = i - 1; j >= 0; j--) {
-		getobj(ocur, "file", j, 0, NULL, &fname2);
-		if ((fname2 != NULL)
-		    && (strcmp0(fname, fname2) == 0))
-		  break;
-	      }
-	      inst = chkobjinst(ocur, i);
-	      if (j == -1) {
-		while (_exeobj(ocur, "store_data", inst, 0, NULL) == 0) {
-		  _getobj(ocur, "store_data", inst, &s);
-		  nwrite(hFile, s, strlen(s));
-		  nwrite(hFile, "\n", 1);
-		}
-	      } else {
-		while (_exeobj(ocur, "store_dummy", inst, 0, NULL) == 0) {
-		  _getobj(ocur, "store_dummy", inst, &s);
-		  nwrite(hFile, s, strlen(s));
-		  nwrite(hFile, "\n", 1);
-		}
-	      }
-	    }
+	  if (ocur == oplot) {
+	    save_plot(ocur, hFile, storedata, i, &array_plot);
+	  } else if (ocur == omerge) {
+	    save_merge(ocur, hFile, storemerge, i);
+	  } else {
+	    getobj(ocur, "save", i, 0, NULL, &s);
+	    nwrite(hFile, s, strlen(s));
+	    nwrite(hFile, "\n", 1);
 	  }
-	  if (storemerge && (ocur == chkobject("merge"))) {
-	    getobj(ocur, "file", i, 0, NULL, &fname);
-	    if (fname != NULL) {
-	      for (j = i - 1; j >= 0; j--) {
-		getobj(ocur, "file", j, 0, NULL, &fname2);
-		if ((fname2 != NULL)
-		    && (strcmp0(fname, fname2) == 0))
-		  break;
-	      }
-	      inst = chkobjinst(ocur, i);
-	      if (j == -1) {
-		while (_exeobj(ocur, "store_data", inst, 0, NULL) == 0) {
-		  _getobj(ocur, "store_data", inst, &s);
-		  nwrite(hFile, s, strlen(s));
-		  nwrite(hFile, "\n", 1);
-		}
-	      } else {
-		while (_exeobj(ocur, "store_dummy", inst, 0, NULL) == 0) {
-		  _getobj(ocur, "store_dummy", inst, &s);
-		  nwrite(hFile, s, strlen(s));
-		  nwrite(hFile, "\n", 1);
-		}
-	      }
-	    }
-	  }
+	}
+	if (ocur == oplot && array_plot) {
+	  char iarray_str[] = "del iarray:!\n\n";
+	  nwrite(hFile, iarray_str, sizeof(iarray_str) -1);
 	}
       }
       SaveParent(hFile, ocur, storedata, storemerge);
