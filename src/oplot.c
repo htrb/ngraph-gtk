@@ -6030,6 +6030,8 @@ f2ddraw(struct objlist *obj, N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   }
 
   if (src == PLOT_SOURCE_FUNC) {
+    GRAregion(GC, &w, &h, &zoom);
+    GRAview(GC, 0, 0, w * 10000.0 / zoom, h * 10000.0 / zoom, clip);
     funcout(obj, inst, f2dlocal, fp, GC, lwidth, snum, style, ljoin, lmiter);
     closedata(fp, f2dlocal);
     goto FinishDrawing;

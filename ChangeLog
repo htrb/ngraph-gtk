@@ -1,3 +1,7 @@
+2014-06-30  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/oplot.c (f2ddraw): call "GRAview()".
+
 2014-06-08  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/oplot.c (open_array): check maximum value of the id.
