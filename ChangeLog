@@ -1,3 +1,8 @@
+2014-07-30  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* addin/fft.c (main, save_data, read_data): fix order of
+	arguments.
+
 2014-06-30  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/oplot.c (f2ddraw): call "GRAview()".

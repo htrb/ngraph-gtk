@@ -43,7 +43,7 @@ main(int argc,char **argv)
     exit(1);
   }
 
-  if (save_data(fname2, n, p, minx, maxx)) {
+  if (save_data(fname2, p, n, minx, maxx)) {
     fprintf(stderr, "error: open (%s)", fname2);
     exit(1);
   }
@@ -52,7 +52,7 @@ main(int argc,char **argv)
 }
 
 static int
-save_data(const char *fname2, int n, int p, double minx, double maxx)
+save_data(const char *fname2, int p, int n, double minx, double maxx)
 {
   FILE *fp2;
   double dx;
@@ -77,7 +77,7 @@ save_data(const char *fname2, int n, int p, double minx, double maxx)
 }
 
 static int
-read_data(const char *fname1, int *fft_n, int *fft_p, double *min, double *max)
+read_data(const char *fname1, int *fft_p, int *fft_n, double *min, double *max)
 {
   FILE *fp1;
   int num, n, p;
