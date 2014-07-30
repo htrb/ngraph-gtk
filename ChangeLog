@@ -1,5 +1,7 @@
 2014-07-30  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* addin/fft.c (save_data): change numerical format of the output.
+
 	* src/gtk/gtk_subwin.c (create_popup_menu_sub): add case for
 	"POP_UP_MENU_ITEM_TYPE_RECENT_DATA".
 

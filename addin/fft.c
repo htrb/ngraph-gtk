@@ -66,10 +66,10 @@ save_data(const char *fname2, int p, int n, double minx, double maxx)
   fft(p, n);
   dx = (n - 1) / (maxx - minx) / n;
   for (i = n / 2; i < n; i++) {
-    fprintf(fp2, "%f %f %f\n", dx * (i - n), gr[i], gi[i]);
+    fprintf(fp2, "%+E %+.15E %+.15E\n", dx * (i - n), gr[i], gi[i]);
   }
   for (i = 0; i < n / 2; i++) {
-    fprintf(fp2, "%f %f %f\n", dx * i, gr[i], gi[i]);
+    fprintf(fp2, "%+E %+.15E %+.15E\n", dx * i, gr[i], gi[i]);
   }
   fclose(fp2);
 
