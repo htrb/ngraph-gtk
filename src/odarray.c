@@ -125,6 +125,17 @@ darrayput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 }
 
 static int 
+darray_modified(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
+{
+  struct darray_local *local;
+
+  _getobj(obj, "_local", inst, &local);
+  local->modified = TRUE;
+
+  return 0;
+}
+
+static int 
 darrayadd(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
@@ -597,7 +608,7 @@ static struct objtable odarray[] = {
   {"init",NVFUNC,NEXEC,darrayinit,NULL,0},
   {"done",NVFUNC,NEXEC,darraydone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},
-  {"@",NDARRAY,NREAD|NWRITE,NULL,NULL,0},
+  {"@",NDARRAY,NREAD|NWRITE,darray_modified,NULL,0},
   {"get",NDFUNC,NREAD|NEXEC,darrayget,"i",0},
   {"put",NVFUNC,NREAD|NEXEC,darrayput,"id",0},
   {"add",NVFUNC,NREAD|NEXEC,darrayadd,"d",0},

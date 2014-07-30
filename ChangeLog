@@ -1,5 +1,8 @@
 2014-07-30  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/odarray.c (darray_modified): added.
+	(odarray): "darray_modified()" is called for the "@" field.
+
 	* addin/fft.c (main, save_data, read_data): fix order of
 	arguments.
 
