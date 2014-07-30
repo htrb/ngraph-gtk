@@ -1,5 +1,7 @@
 2014-07-30  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11commn.c (PlotFileArrayCB): removed.
+
 	* src/odarray.c (darray_modified): added.
 	(odarray): "darray_modified()" is called for the "@" field.
 

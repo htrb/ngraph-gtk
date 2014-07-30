@@ -993,7 +993,7 @@ save_plot(struct objlist *ocur, int hFile, int storedata, int i, int *array_plot
     }
     save_array(ocur, hFile, i, str);
     break;
-  case PLOT_SOURCE_FUNC:
+  case PLOT_SOURCE_RANGE:
     break;
   }
 
@@ -1719,18 +1719,6 @@ PlotFileCB(struct objlist *obj, int id)
 
   getobj(obj, "source", id, 0, NULL, &source);
   if (source != PLOT_SOURCE_FILE) {
-    return NULL;
-  }
-  return get_plot_cb_str(obj, id, source);
-}
-
-char *
-PlotFileArrayCB(struct objlist *obj, int id)
-{
-  int source;
-
-  getobj(obj, "source", id, 0, NULL, &source);
-  if (source == PLOT_SOURCE_FUNC) {
     return NULL;
   }
   return get_plot_cb_str(obj, id, source);
