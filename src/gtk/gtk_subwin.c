@@ -1713,6 +1713,11 @@ create_popup_menu_sub(struct obj_list_data *d, int top, struct subwin_popup_list
       submenu = create_popup_menu_sub(d, FALSE, list[i].submenu);
       gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), submenu);
       break;
+    case POP_UP_MENU_ITEM_TYPE_RECENT_DATA:
+      item = gtk_menu_item_new_with_mnemonic(_(list[i].title));
+      submenu = create_recent_menu(RECENT_TYPE_DATA);
+      gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), submenu);
+      break;
     case POP_UP_MENU_ITEM_TYPE_SEPARATOR:
     default:
       item = gtk_separator_menu_item_new();

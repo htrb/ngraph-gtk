@@ -1,5 +1,8 @@
 2014-07-30  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/gtk/gtk_subwin.c (create_popup_menu_sub): add case for
+	"POP_UP_MENU_ITEM_TYPE_RECENT_DATA".
+
 	* src/gtk/x11commn.c (PlotFileArrayCB): removed.
 
 	* src/odarray.c (darray_modified): added.
