@@ -236,11 +236,6 @@ enum ActionWidgetIndex {
 struct ActionWidget ActionWidget[ActionWidgetNum];
 static int DefaultMode = PointerModeBoth;
 
-enum {
-  RECENT_TYPE_GRAPH,
-  RECENT_TYPE_DATA,
-};
-
 struct ToolItem {
   enum {
     TOOL_TYPE_NORMAL,
@@ -1479,17 +1474,26 @@ struct MenuItem PlotAddMenu[] = {
   },
   {
     MENU_TYPE_NORMAL,
-    N_("_Function"),
-    N_("Add function plot"),
+    N_("_Range"),
+    N_("Add range plot"),
     NULL,
     NULL,
     NULL,
-    "<Ngraph>/Data/Add/Function",
+    "<Ngraph>/Data/Add/Range",
     0,
     0,
     NULL,
-    G_CALLBACK(CmFuncAdd),
+    G_CALLBACK(CmRangeAdd),
     0,
+  },
+  {
+    MENU_TYPE_SEPARATOR,
+    NULL,
+  },
+  {
+    MENU_TYPE_RECENT_DATA,
+    N_("_Recent data"),
+    NULL,
   },
   {
     MENU_TYPE_END,
@@ -1508,11 +1512,6 @@ struct MenuItem DataMenu[] = {
     0,
     0,
     PlotAddMenu,
-  },
-  {
-    MENU_TYPE_RECENT_DATA,
-    N_("_Recent data"),
-    NULL,
   },
   {
     MENU_TYPE_SEPARATOR,
@@ -4897,7 +4896,7 @@ check_exist_instances(struct objlist *parent)
   }
 }
 
-gboolean
+static gboolean
 recent_filter(const GtkRecentFilterInfo *filter_info, gpointer user_data)
 {
   int i;
@@ -4931,7 +4930,7 @@ recent_filter(const GtkRecentFilterInfo *filter_info, gpointer user_data)
   return FALSE;
 }
 
-static GtkWidget *
+GtkWidget *
 create_recent_menu(int type)
 {
   GtkRecentFilter *filter;

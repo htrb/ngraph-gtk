@@ -1,5 +1,9 @@
 2014-07-31  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11menu.c (PlotAddMenu): add "recent data" menu item.
+	(recent_filter): static function.
+	(create_recent_menu): not static function.
+
 	* src/gtk/x11file.c (add_menu_list): add "recent data" menu item.
 	(file_setup_item): check source type.
 	(FileDialogSetupItem): remove third parameter.

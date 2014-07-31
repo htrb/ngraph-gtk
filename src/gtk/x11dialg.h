@@ -602,7 +602,7 @@ void OutputImageDialog(struct OutputImageDialog *data, int type);
 
 
 extern struct FileDialog DlgFile;
-extern struct FileDialog DlgFunc;
+extern struct FileDialog DlgRange;
 extern struct FileDialog DlgArray;
 extern struct FileDialog DlgFileDef;
 extern struct EvalDialog DlgEval;

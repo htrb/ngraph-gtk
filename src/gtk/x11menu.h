@@ -74,6 +74,11 @@ enum MenuID {
   MenuIdEditOrderBottom,
 };
 
+enum {
+  RECENT_TYPE_GRAPH,
+  RECENT_TYPE_DATA,
+};
+
 enum DrawLockVal {DrawLockNone, DrawLockDraw, DrawLockExpose};
 
 enum PointerType {
@@ -125,6 +130,8 @@ enum pop_up_menu_item_type {
   POP_UP_MENU_ITEM_TYPE_CHECK,
   POP_UP_MENU_ITEM_TYPE_MENU,
   POP_UP_MENU_ITEM_TYPE_SEPARATOR,
+  POP_UP_MENU_ITEM_TYPE_RECENT_GRAPH,
+  POP_UP_MENU_ITEM_TYPE_RECENT_DATA,
   POP_UP_MENU_ITEM_TYPE_END,
 };
 
@@ -236,6 +243,7 @@ int application(char *file);
 
 void set_current_window(GtkWidget *w);
 GtkWidget *get_current_window(void);
+GtkWidget *create_recent_menu(int type);
 void UpdateAll(void);
 void UpdateAll2(void);
 void ChangePage(void);
