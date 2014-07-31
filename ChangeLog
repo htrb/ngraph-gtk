@@ -1,3 +1,27 @@
+2014-07-31  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/shell.c (gettok): second argument "len" is always
+	initialized.
+
+	* src/oplot.c (ERR_INVALID_RANGE): added.
+	(f2ddata): add members "range_min", "range_max" and "range_div".
+	(opendata): initialize members "range_min", "range_max" and
+	"range_div".
+	(put_func): don't use the variable "is_fuinc".
+	(f2dinit): initialize fields "range_min", "range_max" and
+	"range_div".
+	(hskipdata, getdata_skip_step, get_data_from_source): handle case
+	for "PLOT_SOURCE_RANGE".
+	(get_func_prm, get_func_value, funcout): removed.
+	(f2dcolumn_range): added.
+	(f2dopendata, f2dgetdata, f2dopendataraw): don't check the
+	"source" field.
+	(f2dstat_range): added.
+	(f2dstat): use "f2dstat_range()".
+	(f2dboundings_func, save_data_func): removed.
+	(solve_equation, calc_fit_equation, get_fit_parameter): don't
+	check the "source" field.
+
 2014-07-30  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* addin/fft.c (save_data): change numerical format of the output.

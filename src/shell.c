@@ -1520,6 +1520,7 @@ gettok(char **s,int *len,int *quote,int *bquote,int *cend,int *escape)
   int i;
   char *po,*spo;
 
+  *len = 0;
   if (*s==NULL) return NULL;
   *cend='\0';
   *escape=FALSE;
