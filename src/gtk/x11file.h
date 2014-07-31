@@ -32,7 +32,7 @@ const char *get_plot_info_str(struct objlist *obj, int id, int src);
 void FileWinUpdate(struct obj_list_data *data, int clear);
 void CmFileHistory(GtkRecentChooser *w, gpointer client_data);
 
-void CmFuncAdd(GtkAction *w, gpointer client_data);
+void CmRangeAdd(GtkAction *w, gpointer client_data);
 void CmFileNew(GtkAction *w, gpointer client_data);
 void CmFileOpen(GtkAction *w, gpointer client_data);
 void CmFileClose(GtkAction *w, gpointer client_data);

@@ -1,5 +1,17 @@
 2014-07-31  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11file.c (add_menu_list): add "recent data" menu item.
+	(file_setup_item): check source type.
+	(FileDialogSetupItem): remove third parameter.
+	(FileDialogSetupCommon): check source type.
+	(RangeDialogSetup): renamed from "FuncDialogSetup()".
+	(ArrayDialogClose, FuncDialogClose): removed.
+	(FileDialog): always "0FileDialogClose" is used.
+	(FileDefDialog): initialize "source" member.
+	(draw_type_pixbuf, start_editing_type): don't check the "source"
+	field.
+	(create_type_color_combo_box): remove fifth parameter.
+
 	* src/shell.c (gettok): second argument "len" is always
 	initialized.
 
