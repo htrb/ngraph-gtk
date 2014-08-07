@@ -82,6 +82,7 @@ read_data(const char *fname1, int *fft_p, int *fft_n, double *min, double *max)
   FILE *fp1;
   int num, n, p;
   double x, y, minx, maxx;
+  char line[1024];
 
   fp1 = fopen(fname1, "rt");
   if (fp1 == NULL) {
@@ -94,7 +95,10 @@ read_data(const char *fname1, int *fft_p, int *fft_n, double *min, double *max)
   maxx = 0;
   minx = 0;
 
-  while (fscanf(fp1, "%lf%lf", &x, &y) == 2) {
+  while (fgets(line, sizeof(line), fp1)) {
+    if (sscanf(line, "%lf%*[ \t,]%lf", &x, &y) != 2) {
+      continue;
+    }
     if (num == 0) {
       minx = x;
     }

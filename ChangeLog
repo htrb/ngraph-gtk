@@ -1,3 +1,8 @@
+2014-08-07  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* addin/fft.c (read_data): use "fgets()" and "sscanf()" instead of
+	"fscanf()".
+
 2014-07-31  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (PlotAddMenu): add "recent data" menu item.
