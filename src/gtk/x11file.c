@@ -46,7 +46,7 @@
 #include "gra.h"
 #include "spline.h"
 #include "nconfig.h"
-#include "oplot.h"
+#include "odata.h"
 #include "ofit.h"
 
 #include "math_equation.h"
@@ -122,7 +122,7 @@ static struct subwin_popup_list add_menu_list[] = {
   {N_("_File"),  G_CALLBACK(CmFileOpen), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {N_("_Range"), G_CALLBACK(CmRangeAdd), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {NULL, NULL, NULL,  POP_UP_MENU_ITEM_TYPE_SEPARATOR},
-  {N_("_Recent data"),  NULL, NULL, POP_UP_MENU_ITEM_TYPE_RECENT_DATA},
+  {N_("_Recent file"),  NULL, NULL, POP_UP_MENU_ITEM_TYPE_RECENT_DATA},
   {NULL, NULL, NULL, POP_UP_MENU_ITEM_TYPE_END},
 };
 
@@ -1876,7 +1876,7 @@ move_tab_create(struct FileDialog *d)
 #endif
   gtk_box_pack_start(GTK_BOX(vbox), w, TRUE, TRUE, 4);
 
-  add_copy_button_to_box(vbox, G_CALLBACK(move_tab_copy), d, "plot");
+  add_copy_button_to_box(vbox, G_CALLBACK(move_tab_copy), d, "data");
 
   return vbox;
 }
@@ -2105,7 +2105,7 @@ mask_tab_create(struct FileDialog *d)
 #endif
   gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 4);
 
-  add_copy_button_to_box(vbox, G_CALLBACK(mask_tab_copy), d, "plot");
+  add_copy_button_to_box(vbox, G_CALLBACK(mask_tab_copy), d, "data");
 
   return vbox;
 }
@@ -2152,7 +2152,7 @@ load_tab_setup_item(struct FileDialog *d, int id)
   SetWidgetFromObjField(d->load.headskip, d->Obj, id, "head_skip");
   SetWidgetFromObjField(d->load.readstep, d->Obj, id, "read_step");
   SetWidgetFromObjField(d->load.finalline, d->Obj, id, "final_line");
-  if (d->source != PLOT_SOURCE_FILE) {
+  if (d->source != DATA_SOURCE_FILE) {
     return;
   }
 
@@ -2226,7 +2226,7 @@ load_tab_create(struct FileDialog *d)
   add_widget_to_table(table, w, _("_Final line:"), FALSE, i++);
   d->load.finalline = w;
 
-  if (d->source == PLOT_SOURCE_FILE) {
+  if (d->source == DATA_SOURCE_FILE) {
     w = create_text_entry(TRUE, TRUE);
     add_widget_to_table(table, w, _("_Remark:"), TRUE, i++);
     d->load.remark = w;
@@ -2251,7 +2251,7 @@ load_tab_create(struct FileDialog *d)
 #endif
   gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 4);
 
-  add_copy_button_to_box(vbox, G_CALLBACK(load_tab_copy), d, "plot");
+  add_copy_button_to_box(vbox, G_CALLBACK(load_tab_copy), d, "data");
 
   return vbox;
 }
@@ -2291,7 +2291,7 @@ load_tab_set_value(struct FileDialog *d)
   if (SetObjFieldFromWidget(d->load.finalline, d->Obj, d->Id, "final_line"))
     return 1;
 
-  if (d->source != PLOT_SOURCE_FILE) {
+  if (d->source != DATA_SOURCE_FILE) {
     return 0;
   }
 
@@ -2427,7 +2427,7 @@ math_tab_create(struct FileDialog *d)
 #endif
   gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 4);
 
-  add_copy_button_to_box(vbox, G_CALLBACK(math_tab_copy), d, "plot");
+  add_copy_button_to_box(vbox, G_CALLBACK(math_tab_copy), d, "data");
 
   return vbox;
 }
@@ -2664,7 +2664,7 @@ plot_axis_setup_item(struct FileDialog *d, int id)
 static void
 file_setup_item(struct FileDialog *d, int id)
 {
-  if (d->source != PLOT_SOURCE_RANGE) {
+  if (d->source != DATA_SOURCE_RANGE) {
     SetWidgetFromObjField(d->xcol, d->Obj, id, "x");
     SetWidgetFromObjField(d->ycol, d->Obj, id, "y");
   }
@@ -2729,14 +2729,14 @@ FileDialogSetupItem(GtkWidget *w, struct FileDialog *d)
   file_setup_item(d, d->Id);
 
   switch (d->source) {
-  case PLOT_SOURCE_FILE:
+  case DATA_SOURCE_FILE:
     SetWidgetFromObjField(d->file, d->Obj, d->Id, "file");
     gtk_editable_set_position(GTK_EDITABLE(d->file), -1);
     break;
-  case PLOT_SOURCE_ARRAY:
+  case DATA_SOURCE_ARRAY:
     SetWidgetFromObjField(d->file, d->Obj, d->Id, "array");
     break;
-  case PLOT_SOURCE_RANGE:
+  case DATA_SOURCE_RANGE:
     SetWidgetFromObjField(d->min, d->Obj, d->Id, "range_min");
     SetWidgetFromObjField(d->max, d->Obj, d->Id, "range_max");
     SetWidgetFromObjField(d->div, d->Obj, d->Id, "range_div");
@@ -3205,7 +3205,7 @@ plot_tab_create(GtkWidget *parent, struct FileDialog *d)
 #endif
   gtk_box_pack_start(GTK_BOX(vbox), w, TRUE, TRUE, 4);
 
-  add_copy_button_to_box(vbox, G_CALLBACK(plot_tab_copy), d, "plot");
+  add_copy_button_to_box(vbox, G_CALLBACK(plot_tab_copy), d, "data");
 
   return vbox;
 }
@@ -3226,7 +3226,7 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
   hbox = gtk_hbox_new(FALSE, 4);
 #endif
 
-  if (d->source != PLOT_SOURCE_RANGE) {
+  if (d->source != DATA_SOURCE_RANGE) {
     w = create_spin_entry(0, FILE_OBJ_MAXCOL, 1, FALSE, TRUE);
     item_setup(hbox, w, _("_X column:"), TRUE);
     d->xcol = w;
@@ -3247,7 +3247,7 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
   hbox = gtk_hbox_new(FALSE, 4);
 #endif
 
-  if (d->source != PLOT_SOURCE_RANGE) {
+  if (d->source != DATA_SOURCE_RANGE) {
     w = create_spin_entry(0, FILE_OBJ_MAXCOL, 1, FALSE, TRUE);
     item_setup(hbox, w, _("_Y column:"), TRUE);
     d->ycol = w;
@@ -3261,7 +3261,7 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
 
   gtk_box_pack_start(GTK_BOX(vbox2), hbox, FALSE, FALSE, 4);
 
-  add_copy_button_to_box(vbox2, G_CALLBACK(file_settings_copy), d, "plot");
+  add_copy_button_to_box(vbox2, G_CALLBACK(file_settings_copy), d, "data");
 
 #if GTK_CHECK_VERSION(3, 0, 0)
   hbox = gtk_grid_new();
@@ -3774,7 +3774,7 @@ update_table_visibility(GtkEditable *editable, gpointer user_data)
   }
 
   remark = NULL;
-  if (d->source == PLOT_SOURCE_FILE) {
+  if (d->source == DATA_SOURCE_FILE) {
     remark = gtk_entry_get_text(GTK_ENTRY(d->load.remark));
   }
   if (remark == NULL) {
@@ -3793,7 +3793,7 @@ update_table_visibility(GtkEditable *editable, gpointer user_data)
 		       HEADLINE_LINE_NUM_COLUMN, &ln,
 		       HEADLINE_FIRST_CHAR_COLUMN, &fc, -1);
 
-    if (d->source == PLOT_SOURCE_FILE) {
+    if (d->source == DATA_SOURCE_FILE) {
       v = CHECK_VISIBILITY(ln, skip, step, remark, fc);
     } else {
       v = CHECK_VISIBILITY_ARRAY(ln, skip, step);
@@ -3829,7 +3829,7 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct FileDialog *) data;
 
-  snprintf(title, sizeof(title), _("Plot %d (File)"), d->Id);
+  snprintf(title, sizeof(title), _("Data %d (File)"), d->Id);
   gtk_window_set_title(GTK_WINDOW(wi), title);
 
   if (makewidget) {
@@ -3940,7 +3940,7 @@ ArrayDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct FileDialog *) data;
 
-  snprintf(title, sizeof(title), _("Plot %d (Array)"), d->Id);
+  snprintf(title, sizeof(title), _("Data %d (Array)"), d->Id);
   gtk_window_set_title(GTK_WINDOW(wi), title);
 
   if (makewidget) {
@@ -4022,7 +4022,7 @@ RangeDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct FileDialog *) data;
 
-  snprintf(title, sizeof(title), _("Plot %d (Range)"), d->Id);
+  snprintf(title, sizeof(title), _("Data %d (Range)"), d->Id);
   gtk_window_set_title(GTK_WINDOW(wi), title);
 
   if (makewidget) {
@@ -4168,12 +4168,12 @@ FileDialogClose(GtkWidget *w, void *data)
   d->ret = IDLOOP;
 
   switch (d->source) {
-  case PLOT_SOURCE_FILE:
+  case DATA_SOURCE_FILE:
     if (SetObjFieldFromWidget(d->file, d->Obj, d->Id, "file")) {
       return;
     }
     break;
-  case PLOT_SOURCE_ARRAY:
+  case DATA_SOURCE_ARRAY:
     if (SetObjFieldFromWidget(d->file, d->Obj, d->Id, "array")) {
       return;
     }
@@ -4209,17 +4209,17 @@ FileDialog(struct obj_list_data *data, int id, int multi)
 
   getobj(data->obj, "source", id, 0, NULL, &source);
   switch (source) {
-  case PLOT_SOURCE_FILE:
+  case DATA_SOURCE_FILE:
     d = &DlgFile;
     data->dialog = d;
     d->SetupWindow = FileDialogSetup;
     break;
-  case PLOT_SOURCE_ARRAY:
+  case DATA_SOURCE_ARRAY:
     d = &DlgArray;
     data->dialog = d;
     d->SetupWindow = ArrayDialogSetup;
     break;
-  case PLOT_SOURCE_RANGE:
+  case DATA_SOURCE_RANGE:
     d = &DlgRange;
     data->dialog = d;
     d->SetupWindow = RangeDialogSetup;
@@ -4292,7 +4292,7 @@ FileDefDialog(struct FileDialog *data, struct objlist *obj, int id)
   data->CloseWindow = FileDefDialogClose;
   data->Obj = obj;
   data->Id = id;
-  data->source = PLOT_SOURCE_FILE;
+  data->source = DATA_SOURCE_FILE;
 }
 
 static void
@@ -4328,7 +4328,7 @@ CmFileHistory(GtkRecentChooser *w, gpointer client_data)
     return;
   }
 
-  obj = chkobject("plot");
+  obj = chkobject("data");
   if (obj == NULL) {
     return;
   }
@@ -4368,7 +4368,7 @@ CmFileNew(GtkAction *w, gpointer client_data)
   if (Menulock || Globallock)
     return;
 
-  if ((obj = chkobject("plot")) == NULL)
+  if ((obj = chkobject("data")) == NULL)
     return;
 
   if (nGetOpenFileName(TopLevel, _("Data new"), NULL, NULL,
@@ -4409,7 +4409,7 @@ CmRangeAdd(GtkAction *w, gpointer client_data)
   if (Menulock || Globallock)
     return;
 
-  obj = chkobject("plot");
+  obj = chkobject("data");
   if (obj == NULL) {
     return;
   }
@@ -4420,7 +4420,7 @@ CmRangeAdd(GtkAction *w, gpointer client_data)
   }
 
   data = NgraphApp.FileWin.data.data;
-  val = PLOT_SOURCE_RANGE;
+  val = DATA_SOURCE_RANGE;
   putobj(obj, "source", id, &val);
   FileDialog(data, id, FALSE);
   ret = DialogExecute(TopLevel, data->dialog);
@@ -4447,7 +4447,7 @@ CmFileOpen(GtkAction *w, gpointer client_data)
   if (Menulock || Globallock)
     return;
 
-  obj = chkobject("plot");
+  obj = chkobject("data");
   if (obj == NULL)
     return;
 
@@ -4493,7 +4493,7 @@ CmFileClose(GtkAction *w, gpointer client_data)
 
   if (Menulock || Globallock)
     return;
-  if ((obj = chkobject("plot")) == NULL)
+  if ((obj = chkobject("data")) == NULL)
     return;
   if (chkobjlastinst(obj) == -1)
     return;
@@ -4578,7 +4578,7 @@ CmFileUpdate(GtkAction *w, gpointer client_data)
   if (Menulock || Globallock)
     return;
 
-  if ((obj = chkobject("plot")) == NULL)
+  if ((obj = chkobject("data")) == NULL)
     return;
 
   last = chkobjlastinst(obj);
@@ -4607,7 +4607,7 @@ check_plot_obj_file(struct objlist *obj)
   last = chkobjlastinst(obj);
   for (i = 0; i < last; i++) {
     getobj(obj, "source", i, 0, NULL, &source);
-    if (source == PLOT_SOURCE_FILE) {
+    if (source == DATA_SOURCE_FILE) {
       return i;
     }
   }
@@ -4628,7 +4628,7 @@ CmFileEdit(GtkAction *w, gpointer client_data)
   if (Menulocal.editor == NULL)
     return;
 
-  if ((obj = chkobject("plot")) == NULL)
+  if ((obj = chkobject("data")) == NULL)
     return;
 
   last = check_plot_obj_file(obj);
@@ -4661,7 +4661,7 @@ CmOptionFileDef(GtkAction *w, gpointer client_data)
   if (Menulock || Globallock)
     return;
 
-  if ((obj = chkobject("plot")) == NULL)
+  if ((obj = chkobject("data")) == NULL)
     return;
 
   id = newobj(obj);
@@ -5293,10 +5293,10 @@ get_plot_info_str(struct objlist *obj, int id, int src)
 
   str = NULL;
   switch (src) {
-  case PLOT_SOURCE_FILE:
+  case DATA_SOURCE_FILE:
     getobj(obj, "file", id, 0, NULL, &str);
     break;
-  case PLOT_SOURCE_RANGE:
+  case DATA_SOURCE_RANGE:
     getobj(obj, "math_y", id, 0, NULL, &str);
     if (str == NULL) {
       getobj(obj, "math_x", id, 0, NULL, &str);
@@ -5305,7 +5305,7 @@ get_plot_info_str(struct objlist *obj, int id, int src)
       }
     }
     break;
-  case PLOT_SOURCE_ARRAY:
+  case DATA_SOURCE_ARRAY:
     getobj(obj, "array", id, 0, NULL, &str);
     break;
   }
@@ -5326,8 +5326,8 @@ file_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
   const char *str;
 
   getobj(d->obj, "source", row, 0, NULL, &src);
-  list_store_set_int(GTK_WIDGET(d->text), iter, FILE_WIN_COL_NOT_RANGE, src != PLOT_SOURCE_RANGE);
-  list_store_set_int(GTK_WIDGET(d->text), iter, FILE_WIN_COL_IS_FILE, src == PLOT_SOURCE_FILE);
+  list_store_set_int(GTK_WIDGET(d->text), iter, FILE_WIN_COL_NOT_RANGE, src != DATA_SOURCE_RANGE);
+  list_store_set_int(GTK_WIDGET(d->text), iter, FILE_WIN_COL_IS_FILE, src == DATA_SOURCE_FILE);
   getobj(d->obj, "mask", row, 0, NULL, &mask);
   getobj(d->obj, "move_data", row, 0, NULL, &move);
   if ((arraynum(mask) != 0) || (arraynum(move) != 0)) {
@@ -5349,7 +5349,7 @@ file_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
       if (str == NULL) {
 	list_store_set_string(GTK_WIDGET(d->text), iter, i, "....................");
       } else {
-	if (src == PLOT_SOURCE_FILE) {
+	if (src == DATA_SOURCE_FILE) {
 	  bfile = getbasename(str);
 	  if (bfile) {
 	    list_store_set_string(GTK_WIDGET(d->text), iter, i, bfile);
@@ -5407,7 +5407,7 @@ CmFileMath(GtkAction *w, gpointer client_data)
   if (Menulock || Globallock)
     return;
 
-  obj = chkobject("plot");
+  obj = chkobject("data");
 
   if (chkobjlastinst(obj) < 0)
     return;
@@ -5427,7 +5427,7 @@ GetDrawFiles(struct narray *farray)
   if (farray == NULL)
     return 1;
 
-  fobj = chkobject("plot");
+  fobj = chkobject("data");
   if (fobj == NULL)
     return 1;
 
@@ -5467,7 +5467,7 @@ CmFileSaveData(GtkAction *w, gpointer client_data)
   if (GetDrawFiles(&farray))
     return;
 
-  obj = chkobject("plot");
+  obj = chkobject("data");
   if (obj == NULL)
     return;
 
@@ -5612,7 +5612,7 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
     case POPUP_ITEM_EDIT:
       if (sel >= 0 && sel <= num) {
 	getobj(d->obj, "source", sel, 0, NULL, &source);
-	gtk_widget_set_sensitive(d->popup_item[i], source == PLOT_SOURCE_FILE);
+	gtk_widget_set_sensitive(d->popup_item[i], source == DATA_SOURCE_FILE);
       } else {
 	gtk_widget_set_sensitive(d->popup_item[i], FALSE);
       }
@@ -5779,7 +5779,7 @@ select_type(GtkComboBox *w, gpointer user_data)
   if (sel < 0)
     return;
 
-  obj = getobject("plot");
+  obj = getobject("data");
   getobj(obj, "type", sel, 0, NULL, &type);
 
   list = GTK_TREE_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(w)));
@@ -5901,7 +5901,7 @@ start_editing_type(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *
   cbox = GTK_COMBO_BOX(editable);
   g_object_set_data(G_OBJECT(cbox), "user-data", GINT_TO_POINTER(sel));
 
-  obj = getobject("plot");
+  obj = getobject("data");
   if (obj == NULL)
     return;
 
@@ -6091,7 +6091,7 @@ FileWinState(struct SubWin *d, int state)
   d->data.data->dialog = &DlgFile;
   d->data.data->ev_key = filewin_ev_key_down;
   d->data.data->delete = delete_file_obj;
-  d->data.data->obj = chkobject("plot");
+  d->data.data->obj = chkobject("data");
 
   sub_win_create_popup_menu(d->data.data, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
   set_combo_cell_renderer_cb(d->data.data, FILE_WIN_COL_X_AXIS, Flist, G_CALLBACK(start_editing_x), G_CALLBACK(edited_axis));

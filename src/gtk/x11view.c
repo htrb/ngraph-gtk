@@ -31,7 +31,7 @@
 
 #include "object.h"
 #include "gra.h"
-#include "oplot.h"
+#include "odata.h"
 #include "olegend.h"
 #include "oarc.h"
 #include "opath.h"
@@ -614,7 +614,7 @@ data_dropped(char **filenames, int num, int file_type)
   int i, id0, type, ret;
   struct objlist *obj, *mobj;
 
-  obj = chkobject("plot");
+  obj = chkobject("data");
   if (obj == NULL) {
     return 1;
   }
@@ -1259,7 +1259,7 @@ ViewerWinFileUpdate(int x1, int y1, int x2, int y2, int err)
   argv[5] = (char *) &limit;
   argv[6] = NULL;
 
-  fileobj = chkobject("plot");
+  fileobj = chkobject("data");
   if (! fileobj)
     goto End;
 
@@ -1375,7 +1375,7 @@ Evaluate(int x1, int y1, int x2, int y2, int err, struct Viewer *d)
   argv[5] = (char *) &limit;
   argv[6] = NULL;
 
-  if ((fileobj = chkobject("plot")) == NULL)
+  if ((fileobj = chkobject("data")) == NULL)
     return;
 
   ignorestdio(&save);
@@ -2717,7 +2717,7 @@ mouse_down_move_data(struct Viewer *d)
   char *axis, *argv[3];
   int *ptr;
 
-  fileobj = chkobject("plot");
+  fileobj = chkobject("data");
   if (fileobj == NULL)
     goto ErrEnd;
 

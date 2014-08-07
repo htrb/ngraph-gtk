@@ -1200,7 +1200,7 @@ AxisDialogFile(GtkWidget *w, gpointer client_data)
 
   d = (struct AxisDialog *) client_data;
 
-  fobj = chkobject("plot");
+  fobj = chkobject("data");
   if (fobj == NULL)
     return;
 
@@ -1303,7 +1303,7 @@ file_button_show(GtkWidget *widget, gpointer user_data)
   int n;
 
   if (file == NULL) {
-    file = chkobject("plot");
+    file = chkobject("data");
   }
 
   if (file == NULL)

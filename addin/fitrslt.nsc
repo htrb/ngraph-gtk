@@ -10,11 +10,11 @@ X=5000      # top-left of the legend to be inserted.
 Y=5000      # top-left of the legend to be inserted.
 
 new iarray name=ID
-for i in `object plot -instances`
+for i in `object data -instances`
 do
-    if [ `get plot:$i -field type` = "fit" -a `get plot:$i -field source` != "function"]
+    if [ `get data:$i -field type` = "fit" -a `get data:$i -field source` != "function"]
     then
-	if [ "x${plot::fit}" != "x" ]
+	if [ "x${data::fit}" != "x" ]
 	then
 	    iarray:ID:push $i
 	fi
@@ -27,10 +27,10 @@ then
     echo ${iarray:ID:num} > "$DATALIST"
     for i in ${iarray:ID:@}
     do
-	if [ "x${plot::fit}" != "x" ]
+	if [ "x${data::fit}" != "x" ]
 	then
-            get plot: -field id source file array >> "$DATALIST"
-	    get ${plot::fit} -field id type poly_dimension user_func %00 %01 %02 %03 %04 %05 %06 %07 %08 %09 >> "$DATALIST"
+            get data: -field id source file array >> "$DATALIST"
+	    get ${data::fit} -field id type poly_dimension user_func %00 %01 %02 %03 %04 %05 %06 %07 %08 %09 >> "$DATALIST"
 	fi
     done
     SCRIPT=${system:0:temp_file}

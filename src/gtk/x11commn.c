@@ -38,7 +38,7 @@
 #include "ioutil.h"
 #include "shell.h"
 #include "nstring.h"
-#include "oplot.h"
+#include "odata.h"
 #include "odraw.h"
 #include "nconfig.h"
 
@@ -350,7 +350,7 @@ AxisDel2(int id)
     }
   }
 
-  obj = getobject("plot");
+  obj = getobject("data");
   if (obj == NULL) {
     return;
   }
@@ -469,7 +469,7 @@ AxisMove(int id1, int id2)
   struct objlist *obj;
   int i;
 
-  if ((obj = getobject("plot")) == NULL)
+  if ((obj = getobject("data")) == NULL)
     return;
 
   for (i = 0; i <= chkobjlastinst(obj); i++) {
@@ -757,7 +757,7 @@ FitClear(void)
 
   if (Menulock || Globallock)
     return;
-  if ((obj = chkobject("plot")) == NULL)
+  if ((obj = chkobject("data")) == NULL)
     return;
   if ((fitobj = chkobject("fit")) == NULL)
     return;
@@ -782,7 +782,7 @@ FitClear(void)
 }
 
 static void
-del_darray(struct objlist *plot_obj)
+del_darray(struct objlist *data_obj)
 {
   char *array;
   int i, j, n, id, last;
@@ -795,7 +795,7 @@ del_darray(struct objlist *plot_obj)
     return;
   }
 
-  last = chkobjlastinst(plot_obj);
+  last = chkobjlastinst(data_obj);
   if (last < 0) {
     return;
   }
@@ -806,7 +806,7 @@ del_darray(struct objlist *plot_obj)
   }
 
   for (i = 0; i <= last; i++) {
-    getobj(plot_obj, "array", i, 0, NULL, &array);
+    getobj(data_obj, "array", i, 0, NULL, &array);
     if (array == NULL) {
       continue;
     }
@@ -833,7 +833,7 @@ DeleteDrawable(void)
   struct objlist *fileobj, *drawobj;
   int i;
 
-  fileobj = chkobject("plot");
+  fileobj = chkobject("data");
   if (fileobj) {
     for (i = 0; i <= chkobjlastinst(fileobj); i++) {
       FitDel(fileobj, i);
@@ -951,7 +951,7 @@ save_merge(struct objlist *ocur, int hFile, int storemerge, int i)
 }
 
 static void
-save_plot(struct objlist *ocur, int hFile, int storedata, int i, int *array_plot)
+save_data(struct objlist *ocur, int hFile, int storedata, int i, int *array_data)
 {
   char *s;
   int source, argc;
@@ -965,9 +965,9 @@ save_plot(struct objlist *ocur, int hFile, int storedata, int i, int *array_plot
   array = NULL;
   getobj(ocur, "source", i, 0, NULL, &source);
   switch (source) {
-  case PLOT_SOURCE_FILE:
+  case DATA_SOURCE_FILE:
     break;
-  case PLOT_SOURCE_ARRAY:
+  case DATA_SOURCE_ARRAY:
     array = arraynew(sizeof(char *));
     if (array == NULL) {
       error(NULL, ERRHEAP);
@@ -981,19 +981,19 @@ save_plot(struct objlist *ocur, int hFile, int storedata, int i, int *array_plot
     argv = argv2;
     argc = 1;
 
-    str = g_string_new("\tplot::array=");
+    str = g_string_new("\tdata::array=");
     if (str == NULL) {
       error(NULL, ERRHEAP);
       return;
     }
-    if (! *array_plot) {
+    if (! *array_data) {
       char iarray_str[] = "new iarray\n\n";
-      *array_plot = TRUE;
+      *array_data = TRUE;
       nwrite(hFile, iarray_str, sizeof(iarray_str) - 1);
     }
     save_array(ocur, hFile, i, str);
     break;
-  case PLOT_SOURCE_RANGE:
+  case DATA_SOURCE_RANGE:
     break;
   }
 
@@ -1019,20 +1019,20 @@ static void
 SaveParent(int hFile, struct objlist *parent, int storedata,
 	   int storemerge)
 {
-  struct objlist *ocur, *oplot, *omerge;
-  int i, instnum, array_plot;
+  struct objlist *ocur, *odata, *omerge;
+  int i, instnum, array_data;
   char *s;
 
   ocur = chkobjroot();
-  oplot = chkobject("plot");
+  odata = chkobject("data");
   omerge = chkobject("merge");
-  array_plot = FALSE;
+  array_data = FALSE;
   while (ocur) {
     if (chkobjparent(ocur) == parent) {
       if ((instnum = chkobjlastinst(ocur)) != -1) {
 	for (i = 0; i <= instnum; i++) {
-	  if (ocur == oplot) {
-	    save_plot(ocur, hFile, storedata, i, &array_plot);
+	  if (ocur == odata) {
+	    save_data(ocur, hFile, storedata, i, &array_data);
 	  } else if (ocur == omerge) {
 	    save_merge(ocur, hFile, storemerge, i);
 	  } else {
@@ -1041,7 +1041,7 @@ SaveParent(int hFile, struct objlist *parent, int storedata,
 	    nwrite(hFile, "\n", 1);
 	  }
 	}
-	if (ocur == oplot && array_plot) {
+	if (ocur == odata && array_data) {
 	  char iarray_str[] = "del iarray:!\n\n";
 	  nwrite(hFile, iarray_str, sizeof(iarray_str) -1);
 	}
@@ -1120,7 +1120,7 @@ get_save_opt(int *sdata, int *smerge, int *path)
   *sdata = FALSE;
   *smerge = FALSE;
 
-  fobj = chkobject("plot");
+  fobj = chkobject("data");
   mobj = chkobject("merge");
 
   fnum = (fobj) ? chkobjlastinst(fobj) : -1;
@@ -1497,7 +1497,7 @@ FileAutoScale(void)
   int refother;
   GString *str;
 
-  if ((fobj = chkobject("plot")) == NULL)
+  if ((fobj = chkobject("data")) == NULL)
     return;
 
   lastinst = chkobjlastinst(fobj);
@@ -1690,7 +1690,7 @@ get_plot_cb_str(struct objlist *obj, int id, int source)
     return g_strdup("....................");
   }
 
-  if (source == PLOT_SOURCE_FILE) {
+  if (source == DATA_SOURCE_FILE) {
     valstr = getbasename(str);
     s = g_strdup_printf("%s", (valstr) ? valstr : "....................");
     if (valstr != NULL) {
@@ -1718,7 +1718,7 @@ PlotFileCB(struct objlist *obj, int id)
   int source;
 
   getobj(obj, "source", id, 0, NULL, &source);
-  if (source != PLOT_SOURCE_FILE) {
+  if (source != DATA_SOURCE_FILE) {
     return NULL;
   }
   return get_plot_cb_str(obj, id, source);
@@ -1732,7 +1732,7 @@ SetFileHidden(void)
   struct narray farray, ifarray;
   int i, a, r, num, inum, *array;
 
-  fobj = chkobject("plot");
+  fobj = chkobject("data");
   if (fobj == NULL) {
     return 1;
   }

@@ -17,19 +17,19 @@ else
 fi
 if [ "$FILE" ]
 then
-  # hide exsisting 'axis', 'axisgrid' and 'plot' instances
-  system:0:hide_instance axis axisgrid plot
+  # hide exsisting 'axis', 'axisgrid' and 'data' instances
+  system:0:hide_instance axis axisgrid data
   # execute file
   new shell
   shell::shell "$FILE"
   del shell
   # tighten connection between new instances
-  for i in `derive -instance plot axis axisgrid`
+  for i in `derive -instance data axis axisgrid`
   do
    exe ${i}:0-! tight
   done
   # recover hidden instances
-  system:0:recover_instance axis axisgrid plot
+  system:0:recover_instance axis axisgrid data
   # delete closed GRA instance
   if [ ${gra::GC} = -1 ]
   then

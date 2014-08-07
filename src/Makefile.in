@@ -144,7 +144,7 @@ am_libngraph_la_OBJECTS = libngraph_la-axis.lo libngraph_la-nconfig.lo \
 	libngraph_la-oagrid.lo libngraph_la-oarc.lo \
 	libngraph_la-oaxis.lo libngraph_la-object.lo \
 	libngraph_la-odarray.lo libngraph_la-odouble.lo \
-	libngraph_la-odraw.lo libngraph_la-oplot.lo \
+	libngraph_la-odraw.lo libngraph_la-odata.lo \
 	libngraph_la-ofit.lo libngraph_la-ogra.lo \
 	libngraph_la-ogra2.lo libngraph_la-ogra2fil.lo \
 	libngraph_la-ogra2nul.lo libngraph_la-ogra2prn.lo \
@@ -458,7 +458,7 @@ libngraph_la_SOURCES = axis.c axis.h nconfig.c nconfig.h gra.c gra.h	\
 	ioutil.c ioutil.h mathcode.c mathcode.h mathfn.c mathfn.h	\
 	nstring.c nstring.h ntime.c ntime.h oagrid.c oarc.c oarc.h	\
 	oaxis.c object.c object.h odarray.c odouble.c odraw.c odraw.h	\
-	oplot.c oplot.h ofit.c ofit.h ogra.c ogra.h ogra2.c		\
+	odata.c odata.h ofit.c ofit.h ogra.c ogra.h ogra2.c		\
 	ogra2fil.c ogra2nul.c ogra2prn.c oiarray.c oiarray.h oint.c	\
 	olegend.c olegend.h omark.c omath.c omerge.c oprm.c orect.c	\
 	oroot.c oroot.h osarray.c oshell.c oregexp.c ostring.c		\
@@ -674,6 +674,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-oaxis.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-object.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-odarray.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-odata.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-odouble.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-odraw.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-ofit.Plo@am__quote@
@@ -690,7 +691,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-omath.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-omerge.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-opath.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-oplot.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-oprm.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-orect.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-oregexp.Plo@am__quote@
@@ -834,12 +834,12 @@ libngraph_la-odraw.lo: odraw.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-odraw.lo `test -f 'odraw.c' || echo '$(srcdir)/'`odraw.c
 
-libngraph_la-oplot.lo: oplot.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-oplot.lo -MD -MP -MF $(DEPDIR)/libngraph_la-oplot.Tpo -c -o libngraph_la-oplot.lo `test -f 'oplot.c' || echo '$(srcdir)/'`oplot.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraph_la-oplot.Tpo $(DEPDIR)/libngraph_la-oplot.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='oplot.c' object='libngraph_la-oplot.lo' libtool=yes @AMDEPBACKSLASH@
+libngraph_la-odata.lo: odata.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-odata.lo -MD -MP -MF $(DEPDIR)/libngraph_la-odata.Tpo -c -o libngraph_la-odata.lo `test -f 'odata.c' || echo '$(srcdir)/'`odata.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraph_la-odata.Tpo $(DEPDIR)/libngraph_la-odata.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='odata.c' object='libngraph_la-odata.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-oplot.lo `test -f 'oplot.c' || echo '$(srcdir)/'`oplot.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-odata.lo `test -f 'odata.c' || echo '$(srcdir)/'`odata.c
 
 libngraph_la-ofit.lo: ofit.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-ofit.lo -MD -MP -MF $(DEPDIR)/libngraph_la-ofit.Tpo -c -o libngraph_la-ofit.lo `test -f 'ofit.c' || echo '$(srcdir)/'`ofit.c

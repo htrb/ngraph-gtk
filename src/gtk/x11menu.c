@@ -1492,7 +1492,7 @@ struct MenuItem PlotAddMenu[] = {
   },
   {
     MENU_TYPE_RECENT_DATA,
-    N_("_Recent data"),
+    N_("_Recent file"),
     NULL,
   },
   {
@@ -4835,7 +4835,7 @@ check_instance(struct objlist *obj)
     case DataEditAction:
     case DataSaveAction:
     case DataMathAction:
-      dobj = chkobject("plot");
+      dobj = chkobject("data");
       break;
     case AxisPropertyAction:
     case AxisDeleteAction:

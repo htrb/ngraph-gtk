@@ -1922,7 +1922,7 @@ CmOptionSaveNgp(GtkAction *w, gpointer client_data)
 
   path = 1;
 
-  obj = chkobject("plot");
+  obj = chkobject("data");
   if (obj) {
     for (i = 0; i <= chkobjlastinst(obj); i++) {
       putobj(obj, "save_path", i, &path);

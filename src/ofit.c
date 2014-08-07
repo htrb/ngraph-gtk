@@ -36,7 +36,7 @@
 #include "mathfn.h"
 #include "oroot.h"
 #include "ofit.h"
-#include "oplot.h"
+#include "odata.h"
 
 #include "math/math_equation.h"
 

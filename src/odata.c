@@ -45,7 +45,7 @@
 #include "ntime.h"
 #include "oroot.h"
 #include "odraw.h"
-#include "oplot.h"
+#include "odata.h"
 #include "axis.h"
 #include "nconfig.h"
 
@@ -93,11 +93,11 @@ enum {
   MATH_CONST_SIZE,
 };
 
-#define NAME		"plot"
-#define ALIAS		"file:data"
+#define NAME		"data"
+#define ALIAS		"file"
 #define PARENT		"draw"
 #define OVERSION	"1.00.00"
-#define F2DCONF		"[plot]"
+#define F2DCONF		"[data]"
 
 #define ERRFILE		100
 #define ERROPEN		101
@@ -876,7 +876,7 @@ file_fit_calc(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
   }
 
   if (file_obj == NULL) {
-    file_obj = getobject("plot");
+    file_obj = getobject("data");
   }
 
   if (file_obj == NULL) {
@@ -915,7 +915,7 @@ file_fit_prm(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
   }
 
   if (file_obj == NULL) {
-    file_obj = getobject("plot");
+    file_obj = getobject("data");
   }
 
   if (file_obj == NULL) {
@@ -1298,15 +1298,15 @@ opendata(struct objlist *obj,N_VALUE *inst,
   _getobj(obj,"data_num",inst,&prev_datanum);
 
   switch (src) {
-  case PLOT_SOURCE_FILE:
+  case DATA_SOURCE_FILE:
     if (file==NULL) {
       error(obj,ERRFILE);
       return NULL;
     }
     break;
-  case PLOT_SOURCE_ARRAY:
+  case DATA_SOURCE_ARRAY:
     break;
-  case PLOT_SOURCE_RANGE:
+  case DATA_SOURCE_RANGE:
     if (min == max || div < 2) {
       error(obj,ERR_INVALID_RANGE);
       return NULL;
@@ -1353,7 +1353,7 @@ opendata(struct objlist *obj,N_VALUE *inst,
 
   fp->src = src;
   switch (src) {
-  case PLOT_SOURCE_FILE:
+  case DATA_SOURCE_FILE:
     fp->file=file;
     if ((fp->fd=nfopen(file,"rt"))==NULL) {
       error2(obj,ERROPEN,file);
@@ -1373,7 +1373,7 @@ opendata(struct objlist *obj,N_VALUE *inst,
       return NULL;
     }
     break;
-  case PLOT_SOURCE_ARRAY:
+  case DATA_SOURCE_ARRAY:
     open_array(array, &fp->array_data);
     if (fp->array_data.data_num < 1) {
       error2(obj,ERROPEN,file);	/* to be fixed */
@@ -1384,7 +1384,7 @@ opendata(struct objlist *obj,N_VALUE *inst,
     fp->fd = NULL;
     fp->mtime = 0;
     break;
-  case PLOT_SOURCE_RANGE:
+  case DATA_SOURCE_RANGE:
     fp->file = NULL;
     fp->fd = NULL;
     fp->range_min = min;
@@ -1988,7 +1988,7 @@ f2dinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   double min,max;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
-  src=PLOT_SOURCE_FILE;
+  src=DATA_SOURCE_FILE;
   x=1;
   y=2;
   rstep=1;
@@ -2424,7 +2424,7 @@ hskipdata(struct f2ddata *fp)
   char *buf;
 
   switch (fp->src) {
-  case PLOT_SOURCE_FILE:
+  case DATA_SOURCE_FILE:
     skip=0;
     while (skip<fp->hskip) {
       if ((fp->line & UPDATE_PROGRESS_LINE_NUM) == 0 && set_data_progress(fp)) {
@@ -2441,14 +2441,14 @@ hskipdata(struct f2ddata *fp)
       skip++;
     }
     break;
-  case PLOT_SOURCE_ARRAY:
+  case DATA_SOURCE_ARRAY:
     if (fp->hskip > fp->array_data.data_num) {
       fp->eof=TRUE;
       return 0;
     }
     fp->line = fp->hskip;
     break;
-  case PLOT_SOURCE_RANGE:
+  case DATA_SOURCE_RANGE:
     if (fp->hskip > fp->range_div) {
       fp->eof = TRUE;
       return 0;
@@ -2572,7 +2572,7 @@ getdata_skip_step(struct f2ddata *fp, int progress)
 
   rcode = 0;
   switch (fp->src) {
-  case PLOT_SOURCE_FILE:
+  case DATA_SOURCE_FILE:
     step = 1;
     while (step < fp->rstep) {
       if (progress && (fp->line & UPDATE_PROGRESS_LINE_NUM) == 0 && set_data_progress(fp)) {
@@ -2595,7 +2595,7 @@ getdata_skip_step(struct f2ddata *fp, int progress)
       g_free(buf);
     }
     break;
-  case PLOT_SOURCE_ARRAY:
+  case DATA_SOURCE_ARRAY:
     if (fp->line + fp->rstep - 1 > fp->array_data.data_num) {
       fp->eof = TRUE;
       rcode = 1;
@@ -2603,7 +2603,7 @@ getdata_skip_step(struct f2ddata *fp, int progress)
       fp->line += fp->hskip - 1;
     }
     break;
-  case PLOT_SOURCE_RANGE:
+  case DATA_SOURCE_RANGE:
     if (fp->line + fp->rstep - 1 > fp->range_div) {
       fp->eof = TRUE;
       rcode = 1;
@@ -3090,7 +3090,7 @@ get_data_from_source(struct f2ddata *fp, int maxdim, MathValue *gdata)
 
   rcode = 0;
   switch (fp->src) {
-  case PLOT_SOURCE_FILE:
+  case DATA_SOURCE_FILE:
     rcode = fgetline(fp->fd, &buf);
     if (rcode == 1 || rcode == -1) {
       fp->eof = TRUE;
@@ -3110,7 +3110,7 @@ get_data_from_source(struct f2ddata *fp, int maxdim, MathValue *gdata)
 
     g_free(buf);
     break;
-  case PLOT_SOURCE_ARRAY:
+  case DATA_SOURCE_ARRAY:
     if (fp->line >= fp->array_data.data_num) {
       fp->eof = TRUE;
       return 1;
@@ -3129,7 +3129,7 @@ get_data_from_source(struct f2ddata *fp, int maxdim, MathValue *gdata)
 
     fp->line++;
     break;
-  case PLOT_SOURCE_RANGE:
+  case DATA_SOURCE_RANGE:
     if (fp->line > fp->range_div) {
       fp->eof = TRUE;
       return 1;
@@ -4205,13 +4205,13 @@ f2derror(struct objlist *obj,struct f2ddata *fp,int code,char *s)
   char buf[256];
 
   switch (fp->src) {
-  case PLOT_SOURCE_FILE:
+  case DATA_SOURCE_FILE:
     sprintf(buf,"#%d: %s (%d:%s)",fp->id,fp->file,fp->dline,s);
     break;
-  case PLOT_SOURCE_ARRAY:
+  case DATA_SOURCE_ARRAY:
     sprintf(buf,"#%d: Array (%s)",fp->id, s);
     break;
- case PLOT_SOURCE_RANGE:
+ case DATA_SOURCE_RANGE:
     sprintf(buf,"#%d: Range (%s)",fp->id, s);
     break;
   }
@@ -5869,13 +5869,13 @@ f2ddraw(struct objlist *obj, N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
     return 0;
 
   switch (src) {
-  case PLOT_SOURCE_FILE:
+  case DATA_SOURCE_FILE:
    _getobj(obj, "file", inst, &file);
    if (file == NULL){
      return 0;
    }
    break;
-  case PLOT_SOURCE_ARRAY:
+  case DATA_SOURCE_ARRAY:
     _getobj(obj,"array", inst, &array);
     open_array(array, &ary);
     if (ary.data_num < 1) {
@@ -6105,19 +6105,19 @@ f2devaluate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
 
   _getobj(obj,"source", inst, &src);
   switch (src) {
-  case PLOT_SOURCE_FILE:
+  case DATA_SOURCE_FILE:
     _getobj(obj, "file", inst, &str);
     if (str == NULL) {
       return 0;
     }
     break;
-  case PLOT_SOURCE_ARRAY:
+  case DATA_SOURCE_ARRAY:
     _getobj(obj, "array", inst, &str);
     if (str == NULL) {
       return 0;
     }
     break;
-  case PLOT_SOURCE_RANGE:
+  case DATA_SOURCE_RANGE:
     break;
   }
 
@@ -6264,7 +6264,7 @@ f2dredraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 
   if (num > 0 && (dmax == 0 || num <= dmax || type == PLOT_TYPE_FIT) && redrawf) {
     f2ddraw(obj,inst,rval,argc,argv);
-  } else if (source == PLOT_SOURCE_RANGE && redrawf) {
+  } else if (source == DATA_SOURCE_RANGE && redrawf) {
     f2ddraw(obj,inst,rval,argc,argv);
   } else {
     _getobj(obj,"GC",inst,&GC);
@@ -6435,13 +6435,13 @@ f2dcolumn(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   _getobj(obj,"source", inst, &src);
   r = 1;
   switch (src) {
-  case PLOT_SOURCE_FILE:
+  case DATA_SOURCE_FILE:
     r = f2dcolumn_file(obj, inst, rval, argc, argv);
     break;
-  case PLOT_SOURCE_ARRAY:
+  case DATA_SOURCE_ARRAY:
     r = f2dcolumn_array(obj, inst, rval, argc, argv);
     break;
-  case PLOT_SOURCE_RANGE:
+  case DATA_SOURCE_RANGE:
     r = f2dcolumn_range(obj, inst, rval, argc, argv);
     break;
   }
@@ -6509,11 +6509,11 @@ f2dhead(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   _getobj(obj,"source", inst, &src);
   r = 1;
   switch (src) {
-  case PLOT_SOURCE_FILE:
+  case DATA_SOURCE_FILE:
     r = f2dhead_file(obj, inst, rval, argc, argv);
     break;
-  case PLOT_SOURCE_ARRAY:
-  case PLOT_SOURCE_RANGE:
+  case DATA_SOURCE_ARRAY:
+  case DATA_SOURCE_RANGE:
     break;
   }
 
@@ -6815,11 +6815,11 @@ f2dsettings(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
   _getobj(obj,"source", inst, &src);
   r = 1;
   switch (src) {
-  case PLOT_SOURCE_FILE:
+  case DATA_SOURCE_FILE:
     r = f2dsettings_file(obj, inst, rval, argc, argv);
     break;
-  case PLOT_SOURCE_ARRAY:
-  case PLOT_SOURCE_RANGE:
+  case DATA_SOURCE_ARRAY:
+  case DATA_SOURCE_RANGE:
     break;
   }
 
@@ -6837,7 +6837,7 @@ f2dtime(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   rval->str=NULL;
 
   _getobj(obj,"source", inst, &src);
-  if (src != PLOT_SOURCE_FILE) {
+  if (src != DATA_SOURCE_FILE) {
     error(obj, ERR_INVALID_SOURCE);
     return -1;
   }
@@ -6861,7 +6861,7 @@ f2ddate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   rval->str=NULL;
 
   _getobj(obj,"source", inst, &src);
-  if (src != PLOT_SOURCE_FILE) {
+  if (src != DATA_SOURCE_FILE) {
     error(obj, ERR_INVALID_SOURCE);
     return -1;
   }
@@ -7444,13 +7444,13 @@ f2dstat(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
 
   r = 0;
   switch (src) {
-  case PLOT_SOURCE_FILE:
+  case DATA_SOURCE_FILE:
     r = f2dstat_file(obj, inst, field, f2dlocal, &stat_x, &stat_y, &dnum);
     break;
-  case PLOT_SOURCE_ARRAY:
+  case DATA_SOURCE_ARRAY:
     f2dstat_array(obj, inst, &stat_x, &stat_y, &dnum);
     break;
-  case PLOT_SOURCE_RANGE:
+  case DATA_SOURCE_RANGE:
     f2dstat_range(obj, inst, &stat_x, &stat_y, &dnum);
     break;
   }
@@ -8022,11 +8022,11 @@ f2dstore(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   _getobj(obj,"source", inst, &src);
   r = 1;
   switch (src) {
-  case PLOT_SOURCE_FILE:
+  case DATA_SOURCE_FILE:
     r = f2dstore_file(obj, inst, rval, argc, argv);
     break;
-  case PLOT_SOURCE_ARRAY:
-  case PLOT_SOURCE_RANGE:
+  case DATA_SOURCE_ARRAY:
+  case DATA_SOURCE_RANGE:
     break;
   }
 
@@ -8185,11 +8185,11 @@ f2dload(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   _getobj(obj,"source", inst, &src);
   r = 1;
   switch (src) {
-  case PLOT_SOURCE_FILE:
+  case DATA_SOURCE_FILE:
     r = f2dload_file(obj, inst, rval, argc, argv);
     break;
-  case PLOT_SOURCE_ARRAY:
-  case PLOT_SOURCE_RANGE:
+  case DATA_SOURCE_ARRAY:
+  case DATA_SOURCE_RANGE:
     break;
   }
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.06.14\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2014-07-31 18:21+0900\n"
+"POT-Creation-Date: 2014-08-07 13:10+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -634,7 +634,7 @@ msgid "auto"
 msgstr ""
 
 #: src/gtk/x11dialg.c:123 src/gtk/x11merge.c:52 src/gtk/x11opt.c:475
-#: src/oplot.c:167
+#: src/odata.c:167
 msgid "file"
 msgstr ""
 
@@ -646,7 +646,7 @@ msgstr ""
 msgid "function"
 msgstr ""
 
-#: src/gtk/x11dialg.c:135 src/oplot.c:168
+#: src/gtk/x11dialg.c:135 src/odata.c:168
 msgid "array"
 msgstr ""
 
@@ -666,7 +666,7 @@ msgstr ""
 msgid "math text"
 msgstr ""
 
-#: src/gtk/x11dialg.c:156 src/oplot.c:194
+#: src/gtk/x11dialg.c:156 src/odata.c:194
 msgid "fit"
 msgstr ""
 
@@ -860,7 +860,7 @@ msgid "_Range"
 msgstr ""
 
 #: src/gtk/x11file.c:125 src/gtk/x11menu.c:1495
-msgid "_Recent data"
+msgid "_Recent file"
 msgstr ""
 
 #: src/gtk/x11file.c:133
@@ -1129,7 +1129,7 @@ msgstr ""
 
 #: src/gtk/x11file.c:3832
 #, c-format
-msgid "Plot %d (File)"
+msgid "Data %d (File)"
 msgstr ""
 
 #: src/gtk/x11file.c:3836 src/gtk/x11file.c:3947 src/gtk/x11file.c:4029
@@ -1168,7 +1168,7 @@ msgstr ""
 
 #: src/gtk/x11file.c:3943
 #, c-format
-msgid "Plot %d (Array)"
+msgid "Data %d (Array)"
 msgstr ""
 
 #: src/gtk/x11file.c:3956
@@ -1177,7 +1177,7 @@ msgstr ""
 
 #: src/gtk/x11file.c:4025
 #, c-format
-msgid "Plot %d (Range)"
+msgid "Data %d (Range)"
 msgstr ""
 
 #: src/gtk/x11file.c:4040
@@ -1562,7 +1562,7 @@ msgstr ""
 msgid "path"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3768 src/oplot.c:181
+#: src/gtk/x11lgnd.c:3768 src/odata.c:181
 msgid "rectangle"
 msgstr ""
 
@@ -1570,7 +1570,7 @@ msgstr ""
 msgid "arc"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3770 src/oplot.c:174
+#: src/gtk/x11lgnd.c:3770 src/odata.c:174
 msgid "mark"
 msgstr ""
 
@@ -2853,79 +2853,79 @@ msgstr ""
 msgid "user"
 msgstr ""
 
-#: src/oplot.c:169
+#: src/odata.c:169
 msgid "range"
 msgstr ""
 
-#: src/oplot.c:175 src/opath.c:81
+#: src/odata.c:175 src/opath.c:81
 msgid "line"
 msgstr ""
 
-#: src/oplot.c:176
+#: src/odata.c:176
 msgid "polygon"
 msgstr ""
 
-#: src/oplot.c:177
+#: src/odata.c:177
 msgid "polygon_solid_fill"
 msgstr ""
 
-#: src/oplot.c:178 src/opath.c:82
+#: src/odata.c:178 src/opath.c:82
 msgid "curve"
 msgstr ""
 
-#: src/oplot.c:179
+#: src/odata.c:179
 msgid "diagonal"
 msgstr ""
 
-#: src/oplot.c:180
+#: src/odata.c:180
 msgid "arrow"
 msgstr ""
 
-#: src/oplot.c:182
+#: src/odata.c:182
 msgid "rectangle_fill"
 msgstr ""
 
-#: src/oplot.c:183
+#: src/odata.c:183
 msgid "rectangle_solid_fill"
 msgstr ""
 
-#: src/oplot.c:184
+#: src/odata.c:184
 msgid "errorbar_x"
 msgstr ""
 
-#: src/oplot.c:185
+#: src/odata.c:185
 msgid "errorbar_y"
 msgstr ""
 
-#: src/oplot.c:186
+#: src/odata.c:186
 msgid "staircase_x"
 msgstr ""
 
-#: src/oplot.c:187
+#: src/odata.c:187
 msgid "staircase_y"
 msgstr ""
 
-#: src/oplot.c:188
+#: src/odata.c:188
 msgid "bar_x"
 msgstr ""
 
-#: src/oplot.c:189
+#: src/odata.c:189
 msgid "bar_y"
 msgstr ""
 
-#: src/oplot.c:190
+#: src/odata.c:190
 msgid "bar_fill_x"
 msgstr ""
 
-#: src/oplot.c:191
+#: src/odata.c:191
 msgid "bar_fill_y"
 msgstr ""
 
-#: src/oplot.c:192
+#: src/odata.c:192
 msgid "bar_solid_fill_x"
 msgstr ""
 
-#: src/oplot.c:193
+#: src/odata.c:193
 msgid "bar_solid_fill_y"
 msgstr ""
 
