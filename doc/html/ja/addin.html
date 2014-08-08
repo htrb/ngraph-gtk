@@ -91,22 +91,22 @@ Ngraph 内部の設定パラメター全てを参照、変更する機能があ�
 <a name="LEGEND_NSC">&nbsp;</a>
 <h2><a href="#TOP">legend.nsc の動作</a></h2>
 <p>
-legend.nsc が起動する外部プログラムは legend.tcl です。
-まず legend.tcl が必要とする現在の Ngraph の状態を記述した中間ファイルを
+legend.nsc が起動する外部プログラムは legend です。
+まず legend が必要とする現在の Ngraph の状態を記述した中間ファイルを
 作成します。
 </p>
 
 <pre>
 DATALIST=${system:0:temp_file}
-object file -instance > "$DATALIST"
-get file:0-! -id -field file x y type >> "$DATALIST"
+object data -instance > "$DATALIST"
+get data:0-! -id -field file x y type >> "$DATALIST"
 </pre>
 
 <p>
 ここでは、system:0:temp_file でテンポラリファイル名を取得し、objectコマンド
-で file (データファイル)のインスタンスの数を、get コマンドで各種設定パラメ
+で data (データファイル)のインスタンスの数を、get コマンドで各種設定パラメ
 ターを取得し、テンポラリファイルに書き込んでいます。この中間ファイルのフォ
-ーマットは起動する外部プログラム（今の場合には legend.tcl）固有のフォーマッ
+ーマットは起動する外部プログラム（今の場合には legend）固有のフォーマッ
 トになります。このファイルの中身は現在の Ngraph のデータファイルの設定状況
 をリストした
 </p>
@@ -123,21 +123,21 @@ mark
 の様なものになります。次に
 </p>
 <pre>
-SCRIPT=${system:0:temp_file}                                          
+SCRIPT=${system:0:temp_file}
 </pre>
 
 <p>
-で legend.tcl の出力用に別のテンポラリファイル名を取得し、変数SCRIPT
+で legend の出力用に別のテンポラリファイル名を取得し、変数SCRIPT
 に格納しています。後にこのファイルが Ngraph マクロスクリプトとして実行
 されます。従って、このファイルの中身はマクロスクリプトの文法に則ってい
 なければなりません。
 </p>
 <pre>
-wish legend.tcl "$DATALIST" "$SCRIPT"
+legend "$DATALIST" "$SCRIPT"
 </pre>
 
 <p>
-ここで外部プログラム legend.tcl を起動しています。legend.tcl は コマン
+ここで外部プログラム legend を起動しています。legend は コマン
 ドラインの1番目に指定されたファイルから Ngraph の状態を取得し、2番目
 に指定されたファイルに変更すべき状態をマクロスクリプトとして出力する
 ように設計されています。例えば "STRING" と言う legend-text を(0,0)に生
@@ -156,12 +156,12 @@ text::text="STRING"
 クリプトを実行するのは
 </p>
 <pre>
-if [ -f "$SCRIPT" ];                                                  
-then                                                                  
-new shell                                                     
-shell::shell "$SCRIPT"                                        
-del shell                                                     
-fi                                                                    
+if [ -f "$SCRIPT" ];
+then
+new shell
+shell::shell "$SCRIPT"
+del shell
+fi
 </pre>
 
 <p>
@@ -172,7 +172,7 @@ fi
 </p>
 <pre>
 system:0:unlink_temp_file "$DATALIST"
-system:0:unlink_temp_file "$SCRIPT"                                
+system:0:unlink_temp_file "$SCRIPT"
 </pre>
 
 <p>
@@ -194,14 +194,14 @@ system:0:unlink_temp_file "$SCRIPT"
 </p>
 <pre>
 ... 外部プログラムに必要な中間ファイルを生成する ...
-SCRIPT=${system:0:temp_file}                                          
+SCRIPT=${system:0:temp_file}
 外部プログラム名  中間ファイル名  "$SCRIPT"
-if [ -f "$SCRIPT" ];                                                  
-then                                                                  
-new shell                                                     
-shell::shell "$SCRIPT"                                        
-del shell                                                     
-fi                                                                    
+if [ -f "$SCRIPT" ];
+then
+new shell
+shell::shell "$SCRIPT"
+del shell
+fi
 system:0:unlink_temp_file "$SCRIPT"
 </pre>
 
@@ -212,15 +212,15 @@ system:0:unlink_temp_file "$SCRIPT"
 もちろん、Ngraphの現在の状態を取得する必要がなければ、
 </p>
 <pre>
-SCRIPT=${system:0:temp_file}                                          
+SCRIPT=${system:0:temp_file}
 外部プログラム名  "$SCRIPT"
-if [ -f "$SCRIPT" ];                                                  
-then                                                                  
-new shell                                                     
-shell::shell "$SCRIPT"                                        
-del shell                                                     
-fi                                                                    
-system:0:unlink_temp_file "$SCRIPT"                                   
+if [ -f "$SCRIPT" ];
+then
+new shell
+shell::shell "$SCRIPT"
+del shell
+fi
+system:0:unlink_temp_file "$SCRIPT"
 </pre>
 
 <p>だけで十分です。</p>
@@ -236,12 +236,12 @@ system:0:unlink_temp_file "$SCRIPT"
 <h2><a href="#TOP">データを扱うアドインスクリプト</a></h2>
 <p>
 
-アドインスクリプトの中からデータを直接扱う事もできます。その例として 
+アドインスクリプトの中からデータを直接扱う事もできます。その例として
 text-in.nsc を説明します。次のようなデータファイルが有るとします。
 </p>
 <pre>
 =====test.dat=========
-0 0 sampleA 
+0 0 sampleA
 1 1 sampleB
 2 2 sampleC
 ======================
@@ -265,17 +265,17 @@ del dialog
 </pre>
 
 <p>
-次に file オブジェクトの file::opendatac を使ってデータファイルを開き、
-file::getdata でデータが無くなるまでデータを取得し、最後に
-file::closedata でデータを閉じます。
+次に data オブジェクトの data::opendatac を使ってデータファイルを開き、
+data::getdata でデータが無くなるまでデータを取得し、最後に
+data::closedata でデータを閉じます。
 </p>
 <pre>
-file:0:opendatac
-while file:0:getdata
+data:0:opendatac
+while data:0:getdata
 do
 ... テキストの設定 ...
 done
-file:0:closedata
+data:0:closedata
 </pre>
 
 <p>
@@ -286,28 +286,28 @@ new text
 </pre>
 
 <p>
-また file::getdata を実行した時、データの数値は file::data_x, file::data_y
-に入り、0.01mm単位での用紙上での位置は file::coord_x, file::coord_y に入
-り、行番号は file::line に入ります。これらを用いて生成したtextの座標値を設
+また data::getdata を実行した時、データの数値は data::data_x, data::data_y
+に入り、0.01mm単位での用紙上での位置は data::coord_x, data::coord_y に入
+り、行番号は data::line に入ります。これらを用いて生成したtextの座標値を設
 定しています。
 </p>
 <pre>
-text::x=${file:0:coord_x} 
-text::y=${file:0:coord_y}
+text::x=${data:0:coord_x}
+text::y=${data:0:coord_y}
 </pre>
 
 <p>
-また file::column を用いてカラムのトークンを取り出しています。file::column 
-の第一引数はファイルの行数で、file::line を使い、第二引数は取り出すカラム数
+また data::column を用いてカラムのトークンを取り出しています。data::column
+の第一引数はファイルの行数で、data::line を使い、第二引数は取り出すカラム数
 で変数 COLUMN の値を用いています。取り出したトークンを text::text に設定し
 ます。
 </p>
 <pre>
-text::text=`get file:0 -field column:"${file:0:line} ${COLUMN}"`
+text::text=`get data:0 -field column:"${data:0:line} ${COLUMN}"`
 </pre>
 
 <p>
-ただし、file::column は呼び出される毎にファイルの先頭から走査して目的の文字
+ただし、data::column は呼び出される毎にファイルの先頭から走査して目的の文字
 列を取得しますので、データファイルが大きい場合には動作が遅いです。
 </p>
 <p>
@@ -315,18 +315,18 @@ text::text=`get file:0 -field column:"${file:0:line} ${COLUMN}"`
 </p>
 
 <pre>
-file::opendatac
-while file::getdata
+data::opendatac
+while data::getdata
 do
 ... 目的の操作
-file::data_x file::data_y file::coord_x file::coord_y file::line が使える
+data::data_x data::data_y data::coord_x data::coord_y data::line が使える
 done
-file::closedata
+data::closedata
 </pre>
 
 <p>
-となります。file::opendatac の代わりに file::opendata を用いた場合、
-file::coord_x, file::coord_y の値は不定となりますが、その代わり軸の設定がなさ
+となります。data::opendatac の代わりに data::opendata を用いた場合、
+data::coord_x, data::coord_y の値は不定となりますが、その代わり軸の設定がなさ
 れていなくてもエラーにはなりません。</p>
 
 

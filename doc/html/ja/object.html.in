@@ -61,7 +61,7 @@ Ngraphオブジェクト階層<br>
         <a href="#draw">draw</a>
                 <a href="#axisgrid">axisgrid</a>
                 <a href="#axis">axis</a>
-                <a href="#file">file</a>
+                <a href="#data">data</a>
                 <a href="#merge">merge</a>
                 <a href="#legend">legend</a>
                         <a href="#rectangle">rectangle</a>
