@@ -1676,7 +1676,7 @@ set_equation(struct f2dlocal *f2dlocal, MathEquation **eq, const char *f, const 
   }
 
   for (i = 0; i < EQUATION_NUM; i++) {
-    eq[i] = ofile_create_math_equation(f2dlocal->const_id, 3, TRUE, TRUE, TRUE, TRUE,  TRUE);
+    eq[i] = ofile_create_math_equation(f2dlocal->const_id, 3, TRUE, TRUE, TRUE, TRUE, TRUE);
   }
 
   for (i = 0; i < EQUATION_NUM; i++) {
@@ -2598,7 +2598,6 @@ getdata_skip_step(struct f2ddata *fp, int progress)
   case DATA_SOURCE_ARRAY:
     if (fp->line + fp->rstep - 1 > fp->array_data.data_num) {
       fp->eof = TRUE;
-      rcode = 1;
     } else {
       fp->line += fp->hskip - 1;
     }
@@ -2606,13 +2605,12 @@ getdata_skip_step(struct f2ddata *fp, int progress)
   case DATA_SOURCE_RANGE:
     if (fp->line + fp->rstep - 1 > fp->range_div) {
       fp->eof = TRUE;
-      rcode = 1;
     } else {
       fp->line += fp->hskip - 1;
     }
     break;
   }
-  return rcode;
+  return 0;
 }
 
 #if MASK_SERACH_METHOD == MASK_SERACH_METHOD_CONST
@@ -3100,10 +3098,10 @@ get_data_from_source(struct f2ddata *fp, int maxdim, MathValue *gdata)
     fp->line++;
 
     for (i = 0; buf[i] && CHECK_IFS(fp->ifs_buf, buf[i]); i++);
-
-    if (buf[i] != '\0' && ! CHECK_REMARK(fp->remark, fp->ifs_buf, buf[i])) {
+    rcode = 2;
+    if (buf[i] != '\0' && (! CHECK_REMARK(fp->remark, fp->ifs_buf, buf[i]))) {
       rcode = getdataarray(buf, maxdim, &fp->count, gdata, fp->ifs_buf, fp->csv);
-      if (rcode == 1) {
+      if (rcode != -1) {
 	rcode = 0;
       }
     }
@@ -3170,16 +3168,17 @@ getdata_sub1(struct f2ddata *fp, int fnumx, int fnumy, int *needx, int *needy,
     }
 
     rcode = get_data_from_source(fp, fp->maxdim, gdata);
-    if (rcode == 1) {
+    if (rcode == 0) {
+      if (getdata_sub2(fp, fnumx, fnumy, needx, needy, datax, datay, gdata, filenum, openfile)) {
+	break;
+      }
+    } else if (rcode == 1) {
       fp->eof=TRUE;
       break;
     } else if (rcode==-1) {
       return -1;
     }
 
-    if (getdata_sub2(fp, fnumx, fnumy, needx, needy, datax, datay, gdata, filenum, openfile)) {
-      break;
-    }
     if ((fp->final>=0) && (fp->line>=fp->final)) fp->eof=TRUE;
   }
   return 0;
@@ -3494,11 +3493,13 @@ getdata2(struct f2ddata *fp, MathEquation *code, int maxdim, double *dd, int *dd
       break;
     }
     rcode = get_data_from_source(fp, maxdim, gdata);
-    if (rcode==1) {
+    if (rcode == 1) {
       fp->eof=TRUE;
       break;
     } else if (rcode==-1) {
       return -1;
+    } else if (rcode != 0) {
+      continue;
     }
 
 #if MASK_SERACH_METHOD == MASK_SERACH_METHOD_LINER
@@ -3570,6 +3571,8 @@ getdataraw(struct f2ddata *fp, int maxdim, MathValue *data)
       break;
     } else if (rcode==-1) {
       return -1;
+    } else if (rcode != 0) {
+      continue;
     }
 #if MASK_SERACH_METHOD == MASK_SERACH_METHOD_LINER
     for (j=0;j<fp->masknum;j++)

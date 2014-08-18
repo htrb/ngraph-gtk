@@ -1,3 +1,13 @@
+2014-08-18  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/odata.c (getdata_skip_step): always return 0 when data
+	source is "DATA_SOURCE_ARRAY" or "DATA_SOURCE_RANGE".
+	(get_data_from_source): return 2 when remarked line.
+	(getdata_sub1): call "getdata_sub2()" only when
+	"get_data_from_source()" returns 0.
+	(getdata2, getdataraw): continue loop when
+	"get_data_from_source()" returns non zero.
+
 2014-08-07  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* addin/fft.c (read_data): use "fgets()" and "sscanf()" instead of
