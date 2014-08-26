@@ -82,7 +82,7 @@ host_triplet = @host@
 subdir = initfile
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/mkinstalldirs $(dist_ngraphconf_DATA) \
-	$(am__dist_ngraphinit_DATA_DIST)
+	$(am__dist_ngraphinit_DATA_DIST) $(dist_ngraphui_DATA)
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/gettext.m4 \
 	$(top_srcdir)/m4/gsl.m4 $(top_srcdir)/m4/gtk-2.0.m4 \
@@ -147,11 +147,12 @@ am__uninstall_files_from_dir = { \
          $(am__cd) "$$dir" && rm -f $$files; }; \
   }
 am__installdirs = "$(DESTDIR)$(ngraphconfdir)" \
-	"$(DESTDIR)$(ngraphinitdir)" "$(DESTDIR)$(ngraphconfdir)"
+	"$(DESTDIR)$(ngraphinitdir)" "$(DESTDIR)$(ngraphuidir)" \
+	"$(DESTDIR)$(ngraphconfdir)"
 am__dist_ngraphinit_DATA_DIST = 10append_addins.nsc \
 	20append_addins_ruby.nsc
 DATA = $(dist_ngraphconf_DATA) $(dist_ngraphinit_DATA) \
-	$(nodist_ngraphconf_DATA)
+	$(dist_ngraphui_DATA) $(nodist_ngraphconf_DATA)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
@@ -311,9 +312,11 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ngraphconfdir = $(sysconfdir)/$(PACKAGE)
 ngraphinitdir = $(sysconfdir)/$(PACKAGE)/init.d
+ngraphuidir = $(sysconfdir)/$(PACKAGE)/gtk
 ACCEL_FILE = accel_map 
 init_scripts = 10append_addins.nsc $(am__append_1)
 dist_ngraphinit_DATA = $(init_scripts)
+dist_ngraphui_DATA = menus.ui
 dist_ngraphconf_DATA = Ngraph.nsc Ngraph.ngp fit.ngp $(ACCEL_FILE)
 nodist_ngraphconf_DATA = Ngraph.ini
 EXTRA_DIST = Ngraph.ini.in Ngraph.ini.win save_ui_file.nsc
@@ -399,6 +402,27 @@ uninstall-dist_ngraphinitDATA:
 	@list='$(dist_ngraphinit_DATA)'; test -n "$(ngraphinitdir)" || list=; \
 	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
 	dir='$(DESTDIR)$(ngraphinitdir)'; $(am__uninstall_files_from_dir)
+install-dist_ngraphuiDATA: $(dist_ngraphui_DATA)
+	@$(NORMAL_INSTALL)
+	@list='$(dist_ngraphui_DATA)'; test -n "$(ngraphuidir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(ngraphuidir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(ngraphuidir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(ngraphuidir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(ngraphuidir)" || exit $$?; \
+	done
+
+uninstall-dist_ngraphuiDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_ngraphui_DATA)'; test -n "$(ngraphuidir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(ngraphuidir)'; $(am__uninstall_files_from_dir)
 install-nodist_ngraphconfDATA: $(nodist_ngraphconf_DATA)
 	@$(NORMAL_INSTALL)
 	@list='$(nodist_ngraphconf_DATA)'; test -n "$(ngraphconfdir)" || list=; \
@@ -461,7 +485,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(DATA)
 installdirs:
-	for dir in "$(DESTDIR)$(ngraphconfdir)" "$(DESTDIR)$(ngraphinitdir)" "$(DESTDIR)$(ngraphconfdir)"; do \
+	for dir in "$(DESTDIR)$(ngraphconfdir)" "$(DESTDIR)$(ngraphinitdir)" "$(DESTDIR)$(ngraphuidir)" "$(DESTDIR)$(ngraphconfdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -516,7 +540,8 @@ info: info-am
 info-am:
 
 install-data-am: install-dist_ngraphconfDATA \
-	install-dist_ngraphinitDATA install-nodist_ngraphconfDATA
+	install-dist_ngraphinitDATA install-dist_ngraphuiDATA \
+	install-nodist_ngraphconfDATA
 
 install-dvi: install-dvi-am
 
@@ -561,7 +586,8 @@ ps: ps-am
 ps-am:
 
 uninstall-am: uninstall-dist_ngraphconfDATA \
-	uninstall-dist_ngraphinitDATA uninstall-nodist_ngraphconfDATA
+	uninstall-dist_ngraphinitDATA uninstall-dist_ngraphuiDATA \
+	uninstall-nodist_ngraphconfDATA
 
 .MAKE: install-am install-strip
 
@@ -570,15 +596,17 @@ uninstall-am: uninstall-dist_ngraphconfDATA \
 	distclean-libtool distdir dvi dvi-am html html-am info info-am \
 	install install-am install-data install-data-am \
 	install-dist_ngraphconfDATA install-dist_ngraphinitDATA \
-	install-dvi install-dvi-am install-exec install-exec-am \
-	install-html install-html-am install-info install-info-am \
-	install-man install-nodist_ngraphconfDATA install-pdf \
-	install-pdf-am install-ps install-ps-am install-strip \
-	installcheck installcheck-am installdirs maintainer-clean \
+	install-dist_ngraphuiDATA install-dvi install-dvi-am \
+	install-exec install-exec-am install-html install-html-am \
+	install-info install-info-am install-man \
+	install-nodist_ngraphconfDATA install-pdf install-pdf-am \
+	install-ps install-ps-am install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-generic \
 	mostlyclean-libtool pdf pdf-am ps ps-am tags-am uninstall \
 	uninstall-am uninstall-dist_ngraphconfDATA \
-	uninstall-dist_ngraphinitDATA uninstall-nodist_ngraphconfDATA
+	uninstall-dist_ngraphinitDATA uninstall-dist_ngraphuiDATA \
+	uninstall-nodist_ngraphconfDATA
 
 
 Ngraph.ini: Ngraph.ini.in Makefile

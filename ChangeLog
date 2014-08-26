@@ -1,3 +1,11 @@
+2014-08-26  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_action.h: added.
+
+	* src/gtk/gtk_action.c: added.
+
+	* initfile/menus.ui: added.
+
 2014-08-18  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/odata.c (getdata_skip_step): always return 0 when data
