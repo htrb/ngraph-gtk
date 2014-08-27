@@ -1,5 +1,36 @@
 2014-08-26  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11menu.c (ActionWidget): add member "action".
+	(ToolItem, MenuItem): add member "action_name".
+	(add_addin_menu): added.
+	(create_addin_menu): call "add_addin_menu()".
+	(set_window_action_visibility): call "g_simple_action_set_enabled()".
+	(clipboard_changed, unref_entry_history, get_subwindow_state):
+	added.
+	(save_entry_history): dont call "g_object_unref()".
+	(toggle_view): added.
+	(toggle_view_cb): use "toggle_view()".
+	(set_toggle_action_widget_state): use "g_action_change_state()".
+	(create_toolbar): call "gtk_actionable_set_action_name()".
+	(create_menu_sub): initialize GActionMap.
+	(create_toplevel_window): added.
+	(application): use "create_toplevel_window()" and destroy
+	"TopLevel" only when terminate signal is received.
+	(script_exec, CmToggleSingleWindowMode): not static.
+	(CmToggleSingleWindowMode): the variable "state" is given from the
+	parameter "client_data" when the first parameter is NULL.
+
+	* src/gtk/ox11menu.c (mx_get_accel_map): use GtkApplication if necessary.
+
+	* src/gtk/x11view.c (ViewerWinClose): don't call "CloseGC()" and
+	"CloseGRA()".
+	(ViewerEvKeyDown): add case for "GDK_KEY_Return".
+
+	* src/gtk/x11menu.h (NgraphApp): remove members "ghistory" and
+	"fhistory", add member "recent_manager".
+
+	* src/gtk/ox11menu.h (menulocal): remove member "ngpfilelist".
+
 	* src/gtk/gtk_action.h: added.
 
 	* src/gtk/gtk_action.c: added.

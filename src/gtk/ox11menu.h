@@ -120,7 +120,6 @@ struct menulocal
   char *fileopendir, *graphloaddir, *expanddir, *coordwin_font, *infowin_font, *file_preview_font;
   int expand, loadpath, expandtofullpath, changedirectory, savehistory;
   int savepath, savewithdata, savewithmerge;
-  GtkRecentManager *ngpfilelist;
   int scriptconsole, addinconsole;
   int statusbar, sidebar, ruler, scrollbar, ctoolbar, ptoolbar, show_cross, showtip, preserve_width;
   int hist_size, info_size;

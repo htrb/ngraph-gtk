@@ -1618,7 +1618,7 @@ add_hist(const char *file, char *mime)
   uri = g_filename_to_uri(full_name, NULL, NULL);
   g_free(full_name);
 
-  gtk_recent_manager_add_full(Menulocal.ngpfilelist, uri, &recent_data);
+  gtk_recent_manager_add_full(NgraphApp.recent_manager, uri, &recent_data);
   g_free(uri);
 }
 

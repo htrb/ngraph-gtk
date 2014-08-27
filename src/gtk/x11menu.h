@@ -214,7 +214,7 @@ struct NgraphApp
   char *FileName;
   GtkWidget *Message, *Message_pos, *Message_extra;
   gint Message1;
-  GtkWidget *ghistory[MENU_HISTORY_NUM], *fhistory[MENU_HISTORY_NUM];
+  GtkRecentManager *recent_manager;
   GtkEntryCompletion *legend_text_list, *x_math_list, *y_math_list, *func_list, *fit_list;
   GtkRadioAction *viewb;
 #if GTK_CHECK_VERSION(3, 0, 0)
@@ -238,6 +238,9 @@ extern struct NgraphApp NgraphApp;
 extern GtkWidget *TopLevel;
 extern GdkColor white, gray;
 extern GtkAccelGroup *AccelGroup;
+#if USE_GTK_BUILDER
+extern GtkApplication *GtkApp;
+#endif
 
 int application(char *file);
 
@@ -270,5 +273,10 @@ void create_recent_data_menu(void);
 void set_pointer_mode(int id);
 void set_toggle_action_widget_state(int id, int state);
 void set_subwindow_state(enum SubWinType id, enum subwin_state state);
+int get_subwindow_state(enum SubWinType id);
+void script_exec(GtkWidget *w, gpointer client_data);
+void toggle_view(int type, int state);
+void CmToggleSingleWindowMode(GtkCheckMenuItem *action, gpointer client_data);
+void CmReloadWindowConfig(GtkAction *w, gpointer user_data);
 
 #endif

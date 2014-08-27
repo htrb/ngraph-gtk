@@ -4442,8 +4442,6 @@ CmFileOpen(GtkAction *w, gpointer client_data)
   struct objlist *obj;
   struct narray farray;
 
-  printf("CmFileOpen\n");
-
   if (Menulock || Globallock)
     return;
 

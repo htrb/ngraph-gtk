@@ -1084,8 +1084,6 @@ menulocal_finalize(void)
 
   arraydel2(&Menulocal.drawrable);
 
-  Menulocal.ngpfilelist = NULL;
-
   g_free(Menulocal.fileopendir);
   Menulocal.fileopendir = NULL;
 
@@ -1142,7 +1140,6 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   Menulocal.expand = 1;
   Menulocal.expanddir = g_strdup("./");
   Menulocal.loadpath = SAVE_PATH_FULL;
-  Menulocal.ngpfilelist = gtk_recent_manager_get_default();
   Menulocal.GRAobj = chkobject("gra");
   Menulocal.hist_size = 1000;
   Menulocal.info_size = 1000;
@@ -1841,6 +1838,27 @@ mx_toggle_win(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char 
 static int
 mx_get_accel_map(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
+#if USE_GTK_BUILDER
+  char **actions, **accels;
+  int i, j;
+  GString *str;
+
+  if (rval->str) {
+    g_free(rval->str);
+  }
+  rval->str = NULL;
+
+  str = g_string_new("");
+  actions = gtk_application_list_action_descriptions(GtkApp);
+  for (i = 0; actions[i]; i++) {
+    accels = gtk_application_get_accels_for_action(GtkApp, actions[i]);
+    for (j = 0; accels[j]; j++) {
+      g_string_append_printf(str, "%s %s\n", actions[i], accels[j]);
+    }
+    g_strfreev(accels);
+  }
+  g_strfreev(actions);
+#else
   FILE *fp;
   int fd;
   char buf[1024], *ptr;
@@ -1869,6 +1887,7 @@ mx_get_accel_map(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, ch
     g_string_append(str, buf);
   }
   fclose(fp);
+#endif
 
   rval->str = g_string_free(str, FALSE);
 

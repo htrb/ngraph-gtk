@@ -116,7 +116,7 @@ am_libngraphui_la_OBJECTS = libngraphui_la-gtk_combo.lo \
 	libngraphui_la-x11merge.lo libngraphui_la-x11opt.lo \
 	libngraphui_la-x11print.lo libngraphui_la-x11view.lo \
 	libngraphui_la-gtk_widget.lo libngraphui_la-gtk_ruler.lo \
-	libngraphui_la-init.lo
+	libngraphui_la-init.lo libngraphui_la-gtk_action.lo
 nodist_libngraphui_la_OBJECTS =
 libngraphui_la_OBJECTS = $(am_libngraphui_la_OBJECTS) \
 	$(nodist_libngraphui_la_OBJECTS)
@@ -360,7 +360,7 @@ libngraphui_la_SOURCES = gtk_common.h gtk_combo.c gtk_combo.h		\
 	x11lgnd.c x11lgnd.h x11lgndx.c x11menu.c x11menu.h x11merge.c	\
 	x11merge.h x11opt.c x11opt.h x11opt_proto.h x11print.c		\
 	x11print.h x11view.c x11view.h gtk_widget.c gtk_widget.h	\
-	gtk_ruler.c gtk_ruler.h init.c init.h
+	gtk_ruler.c gtk_ruler.h init.c init.h gtk_action.c gtk_action.h
 
 BUILT_SOURCES = ${nodist_libngraphui_la_SOURCES}
 ngraphconfdir = $(sysconfdir)/$(PACKAGE)
@@ -423,6 +423,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraphui_la-gtk_action.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraphui_la-gtk_combo.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraphui_la-gtk_entry_completion.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraphui_la-gtk_liststore.Plo@am__quote@
@@ -692,6 +693,13 @@ libngraphui_la-init.lo: init.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='init.c' object='libngraphui_la-init.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -c -o libngraphui_la-init.lo `test -f 'init.c' || echo '$(srcdir)/'`init.c
+
+libngraphui_la-gtk_action.lo: gtk_action.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -MT libngraphui_la-gtk_action.lo -MD -MP -MF $(DEPDIR)/libngraphui_la-gtk_action.Tpo -c -o libngraphui_la-gtk_action.lo `test -f 'gtk_action.c' || echo '$(srcdir)/'`gtk_action.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraphui_la-gtk_action.Tpo $(DEPDIR)/libngraphui_la-gtk_action.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gtk_action.c' object='libngraphui_la-gtk_action.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraphui_la_CFLAGS) $(CFLAGS) -c -o libngraphui_la-gtk_action.lo `test -f 'gtk_action.c' || echo '$(srcdir)/'`gtk_action.c
 
 mostlyclean-libtool:
 	-rm -f *.lo

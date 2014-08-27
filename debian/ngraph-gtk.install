@@ -5,6 +5,7 @@ etc/ngraph-gtk/accel_map
 etc/ngraph-gtk/fit.ngp
 etc/ngraph-gtk/init.d/10append_addins.nsc
 etc/ngraph-gtk/zsh/*
+etc/ngraph-gtk/gtk/*
 usr/bin
 usr/lib/*/lib*
 usr/lib/*/ngraph-gtk/terminal

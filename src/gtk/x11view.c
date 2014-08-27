@@ -1201,8 +1201,6 @@ ViewerWinClose(void)
   struct Viewer *d;
 
   d = &NgraphApp.Viewer;
-  CloseGC();
-  CloseGRA();
   arrayfree2(d->focusobj);
   arrayfree2(d->points);
 
@@ -4900,6 +4898,9 @@ ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data)
       NSetCursor(GDK_TARGET);
       return TRUE;
     }
+    break;
+  case GDK_KEY_Return:
+    ViewUpdate();
     break;
   default:
     break;

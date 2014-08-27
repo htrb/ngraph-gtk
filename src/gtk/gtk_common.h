@@ -14,6 +14,8 @@
 #endif
 
 #define USE_HEADER_BAR 0
+#define USE_APP_MENU GTK_CHECK_VERSION(3, 12, 0)
+#define USE_GTK_BUILDER 0
 
 #if GTK_CHECK_VERSION(2, 18, 0)
 #define GTK_WIDGET_SET_CAN_FOCUS(w) gtk_widget_set_can_focus(w, TRUE)

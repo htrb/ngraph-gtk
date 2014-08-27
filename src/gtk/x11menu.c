@@ -31,6 +31,7 @@
 #include "gtk_subwin.h"
 #include "gtk_widget.h"
 #include "gtk_ruler.h"
+#include "gtk_action.h"
 
 #include "init.h"
 #include "x11bitmp.h"
@@ -77,6 +78,9 @@ static GtkWidget *CurrentWindow = NULL, *CToolbar = NULL, *PToolbar = NULL;
 static enum {APP_CONTINUE, APP_QUIT, APP_QUIT_FORCE} Hide_window = APP_CONTINUE;
 static int DrawLock = FALSE;
 static unsigned int CursorType;
+#if USE_APP_MENU
+GtkApplication *GtkApp;
+#endif
 
 #if USE_EXT_DRIVER
 static GtkWidget *ExtDrvOutMenu = NULL
@@ -85,9 +89,6 @@ static GtkWidget *ExtDrvOutMenu = NULL
 struct MenuItem;
 struct ToolItem;
 
-static void CmReloadWindowConfig(GtkAction *w, gpointer user_data);
-static void CmToggleSingleWindowMode(GtkCheckMenuItem *action, gpointer client_data);
-static void script_exec(GtkWidget *w, gpointer client_data);
 static void create_menu(GtkWidget *w, struct MenuItem *item);
 static void create_popup(GtkWidget *parent, struct MenuItem *item);
 static GtkWidget *create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb);
@@ -159,6 +160,9 @@ enum ACTION_TYPE {
 struct ActionWidget {
   GtkWidget *menu, *popup;
   GtkToolItem *tool;
+#if USE_GTK_BUILDER
+  GAction *action;
+#endif
   enum ACTION_TYPE type;
 };
 
@@ -258,6 +262,7 @@ struct ToolItem {
   GCallback callback;
   int user_data;
   struct ActionWidget *action;
+  const char *action_name;
 };
 
 struct ToolItem PointerToolbar[] = {
@@ -529,6 +534,7 @@ struct ToolItem CommandToolbar[] = {
     G_CALLBACK(toggle_subwindow),
     TypeFileWin,
     ActionWidget + DataWindowAction,
+    "app.ViewToggleDataWindowAction",
   },
   {
     TOOL_TYPE_TOGGLE2,
@@ -544,6 +550,7 @@ struct ToolItem CommandToolbar[] = {
     G_CALLBACK(toggle_subwindow),
     TypeAxisWin,
     ActionWidget + AxisWindowAction,
+    "app.ViewToggleAxisWindowAction",
   },
   {
     TOOL_TYPE_TOGGLE2,
@@ -559,6 +566,7 @@ struct ToolItem CommandToolbar[] = {
     G_CALLBACK(toggle_subwindow),
     TypeLegendWin,
     ActionWidget + LegendWindowAction,
+    "app.ViewToggleLegendWindowAction",
   },
   {
     TOOL_TYPE_TOGGLE2,
@@ -574,6 +582,7 @@ struct ToolItem CommandToolbar[] = {
     G_CALLBACK(toggle_subwindow),
     TypeMergeWin,
     ActionWidget + MergeWindowAction,
+    "app.ViewToggleMergeWindowAction",
   },
   {
     TOOL_TYPE_TOGGLE2,
@@ -589,6 +598,7 @@ struct ToolItem CommandToolbar[] = {
     G_CALLBACK(toggle_subwindow),
     TypeCoordWin,
     ActionWidget + CoordWindowAction,
+    "app.ViewToggleCoordinateWindowAction",
   },
   {
     TOOL_TYPE_TOGGLE2,
@@ -604,6 +614,7 @@ struct ToolItem CommandToolbar[] = {
     G_CALLBACK(toggle_subwindow),
     TypeInfoWin,
     ActionWidget + InfoWindowAction,
+    "app.ViewToggleInformationWindowAction",
   },
   {
     TOOL_TYPE_SEPARATOR,
@@ -633,6 +644,8 @@ struct ToolItem CommandToolbar[] = {
     NULL,
     G_CALLBACK(CmFileOpen),
     0,
+    NULL,
+    "app.DataAddFileAction",
   },
   {
     TOOL_TYPE_SEPARATOR,
@@ -650,6 +663,9 @@ struct ToolItem CommandToolbar[] = {
     GDK_CONTROL_MASK,
     NULL,
     G_CALLBACK(CmGraphLoad),
+    0,
+    NULL,
+    "app.GraphLoadAction",
   },
   {
     TOOL_TYPE_NORMAL,
@@ -665,6 +681,7 @@ struct ToolItem CommandToolbar[] = {
     G_CALLBACK(CmGraphOverWrite),
     0,
     ActionWidget + GraphSaveAction,
+    "app.GraphSaveAction",
   },
   {
     TOOL_TYPE_SEPARATOR,
@@ -684,6 +701,7 @@ struct ToolItem CommandToolbar[] = {
     G_CALLBACK(CmAxisClear),
     0,
     ActionWidget + AxisScaleClearAction,
+    "app.AxisScaleClearAction",
   },
   {
     TOOL_TYPE_NORMAL,
@@ -698,6 +716,8 @@ struct ToolItem CommandToolbar[] = {
     NULL,
     G_CALLBACK(CmViewerDraw),
     FALSE,
+    NULL,
+    "app.ViewDrawDirectAction",
   },
   {
     TOOL_TYPE_NORMAL,
@@ -711,6 +731,9 @@ struct ToolItem CommandToolbar[] = {
     GDK_CONTROL_MASK,
     NULL,
     G_CALLBACK(CmOutputPrinterB),
+    0,
+    NULL,
+    "app.GraphPrintAction",
   },
   {
     TOOL_TYPE_SEPARATOR,
@@ -730,6 +753,7 @@ struct ToolItem CommandToolbar[] = {
     G_CALLBACK(CmFileMath),
     0,
     ActionWidget + DataMathAction,
+    "app.DataMathAction",
   },
   {
     TOOL_TYPE_NORMAL,
@@ -750,6 +774,7 @@ struct ToolItem CommandToolbar[] = {
     G_CALLBACK(CmAxisScaleUndo),
     0,
     ActionWidget + AxisScaleUndoAction,
+    "app.AxisScaleUndoAction",
   },
 };
 
@@ -776,6 +801,7 @@ struct MenuItem {
   GCallback callback;
   int user_data;
   struct ActionWidget *action;
+  const char *action_name;
 };
 
 struct MenuItem HelpMenu[] = {
@@ -795,6 +821,9 @@ struct MenuItem HelpMenu[] = {
     0,
     NULL,
     G_CALLBACK(CmHelpHelp),
+    0,
+    NULL,
+    "help",
   },
   {
     MENU_TYPE_NORMAL,
@@ -808,6 +837,9 @@ struct MenuItem HelpMenu[] = {
     0,
     NULL,
     G_CALLBACK(CmHelpAbout),
+    0,
+    NULL,
+    "about",
   },
   {
     MENU_TYPE_END,
@@ -827,6 +859,9 @@ struct MenuItem PreferenceMenu[] = {
     0,
     NULL,
     G_CALLBACK(CmOptionViewer),
+    0,
+    NULL,
+    "PreferenceViewerAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -840,6 +875,9 @@ struct MenuItem PreferenceMenu[] = {
     0,
     NULL,
     G_CALLBACK(CmOptionExtViewer),
+    0,
+    NULL,
+    "PreferenceExternalViewerAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -853,6 +891,9 @@ struct MenuItem PreferenceMenu[] = {
     0,
     NULL,
     G_CALLBACK(CmOptionPrefFont),
+    0,
+    NULL,
+    "PreferenceFontAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -866,6 +907,9 @@ struct MenuItem PreferenceMenu[] = {
     0,
     NULL,
     G_CALLBACK(CmOptionScript),
+    0,
+    NULL,
+    "PreferenceAddinAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -879,6 +923,9 @@ struct MenuItem PreferenceMenu[] = {
     0,
     NULL,
     G_CALLBACK(CmOptionMisc),
+    0,
+    NULL,
+    "PreferenceMiscAction",
   },
   {
     MENU_TYPE_SEPARATOR,
@@ -896,6 +943,9 @@ struct MenuItem PreferenceMenu[] = {
     0,
     NULL,
     G_CALLBACK(CmOptionSaveDefault),
+    0,
+    NULL,
+    "PreferenceSaveSettingAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -909,6 +959,9 @@ struct MenuItem PreferenceMenu[] = {
     0,
     NULL,
     G_CALLBACK(CmOptionSaveNgp),
+    0,
+    NULL,
+    "PreferenceSaveGraphAction",
   },
   {
     MENU_TYPE_SEPARATOR,
@@ -926,6 +979,9 @@ struct MenuItem PreferenceMenu[] = {
     0,
     NULL,
     G_CALLBACK(CmOptionFileDef),
+    0,
+    NULL,
+    "PreferenceDataDefaultAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -939,6 +995,9 @@ struct MenuItem PreferenceMenu[] = {
     0,
     NULL,
     G_CALLBACK(CmOptionTextDef),
+    0,
+    NULL,
+    "PreferenceTextDefaultAction",
   },
   {
     MENU_TYPE_END,
@@ -958,6 +1017,9 @@ struct MenuItem MergeMenu[] = {
     0,
     NULL,
     G_CALLBACK(CmMergeOpen),
+    0,
+    NULL,
+    "MergeAddAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -972,7 +1034,8 @@ struct MenuItem MergeMenu[] = {
     NULL,
     G_CALLBACK(CmMergeUpdate),
     0,
-    ActionWidget + MergePropertyAction
+    ActionWidget + MergePropertyAction,
+    "MergePropertyAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -987,7 +1050,8 @@ struct MenuItem MergeMenu[] = {
     NULL,
     G_CALLBACK(CmMergeClose),
     0,
-    ActionWidget + MergeCloseAction
+    ActionWidget + MergeCloseAction,
+    "MergeCloseAction",
   },
   {
     MENU_TYPE_END,
@@ -1009,6 +1073,7 @@ struct MenuItem LegendTextleMenu[] = {
     G_CALLBACK(CmTextUpdate),
     0,
     ActionWidget + LegendTextPropertyAction,
+    "LegendTextPropertyAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -1024,6 +1089,7 @@ struct MenuItem LegendTextleMenu[] = {
     G_CALLBACK(CmTextDel),
     0,
     ActionWidget + LegendTextDeleteAction,
+    "LegendTextDeleteAction",
   },
   {
     MENU_TYPE_END,
@@ -1045,6 +1111,7 @@ struct MenuItem LegendMarkleMenu[] = {
     G_CALLBACK(CmMarkUpdate),
     0,
     ActionWidget + LegendMarkPropertyAction,
+    "LegendMarkPropertyAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -1060,6 +1127,7 @@ struct MenuItem LegendMarkleMenu[] = {
     G_CALLBACK(CmMarkDel),
     0,
     ActionWidget + LegendMarkDeleteAction,
+    "LegendMarkDeleteAction",
   },
   {
     MENU_TYPE_END,
@@ -1081,6 +1149,7 @@ struct MenuItem LegendArcMenu[] = {
     G_CALLBACK(CmArcUpdate),
     0,
     ActionWidget + LegendArcPropertyAction,
+    "LegendArcPropertyAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -1096,6 +1165,7 @@ struct MenuItem LegendArcMenu[] = {
     G_CALLBACK(CmArcDel),
     0,
     ActionWidget + LegendArcDeleteAction,
+    "LegendArcDeleteAction",
   },
   {
     MENU_TYPE_END,
@@ -1117,6 +1187,7 @@ struct MenuItem LegendRectangleMenu[] = {
     G_CALLBACK(CmRectUpdate),
     0,
     ActionWidget + LegendRectanglePropertyAction,
+    "LegendRectanglePropertyAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -1132,6 +1203,7 @@ struct MenuItem LegendRectangleMenu[] = {
     G_CALLBACK(CmRectDel),
     0,
     ActionWidget + LegendRectangleDeleteAction,
+    "LegendRectangleDeleteAction",
   },
   {
     MENU_TYPE_END,
@@ -1153,6 +1225,7 @@ struct MenuItem LegendPathMenu[] = {
     G_CALLBACK(CmLineUpdate),
     0,
     ActionWidget + LegendPathPropertyAction,
+    "LegendPathPropertyAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -1168,6 +1241,7 @@ struct MenuItem LegendPathMenu[] = {
     G_CALLBACK(CmLineDel),
     0,
     ActionWidget + LegendPathDeleteAction,
+    "LegendPathDeleteAction",
   },
   {
     MENU_TYPE_END,
@@ -1253,6 +1327,9 @@ struct MenuItem AxisGridMenu[] = {
     0,
     NULL,
     G_CALLBACK(CmAxisGridNew),
+    0,
+    NULL,
+    "AxisGridNewAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -1268,6 +1345,7 @@ struct MenuItem AxisGridMenu[] = {
     G_CALLBACK(CmAxisGridUpdate),
     0,
     ActionWidget + AxisGridPropertyAction,
+    "AxisGridPropertyAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -1283,6 +1361,7 @@ struct MenuItem AxisGridMenu[] = {
     G_CALLBACK(CmAxisGridDel),
     0,
     ActionWidget + AxisGridDeleteAction,
+    "AxisGridDeleteAction",
   },
   {
     MENU_TYPE_END,
@@ -1302,6 +1381,9 @@ struct MenuItem AxisAddMenu[] = {
     0,
     NULL,
     G_CALLBACK(CmAxisNewFrame),
+    0,
+    NULL,
+    "AxisAddFrameAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -1315,6 +1397,9 @@ struct MenuItem AxisAddMenu[] = {
     0,
     NULL,
     G_CALLBACK(CmAxisNewSection),
+    0,
+    NULL,
+    "AxisAddSectionAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -1328,6 +1413,9 @@ struct MenuItem AxisAddMenu[] = {
     0,
     NULL,
     G_CALLBACK(CmAxisNewCross),
+    0,
+    NULL,
+    "AxisAddCrossAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -1341,6 +1429,9 @@ struct MenuItem AxisAddMenu[] = {
     0,
     NULL,
     G_CALLBACK(CmAxisNewSingle),
+    0,
+    NULL,
+    "AxisAddSingleAction",
   },
   {
     MENU_TYPE_END,
@@ -1374,6 +1465,7 @@ struct MenuItem AxisMenu[] = {
     G_CALLBACK(CmAxisUpdate),
     0,
     ActionWidget + AxisPropertyAction,
+    "AxisPropertyAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -1389,6 +1481,7 @@ struct MenuItem AxisMenu[] = {
     G_CALLBACK(CmAxisDel),
     0,
     ActionWidget + AxisDeleteAction,
+    "AxisDeleteAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -1404,6 +1497,7 @@ struct MenuItem AxisMenu[] = {
     G_CALLBACK(CmAxisZoom),
     0,
     ActionWidget + AxisScaleZoomAction,
+    "AxisScaleZoomAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -1419,6 +1513,7 @@ struct MenuItem AxisMenu[] = {
     G_CALLBACK(CmAxisClear),
     0,
     ActionWidget + AxisScaleClearAction,
+    "AxisScaleClearAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -1439,6 +1534,7 @@ struct MenuItem AxisMenu[] = {
     G_CALLBACK(CmAxisScaleUndo),
     0,
     ActionWidget + AxisScaleUndoAction,
+    "AxisScaleUndoAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -1471,6 +1567,8 @@ struct MenuItem PlotAddMenu[] = {
     NULL,
     G_CALLBACK(CmFileOpen),
     0,
+    NULL,
+    "DataAddFileAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -1485,6 +1583,8 @@ struct MenuItem PlotAddMenu[] = {
     NULL,
     G_CALLBACK(CmRangeAdd),
     0,
+    NULL,
+    "DataAddRangeAction",
   },
   {
     MENU_TYPE_SEPARATOR,
@@ -1531,6 +1631,7 @@ struct MenuItem DataMenu[] = {
     G_CALLBACK(CmFileUpdate),
     0,
     ActionWidget + DataPropertyAction,
+    "DataPropertyAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -1546,6 +1647,7 @@ struct MenuItem DataMenu[] = {
     G_CALLBACK(CmFileClose),
     0,
     ActionWidget + DataCloseAction,
+    "DataCloseAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -1561,6 +1663,7 @@ struct MenuItem DataMenu[] = {
     G_CALLBACK(CmFileEdit),
     0,
     ActionWidget + DataEditAction,
+    "DataEditAction",
   },
   {
     MENU_TYPE_SEPARATOR,
@@ -1580,6 +1683,7 @@ struct MenuItem DataMenu[] = {
     G_CALLBACK(CmFileSaveData),
     0,
     ActionWidget + DataSaveAction,
+    "DataSaveAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -1595,6 +1699,7 @@ struct MenuItem DataMenu[] = {
     G_CALLBACK(CmFileMath),
     0,
     ActionWidget + DataMathAction,
+    "DataMathAction",
   },
   {
     MENU_TYPE_END,
@@ -1615,6 +1720,8 @@ struct MenuItem ViewMenu[] = {
     NULL,
     G_CALLBACK(CmViewerDraw),
     TRUE,
+    NULL,
+    "ViewDrawAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -1629,6 +1736,8 @@ struct MenuItem ViewMenu[] = {
     NULL,
     G_CALLBACK(CmViewerClear),
     0,
+    NULL,
+    "ViewClearAction",
   },
   {
     MENU_TYPE_SEPARATOR,
@@ -1648,6 +1757,7 @@ struct MenuItem ViewMenu[] = {
     G_CALLBACK(toggle_subwindow),
     TypeFileWin,
     ActionWidget + DataWindowAction,
+    "ViewToggleDataWindowAction",
   },
   {
     MENU_TYPE_TOGGLE2,
@@ -1663,6 +1773,7 @@ struct MenuItem ViewMenu[] = {
     G_CALLBACK(toggle_subwindow),
     TypeAxisWin,
     ActionWidget + AxisWindowAction,
+    "ViewToggleAxisWindowAction",
   },
   {
     MENU_TYPE_TOGGLE2,
@@ -1678,6 +1789,7 @@ struct MenuItem ViewMenu[] = {
     G_CALLBACK(toggle_subwindow),
     TypeLegendWin,
     ActionWidget + LegendWindowAction,
+    "ViewToggleLegendWindowAction",
   },
   {
     MENU_TYPE_TOGGLE2,
@@ -1693,6 +1805,7 @@ struct MenuItem ViewMenu[] = {
     G_CALLBACK(toggle_subwindow),
     TypeMergeWin,
     ActionWidget + MergeWindowAction,
+    "ViewToggleMergeWindowAction",
   },
   {
     MENU_TYPE_TOGGLE2,
@@ -1708,6 +1821,7 @@ struct MenuItem ViewMenu[] = {
     G_CALLBACK(toggle_subwindow),
     TypeCoordWin,
     ActionWidget + CoordWindowAction,
+    "ViewToggleCoordinateWindowAction",
   },
   {
     MENU_TYPE_TOGGLE2,
@@ -1723,6 +1837,7 @@ struct MenuItem ViewMenu[] = {
     G_CALLBACK(toggle_subwindow),
     TypeInfoWin,
     ActionWidget + InfoWindowAction,
+    "ViewToggleInformationWindowAction",
   },
  {
     MENU_TYPE_TOGGLE,
@@ -1738,6 +1853,7 @@ struct MenuItem ViewMenu[] = {
     G_CALLBACK(CmToggleSingleWindowMode),
     0,
     ActionWidget + SingleWindowAction,
+    "ViewToggleSingleWindowModeAction",
   },
   {
     MENU_TYPE_SEPARATOR,
@@ -1768,6 +1884,7 @@ struct MenuItem ViewMenu[] = {
     G_CALLBACK(CmReloadWindowConfig),
     0,
     ActionWidget + DefaultWindowAction,
+    "ViewDefaultWindowConfigAction",
   },
   {
     MENU_TYPE_SEPARATOR,
@@ -1785,6 +1902,9 @@ struct MenuItem ViewMenu[] = {
     0,
     NULL,
     G_CALLBACK(clear_information),
+    0,
+    NULL,
+    "ViewClearInformationWindowAction",
   },
   {
     MENU_TYPE_SEPARATOR,
@@ -1804,6 +1924,7 @@ struct MenuItem ViewMenu[] = {
     G_CALLBACK(toggle_view_cb),
     MenuIdToggleSidebar,
     ActionWidget + ViewSidebarAction,
+    "ViewSidebarAction",
   },
   {
     MENU_TYPE_TOGGLE,
@@ -1819,6 +1940,7 @@ struct MenuItem ViewMenu[] = {
     G_CALLBACK(toggle_view_cb),
     MenuIdToggleStatusbar,
     ActionWidget + ViewStatusbarAction,
+    "ViewStatusbarAction",
   },
   {
     MENU_TYPE_TOGGLE,
@@ -1834,6 +1956,7 @@ struct MenuItem ViewMenu[] = {
     G_CALLBACK(toggle_view_cb),
     MenuIdToggleRuler,
     ActionWidget + ViewRulerAction,
+    "ViewRulerAction",
   },
   {
     MENU_TYPE_TOGGLE,
@@ -1849,6 +1972,7 @@ struct MenuItem ViewMenu[] = {
     G_CALLBACK(toggle_view_cb),
     MenuIdToggleScrollbar,
     ActionWidget + ViewScrollbarAction,
+    "ViewScrollbarAction",
   },
   {
     MENU_TYPE_TOGGLE,
@@ -1864,6 +1988,7 @@ struct MenuItem ViewMenu[] = {
     G_CALLBACK(toggle_view_cb),
     MenuIdToggleCToolbar,
     ActionWidget + ViewCommandToolbarAction,
+    "ViewCommandToolbarAction",
   },
   {
     MENU_TYPE_TOGGLE,
@@ -1879,6 +2004,7 @@ struct MenuItem ViewMenu[] = {
     G_CALLBACK(toggle_view_cb),
     MenuIdTogglePToolbar,
     ActionWidget + ViewToolboxAction,
+    "ViewToolboxAction",
   },
   {
     MENU_TYPE_TOGGLE,
@@ -1894,6 +2020,7 @@ struct MenuItem ViewMenu[] = {
     G_CALLBACK(toggle_view_cb),
     MenuIdToggleCrossGauge,
     ActionWidget + ViewCrossGaugeAction,
+    "ViewCrossGaugeAction",
   },
   {
     MENU_TYPE_END,
@@ -1915,6 +2042,7 @@ struct MenuItem EditOrderMenu[] = {
     G_CALLBACK(CmEditMenuCB),
     MenuIdEditOrderTop,
     ActionWidget + EditOrderTopAction,
+    "EditOrderTopAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -1930,6 +2058,7 @@ struct MenuItem EditOrderMenu[] = {
     G_CALLBACK(CmEditMenuCB),
     MenuIdEditOrderUp,
     ActionWidget + EditOrderUpAction,
+    "EditOrderUpAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -1945,6 +2074,7 @@ struct MenuItem EditOrderMenu[] = {
     G_CALLBACK(CmEditMenuCB),
     MenuIdEditOrderDown,
     ActionWidget + EditOrderDownAction,
+    "EditOrderDownAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -1960,6 +2090,7 @@ struct MenuItem EditOrderMenu[] = {
     G_CALLBACK(CmEditMenuCB),
     MenuIdEditOrderBottom,
     ActionWidget + EditOrderBottomAction,
+    "EditOrderBottomAction",
   },
   {
     MENU_TYPE_END,
@@ -1981,6 +2112,7 @@ struct MenuItem EditAlignMenu[] = {
     G_CALLBACK(CmEditMenuCB),
     MenuIdAlignLeft,
     ActionWidget + EditAlignLeftAction,
+    "EditAlignLeftAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -1996,6 +2128,7 @@ struct MenuItem EditAlignMenu[] = {
     G_CALLBACK(CmEditMenuCB),
     MenuIdAlignHCenter,
     ActionWidget + EditAlignHCenterAction,
+    "EditAlignHCenterAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -2011,6 +2144,7 @@ struct MenuItem EditAlignMenu[] = {
     G_CALLBACK(CmEditMenuCB),
     MenuIdAlignRight,
     ActionWidget + EditAlignRightAction,
+    "EditAlignRightAction",
   },
   {
     MENU_TYPE_SEPARATOR,
@@ -2030,6 +2164,7 @@ struct MenuItem EditAlignMenu[] = {
     G_CALLBACK(CmEditMenuCB),
     MenuIdAlignTop,
     ActionWidget + EditAlignTopAction,
+    "EditAlignTopAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -2045,6 +2180,7 @@ struct MenuItem EditAlignMenu[] = {
     G_CALLBACK(CmEditMenuCB),
     MenuIdAlignVCenter,
     ActionWidget + EditAlignVCenterAction,
+    "EditAlignVCenterAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -2060,6 +2196,7 @@ struct MenuItem EditAlignMenu[] = {
     G_CALLBACK(CmEditMenuCB),
     MenuIdAlignBottom,
     ActionWidget + EditAlignBottomAction,
+    "EditAlignBottomAction",
   },
   {
     MENU_TYPE_END,
@@ -2081,6 +2218,7 @@ struct MenuItem EditMenu[] = {
     G_CALLBACK(CmEditMenuCB),
     MenuIdEditCut,
     ActionWidget + EditCutAction,
+    "EditCutAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -2096,6 +2234,7 @@ struct MenuItem EditMenu[] = {
     G_CALLBACK(CmEditMenuCB),
     MenuIdEditCopy,
     ActionWidget + EditCopyAction,
+    "EditCopyAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -2111,6 +2250,7 @@ struct MenuItem EditMenu[] = {
     G_CALLBACK(CmEditMenuCB),
     MenuIdEditPaste,
     ActionWidget + EditPasteAction,
+    "EditPasteAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -2126,6 +2266,7 @@ struct MenuItem EditMenu[] = {
     G_CALLBACK(CmEditMenuCB),
     MenuIdEditDelete,
     ActionWidget + EditDeleteAction,
+    "EditDeleteAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -2141,6 +2282,7 @@ struct MenuItem EditMenu[] = {
     G_CALLBACK(CmEditMenuCB),
     MenuIdEditDuplicate,
     ActionWidget + EditDuplicateAction,
+    "EditDuplicateAction",
   },
   {
     MENU_TYPE_SEPARATOR,
@@ -2184,6 +2326,7 @@ struct MenuItem EditMenu[] = {
     G_CALLBACK(CmEditMenuCB),
     MenuIdEditRotateCW,
     ActionWidget + EditRotateCWAction,
+    "EditRotateCWAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -2199,6 +2342,7 @@ struct MenuItem EditMenu[] = {
     G_CALLBACK(CmEditMenuCB),
     MenuIdEditRotateCCW,
     ActionWidget + EditRotateCCWAction,
+    "EditRotateCCWAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -2214,6 +2358,7 @@ struct MenuItem EditMenu[] = {
     G_CALLBACK(CmEditMenuCB),
     MenuIdEditFlipHorizontally,
     ActionWidget + EditFlipHAction,
+    "EditFlipHAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -2229,6 +2374,7 @@ struct MenuItem EditMenu[] = {
     G_CALLBACK(CmEditMenuCB),
     MenuIdEditFlipVertically,
     ActionWidget + EditFlipVAction,
+    "EditFlipVActiopn",
   },
   {
     MENU_TYPE_END,
@@ -2249,6 +2395,8 @@ struct MenuItem GraphNewMenu[] = {
     NULL,
     G_CALLBACK(CmGraphNewMenu),
     MenuIdGraphNewFrame,
+    NULL,
+    "GraphNewFrameAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -2263,6 +2411,8 @@ struct MenuItem GraphNewMenu[] = {
     NULL,
     G_CALLBACK(CmGraphNewMenu),
     MenuIdGraphNewSection,
+    NULL,
+    "GraphNewSectionAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -2277,6 +2427,8 @@ struct MenuItem GraphNewMenu[] = {
     NULL,
     G_CALLBACK(CmGraphNewMenu),
     MenuIdGraphNewCross,
+    NULL,
+    "GraphNewCrossAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -2291,6 +2443,8 @@ struct MenuItem GraphNewMenu[] = {
     NULL,
     G_CALLBACK(CmGraphNewMenu),
     MenuIdGraphAllClear,
+    NULL,
+    "GraphNewClearAction",
   },
   {
     MENU_TYPE_END,
@@ -2311,6 +2465,8 @@ struct MenuItem GraphExportMenu[] = {
     NULL,
     G_CALLBACK(CmOutputMenu),
     MenuIdOutputGRAFile,
+    NULL,
+    "GraphExportGRAAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -2325,6 +2481,8 @@ struct MenuItem GraphExportMenu[] = {
     NULL,
     G_CALLBACK(CmOutputMenu),
     MenuIdOutputPSFile,
+    NULL,
+    "GraphExportPSAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -2339,6 +2497,8 @@ struct MenuItem GraphExportMenu[] = {
     NULL,
     G_CALLBACK(CmOutputMenu),
     MenuIdOutputEPSFile,
+    NULL,
+    "GraphExportEPSAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -2353,6 +2513,8 @@ struct MenuItem GraphExportMenu[] = {
     NULL,
     G_CALLBACK(CmOutputMenu),
     MenuIdOutputPDFFile,
+    NULL,
+    "GraphExportPDFAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -2367,6 +2529,8 @@ struct MenuItem GraphExportMenu[] = {
     NULL,
     G_CALLBACK(CmOutputMenu),
     MenuIdOutputSVGFile,
+    NULL,
+    "GraphExportSVGAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -2381,6 +2545,8 @@ struct MenuItem GraphExportMenu[] = {
     NULL,
     G_CALLBACK(CmOutputMenu),
     MenuIdOutputPNGFile,
+    NULL,
+    "GraphExportPNGAction",
   },
 #ifdef WINDOWS
   {
@@ -2396,6 +2562,8 @@ struct MenuItem GraphExportMenu[] = {
     NULL,
     G_CALLBACK(CmOutputMenu),
     MenuIdOutputEMFFile,
+    NULL,
+    "GraphExportEMFAction",
   },
   {
     MENU_TYPE_SEPARATOR,
@@ -2414,6 +2582,8 @@ struct MenuItem GraphExportMenu[] = {
     NULL,
     G_CALLBACK(CmOutputMenu),
     MenuIdOutputEMFClipboard,
+    NULL,
+    "GraphExportEMFClipboardAction",
   },
 #endif	/* WINDOWS */
   {
@@ -2446,6 +2616,9 @@ struct MenuItem GraphMenu[] = {
     GDK_CONTROL_MASK,
     NULL,
     G_CALLBACK(CmGraphLoad),
+    0,
+    NULL,
+    "GraphLoadAction",
   },
   {
     MENU_TYPE_RECENT_GRAPH,
@@ -2473,6 +2646,7 @@ struct MenuItem GraphMenu[] = {
     G_CALLBACK(CmGraphOverWrite),
     0,
     ActionWidget + GraphSaveAction,
+    "GraphSaveAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -2487,6 +2661,8 @@ struct MenuItem GraphMenu[] = {
     NULL,
     G_CALLBACK(CmGraphSave),
     0,
+    NULL,
+    "GraphSaveAsAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -2515,6 +2691,9 @@ struct MenuItem GraphMenu[] = {
     0,
     NULL,
     G_CALLBACK(CmGraphSwitch),
+    0,
+    NULL,
+    "GraphDrawOrderAction",
   },
   {
     MENU_TYPE_SEPARATOR,
@@ -2536,6 +2715,9 @@ struct MenuItem GraphMenu[] = {
     0,
     NULL,
     G_CALLBACK(CmGraphPage),
+    0,
+    NULL,
+    "GraphPageSetupAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -2549,6 +2731,9 @@ struct MenuItem GraphMenu[] = {
     0,
     NULL,
     G_CALLBACK(CmOutputViewerB),
+    0,
+    NULL,
+    "GraphPrintPreviewAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -2562,6 +2747,9 @@ struct MenuItem GraphMenu[] = {
     GDK_CONTROL_MASK,
     NULL,
     G_CALLBACK(CmOutputPrinterB),
+    0,
+    NULL,
+    "GraphPrintAction",
   },
   {
     MENU_TYPE_SEPARATOR,
@@ -2579,6 +2767,9 @@ struct MenuItem GraphMenu[] = {
     0,
     NULL,
     G_CALLBACK(CmGraphDirectory),
+    0,
+    NULL,
+    "GraphCurrentDirectoryAction",
   },
   {
     MENU_TYPE_SEPARATOR,
@@ -2596,6 +2787,9 @@ struct MenuItem GraphMenu[] = {
     0,
     NULL,
     G_CALLBACK(CmGraphShell),
+    0,
+    NULL,
+    "GraphShellAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -2628,6 +2822,9 @@ struct MenuItem GraphMenu[] = {
     GDK_CONTROL_MASK,
     NULL,
     G_CALLBACK(CmGraphQuit),
+    0,
+    NULL,
+    "quit",
   },
   {
     MENU_TYPE_END,
@@ -2766,6 +2963,7 @@ struct MenuItem PopupRotateMenu[] = {
     G_CALLBACK(CmEditMenuCB),
     MenuIdEditRotateCW,
     ActionWidget + EditRotateCWAction,
+    "EditRotateCWAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -2781,6 +2979,7 @@ struct MenuItem PopupRotateMenu[] = {
     G_CALLBACK(CmEditMenuCB),
     MenuIdEditRotateCCW,
     ActionWidget + EditRotateCCWAction,
+    "EditRotateCCWAction",
   },
   {
     MENU_TYPE_END,
@@ -2802,6 +3001,7 @@ struct MenuItem PopupFlipMenu[] = {
     G_CALLBACK(CmEditMenuCB),
     MenuIdEditFlipHorizontally,
     ActionWidget + EditFlipHAction,
+    "EditFlipHAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -2817,6 +3017,7 @@ struct MenuItem PopupFlipMenu[] = {
     G_CALLBACK(CmEditMenuCB),
     MenuIdEditFlipVertically,
     ActionWidget + EditFlipVAction,
+    "EditFlipVActiopn",
   },
   {
     MENU_TYPE_END,
@@ -2838,6 +3039,7 @@ struct MenuItem PopupAlignMenu[] = {
     G_CALLBACK(CmEditMenuCB),
     MenuIdAlignLeft,
     ActionWidget + EditAlignLeftAction,
+    "EditAlignLeftAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -2853,6 +3055,7 @@ struct MenuItem PopupAlignMenu[] = {
     G_CALLBACK(CmEditMenuCB),
     MenuIdAlignHCenter,
     ActionWidget + EditAlignHCenterAction,
+    "EditAlignHCenterAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -2868,6 +3071,7 @@ struct MenuItem PopupAlignMenu[] = {
     G_CALLBACK(CmEditMenuCB),
     MenuIdAlignRight,
     ActionWidget + EditAlignRightAction,
+    "EditAlignRightAction",
   },
   {
     MENU_TYPE_SEPARATOR,
@@ -2887,6 +3091,7 @@ struct MenuItem PopupAlignMenu[] = {
     G_CALLBACK(CmEditMenuCB),
     MenuIdAlignTop,
     ActionWidget + EditAlignTopAction,
+    "EditAlignTopAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -2902,6 +3107,7 @@ struct MenuItem PopupAlignMenu[] = {
     G_CALLBACK(CmEditMenuCB),
     MenuIdAlignVCenter,
     ActionWidget + EditAlignVCenterAction,
+    "EditAlignVCenterAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -2917,6 +3123,7 @@ struct MenuItem PopupAlignMenu[] = {
     G_CALLBACK(CmEditMenuCB),
     MenuIdAlignBottom,
     ActionWidget + EditAlignBottomAction,
+    "EditAlignBottomAction",
   },
   {
     MENU_TYPE_END,
@@ -2938,6 +3145,7 @@ struct MenuItem PopupMenu[] = {
     G_CALLBACK(CmEditMenuCB),
     MenuIdEditCut,
     ActionWidget + EditCutAction,
+    "EditCutAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -2953,6 +3161,7 @@ struct MenuItem PopupMenu[] = {
     G_CALLBACK(CmEditMenuCB),
     MenuIdEditCopy,
     ActionWidget + EditCopyAction,
+    "EditCopyAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -2968,6 +3177,7 @@ struct MenuItem PopupMenu[] = {
     G_CALLBACK(CmEditMenuCB),
     MenuIdEditPaste,
     ActionWidget + EditPasteAction,
+    "EditPasteAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -2983,6 +3193,7 @@ struct MenuItem PopupMenu[] = {
     G_CALLBACK(CmEditMenuCB),
     MenuIdEditDelete,
     ActionWidget + EditDeleteAction,
+    "EditDeleteAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -2998,6 +3209,7 @@ struct MenuItem PopupMenu[] = {
     G_CALLBACK(CmEditMenuCB),
     MenuIdEditDuplicate,
     ActionWidget + EditDuplicateAction,
+    "EditDuplicateAction",
   },
   {
     MENU_TYPE_SEPARATOR,
@@ -3010,12 +3222,13 @@ struct MenuItem PopupMenu[] = {
     NULL,
     NULL,
     "<Ngraph>/Popup/Update",
-    GDK_KEY_Return,
+    0,
     0,
     NULL,
     G_CALLBACK(ViewerUpdateCB),
     0,
     ActionWidget + PopupUpdateAction,
+    "PopupUpdateAction",
   },
   {
     MENU_TYPE_SEPARATOR,
@@ -3073,6 +3286,7 @@ struct MenuItem PopupMenu[] = {
     G_CALLBACK(CmEditMenuCB),
     MenuIdEditOrderTop,
     ActionWidget + EditOrderTopAction,
+    "EditOrderTopAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -3088,6 +3302,7 @@ struct MenuItem PopupMenu[] = {
     G_CALLBACK(CmEditMenuCB),
     MenuIdEditOrderUp,
     ActionWidget + EditOrderUpAction,
+    "EditOrderUpAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -3103,6 +3318,7 @@ struct MenuItem PopupMenu[] = {
     G_CALLBACK(CmEditMenuCB),
     MenuIdEditOrderDown,
     ActionWidget + EditOrderDownAction,
+    "EditOrderDownAction",
   },
   {
     MENU_TYPE_NORMAL,
@@ -3118,6 +3334,7 @@ struct MenuItem PopupMenu[] = {
     G_CALLBACK(CmEditMenuCB),
     MenuIdEditOrderBottom,
     ActionWidget + EditOrderBottomAction,
+    "EditOrderBottomAction",
   },
   {
     MENU_TYPE_SEPARATOR,
@@ -3136,6 +3353,7 @@ struct MenuItem PopupMenu[] = {
     G_CALLBACK(toggle_view_cb),
     MenuIdToggleCrossGauge,
     ActionWidget + ViewCrossGaugeAction,
+    "ViewCrossGaugeAction",
   },
   {
     MENU_TYPE_END,
@@ -3315,6 +3533,11 @@ menu_lock(int lock)
 static void
 set_action_widget_sensitivity(int id, int state)
 {
+#if USE_GTK_BUILDER
+  if (ActionWidget[id].action) {
+    g_simple_action_set_enabled(G_SIMPLE_ACTION(ActionWidget[id].action), state);
+  }
+#else
   if (ActionWidget[id].menu) {
     gtk_widget_set_sensitive(ActionWidget[id].menu, state);
   }
@@ -3324,6 +3547,7 @@ set_action_widget_sensitivity(int id, int state)
   if (ActionWidget[id].popup) {
     gtk_widget_set_sensitive(ActionWidget[id].popup, state);
   }
+#endif
 }
 
 void
@@ -3446,6 +3670,61 @@ find_gra2gdk_inst(struct objlist **o, N_VALUE **i, struct objlist **ro, int *rou
   return TRUE;
 }
 
+
+#if USE_GTK_BUILDER
+#define ADDIN_MENU_SECTION_INDEX 6
+static void
+add_addin_menu(void)
+{
+  GMenuModel *menu;
+  GMenu *addin_menu;
+  struct script *fcur;
+  GMenuItem *item;
+  int i, n;
+  char buf[1024];
+
+  menu = gtk_application_get_menubar(GtkApp);
+  if (menu == NULL) {
+    return;
+  }
+
+  menu = g_menu_model_get_item_link(G_MENU_MODEL(menu), 0, G_MENU_LINK_SUBMENU);
+  if (menu == NULL) {
+    return;
+  }
+
+  n = g_menu_model_get_n_items(menu);
+  if (n < ADDIN_MENU_SECTION_INDEX) {
+    return;
+  }
+
+  menu = g_menu_model_get_item_link(menu, ADDIN_MENU_SECTION_INDEX, G_MENU_LINK_SECTION);
+  if (menu == NULL) {
+    return;
+  }
+
+  n = g_menu_model_get_n_items(menu);
+  if (n > 1) {
+    g_menu_remove(G_MENU(menu), 0);
+  }
+
+  addin_menu = g_menu_new();
+  i = 0;
+  fcur = Menulocal.scriptroot;
+  while (fcur) {
+    if (fcur->name && fcur->script) {
+      snprintf(buf, sizeof(buf), "app.GraphAddinAction(%d)", i);
+      item = g_menu_item_new(fcur->name, buf);
+      g_menu_append_item(addin_menu, item);
+    }
+    fcur = fcur->next;
+    i++;
+  }
+
+  g_menu_prepend_submenu(G_MENU(menu), _("_Add-in"), G_MENU_MODEL(addin_menu));
+}
+#endif
+
 void
 create_addin_menu(void)
 {
@@ -3485,6 +3764,10 @@ create_addin_menu(void)
   }
 
   gtk_widget_show_all(menu);
+
+#if USE_GTK_BUILDER
+  add_addin_menu();
+#endif
 }
 
 static void
@@ -3605,6 +3888,7 @@ get_home(void)
   return home;
 }
 
+#if ! USE_GTK_BUILDER
 static void
 read_keymap_file(void)
 {
@@ -3627,6 +3911,7 @@ read_keymap_file(void)
   }
   g_free(filename);
 }
+#endif
 
 static void
 create_markpixmap(GtkWidget *win)
@@ -3866,6 +4151,11 @@ set_window_action_visibility(int visibility)
     if (ActionWidget[i].popup) {
       gtk_widget_set_visible(ActionWidget[i].popup, state);
     }
+#if USE_GTK_BUILDER
+    if (ActionWidget[i].action) {
+      g_simple_action_set_enabled(G_SIMPLE_ACTION(ActionWidget[i].action), state);
+    }
+#endif
   }
 }
 
@@ -4223,6 +4513,18 @@ edit_menu_shown(GtkWidget *w, gpointer user_data)
   set_focus_sensitivity(d);
 }
 
+#if USE_GTK_BUILDER
+static void
+clipboard_changed(GtkWidget *w, GdkEvent *e, gpointer user_data)
+{
+  struct Viewer *d;
+
+  d = (struct Viewer *) user_data;
+
+  set_focus_sensitivity(d);
+}
+#endif
+
 static void
 setupwindow(void)
 {
@@ -4242,8 +4544,10 @@ setupwindow(void)
 
   w = gtk_menu_bar_new();
   create_menu(w, MainMenu);
+#if ! USE_GTK_BUILDER
   gtk_box_pack_start(GTK_BOX(vbox2), w, FALSE, FALSE, 0);
   read_keymap_file();
+#endif
   NgraphApp.Viewer.menu = w;
 
   w = create_toolbar(CommandToolbar, sizeof(CommandToolbar) / sizeof(*CommandToolbar), NULL);
@@ -4266,12 +4570,14 @@ setupwindow(void)
 #endif
 
   w = gtk_menu_new();
-  gtk_menu_set_accel_group(GTK_MENU(w), AccelGroup);
   create_popup(w, PopupMenu);
+#if ! USE_GTK_BUILDER
+  gtk_menu_set_accel_group(GTK_MENU(w), AccelGroup);
   NgraphApp.Viewer.popup = w;
   gtk_widget_show_all(w);
-  g_signal_connect(NgraphApp.Viewer.popup, "show", G_CALLBACK(edit_menu_shown), &NgraphApp.Viewer);
   g_signal_connect(ActionWidget[EditMenuAction].menu, "show", G_CALLBACK(edit_menu_shown), &NgraphApp.Viewer);
+#endif
+  g_signal_connect(NgraphApp.Viewer.popup, "show", G_CALLBACK(edit_menu_shown), &NgraphApp.Viewer);
 
 #if GTK_CHECK_VERSION(3, 2, 0)
   NgraphApp.Viewer.HScroll = gtk_scrollbar_new(GTK_ORIENTATION_HORIZONTAL, NULL);
@@ -4504,6 +4810,22 @@ load_hist(void)
 }
 
 static void
+unref_entry_history(void)
+{
+  g_object_unref(NgraphApp.legend_text_list);
+  g_object_unref(NgraphApp.x_math_list);
+  g_object_unref(NgraphApp.y_math_list);
+  g_object_unref(NgraphApp.func_list);
+  g_object_unref(NgraphApp.fit_list);
+
+  NgraphApp.legend_text_list = NULL;
+  NgraphApp.x_math_list = NULL;
+  NgraphApp.y_math_list = NULL;
+  NgraphApp.func_list = NULL;
+  NgraphApp.fit_list = NULL;
+}
+
+static void
 save_entry_history(void)
 {
   char *home;
@@ -4517,18 +4839,6 @@ save_entry_history(void)
   save_hist_file(NgraphApp.y_math_list, home, MATH_Y_HISTORY);
   save_hist_file(NgraphApp.func_list, home, FUNCTION_HISTORY);
   save_hist_file(NgraphApp.fit_list, home, FIT_HISTORY);
-
-  g_object_unref(NgraphApp.legend_text_list);
-  g_object_unref(NgraphApp.x_math_list);
-  g_object_unref(NgraphApp.y_math_list);
-  g_object_unref(NgraphApp.func_list);
-  g_object_unref(NgraphApp.fit_list);
-
-  NgraphApp.legend_text_list = NULL;
-  NgraphApp.x_math_list = NULL;
-  NgraphApp.y_math_list = NULL;
-  NgraphApp.func_list = NULL;
-  NgraphApp.fit_list = NULL;
 }
 
 static void
@@ -4706,10 +5016,10 @@ set_modified_state(int state)
   set_action_widget_sensitivity(GraphSaveAction, state);
 }
 
-static void
-toggle_view_cb(GtkCheckMenuItem *action, gpointer data)
+void
+toggle_view(int type, int state)
 {
-  int type, state, lock = FALSE;
+  static int lock = FALSE;
   GtkWidget *w1 = NULL, *w2 = NULL;
 
   if (lock) {
@@ -4717,13 +5027,6 @@ toggle_view_cb(GtkCheckMenuItem *action, gpointer data)
   }
 
   lock = TRUE;
-
-  type = GPOINTER_TO_INT(data);
-
-  if (action == NULL) {
-    return;
-  }
-  state = gtk_check_menu_item_get_active(action);
 
   switch (type) {
   case MenuIdToggleSidebar:
@@ -4773,9 +5076,31 @@ toggle_view_cb(GtkCheckMenuItem *action, gpointer data)
   lock = FALSE;
 }
 
+static void
+toggle_view_cb(GtkCheckMenuItem *action, gpointer data)
+{
+  int type, state;
+
+  if (action == NULL) {
+    return;
+  }
+  type = GPOINTER_TO_INT(data);
+  state = gtk_check_menu_item_get_active(action);
+
+  toggle_view(type, state);
+}
+
 void
 set_toggle_action_widget_state(int id, int state)
 {
+#if USE_GTK_BUILDER
+  if (ActionWidget[id].action) {
+    GVariant *value;
+
+    value = g_variant_new_boolean(state);
+    g_action_change_state(ActionWidget[id].action, value);
+  }
+#else
   if (ActionWidget[id].menu) {
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(ActionWidget[id].menu), state);
   }
@@ -4785,6 +5110,7 @@ set_toggle_action_widget_state(int id, int state)
   if (ActionWidget[id].tool) {
     gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(ActionWidget[id].tool), state);
   }
+#endif
 }
 
 static void
@@ -4936,7 +5262,7 @@ create_recent_menu(int type)
   GtkRecentFilter *filter;
   GtkWidget *submenu;
 
-  submenu = gtk_recent_chooser_menu_new_for_manager(Menulocal.ngpfilelist);
+  submenu = gtk_recent_chooser_menu_new_for_manager(NgraphApp.recent_manager);
   filter = gtk_recent_filter_new();
   gtk_recent_filter_add_custom(filter,
 			       GTK_RECENT_FILTER_URI |
@@ -5032,6 +5358,11 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
       continue;
     }
 
+#if USE_GTK_BUILDER
+    if (item[i].action_name) {
+      gtk_actionable_set_action_name(GTK_ACTIONABLE(widget), item[i].action_name);
+    } else
+#endif
     if (item[i].callback) {
       switch (item[i].type) {
       case TOOL_TYPE_TOGGLE:
@@ -5126,10 +5457,12 @@ create_menu_sub(GtkWidget *parent, struct MenuItem *item, int popup)
       }
     }
 
+#if ! USE_GTK_BUILDER
     if (item[i].accel_path) {
       gtk_accel_map_add_entry(item[i].accel_path, item[i].accel_key, item[i].accel_mods);
       gtk_menu_item_set_accel_path(GTK_MENU_ITEM(widget), item[i].accel_path);
     }
+#endif
 
     if (item[i].child) {
       menu = gtk_menu_new();
@@ -5146,6 +5479,30 @@ create_menu_sub(GtkWidget *parent, struct MenuItem *item, int popup)
 	item[i].action->menu = widget;
       }
     }
+#if USE_GTK_BUILDER
+    if (item[i].action_name) {
+      if (item[i].action) {
+	item[i].action->action = g_action_map_lookup_action(G_ACTION_MAP(GtkApp), item[i].action_name);
+      }
+      if (item[i].accel_key) {
+	char *key, accel[128], action[128];
+	const char *accels[2];
+
+	key = gdk_keyval_name(item[i].accel_key);
+	if (key) {
+	  snprintf(accel, sizeof(accel), "%s%s%s",
+		   (item[i].accel_mods & GDK_CONTROL_MASK) ? "<Control>" : "",
+		   (item[i].accel_mods & GDK_SHIFT_MASK) ? "<Shift>" : "",
+		   key);
+	  snprintf(action, sizeof(action), "app.%s", item[i].action_name);
+	  accels[0] = accel;
+	  accels[1] = NULL;
+	  gtk_application_set_accels_for_action(GtkApp, action, accels);
+	  gtk_application_add_accelerator(GtkApp, accel, action, NULL);
+	}
+      }
+    }
+#endif
 
     gtk_menu_shell_append(GTK_MENU_SHELL(parent), widget);
   }
@@ -5163,16 +5520,22 @@ create_popup(GtkWidget *parent, struct MenuItem *item)
   create_menu_sub(parent, item, TRUE);
 }
 
-int
-application(char *file)
+static int
+create_toplevel_window(void)
 {
-  int i, terminated;
+  int i;
   struct objlist *aobj;
   int x, y, width, height, w, h;
   GdkScreen *screen;
+#if USE_APP_MENU
+  GMenuModel *model;
+#if USE_GTK_BUILDER
+  GtkWidget *popup;
+  GtkClipboard *clip;
+#endif	/* USE_GTK_BUILDER */
+#endif	/* USE_APP_MENU */
 
-  if (TopLevel)
-    return 1;
+  NgraphApp.recent_manager = gtk_recent_manager_get_default();
 
   init_action_widget_list();
   init_ngraph_app_struct();
@@ -5200,7 +5563,20 @@ application(char *file)
 
   load_hist();
 
+#if USE_APP_MENU
+  GtkApp = create_application_window(&model);
+  CurrentWindow = TopLevel = gtk_application_window_new(GtkApp);
+#if USE_GTK_BUILDER
+  gtk_application_window_set_show_menubar(GTK_APPLICATION_WINDOW(TopLevel), TRUE);
+  popup = gtk_menu_new_from_model(model);
+  NgraphApp.Viewer.popup = popup;
+  clip = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
+  g_signal_connect(clip, "owner-change", G_CALLBACK(clipboard_changed), &NgraphApp.Viewer);
+#endif	/* USE_GTK_BUILDER */
+#else  /* USE_APP_MENU */
   CurrentWindow = TopLevel = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+#endif	/* USE_APP_MENU */
+
   gtk_window_set_title(GTK_WINDOW(TopLevel), AppName);
 #if GTK_CHECK_VERSION(3, 0, 0)
   gtk_window_set_has_resize_grip(GTK_WINDOW(TopLevel), TRUE);
@@ -5263,25 +5639,6 @@ application(char *file)
     }
   }
 
-  if (file != NULL) {
-    char *ext;
-    ext = getextention(file);
-    if (ext) {
-      if ((strcmp0(ext, "PRM") == 0) || (strcmp0(ext, "prm") == 0)) {
-	LoadPrmFile(file);
-      } else if ((strcmp0(ext, "NGP") == 0) || (strcmp0(ext, "ngp") == 0)) {
-	LoadNgpFile(file, Menulocal.loadpath, Menulocal.expand, Menulocal.expanddir, FALSE, NULL);
-      }
-    }
-  }
-
-  CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
-
-#ifndef WINDOWS
-  set_signal(SIGINT, 0, kill_signal_handler);
-  set_signal(SIGTERM, 0, term_signal_handler);
-#endif	/* WINDOWS */
-
   gtk_widget_show_all(GTK_WIDGET(TopLevel));
   set_widget_visibility();
 
@@ -5298,6 +5655,52 @@ application(char *file)
   } else {
     gtk_widget_hide(NgraphApp.Viewer.side_pane1);
   }
+
+  return 0;
+}
+
+int
+application(char *file)
+{
+  int terminated;
+
+  if (TopLevel) {
+#if GTK_CHECK_VERSION(3, 8, 0)
+    if (gtk_widget_is_visible(TopLevel)) {
+      return 1;
+    }
+#else
+    if (GTK_WIDGET_VISIBLE(TopLevel)) {
+      return 1;
+    }
+#endif
+    gtk_widget_show(TopLevel);
+    OpenGC();
+    OpenGRA();
+  } else {
+    if (create_toplevel_window()) {
+      return 1;
+    }
+  }
+
+#ifndef WINDOWS
+  set_signal(SIGINT, 0, kill_signal_handler);
+  set_signal(SIGTERM, 0, term_signal_handler);
+#endif	/* WINDOWS */
+
+  if (file != NULL) {
+    char *ext;
+    ext = getextention(file);
+    if (ext) {
+      if ((strcmp0(ext, "PRM") == 0) || (strcmp0(ext, "prm") == 0)) {
+	LoadPrmFile(file);
+      } else if ((strcmp0(ext, "NGP") == 0) || (strcmp0(ext, "ngp") == 0)) {
+	LoadNgpFile(file, Menulocal.loadpath, Menulocal.expand, Menulocal.expanddir, FALSE, NULL);
+      }
+    }
+  }
+
+  CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
 
   terminated = AppMainLoop();
 
@@ -5320,23 +5723,30 @@ application(char *file)
   set_signal(SIGINT, 0, SIG_DFL);
 #endif	/* WINDOWS */
 
-  ViewerWinClose();
-
-  destroy_sub_windows();
-
-  g_free(NgraphApp.FileName);
-  NgraphApp.FileName = NULL;
-
-  gtk_widget_destroy(TopLevel);
-  NgraphApp.Viewer.Win = NULL;
-  CurrentWindow = TopLevel = PToolbar = CToolbar = NULL;
-
-  free_markpixmap();
-  free_cursor();
-
+  gtk_widget_hide(TopLevel);
   reset_event();
 
+  CloseGC();
+  CloseGRA();
+
   if (terminated) {
+    unref_entry_history();
+
+    ViewerWinClose();
+
+    destroy_sub_windows();
+
+    g_free(NgraphApp.FileName);
+    NgraphApp.FileName = NULL;
+
+    gtk_widget_destroy(TopLevel);
+    NgraphApp.Viewer.Win = NULL;
+    CurrentWindow = TopLevel = PToolbar = CToolbar = NULL;
+
+    free_markpixmap();
+    free_cursor();
+
+    reset_event();
     delobj(getobject("system"), 0);
   }
 
@@ -5563,7 +5973,7 @@ InputYN(const char *mes)
   return (ret == IDYES) ? TRUE : FALSE;
 }
 
-static void
+void
 script_exec(GtkWidget *w, gpointer client_data)
 {
   char *name, *option, *s, *argv[2], mes[256];
@@ -5643,7 +6053,7 @@ script_exec(GtkWidget *w, gpointer client_data)
   main_window_redraw();
 }
 
-static void
+void
 CmReloadWindowConfig(GtkAction *w, gpointer user_data)
 {
   gint x, y, w0, h0;
@@ -5692,7 +6102,7 @@ CmReloadWindowConfig(GtkAction *w, gpointer user_data)
   }
 }
 
-static void
+void
 CmToggleSingleWindowMode(GtkCheckMenuItem *action, gpointer client_data)
 {
   int state;
@@ -5700,7 +6110,7 @@ CmToggleSingleWindowMode(GtkCheckMenuItem *action, gpointer client_data)
   if (action) {
     state = gtk_check_menu_item_get_active(action);
   } else {
-    state = TRUE;
+    state = GPOINTER_TO_INT(client_data);
   }
 
   if (state) {
@@ -5774,6 +6184,38 @@ toggle_subwindow(GtkWidget *action, gpointer client_data)
 
   id = GPOINTER_TO_INT(client_data);
   set_subwindow_state(id, SUBWIN_STATE_TOGGLE);
+}
+
+
+int
+get_subwindow_state(enum SubWinType id)
+{
+  struct SubWin *d;
+
+  switch (id) {
+  case TypeFileWin:
+    d = &NgraphApp.FileWin;
+    break;
+  case TypeAxisWin:
+    d = &NgraphApp.AxisWin;
+    break;
+  case TypeLegendWin:
+    d = &NgraphApp.LegendWin;
+    break;
+  case TypeMergeWin:
+    d = &NgraphApp.MergeWin;
+    break;
+  case TypeCoordWin:
+    d = &NgraphApp.CoordWin;
+    break;
+  case TypeInfoWin:
+    d = &NgraphApp.InfoWin;
+    break;
+  default:
+    return FALSE;
+  }
+
+  return d->visible;
 }
 
 void
