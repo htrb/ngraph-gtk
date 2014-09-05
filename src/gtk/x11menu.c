@@ -5256,14 +5256,17 @@ recent_filter(const GtkRecentFilterInfo *filter_info, gpointer user_data)
   return FALSE;
 }
 
-GtkWidget *
-create_recent_menu(int type)
+static void
+create_recent_filter(GtkWidget *w, int type)
 {
   GtkRecentFilter *filter;
-  GtkWidget *submenu;
+  GtkRecentChooser *recent;
 
-  submenu = gtk_recent_chooser_menu_new_for_manager(NgraphApp.recent_manager);
+  recent = GTK_RECENT_CHOOSER(w);
+
   filter = gtk_recent_filter_new();
+  gtk_recent_filter_set_name(filter,
+			     (type == RECENT_TYPE_GRAPH) ? "NGP file" : "Data file");
   gtk_recent_filter_add_custom(filter,
 			       GTK_RECENT_FILTER_URI |
 			       GTK_RECENT_FILTER_MIME_TYPE |
@@ -5272,17 +5275,60 @@ create_recent_menu(int type)
 			       GINT_TO_POINTER(type),
 			       NULL);
 
-  gtk_recent_chooser_menu_set_show_numbers(GTK_RECENT_CHOOSER_MENU(submenu), TRUE);
-
-  gtk_recent_chooser_add_filter(GTK_RECENT_CHOOSER(submenu), filter);
-  gtk_recent_chooser_set_filter(GTK_RECENT_CHOOSER(submenu), filter);
-  gtk_recent_chooser_set_show_tips(GTK_RECENT_CHOOSER(submenu), TRUE);
-  gtk_recent_chooser_set_show_icons(GTK_RECENT_CHOOSER(submenu), FALSE);
-  gtk_recent_chooser_set_local_only(GTK_RECENT_CHOOSER(submenu), TRUE);
+  gtk_recent_chooser_set_filter(recent, filter);
+  gtk_recent_chooser_set_show_tips(recent, TRUE);
+  gtk_recent_chooser_set_show_icons(recent, FALSE);
+  gtk_recent_chooser_set_local_only(recent, TRUE);
 #ifndef WINDOWS
-  gtk_recent_chooser_set_show_not_found(GTK_RECENT_CHOOSER(submenu), FALSE);
+  gtk_recent_chooser_set_show_not_found(recent, FALSE);
 #endif
-  gtk_recent_chooser_set_sort_type(GTK_RECENT_CHOOSER(submenu), GTK_RECENT_SORT_MRU);
+  gtk_recent_chooser_set_sort_type(recent, GTK_RECENT_SORT_MRU);
+}
+
+void
+show_recent_dialog(int type)
+{
+#if USE_GTK_BUILDER
+  GtkWidget *dialog;
+  int res;
+  char *title;
+
+  title = (type == RECENT_TYPE_GRAPH) ? _("Recent Graphs") : _("Recent Data Files");
+  dialog = gtk_recent_chooser_dialog_new_for_manager(title,
+						     GTK_WINDOW(TopLevel),
+						     NgraphApp.recent_manager,
+						     _("_Cancel"),
+						     GTK_RESPONSE_CANCEL,
+						     _("_Open"),
+						     GTK_RESPONSE_ACCEPT,
+						     NULL);
+
+  create_recent_filter(dialog, type);
+  res = gtk_dialog_run (GTK_DIALOG (dialog));
+  gtk_widget_hide(dialog);
+  if (res == GTK_RESPONSE_ACCEPT) {
+    switch (type) {
+    case RECENT_TYPE_GRAPH:
+      CmGraphHistory(GTK_RECENT_CHOOSER(dialog), NULL);
+      break;
+    case RECENT_TYPE_DATA:
+      CmFileHistory(GTK_RECENT_CHOOSER(dialog), NULL);
+      break;
+    }
+  }
+
+  gtk_widget_destroy(dialog);
+#endif
+}
+
+GtkWidget *
+create_recent_menu(int type)
+{
+  GtkWidget *submenu;
+
+  submenu = gtk_recent_chooser_menu_new_for_manager(NgraphApp.recent_manager);
+  create_recent_filter(submenu, type);
+  gtk_recent_chooser_menu_set_show_numbers(GTK_RECENT_CHOOSER_MENU(submenu), TRUE);
   gtk_recent_chooser_set_limit(GTK_RECENT_CHOOSER(submenu), 10);
 
   switch (type) {

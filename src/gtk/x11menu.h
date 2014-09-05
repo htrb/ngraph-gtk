@@ -278,5 +278,6 @@ void script_exec(GtkWidget *w, gpointer client_data);
 void toggle_view(int type, int state);
 void CmToggleSingleWindowMode(GtkCheckMenuItem *action, gpointer client_data);
 void CmReloadWindowConfig(GtkAction *w, gpointer user_data);
+void show_recent_dialog(int type);
 
 #endif

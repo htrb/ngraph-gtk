@@ -66,6 +66,12 @@ GraphLoadAction_activated(GSimpleAction *action, GVariant *parameter, gpointer a
 }
 
 static void
+GraphRecentAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
+{
+  show_recent_dialog(RECENT_TYPE_GRAPH);
+}
+
+static void
 GraphSaveAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
   CmGraphOverWrite(NULL, NULL);
@@ -449,6 +455,12 @@ DataAddRangeAction_activated(GSimpleAction *action, GVariant *parameter, gpointe
 }
 
 static void
+DataAddRecentFileAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
+{
+  show_recent_dialog(RECENT_TYPE_DATA);
+}
+
+static void
 DataPropertyAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
   CmFileUpdate(NULL, NULL);
@@ -697,6 +709,7 @@ static GActionEntry AppEntries[] =
   { "GraphNewSectionAction", GraphNewSectionAction_activated, NULL, NULL, NULL },
   { "GraphNewCrossAction", GraphNewCrossAction_activated, NULL, NULL, NULL },
   { "GraphNewClearAction", GraphNewClearAction_activated, NULL, NULL, NULL },
+  { "GraphRecentAction", GraphRecentAction_activated, NULL, NULL, NULL },
   { "GraphLoadAction", GraphLoadAction_activated, NULL, NULL, NULL },
   { "GraphSaveAction", GraphSaveAction_activated, NULL, NULL, NULL },
   { "GraphSaveAsAction", GraphSaveAsAction_activated, NULL, NULL, NULL },
@@ -753,6 +766,7 @@ static GActionEntry AppEntries[] =
   { "ViewCrossGaugeAction", NULL, NULL, "true", ViewCrossGaugeAction_activated },
   { "DataAddFileAction", DataAddFileAction_activated, NULL, NULL, NULL },
   { "DataAddRangeAction", DataAddRangeAction_activated, NULL, NULL, NULL },
+  { "DataAddRecentFileAction", DataAddRecentFileAction_activated, NULL, NULL, NULL },
   { "DataPropertyAction", DataPropertyAction_activated, NULL, NULL, NULL },
   { "DataCloseAction", DataCloseAction_activated, NULL, NULL, NULL },
   { "DataEditAction", DataEditAction_activated, NULL, NULL, NULL },

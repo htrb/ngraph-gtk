@@ -1,3 +1,12 @@
+2014-09-05  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_action.c (DataAddRecentFileAction_activated)
+	(GraphRecentAction_activated): added.
+
+	* src/gtk/x11menu.c (create_recent_filter, show_recent_dialog):
+	added.
+	(create_recent_menu): use "create_recent_filter()".
+
 2014-08-26  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (ActionWidget): add member "action".
