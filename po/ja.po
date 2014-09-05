@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.06.13\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2014-08-26 15:55+0900\n"
+"POT-Creation-Date: 2014-09-04 15:11+0900\n"
 "PO-Revision-Date: 2014-08-07 13:11+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -1380,7 +1380,7 @@ msgstr ""
 
 #: src/gtk/x11gui.c:161 src/gtk/x11gui.c:365 src/gtk/x11gui.c:428
 #: src/gtk/x11gui.c:546 src/gtk/x11gui.c:616 src/gtk/x11gui.c:681
-#: src/gtk/x11gui.c:755 src/gtk/x11gui.c:991
+#: src/gtk/x11gui.c:755 src/gtk/x11gui.c:991 src/gtk/x11menu.c:5300
 msgid "_Cancel"
 msgstr "キャンセル(_C)"
 
@@ -1425,7 +1425,7 @@ msgstr "カレントディレクトリを移動(_C)"
 msgid "%s file (*.%s)"
 msgstr "%s ファイル (*.%s)"
 
-#: src/gtk/x11gui.c:1092 src/gtk/x11gui.c:1127
+#: src/gtk/x11gui.c:1092 src/gtk/x11gui.c:1127 src/gtk/x11menu.c:5302
 msgid "_Open"
 msgstr "開く(_O)"
 
@@ -2258,15 +2258,25 @@ msgstr "反転(_F)"
 msgid "data"
 msgstr "データ"
 
-#: src/gtk/x11menu.c:5921
+#: src/gtk/x11menu.c:5296
+#, fuzzy
+msgid "Recent Graphs"
+msgstr "最近使用したグラフ(_R)"
+
+#: src/gtk/x11menu.c:5296
+#, fuzzy
+msgid "Recent Data Files"
+msgstr "データファイルを開く"
+
+#: src/gtk/x11menu.c:5967
 msgid "Error:"
 msgstr "エラー:"
 
-#: src/gtk/x11menu.c:5971
+#: src/gtk/x11menu.c:6017
 msgid "Question"
 msgstr "質問"
 
-#: src/gtk/x11menu.c:6028
+#: src/gtk/x11menu.c:6074
 #, c-format
 msgid "Executing `%.128s'."
 msgstr "実行中 `%.128s'."
@@ -3057,9 +3067,6 @@ msgstr "ワインディング"
 #~ msgstr "合成ファイルを開く"
 
 #~ msgid "Open Data"
-#~ msgstr "データファイルを開く"
-
-#~ msgid "Open Data file"
 #~ msgstr "データファイルを開く"
 
 #~ msgid "_Save file history"

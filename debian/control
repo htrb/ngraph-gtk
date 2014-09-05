@@ -9,14 +9,23 @@ Homepage: http://homepage3.nifty.com/slokar/ngraph/ngraph-gtk.html
 
 Package: ngraph-gtk
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}, libngraph0
 Recommends: ngraph-gtk-addins, ngraph-gtk-doc
-Suggests: fonts-liberation
 Description: create scientific 2-dimensional graphs
  Ngraph is the program to create scientific 2-dimensional graphs for
  researchers and engineers. This program can create advanced graphs
  which can't be created by spreadsheets. Graphs can be exported to
  postscript.
+
+Package: libngraph0
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Suggests: fonts-liberation
+Description: create scientific 2-dimensional graphs
+ Ngraph is the program to create scientific 2-dimensional graphs for
+ researchers and engineers.
+ .
+ This package contains library of ngraph-gtk.
 
 Package: ngraph-gtk-addins-base
 Architecture: any
@@ -98,9 +107,9 @@ Description: documents of Ngraph-gtk
  .
  This package contains document files.
 
-Package: ngraph-gtk-dev
+Package: libngraph0-dev
 Section: libdevel
-Architecture: all
+Architecture: any
 Depends: ${misc:Depends}
 Recommends: ngraph-gtk
 Description: Header files for compiling plugins for Ngraph-gtk

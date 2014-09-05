@@ -1,5 +1,9 @@
 2014-09-05  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* debian/libngraph0.install: added.
+
+	* debian/libngraph0-dev.install: added (renamed from "ngraph-gtk-dev").
+
 	* src/gtk/gtk_action.c (DataAddRecentFileAction_activated)
 	(GraphRecentAction_activated): added.
 

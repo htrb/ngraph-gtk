@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.07.00\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2014-08-26 15:55+0900\n"
+"POT-Creation-Date: 2014-09-04 15:11+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1349,7 +1349,7 @@ msgstr ""
 
 #: src/gtk/x11gui.c:161 src/gtk/x11gui.c:365 src/gtk/x11gui.c:428
 #: src/gtk/x11gui.c:546 src/gtk/x11gui.c:616 src/gtk/x11gui.c:681
-#: src/gtk/x11gui.c:755 src/gtk/x11gui.c:991
+#: src/gtk/x11gui.c:755 src/gtk/x11gui.c:991 src/gtk/x11menu.c:5300
 msgid "_Cancel"
 msgstr ""
 
@@ -1392,7 +1392,7 @@ msgstr ""
 msgid "%s file (*.%s)"
 msgstr ""
 
-#: src/gtk/x11gui.c:1092 src/gtk/x11gui.c:1127
+#: src/gtk/x11gui.c:1092 src/gtk/x11gui.c:1127 src/gtk/x11menu.c:5302
 msgid "_Open"
 msgstr ""
 
@@ -2224,15 +2224,23 @@ msgstr ""
 msgid "data"
 msgstr ""
 
-#: src/gtk/x11menu.c:5921
+#: src/gtk/x11menu.c:5296
+msgid "Recent Graphs"
+msgstr ""
+
+#: src/gtk/x11menu.c:5296
+msgid "Recent Data Files"
+msgstr ""
+
+#: src/gtk/x11menu.c:5967
 msgid "Error:"
 msgstr ""
 
-#: src/gtk/x11menu.c:5971
+#: src/gtk/x11menu.c:6017
 msgid "Question"
 msgstr ""
 
-#: src/gtk/x11menu.c:6028
+#: src/gtk/x11menu.c:6074
 #, c-format
 msgid "Executing `%.128s'."
 msgstr ""

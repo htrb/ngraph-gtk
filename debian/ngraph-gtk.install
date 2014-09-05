@@ -1,22 +1,14 @@
-etc/ngraph-gtk/Ngraph.ini
-etc/ngraph-gtk/Ngraph.ngp
 etc/ngraph-gtk/Ngraph.nsc
-etc/ngraph-gtk/accel_map
-etc/ngraph-gtk/fit.ngp
+etc/ngraph-gtk/Ngraph.ngp
 etc/ngraph-gtk/init.d/10append_addins.nsc
 etc/ngraph-gtk/zsh/*
-etc/ngraph-gtk/gtk/*
 usr/bin
-usr/lib/*/lib*
-usr/lib/*/ngraph-gtk/terminal
 usr/share/icons
 usr/share/ngraph-gtk/demo
-usr/share/locale
-usr/share/pixmaps
-icons/*.xpm usr/share/pixmaps
-icons/*.png usr/share/pixmaps
 misc/ngraph.applications usr/share/application-registry
 misc/ngraph.desktop usr/share/applications
 misc/ngraph.keys usr/share/mime-info
 misc/ngraph.mime usr/share/mime-info
 misc/ngraph.xml usr/share/mime/packages
+icons/*.xpm usr/share/pixmaps
+icons/*.png usr/share/pixmaps
