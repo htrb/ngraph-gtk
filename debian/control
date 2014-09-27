@@ -111,6 +111,7 @@ Package: libngraph0-dev
 Section: libdevel
 Architecture: any
 Depends: ${misc:Depends}
+Replaces: ngraph-gtk-dev
 Recommends: ngraph-gtk
 Description: Header files for compiling plugins for Ngraph-gtk
  Ngraph is the program to create scientific 2-dimensional graphs for

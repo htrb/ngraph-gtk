@@ -949,7 +949,9 @@ points_setup(struct LegendDialog *d)
 
   list = GTK_TREE_MODEL(gtk_list_store_new(POINTS_DIMENSION, G_TYPE_DOUBLE, G_TYPE_DOUBLE));
   tree_view = gtk_tree_view_new_with_model(list);
+#if ! GTK_CHECK_VERSION(3, 14, 0)
   gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(tree_view), TRUE);
+#endif
   gtk_tree_view_set_rubber_banding(GTK_TREE_VIEW(tree_view), FALSE);
   gtk_tree_view_set_grid_lines(GTK_TREE_VIEW(tree_view), GTK_TREE_VIEW_GRID_LINES_VERTICAL);
   gtk_tree_view_set_reorderable(GTK_TREE_VIEW(tree_view), TRUE);

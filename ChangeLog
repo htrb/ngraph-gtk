@@ -1,3 +1,18 @@
+2014-09-27  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (ViewerWinSetup): check "d->popup".
+
+	* src/gtk/x11menu.c (setupwindow): check "NgraphApp.Viewer.popup".
+	(create_menu_sub): don't call "gtk_application_add_accelerator()".
+	(create_toplevel_window): don't call
+	"gtk_window_set_has_resize_grip()".
+
+	* src/gtk/x11file.c (RangeDialogSetup): change width of numeric
+	entries.
+
+	* src/gtk/gtk_action.c (create_application_window): create popup
+	menu.
+
 2014-09-05  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* debian/libngraph0.install: added.

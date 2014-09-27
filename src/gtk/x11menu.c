@@ -4577,7 +4577,9 @@ setupwindow(void)
   gtk_widget_show_all(w);
   g_signal_connect(ActionWidget[EditMenuAction].menu, "show", G_CALLBACK(edit_menu_shown), &NgraphApp.Viewer);
 #endif
-  g_signal_connect(NgraphApp.Viewer.popup, "show", G_CALLBACK(edit_menu_shown), &NgraphApp.Viewer);
+  if (NgraphApp.Viewer.popup) {
+    g_signal_connect(NgraphApp.Viewer.popup, "show", G_CALLBACK(edit_menu_shown), &NgraphApp.Viewer);
+  }
 
 #if GTK_CHECK_VERSION(3, 2, 0)
   NgraphApp.Viewer.HScroll = gtk_scrollbar_new(GTK_ORIENTATION_HORIZONTAL, NULL);
@@ -5544,7 +5546,6 @@ create_menu_sub(GtkWidget *parent, struct MenuItem *item, int popup)
 	  accels[0] = accel;
 	  accels[1] = NULL;
 	  gtk_application_set_accels_for_action(GtkApp, action, accels);
-	  gtk_application_add_accelerator(GtkApp, accel, action, NULL);
 	}
       }
     }
@@ -5574,9 +5575,8 @@ create_toplevel_window(void)
   int x, y, width, height, w, h;
   GdkScreen *screen;
 #if USE_APP_MENU
-  GMenuModel *model;
-#if USE_GTK_BUILDER
   GtkWidget *popup;
+#if USE_GTK_BUILDER
   GtkClipboard *clip;
 #endif	/* USE_GTK_BUILDER */
 #endif	/* USE_APP_MENU */
@@ -5610,23 +5610,23 @@ create_toplevel_window(void)
   load_hist();
 
 #if USE_APP_MENU
-  GtkApp = create_application_window(&model);
+  GtkApp = create_application_window(&popup);
   CurrentWindow = TopLevel = gtk_application_window_new(GtkApp);
 #if USE_GTK_BUILDER
   gtk_application_window_set_show_menubar(GTK_APPLICATION_WINDOW(TopLevel), TRUE);
-  popup = gtk_menu_new_from_model(model);
-  NgraphApp.Viewer.popup = popup;
+  if (popup) {
+    NgraphApp.Viewer.popup = popup;
+  }
   clip = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
   g_signal_connect(clip, "owner-change", G_CALLBACK(clipboard_changed), &NgraphApp.Viewer);
+#else	/* USE_GTK_BUILDER */
+  gtk_application_window_set_show_menubar(GTK_APPLICATION_WINDOW(TopLevel),FALSE);
 #endif	/* USE_GTK_BUILDER */
 #else  /* USE_APP_MENU */
   CurrentWindow = TopLevel = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 #endif	/* USE_APP_MENU */
 
   gtk_window_set_title(GTK_WINDOW(TopLevel), AppName);
-#if GTK_CHECK_VERSION(3, 0, 0)
-  gtk_window_set_has_resize_grip(GTK_WINDOW(TopLevel), TRUE);
-#endif
   gtk_window_set_default_size(GTK_WINDOW(TopLevel), width, height);
   gtk_window_move(GTK_WINDOW(TopLevel), x, y);
 

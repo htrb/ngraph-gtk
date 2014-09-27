@@ -810,7 +810,7 @@ static GActionEntry AppEntries[] =
 };
 
 GtkApplication *
-create_application_window(GMenuModel **popup)
+create_application_window(GtkWidget **popup)
 {
   GtkApplication *app;
   GtkBuilder *builder;
@@ -833,7 +833,8 @@ create_application_window(GMenuModel **popup)
   menu = gtk_builder_get_object(builder, "menubar");
   gtk_application_set_menubar(app, G_MENU_MODEL(menu));
 
-  *popup = G_MENU_MODEL(gtk_builder_get_object(builder, "popup-menu"));
+  menu = gtk_builder_get_object(builder, "popup-menu");
+  *popup = gtk_menu_new_from_model(G_MENU_MODEL(menu));
 #endif
 
   g_object_unref(builder);

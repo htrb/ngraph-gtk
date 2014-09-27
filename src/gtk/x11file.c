@@ -4036,12 +4036,12 @@ RangeDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     i = 0;
     w = create_text_entry(FALSE, TRUE);
-    gtk_entry_set_width_chars(GTK_ENTRY(w), 22);
+    gtk_entry_set_width_chars(GTK_ENTRY(w), 24);
     add_widget_to_table(table, w, _("_Minimum:"), FALSE, i++);
     d->min = w;
 
     w = create_text_entry(FALSE, TRUE);
-    gtk_entry_set_width_chars(GTK_ENTRY(w), 22);
+    gtk_entry_set_width_chars(GTK_ENTRY(w), 24);
     add_widget_to_table(table, w, _("_Maximum:"), FALSE, i++);
     d->max = w;
 

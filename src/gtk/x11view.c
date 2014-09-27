@@ -1182,7 +1182,9 @@ ViewerWinSetup(void)
 			GDK_KEY_RELEASE_MASK);
   GTK_WIDGET_SET_CAN_FOCUS(d->Win);
 
-  gtk_menu_attach_to_widget(GTK_MENU(d->popup), GTK_WIDGET(d->Win), NULL);
+  if (d->popup) {
+    gtk_menu_attach_to_widget(GTK_MENU(d->popup), GTK_WIDGET(d->Win), NULL);
+  }
 
   g_signal_connect(d->Win, "button-press-event", G_CALLBACK(ViewerEvButtonDown), d);
   g_signal_connect(d->Win, "button-release-event", G_CALLBACK(ViewerEvButtonUp), d);
