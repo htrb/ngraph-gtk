@@ -373,6 +373,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+vsymldflags = @vsymldflags@
 addindir = $(pkgdatadir)/addin
 addins = append.nsc fft.nsc fitrslt.nsc legend.nsc math.nsc \
 	text-in.nsc cal.nsc tex_equation.nsc ps2gra.nsc fig2gra.nsc \

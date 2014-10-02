@@ -10,7 +10,7 @@ export XDG_RUNTIME_DIR=/tmp
 	dh $@ --with autoreconf
 
 override_dh_auto_configure:
-	dh_auto_configure -- --disable-silent-rules
+	dh_auto_configure -- --disable-silent-rules --with-versioned-symbol
 
 override_dh_auto_install:
 	dh_auto_install

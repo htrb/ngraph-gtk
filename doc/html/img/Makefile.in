@@ -303,6 +303,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+vsymldflags = @vsymldflags@
 htmlimgdir = $(docdir)/html/img
 dist_htmlimg_DATA = barc.png baxispo.png bclear.png bcross.png		\
 	 bdataopn.png bdatapo.png bdraw.png beval.png bframe.png	\

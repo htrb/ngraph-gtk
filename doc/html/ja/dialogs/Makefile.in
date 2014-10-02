@@ -303,6 +303,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+vsymldflags = @vsymldflags@
 htmldialogdir = $(docdir)/html/ja/dialogs
 dist_htmldialog_DATA = axis.png axisbase.png axisfont.png		\
 	axisgage.png axisnum.png axispos.png data.png dataplot.png	\

@@ -749,6 +749,7 @@ INSTALL_SCRIPT
 INSTALL_PROGRAM
 OS_WIN32_FALSE
 OS_WIN32_TRUE
+vsymldflags
 host_os
 host_vendor
 host_cpu
@@ -799,6 +800,7 @@ SHELL'
 ac_subst_files=''
 ac_user_opts='
 enable_option_checking
+with_versioned_symbol
 enable_silent_rules
 enable_shared
 enable_static
@@ -1474,6 +1476,7 @@ Optional Features:
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
+  --with-versioned-symbol Use versioned symbols
   --with-pic[=PKGS]       try to use only PIC/non-PIC objects [default=use
                           both]
   --with-gnu-ld           assume the C compiler uses GNU ld [default=no]
@@ -2452,6 +2455,20 @@ IFS=$ac_save_IFS
 case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
 
 
+
+vsymldflags=
+	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking version script options" >&5
+$as_echo_n "checking version script options... " >&6; }
+
+# Check whether --with-versioned-symbol was given.
+if test "${with_versioned_symbol+set}" = set; then :
+  withval=$with_versioned_symbol; 	vsymldflags="-Wl,--version-script,ngraph_export.map -Wl,-O1"
+
+fi
+
+
+	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: ${vsymldflags}" >&5
+$as_echo "${vsymldflags}" >&6; }
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for native Win32" >&5
 $as_echo_n "checking for native Win32... " >&6; }

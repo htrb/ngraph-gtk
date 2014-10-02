@@ -303,6 +303,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+vsymldflags = @vsymldflags@
 themedir = $(datadir)/icons/hicolor
 size = scalable
 context = apps

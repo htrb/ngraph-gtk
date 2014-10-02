@@ -273,6 +273,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+vsymldflags = @vsymldflags@
 EXTRA_DIST = gtkrc pango.aliases windows.sh windows_demo.sed	\
 	windows_make.sed associate.bat echo.nsc
 

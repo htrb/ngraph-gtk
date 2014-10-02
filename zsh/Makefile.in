@@ -303,6 +303,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+vsymldflags = @vsymldflags@
 ngraphconfdir = $(sysconfdir)/$(PACKAGE)
 zshdir = $(ngraphconfdir)/zsh
 dist_zsh_DATA = _ngraph _ngp2 # _gra2ps _gra2wmf

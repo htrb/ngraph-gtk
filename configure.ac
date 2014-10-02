@@ -7,6 +7,14 @@ AC_SUBST(LIBNGRAPH_VERSION)
 
 AC_CANONICAL_HOST
 
+vsymldflags=
+	AC_MSG_CHECKING([version script options])
+	AC_ARG_WITH([versioned-symbol],AC_HELP_STRING([--with-versioned-symbol],[Use versioned symbols]),[dnl
+	vsymldflags="-Wl,--version-script,ngraph_export.map -Wl,-O1"
+	])
+	AC_SUBST(vsymldflags)
+	AC_MSG_RESULT([${vsymldflags}])
+
 AC_MSG_CHECKING([for native Win32])
 case "$host" in
   *-*-mingw*)

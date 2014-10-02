@@ -363,6 +363,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+vsymldflags = @vsymldflags@
 ngraphconfdir = $(sysconfdir)/$(PACKAGE)
 dist_html_DATA = addin.html copyrigh.html data.html gra.html math.html	\
 	ngraph.html operate.html refer.html text.html tutorial.html

@@ -19,7 +19,7 @@ ngraph.def: ngraph_api.c
 	echo "EXPORTS" > $@
 	cat $^ | grep '^ngraph_' | sed 's/[^a-z0-9_].*//' >> $@
 else
-libngraph_ldflags += -Wl,--version-script,ngraph_export.map
+libngraph_ldflags += @vsymldflags@
 
 pkglibexec_PROGRAMS = terminal
 terminal_SOURCES = terminal.c

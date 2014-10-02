@@ -329,6 +329,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+vsymldflags = @vsymldflags@
 noinst_LTLIBRARIES = libmath.la
 libmath_la_SOURCES = math_function.c math_function.h math_operator.c	\
 	math_operator.h math_constant.c math_constant.h			\

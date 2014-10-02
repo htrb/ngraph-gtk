@@ -399,6 +399,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+vsymldflags = @vsymldflags@
 SUBDIRS = ruby
 extra_dist_common = libruby.def libruby_resource.rc
 @HAVE_RUBY_DEV_TRUE@ngraphplugindir = $(pkglibdir)/plugins

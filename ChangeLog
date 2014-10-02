@@ -1,3 +1,12 @@
+2014-10-02  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* debian/rules (override_dh_auto_configure): add
+	"--with-versioned-symbol" option.
+
+	* src/Makefile.am (libngraph_ldflags): use "vsymldflags".
+
+	* configure.ac (vsymldflags): add "--with-versioned-symbol" option.
+
 2014-09-27  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (ViewerWinSetup): check "d->popup".

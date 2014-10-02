@@ -303,6 +303,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+vsymldflags = @vsymldflags@
 htmltutorialdir = $(docdir)/html/ja/tutorial
 dist_htmltutorial_DATA = adialog.png alegend.jpg awindow.png		\
 	axisref.jpg evaldlg.png fdialog.png fdialog2.png fdialog3.png	\
