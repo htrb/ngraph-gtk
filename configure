@@ -12841,7 +12841,7 @@ $as_echo "$USE_NLS" >&6; }
 
 
 
-      GETTEXT_MACRO_VERSION=0.18
+      GETTEXT_MACRO_VERSION=0.19
 
 
 
@@ -15417,8 +15417,9 @@ else
   enable_gtktest=yes
 fi
 
+  min_gtk_version=$GTK3_REQUIRED_VERSION
 
-  pkg_config_args=gtk+-3.0
+  pkg_config_args="gtk+-3.0 >= $min_gtk_version"
   for module in .
   do
       case "$module" in
@@ -15484,7 +15485,6 @@ fi
     no_gtk=yes
   fi
 
-  min_gtk_version=$GTK3_REQUIRED_VERSION
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for GTK+ - version >= $min_gtk_version" >&5
 $as_echo_n "checking for GTK+ - version >= $min_gtk_version... " >&6; }
 
@@ -15495,7 +15495,7 @@ $as_echo_n "checking for GTK+ - version >= $min_gtk_version... " >&6; }
 	  enable_gtktest=no
     fi
 
-    if $PKG_CONFIG --atleast-version $min_gtk_version $pkg_config_args; then
+    if $PKG_CONFIG $pkg_config_args; then
 	  :
     else
 	  no_gtk=yes
