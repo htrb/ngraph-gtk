@@ -5118,34 +5118,36 @@ set_toggle_action_widget_state(int id, int state)
 static void
 set_widget_visibility(void)
 {
-  int i;
+  int i, state;
 
   for (i = 0; i < ActionWidgetNum; i++) {
     switch (i) {
     case ViewSidebarAction:
-      set_toggle_action_widget_state(i, Menulocal.sidebar);
+      state = Menulocal.sidebar;
       break;
     case ViewStatusbarAction:
-      set_toggle_action_widget_state(i, Menulocal.statusbar);
+      state = Menulocal.statusbar;
       break;
     case ViewRulerAction:
-      set_toggle_action_widget_state(i, Menulocal.ruler);
+      state = Menulocal.ruler;
       break;
     case ViewScrollbarAction:
-      set_toggle_action_widget_state(i, Menulocal.scrollbar);
+      state = Menulocal.scrollbar;
       break;
     case ViewCommandToolbarAction:
-      set_toggle_action_widget_state(i, Menulocal.ctoolbar);
+      state = Menulocal.ctoolbar;
       break;
     case ViewToolboxAction:
-      set_toggle_action_widget_state(i, Menulocal.ptoolbar);
+      state = Menulocal.ptoolbar;
       break;
     case ViewCrossGaugeAction:
-      set_toggle_action_widget_state(i, Menulocal.show_cross);
+      state = Menulocal.show_cross;
       break;
     default:
       continue;
     }
+    set_toggle_action_widget_state(i, ! state);
+    set_toggle_action_widget_state(i, state);
   }
 }
 
@@ -5653,7 +5655,6 @@ create_toplevel_window(void)
 
   gtk_widget_show_all(GTK_WIDGET(TopLevel));
   ViewerWinSetup();
-  set_widget_visibility();
 
   create_markpixmap(TopLevel);
 

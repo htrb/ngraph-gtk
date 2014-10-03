@@ -1,3 +1,10 @@
+2014-10-03  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (create_toplevel_window): call
+	"set_widget_visibility()" only once.
+	(set_widget_visibility): call "set_toggle_action_widget_state()"
+	twice.
+
 2014-10-02  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* debian/rules (override_dh_auto_configure): add
@@ -1075,7 +1082,7 @@
 2013-10-25  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/ogra2emf.c (check_fonts): use "EnumFontFamiliesEx()"
-	instead of "EnumFontFamiliesExW()" befcase the program is clashed
+	instead of "EnumFontFamiliesExW()" befcase the program is crashed
 	when call "EnumFontFamiliesExW()" on Windows8 64bit.
 
 	* mingw/windows.sh: create ruby plugin.
