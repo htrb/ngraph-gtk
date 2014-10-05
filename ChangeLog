@@ -1,9 +1,13 @@
+2014-10-05  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (set_widget_visibility): call
+	"set_toggle_action_widget_state()" twice when "USE_GTK_BUILDER" is
+	false.
+
 2014-10-03  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (create_toplevel_window): call
 	"set_widget_visibility()" only once.
-	(set_widget_visibility): call "set_toggle_action_widget_state()"
-	twice.
 
 2014-10-02  Hiroyuki Ito  <ZXB01226 at nifty.com>
 

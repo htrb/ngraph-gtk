@@ -5146,7 +5146,9 @@ set_widget_visibility(void)
     default:
       continue;
     }
+#if ! USE_GTK_BUILDER
     set_toggle_action_widget_state(i, ! state);
+#endif
     set_toggle_action_widget_state(i, state);
   }
 }
