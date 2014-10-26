@@ -5426,7 +5426,7 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
     }
 
     if (item[i].tip) {
-      gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(widget), item[i].tip);
+      gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(widget), _(item[i].tip));
     }
 
     if (item[i].caption) {

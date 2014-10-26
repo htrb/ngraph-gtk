@@ -1,3 +1,8 @@
+2014-10-26  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (create_toolbar): use gettext to show
+	tooltips.
+
 2014-10-05  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (set_widget_visibility): call
