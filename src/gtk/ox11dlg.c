@@ -100,7 +100,7 @@ dlgconfirm(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   locksave = Globallock;
   Globallock = TRUE;
   mes = CHK_STR(mes);
-  rcode = message_box(DLGTopLevel, mes, (title) ? title : "Select", RESPONS_YESNO);
+  rcode = message_box(DLGTopLevel, mes, (title) ? title : _("Confirm"), RESPONS_YESNO);
   Globallock = locksave;
   if (rcode == IDYES) {
     rval->i = 1;
@@ -123,7 +123,7 @@ dlgmessage(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   mes = (char *)argv[2];
   locksave = Globallock;
   Globallock = TRUE;
-  message_box(DLGTopLevel, CHK_STR(mes), (title) ? title : "Confirm", RESPONS_OK);
+  message_box(DLGTopLevel, CHK_STR(mes), (title) ? title : _("Message"), RESPONS_OK);
   Globallock = locksave;
 
   return 0;
@@ -159,7 +159,7 @@ dlginput(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
     y = -1;
   }
 
-  r = DialogInput(DLGTopLevel, (title) ? title : "Input", mes, init_str, &inputbuf, &x, &y);
+  r = DialogInput(DLGTopLevel, (title) ? title : _("Input"), mes, init_str, &inputbuf, &x, &y);
   _putobj(obj, "x", inst, &x);
   _putobj(obj, "y", inst, &y);
   if (r == IDOK && inputbuf != NULL) {
@@ -257,7 +257,7 @@ dlgbutton(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
   g_free(rval->str);
   rval->str = NULL;
 
-  rcode = DialogButton(DLGTopLevel, (title) ? title : "Buttons", caption, sarray, &x, &y);
+  rcode = DialogButton(DLGTopLevel, (title) ? title : _("Select"), caption, sarray, &x, &y);
 
   _putobj(obj, "x", inst, &x);
   _putobj(obj, "y", inst, &y);
@@ -309,7 +309,7 @@ dlgradio(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
 
   r = arraylast_int(iarray);
 
-  ret = DialogRadio(DLGTopLevel, (title) ? title : "Select", caption, sarray, &r, &x, &y);
+  ret = DialogRadio(DLGTopLevel, (title) ? title : _("Select"), caption, sarray, &r, &x, &y);
   _putobj(obj, "x", inst, &x);
   _putobj(obj, "y", inst, &y);
   if (ret != IDOK) {
@@ -363,9 +363,9 @@ dlgcombo(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   sel = arraylast_int(iarray);
 
   if (strcmp(argv[1], "combo") == 0) {
-    ret = DialogCombo(DLGTopLevel, (title) ? title : "Select", caption, sarray, sel, &r, &x, &y);
+    ret = DialogCombo(DLGTopLevel, (title) ? title : _("Select"), caption, sarray, sel, &r, &x, &y);
   } else {
-    ret = DialogComboEntry(DLGTopLevel, (title) ? title : "Input", caption, sarray, sel, &r, &x, &y);
+    ret = DialogComboEntry(DLGTopLevel, (title) ? title : _("Input"), caption, sarray, sel, &r, &x, &y);
   }
 
   _putobj(obj, "x", inst, &x);
@@ -426,7 +426,7 @@ dlgspin(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
     return 1;
   }
 
-  ret = DialogSpinEntry(DLGTopLevel, (title) ? title : "Input", caption, min, max, inc, &r, &x, &y);
+  ret = DialogSpinEntry(DLGTopLevel, (title) ? title : _("Input"), caption, min, max, inc, &r, &x, &y);
 
   _putobj(obj, "x", inst, &x);
   _putobj(obj, "y", inst, &y);
@@ -508,7 +508,7 @@ dlgcheck(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
       r[*ptr] = 1;
   }
 
-  ret = DialogCheck(DLGTopLevel, (title) ? title : "Check", caption, sarray, r, &x, &y);
+  ret = DialogCheck(DLGTopLevel, (title) ? title : _("Select"), caption, sarray, r, &x, &y);
   _putobj(obj, "x", inst, &x);
   _putobj(obj, "y", inst, &y);
   if (ret != IDOK) {

@@ -1,3 +1,11 @@
+2014-11-12  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/ox11dlg.c (dlgconfirm, dlgmessage, dlginput)
+	(dlgbutton, dlgradio, dlgcombo, dlgspin, dlgcheck): update title
+	of the window.
+
+	* addin/load_prm.nsc: added.
+
 2014-10-26  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (create_toolbar): use gettext to show
