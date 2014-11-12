@@ -169,7 +169,8 @@ am__can_run_installinfo = \
   esac
 am__dist_addin_DATA_DIST = append.nsc fft.nsc fitrslt.nsc legend.nsc \
 	math.nsc text-in.nsc cal.nsc tex_equation.nsc ps2gra.nsc \
-	fig2gra.nsc timer.nsc fig2gra.rb ruby.nsc spellchecker.rb
+	fig2gra.nsc timer.nsc fig2gra.rb load_prm.nsc ruby.nsc \
+	spellchecker.rb
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -377,7 +378,7 @@ vsymldflags = @vsymldflags@
 addindir = $(pkgdatadir)/addin
 addins = append.nsc fft.nsc fitrslt.nsc legend.nsc math.nsc \
 	text-in.nsc cal.nsc tex_equation.nsc ps2gra.nsc fig2gra.nsc \
-	timer.nsc fig2gra.rb $(am__append_1)
+	timer.nsc fig2gra.rb load_prm.nsc $(am__append_1)
 ruby_addins = ruby.nsc spellchecker.rb
 @HAVE_RUBY_DEV_FALSE@EXTRA_DIST = $(ruby_addins)
 dist_addin_DATA = $(addins)
