@@ -15,7 +15,7 @@ then
     RUBY_EXE=`which ruby`
     RUBY_BIN=`dirname "$RUBY_EXE"`
     RUBY_LIB=`dirname "$RUBY_BIN"`/lib
-    RUBY_DLL=${RUBY_LIB}/libmsvcrt-ruby200.dll.a
+    RUBY_DLL=${RUBY_LIB}/libmsvcrt-ruby210.dll.a
     if [ -f $RUBY_DLL ]
     then
 	HAVE_RUBY=1
