@@ -1,5 +1,8 @@
 2014-11-12  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/oprm.c (addfontcontrol, remarkconv, prmload): support recent
+	Ngraph objects.
+
 	* src/gtk/x11view.c (graph_dropped): don't load PRM file.
 
 	* src/gtk/x11menu.c (check_instance): call

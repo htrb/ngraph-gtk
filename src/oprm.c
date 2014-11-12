@@ -44,6 +44,7 @@
 #include "gra.h"
 #include "ioutil.h"
 #include "odraw.h"
+#include "odata.h"
 #include "opath.h"
 
 #define NAME "prm"
@@ -141,10 +142,26 @@ addfontcontrol(char *s,int *po,int *fchange,int *jchange,
                     int *fff,int *ffb,int *ffj,int script)
 {
   int j;
+  char *style;
 
   j=*po;
   if (fchange[script]) {
-    j+=sprintf(s+j,"%%F{%s}",fontchar[fff[script]+ffb[script]]);
+    j+=sprintf(s+j,"%%F{%s}",fontchar[fff[script]]);
+    switch (ffb[script]) {
+    case FONT_STYLE_NORMAL:
+      style = "\\N";
+      break;
+    case FONT_STYLE_BOLD:
+      style = "\\B";
+      break;
+    case FONT_STYLE_ITALIC:
+      style = "\\I";
+      break;
+    case (FONT_STYLE_BOLD | FONT_STYLE_ITALIC):
+      style = "\\B\\I";
+      break;
+    }
+    j+=sprintf(s+j,"%s",style);
     fchange[script]=FALSE;
   }
   if (jchange[script]) {
@@ -215,9 +232,9 @@ remarkconv(char *str,int ff,int fj,int fb,int *fnameid,char *prmfile)
         j+=7;
       } else if ((toupper(s[i+1])=='F') && (strchr("THCthc",s[i+2])!=NULL)) {
         fchange[script]=TRUE;
-        if (toupper(s[i+2]=='T')) fff[script]=0;
-        else if (toupper(s[i+2]=='H')) fff[script]=4;
-        else if (toupper(s[i+2]=='C')) fff[script]=8;
+        if (toupper(s[i+2]=='T')) fff[script]=FONT_TYPE_SERIF;
+        else if (toupper(s[i+2]=='H')) fff[script]=FONT_TYPE_SANS_SERIF;
+        else if (toupper(s[i+2]=='C')) fff[script]=FONT_TYPE_MONOSPACE;
         i+=2;
       } else if ((toupper(s[i+1])=='J') && (strchr("GMgm",s[i+2])!=NULL)) {
         jchange[script]=TRUE;
@@ -226,19 +243,19 @@ remarkconv(char *str,int ff,int fj,int fb,int *fnameid,char *prmfile)
         i+=2;
       } else if (toupper(s[i+1])=='R') {
         fchange[script]=TRUE;
-        ffb[script]=0;
+        ffb[script]=FONT_STYLE_NORMAL;
         i++;
       } else if (toupper(s[i+1])=='B') {
         fchange[script]=TRUE;
-        ffb[script]=1;
+        ffb[script]=FONT_STYLE_BOLD;
         i++;
       } else if (toupper(s[i+1])=='I') {
         fchange[script]=TRUE;
-        ffb[script]=2;
+        ffb[script]=FONT_STYLE_ITALIC;
         i++;
       } else if (toupper(s[i+1])=='O') {
         fchange[script]=TRUE;
-        ffb[script]=3;
+        ffb[script]=(FONT_STYLE_BOLD | FONT_STYLE_ITALIC);
         i++;
       } else if (s[i+1]=='d') {
         addfontcontrol(s2,&j,fchange,jchange,fff,ffb,ffj,script);
@@ -489,7 +506,7 @@ prmload(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   struct objlist *fobj,*fitobj,*aobj,*agdobj;
   struct objlist *pobj,*mobj,*tobj,*robj;
   struct objlist *mgobj,*gobj,*cmobj;
-  int fid,fidroot,fitid,aid,agdid,lid,pid,mid,tid,rid,rid2,cid;
+  int fid,fidroot,fitid,aid,agdid,lid,pid,mid,tid,rid,cid;
   int mgid,gid,cmid;
   char *s,*s2;
   int d1,d2,d3,d4,d5,d6,d7,d8,d9,d10,R,G,B,gx[11],gy[11];
@@ -528,7 +545,7 @@ prmload(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   _getobj(obj,"file",inst,&file);
   _getobj(obj,"ignore_path",inst,&ignorepath);
   str4[4]='\0';
-  if ((fobj=getobject("plot"))==NULL) return 1;
+  if ((fobj=getobject("data"))==NULL) return 1;
   if ((fitobj=getobject("fit"))==NULL) return 1;
   if ((aobj=getobject("axis"))==NULL) return 1;
   if ((agdobj=getobject("axisgrid"))==NULL) return 1;
@@ -618,10 +635,10 @@ prmload(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
       sprintf(s,"axis:%d",anameid[3]);
     }
     putobj(fobj,"axis_y",fid,s);
-    if (d5==0) type=1;
-    else if (d5==1) type=2;
+    if (d5==0) type=PLOT_TYPE_LINE;
+    else if (d5==1) type=PLOT_TYPE_POLYGON;
     else if (d5<=6) {
-      type=3;
+      type=PLOT_TYPE_CURVE;
       if ((d5==2) || (d5==4)) intp=0;
 /* "Spline" is "Spline S" */
       else if (d5==3) intp=1;
@@ -629,7 +646,7 @@ prmload(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
       else if (d5==6) intp=3;
       putobj(fobj,"interpolation",fid,&intp);
     } else if (d5<=27) {
-      type=0;
+      type=PLOT_TYPE_MARK;
       switch (d5) {
       case 7: mark=-1; break;
       case 8: case 9: mark=0; break;
@@ -653,22 +670,22 @@ prmload(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
       case 27: mark=71; break;
       }
       putobj(fobj,"mark_type",fid,&mark);
-    } else if (d5==28) type=18;
-    else if (d5==29) type=16;
-    else if (d5==30) type=14;
-    else if (d5==31) type=17;
-    else if (d5==32) type=15;
-    else if (d5==33) type=13;
-    else if (d5==34) type=12;
-    else if (d5==35) type=11;
-    else if (d5==36) type=4;
-    else if (d5==37) type=8;
-    else if (d5==38) type=7;
-    else if (d5==39) type=6;
-    else if (d5==40) type=10;
-    else if (d5==41) type=9;
+    } else if (d5==28) type=PLOT_TYPE_BAR_SOLID_FILL_Y;
+    else if (d5==29) type=PLOT_TYPE_BAR_FILL_Y;
+    else if (d5==30) type=PLOT_TYPE_BAR_Y;
+    else if (d5==31) type=PLOT_TYPE_BAR_SOLID_FILL_X;
+    else if (d5==32) type=PLOT_TYPE_BAR_FILL_X;
+    else if (d5==33) type=PLOT_TYPE_BAR_X;
+    else if (d5==34) type=PLOT_TYPE_STAIRCASE_Y;
+    else if (d5==35) type=PLOT_TYPE_STAIRCASE_X;
+    else if (d5==36) type=PLOT_TYPE_DIAGONAL;
+    else if (d5==37) type=PLOT_TYPE_RECTANGLE_SOLID_FILL;
+    else if (d5==38) type=PLOT_TYPE_RECTANGLE_FILL;
+    else if (d5==39) type=PLOT_TYPE_RECTANGLE;
+    else if (d5==40) type=PLOT_TYPE_ERRORBAR_Y;
+    else if (d5==41) type=PLOT_TYPE_ERRORBAR_X;
     else {
-      type=19;
+      type=PLOT_TYPE_FIT;
       if ((fitid=newobj(fitobj))==-1) goto errexit;
       getobj(fitobj,"oid",fitid,0,NULL,&nameid);
       if (d5==51) fitnameid[i]=fitid;
@@ -719,7 +736,7 @@ prmload(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
       error2(obj,ERRPRM,file);
       goto errexit;
     }
-    if (type==19) {
+    if (type==PLOT_TYPE_FIT) {
       putobj(fitobj,"through_point",fitid,&d1);
       putobj(fitobj,"point_x",fitid,&f1);
       putobj(fitobj,"point_y",fitid,&f2);
@@ -837,9 +854,9 @@ prmload(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   for (i=0;i<7;i++) {
     for (j=i*20;j<(i+1)*20;j++) {
       if (buf[j]=='F') {
-        if (buf[j+1]=='H') fff[i]=4;
-        else if (buf[j+1]=='T') fff[i]=0;
-        else if (buf[j+1]=='C') fff[i]=8;
+        if (buf[j+1]=='H') fff[i]=FONT_TYPE_SANS_SERIF;
+        else if (buf[j+1]=='T') fff[i]=FONT_TYPE_SERIF;
+        else if (buf[j+1]=='C') fff[i]=FONT_TYPE_MONOSPACE;
         j++;
       } else if (buf[j]=='J') {
         if (buf[j+1]=='G') ffj[i]=1;
@@ -855,10 +872,10 @@ prmload(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
         d1=((buf[j+2]-'0')*10+(buf[j+3]-'0'))*100;
         ffp[i]=d1*d2;
         j+=3;
-      } else if (buf[j]=='R') ffb[i]=0;
-      else if (buf[j]=='B') ffb[i]=1;
-      else if (buf[j]=='I') ffb[i]=2;
-      else if (buf[j]=='O') ffb[i]=3;
+      } else if (buf[j]=='R') ffb[i]=FONT_STYLE_NORMAL;
+      else if (buf[j]=='B') ffb[i]=FONT_STYLE_BOLD;
+      else if (buf[j]=='I') ffb[i]=FONT_STYLE_ITALIC;
+      else if (buf[j]=='O') ffb[i]=(FONT_STYLE_BOLD | FONT_STYLE_ITALIC);
       else if (buf[j]=='C') {
         d1=(buf[j+1]-'0');
         ffR[i]=(d1 & 4)?255:0;
@@ -1058,9 +1075,10 @@ prmload(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
       if ((i==3) || (i==5)) d3=9000;
       else d3=0;
       putobj(tobj,"direction",tid,&d3);
-      if ((s=g_malloc(strlen(fontchar[fff[j]+ffb[j]])+1))==NULL) goto errexit;
-      strcpy(s,fontchar[fff[j]+ffb[j]]);
+      if ((s=g_malloc(strlen(fontchar[fff[j]])+1))==NULL) goto errexit;
+      strcpy(s,fontchar[fff[j]]);
       putobj(tobj,"font",tid,s);
+      putobj(tobj,"style",tid,&(ffb[j]));
       putobj(tobj,"pt",tid,&(ffs[j]));
       putobj(tobj,"space",tid,&(ffp[j]));
       putobj(tobj,"R",tid,&(ffR[j]));
@@ -1091,9 +1109,10 @@ prmload(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
       putobj(tobj,"y",tid,&d2);
       d3*=9000;
       putobj(tobj,"direction",tid,&d3);
-      if ((s=g_malloc(strlen(fontchar[fff[2]+ffb[2]])+1))==NULL) goto errexit;
-      strcpy(s,fontchar[fff[2]+ffb[2]]);
+      if ((s=g_malloc(strlen(fontchar[fff[2]])+1))==NULL) goto errexit;
+      strcpy(s,fontchar[fff[2]]);
       putobj(tobj,"font",tid,s);
+      putobj(tobj,"style",tid,&(ffb[2]));
       putobj(tobj,"pt",tid,&(ffs[2]));
       putobj(tobj,"space",tid,&(ffp[2]));
       putobj(tobj,"R",tid,&(ffR[2]));
@@ -1194,14 +1213,9 @@ prmload(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
         putobj(robj,"fill",rid,&d10);
         cmid=rid;
         cmobj=robj;
-        if (d3==27) {
-          if ((rid2=newobj(robj))==-1) goto errexit;
-          putobj(robj,"x1",rid2,&(gx[0]));
-          putobj(robj,"y1",rid2,&(gy[0]));
-          putobj(robj,"x2",rid2,&(gx[1]));
-          putobj(robj,"y2",rid2,&(gy[1]));
-          d10=FALSE;
-          putobj(robj,"fill",rid2,&d10);
+        if (d3==26) {
+	  d10 = FALSE;
+	  putobj(robj,"stroke",rid,&d10);
         }
      } else {
         if ((mid=newobj(mobj))==-1) goto errexit;
@@ -1253,23 +1267,21 @@ prmload(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
         putobj(cmobj,"G",cmid,&G);
         putobj(cmobj,"B",cmid,&B);
       } else {
-        putobj(cmobj,"style",cmid,NULL);
         R=255;
         G=255;
         B=255;
-        putobj(cmobj,"R",cmid,&R);
-        putobj(cmobj,"G",cmid,&G);
-        putobj(cmobj,"B",cmid,&B);
+        putobj(cmobj,"fill_R",cmid,&R);
+        putobj(cmobj,"fill_G",cmid,&G);
+        putobj(cmobj,"fill_B",cmid,&B);
         iarray=linestyleconv(d1,d7);
-        putobj(cmobj,"style",rid2,iarray);
-        putobj(cmobj,"width",rid2,&d2);
+        putobj(cmobj,"style",cmid,iarray);
+        putobj(cmobj,"width",cmid,&d2);
         R=(d4 & 4)?255:0;
         G=(d4 & 2)?255:0;
         B=(d4 & 1)?255:0;
-        putobj(cmobj,"R",rid2,&R);
-        putobj(cmobj,"G",rid2,&G);
-        putobj(cmobj,"B",rid2,&B);
-        putobj(cmobj,"hidden",rid2,&(dmode[1]));
+        putobj(cmobj,"stroke_R",cmid,&R);
+        putobj(cmobj,"stroke_G",cmid,&G);
+        putobj(cmobj,"stroke_B",cmid,&B);
       }
     }
   }
@@ -1536,10 +1548,11 @@ prmload(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
         goto errexit;
       strcpy(s,format);
       putobj(aobj,"num_format",aid,s);
-      if ((s=g_malloc(strlen(fontchar[fff[3+i]+ffb[3+i]])+1))==NULL)
+      if ((s=g_malloc(strlen(fontchar[fff[3+i]])+1))==NULL)
         goto errexit;
-      strcpy(s,fontchar[fff[3+i]+ffb[3+i]]);
+      strcpy(s,fontchar[fff[3+i]]);
       putobj(aobj,"num_font",aid,s);
+      putobj(aobj,"num_font_style",aid,&(ffb[3+i]));
       putobj(aobj,"num_pt",aid,&(ffs[3+i]));
       putobj(aobj,"num_space",aid,&(ffp[3+i]));
       putobj(aobj,"num_R",aid,&(ffR[3+i]));

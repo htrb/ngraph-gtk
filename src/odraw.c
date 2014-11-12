@@ -60,13 +60,6 @@ char *pathchar[]={
   NULL,
 };
 
-char *capchar[]={
-  "butt",
-  "round",
-  "projecting",
-  NULL
-};
-
 char *joinchar[]={
   N_("miter"),
   N_("round"),

@@ -414,16 +414,6 @@ struct LoadDialog
 };
 void LoadDialog(struct LoadDialog *data);
 
-struct PrmDialog
-{
-  DIALOG_PROTOTYPE;
-  /****** local member *******/
-  GtkWidget *ignore_path;
-  struct objlist *Obj;
-  int Id;
-};
-void PrmDialog(struct PrmDialog *data, struct objlist *obj, int id);
-
 struct SaveDialog
 {
   DIALOG_PROTOTYPE;
@@ -635,7 +625,6 @@ extern struct PageDialog DlgPage;
 extern struct SwitchDialog DlgSwitch;
 extern struct DirectoryDialog DlgDirectory;
 extern struct LoadDialog DlgLoad;
-extern struct PrmDialog DlgPrm;
 extern struct SaveDialog DlgSave;
 extern struct DriverDialog DlgDriver;
 extern struct PrintDialog DlgPrinter;

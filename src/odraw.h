@@ -51,12 +51,22 @@ enum JOIN_TYPE {
   JOIN_TYPE_BEVEL,
 };
 
+enum FONT_TYPE {
+  FONT_TYPE_SANS_SERIF,
+  FONT_TYPE_SERIF,
+  FONT_TYPE_MONOSPACE,
+};
+
+enum FONT_STYLE {
+  FONT_STYLE_NORMAL = 0,
+  FONT_STYLE_BOLD   = 1,
+  FONT_STYLE_ITALIC = 2,
+};
+
 #define INTERPOLATION_TYPE_NUM (INTERPOLATION_TYPE_BSPLINE_CLOSE + 1)
 
 extern char *pathchar[];
-extern char *capchar[];
 extern char *joinchar[];
-extern char *fillchar[];
 extern char *fontchar[];
 extern char *intpchar[];
 extern char *arrowchar[];
