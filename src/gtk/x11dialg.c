@@ -86,7 +86,6 @@ struct LegendGaussDialog DlgLegendGauss;
 struct PageDialog DlgPage;
 struct SwitchDialog DlgSwitch;
 struct DirectoryDialog DlgDirectory;
-struct PrmDialog DlgPrm;
 struct LoadDialog DlgLoad;
 struct SaveDialog DlgSave;
 struct DriverDialog DlgDriver;
@@ -217,9 +216,6 @@ initdialog(void)
   DlgLoad.widget = NULL;
   DlgLoad.focus = NULL;
   DlgLoad.resource = N_("load");
-  DlgPrm.widget = NULL;
-  DlgPrm.focus = NULL;
-  DlgPrm.resource = N_("loadprm");
   DlgSave.widget = NULL;
   DlgSave.focus = NULL;
   DlgSave.resource = N_("save");

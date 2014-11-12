@@ -424,14 +424,7 @@ graph_dropped(char *fname)
   if (ext == NULL)
     return 1;
 
-  if (strcmp0(ext, "prm") == 0) {
-
-    if (!CheckSave())
-      return 0;
-
-    LoadPrmFile(fname);
-    load = TRUE;
-  } else if (strcmp0(ext, "ngp") == 0) {
+  if (strcmp0(ext, "ngp") == 0) {
     if (!CheckSave())
       return 0;
 

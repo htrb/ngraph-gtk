@@ -5174,6 +5174,9 @@ check_instance(struct objlist *obj)
     case AxisScaleZoomAction:
     case AxisScaleClearAction:
       dobj = chkobject("axis");
+      if (obj == dobj && obj->lastinst < 0) {
+	set_axis_undo_button_sensitivity(FALSE);
+      }
       break;
     case AxisGridPropertyAction:
     case AxisGridDeleteAction:
@@ -5740,12 +5743,8 @@ application(char *file)
   if (file != NULL) {
     char *ext;
     ext = getextention(file);
-    if (ext) {
-      if ((strcmp0(ext, "PRM") == 0) || (strcmp0(ext, "prm") == 0)) {
-	LoadPrmFile(file);
-      } else if ((strcmp0(ext, "NGP") == 0) || (strcmp0(ext, "ngp") == 0)) {
-	LoadNgpFile(file, Menulocal.loadpath, Menulocal.expand, Menulocal.expanddir, FALSE, NULL);
-      }
+    if (ext && ((strcmp0(ext, "NGP") == 0) || (strcmp0(ext, "ngp") == 0))) {
+      LoadNgpFile(file, Menulocal.loadpath, Menulocal.expand, Menulocal.expanddir, FALSE, NULL);
     }
   }
 

@@ -1153,16 +1153,11 @@ GraphSave(int overwrite)
   int path;
   int sdata, smerge;
   int ret;
-  char *ext;
   char *initfil;
   char *file, *prev_wd, *current_wd;
 
   if (NgraphApp.FileName != NULL) {
     initfil = NgraphApp.FileName;
-    if ((ext = getextention(initfil)) != NULL) {
-      if ((strcmp0(ext, "PRM") == 0) || (strcmp0(ext, "prm") == 0))
-	strcpy(ext, "ngp");
-    }
   } else {
     initfil = NULL;
     overwrite = FALSE;
@@ -1435,47 +1430,6 @@ LoadNgpFile(char *file, int loadpath, int expand, char *exdir,
   GetPageSettingsFromGRA();
   UpdateAll();
   delobj(obj, newid);
-}
-
-void
-LoadPrmFile(char *file)
-{
-  struct objlist *obj;
-  char *name;
-  int id;
-  char mes[256];
-
-  obj = chkobject("prm");
-  if (obj == NULL)
-    return;
-
-  id = newobj(obj);
-  if (id < 0)
-    return;
-
-  name = g_strdup(file);
-  if (name == NULL) {
-    delobj(obj, id);
-    return;
-  }
-  changefilename(name);
-  putobj(obj, "file", id, name);
-  PrmDialog(&DlgPrm, obj, id);
-  if (DialogExecute(TopLevel, &DlgPrm) == IDOK) {
-    snprintf(mes, sizeof(mes), _("Loading `%.128s'."), name);
-    SetStatusBar(mes);
-    DeleteDrawable();
-    exeobj(obj, "load", id, 0, NULL);
-    GetPageSettingsFromGRA();
-    UpdateAll();
-    ResetStatusBar();
-    SetFileName(file);
-    set_graph_modified();
-    InfoWinClear();
-  }
-  delobj(obj, id);
-
-  set_axis_undo_button_sensitivity(FALSE);
 }
 
 void

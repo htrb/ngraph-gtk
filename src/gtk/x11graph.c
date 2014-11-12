@@ -1007,57 +1007,6 @@ LoadDialog(struct LoadDialog *data)
 }
 
 static void
-PrmDialogSetup(GtkWidget *wi, void *data, int makewidget)
-{
-  GtkWidget *w, *vbox;
-  struct PrmDialog *d;
-  int a;
-
-  d = (struct PrmDialog *) data;
-  if (makewidget) {
-#if GTK_CHECK_VERSION(3, 0, 0)
-    vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-    vbox = gtk_vbox_new(FALSE, 4);
-#endif
-    w = gtk_check_button_new_with_mnemonic(_("_Ignore file path"));
-    d->ignore_path = w;
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-
-    gtk_box_pack_start(GTK_BOX(d->vbox), vbox, FALSE, FALSE, 4);
-    gtk_widget_show_all(GTK_WIDGET(d->vbox));
-  }
-  getobj(d->Obj, "ignore_path", d->Id, 0, NULL, &a);
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->ignore_path), a);
-}
-
-static void
-PrmDialogClose(GtkWidget *w, void *data)
-{
-  int a;
-  struct PrmDialog *d;
-
-  d = (struct PrmDialog *) data;
-  if (d->ret == IDCANCEL)
-    return;
-
-  a = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->ignore_path));
-  if (putobj(d->Obj, "ignore_path", d->Id, &a) == -1) {
-    d->ret = IDLOOP;
-    return;
-  }
-}
-
-void
-PrmDialog(struct PrmDialog *data, struct objlist *obj, int id)
-{
-  data->SetupWindow = PrmDialogSetup;
-  data->CloseWindow = PrmDialogClose;
-  data->Obj = obj;
-  data->Id = id;
-}
-
-static void
 SaveDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   GtkWidget *w, *vbox;
@@ -1164,7 +1113,7 @@ CmGraphNewMenu(GtkAction *w, gpointer client_data)
 void
 CmGraphLoad(GtkAction *w, gpointer client_data)
 {
-  char *ext, *file;
+  char *file;
 
   if (Menulock || Globallock)
     return;
@@ -1175,21 +1124,17 @@ CmGraphLoad(GtkAction *w, gpointer client_data)
   if (nGetOpenFileName(TopLevel,
 		       _("Load NGP file"), "ngp", &(Menulocal.graphloaddir),
 		       NULL, &file, TRUE,
-		       Menulocal.changedirectory) == IDOK) {
-
-    ext = getextention(file);
-    if (ext && ((strcmp0(ext, "PRM") == 0) || (strcmp0(ext, "prm") == 0))) {
-      LoadPrmFile(file);
-    } else {
-      LoadDialog(&DlgLoad);
-      if (DialogExecute(TopLevel, &DlgLoad) == IDOK) {
-	LoadNgpFile(file, DlgLoad.loadpath, DlgLoad.expand,
-		    DlgLoad.exdir, Menulocal.scriptconsole, "-f");
-      }
-      g_free(DlgLoad.exdir);
-    }
-    g_free(file);
+		       Menulocal.changedirectory) != IDOK) {
+    return;
   }
+
+  LoadDialog(&DlgLoad);
+  if (DialogExecute(TopLevel, &DlgLoad) == IDOK) {
+    LoadNgpFile(file, DlgLoad.loadpath, DlgLoad.expand,
+		DlgLoad.exdir, Menulocal.scriptconsole, "-f");
+  }
+  g_free(DlgLoad.exdir);
+  g_free(file);
 }
 
 void

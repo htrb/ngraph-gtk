@@ -1,5 +1,20 @@
 2014-11-12  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11view.c (graph_dropped): don't load PRM file.
+
+	* src/gtk/x11menu.c (check_instance): call
+	"set_axis_undo_button_sensitivity()".
+	(application): don't load PRM file.
+
+	* src/gtk/x11graph.c (PrmDialogSetup, PrmDialogClose, PrmDialog):
+	removed.
+	(CmGraphLoad): don't load PRM file.
+
+	* src/gtk/x11dialg.c (initdialog): remove "PrmDialog".
+
+	* src/gtk/x11commn.c (GraphSave): don't consider PRM file.
+	(LoadPrmFile): removed.
+
 	* src/gtk/ox11dlg.c (dlgconfirm, dlgmessage, dlginput)
 	(dlgbutton, dlgradio, dlgcombo, dlgspin, dlgcheck): update title
 	of the window.
