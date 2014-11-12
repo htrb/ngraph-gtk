@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.06.13\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2014-10-05 12:24+0900\n"
-"PO-Revision-Date: 2014-10-23 15:45+0900\n"
+"POT-Creation-Date: 2014-11-12 15:10+0900\n"
+"PO-Revision-Date: 2014-11-11 16:33+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja\n"
@@ -19,20 +19,37 @@ msgstr ""
 msgid "Unsaved Graph"
 msgstr "新規グラフ"
 
+#: src/gtk/ox11dlg.c:103 src/gtk/x11commn.c:1537
+msgid "Confirm"
+msgstr "確認"
+
+#: src/gtk/ox11dlg.c:126
+msgid "Message"
+msgstr "メッセージ"
+
+#: src/gtk/ox11dlg.c:162 src/gtk/ox11dlg.c:368 src/gtk/ox11dlg.c:429
+msgid "Input"
+msgstr "入力"
+
+#: src/gtk/ox11dlg.c:260 src/gtk/ox11dlg.c:312 src/gtk/ox11dlg.c:366
+#: src/gtk/ox11dlg.c:511
+msgid "Select"
+msgstr "選択"
+
 #: src/gtk/ox11dlg.c:578
 msgid "Open file"
 msgstr "ファイルを開く"
 
 #: src/gtk/ox11dlg.c:626
 msgid "Open files"
-msgstr "ファイルを開く"
+msgstr "複数のファイルを開く"
 
 #: src/gtk/ox11dlg.c:674
 msgid "Save file"
 msgstr "別名で保存"
 
 #: src/gtk/ogra2cairo.c:45 src/gtk/x11axis.c:1164 src/gtk/x11axis.c:2308
-#: src/odraw.c:85 src/oaxis.c:75 src/oaxis.c:90
+#: src/odraw.c:78 src/oaxis.c:75 src/oaxis.c:90
 msgid "none"
 msgstr "なし"
 
@@ -504,7 +521,7 @@ msgstr "太字(_B)"
 msgid "_Italic"
 msgstr "斜体(_I)"
 
-#: src/gtk/x11axis.c:2243 src/gtk/x11axis.c:3385 src/gtk/x11dialg.c:252
+#: src/gtk/x11axis.c:2243 src/gtk/x11axis.c:3385 src/gtk/x11dialg.c:248
 #: src/gtk/x11lgnd.c:3717 src/gtk/x11opt.c:1423
 msgid "Font"
 msgstr "フォント"
@@ -579,21 +596,21 @@ msgstr "ベキ形式(ログ)"
 msgid "No zero"
 msgstr "ゼロ非表示"
 
-#: src/gtk/x11commn.c:1173 src/gtk/x11menu.c:674 src/gtk/x11menu.c:2639
+#: src/gtk/x11commn.c:1168 src/gtk/x11menu.c:674 src/gtk/x11menu.c:2639
 msgid "Save NGP file"
 msgstr "NGPファイルの保存"
 
-#: src/gtk/x11commn.c:1197 src/gtk/x11opt.c:1947
+#: src/gtk/x11commn.c:1192 src/gtk/x11opt.c:1947
 #, c-format
 msgid "Saving `%.128s'."
 msgstr "保存中 `%.128s'."
 
-#: src/gtk/x11commn.c:1383 src/gtk/x11commn.c:1465
+#: src/gtk/x11commn.c:1378
 #, c-format
 msgid "Loading `%.128s'."
 msgstr "読込中 `%.128s'."
 
-#: src/gtk/x11commn.c:1582
+#: src/gtk/x11commn.c:1536
 msgid ""
 "This graph is modified.\n"
 "Save this graph?"
@@ -601,32 +618,28 @@ msgstr ""
 "このグラフは変更されています.\n"
 "保存しますか?"
 
-#: src/gtk/x11commn.c:1583
-msgid "Confirm"
-msgstr "確認"
-
-#: src/gtk/x11commn.c:1793
+#: src/gtk/x11commn.c:1747
 msgid "Ngraph.ini is not found."
 msgstr "Ngraph.ini が見つかりません."
 
-#: src/gtk/x11commn.c:1796
+#: src/gtk/x11commn.c:1750
 msgid "Ngraph.ini is write protected."
 msgstr "Ngraph.ini に書き込めませんでした."
 
-#: src/gtk/x11commn.c:1811
+#: src/gtk/x11commn.c:1765
 #, c-format
 msgid "Install `Ngraph.ini' to %s ?"
 msgstr "%s に 'Ngraph.ini' をインストールしますか?"
 
-#: src/gtk/x11commn.c:1815
+#: src/gtk/x11commn.c:1769
 msgid "Ngraph.ini could not be copied."
 msgstr "Ngraph.ini をコピーできませんでした."
 
-#: src/gtk/x11commn.c:1918
+#: src/gtk/x11commn.c:1872
 msgid "_Stop"
 msgstr "停止(_S)"
 
-#: src/gtk/x11commn.c:1956
+#: src/gtk/x11commn.c:1910
 msgid "error"
 msgstr "エラー"
 
@@ -662,189 +675,185 @@ msgstr "一点二鎖線"
 msgid "auto"
 msgstr "自動"
 
-#: src/gtk/x11dialg.c:123 src/gtk/x11merge.c:52 src/gtk/x11opt.c:475
+#: src/gtk/x11dialg.c:122 src/gtk/x11merge.c:52 src/gtk/x11opt.c:475
 #: src/odata.c:167
 msgid "file"
 msgstr "ファイル"
 
-#: src/gtk/x11dialg.c:126 src/gtk/x11dialg.c:144 src/gtk/x11dialg.c:198
+#: src/gtk/x11dialg.c:125 src/gtk/x11dialg.c:143 src/gtk/x11dialg.c:197
 msgid "mark selection"
 msgstr "マーク選択"
 
-#: src/gtk/x11dialg.c:129
+#: src/gtk/x11dialg.c:128
 msgid "function"
 msgstr "関数"
 
-#: src/gtk/x11dialg.c:135 src/odata.c:168
+#: src/gtk/x11dialg.c:134 src/odata.c:168
 msgid "array"
 msgstr "配列"
 
-#: src/gtk/x11dialg.c:141
+#: src/gtk/x11dialg.c:140
 msgid "data default"
 msgstr "データファイル初期状態"
 
-#: src/gtk/x11dialg.c:147
+#: src/gtk/x11dialg.c:146
 msgid "evaluation"
 msgstr "データ評価"
 
-#: src/gtk/x11dialg.c:150 src/gtk/x11file.c:483
+#: src/gtk/x11dialg.c:149 src/gtk/x11file.c:483
 msgid "math"
 msgstr "変換数式"
 
-#: src/gtk/x11dialg.c:153
+#: src/gtk/x11dialg.c:152
 msgid "math text"
 msgstr "数式入力"
 
-#: src/gtk/x11dialg.c:156 src/odata.c:194
+#: src/gtk/x11dialg.c:155 src/odata.c:194
 msgid "fit"
 msgstr "フィット"
 
-#: src/gtk/x11dialg.c:159
+#: src/gtk/x11dialg.c:158
 msgid "fit load"
 msgstr "フィット設定読込"
 
-#: src/gtk/x11dialg.c:163
+#: src/gtk/x11dialg.c:162
 msgid "fit save"
 msgstr "フィット設定保存"
 
-#: src/gtk/x11dialg.c:166
+#: src/gtk/x11dialg.c:165
 msgid "Frame/Section Graph"
 msgstr "フレーム/方眼グラフ"
 
-#: src/gtk/x11dialg.c:169 src/gtk/x11menu.c:450
+#: src/gtk/x11dialg.c:168 src/gtk/x11menu.c:450
 msgid "Cross Graph"
 msgstr "交差グラフ"
 
-#: src/gtk/x11dialg.c:172
+#: src/gtk/x11dialg.c:171
 msgid "axis"
 msgstr "軸"
 
-#: src/gtk/x11dialg.c:175
+#: src/gtk/x11dialg.c:174
 msgid "grid"
 msgstr "グリッド"
 
-#: src/gtk/x11dialg.c:178
+#: src/gtk/x11dialg.c:177
 msgid "Scale Zoom"
 msgstr "スケールズーム"
 
-#: src/gtk/x11dialg.c:182
+#: src/gtk/x11dialg.c:181
 msgid "merge"
 msgstr "合成"
 
-#: src/gtk/x11dialg.c:186
+#: src/gtk/x11dialg.c:185
 msgid "legend line"
 msgstr "直線"
 
-#: src/gtk/x11dialg.c:189
+#: src/gtk/x11dialg.c:188
 msgid "legend rectangle"
 msgstr "矩形"
 
-#: src/gtk/x11dialg.c:192
+#: src/gtk/x11dialg.c:191
 msgid "legend arc"
 msgstr "円"
 
-#: src/gtk/x11dialg.c:195
+#: src/gtk/x11dialg.c:194
 msgid "legend mark"
 msgstr "マーク"
 
-#: src/gtk/x11dialg.c:201
+#: src/gtk/x11dialg.c:200
 msgid "legend text"
 msgstr "テキスト"
 
-#: src/gtk/x11dialg.c:204
+#: src/gtk/x11dialg.c:203
 msgid "textdefault"
 msgstr "レジェンドテキスト初期状態"
 
-#: src/gtk/x11dialg.c:207
+#: src/gtk/x11dialg.c:206
 msgid "legend gauss"
 msgstr "ガウス関数等"
 
-#: src/gtk/x11dialg.c:210
+#: src/gtk/x11dialg.c:209
 msgid "page"
 msgstr "用紙"
 
-#: src/gtk/x11dialg.c:213
+#: src/gtk/x11dialg.c:212
 msgid "drawobj"
 msgstr "描画オブジェクト"
 
-#: src/gtk/x11dialg.c:216 src/gtk/x11graph.c:877
+#: src/gtk/x11dialg.c:215 src/gtk/x11graph.c:877
 msgid "directory"
 msgstr "現在のディレクトリ"
 
-#: src/gtk/x11dialg.c:219
+#: src/gtk/x11dialg.c:218
 msgid "load"
 msgstr "読込"
 
-#: src/gtk/x11dialg.c:222
-msgid "loadprm"
-msgstr "PRM ファイル読込"
-
-#: src/gtk/x11dialg.c:225
+#: src/gtk/x11dialg.c:221
 msgid "save"
 msgstr "保存"
 
-#: src/gtk/x11dialg.c:228
+#: src/gtk/x11dialg.c:224
 msgid "driver"
 msgstr "ドライバ"
 
-#: src/gtk/x11dialg.c:231
+#: src/gtk/x11dialg.c:227
 msgid "print"
 msgstr "印刷"
 
-#: src/gtk/x11dialg.c:234
+#: src/gtk/x11dialg.c:230
 msgid "output data"
 msgstr "データ出力"
 
-#: src/gtk/x11dialg.c:237
+#: src/gtk/x11dialg.c:233
 msgid "save default"
 msgstr "初期状態としてセーブ"
 
-#: src/gtk/x11dialg.c:240
+#: src/gtk/x11dialg.c:236
 msgid "Add-in script"
 msgstr "スクリプト設定"
 
-#: src/gtk/x11dialg.c:243
+#: src/gtk/x11dialg.c:239
 msgid "Add-in script setup"
 msgstr "スクリプト"
 
-#: src/gtk/x11dialg.c:246
+#: src/gtk/x11dialg.c:242
 msgid "External driver"
 msgstr "外部ドライバ設定"
 
-#: src/gtk/x11dialg.c:249
+#: src/gtk/x11dialg.c:245
 msgid "External driver setup"
 msgstr "外部ドライバ"
 
-#: src/gtk/x11dialg.c:255 src/gtk/x11opt.c:1446
+#: src/gtk/x11dialg.c:251 src/gtk/x11opt.c:1446
 msgid "Miscellaneous"
 msgstr "その他"
 
-#: src/gtk/x11dialg.c:258
+#: src/gtk/x11dialg.c:254
 msgid "External viewer"
 msgstr "外部ビューア"
 
-#: src/gtk/x11dialg.c:261
+#: src/gtk/x11dialg.c:257
 msgid "Viewer"
 msgstr "ビューア"
 
-#: src/gtk/x11dialg.c:264
+#: src/gtk/x11dialg.c:260
 msgid "multi select"
 msgstr "複数選択"
 
-#: src/gtk/x11dialg.c:267
+#: src/gtk/x11dialg.c:263
 msgid "single select"
 msgstr "単一選択"
 
-#: src/gtk/x11dialg.c:270
+#: src/gtk/x11dialg.c:266
 msgid "output image"
 msgstr "画像ファイル出力"
 
-#: src/gtk/x11dialg.c:346
+#: src/gtk/x11dialg.c:342
 msgid "_All"
 msgstr "全て(_A)"
 
-#: src/gtk/x11dialg.c:357 src/gtk/x11file.c:536 src/gtk/x11file.c:1854
-#: src/gtk/x11file.c:2083 src/gtk/x11view.c:987
+#: src/gtk/x11dialg.c:353 src/gtk/x11file.c:536 src/gtk/x11file.c:1854
+#: src/gtk/x11file.c:2083 src/gtk/x11view.c:980
 msgid "Select _All"
 msgstr "すべて選択(_A)"
 
@@ -926,7 +935,7 @@ msgstr "_X 変換式"
 msgid "_Y math"
 msgstr "_Y 変換式"
 
-#: src/gtk/x11file.c:551 src/gtk/x11menu.c:1042 src/gtk/x11view.c:1003
+#: src/gtk/x11file.c:551 src/gtk/x11menu.c:1042 src/gtk/x11view.c:996
 msgid "_Close"
 msgstr "閉じる(_C)"
 
@@ -1038,7 +1047,7 @@ msgstr "保存(_S)"
 msgid "_Result"
 msgstr "フィット結果(_R)"
 
-#: src/gtk/x11file.c:1805 src/gtk/x11file.c:2046 src/gtk/x11view.c:957
+#: src/gtk/x11file.c:1805 src/gtk/x11file.c:2046 src/gtk/x11view.c:950
 msgid "Line No."
 msgstr "行"
 
@@ -1174,12 +1183,12 @@ msgid "_Load settings"
 msgstr "ファイルから設定読込(_L)"
 
 #: src/gtk/x11file.c:3864 src/gtk/x11file.c:3964 src/gtk/x11file.c:4062
-#: src/gtk/x11view.c:967
+#: src/gtk/x11view.c:960
 msgid "_Mask"
 msgstr "マスク(_M)"
 
 #: src/gtk/x11file.c:3868 src/gtk/x11file.c:3968 src/gtk/x11file.c:4066
-#: src/gtk/x11view.c:968
+#: src/gtk/x11view.c:961
 msgid "_Move"
 msgstr "移動(_M)"
 
@@ -1349,28 +1358,24 @@ msgstr "データファイルの展開(データ込 NGP ファイル) (_E)"
 msgid "_Dir:"
 msgstr "ディレクトリ(_D):"
 
-#: src/gtk/x11graph.c:969 src/gtk/x11graph.c:1076 src/gtk/x11opt.c:1345
+#: src/gtk/x11graph.c:969 src/gtk/x11graph.c:1025 src/gtk/x11opt.c:1345
 #: src/gtk/x11opt.c:1381
 msgid "_Path:"
 msgstr "パス情報(_P):"
 
-#: src/gtk/x11graph.c:1023
-msgid "_Ignore file path"
-msgstr "パス情報無視(_I)"
-
-#: src/gtk/x11graph.c:1082
+#: src/gtk/x11graph.c:1031
 msgid "_Include data file"
 msgstr "データファイルを含める(_I)"
 
-#: src/gtk/x11graph.c:1086
+#: src/gtk/x11graph.c:1035
 msgid "_Include merge file"
 msgstr "合成ファイルを含める(_I)"
 
-#: src/gtk/x11graph.c:1176 src/gtk/x11menu.c:658 src/gtk/x11menu.c:2611
+#: src/gtk/x11graph.c:1125 src/gtk/x11menu.c:658 src/gtk/x11menu.c:2611
 msgid "Load NGP file"
 msgstr "NGPファイルを開く"
 
-#: src/gtk/x11graph.c:1373
+#: src/gtk/x11graph.c:1318
 msgid ""
 "Ngraph is the program to create scientific 2-dimensional graphs for "
 "researchers and engineers."
@@ -1380,7 +1385,7 @@ msgstr ""
 
 #: src/gtk/x11gui.c:161 src/gtk/x11gui.c:365 src/gtk/x11gui.c:428
 #: src/gtk/x11gui.c:546 src/gtk/x11gui.c:616 src/gtk/x11gui.c:681
-#: src/gtk/x11gui.c:755 src/gtk/x11gui.c:991 src/gtk/x11menu.c:5306
+#: src/gtk/x11gui.c:755 src/gtk/x11gui.c:991 src/gtk/x11menu.c:5309
 msgid "_Cancel"
 msgstr "キャンセル(_C)"
 
@@ -1425,7 +1430,7 @@ msgstr "カレントディレクトリを移動(_C)"
 msgid "%s file (*.%s)"
 msgstr "%s ファイル (*.%s)"
 
-#: src/gtk/x11gui.c:1092 src/gtk/x11gui.c:1127 src/gtk/x11menu.c:5308
+#: src/gtk/x11gui.c:1092 src/gtk/x11gui.c:1127 src/gtk/x11menu.c:5311
 msgid "_Open"
 msgstr "開く(_O)"
 
@@ -2058,7 +2063,7 @@ msgstr "下端揃え(_B)"
 msgid "Cu_t"
 msgstr "切り取り(_T)"
 
-#: src/gtk/x11menu.c:2225 src/gtk/x11menu.c:3152 src/gtk/x11view.c:992
+#: src/gtk/x11menu.c:2225 src/gtk/x11menu.c:3152 src/gtk/x11view.c:985
 msgid "_Copy"
 msgstr "コピー(_C)"
 
@@ -2258,25 +2263,23 @@ msgstr "反転(_F)"
 msgid "data"
 msgstr "データ"
 
-#: src/gtk/x11menu.c:5302
-#, fuzzy
+#: src/gtk/x11menu.c:5305
 msgid "Recent Graphs"
-msgstr "最近使用したグラフ(_R)"
+msgstr "最近使用したグラフ"
 
-#: src/gtk/x11menu.c:5302
-#, fuzzy
+#: src/gtk/x11menu.c:5305
 msgid "Recent Data Files"
-msgstr "データファイルを開く"
+msgstr "最近使用したデータファイル"
 
-#: src/gtk/x11menu.c:5970
+#: src/gtk/x11menu.c:5969
 msgid "Error:"
 msgstr "エラー:"
 
-#: src/gtk/x11menu.c:6020
+#: src/gtk/x11menu.c:6019
 msgid "Question"
 msgstr "質問"
 
-#: src/gtk/x11menu.c:6077
+#: src/gtk/x11menu.c:6076
 #, c-format
 msgid "Executing `%.128s'."
 msgstr "実行中 `%.128s'."
@@ -2604,7 +2607,7 @@ msgid "Spawning external driver."
 msgstr "外部ドライバに出力中"
 
 #: src/gtk/x11print.c:737 src/gtk/x11print.c:1011 src/gtk/x11print.c:1084
-#: src/gtk/x11view.c:5644
+#: src/gtk/x11view.c:5637
 msgid "Drawing."
 msgstr "描画中"
 
@@ -2620,33 +2623,33 @@ msgstr "合成ファイルの保存"
 msgid "Making GRA file."
 msgstr "合成ファイル作成中"
 
-#: src/gtk/x11view.c:1276 src/gtk/x11view.c:1278
+#: src/gtk/x11view.c:1269 src/gtk/x11view.c:1271
 #, c-format
 msgid "Searching for data."
 msgstr "データ検索中"
 
-#: src/gtk/x11view.c:1383
+#: src/gtk/x11view.c:1376
 #, c-format
 msgid "Evaluating."
 msgstr "データ評価中"
 
-#: src/gtk/x11view.c:1392
+#: src/gtk/x11view.c:1385
 msgid "Evaluating"
 msgstr "データ評価中"
 
-#: src/gtk/x11view.c:2818
+#: src/gtk/x11view.c:2811
 msgid "Data points are moved."
 msgstr "データは移動されました."
 
-#: src/gtk/x11view.c:4082
+#: src/gtk/x11view.c:4075
 msgid "Moving data points is canceled."
 msgstr "データの移動はキャンセルされました."
 
-#: src/gtk/x11view.c:5638
+#: src/gtk/x11view.c:5631
 msgid "Scaling"
 msgstr "軸スケール設定中"
 
-#: src/gtk/x11view.c:5645
+#: src/gtk/x11view.c:5638
 msgid "Drawing"
 msgstr "描画中"
 
@@ -2787,43 +2790,43 @@ msgstr ""
 msgid "relative"
 msgstr "相対パス"
 
-#: src/odraw.c:71
+#: src/odraw.c:64
 msgid "miter"
 msgstr "角結合"
 
-#: src/odraw.c:72
+#: src/odraw.c:65
 msgid "round"
 msgstr "丸結合"
 
-#: src/odraw.c:73
+#: src/odraw.c:66
 msgid "bevel"
 msgstr "斜結合"
 
-#: src/odraw.c:86
+#: src/odraw.c:79
 msgid "end"
 msgstr "終点"
 
-#: src/odraw.c:87
+#: src/odraw.c:80
 msgid "begin"
 msgstr "始点"
 
-#: src/odraw.c:88 src/oaxis.c:76
+#: src/odraw.c:81 src/oaxis.c:76
 msgid "both"
 msgstr "両方"
 
-#: src/odraw.c:93
+#: src/odraw.c:86
 msgid "spline"
 msgstr "スプライン"
 
-#: src/odraw.c:94
+#: src/odraw.c:87
 msgid "spline_close"
 msgstr "閉スプライン"
 
-#: src/odraw.c:95
+#: src/odraw.c:88
 msgid "bspline"
 msgstr "Bスプライン"
 
-#: src/odraw.c:96
+#: src/odraw.c:89
 msgid "bspline_close"
 msgstr "閉Bスプライン"
 
@@ -2987,6 +2990,18 @@ msgstr "偶奇"
 #: src/opath.c:71
 msgid "winding_rule"
 msgstr "ワインディング"
+
+#~ msgid "Buttons"
+#~ msgstr "ボタン"
+
+#~ msgid "Check"
+#~ msgstr "チェック"
+
+#~ msgid "loadprm"
+#~ msgstr "PRM ファイル読込"
+
+#~ msgid "_Ignore file path"
+#~ msgstr "パス情報無視(_I)"
 
 #~ msgid "_Function"
 #~ msgstr "関数(_F)"
