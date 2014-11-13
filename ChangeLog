@@ -1,3 +1,15 @@
+2014-11-13  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (graph_dropped): don't call "LoadDialog()".
+
+	* src/gtk/x11graph.c (LoadDialog): free "data->exdir" if
+	necessary.
+	(CmGraphLoad, CmGraphHistory): don't call "LoadDialog()".
+
+	* src/gtk/x11dialg.c (initdialog): initialize "DlgLoad.exdir".
+
+	* src/gtk/x11commn.c (LoadNgpFile): call "LoadDialog()".
+
 2014-11-12  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/oprm.c (addfontcontrol, remarkconv, prmload): support recent

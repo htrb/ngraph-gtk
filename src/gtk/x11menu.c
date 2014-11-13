@@ -5744,7 +5744,7 @@ application(char *file)
     char *ext;
     ext = getextention(file);
     if (ext && ((strcmp0(ext, "NGP") == 0) || (strcmp0(ext, "ngp") == 0))) {
-      LoadNgpFile(file, Menulocal.loadpath, Menulocal.expand, Menulocal.expanddir, FALSE, NULL);
+      LoadNgpFile(file, FALSE, NULL);
     }
   }
 

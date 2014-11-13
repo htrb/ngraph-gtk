@@ -1289,9 +1289,8 @@ ToBasename(void)
 }
 
 
-void
-LoadNgpFile(char *file, int loadpath, int expand, char *exdir,
-	    int console, char *option)
+int
+LoadNgpFile(char *file, int console, char *option)
 {
   struct objlist *sys;
   char *expanddir;
@@ -1307,22 +1306,29 @@ LoadNgpFile(char *file, int loadpath, int expand, char *exdir,
   N_VALUE *inst;
   struct objlist *robj;
   int idn;
+  int loadpath, expand;
 
+  LoadDialog(&DlgLoad);
+  if (DialogExecute(TopLevel, &DlgLoad) != IDOK) {
+    return 1;
+  }
   changefilename(file);
 
   if (naccess(file, R_OK)) {
     ErrorMessage();
-    return;
+    return 1;
   }
 
   sys = chkobject("system");
-  if (sys == NULL)
-    return;
+  if (sys == NULL) {
+    return 1;
+  }
 
-  expanddir = g_strdup(exdir);
-
+  loadpath = DlgLoad.loadpath;
+  expand = DlgLoad.expand;
+  expanddir = g_strdup(DlgLoad.exdir);
   if (expanddir == NULL)
-    return;
+    return 1;
 
   putobj(sys, "expand_dir", 0, expanddir);
   putobj(sys, "expand_file", 0, &expand);
@@ -1332,11 +1338,11 @@ LoadNgpFile(char *file, int loadpath, int expand, char *exdir,
 
   obj = chkobject("shell");
   if (obj == NULL)
-    return;
+    return 1;
 
   newid = newobj(obj);
   if (newid < 0)
-    return;
+    return 1;
 
   inst = chkobjinst(obj, newid);
   arrayinit(&sarray, sizeof(char *));
@@ -1344,7 +1350,7 @@ LoadNgpFile(char *file, int loadpath, int expand, char *exdir,
     if (arrayadd(&sarray, &s) == NULL) {
       g_free(s);
       arraydel2(&sarray);
-      return;
+      return 1;
     }
   }
 
@@ -1352,13 +1358,13 @@ LoadNgpFile(char *file, int loadpath, int expand, char *exdir,
 
   if (name == NULL) {
     arraydel2(&sarray);
-    return;
+    return 1;
   }
 
   if (arrayadd(&sarray, &name) == NULL) {
     g_free(name);
     arraydel2(&sarray);
-    return;
+    return 1;
   }
 
   DeleteDrawable();
@@ -1430,6 +1436,8 @@ LoadNgpFile(char *file, int loadpath, int expand, char *exdir,
   GetPageSettingsFromGRA();
   UpdateAll();
   delobj(obj, newid);
+
+  return 0;
 }
 
 void

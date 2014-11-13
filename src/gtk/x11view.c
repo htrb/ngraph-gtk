@@ -411,33 +411,27 @@ PasteObjectsFromClipboard(void)
 static int
 graph_dropped(char *fname)
 {
-  int load;
   char *ext;
 
   if (fname == NULL) {
     return 1;
   }
 
-  load = FALSE;
-
   ext = getextention(fname);
   if (ext == NULL)
     return 1;
 
-  if (strcmp0(ext, "ngp") == 0) {
-    if (!CheckSave())
-      return 0;
-
-    LoadNgpFile(fname, Menulocal.loadpath, Menulocal.expand,
-		Menulocal.expanddir, FALSE, "-f");
-    load = TRUE;
+  if (strcmp0(ext, "ngp")) {
+    return 1;
   }
 
-  if (load) {
-    CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
+  if (!CheckSave()) {
     return 0;
   }
-  return 1;
+
+  LoadNgpFile(fname, FALSE, "-f");
+  CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
+  return 0;
 }
 
 static int

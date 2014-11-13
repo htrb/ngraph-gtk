@@ -34,9 +34,7 @@ void FitCopy(struct objlist *obj, int did, int sid);
 void FitDel(struct objlist *obj, int id);
 void ArrayDel(struct objlist *obj, int id);
 void FitClear(void);
-void LoadPrmFile(char *File);
-void LoadNgpFile(char *File, int ignorepath, int expand,
-		 char *exdir, int console, char *option);
+int LoadNgpFile(char *File, int console, char *option);
 int SaveDrawrable(char *name, int storedata, int storemerge);
 int GraphSave(int overwrite);
 void DeleteDrawable(void);

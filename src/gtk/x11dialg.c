@@ -215,6 +215,7 @@ initdialog(void)
   DlgDirectory.resource = N_("directory");
   DlgLoad.widget = NULL;
   DlgLoad.focus = NULL;
+  DlgLoad.exdir = NULL;
   DlgLoad.resource = N_("load");
   DlgSave.widget = NULL;
   DlgSave.focus = NULL;

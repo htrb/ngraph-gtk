@@ -1002,6 +1002,9 @@ LoadDialog(struct LoadDialog *data)
   data->SetupWindow = LoadDialogSetup;
   data->CloseWindow = LoadDialogClose;
   data->expand = Menulocal.expand;
+  if (data->exdir) {
+    g_free(data->exdir);
+  }
   data->exdir = g_strdup(Menulocal.expanddir);
   data->loadpath = Menulocal.loadpath;
 }
@@ -1128,12 +1131,7 @@ CmGraphLoad(GtkAction *w, gpointer client_data)
     return;
   }
 
-  LoadDialog(&DlgLoad);
-  if (DialogExecute(TopLevel, &DlgLoad) == IDOK) {
-    LoadNgpFile(file, DlgLoad.loadpath, DlgLoad.expand,
-		DlgLoad.exdir, Menulocal.scriptconsole, "-f");
-  }
-  g_free(DlgLoad.exdir);
+  LoadNgpFile(file, Menulocal.scriptconsole, "-f");
   g_free(file);
 }
 
@@ -1260,13 +1258,7 @@ CmGraphHistory(GtkRecentChooser *w, gpointer client_data)
   }
   g_free(path);
 
-  LoadDialog(&DlgLoad);
-
-  if (DialogExecute(TopLevel, &DlgLoad) == IDOK) {
-    LoadNgpFile(fname, DlgLoad.loadpath, DlgLoad.expand,
-		DlgLoad.exdir, Menulocal.scriptconsole, "-f");
-  }
-  g_free(DlgLoad.exdir);
+  LoadNgpFile(fname, Menulocal.scriptconsole, "-f");
   g_free(fname);
 }
 
