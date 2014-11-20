@@ -4,8 +4,7 @@ new dialog
 
 if [ ${menu::modified} = "true" ]
 then
-    if dialog::yesno "All modifications are lost.
-Continue?"
+    if dialog::yesno "All modifications will be lost. Continue?"
     then
 	true
     else

@@ -395,6 +395,9 @@ create_direction_entry(void)
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_ANGLE, FALSE, TRUE);
   gtk_entry_set_width_chars(GTK_ENTRY(w), NUM_ENTRY_WIDTH);
+#if GTK_CHECK_VERSION(3, 12, 0)
+  gtk_entry_set_max_width_chars(GTK_ENTRY(w), NUM_ENTRY_WIDTH);
+#endif
   gtk_entry_set_icon_from_icon_name(GTK_ENTRY(w), GTK_ENTRY_ICON_SECONDARY, "go-up");
   gtk_entry_set_icon_from_icon_name(GTK_ENTRY(w), GTK_ENTRY_ICON_PRIMARY, "go-down");
   g_signal_connect(w, "icon-release", G_CALLBACK(direction_icon_released), NULL);
@@ -570,6 +573,9 @@ _create_spin_entry(enum SPIN_BUTTON_TYPE type, double min, double max,
 
   if (set_default_size) {
     gtk_entry_set_width_chars(GTK_ENTRY(w), NUM_ENTRY_WIDTH);
+#if GTK_CHECK_VERSION(3, 12, 0)
+    gtk_entry_set_max_width_chars(GTK_ENTRY(w), NUM_ENTRY_WIDTH);
+#endif
   }
 
   if (set_default_action) {

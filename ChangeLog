@@ -1,3 +1,8 @@
+2014-11-20  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_widget.c (_create_spin_entry)
+	(create_direction_entry): call "gtk_entry_set_max_width_chars()".
+
 2014-11-13  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (graph_dropped): don't call "LoadDialog()".
