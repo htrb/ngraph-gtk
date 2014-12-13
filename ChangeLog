@@ -1,3 +1,10 @@
+2014-12-13  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* addin/fitrslt.nsc: use "get" command.
+
+	* addin/fitrslt.c (set_parameter): check variable "i".
+	(set_parameter): use "data" object.
+
 2014-11-20  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_widget.c (_create_spin_entry)

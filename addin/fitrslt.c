@@ -335,6 +335,9 @@ set_parameter(struct fit_prm *prm)
   GtkTreeIter iter;
 
   i = gtk_combo_box_get_active(GTK_COMBO_BOX(prm->combo));
+  if (i < 0) {
+    return;
+  }
 
   accuracy = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(prm->accuracy));
   expand = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(prm->expand));
@@ -377,7 +380,7 @@ set_parameter(struct fit_prm *prm)
 	       prm->data[i].prm[j]);
     } else {
       snprintf(buf, sizeof(buf),
-	       "%%pf{%s %%{file:%d:fit_prm:%d}}",
+	       "%%pf{%s %%{data:%d:fit_prm:%d}}",
 	       fmt,
 	       prm->data[i].file_id,
 	       j);
@@ -478,7 +481,9 @@ create_caption_frame(struct fit_prm *prm)
 
   list = gtk_list_store_new(n + 1, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
   tview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(list));
+#if ! GTK_CHECK_VERSION(3, 14, 0)
   gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(tview), TRUE);
+#endif
   gtk_tree_view_set_grid_lines(GTK_TREE_VIEW(tview), GTK_TREE_VIEW_GRID_LINES_VERTICAL);
 
   renderer = gtk_cell_renderer_toggle_new();
