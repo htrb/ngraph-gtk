@@ -578,7 +578,9 @@ create_file_frame(struct file_prm *prm)
 
   list = gtk_list_store_new(n + 1, G_TYPE_BOOLEAN, G_TYPE_INT, G_TYPE_STRING, G_TYPE_INT, G_TYPE_INT, G_TYPE_STRING);
   tview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(list));
+#if ! GTK_CHECK_VERSION(3, 14, 0)
   gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(tview), TRUE);
+#endif
   gtk_tree_view_set_grid_lines(GTK_TREE_VIEW(tview), GTK_TREE_VIEW_GRID_LINES_VERTICAL);
 
   renderer = gtk_cell_renderer_toggle_new();
