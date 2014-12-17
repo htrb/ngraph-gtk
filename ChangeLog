@@ -1,3 +1,13 @@
+2014-12-17  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* addin/fitrslt.c (savescript, create_format_frame) :add "shadow"
+	check button.
+	(frame_toggled): added.
+
+	* addin/legend.c (savescript, create_option_frame): add "shadow"
+	check button.
+	(frame_toggled): added.
+
 2014-12-13  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* addin/fitrslt.nsc: use "get" command.

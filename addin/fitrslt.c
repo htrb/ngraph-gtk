@@ -53,7 +53,7 @@ struct caption_widget {
 };
 
 struct fit_prm {
-  GtkWidget *window, *x,*y, *add_plus, *accuracy, *expand, *frame, *combo;
+  GtkWidget *window, *x,*y, *add_plus, *accuracy, *expand, *frame, *shadow, *combo;
   struct font_prm font;
   GtkWidget *caption;
   const char *script;
@@ -145,7 +145,7 @@ savescript(struct fit_prm *prm)
 {
   char *cap, *val;
   FILE *f;
-  int frame, height, textpt, gx, gy, posx, posy, h_inc, i, draw;
+  int frame, shadow, height, textpt, gx, gy, posx, posy, h_inc, i, draw;
   GtkTreeModel *model;
   GtkTreeIter iter;
 
@@ -164,6 +164,7 @@ savescript(struct fit_prm *prm)
     fprintf(f, "new iarray name:textbbox\n");
   }
 
+  shadow = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(prm->shadow));
   textpt = gtk_spin_button_get_value(GTK_SPIN_BUTTON(prm->font.pt)) * 100;
   height = ceil(textpt * 25.4 / 72.0 / 100) * 100;
   gy = posy;
@@ -190,15 +191,17 @@ savescript(struct fit_prm *prm)
 
   if (frame) {
     fprintf(f, "iarray:textlen:map 'int(X/100+0.5)*100'\n");
-    fprintf(f, "new rectangle\n");
-    fprintf(f, "rectangle::x1=%d\n", posx - height / 4);
-    fprintf(f, "rectangle::y1=%d\n", posy);
-    fprintf(f, "rectangle::x2=%d+${iarray:textlen:max}\n", posx + 3 * height / 4);
-    fprintf(f, "rectangle::y2=%d\n", gy + height / 2);
-    fprintf(f, "rectangle::fill_R=0\n");
-    fprintf(f, "rectangle::fill_G=0\n");
-    fprintf(f, "rectangle::fill_B=0\n");
-    fprintf(f, "rectangle::fill=true\n");
+    if (shadow) {
+      fprintf(f, "new rectangle\n");
+      fprintf(f, "rectangle::x1=%d\n", posx - height / 4);
+      fprintf(f, "rectangle::y1=%d\n", posy);
+      fprintf(f, "rectangle::x2=%d+${iarray:textlen:max}\n", posx + 3 * height / 4);
+      fprintf(f, "rectangle::y2=%d\n", gy + height / 2);
+      fprintf(f, "rectangle::fill_R=0\n");
+      fprintf(f, "rectangle::fill_G=0\n");
+      fprintf(f, "rectangle::fill_B=0\n");
+      fprintf(f, "rectangle::fill=true\n");
+    }
     fprintf(f, "new rectangle\n");
     fprintf(f, "rectangle::x1=%d\n", posx - height / 2);
     fprintf(f, "rectangle::y1=%d\n", posy - height / 4);
@@ -258,6 +261,16 @@ my_create_spin_button(const char *title, double min, double max, double inc, dou
   return w;
 }
 
+static void
+frame_toggled(GtkToggleButton *togglebutton, gpointer user_data)
+{
+  int state;
+  struct fit_prm *prm;
+
+  prm = (struct fit_prm *) user_data;
+  state = gtk_toggle_button_get_active(togglebutton);
+  gtk_widget_set_sensitive(GTK_WIDGET(prm->shadow), state);
+}
 
 static GtkWidget *
 create_format_frame(struct fit_prm *prm)
@@ -287,6 +300,12 @@ create_format_frame(struct fit_prm *prm)
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), FRAME);
   prm->frame = w;
 
+  w = gtk_check_button_new_with_mnemonic("_Shadow");
+  gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 2);
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), FRAME);
+  prm->shadow = w;
+
+  g_signal_connect(prm->frame, "toggled", G_CALLBACK(frame_toggled), prm);
 
   w = my_create_spin_button("_Accuracy:", 1, 15, 1, ACCURACY, &hbox);
   gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 2);
