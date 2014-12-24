@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.07.00\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2014-11-20 16:48+0900\n"
+"POT-Creation-Date: 2014-12-22 15:32+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -307,8 +307,8 @@ msgstr ""
 msgid "_Inc:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1367 src/gtk/x11file.c:122 src/gtk/x11menu.c:1559
-msgid "_File"
+#: src/gtk/x11axis.c:1367 src/gtk/x11menu.c:2876
+msgid "_Data"
 msgstr ""
 
 #: src/gtk/x11axis.c:1375
@@ -862,6 +862,10 @@ msgstr ""
 
 #: src/gtk/x11file.c:80
 msgid "num"
+msgstr ""
+
+#: src/gtk/x11file.c:122 src/gtk/x11menu.c:1559
+msgid "_File"
 msgstr ""
 
 #: src/gtk/x11file.c:123 src/gtk/x11menu.c:1575
@@ -2195,10 +2199,6 @@ msgstr ""
 
 #: src/gtk/x11menu.c:2864
 msgid "_View"
-msgstr ""
-
-#: src/gtk/x11menu.c:2876
-msgid "_Data"
 msgstr ""
 
 #: src/gtk/x11menu.c:2888

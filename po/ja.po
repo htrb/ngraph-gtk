@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.06.13\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2014-11-20 16:48+0900\n"
+"POT-Creation-Date: 2014-12-22 15:32+0900\n"
 "PO-Revision-Date: 2014-11-11 16:33+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -334,9 +334,9 @@ msgstr "最大値(_M):"
 msgid "_Inc:"
 msgstr "増分(_I):"
 
-#: src/gtk/x11axis.c:1367 src/gtk/x11file.c:122 src/gtk/x11menu.c:1559
-msgid "_File"
-msgstr "ファイル(_F)"
+#: src/gtk/x11axis.c:1367 src/gtk/x11menu.c:2876
+msgid "_Data"
+msgstr "データ(_D)"
 
 #: src/gtk/x11axis.c:1375
 msgid "_Scale:"
@@ -892,6 +892,10 @@ msgstr "最終行"
 #: src/gtk/x11file.c:80
 msgid "num"
 msgstr "データ数"
+
+#: src/gtk/x11file.c:122 src/gtk/x11menu.c:1559
+msgid "_File"
+msgstr "ファイル(_F)"
 
 #: src/gtk/x11file.c:123 src/gtk/x11menu.c:1575
 msgid "_Range"
@@ -2230,10 +2234,6 @@ msgstr "グラフ(_G)"
 #: src/gtk/x11menu.c:2864
 msgid "_View"
 msgstr "表示(_V)"
-
-#: src/gtk/x11menu.c:2876
-msgid "_Data"
-msgstr "データ(_D)"
 
 #: src/gtk/x11menu.c:2888
 msgid "_Axis"

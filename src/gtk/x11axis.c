@@ -1364,7 +1364,7 @@ scale_tab_create(struct AxisDialog *d)
   g_signal_connect(w, "clicked", G_CALLBACK(AxisDialogClear), d);
   gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 0);
 
-  w = gtk_button_new_with_mnemonic(_("_File"));
+  w = gtk_button_new_with_mnemonic(_("_Data"));
   g_signal_connect(w, "clicked", G_CALLBACK(AxisDialogFile), d);
   g_signal_connect(w, "map", G_CALLBACK(file_button_show), NULL);
   gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);

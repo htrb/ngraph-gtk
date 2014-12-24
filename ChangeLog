@@ -1,3 +1,8 @@
+2014-12-24  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11axis.c (scale_tab_create): change label fron "File"
+	to "Data".
+
 2014-12-17  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* addin/fitrslt.c (savescript, create_format_frame) :add "shadow"
