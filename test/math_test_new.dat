@@ -116,6 +116,7 @@ mjd2day(51603)#29
 mjd2wday(51603)#2
 mjd2yday(51603)#60
 unix2mjd(0)#40587
+round(mjd2unix(unix2mjd(time())))==time()#1
 cm(BREAK)=isbreak(rm(0))#1
 cm(100)=rm(0)#100
 push(a,3)#3

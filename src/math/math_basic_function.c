@@ -1251,6 +1251,16 @@ math_func_unix2mjd(MathFunctionCallExpression *exp, MathEquation *eq, MathValue 
 }
 
 int
+math_func_mjd2unix(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+
+  rval->val = (exp->buf[0].val.val - 40587) * 86400;
+
+  return 0;
+}
+
+int
 math_func_mjd2year(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   struct tm t;
