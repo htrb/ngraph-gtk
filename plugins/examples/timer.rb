@@ -18,6 +18,8 @@ end
 
 system = Ngraph::System[0]
 menu = Ngraph::Menu[0]
+return unless (menu)
+
 gra = Ngraph::Gra.current
 gra = Ngraph::Gra[0] unless (gra)
 

@@ -23,6 +23,6 @@ Ngraph::String.new {|string|
   show_result("index",    string.index("a", 1),     1)
   show_result("rindex",   string.rindex("a", 1),    1)
   show_result("rindex",   string.rindex("b", 20),   10)
-  show_result("match",    string.match?("f.Ｂ"),    true)
-  show_result("match",    string.match?("a[^b]+c"), false)
+  show_result("match",    string.match("f.Ｂ"),     true)
+  show_result("match",    string.match("a[^b]+c"),  false)
 }

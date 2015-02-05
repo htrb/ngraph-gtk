@@ -14,7 +14,7 @@ end
 
 if (init_script)
   ARGV.unshift(init_script)
-  shell.shell(ARGV) 
+  shell.shell(ARGV)
   Ngraph.execute_loginshell(sys.login_shell, shell) if (sys.login_shell)
 else
   Ngraph.execute_loginshell(nil, shell)
