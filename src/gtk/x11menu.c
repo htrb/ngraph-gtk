@@ -2014,7 +2014,7 @@ struct MenuItem ViewMenu[] = {
     NULL,
     NULL,
     "<Ngraph>/View/cross Gauge",
-    GDK_KEY_g,
+    GDK_KEY_b,
     GDK_CONTROL_MASK,
     NULL,
     G_CALLBACK(toggle_view_cb),
@@ -5574,6 +5574,23 @@ create_popup(GtkWidget *parent, struct MenuItem *item)
   create_menu_sub(parent, item, TRUE);
 }
 
+static gboolean
+toplevel_key_pressed(GtkWidget *w, GdkEventKey *e, gpointer client_data)
+{
+  switch (e->keyval) {
+  case NGRAPH_INTERRUPT_KEY:
+    if (e->state & GDK_CONTROL_MASK) {
+      NgraphApp.Interrupt = TRUE;
+      return TRUE;
+    }
+    break;
+  default:
+    break;
+  }
+
+  return FALSE;
+}
+
 static int
 create_toplevel_window(void)
 {
@@ -5636,6 +5653,7 @@ create_toplevel_window(void)
   gtk_window_set_title(GTK_WINDOW(TopLevel), AppName);
   gtk_window_set_default_size(GTK_WINDOW(TopLevel), width, height);
   gtk_window_move(GTK_WINDOW(TopLevel), x, y);
+  g_signal_connect(TopLevel, "key-press-event", G_CALLBACK(toplevel_key_pressed), 0);
 
   if (AccelGroup == NULL) {
     AccelGroup = gtk_accel_group_new();

@@ -2,9 +2,9 @@
 0b1011#11
 0o377#255
 123_456.789_E8#1.234567890000000e+13
-const a:123*4=a#492
+const a:123*4;a#492
 const bbb:=123*4;bbb#492
-def f(x,y){x*y}=f(2,3)#6
+def f(x,y){x*y};f(2,3)#6
 ICBETA(2,3,0.4)#0.5248
 ISNORMAL(0)#1
 ISNORMAL(NAN)#0
@@ -19,10 +19,10 @@ ISUNDEF(dif(2))#1
 ISUNDEF(UNDEF)#1
 ISCONT(OR(1,cont))#1
 ISBREAK(AND(0,break))#1
-a[0]:2=a[1]:1=SORT(a)=a[0]#1
+a[0]:=2;a[1]:=1;SORT(a);a[0]#1
 a[10]#0
-a[0]:1=a[1]:2=RSORT(a)=a[0]#2
-a[10]:10=SIZE(a)#11
+a[0]:1=a[1]:=2;RSORT(a);a[0]#2
+a[10]:=10;SIZE(a)#11
 b[0]:=2;b[1]:=1;SORT(b);b[0]#1
 b[10]#0
 b[0]:=1;b[1]:=2;RSORT(b);b[0]#2
@@ -117,8 +117,8 @@ mjd2wday(51603)#2
 mjd2yday(51603)#60
 unix2mjd(0)#40587
 round(mjd2unix(unix2mjd(time())))==time()#1
-cm(BREAK)=isbreak(rm(0))#1
-cm(100)=rm(0)#100
+cm(BREAK);isbreak(rm(0))#1
+cm(100);rm(0)#100
 push(a,3)#3
 push(a,4)#4
 unshift(a,2)#2
@@ -184,3 +184,6 @@ b:=3;b/=2;b#1.5
 b:=3;b\=2;b#1
 b:=3;b^=2;b#9
 fmod(5,3)#2
+b:=1;while(-1,b<60,b*=2)#64
+b:=0;while(0,RM(0)<10,b+=RM(0))#45
+b:=5;while(0,RM(0)<10,b)#5

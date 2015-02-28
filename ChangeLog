@@ -1,3 +1,14 @@
+2015-02-28  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (toplevel_key_pressed): added.
+	(create_toplevel_window): connect "key-press-event" to the
+	toplevel window.
+
+	* src/math/math_function.h.in: add function "while".
+
+	* src/math/math_basic_function.c (math_func_while): added.
+	(math_func_for): check interruption.
+
 2015-01-22  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* doc/html/ja/math.html (特殊関数): update document.
