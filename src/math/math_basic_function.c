@@ -17,6 +17,7 @@
 #endif
 
 #include "ntime.h"
+#include "object.h"
 
 #include "math_equation.h"
 #include "math_function.h"
@@ -2390,7 +2391,7 @@ math_func_m(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 int
 math_func_for(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  int n, r;
+  int n, r, i;
   double v, start, stop, step;
   MathFunctionArgument *argv;
 
@@ -2419,12 +2420,81 @@ math_func_for(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
     Memory[n].type = MATH_VALUE_NORMAL;
   }
 
+  i = 0;
   rval->val = 0;
   for (v = start; (step < 0) ?  (v >= stop) : (v <= stop); v += step) {
+    if ((i & 0xff) == 0 && ninterrupt()) {
+      rval->type = MATH_VALUE_ERROR;
+      return 1;
+    }
     if (n >= 0) {
       Memory[n].val = v;
     }
     r = math_expression_calculate(argv[4].exp, rval);
+    if(r) {
+      return r;
+    }
+    if (rval->type == MATH_VALUE_ERROR) {
+      return 1;
+    }
+    i++;
+  }
+
+  return 0;
+}
+
+int
+math_func_while(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int n, r, i;
+  MathFunctionArgument *argv;
+  MathValue condition;
+
+  if (Memory == NULL && init_memory()) {
+    return 1;
+  }
+
+  argv = exp->buf;
+
+  MATH_CHECK_ARG(rval, argv[0]);
+
+  n = argv[0].val.val;
+
+  if (n >= MATH_FUNCTION_MEMORY_NUM) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  if (n >= 0) {
+    Memory[n].type = MATH_VALUE_NORMAL;
+  }
+
+  rval->val = 0;
+  rval->type = MATH_VALUE_UNDEF;
+  condition.val = 0;
+  condition.type = MATH_VALUE_NORMAL;
+  for (i = 0; ; i++) {
+    if ((i & 0xff) == 0 && ninterrupt()) {
+      rval->type = MATH_VALUE_ERROR;
+      return 1;
+    }
+
+    if (n >= 0) {
+      Memory[n].val = i;
+    }
+
+     r = math_expression_calculate(argv[1].exp, &condition);
+    if(r) {
+      return r;
+    }
+    if (condition.type == MATH_VALUE_ERROR) {
+      return 1;
+    }
+    if (condition.val == 0.0) {
+      break;
+    }
+
+    r = math_expression_calculate(argv[2].exp, rval);
     if(r) {
       return r;
     }
