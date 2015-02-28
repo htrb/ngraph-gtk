@@ -78,5 +78,7 @@
 #define GDK_KEY_x GDK_x
 #endif	/* GDK_KEY_BackSpace */
 
+#define NGRAPH_INTERRUPT_KEY GDK_KEY_g
+
 #endif
 
