@@ -5754,8 +5754,8 @@ application(char *file)
   }
 
 #ifndef WINDOWS
-  set_signal(SIGINT, 0, kill_signal_handler);
-  set_signal(SIGTERM, 0, term_signal_handler);
+  set_signal(SIGINT, 0, kill_signal_handler, NULL);
+  set_signal(SIGTERM, 0, term_signal_handler, NULL);
 #endif	/* WINDOWS */
 
   if (file != NULL) {
@@ -5785,8 +5785,8 @@ application(char *file)
   set_delobj_cb(NULL);
 
 #ifndef WINDOWS
-  set_signal(SIGTERM, 0, SIG_DFL);
-  set_signal(SIGINT, 0, SIG_DFL);
+  set_signal(SIGTERM, 0, SIG_DFL, NULL);
+  set_signal(SIGINT, 0, SIG_DFL, NULL);
 #endif	/* WINDOWS */
 
   gtk_widget_hide(TopLevel);

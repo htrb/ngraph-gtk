@@ -1,3 +1,15 @@
+2015-03-04  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/oshell.c (int_handler): added.
+	(cmdshell): save, set and restore signal handler for the "SIGINT"
+	signal.
+
+	* src/shell.c (nsleep): use "reset_interrupt()" and
+	"check_interrupt()".
+	(set_signal): add 4th parameter.
+	(set_interrupt, reset_interrupt, check_interrupt): added.
+	(cmdexec): use "reset_interrupt()" and "check_interrupt()".
+
 2015-02-28  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (toplevel_key_pressed): added.

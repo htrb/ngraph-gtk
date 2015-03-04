@@ -173,10 +173,12 @@ int msleep(int ms);
 void set_security(int state);
 int get_security(void);
 void set_environ(void);
-int set_signal(int signal, int flags, void (*handler)(int));
+int set_signal(int signal, int flags, void (*handler)(int), struct sigaction *oldact);
 void set_childhandler(void);
 void unset_childhandler(void);
 int system_bg(char *cmd);
+void set_interrupt(void);
+int check_interrupt(void);
 #ifdef WINDOWS
 void show_system_error(void);
 #endif	/* WINDOWS */

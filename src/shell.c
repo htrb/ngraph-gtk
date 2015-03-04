@@ -188,9 +188,11 @@ static int Security=FALSE;
 
 static char writebuf[WRITEBUFSIZE];
 static int writepo;
+static int Interrupted = FALSE;
 
 static int storeshhandle(struct nshell *nshell,int fd, char **readbuf,int *readbyte,int *readpo);
 static void restoreshhandle(struct nshell *nshell,int fd, char *readbuf,int readbyte,int readpo);
+static void reset_interrupt(void);
 
 #ifndef WINDOWS
 
@@ -212,14 +214,18 @@ nsleep(int a)
   if (has_eventloop()) {
 #ifdef SIGALRM
     Timeout=FALSE;
-    set_signal(SIGALRM, 0, cmsleeptimeout);
+    reset_interrupt();
+    set_signal(SIGALRM, 0, cmsleeptimeout, NULL);
     alarm(a);
     while (!Timeout) {
       eventloop();
+      if (check_interrupt()) {
+	break;
+      }
       msleep(10);
     }
     alarm(0);
-    set_signal(SIGALRM, 0, SIG_IGN);
+    set_signal(SIGALRM, 0, SIG_IGN, NULL);
 #else  /* SIGALRM */
     sleep(a);
 #endif	/* SIGALRM */
@@ -328,7 +334,7 @@ unlinkfile(char **file)
 
 #ifndef WINDOWS
 int
-set_signal(int signal_id, int flags, void (*handler)(int))
+set_signal(int signal_id, int flags, void (*handler)(int), struct sigaction *oldact)
 {
   static struct sigaction act;
 
@@ -337,7 +343,7 @@ set_signal(int signal_id, int flags, void (*handler)(int))
   act.sa_flags = (flags | SA_RESTART);
   sigemptyset(&act.sa_mask);
 
-  return sigaction(signal_id, &act, NULL);
+  return sigaction(signal_id, &act, oldact);
 }
 
 static void
@@ -353,13 +359,13 @@ childhandler(int sig)
 void
 set_childhandler(void)
 {
-  set_signal(SIGCHLD, SA_NOCLDSTOP, childhandler);
+  set_signal(SIGCHLD, SA_NOCLDSTOP, childhandler, NULL);
 }
 
 void
 unset_childhandler(void)
 {
-  set_signal(SIGCHLD, 0, SIG_DFL);
+  set_signal(SIGCHLD, 0, SIG_DFL, NULL);
 }
 #endif	/* WINDOWS */
 
@@ -3056,6 +3062,27 @@ quote_args(char **args)
 }
 #endif	/* WINDOWS */
 
+void
+set_interrupt(void)
+{
+  Interrupted = TRUE;
+}
+
+static void
+reset_interrupt(void)
+{
+  Interrupted = FALSE;
+}
+
+int
+check_interrupt(void)
+{
+  int state;
+  state = Interrupted;
+  Interrupted = FALSE;
+  return state;
+}
+
 int 
 cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 {
@@ -3093,6 +3120,7 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
   pid_t pid;
 #endif	/* WINDOWS */
 
+  reset_interrupt();
   nshell->cmdexec++;
   err=-1;
   stroot=NULL;
@@ -3973,9 +4001,13 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 			       argv[0],g_strerror(errno));
 		  exit(errlevel);
 		} else {
+		  reset_interrupt();
 		  if (has_eventloop()) {
 		    while (waitpid(pid,&errlevel,WNOHANG)==0) {
 		      eventloop();
+		      if (check_interrupt()) {
+			kill(pid, SIGINT);
+		      }
 		      msleep(10);
 		    }
 		  } else {
