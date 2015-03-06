@@ -192,7 +192,6 @@ static int Interrupted = FALSE;
 
 static int storeshhandle(struct nshell *nshell,int fd, char **readbuf,int *readbyte,int *readpo);
 static void restoreshhandle(struct nshell *nshell,int fd, char *readbuf,int readbyte,int readpo);
-static void reset_interrupt(void);
 
 #ifndef WINDOWS
 
@@ -3068,7 +3067,7 @@ set_interrupt(void)
   Interrupted = TRUE;
 }
 
-static void
+void
 reset_interrupt(void)
 {
   Interrupted = FALSE;
