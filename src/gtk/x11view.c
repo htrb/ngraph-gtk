@@ -156,6 +156,12 @@ static void CheckGrid(int ofs, unsigned int state, int *x, int *y, double *zoom)
 #define GRAY 0.5
 #define DOT_LENGTH 4.0
 
+int
+check_paint_lock(void)
+{
+  return PaintLock;
+}
+
 static int
 mxd2p(int r)
 {

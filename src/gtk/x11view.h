@@ -69,3 +69,4 @@ void ViewCross(int state);
 void ViewerUpdateCB(GtkAction *w, gpointer client_data);
 int check_focused_obj_type(const struct Viewer *d, int *type);
 void move_data_cancel(struct Viewer *d, gboolean show_message);
+int check_paint_lock(void);

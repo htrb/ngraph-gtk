@@ -1,5 +1,18 @@
 2015-03-06  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11view.c (check_paint_lock): added.
+
+	* src/gtk/x11menu.h (NgraphApp): remove member "Interrupt".
+
+	* src/gtk/x11menu.c (kill_signal_handler): call "set_interrupt()".
+	(AppMainLoop): don't reset interruption.
+	(toplevel_key_pressed): use "set_interrupt()"
+	(ChkInterrupt): call "check_interrupt()" when "DrawLock !=
+	DrawLockDraw".
+
+	* src/gtk/x11commn.c (stop_btn_clicked): use "set_interrupt()".
+	(ProgressDialogCreate): call "reset_interrupt()".
+
 	* src/gtk/x11axis.c (pos_edited_common, axis_prm_edited_common):
 	call "menu_lock(FALSE)".
 	(pos_y_edited, pos_x_edited): don't call "menu_lock(FALSE)".

@@ -3566,7 +3566,11 @@ set_draw_lock(int lock)
 static void
 kill_signal_handler(int sig)
 {
-  Hide_window = APP_QUIT;
+  if (Menulock || check_paint_lock()) {
+    set_interrupt();		/* accept SIGINT */
+  } else {
+    Hide_window = APP_QUIT;
+  }
 }
 
 static void
@@ -3581,7 +3585,6 @@ AppMainLoop(void)
 {
   Hide_window = APP_CONTINUE;
   while (TRUE) {
-    NgraphApp.Interrupt = FALSE;
     gtk_main_iteration();
     if (Hide_window != APP_CONTINUE && ! gtk_events_pending()) {
       int state = Hide_window;
@@ -4884,8 +4887,6 @@ init_ngraph_app_struct(void)
   NgraphApp.y_math_list = NULL;
   NgraphApp.func_list = NULL;
   NgraphApp.fit_list = NULL;
-
-  NgraphApp.Interrupt = FALSE;
 }
 
 static void
@@ -5580,7 +5581,7 @@ toplevel_key_pressed(GtkWidget *w, GdkEventKey *e, gpointer client_data)
   switch (e->keyval) {
   case NGRAPH_INTERRUPT_KEY:
     if (e->state & GDK_CONTROL_MASK) {
-      NgraphApp.Interrupt = TRUE;
+      set_interrupt();
       return TRUE;
     }
     break;
@@ -6009,18 +6010,17 @@ ChkInterrupt(void)
     gtk_propagate_event(w, e);
   }
   gdk_event_free(e);
-  if (NgraphApp.Interrupt) {
-    NgraphApp.Interrupt = FALSE;
+  if (check_interrupt()) {
     return TRUE;
   }
 #else
-  if (DrawLock != DrawLockDraw)
-    return FALSE;
+  if (DrawLock != DrawLockDraw) {
+    return check_interrupt();
+  }
 
   while (gtk_events_pending()) {
     gtk_main_iteration_do(FALSE);
-    if (NgraphApp.Interrupt) {
-      NgraphApp.Interrupt = FALSE;
+    if (check_interrupt()) {
       return TRUE;
     }
   }

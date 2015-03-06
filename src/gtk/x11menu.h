@@ -210,7 +210,6 @@ struct SubWin
 
 struct NgraphApp
 {
-  int Interrupt;
   char *FileName;
   GtkWidget *Message, *Message_pos, *Message_extra;
   gint Message1;

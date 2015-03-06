@@ -1824,7 +1824,7 @@ cb_del(GtkWidget *w, GdkEvent *event, gpointer user_data)
 static void
 stop_btn_clicked(GtkButton *button, gpointer user_data)
 {
-  NgraphApp.Interrupt = TRUE;
+  set_interrupt();
 }
 
 void
@@ -1837,6 +1837,8 @@ ProgressDialogCreate(char *title)
 
   if (ProgressDialog)
     gtk_widget_destroy(ProgressDialog);
+
+  reset_interrupt();
 
   SaveCursor = NGetCursor();
   NSetCursor(GDK_WATCH);
