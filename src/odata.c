@@ -2487,7 +2487,7 @@ set_data_progress(struct f2ddata *fp)
 
   snprintf(msgbuf, sizeof(msgbuf), "id:%d (%d)", fp->id, fp->line);
   set_progress(0, msgbuf, frac);
-  if (ninterrupt()) {
+  if (ninterrupt() || fp->interrupt) {
     fp->eof=TRUE;
     fp->interrupt = TRUE;
     return TRUE;
@@ -2846,6 +2846,7 @@ set_const_all(struct f2ddata *fp)
 static int
 file_calculate(struct f2ddata *fp, MathEquation *eq, const MathValue *x, const MathValue *y, MathValue *prm, MathValue *fprm, MathValue *val)
 {
+  int r;
   if (eq == NULL || eq->exp == NULL)
     return 0;
 
@@ -2853,7 +2854,11 @@ file_calculate(struct f2ddata *fp, MathEquation *eq, const MathValue *x, const M
   math_equation_set_parameter_data(eq, 'F', fprm);
   set_var(eq, x, y);
   math_equation_set_user_data(eq, fp);
-  return math_equation_calculate(eq, val);
+  r = math_equation_calculate(eq, val);
+  if (val->type == MATH_VALUE_INTERRUPT) {
+    fp->interrupt = TRUE;
+  }
+  return r;
 }
 
 static int
@@ -3179,6 +3184,9 @@ getdata_sub1(struct f2ddata *fp, int fnumx, int fnumy, int *needx, int *needy,
       return -1;
     }
 
+    if (fp->interrupt) {
+      return -1;
+    }
     if ((fp->final>=0) && (fp->line>=fp->final)) fp->eof=TRUE;
   }
   return 0;

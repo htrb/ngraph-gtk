@@ -1682,8 +1682,10 @@ math_expression_calculate(MathExpression *exp, MathValue *val)
     v.val = 0;
     v.type = MATH_VALUE_NORMAL;
     if (calc(ptr, &v)) {
-      val->val = v.val;
-      val->type = MATH_VALUE_ERROR;
+      *val = v;
+      if (val->type != MATH_VALUE_INTERRUPT) {
+	val->type = MATH_VALUE_ERROR;
+      }
       return 1;
     }
     ptr = ptr->next;

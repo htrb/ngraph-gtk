@@ -1,5 +1,19 @@
 2015-03-06  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/odata.c (set_data_progress): check not only "ninterrupt()"
+	but "fp->interrupt".
+	(file_calculate): "fp->interrupt" is true when "val->type" is
+	"MATH_VALUE_INTERRUPT".
+	(getdata_sub1): check "fp->interrupt".
+
+	* src/math/math_expression.c (math_expression_calculate): retain
+	"val->type" when the type is "MATH_VALUE_INTERRUPT".
+
+	* src/math/math_basic_function.c (math_func_for)
+	(math_func_while): return "MATH_VALUE_INTERRUPT" when interrupted.
+
+	* src/math/math_equation.h (MATH_VALUE_INTERRUPT): added.
+
 	* src/gtk/x11view.c (check_paint_lock): added.
 
 	* src/gtk/x11menu.h (NgraphApp): remove member "Interrupt".

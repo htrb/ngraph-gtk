@@ -2424,7 +2424,7 @@ math_func_for(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
   rval->val = 0;
   for (v = start; (step < 0) ?  (v >= stop) : (v <= stop); v += step) {
     if ((i & 0xff) == 0 && ninterrupt()) {
-      rval->type = MATH_VALUE_ERROR;
+      rval->type = MATH_VALUE_INTERRUPT;
       return 1;
     }
     if (n >= 0) {
@@ -2475,7 +2475,7 @@ math_func_while(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rv
   condition.type = MATH_VALUE_NORMAL;
   for (i = 0; ; i++) {
     if ((i & 0xff) == 0 && ninterrupt()) {
-      rval->type = MATH_VALUE_ERROR;
+      rval->type = MATH_VALUE_INTERRUPT;
       return 1;
     }
 
