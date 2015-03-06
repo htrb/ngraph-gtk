@@ -1,3 +1,9 @@
+2015-03-06  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11axis.c (pos_edited_common, axis_prm_edited_common):
+	call "menu_lock(FALSE)".
+	(pos_y_edited, pos_x_edited): don't call "menu_lock(FALSE)".
+
 2015-03-04  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/oshell.c (int_handler): added.

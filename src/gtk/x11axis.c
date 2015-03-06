@@ -3166,8 +3166,10 @@ pos_edited_common(struct obj_list_data *d, int id, char *str, enum CHANGE_DIR di
   double val;
   char *argv[3];
 
-  if (str == NULL || id < 0)
+  if (str == NULL || id < 0) {
+    menu_lock(FALSE);
     return;
+  }
 
   switch (dir) {
   case CHANGE_DIR_X:
@@ -3179,14 +3181,16 @@ pos_edited_common(struct obj_list_data *d, int id, char *str, enum CHANGE_DIR di
   }
 
   ecode = str_calc(str, &val, NULL, NULL);
+  menu_lock(FALSE);
   if (ecode || val != val || val == HUGE_VAL || val == - HUGE_VAL) {
     return;
   }
 
   pos2 = nround(val * 100);
 
-  if (pos1 == pos2)
+  if (pos1 == pos2) {
     return;
+  }
 
   switch (dir) {
   case CHANGE_DIR_X:
@@ -3218,8 +3222,6 @@ pos_x_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer u
   struct obj_list_data *d;
   int sel;
 
-  menu_lock(FALSE);
-
   d = (struct obj_list_data *) user_data;
 
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
@@ -3233,8 +3235,6 @@ pos_y_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer u
   struct obj_list_data *d;
   int sel;
 
-  menu_lock(FALSE);
-
   d = (struct obj_list_data *) user_data;
 
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
@@ -3247,18 +3247,22 @@ axis_prm_edited_common(struct obj_list_data *d, char *field, gchar *str)
 {
   int sel, num;
 
-  menu_lock(FALSE);
-
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
   num = chkobjlastinst(d->obj);
 
-  if (sel < 0 || sel > num)
+  if (sel < 0 || sel > num) {
+    menu_lock(FALSE);
     return;
+  }
 
   axis_scale_push(d->obj, sel);
 
-  if (chk_sputobjfield(d->obj, sel, field, str))
+  if (chk_sputobjfield(d->obj, sel, field, str)) {
+    menu_lock(FALSE);
     return;
+  }
+
+  menu_lock(FALSE);
 
   d->select = sel;
   d->update(d, FALSE);
