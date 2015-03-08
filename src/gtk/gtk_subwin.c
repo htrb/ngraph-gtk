@@ -1327,7 +1327,7 @@ ev_sub_win_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
       set_subwindow_state(d->type, SUBWIN_STATE_HIDE);
       return TRUE;
     }
-    return FALSE;
+    break;
   }
   return FALSE;
 }

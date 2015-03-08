@@ -20,7 +20,6 @@
 
 	* src/gtk/x11menu.c (kill_signal_handler): call "set_interrupt()".
 	(AppMainLoop): don't reset interruption.
-	(toplevel_key_pressed): use "set_interrupt()"
 	(ChkInterrupt): call "check_interrupt()" when "DrawLock !=
 	DrawLockDraw".
 
@@ -44,10 +43,6 @@
 	(cmdexec): use "reset_interrupt()" and "check_interrupt()".
 
 2015-02-28  Hiroyuki Ito  <ZXB01226 at nifty.com>
-
-	* src/gtk/x11menu.c (toplevel_key_pressed): added.
-	(create_toplevel_window): connect "key-press-event" to the
-	toplevel window.
 
 	* src/math/math_function.h.in: add function "while".
 

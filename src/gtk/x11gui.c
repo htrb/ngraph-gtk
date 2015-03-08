@@ -100,7 +100,7 @@ dialog_key_down_cb(GtkWidget *w, GdkEvent *event, gpointer user_data)
       gtk_dialog_response(GTK_DIALOG(w), GTK_RESPONSE_CANCEL);
       return TRUE;
     }
-    return FALSE;
+    break;
   }
   return FALSE;
 }
