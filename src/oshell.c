@@ -90,11 +90,13 @@ cmddone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
+#ifndef WINDOWS
 static void
 int_handler(int sig)
 {
   set_interrupt();
 }
+#endif
 
 static int 
 cmdshell(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
@@ -109,8 +111,10 @@ cmdshell(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   int fd;
   int rcode;
   char *s;
+#ifndef WINDOWS
   struct sigaction oldact;
   int (*save_interrupt)(void);
+#endif
 
   _getobj(obj,"_local",inst,&shlocal);
 
@@ -121,10 +125,12 @@ cmdshell(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   shlocal->lock=1;
   nshell=shlocal->nshell;
 
+#ifndef WINDOWS
   save_interrupt = ninterrupt;
   shellsavestdio(nshell);
   set_signal(SIGINT, 0, int_handler, &oldact);
   ninterrupt = check_interrupt;
+#endif
 
   err=1;
   filename=NULL;
@@ -191,9 +197,11 @@ cmdshell(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   err=0;
 
 errexit:
+#ifndef WINDOWS
   ninterrupt = save_interrupt;
   sigaction(SIGINT, &oldact, NULL);
   shellrestorestdio(nshell);
+#endif
 
   if (nshell->deleted) {
     delshell(nshell);

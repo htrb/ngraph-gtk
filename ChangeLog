@@ -1,3 +1,9 @@
+2015-03-13  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/shell.h: the function "set_signal()"is not used in Windows.
+
+	* src/oshell.c (cmdshell): signal is not used in Windows.
+
 2015-03-06  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/odata.c (set_data_progress): check not only "ninterrupt()"
@@ -6346,7 +6352,7 @@
 	(GRAdraw): check "GRAClist[GC].alpha".
 
 	* src/gtk/ogra2cairo.c (gra2cairo_output): use
-	"cairo_set_source_rgba()" when teh value "alpha" is less than 255.
+	"cairo_set_source_rgba()" when the value "alpha" is less than 255.
 
 2010-08-25  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
