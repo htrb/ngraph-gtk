@@ -1,3 +1,8 @@
+2015-04-03  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/shell.c (cmdexec): don't call "check_interrupt()" and
+	"reset_interrupt()".
+
 2015-03-13  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/shell.h: the function "set_signal()"is not used in Windows.

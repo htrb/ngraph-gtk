@@ -4000,13 +4000,9 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 			       argv[0],g_strerror(errno));
 		  exit(errlevel);
 		} else {
-		  reset_interrupt();
 		  if (has_eventloop()) {
 		    while (waitpid(pid,&errlevel,WNOHANG)==0) {
 		      eventloop();
-		      if (check_interrupt()) {
-			kill(pid, SIGINT);
-		      }
 		      msleep(10);
 		    }
 		  } else {

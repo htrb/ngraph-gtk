@@ -6,7 +6,7 @@ dnl Test for GTK+, and define GTK_CFLAGS and GTK_LIBS, if gthread is specified i
 dnl pass to pkg-config
 dnl
 AC_DEFUN([AM_PATH_GTK_3_0],
-[dnl 
+[m4_warn([obsolete], [AM_PATH_GTK_3_0 is deprecated, use PKG_CHECK_MODULES([GTK], [gtk+-3.0]) instead])
 dnl Get the cflags and libraries from pkg-config
 dnl
 AC_ARG_ENABLE(gtktest, [  --disable-gtktest       do not try to compile and run a test GTK+ program],
@@ -199,7 +199,7 @@ dnl GTK_CHECK_BACKEND(BACKEND-NAME [, MINIMUM-VERSION [, ACTION-IF-FOUND [, ACTI
 dnl   Tests for BACKEND-NAME in the GTK targets list
 dnl
 AC_DEFUN([GTK_CHECK_BACKEND],
-[
+[m4_warn([obsolete], [GTK_CHECK_BACKEND is deprecated, use PKG_CHECK_MODULES([GTK_X11], [gtk+-x11-3.0]) or similar instead])
   pkg_config_args=ifelse([$1],,gtk+-3.0, gtk+-$1-3.0)
   min_gtk_version=ifelse([$2],,3.0.0,$2)
   pkg_config_args="$pkg_config_args >= $min_gtk_version"
