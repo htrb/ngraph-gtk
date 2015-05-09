@@ -21,10 +21,10 @@
  *
  */
 
-void CmOptionViewer(GtkAction *w, gpointer client_data);
-void CmOptionExtViewer(GtkAction *w, gpointer client_data);
-void CmOptionPrefFont(GtkAction *w, gpointer client_data);
-void CmOptionScript(GtkAction *w, gpointer client_datavoid);
-void CmOptionMisc(GtkAction *w, gpointer client_data);
-void CmOptionSaveDefault(GtkAction *w, gpointer client_data);
-void CmOptionSaveNgp(GtkAction *w, gpointer client_data);
+void CmOptionViewer(void *w, gpointer client_data);
+void CmOptionExtViewer(void *w, gpointer client_data);
+void CmOptionPrefFont(void *w, gpointer client_data);
+void CmOptionScript(void *w, gpointer client_datavoid);
+void CmOptionMisc(void *w, gpointer client_data);
+void CmOptionSaveDefault(void *w, gpointer client_data);
+void CmOptionSaveNgp(void *w, gpointer client_data);

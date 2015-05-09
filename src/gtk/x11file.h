@@ -32,18 +32,18 @@ const char *get_plot_info_str(struct objlist *obj, int id, int src);
 void FileWinUpdate(struct obj_list_data *data, int clear);
 void CmFileHistory(GtkRecentChooser *w, gpointer client_data);
 
-void CmRangeAdd(GtkAction *w, gpointer client_data);
-void CmFileNew(GtkAction *w, gpointer client_data);
-void CmFileOpen(GtkAction *w, gpointer client_data);
-void CmFileClose(GtkAction *w, gpointer client_data);
-void CmFileUpdate(GtkAction *w, gpointer client_data);
-void CmFileEdit(GtkAction *w, gpointer client_data);
-void CmFileMath(GtkAction *w, gpointer client_data);
-void CmFileSaveData(GtkAction *w, gpointer client_data);
+void CmRangeAdd(void *w, gpointer client_data);
+void CmFileNew(void *w, gpointer client_data);
+void CmFileOpen(void *w, gpointer client_data);
+void CmFileClose(void *w, gpointer client_data);
+void CmFileUpdate(void *w, gpointer client_data);
+void CmFileEdit(void *w, gpointer client_data);
+void CmFileMath(void *w, gpointer client_data);
+void CmFileSaveData(void *w, gpointer client_data);
 
 void FileWinState(struct SubWin *d, int state);
 
-void CmOptionFileDef(GtkAction *w, gpointer client_data);
+void CmOptionFileDef(void *w, gpointer client_data);
 int update_file_obj_multi(struct objlist *obj, struct narray *farray, int newfile);
 void copy_file_obj_field(struct objlist *obj, int id, int sel, int copy_filename);
 void button_set_mark_image(GtkWidget *w, int type);

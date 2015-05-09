@@ -2098,7 +2098,7 @@ LegendTextDefDialog(struct LegendDialog *data,
 }
 
 void
-CmLineDel(GtkAction *w, gpointer client_data)
+CmLineDel(void *w, gpointer client_data)
 {
   struct narray array;
   struct objlist *obj;
@@ -2125,7 +2125,7 @@ CmLineDel(GtkAction *w, gpointer client_data)
 }
 
 void
-CmLineUpdate(GtkAction *w, gpointer client_data)
+CmLineUpdate(void *w, gpointer client_data)
 {
   struct narray array;
   struct objlist *obj;
@@ -2158,7 +2158,7 @@ CmLineUpdate(GtkAction *w, gpointer client_data)
 }
 
 void
-CmRectDel(GtkAction *w, gpointer client_data)
+CmRectDel(void *w, gpointer client_data)
 {
   struct narray array;
   struct objlist *obj;
@@ -2185,7 +2185,7 @@ CmRectDel(GtkAction *w, gpointer client_data)
 }
 
 void
-CmRectUpdate(GtkAction *w, gpointer client_data)
+CmRectUpdate(void *w, gpointer client_data)
 {
   struct narray array;
   struct objlist *obj;
@@ -2218,7 +2218,7 @@ CmRectUpdate(GtkAction *w, gpointer client_data)
 }
 
 void
-CmArcDel(GtkAction *w, gpointer client_data)
+CmArcDel(void *w, gpointer client_data)
 {
   struct narray array;
   struct objlist *obj;
@@ -2245,7 +2245,7 @@ CmArcDel(GtkAction *w, gpointer client_data)
 }
 
 void
-CmArcUpdate(GtkAction *w, gpointer client_data)
+CmArcUpdate(void *w, gpointer client_data)
 {
   struct narray array;
   struct objlist *obj;
@@ -2278,7 +2278,7 @@ CmArcUpdate(GtkAction *w, gpointer client_data)
 }
 
 void
-CmMarkDel(GtkAction *w, gpointer client_data)
+CmMarkDel(void *w, gpointer client_data)
 {
   struct narray array;
   struct objlist *obj;
@@ -2305,7 +2305,7 @@ CmMarkDel(GtkAction *w, gpointer client_data)
 }
 
 void
-CmMarkUpdate(GtkAction *w, gpointer client_data)
+CmMarkUpdate(void *w, gpointer client_data)
 {
   struct narray array;
   struct objlist *obj;
@@ -2338,7 +2338,7 @@ CmMarkUpdate(GtkAction *w, gpointer client_data)
 }
 
 void
-CmTextDel(GtkAction *w, gpointer client_data)
+CmTextDel(void *w, gpointer client_data)
 {
   struct narray array;
   struct objlist *obj;
@@ -2365,7 +2365,7 @@ CmTextDel(GtkAction *w, gpointer client_data)
 }
 
 void
-CmTextUpdate(GtkAction *w, gpointer client_data)
+CmTextUpdate(void *w, gpointer client_data)
 {
   struct narray array;
   struct objlist *obj;
@@ -2398,7 +2398,7 @@ CmTextUpdate(GtkAction *w, gpointer client_data)
 }
 
 void
-CmOptionTextDef(GtkAction *w, gpointer client_data)
+CmOptionTextDef(void *w, gpointer client_data)
 {
   struct objlist *obj;
   int id;

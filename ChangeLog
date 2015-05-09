@@ -1,3 +1,7 @@
+2015-05-09  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* use "void *" instead of "GtkAction *".
+
 2015-04-03  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/shell.c (cmdexec): don't call "check_interrupt()" and

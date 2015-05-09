@@ -2555,7 +2555,7 @@ AxisDialog(struct obj_list_data *data, int id, int user_data)
 }
 
 void
-CmAxisNewFrame(GtkAction *w, gpointer client_data)
+CmAxisNewFrame(void *w, gpointer client_data)
 {
   struct objlist *obj, *obj2;
   int idx, idy, idu, idr, idg, ret;
@@ -2611,7 +2611,7 @@ CmAxisNewFrame(GtkAction *w, gpointer client_data)
 }
 
 void
-CmAxisNewSection(GtkAction *w, gpointer client_data)
+CmAxisNewSection(void *w, gpointer client_data)
 {
   struct objlist *obj, *obj2;
   int idx, idy, idu, idr, idg, ret, oidx, oidy;
@@ -2678,7 +2678,7 @@ CmAxisNewSection(GtkAction *w, gpointer client_data)
 }
 
 void
-CmAxisNewCross(GtkAction *w, gpointer client_data)
+CmAxisNewCross(void *w, gpointer client_data)
 {
   struct objlist *obj;
   int idx, idy, ret;
@@ -2720,7 +2720,7 @@ CmAxisNewCross(GtkAction *w, gpointer client_data)
 }
 
 void
-CmAxisNewSingle(GtkAction *w, gpointer client_data)
+CmAxisNewSingle(void *w, gpointer client_data)
 {
   struct objlist *obj;
   int id, ret;
@@ -2741,7 +2741,7 @@ CmAxisNewSingle(GtkAction *w, gpointer client_data)
 }
 
 void
-CmAxisDel(GtkAction *w, gpointer client_data)
+CmAxisDel(void *w, gpointer client_data)
 {
   struct objlist *obj;
 
@@ -2765,7 +2765,7 @@ CmAxisDel(GtkAction *w, gpointer client_data)
 }
 
 void
-CmAxisUpdate(GtkAction *w, gpointer client_data)
+CmAxisUpdate(void *w, gpointer client_data)
 {
   struct objlist *obj;
   int i, ret;
@@ -2793,7 +2793,7 @@ CmAxisUpdate(GtkAction *w, gpointer client_data)
 }
 
 void
-CmAxisZoom(GtkAction *w, gpointer client_data)
+CmAxisZoom(void *w, gpointer client_data)
 {
   struct narray farray;
   struct objlist *obj;
@@ -2868,7 +2868,7 @@ axiswin_scale_clear(GtkMenuItem *item, gpointer user_data)
 }
 
 void
-CmAxisClear(GtkAction *w, gpointer client_data)
+CmAxisClear(void *w, gpointer client_data)
 {
   struct narray farray;
   struct objlist *obj;
@@ -2896,7 +2896,7 @@ CmAxisClear(GtkAction *w, gpointer client_data)
 }
 
 void
-CmAxisGridNew(GtkAction *w, gpointer client_data)
+CmAxisGridNew(void *w, gpointer client_data)
 {
   struct objlist *obj;
   int id, ret;
@@ -2916,7 +2916,7 @@ CmAxisGridNew(GtkAction *w, gpointer client_data)
 }
 
 void
-CmAxisGridDel(GtkAction *w, gpointer client_data)
+CmAxisGridDel(void *w, gpointer client_data)
 {
   struct narray farray;
   struct objlist *obj;
@@ -2942,7 +2942,7 @@ CmAxisGridDel(GtkAction *w, gpointer client_data)
 }
 
 void
-CmAxisGridUpdate(GtkAction *w, gpointer client_data)
+CmAxisGridUpdate(void *w, gpointer client_data)
 {
   struct narray farray;
   struct objlist *obj;
@@ -3095,7 +3095,7 @@ check_axis_history(struct objlist *obj)
 }
 
 void
-CmAxisScaleUndo(GtkAction *w, gpointer client_data)
+CmAxisScaleUndo(void *w, gpointer client_data)
 {
   char *argv[1];
   struct objlist *obj;

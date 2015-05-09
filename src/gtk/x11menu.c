@@ -114,7 +114,7 @@ GdkCursorType Cursor[] = {
 
 #define CURSOR_TYPE_NUM (sizeof(Cursor) / sizeof(*Cursor))
 
-static void clear_information(GtkAction *w, gpointer user_data);
+static void clear_information(void *w, gpointer user_data);
 static void toggle_view_cb(GtkCheckMenuItem *action, gpointer data);
 
 enum FOCUS_TYPE {
@@ -125,12 +125,6 @@ enum FOCUS_TYPE {
   FOCUS_TYPE_5,
   FOCUS_TYPE_6,
   FOCUS_TYPE_NUM,
-};
-
-struct actions {
-  const char *name;
-  GtkAction *action;
-  enum FOCUS_TYPE type;
 };
 
 enum ACTION_TYPE {
@@ -3871,7 +3865,7 @@ set_focus_sensitivity(const struct Viewer *d)
 }
 
 static void
-clear_information(GtkAction *w, gpointer user_data)
+clear_information(void *w, gpointer user_data)
 {
   InfoWinClear();
 }
@@ -6102,7 +6096,7 @@ script_exec(GtkWidget *w, gpointer client_data)
 }
 
 void
-CmReloadWindowConfig(GtkAction *w, gpointer user_data)
+CmReloadWindowConfig(void *w, gpointer user_data)
 {
   gint x, y, w0, h0;
 

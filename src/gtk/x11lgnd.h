@@ -26,16 +26,16 @@ typedef void (* legend_cb_func)(GtkMenuItem *w, gpointer client_data);
 
 void LegendWinUpdate(int clear);
 
-void CmLineUpdate(GtkAction *w, gpointer client_data);
-void CmLineDel(GtkAction *w, gpointer client_data);
-void CmRectUpdate(GtkAction *w, gpointer client_data);
-void CmRectDel(GtkAction *w, gpointer client_data);
-void CmArcUpdate(GtkAction *w, gpointer client_data);
-void CmArcDel(GtkAction *w, gpointer client_data);
-void CmMarkUpdate(GtkAction *w, gpointer client_data);
-void CmMarkDel(GtkAction *w, gpointer client_data);
-void CmTextUpdate(GtkAction *w, gpointer client_data);
-void CmTextDel(GtkAction *w, gpointer client_data);
+void CmLineUpdate(void *w, gpointer client_data);
+void CmLineDel(void *w, gpointer client_data);
+void CmRectUpdate(void *w, gpointer client_data);
+void CmRectDel(void *w, gpointer client_data);
+void CmArcUpdate(void *w, gpointer client_data);
+void CmArcDel(void *w, gpointer client_data);
+void CmMarkUpdate(void *w, gpointer client_data);
+void CmMarkDel(void *w, gpointer client_data);
+void CmTextUpdate(void *w, gpointer client_data);
+void CmTextDel(void *w, gpointer client_data);
 
 void LegendWinState(struct SubWin *d, int state);
-void CmOptionTextDef(GtkAction *w, gpointer client_data);
+void CmOptionTextDef(void *w, gpointer client_data);

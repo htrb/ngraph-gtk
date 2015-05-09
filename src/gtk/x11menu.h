@@ -215,7 +215,6 @@ struct NgraphApp
   gint Message1;
   GtkRecentManager *recent_manager;
   GtkEntryCompletion *legend_text_list, *x_math_list, *y_math_list, *func_list, *fit_list;
-  GtkRadioAction *viewb;
 #if GTK_CHECK_VERSION(3, 0, 0)
   cairo_surface_t *markpix[MARK_TYPE_NUM];
 #else
@@ -276,7 +275,7 @@ int get_subwindow_state(enum SubWinType id);
 void script_exec(GtkWidget *w, gpointer client_data);
 void toggle_view(int type, int state);
 void CmToggleSingleWindowMode(GtkCheckMenuItem *action, gpointer client_data);
-void CmReloadWindowConfig(GtkAction *w, gpointer user_data);
+void CmReloadWindowConfig(void *w, gpointer user_data);
 void show_recent_dialog(int type);
 
 #endif

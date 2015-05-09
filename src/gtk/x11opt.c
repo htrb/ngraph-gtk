@@ -1906,7 +1906,7 @@ ViewerDialog(struct ViewerDialog *data, struct objlist *obj, int id)
 }
 
 void
-CmOptionSaveNgp(GtkAction *w, gpointer client_data)
+CmOptionSaveNgp(void *w, gpointer client_data)
 {
   char *ngpfile;
   char mes[MESSAGE_BUF_SIZE];
@@ -1953,7 +1953,7 @@ CmOptionSaveNgp(GtkAction *w, gpointer client_data)
 }
 
 void
-CmOptionViewer(GtkAction *w, gpointer client_data)
+CmOptionViewer(void *w, gpointer client_data)
 {
   int r;
 
@@ -1968,7 +1968,7 @@ CmOptionViewer(GtkAction *w, gpointer client_data)
 }
 
 void
-CmOptionExtViewer(GtkAction *w, gpointer client_data)
+CmOptionExtViewer(void *w, gpointer client_data)
 {
   if (Menulock || Globallock)
     return;
@@ -1977,7 +1977,7 @@ CmOptionExtViewer(GtkAction *w, gpointer client_data)
 }
 
 void
-CmOptionPrefFont(GtkAction *w, gpointer client_data)
+CmOptionPrefFont(void *w, gpointer client_data)
 {
   if (Menulock || Globallock)
     return;
@@ -1997,7 +1997,7 @@ CmOptionPrefDriver(void)
 #endif
 
 void
-CmOptionScript(GtkAction *w, gpointer client_datavoid)
+CmOptionScript(void *w, gpointer client_datavoid)
 {
   if (Menulock || Globallock)
     return;
@@ -2006,7 +2006,7 @@ CmOptionScript(GtkAction *w, gpointer client_datavoid)
 }
 
 void
-CmOptionMisc(GtkAction *w, gpointer client_data)
+CmOptionMisc(void *w, gpointer client_data)
 {
   if (Menulock || Globallock)
     return;
@@ -2015,7 +2015,7 @@ CmOptionMisc(GtkAction *w, gpointer client_data)
 }
 
 void
-CmOptionSaveDefault(GtkAction *w, gpointer client_data)
+CmOptionSaveDefault(void *w, gpointer client_data)
 {
   if (Menulock || Globallock)
     return;

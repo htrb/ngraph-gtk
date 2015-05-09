@@ -204,7 +204,7 @@ MergeDialog(struct obj_list_data *data, int id, int user_data)
 }
 
 void
-CmMergeOpen(GtkAction *w, gpointer client_data)
+CmMergeOpen(void *w, gpointer client_data)
 {
   struct objlist *obj;
   char *name = NULL;
@@ -238,7 +238,7 @@ CmMergeOpen(GtkAction *w, gpointer client_data)
 }
 
 void
-CmMergeClose(GtkAction *w, gpointer client_data)
+CmMergeClose(void *w, gpointer client_data)
 {
   struct narray farray;
   struct objlist *obj;
@@ -265,7 +265,7 @@ CmMergeClose(GtkAction *w, gpointer client_data)
 }
 
 void
-CmMergeUpdate(GtkAction *w, gpointer client_data)
+CmMergeUpdate(void *w, gpointer client_data)
 {
   struct narray farray;
   struct objlist *obj;

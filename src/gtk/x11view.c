@@ -5686,7 +5686,7 @@ Clear(void)
 }
 
 void
-CmViewerDraw(GtkAction *w, gpointer client_data)
+CmViewerDraw(void *w, gpointer client_data)
 {
   int select_file;
 
@@ -5702,7 +5702,7 @@ CmViewerDraw(GtkAction *w, gpointer client_data)
 }
 
 void
-CmViewerClear(GtkAction *w, gpointer client_data)
+CmViewerClear(void *w, gpointer client_data)
 {
   if (Menulock || Globallock)
     return;
@@ -6331,7 +6331,7 @@ ViewCross(int state)
 }
 
 void
-ViewerUpdateCB(GtkAction *w, gpointer client_data)
+ViewerUpdateCB(void *w, gpointer client_data)
 {
   ViewUpdate();
 }
@@ -6344,7 +6344,7 @@ CmViewerButtonPressed(GtkWidget *widget, GdkEventButton *event, gpointer user_da
 }
 
 void
-CmEditMenuCB(GtkAction *w, gpointer client_data)
+CmEditMenuCB(void *w, gpointer client_data)
 {
   switch (GPOINTER_TO_INT(client_data)) {
   case MenuIdEditCut:

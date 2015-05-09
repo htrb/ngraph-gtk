@@ -747,7 +747,7 @@ CmOutputDriver(void)
 }
 
 void
-CmOutputViewerB(GtkAction *wi, gpointer client_data)
+CmOutputViewerB(void *wi, gpointer client_data)
 {
   if (Menulock || Globallock)
     return;
@@ -1092,13 +1092,13 @@ CmOutputEMF(int type)
 #endif
 
 void
-CmOutputPrinterB(GtkAction *wi, gpointer client_data)
+CmOutputPrinterB(void *wi, gpointer client_data)
 {
   CmOutputPrinter(FALSE, PRINT_SHOW_DIALOG_DIALOG);
 }
 
 void
-CmOutputMenu(GtkAction *wi, gpointer client_data)
+CmOutputMenu(void *wi, gpointer client_data)
 {
   switch (GPOINTER_TO_INT(client_data)) {
   case MenuIdOutputGRAFile:

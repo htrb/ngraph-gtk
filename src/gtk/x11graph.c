@@ -1076,7 +1076,7 @@ SaveDialog(struct SaveDialog *data, int *sdata, int *smerge)
 }
 
 void
-CmGraphNewMenu(GtkAction *w, gpointer client_data)
+CmGraphNewMenu(void *w, gpointer client_data)
 {
   int sel;
 
@@ -1091,13 +1091,13 @@ CmGraphNewMenu(GtkAction *w, gpointer client_data)
   sel = GPOINTER_TO_INT(client_data);
   switch (sel) {
   case MenuIdGraphNewFrame:
-    CmAxisNewFrame(w, client_data);
+    CmAxisNewFrame(NULL, client_data);
     break;
   case MenuIdGraphNewSection:
-    CmAxisNewSection(w, client_data);
+    CmAxisNewSection(NULL, client_data);
     break;
   case MenuIdGraphNewCross:
-    CmAxisNewCross(w, client_data);
+    CmAxisNewCross(NULL, client_data);
     break;
   case MenuIdGraphAllClear:
   default:
@@ -1114,7 +1114,7 @@ CmGraphNewMenu(GtkAction *w, gpointer client_data)
 }
 
 void
-CmGraphLoad(GtkAction *w, gpointer client_data)
+CmGraphLoad(void *w, gpointer client_data)
 {
   char *file;
 
@@ -1136,7 +1136,7 @@ CmGraphLoad(GtkAction *w, gpointer client_data)
 }
 
 void
-CmGraphSave(GtkAction *w, gpointer client_data)
+CmGraphSave(void *w, gpointer client_data)
 {
   if (Menulock || Globallock)
     return;
@@ -1144,7 +1144,7 @@ CmGraphSave(GtkAction *w, gpointer client_data)
 }
 
 void
-CmGraphOverWrite(GtkAction *w, gpointer client_data)
+CmGraphOverWrite(void *w, gpointer client_data)
 {
   if (Menulock || Globallock)
     return;
@@ -1152,7 +1152,7 @@ CmGraphOverWrite(GtkAction *w, gpointer client_data)
 }
 
 void
-CmGraphSwitch(GtkAction *w, gpointer client_data)
+CmGraphSwitch(void *w, gpointer client_data)
 {
   if (Menulock || Globallock)
     return;
@@ -1164,7 +1164,7 @@ CmGraphSwitch(GtkAction *w, gpointer client_data)
 }
 
 void
-CmGraphPage(GtkAction *w, gpointer client_data)
+CmGraphPage(void *w, gpointer client_data)
 {
   if (Menulock || Globallock)
     return;
@@ -1178,7 +1178,7 @@ CmGraphPage(GtkAction *w, gpointer client_data)
 }
 
 void
-CmGraphDirectory(GtkAction *w, gpointer client_data)
+CmGraphDirectory(void *w, gpointer client_data)
 {
   if (Menulock || Globallock)
     return;
@@ -1187,7 +1187,7 @@ CmGraphDirectory(GtkAction *w, gpointer client_data)
 }
 
 void
-CmGraphShell(GtkAction *w, gpointer client_data)
+CmGraphShell(void *w, gpointer client_data)
 {
   struct objlist *obj, *robj, *shell;
   N_VALUE *inst;
@@ -1217,7 +1217,7 @@ CmGraphShell(GtkAction *w, gpointer client_data)
 }
 
 void
-CmGraphQuit(GtkAction *w, gpointer client_data)
+CmGraphQuit(void *w, gpointer client_data)
 {
   if (Menulock || Globallock)
     return;
@@ -1276,7 +1276,7 @@ about_link_activated_cb(GtkAboutDialog *about, const gchar *link, gpointer data)
 #endif
 
 void
-CmHelpAbout(GtkAction *w, gpointer client_data)
+CmHelpAbout(void *w, gpointer client_data)
 {
   struct objlist *obj;
   char *web, *copyright;
@@ -1347,7 +1347,7 @@ check_help_file(void)
 }
 
 void
-CmHelpHelp(GtkAction *w, gpointer client_data)
+CmHelpHelp(void *w, gpointer client_data)
 {
   char *cmd, *file;
 

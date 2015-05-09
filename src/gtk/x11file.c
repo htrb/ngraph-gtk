@@ -4358,7 +4358,7 @@ CmFileHistory(GtkRecentChooser *w, gpointer client_data)
 }
 
 void
-CmFileNew(GtkAction *w, gpointer client_data)
+CmFileNew(void *w, gpointer client_data)
 {
   char *file;
   int id, ret;
@@ -4400,7 +4400,7 @@ CmFileNew(GtkAction *w, gpointer client_data)
 }
 
 void
-CmRangeAdd(GtkAction *w, gpointer client_data)
+CmRangeAdd(void *w, gpointer client_data)
 {
   int id, ret, val;
   struct objlist *obj;
@@ -4434,7 +4434,7 @@ CmRangeAdd(GtkAction *w, gpointer client_data)
 }
 
 void
-CmFileOpen(GtkAction *w, gpointer client_data)
+CmFileOpen(void *w, gpointer client_data)
 {
   int id, ret, n;
   char *name;
@@ -4481,7 +4481,7 @@ CmFileOpen(GtkAction *w, gpointer client_data)
 }
 
 void
-CmFileClose(GtkAction *w, gpointer client_data)
+CmFileClose(void *w, gpointer client_data)
 {
   struct narray farray;
   struct objlist *obj;
@@ -4566,7 +4566,7 @@ update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file)
 }
 
 void
-CmFileUpdate(GtkAction *w, gpointer client_data)
+CmFileUpdate(void *w, gpointer client_data)
 {
   struct objlist *obj;
   int ret;
@@ -4613,7 +4613,7 @@ check_plot_obj_file(struct objlist *obj)
 }
 
 void
-CmFileEdit(GtkAction *w, gpointer client_data)
+CmFileEdit(void *w, gpointer client_data)
 {
   struct objlist *obj;
   int i;
@@ -4651,7 +4651,7 @@ CmFileEdit(GtkAction *w, gpointer client_data)
 }
 
 void
-CmOptionFileDef(GtkAction *w, gpointer client_data)
+CmOptionFileDef(void *w, gpointer client_data)
 {
   struct objlist *obj;
   int id;
@@ -5398,7 +5398,7 @@ file_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
 }
 
 void
-CmFileMath(GtkAction *w, gpointer client_data)
+CmFileMath(void *w, gpointer client_data)
 {
   struct objlist *obj;
 
@@ -5451,7 +5451,7 @@ GetDrawFiles(struct narray *farray)
 }
 
 void
-CmFileSaveData(GtkAction *w, gpointer client_data)
+CmFileSaveData(void *w, gpointer client_data)
 {
   struct narray farray;
   struct objlist *obj;

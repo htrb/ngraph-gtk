@@ -23,20 +23,20 @@
 
 char *AxisCB(struct objlist *obj, int id);
 
-void CmAxisNewFrame(GtkAction *w, gpointer client_data);
-void CmAxisNewSection(GtkAction *w, gpointer client_data);
-void CmAxisNewCross(GtkAction *w, gpointer client_data);
-void CmAxisNewSingle(GtkAction *w, gpointer client_data);
+void CmAxisNewFrame(void *w, gpointer client_data);
+void CmAxisNewSection(void *w, gpointer client_data);
+void CmAxisNewCross(void *w, gpointer client_data);
+void CmAxisNewSingle(void *w, gpointer client_data);
 
-void CmAxisUpdate(GtkAction *w, gpointer client_data);
-void CmAxisDel(GtkAction *w, gpointer client_data);
-void CmAxisZoom(GtkAction *w, gpointer client_data);
-void CmAxisClear(GtkAction *w, gpointer client_data);
-void CmAxisScaleUndo(GtkAction *w, gpointer client_data);
+void CmAxisUpdate(void *w, gpointer client_data);
+void CmAxisDel(void *w, gpointer client_data);
+void CmAxisZoom(void *w, gpointer client_data);
+void CmAxisClear(void *w, gpointer client_data);
+void CmAxisScaleUndo(void *w, gpointer client_data);
 
-void CmAxisGridNew(GtkAction *w, gpointer client_data);
-void CmAxisGridDel(GtkAction *w, gpointer client_data);
-void CmAxisGridUpdate(GtkAction *w, gpointer client_data);
+void CmAxisGridNew(void *w, gpointer client_data);
+void CmAxisGridDel(void *w, gpointer client_data);
+void CmAxisGridUpdate(void *w, gpointer client_data);
 
 void AxisWinState(struct SubWin *d, int state);
 
