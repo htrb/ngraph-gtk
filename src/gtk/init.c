@@ -964,9 +964,11 @@ n_initialize(int *argc, char ***argv)
 void
 n_save_shell_history(void)
 {
+#ifdef HAVE_READLINE_READLINE_H
   if (HistoryFile) {
     write_history(HistoryFile);
   }
+#endif
 }
 
 void
