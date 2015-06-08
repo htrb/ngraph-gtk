@@ -62,7 +62,7 @@ _ngp2()
         -*)
             COMPREPLY=( $( compgen -W '-h --help -I -a -A -c \
 		-ps -ps3 -ps2 -eps -eps3 -eps2 \
-		-wmf -pdf -svg -svg1.1 -svg1.2 -png' -- $cur ) ) 
+		-pdf -svg -svg1.1 -svg1.2 -png' -- $cur ) ) 
             ;;
 	*)
 	    _filedir 'ngp'
