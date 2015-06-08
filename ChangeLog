@@ -1,3 +1,8 @@
+2015-06-03  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/init.c (n_save_shell_history): "HistoryFile" is not
+	declared when "HAVE_READLINE_READLINE_H" is false.
+
 2015-05-09  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* use "void *" instead of "GtkAction *".
