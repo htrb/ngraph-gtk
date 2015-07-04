@@ -30,9 +30,11 @@ create_image_from_file(const char *file)
 void
 set_button_icon(GtkWidget *w, const char *icon_name)
 {
+#if ! GTK_CHECK_VERSION(3, 12, 0)
   GtkWidget *icon;
   icon = gtk_image_new_from_icon_name(icon_name, GTK_ICON_SIZE_BUTTON);
   gtk_button_set_image(GTK_BUTTON(w), icon);
+#endif
 }
 
 void
@@ -910,22 +912,22 @@ set_linumber_color(GtkWidget *w, guint r, guint g, guint b)
   col.blue  = b * 1.0 / 0xFFFF;
   col.alpha = 1.0;
 
-  gtk_widget_override_background_color(w, GTK_STATE_NORMAL, &col);
-  gtk_widget_override_background_color(w, GTK_STATE_ACTIVE, &col);
-  gtk_widget_override_background_color(w, GTK_STATE_PRELIGHT, &col);
-  gtk_widget_override_background_color(w, GTK_STATE_SELECTED, &col);
-  gtk_widget_override_background_color(w, GTK_STATE_INSENSITIVE, &col);
+  gtk_widget_override_background_color(w, GTK_STATE_FLAG_NORMAL, &col);
+  gtk_widget_override_background_color(w, GTK_STATE_FLAG_ACTIVE, &col);
+  gtk_widget_override_background_color(w, GTK_STATE_FLAG_PRELIGHT, &col);
+  gtk_widget_override_background_color(w, GTK_STATE_FLAG_SELECTED, &col);
+  gtk_widget_override_background_color(w, GTK_STATE_FLAG_INSENSITIVE, &col);
 
   col.red   = 0;
   col.green = 0;
   col.blue  = 0;
   col.alpha = 1.0;
 
-  gtk_widget_override_color(w, GTK_STATE_NORMAL, &col);
-  gtk_widget_override_color(w, GTK_STATE_ACTIVE, &col);
-  gtk_widget_override_color(w, GTK_STATE_PRELIGHT, &col);
-  gtk_widget_override_color(w, GTK_STATE_SELECTED, &col);
-  gtk_widget_override_color(w, GTK_STATE_INSENSITIVE, &col);
+  gtk_widget_override_color(w, GTK_STATE_FLAG_NORMAL, &col);
+  gtk_widget_override_color(w, GTK_STATE_FLAG_ACTIVE, &col);
+  gtk_widget_override_color(w, GTK_STATE_FLAG_PRELIGHT, &col);
+  gtk_widget_override_color(w, GTK_STATE_FLAG_SELECTED, &col);
+  gtk_widget_override_color(w, GTK_STATE_FLAG_INSENSITIVE, &col);
 #else
   GdkColor col;
 
