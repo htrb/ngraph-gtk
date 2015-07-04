@@ -82,7 +82,7 @@ union _math_function_argument {
   MathValue val;
   MathExpression *exp;
   int idx;
-} function_argument;
+};
 
 struct _math_function_call_expression {
   MathExpression **argv;
