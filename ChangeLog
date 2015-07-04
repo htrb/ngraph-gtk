@@ -1,3 +1,8 @@
+2015-07-01  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_liststore.c (add_line_style_item_to_cbox): use
+	"g_strcmp0()" instead of "strcmp()".
+
 2015-06-03  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/init.c (n_save_shell_history): "HistoryFile" is not

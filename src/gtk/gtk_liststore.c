@@ -272,7 +272,7 @@ add_line_style_item_to_cbox(GtkTreeStore *list, GtkTreeIter *parent, int column_
 
   add_text_combo_item_to_cbox(list, &iter, parent, -1, -1, _("Line style"), TOGGLE_NONE, FALSE);
   for (i = 0; FwLineStyle[i].name; i++) {
-    active = ! strcmp(str, FwLineStyle[i].list);
+    active = ! g_strcmp0(str, FwLineStyle[i].list);
     add_text_combo_item_to_cbox(list, NULL, &iter, column_id, i, _(FwLineStyle[i].name), TOGGLE_RADIO, active);
   }
   g_free(str);
