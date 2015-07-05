@@ -901,15 +901,21 @@ text_view_size_allocate(GtkWidget*widget, GdkRectangle *allocation, gpointer use
   set_scroll_visibility(scl);
 }
 
+#if ! GTK_CHECK_VERSION(3, 16, 0)
+
+#define LINE_NUMBER_R 0xCC00
+#define LINE_NUMBER_G 0xCC00
+#define LINE_NUMBER_B 0xCC00
+
 static void
-set_linumber_color(GtkWidget *w, guint r, guint g, guint b)
+set_linumber_color(GtkWidget *w)
 {
 #if GTK_CHECK_VERSION(3, 0, 0)
   GdkRGBA col;
 
-  col.red   = r * 1.0 / 0xFFFF;
-  col.green = g * 1.0 / 0xFFFF;
-  col.blue  = b * 1.0 / 0xFFFF;
+  col.red   = LINE_NUMBER_R * 1.0 / 0xFFFF;
+  col.green = LINE_NUMBER_G * 1.0 / 0xFFFF;
+  col.blue  = LINE_NUMBER_B * 1.0 / 0xFFFF;
   col.alpha = 1.0;
 
   gtk_widget_override_background_color(w, GTK_STATE_FLAG_NORMAL, &col);
@@ -931,9 +937,9 @@ set_linumber_color(GtkWidget *w, guint r, guint g, guint b)
 #else
   GdkColor col;
 
-  col.red = r;
-  col.green = g;
-  col.blue = b;
+  col.red = LINE_NUMBER_R;
+  col.green = LINE_NUMBER_G;
+  col.blue = LINE_NUMBER_B;
 
   gtk_widget_modify_base(w, GTK_STATE_NORMAL, &col);
   gtk_widget_modify_base(w, GTK_STATE_ACTIVE, &col);
@@ -954,6 +960,8 @@ set_linumber_color(GtkWidget *w, guint r, guint g, guint b)
 
   gtk_widget_set_sensitive(w, FALSE);
 }
+
+#endif	/* ! GTK_CHECK_VERSION(3, 16, 0) */
 
 #if GTK_CHECK_VERSION(3, 0, 0)
 static void (* get_preferred_width_org) (GtkWidget *w, gint *min, gint *natulal);
@@ -989,7 +997,11 @@ create_text_view_with_line_number(GtkWidget **v)
   buf = gtk_text_buffer_new(NULL);
   ln = gtk_text_view_new_with_buffer(buf);
 
-  set_linumber_color(ln, 0xCC00, 0xCC00, 0xCC00);
+#if GTK_CHECK_VERSION(3, 16, 0)
+  gtk_widget_set_name(ln, LINE_NUMBER_WIDGET_NAME);
+#else
+  set_linumber_color(ln);
+#endif
 
   g_object_set_data(G_OBJECT(view), "line_number", ln);
 

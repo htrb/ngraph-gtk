@@ -1,10 +1,17 @@
+2015-07-05  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_widget.c (set_linumber_color): not used if the
+	vertsion of the GTK+ is greater or equal to 3.16.
+
+	* src/gtk/gtk_common.h (LINE_NUMBER_WIDGET_NAME): added.
+
 2015-07-04  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/math/math_expression.h: remove unnecessary definition of a
 	variable "function_argument".
 
 	* src/gtk/gtk_widget.c (set_button_icon): do nothing when the
-	vertsion of the GTK+ is lesser than 3.12.
+	vertsion of the GTK+ is greater or equal to 3.12.
 	(set_linumber_color): use "GTK_STATE_FLAG_*" instead of
 	"GTK_STATE_*".
 

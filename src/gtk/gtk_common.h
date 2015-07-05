@@ -78,5 +78,7 @@
 #define GDK_KEY_x GDK_x
 #endif	/* GDK_KEY_BackSpace */
 
+#define LINE_NUMBER_WIDGET_NAME "line_number"
+
 #endif
 
