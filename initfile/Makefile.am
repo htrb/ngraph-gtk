@@ -9,7 +9,7 @@ if HAVE_RUBY_DEV
   init_scripts += 20append_addins_ruby.nsc
 endif
 dist_ngraphinit_DATA = $(init_scripts)
-dist_ngraphui_DATA = menus.ui
+dist_ngraphui_DATA = menus.ui ngraph.css
 dist_ngraphconf_DATA = Ngraph.nsc Ngraph.ngp fit.ngp $(ACCEL_FILE)
 nodist_ngraphconf_DATA = Ngraph.ini
 

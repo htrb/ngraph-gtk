@@ -66,6 +66,7 @@ char *HistoryFile = NULL;
 #define HIST_FILE "shell_history"
 #endif	/* HAVE_READLINE_READLINE_H */
 
+#define CSS_FILE "ngraph.css"
 #define SYSCONF "[Ngraph]"
 
 static char *systemname, *locale;
@@ -780,6 +781,20 @@ n_initialize(int *argc, char ***argv)
   gtk_set_locale();
 #endif
   OpenDisplay = gtk_init_check(argc, argv);
+#if GTK_CHECK_VERSION(3, 16, 0)
+  if (OpenDisplay) {
+    GtkCssProvider *css_provider;
+    char *css_file;
+
+    css_file = g_strdup_printf("%s/gtk/%s", CONFDIR, CSS_FILE);
+    if (css_file) {
+      css_provider = gtk_css_provider_new();
+      gtk_css_provider_load_from_path(css_provider, css_file, NULL);
+      gtk_style_context_add_provider_for_screen(gdk_screen_get_default(), GTK_STYLE_PROVIDER(css_provider), GTK_STYLE_PROVIDER_PRIORITY_USER);
+      g_free(css_file);
+    }
+  }
+#endif	/* GTK_CHECK_VERSION(3, 16, 0) */
   g_set_application_name(AppName);
 
 #ifdef WINDOWS
