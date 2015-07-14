@@ -915,7 +915,7 @@ gtkwait_action(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char
   }
 
   if (local->blank_cursor == NULL) {
-    local->blank_cursor = gdk_cursor_new(GDK_BLANK_CURSOR);
+    local->blank_cursor = gdk_cursor_new_for_display(gdk_display_get_default(), GDK_BLANK_CURSOR);
     gdk_window_set_cursor(gtk_widget_get_window(local->mainwin), local->blank_cursor);
   }
 

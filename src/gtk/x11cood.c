@@ -30,6 +30,7 @@
 #include "axis.h"
 
 #include "gtk_subwin.h"
+#include "gtk_widget.h"
 
 #include "x11bitmp.h"
 #include "x11gui.h"
@@ -40,6 +41,11 @@
 void
 CoordWinSetFont(const char *font)
 {
+#if GTK_CHECK_VERSION(3, 16, 0)
+  if (NgraphApp.CoordWin.data.text && font) {
+    set_widget_font(NgraphApp.CoordWin.data.text, font);
+  }
+#else  /* GTK_CHECK_VERSION(3, 16, 0) */
   const char *ptr;
   PangoAttrList *pattr;
   PangoFontDescription *desc;
@@ -61,6 +67,7 @@ CoordWinSetFont(const char *font)
   desc = pango_font_description_from_string(ptr);
   pango_attr_list_change(pattr, pango_attr_font_desc_new(desc));
   pango_font_description_free(desc);
+#endif
 }
 
 void

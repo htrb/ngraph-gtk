@@ -4011,7 +4011,7 @@ create_cursor(void)
     return 1;
 
   for (i = 0; i < CURSOR_TYPE_NUM; i++) {
-    NgraphApp.cursor[i] = gdk_cursor_new(Cursor[i]);
+    NgraphApp.cursor[i] = gdk_cursor_new_for_display(gdk_display_get_default(), Cursor[i]);
   }
 
   return 0;

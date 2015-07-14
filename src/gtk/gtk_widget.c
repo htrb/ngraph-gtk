@@ -901,7 +901,35 @@ text_view_size_allocate(GtkWidget*widget, GdkRectangle *allocation, gpointer use
   set_scroll_visibility(scl);
 }
 
-#if ! GTK_CHECK_VERSION(3, 16, 0)
+#if GTK_CHECK_VERSION(3, 16, 0)
+void
+set_widget_font(GtkWidget *w, const char *font)
+{
+  GtkCssProvider *css_provider;
+  GError *error;
+  char *css_str;
+
+  css_str = g_strdup_printf("%s {font: %s;}", G_OBJECT_TYPE_NAME(w), font);
+  if (css_str == NULL) {
+    return;
+  }
+
+  css_provider = gtk_css_provider_new();
+  if (css_provider == NULL) {
+    return;
+  }
+
+  error = NULL;
+  gtk_css_provider_load_from_data(css_provider, css_str, -1, &error);
+  g_free(css_str);
+  if (error == NULL) {
+    gtk_style_context_add_provider(gtk_widget_get_style_context(w),
+				   GTK_STYLE_PROVIDER(css_provider),
+				   GTK_STYLE_PROVIDER_PRIORITY_USER);
+  }
+}
+
+#else  /* GTK_CHECK_VERSION(3, 16, 0) */
 
 #define LINE_NUMBER_R 0xCC00
 #define LINE_NUMBER_G 0xCC00
@@ -1121,9 +1149,14 @@ text_view_with_line_number_set_text(GtkWidget *view, const gchar *str)
 void
 text_view_with_line_number_set_font(GtkWidget *view, const gchar *font)
 {
+#if ! GTK_CHECK_VERSION(3, 16, 0)
   PangoFontDescription *desc;
+#endif
   GtkWidget *ln;
 
+#if GTK_CHECK_VERSION(3, 16, 0)
+  set_widget_font(view, font);
+#else  /* GTK_CHECK_VERSION(3, 16, 0) */
   desc = pango_font_description_from_string(font);
 #if GTK_CHECK_VERSION(3, 0, 0)
   gtk_widget_override_font(view, NULL);
@@ -1132,13 +1165,19 @@ text_view_with_line_number_set_font(GtkWidget *view, const gchar *font)
   gtk_widget_modify_font(view, NULL);
   gtk_widget_modify_font(view, desc);
 #endif
+#endif	/* GTK_CHECK_VERSION(3, 16, 0) */
 
   ln = g_object_get_data(G_OBJECT(view), "line_number");
   if (ln == NULL) {
+#if ! GTK_CHECK_VERSION(3, 16, 0)
     pango_font_description_free(desc);
+#endif
     return;
   }
 
+#if GTK_CHECK_VERSION(3, 16, 0)
+  set_widget_font(ln, font);
+#else  /* GTK_CHECK_VERSION(3, 16, 0) */
 #if GTK_CHECK_VERSION(3, 0, 0)
   gtk_widget_override_font(ln, NULL);
   gtk_widget_override_font(ln, desc);
@@ -1148,6 +1187,7 @@ text_view_with_line_number_set_font(GtkWidget *view, const gchar *font)
 #endif
 
   pango_font_description_free(desc);
+#endif	/* GTK_CHECK_VERSION(3, 16, 0) */
 }
 
 enum SELECT_OBJ_COLOR_RESULT

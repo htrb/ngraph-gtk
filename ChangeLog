@@ -1,3 +1,30 @@
+2015-07-14  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (create_cursor): use
+	"gdk_cursor_new_for_display()" instead of "gdk_cursor_new()".
+
+	* src/gtk/x11info.c (InfoWinSetFont): use "set_widget_font()".
+
+	* src/gtk/x11file.c (HEADLINE_FONT_COLUMN): added.
+	(create_preview_table): add font column.
+	(update_table_visibility, set_headline_table_array)
+	(set_headline_table): set font.
+	(FileDialogSetup, ArrayDialogSetup): dont setup font.
+
+	* src/gtk/x11cood.c (CoordWinSetFont): use "set_widget_font()".
+
+	* src/gtk/ogra2x11.c (gtkwait_action): use
+	"gdk_cursor_new_for_display()" instead of "gdk_cursor_new()".
+
+	* src/gtk/init.c (load_css): added.
+	(n_initialize): use "load_css()".
+
+	* src/gtk/gtk_widget.c (set_widget_font): added.
+	(text_view_with_line_number_set_font): use "set_widget_font()".
+
+	* src/gtk/gtk_ruler.c (nruler_get_color): remove 3rd parameter.
+	(nruler_draw_ticks): use "gtk_render_background()".
+
 2015-07-06  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/init.c (n_initialize): load css file.

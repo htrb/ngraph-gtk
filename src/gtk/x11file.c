@@ -3422,7 +3422,8 @@ parse_data_line(struct narray *array, const char *str, const char *ifs, const ch
 #define HEADLINE_LINE_NUM_COLUMN   (MAX_COLS + 1)
 #define HEADLINE_VISIBILITY_COLUMN (MAX_COLS + 2)
 #define HEADLINE_ELLIPSIZE_COLUMN  (MAX_COLS + 3)
-#define HEADLINE_COLUMN_NUM        (MAX_COLS + 4)
+#define HEADLINE_FONT_COLUMN       (MAX_COLS + 4)
+#define HEADLINE_COLUMN_NUM        (MAX_COLS + 5)
 
 static void
 set_headline_table_header(struct FileDialog *d)
@@ -3579,6 +3580,7 @@ set_headline_table_array(struct FileDialog *d, int max_lines)
 		       HEADLINE_LINE_NUM_COLUMN, i,
 		       HEADLINE_VISIBILITY_COLUMN, v,
 		       HEADLINE_ELLIPSIZE_COLUMN, (v) ? PANGO_ELLIPSIZE_NONE : PANGO_ELLIPSIZE_END,
+		       HEADLINE_FONT_COLUMN, Menulocal.file_preview_font,
 		       -1);
     if (v) {
       l++;
@@ -3673,6 +3675,7 @@ set_headline_table(struct FileDialog *d, char *s, int max_lines)
 		       HEADLINE_FIRST_CHAR_COLUMN, c,
 		       HEADLINE_VISIBILITY_COLUMN, v,
 		       HEADLINE_ELLIPSIZE_COLUMN, (v) ? PANGO_ELLIPSIZE_NONE : PANGO_ELLIPSIZE_END,
+		       HEADLINE_FONT_COLUMN, Menulocal.file_preview_font,
 		       -1);
     if (v) {
       l++;
@@ -3711,6 +3714,7 @@ create_preview_table(struct FileDialog *d)
   types[HEADLINE_FIRST_CHAR_COLUMN] = G_TYPE_INT;
   types[HEADLINE_VISIBILITY_COLUMN] = G_TYPE_BOOLEAN;
   types[HEADLINE_ELLIPSIZE_COLUMN] = G_TYPE_INT;
+  types[HEADLINE_FONT_COLUMN] = G_TYPE_STRING;
 
   model = gtk_list_store_newv(HEADLINE_COLUMN_NUM, types);
 
@@ -3729,6 +3733,7 @@ create_preview_table(struct FileDialog *d)
 						      "text", i,
 						      "sensitive", HEADLINE_VISIBILITY_COLUMN,
 						      "ellipsize", HEADLINE_ELLIPSIZE_COLUMN,
+						      "font", HEADLINE_FONT_COLUMN,
 						      NULL);
     if (i == 0) {
       gtk_tree_view_column_add_attribute(column, cell, "visible", HEADLINE_VISIBILITY_COLUMN);
@@ -3802,6 +3807,7 @@ update_table_visibility(GtkEditable *editable, gpointer user_data)
 		       0, i,
 		       HEADLINE_VISIBILITY_COLUMN, v,
 		       HEADLINE_ELLIPSIZE_COLUMN, (v) ? PANGO_ELLIPSIZE_NONE : PANGO_ELLIPSIZE_END,
+		       HEADLINE_FONT_COLUMN, Menulocal.file_preview_font,
 		       -1);
     if (v) {
       i++;
@@ -3825,7 +3831,6 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
   struct FileDialog *d;
   int line;
   char title[32], *argv[2], *s;
-  PangoFontDescription *desc;
 
   d = (struct FileDialog *) data;
 
@@ -3913,16 +3918,6 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
   getobj(d->Obj, "head_lines", d->Id, 1, argv, &s);
   FileDialogSetupItem(wi, d);
 
-  desc = pango_font_description_from_string(Menulocal.file_preview_font);
-#if GTK_CHECK_VERSION(3, 0, 0)
-  gtk_widget_override_font(d->comment_table, NULL);
-  gtk_widget_override_font(d->comment_table, desc);
-#else
-  gtk_widget_modify_font(d->comment_table, NULL);
-  gtk_widget_modify_font(d->comment_table, desc);
-#endif
-  pango_font_description_free(desc);
-
   d->initialized = TRUE;
   set_headlines(d, s);
   set_headline_table_header(d);
@@ -3936,7 +3931,6 @@ ArrayDialogSetup(GtkWidget *wi, void *data, int makewidget)
   GtkWidget *w, *hbox, *view, *label, *swin;
   struct FileDialog *d;
   char title[32];
-  PangoFontDescription *desc;
 
   d = (struct FileDialog *) data;
 
@@ -3996,16 +3990,6 @@ ArrayDialogSetup(GtkWidget *wi, void *data, int makewidget)
   }
 
   FileDialogSetupItem(wi, d);
-
-  desc = pango_font_description_from_string(Menulocal.file_preview_font);
-#if GTK_CHECK_VERSION(3, 0, 0)
-  gtk_widget_override_font(d->comment_table, NULL);
-  gtk_widget_override_font(d->comment_table, desc);
-#else
-  gtk_widget_modify_font(d->comment_table, NULL);
-  gtk_widget_modify_font(d->comment_table, desc);
-#endif
-  pango_font_description_free(desc);
 
   d->initialized = TRUE;
   set_headline_table_header(d);

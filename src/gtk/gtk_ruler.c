@@ -76,7 +76,7 @@ static gboolean nruler_destroy(GtkWidget *widget, gpointer user_data);
 #if GTK_CHECK_VERSION(3, 0, 0)
 static void nruler_draw_pos(Nruler *ruler, GtkWidget *widget, cairo_t *cr);
 static gboolean nruler_expose(GtkWidget *widget, cairo_t *cr, gpointer user_data);
-static void nruler_get_color(Nruler *ruler, GdkRGBA *fg, GdkRGBA *bg);
+static void nruler_get_color(Nruler *ruler, GdkRGBA *fg);
 #else	/* GTK_CHECK_VERSION(3, 0, 0) */
 static void nruler_draw_pos(Nruler *ruler, GtkWidget *widget);
 static gboolean nruler_expose(GtkWidget *widget, GdkEventExpose *event, gpointer user_data);
@@ -318,7 +318,8 @@ nruler_draw_ticks(Nruler *ruler, GtkWidget *widget)
   PangoFontDescription *fs;
   GtkAllocation allocation;
 #if GTK_CHECK_VERSION(3, 0, 0)
-  GdkRGBA bg, fg;
+  GdkRGBA fg;
+  GtkStyleContext *context;
 #else
   GdkColor bg, fg;
 #endif
@@ -343,16 +344,19 @@ nruler_draw_ticks(Nruler *ruler, GtkWidget *widget)
 
   digit_height = PANGO_PIXELS(ink_rect.height) + 2;
 
-  nruler_get_color(ruler, &fg, &bg);
 #if GTK_CHECK_VERSION(3, 0, 0)
+  nruler_get_color(ruler, &fg);
   cr = cairo_create(ruler->backing_store);
-  gdk_cairo_set_source_rgba(cr, &bg);
+  context = gtk_widget_get_style_context(TopLevel);
+  gtk_render_background(context, cr,
+			0, 0, allocation.width, allocation.height);
 #else	/* GTK_CHECK_VERSION(3, 0, 0) */
+  nruler_get_color(ruler, &fg, &bg);
   cr = gdk_cairo_create(ruler->backing_store);
   gdk_cairo_set_source_color(cr, &bg);
-#endif	/* GTK_CHECK_VERSION(3, 0, 0) */
   cairo_rectangle(cr, 0, 0, allocation.width, allocation.height);
   cairo_fill(cr);
+#endif	/* GTK_CHECK_VERSION(3, 0, 0) */
 
 #if GTK_CHECK_VERSION(3, 0, 0)
   gdk_cairo_set_source_rgba(cr, &fg);
@@ -486,34 +490,13 @@ nruler_draw_ticks(Nruler *ruler, GtkWidget *widget)
 
 #if GTK_CHECK_VERSION(3, 0, 0)
 static void
-nruler_get_color(Nruler *ruler, GdkRGBA *fg, GdkRGBA *bg)
+nruler_get_color(Nruler *ruler, GdkRGBA *fg)
 {
-  GdkRGBA color;
   GtkStyleContext *style;
 
-  style = gtk_widget_get_style_context(TopLevel);
-  gtk_style_context_get_background_color(style, GTK_STATE_FLAG_NORMAL, &color);
-  color.alpha = 1.0;
-
-  if (bg) {
-    *bg = color;
-  }
-
   if (fg) {
-#if 0
-    if (color.red + color.green + color.blue > 1.5) {
-      fg->red = 0.0;
-      fg->green = 0.0;
-      fg->blue = 0.0;
-    } else {
-      fg->red = 1.0;
-      fg->green = 1.0;
-      fg->blue = 1.0;
-    }
-    fg->alpha = 1.0;
-#else
+    style = gtk_widget_get_style_context(TopLevel);
     gtk_style_context_get_color(style, GTK_STATE_FLAG_NORMAL, fg);
-#endif
   }
 }
 #else
@@ -606,10 +589,11 @@ nruler_draw_pos(Nruler *ruler, GtkWidget *widget)
     y = nround((ruler->position - ruler->lower) * increment) - bs_height / 2 - ruler->ofst;
   }
 
-  nruler_get_color(ruler, &fg, NULL);
 #if GTK_CHECK_VERSION(3, 0, 0)
+  nruler_get_color(ruler, &fg);
   gdk_cairo_set_source_rgba(cr, &fg);
 #else	/* GTK_CHECK_VERSION(3, 0, 0) */
+  nruler_get_color(ruler, &fg, NULL);
   gdk_cairo_set_source_color(cr, &fg);
 #endif	/* GTK_CHECK_VERSION(3, 0, 0) */
 
