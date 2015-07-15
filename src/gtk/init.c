@@ -744,6 +744,7 @@ n_getlocale(void)
   return locale;
 }
 
+#if GTK_CHECK_VERSION(3, 16, 0)
 static void
 load_css(const char *file)
 {
@@ -765,6 +766,7 @@ load_css(const char *file)
     g_free(css_file);
   }
 }
+#endif
 
 int
 n_initialize(int *argc, char ***argv)

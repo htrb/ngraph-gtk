@@ -1973,7 +1973,7 @@ mx_show_lib_version(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 	       h,
 	       pango_version_string());
 
-#ifdef HAVE_READLINE_READLINE_H
+#ifdef RL_VERSION_MAJOR
   g_string_append(str, "\n");
   g_string_append_printf(str, "%sreadline\n"
 	       "%s compile: %d.%d\n"

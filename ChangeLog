@@ -1,3 +1,11 @@
+2015-07-15  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/init.c (load_css): this function is used only when the
+	vertsion of the GTK+ is greater or equal to 3.16.
+
+	* src/gtk/ox11menu.c (mx_show_lib_version): check
+	"RL_VERSION_MAJOR" instead of "HAVE_READLINE_READLINE_H".
+
 2015-07-14  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (create_cursor): use
