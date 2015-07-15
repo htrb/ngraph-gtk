@@ -1,5 +1,8 @@
 2015-07-15  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/nconfig.c (replaceconfig, removeconfig): free "fil" when the
+	variable "fptmp" is NULL.
+
 	* src/gtk/init.c (load_css): this function is used only when the
 	vertsion of the GTK+ is greater or equal to 3.16.
 

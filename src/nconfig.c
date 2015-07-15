@@ -330,6 +330,7 @@ replaceconfig(char *section,struct narray *conf)
   lockconfig(dir);
   fptmp = n_tmpfile(&tmp_name);
   if (fptmp == NULL) {
+    g_free(fil);
     unlockconfig(dir);
     return FALSE;
   }
@@ -461,6 +462,7 @@ removeconfig(char *section,struct narray *conf)
   lockconfig(dir);
   fptmp = n_tmpfile(&tmp_name);
   if (fptmp == NULL) {
+    g_free(fil);
     unlockconfig(dir);
     return FALSE;
   }
