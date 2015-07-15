@@ -1,5 +1,7 @@
 2015-07-15  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/shell.c (expand): remove "WILD_PERIOD" flag.
+
 	* src/nconfig.c (replaceconfig, removeconfig): free "fil" when the
 	variable "fptmp" is NULL.
 

@@ -2322,11 +2322,11 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
 	      int len;
 	      len = strlen(c2) - 1;
               for (k = 0; k <= len; k++) {
-                if (wildmatch(c1,c2+k,WILD_PATHNAME|WILD_PERIOD)) break;
+                if (wildmatch(c1,c2+k,WILD_PATHNAME)) break;
               }
             } else {
               for (k=strlen(c2);k>=0;k--) {
-                if (wildmatch(c1,c2+k,WILD_PATHNAME|WILD_PERIOD)) break;
+                if (wildmatch(c1,c2+k,WILD_PATHNAME)) break;
               }
             }
             if (k<0) k=strlen(c2);
