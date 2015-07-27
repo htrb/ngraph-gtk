@@ -1,0 +1,3 @@
+etc/ngraph-gtk/init.d/20append_addins_ruby.nsc
+usr/lib/*/ngraph-gtk/plugins/libruby.so
+usr/share/ngraph-gtk/addin/ruby.nsc

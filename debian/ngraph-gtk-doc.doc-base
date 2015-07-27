@@ -1,0 +1,9 @@
+Document: ngraph-gtk
+Title: Ngraph-gtk User's Manual
+Author: Satoshi ISHIZAKA, Ito Hiroyuki
+Abstract: Manual for Ngraph-gtk to create scientific 2-dimensional graphs
+Section: Graphics
+
+Format: HTML
+Index: /usr/share/doc/ngraph-gtk/html/index.html
+Files: /usr/share/doc/ngraph-gtk/html/*.html /usr/share/doc/ngraph-gtk/html*/*.html

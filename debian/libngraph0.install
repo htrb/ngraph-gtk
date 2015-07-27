@@ -1,0 +1,8 @@
+etc/ngraph-gtk/Ngraph.ini
+etc/ngraph-gtk/accel_map
+etc/ngraph-gtk/fit.ngp
+etc/ngraph-gtk/gtk/*
+usr/lib/*/lib*.so.*
+usr/lib/*/ngraph-gtk/terminal
+usr/share/locale
+usr/share/pixmaps/ngraph-gtk
