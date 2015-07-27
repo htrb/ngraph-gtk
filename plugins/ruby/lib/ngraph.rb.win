@@ -1,0 +1,10 @@
+# -*- coding: utf-8 -*-
+rb_path = File.dirname(File.expand_path(__FILE__))
+bin_path = File.dirname(File.dirname(rb_path)) + '/bin'
+win_bin_path = bin_path.gsub("/",'\\\\')
+ENV['PATH'] += ";#{win_bin_path}" unless (ENV['PATH'].index(win_bin_path))
+if (require "#{rb_path}/ngraph.so")
+  Ngraph::ngraph_initialize(bin_path + "/ngraph.exe")
+end
+
+require "#{rb_path}/ngraph/ngp2"

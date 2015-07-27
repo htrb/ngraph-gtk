@@ -1,0 +1,94 @@
+# Description: import _PS...,Import PostScript image,ps
+# Description: import _EPS...,Import Encapsulated PostScript image,eps
+# Description: import _PDF...,Import Portable Document Format image,pdf
+
+PSTOEDIT_COMMAND="pstoedit"
+PSTOEDIT_OPTION="-q -flat 0.1 -nc -ssp -dt"
+
+RUBY_COMMAND="ruby"
+
+ps2gra_error_dialog() {
+    new dialog
+    dialog::message "$1"
+    del dialog
+}
+
+set +e
+
+if which -q $PSTOEDIT_COMMAND
+then
+    true
+else
+    ps2gra_error_dialog "Cannot execute '$PSTOEDIT_COMMAND'."
+    exit
+fi
+
+new dialog
+ps_file=`get dialog -field get_open_file:$1`
+del dialog
+
+if [ -z "$ps_file" ]
+then
+    exit
+fi
+
+if [ ! -r "$ps_file" ]
+then
+    ps2gra_error_dialog "cannot open $ps_file"
+    exit
+fi
+
+gra_file="`pwd`/`basename $ps_file .$1`.gra"
+
+if [ -e "$gra_file" ]
+then
+  new dialog
+  response=`get dialog -field yesno:"The file '$gra_file' already exists. Do you want to replace it?"`
+  del dialog
+  if [ x"$response" != "x1" ]
+  then
+      exit
+  fi
+fi
+
+fig_file="${system::temp_file}"
+
+$PSTOEDIT_COMMAND $PSTOEDIT_OPTION -f fig "$ps_file" "$fig_file"
+if [ ! -r "$fig_file" ]
+then
+    ps2gra_error_dialog "Faital error occurred while execute pstoedit."
+    system::unlink_temp_file "$fig_file"
+    exit
+fi
+
+if which -q $RUBY_COMMAND
+then
+    $RUBY_COMMAND "${system::data_dir}/addin/fig2gra.rb" "$fig_file" "$gra_file"
+else
+    . "${system::data_dir}/addin/fig2gra.nsc"
+    fig2gra "$fig_file" "$gra_file"
+fi
+system::unlink_temp_file "$fig_file"
+rm -f "$fig_file"*
+if [ ! -r "$gra_file" ]
+then
+    ps2gra_error_dialog "Fatal error occurred while executing fig2gra."
+    exit
+fi
+
+for i in `object merge -instances`
+do
+    merge_file=`get merge:$i -field file`
+    if [ "$merge_file" = "$gra_file"]
+    then
+	exit
+    fi
+done
+
+new merge
+merge::file="$gra_file"
+
+menu::draw
+menu::unfocus
+menu::focus merge:!
+menu::modified=true

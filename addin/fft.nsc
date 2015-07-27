@@ -1,0 +1,53 @@
+#
+# fft.nsc written by S. ISHIZAKA. 1999/07
+#
+# Description: _FFT...,Fast Fourier Transform,
+
+new dialog
+SOURCE_FILE=${dialog::get_open_file}
+if [ ! -r "$SOURCE_FILE" ]
+then
+    del dialog
+    exit
+fi
+
+DEST_FILE=${dialog::get_save_file:"dat _fft_.dat"}
+if [ -z "$DEST_FILE" ]
+then
+    del dialog
+    exit
+fi
+
+if "$NGRAPHLIB/fft" "$SOURCE_FILE" "$DEST_FILE"
+then
+    true
+else
+    dialog::message "some errors are occurred while calculation."
+    del dialog
+    exit
+fi
+
+new data
+data::x=1
+data::y=2
+data::file="$DEST_FILE"
+data::type=line
+data::B=255
+
+new data
+data::file="$DEST_FILE"
+data::x=1
+data::y=3
+data::type=line
+data::R=255
+
+new data
+data::file="$DEST_FILE"
+data::x=1
+data::y=2
+data::type=staircase_x
+data::math_y='SQRT(%02^2+%03^2)'
+menu::modified=true
+
+del dialog
+menu:0:clear

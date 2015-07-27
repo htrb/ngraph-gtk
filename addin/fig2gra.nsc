@@ -1,0 +1,270 @@
+set +e
+
+fig2gra_delete_obj() {
+    del io:fig2gra
+    del regexp:fig2gra
+    del sarray:fig2gra
+    del iarray:fig2gra
+    del sarray:palette
+    del iarray:points
+}
+
+fig2gra_set_color() {
+    c=`get sarray:palette -field get:$1`
+    if [ -n "$c" ]
+    then
+	io:fig2gra:puts "G,4,$c,255"
+    fi
+}
+
+fig2gra_set_line_attribute () {
+    style=${iarray:fig2gra:get:2}
+    width=`iexpr "${iarray:fig2gra:get:3} * $COORD_CONV * 100 / 80"`
+    len=`iexpr "${iarray:fig2gra:get:9} * $COORD_CONV * 100 / 80"`
+    join=${iarray:fig2gra:get:10}
+    cap=${iarray:fig2gra:get:11}
+    case $style in
+	1)
+	    io:fig2gra:puts "A,7,2,$width,$cap,$join,1000,$len,$len"
+	    ;;
+	2)
+	    io:fig2gra:puts "A,7,2,$width,$cap,$join,1000,50,$len"
+	    ;;
+	3)
+	    io:fig2gra:puts "A,9,4,$width,$cap,$join,1000,$len,100,50,100"
+	    ;;
+	4)
+	    io:fig2gra:puts "A,11,6,$width,$cap,$join,1000,$len,100,50,100,50,100"
+	    ;;
+	5)
+	    io:fig2gra:puts "A,13,8,$width,$cap,$join,1000,$len,100,50,100,50,100,50,100"
+	    ;;
+	*)
+	    io:fig2gra:puts "A,5,0,$width,$cap,$join,1000"
+	    ;;
+    esac
+}
+
+fig2gra_draw_poly_line() {
+    n=${iarray:points:num}
+
+    if [ $n -lt 4 ]
+    then
+	return
+    fi
+
+    fill=0
+    if [ "${iarray:fig2gra:get:8}" != -1 ]
+    then
+	fill=1
+    fi
+
+    close_path=0
+    if [ ${iarray:points:get:0} -eq ${iarray:points:get:-2} -a ${iarray:points:get:1} -eq  ${iarray:points:get:-1} ]
+    then
+	iarray:points:pop
+	iarray:points:pop
+	n=${iarray:points:num}
+	close_path=1
+    fi
+
+    m=`iexpr $n/2`
+    if [ ${iarray:fig2gra:get:1} -ne 1 -o $fill -ne 0 ]
+    then
+	n2=`iexpr $n+2`
+	if [ $fill -ne 0 ]
+	then
+	    fig2gra_set_color ${iarray:fig2gra:get:5}
+	    io:fig2gra:puts "D,$n2,$m,1,${iarray:points:join:','}"
+	fi
+
+	if [ ${iarray:fig2gra:get:3} -gt 0 ]
+	then
+	    fig2gra_set_color ${iarray:fig2gra:get:4}
+	    fig2gra_set_line_attribute
+	    io:fig2gra:puts "D,$n2,$m,0,${iarray:points:join:','}"
+	fi
+    else
+	fig2gra_set_color ${iarray:fig2gra:get:4}
+	fig2gra_set_line_attribute
+	if [ $close_path -ne 0 ]
+	then
+	    io:fig2gra:puts "D,`iexpr $n+2`,$m,0,${iarray:points:join:','}"
+	else
+	    io:fig2gra:puts "R,`iexpr $n+1`,$m,${iarray:points:join:','}"
+	fi
+    fi
+}
+
+fig2gra_init_palette() {
+    sarray:palette:@=""
+    sarray:palette:push "0,0,0"
+    sarray:palette:push "0,0,255"
+    sarray:palette:push "0,255,0"
+    sarray:palette:push "0,255,255"
+    sarray:palette:push "255,0,0"
+    sarray:palette:push "255,0,255"
+    sarray:palette:push "255,255,0"
+    sarray:palette:push "255,255,255"
+    sarray:palette:push "0,0,144"
+    sarray:palette:push "0,0,176"
+    sarray:palette:push "0,0,208"
+    sarray:palette:push "135,206,255"
+    sarray:palette:push "0,144,0"
+    sarray:palette:push "0,176,0"
+    sarray:palette:push "0,208,0"
+    sarray:palette:push "0,144,144"
+    sarray:palette:push "0,176,176"
+    sarray:palette:push "0,208,208"
+    sarray:palette:push "144,0,144"
+    sarray:palette:push "176,0,176"
+    sarray:palette:push "208,0,208"
+    sarray:palette:push "128,48,0"
+    sarray:palette:push "160,64,0"
+    sarray:palette:push "192,96,0"
+    sarray:palette:push "255,128,128"
+    sarray:palette:push "255,160,160"
+    sarray:palette:push "255,192,192"
+    sarray:palette:push "255,224,224"
+    sarray:palette:push "255,215,224"
+
+    new int
+    int::@=512
+    while int::times
+    do
+	sarray:palette:push "0,0,0"
+    done
+    del int
+}
+
+fig2gra_add_palette() {
+    new string
+    string::@=$3
+    r=`iexpr 0x${string::slice:"1 2"}`
+    g=`iexpr 0x${string::slice:"3 2"}`
+    b=`iexpr 0x${string::slice:"5 2"}`
+    sarray:palette:put $2 "$r,$g,$b"
+    del string
+}
+
+fig2gra() {
+    new io name=fig2gra
+    new sarray name=fig2gra
+    new iarray name=fig2gra
+    new regexp name=fig2gra
+    new iarray name=points
+    new sarray name=palette
+
+    fig2gra_init_palette
+
+    if [ "$1" = "-dummy" ]
+    then
+	shift
+    fi
+
+    io:fig2gra:mode="r"
+    regexp:fig2gra:@='^#'
+
+    io:fig2gra:open $1
+    while true
+    do
+	l=${io:fig2gra:gets}
+	if io:fig2gra:eof
+	then
+	    break
+	fi
+
+	if regexp:fig2gra:match:"$l"
+	then
+	    continue
+	fi
+	sarray:fig2gra:push "$l"
+    done
+    io:fig2gra:close
+
+    if [ ${sarray:fig2gra:num} -lt 9 ]
+    then
+	fig2gra_delete_obj
+	return 1
+    fi
+
+    head=${sarray:fig2gra:shift} # 0
+    head=${sarray:fig2gra:shift} # 1
+    head=${sarray:fig2gra:shift} # 2
+    if [ $head = "Metric" ]
+    then
+	COORD_CONV=1
+    else
+	COORD_CONV=25.4
+    fi
+    head=${sarray:fig2gra:shift} # 3
+    head=${sarray:fig2gra:shift} # 4
+    head=${sarray:fig2gra:shift} # 5
+    head=${sarray:fig2gra:shift} # 6
+
+    iarray:fig2gra:@=${sarray:fig2gra:shift} # 7
+    RESOLUTION=${iarray:fig2gra:get:0}
+
+    regexp:fig2gra:@='^a\W'
+    io:fig2gra:mode="w"
+
+    io:fig2gra:open "$2"
+    io:fig2gra:puts ${system::GRAF}
+    io:fig2gra:puts '%Creator: fig2gra.nsc'
+    io:fig2gra:puts "I,5,0,0,21600,27900,10000"
+    io:fig2gra:puts "V,5,0,0,21600,27900,0"
+
+    while true
+    do
+	a=${sarray:fig2gra:shift}
+	if [ -z "$a" ]
+	then
+	    break
+	fi
+
+	b=""
+	while true
+	do
+	    l=${sarray:fig2gra:shift}
+	    if regexp:fig2gra:match "a$l"
+	    then
+		b="$b $l"
+	    else
+		sarray:fig2gra:unshift "$l"
+		break
+	    fi
+	done
+	iarray:fig2gra:@="$a"
+
+	case ${iarray:fig2gra:get:0} in
+	    0)			# Color Pseudo-objects
+		fig2gra_add_palette $a
+		;;
+	    1)			# ELLIPSE
+		;;
+	    2)			# POLYLINE
+		if [ ${iarray:fig2gra:get:1} -ne 5 ]
+		then
+		    iarray:points:@="$b"
+		    iarray:points:map "x * $COORD_CONV * 100 / $RESOLUTION"
+		    fig2gra_draw_poly_line
+		fi
+		;;
+	    3)			# SPLINE
+		;;
+	    4)			# TEXT
+		;;
+	    5)			# ARC
+		;;
+	    6)			# COMPOUND
+		;;
+	esac
+    done
+
+    io:fig2gra:puts 'E,0'
+
+    io:fig2gra:close
+    fig2gra_delete_obj
+
+    return 0
+}

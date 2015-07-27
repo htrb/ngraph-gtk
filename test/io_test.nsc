@@ -1,0 +1,85 @@
+#! /usr/bin/ngraph
+
+set +e
+
+TEST_STR="test str..."
+TEST_STR2="123"
+TEST_FILE=${system::temp_file}
+
+new io
+
+# gets and puts test
+io::mode="w+"
+io::open "$TEST_FILE"
+io::puts $TEST_STR
+io::rewind
+str=${io::gets}
+if [ "$str" != "$TEST_STR" ]
+then
+    echo "error. (gets and puts)"
+else
+    echo "OK. (gets and puts)"
+fi
+
+# getc and putc test
+TEST_CHAR=48
+io::putc $TEST_CHAR
+io::whence=cur
+io::seek -1
+ch=${io::getc}
+if [ "$ch" -ne $TEST_CHAR ]
+then
+    echo "error. (getc and putc)"
+else
+    echo "OK. (getc and putc)"
+fi
+
+# read and write test
+TEST_STR="123"
+io::write $TEST_STR
+io::whence=cur
+io::seek -3
+str=${io::read:3}
+if [ "$str" -ne $TEST_STR ]
+then
+    echo "error. (read and write)"
+    echo "$str"
+    echo "$TEST_STR"
+else
+    echo "OK. (read and write)"
+fi
+
+# flush test
+io::flush
+
+# tell test
+if [ ${io::tell} -ne 16 ]
+then
+    echo "error. (tell)"
+else
+    echo "OK. (tell)"
+fi
+
+io::getc
+
+# eof test
+if io::eof
+then
+    echo "OK. (eof)"
+else
+    echo "error. (eof)"
+fi
+
+io::close
+
+# popen test
+io::mode="r"
+io::popen "ls io_test.nsc"
+str=${io::gets}
+if [ $str !=  "io_test.nsc" ]
+then
+    echo "error. (popen)"
+else
+    echo "OK. (popen)"
+fi
+io::close

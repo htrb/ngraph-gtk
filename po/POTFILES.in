@@ -1,0 +1,27 @@
+# List of source files which contain translatable strings.
+src/gtk/ox11menu.c
+src/gtk/ox11dlg.c
+src/gtk/ogra2cairo.c
+src/gtk/x11axis.c
+src/gtk/x11commn.c
+src/gtk/x11dialg.c
+src/gtk/x11file.c
+src/gtk/x11graph.c
+src/gtk/x11gui.c
+src/gtk/x11lgnd.c
+src/gtk/x11lgndx.c
+src/gtk/x11menu.c
+src/gtk/x11merge.c
+src/gtk/x11opt.c
+src/gtk/x11print.c
+src/gtk/x11view.c
+src/gtk/gtk_widget.c
+src/gtk/gtk_subwin.c
+src/gtk/gtk_liststore.c
+src/math/math_error.c
+src/odraw.c
+src/oaxis.c
+src/ofit.c
+src/odata.c
+src/ogra.c
+src/opath.c

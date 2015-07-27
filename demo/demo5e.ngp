@@ -1,0 +1,56 @@
+#! ngraph
+#
+new text
+text::x=3000
+text::y=6500  
+text::font="Sans-serif"
+text::style=1
+text::text="Demo #5E: AXIS"
+#
+for i in `seq 0 3000 15000`
+do
+  new axis name:axis${i}
+  axis::min=0.0
+  axis::max=0.145
+  axis::inc=0.01
+  axis::type=linear
+  axis::x=11000
+  axis::y=15000
+  axis::direction=$i
+  axis::length=8000
+  axis::gauge=both
+  axis::num=left
+  axis::num_align=center
+  axis::num_direction=normal
+  axis::num_shift_n=300
+  axis::num_log_pow=TRUE
+  axis::num_format="%g"
+  axis::num_no_zero=true
+  axis::num_pt=1200
+  axis::arrow=end
+done
+#
+for i in `seq 18000 3000 33000`
+do
+  new axis name:axis${i}
+  axis::min=0.0
+  axis::max=0.145
+  axis::inc=0.01
+  axis::type=linear
+  axis::x=11000
+  axis::y=15000
+  axis::direction=$i
+  axis::length=8000
+  axis::gauge=both
+  axis::num=left
+  axis::num_align=center
+  axis::num_direction=parallel2
+  axis::num_shift_n=300
+  axis::num_log_pow=TRUE
+  axis::num_format="%g"
+  axis::num_no_zero=true
+  axis::num_pt=1200
+  axis::arrow=end
+done
+#
+new gra

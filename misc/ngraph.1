@@ -1,0 +1,193 @@
+.nr N -1
+.nr D 5
+.TH NGRAPH 1 Local
+.UC 4
+.SH NAME
+Ngraph \- creating scientific 2-dimensional graphs
+.SH SYNOPSIS
+.B ngraph
+[options] [data file(s) or ngp file]
+.PP
+.SH DESCRIPTION
+.\" This defines appropriate quote strings for nroff and troff
+.ds lq \&"
+.ds rq \&"
+.if t .ds lq ``
+.if t .ds rq ''
+.\" Just in case these number registers aren't set yet...
+.if \nN==0 .nr N 10
+.if \nD==0 .nr D 5
+.I
+\fINgraph\fR is the program to create scientific 2-dimensional graphs
+for researchers and engineers. Graphs can be exported to PostScript,
+SVG, PNG or PDF format.
+.PP
+.SH OPTIONS
+Command line options are:
+.PP
+.TP
+.B -L file
+load ngp file
+.TP
+.B -x column
+data column for the x axis
+.TP
+.B -y column
+data column for the y axis
+.TP
+.B -X
+use X axis as the x axis
+.TP
+.B -Y
+use Y axis as the y axis
+.TP
+.B -U
+use U axis as the x axis
+.TP
+.B -R
+use R axis as the y axis
+.TP
+.B -d {mark | line | polygon | curve | diagonal | arrow | rectangle | rectangle_fill | rectangle_solid_fill | errorbar_x | errorbar_y | staircase_x | staircase_y | bar_x | bar_y | bar_fill_x | bar_fill_y | bar_solid_fill_x | bar_solid_fill_y | fit}
+specify plot type
+.TP
+.B -m type
+specify mark type (0-89)
+.TP
+.B -o size
+specify mark size
+.TP
+.B -l style
+specify line style
+.TP
+.B -w width
+specify line width
+.TP
+.B -CR n
+specify red component of the 1st plot color (0-255)
+.TP
+.B -CG n
+specify green component of the 1st plot color (0-255)
+.TP
+.B -CB n
+specify blue component of the 1st plot color (0-255)
+.TP
+.B -cr n
+specify red component of the 2nd plot color (0-255)
+.TP
+.B -cg n
+specify green component of the 2nd plot color (0-255)
+.TP
+.B -cb n
+specify blue component of the 2nd plot color (0-255)
+.TP
+.B -s line
+specify number of the head skip
+.TP
+.B -r step
+specify number of the read step
+.TP
+.B -f line
+specify number of the final line
+.TP
+.B -vx n
+neighbor average of the x data
+.TP
+.B -vy n
+neighbor average of the y data
+.TP
+.B -mx formula
+specify math transformation for the x data
+.TP
+.B -my formula
+specify math transformation for the y data
+.TP
+.B -ex {linear | log | inverse | MJD}
+specify scale type of the x axis
+.TP
+.B -ey {linear | log | inverse | MJD}
+specify scale type of the y axis
+.TP
+.B -minx value
+specify minimum value of x axis
+.TP
+.B -maxx value
+specify maximum value of x axis
+.TP
+.B -incx value
+specify increment value of x axis
+.TP
+.B -miny value
+specify minimum value of y axis
+.TP
+.B -maxy value
+specify maximum value of y axis
+.TP
+.B -incy value
+specify increment value of y axis
+.TP
+.B -g
+load settings from data file
+.TP
+.B -png file
+convert ngp file to PNG format
+.TP
+.B -pdf file
+convert ngp file to PDF format
+.TP
+.B -ps file
+convert ngp file to PostScript format
+.TP
+.B -eps file
+convert ngp file to Encapsulated PostScript format
+.TP
+.B -svg file
+convert ngp file to SVG format
+.TP
+.B -gra file
+convert ngp file to GRA format
+.TP
+.B -dialog
+show print dialog (with \-p option)
+.TP
+.B -p file
+print ngp file
+.TP
+.B -n
+output ngp-file to stdout
+.TP
+.B -h, --help
+show help message
+.TP
+.B -v, --version
+show version of \fINgraph\fR
+.TP
+.B -V, --VERSION
+show detail information about \fINgraph\fR
+.SH FILES
+.TP
+.I ${HOME}/.Ngraph/Ngraph.nsc
+start up script
+.TP
+.I ${HOME}/.Ngraph/Ngraph.ini
+configuration file
+.TP
+.I ${HOME}/.Ngraph/Ngraph.ngp
+default graph
+.SH AUTHORS
+\fBSatoshi ISHIZAKA\fR
+.PP
+\fBHiroyuki Ito\fR <ZXB01226@nifty.com>
+
+.SH "SEE ALSO"
+.BR ngp2 (1)
+
+.PP
+.SH "COPYRIGHT"
+
+.br
+
+Copyright \(co 2003 Satoshi ISHIZAKA
+
+.br
+
+Copyright \(co 2008-2011 Hiroyuki Ito

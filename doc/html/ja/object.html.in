@@ -1,0 +1,86 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Object</title>
+</head>
+<body>
+<a name="TOP">&nbsp;</a>
+<h1><a href="./ngraph.html">Ngraphオブジェクト</a></h1>
+<ul>
+<li><a href="#OBJECT">概要</a>
+<li><a href="#OBJECTLIST">Ngraphオブジェクト一覧</a>
+</ul>
+
+<br>
+<hr>
+<br>
+
+
+
+<a name="OBJECT">&nbsp;</a>
+<h2><a href="#TOP">概要</a></h2>
+<br>
+<div>
+Ngraphで描画されるグラフはNgraphオブジェクトの集合から成り立っています。<br>
+Ngraphでのグラフの作成は, グラフを構成するNgraphオブジェクトのフィールド値を設定することにより行われます。<br>
+フィールド値の設定は, メニューやダイアログボックスでの指定, あるいは *.ngp ファイルに記述されしたスクリプトをインタープリタで実行して行われます。<br>
+<br>
+<ul>
+<li>オブジェクトの一覧を表示するには[Graph]-[Ngraph shell]でスクリプト・インタープリタを起動し、object コマンドを実行して見る事ができます。
+<li>オブジェクトのフィールドを表示するには object object_name と object コマンドの引数にオブジェクト名を指定します。
+</ul>
+<br>
+Ngraphオブジェクト階層<br>
+<br>
+<pre>
+<a href="#object">object</a>
+        <a href="#system">system</a>
+        <a href="#shell">shell</a>
+        <a href="#gra">gra</a>
+        <a href="#gra2">gra2</a>
+                <a href="#gra2null">gra2null</a>
+                <a href="#gra2file">gra2file</a>
+                <a href="#gra2prn">gra2prn</a>
+                <a href="#gra2cairo">gra2cairo</a>
+                        <a href="#gra2cairofile">gra2cairofile</a>
+                        <a href="#gra2gtkprint">gra2gtkprint</a>
+                        <a href="#gra2gtk">gra2gtk</a>
+                        <a href="#gra2gdk">gra2gdk</a>
+                        <a href="#menu">menu</a>
+        <a href="#io">io</a>
+        <a href="#int">int</a>
+        <a href="#double">double</a>
+        <a href="#string">string</a>
+        <a href="#regexp">regexp</a>
+        <a href="#iarray">iarray</a>
+        <a href="#darray">darray</a>
+        <a href="#sarray">sarray</a>
+        <a href="#math">math</a>
+        <a href="#fit">fit</a>
+        <a href="#prm">prm</a>
+        <a href="#draw">draw</a>
+                <a href="#axisgrid">axisgrid</a>
+                <a href="#axis">axis</a>
+                <a href="#data">data</a>
+                <a href="#merge">merge</a>
+                <a href="#legend">legend</a>
+                        <a href="#rectangle">rectangle</a>
+                        <a href="#arc">arc</a>
+                        <a href="#path">path</a>
+                        <a href="#mark">mark</a>
+                        <a href="#text">text</a>
+        <a href="#dialog">dialog</a>
+</pre>
+</div>
+
+<br>
+<hr>
+<br>
+
+
+
+<a name="OBJECTLIST">&nbsp;</a>
+<h2><a href="#TOP">Ngraphオブジェクト一覧</a></h2>
+<br>
+各オブジェクトのフィールド一覧を示します。<br>
+<br>

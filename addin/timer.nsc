@@ -1,0 +1,85 @@
+# Description: _Timer,Countdown timer,
+
+BAR_X=1000
+BAR_Y=19000
+BAR_W=19000
+BAR_H=3000
+
+new dialog
+dialog::title="Countdown timer"
+dialog::caption="Countdown (minutes):"
+T=${dialog::integer_entry:"1 120 1 30"}
+del dialog
+
+if [ -z "$T" ]
+then
+    exit
+fi
+
+for inst in text:timer int:timer
+do
+    if exist -q $inst
+    then
+	del $inst
+    fi
+done
+
+T=`iexpr $T*60`
+
+OBJ=`derive -instance draw`
+system:0:hide_instance $OBJ
+
+new int
+int::name="timer"
+int::@="$T+1"
+
+new text
+text::name="timer"
+text::hidden=false
+text::text='%{system::time:0}'
+text::x=600
+text::y=13000
+text::pt=14200
+text::font='Sans-serif'
+
+new rectangle
+rectangle::name="timer_bar"
+rectangle::x1="$BAR_X"
+rectangle::y1="$BAR_Y"
+rectangle::x2="$BAR_X+$BAR_W"
+rectangle::y2="$BAR_Y+$BAR_H"
+rectangle::fill_G=255
+rectangle::fill=true
+rectangle::stroke=false
+
+dup rectangle
+rectangle::name="timer"
+rectangle::fill=false
+rectangle::stroke=true
+rectangle::width=120
+
+while int:timer:times
+do
+    m=`iexpr "int(${int:timer:@}/60)"`
+    s=`iexpr "${int:timer:@}\\\\60"`
+    s=`get text:timer -field printf:"%02d $s"`
+    text:timer:text="%{system::time:0}\&\n$m:$s\&"
+
+    rectangle:timer_bar:x2="$BAR_W*${int:timer:@}/$T+${rectangle:timer:x1}"
+    rectangle:timer_bar:fill_G="255*${int:timer:@}/$T"
+    rectangle:timer_bar:fill_R="255*(1-${int:timer:@}/$T)"
+
+    gra::clear
+    gra::draw
+    sleep 1
+done
+
+del int:timer
+del text:timer
+del rectangle:timer
+del rectangle:timer_bar
+
+system:0:recover_instance $OBJ
+
+gra::clear
+gra::draw

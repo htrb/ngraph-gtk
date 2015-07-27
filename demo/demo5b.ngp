@@ -1,0 +1,23 @@
+#! ngraph
+#
+new text
+text::x=3000
+text::y=6500  
+text::font="Sans-serif"
+text::style=1
+text::text="Demo #5B: MARK"
+#
+for i in `seq 0 8`
+do
+  for j in `seq 0 9`
+  do
+    new mark x:"2500+${j}*1800" y:"8000+${i}*1800"
+    put mark R:0 G:0 B:0 R2:0 G2:128 B2:128
+    put mark size:1600
+    put mark style:
+    put mark width:100
+    put mark type:`iexpr $i\*10+$j`
+  done
+done
+#
+new gra

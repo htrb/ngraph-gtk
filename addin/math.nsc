@@ -1,0 +1,30 @@
+# math.nsc written by S. ISHIZAKA. 1997/12
+#
+# Line-calculator using shell-builtin command "dexpr".
+#
+# Description: _Math...,calculator,
+
+set +e
+new dialog
+MATH=""
+
+while true
+do
+    dialog::caption='Input mathematical expression'
+    MATH=`get dialog -field input:"$MATH"`
+    if [ -z "$MATH" ]
+    then
+	break
+    fi
+    if result=`dexpr "$MATH"`
+    then
+	new text
+	result=`get text -field printf:"%G $result"`
+	del text
+	dialog::message:"$MATH=$result"
+	menu::echo:"Math: $MATH=$result"
+	break
+    fi
+done
+
+del dialog

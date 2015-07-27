@@ -1,0 +1,118 @@
+#! ngraph
+#
+new text
+text::x=3000
+text::y=6500  
+text::font="Sans-serif"
+text::style=1
+text::text="Demo #5C: TEXT"
+#
+for i in `seq 0 4500 31500`
+do
+  new text
+  text::x=11000
+  text::y=13500
+  text::pt=6000
+  text::font=Sans-serif
+  text::style=3
+  text::direction=$i
+  text::R=0xff
+  text::G=0xcf
+  text::B=0xff
+  text::A=0x7f
+  text::text=" "${system::name}
+done
+#
+
+
+Y=8000
+for i in "Hello, world!" \
+"Здравей, свят!" \
+"Hola, món!" \
+"Hej verden!" \
+"Hallo, Welt!" \
+"Γεια σου, κόσμε!" \
+"Saluton, mondo!" \
+"¡Hola mundo!" \
+"Tere kõik!" \
+"Kaixo, mundu!" \
+"سلام بر همه!" \
+"Terve maailma!" \
+"Bonjour, le monde!" \
+"Dia duit, a dhomhain!" \
+"¡Ola, mundo!"
+do
+  new text
+  text::x=500
+  text::y=${Y}
+  text::pt=2000
+  text::font=Serif
+  text::direction=0
+  text::text="${i}"
+  Y=`iexpr $Y+800`
+done
+
+Y=8000
+for i in "!םלועה לכל םולש" \
+"Pozdrav, svijete!" \
+"Szia Világ!" \
+"Halo, dunia!" \
+"Salve, mondo!" \
+"世界よ、こんにちは！" \
+"სალამი მსოფლიოს!" \
+"안녕하세요, 여러분!" \
+"Sveika, pasaule!" \
+"Hello, Duniaku!" \
+"Hei, verden!" \
+"Hallo, wereld!" \
+"Hei, verda!" \
+"Witaj świecie!" \
+"Olá, mundo!"
+do
+  new text
+  text::x=7500
+  text::y=${Y}
+  text::pt=2000
+  text::font=Serif
+  text::direction=0
+  text::text="${i}"
+  Y=`iexpr $Y+800`
+done
+
+Y=8000
+for i in "Bom dia, mundo!" \
+"Chau, muond!" \
+"Hello, world!" \
+"Здравствуй, мир!" \
+"Ahoj, svet!" \
+"Zdravo, svet!" \
+"Поздрав свима!" \
+"Hej, världen!" \
+"สวัสดี, ชาวโลก!" \
+"Merhaba, dünya!" \
+"Привіт світ!" \
+"Chào thế giới !" \
+"世界你好！" \
+"哈囉，大家好！"
+do
+  new text
+  text::x=15500
+  text::y=${Y}
+  text::pt=2000
+  text::font=Serif
+  text::direction=0
+  text::text="${i}"
+  Y=`iexpr $Y+800`
+done
+#
+new text R:255 G:0 B:0
+text::x=3000
+text::y=22000
+text::pt=4000
+text::font=Serif
+text::style=3
+text::direction=0
+text::text="date: %{system::date:0}\ntime: %{system::time:0}"
+#
+new gra
+

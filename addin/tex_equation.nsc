@@ -1,0 +1,145 @@
+# Description: Te_X equation,import TeX equation as GRA,
+
+TEX_COMMAND="pdflatex"
+TEX_OPTION="-halt-on-error"
+
+PSTOEDIT_COMMAND="pstoedit"
+PSTOEDIT_OPTION="-q -flat 0.1 -nc -ssp -dt"
+
+RUBY_COMMAND="ruby"
+
+TEX_FILE="_tex_eqn_${system::pid}"
+
+tex_eqn_error_dialog() {
+    new dialog
+    dialog::message "$1"
+    del dialog
+}
+
+tex_eqn_check_command() {
+    if which -q $1
+    then
+	true
+    else
+	tex_eqn_error_dialog "Cannot execute '$1'."
+	exit
+    fi
+}
+
+tex_eqn_delete_object() {
+    del iarray:text
+    del iarray:graf
+    del iarray:merge
+}
+
+set +e
+
+text_obj="${menu::focused:'text'}"
+
+if [ -z "$text_obj" ]
+then
+    tex_eqn_error_dialog "focus text object to convert."
+    exit
+fi
+
+tex_eqn_check_command $TEX_COMMAND
+tex_eqn_check_command $PSTOEDIT_COMMAND
+
+if which -q $RUBY_COMMAND
+then
+    FIG2GRA_COMMAND="$RUBY_COMMAND"
+    FIG2GRA_OPTION="${system::data_dir}/addin/fig2gra.rb"
+else
+    . "${system::data_dir}/addin/fig2gra.nsc"
+    FIG2GRA_COMMAND=fig2gra
+    FIG2GRA_OPTION="-dummy"
+fi
+
+new iarray name=text
+new iarray name=graf
+new iarray name=merge
+
+for text in $text_obj
+do
+    merge_name=`get $text -field name`
+    if [ -z "$merge_name" ]
+    then
+	new text
+	t=`iexpr 'time()'`
+	t=`get text -field printf:"%X $t"`
+	del text
+	merge_name="tex_eqn_`get $text -field oid`_$t"
+    fi
+    str=`get $text -field text`
+    cat <<-EOF > $TEX_FILE.tex
+	\documentclass[12pt]{article}
+	\usepackage{amsmath,txfonts}
+	\begin{document}
+	\pagestyle{empty}
+	\[
+	 $str
+	\]
+	\end{document}
+	EOF
+    $TEX_COMMAND $TEX_OPTION "$TEX_FILE".tex | menu::cat
+    menu::echo "---------------"
+    menu::echo
+    if [ ! -r "$TEX_FILE".pdf ]
+    then
+	tex_eqn_error_dialog "Faital error occurred while executing $TEX_COMMAND."
+	rm "$TEX_FILE".*
+	tex_eqn_delete_object
+	menu::show_window 5
+	exit
+    fi
+
+    $PSTOEDIT_COMMAND $PSTOEDIT_OPTION -f fig "$TEX_FILE".pdf "$TEX_FILE".fig
+    if [ ! -r "$TEX_FILE".fig ]
+    then
+	tex_eqn_error_dialog "Faital error occurred while executing $PSTOEDIT_COMMAND."
+	rm "$TEX_FILE".*
+	tex_eqn_delete_object
+	exit
+    fi
+
+    gra_file="`pwd`/$merge_name".gra
+    $FIG2GRA_COMMAND "$FIG2GRA_OPTION" "$TEX_FILE".fig "$gra_file"
+    if [ ! -r "$gra_file" ]
+    then
+	tex_eqn_error_dialog "Faital error occurred while executing fig2gra."
+	rm "$TEX_FILE".*
+	tex_eqn_delete_object
+	exit
+    fi
+
+    if exist -q merge:$merge_name
+    then
+	true
+    else
+	new merge name=$merge_name
+	merge::file="$gra_file"
+    fi
+
+    put merge:$merge_name left_margin=0 top_margin=0
+
+    iarray:text:@=`get $text -field bbox`
+    iarray:graf:@=`get merge:$merge_name -field bbox`
+
+    dx=`iexpr ${iarray:text:get:0} - ${iarray:graf:get:0}`
+    dy=`iexpr ${iarray:text:get:1} - ${iarray:graf:get:1}`
+
+    put merge:$merge_name left_margin=$dx top_margin=$dy
+    put $text hidden=true raw=true name=$merge_name
+
+    iarray:merge:push ${merge::id}
+
+    rm "$TEX_FILE".*
+done
+
+menu::unfocus
+menu::draw
+
+menu::focus merge:${iarray:merge:join:","}
+menu::modified=true
+
+tex_eqn_delete_object

@@ -1,0 +1,11 @@
+#! /usr/bin/ngraph
+
+echo "#" > $1
+
+for i in `object`
+do
+  object $i >> $1
+  echo "#" >> $1
+done
+
+del system

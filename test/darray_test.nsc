@@ -1,0 +1,126 @@
+show_result() {
+    if [ "$2" = "$3" ]
+    then
+	echo "OK. ($1)"
+    else
+	echo "error. ($1)  $2  $3"
+    fi
+}
+
+show_result_val() {
+    if [ `iexpr "EQ($2, $3, 15)"` = "1" ]
+    then
+	echo "OK. ($1)"
+    else
+	echo "error. ($1)  $2  $3"
+    fi
+}
+
+new darray
+darray::@="1 2 3 4 3 2 1"
+
+s="${darray::join}"
+show_result "join" "$s" "1.000000000000000e+00,2.000000000000000e+00,3.000000000000000e+00,4.000000000000000e+00,3.000000000000000e+00,2.000000000000000e+00,1.000000000000000e+00"
+
+darray::rsort
+s="${darray::join}"
+show_result "rsort" "$s" "4.000000000000000e+00,3.000000000000000e+00,3.000000000000000e+00,2.000000000000000e+00,2.000000000000000e+00,1.000000000000000e+00,1.000000000000000e+00"
+
+darray::sort
+s="${darray::join}"
+show_result "sort" "$s" "1.000000000000000e+00,1.000000000000000e+00,2.000000000000000e+00,2.000000000000000e+00,3.000000000000000e+00,3.000000000000000e+00,4.000000000000000e+00"
+
+darray::uniq
+s="${darray::join}"
+show_result "uniq" "$s" "1.000000000000000e+00,2.000000000000000e+00,3.000000000000000e+00,4.000000000000000e+00"
+
+s="${darray::seq}"
+show_result "seq" "$s" "0 1 2 3"
+
+s="${darray::rseq}"
+show_result "rseq" "$s" "3 2 1 0"
+
+s="${darray::pop}"
+show_result "pop" "$s" "4.000000000000000e+00"
+
+s="${darray::join}"
+show_result "pop" "$s" "1.000000000000000e+00,2.000000000000000e+00,3.000000000000000e+00"
+
+darray::push "4"
+s="${darray::join}"
+show_result "push" "$s" "1.000000000000000e+00,2.000000000000000e+00,3.000000000000000e+00,4.000000000000000e+00"
+
+s="${darray::shift}"
+show_result "shift" "$s" "1.000000000000000e+00"
+
+s="${darray::join}"
+show_result "shift" "$s" "2.000000000000000e+00,3.000000000000000e+00,4.000000000000000e+00"
+
+darray::unshift "0"
+s="${darray::join}"
+show_result "unshift" "$s" "0.000000000000000e+00,2.000000000000000e+00,3.000000000000000e+00,4.000000000000000e+00"
+
+s="${darray::get:-2}"
+show_result "get" "$s" "3.000000000000000e+00"
+
+darray::reverse
+s="${darray::join}"
+show_result "reverse" "$s" "4.000000000000000e+00,3.000000000000000e+00,2.000000000000000e+00,0.000000000000000e+00"
+
+darray::pop
+darray::reverse
+s="${darray::join}"
+show_result "reverse" "$s" "2.000000000000000e+00,3.000000000000000e+00,4.000000000000000e+00"
+
+
+darray::@="1 2 3 4 5 6 7 8 9 0 9 8 7 6 5 4 3 2 1"
+
+TEMP_FILE=${system::temp_file}
+echo "${darray::join:'\n'}" > $TEMP_FILE
+
+new file
+file::file=$TEMP_FILE
+file::y=1
+avg="${file::davy}"
+sig="${file::dsigy}"
+min="${file::dminy}"
+max="${file::dmaxy}"
+rms=`dexpr "sqrt($sig^2+$avg^2)"`
+del file
+
+s="${darray::sum}"
+show_result "sum" "$s" "9.000000000000000e+01"
+
+s="${darray::average}"
+show_result "average" "$s" "$avg"
+
+s="${darray::RMS}"
+show_result_val "RMS" "$s" "$rms"
+
+s="${darray::sdev}"
+show_result "sdev" "$s" "$sig"
+
+s="${darray::min}"
+show_result "min" "$s" "$min"
+
+s="${darray::max}"
+show_result "max" "$s" "$max"
+
+darray::slice 1 3
+s="${darray::join}"
+show_result "slice" "$s" "2.000000000000000e+00,3.000000000000000e+00,4.000000000000000e+00"
+
+darray::@="1 2 3 4 5 6 7 8 9 0 9 8 7 6 5 4 3 2 1"
+darray::slice -4 3
+darray::reverse
+s="${darray::join}"
+show_result "slice" "$s" "2.000000000000000e+00,3.000000000000000e+00,4.000000000000000e+00"
+
+darray::@="1 2 3"
+darray::map "x ^ 2"
+s="${darray::join}"
+show_result "map" "$s" "1.000000000000000e+00,4.000000000000000e+00,9.000000000000000e+00"
+
+darray::map "i"
+s="${darray::join}"
+show_result "map" "$s" "0.000000000000000e+00,1.000000000000000e+00,2.000000000000000e+00"

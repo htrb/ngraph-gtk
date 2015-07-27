@@ -1,0 +1,80 @@
+.nr N -1
+.nr D 5
+.TH NGP2 1 Local
+.UC 4
+.SH NAME
+ngp2 \- convert ngp files to image
+.SH SYNOPSIS
+.B ngp2
+[options] ngp files
+.PP
+.SH DESCRIPTION
+.\" This defines appropriate quote strings for nroff and troff
+.ds lq \&"
+.ds rq \&"
+.if t .ds lq ``
+.if t .ds rq ''
+.\" Just in case these number registers aren't set yet...
+.if \nN==0 .nr N 10
+.if \nD==0 .nr D 5
+.I
+\fIngp2\fR is the program to convert ngp files created by Ngraph to
+image files such as PostScript, SVG, PNG, PDF or GRA.
+.PP
+.SH OPTIONS
+Command line options are:
+.PP
+.TP
+.B -I
+ignore path of data files
+.TP
+.B -a
+automatically set scale of axis when scale is not set
+.TP
+.B -A
+clear and automatically set scale of axis
+.TP
+.B -c
+change directory to location of a ngp file
+.TP
+.B -d dpi
+set dpi
+.TP
+.B -ps, ps3
+save as PostScript level 3
+.TP
+.B -ps2
+save as PostScript level 2
+.TP
+.B -eps, -eps3
+save as Encapsulated PostScript level 3
+.TP
+.B -eps2
+save as Encapsulated PostScript level 2
+.TP
+.B -pdf
+save as Portable Document Format
+.TP
+.B -svg, -svg1.1
+save as Scalable Vector Graphics version 1.1
+.TP
+.B -svg1.2
+save as Scalable Vector Graphics version 1.2
+.TP
+.B -png
+save as Portable Network Graphics
+.TP
+.B -h, --help
+show help message
+.SH AUTHORS
+\fBHiroyuki Ito\fR <ZXB01226@nifty.com>
+
+.SH "SEE ALSO"
+.BR ngraph (1)
+
+.PP
+.SH "COPYRIGHT"
+
+.br
+
+Copyright \(co 1999 Hiroyuki Ito

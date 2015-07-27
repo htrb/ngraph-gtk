@@ -1,0 +1,13 @@
+[Desktop Entry]
+Name=Ngraph
+Comment=create scientific 2-dimensional graphs
+Comment[ja]=科学技術用 2D グラフ作成
+Exec=ngraph %f
+TryExec=ngraph
+Icon=ngraph
+Terminal=false
+Type=Application
+Version=1.0
+Categories=GTK;GNOME;Graphics;
+MimeType=application/x-ngraph;application/x-ngraph-graphic
+Keywords=graph;scientific;chart;calculation;

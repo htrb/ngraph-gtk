@@ -1,0 +1,60 @@
+#! /usr/bin/ngraph -i 
+
+TMP_FILE=${system::temp_file}
+
+new io
+
+new string
+new regexp
+regexp::@="(current instance:)|(last instance id:)"
+
+new regexp
+regexp::@='([^\s]+)\s+([^\s]+)\s+(.+)'
+
+for obj in `object`
+do
+    echo '<h3><a name="'$obj'">'$obj'</a></h3>'
+    object $obj > $TMP_FILE
+    io::open "$TMP_FILE"
+    table=0
+    echo '<pre>'
+    while true
+    do
+	string::@="${io::gets}"
+	if io::eof
+	then
+	    break
+	fi
+
+	if regexp:0:match "${string::@}"
+	then
+	    continue
+	elif [ "${string::@}" = "alias:" ]
+	then
+	    continue
+	elif string::index ": 0"
+	then
+	    echo "${string::@}"
+	else
+	    if [ $table = "0" ]
+	    then
+		echo '</pre>'
+		echo '<table border="1" cellspacing="0">'
+		echo "<tr><th>permission</th><th>field name</th><th>field type</th></tr>"
+		table=1
+	    fi
+	    get regexp:1 -field replace:"'${string::@}' '<tr><td>\1</td><td align=\"right\">\2</td><td>\3</td></tr>'"
+	fi
+    done
+    io::close
+    echo "</table>"
+    echo
+done
+
+echo '<br>'
+echo '<hr>'
+echo '<br>'
+echo '</body>'
+echo '</html>'
+
+del system

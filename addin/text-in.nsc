@@ -1,0 +1,101 @@
+# text-in.nsc written by S. ISHIZAKA. 1997/12
+#
+# This script inserts a column as legend-text.
+#
+# Description: _Text in...,inserts a column as legend-text,
+
+SHIFTX=0         # ammount of the shift from plotted data-points.
+SHIFTY=0         # ammount of the shift from plotted data-points.
+PT=2000          # Size
+FONT=Sans-serif  # Font
+DIR=0            # Direction
+
+if [ `object data -instance` = 0 ]
+then
+    new dialog
+    dialog::beep
+    dialog::message "No data file."
+    del dialog
+    exit
+fi
+
+new dialog
+
+new sarray name=FILES
+for i in `object data -instances`
+do
+    if [ `get data:$i -field source` != "function"]
+    then
+	sarray:FILES:push `get data:$i -field id file`
+    fi
+done
+dialog::title="select data"
+dialog::caption="select data object"
+FILE_OBJ=${dialog::combo:"sarray:FILES"}
+del sarray:FILES
+if [ -z "$FILE_OBJ" ]
+then
+    del dialog
+    exit
+fi
+set $FILE_OBJ
+ID=$1
+
+dialog::title="$FILE_OBJ"
+dialog::caption='Input legend-text column'
+COLUMN=${dialog::integer_entry:'0 1000 1 1'}
+if [ -z "$COLUMN" ]
+then
+    del dialog
+    exit
+fi
+
+dialog::caption='select horizontal position of the text'
+ALIGN=${dialog::radio:'_Left _Center _Right'}
+if [ -z "$ALIGN" ]
+then
+    del dialog
+    exit
+fi
+
+dialog::title="$FILE_OBJ"
+dialog::caption='Input vertical offset (mm)'
+OFFSET=${dialog::integer_entry:'-50 50 1 0'}
+if [ -z "$OFFSET" ]
+then
+    del dialog
+    exit
+fi
+
+del dialog
+
+new iarray name=BBOX
+new int name=NAME @=0
+exe data:$ID opendatac
+while data::getdata
+do
+    int:NAME:inc
+    TEXT_NAME=in_${ID}_${int:NAME:@}
+    if exist -q text:$TEXT_NAME
+    then
+	put text:$TEXT_NAME name:$TEXT_NAME # to set text:$TEXT_NAME as a current instance
+    else
+	new text name=$TEXT_NAME
+	text::pt=$PT
+	text::R=${data::R}
+	text::G=${data::G}
+	text::B=${data::B}
+	text::font=$FONT
+	text::direction=$DIR
+    fi
+    text::x=0
+    text::y=0
+    text::text=`get data:$ID -field column:"${data::line} ${COLUMN}"`
+    iarray:BBOX:@="${text::bbox}"
+    text::x="${data::coord_x}+$SHIFTX-ABS(${iarray:BBOX:get:2}-${iarray:BBOX:get:0})/2*(2-$ALIGN)"
+    text::y="${data::coord_y}+$SHIFTY+ABS(${iarray:BBOX:get:3}-${iarray:BBOX:get:1})/2-${iarray:BBOX:get:3}+$OFFSET*100"
+done
+menu::modified=true
+data::closedata
+del int:NAME
+del iarray:BBOX

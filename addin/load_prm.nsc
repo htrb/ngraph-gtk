@@ -1,0 +1,58 @@
+# Description: load _PRM...,Load PRM file (Ngraph version 5),
+
+new dialog
+
+if [ ${menu::modified} = "true" ]
+then
+    if dialog::yesno "All modifications will be lost. Continue?"
+    then
+	true
+    else
+	del dialog
+	exit
+    fi
+fi
+
+PRM_FILE="${dialog::get_open_file:'prm'}"
+if [ ! -r "$PRM_FILE" ]
+then
+    del dialog
+    exit
+fi
+
+if dialog::yesno:"Ignore file path?"
+then
+    IGNORE_PATH="true"
+else
+    IGNORE_PATH="false"
+fi
+
+for i in `derive -instance draw fit`
+do
+    del ${i}:0-!
+done
+
+new prm
+prm::file="$PRM_FILE"
+prm::ignore_path="$IGNORE_PATH"
+if prm::load
+then
+    DIR=`dirname "$PRM_FILE"`
+    NAME=`basename "$PRM_FILE" ".prm"`
+    cd "$DIR"
+    if exist -q gra:viewer
+    then
+	gra:viewer:close
+	cpy gra:!,viewer draw_obj left_margin top_margin zoom paper_width paper_height
+	gra:viewer:open
+    fi
+    menu::fullpath_ngp="$DIR/$NAME".ngp
+    menu::clear_info
+else
+    dialog::message "some errors are occurred while loading ($PRM_FILE)."
+fi
+
+del prm
+del dialog
+
+menu::modified=true

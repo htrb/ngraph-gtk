@@ -1,0 +1,29 @@
+application/x-ngraph
+        open=ngraph %f
+ 	icon_filename=application-x-ngraph.png
+	description=Ngraph
+	default_action_type=application
+	short_list_application_ids_for_novice_user_level=ngraph
+	short_list_application_ids_for_intermediate_user_level=ngraph
+	short_list_application_ids_for_advanced_user_level=ngraph
+	category=Documents/Graphics
+
+application/x-ngraph-script
+        open=gedit %f
+ 	icon_filename=application-x-ngraph-script.png
+	description=Ngraph script
+	default_action_type=application
+	short_list_application_ids_for_novice_user_level=ngraph
+	short_list_application_ids_for_intermediate_user_level=ngraph
+	short_list_application_ids_for_advanced_user_level=ngraph
+	category=Documents
+
+application/x-ngraph-graphic
+        open=ngraph %f
+ 	icon_filename=application-x-ngraph-graphic.png
+	description=Ngraph graphic file
+	default_action_type=application
+	short_list_application_ids_for_novice_user_level=ngraph
+	short_list_application_ids_for_intermediate_user_level=ngraph
+	short_list_application_ids_for_advanced_user_level=ngraph
+	category=Documents/Graphics

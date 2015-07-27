@@ -1,0 +1,102 @@
+#name	argc	side_effect	positional	arg_type	use_GSL
+#arg_type 0: MATH_FUNCTION_ARG_TYPE_DOUBLE, 1: MATH_FUNCTION_ARG_TYPE_ARRAY, 2: MATH_FUNCTION_ARG_TYPE_PROC
+abs		1	0	0	NULL
+sign		1	0	0	NULL
+int		1	0	0	NULL
+gauss		1	0	0	NULL
+frac		1	0	0	NULL
+round		1	0	0	NULL
+min		-1	0	0	NULL
+max		-1	0	0	NULL
+sqr		1	0	0	NULL
+sqrt		1	0	0	NULL
+exp		1	0	0	NULL
+ln		1	0	0	NULL
+log		1	0	0	NULL
+sin		1	0	0	NULL
+cos		1	0	0	NULL
+tan		1	0	0	NULL
+asin		1	0	0	NULL
+acos		1	0	0	NULL
+atan		1	0	0	NULL
+sinh		1	0	0	NULL
+cosh		1	0	0	NULL
+tanh		1	0	0	NULL
+asinh		1	0	0	NULL
+acosh		1	0	0	NULL
+atanh		1	0	0	NULL
+rand		1	0	0	NULL
+srand		1	0	0	NULL
+theta		1	0	0	NULL
+delta		1	0	0	NULL
+gamma		1	0	0	NULL
+icgam		2	0	0	NULL
+erf		1	0	0	NULL	true
+erfc		1	0	0	NULL
+qinv		1	0	0	NULL
+ei		1	0	0	NULL
+beta		2	0	0	NULL
+icbeta		3	0	0	NULL	true
+jn		2	0	0	NULL
+yn		2	0	0	NULL
+pn		2	0	0	NULL
+lgn		3	0	0	NULL
+hn		2	0	0	NULL
+tn		2	0	0	NULL
+mjd		6	0	0	NULL
+unix2mjd	1	0	0	NULL
+mjd2year	1	0	0	NULL
+mjd2month	1	0	0	NULL
+mjd2day		1	0	0	NULL
+mjd2wday	1	0	0	NULL
+mjd2yday	1	0	0	NULL
+eq		3	0	0	NULL
+neq		3	0	0	NULL
+ge		3	0	0	NULL
+gt		3	0	0	NULL
+le		3	0	0	NULL
+lt		3	0	0	NULL
+not		1	0	0	NULL
+or		2	0	0	NULL
+and		2	0	0	NULL
+xor		2	0	0	NULL
+m		2	1	0	NULL
+rm		1	1	0	NULL
+cm		1	0	0	NULL
+if		3	0	0	0,2,2
+unless		3	0	0	0,2,2
+for		5	1	0	0,0,0,0,2
+dif		1	1	1	NULL
+sum		1	1	1	NULL
+sort		1	1	0	1
+rsort		1	1	0	1
+size		1	1	0	1
+isnormal	1	0	0	NULL
+isnan		1	0	0	NULL
+isundef		1	0	0	NULL
+isbreak		1	0	0	NULL
+iscont		1	0	0	NULL
+zeta		1	0	0	NULL	true
+zetam1		1	0	0	NULL	true
+zeta_int	1	0	0	NULL	true
+zetam1_int	1	0	0	NULL	true
+in		2	0	0	NULL	true
+kn		2	0	0	NULL	true
+yl		2	0	0	NULL	true
+jl		2	0	0	NULL	true
+jnu		2	0	0	NULL	true
+ynu		2	0	0	NULL	true
+inu		2	0	0	NULL	true
+knu		2	0	0	NULL	true
+progn		-1	0	0	NULL
+prog1		-1	0	0	NULL
+prog2		-1	0	0	NULL
+push		2	0	0	1,0
+pop		1	0	0	1
+unshift		2	0	0	1,0
+shift		1	0	0	1
+time		0	0	0	NULL
+choose		2	0	0	NULL	true
+fmod		2	0	0	NULL
+mjd2unix	1	0	0	NULL
+while		3	1	0	0,2,2

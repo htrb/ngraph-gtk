@@ -1,0 +1,52 @@
+#! /usr/bin/ngraph
+
+MAP_FILE=$1
+
+TMP_FILE=${system::temp_file}
+
+TMP_NGP=tmp.ngp
+
+new menu
+new regexp
+new sarray
+new io
+
+echo "get menu: -field get_accel_map" > $TMP_NGP
+menu::menu $TMP_NGP > $TMP_FILE
+
+
+echo -n > $MAP_FILE
+
+regexp::@="^; \("
+io::open "$TMP_FILE"
+
+while true
+do
+    s="${io::gets}"
+    if io::eof
+    then
+	break
+    fi
+
+    if regexp::match "$s"
+    then
+	sarray::push "$s"
+    else
+	echo "$s" >> $MAP_FILE
+    fi
+done
+io::close
+
+sarray::sort
+for i in ${sarray::seq}
+do
+    get sarray -field get:$i >> $MAP_FILE
+done
+
+rm $TMP_NGP
+
+del io
+del sarray
+del regexp
+del menu
+del system
