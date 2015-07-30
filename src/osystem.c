@@ -48,7 +48,7 @@
 #define TEMPN     "NGP"
 #define COPYRIGHT "Copyright (C) 2003, Satoshi ISHIZAKA."
 #define EMAIL     "ZXB01226@nifty.com"
-#define WEB       "http://sourceforge.net/projects/ngraph-gtk/"
+#define WEB       "https://github.com/htrb/ngraph-gtk/"
 
 #define ERRSYSNODIR    100
 #define ERRSYSTMPFILE  101
