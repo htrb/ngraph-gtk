@@ -1,5 +1,14 @@
 2015-08-03  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/gtk/gtk_action.c (ViewSidebarAction_activated)
+	(ViewStatusbarAction_activated, ViewRulerAction_activated)
+	(ViewScrollbarAction_activated)
+	(ViewCommandToolbarAction_activated)
+	(ViewToolboxAction_activated, ViewCrossGaugeAction_activated):
+	check returned value of the function "toggle_view()".
+	(ViewToggleSingleWindowModeAction_activated): check
+	"Menulocal.single_window_mode".
+
 	* src/gtk/x11menu.c (toggle_view, CmReloadWindowConfig)
 	(CmToggleSingleWindowMode): check "Menulock" and "Globallock".
 	(toggle_view): return success or false.
