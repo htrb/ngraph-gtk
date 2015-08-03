@@ -273,7 +273,7 @@ void set_toggle_action_widget_state(int id, int state);
 void set_subwindow_state(enum SubWinType id, enum subwin_state state);
 int get_subwindow_state(enum SubWinType id);
 void script_exec(GtkWidget *w, gpointer client_data);
-void toggle_view(int type, int state);
+int toggle_view(int type, int state);
 void CmToggleSingleWindowMode(GtkCheckMenuItem *action, gpointer client_data);
 void CmReloadWindowConfig(void *w, gpointer user_data);
 void show_recent_dialog(int type);

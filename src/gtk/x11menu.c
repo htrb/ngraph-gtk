@@ -5013,14 +5013,18 @@ set_modified_state(int state)
   set_action_widget_sensitivity(GraphSaveAction, state);
 }
 
-void
+int
 toggle_view(int type, int state)
 {
   static int lock = FALSE;
   GtkWidget *w1 = NULL, *w2 = NULL;
 
+  if (Menulock || Globallock) {
+    return FALSE;
+  }
+
   if (lock) {
-    return;
+    return FALSE;
   }
 
   lock = TRUE;
@@ -5060,7 +5064,7 @@ toggle_view(int type, int state)
   if (type == MenuIdToggleCrossGauge) {
     set_toggle_action_widget_state(ViewCrossGaugeAction, state);
     lock = FALSE;
-    return;
+    return TRUE;
   }
 
   if (w1) {
@@ -5071,6 +5075,8 @@ toggle_view(int type, int state)
   }
 
   lock = FALSE;
+
+  return TRUE;
 }
 
 static void
@@ -6024,8 +6030,9 @@ script_exec(GtkWidget *w, gpointer client_data)
   struct objlist *robj, *shell;
   struct script *fcur;
 
-  if (Menulock || Globallock || client_data == NULL)
+  if (Menulock || Globallock || client_data == NULL) {
     return;
+  }
 
   shell = chkobject("shell");
   if (shell == NULL)
@@ -6100,6 +6107,10 @@ CmReloadWindowConfig(void *w, gpointer user_data)
 {
   gint x, y, w0, h0;
 
+  if (Menulock || Globallock) {
+    return;
+  }
+
   initwindowconfig();
   mgtkwindowconfig();
 
@@ -6148,6 +6159,10 @@ void
 CmToggleSingleWindowMode(GtkCheckMenuItem *action, gpointer client_data)
 {
   int state;
+
+  if (Menulock || Globallock) {
+    return;
+  }
 
   if (action) {
     state = gtk_check_menu_item_get_active(action);

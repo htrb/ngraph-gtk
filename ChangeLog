@@ -1,6 +1,13 @@
+2015-08-03  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (toggle_view, CmReloadWindowConfig)
+	(CmToggleSingleWindowMode): check "Menulock" and "Globallock".
+	(toggle_view): return success or false.
+
 2015-07-30  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
-	* src/osystem.c (WEB): moved from SourceForge to GitHub.
+	* src/osystem.c (WEB): The repository is moved from SourceForge to
+	GitHub.
 
 2015-07-15  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
