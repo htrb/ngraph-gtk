@@ -357,7 +357,9 @@ ViewToggleSingleWindowModeAction_activated(GSimpleAction *action, GVariant *para
 
   state = g_variant_get_boolean(parameter);
   CmToggleSingleWindowMode(NULL, GINT_TO_POINTER(state));
-  g_simple_action_set_state(action, parameter);
+  if ((Menulocal.single_window_mode && state) || ! (Menulocal.single_window_mode || state)) {
+    g_simple_action_set_state(action, parameter);
+  }
 }
 
 static void
