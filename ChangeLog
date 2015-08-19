@@ -1,3 +1,13 @@
+2015-08-19  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* initfile/Ngraph.nsc: unset used variables.
+
+	* src/gtk/x11gui.c (FileSelectionDialog): call
+	"gtk_file_chooser_set_local_only()".
+
+	* src/gtk/x11graph.c (DirectoryDialogSetup): call
+	"gtk_file_chooser_set_local_only()".
+
 2015-08-03  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_action.c (ViewSidebarAction_activated)
