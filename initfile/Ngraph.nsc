@@ -484,4 +484,4 @@ done
 del shell:init_d
 cd "$pwd"
 
-unset usage check_file clear_viewer save_image check_set load_graph append_addin_list LOADSETTINGS SHOW_DIALOG XAXIS YAXIS
+unset usage check_file clear_viewer save_image check_set load_graph LOADSETTINGS SHOW_DIALOG XAXIS YAXIS SAVE_NGP NULL_DEVICE pwd
