@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.06.13\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2015-08-03 18:21+0900\n"
+"POT-Creation-Date: 2015-08-19 15:38+0900\n"
 "PO-Revision-Date: 2014-11-11 16:33+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -1040,7 +1040,7 @@ msgstr "X 描画範囲"
 msgid "_Load"
 msgstr "読込(_L)"
 
-#: src/gtk/x11file.c:1604 src/gtk/x11gui.c:1158 src/gtk/x11menu.c:666
+#: src/gtk/x11file.c:1604 src/gtk/x11gui.c:1159 src/gtk/x11menu.c:666
 #: src/gtk/x11menu.c:2631 src/gtk/x11opt.c:481 src/gtk/x11opt.c:686
 #: src/gtk/x11opt.c:1192 src/gtk/x11opt.c:1298 src/gtk/x11opt.c:1644
 #: src/gtk/x11opt.c:1772
@@ -1346,40 +1346,40 @@ msgstr "挿入(_I)"
 msgid "_Objects"
 msgstr "オブジェクト(_O)"
 
-#: src/gtk/x11graph.c:879
+#: src/gtk/x11graph.c:880
 msgid "_Select Dir:"
 msgstr "ディレクトリ選択(_S):"
 
-#: src/gtk/x11graph.c:881
+#: src/gtk/x11graph.c:882
 msgid "Current Dir:"
 msgstr "現在のディレクトリ:"
 
-#: src/gtk/x11graph.c:960
+#: src/gtk/x11graph.c:961
 msgid "_Expand included file"
 msgstr "データファイルの展開(データ込 NGP ファイル) (_E)"
 
-#: src/gtk/x11graph.c:965
+#: src/gtk/x11graph.c:966
 msgid "_Dir:"
 msgstr "ディレクトリ(_D):"
 
-#: src/gtk/x11graph.c:969 src/gtk/x11graph.c:1028 src/gtk/x11opt.c:1345
+#: src/gtk/x11graph.c:970 src/gtk/x11graph.c:1029 src/gtk/x11opt.c:1345
 #: src/gtk/x11opt.c:1381
 msgid "_Path:"
 msgstr "パス情報(_P):"
 
-#: src/gtk/x11graph.c:1034
+#: src/gtk/x11graph.c:1035
 msgid "_Include data file"
 msgstr "データファイルを含める(_I)"
 
-#: src/gtk/x11graph.c:1038
+#: src/gtk/x11graph.c:1039
 msgid "_Include merge file"
 msgstr "合成ファイルを含める(_I)"
 
-#: src/gtk/x11graph.c:1128 src/gtk/x11menu.c:652 src/gtk/x11menu.c:2605
+#: src/gtk/x11graph.c:1129 src/gtk/x11menu.c:652 src/gtk/x11menu.c:2605
 msgid "Load NGP file"
 msgstr "NGPファイルを開く"
 
-#: src/gtk/x11graph.c:1310
+#: src/gtk/x11graph.c:1311
 msgid ""
 "Ngraph is the program to create scientific 2-dimensional graphs for "
 "researchers and engineers."
@@ -1411,7 +1411,7 @@ msgstr "いいえ(_N)"
 msgid "_Yes"
 msgstr "はい(_Y)"
 
-#: src/gtk/x11gui.c:839 src/gtk/x11gui.c:1017
+#: src/gtk/x11gui.c:839 src/gtk/x11gui.c:1018
 msgid "All"
 msgstr "全てのファイル"
 
@@ -1425,16 +1425,16 @@ msgstr ""
 "'%s' というファイルは既に存在します.\n"
 "上書きしてもよろしいですか?"
 
-#: src/gtk/x11gui.c:994
+#: src/gtk/x11gui.c:995
 msgid "_Change current directory"
 msgstr "カレントディレクトリを移動(_C)"
 
-#: src/gtk/x11gui.c:1005
+#: src/gtk/x11gui.c:1006
 #, c-format
 msgid "%s file (*.%s)"
 msgstr "%s ファイル (*.%s)"
 
-#: src/gtk/x11gui.c:1092 src/gtk/x11gui.c:1127 src/gtk/x11menu.c:5312
+#: src/gtk/x11gui.c:1093 src/gtk/x11gui.c:1128 src/gtk/x11menu.c:5312
 msgid "_Open"
 msgstr "開く(_O)"
 
