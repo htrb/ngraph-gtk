@@ -991,6 +991,7 @@ FileSelectionDialog(GtkWidget *parent, int type, char *stock)
 				    _("_Cancel"), GTK_RESPONSE_CANCEL,
 				    stock, GTK_RESPONSE_ACCEPT,
 				    NULL);
+  gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(dlg), TRUE);
   rc = gtk_check_button_new_with_mnemonic(_("_Change current directory"));
   gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dlg))), rc, FALSE, FALSE, 5);
   data->chdir_cb = rc;

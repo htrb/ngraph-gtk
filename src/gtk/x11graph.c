@@ -875,6 +875,7 @@ DirectoryDialogSetup(GtkWidget *wi, void *data, int makewidget)
 #endif
 
     w = gtk_file_chooser_button_new(_("directory"), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
+    gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(w), TRUE);
     d->dir = w;
     add_widget_to_table(table, w, _("_Select Dir:"), TRUE, 0);
 
