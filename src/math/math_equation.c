@@ -654,7 +654,7 @@ optimize_func_cb(struct nhash *hash, void *ptr)
     fprm->opt_usr = math_expression_optimize(fprm->base_usr, &err);
   }
 
-  if (fprm->opt_usr && fprm->opt_usr->u.func.exp->type == MATH_EXPRESSION_TYPE_DOBLE) {
+  if (fprm->opt_usr && fprm->opt_usr->u.func.exp->type == MATH_EXPRESSION_TYPE_DOUBLE) {
     fprm->side_effect = 0;
   } else {
     fprm->side_effect = 1;
@@ -1462,9 +1462,9 @@ check_const_sub(MathExpression *exp, int *constant, int n)
   case MATH_EXPRESSION_TYPE_LT:
   case MATH_EXPRESSION_TYPE_LE:
     r = check_const_sub(exp->u.bin.left, constant, n);
-    if (r)
+    if (r) {
       return r;
-
+    }
     r = check_const_sub(exp->u.bin.right, constant, n);
     break;
   case MATH_EXPRESSION_TYPE_ASSIGN:
@@ -1476,8 +1476,9 @@ check_const_sub(MathExpression *exp, int *constant, int n)
   case MATH_EXPRESSION_TYPE_FUNC_CALL:
     for (i = 0; i < exp->u.func_call.argc; i++) {
       r = check_const_sub(exp->u.func_call.argv[i], constant, n);
-      if (r)
+      if (r) {
 	return r;
+      }
     }
     r = 0;
     break;
@@ -1487,8 +1488,9 @@ check_const_sub(MathExpression *exp, int *constant, int n)
     break;
   case MATH_EXPRESSION_TYPE_CONST:
     for (i = 0; i < n; i++) {
-      if (constant[i] == exp->u.index)
+      if (constant[i] == exp->u.index) {
 	return 1;
+      }
     }
     r = 0;
     break;
@@ -1496,7 +1498,7 @@ check_const_sub(MathExpression *exp, int *constant, int n)
   case MATH_EXPRESSION_TYPE_ARRAY:
   case MATH_EXPRESSION_TYPE_ARRAY_ARGUMENT:
   case MATH_EXPRESSION_TYPE_VARIABLE:
-  case MATH_EXPRESSION_TYPE_DOBLE:
+  case MATH_EXPRESSION_TYPE_DOUBLE:
   case MATH_EXPRESSION_TYPE_PRM:
   case MATH_EXPRESSION_TYPE_EOEQ:
     r = 0;

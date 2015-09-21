@@ -22,7 +22,7 @@ static int calc(MathExpression *exp, MathValue *val);
 static MathExpression *optimize(MathExpression *exp, int *err);
 
 #define CALC_EXPRESSION(e, v)				\
-  ((e->type == MATH_EXPRESSION_TYPE_DOBLE) ?		\
+  ((e->type == MATH_EXPRESSION_TYPE_DOUBLE) ?		\
    ((v = e->u.value), 0) :				\
    calc(e, &v))
 
@@ -531,7 +531,7 @@ math_double_expression_new(MathEquation *eq, const MathValue *val, int *err)
 {
   MathExpression *exp;
 
-  exp = math_expression_new(MATH_EXPRESSION_TYPE_DOBLE, eq, err);
+  exp = math_expression_new(MATH_EXPRESSION_TYPE_DOUBLE, eq, err);
   if (exp == NULL)
     return NULL;
 
@@ -604,7 +604,7 @@ math_expression_free_sub(MathExpression *exp)
   case MATH_EXPRESSION_TYPE_CONST:
   case MATH_EXPRESSION_TYPE_VARIABLE:
     break;
-  case MATH_EXPRESSION_TYPE_DOBLE:
+  case MATH_EXPRESSION_TYPE_DOUBLE:
   case MATH_EXPRESSION_TYPE_PRM:
   case MATH_EXPRESSION_TYPE_EOEQ:
     break;
@@ -935,7 +935,7 @@ optimize_func_call(MathExpression *exp, int *err)
     argv[i] = optimize(exp->u.func_call.argv[i], err);
     if (argv[i] == NULL) {
       error = 1;
-    } else if (argv[i]->type != MATH_EXPRESSION_TYPE_DOBLE) {
+    } else if (argv[i]->type != MATH_EXPRESSION_TYPE_DOUBLE) {
       can_reduce = 0;
     }
   }
@@ -987,10 +987,10 @@ optimize_or_expression(MathExpression *exp, int *err)
     return NULL;
   }
 
-  if (left->type == MATH_EXPRESSION_TYPE_DOBLE &&
-      right->type == MATH_EXPRESSION_TYPE_DOBLE) {
+  if (left->type == MATH_EXPRESSION_TYPE_DOUBLE &&
+      right->type == MATH_EXPRESSION_TYPE_DOUBLE) {
     new_exp = reduce_expression(new_exp, err);
-  } else if (left->type == MATH_EXPRESSION_TYPE_DOBLE) {
+  } else if (left->type == MATH_EXPRESSION_TYPE_DOUBLE) {
     if (left->u.value.val == 0.0) {
       math_expression_free(new_exp);
       new_exp = right;
@@ -1027,10 +1027,10 @@ optimize_and_expression(MathExpression *exp, int *err)
     return NULL;
   }
 
-  if (left->type == MATH_EXPRESSION_TYPE_DOBLE &&
-      right->type == MATH_EXPRESSION_TYPE_DOBLE) {
+  if (left->type == MATH_EXPRESSION_TYPE_DOUBLE &&
+      right->type == MATH_EXPRESSION_TYPE_DOUBLE) {
     new_exp = reduce_expression(new_exp, err);
-  } else if (left->type == MATH_EXPRESSION_TYPE_DOBLE) {
+  } else if (left->type == MATH_EXPRESSION_TYPE_DOUBLE) {
     if (left->u.value.val == 0.0) {
       new_exp->u.bin.left = NULL;
       math_expression_free(new_exp);
@@ -1067,8 +1067,8 @@ optimize_bin_expression(MathExpression *exp, int *err)
     return NULL;
   }
 
-  if (left->type == MATH_EXPRESSION_TYPE_DOBLE &&
-      right->type == MATH_EXPRESSION_TYPE_DOBLE) {
+  if (left->type == MATH_EXPRESSION_TYPE_DOUBLE &&
+      right->type == MATH_EXPRESSION_TYPE_DOUBLE) {
     new_exp = reduce_expression(new_exp, err);
   }
   return new_exp;
@@ -1097,8 +1097,8 @@ optimize_assign_expression(MathExpression *exp, int *err)
     return NULL;
   }
 
-  if (left->type == MATH_EXPRESSION_TYPE_DOBLE &&
-      right->type == MATH_EXPRESSION_TYPE_DOBLE) {
+  if (left->type == MATH_EXPRESSION_TYPE_DOUBLE &&
+      right->type == MATH_EXPRESSION_TYPE_DOUBLE) {
     new_exp = reduce_expression(new_exp, err);
   }
   return new_exp;
@@ -1127,15 +1127,15 @@ optimize_mul_expression(MathExpression *exp, int *err)
     return NULL;
   }
 
-  if (left->type == MATH_EXPRESSION_TYPE_DOBLE &&
-      right->type == MATH_EXPRESSION_TYPE_DOBLE) {
+  if (left->type == MATH_EXPRESSION_TYPE_DOUBLE &&
+      right->type == MATH_EXPRESSION_TYPE_DOUBLE) {
     new_exp = reduce_expression(new_exp, err);
-  } else if (left->type == MATH_EXPRESSION_TYPE_DOBLE &&
+  } else if (left->type == MATH_EXPRESSION_TYPE_DOUBLE &&
 	     left->u.value.val == 1.0) {
     new_exp->u.bin.right = NULL;
     math_expression_free(new_exp);
     new_exp = right;
-  } else if (right->type == MATH_EXPRESSION_TYPE_DOBLE &&
+  } else if (right->type == MATH_EXPRESSION_TYPE_DOUBLE &&
 	     right->u.value.val == 1.0) {
     new_exp->u.bin.left = NULL;
     math_expression_free(new_exp);
@@ -1168,10 +1168,10 @@ optimize_div_expression(MathExpression *exp, int *err)
     return NULL;
   }
 
-  if (left->type == MATH_EXPRESSION_TYPE_DOBLE &&
-      right->type == MATH_EXPRESSION_TYPE_DOBLE) {
+  if (left->type == MATH_EXPRESSION_TYPE_DOUBLE &&
+      right->type == MATH_EXPRESSION_TYPE_DOUBLE) {
     new_exp = reduce_expression(new_exp, err);
-  } else if (right->type == MATH_EXPRESSION_TYPE_DOBLE) {
+  } else if (right->type == MATH_EXPRESSION_TYPE_DOUBLE) {
     if (right->u.value.val == 1.0) {
       new_exp->u.bin.left = NULL;
       math_expression_free(new_exp);
@@ -1204,7 +1204,7 @@ optimize_una_expression(MathExpression *exp, int *err)
     return NULL;
   }
 
-  if (operand->type == MATH_EXPRESSION_TYPE_DOBLE) {
+  if (operand->type == MATH_EXPRESSION_TYPE_DOUBLE) {
     new_exp = reduce_expression(new_exp, err);
   }
 
@@ -1274,7 +1274,7 @@ optimize(MathExpression *exp, int *err)
   case MATH_EXPRESSION_TYPE_FUNC:
     new_exp = optimize_usr_function(exp, err);
     break;
-  case MATH_EXPRESSION_TYPE_DOBLE:
+  case MATH_EXPRESSION_TYPE_DOUBLE:
     new_exp = math_double_expression_new(exp->equation, &exp->u.value, err);
     break;
   case MATH_EXPRESSION_TYPE_CONST:
@@ -1611,7 +1611,7 @@ calc(MathExpression *exp, MathValue *val)
     if (call_func(&exp->u.func_call, exp->equation, val))
       return 1;
     break;
-  case MATH_EXPRESSION_TYPE_DOBLE:
+  case MATH_EXPRESSION_TYPE_DOUBLE:
     *val = exp->u.value;
     break;
   case MATH_EXPRESSION_TYPE_CONST:

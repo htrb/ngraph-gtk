@@ -1,3 +1,11 @@
+2015-09-21  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/math/math_expression.c: fix typo.
+
+	* src/math/math_expression.h (MATH_EXPRESSION_TYPE_DOUBLE): fix typo.
+
+	* src/math/math_equation.c (optimize_func_cb, check_const_sub): fix typo.
+
 2015-08-19  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* initfile/Ngraph.nsc: unset used variables.
