@@ -2,6 +2,7 @@
 
 	* src/gtk/x11menu.c (create_toolbar): set label for radio tool
 	buttons.
+	(show_recent_dialog): check "Menulock" and "Globallock".
 
 	* src/gtk/gtk_subwin.c (spin_button_size_allocated)
 	(start_editing): don't change allocated size.

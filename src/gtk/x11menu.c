@@ -5303,6 +5303,10 @@ show_recent_dialog(int type)
   int res;
   char *title;
 
+  if (Menulock || Globallock) {
+    return;
+  }
+
   title = (type == RECENT_TYPE_GRAPH) ? _("Recent Graphs") : _("Recent Data Files");
   dialog = gtk_recent_chooser_dialog_new_for_manager(title,
 						     GTK_WINDOW(TopLevel),
