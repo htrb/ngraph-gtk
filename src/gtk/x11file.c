@@ -4162,6 +4162,17 @@ FileDialogClose(GtkWidget *w, void *data)
       return;
     }
     break;
+  case DATA_SOURCE_RANGE:
+    if (SetObjFieldFromWidget(d->min, d->Obj, d->Id, "range_min")) {
+      return;
+    }
+    if (SetObjFieldFromWidget(d->max, d->Obj, d->Id, "range_max")) {
+      return;
+    }
+    if (SetObjFieldFromWidget(d->div, d->Obj, d->Id, "range_div")) {
+      return;
+    }
+    break;
   }
 
   if (FileDialogCloseCommon(w, d))
