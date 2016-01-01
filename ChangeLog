@@ -1,5 +1,8 @@
 2016-01-01  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11menu.c (create_toolbar): set label for radio tool
+	buttons.
+
 	* src/gtk/gtk_subwin.c (spin_button_size_allocated)
 	(start_editing): don't change allocated size.
 

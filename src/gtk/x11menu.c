@@ -5399,6 +5399,7 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
     case TOOL_TYPE_RADIO:
       widget = gtk_radio_tool_button_new(list);
       list = gtk_radio_tool_button_get_group(GTK_RADIO_TOOL_BUTTON(widget));
+      gtk_tool_button_set_label(GTK_TOOL_BUTTON(widget), _(item[i].label));
       if (icon) {
 	gtk_tool_button_set_icon_widget(GTK_TOOL_BUTTON(widget), icon);
       }
