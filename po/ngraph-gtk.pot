@@ -1,6 +1,6 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Ito Hiroyuki
-# This file is distributed under the same license as the PACKAGE package.
+# This file is distributed under the same license as the ngraph-gtk package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.07.00\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2015-08-19 15:38+0900\n"
+"POT-Creation-Date: 2016-01-01 13:27+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1075,7 +1075,7 @@ msgid "_Y smooth:"
 msgstr ""
 
 #: src/gtk/x11file.c:2682 src/gtk/x11file.c:3908 src/gtk/x11file.c:3985
-#: src/gtk/x11file.c:4053 src/gtk/x11file.c:5639
+#: src/gtk/x11file.c:4053 src/gtk/x11file.c:5650
 #, c-format
 msgid "Create"
 msgstr ""
@@ -1205,43 +1205,43 @@ msgstr ""
 msgid "_Division:"
 msgstr ""
 
-#: src/gtk/x11file.c:4358
+#: src/gtk/x11file.c:4369
 msgid "Data new"
 msgstr ""
 
-#: src/gtk/x11file.c:4436 src/gtk/x11menu.c:632
+#: src/gtk/x11file.c:4447 src/gtk/x11menu.c:632
 msgid "Add Data file"
 msgstr ""
 
-#: src/gtk/x11file.c:5486
+#: src/gtk/x11file.c:5497
 msgid "Data file"
 msgstr ""
 
-#: src/gtk/x11file.c:5492
+#: src/gtk/x11file.c:5503
 msgid "Making data file"
 msgstr ""
 
-#: src/gtk/x11file.c:5493
+#: src/gtk/x11file.c:5504
 msgid "Making data file."
 msgstr ""
 
-#: src/gtk/x11file.c:5691 src/gtk/x11lgnd.c:3268
+#: src/gtk/x11file.c:5702 src/gtk/x11lgnd.c:3268
 msgid "Join"
 msgstr ""
 
-#: src/gtk/x11file.c:5696 src/gtk/x11lgnd.c:3244 src/gtk/gtk_widget.c:1229
+#: src/gtk/x11file.c:5707 src/gtk/x11lgnd.c:3244 src/gtk/gtk_widget.c:1229
 msgid "Color 1"
 msgstr ""
 
-#: src/gtk/x11file.c:5703 src/gtk/x11lgnd.c:3245 src/gtk/gtk_widget.c:1236
+#: src/gtk/x11file.c:5714 src/gtk/x11lgnd.c:3245 src/gtk/gtk_widget.c:1236
 msgid "Color 2"
 msgstr ""
 
-#: src/gtk/x11file.c:5711
+#: src/gtk/x11file.c:5722
 msgid "Clip"
 msgstr ""
 
-#: src/gtk/x11file.c:5723
+#: src/gtk/x11file.c:5734
 msgid "Type"
 msgstr ""
 

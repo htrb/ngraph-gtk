@@ -1,3 +1,10 @@
+2016-01-01  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_subwin.c (spin_button_size_allocated)
+	(start_editing): don't change allocated size.
+
+	* src/gtk/x11file.c (FileDialogClose): save range parameters.
+
 2015-09-21  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/math/math_expression.c: fix typo.
