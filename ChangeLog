@@ -1,3 +1,7 @@
+2016-01-05  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* debian/control (Build-Depends): depend on "libgsl-dev".
+
 2016-01-01  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (create_toolbar): set label for radio tool
