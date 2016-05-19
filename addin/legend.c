@@ -231,6 +231,7 @@ makescript(FILE *f, struct file_data *data, int gx, int gy, int width, int heigh
 	(g_strcmp0(data->type, "bar_x") == 0) ||
 	(g_strcmp0(data->type, "bar_y") == 0)) {
       fprintf(f, "rectangle::fill=false\n");
+      fprintf(f, "rectangle::stroke=true\n");
       fprintf(f, "rectangle::stroke_R=%d\n", data->r);
       fprintf(f, "rectangle::stroke_G=%d\n", data->g);
       fprintf(f, "rectangle::stroke_B=%d\n", data->b);
@@ -250,6 +251,7 @@ makescript(FILE *f, struct file_data *data, int gx, int gy, int width, int heigh
 	       (g_strcmp0(data->type, "bar_solid_fill_x") == 0) ||
 	       (g_strcmp0(data->type, "bar_solid_fill_y") == 0)) {;
       fprintf(f, "rectangle::fill=true\n");
+      fprintf(f, "rectangle::stroke=false\n");
       fprintf(f, "rectangle::fill_R=%d\n", data->r);
       fprintf(f, "rectangle::fill_G=%d\n", data->g);
       fprintf(f, "rectangle::fill_B=%d\n", data->b);
