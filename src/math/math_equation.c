@@ -1446,6 +1446,7 @@ check_const_sub(MathExpression *exp, int *constant, int n)
   if (exp == NULL)
     return 0;
 
+  r = 0;
   switch (exp->type) {
   case MATH_EXPRESSION_TYPE_OR:
   case MATH_EXPRESSION_TYPE_AND:
@@ -1480,7 +1481,6 @@ check_const_sub(MathExpression *exp, int *constant, int n)
 	return r;
       }
     }
-    r = 0;
     break;
   case MATH_EXPRESSION_TYPE_MINUS:
   case MATH_EXPRESSION_TYPE_FACT:
@@ -1492,7 +1492,6 @@ check_const_sub(MathExpression *exp, int *constant, int n)
 	return 1;
       }
     }
-    r = 0;
     break;
   case MATH_EXPRESSION_TYPE_CONST_DEF:
   case MATH_EXPRESSION_TYPE_ARRAY:
@@ -1501,7 +1500,6 @@ check_const_sub(MathExpression *exp, int *constant, int n)
   case MATH_EXPRESSION_TYPE_DOUBLE:
   case MATH_EXPRESSION_TYPE_PRM:
   case MATH_EXPRESSION_TYPE_EOEQ:
-    r = 0;
     break;
   }
 
