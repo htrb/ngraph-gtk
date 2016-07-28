@@ -125,9 +125,9 @@ cmdshell(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   shlocal->lock=1;
   nshell=shlocal->nshell;
 
+  shellsavestdio(nshell);
 #ifndef WINDOWS
   save_interrupt = ninterrupt;
-  shellsavestdio(nshell);
   set_signal(SIGINT, 0, int_handler, &oldact);
   ninterrupt = check_interrupt;
 #endif
@@ -200,8 +200,8 @@ errexit:
 #ifndef WINDOWS
   ninterrupt = save_interrupt;
   sigaction(SIGINT, &oldact, NULL);
-  shellrestorestdio(nshell);
 #endif
+  shellrestorestdio(nshell);
 
   if (nshell->deleted) {
     delshell(nshell);
