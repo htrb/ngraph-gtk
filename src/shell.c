@@ -4498,15 +4498,16 @@ ngraphenvironment(struct nshell *nshell)
   if (getval(nshell,"IGNOREEOF")==NULL) addval(nshell,"IGNOREEOF","10");
 
   addin = g_strdup_printf("%s/addin", data);
-  pathset = g_strdup_printf("PATH='%s%s%s%s%s%s%s%s'$PATH", home, PATHSEP, addin, PATHSEP, lib, PATHSEP, ".", PATHSEP);
-
-  if (pathset) {
+  if (addin) {
+    pathset = g_strdup_printf("PATH='%s%s%s%s%s%s%s%s'$PATH", home, PATHSEP, addin, PATHSEP, lib, PATHSEP, ".", PATHSEP);
+    if (pathset) {
 #ifdef WINDOWS
-    path_to_win(pathset);
+      path_to_win(pathset);
 #endif	/* WINDOWS */
-    cmdexecute(nshell,pathset);
+      cmdexecute(nshell,pathset);
+      g_free(pathset);
+    }
     g_free(addin);
-    g_free(pathset);
   }
 }
 

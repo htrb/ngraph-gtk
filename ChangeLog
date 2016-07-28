@@ -1,3 +1,11 @@
+2016-07-28  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/shell.c (ngraphenvironment): check returned value of the
+	function "g_strdup_printf()".
+
+	* src/oshell.c (cmdshell): functions "shellsavestdio()" and
+	"shellrestorestdio()" must be called always.
+
 2016-01-05  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* debian/control (Build-Depends): depend on "libgsl-dev".
