@@ -1,0 +1,83 @@
+How to make Ngraph-gtk on Windows with MinGW
+
+
+1. Get and install MinGW
+
+http://sourceforge.net/projects/mingw/files/
+
+Download mingw-get-setup.exe
+Execute mingw-get-setup.exe
+
+rename fstab.sample to fstab in the folder C:/MinGW/msys/1.0/etc/
+
+2. Get GTK+
+
+download
+
+gtk+-bundle_2.22.1-20101227_win32.zip
+
+from
+
+http://ftp.gnome.org/pub/gnome/binaries/win32/gtk+/2.22/
+
+
+3. Install GTK+
+
+extract all files in C:\mingw
+
+
+4. Get readline libraries
+
+http://sourceforge.net/projects/gnuwin32/files/readline/5.0-1/
+
+readline-5.0-1-bin.zip
+readline-5.0-1-lib.zip
+
+
+5. Install readline libraries
+
+extract all files in C:\mingw
+
+
+6. Get GSL
+
+http://www.gnu.org/software/gsl/
+
+gsl-1.16.tar.gz
+
+
+7. Compile and install GSL
+
+tar xf gsl-1.16.tar.gz
+cd gsl-1.16
+./configure --prefix=/mingw
+make
+make install
+
+
+8. Get and install Ruby
+
+get Ruby installer from http://rubyinstaller.org/
+
+http://dl.bintray.com/oneclick/rubyinstaller/rubyinstaller-2.0.0-p451.exe
+
+execute rubyinstaller-2.0.0-p451.exe
+
+Check "Add Ruby executables to your PATH"
+
+
+9. Get Ngraph-gtk
+
+http://sourceforge.net/projects/ngraph-gtk/files/
+
+ngraph-gtk-6.06.14.tar.gz
+
+
+10. Compile and install Ngraph-gtk
+
+tar xf ngraph-gtk-6.06.14.tar.gz
+cd ngraph-gtk-6.06.14
+sh mingw/windows.sh
+
+Ngraph-gtk will be installed in C:\ngraph-gtk if there are no error
+during the compilation.
