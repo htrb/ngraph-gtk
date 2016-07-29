@@ -1,4 +1,3 @@
-#line_number GtkTextView {
-    background-color: #cccccc;
-    color: #000000;
+textview#line_number > text {
+    border-right: 2px dotted @fg_color;
 }
