@@ -909,7 +909,7 @@ set_widget_font(GtkWidget *w, const char *font)
   GError *error;
   char *css_str;
 
-  css_str = g_strdup_printf("%s {font: %s;}", G_OBJECT_TYPE_NAME(w), font);
+  css_str = g_strdup_printf("* {font: %s;}", font);
   if (css_str == NULL) {
     return;
   }
