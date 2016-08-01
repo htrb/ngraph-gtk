@@ -1024,6 +1024,9 @@ create_text_view_with_line_number(GtkWidget **v)
 
   buf = gtk_text_buffer_new(NULL);
   ln = gtk_text_view_new_with_buffer(buf);
+#if GTK_CHECK_VERSION(3, 12, 0)
+  gtk_widget_set_margin_end(ln, 4);
+#endif
 
 #if GTK_CHECK_VERSION(3, 16, 0)
   gtk_widget_set_name(ln, LINE_NUMBER_WIDGET_NAME);

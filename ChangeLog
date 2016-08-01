@@ -1,3 +1,8 @@
+2016-08-01  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_widget.c (create_text_view_with_line_number): call
+	"gtk_widget_set_margin_end()".
+
 2016-07-29  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* addin/cal.nsc: use "ncal" instead of "cal".

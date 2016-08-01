@@ -1,5 +1,5 @@
 textview#line_number > text {
-    border-right: 2px dotted @fg_color;
+    border-right: 1px solid @fg_color;
 }
 textview#line_number {
     padding-right: 1px;
