@@ -1,3 +1,8 @@
+2016-09-07  Hiroyuki Ito  <hito@reich.nict.go.jp>
+
+	* src/gtk/x11menu.c (check_pending_event): added.
+	(AppMainLoop, reset_event, ChkInterrupt): use "check_pending_event()".
+
 2016-08-01  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_widget.c (create_text_view_with_line_number): call

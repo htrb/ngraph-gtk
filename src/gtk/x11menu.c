@@ -3574,13 +3574,49 @@ term_signal_handler(int sig)
 }
 #endif	/* WINDOWS */
 
+int
+check_pending_event(void)
+{
+  GdkEvent *ev;
+  int r;
+  static int prev_type = -1;
+  static guint32 prev_time = -1;
+
+  r = gtk_events_pending();
+  if (r) {
+    ev = gtk_get_current_event();
+    if (ev) {
+      int cur_type;
+      guint32 cur_time;
+      //      GtkWidget *w;
+
+      cur_type = gdk_event_get_event_type(ev);
+      cur_time = gdk_event_get_time(ev);
+      //      w = gtk_get_event_widget(ev);
+      gdk_event_free(ev);
+      if (cur_type == prev_type && cur_time == prev_time) {
+	//	printf("%s:%d:%d\n", G_OBJECT_TYPE_NAME(w), cur_type, cur_time);
+	r = 0;
+      }
+      prev_time = cur_time;
+      prev_type = cur_type;
+    } else {
+      r = 0;
+      prev_time = -1;
+      prev_type = -1;
+    }
+  }
+
+  return r;
+}
+
 static int
 AppMainLoop(void)
 {
   Hide_window = APP_CONTINUE;
   while (TRUE) {
     gtk_main_iteration();
-    if (Hide_window != APP_CONTINUE && ! gtk_events_pending()) {
+    if (Hide_window != APP_CONTINUE && ! check_pending_event()) {
       int state = Hide_window;
 
       Hide_window = APP_CONTINUE;
@@ -3601,7 +3637,7 @@ AppMainLoop(void)
 void
 reset_event(void)
 {
-  while (gtk_events_pending()) {
+  while (check_pending_event()) {
     gtk_main_iteration();
   }
 }
@@ -6005,7 +6041,7 @@ ChkInterrupt(void)
     return check_interrupt();
   }
 
-  while (gtk_events_pending()) {
+  while (check_pending_event()) {
     gtk_main_iteration_do(FALSE);
     if (check_interrupt()) {
       return TRUE;
