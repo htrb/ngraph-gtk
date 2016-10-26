@@ -1,5 +1,9 @@
 2016-10-26  Hiroyuki Ito  <hito@reich.nict.go.jp>
 
+	* src/gtk/x11lgnd.c (LegendArrowDialogScaleL)
+	(LegendArrowDialogScaleW): use "gdk_window_invalidate_rect()" if
+	the version of GTK+ is greater or equal to 3.22.
+
 	* src/gtk/x11view.c (do_popup): use "gtk_menu_popup_at_pointer()"
 	if the version of GTK+ is greater or equal to 3.22.
 	(mouse_down_zoom2): don't use "show_zoom_animation()" if the
