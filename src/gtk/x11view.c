@@ -2817,6 +2817,7 @@ mouse_down_move_data(struct Viewer *d)
 #define VIEWER_DPI_MAX 620
 #define VIEWER_DPI_MIN  20
 
+#if ! GTK_CHECK_VERSION(3, 22, 0)
 #define ANIM_DIV 1
 static void
 show_zoom_animation(struct Viewer *d, TPoint *point, double zoom)
@@ -2856,6 +2857,7 @@ show_zoom_animation(struct Viewer *d, TPoint *point, double zoom)
   cairo_pattern_destroy(pattern);
   cairo_destroy(cr);
 }
+#endif
 
 #ifdef SHOW_MOVE_ANIMATION
 static void
@@ -2958,9 +2960,11 @@ mouse_down_zoom2(unsigned int state, TPoint *point, struct Viewer *d, int zoom_o
   }
 
   ratio = vdpi / saved_dpi_i;
+#if ! GTK_CHECK_VERSION(3, 22, 0)
   if (vdpi != nround(saved_dpi_i)) {
     show_zoom_animation(d, point, ratio);
   }
+#endif
 
   vdpi = saved_dpi_i;
 
@@ -4676,7 +4680,11 @@ do_popup(GdkEventButton *event, struct Viewer *d)
     func = popup_menu_position;
   }
 
+#if GTK_CHECK_VERSION(3, 22, 0)
+  gtk_menu_popup_at_pointer(GTK_MENU(d->popup), ((GdkEvent *)event));
+#else
   gtk_menu_popup(GTK_MENU(d->popup), NULL, NULL, func, d, button, event_time);
+#endif
 }
 
 static gboolean

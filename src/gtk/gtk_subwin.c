@@ -1165,11 +1165,15 @@ do_popup(GdkEventButton *event, struct obj_list_data *d)
     d->select = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
   }
 
+#if GTK_CHECK_VERSION(3, 22, 0)
+  gtk_menu_popup_at_pointer(GTK_MENU(d->popup), ((GdkEvent *)event));
+#else
   /* If the menu popup was initiated by something other than a mouse
      button press, such as a mouse button release or a keypress,
      button should be 0. */
   button = 0;
   gtk_menu_popup(GTK_MENU(d->popup), NULL, NULL, func, d->text, button, event_time);
+#endif
 }
 
 static gboolean

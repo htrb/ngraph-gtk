@@ -1,3 +1,14 @@
+2016-10-26  Hiroyuki Ito  <hito@reich.nict.go.jp>
+
+	* src/gtk/x11view.c (do_popup): use "gtk_menu_popup_at_pointer()"
+	if the version of GTK+ is greater or equal to 3.22.
+	(mouse_down_zoom2): don't use "show_zoom_animation()" if the
+	version of GTK+ is greater or equal to 3.22.
+
+	* src/gtk/gtk_subwin.c (do_popup): use
+	"gtk_menu_popup_at_pointer()" if the version of GTK+ is greater or
+	equal to 3.22.
+
 2016-09-07  Hiroyuki Ito  <hito@reich.nict.go.jp>
 
 	* src/gtk/x11menu.c (check_pending_event): added.
