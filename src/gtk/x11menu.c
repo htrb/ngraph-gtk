@@ -4755,9 +4755,30 @@ static void
 defaultwindowconfig(void)
 {
   int w, h;
+#if GTK_CHECK_VERSION(3, 22, 0)
+  GdkDisplay *disp;
+#endif
 
+#if GTK_CHECK_VERSION(3, 22, 0)
+  w = 800;
+  h = 600;
+  disp = gdk_display_get_default();
+  if (disp) {
+    GdkMonitor *monitor;
+
+    monitor = gdk_display_get_primary_monitor(disp);
+    if (monitor) {
+      GdkRectangle rect;
+
+      gdk_monitor_get_geometry(monitor, &rect);
+      w = rect.width;
+      h = rect.height;
+    }
+  }
+#else
   w = gdk_screen_get_width(gdk_screen_get_default());
   h = w / 2 * 1.2;
+#endif
 
   if (Menulocal.fileopen) {
     if (Menulocal.filewidth == DEFAULT_GEOMETRY)
@@ -5622,7 +5643,11 @@ create_toplevel_window(void)
   int i;
   struct objlist *aobj;
   int x, y, width, height, w, h;
+#if GTK_CHECK_VERSION(3, 22, 0)
+  GdkDisplay *disp;
+#else
   GdkScreen *screen;
+#endif
 #if USE_APP_MENU
   GtkWidget *popup;
 #if USE_GTK_BUILDER
@@ -5635,9 +5660,27 @@ create_toplevel_window(void)
   init_action_widget_list();
   init_ngraph_app_struct();
 
+#if GTK_CHECK_VERSION(3, 22, 0)
+  w = 800;
+  h = 600;
+  disp = gdk_display_get_default();
+  if (disp) {
+    GdkMonitor *monitor;
+
+    monitor = gdk_display_get_primary_monitor(disp);
+    if (monitor) {
+      GdkRectangle rect;
+
+      gdk_monitor_get_geometry(monitor, &rect);
+      w = rect.width;
+      h = rect.height;
+    }
+  }
+#else
   screen = gdk_screen_get_default();
   w = gdk_screen_get_width(screen);
   h = gdk_screen_get_height(screen);
+#endif
 
   if (Menulocal.menux == DEFAULT_GEOMETRY)
     Menulocal.menux = w * 3 / 8;

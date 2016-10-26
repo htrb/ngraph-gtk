@@ -1,5 +1,9 @@
 2016-10-26  Hiroyuki Ito  <hito@reich.nict.go.jp>
 
+	* src/gtk/x11menu.c (defaultwindowconfig)
+	(create_toplevel_window): use "gdk_monitor_get_geometry();" if the
+	version of GTK+ is greater or equal to 3.22.
+
 	* src/gtk/x11lgnd.c (LegendArrowDialogScaleL)
 	(LegendArrowDialogScaleW): use "gdk_window_invalidate_rect()" if
 	the version of GTK+ is greater or equal to 3.22.
