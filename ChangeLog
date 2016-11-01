@@ -1,4 +1,4 @@
-2016-11-01  Hiroyuki Ito  <hito@localhost.localdomain>
+2016-11-01  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_subwin.c (popup_menu_position): not used if the
 	version of GTK+ is greater or equal to 3.22.
@@ -6,7 +6,7 @@
 	* src/gtk/x11view.c (popup_menu_position): not used if the version
 	of GTK+ is greater or equal to 3.22.
 
-2016-10-26  Hiroyuki Ito  <hito@reich.nict.go.jp>
+2016-10-26  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (defaultwindowconfig)
 	(create_toplevel_window): use "gdk_monitor_get_geometry();" if the
@@ -25,7 +25,7 @@
 	"gtk_menu_popup_at_pointer()" if the version of GTK+ is greater or
 	equal to 3.22.
 
-2016-09-07  Hiroyuki Ito  <hito@reich.nict.go.jp>
+2016-09-07  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (check_pending_event): added.
 	(AppMainLoop, reset_event, ChkInterrupt): use "check_pending_event()".
