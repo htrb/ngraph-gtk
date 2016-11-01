@@ -4599,6 +4599,7 @@ ViewerEvMouseMotion(GtkWidget *w, GdkEventMotion *e, gpointer client_data)
   return FALSE;
 }
 
+#if ! GTK_CHECK_VERSION(3, 22, 0)
 static void
 popup_menu_position(GtkMenu *menu, gint *x, gint *y, gboolean *push_in, gpointer user_data)
 {
@@ -4614,6 +4615,7 @@ popup_menu_position(GtkMenu *menu, gint *x, gint *y, gboolean *push_in, gpointer
 
   gdk_window_get_origin(win, x, y);
 }
+#endif
 
 int
 check_focused_obj_type(const struct Viewer *d, int *type)
@@ -4664,6 +4666,9 @@ check_focused_obj_type(const struct Viewer *d, int *type)
 static void
 do_popup(GdkEventButton *event, struct Viewer *d)
 {
+#if GTK_CHECK_VERSION(3, 22, 0)
+  gtk_menu_popup_at_pointer(GTK_MENU(d->popup), ((GdkEvent *)event));
+#else
   int button, event_time;
   GtkMenuPositionFunc func = NULL;
 
@@ -4680,9 +4685,6 @@ do_popup(GdkEventButton *event, struct Viewer *d)
     func = popup_menu_position;
   }
 
-#if GTK_CHECK_VERSION(3, 22, 0)
-  gtk_menu_popup_at_pointer(GTK_MENU(d->popup), ((GdkEvent *)event));
-#else
   gtk_menu_popup(GTK_MENU(d->popup), NULL, NULL, func, d, button, event_time);
 #endif
 }

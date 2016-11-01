@@ -1132,6 +1132,7 @@ set_hidden_state(struct obj_list_data *d, int hide)
   }
 }
 
+#if ! GTK_CHECK_VERSION(3, 22, 0)
 static void
 popup_menu_position(GtkMenu *menu, gint *x, gint *y, gboolean *push_in, gpointer user_data)
 {
@@ -1143,10 +1144,14 @@ popup_menu_position(GtkMenu *menu, gint *x, gint *y, gboolean *push_in, gpointer
   gdk_win = gtk_widget_get_window(w);
   gdk_window_get_origin(gdk_win, x, y);
 }
+#endif
 
 static void
 do_popup(GdkEventButton *event, struct obj_list_data *d)
 {
+#if GTK_CHECK_VERSION(3, 22, 0)
+  gtk_menu_popup_at_pointer(GTK_MENU(d->popup), ((GdkEvent *)event));
+#else
   int button, event_time;
   GtkMenuPositionFunc func;
 
@@ -1165,9 +1170,6 @@ do_popup(GdkEventButton *event, struct obj_list_data *d)
     d->select = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
   }
 
-#if GTK_CHECK_VERSION(3, 22, 0)
-  gtk_menu_popup_at_pointer(GTK_MENU(d->popup), ((GdkEvent *)event));
-#else
   /* If the menu popup was initiated by something other than a mouse
      button press, such as a mouse button release or a keypress,
      button should be 0. */

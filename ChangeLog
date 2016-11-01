@@ -1,3 +1,11 @@
+2016-11-01  Hiroyuki Ito  <hito@localhost.localdomain>
+
+	* src/gtk/gtk_subwin.c (popup_menu_position): not used if the
+	version of GTK+ is greater or equal to 3.22.
+
+	* src/gtk/x11view.c (popup_menu_position): not used if the version
+	of GTK+ is greater or equal to 3.22.
+
 2016-10-26  Hiroyuki Ito  <hito@reich.nict.go.jp>
 
 	* src/gtk/x11menu.c (defaultwindowconfig)
