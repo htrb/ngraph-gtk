@@ -673,7 +673,17 @@ CmOutputPrinter(int select_file, int show_dialog)
     opt = GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG;
   }
 
+#ifdef __WIN64__
+  if (NgraphApp.Viewer.side_pane1) {
+    gtk_widget_hide(NgraphApp.Viewer.side_pane1);
+  }
+#endif
   res = gtk_print_operation_run(print, opt, GTK_WINDOW(TopLevel), &error);
+#ifdef __WIN64__
+  if (NgraphApp.Viewer.side_pane1) {
+    gtk_widget_set_visible(NgraphApp.Viewer.side_pane1, Menulocal.sidebar);
+  }
+#endif
 
   if (res == GTK_PRINT_OPERATION_RESULT_ERROR) {
     snprintf(buf, sizeof(buf), _("Printing error: %s"), error->message);
@@ -689,7 +699,7 @@ CmOutputPrinter(int select_file, int show_dialog)
   delobj(graobj, id);
   delobj(g2wobj, g2wid);
 
-  if (select_file) {
+  if (select_file && NgraphApp.FileWin) {
     FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
   }
 }

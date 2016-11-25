@@ -704,6 +704,16 @@ set_dir_defs(char *app)
     return 1;
   }
 
+#ifdef __WIN64__
+  DOCDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/doc/ngraph-gtk");
+  LIBDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "bin");
+  PLUGINDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "lib/plugins");
+  NDATADIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/ngraph-gtk");
+  ADDINDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/ngraph-gtk/addin");
+  CONFDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "etc/ngraph-gtk");
+  LOCALEDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/locale");
+  PIXMAPDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/pixmaps/ngraph-gtk");
+#else
   DOCDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "doc");
   LIBDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "bin");
   PLUGINDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "lib/plugins");
@@ -712,6 +722,7 @@ set_dir_defs(char *app)
   CONFDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "etc");
   LOCALEDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/locale");
   PIXMAPDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/pixmaps");
+#endif
 
   g_free(app_path);
 
