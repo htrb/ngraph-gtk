@@ -699,7 +699,7 @@ CmOutputPrinter(int select_file, int show_dialog)
   delobj(graobj, id);
   delobj(g2wobj, g2wid);
 
-  if (select_file && NgraphApp.FileWin) {
+  if (select_file && NgraphApp.FileWin.data.data) {
     FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
   }
 }
