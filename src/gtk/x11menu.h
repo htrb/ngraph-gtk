@@ -155,12 +155,6 @@ struct Viewer
   double vscroll, hscroll, Zoom;
 };
 
-enum subwin_state {
-  SUBWIN_STATE_SHOW,
-  SUBWIN_STATE_HIDE,
-  SUBWIN_STATE_TOGGLE,
-};
-
 enum SubWinType {
   TypeFileWin,
   TypeAxisWin,
@@ -189,21 +183,16 @@ struct obj_list_data
   struct obj_list_data *next;
 };
 
-struct SubWin;
-
 typedef void (* sub_window_state_func) (struct SubWin *d, int state);
 
 struct SubWin
 {
   enum SubWinType type;
   GtkWidget *Win;
-  GdkWindowState window_state;
-  int visible, action_widget_id;
   union {
     struct obj_list_data *data;
     GtkWidget *text;
   } data;
-  sub_window_state_func state_func;
 };
 
 #define MENU_HISTORY_NUM 10
@@ -270,8 +259,6 @@ void create_addin_menu(void);
 void create_recent_data_menu(void);
 void set_pointer_mode(int id);
 void set_toggle_action_widget_state(int id, int state);
-void set_subwindow_state(enum SubWinType id, enum subwin_state state);
-int get_subwindow_state(enum SubWinType id);
 void script_exec(GtkWidget *w, gpointer client_data);
 int toggle_view(int type, int state);
 void CmToggleSingleWindowMode(GtkCheckMenuItem *action, gpointer client_data);

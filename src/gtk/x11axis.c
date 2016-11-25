@@ -3784,19 +3784,14 @@ axiswin_ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
   return TRUE;
 }
 
-void
-AxisWinState(struct SubWin *d, int state)
+GtkWidget *
+AxisWinState(struct SubWin *d)
 {
   if (d->Win) {
-    sub_window_set_visibility(d, state);
-    return;
+    return d->Win;
   }
 
-  if (! state) {
-    return;
-  }
-
-  list_sub_window_create(d, "Axis Window", AXIS_WIN_COL_NUM, Alist, Axiswin_xpm, Axiswin48_xpm);
+  list_sub_window_create(d, AXIS_WIN_COL_NUM, Alist);
 
   d->data.data->update = AxisWinUpdate;
   d->data.data->setup_dialog = AxisDialog;
@@ -3826,4 +3821,6 @@ AxisWinState(struct SubWin *d, int state)
   gtk_tree_view_set_enable_search(GTK_TREE_VIEW(d->data.data->text), TRUE);
   gtk_tree_view_set_search_column(GTK_TREE_VIEW(d->data.data->text), AXIS_WIN_COL_NAME);
   tree_view_set_tooltip_column(GTK_TREE_VIEW(d->data.data->text), AXIS_WIN_COL_NAME);
+
+  return d->Win;
 }

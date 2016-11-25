@@ -110,12 +110,6 @@ struct menulocal
   struct extprinter *extprinterroot;
   struct script *scriptroot, *addin_list;
   int menuheight, menuwidth, menux, menuy;
-  int fileheight, filewidth, filex, filey, fileopen;
-  int axisheight, axiswidth, axisx, axisy, axisopen;
-  int legendheight, legendwidth, legendx, legendy, legendopen;
-  int mergeheight, mergewidth, mergex, mergey, mergeopen;
-  int dialogheight, dialogwidth, dialogx, dialogy, dialogopen;
-  int coordheight, coordwidth, coordx, coordy, coordopen;
   int exwindpi, exwinwidth, exwinheight, exwin_use_external;
   char *fileopendir, *graphloaddir, *expanddir, *coordwin_font, *infowin_font, *file_preview_font;
   int expand, loadpath, expandtofullpath, changedirectory, savehistory;
@@ -125,7 +119,7 @@ struct menulocal
   int hist_size, info_size;
   double bg_r, bg_g, bg_b;
   int focus_frame_type, use_opacity, select_data;
-  int side_pane1_pos, side_pane2_pos, side_pane3_pos, main_pane_pos, single_window_mode;
+  int side_pane1_pos, side_pane2_pos, side_pane3_pos, main_pane_pos;
   int file_tab, axis_tab, merge_tab, path_tab, rectangle_tab, arc_tab, mark_tab, text_tab;
 #ifdef WINDOWS
   int emf_dpi;
@@ -138,19 +132,17 @@ extern struct menulocal Menulocal;
 
 enum SAVE_CONFIG_TYPE {
   SAVE_CONFIG_TYPE_GEOMETRY        = 0x0001,
-  SAVE_CONFIG_TYPE_CHILD_GEOMETRY  = 0x0002,
-  SAVE_CONFIG_TYPE_VIEWER          = 0x0004,
-  SAVE_CONFIG_TYPE_EXTERNAL_DRIVER = 0x0008,
-  SAVE_CONFIG_TYPE_ADDIN_SCRIPT    = 0x0010,
-  SAVE_CONFIG_TYPE_MISC            = 0x0020,
-  SAVE_CONFIG_TYPE_EXTERNAL_VIEWER = 0x0040,
-  SAVE_CONFIG_TYPE_FONTS           = 0x0080,
-  SAVE_CONFIG_TYPE_TOGGLE_VIEW     = 0x0100,
-  SAVE_CONFIG_TYPE_OTHERS          = 0x0200,
+  SAVE_CONFIG_TYPE_VIEWER          = 0x0002,
+  SAVE_CONFIG_TYPE_EXTERNAL_DRIVER = 0x0004,
+  SAVE_CONFIG_TYPE_ADDIN_SCRIPT    = 0x0008,
+  SAVE_CONFIG_TYPE_MISC            = 0x0010,
+  SAVE_CONFIG_TYPE_EXTERNAL_VIEWER = 0x0020,
+  SAVE_CONFIG_TYPE_FONTS           = 0x0040,
+  SAVE_CONFIG_TYPE_TOGGLE_VIEW     = 0x0080,
+  SAVE_CONFIG_TYPE_OTHERS          = 0x0100,
 };
 
 #define SAVE_CONFIG_TYPE_X11MENU 	(SAVE_CONFIG_TYPE_GEOMETRY		\
-				  | SAVE_CONFIG_TYPE_CHILD_GEOMETRY	\
 				  | SAVE_CONFIG_TYPE_VIEWER		\
 				  | SAVE_CONFIG_TYPE_EXTERNAL_VIEWER	\
 				  | SAVE_CONFIG_TYPE_EXTERNAL_DRIVER	\

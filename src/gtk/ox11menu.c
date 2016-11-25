@@ -105,7 +105,6 @@ enum menu_config_type {
   MENU_CONFIG_TYPE_BOOL,
   MENU_CONFIG_TYPE_STRING,
   MENU_CONFIG_TYPE_WINDOW,
-  MENU_CONFIG_TYPE_CHILD_WINDOW,
   MENU_CONFIG_TYPE_COLOR,
   MENU_CONFIG_TYPE_SCRIPT,
   MENU_CONFIG_TYPE_DRIVER,
@@ -113,7 +112,6 @@ enum menu_config_type {
 };
 
 static int menu_config_set_four_elements(char *s2, void *data);
-static int menu_config_set_child_window_geometry(char *s2, void *data);
 static int menu_config_set_bgcolor(char *s2, void *data);
 static int menu_config_set_ext_driver(char *s2, void *data);
 static int menu_config_set_script(char *s2, void *data);
@@ -124,77 +122,6 @@ static int *menu_config_menu_geometry[] = {
   &Menulocal.menuy,
   &Menulocal.menuwidth,
   &Menulocal.menuheight,
-};
-
-struct child_win_stat {
-  struct SubWin *win;
-  int *stat[5];
-};
-
-static struct child_win_stat menu_config_file_geometry = {
-  &NgraphApp.FileWin,
-  {
-    &Menulocal.filex,
-    &Menulocal.filey,
-    &Menulocal.filewidth,
-    &Menulocal.fileheight,
-    &Menulocal.fileopen,
-  }
-};
-
-static struct child_win_stat menu_config_axis_geometry = {
-  &NgraphApp.AxisWin,
-  {
-    &Menulocal.axisx,
-    &Menulocal.axisy,
-    &Menulocal.axiswidth,
-    &Menulocal.axisheight,
-    &Menulocal.axisopen,
-  }
-};
-
-static struct child_win_stat menu_config_legend_geometry = {
-  &NgraphApp.LegendWin,
-  {
-    &Menulocal.legendx,
-    &Menulocal.legendy,
-    &Menulocal.legendwidth,
-    &Menulocal.legendheight,
-    &Menulocal.legendopen,
-  }
-};
-
-static struct child_win_stat menu_config_merge_geometry = {
-  &NgraphApp.MergeWin,
-  {
-    &Menulocal.mergex,
-    &Menulocal.mergey,
-    &Menulocal.mergewidth,
-    &Menulocal.mergeheight,
-    &Menulocal.mergeopen,
-  }
-};
-
-static struct child_win_stat menu_config_dialog_geometry = {
-  &NgraphApp.InfoWin,
-  {
-    &Menulocal.dialogx,
-    &Menulocal.dialogy,
-    &Menulocal.dialogwidth,
-    &Menulocal.dialogheight,
-    &Menulocal.dialogopen,
-  }
-};
-
-static struct child_win_stat menu_config_coord_geometry = {
-  &NgraphApp.CoordWin,
-  {
-    &Menulocal.coordx,
-    &Menulocal.coordy,
-    &Menulocal.coordwidth,
-    &Menulocal.coordheight,
-    &Menulocal.coordopen,
-  }
 };
 
 struct menu_config {
@@ -279,7 +206,7 @@ static struct menu_config MenuConfigOthers[] = {
   {"side_pane1",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.side_pane1_pos},
   {"side_pane2",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.side_pane2_pos},
   {"side_pane3",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.side_pane3_pos},
-  {"single_window_mode",MENU_CONFIG_TYPE_BOOL,    NULL, &Menulocal.single_window_mode},
+
   {"file_tab",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.file_tab},
   {"axis_tab",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.axis_tab},
   {"merge_tab",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.merge_tab},
@@ -293,16 +220,6 @@ static struct menu_config MenuConfigOthers[] = {
 
 static struct menu_config MenuConfigGeometry[] = {
   {"menu_win", MENU_CONFIG_TYPE_WINDOW, menu_config_set_four_elements, menu_config_menu_geometry},
-  {NULL},
-};
-
-static struct menu_config MenuConfigChildGeometry[] = {
-  {"file_win",		MENU_CONFIG_TYPE_CHILD_WINDOW, NULL, &menu_config_file_geometry},
-  {"axis_win",		MENU_CONFIG_TYPE_CHILD_WINDOW, NULL, &menu_config_axis_geometry},
-  {"legend_win",	MENU_CONFIG_TYPE_CHILD_WINDOW, NULL, &menu_config_legend_geometry},
-  {"merge_win",		MENU_CONFIG_TYPE_CHILD_WINDOW, NULL, &menu_config_merge_geometry},
-  {"information_win",	MENU_CONFIG_TYPE_CHILD_WINDOW, NULL, &menu_config_dialog_geometry},
-  {"coordinate_win",	MENU_CONFIG_TYPE_CHILD_WINDOW, NULL, &menu_config_coord_geometry},
   {NULL},
 };
 
@@ -323,7 +240,6 @@ static struct menu_config *MenuConfigArrray[] = {
   MenuConfigToggleView,
   MenuConfigOthers,
   MenuConfigGeometry,
-  MenuConfigChildGeometry,
   MenuConfigExtView,
   NULL,
 };
@@ -390,25 +306,6 @@ add_str_with_int_to_array(struct menu_config *cfg, struct narray *conf)
 
   buf = g_strdup_printf("%s=%d", cfg->name, * (int *) cfg->data);
   if (buf) {
-    arrayadd(conf, &buf);
-  }
-}
-
-static void
-add_child_geometry_to_array(struct menu_config *cfg, struct narray *conf)
-{
-  char *buf;
-  int **data;
-  struct child_win_stat *stat;
-
-  stat = cfg->data;
-  data = stat->stat;
-
-  buf = g_strdup_printf("%s=%d,%d,%d,%d,%d",
-			cfg->name, *data[0], *data[1], *data[2], *data[3], *data[4]);
-  if (buf) {
-    sub_window_save_geometry(stat->win);
-    sub_window_save_visibility(stat->win);
     arrayadd(conf, &buf);
   }
 }
@@ -552,9 +449,6 @@ menu_save_config_sub(struct menu_config *cfg, struct narray *conf)
     case MENU_CONFIG_TYPE_WINDOW:
       add_geometry_to_array(cfg + i, conf);
       break;
-    case MENU_CONFIG_TYPE_CHILD_WINDOW:
-      add_child_geometry_to_array(cfg + i, conf);
-      break;
     case MENU_CONFIG_TYPE_SCRIPT:
       save_script_config(conf);
       break;
@@ -577,10 +471,6 @@ menu_save_config(int type)
 
   if (type & SAVE_CONFIG_TYPE_GEOMETRY) {
     menu_save_config_sub(MenuConfigGeometry, &conf);
-  }
-
-  if (type & SAVE_CONFIG_TYPE_CHILD_GEOMETRY) {
-    menu_save_config_sub(MenuConfigChildGeometry, &conf);
   }
 
   if (type & SAVE_CONFIG_TYPE_VIEWER) {
@@ -663,37 +553,6 @@ menu_config_set_four_elements(char *s2, void *data)
 
  End:
   for (i = 0; i < 4; i++) {
-    g_free(f[i]);
-  }
-  return 0;
-}
-
-static int
-menu_config_set_child_window_geometry(char *s2, void *data)
-{
-  int len, i, val, **ary;
-  char *endptr, *f[] = {NULL, NULL, NULL, NULL, NULL};
-
-  if (data == NULL)
-    return 0;
-
-  ary = ((struct child_win_stat *) data)->stat;
-
-  for (i = 0; i < 5; i++) {
-    f[i] = getitok2(&s2, &len, " \t,");
-    if (f[i] == NULL)
-      goto End;
-  }
-
-  for (i = 0; i < 5; i++) {
-    val = strtol(f[i], &endptr, 10);
-    if (endptr[0] == '\0') {
-      *(ary[i]) = val;
-    }
-  }
-
- End:
-  for (i = 0; i < 5; i++) {
     g_free(f[i]);
   }
   return 0;
@@ -909,9 +768,6 @@ mgtkloadconfig(void)
 	  * (char **) (cfg->data) = f1;
 	}
 	break;
-      case MENU_CONFIG_TYPE_CHILD_WINDOW:
-	menu_config_set_child_window_geometry(s2, cfg->data);
-	break;
       case MENU_CONFIG_TYPE_CHARMAP:
       case MENU_CONFIG_TYPE_COLOR:
       case MENU_CONFIG_TYPE_SCRIPT:
@@ -927,70 +783,6 @@ mgtkloadconfig(void)
       }
     } else {
       fprintf(stderr, "(%s): configuration '%s' in section %s is not used.\n", AppName, tok, MGTKCONF);
-    }
-    g_free(tok);
-    g_free(str);
-  }
-  closeconfig(fp);
-  return 0;
-}
-
-void
-initwindowconfig(void)
-{
-  Menulocal.fileopen =
-    Menulocal.axisopen =
-    Menulocal.legendopen  =
-    Menulocal.mergeopen =
-    Menulocal.dialogopen =
-    Menulocal.coordopen = FALSE;
-
-  Menulocal.filex =
-    Menulocal.filey =
-    Menulocal.fileheight =
-    Menulocal.filewidth = DEFAULT_GEOMETRY;
-
-  Menulocal.axisx =
-    Menulocal.axisy =
-    Menulocal.axisheight =
-    Menulocal.axiswidth = DEFAULT_GEOMETRY;
-
-  Menulocal.legendx =
-    Menulocal.legendy =
-    Menulocal.legendheight =
-    Menulocal.legendwidth = DEFAULT_GEOMETRY;
-
-  Menulocal.mergex =
-    Menulocal.mergey =
-    Menulocal.mergeheight =
-    Menulocal.mergewidth = DEFAULT_GEOMETRY;
-
-  Menulocal.dialogx =
-    Menulocal.dialogy =
-    Menulocal.dialogheight =
-    Menulocal.dialogwidth = DEFAULT_GEOMETRY;
-
-  Menulocal.coordx =
-    Menulocal.coordy =
-    Menulocal.coordheight =
-    Menulocal.coordwidth = DEFAULT_GEOMETRY;
-}
-
-int
-mgtkwindowconfig(void)
-{
-  FILE *fp;
-  char *tok, *str, *s2;
-  struct menu_config *cfg;
-
-  if ((fp = openconfig(MGTKCONF)) == NULL)
-    return 0;
-  while ((tok = getconfig(fp, &str))) {
-    s2 = str;
-    if (nhash_get_ptr(MenuConfigHash, tok, (void *) &cfg) == 0) {
-      if(cfg && cfg->type == MENU_CONFIG_TYPE_CHILD_WINDOW) {
-	menu_config_set_child_window_geometry(s2, cfg->data);
-      }
     }
     g_free(tok);
     g_free(str);
@@ -1119,7 +911,6 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
 
   Menulocal.menux = Menulocal.menuy
     = Menulocal.menuheight = Menulocal.menuwidth = DEFAULT_GEOMETRY;
-  initwindowconfig();
   Menulocal.showtip = TRUE;
   Menulocal.sidebar = TRUE;
   Menulocal.statusbar = TRUE;
@@ -1151,7 +942,6 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   Menulocal.side_pane1_pos = 500;
   Menulocal.side_pane2_pos = 300;
   Menulocal.side_pane3_pos = 200;
-  Menulocal.single_window_mode = FALSE;
   Menulocal.file_tab = 0;
   Menulocal.axis_tab = 100;
   Menulocal.merge_tab = 101;
@@ -1773,69 +1563,6 @@ mx_clear_info(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char 
 }
 
 static int
-mx_show_win(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
-{
-  unsigned int win;
-
-  if (Menulocal.single_window_mode) {
-    return 0;
-  }
-
-  if (TopLevel == NULL) {
-    error(obj, ERR_MENU_GUI);
-    return 1;
-  }
-
-  win = * (unsigned int *) (argv[2]);
-
-  set_subwindow_state(win, SUBWIN_STATE_SHOW);
-
-  return 0;
-}
-
-static int
-mx_hide_win(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
-{
-  unsigned int win;
-
-  if (Menulocal.single_window_mode) {
-    return 0;
-  }
-
-  if (TopLevel == NULL) {
-    error(obj, ERR_MENU_GUI);
-    return 1;
-  }
-
-  win = * (unsigned int *) (argv[2]);
-
-  set_subwindow_state(win, SUBWIN_STATE_HIDE);
-
-  return 0;
-}
-
-static int
-mx_toggle_win(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
-{
-  int win;
-
-  if (Menulocal.single_window_mode) {
-    return 0;
-  }
-
-  if (TopLevel == NULL) {
-    error(obj, ERR_MENU_GUI);
-    return 1;
-  }
-
-  win = * (int *) (argv[2]);
-
-  set_subwindow_state(win, SUBWIN_STATE_TOGGLE);
-
-  return 0;
-}
-
-static int
 mx_get_accel_map(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
 #if USE_GTK_BUILDER
@@ -2295,9 +2022,6 @@ static struct objtable gtkmenu[] = {
   {"echo", NVFUNC, NREAD | NEXEC, mx_echo, "s", 0},
   {"cat", NVFUNC, NREAD | NEXEC, mx_cat, "s", 0},
   {"clear_info", NVFUNC, NREAD | NEXEC, mx_clear_info, "", 0},
-  {"show_window", NVFUNC, NREAD | NEXEC, mx_show_win, "i", 0},
-  {"hide_window", NVFUNC, NREAD | NEXEC, mx_hide_win, "i", 0},
-  {"toggle_window", NVFUNC, NREAD | NEXEC, mx_toggle_win, "i", 0},
   {"get_accel_map", NSFUNC, NREAD | NEXEC, mx_get_accel_map, "", 0},
   {"lib_version", NSFUNC, NREAD | NEXEC, mx_show_lib_version, NULL, 0},
   {"focus", NVFUNC, NREAD | NEXEC, mx_focus_obj, "o", 0},

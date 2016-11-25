@@ -89,7 +89,6 @@ do
 	tex_eqn_error_dialog "Faital error occurred while executing $TEX_COMMAND."
 	rm "$TEX_FILE".*
 	tex_eqn_delete_object
-	menu::show_window 5
 	exit
     fi
 

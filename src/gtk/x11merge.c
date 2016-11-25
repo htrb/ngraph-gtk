@@ -407,19 +407,14 @@ init_dnd(struct SubWin *d)
   g_signal_connect(widget, "drag-data-received", G_CALLBACK(drag_drop_cb), NULL);
 }
 
-void
-MergeWinState(struct SubWin *d, int state)
+GtkWidget *
+MergeWinState(struct SubWin *d)
 {
   if (d->Win) {
-    sub_window_set_visibility(d, state);
-    return;
+    return d->Win;
   }
 
-  if (! state) {
-    return;
-  }
-
-  list_sub_window_create(d, "Merge Window", MERG_WIN_COL_NUM, Mlist, Mergewin_xpm, Mergewin48_xpm);
+  list_sub_window_create(d, MERG_WIN_COL_NUM, Mlist);
 
   d->data.data->update = MergeWinUpdate;
   d->data.data->setup_dialog = MergeDialog;
@@ -433,4 +428,6 @@ MergeWinState(struct SubWin *d, int state)
   gtk_tree_view_set_enable_search(GTK_TREE_VIEW(d->data.data->text), TRUE);
   gtk_tree_view_set_search_column(GTK_TREE_VIEW(d->data.data->text), MERG_WIN_COL_FILE);
   tree_view_set_tooltip_column(GTK_TREE_VIEW(d->data.data->text), MERG_WIN_COL_FILE);
+
+  return d->Win;
 }

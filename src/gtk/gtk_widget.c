@@ -1277,7 +1277,7 @@ select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type)
   color.blue = b / 255.0;
   color.alpha = a / 255.0;
 
-  dlg = gtk_color_chooser_dialog_new(title, GTK_WINDOW(NgraphApp.FileWin.Win));
+  dlg = gtk_color_chooser_dialog_new(title, GTK_WINDOW(TopLevel));
   gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(dlg), &color);
   gtk_color_chooser_set_use_alpha(GTK_COLOR_CHOOSER(dlg), Menulocal.use_opacity);
 

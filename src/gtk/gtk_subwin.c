@@ -75,7 +75,7 @@ file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointe
     getobj(d->obj, "ext", sel, 0, NULL, &ext);
   }
 
-  parent = (Menulocal.single_window_mode) ? TopLevel : d->parent->Win;
+  parent = TopLevel;
 
   if (nGetOpenFileName(parent, _("Open"), ext, NULL, gtk_entry_get_text(w),
 		       &file, TRUE, Menulocal.changedirectory) == IDOK && file) {
@@ -505,310 +505,6 @@ set_obj_cell_renderer_cb(struct obj_list_data *d, int i, n_list_store *list, GCa
 }
 
 static void
-get_geometry(struct SubWin *d, int *x, int *y, int *w, int *h)
-{
-  switch (d->type) {
-  case TypeFileWin:
-    *w = Menulocal.filewidth;
-    *h = Menulocal.fileheight;
-    *x = Menulocal.filex;
-    *y = Menulocal.filey;
-    break;
-  case TypeAxisWin:
-    *w = Menulocal.axiswidth;
-    *h = Menulocal.axisheight;
-    *x = Menulocal.axisx;
-    *y = Menulocal.axisy;
-    break;
-  case TypeLegendWin:
-    *w = Menulocal.legendwidth;
-    *h = Menulocal.legendheight;
-    *x = Menulocal.legendx;
-    *y = Menulocal.legendy;
-    break;
-  case TypeMergeWin:
-    *w = Menulocal.mergewidth;
-    *h = Menulocal.mergeheight;
-    *x = Menulocal.mergex;
-    *y = Menulocal.mergey;
-    break;
-  case TypeInfoWin:
-    *w = Menulocal.dialogwidth;
-    *h = Menulocal.dialogheight;
-    *x = Menulocal.dialogx;
-    *y = Menulocal.dialogy;
-    break;
-  case TypeCoordWin:
-    *w = Menulocal.coordwidth;
-    *h = Menulocal.coordheight;
-    *x = Menulocal.coordx;
-    *y = Menulocal.coordy;
-    break;
-  default:
-    *w = DEFAULT_GEOMETRY;
-    *h = DEFAULT_GEOMETRY;
-    *x = DEFAULT_GEOMETRY;
-    *y = DEFAULT_GEOMETRY;
-    break;
-  }
-}
-
-static void
-set_geometry(struct SubWin *d, int x, int y, int w, int h)
-{
-  switch (d->type) {
-  case TypeFileWin:
-    Menulocal.filewidth = w;
-    Menulocal.fileheight = h;
-    Menulocal.filex = x;
-    Menulocal.filey = y;
-    break;
-  case TypeAxisWin:
-    Menulocal.axiswidth = w;
-    Menulocal.axisheight = h;
-    Menulocal.axisx = x;
-    Menulocal.axisy = y;
-    break;
-  case TypeLegendWin:
-    Menulocal.legendwidth = w;
-    Menulocal.legendheight = h;
-    Menulocal.legendx = x;
-    Menulocal.legendy = y;
-    break;
-  case TypeMergeWin:
-    Menulocal.mergewidth = w;
-    Menulocal.mergeheight = h;
-    Menulocal.mergex = x;
-    Menulocal.mergey = y;
-    break;
-  case TypeInfoWin:
-    Menulocal.dialogwidth = w;
-    Menulocal.dialogheight = h;
-    Menulocal.dialogx = x;
-    Menulocal.dialogy = y;
-    break;
-  case TypeCoordWin:
-    Menulocal.coordwidth = w;
-    Menulocal.coordheight = h;
-    Menulocal.coordx = x;
-    Menulocal.coordy = y;
-    break;
-  }
-}
-
-static void
-set_visibility(struct SubWin *d, int s)
-{
-  switch (d->type) {
-  case TypeFileWin:
-    Menulocal.fileopen = s;
-    break;
-  case TypeAxisWin:
-    Menulocal.axisopen = s;
-    break;
-  case TypeLegendWin:
-    Menulocal.legendopen = s;
-    break;
-  case TypeMergeWin:
-    Menulocal.mergeopen = s;
-    break;
-  case TypeInfoWin:
-    Menulocal.dialogopen = s;
-    break;
-  case TypeCoordWin:
-    Menulocal.coordopen = s;
-    break;
-  }
-}
-
-#define DEFAULT_WIDTH 240
-#define DEFAULT_HEIGHT 320
-
-void
-sub_window_set_geometry(struct SubWin *d, int resize)
-{
-  int w, h, x, y, x0, y0;
-
-  if (d->Win == NULL) return;
-
-  get_geometry(d, &x, &y, &w, &h);
-
-  if (w == DEFAULT_GEOMETRY) {
-    w = DEFAULT_WIDTH;
-  }
-
-  if (h == DEFAULT_GEOMETRY) {
-    h = DEFAULT_HEIGHT;
-  }
-
-  if ((x != DEFAULT_GEOMETRY) && (y != DEFAULT_GEOMETRY)) {
-    gtk_window_get_position(GTK_WINDOW(TopLevel), &x0, &y0);
-    x += x0;
-    y += y0;
-
-    if (x < 0) {
-      x = 0;
-    }
-    if (y < 0) {
-      y = 0;
-    }
-    gtk_window_move(GTK_WINDOW(d->Win), x, y);
-  }
-
-  gtk_window_set_default_size(GTK_WINDOW(d->Win), w, h);
-
-  if (resize) {
-    gtk_window_resize(GTK_WINDOW(d->Win), w, h);
-  }
-}
-
-static int
-get_window_visibility(struct SubWin *d)
-{
-  GdkWindow *win;
-  GdkWindowState state;
-
-  if (d->Win == NULL) {
-    return 0;
-  }
-
-  win = gtk_widget_get_window(d->Win);
-  if (win == NULL) {
-    return 0;
-  }
-
-  state = gdk_window_get_state(win);
-
-  return ! (state & GDK_WINDOW_STATE_WITHDRAWN);
-}
-
-void
-sub_window_save_geometry(struct SubWin *d)
-{
-  gint x, y, x0, y0, w, h;
-
-  if (Menulocal.single_window_mode || ! get_window_visibility(d)) {
-    return;
-  }
-
-  gtk_window_get_position(GTK_WINDOW(TopLevel), &x0, &y0);
-  get_window_geometry(d->Win, &x, &y, &w, &h);
-  set_geometry(d, x - x0, y - y0, w, h);
-}
-
-void
-sub_window_save_visibility(struct SubWin *d)
-{
-  int state;
-
-  state = get_window_visibility(d);
-  set_visibility(d, state);
-}
-
-static void
-sub_window_hide(struct SubWin *d)
-{
-  if (d->Win) {
-    sub_window_save_geometry(d);
-    gtk_widget_hide(d->Win);
-    d->visible = FALSE;
-    set_toggle_action_widget_state(d->action_widget_id, FALSE);
-  }
-}
-
-static void
-sub_window_show(struct SubWin *d)
-{
-  if (d->Win) {
-    gtk_window_present(GTK_WINDOW(d->Win));
-    d->visible = TRUE;
-    set_toggle_action_widget_state(d->action_widget_id, TRUE);
-  }
-}
-
-static void
-sub_window_show_all(struct SubWin *d)
-{
-  if (d->Win) {
-    gtk_widget_show_all(d->Win);
-  }
-}
-
-void
-sub_window_set_visibility(struct SubWin *d, int state)
-{
-  if (d->Win == NULL) {
-    return;
-  }
-
-  if (state && ! Menulocal.single_window_mode) {
-    if (! gtk_widget_get_realized(d->Win)) {
-      sub_window_show_all(d);
-      sub_window_set_geometry(d, TRUE);
-    }
-    sub_window_show(d);
-  } else {
-    sub_window_hide(d);
-  }
-}
-
-static void
-cb_show(GtkWidget *widget, gpointer user_data)
-{
-  struct SubWin *d;
-
-  d = user_data;
-
-  if (d->Win == NULL) return;
-
-  sub_window_set_geometry(d, FALSE);
-}
-
-static gboolean
-cb_del(GtkWidget *w, GdkEvent *event, gpointer user_data)
-{
-  struct SubWin *d;
-
-  d = (struct SubWin *) user_data;
-  set_subwindow_state(d->type, SUBWIN_STATE_HIDE);
-
-  return TRUE;
-}
-
-static void
-cb_destroy(GtkWidget *w, gpointer user_data)
-{
-  struct SubWin *d;
-  struct obj_list_data *ptr, *next;
-
-  d = user_data;
-
-  d->Win = NULL;
-
-  switch (d->type) {
-  case TypeFileWin:
-  case TypeAxisWin:
-  case TypeMergeWin:
-  case TypeLegendWin:
-    for (ptr = d->data.data; ptr; ptr = next) {
-      if (ptr->popup) {
-	gtk_widget_destroy(ptr->popup);
-      }
-      if (ptr->popup_item) {
-	g_free(ptr->popup_item);
-      }
-      next = ptr->next;
-      g_free(ptr);
-    }
-    d->data.data = NULL;
-    break;
-  default:
-    d->data.text = NULL;
-    break;
-  }
-}
-
-static void
 obj_copy(struct objlist *obj, int dest, int src)
 {
   char *field[] = {"name", NULL};
@@ -979,7 +675,7 @@ update(struct obj_list_data *d)
     return;
   }
 
-  parent = (Menulocal.single_window_mode) ? TopLevel : d->parent->Win;
+  parent = TopLevel;
 
   d->setup_dialog(d, sel, -1);
   d->select = sel;
@@ -1314,30 +1010,6 @@ ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
   return TRUE;
 }
 
-static gboolean
-ev_sub_win_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
-{
-  GdkEventKey *e;
-  struct SubWin *d;
-
-  d = user_data;
-
-  g_return_val_if_fail(w != NULL, FALSE);
-  g_return_val_if_fail(event != NULL, FALSE);
-
-  e = (GdkEventKey *)event;
-
-  switch (e->keyval) {
-  case GDK_KEY_w:
-    if (e->state & GDK_CONTROL_MASK) {
-      set_subwindow_state(d->type, SUBWIN_STATE_HIDE);
-      return TRUE;
-    }
-    break;
-  }
-  return FALSE;
-}
-
 #ifdef WINDOWS
 #include <gdk/gdkwin32.h>
 
@@ -1364,72 +1036,19 @@ swin_realized(GtkWidget *widget, gpointer user_data)
 }
 
 static GtkWidget *
-sub_window_create(struct SubWin *d, const char *title, GtkWidget *swin, const char **xpm, const char **xpm2)
+sub_window_create(struct SubWin *d, GtkWidget *swin)
 {
-  GtkWidget *dlg;
-  GdkPixbuf *icon;
-  GtkWindowGroup *group;
-
-  dlg = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-  if (AccelGroup)
-    gtk_window_add_accel_group(GTK_WINDOW(dlg), AccelGroup);
-
-  d->Win = dlg;
-
-  if (xpm) {
-    icon = gdk_pixbuf_new_from_xpm_data(xpm);
-    if (xpm2) {
-      GList *tmp, *list = NULL;
-
-      list = g_list_append(list, icon);
-
-      icon = gdk_pixbuf_new_from_xpm_data(xpm2);
-      list = g_list_append(list, icon);
-
-      gtk_window_set_icon_list(GTK_WINDOW(dlg), list);
-
-      tmp = list;
-      while (tmp) {
-	g_object_unref(tmp->data);
-	tmp = tmp->next;
-      }
-      g_list_free(list);
-    } else {
-      gtk_window_set_icon(GTK_WINDOW(dlg), icon);
-    }
-  }
-  if (title) {
-    gtk_window_set_title(GTK_WINDOW(dlg), title);
-  }
-
-  group = gtk_window_get_group(GTK_WINDOW(TopLevel));
-  gtk_window_group_add_window(group, GTK_WINDOW(dlg));
-  //  gtk_widget_set_parent_window(GTK_WIDGET(dlg), TopLevel);
-  //  gtk_window_set_destroy_with_parent(GTK_WINDOW(dlg), TRUE);
-  //  gtk_window_set_type_hint(GTK_WINDOW(dlg), GDK_WINDOW_TYPE_HINT_DIALOG);
-  gtk_window_set_type_hint(GTK_WINDOW(dlg), GDK_WINDOW_TYPE_HINT_UTILITY);
-  gtk_window_set_transient_for(GTK_WINDOW(dlg), GTK_WINDOW(TopLevel));
-  gtk_window_set_skip_taskbar_hint(GTK_WINDOW(dlg), TRUE);
-  gtk_window_set_skip_pager_hint(GTK_WINDOW(dlg), FALSE);
-  gtk_window_set_urgency_hint(GTK_WINDOW(dlg), FALSE);
-
-  gtk_container_add(GTK_CONTAINER(dlg), swin);
+  d->Win = swin;
 
 #ifdef WINDOWS
   g_signal_connect(dlg, "realize", G_CALLBACK(hide_minimize_menu_item), NULL);
 #endif
-  g_signal_connect(dlg, "show", G_CALLBACK(cb_show), d);
-  g_signal_connect(dlg, "delete-event", G_CALLBACK(cb_del), d);
-  g_signal_connect(dlg, "destroy", G_CALLBACK(cb_destroy), d);
-  g_signal_connect(dlg, "key-press-event", G_CALLBACK(ev_sub_win_key_down), d);
 
-  gtk_widget_show_all(swin);
-
-  return dlg;
+  return swin;
 }
 
 GtkWidget *
-text_sub_window_create(struct SubWin *d, const char *title, const char **xpm, const char **xpm2)
+text_sub_window_create(struct SubWin *d)
 {
   GtkWidget *view, *swin;
   GtkTextBuffer *buf;
@@ -1445,11 +1064,11 @@ text_sub_window_create(struct SubWin *d, const char *title, const char **xpm, co
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   gtk_container_add(GTK_CONTAINER(swin), view);
 
-  return sub_window_create(d, title, swin, xpm, xpm2);
+  return sub_window_create(d, swin);
 }
 
 GtkWidget *
-label_sub_window_create(struct SubWin *d, const char *title, const char **xpm, const char **xpm2)
+label_sub_window_create(struct SubWin *d)
 {
   GtkWidget *label, *swin;
 
@@ -1474,7 +1093,7 @@ label_sub_window_create(struct SubWin *d, const char *title, const char **xpm, c
   gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(swin), label);
 #endif
 
-  return sub_window_create(d, title, swin, xpm, xpm2);
+  return sub_window_create(d, swin);
 }
 
 static gboolean
@@ -1535,7 +1154,7 @@ list_widget_create(struct SubWin *d, int lisu_num, n_list_store *list, int can_f
 }
 
 GtkWidget *
-list_sub_window_create(struct SubWin *d, const char *title, int lisu_num, n_list_store *list, const char **xpm, const char **xpm2)
+list_sub_window_create(struct SubWin *d, int lisu_num, n_list_store *list)
 {
   GtkWidget *swin;
   struct obj_list_data *data;
@@ -1543,11 +1162,11 @@ list_sub_window_create(struct SubWin *d, const char *title, int lisu_num, n_list
   data = list_widget_create(d, lisu_num, list, d->type != TypeFileWin, &swin);
   d->data.data = data;
 
-  return sub_window_create(d, title, swin, xpm, xpm2);
+  return sub_window_create(d, swin);
 }
 
 GtkWidget *
-tree_sub_window_create(struct SubWin *d, const char *title, int page_num, int *lisu_num, n_list_store **list, GtkWidget **icons, const char **xpm, const char **xpm2)
+tree_sub_window_create(struct SubWin *d, int page_num, int *lisu_num, n_list_store **list, GtkWidget **icons)
 {
   GtkWidget *tab, *swin;
   int i;
@@ -1573,7 +1192,7 @@ tree_sub_window_create(struct SubWin *d, const char *title, int page_num, int *l
   }
   gtk_notebook_set_current_page(GTK_NOTEBOOK(tab), 0);
 
-  return sub_window_create(d, title, tab, xpm, xpm2);
+  return sub_window_create(d, tab);
 }
 
 gboolean

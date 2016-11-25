@@ -140,18 +140,14 @@ CoordWinUpdate(int clear)
 {
 }
 
-void
-CoordWinState(struct SubWin *d, int state)
+GtkWidget *
+CoordWinState(struct SubWin *d)
 {
   if (d->Win) {
-    sub_window_set_visibility(d, state);
-    return;
+    return d->Win;
   }
 
-  if (! state) {
-    return;
-  }
-
-  label_sub_window_create(d, "Coordinate Window", Coordwin_xpm, Coordwin48_xpm);
+  label_sub_window_create(d);
   CoordWinSetFont(Menulocal.coordwin_font);
+  return d->Win;
 }

@@ -41,7 +41,7 @@ void CmFileEdit(void *w, gpointer client_data);
 void CmFileMath(void *w, gpointer client_data);
 void CmFileSaveData(void *w, gpointer client_data);
 
-void FileWinState(struct SubWin *d, int state);
+GtkWidget *FileWinState(struct SubWin *d);
 
 void CmOptionFileDef(void *w, gpointer client_data);
 int update_file_obj_multi(struct objlist *obj, struct narray *farray, int newfile);

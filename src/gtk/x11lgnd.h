@@ -37,5 +37,5 @@ void CmMarkDel(void *w, gpointer client_data);
 void CmTextUpdate(void *w, gpointer client_data);
 void CmTextDel(void *w, gpointer client_data);
 
-void LegendWinState(struct SubWin *d, int state);
+GtkWidget *LegendWinState(struct SubWin *d);
 void CmOptionTextDef(void *w, gpointer client_data);

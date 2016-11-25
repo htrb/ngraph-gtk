@@ -309,66 +309,6 @@ ViewClearAction_activated(GSimpleAction *action, GVariant *parameter, gpointer a
 }
 
 static void
-ViewToggleDataWindowAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
-{
-  set_subwindow_state(TypeFileWin, SUBWIN_STATE_TOGGLE);
-  g_simple_action_set_state(action, parameter);
-}
-
-static void
-ViewToggleAxisWindowAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
-{
-  set_subwindow_state(TypeAxisWin, SUBWIN_STATE_TOGGLE);
-  g_simple_action_set_state(action, parameter);
-}
-
-static void
-ViewToggleLegendWindowAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
-{
-  set_subwindow_state(TypeLegendWin, SUBWIN_STATE_TOGGLE);
-  g_simple_action_set_state(action, parameter);
-}
-
-static void
-ViewToggleMergeWindowAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
-{
-  set_subwindow_state(TypeMergeWin, SUBWIN_STATE_TOGGLE);
-  g_simple_action_set_state(action, parameter);
-}
-
-static void
-ViewToggleCoordinateWindowAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
-{
-  set_subwindow_state(TypeCoordWin, SUBWIN_STATE_TOGGLE);
-  g_simple_action_set_state(action, parameter);
-}
-
-static void
-ViewToggleInformationWindowAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
-{
-  set_subwindow_state(TypeInfoWin, SUBWIN_STATE_TOGGLE);
-  g_simple_action_set_state(action, parameter);
-}
-
-static void
-ViewToggleSingleWindowModeAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
-{
-  int state;
-
-  state = g_variant_get_boolean(parameter);
-  CmToggleSingleWindowMode(NULL, GINT_TO_POINTER(state));
-  if ((Menulocal.single_window_mode && state) || ! (Menulocal.single_window_mode || state)) {
-    g_simple_action_set_state(action, parameter);
-  }
-}
-
-static void
-ViewDefaultWindowConfigAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
-{
-  CmReloadWindowConfig(NULL, NULL);
-}
-
-static void
 ViewClearInformationWindowAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
   InfoWinClear();
@@ -757,14 +697,6 @@ static GActionEntry AppEntries[] =
   { "ViewDrawDirectAction", ViewDrawDirectAction_activated, NULL, NULL, NULL },
   { "ViewDrawAction", ViewDrawAction_activated, NULL, NULL, NULL },
   { "ViewClearAction", ViewClearAction_activated, NULL, NULL, NULL },
-  { "ViewToggleDataWindowAction", NULL, NULL, "true", ViewToggleDataWindowAction_activated },
-  { "ViewToggleAxisWindowAction", NULL, NULL, "true", ViewToggleAxisWindowAction_activated },
-  { "ViewToggleLegendWindowAction", NULL, NULL, "true", ViewToggleLegendWindowAction_activated },
-  { "ViewToggleMergeWindowAction", NULL, NULL, "false", ViewToggleMergeWindowAction_activated },
-  { "ViewToggleCoordinateWindowAction", NULL, NULL, "true", ViewToggleCoordinateWindowAction_activated },
-  { "ViewToggleInformationWindowAction", NULL, NULL, "false", ViewToggleInformationWindowAction_activated },
-  { "ViewToggleSingleWindowModeAction", NULL, NULL, "true", ViewToggleSingleWindowModeAction_activated },
-  { "ViewDefaultWindowConfigAction", ViewDefaultWindowConfigAction_activated, NULL, NULL, NULL },
   { "ViewClearInformationWindowAction", ViewClearInformationWindowAction_activated, NULL, NULL, NULL },
   { "ViewSidebarAction", NULL, NULL, "true", ViewSidebarAction_activated },
   { "ViewStatusbarAction", NULL, NULL, "true", ViewStatusbarAction_activated },

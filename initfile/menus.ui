@@ -239,50 +239,6 @@
       </section>
       <section>
 	<item>
-	  <attribute name="label" translatable="yes">Data window</attribute>
-	  <attribute name="action">app.ViewToggleDataWindowAction</attribute>
-	  <attribute name="hidden-when">action-disabled</attribute>
-	</item>
-	<item>
-	  <attribute name="label" translatable="yes">Axis window</attribute>
-	  <attribute name="action">app.ViewToggleAxisWindowAction</attribute>
-	  <attribute name="hidden-when">action-disabled</attribute>
-	</item>
-	<item>
-	  <attribute name="label" translatable="yes">Legend window</attribute>
-	  <attribute name="action">app.ViewToggleLegendWindowAction</attribute>
-	  <attribute name="hidden-when">action-disabled</attribute>
-	</item>
-	<item>
-	  <attribute name="label" translatable="yes">Merge window</attribute>
-	  <attribute name="action">app.ViewToggleMergeWindowAction</attribute>
-	  <attribute name="hidden-when">action-disabled</attribute>
-	</item>
-	<item>
-	  <attribute name="label" translatable="yes">Coordinate window</attribute>
-	  <attribute name="action">app.ViewToggleCoordinateWindowAction</attribute>
-	  <attribute name="hidden-when">action-disabled</attribute>
-	</item>
-	<item>
-	  <attribute name="label" translatable="yes">Information window</attribute>
-	  <attribute name="action">app.ViewToggleInformationWindowAction</attribute>
-	  <attribute name="hidden-when">action-disabled</attribute>
-	</item>
-	<item>
-	  <attribute name="label" translatable="yes">Single window mode</attribute>
-	  <attribute name="action">app.ViewToggleSingleWindowModeAction</attribute>
-	  <attribute name="hidden-when">action-disabled</attribute>
-	</item>
-      </section>
-      <section>
-	<item>
-	  <attribute name="label" translatable="yes">default _Window config</attribute>
-	  <attribute name="action">app.ViewDefaultWindowConfigAction</attribute>
-	  <attribute name="hidden-when">action-disabled</attribute>
-	</item>
-      </section>
-      <section>
-	<item>
 	  <attribute name="label" translatable="yes">_Clear information view</attribute>
 	  <attribute name="action">app.ViewClearInformationWindowAction</attribute>
 	</item>

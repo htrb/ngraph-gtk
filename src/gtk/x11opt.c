@@ -71,10 +71,6 @@ DefaultDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->geometry = w;
     gtk_box_pack_start(GTK_BOX(d->vbox), w, FALSE, FALSE, 4);
 
-    w = gtk_check_button_new_with_mnemonic(_("_Child Geometry"));
-    d->child_geometry = w;
-    gtk_box_pack_start(GTK_BOX(d->vbox), w, FALSE, FALSE, 4);
-
     w = gtk_check_button_new_with_mnemonic(_("_Viewer"));
     d->viewer = w;
     gtk_box_pack_start(GTK_BOX(d->vbox), w, FALSE, FALSE, 4);
@@ -101,15 +97,11 @@ DefaultDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->geometry), FALSE);
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->child_geometry), FALSE);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->viewer), FALSE);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->external_viewer), FALSE);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->external_driver), FALSE);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->addin_script), FALSE);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->misc), FALSE);
-
-  gtk_widget_set_visible(d->geometry, ! Menulocal.single_window_mode);
-  gtk_widget_set_visible(d->child_geometry, ! Menulocal.single_window_mode);
 }
 
 static int
@@ -141,7 +133,6 @@ DefaultDialogClose(GtkWidget *win, void *data)
     enum SAVE_CONFIG_TYPE type;
   } btns[] = {
     {NULL, SAVE_CONFIG_TYPE_GEOMETRY},
-    {NULL, SAVE_CONFIG_TYPE_CHILD_GEOMETRY},
     {NULL, SAVE_CONFIG_TYPE_VIEWER},
     {NULL, SAVE_CONFIG_TYPE_EXTERNAL_DRIVER},
     {NULL, SAVE_CONFIG_TYPE_ADDIN_SCRIPT},
@@ -159,13 +150,12 @@ DefaultDialogClose(GtkWidget *win, void *data)
   d->ret = IDLOOP;
 
   btns[0].btn = d->geometry;
-  btns[1].btn = d->child_geometry;
-  btns[2].btn = d->viewer;
-  btns[3].btn = d->external_driver;
-  btns[4].btn = d->addin_script;
-  btns[5].btn = d->misc;
-  btns[6].btn = d->external_viewer;
-  btns[7].btn = d->fonts;
+  btns[1].btn = d->viewer;
+  btns[2].btn = d->external_driver;
+  btns[3].btn = d->addin_script;
+  btns[4].btn = d->misc;
+  btns[5].btn = d->external_viewer;
+  btns[6].btn = d->fonts;
 
   type = 0;
 

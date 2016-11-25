@@ -31,7 +31,6 @@ fi
 YEAR=`date +%Y`
 MONTH=`iexpr $DATE`
 
-menu::show_window 5
 menu::echo
 LANG=$LOCALE /usr/bin/ncal -3Mbh $MONTH $YEAR | menu::cat
 menu::echo

@@ -25,4 +25,4 @@ void InfoWinClear(void);
 void InfoWinUpdate(int clear);
 void InfoWinDrawInfoText(const char *str);
 void InfoWinSetFont(char *font);
-void InfoWinState(struct SubWin *d, int state);
+GtkWidget *InfoWinState(struct SubWin *d);

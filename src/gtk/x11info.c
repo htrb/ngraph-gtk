@@ -112,18 +112,14 @@ InfoWinUpdate(int clear)
 {
 }
 
-void
-InfoWinState(struct SubWin *d, int state)
+GtkWidget *
+InfoWinState(struct SubWin *d)
 {
   if (d->Win) {
-    sub_window_set_visibility(d, state);
-    return;
+    return d->Win;
   }
 
-  if (! state) {
-    return;
-  }
-
-  text_sub_window_create(d, "Information Window", Infowin_xpm, Infowin48_xpm);
+  text_sub_window_create(d);
   InfoWinSetFont(Menulocal.infowin_font);
+  return d->Win;
 }

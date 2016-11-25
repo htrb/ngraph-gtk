@@ -93,7 +93,7 @@ static void create_menu(GtkWidget *w, struct MenuItem *item);
 static void create_popup(GtkWidget *parent, struct MenuItem *item);
 static GtkWidget *create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb);
 static void CmViewerButtonArm(GtkToggleToolButton *action, gpointer client_data);
-static void toggle_subwindow(GtkWidget *action, gpointer client_data);
+static void set_subwindow_state(enum SubWinType id);
 
 GdkCursorType Cursor[] = {
   GDK_LEFT_PTR,
@@ -145,8 +145,6 @@ enum ACTION_TYPE {
   ACTION_TYPE_FOCUS_UP,
   ACTION_TYPE_FOCUS_DOWN,
   ACTION_TYPE_AXIS_UNDO,
-  ACTION_TYPE_MULTI_WINDOW,
-  ACTION_TYPE_SINGLE_WINDOW,
   ACTION_TYPE_MODIFIED,
   ACTION_TYPE_NONE,
 };
@@ -183,13 +181,6 @@ enum ActionWidgetIndex {
   EditOrderBottomAction,
   PopupUpdateAction,
   EditPasteAction,
-  DataWindowAction,
-  AxisWindowAction,
-  LegendWindowAction,
-  MergeWindowAction,
-  CoordWindowAction,
-  InfoWindowAction,
-  DefaultWindowAction,
   ViewSidebarAction,
   ViewStatusbarAction,
   ViewRulerAction,
@@ -197,8 +188,6 @@ enum ActionWidgetIndex {
   ViewCommandToolbarAction,
   ViewToolboxAction,
   ViewCrossGaugeAction,
-  SingleWindowAction,
-  SingleWindowSeparator,
   DataPropertyAction,
   DataCloseAction,
   DataEditAction,
@@ -514,117 +503,6 @@ struct ToolItem PointerToolbar[] = {
 };
 
 struct ToolItem CommandToolbar[] = {
-  {
-    TOOL_TYPE_TOGGLE2,
-    "Data Window",
-    "Data Window",
-    N_("Activate Data Window"),
-    NULL,
-    NGRAPH_FILEWIN_ICON_FILE,
-    "<Ngraph>/View/Data Window",
-    GDK_KEY_F3,
-    0,
-    NULL,
-    G_CALLBACK(toggle_subwindow),
-    TypeFileWin,
-    ActionWidget + DataWindowAction,
-    "app.ViewToggleDataWindowAction",
-  },
-  {
-    TOOL_TYPE_TOGGLE2,
-    "Axis Window",
-    "Axis Window",
-    N_("Activate Axis Window"),
-    NULL,
-    NGRAPH_AXISWIN_ICON_FILE,
-    "<Ngraph>/View/Axis Window",
-    GDK_KEY_F4,
-    0,
-    NULL,
-    G_CALLBACK(toggle_subwindow),
-    TypeAxisWin,
-    ActionWidget + AxisWindowAction,
-    "app.ViewToggleAxisWindowAction",
-  },
-  {
-    TOOL_TYPE_TOGGLE2,
-    "Legend Window",
-    "Legend Window",
-    N_("Activate Legend Window"),
-    NULL,
-    NGRAPH_LEGENDWIN_ICON_FILE,
-    "<Ngraph>/View/Legend Window",
-    GDK_KEY_F5,
-    0,
-    NULL,
-    G_CALLBACK(toggle_subwindow),
-    TypeLegendWin,
-    ActionWidget + LegendWindowAction,
-    "app.ViewToggleLegendWindowAction",
-  },
-  {
-    TOOL_TYPE_TOGGLE2,
-    "Merge Window",
-    "Merge Window",
-    N_("Activate Merge Window"),
-    NULL,
-    NGRAPH_MERGEWIN_ICON_FILE,
-    "<Ngraph>/View/Merge Window",
-    GDK_KEY_F6,
-    0,
-    NULL,
-    G_CALLBACK(toggle_subwindow),
-    TypeMergeWin,
-    ActionWidget + MergeWindowAction,
-    "app.ViewToggleMergeWindowAction",
-  },
-  {
-    TOOL_TYPE_TOGGLE2,
-    "Coordinate Window",
-    "Coordinate Window",
-    N_("Activate Coordinate Window"),
-    NULL,
-    NGRAPH_COORDWIN_ICON_FILE,
-    "<Ngraph>/View/Coordinate Window",
-    GDK_KEY_F7,
-    0,
-    NULL,
-    G_CALLBACK(toggle_subwindow),
-    TypeCoordWin,
-    ActionWidget + CoordWindowAction,
-    "app.ViewToggleCoordinateWindowAction",
-  },
-  {
-    TOOL_TYPE_TOGGLE2,
-    "Information Window",
-    "Information Window",
-    N_("Activate Information Window"),
-    NULL,
-    NGRAPH_INFOWIN_ICON_FILE,
-    "<Ngraph>/View/Information Window",
-    GDK_KEY_F8,
-    0,
-    NULL,
-    G_CALLBACK(toggle_subwindow),
-    TypeInfoWin,
-    ActionWidget + InfoWindowAction,
-    "app.ViewToggleInformationWindowAction",
-  },
-  {
-    TOOL_TYPE_SEPARATOR,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    0,
-    0,
-    NULL,
-    NULL,
-    0,
-    ActionWidget + SingleWindowSeparator,
-  },
   {
     TOOL_TYPE_RECENT_DATA,
     N_("_Add"),
@@ -1732,153 +1610,6 @@ struct MenuItem ViewMenu[] = {
     0,
     NULL,
     "ViewClearAction",
-  },
-  {
-    MENU_TYPE_SEPARATOR,
-    NULL,
-  },
-  {
-    MENU_TYPE_TOGGLE2,
-    "Data Window",
-    "Data Window",
-    N_("Activate Data Window"),
-    NULL,
-    NGRAPH_FILEWIN_ICON_FILE,
-    "<Ngraph>/View/Data Window",
-    GDK_KEY_F3,
-    0,
-    NULL,
-    G_CALLBACK(toggle_subwindow),
-    TypeFileWin,
-    ActionWidget + DataWindowAction,
-    "ViewToggleDataWindowAction",
-  },
-  {
-    MENU_TYPE_TOGGLE2,
-    "Axis Window",
-    "Axis Window",
-    N_("Activate Axis Window"),
-    NULL,
-    NGRAPH_AXISWIN_ICON_FILE,
-    "<Ngraph>/View/Axis Window",
-    GDK_KEY_F4,
-    0,
-    NULL,
-    G_CALLBACK(toggle_subwindow),
-    TypeAxisWin,
-    ActionWidget + AxisWindowAction,
-    "ViewToggleAxisWindowAction",
-  },
-  {
-    MENU_TYPE_TOGGLE2,
-    "Legend Window",
-    "Legend Window",
-    N_("Activate Legend Window"),
-    NULL,
-    NGRAPH_LEGENDWIN_ICON_FILE,
-    "<Ngraph>/View/Legend Window",
-    GDK_KEY_F5,
-    0,
-    NULL,
-    G_CALLBACK(toggle_subwindow),
-    TypeLegendWin,
-    ActionWidget + LegendWindowAction,
-    "ViewToggleLegendWindowAction",
-  },
-  {
-    MENU_TYPE_TOGGLE2,
-    "Merge Window",
-    "Merge Window",
-    N_("Activate Merge Window"),
-    NULL,
-    NGRAPH_MERGEWIN_ICON_FILE,
-    "<Ngraph>/View/Merge Window",
-    GDK_KEY_F6,
-    0,
-    NULL,
-    G_CALLBACK(toggle_subwindow),
-    TypeMergeWin,
-    ActionWidget + MergeWindowAction,
-    "ViewToggleMergeWindowAction",
-  },
-  {
-    MENU_TYPE_TOGGLE2,
-    "Coordinate Window",
-    "Coordinate Window",
-    N_("Activate Coordinate Window"),
-    NULL,
-    NGRAPH_COORDWIN_ICON_FILE,
-    "<Ngraph>/View/Coordinate Window",
-    GDK_KEY_F7,
-    0,
-    NULL,
-    G_CALLBACK(toggle_subwindow),
-    TypeCoordWin,
-    ActionWidget + CoordWindowAction,
-    "ViewToggleCoordinateWindowAction",
-  },
-  {
-    MENU_TYPE_TOGGLE2,
-    "Information Window",
-    "Information Window",
-    N_("Activate Information Window"),
-    NULL,
-    NGRAPH_INFOWIN_ICON_FILE,
-    "<Ngraph>/View/Information Window",
-    GDK_KEY_F8,
-    0,
-    NULL,
-    G_CALLBACK(toggle_subwindow),
-    TypeInfoWin,
-    ActionWidget + InfoWindowAction,
-    "ViewToggleInformationWindowAction",
-  },
- {
-    MENU_TYPE_TOGGLE,
-    N_("Single window mode"),
-    N_("Single window mode"),
-    N_("Toggle single window mode"),
-    NULL,
-    NULL,
-    NULL,
-    0,
-    0,
-    NULL,
-    G_CALLBACK(CmToggleSingleWindowMode),
-    0,
-    ActionWidget + SingleWindowAction,
-    "ViewToggleSingleWindowModeAction",
-  },
-  {
-    MENU_TYPE_SEPARATOR,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    0,
-    0,
-    NULL,
-    NULL,
-    0,
-    ActionWidget + SingleWindowSeparator,
-  },
-  {
-    MENU_TYPE_NORMAL,
-    N_("default _Window config"),
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    "<Ngraph>/View/default Window config",
-    0,
-    0,
-    NULL,
-    G_CALLBACK(CmReloadWindowConfig),
-    0,
-    ActionWidget + DefaultWindowAction,
-    "ViewDefaultWindowConfigAction",
   },
   {
     MENU_TYPE_SEPARATOR,
@@ -3419,18 +3150,8 @@ init_action_widget_list(void)
     case EditPasteAction:
       ActionWidget[i].type = ACTION_TYPE_FOCUS_EDIT_PASTE;
       break;
-    case DataWindowAction:
-    case AxisWindowAction:
-    case LegendWindowAction:
-    case MergeWindowAction:
-    case CoordWindowAction:
-    case InfoWindowAction:
-    case DefaultWindowAction:
-    case SingleWindowSeparator:
-      ActionWidget[i].type = ACTION_TYPE_MULTI_WINDOW;
-      break;
-    case ViewSidebarAction:
-      ActionWidget[i].type = ACTION_TYPE_SINGLE_WINDOW;
+      //    case ViewSidebarAction:
+      //      ActionWidget[i].type = ACTION_TYPE_SINGLE_WINDOW;
       break;
     case DataPropertyAction:
     case DataCloseAction:
@@ -4161,71 +3882,24 @@ create_message_box(GtkWidget **label1, GtkWidget **label2)
   return frame;
 }
 
-static void
-set_window_action_visibility(int visibility)
-{
-  int i, state;
-
-  for (i = 0; i < ActionWidgetNum; i++) {
-    if (ActionWidget[i].type == ACTION_TYPE_SINGLE_WINDOW) {
-      state = ! visibility;
-    } else if (ActionWidget[i].type == ACTION_TYPE_MULTI_WINDOW) {
-      state = visibility;
-    } else {
-      continue;
-    }
-
-    if (ActionWidget[i].menu) {
-      gtk_widget_set_visible(ActionWidget[i].menu, state);
-    }
-    if (ActionWidget[i].tool) {
-      gtk_widget_set_visible(GTK_WIDGET(ActionWidget[i].tool), state);
-    }
-    if (ActionWidget[i].popup) {
-      gtk_widget_set_visible(ActionWidget[i].popup, state);
-    }
-#if USE_GTK_BUILDER
-    if (ActionWidget[i].action) {
-      g_simple_action_set_enabled(G_SIMPLE_ACTION(ActionWidget[i].action), state);
-    }
-#endif
-  }
-}
-
 #define OBJ_ID_KEY "ngraph_object_id"
 
 static void
 window_to_tab(struct SubWin *win, GtkWidget *tab, const char *icon_file, const char *tip)
 {
-  GtkWidget *w, *icon, *dialog;
+  GtkWidget *icon;
   int obj_id;
 
   obj_id = chkobjectid(win->data.data->obj);
-  dialog = win->Win;
-
-  w = gtk_bin_get_child(GTK_BIN(dialog));
-  g_object_ref(w);
-  g_object_set_data(G_OBJECT(w), OBJ_ID_KEY, GINT_TO_POINTER(obj_id));
-  gtk_container_remove(GTK_CONTAINER(dialog), w);
+  g_object_set_data(G_OBJECT(win->Win), OBJ_ID_KEY, GINT_TO_POINTER(obj_id));
 
   icon = gtk_image_new_from_file(icon_file);
   gtk_widget_set_tooltip_text(icon, tip);
 
-  gtk_notebook_append_page(GTK_NOTEBOOK(tab), w, icon);
-  gtk_notebook_set_tab_detachable(GTK_NOTEBOOK(tab), w, TRUE);
-  gtk_notebook_set_tab_reorderable(GTK_NOTEBOOK(tab), w, TRUE);
-  gtk_notebook_set_menu_label_text(GTK_NOTEBOOK(tab), w, tip);
-}
-
-static void
-tab_to_window(GtkWidget *dialog, GtkWidget *tab, int page)
-{
-  GtkWidget *w;
-
-  w = gtk_notebook_get_nth_page(GTK_NOTEBOOK(tab), page);
-  g_object_ref(w);		/* FIXME: can avoid to call of the function? */
-  gtk_notebook_remove_page(GTK_NOTEBOOK(tab), page);
-  gtk_container_add(GTK_CONTAINER(dialog), w);
+  gtk_notebook_append_page(GTK_NOTEBOOK(tab), win->Win, icon);
+  gtk_notebook_set_tab_detachable(GTK_NOTEBOOK(tab), win->Win, TRUE);
+  gtk_notebook_set_tab_reorderable(GTK_NOTEBOOK(tab), win->Win, TRUE);
+  gtk_notebook_set_menu_label_text(GTK_NOTEBOOK(tab), win->Win, tip);
 }
 
 static void
@@ -4333,7 +4007,7 @@ save_tab_position(void)
 static void
 multi_to_single(void)
 {
-  int i, j, n, tab_n, obj_id, height, width;
+  int i, j, n, tab_n, obj_id;
   struct obj_list_data *obj_data;
   GtkWidget *legend_tab, *icon, *w, *tab;
   struct obj_tab_info tab_info[] = {
@@ -4350,8 +4024,7 @@ multi_to_single(void)
   tab_n = sizeof(tab_info) / sizeof(*tab_info);
   init_tab_info(tab_info, tab_n);
 
-  legend_tab =  gtk_bin_get_child(GTK_BIN(NgraphApp.LegendWin.Win));
-
+  legend_tab = NgraphApp.LegendWin.Win;
   for (j = 0; j < tab_n; j++) {
     if (tab_info[j].tab > 0) {
       tab = gtk_paned_get_child2(GTK_PANED(NgraphApp.Viewer.side_pane2));
@@ -4407,133 +4080,13 @@ multi_to_single(void)
     }
   }
 
-  w =  gtk_bin_get_child(GTK_BIN(NgraphApp.CoordWin.Win));
-  g_object_ref(w);
-  gtk_container_remove(GTK_CONTAINER(NgraphApp.CoordWin.Win), w);
-  gtk_paned_pack1(GTK_PANED(NgraphApp.Viewer.side_pane3), w, FALSE, TRUE);
+  gtk_paned_pack1(GTK_PANED(NgraphApp.Viewer.side_pane3), NgraphApp.CoordWin.Win, FALSE, TRUE);
+  gtk_paned_pack2(GTK_PANED(NgraphApp.Viewer.side_pane3), NgraphApp.InfoWin.Win, TRUE, TRUE);
 
-  w =  gtk_bin_get_child(GTK_BIN(NgraphApp.InfoWin.Win));
-  g_object_ref(w);
-  gtk_container_remove(GTK_CONTAINER(NgraphApp.InfoWin.Win), w);
-  gtk_paned_pack2(GTK_PANED(NgraphApp.Viewer.side_pane3), w, TRUE, TRUE);
-
-  set_window_action_visibility(FALSE);
   set_pane_position();
-
   if (Menulocal.sidebar) {
     gtk_widget_show(NgraphApp.Viewer.side_pane1);
   }
-
-  set_subwindow_state(TypeFileWin, SUBWIN_STATE_HIDE);
-  set_subwindow_state(TypeAxisWin, SUBWIN_STATE_HIDE);
-  set_subwindow_state(TypeLegendWin, SUBWIN_STATE_HIDE);
-  set_subwindow_state(TypeMergeWin, SUBWIN_STATE_HIDE);
-  set_subwindow_state(TypeCoordWin, SUBWIN_STATE_HIDE);
-  set_subwindow_state(TypeInfoWin, SUBWIN_STATE_HIDE);
-
-  if (! Menulocal.single_window_mode) {
-    gtk_window_get_size(GTK_WINDOW(TopLevel), &width, &height);
-    if (Menulocal.filewidth > 0) {
-      width += Menulocal.filewidth;
-    }
-    gtk_window_resize(GTK_WINDOW(TopLevel), width, height);
-  }
-
-  Menulocal.single_window_mode = TRUE;
-}
-
-static void
-check_move_widget(GtkWidget *tab2)
-{
-  int i, n, obj_id;
-  GtkWidget *w;
-
-  n = gtk_notebook_get_n_pages(GTK_NOTEBOOK(tab2));
-  for (i = n - 1; i >= 0; i--) {
-    w = gtk_notebook_get_nth_page(GTK_NOTEBOOK(tab2), i);
-    obj_id = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(w), OBJ_ID_KEY));
-    if (obj_id == chkobjectid(NgraphApp.MergeWin.data.data->obj)) {
-      tab_to_window(NgraphApp.MergeWin.Win, tab2, i);
-    } else if (obj_id == chkobjectid(NgraphApp.AxisWin.data.data->obj)) {
-      tab_to_window(NgraphApp.AxisWin.Win, tab2, i);
-    } else if (obj_id == chkobjectid(NgraphApp.FileWin.data.data->obj)) {
-      tab_to_window(NgraphApp.FileWin.Win, tab2, i);
-    }
-  }
-}
-
-static void
-check_move_legend_widget(GtkWidget *tab, GtkWidget *tab2, int obj_id)
-{
-  int i, n, obj_id2;
-  GtkWidget *w, *icon;
-
-  n = gtk_notebook_get_n_pages(GTK_NOTEBOOK(tab2));
-  for (i = 0; i < n; i++) {
-    w = gtk_notebook_get_nth_page(GTK_NOTEBOOK(tab2), i);
-    obj_id2 = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(w), OBJ_ID_KEY));
-    if (obj_id2 == obj_id) {
-      icon = gtk_notebook_get_tab_label(GTK_NOTEBOOK(tab2), w);
-      g_object_ref(w);
-      g_object_ref(icon);
-      gtk_notebook_remove_page(GTK_NOTEBOOK(tab2), i);
-      gtk_notebook_append_page(GTK_NOTEBOOK(tab), w, icon);
-      break;
-    }
-  }
-}
-
-static void
-single_to_multi(void)
-{
-  int obj_id, width, height;
-  GtkWidget *tab, *w, *tab2, *tab3;
-  struct obj_list_data *obj_data;
-
-  save_tab_position();
-
-  set_window_action_visibility(TRUE);
-  get_pane_position();
-
-  tab2 = gtk_paned_get_child2(GTK_PANED(NgraphApp.Viewer.side_pane2));
-  check_move_widget(tab2);
-
-  tab2 = gtk_paned_get_child1(GTK_PANED(NgraphApp.Viewer.side_pane2));
-  check_move_widget(tab2);
-
-  obj_data = NgraphApp.LegendWin.data.data;
-  tab =  gtk_bin_get_child(GTK_BIN(NgraphApp.LegendWin.Win));
-  tab2 = gtk_paned_get_child2(GTK_PANED(NgraphApp.Viewer.side_pane2));
-  tab3 = gtk_paned_get_child1(GTK_PANED(NgraphApp.Viewer.side_pane2));
-  for (; obj_data; obj_data = obj_data->next) {
-    obj_id = chkobjectid(obj_data->obj);
-    check_move_legend_widget(tab, tab2, obj_id);
-    check_move_legend_widget(tab, tab3, obj_id);
-  }
-
-  w = gtk_paned_get_child1(GTK_PANED(NgraphApp.Viewer.side_pane3));
-  g_object_ref(w);
-  gtk_container_remove(GTK_CONTAINER(NgraphApp.Viewer.side_pane3), w);
-  gtk_container_add(GTK_CONTAINER(NgraphApp.CoordWin.Win), w);
-
-  w = gtk_paned_get_child2(GTK_PANED(NgraphApp.Viewer.side_pane3));
-  g_object_ref(w);
-  gtk_container_remove(GTK_CONTAINER(NgraphApp.Viewer.side_pane3), w);
-  gtk_container_add(GTK_CONTAINER(NgraphApp.InfoWin.Win), w);
-
-  gtk_widget_hide(NgraphApp.Viewer.side_pane1);
-
-  if (Menulocal.single_window_mode) {
-    gtk_window_get_size(GTK_WINDOW(TopLevel), &width, &height);
-    if (Menulocal.filewidth > 0) {
-      width -= Menulocal.filewidth;
-    }
-    gtk_window_resize(GTK_WINDOW(TopLevel), width, height);
-  }
-
-  Menulocal.single_window_mode = FALSE;
-
-  CmReloadWindowConfig(NULL, NULL);
 }
 
 static void
@@ -4749,78 +4302,14 @@ setupwindow(void)
   set_axis_undo_button_sensitivity(FALSE);
 
   gtk_container_add(GTK_CONTAINER(TopLevel), vbox2);
-}
 
-static void
-defaultwindowconfig(void)
-{
-  int w, h;
-#if GTK_CHECK_VERSION(3, 22, 0)
-  GdkDisplay *disp;
-#endif
-
-#if GTK_CHECK_VERSION(3, 22, 0)
-  w = 800;
-  h = 600;
-  disp = gdk_display_get_default();
-  if (disp) {
-    GdkMonitor *monitor;
-
-    monitor = gdk_display_get_primary_monitor(disp);
-    if (monitor) {
-      GdkRectangle rect;
-
-      gdk_monitor_get_geometry(monitor, &rect);
-      w = rect.width;
-      h = rect.height;
-    }
-  }
-#else
-  w = gdk_screen_get_width(gdk_screen_get_default());
-  h = w / 2 * 1.2;
-#endif
-
-  if (Menulocal.fileopen) {
-    if (Menulocal.filewidth == DEFAULT_GEOMETRY)
-      Menulocal.filewidth = w / 4;
-
-    if (Menulocal.fileheight == DEFAULT_GEOMETRY)
-      Menulocal.fileheight = h / 4;
-
-    if (Menulocal.filex == DEFAULT_GEOMETRY)
-      Menulocal.filex = -Menulocal.filewidth - 4;
-
-    if (Menulocal.filey == DEFAULT_GEOMETRY)
-      Menulocal.filey = 0;
-  }
-
-  if (Menulocal.axisopen) {
-    if (Menulocal.axiswidth == DEFAULT_GEOMETRY)
-      Menulocal.axiswidth = w / 4;
-
-    if (Menulocal.axisheight == DEFAULT_GEOMETRY)
-      Menulocal.axisheight = h / 4;
-
-    if (Menulocal.axisx == DEFAULT_GEOMETRY)
-      Menulocal.axisx = -Menulocal.axiswidth - 4;
-
-    if (Menulocal.axisy == DEFAULT_GEOMETRY)
-      Menulocal.axisy = Menulocal.fileheight + 4;
-  }
-
-  if (Menulocal.coordopen) {
-    if (Menulocal.coordwidth == DEFAULT_GEOMETRY)
-      Menulocal.coordwidth = w / 4;
-
-    if (Menulocal.coordheight == DEFAULT_GEOMETRY)
-      Menulocal.coordheight = h / 4;
-
-    if (Menulocal.coordx == DEFAULT_GEOMETRY)
-      Menulocal.coordx = -Menulocal.coordwidth - 4;
-
-    if (Menulocal.coordy == DEFAULT_GEOMETRY)
-      Menulocal.coordy = Menulocal.fileheight + Menulocal.axisheight + 8;
-  }
+  set_subwindow_state(TypeInfoWin);
+  set_subwindow_state(TypeCoordWin);
+  set_subwindow_state(TypeMergeWin);
+  set_subwindow_state(TypeLegendWin);
+  set_subwindow_state(TypeAxisWin);
+  set_subwindow_state(TypeFileWin);
+  multi_to_single();
 }
 
 static void
@@ -4905,33 +4394,21 @@ init_ngraph_app_struct(void)
 
   memset(&NgraphApp.FileWin, 0, sizeof(NgraphApp.FileWin));
   NgraphApp.FileWin.type = TypeFileWin;
-  NgraphApp.FileWin.action_widget_id = DataWindowAction;
-  NgraphApp.FileWin.state_func = FileWinState;
 
   memset(&NgraphApp.AxisWin, 0, sizeof(NgraphApp.AxisWin));
   NgraphApp.AxisWin.type = TypeAxisWin;
-  NgraphApp.AxisWin.action_widget_id = AxisWindowAction;
-  NgraphApp.AxisWin.state_func = AxisWinState;
 
   memset(&NgraphApp.LegendWin, 0, sizeof(NgraphApp.LegendWin));
   NgraphApp.LegendWin.type = TypeLegendWin;
-  NgraphApp.LegendWin.action_widget_id = LegendWindowAction;
-  NgraphApp.LegendWin.state_func = LegendWinState;
 
   memset(&NgraphApp.MergeWin, 0, sizeof(NgraphApp.MergeWin));
   NgraphApp.MergeWin.type = TypeMergeWin;
-  NgraphApp.MergeWin.action_widget_id = MergeWindowAction;
-  NgraphApp.MergeWin.state_func = MergeWinState;
 
   memset(&NgraphApp.InfoWin, 0, sizeof(NgraphApp.InfoWin));
   NgraphApp.InfoWin.type = TypeInfoWin;
-  NgraphApp.InfoWin.action_widget_id = InfoWindowAction;
-  NgraphApp.InfoWin.state_func = InfoWinState;
 
   memset(&NgraphApp.CoordWin, 0, sizeof(NgraphApp.CoordWin));
   NgraphApp.CoordWin.type = TypeCoordWin;
-  NgraphApp.CoordWin.action_widget_id = CoordWindowAction;
-  NgraphApp.CoordWin.state_func = CoordWinState;
 
   NgraphApp.legend_text_list = NULL;
   NgraphApp.x_math_list = NULL;
@@ -4939,130 +4416,6 @@ init_ngraph_app_struct(void)
   NgraphApp.func_list = NULL;
   NgraphApp.fit_list = NULL;
 }
-
-static void
-set_subwin_state(void)
-{
-  NgraphApp.InfoWin.visible = Menulocal.single_window_mode && Menulocal.dialogopen;
-  NgraphApp.CoordWin.visible = Menulocal.single_window_mode && Menulocal.coordopen;
-  NgraphApp.MergeWin.visible = Menulocal.single_window_mode && Menulocal.mergeopen;
-  NgraphApp.LegendWin.visible = Menulocal.single_window_mode && Menulocal.legendopen;
-  NgraphApp.AxisWin.visible = Menulocal.single_window_mode && Menulocal.axisopen;
-  NgraphApp.FileWin.visible = Menulocal.single_window_mode && Menulocal.fileopen;
-}
-
-static void
-create_sub_windows(void)
-{
-  set_subwindow_state(TypeFileWin, SUBWIN_STATE_SHOW);
-  set_subwindow_state(TypeAxisWin, SUBWIN_STATE_SHOW);
-  set_subwindow_state(TypeLegendWin, SUBWIN_STATE_SHOW);
-  set_subwindow_state(TypeMergeWin, SUBWIN_STATE_SHOW);
-  set_subwindow_state(TypeCoordWin, SUBWIN_STATE_SHOW);
-  set_subwindow_state(TypeInfoWin, SUBWIN_STATE_SHOW);
-
-  set_subwin_state();
-
-  set_subwindow_state(TypeFileWin, (Menulocal.fileopen) ? SUBWIN_STATE_SHOW : SUBWIN_STATE_HIDE);
-  set_subwindow_state(TypeAxisWin, (Menulocal.axisopen) ? SUBWIN_STATE_SHOW : SUBWIN_STATE_HIDE);
-  set_subwindow_state(TypeLegendWin, (Menulocal.legendopen) ? SUBWIN_STATE_SHOW : SUBWIN_STATE_HIDE);
-  set_subwindow_state(TypeMergeWin, (Menulocal.mergeopen) ? SUBWIN_STATE_SHOW : SUBWIN_STATE_HIDE);
-  set_subwindow_state(TypeCoordWin, (Menulocal.coordopen) ? SUBWIN_STATE_SHOW : SUBWIN_STATE_HIDE);
-  set_subwindow_state(TypeInfoWin, (Menulocal.dialogopen) ? SUBWIN_STATE_SHOW : SUBWIN_STATE_HIDE);
-}
-
-static void
-destroy_sub_windows(void)
-{
-  if (NgraphApp.FileWin.Win) {
-    set_subwindow_state(TypeFileWin, SUBWIN_STATE_HIDE);
-    gtk_widget_destroy(NgraphApp.FileWin.Win);
-  }
-
-  if (NgraphApp.AxisWin.Win) {
-    set_subwindow_state(TypeAxisWin, SUBWIN_STATE_HIDE);
-    gtk_widget_destroy(NgraphApp.AxisWin.Win);
-  }
-
-  if (NgraphApp.LegendWin.Win) {
-    set_subwindow_state(TypeLegendWin, SUBWIN_STATE_HIDE);
-    gtk_widget_destroy(NgraphApp.LegendWin.Win);
-  }
-
-  if (NgraphApp.MergeWin.Win) {
-    set_subwindow_state(TypeMergeWin, SUBWIN_STATE_HIDE);
-    gtk_widget_destroy(NgraphApp.MergeWin.Win);
-  }
-
-  if (NgraphApp.InfoWin.Win) {
-    set_subwindow_state(TypeInfoWin, SUBWIN_STATE_HIDE);
-    gtk_widget_destroy(NgraphApp.InfoWin.Win);
-  }
-
-  if (NgraphApp.CoordWin.Win) {
-    set_subwindow_state(TypeCoordWin, SUBWIN_STATE_HIDE);
-    gtk_widget_destroy(NgraphApp.CoordWin.Win);
-  }
-}
-
-#ifdef WINDOWS
-enum SUB_WINDOW_STATE {
-  FILE_WIN_VISIBLE   = 0x01,
-  AXIS_WIN_VISIBLE   = 0x02,
-  LEGEND_WIN_VISIBLE = 0x04,
-  MERGE_WIN_VISIBLE  = 0x08,
-  INFO_WIN_VISIBLE   = 0x10,
-  COORD_WIN_VISIBLE  = 0x20,
-};
-
-static gboolean
-change_window_state_cb(GtkWidget *widget, GdkEventWindowState *event, gpointer user_data)
-{
-  static int window_state = 0;
-
-  if (event->new_window_state & GDK_WINDOW_STATE_ICONIFIED) {
-    if (NgraphApp.FileWin.Win && GTK_WIDGET_VISIBLE(NgraphApp.FileWin.Win)) {
-      window_state |= FILE_WIN_VISIBLE;
-      gtk_widget_hide(NgraphApp.FileWin.Win);
-    }
-    if (NgraphApp.AxisWin.Win && GTK_WIDGET_VISIBLE(NgraphApp.AxisWin.Win)) {
-      window_state |= AXIS_WIN_VISIBLE;
-      gtk_widget_hide(NgraphApp.AxisWin.Win);
-    }
-    if (NgraphApp.LegendWin.Win && GTK_WIDGET_VISIBLE(NgraphApp.LegendWin.Win)) {
-      window_state |= LEGEND_WIN_VISIBLE;
-      gtk_widget_hide(NgraphApp.LegendWin.Win);
-    }
-    if (NgraphApp.InfoWin.Win && GTK_WIDGET_VISIBLE(NgraphApp.InfoWin.Win)) {
-      window_state |= INFO_WIN_VISIBLE;
-      gtk_widget_hide(NgraphApp.InfoWin.Win);
-    }
-    if (NgraphApp.CoordWin.Win && GTK_WIDGET_VISIBLE(NgraphApp.CoordWin.Win)) {
-      window_state |= COORD_WIN_VISIBLE;
-      gtk_widget_hide(NgraphApp.CoordWin.Win);
-    }
-  } else if (event->changed_mask & GDK_WINDOW_STATE_ICONIFIED) {
-    if (NgraphApp.FileWin.Win && (window_state & FILE_WIN_VISIBLE)) {
-      gtk_widget_show(NgraphApp.FileWin.Win);
-    }
-    if (NgraphApp.AxisWin.Win && (window_state & AXIS_WIN_VISIBLE)) {
-      gtk_widget_show(NgraphApp.AxisWin.Win);
-    }
-    if (NgraphApp.LegendWin.Win && (window_state & LEGEND_WIN_VISIBLE)) {
-      gtk_widget_show(NgraphApp.LegendWin.Win);
-    }
-    if (NgraphApp.InfoWin.Win && (window_state & INFO_WIN_VISIBLE)) {
-      gtk_widget_show(NgraphApp.InfoWin.Win);
-    }
-    if (NgraphApp.CoordWin.Win && (window_state & COORD_WIN_VISIBLE)) {
-      gtk_widget_show(NgraphApp.CoordWin.Win);
-    }
-    window_state = 0;
-  }
-
-  return FALSE;
-}
-#endif
 
 void
 set_modified_state(int state)
@@ -5727,9 +5080,6 @@ create_toplevel_window(void)
   }
   gtk_window_add_accel_group(GTK_WINDOW(TopLevel), AccelGroup);
 
-#ifdef WINDOWS
-  g_signal_connect(TopLevel, "window-state-event", G_CALLBACK(change_window_state_cb), NULL);
-#endif
   g_signal_connect(TopLevel, "delete-event", G_CALLBACK(CloseCallback), NULL);
   g_signal_connect(TopLevel, "destroy-event", G_CALLBACK(CloseCallback), NULL);
 
@@ -5779,19 +5129,11 @@ create_toplevel_window(void)
   gtk_widget_show_all(GTK_WIDGET(TopLevel));
   set_widget_visibility();
 
-  create_sub_windows();
-
   set_focus_sensitivity(&NgraphApp.Viewer);
   check_exist_instances(chkobject("draw"));
 
   set_newobj_cb(check_instance);
   set_delobj_cb(check_instance);
-
-  if (Menulocal.single_window_mode) {
-    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(ActionWidget[SingleWindowAction].menu), TRUE);
-  } else {
-    gtk_widget_hide(NgraphApp.Viewer.side_pane1);
-  }
 
   return 0;
 }
@@ -5838,11 +5180,9 @@ application(char *file)
   terminated = AppMainLoop();
 
   if (CheckIniFile()) {
-    if (Menulocal.single_window_mode) {
-      save_tab_position();
-      get_pane_position();
-      menu_save_config(SAVE_CONFIG_TYPE_GEOMETRY);
-    }
+    save_tab_position();
+    get_pane_position();
+    menu_save_config(SAVE_CONFIG_TYPE_GEOMETRY);
     save_entry_history();
     menu_save_config(SAVE_CONFIG_TYPE_TOGGLE_VIEW |
 		     SAVE_CONFIG_TYPE_OTHERS);
@@ -5866,8 +5206,6 @@ application(char *file)
     unref_entry_history();
 
     ViewerWinClose();
-
-    destroy_sub_windows();
 
     g_free(NgraphApp.FileName);
     NgraphApp.FileName = NULL;
@@ -6186,81 +5524,6 @@ script_exec(GtkWidget *w, gpointer client_data)
   main_window_redraw();
 }
 
-void
-CmReloadWindowConfig(void *w, gpointer user_data)
-{
-  gint x, y, w0, h0;
-
-  if (Menulock || Globallock) {
-    return;
-  }
-
-  initwindowconfig();
-  mgtkwindowconfig();
-
-  gtk_window_get_position(GTK_WINDOW(TopLevel), &x, &y);
-  gtk_window_get_size(GTK_WINDOW(TopLevel), &w0, &h0);
-
-  Menulocal.menux = x;
-  Menulocal.menuy = y;
-  Menulocal.menuwidth = w0;
-  Menulocal.menuheight = h0;
-
-  defaultwindowconfig();
-
-  if (Menulocal.dialogopen) {
-    set_subwindow_state(TypeInfoWin, (Menulocal.dialogopen) ? SUBWIN_STATE_SHOW : SUBWIN_STATE_HIDE);
-    sub_window_set_geometry(&(NgraphApp.InfoWin), TRUE);
-  }
-
-  if (Menulocal.coordopen) {
-    set_subwindow_state(TypeCoordWin, (Menulocal.coordopen) ? SUBWIN_STATE_SHOW : SUBWIN_STATE_HIDE);
-    sub_window_set_geometry(&(NgraphApp.CoordWin), TRUE);
-  }
-
-  if (Menulocal.mergeopen) {
-    set_subwindow_state(TypeMergeWin, (Menulocal.mergeopen) ? SUBWIN_STATE_SHOW : SUBWIN_STATE_HIDE);
-    sub_window_set_geometry(&(NgraphApp.MergeWin), TRUE);
-  }
-
-  if (Menulocal.legendopen) {
-    set_subwindow_state(TypeLegendWin, (Menulocal.legendopen) ? SUBWIN_STATE_SHOW : SUBWIN_STATE_HIDE);
-    sub_window_set_geometry(&(NgraphApp.LegendWin), TRUE);
-  }
-
-  if (Menulocal.axisopen) {
-    set_subwindow_state(TypeAxisWin, (Menulocal.axisopen) ? SUBWIN_STATE_SHOW : SUBWIN_STATE_HIDE);
-    sub_window_set_geometry(&(NgraphApp.AxisWin), TRUE);
-  }
-
-  if (Menulocal.fileopen) {
-    set_subwindow_state(TypeFileWin, (Menulocal.fileopen) ? SUBWIN_STATE_SHOW : SUBWIN_STATE_HIDE);
-    sub_window_set_geometry(&(NgraphApp.FileWin), TRUE);
-  }
-}
-
-void
-CmToggleSingleWindowMode(GtkCheckMenuItem *action, gpointer client_data)
-{
-  int state;
-
-  if (Menulock || Globallock) {
-    return;
-  }
-
-  if (action) {
-    state = gtk_check_menu_item_get_active(action);
-  } else {
-    state = GPOINTER_TO_INT(client_data);
-  }
-
-  if (state) {
-    multi_to_single();
-  } else {
-    single_to_multi();
-  }
-}
-
 static void
 CmViewerButtonArm(GtkToggleToolButton *action, gpointer client_data)
 {
@@ -6319,50 +5582,8 @@ CmViewerButtonArm(GtkToggleToolButton *action, gpointer client_data)
 }
 
 static void
-toggle_subwindow(GtkWidget *action, gpointer client_data)
+set_subwindow_state(enum SubWinType id)
 {
-  int id;
-
-  id = GPOINTER_TO_INT(client_data);
-  set_subwindow_state(id, SUBWIN_STATE_TOGGLE);
-}
-
-
-int
-get_subwindow_state(enum SubWinType id)
-{
-  struct SubWin *d;
-
-  switch (id) {
-  case TypeFileWin:
-    d = &NgraphApp.FileWin;
-    break;
-  case TypeAxisWin:
-    d = &NgraphApp.AxisWin;
-    break;
-  case TypeLegendWin:
-    d = &NgraphApp.LegendWin;
-    break;
-  case TypeMergeWin:
-    d = &NgraphApp.MergeWin;
-    break;
-  case TypeCoordWin:
-    d = &NgraphApp.CoordWin;
-    break;
-  case TypeInfoWin:
-    d = &NgraphApp.InfoWin;
-    break;
-  default:
-    return FALSE;
-  }
-
-  return d->visible;
-}
-
-void
-set_subwindow_state(enum SubWinType id, enum subwin_state state)
-{
-  struct SubWin *d;
   static int lock = FALSE;
 
   if (lock) {
@@ -6373,37 +5594,25 @@ set_subwindow_state(enum SubWinType id, enum subwin_state state)
 
   switch (id) {
   case TypeFileWin:
-    d = &NgraphApp.FileWin;
+    FileWinState(&NgraphApp.FileWin);
     break;
   case TypeAxisWin:
-    d = &NgraphApp.AxisWin;
+    AxisWinState(&NgraphApp.AxisWin);
     break;
   case TypeLegendWin:
-    d = &NgraphApp.LegendWin;
+    LegendWinState(&NgraphApp.LegendWin);
     break;
   case TypeMergeWin:
-    d = &NgraphApp.MergeWin;
+    MergeWinState(&NgraphApp.MergeWin);
     break;
   case TypeCoordWin:
-    d = &NgraphApp.CoordWin;
+    CoordWinState(&NgraphApp.CoordWin);
     break;
   case TypeInfoWin:
-    d = &NgraphApp.InfoWin;
+    InfoWinState(&NgraphApp.InfoWin);
     break;
   default:
     return;
-  }
-
-  switch (state) {
-  case SUBWIN_STATE_SHOW:
-    d->state_func(d, TRUE);
-    break;
-  case SUBWIN_STATE_HIDE:
-    d->state_func(d, FALSE);
-    break;
-  case SUBWIN_STATE_TOGGLE:
-    d->state_func(d, ! d->visible);
-    break;
   }
 
   lock = FALSE;

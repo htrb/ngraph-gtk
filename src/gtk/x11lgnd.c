@@ -3771,8 +3771,8 @@ struct legend_data {
   struct LegendDialog *dialog;
 };
 
-void
-LegendWinState(struct SubWin *d, int state)
+GtkWidget *
+LegendWinState(struct SubWin *d)
 {
   int i, j, n;
   struct obj_list_data *data;
@@ -3790,12 +3790,7 @@ LegendWinState(struct SubWin *d, int state)
   int noexpand_text_colmns[] = {TEXT_LIST_COL_X, TEXT_LIST_COL_Y, TEXT_LIST_COL_PT, TEXT_LIST_COL_DIR};
 
   if (d->Win) {
-    sub_window_set_visibility(d, state);
-    return;
-  }
-
-  if (! state) {
-    return;
+    return d->Win;
   }
 
   for (i = 0; i < LEGENDNUM; i++) {
@@ -3803,7 +3798,7 @@ LegendWinState(struct SubWin *d, int state)
     gtk_widget_set_tooltip_text(GTK_WIDGET(icons[i]), _(legend_data[i].name));
   }
 
-  tree_sub_window_create(d, "Legend Window", LEGENDNUM, Llist_num, Llist, icons, Legendwin_xpm, Legendwin48_xpm);
+  tree_sub_window_create(d, LEGENDNUM, Llist_num, Llist, icons);
 
   data = d->data.data;
   for (i = 0; i < LEGENDNUM; i++) {
@@ -3866,4 +3861,5 @@ LegendWinState(struct SubWin *d, int state)
     }
     data = data->next;
   }
+  return d->Win;
 }

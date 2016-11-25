@@ -4836,7 +4836,7 @@ FileWinFileUpdate(struct obj_list_data *d)
     d->setup_dialog(d, sel, FALSE);
     d->select = sel;
 
-    parent = (Menulocal.single_window_mode) ? TopLevel : d->parent->Win;
+    parent = TopLevel;
     ret = DialogExecute(parent, d->dialog);
     if (ret == IDDELETE) {
       delete_file_obj(d, sel);
@@ -4958,7 +4958,7 @@ FileWinFit(struct obj_list_data *d)
   if (fit == NULL)
     return;
 
-  parent = (Menulocal.single_window_mode) ? TopLevel : d->parent->Win;
+  parent = TopLevel;
   ret = execute_fit_dialog(parent, d->obj, sel, fitobj, fitid);
 
   if (ret == IDDELETE) {
@@ -5807,7 +5807,7 @@ select_type(GtkComboBox *w, gpointer user_data)
 
       getobj(obj, "fit", sel, 0, NULL, &fit);
       if (fit == NULL) {
-	ret = show_fit_dialog(obj, sel, (Menulocal.single_window_mode) ? TopLevel : d->parent->Win);
+	ret = show_fit_dialog(obj, sel, TopLevel);
 	if (ret != IDOK) {
 	  putobj(obj, "type", sel, &type);
 	  return;
@@ -5849,7 +5849,7 @@ select_type(GtkComboBox *w, gpointer user_data)
     }
     break;
   case FILE_COMBO_ITEM_FIT:
-    show_fit_dialog(obj, sel, (Menulocal.single_window_mode) ? TopLevel : d->parent->Win);
+    show_fit_dialog(obj, sel, TopLevel);
     break;
   case FILE_COMBO_ITEM_JOIN:
     gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_ENUM, &enum_id, -1);
@@ -6065,19 +6065,14 @@ init_dnd(struct SubWin *d)
   g_signal_connect(widget, "drag-data-received", G_CALLBACK(drag_drop_cb), NULL);
 }
 
-void
-FileWinState(struct SubWin *d, int state)
+GtkWidget *
+FileWinState(struct SubWin *d)
 {
   if (d->Win) {
-    sub_window_set_visibility(d, state);
-    return;
+    return d->Win;
   }
 
-  if (! state) {
-    return;
-  }
-
-  list_sub_window_create(d, "Data Window", FILE_WIN_COL_NUM, Flist, Filewin_xpm, Filewin48_xpm);
+  list_sub_window_create(d, FILE_WIN_COL_NUM, Flist);
 
   d->data.data->update = FileWinUpdate;
   d->data.data->setup_dialog = FileDialog;
@@ -6103,4 +6098,6 @@ FileWinState(struct SubWin *d, int state)
   set_cell_attribute_source(d, "visible", FILE_WIN_COL_Y, FILE_WIN_COL_NOT_RANGE);
 
   set_cell_attribute_source(d, "editable", FILE_WIN_COL_FILE, FILE_WIN_COL_IS_FILE);
+
+  return d->Win;
 }
