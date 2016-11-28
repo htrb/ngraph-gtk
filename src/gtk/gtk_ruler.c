@@ -492,12 +492,18 @@ nruler_draw_ticks(Nruler *ruler, GtkWidget *widget)
 static void
 nruler_get_color(Nruler *ruler, GdkRGBA *fg)
 {
-  GtkStyleContext *style;
+  static GtkStyleContext *style = NULL;
+  static GdkRGBA saved_fg = {0};
 
-  if (fg) {
-    style = gtk_widget_get_style_context(TopLevel);
-    gtk_style_context_get_color(style, GTK_STATE_FLAG_NORMAL, fg);
+  if (fg == NULL) {
+    return;
   }
+
+  if (style == NULL) {
+    style = gtk_widget_get_style_context(TopLevel);
+    gtk_style_context_get_color(style, GTK_STATE_FLAG_NORMAL, &saved_fg);
+  }
+  *fg = saved_fg;
 }
 #else
 static void

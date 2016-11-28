@@ -1,3 +1,8 @@
+2016-11-28  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_ruler.c (nruler_get_color): use cached color to
+	avoid busy loop in the function "AppMainLoop()".
+
 2016-11-25  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/ogra2x11.c (gtk_evloop): use "check_pending_event()"
