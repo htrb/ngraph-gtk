@@ -494,6 +494,7 @@ gtkdone(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   struct gtklocal *gtklocal;
   int idn;
   struct objlist *robj;
+  static struct EventLoopInfo info = {0, 0};
 
   if (_exeparent(obj, argv[1], inst, rval, argc, argv))
     return 1;
@@ -512,7 +513,7 @@ gtkdone(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   if (gtklocal->mainwin != NULL) {
     gtk_widget_destroy(gtklocal->mainwin);
     gtklocal->mainwin = NULL;
-    while (gtk_events_pending()) {
+    while (check_pending_event(&info)) {
       gtk_main_iteration();
     }
   }
