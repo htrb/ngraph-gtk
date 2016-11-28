@@ -494,7 +494,6 @@ gtkdone(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   struct gtklocal *gtklocal;
   int idn;
   struct objlist *robj;
-  static struct EventLoopInfo info = {0, 0};
 
   if (_exeparent(obj, argv[1], inst, rval, argc, argv))
     return 1;
@@ -513,7 +512,7 @@ gtkdone(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   if (gtklocal->mainwin != NULL) {
     gtk_widget_destroy(gtklocal->mainwin);
     gtklocal->mainwin = NULL;
-    while (check_pending_event(&info)) {
+    while (gtk_events_pending()) {
       gtk_main_iteration();
     }
   }
@@ -701,14 +700,9 @@ gtkredraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
 static int
 gtk_evloop(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  static struct EventLoopInfo info = {0, 0};
-
-  while (check_pending_event(&info)) {
+  while (gtk_events_pending()) {
     gtk_main_iteration();
   }
-#ifdef __WIN64__
-  msleep(100);
-#endif
   return 0;
 }
 
