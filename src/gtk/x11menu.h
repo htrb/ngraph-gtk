@@ -240,6 +240,11 @@ extern GtkAccelGroup *AccelGroup;
 extern GtkApplication *GtkApp;
 #endif
 
+struct EventLoopInfo {
+  int type;
+  guint32 time;
+};
+
 int application(char *file);
 
 void set_current_window(GtkWidget *w);
@@ -277,5 +282,6 @@ int toggle_view(int type, int state);
 void CmToggleSingleWindowMode(GtkCheckMenuItem *action, gpointer client_data);
 void CmReloadWindowConfig(void *w, gpointer user_data);
 void show_recent_dialog(int type);
+int check_pending_event(struct EventLoopInfo *info);
 
 #endif

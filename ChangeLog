@@ -1,3 +1,8 @@
+2016-11-25  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/ogra2x11.c (gtk_evloop): use "check_pending_event()"
+	instead of "gtk_events_pending()".
+
 2016-11-01  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_subwin.c (popup_menu_position): not used if the

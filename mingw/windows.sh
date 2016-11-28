@@ -37,9 +37,6 @@ do
 done
 
 make
-
-(cd initfile; cp Ngraph.ini.win Ngraph.ini)
-
 make install
 
 mkdir -p $PKG_DIR/share/icons $PKG_DIR/lib/plugins

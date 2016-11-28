@@ -700,7 +700,9 @@ gtkredraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
 static int
 gtk_evloop(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  while (gtk_events_pending()) {
+  static struct EventLoopInfo info = {0, 0};
+
+  while (check_pending_event(&info)) {
     gtk_main_iteration();
   }
   return 0;

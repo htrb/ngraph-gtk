@@ -3575,12 +3575,10 @@ term_signal_handler(int sig)
 #endif	/* WINDOWS */
 
 int
-check_pending_event(void)
+check_pending_event(struct EventLoopInfo *info)
 {
   GdkEvent *ev;
   int r;
-  static int prev_type = -1;
-  static guint32 prev_time = -1;
 
   r = gtk_events_pending();
   if (r) {
@@ -3594,16 +3592,16 @@ check_pending_event(void)
       cur_time = gdk_event_get_time(ev);
       //      w = gtk_get_event_widget(ev);
       gdk_event_free(ev);
-      if (cur_type == prev_type && cur_time == prev_time) {
+      if (cur_type == info->type && cur_time == info->time) {
 	//	printf("%s:%d:%d\n", G_OBJECT_TYPE_NAME(w), cur_type, cur_time);
 	r = 0;
       }
-      prev_time = cur_time;
-      prev_type = cur_type;
+      info->time = cur_time;
+      info->type = cur_type;
     } else {
       r = 0;
-      prev_time = -1;
-      prev_type = -1;
+      info->time = 0;
+      info->type = 0;
     }
   }
 
@@ -3613,10 +3611,12 @@ check_pending_event(void)
 static int
 AppMainLoop(void)
 {
+  static struct EventLoopInfo info = {0, 0};
+
   Hide_window = APP_CONTINUE;
   while (TRUE) {
     gtk_main_iteration();
-    if (Hide_window != APP_CONTINUE && ! check_pending_event()) {
+    if (Hide_window != APP_CONTINUE && ! check_pending_event(&info)) {
       int state = Hide_window;
 
       Hide_window = APP_CONTINUE;
@@ -3637,7 +3637,8 @@ AppMainLoop(void)
 void
 reset_event(void)
 {
-  while (check_pending_event()) {
+  static struct EventLoopInfo info = {0, 0};
+  while (check_pending_event(&info)) {
     gtk_main_iteration();
   }
 }
@@ -6080,11 +6081,13 @@ ChkInterrupt(void)
     return TRUE;
   }
 #else
+  static struct EventLoopInfo info = {0, 0};
+
   if (DrawLock != DrawLockDraw) {
     return check_interrupt();
   }
 
-  while (check_pending_event()) {
+  while (check_pending_event(&info)) {
     gtk_main_iteration_do(FALSE);
     if (check_interrupt()) {
       return TRUE;
