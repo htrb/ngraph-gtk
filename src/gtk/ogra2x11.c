@@ -705,6 +705,9 @@ gtk_evloop(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   while (check_pending_event(&info)) {
     gtk_main_iteration();
   }
+#ifdef __WIN64__
+  msleep(100);
+#endif
   return 0;
 }
 
