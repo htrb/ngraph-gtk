@@ -55,11 +55,28 @@ use_external_viewer=0
 history_size=1000
 palette=black:white:gray50:red:purple:blue:light blue:green:yellow:orange:lavender:brown:goldenrod4:dodger blue:pink:light green:gray10:gray30:gray75:gray90
 single_window_mode=1
+sidebar=1
+png_dpi=72
+emf_dpi=576
+ps_version=0
+svg_version=0
+main_pane=668
+side_pane1=767
+side_pane2=300
+side_pane3=291
+file_tab=0
+axis_tab=100
+merge_tab=101
+path_tab=1
+rectangle_tab=2
+arc_tab=3
+mark_tab=4
+text_tab=5
 
 [gra2cairo]
-font=Sans-serif,arial,ms pgothic,browallia new,mingliu,simhei,gulimche,kartika,latha,mangal,raavi,Sylfaen,Microsoft Sans Serif
-font=Serif,times new roman,ms pmincho,angsana new,mingliu,simsun,batangche,kartika,latha,mangal,raavi,Sylfaen,Microsoft Sans Serif
-font=Monospace,courier new,ms gothic,courier monothai,mingliu,simsun,gulimche,kartika,latha,mangal,raavi,Sylfaen,Microsoft Sans Serif
+font=Sans-serif,arial,ms pgothic,browallia new,mingliu,simhei,gulimche,kartika,latha,mangal,raavi,Sylfaen,Microsoft Sans Serif,Malgun Gothic
+font=Serif,times new roman,ms pmincho,angsana new,mingliu,simsun,batangche,kartika,latha,mangal,raavi,Sylfaen,Microsoft Sans Serif,Malgun Gothic
+font=Monospace,courier new,ms gothic,courier monothai,mingliu,simsun,gulimche,kartika,latha,mangal,raavi,Sylfaen,Microsoft Sans Serif,Malgun Gothic
 
 [axis]
 width=40
