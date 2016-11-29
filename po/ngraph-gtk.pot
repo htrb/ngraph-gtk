@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.07.00\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2016-11-01 18:04+0900\n"
+"POT-Creation-Date: 2016-11-29 10:40+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1358,7 +1358,7 @@ msgstr ""
 
 #: src/gtk/x11gui.c:161 src/gtk/x11gui.c:365 src/gtk/x11gui.c:428
 #: src/gtk/x11gui.c:546 src/gtk/x11gui.c:616 src/gtk/x11gui.c:681
-#: src/gtk/x11gui.c:755 src/gtk/x11gui.c:991 src/gtk/x11menu.c:5371
+#: src/gtk/x11gui.c:755 src/gtk/x11gui.c:991 src/gtk/x11menu.c:5335
 msgid "_Cancel"
 msgstr ""
 
@@ -1401,7 +1401,7 @@ msgstr ""
 msgid "%s file (*.%s)"
 msgstr ""
 
-#: src/gtk/x11gui.c:1093 src/gtk/x11gui.c:1128 src/gtk/x11menu.c:5373
+#: src/gtk/x11gui.c:1093 src/gtk/x11gui.c:1128 src/gtk/x11menu.c:5337
 msgid "_Open"
 msgstr ""
 
@@ -1845,7 +1845,7 @@ msgid "_Print"
 msgstr ""
 
 #: src/gtk/x11menu.c:719 src/gtk/x11menu.c:720 src/gtk/x11menu.c:2735
-#: src/gtk/x11menu.c:2736 src/gtk/x11print.c:680
+#: src/gtk/x11menu.c:2736 src/gtk/x11print.c:690
 msgid "Print"
 msgstr ""
 
@@ -2185,7 +2185,7 @@ msgstr ""
 msgid "_Ngraph shell"
 msgstr ""
 
-#: src/gtk/x11menu.c:2790 src/gtk/x11menu.c:3757
+#: src/gtk/x11menu.c:2790 src/gtk/x11menu.c:3721
 msgid "_Add-in"
 msgstr ""
 
@@ -2225,27 +2225,27 @@ msgstr ""
 msgid "_Flip"
 msgstr ""
 
-#: src/gtk/x11menu.c:4365 src/gtk/x11menu.c:4368
+#: src/gtk/x11menu.c:4329 src/gtk/x11menu.c:4332
 msgid "data"
 msgstr ""
 
-#: src/gtk/x11menu.c:5367
+#: src/gtk/x11menu.c:5331
 msgid "Recent Graphs"
 msgstr ""
 
-#: src/gtk/x11menu.c:5367
+#: src/gtk/x11menu.c:5331
 msgid "Recent Data Files"
 msgstr ""
 
-#: src/gtk/x11menu.c:6054
+#: src/gtk/x11menu.c:6018
 msgid "Error:"
 msgstr ""
 
-#: src/gtk/x11menu.c:6103
+#: src/gtk/x11menu.c:6067
 msgid "Question"
 msgstr ""
 
-#: src/gtk/x11menu.c:6161
+#: src/gtk/x11menu.c:6125
 #, c-format
 msgid "Executing `%.128s'."
 msgstr ""
@@ -2563,29 +2563,29 @@ msgstr ""
 msgid "Printing."
 msgstr ""
 
-#: src/gtk/x11print.c:679
+#: src/gtk/x11print.c:689
 #, c-format
 msgid "Printing error: %s"
 msgstr ""
 
-#: src/gtk/x11print.c:731
+#: src/gtk/x11print.c:741
 msgid "Spawning external driver."
 msgstr ""
 
-#: src/gtk/x11print.c:737 src/gtk/x11print.c:1011 src/gtk/x11print.c:1084
+#: src/gtk/x11print.c:747 src/gtk/x11print.c:1021 src/gtk/x11print.c:1094
 #: src/gtk/x11view.c:5647
 msgid "Drawing."
 msgstr ""
 
-#: src/gtk/x11print.c:804
+#: src/gtk/x11print.c:814
 msgid "Spawning external viewer."
 msgstr ""
 
-#: src/gtk/x11print.c:846
+#: src/gtk/x11print.c:856
 msgid "GRA file"
 msgstr ""
 
-#: src/gtk/x11print.c:886
+#: src/gtk/x11print.c:896
 msgid "Making GRA file."
 msgstr ""
 

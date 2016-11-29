@@ -1,3 +1,12 @@
+2016-11-29  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_ruler.c (_Nruler): hold widget style and foreground
+	color.
+
+	* initfile/Ngraph.ini.win (font): add "Malgun Gothic".
+
+	* debian/control (Build-Depends): depend on "libreadline-dev".
+
 2016-11-28  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_ruler.c (nruler_get_color): use cached color to

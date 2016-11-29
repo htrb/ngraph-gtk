@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.06.13\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2016-11-01 18:04+0900\n"
+"POT-Creation-Date: 2016-11-29 10:40+0900\n"
 "PO-Revision-Date: 2014-11-11 16:33+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -1389,7 +1389,7 @@ msgstr ""
 
 #: src/gtk/x11gui.c:161 src/gtk/x11gui.c:365 src/gtk/x11gui.c:428
 #: src/gtk/x11gui.c:546 src/gtk/x11gui.c:616 src/gtk/x11gui.c:681
-#: src/gtk/x11gui.c:755 src/gtk/x11gui.c:991 src/gtk/x11menu.c:5371
+#: src/gtk/x11gui.c:755 src/gtk/x11gui.c:991 src/gtk/x11menu.c:5335
 msgid "_Cancel"
 msgstr "キャンセル(_C)"
 
@@ -1434,7 +1434,7 @@ msgstr "カレントディレクトリを移動(_C)"
 msgid "%s file (*.%s)"
 msgstr "%s ファイル (*.%s)"
 
-#: src/gtk/x11gui.c:1093 src/gtk/x11gui.c:1128 src/gtk/x11menu.c:5373
+#: src/gtk/x11gui.c:1093 src/gtk/x11gui.c:1128 src/gtk/x11menu.c:5337
 msgid "_Open"
 msgstr "開く(_O)"
 
@@ -1879,7 +1879,7 @@ msgid "_Print"
 msgstr "印刷(_P)"
 
 #: src/gtk/x11menu.c:719 src/gtk/x11menu.c:720 src/gtk/x11menu.c:2735
-#: src/gtk/x11menu.c:2736 src/gtk/x11print.c:680
+#: src/gtk/x11menu.c:2736 src/gtk/x11print.c:690
 msgid "Print"
 msgstr "印刷"
 
@@ -2219,7 +2219,7 @@ msgstr "現在のディレクトリ(_C)"
 msgid "_Ngraph shell"
 msgstr "Ngraphシェル(_N)"
 
-#: src/gtk/x11menu.c:2790 src/gtk/x11menu.c:3757
+#: src/gtk/x11menu.c:2790 src/gtk/x11menu.c:3721
 msgid "_Add-in"
 msgstr "アドイン(_A)"
 
@@ -2259,27 +2259,27 @@ msgstr "回転(_R)"
 msgid "_Flip"
 msgstr "反転(_F)"
 
-#: src/gtk/x11menu.c:4365 src/gtk/x11menu.c:4368
+#: src/gtk/x11menu.c:4329 src/gtk/x11menu.c:4332
 msgid "data"
 msgstr "データ"
 
-#: src/gtk/x11menu.c:5367
+#: src/gtk/x11menu.c:5331
 msgid "Recent Graphs"
 msgstr "最近使用したグラフ"
 
-#: src/gtk/x11menu.c:5367
+#: src/gtk/x11menu.c:5331
 msgid "Recent Data Files"
 msgstr "最近使用したデータファイル"
 
-#: src/gtk/x11menu.c:6054
+#: src/gtk/x11menu.c:6018
 msgid "Error:"
 msgstr "エラー:"
 
-#: src/gtk/x11menu.c:6103
+#: src/gtk/x11menu.c:6067
 msgid "Question"
 msgstr "質問"
 
-#: src/gtk/x11menu.c:6161
+#: src/gtk/x11menu.c:6125
 #, c-format
 msgid "Executing `%.128s'."
 msgstr "実行中 `%.128s'."
@@ -2597,29 +2597,29 @@ msgstr "Cairo EMF 出力"
 msgid "Printing."
 msgstr "印刷中"
 
-#: src/gtk/x11print.c:679
+#: src/gtk/x11print.c:689
 #, c-format
 msgid "Printing error: %s"
 msgstr "印刷エラー: %s"
 
-#: src/gtk/x11print.c:731
+#: src/gtk/x11print.c:741
 msgid "Spawning external driver."
 msgstr "外部ドライバに出力中"
 
-#: src/gtk/x11print.c:737 src/gtk/x11print.c:1011 src/gtk/x11print.c:1084
+#: src/gtk/x11print.c:747 src/gtk/x11print.c:1021 src/gtk/x11print.c:1094
 #: src/gtk/x11view.c:5647
 msgid "Drawing."
 msgstr "描画中"
 
-#: src/gtk/x11print.c:804
+#: src/gtk/x11print.c:814
 msgid "Spawning external viewer."
 msgstr "外部ビューアに出力中"
 
-#: src/gtk/x11print.c:846
+#: src/gtk/x11print.c:856
 msgid "GRA file"
 msgstr "合成ファイルの保存"
 
-#: src/gtk/x11print.c:886
+#: src/gtk/x11print.c:896
 msgid "Making GRA file."
 msgstr "合成ファイル作成中"
 
