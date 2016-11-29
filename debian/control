@@ -3,7 +3,7 @@ Section: graphics
 Priority: extra
 Maintainer: Koichi Akabe <vbkaisetsu@gmail.com>
 Uploaders: Ito Hiroyuki <ZXB01226@nifty.com>
-Build-Depends: debhelper (>= 9.0.0), dh-autoreconf, libgtk-3-dev, libgsl-dev, libreadline6-dev, ruby (>= 1:2.0.0), ruby-dev (>= 1:2.0.0)
+Build-Depends: debhelper (>= 9.0.0), dh-autoreconf, libgtk-3-dev, libgsl-dev, libreadline-dev, ruby (>= 1:2.0.0), ruby-dev (>= 1:2.0.0)
 Standards-Version: 3.9.6
 Homepage: http://homepage3.nifty.com/slokar/ngraph/ngraph-gtk.html
 
