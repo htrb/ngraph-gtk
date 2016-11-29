@@ -49,6 +49,10 @@ typedef struct _Nruler {
   double lower, upper, position;
   double save_l, save_u;
   GtkWidget *widget, *parent;
+#if GTK_CHECK_VERSION(3, 0, 0)
+  GtkStyleContext *saved_style;
+  GdkRGBA saved_fg;
+#endif
 } Nruler;
 
 struct _NrulerMetric
@@ -76,7 +80,7 @@ static gboolean nruler_destroy(GtkWidget *widget, gpointer user_data);
 #if GTK_CHECK_VERSION(3, 0, 0)
 static void nruler_draw_pos(Nruler *ruler, GtkWidget *widget, cairo_t *cr);
 static gboolean nruler_expose(GtkWidget *widget, cairo_t *cr, gpointer user_data);
-static void nruler_get_color(Nruler *ruler, GdkRGBA *fg);
+static GtkStyleContext *nruler_get_color(Nruler *ruler, GdkRGBA *fg);
 #else	/* GTK_CHECK_VERSION(3, 0, 0) */
 static void nruler_draw_pos(Nruler *ruler, GtkWidget *widget);
 static gboolean nruler_expose(GtkWidget *widget, GdkEventExpose *event, gpointer user_data);
@@ -108,6 +112,9 @@ nruler_new(GtkOrientation orientation)
   ruler->orientation = orientation;
   ruler->widget = w;
   ruler->parent = frame;
+#if GTK_CHECK_VERSION(3, 0, 0)
+  ruler->saved_style = NULL;
+#endif
 
   g_object_set_data(G_OBJECT(frame), RULER_DATA_KEY, ruler);
 
@@ -345,9 +352,8 @@ nruler_draw_ticks(Nruler *ruler, GtkWidget *widget)
   digit_height = PANGO_PIXELS(ink_rect.height) + 2;
 
 #if GTK_CHECK_VERSION(3, 0, 0)
-  nruler_get_color(ruler, &fg);
+  context = nruler_get_color(ruler, &fg);
   cr = cairo_create(ruler->backing_store);
-  context = gtk_widget_get_style_context(TopLevel);
   gtk_render_background(context, cr,
 			0, 0, allocation.width, allocation.height);
 #else	/* GTK_CHECK_VERSION(3, 0, 0) */
@@ -489,21 +495,20 @@ nruler_draw_ticks(Nruler *ruler, GtkWidget *widget)
 }
 
 #if GTK_CHECK_VERSION(3, 0, 0)
-static void
+static GtkStyleContext *
 nruler_get_color(Nruler *ruler, GdkRGBA *fg)
 {
-  static GtkStyleContext *style = NULL;
-  static GdkRGBA saved_fg = {0};
+  if (ruler->saved_style == NULL) {
+    ruler->saved_style = gtk_widget_get_style_context(TopLevel);
+    gtk_style_context_get_color(ruler->saved_style, GTK_STATE_FLAG_NORMAL, &ruler->saved_fg);
+  }
 
   if (fg == NULL) {
-    return;
+    return ruler->saved_style;
   }
 
-  if (style == NULL) {
-    style = gtk_widget_get_style_context(TopLevel);
-    gtk_style_context_get_color(style, GTK_STATE_FLAG_NORMAL, &saved_fg);
-  }
-  *fg = saved_fg;
+  *fg = ruler->saved_fg;
+  return ruler->saved_style;
 }
 #else
 static void
