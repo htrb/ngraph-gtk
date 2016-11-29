@@ -1,0 +1,64 @@
+#! /bin/sh
+
+TMPFILE=ngraph_tmp
+PKG_DIR=$HOMEDRIVE/ngraph-gtk64
+WIN_PATH=mingw
+
+HAVE_RUBY="0"
+
+DEFS="-D _USE_32BIT_TIME_T -D_FORTIFY_SOURCE -DGDK_DISABLE_DEPRECATED=1 -DGDK_PIXBUF_DISABLE_DEPRECATED=1 -DG_DISABLE_DEPRECATED=1 -DGTK_DISABLE_SINGLE_INCLUDES=1 -DG_DISABLE_SINGLE_INCLUDES=1 -DGDK_PIXBUF_DISABLE_SINGLE_INCLUDES=1 -DGSL_DISABLE_DEPRECATED=1 -DGTK_DISABLE_DEPRECATED=1"
+
+CCOPT="-Wall -Wextra -Wpointer-arith -Wstrict-aliasing -Wno-unused-parameter -Wno-missing-field-initializers -Wdeprecated-declarations -g"
+
+CFLAGS="$DEFS $CCOPT" ./configure --prefix=$PKG_DIR --libexecdir=$PKG_DIR/lib
+
+for demo in demo/*.ngp.in
+do
+    sed -f $WIN_PATH/windows_demo.sed $demo > $TMPFILE
+    mv $TMPFILE $demo
+done
+
+make
+make install
+
+# copy /share
+for i in GConf glib-2.0 icons locale themes
+do
+    cp -r /mingw64/share/$i $PKG_DIR/share/
+done
+
+# copy /etc
+for i in fonts gtk-3.0
+do
+    cp -r /mingw64/etc/$i $PKG_DIR/etc/
+done
+
+# copy /lib
+for i in gdk-pixbuf-2.0 glib-2.0 gtk-3.0
+do
+    cp -r /mingw64/lib/$i $PKG_DIR/lib/
+done
+
+
+#copy dlls
+
+EXLIBS=libatk-1.0-0.dll libbz2-1.dll libcairo-2.dll \
+libcairo-gobject-2.dll libepoxy-0.dll libexpat-1.dll libffi-6.dll \
+libfontconfig-1.dll libfreetype-6.dll libgcc_s_seh-1.dll \
+libgdk_pixbuf-2.0-0.dll libgdk-3-0.dll libgio-2.0-0.dll \
+libglib-2.0-0.dll libgmodule-2.0-0.dll libgobject-2.0-0.dll \
+libgraphite2.dll libgsl-19.dll libgslcblas-0.dll libgtk-3-0.dll \
+libgtksourceview-3.0-1.dll libharfbuzz-0.dll libiconv-2.dll \
+libintl-8.dll libngraph-0.dll libobjc-4.dll libp11-kit-0.dll \
+libpango-1.0-0.dll libpangocairo-1.0-0.dll libpangoft2-1.0-0.dll \
+libpangowin32-1.0-0.dll libpcre-1.dll libpixman-1-0.dll \
+libpng16-16.dll libreadline7.dll libstdc++-6.dll libtermcap-0.dll \
+libwinpthread-1.dll zlib1.dll
+
+for i in $EXLIBS
+do
+    cp /mingw64/bin/$i $PKG_DIR/bin/
+done
+
+cp src/ngraph.ico $PKG_DIR/share/icons
+cp /mingw64/lib/ngraph-gtk/* $PKG_DIR/bin/
