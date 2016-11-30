@@ -19,7 +19,7 @@ demo6.ngp: Makefile
 SUFFIXES = .ngp.in .ngp
 if OS_WIN32
 .ngp.in.ngp:
-	sed -f $WIN_PATH/windows_demo.sed $< > $@
+	sed -f windows_demo.sed $< > $@
 else
 .ngp.in.ngp:
 	sh ../pathconv.sh "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" $<

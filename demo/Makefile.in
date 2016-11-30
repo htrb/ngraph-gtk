@@ -577,7 +577,7 @@ demo3.ngp: Makefile
 demo4.ngp: Makefile
 demo6.ngp: Makefile
 @OS_WIN32_TRUE@.ngp.in.ngp:
-@OS_WIN32_TRUE@	sed -f $WIN_PATH/windows_demo.sed $< > $@
+@OS_WIN32_TRUE@	sed -f windows_demo.sed $< > $@
 @OS_WIN32_FALSE@.ngp.in.ngp:
 @OS_WIN32_FALSE@	sh ../pathconv.sh "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" $<
 
