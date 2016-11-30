@@ -2,7 +2,7 @@
 
 TMPFILE=ngraph_tmp
 PKG_DIR=/`echo $HOMEDRIVE|sed -e's/://'`/ngraph-gtk64
-WIN_PATH=mingw
+WIN_PATH=/mingw64
 
 HAVE_RUBY="0"
 
@@ -16,7 +16,7 @@ CCOPT="-Wall -Wextra -Wpointer-arith -Wstrict-aliasing
 -Wno-unused-parameter -Wno-missing-field-initializers
 -Wdeprecated-declarations -g"
 
-CFLAGS="$DEFS $CCOPT" ./configure --prefix=/mingw64
+CFLAGS="$DEFS $CCOPT" ./configure --prefix=$WIN_PATH
 
 BINFILES="libatk-1.0-0.dll libbz2-1.dll libcairo-2.dll
 libcairo-gobject-2.dll libepoxy-0.dll libexpat-1.dll libffi-6.dll
@@ -42,29 +42,29 @@ do
 	bin)
 	    for i in $BINFILES
 	    do
-		cp /mingw64/$subdir/$i $PKG_DIR/$subdir/
+		cp $WIN_PATH/$subdir/$i $PKG_DIR/$subdir/
 	    done
 	;;
 	etc)
 	    for i in fonts gtk-3.0 ngraph-gtk
 	    do
-		cp -r /mingw64/$subdir/$i $PKG_DIR/$subdir/
+		cp -r $WIN_PATH/$subdir/$i $PKG_DIR/$subdir/
 	    done
 	;;
 	lib)
 	    for i in gdk-pixbuf-2.0 glib-2.0 gtk-3.0
 	    do
-		cp -r /mingw64/$subdir/$i $PKG_DIR/$subdir/
+		cp -r $WIN_PATH/$subdir/$i $PKG_DIR/$subdir/
 	    done
 	;;
 	share)
 	    for i in GConf glib-2.0 icons locale themes ngraph-gtk pixmaps
 	    do
-		cp -r /mingw64/$subdir/$i $PKG_DIR/$subdir/
+		cp -r $WIN_PATH/$subdir/$i $PKG_DIR/$subdir/
 	    done
 	;;
     esac
 done
 
 cp src/ngraph.ico $PKG_DIR/share/icons
-cp /mingw64/libexec/ngraph-gtk/* $PKG_DIR/bin/
+cp $WIN_PATH/libexec/ngraph-gtk/* $PKG_DIR/bin/
