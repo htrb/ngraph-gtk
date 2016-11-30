@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.06.13\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
 "POT-Creation-Date: 2016-11-29 16:39+0900\n"
-"PO-Revision-Date: 2014-11-11 16:33+0900\n"
+"PO-Revision-Date: 2016-11-30 09:46+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja\n"
@@ -859,7 +859,7 @@ msgstr "すべて選択(_A)"
 
 #: src/gtk/x11file.c:69
 msgid "file/range"
-msgstr "ファイル/範囲"
+msgstr "ファイル/式"
 
 #: src/gtk/x11file.c:72
 msgid "ax"
