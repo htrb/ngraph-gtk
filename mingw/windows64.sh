@@ -31,12 +31,6 @@ libpcre-1.dll libpixman-1-0.dll libpng16-16.dll libreadline7.dll
 libstdc++-6.dll libtermcap-0.dll libwinpthread-1.dll zlib1.dll
 libngraph-0.dll ngraph.exe ngp2"
 
-for demo in demo/*.ngp.in
-do
-    sed -f $WIN_PATH/windows_demo.sed $demo > $TMPFILE
-    mv $TMPFILE $demo
-done
-
 make
 make install
 

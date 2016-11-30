@@ -30,12 +30,6 @@ do
     mv $TMPFILE $makefile
 done
 
-for demo in demo/*.ngp.in
-do
-    sed -f $WIN_PATH/windows_demo.sed $demo > $TMPFILE
-    mv $TMPFILE $demo
-done
-
 make
 make install
 

@@ -7,7 +7,7 @@ nodist_demo_DATA = demo.ngp demo1.ngp demo2.ngp demo3.ngp demo4.ngp	\
 	demo6.ngp
 
 EXTRA_DIST = demo.ngp.in demo1.ngp.in demo2.ngp.in demo3.ngp.in	\
-	demo4.ngp.in demo6.ngp.in
+	demo4.ngp.in demo6.ngp.in windows_demo.sed
 
 demo.ngp: Makefile
 demo1.ngp: Makefile
@@ -17,7 +17,12 @@ demo4.ngp: Makefile
 demo6.ngp: Makefile
 
 SUFFIXES = .ngp.in .ngp
+if OS_WIN32
+.ngp.in.ngp:
+	sed -f $WIN_PATH/windows_demo.sed $< > $@
+else
 .ngp.in.ngp:
 	sh ../pathconv.sh "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" $<
+endif
 
 CLEANFILES = demo.ngp demo1.ngp demo2.ngp demo3.ngp demo4.ngp demo6.ngp
