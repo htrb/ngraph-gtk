@@ -62,6 +62,8 @@ do
 	    do
 		cp -r $WIN_PATH/$subdir/$i $PKG_DIR/$subdir/
 	    done
+	    mkdir $PKG_DIR/$subdir/doc
+	    cp -r $WIN_PATH/$subdir/doc/ngraph-gtk $PKG_DIR/$subdir/doc
 	;;
     esac
 done
