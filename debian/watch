@@ -1,4 +1,4 @@
 version=3
 
 opts=pgpsigurlmangle=s/$/.asc/ \
-http://sf.net/ngraph-gtk/ngraph-gtk-(.*)\.tar\.gz
+https://github.com/htrb/ngraph-gtk/releases/download/v(.*)/ngraph-gtk-(.*)\.tar\.gz
