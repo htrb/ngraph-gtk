@@ -1,3 +1,7 @@
+2016-12-13  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* mingw/windows64.sh: use mingw package for the installation.
+
 2016-11-29  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_ruler.c (_Nruler): hold widget style and foreground
