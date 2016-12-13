@@ -41,7 +41,7 @@
 #ifdef LOCALEDIR
 #undef LOCALEDIR
 #endif	/* LOCALEDIR */
-char *DOCDIR, *NDATADIR, *ADDINDIR, *LIBDIR, *PLUGINDIR, *CONFDIR, *LOCALEDIR, *PIXMAPDIR;
+char *DOCDIR, *NDATADIR, *ADDINDIR, *LIBDIR, *PLUGINDIR, *CONFDIR, *LOCALEDIR, *PIXMAPDIR, *BINDIR;
 #endif	/* WINDOWS */
 
 #include "dir_defs.h"
@@ -705,9 +705,10 @@ set_dir_defs(char *app)
   }
 
 #ifdef __WIN64__
+  BINDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "bin");
   DOCDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/doc/ngraph-gtk");
-  LIBDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "bin");
-  PLUGINDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "lib/plugins");
+  LIBDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "lib/ngraph-gtk");
+  PLUGINDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "lib/ngraph-gtk/plugins");
   NDATADIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/ngraph-gtk");
   ADDINDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/ngraph-gtk/addin");
   CONFDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "etc/ngraph-gtk");
@@ -730,7 +731,7 @@ set_dir_defs(char *app)
 }
 #endif	/* WINDOWS */
 
-#if 0
+#ifdef WINDOWS
 static void
 set_path_env(char *homedir)
 {
@@ -738,10 +739,14 @@ set_path_env(char *homedir)
   char *pathset;
 
   path = g_getenv("PATH");
-  pathset = g_strdup_printf("%s%s%s%s%s%s%s%s%s", homedir, PATHSEP, ADDINDIR, PATHSEP, LIBDIR, PATHSEP, ".", PATHSEP, CHK_STR(path));
-#ifdef WINDOWS
+  pathset = g_strdup_printf("%s%s%s%s%s%s%s%s%s%s%s",
+			    homedir, PATHSEP,
+			    ADDINDIR, PATHSEP,
+			    LIBDIR, PATHSEP,
+			    BINDIR, PATHSEP,
+			    ".", PATHSEP,
+			    CHK_STR(path));
   path_to_win(pathset);
-#endif	/* WINDOWS */
   g_setenv("PATH", pathset, TRUE);
   g_setenv("NGRAPHLIB",  LIBDIR, TRUE);
   g_setenv("NGRAPHCONF", CONFDIR, TRUE);
@@ -896,8 +901,9 @@ n_initialize(int *argc, char ***argv)
     }
   }
 
-  /* set_path_env(homedir); */
-  /* it may not necessary to call the function because all environments will be set in the function ngraphenvironment() */
+#ifdef WINDOWS
+  set_path_env(homedir);
+#endif
   set_environ();
 
   if (addobjectroot() == NULL)

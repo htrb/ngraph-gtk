@@ -2,6 +2,9 @@
 
 	* mingw/windows64.sh: use mingw package for the installation.
 
+	* src/gtk/init.c (set_dir_defs, set_path_env): add "BINDIR" to the
+	windows "PATH" environment.
+
 2016-11-29  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_ruler.c (_Nruler): hold widget style and foreground
