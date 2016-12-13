@@ -1,0 +1,50 @@
+# Maintainer: Hiroyuki Ito <ZXB01226@nifty.com>
+
+_realname=ngraph-gtk
+pkgbase=mingw-w64-${_realname}
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+pkgver=6.07.01
+pkgrel=1
+arch=('any')
+pkgdesc="create scientific 2-dimensional graphs (mingw-w64)"
+depends=("${MINGW_PACKAGE_PREFIX}-adwaita-icon-theme"
+         "${MINGW_PACKAGE_PREFIX}-gsettings-desktop-schemas"
+         "${MINGW_PACKAGE_PREFIX}-readline"
+         "${MINGW_PACKAGE_PREFIX}-gsl"
+         "${MINGW_PACKAGE_PREFIX}-ruby")
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
+             "${MINGW_PACKAGE_PREFIX}-pkg-config")
+options=('staticlibs')
+license=("GPL")
+url="http://htrb.github.io/ngraph-gtk/"
+install=${_realname}-${CARCH}.install
+source=("https://github.com/htrb/ngraph-gtk/releases/download/v${pkgver}/ngraph-gtk-${pkgver}.tar.gz")
+sha256sums=('SKIP')
+
+prepare() {
+  cd "${srcdir}"/${_realname}-${pkgver}
+  autoreconf -if
+}
+
+build() {
+  cd "${srcdir}"/${_realname}-${pkgver}
+
+  export CFLAGS="-O2"
+  ./configure \
+    --host=${MINGW_CHOST} \
+    --target=${MINGW_CHOST} \
+    --build=${MINGW_CHOST} \
+    --prefix=${MINGW_PREFIX} \
+    --libexecdir=${MINGW_PREFIX}/lib
+  make
+}
+
+package() {
+  cd "${srcdir}"/${_realname}-${pkgver}
+  make DESTDIR=${pkgdir} install
+
+  install -Dm644 "${srcdir}/${_realname}-${pkgver}/COPYING" "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/COPYING"
+  install -Dm644 "${srcdir}/${_realname}-${pkgver}/plugins/ruby/ngraph.so" "${pkgdir}${MINGW_PREFIX}/lib/${_realname}/ruby/ngraph.so"
+  install -Dm644 "${srcdir}/${_realname}-${pkgver}/plugins/ruby/lib/ngraph.rb.win" "${pkgdir}${MINGW_PREFIX}/lib/${_realname}/ruby/ngraph.rb"
+  install -Dm644 "${srcdir}/${_realname}-${pkgver}/plugins/ruby/lib/ngraph/ngp2.rb" "${pkgdir}${MINGW_PREFIX}/lib/${_realname}/ruby/ngraph/ngp2.rb"
+}
