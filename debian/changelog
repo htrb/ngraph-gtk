@@ -2,13 +2,45 @@ ngraph-gtk (6.07.01-1) unstable; urgency=low
 
   * new release.
 
- -- Ito Hiroyuki <ZXB01226@nifty.com>  Wed, 2 Apr 2014 09:16:03 +0900
+ -- Ito Hiroyuki <ZXB01226@nifty.com>  Sun, 4 Dec 2016 09:16:03 +0900
 
 ngraph-gtk (6.07.00-1) unstable; urgency=low
 
   * preperation for next release.
 
- -- Ito Hiroyuki <ZXB01226@nifty.com>  Wed, 2 Apr 2014 09:16:03 +0900
+ -- Ito Hiroyuki <ZXB01226@nifty.com>  Fri, 2 Dec 2016 09:16:03 +0900
+
+ngraph-gtk (6.06.13-5.2) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Fix build failure on mips* (Dejan Latinovic). Closes: #841302.
+
+ -- Matthias Klose <doko@debian.org>  Sat, 05 Nov 2016 14:02:34 +0100
+
+ngraph-gtk (6.06.13-5.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+
+  [ Bas Couwenberg ]
+  * Update build dependencies for GSL 2, change libgsl0-dev to libgsl-dev.
+    Closes: #807217
+
+ -- Mattia Rizzolo <mattia@debian.org>  Tue, 26 Jan 2016 10:43:45 +0000
+
+ngraph-gtk (6.06.13-5) unstable; urgency=medium
+
+  * debian/rules
+   - change XDG_RUNTIME_DIR to /root/xdg_run/ (Closes: #751664)
+
+ -- Koichi Akabe <vbkaisetsu@gmail.com>  Sun, 15 Jun 2014 20:07:58 +0900
+
+ngraph-gtk (6.06.13-4.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Apply patch from Antonio Terceiro <terceiro@debian.org> to fix FTBFS
+    on Linux platforms. (Closes: #750043)
+
+ -- Christian Hofstaedtler <zeha@debian.org>  Mon, 09 Jun 2014 23:24:52 +0200
 
 ngraph-gtk (6.06.13-4) unstable; urgency=low
 
