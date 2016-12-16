@@ -28,10 +28,12 @@ prepare() {
 }
 
 build() {
-  cd "${srcdir}"/${_realname}-${pkgver}
+  [[ -d build-${MINGW_CHOST} ]] && rm -rf build-${MINGW_CHOST}
+  mkdir -p build-${MINGW_CHOST}
+  cd build-${MINGW_CHOST}
 
   export CFLAGS="-O2"
-  ./configure \
+  ../${_realname}-${pkgver}/configure \
     --host=${MINGW_CHOST} \
     --target=${MINGW_CHOST} \
     --build=${MINGW_CHOST} \
@@ -41,12 +43,12 @@ build() {
 }
 
 package() {
-  cd "${srcdir}"/${_realname}-${pkgver}
+  cd "${srcdir}/build-${MINGW_CHOST}"
   make DESTDIR=${pkgdir} install
 
   install -Dm644 "${srcdir}/${_realname}-${pkgver}/COPYING" "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/COPYING"
   install -Dm644 "${srcdir}/${_realname}-${pkgver}/icons/application-x-ngraph-graphic.png" "${pkgdir}${MINGW_PREFIX}/share/icons/hicolor/64x64/${_realname}.png"
-  install -Dm644 "${srcdir}/${_realname}-${pkgver}/plugins/ruby/ngraph.so" "${pkgdir}${MINGW_PREFIX}/lib/${_realname}/ruby/ngraph.so"
+  install -Dm644 "${srcdir}/build-${MINGW_CHOST}/plugins/ruby/ngraph.so" "${pkgdir}${MINGW_PREFIX}/lib/${_realname}/ruby/ngraph.so"
   install -Dm644 "${srcdir}/${_realname}-${pkgver}/plugins/ruby/lib/ngraph.rb.win" "${pkgdir}${MINGW_PREFIX}/lib/${_realname}/ruby/ngraph.rb"
   install -Dm644 "${srcdir}/${_realname}-${pkgver}/plugins/ruby/lib/ngraph/ngp2.rb" "${pkgdir}${MINGW_PREFIX}/lib/${_realname}/ruby/ngraph/ngp2.rb"
 }
