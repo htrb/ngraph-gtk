@@ -30,11 +30,6 @@
 #include <windows.h>
 #endif
 
-#ifdef __WIN64__
-#define WINDOWS 1
-#include <windows.h>
-#endif
-
 #ifndef CCNAME
 #define CCNAME "unknown";
 #endif
