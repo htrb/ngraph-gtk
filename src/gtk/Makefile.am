@@ -26,8 +26,8 @@ ngraphconfdir = $(sysconfdir)/$(PACKAGE)
 pixmapdir = $(datadir)/pixmaps/$(PACKAGE)
 
 dir_defs.h: dir_defs.h.in Makefile
-	sh ../../pathconv.sh "$(bindir)" "$(docdir)" "$(pkglibexecdir)" "$(pkglibdir)" "$(pkgdatadir)" "$(ngraphconfdir)" "$(pixmapdir)" dir_defs.h.in
+	sh $(top_srcdir)/pathconv.sh "$(bindir)" "$(docdir)" "$(pkglibexecdir)" "$(pkglibdir)" "$(pkgdatadir)" "$(ngraphconfdir)" "$(pixmapdir)" $(srcdir)/dir_defs.h.in
 
-libngraphui_la_CFLAGS = $(GTK_CFLAGS) -I.. -I../math
+libngraphui_la_CFLAGS = $(GTK_CFLAGS) -I$(srcdir)/.. -I$(srcdir)/../math
 
 CLEANFILES = dir_defs.h

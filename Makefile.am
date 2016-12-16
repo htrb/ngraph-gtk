@@ -14,7 +14,7 @@ endif
 
 LIBTOOL_DEPS = @LIBTOOL_DEPS@
 libtool: $(LIBTOOL_DEPS)
-	$(SHELL) ./config.status --recheck
+	$(SHELL) $(top_srcdir)/config.status --recheck
 
 test_all:
 	(cd test; $(MAKE) test)

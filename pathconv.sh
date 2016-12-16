@@ -21,7 +21,7 @@ shift
 PIXMAPDIR=$1
 shift
 
-TARGET=`basename $1 .in`
+TARGET=`dirname $1`/`basename $1 .in`
 
 LC_ALL=C
 export LC_ALL

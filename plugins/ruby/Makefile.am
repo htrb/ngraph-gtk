@@ -6,7 +6,7 @@ if HAVE_RUBY_DEV
   ruby_ext = ngraph.$(RUBY_DLEXT)
 $(ruby_ext): ngraph.c ruby_ngraph.h
 	mv Makefile Makefile.org
-	ruby extconf.rb $(prefix) --with-ngraph-include="../../src" --with-ngraph-lib="../../src/.libs"
+	ruby $(srcdir)/extconf.rb $(prefix) --with-ngraph-include=$(top_srcdir)/src --with-ngraph-lib=$(top_srcdir)/src/.libs
 	make
 	mv Makefile Makefile.ruby
 	mv Makefile.org Makefile
@@ -17,11 +17,11 @@ install-data-local: $(ruby_ext)
 	make -f Makefile.ruby install
 endif
 
-obj.txt: getobj.nsc ../../src/libngraph.la
-	../../src/ngraph -i getobj.nsc > obj.txt
+obj.txt: getobj.nsc $(top_builddir)/src/libngraph.la
+	$(top_builddir)/src/ngraph -i $(srcdir)/getobj.nsc > $(srcdir)/obj.txt
 
 ruby_ngraph.h: obj.txt
-	ruby create_objs.rb obj.txt ruby_ngraph.h
+	ruby $(srcdir)/create_objs.rb $(srcdir)/obj.txt $(srcdir)/ruby_ngraph.h
 
   BUILT_SOURCES = $(ruby_ext)
   CLEANFILES = mkmf.log obj.txt ruby_ngraph.h $(ruby_ext) Makefile.ruby ngraph.o

@@ -9,15 +9,15 @@ EXTRA_DIST = object.html.in intro.html.in script.html.in
 
 htmldir = $(docdir)/html/ja
 
-object.html: ../../../src/libngraph.la object.html.in ../objlist.nsc
-	cat object.html.in > object.html
-	../../../src/ngraph -i ../objlist.nsc >> object.html
+object.html: $(top_builddir)/src/libngraph.la object.html.in $(srcdir)/../objlist.nsc
+	cat $(srcdir)/object.html.in > object.html
+	$(top_builddir)/src/ngraph -i $(srcdir)/../objlist.nsc >> object.html
 
 intro.html: intro.html.in Makefile
-	sh ../../../pathconv.sh "$(bindir)" "$(docdir)" "$(pkglibexecdir)" "$(pkglibdir)" "$(pkgdatadir)" "$(ngraphconfdir)" "$(pixmapdir)" intro.html.in
+	sh $(top_srcdir)/pathconv.sh "$(bindir)" "$(docdir)" "$(pkglibexecdir)" "$(pkglibdir)" "$(pkgdatadir)" "$(ngraphconfdir)" "$(pixmapdir)" $(srcdir)/intro.html.in
 
 script.html: script.html.in Makefile
-	sh ../../../pathconv.sh "$(bindir)" "$(docdir)" "$(pkglibexecdir)" "$(pkglibdir)" "$(pkgdatadir)" "$(ngraphconfdir)" "$(pixmapdir)" script.html.in
+	sh $(top_srcdir)/pathconv.sh "$(bindir)" "$(docdir)" "$(pkglibexecdir)" "$(pkglibdir)" "$(pkgdatadir)" "$(ngraphconfdir)" "$(pixmapdir)" $(srcdir)/script.html.in
 
 CLEANFILES = intro.html script.html
 DISTCLEANFILES = object.html

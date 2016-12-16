@@ -22,7 +22,7 @@ if OS_WIN32
 	sed -f windows_demo.sed $< > $@
 else
 .ngp.in.ngp:
-	sh ../pathconv.sh "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" $<
+	sh $(top_srcdir)/pathconv.sh "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" $<
 endif
 
 CLEANFILES = demo.ngp demo1.ngp demo2.ngp demo3.ngp demo4.ngp demo6.ngp
