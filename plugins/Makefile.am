@@ -10,9 +10,9 @@ if HAVE_RUBY_DEV
   ngraphplugin_LTLIBRARIES = libruby.la
   libruby_la_SOURCES = ruby.c
   libruby_la_CFLAGS = -I$(top_srcdir) -I $(RUBY_INCRUDEDIR) -I $(RUBY_ARCH)
-  libruby_ldflags = -L$(top_srcdir)/src -avoid-version -module `ruby -e 'puts(RbConfig::CONFIG["LIBRUBYARG_SHARED"])'`
+  libruby_ldflags = -L$(top_builddir)/src -avoid-version -module `ruby -e 'puts(RbConfig::CONFIG["LIBRUBYARG_SHARED"])'`
 if OS_WIN32
-  libruby_ldflags += -no-undefined -L`ruby -e 'puts(RbConfig::CONFIG["libdir"])'` -export-symbols $(srcdir)/libruby.def -Wl,$(srcdir)/libruby_resource.o
+  libruby_ldflags += -no-undefined -L`ruby -e 'puts(RbConfig::CONFIG["libdir"])'` -export-symbols $(srcdir)/libruby.def -Wl,$(builddir)/libruby_resource.o
   built_sources += libruby_resource.o
   libruby_la_LIBADD = -lngraph
 .rc.o:
