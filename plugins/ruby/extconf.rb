@@ -2,7 +2,6 @@ prefix = ARGV.shift
 
 require 'mkmf'
 
-$CFLAGS = "-Wall -O2"
 $configure_args["--vendor"] = true unless (prefix =~ /.*local.*/)
 
 dir_config("ngraph")
