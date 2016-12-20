@@ -15,7 +15,7 @@ depends=("${MINGW_PACKAGE_PREFIX}-adwaita-icon-theme"
          "${MINGW_PACKAGE_PREFIX}-ruby")
 makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
              "${MINGW_PACKAGE_PREFIX}-pkg-config")
-options=('staticlibs')
+options=('strip' 'staticlibs')
 license=("GPL")
 url="http://htrb.github.io/ngraph-gtk/"
 install=${_realname}-${CARCH}.install
@@ -24,13 +24,18 @@ sha256sums=('SKIP')
 
 prepare() {
   cd "${srcdir}"/${_realname}-${pkgver}
-  autoreconf -if
+  AUTOPOINT='initltoolize --automake --copy' autoreconf -if
 }
 
 build() {
   [[ -d build-${MINGW_CHOST} ]] && rm -rf build-${MINGW_CHOST}
   mkdir -p build-${MINGW_CHOST}
   cd build-${MINGW_CHOST}
+
+  if [ ${CARCH} = "i686" ]
+  then
+    MAKEFLAGS="-j1"
+  fi
 
   export CFLAGS="-O2"
   ../${_realname}-${pkgver}/configure \
