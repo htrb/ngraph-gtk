@@ -3803,7 +3803,7 @@ LegendWinState(struct SubWin *d, int state)
     gtk_widget_set_tooltip_text(GTK_WIDGET(icons[i]), _(legend_data[i].name));
   }
 
-  tree_sub_window_create(d, "Legend Window", LEGENDNUM, Llist_num, Llist, icons, Legendwin_xpm, Legendwin48_xpm);
+  tree_sub_window_create(d, "Legend Window", LEGENDNUM, Llist_num, Llist, icons, NGRAPH_LEGENDWIN_ICON_FILE, NGRAPH_LEGENDWIN_ICON48_FILE);
 
   data = d->data.data;
   for (i = 0; i < LEGENDNUM; i++) {

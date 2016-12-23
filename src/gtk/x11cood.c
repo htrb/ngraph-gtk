@@ -152,6 +152,6 @@ CoordWinState(struct SubWin *d, int state)
     return;
   }
 
-  label_sub_window_create(d, "Coordinate Window", Coordwin_xpm, Coordwin48_xpm);
+  label_sub_window_create(d, "Coordinate Window", NGRAPH_COORDWIN_ICON_FILE, NGRAPH_COORDWIN_ICON48_FILE);
   CoordWinSetFont(Menulocal.coordwin_font);
 }

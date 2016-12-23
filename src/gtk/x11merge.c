@@ -419,7 +419,7 @@ MergeWinState(struct SubWin *d, int state)
     return;
   }
 
-  list_sub_window_create(d, "Merge Window", MERG_WIN_COL_NUM, Mlist, Mergewin_xpm, Mergewin48_xpm);
+  list_sub_window_create(d, "Merge Window", MERG_WIN_COL_NUM, Mlist, NGRAPH_MERGEWIN_ICON_FILE, NGRAPH_MERGEWIN_ICON48_FILE);
 
   d->data.data->update = MergeWinUpdate;
   d->data.data->setup_dialog = MergeDialog;

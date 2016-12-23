@@ -1,3 +1,14 @@
+2016-12-23  Hiroyuki Ito  <hito@localhost.localdomain>
+
+	* src/gtk/x11menu.c (create_icon): use image file for application
+	icon (Windows).
+
+	* src/gtk/gtk_subwin.c (sub_window_create): use image file instead
+	of xpm data.
+
+	* pixmap/Makefile.am (dist_pixmap_DATA): add application icons and
+	48 dot window icons.
+
 2016-12-13  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* mingw/windows64.sh: use mingw package for the installation.

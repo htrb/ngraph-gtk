@@ -124,6 +124,6 @@ InfoWinState(struct SubWin *d, int state)
     return;
   }
 
-  text_sub_window_create(d, "Information Window", Infowin_xpm, Infowin48_xpm);
+  text_sub_window_create(d, "Information Window", NGRAPH_INFOWIN_ICON_FILE, NGRAPH_INFOWIN_ICON48_FILE);
   InfoWinSetFont(Menulocal.infowin_font);
 }

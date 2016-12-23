@@ -1364,7 +1364,7 @@ swin_realized(GtkWidget *widget, gpointer user_data)
 }
 
 static GtkWidget *
-sub_window_create(struct SubWin *d, const char *title, GtkWidget *swin, const char **xpm, const char **xpm2)
+sub_window_create(struct SubWin *d, const char *title, GtkWidget *swin, const char *iconfile, const char *iconfile2)
 {
   GtkWidget *dlg;
   GdkPixbuf *icon;
@@ -1376,26 +1376,47 @@ sub_window_create(struct SubWin *d, const char *title, GtkWidget *swin, const ch
 
   d->Win = dlg;
 
-  if (xpm) {
-    icon = gdk_pixbuf_new_from_xpm_data(xpm);
-    if (xpm2) {
+  if (iconfile) {
+#ifdef WINDOWS
+    char *str;
+    str = g_strdup_printf("%s%s", PIXMAPDIR, iconfile);
+    icon = gdk_pixbuf_new_from_file(str, NULL);
+    g_free(str);
+#else
+    icon = gdk_pixbuf_new_from_file(iconfile, NULL);
+#endif
+
+    if (iconfile2) {
       GList *tmp, *list = NULL;
 
-      list = g_list_append(list, icon);
-
-      icon = gdk_pixbuf_new_from_xpm_data(xpm2);
-      list = g_list_append(list, icon);
-
-      gtk_window_set_icon_list(GTK_WINDOW(dlg), list);
-
-      tmp = list;
-      while (tmp) {
-	g_object_unref(tmp->data);
-	tmp = tmp->next;
+      if (icon) {
+	list = g_list_append(list, icon);
       }
-      g_list_free(list);
+
+#ifdef WINDOWS
+      str = g_strdup_printf("%s%s", PIXMAPDIR, iconfile2);
+      icon = gdk_pixbuf_new_from_file(str, NULL);
+      g_free(str);
+#else
+      icon = gdk_pixbuf_new_from_file(iconfile2, NULL);
+#endif
+      if (icon) {
+	list = g_list_append(list, icon);
+      }
+
+      if (list) {
+	gtk_window_set_icon_list(GTK_WINDOW(dlg), list);
+	tmp = list;
+	while (tmp) {
+	  g_object_unref(tmp->data);
+	  tmp = tmp->next;
+	}
+	g_list_free(list);
+      }
     } else {
-      gtk_window_set_icon(GTK_WINDOW(dlg), icon);
+      if (icon) {
+	gtk_window_set_icon(GTK_WINDOW(dlg), icon);
+      }
     }
   }
   if (title) {
@@ -1429,7 +1450,7 @@ sub_window_create(struct SubWin *d, const char *title, GtkWidget *swin, const ch
 }
 
 GtkWidget *
-text_sub_window_create(struct SubWin *d, const char *title, const char **xpm, const char **xpm2)
+text_sub_window_create(struct SubWin *d, const char *title, const char *icon, const char *icon2)
 {
   GtkWidget *view, *swin;
   GtkTextBuffer *buf;
@@ -1445,11 +1466,11 @@ text_sub_window_create(struct SubWin *d, const char *title, const char **xpm, co
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   gtk_container_add(GTK_CONTAINER(swin), view);
 
-  return sub_window_create(d, title, swin, xpm, xpm2);
+  return sub_window_create(d, title, swin, icon, icon2);
 }
 
 GtkWidget *
-label_sub_window_create(struct SubWin *d, const char *title, const char **xpm, const char **xpm2)
+label_sub_window_create(struct SubWin *d, const char *title, const char *icon, const char *icon2)
 {
   GtkWidget *label, *swin;
 
@@ -1474,7 +1495,7 @@ label_sub_window_create(struct SubWin *d, const char *title, const char **xpm, c
   gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(swin), label);
 #endif
 
-  return sub_window_create(d, title, swin, xpm, xpm2);
+  return sub_window_create(d, title, swin, icon, icon2);
 }
 
 static gboolean
@@ -1535,7 +1556,7 @@ list_widget_create(struct SubWin *d, int lisu_num, n_list_store *list, int can_f
 }
 
 GtkWidget *
-list_sub_window_create(struct SubWin *d, const char *title, int lisu_num, n_list_store *list, const char **xpm, const char **xpm2)
+list_sub_window_create(struct SubWin *d, const char *title, int lisu_num, n_list_store *list, const char *icon, const char *icon2)
 {
   GtkWidget *swin;
   struct obj_list_data *data;
@@ -1543,11 +1564,11 @@ list_sub_window_create(struct SubWin *d, const char *title, int lisu_num, n_list
   data = list_widget_create(d, lisu_num, list, d->type != TypeFileWin, &swin);
   d->data.data = data;
 
-  return sub_window_create(d, title, swin, xpm, xpm2);
+  return sub_window_create(d, title, swin, icon, icon2);
 }
 
 GtkWidget *
-tree_sub_window_create(struct SubWin *d, const char *title, int page_num, int *lisu_num, n_list_store **list, GtkWidget **icons, const char **xpm, const char **xpm2)
+tree_sub_window_create(struct SubWin *d, const char *title, int page_num, int *lisu_num, n_list_store **list, GtkWidget **icons, const char *icon, const char *icon2)
 {
   GtkWidget *tab, *swin;
   int i;
@@ -1573,7 +1594,7 @@ tree_sub_window_create(struct SubWin *d, const char *title, int page_num, int *l
   }
   gtk_notebook_set_current_page(GTK_NOTEBOOK(tab), 0);
 
-  return sub_window_create(d, title, tab, xpm, xpm2);
+  return sub_window_create(d, title, tab, icon, icon2);
 }
 
 gboolean

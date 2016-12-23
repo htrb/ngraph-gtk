@@ -80,3 +80,13 @@ extern const gchar *Mergewin48_xpm[];
 #define NGRAPH_TRIMMING_ICON_FILE	ICON_FILE(ngraph_trimming.png)
 #define NGRAPH_ZOOM_ICON_FILE		ICON_FILE(ngraph_zoom.png)
 #define NGRAPH_UNDO_ICON_FILE		ICON_FILE(ngraph_undo.png)
+
+#define NGRAPH_FILEWIN_ICON48_FILE	ICON_FILE(ngraph_filewin48.png)
+#define NGRAPH_AXISWIN_ICON48_FILE	ICON_FILE(ngraph_axiswin48.png)
+#define NGRAPH_LEGENDWIN_ICON48_FILE	ICON_FILE(ngraph_legendwin48.png)
+#define NGRAPH_MERGEWIN_ICON48_FILE	ICON_FILE(ngraph_mergewin48.png)
+#define NGRAPH_COORDWIN_ICON48_FILE	ICON_FILE(ngraph_coordwin48.png)
+#define NGRAPH_INFOWIN_ICON48_FILE	ICON_FILE(ngraph_infowin48.png)
+
+#define NGRAPH_ICON_FILE		ICON_FILE(ngraph_icon.png)
+#define NGRAPH_ICON64_FILE		ICON_FILE(ngraph_icon64.png)

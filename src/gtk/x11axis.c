@@ -3796,7 +3796,7 @@ AxisWinState(struct SubWin *d, int state)
     return;
   }
 
-  list_sub_window_create(d, "Axis Window", AXIS_WIN_COL_NUM, Alist, Axiswin_xpm, Axiswin48_xpm);
+  list_sub_window_create(d, "Axis Window", AXIS_WIN_COL_NUM, Alist, NGRAPH_AXISWIN_ICON_FILE, NGRAPH_AXISWIN_ICON48_FILE);
 
   d->data.data->update = AxisWinUpdate;
   d->data.data->setup_dialog = AxisDialog;

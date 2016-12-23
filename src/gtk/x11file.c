@@ -6077,7 +6077,7 @@ FileWinState(struct SubWin *d, int state)
     return;
   }
 
-  list_sub_window_create(d, "Data Window", FILE_WIN_COL_NUM, Flist, Filewin_xpm, Filewin48_xpm);
+  list_sub_window_create(d, "Data Window", FILE_WIN_COL_NUM, Flist, NGRAPH_FILEWIN_ICON_FILE, NGRAPH_FILEWIN_ICON48_FILE);
 
   d->data.data->update = FileWinUpdate;
   d->data.data->setup_dialog = FileDialog;

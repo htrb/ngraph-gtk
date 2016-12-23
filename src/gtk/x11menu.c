@@ -3984,21 +3984,45 @@ create_icon(void)
   GList *tmp, *list = NULL;
   GdkPixbuf *pixbuf;
 
+#ifdef WINDOWS
+  char *str;
+
+  str = g_strdup_printf("%s%s", PIXMAPDIR, NGRAPH_ICON_FILE);
+  pixbuf = gdk_pixbuf_new_from_file(str, NULL);
+  g_free(str);
+  if (pixbuf) {
+    list = g_list_append(list, pixbuf);
+  }
+
+  str = g_strdup_printf("%s%s", PIXMAPDIR, NGRAPH_ICON64_FILE);
+  pixbuf = gdk_pixbuf_new_from_file(str, NULL);
+  g_free(str);
+  if (pixbuf) {
+    list = g_list_append(list, pixbuf);
+  }
+#else
   pixbuf = gdk_pixbuf_new_from_xpm_data(Icon_xpm);
-  list = g_list_append(list, pixbuf);
+  if (pixbuf) {
+    list = g_list_append(list, pixbuf);
+  }
 
   pixbuf = gdk_pixbuf_new_from_xpm_data(Icon_xpm_64);
-  list = g_list_append(list, pixbuf);
-
-  gtk_window_set_default_icon_list(list);
-  gtk_window_set_icon_list(GTK_WINDOW(TopLevel), list);
-
-  tmp = list;
-  while (tmp) {
-    g_object_unref(tmp->data);
-    tmp = tmp->next;
+  if (pixbuf) {
+    list = g_list_append(list, pixbuf);
   }
-  g_list_free(list);
+#endif
+
+  if (list) {
+    gtk_window_set_default_icon_list(list);
+    gtk_window_set_icon_list(GTK_WINDOW(TopLevel), list);
+
+    tmp = list;
+    while (tmp) {
+      g_object_unref(tmp->data);
+      tmp = tmp->next;
+    }
+    g_list_free(list);
+  }
 }
 
 static int
