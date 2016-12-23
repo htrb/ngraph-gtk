@@ -9,6 +9,8 @@
 #include <math.h>
 #include <libgen.h>
 
+#include "dir_defs.h"
+
 #include "object.h"
 #include "nstring.h"
 #include "mathfn.h"
