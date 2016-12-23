@@ -37,7 +37,6 @@ build() {
     MAKEFLAGS="-j1"
   fi
 
-  export CFLAGS="-O2"
   ../${_realname}-${pkgver}/configure \
     --host=${MINGW_CHOST} \
     --target=${MINGW_CHOST} \
@@ -52,7 +51,6 @@ package() {
   make DESTDIR=${pkgdir} install
 
   install -Dm644 "${srcdir}/${_realname}-${pkgver}/COPYING" "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/COPYING"
-  install -Dm644 "${srcdir}/${_realname}-${pkgver}/icons/application-x-ngraph-graphic.png" "${pkgdir}${MINGW_PREFIX}/share/icons/hicolor/64x64/${_realname}.png"
   install -Dm644 "${srcdir}/build-${MINGW_CHOST}/plugins/ruby/ngraph.so" "${pkgdir}${MINGW_PREFIX}/lib/${_realname}/ruby/ngraph.so"
   install -Dm644 "${srcdir}/${_realname}-${pkgver}/plugins/ruby/lib/ngraph.rb.win" "${pkgdir}${MINGW_PREFIX}/lib/${_realname}/ruby/ngraph.rb"
   install -Dm644 "${srcdir}/${_realname}-${pkgver}/plugins/ruby/lib/ngraph/ngp2.rb" "${pkgdir}${MINGW_PREFIX}/lib/${_realname}/ruby/ngraph/ngp2.rb"
