@@ -908,8 +908,45 @@ set_widget_font(GtkWidget *w, const char *font)
   GtkCssProvider *css_provider;
   GError *error;
   char *css_str;
+  PangoFontDescription *desc;
+  const char *family, *style_str, *unit;
+  PangoStyle style;
+  int size;
 
-  css_str = g_strdup_printf("* {font: %s;}", font);
+  desc = pango_font_description_from_string(font);
+  if (desc == NULL) {
+    return;
+  }
+
+  family = pango_font_description_get_family(desc);
+  style = pango_font_description_get_style(desc);
+  size = pango_font_description_get_size(desc);
+  switch (style) {
+  case PANGO_STYLE_NORMAL:
+    style_str = "normal";
+    break;
+  case PANGO_STYLE_OBLIQUE:
+    style_str = "oblique";
+    break;
+ case PANGO_STYLE_ITALIC:
+    style_str = "italic";
+    break;
+  default:
+    style_str = "normal";
+    break;
+  }
+  if (pango_font_description_get_size_is_absolute(desc)) {
+    unit = "px";
+  } else {
+    unit = "pt";
+  }
+
+  css_str = g_strdup_printf("* {font: %s %d%s %s;}",
+			    style_str,
+			    size / PANGO_SCALE,
+			    unit,
+			    family ? family : "");
+  pango_font_description_free(desc);
   if (css_str == NULL) {
     return;
   }

@@ -1,4 +1,9 @@
-2016-12-23  Hiroyuki Ito  <hito@localhost.localdomain>
+2016-12-26  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_widget.c (set_widget_font): use PangoFontDescription
+	to make css string.
+
+2016-12-23  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (create_icon): use image file for application
 	icon (Windows).
