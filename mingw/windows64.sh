@@ -22,6 +22,7 @@ libobjc-4.dll libp11-kit-0.dll libpango-1.0-0.dll
 libpangocairo-1.0-0.dll libpangoft2-1.0-0.dll libpangowin32-1.0-0.dll
 libpcre-1.dll libpixman-1-0.dll libpng16-16.dll libreadline7.dll
 libstdc++-6.dll libtermcap-0.dll libwinpthread-1.dll zlib1.dll
+libcroco-0.6-3.dll liblzma-5.dll librsvg-2-2.dll libxml2-2.dll
 libngraph-0.dll ngraph.exe ngp2"
 
 BINFILES64="libgcc_s_seh-1.dll"
