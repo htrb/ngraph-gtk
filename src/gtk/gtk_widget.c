@@ -911,7 +911,8 @@ set_widget_font(GtkWidget *w, const char *font)
   PangoFontDescription *desc;
   const char *family, *style_str, *unit;
   PangoStyle style;
-  int size;
+  PangoWeight weight;
+  int weight_val, size;
 
   desc = pango_font_description_from_string(font);
   if (desc == NULL) {
@@ -921,6 +922,7 @@ set_widget_font(GtkWidget *w, const char *font)
   family = pango_font_description_get_family(desc);
   style = pango_font_description_get_style(desc);
   size = pango_font_description_get_size(desc);
+  weight = pango_font_description_get_weight(desc);
   switch (style) {
   case PANGO_STYLE_NORMAL:
     style_str = "normal";
@@ -935,14 +937,58 @@ set_widget_font(GtkWidget *w, const char *font)
     style_str = "normal";
     break;
   }
+
+  switch (weight) {
+  case PANGO_WEIGHT_THIN:
+    weight_val = 100;
+    break;
+  case PANGO_WEIGHT_ULTRALIGHT:
+    weight_val = 200;
+    break;
+  case PANGO_WEIGHT_LIGHT:
+    weight_val = 300;
+    break;
+  case PANGO_WEIGHT_SEMILIGHT:
+    weight_val = 350;
+    break;
+  case PANGO_WEIGHT_BOOK:
+    weight_val = 380;
+    break;
+  case PANGO_WEIGHT_NORMAL:
+    weight_val = 400;
+    break;
+  case PANGO_WEIGHT_MEDIUM:
+    weight_val = 500;
+    break;
+  case PANGO_WEIGHT_SEMIBOLD:
+    weight_val = 600;
+    break;
+  case PANGO_WEIGHT_BOLD:
+    weight_val = 700;
+    break;
+  case PANGO_WEIGHT_ULTRABOLD:
+    weight_val = 800;
+    break;
+  case PANGO_WEIGHT_HEAVY:
+    weight_val = 900;
+    break;
+  case PANGO_WEIGHT_ULTRAHEAVY:
+    weight_val = 1000;
+    break;
+  default:
+    weight_val = 400;
+    break;
+  }
+
   if (pango_font_description_get_size_is_absolute(desc)) {
     unit = "px";
   } else {
     unit = "pt";
   }
 
-  css_str = g_strdup_printf("* {font: %s %d%s %s;}",
+  css_str = g_strdup_printf("* {font: %s %d %d%s \"%s\";}",
 			    style_str,
+			    weight_val,
 			    size / PANGO_SCALE,
 			    unit,
 			    family ? family : "");
