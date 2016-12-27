@@ -2,7 +2,7 @@ ngraph-gtk (6.07.02-1) unstable; urgency=low
 
   * preperation for next release.
 
- -- Ito Hiroyuki <ZXB01226@nifty.com>  Tue, 27 Dec 2016 09:16:03 +0900
+ -- Hiroyuki Ito <ZXB01226@nifty.com>  Tue, 27 Dec 2016 09:16:03 +0900
 
 ngraph-gtk (6.06.13-5.2) unstable; urgency=medium
 
