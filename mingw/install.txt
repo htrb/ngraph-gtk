@@ -70,13 +70,13 @@ Check "Add Ruby executables to your PATH"
 
 https://github.com/htrb/ngraph-gtk/releases/latest
 
-ngraph-gtk-6.07.01.tar.gz
+ngraph-gtk-6.07.02.tar.gz
 
 
 10. Compile and install Ngraph-gtk
 
-tar xf ngraph-gtk-6.07.01.tar.gz
-cd ngraph-gtk-6.07.01
+tar xf ngraph-gtk-6.07.02.tar.gz
+cd ngraph-gtk-6.07.02
 sh mingw/windows.sh
 
 Ngraph-gtk will be installed in C:\ngraph-gtk if there are no error
