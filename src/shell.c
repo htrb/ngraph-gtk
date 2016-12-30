@@ -168,7 +168,7 @@ static char *cmderrorlist[] = {
   "cannot unset",
   "no such directory",
   "syntax error for math.",
-  "not allowd function for math.",
+  "not allowed function for math.",
   "sum() or dif(): deep nest for math.",
   "illegal argument for math.",
   "fatal error for math.",
