@@ -18,7 +18,6 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
 options=('strip' 'staticlibs')
 license=("GPL")
 url="http://htrb.github.io/ngraph-gtk/"
-install=${_realname}-${CARCH}.install
 source=("https://github.com/htrb/ngraph-gtk/releases/download/v${pkgver}/ngraph-gtk-${pkgver}.tar.gz")
 sha256sums=('SKIP')
 
@@ -32,10 +31,7 @@ build() {
   mkdir -p build-${MINGW_CHOST}
   cd build-${MINGW_CHOST}
 
-  if [ ${CARCH} = "i686" ]
-  then
-    MAKEFLAGS="-j1"
-  fi
+  MAKEFLAGS="-j1"
 
   ../${_realname}-${pkgver}/configure \
     --host=${MINGW_CHOST} \
