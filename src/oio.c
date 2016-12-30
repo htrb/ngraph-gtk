@@ -46,6 +46,7 @@ static char *io_errorlist[]={
   "IO is closed.",
   "IO is opened.",
   "I/O error:",
+  "the method is forbidden for the security",
 };
 
 #define ERRNUM (sizeof(io_errorlist) / sizeof(*io_errorlist))
@@ -63,6 +64,7 @@ static char *io_errorlist[]={
 #define ERRCLOSED	106
 #define ERROPENED	107
 #define ERRSTD		108
+#define ERRSYSSECURTY   109
 
 char *seek_whence[]={
   N_("set"),
@@ -165,6 +167,11 @@ io_open(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   struct io_local *io_local;
   FILE *fp;
   char *file, *mode;
+
+  if (get_security()) {
+    error(obj, ERRSYSSECURTY);
+    return 1;
+  }
 
   _getobj(obj, "_local", inst, &io_local);
   _getobj(obj, "mode", inst, &mode);
