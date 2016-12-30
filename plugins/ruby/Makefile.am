@@ -24,5 +24,5 @@ ruby_ngraph.h: obj.txt
 	ruby $(srcdir)/create_objs.rb $(srcdir)/obj.txt $(srcdir)/ruby_ngraph.h
 
   BUILT_SOURCES = $(ruby_ext)
-  CLEANFILES = mkmf.log obj.txt ruby_ngraph.h $(ruby_ext) Makefile.ruby ngraph.o
+  CLEANFILES = mkmf.log obj.txt ruby_ngraph.h $(ruby_ext) Makefile.ruby ngraph.o .*.time
 endif
