@@ -1,3 +1,7 @@
+2017-01-01  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* plugins/ruby/Makefile.am: use "$(MAKE)" and "$(AM_MAKEFLAGS)".
+
 2016-12-30  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/oio.c (io_open): check security.

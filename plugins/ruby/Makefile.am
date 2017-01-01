@@ -7,14 +7,14 @@ if HAVE_RUBY_DEV
 $(ruby_ext): ngraph.c ruby_ngraph.h
 	mv Makefile Makefile.org
 	ruby $(srcdir)/extconf.rb $(prefix) --with-ngraph-include=$(top_srcdir)/src --with-ngraph-lib=$(top_builddir)/src/.libs
-	make
+	$(MAKE) $(AM_MAKEFLAGS)
 	mv Makefile Makefile.ruby
 	mv Makefile.org Makefile
 
 if OS_WIN32
 else
 install-data-local: $(ruby_ext)
-	make -f Makefile.ruby install
+	$(MAKE) -f Makefile.ruby install
 endif
 
 obj.txt: getobj.nsc $(top_builddir)/src/libngraph.la
