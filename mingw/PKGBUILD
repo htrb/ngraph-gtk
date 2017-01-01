@@ -31,8 +31,6 @@ build() {
   mkdir -p build-${MINGW_CHOST}
   cd build-${MINGW_CHOST}
 
-  MAKEFLAGS="-j1"
-
   ../${_realname}-${pkgver}/configure \
     --host=${MINGW_CHOST} \
     --target=${MINGW_CHOST} \
