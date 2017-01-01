@@ -2,6 +2,8 @@
 
 	* plugins/ruby/Makefile.am: use "$(MAKE)" and "$(AM_MAKEFLAGS)".
 
+	* src/Makefile.am (ngraph_DEPENDENCIES): set dependency.
+
 2016-12-30  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/oio.c (io_open): check security.

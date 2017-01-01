@@ -4,6 +4,7 @@ EXTRA_DIST = ngraph_export.map ngraph_resource.rc libngraph_resource.rc ngraph.i
 
 libngraph_ldflags = -version-info $(LIBNGRAPH_VERSION) $(READLINE_LIBS) $(GTK_LIBS) $(GLIB_LIBS) $(GSL_LIBS)
 ngraph_ldflags = -lngraph
+ngraph_lib = libngraph.la
 
 if OS_WIN32
 libngraph_ldflags += -no-undefined -export-symbols ngraph.def -Wl,libngraph_resource.o
@@ -26,7 +27,7 @@ terminal_SOURCES = terminal.c
 terminal_CFLAGS = $(GTK_CFLAGS)
 endif
 
-lib_LTLIBRARIES = libngraph.la
+lib_LTLIBRARIES = $(ngraph_lib)
 
 libngraph_la_SOURCES = axis.c axis.h nconfig.c nconfig.h gra.c gra.h	\
 	ioutil.c ioutil.h mathcode.c mathcode.h mathfn.c mathfn.h	\
@@ -47,6 +48,7 @@ libngraph_la_LDFLAGS = $(libngraph_ldflags)
 
 bin_PROGRAMS = ngraph
 ngraph_SOURCES = main.c
+ngraph_DEPENDENCIES = $(ngraph_lib)
 ngraph_LDFLAGS = $(ngraph_ldflags)
 
 include_HEADERS = ngraph.h
