@@ -1,6 +1,6 @@
 SUBDIRS = gtk math
 
-EXTRA_DIST = ngraph_export.map ngraph_resource.rc libngraph_resource.rc ngraph.ico
+EXTRA_DIST = ngraph_export.map ngraph_resource.rc.in libngraph_resource.rc.in ngraph.ico
 
 libngraph_ldflags = -version-info $(LIBNGRAPH_VERSION) $(READLINE_LIBS) $(GTK_LIBS) $(GLIB_LIBS) $(GSL_LIBS)
 ngraph_ldflags = -lngraph
@@ -11,7 +11,13 @@ libngraph_ldflags += -no-undefined -export-symbols ngraph.def -Wl,libngraph_reso
 ngraph_ldflags += -Wl,ngraph_resource.o
 
 BUILT_SOURCES = ngraph.def libngraph_resource.o ngraph_resource.o
-CLEANFILES = $(BUILT_SOURCES)
+CLEANFILES = $(BUILT_SOURCES) libngraph_resource.rc ngraph_resource.rc
+
+ngraph_resource.rc: ngraph_resource.rc.in
+	$(AWK) -f $(top_srcdir)/winrc_version.awk -v VERSION=$(VERSION) $^ > $@
+
+libngraph_resource.rc: libngraph_resource.rc.in
+	$(AWK) -f $(top_srcdir)/winrc_version.awk -v VERSION=$(VERSION) $^ > $@
 
 .rc.o:
 	windres -o $@ $<
