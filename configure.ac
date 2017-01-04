@@ -19,6 +19,7 @@ AC_MSG_CHECKING([for native Win32])
 case "$host" in
   *-*-mingw*)
     os_win32=yes
+    AC_CHECK_TOOL(WINDRES, windres)
     ;;
   *)
     os_win32=no
