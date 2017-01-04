@@ -1,6 +1,6 @@
 ngraphconfdir = $(sysconfdir)/$(PACKAGE)
 
-EXTRA_DIST = config.rpath pathconv.sh
+EXTRA_DIST = config.rpath pathconv.sh winrc_version.awk
 
 doc_DATA = README AUTHORS ChangeLog NEWS COPYING
 
