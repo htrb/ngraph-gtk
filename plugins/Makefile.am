@@ -20,7 +20,7 @@ libruby_resource.rc: libruby_resource.rc.in
 	$(AWK) -f $(top_srcdir)/winrc_version.awk -v VERSION=$(VERSION) $^ > $@
 
 .rc.o:
-	windres -o $@ $<
+	$(WINDRES) -o $@ $<
   clean_files += ngraph_resource.rc
 endif
   libruby_la_LDFLAGS = $(libruby_ldflags)

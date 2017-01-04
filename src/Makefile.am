@@ -20,7 +20,7 @@ libngraph_resource.rc: libngraph_resource.rc.in
 	$(AWK) -f $(top_srcdir)/winrc_version.awk -v VERSION=$(VERSION) $^ > $@
 
 .rc.o:
-	windres -o $@ $<
+	$(WINDRES) -I $(top_srcdir)/src -o $@ $<
 
 ngraph.def: ngraph_api.c
 	echo "EXPORTS" > $@
