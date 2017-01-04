@@ -16,15 +16,16 @@ if OS_WIN32
   libruby_ldflags += -no-undefined -L`ruby -e 'puts(RbConfig::CONFIG["libdir"])'` -export-symbols $(srcdir)/libruby.def -Wl,$(builddir)/libruby_resource.o
   built_sources += libruby_resource.o
   libruby_la_LIBADD = -lngraph
+  clean_files += ngraph_resource.rc
 libruby_resource.rc: libruby_resource.rc.in
 	$(AWK) -f $(top_srcdir)/winrc_version.awk -v VERSION=$(VERSION) $^ > $@
 
 .rc.o:
 	$(WINDRES) -o $@ $<
-  clean_files += ngraph_resource.rc
 endif
   libruby_la_LDFLAGS = $(libruby_ldflags)
   extra_dist = $(extra_dist_common)
+  libruby_la_DEPENDENCIES = $(top_builddir)/src/libngraph.la
 else
   extra_dist = $(extra_dist_common) ruby.c
 endif
