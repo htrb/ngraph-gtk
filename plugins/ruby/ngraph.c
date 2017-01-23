@@ -1713,9 +1713,9 @@ nputerr(VALUE module, VALUE str)
 static VALUE
 nsleep(VALUE module, VALUE arg)
 {
-  int t;
+  double t;
 
-  t = NUM2INT(arg);
+  t = NUM2DBL(arg);
   ngraph_sleep(t);
 
   return Qnil;

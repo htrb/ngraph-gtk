@@ -1,3 +1,12 @@
+2017-01-23  Hiroyuki Ito  <hito@localhost.localdomain>
+
+	* src/shell.c (nsleep): use g_thread.
+
+	* plugins/ruby/ngraph.c (nsleep): accepts real number (not only
+	integer).
+
+	* src/shellux.c (cmsleep): accepts real number (not only integer).
+
 2017-01-01  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* plugins/ruby/Makefile.am: use "$(MAKE)" and "$(AM_MAKEFLAGS)".

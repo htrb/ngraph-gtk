@@ -51,7 +51,7 @@ cmfalse(struct nshell *nshell,int argc,char **argv)
 int 
 cmsleep(struct nshell *nshell,int argc,char **argv)
 {
-  int a;
+  double a;
   char *arg,*endptr;
 
   if (argc<2) {
@@ -59,7 +59,7 @@ cmsleep(struct nshell *nshell,int argc,char **argv)
     return ERRSMLARG;
   }
   arg=argv[1];
-  a=strtol(arg,&endptr,10);
+  a=strtod(arg, &endptr);
   if (endptr[0]!='\0') {
     sherror3(argv[0],ERRNUMERIC,arg);
     return ERRNUMERIC;

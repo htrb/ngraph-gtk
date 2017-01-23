@@ -193,82 +193,49 @@ static int Interrupted = FALSE;
 static int storeshhandle(struct nshell *nshell,int fd, char **readbuf,int *readbyte,int *readpo);
 static void restoreshhandle(struct nshell *nshell,int fd, char *readbuf,int readbyte,int readpo);
 
-#ifndef WINDOWS
-
-static int Timeout;
-
-static void 
-cmsleeptimeout(int sig)
-{
-  Timeout=TRUE;
-}
-
-void
-nsleep(int a)
-{
-  if (a < 1) {
-    return;
-  }
-
-  if (has_eventloop()) {
-#ifdef SIGALRM
-    Timeout=FALSE;
-    reset_interrupt();
-    set_signal(SIGALRM, 0, cmsleeptimeout, NULL);
-    alarm(a);
-    while (!Timeout) {
-      eventloop();
-      if (check_interrupt()) {
-	break;
-      }
-      msleep(10);
-    }
-    alarm(0);
-    set_signal(SIGALRM, 0, SIG_IGN, NULL);
-#else  /* SIGALRM */
-    sleep(a);
-#endif	/* SIGALRM */
-  } else {
-    sleep(a);
-  }
-}
-
-#else  /* WINDOWS */
-
 typedef struct {
-  int Sleep;
-  int Second;
+  int sleep;
+  int msec;
 } ThreadParam;
 
-DWORD WINAPI
-SleepThread(LPVOID lpvThreadParam)
+gpointer
+sleep_thread(gpointer data)
 {
-  ThreadParam *pTH;
+  ThreadParam *th;
 
-  pTH = (ThreadParam *)lpvThreadParam;
-  Sleep(pTH->Second * 1000);
-  pTH->Sleep = FALSE;
+  th = (ThreadParam *) data;
+  msleep(th->msec);
+  th->sleep = FALSE;
   return 0;
 }
 
 void
-nsleep(int a)
+nsleep(double a)
 {
-  ThreadParam TH;
-  DWORD IDThread;
+  ThreadParam th;
+  GThread *thread;
 
-  if (a < 1) {
+  if (a < 0 || a > 100000) {
     return;
   }
-
-  TH.Sleep = TRUE;
-  TH.Second = a;
-  CreateThread(NULL, 0, SleepThread, &TH, 0, &IDThread);
-  while (TH.Sleep) eventloop();
+  th.sleep = TRUE;
+  th.msec = a * 1000;
+  if (th.msec < 1) {
+    return;
+  }
+#if GLIB_CHECK_VERSION(2, 32, 0)
+  thread= g_thread_new("sleep", sleep_thread, &th);
+#else
+  thread = g_thread_create(sleep_thread, &th, TRUE, NULL);
+#endif
+  while (th.sleep) {
+    eventloop();
+    msleep(1);
+  }
+  g_thread_join(thread);
 
   return;
 }
-#endif	/* WINDOWS */
 
 void
 set_environ(void)

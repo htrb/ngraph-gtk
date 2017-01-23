@@ -645,7 +645,7 @@ ngraph_err_puts(const char *s)
 }
 
 void
-ngraph_sleep(int t)
+ngraph_sleep(double t)
 {
   nsleep(t);
 }

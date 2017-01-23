@@ -145,7 +145,7 @@ shell_proc check_cmd(char *name);
 int check_cpcmd(char *name);
 int init_cmd_tbl(void);
 
-void nsleep(int a);
+void nsleep(double a);
 int eval_script(const char *script, int security);
 char *addval(struct nshell *nshell,char *name,char *val);
 char *addexp(struct nshell *nshell,char *name);
