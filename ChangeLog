@@ -1,4 +1,7 @@
-2017-01-23  Hiroyuki Ito  <hito@localhost.localdomain>
+2017-01-23  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/math/math_parser.c (parse_primary_expression): now accepts
+	two character variable.
 
 	* src/shell.c (nsleep): use g_thread.
 
