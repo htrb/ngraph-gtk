@@ -1382,7 +1382,7 @@ opendata(struct objlist *obj,N_VALUE *inst,
     }
     fp->file = NULL;
     fp->fd = NULL;
-    fp->mtime = 0;
+    fp->mtime = 1;
     break;
   case DATA_SOURCE_RANGE:
     fp->file = NULL;
@@ -1390,7 +1390,7 @@ opendata(struct objlist *obj,N_VALUE *inst,
     fp->range_min = min;
     fp->range_max = max;
     fp->range_div = div;
-    fp->mtime = 0;
+    fp->mtime = 1;
     break;
   }
 
@@ -7132,8 +7132,18 @@ static time_t
 get_mtime(struct objlist *obj, N_VALUE *inst, time_t *mtime)
 {
   GStatBuf buf;
-  int r;
+  int r, src;
   char *file;
+
+  _getobj(obj, "source", inst, &src);
+  switch (src) {
+  case DATA_SOURCE_FILE:
+    break;
+  case DATA_SOURCE_ARRAY:
+  case DATA_SOURCE_RANGE:
+    *mtime = 1;
+    return 0;
+  }
 
   _getobj(obj, "file", inst, &file);
 
@@ -7152,94 +7162,9 @@ struct data_stat {
   double min, max, ave, sig;
 };
 
-static void
-f2dlocal_array_sub(struct array_prm *ary, int col, struct data_stat *stat)
-{
-  double n, sum, ssum;
-
-  n = ary->data_num;
-
-  if (col == 0 && n > 0) {
-    stat->min = 1;
-    stat->max = n;
-    sum = ((n + 1.0) * n) / 2.0;
-    ssum = (n * (n + 1.0) * (2.0 * n + 1.0)) / 6.0;
-    stat->ave = sum / n;
-    stat->sig = sqrt(ssum / n - sum * sum / n / n);
-    return;
-  }
-
-  if (col >= ary->col_num) {
-    return;
-  }
-
-  getobj(ary->obj, "average", ary->id[col - 1], 0, NULL, &stat->ave);
-  getobj(ary->obj, "sdev", ary->id[col - 1], 0, NULL, &stat->sig);
-  getobj(ary->obj, "min", ary->id[col - 1], 0, NULL, &stat->min);
-  getobj(ary->obj, "max", ary->id[col - 1], 0, NULL, &stat->max);
-}
-
-static void
-f2dstat_array(struct objlist *obj, N_VALUE *inst, struct data_stat *stat_x, struct data_stat *stat_y, int *dnum)
-{
-  int x, y;
-  char *array;
-  struct array_prm ary;
-
-  _getobj(obj,"array", inst, &array);
-  open_array(array, &ary);
-  *dnum = ary.data_num;
-  if (ary.data_num < 1) {
-    return;
-  }
-
-  _getobj(obj,"x",inst,&x);
-  _getobj(obj,"y",inst,&y);
-
-  f2dlocal_array_sub(&ary, x, stat_x);
-  f2dlocal_array_sub(&ary, y, stat_y);
-
-  return;
-}
-
-static void
-f2dstat_range(struct objlist *obj, N_VALUE *inst, struct data_stat *stat_x, struct data_stat *stat_y, int *dnum)
-{
-  int div;
-  double min, max, avg, avg2, dif;
-
-  _getobj(obj, "range_min", inst, &min);
-  _getobj(obj, "range_max", inst, &max);
-  _getobj(obj, "range_div", inst, &div);
-
-  if (div < 1) {
-    div = 1;
-  }
-
-  if (min > max) {
-    double tmp;
-    tmp = min;
-    min = max;
-    max = tmp;
-  }
-
-  dif = max - min;
-  avg = (min + max) / 2;
-  avg2 = min * max + dif * dif * (2 + 1.0 / div) / 6;
-
-  stat_x->ave = stat_y->ave = avg;
-  stat_x->min = stat_y->min = min;
-  stat_x->max = stat_y->max = max;
-  stat_x->sig = stat_y->sig = sqrt(avg2 - avg * avg);
-
-  *dnum = div + 1;
-
-  return;
-}
-
 static int
-f2dstat_file(struct objlist *obj,N_VALUE *inst, const char *field, struct f2dlocal *f2dlocal, struct data_stat *stat_x,
-	     struct data_stat *stat_y, int *num)
+f2dstat_sub(struct objlist *obj,N_VALUE *inst, const char *field, struct f2dlocal *f2dlocal, struct data_stat *stat_x,
+	    struct data_stat *stat_y, int *num)
 {
   int rcode, interrupt;
   int dnum,minxstat,maxxstat,minystat,maxystat;
@@ -7453,19 +7378,7 @@ f2dstat(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
   memset(&stat_x, 0, sizeof(stat_x));
   memset(&stat_y, 0, sizeof(stat_y));
 
-  r = 0;
-  switch (src) {
-  case DATA_SOURCE_FILE:
-    r = f2dstat_file(obj, inst, field, f2dlocal, &stat_x, &stat_y, &dnum);
-    break;
-  case DATA_SOURCE_ARRAY:
-    f2dstat_array(obj, inst, &stat_x, &stat_y, &dnum);
-    break;
-  case DATA_SOURCE_RANGE:
-    f2dstat_range(obj, inst, &stat_x, &stat_y, &dnum);
-    break;
-  }
-
+  r = f2dstat_sub(obj, inst, field, f2dlocal, &stat_x, &stat_y, &dnum);
   if (r) {
     return r;
   }

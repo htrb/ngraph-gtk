@@ -1,3 +1,11 @@
+2017-01-25  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/odata.c (f2dlocal_array_sub, f2dstat_array, f2dstat_range): removed.
+	(f2dstat_sub): renamed from "f2dstat_file()".
+	(f2dstat): always use "f2dstat_sub()".
+	(opendata): "fp->mtime" is always 1 for the source type
+	"DATA_SOURCE_ARRAY" and "DATA_SOURCE_RANGE".
+
 2017-01-23  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/math/math_parser.c (parse_primary_expression): now accepts
