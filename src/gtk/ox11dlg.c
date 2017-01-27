@@ -129,12 +129,36 @@ dlgmessage(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   return 0;
 }
 
+static struct narray *
+dlg_get_buttons(struct objlist *obj, N_VALUE *inst)
+{
+  struct narray *sarray;
+  int num;
+
+  if (_getobj(obj, "buttons", inst, &sarray)) {
+    return NULL;
+  }
+
+  if (sarray == NULL) {
+    return NULL;
+  }
+
+  num = arraynum(sarray);
+  if (num < 1) {
+    return NULL;
+  }
+
+  return sarray;
+}
+
 static int
 dlginput(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   char *mes, *title, *init_str;
   int locksave, x, y, r;
   char *inputbuf;
+  struct narray *buttons;
+  int btn = -1;
 
   locksave = Globallock;
   Globallock = TRUE;
@@ -159,9 +183,12 @@ dlginput(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
     y = -1;
   }
 
-  r = DialogInput(DLGTopLevel, (title) ? title : _("Input"), mes, init_str, &inputbuf, &x, &y);
+  buttons = dlg_get_buttons(obj, inst);
+
+  r = DialogInput(DLGTopLevel, (title) ? title : _("Input"), mes, init_str, buttons, &btn, &inputbuf, &x, &y);
   _putobj(obj, "x", inst, &x);
   _putobj(obj, "y", inst, &y);
+  _putobj(obj, "response_button", inst, &btn);
   if (r == IDOK && inputbuf != NULL) {
     rval->str = inputbuf;
   } else {
@@ -279,6 +306,8 @@ dlgradio(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   char *title, *caption;
   int locksave, r, x, y, ret;
   struct narray *iarray, *sarray;
+  struct narray *buttons;
+  int btn = -1;
 
   sarray = get_sarray_argument((struct narray *) argv[2]);
   if (arraynum(sarray) == 0)
@@ -309,9 +338,11 @@ dlgradio(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
 
   r = arraylast_int(iarray);
 
-  ret = DialogRadio(DLGTopLevel, (title) ? title : _("Select"), caption, sarray, &r, &x, &y);
+  buttons = dlg_get_buttons(obj, inst);
+  ret = DialogRadio(DLGTopLevel, (title) ? title : _("Select"), caption, sarray, buttons, &btn, &r, &x, &y);
   _putobj(obj, "x", inst, &x);
   _putobj(obj, "y", inst, &y);
+  _putobj(obj, "response_button", inst, &btn);
   if (ret != IDOK) {
     Globallock = locksave;
     return 1;
@@ -329,6 +360,8 @@ dlgcombo(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   int locksave, sel, ret, x, y;
   char *r, *title, *caption;
   struct narray *iarray, *sarray;
+  struct narray *buttons;
+  int btn = -1;
 
   sarray = get_sarray_argument((struct narray *) argv[2]);
   if (arraynum(sarray) == 0)
@@ -361,15 +394,16 @@ dlgcombo(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   }
 
   sel = arraylast_int(iarray);
-
+  buttons = dlg_get_buttons(obj, inst);
   if (strcmp(argv[1], "combo") == 0) {
-    ret = DialogCombo(DLGTopLevel, (title) ? title : _("Select"), caption, sarray, sel, &r, &x, &y);
+    ret = DialogCombo(DLGTopLevel, (title) ? title : _("Select"), caption, sarray, buttons, &btn, sel, &r, &x, &y);
   } else {
-    ret = DialogComboEntry(DLGTopLevel, (title) ? title : _("Input"), caption, sarray, sel, &r, &x, &y);
+    ret = DialogComboEntry(DLGTopLevel, (title) ? title : _("Input"), caption, sarray, buttons, &btn, sel, &r, &x, &y);
   }
 
   _putobj(obj, "x", inst, &x);
   _putobj(obj, "y", inst, &y);
+  _putobj(obj, "response_button", inst, &btn);
   if (ret != IDOK) {
     Globallock = locksave;
     return 1;
@@ -387,6 +421,8 @@ dlgspin(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   int locksave, ret, type, x, y;
   char *title, *caption;
   double min, max, inc, r;
+  struct narray *buttons;
+  int btn = -1;
 
   locksave = Globallock;
   Globallock = TRUE;
@@ -426,10 +462,12 @@ dlgspin(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
     return 1;
   }
 
-  ret = DialogSpinEntry(DLGTopLevel, (title) ? title : _("Input"), caption, min, max, inc, &r, &x, &y);
+  buttons = dlg_get_buttons(obj, inst);
+  ret = DialogSpinEntry(DLGTopLevel, (title) ? title : _("Input"), caption, min, max, inc, buttons, &btn, &r, &x, &y);
 
   _putobj(obj, "x", inst, &x);
   _putobj(obj, "y", inst, &y);
+  _putobj(obj, "response_button", inst, &btn);
   if (ret != IDOK) {
     Globallock = locksave;
     return 1;
@@ -457,6 +495,8 @@ dlgcheck(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   int locksave, *r, i, n, inum, *ptr, x, y, ret;
   struct narray *array, *sarray, *iarray;
   char *title, *caption;
+  struct narray *buttons;
+  int btn = -1;
 
   sarray = get_sarray_argument((struct narray *) argv[2]);
   n = arraynum(sarray);
@@ -508,9 +548,11 @@ dlgcheck(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
       r[*ptr] = 1;
   }
 
-  ret = DialogCheck(DLGTopLevel, (title) ? title : _("Select"), caption, sarray, r, &x, &y);
+  buttons = dlg_get_buttons(obj, inst);
+  ret = DialogCheck(DLGTopLevel, (title) ? title : _("Select"), caption, sarray, buttons, &btn, r, &x, &y);
   _putobj(obj, "x", inst, &x);
   _putobj(obj, "y", inst, &y);
+  _putobj(obj, "response_button", inst, &btn);
   if (ret != IDOK) {
     arrayfree(array);
     g_free(r);
@@ -694,6 +736,8 @@ static struct objtable dialog[] = {
   {"title", NSTR, NREAD | NWRITE, NULL, NULL, 0},
   {"caption", NSTR, NREAD | NWRITE, NULL, NULL, 0},
   {"select", NIARRAY, NREAD | NWRITE, NULL, NULL, 0},
+  {"buttons", NSARRAY, NREAD | NWRITE, NULL, NULL, 0},
+  {"response_button", NINT, NREAD, NULL, NULL, 0},
   {"yesno", NIFUNC, NREAD | NEXEC, dlgconfirm, "s", 0},
   {"message", NVFUNC, NREAD | NEXEC, dlgmessage, "s", 0},
   {"input", NSFUNC, NREAD | NEXEC, dlginput, "s", 0},

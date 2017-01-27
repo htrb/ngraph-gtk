@@ -1,3 +1,14 @@
+2017-01-27  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11gui.c (add_buttons): added.
+	(DialogButton, DialogCombo, DialogComboEntry, DialogSpinEntry)
+	(DialogCheck): use "add_buttons()".
+
+	* src/gtk/ox11dlg.c (dlg_get_buttons): added.
+	(dlginput, dlgradio, dlgcombo, dlgspin, dlgcheck): use
+	"dlg_get_buttons()".
+	(dialog): add "buttons" and "response_button" fields.
+
 2017-01-26  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* plugins/ruby/ngraph.c (set_ngraph_obj_class_name): added.
