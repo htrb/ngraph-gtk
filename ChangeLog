@@ -1,5 +1,9 @@
 2017-01-27  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* addin/spellchecker.rb (NgraphSpellchecker#spell_check): use
+	"buttons" and "response_button" fields of the Ngraph::Dialog
+	object.
+
 	* src/gtk/x11gui.c (add_buttons): added.
 	(DialogButton, DialogCombo, DialogComboEntry, DialogSpinEntry)
 	(DialogCheck): use "add_buttons()".
