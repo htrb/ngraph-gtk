@@ -1,8 +1,63 @@
-ngraph-gtk (6.07.02-1) unstable; urgency=low
+ngraph-gtk (6.07.02-2) unstable; urgency=medium
 
-  * preperation for next release.
+  * debian/control
+   - fix dependencies of libngraph0
+  * debian/patch/1000_clean_time_file.patch
+   - clean .*.time file
+  * debian/patch/1001_fix_misspelling.patch
+   - fix missing
+  * debian/patch/1002_use_strdup.patch
+   - use strdup instead of strncpy
+  * debian/watch
+   - check releases directory instead of tag directory
+  * debian/rules
+   - export DEB_BUILD_MAINT_OPTIONS
 
- -- Hiroyuki Ito <ZXB01226@nifty.com>  Tue, 27 Dec 2016 09:16:03 +0900
+ -- Hiroyuki Ito <ZXB01226@nifty.com>  Fri, 30 Dec 2016 10:28:12 +0900
+
+ngraph-gtk (6.07.02-1) unstable; urgency=medium
+
+  * New upstream release
+  * debian/patch/1000_replace-deprecated-typedef.patch
+   - removed because it was merged to the upstream
+  * debian/patch/1001_ruby2.0-path-fix.patch
+   - removed because it was merged to the upstream
+  * debian/patch/fix-version-script.patch
+   - removed because it was merged to the upstream
+  * debian/control
+   - build dependencies for readline, change libreadline6-dev to libreadline-dev
+   - homepage is moved to http://hito.music.coocan.jp/ngraph/ngraph-gtk.html
+   - add libngraph0, ruby-ngraph and ngraph-gtk-addin-spellcheck packages
+   - ngraph-gtk-dev is renamed as libngraph0-dev
+   - ngraph-gtk-plugin-ruby is depend on ruby-ngraph
+  * add following install files for new packages
+   - libngraph0-dev.install
+   - libngraph0.install
+   - ngraph-gtk-addin-spellcheck.install
+   - ruby-ngraph.install
+  * debian/ngraph-gtk-addin-import-ps.install
+   - install ruby script is only fig2gra.rb
+  * debian/ngraph-gtk-addins-base.install
+   - calc addin is removed from upstream
+  * debian/ngraph-gtk-addins.install
+   - calc.nsc is removed in upstream
+   - load_prm.nsc is added in upstream
+  * debian/ngraph-gtk-dev.install
+   - replaced to libngraph0-dev.install
+  * debian/ngraph-gtk-plugin-ruby.install
+   - install 20append_addins_ruby.nsc and ruby.nsc
+  * debian/ngraph-gtk.install
+   - some files are installed as libngraph0
+  * debian/rules
+   - fix install directory of bash-completion
+  * debian/watch
+   - Upstream repository is moved from sf.net to github.com
+  * debian/copyright
+   - homepage is moved to http://hito.music.coocan.jp/ngraph/ngraph-gtk.html
+  * debian/menu
+   - removed because the command is listed in a desktop file
+
+ -- Hiroyuki Ito <ZXB01226@nifty.com>  Wed, 28 Dec 2016 10:47:33 +0900
 
 ngraph-gtk (6.06.13-5.2) unstable; urgency=medium
 
@@ -56,7 +111,7 @@ ngraph-gtk (6.06.13-3) unstable; urgency=medium
  -- Koichi Akabe <vbkaisetsu@gmail.com>  Sat, 11 Jan 2014 18:30:19 +0900
 
 ngraph-gtk (6.06.13-2) unstable; urgency=medium
-
+   
   * debian/upstream-signing-key.pgp
   * debian/watch
   * debian/source/include-binaries
