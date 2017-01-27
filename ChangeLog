@@ -1,5 +1,8 @@
 2017-01-27  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11menu.c (set_focus_sensitivity_sub): the merge object
+	can be deleted and duplicated.
+
 	* addin/spellchecker.rb (NgraphSpellchecker#spell_check): use
 	"buttons" and "response_button" fields of the Ngraph::Dialog
 	object.

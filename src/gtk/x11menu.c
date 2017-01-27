@@ -3802,7 +3802,7 @@ set_focus_sensitivity_sub(const struct Viewer *d, int insensitive)
       if (insensitive) {
 	state = FALSE;
       } else {
-	state = (! (type & FOCUS_OBJ_TYPE_MERGE) && (type & (FOCUS_OBJ_TYPE_AXIS | FOCUS_OBJ_TYPE_LEGEND)));
+	state = (type & (FOCUS_OBJ_TYPE_AXIS | FOCUS_OBJ_TYPE_LEGEND | FOCUS_OBJ_TYPE_MERGE));
       }
       set_action_widget_sensitivity(i, state);
       break;
