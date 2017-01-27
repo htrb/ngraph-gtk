@@ -434,7 +434,7 @@ obj_field_permission(VALUE klass, VALUE field, const char *name)
 }
 
 static void
-copy_obj_name(const char *name, char *buf, int len)
+set_ngraph_obj_class_name(const char *name, char *buf, int len)
 {
   int i;
 
@@ -453,7 +453,7 @@ get_ngraph_obj(const char *name)
 {
   char buf[64];
 
-  copy_obj_name(name, buf, sizeof(buf));
+  set_ngraph_obj_class_name(name, buf, sizeof(buf));
 
   return rb_const_get(NgraphModule, rb_intern(buf));
 }
@@ -1593,7 +1593,7 @@ add_obj_name_const(VALUE klass, struct objlist *nobj, const char *name)
     val = Qnil;
   } else {
     obj_name = ngraph_get_object_name(nobj);
-    copy_obj_name(obj_name, str, sizeof(str));
+    set_ngraph_obj_class_name(obj_name, str, sizeof(str));
     val = ID2SYM(rb_intern(str));
   }
   rb_define_const(klass, name, val);

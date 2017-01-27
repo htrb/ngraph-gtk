@@ -1,7 +1,7 @@
 2017-01-26  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
-	* plugins/ruby/ngraph.c (copy_obj_name): added.
-	(get_ngraph_obj, add_obj_name_const): use "copy_obj_name()".
+	* plugins/ruby/ngraph.c (set_ngraph_obj_class_name): added.
+	(get_ngraph_obj, add_obj_name_const): use "set_ngraph_obj_class_name()".
 
 2017-01-25  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
