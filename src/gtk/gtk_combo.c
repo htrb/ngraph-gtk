@@ -18,9 +18,8 @@ set_model(GtkComboBox *cbox, int renderer)
   list = gtk_list_store_new(1, G_TYPE_STRING);
   gtk_combo_box_set_model(cbox, GTK_TREE_MODEL(list));
 
-  rend_s = gtk_cell_renderer_text_new();
-
   if (renderer) {
+    rend_s = gtk_cell_renderer_text_new();
     gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(cbox), rend_s, FALSE);
     gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend_s, "text", 0);
   }

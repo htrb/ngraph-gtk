@@ -1,3 +1,11 @@
+2017-01-31  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_combo.c (set_model): "gtk_cell_renderer_text_new()"
+	shoud be called only when the variable "renderer" is true.
+
+	* plugins/ruby.c (ngraph_plugin_open_ruby): use "rb_protect()" to
+	avoid exception.
+
 2017-01-27  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (set_focus_sensitivity_sub): the merge object
