@@ -573,7 +573,7 @@ end
 
 presentation = Presentation.new
 
-while (ARGV[0][0] == "-")
+while (ARGV[0] && ARGV[0][0] == "-")
   case (ARGV[0])
   when "-pdf"
     presentation.pdf_out = Presentation::PDF
