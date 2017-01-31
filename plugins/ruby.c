@@ -74,6 +74,7 @@ ngraph_plugin_open_ruby(void)
   char *ext_name;
 #endif
   VALUE result;
+  int status;
 
   if (Initialized) {
     return 0;
@@ -96,17 +97,42 @@ ngraph_plugin_open_ruby(void)
     rb_enc_set_default_external(rb_enc_from_encoding(enc));
   }
   rb_enc_set_default_internal(rb_enc_from_encoding(rb_utf8_encoding()));
-  rb_require("enc/encdb");
-  rb_require("enc/trans/transdb");
-  rb_require("rubygems");
-  Initialized = TRUE;
+  rb_protect(RUBY_METHOD_FUNC(rb_require), (VALUE) "enc/encdb", &status);
+  if (status) {
+#ifdef __MINGW32__
+    free(ext_name);
+#endif
+    return 1;
+  }
+  rb_protect(RUBY_METHOD_FUNC(rb_require), (VALUE)"enc/trans/transdb", &status);
+  if (status) {
+#ifdef __MINGW32__
+    free(ext_name);
+#endif
+    return 1;
+  }
+  rb_protect(RUBY_METHOD_FUNC(rb_require), (VALUE) "rubygems", &status);
+  if (status) {
+#ifdef __MINGW32__
+    free(ext_name);
+#endif
+    return 1;
+  }
 
 #ifdef __MINGW32__
-  result = rb_require(ext_name);
+  result = rb_protect(RUBY_METHOD_FUNC(rb_require), (VALUE) ext_name, &status);
   free(ext_name);
+  if (status) {
+    return 1;
+  }
 #else
-  result = rb_require("ngraph.rb");
+  result = rb_protect(RUBY_METHOD_FUNC(rb_require), (VALUE) "ngraph.rb", &status);
+  if (status) {
+    return 1;
+  }
 #endif
+
+  Initialized = TRUE;
 
   return ! RTEST(result);
 }
