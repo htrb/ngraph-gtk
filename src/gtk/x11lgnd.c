@@ -1189,9 +1189,8 @@ LegendArrowDialogPaint(GtkWidget *w, GdkEvent *event, gpointer client_data)
 }
 
 static void
-LegendArrowDialogScaleW(GtkWidget *w, gpointer client_data)
+LegendArrowDialogScale(GtkWidget *w, struct LegendDialog *d)
 {
-  struct LegendDialog *d;
 #if GTK_CHECK_VERSION(3, 0, 0)
   GdkWindow *win;
 #if ! GTK_CHECK_VERSION(3, 22, 0)
@@ -1199,13 +1198,12 @@ LegendArrowDialogScaleW(GtkWidget *w, gpointer client_data)
 #endif
 #endif
 
-  d = (struct LegendDialog *) client_data;
-  d->wid = gtk_range_get_value(GTK_RANGE(w)) * 100;
   draw_arrow_pixmap(w, d);
-
 #if GTK_CHECK_VERSION(3, 22, 0)
   win = gtk_widget_get_window(d->view);
-  gdk_window_invalidate_rect(win, NULL, FALSE);
+  if (win) {
+    gdk_window_invalidate_rect(win, NULL, FALSE);
+  }
 #else  /*  GTK_CHECK_VERSION(3, 22, 0) */
 #if GTK_CHECK_VERSION(3, 0, 0)
   win = gtk_widget_get_window(d->view);
@@ -1222,35 +1220,23 @@ LegendArrowDialogScaleW(GtkWidget *w, gpointer client_data)
 }
 
 static void
+LegendArrowDialogScaleW(GtkWidget *w, gpointer client_data)
+{
+  struct LegendDialog *d;
+
+  d = (struct LegendDialog *) client_data;
+  d->wid = gtk_range_get_value(GTK_RANGE(w)) * 100;
+  LegendArrowDialogScale(w, d);
+}
+
+static void
 LegendArrowDialogScaleL(GtkWidget *w, gpointer client_data)
 {
   struct LegendDialog *d;
-#if GTK_CHECK_VERSION(3, 0, 0)
-  GdkWindow *win;
-#if ! GTK_CHECK_VERSION(3, 22, 0)
-  cairo_t *cr;
-#endif
-#endif
 
   d = (struct LegendDialog *) client_data;
   d->ang = gtk_range_get_value(GTK_RANGE(w));
-  draw_arrow_pixmap(w, d);
-#if GTK_CHECK_VERSION(3, 22, 0)
-  win = gtk_widget_get_window(d->view);
-  gdk_window_invalidate_rect(win, NULL, FALSE);
-#else  /*  GTK_CHECK_VERSION(3, 22, 0) */
-#if GTK_CHECK_VERSION(3, 0, 0)
-  win = gtk_widget_get_window(d->view);
-  if (win == NULL) {
-    return;
-  }
-  cr = gdk_cairo_create(win);
-  LegendArrowDialogPaint(d->view, cr, d);
-  cairo_destroy(cr);
-#else
-  LegendArrowDialogPaint(d->view, NULL, d);
-#endif
-#endif  /*  GTK_CHECK_VERSION(3, 22, 0) */
+  LegendArrowDialogScale(w, d);
 }
 
 static gchar*

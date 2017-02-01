@@ -1,5 +1,11 @@
 2017-02-01  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11lgnd.c (LegendArrowDialogScale): added.
+	(LegendArrowDialogScaleW, LegendArrowDialogScaleL): use
+	"LegendArrowDialogScale()".
+
+2017-02-01  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
 	* plugins/ruby/ngraph.c (wrap_load_script): added.
 	(load_script): use "wrap_load_script()" with "rb_protect()"
 	instead of "rb_load_protect()".
