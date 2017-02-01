@@ -1808,6 +1808,13 @@ ruby_ngraph_exec_loginshell(VALUE module, VALUE cmd, VALUE nobj)
   return INT2FIX(r);
 }
 
+static VALUE
+wrap_load_script(VALUE file)
+{
+  rb_load(file, 1);
+  return Qnil;
+}
+
 static int
 load_script(int argc, char **argv)
 {
@@ -1825,7 +1832,7 @@ load_script(int argc, char **argv)
   }
 
   fname = rb_funcall(rb_cFile, ExpandPath, 1, rb_str_new2(argv[0]));
-  rb_load_protect(fname, 1, &state);
+  rb_protect(wrap_load_script, fname, &state);
   if (state) {
     VALUE errinfo, errstr, errat;
     int n, i;

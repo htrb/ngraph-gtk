@@ -1,3 +1,13 @@
+2017-02-01  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* plugins/ruby/ngraph.c (wrap_load_script): added.
+	(load_script): use "wrap_load_script()" with "rb_protect()"
+	instead of "rb_load_protect()".
+
+	* plugins/ruby.c (require_files): added.
+	(ngraph_plugin_open_ruby): use "require_files()" with
+	"rb_protect()".
+
 2017-01-31  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_combo.c (set_model): "gtk_cell_renderer_text_new()"
