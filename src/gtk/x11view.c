@@ -4667,6 +4667,9 @@ static void
 do_popup(GdkEventButton *event, struct Viewer *d)
 {
 #if GTK_CHECK_VERSION(3, 22, 0)
+  if (! gtk_widget_get_realized(d->popup)) {
+    gtk_widget_realize(d->popup);
+  }
   gtk_menu_popup_at_pointer(GTK_MENU(d->popup), ((GdkEvent *)event));
 #else
   int button, event_time;
