@@ -33,6 +33,7 @@
 #include "mathfn.h"
 #include "nstring.h"
 #include "ioutil.h"
+#include "x11menu.h"
 #include "ox11menu.h"
 
 #include "init.h"
@@ -52,7 +53,21 @@ static char *dlgerrorlist[] = {
 
 #define ERRNUM (sizeof(dlgerrorlist) / sizeof(*dlgerrorlist))
 
-GtkWidget *DLGTopLevel = NULL;
+static GtkWidget *DLGTopLevel = NULL;
+
+static GtkWidget *
+get_toplevel_window(void)
+{
+  if (TopLevel) {
+    return TopLevel;
+  }
+
+  if (DLGTopLevel == NULL) {
+    DLGTopLevel = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+  }
+
+  return DLGTopLevel;
+}
 
 static int
 dlginit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
@@ -66,10 +81,6 @@ dlginit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   if (!OpenApplication()) {
     error(obj, ERRDISPLAY);
     return 1;
-  }
-
-  if (DLGTopLevel == NULL) {
-    DLGTopLevel = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   }
 
   _putobj(obj, "x", inst, &pos);
@@ -100,7 +111,7 @@ dlgconfirm(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   locksave = Globallock;
   Globallock = TRUE;
   mes = CHK_STR(mes);
-  rcode = message_box(DLGTopLevel, mes, (title) ? title : _("Confirm"), RESPONS_YESNO);
+  rcode = message_box(get_toplevel_window(), mes, (title) ? title : _("Confirm"), RESPONS_YESNO);
   Globallock = locksave;
   if (rcode == IDYES) {
     rval->i = 1;
@@ -123,7 +134,7 @@ dlgmessage(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   mes = (char *)argv[2];
   locksave = Globallock;
   Globallock = TRUE;
-  message_box(DLGTopLevel, CHK_STR(mes), (title) ? title : _("Message"), RESPONS_OK);
+  message_box(get_toplevel_window(), CHK_STR(mes), (title) ? title : _("Message"), RESPONS_OK);
   Globallock = locksave;
 
   return 0;
@@ -185,7 +196,7 @@ dlginput(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
 
   buttons = dlg_get_buttons(obj, inst);
 
-  r = DialogInput(DLGTopLevel, (title) ? title : _("Input"), mes, init_str, buttons, &btn, &inputbuf, &x, &y);
+  r = DialogInput(get_toplevel_window(), (title) ? title : _("Input"), mes, init_str, buttons, &btn, &inputbuf, &x, &y);
   _putobj(obj, "x", inst, &x);
   _putobj(obj, "y", inst, &y);
   _putobj(obj, "response_button", inst, &btn);
@@ -284,7 +295,7 @@ dlgbutton(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
   g_free(rval->str);
   rval->str = NULL;
 
-  rcode = DialogButton(DLGTopLevel, (title) ? title : _("Select"), caption, sarray, &x, &y);
+  rcode = DialogButton(get_toplevel_window(), (title) ? title : _("Select"), caption, sarray, &x, &y);
 
   _putobj(obj, "x", inst, &x);
   _putobj(obj, "y", inst, &y);
@@ -339,7 +350,7 @@ dlgradio(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   r = arraylast_int(iarray);
 
   buttons = dlg_get_buttons(obj, inst);
-  ret = DialogRadio(DLGTopLevel, (title) ? title : _("Select"), caption, sarray, buttons, &btn, &r, &x, &y);
+  ret = DialogRadio(get_toplevel_window(), (title) ? title : _("Select"), caption, sarray, buttons, &btn, &r, &x, &y);
   _putobj(obj, "x", inst, &x);
   _putobj(obj, "y", inst, &y);
   _putobj(obj, "response_button", inst, &btn);
@@ -396,9 +407,9 @@ dlgcombo(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   sel = arraylast_int(iarray);
   buttons = dlg_get_buttons(obj, inst);
   if (strcmp(argv[1], "combo") == 0) {
-    ret = DialogCombo(DLGTopLevel, (title) ? title : _("Select"), caption, sarray, buttons, &btn, sel, &r, &x, &y);
+    ret = DialogCombo(get_toplevel_window(), (title) ? title : _("Select"), caption, sarray, buttons, &btn, sel, &r, &x, &y);
   } else {
-    ret = DialogComboEntry(DLGTopLevel, (title) ? title : _("Input"), caption, sarray, buttons, &btn, sel, &r, &x, &y);
+    ret = DialogComboEntry(get_toplevel_window(), (title) ? title : _("Input"), caption, sarray, buttons, &btn, sel, &r, &x, &y);
   }
 
   _putobj(obj, "x", inst, &x);
@@ -463,7 +474,7 @@ dlgspin(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   }
 
   buttons = dlg_get_buttons(obj, inst);
-  ret = DialogSpinEntry(DLGTopLevel, (title) ? title : _("Input"), caption, min, max, inc, buttons, &btn, &r, &x, &y);
+  ret = DialogSpinEntry(get_toplevel_window(), (title) ? title : _("Input"), caption, min, max, inc, buttons, &btn, &r, &x, &y);
 
   _putobj(obj, "x", inst, &x);
   _putobj(obj, "y", inst, &y);
@@ -549,7 +560,7 @@ dlgcheck(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   }
 
   buttons = dlg_get_buttons(obj, inst);
-  ret = DialogCheck(DLGTopLevel, (title) ? title : _("Select"), caption, sarray, buttons, &btn, r, &x, &y);
+  ret = DialogCheck(get_toplevel_window(), (title) ? title : _("Select"), caption, sarray, buttons, &btn, r, &x, &y);
   _putobj(obj, "x", inst, &x);
   _putobj(obj, "y", inst, &y);
   _putobj(obj, "response_button", inst, &btn);
@@ -580,7 +591,7 @@ dlgbeep(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
 
   locksave = Globallock;
   Globallock = TRUE;
-  message_beep(DLGTopLevel);
+  message_beep(get_toplevel_window());
   Globallock = locksave;
 
   return 0;
@@ -617,7 +628,7 @@ dlggetopenfile(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
     filter = d[0];
     initfile = d[1];
   }
-  ret = nGetOpenFileName(DLGTopLevel, _("Open file"),
+  ret = nGetOpenFileName(get_toplevel_window(), _("Open file"),
 			 filter, NULL, initfile,
 			 &file, TRUE, TRUE);
   if (ret == IDOK) {
@@ -665,7 +676,7 @@ dlggetopenfiles(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
     filter = d[0];
     initfile = d[1];
   }
-  ret = nGetOpenFileNameMulti(DLGTopLevel, _("Open files"),
+  ret = nGetOpenFileNameMulti(get_toplevel_window(), _("Open files"),
 			      filter, NULL, initfile, &file, TRUE);
   if (ret == IDOK) {
     farray = arraynew(sizeof(char *));
@@ -713,7 +724,7 @@ dlggetsavefile(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
     filter = d[0];
     initfile = d[1];
   }
-  ret = nGetSaveFileName(DLGTopLevel, _("Save file"),
+  ret = nGetSaveFileName(get_toplevel_window(), _("Save file"),
 			 filter, NULL, initfile,
 			 &file, FALSE, TRUE);
   if (ret == IDOK) {

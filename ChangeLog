@@ -1,3 +1,7 @@
+2017-02-05  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/ox11dlg.c (get_toplevel_window): added.
+
 2017-02-02  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (do_popup): call "gtk_widget_realize()" when

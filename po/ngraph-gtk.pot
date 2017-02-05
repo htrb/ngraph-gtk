@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.07.02\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2017-02-02 10:41+0900\n"
+"POT-Creation-Date: 2017-02-05 14:56+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,32 +21,32 @@ msgstr ""
 msgid "Unsaved Graph"
 msgstr ""
 
-#: src/gtk/ox11dlg.c:103 src/gtk/x11commn.c:1545
+#: src/gtk/ox11dlg.c:114 src/gtk/x11commn.c:1545
 msgid "Confirm"
 msgstr ""
 
-#: src/gtk/ox11dlg.c:126
+#: src/gtk/ox11dlg.c:137
 msgid "Message"
 msgstr ""
 
-#: src/gtk/ox11dlg.c:188 src/gtk/ox11dlg.c:401 src/gtk/ox11dlg.c:466
+#: src/gtk/ox11dlg.c:199 src/gtk/ox11dlg.c:412 src/gtk/ox11dlg.c:477
 msgid "Input"
 msgstr ""
 
-#: src/gtk/ox11dlg.c:287 src/gtk/ox11dlg.c:342 src/gtk/ox11dlg.c:399
-#: src/gtk/ox11dlg.c:552
+#: src/gtk/ox11dlg.c:298 src/gtk/ox11dlg.c:353 src/gtk/ox11dlg.c:410
+#: src/gtk/ox11dlg.c:563
 msgid "Select"
 msgstr ""
 
-#: src/gtk/ox11dlg.c:620
+#: src/gtk/ox11dlg.c:631
 msgid "Open file"
 msgstr ""
 
-#: src/gtk/ox11dlg.c:668
+#: src/gtk/ox11dlg.c:679
 msgid "Open files"
 msgstr ""
 
-#: src/gtk/ox11dlg.c:716
+#: src/gtk/ox11dlg.c:727
 msgid "Save file"
 msgstr ""
 
