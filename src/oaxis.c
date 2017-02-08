@@ -1891,7 +1891,7 @@ mjd_to_date_str(const struct axis_config *aconf, double mjd, const gchar *date_f
 
   if (date_format && date_format[0]) {
     fmt = date_format;
-  }else {
+  } else {
     if (fabs(aconf->max - aconf->min) < 1) {
       if (tm.tm_sec == 0) {
 	fmt = fmt_hm;
