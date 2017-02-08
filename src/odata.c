@@ -417,6 +417,24 @@ struct object_color_type {
 };
 
 static int
+line_number(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  struct f2ddata *fp;
+
+  rval->val = 0;
+  rval->type = MATH_VALUE_NORMAL;
+
+  fp = math_equation_get_user_data(eq);
+  if (fp == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  rval->val = fp->line;
+  return 0;
+}
+
+static int
 file_obj_color_alpha(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval, int type)
 {
   struct f2ddata *fp;
@@ -947,8 +965,12 @@ struct funcs {
   struct math_function_parameter prm;
 };
 
+static struct funcs BasicFunc[] = {
+  {"LINE_NUMBER", {0, 0, 0, line_number, NULL, NULL, NULL, NULL}},
+};
+
 static struct funcs FitFunc[] = {
-  {"FIT_CALC", {2, 0, 0, file_fit_calc,   NULL, NULL, NULL, NULL}},
+  {"FIT_CALC", {2, 0, 0, file_fit_calc,  NULL, NULL, NULL, NULL}},
   {"FIT_PRM",  {2, 0, 0, file_fit_prm,   NULL, NULL, NULL, NULL}},
 };
 
@@ -966,25 +988,31 @@ static struct funcs FileFunc[] = {
 };
 
 static int
-add_file_func(MathEquation *eq) {
+add_func_sub(MathEquation *eq, struct funcs *funcs, unsigned int n)
+{
   unsigned int i;
 
-  for (i = 0; i < sizeof(FileFunc) / sizeof(*FileFunc); i++) {
-    if (math_equation_add_func(eq, FileFunc[i].name, &FileFunc[i].prm) == NULL)
+  for (i = 0; i < n; i++) {
+    if (math_equation_add_func(eq, funcs[i].name, &funcs[i].prm) == NULL) {
       return 1;
+    }
   }
   return 0;
 }
 
 static int
-add_fit_func(MathEquation *eq) {
-  unsigned int i;
+add_file_func(MathEquation *eq) {
+  return add_func_sub(eq, FileFunc, sizeof(FileFunc) / sizeof(*FileFunc));
+}
 
-  for (i = 0; i < sizeof(FitFunc) / sizeof(*FitFunc); i++) {
-    if (math_equation_add_func(eq, FitFunc[i].name, &FitFunc[i].prm) == NULL)
-      return 1;
-  }
-  return 0;
+static int
+add_fit_func(MathEquation *eq) {
+  return add_func_sub(eq, FitFunc, sizeof(FitFunc) / sizeof(*FitFunc));
+}
+
+static int
+add_basic_func(MathEquation *eq) {
+  return add_func_sub(eq, BasicFunc, sizeof(BasicFunc) / sizeof(*BasicFunc));
 }
 
 int
@@ -1974,6 +2002,8 @@ ofile_create_math_equation(int *id, int prm_digit, int use_fprm, int use_const, 
   if (use_fit_func) {
     add_fit_func(code);
   }
+
+  add_basic_func(code);
 
   return code;
 }
