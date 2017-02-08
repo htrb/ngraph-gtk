@@ -1,5 +1,11 @@
 2017-02-08  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/gtk/init.c (n_initialize): don't use "g_mem_set_vtable()".
+
+	* src/osystem.c (system_mem_profile): removed.
+
+	* src/common.h (MARK_TYPE_NUM): removed.
+
 	* src/gtk/gtk_subwin.c (do_popup): set "d->select" before call
 	"gtk_menu_popup_at_pointer()".
 

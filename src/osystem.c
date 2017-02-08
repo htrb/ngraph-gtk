@@ -794,15 +794,6 @@ system_set_exec_func(const char *name, ngraph_plugin_exec func)
   return 0;
 }
 
-#if USE_MEM_PROFILE
-static int 
-system_mem_profile(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
-{
-  g_mem_profile();
-  return 0;
-}
-#endif
-
 static struct objtable nsystem[] = {
   {"init",NVFUNC,NEXEC,sysinit,NULL,0},
   {"done",NVFUNC,NEXEC,sysdone,NULL,0},
@@ -839,9 +830,6 @@ static struct objtable nsystem[] = {
   {"plugin_exec",NIFUNC, NREAD|NEXEC, system_plugin_exec, NULL, 0},
   {"plugin_module",NSFUNC, NREAD|NEXEC, system_plugin_get_module, "s", 0},
   {"plugins",NSAFUNC, NREAD|NEXEC, system_plugin_modules, "", 0},
-#if USE_MEM_PROFILE
-  {"mem_profile",NVFUNC,NREAD|NEXEC,system_mem_profile,"",0},
-#endif
 };
 
 #define TBLNUM (sizeof(nsystem) / sizeof(*nsystem))

@@ -40,8 +40,6 @@
 
 #define COMPILER_NAME (CCNAME " " __VERSION__)
 
-#define USE_MEM_PROFILE 0
-
 #define MARK_TYPE_NUM 90
 
 int printfconsole(const char *fmt,...);

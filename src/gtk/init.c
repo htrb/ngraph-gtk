@@ -790,10 +790,6 @@ n_initialize(int *argc, char ***argv)
     return 0;
   }
 
-#if USE_MEM_PROFILE
-  g_mem_set_vtable(glib_mem_profiler_table);
-#endif
-
 #if ! GLIB_CHECK_VERSION(2, 32, 0)
   g_thread_init(NULL);
 #endif
