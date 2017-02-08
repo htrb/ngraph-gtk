@@ -1,5 +1,8 @@
 2017-02-08  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11lgnd.c (Mlist): change step for mark size.
+	(Tlist): change step size for font size.
+
 	* src/gtk/gtk_widget.c (create_spin_entry_type): change step size for font size.
 
 	* src/gtk/init.c (n_initialize): don't use "g_mem_set_vtable()".
