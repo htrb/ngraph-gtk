@@ -630,7 +630,7 @@ create_spin_entry_type(enum SPIN_BUTTON_TYPE type,
   case SPIN_BUTTON_TYPE_POINT:
     min = int2val(type, TEXT_SIZE_MIN);
     max = int2val(type, SPIN_ENTRY_MAX);
-    inc = 2;
+    inc = 1;
     break;
   case SPIN_BUTTON_TYPE_PERCENT:
     min = 0;
