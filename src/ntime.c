@@ -32,6 +32,7 @@
 #include "object.h"
 #include "nstring.h"
 #include "ntime.h"
+#include "mathfn.h"
 
 char *weekstr[7]={"Sun","Mon","Tue","Wed","Thu","Fri","Sat"};
 char *monthstr[12]={"Jan","Feb","Mar","Apr","May","Jun",
@@ -148,13 +149,14 @@ void
 mjd2gd(double mjd, struct tm *tm)
 {
   double t;
-  int wd;
+  int wd, sec;
   /* Date */
+
 #if 1
   /* http://en.wikipedia.org/wiki/Julian_day */
   int j, g, dg, c, dc, b, db, a, da, y, m, d, Y, M, D;
 
-  j = floor(mjd + 2400000.5 + 0.5 + 32044);
+  j = floor(mjd + 2400001 + 32044);
   g = j / 146097;
   dg = j % 146097;
   c = (dg / 36524 + 1) * 3 / 4;
@@ -215,14 +217,15 @@ mjd2gd(double mjd, struct tm *tm)
   /* Time */
   t = fmod(mjd, 1);
   t = (t < 0) ? 1 + t : t;
-  t *= 24;
+  sec = nround(t * 86400);
 
-  tm->tm_hour = floor(t);
+  tm->tm_hour = sec / 3600;
+  sec %= 3600;
 
-  t = fmod(t, 1) * 60;
-  tm->tm_min = floor(t);
+  tm->tm_min = sec / 60;
+  sec %= 60;
 
-  tm->tm_sec = fmod(t, 1) * 60;
+  tm->tm_sec = sec;
   tm->tm_isdst = -1;
 }
 
