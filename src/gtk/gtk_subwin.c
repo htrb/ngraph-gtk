@@ -1152,6 +1152,12 @@ static void
 do_popup(GdkEventButton *event, struct obj_list_data *d)
 {
 #if GTK_CHECK_VERSION(3, 22, 0)
+  if (d->parent->type == TypeFileWin ||
+      d->parent->type == TypeAxisWin ||
+      d->parent->type == TypeMergeWin ||
+      d->parent->type == TypeLegendWin) {
+    d->select = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
+  }
   gtk_menu_popup_at_pointer(GTK_MENU(d->popup), ((GdkEvent *)event));
 #else
   int button, event_time;

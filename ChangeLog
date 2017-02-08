@@ -1,5 +1,8 @@
 2017-02-08  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/gtk/gtk_subwin.c (do_popup): set "d->select" before call
+	"gtk_menu_popup_at_pointer()".
+
 	* src/odata.c (line_number, add_func_sub, add_basic_func): added.
 	(add_file_func, add_fit_func): use "add_func_sub()".
 	(ofile_create_math_equation): call "add_basic_func()".
@@ -181,9 +184,9 @@
 
 	* addin/cal.nsc: use "ncal" instead of "cal".
 
-	* src/gtk/gtk_widget.c (set_widget_font): us "*" as a selecter.
+	* src/gtk/gtk_widget.c (set_widget_font): us "*" as a selector.
 
-	* initfile/ngraph.css: fix selecer and style.
+	* initfile/ngraph.css: fix selector and style.
 
 2016-07-28  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
