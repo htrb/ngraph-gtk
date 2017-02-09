@@ -1,7 +1,0 @@
-courier = "courier new"
-
-tahoma = "tahoma,ms pgothic,browallia new,mingliu,simhei,gulimche,kartika,latha,mangal,raavi,Sylfaen,Microsoft Sans Serif "
-sans = "arial,ms pgothic,browallia new,mingliu,simhei,gulimche,kartika,latha,mangal,raavi,Sylfaen,Microsoft Sans Serif"
-serif = "times new roman,ms pmincho,angsana new,mingliu,simsun,gulimche,kartika,latha,mangal,raavi,Sylfaen,Microsoft Sans Serif"
-mono = "courier new,ms gothic,courier monothai,mingliu,simsun,gulimche,kartika,latha,mangal,raavi,Sylfaen,Microsoft Sans Serif"
-monospace = "courier new,ms gothic,courier monothai,mingliu,simsun,gulimche,kartika,latha,mangal,raavi,Sylfaen,Microsoft Sans Serif"

@@ -1,4 +1,0 @@
-new dialog
-dialog::message "Ngraph-gtk (${system::version}): "$1
-del dialog
-del system
