@@ -1,3 +1,8 @@
+2017-02-09  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (MainMenu): remove "Help" menu (integrated to
+	the app menu).
+
 2017-02-08  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11lgnd.c (Mlist): change step for mark size.

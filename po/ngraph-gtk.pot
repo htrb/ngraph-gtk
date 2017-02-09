@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.07.02\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2017-02-08 15:30+0900\n"
+"POT-Creation-Date: 2017-02-09 14:17+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -91,42 +91,42 @@ msgstr ""
 msgid "len"
 msgstr ""
 
-#: src/gtk/x11axis.c:95 src/gtk/x11menu.c:1368 src/gtk/x11menu.c:2381
+#: src/gtk/x11axis.c:95 src/gtk/x11menu.c:1370 src/gtk/x11menu.c:2383
 msgid "_Frame graph"
 msgstr ""
 
-#: src/gtk/x11axis.c:96 src/gtk/x11menu.c:1384 src/gtk/x11menu.c:2397
+#: src/gtk/x11axis.c:96 src/gtk/x11menu.c:1386 src/gtk/x11menu.c:2399
 msgid "_Section graph"
 msgstr ""
 
-#: src/gtk/x11axis.c:97 src/gtk/x11menu.c:1400 src/gtk/x11menu.c:2413
+#: src/gtk/x11axis.c:97 src/gtk/x11menu.c:1402 src/gtk/x11menu.c:2415
 msgid "_Cross graph"
 msgstr ""
 
-#: src/gtk/x11axis.c:98 src/gtk/x11menu.c:1416
+#: src/gtk/x11axis.c:98 src/gtk/x11menu.c:1418
 msgid "Single _Axis"
 msgstr ""
 
 #: src/gtk/x11axis.c:103 src/gtk/x11file.c:130 src/gtk/x11file.c:1843
 #: src/gtk/x11file.c:2072 src/gtk/x11graph.c:708 src/gtk/x11lgnd.c:1025
-#: src/gtk/x11menu.c:630 src/gtk/x11menu.c:1004 src/gtk/x11menu.c:1314
-#: src/gtk/x11menu.c:1438 src/gtk/x11menu.c:1600 src/gtk/x11merge.c:68
+#: src/gtk/x11menu.c:630 src/gtk/x11menu.c:1006 src/gtk/x11menu.c:1316
+#: src/gtk/x11menu.c:1440 src/gtk/x11menu.c:1602 src/gtk/x11merge.c:68
 #: src/gtk/x11opt.c:957
 msgid "_Add"
 msgstr ""
 
 #: src/gtk/x11axis.c:105 src/gtk/x11file.c:132 src/gtk/x11lgnd.c:215
-#: src/gtk/x11menu.c:2267 src/gtk/x11menu.c:3194 src/gtk/x11merge.c:69
+#: src/gtk/x11menu.c:2269 src/gtk/x11menu.c:3198 src/gtk/x11merge.c:69
 msgid "_Duplicate"
 msgstr ""
 
 #: src/gtk/x11axis.c:106 src/gtk/x11file.c:134 src/gtk/x11file.c:638
 #: src/gtk/x11file.c:1477 src/gtk/x11lgnd.c:217 src/gtk/x11lgnd.c:1030
 #: src/gtk/x11lgnd.c:1269 src/gtk/x11lgnd.c:1454 src/gtk/x11lgnd.c:1573
-#: src/gtk/x11lgnd.c:1731 src/gtk/x11lgnd.c:1991 src/gtk/x11menu.c:1074
-#: src/gtk/x11menu.c:1112 src/gtk/x11menu.c:1150 src/gtk/x11menu.c:1188
-#: src/gtk/x11menu.c:1226 src/gtk/x11menu.c:1346 src/gtk/x11menu.c:1466
-#: src/gtk/x11menu.c:1632 src/gtk/x11menu.c:2251 src/gtk/x11menu.c:3178
+#: src/gtk/x11lgnd.c:1731 src/gtk/x11lgnd.c:1991 src/gtk/x11menu.c:1076
+#: src/gtk/x11menu.c:1114 src/gtk/x11menu.c:1152 src/gtk/x11menu.c:1190
+#: src/gtk/x11menu.c:1228 src/gtk/x11menu.c:1348 src/gtk/x11menu.c:1468
+#: src/gtk/x11menu.c:1634 src/gtk/x11menu.c:2253 src/gtk/x11menu.c:3182
 #: src/gtk/x11merge.c:70
 msgid "_Delete"
 msgstr ""
@@ -135,38 +135,38 @@ msgstr ""
 msgid "_Focus"
 msgstr ""
 
-#: src/gtk/x11axis.c:109 src/gtk/x11axis.c:1363 src/gtk/x11menu.c:1722
+#: src/gtk/x11axis.c:109 src/gtk/x11axis.c:1363 src/gtk/x11menu.c:1724
 msgid "_Clear"
 msgstr ""
 
 #: src/gtk/x11axis.c:110 src/gtk/x11file.c:137 src/gtk/x11lgnd.c:220
-#: src/gtk/x11menu.c:1020 src/gtk/x11menu.c:1058 src/gtk/x11menu.c:1096
-#: src/gtk/x11menu.c:1134 src/gtk/x11menu.c:1172 src/gtk/x11menu.c:1210
-#: src/gtk/x11menu.c:1330 src/gtk/x11menu.c:1450 src/gtk/x11menu.c:1616
-#: src/gtk/x11menu.c:3213
+#: src/gtk/x11menu.c:1022 src/gtk/x11menu.c:1060 src/gtk/x11menu.c:1098
+#: src/gtk/x11menu.c:1136 src/gtk/x11menu.c:1174 src/gtk/x11menu.c:1212
+#: src/gtk/x11menu.c:1332 src/gtk/x11menu.c:1452 src/gtk/x11menu.c:1618
+#: src/gtk/x11menu.c:3217
 msgid "_Properties"
 msgstr ""
 
 #: src/gtk/x11axis.c:112 src/gtk/x11file.c:140 src/gtk/x11graph.c:726
-#: src/gtk/x11lgnd.c:222 src/gtk/x11menu.c:2027 src/gtk/x11menu.c:3271
+#: src/gtk/x11lgnd.c:222 src/gtk/x11menu.c:2029 src/gtk/x11menu.c:3275
 #: src/gtk/x11merge.c:75
 msgid "_Top"
 msgstr ""
 
 #: src/gtk/x11axis.c:113 src/gtk/x11file.c:141 src/gtk/x11graph.c:732
-#: src/gtk/x11lgnd.c:223 src/gtk/x11menu.c:2043 src/gtk/x11menu.c:3287
+#: src/gtk/x11lgnd.c:223 src/gtk/x11menu.c:2045 src/gtk/x11menu.c:3291
 #: src/gtk/x11merge.c:76 src/gtk/x11opt.c:976
 msgid "_Up"
 msgstr ""
 
 #: src/gtk/x11axis.c:114 src/gtk/x11file.c:142 src/gtk/x11graph.c:738
-#: src/gtk/x11lgnd.c:224 src/gtk/x11menu.c:2059 src/gtk/x11menu.c:3303
+#: src/gtk/x11lgnd.c:224 src/gtk/x11menu.c:2061 src/gtk/x11menu.c:3307
 #: src/gtk/x11merge.c:77 src/gtk/x11opt.c:969
 msgid "_Down"
 msgstr ""
 
 #: src/gtk/x11axis.c:115 src/gtk/x11file.c:143 src/gtk/x11graph.c:744
-#: src/gtk/x11lgnd.c:225 src/gtk/x11menu.c:2075 src/gtk/x11menu.c:3319
+#: src/gtk/x11lgnd.c:225 src/gtk/x11menu.c:2077 src/gtk/x11menu.c:3323
 #: src/gtk/x11merge.c:78
 msgid "_Bottom"
 msgstr ""
@@ -287,7 +287,7 @@ msgstr ""
 msgid "_R axis"
 msgstr ""
 
-#: src/gtk/x11axis.c:763 src/gtk/x11menu.c:1535
+#: src/gtk/x11axis.c:763 src/gtk/x11menu.c:1537
 msgid "_Grid"
 msgstr ""
 
@@ -307,7 +307,7 @@ msgstr ""
 msgid "_Inc:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1367 src/gtk/x11menu.c:2870
+#: src/gtk/x11axis.c:1367 src/gtk/x11menu.c:2872
 msgid "_Data"
 msgstr ""
 
@@ -541,7 +541,7 @@ msgid "_Position"
 msgstr ""
 
 #: src/gtk/x11axis.c:3328 src/gtk/x11axis.c:3340 src/gtk/x11lgnd.c:3276
-#: src/gtk/x11lgnd.c:3290 src/gtk/x11menu.c:703 src/gtk/x11menu.c:1707
+#: src/gtk/x11lgnd.c:3290 src/gtk/x11menu.c:703 src/gtk/x11menu.c:1709
 msgid "Draw"
 msgstr ""
 
@@ -569,7 +569,7 @@ msgstr ""
 msgid "No zero"
 msgstr ""
 
-#: src/gtk/x11commn.c:1168 src/gtk/x11menu.c:668 src/gtk/x11menu.c:2633
+#: src/gtk/x11commn.c:1168 src/gtk/x11menu.c:668 src/gtk/x11menu.c:2635
 msgid "Save NGP file"
 msgstr ""
 
@@ -864,15 +864,15 @@ msgstr ""
 msgid "num"
 msgstr ""
 
-#: src/gtk/x11file.c:122 src/gtk/x11menu.c:1553
+#: src/gtk/x11file.c:122 src/gtk/x11menu.c:1555
 msgid "_File"
 msgstr ""
 
-#: src/gtk/x11file.c:123 src/gtk/x11menu.c:1569
+#: src/gtk/x11file.c:123 src/gtk/x11menu.c:1571
 msgid "_Range"
 msgstr ""
 
-#: src/gtk/x11file.c:125 src/gtk/x11menu.c:1589
+#: src/gtk/x11file.c:125 src/gtk/x11menu.c:1591
 msgid "_Recent file"
 msgstr ""
 
@@ -881,12 +881,12 @@ msgid "duplicate _Behind"
 msgstr ""
 
 #: src/gtk/x11file.c:136 src/gtk/x11file.c:1610 src/gtk/x11menu.c:702
-#: src/gtk/x11menu.c:1706
+#: src/gtk/x11menu.c:1708
 msgid "_Draw"
 msgstr ""
 
 #: src/gtk/x11file.c:138 src/gtk/x11file.c:542 src/gtk/x11file.c:3858
-#: src/gtk/x11menu.c:1648 src/gtk/x11menu.c:2843
+#: src/gtk/x11menu.c:1650 src/gtk/x11menu.c:2845
 msgid "_Edit"
 msgstr ""
 
@@ -910,7 +910,7 @@ msgstr ""
 msgid "_Y math"
 msgstr ""
 
-#: src/gtk/x11file.c:551 src/gtk/x11menu.c:1036 src/gtk/x11view.c:996
+#: src/gtk/x11file.c:551 src/gtk/x11menu.c:1038 src/gtk/x11view.c:996
 msgid "_Close"
 msgstr ""
 
@@ -1012,7 +1012,7 @@ msgid "_Load"
 msgstr ""
 
 #: src/gtk/x11file.c:1604 src/gtk/x11gui.c:1204 src/gtk/x11menu.c:666
-#: src/gtk/x11menu.c:2631 src/gtk/x11opt.c:481 src/gtk/x11opt.c:686
+#: src/gtk/x11menu.c:2633 src/gtk/x11opt.c:481 src/gtk/x11opt.c:686
 #: src/gtk/x11opt.c:1192 src/gtk/x11opt.c:1298 src/gtk/x11opt.c:1644
 #: src/gtk/x11opt.c:1772
 msgid "_Save"
@@ -1305,7 +1305,7 @@ msgstr ""
 msgid "Object"
 msgstr ""
 
-#: src/gtk/x11graph.c:683 src/gtk/x11menu.c:2678
+#: src/gtk/x11graph.c:683 src/gtk/x11menu.c:2680
 msgid "_Draw order"
 msgstr ""
 
@@ -1346,7 +1346,7 @@ msgstr ""
 msgid "_Include merge file"
 msgstr ""
 
-#: src/gtk/x11graph.c:1129 src/gtk/x11menu.c:652 src/gtk/x11menu.c:2605
+#: src/gtk/x11graph.c:1129 src/gtk/x11menu.c:652 src/gtk/x11menu.c:2607
 msgid "Load NGP file"
 msgstr ""
 
@@ -1358,7 +1358,7 @@ msgstr ""
 
 #: src/gtk/x11gui.c:162 src/gtk/x11gui.c:369 src/gtk/x11gui.c:437
 #: src/gtk/x11gui.c:573 src/gtk/x11gui.c:649 src/gtk/x11gui.c:719
-#: src/gtk/x11gui.c:798 src/gtk/x11gui.c:1036 src/gtk/x11menu.c:5359
+#: src/gtk/x11gui.c:798 src/gtk/x11gui.c:1036 src/gtk/x11menu.c:5363
 msgid "_Cancel"
 msgstr ""
 
@@ -1401,7 +1401,7 @@ msgstr ""
 msgid "%s file (*.%s)"
 msgstr ""
 
-#: src/gtk/x11gui.c:1138 src/gtk/x11gui.c:1173 src/gtk/x11menu.c:5361
+#: src/gtk/x11gui.c:1138 src/gtk/x11gui.c:1173 src/gtk/x11menu.c:5365
 msgid "_Open"
 msgstr ""
 
@@ -1787,27 +1787,27 @@ msgstr ""
 msgid "Viewer Zoom-In (+CONTROL: Zoom-Out +SHIFT: Centering)"
 msgstr ""
 
-#: src/gtk/x11menu.c:521 src/gtk/x11menu.c:1744
+#: src/gtk/x11menu.c:521 src/gtk/x11menu.c:1746
 msgid "Activate Data Window"
 msgstr ""
 
-#: src/gtk/x11menu.c:537 src/gtk/x11menu.c:1760
+#: src/gtk/x11menu.c:537 src/gtk/x11menu.c:1762
 msgid "Activate Axis Window"
 msgstr ""
 
-#: src/gtk/x11menu.c:553 src/gtk/x11menu.c:1776
+#: src/gtk/x11menu.c:553 src/gtk/x11menu.c:1778
 msgid "Activate Legend Window"
 msgstr ""
 
-#: src/gtk/x11menu.c:569 src/gtk/x11menu.c:1792
+#: src/gtk/x11menu.c:569 src/gtk/x11menu.c:1794
 msgid "Activate Merge Window"
 msgstr ""
 
-#: src/gtk/x11menu.c:585 src/gtk/x11menu.c:1808
+#: src/gtk/x11menu.c:585 src/gtk/x11menu.c:1810
 msgid "Activate Coordinate Window"
 msgstr ""
 
-#: src/gtk/x11menu.c:601 src/gtk/x11menu.c:1824
+#: src/gtk/x11menu.c:601 src/gtk/x11menu.c:1826
 msgid "Activate Information Window"
 msgstr ""
 
@@ -1815,437 +1815,437 @@ msgstr ""
 msgid "Add Data"
 msgstr ""
 
-#: src/gtk/x11menu.c:650 src/gtk/x11menu.c:2603
+#: src/gtk/x11menu.c:650 src/gtk/x11menu.c:2605
 msgid "_Load graph"
 msgstr ""
 
-#: src/gtk/x11menu.c:651 src/gtk/x11menu.c:2604
+#: src/gtk/x11menu.c:651 src/gtk/x11menu.c:2606
 msgid "Load NGP"
 msgstr ""
 
-#: src/gtk/x11menu.c:667 src/gtk/x11menu.c:2632 src/gtk/x11menu.c:2648
+#: src/gtk/x11menu.c:667 src/gtk/x11menu.c:2634 src/gtk/x11menu.c:2650
 msgid "Save NGP"
 msgstr ""
 
-#: src/gtk/x11menu.c:686 src/gtk/x11menu.c:1498
+#: src/gtk/x11menu.c:686 src/gtk/x11menu.c:1500
 msgid "Scale _Clear"
 msgstr ""
 
-#: src/gtk/x11menu.c:687 src/gtk/x11menu.c:688 src/gtk/x11menu.c:1499
-#: src/gtk/x11menu.c:1500
+#: src/gtk/x11menu.c:687 src/gtk/x11menu.c:688 src/gtk/x11menu.c:1501
+#: src/gtk/x11menu.c:1502
 msgid "Clear Scale"
 msgstr ""
 
-#: src/gtk/x11menu.c:704 src/gtk/x11menu.c:1708
+#: src/gtk/x11menu.c:704 src/gtk/x11menu.c:1710
 msgid "Draw on Viewer Window"
 msgstr ""
 
-#: src/gtk/x11menu.c:718 src/gtk/x11menu.c:2734
+#: src/gtk/x11menu.c:718 src/gtk/x11menu.c:2736
 msgid "_Print"
 msgstr ""
 
-#: src/gtk/x11menu.c:719 src/gtk/x11menu.c:720 src/gtk/x11menu.c:2735
-#: src/gtk/x11menu.c:2736 src/gtk/x11print.c:680
+#: src/gtk/x11menu.c:719 src/gtk/x11menu.c:720 src/gtk/x11menu.c:2737
+#: src/gtk/x11menu.c:2738 src/gtk/x11print.c:680
 msgid "Print"
 msgstr ""
 
-#: src/gtk/x11menu.c:738 src/gtk/x11menu.c:1684
+#: src/gtk/x11menu.c:738 src/gtk/x11menu.c:1686
 msgid "_Math Transformation"
 msgstr ""
 
-#: src/gtk/x11menu.c:739 src/gtk/x11menu.c:1685
+#: src/gtk/x11menu.c:739 src/gtk/x11menu.c:1687
 msgid "Math Transformation"
 msgstr ""
 
-#: src/gtk/x11menu.c:740 src/gtk/x11menu.c:1686
+#: src/gtk/x11menu.c:740 src/gtk/x11menu.c:1688
 msgid "Set Math Transformation"
 msgstr ""
 
-#: src/gtk/x11menu.c:754 src/gtk/x11menu.c:1514
+#: src/gtk/x11menu.c:754 src/gtk/x11menu.c:1516
 msgid "Scale _Undo"
 msgstr ""
 
-#: src/gtk/x11menu.c:755 src/gtk/x11menu.c:1515
+#: src/gtk/x11menu.c:755 src/gtk/x11menu.c:1517
 msgid "Scale Undo"
 msgstr ""
 
-#: src/gtk/x11menu.c:756 src/gtk/x11menu.c:1516
+#: src/gtk/x11menu.c:756 src/gtk/x11menu.c:1518
 msgid "Undo Scale Settings"
 msgstr ""
 
-#: src/gtk/x11menu.c:804 src/gtk/x11menu.c:2930
+#: src/gtk/x11menu.c:805 src/gtk/x11menu.c:2933
 msgid "_Help"
 msgstr ""
 
-#: src/gtk/x11menu.c:824
+#: src/gtk/x11menu.c:825
 msgid "_About"
 msgstr ""
 
-#: src/gtk/x11menu.c:846 src/gtk/x11opt.c:78
+#: src/gtk/x11menu.c:848 src/gtk/x11opt.c:78
 msgid "_Viewer"
 msgstr ""
 
-#: src/gtk/x11menu.c:862
+#: src/gtk/x11menu.c:864
 msgid "_External viewer"
 msgstr ""
 
-#: src/gtk/x11menu.c:878 src/gtk/x11opt.c:86
+#: src/gtk/x11menu.c:880 src/gtk/x11opt.c:86
 msgid "_Font aliases"
 msgstr ""
 
-#: src/gtk/x11menu.c:894
+#: src/gtk/x11menu.c:896
 msgid "_Add-in script"
 msgstr ""
 
-#: src/gtk/x11menu.c:910 src/gtk/x11opt.c:98
+#: src/gtk/x11menu.c:912 src/gtk/x11opt.c:98
 msgid "_Miscellaneous"
 msgstr ""
 
-#: src/gtk/x11menu.c:930
+#: src/gtk/x11menu.c:932
 msgid "save as default (_Settings)"
 msgstr ""
 
-#: src/gtk/x11menu.c:946
+#: src/gtk/x11menu.c:948
 msgid "save as default (_Graph)"
 msgstr ""
 
-#: src/gtk/x11menu.c:966
+#: src/gtk/x11menu.c:968
 msgid "_Data file default"
 msgstr ""
 
-#: src/gtk/x11menu.c:982
+#: src/gtk/x11menu.c:984
 msgid "_Legend text default"
 msgstr ""
 
-#: src/gtk/x11menu.c:1248
+#: src/gtk/x11menu.c:1250
 msgid "_Path"
 msgstr ""
 
-#: src/gtk/x11menu.c:1260
+#: src/gtk/x11menu.c:1262
 msgid "_Rectangle"
 msgstr ""
 
-#: src/gtk/x11menu.c:1272
+#: src/gtk/x11menu.c:1274
 msgid "_Arc"
 msgstr ""
 
-#: src/gtk/x11menu.c:1284
+#: src/gtk/x11menu.c:1286
 msgid "_Mark"
 msgstr ""
 
-#: src/gtk/x11menu.c:1296
+#: src/gtk/x11menu.c:1298
 msgid "_Text"
 msgstr ""
 
-#: src/gtk/x11menu.c:1482
+#: src/gtk/x11menu.c:1484
 msgid "Scale _Zoom"
 msgstr ""
 
-#: src/gtk/x11menu.c:1554 src/gtk/x11menu.c:1555
+#: src/gtk/x11menu.c:1556 src/gtk/x11menu.c:1557
 msgid "Add data file"
 msgstr ""
 
-#: src/gtk/x11menu.c:1570
+#: src/gtk/x11menu.c:1572
 msgid "Add range plot"
 msgstr ""
 
-#: src/gtk/x11menu.c:1668
+#: src/gtk/x11menu.c:1670
 msgid "_Save data"
 msgstr ""
 
-#: src/gtk/x11menu.c:1723
+#: src/gtk/x11menu.c:1725
 msgid "Clear Image"
 msgstr ""
 
-#: src/gtk/x11menu.c:1724
+#: src/gtk/x11menu.c:1726
 msgid "Clear Viewer Window"
 msgstr ""
 
-#: src/gtk/x11menu.c:1838 src/gtk/x11menu.c:1839
+#: src/gtk/x11menu.c:1840 src/gtk/x11menu.c:1841
 msgid "Single window mode"
 msgstr ""
 
-#: src/gtk/x11menu.c:1840
+#: src/gtk/x11menu.c:1842
 msgid "Toggle single window mode"
 msgstr ""
 
-#: src/gtk/x11menu.c:1869
+#: src/gtk/x11menu.c:1871
 msgid "default _Window config"
 msgstr ""
 
-#: src/gtk/x11menu.c:1889
+#: src/gtk/x11menu.c:1891
 msgid "_Clear information view"
 msgstr ""
 
-#: src/gtk/x11menu.c:1909
+#: src/gtk/x11menu.c:1911
 msgid "_Sidebar"
 msgstr ""
 
-#: src/gtk/x11menu.c:1925
+#: src/gtk/x11menu.c:1927
 msgid "_Statusbar"
 msgstr ""
 
-#: src/gtk/x11menu.c:1941
+#: src/gtk/x11menu.c:1943
 msgid "_Ruler"
 msgstr ""
 
-#: src/gtk/x11menu.c:1957
+#: src/gtk/x11menu.c:1959
 msgid "_Scrollbar"
 msgstr ""
 
-#: src/gtk/x11menu.c:1973
+#: src/gtk/x11menu.c:1975
 msgid "_Command toolbar"
 msgstr ""
 
-#: src/gtk/x11menu.c:1989
+#: src/gtk/x11menu.c:1991
 msgid "_Toolbox"
 msgstr ""
 
-#: src/gtk/x11menu.c:2005 src/gtk/x11menu.c:3338
+#: src/gtk/x11menu.c:2007 src/gtk/x11menu.c:3342
 msgid "cross _Gauge"
 msgstr ""
 
-#: src/gtk/x11menu.c:2097 src/gtk/x11menu.c:3024
+#: src/gtk/x11menu.c:2099 src/gtk/x11menu.c:3028
 msgid "Align _Left"
 msgstr ""
 
-#: src/gtk/x11menu.c:2113 src/gtk/x11menu.c:3040
+#: src/gtk/x11menu.c:2115 src/gtk/x11menu.c:3044
 msgid "Align _Horizontal Center"
 msgstr ""
 
-#: src/gtk/x11menu.c:2129 src/gtk/x11menu.c:3056
+#: src/gtk/x11menu.c:2131 src/gtk/x11menu.c:3060
 msgid "Align _Right"
 msgstr ""
 
-#: src/gtk/x11menu.c:2149 src/gtk/x11menu.c:3076
+#: src/gtk/x11menu.c:2151 src/gtk/x11menu.c:3080
 msgid "Align _Top"
 msgstr ""
 
-#: src/gtk/x11menu.c:2165 src/gtk/x11menu.c:3092
+#: src/gtk/x11menu.c:2167 src/gtk/x11menu.c:3096
 msgid "Align _Vertical Center"
 msgstr ""
 
-#: src/gtk/x11menu.c:2181 src/gtk/x11menu.c:3108
+#: src/gtk/x11menu.c:2183 src/gtk/x11menu.c:3112
 msgid "Align _Bottom"
 msgstr ""
 
-#: src/gtk/x11menu.c:2203
+#: src/gtk/x11menu.c:2205
 msgid "Cu_t"
 msgstr ""
 
-#: src/gtk/x11menu.c:2219 src/gtk/x11menu.c:3146 src/gtk/x11view.c:985
+#: src/gtk/x11menu.c:2221 src/gtk/x11menu.c:3150 src/gtk/x11view.c:985
 msgid "_Copy"
 msgstr ""
 
-#: src/gtk/x11menu.c:2235 src/gtk/x11menu.c:3162
+#: src/gtk/x11menu.c:2237 src/gtk/x11menu.c:3166
 msgid "_Paste"
 msgstr ""
 
-#: src/gtk/x11menu.c:2287
+#: src/gtk/x11menu.c:2289
 msgid "draw _Order"
 msgstr ""
 
-#: src/gtk/x11menu.c:2299 src/gtk/x11menu.c:3232
+#: src/gtk/x11menu.c:2301 src/gtk/x11menu.c:3236
 msgid "_Align"
 msgstr ""
 
-#: src/gtk/x11menu.c:2311 src/gtk/x11menu.c:2948
+#: src/gtk/x11menu.c:2313 src/gtk/x11menu.c:2952
 msgid "rotate _90 degree clockwise"
 msgstr ""
 
-#: src/gtk/x11menu.c:2327 src/gtk/x11menu.c:2964
+#: src/gtk/x11menu.c:2329 src/gtk/x11menu.c:2968
 msgid "rotate 9_0 degree counter-clockwise"
 msgstr ""
 
-#: src/gtk/x11menu.c:2343 src/gtk/x11menu.c:2986
+#: src/gtk/x11menu.c:2345 src/gtk/x11menu.c:2990
 msgid "flip _Horizontally"
 msgstr ""
 
-#: src/gtk/x11menu.c:2359 src/gtk/x11menu.c:3002
+#: src/gtk/x11menu.c:2361 src/gtk/x11menu.c:3006
 msgid "flip _Vertically"
 msgstr ""
 
-#: src/gtk/x11menu.c:2382
+#: src/gtk/x11menu.c:2384
 msgid "Create frame graph"
 msgstr ""
 
-#: src/gtk/x11menu.c:2398
+#: src/gtk/x11menu.c:2400
 msgid "Create section graph"
 msgstr ""
 
-#: src/gtk/x11menu.c:2414
+#: src/gtk/x11menu.c:2416
 msgid "Create cross graph"
 msgstr ""
 
-#: src/gtk/x11menu.c:2429
+#: src/gtk/x11menu.c:2431
 msgid "_All clear"
 msgstr ""
 
-#: src/gtk/x11menu.c:2430
+#: src/gtk/x11menu.c:2432
 msgid "Clear graph"
 msgstr ""
 
-#: src/gtk/x11menu.c:2451
+#: src/gtk/x11menu.c:2453
 msgid "_GRA file"
 msgstr ""
 
-#: src/gtk/x11menu.c:2452
+#: src/gtk/x11menu.c:2454
 msgid "Export as GRA file"
 msgstr ""
 
-#: src/gtk/x11menu.c:2467
+#: src/gtk/x11menu.c:2469
 msgid "_PS file"
 msgstr ""
 
-#: src/gtk/x11menu.c:2468
+#: src/gtk/x11menu.c:2470
 msgid "Export as PostScript file"
 msgstr ""
 
-#: src/gtk/x11menu.c:2483
+#: src/gtk/x11menu.c:2485
 msgid "_EPS file"
 msgstr ""
 
-#: src/gtk/x11menu.c:2484
+#: src/gtk/x11menu.c:2486
 msgid "Export as Encapsulate PostScript file"
 msgstr ""
 
-#: src/gtk/x11menu.c:2499
+#: src/gtk/x11menu.c:2501
 msgid "P_DF file"
 msgstr ""
 
-#: src/gtk/x11menu.c:2500
+#: src/gtk/x11menu.c:2502
 msgid "Export as Portable Document Format"
 msgstr ""
 
-#: src/gtk/x11menu.c:2515
+#: src/gtk/x11menu.c:2517
 msgid "_SVG file"
 msgstr ""
 
-#: src/gtk/x11menu.c:2516
+#: src/gtk/x11menu.c:2518
 msgid "Export as Scalable Vector Graphics file"
 msgstr ""
 
-#: src/gtk/x11menu.c:2531
+#: src/gtk/x11menu.c:2533
 msgid "P_NG file"
 msgstr ""
 
-#: src/gtk/x11menu.c:2532
+#: src/gtk/x11menu.c:2534
 msgid "Export as Portable Network Graphics  file"
 msgstr ""
 
-#: src/gtk/x11menu.c:2548
+#: src/gtk/x11menu.c:2550
 msgid "_EMF file"
 msgstr ""
 
-#: src/gtk/x11menu.c:2549
+#: src/gtk/x11menu.c:2551
 msgid "Export as Windows Enhanced Metafile"
 msgstr ""
 
-#: src/gtk/x11menu.c:2568
+#: src/gtk/x11menu.c:2570
 msgid "_Clipboard (EMF)"
 msgstr ""
 
-#: src/gtk/x11menu.c:2569
+#: src/gtk/x11menu.c:2571
 msgid "Copy to the clipboard as Windows Enhanced Metafile "
 msgstr ""
 
-#: src/gtk/x11menu.c:2591
+#: src/gtk/x11menu.c:2593
 msgid "_New graph"
 msgstr ""
 
-#: src/gtk/x11menu.c:2619
+#: src/gtk/x11menu.c:2621
 msgid "_Recent graphs"
 msgstr ""
 
-#: src/gtk/x11menu.c:2647
+#: src/gtk/x11menu.c:2649
 msgid "Save _As"
 msgstr ""
 
-#: src/gtk/x11menu.c:2663
+#: src/gtk/x11menu.c:2665
 msgid "_Export image"
 msgstr ""
 
-#: src/gtk/x11menu.c:2698
+#: src/gtk/x11menu.c:2700
 msgid "Page Set_up"
 msgstr ""
 
-#: src/gtk/x11menu.c:2718
+#: src/gtk/x11menu.c:2720
 msgid "Pre_view"
 msgstr ""
 
-#: src/gtk/x11menu.c:2719 src/gtk/x11menu.c:2720
+#: src/gtk/x11menu.c:2721 src/gtk/x11menu.c:2722
 msgid "Print preview"
 msgstr ""
 
-#: src/gtk/x11menu.c:2754
+#: src/gtk/x11menu.c:2756
 msgid "_Current directory"
 msgstr ""
 
-#: src/gtk/x11menu.c:2774
+#: src/gtk/x11menu.c:2776
 msgid "_Ngraph shell"
 msgstr ""
 
-#: src/gtk/x11menu.c:2790 src/gtk/x11menu.c:3721
+#: src/gtk/x11menu.c:2792 src/gtk/x11menu.c:3725
 msgid "_Add-in"
 msgstr ""
 
-#: src/gtk/x11menu.c:2809
+#: src/gtk/x11menu.c:2811
 msgid "_Quit"
 msgstr ""
 
-#: src/gtk/x11menu.c:2831
+#: src/gtk/x11menu.c:2833
 msgid "_Graph"
 msgstr ""
 
-#: src/gtk/x11menu.c:2858
+#: src/gtk/x11menu.c:2860
 msgid "_View"
 msgstr ""
 
-#: src/gtk/x11menu.c:2882
+#: src/gtk/x11menu.c:2884
 msgid "_Axis"
 msgstr ""
 
-#: src/gtk/x11menu.c:2894
+#: src/gtk/x11menu.c:2896
 msgid "_Legend"
 msgstr ""
 
-#: src/gtk/x11menu.c:2906
+#: src/gtk/x11menu.c:2908
 msgid "_Merge"
 msgstr ""
 
-#: src/gtk/x11menu.c:2918
+#: src/gtk/x11menu.c:2920
 msgid "_Preference"
 msgstr ""
 
-#: src/gtk/x11menu.c:3244
+#: src/gtk/x11menu.c:3248
 msgid "_Rotate"
 msgstr ""
 
-#: src/gtk/x11menu.c:3256
+#: src/gtk/x11menu.c:3260
 msgid "_Flip"
 msgstr ""
 
-#: src/gtk/x11menu.c:4353 src/gtk/x11menu.c:4356
+#: src/gtk/x11menu.c:4357 src/gtk/x11menu.c:4360
 msgid "data"
 msgstr ""
 
-#: src/gtk/x11menu.c:5355
+#: src/gtk/x11menu.c:5359
 msgid "Recent Graphs"
 msgstr ""
 
-#: src/gtk/x11menu.c:5355
+#: src/gtk/x11menu.c:5359
 msgid "Recent Data Files"
 msgstr ""
 
-#: src/gtk/x11menu.c:6042
+#: src/gtk/x11menu.c:6046
 msgid "Error:"
 msgstr ""
 
-#: src/gtk/x11menu.c:6091
+#: src/gtk/x11menu.c:6095
 msgid "Question"
 msgstr ""
 
-#: src/gtk/x11menu.c:6149
+#: src/gtk/x11menu.c:6153
 #, c-format
 msgid "Executing `%.128s'."
 msgstr ""
