@@ -144,11 +144,7 @@ DriverDialogSetup(GtkWidget *wi, void *data, int makewidget)
   d = (struct DriverDialog *) data;
   if (makewidget) {
 
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i = 0;
     w = combo_box_create();

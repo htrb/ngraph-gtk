@@ -89,15 +89,6 @@ file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointe
   }
 }
 
-#if ! GTK_CHECK_VERSION(3, 2, 0)
-static gboolean
-cell_focus_out(GtkWidget *widget, GdkEvent *event, gpointer user_data)
-{
-  menu_lock(FALSE);
-  return FALSE;
-}
-#endif
-
 static void
 select_enum(GtkComboBox *w, gpointer user_data)
 {
@@ -220,10 +211,6 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
 	  g_free(valstr);
 	}
       }
-#if ! GTK_CHECK_VERSION(3, 2, 0)
-      /* this code may need to avoid a bug of GTK+ 3.0 */
-      g_signal_connect(editable, "focus-out-event", G_CALLBACK(cell_focus_out), d);
-#endif
     }
     break;
   case G_TYPE_DOUBLE:
@@ -1483,12 +1470,8 @@ label_sub_window_create(struct SubWin *d, const char *title, const char *icon, c
   GtkWidget *label, *swin;
 
   label = gtk_label_new(NULL);
-#if GTK_CHECK_VERSION(3, 4, 0)
   gtk_widget_set_halign(label, GTK_ALIGN_START);
   gtk_widget_set_valign(label, GTK_ALIGN_START);
-#else
-  gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.0);
-#endif
   gtk_label_set_selectable(GTK_LABEL(label), TRUE);
   gtk_label_set_line_wrap(GTK_LABEL(label), FALSE);
   gtk_label_set_single_line_mode(GTK_LABEL(label), FALSE);

@@ -371,10 +371,8 @@ PasteObjectsFromClipboard(void)
 {
   GtkClipboard *clip;
   struct Viewer *d;
-#if GTK_CHECK_VERSION(3, 4, 0)
   GdkDevice *device;
   GdkWindow *win;
-#endif
 
   d = &NgraphApp.Viewer;
 
@@ -386,7 +384,6 @@ PasteObjectsFromClipboard(void)
   if (gtk_clipboard_wait_is_text_available(clip)) {
     gint x, y;
     gtk_clipboard_request_text(clip, paste_cb, NULL);
-#if GTK_CHECK_VERSION(3, 4, 0)
     device = gtk_get_current_event_device(); /* fix-me: is there any other appropriate way to get the device? */
     if (device && gdk_device_get_source(device) != GDK_SOURCE_KEYBOARD) {
       win = gtk_widget_get_window(d->Win);
@@ -395,10 +392,6 @@ PasteObjectsFromClipboard(void)
 	set_mouse_cursor_hover(d, x, y);
       }
     }
-#else
-    gtk_widget_get_pointer(d->Win, &x, &y);
-    set_mouse_cursor_hover(d, x, y);
-#endif
   }
 }
 
@@ -1033,10 +1026,8 @@ EvalDialog(struct EvalDialog *data,
 static gboolean
 scrollbar_scroll_cb(GtkWidget *w, GdkEventScroll *e, gpointer client_data)
 {
-#if GTK_CHECK_VERSION(3, 4, 0)
   gdouble x, y;
 
-#endif
   switch (e->direction) {
   case GDK_SCROLL_UP:
   case GDK_SCROLL_LEFT:
@@ -1046,13 +1037,11 @@ scrollbar_scroll_cb(GtkWidget *w, GdkEventScroll *e, gpointer client_data)
   case GDK_SCROLL_RIGHT:
     range_increment(w, SCROLL_INC);
     break;
-#if GTK_CHECK_VERSION(3, 4, 0)
   case GDK_SCROLL_SMOOTH:
     if (gdk_event_get_scroll_deltas((GdkEvent *) e, &x, &y)) {
       range_increment(w, y * SCROLL_INC);
     }
     return TRUE;
-#endif
   default:
     return FALSE;
   }
@@ -1144,10 +1133,8 @@ ViewerWinSetup(void)
 			GDK_BUTTON_RELEASE_MASK |
 			GDK_BUTTON_PRESS_MASK |
 			GDK_KEY_PRESS_MASK |
-#if GTK_CHECK_VERSION(3, 4, 0)
 			GDK_SCROLL_MASK |
 			GDK_SMOOTH_SCROLL_MASK |
-#endif
 			GDK_KEY_RELEASE_MASK);
   gtk_widget_set_can_focus(d->Win, TRUE);
 
@@ -4642,9 +4629,7 @@ ViewerEvScroll(GtkWidget *w, GdkEventScroll *e, gpointer client_data)
 {
   struct Viewer *d;
   TPoint point;
-#if GTK_CHECK_VERSION(3, 4, 0)
   gdouble x, y;
-#endif
 
   point.x = e->x;
   point.y = e->y;
@@ -4672,7 +4657,6 @@ ViewerEvScroll(GtkWidget *w, GdkEventScroll *e, gpointer client_data)
   case GDK_SCROLL_RIGHT:
     range_increment(d->HScroll, SCROLL_INC);
     return TRUE;
-#if GTK_CHECK_VERSION(3, 4, 0)
   case GDK_SCROLL_SMOOTH:
     if (gdk_event_get_scroll_deltas((GdkEvent *) e, &x, &y)) {
       if ((e->state & GDK_CONTROL_MASK) && y != 0) {
@@ -4683,7 +4667,6 @@ ViewerEvScroll(GtkWidget *w, GdkEventScroll *e, gpointer client_data)
       }
     }
     return TRUE;
-#endif
   }
   return FALSE;
 }

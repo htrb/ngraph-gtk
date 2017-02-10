@@ -47,34 +47,19 @@ GtkWidget *
 add_widget_to_table_sub(GtkWidget *table, GtkWidget *w, char *title, int expand, int col, int width, int n)
 {
   GtkWidget *label;
-#if ! GTK_CHECK_VERSION(3, 4, 0)
-  GtkWidget *align;
-  int x, y;
-
-  g_object_get(table, "n-columns", &x, "n-rows", &y, NULL);
-
-  y = (y > n + 1) ? y : n + 1;
-  gtk_table_resize(GTK_TABLE(table), y, x);
-#endif
 
   label = NULL;
 
   if (title) {
     label = gtk_label_new_with_mnemonic(title);
     gtk_label_set_mnemonic_widget(GTK_LABEL(label), w);
-#if GTK_CHECK_VERSION(3, 4, 0)
     gtk_widget_set_halign(label, GTK_ALIGN_START);
     g_object_set(label, "margin", GINT_TO_POINTER(4), NULL);
     gtk_grid_attach(GTK_GRID(table), label, col, n, 1, 1);
-#else
-    gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-    gtk_table_attach(GTK_TABLE(table), label, col, col + 1, n, n + 1, GTK_FILL, 0, 4, 4);
-#endif
     col++;
   }
 
   if (w) {
-#if GTK_CHECK_VERSION(3, 4, 0)
     if (expand) {
       gtk_widget_set_hexpand(w, TRUE);
       gtk_widget_set_halign(w, GTK_ALIGN_FILL);
@@ -83,11 +68,6 @@ add_widget_to_table_sub(GtkWidget *table, GtkWidget *w, char *title, int expand,
     }
     g_object_set(w, "margin", GINT_TO_POINTER(4), NULL);
     gtk_grid_attach(GTK_GRID(table), w, col, n, width, 1);
-#else
-    align = gtk_alignment_new(0, 0.5, (expand) ? 1 : 0, 0);
-    gtk_container_add(GTK_CONTAINER(align), w);
-    gtk_table_attach(GTK_TABLE(table), align, col, col + width, n, n + 1, ((expand) ? GTK_EXPAND : 0) | GTK_FILL, 0, 4, 4);
-#endif
   }
 
   return label;
@@ -155,11 +135,7 @@ void
 get_font_parameter(struct font_prm *prm, int *pt, int *spc, int *script, int *style, int *r, int *g, int *b)
 {
   int bold, italic;
-#if GTK_CHECK_VERSION(3, 4, 0)
   GdkRGBA color;
-#else
-  GdkColor color;
-#endif
 
   *pt = gtk_spin_button_get_value(GTK_SPIN_BUTTON(prm->pt)) * 100;
   *script = gtk_spin_button_get_value(GTK_SPIN_BUTTON(prm->script)) * 100;
@@ -169,17 +145,10 @@ get_font_parameter(struct font_prm *prm, int *pt, int *spc, int *script, int *st
   italic = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(prm->italic));
   *style = (bold ? 1 : 0) + (italic ? 2 : 0);
 
-#if GTK_CHECK_VERSION(3, 4, 0)
   gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(prm->color), &color);
   *r = color.red * 255;
   *g = color.green * 255;
   *b = color.blue * 255;
-#else
-  gtk_color_button_get_color(GTK_COLOR_BUTTON(prm->color), &color);
-  *r = color.red >> 8;
-  *g = color.green >> 8;
-  *b = color.blue >> 8;
-#endif
 }
 
 GtkWidget *
@@ -190,11 +159,7 @@ create_font_frame(struct font_prm *prm)
 
   frame = gtk_frame_new("font");
 
-#if GTK_CHECK_VERSION(3, 4, 0)
   table = gtk_grid_new();
-#else
-  table = gtk_table_new(1, 2, FALSE);
-#endif
   j = 0;
 
   w = gtk_combo_box_text_new();

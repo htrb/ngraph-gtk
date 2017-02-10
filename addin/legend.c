@@ -457,11 +457,7 @@ create_geometry_frame(struct file_prm *prm)
 
   frame = gtk_frame_new("geometry");
 
-#if GTK_CHECK_VERSION(3, 4, 0)
   table = gtk_grid_new();
-#else
-  table = gtk_table_new(1, 2, FALSE);
-#endif
 
   j = 0;
   w = create_spin_button(POS_MIN, POS_MAX, POS_INC, prm->posx / 100.0, 2);

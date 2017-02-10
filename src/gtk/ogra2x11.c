@@ -271,10 +271,8 @@ scrolled(GtkWidget *widget, GdkEventScroll *event, gpointer user_data)
     gtklocal->action.type = ACTION_TYPE_SCROLL;
     gtklocal->action.val = event->direction;
     break;
-#if GTK_CHECK_VERSION(3, 4, 0)
   case GDK_SCROLL_SMOOTH:
     break;
-#endif
   }
 
   return FALSE;

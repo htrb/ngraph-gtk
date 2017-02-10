@@ -172,35 +172,19 @@ GtkWidget *
 add_widget_to_table_sub(GtkWidget *table, GtkWidget *w, char *title, int expand, int col, int width, int col_max, int n)
 {
   GtkWidget *label;
-#if ! GTK_CHECK_VERSION(3, 4, 0)
-  GtkWidget *align;
-  int x, y;
-
-  g_object_get(table, "n-columns", &x, "n-rows", &y, NULL);
-
-  x = (x > col_max) ? x : col_max;
-  y = (y > n + 1) ? y : n + 1;
-  gtk_table_resize(GTK_TABLE(table), y, x);
-#endif
 
   label = NULL;
 
   if (title) {
     label = gtk_label_new_with_mnemonic(title);
     gtk_label_set_mnemonic_widget(GTK_LABEL(label), w);
-#if GTK_CHECK_VERSION(3, 4, 0)
     gtk_widget_set_halign(label, GTK_ALIGN_START);
     g_object_set(label, "margin", GINT_TO_POINTER(4), NULL);
     gtk_grid_attach(GTK_GRID(table), label, col, n, 1, 1);
-#else
-    gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-    gtk_table_attach(GTK_TABLE(table), label, col, col + 1, n, n + 1, GTK_FILL, 0, 4, 4);
-#endif
     col++;
   }
 
   if (w) {
-#if GTK_CHECK_VERSION(3, 4, 0)
     if (expand) {
       gtk_widget_set_hexpand(w, TRUE);
       gtk_widget_set_halign(w, GTK_ALIGN_FILL);
@@ -209,11 +193,6 @@ add_widget_to_table_sub(GtkWidget *table, GtkWidget *w, char *title, int expand,
     }
     g_object_set(w, "margin", GINT_TO_POINTER(4), NULL);
     gtk_grid_attach(GTK_GRID(table), w, col, n, width, 1);
-#else
-    align = gtk_alignment_new(0, 0.5, (expand) ? 1 : 0, 0);
-    gtk_container_add(GTK_CONTAINER(align), w);
-    gtk_table_attach(GTK_TABLE(table), align, col, col + width, n, n + 1, ((expand) ? GTK_EXPAND : 0) | GTK_FILL, 0, 4, 4);
-#endif
   }
 
   return label;
@@ -673,7 +652,6 @@ create_spin_entry(int min, int max, int inc,
 			    TRUE, FALSE, set_default_size, set_default_action);
 }
 
-#if GTK_CHECK_VERSION(3, 4, 0)
 static void
 show_color_sel(GtkWidget *w, gpointer user_data)
 {
@@ -688,68 +666,6 @@ show_color_sel(GtkWidget *w, gpointer user_data)
 	   nround(col.blue * 255));
   gtk_widget_set_tooltip_text(w, buf);
 }
-#else
-static gboolean
-show_color_sel(GtkWidget *w, GdkEventButton *e, gpointer user_data)
-{
-  GtkWidget *dlg;
-  GtkColorSelection *sel;
-  GdkColor col;
-  GtkColorButton *button;
-  gboolean r;
-  guint16 alpha;
-
-
-  button = GTK_COLOR_BUTTON(w);
-
-  gtk_color_button_get_color(button, &col);
-  alpha = (Menulocal.use_opacity) ? gtk_color_button_get_alpha(button) : 0xffff;
-
-  dlg = gtk_color_selection_dialog_new(_("Pick a Color"));
-  gtk_window_set_transient_for(GTK_WINDOW(dlg), GTK_WINDOW(user_data));
-  sel = GTK_COLOR_SELECTION(gtk_color_selection_dialog_get_color_selection(GTK_COLOR_SELECTION_DIALOG(dlg)));
-
-  gtk_color_selection_set_has_palette(sel, TRUE);
-  gtk_color_selection_set_has_opacity_control(sel, Menulocal.use_opacity);
-  gtk_color_selection_set_current_color(sel, &col);
-  gtk_color_selection_set_current_alpha(sel, alpha);
-
-  r = ndialog_run(dlg);
-  gtk_color_selection_get_current_color(sel, &col);
-  alpha = gtk_color_selection_get_current_alpha(sel);
-  gtk_widget_destroy(dlg);
-
-  if (r == GTK_RESPONSE_OK) {
-    char buf[64];
-    snprintf(buf, sizeof(buf),
-	     "#%02X%02X%02X",
-	     col.red >> 8,
-	     col.green >> 8,
-	     col.blue >> 8);
-    gtk_widget_set_tooltip_text(w, buf);
-
-    gtk_color_button_set_color(button, &col);
-    gtk_color_button_set_alpha(button, alpha);
-  }
-
-  return TRUE;
-}
-
-static gboolean
-color_button_key_event(GtkWidget *w, GdkEventKey *e, gpointer u)
-{
-  switch (e->keyval) {
-  case GDK_KEY_space:
-  case GDK_KEY_Return:
-    if (e->type == GDK_KEY_RELEASE) {
-      show_color_sel(w, NULL, u);
-    }
-    return TRUE;
-  }
-
-  return FALSE;
-}
-#endif
 
 GtkWidget *
 create_color_button(GtkWidget *win)
@@ -757,14 +673,7 @@ create_color_button(GtkWidget *win)
   GtkWidget *w;
 
   w = gtk_color_button_new();
-#if GTK_CHECK_VERSION(3, 4, 0)
   g_signal_connect(w, "color-set", G_CALLBACK(show_color_sel), win);
-#else
-  gtk_color_button_set_use_alpha(GTK_COLOR_BUTTON(w), Menulocal.use_opacity);
-  g_signal_connect(w, "button-release-event", G_CALLBACK(show_color_sel), win);
-  g_signal_connect(w, "key-press-event", G_CALLBACK(color_button_key_event), win);
-  g_signal_connect(w, "key-release-event", G_CALLBACK(color_button_key_event), win);
-#endif
 
   return w;
 }
@@ -832,7 +741,6 @@ text_view_scroll_event(GtkWidget *widget, GdkEventScroll *event, gpointer user_d
     y_adj = NULL;
     y = 0;
     break;
-#if GTK_CHECK_VERSION(3, 4, 0)
   case GDK_SCROLL_SMOOTH:
     if (gdk_event_get_scroll_deltas((GdkEvent *) event, &x, &y)) {
       scl = g_object_get_data(G_OBJECT(widget), "hscroll");
@@ -845,7 +753,6 @@ text_view_scroll_event(GtkWidget *widget, GdkEventScroll *event, gpointer user_d
       break;
     }
     return FALSE;
-#endif
   default:
     return FALSE;
   }
@@ -1088,18 +995,9 @@ create_text_view_with_line_number(GtkWidget **v)
   gtk_text_view_set_editable(GTK_TEXT_VIEW(ln), FALSE);
   gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(ln), FALSE);
 
-#if GTK_CHECK_VERSION(3, 4, 0)
   swin = gtk_grid_new();
-#else
-  swin = gtk_table_new(3, 2, FALSE);
-#endif
-#if GTK_CHECK_VERSION(3, 2, 0)
   hs = gtk_scrollbar_new(GTK_ORIENTATION_HORIZONTAL, NULL);
   vs = gtk_scrollbar_new(GTK_ORIENTATION_VERTICAL, NULL);
-#else
-  hs = gtk_hscrollbar_new(NULL);
-  vs = gtk_vscrollbar_new(NULL);
-#endif
 
   g_object_set_data(G_OBJECT(view), "hscroll", hs);
   g_object_set_data(G_OBJECT(view), "vscroll", vs);
@@ -1119,7 +1017,6 @@ create_text_view_with_line_number(GtkWidget **v)
   g_signal_connect(view, "scroll-event", G_CALLBACK(text_view_scroll_event), NULL);
   g_signal_connect(view, "size-allocate", G_CALLBACK(text_view_size_allocate), NULL);
 
-#if GTK_CHECK_VERSION(3, 4, 0)
   gtk_widget_set_vexpand(ln, TRUE);
   gtk_grid_attach(GTK_GRID(swin), ln,   0, 0, 1, 1);
 
@@ -1132,16 +1029,6 @@ create_text_view_with_line_number(GtkWidget **v)
 
   gtk_widget_set_vexpand(vs, TRUE);
   gtk_grid_attach(GTK_GRID(swin), vs,   2, 0, 1, 1);
-#else
-  gtk_table_attach(GTK_TABLE(swin), ln,   0, 1, 0, 1,
-		   0, GTK_EXPAND | GTK_FILL, 0, 0);
-  gtk_table_attach(GTK_TABLE(swin), view, 1, 2, 0, 1,
-		   GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
-  gtk_table_attach(GTK_TABLE(swin), hs,   0, 2, 1, 2,
-		   GTK_FILL, GTK_FILL, 0, 0);
-  gtk_table_attach(GTK_TABLE(swin), vs,   2, 3, 0, 1,
-		   GTK_FILL, GTK_FILL, 0, 0);
-#endif
 
   if (v) {
     *v = view;
@@ -1226,12 +1113,7 @@ select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type)
 {
   GtkWidget *dlg;
   int r, g, b, a, rr ,gg, bb, aa, response;
-#if GTK_CHECK_VERSION(3, 4, 0)
   GdkRGBA color;
-#else
-  GtkWidget *sel;
-  GdkColor color;
-#endif
   char *title;
 
   switch (type) {
@@ -1299,7 +1181,6 @@ select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type)
     a = 255;
   }
 
-#if GTK_CHECK_VERSION(3, 4, 0)
   color.red = r / 255.0;
   color.green = g / 255.0;
   color.blue = b / 255.0;
@@ -1322,34 +1203,6 @@ select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type)
   gg = nround(color.green * 255);
   bb = nround(color.blue * 255);
   aa = nround(color.alpha * 255);
-#else
-  color.red = (r & 0xffU) * 257;
-  color.green = (g & 0xffU) * 257;
-  color.blue = (b & 0xffU) * 257;
-
-  dlg = gtk_color_selection_dialog_new(title);
-  sel = gtk_color_selection_dialog_get_color_selection(GTK_COLOR_SELECTION_DIALOG(dlg));
-
-  gtk_color_selection_set_has_palette(GTK_COLOR_SELECTION(sel), TRUE);
-  gtk_color_selection_set_has_opacity_control(GTK_COLOR_SELECTION(sel), Menulocal.use_opacity);
-
-  gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(sel), &color);
-  gtk_color_selection_set_current_alpha(GTK_COLOR_SELECTION(sel), (a & 0xffU) * 257);
-
-  response = ndialog_run(dlg);
-  gtk_color_selection_get_current_color(GTK_COLOR_SELECTION(sel), &color);
-  aa = gtk_color_selection_get_current_alpha(GTK_COLOR_SELECTION(sel));
-  gtk_widget_destroy(dlg);
-
-  if (response != GTK_RESPONSE_OK) {
-    return SELECT_OBJ_COLOR_CANCEL;
-  }
-
-  rr = (color.red >> 8);
-  gg = (color.green >> 8);
-  bb = (color.blue >> 8);
-  aa >>= 8;
-#endif
 
   switch (type) {
   case OBJ_FIELD_COLOR_TYPE_STROKE:

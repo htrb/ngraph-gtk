@@ -996,11 +996,7 @@ points_setup(struct LegendDialog *d)
 
   label = gtk_label_new_with_mnemonic(_("_Points:"));
   set_widget_margin(label, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT | WIDGET_MARGIN_TOP | WIDGET_MARGIN_BOTTOM);
-#if GTK_CHECK_VERSION(3, 4, 0)
   gtk_widget_set_halign(label, GTK_ALIGN_START);
-#else
-  gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-#endif
   gtk_label_set_mnemonic_widget(GTK_LABEL(label), tree_view);
   gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 
@@ -1241,21 +1237,13 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     frame = gtk_frame_new(NULL);
     gtk_container_add(GTK_CONTAINER(frame), w);
-#if GTK_CHECK_VERSION(3, 4, 0)
    gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
-#else
-    gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 0);
-#endif
 
     vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 
     hbox2 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i = 0;
     w = combo_box_create();
@@ -1270,11 +1258,7 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_box_pack_start(GTK_BOX(vbox2), table, FALSE, FALSE, 0);
 
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i = 0;
     w = gtk_check_button_new_with_mnemonic(_("_Close path"));
@@ -1295,11 +1279,7 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(hbox2), table, TRUE, TRUE, 0);
 
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#if GTK_CHECK_VERSION(3, 2, 0)
     w = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 10, 170, 1);
-#else
-    w = gtk_hscale_new_with_range(10, 170, 1);
-#endif
     set_scale_mark(w, GTK_POS_BOTTOM, 15, 15);
 
     g_signal_connect(w, "value-changed", G_CALLBACK(LegendArrowDialogScaleL), d);
@@ -1313,11 +1293,7 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect(w, "draw", G_CALLBACK(LegendArrowDialogPaint), d);
     d->view = w;
 
-#if GTK_CHECK_VERSION(3, 2, 0)
     w = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 100, 2000, 1);
-#else
-    w = gtk_hscale_new_with_range(100, 2000, 1);
-#endif
     set_scale_mark(w, GTK_POS_TOP, 200, 200);
     g_signal_connect(w, "value-changed", G_CALLBACK(LegendArrowDialogScaleW), d);
     g_signal_connect(w, "format-value", G_CALLBACK(format_value_percent), NULL);
@@ -1337,11 +1313,7 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
     set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT | WIDGET_MARGIN_BOTTOM);
     gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 0);
 
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i = 0;
     w = combo_box_create();
@@ -1402,11 +1374,7 @@ LegendRectDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i = 0;
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
@@ -1430,11 +1398,7 @@ LegendRectDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 0);
 
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i = 0;
 
@@ -1452,11 +1416,7 @@ LegendRectDialogSetup(GtkWidget *wi, void *data, int makewidget)
     set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT | WIDGET_MARGIN_BOTTOM);
     gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
 
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i = 0;
     fill_color_setup(d, table, i++);
@@ -1513,11 +1473,7 @@ LegendArcDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i = 0;
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
@@ -1540,12 +1496,7 @@ LegendArcDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 0);
 
-
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i = 0;
     w = create_direction_entry();
@@ -1563,12 +1514,7 @@ LegendArcDialogSetup(GtkWidget *wi, void *data, int makewidget)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     gtk_box_pack_start(GTK_BOX(vbox), table, FALSE, FALSE, 0);
 
-
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i = 0;
     w = gtk_check_button_new_with_mnemonic(_("_Close path"));
@@ -1591,12 +1537,7 @@ LegendArcDialogSetup(GtkWidget *wi, void *data, int makewidget)
     set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT | WIDGET_MARGIN_BOTTOM);
     gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
 
-
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i = 0;
     fill_color_setup(d, table, i++);
@@ -1663,11 +1604,7 @@ LegendMarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i = 0;
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
@@ -1682,12 +1619,7 @@ LegendMarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 0);
 
-
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i = 0;
     style_setup(d, table, i++);
@@ -1754,11 +1686,7 @@ legend_dialog_setup_sub(struct LegendDialog *d, GtkWidget *table, int i)
   add_widget_to_table(table, w, _("_Font:"), FALSE, i++);
   d->font = w;
 
-#if GTK_CHECK_VERSION(3, 2, 0)
   btn_box = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
-#else
-  btn_box = gtk_hbutton_box_new();
-#endif
   gtk_box_set_spacing(GTK_BOX(btn_box), 10);
   w = gtk_check_button_new_with_mnemonic(_("_Bold"));
   set_button_icon(w, "format-text-bold");
@@ -1917,11 +1845,7 @@ LegendTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i = 0;
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
@@ -1936,12 +1860,7 @@ LegendTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 0);
 
-
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i = 0;
     w = create_text_entry(FALSE, TRUE);
@@ -1988,11 +1907,7 @@ LegendTextDefDialogSetup(GtkWidget *w, void *data, int makewidget)
   if (makewidget) {
     init_legend_dialog_widget_member(d);
 
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
     legend_dialog_setup_sub(d, table, 0);
 
     frame = gtk_frame_new(NULL);

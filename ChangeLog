@@ -1,6 +1,7 @@
 2017-02-10  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* configure.ac: remove GTK+2 support.
+	(GTK3_REQUIRED_VERSION): support GTK+ 3.4.0 or later.
 
 2017-02-09  Hiroyuki Ito  <ZXB01226 at nifty.com>
 

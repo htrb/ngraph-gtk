@@ -167,11 +167,7 @@ PageDialogSetup(GtkWidget *wi, void *data, int makewidget)
   d = (struct PageDialog *) data;
 
   if (makewidget) {
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i = 0;
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, FALSE, TRUE);
@@ -706,11 +702,7 @@ SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
     d->ins = w;
 
-#if GTK_CHECK_VERSION(3, 2, 0)
     w = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
-#else
-    w = gtk_hseparator_new();
-#endif
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
 
     w = gtk_button_new_with_mnemonic(_("_Top"));
@@ -850,11 +842,7 @@ DirectoryDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct DirectoryDialog *) data;
   if (makewidget) {
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(2, 2, FALSE);
-#endif
 
     w = gtk_file_chooser_button_new(_("directory"), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
     gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(w), TRUE);
@@ -862,27 +850,17 @@ DirectoryDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, _("_Select Dir:"), TRUE, 0);
 
     w = gtk_label_new(_("Current Dir:"));
-#if GTK_CHECK_VERSION(3, 4, 0)
     gtk_widget_set_halign(w, GTK_ALIGN_START);
     g_object_set(w, "margin", GINT_TO_POINTER(4), NULL);
     gtk_grid_attach(GTK_GRID(table), w, 0, 1, 1, 1);
-#else
-    gtk_misc_set_alignment(GTK_MISC(w), 0, 0.5);
-    gtk_table_attach(GTK_TABLE(table), w, 0, 1, 1, 2, 0, 0, 4, 4);
-#endif
 
     w = gtk_label_new("");
     gtk_label_set_ellipsize(GTK_LABEL(w), PANGO_ELLIPSIZE_START);
     d->dir_label = w;
-#if GTK_CHECK_VERSION(3, 4, 0)
     gtk_widget_set_hexpand(w, TRUE);
     gtk_widget_set_halign(w, GTK_ALIGN_START);
     g_object_set(w, "margin", GINT_TO_POINTER(4), NULL);
     gtk_grid_attach(GTK_GRID(table), w, 1, 2, 1, 1);
-#else
-    gtk_misc_set_alignment(GTK_MISC(w), 0, 0.5);
-    gtk_table_attach(GTK_TABLE(table), w, 1, 2, 1, 2, GTK_FILL | GTK_EXPAND, 0, 4, 4);
-#endif
 
     gtk_box_pack_start(GTK_BOX(d->vbox), table, FALSE, FALSE, 4);
     gtk_widget_show_all(GTK_WIDGET(d->vbox));

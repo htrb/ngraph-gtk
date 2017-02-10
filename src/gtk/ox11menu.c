@@ -330,59 +330,6 @@ static struct menu_config *MenuConfigArrray[] = {
 
 static NHASH MenuConfigHash = NULL;
 
-#if ! GTK_CHECK_VERSION(3, 4, 0)
-static void
-get_palette(void)
-{
-  GtkSettings *settings;
-  gchar *palette;
-
-  settings = gtk_settings_get_default();
-  if (settings == NULL) {
-    return;
-  }
-
-  palette = NULL;
-  g_object_get(settings, "gtk-color-palette", &palette, NULL);
-  if (palette == NULL) {
-    return;
-  }
-
-  if (Menulocal.Palette) {
-    g_free(Menulocal.Palette);
-  }
-
-  Menulocal.Palette = palette;
-}
-
-static void
-set_palette(void)
-{
-  GtkWidget *sel;
-  int n;
-  GdkColor *colors;
-  GtkSettings *settings;
-
-  if (Menulocal.Palette == NULL) {
-    return;
-  }
-
-  settings = gtk_settings_get_default();
-  if (settings == NULL) {
-    return;
-  }
-
-  sel = gtk_color_selection_new();
-  if (gtk_color_selection_palette_from_string(Menulocal.Palette, &colors, &n)) {
-    g_free(colors);
-    g_object_set(settings, "gtk-color-palette", Menulocal.Palette, NULL);
-  }
-  gtk_widget_destroy(sel);
-
-  return;
-}
-#endif
-
 static void
 add_str_with_int_to_array(struct menu_config *cfg, struct narray *conf)
 {
@@ -596,9 +543,6 @@ menu_save_config(int type)
   }
 
   if (type & SAVE_CONFIG_TYPE_OTHERS) {
-#if ! GTK_CHECK_VERSION(3, 4, 0)
-    get_palette();
-#endif
     menu_save_config_sub(MenuConfigOthers, &conf);
   }
 
@@ -1223,10 +1167,6 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   Menulocal.inst = inst;
   Menulocal.pix = NULL;
   Menulocal.lock = 0;
-
-#if ! GTK_CHECK_VERSION(3, 4, 0)
-  set_palette();
-#endif
 
   return 0;
 

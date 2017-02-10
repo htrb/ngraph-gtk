@@ -1374,11 +1374,7 @@ create_user_fit_frame(struct FitDialog *d)
 
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
 
-#if GTK_CHECK_VERSION(3, 4, 0)
   table = gtk_grid_new();
-#else
-  table = gtk_table_new(1, 3, FALSE);
-#endif
 
   j = 0;
   w = create_text_entry(FALSE, TRUE);
@@ -1397,12 +1393,7 @@ create_user_fit_frame(struct FitDialog *d)
 
   gtk_box_pack_start(GTK_BOX(vbox), table, FALSE, FALSE, 0);
 
-
-#if GTK_CHECK_VERSION(3, 4, 0)
   table = gtk_grid_new();
-#else
-  table = gtk_table_new(1, 4, FALSE);
-#endif
 
   for (i = 0; i < FIT_PARM_NUM; i++) {
     char p[] = "%0_0:", dd[] = "dF/d(%0_0):";
@@ -1455,11 +1446,7 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     gtk_dialog_add_button(GTK_DIALOG(wi), _("_Delete"), IDDELETE);
 
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 5, FALSE);
-#endif
 
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
@@ -1472,7 +1459,7 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
       combo_box_append_text(d->type, _(enumlist[i]));
     }
 
-    hbox2 = gtk_hbox_new(FALSE, 4);
+    hbox2 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
     w = combo_box_create();
     add_widget_to_table_sub(table, w, _("_Dim:"), FALSE, 2, 1, 5, 0);
     d->dim = w;
@@ -1482,18 +1469,13 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     }
 
     w = gtk_label_new("");
-#if ! GTK_CHECK_VERSION(3, 4, 0)
-    gtk_misc_set_alignment(GTK_MISC(w), 0, 1);
-#endif
     add_widget_to_table_sub(table, w, NULL, TRUE, 4, 1, 5, 0);
-#if GTK_CHECK_VERSION(3, 4, 0)
     gtk_widget_set_halign(w, GTK_ALIGN_START);
     gtk_widget_set_valign(w, GTK_ALIGN_END);
-#endif
     d->func_label = w;
 
 
-    hbox2 = gtk_hbox_new(FALSE, 4);
+    hbox2 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
     w = create_text_entry(TRUE, TRUE);
     add_widget_to_table_sub(table, w, _("_Weight:"), TRUE, 0, 4, 5, 1);
     d->weight = w;
@@ -1507,7 +1489,7 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
     d->through_point = w;
 
-    hbox2 = gtk_hbox_new(FALSE, 4);
+    hbox2 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
     w = create_text_entry(TRUE, TRUE);
     item_setup(hbox2, w, "_X:", TRUE);
     d->x = w;
@@ -1780,11 +1762,7 @@ move_tab_create(struct FileDialog *d)
   gtk_container_add(GTK_CONTAINER(swin), w);
   set_widget_margin(swin, WIDGET_MARGIN_TOP | WIDGET_MARGIN_BOTTOM);
 
-#if GTK_CHECK_VERSION(3, 4, 0)
   table = gtk_grid_new();
-#else
-  table = gtk_table_new(1, 2, FALSE);
-#endif
 
   i = 0;
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_NATURAL, TRUE, FALSE);
@@ -2001,11 +1979,7 @@ mask_tab_create(struct FileDialog *d)
   };
   int i;
 
-#if GTK_CHECK_VERSION(3, 4, 0)
   table = gtk_grid_new();
-#else
-  table = gtk_table_new(1, 2, FALSE);
-#endif
 
   i = 0;
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_NATURAL, TRUE, FALSE);
@@ -2153,11 +2127,7 @@ load_tab_create(struct FileDialog *d)
   GtkWidget *w, *table, *frame, *vbox;
   int i;
 
-#if GTK_CHECK_VERSION(3, 4, 0)
   table = gtk_grid_new();
-#else
-  table = gtk_table_new(1, 2, FALSE);
-#endif
 
   i = 0;
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_UINT, TRUE, TRUE);
@@ -2341,11 +2311,7 @@ math_tab_create(struct FileDialog *d)
   GtkWidget *table, *w, *vbox, *frame;
   int i;
 
-#if GTK_CHECK_VERSION(3, 4, 0)
   table = gtk_grid_new();
-#else
-  table = gtk_table_new(1, 2, FALSE);
-#endif
 
   i = 0;
   w = create_spin_entry(0, FILE_OBJ_SMOOTH_MAX, 1, FALSE, TRUE);
@@ -3029,11 +2995,7 @@ plot_tab_create(GtkWidget *parent, struct FileDialog *d)
 
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
-#if GTK_CHECK_VERSION(3, 4, 0)
   table = gtk_grid_new();
-#else
-  table = gtk_table_new(1, 2, FALSE);
-#endif
 
   i = 0;
   w = combo_box_create();
@@ -3064,12 +3026,7 @@ plot_tab_create(GtkWidget *parent, struct FileDialog *d)
 
   gtk_box_pack_start(GTK_BOX(hbox), table, FALSE, FALSE, 4);
 
-
-#if GTK_CHECK_VERSION(3, 4, 0)
   table = gtk_grid_new();
-#else
-  table = gtk_table_new(1, 2, FALSE);
-#endif
 
   i = 0;
   w = combo_box_entry_create();
@@ -3879,11 +3836,7 @@ RangeDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     d->apply_all = gtk_dialog_add_button(GTK_DIALOG(wi), _("_Apply all"), IDFAPPLY);
 
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 3, FALSE);
-#endif
 
     i = 0;
     w = create_text_entry(FALSE, TRUE);
