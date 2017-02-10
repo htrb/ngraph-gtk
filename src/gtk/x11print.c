@@ -250,11 +250,7 @@ OutputDataDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     w = create_spin_entry(0, 200, 1, FALSE, TRUE);
     d->div_entry = w;
-#if GTK_CHECK_VERSION(3, 0, 0)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-    hbox = gtk_hbox_new(FALSE, 4);
-#endif
     item_setup(hbox, w, _("_Div:"), TRUE);
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
@@ -288,10 +284,8 @@ OutputImageDialogSetupItem(GtkWidget *w, struct OutputImageDialog *d)
 {
   int i;
   GtkWidget *vlabel;
-#if GTK_CHECK_VERSION(3, 0, 0)
   GtkWidget *window;
   GtkRequisition minimum_size;
-#endif
 
   vlabel = get_mnemonic_label(d->version);
 
@@ -356,13 +350,11 @@ OutputImageDialogSetupItem(GtkWidget *w, struct OutputImageDialog *d)
 #endif	/* CAIRO_HAS_WIN32_SURFACE */
   }
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   window = gtk_widget_get_parent(GTK_WIDGET(d->vbox));
   if (GTK_IS_WINDOW(window)) {
     gtk_widget_get_preferred_size(GTK_WIDGET(d->vbox), &minimum_size, NULL);
     gtk_window_resize(GTK_WINDOW(window), minimum_size.width, minimum_size.height);
   }
-#endif
 }
 
 static void
@@ -622,11 +614,9 @@ CmOutputPrinter(int select_file, int show_dialog)
 
   print = gtk_print_operation_new();
   gtk_print_operation_set_n_pages(print, 1);
-#if GTK_CHECK_VERSION(2, 18, 0)
   gtk_print_operation_set_has_selection(print, FALSE);
   gtk_print_operation_set_support_selection(print, FALSE);
   gtk_print_operation_set_embed_page_setup(print, FALSE);
-#endif
   gtk_print_operation_set_use_full_page(print, TRUE);
 
   if (PrintSettings == NULL)

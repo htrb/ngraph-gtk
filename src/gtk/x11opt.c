@@ -930,11 +930,7 @@ FontSettingDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(d->vbox), table, FALSE, FALSE, 4);
 
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-    hbox = gtk_hbox_new(FALSE, 4);
-#endif
 
     swin = gtk_scrolled_window_new(NULL, NULL);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
@@ -948,11 +944,7 @@ FontSettingDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_box_pack_start(GTK_BOX(hbox), swin, TRUE, TRUE, 4);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-    vbox = gtk_vbox_new(FALSE, 4);
-#endif
 
     w= gtk_button_new_with_mnemonic(_("_Add"));
     set_button_icon(w, "list-add");
@@ -1191,11 +1183,7 @@ PrefFontDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     gtk_dialog_add_button(GTK_DIALOG(wi), _("_Save"), IDSAVE);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-    vbox = gtk_vbox_new(FALSE, 4);
-#endif
     PrefFontDialogCreateWidgets(d, vbox, sizeof(list) / sizeof(*list), list);
     gtk_window_set_default_size(GTK_WINDOW(wi), 550, 300);
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
@@ -1230,11 +1218,6 @@ MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
 
   if (Menulocal.help_browser)
     gtk_entry_set_text(GTK_ENTRY(d->help_browser), Menulocal.help_browser);
-
-#if ! GTK_CHECK_VERSION(3, 0, 0)
-  if (Menulocal.browser)
-    gtk_entry_set_text(GTK_ENTRY(d->browser), Menulocal.browser);
-#endif
 
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->directory), Menulocal.changedirectory);
 
@@ -1297,13 +1280,8 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     gtk_dialog_add_button(GTK_DIALOG(wi), _("_Save"), IDSAVE);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     hbox2 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
     vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-    hbox2 = gtk_hbox_new(FALSE, 4);
-    vbox2 = gtk_vbox_new(FALSE, 4);
-#endif
 
     frame = gtk_frame_new(_("External programs"));
 #if GTK_CHECK_VERSION(3, 4, 0)
@@ -1321,12 +1299,6 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = create_file_entry_with_cb(G_CALLBACK(set_file_in_entry), d);
     add_widget_to_table(table, w, _("_Help browser:"), TRUE, i++);
     d->help_browser = w;
-
-#if ! GTK_CHECK_VERSION(3, 0, 0)
-    w = create_file_entry_with_cb(G_CALLBACK(set_file_in_entry), d);
-    add_widget_to_table(table, w, _("_Web browser:"), TRUE, i++);
-    d->browser = w;
-#endif
 
     gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
@@ -1390,11 +1362,7 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(hbox2), vbox2, TRUE, TRUE, 4);
 
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-    vbox2 = gtk_vbox_new(FALSE, 4);
-#endif
 
     frame = gtk_frame_new(_("Size"));
 #if GTK_CHECK_VERSION(3, 4, 0)
@@ -1534,9 +1502,6 @@ MiscDialogClose(GtkWidget *w, void *data)
 
   set_program_name(d->editor, &Menulocal.editor);
   set_program_name(d->help_browser, &Menulocal.help_browser);
-#if ! GTK_CHECK_VERSION(3, 0, 0)
-  set_program_name(d->browser, &Menulocal.browser);
-#endif
 
   Menulocal.changedirectory =
     gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->directory));

@@ -122,7 +122,6 @@ get_text_from_entry(GtkWidget *entry)
 GtkWidget *
 create_title(const char *name, const char *comment)
 {
-#if GTK_CHECK_VERSION(3, 0, 0)
   GtkWidget *frame, *label;
 
   frame = gtk_frame_new(name);
@@ -139,24 +138,6 @@ create_title(const char *name, const char *comment)
   gtk_container_add(GTK_CONTAINER(frame), label);
 
   return frame;
-#else
-  GtkWidget *vbox, *frame, *label, *hbox;
-
-  vbox = gtk_vbox_new(FALSE, 4);
-  frame = gtk_frame_new(name);
-  gtk_frame_set_label_align(GTK_FRAME(frame), 0.5, 0.5);
-
-  label = gtk_label_new(comment);
-  gtk_misc_set_alignment(GTK_MISC(label), 0.5, 0.5);
-  gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 4);
-
-  gtk_container_add(GTK_CONTAINER(frame), vbox);
-
-  hbox = gtk_hbox_new(FALSE, 4);
-  gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 4);
-
-  return hbox;
-#endif
 }
 
 const char *
@@ -216,17 +197,10 @@ create_font_frame(struct font_prm *prm)
 #endif
   j = 0;
 
-#if GTK_CHECK_VERSION(2, 24, 0)
   w = gtk_combo_box_text_new();
   for (i = 0; i < sizeof(FontList) / sizeof(*FontList); i++) {
     gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(w), FontList[i]);
   }
-#else
-  w = gtk_combo_box_new_text();
-  for (i = 0; i < sizeof(FontList) / sizeof(*FontList); i++) {
-    gtk_combo_box_append_text(GTK_COMBO_BOX(w), FontList[i]);
-  }
-#endif
   gtk_combo_box_set_active(GTK_COMBO_BOX(w), 1);
   add_widget_to_table_sub(table, w, "_Font:", TRUE, 0, 1, j++);
   prm->font = w;
@@ -243,18 +217,10 @@ create_font_frame(struct font_prm *prm)
   add_widget_to_table_sub(table, w, "_Script:", TRUE, 0, 1, j++);
   prm->script = w;
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-  hbox = gtk_hbox_new(FALSE, 4);
-#endif
   gtk_box_pack_start(GTK_BOX(hbox), table, TRUE, TRUE, 4);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-  vbox = gtk_vbox_new(FALSE, 4);
-#endif
 
   w = gtk_check_button_new_with_mnemonic("_Bold");
   gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);

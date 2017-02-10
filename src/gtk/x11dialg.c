@@ -346,11 +346,7 @@ SelectDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_container_add(GTK_CONTAINER(w), swin);
     gtk_box_pack_start(GTK_BOX(d->vbox), w, TRUE, TRUE, 4);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-    hbox = gtk_hbox_new(FALSE, 4);
-#endif
     w = gtk_button_new_with_mnemonic(_("Select _All"));
     set_button_icon(w, "edit-select-all");
     g_signal_connect(w, "clicked", G_CALLBACK(list_store_select_all_cb), d->list);
@@ -733,20 +729,12 @@ SetObjFieldFromWidget(GtkWidget *w, struct objlist *Obj, int Id, char *field)
     r = SetObjFieldFromSpin(w, Obj, Id, field);
   } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_ENTRY)) {
     r = SetObjFieldFromText(w, Obj, Id, field);
-#if ! GTK_CHECK_VERSION(2, 24, 0)
-  } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_COMBO_BOX_ENTRY)) {
-    r = SetObjFieldFromText(gtk_bin_get_child(GTK_BIN(w)), Obj, Id, field);
-#endif
   } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_COMBO_BOX)) {
-#if GTK_CHECK_VERSION(2, 24, 0)
     if (gtk_combo_box_get_has_entry(GTK_COMBO_BOX(w))) {
       r = SetObjFieldFromText(gtk_bin_get_child(GTK_BIN(w)), Obj, Id, field);
     } else {
       r = SetObjFieldFromList(w, Obj, Id, field);
     }
-#else
-    r = SetObjFieldFromList(w, Obj, Id, field);
-#endif
   } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_TOGGLE_BUTTON)) {
     r = SetObjFieldFromToggle(w, Obj, Id, field);
   }
@@ -769,20 +757,12 @@ SetWidgetFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
     SetSpinFromObjField(w, Obj, Id, field);
   } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_ENTRY)) {
     SetTextFromObjField(w, Obj, Id, field);
-#if ! GTK_CHECK_VERSION(2, 24, 0)
-  } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_COMBO_BOX_ENTRY)) {
-    SetTextFromObjField(gtk_bin_get_child(GTK_BIN(w)), Obj, Id, field);
-#endif
   } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_COMBO_BOX)) {
-#if GTK_CHECK_VERSION(2, 24, 0)
     if (gtk_combo_box_get_has_entry(GTK_COMBO_BOX(w))) {
       SetTextFromObjField(gtk_bin_get_child(GTK_BIN(w)), Obj, Id, field);
     } else {
       SetListFromObjField(w, Obj, Id, field);
     }
-#else
-    SetListFromObjField(w, Obj, Id, field);
-#endif
   } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_TOGGLE_BUTTON)) {
     SetToggleFromObjField(w, Obj, Id, field);
   }
@@ -1081,7 +1061,6 @@ get_style_string(struct objlist *obj, int id, char *field)
   return NULL;
 }
 
-#if GTK_CHECK_VERSION(2, 18, 0)
 static void
 set_entry_from_obj_point(GtkEntry *entry, struct objlist *Obj, int Id, char *field)
 {
@@ -1103,33 +1082,6 @@ set_entry_from_obj_point(GtkEntry *entry, struct objlist *Obj, int Id, char *fie
     pos += l;
   }
 }
-#else
-static void
-set_entry_from_obj_point(GtkEntry *entry, struct objlist *Obj, int Id, char *field)
-{
-  struct narray *array;
-  char buf[128], *tmp;
-  GString *str;
-  int i, n, *points;
-
-  str = g_string_sized_new(256);
-  if (str == NULL) {
-    return;
-  }
-
-  getobj(Obj, field, Id, 0, NULL, &array);
-  n = arraynum(array);
-  points = arraydata(array);
-  for (i = 0; i < n; i++) {
-    g_string_append_printf(str, "%.2f ", points[i] / 100.0);
-  }
-
-  gtk_entry_set_text(entry, str->str);
-
- END:
-  g_string_free(str, TRUE);
-}
-#endif
 
 void
 SetStyleFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)

@@ -109,11 +109,7 @@ LegendGaussDialogSetupItem(GtkWidget *w, struct LegendGaussDialog *d, int id)
 }
 
 static gboolean
-#if GTK_CHECK_VERSION(3, 0, 0)
 LegendGaussDialogPaint(GtkWidget *w, cairo_t *cr, gpointer client_data)
-#else
-LegendGaussDialogPaint(GtkWidget *w, GdkEventExpose *event, gpointer client_data)
-#endif
 {
   struct LegendGaussDialog *d;
   int i, j, k, pw, dw, minx, miny, maxx, maxy,
@@ -123,12 +119,7 @@ LegendGaussDialogPaint(GtkWidget *w, GdkEventExpose *event, gpointer client_data
   struct objlist *gobj, *robj;
   N_VALUE *inst;
   struct gra2cairo_local *local;
-#if GTK_CHECK_VERSION(3, 0, 0)
   cairo_surface_t *pix;
-#else
-  GdkPixmap *pix;
-  cairo_t *cr;
-#endif
 
   d = (struct LegendGaussDialog *) client_data;
 
@@ -142,22 +133,11 @@ LegendGaussDialogPaint(GtkWidget *w, GdkEventExpose *event, gpointer client_data
     return FALSE;
   }
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   pix = gra2gdk_create_pixmap(local, VIEW_SIZE, VIEW_SIZE,
 			      Menulocal.bg_r, Menulocal.bg_g, Menulocal.bg_b);
   if (pix == NULL) {
     return FALSE;
   }
-#else
-  pix = gra2gdk_create_pixmap(local, win,
-			      VIEW_SIZE, VIEW_SIZE,
-			      Menulocal.bg_r, Menulocal.bg_g, Menulocal.bg_b);
-  if (pix == NULL) {
-    return FALSE;
-  }
-
-  cr = gdk_cairo_create(win);
-#endif
 
   pw = VIEW_SIZE - 1;
   dw = (d->Wdx < d->Wdy) ? d->Wdy : d->Wdx;
@@ -261,11 +241,7 @@ LegendGaussDialogPaint(GtkWidget *w, GdkEventExpose *event, gpointer client_data
     gra2cairo_draw_path(local);
   }
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   cairo_set_source_surface(cr, pix, 0, 0);
-#else
-  gdk_cairo_set_source_pixmap(cr, pix, 0, 0);
-#endif
   cairo_paint(cr);
 
   cairo_set_source_rgb(cr, 0, 0, 0);
@@ -277,12 +253,7 @@ LegendGaussDialogPaint(GtkWidget *w, GdkEventExpose *event, gpointer client_data
 		  maxx - minx, maxy - miny);
   cairo_stroke(cr);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   cairo_surface_destroy(pix);
-#else
-  g_object_unref(G_OBJECT(pix));
-  cairo_destroy(cr);
-#endif
 
   return FALSE;
 }
@@ -393,11 +364,7 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
   gtk_window_set_title(GTK_WINDOW(wi), title);
 
   if (makewidget) {
-#if GTK_CHECK_VERSION(3, 0, 0)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-    hbox = gtk_hbox_new(FALSE, 4);
-#endif
 
     button = NULL;
 
@@ -423,11 +390,7 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->func_list = func_list;
 
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-    hbox = gtk_hbox_new(FALSE, 4);
-#endif
 
 #if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
@@ -467,11 +430,7 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->div = w;
 
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     hbox2 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-    hbox2 = gtk_hbox_new(FALSE, 4);
-#endif
     button = NULL;
 
     button = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(button), "_T");
@@ -498,11 +457,7 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(hbox), table, TRUE, TRUE, 0);
 
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-    vbox = gtk_vbox_new(FALSE, 4);
-#endif
 
 #if GTK_CHECK_VERSION(3, 2, 0)
     w = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 0, SCALE_V_MAX, 1);
@@ -518,11 +473,7 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->view = w;
     gtk_widget_set_size_request(w, VIEW_SIZE, VIEW_SIZE);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     g_signal_connect(w, "draw", G_CALLBACK(LegendGaussDialogPaint), d);
-#else
-    g_signal_connect(w, "expose-event", G_CALLBACK(LegendGaussDialogPaint), d);
-#endif
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 0);
 
 #if GTK_CHECK_VERSION(3, 2, 0)

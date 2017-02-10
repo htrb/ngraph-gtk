@@ -229,7 +229,6 @@ my_create_spin_button(const char *title, double min, double max, double inc, dou
 {
   GtkWidget *w, *label;
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   *hbox = gtk_grid_new();
   gtk_widget_set_hexpand(*hbox, FALSE);
 
@@ -248,15 +247,6 @@ my_create_spin_button(const char *title, double min, double max, double inc, dou
 
   gtk_grid_attach(GTK_GRID(*hbox), label, 0, 0, 1, 1);
   gtk_grid_attach(GTK_GRID(*hbox), w,     1, 0, 1, 1);
-#else
-  *hbox = gtk_hbox_new(FALSE, 4);
-  label = gtk_label_new_with_mnemonic(title);
-  gtk_box_pack_start(GTK_BOX(*hbox), label, FALSE, FALSE, 4);
-
-  w = create_spin_button(min, max, inc, init, 0);
-  gtk_label_set_mnemonic_widget(GTK_LABEL(label), w);
-  gtk_box_pack_start(GTK_BOX(*hbox), w, TRUE, TRUE, 4);
-#endif
 
   return w;
 }
@@ -279,11 +269,7 @@ create_format_frame(struct fit_prm *prm)
 
   frame = gtk_frame_new("format");
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-  vbox = gtk_vbox_new(FALSE, 4);
-#endif
 
   w = gtk_check_button_new_with_mnemonic("add _+");
   gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 2);
@@ -531,11 +517,7 @@ create_caption_frame(struct fit_prm *prm)
   frame = gtk_frame_new(NULL);
   gtk_container_add(GTK_CONTAINER(frame), tview);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-  hbox = gtk_hbox_new(FALSE, 4);
-#endif
 
   gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 4);
 
@@ -577,11 +559,7 @@ create_file_frame(struct fit_prm *prm)
 
   prm->combo = combo;
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-  hbox = gtk_hbox_new(FALSE, 4);
-#endif
   label = gtk_label_new_with_mnemonic("_Data:");
   gtk_label_set_mnemonic_widget(GTK_LABEL(label), combo);
 
@@ -596,11 +574,7 @@ create_control(GtkWidget *box, struct fit_prm *prm)
 {
   GtkWidget *w, *hbox;
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-  hbox = gtk_hbox_new(FALSE, 4);
-#endif
   w = create_format_frame(prm);
   gtk_box_pack_start(GTK_BOX(hbox), w, TRUE, TRUE, 4);
 
@@ -667,11 +641,7 @@ main(int argc, char **argv)
   struct fit_prm prm;
   const char *data_file;
 
-#if GTK_CHECK_VERSION(2, 24, 0)
   setlocale(LC_ALL, "");
-#else
-  gtk_set_locale();
-#endif
   gtk_init(&argc, &argv);
 
   prm.posx = POS_X;

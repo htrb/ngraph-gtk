@@ -355,11 +355,7 @@ GridDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct GridDialog *) data;
   if (makewidget) {
-#if GTK_CHECK_VERSION(3, 0, 0)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-    hbox = gtk_hbox_new(FALSE, 4);
-#endif
 
 #if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
@@ -635,11 +631,7 @@ SectionDialogSetup(GtkWidget *wi, void *data, int makewidget)
   d = (struct SectionDialog *) data;
 
   if (makewidget) {
-#if GTK_CHECK_VERSION(3, 0, 0)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-    hbox = gtk_hbox_new(FALSE, 4);
-#endif
 
 #if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
@@ -678,15 +670,9 @@ SectionDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
 
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-    hbox = gtk_hbox_new(FALSE, 4);
-
-    vbox = gtk_vbox_new(FALSE, 4);
-#endif
 
     w = gtk_button_new_with_mnemonic(_("_X axis"));
     g_signal_connect(w, "clicked", G_CALLBACK(SectionDialogAxisX), d);
@@ -700,11 +686,7 @@ SectionDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 4);
 
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-    vbox = gtk_vbox_new(FALSE, 4);
-#endif
 
     w = gtk_button_new_with_mnemonic(_("_Y axis"));
     g_signal_connect(w, "clicked", G_CALLBACK(SectionDialogAxisY), d);
@@ -718,11 +700,7 @@ SectionDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 4);
 
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-    vbox = gtk_vbox_new(FALSE, 4);
-#endif
 
     w = gtk_button_new_with_mnemonic(_("_U axis"));
     g_signal_connect(w, "clicked", G_CALLBACK(SectionDialogAxisU), d);
@@ -736,11 +714,7 @@ SectionDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 4);
 
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-    vbox = gtk_vbox_new(FALSE, 4);
-#endif
 
     w = gtk_button_new_with_mnemonic(_("_R axis"));
     g_signal_connect(w, "clicked", G_CALLBACK(SectionDialogAxisR), d);
@@ -754,11 +728,7 @@ SectionDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 4);
 
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-    vbox = gtk_vbox_new(FALSE, 4);
-#endif
 
     w = gtk_button_new_with_mnemonic(_("_Grid"));
     g_signal_connect(w, "clicked", G_CALLBACK(SectionDialogGrid), d);
@@ -894,11 +864,7 @@ CrossDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct CrossDialog *) data;
   if (makewidget) {
-#if GTK_CHECK_VERSION(3, 0, 0)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-    hbox = gtk_hbox_new(FALSE, 4);
-#endif
 
 #if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
@@ -938,13 +904,8 @@ CrossDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
 
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-    hbox = gtk_hbox_new(FALSE, 4);
-    vbox = gtk_vbox_new(FALSE, 4);
-#endif
 
     w = gtk_button_new_with_mnemonic(_("_X axis"));
     g_signal_connect(w, "clicked", G_CALLBACK(CrossDialogAxisX), d);
@@ -958,11 +919,7 @@ CrossDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 4);
 
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-    vbox = gtk_vbox_new(FALSE, 4);
-#endif
 
     w = gtk_button_new_with_mnemonic(_("_Y axis"));
     g_signal_connect(w, "clicked", G_CALLBACK(CrossDialogAxisY), d);
@@ -1059,11 +1016,7 @@ ZoomDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct ZoomDialog *) data;
   if (makewidget) {
-#if GTK_CHECK_VERSION(3, 0, 0)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-    vbox = gtk_vbox_new(FALSE, 4);
-#endif
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_PERCENT, TRUE, TRUE);
     item_setup(vbox, w, _("_Zoom:"), TRUE);
     d->zoom_entry = w;
@@ -1354,11 +1307,7 @@ scale_tab_create(struct AxisDialog *d)
   d->inc = w;
 
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 12);
-#else
-  hbox = gtk_hbox_new(FALSE, 12);
-#endif
 
   w = gtk_button_new_with_mnemonic(_("_Clear"));
   g_signal_connect(w, "clicked", G_CALLBACK(AxisDialogClear), d);
@@ -1393,11 +1342,7 @@ scale_tab_create(struct AxisDialog *d)
   gtk_container_add(GTK_CONTAINER(frame), table);
   set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   parent_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-  parent_box = gtk_vbox_new(FALSE, 4);
-#endif
   gtk_box_pack_start(GTK_BOX(parent_box), frame, TRUE, TRUE, 4);
 
   add_copy_button_to_box(parent_box, G_CALLBACK(scale_tab_copy_clicked), d, "axis");
@@ -1496,11 +1441,7 @@ baseline_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 
   d = &dd->base;
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-#else
-  hbox = gtk_hbox_new(FALSE, 4);
-#endif
 
 #if GTK_CHECK_VERSION(3, 4, 0)
   table = gtk_grid_new();
@@ -1536,11 +1477,7 @@ baseline_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 #else
   table = gtk_table_new(1, 2, FALSE);
 #endif
-#if GTK_CHECK_VERSION(3, 0, 0)
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-  vbox = gtk_vbox_new(FALSE, 4);
-#endif
 
   i = 0;
   w = combo_box_create();
@@ -1589,11 +1526,7 @@ baseline_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 
   gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-  vbox = gtk_vbox_new(FALSE, 4);
-#endif
   gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 4);
 
   add_copy_button_to_box(vbox, G_CALLBACK(baseline_tab_copy_clicked), dd, "axis");
@@ -1692,11 +1625,7 @@ gauge_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 
   d = &dd->gauge;
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-  vbox = gtk_vbox_new(FALSE, 4);
-#endif
 
 #if GTK_CHECK_VERSION(3, 4, 0)
   table = gtk_grid_new();
@@ -1757,11 +1686,7 @@ gauge_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
   gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   parent_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-  parent_box = gtk_vbox_new(FALSE, 4);
-#endif
   gtk_box_pack_start(GTK_BOX(parent_box), vbox, TRUE, TRUE, 4);
   add_copy_button_to_box(parent_box, G_CALLBACK(gauge_tab_copy_clicked), dd, "axis");
 
@@ -1967,17 +1892,9 @@ numbering_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 
   d = &dd->numbering;
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-#else
-  hbox = gtk_hbox_new(FALSE, 4);
-
-  vbox = gtk_vbox_new(FALSE, 0);
-#endif
-
-
 
 #if GTK_CHECK_VERSION(3, 4, 0)
   table = gtk_grid_new();
@@ -2090,11 +2007,7 @@ numbering_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 
   gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-  vbox = gtk_vbox_new(FALSE, 4);
-#endif
   gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 4);
 
   add_copy_button_to_box(vbox, G_CALLBACK(numbering_tab_copy_clicked), dd, "axis");
@@ -2244,11 +2157,7 @@ font_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   gtk_container_add(GTK_CONTAINER(frame), table);
   set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-  vbox = gtk_vbox_new(FALSE, 4);
-#endif
   gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 4);
 
   add_copy_button_to_box(vbox, G_CALLBACK(font_tab_copy_clicked), dd, "axis");
@@ -2386,11 +2295,7 @@ position_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   gtk_container_add(GTK_CONTAINER(frame), table);
   set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-  vbox = gtk_vbox_new(FALSE, 4);
-#endif
   gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 4);
 
   add_copy_button_to_box(vbox, G_CALLBACK(position_tab_copy_clicked), dd, "axis");
@@ -3324,9 +3229,7 @@ create_base_combo_item(GtkTreeStore *list, GtkTreeIter *parent, struct objlist *
 		     OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
 		     -1);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   add_bool_combo_item_to_cbox(list, NULL, &iter, AXIS_COMBO_ITEM_BASE_DRAW, obj, "baseline", id, _("Draw"));
-#endif
   add_line_style_item_to_cbox(list, &iter, AXIS_COMBO_ITEM_BASE_STYLE, obj, "style", id);
 
   add_text_combo_item_to_cbox(list, &child, &iter, -1, -1, _("Arrow"), TOGGLE_NONE, FALSE);
@@ -3336,10 +3239,6 @@ create_base_combo_item(GtkTreeStore *list, GtkTreeIter *parent, struct objlist *
   add_enum_combo_item_to_cbox(list, NULL, &child, AXIS_COMBO_ITEM_BASE_WAVE, obj, "wave", id);
 
   add_text_combo_item_to_cbox(list, NULL, &iter, AXIS_COMBO_ITEM_BASE_COLOR, -1, _("Color"), TOGGLE_NONE, FALSE);
-#if ! GTK_CHECK_VERSION(3, 0, 0)
-  add_bool_combo_item_to_cbox(list, NULL, &iter, AXIS_COMBO_ITEM_BASE_DRAW, obj, "baseline", id, _("Draw"));
-#endif
-
 }
 
 static void

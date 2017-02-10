@@ -172,11 +172,7 @@ MathTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct MathTextDialog *) data;
   if (makewidget) {
-#if GTK_CHECK_VERSION(3, 0, 0)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-    hbox = gtk_hbox_new(FALSE, 4);
-#endif
     w = create_text_entry(TRUE, TRUE);
     d->label = item_setup(hbox, w, _("_Math:"), TRUE);
     d->list = w;
@@ -495,13 +491,8 @@ MathDialogSetup(GtkWidget *wi, void *data, int makewidget)
       "_H(X, Y, Z)",
     };
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-    vbox = gtk_vbox_new(FALSE, 4);
-    hbox = gtk_hbox_new(FALSE, 4);
-#endif
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
 
     w = list_store_create(sizeof(list) / sizeof(*list), list);
@@ -527,11 +518,7 @@ MathDialogSetup(GtkWidget *wi, void *data, int makewidget)
       g_signal_connect(w, "toggled", G_CALLBACK(MathDialogMode), d);
     }
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-    hbox = gtk_hbox_new(FALSE, 4);
-#endif
 
     w = gtk_button_new_with_mnemonic(_("Select _All"));
     set_button_icon(w, "edit-select-all");
@@ -641,11 +628,7 @@ FitSaveDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = combo_box_entry_create();
     combo_box_entry_set_width(w, 20);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-    hbox = gtk_hbox_new(FALSE, 4);
-#endif
     item_setup(hbox, w, _("_Profile:"), TRUE);
     d->profile = w;
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
@@ -1389,11 +1372,7 @@ create_user_fit_frame(struct FitDialog *d)
   GtkWidget *table, *w, *vbox;
   int i, j;
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-  vbox = gtk_vbox_new(FALSE, 4);
-#endif
 
 #if GTK_CHECK_VERSION(3, 4, 0)
   table = gtk_grid_new();
@@ -1482,13 +1461,8 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     table = gtk_table_new(1, 5, FALSE);
 #endif
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-    vbox = gtk_vbox_new(FALSE, 4);
-    hbox = gtk_hbox_new(FALSE, 4);
-#endif
 
     w = combo_box_create();
     add_widget_to_table_sub(table, w, _("_Type:"), FALSE, 0, 1, 5, 0);
@@ -1527,11 +1501,7 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(vbox), table, FALSE, FALSE, 4);
 
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-    hbox = gtk_hbox_new(FALSE, 4);
-#endif
 
     w = gtk_check_button_new_with_mnemonic(_("_Through"));
     gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
@@ -1556,11 +1526,7 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_container_add(GTK_CONTAINER(frame), vbox);
     gtk_box_pack_start(GTK_BOX(d->vbox), frame, FALSE, FALSE, 4);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-    hbox = gtk_hbox_new(FALSE, 4);
-#endif
 
     w = create_text_entry(TRUE, TRUE);
     item_setup(hbox, w, _("_Min:"), TRUE);
@@ -1578,11 +1544,7 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
     d->interpolation = w;
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-    vbox = gtk_vbox_new(FALSE, 4);
-#endif
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
 
     frame = gtk_frame_new(_("Draw X range"));
@@ -1857,11 +1819,7 @@ move_tab_create(struct FileDialog *d)
   g_signal_connect(w, "clicked", G_CALLBACK(list_store_select_all_cb), d->move.list);
   set_sensitivity_by_row_num(d->move.list, w);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-  hbox = gtk_hbox_new(FALSE, 4);
-#endif
   gtk_box_pack_start(GTK_BOX(hbox), table, FALSE, FALSE, 4);
   gtk_box_pack_start(GTK_BOX(hbox), swin, TRUE, TRUE, 4);
 
@@ -1869,11 +1827,7 @@ move_tab_create(struct FileDialog *d)
   gtk_container_add(GTK_CONTAINER(w), hbox);
   set_widget_margin(w, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-  vbox = gtk_vbox_new(FALSE, 4);
-#endif
   gtk_box_pack_start(GTK_BOX(vbox), w, TRUE, TRUE, 4);
 
   add_copy_button_to_box(vbox, G_CALLBACK(move_tab_copy), d, "data");
@@ -2086,11 +2040,7 @@ mask_tab_create(struct FileDialog *d)
   g_signal_connect(w, "clicked", G_CALLBACK(list_store_select_all_cb), d->mask.list);
   set_sensitivity_by_row_num(d->mask.list, w);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-  hbox = gtk_hbox_new(FALSE, 4);
-#endif
   gtk_box_pack_start(GTK_BOX(hbox), table, FALSE, FALSE, 4);
   gtk_box_pack_start(GTK_BOX(hbox), swin, TRUE, TRUE, 4);
 
@@ -2098,11 +2048,7 @@ mask_tab_create(struct FileDialog *d)
   gtk_container_add(GTK_CONTAINER(frame), hbox);
   set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-  vbox = gtk_vbox_new(FALSE, 4);
-#endif
   gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 4);
 
   add_copy_button_to_box(vbox, G_CALLBACK(mask_tab_copy), d, "data");
@@ -2244,11 +2190,7 @@ load_tab_create(struct FileDialog *d)
   gtk_container_add(GTK_CONTAINER(frame), table);
   set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-  vbox = gtk_vbox_new(FALSE, 4);
-#endif
   gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 4);
 
   add_copy_button_to_box(vbox, G_CALLBACK(load_tab_copy), d, "data");
@@ -2420,11 +2362,7 @@ math_tab_create(struct FileDialog *d)
   gtk_container_add(GTK_CONTAINER(frame), table);
   set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-  vbox = gtk_vbox_new(FALSE, 4);
-#endif
   gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 4);
 
   add_copy_button_to_box(vbox, G_CALLBACK(math_tab_copy), d, "data");
@@ -2522,14 +2460,10 @@ button_set_mark_image(GtkWidget *w, int type)
   }
 
   if (NgraphApp.markpix[type]) {
-#if GTK_CHECK_VERSION(3, 0, 0)
     GdkPixbuf *pixbuf;
     pixbuf = gdk_pixbuf_get_from_surface(NgraphApp.markpix[type],
 					 0, 0, MARK_PIX_SIZE, MARK_PIX_SIZE);
     img = gtk_image_new_from_pixbuf(pixbuf);
-#else
-    img = gtk_image_new_from_pixmap(NgraphApp.markpix[type], NULL);
-#endif
     if (img) {
       gtk_button_set_image(GTK_BUTTON(w), img);
     }
@@ -2541,11 +2475,7 @@ button_set_mark_image(GtkWidget *w, int type)
 static void
 MarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-#if GTK_CHECK_VERSION(3, 0, 0)
   GtkWidget *w, *grid;
-#else
-  GtkWidget *w, *hbox,*vbox;
-#endif
   struct MarkDialog *d;
   int type;
 #define COL 10
@@ -2553,7 +2483,6 @@ MarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
   d = (struct MarkDialog *) data;
 
   if (makewidget) {
-#if GTK_CHECK_VERSION(3, 0, 0)
     grid = gtk_grid_new();
     gtk_grid_set_column_spacing(GTK_GRID(grid), 8);
     gtk_grid_set_row_spacing(GTK_GRID(grid), 8);
@@ -2572,26 +2501,6 @@ MarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
       gtk_grid_attach(GTK_GRID(grid), w, type % COL, type / COL, 1, 1);
     }
     gtk_box_pack_start(GTK_BOX(d->vbox), grid, FALSE, FALSE, 4);
-#else
-    hbox = NULL;
-    vbox = gtk_vbox_new(FALSE, 4);
-
-    for (type = 0; type < MARK_TYPE_NUM; type++) {
-      w = gtk_toggle_button_new();
-      button_set_mark_image(w, type);
-      g_signal_connect(w, "clicked", G_CALLBACK(MarkDialogCB), d);
-      d->toggle[type] = w;
-      if (type % COL == 0) {
-	if (hbox) {
-	  gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
-	}
-	hbox = gtk_hbox_new(FALSE, 4);
-      }
-      gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
-    }
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
-    gtk_box_pack_start(GTK_BOX(d->vbox), vbox, FALSE, FALSE, 4);
-#endif
 
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
@@ -3118,11 +3027,7 @@ plot_tab_create(GtkWidget *parent, struct FileDialog *d)
   GtkWidget *table, *hbox, *w, *vbox;
   int i;
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-  hbox = gtk_hbox_new(FALSE, 4);
-#endif
 
 #if GTK_CHECK_VERSION(3, 4, 0)
   table = gtk_grid_new();
@@ -3198,11 +3103,7 @@ plot_tab_create(GtkWidget *parent, struct FileDialog *d)
   gtk_container_add(GTK_CONTAINER(w), hbox);
   set_widget_margin(w, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-  vbox = gtk_vbox_new(FALSE, 4);
-#endif
   gtk_box_pack_start(GTK_BOX(vbox), w, TRUE, TRUE, 4);
 
   add_copy_button_to_box(vbox, G_CALLBACK(plot_tab_copy), d, "data");
@@ -3216,15 +3117,9 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
   GtkWidget *w, *hbox, *vbox2, *frame, *notebook, *label;
 
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
 
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-  vbox2 = gtk_vbox_new(FALSE, 4);
-
-  hbox = gtk_hbox_new(FALSE, 4);
-#endif
 
   if (d->source != DATA_SOURCE_RANGE) {
     w = create_spin_entry(0, FILE_OBJ_MAXCOL, 1, FALSE, TRUE);
@@ -3241,11 +3136,7 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
   gtk_box_pack_start(GTK_BOX(vbox2), hbox, FALSE, FALSE, 4);
 
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-  hbox = gtk_hbox_new(FALSE, 4);
-#endif
 
   if (d->source != DATA_SOURCE_RANGE) {
     w = create_spin_entry(0, FILE_OBJ_MAXCOL, 1, FALSE, TRUE);
@@ -3263,22 +3154,14 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
 
   add_copy_button_to_box(vbox2, G_CALLBACK(file_settings_copy), d, "data");
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   hbox = gtk_grid_new();
   gtk_grid_set_column_spacing(GTK_GRID(hbox), 4);
-#else
-  hbox = gtk_hbox_new(FALSE, 4);
-#endif
   d->comment_box = hbox;
   frame = gtk_frame_new(NULL);
   gtk_container_add(GTK_CONTAINER(frame), vbox2);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   gtk_widget_set_hexpand(frame, FALSE);
   gtk_grid_attach(GTK_GRID(hbox), frame, 0, 0, 1, 1);
-#else
-  gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 0);
-#endif
   gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
 
   notebook = gtk_notebook_new();
@@ -3840,11 +3723,7 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     d->apply_all = gtk_dialog_add_button(GTK_DIALOG(wi), _("_Apply all"), IDFAPPLY);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-    hbox = gtk_hbox_new(FALSE, 4);
-#endif
 
     w = create_file_entry(d->Obj);
     item_setup(GTK_WIDGET(hbox), w, _("_File:"), TRUE);
@@ -3900,11 +3779,7 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect(d->ycol, "changed", G_CALLBACK(update_table_header), d);
     g_signal_connect(d->type, "changed", G_CALLBACK(update_table_header), d);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     gtk_grid_attach(GTK_GRID(d->comment_box), w, 1, 0, 1, 1);
-#else
-    gtk_box_pack_start(GTK_BOX(d->comment_box), w, TRUE, TRUE, 0);
-#endif
     w = gtk_button_new_with_label(_("Create"));
     add_widget_to_table(d->fit_table, w, _("_Fit:"), FALSE, d->fit_row);
     d->fit = w;
@@ -3940,11 +3815,7 @@ ArrayDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     d->apply_all = gtk_dialog_add_button(GTK_DIALOG(wi), _("_Apply all"), IDFAPPLY);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-    hbox = gtk_hbox_new(FALSE, 4);
-#endif
 
     w = create_text_entry(TRUE, TRUE);
     item_setup(GTK_WIDGET(hbox), w, _("_Array:"), TRUE);
@@ -3975,13 +3846,9 @@ ArrayDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect(d->ycol, "changed", G_CALLBACK(update_table_header), d);
     g_signal_connect(d->type, "changed", G_CALLBACK(update_table_header), d);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     gtk_widget_set_hexpand(swin, TRUE);
     gtk_widget_set_vexpand(swin, TRUE);
     gtk_grid_attach(GTK_GRID(d->comment_box), swin, 1, 0, 1, 1);
-#else
-    gtk_box_pack_start(GTK_BOX(d->comment_box), swin, TRUE, TRUE, 0);
-#endif
     w = gtk_button_new_with_label(_("Create"));
     add_widget_to_table(d->fit_table, w, _("_Fit:"), FALSE, d->fit_row);
     d->fit = w;
@@ -4035,12 +3902,8 @@ RangeDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     FileDialogSetupCommon(wi, d);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     gtk_grid_insert_column(GTK_GRID(d->comment_box), 0);
     gtk_grid_attach(GTK_GRID(d->comment_box), table, 0, 0, 1, 1);
-#else
-    gtk_box_pack_start(GTK_BOX(d->comment_box), table, TRUE, TRUE, 0);
-#endif
 
     w = mask_tab_create(d);
     label = gtk_label_new_with_mnemonic(_("_Mask"));
@@ -5025,11 +4888,7 @@ draw_type_pixbuf(struct objlist *obj, int i)
     type, w, width = 40, height = 20, poly[14], marktype,
     intp, spcond, spnum, lockstate, found, output;
   double spx[CURVE_POINTS_MAX], spy[CURVE_POINTS_MAX];
-#if GTK_CHECK_VERSION(3, 0, 0)
   cairo_surface_t *pix;
-#else
-  GdkPixmap *pix;
-#endif
   GdkPixbuf *pixbuf;
   struct objlist *gobj, *robj;
   N_VALUE *inst;
@@ -5043,14 +4902,8 @@ draw_type_pixbuf(struct objlist *obj, int i)
     return NULL;
   }
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   pix = gra2gdk_create_pixmap(local, width, height,
 			      Menulocal.bg_r, Menulocal.bg_g, Menulocal.bg_b);
-#else
-  pix = gra2gdk_create_pixmap(local, gtk_widget_get_window(TopLevel),
-			      width, height,
-			      Menulocal.bg_r, Menulocal.bg_g, Menulocal.bg_b);
-#endif
   if (pix == NULL) {
     return NULL;
   }
@@ -5247,13 +5100,8 @@ draw_type_pixbuf(struct objlist *obj, int i)
   _GRAclose(ggc);
   gra2cairo_draw_path(local);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   pixbuf = gdk_pixbuf_get_from_surface(pix, 0, 0, width, height);
   cairo_surface_destroy(pix);
-#else
-  pixbuf = gdk_pixbuf_get_from_drawable(NULL, pix, NULL, 0, 0, 0, 0, width, height);
-  g_object_unref(G_OBJECT(pix));
-#endif
 
   Globallock = lockstate;
 

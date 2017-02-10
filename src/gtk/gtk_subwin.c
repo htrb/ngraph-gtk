@@ -89,7 +89,7 @@ file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointe
   }
 }
 
-#if GTK_CHECK_VERSION(3, 0, 0) && ! GTK_CHECK_VERSION(3, 2, 0)
+#if ! GTK_CHECK_VERSION(3, 2, 0)
 static gboolean
 cell_focus_out(GtkWidget *widget, GdkEvent *event, gpointer user_data)
 {
@@ -220,7 +220,7 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
 	  g_free(valstr);
 	}
       }
-#if GTK_CHECK_VERSION(3, 0, 0) && ! GTK_CHECK_VERSION(3, 2, 0)
+#if ! GTK_CHECK_VERSION(3, 2, 0)
       /* this code may need to avoid a bug of GTK+ 3.0 */
       g_signal_connect(editable, "focus-out-event", G_CALLBACK(cell_focus_out), d);
 #endif

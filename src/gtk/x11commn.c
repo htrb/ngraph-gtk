@@ -1854,31 +1854,19 @@ ProgressDialogCreate(char *title)
   gtk_window_set_position(GTK_WINDOW(ProgressDialog), GTK_WIN_POS_CENTER);
   gtk_window_set_type_hint(GTK_WINDOW(ProgressDialog), GDK_WINDOW_TYPE_HINT_DIALOG);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-  vbox = gtk_vbox_new(FALSE, 4);
-#endif
 
   ProgressBar = GTK_PROGRESS_BAR(gtk_progress_bar_new());
   gtk_progress_bar_set_ellipsize(ProgressBar, PANGO_ELLIPSIZE_MIDDLE);
-#if GTK_CHECK_VERSION(3, 0, 0)
   gtk_progress_bar_set_show_text(ProgressBar, TRUE);
-#endif
   gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(ProgressBar), FALSE, FALSE, 4);
 
   ProgressBar2 = GTK_PROGRESS_BAR(gtk_progress_bar_new());
   gtk_progress_bar_set_ellipsize(ProgressBar2, PANGO_ELLIPSIZE_MIDDLE);
-#if GTK_CHECK_VERSION(3, 0, 0)
   gtk_progress_bar_set_show_text(ProgressBar2, TRUE);
-#endif
   gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(ProgressBar2), FALSE, FALSE, 4);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-  hbox = gtk_hbox_new(FALSE, 4);
-#endif
   btn = gtk_button_new_with_mnemonic(_("_Stop"));
   set_button_icon(btn, "process-stop");
   g_signal_connect(btn, "clicked", G_CALLBACK(stop_btn_clicked), NULL);

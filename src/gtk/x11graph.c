@@ -670,15 +670,9 @@ SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   if (makewidget) {
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-    hbox = gtk_hbox_new(FALSE, 4);
-
-    vbox = gtk_vbox_new(FALSE, 4);
-#endif
 
     label = gtk_label_new_with_mnemonic(_("_Draw order"));
     gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 4);
@@ -699,11 +693,7 @@ SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 4);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-    vbox = gtk_vbox_new(FALSE, 4);
-#endif
 
     w = gtk_button_new_with_mnemonic(_("_Add"));
     set_button_icon(w, "list-add");
@@ -753,20 +743,12 @@ SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
     d->del = w;
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-    vbox2 = gtk_vbox_new(FALSE, 4);
-#endif
     gtk_box_pack_end(GTK_BOX(vbox2), vbox, FALSE, FALSE, 4);
 
     gtk_box_pack_start(GTK_BOX(hbox), vbox2, FALSE, FALSE, 4);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-    vbox = gtk_vbox_new(FALSE, 4);
-#endif
 
     label = gtk_label_new_with_mnemonic(_("_Objects"));
     gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 4);
@@ -952,11 +934,7 @@ LoadDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct LoadDialog *) data;
   if (makewidget) {
-#if GTK_CHECK_VERSION(3, 0, 0)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-    vbox = gtk_vbox_new(FALSE, 4);
-#endif
 
     w = gtk_check_button_new_with_mnemonic(_("_Expand included file"));
     d->expand_file = w;
@@ -1019,11 +997,7 @@ SaveDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct SaveDialog *) data;
   if (makewidget) {
-#if GTK_CHECK_VERSION(3, 0, 0)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-    vbox = gtk_vbox_new(FALSE, 4);
-#endif
 
     w = combo_box_create();
     item_setup(vbox, w, _("_Path:"), FALSE);
@@ -1263,19 +1237,6 @@ CmGraphHistory(GtkRecentChooser *w, gpointer client_data)
   g_free(fname);
 }
 
-#if ! GTK_CHECK_VERSION(2, 24, 0)
-static void
-about_link_activated_cb(GtkAboutDialog *about, const gchar *link, gpointer data)
-{
-  char *cmd;
-
-  cmd = g_strdup_printf("%s \"%s\"", Menulocal.browser, link);
-  system_bg(cmd);
-
-  g_free(cmd);
-}
-#endif
-
 void
 CmHelpAbout(void *w, gpointer client_data)
 {
@@ -1291,19 +1252,12 @@ CmHelpAbout(void *w, gpointer client_data)
   getobj(obj, "copyright", 0, 0, NULL, &copyright);
   getobj(obj, "web", 0, 0, NULL, &web);
 
-#if ! GTK_CHECK_VERSION(2, 24, 0)
-  gtk_about_dialog_set_url_hook(about_link_activated_cb, NULL, NULL);
-#endif
   gtk_show_about_dialog(GTK_WINDOW(TopLevel),
 			"program-name", PACKAGE,
 			"copyright", copyright,
 			"version", VERSION,
 			"website", web,
-#if GTK_CHECK_VERSION(3, 0, 0)
 			"license-type", GTK_LICENSE_GPL_2_0,
-#else
-			"license", License,
-#endif
 			"wrap-license", TRUE,
 			"authors", Auther,
 			"translator-credits", Translator,

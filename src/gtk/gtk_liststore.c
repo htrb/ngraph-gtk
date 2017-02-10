@@ -201,12 +201,8 @@ add_mark_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *
 
   for (j = 0; j < MARK_TYPE_NUM; j++) {
     GdkPixbuf *pixbuf;
-#if GTK_CHECK_VERSION(3, 0, 0)
     pixbuf = gdk_pixbuf_get_from_surface(NgraphApp.markpix[j],
 					 0, 0, MARK_PIX_SIZE, MARK_PIX_SIZE);
-#else
-    pixbuf = gdk_pixbuf_get_from_drawable(NULL, NgraphApp.markpix[j], NULL, 0, 0, 0, 0, -1, -1);
-#endif
     if (pixbuf) {
       char buf[64];
 
@@ -279,13 +275,8 @@ add_line_style_item_to_cbox(GtkTreeStore *list, GtkTreeIter *parent, int column_
 }
 
 GtkCellEditable *
-#if GTK_CHECK_VERSION(3, 0, 0)
 start_editing_obj(GtkCellRenderer *cell, GdkEvent *event, GtkWidget *widget, const gchar *path,
 		  const GdkRectangle *background_area, const GdkRectangle *cell_area, GtkCellRendererState flags)
-#else
-start_editing_obj(GtkCellRenderer *cell, GdkEvent *event, GtkWidget *widget, const gchar *path,
-		  GdkRectangle *background_area, GdkRectangle *cell_area, GtkCellRendererState flags)
-#endif
 {
   return GTK_CELL_EDITABLE(create_object_cbox());
 }
@@ -315,7 +306,7 @@ create_column(n_list_store *list, int i)
   case G_TYPE_UINT64:
   case G_TYPE_FLOAT:
   case G_TYPE_DOUBLE:
-#if GTK_CHECK_VERSION(3, 8, 0) || ! GTK_CHECK_VERSION(3, 0, 0)
+#if GTK_CHECK_VERSION(3, 8, 0)
     renderer = gtk_cell_renderer_spin_new();
 #else
     renderer = gtk_cell_renderer_text_new();
@@ -328,7 +319,7 @@ create_column(n_list_store *list, int i)
       if (list[i].type == G_TYPE_DOUBLE || list[i].type == G_TYPE_FLOAT) {
 	g_object_set((GObject *) renderer,
 		     "editable", list[i].editable,
-#if GTK_CHECK_VERSION(3, 8, 0) || ! GTK_CHECK_VERSION(3, 0, 0)
+#if GTK_CHECK_VERSION(3, 8, 0)
 		     "adjustment", gtk_adjustment_new(0,
 						      list[i].min / 100.0,
 						      list[i].max / 100.0,
@@ -342,7 +333,7 @@ create_column(n_list_store *list, int i)
       } else {
 	g_object_set((GObject *) renderer,
 		     "editable", list[i].editable,
-#if GTK_CHECK_VERSION(3, 8, 0) || ! GTK_CHECK_VERSION(3, 0, 0)
+#if GTK_CHECK_VERSION(3, 8, 0)
 		     "adjustment", gtk_adjustment_new(0,
 						      list[i].min,
 						      list[i].max,

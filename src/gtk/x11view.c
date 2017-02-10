@@ -100,11 +100,7 @@ enum ViewerAlignType {
 #define FOCUS_FRAME_OFST 5
 #define FOCUS_RECT_SIZE 6
 
-#if GTK_CHECK_VERSION(3, 0, 0)
 static cairo_region_t *region = NULL;
-#else
-static GdkRegion *region = NULL;
-#endif
 static int PaintLock = FALSE, ZoomLock = FALSE, KeepMouseMode = FALSE;
 
 #define EVAL_NUM_MAX 5000
@@ -118,11 +114,7 @@ static struct narray SelList;
 static void ViewerEvSize(GtkWidget *w, GtkAllocation *allocation, gpointer client_data);
 static void ViewerEvHScroll(GtkRange *range, gpointer user_data);
 static void ViewerEvVScroll(GtkRange *range, gpointer user_data);
-#if GTK_CHECK_VERSION(3, 0, 0)
 static gboolean ViewerEvPaint(GtkWidget *w, cairo_t *cr, gpointer client_data);
-#else
-static gboolean ViewerEvPaint(GtkWidget *w, GdkEventExpose *e, gpointer client_data);
-#endif
 static gboolean ViewerEvLButtonDown(unsigned int state, TPoint *point, struct Viewer *d);
 static gboolean ViewerEvLButtonUp(unsigned int state, TPoint *point, struct Viewer *d);
 static gboolean ViewerEvLButtonDblClk(unsigned int state, TPoint *point, struct Viewer *d);
@@ -345,12 +337,8 @@ paste_cb(GtkClipboard *clipboard, const gchar *text, gpointer data)
   if (strncmp(text, SCRIPT_IDN, SCRIPT_IDN_LEN)) {
     gint w, h;
 
-#if GTK_CHECK_VERSION(2, 24, 0)
     w = gdk_window_get_width(window);
     h = gdk_window_get_height(window);
-#else
-    gdk_window_get_geometry(window, NULL, NULL, &w, &h, NULL);
-#endif
     text_dropped(text, w / 2, h / 2, &NgraphApp.Viewer);
     return;
   }
@@ -972,11 +960,7 @@ EvalDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_container_add(GTK_CONTAINER(w), swin);
     gtk_box_pack_start(GTK_BOX(d->vbox), w, TRUE, TRUE, 4);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-    hbox = gtk_hbox_new(FALSE, 4);
-#endif
     w = gtk_button_new_with_mnemonic(_("Select _All"));
     set_button_icon(w, "edit-select-all");
     g_signal_connect(w, "clicked", G_CALLBACK(tree_store_select_all_cb), d->list);
@@ -1134,12 +1118,8 @@ ViewerWinSetup(void)
   SetScroller();
   win = gtk_widget_get_window(NgraphApp.Viewer.Win);
   gdk_window_get_position(win, &x, &y);
-#if GTK_CHECK_VERSION(2, 24, 0)
   width = gdk_window_get_width(win);
   height = gdk_window_get_height(win);
-#else
-  gdk_drawable_get_size(win, &width, &height);
-#endif
   d->cx = width / 2;
   d->cy = height / 2;
 
@@ -1148,11 +1128,7 @@ ViewerWinSetup(void)
 
   ChangeDPI();
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   g_signal_connect(d->Win, "draw", G_CALLBACK(ViewerEvPaint), d);
-#else
-  g_signal_connect(d->Win, "expose-event", G_CALLBACK(ViewerEvPaint), d);
-#endif
   g_signal_connect(d->Win, "size-allocate", G_CALLBACK(ViewerEvSize), d);
 
   g_signal_connect(d->HScroll, "value-changed", G_CALLBACK(ViewerEvHScroll), d);
@@ -1173,7 +1149,7 @@ ViewerWinSetup(void)
 			GDK_SMOOTH_SCROLL_MASK |
 #endif
 			GDK_KEY_RELEASE_MASK);
-  GTK_WIDGET_SET_CAN_FOCUS(d->Win);
+  gtk_widget_set_can_focus(d->Win, TRUE);
 
   if (d->popup) {
     gtk_menu_attach_to_widget(GTK_MENU(d->popup), GTK_WIDGET(d->Win), NULL);
@@ -1203,11 +1179,7 @@ ViewerWinClose(void)
   d->points = NULL;
 
   if (region) {
-#if GTK_CHECK_VERSION(3, 0, 0)
     cairo_region_destroy(region);
-#else
-    gdk_region_destroy(region);
-#endif
     region = NULL;
   }
 
@@ -1707,11 +1679,7 @@ AddInvalidateRect(struct objlist *obj, N_VALUE *inst)
   struct narray *abbox;
   int bboxnum, *bbox;
   double zoom;
-#if GTK_CHECK_VERSION(3, 0, 0)
   cairo_rectangle_int_t rect;
-#else
-  GdkRectangle rect;
-#endif
   if (chkobjfield(obj, "bbox")) {
     return;
   }
@@ -1731,18 +1699,11 @@ AddInvalidateRect(struct objlist *obj, N_VALUE *inst)
   rect.width = mxd2p(bbox[2] * zoom + Menulocal.LeftMargin) - rect.x + 7;
   rect.height = mxd2p(bbox[3] * zoom + Menulocal.TopMargin) - rect.y + 7;
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   if (region == NULL) {
     region = cairo_region_create_rectangle(&rect);
   } else {
     cairo_region_union_rectangle(region, &rect);
   }
-#else
-  if (region == NULL) {
-    region = gdk_region_new();
-  }
-  gdk_region_union_with_rect(region, &rect);
-#endif
 }
 
 
@@ -2504,12 +2465,8 @@ ShowCrossGauge(cairo_t *cr, const struct Viewer *d)
     return;
   }
 
-#if GTK_CHECK_VERSION(2, 24, 0)
   width = gdk_window_get_width(win);
   height = gdk_window_get_height(win);
-#else
-  gdk_drawable_get_size(win, &width, &height);
-#endif
 
   zoom = Menulocal.PaperZoom / 10000.0;
 
@@ -2847,11 +2804,7 @@ show_zoom_animation(struct Viewer *d, TPoint *point, double zoom)
 		      (point->x + d->hscroll - d->cx) - point->x * z,
 		      (point->y + d->vscroll - d->cy) - point->y * z);
     cairo_pattern_set_matrix(pattern, &matrix);
-#if GTK_CHECK_VERSION(3, 0, 0)
     cairo_paint(cr);
-#else
-    cairo_fill(cr);
-#endif
   }
 
   cairo_pattern_destroy(pattern);
@@ -2902,11 +2855,7 @@ show_move_animation(struct Viewer *d, int x, int y)
 		      (d->hscroll - d->cx) + incx * i,
 		      (d->vscroll - d->cy) + incy * i);
     cairo_pattern_set_matrix(pattern, &matrix);
-#if GTK_CHECK_VERSION(3, 0, 0)
     cairo_paint(cr);
-#else
-    cairo_fill(cr);
-#endif
   }
 
   cairo_pattern_destroy(pattern);
@@ -4437,12 +4386,8 @@ mouse_move_scroll(TPoint *point, const struct Viewer *d)
     return;
   }
 
-#if GTK_CHECK_VERSION(2, 24, 0)
   w = gdk_window_get_width(win);
   h = gdk_window_get_height(win);
-#else
-  gdk_window_get_geometry(win, NULL, NULL, &w, &h, NULL);
-#endif
   if (point->y > h) {
     range_increment(d->VScroll, SCROLL_INC);
   } else if (point->y < 0) {
@@ -5005,29 +4950,9 @@ ViewerEvSize(GtkWidget *w, GtkAllocation *allocation, gpointer client_data)
   ChangeDPI();
 }
 
-#if ! GTK_CHECK_VERSION(3, 0, 0)
-static cairo_t *
-create_cairo(GdkWindow *win)
-{
-  cairo_t *cr;
-  cr = gdk_cairo_create(win);
-  cairo_set_antialias(cr, CAIRO_ANTIALIAS_NONE);
-  cairo_set_line_width(cr, 1);
-
-  return cr;
-}
-#endif
-
 static gboolean
-#if GTK_CHECK_VERSION(3, 0, 0)
 ViewerEvPaint(GtkWidget *w, cairo_t *cr, gpointer client_data)
-#else
-ViewerEvPaint(GtkWidget *w, GdkEventExpose *e, gpointer client_data)
-#endif
 {
-#if ! GTK_CHECK_VERSION(3, 0, 0)
-  cairo_t *cr;
-#endif
   struct Viewer *d;
 
   d = (struct Viewer *) client_data;
@@ -5036,37 +4961,16 @@ ViewerEvPaint(GtkWidget *w, GdkEventExpose *e, gpointer client_data)
     return TRUE;
   }
 
-
-#if ! GTK_CHECK_VERSION(3, 0, 0)
-  if (e && e->count != 0) {
-    return TRUE;
-  }
-
-  cr = create_cairo(gtk_widget_get_window(w));
-  if (cr == NULL) {
-    return TRUE;
-  }
-#endif
-
   if (Menulocal.pix) {
-#if ! GTK_CHECK_VERSION(3, 0, 0)
-    gdk_cairo_region(cr, e->region);
-#endif
     cairo_set_source_surface(cr, Menulocal.pix,
 			     nround(- d->hscroll + d->cx),
 			     nround(- d->vscroll + d->cy));
-#if GTK_CHECK_VERSION(3, 0, 0)
     cairo_paint(cr);
-#else
-    cairo_fill(cr);
-#endif
   }
 
   if (! Globallock) {
-#if GTK_CHECK_VERSION(3, 0, 0)
     cairo_set_antialias(cr, CAIRO_ANTIALIAS_NONE);
     cairo_set_line_width(cr, 1);
-#endif
     /* I think it is not necessary to check chkobjinstoid(Menulocal.GRAobj, Menulocal.GRAoid). */
     if (d->ShowFrame) {
       ShowFocusFrame(cr, d);
@@ -5088,17 +4992,9 @@ ViewerEvPaint(GtkWidget *w, GdkEventExpose *e, gpointer client_data)
   }
 
   if (! PaintLock && region) {
-#if GTK_CHECK_VERSION(3, 0, 0)
     cairo_region_destroy(region);
-#else
-    gdk_region_destroy(region);
-#endif
     region = NULL;
   }
-
-#if ! GTK_CHECK_VERSION(3, 0, 0)
-  cairo_destroy(cr);
-#endif
 
   return FALSE;
 }
@@ -5188,11 +5084,7 @@ SetHRuler(const struct Viewer *d)
     return;
   }
 
-#if GTK_CHECK_VERSION(2, 24, 0)
   width = gdk_window_get_width(win);
-#else
-  gdk_drawable_get_size(win, &width, NULL);
-#endif
   zoom = Menulocal.PaperZoom / 10000.0;
   x1 = N2GTK_RULER_METRIC(calc_mouse_x(0, zoom, d));
   x2 = x1 + N2GTK_RULER_METRIC(mxp2d(width)) / zoom;
@@ -5212,11 +5104,7 @@ SetVRuler(const struct Viewer *d)
     return;
   }
 
-#if GTK_CHECK_VERSION(2, 24, 0)
   height = gdk_window_get_height(win);
-#else
-  gdk_drawable_get_size(win, NULL, &height);
-#endif
   zoom = Menulocal.PaperZoom / 10000.0;
   y1 = N2GTK_RULER_METRIC(calc_mouse_y(0, zoom, d));
   y2 = y1 + N2GTK_RULER_METRIC(mxp2d(height)) / zoom;
@@ -5573,11 +5461,7 @@ void
 CloseGC(void)
 {
   if (Menulocal.region != NULL) {
-#if GTK_CHECK_VERSION(3, 0, 0)
     cairo_region_destroy(Menulocal.region);
-#else
-    gdk_region_destroy(Menulocal.region);
-#endif
   }
 
   Menulocal.region = NULL;
@@ -5593,11 +5477,7 @@ ReopenGC(void)
     Menulocal.windpi / 25.4 / 100;
 
   if (Menulocal.region != NULL) {
-#if GTK_CHECK_VERSION(3, 0, 0)
     cairo_region_destroy(Menulocal.region);
-#else
-    gdk_region_destroy(Menulocal.region);
-#endif
   }
   Menulocal.region = NULL;
 }
@@ -5621,11 +5501,7 @@ draw_paper_frame(void)
   cairo_set_source_rgb(cr, 0, 0, 0);
   cairo_set_line_width(cr, 1);
   cairo_set_dash(cr, NULL, 0, 0);
-#if GTK_CHECK_VERSION(2, 22, 0)
   cairo_rectangle(cr, CAIRO_COORDINATE_OFFSET, CAIRO_COORDINATE_OFFSET, w, h);
-#else
-  cairo_rectangle(cr, 0, 0, w, h);
-#endif
   cairo_stroke(cr);
   cairo_restore(cr);
 }
@@ -5652,11 +5528,7 @@ Draw(int SelectFile)
 
   ReopenGC();
   if (region) {
-#if GTK_CHECK_VERSION(3, 0, 0)
     cairo_region_destroy(region);
-#else
-    gdk_region_destroy(region);
-#endif
   }
   region = NULL;
 

@@ -120,21 +120,6 @@ void resizeconsole(int col, int row);
 
 // XtAppContext Application=NULL;
 char *AppName = "Ngraph", *AppClass = "Ngraph", *Home;
-char *License = "\
-This program is free software; you can redistribute it and/or modify \
-it under the terms of the GNU General Public License as published by \
-the Free Software Foundation; either version 2 of the License, or \
-(at your option) any later version.\n\
-\n\
-This program is distributed in the hope that it will be useful, \
-but WITHOUT ANY WARRANTY; without even the implied warranty of \
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the \
-GNU General Public License for more details.\n\
-\n\
-You should have received a copy of the GNU General Public License \
-along with this program; if not, write to the Free Software \
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA\
-";
 
 char *Auther[] = {
   "Satoshi ISHIZAKA",
@@ -802,9 +787,6 @@ n_initialize(int *argc, char ***argv)
   set_childhandler();
 #endif	/* WINDOWS */
 
-#if ! GTK_CHECK_VERSION(2, 24, 0)
-  gtk_set_locale();
-#endif
   OpenDisplay = gtk_init_check(argc, argv);
   g_set_application_name(AppName);
 

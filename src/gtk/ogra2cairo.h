@@ -44,18 +44,10 @@ struct gra2cairo_local {
   int font_style, symbol;
   double pixel_dot_x,  pixel_dot_y, offsetx, offsety,
     fontdir, fontcos, fontsin, fontspace, fontsize;
-#if GTK_CHECK_VERSION(3, 0, 0)
   cairo_region_t *region;
-#else
-  GdkRegion *region;
-#endif
 };
 
-#if GTK_CHECK_VERSION(3, 0, 0)
 int gra2cairo_clip_region(struct gra2cairo_local *local, cairo_region_t *region);
-#else
-int gra2cairo_clip_region(struct gra2cairo_local *local, GdkRegion *region);
-#endif
 int gra2cairo_strwidth(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv);
 int gra2cairo_charheight(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv);
 void gra2cairo_set_antialias(struct gra2cairo_local *local, int antialias);

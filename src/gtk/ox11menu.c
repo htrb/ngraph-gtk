@@ -1539,11 +1539,7 @@ mxflush(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
 }
 
 void
-#if GTK_CHECK_VERSION(3, 0, 0)
 mx_clear(cairo_region_t *region)
-#else
-mx_clear(GdkRegion *region)
-#endif
 {
   cairo_t *cr;
 

@@ -215,11 +215,7 @@ struct NgraphApp
   gint Message1;
   GtkRecentManager *recent_manager;
   GtkEntryCompletion *legend_text_list, *x_math_list, *y_math_list, *func_list, *fit_list;
-#if GTK_CHECK_VERSION(3, 0, 0)
   cairo_surface_t *markpix[MARK_TYPE_NUM];
-#else
-  GdkPixmap *markpix[MARK_TYPE_NUM];
-#endif
   GdkCursor **cursor;
   struct Viewer Viewer;
   struct SubWin FileWin;

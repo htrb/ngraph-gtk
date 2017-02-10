@@ -41,18 +41,12 @@
 
 typedef struct _Nruler {
   int orientation, ofst, length, size;
-#if GTK_CHECK_VERSION(3, 0, 0)
   cairo_surface_t *backing_store;
-#else	/* GTK_CHECK_VERSION(3, 0, 0) */
-  GdkPixmap *backing_store;
-#endif	/* GTK_CHECK_VERSION(3, 0, 0) */
   double lower, upper, position;
   double save_l, save_u;
   GtkWidget *widget, *parent;
-#if GTK_CHECK_VERSION(3, 0, 0)
   GtkStyleContext *saved_style;
   GdkRGBA saved_fg;
-#endif
 } Nruler;
 
 struct _NrulerMetric
@@ -77,15 +71,9 @@ static void nruler_draw_ticks(Nruler *ruler, GtkWidget *widget);
 static void nruler_realize(GtkWidget *widget, gpointer user_data);
 static void nruler_size_allocate(GtkWidget *widget, GtkAllocation *allocation, gpointer user_data);
 static gboolean nruler_destroy(GtkWidget *widget, gpointer user_data);
-#if GTK_CHECK_VERSION(3, 0, 0)
 static void nruler_draw_pos(Nruler *ruler, GtkWidget *widget, cairo_t *cr);
 static gboolean nruler_expose(GtkWidget *widget, cairo_t *cr, gpointer user_data);
 static GtkStyleContext *nruler_get_color(Nruler *ruler, GdkRGBA *fg);
-#else	/* GTK_CHECK_VERSION(3, 0, 0) */
-static void nruler_draw_pos(Nruler *ruler, GtkWidget *widget);
-static gboolean nruler_expose(GtkWidget *widget, GdkEventExpose *event, gpointer user_data);
-static void nruler_get_color(Nruler *ruler, GdkColor *fg, GdkColor *bg);
-#endif	/* GTK_CHECK_VERSION(3, 0, 0) */
 
 GtkWidget *
 nruler_new(GtkOrientation orientation)
@@ -112,18 +100,11 @@ nruler_new(GtkOrientation orientation)
   ruler->orientation = orientation;
   ruler->widget = w;
   ruler->parent = frame;
-#if GTK_CHECK_VERSION(3, 0, 0)
   ruler->saved_style = NULL;
-#endif
 
   g_object_set_data(G_OBJECT(frame), RULER_DATA_KEY, ruler);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   g_signal_connect(w, "draw", G_CALLBACK(nruler_expose), ruler);
-#else	/* GTK_CHECK_VERSION(3, 0, 0) */
-  g_signal_connect(w, "expose-event", G_CALLBACK(nruler_expose), ruler);
-#endif	/* GTK_CHECK_VERSION(3, 0, 0) */
-
   g_signal_connect(w, "realize", G_CALLBACK(nruler_realize), ruler);
   g_signal_connect(w, "size-allocate", G_CALLBACK(nruler_size_allocate), ruler);
   g_signal_connect(frame, "unrealize", G_CALLBACK(nruler_destroy), ruler);
@@ -184,11 +165,7 @@ nruler_destroy(GtkWidget *widget, gpointer user_data)
   ruler = (Nruler *) user_data;
   if (ruler) {
     if (ruler->backing_store) {
-#if GTK_CHECK_VERSION(3, 0, 0)
       cairo_surface_destroy(ruler->backing_store);
-#else
-      g_object_unref(ruler->backing_store);
-#endif
     }
     g_free(ruler);
   }
@@ -216,7 +193,6 @@ nruler_realize(GtkWidget *widget, gpointer user_data)
   nruler_make_pixmap(ruler, widget, ruler->parent);
 }
 
-#if GTK_CHECK_VERSION(3, 0, 0)
 static gboolean
 nruler_expose(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 {
@@ -229,20 +205,6 @@ nruler_expose(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 
   return FALSE;
 }
-#else	/* GTK_CHECK_VERSION(3, 0, 0) */
-static gboolean
-nruler_expose(GtkWidget *widget, GdkEventExpose *event, gpointer user_data)
-{
-  if (gtk_widget_is_drawable(widget)) {
-    Nruler *ruler = (Nruler *) user_data;
-
-    nruler_draw_ticks(ruler, widget);
-    nruler_draw_pos(ruler, widget);
-  }
-
-  return FALSE;
-}
-#endif	/* GTK_CHECK_VERSION(3, 0, 0) */
 
 static void
 nruler_make_pixmap(Nruler *ruler, GtkWidget *widget, GtkWidget *parent)
@@ -269,36 +231,19 @@ nruler_make_pixmap(Nruler *ruler, GtkWidget *widget, GtkWidget *parent)
   }
 
   if (ruler->backing_store) {
-#if GTK_CHECK_VERSION(3, 0, 0)
     width = cairo_image_surface_get_width(ruler->backing_store);
     height = cairo_image_surface_get_height(ruler->backing_store);
-#elif GTK_CHECK_VERSION(2, 24, 0)
-    gdk_pixmap_get_size(ruler->backing_store, &width, &height);
-#else
-    gdk_drawable_get_size(ruler->backing_store, &width, &height);
-#endif
     if ((width == allocation.width) &&
 	(height == allocation.height)) {
       return;
     }
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     cairo_surface_destroy(ruler->backing_store);
-#else
-    g_object_unref(ruler->backing_store);
-#endif
   }
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   ruler->backing_store = cairo_image_surface_create(CAIRO_FORMAT_RGB24,
 						    allocation.width,
 						    allocation.height);
-#else
-  ruler->backing_store = gdk_pixmap_new(gtk_widget_get_window(widget),
-					allocation.width,
-					allocation.height,
-					-1);
-#endif
 
   ruler->save_l = 0;
   ruler->save_u = 0;
@@ -324,12 +269,8 @@ nruler_draw_ticks(Nruler *ruler, GtkWidget *widget)
   PangoRectangle logical_rect, ink_rect;
   PangoFontDescription *fs;
   GtkAllocation allocation;
-#if GTK_CHECK_VERSION(3, 0, 0)
   GdkRGBA fg;
   GtkStyleContext *context;
-#else
-  GdkColor bg, fg;
-#endif
 
   if (! gtk_widget_is_drawable(widget)) {
     return;
@@ -351,24 +292,11 @@ nruler_draw_ticks(Nruler *ruler, GtkWidget *widget)
 
   digit_height = PANGO_PIXELS(ink_rect.height) + 2;
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   context = nruler_get_color(ruler, &fg);
   cr = cairo_create(ruler->backing_store);
   gtk_render_background(context, cr,
 			0, 0, allocation.width, allocation.height);
-#else	/* GTK_CHECK_VERSION(3, 0, 0) */
-  nruler_get_color(ruler, &fg, &bg);
-  cr = gdk_cairo_create(ruler->backing_store);
-  gdk_cairo_set_source_color(cr, &bg);
-  cairo_rectangle(cr, 0, 0, allocation.width, allocation.height);
-  cairo_fill(cr);
-#endif	/* GTK_CHECK_VERSION(3, 0, 0) */
-
-#if GTK_CHECK_VERSION(3, 0, 0)
   gdk_cairo_set_source_rgba(cr, &fg);
-#else
-  gdk_cairo_set_source_color(cr, &fg);
-#endif
 
   if (ruler->orientation == GTK_ORIENTATION_HORIZONTAL) {
     cairo_rectangle(cr, 0, allocation.height - 1, allocation.width, 1);
@@ -494,7 +422,6 @@ nruler_draw_ticks(Nruler *ruler, GtkWidget *widget)
   g_object_unref(layout);
 }
 
-#if GTK_CHECK_VERSION(3, 0, 0)
 static GtkStyleContext *
 nruler_get_color(Nruler *ruler, GdkRGBA *fg)
 {
@@ -510,43 +437,16 @@ nruler_get_color(Nruler *ruler, GdkRGBA *fg)
   *fg = ruler->saved_fg;
   return ruler->saved_style;
 }
-#else
-static void
-nruler_get_color(Nruler *ruler, GdkColor *fg, GdkColor *bg)
-{
-  GtkStateType state;
-  GtkStyle *style;
-
-  state = gtk_widget_get_state(ruler->parent);
-  style = gtk_widget_get_style(ruler->parent);
-  if (fg) {
-    *fg = style->fg[state];
-  }
-
-  if (bg) {
-    *bg = style->bg[state];
-  }
-}
-#endif	/* GTK_CHECK_VERSION(3, 0, 0) */
 
 static void
-#if GTK_CHECK_VERSION(3, 0, 0)
 nruler_draw_pos(Nruler *ruler, GtkWidget *widget, cairo_t *cr)
-#else	/* GTK_CHECK_VERSION(3, 0, 0) */
-nruler_draw_pos(Nruler *ruler, GtkWidget *widget)
-#endif	/* GTK_CHECK_VERSION(3, 0, 0) */
 {
   gint x, y;
   gint width, height;
   gint bs_width, bs_height;
   gdouble increment;
   GtkAllocation allocation;
-#if GTK_CHECK_VERSION(3, 0, 0)
   GdkRGBA fg;
-#else	/* GTK_CHECK_VERSION(3, 0, 0) */
-  GdkColor fg;
-  cairo_t *cr;
-#endif	/* GTK_CHECK_VERSION(3, 0, 0) */
 
   gtk_widget_get_allocation(widget, &allocation);
 
@@ -573,17 +473,9 @@ nruler_draw_pos(Nruler *ruler, GtkWidget *widget)
     return;
   }
 
-#if ! GTK_CHECK_VERSION(3, 0, 0)
-  cr = gdk_cairo_create(gtk_widget_get_window(widget));
-#endif	/* ! GTK_CHECK_VERSION(3, 0, 0) */
-
   /*  If a backing store exists, restore the ruler  */
   if (ruler->backing_store) {
-#if GTK_CHECK_VERSION(3, 0, 0)
     cairo_set_source_surface(cr, ruler->backing_store, 0, 0);
-#else	/* GTK_CHECK_VERSION(3, 0, 0) */
-    gdk_cairo_set_source_pixmap(cr, ruler->backing_store, 0, 0);
-#endif	/* GTK_CHECK_VERSION(3, 0, 0) */
     cairo_rectangle(cr, 0, 0, allocation.width, allocation.height);
     cairo_fill(cr);
   }
@@ -600,13 +492,8 @@ nruler_draw_pos(Nruler *ruler, GtkWidget *widget)
     y = nround((ruler->position - ruler->lower) * increment) - bs_height / 2 - ruler->ofst;
   }
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   nruler_get_color(ruler, &fg);
   gdk_cairo_set_source_rgba(cr, &fg);
-#else	/* GTK_CHECK_VERSION(3, 0, 0) */
-  nruler_get_color(ruler, &fg, NULL);
-  gdk_cairo_set_source_color(cr, &fg);
-#endif	/* GTK_CHECK_VERSION(3, 0, 0) */
 
   cairo_set_antialias(cr, CAIRO_ANTIALIAS_NONE);
   cairo_move_to(cr, x, y);
@@ -620,8 +507,4 @@ nruler_draw_pos(Nruler *ruler, GtkWidget *widget)
   }
 
   cairo_fill(cr);
-
-#if ! GTK_CHECK_VERSION(3, 0, 0)
-  cairo_destroy(cr);
-#endif	/* ! GTK_CHECK_VERSION(3, 0, 0) */
 }

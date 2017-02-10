@@ -47,18 +47,9 @@ combo_box_entry_create(void)
 {
   GtkComboBox *cbox;
 
-#if GTK_CHECK_VERSION(2, 24, 0)
   cbox = GTK_COMBO_BOX(gtk_combo_box_new_with_entry());
-#else
-  cbox = GTK_COMBO_BOX(gtk_combo_box_entry_new());
-#endif
-
   set_model(cbox, FALSE);
-#if GTK_CHECK_VERSION(2, 24, 0)
   gtk_combo_box_set_entry_text_column(GTK_COMBO_BOX(cbox), 0);
-#else
-  gtk_combo_box_entry_set_text_column(GTK_COMBO_BOX_ENTRY(cbox), 0);
-#endif
   gtk_entry_set_activates_default(GTK_ENTRY(gtk_bin_get_child(GTK_BIN(cbox))), TRUE);
   return GTK_WIDGET(cbox);
 }

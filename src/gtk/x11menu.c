@@ -64,11 +64,7 @@
 
 #define USE_EXT_DRIVER 0
 
-#if GTK_CHECK_VERSION(2, 24, 0)
 #define SIDE_PANE_TAB_ID "side_pane"
-#else
-static char *SIDE_PANE_TAB_ID = "side_pane";
-#endif
 int Menulock = FALSE, DnDLock = FALSE;
 struct NgraphApp NgraphApp = {0};
 GtkWidget *TopLevel = NULL;
@@ -3917,11 +3913,7 @@ read_keymap_file(void)
 static void
 create_markpixmap(GtkWidget *win)
 {
-#if GTK_CHECK_VERSION(3, 0, 0)
   cairo_surface_t *pix;
-#else
-  GdkPixmap *pix;
-#endif
   int gra, i, R, G, B, R2, G2, B2, found, output;
   struct objlist *obj, *robj;
   N_VALUE *inst;
@@ -3938,14 +3930,8 @@ create_markpixmap(GtkWidget *win)
   for (i = 0; i < MARK_TYPE_NUM; i++) {
     pix = NULL;
     if (window && found) {
-#if GTK_CHECK_VERSION(3, 0, 0)
       pix = gra2gdk_create_pixmap(local, MARK_PIX_SIZE, MARK_PIX_SIZE,
 				  1.0, 1.0, 1.0);
-#else
-      pix = gra2gdk_create_pixmap(local, window,
-				  MARK_PIX_SIZE, MARK_PIX_SIZE,
-				  1.0, 1.0, 1.0);
-#endif
       if (pix) {
 	gra = _GRAopen("gra2gdk", "_output",
 		       robj, inst, output, -1, -1, -1, NULL, local);
@@ -3972,11 +3958,7 @@ free_markpixmap(void)
 
   for (i = 0; i < MARK_TYPE_NUM; i++) {
     if (NgraphApp.markpix[i]) {
-#if GTK_CHECK_VERSION(3, 0, 0)
       cairo_surface_destroy(NgraphApp.markpix[i]);
-#else
-      g_object_unref(NgraphApp.markpix[i]);
-#endif
     }
     NgraphApp.markpix[i] = NULL;
   }
@@ -4051,11 +4033,7 @@ free_cursor(void)
   unsigned int i;
 
   for (i = 0; i < CURSOR_TYPE_NUM; i++) {
-#if GTK_CHECK_VERSION(3, 0,0)
     g_object_unref(NgraphApp.cursor[i]);
-#else
-    gdk_cursor_unref(NgraphApp.cursor[i]);
-#endif
     NgraphApp.cursor[i] = NULL;
   }
   g_free(NgraphApp.cursor);
@@ -4123,11 +4101,7 @@ create_message_box(GtkWidget **label1, GtkWidget **label2)
   frame = gtk_frame_new(NULL);
   gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-  hbox = gtk_hbox_new(FALSE, 4);
-#endif
 
   w = gtk_label_new(NULL);
 #if GTK_CHECK_VERSION(3, 4, 0)
@@ -4555,17 +4529,10 @@ setupwindow(void)
 {
   GtkWidget *w, *hbox, *hbox2, *vbox, *vbox2, *table, *hpane1, *hpane2, *vpane1, *vpane2;
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   hbox2 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-#else
-  vbox = gtk_vbox_new(FALSE, 0);
-  vbox2 = gtk_vbox_new(FALSE, 0);
-  hbox = gtk_hbox_new(FALSE, 0);
-  hbox2 = gtk_hbox_new(FALSE, 0);
-#endif
 
   w = gtk_menu_bar_new();
   create_menu(w, MainMenu);
@@ -4681,22 +4648,14 @@ setupwindow(void)
   w = gtk_notebook_new();
   gtk_notebook_popup_enable(GTK_NOTEBOOK(w));
   gtk_notebook_set_tab_pos(GTK_NOTEBOOK(w), GTK_POS_LEFT);
-#if GTK_CHECK_VERSION(2, 24, 0)
   gtk_notebook_set_group_name(GTK_NOTEBOOK(w), SIDE_PANE_TAB_ID);
-#else
-  gtk_notebook_set_group(GTK_NOTEBOOK(w), SIDE_PANE_TAB_ID);
-#endif
   gtk_notebook_set_scrollable(GTK_NOTEBOOK(w), TRUE);
   gtk_paned_add1(GTK_PANED(vpane2), w);
 
   w = gtk_notebook_new();
   gtk_notebook_popup_enable(GTK_NOTEBOOK(w));
   gtk_notebook_set_tab_pos(GTK_NOTEBOOK(w), GTK_POS_LEFT);
-#if GTK_CHECK_VERSION(2, 24, 0)
   gtk_notebook_set_group_name(GTK_NOTEBOOK(w), SIDE_PANE_TAB_ID);
-#else
-  gtk_notebook_set_group(GTK_NOTEBOOK(w), SIDE_PANE_TAB_ID);
-#endif
   gtk_notebook_set_scrollable(GTK_NOTEBOOK(w), TRUE);
   gtk_paned_add2(GTK_PANED(vpane2), w);
 

@@ -40,7 +40,6 @@ set_button_icon(GtkWidget *w, const char *icon_name)
 void
 set_widget_margin(GtkWidget *w, int margin_pos)
 {
-#if GTK_CHECK_VERSION(3, 0, 0)
 #if GTK_CHECK_VERSION(3, 12, 0)
   if (margin_pos & WIDGET_MARGIN_LEFT) {
     gtk_widget_set_margin_start(w, 4);
@@ -66,7 +65,6 @@ set_widget_margin(GtkWidget *w, int margin_pos)
   if (margin_pos & WIDGET_MARGIN_TOP) {
     gtk_widget_set_margin_top(w, 4);
   }
-#endif
 }
 
 void
@@ -232,11 +230,7 @@ add_copy_button_to_box(GtkWidget *parent_box, GCallback cb, gpointer d, char *ob
 {
   GtkWidget *hbox, *w;
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-  hbox = gtk_hbox_new(FALSE, 4);
-#endif
   w = gtk_button_new_with_mnemonic(_("_Copy Settings"));
   g_signal_connect(w, "map", G_CALLBACK(set_sensitivity_by_check_instance), obj_name);
   g_signal_connect(w, "clicked", cb, d);
@@ -251,7 +245,6 @@ item_setup(GtkWidget *box, GtkWidget *w, char *title, gboolean expand)
 {
   GtkWidget *hbox, *label;
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   hbox = gtk_grid_new();
   label = gtk_label_new_with_mnemonic(title);
   gtk_label_set_mnemonic_widget(GTK_LABEL(label), w);
@@ -265,13 +258,6 @@ item_setup(GtkWidget *box, GtkWidget *w, char *title, gboolean expand)
   }
   gtk_grid_attach(GTK_GRID(hbox), label, 0, 0, 1, 1);
   gtk_grid_attach(GTK_GRID(hbox), w, 1, 0, 1, 1);
-#else
-  hbox = gtk_hbox_new(FALSE, 4);
-  label = gtk_label_new_with_mnemonic(title);
-  gtk_label_set_mnemonic_widget(GTK_LABEL(label), w);
-  gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 2);
-  gtk_box_pack_start(GTK_BOX(hbox), w, expand, expand, 2);
-#endif
   gtk_box_pack_start(GTK_BOX(box), hbox, expand, expand, 4);
 
   return label;
@@ -1021,7 +1007,6 @@ set_widget_font(GtkWidget *w, const char *font)
 static void
 set_linumber_color(GtkWidget *w)
 {
-#if GTK_CHECK_VERSION(3, 0, 0)
   GdkRGBA col;
 
   col.red   = LINE_NUMBER_R * 1.0 / 0xFFFF;
@@ -1045,36 +1030,12 @@ set_linumber_color(GtkWidget *w)
   gtk_widget_override_color(w, GTK_STATE_FLAG_PRELIGHT, &col);
   gtk_widget_override_color(w, GTK_STATE_FLAG_SELECTED, &col);
   gtk_widget_override_color(w, GTK_STATE_FLAG_INSENSITIVE, &col);
-#else
-  GdkColor col;
-
-  col.red = LINE_NUMBER_R;
-  col.green = LINE_NUMBER_G;
-  col.blue = LINE_NUMBER_B;
-
-  gtk_widget_modify_base(w, GTK_STATE_NORMAL, &col);
-  gtk_widget_modify_base(w, GTK_STATE_ACTIVE, &col);
-  gtk_widget_modify_base(w, GTK_STATE_PRELIGHT, &col);
-  gtk_widget_modify_base(w, GTK_STATE_SELECTED, &col);
-  gtk_widget_modify_base(w, GTK_STATE_INSENSITIVE, &col);
-
-  col.red = 0;
-  col.green = 0;
-  col.blue = 0;
-
-  gtk_widget_modify_text(w, GTK_STATE_NORMAL, &col);
-  gtk_widget_modify_text(w, GTK_STATE_ACTIVE, &col);
-  gtk_widget_modify_text(w, GTK_STATE_PRELIGHT, &col);
-  gtk_widget_modify_text(w, GTK_STATE_SELECTED, &col);
-  gtk_widget_modify_text(w, GTK_STATE_INSENSITIVE, &col);
-#endif
 
   gtk_widget_set_sensitive(w, FALSE);
 }
 
 #endif	/* ! GTK_CHECK_VERSION(3, 16, 0) */
 
-#if GTK_CHECK_VERSION(3, 0, 0)
 static void (* get_preferred_width_org) (GtkWidget *w, gint *min, gint *natulal);
 static void (* get_preferred_height_org) (GtkWidget *w, gint *min, gint *natulal);
 
@@ -1093,7 +1054,6 @@ get_preferred_height(GtkWidget *w, gint *min, gint *natulal)
   get_preferred_height_org(w, min, natulal);
   *min = 0;
 }
-#endif
 
 GtkWidget *
 create_text_view_with_line_number(GtkWidget **v)
@@ -1146,7 +1106,6 @@ create_text_view_with_line_number(GtkWidget **v)
 
   hadj = gtk_range_get_adjustment(GTK_RANGE(hs));
   vadj = gtk_range_get_adjustment(GTK_RANGE(vs));
-#if GTK_CHECK_VERSION(3, 0, 0)
   gtk_scrollable_set_hadjustment(GTK_SCROLLABLE(view), hadj);
   gtk_scrollable_set_vadjustment(GTK_SCROLLABLE(view), vadj);
   gtk_scrollable_set_vadjustment(GTK_SCROLLABLE(ln), vadj);
@@ -1156,10 +1115,6 @@ create_text_view_with_line_number(GtkWidget **v)
   get_preferred_height_org = GTK_WIDGET_GET_CLASS(view)->get_preferred_height;
   GTK_WIDGET_GET_CLASS(view)->get_preferred_width = get_preferred_width;
   GTK_WIDGET_GET_CLASS(view)->get_preferred_height = get_preferred_height;
-#else
-  gtk_widget_set_scroll_adjustments(view, hadj, vadj);
-  gtk_widget_set_scroll_adjustments(ln,   NULL, vadj);
-#endif
 
   g_signal_connect(view, "scroll-event", G_CALLBACK(text_view_scroll_event), NULL);
   g_signal_connect(view, "size-allocate", G_CALLBACK(text_view_size_allocate), NULL);
@@ -1244,13 +1199,8 @@ text_view_with_line_number_set_font(GtkWidget *view, const gchar *font)
   set_widget_font(view, font);
 #else  /* GTK_CHECK_VERSION(3, 16, 0) */
   desc = pango_font_description_from_string(font);
-#if GTK_CHECK_VERSION(3, 0, 0)
   gtk_widget_override_font(view, NULL);
   gtk_widget_override_font(view, desc);
-#else
-  gtk_widget_modify_font(view, NULL);
-  gtk_widget_modify_font(view, desc);
-#endif
 #endif	/* GTK_CHECK_VERSION(3, 16, 0) */
 
   ln = g_object_get_data(G_OBJECT(view), "line_number");
@@ -1264,13 +1214,8 @@ text_view_with_line_number_set_font(GtkWidget *view, const gchar *font)
 #if GTK_CHECK_VERSION(3, 16, 0)
   set_widget_font(ln, font);
 #else  /* GTK_CHECK_VERSION(3, 16, 0) */
-#if GTK_CHECK_VERSION(3, 0, 0)
   gtk_widget_override_font(ln, NULL);
   gtk_widget_override_font(ln, desc);
-#else
-  gtk_widget_modify_font(ln, NULL);
-  gtk_widget_modify_font(ln, desc);
-#endif
 
   pango_font_description_free(desc);
 #endif	/* GTK_CHECK_VERSION(3, 16, 0) */
