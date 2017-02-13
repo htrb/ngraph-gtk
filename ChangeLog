@@ -1,3 +1,8 @@
+2017-02-13  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11lgnd.c (create_color_combo_box): add "Stroke" and
+	"Fill" menu items under the each submenu.
+
 2017-02-10  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* configure.ac: remove GTK+2 support.

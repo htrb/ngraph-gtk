@@ -3064,7 +3064,8 @@ create_color_combo_box(GtkWidget *cbox, struct objlist *obj, int id)
 
   list = GTK_TREE_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(cbox)));
 
-  add_bool_combo_item_to_cbox(list, &iter, NULL, LEGEND_COMBO_ITEM_TOGGLE_STROKE, obj, "stroke", id, _("Stroke"));
+  add_text_combo_item_to_cbox(list, &iter, NULL, -1, -1, _("Stroke"), TOGGLE_NONE, FALSE);
+  add_bool_combo_item_to_cbox(list, NULL, &iter, LEGEND_COMBO_ITEM_TOGGLE_STROKE, obj, "stroke", id, _("Stroke"));
   add_line_style_item_to_cbox(list, &iter, LEGEND_COMBO_ITEM_STYLE, obj, "style", id);
   if (chkobjfield(obj, "join") == 0) {
     add_text_combo_item_to_cbox(list, &parent, &iter, -1, -1, _("Join"), TOGGLE_NONE, FALSE);
@@ -3075,12 +3076,13 @@ create_color_combo_box(GtkWidget *cbox, struct objlist *obj, int id)
     add_bool_combo_item_to_cbox(list, NULL, &iter, LEGEND_COMBO_ITEM_CLOSE_PATH, obj, "close_path", id, _("Close path"));
   }
 
-  add_bool_combo_item_to_cbox(list, &iter, NULL, LEGEND_COMBO_ITEM_TOGGLE_FILL, obj, "fill", id, _("Fill"));
-  add_text_combo_item_to_cbox(list, NULL, &iter, LEGEND_COMBO_ITEM_COLOR_FILL, -1, _("Color"), TOGGLE_NONE, FALSE);
+  add_text_combo_item_to_cbox(list, &iter, NULL, -1, -1, _("Fill"), TOGGLE_NONE, FALSE);
+  add_bool_combo_item_to_cbox(list, NULL, &iter, LEGEND_COMBO_ITEM_TOGGLE_FILL, obj, "fill", id, _("Fill"));
   if (chkobjfield(obj, "fill_rule") == 0) {
     add_text_combo_item_to_cbox(list, &parent, &iter, -1, -1, _("Fill rule"), TOGGLE_NONE, FALSE);
     add_enum_combo_item_to_cbox(list, NULL, &parent, LEGEND_COMBO_ITEM_FILL_RULE, obj, "fill_rule", id);
   }
+  add_text_combo_item_to_cbox(list, NULL, &iter, LEGEND_COMBO_ITEM_COLOR_FILL, -1, _("Color"), TOGGLE_NONE, FALSE);
 }
 
 static int
