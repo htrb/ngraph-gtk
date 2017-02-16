@@ -28,6 +28,18 @@ esac
 AC_MSG_RESULT([$os_win32])
 AM_CONDITIONAL(OS_WIN32, test "$os_win32" = "yes")
 
+AC_MSG_CHECKING([for native OSX])
+case "$host" in
+  *-*-apple-darwin*)
+    os_osx=yes
+    ;;
+  *)
+    os_osx=no
+    ;;
+esac
+AC_MSG_RESULT([$os_osx])
+AM_CONDITIONAL(OS_OSX, test "$os_osx" = "yes")
+
 AC_CONFIG_SRCDIR(src/main.c)
 AC_CONFIG_MACRO_DIR([m4])
 

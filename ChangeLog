@@ -1,5 +1,7 @@
 2017-02-16  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* configure.ac: check OSX environment.
+
 	* src/gtk/x11menu.c (ObjectMenu): add "Object" menu.
 
 2017-02-13  Hiroyuki Ito  <ZXB01226 at nifty.com>
