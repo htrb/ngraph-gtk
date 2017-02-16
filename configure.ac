@@ -30,7 +30,7 @@ AM_CONDITIONAL(OS_WIN32, test "$os_win32" = "yes")
 
 AC_MSG_CHECKING([for native OSX])
 case "$host" in
-  *-*-apple-darwin*)
+  *-apple-darwin*)
     os_osx=yes
     ;;
   *)
