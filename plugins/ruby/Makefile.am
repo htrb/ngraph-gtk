@@ -13,8 +13,11 @@ $(ruby_ext): ngraph.c ruby_ngraph.h
 
 if OS_WIN32
 else
+if OS_OSX
+else
 install-data-local: $(ruby_ext)
 	$(MAKE) -f Makefile.ruby install
+endif
 endif
 
 obj.txt: getobj.nsc $(top_builddir)/src/libngraph.la
