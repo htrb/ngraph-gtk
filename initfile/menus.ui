@@ -319,117 +319,117 @@
       </section>
     </submenu>
     <submenu>
-      <attribute name="label" translatable="yes">_Data</attribute>
-      <section> 
-	<submenu>
-	  <attribute name="label" translatable="yes">_Add</attribute>
-	  <section>
-	    <item>
-	      <attribute name="label" translatable="yes">_File</attribute>
-	      <attribute name="action">app.DataAddFileAction</attribute>
-	    </item>
-	    <item>
-	      <attribute name="label" translatable="yes">_Range</attribute>
-	      <attribute name="action">app.DataAddRangeAction</attribute>
-	    </item>
-	  </section>
-	  <section>
-	    <item>
-	      <attribute name="label" translatable="yes">_Recent files</attribute>
-	      <attribute name="action">app.DataAddRecentFileAction</attribute>
-	    </item>
-	  </section>
-	</submenu>
-	<item>
-	  <attribute name="label" translatable="yes">_Properties</attribute>
-	  <attribute name="action">app.DataPropertyAction</attribute>
-	</item>
-	<item>
-	  <attribute name="label" translatable="yes">_Close</attribute>
-	  <attribute name="action">app.DataCloseAction</attribute>
-	</item>
-	<item>
-	  <attribute name="label" translatable="yes">_Edit</attribute>
-	  <attribute name="action">app.DataEditAction</attribute>
-	</item>
-      </section>
-      <section>
-	<item>
-	  <attribute name="label" translatable="yes">_Save data</attribute>
-	  <attribute name="action">app.DataSaveAction</attribute>
-	</item>
-	<item>
-	  <attribute name="label" translatable="yes">_Math Transformation</attribute>
-	  <attribute name="action">app.DataMathAction</attribute>
-	</item>
-      </section>
-    </submenu>
-    <submenu>
-      <attribute name="label" translatable="yes">_Axis</attribute>
+      <attribute name="label" translatable="yes">_Object</attribute>
       <section>
 	<submenu>
-	  <attribute name="label" translatable="yes">_Add</attribute>
+	  <attribute name="label" translatable="yes">_Data</attribute>
 	  <section>
-	    <item>
-	      <attribute name="label" translatable="yes">_Frame graph</attribute>
-	      <attribute name="action">app.AxisAddFrameAction</attribute>
-            </item>
-	    <item>
-	      <attribute name="label" translatable="yes">_Section graph</attribute>
-	      <attribute name="action">app.AxisAddSectionAction</attribute>
-            </item>
-	    <item>
-	      <attribute name="label" translatable="yes">_Cross graph</attribute>
-	      <attribute name="action">app.AxisAddCrossAction</attribute>
-            </item>
-	    <item>
-	      <attribute name="label" translatable="yes">Single _Axis</attribute>
-	      <attribute name="action">app.AxisAddSingleAction</attribute>
-	    </item>
-	  </section>
-	</submenu>
-	<item>
-	  <attribute name="label" translatable="yes">_Properties</attribute>
-	  <attribute name="action">app.AxisPropertyAction</attribute>
-	</item>
-	<item>
-	  <attribute name="label" translatable="yes">_Delete</attribute>
-	  <attribute name="action">app.AxisDeleteAction</attribute>
-	</item>
-	<item>
-	  <attribute name="label" translatable="yes">Scale _Zoom</attribute>
-	  <attribute name="action">app.AxisScaleZoomAction</attribute>
-	</item>
-	<item>
-	  <attribute name="label" translatable="yes">Scale _Clear</attribute>
-	  <attribute name="action">app.AxisScaleClearAction</attribute>
-	</item>
-	<item>
-	  <attribute name="label" translatable="yes">Scale _Undo</attribute>
-	  <attribute name="action">app.AxisScaleUndoAction</attribute>
-	</item>
-	<submenu>
-	  <attribute name="label" translatable="yes">_Grid</attribute>
-	  <section>
-	    <item>
+	    <submenu>
 	      <attribute name="label" translatable="yes">_Add</attribute>
-	      <attribute name="action">app.AxisGridNewAction</attribute>
-            </item>
+	      <section>
+		<item>
+		  <attribute name="label" translatable="yes">_File</attribute>
+		  <attribute name="action">app.DataAddFileAction</attribute>
+		</item>
+		<item>
+		  <attribute name="label" translatable="yes">_Range</attribute>
+		  <attribute name="action">app.DataAddRangeAction</attribute>
+		</item>
+	      </section>
+	      <section>
+		<item>
+		  <attribute name="label" translatable="yes">_Recent files</attribute>
+		  <attribute name="action">app.DataAddRecentFileAction</attribute>
+		</item>
+	      </section>
+	    </submenu>
 	    <item>
 	      <attribute name="label" translatable="yes">_Properties</attribute>
-	      <attribute name="action">app.AxisGridPropertyAction</attribute>
-            </item>
+	      <attribute name="action">app.DataPropertyAction</attribute>
+	    </item>
 	    <item>
-	      <attribute name="label" translatable="yes">_Delete</attribute>
-	      <attribute name="action">app.AxisGridDeleteAction</attribute>
+	      <attribute name="label" translatable="yes">_Close</attribute>
+	      <attribute name="action">app.DataCloseAction</attribute>
+	    </item>
+	    <item>
+	      <attribute name="label" translatable="yes">_Edit</attribute>
+	      <attribute name="action">app.DataEditAction</attribute>
+	    </item>
+	  </section>
+	  <section>
+	    <item>
+	      <attribute name="label" translatable="yes">_Save data</attribute>
+	      <attribute name="action">app.DataSaveAction</attribute>
+	    </item>
+	    <item>
+	      <attribute name="label" translatable="yes">_Math Transformation</attribute>
+	      <attribute name="action">app.DataMathAction</attribute>
 	    </item>
 	  </section>
 	</submenu>
-      </section>
-    </submenu>
-    <submenu>
-      <attribute name="label" translatable="yes">_Legend</attribute>
-      <section>
+	<submenu>
+	  <attribute name="label" translatable="yes">_Axis</attribute>
+	  <section>
+	    <submenu>
+	      <attribute name="label" translatable="yes">_Add</attribute>
+	      <section>
+		<item>
+		  <attribute name="label" translatable="yes">_Frame graph</attribute>
+		  <attribute name="action">app.AxisAddFrameAction</attribute>
+		</item>
+		<item>
+		  <attribute name="label" translatable="yes">_Section graph</attribute>
+		  <attribute name="action">app.AxisAddSectionAction</attribute>
+		</item>
+		<item>
+		  <attribute name="label" translatable="yes">_Cross graph</attribute>
+		  <attribute name="action">app.AxisAddCrossAction</attribute>
+		</item>
+		<item>
+		  <attribute name="label" translatable="yes">Single _Axis</attribute>
+		  <attribute name="action">app.AxisAddSingleAction</attribute>
+		</item>
+	      </section>
+	    </submenu>
+	    <item>
+	      <attribute name="label" translatable="yes">_Properties</attribute>
+	      <attribute name="action">app.AxisPropertyAction</attribute>
+	    </item>
+	    <item>
+	      <attribute name="label" translatable="yes">_Delete</attribute>
+	      <attribute name="action">app.AxisDeleteAction</attribute>
+	    </item>
+	    <item>
+	      <attribute name="label" translatable="yes">Scale _Zoom</attribute>
+	      <attribute name="action">app.AxisScaleZoomAction</attribute>
+	    </item>
+	    <item>
+	      <attribute name="label" translatable="yes">Scale _Clear</attribute>
+	      <attribute name="action">app.AxisScaleClearAction</attribute>
+	    </item>
+	    <item>
+	      <attribute name="label" translatable="yes">Scale _Undo</attribute>
+	      <attribute name="action">app.AxisScaleUndoAction</attribute>
+	    </item>
+	    <submenu>
+	      <attribute name="label" translatable="yes">_Grid</attribute>
+	      <section>
+		<item>
+		  <attribute name="label" translatable="yes">_Add</attribute>
+		  <attribute name="action">app.AxisGridNewAction</attribute>
+		</item>
+		<item>
+		  <attribute name="label" translatable="yes">_Properties</attribute>
+		  <attribute name="action">app.AxisGridPropertyAction</attribute>
+		</item>
+		<item>
+		  <attribute name="label" translatable="yes">_Delete</attribute>
+		  <attribute name="action">app.AxisGridDeleteAction</attribute>
+		</item>
+	      </section>
+	    </submenu>
+	  </section>
+	</submenu>
 	<submenu>
 	  <attribute name="label" translatable="yes">_Path</attribute>
 	  <section>
@@ -495,23 +495,23 @@
             </item>
 	  </section>
 	</submenu>
-      </section>
-    </submenu>
-    <submenu>
-      <attribute name="label" translatable="yes">_Merge</attribute>
-      <section>
-	<item>
-	  <attribute name="label" translatable="yes">_Add</attribute>
-	  <attribute name="action">app.MergeAddAction</attribute>
-	</item>
-	<item>
-	  <attribute name="label" translatable="yes">_Properties</attribute>
-	  <attribute name="action">app.MergePropertyAction</attribute>
-	</item>
-	<item>
-	  <attribute name="label" translatable="yes">_Close</attribute>
-	  <attribute name="action">app.MergeCloseAction</attribute>
-	</item>
+	<submenu>
+	  <attribute name="label" translatable="yes">_Merge</attribute>
+	  <section>
+	    <item>
+	      <attribute name="label" translatable="yes">_Add</attribute>
+	      <attribute name="action">app.MergeAddAction</attribute>
+	    </item>
+	    <item>
+	      <attribute name="label" translatable="yes">_Properties</attribute>
+	      <attribute name="action">app.MergePropertyAction</attribute>
+	    </item>
+	    <item>
+	      <attribute name="label" translatable="yes">_Close</attribute>
+	      <attribute name="action">app.MergeCloseAction</attribute>
+	    </item>
+	  </section>
+	</submenu>
       </section>
     </submenu>
     <submenu>
