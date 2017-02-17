@@ -5,7 +5,7 @@
 #ifndef _DIR_DEFS_HEADER
 #define _DIR_DEFS_HEADER
 
-#if WINDOWS
+#if WINDOWS || OSX
 extern char *DOCDIR, *NDATADIR, *ADDINDIR, *LIBDIR, *PLUGINDIR, *CONFDIR, *PIXMAPDIR;
 #define HOME_DIR "Ngraph"
 #else  /* WINDOWS */
