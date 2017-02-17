@@ -14,4 +14,7 @@ EXTRA_DIST = Info-ngraph-gtk.plist ngraph-gtk.bundle ngraph-launcher.sh $(ICONSE
 if OS_OSX
 ngraph.icns: $(ICONSET)
 	iconutil -c icns ngraph.iconset
+
+Info-ngraph-gtk.plist: Info-ngraph-gtk.plist.in
+	$(SED) -e "s/%VERSION%/$(VERSION)/" $^ > $@
 endif
