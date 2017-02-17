@@ -15,7 +15,11 @@
 
 #define USE_HEADER_BAR 0
 #define USE_APP_MENU GTK_CHECK_VERSION(3, 12, 0)
+#if OSX
+#define USE_GTK_BUILDER 1
+#else
 #define USE_GTK_BUILDER 0
+#endif
 
 #define CAIRO_COORDINATE_OFFSET 1
 
