@@ -21,8 +21,13 @@ if OS_WIN32
 .ngp.in.ngp:
 	sed -f $(srcdir)/windows_demo.sed $< > $@
 else
+if OS_OSX
+.ngp.in.ngp:
+	sed -f $(srcdir)/windows_demo.sed $< > $@
+else
 .ngp.in.ngp:
 	sh $(top_srcdir)/pathconv.sh "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" $<
+endif
 endif
 
 CLEANFILES = demo.ngp demo1.ngp demo2.ngp demo3.ngp demo4.ngp demo6.ngp

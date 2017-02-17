@@ -19,8 +19,13 @@ if OS_WIN32
 Ngraph.ini: Ngraph.ini.win
 	cp $(srcdir)/Ngraph.ini.win $(srcdir)/Ngraph.ini
 else
+if OS_WIN32
+Ngraph.ini: Ngraph.ini.osx
+	cp $(srcdir)/Ngraph.ini.osx $(srcdir)/Ngraph.ini
+else
 Ngraph.ini: Ngraph.ini.in Makefile
 	sh $(top_srcdir)/pathconv.sh "$(bindir)" "$(docdir)" "$(pkglibexecdir)" "$(pkglibdir)" "$(pkgdatadir)" "$(ngraphconfdir)" "$(pixmapdir)" $(srcdir)/Ngraph.ini.in
+endif
 endif
 
 update_ui_file:
