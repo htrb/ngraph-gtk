@@ -160,6 +160,7 @@ AC_CONFIG_FILES([Makefile \
 		 plugins/ruby/lib/Makefile \
 		 plugins/ruby/lib/ngraph/Makefile \
 		 mingw/Makefile \
+		 osx/Makefile \
 		 pixmap/Makefile \
 		 icons/Makefile \
 		 icons/scalable/Makefile \
