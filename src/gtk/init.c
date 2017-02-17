@@ -711,17 +711,17 @@ set_dir_defs(char *app)
 {
   const char *app_path;
 
-  app_path = g_getenv("GTK_PATH");
+  app_path = g_getenv("APP_CONTENTS");
 
-  BINDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "libexec/ngraph-gtk");
-  DOCDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/doc/ngraph-gtk");
-  LIBDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "libexec/ngraph-gtk");
-  PLUGINDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "lib/ngraph-gtk/plugins");
-  NDATADIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/ngraph-gtk");
-  ADDINDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/ngraph-gtk/addin");
-  CONFDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "etc/ngraph-gtk");
-  LOCALEDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/locale");
-  PIXMAPDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/pixmaps/ngraph-gtk");
+  BINDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "Resources/libexec/ngraph-gtk");
+  DOCDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "Resources/share/doc/ngraph-gtk");
+  LIBDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "Resources/MacOS");
+  PLUGINDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "Resources/lib/ngraph-gtk/plugins");
+  NDATADIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "Resources/share/ngraph-gtk");
+  ADDINDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "Resources/share/ngraph-gtk/addin");
+  CONFDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "Resources/etc/ngraph-gtk");
+  LOCALEDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "Resources/share/locale");
+  PIXMAPDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "Resources/share/pixmaps/ngraph-gtk");
 
   return (DOCDIR && LIBDIR && CONFDIR);
 }

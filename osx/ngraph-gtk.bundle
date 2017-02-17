@@ -73,9 +73,21 @@
     ${prefix}/lib/ngraph-gtk
   </binary>
 
-  <binary>
-    ${prefix}/libexec/ngraph-gtk/*
+  <binary dest="${bundle}/Contents/MacOS/legend-bin">
+    ${prefix}/libexec/ngraph-gtk/legend
   </binary>
+
+  <binary dest="${bundle}/Contents/MacOS/fitrslt-bin">
+    ${prefix}/libexec/ngraph-gtk/fitrslt
+  </binary>
+
+  <data dest="${bundle}/Contents/MacOS/legend">
+    ${project}/ngraph-launcher.sh
+  </data>
+
+  <data dest="${bundle}/Contents/MacOS/fitrslt">
+    ${project}/ngraph-launcher.sh
+  </data>
 
   <data>
     ${prefix}/share/ngraph-gtk
@@ -103,11 +115,11 @@
        want to copy in to the bundle. The "dest" attribute is
        optional, as usual. Bundler will find all translations of that
        library/program under the indicated directory and copy them.-->
-  <translations  name="gtk30">
+  <translations name="gtk30">
     ${prefix}/share/locale
   </translations>
 
-  <translations  name="ngraph-gtk">
+  <translations name="ngraph-gtk">
     ${prefix}/share/locale
   </translations>
 
