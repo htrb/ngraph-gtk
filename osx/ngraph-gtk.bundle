@@ -33,7 +33,7 @@
          not needed. If the source path is left out, the default
          script will be used.
     -->
-    <launcher-script>${project}/osx/ngraph-launcher.sh</launcher-script >
+    <launcher-script>${project}/ngraph-launcher.sh</launcher-script >
 
     <!-- Not implemented: Optional runtime, could be python or mono
          for example.
@@ -48,7 +48,7 @@
        this bundle file is located. The application name and bundle
        identifier are taken from the plist file.
   -->
-  <plist>${project}/osx/Info-ngraph-gtk.plist</plist>
+  <plist>${project}/Info-ngraph-gtk.plist</plist>
 
   <main-binary>${prefix}/bin/ngraph</main-binary>
 
@@ -143,7 +143,7 @@
     ${project}/Giggle.icns
   </data -->
   <data dest="${bundle}/Contents/Resources">
-    ${project}/osx/ngraph.icns
+    ${project}/ngraph.icns
   </data>
 
   </app-bundle>
