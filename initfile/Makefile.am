@@ -19,7 +19,7 @@ if OS_WIN32
 Ngraph.ini: Ngraph.ini.win
 	cp $(srcdir)/Ngraph.ini.win $(srcdir)/Ngraph.ini
 else
-if OS_WIN32
+if OS_OSX
 Ngraph.ini: Ngraph.ini.osx
 	cp $(srcdir)/Ngraph.ini.osx $(srcdir)/Ngraph.ini
 else
