@@ -74,7 +74,7 @@
   </binary>
 
   <binary>
-    ${prefix}/libexec/ngraph-gtk
+    ${prefix}/libexec/ngraph-gtk/*
   </binary>
 
   <data>
