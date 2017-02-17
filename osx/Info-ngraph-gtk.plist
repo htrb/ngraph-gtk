@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleDevelopmentRegion</key>
+    <string>Japanese</string>
+    <key>CFBundleExecutable</key>
+    <string>Ngraph-GTK</string>
+    <key>CFBundleGetInfoString</key>
+    <string>6.07.02, (C) 2017 Hiroyuki Ito</string>
+    <key>CFBundleIconFile</key>
+    <string>ngraph.icns</string>
+    <key>CFBundleIdentifier</key>
+    <string>com.github.htrb.ngraph-gtk</string>
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleShortVersionString</key>
+    <string>6.07.02</string>
+    <key>CFBundleSignature</key>
+    <string>????</string>
+    <key>CFBundleVersion</key>
+    <string>6.07.02</string>
+    <key>NSHumanReadableCopyright</key>
+    <string>Copyright 1997 - 2017 The GTK+ Team, GNU General Public License.</string>
+    <key>LSMinimumSystemVersion</key>
+    <string>10.4</string>
+    <key>GtkOSXLaunchScriptFile</key>
+    <string>ngraph-launcher.sh</string>
+
+</dict>
+</plist>
