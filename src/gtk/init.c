@@ -715,7 +715,7 @@ set_dir_defs(char *app)
 
   BINDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "Resources/libexec/ngraph-gtk");
   DOCDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "Resources/share/doc/ngraph-gtk");
-  LIBDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "Resources/MacOS");
+  LIBDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "MacOS");
   PLUGINDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "Resources/lib/ngraph-gtk/plugins");
   NDATADIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "Resources/share/ngraph-gtk");
   ADDINDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "Resources/share/ngraph-gtk/addin");
