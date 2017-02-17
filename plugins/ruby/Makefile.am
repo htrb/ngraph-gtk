@@ -1,6 +1,4 @@
-SUBDIRS = lib
-
-EXTRA_DIST = create_objs.rb extconf.rb getobj.nsc ngraph.c
+EXTRA_DIST = create_objs.rb extconf.rb getobj.nsc ngraph.c lib/ngraph.rb lib/ngraph.rb.win lib/ngraph/ngp2.rb
 
 if HAVE_RUBY_DEV
   ruby_ext = ngraph.$(RUBY_DLEXT)
