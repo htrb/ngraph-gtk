@@ -120,7 +120,7 @@ static char *Prompt;
 static int MultiLine = FALSE;
 #endif	/* HAVE_READLINE_READLINE_H */
 
-#ifndef WINDOWS
+#if ! WINDOWS
 #include <sys/wait.h>
 #include <sys/ioctl.h>
 #endif	/* WINDOWS */
@@ -298,7 +298,7 @@ unlinkfile(char **file)
   }
 }
 
-#ifndef WINDOWS
+#if ! WINDOWS
 int
 set_signal(int signal_id, int flags, void (*handler)(int), struct sigaction *oldact)
 {
@@ -565,7 +565,7 @@ shputstdout(const char *s)
   return len;
 }
 
-#ifdef WINDOWS
+#if WINDOWS
 static int 
 shputstderr(const char *s)
 {
@@ -2941,7 +2941,7 @@ msleep(int ms)
 #endif
 }
 
-#ifdef WINDOWS
+#if WINDOWS
 static int WaitProc;
 
 static void *
@@ -3082,7 +3082,7 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
   char buf[2];
   shell_proc proc;
   
-#ifndef WINDOWS
+#if ! WINDOWS
   pid_t pid;
 #endif	/* WINDOWS */
 
@@ -3920,7 +3920,7 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 		  }
 		  prm=prm->next;
 		}
-#ifdef WINDOWS
+#if WINDOWS
 		{
 		  GThread *thread;
 		  char *ptr, *cmd;
@@ -4468,7 +4468,7 @@ ngraphenvironment(struct nshell *nshell)
   if (addin) {
     pathset = g_strdup_printf("PATH='%s%s%s%s%s%s%s%s'$PATH", home, PATHSEP, addin, PATHSEP, lib, PATHSEP, ".", PATHSEP);
     if (pathset) {
-#ifdef WINDOWS
+#if WINDOWS
       path_to_win(pathset);
 #endif	/* WINDOWS */
       cmdexecute(nshell,pathset);
@@ -4534,7 +4534,7 @@ str_calc(const char *str, double *val, int *r, char **err_msg)
   return 0;
 }
 
-#ifdef WINDOWS
+#if WINDOWS
 void
 show_system_error(void)
 {
@@ -4587,7 +4587,7 @@ system_in_thread(void *ptr)
 int
 system_bg(char *cmd)
 {
-#ifdef WINDOWS
+#if WINDOWS
   GThread *thread;
   char *ptr;
 

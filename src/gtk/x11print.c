@@ -1003,7 +1003,7 @@ CmOutputImage(int type)
   }
 }
 
-#ifdef WINDOWS
+#if WINDOWS
 static void
 CmOutputEMF(int type)
 {
@@ -1100,7 +1100,7 @@ CmOutputMenu(void *wi, gpointer client_data)
 #endif	/* CAIRO_HAS_WIN32_SURFACE */
     CmOutputImage(GPOINTER_TO_INT(client_data));
     break;
-#ifdef WINDOWS
+#if WINDOWS
   case MenuIdOutputEMFFile:
   case MenuIdOutputEMFClipboard:
     CmOutputEMF(GPOINTER_TO_INT(client_data));

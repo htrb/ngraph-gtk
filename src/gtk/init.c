@@ -37,7 +37,7 @@
 #include <locale.h>
 #include <signal.h>
 
-#ifdef WINDOWS
+#if WINDOWS || OSX
 #ifdef LOCALEDIR
 #undef LOCALEDIR
 #endif	/* LOCALEDIR */
@@ -112,7 +112,7 @@ void *addpath(void);
 void *addgra2gtk(void);
 void *addmenu(void);
 void *adddialog(void);
-#ifdef WINDOWS
+#if WINDOWS
 void *addgra2emf(void);
 #endif	/* WINDOWS */
 
@@ -177,7 +177,7 @@ static void * ( * obj_add_func_ary[]) (void) = {
   addtext,
   addmenu,
   adddialog,
-#ifdef WINDOWS
+#if WINDOWS
   addgra2emf,
 #endif
 };
@@ -266,7 +266,7 @@ resizeconsole(int col, int row)
 
 static char *Terminal = NULL;
 
-#ifdef WINDOWS
+#if WINDOWS
 static HWND ConsoleHandle = NULL;
 
 static int
@@ -664,7 +664,7 @@ load_config(struct objlist *sys, N_VALUE *inst, int *allocconsole)
   }
 }
 
-#ifdef WINDOWS
+#if WINDOWS
 static int
 set_dir_defs(char *app)
 {
@@ -705,7 +705,30 @@ set_dir_defs(char *app)
 }
 #endif	/* WINDOWS */
 
-#ifdef WINDOWS
+#if OSX
+static int
+set_dir_defs(char *app)
+{
+  const char *app_path;
+
+  app_path = g_getenv("GTK_PATH");
+
+  BINDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "libexec/ngraph-gtk");
+  DOCDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/doc/ngraph-gtk");
+  LIBDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "lib/ngraph-gtk");
+  PLUGINDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "lib/ngraph-gtk/plugins");
+  NDATADIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/ngraph-gtk");
+  ADDINDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/ngraph-gtk/addin");
+  CONFDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "etc/ngraph-gtk");
+  LOCALEDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/locale");
+  PIXMAPDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/pixmaps/ngraph-gtk");
+
+  return (DOCDIR && LIBDIR && CONFDIR);
+}
+#endif
+
+
+#if WINDOWS
 static void
 set_path_env(char *homedir)
 {
@@ -783,14 +806,14 @@ n_initialize(int *argc, char ***argv)
   char_type_buf_init();
 #endif
 
-#ifndef WINDOWS
+#if ! WINDOWS
   set_childhandler();
 #endif	/* WINDOWS */
 
   OpenDisplay = gtk_init_check(argc, argv);
   g_set_application_name(AppName);
 
-#ifdef WINDOWS
+#if WINDOWS || OSX
   set_dir_defs((*argv)[0]);
 #endif	/* WINDOWS */
 
@@ -868,7 +891,7 @@ n_initialize(int *argc, char ***argv)
     }
   }
 
-#ifdef WINDOWS
+#if WINDOWS
   set_path_env(homedir);
 #endif
   set_environ();
@@ -951,7 +974,7 @@ n_initialize(int *argc, char ***argv)
     nallocconsole();
   }
 
-#ifdef WINDOWS
+#if WINDOWS
   ConsoleAc = check_console(allocconsole);
   if (isatty(0) && isatty(1) && isatty(2)) {
     if (! allocconsole) {
@@ -997,7 +1020,7 @@ n_finalize(void)
   }
 #endif
 
-#ifndef WINDOWS
+#if ! WINDOWS
   if (ConsoleAc && (consolepid != -1)) {
     nfreeconsole();
   }

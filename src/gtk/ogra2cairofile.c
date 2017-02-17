@@ -153,7 +153,7 @@ create_cairo(struct objlist *obj, N_VALUE *inst, char *fname, int iw, int ih, in
   int format, dpi, r;
   struct gra2cairo_local *local;
 
-#ifdef WINDOWS
+#if WINDOWS
   fname = g_locale_from_utf8(fname, -1, NULL, NULL, NULL);
 #else  /* WINDOWS */
   fname = g_filename_from_utf8(fname, -1, NULL, NULL, NULL);

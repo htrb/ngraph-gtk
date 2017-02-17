@@ -36,7 +36,7 @@
 #define CONFTOP "/"
 #define NOHANDLE -1
 
-#ifndef WINDOWS
+#if ! WINDOWS
 #define PATHSEP ":"
 #define NFMODE (S_IRUSR | S_IWUSR)
 #define NFMODE_NORMAL_FILE (NFMODE | S_IRGRP | S_IROTH)

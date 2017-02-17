@@ -16,7 +16,7 @@ GtkWidget *
 create_image_from_file(const char *file)
 {
   GtkWidget *img;
-#ifdef WINDOWS
+#if WINDOWS || OSX
     char *str;
     str = g_strdup_printf("%s%s", PIXMAPDIR, file);
     img = gtk_image_new_from_file(str);

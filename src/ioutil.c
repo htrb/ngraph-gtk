@@ -65,7 +65,7 @@ char_type_buf_init(void)
 void 
 changefilename(char *name)
 {
-#ifdef WINDOWS
+#if WINDOWS
   int i;
 
   if (name == NULL) {
@@ -83,7 +83,7 @@ changefilename(char *name)
 void 
 path_to_win(char *name)
 {
-#ifdef WINDOWS
+#if WINDOWS
   int i;
 
   if (name == NULL) {
@@ -171,7 +171,7 @@ getfullpath(const char *name)
   return s;
 }
 
-#ifdef WINDOWS
+#if WINDOWS
 static int
 getdisk(void)
 {
@@ -213,13 +213,13 @@ getrelativepath(const char *name)
     int i, j, top, depth;
 
     top = 0;
-#ifdef WINDOWS
+#if WINDOWS
     if (isalpha(utf8_name[0]) && name[1] == ':') {
       top = 2;
     }
 #endif	/* WINDOWS */
     if (
-#ifdef WINDOWS
+#if WINDOWS
 	name[top] == DIRSEP && (top != 2 || toupper(name[0]) - 'A' == getdisk())
 #else  /* WINDOWS */
 	name[0] == DIRSEP
@@ -232,7 +232,7 @@ getrelativepath(const char *name)
 	g_free(utf8_name);
 	return NULL;
       }
-#ifdef WINDOWS
+#if WINDOWS
       for (j = 2; cwd[j] != '\0'; j++) {
 	cwd[j - 2] = cwd[j];
       }
@@ -309,7 +309,7 @@ get_utf8_filename(const char *name)
   if (g_utf8_validate(name, -1, NULL)) {
     utf8_name = g_strdup(name);
   } else {
-#ifdef WINDOWS
+#if WINDOWS
     utf8_name = g_locale_to_utf8(name, -1, NULL, NULL, NULL);
 #else  /* WINDOWS */
     utf8_name = g_filename_to_utf8(name, -1, NULL, NULL, NULL);
@@ -330,7 +330,7 @@ get_localized_filename(const char *name)
     return NULL;
   }
 
-#ifdef WINDOWS
+#if WINDOWS
   if (g_utf8_validate(name, -1, NULL)) {
     localized_name = g_strdup(name);
   } else {
@@ -1014,7 +1014,7 @@ n_tmpfile(char **name)
     return NULL;
   }
 
-#ifndef WINDOWS
+#if ! WINDOWS
   if (*name) {
     g_unlink(*name);
   }
@@ -1024,7 +1024,7 @@ n_tmpfile(char **name)
   if (fp == NULL) {
     close(fd);
     if (*name) {
-#ifdef WINDOWS
+#if WINDOWS
       g_unlink(*name);
 #endif
       g_free(*name);
@@ -1043,7 +1043,7 @@ n_tmpfile_close(FILE *fp, char *name)
   }
 
   if (name) {
-#ifdef WINDOWS
+#if WINDOWS
     g_unlink(name);
 #endif
     g_free(name);

@@ -1,6 +1,6 @@
 #include "common.h"
 
-#ifdef WINDOWS
+#if WINDOWS
 #include <stdlib.h>
 #include <stdarg.h>
 #include <limits.h>

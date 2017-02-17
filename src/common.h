@@ -26,8 +26,16 @@
 #define WINDOWS 1
 #ifndef _WIN32_WINNT
 #define _WIN32_WINNT 0x0500
+#else
+#define WINDOWS 0
 #endif
 #include <windows.h>
+#endif
+
+#ifdef __APPLE__
+#define OSX 1
+#else
+#define OSX 0
 #endif
 
 #ifndef CCNAME

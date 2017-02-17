@@ -269,7 +269,7 @@ static struct menu_config MenuConfigToggleView[] = {
 
 static struct menu_config MenuConfigOthers[] = {
   {"png_dpi",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.png_dpi},
-#ifdef WINDOWS
+#if WINDOWS
   {"emf_dpi",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.emf_dpi},
 #endif
   {"ps_version",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.ps_version},
@@ -1118,7 +1118,7 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   Menulocal.local = local;
 
   Menulocal.png_dpi = 72;
-#ifdef WINDOWS
+#if WINDOWS
   Menulocal.emf_dpi = 576;
 #endif
   Menulocal.ps_version = 0;

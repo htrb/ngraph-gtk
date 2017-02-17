@@ -41,7 +41,7 @@ extern const gchar *Infowin48_xpm[];
 extern const gchar *Legendwin48_xpm[];
 extern const gchar *Mergewin48_xpm[];
 
-#ifdef WINDOWS
+#if WINDOWS || OSX
 #define ICON_FILE(file) (DIRSEP_STR #file)
 #else
 #define ICON_FILE(file) (PIXMAPDIR DIRSEP_STR #file)

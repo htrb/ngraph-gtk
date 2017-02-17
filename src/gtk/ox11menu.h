@@ -123,7 +123,7 @@ struct menulocal
   int focus_frame_type, use_opacity, select_data;
   int side_pane1_pos, side_pane2_pos, side_pane3_pos, main_pane_pos, single_window_mode;
   int file_tab, axis_tab, merge_tab, path_tab, rectangle_tab, arc_tab, mark_tab, text_tab;
-#ifdef WINDOWS
+#if WINDOWS
   int emf_dpi;
 #endif
   int png_dpi, ps_version, svg_version;

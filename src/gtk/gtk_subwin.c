@@ -1333,7 +1333,7 @@ ev_sub_win_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
   return FALSE;
 }
 
-#ifdef WINDOWS
+#if WINDOWS
 #include <gdk/gdkwin32.h>
 
 static void
@@ -1372,7 +1372,7 @@ sub_window_create(struct SubWin *d, const char *title, GtkWidget *swin, const ch
   d->Win = dlg;
 
   if (iconfile) {
-#ifdef WINDOWS
+#if WINDOWS || OSX
     char *str;
     str = g_strdup_printf("%s%s", PIXMAPDIR, iconfile);
     icon = gdk_pixbuf_new_from_file(str, NULL);
@@ -1388,7 +1388,7 @@ sub_window_create(struct SubWin *d, const char *title, GtkWidget *swin, const ch
 	list = g_list_append(list, icon);
       }
 
-#ifdef WINDOWS
+#if WINDOWS || OSX
       str = g_strdup_printf("%s%s", PIXMAPDIR, iconfile2);
       icon = gdk_pixbuf_new_from_file(str, NULL);
       g_free(str);
@@ -1431,7 +1431,7 @@ sub_window_create(struct SubWin *d, const char *title, GtkWidget *swin, const ch
 
   gtk_container_add(GTK_CONTAINER(dlg), swin);
 
-#ifdef WINDOWS
+#if WINDOWS
   g_signal_connect(dlg, "realize", G_CALLBACK(hide_minimize_menu_item), NULL);
 #endif
   g_signal_connect(dlg, "show", G_CALLBACK(cb_show), d);

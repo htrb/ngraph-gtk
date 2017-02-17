@@ -2576,7 +2576,7 @@ struct MenuItem GraphExportMenu[] = {
     NULL,
     "GraphExportPNGAction",
   },
-#ifdef WINDOWS
+#if WINDOWS
   {
     MENU_TYPE_NORMAL,
     N_("_EMF file"),
@@ -3556,7 +3556,7 @@ set_draw_lock(int lock)
   DrawLock = lock;
 }
 
-#ifndef WINDOWS
+#if ! WINDOWS
 static void
 kill_signal_handler(int sig)
 {
@@ -3970,7 +3970,7 @@ create_icon(void)
   GList *tmp, *list = NULL;
   GdkPixbuf *pixbuf;
 
-#ifdef WINDOWS
+#if WINDOWS || OSX
   char *str;
 
   str = g_strdup_printf("%s%s", PIXMAPDIR, NGRAPH_ICON_FILE);
@@ -4280,7 +4280,7 @@ multi_to_single(void)
       tab = gtk_paned_get_child1(GTK_PANED(NgraphApp.Viewer.side_pane2));
     }
     if (strcmp(tab_info[j].obj_name, "file") == 0) {
-#ifdef WINDOWS
+#if WINDOWS || OSX
       char *str;
       str = g_strdup_printf("%s%s", PIXMAPDIR, NGRAPH_FILEWIN_ICON_FILE);
       window_to_tab(&NgraphApp.FileWin, tab, str, _("data"));
@@ -4289,7 +4289,7 @@ multi_to_single(void)
       window_to_tab(&NgraphApp.FileWin, tab, NGRAPH_FILEWIN_ICON_FILE, _("data"));
 #endif
     } else if (strcmp(tab_info[j].obj_name, "axis") == 0) {
-#ifdef WINDOWS
+#if WINDOWS || OSX
       char *str;
       str = g_strdup_printf("%s%s", PIXMAPDIR, NGRAPH_AXISWIN_ICON_FILE);
       window_to_tab(&NgraphApp.AxisWin, tab, str, _(tab_info[j].obj_name));
@@ -4298,7 +4298,7 @@ multi_to_single(void)
       window_to_tab(&NgraphApp.AxisWin, tab, NGRAPH_AXISWIN_ICON_FILE, _(tab_info[j].obj_name));
 #endif
     } else if (strcmp(tab_info[j].obj_name, "merge") == 0) {
-#ifdef WINDOWS
+#if WINDOWS || OSX
       char *str;
       str = g_strdup_printf("%s%s", PIXMAPDIR, NGRAPH_MERGEWIN_ICON_FILE);
       window_to_tab(&NgraphApp.MergeWin, tab, str, _(tab_info[j].obj_name));
@@ -4846,7 +4846,7 @@ destroy_sub_windows(void)
   }
 }
 
-#ifdef WINDOWS
+#if WINDOWS
 enum SUB_WINDOW_STATE {
   FILE_WIN_VISIBLE   = 0x01,
   AXIS_WIN_VISIBLE   = 0x02,
@@ -5187,7 +5187,7 @@ create_recent_filter(GtkWidget *w, int type)
   gtk_recent_chooser_set_show_tips(recent, TRUE);
   gtk_recent_chooser_set_show_icons(recent, FALSE);
   gtk_recent_chooser_set_local_only(recent, TRUE);
-#ifndef WINDOWS
+#if ! WINDOWS
   gtk_recent_chooser_set_show_not_found(recent, FALSE);
 #endif
   gtk_recent_chooser_set_sort_type(recent, GTK_RECENT_SORT_MRU);
@@ -5568,7 +5568,7 @@ create_toplevel_window(void)
   }
   gtk_window_add_accel_group(GTK_WINDOW(TopLevel), AccelGroup);
 
-#ifdef WINDOWS
+#if WINDOWS
   g_signal_connect(TopLevel, "window-state-event", G_CALLBACK(change_window_state_cb), NULL);
 #endif
   g_signal_connect(TopLevel, "delete-event", G_CALLBACK(CloseCallback), NULL);
@@ -5661,7 +5661,7 @@ application(char *file)
     }
   }
 
-#ifndef WINDOWS
+#if ! WINDOWS
   set_signal(SIGINT, 0, kill_signal_handler, NULL);
   set_signal(SIGTERM, 0, term_signal_handler, NULL);
 #endif	/* WINDOWS */
@@ -5692,7 +5692,7 @@ application(char *file)
   set_newobj_cb(NULL);
   set_delobj_cb(NULL);
 
-#ifndef WINDOWS
+#if ! WINDOWS
   set_signal(SIGTERM, 0, SIG_DFL, NULL);
   set_signal(SIGINT, 0, SIG_DFL, NULL);
 #endif	/* WINDOWS */

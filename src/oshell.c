@@ -90,7 +90,7 @@ cmddone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-#ifndef WINDOWS
+#if ! WINDOWS
 static void
 int_handler(int sig)
 {
@@ -111,7 +111,7 @@ cmdshell(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   int fd;
   int rcode;
   char *s;
-#ifndef WINDOWS
+#if ! WINDOWS
   struct sigaction oldact;
   int (*save_interrupt)(void);
 #endif
@@ -126,7 +126,7 @@ cmdshell(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   nshell=shlocal->nshell;
 
   shellsavestdio(nshell);
-#ifndef WINDOWS
+#if ! WINDOWS
   save_interrupt = ninterrupt;
   set_signal(SIGINT, 0, int_handler, &oldact);
   ninterrupt = check_interrupt;
@@ -197,7 +197,7 @@ cmdshell(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   err=0;
 
 errexit:
-#ifndef WINDOWS
+#if ! WINDOWS
   ninterrupt = save_interrupt;
   sigaction(SIGINT, &oldact, NULL);
 #endif

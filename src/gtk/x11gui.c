@@ -1078,7 +1078,7 @@ FileSelectionDialog(GtkWidget *parent, int type, char *stock)
   fname = get_filename_with_ext(data->init_file, data->ext);
   if (fname) {
     if (type == GTK_FILE_CHOOSER_ACTION_SAVE) {
-#ifdef WINDOWS
+#if WINDOWS
       char *tmp;
       tmp = g_locale_from_utf8(fname, -1, NULL, NULL, NULL);
       if (tmp) {

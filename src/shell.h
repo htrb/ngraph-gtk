@@ -179,7 +179,7 @@ int system_bg(char *cmd);
 void set_interrupt(void);
 int check_interrupt(void);
 void reset_interrupt(void);
-#ifdef WINDOWS
+#if WINDOWS
 void show_system_error(void);
 #else
 int set_signal(int signal, int flags, void (*handler)(int), struct sigaction *oldact);
