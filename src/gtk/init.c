@@ -397,11 +397,7 @@ exec_console(char *fifo_in, char *fifo_out)
     if (pid == 0) {
       char buf[256], *s2, *s;
       int len;
-#if OSX
-      snprintf(buf, sizeof(buf), "open -a Terminal %s/terminal %s %s", LIBDIR, fifo_in, fifo_out);
-#else
       snprintf(buf, sizeof(buf), "%s %s %s", Terminal, fifo_in, fifo_out);
-#endif
       argv = NULL;
       s = buf;
       while ((s2 = getitok2(&s, &len, " \t")) != NULL) {
@@ -431,6 +427,10 @@ nallocconsole(void)
 
   if (ConsoleAc)
     return FALSE;
+
+#if OSX
+  putstderr("To use this function, please run ngraph in a Terminal.")
+#endif
 
   if (Terminal == NULL)
     return FALSE;
