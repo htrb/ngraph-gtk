@@ -71,7 +71,11 @@
 
 <!-- ngraph-gtk specified files -->
   <binary>
-    ${prefix}/lib/ngraph-gtk
+    ${prefix}/lib/ngraph-gtk/plugins
+  </binary>
+
+  <binary>
+    ${prefix}/lib/ngraph-gtk/ruby
   </binary>
 
   <binary dest="${bundle}/Contents/MacOS/fft">
