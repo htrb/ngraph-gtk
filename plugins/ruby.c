@@ -20,6 +20,18 @@ static char **DummyArgvPtr = DummyArgv;
 static int DummyArgc = 1;
 
 #ifdef __MINGW32__
+#define WINDOWS 1
+#else
+#define WINDOWS 0
+#endif
+
+#ifdef __APPLE__
+#define MAC_OS 1
+#else
+#define MAC_OS 0
+#endif
+
+#if WINDOWS || MAC_OS
 static char *
 get_ext_name(void)
 {
@@ -84,7 +96,7 @@ int
 ngraph_plugin_open_ruby(void)
 {
   rb_encoding *enc;
-#ifdef __MINGW32__
+#if WINDOWS || MAC_OS
   char *ext_name;
 #endif
   VALUE result, arg;
@@ -94,7 +106,7 @@ ngraph_plugin_open_ruby(void)
     return 0;
   }
 
-#ifdef __MINGW32__
+#if WINDOWS || MAC_OS
   ext_name = get_ext_name();
   if (ext_name == NULL) {
     return 1;
@@ -113,14 +125,14 @@ ngraph_plugin_open_ruby(void)
       rb_enc_set_default_external(rb_enc_from_encoding(enc));
     }
     rb_enc_set_default_internal(rb_enc_from_encoding(rb_utf8_encoding()));
-#ifdef __MINGW32__
+#if WINDOWS || MAC_OS
     arg = (VALUE) ext_name;
 #else
     arg = (VALUE) "ngraph.rb";
 #endif
     result = rb_protect(require_files, arg, &status);
   }
-#ifdef __MINGW32__
+#if WINDOWS || MAC_OS
   free(ext_name);
 #endif
   if (status) {

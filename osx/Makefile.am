@@ -15,6 +15,11 @@ if OS_OSX
 ngraph.icns: $(ICONSET)
 	iconutil -c icns ngraph.iconset
 
-Info-ngraph-gtk.plist: Info-ngraph-gtk.plist.in
+Info-ngraph-gtk.plist: Info-ngraph-gtk.plist.in Makefile
 	$(SED) -e "s/%VERSION%/$(VERSION)/" $^ > $@
+
+app_data = ngraph.icns Info-ngraph-gtk.plist
+
+BUILT_SOURCES = $(app_data)
+CLEANFILES = $(app_data)
 endif

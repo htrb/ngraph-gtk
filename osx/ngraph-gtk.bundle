@@ -68,9 +68,18 @@
   <binary>
     ${prefix}/lib/gdk-pixbuf-2.0/${pkg:gdk-pixbuf-2.0:gdk_pixbuf_binary_version}/loaders/*.so
   </binary>
+
 <!-- ngraph-gtk specified files -->
   <binary>
     ${prefix}/lib/ngraph-gtk
+  </binary>
+
+  <binary dest="${bundle}/Contents/MacOS/fft">
+    ${prefix}/libexec/ngraph-gtk/fft
+  </binary>
+
+  <binary dest="${bundle}/Contents/MacOS/terminal">
+    ${prefix}/libexec/ngraph-gtk/terminal
   </binary>
 
   <binary dest="${bundle}/Contents/MacOS/legend-bin">
@@ -157,5 +166,4 @@
   <data dest="${bundle}/Contents/Resources">
     ${project}/ngraph.icns
   </data>
-
-  </app-bundle>
+</app-bundle>

@@ -2814,7 +2814,11 @@ edit_file(const char *file)
   if (localize_name == NULL)
     return;
 
+#if OSX
+  cmd = g_strdup_printf("%s \"%s\"", Menulocal.editor, localize_name);
+#else
   cmd = g_strdup_printf("\"%s\" \"%s\"", Menulocal.editor, localize_name);
+#endif
   g_free(localize_name);
 
   system_bg(cmd);
