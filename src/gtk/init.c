@@ -429,7 +429,7 @@ nallocconsole(void)
     return FALSE;
 
 #if OSX
-  putstderr("To use this function, please run ngraph in a Terminal.")
+  putstderr("To use this function, please run ngraph in a Terminal.");
 #endif
 
   if (Terminal == NULL)
