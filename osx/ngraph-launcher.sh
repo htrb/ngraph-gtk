@@ -30,6 +30,8 @@ export GTK_EXE_PREFIX="$bundle_res"
 export GTK_PATH="$bundle_res"
 export APP_CONTENTS="$bundle_contents"
 
+export RUBYLIB="$bundle_lib"/ngraph-gtk/ruby
+
 # PANGO_* is no longer needed for pango >= 1.38
 export PANGO_RC_FILE="$bundle_etc/pango/pangorc"
 export PANGO_SYSCONFDIR="$bundle_etc"
