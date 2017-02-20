@@ -704,7 +704,7 @@ set_dir_defs(char *app)
 
   g_free(app_path);
 
-  return (DOCDIR && LIBDIR && CONFDIR);
+  return 0;
 }
 #endif	/* WINDOWS */
 
@@ -712,21 +712,36 @@ set_dir_defs(char *app)
 static int
 set_dir_defs(char *app)
 {
-  const char *app_path;
+  const char *app_path, *app_contents;
 
-  app_path = g_getenv("APP_CONTENTS");
+  app_contents = g_getenv("APP_CONTENTS");
+  if (app_contents) {
+    app_path = g_strdup_printf("%s%cResources", app_contents);
+    LIBDIR = g_strdup_printf("%s%c%s", app_contents, DIRSEP, "MacOS");
+  } else {
+    char *bin_path;
+    bin_path = g_path_get_dirname(app);
+    app_path = g_path_get_dirname(bin_path);
+    g_free(bin_path);
+    LIBDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "libexec/ngraph-gtk");
+  }
 
-  BINDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "Resources/libexec/ngraph-gtk");
-  DOCDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "Resources/share/doc/ngraph-gtk");
-  LIBDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "MacOS");
-  PLUGINDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "Resources/lib/ngraph-gtk/plugins");
-  NDATADIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "Resources/share/ngraph-gtk");
-  ADDINDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "Resources/share/ngraph-gtk/addin");
-  CONFDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "Resources/etc/ngraph-gtk");
-  LOCALEDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "Resources/share/locale");
-  PIXMAPDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "Resources/share/pixmaps/ngraph-gtk");
+  if (app_path == NULL) {
+    return 1;
+  }
 
-  return (DOCDIR && LIBDIR && CONFDIR);
+  BINDIR = NULL;
+  DOCDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/doc/ngraph-gtk");
+  PLUGINDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "lib/ngraph-gtk/plugins");
+  NDATADIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/ngraph-gtk");
+  ADDINDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/ngraph-gtk/addin");
+  CONFDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "etc/ngraph-gtk");
+  LOCALEDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/locale");
+  PIXMAPDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/pixmaps/ngraph-gtk");
+
+  g_free(app_path);
+
+  return 0;
 }
 #endif
 
