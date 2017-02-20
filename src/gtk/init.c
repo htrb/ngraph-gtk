@@ -716,7 +716,7 @@ set_dir_defs(char *app)
 
   app_contents = g_getenv("APP_CONTENTS");
   if (app_contents) {
-    app_path = g_strdup_printf("%s%cResources", app_contents);
+    app_path = g_strdup_printf("%s%c%s", app_contents, DIRSEP, "Resources");
     LIBDIR = g_strdup_printf("%s%c%s", app_contents, DIRSEP, "MacOS");
   } else {
     char *bin_path;
