@@ -712,7 +712,8 @@ set_dir_defs(char *app)
 static int
 set_dir_defs(char *app)
 {
-  const char *app_path, *app_contents;
+  const char *app_contents;
+  char *app_path;
 
   app_contents = g_getenv("APP_CONTENTS");
   if (app_contents) {
