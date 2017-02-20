@@ -16,7 +16,7 @@ ngraph.icns: $(ICONSET)
 	iconutil -c icns ngraph.iconset
 
 Info-ngraph-gtk.plist: Info-ngraph-gtk.plist.in Makefile
-	$(SED) -e "s/%VERSION%/$(VERSION)/" $^ > $@
+	$(SED) -e "s/%VERSION%/$(VERSION)/" $< > $@
 
 app_data = ngraph.icns Info-ngraph-gtk.plist
 
