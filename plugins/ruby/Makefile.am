@@ -11,12 +11,12 @@ $(ruby_ext): ngraph.c ruby_ngraph.h
 
 if OS_WIN32
 install-data-local: $(ruby_ext)
-	$(INSTALL) $(srcdir)/$(builddir)/$(ruby_ext) $(pkglibdir)/ruby/$(ruby_ext)
+	$(INSTALL) $(builddir)/$(ruby_ext) $(pkglibdir)/ruby/$(ruby_ext)
 	$(INSTALL_DATA) $(srcdir)/lib/ngraph.rb.win  $(pkglibdir)/ruby/ngraph.rb
 	$(INSTALL_DATA) $(srcdir)/lib/ngraph/ngp2.rb $(pkglibdir)/ruby/ngraph/ngp2.rb
 else
 if OS_OSX
-	$(INSTALL) $(srcdir)/$(builddir)/$(ruby_ext) $(pkglibdir)/ruby/$(ruby_ext)
+	$(INSTALL) $(builddir)/$(ruby_ext) $(pkglibdir)/ruby/$(ruby_ext)
 	$(INSTALL_DATA) $(srcdir)/lib/ngraph.rb.osx  $(pkglibdir)/ruby/ngraph.rb
 	$(INSTALL_DATA) $(srcdir)/lib/ngraph/ngp2.rb $(pkglibdir)/ruby/ngraph/ngp2.rb
 else
