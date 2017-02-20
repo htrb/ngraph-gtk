@@ -78,10 +78,6 @@
     ${prefix}/libexec/ngraph-gtk/fft
   </binary>
 
-  <binary dest="${bundle}/Contents/MacOS/terminal">
-    ${prefix}/libexec/ngraph-gtk/terminal
-  </binary>
-
   <binary dest="${bundle}/Contents/MacOS/legend-bin">
     ${prefix}/libexec/ngraph-gtk/legend
   </binary>
