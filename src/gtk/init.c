@@ -715,7 +715,7 @@ set_dir_defs(char *app)
   const char *app_contents;
   char *app_path;
 
-  app_contents = g_getenv("APP_CONTENTS");
+  app_contents = g_getenv("NGRAPH_APP_CONTENTS");
   if (app_contents) {
     app_path = g_strdup_printf("%s%c%s", app_contents, DIRSEP, "Resources");
     LIBDIR = g_strdup_printf("%s%c%s", app_contents, DIRSEP, "MacOS");

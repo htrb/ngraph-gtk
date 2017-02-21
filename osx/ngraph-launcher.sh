@@ -28,8 +28,8 @@ export XDG_DATA_DIRS="$bundle_data"
 export GTK_DATA_PREFIX="$bundle_res"
 export GTK_EXE_PREFIX="$bundle_res"
 export GTK_PATH="$bundle_res"
-export APP_CONTENTS="$bundle_contents"
 
+export NGRAPH_APP_CONTENTS="$bundle_contents"
 export RUBYLIB="$bundle_lib"/ngraph-gtk/ruby
 
 # PANGO_* is no longer needed for pango >= 1.38
