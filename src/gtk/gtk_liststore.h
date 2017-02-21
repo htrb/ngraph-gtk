@@ -37,6 +37,7 @@ typedef struct _list_store {
 
 
 void tree_view_set_tooltip_column(GtkTreeView *tree_view, gint column);
+void tree_view_set_no_expand_column(GtkWidget *tview, const int *columns, int n);
 
 void init_object_combo_box(GtkWidget *cbox);
 

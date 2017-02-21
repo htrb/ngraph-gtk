@@ -409,6 +409,18 @@ create_column(n_list_store *list, int i)
 }
 
 void
+tree_view_set_no_expand_column(GtkWidget *tview, const int *columns, int n)
+{
+  GtkTreeViewColumn *col;
+  int i;
+
+  for (i = 0; i < n; i++) {
+    col = gtk_tree_view_get_column(GTK_TREE_VIEW(tview), columns[i]);
+    gtk_tree_view_column_set_expand(col, FALSE);
+  }
+}
+
+void
 list_store_set_align(GtkWidget *tview, int n, double align)
 {
   GtkTreeViewColumn *col;

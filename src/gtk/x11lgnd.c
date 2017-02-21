@@ -3552,7 +3552,7 @@ struct legend_data {
 void
 LegendWinState(struct SubWin *d, int state)
 {
-  int i, j, n;
+  int i, n;
   struct obj_list_data *data;
   GList *list;
   GtkTreeViewColumn *col;
@@ -3635,10 +3635,7 @@ LegendWinState(struct SubWin *d, int state)
       }
       g_list_free(list);
       n = sizeof(noexpand_text_colmns) / sizeof(*noexpand_text_colmns);
-      for (j = 0; j < n; j++) {
-	col = gtk_tree_view_get_column(GTK_TREE_VIEW(data->text), noexpand_text_colmns[j]);
-	gtk_tree_view_column_set_expand(col, FALSE);
-      }
+      tree_view_set_no_expand_column(data->text, noexpand_text_colmns, n);
       tree_view_set_tooltip_column(GTK_TREE_VIEW(data->text), TEXT_LIST_COL_TEXT);
       break;
     }

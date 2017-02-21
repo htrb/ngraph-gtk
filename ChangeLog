@@ -1,3 +1,13 @@
+2017-02-21  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (FileWinState): use
+	"tree_view_set_no_expand_column()".
+
+	* src/gtk/x11lgnd.c (LegendWinState): use
+	"tree_view_set_no_expand_column()".
+
+	* src/gtk/gtk_liststore.c (tree_view_set_no_expand_column): added.
+
 2017-02-17  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/common.h (OSX): check OSX environment.

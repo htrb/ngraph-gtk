@@ -5873,6 +5873,19 @@ init_dnd(struct SubWin *d)
 void
 FileWinState(struct SubWin *d, int state)
 {
+  int n;
+  int noexpand_colmns[] = {FILE_WIN_COL_X,
+			   FILE_WIN_COL_Y,
+			   FILE_WIN_COL_X_AXIS,
+			   FILE_WIN_COL_Y_AXIS,
+			   FILE_WIN_COL_TYPE,
+			   FILE_WIN_COL_SIZE,
+			   FILE_WIN_COL_WIDTH,
+			   FILE_WIN_COL_SKIP,
+			   FILE_WIN_COL_STEP,
+			   FILE_WIN_COL_FINAL,
+			   FILE_WIN_COL_DNUM};
+
   if (d->Win) {
     sub_window_set_visibility(d, state);
     return;
@@ -5901,6 +5914,9 @@ FileWinState(struct SubWin *d, int state)
   gtk_tree_view_set_enable_search(GTK_TREE_VIEW(d->data.data->text), TRUE);
   gtk_tree_view_set_search_column(GTK_TREE_VIEW(d->data.data->text), FILE_WIN_COL_FILE);
   tree_view_set_tooltip_column(GTK_TREE_VIEW(d->data.data->text), FILE_WIN_COL_TIP);
+
+  n = sizeof(noexpand_colmns) / sizeof(*noexpand_colmns);
+  tree_view_set_no_expand_column(d->data.data->text, noexpand_colmns, n);
 
   set_cell_attribute_source(d, "style", FILE_WIN_COL_FILE, FILE_WIN_COL_MASKED);
 
