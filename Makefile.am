@@ -12,6 +12,12 @@ if OS_WIN32
 AM_CFLAGS = -mms-bitfields
 endif
 
+if OS_OSX
+bundler: osx/ngraph-gtk.bundle
+	rm -rf ~/Desktop/Ngraph-GTK.app
+	gtk-mac-bundler $<
+endif
+
 LIBTOOL_DEPS = @LIBTOOL_DEPS@
 libtool: $(LIBTOOL_DEPS)
 	$(SHELL) $(top_srcdir)/config.status --recheck
