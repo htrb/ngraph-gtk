@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.07.02\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2017-02-20 15:52+0900\n"
+"POT-Creation-Date: 2017-02-22 10:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2228,23 +2228,23 @@ msgstr ""
 msgid "data"
 msgstr ""
 
-#: src/gtk/x11menu.c:5208
+#: src/gtk/x11menu.c:5208 src/gtk/x11menu.c:5288
 msgid "Recent Graphs"
 msgstr ""
 
-#: src/gtk/x11menu.c:5208
+#: src/gtk/x11menu.c:5208 src/gtk/x11menu.c:5294
 msgid "Recent Data Files"
 msgstr ""
 
-#: src/gtk/x11menu.c:5895
+#: src/gtk/x11menu.c:5897
 msgid "Error:"
 msgstr ""
 
-#: src/gtk/x11menu.c:5944
+#: src/gtk/x11menu.c:5946
 msgid "Question"
 msgstr ""
 
-#: src/gtk/x11menu.c:6002
+#: src/gtk/x11menu.c:6004
 #, c-format
 msgid "Executing `%.128s'."
 msgstr ""

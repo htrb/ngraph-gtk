@@ -5285,11 +5285,13 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
       widget = gtk_menu_tool_button_new(icon, _(item[i].label));
       menu = create_recent_menu(RECENT_TYPE_GRAPH);
       gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(widget), menu);
+      gtk_menu_tool_button_set_arrow_tooltip_text(GTK_MENU_TOOL_BUTTON(widget), _("Recent Graphs"));
       break;
     case TOOL_TYPE_RECENT_DATA:
       widget = gtk_menu_tool_button_new(icon, _(item[i].label));
       menu = create_recent_menu(RECENT_TYPE_DATA);
       gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(widget), menu);
+      gtk_menu_tool_button_set_arrow_tooltip_text(GTK_MENU_TOOL_BUTTON(widget), _("Recent Data Files"));
       break;
     case TOOL_TYPE_TOGGLE:
     case TOOL_TYPE_TOGGLE2:

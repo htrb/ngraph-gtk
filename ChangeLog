@@ -1,3 +1,8 @@
+2017-02-22  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (create_toolbar): use
+	"gtk_menu_tool_button_set_arrow_tooltip_text()".
+
 2017-02-21  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (FileWinState): use
