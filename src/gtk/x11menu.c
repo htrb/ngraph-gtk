@@ -2956,7 +2956,11 @@ struct MenuItem SaveMenu[] = {
     GDK_KEY_s,
     GDK_CONTROL_MASK,
     NULL,
+#if USE_GTK_BUILDER
+    NULL,
+#else
     G_CALLBACK(CmGraphOverWrite),
+#endif
     0,
     ActionWidget + GraphSaveAction,
     "GraphSaveAction",
@@ -2972,7 +2976,11 @@ struct MenuItem SaveMenu[] = {
     GDK_KEY_s,
     GDK_CONTROL_MASK | GDK_SHIFT_MASK,
     NULL,
+#if USE_GTK_BUILDER
+    NULL,
+#else
     G_CALLBACK(CmGraphSave),
+#endif
     0,
     NULL,
     "GraphSaveAsAction",
@@ -3008,7 +3016,11 @@ struct MenuItem SaveMenu[] = {
     0,
     0,
     NULL,
+#if USE_GTK_BUILDER
+    NULL,
+#else
     G_CALLBACK(CmFileSaveData),
+#endif
     0,
     ActionWidget + DataSaveAction,
     "DataSaveAction",
@@ -5335,9 +5347,24 @@ static GtkWidget*
 create_save_menu(void)
 {
   GtkWidget *menu;
+#if USE_GTK_BUILDER
+  int i;
+  char *action;
+#endif
 
   menu = gtk_menu_new();
   create_menu_sub(menu, SaveMenu, TRUE);
+#if USE_GTK_BUILDER
+  for (i = 0; SaveMenu[i].type != MENU_TYPE_END; i++) {
+    if (SaveMenu[i].action_name && SaveMenu[i].action) {
+      action = g_strdup_printf("app.%s", SaveMenu[i].action_name);
+      if (action) {
+	gtk_actionable_set_action_name(SaveMenu[i].action->popup, action);
+	g_free(action);
+      }
+    }
+  }
+#endif
   gtk_widget_show_all(menu);
   return menu;
 }
