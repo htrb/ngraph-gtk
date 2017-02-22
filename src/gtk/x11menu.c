@@ -86,6 +86,7 @@ struct MenuItem;
 struct ToolItem;
 
 static void create_menu(GtkWidget *w, struct MenuItem *item);
+static void create_menu_sub(GtkWidget *parent, struct MenuItem *item, int popup);
 static void create_popup(GtkWidget *parent, struct MenuItem *item);
 static GtkWidget *create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb);
 static void CmViewerButtonArm(GtkToggleToolButton *action, gpointer client_data);
@@ -233,6 +234,7 @@ static int DefaultMode = PointerModeBoth;
 struct ToolItem {
   enum {
     TOOL_TYPE_NORMAL,
+    TOOL_TYPE_SAVE,
     TOOL_TYPE_TOGGLE,
     TOOL_TYPE_TOGGLE2,
     TOOL_TYPE_RADIO,
@@ -658,7 +660,7 @@ struct ToolItem CommandToolbar[] = {
     "app.GraphLoadAction",
   },
   {
-    TOOL_TYPE_NORMAL,
+    TOOL_TYPE_SAVE,
     N_("_Save"),
     N_("Save NGP"),
     N_("Save NGP file"),
@@ -670,7 +672,7 @@ struct ToolItem CommandToolbar[] = {
     NULL,
     G_CALLBACK(CmGraphOverWrite),
     0,
-    ActionWidget + GraphSaveAction,
+    NULL,
     "app.GraphSaveAction",
   },
   {
@@ -2937,6 +2939,80 @@ struct MenuItem MainMenu[] = {
     HelpMenu,
   },
 #endif
+  {
+    MENU_TYPE_END,
+  },
+};
+
+struct MenuItem SaveMenu[] = {
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Save"),
+    N_("Save NGP"),
+    N_("Save NGP file"),
+    "document-save",
+    NULL,
+    "<Ngraph>/Graph/Save",
+    GDK_KEY_s,
+    GDK_CONTROL_MASK,
+    NULL,
+    G_CALLBACK(CmGraphOverWrite),
+    0,
+    ActionWidget + GraphSaveAction,
+    "GraphSaveAction",
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("Save _As"),
+    N_("Save NGP"),
+    NULL,
+    "document-save-as",
+    NULL,
+    "<Ngraph>/Graph/SaveAs",
+    GDK_KEY_s,
+    GDK_CONTROL_MASK | GDK_SHIFT_MASK,
+    NULL,
+    G_CALLBACK(CmGraphSave),
+    0,
+    NULL,
+    "GraphSaveAsAction",
+  },
+  {
+    MENU_TYPE_SEPARATOR,
+    NULL,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Export image"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    0,
+    0,
+    GraphExportMenu,
+  },
+  {
+    MENU_TYPE_SEPARATOR,
+    NULL,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Save data"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/Data/Save data",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmFileSaveData),
+    0,
+    ActionWidget + DataSaveAction,
+    "DataSaveAction",
+  },
   {
     MENU_TYPE_END,
   },
@@ -5255,6 +5331,18 @@ create_recent_menu(int type)
   return submenu;
 }
 
+static GtkWidget*
+create_save_menu(void)
+{
+  GtkWidget *menu;
+
+  menu = gtk_menu_new();
+  create_menu_sub(menu, SaveMenu, TRUE);
+  gtk_widget_show_all(menu);
+  return menu;
+}
+
+
 static GtkWidget *
 create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
 {
@@ -5280,6 +5368,12 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
       break;
     case TOOL_TYPE_NORMAL:
       widget = gtk_tool_button_new(icon, _(item[i].label));
+      break;
+    case TOOL_TYPE_SAVE:
+      widget = gtk_menu_tool_button_new(icon, _(item[i].label));
+      menu = create_save_menu();
+      gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(widget), menu);
+      gtk_menu_tool_button_set_arrow_tooltip_text(GTK_MENU_TOOL_BUTTON(widget), _("Save menu"));
       break;
     case TOOL_TYPE_RECENT_GRAPH:
       widget = gtk_menu_tool_button_new(icon, _(item[i].label));

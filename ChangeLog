@@ -2,6 +2,8 @@
 
 	* src/gtk/x11menu.c (create_toolbar): use
 	"gtk_menu_tool_button_set_arrow_tooltip_text()".
+	(SaveMenu, create_save_menu): added.
+	(create_toolbar): use GtkMenuToolButton for save tool button.
 
 2017-02-21  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
