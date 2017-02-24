@@ -2925,7 +2925,6 @@ struct MenuItem MainMenu[] = {
     0,
     PreferenceMenu,
   },
-#if ! USE_APP_MENU
   {
     MENU_TYPE_NORMAL,
     N_("_Help"),
@@ -2938,7 +2937,6 @@ struct MenuItem MainMenu[] = {
     0,
     HelpMenu,
   },
-#endif
   {
     MENU_TYPE_END,
   },
