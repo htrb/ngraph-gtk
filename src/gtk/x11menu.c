@@ -92,7 +92,7 @@ static GtkWidget *create_toolbar(struct ToolItem *item, int n, GCallback btn_pre
 static void CmViewerButtonArm(GtkToggleToolButton *action, gpointer client_data);
 static void toggle_subwindow(GtkWidget *action, gpointer client_data);
 
-GdkCursorType Cursor[] = {
+static GdkCursorType Cursor[] = {
   GDK_LEFT_PTR,
   GDK_XTERM,
   GDK_CROSSHAIR,
@@ -257,7 +257,7 @@ struct ToolItem {
   const char *action_name;
 };
 
-struct ToolItem PointerToolbar[] = {
+static struct ToolItem PointerToolbar[] = {
   {
     TOOL_TYPE_RADIO,
     N_("Point"),
@@ -511,7 +511,7 @@ struct ToolItem PointerToolbar[] = {
   },
 };
 
-struct ToolItem CommandToolbar[] = {
+static struct ToolItem CommandToolbar[] = {
   {
     TOOL_TYPE_TOGGLE2,
     "Data Window",
@@ -796,7 +796,7 @@ struct MenuItem {
   const char *action_name;
 };
 
-struct MenuItem HelpMenu[] = {
+static struct MenuItem HelpMenu[] = {
   {
     MENU_TYPE_NORMAL,
     N_("_Help"),
@@ -838,7 +838,7 @@ struct MenuItem HelpMenu[] = {
   },
 };
 
-struct MenuItem PreferenceMenu[] = {
+static struct MenuItem PreferenceMenu[] = {
   {
     MENU_TYPE_NORMAL,
     N_("_Viewer"),
@@ -996,7 +996,7 @@ struct MenuItem PreferenceMenu[] = {
   },
 };
 
-struct MenuItem MergeMenu[] = {
+static struct MenuItem MergeMenu[] = {
   {
     MENU_TYPE_NORMAL,
     N_("_Add"),
@@ -1050,7 +1050,7 @@ struct MenuItem MergeMenu[] = {
   },
 };
 
-struct MenuItem LegendTextleMenu[] = {
+static struct MenuItem LegendTextleMenu[] = {
   {
     MENU_TYPE_NORMAL,
     N_("_Properties"),
@@ -1088,7 +1088,7 @@ struct MenuItem LegendTextleMenu[] = {
   },
 };
 
-struct MenuItem LegendMarkleMenu[] = {
+static struct MenuItem LegendMarkleMenu[] = {
   {
     MENU_TYPE_NORMAL,
     N_("_Properties"),
@@ -1126,7 +1126,7 @@ struct MenuItem LegendMarkleMenu[] = {
   },
 };
 
-struct MenuItem LegendArcMenu[] = {
+static struct MenuItem LegendArcMenu[] = {
   {
     MENU_TYPE_NORMAL,
     N_("_Properties"),
@@ -1164,7 +1164,7 @@ struct MenuItem LegendArcMenu[] = {
   },
 };
 
-struct MenuItem LegendRectangleMenu[] = {
+static struct MenuItem LegendRectangleMenu[] = {
   {
     MENU_TYPE_NORMAL,
     N_("_Properties"),
@@ -1202,7 +1202,7 @@ struct MenuItem LegendRectangleMenu[] = {
   },
 };
 
-struct MenuItem LegendPathMenu[] = {
+static struct MenuItem LegendPathMenu[] = {
   {
     MENU_TYPE_NORMAL,
     N_("_Properties"),
@@ -1240,7 +1240,7 @@ struct MenuItem LegendPathMenu[] = {
   },
 };
 
-struct MenuItem AxisGridMenu[] = {
+static struct MenuItem AxisGridMenu[] = {
   {
     MENU_TYPE_NORMAL,
     N_("_Add"),
@@ -1294,7 +1294,7 @@ struct MenuItem AxisGridMenu[] = {
   },
 };
 
-struct MenuItem AxisAddMenu[] = {
+static struct MenuItem AxisAddMenu[] = {
   {
     MENU_TYPE_NORMAL,
     N_("_Frame graph"),
@@ -1364,7 +1364,7 @@ struct MenuItem AxisAddMenu[] = {
   },
 };
 
-struct MenuItem AxisMenu[] = {
+static struct MenuItem AxisMenu[] = {
   {
     MENU_TYPE_NORMAL,
     N_("_Add"),
@@ -1479,7 +1479,7 @@ struct MenuItem AxisMenu[] = {
   },
 };
 
-struct MenuItem PlotAddMenu[] = {
+static struct MenuItem PlotAddMenu[] = {
   {
     MENU_TYPE_NORMAL,
     N_("_File"),
@@ -1526,7 +1526,7 @@ struct MenuItem PlotAddMenu[] = {
   },
 };
 
-struct MenuItem DataMenu[] = {
+static struct MenuItem DataMenu[] = {
   {
     MENU_TYPE_NORMAL,
     N_("_Add"),
@@ -1632,7 +1632,7 @@ struct MenuItem DataMenu[] = {
   },
 };
 
-struct MenuItem ObjectMenu[] = {
+static struct MenuItem ObjectMenu[] = {
   {
     MENU_TYPE_NORMAL,
     N_("_Data"),
@@ -1734,7 +1734,7 @@ struct MenuItem ObjectMenu[] = {
   },
 };
 
-struct MenuItem ViewMenu[] = {
+static struct MenuItem ViewMenu[] = {
   {
     MENU_TYPE_NORMAL,
     N_("_Draw"),
@@ -2055,7 +2055,7 @@ struct MenuItem ViewMenu[] = {
   },
 };
 
-struct MenuItem EditOrderMenu[] = {
+static struct MenuItem EditOrderMenu[] = {
   {
     MENU_TYPE_NORMAL,
     N_("_Top"),
@@ -2125,7 +2125,7 @@ struct MenuItem EditOrderMenu[] = {
   },
 };
 
-struct MenuItem EditAlignMenu[] = {
+static struct MenuItem EditAlignMenu[] = {
   {
     MENU_TYPE_NORMAL,
     N_("Align _Left"),
@@ -2231,7 +2231,7 @@ struct MenuItem EditAlignMenu[] = {
   },
 };
 
-struct MenuItem EditMenu[] = {
+static struct MenuItem EditMenu[] = {
   {
     MENU_TYPE_NORMAL,
     N_("Cu_t"),
@@ -2409,7 +2409,7 @@ struct MenuItem EditMenu[] = {
   },
 };
 
-struct MenuItem GraphNewMenu[] = {
+static struct MenuItem GraphNewMenu[] = {
   {
     MENU_TYPE_NORMAL,
     N_("_Frame graph"),
@@ -2479,7 +2479,7 @@ struct MenuItem GraphNewMenu[] = {
   },
 };
 
-struct MenuItem GraphExportMenu[] = {
+static struct MenuItem GraphExportMenu[] = {
   {
     MENU_TYPE_NORMAL,
     N_("_GRA file"),
@@ -2619,7 +2619,7 @@ struct MenuItem GraphExportMenu[] = {
   },
 };
 
-struct MenuItem GraphMenu[] = {
+static struct MenuItem GraphMenu[] = {
   {
     MENU_TYPE_NORMAL,
     N_("_New graph"),
@@ -2859,7 +2859,7 @@ struct MenuItem GraphMenu[] = {
   },
 };
 
-struct MenuItem MainMenu[] = {
+static struct MenuItem MainMenu[] = {
   {
     MENU_TYPE_NORMAL,
     N_("_Graph"),
@@ -2940,7 +2940,7 @@ struct MenuItem MainMenu[] = {
   },
 };
 
-struct MenuItem SaveMenu[] = {
+static struct MenuItem SaveMenu[] = {
   {
     MENU_TYPE_NORMAL,
     N_("_Save"),
@@ -3022,7 +3022,7 @@ struct MenuItem SaveMenu[] = {
   },
 };
 
-struct MenuItem PopupRotateMenu[] = {
+static struct MenuItem PopupRotateMenu[] = {
   {
     MENU_TYPE_NORMAL,
     N_("rotate _90 degree clockwise"),
@@ -3060,7 +3060,7 @@ struct MenuItem PopupRotateMenu[] = {
   },
 };
 
-struct MenuItem PopupFlipMenu[] = {
+static struct MenuItem PopupFlipMenu[] = {
   {
     MENU_TYPE_NORMAL,
     N_("flip _Horizontally"),
@@ -3098,7 +3098,7 @@ struct MenuItem PopupFlipMenu[] = {
   },
 };
 
-struct MenuItem PopupAlignMenu[] = {
+static struct MenuItem PopupAlignMenu[] = {
   {
     MENU_TYPE_NORMAL,
     N_("Align _Left"),
@@ -3204,7 +3204,7 @@ struct MenuItem PopupAlignMenu[] = {
   },
 };
 
-struct MenuItem PopupMenu[] = {
+static struct MenuItem PopupMenu[] = {
   {
     MENU_TYPE_NORMAL,
     "Cu_t",
