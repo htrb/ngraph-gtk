@@ -796,7 +796,6 @@ struct MenuItem {
   const char *action_name;
 };
 
-#if ! USE_APP_MENU
 struct MenuItem HelpMenu[] = {
   {
     MENU_TYPE_NORMAL,
@@ -838,7 +837,6 @@ struct MenuItem HelpMenu[] = {
     MENU_TYPE_END,
   },
 };
-#endif
 
 struct MenuItem PreferenceMenu[] = {
   {
