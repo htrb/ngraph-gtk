@@ -22,7 +22,7 @@ Ngraph.ini: Ngraph.ini.win
 	cp $(srcdir)/Ngraph.ini.win Ngraph.ini
 else
 if OS_OSX
-APPMENU_UI_SOURCE = $(srcdir)/menus-appmenu.ui.in
+APPMENU_UI_SOURCE = $(srcdir)/menus-appmenu.ui.osx
 Ngraph.ini: Ngraph.ini.osx
 	cp $(srcdir)/Ngraph.ini.osx Ngraph.ini
 else
