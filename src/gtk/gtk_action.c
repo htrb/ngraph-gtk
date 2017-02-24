@@ -714,6 +714,7 @@ static GActionEntry AppEntries[] =
   { "help", help_activated, NULL, NULL, NULL },
   { "about", about_activated, NULL, NULL, NULL },
   { "quit", quit_activated, NULL, NULL, NULL },
+  { "preference", PreferenceMiscAction_activated, NULL, NULL, NULL },
   { "GraphNewFrameAction", GraphNewFrameAction_activated, NULL, NULL, NULL },
   { "GraphNewSectionAction", GraphNewSectionAction_activated, NULL, NULL, NULL },
   { "GraphNewCrossAction", GraphNewCrossAction_activated, NULL, NULL, NULL },
