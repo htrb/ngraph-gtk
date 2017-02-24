@@ -15,6 +15,7 @@
 #include "ox11menu.h"
 
 #define UI_FILE "menus.ui"
+#define APPMENU_UI_FILE "menus-appmenu.ui"
 
 #if USE_APP_MENU
 static void
@@ -835,11 +836,12 @@ create_application_window(GtkWidget **popup)
   filename = g_strdup_printf("%s/gtk/%s", CONFDIR, UI_FILE);
   builder = gtk_builder_new_from_file(filename);
   g_free(filename);
+  filename = g_strdup_printf("%s/gtk/%s", CONFDIR, APPMENU_UI_FILE);
+  gtk_builder_add_from_file(builder, filename, NULL);
+  g_free(filename);
 
-#if ! OSX			/* use default app menu for macOS */
   menu = gtk_builder_get_object(builder, "app-menu");
   gtk_application_set_app_menu(app, G_MENU_MODEL(menu));
-#endif
 
 #if USE_GTK_BUILDER
   menu = gtk_builder_get_object(builder, "menubar");

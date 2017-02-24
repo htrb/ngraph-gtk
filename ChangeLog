@@ -1,6 +1,7 @@
 2017-02-24  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_action.c (AppEntries): add "preference" action (for macOS).
+	(create_application_window): divide appmenu resource file.
 
 2017-02-22  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
