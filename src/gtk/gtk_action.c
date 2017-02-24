@@ -835,8 +835,10 @@ create_application_window(GtkWidget **popup)
   builder = gtk_builder_new_from_file(filename);
   g_free(filename);
 
+#if ! OSX
   menu = gtk_builder_get_object(builder, "app-menu");
   gtk_application_set_app_menu(app, G_MENU_MODEL(menu));
+#endif
 
 #if USE_GTK_BUILDER
   menu = gtk_builder_get_object(builder, "menubar");
