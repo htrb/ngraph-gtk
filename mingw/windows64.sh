@@ -10,6 +10,8 @@ then
     exit
 fi
 
+MO_FILES="gtk30.mo ngraph-gtk.mo"
+
 VERSION=`basename $ARCHIVE '.tar.gz' | sed -e 's/ngraph-gtk-//'`
 
 BINFILES="libatk-1.0-0.dll libbz2-1.dll libcairo-2.dll
@@ -73,9 +75,30 @@ make_zip() {
 		done
 		;;
 	    share)
-		for i in GConf glib-2.0 icons locale themes ngraph-gtk pixmaps
+		for i in GConf glib-2.0 icons themes ngraph-gtk pixmaps
 		do
 		    cp -r $win_path/$subdir/$i $PKG_DIR/$subdir/
+		done
+
+		locale_dir="$PKG_DIR/$subdir/locale"
+		mkdir "$locale_dir"
+		for i in $win_path/$subdir/locale/*
+		do
+		    if [ -d "$i" ]
+		    then
+			modir=`basename "$i"`/LC_MESSAGES
+			mkdir -p "$locale_dir/$modir"
+			for mo in $MO_FILES
+			do
+			    mofile="$i"/LC_MESSAGES/$mo
+			    if [ -f $mofile ]
+			    then
+				cp $mofile $locale_dir/$modir/
+			    fi
+			done
+		    else
+			cp "$i" $PKG_DIR/$subdir/locale/
+		    fi
 		done
 		mkdir $PKG_DIR/$subdir/doc
 		cp -r $win_path/$subdir/doc/ngraph-gtk $PKG_DIR/$subdir/doc
