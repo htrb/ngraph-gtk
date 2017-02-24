@@ -9,13 +9,14 @@
         <attribute name="x-gtk-private-special">replace-appname</attribute>
       </item>
     </section>
+    <!-- used for the application menu on MacOS
     <section>
       <item>
-        <!-- used for the application menu on MacOS -->
         <attribute name="label" translatable="yes">Preferences</attribute>
         <attribute name="action">app.preferences</attribute>
       </item>
     </section>
+    -->
     <section>
       <item>
         <!-- used for the application menu on MacOS -->
