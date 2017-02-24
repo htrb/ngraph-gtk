@@ -19,21 +19,21 @@ EXTRA_DIST = Ngraph.ini.in Ngraph.ini.win save_ui_file.nsc menus-appmenu.ui.in m
 if OS_WIN32
 APPMENU_UI_SOURCE = $(srcdir)/menus-appmenu.ui.in
 Ngraph.ini: Ngraph.ini.win
-	cp $(srcdir)/Ngraph.ini.win Ngraph.ini
+	cp $< $@
 else
 if OS_OSX
 APPMENU_UI_SOURCE = $(srcdir)/menus-appmenu.ui.osx
 Ngraph.ini: Ngraph.ini.osx
-	cp $(srcdir)/Ngraph.ini.osx Ngraph.ini
+	cp $< $@
 else
 APPMENU_UI_SOURCE = $(srcdir)/menus-appmenu.ui.in
-Ngraph.ini: Ngraph.ini.in Makefile
-	sh $(top_srcdir)/pathconv.sh "$(bindir)" "$(docdir)" "$(pkglibexecdir)" "$(pkglibdir)" "$(pkgdatadir)" "$(ngraphconfdir)" "$(pixmapdir)" $(srcdir)/Ngraph.ini.in
+Ngraph.ini: $(srcdir)/Ngraph.ini.in Makefile
+	sh $(top_srcdir)/pathconv.sh "$(bindir)" "$(docdir)" "$(pkglibexecdir)" "$(pkglibdir)" "$(pkgdatadir)" "$(ngraphconfdir)" "$(pixmapdir)" $<
 endif
 endif
 
 menus-appmenu.ui: $(APPMENU_UI_SOURCE)
-	cp $^ $@
+	cp $< $@
 
 update_ui_file:
 	$(top_srcdir)/src/ngraph -i save_ui_file.nsc $(ACCEL_FILE)
