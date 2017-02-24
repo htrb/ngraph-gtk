@@ -38,4 +38,4 @@ menus-appmenu.ui: $(APPMENU_UI_SOURCE)
 update_ui_file:
 	$(top_srcdir)/src/ngraph -i save_ui_file.nsc $(ACCEL_FILE)
 
-CLEANFILES = Ngraph.ini
+CLEANFILES = Ngraph.ini menus-appmenu.ui
