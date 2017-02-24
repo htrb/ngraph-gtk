@@ -27,8 +27,8 @@ libstdc++-6.dll libtermcap-0.dll libwinpthread-1.dll zlib1.dll
 libcroco-0.6-3.dll liblzma-5.dll librsvg-2-2.dll libxml2-2.dll
 libngraph-0.dll ngraph.exe ngp2"
 
-BINFILES64="libgcc_s_seh-1.dll"
-BINFILES32="libgcc_s_dw2-1.dll"
+BINFILES64="libgcc_s_seh-1.dll gspawn-win64-helper-console.exe"
+BINFILES32="libgcc_s_dw2-1.dll gspawn-win32-helper-console.exe"
 
 make_zip() {
     echo create win$1 archive.
