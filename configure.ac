@@ -106,6 +106,9 @@ AM_PATH_GTK_3_0($GTK3_REQUIRED_VERSION,,AC_MSG_ERROR(Test for GTK failed.),)
 AM_PATH_GSL($GSL_REQUIRED_VERSION,
 	AC_DEFINE([HAVE_LIBGSL], 1, [have GNU Scientific Library]),)
 
+AC_PATH_PROG(GLIB_COMPILE_RESOURCES, glib-compile-resources)
+AC_PATH_PROG(GLIB_MKENUMS, glib-mkenums)
+
 AC_SUBST(PKG_CONFIG)
 
 # Checks for header files.
