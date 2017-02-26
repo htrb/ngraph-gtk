@@ -4050,33 +4050,15 @@ create_icon(void)
   GList *tmp, *list = NULL;
   GdkPixbuf *pixbuf;
 
-#if WINDOWS || OSX
-  char *str;
-
-  str = g_strdup_printf("%s%s", PIXMAPDIR, NGRAPH_ICON_FILE);
-  pixbuf = gdk_pixbuf_new_from_file(str, NULL);
-  g_free(str);
+  pixbuf = gdk_pixbuf_new_from_resource(NGRAPH_ICON_FILE, NULL);
   if (pixbuf) {
     list = g_list_append(list, pixbuf);
   }
 
-  str = g_strdup_printf("%s%s", PIXMAPDIR, NGRAPH_ICON64_FILE);
-  pixbuf = gdk_pixbuf_new_from_file(str, NULL);
-  g_free(str);
+  pixbuf = gdk_pixbuf_new_from_resource(NGRAPH_ICON64_FILE, NULL);
   if (pixbuf) {
     list = g_list_append(list, pixbuf);
   }
-#else
-  pixbuf = gdk_pixbuf_new_from_xpm_data(Icon_xpm);
-  if (pixbuf) {
-    list = g_list_append(list, pixbuf);
-  }
-
-  pixbuf = gdk_pixbuf_new_from_xpm_data(Icon_xpm_64);
-  if (pixbuf) {
-    list = g_list_append(list, pixbuf);
-  }
-#endif
 
   if (list) {
     gtk_window_set_default_icon_list(list);
@@ -4199,6 +4181,7 @@ static void
 window_to_tab(struct SubWin *win, GtkWidget *tab, const char *icon_file, const char *tip)
 {
   GtkWidget *w, *icon, *dialog;
+  GdkPixbuf *pix;
   int obj_id;
 
   obj_id = chkobjectid(win->data.data->obj);
@@ -4209,7 +4192,8 @@ window_to_tab(struct SubWin *win, GtkWidget *tab, const char *icon_file, const c
   g_object_set_data(G_OBJECT(w), OBJ_ID_KEY, GINT_TO_POINTER(obj_id));
   gtk_container_remove(GTK_CONTAINER(dialog), w);
 
-  icon = gtk_image_new_from_file(icon_file);
+  pix = gdk_pixbuf_new_from_resource(icon_file, NULL);
+  icon = gtk_image_new_from_pixbuf(pix);
   gtk_widget_set_tooltip_text(icon, tip);
 
   gtk_notebook_append_page(GTK_NOTEBOOK(tab), w, icon);
@@ -4360,32 +4344,11 @@ multi_to_single(void)
       tab = gtk_paned_get_child1(GTK_PANED(NgraphApp.Viewer.side_pane2));
     }
     if (strcmp(tab_info[j].obj_name, "file") == 0) {
-#if WINDOWS || OSX
-      char *str;
-      str = g_strdup_printf("%s%s", PIXMAPDIR, NGRAPH_FILEWIN_ICON_FILE);
-      window_to_tab(&NgraphApp.FileWin, tab, str, _("data"));
-      g_free(str);
-#else
       window_to_tab(&NgraphApp.FileWin, tab, NGRAPH_FILEWIN_ICON_FILE, _("data"));
-#endif
     } else if (strcmp(tab_info[j].obj_name, "axis") == 0) {
-#if WINDOWS || OSX
-      char *str;
-      str = g_strdup_printf("%s%s", PIXMAPDIR, NGRAPH_AXISWIN_ICON_FILE);
-      window_to_tab(&NgraphApp.AxisWin, tab, str, _(tab_info[j].obj_name));
-      g_free(str);
-#else
       window_to_tab(&NgraphApp.AxisWin, tab, NGRAPH_AXISWIN_ICON_FILE, _(tab_info[j].obj_name));
-#endif
     } else if (strcmp(tab_info[j].obj_name, "merge") == 0) {
-#if WINDOWS || OSX
-      char *str;
-      str = g_strdup_printf("%s%s", PIXMAPDIR, NGRAPH_MERGEWIN_ICON_FILE);
-      window_to_tab(&NgraphApp.MergeWin, tab, str, _(tab_info[j].obj_name));
-      g_free(str);
-#else
       window_to_tab(&NgraphApp.MergeWin, tab, NGRAPH_MERGEWIN_ICON_FILE, _(tab_info[j].obj_name));
-#endif
     } else {
       n = gtk_notebook_get_n_pages(GTK_NOTEBOOK(legend_tab));
       for (i = 0; i < n; i++) {

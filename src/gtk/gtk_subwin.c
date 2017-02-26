@@ -1372,14 +1372,7 @@ sub_window_create(struct SubWin *d, const char *title, GtkWidget *swin, const ch
   d->Win = dlg;
 
   if (iconfile) {
-#if WINDOWS || OSX
-    char *str;
-    str = g_strdup_printf("%s%s", PIXMAPDIR, iconfile);
-    icon = gdk_pixbuf_new_from_file(str, NULL);
-    g_free(str);
-#else
-    icon = gdk_pixbuf_new_from_file(iconfile, NULL);
-#endif
+    icon = gdk_pixbuf_new_from_resource(iconfile, NULL);
 
     if (iconfile2) {
       GList *tmp, *list = NULL;
@@ -1388,13 +1381,7 @@ sub_window_create(struct SubWin *d, const char *title, GtkWidget *swin, const ch
 	list = g_list_append(list, icon);
       }
 
-#if WINDOWS || OSX
-      str = g_strdup_printf("%s%s", PIXMAPDIR, iconfile2);
-      icon = gdk_pixbuf_new_from_file(str, NULL);
-      g_free(str);
-#else
-      icon = gdk_pixbuf_new_from_file(iconfile2, NULL);
-#endif
+      icon = gdk_pixbuf_new_from_resource(iconfile2, NULL);
       if (icon) {
 	list = g_list_append(list, icon);
       }

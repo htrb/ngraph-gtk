@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.06.13\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2017-02-24 23:08+0900\n"
+"POT-Creation-Date: 2017-02-26 11:42+0900\n"
 "PO-Revision-Date: 2017-02-22 10:51+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -282,7 +282,7 @@ msgstr "背景色(_B):"
 
 #: src/gtk/x11axis.c:401 src/gtk/x11axis.c:3157 src/gtk/x11axis.c:3178
 #: src/gtk/x11axis.c:3211 src/gtk/x11lgnd.c:3074 src/gtk/x11lgnd.c:3085
-#: src/gtk/x11lgnd.c:3513 src/gtk/gtk_widget.c:1135
+#: src/gtk/x11lgnd.c:3513 src/gtk/gtk_widget.c:1131
 msgid "Color"
 msgstr "色"
 
@@ -1258,11 +1258,11 @@ msgstr "データファイル作成中"
 msgid "Join"
 msgstr "ジョイン"
 
-#: src/gtk/x11file.c:5512 src/gtk/x11lgnd.c:3050 src/gtk/gtk_widget.c:1142
+#: src/gtk/x11file.c:5512 src/gtk/x11lgnd.c:3050 src/gtk/gtk_widget.c:1138
 msgid "Color 1"
 msgstr "色 1"
 
-#: src/gtk/x11file.c:5519 src/gtk/x11lgnd.c:3051 src/gtk/gtk_widget.c:1149
+#: src/gtk/x11file.c:5519 src/gtk/x11lgnd.c:3051 src/gtk/gtk_widget.c:1145
 msgid "Color 2"
 msgstr "色 2"
 
@@ -1389,7 +1389,7 @@ msgstr ""
 
 #: src/gtk/x11gui.c:162 src/gtk/x11gui.c:369 src/gtk/x11gui.c:437
 #: src/gtk/x11gui.c:573 src/gtk/x11gui.c:649 src/gtk/x11gui.c:719
-#: src/gtk/x11gui.c:798 src/gtk/x11gui.c:1036 src/gtk/x11menu.c:5292
+#: src/gtk/x11gui.c:798 src/gtk/x11gui.c:1036 src/gtk/x11menu.c:5255
 msgid "_Cancel"
 msgstr "キャンセル(_C)"
 
@@ -1434,7 +1434,7 @@ msgstr "カレントディレクトリを移動(_C)"
 msgid "%s file (*.%s)"
 msgstr "%s ファイル (*.%s)"
 
-#: src/gtk/x11gui.c:1138 src/gtk/x11gui.c:1173 src/gtk/x11menu.c:5294
+#: src/gtk/x11gui.c:1138 src/gtk/x11gui.c:1173 src/gtk/x11menu.c:5257
 msgid "_Open"
 msgstr "開く(_O)"
 
@@ -2260,31 +2260,31 @@ msgstr "回転(_R)"
 msgid "_Flip"
 msgstr "反転(_F)"
 
-#: src/gtk/x11menu.c:4366 src/gtk/x11menu.c:4369
+#: src/gtk/x11menu.c:4347
 msgid "data"
 msgstr "データ"
 
-#: src/gtk/x11menu.c:5288 src/gtk/x11menu.c:5401
+#: src/gtk/x11menu.c:5251 src/gtk/x11menu.c:5364
 msgid "Recent Graphs"
 msgstr "最近使用したグラフ"
 
-#: src/gtk/x11menu.c:5288 src/gtk/x11menu.c:5407
+#: src/gtk/x11menu.c:5251 src/gtk/x11menu.c:5370
 msgid "Recent Data Files"
 msgstr "最近使用したデータファイル"
 
-#: src/gtk/x11menu.c:5395
+#: src/gtk/x11menu.c:5358
 msgid "Save menu"
 msgstr "保存メニュー"
 
-#: src/gtk/x11menu.c:6010
+#: src/gtk/x11menu.c:5973
 msgid "Error:"
 msgstr "エラー:"
 
-#: src/gtk/x11menu.c:6059
+#: src/gtk/x11menu.c:6022
 msgid "Question"
 msgstr "質問"
 
-#: src/gtk/x11menu.c:6117
+#: src/gtk/x11menu.c:6080
 #, c-format
 msgid "Executing `%.128s'."
 msgstr "実行中 `%.128s'."
@@ -2654,27 +2654,27 @@ msgstr "軸スケール設定中"
 msgid "Drawing"
 msgstr "描画中"
 
-#: src/gtk/gtk_widget.c:213
+#: src/gtk/gtk_widget.c:209
 msgid "_Copy Settings"
 msgstr "設定のコピー(_C)"
 
-#: src/gtk/gtk_widget.c:1121
+#: src/gtk/gtk_widget.c:1117
 msgid "Stroke Color"
 msgstr "ストローク色"
 
-#: src/gtk/gtk_widget.c:1128
+#: src/gtk/gtk_widget.c:1124
 msgid "Fill Color"
 msgstr "塗りつぶし色"
 
-#: src/gtk/gtk_widget.c:1156
+#: src/gtk/gtk_widget.c:1152
 msgid "Axis baseline color"
 msgstr "軸基線の色"
 
-#: src/gtk/gtk_widget.c:1163
+#: src/gtk/gtk_widget.c:1159
 msgid "Axis gauge color"
 msgstr "目盛線の色"
 
-#: src/gtk/gtk_widget.c:1170
+#: src/gtk/gtk_widget.c:1166
 msgid "Axis numbering color"
 msgstr "目盛数字の色"
 

@@ -41,7 +41,7 @@
 #ifdef LOCALEDIR
 #undef LOCALEDIR
 #endif	/* LOCALEDIR */
-char *DOCDIR, *NDATADIR, *ADDINDIR, *LIBDIR, *PLUGINDIR, *CONFDIR, *LOCALEDIR, *PIXMAPDIR, *BINDIR;
+char *DOCDIR, *NDATADIR, *ADDINDIR, *LIBDIR, *PLUGINDIR, *CONFDIR, *LOCALEDIR, *BINDIR;
 #endif	/* WINDOWS */
 
 #include "dir_defs.h"
@@ -66,7 +66,7 @@ char *HistoryFile = NULL;
 #define HIST_FILE "shell_history"
 #endif	/* HAVE_READLINE_READLINE_H */
 
-#define CSS_FILE "ngraph.css"
+#define CSS_PATH RESOURCE_PATH "/css/ngraph.css"
 #define SYSCONF "[Ngraph]"
 
 static char *systemname, *locale;
@@ -700,7 +700,6 @@ set_dir_defs(char *app)
   ADDINDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/ngraph-gtk/addin");
   CONFDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "etc/ngraph-gtk");
   LOCALEDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/locale");
-  PIXMAPDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/pixmaps/ngraph-gtk");
 
   g_free(app_path);
 
@@ -738,7 +737,6 @@ set_dir_defs(char *app)
   ADDINDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/ngraph-gtk/addin");
   CONFDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "etc/ngraph-gtk");
   LOCALEDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/locale");
-  PIXMAPDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/pixmaps/ngraph-gtk");
 
   g_free(app_path);
 
@@ -778,25 +776,13 @@ n_getlocale(void)
 
 #if GTK_CHECK_VERSION(3, 16, 0)
 static void
-load_css(const char *file)
+load_css(void)
 {
   GtkCssProvider *css_provider;
-  char *css_file;
 
-  css_file = g_strdup_printf("%s/gtk/%s", CONFDIR, file);
-  if (css_file) {
-    GError *error;
-
-    css_provider = gtk_css_provider_new();
-    error = NULL;
-    gtk_css_provider_load_from_path(css_provider, css_file, &error);
-    if (error) {
-      printfstderr("(%s): %s\n", css_file, error->message);
-    } else {
-      gtk_style_context_add_provider_for_screen(gdk_screen_get_default(), GTK_STYLE_PROVIDER(css_provider), GTK_STYLE_PROVIDER_PRIORITY_USER);
-    }
-    g_free(css_file);
-  }
+  css_provider = gtk_css_provider_new();
+  gtk_css_provider_load_from_resource(css_provider, CSS_PATH);
+  gtk_style_context_add_provider_for_screen(gdk_screen_get_default(), GTK_STYLE_PROVIDER(css_provider), GTK_STYLE_PROVIDER_PRIORITY_USER);
 }
 #endif
 
@@ -850,7 +836,7 @@ n_initialize(int *argc, char ***argv)
 
 #if GTK_CHECK_VERSION(3, 16, 0)
   if (OpenDisplay) {
-    load_css(CSS_FILE);
+    load_css();
   }
 #endif	/* GTK_CHECK_VERSION(3, 16, 0) */
 

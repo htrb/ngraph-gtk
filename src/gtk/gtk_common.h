@@ -21,6 +21,9 @@
 #define USE_GTK_BUILDER 0
 #endif
 
+#define APPLICATION_ID "com.github.htrb.ngraph-gtk"
+#define RESOURCE_PATH "/com/github/htrb/ngraph-gtk"
+
 #define CAIRO_COORDINATE_OFFSET 1
 
 #define LINE_NUMBER_WIDGET_NAME "line_number"

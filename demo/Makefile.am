@@ -26,7 +26,7 @@ if OS_OSX
 	sed -f $(srcdir)/windows_demo.sed $< > $@
 else
 .ngp.in.ngp:
-	sh $(top_srcdir)/pathconv.sh "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" $<
+	sh $(top_srcdir)/pathconv.sh "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" $<
 endif
 endif
 

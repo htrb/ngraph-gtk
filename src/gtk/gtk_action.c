@@ -14,9 +14,6 @@
 #include "x11view.h"
 #include "ox11menu.h"
 
-#define UI_FILE "menus.ui"
-#define APPMENU_UI_FILE "menus-appmenu.ui"
-
 #if USE_APP_MENU
 static void
 help_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
@@ -710,6 +707,14 @@ PopupUpdateAction_activated(GSimpleAction *action, GVariant *parameter, gpointer
   ViewerUpdateCB(NULL, NULL);
 }
 
+/*
+static GtkWidget *ShortcutWin;
+static void help_overlay_action(GSimpleAction *action, GVariant *parameter, gpointer app)
+{
+  gtk_widget_show_all(ShortcutWin);
+}
+*/
+
 static GActionEntry AppEntries[] =
 {
   { "help", help_activated, NULL, NULL, NULL },
@@ -817,41 +822,46 @@ static GActionEntry AppEntries[] =
   { "PreferenceSaveGraphAction", PreferenceSaveGraphAction_activated, NULL, NULL, NULL },
   { "PreferenceDataDefaultAction", PreferenceDataDefaultAction_activated, NULL, NULL, NULL },
   { "PreferenceTextDefaultAction", PreferenceTextDefaultAction_activated, NULL, NULL, NULL },
-  { "PopupUpdateAction", PopupUpdateAction_activated, NULL, NULL, NULL }
+  { "PopupUpdateAction", PopupUpdateAction_activated, NULL, NULL, NULL },
+  //  { "show-help-overlay", help_overlay_action, NULL, NULL, NULL },
 };
 
+  /*
+static gboolean
+cb_del(GtkWidget *w, GdkEvent *event, gpointer user_data)
+{
+  gtk_widget_hide(w);
+  return TRUE;
+}
+  */
 GtkApplication *
 create_application_window(GtkWidget **popup)
 {
   GtkApplication *app;
-  GtkBuilder *builder;
-  GObject *menu;
-  char *filename;
 
-  app = gtk_application_new(NULL, G_APPLICATION_FLAGS_NONE);
+  app = gtk_application_new(APPLICATION_ID, G_APPLICATION_FLAGS_NONE);
   g_application_register(G_APPLICATION(app), NULL, NULL);
-
   g_action_map_add_action_entries(G_ACTION_MAP(app), AppEntries, G_N_ELEMENTS(AppEntries), app);
 
-  filename = g_strdup_printf("%s/gtk/%s", CONFDIR, UI_FILE);
-  builder = gtk_builder_new_from_file(filename);
-  g_free(filename);
-  filename = g_strdup_printf("%s/gtk/%s", CONFDIR, APPMENU_UI_FILE);
-  gtk_builder_add_from_file(builder, filename, NULL);
-  g_free(filename);
-
-  menu = gtk_builder_get_object(builder, "app-menu");
+#if 0
+  menu = gtk_application_get_menu_by_id(app, "app-menu");
   gtk_application_set_app_menu(app, G_MENU_MODEL(menu));
-
-#if USE_GTK_BUILDER
-  menu = gtk_builder_get_object(builder, "menubar");
-  gtk_application_set_menubar(app, G_MENU_MODEL(menu));
-
-  menu = gtk_builder_get_object(builder, "popup-menu");
-  *popup = gtk_menu_new_from_model(G_MENU_MODEL(menu));
 #endif
 
-  g_object_unref(builder);
+  /*
+  ShortcutWin = GTK_WIDGET(gtk_builder_get_object(builder, "help_overlay"));
+  g_signal_connect(ShortcutWin, "delete-event", G_CALLBACK(cb_del), NULL);
+  */
+
+#if USE_GTK_BUILDER
+  /*
+  menu = gtk_application_get_menu_by_id(app, "menubar");
+  gtk_application_set_menubar(app, G_MENU_MODEL(menu));
+  */
+
+  menu = gtk_application_get_menu_by_id(app, "popup-menu");
+  *popup = gtk_menu_new_from_model(G_MENU_MODEL(menu));
+#endif
 
   return app;
 }

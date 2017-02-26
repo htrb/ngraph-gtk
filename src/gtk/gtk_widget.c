@@ -16,15 +16,11 @@ GtkWidget *
 create_image_from_file(const char *file)
 {
   GtkWidget *img;
-#if WINDOWS || OSX
-    char *str;
-    str = g_strdup_printf("%s%s", PIXMAPDIR, file);
-    img = gtk_image_new_from_file(str);
-    g_free(str);
-#else
-    img = gtk_image_new_from_file(file);
-#endif
-    return img;
+  GdkPixbuf *pix;
+
+  pix = gdk_pixbuf_new_from_resource(file, NULL);
+  img = gtk_image_new_from_pixbuf(pix);
+  return img;
 }
 
 void

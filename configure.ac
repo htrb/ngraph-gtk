@@ -162,7 +162,6 @@ AC_CONFIG_FILES([Makefile \
 		 plugins/ruby/Makefile \
 		 mingw/Makefile \
 		 osx/Makefile \
-		 pixmap/Makefile \
 		 icons/Makefile \
 		 icons/scalable/Makefile \
 		 icons/scalable/apps/Makefile \
