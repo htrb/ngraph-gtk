@@ -1,6 +1,6 @@
-/* 
+/*
  * $Id: math_equation.h,v 1.8 2009-11-21 11:39:10 hito Exp $
- * 
+ *
  */
 
 #ifndef MATH_EQUATION_HEADER

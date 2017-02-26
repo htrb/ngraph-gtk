@@ -1,24 +1,24 @@
-/* 
+/*
  * $Id: oshell.c,v 1.9 2010-03-04 08:30:16 hito Exp $
- * 
+ *
  * This file is part of "Ngraph for X11".
- * 
+ *
  * Copyright (C) 2002, Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
- * 
+ *
  * "Ngraph for X11" is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * "Ngraph for X11" is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  */
 
 #include "common.h"
@@ -55,7 +55,7 @@ struct shlocal {
   struct nshell *nshell;
 };
 
-static int 
+static int
 cmdinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct shlocal *shlocal;
@@ -74,7 +74,7 @@ cmdinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 cmddone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct shlocal *shlocal;
@@ -98,7 +98,7 @@ int_handler(int sig)
 }
 #endif
 
-static int 
+static int
 cmdshell(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct shlocal *shlocal;
@@ -212,7 +212,7 @@ errexit:
   return err;
 }
 
-static int 
+static int
 cmdsecurity(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   set_security(*(int *)argv[2]);

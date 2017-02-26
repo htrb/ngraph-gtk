@@ -1,24 +1,24 @@
-/* 
+/*
  * $Id: oagrid.c,v 1.20 2010-03-04 08:30:16 hito Exp $
- * 
+ *
  * This file is part of "Ngraph for X11".
- * 
+ *
  * Copyright (C) 2002, Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
- * 
+ *
  * "Ngraph for X11" is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * "Ngraph for X11" is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  */
 
 #include "common.h"
@@ -45,12 +45,12 @@
 static char *agriderrorlist[]={
   "no instance for axis",
   "illegal axis min/max.",
-  "illegal axis direction.", 
+  "illegal axis direction.",
 };
 
 #define ERRNUM (sizeof(agriderrorlist) / sizeof(*agriderrorlist))
 
-static int 
+static int
 agridinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int wid1,wid2,wid3,dot,grid;
@@ -90,7 +90,7 @@ agridinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 }
 
 
-static int 
+static int
 agriddone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
@@ -330,7 +330,7 @@ draw_background(struct objlist *obj, N_VALUE *inst, int GC, struct axis_pos *ax,
   return 0;
 }
 
-static int 
+static int
 agriddraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   int GC, clip, zoom, back;
@@ -405,7 +405,7 @@ agriddraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
   return 0;
 }
 
-static int 
+static int
 agridtight(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   obj_do_tighten(obj, inst, "axis_x");

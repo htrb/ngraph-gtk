@@ -1,24 +1,24 @@
-/* 
+/*
  * $Id: ofit.c,v 1.37 2010-02-24 00:52:44 hito Exp $
- * 
+ *
  * This file is part of "Ngraph for X11".
- * 
+ *
  * Copyright (C) 2002, Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
- * 
+ *
  * "Ngraph for X11" is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * "Ngraph for X11" is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  */
 
 #include "common.h"
@@ -101,7 +101,7 @@ struct fitlocal {
   char *equation;
 };
 
-static int 
+static int
 fitinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int div,dimension;
@@ -133,7 +133,7 @@ fitinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 fitdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct fitlocal *fitlocal;
@@ -188,7 +188,7 @@ show_eqn_error(struct objlist *obj, MathEquation *code, char *math, char *field,
   }
 }
 
-static int 
+static int
 fitequation(struct objlist *obj,N_VALUE *inst,N_VALUE *rval, int argc,char **argv)
 {
   struct fitlocal *fitlocal;
@@ -203,7 +203,7 @@ fitequation(struct objlist *obj,N_VALUE *inst,N_VALUE *rval, int argc,char **arg
   return 0;
 }
 
-static int 
+static int
 fitput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
            int argc,char **argv)
 {
@@ -267,7 +267,7 @@ fitput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
   return 0;
 }
 
-static int 
+static int
 fit_put_weight_func(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
            int argc,char **argv)
 {
@@ -592,7 +592,7 @@ show_user_equation(struct fitlocal *fitlocal, const char *func, MathValue *par, 
   return 0;
 }
 
-static enum FitError 
+static enum FitError
 fituser(struct objlist *obj,struct fitlocal *fitlocal, const char *func,
 	int deriv,double converge,double *data,int num,int disp,
 	int weight,double *wdata)
@@ -878,7 +878,7 @@ errexit:
   return ecode;
 }
 
-static int 
+static int
 fitfit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct fitlocal *fitlocal;
@@ -1090,7 +1090,7 @@ fitfit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 fitcalc(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   MathValue val;

@@ -1,4 +1,4 @@
-/* 
+/*
  * $Id: nhash.c,v 1.16 2009-11-16 12:59:18 hito Exp $
  */
 
@@ -73,7 +73,7 @@ nhash_clear(NHASH hash)
   memset(hash, 0, HASH_SIZE * sizeof(struct nhash *));
 }
 
-int 
+int
 nhash_hkey(const char *ptr)
 {
   unsigned int i, v;
@@ -474,7 +474,7 @@ nhash_get_ptr_with_hkey(NHASH hash, const char *key, int hkey, void **ptr)
   return 0;
 }
 
-static void 
+static void
 print_hash(struct nhash *h)
 {
   if (h == NULL)

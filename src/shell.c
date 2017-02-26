@@ -1,24 +1,24 @@
-/* 
+/*
  * $Id: shell.c,v 1.41 2010-04-01 06:08:23 hito Exp $
- * 
+ *
  * This file is part of "Ngraph for X11".
- * 
+ *
  * Copyright (C) 2002, Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
- * 
+ *
  * "Ngraph for X11" is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * "Ngraph for X11" is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  */
 
 /*
@@ -36,7 +36,7 @@
  *        until list do list done
  *        name() { list; } * { } is needed
  *
- *    command replacement 
+ *    command replacement
  *        `command`
  *
  *    parameter replacement
@@ -159,7 +159,7 @@ static char *cmderrorlist[] = {
   "new instance is specified",
   "illegal field identifier",
   "illegal type of argument",
-  "illegal number of specified instance.", 
+  "illegal number of specified instance.",
   "no instance specified",
   "no field identifier.",
   "non-numeric argument",
@@ -288,7 +288,7 @@ get_security(void)
   return Security;
 }
 
-static void 
+static void
 unlinkfile(char **file)
 {
   if (*file!=NULL) {
@@ -351,7 +351,7 @@ shellevloop(void *ptr)
   return NULL;
 }
 
-static void 
+static void
 set_shellevloop(int sig)
 {
   if (! has_eventloop())
@@ -374,7 +374,7 @@ set_shellevloop(int sig)
   }
 }
 
-static void 
+static void
 reset_shellevloop(void)
 {
   if (EvLoopActive) {
@@ -383,7 +383,7 @@ reset_shellevloop(void)
   }
 }
 
-static int 
+static int
 shgetstdin(void)
 {
   char buf[2];
@@ -468,7 +468,7 @@ remove_duplicate_history(char *str)
 }
 #endif
 
-static int 
+static int
 shget(struct nshell *nshell)
 {
   char buf[2];
@@ -551,7 +551,7 @@ puts_localized(int fd, const char *str)
   return r;
 }
 
-static int 
+static int
 shputstdout(const char *s)
 {
   int len, r;
@@ -566,7 +566,7 @@ shputstdout(const char *s)
 }
 
 #if WINDOWS
-static int 
+static int
 shputstderr(const char *s)
 {
   int len, r;
@@ -586,7 +586,7 @@ shputstderr(const char *s)
 }
 #endif	/* WINDOWS */
 
-static int 
+static int
 shprintfstdout(const char *fmt,...)
 {
   int len;
@@ -608,7 +608,7 @@ shprintfstdout(const char *fmt,...)
 }
 
 #ifdef COMPILE_UNUSED_FUNCTIONS
-static int 
+static int
 shprintfstderr(const char *fmt,...)
 {
   int len;
@@ -706,7 +706,7 @@ struct cmdstack {
 
 static NHASH CmdTblHash, CpCmdTblHash;
 
-int 
+int
 eval_script(const char *script, int security)
 {
   struct nshell *nshell;
@@ -724,7 +724,7 @@ eval_script(const char *script, int security)
   return 0;
 }
 
-int 
+int
 init_cmd_tbl(void)
 {
   int i, r;
@@ -760,7 +760,7 @@ init_cmd_tbl(void)
   return 1;
 }
 
-shell_proc 
+shell_proc
 check_cmd(char *name)
 {
   shell_proc proc;
@@ -773,7 +773,7 @@ check_cmd(char *name)
   return proc;
 }
 
-int 
+int
 check_cpcmd(char *name)
 {
   int r, i;
@@ -786,7 +786,7 @@ check_cpcmd(char *name)
   return i;
 }
 
-static void 
+static void
 prmfree(struct prmlist *prmroot)
 {
   struct prmlist *prmcur,*prmdel;
@@ -801,7 +801,7 @@ prmfree(struct prmlist *prmroot)
   }
 }
 
-static void 
+static void
 cmdfree(struct cmdlist *cmdroot)
 {
   struct cmdlist *cmdcur,*cmddel;
@@ -815,7 +815,7 @@ cmdfree(struct cmdlist *cmdroot)
   }
 }
 
-static void 
+static void
 cmdstackfree(struct cmdstack *stroot)
 {
   struct cmdstack *stcur,*stdel;
@@ -864,7 +864,7 @@ cmdstackgetpo(struct cmdstack **stroot)
   return stprev;
 }
 
-static int 
+static int
 cmdstackgetlast(struct cmdstack **stroot)
 {
   struct cmdstack *stcur,*stprev;
@@ -879,7 +879,7 @@ cmdstackgetlast(struct cmdstack **stroot)
   else return stprev->cmdno;
 }
 
-static void 
+static void
 cmdstackrmlast(struct cmdstack **stroot)
 {
   struct cmdstack *stcur,*stprev;
@@ -1094,7 +1094,7 @@ delete_save_val(struct nhash *hash, void *data)
   return 0;
 }
 
-static void 
+static void
 restoreval(struct nshell *nshell,struct vallist *newvalroot)
 /* restoreval() returns NULL on error */
 {
@@ -1198,7 +1198,7 @@ addexp(struct nshell *nshell,char *name)
 #endif
 }
 
-int 
+int
 delval(struct nshell *nshell,char *name)
 {
 #if USE_HASH
@@ -1259,7 +1259,7 @@ getval(struct nshell *nshell,char *name)
 #endif
 }
 
-static int 
+static int
 getexp(struct nshell *nshell,char *name)
 {
 #if USE_HASH
@@ -1523,21 +1523,21 @@ gettok(char **s,int *len,int *quote,int *bquote,int *cend,int *escape)
     }
   }
 
-  for (;(po[i]!='\0') && 
+  for (;(po[i]!='\0') &&
        (*quote || *bquote || *escape || (strchr(";&|^<> \t()",po[i])==NULL));
         i++) {
     /* check escapse */
     if (*escape) *escape=FALSE;
     else if (po[i]=='\\') {
       if (!*quote
-      || ((*quote=='"') && (strchr("\"\\'$",po[i+1])!=NULL)) 
+      || ((*quote=='"') && (strchr("\"\\'$",po[i+1])!=NULL))
       || *bquote ) *escape=TRUE;
     /* check back quote */
     } else if (*bquote) {
       if (po[i]=='`') *bquote='\0';
     } else if ((po[i]=='`') && (*quote!='\'')) *bquote='`';
     /* check quotation */
-    else if ((*quote=='"') || (*quote=='\'')) { 
+    else if ((*quote=='"') || (*quote=='\'')) {
       if (po[i]==*quote) *quote='\0';
     } else if (po[i]=='\'' || po[i]=='"') *quote=po[i];
   }
@@ -1548,7 +1548,7 @@ gettok(char **s,int *len,int *quote,int *bquote,int *cend,int *escape)
   return spo;
 }
 
-static int 
+static int
 getcmdline(struct nshell *nshell,
 	   struct cmdlist **rcmdroot,struct cmdlist *cmd,
 	   const char *str,int *istr)
@@ -1745,8 +1745,8 @@ quotation(struct nshell *nshell,char *s,int quote)
   for (i=0;s[i]!='\0';i++) if (strchr("\"\\'$",s[i])!=NULL) num++;
   if ((snew=g_malloc(strlen(s)+num+1))==NULL) return NULL;
   j=0;
-  for (i=0;s[i]!='\0';i++) { 
-    if ((quote!='"') && (ifs!=NULL) && (ifs[0]!='\0') 
+  for (i=0;s[i]!='\0';i++) {
+    if ((quote!='"') && (ifs!=NULL) && (ifs[0]!='\0')
     && (strchr(ifs,s[i])!=NULL)) snew[j++]=(char )0x01;
     else {
       if (strchr("\"\\'$",s[i])!=NULL) snew[j++]=(char )0x02;
@@ -1780,7 +1780,7 @@ unquotation(char *s,int *quoted)
       else snew[j++]=po[i];
     } else if (po[i]==(char )0x02) escape=TRUE;
     else if (po[i]==(char )0x01) snew[j++]=' ';
-    else if ((quote=='"') || (quote=='\'')) { 
+    else if ((quote=='"') || (quote=='\'')) {
       if (po[i]==quote) quote='\0';
       else snew[j++]=po[i];
     } else if (po[i]=='\'' || po[i]=='"') {
@@ -1862,7 +1862,7 @@ errexit:
   return NULL;
 }
 
-static int 
+static int
 wordsplit(struct prmlist *prmcur)
 {
   int i,num;
@@ -2044,7 +2044,7 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
         if ((sb=nstrnew())==NULL) goto errexit;
       }
     /* check constant variable */
-    } else if ((po[i]=='$') && (po[i+1]!='\0') 
+    } else if ((po[i]=='$') && (po[i+1]!='\0')
     && (*quote!='\'') && (se==NULL)) {
       if (isdigit(po[i+1])) {
         for (j=i+1;(po[j]!='\0') && isdigit(po[j]);j++);
@@ -2123,7 +2123,7 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
           }
           i=j;
         } else {
-          if ((po[j]==':') 
+          if ((po[j]==':')
           && (po[j+1]!='\0') && (strchr("-=?+",po[j+1])==NULL)) {
             valf='o';
             if ((se=nstrnew())==NULL) goto errexit;
@@ -2267,7 +2267,7 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
                 }
                 c2[k]=ch;
               }
-            } 
+            }
             if (k > (int) strlen(c2)) {
 	      k=0;
 	    }
@@ -2316,7 +2316,7 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
         se=NULL;
       }
     /* check quotation */
-    } else if ((*quote=='"') || (*quote=='\'')) { 
+    } else if ((*quote=='"') || (*quote=='\'')) {
       if (po[i]==*quote) *quote='\0';
       if (se==NULL) {
         if ((s=nstrccat(s,po[i]))==NULL) goto errexit;
@@ -2328,10 +2328,10 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
       }
     } else {
       if (se==NULL) {
-        if (ifsexp && (ifs!=NULL) && (ifs[0]!='\0') 
+        if (ifsexp && (ifs!=NULL) && (ifs[0]!='\0')
         && (strchr(ifs,po[i])!=NULL)) {
           if ((s=nstrccat(s,(char )0x01))==NULL) goto errexit;
-        } else {       
+        } else {
           if ((s=nstrccat(s,po[i]))==NULL) goto errexit;
         }
       }
@@ -2359,7 +2359,7 @@ errexit:
   return NULL;
 }
 
-static int 
+static int
 checkcmd(struct nshell *nshell,struct cmdlist **cmdroot)
 /* checkcmd() returns
      -1: fatal error
@@ -2394,7 +2394,7 @@ checkcmd(struct nshell *nshell,struct cmdlist **cmdroot)
       while (prmcur->next!=NULL) prmcur=prmcur->next;
       if (prmcur->str[0]==')') cmd=CPPATI;
       prmcur=cmdcur->prm;
-      if ((prmcur->str[0]!='\0') 
+      if ((prmcur->str[0]!='\0')
       && (strchr(cpcmdtable[0],prmcur->str[0])!=NULL)) cmd=CPNULL;
 
       i = check_cpcmd(prmcur->str);
@@ -2408,7 +2408,7 @@ checkcmd(struct nshell *nshell,struct cmdlist **cmdroot)
         }
       }
       cmdcur->cmdno=cmd;
-      if ((cmd!=CPNO) && (cmd!=CPCASE) && (cmd!=CPPATI) && (cmd!=CPPATO) 
+      if ((cmd!=CPNO) && (cmd!=CPCASE) && (cmd!=CPPATI) && (cmd!=CPPATO)
       && (cmd!=CPFOR) && (cmd!=CPFN) && ((cmdcur->prm)->next!=NULL)) {
         if ((cmdnew=g_malloc(sizeof(struct cmdlist)))==NULL) return -1;
         cmdnew->next=cmdcur->next;
@@ -2445,13 +2445,13 @@ checkcmd(struct nshell *nshell,struct cmdlist **cmdroot)
       while (prmcur!=NULL) {
         if (prmcur->str!=NULL) {
           if ((prmcur->str[0]=='>') || (prmcur->str[0]=='<')) {
-            if ((prmcur->next==NULL) || ((prmcur->next)->str==NULL) 
+            if ((prmcur->next==NULL) || ((prmcur->next)->str==NULL)
              || (strchr(";&|",(prmcur->next)->str[0])!=NULL)) {
               sherror2(ERRUEXPTOK,prmprev->str);
               return 2;
             }
             if (prmcur->str[0]==prmcur->str[1]) {
-              if (prmcur->str[0]=='>') 
+              if (prmcur->str[0]=='>')
                 prmcur->prmno=PPSO2;
               else {
                 prmcur->prmno=PPSI2;
@@ -2572,7 +2572,7 @@ checkcmd(struct nshell *nshell,struct cmdlist **cmdroot)
             } else {
               if (prmcur->str[0]=='>')
                 prmcur->prmno=PPSO1;
-              else 
+              else
                 prmcur->prmno=PPSI1;
             }
 
@@ -2584,7 +2584,7 @@ checkcmd(struct nshell *nshell,struct cmdlist **cmdroot)
             } else {
               cmdcur->cmdend=PPPIPE;
               prmcur->prmno=PPPIPE;
-              if ((prmcur->next==NULL) || ((prmcur->next)->str==NULL) 
+              if ((prmcur->next==NULL) || ((prmcur->next)->str==NULL)
                || (strchr(";&|",(prmcur->next)->str[0])!=NULL)) {
                 sherror2(ERRUEXPTOK,prmcur->str);
                 return 2;
@@ -2641,7 +2641,7 @@ checkcmd(struct nshell *nshell,struct cmdlist **cmdroot)
   return 0;
 }
 
-static int 
+static int
 syntax(struct nshell *nshell,
        struct cmdlist *cmdroot,int *needcmd,struct cmdstack **sx)
 /* syntax() returns
@@ -2666,11 +2666,11 @@ syntax(struct nshell *nshell,
     if ((c==CPCASE) && (cmd!=CPPATI) && (cmd!=CPESAC)) {
       sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
       return 2;
-    } 
+    }
     if ((c==CPFN) && (cmd!=CPBI)) {
       sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
       return 2;
-    } 
+    }
     if ((*needcmd) &&
        !((cmd==CPIF) || (cmd==CPCASE) || (cmd==CPFOR) || (cmd==CPWHILE)
      || (cmd==CPUNTIL) || (cmd==CPFN) || (cmd==CPNO))) {
@@ -2678,14 +2678,14 @@ syntax(struct nshell *nshell,
       return 2;
     }
     if ((cmd==CPIF) || (cmd==CPTHEN) || (cmd==CPELSE) || (cmd==CPELIF)
-     || (cmd==CPWHILE) || (cmd==CPUNTIL) || (cmd==CPDO) || (cmd==CPBI)) 
+     || (cmd==CPWHILE) || (cmd==CPUNTIL) || (cmd==CPDO) || (cmd==CPBI))
       *needcmd=TRUE;
     else if (cmdcur->cmdend==PPPIPE) *needcmd=TRUE;
     else *needcmd=FALSE;
     switch (cmd) {
     case CPNULL:
       sherror2(ERRUEXPTOK,(cmdcur->prm)->str);
-      return 2; 
+      return 2;
     case CPIF:
       if ((st=cmdstackcat(sx,CPIF))==NULL) return -1;
       st->cmd=cmdcur;
@@ -3049,7 +3049,7 @@ check_interrupt(void)
   return state;
 }
 
-int 
+int
 cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 {
   struct cmdlist *cmdcur,*cmdnew,*cmd;
@@ -3081,7 +3081,7 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
   int ch;
   char buf[2];
   shell_proc proc;
-  
+
 #if ! WINDOWS
   pid_t pid;
 #endif	/* WINDOWS */
@@ -4063,7 +4063,7 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
   return err;
 }
 
-int 
+int
 cmdexecute(struct nshell *nshell, const char *cline)
 /* return
      -2: unexpected eof detected
@@ -4124,7 +4124,7 @@ cmdexecute(struct nshell *nshell, const char *cline)
   return rcode;
 }
 
-void 
+void
 setshhandle(struct nshell *nshell,int fd)
 {
   nshell->fd=fd;
@@ -4132,7 +4132,7 @@ setshhandle(struct nshell *nshell,int fd)
   nshell->readpo=0;
 }
 
-static int 
+static int
 storeshhandle(struct nshell *nshell,int fd,
                      char **readbuf,int *readbyte,int *readpo)
 {
@@ -4149,7 +4149,7 @@ storeshhandle(struct nshell *nshell,int fd,
   return sfd;
 }
 
-static void 
+static void
 restoreshhandle(struct nshell *nshell,int fd,
                      char *readbuf,int readbyte,int readpo)
 {
@@ -4161,7 +4161,7 @@ restoreshhandle(struct nshell *nshell,int fd,
 }
 
 
-int 
+int
 getshhandle(struct nshell *nshell)
 {
   return nshell->fd;
@@ -4244,7 +4244,7 @@ del_vallist(struct nhash *h, void *data)
   return 0;
 }
 
-void 
+void
 delshell(struct nshell *nshell)
 {
 #if ! USE_HASH
@@ -4286,13 +4286,13 @@ delshell(struct nshell *nshell)
   return;
 }
 
-void 
+void
 sherror(int code)
 {
   printfstderr("shell: %.64s\n",cmderrorlist[code-100]);
 }
 
-void 
+void
 sherror2(int code,char *mes)
 {
   if (mes!=NULL) {
@@ -4302,7 +4302,7 @@ sherror2(int code,char *mes)
   }
 }
 
-void 
+void
 sherror3(char *cmd,int code,char *mes)
 {
   cmd = CHK_STR(cmd);
@@ -4314,14 +4314,14 @@ sherror3(char *cmd,int code,char *mes)
   }
 }
 
-void 
+void
 sherror4(char *cmd,int code)
 {
   cmd = CHK_STR(cmd);
   printfstderr("shell: %.64s: %.64s\n",cmd,cmderrorlist[code-100]);
 }
 
-void 
+void
 shellsavestdio(struct nshell *nshell)
 {
   nshell->sgetstdin=getstdin;
@@ -4332,7 +4332,7 @@ shellsavestdio(struct nshell *nshell)
   printfstdout=shprintfstdout;
 }
 
-void 
+void
 shellrestorestdio(struct nshell *nshell)
 {
   getstdin=nshell->sgetstdin;
@@ -4340,7 +4340,7 @@ shellrestorestdio(struct nshell *nshell)
   printfstdout=nshell->sprintfstdout;
 }
 
-int 
+int
 setshelloption(struct nshell *nshell,char *opt)
 {
   int flag;
@@ -4371,7 +4371,7 @@ setshelloption(struct nshell *nshell,char *opt)
   return 0;
 }
 
-int 
+int
 getshelloption(struct nshell *nshell,char opt)
 {
   switch (opt) {
@@ -4431,7 +4431,7 @@ set_shell_args(struct nshell *nshell, int j, const char *argv0, int argc, char *
   return 0;
 }
 
-void 
+void
 setshellargument(struct nshell *nshell,int argc,char **argv)
 {
   arg_del(nshell->argv);
@@ -4439,7 +4439,7 @@ setshellargument(struct nshell *nshell,int argc,char **argv)
   nshell->argv=argv;
 }
 
-void 
+void
 ngraphenvironment(struct nshell *nshell)
 {
   char *sver,*lib,*home,*conf,*data,*addin;
@@ -4513,7 +4513,7 @@ str_calc(const char *str, double *val, int *r, char **err_msg)
     }
     return ERRMSYNTAX;
   }
- 
+
   rcode = math_equation_calculate(eq, &value);
   ecode = (rcode) ? ERRMFAT : 0;
 

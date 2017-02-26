@@ -1,24 +1,24 @@
-/* 
+/*
  * $Id: shellcm.c,v 1.29 2010-03-04 08:30:16 hito Exp $
- * 
+ *
  * This file is part of "Ngraph for X11".
- * 
+ *
  * Copyright (C) 2002, Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
- * 
+ *
  * "Ngraph for X11" is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * "Ngraph for X11" is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  */
 
 #include "common.h"
@@ -45,7 +45,7 @@
 
 #define ERR 128
 
-int 
+int
 cmcd(struct nshell *nshell,int argc,char **argv)
 {
   char *home;
@@ -66,7 +66,7 @@ cmcd(struct nshell *nshell,int argc,char **argv)
   return 0;
 }
 
-int 
+int
 cmecho(struct nshell *nshell,int argc,char **argv)
 {
   int i, nbr;
@@ -85,7 +85,7 @@ cmecho(struct nshell *nshell,int argc,char **argv)
   return 0;
 }
 
-int 
+int
 cmbasename(struct nshell *nshell,int argc,char **argv)
 {
   int len, ext_len;
@@ -121,7 +121,7 @@ cmbasename(struct nshell *nshell,int argc,char **argv)
   return 0;
 }
 
-int 
+int
 cmdirname(struct nshell *nshell,int argc,char **argv)
 {
   char *tmp;
@@ -141,7 +141,7 @@ cmdirname(struct nshell *nshell,int argc,char **argv)
   return 0;
 }
 
-int 
+int
 cmseq(struct nshell *nshell, int argc, char **argv)
 {
   int i, f, l;
@@ -205,7 +205,7 @@ cmseq(struct nshell *nshell, int argc, char **argv)
   return 0;
 }
 
-int 
+int
 cmeval(struct nshell *nshell,int argc,char **argv)
 {
   GString *s;
@@ -231,7 +231,7 @@ cmeval(struct nshell *nshell,int argc,char **argv)
   return 0;
 }
 
-int 
+int
 cmexit(struct nshell *nshell,int argc,char **argv)
 {
   int a;
@@ -264,7 +264,7 @@ printexp(struct nhash *h, void *data)
 }
 #endif
 
-int 
+int
 cmexport(struct nshell *nshell,int argc,char **argv)
 {
   int i;
@@ -296,7 +296,7 @@ cmexport(struct nshell *nshell,int argc,char **argv)
 #endif
 }
 
-int 
+int
 cmpwd(struct nshell *nshell,int argc,char **argv)
 {
   char *s;
@@ -477,7 +477,7 @@ cmset(struct nshell *nshell,int argc,char **argv)
         }
       } else break;
     }
-    if (j!=argc) { 
+    if (j!=argc) {
       argv2=NULL;
       if ((s=g_malloc(strlen((nshell->argv)[0])+1))==NULL) return ERR;
       strcpy(s,(nshell->argv)[0]);
@@ -525,7 +525,7 @@ cmset(struct nshell *nshell,int argc,char **argv)
   return 0;
 }
 
-int 
+int
 cmshift(struct nshell *nshell,int argc,char **argv)
 {
   int i,a;
@@ -554,7 +554,7 @@ cmshift(struct nshell *nshell,int argc,char **argv)
   return 0;
 }
 
-int 
+int
 cmtype(struct nshell *nshell,int argc,char **argv)
 {
   struct prmlist *prm2;
@@ -605,7 +605,7 @@ cmtype(struct nshell *nshell,int argc,char **argv)
   return 0;
 }
 
-int 
+int
 cmunset(struct nshell *nshell,int argc,char **argv)
 {
   int i;
@@ -622,7 +622,7 @@ cmunset(struct nshell *nshell,int argc,char **argv)
   return 0;
 }
 
-static void 
+static void
 objdisp(struct objlist *root,struct objlist *parent,int *tab)
 {
   int i;
@@ -641,7 +641,7 @@ objdisp(struct objlist *root,struct objlist *parent,int *tab)
   (*tab)--;
 }
 
-static void 
+static void
 dispfield(struct objlist *obj,char *name)
 {
   int j;
@@ -723,7 +723,7 @@ dispfield(struct objlist *obj,char *name)
   printfstdout("\n");
 }
 
-int 
+int
 cmobject(struct nshell *nshell,int argc,char **argv)
 {
   struct objlist *obj;
@@ -792,7 +792,7 @@ cmobject(struct nshell *nshell,int argc,char **argv)
   return 0;
 }
 
-static void 
+static void
 dispparent(struct objlist *parent,int noinst)
 {
   struct objlist *ocur;
@@ -800,7 +800,7 @@ dispparent(struct objlist *parent,int noinst)
   ocur=chkobjroot();
   while (ocur!=NULL) {
     if (chkobjparent(ocur)==parent) {
-      if ((chkobjlastinst(ocur)!=-1) || (!noinst)) 
+      if ((chkobjlastinst(ocur)!=-1) || (!noinst))
         putstdout(chkobjectname(ocur));
       dispparent(ocur,noinst);
     }
@@ -808,7 +808,7 @@ dispparent(struct objlist *parent,int noinst)
   }
 }
 
-int 
+int
 cmderive(struct nshell *nshell,int argc,char **argv)
 {
   struct objlist *obj;
@@ -826,13 +826,13 @@ cmderive(struct nshell *nshell,int argc,char **argv)
   }
   if (i==argc) {
     if ((obj=getobject("object"))==NULL) return ERR;
-    if ((chkobjlastinst(obj)!=-1) || (!noinst)) 
+    if ((chkobjlastinst(obj)!=-1) || (!noinst))
       putstdout(chkobjectname(obj));
     dispparent(obj,noinst);
   } else {
     for (;i<argc;i++) {
       if ((obj=getobject(argv[i]))==NULL) return ERR;
-      if ((chkobjlastinst(obj)!=-1) || (!noinst)) 
+      if ((chkobjlastinst(obj)!=-1) || (!noinst))
         putstdout(chkobjectname(obj));
       dispparent(obj,noinst);
     }
@@ -840,7 +840,7 @@ cmderive(struct nshell *nshell,int argc,char **argv)
   return 0;
 }
 
-int 
+int
 cmnew(struct nshell *nshell,int argc,char **argv)
 {
   struct objlist *obj;
@@ -880,7 +880,7 @@ cmnew(struct nshell *nshell,int argc,char **argv)
   return 0;
 }
 
-int 
+int
 cmdel(struct nshell*nshell,int argc,char **argv)
 {
   struct objlist *obj;
@@ -904,7 +904,7 @@ cmdel(struct nshell*nshell,int argc,char **argv)
   }
   adata=arraydata(&iarray);
   for (i=0;i<anum;i++)
-    for (j=1;j<anum;j++) 
+    for (j=1;j<anum;j++)
       if (adata[j-1]<adata[j]) {
         id=adata[j-1];
         adata[j-1]=adata[j];
@@ -925,7 +925,7 @@ cmdel(struct nshell*nshell,int argc,char **argv)
   return 0;
 }
 
-int 
+int
 cmexist(struct nshell*nshell,int argc,char **argv)
 {
   struct objlist *obj;
@@ -964,7 +964,7 @@ cmexist(struct nshell*nshell,int argc,char **argv)
   return 0;
 }
 
-int 
+int
 cmget(struct nshell*nshell,int argc,char **argv)
 {
   struct objlist *obj;
@@ -1051,7 +1051,7 @@ cmget(struct nshell*nshell,int argc,char **argv)
   return 0;
 }
 
-int 
+int
 cmput(struct nshell*nshell,int argc,char **argv)
 {
   struct objlist *obj;
@@ -1089,7 +1089,7 @@ cmput(struct nshell*nshell,int argc,char **argv)
   return 0;
 }
 
-int 
+int
 cmdup(struct nshell *nshell, int argc, char **argv)
 {
   struct objlist *obj;
@@ -1132,7 +1132,7 @@ cmdup(struct nshell *nshell, int argc, char **argv)
   return 0;
 }
 
-int 
+int
 cmcpy(struct nshell*nshell,int argc,char **argv)
 {
   struct objlist *obj;
@@ -1173,7 +1173,7 @@ cmcpy(struct nshell*nshell,int argc,char **argv)
   return 0;
 }
 
-int 
+int
 cmmove(struct nshell*nshell,int argc,char **argv)
 {
   struct objlist *obj;
@@ -1207,7 +1207,7 @@ cmmove(struct nshell*nshell,int argc,char **argv)
   return 0;
 }
 
-int 
+int
 cmmovetop(struct nshell*nshell,int argc,char **argv)
 {
   struct objlist *obj;
@@ -1243,7 +1243,7 @@ cmmovetop(struct nshell*nshell,int argc,char **argv)
   return 0;
 }
 
-int 
+int
 cmexe(struct nshell*nshell,int argc,char **argv)
 {
   struct objlist *obj;
@@ -1281,7 +1281,7 @@ cmexe(struct nshell*nshell,int argc,char **argv)
   return 0;
 }
 
-int 
+int
 cmdexpr(struct nshell*nshell,int argc,char **argv)
 {
   int rcode,ecode;
@@ -1326,7 +1326,7 @@ cmdexpr(struct nshell*nshell,int argc,char **argv)
   }
 
   if (argv[0][0] == 'd') {
-    printfstdout("%.15e\n", vd); 
+    printfstdout("%.15e\n", vd);
   } else {
     printfstdout("%.0f\n", round(vd));
   }
@@ -1334,7 +1334,7 @@ cmdexpr(struct nshell*nshell,int argc,char **argv)
   return 0;
 }
 
-int 
+int
 cmread(struct nshell *nshell,int argc,char **argv)
 {
   int c,i,len;
@@ -1374,7 +1374,7 @@ cmread(struct nshell *nshell,int argc,char **argv)
   return (c == EOF) ? ERR : 0;
 }
 
-int 
+int
 cmwhich(struct nshell*nshell,int argc,char **argv)
 {
   int i, r, start, quiet;

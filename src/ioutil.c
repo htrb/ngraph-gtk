@@ -1,24 +1,24 @@
-/* 
+/*
  * $Id: ioutil.c,v 1.25 2010-04-01 06:08:22 hito Exp $
- * 
+ *
  * This file is part of "Ngraph for X11".
- * 
+ *
  * Copyright (C) 2002, Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
- * 
+ *
  * "Ngraph for X11" is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * "Ngraph for X11" is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  */
 
 #include "common.h"
@@ -62,7 +62,7 @@ char_type_buf_init(void)
 #define is_line_sep(ch) (C_type_buf[ch + 1])
 #endif
 
-void 
+void
 changefilename(char *name)
 {
 #if WINDOWS
@@ -80,7 +80,7 @@ changefilename(char *name)
 #endif  /* WINDOWS */
 }
 
-void 
+void
 path_to_win(char *name)
 {
 #if WINDOWS
@@ -98,7 +98,7 @@ path_to_win(char *name)
 #endif  /* WINDOWS */
 }
 
-static void 
+static void
 pathresolv(char *name)
 {
   int j,k;
@@ -420,7 +420,7 @@ getfilename(const char *dir, const char *sep, const char *file)
   return s;
 }
 
-int 
+int
 findfilename(const char *dir, const char *sep, const char *file)
 {
   char *s;
@@ -490,7 +490,7 @@ nsearchpath(char *path,char *name,int shellscript)
   return NULL;
 }
 
-static int 
+static int
 nscandir(char *dir,char ***namelist, int (*compar)())
 {
   unsigned int i;
@@ -545,13 +545,13 @@ nscandir(char *dir,char ***namelist, int (*compar)())
   return alloc;
 }
 
-static int 
+static int
 nalphasort(char **a,char **b)
 {
   return strcmp(*a,*b);
 }
 
-static int 
+static int
 nglob2(char *path,int po,int *num,char ***list)
 {
   int i,j,p1,escape,scannum,len,err;
@@ -639,7 +639,7 @@ nglob2(char *path,int po,int *num,char ***list)
   return 0;
 }
 
-int 
+int
 nglob(char *path,char ***namelist)
 {
   int num;
@@ -660,7 +660,7 @@ nglob(char *path,char ***namelist)
   return num;
 }
 
-int 
+int
 fgetline(FILE *fp, char **buf)
 {
 /*
@@ -740,7 +740,7 @@ fgetline(FILE *fp, char **buf)
   }
 }
 
-int 
+int
 fgetnline(FILE *fp, char *buf, int len)
 {
 /*
@@ -765,7 +765,7 @@ fgetnline(FILE *fp, char *buf, int len)
   return 0;
 }
 
-int 
+int
 nfgetc(FILE *fp)
 {
   int ch;
@@ -796,7 +796,7 @@ nfopen(const char *filename, const char *mode)
   return fp;
 }
 
-int 
+int
 nisatty(int fd)
 {
   return isatty(fd);
@@ -862,7 +862,7 @@ nchdir(const gchar *path)
   return r;
 }
 
-int 
+int
 nopen(const char *path,int access,int mode)
 {
   int r;
@@ -882,31 +882,31 @@ nopen(const char *path,int access,int mode)
   return r;
 }
 
-void 
+void
 nclose(int fd)
 {
   close(fd);
 }
 
-void 
+void
 nlseek(int fd,long offset,int fromwhere)
 {
   lseek(fd,offset,fromwhere);
 }
 
-int 
+int
 nread(int fd,char *buf,unsigned len)
 {
   return read(fd,buf,len);
 }
 
-int 
+int
 nwrite(int fd,char *buf,unsigned len)
 {
   return write(fd,buf,len);
 }
 
-int 
+int
 nredirect(int fd,int newfd)
 {
   int savefd;
@@ -917,26 +917,26 @@ nredirect(int fd,int newfd)
   return savefd;
 }
 
-void 
+void
 nredirect2(int fd,int savefd)
 {
   dup2(savefd,fd);
   close(savefd);
 }
 
-int 
+int
 stdinfd(void)
 {
   return 0;
 }
 
-int 
+int
 stdoutfd(void)
 {
   return 1;
 }
 
-int 
+int
 stderrfd(void)
 {
   return 2;

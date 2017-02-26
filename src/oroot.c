@@ -1,24 +1,24 @@
-/* 
+/*
  * $Id: oroot.c,v 1.11 2010-03-04 08:30:16 hito Exp $
- * 
+ *
  * This file is part of "Ngraph for X11".
- * 
+ *
  * Copyright (C) 2002, Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
- * 
+ *
  * "Ngraph for X11" is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * "Ngraph for X11" is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  */
 
 #include "common.h"
@@ -45,7 +45,7 @@ static char *rooterrorlist[]={
 
 #define ERRNUM (sizeof(rooterrorlist) / sizeof(*rooterrorlist))
 
-int 
+int
 obj_load_config(struct objlist *obj, N_VALUE *inst, char *title, NHASH hash)
 {
   FILE *fp;
@@ -77,7 +77,7 @@ obj_load_config(struct objlist *obj, N_VALUE *inst, char *title, NHASH hash)
 	_getobj(obj, cfg->name, inst, &f2);
 	g_free(f2);
 	_putobj(obj, cfg->name, inst, f1);
-	break; 
+	break;
       case OBJ_CONFIG_TYPE_STYLE:
 	iarray = arraynew(sizeof(int));
 	if (iarray) {
@@ -154,7 +154,7 @@ obj_save_config_line_style(struct objlist *obj, N_VALUE *inst, char *field, stru
   arrayadd(conf, &buf);
 }
 
-int 
+int
 obj_save_config(struct objlist *obj, N_VALUE *inst, char *title, struct obj_config *config, unsigned int n)
 {
   struct narray conf;
@@ -185,21 +185,21 @@ obj_save_config(struct objlist *obj, N_VALUE *inst, char *title, struct obj_conf
   return 0;
 }
 
-static int 
+static int
 oinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
-{  
+{
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
-static int 
+static int
 odone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
-static int 
+static int
 oputname(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   char *arg;
@@ -220,21 +220,21 @@ oputname(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-int 
+int
 oputabs(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   if (*(int *)(argv[2])<0) *(int *)argv[2]=0;
   return 0;
 }
 
-int 
+int
 oputge1(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   if (*(int *)(argv[2])<1) *(int *)(argv[2])=1;
   return 0;
 }
 
-int 
+int
 oputangle(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   if (*(int *)(argv[2])<0) *(int *)(argv[2])=0;
@@ -242,7 +242,7 @@ oputangle(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-int 
+int
 oputcolor(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   if (*(int *) (argv[2]) < 0) *(int *)(argv[2]) = 0;
@@ -250,7 +250,7 @@ oputcolor(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-int 
+int
 oputmarktype(struct objlist *obj,N_VALUE *inst,N_VALUE *rval, int argc,char **argv)
 {
   int type;
@@ -264,7 +264,7 @@ oputmarktype(struct objlist *obj,N_VALUE *inst,N_VALUE *rval, int argc,char **ar
   return 0;
 }
 
-int 
+int
 oputstyle(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct narray *array;
@@ -287,7 +287,7 @@ oputstyle(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
 }
 
 #ifdef COMPILE_UNUSED_FUNCTIONS
-static void 
+static void
 ochgobjlist(char **olist)
 {
   char *list,*objname,*field;
@@ -335,7 +335,7 @@ ochgobjlist(char **olist)
 }
 #endif /* COMPILE_UNUSED_FUNCTIONS */
 
-static int 
+static int
 osave(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct objlist *obj2;

@@ -1,24 +1,24 @@
-/* 
+/*
  * $Id: odarray.c,v 1.6 2010-03-04 08:30:16 hito Exp $
- * 
+ *
  * This file is part of "Ngraph for X11".
- * 
+ *
  * Copyright (C) 2002, Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
- * 
+ *
  * "Ngraph for X11" is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * "Ngraph for X11" is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  */
 
 
@@ -52,7 +52,7 @@ struct darray_local {
 
 #define ERRNUM (sizeof(darrayerrorlist) / sizeof(*darrayerrorlist))
 
-static int 
+static int
 darrayinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct darray_local *local;
@@ -63,21 +63,21 @@ darrayinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   if (local == NULL) {
     return 1;
   }
- 
+
   local->modified = TRUE;
  _putobj(obj, "_local", inst, local);
 
   return 0;
 }
 
-static int 
+static int
 darraydone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
-static int 
+static int
 darrayget(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
@@ -101,7 +101,7 @@ darrayget(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 darrayput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
@@ -124,7 +124,7 @@ darrayput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 darray_modified(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct darray_local *local;
@@ -135,7 +135,7 @@ darray_modified(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **
   return 0;
 }
 
-static int 
+static int
 darrayadd(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
@@ -156,7 +156,7 @@ darrayadd(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 darraypop(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
@@ -196,7 +196,7 @@ darraypop(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 darrayins(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
@@ -225,7 +225,7 @@ darrayins(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 darrayunshift(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
@@ -249,7 +249,7 @@ darrayunshift(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **ar
   return 0;
 }
 
-static int 
+static int
 darrayshift(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
@@ -284,7 +284,7 @@ darrayshift(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
   return 0;
 }
 
-static int 
+static int
 darraydel(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
@@ -315,7 +315,7 @@ darraydel(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 darraysort(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc, char **argv)
 {
   struct narray *array;
@@ -327,7 +327,7 @@ darraysort(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc, char **argv
   return 0;
 }
 
-static int 
+static int
 darrayrsort(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc, char **argv)
 {
   struct narray *array;
@@ -355,7 +355,7 @@ darrayuniq(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc, char **argv
   return 0;
 }
 
-static int 
+static int
 darrayjoin(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct narray *array;
@@ -440,7 +440,7 @@ cache_data(struct objlist *obj, N_VALUE *inst, struct darray_local *local)
   local->modified = FALSE;
 }
 
-static int 
+static int
 darray_sum(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct darray_local *local;
@@ -457,7 +457,7 @@ darray_sum(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   return 0;
 }
 
-static int 
+static int
 darray_average(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct darray_local *local;
@@ -628,9 +628,9 @@ static struct objtable odarray[] = {
   {"RMS", NDFUNC, NREAD|NEXEC, darray_rms, "", 0},
   {"min", NDFUNC, NREAD|NEXEC, darray_min, "", 0},
   {"max", NDFUNC, NREAD|NEXEC, darray_max, "", 0},
-  {"num", NIFUNC, NREAD|NEXEC, oarray_num, "", 0}, 
-  {"seq", NSFUNC, NREAD|NEXEC, oarray_seq, "", 0}, 
-  {"rseq", NSFUNC, NREAD|NEXEC, oarray_reverse_seq, "", 0}, 
+  {"num", NIFUNC, NREAD|NEXEC, oarray_num, "", 0},
+  {"seq", NSFUNC, NREAD|NEXEC, oarray_seq, "", 0},
+  {"rseq", NSFUNC, NREAD|NEXEC, oarray_reverse_seq, "", 0},
   {"reverse", NVFUNC, NREAD|NEXEC, oarray_reverse, "", 0},
   {"slice", NVFUNC, NREAD|NEXEC, oarray_slice, "ii", 0},
   {"map", NVFUNC, NREAD|NEXEC, darray_map, "s", 0},

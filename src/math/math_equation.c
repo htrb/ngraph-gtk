@@ -1,6 +1,6 @@
-/* 
+/*
  * $Id: math_equation.c,v 1.13 2009-11-24 06:32:37 hito Exp $
- * 
+ *
  */
 
 #include "config.h"

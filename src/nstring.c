@@ -1,24 +1,24 @@
-/* 
+/*
  * $Id: nstring.c,v 1.10 2010-03-04 08:30:16 hito Exp $
- * 
+ *
  * This file is part of "Ngraph for X11".
- * 
+ *
  * Copyright (C) 2002, Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
- * 
+ *
  * "Ngraph for X11" is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * "Ngraph for X11" is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  */
 
 #include "common.h"
@@ -92,7 +92,7 @@ nstrcat(char *po,char *s)
   /* modified */
 
   if (po == NULL) return NULL;
-  if (s == NULL) return po; 
+  if (s == NULL) return po;
   len = strlen(po);
   for (i = 0; s[i] != '\0'; i++) {
     po = nstraddchar(po, len + i, s[i]);
@@ -111,14 +111,14 @@ nstrncat(char *po,char *s,size_t n)
   size_t i;
 
   if (po==NULL) return NULL;
-  if (s==NULL) return po; 
-  for (i=0;(s[i]!='\0') && (i<n);i++) 
+  if (s==NULL) return po;
+  for (i=0;(s[i]!='\0') && (i<n);i++)
     if ((po=nstrccat(po,s[i]))==NULL) return NULL;
   return po;
 }
 #endif
 
-int 
+int
 strcmp0(const char *s1, const char *s2)
 {
   const char *s3,*s4;
@@ -134,7 +134,7 @@ strcmp0(const char *s1, const char *s2)
   return 1;
 }
 
-int 
+int
 strcmp2(char *s1,char *s2)
 {
   int len1,len2,len,c;
@@ -151,7 +151,7 @@ strcmp2(char *s1,char *s2)
   } else return c;
 }
 
-static int 
+static int
 wildmatch2(const char *pat, const char *s,int flags)
 {
   const char *spo,*patpo,*po;
@@ -164,7 +164,7 @@ wildmatch2(const char *pat, const char *s,int flags)
     else if (*patpo=='\0') return 0;
     else if ((flags & WILD_PATHNAME) && (*spo=='/')) {
       if (*patpo!='/') return 0;
-      patpo++;        
+      patpo++;
       spo++;
     } else if (*patpo=='?') {
       if (*spo=='\0') return 0;
@@ -209,7 +209,7 @@ wildmatch2(const char *pat, const char *s,int flags)
   }
 }
 
-int 
+int
 wildmatch(const char *pat, const char *s,int flags)
 {
   if ((s==NULL) || (pat==NULL)) return 0;

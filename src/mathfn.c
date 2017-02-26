@@ -1,24 +1,24 @@
-/* 
+/*
  * $Id: mathfn.c,v 1.9 2010-03-04 08:30:16 hito Exp $
- * 
+ *
  * This file is part of "Ngraph for X11".
- * 
+ *
  * Copyright (C) 2002, Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
- * 
+ *
  * "Ngraph for X11" is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * "Ngraph for X11" is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  */
 
 #include "common.h"
@@ -40,7 +40,7 @@ compare_double(double x, double y)
   }
 }
 
-double 
+double
 cutdown(double x)
 {
   if (x>=0) return (int )x;
@@ -48,7 +48,7 @@ cutdown(double x)
   else return (int )(x-1);
 }
 
-double 
+double
 nraise(double x)
 {
   if (x<0) return (int )x;
@@ -56,7 +56,7 @@ nraise(double x)
   else return (int )(x+1);
 }
 
-int 
+int
 nround(double x)
 {
   int ix;
@@ -73,7 +73,7 @@ nround(double x)
   }
 }
 
-static int 
+static int
 matinv(int dim,matrix m,matrix mi)
 {
   int i,j,k;
@@ -105,16 +105,16 @@ matinv(int dim,matrix m,matrix mi)
     for (j=dim-1;j>=0;j--) mi[i][j]=mi[i][j]/m[i][i];
     for (j=dim-1;j>=i;j--) m[i][j]=m[i][j]/m[i][i];
     for (j=0;j<dim;j++)
-     if (j!=i) 
+     if (j!=i)
        for (k=dim-1;k>=0;k--) mi[j][k]=mi[j][k]-m[j][i]*mi[i][k];
     for (j=0;j<dim;j++)
-     if (j!=i) 
+     if (j!=i)
        for (k=dim-1;k>=0;k--) m[j][k]=m[j][k]-m[j][i]*m[i][k];
   }
   return 0;
 }
 
-int 
+int
 matsolv(int dim,matrix a,vector b,vector x)
 {
   matrix ai;
@@ -131,7 +131,7 @@ matsolv(int dim,matrix a,vector b,vector x)
 }
 
 
-void 
+void
 HSB2RGB(double h, double s, double b, int *R, int *G, int *B)
 {
   double th, s3;

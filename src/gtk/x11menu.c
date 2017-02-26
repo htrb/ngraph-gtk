@@ -861,7 +861,7 @@ static struct MenuItem PreferenceMenu[] = {
     NULL,
     NULL,
     NULL,
-    NULL, 
+    NULL,
     "<Ngraph>/Preference/External Viewer",
     0,
     0,
@@ -2733,7 +2733,7 @@ static struct MenuItem GraphMenu[] = {
     NULL,
     NULL,
 #if GTK_CHECK_VERSION(3, 10, 0)
-    "document-page-setup", 
+    "document-page-setup",
 #else
     NULL,
 #endif
@@ -3539,7 +3539,7 @@ init_action_widget_list(void)
     case LegendRectanglePropertyAction:
     case LegendRectangleDeleteAction:
       ActionWidget[i].type = ACTION_TYPE_RECTANGLE;
-      break; 
+      break;
    case LegendArcPropertyAction:
     case LegendArcDeleteAction:
       ActionWidget[i].type = ACTION_TYPE_ARC;
@@ -3921,7 +3921,7 @@ set_focus_sensitivity_sub(const struct Viewer *d, int insensitive)
     case ACTION_TYPE_FOCUS_UP:
       state = up_state;
       set_action_widget_sensitivity(i, state);
-      break; 
+      break;
     case ACTION_TYPE_FOCUS_DOWN:
       state = down_state;
       set_action_widget_sensitivity(i, state);

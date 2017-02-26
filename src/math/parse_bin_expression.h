@@ -1,6 +1,6 @@
-/* 
+/*
  * $Id: parse_bin_expression.h,v 1.3 2009-11-10 04:12:20 hito Exp $
- * 
+ *
  */
 
 #define CREATE_PARSER_FUNC(a, b, c, d) parse_ ## a ## _expression(const char **str, MathEquation *eq, int *err) \

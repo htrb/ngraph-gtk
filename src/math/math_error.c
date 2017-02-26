@@ -1,6 +1,6 @@
-/* 
+/*
  * $Id: math_error.c,v 1.10 2009-12-22 00:57:42 hito Exp $
- * 
+ *
  */
 
 #include <stdlib.h>
@@ -47,7 +47,7 @@ check_error_position(MathEquation *eq, const char *code)
   if (l >= len)
     return NULL;
 
-  if (eq->err_info.pos[0] == ';' || eq->err_info.pos[0] == '=' || eq->err_info.pos[0] == '\0') 
+  if (eq->err_info.pos[0] == ';' || eq->err_info.pos[0] == '=' || eq->err_info.pos[0] == '\0')
     return NULL;
 
   len -= l;

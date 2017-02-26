@@ -1,6 +1,6 @@
-/* 
+/*
  * $Id: math_parser.c,v 1.19 2010-03-04 08:30:17 hito Exp $
- * 
+ *
  */
 
 #include "config.h"

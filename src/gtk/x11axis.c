@@ -3140,7 +3140,7 @@ create_base_combo_item(GtkTreeStore *list, GtkTreeIter *parent, struct objlist *
   gtk_tree_store_set(list, &iter,
 		     OBJECT_COLUMN_TYPE_STRING, _("Baseline"),
 		     OBJECT_COLUMN_TYPE_PIXBUF, NULL,
-		     OBJECT_COLUMN_TYPE_INT, -1, 
+		     OBJECT_COLUMN_TYPE_INT, -1,
 		     OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, FALSE,
 		     OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
 		     -1);
@@ -3166,7 +3166,7 @@ create_gauge_combo_item(GtkTreeStore *list, GtkTreeIter *parent, struct objlist 
   gtk_tree_store_set(list, &iter,
 		     OBJECT_COLUMN_TYPE_STRING, _("Gauge"),
 		     OBJECT_COLUMN_TYPE_PIXBUF, NULL,
-		     OBJECT_COLUMN_TYPE_INT, -1, 
+		     OBJECT_COLUMN_TYPE_INT, -1,
 		     OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, FALSE,
 		     OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
 		     -1);

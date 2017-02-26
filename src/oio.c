@@ -1,24 +1,24 @@
-/* 
+/*
  * $Id: oio.c,v 1.6 2010-03-04 08:30:16 hito Exp $
- * 
+ *
  * This file is part of "Ngraph for X11".
- * 
+ *
  * Copyright (C) 2002, Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
- * 
+ *
  * "Ngraph for X11" is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * "Ngraph for X11" is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  */
 
 #include <stdio.h>
@@ -95,7 +95,7 @@ io_error(struct objlist *obj)
     error2(obj, OIO_ERRSTD, CHK_STR(str));
 }
 
-static int 
+static int
 io_init(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct io_local *io_local;
@@ -147,7 +147,7 @@ io_close_sub(struct io_local *io_local)
   return 0;
 }
 
-static int 
+static int
 io_done(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct io_local *io_local;
@@ -162,7 +162,7 @@ io_done(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 io_open(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct io_local *io_local;
@@ -212,7 +212,7 @@ io_open(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 io_close(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct io_local *io_local;
@@ -234,7 +234,7 @@ io_close(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 io_puts(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct io_local *io_local;
@@ -252,7 +252,7 @@ io_puts(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
     rcode = fputs(argv[2], fp);
   }
   rcode = fputs("\n", fp);
-     
+
   if (rcode == EOF) {
     io_error(obj);
     return 1;
@@ -261,7 +261,7 @@ io_puts(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 io_gets(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct io_local *io_local;
@@ -293,7 +293,7 @@ io_gets(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 io_getc(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct io_local *io_local;
@@ -319,7 +319,7 @@ io_getc(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 io_putc(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct io_local *io_local;
@@ -347,7 +347,7 @@ io_putc(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 io_read(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct io_local *io_local;
@@ -396,7 +396,7 @@ io_read(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 io_write(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct io_local *io_local;
@@ -430,7 +430,7 @@ io_write(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 io_seek(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct io_local *io_local;
@@ -471,7 +471,7 @@ io_seek(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 io_rewind(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct io_local *io_local;
@@ -489,7 +489,7 @@ io_rewind(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 io_tell(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct io_local *io_local;
@@ -554,7 +554,7 @@ io_eof(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   }
 
   r = feof(fp);
-  
+
   rval->i = (r) ? TRUE : FALSE;
 
   return r ? 0 : 1;

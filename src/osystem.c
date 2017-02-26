@@ -1,24 +1,24 @@
-/* 
+/*
  * $Id: osystem.c,v 1.17 2010-03-04 08:30:16 hito Exp $
- * 
+ *
  * This file is part of "Ngraph for X11".
- * 
+ *
  * Copyright (C) 2002, Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
- * 
+ *
  * "Ngraph for X11" is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * "Ngraph for X11" is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  */
 
 #include "common.h"
@@ -96,7 +96,7 @@ struct ngraph_plugin {
 
 static NHASH Plugins = NULL;
 
-static int 
+static int
 sysinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   char *wd;
@@ -153,7 +153,7 @@ close_module(struct nhash *hash, void *data)
   return 0;
 }
 
-static int 
+static int
 sysdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct objlist *objcur;
@@ -233,7 +233,7 @@ sysdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 syscwd(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   char *wd;
@@ -259,7 +259,7 @@ syscwd(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 systime(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   time_t t;
@@ -272,7 +272,7 @@ systime(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 sysdate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   time_t t;
@@ -285,7 +285,7 @@ sysdate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 systemp(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   char *pfx, *tmpfil;
@@ -316,7 +316,7 @@ systemp(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 sysunlink(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   char *tmpfil;
@@ -348,7 +348,7 @@ sysunlink(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 syshideinstance(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
@@ -368,7 +368,7 @@ syshideinstance(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **
   return 0;
 }
 
-static int 
+static int
 sysrecoverinstance(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
@@ -388,7 +388,7 @@ sysrecoverinstance(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char
   return 0;
 }
 
-static int 
+static int
 systemresize(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *iarray;
@@ -577,7 +577,7 @@ load_plugin(struct objlist *obj, N_VALUE *inst, const char *arg, int *rval)
   return plugin;
 }
 
-static int 
+static int
 system_plugin_load(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct ngraph_plugin *plugin;
@@ -588,7 +588,7 @@ system_plugin_load(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, 
   return (plugin) ? 0 : 1;
 }
 
-static int 
+static int
 system_plugin_check(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   char *name, *module_file;
@@ -672,7 +672,7 @@ system_plugin_exec(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, 
     error(obj, ERRSYSSECURTY);
     return 1;
   }
- 
+
   plugin = get_plugin_from_name(argv[2]);
   if (plugin == NULL) {
     plugin = load_plugin(obj, inst, argv[2], NULL);

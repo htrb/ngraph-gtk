@@ -3360,7 +3360,7 @@ select_line_type(GtkComboBox *w, gpointer user_data)
       return;
     }
     break;
-  case LEGEND_PATH_LINE_TYPE_CURVE: 
+  case LEGEND_PATH_LINE_TYPE_CURVE:
     if (type == PATH_TYPE_CURVE && enum_id == interpolation) {
       return;
     }

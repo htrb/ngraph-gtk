@@ -1,6 +1,6 @@
-/* 
+/*
  * $Id: math_expression.h,v 1.3 2009-11-10 04:12:20 hito Exp $
- * 
+ *
  */
 
 #ifndef EXPRESSION_HEADER

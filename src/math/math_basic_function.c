@@ -1,6 +1,6 @@
-/* 
+/*
  * $Id: math_basic_function.c,v 1.14 2010-03-04 08:30:17 hito Exp $
- * 
+ *
  */
 
 #include "config.h"
@@ -550,7 +550,7 @@ exp1(double x, double *val)
     }
     if (x > 0) {
       xx = eipt[i] / 100;
-    } else{ 
+    } else{
       xx = eimt[i] / 100;
     }
     xx2 = 1 / (-xo[i]);
@@ -1668,21 +1668,21 @@ math_func_isnan(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rv
 int
 math_func_isundef(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  CHECK_VAL_TYPE(rval, exp->buf[0], MATH_VALUE_UNDEF); 
+  CHECK_VAL_TYPE(rval, exp->buf[0], MATH_VALUE_UNDEF);
   return 0;
 }
 
 int
 math_func_isbreak(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  CHECK_VAL_TYPE(rval, exp->buf[0], MATH_VALUE_BREAK); 
+  CHECK_VAL_TYPE(rval, exp->buf[0], MATH_VALUE_BREAK);
   return 0;
 }
 
 int
 math_func_iscont(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  CHECK_VAL_TYPE(rval, exp->buf[0], MATH_VALUE_CONT); 
+  CHECK_VAL_TYPE(rval, exp->buf[0], MATH_VALUE_CONT);
   return 0;
 }
 
@@ -2324,7 +2324,7 @@ math_func_cm(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
   if (Memory == NULL && init_memory()) {
     return 1;
   }
-  
+
   if (exp->buf[0].val.val == 0 && exp->buf[0].val.type == MATH_VALUE_NORMAL) {
     memset(Memory, 0, sizeof(*Memory) * MATH_FUNCTION_MEMORY_NUM);
   } else {

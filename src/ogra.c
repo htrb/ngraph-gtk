@@ -1,24 +1,24 @@
-/* 
+/*
  * $Id: ogra.c,v 1.11 2009-11-16 09:13:04 hito Exp $
- * 
+ *
  * This file is part of "Ngraph for X11".
- * 
+ *
  * Copyright (C) 2002, Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
- * 
+ *
  * "Ngraph for X11" is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * "Ngraph for X11" is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  */
 
 #include "common.h"
@@ -54,7 +54,7 @@ static char *GRAerrorlist[]={
 static void set_progress_val(int i, int n, const char *name);
 static int oGRAclose(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv);
 
-static int 
+static int
 oGRAinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int GC,width,height,zoom;
@@ -72,7 +72,7 @@ oGRAinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 oGRAdisconnect(struct objlist *obj,void *inst,int clear)
 {
   struct objlist *dobj,*gobj;
@@ -105,7 +105,7 @@ oGRAdisconnect(struct objlist *obj,void *inst,int clear)
   return 0;
 }
 
-static int 
+static int
 oGRAdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int GC;
@@ -117,7 +117,7 @@ oGRAdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 oGRAputdevice(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
                   int argc,char **argv)
 {
@@ -145,7 +145,7 @@ close_gc(struct objlist *obj, N_VALUE *inst, int GC)
   return 0;
 }
 
-static int 
+static int
 oGRAopen(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int anum,id;
@@ -276,7 +276,7 @@ oGRAopen(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 oGRAclose(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int GC;
@@ -286,7 +286,7 @@ oGRAclose(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return close_gc(obj, inst, GC);
 }
 
-static int 
+static int
 oGRAredraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct objlist *dobj;
@@ -306,7 +306,7 @@ oGRAredraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 oGRAclear(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int GC;
@@ -329,7 +329,7 @@ oGRAclear(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 oGRAputtopm(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int GC;
@@ -350,7 +350,7 @@ oGRAputtopm(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
   return 0;
 }
 
-static int 
+static int
 oGRAdrawparent(struct objlist *parent, char **oGRAargv)
 {
   struct objlist *ocur;
@@ -377,7 +377,7 @@ oGRAdrawparent(struct objlist *parent, char **oGRAargv)
   return TRUE;
 }
 
-static int 
+static int
 oGRAdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int GC;

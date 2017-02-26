@@ -1,7 +1,7 @@
 /*
  *
  * fft.c written by S. ISHIZAKA 1999/07
- * 
+ *
  */
 
 #include<stdio.h>

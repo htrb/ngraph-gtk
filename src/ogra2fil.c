@@ -1,24 +1,24 @@
-/* 
+/*
  * $Id: ogra2fil.c,v 1.6 2010-03-04 08:30:16 hito Exp $
- * 
+ *
  * This file is part of "Ngraph for X11".
- * 
+ *
  * Copyright (C) 2002, Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
- * 
+ *
  * "Ngraph for X11" is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * "Ngraph for X11" is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  */
 
 #include "common.h"
@@ -48,9 +48,9 @@ struct gra2flocal {
   FILE *fil;
 };
 
-static int 
+static int
 gra2finit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
-{  
+{
   struct gra2flocal *gra2flocal;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
@@ -64,7 +64,7 @@ errexit:
   return 1;
 }
 
-static int 
+static int
 gra2fdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct gra2flocal *gra2flocal;
@@ -75,7 +75,7 @@ gra2fdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 gra2f_output(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
                  int argc,char **argv)
 {
@@ -111,11 +111,11 @@ gra2f_output(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
   if (gra2flocal->fil!=NULL) {
     fputc(code,gra2flocal->fil);
     if (cpar[0]==-1) {
-      for (i=0;cstr[i]!='\0';i++) 
+      for (i=0;cstr[i]!='\0';i++)
         fputc(cstr[i],gra2flocal->fil);
     } else {
       fprintf(gra2flocal->fil,",%d",cpar[0]);
-      for (i=1;i<=cpar[0];i++)  
+      for (i=1;i<=cpar[0];i++)
         fprintf(gra2flocal->fil,",%d",cpar[i]);
     }
     fputc('\n',gra2flocal->fil);

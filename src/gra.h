@@ -1,27 +1,27 @@
-/* 
+/*
  * $Id: gra.h,v 1.5 2010-01-04 05:11:28 hito Exp $
- * 
+ *
  * This file is part of "Ngraph for X11".
- * 
+ *
  * Copyright (C) 2002, Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  */
 
-#include "object.h" 
+#include "object.h"
 
 #ifndef GRA_HEADER
 #define GRA_HEADER
@@ -152,7 +152,7 @@ void GRAdrawtext(int GC,char *s,char *font, int style,
                  int size, int space, int dir, int scriptsize);
 void GRAdrawtextraw(int GC,char *s,char *font, int style,
                  int size,int space,int dir);
-void GRAtextextent(char *s,char *font, int style, 
+void GRAtextextent(char *s,char *font, int style,
                  int size,int space,int scriptsize,
                  int *gx0,int *gy0,int *gx1,int *gy1,int raw);
 void GRAtextextentraw(char *s,char *font, int style,

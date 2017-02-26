@@ -1,24 +1,24 @@
-/* 
+/*
  * $Id: omerge.c,v 1.16 2010-03-04 08:30:16 hito Exp $
- * 
+ *
  * This file is part of "Ngraph for X11".
- * 
+ *
  * Copyright (C) 2002, Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
- * 
+ *
  * "Ngraph for X11" is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * "Ngraph for X11" is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  */
 
 #include "common.h"
@@ -64,7 +64,7 @@ struct mergelocal {
   int endstore;
 };
 
-static int 
+static int
 mergeinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int zm, n;
@@ -92,14 +92,14 @@ errexit:
   return 1;
 }
 
-static int 
+static int
 mergedone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
-static int 
+static int
 mergedraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int GC;
@@ -173,7 +173,7 @@ mergedraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 mergeredraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int redrawf, dmax, line_num;
@@ -194,8 +194,8 @@ mergeredraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
   return 0;
 }
 
-static int 
-mergefile(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, 
+static int
+mergefile(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
             int argc, char **argv)
 {
   struct objlist *sys;
@@ -231,7 +231,7 @@ mergefile(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
   return 0;
 }
 
-static int 
+static int
 mergetime(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   char *file;
@@ -248,7 +248,7 @@ mergetime(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 mergedate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   char *file;
@@ -265,7 +265,7 @@ mergedate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 mergestore(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct mergelocal *mergelocal;
@@ -329,7 +329,7 @@ mergestore(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   }
 }
 
-static int 
+static int
 mergeload(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   char *s;
@@ -380,7 +380,7 @@ mergeload(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 mergestoredum(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct mergelocal *mergelocal;
@@ -426,7 +426,7 @@ mergestoredum(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **ar
   }
 }
 
-static int 
+static int
 mergeloaddum(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   char *s;
@@ -445,7 +445,7 @@ mergeloaddum(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **arg
   return 0;
 }
 
-static int 
+static int
 mergebbox(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
@@ -525,7 +525,7 @@ mergebbox(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 mergemove(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int lm,tm;
@@ -545,7 +545,7 @@ mergemove(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 
 #define ZOOM_MAX 1000000
 
-static int 
+static int
 mergezoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int lm,tm,zm;
@@ -576,7 +576,7 @@ mergezoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 mergematch(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy,err;
@@ -613,7 +613,7 @@ mergematch(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 mergegeometry(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
                  int argc,char **argv)
 {

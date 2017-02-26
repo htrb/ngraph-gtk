@@ -1,6 +1,6 @@
-/* 
+/*
  * $Id: math_expression.c,v 1.16 2010-02-24 00:52:44 hito Exp $
- * 
+ *
  */
 
 #include "config.h"
@@ -982,7 +982,7 @@ optimize_or_expression(MathExpression *exp, int *err)
 
   right = optimize(exp->u.bin.right, err);
   new_exp->u.bin.right = right;
-  if (right == NULL) { 
+  if (right == NULL) {
     math_expression_free(new_exp);
     return NULL;
   }
@@ -1022,7 +1022,7 @@ optimize_and_expression(MathExpression *exp, int *err)
 
   right = optimize(exp->u.bin.right, err);
   new_exp->u.bin.right = right;
-  if (right == NULL) { 
+  if (right == NULL) {
     math_expression_free(new_exp);
     return NULL;
   }
@@ -1062,7 +1062,7 @@ optimize_bin_expression(MathExpression *exp, int *err)
 
   right = optimize(exp->u.bin.right, err);
   new_exp->u.bin.right = right;
-  if (right == NULL) { 
+  if (right == NULL) {
     math_expression_free(new_exp);
     return NULL;
   }
@@ -1092,7 +1092,7 @@ optimize_assign_expression(MathExpression *exp, int *err)
 
   right = optimize(exp->u.assign.right, err);
   new_exp->u.assign.right = right;
-  if (right == NULL) { 
+  if (right == NULL) {
     math_expression_free(new_exp);
     return NULL;
   }
@@ -1122,7 +1122,7 @@ optimize_mul_expression(MathExpression *exp, int *err)
 
   right = optimize(exp->u.bin.right, err);
   new_exp->u.bin.right = right;
-  if (right == NULL) { 
+  if (right == NULL) {
     math_expression_free(new_exp);
     return NULL;
   }
@@ -1163,7 +1163,7 @@ optimize_div_expression(MathExpression *exp, int *err)
 
   right = optimize(exp->u.bin.right, err);
   new_exp->u.bin.right = right;
-  if (right == NULL) { 
+  if (right == NULL) {
     math_expression_free(new_exp);
     return NULL;
   }
@@ -1237,7 +1237,7 @@ optimize(MathExpression *exp, int *err)
   MathExpression *new_exp;
 
   switch (exp->type) {
-  case MATH_EXPRESSION_TYPE_OR: 
+  case MATH_EXPRESSION_TYPE_OR:
     new_exp = optimize_or_expression(exp, err);
     break;
   case MATH_EXPRESSION_TYPE_AND:

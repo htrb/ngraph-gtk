@@ -1,4 +1,4 @@
-/* 
+/*
  * $Id: strconv.c,v 1.2 2010-03-04 08:30:16 hito Exp $
  */
 
@@ -60,7 +60,7 @@ str2utf8(char *str, char *scode, char *dcode)
   size_t l, slen, dlen;
   char *tmp, *ptr;
 
-  if (str == NULL) 
+  if (str == NULL)
     return NULL;
 
   cd = g_iconv_open(dcode, scode);
@@ -73,7 +73,7 @@ str2utf8(char *str, char *scode, char *dcode)
   dlen = slen * 6 + 1;
 
   tmp = g_malloc(dlen);
-  if (tmp == NULL) 
+  if (tmp == NULL)
     return NULL;
 
   ptr = tmp;

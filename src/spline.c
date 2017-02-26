@@ -1,24 +1,24 @@
-/* 
+/*
  * $Id: spline.c,v 1.4 2010-03-04 08:30:16 hito Exp $
- * 
+ *
  * This file is part of "Ngraph for X11".
- * 
+ *
  * Copyright (C) 2002, Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
- * 
+ *
  * "Ngraph for X11" is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * "Ngraph for X11" is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  */
 
 #include "common.h"
@@ -26,7 +26,7 @@
 #include "mathfn.h"
 #include "spline.h"
 
-static int 
+static int
 splinecheck(double d[],double mu[],double ram[],double x[],double y[], int num)
 {
   double h1,h2;
@@ -42,7 +42,7 @@ splinecheck(double d[],double mu[],double ram[],double x[],double y[], int num)
   return 0;
 }
 
-static void 
+static void
 splinesetval(double d[],double mu[],double ram[],double x[],double y[], int num)
 {
   double h1,h2,y1,y2;
@@ -63,7 +63,7 @@ splinesetval(double d[],double mu[],double ram[],double x[],double y[], int num)
   ram[num-1]=0;
 }
 
-static int 
+static int
 splinesolv(double d[],double mu[],double ram[],double x[],double y[], int num,double *xx)
 {
   int i;
@@ -83,7 +83,7 @@ splinesolv(double d[],double mu[],double ram[],double x[],double y[], int num,do
   return 0;
 }
 
-static int 
+static int
 splinesolv2(double d[],double mu[],double ram[],double x[],double y[], int num,double *xx)
 {
   int i;
@@ -103,7 +103,7 @@ splinesolv2(double d[],double mu[],double ram[],double x[],double y[], int num,d
   return 0;
 }
 
-int 
+int
 splineperiod(double d[],double mu[],double ram[],double x[],double y[],
 	     int num,double *df0)
 {
@@ -139,7 +139,7 @@ splineperiod(double d[],double mu[],double ram[],double x[],double y[],
   return 0;
 }
 
-static int 
+static int
 splineboundary(double d[],double mu[],double ram[],double x[],double y[],
 	       int num,int bc0,int bc1,double df0,double df1)
 {
@@ -191,7 +191,7 @@ splineboundary(double d[],double mu[],double ram[],double x[],double y[],
   return 0;
 }
 
-int 
+int
 spline(double x[],double y[],double c1[],double c2[],double c3[],
            int num,int bc0,int bc1,double df0,double df1)
 {
@@ -215,7 +215,7 @@ spline(double x[],double y[],double c1[],double c2[],double c3[],
   return 0;
 }
 
-void 
+void
 bspline(int edge,double x[],double c[])
 {
   if (edge==0) {
@@ -246,7 +246,7 @@ bspline(int edge,double x[],double c[])
   }
 }
 
-void 
+void
 splinedif(double d,double c[],
                double *dx,double *dy,double *ddx,double *ddy,void *local)
 {
@@ -256,7 +256,7 @@ splinedif(double d,double c[],
   *ddy=6*c[5];
 }
 
-void 
+void
 splinedifxy(double d,double c[],
                  double *dx,double *dy,double *ddx,double *ddy,void *local)
 {
@@ -266,7 +266,7 @@ splinedifxy(double d,double c[],
   *ddy=6*c[3]*c[3]*c[3]*c[2];
 }
 
-void 
+void
 bsplinedif(double d,double c[],
                 double *dx,double *dy,double *ddx,double *ddy,void *local)
 {
@@ -276,7 +276,7 @@ bsplinedif(double d,double c[],
   *ddy=6*c[7];
 }
 
-void 
+void
 splineint(double d,double c[],double x0,double y0,double *x,double *y,
                void *local)
 {
@@ -284,7 +284,7 @@ splineint(double d,double c[],double x0,double y0,double *x,double *y,
   *y=y0+d*(c[3]+d*(c[4]+d*c[5]));
 }
 
-void 
+void
 splineintxy(double d,double c[],double x0,double y0,double *x,double *y,
                  void *local)
 {
@@ -295,7 +295,7 @@ splineintxy(double d,double c[],double x0,double y0,double *x,double *y,
   *y=y0+dd*(c[0]+dd*(c[1]+dd*c[2]));
 }
 
-void 
+void
 bsplineint(double d,double c[],double x0,double y0,double *x,double *y,
                 void *local)
 {

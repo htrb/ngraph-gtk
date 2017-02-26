@@ -1,24 +1,24 @@
-/* 
+/*
  * $Id: oline.c,v 1.13 2010-03-04 08:30:16 hito Exp $
- * 
+ *
  * This file is part of "Ngraph for X11".
- * 
+ *
  * Copyright (C) 2002, Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
- * 
+ *
  * "Ngraph for X11" is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * "Ngraph for X11" is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  */
 
 #include "common.h"
@@ -83,9 +83,9 @@ static char *path_type[]={
   NULL,
 };
 
-static int 
+static int
 arrowinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
-{  
+{
   int width, headlen, headwidth, miter, stroke, join, prm, type, alpha;
   struct narray *expand_points;
 
@@ -144,7 +144,7 @@ arrowinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
   return 0;
 }
 
-static int 
+static int
 arrowdone(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   if (_exeparent(obj, argv[1], inst, rval, argc, argv)) return 1;
@@ -154,7 +154,7 @@ arrowdone(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
 #define ARROW_SIZE_MIN 10000
 #define ARROW_SIZE_MAX 200000
 
-static int 
+static int
 arrowput(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   char *field;
@@ -412,7 +412,7 @@ curve_expand_points(struct objlist *obj, N_VALUE *inst, int intp, struct narray 
   return 0;
 }
 
-static void 
+static void
 curve_clear(struct objlist *obj,N_VALUE *inst)
 {
   struct narray *expand_points;
@@ -559,7 +559,7 @@ draw_fill(struct objlist *obj, N_VALUE *inst, int GC, int *points2, int num)
   GRAdrawpoly(GC, num, points2, fill_rule + 1);
 }
 
-static int 
+static int
 arrowdraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   int GC, w, h, intp, i, j, num, close_path;
@@ -642,7 +642,7 @@ arrowdraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
   return 0;
 }
 
-static int 
+static int
 arrowbbox(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   int minx, miny, maxx, maxy;
@@ -801,7 +801,7 @@ arrowbbox(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
   return 0;
 }
 
-static int 
+static int
 set_points(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   curve_clear(obj, inst);
@@ -893,7 +893,7 @@ point_match(struct objlist *obj, N_VALUE *inst, int type, int fill, int err, int
   return r;
 }
 
-static int 
+static int
 curvematch(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   int minx, miny, maxx, maxy, err;
@@ -940,9 +940,9 @@ curvematch(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
     bminy = arraynget_int(array, 1);
     bmaxx = arraynget_int(array, 2);
     bmaxy = arraynget_int(array, 3);
-    if (minx <= bminx && bminx <= maxx && 
-	minx <= bmaxx && bmaxx <= maxx && 
-	miny <= bminy && bminy <= maxy && 
+    if (minx <= bminx && bminx <= maxx &&
+	minx <= bmaxx && bmaxx <= maxx &&
+	miny <= bminy && bminy <= maxy &&
 	miny <= bmaxy && bmaxy <= maxy) {
       rval->i = TRUE;
     }
@@ -950,7 +950,7 @@ curvematch(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   return 0;
 }
 
-static int 
+static int
 curve_flip(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   curve_clear(obj, inst);
@@ -958,7 +958,7 @@ curve_flip(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   return legendflip(obj, inst, rval, argc, argv);
 }
 
-static int 
+static int
 curve_move(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct narray *points;
@@ -981,7 +981,7 @@ curve_move(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   return legendmove(obj, inst, rval, argc, argv);
 }
 
-static int 
+static int
 curve_rotate(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   curve_clear(obj, inst);
@@ -989,7 +989,7 @@ curve_rotate(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char *
   return legendrotate(obj, inst, rval, argc, argv);
 }
 
-static int 
+static int
 curve_zoom(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   curve_clear(obj, inst);
@@ -997,7 +997,7 @@ curve_zoom(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   return legendzoom(obj, inst, rval, argc, argv);
 }
 
-static int 
+static int
 curve_change(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   curve_clear(obj, inst);
@@ -1005,7 +1005,7 @@ curve_change(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char *
   return legendchange(obj, inst, rval, argc, argv);
 }
 
-static int 
+static int
 put_fill_mode(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   int mode, rule;

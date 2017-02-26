@@ -1,6 +1,6 @@
-/* 
+/*
  * $Id: math_scanner.c,v 1.5 2009-11-16 09:13:06 hito Exp $
- * 
+ *
  */
 
 #include "config.h"
@@ -53,7 +53,7 @@ check_reserved(char *str)
 }
 
 void
-math_scanner_free_token(struct math_token *token) 
+math_scanner_free_token(struct math_token *token)
 {
   if (token == NULL)
     return;

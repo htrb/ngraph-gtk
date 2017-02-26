@@ -1,24 +1,24 @@
-/* 
+/*
  * $Id: oiarray.c,v 1.6 2010-03-04 08:30:16 hito Exp $
- * 
+ *
  * This file is part of "Ngraph for X11".
- * 
+ *
  * Copyright (C) 2002, Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
- * 
+ *
  * "Ngraph for X11" is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * "Ngraph for X11" is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  */
 
 #include "common.h"
@@ -46,14 +46,14 @@ static char *iarrayerrorlist[]={
 
 #define ERRNUM (sizeof(iarrayerrorlist) / sizeof(*iarrayerrorlist))
 
-static int 
+static int
 iarrayinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
-static int 
+static int
 iarraydone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
@@ -70,7 +70,7 @@ oarray_get_index(struct narray *array, int i)
   return i;
 }
 
-static int 
+static int
 iarrayget(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
@@ -94,7 +94,7 @@ iarrayget(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 iarrayput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
@@ -135,7 +135,7 @@ oarray_get_array(struct objlist *obj, N_VALUE *inst, unsigned int size)
   return array;
 }
 
-static int 
+static int
 iarrayadd(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
@@ -152,7 +152,7 @@ iarrayadd(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 iarraypop(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
@@ -187,7 +187,7 @@ iarraypop(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 iarrayins(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
@@ -215,7 +215,7 @@ iarrayins(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 iarrayunshift(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
@@ -235,7 +235,7 @@ iarrayunshift(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **ar
   return 0;
 }
 
-static int 
+static int
 iarrayshift(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
@@ -266,7 +266,7 @@ iarrayshift(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
   return 0;
 }
 
-static int 
+static int
 iarraydel(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
@@ -294,7 +294,7 @@ iarraydel(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-int 
+int
 oarray_num(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct narray *array;
@@ -305,7 +305,7 @@ oarray_num(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   return 0;
 }
 
-int 
+int
 oarray_seq(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct narray *array;
@@ -371,7 +371,7 @@ oarray_reverse_seq(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, 
   return 0;
 }
 
-static int 
+static int
 iarraysort(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc, char **argv)
 {
   struct narray *array;
@@ -383,7 +383,7 @@ iarraysort(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc, char **argv
   return 0;
 }
 
-static int 
+static int
 iarrayrsort(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc, char **argv)
 {
   struct narray *array;
@@ -407,7 +407,7 @@ iarrayuniq(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc, char **argv
   return 0;
 }
 
-static int 
+static int
 iarrayjoin(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct narray *array;
@@ -453,7 +453,7 @@ iarrayjoin(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   return 0;
 }
 
-int 
+int
 oarray_reverse(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct narray *array;
@@ -466,7 +466,7 @@ oarray_reverse(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char
   return 0;
 }
 
-int 
+int
 oarray_slice(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct narray *array;
@@ -516,7 +516,7 @@ calc_square_sum(const int *d, int n)
   return sum;
 }
 
-static int 
+static int
 iarray_sum(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct narray *array;
@@ -543,7 +543,7 @@ iarray_sum(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   return 0;
 }
 
-static int 
+static int
 iarray_average(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct narray *array;
