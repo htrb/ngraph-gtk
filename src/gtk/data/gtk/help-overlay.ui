@@ -14,23 +14,33 @@
             <child>
               <object class="GtkShortcutsShortcut">
                 <property name="visible">1</property>
-                <property name="action-name">app.GraphLoadAction</property>
-                <property name="title" translatable="yes">New Window</property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkShortcutsShortcut">
-                <property name="visible">1</property>
                 <property name="action-name">app.quit</property>
-                <property name="accelerator">&lt;ctrl&gt;Q</property>
+                <property name="accelerator">&lt;Primary&gt;Q</property>
                 <property name="title" translatable="yes">Quit</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
                 <property name="visible">1</property>
-                <property name="action-name">win.fullscreen</property>
-                <property name="title" translatable="yes">Fullscreen</property>
+                <property name="action-name">app.GraphLoadAction</property>
+                <property name="title" translatable="yes">Load NGP file</property>
+                <property name="accelerator">&lt;Primary&gt;L</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="visible">1</property>
+                <property name="action-name">app.GraphSaveAction</property>
+                <property name="title" translatable="yes">Save NGP file</property>
+                <property name="accelerator">&lt;Primary&gt;S</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="visible">1</property>
+                <property name="action-name">app.GraphSaveAsAction</property>
+                <property name="title" translatable="yes">Save a copy of the current NGP file</property>
+                <property name="accelerator">&lt;Primary&gt;&lt;shift&gt;S</property>
               </object>
             </child>
             <child>
