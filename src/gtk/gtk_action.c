@@ -846,7 +846,7 @@ create_application_window(GtkWidget **popup)
   gtk_application_set_app_menu(app, G_MENU_MODEL(menu));
 #endif
 
-  builder = gtk_builder_new_from_resource(RESOURCE_PATH "/gtk/shortcuts.ui");
+  builder = gtk_builder_new_from_resource(RESOURCE_PATH "/gtk/help-overlay.ui");
   ShortcutWin = GTK_WIDGET(gtk_builder_get_object(builder, "shortcuts"));
   g_signal_connect(ShortcutWin, "delete-event", G_CALLBACK(cb_del), NULL);
   g_object_unref(builder);
