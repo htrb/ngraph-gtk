@@ -707,15 +707,8 @@ PopupUpdateAction_activated(GSimpleAction *action, GVariant *parameter, gpointer
   ViewerUpdateCB(NULL, NULL);
 }
 
-static GtkWidget *ShortcutWin;
-static void help_overlay_action(GSimpleAction *action, GVariant *parameter, gpointer app)
-{
-  gtk_widget_show_all(ShortcutWin);
-}
-
 static GActionEntry AppEntries[] =
 {
-  { "show-help-overlay", help_overlay_action, NULL, NULL, NULL },
   { "help", help_activated, NULL, NULL, NULL },
   { "about", about_activated, NULL, NULL, NULL },
   { "quit", quit_activated, NULL, NULL, NULL },
@@ -824,18 +817,10 @@ static GActionEntry AppEntries[] =
   { "PopupUpdateAction", PopupUpdateAction_activated, NULL, NULL, NULL },
 };
 
-static gboolean
-cb_del(GtkWidget *w, GdkEvent *event, gpointer user_data)
-{
-  gtk_widget_hide(w);
-  return TRUE;
-}
-
 GtkApplication *
 create_application_window(GtkWidget **popup)
 {
   GtkApplication *app;
-  GtkBuilder *builder;
 
   app = gtk_application_new(APPLICATION_ID, G_APPLICATION_FLAGS_NONE);
   g_application_register(G_APPLICATION(app), NULL, NULL);
@@ -845,11 +830,6 @@ create_application_window(GtkWidget **popup)
   menu = gtk_application_get_menu_by_id(app, "app-menu");
   gtk_application_set_app_menu(app, G_MENU_MODEL(menu));
 #endif
-
-  builder = gtk_builder_new_from_resource(RESOURCE_PATH "/gtk/help-overlay.ui");
-  ShortcutWin = GTK_WIDGET(gtk_builder_get_object(builder, "shortcuts"));
-  g_signal_connect(ShortcutWin, "delete-event", G_CALLBACK(cb_del), NULL);
-  g_object_unref(builder);
 
 #if USE_GTK_BUILDER
   /*
