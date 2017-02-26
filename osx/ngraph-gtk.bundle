@@ -107,10 +107,6 @@
   </data>
 
   <data>
-    ${prefix}/share/pixmaps/ngraph-gtk
-  </data>
-
-  <data>
     ${prefix}/share/doc/ngraph-gtk
   </data>
 
