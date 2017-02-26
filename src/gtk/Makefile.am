@@ -1,6 +1,7 @@
 EXTRA_DIST = dir_defs.h.in data/css/ngraph.css				\
 	data/gtk/menus-common.ui data/gtk/menus-appmenu.ui.in		\
-	data/gtk/menus-appmenu.ui.osx data/pixmaps/ngraph_align_b.png	\
+	data/gtk/shortcuts.ui data/gtk/menus-appmenu.ui.osx		\
+	data/pixmaps/ngraph_align_b.png					\
 	data/pixmaps/ngraph_align_hc.png				\
 	data/pixmaps/ngraph_align_l.png					\
 	data/pixmaps/ngraph_align_r.png					\
@@ -66,7 +67,7 @@ endif
 data/gtk/menus-appmenu.ui: $(APPMENU_UI_SOURCE)
 	cp $< $@
 
-ngraph.resources.c: data/ngraph.resources.xml data/gtk/menus-common.ui data/css/ngraph.css data/gtk/menus-appmenu.ui
+ngraph.resources.c: data/ngraph.resources.xml data/gtk/menus-common.ui data/css/ngraph.css data/gtk/menus-appmenu.ui data/gtk/shortcuts.ui
 	$(GLIB_COMPILE_RESOURCES) --target=$@ --generate-source --sourcedir $(srcdir)/data --sourcedir $(builddir)/data $<
 
 BUILT_SOURCES = ${nodist_libngraphui_la_SOURCES}

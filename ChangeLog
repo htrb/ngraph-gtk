@@ -1,5 +1,8 @@
 2017-02-26  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/gtk/gtk_action.c (create_application_window): add
+	GtkShortcutsWindow.
+
 	* src/gtk/x11menu.c (create_icon, window_to_tab): use
 	"gdk_pixbuf_new_from_resource()".
 
