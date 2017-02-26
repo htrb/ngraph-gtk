@@ -836,9 +836,11 @@ create_application_window(GtkWidget **popup)
   menu = gtk_application_get_menu_by_id(app, "menubar");
   gtk_application_set_menubar(app, G_MENU_MODEL(menu));
   */
-
-  menu = gtk_application_get_menu_by_id(app, "popup-menu");
-  *popup = gtk_menu_new_from_model(G_MENU_MODEL(menu));
+  {
+    GMenu *menu;
+    menu = gtk_application_get_menu_by_id(app, "popup-menu");
+    *popup = gtk_menu_new_from_model(G_MENU_MODEL(menu));
+  }
 #endif
 
   return app;
