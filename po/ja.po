@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.06.13\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
 "POT-Creation-Date: 2017-02-26 20:03+0900\n"
-"PO-Revision-Date: 2017-02-22 10:51+0900\n"
+"PO-Revision-Date: 2017-02-26 20:53+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja\n"
@@ -2234,7 +2234,7 @@ msgstr "アドイン(_A)"
 
 #: src/gtk/x11menu.c:2843
 msgid "_Quit"
-msgstr "終了(Q) "
+msgstr "終了(_Q)"
 
 #: src/gtk/x11menu.c:2865
 msgid "_Graph"
