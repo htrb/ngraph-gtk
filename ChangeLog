@@ -1,5 +1,13 @@
 2017-02-26  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/gtk/gtk_widget.c (create_image_from_file): removed.
+
+	* src/gtk/x11menu.c (create_toolbar, create_menu_sub): use
+	"gtk_image_new_from_resource()".
+
+	* src/gtk/x11lgnd.c (LegendWinState): use
+	"gtk_image_new_from_resource()".
+
 	* src/gtk/gtk_action.c (create_application_window): add
 	GtkShortcutsWindow.
 

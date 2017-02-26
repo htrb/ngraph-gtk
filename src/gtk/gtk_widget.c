@@ -12,17 +12,6 @@
 #include "x11gui.h"
 #include "dir_defs.h"
 
-GtkWidget *
-create_image_from_file(const char *file)
-{
-  GtkWidget *img;
-  GdkPixbuf *pix;
-
-  pix = gdk_pixbuf_new_from_resource(file, NULL);
-  img = gtk_image_new_from_pixbuf(pix);
-  return img;
-}
-
 void
 set_button_icon(GtkWidget *w, const char *icon_name)
 {

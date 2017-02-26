@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.07.02\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2017-02-26 11:42+0900\n"
+"POT-Creation-Date: 2017-02-26 20:03+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -255,7 +255,7 @@ msgstr ""
 
 #: src/gtk/x11axis.c:401 src/gtk/x11axis.c:3157 src/gtk/x11axis.c:3178
 #: src/gtk/x11axis.c:3211 src/gtk/x11lgnd.c:3074 src/gtk/x11lgnd.c:3085
-#: src/gtk/x11lgnd.c:3513 src/gtk/gtk_widget.c:1131
+#: src/gtk/x11lgnd.c:3513 src/gtk/gtk_widget.c:1120
 msgid "Color"
 msgstr ""
 
@@ -1229,11 +1229,11 @@ msgstr ""
 msgid "Join"
 msgstr ""
 
-#: src/gtk/x11file.c:5512 src/gtk/x11lgnd.c:3050 src/gtk/gtk_widget.c:1138
+#: src/gtk/x11file.c:5512 src/gtk/x11lgnd.c:3050 src/gtk/gtk_widget.c:1127
 msgid "Color 1"
 msgstr ""
 
-#: src/gtk/x11file.c:5519 src/gtk/x11lgnd.c:3051 src/gtk/gtk_widget.c:1145
+#: src/gtk/x11file.c:5519 src/gtk/x11lgnd.c:3051 src/gtk/gtk_widget.c:1134
 msgid "Color 2"
 msgstr ""
 
@@ -1358,7 +1358,7 @@ msgstr ""
 
 #: src/gtk/x11gui.c:162 src/gtk/x11gui.c:369 src/gtk/x11gui.c:437
 #: src/gtk/x11gui.c:573 src/gtk/x11gui.c:649 src/gtk/x11gui.c:719
-#: src/gtk/x11gui.c:798 src/gtk/x11gui.c:1036 src/gtk/x11menu.c:5255
+#: src/gtk/x11gui.c:798 src/gtk/x11gui.c:1036 src/gtk/x11menu.c:5253
 msgid "_Cancel"
 msgstr ""
 
@@ -1401,7 +1401,7 @@ msgstr ""
 msgid "%s file (*.%s)"
 msgstr ""
 
-#: src/gtk/x11gui.c:1138 src/gtk/x11gui.c:1173 src/gtk/x11menu.c:5257
+#: src/gtk/x11gui.c:1138 src/gtk/x11gui.c:1173 src/gtk/x11menu.c:5255
 msgid "_Open"
 msgstr ""
 
@@ -2226,31 +2226,31 @@ msgstr ""
 msgid "_Flip"
 msgstr ""
 
-#: src/gtk/x11menu.c:4347
+#: src/gtk/x11menu.c:4345
 msgid "data"
 msgstr ""
 
-#: src/gtk/x11menu.c:5251 src/gtk/x11menu.c:5364
+#: src/gtk/x11menu.c:5249 src/gtk/x11menu.c:5362
 msgid "Recent Graphs"
 msgstr ""
 
-#: src/gtk/x11menu.c:5251 src/gtk/x11menu.c:5370
+#: src/gtk/x11menu.c:5249 src/gtk/x11menu.c:5368
 msgid "Recent Data Files"
 msgstr ""
 
-#: src/gtk/x11menu.c:5358
+#: src/gtk/x11menu.c:5356
 msgid "Save menu"
 msgstr ""
 
-#: src/gtk/x11menu.c:5973
+#: src/gtk/x11menu.c:5971
 msgid "Error:"
 msgstr ""
 
-#: src/gtk/x11menu.c:6022
+#: src/gtk/x11menu.c:6020
 msgid "Question"
 msgstr ""
 
-#: src/gtk/x11menu.c:6080
+#: src/gtk/x11menu.c:6078
 #, c-format
 msgid "Executing `%.128s'."
 msgstr ""
@@ -2620,27 +2620,27 @@ msgstr ""
 msgid "Drawing"
 msgstr ""
 
-#: src/gtk/gtk_widget.c:209
+#: src/gtk/gtk_widget.c:198
 msgid "_Copy Settings"
 msgstr ""
 
-#: src/gtk/gtk_widget.c:1117
+#: src/gtk/gtk_widget.c:1106
 msgid "Stroke Color"
 msgstr ""
 
-#: src/gtk/gtk_widget.c:1124
+#: src/gtk/gtk_widget.c:1113
 msgid "Fill Color"
 msgstr ""
 
-#: src/gtk/gtk_widget.c:1152
+#: src/gtk/gtk_widget.c:1141
 msgid "Axis baseline color"
 msgstr ""
 
-#: src/gtk/gtk_widget.c:1159
+#: src/gtk/gtk_widget.c:1148
 msgid "Axis gauge color"
 msgstr ""
 
-#: src/gtk/gtk_widget.c:1166
+#: src/gtk/gtk_widget.c:1155
 msgid "Axis numbering color"
 msgstr ""
 

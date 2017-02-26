@@ -4,47 +4,47 @@
     <file preprocess="xml-stripblanks">gtk/menus-common.ui</file>
     <file preprocess="xml-stripblanks">gtk/menus-appmenu.ui</file>
     <file preprocess="xml-stripblanks">gtk/help-overlay.ui</file>
-    <file preprocess="to-pixdata">pixmaps/ngraph_align_b.png</file>
-    <file preprocess="to-pixdata">pixmaps/ngraph_align_hc.png</file>
-    <file preprocess="to-pixdata">pixmaps/ngraph_align_l.png</file>
-    <file preprocess="to-pixdata">pixmaps/ngraph_align_r.png</file>
-    <file preprocess="to-pixdata">pixmaps/ngraph_align_t.png</file>
-    <file preprocess="to-pixdata">pixmaps/ngraph_align_vc.png</file>
-    <file preprocess="to-pixdata">pixmaps/ngraph_arc.png</file>
-    <file preprocess="to-pixdata">pixmaps/ngraph_axispoint.png</file>
-    <file preprocess="to-pixdata">pixmaps/ngraph_axiswin.png</file>
-    <file preprocess="to-pixdata">pixmaps/ngraph_axiswin48.png</file>
-    <file preprocess="to-pixdata">pixmaps/ngraph_coordwin.png</file>
-    <file preprocess="to-pixdata">pixmaps/ngraph_coordwin48.png</file>
-    <file preprocess="to-pixdata">pixmaps/ngraph_cross.png</file>
-    <file preprocess="to-pixdata">pixmaps/ngraph_datapoint.png</file>
-    <file preprocess="to-pixdata">pixmaps/ngraph_draw.png</file>
-    <file preprocess="to-pixdata">pixmaps/ngraph_eval.png</file>
-    <file preprocess="to-pixdata">pixmaps/ngraph_filewin.png</file>
-    <file preprocess="to-pixdata">pixmaps/ngraph_filewin48.png</file>
-    <file preprocess="to-pixdata">pixmaps/ngraph_frame.png</file>
-    <file preprocess="to-pixdata">pixmaps/ngraph_gauss.png</file>
-    <file preprocess="to-pixdata">pixmaps/ngraph_icon.png</file>
-    <file preprocess="to-pixdata">pixmaps/ngraph_icon64.png</file>
-    <file preprocess="to-pixdata">pixmaps/ngraph_infowin.png</file>
-    <file preprocess="to-pixdata">pixmaps/ngraph_infowin48.png</file>
-    <file preprocess="to-pixdata">pixmaps/ngraph_legendpoint.png</file>
-    <file preprocess="to-pixdata">pixmaps/ngraph_legendwin.png</file>
-    <file preprocess="to-pixdata">pixmaps/ngraph_legendwin48.png</file>
-    <file preprocess="to-pixdata">pixmaps/ngraph_line.png</file>
-    <file preprocess="to-pixdata">pixmaps/ngraph_mark.png</file>
-    <file preprocess="to-pixdata">pixmaps/ngraph_math.png</file>
-    <file preprocess="to-pixdata">pixmaps/ngraph_mergewin.png</file>
-    <file preprocess="to-pixdata">pixmaps/ngraph_mergewin48.png</file>
-    <file preprocess="to-pixdata">pixmaps/ngraph_point.png</file>
-    <file preprocess="to-pixdata">pixmaps/ngraph_rect.png</file>
-    <file preprocess="to-pixdata">pixmaps/ngraph_scale.png</file>
-    <file preprocess="to-pixdata">pixmaps/ngraph_section.png</file>
-    <file preprocess="to-pixdata">pixmaps/ngraph_single.png</file>
-    <file preprocess="to-pixdata">pixmaps/ngraph_text.png</file>
-    <file preprocess="to-pixdata">pixmaps/ngraph_trimming.png</file>
-    <file preprocess="to-pixdata">pixmaps/ngraph_undo.png</file>
-    <file preprocess="to-pixdata">pixmaps/ngraph_zoom.png</file>
+    <file>pixmaps/ngraph_align_b.png</file>
+    <file>pixmaps/ngraph_align_hc.png</file>
+    <file>pixmaps/ngraph_align_l.png</file>
+    <file>pixmaps/ngraph_align_r.png</file>
+    <file>pixmaps/ngraph_align_t.png</file>
+    <file>pixmaps/ngraph_align_vc.png</file>
+    <file>pixmaps/ngraph_arc.png</file>
+    <file>pixmaps/ngraph_axispoint.png</file>
+    <file>pixmaps/ngraph_axiswin.png</file>
+    <file>pixmaps/ngraph_axiswin48.png</file>
+    <file>pixmaps/ngraph_coordwin.png</file>
+    <file>pixmaps/ngraph_coordwin48.png</file>
+    <file>pixmaps/ngraph_cross.png</file>
+    <file>pixmaps/ngraph_datapoint.png</file>
+    <file>pixmaps/ngraph_draw.png</file>
+    <file>pixmaps/ngraph_eval.png</file>
+    <file>pixmaps/ngraph_filewin.png</file>
+    <file>pixmaps/ngraph_filewin48.png</file>
+    <file>pixmaps/ngraph_frame.png</file>
+    <file>pixmaps/ngraph_gauss.png</file>
+    <file>pixmaps/ngraph_icon.png</file>
+    <file>pixmaps/ngraph_icon64.png</file>
+    <file>pixmaps/ngraph_infowin.png</file>
+    <file>pixmaps/ngraph_infowin48.png</file>
+    <file>pixmaps/ngraph_legendpoint.png</file>
+    <file>pixmaps/ngraph_legendwin.png</file>
+    <file>pixmaps/ngraph_legendwin48.png</file>
+    <file>pixmaps/ngraph_line.png</file>
+    <file>pixmaps/ngraph_mark.png</file>
+    <file>pixmaps/ngraph_math.png</file>
+    <file>pixmaps/ngraph_mergewin.png</file>
+    <file>pixmaps/ngraph_mergewin48.png</file>
+    <file>pixmaps/ngraph_point.png</file>
+    <file>pixmaps/ngraph_rect.png</file>
+    <file>pixmaps/ngraph_scale.png</file>
+    <file>pixmaps/ngraph_section.png</file>
+    <file>pixmaps/ngraph_single.png</file>
+    <file>pixmaps/ngraph_text.png</file>
+    <file>pixmaps/ngraph_trimming.png</file>
+    <file>pixmaps/ngraph_undo.png</file>
+    <file>pixmaps/ngraph_zoom.png</file>
     <file>css/ngraph.css</file>
   </gresource>
 </gresources>

@@ -3577,7 +3577,7 @@ LegendWinState(struct SubWin *d, int state)
   }
 
   for (i = 0; i < LEGENDNUM; i++) {
-    icons[i] = create_image_from_file(legend_data[i].icon_file);
+    icons[i] = gtk_image_new_from_resource(legend_data[i].icon_file);
     gtk_widget_set_tooltip_text(GTK_WIDGET(icons[i]), _(legend_data[i].name));
   }
 

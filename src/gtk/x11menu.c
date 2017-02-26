@@ -4181,7 +4181,6 @@ static void
 window_to_tab(struct SubWin *win, GtkWidget *tab, const char *icon_file, const char *tip)
 {
   GtkWidget *w, *icon, *dialog;
-  GdkPixbuf *pix;
   int obj_id;
 
   obj_id = chkobjectid(win->data.data->obj);
@@ -4192,8 +4191,7 @@ window_to_tab(struct SubWin *win, GtkWidget *tab, const char *icon_file, const c
   g_object_set_data(G_OBJECT(w), OBJ_ID_KEY, GINT_TO_POINTER(obj_id));
   gtk_container_remove(GTK_CONTAINER(dialog), w);
 
-  pix = gdk_pixbuf_new_from_resource(icon_file, NULL);
-  icon = gtk_image_new_from_pixbuf(pix);
+  icon = gtk_image_new_from_resource(icon_file);
   gtk_widget_set_tooltip_text(icon, tip);
 
   gtk_notebook_append_page(GTK_NOTEBOOK(tab), w, icon);
@@ -5340,7 +5338,7 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
     if (item[i].icon) {
       icon = gtk_image_new_from_icon_name(item[i].icon, GTK_ICON_SIZE_SMALL_TOOLBAR);
     } else if (item[i].icon_file) {
-      icon = create_image_from_file(item[i].icon_file);
+      icon = gtk_image_new_from_resource(item[i].icon_file);
     }
 
     switch (item[i].type) {
@@ -5457,7 +5455,7 @@ create_menu_sub(GtkWidget *parent, struct MenuItem *item, int popup)
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(widget), icon);
       } else if (item[i].icon_file) {
 	GtkWidget *icon;
-	icon = create_image_from_file(item[i].icon_file);
+	icon = gtk_image_new_from_resource(item[i].icon_file);
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(widget), icon);
       }
 #endif
