@@ -715,6 +715,7 @@ static void help_overlay_action(GSimpleAction *action, GVariant *parameter, gpoi
 
 static GActionEntry AppEntries[] =
 {
+  { "show-help-overlay", help_overlay_action, NULL, NULL, NULL },
   { "help", help_activated, NULL, NULL, NULL },
   { "about", about_activated, NULL, NULL, NULL },
   { "quit", quit_activated, NULL, NULL, NULL },
@@ -821,7 +822,6 @@ static GActionEntry AppEntries[] =
   { "PreferenceDataDefaultAction", PreferenceDataDefaultAction_activated, NULL, NULL, NULL },
   { "PreferenceTextDefaultAction", PreferenceTextDefaultAction_activated, NULL, NULL, NULL },
   { "PopupUpdateAction", PopupUpdateAction_activated, NULL, NULL, NULL },
-  { "shortcuts", help_overlay_action, NULL, NULL, NULL },
 };
 
 static gboolean

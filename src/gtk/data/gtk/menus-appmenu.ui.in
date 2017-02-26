@@ -4,7 +4,7 @@
     <section>
      <item>
         <attribute name="label" translatable="yes">_Keyboard Shortcuts</attribute>
-        <attribute name="action">app.shortcuts</attribute>
+        <attribute name="action">app.show-help-overlay</attribute>
       </item>
     </section>
     <section>
