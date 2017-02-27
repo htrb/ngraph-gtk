@@ -826,7 +826,7 @@ create_application_window(GtkWidget **popup)
   g_application_register(G_APPLICATION(app), NULL, NULL);
   g_action_map_add_action_entries(G_ACTION_MAP(app), AppEntries, G_N_ELEMENTS(AppEntries), app);
 
-#if 0
+#if OSX
   menu = gtk_application_get_menu_by_id(app, "app-menu");
   gtk_application_set_app_menu(app, G_MENU_MODEL(menu));
 #endif
