@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.07.02\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2017-02-26 20:03+0900\n"
+"POT-Creation-Date: 2017-02-27 17:27+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -568,8 +568,7 @@ msgstr ""
 msgid "No zero"
 msgstr ""
 
-#: src/gtk/x11commn.c:1168 src/gtk/x11menu.c:666 src/gtk/x11menu.c:2667
-#: src/gtk/x11menu.c:2948
+#: src/gtk/x11commn.c:1168 src/gtk/x11menu.c:666
 msgid "Save NGP file"
 msgstr ""
 
@@ -1346,7 +1345,7 @@ msgstr ""
 msgid "_Include merge file"
 msgstr ""
 
-#: src/gtk/x11graph.c:1081 src/gtk/x11menu.c:650 src/gtk/x11menu.c:2639
+#: src/gtk/x11graph.c:1081 src/gtk/x11menu.c:650
 msgid "Load NGP file"
 msgstr ""
 
@@ -1846,7 +1845,7 @@ msgid "_Print"
 msgstr ""
 
 #: src/gtk/x11menu.c:717 src/gtk/x11menu.c:718 src/gtk/x11menu.c:2769
-#: src/gtk/x11menu.c:2770 src/gtk/x11print.c:666
+#: src/gtk/x11print.c:666
 msgid "Print"
 msgstr ""
 
@@ -1876,6 +1875,10 @@ msgstr ""
 
 #: src/gtk/x11menu.c:802 src/gtk/x11menu.c:2928
 msgid "_Help"
+msgstr ""
+
+#: src/gtk/x11menu.c:804
+msgid "Show the help document"
 msgstr ""
 
 #: src/gtk/x11menu.c:822
@@ -2014,6 +2017,26 @@ msgstr ""
 msgid "cross _Gauge"
 msgstr ""
 
+#: src/gtk/x11menu.c:2041
+msgid "Show cross gauge"
+msgstr ""
+
+#: src/gtk/x11menu.c:2063
+msgid "Rise selection to top"
+msgstr ""
+
+#: src/gtk/x11menu.c:2079
+msgid "Rise selection one step"
+msgstr ""
+
+#: src/gtk/x11menu.c:2095
+msgid "Lower selection one step"
+msgstr ""
+
+#: src/gtk/x11menu.c:2111
+msgid "Lower selection to bottom"
+msgstr ""
+
 #: src/gtk/x11menu.c:2131 src/gtk/x11menu.c:3104
 msgid "Align _Left"
 msgstr ""
@@ -2042,12 +2065,32 @@ msgstr ""
 msgid "Cu_t"
 msgstr ""
 
+#: src/gtk/x11menu.c:2239
+msgid "Cut selected object to clipboard"
+msgstr ""
+
 #: src/gtk/x11menu.c:2253 src/gtk/x11menu.c:3226 src/gtk/x11view.c:962
 msgid "_Copy"
 msgstr ""
 
+#: src/gtk/x11menu.c:2255
+msgid "Copy selected object to clipboard"
+msgstr ""
+
 #: src/gtk/x11menu.c:2269 src/gtk/x11menu.c:3242
 msgid "_Paste"
+msgstr ""
+
+#: src/gtk/x11menu.c:2271
+msgid "Paste object from clipboard"
+msgstr ""
+
+#: src/gtk/x11menu.c:2287
+msgid "Delete the selected object"
+msgstr ""
+
+#: src/gtk/x11menu.c:2303
+msgid "Duplicate the selected object"
 msgstr ""
 
 #: src/gtk/x11menu.c:2321
@@ -2162,12 +2205,24 @@ msgstr ""
 msgid "_New graph"
 msgstr ""
 
+#: src/gtk/x11menu.c:2639
+msgid "Load a graph (NGP file)"
+msgstr ""
+
 #: src/gtk/x11menu.c:2653
 msgid "_Recent graphs"
 msgstr ""
 
+#: src/gtk/x11menu.c:2667 src/gtk/x11menu.c:2948
+msgid "Save the graph"
+msgstr ""
+
 #: src/gtk/x11menu.c:2681 src/gtk/x11menu.c:2966
 msgid "Save _As"
+msgstr ""
+
+#: src/gtk/x11menu.c:2683
+msgid "Save the graph with a new filename"
 msgstr ""
 
 #: src/gtk/x11menu.c:2697 src/gtk/x11menu.c:2986
@@ -2186,6 +2241,10 @@ msgstr ""
 msgid "Print preview"
 msgstr ""
 
+#: src/gtk/x11menu.c:2770
+msgid "Print the graph"
+msgstr ""
+
 #: src/gtk/x11menu.c:2788
 msgid "_Current directory"
 msgstr ""
@@ -2200,6 +2259,10 @@ msgstr ""
 
 #: src/gtk/x11menu.c:2843
 msgid "_Quit"
+msgstr ""
+
+#: src/gtk/x11menu.c:2845
+msgid "Quit the application"
 msgstr ""
 
 #: src/gtk/x11menu.c:2865

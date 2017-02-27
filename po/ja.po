@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.06.13\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2017-02-26 20:03+0900\n"
-"PO-Revision-Date: 2017-02-26 20:53+0900\n"
+"POT-Creation-Date: 2017-02-27 17:27+0900\n"
+"PO-Revision-Date: 2017-02-27 17:50+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja\n"
@@ -595,8 +595,7 @@ msgstr "ベキ形式(ログ)"
 msgid "No zero"
 msgstr "ゼロ非表示"
 
-#: src/gtk/x11commn.c:1168 src/gtk/x11menu.c:666 src/gtk/x11menu.c:2667
-#: src/gtk/x11menu.c:2948
+#: src/gtk/x11commn.c:1168 src/gtk/x11menu.c:666
 msgid "Save NGP file"
 msgstr "NGPファイルの保存"
 
@@ -1375,7 +1374,7 @@ msgstr "データファイルを含める(_I)"
 msgid "_Include merge file"
 msgstr "合成ファイルを含める(_I)"
 
-#: src/gtk/x11graph.c:1081 src/gtk/x11menu.c:650 src/gtk/x11menu.c:2639
+#: src/gtk/x11graph.c:1081 src/gtk/x11menu.c:650
 msgid "Load NGP file"
 msgstr "NGPファイルを開く"
 
@@ -1880,7 +1879,7 @@ msgid "_Print"
 msgstr "印刷(_P)"
 
 #: src/gtk/x11menu.c:717 src/gtk/x11menu.c:718 src/gtk/x11menu.c:2769
-#: src/gtk/x11menu.c:2770 src/gtk/x11print.c:666
+#: src/gtk/x11print.c:666
 msgid "Print"
 msgstr "印刷"
 
@@ -1911,6 +1910,10 @@ msgstr "スケール設定のundo"
 #: src/gtk/x11menu.c:802 src/gtk/x11menu.c:2928
 msgid "_Help"
 msgstr "ヘルプ(_H)"
+
+#: src/gtk/x11menu.c:804
+msgid "Show the help document"
+msgstr "ヘルプの表示"
 
 #: src/gtk/x11menu.c:822
 msgid "_About"
@@ -2048,6 +2051,26 @@ msgstr "ツールボックス(_T)"
 msgid "cross _Gauge"
 msgstr "クロスゲージ(_G)"
 
+#: src/gtk/x11menu.c:2041
+msgid "Show cross gauge"
+msgstr "クロスゲージを表示"
+
+#: src/gtk/x11menu.c:2063
+msgid "Rise selection to top"
+msgstr "最前面に移動"
+
+#: src/gtk/x11menu.c:2079
+msgid "Rise selection one step"
+msgstr "前面に１段移動"
+
+#: src/gtk/x11menu.c:2095
+msgid "Lower selection one step"
+msgstr "背面に１段移動"
+
+#: src/gtk/x11menu.c:2111
+msgid "Lower selection to bottom"
+msgstr "最背面に移動"
+
 #: src/gtk/x11menu.c:2131 src/gtk/x11menu.c:3104
 msgid "Align _Left"
 msgstr "左揃え(_L)"
@@ -2076,13 +2099,33 @@ msgstr "下端揃え(_B)"
 msgid "Cu_t"
 msgstr "切り取り(_T)"
 
+#: src/gtk/x11menu.c:2239
+msgid "Cut selected object to clipboard"
+msgstr "選択したオブジェクトをクリップボードにカット"
+
 #: src/gtk/x11menu.c:2253 src/gtk/x11menu.c:3226 src/gtk/x11view.c:962
 msgid "_Copy"
 msgstr "コピー(_C)"
 
+#: src/gtk/x11menu.c:2255
+msgid "Copy selected object to clipboard"
+msgstr "選択したオブジェクトをクリップボードにコピー"
+
 #: src/gtk/x11menu.c:2269 src/gtk/x11menu.c:3242
 msgid "_Paste"
 msgstr "貼り付け(_P)"
+
+#: src/gtk/x11menu.c:2271
+msgid "Paste object from clipboard"
+msgstr "クリップボードのオブジェクトを貼り付け"
+
+#: src/gtk/x11menu.c:2287
+msgid "Delete the selected object"
+msgstr "選択したオブジェクトの削除"
+
+#: src/gtk/x11menu.c:2303
+msgid "Duplicate the selected object"
+msgstr "選択したオブジェクトを２重化"
 
 #: src/gtk/x11menu.c:2321
 msgid "draw _Order"
@@ -2196,13 +2239,25 @@ msgstr "EMF としてクリップボードにコピー"
 msgid "_New graph"
 msgstr "新規作成(_N)"
 
+#: src/gtk/x11menu.c:2639
+msgid "Load a graph (NGP file)"
+msgstr "グラフ(NGPファイル)を開く"
+
 #: src/gtk/x11menu.c:2653
 msgid "_Recent graphs"
 msgstr "最近使用したグラフ(_R)"
 
+#: src/gtk/x11menu.c:2667 src/gtk/x11menu.c:2948
+msgid "Save the graph"
+msgstr "グラフの保存"
+
 #: src/gtk/x11menu.c:2681 src/gtk/x11menu.c:2966
 msgid "Save _As"
 msgstr "名前をつけて保存(_A)"
+
+#: src/gtk/x11menu.c:2683
+msgid "Save the graph with a new filename"
+msgstr "グラフに名前をつけて保存"
 
 #: src/gtk/x11menu.c:2697 src/gtk/x11menu.c:2986
 msgid "_Export image"
@@ -2220,6 +2275,10 @@ msgstr "印刷プレビュー(_V)"
 msgid "Print preview"
 msgstr "印刷プレビュー"
 
+#: src/gtk/x11menu.c:2770
+msgid "Print the graph"
+msgstr "グラフを印刷"
+
 #: src/gtk/x11menu.c:2788
 msgid "_Current directory"
 msgstr "現在のディレクトリ(_C)"
@@ -2235,6 +2294,10 @@ msgstr "アドイン(_A)"
 #: src/gtk/x11menu.c:2843
 msgid "_Quit"
 msgstr "終了(_Q)"
+
+#: src/gtk/x11menu.c:2845
+msgid "Quit the application"
+msgstr "アプリケーションの終了"
 
 #: src/gtk/x11menu.c:2865
 msgid "_Graph"
@@ -3373,9 +3436,6 @@ msgstr "ワインディング"
 #~ msgid "_Window"
 #~ msgstr "ウィンドウ(_W)"
 
-#~ msgid "_Show cross"
-#~ msgstr "クロスゲージ表示(_S)"
-
 #~ msgid "I/O error: Write"
 #~ msgstr "I/O エラー: 書き込み"
 
@@ -3417,9 +3477,6 @@ msgstr "ワインディング"
 
 #~ msgid "_JFont"
 #~ msgstr "英文フォント(_F):"
-
-#~ msgid "Color selection"
-#~ msgstr "色の選択"
 
 #~ msgid "Printing"
 #~ msgstr "印刷中"
