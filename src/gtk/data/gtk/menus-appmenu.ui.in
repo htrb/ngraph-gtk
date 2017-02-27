@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <menu id="app-menu">
+    <!--
     <section>
      <item>
         <attribute name="label" translatable="yes">_Keyboard Shortcuts</attribute>
         <attribute name="action">win.show-help-overlay</attribute>
       </item>
     </section>
+    -->
     <section>
       <item>
 	<attribute name="label" translatable="yes">_Help</attribute>
