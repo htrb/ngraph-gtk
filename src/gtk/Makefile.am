@@ -67,7 +67,7 @@ endif
 data/gtk/menus-appmenu.ui: $(APPMENU_UI_SOURCE)
 	cp $< $@
 
-ngraph.resources.c: data/ngraph.resources.xml data/gtk/menus-common.ui data/css/ngraph.css data/gtk/menus-appmenu.ui data/gtk/help-overlay.ui
+ngraph.resources.c: $(srcdir)/data/ngraph.resources.xml $(srcdir)/data/gtk/menus-common.ui $(srcdir)/data/css/ngraph.css $(srcdir)/data/gtk/help-overlay.ui data/gtk/menus-appmenu.ui
 	$(GLIB_COMPILE_RESOURCES) --target=$@ --generate-source --sourcedir $(srcdir)/data --sourcedir $(builddir)/data $<
 
 BUILT_SOURCES = ${nodist_libngraphui_la_SOURCES}
