@@ -66,7 +66,7 @@ endif
 
 uidir = data/gtk
 $(uidir)/menus-appmenu.ui: $(APPMENU_UI_SOURCE)
-	$(INSTALL_DATA) $< $@
+	$(INSTALL_DATA) -D $< $@
 
 ngraph.resources.c: $(srcdir)/data/ngraph.resources.xml $(srcdir)/data/gtk/menus-common.ui $(srcdir)/data/css/ngraph.css $(srcdir)/data/gtk/help-overlay.ui data/gtk/menus-appmenu.ui
 	$(GLIB_COMPILE_RESOURCES) --target=$@ --generate-source --sourcedir $(srcdir)/data --sourcedir $(builddir)/data $<
@@ -77,7 +77,7 @@ ngraphconfdir = $(sysconfdir)/$(PACKAGE)
 pixmapdir = $(datadir)/pixmaps/$(PACKAGE)
 
 dir_defs.h: dir_defs.h.in Makefile
-	sh $(top_srcdir)/pathconv.sh "$(bindir)" "$(docdir)" "$(pkglibexecdir)" "$(pkglibdir)" "$(pkgdatadir)" "$(ngraphconfdir)" $(srcdir)/dir_defs.h.in
+	$(SHELL) $(top_srcdir)/pathconv.sh "$(bindir)" "$(docdir)" "$(pkglibexecdir)" "$(pkglibdir)" "$(pkgdatadir)" "$(ngraphconfdir)" $(srcdir)/dir_defs.h.in
 
 libngraphui_la_CFLAGS = $(GTK_CFLAGS) -I$(top_builddir) -I$(builddir) -I$(srcdir)/.. -I$(srcdir)/../math
 
