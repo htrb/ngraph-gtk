@@ -830,7 +830,7 @@ create_application_window(GtkWidget **popup)
   {
     /* only for remove "Settings" menu item */
     GtkBuilder *builder;
-    GObject menu;
+    GObject *menu;
     builder = gtk_builder_new_from_resource(RESOURCE_PATH "/gtk/menus-appmeu.ui");
     menu = gtk_builder_get_object(builder, "app-menu");
     gtk_application_set_app_menu(app, G_MENU_MODEL(menu));
