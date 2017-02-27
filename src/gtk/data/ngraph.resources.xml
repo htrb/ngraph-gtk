@@ -3,7 +3,9 @@
   <gresource prefix="/com/github/htrb/ngraph-gtk">
     <file preprocess="xml-stripblanks">gtk/menus-common.ui</file>
     <file preprocess="xml-stripblanks">gtk/menus-appmenu.ui</file>
-    <file preprocess="xml-stripblanks">gtk/help-overlay.ui</file>
+    <!--
+	<file preprocess="xml-stripblanks">gtk/help-overlay.ui</file>
+    -->
     <file>pixmaps/ngraph_align_b.png</file>
     <file>pixmaps/ngraph_align_hc.png</file>
     <file>pixmaps/ngraph_align_l.png</file>
