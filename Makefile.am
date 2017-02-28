@@ -27,7 +27,7 @@ dmg: $(ngraph_app)
 	$(RM) $(ngraph_package)
 	hdiutil create -srcfolder $(ngraph_app) $(ngraph_package)
 
-CLEANFILES = $(ngraph_app) $(ngraph_package)
+MAINTAINERCLEANFILES = $(ngraph_package)
 endif
 
 LIBTOOL_DEPS = @LIBTOOL_DEPS@
