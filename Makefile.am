@@ -19,7 +19,7 @@ ngraph_package = $(PACKAGE)-$(PACKAGE_VERSION)-x86_64.dmg
 
 bundler: $(ngraph_app)
 
-$(ngraph_app): osx/ngraph-gtk.bundle src/ngraph
+$(ngraph_app): osx/ngraph-gtk.bundle $(bindir)/ngraph
 	rm -rf $(ngraph_app)
 	gtk-mac-bundler $<
 
