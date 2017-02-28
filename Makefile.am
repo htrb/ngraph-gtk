@@ -19,7 +19,7 @@ ngraph_package = $(PACKAGE)-$(PACKAGE_VERSION)-x86_64.dmg
 
 bundler: $(ngraph_app)
 
-$(ngraph_app): osx/ngraph-gtk.bundle
+$(ngraph_app): osx/ngraph-gtk.bundle src/ngraph
 	rm -rf $(ngraph_app)
 	gtk-mac-bundler $<
 
@@ -27,7 +27,7 @@ dmg: $(ngraph_app)
 	$(RM) $(ngraph_package)
 	hdiutil create -srcfolder $(ngraph_app) $(ngraph_package)
 
-CLEANFILES = $(ngraph_app) $(ngraph_package)
+CLEANFILES = $(ngraph_package)
 endif
 
 LIBTOOL_DEPS = @LIBTOOL_DEPS@
