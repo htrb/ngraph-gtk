@@ -23,7 +23,9 @@ $(ngraph_app): osx/ngraph-gtk.bundle $(bindir)/ngraph
 	rm -rf $(ngraph_app)
 	gtk-mac-bundler $<
 
-dmg: $(ngraph_app)
+dmg: $(ngraph_package)
+
+$(ngraph_package): $(ngraph_app)
 	$(RM) $(ngraph_package)
 	hdiutil create -srcfolder $(ngraph_app) $(ngraph_package)
 
