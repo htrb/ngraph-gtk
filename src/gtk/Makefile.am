@@ -66,7 +66,8 @@ endif
 
 uidir = data/gtk
 $(uidir)/menus-appmenu.ui: $(APPMENU_UI_SOURCE)
-	$(INSTALL_DATA) -D $< $@
+	$(MKDIR_P) $(uidir)
+	cp $< $@
 
 ngraph.resources.c: $(srcdir)/data/ngraph.resources.xml $(srcdir)/data/gtk/menus-common.ui $(srcdir)/data/css/ngraph.css $(srcdir)/data/gtk/help-overlay.ui data/gtk/menus-appmenu.ui
 	$(GLIB_COMPILE_RESOURCES) --target=$@ --generate-source --sourcedir $(srcdir)/data --sourcedir $(builddir)/data $<
