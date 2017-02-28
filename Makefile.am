@@ -13,9 +13,17 @@ AM_CFLAGS = -mms-bitfields
 endif
 
 if OS_OSX
+
+ngraph_app = ~/Desktop/$(PACKAGE).app
+ngraph_package = $(PACKAGE)-$(PACKAGE_VERSION)-x86_64.dmg
+
 bundler: osx/ngraph-gtk.bundle
-	rm -rf ~/Desktop/Ngraph-GTK.app
+	rm -rf $(ngraph_app)
 	gtk-mac-bundler $<
+
+dmg: $(ngraph_app)
+	$(RM) $(ngraph_package)
+	hdiutil create -srcfolder $(ngraph_app) $(ngraph_package)
 endif
 
 LIBTOOL_DEPS = @LIBTOOL_DEPS@
