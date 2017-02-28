@@ -26,6 +26,8 @@ $(ngraph_app): osx/ngraph-gtk.bundle
 dmg: $(ngraph_app)
 	$(RM) $(ngraph_package)
 	hdiutil create -srcfolder $(ngraph_app) $(ngraph_package)
+
+CLEANFILES = $(ngraph_app) $(ngraph_package)
 endif
 
 LIBTOOL_DEPS = @LIBTOOL_DEPS@
