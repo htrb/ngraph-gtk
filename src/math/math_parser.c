@@ -32,7 +32,7 @@ static MathExpression * parse_unary_expression(const char **str, MathEquation *e
 
 
 static struct math_token *
-my_get_token(const const char **str)
+my_get_token(const char **str)
 {
   struct math_token *token;
 
