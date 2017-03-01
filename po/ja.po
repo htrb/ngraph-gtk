@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.06.13\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2017-02-27 17:27+0900\n"
-"PO-Revision-Date: 2017-02-27 17:50+0900\n"
+"POT-Creation-Date: 2017-03-01 10:01+0900\n"
+"PO-Revision-Date: 2017-03-01 10:02+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja\n"
@@ -900,7 +900,7 @@ msgstr "ファイル(_F)"
 msgid "_Range"
 msgstr "範囲(_R)"
 
-#: src/gtk/x11file.c:125 src/gtk/x11menu.c:1521
+#: src/gtk/x11file.c:125
 msgid "_Recent file"
 msgstr "最近使用したファイル(_R)"
 
@@ -1966,6 +1966,10 @@ msgstr "データファイルの追加"
 #: src/gtk/x11menu.c:1502
 msgid "Add range plot"
 msgstr "範囲プロットの追加"
+
+#: src/gtk/x11menu.c:1521
+msgid "_Recent files"
+msgstr "最近使用したファイル(_R)"
 
 #: src/gtk/x11menu.c:1600 src/gtk/x11menu.c:3002
 msgid "_Save data"

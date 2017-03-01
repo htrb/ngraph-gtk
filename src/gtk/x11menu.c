@@ -1518,7 +1518,7 @@ static struct MenuItem PlotAddMenu[] = {
   },
   {
     MENU_TYPE_RECENT_DATA,
-    N_("_Recent file"),
+    N_("_Recent files"),
     NULL,
   },
   {
