@@ -2379,7 +2379,7 @@ getdataarray(char *buf, int maxdim, double *count, MathValue *data, const char *
     hex = FALSE;
     if (dim>=maxdim) return 0;
     if (csv) {
-      for (;(*po==' ');po++);
+      for (;*po==' ';po++);
       if (*po=='\0') break;
       if (CHECK_IFS(ifs, *po)) {
         po2=po;
@@ -2407,7 +2407,7 @@ getdataarray(char *buf, int maxdim, double *count, MathValue *data, const char *
 	}
 #endif
 	val = get_value_from_str(po, po2, &st);
-        for (;(*po2==' ');po2++);
+        for (;*po2==' ';po2++);
         if (CHECK_IFS(ifs, *po2)) po2++;
      }
     } else {
@@ -6372,7 +6372,7 @@ f2dcolumn_file(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **a
                 rval->str=buf2;
                 break;
               } else {
-                for (;(*po2==' ');po2++);
+                for (;*po2==' ';po2++);
                 if (strchr(ifs,*po2)!=NULL) po2++;
                 po=po2;
               }
