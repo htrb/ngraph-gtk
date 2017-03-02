@@ -1,6 +1,7 @@
 2017-03-02  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (setup_toolbar): added.
+	(create_toplevel_window): call "setup_toolbar()" before realize the window.
 
 	* src/gtk/x11commn.c (ProgressDialogCreate): don't destory existent widget.
 	(ProgressDialogFinalize): don't destory widget.
