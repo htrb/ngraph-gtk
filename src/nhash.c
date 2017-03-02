@@ -10,7 +10,7 @@
 #include "object.h"
 #include "nhash.h"
 
-#define HASH_SIZE 67
+#define HASH_SIZE 251
 
 NHASH
 nhash_new(void)
