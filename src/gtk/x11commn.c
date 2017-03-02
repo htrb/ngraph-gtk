@@ -1793,7 +1793,7 @@ ProgressDialogSetTitle(char *title)
 }
 
 static void
-show_progress(int pos, char *msg, double fraction)
+show_progress(int pos, const char *msg, double fraction)
 {
   GtkProgressBar *bar;
 
@@ -1835,15 +1835,21 @@ ProgressDialogCreate(char *title)
   if (TopLevel == NULL)
     return;
 
-  if (ProgressDialog)
-    gtk_widget_destroy(ProgressDialog);
-
   reset_interrupt();
 
   SaveCursor = NGetCursor();
   NSetCursor(GDK_WATCH);
 
   set_draw_lock(DrawLockDraw);
+
+  if (ProgressDialog) {
+    ProgressDialogSetTitle(title);
+    show_progress(0, "", 0);
+    show_progress(1, "", 0);
+    set_progress_func(show_progress);
+    gtk_widget_show_all(ProgressDialog);
+    return;
+  }
 
   ProgressDialog = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   g_signal_connect(ProgressDialog, "delete-event", G_CALLBACK(cb_del), NULL);
@@ -1866,14 +1872,21 @@ ProgressDialogCreate(char *title)
   gtk_progress_bar_set_show_text(ProgressBar2, TRUE);
   gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(ProgressBar2), FALSE, FALSE, 4);
 
-  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
   btn = gtk_button_new_with_mnemonic(_("_Stop"));
   set_button_icon(btn, "process-stop");
   g_signal_connect(btn, "clicked", G_CALLBACK(stop_btn_clicked), NULL);
+#if USE_HEADER_BAR
+  hbox = gtk_header_bar_new();
+  gtk_header_bar_set_title(GTK_HEADER_BAR(hbox), title);
+  gtk_header_bar_pack_end(GTK_HEADER_BAR(hbox), btn);
+  gtk_window_set_titlebar(GTK_WINDOW(ProgressDialog), hbox);
+#else
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
   gtk_box_pack_end(GTK_BOX(hbox), btn, FALSE, FALSE, 4);
 
   gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
+#endif
   gtk_container_add(GTK_CONTAINER(ProgressDialog), vbox);
 
   gtk_window_set_default_size(GTK_WINDOW(ProgressDialog), 400, -1);
@@ -1888,12 +1901,9 @@ ProgressDialogFinalize(void)
   if (TopLevel == NULL)
     return;
 
+  gtk_widget_hide(ProgressDialog);
   NSetCursor(SaveCursor);
   set_progress_func(NULL);
-  gtk_widget_destroy(ProgressDialog);
-  ProgressDialog = NULL;
-  ProgressBar = NULL;
-  ProgressBar2 = NULL;
   set_draw_lock(DrawLockNone);
 }
 

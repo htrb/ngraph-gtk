@@ -44,7 +44,7 @@
 #endif
 
 
-static void (* ShowProgressFunc)(int, char *, double) = NULL;
+static void (* ShowProgressFunc)(int, const char *, double) = NULL;
 
 #if EOF == -1
 static char C_type_buf[257];
@@ -943,7 +943,7 @@ stderrfd(void)
 }
 
 void
-set_progress_func(void (* func)(int, char *, double))
+set_progress_func(void (* func)(int, const char *, double))
 {
   ShowProgressFunc = func;
 }

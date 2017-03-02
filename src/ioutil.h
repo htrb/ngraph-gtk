@@ -74,7 +74,7 @@ int nwrite(int fd,char *buf,unsigned len);
 int stdinfd(void);
 int stdoutfd(void);
 int stderrfd(void);
-void set_progress_func(void (* func)(int, char *, double));
+void set_progress_func(void (* func)(int, const char *, double));
 void set_progress(int pos, char *msg, double fraction);
 int n_mkstemp(const char *dir, char *templ, char **name);
 FILE *n_tmpfile(char **name);

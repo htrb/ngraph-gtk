@@ -1,3 +1,8 @@
+2017-03-02  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11commn.c (ProgressDialogCreate): don't destory existent widget.
+	(ProgressDialogFinalize): don't destory widget.
+
 2017-03-01  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/odata.c (getdataarray, f2dcolumn_file): remove extraneous parentheses.
