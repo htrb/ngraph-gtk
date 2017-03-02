@@ -16,11 +16,16 @@
 #define USE_APP_MENU GTK_CHECK_VERSION(3, 12, 0)
 #if OSX
 #define USE_GTK_BUILDER 1
-#define USE_HEADER_BAR 1
 #else
 #define USE_GTK_BUILDER 0
-#define USE_HEADER_BAR 0
 #endif
+
+#if WINDOWS || OSX
+#define USE_HEADER_BAR 0
+#else
+#define USE_HEADER_BAR 1
+#endif
+
 
 #define APPLICATION_ID "com.github.htrb.ngraph-gtk"
 #define RESOURCE_PATH "/com/github/htrb/ngraph-gtk"
