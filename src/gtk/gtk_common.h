@@ -13,12 +13,13 @@
 #define GTK_WIDGET_VISIBLE(w) gtk_widget_get_visible(w)
 #endif
 
-#define USE_HEADER_BAR 0
 #define USE_APP_MENU GTK_CHECK_VERSION(3, 12, 0)
 #if OSX
 #define USE_GTK_BUILDER 1
+#define USE_HEADER_BAR 1
 #else
 #define USE_GTK_BUILDER 0
+#define USE_HEADER_BAR 0
 #endif
 
 #define APPLICATION_ID "com.github.htrb.ngraph-gtk"
