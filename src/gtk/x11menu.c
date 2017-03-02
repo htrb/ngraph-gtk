@@ -4520,12 +4520,40 @@ clipboard_changed(GtkWidget *w, GdkEvent *e, gpointer user_data)
 }
 #endif
 
+#define USE_APP_HEADER_BAR 0
+static void
+setup_toolbar(GtkWidget *window)
+{
+  GtkWidget *w;
+#if USE_APP_HEADER_BAR
+  GtkWidget *hbar;
+#endif
+  w = create_toolbar(CommandToolbar, sizeof(CommandToolbar) / sizeof(*CommandToolbar), NULL);
+  CToolbar = w;
+  gtk_toolbar_set_style(GTK_TOOLBAR(w), GTK_TOOLBAR_ICONS);
+
+#if USE_APP_HEADER_BAR
+  hbar = gtk_header_bar_new();
+  gtk_header_bar_set_title(GTK_HEADER_BAR(hbar), AppName);
+  gtk_header_bar_set_show_close_button(GTK_HEADER_BAR(hbar), TRUE);
+  gtk_header_bar_pack_start(GTK_HEADER_BAR(hbar), CToolbar);
+  gtk_window_set_titlebar(GTK_WINDOW(window), hbar);
+#endif
+  w = create_toolbar(PointerToolbar, sizeof(PointerToolbar) / sizeof(*PointerToolbar), G_CALLBACK(CmViewerButtonPressed));
+  PToolbar = w;
+  gtk_orientable_set_orientation(GTK_ORIENTABLE(w), GTK_ORIENTATION_VERTICAL);
+  gtk_toolbar_set_style(GTK_TOOLBAR(w), GTK_TOOLBAR_ICONS);
+}
+
 static void
 setupwindow(void)
 {
-  GtkWidget *w, *hbox, *hbox2, *vbox, *vbox2, *table, *hpane1, *hpane2, *vpane1, *vpane2;
+  GtkWidget *w, *hbox, *hbox2, *vbox2, *table, *hpane1, *hpane2, *vpane1, *vpane2;
+#if ! USE_APP_HEADER_BAR
+  GtkWidget *vbox;
 
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+#endif
   vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   hbox2 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
@@ -4538,16 +4566,10 @@ setupwindow(void)
 #endif
   NgraphApp.Viewer.menu = w;
 
-  w = create_toolbar(CommandToolbar, sizeof(CommandToolbar) / sizeof(*CommandToolbar), NULL);
-  CToolbar = w;
-  gtk_toolbar_set_style(GTK_TOOLBAR(w), GTK_TOOLBAR_ICONS);
-  gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 0);
-
-  w = create_toolbar(PointerToolbar, sizeof(PointerToolbar) / sizeof(*PointerToolbar), G_CALLBACK(CmViewerButtonPressed));
-  PToolbar = w;
-  gtk_orientable_set_orientation(GTK_ORIENTABLE(w), GTK_ORIENTATION_VERTICAL);
-  gtk_toolbar_set_style(GTK_TOOLBAR(w), GTK_TOOLBAR_ICONS);
-  gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 0);
+#if ! USE_APP_HEADER_BAR
+  gtk_box_pack_start(GTK_BOX(vbox), CToolbar, FALSE, FALSE, 0);
+#endif
+  gtk_box_pack_start(GTK_BOX(hbox), PToolbar, FALSE, FALSE, 0);
 
   w = gtk_menu_new();
   create_popup(w, PopupMenu);
@@ -4611,12 +4633,18 @@ setupwindow(void)
   NgraphApp.Viewer.side_pane1 = vpane1;
 
   hpane1 = gtk_paned_new(GTK_ORIENTATION_HORIZONTAL);
+#if USE_APP_HEADER_BAR
+  gtk_paned_add1(GTK_PANED(hpane1), hbox);
+#else
   gtk_paned_add1(GTK_PANED(hpane1), vbox);
+#endif
   gtk_paned_add2(GTK_PANED(hpane1), vpane1);
   NgraphApp.Viewer.main_pane = hpane1;
 
   gtk_box_pack_start(GTK_BOX(hbox), table, TRUE, TRUE, 0);
+#if ! USE_APP_HEADER_BAR
   gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
+#endif
   gtk_box_pack_start(GTK_BOX(hbox2), hpane1, TRUE, TRUE, 0);
   gtk_box_pack_start(GTK_BOX(vbox2), hbox2, TRUE, TRUE, 0);
 
@@ -5653,6 +5681,7 @@ create_toplevel_window(void)
   create_icon();
   initdialog();
 
+  setup_toolbar(TopLevel);
   gtk_widget_show_all(GTK_WIDGET(TopLevel));
   reset_event();
   setupwindow();

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.06.13\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2017-03-02 15:16+0900\n"
+"POT-Creation-Date: 2017-03-02 17:42+0900\n"
 "PO-Revision-Date: 2017-03-01 10:02+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -1388,7 +1388,7 @@ msgstr ""
 
 #: src/gtk/x11gui.c:162 src/gtk/x11gui.c:369 src/gtk/x11gui.c:437
 #: src/gtk/x11gui.c:573 src/gtk/x11gui.c:649 src/gtk/x11gui.c:719
-#: src/gtk/x11gui.c:798 src/gtk/x11gui.c:1036 src/gtk/x11menu.c:5253
+#: src/gtk/x11gui.c:798 src/gtk/x11gui.c:1036 src/gtk/x11menu.c:5281
 msgid "_Cancel"
 msgstr "キャンセル(_C)"
 
@@ -1433,7 +1433,7 @@ msgstr "カレントディレクトリを移動(_C)"
 msgid "%s file (*.%s)"
 msgstr "%s ファイル (*.%s)"
 
-#: src/gtk/x11gui.c:1138 src/gtk/x11gui.c:1173 src/gtk/x11menu.c:5255
+#: src/gtk/x11gui.c:1138 src/gtk/x11gui.c:1173 src/gtk/x11menu.c:5283
 msgid "_Open"
 msgstr "開く(_O)"
 
@@ -2331,27 +2331,27 @@ msgstr "反転(_F)"
 msgid "data"
 msgstr "データ"
 
-#: src/gtk/x11menu.c:5249 src/gtk/x11menu.c:5362
+#: src/gtk/x11menu.c:5277 src/gtk/x11menu.c:5390
 msgid "Recent Graphs"
 msgstr "最近使用したグラフ"
 
-#: src/gtk/x11menu.c:5249 src/gtk/x11menu.c:5368
+#: src/gtk/x11menu.c:5277 src/gtk/x11menu.c:5396
 msgid "Recent Data Files"
 msgstr "最近使用したデータファイル"
 
-#: src/gtk/x11menu.c:5356
+#: src/gtk/x11menu.c:5384
 msgid "Save menu"
 msgstr "保存メニュー"
 
-#: src/gtk/x11menu.c:5971
+#: src/gtk/x11menu.c:6000
 msgid "Error:"
 msgstr "エラー:"
 
-#: src/gtk/x11menu.c:6020
+#: src/gtk/x11menu.c:6049
 msgid "Question"
 msgstr "質問"
 
-#: src/gtk/x11menu.c:6078
+#: src/gtk/x11menu.c:6107
 #, c-format
 msgid "Executing `%.128s'."
 msgstr "実行中 `%.128s'."
