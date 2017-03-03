@@ -1058,6 +1058,11 @@ FileSelectionDialog(GtkWidget *parent, struct nGetOpenFileData *data)
     gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dlg), filter);
   } else {
     filter = gtk_file_filter_new();
+    gtk_file_filter_add_pattern(filter, "*");
+    gtk_file_filter_set_name(filter, _("All"));
+    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dlg), filter);
+
+    filter = gtk_file_filter_new();
     gtk_file_filter_add_pattern(filter, "*.txt");
     gtk_file_filter_set_name(filter, "Text file (*.txt)");
     gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dlg), filter);
@@ -1065,11 +1070,6 @@ FileSelectionDialog(GtkWidget *parent, struct nGetOpenFileData *data)
     filter = gtk_file_filter_new();
     gtk_file_filter_add_pattern(filter, "*.dat");
     gtk_file_filter_set_name(filter, "Data file (*.dat)");
-    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dlg), filter);
-
-    filter = gtk_file_filter_new();
-    gtk_file_filter_add_pattern(filter, "*");
-    gtk_file_filter_set_name(filter, _("All"));
     gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dlg), filter);
   }
 

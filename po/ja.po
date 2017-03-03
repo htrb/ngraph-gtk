@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.06.13\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2017-03-03 15:56+0900\n"
+"POT-Creation-Date: 2017-03-03 17:18+0900\n"
 "PO-Revision-Date: 2017-03-01 10:02+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -1410,7 +1410,7 @@ msgstr "いいえ(_N)"
 msgid "_Yes"
 msgstr "はい(_Y)"
 
-#: src/gtk/x11gui.c:882 src/gtk/x11gui.c:1057 src/gtk/x11gui.c:1072
+#: src/gtk/x11gui.c:882 src/gtk/x11gui.c:1057 src/gtk/x11gui.c:1062
 msgid "All"
 msgstr "全てのファイル"
 
