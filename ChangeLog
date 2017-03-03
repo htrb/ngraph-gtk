@@ -1,3 +1,10 @@
+2017-03-03  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_action.c (create_application_window): set
+	G_APPLICATION_NON_UNIQUE flag to GtkApplication.
+
+	* src/gtk/x11gui.c (FileSelectionDialog): don't use global variable.
+
 2017-03-02  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (setup_toolbar): added.
