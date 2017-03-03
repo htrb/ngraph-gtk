@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.07.02\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2017-03-02 17:42+0900\n"
+"POT-Creation-Date: 2017-03-03 15:56+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1010,7 +1010,7 @@ msgstr ""
 msgid "_Load"
 msgstr ""
 
-#: src/gtk/x11file.c:1548 src/gtk/x11gui.c:1204 src/gtk/x11menu.c:664
+#: src/gtk/x11file.c:1548 src/gtk/x11gui.c:1216 src/gtk/x11menu.c:664
 #: src/gtk/x11menu.c:2665 src/gtk/x11menu.c:2946 src/gtk/x11opt.c:477
 #: src/gtk/x11opt.c:678 src/gtk/x11opt.c:1155 src/gtk/x11opt.c:1252
 #: src/gtk/x11opt.c:1556 src/gtk/x11opt.c:1664
@@ -1355,35 +1355,35 @@ msgid ""
 "researchers and engineers."
 msgstr ""
 
-#: src/gtk/x11gui.c:162 src/gtk/x11gui.c:369 src/gtk/x11gui.c:437
-#: src/gtk/x11gui.c:573 src/gtk/x11gui.c:649 src/gtk/x11gui.c:719
-#: src/gtk/x11gui.c:798 src/gtk/x11gui.c:1036 src/gtk/x11menu.c:5281
+#: src/gtk/x11gui.c:163 src/gtk/x11gui.c:370 src/gtk/x11gui.c:438
+#: src/gtk/x11gui.c:574 src/gtk/x11gui.c:650 src/gtk/x11gui.c:720
+#: src/gtk/x11gui.c:799 src/gtk/x11gui.c:1030 src/gtk/x11menu.c:5281
 msgid "_Cancel"
 msgstr ""
 
-#: src/gtk/x11gui.c:175 src/gtk/x11gui.c:370 src/gtk/x11gui.c:438
-#: src/gtk/x11gui.c:574 src/gtk/x11gui.c:650 src/gtk/x11gui.c:720
-#: src/gtk/x11gui.c:799
+#: src/gtk/x11gui.c:176 src/gtk/x11gui.c:371 src/gtk/x11gui.c:439
+#: src/gtk/x11gui.c:575 src/gtk/x11gui.c:651 src/gtk/x11gui.c:721
+#: src/gtk/x11gui.c:800
 msgid "_OK"
 msgstr ""
 
-#: src/gtk/x11gui.c:278
+#: src/gtk/x11gui.c:279
 msgid "Error"
 msgstr ""
 
-#: src/gtk/x11gui.c:310
+#: src/gtk/x11gui.c:311
 msgid "_No"
 msgstr ""
 
-#: src/gtk/x11gui.c:311
+#: src/gtk/x11gui.c:312
 msgid "_Yes"
 msgstr ""
 
-#: src/gtk/x11gui.c:884 src/gtk/x11gui.c:1063
+#: src/gtk/x11gui.c:882 src/gtk/x11gui.c:1057 src/gtk/x11gui.c:1072
 msgid "All"
 msgstr ""
 
-#: src/gtk/x11gui.c:985 src/gtk/x11opt.c:1813
+#: src/gtk/x11gui.c:983 src/gtk/x11opt.c:1813
 #, c-format
 msgid ""
 "`%s'\n"
@@ -1391,16 +1391,16 @@ msgid ""
 "Overwrite existing file?"
 msgstr ""
 
-#: src/gtk/x11gui.c:1040
+#: src/gtk/x11gui.c:1034
 msgid "_Change current directory"
 msgstr ""
 
-#: src/gtk/x11gui.c:1051
+#: src/gtk/x11gui.c:1045
 #, c-format
 msgid "%s file (*.%s)"
 msgstr ""
 
-#: src/gtk/x11gui.c:1138 src/gtk/x11gui.c:1173 src/gtk/x11menu.c:5283
+#: src/gtk/x11gui.c:1149 src/gtk/x11gui.c:1182 src/gtk/x11menu.c:5283
 msgid "_Open"
 msgstr ""
 
