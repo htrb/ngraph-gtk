@@ -27,7 +27,7 @@ dmg: $(ngraph_package)
 
 $(ngraph_package): $(ngraph_app)
 	$(RM) $(ngraph_package)
-	hdiutil create -srcfolder $(ngraph_app) -volname "$PACKAGE $PACKAGE_VERSION" -format UDBZ -o $(ngraph_package)
+	hdiutil create -srcfolder $(ngraph_app) -volname "$(PACKAGE) $(PACKAGE_VERSION)" -format UDBZ -o $(ngraph_package)
 
 CLEANFILES = $(ngraph_package)
 endif
