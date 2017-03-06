@@ -826,7 +826,7 @@ create_application_window(GtkWidget **popup)
   g_application_register(G_APPLICATION(app), NULL, NULL);
   g_action_map_add_action_entries(G_ACTION_MAP(app), AppEntries, G_N_ELEMENTS(AppEntries), app);
 
-#if OSX
+#if OSX || WINDOWS
   {
     /* only for remove "Settings" menu item */
     GtkBuilder *builder;
