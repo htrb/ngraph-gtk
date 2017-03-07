@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.06.13\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2017-03-03 17:18+0900\n"
+"POT-Creation-Date: 2017-03-07 11:06+0900\n"
 "PO-Revision-Date: 2017-03-01 10:02+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -282,7 +282,7 @@ msgstr "背景色(_B):"
 
 #: src/gtk/x11axis.c:401 src/gtk/x11axis.c:3157 src/gtk/x11axis.c:3178
 #: src/gtk/x11axis.c:3211 src/gtk/x11lgnd.c:3074 src/gtk/x11lgnd.c:3085
-#: src/gtk/x11lgnd.c:3513 src/gtk/gtk_widget.c:1120
+#: src/gtk/x11lgnd.c:3513 src/gtk/gtk_widget.c:1125
 msgid "Color"
 msgstr "色"
 
@@ -1257,11 +1257,11 @@ msgstr "データファイル作成中"
 msgid "Join"
 msgstr "ジョイン"
 
-#: src/gtk/x11file.c:5512 src/gtk/x11lgnd.c:3050 src/gtk/gtk_widget.c:1127
+#: src/gtk/x11file.c:5512 src/gtk/x11lgnd.c:3050 src/gtk/gtk_widget.c:1132
 msgid "Color 1"
 msgstr "色 1"
 
-#: src/gtk/x11file.c:5519 src/gtk/x11lgnd.c:3051 src/gtk/gtk_widget.c:1134
+#: src/gtk/x11file.c:5519 src/gtk/x11lgnd.c:3051 src/gtk/gtk_widget.c:1139
 msgid "Color 2"
 msgstr "色 2"
 
@@ -2725,23 +2725,23 @@ msgstr "描画中"
 msgid "_Copy Settings"
 msgstr "設定のコピー(_C)"
 
-#: src/gtk/gtk_widget.c:1106
+#: src/gtk/gtk_widget.c:1111
 msgid "Stroke Color"
 msgstr "ストローク色"
 
-#: src/gtk/gtk_widget.c:1113
+#: src/gtk/gtk_widget.c:1118
 msgid "Fill Color"
 msgstr "塗りつぶし色"
 
-#: src/gtk/gtk_widget.c:1141
+#: src/gtk/gtk_widget.c:1146
 msgid "Axis baseline color"
 msgstr "軸基線の色"
 
-#: src/gtk/gtk_widget.c:1148
+#: src/gtk/gtk_widget.c:1153
 msgid "Axis gauge color"
 msgstr "目盛線の色"
 
-#: src/gtk/gtk_widget.c:1155
+#: src/gtk/gtk_widget.c:1160
 msgid "Axis numbering color"
 msgstr "目盛数字の色"
 

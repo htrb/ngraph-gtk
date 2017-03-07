@@ -864,7 +864,12 @@ set_widget_font(GtkWidget *w, const char *font)
     unit = "pt";
   }
 
-  css_str = g_strdup_printf("* {font: %s %d %d%s \"%s\";}",
+  css_str = g_strdup_printf("* {\n"
+			    "   font-style: %s;\n"
+			    "   font-weight: %d;\n"
+			    "   font-size: %d%s;\n"
+			    "   font-family: \"%s\";\n"
+			    "}",
 			    style_str,
 			    weight_val,
 			    size / PANGO_SCALE,
