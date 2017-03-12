@@ -31,13 +31,13 @@ EXTRA_DIST = dir_defs.h.in data/css/ngraph.css				\
 	data/pixmaps/ngraph_scale.png data/pixmaps/ngraph_section.png	\
 	data/pixmaps/ngraph_single.png data/pixmaps/ngraph_text.png	\
 	data/pixmaps/ngraph_trimming.png data/pixmaps/ngraph_undo.png	\
-	data/pixmaps/ngraph_zoom.png data/ngraph.resources.xml
+	data/pixmaps/ngraph_zoom.png data/ngraphui.resources.xml
 
 AM_CPPFLAGS = -DLOCALEDIR=\""@localedir@"\"
 
 noinst_LTLIBRARIES = libngraphui.la
 
-nodist_libngraphui_la_SOURCES = dir_defs.h ngraph.resources.c
+nodist_libngraphui_la_SOURCES = dir_defs.h ngraphui.resources.c
 
 libngraphui_la_SOURCES = gtk_common.h gtk_combo.c gtk_combo.h		\
 	gtk_entry_completion.c gtk_entry_completion.h gtk_liststore.c	\
@@ -69,7 +69,7 @@ $(uidir)/menus-appmenu.ui: $(APPMENU_UI_SOURCE)
 	$(MKDIR_P) $(uidir)
 	cp $< $@
 
-ngraph.resources.c: $(srcdir)/data/ngraph.resources.xml $(srcdir)/data/gtk/menus-common.ui $(srcdir)/data/css/ngraph.css $(srcdir)/data/gtk/help-overlay.ui data/gtk/menus-appmenu.ui
+ngraphui.resources.c: $(srcdir)/data/ngraphui.resources.xml $(srcdir)/data/gtk/menus-common.ui $(srcdir)/data/css/ngraph.css $(srcdir)/data/gtk/help-overlay.ui data/gtk/menus-appmenu.ui
 	$(GLIB_COMPILE_RESOURCES) --target=$@ --generate-source --sourcedir $(srcdir)/data --sourcedir $(builddir)/data $<
 
 BUILT_SOURCES = ${nodist_libngraphui_la_SOURCES}
