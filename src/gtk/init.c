@@ -432,10 +432,6 @@ nallocconsole(void)
   if (ConsoleAc)
     return FALSE;
 
-#if OSX
-  PutStderr("To use this function, please run ngraph in a Terminal.");
-#endif
-
   if (Terminal == NULL)
     return FALSE;
 
