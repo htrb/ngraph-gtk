@@ -398,7 +398,7 @@ exec_console(char *fifo_in, char *fifo_out)
       char buf[256], *s2, *s;
       int len;
 #if OSX
-      snprintf(buf, sizeof(buf), "%s %s/terminal %s %s", Terminal, LIBDIR, fifo_in, fifo_out);
+      snprintf(buf, sizeof(buf), "%s -e %s/terminal %s %s", Terminal, LIBDIR, fifo_in, fifo_out);
 #else
       snprintf(buf, sizeof(buf), "%s %s %s", Terminal, fifo_in, fifo_out);
 #endif
@@ -432,24 +432,21 @@ nallocconsole(void)
   if (ConsoleAc)
     return FALSE;
 
+  if (Terminal == NULL)
+    return FALSE;
+
 #if OSX
   {
-    int r, argc;
     char *path;
 
-    path = NULL;
-    if (Terminal) {
-      path = g_find_program_in_path(Terminal);
-    }
+    path = g_find_program_in_path(Terminal);
     if (path == NULL) {
       PutStderr("To use this function, please install XQuartz.");
       return FALSE;
     }
+    g_free(path);
   }
 #endif
-
-  if (Terminal == NULL)
-    return FALSE;
 
   snprintf(fifo_in, sizeof(fifo_in) - 1, "/tmp/nterm1_%d", getpid());
   snprintf(fifo_out, sizeof(fifo_out) - 1, "/tmp/nterm2_%d", getpid());
