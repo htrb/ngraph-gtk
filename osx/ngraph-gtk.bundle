@@ -82,6 +82,10 @@
     ${prefix}/libexec/ngraph-gtk/legend
   </binary>
 
+  <binary dest="${bundle}/Contents/Resources/lib/ngraph-gtk/terminal">
+    ${prefix}/libexec/ngraph-gtk/terminal
+  </binary>
+
   <binary dest="${bundle}/Contents/MacOS/fitrslt-bin">
     ${prefix}/libexec/ngraph-gtk/fitrslt
   </binary>

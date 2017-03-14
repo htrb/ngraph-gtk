@@ -397,7 +397,11 @@ exec_console(char *fifo_in, char *fifo_out)
     if (pid == 0) {
       char buf[256], *s2, *s;
       int len;
+#if OSX
+      snprintf(buf, sizeof(buf), "%s %s/terminal %s %s", Terminal, LIBDIR, fifo_in, fifo_out);
+#else
       snprintf(buf, sizeof(buf), "%s %s %s", Terminal, fifo_in, fifo_out);
+#endif
       argv = NULL;
       s = buf;
       while ((s2 = getitok2(&s, &len, " \t")) != NULL) {

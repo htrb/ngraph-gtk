@@ -1,6 +1,6 @@
 
 [Ngraph]
-#terminal=xterm -e /usr/local/lib/ngraph-gtk/terminal
+terminal=xterm -e
 alloc_console=0
 history_size=1000
 
