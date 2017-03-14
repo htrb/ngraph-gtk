@@ -1,6 +1,6 @@
 
 [Ngraph]
-terminal=xterm -e
+terminal=/opt/X11/bin/xterm -e
 alloc_console=0
 history_size=1000
 

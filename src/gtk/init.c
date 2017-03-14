@@ -432,6 +432,22 @@ nallocconsole(void)
   if (ConsoleAc)
     return FALSE;
 
+#if OSX
+  {
+    int r, argc;
+    char *path;
+
+    path = NULL;
+    if (Terminal) {
+      path = g_find_program_in_path(Terminal);
+    }
+    if (path == NULL) {
+      PutStderr("To use this function, please install XQuartz.");
+      return FALSE;
+    }
+  }
+#endif
+
   if (Terminal == NULL)
     return FALSE;
 

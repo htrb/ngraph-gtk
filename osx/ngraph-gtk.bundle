@@ -82,7 +82,7 @@
     ${prefix}/libexec/ngraph-gtk/legend
   </binary>
 
-  <binary dest="${bundle}/Contents/Resources/lib/ngraph-gtk/terminal">
+  <binary dest="${bundle}/Contents/MacOS/terminal">
     ${prefix}/libexec/ngraph-gtk/terminal
   </binary>
 
