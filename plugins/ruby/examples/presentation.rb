@@ -139,7 +139,11 @@ class Presentation
     ofst = @ofst_y + @title_h
     list = Ngraph::Text["LIST"][-1]
     if (list)
-      ofst = list.bbox[1] + (list.bbox[3] - list.bbox[1])/100.0 * @line_height
+      is_raw = list.raw
+      list.raw = true
+      padding = (list.bbox[3] - list.bbox[1]) / 100.0 * (@line_height - 100.0)
+      list.raw = is_raw
+      ofst = list.bbox[3] + padding
     end
     text = Ngraph::Text.new
     text.name = "LIST"
