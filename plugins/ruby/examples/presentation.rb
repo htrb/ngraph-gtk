@@ -319,7 +319,7 @@ class Presentation
     mode = nil
     response = nil
 
-    Ngraph::Merge.new.file = @background if (FileTest.readable?(@background))
+    Ngraph::Merge.new.file = @background if (@background && FileTest.readable?(@background))
 
     add_footer
 
