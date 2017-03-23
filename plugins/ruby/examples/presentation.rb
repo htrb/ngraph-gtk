@@ -17,6 +17,7 @@ class Presentation
     :COMMAND,
     :SLEEP,
     :OPACITY,
+    :LINE_HEIGHT,
   ]
 
   PDF_MODE = [
@@ -46,6 +47,7 @@ class Presentation
     @page_width = 29700
     @page_height = 21000
     @use_opacity = true
+    @line_height = 100
 
     @pdf_out = false
     @total_time = nil
@@ -136,8 +138,9 @@ class Presentation
 
     ofst = @ofst_y + @title_h
     list = Ngraph::Text["LIST"][-1]
-    ofst = list.bbox[3] if (list)
-
+    if (list)
+      ofst = list.bbox[1] + (list.bbox[3] - list.bbox[1])/100.0 * @line_height
+    end
     text = Ngraph::Text.new
     text.name = "LIST"
     text.text = if (dot_char)
@@ -243,6 +246,8 @@ class Presentation
 
   def command(mode, arg, skip_pause)
     case (mode)
+    when LINE_HEIGHT
+      @line_height = arg.to_f
     when CENTER
       center_add(arg)
     when LOAD
@@ -329,6 +334,9 @@ class Presentation
       str = page[page_item]
 
       case str
+      when "@line_height"
+        mode = LINE_HEIGHT
+        page_item += 1
       when "@center"
         mode = CENTER
         page_item += 1
@@ -436,6 +444,8 @@ class Presentation
           @background = f.gets.chomp
         when "@total_time"
           @total_time = f.gets.to_i
+        when "@line_height"
+          @line_height = f.gets.to_f
         else
           dat = page[-1]
           dat.push(l) if (dat)
