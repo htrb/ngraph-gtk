@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+Encoding.default_external = Encoding.default_internal = Encoding::UTF_8
 require 'ngraph'
 
 class Presentation
