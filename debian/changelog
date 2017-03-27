@@ -1,3 +1,9 @@
+ngraph-gtk (6.07.03-1) unreleased; urgency=medium
+
+  * New upstream release
+
+ -- Hiroyuki Ito <ZXB01226@nifty.com>  Mon, 27 Mar 2016 18:39:26 +0900
+
 ngraph-gtk (6.07.02-2) unstable; urgency=medium
 
   * debian/control
