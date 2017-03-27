@@ -7,7 +7,6 @@
 
 #if WINDOWS || OSX
 extern char *DOCDIR, *NDATADIR, *ADDINDIR, *LIBDIR, *PLUGINDIR, *CONFDIR;
-#define HOME_DIR "Ngraph"
 #else  /* WINDOWS */
 #define DOCDIR    "DOCDIRDEF"
 #define LIBDIR    "LIBEXECDIRDEF"
@@ -15,8 +14,13 @@ extern char *DOCDIR, *NDATADIR, *ADDINDIR, *LIBDIR, *PLUGINDIR, *CONFDIR;
 #define NDATADIR  "DATADIRDEF"
 #define ADDINDIR  "DATADIRDEF/addin"
 #define CONFDIR   "CONFDIRDEF"
-#define HOME_DIR  ".Ngraph"
 #endif	/* WINDOWS */
+
+#if WINDOWS
+#define HOME_DIR "Ngraph"
+#else
+#define HOME_DIR  ".Ngraph"
+#endif
 
 #define HELP_FILE "ngraph.html"
 
