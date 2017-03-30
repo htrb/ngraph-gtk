@@ -361,7 +361,7 @@ str_to_pow(const char *str)
   pow = atoi(str + n + 1);
   g_string_append_len(pow_str, str, n);
   if (pow) {
-    g_string_append_printf(pow_str, "×10^%d", pow);
+    g_string_append_printf(pow_str, "×10^%d@", pow);
   }
   return g_string_free(pow_str, FALSE);
 }
