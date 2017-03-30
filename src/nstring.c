@@ -258,65 +258,125 @@ getitok2(char **s, int *len, const char *ifs)
 }
 
 static char *
-get_printf_format_str(const char *str, int *len)
+get_printf_format_str(const char *str, int *len, int *pow)
 {
   int n;
-  char *fmt;
+  GString *format;
 
-  *len = 0;
+  if (pow) {
+    *pow = FALSE;
+  }
+  if (len) {
+    *len = 0;
+  }
 
   n = 0;
   if (str[n] != '%') {
     return NULL;
   }
+
+  format = g_string_new("");
+  if (format == NULL) {
+    return NULL;
+  }
+  g_string_append_c(format, str[n]);
   n++;
 
-  while (strchr("#0- +", str[n])) {
+  while (strchr("#0- +^", str[n])) {
+    if (str[n] == '^') {
+      if (pow) {
+	*pow = TRUE;
+      }
+    } else {
+      g_string_append_c(format, str[n]);
+    }
     n++;
   }
 
-  for (; isdigit(str[n]); n++);
+  for (; isdigit(str[n]); n++) {
+    g_string_append_c(format, str[n]);
+  }
 
   if (str[n] == '.') {
+    g_string_append_c(format, str[n]);
     n++;
-    for (; isdigit(str[n]); n++);
+    for (; isdigit(str[n]); n++) {
+      g_string_append_c(format, str[n]);
+    }
   }
 
   if (str[n] == 'l') {
+    g_string_append_c(format, str[n]);
     n++;
   }
 
   if (str[n] == 'l') {
+    g_string_append_c(format, str[n]);
     n++;
   }
 
   if (strchr("diouxXeEfFgGcs", str[n]) == NULL) {
+    g_string_free(format, TRUE);
     return NULL;
   }
 
-  *len = n;
-  n++;
+  g_string_append_c(format, str[n]);
+  if (len) {
+    *len = n;
+  }
 
-  fmt = g_strdup(str);
-  if (fmt == NULL) {
+  return g_string_free(format, FALSE);
+}
+
+static char *
+str_to_pow(const char *str)
+{
+  int n, i, len, pow;
+  GString *pow_str;
+
+  if (str == NULL) {
     return NULL;
   }
-  fmt[n] = '\0';
 
-  return fmt;
+  n = -1;
+  len = strlen(str);
+  for (i = 0; i < len; i++) {
+    if (str[i] == 'E' ||
+	str[i] == 'e' ||
+	str[i] == 'D' ||
+	str[i] == 'd') {
+      n = i;
+      break;
+    }
+  }
+
+  if (n < 0) {
+    return NULL;
+  }
+
+  pow_str = g_string_new("");
+  if (pow_str == NULL) {
+    return NULL;
+  }
+  pow = atoi(str + n + 1);
+  g_string_append_len(pow_str, str, n);
+  if (pow) {
+    g_string_append_printf(pow_str, "×10^%d", pow);
+  }
+  return g_string_free(pow_str, FALSE);
 }
 
 int
 add_printf_formated_str(GString *str, const char *format, const char *arg, int *len)
 {
-  int i, formated;
+  int i, formated, pow;
   char *format2, *buf, *endptr;
   int vi;
   long long int vll;
   double vd;
 
   formated = FALSE;
-  format2 = get_printf_format_str(format, &i);
+  format2 = get_printf_format_str(format, &i, &pow);
   if (len) {
     *len = i;
   }
@@ -351,6 +411,14 @@ add_printf_formated_str(GString *str, const char *format, const char *arg, int *
       vd = strtod(arg,&endptr);
     }
     buf = g_strdup_printf(format2, vd);
+    if (pow) {
+      char *new_buf;
+      new_buf = str_to_pow(buf);
+      if (new_buf) {
+	g_free(buf);
+	buf = new_buf;
+      }
+    }
     formated = TRUE;
     break;
   case 's':

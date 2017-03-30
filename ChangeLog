@@ -1,3 +1,9 @@
+2017-03-30  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/nstring.c (get_printf_format_str): check '^' flag.
+	(str_to_pow): added.
+	(add_printf_formated_str): support '^' flag.
+
 2017-03-03  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_action.c (create_application_window): set
