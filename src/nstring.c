@@ -341,10 +341,7 @@ str_to_pow(const char *str)
   n = -1;
   len = strlen(str);
   for (i = 0; i < len; i++) {
-    if (str[i] == 'E' ||
-	str[i] == 'e' ||
-	str[i] == 'D' ||
-	str[i] == 'd') {
+    if (str[i] == 'E' || str[i] == 'e') {
       n = i;
       break;
     }
