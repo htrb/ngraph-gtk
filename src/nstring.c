@@ -283,10 +283,10 @@ get_printf_format_str(const char *str, int *len, int *pow)
   n++;
 
   while (strchr("#0- +^", str[n])) {
-    if (str[n] == '^' && pow) {
-      *pow = TRUE;
-    } else {
+    if (str[n] != '^') {
       g_string_append_c(format, str[n]);
+    } else if (pow) {
+      *pow = TRUE;
     }
     n++;
   }
