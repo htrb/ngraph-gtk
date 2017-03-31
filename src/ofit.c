@@ -339,8 +339,11 @@ show_poly_equation(struct fitlocal *fitlocal, enum FIT_OBJ_TYPE type, vector coe
   case FIT_TYPE_POLY:
     for (i = fitlocal->dim - 1; i > 0; i--) {
       g_string_append_printf(equation,
-			     (i == fitlocal->dim - 1) ? "%.7e*X^%d" : "%+.7e*X^%d",
-			     coe[i], i);
+			     (i == fitlocal->dim - 1) ? "%.7e*X" : "%+.7e*X",
+			     coe[i]);
+      if (i > 1) {
+	g_string_append_printf(equation, "^%d", i);
+      }
     }
     g_string_append_printf(equation, "%+.7e", coe[0]);
     break;
