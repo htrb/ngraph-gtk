@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-<dict>
+  <dict>
     <key>CFBundleDevelopmentRegion</key>
     <string>Japanese</string>
     <key>CFBundleExecutable</key>
@@ -30,6 +30,14 @@
     <string>10.4</string>
     <key>GtkOSXLaunchScriptFile</key>
     <string>ngraph-launcher.sh</string>
-
-</dict>
+    <key>CFBundleTypeExtensions</key>
+    <array>
+      <string>ngp</string>
+      <string>NGP</string>
+    </array>
+    <key>CFBundleTypeIconFile</key>
+    <string>ngraph.icns</string>
+    <key>CFBundleTypeName</key>
+    <string>ngraph graph</string>
+  </dict>
 </plist>
