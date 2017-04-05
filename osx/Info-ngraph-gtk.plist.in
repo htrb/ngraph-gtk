@@ -30,14 +30,5 @@
     <string>10.4</string>
     <key>GtkOSXLaunchScriptFile</key>
     <string>ngraph-launcher.sh</string>
-    <key>CFBundleTypeExtensions</key>
-    <array>
-      <string>ngp</string>
-      <string>NGP</string>
-    </array>
-    <key>CFBundleTypeIconFile</key>
-    <string>ngraph.icns</string>
-    <key>CFBundleTypeName</key>
-    <string>ngraph graph</string>
   </dict>
 </plist>
