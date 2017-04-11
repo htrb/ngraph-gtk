@@ -126,7 +126,7 @@
  <tr><td>HSKIP</td><td>「先頭スキップ行」に指定された行数</td></tr>
  <tr><td>RSTEP</td><td>「読込ステップ行」に指定された行数</td></tr>
  <tr><td>FLINE</td><td>「最終行」に指定された行数</td></tr>
- <tr><td>FILE_OBJ</td><td>file オブジェクトのオブジェクト識別番号</td></tr>
+ <tr><td>DATA_OBJ</td><td>data オブジェクトのオブジェクト識別番号</td></tr>
  <tr><td>PATH_OBJ</td><td>path オブジェクトのオブジェクト識別番号</td></tr>
  <tr><td>RECT_OBJ</td><td>rectangle オブジェクトのオブジェクト識別番号</td></tr>
  <tr><td>ARC_OBJ</td><td>arc オブジェクトのオブジェクト識別番号</td></tr>
@@ -422,14 +422,14 @@
  <tr>
   <td>FIT_PRM(id,x)</td>
   <td>
-   ID が id の file オブジェクトのプロットタイプが fit のとき、対応す
+   ID が id の data オブジェクトのプロットタイプが fit のとき、対応す
    る fit object のフィールド "%0x" の値。
   </td>
  </tr>
  <tr>
   <td>FIT_CALC(id,x)</td>
   <td>
-   ID が id の file オブジェクトのプロットタイプが fit のとき、対応する
+   ID が id の data オブジェクトのプロットタイプが fit のとき、対応する
    fit 結果 f(x) を計算する。
   </td>
  </tr>
@@ -454,7 +454,7 @@
  <tr><td>COLOR(7,x)</td><td>R2, G2, B2 値を x (0≦x＜256)に設定</td></tr>
  <tr><td>COLOR(8,x)</td><td>x を 6 桁の 16 進数として、 2 桁ずつ R, G, B 値に設定</td></tr>
  <tr><td>COLOR(9,x)</td><td>x を 6 桁の 16 進数として、 2 桁ずつ R2, G2, B2 値に設定</td></tr>
- <tr><td>OBJ_COLOR(id, FILE_OBJ), OBJ_COLOR(id)</td><td>R, G, B, R2, G2, B2 値を ID が id の file オブジェクトと同じ値にする。</td></tr>
+ <tr><td>OBJ_COLOR(id, DATA_OBJ), OBJ_COLOR(id)</td><td>R, G, B, R2, G2, B2 値を ID が id の data オブジェクトと同じ値にする。</td></tr>
  <tr><td>OBJ_COLOR(id, PATH_OBJ)</td><td>R, G, B, R2, G2, B2 値を ID が id の path オブジェクトの stroke_R, stroke_G, stroke_B, fill_R, fill_G, fill_B と同じ値にする。</td></tr>
  <tr><td>OBJ_COLOR(id, RECT_OBJ)</td><td>R, G, B, R2, G2, B2 値を ID が id の rectangle オブジェクトの stroke_R, stroke_G, stroke_B, fill_R, fill_G, fill_B と同じ値にする。</td></tr>
  <tr><td>OBJ_COLOR(id, ARC_OBJ)</td><td>R, G, B, R2, G2, B2 値を ID が id の arc オブジェクトの stroke_R, stroke_G, stroke_B, fill_R, fill_G, fill_B と同じ値にする。</td></tr>
@@ -463,7 +463,7 @@
  <tr><td>ALPHA(x)</td><td>A, A2 値を x (0≦x＜256)に設定</td></tr>
  <tr><td>ALPHA(x,1)</td><td>A 値を x (0≦x＜256)に設定</td></tr>
  <tr><td>ALPHA(x,2)</td><td>A2 値を x (0≦x＜256)に設定</td></tr>
- <tr><td>OBJ_ALPHA(id, FILE_OBJ), OBJ_ALPHA(id)</td><td>A, A2 値を ID が id の file オブジェクトと同じ値にする。</td></tr>
+ <tr><td>OBJ_ALPHA(id, DATA_OBJ), OBJ_ALPHA(id)</td><td>A, A2 値を ID が id の data オブジェクトと同じ値にする。</td></tr>
  <tr><td>OBJ_ALPHA(id, PATH_OBJ)</td><td>A, A2 値を ID が id の path オブジェクトの stroke_A, fill_A と同じ値にする。</td></tr>
  <tr><td>OBJ_ALPHA(id, RECT_OBJ)</td><td>A, A2 値を ID が id の rectangle オブジェクトの stroke_A, fill_A と同じ値にする。</td></tr>
  <tr><td>OBJ_ALPHA(id, ARC_OBJ)</td><td>A, A2 値を ID が id の arc オブジェクトの stroke_A, fill_A と同じ値にする。</td></tr>
@@ -622,23 +622,23 @@
       </p>
       とします。
       <p>
-      SUM(Y*DIF(X)) は Σ Y(n)*{ X(n)-X(n-1) } (n=1..n) になります。
+      SUM(Y * DIF(X)) は Σ Y(n) * {X(n) - X(n-1)} (n = 1..n) になります。
       </p>
       また、台形公式を用いて積分近似値を評価したい場合
       <p>
-      SUM(0.5*(2*Y-DIF(Y))*DIF(X))
+      SUM(0.5 * (2 * Y - DIF(Y)) * DIF(X))
       </p>
       とします。
       <p>
-      SUM(0.5*(2*Y-DIF(Y))*DIF(X)) は Σ(Y(n-1)+Y(n))/2*{X(n)-X(n-1)} (n=1..n) になります。
+      SUM(0.5 * (2 * Y - DIF(Y)) * DIF(X)) は Σ(Y(n-1) + Y(n)) / 2  *{X(n) - X(n-1)} (n = 1..n) になります。
       </p>
       さらに積分の上限(b)、下限(a)を指定したい場合は階段関数 THETA() を用い
       <p>
-      SUM(0.5*(2*Y-DIF(Y))*DIF(X)*THETA(X-a)*THETA(b-X))
+      SUM(0.5 * (2 * Y-DIF(Y)) * DIF(X) * THETA(X-a) * THETA(b-X))
       </p>
       とします。IF() を使って
       <p>
-      IF(AND(GE(x,a),LE(x,b)),INTEG(0.5*(2*Y-DIF(Y))*DIF(X)),0)
+      IF(X &gt;= a && X &lt;= b, SUM(0.5 * (2 * Y - DIF(Y)) * DIF(X)), 0)
       </p>
       としても可能です。
       <br>
@@ -678,14 +678,14 @@
 
  <li><b>関数 OBJ_COLOR() 使用例</b>
       <p>
-      file, path, rectangle, arc, mark, text の各オブジェクトの設定色を描
+      data, path, rectangle, arc, mark, text の各オブジェクトの設定色を描
       画色にします。例えばいくつかのフィッティング結果をもとにフィッティ
       ングパラメータをグラフにするような場合、
       <pre>
       OBJ_COLOR(X);FIT_PRM(X,1)
       </pre>
       のようにして、フィッティングとプロットの色を揃えることができます。
-      この時 X はフィッティングプロットにした file オブジェクトのインスタ
+      この時 X はフィッティングプロットにした data オブジェクトのインスタ
       ンス ID です。
       </p>
 
@@ -699,13 +699,13 @@
       <pre>
       FIT_PRM(X,1)
       </pre>
-      のようにします。この時 X はフィッティングプロットにした file オブジェ
+      のようにします。この時 X はフィッティングプロットにした data オブジェ
       クトのインスタンス ID です。
       </p>
 
       <p>
       また、１次ドリフトのあるデータからドリフト成分を引いてプロットし
-      たい場合 (id が 0 の file オブジェクトでフィッティングを行ってい
+      たい場合 (id が 0 の data オブジェクトでフィッティングを行ってい
       るとして)、
       <pre>
       Y-FIT_CALC(0,X)
