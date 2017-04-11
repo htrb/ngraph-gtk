@@ -82,6 +82,7 @@ enum {
   MATH_CONST_HSKIP,
   MATH_CONST_RSTEP,
   MATH_CONST_FLINE,
+  MATH_CONST_DATA_OBJ,
   MATH_CONST_FILE_OBJ,
   MATH_CONST_PATH_OBJ,
   MATH_CONST_RECT_OBJ,
@@ -441,7 +442,7 @@ file_obj_color_alpha(MathFunctionCallExpression *exp, MathEquation *eq, MathValu
   struct objlist *obj;
   int id, object_id, color_type;
   struct object_color_type obj_names[] = {
-    {"file", COLOR_TYPE_MARK},
+    {"data", COLOR_TYPE_MARK},
     {"path", COLOR_TYPE_PATH},
     {"rectangle", COLOR_TYPE_PATH},
     {"arc", COLOR_TYPE_PATH},
@@ -1938,6 +1939,7 @@ ofile_create_math_equation(int *id, int prm_digit, int use_fprm, int use_const, 
     "HSKIP",
     "RSTEP",
     "FLINE",
+    "DATA_OBJ",
     "FILE_OBJ",
     "PATH_OBJ",
     "RECT_OBJ",
@@ -2695,6 +2697,7 @@ static int
 set_const(MathEquation *eq, int *const_id, int need2pass, struct f2ddata *fp, int first)
 {
   struct obj_name_const obj_names[] = {
+    {"data",      MATH_CONST_DATA_OBJ},
     {"file",      MATH_CONST_FILE_OBJ},
     {"path",      MATH_CONST_PATH_OBJ},
     {"rectangle", MATH_CONST_RECT_OBJ},
