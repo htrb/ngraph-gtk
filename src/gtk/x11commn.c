@@ -1231,7 +1231,7 @@ change_filename(char * (*func)(const char *))
   struct objlist *obj;
   int i;
   unsigned int j;
-  char *file, *file2, *objname[] = {"file", "merge"};
+  char *file, *file2, *objname[] = {"data", "merge"};
 
   for (j = 0; j < sizeof(objname) / sizeof(*objname); j++) {
     obj = chkobject(objname[j]);
