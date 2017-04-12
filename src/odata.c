@@ -2707,6 +2707,7 @@ set_const(MathEquation *eq, int *const_id, int need2pass, struct f2ddata *fp, in
   };
   MathValue val;
   int i;
+  double tmp;
 
   if (eq == NULL || eq->exp == NULL)
     return 0;
@@ -2753,11 +2754,13 @@ set_const(MathEquation *eq, int *const_id, int need2pass, struct f2ddata *fp, in
       val.type = MATH_VALUE_NORMAL;
       math_equation_set_const(eq, const_id[MATH_CONST_AVY], &val);
 
-      val.val = sqrt(fp->sumxx / fp->num - (fp->sumx / fp->num) * (fp->sumx / fp->num));
+      tmp = fp->sumxx / fp->num - (fp->sumx / fp->num) * (fp->sumx / fp->num);
+      val.val = (tmp < 0) ? 0 : sqrt(tmp);
       val.type = MATH_VALUE_NORMAL;
       math_equation_set_const(eq, const_id[MATH_CONST_SGX], &val);
 
-      val.val = sqrt(fp->sumyy / fp->num - (fp->sumy / fp->num) * (fp->sumy / fp->num));
+      tmp = fp->sumyy / fp->num - (fp->sumy / fp->num) * (fp->sumy / fp->num);
+      val.val = (tmp < 0) ? 0 : sqrt(tmp);
       val.type = MATH_VALUE_NORMAL;
       math_equation_set_const(eq, const_id[MATH_CONST_SGY], &val);
     }
@@ -7202,7 +7205,7 @@ f2dstat_sub(struct objlist *obj,N_VALUE *inst, const char *field, struct f2dloca
   int rcode, interrupt;
   int dnum,minxstat,maxxstat,minystat,maxystat;
   double minx,maxx,miny,maxy;
-  double sumx,sumxx,sumy,sumyy;
+  double sumx,sumxx,sumy,sumyy, tmp;
   time_t mtime;
   struct f2ddata *fp;
 
@@ -7365,8 +7368,10 @@ f2dstat_sub(struct objlist *obj,N_VALUE *inst, const char *field, struct f2dloca
   if (dnum!=0) {
     sumx=sumx/(double )dnum;
     sumy=sumy/(double )dnum;
-    sumxx=sqrt((sumxx/(double )dnum)-sumx*sumx);
-    sumyy=sqrt((sumyy/(double )dnum)-sumy*sumy);
+    tmp = sumxx / dnum - sumx * sumx;
+    sumxx = (tmp < 0) ? 0 : sqrt(tmp);
+    tmp = sumyy / dnum - sumy * sumy;
+    sumyy = (tmp < 0) ? 0 : sqrt(tmp);
   } else {
     sumx=sumy=sumxx=sumyy=0;
   }

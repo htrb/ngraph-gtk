@@ -524,7 +524,7 @@ darray_sdev(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **
   sum /= n;
   val = ssum / n - sum * sum;
 
-  rval->d = sqrt(val);
+  rval->d = (val < 0) ? 0 : sqrt(val);
 
   return 0;
 }
