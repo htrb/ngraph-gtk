@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.07.03\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2017-03-27 18:40+0900\n"
+"POT-Creation-Date: 2017-05-16 11:42+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -108,7 +108,7 @@ msgid "Single _Axis"
 msgstr ""
 
 #: src/gtk/x11axis.c:103 src/gtk/x11file.c:130 src/gtk/x11file.c:1783
-#: src/gtk/x11file.c:2000 src/gtk/x11graph.c:694 src/gtk/x11lgnd.c:1013
+#: src/gtk/x11file.c:2000 src/gtk/x11graph.c:696 src/gtk/x11lgnd.c:1013
 #: src/gtk/x11menu.c:628 src/gtk/x11menu.c:1002 src/gtk/x11menu.c:1246
 #: src/gtk/x11menu.c:1370 src/gtk/x11menu.c:1532 src/gtk/x11merge.c:68
 #: src/gtk/x11opt.c:920
@@ -147,25 +147,25 @@ msgstr ""
 msgid "_Properties"
 msgstr ""
 
-#: src/gtk/x11axis.c:112 src/gtk/x11file.c:140 src/gtk/x11graph.c:708
+#: src/gtk/x11axis.c:112 src/gtk/x11file.c:140 src/gtk/x11graph.c:710
 #: src/gtk/x11lgnd.c:222 src/gtk/x11menu.c:2061 src/gtk/x11menu.c:3351
 #: src/gtk/x11merge.c:75
 msgid "_Top"
 msgstr ""
 
-#: src/gtk/x11axis.c:113 src/gtk/x11file.c:141 src/gtk/x11graph.c:714
+#: src/gtk/x11axis.c:113 src/gtk/x11file.c:141 src/gtk/x11graph.c:716
 #: src/gtk/x11lgnd.c:223 src/gtk/x11menu.c:2077 src/gtk/x11menu.c:3367
 #: src/gtk/x11merge.c:76 src/gtk/x11opt.c:939
 msgid "_Up"
 msgstr ""
 
-#: src/gtk/x11axis.c:114 src/gtk/x11file.c:142 src/gtk/x11graph.c:720
+#: src/gtk/x11axis.c:114 src/gtk/x11file.c:142 src/gtk/x11graph.c:722
 #: src/gtk/x11lgnd.c:224 src/gtk/x11menu.c:2093 src/gtk/x11menu.c:3383
 #: src/gtk/x11merge.c:77 src/gtk/x11opt.c:932
 msgid "_Down"
 msgstr ""
 
-#: src/gtk/x11axis.c:115 src/gtk/x11file.c:143 src/gtk/x11graph.c:726
+#: src/gtk/x11axis.c:115 src/gtk/x11file.c:143 src/gtk/x11graph.c:728
 #: src/gtk/x11lgnd.c:225 src/gtk/x11menu.c:2109 src/gtk/x11menu.c:3399
 #: src/gtk/x11merge.c:78
 msgid "_Bottom"
@@ -646,7 +646,7 @@ msgid "auto"
 msgstr ""
 
 #: src/gtk/x11dialg.c:122 src/gtk/x11merge.c:52 src/gtk/x11opt.c:471
-#: src/odata.c:167
+#: src/odata.c:168
 msgid "file"
 msgstr ""
 
@@ -658,7 +658,7 @@ msgstr ""
 msgid "function"
 msgstr ""
 
-#: src/gtk/x11dialg.c:134 src/odata.c:168
+#: src/gtk/x11dialg.c:134 src/odata.c:169
 msgid "array"
 msgstr ""
 
@@ -678,7 +678,7 @@ msgstr ""
 msgid "math text"
 msgstr ""
 
-#: src/gtk/x11dialg.c:155 src/odata.c:194
+#: src/gtk/x11dialg.c:155 src/odata.c:195
 msgid "fit"
 msgstr ""
 
@@ -750,7 +750,7 @@ msgstr ""
 msgid "drawobj"
 msgstr ""
 
-#: src/gtk/x11dialg.c:215 src/gtk/x11graph.c:847
+#: src/gtk/x11dialg.c:215 src/gtk/x11graph.c:849
 msgid "directory"
 msgstr ""
 
@@ -1260,96 +1260,104 @@ msgstr ""
 msgid "Custom"
 msgstr ""
 
-#: src/gtk/x11graph.c:82
-msgid "Letter P (215.90x279.40)"
+#: src/gtk/x11graph.c:74
+msgid "normal display (4:3)"
 msgstr ""
 
-#: src/gtk/x11graph.c:83
-msgid "Letter L (279.40x215.90)"
+#: src/gtk/x11graph.c:75
+msgid "wide display (16:9)"
 msgstr ""
 
 #: src/gtk/x11graph.c:84
-msgid "Legal  P (215.90x355.60)"
+msgid "Letter P (215.90x279.40)"
 msgstr ""
 
 #: src/gtk/x11graph.c:85
+msgid "Letter L (279.40x215.90)"
+msgstr ""
+
+#: src/gtk/x11graph.c:86
+msgid "Legal  P (215.90x355.60)"
+msgstr ""
+
+#: src/gtk/x11graph.c:87
 msgid "Legal  L (355.60x215.90)"
 msgstr ""
 
-#: src/gtk/x11graph.c:175
+#: src/gtk/x11graph.c:177
 msgid "paper _Width:"
 msgstr ""
 
-#: src/gtk/x11graph.c:180
+#: src/gtk/x11graph.c:182
 msgid "paper _Height:"
 msgstr ""
 
-#: src/gtk/x11graph.c:184
+#: src/gtk/x11graph.c:186
 msgid "_Paper:"
 msgstr ""
 
-#: src/gtk/x11graph.c:193
+#: src/gtk/x11graph.c:195
 msgid "_Left margin:"
 msgstr ""
 
-#: src/gtk/x11graph.c:198
+#: src/gtk/x11graph.c:200
 msgid "_Top margin:"
 msgstr ""
 
-#: src/gtk/x11graph.c:202
+#: src/gtk/x11graph.c:204
 msgid "paper _Zoom:"
 msgstr ""
 
-#: src/gtk/x11graph.c:662
+#: src/gtk/x11graph.c:664
 msgid "Object"
 msgstr ""
 
-#: src/gtk/x11graph.c:673 src/gtk/x11menu.c:2712
+#: src/gtk/x11graph.c:675 src/gtk/x11menu.c:2712
 msgid "_Draw order"
 msgstr ""
 
-#: src/gtk/x11graph.c:700
+#: src/gtk/x11graph.c:702
 msgid "_Insert"
 msgstr ""
 
-#: src/gtk/x11graph.c:745
+#: src/gtk/x11graph.c:747
 msgid "_Objects"
 msgstr ""
 
-#: src/gtk/x11graph.c:850
+#: src/gtk/x11graph.c:852
 msgid "_Select Dir:"
 msgstr ""
 
-#: src/gtk/x11graph.c:852
+#: src/gtk/x11graph.c:854
 msgid "Current Dir:"
 msgstr ""
 
-#: src/gtk/x11graph.c:917
+#: src/gtk/x11graph.c:919
 msgid "_Expand included file"
 msgstr ""
 
-#: src/gtk/x11graph.c:922
+#: src/gtk/x11graph.c:924
 msgid "_Dir:"
 msgstr ""
 
-#: src/gtk/x11graph.c:926 src/gtk/x11graph.c:981 src/gtk/x11opt.c:1280
+#: src/gtk/x11graph.c:928 src/gtk/x11graph.c:983 src/gtk/x11opt.c:1280
 #: src/gtk/x11opt.c:1312
 msgid "_Path:"
 msgstr ""
 
-#: src/gtk/x11graph.c:987
+#: src/gtk/x11graph.c:989
 msgid "_Include data file"
 msgstr ""
 
-#: src/gtk/x11graph.c:991
+#: src/gtk/x11graph.c:993
 msgid "_Include merge file"
 msgstr ""
 
-#: src/gtk/x11graph.c:1081 src/gtk/x11menu.c:650
+#: src/gtk/x11graph.c:1083 src/gtk/x11menu.c:650
 msgid "Load NGP file"
 msgstr ""
 
-#: src/gtk/x11graph.c:1243
+#: src/gtk/x11graph.c:1245
 msgid ""
 "Ngraph is the program to create scientific 2-dimensional graphs for "
 "researchers and engineers."
@@ -1570,7 +1578,7 @@ msgstr ""
 msgid "path"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3562 src/odata.c:181
+#: src/gtk/x11lgnd.c:3562 src/odata.c:182
 msgid "rectangle"
 msgstr ""
 
@@ -1578,7 +1586,7 @@ msgstr ""
 msgid "arc"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3564 src/odata.c:174
+#: src/gtk/x11lgnd.c:3564 src/odata.c:175
 msgid "mark"
 msgstr ""
 
@@ -2930,79 +2938,79 @@ msgstr ""
 msgid "user"
 msgstr ""
 
-#: src/odata.c:169
+#: src/odata.c:170
 msgid "range"
 msgstr ""
 
-#: src/odata.c:175 src/opath.c:81
+#: src/odata.c:176 src/opath.c:81
 msgid "line"
 msgstr ""
 
-#: src/odata.c:176
+#: src/odata.c:177
 msgid "polygon"
 msgstr ""
 
-#: src/odata.c:177
+#: src/odata.c:178
 msgid "polygon_solid_fill"
 msgstr ""
 
-#: src/odata.c:178 src/opath.c:82
+#: src/odata.c:179 src/opath.c:82
 msgid "curve"
 msgstr ""
 
-#: src/odata.c:179
+#: src/odata.c:180
 msgid "diagonal"
 msgstr ""
 
-#: src/odata.c:180
+#: src/odata.c:181
 msgid "arrow"
 msgstr ""
 
-#: src/odata.c:182
+#: src/odata.c:183
 msgid "rectangle_fill"
 msgstr ""
 
-#: src/odata.c:183
+#: src/odata.c:184
 msgid "rectangle_solid_fill"
 msgstr ""
 
-#: src/odata.c:184
+#: src/odata.c:185
 msgid "errorbar_x"
 msgstr ""
 
-#: src/odata.c:185
+#: src/odata.c:186
 msgid "errorbar_y"
 msgstr ""
 
-#: src/odata.c:186
+#: src/odata.c:187
 msgid "staircase_x"
 msgstr ""
 
-#: src/odata.c:187
+#: src/odata.c:188
 msgid "staircase_y"
 msgstr ""
 
-#: src/odata.c:188
+#: src/odata.c:189
 msgid "bar_x"
 msgstr ""
 
-#: src/odata.c:189
+#: src/odata.c:190
 msgid "bar_y"
 msgstr ""
 
-#: src/odata.c:190
+#: src/odata.c:191
 msgid "bar_fill_x"
 msgstr ""
 
-#: src/odata.c:191
+#: src/odata.c:192
 msgid "bar_fill_y"
 msgstr ""
 
-#: src/odata.c:192
+#: src/odata.c:193
 msgid "bar_solid_fill_x"
 msgstr ""
 
-#: src/odata.c:193
+#: src/odata.c:194
 msgid "bar_solid_fill_y"
 msgstr ""
 

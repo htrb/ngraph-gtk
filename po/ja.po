@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.06.13\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2017-03-27 18:40+0900\n"
-"PO-Revision-Date: 2017-03-01 10:02+0900\n"
+"POT-Creation-Date: 2017-05-16 11:42+0900\n"
+"PO-Revision-Date: 2017-05-16 11:43+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja\n"
@@ -106,7 +106,7 @@ msgid "Single _Axis"
 msgstr "単一軸(_A)"
 
 #: src/gtk/x11axis.c:103 src/gtk/x11file.c:130 src/gtk/x11file.c:1783
-#: src/gtk/x11file.c:2000 src/gtk/x11graph.c:694 src/gtk/x11lgnd.c:1013
+#: src/gtk/x11file.c:2000 src/gtk/x11graph.c:696 src/gtk/x11lgnd.c:1013
 #: src/gtk/x11menu.c:628 src/gtk/x11menu.c:1002 src/gtk/x11menu.c:1246
 #: src/gtk/x11menu.c:1370 src/gtk/x11menu.c:1532 src/gtk/x11merge.c:68
 #: src/gtk/x11opt.c:920
@@ -145,25 +145,25 @@ msgstr "クリア(_C)"
 msgid "_Properties"
 msgstr "プロパティ(_P)"
 
-#: src/gtk/x11axis.c:112 src/gtk/x11file.c:140 src/gtk/x11graph.c:708
+#: src/gtk/x11axis.c:112 src/gtk/x11file.c:140 src/gtk/x11graph.c:710
 #: src/gtk/x11lgnd.c:222 src/gtk/x11menu.c:2061 src/gtk/x11menu.c:3351
 #: src/gtk/x11merge.c:75
 msgid "_Top"
 msgstr "先頭へ(_T)"
 
-#: src/gtk/x11axis.c:113 src/gtk/x11file.c:141 src/gtk/x11graph.c:714
+#: src/gtk/x11axis.c:113 src/gtk/x11file.c:141 src/gtk/x11graph.c:716
 #: src/gtk/x11lgnd.c:223 src/gtk/x11menu.c:2077 src/gtk/x11menu.c:3367
 #: src/gtk/x11merge.c:76 src/gtk/x11opt.c:939
 msgid "_Up"
 msgstr "上へ(_U)"
 
-#: src/gtk/x11axis.c:114 src/gtk/x11file.c:142 src/gtk/x11graph.c:720
+#: src/gtk/x11axis.c:114 src/gtk/x11file.c:142 src/gtk/x11graph.c:722
 #: src/gtk/x11lgnd.c:224 src/gtk/x11menu.c:2093 src/gtk/x11menu.c:3383
 #: src/gtk/x11merge.c:77 src/gtk/x11opt.c:932
 msgid "_Down"
 msgstr "下へ(_D)"
 
-#: src/gtk/x11axis.c:115 src/gtk/x11file.c:143 src/gtk/x11graph.c:726
+#: src/gtk/x11axis.c:115 src/gtk/x11file.c:143 src/gtk/x11graph.c:728
 #: src/gtk/x11lgnd.c:225 src/gtk/x11menu.c:2109 src/gtk/x11menu.c:3399
 #: src/gtk/x11merge.c:78
 msgid "_Bottom"
@@ -675,7 +675,7 @@ msgid "auto"
 msgstr "自動"
 
 #: src/gtk/x11dialg.c:122 src/gtk/x11merge.c:52 src/gtk/x11opt.c:471
-#: src/odata.c:167
+#: src/odata.c:168
 msgid "file"
 msgstr "ファイル"
 
@@ -687,7 +687,7 @@ msgstr "マーク選択"
 msgid "function"
 msgstr "関数"
 
-#: src/gtk/x11dialg.c:134 src/odata.c:168
+#: src/gtk/x11dialg.c:134 src/odata.c:169
 msgid "array"
 msgstr "配列"
 
@@ -707,7 +707,7 @@ msgstr "変換数式"
 msgid "math text"
 msgstr "数式入力"
 
-#: src/gtk/x11dialg.c:155 src/odata.c:194
+#: src/gtk/x11dialg.c:155 src/odata.c:195
 msgid "fit"
 msgstr "フィット"
 
@@ -779,7 +779,7 @@ msgstr "用紙"
 msgid "drawobj"
 msgstr "描画オブジェクト"
 
-#: src/gtk/x11dialg.c:215 src/gtk/x11graph.c:847
+#: src/gtk/x11dialg.c:215 src/gtk/x11graph.c:849
 msgid "directory"
 msgstr "現在のディレクトリ"
 
@@ -1289,96 +1289,104 @@ msgstr "ファイル名のみ"
 msgid "Custom"
 msgstr "任意"
 
-#: src/gtk/x11graph.c:82
+#: src/gtk/x11graph.c:74
+msgid "normal display (4:3)"
+msgstr "標準画面 (4:3)"
+
+#: src/gtk/x11graph.c:75
+msgid "wide display (16:9)"
+msgstr "ワイド画面 (16:9)"
+
+#: src/gtk/x11graph.c:84
 msgid "Letter P (215.90x279.40)"
 msgstr "レター P (215.90x279.40)"
 
-#: src/gtk/x11graph.c:83
+#: src/gtk/x11graph.c:85
 msgid "Letter L (279.40x215.90)"
 msgstr "レター L (279.40x215.90)"
 
-#: src/gtk/x11graph.c:84
+#: src/gtk/x11graph.c:86
 msgid "Legal  P (215.90x355.60)"
 msgstr "リーガル P (215.90x355.60)"
 
-#: src/gtk/x11graph.c:85
+#: src/gtk/x11graph.c:87
 msgid "Legal  L (355.60x215.90)"
 msgstr "リーガル L (355.60x215.90)"
 
-#: src/gtk/x11graph.c:175
+#: src/gtk/x11graph.c:177
 msgid "paper _Width:"
 msgstr "用紙幅(_W):"
 
-#: src/gtk/x11graph.c:180
+#: src/gtk/x11graph.c:182
 msgid "paper _Height:"
 msgstr "用紙高さ(_H):"
 
-#: src/gtk/x11graph.c:184
+#: src/gtk/x11graph.c:186
 msgid "_Paper:"
 msgstr "用紙(_P):"
 
-#: src/gtk/x11graph.c:193
+#: src/gtk/x11graph.c:195
 msgid "_Left margin:"
 msgstr "左マージン(_L):"
 
-#: src/gtk/x11graph.c:198
+#: src/gtk/x11graph.c:200
 msgid "_Top margin:"
 msgstr "上マージン(_T):"
 
-#: src/gtk/x11graph.c:202
+#: src/gtk/x11graph.c:204
 msgid "paper _Zoom:"
 msgstr "拡大率(_Z):"
 
-#: src/gtk/x11graph.c:662
+#: src/gtk/x11graph.c:664
 msgid "Object"
 msgstr "オブジェクト"
 
-#: src/gtk/x11graph.c:673 src/gtk/x11menu.c:2712
+#: src/gtk/x11graph.c:675 src/gtk/x11menu.c:2712
 msgid "_Draw order"
 msgstr "描画順(_D)"
 
-#: src/gtk/x11graph.c:700
+#: src/gtk/x11graph.c:702
 msgid "_Insert"
 msgstr "挿入(_I)"
 
-#: src/gtk/x11graph.c:745
+#: src/gtk/x11graph.c:747
 msgid "_Objects"
 msgstr "オブジェクト(_O)"
 
-#: src/gtk/x11graph.c:850
+#: src/gtk/x11graph.c:852
 msgid "_Select Dir:"
 msgstr "ディレクトリ選択(_S):"
 
-#: src/gtk/x11graph.c:852
+#: src/gtk/x11graph.c:854
 msgid "Current Dir:"
 msgstr "現在のディレクトリ:"
 
-#: src/gtk/x11graph.c:917
+#: src/gtk/x11graph.c:919
 msgid "_Expand included file"
 msgstr "データファイルの展開(データ込 NGP ファイル) (_E)"
 
-#: src/gtk/x11graph.c:922
+#: src/gtk/x11graph.c:924
 msgid "_Dir:"
 msgstr "ディレクトリ(_D):"
 
-#: src/gtk/x11graph.c:926 src/gtk/x11graph.c:981 src/gtk/x11opt.c:1280
+#: src/gtk/x11graph.c:928 src/gtk/x11graph.c:983 src/gtk/x11opt.c:1280
 #: src/gtk/x11opt.c:1312
 msgid "_Path:"
 msgstr "パス情報(_P):"
 
-#: src/gtk/x11graph.c:987
+#: src/gtk/x11graph.c:989
 msgid "_Include data file"
 msgstr "データファイルを含める(_I)"
 
-#: src/gtk/x11graph.c:991
+#: src/gtk/x11graph.c:993
 msgid "_Include merge file"
 msgstr "合成ファイルを含める(_I)"
 
-#: src/gtk/x11graph.c:1081 src/gtk/x11menu.c:650
+#: src/gtk/x11graph.c:1083 src/gtk/x11menu.c:650
 msgid "Load NGP file"
 msgstr "NGPファイルを開く"
 
-#: src/gtk/x11graph.c:1243
+#: src/gtk/x11graph.c:1245
 msgid ""
 "Ngraph is the program to create scientific 2-dimensional graphs for "
 "researchers and engineers."
@@ -1603,7 +1611,7 @@ msgstr "ルール"
 msgid "path"
 msgstr "パス"
 
-#: src/gtk/x11lgnd.c:3562 src/odata.c:181
+#: src/gtk/x11lgnd.c:3562 src/odata.c:182
 msgid "rectangle"
 msgstr "矩形"
 
@@ -1611,7 +1619,7 @@ msgstr "矩形"
 msgid "arc"
 msgstr "円"
 
-#: src/gtk/x11lgnd.c:3564 src/odata.c:174
+#: src/gtk/x11lgnd.c:3564 src/odata.c:175
 msgid "mark"
 msgstr "マーク"
 
@@ -2966,79 +2974,79 @@ msgstr "指数関数"
 msgid "user"
 msgstr "ユーザ定義"
 
-#: src/odata.c:169
+#: src/odata.c:170
 msgid "range"
 msgstr "範囲"
 
-#: src/odata.c:175 src/opath.c:81
+#: src/odata.c:176 src/opath.c:81
 msgid "line"
 msgstr "直線"
 
-#: src/odata.c:176
+#: src/odata.c:177
 msgid "polygon"
 msgstr "多角形"
 
-#: src/odata.c:177
+#: src/odata.c:178
 msgid "polygon_solid_fill"
 msgstr "実多角形"
 
-#: src/odata.c:178 src/opath.c:82
+#: src/odata.c:179 src/opath.c:82
 msgid "curve"
 msgstr "曲線"
 
-#: src/odata.c:179
+#: src/odata.c:180
 msgid "diagonal"
 msgstr "対角線"
 
-#: src/odata.c:180
+#: src/odata.c:181
 msgid "arrow"
 msgstr "矢印"
 
-#: src/odata.c:182
+#: src/odata.c:183
 msgid "rectangle_fill"
 msgstr "塗りつぶし矩形"
 
-#: src/odata.c:183
+#: src/odata.c:184
 msgid "rectangle_solid_fill"
 msgstr "実矩形"
 
-#: src/odata.c:184
+#: src/odata.c:185
 msgid "errorbar_x"
 msgstr "横誤差棒"
 
-#: src/odata.c:185
+#: src/odata.c:186
 msgid "errorbar_y"
 msgstr "縦誤差棒"
 
-#: src/odata.c:186
+#: src/odata.c:187
 msgid "staircase_x"
 msgstr "縦階段"
 
-#: src/odata.c:187
+#: src/odata.c:188
 msgid "staircase_y"
 msgstr "横階段"
 
-#: src/odata.c:188
+#: src/odata.c:189
 msgid "bar_x"
 msgstr "空横棒"
 
-#: src/odata.c:189
+#: src/odata.c:190
 msgid "bar_y"
 msgstr "空縦棒"
 
-#: src/odata.c:190
+#: src/odata.c:191
 msgid "bar_fill_x"
 msgstr "塗りつぶし横棒"
 
-#: src/odata.c:191
+#: src/odata.c:192
 msgid "bar_fill_y"
 msgstr "塗りつぶし縦棒"
 
-#: src/odata.c:192
+#: src/odata.c:193
 msgid "bar_solid_fill_x"
 msgstr "実横棒"
 
-#: src/odata.c:193
+#: src/odata.c:194
 msgid "bar_solid_fill_y"
 msgstr "実縦棒"
 
