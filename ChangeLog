@@ -18,7 +18,7 @@
 
 2017-03-31  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
-	* src/ofit.c (show_poly_equation): improve tne notation of a
+	* src/ofit.c (show_poly_equation): improve tne notation of an
 	equation.
 
 2017-03-30  Hiroyuki Ito  <ZXB01226 at nifty.com>
@@ -3420,7 +3420,7 @@
 	* src/gtk/ogra2cairo.c (gra2cairo_get_utf8_str): added.
 	(gra2cairo_output): use "gra2cairo_get_utf8_str()".
 
-	* src/gtk/ox11menu.c (menuinit): set default dpi of a EMF file as
+	* src/gtk/ox11menu.c (menuinit): set default dpi of an EMF file as
 	576.
 
 2012-07-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
@@ -3446,7 +3446,7 @@
 
 2012-07-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/gtk/ox11menu.c (menuinit): set default dpi of a EMF file as
+	* src/gtk/ox11menu.c (menuinit): set default dpi of an EMF file as
 	600.
 
 	* src/gtk/ogra2cairofile.c (create_reference_dc): removed.
@@ -8769,15 +8769,15 @@
 
 	* src/gtk/x11lgnd.c (width_edited, pos_edited): add 4th argument
 	for the function "str_calc()".
-	(width_edited, pos_edited): show message on a error.
+	(width_edited, pos_edited): show message on an error.
 
 	* src/gtk/x11axis.c (pos_edited_common): add 4th argument for the
 	function "str_calc()".
-	(pos_edited_common): show message on a error.
+	(pos_edited_common): show message on an error.
 
 	* src/gtk/gtk_widget.c (spin_change_value_cb): add 4th argument
 	for the function "str_calc()".
-	(spin_change_value_cb): show message on a error.
+	(spin_change_value_cb): show message on an error.
 
 	* src/gtk/gtk_subwin.c (numeric_cb): add 4th argument for the
 	function "str_calc()".
@@ -8786,7 +8786,7 @@
 	(str_calc): set error message when "*err_msg" is not NULL.
 	(cmdexpr): show error message created in new math code.
 
-	* src/ofile.c (put_func): show message on a error.
+	* src/ofile.c (put_func): show message on an error.
 	(f2dputmath): don't show error message.
 
 2009-10-27  Ito Hiroyuki  <ZXB01226 at nifty.com>
