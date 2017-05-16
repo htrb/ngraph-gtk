@@ -1,3 +1,12 @@
+2017-05-16  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/ox11menu.h (paper_id): add PAPER_ID_NORMAL and
+	PAPER_ID_WIDE.
+
+
+	* src/gtk/x11graph.c (pagelist): add "normal display" and "wide
+	display".
+
 2017-04-12  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/oiarray.c (iarray_sdev): check the value befor call sqrt.
