@@ -76,7 +76,7 @@ $(uidir)/menus-common.ui: $(MENU_UI_SOURCE)
 	$(MKDIR_P) $(uidir)
 	cp $< $@
 
-ngraphui.resources.c: $(srcdir)/data/ngraphui.resources.xml $(srcdir)/data/gtk/menus-common.ui $(srcdir)/data/css/ngraph.css $(srcdir)/data/gtk/help-overlay.ui data/gtk/menus-appmenu.ui
+ngraphui.resources.c: $(srcdir)/data/ngraphui.resources.xml $(uidir)/menus-common.ui $(srcdir)/data/css/ngraph.css $(srcdir)/data/gtk/help-overlay.ui $(uidir)/menus-appmenu.ui
 	$(GLIB_COMPILE_RESOURCES) --target=$@ --generate-source --sourcedir $(srcdir)/data --sourcedir $(builddir)/data $<
 
 BUILT_SOURCES = ${nodist_libngraphui_la_SOURCES}
