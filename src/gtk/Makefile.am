@@ -1,5 +1,5 @@
 EXTRA_DIST = dir_defs.h.in data/css/ngraph.css				\
-	data/gtk/menus-common.ui.in data/gtk/menus-common.ui.mac	\
+	data/gtk/menus-common.ui.in data/gtk/menus-common.ui.osx	\
 	data/gtk/menus-appmenu.ui.in data/gtk/help-overlay.ui		\
 	data/gtk/menus-appmenu.ui.osx data/pixmaps/ngraph_align_b.png	\
 	data/pixmaps/ngraph_align_hc.png				\
