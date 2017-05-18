@@ -1,7 +1,7 @@
 EXTRA_DIST = dir_defs.h.in data/css/ngraph.css				\
-	data/gtk/menus-common.ui data/gtk/menus-appmenu.ui.in		\
-	data/gtk/help-overlay.ui data/gtk/menus-appmenu.ui.osx		\
-	data/pixmaps/ngraph_align_b.png					\
+	data/gtk/menus-common.ui.in data/gtk/menus-common.ui.mac	\
+	data/gtk/menus-appmenu.ui.in data/gtk/help-overlay.ui		\
+	data/gtk/menus-appmenu.ui.osx data/pixmaps/ngraph_align_b.png	\
 	data/pixmaps/ngraph_align_hc.png				\
 	data/pixmaps/ngraph_align_l.png					\
 	data/pixmaps/ngraph_align_r.png					\
@@ -56,16 +56,23 @@ libngraphui_la_SOURCES = gtk_common.h gtk_combo.c gtk_combo.h		\
 
 if OS_WIN32
 APPMENU_UI_SOURCE = $(srcdir)/data/gtk/menus-appmenu.ui.in
+MENU_UI_SOURCE = $(srcdir)/data/gtk/menus-common.ui.in
 else
 if OS_OSX
 APPMENU_UI_SOURCE = $(srcdir)/data/gtk/menus-appmenu.ui.osx
+MENU_UI_SOURCE = $(srcdir)/data/gtk/menus-common.ui.osx
 else
 APPMENU_UI_SOURCE = $(srcdir)/data/gtk/menus-appmenu.ui.in
+MENU_UI_SOURCE = $(srcdir)/data/gtk/menus-common.ui.in
 endif
 endif
 
 uidir = data/gtk
 $(uidir)/menus-appmenu.ui: $(APPMENU_UI_SOURCE)
+	$(MKDIR_P) $(uidir)
+	cp $< $@
+
+$(uidir)/menus-common.ui: $(MENU_UI_SOURCE)
 	$(MKDIR_P) $(uidir)
 	cp $< $@
 
