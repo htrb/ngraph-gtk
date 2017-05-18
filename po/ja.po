@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.06.13\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
 "POT-Creation-Date: 2017-05-16 11:42+0900\n"
-"PO-Revision-Date: 2017-05-16 11:43+0900\n"
+"PO-Revision-Date: 2017-05-18 13:22+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja\n"
@@ -2137,7 +2137,7 @@ msgstr "選択したオブジェクトの削除"
 
 #: src/gtk/x11menu.c:2303
 msgid "Duplicate the selected object"
-msgstr "選択したオブジェクトを２重化"
+msgstr "選択したオブジェクトを複製"
 
 #: src/gtk/x11menu.c:2321
 msgid "draw _Order"
