@@ -14,11 +14,15 @@ class Presentation
     :LIST,
     :SUB_LIST,
     :CENTER_LIST,
+    :VERB,
+    :ENUM,
     :TITLE,
     :COMMAND,
     :SLEEP,
     :OPACITY,
     :LINE_HEIGHT,
+    :INCLUDE,
+    :VERB_INCLUDE,
   ]
 
   PDF_MODE = [
@@ -47,6 +51,8 @@ class Presentation
     @ofst_y = 400
     @page_width = 29700
     @page_height = 21000
+    @page_top_margin= 0
+    @page_left_margin = 0
     @use_opacity = true
     @line_height = 100
 
@@ -55,6 +61,9 @@ class Presentation
 
     @slide_show = false
     @slide_show_wait = 10
+
+    @path = "."
+    @enum = 0
   end
 
   def save_image(file)
@@ -86,16 +95,24 @@ class Presentation
 
   def load_graph(file)
     Ngraph::Shell.new {|shell|
-      shell::shell(file)
+      shell::shell(@path + "/" + file)
     }
 
     Ngraph::Gra.del("viewer")
     Ngraph::Fit.each {|fit|
       fit.display = false
     }
+    Ngraph::Data.each {|data|
+      data.file = @path + "/" + data.file if (data.file && data.file[0] != "/")
+    }
+    Ngraph::Merge.each {|data|
+      data.file = @path + "/" + data.file if (data.file && data.file[0] != "/")
+      p data.file
+    }
   end
 
   def clear
+    @enum = 0
     Ngraph::Draw.derive(true).each {|obj|
       obj.del("0-!")
     }
@@ -110,7 +127,7 @@ class Presentation
   def center_add(str)
     text = Ngraph::Text.new
     text.name = "CENTER"
-    text.text = str
+    text.text = (str == "　") ? " " : str
     text.pt = @center_text_size
 
     margin = 800
@@ -134,8 +151,8 @@ class Presentation
     Ngraph::Text.del("CENTER")
   end
 
-  def list_add_sub(str, ofst_x, size, dot_char)
-    margin = @list_text_size / 10
+  def list_add_sub(str, ofst_x, size, dot_char, raw = false, font = 'Sans-serif')
+    margin = size / 10
 
     ofst = @ofst_y + @title_h
     list = Ngraph::Text["LIST"][-1]
@@ -145,16 +162,19 @@ class Presentation
       padding = (list.bbox[3] - list.bbox[1]) / 100.0 * (@line_height - 100.0)
       list.raw = is_raw
       ofst = list.bbox[3] + padding
+      margin = list.pt / 10
     end
     text = Ngraph::Text.new
     text.name = "LIST"
     text.text = if (dot_char)
                   "%C{#{ENUM_COLOR}}#{dot_char}%C{0} #{str}"
                 else
-                  str
+                  (str == "　") ? " " : str
                 end
     text.x = ofst_x
     text.pt = size
+    text.raw = raw
+    text.font = font
     top = text.bbox[1]
     text.y = text.y - top + ofst + margin
   end
@@ -167,14 +187,29 @@ class Presentation
   end
 
   def sub_list_add(str)
+    @enum = 0
     ofst_x = @ofst_x + @list_text_size / 2
     dot_char = ENUM_CHAR[1]
     list_add_sub(str, ofst_x, @sub_list_text_size, dot_char)
   end
 
   def list_add(str)
+    @enum = 0
     ofst_x = @ofst_x
     dot_char = ENUM_CHAR[0]
+    list_add_sub(str, ofst_x, @list_text_size, dot_char)
+  end
+
+  def verb_add(str)
+    @enum = 0
+    ofst_x = @ofst_x
+    list_add_sub(str, ofst_x, @list_text_size, nil, true, "Monospace")
+  end
+
+  def enum_add(str)
+    ofst_x = @ofst_x
+    @enum += 1
+    dot_char = "#{@enum}. "
     list_add_sub(str, ofst_x, @list_text_size, dot_char)
   end
 
@@ -249,6 +284,15 @@ class Presentation
     Ngraph::Text.del("LIST")
   end
 
+  def verb_include(file)
+    include(file, 'Monospace')
+  end
+
+  def include(file, font = 'Sans-serif')
+    str = IO.read(@path + "/" + file)
+    list_add_sub(str, @ofst_x, @sub_list_text_size, nil, true, font)
+  end
+
   def command(mode, arg, skip_pause)
     case (mode)
     when LINE_HEIGHT
@@ -263,8 +307,16 @@ class Presentation
       sub_list_add(arg)
     when CENTER_LIST
       center_list_add(arg)
+    when VERB
+      verb_add(arg)
+    when ENUM
+      enum_add(arg)
     when TITLE
       title_add(arg)
+    when VERB_INCLUDE
+      verb_include(arg)
+    when INCLUDE
+      include(arg)
     when COMMAND
       eval(arg)
     when SLEEP
@@ -351,6 +403,12 @@ class Presentation
       when "@list"
         mode = LIST
         page_item += 1
+      when "@verb"
+        mode = VERB
+        page_item += 1
+      when "@enum"
+        mode = ENUM
+        page_item += 1
       when "@sub_list"
         mode = SUB_LIST
         page_item += 1
@@ -359,6 +417,12 @@ class Presentation
         page_item += 1
       when "@title"
         mode = TITLE
+        page_item += 1
+      when "@verb_include"
+        mode = VERB_INCLUDE
+        page_item += 1
+      when "@include"
+        mode = INCLUDE
         page_item += 1
       when "@command"
         mode = COMMAND
@@ -451,6 +515,14 @@ class Presentation
           @total_time = f.gets.to_i
         when "@line_height"
           @line_height = f.gets.to_f
+        when "@title_y"
+          @title_y = f.gets.to_f
+        when "@page_size"
+          size = f.gets.split.map {|i| i.to_i}
+          @page_width = size[0]
+          @page_height = size[1]
+          @page_left_margin = size[2] if (size[2])
+          @page_top_margin = size[3] if (size[3])
         else
           dat = page[-1]
           dat.push(l) if (dat)
@@ -468,7 +540,11 @@ class Presentation
 
     if (pdf_out)
       gra2cairofile = Ngraph::Gra2cairofile.new
-      gra2cairofile.file = "/dev/null"
+      if (FileTest.exist?("/dev/null"))
+        gra2cairofile.file = "/dev/null"
+      else
+        gra2cairofile.file = "nul"
+      end
       @gra.device = gra2cairofile
     else
       @gra2gtk = Ngraph::Gra2gtk.new
@@ -480,6 +556,8 @@ class Presentation
     @gra.zoom = 10000
     @gra.paper_width = @page_width
     @gra.paper_height = @page_height
+    @gra.top_margin = @page_top_margin
+    @gra.left_margin = @page_left_margin
     @gra.draw_obj = ["merge", "axisgrid", "file", "axis", "legend", "rectangle", "arc", "path", "mark", "text"]
     @gra.open
   end
@@ -489,6 +567,7 @@ class Presentation
     @last_page = @pages.size
     @data_file = data_file
     @page = @last_page - 1 if (@page > @last_page - 1)
+    @path = File.dirname(data_file)
   end
 
   def reload
@@ -571,8 +650,16 @@ class Presentation
 
           if (@pdf_out)
             pdf_file = File.basename(@data_file, ".dat") + ".pdf"
-            system("pdfjoin -q -o #{pdf_file} #{PDF_PREFIX}*.pdf")
-            File.delete(*Dir.glob("#{PDF_PREFIX}*.pdf"))
+            src_pdf_files = Dir.glob("#{PDF_PREFIX}*.pdf").sort
+            if (FileTest.exist?("/dev/null"))
+              system("pdfunite #{src_pdf_files.join(" ")} #{pdf_file}")
+            else
+              pdf_file_tmp = "__tmp__" + pdf_file
+              system("pdfunite #{src_pdf_files.join(" ")} #{pdf_file_tmp}")
+              system("pdfopt #{pdf_file_tmp} #{pdf_file}")
+              File.delete(pdf_file_tmp)
+            end
+            File.delete(*src_pdf_files)
             puts("save #{pdf_file}")
             break
           end
