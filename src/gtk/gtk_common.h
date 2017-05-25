@@ -26,6 +26,7 @@
 #define USE_HEADER_BAR 1
 #endif
 
+#define RECENT_CHOOSER_LIMIT 25
 
 #define APPLICATION_ID "com.github.htrb.ngraph-gtk"
 #define RESOURCE_PATH "/com/github/htrb/ngraph-gtk"

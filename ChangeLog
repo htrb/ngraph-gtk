@@ -1,3 +1,9 @@
+2017-05-25  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (create_recent_menu): use RECENT_CHOOSER_LIMIT.
+
+	* src/gtk/gtk_common.h (RECENT_CHOOSER_LIMIT): added.
+
 2017-05-16  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/ox11menu.h (paper_id): add PAPER_ID_NORMAL and

@@ -5310,7 +5310,7 @@ create_recent_menu(int type)
   submenu = gtk_recent_chooser_menu_new_for_manager(NgraphApp.recent_manager);
   create_recent_filter(submenu, type);
   gtk_recent_chooser_menu_set_show_numbers(GTK_RECENT_CHOOSER_MENU(submenu), TRUE);
-  gtk_recent_chooser_set_limit(GTK_RECENT_CHOOSER(submenu), 10);
+  gtk_recent_chooser_set_limit(GTK_RECENT_CHOOSER(submenu), RECENT_CHOOSER_LIMIT);
 
   switch (type) {
   case RECENT_TYPE_GRAPH:
