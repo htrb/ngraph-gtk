@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.07.03\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2017-05-16 11:42+0900\n"
+"POT-Creation-Date: 2017-06-07 18:11+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1074,7 +1074,7 @@ msgid "_Y smooth:"
 msgstr ""
 
 #: src/gtk/x11file.c:2557 src/gtk/x11file.c:3744 src/gtk/x11file.c:3813
-#: src/gtk/x11file.c:3873 src/gtk/x11file.c:5455
+#: src/gtk/x11file.c:3873 src/gtk/x11file.c:5457
 #, c-format
 msgid "Create"
 msgstr ""
@@ -1208,39 +1208,39 @@ msgstr ""
 msgid "Data new"
 msgstr ""
 
-#: src/gtk/x11file.c:4267 src/gtk/x11menu.c:630
+#: src/gtk/x11file.c:4269 src/gtk/x11menu.c:630
 msgid "Add Data file"
 msgstr ""
 
-#: src/gtk/x11file.c:5302
+#: src/gtk/x11file.c:5304
 msgid "Data file"
 msgstr ""
 
-#: src/gtk/x11file.c:5308
+#: src/gtk/x11file.c:5310
 msgid "Making data file"
 msgstr ""
 
-#: src/gtk/x11file.c:5309
+#: src/gtk/x11file.c:5311
 msgid "Making data file."
 msgstr ""
 
-#: src/gtk/x11file.c:5507 src/gtk/x11lgnd.c:3071
+#: src/gtk/x11file.c:5509 src/gtk/x11lgnd.c:3071
 msgid "Join"
 msgstr ""
 
-#: src/gtk/x11file.c:5512 src/gtk/x11lgnd.c:3050 src/gtk/gtk_widget.c:1132
+#: src/gtk/x11file.c:5514 src/gtk/x11lgnd.c:3050 src/gtk/gtk_widget.c:1132
 msgid "Color 1"
 msgstr ""
 
-#: src/gtk/x11file.c:5519 src/gtk/x11lgnd.c:3051 src/gtk/gtk_widget.c:1139
+#: src/gtk/x11file.c:5521 src/gtk/x11lgnd.c:3051 src/gtk/gtk_widget.c:1139
 msgid "Color 2"
 msgstr ""
 
-#: src/gtk/x11file.c:5527
+#: src/gtk/x11file.c:5529
 msgid "Clip"
 msgstr ""
 
-#: src/gtk/x11file.c:5539
+#: src/gtk/x11file.c:5541
 msgid "Type"
 msgstr ""
 

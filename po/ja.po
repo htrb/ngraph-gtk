@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.06.13\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2017-05-16 11:42+0900\n"
+"POT-Creation-Date: 2017-06-07 18:11+0900\n"
 "PO-Revision-Date: 2017-05-18 13:22+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -1103,7 +1103,7 @@ msgid "_Y smooth:"
 msgstr "_Y 隣接平均:"
 
 #: src/gtk/x11file.c:2557 src/gtk/x11file.c:3744 src/gtk/x11file.c:3813
-#: src/gtk/x11file.c:3873 src/gtk/x11file.c:5455
+#: src/gtk/x11file.c:3873 src/gtk/x11file.c:5457
 #, c-format
 msgid "Create"
 msgstr "作成"
@@ -1237,39 +1237,39 @@ msgstr "分割数(_D):"
 msgid "Data new"
 msgstr "新規作成"
 
-#: src/gtk/x11file.c:4267 src/gtk/x11menu.c:630
+#: src/gtk/x11file.c:4269 src/gtk/x11menu.c:630
 msgid "Add Data file"
 msgstr "データの追加"
 
-#: src/gtk/x11file.c:5302
+#: src/gtk/x11file.c:5304
 msgid "Data file"
 msgstr "データの保存"
 
-#: src/gtk/x11file.c:5308
+#: src/gtk/x11file.c:5310
 msgid "Making data file"
 msgstr "データファイル作成中"
 
-#: src/gtk/x11file.c:5309
+#: src/gtk/x11file.c:5311
 msgid "Making data file."
 msgstr "データファイル作成中"
 
-#: src/gtk/x11file.c:5507 src/gtk/x11lgnd.c:3071
+#: src/gtk/x11file.c:5509 src/gtk/x11lgnd.c:3071
 msgid "Join"
 msgstr "ジョイン"
 
-#: src/gtk/x11file.c:5512 src/gtk/x11lgnd.c:3050 src/gtk/gtk_widget.c:1132
+#: src/gtk/x11file.c:5514 src/gtk/x11lgnd.c:3050 src/gtk/gtk_widget.c:1132
 msgid "Color 1"
 msgstr "色 1"
 
-#: src/gtk/x11file.c:5519 src/gtk/x11lgnd.c:3051 src/gtk/gtk_widget.c:1139
+#: src/gtk/x11file.c:5521 src/gtk/x11lgnd.c:3051 src/gtk/gtk_widget.c:1139
 msgid "Color 2"
 msgstr "色 2"
 
-#: src/gtk/x11file.c:5527
+#: src/gtk/x11file.c:5529
 msgid "Clip"
 msgstr "クリップ"
 
-#: src/gtk/x11file.c:5539
+#: src/gtk/x11file.c:5541
 msgid "Type"
 msgstr "タイプ"
 
