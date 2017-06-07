@@ -4237,6 +4237,8 @@ CmRangeAdd(void *w, gpointer client_data)
   data = NgraphApp.FileWin.data.data;
   val = DATA_SOURCE_RANGE;
   putobj(obj, "source", id, &val);
+  val = PLOT_TYPE_LINE;
+  putobj(obj, "type", id, &val);
   FileDialog(data, id, FALSE);
   ret = DialogExecute(TopLevel, data->dialog);
 

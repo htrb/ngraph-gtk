@@ -1,3 +1,8 @@
+2017-06-07  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (CmRangeAdd): default plot type is "line" when
+	sata source is "range".
+
 2017-05-25  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (create_recent_menu): use RECENT_CHOOSER_LIMIT.
