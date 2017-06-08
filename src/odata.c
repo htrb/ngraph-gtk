@@ -2631,14 +2631,14 @@ getdata_skip_step(struct f2ddata *fp, int progress)
     if (fp->line + fp->rstep - 1 > fp->array_data.data_num) {
       fp->eof = TRUE;
     } else {
-      fp->line += fp->hskip - 1;
+      fp->line += fp->rstep - 1;
     }
     break;
   case DATA_SOURCE_RANGE:
     if (fp->line + fp->rstep - 1 > fp->range_div) {
       fp->eof = TRUE;
     } else {
-      fp->line += fp->hskip - 1;
+      fp->line += fp->rstep - 1;
     }
     break;
   }
