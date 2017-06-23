@@ -1,3 +1,7 @@
+2017-06-23  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/otext.c (textmatch): fix point coordinates calculation.
+
 2017-06-08  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/odata.c (getdata_skip_step): bug fix: use "rstep" instead of

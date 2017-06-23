@@ -424,19 +424,18 @@ textmatch(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
       GRAtextextent(text,font,style,pt,space,scriptsize,&gx0,&gy0,&gx1,&gy1,FALSE);
     }
 
-    minx-=err;
-    miny-=err;
-    maxx+=err;
-    maxy+=err;
-
     si=sin(dir/18000.0*MPI);
     co=cos(dir/18000.0*MPI);
     px=minx-x;
     py=miny-y;
     px2=px*co-py*si;
     py2=px*si+py*co;
-    if ((gx0<=px2) && (px2<=gx1)
-     && (gy0<=py2) && (py2<=gy1)) rval->i=TRUE;
+    if ((px2 >= gx0 - err) &&
+	(px2 <= gx1 + err) &&
+	(py2 >= gy0 - err) &&
+	(py2 <= gy1 + err)) {
+      rval->i=TRUE;
+    }
   } else {
     if (_exeobj(obj,"bbox",inst,0,NULL)) return 1;
     _getobj(obj,"bbox",inst,&array);
