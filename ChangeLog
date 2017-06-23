@@ -1,5 +1,8 @@
 2017-06-23  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/gtk/init.c (exec_console): use "system" to execute xterm on
+	macOS.
+
 	* src/otext.c (textmatch): fix point coordinates calculation.
 
 2017-06-08  Hiroyuki Ito  <ZXB01226 at nifty.com>

@@ -399,15 +399,17 @@ exec_console(char *fifo_in, char *fifo_out)
       int len;
 #if OSX
       snprintf(buf, sizeof(buf), "%s -e %s/terminal %s %s", Terminal, LIBDIR, fifo_in, fifo_out);
+      system(buf);
+      exit(0);
 #else
       snprintf(buf, sizeof(buf), "%s %s %s", Terminal, fifo_in, fifo_out);
-#endif
       argv = NULL;
       s = buf;
       while ((s2 = getitok2(&s, &len, " \t")) != NULL) {
 	arg_add(&argv, s2);
       }
       execvp(argv[0], argv);
+#endif
     } else if (pid != -1) {
       int status;
 
