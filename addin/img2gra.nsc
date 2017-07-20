@@ -1,0 +1,26 @@
+# legend.nsc written by hito
+#
+# This script import image as merge object. 
+#
+# Description: _Import image...,import image as merge object,
+
+new dialog
+IMG_FILE=${dialog::get_open_file}
+del dialog
+
+if [ ! -r "$IMG_FILE" ]
+then
+    exit
+fi
+
+GRA_FILE=`basename $IMG_FILE`.gra
+gimg2gra ${menu::dpi} $IMG_FILE $GRA_FILE
+
+if [ -f "$GRA_FILE" ]
+then
+    new merge
+    merge::file=$GRA_FILE
+    gra::clear
+    gra::draw
+    menu::modified=true
+fi
