@@ -38,7 +38,7 @@ struct rectangle{
 };
 static GtkWidget *App = NULL;
 
-static GtkWidget *create_widgets(struct AppData *app_data, gchar *img_file);
+static GtkWidget *create_widgets(struct AppData *app_data, const gchar *img_file);
 static void print_error_exit(const gchar *error);
 static void set_bgcolor(int r, int g, int b, int a, struct AppData *data);
 
@@ -85,16 +85,23 @@ main(int argc, char *argv[])
 }
 
 static GtkWidget *
-create_widgets(struct AppData *app_data, gchar *img_file)
+create_widgets(struct AppData *app_data, const gchar *img_file)
 {
   GtkWidget *w, *vbox, *hbox, *event_box, *scrolled_window, *app;
+  GdkPixbuf *pixbuf;
+  GError *error;
 
   app_data->entry = NULL;
 
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 
-  w = gtk_image_new_from_file(img_file);
+  error = NULL;
+  pixbuf = gdk_pixbuf_new_from_file(img_file, &error);
+  if (pixbuf == NULL) {
+    print_error_exit(error->message);
+  }
+  w = gtk_image_new_from_pixbuf(pixbuf);
   app_data->im = gtk_image_get_pixbuf(GTK_IMAGE(w));
   event_box = gtk_event_box_new();
   gtk_container_add(GTK_CONTAINER(event_box), w);

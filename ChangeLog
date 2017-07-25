@@ -2,6 +2,8 @@
 
 	* addin/gimg2gra.c (create_widgets): added.
 	(main): use create_widgets().
+	(create_widgets): use gdk_pixbuf_new_from_file() and
+	gtk_image_new_from_pixbuf() instead of gtk_image_new_from_file().
 
 2017-06-23  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
