@@ -1,3 +1,8 @@
+2017-07-25  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* addin/gimg2gra.c (create_widgets): added.
+	(main): use create_widgets().
+
 2017-06-23  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/init.c (exec_console): use "system" to execute xterm on

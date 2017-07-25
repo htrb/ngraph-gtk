@@ -36,21 +36,19 @@ struct rectangle{
   unsigned char r, g, b, a;
   int x1, y1, x2, y2;
 };
-static int ADJUST = WIDTH;
 static GtkWidget *App = NULL;
 
+static GtkWidget *create_widgets(struct AppData *app_data, gchar *img_file);
 static void print_error_exit(const gchar *error);
 static void set_bgcolor(int r, int g, int b, int a, struct AppData *data);
 
 static void create_entry(GdkPixbuf *im, GtkWidget *hbox, struct AppData *data);
 static void create_buttons(struct AppData *data, GtkWidget *hbox);
-static void create_radio_buttons(GtkWidget *box);
 
 static gboolean delete_event(GtkWidget *widget, GdkEvent *event, gpointer data);
 static gboolean button_press_event(GtkWidget *widget, GdkEventButton *event, gpointer data);
 static void save_button_clicked(GtkButton *widget, gpointer data);
 static void cancel_button_clicked(GtkButton *widget, gpointer data);
-static void adjust_button_clicked(GtkButton *widget, gpointer data);
 
 static int  rectcmp(const void *tmpa, const void *tmpb);
 static void fputcolor(FILE *fp, struct Color *color);
@@ -62,58 +60,62 @@ static int  gra_save(GdkPixbuf *im, char *gra_file);
 int
 main(int argc, char *argv[])
 {
-  GtkWidget *w, *vbox, *hbox, *event_box;
   static gchar *img_file = NULL, *gra_file = NULL;
   static char *usage = "Usage: %s resolution image_file gra_file\n";
   struct AppData app_data;
 
-  //  gtk_set_locale();
-  gtk_init (&argc, &argv);
-
-  while(getopt(argc, argv, "") != -1);
-  if(argc - optind != 3){
+  gtk_init(&argc, &argv);
+  if (argc != 4) {
     gchar *error;
-
     error = g_strdup_printf(usage, g_path_get_basename(argv[0]));
     print_error_exit(error);
   }
-  gra_file = argv[optind + 2];
-  img_file = argv[optind + 1];
-  app_data.dpi = atoi(argv[optind]);
-
+  gra_file = argv[3];
+  img_file = argv[2];
+  app_data.dpi = atoi(argv[1]);
   if(gra_file == NULL) {
     gra_file = g_strconcat(g_path_get_basename(img_file), ".gra", NULL);
   }
 
   app_data.gra = gra_file;
-  app_data.entry = NULL;
+  App = create_widgets(&app_data, img_file);
+  gtk_main();
+
+  return 0;
+}
+
+static GtkWidget *
+create_widgets(struct AppData *app_data, gchar *img_file)
+{
+  GtkWidget *w, *vbox, *hbox, *event_box, *scrolled_window, *app;
+
+  app_data->entry = NULL;
 
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 
-
   w = gtk_image_new_from_file(img_file);
-  app_data.im = gtk_image_get_pixbuf(GTK_IMAGE(w));
+  app_data->im = gtk_image_get_pixbuf(GTK_IMAGE(w));
+  event_box = gtk_event_box_new();
+  gtk_container_add(GTK_CONTAINER(event_box), w);
+  g_signal_connect(event_box, "button-press-event", G_CALLBACK(button_press_event), app_data);
 
-  event_box = gtk_event_box_new ();
-  gtk_container_add (GTK_CONTAINER(event_box), w);
-  g_signal_connect(event_box, "button-press-event", G_CALLBACK(button_press_event), &app_data);
+  scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+  gtk_widget_set_size_request(scrolled_window, 800, 600);
+  gtk_container_add(GTK_CONTAINER(scrolled_window), event_box);
 
-  gtk_box_pack_start(GTK_BOX(vbox), event_box, TRUE, TRUE, 0);
+  gtk_box_pack_start(GTK_BOX(vbox), scrolled_window, TRUE, TRUE, 0);
   gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
 
-  create_buttons(&app_data, hbox);
+  create_buttons(app_data, hbox);
 
-  App = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+  app = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
-  g_signal_connect(App, "delete-event", G_CALLBACK(delete_event), NULL);
-  gtk_container_add(GTK_CONTAINER(App), vbox);
+  g_signal_connect(app, "delete-event", G_CALLBACK(delete_event), NULL);
+  gtk_container_add(GTK_CONTAINER(app), vbox);
 
-  gtk_widget_show_all(App);
-
-  gtk_main();
-
-  return 0;
+  gtk_widget_show_all(app);
+  return app;
 }
 
 static void
@@ -121,14 +123,14 @@ print_error_exit(const gchar *error)
 {
   GtkWidget *dialog;
 
-  dialog = gtk_message_dialog_new (GTK_WINDOW(App),
-				   GTK_DIALOG_DESTROY_WITH_PARENT,
-				   GTK_MESSAGE_ERROR,
-				   GTK_BUTTONS_CLOSE,
-				   "Error loading file %s",
-				   error);
-  gtk_dialog_run (GTK_DIALOG (dialog));
-  gtk_widget_destroy (dialog);
+  dialog = gtk_message_dialog_new(GTK_WINDOW(App),
+				  GTK_DIALOG_DESTROY_WITH_PARENT,
+				  GTK_MESSAGE_ERROR,
+				  GTK_BUTTONS_CLOSE,
+				  "Error loading file %s",
+				  error);
+  gtk_dialog_run(GTK_DIALOG(dialog));
+  gtk_widget_destroy(dialog);
 
   exit(1);
 }
@@ -144,8 +146,6 @@ create_buttons(struct AppData *data, GtkWidget *box)
   im = data->im;
 
   create_entry(im, vbox, data);
-  create_radio_buttons(vbox);
-
   gtk_box_pack_start(GTK_BOX(box), vbox, FALSE, FALSE, 10);
 
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
@@ -156,31 +156,6 @@ create_buttons(struct AppData *data, GtkWidget *box)
   w = gtk_button_new_with_label(" Cancel ");
   g_signal_connect(w, "clicked", G_CALLBACK(cancel_button_clicked), NULL);
   gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 5);
-
-  gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 5);
-}
-
-static void
-create_radio_buttons(GtkWidget *box)
-{
-  GtkWidget *w, *group, *hbox;
-
-  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-
-  w = gtk_label_new("ADJUST:");
-  gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 0);
-
-  group = gtk_radio_button_new_with_label(NULL, "Width");
-  if(ADJUST == WIDTH)
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(group), TRUE);
-  g_signal_connect(group, "clicked", G_CALLBACK(adjust_button_clicked), (gpointer)WIDTH);
-  gtk_box_pack_start(GTK_BOX(hbox), group, FALSE, FALSE, 5);
-
-  group = gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(group), "Height");
-  if(ADJUST == HEIGHT)
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(group), TRUE);
-  g_signal_connect(group, "clicked", G_CALLBACK(adjust_button_clicked), (gpointer)HEIGHT);
-  gtk_box_pack_start(GTK_BOX(hbox), group, FALSE, FALSE, 5);
 
   gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 5);
 }
@@ -260,19 +235,12 @@ button_press_event(GtkWidget *widget, GdkEventButton *event, gpointer data)
 }
 
 static void
-adjust_button_clicked(GtkButton *widget, gpointer data)
-{
-  ADJUST = GPOINTER_TO_INT(data);
-}
-
-static void
 save_button_clicked(GtkButton *widget, gpointer data)
 {
   struct AppData *app_data = (struct AppData *) data;
   GdkPixbuf *im;
   gchar *grafile;
   int dotsize, w, h;
-  char *adj[] = {"Width", "Height"};
 
   im = app_data->im;
   grafile = app_data->gra;
@@ -281,7 +249,7 @@ save_button_clicked(GtkButton *widget, gpointer data)
 
   dotsize = gra_set_dpi(app_data->dpi);
   gra_save(im, grafile);
-  printf("%d %d %s\n", w * dotsize, h * dotsize, adj[ADJUST]);
+  printf("%d %d\n", w * dotsize, h * dotsize);
   gtk_main_quit();
 }
 
@@ -305,8 +273,9 @@ gra_set_bgcolor(gint r, gint g, gint b, gint a)
 static int
 gra_set_dpi(int dpi)
 {
-  if(dpi > 0 && dpi<= DPI_MAX)
+  if(dpi > 0 && dpi<= DPI_MAX) {
     DotSize = DPI_MAX / dpi;
+  }
 
   return DotSize;
 }
@@ -418,8 +387,9 @@ gra_save(GdkPixbuf *im, char *gra_file)
     print_error_exit(g_strerror(errno));
   }
 
-  if(fp != stdout)
+  if(fp != stdout) {
     fclose(fp);
+  }
 
   g_free(rect);
   return 0;
