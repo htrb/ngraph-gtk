@@ -7,3 +7,4 @@ usr/share/ngraph-gtk/addin/text-in.nsc
 usr/share/ngraph-gtk/addin/fitrslt.nsc
 usr/share/ngraph-gtk/addin/timer.nsc
 usr/share/ngraph-gtk/addin/load_prm.nsc
+usr/share/ngraph-gtk/addin/img2gra.nsc
