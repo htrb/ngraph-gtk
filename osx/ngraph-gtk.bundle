@@ -82,8 +82,8 @@
     ${prefix}/libexec/ngraph-gtk/legend
   </binary>
 
-  <binary dest="${bundle}/Contents/MacOS/img2gra-bin">
-    ${prefix}/libexec/ngraph-gtk/img2gra
+  <binary dest="${bundle}/Contents/MacOS/gimg2gra-bin">
+    ${prefix}/libexec/ngraph-gtk/gimg2gra
   </binary>
 
   <binary dest="${bundle}/Contents/MacOS/terminal">
