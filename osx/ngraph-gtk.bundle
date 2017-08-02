@@ -98,6 +98,10 @@
     ${project}/ngraph-launcher.sh
   </data>
 
+  <data dest="${bundle}/Contents/MacOS/gimg2gra">
+    ${project}/ngraph-launcher.sh
+  </data>
+
   <data dest="${bundle}/Contents/MacOS/fitrslt">
     ${project}/ngraph-launcher.sh
   </data>
