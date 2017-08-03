@@ -173,4 +173,8 @@ if /bin/expr "x$1" : '^x-psn_' > /dev/null; then
     shift 1
 fi
 
+if [ `pwd` = "/" ]
+then
+    cd "$HOME"
+fi
 $EXEC "$bundle_contents/MacOS/$name-bin" "$@" $EXTRA_ARGS
