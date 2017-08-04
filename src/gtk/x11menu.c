@@ -6354,3 +6354,49 @@ set_subwindow_state(enum SubWinType id, enum subwin_state state)
 
   lock = FALSE;
 }
+
+void
+menu_undo_iteration(UNDO_FUNC func)
+{
+  struct objlist *obj, *parent;
+
+  parent = getobject("legend");
+  if (parent == NULL) {
+    return;
+  }
+  obj = parent->child;
+  while (obj) {
+    puts(obj->name);
+    func(obj);
+    obj = obj->next;
+    if (obj->parent != parent) {
+      break;
+    }
+  }
+}
+
+void
+menu_save_undo(void)
+{
+  menu_undo_iteration(undo_save);
+}
+
+void
+menu_clear_undo(void)
+{
+  menu_undo_iteration(undo_clear);
+}
+
+void
+menu_undo(void)
+{
+  menu_undo_iteration(undo_undo);
+  main_window_redraw();
+}
+
+void
+menu_redo(void)
+{
+  menu_undo_iteration(undo_redo);
+  main_window_redraw();
+}

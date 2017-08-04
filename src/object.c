@@ -400,6 +400,44 @@ arrayclear2(struct narray *array)
   array->num=0;
 }
 
+struct narray *
+arraydup(struct narray *array)
+{
+  struct narray *new_ary;
+  if (array == NULL) {
+    return NULL;
+  }
+  new_ary = g_malloc(sizeof(*new_ary));
+  if (new_ary == NULL ) {
+    return NULL;
+  }
+  *new_ary = *array;
+  new_ary->data = g_memdup(array->data, array->base * array->size);
+  if (new_ary->data == NULL) {
+    g_free(new_ary);
+    return NULL;
+  }
+  return new_ary;
+}
+
+struct narray *
+arraydup2(struct narray *array)
+{
+  struct narray *new_ary;
+  char **data, **new_data;
+  unsigned int i;
+  new_ary = arraydup(array);
+  if (new_ary == NULL ) {
+    return NULL;
+  }
+  data = array->data;
+  new_data = new_ary->data;
+  for (i = 0; i < array->num; i++) {
+    new_data[i] = g_strdup(data[i]);
+  }
+  return new_ary;
+}
+
 void
 arrayfree(struct narray *array)
 {
@@ -1486,6 +1524,237 @@ recoverinstance(struct objlist *obj)
   }
   obj->root2=NULL;
   obj->lastinst2=-1;
+}
+
+static N_VALUE *
+dup_inst(const struct objlist *obj, N_VALUE *inst)
+{
+  N_VALUE *inst_new;
+  int i;
+  inst_new = g_malloc0(obj->size * sizeof(N_VALUE));
+  if (inst_new == NULL) {
+    return NULL;
+  }
+  for (i = 0; i < obj->size; i++) {
+    switch (obj->table[i].type) {
+      break;
+    case NPOINTER:
+      /* TODO: must copy private data */
+      break;
+    case NIARRAY:
+    case NDARRAY:
+      inst_new[i].array = arraydup(inst[i].array);
+      break;
+    case NSARRAY:
+      inst_new[i].array = arraydup2(inst[i].array);
+      break;
+    case NSTR:
+    case NOBJ:
+      inst_new[i].str = g_strdup(inst[i].str); /* If str is NULL g_strdup(str) returns NULL */
+      break;
+    default:
+      inst_new[i] = inst[i];
+      break;
+    }
+  }
+  return inst_new;
+}
+
+static N_VALUE *
+dup_inst_list(const struct objlist *obj)
+{
+  N_VALUE *inst_new, *inst_prev, *inst;
+  int nextp;
+
+  if (obj->lastinst == -1) {
+    return NULL;
+  }
+
+  nextp = obj->nextp;
+  inst_prev = NULL;
+  for (inst = obj->root; inst; inst = inst[nextp].inst) {
+    inst_new = dup_inst(obj, inst);
+    if (inst_new == NULL) {
+      return NULL;		/* don't care about the memory leak. */
+    }
+    if (inst_prev) {
+      inst_prev[nextp].inst = inst_new;
+    }
+    inst_prev = inst_new;
+  }
+  return NULL;
+}
+
+static void
+free_inst(const struct objlist *obj, N_VALUE *inst)
+{
+  int i;
+
+  if (inst == NULL) {
+    return;
+  }
+
+  for (i = 0; i < obj->size; i++) {
+    switch (obj->table[i].type) {
+      break;
+    case NPOINTER:
+      /* TODO: must free private data */
+      break;
+    case NIARRAY:
+    case NDARRAY:
+      arrayfree(inst[i].array);
+      break;
+    case NSARRAY:
+      arrayfree2(inst[i].array);
+      break;
+    case NSTR:
+    case NOBJ:
+      g_free(inst[i].str);
+      break;
+    default:
+      break;
+    }
+  }
+  return;
+}
+
+static void
+free_inst_list(const struct objlist *obj, N_VALUE *inst)
+{
+  N_VALUE *next;
+  int nextp;
+
+  nextp = obj->nextp;
+  while (inst) {
+    next = inst[nextp].inst;
+    free_inst(obj, inst);
+    g_free(inst);
+    inst = next;
+  }
+}
+
+static void
+free_undo_inst(struct objlist *obj, struct undo_inst *cur)
+{
+  struct undo_inst *next;
+  while (cur) {
+    free_inst_list(obj, cur->inst);
+    next = cur->next;
+    g_free(cur);
+    cur = next;
+  }
+}
+
+static void
+undo_clear_redo(struct objlist *obj)
+{
+  free_undo_inst(obj, obj->redo);
+  obj->redo = NULL;
+}
+
+void
+undo_clear(struct objlist *obj)
+{
+  undo_clear_redo(obj);
+  free_undo_inst(obj, obj->undo);
+  obj->undo = NULL;
+}
+
+void
+undo_save(struct objlist *obj)
+{
+  struct undo_inst *inst;
+
+  undo_clear_redo(obj);
+
+  if (obj == NULL) {
+    return;
+  }
+  if (obj->idp == -1) {
+    return;
+  }
+  if (obj->nextp == -1) {
+    return;
+  }
+  if (obj->lastinst2 != -1) {
+    return;
+  }
+
+  inst = g_malloc(sizeof(*inst));
+  inst->lastinst = obj->lastinst;
+  inst->lastinst2 = obj->lastinst2;
+  inst->curinst = obj->curinst;
+  inst->lastoid = obj->lastoid;
+
+  inst->inst = dup_inst_list(obj);
+  undo_clear_redo(obj);
+  
+  inst->next = obj->undo;
+  obj->undo = inst;
+}
+
+void
+undo_undo(struct objlist *obj)
+{
+  int lastoid, lastinst2, curinst, lastinst;
+  N_VALUE *inst;
+  struct undo_inst *undo;
+  undo = obj->undo;
+  if (undo == NULL) {
+    return;
+  }
+  lastinst = obj->lastinst;
+  lastinst2 = obj->lastinst2;
+  curinst = obj->curinst;
+  lastoid = obj->lastoid;
+  inst = obj->root;
+
+  obj->lastinst = undo->lastinst;
+  obj->lastinst2 = undo->lastinst2;
+  obj->curinst = undo->curinst;
+  obj->lastoid = undo->lastoid;
+  obj->root = undo->inst;
+  obj->undo = undo->next;
+  
+  undo->lastinst = lastinst;
+  undo->lastinst2 = lastinst2;
+  undo->curinst = curinst;
+  undo->lastoid = lastoid;
+  undo->inst = inst;
+  undo->next = obj->redo;
+  obj->redo = undo;
+}
+
+void
+undo_redo(struct objlist *obj)
+{
+  int lastoid, lastinst2, curinst, lastinst;
+  N_VALUE *inst;
+  struct undo_inst *redo;
+  redo = obj->redo;
+  if (redo == NULL) {
+    return;
+  }
+  lastinst = obj->lastinst;
+  lastinst2 = obj->lastinst2;
+  curinst = obj->curinst;
+  lastoid = obj->lastoid;
+  inst = obj->root;
+
+  obj->lastinst = redo->lastinst;
+  obj->lastinst2 = redo->lastinst2;
+  obj->curinst = redo->curinst;
+  obj->lastoid = redo->lastoid;
+  obj->root = redo->inst;
+  obj->redo = redo->next;
+  
+  redo->lastinst = lastinst;
+  redo->lastinst2 = lastinst2;
+  redo->curinst = curinst;
+  redo->lastoid = lastoid;
+  redo->inst = inst;
+  redo->next = obj->undo;
+  obj->undo = redo;
 }
 
 struct objlist *

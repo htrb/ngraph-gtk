@@ -57,6 +57,13 @@ typedef
 typedef
   int (*DoneProc)(struct objlist *obj,void *local);
 
+struct undo_inst {
+  int operation;
+  int curinst, lastinst, lastoid, lastinst2;
+  N_VALUE *inst;
+  struct undo_inst *next;
+};
+
 struct objtable {
     char *name;
     enum ngraph_object_field_type type;
@@ -83,6 +90,7 @@ struct objlist {
     N_VALUE *root;
     N_VALUE *root2;
     int lastinst2;
+    struct undo_inst *undo, *redo;
     struct objlist *parent;
     struct objlist *next, *child;
     int idp,oidp,nextp;
@@ -310,5 +318,11 @@ int vinterrupt(void);
 int vinputyn(const char *mes);
 int copy_obj_field(struct objlist *obj, int dist, int src, char **ignore_field);
 int str_calc(const char *str, double *val, int *r, char **err_msg);
+
+typedef void (*UNDO_FUNC)(struct objlist *obj);
+void undo_save(struct objlist *obj);
+void undo_undo(struct objlist *obj);
+void undo_redo(struct objlist *obj);
+void undo_clear(struct objlist *obj);
 
 #endif
