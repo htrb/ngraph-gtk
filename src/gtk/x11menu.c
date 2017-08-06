@@ -160,6 +160,8 @@ struct ActionWidget {
 enum ActionWidgetIndex {
   GraphSaveAction,
   EditMenuAction,
+  EditRedoAction,
+  EditUndoAction,
   EditCutAction,
   EditCopyAction,
   EditRotateCCWAction,
@@ -2232,6 +2234,38 @@ static struct MenuItem EditAlignMenu[] = {
 };
 
 static struct MenuItem EditMenu[] = {
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Redo"),
+    NULL,
+    N_("Redo"),
+    NULL,
+    NULL,
+    "<Ngraph>/Edit/Redo",
+    GDK_KEY_y,
+    GDK_CONTROL_MASK,
+    NULL,
+    G_CALLBACK(CmEditMenuCB),
+    MenuIdEditRedo,
+    ActionWidget + EditRedoAction,
+    "EditRedoAction",
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Undo"),
+    NULL,
+    N_("Undo"),
+    NULL,
+    NULL,
+    "<Ngraph>/Edit/Undo",
+    GDK_KEY_z,
+    GDK_CONTROL_MASK,
+    NULL,
+    G_CALLBACK(CmEditMenuCB),
+    MenuIdEditUndo,
+    ActionWidget + EditUndoAction,
+    "EditUndoAction",
+  },
   {
     MENU_TYPE_NORMAL,
     N_("Cu_t"),

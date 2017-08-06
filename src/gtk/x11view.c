@@ -3103,6 +3103,7 @@ mouse_up_drag(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
   PaintLock = TRUE;
 
   if (dx != 0 || dy != 0) {
+    menu_save_undo();
     argv[0] = (char *) &dx;
     argv[1] = (char *) &dy;
     argv[2] = NULL;
@@ -6215,6 +6216,12 @@ void
 CmEditMenuCB(void *w, gpointer client_data)
 {
   switch (GPOINTER_TO_INT(client_data)) {
+  case MenuIdEditRedo:
+    menu_redo();
+    break;
+  case MenuIdEditUndo:
+    menu_undo();
+    break;
   case MenuIdEditCut:
     CutFocusedObjects();
     break;

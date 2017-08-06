@@ -37,6 +37,8 @@ enum MenuID {
   MenuIdGraphNewSection,
   MenuIdGraphNewCross,
   MenuIdGraphAllClear,
+  MenuIdEditRedo,
+  MenuIdEditUndo,
   MenuIdEditCut,
   MenuIdEditCopy,
   MenuIdEditPaste,
