@@ -1419,6 +1419,8 @@ addobject(char *name,char *alias,char *parentname,char *ver,
   objnew->child=NULL;
   objnew->root=NULL;
   objnew->root2=NULL;
+  objnew->undo = NULL;
+  objnew->redo = NULL;
   objnew->local=local;
   objnew->doneproc=doneproc;
   if (parent==NULL) offset=0;
@@ -1527,33 +1529,53 @@ recoverinstance(struct objlist *obj)
 }
 
 static N_VALUE *
-dup_inst(const struct objlist *obj, N_VALUE *inst)
+dup_inst(struct objlist *obj, N_VALUE *inst)
 {
   N_VALUE *inst_new;
-  int i;
-  inst_new = g_malloc0(obj->size * sizeof(N_VALUE));
+  int i, j, n, idn;
+  const char *field;
+  struct objlist *robj;
+  enum ngraph_object_field_type type;
+  inst_new = g_memdup(inst, obj->size * sizeof(N_VALUE));
   if (inst_new == NULL) {
     return NULL;
   }
-  for (i = 0; i < obj->size; i++) {
-    switch (obj->table[i].type) {
+
+  n = chkobjfieldnum(obj);
+  for (i = 0; i < n; i++) {
+    field = chkobjfieldname(obj, i);
+    idn = getobjtblpos(obj, field, &robj);
+    if (idn == -1) {
+      return NULL;
+    }
+    j = chkobjoffset2(robj, idn);
+    type = robj->table[idn].type;
+    switch (type) {
+    case NVOID:
+#if USE_LABEL
+    case NLABEL:
+#endif
+    case NVFUNC:
       break;
     case NPOINTER:
       /* TODO: must copy private data */
       break;
     case NIARRAY:
     case NDARRAY:
-      inst_new[i].array = arraydup(inst[i].array);
+    case NIAFUNC:
+    case NDAFUNC:
+      inst_new[j].array = arraydup(inst[j].array);
       break;
     case NSARRAY:
-      inst_new[i].array = arraydup2(inst[i].array);
+    case NSAFUNC:
+      inst_new[j].array = arraydup2(inst[j].array);
       break;
     case NSTR:
     case NOBJ:
-      inst_new[i].str = g_strdup(inst[i].str); /* If str is NULL g_strdup(str) returns NULL */
+    case NSFUNC:
+      inst_new[j].str = g_strdup(inst[j].str); /* If str is NULL g_strdup(str) returns NULL */
       break;
     default:
-      inst_new[i] = inst[i];
       break;
     }
   }
@@ -1561,9 +1583,9 @@ dup_inst(const struct objlist *obj, N_VALUE *inst)
 }
 
 static N_VALUE *
-dup_inst_list(const struct objlist *obj)
+dup_inst_list(struct objlist *obj)
 {
-  N_VALUE *inst_new, *inst_prev, *inst;
+  N_VALUE *inst_new, *inst_prev, *inst, *root;
   int nextp;
 
   if (obj->lastinst == -1) {
@@ -1572,44 +1594,63 @@ dup_inst_list(const struct objlist *obj)
 
   nextp = obj->nextp;
   inst_prev = NULL;
+  root = NULL;
   for (inst = obj->root; inst; inst = inst[nextp].inst) {
     inst_new = dup_inst(obj, inst);
     if (inst_new == NULL) {
       return NULL;		/* don't care about the memory leak. */
+    }
+    if (root == NULL) {
+      root = inst_new;
     }
     if (inst_prev) {
       inst_prev[nextp].inst = inst_new;
     }
     inst_prev = inst_new;
   }
-  return NULL;
+  return root;
 }
 
 static void
-free_inst(const struct objlist *obj, N_VALUE *inst)
+free_inst(struct objlist *obj, N_VALUE *inst)
 {
-  int i;
+  int i, j, idn;
+  const char *field;
+  enum ngraph_object_field_type type;
+  struct objlist *robj;
 
   if (inst == NULL) {
     return;
   }
 
   for (i = 0; i < obj->size; i++) {
-    switch (obj->table[i].type) {
+    field = chkobjfieldname(obj, i);
+    idn = getobjtblpos(obj, field, &robj);
+    if (idn == -1) {
+      return;
+    }
+    j = chkobjoffset2(robj, idn);
+    type = robj->table[idn].type;
+    switch (type) {
+    case NVOID:
+#if USE_LABEL
+    case NLABEL:
+#endif
+    case NVFUNC:
       break;
     case NPOINTER:
       /* TODO: must free private data */
       break;
     case NIARRAY:
     case NDARRAY:
-      arrayfree(inst[i].array);
+      arrayfree(inst[j].array);
       break;
     case NSARRAY:
-      arrayfree2(inst[i].array);
+      arrayfree2(inst[j].array);
       break;
     case NSTR:
     case NOBJ:
-      g_free(inst[i].str);
+      g_free(inst[j].str);
       break;
     default:
       break;
@@ -1619,7 +1660,7 @@ free_inst(const struct objlist *obj, N_VALUE *inst)
 }
 
 static void
-free_inst_list(const struct objlist *obj, N_VALUE *inst)
+free_inst_list(struct objlist *obj, N_VALUE *inst)
 {
   N_VALUE *next;
   int nextp;
@@ -1715,7 +1756,7 @@ undo_undo(struct objlist *obj)
   obj->lastoid = undo->lastoid;
   obj->root = undo->inst;
   obj->undo = undo->next;
-  
+
   undo->lastinst = lastinst;
   undo->lastinst2 = lastinst2;
   undo->curinst = curinst;
