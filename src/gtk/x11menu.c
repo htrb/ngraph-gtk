@@ -6425,12 +6425,12 @@ void
 menu_undo(void)
 {
   menu_undo_iteration(undo_undo);
-  main_window_redraw();
+  UpdateAll();
 }
 
 void
 menu_redo(void)
 {
   menu_undo_iteration(undo_redo);
-  main_window_redraw();
+  UpdateAll();
 }
