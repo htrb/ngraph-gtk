@@ -1,3 +1,8 @@
+2017-08-08  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (move_objects): added.
+	(mouse_up_drag, ViewerEvKeyUp): use "move_objects()".
+
 2017-07-25  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* addin/gimg2gra.c (create_widgets): added.
