@@ -6143,6 +6143,7 @@ script_exec(GtkWidget *w, gpointer client_data)
 
   menu_lock(TRUE);
 
+  menu_save_undo();
   idn = getobjtblpos(Menulocal.obj, "_evloop", &robj);
   registerevloop(chkobjectname(Menulocal.obj), "_evloop", robj, idn, Menulocal.inst, NULL);
   argv[0] = (char *) &sarray;
@@ -6389,30 +6390,37 @@ set_subwindow_state(enum SubWinType id, enum subwin_state state)
   lock = FALSE;
 }
 
-void
+static int
 menu_undo_iteration(UNDO_FUNC func)
 {
   struct objlist *obj, *parent;
+  int r = 0;
 
   parent = getobject("legend");
   if (parent == NULL) {
-    return;
+    return 1;
   }
   obj = parent->child;
   while (obj) {
-    puts(obj->name);
-    func(obj);
+    r = func(obj);
     obj = obj->next;
     if (obj->parent != parent) {
       break;
     }
   }
+  return r;
 }
 
 void
 menu_save_undo(void)
 {
   menu_undo_iteration(undo_save);
+}
+
+void
+menu_delete_undo(void)
+{
+  menu_undo_iteration(undo_delete);
 }
 
 void
@@ -6424,13 +6432,21 @@ menu_clear_undo(void)
 void
 menu_undo(void)
 {
-  menu_undo_iteration(undo_undo);
-  UpdateAll();
+  int r;
+  r = menu_undo_iteration(undo_undo);
+  if (r) {
+    return;
+  }
+  CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
 }
 
 void
 menu_redo(void)
 {
-  menu_undo_iteration(undo_redo);
-  UpdateAll();
+  int r;
+  r = menu_undo_iteration(undo_redo);
+  if (r) {
+    return;
+  }
+  CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
 }

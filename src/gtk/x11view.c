@@ -272,7 +272,7 @@ CutFocusedObjects(void)
   return 0;
 }
 
-static void
+void
 check_last_insts(struct objlist *parent, struct narray *array)
 {
   struct objlist *ocur;
@@ -290,7 +290,7 @@ check_last_insts(struct objlist *parent, struct narray *array)
   return;
 }
 
-static void
+void
 focus_new_insts(struct objlist *parent, struct narray *array)
 {
   struct objlist *ocur;
@@ -318,7 +318,6 @@ focus_new_insts(struct objlist *parent, struct narray *array)
   }
   return;
 }
-
 
 static void
 paste_cb(GtkClipboard *clipboard, const gchar *text, gpointer data)
@@ -351,7 +350,7 @@ paste_cb(GtkClipboard *clipboard, const gchar *text, gpointer data)
   check_last_insts(draw_obj, &idarray);
 
   UnFocus();
-
+  menu_save_undo();
   eval_script(text, TRUE);
 
   focus_new_insts(draw_obj, &idarray);
@@ -599,6 +598,7 @@ data_dropped(char **filenames, int num, int file_type)
   }
 
   id0 = -1;
+  menu_save_undo();
   for (i = 0; i < num; i++) {
     name = g_filename_from_uri(filenames[i], NULL, NULL);
     if (name == NULL) {
@@ -675,6 +675,7 @@ text_dropped(const char *str, gint x, gint y, struct Viewer *d)
   }
   ptr[j] = '\0';
 
+  menu_save_undo();
   id = newobj(obj);
   if (id < 0) {
     g_free(ptr);
@@ -697,6 +698,7 @@ text_dropped(const char *str, gint x, gint y, struct Viewer *d)
   r = DialogExecute(TopLevel, &DlgLegendText);
 
   if ((r == IDDELETE) || (r == IDCANCEL)) {
+    menu_delete_undo();
     delobj(obj, id);
   } else {
     int oid;
@@ -1693,7 +1695,6 @@ AddInvalidateRect(struct objlist *obj, N_VALUE *inst)
   }
 }
 
-
 static void
 GetLargeFrame(int *minx, int *miny, int *maxx, int *maxy, const struct Viewer *d)
 {
@@ -1924,7 +1925,6 @@ AlignFocusedObj(int align)
   d = &NgraphApp.Viewer;
 
   num = arraynum(d->focusobj);
-
   if (num < 1) {
     return;
   }
@@ -1944,9 +1944,8 @@ AlignFocusedObj(int align)
     return;
 
   d->allclear = FALSE;
-
   PaintLock = TRUE;
-
+  menu_save_undo();
   for (i = 0; i < num; i++) {
     inst = chkobjinstoid(focus[i]->obj, focus[i]->oid);
     if (inst == NULL) {
@@ -2064,7 +2063,7 @@ RotateFocusedObj(int direction)
     px = (minx + maxx) / 2;
     py = (miny + maxy) / 2;
   }
-
+  menu_save_undo();
   execute_selected_instances(focus, num, 4, argv, "rotate");
 
   PaintLock = FALSE;
@@ -2107,7 +2106,7 @@ FlipFocusedObj(enum FLIP_DIRECTION dir)
     use_pivot = 1;
     p = (dir == FLIP_DIRECTION_HORIZONTAL) ? (minx + maxx) / 2 : (miny + maxy) / 2;
   }
-
+  menu_save_undo();
   execute_selected_instances(focus, num, 3, argv, "flip");
 
   PaintLock = FALSE;
@@ -3073,29 +3072,16 @@ mouse_up_point(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
   }
 }
 
-static void
-mouse_up_drag(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
+static int
+move_objects(int dx, int dy, struct Viewer *d)
 {
-  int i, dx, dy, num, axis;
+  int i, num, axis;
   char *argv[5];
   N_VALUE *inst;
   struct FocusObj *focus;
   struct objlist *obj;
 
-  if (d->MouseX1 == d->MouseX2 && d->MouseY1 == d->MouseY2) {
-    return;
-  }
-
   d->ShowFrame = FALSE;
-
-  d->MouseX2 = calc_mouse_x(point->x, zoom, d);
-  d->MouseY2 = calc_mouse_y(point->y, zoom, d);
-
-  dx = d->MouseX2 - d->MouseX1;
-  dy = d->MouseY2 - d->MouseY1;
-
-  CheckGrid(FALSE, state, &dx, &dy, NULL);
-
   num = arraynum(d->focusobj);
   axis = FALSE;
   PaintLock = TRUE;
@@ -3121,6 +3107,25 @@ mouse_up_drag(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
   PaintLock = FALSE;
   d->FrameOfsX = d->FrameOfsY = 0;
   d->ShowFrame = TRUE;
+  return axis;
+}
+
+static void
+mouse_up_drag(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
+{
+  int dx, dy, axis;
+
+  if (d->MouseX1 == d->MouseX2 && d->MouseY1 == d->MouseY2) {
+    return;
+  }
+
+  d->MouseX2 = calc_mouse_x(point->x, zoom, d);
+  d->MouseY2 = calc_mouse_y(point->y, zoom, d);
+
+  dx = d->MouseX2 - d->MouseX1;
+  dy = d->MouseY2 - d->MouseY1;
+  CheckGrid(FALSE, state, &dx, &dy, NULL);
+  axis = move_objects(dx, dy, d);
   if (d->Mode == LegendB || (d->Mode == PointB && !axis)) {
     d->allclear=FALSE;
   }
@@ -3163,6 +3168,7 @@ mouse_up_zoom(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
   }
 
   if (zm != 10000) {
+    menu_save_undo();
     argv[0] = (char *) &zm;
     argv[1] = (char *) &(d->RefX1);
     argv[2] = (char *) &(d->RefY1);
@@ -3248,6 +3254,7 @@ mouse_up_change(unsigned int state, TPoint *point, double zoom, struct Viewer *d
       }
 
       if (inst) {
+	menu_save_undo();
 	AddInvalidateRect(obj, inst);
 	_exeobj(obj, "change", inst, 3, argv);
 	set_graph_modified();
@@ -3482,10 +3489,10 @@ swapint(int *a, int *b)
   *b = tmp;
 }
 
-static void
+static int
 create_legend1(struct Viewer *d)
 {
-  int id, num, x1, y1, ret;
+  int id, num, x1, y1, ret, create = TRUE;
   N_VALUE *inst;
   struct objlist *obj = NULL;
   struct Point *po;
@@ -3523,6 +3530,7 @@ create_legend1(struct Viewer *d)
 
       if ((ret == IDDELETE) || (ret == IDCANCEL)) {
 	delobj(obj, id);
+	create = FALSE;
       } else {
 	AddList(obj, inst);
 	AddInvalidateRect(obj, inst);
@@ -3535,27 +3543,30 @@ create_legend1(struct Viewer *d)
   arraydel2(d->points);
   d->allclear = FALSE;
   UpdateAll();
+  return create;
 }
 
-static void
+static int
 create_path(struct Viewer *d)
 {
   struct objlist *obj = NULL;
   struct narray *parray;
   struct Point *po;
   N_VALUE *inst;
-  int i, num, id, ret = IDCANCEL;
+  int i, num, id, ret = IDCANCEL, create = TRUE;
 
   d->Capture = FALSE;
   num = arraynum(d->points);
   obj = chkobject("path");
 
   if (num < 3 || obj == NULL) {
+    create = FALSE;
     goto ExitCreatePath;
   }
 
   id = newobj(obj);
   if (id < 0) {
+    create = FALSE;
     goto ExitCreatePath;
   }
 
@@ -3575,6 +3586,7 @@ create_path(struct Viewer *d)
   ret = DialogExecute(TopLevel, &DlgLegendArrow);
 
   if (ret == IDDELETE || ret == IDCANCEL) {
+    create = FALSE;
     delobj(obj, id);
   } else {
     AddList(obj, inst);
@@ -3589,12 +3601,13 @@ create_path(struct Viewer *d)
 
   d->allclear = FALSE;
   UpdateAll();
+  return create;
 }
 
-static void
+static int
 create_legend3(struct Viewer *d)
 {
-  int id, num, x1, y1, x2, y2, ret = IDCANCEL;
+  int id, num, x1, y1, x2, y2, ret = IDCANCEL, create = TRUE;
   N_VALUE *inst;
   struct objlist *obj = NULL;
   struct Point **pdata;
@@ -3650,6 +3663,7 @@ create_legend3(struct Viewer *d)
 	}
 
 	if ((ret == IDDELETE) || (ret == IDCANCEL)) {
+	  create = FALSE;
 	  delobj(obj, id);
 	} else {
 	  AddList(obj, inst);
@@ -3664,12 +3678,13 @@ create_legend3(struct Viewer *d)
   arraydel2(d->points);
   d->allclear = FALSE;
   UpdateAll();
+  return create;
 }
 
-static void
+static int
 create_legendx(struct Viewer *d)
 {
-  int id, num, x1, y1, x2, y2, ret = IDCANCEL, type;
+  int id, num, x1, y1, x2, y2, ret = IDCANCEL, type, create = TRUE;
   N_VALUE *inst;
   struct objlist *obj = NULL;
   struct Point **pdata;
@@ -3707,6 +3722,7 @@ create_legendx(struct Viewer *d)
 	  ret = DialogExecute(TopLevel, &DlgLegendGauss);
 
 	  if (ret != IDOK) {
+	    create = FALSE;
 	    delobj(obj, id);
 	  } else {
 	    AddList(obj, inst);
@@ -3721,12 +3737,13 @@ create_legendx(struct Viewer *d)
   arraydel2(d->points);
   d->allclear = FALSE;
   UpdateAll();
+  return create;
 }
 
-static void
+static int
 create_single_axis(struct Viewer *d)
 {
-  int id, num, x1, y1, x2, y2, lenx, dir, ret = IDCANCEL;
+  int id, num, x1, y1, x2, y2, lenx, dir, ret = IDCANCEL, create = TRUE;
   double fx1, fy1;
   N_VALUE *inst;
   struct objlist *obj = NULL;
@@ -3779,6 +3796,7 @@ create_single_axis(struct Viewer *d)
 	ret = DialogExecute(TopLevel, &DlgAxis);
 
 	if (ret == IDDELETE || ret == IDCANCEL) {
+	  create = FALSE;
 	  delobj(obj, id);
 	} else {
 	  AddList(obj, inst);
@@ -3790,12 +3808,13 @@ create_single_axis(struct Viewer *d)
   arraydel2(d->points);
   d->allclear = TRUE;
   UpdateAll();
+  return create;
 }
 
-static void
+static int
 create_axis(struct Viewer *d)
 {
-  int idx, idy, idu, idr, idg, oidx, oidy, type,
+  int idx, idy, idu, idr, idg, oidx, oidy, type, create = TRUE,
     num, x1, y1, x2, y2, lenx, leny, ret = IDCANCEL;
   N_VALUE *inst;
   char *argv[2], *ref;
@@ -3913,6 +3932,7 @@ create_axis(struct Viewer *d)
 	if ((idg != -1) && (obj2 != NULL)) {
 	  delobj(obj2, idg);
 	}
+	create = FALSE;
       } else {
 	inst = chkobjinst(obj, idx);
 	if (inst)
@@ -3945,11 +3965,13 @@ create_axis(struct Viewer *d)
   arraydel2(d->points);
   d->allclear = TRUE;
   UpdateAll();
+  return create;
 }
 
 static gboolean
 ViewerEvLButtonDblClk(unsigned int state, TPoint *point, struct Viewer *d)
 {
+  int modified = TRUE;
   if (Menulock || Globallock)
     return FALSE;
 
@@ -3966,30 +3988,39 @@ ViewerEvLButtonDblClk(unsigned int state, TPoint *point, struct Viewer *d)
     break;
   case MarkB:
   case TextB:
-    create_legend1(d);
+    menu_save_undo();
+    modified = create_legend1(d);
     break;
   case PathB:
-    create_path(d);
+    menu_save_undo();
+    modified = create_path(d);
     break;
   case RectB:
   case ArcB:
-    create_legend3(d);
+    menu_save_undo();
+    modified = create_legend3(d);
     break;
   case GaussB:
-    create_legendx(d);
+    menu_save_undo();
+    modified = create_legendx(d);
     break;
   case SingleB:
-    create_single_axis(d);
+    menu_save_undo();
+    modified = create_single_axis(d);
     break;
   case FrameB:
   case SectionB:
   case CrossB:
-    create_axis(d);
+    menu_save_undo();
+    modified = create_axis(d);
     break;
   case ZoomB:
     break;
   }
 
+  if (! modified) {
+    menu_delete_undo();
+  }
   if ((d->Mode & POINT_TYPE_DRAW_ALL) && ! KeepMouseMode) {
     set_pointer_mode(-1);
   }
@@ -4845,12 +4876,8 @@ static gboolean
 ViewerEvKeyUp(GtkWidget *w, GdkEventKey *e, gpointer client_data)
 {
   struct Viewer *d;
-  int num, i, dx, dy;
-  struct FocusObj *focus;
-  N_VALUE *inst;
-  struct objlist *obj;
-  char *argv[4];
-  int axis = FALSE;
+  int dx, dy;
+  int axis;
 
   if (Menulock || Globallock)
     return FALSE;
@@ -4876,31 +4903,7 @@ ViewerEvKeyUp(GtkWidget *w, GdkEventKey *e, gpointer client_data)
 
     dx = d->FrameOfsX;
     dy = d->FrameOfsY;
-    num = arraynum(d->focusobj);
-    axis = FALSE;
-    PaintLock = TRUE;
-    if (dx != 0 || dy != 0) {
-      argv[0] = (char *) &dx;
-      argv[1] = (char *) &dy;
-      argv[2] = NULL;
-      for (i = num - 1; i >= 0; i--) {
-	focus = *(struct FocusObj **) arraynget(d->focusobj, i);
-	obj = focus->obj;
-	if (obj == chkobject("axis"))
-	  axis = TRUE;
-	inst = chkobjinstoid(focus->obj, focus->oid);
-	if (inst) {
-	  AddInvalidateRect(obj, inst);
-	  _exeobj(obj, "move", inst, 2, argv);
-	  set_graph_modified();
-	  AddInvalidateRect(obj, inst);
-	}
-      }
-    }
-    PaintLock = FALSE;
-    d->FrameOfsX = d->FrameOfsY = 0;
-    d->ShowFrame = TRUE;
-
+    axis = move_objects(dx, dy, d);
     if (! axis) {
       d->allclear = FALSE;
     }
@@ -5673,11 +5676,15 @@ ViewUpdate(void)
     return;
 
   d = &NgraphApp.Viewer;
+  num = arraynum(d->focusobj);
+  if (num < 1) {
+    return;
+  }
 
   d->ShowFrame = FALSE;
   d->ShowRect = FALSE;
 
-  num = arraynum(d->focusobj);
+  menu_save_undo();
   axis = FALSE;
   PaintLock = TRUE;
 
@@ -5827,13 +5834,16 @@ ViewDelete(void)
     return;
   }
 
-  d->ShowFrame = FALSE;
+  num = arraynum(d->focusobj);
+  if (num  <1) {
+    return;
+  }
 
+  d->ShowFrame = FALSE;
   axis = FALSE;
   PaintLock = TRUE;
 
-  num = arraynum(d->focusobj);
-
+  menu_save_undo();
   for (i = num - 1; i >= 0; i--) {
     focus = *(struct FocusObj **) arraynget(d->focusobj, i);
     obj = focus->obj;
@@ -5899,6 +5909,7 @@ reorder_object(enum object_move_type type)
   if (inst == NULL)
     return;
 
+  menu_save_undo();
   DelList(obj, inst, d);
   _getobj(obj, "id", inst, &id);
   switch (type) {
@@ -6131,17 +6142,20 @@ ViewCopy(void)
     return;
 
   d = &NgraphApp.Viewer;
-
-  if (d->MouseMode != MOUSENONE || ! (d->Mode & POINT_TYPE_POINT))
+  if (d->MouseMode != MOUSENONE || ! (d->Mode & POINT_TYPE_POINT)) {
     return;
+  }
+
+  num = arraynum(d->focusobj);
+  if (num < 1) {
+    return;
+  }
 
   d->ShowFrame = FALSE;
-
   axis = FALSE;
   PaintLock = TRUE;
 
-  num = arraynum(d->focusobj);
-
+  menu_save_undo();
   for (i = 0; i < num; i++) {
     focus = * (struct FocusObj **) arraynget(d->focusobj, i);
     if (focus == NULL)
