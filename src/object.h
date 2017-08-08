@@ -319,10 +319,11 @@ int vinputyn(const char *mes);
 int copy_obj_field(struct objlist *obj, int dist, int src, char **ignore_field);
 int str_calc(const char *str, double *val, int *r, char **err_msg);
 
-typedef void (*UNDO_FUNC)(struct objlist *obj);
-void undo_save(struct objlist *obj);
-void undo_undo(struct objlist *obj);
-void undo_redo(struct objlist *obj);
-void undo_clear(struct objlist *obj);
+typedef int (*UNDO_FUNC)(struct objlist *obj);
+int undo_save(struct objlist *obj);
+int undo_undo(struct objlist *obj);
+int undo_redo(struct objlist *obj);
+int undo_clear(struct objlist *obj);
+int undo_delete(struct objlist *obj);
 
 #endif

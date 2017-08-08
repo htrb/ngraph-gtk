@@ -1693,15 +1693,16 @@ undo_clear_redo(struct objlist *obj)
   obj->redo = NULL;
 }
 
-void
+int
 undo_clear(struct objlist *obj)
 {
   undo_clear_redo(obj);
   free_undo_inst(obj, obj->undo);
   obj->undo = NULL;
+  return 0;
 }
 
-void
+int
 undo_save(struct objlist *obj)
 {
   struct undo_inst *inst;
@@ -1709,16 +1710,16 @@ undo_save(struct objlist *obj)
   undo_clear_redo(obj);
 
   if (obj == NULL) {
-    return;
+    return 1;
   }
   if (obj->idp == -1) {
-    return;
+    return 1;
   }
   if (obj->nextp == -1) {
-    return;
+    return 1;
   }
   if (obj->lastinst2 != -1) {
-    return;
+    return 1;
   }
 
   inst = g_malloc(sizeof(*inst));
@@ -1732,9 +1733,10 @@ undo_save(struct objlist *obj)
   
   inst->next = obj->undo;
   obj->undo = inst;
+  return 0;
 }
 
-void
+int
 undo_undo(struct objlist *obj)
 {
   int lastoid, lastinst2, curinst, lastinst;
@@ -1742,7 +1744,7 @@ undo_undo(struct objlist *obj)
   struct undo_inst *undo;
   undo = obj->undo;
   if (undo == NULL) {
-    return;
+    return 1;
   }
   lastinst = obj->lastinst;
   lastinst2 = obj->lastinst2;
@@ -1764,9 +1766,24 @@ undo_undo(struct objlist *obj)
   undo->inst = inst;
   undo->next = obj->redo;
   obj->redo = undo;
+  return 0;
 }
 
-void
+int
+undo_delete(struct objlist *obj)
+{
+  struct undo_inst *undo;
+  undo = obj->undo;
+  if (undo == NULL) {
+    return 1;
+  }
+  obj->undo = undo->next;
+  undo->next = NULL;
+  free_undo_inst(obj, undo);
+  return 0;
+}
+
+int
 undo_redo(struct objlist *obj)
 {
   int lastoid, lastinst2, curinst, lastinst;
@@ -1774,7 +1791,7 @@ undo_redo(struct objlist *obj)
   struct undo_inst *redo;
   redo = obj->redo;
   if (redo == NULL) {
-    return;
+    return 1;
   }
   lastinst = obj->lastinst;
   lastinst2 = obj->lastinst2;
@@ -1796,6 +1813,7 @@ undo_redo(struct objlist *obj)
   redo->inst = inst;
   redo->next = obj->undo;
   obj->undo = redo;
+  return 0;
 }
 
 struct objlist *
