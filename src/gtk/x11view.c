@@ -3082,8 +3082,6 @@ mouse_up_drag(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
   struct FocusObj *focus;
   struct objlist *obj;
 
-  axis = FALSE;
-
   if (d->MouseX1 == d->MouseX2 && d->MouseY1 == d->MouseY2) {
     return;
   }
@@ -3099,22 +3097,18 @@ mouse_up_drag(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
   CheckGrid(FALSE, state, &dx, &dy, NULL);
 
   num = arraynum(d->focusobj);
-
+  axis = FALSE;
   PaintLock = TRUE;
-
   if (dx != 0 || dy != 0) {
     menu_save_undo();
     argv[0] = (char *) &dx;
     argv[1] = (char *) &dy;
     argv[2] = NULL;
-
     for (i = num - 1; i >= 0; i--) {
       focus = *(struct FocusObj **) arraynget(d->focusobj, i);
       obj = focus->obj;
-
       if (obj == chkobject("axis"))
 	axis = TRUE;
-
       inst = chkobjinstoid(focus->obj, focus->oid);
       if (inst) {
 	AddInvalidateRect(obj, inst);
@@ -3124,7 +3118,6 @@ mouse_up_drag(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
       }
     }
   }
-
   PaintLock = FALSE;
   d->FrameOfsX = d->FrameOfsY = 0;
   d->ShowFrame = TRUE;
@@ -4883,22 +4876,25 @@ ViewerEvKeyUp(GtkWidget *w, GdkEventKey *e, gpointer client_data)
 
     dx = d->FrameOfsX;
     dy = d->FrameOfsY;
-    argv[0] = (char *) &dx;
-    argv[1] = (char *) &dy;
-    argv[2] = NULL;
     num = arraynum(d->focusobj);
     axis = FALSE;
     PaintLock = TRUE;
-    for (i = num - 1; i >= 0; i--) {
-      focus = *(struct FocusObj **) arraynget(d->focusobj, i);
-      obj = focus->obj;
-      if (obj == chkobject("axis"))
-	axis = TRUE;
-      if ((inst = chkobjinstoid(focus->obj, focus->oid)) != NULL) {
-	AddInvalidateRect(obj, inst);
-	_exeobj(obj, "move", inst, 2, argv);
-	set_graph_modified();
-	AddInvalidateRect(obj, inst);
+    if (dx != 0 || dy != 0) {
+      argv[0] = (char *) &dx;
+      argv[1] = (char *) &dy;
+      argv[2] = NULL;
+      for (i = num - 1; i >= 0; i--) {
+	focus = *(struct FocusObj **) arraynget(d->focusobj, i);
+	obj = focus->obj;
+	if (obj == chkobject("axis"))
+	  axis = TRUE;
+	inst = chkobjinstoid(focus->obj, focus->oid);
+	if (inst) {
+	  AddInvalidateRect(obj, inst);
+	  _exeobj(obj, "move", inst, 2, argv);
+	  set_graph_modified();
+	  AddInvalidateRect(obj, inst);
+	}
       }
     }
     PaintLock = FALSE;
