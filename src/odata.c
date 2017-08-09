@@ -345,7 +345,7 @@ struct f2ddata {
 };
 
 struct f2dlocal {
-  MathEquation *codex[3], *codey[3];
+  MathEquation *codex[EQUATION_NUM], *codey[EQUATION_NUM];
   MathValue minx, maxx, miny, maxy;
   int const_id[MATH_CONST_SIZE];
   int maxdimx,maxdimy;
@@ -9070,6 +9070,73 @@ set_array(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
   return 0;
 }
 
+static int
+data_inst_dup(struct objlist *obj, N_VALUE *src, N_VALUE *dest)
+{
+  int i, pos;
+  struct f2dlocal *local_new, *local_src;
+  char *math;
+
+  pos = obj_get_field_pos(obj, "_local");
+  if (pos < 0) {
+    return 1;
+  }
+  local_src = src[pos].ptr;
+  local_new = g_memdup(local_src, sizeof(struct f2dlocal));
+  if (local_new == NULL) {
+    return 1;
+  }
+  dest[pos].ptr = local_new;
+
+  if (local_src->data) {
+    closedata(local_src->data, local_src);
+    local_src->data = NULL;
+    local_new->data = NULL;
+  }
+  if (local_src->codex[0]) {
+    _getobj(obj, "math_x", src, &math);
+    for (i = 0; i < EQUATION_NUM; i++) {
+      local_new->codex[i] = NULL;
+    }
+    put_func(obj, dest, local_new, "math_x", math);
+  }
+  if (local_src->codey[0]) {
+    _getobj(obj, "math_y", src, &math);
+    for (i = 0; i < EQUATION_NUM; i++) {
+      local_new->codey[i] = NULL;
+    }
+    put_func(obj, dest, local_new, "math_y", math);
+  }
+
+  return 0;
+}
+
+static int
+data_inst_free(struct objlist *obj, N_VALUE *inst)
+{
+  int i, pos;
+  struct f2dlocal *local;
+
+  pos = obj_get_field_pos(obj, "_local");
+  if (pos < 0) {
+    return 1;
+  }
+  local = inst[pos].ptr;
+  if (local->data) {
+    closedata(local->data, local);
+  }
+  for (i = 0; i < EQUATION_NUM; i++) {
+    if (local->codex[i]) {
+      math_equation_free(local->codex[i]);
+    }
+    if (local->codey[i]) {
+      math_equation_free(local->codey[i]);
+    }
+  }
+  g_free(local);
+  return 0;
+}
+
 static struct objtable file2d[] = {
   {"init",NVFUNC,NEXEC,f2dinit,NULL,0},
   {"done",NVFUNC,NEXEC,f2ddone,NULL,0},
@@ -9213,6 +9280,7 @@ void *
 addfile(void)
 /* addfile() returns NULL on error */
 {
+  struct objlist *data_obj;
   unsigned int i;
 
   if (FileConfigHash == NULL) {
@@ -9228,5 +9296,7 @@ addfile(void)
     }
   }
 
-  return addobject(NAME,ALIAS,PARENT,OVERSION,TBLNUM,file2d,ERRNUM,f2derrorlist,NULL,NULL);
+  data_obj = addobject(NAME,ALIAS,PARENT,OVERSION,TBLNUM,file2d,ERRNUM,f2derrorlist,NULL,NULL);
+  obj_set_undo_func(data_obj, data_inst_dup, data_inst_free);
+  return data_obj;
 }
