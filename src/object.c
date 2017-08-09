@@ -1423,6 +1423,8 @@ addobject(char *name,char *alias,char *parentname,char *ver,
   objnew->redo = NULL;
   objnew->local=local;
   objnew->doneproc=doneproc;
+  objnew->dup_func = NULL;
+  objnew->free_func = NULL;
   if (parent==NULL) offset=0;
   else offset=parent->size;
   for (i=0;i<tblnum;i++) {
@@ -1463,6 +1465,16 @@ addobject(char *name,char *alias,char *parentname,char *ver,
   nhash_free(tbl_hash);
   error2(NULL,ERRHEAP,name);
   return NULL;
+}
+
+void
+obj_set_undo_func(struct objlist *obj, UNDO_DUP_FUNC dup_func, UNDO_FREE_FUNC free_func)
+{
+  if (obj == NULL) {
+    return;
+  }
+  obj->dup_func = dup_func;
+  obj->free_func = free_func;
 }
 
 void
@@ -1528,6 +1540,18 @@ recoverinstance(struct objlist *obj)
   obj->lastinst2=-1;
 }
 
+int
+obj_get_field_pos(struct objlist *obj, const char *field)
+{
+  int idn;
+  struct objlist *robj;
+  idn = getobjtblpos(obj, field, &robj);
+  if (idn == -1) {
+      return -1;
+  }
+  return chkobjoffset2(robj, idn);
+}
+
 static N_VALUE *
 dup_inst(struct objlist *obj, N_VALUE *inst)
 {
@@ -1541,6 +1565,9 @@ dup_inst(struct objlist *obj, N_VALUE *inst)
     return NULL;
   }
 
+  if (obj->dup_func) {
+    obj->dup_func(obj, inst, inst_new);
+  }
   n = chkobjfieldnum(obj);
   for (i = 0; i < n; i++) {
     field = chkobjfieldname(obj, i);
@@ -1558,7 +1585,7 @@ dup_inst(struct objlist *obj, N_VALUE *inst)
     case NVFUNC:
       break;
     case NPOINTER:
-      /* TODO: must copy private data */
+      /* _local data is copied by obj->dup_func(). */
       break;
     case NIARRAY:
     case NDARRAY:
@@ -1623,6 +1650,9 @@ free_inst(struct objlist *obj, N_VALUE *inst)
     return;
   }
 
+  if (obj->free_func) {
+    obj->free_func(obj, inst);
+  }
   for (i = 0; i < obj->size; i++) {
     field = chkobjfieldname(obj, i);
     idn = getobjtblpos(obj, field, &robj);
@@ -1639,7 +1669,7 @@ free_inst(struct objlist *obj, N_VALUE *inst)
     case NVFUNC:
       break;
     case NPOINTER:
-      /* TODO: must free private data */
+      /* _local data is freed by obj->free_func(). */
       break;
     case NIARRAY:
     case NDARRAY:

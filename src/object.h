@@ -57,6 +57,9 @@ typedef
 typedef
   int (*DoneProc)(struct objlist *obj,void *local);
 
+typedef int (*UNDO_DUP_FUNC)(struct objlist *obj, N_VALUE *src, N_VALUE *dest);
+typedef int (*UNDO_FREE_FUNC)(struct objlist *obj, N_VALUE *inst);
+
 struct undo_inst {
   int operation;
   int curinst, lastinst, lastoid, lastinst2;
@@ -96,6 +99,8 @@ struct objlist {
     int idp,oidp,nextp;
     void *local;
     DoneProc doneproc;
+  UNDO_DUP_FUNC dup_func;
+  UNDO_FREE_FUNC free_func;
 };
 
 struct narray {
@@ -325,5 +330,7 @@ int undo_undo(struct objlist *obj);
 int undo_redo(struct objlist *obj);
 int undo_clear(struct objlist *obj);
 int undo_delete(struct objlist *obj);
+void obj_set_undo_func(struct objlist *obj, UNDO_DUP_FUNC dup_func, UNDO_FREE_FUNC free_func);
+int obj_get_field_pos(struct objlist *obj, const char *field);
 
 #endif
