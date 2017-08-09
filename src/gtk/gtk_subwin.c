@@ -111,6 +111,7 @@ select_enum(GtkComboBox *w, gpointer user_data)
   if (j < 0 || j == val)
     return;
 
+  menu_save_undo();
   if (putobj(d->obj, list->name, sel, &j) >= 0) {
     d->select = sel;
   }
@@ -1012,6 +1013,7 @@ toggle_boolean(struct obj_list_data *d, char *field, int sel)
     return;
   }
 
+  menu_save_undo();
   getobj(d->obj, field, sel, 0, NULL, &v1);
   v1 = ! v1;
   if (putobj(d->obj, field, sel, &v1) < 0) {
@@ -1037,8 +1039,8 @@ modify_numeric(struct obj_list_data *d, char *field, int val)
     return;
   }
 
+  menu_save_undo();
   getobj(d->obj, field, sel, 0, NULL, &v1);
-
   if (putobj(d->obj, field, sel, &val) < 0) {
     return;
   }
@@ -1048,6 +1050,8 @@ modify_numeric(struct obj_list_data *d, char *field, int val)
     d->select = sel;
     d->update(d, FALSE);
     set_graph_modified();
+  } else {
+    menu_delete_undo();
   }
 }
 
@@ -1065,8 +1069,11 @@ modify_string(struct obj_list_data *d, char *field, char *str)
     return;
   }
 
-  if (chk_sputobjfield(d->obj, sel, field, str))
+  menu_save_undo();
+  if (chk_sputobjfield(d->obj, sel, field, str)) {
+    menu_delete_undo();
     return;
+  }
 
   d->select = sel;
   d->update(d, FALSE);
@@ -1089,6 +1096,7 @@ hidden(struct obj_list_data *d)
 
   UnFocus();
 
+  menu_save_undo();
   getobj(d->obj, "hidden", sel, 0, NULL, &hidden);
   hidden = hidden ? FALSE : TRUE;
   putobj(d->obj, "hidden", sel, &hidden);
