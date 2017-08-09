@@ -37,6 +37,8 @@ enum MenuID {
   MenuIdGraphNewSection,
   MenuIdGraphNewCross,
   MenuIdGraphAllClear,
+  MenuIdEditRedo,
+  MenuIdEditUndo,
   MenuIdEditCut,
   MenuIdEditCopy,
   MenuIdEditPaste,
@@ -278,5 +280,10 @@ int toggle_view(int type, int state);
 void CmToggleSingleWindowMode(GtkCheckMenuItem *action, gpointer client_data);
 void CmReloadWindowConfig(void *w, gpointer user_data);
 void show_recent_dialog(int type);
+void menu_save_undo(void);
+void menu_delete_undo(void);
+void menu_clear_undo(void);
+void menu_undo(void);
+void menu_redo(void);
 
 #endif

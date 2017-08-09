@@ -1950,12 +1950,15 @@ CmLineDel(void *w, gpointer client_data)
   SelectDialog(&DlgSelect, obj, LegendLineCB, &array, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&array);
-    data = arraydata(&array);
-    for (i = num - 1; i >= 0; i--) {
-      delobj(obj, data[i]);
-      set_graph_modified();
+    if (num > 0) {
+      menu_save_undo();
+      data = arraydata(&array);
+      for (i = num - 1; i >= 0; i--) {
+	delobj(obj, data[i]);
+	set_graph_modified();
+      }
+      LegendWinUpdate(TRUE);
     }
-    LegendWinUpdate(TRUE);
   }
   arraydel(&array);
 }
@@ -1977,18 +1980,21 @@ CmLineUpdate(void *w, gpointer client_data)
   SelectDialog(&DlgSelect, obj, LegendLineCB, &array, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&array);
-    data = arraydata(&array);
-    for (i = 0; i < num; i++) {
-      LegendArrowDialog(&DlgLegendArrow, obj, data[i]);
-      if (DialogExecute(TopLevel, &DlgLegendArrow) == IDDELETE) {
-	delobj(obj, data[i]);
-	set_graph_modified();
-	for (j = i + 1; j < num; j++) {
-	  data[j]--;
+    if (num > 0) {
+      data = arraydata(&array);
+      menu_save_undo();
+      for (i = 0; i < num; i++) {
+	LegendArrowDialog(&DlgLegendArrow, obj, data[i]);
+	if (DialogExecute(TopLevel, &DlgLegendArrow) == IDDELETE) {
+	  delobj(obj, data[i]);
+	  set_graph_modified();
+	  for (j = i + 1; j < num; j++) {
+	    data[j]--;
+	  }
 	}
       }
+      LegendWinUpdate(TRUE);
     }
-    LegendWinUpdate(TRUE);
   }
   arraydel(&array);
 }
@@ -2010,12 +2016,15 @@ CmRectDel(void *w, gpointer client_data)
   SelectDialog(&DlgSelect, obj, LegendRectCB, &array, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&array);
-    data = arraydata(&array);
-    for (i = num - 1; i >= 0; i--) {
-      delobj(obj, data[i]);
-      set_graph_modified();
+    if (num > 0) {
+      menu_save_undo();
+      data = arraydata(&array);
+      for (i = num - 1; i >= 0; i--) {
+	delobj(obj, data[i]);
+	set_graph_modified();
+      }
+      LegendWinUpdate(TRUE);
     }
-    LegendWinUpdate(TRUE);
   }
   arraydel(&array);
 }
@@ -2037,18 +2046,21 @@ CmRectUpdate(void *w, gpointer client_data)
   SelectDialog(&DlgSelect, obj, LegendRectCB, &array, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&array);
-    data = arraydata(&array);
-    for (i = 0; i < num; i++) {
-      LegendRectDialog(&DlgLegendRect, obj, data[i]);
-      if (DialogExecute(TopLevel, &DlgLegendRect) == IDDELETE) {
-	delobj(obj, data[i]);
-	set_graph_modified();
-	for (j = i + 1; j < num; j++) {
-	  data[j]--;
+    if (num > 0) {
+      menu_save_undo();
+      data = arraydata(&array);
+      for (i = 0; i < num; i++) {
+	LegendRectDialog(&DlgLegendRect, obj, data[i]);
+	if (DialogExecute(TopLevel, &DlgLegendRect) == IDDELETE) {
+	  delobj(obj, data[i]);
+	  set_graph_modified();
+	  for (j = i + 1; j < num; j++) {
+	    data[j]--;
+	  }
 	}
       }
+      LegendWinUpdate(TRUE);
     }
-    LegendWinUpdate(TRUE);
   }
   arraydel(&array);
 }
@@ -2097,18 +2109,21 @@ CmArcUpdate(void *w, gpointer client_data)
   SelectDialog(&DlgSelect, obj, LegendArcCB, &array, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&array);
-    data = arraydata(&array);
-    for (i = 0; i < num; i++) {
-      LegendArcDialog(&DlgLegendArc, obj, data[i]);
-      if (DialogExecute(TopLevel, &DlgLegendArc) == IDDELETE) {
-	delobj(obj, data[i]);
-	set_graph_modified();
-	for (j = i + 1; j < num; j++) {
-	  data[j]--;
+    if (num > 0) {
+      menu_save_undo();
+      data = arraydata(&array);
+      for (i = 0; i < num; i++) {
+	LegendArcDialog(&DlgLegendArc, obj, data[i]);
+	if (DialogExecute(TopLevel, &DlgLegendArc) == IDDELETE) {
+	  delobj(obj, data[i]);
+	  set_graph_modified();
+	  for (j = i + 1; j < num; j++) {
+	    data[j]--;
+	  }
 	}
       }
+      LegendWinUpdate(TRUE);
     }
-    LegendWinUpdate(TRUE);
   }
   arraydel(&array);
 }
@@ -2130,12 +2145,15 @@ CmMarkDel(void *w, gpointer client_data)
   SelectDialog(&DlgSelect, obj, LegendMarkCB, &array, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&array);
-    data = arraydata(&array);
-    for (i = num - 1; i >= 0; i--) {
-      delobj(obj, data[i]);
-      set_graph_modified();
+    if (num > 0) {
+      menu_save_undo();
+      data = arraydata(&array);
+      for (i = num - 1; i >= 0; i--) {
+	delobj(obj, data[i]);
+	set_graph_modified();
+      }
+      LegendWinUpdate(TRUE);
     }
-    LegendWinUpdate(TRUE);
   }
   arraydel(&array);
 }
@@ -2157,14 +2175,17 @@ CmMarkUpdate(void *w, gpointer client_data)
   SelectDialog(&DlgSelect, obj, LegendMarkCB, &array, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&array);
-    data = arraydata(&array);
-    for (i = 0; i < num; i++) {
-      LegendMarkDialog(&DlgLegendMark, obj, data[i]);
-      if (DialogExecute(TopLevel, &DlgLegendMark) == IDDELETE) {
-	delobj(obj, data[i]);
-	set_graph_modified();
-	for (j = i + 1; j < num; j++) {
-	  data[j]--;
+    if (num > 0) {
+      menu_save_undo();
+      data = arraydata(&array);
+      for (i = 0; i < num; i++) {
+	LegendMarkDialog(&DlgLegendMark, obj, data[i]);
+	if (DialogExecute(TopLevel, &DlgLegendMark) == IDDELETE) {
+	  delobj(obj, data[i]);
+	  set_graph_modified();
+	  for (j = i + 1; j < num; j++) {
+	    data[j]--;
+	  }
 	}
       }
     }
@@ -2190,12 +2211,15 @@ CmTextDel(void *w, gpointer client_data)
   SelectDialog(&DlgSelect, obj, LegendTextCB, &array, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&array);
-    data = arraydata(&array);
-    for (i = num - 1; i >= 0; i--) {
-      delobj(obj, data[i]);
-      set_graph_modified();
+    if (num > 0) {
+      menu_save_undo();
+      data = arraydata(&array);
+      for (i = num - 1; i >= 0; i--) {
+	delobj(obj, data[i]);
+	set_graph_modified();
+      }
+      LegendWinUpdate(TRUE);
     }
-    LegendWinUpdate(TRUE);
   }
   arraydel(&array);
 }
@@ -2217,18 +2241,21 @@ CmTextUpdate(void *w, gpointer client_data)
   SelectDialog(&DlgSelect, obj, LegendTextCB, &array, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&array);
-    data = arraydata(&array);
-    for (i = 0; i < num; i++) {
-      LegendTextDialog(&DlgLegendText, obj, data[i]);
-      if (DialogExecute(TopLevel, &DlgLegendText) == IDDELETE) {
-	delobj(obj, data[i]);
-	set_graph_modified();
-	for (j = i + 1; j < num; j++) {
-	  data[j]--;
+    if (num > 0) {
+      menu_save_undo();
+      data = arraydata(&array);
+      for (i = 0; i < num; i++) {
+	LegendTextDialog(&DlgLegendText, obj, data[i]);
+	if (DialogExecute(TopLevel, &DlgLegendText) == IDDELETE) {
+	  delobj(obj, data[i]);
+	  set_graph_modified();
+	  for (j = i + 1; j < num; j++) {
+	    data[j]--;
+	  }
 	}
       }
+      LegendWinUpdate(TRUE);
     }
-    LegendWinUpdate(TRUE);
   }
   arraydel(&array);
 }
@@ -2267,30 +2294,35 @@ CmOptionTextDef(void *w, gpointer client_data)
 static void
 LegendWinPathUpdate(struct obj_list_data *data, int id, int user_data)
 {
+  menu_save_undo();
   LegendArrowDialog(&DlgLegendArrow, data->obj, id);
 }
 
 static void
 LegendWinRectUpdate(struct obj_list_data *data, int id, int user_data)
 {
+  menu_save_undo();
   LegendRectDialog(&DlgLegendRect, data->obj, id);
 }
 
 static void
 LegendWinArcUpdate(struct obj_list_data *data, int id, int user_data)
 {
+  menu_save_undo();
   LegendArcDialog(&DlgLegendArc, data->obj, id);
 }
 
 static void
 LegendWinMarkUpdate(struct obj_list_data *data, int id, int user_data)
 {
+  menu_save_undo();
   LegendMarkDialog(&DlgLegendMark, data->obj, id);
 }
 
 static void
 LegendWinTextUpdate(struct obj_list_data *data, int id, int user_data)
 {
+  menu_save_undo();
   LegendTextDialog(&DlgLegendText, data->obj, id);
 }
 
@@ -2866,7 +2898,6 @@ pos_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer use
   int x, y, i;
   char *argv[3], *tmp, *ptr;
 
-
   menu_lock(FALSE);
 
   if (str == NULL || path == NULL)
@@ -2930,6 +2961,7 @@ pos_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer use
   argv[2] = NULL;
 
   if (inc != 0 ) {
+    menu_save_undo();
     exeobj(d->obj, "move", m, 2, argv);
     set_graph_modified();
     d->update(d, TRUE);
@@ -2976,6 +3008,7 @@ rect_size_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpoint
 
   v = nround(val * 100);
   if (v != x2 - x1) {
+    menu_save_undo();
     x2 = x1 + v;
     putobj(d->obj, pos1, id, &x1);
     putobj(d->obj, pos2, id, &x2);
@@ -3099,6 +3132,7 @@ set_bool_field(struct objlist *obj, char *field, int id, int state)
     return 0;
   }
 
+  menu_save_undo();
   putobj(obj, field, id, &state);
   return 1;
 }
@@ -3161,6 +3195,7 @@ select_type(GtkComboBox *w, gpointer user_data)
     if (enum_id == mark_type) {
       return;
     }
+    menu_save_undo();
     putobj(d->obj, "type", sel, &enum_id);
     break;
   case LEGEND_COMBO_ITEM_STYLE:
@@ -3241,12 +3276,14 @@ select_type(GtkComboBox *w, gpointer user_data)
     gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);
     getobj(d->obj, "style", sel, 0, NULL, &style);
     style = (style & GRA_FONT_STYLE_ITALIC) | (active ? 0 : GRA_FONT_STYLE_BOLD);
+    menu_save_undo();
     putobj(d->obj, "style", sel, &style);
     break;
   case LEGEND_COMBO_ITEM_STYLE_ITALIC:
     gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);
     getobj(d->obj, "style", sel, 0, NULL, &style);
     style = (style & GRA_FONT_STYLE_BOLD) | (active ? 0 : GRA_FONT_STYLE_ITALIC);
+    menu_save_undo();
     putobj(d->obj, "style", sel, &style);
     break;
   default:
@@ -3456,6 +3493,7 @@ select_font(GtkComboBox *w, gpointer user_data)
       g_free(font);
       return;
     }
+    menu_save_undo();
     putobj(d->obj, "font", sel, font);
     break;
   case LEGEND_COMBO_ITEM_COLOR_0:
@@ -3464,12 +3502,14 @@ select_font(GtkComboBox *w, gpointer user_data)
     }
     break;
   case LEGEND_COMBO_ITEM_STYLE_BOLD:
+    menu_save_undo();
     gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);
     getobj(d->obj, "style", sel, 0, NULL, &style);
     style = (style & GRA_FONT_STYLE_ITALIC) | (active ? 0 : GRA_FONT_STYLE_BOLD);
     putobj(d->obj, "style", sel, &style);
     break;
   case LEGEND_COMBO_ITEM_STYLE_ITALIC:
+    menu_save_undo();
     gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);
     getobj(d->obj, "style", sel, 0, NULL, &style);
     style = (style & GRA_FONT_STYLE_BOLD) | (active ? 0 : GRA_FONT_STYLE_ITALIC);

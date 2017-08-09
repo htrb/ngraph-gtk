@@ -400,6 +400,44 @@ arrayclear2(struct narray *array)
   array->num=0;
 }
 
+struct narray *
+arraydup(struct narray *array)
+{
+  struct narray *new_ary;
+  if (array == NULL) {
+    return NULL;
+  }
+  new_ary = g_malloc(sizeof(*new_ary));
+  if (new_ary == NULL ) {
+    return NULL;
+  }
+  *new_ary = *array;
+  new_ary->data = g_memdup(array->data, array->base * array->size);
+  if (new_ary->data == NULL) {
+    g_free(new_ary);
+    return NULL;
+  }
+  return new_ary;
+}
+
+struct narray *
+arraydup2(struct narray *array)
+{
+  struct narray *new_ary;
+  char **data, **new_data;
+  unsigned int i;
+  new_ary = arraydup(array);
+  if (new_ary == NULL ) {
+    return NULL;
+  }
+  data = array->data;
+  new_data = new_ary->data;
+  for (i = 0; i < array->num; i++) {
+    new_data[i] = g_strdup(data[i]);
+  }
+  return new_ary;
+}
+
 void
 arrayfree(struct narray *array)
 {
@@ -1381,8 +1419,12 @@ addobject(char *name,char *alias,char *parentname,char *ver,
   objnew->child=NULL;
   objnew->root=NULL;
   objnew->root2=NULL;
+  objnew->undo = NULL;
+  objnew->redo = NULL;
   objnew->local=local;
   objnew->doneproc=doneproc;
+  objnew->dup_func = NULL;
+  objnew->free_func = NULL;
   if (parent==NULL) offset=0;
   else offset=parent->size;
   for (i=0;i<tblnum;i++) {
@@ -1423,6 +1465,16 @@ addobject(char *name,char *alias,char *parentname,char *ver,
   nhash_free(tbl_hash);
   error2(NULL,ERRHEAP,name);
   return NULL;
+}
+
+void
+obj_set_undo_func(struct objlist *obj, UNDO_DUP_FUNC dup_func, UNDO_FREE_FUNC free_func)
+{
+  if (obj == NULL) {
+    return;
+  }
+  obj->dup_func = dup_func;
+  obj->free_func = free_func;
 }
 
 void
@@ -1486,6 +1538,312 @@ recoverinstance(struct objlist *obj)
   }
   obj->root2=NULL;
   obj->lastinst2=-1;
+}
+
+int
+obj_get_field_pos(struct objlist *obj, const char *field)
+{
+  int idn;
+  struct objlist *robj;
+  idn = getobjtblpos(obj, field, &robj);
+  if (idn == -1) {
+      return -1;
+  }
+  return chkobjoffset2(robj, idn);
+}
+
+static N_VALUE *
+dup_inst(struct objlist *obj, N_VALUE *inst)
+{
+  N_VALUE *inst_new;
+  int i, j, n, idn;
+  const char *field;
+  struct objlist *robj;
+  enum ngraph_object_field_type type;
+  inst_new = g_memdup(inst, obj->size * sizeof(N_VALUE));
+  if (inst_new == NULL) {
+    return NULL;
+  }
+
+  if (obj->dup_func) {
+    obj->dup_func(obj, inst, inst_new);
+  }
+  n = chkobjfieldnum(obj);
+  for (i = 0; i < n; i++) {
+    field = chkobjfieldname(obj, i);
+    idn = getobjtblpos(obj, field, &robj);
+    if (idn == -1) {
+      return NULL;
+    }
+    j = chkobjoffset2(robj, idn);
+    type = robj->table[idn].type;
+    switch (type) {
+    case NVOID:
+#if USE_LABEL
+    case NLABEL:
+#endif
+    case NVFUNC:
+      break;
+    case NPOINTER:
+      /* _local data is copied by obj->dup_func(). */
+      break;
+    case NIARRAY:
+    case NDARRAY:
+    case NIAFUNC:
+    case NDAFUNC:
+      inst_new[j].array = arraydup(inst[j].array);
+      break;
+    case NSARRAY:
+    case NSAFUNC:
+      inst_new[j].array = arraydup2(inst[j].array);
+      break;
+    case NSTR:
+    case NOBJ:
+    case NSFUNC:
+      inst_new[j].str = g_strdup(inst[j].str); /* If str is NULL g_strdup(str) returns NULL */
+      break;
+    default:
+      break;
+    }
+  }
+  return inst_new;
+}
+
+static N_VALUE *
+dup_inst_list(struct objlist *obj)
+{
+  N_VALUE *inst_new, *inst_prev, *inst, *root;
+  int nextp;
+
+  if (obj->lastinst == -1) {
+    return NULL;
+  }
+
+  nextp = obj->nextp;
+  inst_prev = NULL;
+  root = NULL;
+  for (inst = obj->root; inst; inst = inst[nextp].inst) {
+    inst_new = dup_inst(obj, inst);
+    if (inst_new == NULL) {
+      return NULL;		/* don't care about the memory leak. */
+    }
+    if (root == NULL) {
+      root = inst_new;
+    }
+    if (inst_prev) {
+      inst_prev[nextp].inst = inst_new;
+    }
+    inst_prev = inst_new;
+  }
+  return root;
+}
+
+static void
+free_inst(struct objlist *obj, N_VALUE *inst)
+{
+  int i, j, idn;
+  const char *field;
+  enum ngraph_object_field_type type;
+  struct objlist *robj;
+
+  if (inst == NULL) {
+    return;
+  }
+
+  if (obj->free_func) {
+    obj->free_func(obj, inst);
+  }
+  for (i = 0; i < obj->size; i++) {
+    field = chkobjfieldname(obj, i);
+    idn = getobjtblpos(obj, field, &robj);
+    if (idn == -1) {
+      return;
+    }
+    j = chkobjoffset2(robj, idn);
+    type = robj->table[idn].type;
+    switch (type) {
+    case NVOID:
+#if USE_LABEL
+    case NLABEL:
+#endif
+    case NVFUNC:
+      break;
+    case NPOINTER:
+      /* _local data is freed by obj->free_func(). */
+      break;
+    case NIARRAY:
+    case NDARRAY:
+      arrayfree(inst[j].array);
+      break;
+    case NSARRAY:
+      arrayfree2(inst[j].array);
+      break;
+    case NSTR:
+    case NOBJ:
+      g_free(inst[j].str);
+      break;
+    default:
+      break;
+    }
+  }
+  return;
+}
+
+static void
+free_inst_list(struct objlist *obj, N_VALUE *inst)
+{
+  N_VALUE *next;
+  int nextp;
+
+  nextp = obj->nextp;
+  while (inst) {
+    next = inst[nextp].inst;
+    free_inst(obj, inst);
+    g_free(inst);
+    inst = next;
+  }
+}
+
+static void
+free_undo_inst(struct objlist *obj, struct undo_inst *cur)
+{
+  struct undo_inst *next;
+  while (cur) {
+    free_inst_list(obj, cur->inst);
+    next = cur->next;
+    g_free(cur);
+    cur = next;
+  }
+}
+
+static void
+undo_clear_redo(struct objlist *obj)
+{
+  free_undo_inst(obj, obj->redo);
+  obj->redo = NULL;
+}
+
+int
+undo_clear(struct objlist *obj)
+{
+  undo_clear_redo(obj);
+  free_undo_inst(obj, obj->undo);
+  obj->undo = NULL;
+  return 0;
+}
+
+int
+undo_save(struct objlist *obj)
+{
+  struct undo_inst *inst;
+
+  undo_clear_redo(obj);
+
+  if (obj == NULL) {
+    return 1;
+  }
+  if (obj->idp == -1) {
+    return 1;
+  }
+  if (obj->nextp == -1) {
+    return 1;
+  }
+  if (obj->lastinst2 != -1) {
+    return 1;
+  }
+
+  inst = g_malloc(sizeof(*inst));
+  inst->lastinst = obj->lastinst;
+  inst->lastinst2 = obj->lastinst2;
+  inst->curinst = obj->curinst;
+  inst->lastoid = obj->lastoid;
+
+  inst->inst = dup_inst_list(obj);
+  undo_clear_redo(obj);
+  
+  inst->next = obj->undo;
+  obj->undo = inst;
+  return 0;
+}
+
+int
+undo_undo(struct objlist *obj)
+{
+  int lastoid, lastinst2, curinst, lastinst;
+  N_VALUE *inst;
+  struct undo_inst *undo;
+  undo = obj->undo;
+  if (undo == NULL) {
+    return 1;
+  }
+  lastinst = obj->lastinst;
+  lastinst2 = obj->lastinst2;
+  curinst = obj->curinst;
+  lastoid = obj->lastoid;
+  inst = obj->root;
+
+  obj->lastinst = undo->lastinst;
+  obj->lastinst2 = undo->lastinst2;
+  obj->curinst = undo->curinst;
+  obj->lastoid = undo->lastoid;
+  obj->root = undo->inst;
+  obj->undo = undo->next;
+
+  undo->lastinst = lastinst;
+  undo->lastinst2 = lastinst2;
+  undo->curinst = curinst;
+  undo->lastoid = lastoid;
+  undo->inst = inst;
+  undo->next = obj->redo;
+  obj->redo = undo;
+  return 0;
+}
+
+int
+undo_delete(struct objlist *obj)
+{
+  struct undo_inst *undo;
+  undo = obj->undo;
+  if (undo == NULL) {
+    return 1;
+  }
+  obj->undo = undo->next;
+  undo->next = NULL;
+  free_undo_inst(obj, undo);
+  return 0;
+}
+
+int
+undo_redo(struct objlist *obj)
+{
+  int lastoid, lastinst2, curinst, lastinst;
+  N_VALUE *inst;
+  struct undo_inst *redo;
+  redo = obj->redo;
+  if (redo == NULL) {
+    return 1;
+  }
+  lastinst = obj->lastinst;
+  lastinst2 = obj->lastinst2;
+  curinst = obj->curinst;
+  lastoid = obj->lastoid;
+  inst = obj->root;
+
+  obj->lastinst = redo->lastinst;
+  obj->lastinst2 = redo->lastinst2;
+  obj->curinst = redo->curinst;
+  obj->lastoid = redo->lastoid;
+  obj->root = redo->inst;
+  obj->redo = redo->next;
+  
+  redo->lastinst = lastinst;
+  redo->lastinst2 = lastinst2;
+  redo->curinst = curinst;
+  redo->lastoid = lastoid;
+  redo->inst = inst;
+  redo->next = obj->undo;
+  obj->undo = redo;
+  return 0;
 }
 
 struct objlist *

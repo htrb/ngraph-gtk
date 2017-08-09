@@ -160,6 +160,8 @@ struct ActionWidget {
 enum ActionWidgetIndex {
   GraphSaveAction,
   EditMenuAction,
+  EditRedoAction,
+  EditUndoAction,
   EditCutAction,
   EditCopyAction,
   EditRotateCCWAction,
@@ -2232,6 +2234,38 @@ static struct MenuItem EditAlignMenu[] = {
 };
 
 static struct MenuItem EditMenu[] = {
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Redo"),
+    NULL,
+    N_("Redo"),
+    NULL,
+    NULL,
+    "<Ngraph>/Edit/Redo",
+    GDK_KEY_y,
+    GDK_CONTROL_MASK,
+    NULL,
+    G_CALLBACK(CmEditMenuCB),
+    MenuIdEditRedo,
+    ActionWidget + EditRedoAction,
+    "EditRedoAction",
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Undo"),
+    NULL,
+    N_("Undo"),
+    NULL,
+    NULL,
+    "<Ngraph>/Edit/Undo",
+    GDK_KEY_z,
+    GDK_CONTROL_MASK,
+    NULL,
+    G_CALLBACK(CmEditMenuCB),
+    MenuIdEditUndo,
+    ActionWidget + EditUndoAction,
+    "EditUndoAction",
+  },
   {
     MENU_TYPE_NORMAL,
     N_("Cu_t"),
@@ -6109,6 +6143,7 @@ script_exec(GtkWidget *w, gpointer client_data)
 
   menu_lock(TRUE);
 
+  menu_save_undo();
   idn = getobjtblpos(Menulocal.obj, "_evloop", &robj);
   registerevloop(chkobjectname(Menulocal.obj), "_evloop", robj, idn, Menulocal.inst, NULL);
   argv[0] = (char *) &sarray;
@@ -6353,4 +6388,79 @@ set_subwindow_state(enum SubWinType id, enum subwin_state state)
   }
 
   lock = FALSE;
+}
+
+static void
+iterate_undo_func(struct objlist *parent, UNDO_FUNC func)
+{
+  struct objlist *obj;
+  obj = parent->child;
+  while (obj) {
+    if (obj->parent != parent) {
+      break;
+    }
+    func(obj);
+    if (obj->child) {
+      iterate_undo_func(obj, func);
+    }
+    obj = obj->next;
+  }
+}
+
+static int
+menu_undo_iteration(UNDO_FUNC func)
+{
+  struct objlist *obj, *parent;
+  int r;
+
+  parent = getobject("draw");
+  if (parent == NULL) {
+    return 1;
+  }
+  iterate_undo_func(parent, func);
+  obj = getobject("fit");
+  r = func(obj);
+  return r;
+}
+
+void
+menu_save_undo(void)
+{
+  menu_undo_iteration(undo_save);
+}
+
+void
+menu_delete_undo(void)
+{
+  menu_undo_iteration(undo_delete);
+}
+
+void
+menu_clear_undo(void)
+{
+  menu_undo_iteration(undo_clear);
+}
+
+void
+menu_undo(void)
+{
+  int r;
+  r = menu_undo_iteration(undo_undo);
+  if (r) {
+    return;
+  }
+  UpdateAll();
+  CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
+}
+
+void
+menu_redo(void)
+{
+  int r;
+  r = menu_undo_iteration(undo_redo);
+  if (r) {
+    return;
+  }
+  UpdateAll();
+  CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
 }

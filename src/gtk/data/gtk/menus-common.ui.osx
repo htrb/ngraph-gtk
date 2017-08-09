@@ -112,6 +112,16 @@
       <attribute name="label" translatable="yes">_Edit</attribute>
       <section>
 	<item>
+	  <attribute name="label" translatable="yes">_Redo</attribute>
+	  <attribute name="action">app.EditRedoAction</attribute>
+	</item>
+	<item>
+	  <attribute name="label" translatable="yes">_Undo</attribute>
+	  <attribute name="action">app.EditUndoAction</attribute>
+	</item>
+      </section>
+      <section>
+	<item>
 	  <attribute name="label" translatable="yes">Cu_t</attribute>
 	  <attribute name="action">app.EditCutAction</attribute>
 	</item>

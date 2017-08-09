@@ -176,6 +176,18 @@ GraphAddinAction_activated(GSimpleAction *action, GVariant *parameter, gpointer 
 }
 
 static void
+EditRedoAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
+{
+  menu_redo();
+}
+
+static void
+EditUndoAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
+{
+  menu_undo();
+}
+
+static void
 EditCutAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
   CmEditMenuCB(NULL, GINT_TO_POINTER(MenuIdEditCut));
@@ -734,6 +746,8 @@ static GActionEntry AppEntries[] =
   { "GraphCurrentDirectoryAction", GraphCurrentDirectoryAction_activated, NULL, NULL, NULL },
   { "GraphAddinAction", GraphAddinAction_activated, "i", NULL, NULL },
   { "GraphShellAction", GraphShellAction_activated, NULL, NULL, NULL },
+  { "EditRedoAction", EditRedoAction_activated, NULL, NULL, NULL },
+  { "EditUndoAction", EditUndoAction_activated, NULL, NULL, NULL },
   { "EditCutAction", EditCutAction_activated, NULL, NULL, NULL },
   { "EditCopyAction", EditCopyAction_activated, NULL, NULL, NULL },
   { "EditPasteAction", EditPasteAction_activated, NULL, NULL, NULL },
@@ -852,4 +866,4 @@ create_application_window(GtkWidget **popup)
 
   return app;
 }
-#endif	/* USE_APP_MENU*/
+#endif	/* USE_APP_MENU */

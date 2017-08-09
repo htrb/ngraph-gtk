@@ -1436,6 +1436,7 @@ LoadNgpFile(char *file, int console, char *option)
   GetPageSettingsFromGRA();
   UpdateAll();
   delobj(obj, newid);
+  menu_clear_undo();
 
   return 0;
 }

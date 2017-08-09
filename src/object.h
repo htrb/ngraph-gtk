@@ -57,6 +57,16 @@ typedef
 typedef
   int (*DoneProc)(struct objlist *obj,void *local);
 
+typedef int (*UNDO_DUP_FUNC)(struct objlist *obj, N_VALUE *src, N_VALUE *dest);
+typedef int (*UNDO_FREE_FUNC)(struct objlist *obj, N_VALUE *inst);
+
+struct undo_inst {
+  int operation;
+  int curinst, lastinst, lastoid, lastinst2;
+  N_VALUE *inst;
+  struct undo_inst *next;
+};
+
 struct objtable {
     char *name;
     enum ngraph_object_field_type type;
@@ -83,11 +93,14 @@ struct objlist {
     N_VALUE *root;
     N_VALUE *root2;
     int lastinst2;
+    struct undo_inst *undo, *redo;
     struct objlist *parent;
     struct objlist *next, *child;
     int idp,oidp,nextp;
     void *local;
     DoneProc doneproc;
+  UNDO_DUP_FUNC dup_func;
+  UNDO_FREE_FUNC free_func;
 };
 
 struct narray {
@@ -310,5 +323,14 @@ int vinterrupt(void);
 int vinputyn(const char *mes);
 int copy_obj_field(struct objlist *obj, int dist, int src, char **ignore_field);
 int str_calc(const char *str, double *val, int *r, char **err_msg);
+
+typedef int (*UNDO_FUNC)(struct objlist *obj);
+int undo_save(struct objlist *obj);
+int undo_undo(struct objlist *obj);
+int undo_redo(struct objlist *obj);
+int undo_clear(struct objlist *obj);
+int undo_delete(struct objlist *obj);
+void obj_set_undo_func(struct objlist *obj, UNDO_DUP_FUNC dup_func, UNDO_FREE_FUNC free_func);
+int obj_get_field_pos(struct objlist *obj, const char *field);
 
 #endif

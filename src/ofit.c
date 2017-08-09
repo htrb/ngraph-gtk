@@ -175,7 +175,7 @@ set_equation(struct objlist *obj, N_VALUE *inst, struct fitlocal *fitlocal, char
 }
 
 static void
-show_eqn_error(struct objlist *obj, MathEquation *code, char *math, char *field, int rcode)
+show_eqn_error(struct objlist *obj, MathEquation *code, const char *math, const char *field, int rcode)
 {
   char *err_msg;
 
@@ -203,6 +203,31 @@ fitequation(struct objlist *obj,N_VALUE *inst,N_VALUE *rval, int argc,char **arg
   return 0;
 }
 
+static MathEquation *
+create_math_equation(struct objlist *obj, const char *math, const char *field)
+{
+  MathEquation *code;
+  int rcode;
+
+  code = ofile_create_math_equation(NULL, 2, FALSE, FALSE, FALSE, FALSE, TRUE);
+  if (code == NULL) {
+    return NULL;
+  }
+
+  rcode = math_equation_parse(code, math);
+  if (rcode) {
+    show_eqn_error(obj, code, math, field, rcode);
+    math_equation_free(code);
+    return NULL;
+  }
+
+  if (math_equation_optimize(code)) {
+    math_equation_free(code);
+    return NULL;
+  }
+  return code;
+}
+
 static int
 fitput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
            int argc,char **argv)
@@ -211,7 +236,6 @@ fitput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
   char *math;
   struct fitlocal *fitlocal;
   MathEquation *code;
-  int rcode;
 
   _getobj(obj,"_local",inst,&fitlocal);
   field=argv[1];
@@ -223,21 +247,8 @@ fitput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
     math=(char *)(argv[2]);
     if (math!=NULL) {
       MathEquationParametar *prm;
-
-      code = ofile_create_math_equation(NULL, 2, FALSE, FALSE, FALSE, FALSE, TRUE);
+      code = create_math_equation(obj, math, field);
       if (code == NULL) {
-	return 1;
-      }
-
-      rcode = math_equation_parse(code, math);
-      if (rcode) {
-	show_eqn_error(obj, code, math, field, rcode);
-	math_equation_free(code);
-	return 1;
-      }
-
-      if (math_equation_optimize(code)) {
-	math_equation_free(code);
 	return 1;
       }
 
@@ -1144,6 +1155,75 @@ fitcalc(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
+static int
+fit_inst_dup(struct objlist *obj, N_VALUE *src, N_VALUE *dest)
+{
+  int i, pos, len;
+  struct fitlocal *local_new, *local_src;
+  char deriv[] = "derivative0", *math;
+
+  pos = obj_get_field_pos(obj, "_local");
+  if (pos < 0) {
+    return 1;
+  }
+  local_src = src[pos].ptr;
+  local_new = g_memdup(local_src, sizeof(struct fitlocal));
+  if (local_new == NULL) {
+    return 1;
+  }
+  dest[pos].ptr = local_new;
+  local_new->equation = g_strdup(local_src->equation);
+  local_new->result_code = NULL;
+  if (local_src->codef) {
+    _getobj(obj, "user_func", src, &math);
+    local_new->codef = create_math_equation(obj, math, "user_func");
+    if (local_new->codef == NULL) {
+      return 1;
+    }
+  }
+  len = sizeof(deriv);
+  for (i = 0; i < 10; i++) {
+    deriv[len - 2] = '0' + i;
+    if (local_src->codedf[i]) {
+      _getobj(obj, deriv, src, &math);
+      local_new->codedf[i] = create_math_equation(obj, math, deriv);
+      if (local_new->codedf[i] == NULL) {
+	return 1;
+      }
+    }
+  }
+  return 0;
+}
+
+static int
+fit_inst_free(struct objlist *obj, N_VALUE *inst)
+{
+  int i, pos;
+  struct fitlocal *local;
+
+  pos = obj_get_field_pos(obj, "_local");
+  if (pos < 0) {
+    return 1;
+  }
+  local = inst[pos].ptr;
+  if (local->equation) {
+    g_free(local->equation);
+  }
+  if (local->result_code) {
+    math_equation_free(local->result_code);
+  }
+  if (local->codef) {
+    math_equation_free(local->codef);
+  }
+  for (i = 0; i < 10; i++) {
+    if (local->codedf[i]) {
+      math_equation_free(local->codedf[i]);
+    }
+  }
+  g_free(local);
+  return 0;
+}
+
 static struct objtable fit[] = {
   {"init",NVFUNC,NEXEC,fitinit,NULL,0},
   {"done",NVFUNC,NEXEC,fitdone,NULL,0},
@@ -1213,5 +1293,8 @@ void *
 addfit(void)
 /* addfit() returns NULL on error */
 {
-  return addobject(NAME,NULL,PARENT,OVERSION,TBLNUM,fit,ERRNUM,fiterrorlist,NULL,NULL);
+  struct objlist *fit_obj;
+  fit_obj = addobject(NAME,NULL,PARENT,OVERSION,TBLNUM,fit,ERRNUM,fiterrorlist,NULL,NULL);
+  obj_set_undo_func(fit_obj, fit_inst_dup, fit_inst_free);
+  return fit_obj;
 }

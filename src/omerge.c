@@ -636,6 +636,37 @@ mergegeometry(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
   return 0;
 }
 
+static int
+merge_inst_dup(struct objlist *obj, N_VALUE *src, N_VALUE *dest)
+{
+  int i;
+
+  i = obj_get_field_pos(obj, "_local");
+  if (i < 0) {
+    return 1;
+  }
+  dest[i].ptr = g_memdup(src[i].ptr, sizeof(struct mergelocal));
+  /*   mergelocal->storefd may be NULL */
+  if (dest[i].ptr == NULL) {
+    return 1;
+  }
+  return 0;
+}
+
+static int
+merge_inst_free(struct objlist *obj, N_VALUE *inst)
+{
+  int i;
+
+  i = obj_get_field_pos(obj, "_local");
+  if (i == -1) {
+      return 1;
+  }
+  g_free(inst[i].ptr);
+  /* mergelocal->storefd may be NULL */
+  return 0;
+}
+
 static struct objtable merge[] = {
   {"init",NVFUNC,NEXEC,mergeinit,NULL,0},
   {"done",NVFUNC,NEXEC,mergedone,NULL,0},
@@ -673,5 +704,8 @@ void *
 addmerge(void)
 /* addmerge() returns NULL on error */
 {
-  return addobject(NAME,NULL,PARENT,OVERSION,TBLNUM,merge,ERRNUM,mergeerrorlist,NULL,NULL);
+  struct objlist *merge_obj;
+  merge_obj = addobject(NAME,NULL,PARENT,OVERSION,TBLNUM,merge,ERRNUM,mergeerrorlist,NULL,NULL);
+  obj_set_undo_func(merge_obj, merge_inst_dup, merge_inst_free);
+  return merge_obj;
 }
