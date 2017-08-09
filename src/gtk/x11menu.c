@@ -6390,24 +6390,36 @@ set_subwindow_state(enum SubWinType id, enum subwin_state state)
   lock = FALSE;
 }
 
+static void
+iterate_undo_func(struct objlist *parent, UNDO_FUNC func)
+{
+  struct objlist *obj;
+  obj = parent->child;
+  while (obj) {
+    if (obj->parent != parent) {
+      break;
+    }
+    func(obj);
+    if (obj->child) {
+      iterate_undo_func(obj, func);
+    }
+    obj = obj->next;
+  }
+}
+
 static int
 menu_undo_iteration(UNDO_FUNC func)
 {
   struct objlist *obj, *parent;
-  int r = 0;
+  int r;
 
-  parent = getobject("legend");
+  parent = getobject("draw");
   if (parent == NULL) {
     return 1;
   }
-  obj = parent->child;
-  while (obj) {
-    r = func(obj);
-    obj = obj->next;
-    if (obj->parent != parent) {
-      break;
-    }
-  }
+  iterate_undo_func(parent, func);
+  obj = getobject("fit");
+  r = func(obj);
   return r;
 }
 
@@ -6437,6 +6449,7 @@ menu_undo(void)
   if (r) {
     return;
   }
+  UpdateAll();
   CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
 }
 
@@ -6448,5 +6461,6 @@ menu_redo(void)
   if (r) {
     return;
   }
+  UpdateAll();
   CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
 }
