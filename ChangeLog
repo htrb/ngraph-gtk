@@ -1,3 +1,7 @@
+2017-08-10  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/object.c: add undo related functions.
+
 2017-08-09  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/odata.c (data_inst_dup, data_inst_free): added.
