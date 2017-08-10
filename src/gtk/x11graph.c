@@ -1179,7 +1179,6 @@ CmGraphQuit(void *w, gpointer client_data)
   if (Menulock || Globallock)
     return;
 
-  menu_clear_undo();
   QuitGUI();
 }
 
