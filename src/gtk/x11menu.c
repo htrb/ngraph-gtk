@@ -3705,10 +3705,12 @@ AppMainLoop(void)
       switch (state) {
       case APP_QUIT:
 	if (CheckSave()) {
+	  menu_clear_undo();
 	  return 0;
 	}
 	break;
       case APP_QUIT_FORCE:
+	menu_clear_undo();
 	return 1;
       }
     }
@@ -6477,6 +6479,7 @@ menu_undo(void)
   }
   set_action_widget_sensitivity(EditUndoAction, menu_check_undo());
   set_action_widget_sensitivity(EditRedoAction, menu_check_redo());
+  check_exist_instances(chkobject("draw"));
   UpdateAll();
   CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
 }
@@ -6491,6 +6494,7 @@ menu_redo(void)
   }
   set_action_widget_sensitivity(EditUndoAction, menu_check_undo());
   set_action_widget_sensitivity(EditRedoAction, menu_check_redo());
+  check_exist_instances(chkobject("draw"));
   UpdateAll();
   CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
 }
