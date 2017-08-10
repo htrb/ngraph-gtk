@@ -1814,6 +1814,20 @@ undo_delete(struct objlist *obj)
 }
 
 int
+undo_check_undo(struct objlist *obj)
+{
+  return (obj->undo) ? 1 : 0;
+
+}
+
+int
+undo_check_redo(struct objlist *obj)
+{
+  return (obj->redo) ? 1 : 0;
+
+}
+
+int
 undo_redo(struct objlist *obj)
 {
   int lastoid, lastinst2, curinst, lastinst;

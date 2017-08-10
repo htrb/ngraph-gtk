@@ -332,5 +332,7 @@ int undo_clear(struct objlist *obj);
 int undo_delete(struct objlist *obj);
 void obj_set_undo_func(struct objlist *obj, UNDO_DUP_FUNC dup_func, UNDO_FREE_FUNC free_func);
 int obj_get_field_pos(struct objlist *obj, const char *field);
+int undo_check_undo(struct objlist *obj);
+int undo_check_redo(struct objlist *obj);
 
 #endif
