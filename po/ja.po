@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.06.13\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2017-08-09 18:14+0900\n"
+"POT-Creation-Date: 2017-08-10 11:47+0900\n"
 "PO-Revision-Date: 2017-08-09 18:26+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -48,7 +48,7 @@ msgstr "複数のファイルを開く"
 msgid "Save file"
 msgstr "別名で保存"
 
-#: src/gtk/ogra2cairo.c:45 src/gtk/x11axis.c:1085 src/gtk/x11axis.c:2137
+#: src/gtk/ogra2cairo.c:45 src/gtk/x11axis.c:1088 src/gtk/x11axis.c:2140
 #: src/odraw.c:78 src/oaxis.c:75 src/oaxis.c:90
 msgid "none"
 msgstr "なし"
@@ -89,15 +89,15 @@ msgstr "方向"
 msgid "len"
 msgstr "長さ"
 
-#: src/gtk/x11axis.c:95 src/gtk/x11menu.c:1302 src/gtk/x11menu.c:2449
+#: src/gtk/x11axis.c:95 src/gtk/x11menu.c:1302 src/gtk/x11menu.c:2453
 msgid "_Frame graph"
 msgstr "フレームグラフ(_F)"
 
-#: src/gtk/x11axis.c:96 src/gtk/x11menu.c:1318 src/gtk/x11menu.c:2465
+#: src/gtk/x11axis.c:96 src/gtk/x11menu.c:1318 src/gtk/x11menu.c:2469
 msgid "_Section graph"
 msgstr "方眼グラフ(_S)"
 
-#: src/gtk/x11axis.c:97 src/gtk/x11menu.c:1334 src/gtk/x11menu.c:2481
+#: src/gtk/x11axis.c:97 src/gtk/x11menu.c:1334 src/gtk/x11menu.c:2485
 msgid "_Cross graph"
 msgstr "交差グラフ(_C)"
 
@@ -114,7 +114,7 @@ msgid "_Add"
 msgstr "追加(_A)"
 
 #: src/gtk/x11axis.c:105 src/gtk/x11file.c:132 src/gtk/x11lgnd.c:215
-#: src/gtk/x11menu.c:2335 src/gtk/x11menu.c:3308 src/gtk/x11merge.c:69
+#: src/gtk/x11menu.c:2339 src/gtk/x11menu.c:3312 src/gtk/x11merge.c:69
 msgid "_Duplicate"
 msgstr "複製(_D)"
 
@@ -124,7 +124,7 @@ msgstr "複製(_D)"
 #: src/gtk/x11lgnd.c:1603 src/gtk/x11lgnd.c:1844 src/gtk/x11menu.c:1074
 #: src/gtk/x11menu.c:1112 src/gtk/x11menu.c:1150 src/gtk/x11menu.c:1188
 #: src/gtk/x11menu.c:1226 src/gtk/x11menu.c:1280 src/gtk/x11menu.c:1400
-#: src/gtk/x11menu.c:1566 src/gtk/x11menu.c:2319 src/gtk/x11menu.c:3292
+#: src/gtk/x11menu.c:1566 src/gtk/x11menu.c:2323 src/gtk/x11menu.c:3296
 #: src/gtk/x11merge.c:70
 msgid "_Delete"
 msgstr "削除(_D)"
@@ -133,7 +133,7 @@ msgstr "削除(_D)"
 msgid "_Focus"
 msgstr "フォーカス(_F)"
 
-#: src/gtk/x11axis.c:109 src/gtk/x11axis.c:1276 src/gtk/x11menu.c:1758
+#: src/gtk/x11axis.c:109 src/gtk/x11axis.c:1279 src/gtk/x11menu.c:1758
 msgid "_Clear"
 msgstr "クリア(_C)"
 
@@ -141,30 +141,30 @@ msgstr "クリア(_C)"
 #: src/gtk/x11menu.c:1020 src/gtk/x11menu.c:1058 src/gtk/x11menu.c:1096
 #: src/gtk/x11menu.c:1134 src/gtk/x11menu.c:1172 src/gtk/x11menu.c:1210
 #: src/gtk/x11menu.c:1264 src/gtk/x11menu.c:1384 src/gtk/x11menu.c:1550
-#: src/gtk/x11menu.c:3327
+#: src/gtk/x11menu.c:3331
 msgid "_Properties"
 msgstr "プロパティ(_P)"
 
 #: src/gtk/x11axis.c:112 src/gtk/x11file.c:140 src/gtk/x11graph.c:710
-#: src/gtk/x11lgnd.c:222 src/gtk/x11menu.c:2063 src/gtk/x11menu.c:3385
+#: src/gtk/x11lgnd.c:222 src/gtk/x11menu.c:2063 src/gtk/x11menu.c:3389
 #: src/gtk/x11merge.c:75
 msgid "_Top"
 msgstr "先頭へ(_T)"
 
 #: src/gtk/x11axis.c:113 src/gtk/x11file.c:141 src/gtk/x11graph.c:716
-#: src/gtk/x11lgnd.c:223 src/gtk/x11menu.c:2079 src/gtk/x11menu.c:3401
+#: src/gtk/x11lgnd.c:223 src/gtk/x11menu.c:2079 src/gtk/x11menu.c:3405
 #: src/gtk/x11merge.c:76 src/gtk/x11opt.c:939
 msgid "_Up"
 msgstr "上へ(_U)"
 
 #: src/gtk/x11axis.c:114 src/gtk/x11file.c:142 src/gtk/x11graph.c:722
-#: src/gtk/x11lgnd.c:224 src/gtk/x11menu.c:2095 src/gtk/x11menu.c:3417
+#: src/gtk/x11lgnd.c:224 src/gtk/x11menu.c:2095 src/gtk/x11menu.c:3421
 #: src/gtk/x11merge.c:77 src/gtk/x11opt.c:932
 msgid "_Down"
 msgstr "下へ(_D)"
 
 #: src/gtk/x11axis.c:115 src/gtk/x11file.c:143 src/gtk/x11graph.c:728
-#: src/gtk/x11lgnd.c:225 src/gtk/x11menu.c:2111 src/gtk/x11menu.c:3433
+#: src/gtk/x11lgnd.c:225 src/gtk/x11menu.c:2111 src/gtk/x11menu.c:3437
 #: src/gtk/x11merge.c:78
 msgid "_Bottom"
 msgstr "最後へ(_B)"
@@ -236,7 +236,7 @@ msgstr ""
 msgid "_Style %d:"
 msgstr "線種 %d(_S):"
 
-#: src/gtk/x11axis.c:338 src/gtk/x11axis.c:1615
+#: src/gtk/x11axis.c:338 src/gtk/x11axis.c:1618
 #, c-format
 msgid "_Width %d:"
 msgstr "線幅 %d(_W):"
@@ -266,8 +266,8 @@ msgstr "_Y グリッド描画"
 msgid "Axis"
 msgstr "軸"
 
-#: src/gtk/x11axis.c:389 src/gtk/x11axis.c:1427 src/gtk/x11axis.c:1611
-#: src/gtk/x11axis.c:2073 src/gtk/x11lgnd.c:1071 src/gtk/x11lgnd.c:1091
+#: src/gtk/x11axis.c:389 src/gtk/x11axis.c:1430 src/gtk/x11axis.c:1614
+#: src/gtk/x11axis.c:2076 src/gtk/x11lgnd.c:1071 src/gtk/x11lgnd.c:1091
 #: src/gtk/x11lgnd.c:1101 src/gtk/x11lgndx.c:415
 msgid "_Color:"
 msgstr "色(_C):"
@@ -280,318 +280,318 @@ msgstr "背景色(_B)"
 msgid "_Background Color:"
 msgstr "背景色(_B):"
 
-#: src/gtk/x11axis.c:401 src/gtk/x11axis.c:3157 src/gtk/x11axis.c:3178
-#: src/gtk/x11axis.c:3211 src/gtk/x11lgnd.c:3107 src/gtk/x11lgnd.c:3118
+#: src/gtk/x11axis.c:401 src/gtk/x11axis.c:3187 src/gtk/x11axis.c:3208
+#: src/gtk/x11axis.c:3241 src/gtk/x11lgnd.c:3107 src/gtk/x11lgnd.c:3118
 #: src/gtk/x11lgnd.c:3553 src/gtk/gtk_widget.c:1125
 msgid "Color"
 msgstr "色"
 
-#: src/gtk/x11axis.c:414 src/gtk/x11axis.c:1626
+#: src/gtk/x11axis.c:414 src/gtk/x11axis.c:1629
 msgid "Style"
 msgstr "スタイル"
 
-#: src/gtk/x11axis.c:639 src/gtk/x11axis.c:863
+#: src/gtk/x11axis.c:642 src/gtk/x11axis.c:866
 msgid "Graph _Width:"
 msgstr "幅(_W):"
 
-#: src/gtk/x11axis.c:643 src/gtk/x11axis.c:867
+#: src/gtk/x11axis.c:646 src/gtk/x11axis.c:870
 msgid "Graph _Height:"
 msgstr "高さ(_H):"
 
-#: src/gtk/x11axis.c:654 src/gtk/x11axis.c:878
+#: src/gtk/x11axis.c:657 src/gtk/x11axis.c:881
 msgid "_X axis"
 msgstr "_X 軸"
 
-#: src/gtk/x11axis.c:668 src/gtk/x11axis.c:892
+#: src/gtk/x11axis.c:671 src/gtk/x11axis.c:895
 msgid "_Y axis"
 msgstr "_Y 軸"
 
-#: src/gtk/x11axis.c:682
+#: src/gtk/x11axis.c:685
 msgid "_U axis"
 msgstr "_U 軸"
 
-#: src/gtk/x11axis.c:696
+#: src/gtk/x11axis.c:699
 msgid "_R axis"
 msgstr "_R 軸"
 
-#: src/gtk/x11axis.c:710 src/gtk/x11menu.c:1469
+#: src/gtk/x11axis.c:713 src/gtk/x11menu.c:1469
 msgid "_Grid"
 msgstr "グリッド(_G)"
 
-#: src/gtk/x11axis.c:989 src/gtk/x11merge.c:145
+#: src/gtk/x11axis.c:992 src/gtk/x11merge.c:145
 msgid "_Zoom:"
 msgstr "ズーム(_Z):"
 
-#: src/gtk/x11axis.c:1262 src/gtk/x11axis.c:1590 src/gtk/x11file.c:1514
+#: src/gtk/x11axis.c:1265 src/gtk/x11axis.c:1593 src/gtk/x11file.c:1514
 msgid "_Min:"
 msgstr "最小値(_M):"
 
-#: src/gtk/x11axis.c:1266 src/gtk/x11axis.c:1595 src/gtk/x11file.c:1518
+#: src/gtk/x11axis.c:1269 src/gtk/x11axis.c:1598 src/gtk/x11file.c:1518
 msgid "_Max:"
 msgstr "最大値(_M):"
 
-#: src/gtk/x11axis.c:1270
+#: src/gtk/x11axis.c:1273
 msgid "_Inc:"
 msgstr "増分(_I):"
 
-#: src/gtk/x11axis.c:1280 src/gtk/x11menu.c:1640
+#: src/gtk/x11axis.c:1283 src/gtk/x11menu.c:1640
 msgid "_Data"
 msgstr "データ(_D)"
 
-#: src/gtk/x11axis.c:1288
+#: src/gtk/x11axis.c:1291
 msgid "_Scale:"
 msgstr "スケール法(_S):"
 
-#: src/gtk/x11axis.c:1292 src/gtk/x11file.c:1522 src/gtk/x11print.c:250
+#: src/gtk/x11axis.c:1295 src/gtk/x11file.c:1522 src/gtk/x11print.c:250
 msgid "_Div:"
 msgstr "分割数(_D):"
 
-#: src/gtk/x11axis.c:1296
+#: src/gtk/x11axis.c:1299
 msgid "_Ref:"
 msgstr "参照軸(_R):"
 
-#: src/gtk/x11axis.c:1302
+#: src/gtk/x11axis.c:1305
 msgid "_Auto scale margin:"
 msgstr "オートスケール余白(_A):"
 
-#: src/gtk/x11axis.c:1305 src/gtk/x11axis.c:3226
+#: src/gtk/x11axis.c:1308 src/gtk/x11axis.c:3256
 msgid "Scale"
 msgstr "スケール"
 
-#: src/gtk/x11axis.c:1413
+#: src/gtk/x11axis.c:1416
 msgid "Draw _Baseline"
 msgstr "軸基線描画(_B)"
 
-#: src/gtk/x11axis.c:1419 src/gtk/x11file.c:3039 src/gtk/x11lgnd.c:1041
+#: src/gtk/x11axis.c:1422 src/gtk/x11file.c:3039 src/gtk/x11lgnd.c:1041
 #: src/gtk/x11lgndx.c:399
 msgid "Line _Style:"
 msgstr "線種(_S):"
 
-#: src/gtk/x11axis.c:1423 src/gtk/x11file.c:3043 src/gtk/x11lgndx.c:403
+#: src/gtk/x11axis.c:1426 src/gtk/x11file.c:3043 src/gtk/x11lgndx.c:403
 msgid "_Line Width:"
 msgstr "線幅(_W):"
 
-#: src/gtk/x11axis.c:1430 src/gtk/x11axis.c:3141
+#: src/gtk/x11axis.c:1433 src/gtk/x11axis.c:3171
 msgid "Baseline"
 msgstr "軸基線"
 
-#: src/gtk/x11axis.c:1440 src/gtk/x11axis.c:1462
+#: src/gtk/x11axis.c:1443 src/gtk/x11axis.c:1465
 msgid "_Position:"
 msgstr "位置(_P):"
 
-#: src/gtk/x11axis.c:1445
+#: src/gtk/x11axis.c:1448
 msgid "_Arrow length:"
 msgstr "長さ(_A):"
 
-#: src/gtk/x11axis.c:1450
+#: src/gtk/x11axis.c:1453
 msgid "_Arrow width:"
 msgstr "幅(_A):"
 
-#: src/gtk/x11axis.c:1453 src/gtk/x11axis.c:3151
+#: src/gtk/x11axis.c:1456 src/gtk/x11axis.c:3181
 msgid "Arrow"
 msgstr "矢印"
 
-#: src/gtk/x11axis.c:1466
+#: src/gtk/x11axis.c:1469
 msgid "_Wave length:"
 msgstr "長さ(_W):"
 
-#: src/gtk/x11axis.c:1470
+#: src/gtk/x11axis.c:1473
 msgid "_Wave width:"
 msgstr "線幅(_W):"
 
-#: src/gtk/x11axis.c:1473 src/gtk/x11axis.c:3154
+#: src/gtk/x11axis.c:1476 src/gtk/x11axis.c:3184
 msgid "Wave"
 msgstr "波型"
 
-#: src/gtk/x11axis.c:1585
+#: src/gtk/x11axis.c:1588
 msgid "_Gauge:"
 msgstr "位置(_G):"
 
-#: src/gtk/x11axis.c:1598 src/gtk/x11axis.c:1860
+#: src/gtk/x11axis.c:1601 src/gtk/x11axis.c:1863
 msgid "Range"
 msgstr "範囲"
 
-#: src/gtk/x11axis.c:1607
+#: src/gtk/x11axis.c:1610
 msgid "_Style:"
 msgstr "線種(_S):"
 
-#: src/gtk/x11axis.c:1620
+#: src/gtk/x11axis.c:1623
 #, c-format
 msgid "_Length %d:"
 msgstr "長さ %d(_L):"
 
-#: src/gtk/x11axis.c:1845
+#: src/gtk/x11axis.c:1848
 msgid "_Numbering:"
 msgstr "位置(_N):"
 
-#: src/gtk/x11axis.c:1849
+#: src/gtk/x11axis.c:1852
 msgid "_Begin:"
 msgstr "開始点(_B):"
 
-#: src/gtk/x11axis.c:1853
+#: src/gtk/x11axis.c:1856
 msgid "_Step:"
 msgstr "間隔(_S):"
 
-#: src/gtk/x11axis.c:1857
+#: src/gtk/x11axis.c:1860
 msgid "_Num:"
 msgstr "個数(_N):"
 
-#: src/gtk/x11axis.c:1869
+#: src/gtk/x11axis.c:1872
 msgid "_Align:"
 msgstr "位置合わせ(_A):"
 
-#: src/gtk/x11axis.c:1873 src/gtk/x11axis.c:2196 src/gtk/x11lgnd.c:1706
+#: src/gtk/x11axis.c:1876 src/gtk/x11axis.c:2199 src/gtk/x11lgnd.c:1706
 msgid "_Direction:"
 msgstr "方向(_D):"
 
-#: src/gtk/x11axis.c:1878
+#: src/gtk/x11axis.c:1881
 msgid "shift (_P):"
 msgstr "並行シフト量(_P):"
 
-#: src/gtk/x11axis.c:1882
+#: src/gtk/x11axis.c:1885
 msgid "shift (_N):"
 msgstr "垂直シフト量(_N):"
 
-#: src/gtk/x11axis.c:1885 src/gtk/x11axis.c:2210 src/gtk/x11axis.c:3174
-#: src/gtk/x11axis.c:3195
+#: src/gtk/x11axis.c:1888 src/gtk/x11axis.c:2213 src/gtk/x11axis.c:3204
+#: src/gtk/x11axis.c:3225
 msgid "Position"
 msgstr "位置"
 
-#: src/gtk/x11axis.c:1896
+#: src/gtk/x11axis.c:1899
 msgid "_Fraction:"
 msgstr "小数部桁数(_F):"
 
-#: src/gtk/x11axis.c:1900
+#: src/gtk/x11axis.c:1903
 msgid "_Head:"
 msgstr "先頭(_H):"
 
-#: src/gtk/x11axis.c:1904
+#: src/gtk/x11axis.c:1907
 msgid "_Tail:"
 msgstr "後続(_T):"
 
-#: src/gtk/x11axis.c:1909
+#: src/gtk/x11axis.c:1912
 msgid "_Date/time format:"
 msgstr "日時書式(_D):"
 
-#: src/gtk/x11axis.c:1913
+#: src/gtk/x11axis.c:1916
 msgid "_Auto normalization:"
 msgstr "自動スケール(_A):"
 
-#: src/gtk/x11axis.c:1916
+#: src/gtk/x11axis.c:1919
 msgid "_Log power"
 msgstr "ベキ形式(ログ)(_L)"
 
-#: src/gtk/x11axis.c:1920
+#: src/gtk/x11axis.c:1923
 msgid "_Add plus"
 msgstr "+追加(_A)"
 
-#: src/gtk/x11axis.c:1924
+#: src/gtk/x11axis.c:1927
 msgid "no _Zero"
 msgstr "ゼロ非表示(_Z)"
 
-#: src/gtk/x11axis.c:1929
+#: src/gtk/x11axis.c:1932
 msgid "numbering _Math:"
 msgstr "変換数式(_M):"
 
-#: src/gtk/x11axis.c:1932
+#: src/gtk/x11axis.c:1935
 msgid "Format"
 msgstr "フォーマット"
 
-#: src/gtk/x11axis.c:2043
+#: src/gtk/x11axis.c:2046
 msgid "_Point:"
 msgstr "ポイント(_P):"
 
-#: src/gtk/x11axis.c:2047 src/gtk/x11lgnd.c:1677
+#: src/gtk/x11axis.c:2050 src/gtk/x11lgnd.c:1677
 msgid "_Space:"
 msgstr "文字間(_S):"
 
-#: src/gtk/x11axis.c:2051
+#: src/gtk/x11axis.c:2054
 msgid "_Script size:"
 msgstr "スクリプトサイズ(_S):"
 
-#: src/gtk/x11axis.c:2055 src/gtk/x11lgnd.c:1686 src/gtk/x11opt.c:898
+#: src/gtk/x11axis.c:2058 src/gtk/x11lgnd.c:1686 src/gtk/x11opt.c:898
 msgid "_Font:"
 msgstr "フォント(_F):"
 
-#: src/gtk/x11axis.c:2060 src/gtk/x11lgnd.c:1691
+#: src/gtk/x11axis.c:2063 src/gtk/x11lgnd.c:1691
 msgid "_Bold"
 msgstr "太字(_B)"
 
-#: src/gtk/x11axis.c:2065 src/gtk/x11lgnd.c:1696
+#: src/gtk/x11axis.c:2068 src/gtk/x11lgnd.c:1696
 msgid "_Italic"
 msgstr "斜体(_I)"
 
-#: src/gtk/x11axis.c:2076 src/gtk/x11axis.c:3204 src/gtk/x11dialg.c:249
+#: src/gtk/x11axis.c:2079 src/gtk/x11axis.c:3234 src/gtk/x11dialg.c:249
 #: src/gtk/x11lgnd.c:3551 src/gtk/x11opt.c:1346
 msgid "Font"
 msgstr "フォント"
 
-#: src/gtk/x11axis.c:2192
+#: src/gtk/x11axis.c:2195
 msgid "_Length:"
 msgstr "長さ(_L):"
 
-#: src/gtk/x11axis.c:2202
+#: src/gtk/x11axis.c:2205
 msgid "_Adjust:"
 msgstr "交差軸(_A):"
 
-#: src/gtk/x11axis.c:2206
+#: src/gtk/x11axis.c:2209
 msgid "Adjust _Position:"
 msgstr "交差位置(_P):"
 
-#: src/gtk/x11axis.c:2232
+#: src/gtk/x11axis.c:2235
 #, c-format
 msgid "Axis %d %s"
 msgstr "軸 %d %s"
 
-#: src/gtk/x11axis.c:2241
+#: src/gtk/x11axis.c:2244
 msgid "_Scale"
 msgstr "スケール(_S)"
 
-#: src/gtk/x11axis.c:2245
+#: src/gtk/x11axis.c:2248
 msgid "_Baseline"
 msgstr "軸基線(_B)"
 
-#: src/gtk/x11axis.c:2249
+#: src/gtk/x11axis.c:2252
 msgid "_Gauge"
 msgstr "目盛線(_G)"
 
-#: src/gtk/x11axis.c:2253
+#: src/gtk/x11axis.c:2256
 msgid "_Numbering"
 msgstr "目盛数字(_N)"
 
-#: src/gtk/x11axis.c:2257
+#: src/gtk/x11axis.c:2260
 msgid "_Font"
 msgstr "フォント(_F)"
 
-#: src/gtk/x11axis.c:2261
+#: src/gtk/x11axis.c:2264
 msgid "_Position"
 msgstr "位置(_P)"
 
-#: src/gtk/x11axis.c:3148 src/gtk/x11menu.c:703 src/gtk/x11menu.c:1743
+#: src/gtk/x11axis.c:3178 src/gtk/x11menu.c:703 src/gtk/x11menu.c:1743
 msgid "Draw"
 msgstr "描画"
 
-#: src/gtk/x11axis.c:3167
+#: src/gtk/x11axis.c:3197
 msgid "Gauge"
 msgstr "目盛線"
 
-#: src/gtk/x11axis.c:3188
+#: src/gtk/x11axis.c:3218
 msgid "Numbering"
 msgstr "目盛数字"
 
-#: src/gtk/x11axis.c:3198
+#: src/gtk/x11axis.c:3228
 msgid "Align"
 msgstr "位置合わせ"
 
-#: src/gtk/x11axis.c:3201
+#: src/gtk/x11axis.c:3231
 msgid "Direction"
 msgstr "方向"
 
-#: src/gtk/x11axis.c:3213
+#: src/gtk/x11axis.c:3243
 msgid "Log power"
 msgstr "ベキ形式(ログ)"
 
-#: src/gtk/x11axis.c:3214
+#: src/gtk/x11axis.c:3244
 msgid "No zero"
 msgstr "ゼロ非表示"
 
@@ -914,7 +914,7 @@ msgid "_Draw"
 msgstr "描画(_D)"
 
 #: src/gtk/x11file.c:138 src/gtk/x11file.c:529 src/gtk/x11file.c:3699
-#: src/gtk/x11menu.c:1582 src/gtk/x11menu.c:2911
+#: src/gtk/x11menu.c:1582 src/gtk/x11menu.c:2915
 msgid "_Edit"
 msgstr "編集(_E)"
 
@@ -1040,7 +1040,7 @@ msgid "_Load"
 msgstr "読込(_L)"
 
 #: src/gtk/x11file.c:1548 src/gtk/x11gui.c:1216 src/gtk/x11menu.c:666
-#: src/gtk/x11menu.c:2699 src/gtk/x11menu.c:2980 src/gtk/x11opt.c:477
+#: src/gtk/x11menu.c:2703 src/gtk/x11menu.c:2984 src/gtk/x11opt.c:477
 #: src/gtk/x11opt.c:678 src/gtk/x11opt.c:1155 src/gtk/x11opt.c:1252
 #: src/gtk/x11opt.c:1556 src/gtk/x11opt.c:1664
 msgid "_Save"
@@ -1341,7 +1341,7 @@ msgstr "拡大率(_Z):"
 msgid "Object"
 msgstr "オブジェクト"
 
-#: src/gtk/x11graph.c:675 src/gtk/x11menu.c:2746
+#: src/gtk/x11graph.c:675 src/gtk/x11menu.c:2750
 msgid "_Draw order"
 msgstr "描画順(_D)"
 
@@ -1382,11 +1382,11 @@ msgstr "データファイルを含める(_I)"
 msgid "_Include merge file"
 msgstr "合成ファイルを含める(_I)"
 
-#: src/gtk/x11graph.c:1083 src/gtk/x11menu.c:652
+#: src/gtk/x11graph.c:1084 src/gtk/x11menu.c:652
 msgid "Load NGP file"
 msgstr "NGPファイルを開く"
 
-#: src/gtk/x11graph.c:1246
+#: src/gtk/x11graph.c:1248
 msgid ""
 "Ngraph is the program to create scientific 2-dimensional graphs for "
 "researchers and engineers."
@@ -1396,7 +1396,7 @@ msgstr ""
 
 #: src/gtk/x11gui.c:163 src/gtk/x11gui.c:370 src/gtk/x11gui.c:438
 #: src/gtk/x11gui.c:574 src/gtk/x11gui.c:650 src/gtk/x11gui.c:720
-#: src/gtk/x11gui.c:799 src/gtk/x11gui.c:1030 src/gtk/x11menu.c:5315
+#: src/gtk/x11gui.c:799 src/gtk/x11gui.c:1030 src/gtk/x11menu.c:5322
 msgid "_Cancel"
 msgstr "キャンセル(_C)"
 
@@ -1441,7 +1441,7 @@ msgstr "カレントディレクトリを移動(_C)"
 msgid "%s file (*.%s)"
 msgstr "%s ファイル (*.%s)"
 
-#: src/gtk/x11gui.c:1149 src/gtk/x11gui.c:1182 src/gtk/x11menu.c:5317
+#: src/gtk/x11gui.c:1149 src/gtk/x11gui.c:1182 src/gtk/x11menu.c:5324
 msgid "_Open"
 msgstr "開く(_O)"
 
@@ -1856,16 +1856,16 @@ msgstr "Information Windowをアクティブにする"
 msgid "Add Data"
 msgstr "データ追加"
 
-#: src/gtk/x11menu.c:650 src/gtk/x11menu.c:2671
+#: src/gtk/x11menu.c:650 src/gtk/x11menu.c:2675
 msgid "_Load graph"
 msgstr "開く(_L)"
 
-#: src/gtk/x11menu.c:651 src/gtk/x11menu.c:2672
+#: src/gtk/x11menu.c:651 src/gtk/x11menu.c:2676
 msgid "Load NGP"
 msgstr "NGPファイルの読み込み"
 
-#: src/gtk/x11menu.c:667 src/gtk/x11menu.c:2700 src/gtk/x11menu.c:2716
-#: src/gtk/x11menu.c:2981 src/gtk/x11menu.c:3001
+#: src/gtk/x11menu.c:667 src/gtk/x11menu.c:2704 src/gtk/x11menu.c:2720
+#: src/gtk/x11menu.c:2985 src/gtk/x11menu.c:3005
 msgid "Save NGP"
 msgstr "NGPファイル保存"
 
@@ -1882,11 +1882,11 @@ msgstr "スケールのクリア"
 msgid "Draw on Viewer Window"
 msgstr "ビューアに描画"
 
-#: src/gtk/x11menu.c:718 src/gtk/x11menu.c:2802
+#: src/gtk/x11menu.c:718 src/gtk/x11menu.c:2806
 msgid "_Print"
 msgstr "印刷(_P)"
 
-#: src/gtk/x11menu.c:719 src/gtk/x11menu.c:720 src/gtk/x11menu.c:2803
+#: src/gtk/x11menu.c:719 src/gtk/x11menu.c:720 src/gtk/x11menu.c:2807
 #: src/gtk/x11print.c:666
 msgid "Print"
 msgstr "印刷"
@@ -1915,7 +1915,7 @@ msgstr "スケールundo"
 msgid "Undo Scale Settings"
 msgstr "スケール設定のundo"
 
-#: src/gtk/x11menu.c:804 src/gtk/x11menu.c:2962
+#: src/gtk/x11menu.c:804 src/gtk/x11menu.c:2966
 msgid "_Help"
 msgstr "ヘルプ(_H)"
 
@@ -1979,7 +1979,7 @@ msgstr "範囲プロットの追加"
 msgid "_Recent files"
 msgstr "最近使用したファイル(_R)"
 
-#: src/gtk/x11menu.c:1602 src/gtk/x11menu.c:3036
+#: src/gtk/x11menu.c:1602 src/gtk/x11menu.c:3040
 msgid "_Save data"
 msgstr "データの保存(_S)"
 
@@ -2059,7 +2059,7 @@ msgstr "コマンドツールバー(_C)"
 msgid "_Toolbox"
 msgstr "ツールボックス(_T)"
 
-#: src/gtk/x11menu.c:2041 src/gtk/x11menu.c:3452
+#: src/gtk/x11menu.c:2041 src/gtk/x11menu.c:3456
 msgid "cross _Gauge"
 msgstr "クロスゲージ(_G)"
 
@@ -2083,27 +2083,27 @@ msgstr "背面に１段移動"
 msgid "Lower selection to bottom"
 msgstr "最背面に移動"
 
-#: src/gtk/x11menu.c:2133 src/gtk/x11menu.c:3138
+#: src/gtk/x11menu.c:2133 src/gtk/x11menu.c:3142
 msgid "Align _Left"
 msgstr "左揃え(_L)"
 
-#: src/gtk/x11menu.c:2149 src/gtk/x11menu.c:3154
+#: src/gtk/x11menu.c:2149 src/gtk/x11menu.c:3158
 msgid "Align _Horizontal Center"
 msgstr "横中央揃え(_H)"
 
-#: src/gtk/x11menu.c:2165 src/gtk/x11menu.c:3170
+#: src/gtk/x11menu.c:2165 src/gtk/x11menu.c:3174
 msgid "Align _Right"
 msgstr "右揃え(_R)"
 
-#: src/gtk/x11menu.c:2185 src/gtk/x11menu.c:3190
+#: src/gtk/x11menu.c:2185 src/gtk/x11menu.c:3194
 msgid "Align _Top"
 msgstr "上端揃え(_T)"
 
-#: src/gtk/x11menu.c:2201 src/gtk/x11menu.c:3206
+#: src/gtk/x11menu.c:2201 src/gtk/x11menu.c:3210
 msgid "Align _Vertical Center"
 msgstr "縦中央揃え(_V)"
 
-#: src/gtk/x11menu.c:2217 src/gtk/x11menu.c:3222
+#: src/gtk/x11menu.c:2217 src/gtk/x11menu.c:3226
 msgid "Align _Bottom"
 msgstr "下端揃え(_B)"
 
@@ -2123,259 +2123,259 @@ msgstr "元に戻す(_U)"
 msgid "Undo"
 msgstr "直前の操作を取り消す"
 
-#: src/gtk/x11menu.c:2271
+#: src/gtk/x11menu.c:2275
 msgid "Cu_t"
 msgstr "切り取り(_T)"
 
-#: src/gtk/x11menu.c:2273
+#: src/gtk/x11menu.c:2277
 msgid "Cut selected object to clipboard"
 msgstr "選択したオブジェクトをクリップボードにカット"
 
-#: src/gtk/x11menu.c:2287 src/gtk/x11menu.c:3260 src/gtk/x11view.c:964
+#: src/gtk/x11menu.c:2291 src/gtk/x11menu.c:3264 src/gtk/x11view.c:964
 msgid "_Copy"
 msgstr "コピー(_C)"
 
-#: src/gtk/x11menu.c:2289
+#: src/gtk/x11menu.c:2293
 msgid "Copy selected object to clipboard"
 msgstr "選択したオブジェクトをクリップボードにコピー"
 
-#: src/gtk/x11menu.c:2303 src/gtk/x11menu.c:3276
+#: src/gtk/x11menu.c:2307 src/gtk/x11menu.c:3280
 msgid "_Paste"
 msgstr "貼り付け(_P)"
 
-#: src/gtk/x11menu.c:2305
+#: src/gtk/x11menu.c:2309
 msgid "Paste object from clipboard"
 msgstr "クリップボードのオブジェクトを貼り付け"
 
-#: src/gtk/x11menu.c:2321
+#: src/gtk/x11menu.c:2325
 msgid "Delete the selected object"
 msgstr "選択したオブジェクトの削除"
 
-#: src/gtk/x11menu.c:2337
+#: src/gtk/x11menu.c:2341
 msgid "Duplicate the selected object"
 msgstr "選択したオブジェクトを複製"
 
-#: src/gtk/x11menu.c:2355
+#: src/gtk/x11menu.c:2359
 msgid "draw _Order"
 msgstr "描画順(_O)"
 
-#: src/gtk/x11menu.c:2367 src/gtk/x11menu.c:3346
+#: src/gtk/x11menu.c:2371 src/gtk/x11menu.c:3350
 msgid "_Align"
 msgstr "位置合わせ(_A)"
 
-#: src/gtk/x11menu.c:2379 src/gtk/x11menu.c:3062
+#: src/gtk/x11menu.c:2383 src/gtk/x11menu.c:3066
 msgid "rotate _90 degree clockwise"
 msgstr "_90° 時計回り回転"
 
-#: src/gtk/x11menu.c:2395 src/gtk/x11menu.c:3078
+#: src/gtk/x11menu.c:2399 src/gtk/x11menu.c:3082
 msgid "rotate 9_0 degree counter-clockwise"
 msgstr "9_0° 反時計回り回転"
 
-#: src/gtk/x11menu.c:2411 src/gtk/x11menu.c:3100
+#: src/gtk/x11menu.c:2415 src/gtk/x11menu.c:3104
 msgid "flip _Horizontally"
 msgstr "水平反転(_H)"
 
-#: src/gtk/x11menu.c:2427 src/gtk/x11menu.c:3116
+#: src/gtk/x11menu.c:2431 src/gtk/x11menu.c:3120
 msgid "flip _Vertically"
 msgstr "垂直反転(_V)"
 
-#: src/gtk/x11menu.c:2450
+#: src/gtk/x11menu.c:2454
 msgid "Create frame graph"
 msgstr "フレームグラフを作成"
 
-#: src/gtk/x11menu.c:2466
+#: src/gtk/x11menu.c:2470
 msgid "Create section graph"
 msgstr "方眼グラフを作成"
 
-#: src/gtk/x11menu.c:2482
+#: src/gtk/x11menu.c:2486
 msgid "Create cross graph"
 msgstr "交差グラフを作成"
 
-#: src/gtk/x11menu.c:2497
+#: src/gtk/x11menu.c:2501
 msgid "_All clear"
 msgstr "全てクリア(_A)"
 
-#: src/gtk/x11menu.c:2498
+#: src/gtk/x11menu.c:2502
 msgid "Clear graph"
 msgstr "グラフのクリア"
 
-#: src/gtk/x11menu.c:2519
+#: src/gtk/x11menu.c:2523
 msgid "_GRA file"
 msgstr "_GRA ファイル"
 
-#: src/gtk/x11menu.c:2520
+#: src/gtk/x11menu.c:2524
 msgid "Export as GRA file"
 msgstr "合成ファイルの保存"
 
-#: src/gtk/x11menu.c:2535
+#: src/gtk/x11menu.c:2539
 msgid "_PS file"
 msgstr "_PS ファイル"
 
-#: src/gtk/x11menu.c:2536
+#: src/gtk/x11menu.c:2540
 msgid "Export as PostScript file"
 msgstr "PostScript ファイルにエクスポート"
 
-#: src/gtk/x11menu.c:2551
+#: src/gtk/x11menu.c:2555
 msgid "_EPS file"
 msgstr "_EPS ファイル"
 
-#: src/gtk/x11menu.c:2552
+#: src/gtk/x11menu.c:2556
 msgid "Export as Encapsulate PostScript file"
 msgstr "EPS ファイルにエクスポート"
 
-#: src/gtk/x11menu.c:2567
+#: src/gtk/x11menu.c:2571
 msgid "P_DF file"
 msgstr "P_DF ファイル"
 
-#: src/gtk/x11menu.c:2568
+#: src/gtk/x11menu.c:2572
 msgid "Export as Portable Document Format"
 msgstr "PDF ファイルにエクスポート"
 
-#: src/gtk/x11menu.c:2583
+#: src/gtk/x11menu.c:2587
 msgid "_SVG file"
 msgstr "_SVG ファイル"
 
-#: src/gtk/x11menu.c:2584
+#: src/gtk/x11menu.c:2588
 msgid "Export as Scalable Vector Graphics file"
 msgstr "SVG ファイルにエクスポート"
 
-#: src/gtk/x11menu.c:2599
+#: src/gtk/x11menu.c:2603
 msgid "P_NG file"
 msgstr "P_NG ファイル"
 
-#: src/gtk/x11menu.c:2600
+#: src/gtk/x11menu.c:2604
 msgid "Export as Portable Network Graphics  file"
 msgstr "PNG ファイルにエクスポート"
 
-#: src/gtk/x11menu.c:2616
+#: src/gtk/x11menu.c:2620
 msgid "_EMF file"
 msgstr "E_MF ファイル"
 
-#: src/gtk/x11menu.c:2617
+#: src/gtk/x11menu.c:2621
 msgid "Export as Windows Enhanced Metafile"
 msgstr "EMF にエクスポート"
 
-#: src/gtk/x11menu.c:2636
+#: src/gtk/x11menu.c:2640
 msgid "_Clipboard (EMF)"
 msgstr "クリップボード (EMF) (_C) "
 
-#: src/gtk/x11menu.c:2637
+#: src/gtk/x11menu.c:2641
 msgid "Copy to the clipboard as Windows Enhanced Metafile "
 msgstr "EMF としてクリップボードにコピー"
 
-#: src/gtk/x11menu.c:2659
+#: src/gtk/x11menu.c:2663
 msgid "_New graph"
 msgstr "新規作成(_N)"
 
-#: src/gtk/x11menu.c:2673
+#: src/gtk/x11menu.c:2677
 msgid "Load a graph (NGP file)"
 msgstr "グラフ(NGPファイル)を開く"
 
-#: src/gtk/x11menu.c:2687
+#: src/gtk/x11menu.c:2691
 msgid "_Recent graphs"
 msgstr "最近使用したグラフ(_R)"
 
-#: src/gtk/x11menu.c:2701 src/gtk/x11menu.c:2982
+#: src/gtk/x11menu.c:2705 src/gtk/x11menu.c:2986
 msgid "Save the graph"
 msgstr "グラフの保存"
 
-#: src/gtk/x11menu.c:2715 src/gtk/x11menu.c:3000
+#: src/gtk/x11menu.c:2719 src/gtk/x11menu.c:3004
 msgid "Save _As"
 msgstr "名前をつけて保存(_A)"
 
-#: src/gtk/x11menu.c:2717
+#: src/gtk/x11menu.c:2721
 msgid "Save the graph with a new filename"
 msgstr "グラフに名前をつけて保存"
 
-#: src/gtk/x11menu.c:2731 src/gtk/x11menu.c:3020
+#: src/gtk/x11menu.c:2735 src/gtk/x11menu.c:3024
 msgid "_Export image"
 msgstr "画像にエクスポート(_E)"
 
-#: src/gtk/x11menu.c:2766
+#: src/gtk/x11menu.c:2770
 msgid "Page Set_up"
 msgstr "ページの設定(_U)"
 
-#: src/gtk/x11menu.c:2786
+#: src/gtk/x11menu.c:2790
 msgid "Pre_view"
 msgstr "印刷プレビュー(_V)"
 
-#: src/gtk/x11menu.c:2787 src/gtk/x11menu.c:2788
+#: src/gtk/x11menu.c:2791 src/gtk/x11menu.c:2792
 msgid "Print preview"
 msgstr "印刷プレビュー"
 
-#: src/gtk/x11menu.c:2804
+#: src/gtk/x11menu.c:2808
 msgid "Print the graph"
 msgstr "グラフを印刷"
 
-#: src/gtk/x11menu.c:2822
+#: src/gtk/x11menu.c:2826
 msgid "_Current directory"
 msgstr "現在のディレクトリ(_C)"
 
-#: src/gtk/x11menu.c:2842
+#: src/gtk/x11menu.c:2846
 msgid "_Ngraph shell"
 msgstr "Ngraphシェル(_N)"
 
-#: src/gtk/x11menu.c:2858 src/gtk/x11menu.c:3835
+#: src/gtk/x11menu.c:2862 src/gtk/x11menu.c:3839
 msgid "_Add-in"
 msgstr "アドイン(_A)"
 
-#: src/gtk/x11menu.c:2877
+#: src/gtk/x11menu.c:2881
 msgid "_Quit"
 msgstr "終了(_Q)"
 
-#: src/gtk/x11menu.c:2879
+#: src/gtk/x11menu.c:2883
 msgid "Quit the application"
 msgstr "アプリケーションの終了"
 
-#: src/gtk/x11menu.c:2899
+#: src/gtk/x11menu.c:2903
 msgid "_Graph"
 msgstr "グラフ(_G)"
 
-#: src/gtk/x11menu.c:2926
+#: src/gtk/x11menu.c:2930
 msgid "_View"
 msgstr "表示(_V)"
 
-#: src/gtk/x11menu.c:2938
+#: src/gtk/x11menu.c:2942
 msgid "_Object"
 msgstr "オブジェクト(_O)"
 
-#: src/gtk/x11menu.c:2950
+#: src/gtk/x11menu.c:2954
 msgid "_Preference"
 msgstr "設定(_P)"
 
-#: src/gtk/x11menu.c:3358
+#: src/gtk/x11menu.c:3362
 msgid "_Rotate"
 msgstr "回転(_R)"
 
-#: src/gtk/x11menu.c:3370
+#: src/gtk/x11menu.c:3374
 msgid "_Flip"
 msgstr "反転(_F)"
 
-#: src/gtk/x11menu.c:4379
+#: src/gtk/x11menu.c:4383
 msgid "data"
 msgstr "データ"
 
-#: src/gtk/x11menu.c:5311 src/gtk/x11menu.c:5424
+#: src/gtk/x11menu.c:5318 src/gtk/x11menu.c:5431
 msgid "Recent Graphs"
 msgstr "最近使用したグラフ"
 
-#: src/gtk/x11menu.c:5311 src/gtk/x11menu.c:5430
+#: src/gtk/x11menu.c:5318 src/gtk/x11menu.c:5437
 msgid "Recent Data Files"
 msgstr "最近使用したデータファイル"
 
-#: src/gtk/x11menu.c:5418
+#: src/gtk/x11menu.c:5425
 msgid "Save menu"
 msgstr "保存メニュー"
 
-#: src/gtk/x11menu.c:6034
+#: src/gtk/x11menu.c:6041
 msgid "Error:"
 msgstr "エラー:"
 
-#: src/gtk/x11menu.c:6083
+#: src/gtk/x11menu.c:6090
 msgid "Question"
 msgstr "質問"
 
-#: src/gtk/x11menu.c:6141
+#: src/gtk/x11menu.c:6148
 #, c-format
 msgid "Executing `%.128s'."
 msgstr "実行中 `%.128s'."
