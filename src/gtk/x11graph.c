@@ -1066,6 +1066,7 @@ CmGraphNewMenu(void *w, gpointer client_data)
   UpdateAll();
   CmViewerDraw(NULL, GINT_TO_POINTER(TRUE));
   InfoWinClear();
+  menu_clear_undo();
 }
 
 void
@@ -1178,6 +1179,7 @@ CmGraphQuit(void *w, gpointer client_data)
   if (Menulock || Globallock)
     return;
 
+  menu_clear_undo();
   QuitGUI();
 }
 

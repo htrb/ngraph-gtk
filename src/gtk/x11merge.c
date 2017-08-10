@@ -216,6 +216,7 @@ CmMergeOpen(void *w, gpointer client_data)
 		       TRUE, Menulocal.changedirectory) != IDOK || ! name)
     return;
 
+  menu_save_undo();
   id = newobj(obj);
   if (id >= 0) {
     changefilename(name);
@@ -223,6 +224,7 @@ CmMergeOpen(void *w, gpointer client_data)
     MergeDialog(NgraphApp.MergeWin.data.data, id, -1);
     ret = DialogExecute(TopLevel, &DlgMerge);
     if ((ret == IDDELETE) || (ret == IDCANCEL)) {
+      menu_delete_undo();
       delobj(obj, id);
     } else {
       set_graph_modified();
@@ -250,6 +252,9 @@ CmMergeClose(void *w, gpointer client_data)
   SelectDialog(&DlgSelect, obj, FileCB, (struct narray *) &farray, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&farray);
+    if (num > 0) {
+      menu_save_undo();
+    }
     array = arraydata(&farray);
     for (i = num - 1; i >= 0; i--) {
       delobj(obj, array[i]);
@@ -277,6 +282,9 @@ CmMergeUpdate(void *w, gpointer client_data)
   SelectDialog(&DlgSelect, obj, FileCB, (struct narray *) &farray, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&farray);
+    if (num > 0) {
+      menu_save_undo();
+    }
     array = arraydata(&farray);
     for (i = 0; i < num; i++) {
       MergeDialog(NgraphApp.MergeWin.data.data, array[i], -1);
