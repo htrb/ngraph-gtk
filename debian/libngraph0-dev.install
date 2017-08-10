@@ -1,2 +1,4 @@
 usr/include
-usr/lib/*/*.so
+usr/lib/*/libngraph.so
+usr/lib/*/libngraph.a
+usr/lib/*/libngraph.la
