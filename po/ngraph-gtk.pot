@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.07.03\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2017-08-10 11:47+0900\n"
+"POT-Creation-Date: 2017-08-10 18:10+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1357,7 +1357,7 @@ msgstr ""
 msgid "Load NGP file"
 msgstr ""
 
-#: src/gtk/x11graph.c:1248
+#: src/gtk/x11graph.c:1247
 msgid ""
 "Ngraph is the program to create scientific 2-dimensional graphs for "
 "researchers and engineers."
@@ -1365,7 +1365,7 @@ msgstr ""
 
 #: src/gtk/x11gui.c:163 src/gtk/x11gui.c:370 src/gtk/x11gui.c:438
 #: src/gtk/x11gui.c:574 src/gtk/x11gui.c:650 src/gtk/x11gui.c:720
-#: src/gtk/x11gui.c:799 src/gtk/x11gui.c:1030 src/gtk/x11menu.c:5322
+#: src/gtk/x11gui.c:799 src/gtk/x11gui.c:1030 src/gtk/x11menu.c:5324
 msgid "_Cancel"
 msgstr ""
 
@@ -1408,7 +1408,7 @@ msgstr ""
 msgid "%s file (*.%s)"
 msgstr ""
 
-#: src/gtk/x11gui.c:1149 src/gtk/x11gui.c:1182 src/gtk/x11menu.c:5324
+#: src/gtk/x11gui.c:1149 src/gtk/x11gui.c:1182 src/gtk/x11menu.c:5326
 msgid "_Open"
 msgstr ""
 
@@ -2281,7 +2281,7 @@ msgstr ""
 msgid "_Ngraph shell"
 msgstr ""
 
-#: src/gtk/x11menu.c:2862 src/gtk/x11menu.c:3839
+#: src/gtk/x11menu.c:2862 src/gtk/x11menu.c:3841
 msgid "_Add-in"
 msgstr ""
 
@@ -2317,31 +2317,31 @@ msgstr ""
 msgid "_Flip"
 msgstr ""
 
-#: src/gtk/x11menu.c:4383
+#: src/gtk/x11menu.c:4385
 msgid "data"
 msgstr ""
 
-#: src/gtk/x11menu.c:5318 src/gtk/x11menu.c:5431
+#: src/gtk/x11menu.c:5320 src/gtk/x11menu.c:5433
 msgid "Recent Graphs"
 msgstr ""
 
-#: src/gtk/x11menu.c:5318 src/gtk/x11menu.c:5437
+#: src/gtk/x11menu.c:5320 src/gtk/x11menu.c:5439
 msgid "Recent Data Files"
 msgstr ""
 
-#: src/gtk/x11menu.c:5425
+#: src/gtk/x11menu.c:5427
 msgid "Save menu"
 msgstr ""
 
-#: src/gtk/x11menu.c:6041
+#: src/gtk/x11menu.c:6043
 msgid "Error:"
 msgstr ""
 
-#: src/gtk/x11menu.c:6090
+#: src/gtk/x11menu.c:6092
 msgid "Question"
 msgstr ""
 
-#: src/gtk/x11menu.c:6148
+#: src/gtk/x11menu.c:6150
 #, c-format
 msgid "Executing `%.128s'."
 msgstr ""
