@@ -2267,6 +2267,10 @@ static struct MenuItem EditMenu[] = {
     "EditUndoAction",
   },
   {
+    MENU_TYPE_SEPARATOR,
+    NULL,
+  },
+  {
     MENU_TYPE_NORMAL,
     N_("Cu_t"),
     NULL,
@@ -4693,6 +4697,9 @@ setupwindow(void)
   set_axis_undo_button_sensitivity(FALSE);
 
   gtk_container_add(GTK_CONTAINER(TopLevel), vbox2);
+
+  set_action_widget_sensitivity(EditUndoAction, FALSE);
+  set_action_widget_sensitivity(EditRedoAction, FALSE);
 }
 
 static void
@@ -6423,22 +6430,41 @@ menu_undo_iteration(UNDO_FUNC func)
   return r;
 }
 
+static int
+menu_check_undo(void)
+{
+  return undo_check_undo(getobject("fit"));
+}
+
+static int
+menu_check_redo(void)
+{
+  return undo_check_redo(getobject("fit"));
+}
+
 void
 menu_save_undo(void)
 {
   menu_undo_iteration(undo_save);
+  set_action_widget_sensitivity(EditUndoAction, menu_check_undo());
+  set_action_widget_sensitivity(EditRedoAction, menu_check_redo());
 }
 
 void
 menu_delete_undo(void)
 {
   menu_undo_iteration(undo_delete);
+  if (! menu_check_undo()) {
+    set_action_widget_sensitivity(EditUndoAction, FALSE);
+  }
 }
 
 void
 menu_clear_undo(void)
 {
   menu_undo_iteration(undo_clear);
+  set_action_widget_sensitivity(EditUndoAction, menu_check_undo());
+  set_action_widget_sensitivity(EditRedoAction, menu_check_redo());
 }
 
 void
@@ -6449,6 +6475,8 @@ menu_undo(void)
   if (r) {
     return;
   }
+  set_action_widget_sensitivity(EditUndoAction, menu_check_undo());
+  set_action_widget_sensitivity(EditRedoAction, menu_check_redo());
   UpdateAll();
   CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
 }
@@ -6461,6 +6489,8 @@ menu_redo(void)
   if (r) {
     return;
   }
+  set_action_widget_sensitivity(EditUndoAction, menu_check_undo());
+  set_action_widget_sensitivity(EditRedoAction, menu_check_redo());
   UpdateAll();
   CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
 }
