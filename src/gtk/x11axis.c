@@ -2744,15 +2744,18 @@ CmAxisGridNew(void *w, gpointer client_data)
   if ((obj = chkobject("axisgrid")) == NULL)
     return;
   menu_save_undo();
-  if ((id = newobj(obj)) >= 0) {
-    GridDialog(&DlgGrid, obj, id);
-    ret = DialogExecute(TopLevel, &DlgGrid);
-    if ((ret == IDDELETE) || (ret == IDCANCEL)) {
-      delobj(obj, id);
-      menu_delete_undo();
-    } else {
-      set_graph_modified();
-    }
+  id = newobj(obj);
+  if (id < 0) {
+    menu_delete_undo();
+    return;
+  }
+  GridDialog(&DlgGrid, obj, id);
+  ret = DialogExecute(TopLevel, &DlgGrid);
+  if ((ret == IDDELETE) || (ret == IDCANCEL)) {
+    delobj(obj, id);
+    menu_delete_undo();
+  } else {
+    set_graph_modified();
   }
 }
 
