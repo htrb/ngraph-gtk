@@ -820,14 +820,16 @@ copy(struct obj_list_data *d)
   num = chkobjlastinst(d->obj);
 
   if (sel >= 0 && sel <= num) {
+    menu_save_undo();
     id = newobj(d->obj);
-    if (id >= 0) {
-      menu_save_undo();
-      obj_copy(d->obj, id, sel);
-      set_graph_modified();
-      d->select = id;
-      d->update(d, FALSE);
+    if (id < 0) {
+      menu_delete_undo();
+      return;
     }
+    obj_copy(d->obj, id, sel);
+    set_graph_modified();
+    d->select = id;
+    d->update(d, FALSE);
   }
 }
 
