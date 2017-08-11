@@ -822,6 +822,7 @@ copy(struct obj_list_data *d)
   if (sel >= 0 && sel <= num) {
     id = newobj(d->obj);
     if (id >= 0) {
+      menu_save_undo();
       obj_copy(d->obj, id, sel);
       set_graph_modified();
       d->select = id;
@@ -847,6 +848,7 @@ delete(struct obj_list_data *d)
 
   UnFocus();
 
+  menu_save_undo();
   if (d->delete) {
     d->delete(d, sel);
   } else {
@@ -884,6 +886,7 @@ move_top(struct obj_list_data *d)
 
   UnFocus();
 
+  menu_save_undo();
   movetopobj(d->obj, sel);
   d->select = 0;
   d->update(d, FALSE);
@@ -906,6 +909,7 @@ move_last(struct obj_list_data *d)
     return;
   }
 
+  menu_save_undo();
   movelastobj(d->obj, sel);
   d->select = num;
   d->update(d, FALSE);
@@ -925,6 +929,7 @@ move_up(struct obj_list_data *d)
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
   num = chkobjlastinst(d->obj);
   if ((sel >= 1) && (sel <= num)) {
+    menu_save_undo();
     moveupobj(d->obj, sel);
     d->select = sel - 1;
     d->update(d, FALSE);
@@ -945,6 +950,7 @@ move_down(struct obj_list_data *d)
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
   num = chkobjlastinst(d->obj);
   if ((sel >= 0) && (sel < num)) {
+    menu_save_undo();
     movedownobj(d->obj, sel);
     d->select = sel + 1;
     d->update(d, FALSE);
@@ -973,6 +979,7 @@ update(struct obj_list_data *d)
 
   d->setup_dialog(d, sel, -1);
   d->select = sel;
+  menu_save_undo();
   if ((ret = DialogExecute(parent, d->dialog)) == IDDELETE) {
     if (d->delete) {
       d->delete(d, sel);
