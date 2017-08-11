@@ -1059,7 +1059,7 @@ menu_activate(GtkMenuShell *menushell, gpointer user_data)
   d = (struct Viewer *) user_data;
 
   if (d->MoveData) {
-   move_data_cancel(d, FALSE);
+    move_data_cancel(d, FALSE);
   }
 }
 
@@ -1381,13 +1381,19 @@ Evaluate(int x1, int y1, int x2, int y2, int err, struct Viewer *d)
     ret = DialogExecute(TopLevel, &DlgEval);
     selnum = arraynum(&SelList);
 
-    if (ret == IDEVMASK) {
-      mask_selected_data(fileobj, selnum, &SelList);
-      arraydel(&SelList);
-    } else if ((ret == IDEVMOVE) && (selnum > 0)) {
-      NSetCursor(GDK_TCROSS);
-      d->Capture = TRUE;
-      d->MoveData = TRUE;
+    if (selnum > 0) {
+      switch (ret) {
+      case IDEVMASK:
+	menu_save_undo();
+	mask_selected_data(fileobj, selnum, &SelList);
+	arraydel(&SelList);
+	break;
+      case IDEVMOVE:
+	NSetCursor(GDK_TCROSS);
+	d->Capture = TRUE;
+	d->MoveData = TRUE;
+	break;
+      }
     }
   }
   restorestdio(&save);
@@ -1426,6 +1432,9 @@ Trimming(int x1, int y1, int x2, int y2, struct Viewer *d)
     num = arraynum(&farray);
     array = arraydata(&farray);
 
+    if (num > 0) {
+      menu_save_undo();
+    }
     for (i = 0; i < num; i++) {
       id = array[i];
       getobj(obj, "direction", id, 0, NULL, &dir);
@@ -2972,6 +2981,7 @@ ViewerEvLButtonDown(unsigned int state, TPoint *point, struct Viewer *d)
   d->MouseMode = MOUSENONE;
 
   if (d->MoveData) {
+    menu_save_undo();
     mouse_down_move_data(d);
     return TRUE;
   }
