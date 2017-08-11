@@ -599,7 +599,7 @@ SectionDialogGrid(GtkWidget *w, gpointer client_data)
       delobj(d->Obj2, *(d->IDG));
       *(d->IDG) = -1;
       if (create) {
-	menu_save_undo();
+	menu_delete_undo();
 	break;
       }
     default:
@@ -2645,12 +2645,14 @@ CmAxisZoom(void *w, gpointer client_data)
     return;
   ZoomDialog(&DlgZoom);
   if ((DialogExecute(TopLevel, &DlgZoom) == IDOK) && (DlgZoom.zoom > 0)) {
-    menu_save_undo();
     zoom = DlgZoom.zoom / 10000.0;
     SelectDialog(&DlgSelect, obj, AxisCB, (struct narray *) &farray, NULL);
     if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
       num = arraynum(&farray);
       array = arraydata(&farray);
+      if (num > 0) {
+	menu_save_undo();
+      }
       for (i = 0; i < num; i++) {
 	getobj(obj, "min", array[i], 0, NULL, &min);
 	getobj(obj, "max", array[i], 0, NULL, &max);
@@ -2722,7 +2724,9 @@ CmAxisClear(void *w, gpointer client_data)
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&farray);
     array = arraydata(&farray);
-    menu_save_undo();
+    if (num > 0) {
+      menu_save_undo();
+    }
     for (i = 0; i < num; i++) {
       axis_scale_push(obj, array[i]);
       exeobj(obj, "clear", array[i], 0, NULL);
@@ -3521,6 +3525,7 @@ AxisWinAxisTop(GtkWidget *w, gpointer client_data)
   num = chkobjlastinst(d->obj);
 
   if ((sel  >=  0) && (sel <= num)) {
+    menu_save_undo();
     movetopobj(d->obj, sel);
     d->select = 0;
     AxisMove(sel,0);
@@ -3544,6 +3549,7 @@ AxisWinAxisLast(GtkWidget *w, gpointer client_data)
   num = chkobjlastinst(d->obj);
 
   if ((sel >= 0) && (sel <= num)) {
+    menu_save_undo();
     movelastobj(d->obj, sel);
     d->select = num;
     AxisMove(sel, num);
@@ -3567,6 +3573,7 @@ AxisWinAxisUp(GtkWidget *w, gpointer client_data)
   num = chkobjlastinst(d->obj);
 
   if ((sel >= 1) && (sel <= num)) {
+    menu_save_undo();
     moveupobj(d->obj, sel);
     d->select = sel - 1;
     AxisMove(sel, sel - 1);
@@ -3590,6 +3597,7 @@ AxisWinAxisDown(GtkWidget *w, gpointer client_data)
   num = chkobjlastinst(d->obj);
 
   if (sel >= 0 && sel <= num-1) {
+    menu_save_undo();
     movedownobj(d->obj, sel);
     d->select = sel + 1;
     AxisMove(sel, sel + 1);
@@ -3620,7 +3628,6 @@ axiswin_ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
     break;
   case GDK_KEY_Home:
     if (e->state & GDK_SHIFT_MASK) {
-      menu_save_undo();
       AxisWinAxisTop(w, d);
     } else {
       return FALSE;
@@ -3628,7 +3635,6 @@ axiswin_ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
     break;
   case GDK_KEY_End:
     if (e->state & GDK_SHIFT_MASK) {
-      menu_save_undo();
       AxisWinAxisLast(w, d);
     } else {
       return FALSE;
@@ -3636,7 +3642,6 @@ axiswin_ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
     break;
   case GDK_KEY_Up:
     if (e->state & GDK_SHIFT_MASK) {
-      menu_save_undo();
       AxisWinAxisUp(w, d);
     } else {
       return FALSE;
@@ -3644,7 +3649,6 @@ axiswin_ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
     break;
   case GDK_KEY_Down:
     if (e->state & GDK_SHIFT_MASK) {
-      menu_save_undo();
       AxisWinAxisDown(w, d);
     } else {
       return FALSE;
