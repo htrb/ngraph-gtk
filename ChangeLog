@@ -1,3 +1,12 @@
+2017-08-11  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11lgnd.c (legend_menu_update_object): added.
+	(CmLineUpdate, CmRectUpdate, CmArcUpdate, CmMarkUpdate)
+	(CmTextUpdate): use "legend_menu_update_object()".
+	(legend_menu_delete_object): added.
+	(CmLineDel, CmRectDel, CmArcDel, CmMarkDel, CmTextDel): use
+	"legend_menu_delete_object()".
+
 2017-08-10  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/object.c: add undo related functions.
