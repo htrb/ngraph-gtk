@@ -178,13 +178,13 @@ GraphAddinAction_activated(GSimpleAction *action, GVariant *parameter, gpointer 
 static void
 EditRedoAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  menu_redo();
+  CmEditMenuCB(NULL, GINT_TO_POINTER(MenuIdEditRedo));
 }
 
 static void
 EditUndoAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  menu_undo();
+  CmEditMenuCB(NULL, GINT_TO_POINTER(MenuIdEditUndo));
 }
 
 static void
