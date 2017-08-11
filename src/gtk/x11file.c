@@ -4682,10 +4682,15 @@ FileWinFileUpdate(struct obj_list_data *d)
 
     parent = (Menulocal.single_window_mode) ? TopLevel : d->parent->Win;
     ret = DialogExecute(parent, d->dialog);
-    if (ret == IDDELETE) {
+    switch (ret) {
+    case IDCANCEL:
+      menu_delete_undo();
+      break;
+    case IDDELETE:
       delete_file_obj(d, sel);
       d->select = -1;
       set_graph_modified();
+      break;
     }
     d->update(d, FALSE);
   }

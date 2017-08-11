@@ -982,7 +982,12 @@ update(struct obj_list_data *d)
   d->setup_dialog(d, sel, -1);
   d->select = sel;
   menu_save_undo();
-  if ((ret = DialogExecute(parent, d->dialog)) == IDDELETE) {
+  ret = DialogExecute(parent, d->dialog);
+  switch (ret) {
+  case IDCANCEL:
+    menu_delete_undo();
+    break;
+  case IDDELETE:
     if (d->delete) {
       d->delete(d, sel);
     } else {
@@ -990,6 +995,7 @@ update(struct obj_list_data *d)
     }
     d->select = -1;
     set_graph_modified();
+    break;
   }
   d->update(d, FALSE);
 }
