@@ -2096,35 +2096,30 @@ CmOptionTextDef(void *w, gpointer client_data)
 static void
 LegendWinPathUpdate(struct obj_list_data *data, int id, int user_data)
 {
-  menu_save_undo();
   LegendArrowDialog(&DlgLegendArrow, data->obj, id);
 }
 
 static void
 LegendWinRectUpdate(struct obj_list_data *data, int id, int user_data)
 {
-  menu_save_undo();
   LegendRectDialog(&DlgLegendRect, data->obj, id);
 }
 
 static void
 LegendWinArcUpdate(struct obj_list_data *data, int id, int user_data)
 {
-  menu_save_undo();
   LegendArcDialog(&DlgLegendArc, data->obj, id);
 }
 
 static void
 LegendWinMarkUpdate(struct obj_list_data *data, int id, int user_data)
 {
-  menu_save_undo();
   LegendMarkDialog(&DlgLegendMark, data->obj, id);
 }
 
 static void
 LegendWinTextUpdate(struct obj_list_data *data, int id, int user_data)
 {
-  menu_save_undo();
   LegendTextDialog(&DlgLegendText, data->obj, id);
 }
 
