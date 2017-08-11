@@ -5659,7 +5659,7 @@ search_axis_group(struct objlist *obj, int id, const char *group,
 static void
 ViewUpdate(void)
 {
-  int i, id, num;
+  int i, id, num, modified;
   struct FocusObj *focus;
   struct objlist *obj, *dobj = NULL;
   N_VALUE *inst, *dinst;
@@ -5687,6 +5687,7 @@ ViewUpdate(void)
   menu_save_undo();
   axis = FALSE;
   PaintLock = TRUE;
+  modified = FALSE;
 
   for (i = num - 1; i >= 0; i--) {
     focus = *(struct FocusObj **) arraynget(d->focusobj, i);
@@ -5800,8 +5801,14 @@ ViewUpdate(void)
       if (ret == IDOK)
 	AddInvalidateRect(obj, inst);
     }
+    if (ret != IDCANCEL) {
+      modified = TRUE;
+    }
   }
   PaintLock = FALSE;
+  if (! modified) {
+    menu_undo();
+  }
 
   if (arraynum(d->focusobj) == 0)
     clear_focus_obj(d);
