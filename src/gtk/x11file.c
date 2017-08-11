@@ -2751,7 +2751,6 @@ FileDialogFit(GtkWidget *w, gpointer client_data)
 
   d = (struct FileDialog *) client_data;
 
-  menu_save_undo();
   show_fit_dialog(d->Obj, d->Id, d->widget);
 
   sgetobjfield(d->Obj, d->Id, "fit", NULL, &valstr, FALSE, FALSE, FALSE);
@@ -4346,7 +4345,7 @@ CmFileClose(void *w, gpointer client_data)
 int
 update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file)
 {
-  int i, j, num, *array, id0;
+  int i, j, num, *array, id0, modified, ret;
   char *name;
   struct obj_list_data *data;
 
@@ -4358,6 +4357,8 @@ update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file)
   array = arraydata(farray);
   id0 = -1;
 
+  ret = IDCANCEL;
+  modified = FALSE;
   menu_save_undo();
   for (i = 0; i < num; i++) {
     name = NULL;
@@ -4368,8 +4369,6 @@ update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file)
 	AddDataFileList(name);
       }
     } else {
-      int ret;
-
       data = NgraphApp.FileWin.data.data;
       FileDialog(data, array[i], i < num - 1);
       ret = DialogExecute(TopLevel, data->dialog);
@@ -4395,8 +4394,13 @@ update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file)
 	}
       }
     }
+    if (ret != IDCANCEL) {
+      modified = TRUE;
+    }
   }
-
+  if (! modified) {
+    menu_undo();
+  }
   return 1;
 }
 
@@ -4684,7 +4688,7 @@ FileWinFileUpdate(struct obj_list_data *d)
     ret = DialogExecute(parent, d->dialog);
     switch (ret) {
     case IDCANCEL:
-      menu_delete_undo();
+      menu_undo();
       break;
     case IDDELETE:
       delete_file_obj(d, sel);
@@ -5651,6 +5655,7 @@ select_type(GtkComboBox *w, gpointer user_data)
       if (fit == NULL) {
 	ret = show_fit_dialog(obj, sel, (Menulocal.single_window_mode) ? TopLevel : d->parent->Win);
 	if (ret != IDOK) {
+	  menu_delete_undo();
 	  putobj(obj, "type", sel, &type);
 	  return;
 	}
