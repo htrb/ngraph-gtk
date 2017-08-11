@@ -305,6 +305,36 @@ legend_menu_update_object(const char *name, char *(*callback) (struct objlist * 
   arraydel(&array);
 }
 
+static void
+legend_menu_delete_object(const char *name, char *(*callback) (struct objlist * obj, int id))
+{
+  struct narray array;
+  struct objlist *obj;
+  int i;
+  int num, *data;
+
+  if (Menulock || Globallock)
+    return;
+  if ((obj = chkobject(name)) == NULL)
+    return;
+  if (chkobjlastinst(obj) == -1)
+    return;
+  SelectDialog(&DlgSelect, obj, callback, &array, NULL);
+  if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
+    num = arraynum(&array);
+    if (num > 0) {
+      menu_save_undo();
+      data = arraydata(&array);
+      for (i = num - 1; i >= 0; i--) {
+	delobj(obj, data[i]);
+	set_graph_modified();
+      }
+      LegendWinUpdate(TRUE);
+    }
+  }
+  arraydel(&array);
+}
+
 static char *
 LegendLineCB(struct objlist *obj, int id)
 {
@@ -1975,31 +2005,7 @@ LegendTextDefDialog(struct LegendDialog *data,
 void
 CmLineDel(void *w, gpointer client_data)
 {
-  struct narray array;
-  struct objlist *obj;
-  int i;
-  int num, *data;
-
-  if (Menulock || Globallock)
-    return;
-  if ((obj = chkobject("path")) == NULL)
-    return;
-  if (chkobjlastinst(obj) == -1)
-    return;
-  SelectDialog(&DlgSelect, obj, LegendLineCB, &array, NULL);
-  if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
-    num = arraynum(&array);
-    if (num > 0) {
-      menu_save_undo();
-      data = arraydata(&array);
-      for (i = num - 1; i >= 0; i--) {
-	delobj(obj, data[i]);
-	set_graph_modified();
-      }
-      LegendWinUpdate(TRUE);
-    }
-  }
-  arraydel(&array);
+  legend_menu_delete_object("path", LegendLineCB);
 }
 
 void
@@ -2011,31 +2017,7 @@ CmLineUpdate(void *w, gpointer client_data)
 void
 CmRectDel(void *w, gpointer client_data)
 {
-  struct narray array;
-  struct objlist *obj;
-  int i;
-  int num, *data;
-
-  if (Menulock || Globallock)
-    return;
-  if ((obj = chkobject("rectangle")) == NULL)
-    return;
-  if (chkobjlastinst(obj) == -1)
-    return;
-  SelectDialog(&DlgSelect, obj, LegendRectCB, &array, NULL);
-  if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
-    num = arraynum(&array);
-    if (num > 0) {
-      menu_save_undo();
-      data = arraydata(&array);
-      for (i = num - 1; i >= 0; i--) {
-	delobj(obj, data[i]);
-	set_graph_modified();
-      }
-      LegendWinUpdate(TRUE);
-    }
-  }
-  arraydel(&array);
+  legend_menu_delete_object("rectangle", LegendRectCB);
 }
 
 void
@@ -2047,31 +2029,7 @@ CmRectUpdate(void *w, gpointer client_data)
 void
 CmArcDel(void *w, gpointer client_data)
 {
-  struct narray array;
-  struct objlist *obj;
-  int i;
-  int num, *data;
-
-  if (Menulock || Globallock)
-    return;
-  if ((obj = chkobject("arc")) == NULL)
-    return;
-  if (chkobjlastinst(obj) == -1)
-    return;
-  SelectDialog(&DlgSelect, obj, LegendArcCB, &array, NULL);
-  if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
-    num = arraynum(&array);
-    data = arraydata(&array);
-    if (num > 0) {
-      menu_save_undo();
-    }
-    for (i = num - 1; i >= 0; i--) {
-      delobj(obj, data[i]);
-      set_graph_modified();
-    }
-    LegendWinUpdate(TRUE);
-  }
-  arraydel(&array);
+  legend_menu_delete_object("arc", LegendArcCB);
 }
 
 void
@@ -2083,31 +2041,7 @@ CmArcUpdate(void *w, gpointer client_data)
 void
 CmMarkDel(void *w, gpointer client_data)
 {
-  struct narray array;
-  struct objlist *obj;
-  int i;
-  int num, *data;
-
-  if (Menulock || Globallock)
-    return;
-  if ((obj = chkobject("mark")) == NULL)
-    return;
-  if (chkobjlastinst(obj) == -1)
-    return;
-  SelectDialog(&DlgSelect, obj, LegendMarkCB, &array, NULL);
-  if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
-    num = arraynum(&array);
-    if (num > 0) {
-      menu_save_undo();
-      data = arraydata(&array);
-      for (i = num - 1; i >= 0; i--) {
-	delobj(obj, data[i]);
-	set_graph_modified();
-      }
-      LegendWinUpdate(TRUE);
-    }
-  }
-  arraydel(&array);
+  legend_menu_delete_object("mark", LegendMarkCB);
 }
 
 void
@@ -2119,31 +2053,7 @@ CmMarkUpdate(void *w, gpointer client_data)
 void
 CmTextDel(void *w, gpointer client_data)
 {
-  struct narray array;
-  struct objlist *obj;
-  int i;
-  int num, *data;
-
-  if (Menulock || Globallock)
-    return;
-  if ((obj = chkobject("text")) == NULL)
-    return;
-  if (chkobjlastinst(obj) == -1)
-    return;
-  SelectDialog(&DlgSelect, obj, LegendTextCB, &array, NULL);
-  if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
-    num = arraynum(&array);
-    if (num > 0) {
-      menu_save_undo();
-      data = arraydata(&array);
-      for (i = num - 1; i >= 0; i--) {
-	delobj(obj, data[i]);
-	set_graph_modified();
-      }
-      LegendWinUpdate(TRUE);
-    }
-  }
-  arraydel(&array);
+  legend_menu_delete_object("text", LegendTextCB);
 }
 
 void
