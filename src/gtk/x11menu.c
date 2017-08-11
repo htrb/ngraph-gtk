@@ -6469,6 +6469,17 @@ menu_clear_undo(void)
   set_action_widget_sensitivity(EditRedoAction, menu_check_redo());
 }
 
+static void
+undo_update_widgets(void)
+{
+  set_action_widget_sensitivity(EditUndoAction, menu_check_undo());
+  set_action_widget_sensitivity(EditRedoAction, menu_check_redo());
+  check_exist_instances(chkobject("draw"));
+  /* should be update sensitivity of the axis scale undo button */
+  UpdateAll();
+  CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
+}
+
 void
 menu_undo(void)
 {
@@ -6477,11 +6488,7 @@ menu_undo(void)
   if (r) {
     return;
   }
-  set_action_widget_sensitivity(EditUndoAction, menu_check_undo());
-  set_action_widget_sensitivity(EditRedoAction, menu_check_redo());
-  check_exist_instances(chkobject("draw"));
-  UpdateAll();
-  CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
+  undo_update_widgets();
 }
 
 void
@@ -6492,9 +6499,5 @@ menu_redo(void)
   if (r) {
     return;
   }
-  set_action_widget_sensitivity(EditUndoAction, menu_check_undo());
-  set_action_widget_sensitivity(EditRedoAction, menu_check_redo());
-  check_exist_instances(chkobject("draw"));
-  UpdateAll();
-  CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
+  undo_update_widgets();
 }
