@@ -6419,29 +6419,41 @@ iterate_undo_func(struct objlist *parent, UNDO_FUNC func)
 static int
 menu_undo_iteration(UNDO_FUNC func)
 {
-  struct objlist *obj, *parent;
-  int r;
+  struct objlist *obj;
 
-  parent = getobject("draw");
-  if (parent == NULL) {
+  obj = getobject("draw");
+  if (obj == NULL) {
     return 1;
   }
-  iterate_undo_func(parent, func);
+  iterate_undo_func(obj, func);
   obj = getobject("fit");
-  r = func(obj);
-  return r;
+  if (obj == NULL) {
+    return 1;
+  }
+
+  return func(obj);
 }
 
 static int
 menu_check_undo(void)
 {
-  return undo_check_undo(getobject("fit"));
+  struct objlist *obj;
+  obj = getobject("fit");
+  if (obj == NULL) {
+    return FALSE;
+  }
+  return undo_check_undo(obj);
 }
 
 static int
 menu_check_redo(void)
 {
-  return undo_check_redo(getobject("fit"));
+  struct objlist *obj;
+  obj = getobject("fit");
+  if (obj == NULL) {
+    return FALSE;
+  }
+  return undo_check_redo(obj);
 }
 
 void
