@@ -1,5 +1,7 @@
 2017-08-12  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11file.c (MathDialogSetup): show cancel button.
+
 	* src/gtk/x11axis.c (axis_check_history): added.
 
 2017-08-11  Hiroyuki Ito  <ZXB01226 at nifty.com>
