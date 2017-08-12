@@ -53,6 +53,8 @@
 #include "x11opt.h"
 #include "x11view.h"
 
+#define DUMMY_AXISGRID N_("axisgrid") /* only for translation */
+
 #define TEXT_HISTORY     "text_history"
 #define MATH_X_HISTORY   "math_x_history"
 #define MATH_Y_HISTORY   "math_y_history"
