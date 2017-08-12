@@ -283,7 +283,7 @@ void show_recent_dialog(int type);
 void menu_save_undo(void);
 void menu_delete_undo(void);
 void menu_clear_undo(void);
-void menu_undo(void);
+void menu_undo(int redraw);
 void menu_redo(void);
 
 #endif

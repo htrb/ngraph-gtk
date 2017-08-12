@@ -5817,7 +5817,7 @@ ViewUpdate(void)
   }
   PaintLock = FALSE;
   if (! modified) {
-    menu_undo();
+    menu_undo(FALSE);
   }
 
   if (arraynum(d->focusobj) == 0)
@@ -6247,7 +6247,7 @@ CmEditMenuCB(void *w, gpointer client_data)
     menu_redo();
     break;
   case MenuIdEditUndo:
-    menu_undo();
+    menu_undo(TRUE);
     break;
   case MenuIdEditCut:
     CutFocusedObjects();

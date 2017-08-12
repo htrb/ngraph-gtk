@@ -6482,25 +6482,27 @@ menu_clear_undo(void)
 }
 
 static void
-undo_update_widgets(void)
+undo_update_widgets(int redraw)
 {
   set_action_widget_sensitivity(EditUndoAction, menu_check_undo());
   set_action_widget_sensitivity(EditRedoAction, menu_check_redo());
   check_exist_instances(chkobject("draw"));
   set_axis_undo_button_sensitivity(axis_check_history());
   UpdateAll2();
-  CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
+  if (redraw) {
+    CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
+  }
 }
 
 void
-menu_undo(void)
+menu_undo(int redraw)
 {
   int r;
   r = menu_undo_iteration(undo_undo);
   if (r) {
     return;
   }
-  undo_update_widgets();
+  undo_update_widgets(redraw);
 }
 
 void
@@ -6511,5 +6513,5 @@ menu_redo(void)
   if (r) {
     return;
   }
-  undo_update_widgets();
+  undo_update_widgets(TRUE);
 }

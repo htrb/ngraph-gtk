@@ -533,12 +533,7 @@ MathDialogSetup(GtkWidget *wi, void *data, int makewidget)
     set_sensitivity_by_selection(d->list, w);
 
     gtk_box_pack_start(GTK_BOX(d->vbox), vbox, TRUE, TRUE, 4);
-
-    d->show_cancel = FALSE;
-    d->ok_button = _("_Close");
-
     gtk_window_set_default_size(GTK_WINDOW(wi), -1, 300);
-
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
 
     d->Mode = 0;
@@ -4399,7 +4394,7 @@ update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file)
     }
   }
   if (! modified) {
-    menu_undo();
+    menu_undo(FALSE);
   }
   return 1;
 }
@@ -4688,7 +4683,7 @@ FileWinFileUpdate(struct obj_list_data *d)
     ret = DialogExecute(parent, d->dialog);
     switch (ret) {
     case IDCANCEL:
-      menu_undo();
+      menu_undo(FALSE);
       break;
     case IDDELETE:
       delete_file_obj(d, sel);
@@ -5240,6 +5235,7 @@ void
 CmFileMath(void *w, gpointer client_data)
 {
   struct objlist *obj;
+  int r;
 
   if (Menulock || Globallock)
     return;
@@ -5251,7 +5247,10 @@ CmFileMath(void *w, gpointer client_data)
 
   menu_save_undo();
   MathDialog(&DlgMath, obj);
-  DialogExecute(TopLevel, &DlgMath);
+  r = DialogExecute(TopLevel, &DlgMath);
+  if (r == IDCANCEL) {
+    menu_undo(FALSE);
+  }
 }
 
 static int
