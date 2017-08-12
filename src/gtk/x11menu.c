@@ -6475,8 +6475,8 @@ undo_update_widgets(void)
   set_action_widget_sensitivity(EditUndoAction, menu_check_undo());
   set_action_widget_sensitivity(EditRedoAction, menu_check_redo());
   check_exist_instances(chkobject("draw"));
-  /* should be update sensitivity of the axis scale undo button */
-  UpdateAll();
+  set_axis_undo_button_sensitivity(axis_check_history());
+  UpdateAll2();
   CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
 }
 

@@ -42,3 +42,4 @@ void AxisWinState(struct SubWin *d, int state);
 
 void axis_scale_push(struct objlist *obj, int id);
 void AxisWinUpdate(struct obj_list_data *data, int clear);
+int axis_check_history(void);

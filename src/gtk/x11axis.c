@@ -2948,6 +2948,17 @@ check_axis_history(struct objlist *obj)
   return num;
 }
 
+int
+axis_check_history(void)
+{
+  struct objlist *obj;
+  obj = chkobject("axis");
+  if (obj == NULL) {
+    return FALSE;
+  }
+  return check_axis_history(obj);
+}
+
 void
 CmAxisScaleUndo(void *w, gpointer client_data)
 {
