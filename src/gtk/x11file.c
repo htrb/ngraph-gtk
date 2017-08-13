@@ -533,6 +533,10 @@ MathDialogSetup(GtkWidget *wi, void *data, int makewidget)
     set_sensitivity_by_selection(d->list, w);
 
     gtk_box_pack_start(GTK_BOX(d->vbox), vbox, TRUE, TRUE, 4);
+
+    d->show_cancel = FALSE;
+    d->ok_button = _("_Close");
+
     gtk_window_set_default_size(GTK_WINDOW(wi), -1, 300);
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
 
@@ -5235,7 +5239,6 @@ void
 CmFileMath(void *w, gpointer client_data)
 {
   struct objlist *obj;
-  int r;
 
   if (Menulock || Globallock)
     return;
@@ -5247,10 +5250,7 @@ CmFileMath(void *w, gpointer client_data)
 
   menu_save_undo();
   MathDialog(&DlgMath, obj);
-  r = DialogExecute(TopLevel, &DlgMath);
-  if (r == IDCANCEL) {
-    menu_undo(FALSE);
-  }
+  DialogExecute(TopLevel, &DlgMath);
 }
 
 static int
