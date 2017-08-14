@@ -79,26 +79,6 @@
         <child>
           <object class="GtkShortcutsGroup">
             <property name="visible">1</property>
-            <property name="title">Help</property>
-	    <child>
-	      <object class="GtkShortcutsShortcut">
-		<property name="visible">1</property>
-		<property name="action-name">app.help</property>
-		<property name="title" translatable="yes">Show the help document</property>
-	      </object>
-	    </child>
-	    <child>
-	      <object class="GtkShortcutsShortcut">
-		<property name="visible">1</property>
-		<property name="action-name">win.show-help-overlay</property>
-		<property name="title" translatable="yes">Show shortcut keys</property>
-	      </object>
-	    </child>
-	  </object>
-	</child>
-        <child>
-          <object class="GtkShortcutsGroup">
-            <property name="visible">1</property>
             <property name="title">Editing</property>
 	    <child>
 	      <object class="GtkShortcutsShortcut">
@@ -213,6 +193,26 @@
 	    </child>
 	  </object>
         </child>
+        <child>
+          <object class="GtkShortcutsGroup">
+            <property name="visible">1</property>
+            <property name="title">Help</property>
+	    <child>
+	      <object class="GtkShortcutsShortcut">
+		<property name="visible">1</property>
+		<property name="action-name">app.help</property>
+		<property name="title" translatable="yes">Show the help document</property>
+	      </object>
+	    </child>
+	    <child>
+	      <object class="GtkShortcutsShortcut">
+		<property name="visible">1</property>
+		<property name="action-name">win.show-help-overlay</property>
+		<property name="title" translatable="yes">Show shortcut keys</property>
+	      </object>
+	    </child>
+	  </object>
+	</child>
       </object>
     </child>
   </object>
