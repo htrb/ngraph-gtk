@@ -54,6 +54,7 @@
 #include "x11view.h"
 
 #define DUMMY_AXISGRID N_("axisgrid") /* only for translation */
+#define DUMMY_SHORTCUT N_("Show shortcut keys") /* only for translation */
 
 #define TEXT_HISTORY     "text_history"
 #define MATH_X_HISTORY   "math_x_history"
@@ -2240,7 +2241,7 @@ static struct MenuItem EditMenu[] = {
     MENU_TYPE_NORMAL,
     N_("_Redo"),
     NULL,
-    N_("Redo"),
+    N_("Redo previous command"),
     NULL,
     NULL,
     "<Ngraph>/Edit/Redo",
@@ -2256,7 +2257,7 @@ static struct MenuItem EditMenu[] = {
     MENU_TYPE_NORMAL,
     N_("_Undo"),
     NULL,
-    N_("Undo"),
+    N_("Undo previous command"),
     NULL,
     NULL,
     "<Ngraph>/Edit/Undo",
