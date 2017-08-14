@@ -1,4 +1,3 @@
 usr/include
 usr/lib/*/libngraph.so
 usr/lib/*/libngraph.a
-usr/lib/*/libngraph.la
