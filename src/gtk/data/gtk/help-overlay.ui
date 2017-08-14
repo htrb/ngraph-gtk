@@ -74,22 +74,28 @@
 		<property name="title" translatable="yes">Quit the application</property>
 	      </object>
 	    </child>
+	  </object>
+        </child>
+        <child>
+          <object class="GtkShortcutsGroup">
+            <property name="visible">1</property>
+            <property name="title">Help</property>
 	    <child>
 	      <object class="GtkShortcutsShortcut">
 		<property name="visible">1</property>
-		<property name="action-name">app.ViewToggleCoordinateWindowAction</property>
-		<property name="title" translatable="yes">Activate Coordinate Window</property>
+		<property name="action-name">app.help</property>
+		<property name="title" translatable="yes">Show the help document</property>
 	      </object>
 	    </child>
 	    <child>
 	      <object class="GtkShortcutsShortcut">
 		<property name="visible">1</property>
-		<property name="action-name">app.ViewToggleInformationWindowAction</property>
-		<property name="title" translatable="yes">Activate Information Window</property>
+		<property name="action-name">win.show-help-overlay</property>
+		<property name="title" translatable="yes">Show shortcut keys</property>
 	      </object>
 	    </child>
 	  </object>
-        </child>
+	</child>
         <child>
           <object class="GtkShortcutsGroup">
             <property name="visible">1</property>
@@ -162,26 +168,6 @@
         <child>
           <object class="GtkShortcutsGroup">
             <property name="visible">1</property>
-            <property name="title">Help</property>
-	    <child>
-	      <object class="GtkShortcutsShortcut">
-		<property name="visible">1</property>
-		<property name="action-name">app.help</property>
-		<property name="title" translatable="yes">Show the help document</property>
-	      </object>
-	    </child>
-	    <child>
-	      <object class="GtkShortcutsShortcut">
-		<property name="visible">1</property>
-		<property name="action-name">win.show-help-overlay</property>
-		<property name="title" translatable="yes">Show shortcut keys</property>
-	      </object>
-	    </child>
-	  </object>
-	</child>
-        <child>
-          <object class="GtkShortcutsGroup">
-            <property name="visible">1</property>
             <property name="title">Window (multi window mode only)</property>
 	    <child>
 	      <object class="GtkShortcutsShortcut">
@@ -209,6 +195,20 @@
 		<property name="visible">1</property>
 		<property name="action-name">app.ViewToggleMergeWindowAction</property>
 		<property name="title" translatable="yes">Activate Merge Window</property>
+	      </object>
+	    </child>
+	    <child>
+	      <object class="GtkShortcutsShortcut">
+		<property name="visible">1</property>
+		<property name="action-name">app.ViewToggleCoordinateWindowAction</property>
+		<property name="title" translatable="yes">Activate Coordinate Window</property>
+	      </object>
+	    </child>
+	    <child>
+	      <object class="GtkShortcutsShortcut">
+		<property name="visible">1</property>
+		<property name="action-name">app.ViewToggleInformationWindowAction</property>
+		<property name="title" translatable="yes">Activate Information Window</property>
 	      </object>
 	    </child>
 	  </object>
