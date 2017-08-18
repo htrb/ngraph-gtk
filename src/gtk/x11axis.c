@@ -565,6 +565,16 @@ SectionDialogAxisR(GtkWidget *w, gpointer client_data)
 }
 
 static void
+axis_save_undo(int type)
+{
+  char *arg[3];
+  arg[0] = "axis";
+  arg[1] = "axisgrid";
+  arg[2] = NULL;
+  menu_save_undo(type, arg);
+}
+
+static void
 SectionDialogGrid(GtkWidget *w, gpointer client_data)
 {
   struct SectionDialog *d;
@@ -573,7 +583,7 @@ SectionDialogGrid(GtkWidget *w, gpointer client_data)
 
   d = (struct SectionDialog *) client_data;
   if (*(d->IDG) == -1) {
-    menu_save_undo();
+    axis_save_undo(UNDO_TYPE_EDIT);
     if ((*(d->IDG) = newobj(d->Obj2)) >= 0) {
       getobj(d->Obj, "oid", d->IDX, 0, NULL, &oidx);
       ref = g_strdup_printf("axis:^%d", oidx);
@@ -2393,7 +2403,7 @@ CmAxisNewFrame(void *w, gpointer client_data)
     return;
   if ((obj2 = getobject("axisgrid")) == NULL)
     return;
-  menu_save_undo();
+  axis_save_undo(UNDO_TYPE_CREATE);
   idx = newobj(obj);
   idy = newobj(obj);
   idu = newobj(obj);
@@ -2452,7 +2462,7 @@ CmAxisNewSection(void *w, gpointer client_data)
     return;
   if ((obj2 = getobject("axisgrid")) == NULL)
     return;
-  menu_save_undo();
+  axis_save_undo(UNDO_TYPE_CREATE);
   idx = newobj(obj);
   idy = newobj(obj);
   idu = newobj(obj);
@@ -2518,7 +2528,7 @@ CmAxisNewCross(void *w, gpointer client_data)
     return;
   if ((obj = chkobject("axis")) == NULL)
     return;
-  menu_save_undo();
+  axis_save_undo(UNDO_TYPE_CREATE);
   idx = newobj(obj);
   idy = newobj(obj);
   arrayinit(&group, sizeof(int));
@@ -2559,7 +2569,7 @@ CmAxisNewSingle(void *w, gpointer client_data)
     return;
   if ((obj = chkobject("axis")) == NULL)
     return;
-  menu_save_undo();
+  axis_save_undo(UNDO_TYPE_CREATE);
   if ((id = newobj(obj)) >= 0) {
     AxisDialog(NgraphApp.AxisWin.data.data, id, -1);
     ret = DialogExecute(TopLevel, &DlgAxis);
@@ -2590,7 +2600,7 @@ CmAxisDel(void *w, gpointer client_data)
   CopyDialog(&DlgCopy, obj, -1, AxisCB);
 
   if (DialogExecute(TopLevel, &DlgCopy) == IDOK && DlgCopy.sel >= 0) {
-    menu_save_undo();
+    axis_save_undo(UNDO_TYPE_DELETE);
     AxisDel(DlgCopy.sel);
     set_graph_modified();
     AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE);
@@ -2618,7 +2628,7 @@ CmAxisUpdate(void *w, gpointer client_data)
   } else {
     return;
   }
-  menu_save_undo();
+  axis_save_undo(UNDO_TYPE_EDIT);
   AxisDialog(NgraphApp.AxisWin.data.data, i, -1);
   if ((ret = DialogExecute(TopLevel, &DlgAxis)) == IDDELETE) {
     AxisDel(i);
@@ -2651,7 +2661,7 @@ CmAxisZoom(void *w, gpointer client_data)
       num = arraynum(&farray);
       array = arraydata(&farray);
       if (num > 0) {
-	menu_save_undo();
+	axis_save_undo(UNDO_TYPE_EDIT);
       }
       for (i = 0; i < num; i++) {
 	getobj(obj, "min", array[i], 0, NULL, &min);
@@ -2696,7 +2706,7 @@ axiswin_scale_clear(GtkMenuItem *item, gpointer user_data)
   num = chkobjlastinst(d->obj);
 
   if ((sel >= 0) && (sel <= num)) {
-    menu_save_undo();
+    axis_save_undo(UNDO_TYPE_CLEAR_SCALE);
     d->setup_dialog(d, sel, -1);
     d->select = sel;
     axis_scale_push(obj, sel);
@@ -2725,7 +2735,7 @@ CmAxisClear(void *w, gpointer client_data)
     num = arraynum(&farray);
     array = arraydata(&farray);
     if (num > 0) {
-      menu_save_undo();
+      axis_save_undo(UNDO_TYPE_CLEAR_SCALE);
     }
     for (i = 0; i < num; i++) {
       axis_scale_push(obj, array[i]);
@@ -2747,7 +2757,7 @@ CmAxisGridNew(void *w, gpointer client_data)
     return;
   if ((obj = chkobject("axisgrid")) == NULL)
     return;
-  menu_save_undo();
+  axis_save_undo(UNDO_TYPE_CREATE);
   id = newobj(obj);
   if (id < 0) {
     menu_delete_undo();
@@ -2781,7 +2791,7 @@ CmAxisGridDel(void *w, gpointer client_data)
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&farray);
     if (num > 0) {
-      menu_save_undo();
+      axis_save_undo(UNDO_TYPE_DELETE);
     }
     array = arraydata(&farray);
     for (i = num - 1; i >= 0; i--) {
@@ -2810,7 +2820,7 @@ CmAxisGridUpdate(void *w, gpointer client_data)
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&farray);
     if (num > 0) {
-      menu_save_undo();
+      axis_save_undo(UNDO_TYPE_EDIT);
     }
     array = arraydata(&farray);
     for (i = 0; i < num; i++) {
@@ -2980,7 +2990,7 @@ CmAxisScaleUndo(void *w, gpointer client_data)
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&farray);
     if (num > 0) {
-      menu_save_undo();
+      axis_save_undo(UNDO_TYPE_UNDO_SCALE);
     }
     array = arraydata(&farray);
     for (i = num - 1; i >= 0; i--) {
@@ -3077,7 +3087,7 @@ pos_edited_common(struct obj_list_data *d, int id, char *str, enum CHANGE_DIR di
 
   getobj(d->obj, "group_manager", id, 0, NULL, &man);
   if (man >= 0) {
-    menu_save_undo();
+    axis_save_undo(UNDO_TYPE_EDIT);
     exeobj(d->obj, "move", man, 2, argv);
 
     set_graph_modified();
@@ -3124,7 +3134,7 @@ axis_prm_edited_common(struct obj_list_data *d, char *field, gchar *str)
     return;
   }
 
-  menu_save_undo();
+  axis_save_undo(UNDO_TYPE_EDIT);
   axis_scale_push(d->obj, sel);
   if (chk_sputobjfield(d->obj, sel, field, str)) {
     menu_lock(FALSE);
@@ -3315,12 +3325,12 @@ select_type(GtkComboBox *w, gpointer user_data)
     if (type == enum_id) {
       return;
     }
-    menu_save_undo();
+    axis_save_undo(UNDO_TYPE_EDIT);
     putobj(d->obj, "type", sel, &enum_id);
     break;
   case AXIS_COMBO_ITEM_BASE_DRAW:
     gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);
-    menu_save_undo();
+    axis_save_undo(UNDO_TYPE_EDIT);
     active = ! active;
     putobj(d->obj, "baseline", sel, &active);
     break;
@@ -3333,7 +3343,7 @@ select_type(GtkComboBox *w, gpointer user_data)
     if (enum_id < 0 || enum_id >= FwNumStyleNum) {
       return;
     }
-    menu_save_undo();
+    axis_save_undo(UNDO_TYPE_EDIT);
     if (chk_sputobjfield(d->obj, sel, "style", FwLineStyle[enum_id].list) != 0) {
       return;
     }
@@ -3346,7 +3356,7 @@ select_type(GtkComboBox *w, gpointer user_data)
     if (type == enum_id) {
       return;
     }
-    menu_save_undo();
+    axis_save_undo(UNDO_TYPE_EDIT);
     putobj(d->obj, "arrow", sel, &enum_id);
     break;
   case AXIS_COMBO_ITEM_BASE_WAVE:
@@ -3354,7 +3364,7 @@ select_type(GtkComboBox *w, gpointer user_data)
     if (type == enum_id) {
       return;
     }
-    menu_save_undo();
+    axis_save_undo(UNDO_TYPE_EDIT);
     putobj(d->obj, "wave", sel, &enum_id);
     break;
   case AXIS_COMBO_ITEM_GAUGE_POS:
@@ -3362,7 +3372,7 @@ select_type(GtkComboBox *w, gpointer user_data)
     if (type == enum_id) {
       return;
     }
-    menu_save_undo();
+    axis_save_undo(UNDO_TYPE_EDIT);
     putobj(d->obj, "gauge", sel, &enum_id);
     break;
   case AXIS_COMBO_ITEM_GAUGE_COLOR:
@@ -3374,7 +3384,7 @@ select_type(GtkComboBox *w, gpointer user_data)
     if (enum_id < 0 || enum_id >= FwNumStyleNum) {
       return;
     }
-    menu_save_undo();
+    axis_save_undo(UNDO_TYPE_EDIT);
     if (chk_sputobjfield(d->obj, sel, "gauge_style", FwLineStyle[enum_id].list) != 0) {
       return;
     }
@@ -3387,7 +3397,7 @@ select_type(GtkComboBox *w, gpointer user_data)
     if (type == enum_id) {
       return;
     }
-    menu_save_undo();
+    axis_save_undo(UNDO_TYPE_EDIT);
     putobj(d->obj, "num", sel, &enum_id);
     break;
   case AXIS_COMBO_ITEM_NUM_ALIGN:
@@ -3395,7 +3405,7 @@ select_type(GtkComboBox *w, gpointer user_data)
     if (type == enum_id) {
       return;
     }
-    menu_save_undo();
+    axis_save_undo(UNDO_TYPE_EDIT);
     putobj(d->obj, "num_align", sel, &enum_id);
     break;
   case AXIS_COMBO_ITEM_NUM_DIR:
@@ -3403,18 +3413,18 @@ select_type(GtkComboBox *w, gpointer user_data)
     if (type == enum_id) {
       return;
     }
-    menu_save_undo();
+    axis_save_undo(UNDO_TYPE_EDIT);
     putobj(d->obj, "num_direction", sel, &enum_id);
     break;
   case AXIS_COMBO_ITEM_NUM_LOG:
     gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);
-    menu_save_undo();
+    axis_save_undo(UNDO_TYPE_EDIT);
     active = ! active;
     putobj(d->obj, "num_log_pow", sel, &active);
     break;
   case AXIS_COMBO_ITEM_NUM_NO_ZERO:
     gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);
-    menu_save_undo();
+    axis_save_undo(UNDO_TYPE_EDIT);
     active = ! active;
     putobj(d->obj, "num_no_zero", sel, &active);
     break;
@@ -3430,20 +3440,20 @@ select_type(GtkComboBox *w, gpointer user_data)
       g_free(font);
       return;
     }
-    menu_save_undo();
+    axis_save_undo(UNDO_TYPE_EDIT);
     putobj(d->obj, "num_font", sel, font);
     break;
   case AXIS_COMBO_ITEM_NUM_BOLD:
     gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);
     getobj(d->obj, "num_font_style", sel, 0, NULL, &type);
-    menu_save_undo();
+    axis_save_undo(UNDO_TYPE_EDIT);
     style = (type & GRA_FONT_STYLE_ITALIC) | (active ? 0 : GRA_FONT_STYLE_BOLD);
     putobj(d->obj, "num_font_style", sel, &style);
     break;
   case AXIS_COMBO_ITEM_NUM_ITALIC:
     gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);
     getobj(d->obj, "num_font_style", sel, 0, NULL, &type);
-    menu_save_undo();
+    axis_save_undo(UNDO_TYPE_EDIT);
     style = (type & GRA_FONT_STYLE_BOLD) | (active ? 0 : GRA_FONT_STYLE_ITALIC);
     putobj(d->obj, "num_font_style", sel, &style);
     break;
@@ -3504,7 +3514,7 @@ axiswin_delete_axis(struct obj_list_data *d)
   num = chkobjlastinst(d->obj);
 
   if ((sel >= 0) && (sel <= num)) {
-    menu_save_undo();
+    axis_save_undo(UNDO_TYPE_DELETE);
     AxisDel(sel);
     AxisWinUpdate(d, TRUE);
     FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
@@ -3536,7 +3546,7 @@ AxisWinAxisTop(GtkWidget *w, gpointer client_data)
   num = chkobjlastinst(d->obj);
 
   if ((sel  >=  0) && (sel <= num)) {
-    menu_save_undo();
+    axis_save_undo(UNDO_TYPE_ORDER);
     movetopobj(d->obj, sel);
     d->select = 0;
     AxisMove(sel,0);
@@ -3560,7 +3570,7 @@ AxisWinAxisLast(GtkWidget *w, gpointer client_data)
   num = chkobjlastinst(d->obj);
 
   if ((sel >= 0) && (sel <= num)) {
-    menu_save_undo();
+    axis_save_undo(UNDO_TYPE_ORDER);
     movelastobj(d->obj, sel);
     d->select = num;
     AxisMove(sel, num);
@@ -3584,7 +3594,7 @@ AxisWinAxisUp(GtkWidget *w, gpointer client_data)
   num = chkobjlastinst(d->obj);
 
   if ((sel >= 1) && (sel <= num)) {
-    menu_save_undo();
+    axis_save_undo(UNDO_TYPE_ORDER);
     moveupobj(d->obj, sel);
     d->select = sel - 1;
     AxisMove(sel, sel - 1);
@@ -3608,7 +3618,7 @@ AxisWinAxisDown(GtkWidget *w, gpointer client_data)
   num = chkobjlastinst(d->obj);
 
   if (sel >= 0 && sel <= num-1) {
-    menu_save_undo();
+    axis_save_undo(UNDO_TYPE_ORDER);
     movedownobj(d->obj, sel);
     d->select = sel + 1;
     AxisMove(sel, sel + 1);
