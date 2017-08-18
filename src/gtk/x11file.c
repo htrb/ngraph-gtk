@@ -2726,6 +2726,7 @@ show_fit_dialog(struct objlist *obj, int id, GtkWidget *parent)
   case IDCANCEL:
     if (! create)
       break;
+    /* fall through */
   case IDDELETE:
     delobj(fitobj, fitid);
     putobj(obj, "fit", id, NULL);

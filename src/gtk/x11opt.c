@@ -492,6 +492,7 @@ PrefScriptDialogClose(GtkWidget *w, void *data)
   switch (d->ret) {
   case IDSAVE:
     save_config(SAVE_CONFIG_TYPE_ADDIN_SCRIPT);
+    /* fall through */
   case IDOK:
     create_addin_menu();
     break;

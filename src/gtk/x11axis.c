@@ -605,6 +605,7 @@ SectionDialogGrid(GtkWidget *w, gpointer client_data)
     case IDCANCEL:
       if (! create)
 	break;
+      /* fall through */
     case IDDELETE:
       delobj(d->Obj2, *(d->IDG));
       *(d->IDG) = -1;
@@ -612,6 +613,7 @@ SectionDialogGrid(GtkWidget *w, gpointer client_data)
 	menu_delete_undo();
 	break;
       }
+      /* fall through */
     default:
       set_graph_modified();
     }

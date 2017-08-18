@@ -621,6 +621,7 @@ dlggetopenfile(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
     break;
   case 2:
     initfile = d[1];
+    /* fall through */
   case 1:
     filter = d[0];
     break;
@@ -657,10 +658,8 @@ dlggetopenfiles(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
 
   locksave = Globallock;
   Globallock = TRUE;
-
   arrayfree2(rval->array);
   rval->array = NULL;
-
   array = (struct narray *)argv[2];
   d = arraydata(array);
   anum = arraynum(array);
@@ -669,6 +668,7 @@ dlggetopenfiles(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
     break;
   case 2:
     initfile = d[1];
+    /* fall through */
   case 1:
     filter = d[0];
     break;
@@ -717,6 +717,7 @@ dlggetsavefile(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
     break;
   case 2:
     initfile = d[1];
+    /* fall through */
   case 1:
     filter = d[0];
     break;

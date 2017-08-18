@@ -310,7 +310,8 @@ message_box(GtkWidget * parent, const char *message, const char *title, int mode
   case RESPONS_YESNOCANCEL:
     gtk_dialog_add_button(GTK_DIALOG(dlg), _("_No"), GTK_RESPONSE_NO);
     gtk_dialog_add_button(GTK_DIALOG(dlg), _("_Yes"), GTK_RESPONSE_YES);
-  case RESPONS_YESNO:		/* fall-through */
+    /* fall through */
+  case RESPONS_YESNO:
     gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_YES);
     break;
   }
