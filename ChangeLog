@@ -1,3 +1,19 @@
+2017-08-18  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (data_save_undo): added.
+
+	* src/gtk/x11axis.c (axis_save_undo): added.
+
+	* src/gtk/x11menu.c (menu_redo, menu_undo, menu_clear_undo)
+	(menu_delete_undo, menu_save_undo): save undo informations.
+	(menu_save_undo_single): added.
+	(set_undo_menu_label): added.
+	(undo_info_pop, undo_info_push): added.
+	(menu_undo_iteration): add second parameter.
+	(menu_check_undo, menu_check_redo): check undo informations.
+
+	* src/gtk/x11menu.h (MENU_UNDO_TYPE): added.
+
 2017-08-12  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11axis.c (axis_check_history): added.
@@ -21,7 +37,7 @@
 
 	* src/omerge.c (merge_inst_dup, merge_inst_free): added.
 
-	* src/ofit.c  (fit_inst_dup, fit_inst_free, create_math_equation): added.
+	* src/ofit.c (fit_inst_dup, fit_inst_free, create_math_equation): added.
 	(fitput): use "create_math_equation()".
 
 2017-08-08  Hiroyuki Ito  <ZXB01226 at nifty.com>
