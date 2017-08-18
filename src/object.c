@@ -44,7 +44,6 @@
 
 #define USE_HASH 1
 
-#define OBJ_MAX 1024
 #define INST_MAX 32767
 
 static struct objlist *objroot=NULL;

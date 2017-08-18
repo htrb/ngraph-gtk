@@ -25,6 +25,7 @@
 #define N_OBJECT_HEADER
 
 #define TEXT_SIZE_MIN 500
+#define OBJ_MAX 128
 
 #include "nhash.h"
 #include "ngraph.h"
