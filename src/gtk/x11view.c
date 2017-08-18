@@ -1923,12 +1923,40 @@ ShowFocusFrame(cairo_t *cr, const struct Viewer *d)
 }
 
 static void
+get_focused_obj_array(struct narray *focusobj, char **objs)
+{
+  int i, j, obj_n, n;
+  struct objlist *obj, *obj_array[OBJ_MAX] = {NULL};
+  struct FocusObj **focus;
+
+  n = arraynum(focusobj);
+  focus = arraydata(focusobj);
+  obj_n = 0;
+  for (i = 0; i < n; i++) {
+    obj = focus[i]->obj;
+    for (j = 0; j < obj_n; j++) {
+      if (obj_array[j] == obj) {
+	break;
+      }
+    }
+    if (j == obj_n) {
+      obj_array[obj_n] = obj;
+      obj_n++;
+    }
+  }
+  for (i = 0; i < obj_n; i++) {
+    objs[i] = obj_array[i]->name;
+  }
+  objs[i] = NULL;
+}
+
+static void
 AlignFocusedObj(int align)
 {
   int i, num, bboxnum, *bbox, minx, miny, maxx, maxy, dx, dy;
   struct FocusObj **focus;
   struct narray *abbox;
-  char *argv[4];
+  char *argv[4], *objs[OBJ_MAX];
   N_VALUE *inst;
   struct Viewer *d;
 
@@ -1958,7 +1986,8 @@ AlignFocusedObj(int align)
 
   d->allclear = FALSE;
   PaintLock = TRUE;
-  menu_save_undo(UNDO_TYPE_ALIGN, NULL);
+  get_focused_obj_array(d->focusobj, objs);
+  menu_save_undo(UNDO_TYPE_ALIGN, objs);
   for (i = 0; i < num; i++) {
     inst = chkobjinstoid(focus[i]->obj, focus[i]->oid);
     if (inst == NULL) {
@@ -2041,7 +2070,7 @@ RotateFocusedObj(int direction)
   int num, minx, miny, maxx, maxy, angle, type;
   int use_pivot, px, py;
   struct FocusObj **focus;
-  char *argv[5];
+  char *argv[5], *objs[OBJ_MAX];
   struct Viewer *d;
 
   if (Menulock || Globallock)
@@ -2076,7 +2105,8 @@ RotateFocusedObj(int direction)
     px = (minx + maxx) / 2;
     py = (miny + maxy) / 2;
   }
-  menu_save_undo(UNDO_TYPE_ROTATE, NULL);
+  get_focused_obj_array(d->focusobj, objs);
+  menu_save_undo(UNDO_TYPE_ROTATE, objs);
   execute_selected_instances(focus, num, 4, argv, "rotate");
 
   PaintLock = FALSE;
@@ -2089,7 +2119,7 @@ FlipFocusedObj(enum FLIP_DIRECTION dir)
   int num, minx, miny, maxx, maxy, type;
   int use_pivot, p;
   struct FocusObj **focus;
-  char *argv[4];
+  char *argv[4], *objs[OBJ_MAX];
   struct Viewer *d;
 
   if (Menulock || Globallock)
@@ -2119,7 +2149,8 @@ FlipFocusedObj(enum FLIP_DIRECTION dir)
     use_pivot = 1;
     p = (dir == FLIP_DIRECTION_HORIZONTAL) ? (minx + maxx) / 2 : (miny + maxy) / 2;
   }
-  menu_save_undo(UNDO_TYPE_FLIP, NULL);
+  get_focused_obj_array(d->focusobj, objs);
+  menu_save_undo(UNDO_TYPE_FLIP, objs);
   execute_selected_instances(focus, num, 3, argv, "flip");
 
   PaintLock = FALSE;
@@ -3090,7 +3121,7 @@ static int
 move_objects(int dx, int dy, struct Viewer *d)
 {
   int i, num, axis;
-  char *argv[5];
+  char *argv[5], *objs[OBJ_MAX];
   N_VALUE *inst;
   struct FocusObj *focus;
   struct objlist *obj;
@@ -3100,7 +3131,8 @@ move_objects(int dx, int dy, struct Viewer *d)
   axis = FALSE;
   PaintLock = TRUE;
   if (dx != 0 || dy != 0) {
-    menu_save_undo(UNDO_TYPE_MOVE, NULL);
+    get_focused_obj_array(d->focusobj, objs);
+    menu_save_undo(UNDO_TYPE_MOVE, objs);
     argv[0] = (char *) &dx;
     argv[1] = (char *) &dy;
     argv[2] = NULL;
@@ -3151,7 +3183,7 @@ mouse_up_zoom(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
 {
   int vx1, vy1, zm, i, num, axis;
   double zoom2;
-  char *argv[5];
+  char *argv[5], *objs[OBJ_MAX];
   N_VALUE *inst;
   struct FocusObj *focus;
   struct objlist *obj;
@@ -3182,7 +3214,6 @@ mouse_up_zoom(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
   }
 
   if (zm != 10000) {
-    menu_save_undo(UNDO_TYPE_ZOOM, NULL);
     argv[0] = (char *) &zm;
     argv[1] = (char *) &(d->RefX1);
     argv[2] = (char *) &(d->RefY1);
@@ -3192,6 +3223,10 @@ mouse_up_zoom(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
     num = arraynum(d->focusobj);
     PaintLock = TRUE;
 
+    if (num > 0) {
+      get_focused_obj_array(d->focusobj, objs);
+      menu_save_undo(UNDO_TYPE_ZOOM, objs);
+    }
     for (i = num - 1; i >= 0; i--) {
       focus = *(struct FocusObj **) arraynget(d->focusobj, i);
       obj = focus->obj;
@@ -5674,7 +5709,7 @@ ViewUpdate(void)
   int idx = 0, idy = 0, idu = 0, idr = 0, idg, lenx, leny;
   int findX, findY, findU, findR, findG;
   char type;
-  char *group;
+  char *group, *objs[OBJ_MAX];
   int axis;
   struct Viewer *d;
 
@@ -5690,7 +5725,8 @@ ViewUpdate(void)
   d->ShowFrame = FALSE;
   d->ShowRect = FALSE;
 
-  menu_save_undo(UNDO_TYPE_EDIT, NULL);
+  get_focused_obj_array(d->focusobj, objs);
+  menu_save_undo(UNDO_TYPE_EDIT, objs);
   axis = FALSE;
   PaintLock = TRUE;
   modified = FALSE;
@@ -5835,6 +5871,7 @@ ViewDelete(void)
   N_VALUE *inst;
   int axis;
   struct Viewer *d;
+  char *objs[OBJ_MAX];
 
   if (Menulock || Globallock)
     return;
@@ -5856,7 +5893,8 @@ ViewDelete(void)
   axis = FALSE;
   PaintLock = TRUE;
 
-  menu_save_undo(UNDO_TYPE_DELETE, NULL);
+  get_focused_obj_array(d->focusobj, objs);
+  menu_save_undo(UNDO_TYPE_DELETE, objs);
   for (i = num - 1; i >= 0; i--) {
     focus = *(struct FocusObj **) arraynget(d->focusobj, i);
     obj = focus->obj;
@@ -6150,6 +6188,7 @@ ViewCopy(void)
   N_VALUE *inst, *inst2;
   int axis = FALSE;
   struct Viewer *d;
+  char *objs[OBJ_MAX];
 
   if (Menulock || Globallock)
     return;
@@ -6168,7 +6207,8 @@ ViewCopy(void)
   axis = FALSE;
   PaintLock = TRUE;
 
-  menu_save_undo(UNDO_TYPE_COPY, NULL);
+  get_focused_obj_array(d->focusobj, objs);
+  menu_save_undo(UNDO_TYPE_COPY, objs);
   for (i = 0; i < num; i++) {
     focus = * (struct FocusObj **) arraynget(d->focusobj, i);
     if (focus == NULL)
