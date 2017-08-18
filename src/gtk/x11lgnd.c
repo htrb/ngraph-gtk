@@ -287,7 +287,7 @@ legend_menu_update_object(const char *name, char *(*callback) (struct objlist * 
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&array);
     if (num > 0) {
-      menu_save_undo();
+      menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
       data = arraydata(&array);
       for (i = 0; i < num; i++) {
 	setup(dialog, obj, data[i]);
@@ -323,7 +323,7 @@ legend_menu_delete_object(const char *name, char *(*callback) (struct objlist * 
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&array);
     if (num > 0) {
-      menu_save_undo();
+      menu_save_undo_single(UNDO_TYPE_DELETE, obj->name);
       data = arraydata(&array);
       for (i = num - 1; i >= 0; i--) {
 	delobj(obj, data[i]);
@@ -2758,7 +2758,7 @@ pos_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer use
   argv[2] = NULL;
 
   if (inc != 0 ) {
-    menu_save_undo();
+    menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
     exeobj(d->obj, "move", m, 2, argv);
     set_graph_modified();
     d->update(d, TRUE);
@@ -2805,7 +2805,7 @@ rect_size_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpoint
 
   v = nround(val * 100);
   if (v != x2 - x1) {
-    menu_save_undo();
+    menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
     x2 = x1 + v;
     putobj(d->obj, pos1, id, &x1);
     putobj(d->obj, pos2, id, &x2);
@@ -2929,7 +2929,7 @@ set_bool_field(struct objlist *obj, char *field, int id, int state)
     return 0;
   }
 
-  menu_save_undo();
+  menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
   putobj(obj, field, id, &state);
   return 1;
 }
@@ -2992,7 +2992,7 @@ select_type(GtkComboBox *w, gpointer user_data)
     if (enum_id == mark_type) {
       return;
     }
-    menu_save_undo();
+    menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
     putobj(d->obj, "type", sel, &enum_id);
     break;
   case LEGEND_COMBO_ITEM_STYLE:
@@ -3073,14 +3073,14 @@ select_type(GtkComboBox *w, gpointer user_data)
     gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);
     getobj(d->obj, "style", sel, 0, NULL, &style);
     style = (style & GRA_FONT_STYLE_ITALIC) | (active ? 0 : GRA_FONT_STYLE_BOLD);
-    menu_save_undo();
+    menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
     putobj(d->obj, "style", sel, &style);
     break;
   case LEGEND_COMBO_ITEM_STYLE_ITALIC:
     gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);
     getobj(d->obj, "style", sel, 0, NULL, &style);
     style = (style & GRA_FONT_STYLE_BOLD) | (active ? 0 : GRA_FONT_STYLE_ITALIC);
-    menu_save_undo();
+    menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
     putobj(d->obj, "style", sel, &style);
     break;
   default:
@@ -3290,7 +3290,7 @@ select_font(GtkComboBox *w, gpointer user_data)
       g_free(font);
       return;
     }
-    menu_save_undo();
+    menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
     putobj(d->obj, "font", sel, font);
     break;
   case LEGEND_COMBO_ITEM_COLOR_0:
@@ -3299,14 +3299,14 @@ select_font(GtkComboBox *w, gpointer user_data)
     }
     break;
   case LEGEND_COMBO_ITEM_STYLE_BOLD:
-    menu_save_undo();
+    menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
     gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);
     getobj(d->obj, "style", sel, 0, NULL, &style);
     style = (style & GRA_FONT_STYLE_ITALIC) | (active ? 0 : GRA_FONT_STYLE_BOLD);
     putobj(d->obj, "style", sel, &style);
     break;
   case LEGEND_COMBO_ITEM_STYLE_ITALIC:
-    menu_save_undo();
+    menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
     gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);
     getobj(d->obj, "style", sel, 0, NULL, &style);
     style = (style & GRA_FONT_STYLE_BOLD) | (active ? 0 : GRA_FONT_STYLE_ITALIC);
