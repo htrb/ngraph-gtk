@@ -397,9 +397,6 @@ static struct ToolItem PointerToolbar[] = {
     TextB,
   },
   {
-    TOOL_TYPE_SEPARATOR,
-  },
-  {
     TOOL_TYPE_RADIO,
     N_("Gauss"),
     N_("Gaussian"),
@@ -412,6 +409,9 @@ static struct ToolItem PointerToolbar[] = {
     NULL,
     G_CALLBACK(CmViewerButtonArm),
     GaussB,
+  },
+  {
+    TOOL_TYPE_SEPARATOR,
   },
   {
     TOOL_TYPE_RADIO,
@@ -6155,7 +6155,7 @@ script_exec(GtkWidget *w, gpointer client_data)
 
   menu_lock(TRUE);
 
-  menu_save_undo();
+  menu_save_undo(UNDO_TYPE_ADDIN, NULL);
   idn = getobjtblpos(Menulocal.obj, "_evloop", &robj);
   registerevloop(chkobjectname(Menulocal.obj), "_evloop", robj, idn, Menulocal.inst, NULL);
   argv[0] = (char *) &sarray;
@@ -6402,6 +6402,14 @@ set_subwindow_state(enum SubWinType id, enum subwin_state state)
   lock = FALSE;
 }
 
+struct undo_info {
+  enum MENU_UNDO_TYPE type;
+  char **obj;
+  time_t time;
+  struct undo_info *next;
+};
+static struct undo_info *UndoInfo = NULL, *RedoInfo = NULL;
+
 static void
 iterate_undo_func(struct objlist *parent, UNDO_FUNC func)
 {
@@ -6420,57 +6428,169 @@ iterate_undo_func(struct objlist *parent, UNDO_FUNC func)
 }
 
 static int
-menu_undo_iteration(UNDO_FUNC func)
+menu_undo_iteration(UNDO_FUNC func, char **objs)
 {
   struct objlist *obj;
+  int r;
 
-  obj = getobject("draw");
-  if (obj == NULL) {
-    return 1;
-  }
-  iterate_undo_func(obj, func);
-  obj = getobject("fit");
-  if (obj == NULL) {
-    return 1;
+  r = 0;
+  if (objs) {
+    while (*objs) {
+      obj = getobject(*objs);
+      if (obj) {
+	func(obj);
+      }
+      objs++;
+    }
+  } else {
+    obj = getobject("draw");
+    if (obj == NULL) {
+      return 1;
+    }
+    iterate_undo_func(obj, func);
+    obj = getobject("fit");
+    if (obj == NULL) {
+      return 1;
+    }
+    r = func(obj);;
   }
 
-  return func(obj);
+  return r;
 }
 
 static int
 menu_check_undo(void)
 {
-  struct objlist *obj;
-  obj = getobject("fit");
-  if (obj == NULL) {
-    return FALSE;
-  }
-  return undo_check_undo(obj);
+  return UndoInfo ? 1 : 0;
 }
 
 static int
 menu_check_redo(void)
 {
-  struct objlist *obj;
-  obj = getobject("fit");
-  if (obj == NULL) {
-    return FALSE;
+  return RedoInfo ? 1 : 0;
+}
+
+static struct undo_info *
+undo_info_push(enum MENU_UNDO_TYPE type, char **obj)
+{
+  struct undo_info *info;
+  time_t t;
+
+  t = time(NULL);
+  if (UndoInfo &&
+      (type == UndoInfo->type) &&
+      (t - UndoInfo->time < 2)) {
+    UndoInfo->time = t;
+    return NULL;
   }
-  return undo_check_redo(obj);
+  info = g_malloc(sizeof(*info));
+  if (info == NULL) {
+    return NULL;
+  }
+  info->type = type;
+  info->obj = g_strdupv(obj);
+  info->next = UndoInfo;
+  info->time = t;
+  UndoInfo = info;
+  return info;
+}
+
+static struct undo_info *
+undo_info_pop(struct undo_info *undo_info)
+{
+  struct undo_info *info, *next;
+
+  if (undo_info == NULL) {
+    return NULL;
+  }
+  info = undo_info;
+  next = info->next;
+  g_strfreev(info->obj);
+  g_free(info);
+  return next;
+}
+
+static char *UndoTypeStr[UNDO_TYPE_NUM] = {
+  N_("edit"),
+  N_("move"),
+  N_("rotate"),
+  N_("flip"),
+  N_("delete object"),
+  N_("create object"),
+  N_("align"),
+  N_("order"),
+  N_("duplicate"),
+  N_("execute shell"),
+  N_("execute add-in"),
+  N_("scale clear"),
+  N_("open file"),
+  N_("add range"),
+  N_("paste"),
+  N_("scale trimming"),
+};
+
+static void
+set_undo_menu_label(void)
+{
+  char buf[512], *label;
+  if (ActionWidget[EditUndoAction].menu) {
+    if (UndoInfo) {
+      snprintf(buf, sizeof(buf), _("_Undo: %s"), _(UndoTypeStr[UndoInfo->type]));
+      label = buf;
+    } else {
+      label = _("_Undo");
+    }
+    gtk_menu_item_set_label(GTK_MENU_ITEM(ActionWidget[EditUndoAction].menu), label);
+  }
+
+  if (ActionWidget[EditRedoAction].menu) {
+    if (RedoInfo) {
+      snprintf(buf, sizeof(buf), _("_Redo: %s"), _(UndoTypeStr[RedoInfo->type]));
+      label = buf;
+    } else {
+      label = _("_Redo");
+    }
+    gtk_menu_item_set_label(GTK_MENU_ITEM(ActionWidget[EditRedoAction].menu), label);
+  }
 }
 
 void
-menu_save_undo(void)
+menu_save_undo(enum MENU_UNDO_TYPE type, char **obj)
 {
-  menu_undo_iteration(undo_save);
+  struct undo_info *info;
+
+  info = undo_info_push(type, obj);
+  if (info == NULL) {
+    return;
+  }
+  menu_undo_iteration(undo_save, obj);
+  while (RedoInfo) {
+    RedoInfo = undo_info_pop(RedoInfo);
+  }
+  set_undo_menu_label();
   set_action_widget_sensitivity(EditUndoAction, menu_check_undo());
   set_action_widget_sensitivity(EditRedoAction, menu_check_redo());
 }
 
 void
+menu_save_undo_single(enum MENU_UNDO_TYPE type, char *obj)
+{
+  char *objs[2];
+  objs[0] = obj;
+  objs[1] = NULL;
+  menu_save_undo(type, objs);
+}
+
+
+void
 menu_delete_undo(void)
 {
-  menu_undo_iteration(undo_delete);
+  if (UndoInfo == NULL) {
+    return;
+  }
+  menu_undo_iteration(undo_delete, UndoInfo->obj);
+  UndoInfo = undo_info_pop(UndoInfo);
+  set_undo_menu_label();
   if (! menu_check_undo()) {
     set_action_widget_sensitivity(EditUndoAction, FALSE);
   }
@@ -6479,7 +6599,14 @@ menu_delete_undo(void)
 void
 menu_clear_undo(void)
 {
-  menu_undo_iteration(undo_clear);
+  while (UndoInfo) {
+    UndoInfo = undo_info_pop(UndoInfo);
+  }
+  while (RedoInfo) {
+    RedoInfo = undo_info_pop(RedoInfo);
+  }
+  menu_undo_iteration(undo_clear, NULL);
+  set_undo_menu_label();
   set_action_widget_sensitivity(EditUndoAction, menu_check_undo());
   set_action_widget_sensitivity(EditRedoAction, menu_check_redo());
 }
@@ -6501,7 +6628,21 @@ void
 menu_undo(int redraw)
 {
   int r;
-  r = menu_undo_iteration(undo_undo);
+  struct undo_info *info;
+  if (UndoInfo == NULL) {
+    return;
+  }
+
+  r = menu_undo_iteration(undo_undo, UndoInfo->obj);
+  info = UndoInfo;
+  UndoInfo = info->next;
+  if (redraw) {
+    info->next = RedoInfo;
+    RedoInfo = info;
+  } else {
+    undo_info_pop(info);
+  }
+  set_undo_menu_label();
   if (r) {
     return;
   }
@@ -6512,7 +6653,17 @@ void
 menu_redo(void)
 {
   int r;
-  r = menu_undo_iteration(undo_redo);
+  struct undo_info *info;
+  if (RedoInfo == NULL) {
+    return;
+  }
+  r = menu_undo_iteration(undo_redo, RedoInfo->obj);
+
+  info = RedoInfo;
+  RedoInfo = info->next;
+  info->next = UndoInfo;
+  UndoInfo = info;
+  set_undo_menu_label();
   if (r) {
     return;
   }

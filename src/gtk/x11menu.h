@@ -238,6 +238,27 @@ extern GtkAccelGroup *AccelGroup;
 extern GtkApplication *GtkApp;
 #endif
 
+enum MENU_UNDO_TYPE {
+  UNDO_TYPE_EDIT,
+  UNDO_TYPE_MOVE,
+  UNDO_TYPE_ROTATE,
+  UNDO_TYPE_FLIP,
+  UNDO_TYPE_DELETE,
+  UNDO_TYPE_CREATE,
+  UNDO_TYPE_ALIGN,
+  UNDO_TYPE_ORDER,
+  UNDO_TYPE_COPY,
+  UNDO_TYPE_SHLL,
+  UNDO_TYPE_ADDIN,
+  UNDO_TYPE_CLEAR_SCALE,
+  UNDO_TYPE_OPEN_FILE,
+  UNDO_TYPE_ADD_RANGE,
+  UNDO_TYPE_PASTE,
+  UNDO_TYPE_ZOOM,
+  UNDO_TYPE_TRIMMING,
+  UNDO_TYPE_NUM,
+};
+
 struct EventLoopInfo {
   int type;
   guint32 time;
@@ -280,7 +301,8 @@ int toggle_view(int type, int state);
 void CmToggleSingleWindowMode(GtkCheckMenuItem *action, gpointer client_data);
 void CmReloadWindowConfig(void *w, gpointer user_data);
 void show_recent_dialog(int type);
-void menu_save_undo(void);
+void menu_save_undo(enum MENU_UNDO_TYPE type, char **obj);
+void menu_save_undo_single(enum MENU_UNDO_TYPE type, char *obj);
 void menu_delete_undo(void);
 void menu_clear_undo(void);
 void menu_undo(int redraw);
