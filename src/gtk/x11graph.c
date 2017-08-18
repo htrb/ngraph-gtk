@@ -1154,7 +1154,7 @@ CmGraphShell(void *w, gpointer client_data)
 
   menu_lock(TRUE);
 
-  menu_save_undo();
+  menu_save_undo(UNDO_TYPE_SHLL, NULL);
   obj = Menulocal.obj;
   inst = Menulocal.inst;
   idn = getobjtblpos(obj, "_evloop", &robj);
