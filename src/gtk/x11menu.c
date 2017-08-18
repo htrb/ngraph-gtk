@@ -6523,6 +6523,7 @@ static char *UndoTypeStr[UNDO_TYPE_NUM] = {
   N_("execute shell"),
   N_("execute add-in"),
   N_("scale clear"),
+  N_("scale undo"),
   N_("open file"),
   N_("add range"),
   N_("paste"),
