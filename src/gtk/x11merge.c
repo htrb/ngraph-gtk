@@ -216,7 +216,7 @@ CmMergeOpen(void *w, gpointer client_data)
 		       TRUE, Menulocal.changedirectory) != IDOK || ! name)
     return;
 
-  menu_save_undo();
+  menu_save_undo_single(UNDO_TYPE_CREATE, obj->name);
   id = newobj(obj);
   if (id >= 0) {
     changefilename(name);
@@ -253,7 +253,7 @@ CmMergeClose(void *w, gpointer client_data)
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&farray);
     if (num > 0) {
-      menu_save_undo();
+      menu_save_undo_single(UNDO_TYPE_DELETE, obj->name);
     }
     array = arraydata(&farray);
     for (i = num - 1; i >= 0; i--) {
@@ -283,7 +283,7 @@ CmMergeUpdate(void *w, gpointer client_data)
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&farray);
     if (num > 0) {
-      menu_save_undo();
+      menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
     }
     array = arraydata(&farray);
     for (i = 0; i < num; i++) {
