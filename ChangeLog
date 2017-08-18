@@ -1,5 +1,7 @@
 2017-08-18  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11view.c (get_focused_obj_array): added.
+
 	* src/gtk/x11file.c (data_save_undo): added.
 
 	* src/gtk/x11axis.c (axis_save_undo): added.
