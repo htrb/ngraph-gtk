@@ -1194,7 +1194,7 @@ select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type)
   bb = nround(color.blue * 255);
   aa = nround(color.alpha * 255);
 
-  menu_save_undo();
+  menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
   switch (type) {
   case OBJ_FIELD_COLOR_TYPE_STROKE:
     putobj(obj, "stroke_R", id, &rr);

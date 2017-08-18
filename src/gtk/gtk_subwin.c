@@ -111,7 +111,7 @@ select_enum(GtkComboBox *w, gpointer user_data)
   if (j < 0 || j == val)
     return;
 
-  menu_save_undo();
+  menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
   if (putobj(d->obj, list->name, sel, &j) >= 0) {
     d->select = sel;
   }
@@ -820,7 +820,7 @@ copy(struct obj_list_data *d)
   num = chkobjlastinst(d->obj);
 
   if (sel >= 0 && sel <= num) {
-    menu_save_undo();
+    menu_save_undo_single(UNDO_TYPE_COPY, d->obj->name);
     id = newobj(d->obj);
     if (id < 0) {
       menu_delete_undo();
@@ -850,7 +850,7 @@ delete(struct obj_list_data *d)
 
   UnFocus();
 
-  menu_save_undo();
+  menu_save_undo_single(UNDO_TYPE_DELETE, d->obj->name);
   if (d->delete) {
     d->delete(d, sel);
   } else {
@@ -888,7 +888,7 @@ move_top(struct obj_list_data *d)
 
   UnFocus();
 
-  menu_save_undo();
+  menu_save_undo_single(UNDO_TYPE_ORDER, d->obj->name);
   movetopobj(d->obj, sel);
   d->select = 0;
   d->update(d, FALSE);
@@ -911,7 +911,7 @@ move_last(struct obj_list_data *d)
     return;
   }
 
-  menu_save_undo();
+  menu_save_undo_single(UNDO_TYPE_ORDER, d->obj->name);
   movelastobj(d->obj, sel);
   d->select = num;
   d->update(d, FALSE);
@@ -931,7 +931,7 @@ move_up(struct obj_list_data *d)
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
   num = chkobjlastinst(d->obj);
   if ((sel >= 1) && (sel <= num)) {
-    menu_save_undo();
+    menu_save_undo_single(UNDO_TYPE_ORDER, d->obj->name);
     moveupobj(d->obj, sel);
     d->select = sel - 1;
     d->update(d, FALSE);
@@ -952,7 +952,7 @@ move_down(struct obj_list_data *d)
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
   num = chkobjlastinst(d->obj);
   if ((sel >= 0) && (sel < num)) {
-    menu_save_undo();
+    menu_save_undo_single(UNDO_TYPE_ORDER, d->obj->name);
     movedownobj(d->obj, sel);
     d->select = sel + 1;
     d->update(d, FALSE);
@@ -981,7 +981,7 @@ update(struct obj_list_data *d)
 
   d->setup_dialog(d, sel, -1);
   d->select = sel;
-  menu_save_undo();
+  menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
   ret = DialogExecute(parent, d->dialog);
   switch (ret) {
   case IDCANCEL:
@@ -1028,7 +1028,7 @@ toggle_boolean(struct obj_list_data *d, char *field, int sel)
     return;
   }
 
-  menu_save_undo();
+  menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
   getobj(d->obj, field, sel, 0, NULL, &v1);
   v1 = ! v1;
   if (putobj(d->obj, field, sel, &v1) < 0) {
@@ -1054,7 +1054,7 @@ modify_numeric(struct obj_list_data *d, char *field, int val)
     return;
   }
 
-  menu_save_undo();
+  menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
   getobj(d->obj, field, sel, 0, NULL, &v1);
   if (putobj(d->obj, field, sel, &val) < 0) {
     return;
@@ -1084,7 +1084,7 @@ modify_string(struct obj_list_data *d, char *field, char *str)
     return;
   }
 
-  menu_save_undo();
+  menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
   if (chk_sputobjfield(d->obj, sel, field, str)) {
     menu_delete_undo();
     return;
@@ -1111,7 +1111,7 @@ hidden(struct obj_list_data *d)
 
   UnFocus();
 
-  menu_save_undo();
+  menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
   getobj(d->obj, "hidden", sel, 0, NULL, &hidden);
   hidden = hidden ? FALSE : TRUE;
   putobj(d->obj, "hidden", sel, &hidden);
