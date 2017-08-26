@@ -1,3 +1,17 @@
+2017-08-26  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (ViewerEvPaint): draw background and
+	foreground images.
+	(update_bg): added.
+	(create_pix): create background image.
+
+	* src/gtk/x11opt.c (ViewerDialogClose): call "update_bg()" anf
+	"UpdateAll2()" when background color is changed.
+
+	* src/gtk/ox11menu.c (mx_clear): fill "empty" image.
+
+	* src/odata.c (file_alpha): add "break" statement.
+
 2017-08-18  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (get_focused_obj_array): added.

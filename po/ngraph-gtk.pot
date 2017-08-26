@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.07.04\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2017-08-18 19:26+0900\n"
+"POT-Creation-Date: 2017-08-26 15:00+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/gtk/ox11menu.c:1972
+#: src/gtk/ox11menu.c:1973
 msgid "Unsaved Graph"
 msgstr ""
 
@@ -572,7 +572,7 @@ msgstr ""
 msgid "Save NGP file"
 msgstr ""
 
-#: src/gtk/x11commn.c:1192 src/gtk/x11opt.c:1821
+#: src/gtk/x11commn.c:1192 src/gtk/x11opt.c:1826
 #, c-format
 msgid "Saving `%.128s'."
 msgstr ""
@@ -1391,7 +1391,7 @@ msgstr ""
 msgid "All"
 msgstr ""
 
-#: src/gtk/x11gui.c:984 src/gtk/x11opt.c:1814
+#: src/gtk/x11gui.c:984 src/gtk/x11opt.c:1819
 #, c-format
 msgid ""
 "`%s'\n"
@@ -2693,7 +2693,7 @@ msgstr ""
 msgid "_Maximum number of data on redraw:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1815
+#: src/gtk/x11opt.c:1820
 msgid "Save as Ngraph.ngp"
 msgstr ""
 
@@ -2751,7 +2751,7 @@ msgid "Spawning external driver."
 msgstr ""
 
 #: src/gtk/x11print.c:723 src/gtk/x11print.c:997 src/gtk/x11print.c:1070
-#: src/gtk/x11view.c:5550
+#: src/gtk/x11view.c:5569
 msgid "Drawing."
 msgstr ""
 
@@ -2789,11 +2789,11 @@ msgstr ""
 msgid "Moving data points is canceled."
 msgstr ""
 
-#: src/gtk/x11view.c:5544
+#: src/gtk/x11view.c:5563
 msgid "Scaling"
 msgstr ""
 
-#: src/gtk/x11view.c:5551
+#: src/gtk/x11view.c:5570
 msgid "Drawing"
 msgstr ""
 
