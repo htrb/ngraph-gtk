@@ -4985,7 +4985,7 @@ ViewerEvPaint(GtkWidget *w, cairo_t *cr, gpointer client_data)
     return TRUE;
   }
 
-  if (Menulocal.pix) {
+  if (Menulocal.pix && Menulocal.bg) {
     cairo_set_source_surface(cr, Menulocal.bg,
 			     nround(- d->hscroll + d->cx),
 			     nround(- d->vscroll + d->cy));
@@ -5303,6 +5303,7 @@ UnFocus(void)
 void
 update_bg(void)
 {
+  int w, h;
   cairo_t *cr;
   if (Menulocal.bg == NULL) {
     return;
@@ -5310,6 +5311,17 @@ update_bg(void)
   cr = cairo_create(Menulocal.bg);
   cairo_set_source_rgb(cr, Menulocal.bg_r, Menulocal.bg_g, Menulocal.bg_b);
   cairo_paint(cr);
+
+  w = cairo_image_surface_get_width(Menulocal.bg) - 1;
+  h = cairo_image_surface_get_height(Menulocal.bg) - 1;
+
+  cairo_set_antialias(cr, CAIRO_ANTIALIAS_NONE);
+  cairo_set_source_rgb(cr, 0, 0, 0);
+  cairo_set_line_width(cr, 1);
+  cairo_set_dash(cr, NULL, 0, 0);
+  cairo_rectangle(cr, CAIRO_COORDINATE_OFFSET, CAIRO_COORDINATE_OFFSET, w, h);
+  cairo_stroke(cr);
+
   cairo_destroy(cr);
 }
 
@@ -5338,11 +5350,14 @@ create_pix(int w, int h)
 
   Menulocal.local->cairo = NULL;
 
-  if (Menulocal.pix){
+  if (Menulocal.pix) {
     cairo_surface_destroy(Menulocal.pix);
   }
-
   Menulocal.pix = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, w + 1, h + 1);
+
+  if (Menulocal.bg) {
+    cairo_surface_destroy(Menulocal.bg);
+  }
   Menulocal.bg = cairo_image_surface_create(CAIRO_FORMAT_RGB24, w + 1, h + 1);
 
   cr = cairo_create(Menulocal.pix);
@@ -5526,30 +5541,6 @@ ReopenGC(void)
 }
 
 void
-draw_paper_frame(void)
-{
-  int w, h;
-  cairo_t *cr;
-
-  if (Menulocal.local->cairo == NULL || Menulocal.pix == NULL)
-    return;
-
-  w = cairo_image_surface_get_width(Menulocal.pix) - 1;
-  h = cairo_image_surface_get_height(Menulocal.pix) - 1;
-  cr = Menulocal.local->cairo;
-
-  cairo_save(cr);
-  cairo_reset_clip(cr);
-  cairo_set_antialias(cr, CAIRO_ANTIALIAS_NONE);
-  cairo_set_source_rgb(cr, 0, 0, 0);
-  cairo_set_line_width(cr, 1);
-  cairo_set_dash(cr, NULL, 0, 0);
-  cairo_rectangle(cr, CAIRO_COORDINATE_OFFSET, CAIRO_COORDINATE_OFFSET, w, h);
-  cairo_stroke(cr);
-  cairo_restore(cr);
-}
-
-void
 Draw(int SelectFile)
 {
   struct Viewer *d;
@@ -5585,8 +5576,6 @@ Draw(int SelectFile)
     _exeobj(Menulocal.GRAobj, "flush", gra_inst, 0, NULL);
     d->ignoreredraw = FALSE;
   }
-
-  draw_paper_frame();
 
   ResetStatusBar();
 

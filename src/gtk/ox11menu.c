@@ -1025,6 +1025,9 @@ menulocal_finalize(void)
   if (Menulocal.pix) {
     cairo_surface_destroy(Menulocal.pix);
   }
+  if (Menulocal.bg) {
+    cairo_surface_destroy(Menulocal.bg);
+  }
 
   arraydel2(&Menulocal.drawrable);
 
@@ -1166,6 +1169,7 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   Menulocal.obj = obj;
   Menulocal.inst = inst;
   Menulocal.pix = NULL;
+  Menulocal.bg = NULL;
   Menulocal.lock = 0;
 
   return 0;
@@ -1395,7 +1399,6 @@ mx_redraw(struct objlist *obj, N_VALUE *inst)
 
   GRAredraw(obj, inst, TRUE, n);
   mxflush(obj, inst, NULL, 0, NULL);
-  draw_paper_frame();
 
   main_window_redraw();
 }
@@ -1488,7 +1491,7 @@ mx_clear(cairo_region_t *region)
   }
 
   cr = Menulocal.local->cairo;
-  cairo_save (cr);
+  cairo_save(cr);
   cairo_set_source_rgba(cr, 0, 0, 0, 0);
   cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
   if (region) {
@@ -1498,8 +1501,7 @@ mx_clear(cairo_region_t *region)
     cairo_reset_clip(cr);
     cairo_paint(cr);
   }
-  cairo_restore (cr);
-  draw_paper_frame();
+  cairo_restore(cr);
 }
 
 static int
