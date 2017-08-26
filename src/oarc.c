@@ -350,7 +350,7 @@ arcchange(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
 static int
 arcrotate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
-  int tmp, angle, rx, ry, a, use_pivot;
+  int angle, rx, ry, a, use_pivot;
 
   _getobj(obj, "rx", inst, &rx);
   _getobj(obj, "ry", inst, &ry);
@@ -365,11 +365,9 @@ arcrotate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   switch (angle) {
   case 9000:
   case 27000:
-    tmp = rx;
-    rx = ry;
-    ry = tmp;
-    _putobj(obj, "rx", inst, &rx);
-    _putobj(obj, "ry", inst, &ry);
+    _putobj(obj, "rx", inst, &ry);
+    _putobj(obj, "ry", inst, &rx);
+    /* fall through */
   case 18000:
     a += angle;
     break;
