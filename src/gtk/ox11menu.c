@@ -977,6 +977,34 @@ free_script_list(struct script *script)
   }
 }
 
+static int
+free_layers(struct nhash *layers, void *layer)
+{
+  if (layer == NULL) {
+    return 0;
+  }
+  cairo_surface_destroy(layer);
+  return 0;
+}
+
+int
+select_layer(const char *id)
+{
+  cairo_surface_t *surface;
+  void *ptr;
+  int r;
+  r = nhash_get_ptr(Menulocal.layers, id, &ptr);
+  if (r) {
+    return 1;
+  }
+  surface = ptr;
+  if (Menulocal.local->cairo) {
+    cairo_destroy(Menulocal.local->cairo);
+  }
+  Menulocal.local->cairo = cairo_create(surface);
+  return 0;
+}
+
 static void
 menulocal_finalize(void)
 {
@@ -1024,9 +1052,16 @@ menulocal_finalize(void)
 
   if (Menulocal.pix) {
     cairo_surface_destroy(Menulocal.pix);
+    Menulocal.pix = NULL;
   }
   if (Menulocal.bg) {
     cairo_surface_destroy(Menulocal.bg);
+    Menulocal.bg = NULL;
+  }
+  if (Menulocal.layers) {
+    nhash_each(Menulocal.layers, free_layers, NULL);
+    nhash_free(Menulocal.layers);
+    Menulocal.layers = NULL;
   }
 
   arraydel2(&Menulocal.drawrable);
@@ -1170,6 +1205,7 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   Menulocal.inst = inst;
   Menulocal.pix = NULL;
   Menulocal.bg = NULL;
+  Menulocal.layers = NULL;
   Menulocal.lock = 0;
 
   return 0;

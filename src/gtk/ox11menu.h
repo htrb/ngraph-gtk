@@ -20,6 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
+#include "nhash.h"
 
 #ifndef _O_X11_MENU_HEADER
 #define _O_X11_MENU_HEADER
@@ -86,6 +87,7 @@ struct character_map_list {
 struct menulocal
 {
   cairo_surface_t *pix, *bg;
+  NHASH layers;
   int redrawf, redrawf_num;
   int windpi, data_head_lines;
   int grid;
