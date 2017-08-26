@@ -4,6 +4,7 @@
 	foreground images.
 	(update_bg): added.
 	(create_pix): create background image.
+	(draw_paper_frame): removed.
 
 	* src/gtk/x11opt.c (ViewerDialogClose): call "update_bg()" anf
 	"UpdateAll2()" when background color is changed.
