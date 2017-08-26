@@ -500,7 +500,8 @@ file_obj_color_alpha(MathFunctionCallExpression *exp, MathEquation *eq, MathValu
     } else {
       getobj(obj, "A2", id, 0, NULL, &fp->color2.a);
     }
-  case COLOR_TYPE_TEXT:			/* fall-through */
+    /* fall through */
+  case COLOR_TYPE_TEXT:
     if (type == FILE_OBJ_COLOR_COLOR) {
       getobj(obj, "R", id, 0, NULL, &fp->color.r);
       getobj(obj, "G", id, 0, NULL, &fp->color.g);
@@ -659,6 +660,7 @@ file_alpha(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
     break;
   case 2:
     fp->color2.a = alpha;
+    break;
   default:
     fp->color.a = alpha;
     fp->color2.a = alpha;
