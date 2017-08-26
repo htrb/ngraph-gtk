@@ -47,7 +47,7 @@ nhash_free(NHASH hash)
   int i;
 
   for (i = 0; i < HASH_SIZE; i++) {
-    free_hash_list(hash[i], 0);
+    free_hash_list(hash[i], FALSE);
   }
   g_free(hash);
 }
@@ -58,7 +58,7 @@ nhash_free_with_memfree_ptr(NHASH hash)
   int i;
 
   for (i = 0; i < HASH_SIZE; i++) {
-    free_hash_list(hash[i], 1);
+    free_hash_list(hash[i], TRUE);
   }
   g_free(hash);
 }
@@ -68,7 +68,7 @@ nhash_clear(NHASH hash)
 {
   int i;
   for (i = 0; i < HASH_SIZE; i++) {
-    free_hash_list(hash[i], 0);
+    free_hash_list(hash[i], FALSE);
   }
   memset(hash, 0, HASH_SIZE * sizeof(struct nhash *));
 }
