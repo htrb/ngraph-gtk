@@ -4986,6 +4986,10 @@ ViewerEvPaint(GtkWidget *w, cairo_t *cr, gpointer client_data)
   }
 
   if (Menulocal.pix) {
+    cairo_set_source_surface(cr, Menulocal.bg,
+			     nround(- d->hscroll + d->cx),
+			     nround(- d->vscroll + d->cy));
+    cairo_paint(cr);
     cairo_set_source_surface(cr, Menulocal.pix,
 			     nround(- d->hscroll + d->cx),
 			     nround(- d->vscroll + d->cy));
@@ -5296,6 +5300,19 @@ UnFocus(void)
   gtk_widget_queue_draw(d->Win);
 }
 
+void
+update_bg(void)
+{
+  cairo_t *cr;
+  if (Menulocal.bg == NULL) {
+    return;
+  }
+  cr = cairo_create(Menulocal.bg);
+  cairo_set_source_rgb(cr, Menulocal.bg_r, Menulocal.bg_g, Menulocal.bg_b);
+  cairo_paint(cr);
+  cairo_destroy(cr);
+}
+
 static void
 create_pix(int w, int h)
 {
@@ -5325,14 +5342,16 @@ create_pix(int w, int h)
     cairo_surface_destroy(Menulocal.pix);
   }
 
-  Menulocal.pix = cairo_image_surface_create(CAIRO_FORMAT_RGB24, w + 1, h + 1);
+  Menulocal.pix = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, w + 1, h + 1);
+  Menulocal.bg = cairo_image_surface_create(CAIRO_FORMAT_RGB24, w + 1, h + 1);
 
   cr = cairo_create(Menulocal.pix);
   Menulocal.local->cairo = cr;
 
   cairo_set_antialias(cr, CAIRO_ANTIALIAS_NONE);
-  cairo_set_source_rgb(cr, Menulocal.bg_r, Menulocal.bg_g, Menulocal.bg_b);
-  cairo_paint(cr);
+
+  /* draw background */
+  update_bg();
 
   gra2cairo_set_antialias(Menulocal.local, Menulocal.antialias);
 #if 0

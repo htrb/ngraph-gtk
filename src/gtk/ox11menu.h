@@ -85,7 +85,7 @@ struct character_map_list {
 
 struct menulocal
 {
-  cairo_surface_t *pix;
+  cairo_surface_t *pix, *bg;
   int redrawf, redrawf_num;
   int windpi, data_head_lines;
   int grid;

@@ -1488,8 +1488,9 @@ mx_clear(cairo_region_t *region)
   }
 
   cr = Menulocal.local->cairo;
-
-  cairo_set_source_rgb(cr, Menulocal.bg_r, Menulocal.bg_g, Menulocal.bg_b);
+  cairo_save (cr);
+  cairo_set_source_rgba(cr, 0, 0, 0, 0);
+  cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
   if (region) {
     gdk_cairo_region(cr, region);
     cairo_fill(cr);
@@ -1497,7 +1498,7 @@ mx_clear(cairo_region_t *region)
     cairo_reset_clip(cr);
     cairo_paint(cr);
   }
-
+  cairo_restore (cr);
   draw_paper_frame();
 }
 

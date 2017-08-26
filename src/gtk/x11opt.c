@@ -1716,7 +1716,7 @@ static void
 ViewerDialogClose(GtkWidget *w, void *data)
 {
   struct ViewerDialog *d;
-  int ret, dpi, a;
+  int ret, dpi, a, bg;
   GdkRGBA color;
 
   d = (struct ViewerDialog *) data;
@@ -1752,6 +1752,7 @@ ViewerDialogClose(GtkWidget *w, void *data)
     gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->preserve_width));
 
   gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(d->bgcol), &color);
+  bg = (Menulocal.bg_r != color.red || Menulocal.bg_g != color.green || Menulocal.bg_b != color.blue);
   Menulocal.bg_r = color.red;
   Menulocal.bg_g = color.green;
   Menulocal.bg_b = color.blue;
@@ -1765,6 +1766,10 @@ ViewerDialogClose(GtkWidget *w, void *data)
 
   if (d->ret == IDSAVE) {
     save_config(SAVE_CONFIG_TYPE_VIEWER);
+  }
+  if (bg) {
+    update_bg();
+    UpdateAll2();
   }
 }
 

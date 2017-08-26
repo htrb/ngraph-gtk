@@ -72,3 +72,4 @@ void move_data_cancel(struct Viewer *d, gboolean show_message);
 int check_paint_lock(void);
 void check_last_insts(struct objlist *parent, struct narray *array);
 void focus_new_insts(struct objlist *parent, struct narray *array);
+void update_bg(void);
