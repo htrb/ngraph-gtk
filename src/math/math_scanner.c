@@ -414,6 +414,7 @@ get_dec(const char *str, double *val)
       switch (in_pow) {
       case 1:
 	in_pow = 2;
+	/* fall through */
       case 2:
 	if (pow_val < INT_MAX / 10) {
 	  pow_val *= 10;
