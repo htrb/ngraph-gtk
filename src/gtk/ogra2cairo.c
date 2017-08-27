@@ -1036,7 +1036,7 @@ gra2cairo_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
       error(obj, r);
       return 1;
     }
-  case '%': case 'X':
+  case '%': case 'X': case 'Z':
     break;
   case 'E':
     r = check_cairo_status(local->cairo);

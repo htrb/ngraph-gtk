@@ -1521,7 +1521,7 @@ gra2emf_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char
       return 1;
     }
     break;
-  case '%': case 'X':
+  case '%': case 'X': case 'Z':
     break;
   case 'E':
     r = 0;

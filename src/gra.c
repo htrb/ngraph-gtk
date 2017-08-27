@@ -1680,6 +1680,19 @@ GRAouttext(int GC,char *s)
   GRAdraw(GC,code,cpar,cstr);
 }
 
+void
+GRAlayer(int GC,char *s)
+{
+  char code;
+  int cpar[1];
+  char *cstr;
+
+  code='Z';
+  cpar[0]=-1;
+  cstr=s;
+  GRAdraw(GC,code,cpar,cstr);
+}
+
 static char *GRAexpandobj(char **s);
 static char *GRAexpandmath(char **s);
 
@@ -2722,7 +2735,7 @@ GRAinputdraw(int GC,int leftm,int topm,int rate,
   else r=((double )rate)/GRAClist[GC].mergezoom;
   switch (code) {
   case '%':
-  case 'O': case 'Q': case 'F': case 'S': case 'K':
+  case 'O': case 'Q': case 'F': case 'S': case 'K': case 'Z':
     break;
   case 'G':
     if (cpar[0] != 3 && cpar[0] != 4)
@@ -2930,7 +2943,7 @@ GRAinputold(int GC,char *s,int leftm,int topm,int rate)
   switch (code) {
   case 'X':
     break;
-  case '%': case 'S':
+  case '%': case 'S': case 'Z':
     GRAinputdraw(GC,leftm,topm,rate,code,cpar,cstr);
     break;
   case 'K':
@@ -3574,7 +3587,7 @@ GRAboundingbox(char code, int *cpar, char *cstr, void *local)
 
   bbox=local;
   switch (code) {
-  case 'I': case 'X': case 'E': case '%': case 'G':
+  case 'I': case 'X': case 'E': case '%': case 'G': case 'Z':
     break;
   case 'V':
     bbox->offsetx=cpar[1];
