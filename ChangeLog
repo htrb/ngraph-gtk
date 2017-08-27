@@ -1,3 +1,7 @@
+2017-08-27  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gra.c (GRAlayer): added.
+
 2017-08-26  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (ViewerEvPaint): draw background and
