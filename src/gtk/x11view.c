@@ -5326,6 +5326,21 @@ update_bg(void)
 }
 
 static void
+create_layers(void)
+{
+  int i, n;
+  struct narray *array;
+  char *obj;
+
+  array = &Menulocal.drawrable;
+  n = arraynum(array);
+  for (i = 0; i < n; i++) {
+    obj = arraynget_str(array, i);
+    init_layer(obj);
+  }
+}
+
+static void
 create_pix(int w, int h)
 {
   GdkWindow *window;
@@ -5360,10 +5375,10 @@ create_pix(int w, int h)
   }
   Menulocal.bg = cairo_image_surface_create(CAIRO_FORMAT_RGB24, w + 1, h + 1);
 
+  create_layers();
+
   cr = cairo_create(Menulocal.pix);
   Menulocal.local->cairo = cr;
-
-  cairo_set_antialias(cr, CAIRO_ANTIALIAS_NONE);
 
   /* draw background */
   update_bg();

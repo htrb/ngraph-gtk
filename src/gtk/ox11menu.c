@@ -1007,7 +1007,7 @@ select_layer(const char *id)
 }
 
 void
-init_layer(const char **obj)
+init_layer(const char *obj)
 {
   struct layer *layer;
   void *ptr;
@@ -1015,30 +1015,32 @@ init_layer(const char **obj)
   if (Menulocal.pix == NULL) {
     return;
   }
+  if (obj == NULL) {
+    return;
+  }
   w = cairo_image_surface_get_width(Menulocal.pix);
   h = cairo_image_surface_get_height(Menulocal.pix);
-  while (*obj) {
-    r = nhash_get_ptr(Menulocal.layers, *obj, &ptr);
-    if (r) {
-      layer = g_malloc(sizeof(*layer));
-      if (layer == NULL) {
-	return;
-      }
+  r = nhash_get_ptr(Menulocal.layers, obj, &ptr);
+  if (r) {
+    layer = g_malloc(sizeof(*layer));
+    if (layer == NULL) {
+      return;
+    }
+    layer->pix = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, w, h);
+    layer->cairo = cairo_create(layer->pix);
+    r = nhash_set_ptr(Menulocal.layers, obj, layer);
+  } else {
+    layer = ptr;
+    lw = cairo_image_surface_get_width(layer->pix);
+    lh = cairo_image_surface_get_height(layer->pix);
+    if (lw != w || lh != h) {
+      cairo_destroy(layer->cairo);
+      cairo_surface_destroy(layer->pix);
       layer->pix = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, w, h);
       layer->cairo = cairo_create(layer->pix);
-    } else {
-      layer = ptr;
-      lw = cairo_image_surface_get_width(layer->pix);
-      lh = cairo_image_surface_get_height(layer->pix);
-      if (lw != w || lh != h) {
-	cairo_destroy(layer->cairo);
-	cairo_surface_destroy(layer->pix);
-	layer->pix = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, w, h);
-	layer->cairo = cairo_create(layer->pix);
-      }
     }
-    obj++;
   }
+  set_cairo_antialias(layer->cairo, Menulocal.antialias);
 }
 
 static void

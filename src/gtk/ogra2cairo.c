@@ -709,12 +709,11 @@ gra2cairo_set_dpi_y(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 }
 
 void
-gra2cairo_set_antialias(struct gra2cairo_local *local, int antialias)
+set_cairo_antialias(cairo_t *cairo, int antialias)
 {
-  if (local->cairo == NULL)
+  if (cairo == NULL) {
     return;
-
-  local->antialias = antialias;
+  }
 
   switch (antialias) {
   case ANTIALIAS_TYPE_NONE:
@@ -731,7 +730,17 @@ gra2cairo_set_antialias(struct gra2cairo_local *local, int antialias)
     break;
   }
 
-  cairo_set_antialias(local->cairo, antialias);
+  cairo_set_antialias(cairo, antialias);
+}
+
+void
+gra2cairo_set_antialias(struct gra2cairo_local *local, int antialias)
+{
+  if (local->cairo == NULL)
+    return;
+
+  local->antialias = antialias;
+  set_cairo_antialias(local->cairo, antialias);
 }
 
 static int
