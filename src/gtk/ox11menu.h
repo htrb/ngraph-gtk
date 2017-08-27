@@ -84,6 +84,11 @@ struct character_map_list {
   struct character_map_list *next;
 };
 
+struct layer {
+  cairo_surface_t *pix;
+  cairo_t *cairo;
+};
+
 struct menulocal
 {
   cairo_surface_t *pix, *bg;

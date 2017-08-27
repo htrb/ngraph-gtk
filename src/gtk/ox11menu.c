@@ -978,31 +978,67 @@ free_script_list(struct script *script)
 }
 
 static int
-free_layers(struct nhash *layers, void *layer)
+free_layers(struct nhash *layers, void *ptr)
 {
+  struct layer *layer;
+  layer = ptr;
   if (layer == NULL) {
     return 0;
   }
-  cairo_surface_destroy(layer);
+  cairo_surface_destroy(layer->pix);
+  cairo_destroy(layer->cairo);
+  g_free(layer);
   return 0;
 }
 
 int
 select_layer(const char *id)
 {
-  cairo_surface_t *surface;
+  struct layer *layer;
   void *ptr;
   int r;
   r = nhash_get_ptr(Menulocal.layers, id, &ptr);
   if (r) {
     return 1;
   }
-  surface = ptr;
-  if (Menulocal.local->cairo) {
-    cairo_destroy(Menulocal.local->cairo);
-  }
-  Menulocal.local->cairo = cairo_create(surface);
+  layer = ptr;
+  Menulocal.local->cairo = layer->cairo;
   return 0;
+}
+
+void
+init_layer(const char **obj)
+{
+  struct layer *layer;
+  void *ptr;
+  int r, w, h, lw, lh;
+  if (Menulocal.pix == NULL) {
+    return;
+  }
+  w = cairo_image_surface_get_width(Menulocal.pix);
+  h = cairo_image_surface_get_height(Menulocal.pix);
+  while (*obj) {
+    r = nhash_get_ptr(Menulocal.layers, *obj, &ptr);
+    if (r) {
+      layer = g_malloc(sizeof(*layer));
+      if (layer == NULL) {
+	return;
+      }
+      layer->pix = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, w, h);
+      layer->cairo = cairo_create(layer->pix);
+    } else {
+      layer = ptr;
+      lw = cairo_image_surface_get_width(layer->pix);
+      lh = cairo_image_surface_get_height(layer->pix);
+      if (lw != w || lh != h) {
+	cairo_destroy(layer->cairo);
+	cairo_surface_destroy(layer->pix);
+	layer->pix = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, w, h);
+	layer->cairo = cairo_create(layer->pix);
+      }
+    }
+    obj++;
+  }
 }
 
 static void
@@ -1205,7 +1241,7 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   Menulocal.inst = inst;
   Menulocal.pix = NULL;
   Menulocal.bg = NULL;
-  Menulocal.layers = NULL;
+  Menulocal.layers = nhash_new();
   Menulocal.lock = 0;
 
   return 0;
