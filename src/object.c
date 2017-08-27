@@ -491,12 +491,11 @@ arrayadd2(struct narray *array,const char *val)
   if (val == NULL) {
     return NULL;
   } else {
-    s = g_malloc(strlen(val) + 1);
+    s = g_strdup(val);
     if (s == NULL) {
       arraydel2(array);
       return NULL;
     }
-    strcpy(s, val);
   }
   if (array->num == array->size) {
     size = array->size+ALLOCSIZE;
