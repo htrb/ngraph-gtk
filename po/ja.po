@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.06.13\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2017-08-27 15:31+0900\n"
+"POT-Creation-Date: 2017-08-27 15:50+0900\n"
 "PO-Revision-Date: 2017-08-18 11:47+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -3152,7 +3152,7 @@ msgstr "実横棒"
 msgid "bar_solid_fill_y"
 msgstr "実縦棒"
 
-#: src/ogra.c:437
+#: src/ogra.c:439
 #, c-format
 msgid "drawing %s (%.1f%%)"
 msgstr "%s 描画中 (%.1f%%)"

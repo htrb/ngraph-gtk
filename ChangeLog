@@ -1,5 +1,7 @@
 2017-08-27  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/ogra.c (oGRAdrawparent, oGRAdraw): call "GRAlayer()".
+
 	* src/gra.c (GRAlayer): added.
 
 2017-08-26  Hiroyuki Ito  <ZXB01226 at nifty.com>
