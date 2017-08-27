@@ -174,6 +174,6 @@ void GRAendbbox(struct GRAbbox *bbox);
 int GRAboundingbox(char code,int *cpar,char *cstr,void *local);
 void GRAtextstyle(int GC,char *font,int style, int size,int space,int dir);
 void GRAouttext(int GC,char *s);
-void GRAlayer(int GC,char *s);
+void GRAlayer(int GC,const char *s);
 
 #endif

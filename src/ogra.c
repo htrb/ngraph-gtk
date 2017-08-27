@@ -363,6 +363,7 @@ oGRAdrawparent(struct objlist *parent, char **oGRAargv)
       instnum = chkobjlastinst(ocur);
       if (instnum != -1) {
 	objname = chkobjectname(ocur);
+	GRAlayer(*((int *) oGRAargv[0]), objname);
         for (i=0;i<=instnum;i++) {
 	  set_progress_val(i, instnum, objname);
 
@@ -412,6 +413,7 @@ oGRAdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 	continue;
 
       objname = chkobjectname(draw);
+      GRAlayer(GC, objname);
       for (i=0;i<=instnum;i++) {
 	set_progress_val(i, instnum, objname);
 

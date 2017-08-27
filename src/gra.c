@@ -1681,7 +1681,7 @@ GRAouttext(int GC,char *s)
 }
 
 void
-GRAlayer(int GC,char *s)
+GRAlayer(int GC,const char *s)
 {
   char code;
   int cpar[1];
@@ -1689,7 +1689,7 @@ GRAlayer(int GC,char *s)
 
   code='Z';
   cpar[0]=-1;
-  cstr=s;
+  cstr=(char *) s;
   GRAdraw(GC,code,cpar,cstr);
 }
 
