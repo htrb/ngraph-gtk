@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.06.13\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2017-08-27 15:50+0900\n"
+"POT-Creation-Date: 2017-08-27 20:39+0900\n"
 "PO-Revision-Date: 2017-08-18 11:47+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/gtk/ox11menu.c:2047
+#: src/gtk/ox11menu.c:2049
 msgid "Unsaved Graph"
 msgstr "新規グラフ"
 
@@ -2785,7 +2785,7 @@ msgid "Spawning external driver."
 msgstr "外部ドライバに出力中"
 
 #: src/gtk/x11print.c:723 src/gtk/x11print.c:997 src/gtk/x11print.c:1070
-#: src/gtk/x11view.c:5560
+#: src/gtk/x11view.c:5575
 msgid "Drawing."
 msgstr "描画中"
 
@@ -2823,11 +2823,11 @@ msgstr "データは移動されました."
 msgid "Moving data points is canceled."
 msgstr "データの移動はキャンセルされました."
 
-#: src/gtk/x11view.c:5554
+#: src/gtk/x11view.c:5569
 msgid "Scaling"
 msgstr "軸スケール設定中"
 
-#: src/gtk/x11view.c:5561
+#: src/gtk/x11view.c:5576
 msgid "Drawing"
 msgstr "描画中"
 

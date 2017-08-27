@@ -1,5 +1,9 @@
 2017-08-27  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11view.c (create_layers): added.
+
+	* src/gtk/ogra2cairo.c (set_cairo_antialias): added.
+
 	* src/ogra.c (oGRAdrawparent, oGRAdraw): call "GRAlayer()".
 
 	* src/gra.c (GRAlayer): added.
