@@ -162,8 +162,8 @@ enum SAVE_CONFIG_TYPE {
 				  | SAVE_CONFIG_TYPE_ADDIN_SCRIPT	\
 				  | SAVE_CONFIG_TYPE_MISC)
 
-void mx_redraw(struct objlist *obj, N_VALUE *inst);
-void mx_clear(cairo_region_t *region);
+void mx_redraw(struct objlist *obj, N_VALUE *inst, char **objects);
+void mx_clear(cairo_region_t *region, char **objects);
 void mx_inslist(struct objlist *obj, N_VALUE *inst,
 		struct objlist *aobj, N_VALUE *ainst, char *afield, int addn);
 void mx_dellist(struct objlist *obj, N_VALUE *inst, int deln);

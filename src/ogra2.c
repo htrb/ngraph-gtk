@@ -44,11 +44,13 @@ static char *gra2errorlist[]={
 static int
 gra2init(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
-  int GC;
+  int GC, layer;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   GC=-1;
   if (_putobj(obj,"_GC",inst,&GC)) return 1;
+  layer = FALSE;
+  if (_putobj(obj,"_layer",inst,&layer)) return 1;
   return 0;
 }
 
@@ -137,6 +139,7 @@ static struct objtable gra2[] = {
   {"clear",NVFUNC,NREAD|NEXEC,gra2clear,"",0},
   {"_list",NSARRAY,NREAD,NULL,NULL,0},
   {"_GC",NINT,NREAD,NULL,NULL,0},
+  {"_layer",NBOOL,NREAD,NULL,NULL,0},
   {"delete_gra",NBOOL,NREAD|NWRITE,NULL,NULL,0},
   {"disconnect",NVFUNC,NREAD|NEXEC,NULL,"",0},
 };

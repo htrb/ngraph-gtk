@@ -1434,7 +1434,7 @@ LoadNgpFile(char *file, int console, char *option)
 
   set_axis_undo_button_sensitivity(FALSE);
   GetPageSettingsFromGRA();
-  UpdateAll();
+  UpdateAll(NULL);
   delobj(obj, newid);
   menu_clear_undo();
 

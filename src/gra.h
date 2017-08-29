@@ -124,6 +124,7 @@ void GRAclose(int GC);
 void _GRAredraw(int GC,int snum,char **sdata,int setredrawf,int redrawf,
                 int addn,struct objlist *obj,N_VALUE *inst,const char *field);
 void GRAredraw(struct objlist *obj,N_VALUE *inst,int setredrawf,int redrawf);
+void GRAredraw_layers(struct objlist *obj, N_VALUE *inst, int setredrawf, int redraw_num, char **objects);
 void GRAaddlist(int GC,struct objlist *obj,N_VALUE *inst,
                 const char *objname, const char *field);
 void GRAinslist(int GC,struct objlist *obj,N_VALUE *inst,
@@ -175,5 +176,6 @@ int GRAboundingbox(char code,int *cpar,char *cstr,void *local);
 void GRAtextstyle(int GC,char *font,int style, int size,int space,int dir);
 void GRAouttext(int GC,char *s);
 void GRAlayer(int GC,const char *s);
+int GRAlayer_support(int GC);
 
 #endif

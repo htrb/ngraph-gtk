@@ -361,7 +361,7 @@ paste_cb(GtkClipboard *clipboard, const gchar *text, gpointer data)
     NgraphApp.Viewer.allclear = FALSE;
     NgraphApp.Viewer.ShowFrame = TRUE;
     gtk_widget_grab_focus(NgraphApp.Viewer.Win);
-    UpdateAll();
+    UpdateAll(NULL);
   }
 }
 
@@ -706,6 +706,7 @@ text_dropped(const char *str, gint x, gint y, struct Viewer *d)
     delobj(obj, id);
   } else {
     int oid;
+    char *objects[] = {"text", NULL};
 
     UnFocus();
 
@@ -718,7 +719,7 @@ text_dropped(const char *str, gint x, gint y, struct Viewer *d)
     set_graph_modified();
     d->ShowFrame = TRUE;
     gtk_widget_grab_focus(d->Win);
-    UpdateAll();
+    UpdateAll(objects);
   }
   PaintLock = FALSE;
 
@@ -1506,7 +1507,11 @@ Trimming(int x1, int y1, int x2, int y2, struct Viewer *d)
     }
     AdjustAxis();
     d->allclear = TRUE;
-    UpdateAll();
+    argv[0] = "data";
+    argv[1] = "axis";
+    argv[2] = "axisgrid";
+    argv[3] = NULL;
+    UpdateAll(argv);
   }
   arraydel(&farray);
 }
@@ -1925,15 +1930,19 @@ ShowFocusFrame(cairo_t *cr, const struct Viewer *d)
 static void
 get_focused_obj_array(struct narray *focusobj, char **objs)
 {
-  int i, j, obj_n, n;
+  int i, j, obj_n, n, axis;
   struct objlist *obj, *obj_array[OBJ_MAX] = {NULL};
   struct FocusObj **focus;
 
   n = arraynum(focusobj);
   focus = arraydata(focusobj);
+  axis = FALSE;
   obj_n = 0;
   for (i = 0; i < n; i++) {
     obj = focus[i]->obj;
+    if (! axis && strcmp(obj->name, "axis") == 0) {
+      axis = TRUE;
+    }
     for (j = 0; j < obj_n; j++) {
       if (obj_array[j] == obj) {
 	break;
@@ -1946,6 +1955,10 @@ get_focused_obj_array(struct narray *focusobj, char **objs)
   }
   for (i = 0; i < obj_n; i++) {
     objs[i] = obj_array[i]->name;
+  }
+  if (axis) {
+    objs[i] = "axisgrid";
+    i++;
   }
   objs[i] = NULL;
 }
@@ -2041,7 +2054,7 @@ AlignFocusedObj(int align)
     AddInvalidateRect(focus[i]->obj, inst);
   }
   PaintLock = FALSE;
-  UpdateAll();
+  UpdateAll(objs);
 }
 
 static void
@@ -2110,7 +2123,7 @@ RotateFocusedObj(int direction)
   execute_selected_instances(focus, num, 4, argv, "rotate");
 
   PaintLock = FALSE;
-  UpdateAll();
+  UpdateAll(objs);
 }
 
 static void
@@ -2154,7 +2167,7 @@ FlipFocusedObj(enum FLIP_DIRECTION dir)
   execute_selected_instances(focus, num, 3, argv, "flip");
 
   PaintLock = FALSE;
-  UpdateAll();
+  UpdateAll(objs);
 }
 
 static int
@@ -3105,7 +3118,8 @@ mouse_up_point(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
     break;
   case DataB:
     if (ViewerWinFileUpdate(x1, y1, x2, y2, err)) {
-      UpdateAll();
+      char *objects[] = {"data", NULL};
+      UpdateAll(objects);
     }
     break;
   case EvalB:
@@ -3118,10 +3132,10 @@ mouse_up_point(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
 }
 
 static int
-move_objects(int dx, int dy, struct Viewer *d)
+move_objects(int dx, int dy, struct Viewer *d, char **objs)
 {
   int i, num, axis;
-  char *argv[5], *objs[OBJ_MAX];
+  char *argv[5];
   N_VALUE *inst;
   struct FocusObj *focus;
   struct objlist *obj;
@@ -3131,7 +3145,6 @@ move_objects(int dx, int dy, struct Viewer *d)
   axis = FALSE;
   PaintLock = TRUE;
   if (dx != 0 || dy != 0) {
-    get_focused_obj_array(d->focusobj, objs);
     menu_save_undo(UNDO_TYPE_MOVE, objs);
     argv[0] = (char *) &dx;
     argv[1] = (char *) &dy;
@@ -3157,9 +3170,44 @@ move_objects(int dx, int dy, struct Viewer *d)
 }
 
 static void
+add_data_grid_to_objs(char **objs)
+{
+  int i, axis, data, axisgrid;
+  if (objs == NULL) {
+    return;
+  }
+  i = 0;
+  axis = FALSE;
+  data = FALSE;
+  axisgrid = FALSE;
+  while (objs[i]) {
+    if (strcmp(objs[i], "axis") == 0) {
+      axis = TRUE;
+    } else if (strcmp(objs[i], "data") == 0) {
+      data = TRUE;
+    } else if (strcmp(objs[i], "axisgrid") == 0) {
+      axisgrid = TRUE;
+    }
+    i++;
+  }
+  if (axis) {
+    if (! data) {
+      objs[i] = "data";
+      i++;
+    }
+    if (! axisgrid) {
+      objs[i] = "axisgrid";
+      i++;
+    }
+    objs[i] = NULL;
+  }
+}
+
+static void
 mouse_up_drag(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
 {
   int dx, dy, axis;
+  char *objs[OBJ_MAX];
 
   if (d->MouseX1 == d->MouseX2 && d->MouseY1 == d->MouseY2) {
     return;
@@ -3171,11 +3219,15 @@ mouse_up_drag(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
   dx = d->MouseX2 - d->MouseX1;
   dy = d->MouseY2 - d->MouseY1;
   CheckGrid(FALSE, state, &dx, &dy, NULL);
-  axis = move_objects(dx, dy, d);
+  get_focused_obj_array(d->focusobj, objs);
+  axis = move_objects(dx, dy, d, objs);
   if (d->Mode == LegendB || (d->Mode == PointB && !axis)) {
     d->allclear=FALSE;
   }
-  UpdateAll();
+  if (axis) {
+    add_data_grid_to_objs(objs);
+  }
+  UpdateAll(objs);
 }
 
 static void
@@ -3223,6 +3275,7 @@ mouse_up_zoom(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
     num = arraynum(d->focusobj);
     PaintLock = TRUE;
 
+    objs[0] = NULL;
     if (num > 0) {
       get_focused_obj_array(d->focusobj, objs);
       menu_save_undo(UNDO_TYPE_ZOOM, objs);
@@ -3254,7 +3307,7 @@ mouse_up_zoom(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
     d->allclear = FALSE;
   }
 
-  UpdateAll();
+  UpdateAll(objs);
 }
 
 static void
@@ -3269,6 +3322,7 @@ mouse_up_change(unsigned int state, TPoint *point, double zoom, struct Viewer *d
   axis = FALSE;
 
   d->ShowLine = FALSE;
+  obj = NULL;
 
   if ((d->MouseX1 != d->MouseX2) || (d->MouseY1 != d->MouseY2)) {
     d->MouseX2 = calc_mouse_x(point->x, zoom, d);
@@ -3314,9 +3368,12 @@ mouse_up_change(unsigned int state, TPoint *point, double zoom, struct Viewer *d
     }
     d->FrameOfsX = d->FrameOfsY = 0;
     d->ShowFrame = TRUE;
-    if (d->Mode == LegendB || (d->Mode == PointB && !axis))
+    if (d->Mode == LegendB || (d->Mode == PointB && !axis)) {
       d->allclear = FALSE;
-    UpdateAll();
+    }
+    argv[0] = (obj) ? obj->name : NULL;
+    argv[1] = NULL;
+    UpdateAll(argv);
   } else {
     d->FrameOfsX = d->FrameOfsY = 0;
     d->ShowFrame = TRUE;
@@ -3502,7 +3559,7 @@ ViewerEvLButtonUp(unsigned int state, TPoint *point, struct Viewer *d)
       mouse_up_point(state, point, zoom, d);
       if (d->Mode & POINT_TYPE_POINT) {
 	d->allclear = FALSE;
-	UpdateAll();
+	UpdateAll(NULL);
       } else {
 	gtk_widget_queue_draw(d->Win);
       }
@@ -3545,6 +3602,7 @@ create_legend1(struct Viewer *d)
   N_VALUE *inst;
   struct objlist *obj = NULL;
   struct Point *po;
+  char *objects[2];
 
   d->Capture = FALSE;
   num = arraynum(d->points);
@@ -3592,7 +3650,9 @@ create_legend1(struct Viewer *d)
 
   arraydel2(d->points);
   d->allclear = FALSE;
-  UpdateAll();
+  objects[0] = obj->name;
+  objects[1] = NULL;
+  UpdateAll(objects);
 }
 
 static void
@@ -3603,6 +3663,7 @@ create_path(struct Viewer *d)
   struct Point *po;
   N_VALUE *inst;
   int i, num, id, ret = IDCANCEL;
+  char *objects[2];
 
   d->Capture = FALSE;
   num = arraynum(d->points);
@@ -3649,7 +3710,9 @@ create_path(struct Viewer *d)
   arraydel2(d->points);
 
   d->allclear = FALSE;
-  UpdateAll();
+  objects[0] = obj->name;
+  objects[1] = NULL;
+  UpdateAll(objects);
 }
 
 static void
@@ -3659,6 +3722,7 @@ create_legend3(struct Viewer *d)
   N_VALUE *inst;
   struct objlist *obj = NULL;
   struct Point **pdata;
+  char *objects[2];
 
   d->Capture = FALSE;
   num = arraynum(d->points);
@@ -3726,7 +3790,9 @@ create_legend3(struct Viewer *d)
 
   arraydel2(d->points);
   d->allclear = FALSE;
-  UpdateAll();
+  objects[0] = obj->name;
+  objects[1] = NULL;
+  UpdateAll(objects);
 }
 
 static void
@@ -3736,6 +3802,7 @@ create_legendx(struct Viewer *d)
   N_VALUE *inst;
   struct objlist *obj = NULL;
   struct Point **pdata;
+  char *objects[2];
 
   d->Capture = FALSE;
   num = arraynum(d->points);
@@ -3785,7 +3852,9 @@ create_legendx(struct Viewer *d)
   }
   arraydel2(d->points);
   d->allclear = FALSE;
-  UpdateAll();
+  objects[0] = obj->name;
+  objects[1] = NULL;
+  UpdateAll(objects);
 }
 
 static void
@@ -3796,6 +3865,7 @@ create_single_axis(struct Viewer *d)
   N_VALUE *inst;
   struct objlist *obj = NULL;
   struct Point **pdata;
+  char *objects[2];
 
   d->Capture = FALSE;
   num = arraynum(d->points);
@@ -3856,7 +3926,9 @@ create_single_axis(struct Viewer *d)
   }
   arraydel2(d->points);
   d->allclear = TRUE;
-  UpdateAll();
+  objects[0] = obj->name;
+  objects[1] = NULL;
+  UpdateAll(objects);
 }
 
 static void
@@ -4013,10 +4085,13 @@ create_axis(struct Viewer *d)
 	set_graph_modified();
       }
     }
+    d->allclear = TRUE;
+    argv[0] = obj->name;
+    argv[1] = obj2->name;
+    argv[2] = NULL;
+    UpdateAll(argv);
   }
   arraydel2(d->points);
-  d->allclear = TRUE;
-  UpdateAll();
 }
 
 static gboolean
@@ -4917,6 +4992,7 @@ static gboolean
 ViewerEvKeyUp(GtkWidget *w, GdkEventKey *e, gpointer client_data)
 {
   struct Viewer *d;
+  char *objs[OBJ_MAX];
   int dx, dy;
   int axis;
 
@@ -4944,11 +5020,14 @@ ViewerEvKeyUp(GtkWidget *w, GdkEventKey *e, gpointer client_data)
 
     dx = d->FrameOfsX;
     dy = d->FrameOfsY;
-    axis = move_objects(dx, dy, d);
+    get_focused_obj_array(d->focusobj, objs);
+    axis = move_objects(dx, dy, d, objs);
     if (! axis) {
       d->allclear = FALSE;
+    } else {
+      add_data_grid_to_objs(objs);
     }
-    UpdateAll();
+    UpdateAll(objs);
     d->MouseMode = MOUSENONE;
 #if CLEAR_DRAG_INFO
     reset_drag_info(d);
@@ -4974,6 +5053,31 @@ ViewerEvSize(GtkWidget *w, GtkAllocation *allocation, gpointer client_data)
   ChangeDPI();
 }
 
+static void
+show_layers(cairo_t *cr, struct Viewer *d)
+{
+  int r, i, n;
+  struct narray *array;
+  struct layer *layer;
+  char *obj;
+  void *ptr;
+
+  array = &Menulocal.drawrable;
+  n = arraynum(array);
+  for (i = 0; i < n; i++) {
+    obj = arraynget_str(array, i);
+    r = nhash_get_ptr(Menulocal.layers, obj, &ptr);
+    if (r) {
+      continue;
+    }
+    layer = ptr;
+    cairo_set_source_surface(cr, layer->pix,
+			     nround(- d->hscroll + d->cx),
+			     nround(- d->vscroll + d->cy));
+    cairo_paint(cr);
+  }
+}
+
 static gboolean
 ViewerEvPaint(GtkWidget *w, cairo_t *cr, gpointer client_data)
 {
@@ -4984,7 +5088,7 @@ ViewerEvPaint(GtkWidget *w, cairo_t *cr, gpointer client_data)
   if (ZoomLock) {
     return TRUE;
   }
-
+ 
   if (Menulocal.pix && Menulocal.bg) {
     cairo_set_source_surface(cr, Menulocal.bg,
 			     nround(- d->hscroll + d->cx),
@@ -5052,7 +5156,7 @@ ViewerEvHScroll(GtkRange *range, gpointer user_data)
 }
 
 void
-ViewerWinUpdate(void)
+ViewerWinUpdate(char **objects)
 {
   int i, num, lock_state;
   struct FocusObj **focus;
@@ -5084,12 +5188,12 @@ ViewerWinUpdate(void)
   }
 
   if (d->allclear) {
-    mx_clear(NULL);
-    mx_redraw(Menulocal.obj, Menulocal.inst);
+    mx_clear(NULL, objects);
+    mx_redraw(Menulocal.obj, Menulocal.inst, objects);
   } else if (region) {
     Menulocal.region = region;
     gra2cairo_clip_region(Menulocal.local, region);
-    mx_redraw(Menulocal.obj, Menulocal.inst);
+    mx_redraw(Menulocal.obj, Menulocal.inst, objects);
     gra2cairo_clip_region(Menulocal.local, NULL);
     Menulocal.region = NULL;
   }
@@ -5272,7 +5376,7 @@ Focus(struct objlist *fobj, int id, int add)
   }
 
   d->allclear = FALSE;
-  UpdateAll();
+  //  UpdateAll();
   d->ShowFrame = TRUE;
 
   /* this is inconvenient when one use single window mode. */
@@ -5312,8 +5416,8 @@ update_bg(void)
   cairo_set_source_rgb(cr, Menulocal.bg_r, Menulocal.bg_g, Menulocal.bg_b);
   cairo_paint(cr);
 
-  w = cairo_image_surface_get_width(Menulocal.bg) - 1;
-  h = cairo_image_surface_get_height(Menulocal.bg) - 1;
+  w = cairo_image_surface_get_width(Menulocal.bg) - CAIRO_COORDINATE_OFFSET;
+  h = cairo_image_surface_get_height(Menulocal.bg) - CAIRO_COORDINATE_OFFSET;
 
   cairo_set_antialias(cr, CAIRO_ANTIALIAS_NONE);
   cairo_set_source_rgb(cr, 0, 0, 0);
@@ -5360,7 +5464,7 @@ create_pix(int w, int h)
   }
 
   if (Menulocal.local->cairo) {
-    cairo_destroy(Menulocal.local->cairo);
+    //    cairo_destroy(Menulocal.local->cairo);
   }
 
   Menulocal.local->cairo = NULL;
@@ -5500,7 +5604,7 @@ ChangeDPI(void)
 
   if (w != width || h != height) {
     create_pix(width, height);
-    mx_redraw(Menulocal.obj, Menulocal.inst);
+    mx_redraw(Menulocal.obj, Menulocal.inst, NULL);
   }
 
   XPos = nround(width * ratex);
@@ -5881,7 +5985,7 @@ ViewUpdate(void)
   if (! axis)
     d->allclear = FALSE;
 
-  UpdateAll();
+  UpdateAll(objs);
   d->ShowFrame = TRUE;
 }
 
@@ -5944,7 +6048,7 @@ ViewDelete(void)
     d->allclear = FALSE;
 
   if (num != 0)
-    UpdateAll();
+    UpdateAll(objs);
 
   NSetCursor(GDK_LEFT_PTR);
 }
@@ -5957,6 +6061,7 @@ reorder_object(enum object_move_type type)
   struct objlist *obj;
   N_VALUE *inst;
   struct Viewer *d;
+  char *objects[2];
 
   if (Menulock || Globallock)
     return;
@@ -6003,7 +6108,9 @@ reorder_object(enum object_move_type type)
   AddList(obj, inst);
   set_graph_modified();
   d->allclear = TRUE;
-  UpdateAll();
+  objects[0] = obj->name;
+  objects[1] = NULL;
+  UpdateAll(objects);
 }
 
 static void
@@ -6265,7 +6372,7 @@ ViewCopy(void)
   if (! axis)
     d->allclear = FALSE;
 
-  UpdateAll();
+  UpdateAll(objs);
   d->ShowFrame = TRUE;
 }
 

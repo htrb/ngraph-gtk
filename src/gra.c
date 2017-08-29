@@ -409,11 +409,12 @@ _GRAredraw(int GC,int snum,char **sdata,int setredrawf,int redraw_num,
   char *dargv[2];
   int redrawfsave;
   struct objlist *dobj;
-  int did;
+  int did, layer;
   char *dfield;
   N_VALUE *dinst;
 
   if (ninterrupt()) return;
+  layer = GRAlayer_support(GC);
   dargv[0]=(char *)&GC;
   if ((addn==0) && (obj!=NULL) && (inst!=NULL) && (field!=NULL))
     _exeobj(obj,field,inst,1,dargv);
@@ -428,6 +429,9 @@ _GRAredraw(int GC,int snum,char **sdata,int setredrawf,int redraw_num,
           _putobj(dobj,"redraw_flag",dinst, &t);
           _putobj(dobj,"redraw_num",dinst, &redraw_num);
         }
+	if (layer) {
+	  GRAlayer(GC, dobj->name);
+	}
         _exeobj(dobj,dfield,dinst,1,dargv);
         if (setredrawf) {
           _putobj(dobj,"redraw_flag",dinst,&redrawfsave);
@@ -497,6 +501,95 @@ void
 GRAredraw(struct objlist *obj,N_VALUE *inst,int setredrawf,int redraw_num)
 {
   GRAredraw2(obj,inst,setredrawf,redraw_num,-1,NULL,NULL,NULL);
+}
+
+void
+GRAredraw_layers(struct objlist *obj, N_VALUE *inst, int setredrawf, int redraw_num, char **objects)
+{
+  int i, n, snum;
+  char *dargv[2], *device, **sdata;
+  int redrawfsave;
+  struct objlist *dobj, *gobj, *xobj;
+  int xid, gid, oid, layer, GC, GCnew;
+  char *dfield, *xfield, *gfield;
+  N_VALUE *dinst, *ginst;
+  struct narray *sarray;
+
+  if (ninterrupt()) return;
+
+  if (_getobj(obj,"_list",inst,&sarray)) return;
+  if (_getobj(obj,"oid",inst,&oid)) return;
+  if ((snum=arraynum(sarray))==0) return;
+  sdata=arraydata(sarray);
+  if (_getobj(obj,"_GC",inst,&GC)) {
+    return;
+  }
+  if (((gobj=getobjlist(sdata[0],&gid,&gfield,NULL))==NULL)
+  || ((ginst=getobjinstoid(gobj,gid))==NULL)) {
+    return;
+  }
+  if (GC!=-1) {
+    /* gra is still opened */
+    GCnew=GC;
+    GRAreopen(GC);
+  } else {
+    /* gra is already closed */
+    /* check consistency */
+    if (_getobj(gobj,"_device",ginst,&device) || (device==NULL)
+    || ((xobj=getobjlist(device,&xid,&xfield,NULL))==NULL)
+    || (xobj!=obj) || (xid!=oid) || (strcmp(xfield,"_output")!=0)) {
+      return;
+    }
+    /* open GRA */
+    if ((_exeobj(gobj,"open",ginst,0,NULL))
+    || (_getobj(gobj,"open",ginst,&GCnew))
+    || (GRAopened(GCnew)==-1)) {
+      return;
+    }
+  }
+
+  layer = GRAlayer_support(GC);
+  if (! layer) {
+    return;
+  }
+
+  dargv[0]=(char *)&GC;
+  while (*objects) {
+    dobj = getobject(*objects);
+    objects++;
+    if (dobj == NULL) {
+      continue;
+    }
+    n = chkobjlastinst(dobj) + 1;
+    if (n < 1) {
+      continue;
+    }
+    GRAlayer(GC, dobj->name);
+    for (i = 0; i < n; i++) {
+      if (ninterrupt()) {
+	return;
+      }
+      if (chkobjfield(dobj, "file")) {
+	dfield = "draw";
+      } else {
+	dfield = "redraw";
+      }
+      dinst = chkobjinst(dobj, i);
+      if (dinst == NULL) {
+	continue;
+      }
+      if (setredrawf) {
+	int t = (redraw_num != 0);
+	_getobj(dobj, "redraw_flag", dinst, &redrawfsave);
+	_putobj(dobj, "redraw_flag", dinst, &t);
+	_putobj(dobj, "redraw_num", dinst, &redraw_num);
+      }
+      _exeobj(dobj, dfield, dinst, 1, dargv);
+      if (setredrawf) {
+	_putobj(dobj, "redraw_flag", dinst, &redrawfsave);
+      }
+    }
+  }
 }
 
 int
@@ -1680,6 +1773,22 @@ GRAouttext(int GC,char *s)
   GRAdraw(GC,code,cpar,cstr);
 }
 
+int
+GRAlayer_support(int GC)
+{
+  int layer;
+  if (GC < 0) {
+    return FALSE;
+  }
+  if (GRAClist[GC].obj == NULL || GRAClist[GC].inst == NULL) {
+    return FALSE;
+  }
+  if (_getobj(GRAClist[GC].obj, "_layer", GRAClist[GC].inst, &layer)) {
+    return FALSE;
+  }
+  return layer;
+}
+
 void
 GRAlayer(int GC,const char *s)
 {
@@ -1687,6 +1796,19 @@ GRAlayer(int GC,const char *s)
   int cpar[1];
   char *cstr;
 
+  g_free(GRAClist[GC].linedash);
+  GRAClist[GC].linedashn=0;
+  GRAClist[GC].linedash=NULL;
+#if EXPAND_DOTTED_LINE
+  g_free(GRAClist[GC].gdashlist);
+  GRAClist[GC].gdashlist=NULL;
+#endif
+  g_free(GRAClist[GC].textfont);
+  GRAClist[GC].textfont=NULL;
+  GRAClist[GC].viewf=FALSE;
+  GRAClist[GC].linef=FALSE;
+  GRAClist[GC].colorf=FALSE;
+  GRAClist[GC].textf=FALSE;
   code='Z';
   cpar[0]=-1;
   cstr=(char *) s;

@@ -1034,6 +1034,7 @@ void
 CmGraphNewMenu(void *w, gpointer client_data)
 {
   int sel;
+  char *objects[] = {"axis", NULL};
 
   if (Menulock || Globallock)
     return;
@@ -1063,7 +1064,7 @@ CmGraphNewMenu(void *w, gpointer client_data)
   set_axis_undo_button_sensitivity(FALSE);
   reset_graph_modified();
 
-  UpdateAll();
+  UpdateAll(objects);
   CmViewerDraw(NULL, GINT_TO_POINTER(TRUE));
   InfoWinClear();
   menu_clear_undo();
@@ -1170,7 +1171,7 @@ CmGraphShell(void *w, gpointer client_data)
   }
   unregisterevloop(robj, idn, inst);
   menu_lock(FALSE);
-  UpdateAll();
+  UpdateAll(NULL);
 }
 
 void

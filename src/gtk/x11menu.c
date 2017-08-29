@@ -5879,9 +5879,9 @@ application(char *file)
 }
 
 void
-UpdateAll(void)
+UpdateAll(char **objects)
 {
-  ViewerWinUpdate();
+  ViewerWinUpdate(objects);
   UpdateAll2();
 }
 
@@ -6613,15 +6613,45 @@ menu_clear_undo(void)
 }
 
 static void
-undo_update_widgets(int redraw)
+undo_update_widgets(struct undo_info *info, int redraw)
 {
   set_action_widget_sensitivity(EditUndoAction, menu_check_undo());
   set_action_widget_sensitivity(EditRedoAction, menu_check_redo());
   check_exist_instances(chkobject("draw"));
   set_axis_undo_button_sensitivity(axis_check_history());
-  UpdateAll2();
-  if (redraw) {
-    CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
+  if (info->obj == NULL) {
+    UpdateAll(NULL);
+  } else {
+    char **ptr, *objs[OBJ_MAX];
+    int i, axis, data, axisgrid;
+    axis = FALSE;
+    data = FALSE;
+    axisgrid = FALSE;
+    ptr = info->obj;
+    i = 0;
+    while (ptr[i]) {
+      objs[i] = ptr[i];
+      if (strcmp(ptr[i], "axis") == 0) {
+	axis = TRUE;
+      } else if (strcmp(ptr[i], "data") == 0) {
+	data = TRUE;
+      } else if (strcmp(ptr[i], "axisgrid") == 0) {
+	axisgrid = TRUE;
+      }
+      i++;
+    }
+    if (axis) {
+      if (! data) {
+	objs[i] = "data";
+	i++;
+      }
+      if (! axisgrid) {
+	objs[i] = "axisgrid";
+	i++;
+      }
+    }
+    objs[i] = NULL;
+    UpdateAll(objs);
   }
 }
 
@@ -6635,6 +6665,10 @@ menu_undo(int redraw)
   }
 
   r = menu_undo_iteration(undo_undo, UndoInfo->obj);
+  if (r) {
+    return;
+  }
+  undo_update_widgets(UndoInfo, redraw);
   info = UndoInfo;
   UndoInfo = info->next;
   if (redraw) {
@@ -6644,10 +6678,6 @@ menu_undo(int redraw)
     undo_info_pop(info);
   }
   set_undo_menu_label();
-  if (r) {
-    return;
-  }
-  undo_update_widgets(redraw);
 }
 
 void
@@ -6659,14 +6689,13 @@ menu_redo(void)
     return;
   }
   r = menu_undo_iteration(undo_redo, RedoInfo->obj);
-
+  if (r) {
+    return;
+  }
+  undo_update_widgets(RedoInfo, TRUE);
   info = RedoInfo;
   RedoInfo = info->next;
   info->next = UndoInfo;
   UndoInfo = info;
   set_undo_menu_label();
-  if (r) {
-    return;
-  }
-  undo_update_widgets(TRUE);
 }

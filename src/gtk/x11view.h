@@ -51,7 +51,7 @@ enum FOCU_OBJ_TYPE {
 
 void ViewerWinSetup(void);
 void ViewerWinClose(void);
-void ViewerWinUpdate(void);
+void ViewerWinUpdate(char **objects);
 void OpenGC(void);
 void CloseGC(void);
 void SetScroller(void);

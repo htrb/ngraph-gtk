@@ -1118,7 +1118,7 @@ static int
 menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct gra2cairo_local *local;
-  int i;
+  int i, layer;
 
   if (!OpenApplication()) {
     error(obj, ERR_MENU_DISPLAY);
@@ -1128,6 +1128,9 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   if (_exeparent(obj, (char *) argv[1], inst, rval, argc, argv)) {
     return 1;
   }
+
+  layer = TRUE;
+  if (_putobj(obj, "_layer", inst, &layer)) return 1;
 
   if (_getobj(obj, "_local", inst, &local)) {
     local = gra2cairo_free(obj, inst);
@@ -1265,6 +1268,7 @@ menudone(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
     return 1;
   }
 
+  Menulocal.local->cairo = NULL;
   if (_exeparent(obj, (char *) argv[1], inst, rval, argc, argv))
     return 1;
 
@@ -1457,12 +1461,12 @@ main_window_redraw(void)
 }
 
 void
-mx_redraw(struct objlist *obj, N_VALUE *inst)
+mx_redraw(struct objlist *obj, N_VALUE *inst, char **objects)
 {
   int n;
 
   if (Menulocal.region) {
-    mx_clear(Menulocal.region);
+    mx_clear(Menulocal.region, objects);
   }
 
   if (Menulocal.redrawf) {
@@ -1471,7 +1475,11 @@ mx_redraw(struct objlist *obj, N_VALUE *inst)
     n = 0;
   }
 
-  GRAredraw(obj, inst, TRUE, n);
+  if (objects) {
+    GRAredraw_layers(obj, inst, TRUE, n, objects);
+  } else {
+    GRAredraw(obj, inst, TRUE, n);
+  }    
   mxflush(obj, inst, NULL, 0, NULL);
 
   main_window_redraw();
@@ -1504,7 +1512,7 @@ mxredraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
     return 1;
   }
 
-  mx_redraw(obj, inst);
+  mx_redraw(obj, inst, NULL);
   return 0;
 }
 
@@ -1533,38 +1541,35 @@ mxdpi(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
   return 0;
 }
 
-static int
-mxflush(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+static void
+flush_layers(cairo_t *cr)
 {
-  cairo_surface_t *surface;
-
-  if (TopLevel == NULL) {
-    error(obj, ERR_MENU_GUI);
-    return 1;
-  }
-
-  if (Menulocal.local->cairo) {
-    gra2cairo_draw_path(Menulocal.local);
-
-    surface = cairo_get_target(Menulocal.local->cairo);
-    if (surface) {
-      cairo_surface_flush(surface);
+  int r, i, n;
+  struct narray *array;
+  struct layer *layer;
+  char *obj;
+  void *ptr;
+  
+  array = &Menulocal.drawrable;
+  n = arraynum(array);
+  for (i = 0; i < n; i++) {
+    obj = arraynget_str(array, i);
+    r = nhash_get_ptr(Menulocal.layers, obj, &ptr);
+    if (r) {
+      continue;
     }
+    layer = ptr;
+    if (layer->pix) {
+      cairo_surface_flush(layer->pix);
+    }
+    cairo_set_source_surface(cr, layer->pix, 0, 0);
+    cairo_paint(cr);
   }
-
-  return 0;
 }
 
-void
-mx_clear(cairo_region_t *region)
+static void
+clear_region(cairo_t *cr, cairo_region_t *region)
 {
-  cairo_t *cr;
-
-  if (Menulocal.pix == NULL || Menulocal.local->cairo == NULL) {
-    return;
-  }
-
-  cr = Menulocal.local->cairo;
   cairo_save(cr);
   cairo_set_source_rgba(cr, 0, 0, 0, 0);
   cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
@@ -1579,6 +1584,82 @@ mx_clear(cairo_region_t *region)
 }
 
 static int
+mxflush(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  cairo_surface_t *surface;
+  cairo_t *cr;
+  if (TopLevel == NULL) {
+    error(obj, ERR_MENU_GUI);
+    return 1;
+  }
+
+  if (Menulocal.local->cairo) {
+    gra2cairo_draw_path(Menulocal.local);
+
+    surface = cairo_get_target(Menulocal.local->cairo);
+    if (surface) {
+      cairo_surface_flush(surface);
+    }
+  }
+  
+  if (Menulocal.pix) {
+    cr = cairo_create(Menulocal.pix);
+    clear_region(cr, NULL);
+    flush_layers(cr);
+    cairo_destroy(cr);
+  }
+
+  return 0;
+}
+
+static int
+clear_layer(const char *obj, cairo_region_t *region)
+{
+  struct layer *layer;
+  void *ptr;
+  int r;
+  r = nhash_get_ptr(Menulocal.layers, obj, &ptr);
+  if (r) {
+    return 1;
+  }
+  layer = ptr;
+  clear_region(layer->cairo, region);
+  return 0;
+}
+
+static void
+clear_layers(cairo_region_t *region, char **objects)
+{
+  int i, n;
+  struct narray *array;
+  char *obj;
+
+  if (objects) {
+    while(*objects) {
+      clear_layer(*objects, region);
+      objects++;
+    }
+  } else {
+    array = &Menulocal.drawrable;
+    n = arraynum(array);
+    for (i = 0; i < n; i++) {
+      obj = arraynget_str(array, i);
+      clear_layer(obj, region);
+    }
+  }
+}
+
+void
+mx_clear(cairo_region_t *region, char **objects)
+{
+  if (Menulocal.pix == NULL || Menulocal.local->cairo == NULL) {
+    return;
+  }
+
+  clear_layers(region, objects);
+}
+
+static int
 mxclear(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   if (TopLevel == NULL) {
@@ -1589,7 +1670,7 @@ mxclear(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   if (_exeparent(obj, (char *) argv[1], inst, rval, argc, argv))
     return 1;
 
-  mx_clear(NULL);
+  mx_clear(NULL, NULL);
 
   main_window_redraw();
 
@@ -2287,6 +2368,41 @@ reset_graph_modified(void)
   graph_modified_sub(0);
 }
 
+static int
+mx_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  char code, *cstr, *layer;
+  struct gra2cairo_local *local;
+
+  local = (struct gra2cairo_local *)argv[2];
+  code = *(char *) (argv[3]);
+  cstr = argv[5];
+
+  switch (code) {
+  case 'I':
+    layer = arraynget_str(&Menulocal.drawrable, 0);
+    if (layer){
+      select_layer(layer);
+    }
+    break;
+  case 'Z':
+    gra2cairo_draw_path(local);
+    select_layer(cstr);
+    break;
+  }
+
+  if (_exeparent(obj, argv[1], inst, rval, argc, argv)) {
+    return 1;
+  }
+  return 0;
+}
+
+static int
+mx_exeparent(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  return _exeparent(obj, argv[1], inst, rval, argc, argv);
+}
+
 static struct objtable gtkmenu[] = {
   {"init", NVFUNC, NEXEC, menuinit, NULL, 0},
   {"done", NVFUNC, NEXEC, menudone, NULL, 0},
@@ -2319,6 +2435,10 @@ static struct objtable gtkmenu[] = {
   {"active", NBFUNC, NREAD | NEXEC, mx_get_active, "", 0},
   {"addin_list_append", NVFUNC, NREAD | NEXEC, mx_addin_list_append, "o", 0},
   {"_evloop", NVFUNC, 0, mx_evloop, NULL, 0},
+  {"_output", NVFUNC, 0, mx_output, NULL, 0},
+  {"_strwidth", NIFUNC, 0, mx_exeparent, NULL, 0},
+  {"_charascent", NIFUNC, 0, mx_exeparent, NULL, 0},
+  {"_chardescent", NIFUNC, 0, mx_exeparent, NULL, 0},
 };
 
 #define TBLNUM (sizeof(gtkmenu) / sizeof(*gtkmenu))

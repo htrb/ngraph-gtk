@@ -351,7 +351,7 @@ oGRAputtopm(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
 }
 
 static int
-oGRAdrawparent(struct objlist *parent, char **oGRAargv)
+oGRAdrawparent(struct objlist *parent, char **oGRAargv, int layer)
 {
   struct objlist *ocur;
   int i,instnum;
@@ -363,7 +363,9 @@ oGRAdrawparent(struct objlist *parent, char **oGRAargv)
       instnum = chkobjlastinst(ocur);
       if (instnum != -1) {
 	objname = chkobjectname(ocur);
-	GRAlayer(*((int *) oGRAargv[0]), objname);
+	if (layer) {
+	  GRAlayer(*((int *) oGRAargv[0]), objname);
+	}
         for (i=0;i<=instnum;i++) {
 	  set_progress_val(i, instnum, objname);
 
@@ -371,7 +373,7 @@ oGRAdrawparent(struct objlist *parent, char **oGRAargv)
 	  exeobj(ocur,"draw",i,1,oGRAargv);
         }
       }
-      if (!oGRAdrawparent(ocur, oGRAargv)) return FALSE;
+      if (!oGRAdrawparent(ocur, oGRAargv, layer)) return FALSE;
     }
     ocur=ocur->next;
   }
@@ -381,7 +383,7 @@ oGRAdrawparent(struct objlist *parent, char **oGRAargv)
 static int
 oGRAdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
-  int GC;
+  int GC, layer;
   struct objlist *draw;
   struct narray *array;
   char **drawrable;
@@ -394,12 +396,14 @@ oGRAdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
     error(obj,ERRGRACLOSE);
     return 1;
   }
+
+  layer = GRAlayer_support(GC);
   _getobj(obj,"draw_obj",inst,&array);
   oGRAargv[0]=(char *)&GC;
   oGRAargv[1]=NULL;
   if (array==NULL) {
     if ((draw=getobject("draw"))==NULL) return 1;
-    oGRAdrawparent(draw, oGRAargv);
+    oGRAdrawparent(draw, oGRAargv, layer);
   } else {
     anum=arraynum(array);
     drawrable=arraydata(array);
@@ -413,7 +417,9 @@ oGRAdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 	continue;
 
       objname = chkobjectname(draw);
-      GRAlayer(GC, objname);
+      if (layer) {
+	GRAlayer(GC, objname);
+      }
       for (i=0;i<=instnum;i++) {
 	set_progress_val(i, instnum, objname);
 

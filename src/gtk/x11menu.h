@@ -270,7 +270,7 @@ int application(char *file);
 void set_current_window(GtkWidget *w);
 GtkWidget *get_current_window(void);
 GtkWidget *create_recent_menu(int type);
-void UpdateAll(void);
+void UpdateAll(char **objects);
 void UpdateAll2(void);
 void ChangePage(void);
 void NSetCursor(unsigned int type);
