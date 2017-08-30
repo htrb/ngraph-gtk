@@ -65,6 +65,7 @@ void tree_sub_window_update(GtkMenuItem *item, gpointer user_data);
 void tree_sub_window_hide(GtkMenuItem *item, gpointer user_data);
 void tree_sub_window_focus(GtkMenuItem *item, gpointer user_data);
 void tree_sub_window_add_focus(GtkMenuItem *item, gpointer user_data);
+void update_viewer(struct obj_list_data *d);
 
 GtkWidget *sub_win_create_popup_menu(struct obj_list_data *d, int n, struct subwin_popup_list *list, GCallback cb);
 
