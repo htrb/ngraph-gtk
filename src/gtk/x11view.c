@@ -1519,6 +1519,7 @@ Trimming(int x1, int y1, int x2, int y2, struct Viewer *d)
 static int
 Match(char *objname, int x1, int y1, int x2, int y2, int err, const struct Viewer *d)
 {
+#if 0
   struct objlist *fobj;
   char *argv[6];
   struct narray *sarray;
@@ -1557,7 +1558,6 @@ Match(char *objname, int x1, int y1, int x2, int y2, int err, const struct Viewe
   ignorestdio(&save);
 
   sdata = arraydata(sarray);
-
   r = 0;
   for (i = 1; i < snum; i++) {
     dobj = getobjlist(sdata[i], &did, &dfield, NULL);
@@ -1580,6 +1580,86 @@ Match(char *objname, int x1, int y1, int x2, int y2, int err, const struct Viewe
   }
 
   restorestdio(&save);
+#else
+  struct objlist *fobj, *aobj;
+  char *argv[6];
+  struct narray *sarray;
+  char **sdata;
+  int snum, dnum;
+  struct objlist *dobj;
+  int did, oid;
+  N_VALUE *dinst;
+  int i, match, hidden, r;
+  int minx, miny, maxx, maxy;
+  struct savedstdio save;
+
+  minx = (x1 < x2) ? x1 : x2;
+  miny = (y1 < y2) ? y1 : y2;
+  maxx = (x1 > x2) ? x1 : x2;
+  maxy = (y1 > y2) ? y1 : y2;
+
+  argv[0] = (char *) &minx;
+  argv[1] = (char *) &miny;
+  argv[2] = (char *) &maxx;
+  argv[3] = (char *) &maxy;
+  argv[4] = (char *) &err;
+  argv[5] = NULL;
+
+  fobj = chkobject(objname);
+  if (! fobj) {
+    return 0;
+  }
+
+  sarray = &Menulocal.drawrable;
+  snum = arraynum(sarray);
+  if (snum < 1) {
+    return 0;
+  }
+
+  ignorestdio(&save);
+  aobj = getobject("axis");
+  sdata = arraydata(sarray);
+
+  r = 0;
+  for (i = 0; i < snum; i++) {
+    dobj = getobject(sdata[i]);
+    if (dobj == NULL) {
+      continue;
+    }
+    if (! chkobjchild(fobj, dobj)) {
+      continue;
+    }
+    dnum = chkobjlastinst(dobj) + 1;
+    if (dnum < 1) {
+      continue;
+    }
+    for (did = 0; did < dnum; did++) {
+      dinst = chkobjinst(dobj, did);
+      if (dinst == NULL) {
+	continue;
+      }
+      _getobj(dobj, "hidden", dinst, &hidden);
+      if (hidden) {
+	continue;
+      }
+      if (dobj == aobj) {
+	getobj(fobj, "group_manager", did, 0, NULL, &did);
+	dinst = chkobjinst(dobj, did);
+      }
+      _getobj(dobj, "oid", dinst, &oid);
+      _exeobj(dobj, "match", dinst, 5, argv);
+      _getobj(dobj, "match", dinst, &match);
+      if (! match) {
+	continue;
+      }
+      if (add_focus_obj(d->focusobj, dobj, oid)) {
+	r++;
+      }
+    }
+  }
+
+  restorestdio(&save);
+#endif
   return r;
 }
 
@@ -5299,77 +5379,70 @@ clear_focus_obj(const struct Viewer *d)
   arraydel2(d->focusobj);
 }
 
+static int
+check_drawrable(struct objlist *obj)
+{
+  struct narray *array;
+  int i, n;
+  char *name;
+  array = &Menulocal.drawrable;
+  n = arraynum(array);
+  for (i = 0; i < n; i++) {
+    name = arraynget_str(array, i);
+    if (g_strcmp0(name, obj->name) == 0) {
+      return 0;
+    }
+  }
+  return 1;
+}
+
 void
 Focus(struct objlist *fobj, int id, int add)
 {
   int oid, focus;
   N_VALUE *inst;
-  struct narray *sarray;
-  char **sdata;
-  int snum;
-  struct objlist *dobj;
-  int did;
-  char *dfield;
-  int i;
-  struct savedstdio save;
-  int man;
+  int man, hidden, legend, axis, merge;
   struct Viewer *d;
 
-  if (fobj == NULL)
+  if (fobj == NULL) {
     return;
-
+  }
   d = &NgraphApp.Viewer;
 
-  if (! chkobjchild(chkobject("legend"), fobj) &&
-      ! chkobjchild(chkobject("axis"), fobj) &&
-      ! chkobjchild(chkobject("merge"), fobj)) {
+  legend = chkobjchild(chkobject("legend"), fobj);
+  axis = chkobjchild(chkobject("axis"), fobj);
+  merge = chkobjchild(chkobject("merge"), fobj);
+  if (! legend && ! axis && ! merge) {
     return;
   }
 
-  if (! add)
+  if (check_drawrable(fobj)) {
+    return;
+  }
+
+  if (! add) {
     UnFocus();
+  }
 
   inst = chkobjinst(fobj, id);
-
   _getobj(fobj, "oid", inst, &oid);
-
-
-  if (_getobj(Menulocal.obj, "_list", Menulocal.inst, &sarray))
+  _getobj(fobj, "hidden", inst, &hidden);
+  if (hidden) {
     return;
-
-  snum = arraynum(sarray);
-  if (snum == 0)
-    return;
-
-  ignorestdio(&save);
-
-  sdata = arraydata(sarray);
-
-  for (i = 1; i < snum; i++) {
-    dobj = getobjlist(sdata[i], &did, &dfield, NULL);
-    if (! dobj || (fobj != dobj) || (did != oid)) {
-      continue;
-    }
-
-    if (chkobjchild(chkobject("axis"), dobj)) {
-      getobj(fobj, "group_manager", id, 0, NULL, &man);
-      if (man < 0)
-	continue;
-
-      getobj(fobj, "oid", man, 0, NULL, &did);
-    }
-
-    focus = check_focused_obj(d->focusobj, fobj, did);
-    if (focus >= 0) {
-      arrayndel2(d->focusobj, focus);
-      break;
-    }
-
-    add_focus_obj(d->focusobj, dobj, did);
-
-    d->MouseMode = MOUSENONE;
-    break;
   }
+
+  if (axis) {
+    getobj(fobj, "group_manager", id, 0, NULL, &man);
+    if (man >= 0) {
+      getobj(fobj, "oid", man, 0, NULL, &oid);
+    }
+  }
+  focus = check_focused_obj(d->focusobj, fobj, oid);
+  if (focus >= 0) {
+    arrayndel2(d->focusobj, focus);
+  }
+  add_focus_obj(d->focusobj, fobj, oid);
+  d->MouseMode = MOUSENONE;
 
   if (arraynum(d->focusobj) == 0) {
     UnFocus();
@@ -5381,8 +5454,6 @@ Focus(struct objlist *fobj, int id, int add)
 
   /* this is inconvenient when one use single window mode. */
   /* gtk_widget_grab_focus(d->Win); */
-
-  restorestdio(&save);
 }
 
 void
@@ -5448,7 +5519,6 @@ static void
 create_pix(int w, int h)
 {
   GdkWindow *window;
-  cairo_t *cr;
 
   window = gtk_widget_get_window(NgraphApp.Viewer.Win);
   if (window == NULL) {
@@ -5463,12 +5533,6 @@ create_pix(int w, int h)
     h = 1;
   }
 
-  if (Menulocal.local->cairo) {
-    //    cairo_destroy(Menulocal.local->cairo);
-  }
-
-  Menulocal.local->cairo = NULL;
-
   if (Menulocal.pix) {
     cairo_surface_destroy(Menulocal.pix);
   }
@@ -5480,9 +5544,6 @@ create_pix(int w, int h)
   Menulocal.bg = cairo_image_surface_create(CAIRO_FORMAT_RGB24, w + 1, h + 1);
 
   create_layers();
-
-  cr = cairo_create(Menulocal.pix);
-  Menulocal.local->cairo = cr;
 
   /* draw background */
   update_bg();
