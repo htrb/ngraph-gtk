@@ -52,6 +52,7 @@
 #include "x11commn.h"
 #include "x11info.h"
 #include "x11file.h"
+#include "x11view.h"
 
 #define COMMENT_BUF_SIZE 1024
 
@@ -1434,7 +1435,8 @@ LoadNgpFile(char *file, int console, char *option)
 
   set_axis_undo_button_sensitivity(FALSE);
   GetPageSettingsFromGRA();
-  UpdateAll(NULL);
+  CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
+  UpdateAll2();
   delobj(obj, newid);
   menu_clear_undo();
 
