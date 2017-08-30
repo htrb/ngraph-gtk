@@ -6173,7 +6173,7 @@ script_exec(GtkWidget *w, gpointer client_data)
   }
 
   GetPageSettingsFromGRA();
-  UpdateAll2();
+  UpdateAll(NULL);
 
   delobj(shell, newid);
   main_window_redraw();
