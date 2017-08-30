@@ -1003,6 +1003,7 @@ select_layer(const char *id)
   }
   layer = ptr;
   Menulocal.local->cairo = layer->cairo;
+  set_cairo_antialias(layer->cairo, Menulocal.antialias);
   return 0;
 }
 
@@ -1627,8 +1628,8 @@ clear_layer(const char *obj, cairo_region_t *region)
   return 0;
 }
 
-static void
-clear_layers(cairo_region_t *region, char **objects)
+void
+mx_clear(cairo_region_t *region, char **objects)
 {
   int i, n;
   struct narray *array;
@@ -1647,16 +1648,6 @@ clear_layers(cairo_region_t *region, char **objects)
       clear_layer(obj, region);
     }
   }
-}
-
-void
-mx_clear(cairo_region_t *region, char **objects)
-{
-  if (Menulocal.pix == NULL || Menulocal.local->cairo == NULL) {
-    return;
-  }
-
-  clear_layers(region, objects);
 }
 
 static int
