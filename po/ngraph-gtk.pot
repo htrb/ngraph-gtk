@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.07.04\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2017-08-27 20:39+0900\n"
+"POT-Creation-Date: 2017-08-31 14:40+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,11 +17,11 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/gtk/ox11menu.c:2049
+#: src/gtk/ox11menu.c:2121
 msgid "Unsaved Graph"
 msgstr ""
 
-#: src/gtk/ox11dlg.c:114 src/gtk/x11commn.c:1546
+#: src/gtk/ox11dlg.c:114 src/gtk/x11commn.c:1548
 msgid "Confirm"
 msgstr ""
 
@@ -254,8 +254,8 @@ msgid "_Background Color:"
 msgstr ""
 
 #: src/gtk/x11axis.c:401 src/gtk/x11axis.c:3217 src/gtk/x11axis.c:3238
-#: src/gtk/x11axis.c:3271 src/gtk/x11lgnd.c:2904 src/gtk/x11lgnd.c:2915
-#: src/gtk/x11lgnd.c:3350 src/gtk/gtk_widget.c:1125
+#: src/gtk/x11axis.c:3271 src/gtk/x11lgnd.c:2905 src/gtk/x11lgnd.c:2916
+#: src/gtk/x11lgnd.c:3352 src/gtk/gtk_widget.c:1125
 msgid "Color"
 msgstr ""
 
@@ -495,7 +495,7 @@ msgid "_Italic"
 msgstr ""
 
 #: src/gtk/x11axis.c:2091 src/gtk/x11axis.c:3264 src/gtk/x11dialg.c:249
-#: src/gtk/x11lgnd.c:3348 src/gtk/x11opt.c:1347
+#: src/gtk/x11lgnd.c:3350 src/gtk/x11opt.c:1347
 msgid "Font"
 msgstr ""
 
@@ -568,48 +568,48 @@ msgstr ""
 msgid "No zero"
 msgstr ""
 
-#: src/gtk/x11commn.c:1168 src/gtk/x11menu.c:671
+#: src/gtk/x11commn.c:1169 src/gtk/x11menu.c:671
 msgid "Save NGP file"
 msgstr ""
 
-#: src/gtk/x11commn.c:1192 src/gtk/x11opt.c:1826
+#: src/gtk/x11commn.c:1193 src/gtk/x11opt.c:1826
 #, c-format
 msgid "Saving `%.128s'."
 msgstr ""
 
-#: src/gtk/x11commn.c:1384
+#: src/gtk/x11commn.c:1385
 #, c-format
 msgid "Loading `%.128s'."
 msgstr ""
 
-#: src/gtk/x11commn.c:1545
+#: src/gtk/x11commn.c:1547
 msgid ""
 "This graph is modified.\n"
 "Save this graph?"
 msgstr ""
 
-#: src/gtk/x11commn.c:1756
+#: src/gtk/x11commn.c:1758
 msgid "Ngraph.ini is not found."
 msgstr ""
 
-#: src/gtk/x11commn.c:1759
+#: src/gtk/x11commn.c:1761
 msgid "Ngraph.ini is write protected."
 msgstr ""
 
-#: src/gtk/x11commn.c:1774
+#: src/gtk/x11commn.c:1776
 #, c-format
 msgid "Install `Ngraph.ini' to %s ?"
 msgstr ""
 
-#: src/gtk/x11commn.c:1778
+#: src/gtk/x11commn.c:1780
 msgid "Ngraph.ini could not be copied."
 msgstr ""
 
-#: src/gtk/x11commn.c:1876
+#: src/gtk/x11commn.c:1878
 msgid "_Stop"
 msgstr ""
 
-#: src/gtk/x11commn.c:1919
+#: src/gtk/x11commn.c:1921
 msgid "error"
 msgstr ""
 
@@ -823,7 +823,7 @@ msgid "_All"
 msgstr ""
 
 #: src/gtk/x11dialg.c:350 src/gtk/x11file.c:523 src/gtk/x11file.c:1793
-#: src/gtk/x11file.c:2010 src/gtk/x11view.c:963
+#: src/gtk/x11file.c:2010 src/gtk/x11view.c:965
 msgid "Select _All"
 msgstr ""
 
@@ -909,7 +909,7 @@ msgstr ""
 msgid "_Y math"
 msgstr ""
 
-#: src/gtk/x11file.c:538 src/gtk/x11menu.c:1039 src/gtk/x11view.c:979
+#: src/gtk/x11file.c:538 src/gtk/x11menu.c:1039 src/gtk/x11view.c:981
 msgid "_Close"
 msgstr ""
 
@@ -1021,7 +1021,7 @@ msgstr ""
 msgid "_Result"
 msgstr ""
 
-#: src/gtk/x11file.c:1748 src/gtk/x11file.c:1977 src/gtk/x11view.c:937
+#: src/gtk/x11file.c:1748 src/gtk/x11file.c:1977 src/gtk/x11view.c:939
 msgid "Line No."
 msgstr ""
 
@@ -1157,12 +1157,12 @@ msgid "_Load settings"
 msgstr ""
 
 #: src/gtk/x11file.c:3709 src/gtk/x11file.c:3790 src/gtk/x11file.c:3866
-#: src/gtk/x11view.c:947
+#: src/gtk/x11view.c:949
 msgid "_Mask"
 msgstr ""
 
 #: src/gtk/x11file.c:3713 src/gtk/x11file.c:3794 src/gtk/x11file.c:3870
-#: src/gtk/x11view.c:948
+#: src/gtk/x11view.c:950
 msgid "_Move"
 msgstr ""
 
@@ -1224,15 +1224,15 @@ msgstr ""
 msgid "Making data file."
 msgstr ""
 
-#: src/gtk/x11file.c:5557 src/gtk/x11lgnd.c:2901
+#: src/gtk/x11file.c:5557 src/gtk/x11lgnd.c:2902
 msgid "Join"
 msgstr ""
 
-#: src/gtk/x11file.c:5562 src/gtk/x11lgnd.c:2880 src/gtk/gtk_widget.c:1132
+#: src/gtk/x11file.c:5562 src/gtk/x11lgnd.c:2881 src/gtk/gtk_widget.c:1132
 msgid "Color 1"
 msgstr ""
 
-#: src/gtk/x11file.c:5569 src/gtk/x11lgnd.c:2881 src/gtk/gtk_widget.c:1139
+#: src/gtk/x11file.c:5569 src/gtk/x11lgnd.c:2882 src/gtk/gtk_widget.c:1139
 msgid "Color 2"
 msgstr ""
 
@@ -1353,11 +1353,11 @@ msgstr ""
 msgid "_Include merge file"
 msgstr ""
 
-#: src/gtk/x11graph.c:1084 src/gtk/x11menu.c:655
+#: src/gtk/x11graph.c:1085 src/gtk/x11menu.c:655
 msgid "Load NGP file"
 msgstr ""
 
-#: src/gtk/x11graph.c:1247
+#: src/gtk/x11graph.c:1248
 msgid ""
 "Ngraph is the program to create scientific 2-dimensional graphs for "
 "researchers and engineers."
@@ -1554,43 +1554,43 @@ msgstr ""
 msgid "_Text:"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:2876 src/gtk/x11menu.c:373 src/gtk/x11menu.c:374
+#: src/gtk/x11lgnd.c:2877 src/gtk/x11menu.c:373 src/gtk/x11menu.c:374
 msgid "Mark"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:2897 src/gtk/x11lgnd.c:2898
+#: src/gtk/x11lgnd.c:2898 src/gtk/x11lgnd.c:2899
 msgid "Stroke"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:2906
+#: src/gtk/x11lgnd.c:2907
 msgid "Close path"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:2909 src/gtk/x11lgnd.c:2910
+#: src/gtk/x11lgnd.c:2910 src/gtk/x11lgnd.c:2911
 msgid "Fill"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:2912
+#: src/gtk/x11lgnd.c:2913
 msgid "Fill rule"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3398
+#: src/gtk/x11lgnd.c:3400
 msgid "path"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3399 src/odata.c:182
+#: src/gtk/x11lgnd.c:3401 src/odata.c:182
 msgid "rectangle"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3400
+#: src/gtk/x11lgnd.c:3402
 msgid "arc"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3401 src/odata.c:175
+#: src/gtk/x11lgnd.c:3403 src/odata.c:175
 msgid "mark"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3402
+#: src/gtk/x11lgnd.c:3404
 msgid "text"
 msgstr ""
 
@@ -2105,7 +2105,7 @@ msgstr ""
 msgid "Cut selected object to clipboard"
 msgstr ""
 
-#: src/gtk/x11menu.c:2294 src/gtk/x11menu.c:3267 src/gtk/x11view.c:968
+#: src/gtk/x11menu.c:2294 src/gtk/x11menu.c:3267 src/gtk/x11view.c:970
 msgid "_Copy"
 msgstr ""
 
@@ -2751,7 +2751,7 @@ msgid "Spawning external driver."
 msgstr ""
 
 #: src/gtk/x11print.c:723 src/gtk/x11print.c:997 src/gtk/x11print.c:1070
-#: src/gtk/x11view.c:5575
+#: src/gtk/x11view.c:5679
 msgid "Drawing."
 msgstr ""
 
@@ -2767,12 +2767,12 @@ msgstr ""
 msgid "Making GRA file."
 msgstr ""
 
-#: src/gtk/x11view.c:1234 src/gtk/x11view.c:1236
+#: src/gtk/x11view.c:1233 src/gtk/x11view.c:1235
 #, c-format
 msgid "Searching for data."
 msgstr ""
 
-#: src/gtk/x11view.c:1341
+#: src/gtk/x11view.c:1347
 #, c-format
 msgid "Evaluating."
 msgstr ""
@@ -2781,19 +2781,19 @@ msgstr ""
 msgid "Evaluating"
 msgstr ""
 
-#: src/gtk/x11view.c:2798
+#: src/gtk/x11view.c:2827
 msgid "Data points are moved."
 msgstr ""
 
-#: src/gtk/x11view.c:4081
+#: src/gtk/x11view.c:4172
 msgid "Moving data points is canceled."
 msgstr ""
 
-#: src/gtk/x11view.c:5569
+#: src/gtk/x11view.c:5673
 msgid "Scaling"
 msgstr ""
 
-#: src/gtk/x11view.c:5576
+#: src/gtk/x11view.c:5680
 msgid "Drawing"
 msgstr ""
 
@@ -3116,7 +3116,7 @@ msgstr ""
 msgid "bar_solid_fill_y"
 msgstr ""
 
-#: src/ogra.c:439
+#: src/ogra.c:445
 #, c-format
 msgid "drawing %s (%.1f%%)"
 msgstr ""

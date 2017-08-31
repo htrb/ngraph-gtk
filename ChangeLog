@@ -1,3 +1,17 @@
+2017-08-30  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_subwin.c (update_viewer): added.
+
+	* src/gtk/x11view.c (create_pix): dont set
+	"Menulocal.local->cairo".
+
+	* src/gtk/x11menu.c (script_exec): call "UpdateAll()" instead of
+	"UpdateAll2()".
+
+	* src/gtk/x11lgnd.c (ObjListUpdate): call "ViewerWinUpdate()".
+
+	* src/gtk/x11commn.c (LoadNgpFile): call "CmViewerDraw()".
+
 2017-08-27  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (create_layers): added.
