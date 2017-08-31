@@ -6668,12 +6668,12 @@ menu_undo(int redraw)
   if (r) {
     return;
   }
-  undo_update_widgets(UndoInfo, redraw);
   info = UndoInfo;
   UndoInfo = info->next;
   if (redraw) {
     info->next = RedoInfo;
     RedoInfo = info;
+    undo_update_widgets(info, redraw);
   } else {
     undo_info_pop(info);
   }
@@ -6692,10 +6692,10 @@ menu_redo(void)
   if (r) {
     return;
   }
-  undo_update_widgets(RedoInfo, TRUE);
   info = RedoInfo;
   RedoInfo = info->next;
   info->next = UndoInfo;
   UndoInfo = info;
+  undo_update_widgets(info, TRUE);
   set_undo_menu_label();
 }
