@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.07.04\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2017-08-31 14:40+0900\n"
+"POT-Creation-Date: 2017-08-31 19:10+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,7 @@ msgstr ""
 msgid "Unsaved Graph"
 msgstr ""
 
-#: src/gtk/ox11dlg.c:114 src/gtk/x11commn.c:1548
+#: src/gtk/ox11dlg.c:114 src/gtk/x11commn.c:1552
 msgid "Confirm"
 msgstr ""
 
@@ -568,48 +568,48 @@ msgstr ""
 msgid "No zero"
 msgstr ""
 
-#: src/gtk/x11commn.c:1169 src/gtk/x11menu.c:671
+#: src/gtk/x11commn.c:1173 src/gtk/x11menu.c:671
 msgid "Save NGP file"
 msgstr ""
 
-#: src/gtk/x11commn.c:1193 src/gtk/x11opt.c:1826
+#: src/gtk/x11commn.c:1197 src/gtk/x11opt.c:1826
 #, c-format
 msgid "Saving `%.128s'."
 msgstr ""
 
-#: src/gtk/x11commn.c:1385
+#: src/gtk/x11commn.c:1389
 #, c-format
 msgid "Loading `%.128s'."
 msgstr ""
 
-#: src/gtk/x11commn.c:1547
+#: src/gtk/x11commn.c:1551
 msgid ""
 "This graph is modified.\n"
 "Save this graph?"
 msgstr ""
 
-#: src/gtk/x11commn.c:1758
+#: src/gtk/x11commn.c:1762
 msgid "Ngraph.ini is not found."
 msgstr ""
 
-#: src/gtk/x11commn.c:1761
+#: src/gtk/x11commn.c:1765
 msgid "Ngraph.ini is write protected."
 msgstr ""
 
-#: src/gtk/x11commn.c:1776
+#: src/gtk/x11commn.c:1780
 #, c-format
 msgid "Install `Ngraph.ini' to %s ?"
 msgstr ""
 
-#: src/gtk/x11commn.c:1780
+#: src/gtk/x11commn.c:1784
 msgid "Ngraph.ini could not be copied."
 msgstr ""
 
-#: src/gtk/x11commn.c:1878
+#: src/gtk/x11commn.c:1882
 msgid "_Stop"
 msgstr ""
 
-#: src/gtk/x11commn.c:1921
+#: src/gtk/x11commn.c:1925
 msgid "error"
 msgstr ""
 
@@ -750,7 +750,7 @@ msgstr ""
 msgid "drawobj"
 msgstr ""
 
-#: src/gtk/x11dialg.c:215 src/gtk/x11graph.c:849
+#: src/gtk/x11dialg.c:215 src/gtk/x11graph.c:853
 msgid "directory"
 msgstr ""
 
@@ -1324,40 +1324,40 @@ msgstr ""
 msgid "_Objects"
 msgstr ""
 
-#: src/gtk/x11graph.c:852
+#: src/gtk/x11graph.c:856
 msgid "_Select Dir:"
 msgstr ""
 
-#: src/gtk/x11graph.c:854
+#: src/gtk/x11graph.c:858
 msgid "Current Dir:"
 msgstr ""
 
-#: src/gtk/x11graph.c:919
+#: src/gtk/x11graph.c:923
 msgid "_Expand included file"
 msgstr ""
 
-#: src/gtk/x11graph.c:924
+#: src/gtk/x11graph.c:928
 msgid "_Dir:"
 msgstr ""
 
-#: src/gtk/x11graph.c:928 src/gtk/x11graph.c:983 src/gtk/x11opt.c:1281
+#: src/gtk/x11graph.c:932 src/gtk/x11graph.c:987 src/gtk/x11opt.c:1281
 #: src/gtk/x11opt.c:1313
 msgid "_Path:"
 msgstr ""
 
-#: src/gtk/x11graph.c:989
+#: src/gtk/x11graph.c:993
 msgid "_Include data file"
 msgstr ""
 
-#: src/gtk/x11graph.c:993
+#: src/gtk/x11graph.c:997
 msgid "_Include merge file"
 msgstr ""
 
-#: src/gtk/x11graph.c:1085 src/gtk/x11menu.c:655
+#: src/gtk/x11graph.c:1089 src/gtk/x11menu.c:655
 msgid "Load NGP file"
 msgstr ""
 
-#: src/gtk/x11graph.c:1248
+#: src/gtk/x11graph.c:1252
 msgid ""
 "Ngraph is the program to create scientific 2-dimensional graphs for "
 "researchers and engineers."
