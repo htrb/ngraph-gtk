@@ -3001,6 +3001,7 @@ select_type(GtkComboBox *w, gpointer user_data)
     if (enum_id < 0 || enum_id >= FwNumStyleNum) {
       return;
     }
+    menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
     if (chk_sputobjfield(d->obj, sel, "style", FwLineStyle[enum_id].list) != 0 && ! modified) {
       return;
     }
