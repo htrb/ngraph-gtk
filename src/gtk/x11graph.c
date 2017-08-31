@@ -815,11 +815,15 @@ SwitchDialogClose(GtkWidget *w, void *data)
   if (d->ret == IDOK) {
     arraydel2(&(Menulocal.drawrable));
     num = arraynum(&(d->idrawrable));
-    for (j = 0; j < num; j++) {
-      buf = (char **) arraynget(&(d->drawrable),
-				arraynget_int(&(d->idrawrable), j));
-      if ((*buf) != NULL)
-	arrayadd2(&(Menulocal.drawrable), *buf);
+    if (num == 0) {
+      menuadddrawrable(chkobject("draw"), &(Menulocal.drawrable));
+    } else {
+      for (j = 0; j < num; j++) {
+	buf = (char **) arraynget(&(d->drawrable),
+				  arraynget_int(&(d->idrawrable), j));
+	if ((*buf) != NULL)
+	  arrayadd2(&(Menulocal.drawrable), *buf);
+      }
     }
   }
   arraydel2(&(d->drawrable));

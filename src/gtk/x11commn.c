@@ -279,8 +279,12 @@ GetPageSettingsFromGRA(void)
     arraydel2(&(Menulocal.drawrable));
     num = arraynum(drawrable);
 
-    for (j = 0; j < num; j++) {
-      arrayadd2(&(Menulocal.drawrable), *(char **) arraynget(drawrable, j));
+    if (num == 0) {
+      menuadddrawrable(chkobject("draw"), &(Menulocal.drawrable));
+    } else {
+      for (j = 0; j < num; j++) {
+	arrayadd2(&(Menulocal.drawrable), *(char **) arraynget(drawrable, j));
+      }
     }
   }
 
