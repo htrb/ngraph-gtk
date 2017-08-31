@@ -144,6 +144,7 @@ static void AddList(struct objlist *obj, N_VALUE *inst);
 static void RotateFocusedObj(int direction);
 static void set_mouse_cursor_hover(struct Viewer *d, int x, int y);
 static void CheckGrid(int ofs, unsigned int state, int *x, int *y, double *zoom);
+static int check_drawrable(struct objlist *obj);
 
 #define GRAY 0.5
 #define DOT_LENGTH 4.0
@@ -1184,12 +1185,8 @@ ViewerWinFileUpdate(int x1, int y1, int x2, int y2, int err)
 {
   struct objlist *fileobj;
   char *argv[7];
-  struct narray *sarray;
-  char **sdata;
-  int snum;
-  struct objlist *dobj;
-  int did, id, limit;
-  char *dfield;
+  int snum, hidden;
+  int did, limit;
   N_VALUE *dinst;
   int i;
   struct narray *eval;
@@ -1224,30 +1221,34 @@ ViewerWinFileUpdate(int x1, int y1, int x2, int y2, int err)
 
   arrayinit(&dfile, sizeof(int));
 
-  if (_getobj(Menulocal.obj, "_list", Menulocal.inst, &sarray))
+  if (check_drawrable(fileobj)) {
     goto End;
+  }
 
-  if ((snum = arraynum(sarray)) == 0)
+  snum = chkobjlastinst(fileobj) + 1;
+  if (snum == 0) {
     goto End;
-
-  sdata = arraydata(sarray);
+  }
 
   snprintf(mes, sizeof(mes), _("Searching for data."));
   SetStatusBar(mes);
   ProgressDialogCreate(_("Searching for data."));
 
-  for (i = 1; i < snum; i++) {
-    dobj = getobjlist(sdata[i], &did, &dfield, NULL);
-    if (dobj && chkobjchild(fileobj, dobj)) {
-      dinst = chkobjinstoid(dobj, did);
-      if (dinst) {
-	_getobj(dobj, "id", dinst, &id);
-	_exeobj(dobj, "evaluate", dinst, 6, argv);
-	_getobj(dobj, "evaluate", dinst, &eval);
-	evalnum = arraynum(eval) / 3;
-	if (evalnum != 0)
-	  arrayadd(&dfile, &id);
-      }
+  for (i = 0; i < snum; i++) {
+    dinst = chkobjinst(fileobj, i);
+    if (dinst == NULL) {
+      continue;
+    }
+    _getobj(fileobj, "hidden", dinst, &hidden);
+    if (hidden) {
+      continue;
+    }
+    _getobj(fileobj, "oid", dinst, &did);
+    _exeobj(fileobj, "evaluate", dinst, 6, argv);
+    _getobj(fileobj, "evaluate", dinst, &eval);
+    evalnum = arraynum(eval) / 3;
+    if (evalnum != 0) {
+      arrayadd(&dfile, &i);
     }
   }
 
@@ -1302,12 +1303,8 @@ Evaluate(int x1, int y1, int x2, int y2, int err, struct Viewer *d)
 {
   struct objlist *fileobj;
   char *argv[7];
-  struct narray *sarray;
-  char **sdata;
-  int snum;
-  struct objlist *dobj;
-  int did, id, limit;
-  char *dfield;
+  int snum, hidden;
+  int limit;
   N_VALUE *dinst;
   int i, j;
   struct narray *eval;
@@ -1337,45 +1334,47 @@ Evaluate(int x1, int y1, int x2, int y2, int err, struct Viewer *d)
   if ((fileobj = chkobject("data")) == NULL)
     return;
 
+  if (check_drawrable(fileobj)) {
+    return;
+  }
+
+  snum = chkobjlastinst(fileobj) + 1;
+  if (snum == 0) {
+    return;
+  }
   ignorestdio(&save);
 
   snprintf(mes, sizeof(mes), _("Evaluating."));
   SetStatusBar(mes);
 
-  if (_getobj(Menulocal.obj, "_list", Menulocal.inst, &sarray))
-    return;
-
-  if ((snum = arraynum(sarray)) == 0)
-    return;
-
   ProgressDialogCreate(_("Evaluating"));
 
-  sdata = arraydata(sarray);
   tot = 0;
 
-  for (i = 1; i < snum; i++) {
-    dobj = getobjlist(sdata[i], &did, &dfield, NULL);
-    if (dobj && fileobj == dobj) {
-      dinst = chkobjinstoid(dobj, did);
-      if (dinst) {
-	_getobj(dobj, "id", dinst, &id);
-	_exeobj(dobj, "evaluate", dinst, 6, argv);
-	_getobj(dobj, "evaluate", dinst, &eval);
-	evalnum = arraynum(eval) / 3;
-	for (j = 0; j < evalnum; j++) {
-	  if (tot >= limit) break;
-	  tot++;
-	  line = arraynget_double(eval, j * 3 + 0);
-	  dx = arraynget_double(eval, j * 3 + 1);
-	  dy = arraynget_double(eval, j * 3 + 2);
-	  EvalList[tot - 1].id = id;
-	  EvalList[tot - 1].line = nround(line);
-	  EvalList[tot - 1].x = dx;
-	  EvalList[tot - 1].y = dy;
-	}
-	if (tot >= limit) break;
-      }
+  for (i = 0; i < snum; i++) {
+    dinst = chkobjinst(fileobj, i);
+    if (dinst == NULL) {
+      continue;
     }
+    _getobj(fileobj, "hidden", dinst, &hidden);
+    if (hidden) {
+      continue;
+    }
+    _exeobj(fileobj, "evaluate", dinst, 6, argv);
+    _getobj(fileobj, "evaluate", dinst, &eval);
+    evalnum = arraynum(eval) / 3;
+    for (j = 0; j < evalnum; j++) {
+      if (tot >= limit) break;
+      tot++;
+      line = arraynget_double(eval, j * 3 + 0);
+      dx = arraynget_double(eval, j * 3 + 1);
+      dy = arraynget_double(eval, j * 3 + 2);
+      EvalList[tot - 1].id = i;
+      EvalList[tot - 1].line = nround(line);
+      EvalList[tot - 1].x = dx;
+      EvalList[tot - 1].y = dy;
+    }
+    if (tot >= limit) break;
   }
 
   ProgressDialogFinalize();
@@ -1519,68 +1518,6 @@ Trimming(int x1, int y1, int x2, int y2, struct Viewer *d)
 static int
 Match(char *objname, int x1, int y1, int x2, int y2, int err, const struct Viewer *d)
 {
-#if 0
-  struct objlist *fobj;
-  char *argv[6];
-  struct narray *sarray;
-  char **sdata;
-  int snum;
-  struct objlist *dobj;
-  int did;
-  char *dfield;
-  N_VALUE *dinst;
-  int i, match, r;
-  int minx, miny, maxx, maxy;
-  struct savedstdio save;
-
-  minx = (x1 < x2) ? x1 : x2;
-  miny = (y1 < y2) ? y1 : y2;
-  maxx = (x1 > x2) ? x1 : x2;
-  maxy = (y1 > y2) ? y1 : y2;
-
-  argv[0] = (char *) &minx;
-  argv[1] = (char *) &miny;
-  argv[2] = (char *) &maxx;
-  argv[3] = (char *) &maxy;
-  argv[4] = (char *) &err;
-  argv[5] = NULL;
-
-  fobj = chkobject(objname);
-  if (! fobj)
-    return 0;
-
-  if (_getobj(Menulocal.obj, "_list", Menulocal.inst, &sarray))
-    return 0;
-
-  if ((snum = arraynum(sarray)) == 0)
-    return 0;
-
-  ignorestdio(&save);
-
-  sdata = arraydata(sarray);
-  r = 0;
-  for (i = 1; i < snum; i++) {
-    dobj = getobjlist(sdata[i], &did, &dfield, NULL);
-
-    if (! dobj || ! chkobjchild(fobj, dobj))
-      continue;
-
-    dinst = chkobjinstoid(dobj, did);
-    if (! dinst)
-      continue;
-
-    _exeobj(dobj, "match", dinst, 5, argv);
-    _getobj(dobj, "match", dinst, &match);
-    if (! match)
-      continue;
-
-    if (add_focus_obj(d->focusobj, dobj, did)) {
-      r++;
-    }
-  }
-
-  restorestdio(&save);
-#else
   struct objlist *fobj, *aobj;
   char *argv[6];
   struct narray *sarray;
@@ -1659,7 +1596,6 @@ Match(char *objname, int x1, int y1, int x2, int y2, int err, const struct Viewe
   }
 
   restorestdio(&save);
-#endif
   return r;
 }
 
@@ -5403,6 +5339,7 @@ Focus(struct objlist *fobj, int id, int add)
   N_VALUE *inst;
   int man, hidden, legend, axis, merge;
   struct Viewer *d;
+  struct savedstdio save;
 
   if (fobj == NULL) {
     return;
@@ -5431,6 +5368,7 @@ Focus(struct objlist *fobj, int id, int add)
     return;
   }
 
+  ignorestdio(&save);
   if (axis) {
     getobj(fobj, "group_manager", id, 0, NULL, &man);
     if (man >= 0) {
@@ -5454,6 +5392,7 @@ Focus(struct objlist *fobj, int id, int add)
 
   /* this is inconvenient when one use single window mode. */
   /* gtk_widget_grab_focus(d->Win); */
+  restorestdio(&save);
 }
 
 void
@@ -5814,14 +5753,11 @@ search_axis_group(struct objlist *obj, int id, const char *group,
 		  int *findX, int *findY, int *findU, int *findR, int *findG,
 		  int *idx, int *idy, int *idu, int *idr, int *idg)
 {
-  int j, id2, did, type;
-  struct objlist *dobj, *aobj, *gobj;
+  int j, id2, type;
+  struct objlist *aobj, *gobj;
   N_VALUE *inst2, *dinst;
   char *group2;
-  struct narray *sarray;
   int snum;
-  char **sdata;
-  char *dfield;
 
   *findX = *findY = *findU = *findR = *findG = FALSE;
   type = group[0];
@@ -5852,32 +5788,23 @@ search_axis_group(struct objlist *obj, int id, const char *group,
     }
   }
 
+  gobj = chkobject("axisgrid");
   if ((type == 's' || type == 'f') &&
       *findX && *findY &&
-      ! _getobj(Menulocal.obj, "_list", Menulocal.inst, &sarray) &&
-      ((snum = arraynum(sarray)) >= 0)) {
+      ! check_drawrable(gobj)) {
 
-    sdata = arraydata(sarray);
-    gobj = chkobject("axisgrid");
-
-    for (j = 1; j < snum; j++) {
+    snum = chkobjlastinst(gobj) + 1;
+    for (j = 0; j < snum; j++) {
       int aid1, aid2;
-
-      dobj = getobjlist(sdata[j], &did, &dfield, NULL);
-      if (dobj == NULL || dobj != gobj) {
-	continue;
-      }
-
-      dinst = chkobjinstoid(dobj, did);
+      dinst = chkobjinst(gobj, j);
       if (dinst == NULL) {
 	continue;
       }
-
-      aid1 = get_axis_id(dobj, dinst, &aobj, AXIS_X);
-      aid2 = get_axis_id(dobj, dinst, &aobj, AXIS_Y);
+      aid1 = get_axis_id(gobj, dinst, &aobj, AXIS_X);
+      aid2 = get_axis_id(gobj, dinst, &aobj, AXIS_Y);
       if (aid1 >= 0 && aid2 >= 0 && obj == aobj && aid1 == *idx && aid2 == *idy) {
 	*findG = TRUE;
-	_getobj(dobj, "id", dinst, idg);
+	_getobj(gobj, "id", dinst, idg);
 	break;
       }
     }
