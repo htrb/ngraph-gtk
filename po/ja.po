@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.06.13\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2017-09-01 11:18+0900\n"
+"POT-Creation-Date: 2017-09-01 17:54+0900\n"
 "PO-Revision-Date: 2017-08-18 11:47+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -281,8 +281,8 @@ msgid "_Background Color:"
 msgstr "背景色(_B):"
 
 #: src/gtk/x11axis.c:401 src/gtk/x11axis.c:3217 src/gtk/x11axis.c:3238
-#: src/gtk/x11axis.c:3271 src/gtk/x11lgnd.c:2905 src/gtk/x11lgnd.c:2916
-#: src/gtk/x11lgnd.c:3352 src/gtk/gtk_widget.c:1125
+#: src/gtk/x11axis.c:3271 src/gtk/x11lgnd.c:2906 src/gtk/x11lgnd.c:2917
+#: src/gtk/x11lgnd.c:3353 src/gtk/gtk_widget.c:1125
 msgid "Color"
 msgstr "色"
 
@@ -522,7 +522,7 @@ msgid "_Italic"
 msgstr "斜体(_I)"
 
 #: src/gtk/x11axis.c:2091 src/gtk/x11axis.c:3264 src/gtk/x11dialg.c:249
-#: src/gtk/x11lgnd.c:3350 src/gtk/x11opt.c:1347
+#: src/gtk/x11lgnd.c:3351 src/gtk/x11opt.c:1347
 msgid "Font"
 msgstr "フォント"
 
@@ -1253,15 +1253,15 @@ msgstr "データファイル作成中"
 msgid "Making data file."
 msgstr "データファイル作成中"
 
-#: src/gtk/x11file.c:5557 src/gtk/x11lgnd.c:2902
+#: src/gtk/x11file.c:5557 src/gtk/x11lgnd.c:2903
 msgid "Join"
 msgstr "ジョイン"
 
-#: src/gtk/x11file.c:5562 src/gtk/x11lgnd.c:2881 src/gtk/gtk_widget.c:1132
+#: src/gtk/x11file.c:5562 src/gtk/x11lgnd.c:2882 src/gtk/gtk_widget.c:1132
 msgid "Color 1"
 msgstr "色 1"
 
-#: src/gtk/x11file.c:5569 src/gtk/x11lgnd.c:2882 src/gtk/gtk_widget.c:1139
+#: src/gtk/x11file.c:5569 src/gtk/x11lgnd.c:2883 src/gtk/gtk_widget.c:1139
 msgid "Color 2"
 msgstr "色 2"
 
@@ -1587,43 +1587,43 @@ msgstr "テキスト %d"
 msgid "_Text:"
 msgstr "テキスト(_T):"
 
-#: src/gtk/x11lgnd.c:2877 src/gtk/x11menu.c:373 src/gtk/x11menu.c:374
+#: src/gtk/x11lgnd.c:2878 src/gtk/x11menu.c:373 src/gtk/x11menu.c:374
 msgid "Mark"
 msgstr "マーク"
 
-#: src/gtk/x11lgnd.c:2898 src/gtk/x11lgnd.c:2899
+#: src/gtk/x11lgnd.c:2899 src/gtk/x11lgnd.c:2900
 msgid "Stroke"
 msgstr "ストローク"
 
-#: src/gtk/x11lgnd.c:2907
+#: src/gtk/x11lgnd.c:2908
 msgid "Close path"
 msgstr "パスを閉じる"
 
-#: src/gtk/x11lgnd.c:2910 src/gtk/x11lgnd.c:2911
+#: src/gtk/x11lgnd.c:2911 src/gtk/x11lgnd.c:2912
 msgid "Fill"
 msgstr "塗りつぶし"
 
-#: src/gtk/x11lgnd.c:2913
+#: src/gtk/x11lgnd.c:2914
 msgid "Fill rule"
 msgstr "ルール"
 
-#: src/gtk/x11lgnd.c:3400
+#: src/gtk/x11lgnd.c:3401
 msgid "path"
 msgstr "パス"
 
-#: src/gtk/x11lgnd.c:3401 src/odata.c:182
+#: src/gtk/x11lgnd.c:3402 src/odata.c:182
 msgid "rectangle"
 msgstr "矩形"
 
-#: src/gtk/x11lgnd.c:3402
+#: src/gtk/x11lgnd.c:3403
 msgid "arc"
 msgstr "円"
 
-#: src/gtk/x11lgnd.c:3403 src/odata.c:175
+#: src/gtk/x11lgnd.c:3404 src/odata.c:175
 msgid "mark"
 msgstr "マーク"
 
-#: src/gtk/x11lgnd.c:3404
+#: src/gtk/x11lgnd.c:3405
 msgid "text"
 msgstr "テキスト"
 
@@ -2785,7 +2785,7 @@ msgid "Spawning external driver."
 msgstr "外部ドライバに出力中"
 
 #: src/gtk/x11print.c:723 src/gtk/x11print.c:997 src/gtk/x11print.c:1070
-#: src/gtk/x11view.c:5679
+#: src/gtk/x11view.c:5686
 msgid "Drawing."
 msgstr "描画中"
 
@@ -2815,19 +2815,19 @@ msgstr "データ評価中"
 msgid "Evaluating"
 msgstr "データ評価中"
 
-#: src/gtk/x11view.c:2827
+#: src/gtk/x11view.c:2830
 msgid "Data points are moved."
 msgstr "データは移動されました."
 
-#: src/gtk/x11view.c:4172
+#: src/gtk/x11view.c:4179
 msgid "Moving data points is canceled."
 msgstr "データの移動はキャンセルされました."
 
-#: src/gtk/x11view.c:5673
+#: src/gtk/x11view.c:5680
 msgid "Scaling"
 msgstr "軸スケール設定中"
 
-#: src/gtk/x11view.c:5680
+#: src/gtk/x11view.c:5687
 msgid "Drawing"
 msgstr "描画中"
 

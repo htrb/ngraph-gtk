@@ -1,5 +1,11 @@
 2017-09-01  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11lgnd.c (ObjListUpdate): set "NgraphApp.Viewer.allclear" as TRUE.
+
+	* src/gtk/x11view.c (mouse_down_move_data, Evaluate): call "UpdateAll()".
+
+	* src/odata.c (opendata): don't show error messages on redrawing.
+
 	* src/gtk/x11commn.c (GetPageSettingsFromGRA): check alias name
 	and duplications.
 
