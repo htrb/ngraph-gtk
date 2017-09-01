@@ -1097,6 +1097,35 @@ arrayuniq_str(struct narray *array)
   }
 }
 
+void
+arrayuniq_all_str(struct narray *array)
+{
+  int i, j, num;
+  char **adata, *val;
+
+  if (array == NULL) {
+    return;
+  }
+
+  num = arraynum(array);
+  if (num < 2) {
+    return;
+  }
+
+  adata = arraydata(array);
+  for (j = 0; j < num - 1; j++) {
+    val = adata[j];
+    for (i = j + 1; i < num;) {
+      if (g_strcmp0(adata[i], val) == 0) {
+	arrayndel2(array, i);
+	num--;
+      } else {
+	i++;
+      }
+    }
+  }
+}
+
 #define ARGBUFNUM 32
 
 int
