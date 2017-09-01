@@ -1,3 +1,10 @@
+2017-09-01  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11commn.c (GetPageSettingsFromGRA): check alias name
+	and duplications.
+
+	* src/object.c (arrayuniq_all_str): added.
+
 2017-08-30  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_subwin.c (update_viewer): added.
