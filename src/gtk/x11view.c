@@ -1391,6 +1391,9 @@ Evaluate(int x1, int y1, int x2, int y2, int err, struct Viewer *d)
 	menu_save_undo_single(UNDO_TYPE_EDIT, fileobj->name);
 	mask_selected_data(fileobj, selnum, &SelList);
 	arraydel(&SelList);
+	argv[0] = "data";
+	argv[1] = NULL;
+	UpdateAll(argv);
 	break;
       case IDEVMOVE:
 	NSetCursor(GDK_TCROSS);
@@ -2823,8 +2826,12 @@ mouse_down_move_data(struct Viewer *d)
     }
   }
 
-  if (selnum > 0)
+  if (selnum > 0) {
     message_box(NULL, _("Data points are moved."), "Confirm", RESPONS_OK);
+  }
+  argv[0] = "data";
+  argv[1] = NULL;
+  UpdateAll(argv);
 
  ErrEnd:
   move_data_cancel(d, FALSE);
