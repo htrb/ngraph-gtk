@@ -6676,6 +6676,8 @@ menu_undo(int redraw)
     undo_update_widgets(info, redraw);
   } else {
     undo_info_pop(info);
+    set_action_widget_sensitivity(EditUndoAction, menu_check_undo());
+    set_action_widget_sensitivity(EditRedoAction, menu_check_redo());
   }
   set_undo_menu_label();
 }
