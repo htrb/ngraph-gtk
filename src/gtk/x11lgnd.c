@@ -2142,6 +2142,7 @@ ObjListUpdate(struct obj_list_data *d, int clear, list_sub_window_set_val_func f
   if (! clear && d->select >= 0) {
     list_store_select_int(GTK_WIDGET(d->text), COL_ID, d->select);
   }
+  NgraphApp.Viewer.allclear = TRUE;
   update_viewer(d);
 }
 
