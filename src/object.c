@@ -411,10 +411,12 @@ arraydup(struct narray *array)
     return NULL;
   }
   *new_ary = *array;
-  new_ary->data = g_memdup(array->data, array->base * array->size);
-  if (new_ary->data == NULL) {
-    g_free(new_ary);
-    return NULL;
+  if (array->data) {
+    new_ary->data = g_memdup(array->data, array->base * array->size);
+    if (new_ary->data == NULL) {
+      g_free(new_ary);
+      return NULL;
+    }
   }
   return new_ary;
 }
@@ -1787,7 +1789,7 @@ undo_save(struct objlist *obj)
 
   inst->inst = dup_inst_list(obj);
   undo_clear_redo(obj);
-  
+
   inst->next = obj->undo;
   obj->undo = inst;
   return 0;
@@ -1876,7 +1878,7 @@ undo_redo(struct objlist *obj)
   obj->lastoid = redo->lastoid;
   obj->root = redo->inst;
   obj->redo = redo->next;
-  
+
   redo->lastinst = lastinst;
   redo->lastinst2 = lastinst2;
   redo->curinst = curinst;
