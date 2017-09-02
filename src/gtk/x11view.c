@@ -5084,31 +5084,6 @@ ViewerEvSize(GtkWidget *w, GtkAllocation *allocation, gpointer client_data)
   ChangeDPI();
 }
 
-static void
-show_layers(cairo_t *cr, struct Viewer *d)
-{
-  int r, i, n;
-  struct narray *array;
-  struct layer *layer;
-  char *obj;
-  void *ptr;
-
-  array = &Menulocal.drawrable;
-  n = arraynum(array);
-  for (i = 0; i < n; i++) {
-    obj = arraynget_str(array, i);
-    r = nhash_get_ptr(Menulocal.layers, obj, &ptr);
-    if (r) {
-      continue;
-    }
-    layer = ptr;
-    cairo_set_source_surface(cr, layer->pix,
-			     nround(- d->hscroll + d->cx),
-			     nround(- d->vscroll + d->cy));
-    cairo_paint(cr);
-  }
-}
-
 static gboolean
 ViewerEvPaint(GtkWidget *w, cairo_t *cr, gpointer client_data)
 {
@@ -5119,7 +5094,7 @@ ViewerEvPaint(GtkWidget *w, cairo_t *cr, gpointer client_data)
   if (ZoomLock) {
     return TRUE;
   }
- 
+
   if (Menulocal.pix && Menulocal.bg) {
     cairo_set_source_surface(cr, Menulocal.bg,
 			     nround(- d->hscroll + d->cx),
