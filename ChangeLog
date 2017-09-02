@@ -1,3 +1,7 @@
+2017-09-02  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/object.c (arraydup): bug fix: array->data can be NULL.
+
 2017-09-01  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/odata.c (f2dredraw): call "ignorestdio()" and "restorestdio()".
