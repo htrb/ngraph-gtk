@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.06.13\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2017-09-02 17:54+0900\n"
+"POT-Creation-Date: 2017-09-02 20:26+0900\n"
 "PO-Revision-Date: 2017-08-18 11:47+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -282,7 +282,7 @@ msgstr "背景色(_B):"
 
 #: src/gtk/x11axis.c:401 src/gtk/x11axis.c:3217 src/gtk/x11axis.c:3238
 #: src/gtk/x11axis.c:3271 src/gtk/x11lgnd.c:2906 src/gtk/x11lgnd.c:2917
-#: src/gtk/x11lgnd.c:3353 src/gtk/gtk_widget.c:1125
+#: src/gtk/x11lgnd.c:3357 src/gtk/gtk_widget.c:1125
 msgid "Color"
 msgstr "色"
 
@@ -522,7 +522,7 @@ msgid "_Italic"
 msgstr "斜体(_I)"
 
 #: src/gtk/x11axis.c:2091 src/gtk/x11axis.c:3264 src/gtk/x11dialg.c:249
-#: src/gtk/x11lgnd.c:3351 src/gtk/x11opt.c:1347
+#: src/gtk/x11lgnd.c:3355 src/gtk/x11opt.c:1347
 msgid "Font"
 msgstr "フォント"
 
@@ -1607,23 +1607,23 @@ msgstr "塗りつぶし"
 msgid "Fill rule"
 msgstr "ルール"
 
-#: src/gtk/x11lgnd.c:3401
+#: src/gtk/x11lgnd.c:3405
 msgid "path"
 msgstr "パス"
 
-#: src/gtk/x11lgnd.c:3402 src/odata.c:182
+#: src/gtk/x11lgnd.c:3406 src/odata.c:182
 msgid "rectangle"
 msgstr "矩形"
 
-#: src/gtk/x11lgnd.c:3403
+#: src/gtk/x11lgnd.c:3407
 msgid "arc"
 msgstr "円"
 
-#: src/gtk/x11lgnd.c:3404 src/odata.c:175
+#: src/gtk/x11lgnd.c:3408 src/odata.c:175
 msgid "mark"
 msgstr "マーク"
 
-#: src/gtk/x11lgnd.c:3405
+#: src/gtk/x11lgnd.c:3409
 msgid "text"
 msgstr "テキスト"
 
