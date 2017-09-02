@@ -1262,7 +1262,7 @@ add_file_prm(struct f2ddata *fp, MathEquationParametar *prm)
 
 static struct f2ddata *
 opendata(struct objlist *obj,N_VALUE *inst,
-	 struct f2dlocal *f2dlocal,int axis,int raw, int redraw)
+	 struct f2dlocal *f2dlocal,int axis,int raw)
 {
   int fid;
   char *file;
@@ -1331,9 +1331,7 @@ opendata(struct objlist *obj,N_VALUE *inst,
   switch (src) {
   case DATA_SOURCE_FILE:
     if (file==NULL) {
-      if (!redraw ) {
-	error(obj,ERRFILE);
-      }
+      error(obj,ERRFILE);
       return NULL;
     }
     break;
@@ -1341,9 +1339,7 @@ opendata(struct objlist *obj,N_VALUE *inst,
     break;
   case DATA_SOURCE_RANGE:
     if (min == max || div < 2) {
-      if (!redraw ) {
-	error(obj,ERR_INVALID_RANGE);
-      }
+      error(obj,ERR_INVALID_RANGE);
       return NULL;
     }
     if (min > max) {
@@ -1358,17 +1354,13 @@ opendata(struct objlist *obj,N_VALUE *inst,
   if (axis) {
     axid = get_axis_prm(obj, inst, AXIS_X, &ax_prm);
     if (axid  < 0) {
-      if (!redraw ) {
-	error(obj, - axid);
-      }
+      error(obj, - axid);
       return NULL;
     }
 
     ayid = get_axis_prm(obj, inst, AXIS_Y, &ay_prm);
     if (ayid  < 0) {
-      if (!redraw ) {
-	error(obj, - ayid);
-      }
+      error(obj, - ayid);
       return NULL;
     }
 
@@ -1376,9 +1368,7 @@ opendata(struct objlist *obj,N_VALUE *inst,
     ip2=-ay_prm.vy*ax_prm.vx+ay_prm.vx*ax_prm.vy;
 
     if ((fabs(ip1)<=1e-15) || (fabs(ip2)<=1e-15)) {
-      if (!redraw ) {
-	error(obj,ERRAXISDIR);
-      }
+      error(obj,ERRAXISDIR);
       return NULL;
     }
   } else {
@@ -1397,35 +1387,27 @@ opendata(struct objlist *obj,N_VALUE *inst,
   case DATA_SOURCE_FILE:
     fp->file=file;
     if ((fp->fd=nfopen(file,"rt"))==NULL) {
-      if (!redraw ) {
-	error2(obj,ERROPEN,file);
-      }
+      error2(obj,ERROPEN,file);
       g_free(fp);
       return NULL;
     }
 
     if (fstat(fileno(fp->fd), &stat_buf)) {
-      if (!redraw ) {
-	error2(obj,ERROPEN,file);
-      }
+      error2(obj,ERROPEN,file);
       fclose(fp->fd);
       g_free(fp);
       return NULL;
     }
     fp->mtime = stat_buf.st_mtime;
     if (file==NULL) {
-      if (!redraw ) {
-	error(obj,ERRFILE);
-      }
+      error(obj,ERRFILE);
       return NULL;
     }
     break;
   case DATA_SOURCE_ARRAY:
     open_array(array, &fp->array_data);
     if (fp->array_data.data_num < 1) {
-      if (!redraw ) {
-	error2(obj,ERROPEN,file);	/* to be fixed */
-      }
+      error2(obj,ERROPEN,file);	/* to be fixed */
       g_free(fp);
       return NULL;
     }
@@ -5920,7 +5902,7 @@ f2ddraw(struct objlist *obj, N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   struct narray *lstyle;
   int snum, *style;
   struct f2ddata *fp;
-  int rcode, redraw;
+  int rcode;
   int w, h, clip, zoom;
   char *fit, *field, *array;
   char *file;
@@ -5928,8 +5910,6 @@ f2ddraw(struct objlist *obj, N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv))
     return 1;
-
-  redraw = (argv[1][0] == 'r');
 
   _getobj(obj, "_local", inst, &f2dlocal);
   _getobj(obj, "source", inst, &src);
@@ -5966,7 +5946,7 @@ f2ddraw(struct objlist *obj, N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   snum = arraynum(lstyle);
   style = arraydata(lstyle);
 
-  fp = opendata(obj, inst, f2dlocal, TRUE, FALSE, redraw);
+  fp = opendata(obj, inst, f2dlocal, TRUE, FALSE);
   if (fp == NULL) {
     return 1;
   }
@@ -6191,7 +6171,7 @@ f2devaluate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
   }
 
   _getobj(obj,"_local",inst,&f2dlocal);
-  if ((fp=opendata(obj,inst,f2dlocal,TRUE,FALSE,FALSE))==NULL) return 1;
+  if ((fp=opendata(obj,inst,f2dlocal,TRUE,FALSE))==NULL) return 1;
   if (fp->need2pass || fp->final < -1) {
     if (getminmaxdata(fp, f2dlocal)==-1) {
       closedata(fp, f2dlocal);
@@ -6323,6 +6303,7 @@ f2dredraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int redrawf, num, dmax, type, source;
   int GC;
+  struct savedstdio save;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   _getobj(obj,"source",inst,&source);
@@ -6332,9 +6313,13 @@ f2dredraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   _getobj(obj, "type", inst, &type);
 
   if (num > 0 && (dmax == 0 || num <= dmax) && redrawf) {
+    ignorestdio(&save);
     f2ddraw(obj,inst,rval,argc,argv);
+    restorestdio(&save);
   } else if (source == DATA_SOURCE_RANGE && redrawf) {
+    ignorestdio(&save);
     f2ddraw(obj,inst,rval,argc,argv);
+    restorestdio(&save);
   } else {
     _getobj(obj,"GC",inst,&GC);
     if (GC<0) return 0;
@@ -7023,7 +7008,7 @@ f2dopendata(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
   fp=f2dlocal->data;
   if (fp!=NULL) closedata(fp, f2dlocal);
   f2dlocal->data=NULL;
-  if ((fp=opendata(obj,inst,f2dlocal,f2dlocal->coord,FALSE,FALSE))==NULL) return 1;
+  if ((fp=opendata(obj,inst,f2dlocal,f2dlocal->coord,FALSE))==NULL) return 1;
   if (fp->need2pass || fp->final < -1) {
     if (getminmaxdata(fp, f2dlocal)==-1) {
       closedata(fp, f2dlocal);
@@ -7092,7 +7077,7 @@ f2dopendataraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **a
   fp=f2dlocal->data;
   if (fp!=NULL) closedata(fp, f2dlocal);
   f2dlocal->data=NULL;
-  if ((fp=opendata(obj,inst,f2dlocal,FALSE,TRUE,FALSE))==NULL) return 1;
+  if ((fp=opendata(obj,inst,f2dlocal,FALSE,TRUE))==NULL) return 1;
 
   if (fp->final < -1) {
     if (getminmaxdata(fp, f2dlocal) == -1) {
@@ -7252,7 +7237,7 @@ f2dstat_sub(struct objlist *obj,N_VALUE *inst, const char *field, struct f2dloca
     }
   }
 
-  fp = opendata(obj, inst, f2dlocal, FALSE, FALSE, FALSE);
+  fp = opendata(obj, inst, f2dlocal, FALSE, FALSE);
   if (fp == NULL) return 1;
 
   if (fp->need2pass || fp->final < -1) {
@@ -7498,7 +7483,7 @@ f2dstat2(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
   field=argv[1];
   line=*(int *)(argv[2]);
   _getobj(obj,"_local",inst,&f2dlocal);
-  if ((fp=opendata(obj,inst,f2dlocal,FALSE,FALSE,FALSE))==NULL) return 1;
+  if ((fp=opendata(obj,inst,f2dlocal,FALSE,FALSE))==NULL) return 1;
   if (fp->need2pass || fp->final < -1) {
     if (getminmaxdata(fp, f2dlocal)==-1) {
       closedata(fp, f2dlocal);
@@ -7747,7 +7732,7 @@ f2dboundings(struct objlist *obj,N_VALUE *inst,N_VALUE *rval, int argc,char **ar
   }
   _getobj(obj,"_local",inst,&f2dlocal);
 
-  fp = opendata(obj,inst,f2dlocal,FALSE,FALSE,FALSE);
+  fp = opendata(obj,inst,f2dlocal,FALSE,FALSE);
   if (fp == NULL)
     return 1;
 
@@ -8584,7 +8569,7 @@ f2doutputfile(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
 
   if (div<1) div=1;
 
-  fp = opendata(obj,inst,f2dlocal,FALSE,FALSE,FALSE);
+  fp = opendata(obj,inst,f2dlocal,FALSE,FALSE);
   if (fp == NULL) {
     return 1;
   }
