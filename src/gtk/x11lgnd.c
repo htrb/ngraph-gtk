@@ -3056,6 +3056,7 @@ select_type(GtkComboBox *w, gpointer user_data)
     if (fill_rule == enum_id && ! modified) {
       return;
     }
+    menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
     fill_rule = enum_id;
     putobj(d->obj, "fill_rule", sel, &fill_rule);
     break;
@@ -3064,10 +3065,12 @@ select_type(GtkComboBox *w, gpointer user_data)
     if (join == enum_id) {
       return;
     }
+    menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
     putobj(d->obj, "join", sel, &enum_id);
     break;
   case LEGEND_COMBO_ITEM_CLOSE_PATH:
     gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);
+    menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
     active = ! active;
     putobj(d->obj, "close_path", sel, &active);
     set_stroke(d->obj, sel, TRUE);
@@ -3206,6 +3209,7 @@ select_line_type(GtkComboBox *w, gpointer user_data)
     return;
   }
 
+  menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
   putobj(d->obj, "type", sel, &col_type);
 
   if (enum_id >= 0) {
