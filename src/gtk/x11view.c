@@ -1946,7 +1946,7 @@ ShowFocusFrame(cairo_t *cr, const struct Viewer *d)
   restorestdio(&save);
 }
 
-static void
+static int
 get_focused_obj_array(struct narray *focusobj, char **objs)
 {
   int i, j, obj_n, n, axis;
@@ -1978,8 +1978,11 @@ get_focused_obj_array(struct narray *focusobj, char **objs)
   if (axis) {
     objs[i] = "axisgrid";
     i++;
+    objs[i] = "data";
+    i++;
   }
   objs[i] = NULL;
+  return i;
 }
 
 static void
@@ -3396,6 +3399,11 @@ mouse_up_change(unsigned int state, TPoint *point, double zoom, struct Viewer *d
     }
     argv[0] = (obj) ? obj->name : NULL;
     argv[1] = NULL;
+    if (axis) {
+      argv[1] = "data";
+      argv[2] = "axisgrid";
+      argv[3] = NULL;
+    }
     UpdateAll(argv);
   } else {
     d->FrameOfsX = d->FrameOfsY = 0;
