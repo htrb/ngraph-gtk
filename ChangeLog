@@ -1,5 +1,8 @@
 2017-09-03  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11axis.c (axis_save_undo): save undo information of the
+	data object.
+
 	* src/gtk/ox11menu.c (mx_redraw): use the function "GRArederaw()".
 
 	* src/gra.c (_GRAredraw): now static function.
