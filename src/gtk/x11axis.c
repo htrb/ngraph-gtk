@@ -567,9 +567,10 @@ SectionDialogAxisR(GtkWidget *w, gpointer client_data)
 static void
 axis_save_undo(int type)
 {
-  char *arg[3];
+  char *arg[4];
   arg[0] = "axis";
   arg[1] = "axisgrid";
+  arg[1] = "data";
   arg[2] = NULL;
   menu_save_undo(type, arg);
 }
