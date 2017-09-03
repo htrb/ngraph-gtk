@@ -1480,7 +1480,7 @@ mx_redraw(struct objlist *obj, N_VALUE *inst, char **objects)
     GRAredraw_layers(obj, inst, TRUE, n, objects);
   } else {
     GRAredraw(obj, inst, TRUE, n);
-  }    
+  }
   mxflush(obj, inst, NULL, 0, NULL);
 
   main_window_redraw();
