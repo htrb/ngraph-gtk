@@ -1,5 +1,7 @@
 2017-09-03  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/gtk/ox11menu.c (mx_redraw): use the function "GRArederaw()".
+
 	* src/gra.c (_GRAredraw): now static function.
 
 	* src/gtk/x11graph.c (CmGraphShell): call "set_graph_modified()".
