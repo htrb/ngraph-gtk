@@ -1465,6 +1465,7 @@ void
 mx_redraw(struct objlist *obj, N_VALUE *inst, char **objects)
 {
   int n;
+  char *objs[OBJ_MAX];
 
   if (Menulocal.region) {
     mx_clear(Menulocal.region, objects);
@@ -1476,11 +1477,19 @@ mx_redraw(struct objlist *obj, N_VALUE *inst, char **objects)
     n = 0;
   }
 
-  if (objects) {
-    GRAredraw_layers(obj, inst, TRUE, n, objects);
-  } else {
-    GRAredraw(obj, inst, TRUE, n);
+  if (objects == NULL) {
+    int i, num;
+    struct narray *array;
+    array = &Menulocal.drawrable;
+    num = arraynum(array);
+    for (i = 0; i < num; i++) {
+      objs[i] = arraynget_str(array, i);
+    }
+    objs[i] = NULL;
+    objects = objs;
   }
+
+  GRAredraw_layers(obj, inst, TRUE, n, objects);
   mxflush(obj, inst, NULL, 0, NULL);
 
   main_window_redraw();
@@ -1550,7 +1559,7 @@ flush_layers(cairo_t *cr)
   struct layer *layer;
   char *obj;
   void *ptr;
-  
+
   array = &Menulocal.drawrable;
   n = arraynum(array);
   for (i = 0; i < n; i++) {
@@ -1602,7 +1611,7 @@ mxflush(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
       cairo_surface_flush(surface);
     }
   }
-  
+
   if (Menulocal.pix) {
     cr = cairo_create(Menulocal.pix);
     clear_region(cr, NULL);
