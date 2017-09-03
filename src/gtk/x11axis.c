@@ -570,8 +570,8 @@ axis_save_undo(int type)
   char *arg[4];
   arg[0] = "axis";
   arg[1] = "axisgrid";
-  arg[1] = "data";
-  arg[2] = NULL;
+  arg[2] = "data";
+  arg[3] = NULL;
   menu_save_undo(type, arg);
 }
 
