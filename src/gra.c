@@ -401,7 +401,7 @@ GRAgetlist(int GC,int *oid,char **field,int n)
   return getobjlist(sdata[n],oid,field,NULL);
 }
 
-void
+static void
 _GRAredraw(int GC,int snum,char **sdata,int setredrawf,int redraw_num,
                 int addn,struct objlist *obj,N_VALUE *inst,const char *field)
 {

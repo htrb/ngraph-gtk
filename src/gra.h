@@ -121,8 +121,6 @@ int GRAreopen(int GC);
 int GRAopened(int GC);
 void _GRAclose(int GC);
 void GRAclose(int GC);
-void _GRAredraw(int GC,int snum,char **sdata,int setredrawf,int redrawf,
-                int addn,struct objlist *obj,N_VALUE *inst,const char *field);
 void GRAredraw(struct objlist *obj,N_VALUE *inst,int setredrawf,int redrawf);
 void GRAredraw_layers(struct objlist *obj, N_VALUE *inst, int setredrawf, int redraw_num, char **objects);
 void GRAaddlist(int GC,struct objlist *obj,N_VALUE *inst,
