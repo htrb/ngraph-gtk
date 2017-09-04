@@ -1,3 +1,7 @@
+2017-09-04  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/omerge.c (mergeredraw): draw a rectangle instead of a image.
+
 2017-09-03  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11axis.c (axis_save_undo): save undo information of the
