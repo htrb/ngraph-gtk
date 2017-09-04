@@ -1,5 +1,8 @@
 2017-09-04  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11view.c (CmEditMenuCB): call the function
+	"set_focus_sensitivity()".
+
 	* src/omerge.c (mergeredraw): draw a rectangle instead of a image.
 
 2017-09-03  Hiroyuki Ito  <ZXB01226 at nifty.com>
