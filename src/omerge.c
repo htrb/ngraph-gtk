@@ -187,8 +187,22 @@ mergeredraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
   if (redrawf && line_num > 0 && (dmax == 0 || line_num < dmax * 10)) {
     mergedraw(obj,inst,rval,argc,argv);
   } else {
+    struct narray *array;
+    int x1, x2, y1, y2, zoom, w, h;
     _getobj(obj,"GC",inst,&GC);
     if (GC<0) return 0;
+    _getobj(obj, "bbox", inst, &array);
+    if (array) {
+      x1 = arraynget_int(array,0);
+      y1 = arraynget_int(array,1);
+      x2 = arraynget_int(array,2);
+      y2 = arraynget_int(array,3);
+      GRAregion(GC, &w, &h, &zoom);
+      GRAview(GC, 0, 0, w * 10000.0 / zoom, h * 10000.0 / zoom, 1);
+      GRAcolor(GC, 0, 0, 0, 255);
+      GRAlinestyle(GC, 0, NULL, 10, GRA_LINE_CAP_BUTT, GRA_LINE_JOIN_MITER, 1000);
+      GRArectangle(GC, x1, y1, x2, y2, 0);
+    }
     GRAaddlist(GC,obj,inst,(char *)argv[0],(char *)argv[1]);
   }
   return 0;
