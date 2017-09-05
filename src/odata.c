@@ -4255,13 +4255,13 @@ f2derror(struct objlist *obj,struct f2ddata *fp,int code,char *s)
 
   switch (fp->src) {
   case DATA_SOURCE_FILE:
-    sprintf(buf,"#%d: %s (%d:%s)",fp->id,fp->file,fp->dline,s);
+    snprintf(buf, sizeof(buf), "#%d: %s (%d:%s)",fp->id,fp->file,fp->dline,s);
     break;
   case DATA_SOURCE_ARRAY:
-    sprintf(buf,"#%d: Array (%s)",fp->id, s);
+    snprintf(buf, sizeof(buf), "#%d: Array (%s)",fp->id, s);
     break;
  case DATA_SOURCE_RANGE:
-    sprintf(buf,"#%d: Range (%s)",fp->id, s);
+   snprintf(buf, sizeof(buf), "#%d: Range (%s)",fp->id, s);
     break;
   }
   error2(obj,code,buf);
