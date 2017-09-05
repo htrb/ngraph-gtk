@@ -292,7 +292,7 @@ check_last_insts(struct objlist *parent, struct narray *array)
 }
 
 static void
-focus_new_insts(struct objlist *parent, struct narray *array)
+focus_new_insts(struct objlist *parent, struct narray *array, char **objects)
 {
   struct objlist *ocur;
   int i, instnum, prev_instnum, oid;
@@ -304,6 +304,11 @@ focus_new_insts(struct objlist *parent, struct narray *array)
     prev_instnum = arraynget_int(array, 0);
     arrayndel(array, 0);
     if (chkobjfield(ocur, "bbox") == 0) {
+      if (instnum != prev_instnum) {
+	*objects = ocur->name;
+	objects++;
+	*objects = NULL;
+      }
       for (i = prev_instnum + 1; i <= instnum; i++) {
 	getobj(ocur, "oid", i, 0, NULL, &oid);
 	add_focus_obj(NgraphApp.Viewer.focusobj, ocur, oid);
@@ -313,7 +318,7 @@ focus_new_insts(struct objlist *parent, struct narray *array)
       }
     }
     if (ocur->child) {
-      focus_new_insts(ocur, array);
+      focus_new_insts(ocur, array, objects);
     }
     ocur = ocur->next;
   }
@@ -326,6 +331,7 @@ paste_cb(GtkClipboard *clipboard, const gchar *text, gpointer data)
   struct narray idarray;
   struct objlist *draw_obj;
   GdkWindow *window;
+  char *objects[OBJ_MAX] = {NULL};
 
   if (text == NULL)
     return;
@@ -354,7 +360,7 @@ paste_cb(GtkClipboard *clipboard, const gchar *text, gpointer data)
   menu_save_undo(UNDO_TYPE_PASTE, NULL);
   eval_script(text, TRUE);
 
-  focus_new_insts(draw_obj, &idarray);
+  focus_new_insts(draw_obj, &idarray, objects);
   arraydel(&idarray);
 
   if (arraynum(NgraphApp.Viewer.focusobj) > 0) {
@@ -362,7 +368,7 @@ paste_cb(GtkClipboard *clipboard, const gchar *text, gpointer data)
     NgraphApp.Viewer.allclear = FALSE;
     NgraphApp.Viewer.ShowFrame = TRUE;
     gtk_widget_grab_focus(NgraphApp.Viewer.Win);
-    UpdateAll(NULL);
+    UpdateAll(objects);
   }
 }
 
