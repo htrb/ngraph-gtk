@@ -273,7 +273,7 @@ CutFocusedObjects(void)
   return 0;
 }
 
-void
+static void
 check_last_insts(struct objlist *parent, struct narray *array)
 {
   struct objlist *ocur;
@@ -291,7 +291,7 @@ check_last_insts(struct objlist *parent, struct narray *array)
   return;
 }
 
-void
+static void
 focus_new_insts(struct objlist *parent, struct narray *array)
 {
   struct objlist *ocur;
