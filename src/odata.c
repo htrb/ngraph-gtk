@@ -6303,7 +6303,6 @@ f2dredraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int redrawf, num, dmax, type, source;
   int GC;
-  struct savedstdio save;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   _getobj(obj,"source",inst,&source);
@@ -6313,13 +6312,9 @@ f2dredraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   _getobj(obj, "type", inst, &type);
 
   if (num > 0 && (dmax == 0 || num <= dmax) && redrawf) {
-    ignorestdio(&save);
     f2ddraw(obj,inst,rval,argc,argv);
-    restorestdio(&save);
   } else if (source == DATA_SOURCE_RANGE && redrawf) {
-    ignorestdio(&save);
     f2ddraw(obj,inst,rval,argc,argv);
-    restorestdio(&save);
   } else {
     _getobj(obj,"GC",inst,&GC);
     if (GC<0) return 0;
