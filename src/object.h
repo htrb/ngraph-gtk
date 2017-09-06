@@ -221,6 +221,8 @@ void arrayrsort_str(struct narray *array);
 void arraysort_str(struct narray *array);
 void arrayuniq_str(struct narray *array);
 void arrayuniq_all_str(struct narray *array);
+int arraycmp(struct narray *a, struct narray *b);
+int arraycpy(struct narray *a, struct narray *b);
 
 int getargc(char **arg);
 char **arg_add(char ***arg,void *ptr);

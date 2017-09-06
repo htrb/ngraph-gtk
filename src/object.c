@@ -399,6 +399,50 @@ arrayclear2(struct narray *array)
   array->num=0;
 }
 
+int
+arraycmp(struct narray *a, struct narray *b)
+{
+  if (a == NULL || b == NULL) {
+    return 1;
+  }
+  if (a->base != b->base) {
+    return 1;
+  }
+  if (a->num != b->num) {
+    return 1;
+  }
+  if (a->data == NULL && b->data == NULL) {
+    return 0;
+  }
+  if (a->data == NULL || b->data == NULL) {
+    return 1;
+  }
+  return memcmp(a->data, b->data, a->base * a->num);
+}
+
+int
+arraycpy(struct narray *dest, struct narray *src)
+{
+  void *data;
+  if (dest == NULL || src == NULL) {
+    return 1;
+  }
+  if (dest->base != src->base) {
+    return 1;
+  }
+  if (src->num > dest->size) {
+    data = g_realloc(dest->data, src->base * src->size);
+    if (data == NULL) {
+      return 1;
+    }
+    dest->data = data;
+    dest->size = src->size;
+  }
+  memcpy(dest->data, src->data, src->num * src->base);
+  dest->num = src->num;
+  return 0;
+}
+
 struct narray *
 arraydup(struct narray *array)
 {
