@@ -638,6 +638,27 @@ create_spin_entry(int min, int max, int inc,
 }
 
 static void
+set_custom_palette(GtkWidget *dlg)
+{
+  int n;
+  struct narray *palette;
+  GdkRGBA *colors;
+
+  palette = &(Menulocal.custom_palette);
+  n = arraynum(palette);
+  if (n < 1) {
+    return;
+  }
+  colors = arraydata(palette);
+  if (n >= 18) {
+    gtk_color_chooser_add_palette(GTK_COLOR_CHOOSER(dlg), GTK_ORIENTATION_HORIZONTAL, 9, n - 9, colors);
+    gtk_color_chooser_add_palette(GTK_COLOR_CHOOSER(dlg), GTK_ORIENTATION_HORIZONTAL, 9, 9, colors + (n - 9));
+  } else {
+    gtk_color_chooser_add_palette(GTK_COLOR_CHOOSER(dlg), GTK_ORIENTATION_HORIZONTAL, 9, n - 9, colors);
+  }
+}
+
+static void
 show_color_sel(GtkWidget *w, gpointer user_data)
 {
   GdkRGBA col;
@@ -652,13 +673,106 @@ show_color_sel(GtkWidget *w, gpointer user_data)
   gtk_widget_set_tooltip_text(w, buf);
 }
 
+void
+add_default_color(struct narray *palette)
+{
+  const gchar *default_colors[9][3] = {
+    { "#ef2929", "#cc0000", "#a40000" }, /* Scarlet Red */
+    { "#fcaf3e", "#f57900", "#ce5c00" }, /* Orange */
+    { "#fce94f", "#edd400", "#c4a000" }, /* Butter */
+    { "#8ae234", "#73d216", "#4e9a06" }, /* Chameleon */
+    { "#729fcf", "#3465a4", "#204a87" }, /* Sky Blue */
+    { "#ad7fa8", "#75507b", "#5c3566" }, /* Plum */
+    { "#e9b96e", "#c17d11", "#8f5902" }, /* Chocolate */
+    { "#888a85", "#555753", "#2e3436" }, /* Aluminum 1 */
+    { "#eeeeec", "#d3d7cf", "#babdb6" }  /* Aluminum 2 */
+  };
+  GdkRGBA color;
+  int i, j;
+  for (j = 0; j < 3; j++) {
+    for (i = 0; i < 9; i++) {
+      gdk_rgba_parse(&color, default_colors[i][j]);
+      arrayadd(palette, &color);
+    }
+  }
+}
+
+void
+add_default_gray(struct narray *palette)
+{
+  const gchar *default_grays[9] = {
+    "#000000", /* black */
+    "#2e3436", /* very dark gray */
+    "#555753", /* darker gray */
+    "#888a85", /* dark gray */
+    "#babdb6", /* medium gray */
+    "#d3d7cf", /* light gray */
+    "#eeeeec", /* lighter gray */
+    "#f3f3f3", /* very light gray */
+    "#ffffff"  /* white */
+  };
+  GdkRGBA color;
+  int i;
+  for (i = 0; i < 9; i++) {
+    gdk_rgba_parse(&color, default_grays[i]);
+    arrayadd(palette, &color);
+  }
+}
+
+static void
+set_default_palette(GtkWidget *cc)
+{
+  struct narray palette;
+  gint n;
+
+  arrayinit(&palette, sizeof(GdkRGBA));
+  add_default_color(&palette);
+  n = arraynum(&palette);
+  gtk_color_chooser_add_palette(GTK_COLOR_CHOOSER(cc), GTK_ORIENTATION_HORIZONTAL, 9, n, arraydata(&palette));
+
+  arrayclear(&palette);
+  add_default_gray(&palette);
+  n = arraynum(&palette);
+  gtk_color_chooser_add_palette(GTK_COLOR_CHOOSER(cc), GTK_ORIENTATION_HORIZONTAL, n, n, arraydata(&palette));
+  arraydel(&palette);
+}
+
+#define CUSTOM_PALETTE_KEY "custom_palette"
+
+static void
+show_color_dialog(GtkButton *btn, gpointer user_data)
+{
+  int custom_palette;
+  GdkRGBA color;
+
+  gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(btn), &color);
+
+  custom_palette = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(btn), CUSTOM_PALETTE_KEY));
+  if (Menulocal.use_custom_palette) {
+    if (custom_palette != Menulocal.custom_palette_id) {
+      gtk_color_chooser_add_palette(GTK_COLOR_CHOOSER(btn), GTK_ORIENTATION_HORIZONTAL, 0, 0, NULL);
+      set_custom_palette(GTK_WIDGET(btn));
+      g_object_set_data(G_OBJECT(btn), CUSTOM_PALETTE_KEY, GINT_TO_POINTER(Menulocal.custom_palette_id));
+    }
+   } else {
+    if (custom_palette) {
+      gtk_color_chooser_add_palette(GTK_COLOR_CHOOSER(btn), GTK_ORIENTATION_HORIZONTAL, 0, 0, NULL);
+      set_default_palette(GTK_WIDGET(btn));
+      g_object_set_data(G_OBJECT(btn), CUSTOM_PALETTE_KEY, GINT_TO_POINTER(0));
+    }
+  }
+  gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(btn), &color);
+}
+
 GtkWidget *
 create_color_button(GtkWidget *win)
 {
   GtkWidget *w;
 
   w = gtk_color_button_new();
+  g_object_set_data(G_OBJECT(w), CUSTOM_PALETTE_KEY, GINT_TO_POINTER(0));
   g_signal_connect(w, "color-set", G_CALLBACK(show_color_sel), win);
+  g_signal_connect(w, "clicked", G_CALLBACK(show_color_dialog), win);
 
   return w;
 }
@@ -1177,9 +1291,11 @@ select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type)
   color.alpha = a / 255.0;
 
   dlg = gtk_color_chooser_dialog_new(title, GTK_WINDOW(NgraphApp.FileWin.Win));
+  if (Menulocal.use_custom_palette) {
+    set_custom_palette(dlg);
+  }
   gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(dlg), &color);
   gtk_color_chooser_set_use_alpha(GTK_COLOR_CHOOSER(dlg), Menulocal.use_opacity);
-
   response = ndialog_run(dlg);
   gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(dlg), &color);
 

@@ -107,12 +107,14 @@ enum menu_config_type {
   MENU_CONFIG_TYPE_WINDOW,
   MENU_CONFIG_TYPE_CHILD_WINDOW,
   MENU_CONFIG_TYPE_COLOR,
+  MENU_CONFIG_TYPE_COLOR_ARY,
   MENU_CONFIG_TYPE_SCRIPT,
   MENU_CONFIG_TYPE_DRIVER,
   MENU_CONFIG_TYPE_CHARMAP,
 };
 
 static int menu_config_set_four_elements(char *s2, void *data);
+static int menu_config_set_custom_palette(char *s2, void *data);
 static int menu_config_set_child_window_geometry(char *s2, void *data);
 static int menu_config_set_bgcolor(char *s2, void *data);
 static int menu_config_set_ext_driver(char *s2, void *data);
@@ -241,6 +243,8 @@ static struct menu_config MenuConfigMisc[] = {
   {"data_head_lines",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.data_head_lines},
   {"use_opacity",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.use_opacity},
   {"select_data_on_export",	MENU_CONFIG_TYPE_BOOL,    NULL, &Menulocal.select_data},
+  {"use_custom_palette",	MENU_CONFIG_TYPE_BOOL,    NULL, &Menulocal.use_custom_palette},
+  {"custom_palette",		MENU_CONFIG_TYPE_COLOR_ARY, menu_config_set_custom_palette, NULL},
   {NULL},
 };
 
@@ -397,6 +401,37 @@ add_color_to_array(struct menu_config *cfg, struct narray *conf)
 }
 
 static void
+add_color_ary_to_array(struct menu_config *cfg, struct narray *conf)
+{
+  GString *str;
+  char *buf;
+  struct narray *palette;
+  int i, n;
+  GdkRGBA *color;
+  unsigned int r, g, b, a;
+  palette = &(Menulocal.custom_palette);
+  n = arraynum(palette);
+  if (n < 1) {
+    return;
+  }
+
+  str = g_string_new(cfg->name);
+  g_string_append_c(str, '=');
+  for (i = 0; i < n; i++) {
+     color = arraynget(palette, i);
+     r = color->red * 0xff;
+     g = color->green * 0xff;
+     b = color->blue * 0xff;
+     a = color->alpha * 0xff;
+     g_string_append_printf(str, "%02x%02x%02x%02x%s", r, g, b, a, (i == n -1) ? "\n" : ",");
+   }
+   buf = g_string_free(str, FALSE);
+   if (buf) {
+     arrayadd(conf, &buf);
+   }
+}
+
+static void
 add_prm_str_to_array(struct menu_config *cfg, struct narray *conf)
 {
   char *buf, *prm;
@@ -492,6 +527,9 @@ menu_save_config_sub(struct menu_config *cfg, struct narray *conf)
       break;
     case MENU_CONFIG_TYPE_COLOR:
       add_color_to_array(cfg + i, conf);
+      break;
+    case MENU_CONFIG_TYPE_COLOR_ARY:
+      add_color_ary_to_array(cfg + i, conf);
       break;
     case MENU_CONFIG_TYPE_STRING:
       add_prm_str_to_array(cfg + i, conf);
@@ -657,6 +695,35 @@ menu_config_set_bgcolor(char *s2, void *data)
     Menulocal.bg_b = (val & 0xffU) / 255.0;
   }
   g_free(f1);
+  return 0;
+}
+
+static int
+menu_config_set_custom_palette(char *s2, void *data)
+{
+  gchar **colors, **ptr;
+  unsigned int r, g, b, a;
+  struct narray *palette;
+  GdkRGBA color;
+
+  colors = g_strsplit(s2, ",", 0);
+  if (colors == NULL) {
+    return 0;
+  }
+  palette = &(Menulocal.custom_palette);
+  arrayclear(palette);
+  ptr = colors;
+  while (*ptr) {
+    r = g = b = a = 0xff;
+    sscanf(*ptr, "%02x%02x%02x%02x", &r, &g, &b, &a);
+    color.red = r / 255.0;
+    color.green = g / 255.0;
+    color.blue = b / 255.0;
+    color.alpha = a / 255.0;
+    arrayadd(palette, &color);
+    ptr++;
+  }
+  g_strfreev(colors);
   return 0;
 }
 
@@ -858,6 +925,7 @@ mgtkloadconfig(void)
 	break;
       case MENU_CONFIG_TYPE_CHARMAP:
       case MENU_CONFIG_TYPE_COLOR:
+      case MENU_CONFIG_TYPE_COLOR_ARY:
       case MENU_CONFIG_TYPE_SCRIPT:
       case MENU_CONFIG_TYPE_DRIVER:
       case MENU_CONFIG_TYPE_WINDOW:
@@ -1104,6 +1172,7 @@ menulocal_finalize(void)
   }
 
   arraydel2(&Menulocal.drawrable);
+  arraydel(&Menulocal.custom_palette);
 
   g_free(Menulocal.fileopendir);
   Menulocal.fileopendir = NULL;
@@ -1113,6 +1182,31 @@ menulocal_finalize(void)
 
   Menulocal.obj = NULL;
   Menulocal.local = NULL;
+}
+
+static void
+init_custom_palette(void)
+{
+  struct narray *palette;
+  int i, j, k;
+  unsigned int c[] = {0xff, 0xcc, 0x99};
+  GdkRGBA color;
+
+  palette = &(Menulocal.custom_palette);
+  arrayclear(palette);
+  add_default_color(palette);
+  for (i = 0; i < 3; i++) {
+    for (j = 0; j < 3; j++) {
+      for (k = 0; k < 3; k++) {
+	color.red = c[j] / 255.0;
+	color.green = c[i] / 255.0;
+	color.blue = c[k] / 255.0;
+	color.alpha = 1.0;
+	arrayadd(palette, &color);
+      }
+    }
+  }
+  add_default_gray(palette);
 }
 
 static int
@@ -1187,6 +1281,11 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
 
   arrayinit(&(Menulocal.drawrable), sizeof(char *));
   menuadddrawrable(chkobject("draw"), &(Menulocal.drawrable));
+
+  arrayinit(&(Menulocal.custom_palette), sizeof(GdkRGBA));
+  init_custom_palette();
+  Menulocal.use_custom_palette = FALSE;
+  Menulocal.custom_palette_id = 1;
 
   Menulocal.windpi = DEFAULT_DPI;
   Menulocal.redrawf = TRUE;

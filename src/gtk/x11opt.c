@@ -1225,6 +1225,9 @@ MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->use_opacity), Menulocal.use_opacity);
 
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->select_data), Menulocal.select_data);
+
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->use_custom_palette), Menulocal.use_custom_palette);
+  arraycpy(&(d->tmp_palette), &(Menulocal.custom_palette));
 }
 
 static void
@@ -1241,6 +1244,90 @@ set_file_in_entry(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, g
   g_free(file);
 }
 
+#define PALETTE_COLUMN 9
+static GtkWidget **
+create_custom_palette_buttons(struct MiscDialog *d, GtkWidget *box)
+{
+  struct narray *palette;
+  GdkRGBA *colors;
+  GtkWidget *btn, *bbox, **btns;
+  int i, n;
+
+  palette = &(d->tmp_palette);
+  n = arraynum(palette);
+  if (n < 1) {
+    return NULL;
+  }
+  btns = g_malloc(sizeof(*btns) * (n + 1));
+  if (btns == NULL) {
+    return NULL;
+  }
+  colors = arraydata(palette);
+  bbox = NULL;
+  for (i = 0; i < n; i++) {
+    if (i % PALETTE_COLUMN == 0) {
+      if (bbox) {
+	gtk_box_pack_start(GTK_BOX(box), bbox, FALSE, FALSE, 0);
+      }
+      bbox = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
+      gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_START);
+    }
+    btn = gtk_color_button_new_with_rgba(colors + i);
+    gtk_box_pack_start(GTK_BOX(bbox), btn, FALSE, FALSE, 4);
+    btns[i] = btn;
+  }
+  btns[i] = NULL;
+  if (bbox) {
+    gtk_box_pack_start(GTK_BOX(box), bbox, FALSE, FALSE, 0);
+  }
+  return btns;
+}
+
+static void
+save_custom_palette(struct MiscDialog *d, GtkWidget **btns)
+{
+  struct narray *palette;
+  GdkRGBA rgba;
+  palette = &(d->tmp_palette);
+  arrayclear(palette);
+  while (*btns) {
+    gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(*btns), &rgba);
+    arrayadd(palette, &rgba);
+    btns++;
+  }
+}
+
+static void
+edit_custom_palette(GtkWidget *w, gpointer data)
+{
+  GtkWidget *dialog, *box, **btns;
+  struct MiscDialog *d;
+  gint r;
+  d = data;
+  dialog = gtk_dialog_new_with_buttons(_("custom palette"),
+				       GTK_WINDOW(d->widget),
+				       GTK_DIALOG_MODAL,
+				       _("_OK"),
+				       GTK_RESPONSE_ACCEPT,
+				       _("_Cancel"),
+				       GTK_RESPONSE_REJECT,
+				       NULL);
+  box = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+  btns = create_custom_palette_buttons(d, box);
+  if (btns == NULL) {
+    gtk_widget_destroy(dialog);
+    return;
+  }
+  gtk_widget_show_all(dialog);
+  r = gtk_dialog_run(GTK_DIALOG(dialog));
+  if (r == GTK_RESPONSE_ACCEPT) {
+    save_custom_palette(d, btns);
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->use_custom_palette), TRUE);
+  }
+  g_free(btns);
+  gtk_widget_destroy(dialog);
+}
+
 static void
 MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
@@ -1250,6 +1337,7 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct MiscDialog *) data;
   if (makewidget) {
+    arrayinit(&(d->tmp_palette), sizeof(GdkRGBA));
     gtk_dialog_add_button(GTK_DIALOG(wi), _("_Save"), IDSAVE);
 
     hbox2 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
@@ -1379,6 +1467,14 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, NULL, FALSE, i++);
     d->select_data = w;
 
+    w = gtk_check_button_new_with_mnemonic(_("use custom _Palette"));
+    add_widget_to_table(table, w, NULL, FALSE, i++);
+    d->use_custom_palette = w;
+
+    w = gtk_button_new_with_mnemonic(_("_Edit custom palette"));
+    g_signal_connect(w, "clicked", G_CALLBACK(edit_custom_palette), d);
+    add_widget_to_table(table, w, NULL, FALSE, i++);
+
     gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(vbox2), frame, TRUE, TRUE, 4);
 
@@ -1503,6 +1599,12 @@ MiscDialogClose(GtkWidget *w, void *data)
   putobj(d->Obj, "use_opacity", d->Id, &Menulocal.use_opacity);
 
   Menulocal.select_data = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->select_data));
+  Menulocal.use_custom_palette = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->use_custom_palette));
+  if (arraycmp(&(Menulocal.custom_palette), &(d->tmp_palette))) {
+    arraycpy(&(Menulocal.custom_palette), &(d->tmp_palette));
+    Menulocal.custom_palette_id++;
+  }
+  arraydel(&(d->tmp_palette));
 
   d->ret = ret;
 
