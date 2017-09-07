@@ -1,3 +1,38 @@
+2017-09-07  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/ox11menu.c (MenuConfigMisc): add custom palette support.
+	(add_color_ary_to_array, menu_config_set_custom_palette)
+	(init_custom_palette): added.
+	(menu_save_config_sub, mgtkloadconfig, menulocal_finalize)
+	(menuinit): add custom palette support.
+
+	* src/gtk/gtk_widget.c (add_default_color, add_default_gray)
+	(set_default_palette, show_color_dialog, set_custom_palette):
+	added.
+	(create_color_button, select_obj_color): add custom palette
+	support.
+
+	* src/gtk/x11opt.c (edit_custom_palette, save_custom_palette)
+	(create_custom_palette_buttons): added.
+	(MiscDialogSetup, MiscDialogClose, MiscDialogSetupItem): add
+	custom palette support.
+
+2017-09-06  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/object.c (arraycmp, arraycpy): added.
+
+2017-09-05  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (ViewerEvLButtonUp): don't call "UpdateAll()".
+	(check_last_insts, focus_new_insts): static function.
+	(focus_new_insts): save created objects.
+
+	* src/odata.c (f2dredraw): don't call "ignorestdio()" and "restorestdio()".
+
+	* src/gtk/ox11menu.c (mx_redraw): call "ignorestdio()" and "restorestdio()".
+
+	* src/odata.c (f2derror): use snprintf() instead of sprintf().
+
 2017-09-04  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (CmEditMenuCB): call the function
