@@ -739,29 +739,16 @@ set_default_palette(GtkWidget *cc)
 
 #define CUSTOM_PALETTE_KEY "custom_palette"
 
-static void
-show_color_dialog(GtkButton *btn, gpointer user_data)
+static gboolean
+show_color_dialog(GtkButton *btn, GdkEvent *event, gpointer user_data)
 {
-  int custom_palette;
-  GdkRGBA color;
-
-  gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(btn), &color);
-
-  custom_palette = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(btn), CUSTOM_PALETTE_KEY));
+  gtk_color_chooser_add_palette(GTK_COLOR_CHOOSER(btn), GTK_ORIENTATION_HORIZONTAL, 0, 0, NULL);
   if (Menulocal.use_custom_palette) {
-    if (custom_palette != Menulocal.custom_palette_id) {
-      gtk_color_chooser_add_palette(GTK_COLOR_CHOOSER(btn), GTK_ORIENTATION_HORIZONTAL, 0, 0, NULL);
-      set_custom_palette(GTK_WIDGET(btn));
-      g_object_set_data(G_OBJECT(btn), CUSTOM_PALETTE_KEY, GINT_TO_POINTER(Menulocal.custom_palette_id));
-    }
-   } else {
-    if (custom_palette) {
-      gtk_color_chooser_add_palette(GTK_COLOR_CHOOSER(btn), GTK_ORIENTATION_HORIZONTAL, 0, 0, NULL);
-      set_default_palette(GTK_WIDGET(btn));
-      g_object_set_data(G_OBJECT(btn), CUSTOM_PALETTE_KEY, GINT_TO_POINTER(0));
-    }
+    set_custom_palette(GTK_WIDGET(btn));
+  } else {
+    set_default_palette(GTK_WIDGET(btn));
   }
-  gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(btn), &color);
+  return FALSE;
 }
 
 GtkWidget *
@@ -772,7 +759,7 @@ create_color_button(GtkWidget *win)
   w = gtk_color_button_new();
   g_object_set_data(G_OBJECT(w), CUSTOM_PALETTE_KEY, GINT_TO_POINTER(0));
   g_signal_connect(w, "color-set", G_CALLBACK(show_color_sel), win);
-  g_signal_connect(w, "clicked", G_CALLBACK(show_color_dialog), win);
+  g_signal_connect(w, "button-press-event", G_CALLBACK(show_color_dialog), win);
 
   return w;
 }

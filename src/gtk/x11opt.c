@@ -1602,7 +1602,6 @@ MiscDialogClose(GtkWidget *w, void *data)
   Menulocal.use_custom_palette = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->use_custom_palette));
   if (arraycmp(&(Menulocal.custom_palette), &(d->tmp_palette))) {
     arraycpy(&(Menulocal.custom_palette), &(d->tmp_palette));
-    Menulocal.custom_palette_id++;
   }
   arraydel(&(d->tmp_palette));
 

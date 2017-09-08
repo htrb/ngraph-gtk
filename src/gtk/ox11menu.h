@@ -137,7 +137,7 @@ struct menulocal
 #endif
   int png_dpi, ps_version, svg_version;
   struct character_map_list *char_map;
-  int use_custom_palette, custom_palette_id;
+  int use_custom_palette;
   struct narray custom_palette;
 };
 
