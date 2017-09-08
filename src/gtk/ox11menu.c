@@ -1284,7 +1284,7 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
 
   arrayinit(&(Menulocal.custom_palette), sizeof(GdkRGBA));
   init_custom_palette();
-  Menulocal.use_custom_palette = FALSE;
+  Menulocal.use_custom_palette = TRUE;
 
   Menulocal.windpi = DEFAULT_DPI;
   Menulocal.redrawf = TRUE;
