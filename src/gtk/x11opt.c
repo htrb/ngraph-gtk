@@ -1252,7 +1252,10 @@ create_custom_palette_buttons(struct MiscDialog *d, GtkWidget *box)
   GdkRGBA *colors;
   GtkWidget *btn, *bbox, **btns;
   int i, n;
+  GValue value = G_VALUE_INIT;
 
+  g_value_init(&value, G_TYPE_BOOLEAN);
+  g_value_set_boolean(&value, TRUE);
   palette = &(d->tmp_palette);
   n = arraynum(palette);
   if (n < 1) {
@@ -1273,6 +1276,7 @@ create_custom_palette_buttons(struct MiscDialog *d, GtkWidget *box)
       gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_START);
     }
     btn = gtk_color_button_new_with_rgba(colors + i);
+    g_object_set_property(G_OBJECT(btn), "show-editor", &value);
     gtk_box_pack_start(GTK_BOX(bbox), btn, FALSE, FALSE, 4);
     btns[i] = btn;
   }
