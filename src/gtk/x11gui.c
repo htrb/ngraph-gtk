@@ -107,13 +107,6 @@ dialog_key_down_cb(GtkWidget *w, GdkEvent *event, gpointer user_data)
   return FALSE;
 }
 
-
-static gboolean
-dialog_delete_cb(GtkWidget *w, GdkEvent *e, gpointer user_data)
-{
-  return TRUE;
-}
-
 int
 ndialog_run(GtkWidget *dlg)
 {
@@ -165,7 +158,7 @@ DialogExecute(GtkWidget *parent, void *dialog)
 
     gtk_window_set_resizable(GTK_WINDOW(dlg), TRUE);
 
-    g_signal_connect(dlg, "delete-event", G_CALLBACK(dialog_delete_cb), data);
+    g_signal_connect(dlg, "delete-event", G_CALLBACK(gtk_true), data);
     g_signal_connect(dlg, "destroy", G_CALLBACK(dialog_destroyed_cb), data);
     g_signal_connect(dlg, "key-press-event", G_CALLBACK(dialog_key_down_cb), NULL);
 

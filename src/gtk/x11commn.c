@@ -1832,12 +1832,6 @@ show_progress(int pos, const char *msg, double fraction)
   gtk_progress_bar_set_text(bar, msg);
 }
 
-static gboolean
-cb_del(GtkWidget *w, GdkEvent *event, gpointer user_data)
-{
-  return TRUE;
-}
-
 static void
 stop_btn_clicked(GtkButton *button, gpointer user_data)
 {
@@ -1869,7 +1863,7 @@ ProgressDialogCreate(char *title)
   }
 
   ProgressDialog = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-  g_signal_connect(ProgressDialog, "delete-event", G_CALLBACK(cb_del), NULL);
+  g_signal_connect(ProgressDialog, "delete-event", G_CALLBACK(gtk_true), NULL);
   gtk_window_set_title(GTK_WINDOW(ProgressDialog), title);
 
   gtk_window_set_transient_for(GTK_WINDOW(ProgressDialog), GTK_WINDOW(TopLevel));
