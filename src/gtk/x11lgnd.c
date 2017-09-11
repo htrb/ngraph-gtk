@@ -276,6 +276,7 @@ legend_menu_update_object(const char *name, char *(*callback) (struct objlist * 
   struct objlist *obj;
   int i, j;
   int *data, num;
+  char title[256];
 
   if (Menulock || Globallock)
     return;
@@ -283,7 +284,9 @@ legend_menu_update_object(const char *name, char *(*callback) (struct objlist * 
     return;
   if (chkobjlastinst(obj) == -1)
     return;
-  SelectDialog(&DlgSelect, obj, callback, &array, NULL);
+
+  snprintf(title, sizeof(title), _("%s property (multi select)"), obj->name);
+  SelectDialog(&DlgSelect, obj, title, callback, &array, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&array);
     if (num > 0) {
@@ -312,6 +315,7 @@ legend_menu_delete_object(const char *name, char *(*callback) (struct objlist * 
   struct objlist *obj;
   int i;
   int num, *data;
+  char title[256];
 
   if (Menulock || Globallock)
     return;
@@ -319,7 +323,7 @@ legend_menu_delete_object(const char *name, char *(*callback) (struct objlist * 
     return;
   if (chkobjlastinst(obj) == -1)
     return;
-  SelectDialog(&DlgSelect, obj, callback, &array, NULL);
+  snprintf(title, sizeof(title), _("delete %s (multi select)"), obj->name);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&array);
     if (num > 0) {

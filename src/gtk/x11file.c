@@ -4335,7 +4335,7 @@ CmFileClose(void *w, gpointer client_data)
     return;
   if (chkobjlastinst(obj) == -1)
     return;
-  SelectDialog(&DlgSelect, obj, FileCB, (struct narray *) &farray, NULL);
+  SelectDialog(&DlgSelect, obj, _("close data (multi select)"), FileCB, (struct narray *) &farray, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     data = NgraphApp.FileWin.data.data;
     num = arraynum(&farray);
@@ -4436,7 +4436,7 @@ CmFileUpdate(void *w, gpointer client_data)
     arrayadd(&farray, &last);
     ret = IDOK;
   } else {
-    SelectDialog(&DlgSelect, obj, FileCB, (struct narray *) &farray, NULL);
+    SelectDialog(&DlgSelect, obj, _("data property (multi select)"), FileCB, (struct narray *) &farray, NULL);
     ret = DialogExecute(TopLevel, &DlgSelect);
   }
 
@@ -4482,7 +4482,7 @@ CmFileEdit(void *w, gpointer client_data)
   if (last == -1) {
     return;
   } else {
-    CopyDialog(&DlgCopy, obj, -1, PlotFileCB);
+    CopyDialog(&DlgCopy, obj, -1, _("edit data file (single select)"), PlotFileCB);
     if (DialogExecute(TopLevel, &DlgCopy) == IDOK) {
       i = DlgCopy.sel;
     } else {
@@ -5289,7 +5289,7 @@ GetDrawFiles(struct narray *farray)
     if (!a)
       arrayadd(&ifarray, &i);
   }
-  SelectDialog(&DlgSelect, fobj, FileCB, farray, &ifarray);
+  SelectDialog(&DlgSelect, fobj, NULL, FileCB, farray, &ifarray);
   if (DialogExecute(TopLevel, &DlgSelect) != IDOK) {
     arraydel(&ifarray);
     arraydel(farray);

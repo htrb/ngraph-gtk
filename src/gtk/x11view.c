@@ -1434,7 +1434,7 @@ Trimming(int x1, int y1, int x2, int y2, struct Viewer *d)
   if (chkobjlastinst(obj) == -1)
     return;
 
-  SelectDialog(&DlgSelect, obj, AxisCB, (struct narray *) &farray, NULL);
+  SelectDialog(&DlgSelect, obj, _("trimming (multi select)"), AxisCB, (struct narray *) &farray, NULL);
 
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     vx1 = x1 - x2;

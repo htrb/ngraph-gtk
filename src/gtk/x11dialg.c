@@ -356,7 +356,7 @@ SelectDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_window_set_default_size(GTK_WINDOW(wi), -1, 300);
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
-
+  gtk_window_set_title(GTK_WINDOW(d->widget), (d->title) ? d->title : d->resource);
   list_store_clear(d->list);
 
   for (i = 0; i <= chkobjlastinst(d->Obj); i++) {
@@ -432,6 +432,7 @@ SelectDialogClose(GtkWidget *w, void *data)
 void
 SelectDialog(struct SelectDialog *data,
 	     struct objlist *obj,
+	     const char *title,
 	     char *(*callback) (struct objlist * obj, int id),
 	     struct narray *array, struct narray *iarray)
 {
@@ -442,6 +443,7 @@ SelectDialog(struct SelectDialog *data,
   arrayinit(array, sizeof(int));
   data->sel = array;
   data->isel = iarray;
+  data->title = title;
 }
 
 static gboolean
@@ -500,7 +502,7 @@ CopyDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_window_set_default_size(GTK_WINDOW(wi), -1, 300);
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
-
+  gtk_window_set_title(GTK_WINDOW(d->widget), (d->title) ? d->title : d->resource);
   list_store_clear(d->list);
 
   for (i = 0; i <= chkobjlastinst(d->Obj); i++) {
@@ -548,6 +550,7 @@ CopyDialogClose(GtkWidget *w, void *data)
 void
 CopyDialog(struct CopyDialog *data,
 	   struct objlist *obj, int id,
+	   const char *title,
 	   char *(*callback) (struct objlist * obj, int id))
 {
   data->SetupWindow = CopyDialogSetup;
@@ -556,6 +559,7 @@ CopyDialog(struct CopyDialog *data,
   data->Id = id;
   data->cb = callback;
   data->sel = id;
+  data->title = title;
 }
 
 int
@@ -564,7 +568,7 @@ CopyClick(GtkWidget *parent, struct objlist *obj, int Id,
 {
   int sel;
 
-  CopyDialog(&DlgCopy, obj, Id, callback);
+  CopyDialog(&DlgCopy, obj, Id, "copy property (single select)", callback);
 
   if (DialogExecute(parent, &DlgCopy) == IDOK) {
     sel = DlgCopy.sel;

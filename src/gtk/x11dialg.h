@@ -559,10 +559,12 @@ struct SelectDialog
   struct objlist *Obj;
   char *Field;
   GtkWidget *list;
+  const char *title;
   char *(*cb) (struct objlist * obj, int id);
 };
 void SelectDialog(struct SelectDialog *data,
 		  struct objlist *obj,
+		  const char *title,
 		  char *(*callback) (struct objlist * obj, int id),
 		  struct narray *array, struct narray *iarray);
 
@@ -574,11 +576,13 @@ struct CopyDialog
   int Id;
   int sel;
   GtkWidget *list;
+  const char *title;
   char *(*cb) (struct objlist * obj, int id);
 };
 
 void CopyDialog(struct CopyDialog *data,
 		struct objlist *obj, int id,
+		const char *title,
 		char *(*callback) (struct objlist * obj, int id));
 
 struct OutputImageDialog

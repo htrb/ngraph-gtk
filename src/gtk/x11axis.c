@@ -1144,7 +1144,7 @@ AxisDialogFile(GtkWidget *w, gpointer client_data)
   if (chkobjlastinst(fobj) == -1)
     return;
 
-  SelectDialog(&DlgSelect, fobj, FileCB, (struct narray *) &farray, NULL);
+  SelectDialog(&DlgSelect, fobj, _("autoscale (multi select)"), FileCB, (struct narray *) &farray, NULL);
 
   if (DialogExecute(d->widget, &DlgSelect) == IDOK) {
     int a, i, anum, num, *array;
@@ -2600,7 +2600,7 @@ CmAxisDel(void *w, gpointer client_data)
   if (chkobjlastinst(obj) == -1)
     return;
 
-  CopyDialog(&DlgCopy, obj, -1, AxisCB);
+  CopyDialog(&DlgCopy, obj, -1, _("delete axis (single select)"), AxisCB);
 
   if (DialogExecute(TopLevel, &DlgCopy) == IDOK && DlgCopy.sel >= 0) {
     axis_save_undo(UNDO_TYPE_DELETE);
@@ -2623,7 +2623,7 @@ CmAxisUpdate(void *w, gpointer client_data)
     return;
   if (chkobjlastinst(obj) == -1)
     return;
-  CopyDialog(&DlgCopy, obj, -1, AxisCB);
+  CopyDialog(&DlgCopy, obj, -1, _("axis property (single select)"), AxisCB);
   if (DialogExecute(TopLevel, &DlgCopy) == IDOK) {
     i = DlgCopy.sel;
     if (i < 0)
@@ -2659,7 +2659,7 @@ CmAxisZoom(void *w, gpointer client_data)
   ZoomDialog(&DlgZoom);
   if ((DialogExecute(TopLevel, &DlgZoom) == IDOK) && (DlgZoom.zoom > 0)) {
     zoom = DlgZoom.zoom / 10000.0;
-    SelectDialog(&DlgSelect, obj, AxisCB, (struct narray *) &farray, NULL);
+    SelectDialog(&DlgSelect, obj, _("scale zoom (multi select)"), AxisCB, (struct narray *) &farray, NULL);
     if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
       num = arraynum(&farray);
       array = arraydata(&farray);
@@ -2733,7 +2733,7 @@ CmAxisClear(void *w, gpointer client_data)
     return;
   if (chkobjlastinst(obj) == -1)
     return;
-  SelectDialog(&DlgSelect, obj, AxisCB, (struct narray *) &farray, NULL);
+  SelectDialog(&DlgSelect, obj, _("scale clear (multi select)"), AxisCB, (struct narray *) &farray, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&farray);
     array = arraydata(&farray);
@@ -2790,7 +2790,7 @@ CmAxisGridDel(void *w, gpointer client_data)
     return;
   if (chkobjlastinst(obj) == -1)
     return;
-  SelectDialog(&DlgSelect, obj, GridCB, (struct narray *) &farray, NULL);
+  SelectDialog(&DlgSelect, obj, _("delete grid (multi select)"), GridCB, (struct narray *) &farray, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&farray);
     if (num > 0) {
@@ -2819,7 +2819,7 @@ CmAxisGridUpdate(void *w, gpointer client_data)
     return;
   if (chkobjlastinst(obj) == -1)
     return;
-  SelectDialog(&DlgSelect, obj, GridCB, (struct narray *) &farray, NULL);
+  SelectDialog(&DlgSelect, obj, _("grid property (multi select)"), GridCB, (struct narray *) &farray, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&farray);
     if (num > 0) {
@@ -2989,7 +2989,7 @@ CmAxisScaleUndo(void *w, gpointer client_data)
   if (check_axis_history(obj) == 0)
     return;
 
-  SelectDialog(&DlgSelect, obj, AxisHistoryCB, (struct narray *) &farray, NULL);
+  SelectDialog(&DlgSelect, obj, _("scale undo (multi select)"), AxisHistoryCB, (struct narray *) &farray, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&farray);
     if (num > 0) {

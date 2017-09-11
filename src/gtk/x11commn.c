@@ -1730,7 +1730,7 @@ SetFileHidden(void)
   }
 
   r = 0;
-  SelectDialog(&DlgSelect, fobj, FileCB, &farray, &ifarray);
+  SelectDialog(&DlgSelect, fobj, NULL, FileCB, &farray, &ifarray);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     a = TRUE;
     for (i = 0; i <= lastinst; i++) {
