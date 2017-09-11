@@ -1,5 +1,7 @@
 2017-09-11  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11dialg.c (CopyDialog, SelectDialog): add "title" parameter.
+
 	* src/gtk/x11commn.c (ProgressDialogCreate): use predefined function "gtk_true()".
 
 	* src/gtk/x11gui.c (DialogExecute): remove redundant call of the
