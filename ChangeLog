@@ -1,3 +1,11 @@
+2017-09-11  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11commn.c (ProgressDialogCreate): use predefined function "gtk_true()".
+
+	* src/gtk/x11gui.c (DialogExecute): remove redundant call of the
+	function "gtk_window_set_title()".
+	(DialogExecute): use predefined function "gtk_true()".
+
 2017-09-07  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/ox11menu.c (MenuConfigMisc): add custom palette support.
