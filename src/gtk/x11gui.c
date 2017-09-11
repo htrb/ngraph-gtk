@@ -175,10 +175,7 @@ DialogExecute(GtkWidget *parent, void *dialog)
     data->show_cancel = TRUE;
     data->ok_button = _("_OK");
 
-    gtk_window_set_title(GTK_WINDOW(dlg), _(data->resource));
-
     data->SetupWindow(dlg, data, TRUE);
-
     gtk_dialog_add_button(GTK_DIALOG(dlg), data->ok_button, GTK_RESPONSE_OK);
 
     if (! data->show_cancel) {
