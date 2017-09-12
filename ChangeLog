@@ -1,3 +1,8 @@
+2017-09-12  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11gui.c (DialogExecute): dont connect "key-press-event"
+	signal (use CSS).
+
 2017-09-11  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11dialg.c (CopyDialog, SelectDialog): add "title" parameter.
