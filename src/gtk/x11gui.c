@@ -85,28 +85,6 @@ dialog_destroyed_cb(GtkWidget *w, gpointer user_data)
   ((struct DialogType *) user_data)->widget = NULL;
 }
 
-static gboolean
-dialog_key_down_cb(GtkWidget *w, GdkEvent *event, gpointer user_data)
-{
-  GdkEventKey *e;
-
-  g_return_val_if_fail(w != NULL, FALSE);
-  g_return_val_if_fail(event != NULL, FALSE);
-
-  e = (GdkEventKey *)event;
-
-
-  switch (e->keyval) {
-  case GDK_KEY_w:
-    if (e->state & GDK_CONTROL_MASK) {
-      gtk_dialog_response(GTK_DIALOG(w), GTK_RESPONSE_CANCEL);
-      return TRUE;
-    }
-    break;
-  }
-  return FALSE;
-}
-
 int
 ndialog_run(GtkWidget *dlg)
 {
@@ -160,7 +138,6 @@ DialogExecute(GtkWidget *parent, void *dialog)
 
     g_signal_connect(dlg, "delete-event", G_CALLBACK(gtk_true), data);
     g_signal_connect(dlg, "destroy", G_CALLBACK(dialog_destroyed_cb), data);
-    g_signal_connect(dlg, "key-press-event", G_CALLBACK(dialog_key_down_cb), NULL);
 
     data->parent = parent;
     data->widget = dlg;
