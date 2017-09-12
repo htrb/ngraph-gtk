@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.06.13\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
 "POT-Creation-Date: 2017-09-12 14:03+0900\n"
-"PO-Revision-Date: 2017-09-07 16:06+0900\n"
+"PO-Revision-Date: 2017-09-12 14:18+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja\n"
@@ -323,9 +323,8 @@ msgid "_Zoom:"
 msgstr "ズーム(_Z):"
 
 #: src/gtk/x11axis.c:1147
-#, fuzzy
 msgid "autoscale (multi select)"
-msgstr "複数選択"
+msgstr "自動スケール (複数選択)"
 
 #: src/gtk/x11axis.c:1278 src/gtk/x11axis.c:1606 src/gtk/x11file.c:1513
 msgid "_Min:"
@@ -573,39 +572,32 @@ msgid "_Position"
 msgstr "位置(_P)"
 
 #: src/gtk/x11axis.c:2603
-#, fuzzy
 msgid "delete axis (single select)"
-msgstr "単一選択"
+msgstr "軸削除 (単一選択)"
 
 #: src/gtk/x11axis.c:2626
-#, fuzzy
 msgid "axis property (single select)"
-msgstr "単一選択"
+msgstr "軸プロパティ (単一選択)"
 
 #: src/gtk/x11axis.c:2662
-#, fuzzy
 msgid "scale zoom (multi select)"
-msgstr "複数選択"
+msgstr "スケールズーム (複数選択)"
 
 #: src/gtk/x11axis.c:2736
-#, fuzzy
 msgid "scale clear (multi select)"
-msgstr "複数選択"
+msgstr "スケールクリア (複数選択)"
 
 #: src/gtk/x11axis.c:2793
-#, fuzzy
 msgid "delete grid (multi select)"
-msgstr "複数選択"
+msgstr "グリッド削除 (複数選択)"
 
 #: src/gtk/x11axis.c:2822
-#, fuzzy
 msgid "grid property (multi select)"
-msgstr "Legendの選択 (+SHIFT:複数選択)"
+msgstr "グリッドプロパティ (複数選択)"
 
 #: src/gtk/x11axis.c:2992
-#, fuzzy
 msgid "scale undo (multi select)"
-msgstr "複数選択"
+msgstr "スケールundo (複数選択)"
 
 #: src/gtk/x11axis.c:3209 src/gtk/x11menu.c:706 src/gtk/x11menu.c:1746
 msgid "Draw"
@@ -1282,19 +1274,16 @@ msgid "Add Data file"
 msgstr "データの追加"
 
 #: src/gtk/x11file.c:4338
-#, fuzzy
 msgid "close data (multi select)"
-msgstr "複数選択"
+msgstr "データを閉じる (複数選択)"
 
 #: src/gtk/x11file.c:4439
-#, fuzzy
 msgid "data property (multi select)"
-msgstr "複数選択"
+msgstr "データプロパティ (複数選択)"
 
 #: src/gtk/x11file.c:4485
-#, fuzzy
 msgid "edit data file (single select)"
-msgstr "単一選択"
+msgstr "データファイルの編集 (単一選択)"
 
 #: src/gtk/x11file.c:5352
 msgid "Data file"
@@ -1542,14 +1531,14 @@ msgid "direction"
 msgstr "方向"
 
 #: src/gtk/x11lgnd.c:288
-#, fuzzy, c-format
+#, c-format
 msgid "%s property (multi select)"
-msgstr "複数選択"
+msgstr "%sプロパティ (複数選択)"
 
 #: src/gtk/x11lgnd.c:326
-#, fuzzy, c-format
+#, c-format
 msgid "delete %s (multi select)"
-msgstr "複数選択"
+msgstr "%s削除 (複数選択)"
 
 #: src/gtk/x11lgnd.c:402
 #, c-format
@@ -2567,11 +2556,11 @@ msgstr "合成ファイルの追加"
 
 #: src/gtk/x11merge.c:252
 msgid "close merge file (multi select)"
-msgstr ""
+msgstr "合成ファイルを閉じる (複数選択)"
 
 #: src/gtk/x11merge.c:282
 msgid "merge file property (multi select)"
-msgstr ""
+msgstr "合成プロパティ (複数選択)"
 
 #: src/gtk/x11opt.c:70
 msgid "_Geometry"
@@ -2902,9 +2891,8 @@ msgid "Evaluating"
 msgstr "データ評価中"
 
 #: src/gtk/x11view.c:1437
-#, fuzzy
 msgid "trimming (multi select)"
-msgstr "複数選択"
+msgstr "トリミング (複数選択)"
 
 #: src/gtk/x11view.c:2839
 msgid "Data points are moved."
