@@ -741,7 +741,7 @@ static struct ToolItem CommandToolbar[] = {
     N_("_Math Transformation"),
     N_("Math Transformation"),
     N_("Set Math Transformation"),
-    NULL,
+    "accessories-calculator",
     NGRAPH_MATH_ICON_FILE,
     NULL,
     0,
