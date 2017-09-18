@@ -5881,7 +5881,24 @@ application(char *file)
 void
 UpdateAll(char **objects)
 {
-  ViewerWinUpdate(objects);
+  if (objects) {
+    /* legends are drawn in LegendWinUpdate(). */
+    char *objs[OBJ_MAX], **ptr;
+    struct objlist *lobj, *obj;
+    lobj = getobject("legend");
+    ptr = objs;
+    do {
+      obj = getobject(*objects);
+      if (chkobjparent(obj) != lobj) {
+	*ptr = *objects;
+	ptr++;
+      }
+      objects++;
+    } while (*objects);
+    ViewerWinUpdate(objs);
+  } else {
+    ViewerWinUpdate(objects);
+  }
   UpdateAll2();
 }
 
