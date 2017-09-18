@@ -5895,6 +5895,7 @@ UpdateAll(char **objects)
       }
       objects++;
     } while (*objects);
+    *ptr = NULL;
     ViewerWinUpdate(objs);
   } else {
     ViewerWinUpdate(objects);
