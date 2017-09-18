@@ -1,3 +1,7 @@
+2017-09-18  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (UpdateAll): don't redraw legends.
+
 2017-09-12  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11gui.c (DialogExecute): dont connect "key-press-event"
