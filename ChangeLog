@@ -1,3 +1,9 @@
+2017-09-22  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (UpdateAll2): add parameter.
+
+	* src/gtk/x11lgnd.c (LegendWinUpdate): add first parameter.
+
 2017-09-18  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (UpdateAll): don't redraw legends.
