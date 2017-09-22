@@ -4504,6 +4504,7 @@ CmOptionFileDef(void *w, gpointer client_data)
 {
   struct objlist *obj;
   int id;
+  char *objs[2];
 
   if (Menulock || Globallock)
     return;
@@ -4523,7 +4524,9 @@ CmOptionFileDef(void *w, gpointer client_data)
       }
     }
     delobj(obj, id);
-    UpdateAll2();
+    objs[0] = obj->name;
+    objs[1] = NULL;
+    UpdateAll2(objs);
     if (! modified) {
       reset_graph_modified();
     }

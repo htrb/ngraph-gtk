@@ -276,7 +276,7 @@ legend_menu_update_object(const char *name, char *(*callback) (struct objlist * 
   struct objlist *obj;
   int i, j;
   int *data, num;
-  char title[256];
+  char title[256], *objs[2];
 
   if (Menulock || Globallock)
     return;
@@ -302,7 +302,9 @@ legend_menu_update_object(const char *name, char *(*callback) (struct objlist * 
 	  }
 	}
       }
-      LegendWinUpdate(TRUE);
+      objs[0] = obj->name;
+      objs[1] = NULL;
+      LegendWinUpdate(objs, TRUE);
     }
   }
   arraydel(&array);
@@ -315,7 +317,7 @@ legend_menu_delete_object(const char *name, char *(*callback) (struct objlist * 
   struct objlist *obj;
   int i;
   int num, *data;
-  char title[256];
+  char title[256], *objs[2];
 
   if (Menulock || Globallock)
     return;
@@ -333,7 +335,9 @@ legend_menu_delete_object(const char *name, char *(*callback) (struct objlist * 
 	delobj(obj, data[i]);
 	set_graph_modified();
       }
-      LegendWinUpdate(TRUE);
+      objs[0] = obj->name;
+      objs[1] = NULL;
+      LegendWinUpdate(objs, TRUE);
     }
   }
   arraydel(&array);
@@ -2071,6 +2075,7 @@ CmOptionTextDef(void *w, gpointer client_data)
 {
   struct objlist *obj;
   int id;
+  char *objs[2];
 
   if (Menulock || Globallock)
     return;
@@ -2090,7 +2095,9 @@ CmOptionTextDef(void *w, gpointer client_data)
       }
     }
     delobj(obj, id);
-    UpdateAll2();
+    objs[0] = obj->name;
+    objs[1] = NULL;
+    UpdateAll2(objs);
     if (! modified) {
       reset_graph_modified();
     }
@@ -2181,14 +2188,26 @@ TextListUpdate(struct obj_list_data *d, int clear)
 }
 
 void
-LegendWinUpdate(int clear)
+LegendWinUpdate(char **objects, int clear)
 {
   struct obj_list_data *d;
+  struct objlist *obj;
+  char **ptr;
   if (Menulock || Globallock)
     return;
 
   for (d = NgraphApp.LegendWin.data.data; d; d = d->next) {
-    d->update(d, clear);
+    if (objects) {
+      for (ptr = objects; *ptr; ptr++) {
+	obj = getobject(*ptr);
+	if (obj == d->obj) {
+	  d->update(d, clear);
+	  break;
+	}
+      }
+    } else {
+      d->update(d, clear);
+    }
   }
 }
 

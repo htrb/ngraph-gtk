@@ -5883,32 +5883,38 @@ UpdateAll(char **objects)
 {
   if (objects) {
     /* legends are drawn in LegendWinUpdate(). */
-    char *objs[OBJ_MAX], **ptr;
+    char *objs[OBJ_MAX], *lobjs[OBJ_MAX], **ptr, **lptr;
     struct objlist *lobj, *obj;
     lobj = getobject("legend");
     ptr = objs;
+    lptr = lobjs;
     do {
       obj = getobject(*objects);
       if (chkobjparent(obj) != lobj) {
 	*ptr = *objects;
 	ptr++;
+      } else {
+	*lptr = *objects;
+	lptr++;
       }
       objects++;
     } while (*objects);
     *ptr = NULL;
+    *lptr = NULL;
     ViewerWinUpdate(objs);
+    UpdateAll2(lobjs);
   } else {
     ViewerWinUpdate(objects);
+    UpdateAll2(objects);
   }
-  UpdateAll2();
 }
 
 void
-UpdateAll2(void)
+UpdateAll2(char **objs)
 {
   FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
   AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE);
-  LegendWinUpdate(TRUE);
+  LegendWinUpdate(objs, TRUE);
   MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE);
   InfoWinUpdate(TRUE);
   CoordWinUpdate(TRUE);
@@ -6054,7 +6060,7 @@ PutStderr(const char *s)
 {
   gssize len;
   gsize rlen, wlen;
-  char *ustr;
+  char *ustr, *arg[] = {NULL};
 
   if (s == NULL)
     return 0;
@@ -6063,7 +6069,7 @@ PutStderr(const char *s)
   ustr = g_locale_to_utf8(s, len, &rlen, &wlen, NULL);
   message_box(NULL, ustr, _("Error:"), RESPONS_ERROR);
   g_free(ustr);
-  UpdateAll2();
+  UpdateAll2(arg);
   return len + 1;
 }
 
@@ -6109,9 +6115,10 @@ int
 InputYN(const char *mes)
 {
   int ret;
+  char *arg[] = {NULL};
 
   ret = message_box(get_current_window(), mes, _("Question"), RESPONS_YESNO);
-  UpdateAll2();
+  UpdateAll2(arg);
   return (ret == IDYES) ? TRUE : FALSE;
 }
 
