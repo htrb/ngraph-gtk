@@ -1,3 +1,12 @@
+2017-09-25  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/ox11menu.c (MenuConfigToggleView): add "show_grid" configration.
+
+	* src/gtk/x11menu.c (toggle_view): add case for MenuIdToggleGridLine.
+	(ViewMenu): agg grid menu item.
+
+	* src/gtk/x11view.c (draw_grid): added.
+
 2017-09-22  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (UpdateAll2): add parameter.
