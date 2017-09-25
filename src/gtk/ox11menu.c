@@ -268,6 +268,7 @@ static struct menu_config MenuConfigToggleView[] = {
   {"command_toolbar",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.ctoolbar},
   {"pointer_toolbar",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.ptoolbar},
   {"cross_gauge",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.show_cross},
+  {"show_grid",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.show_grid},
   {NULL},
 };
 
@@ -1290,6 +1291,7 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   Menulocal.redrawf = TRUE;
   Menulocal.redrawf_num = 0xffU;
   Menulocal.grid = 200;
+  Menulocal.show_grid = TRUE;
   Menulocal.data_head_lines = 20;
   Menulocal.use_opacity = FALSE;
   Menulocal.select_data = TRUE;

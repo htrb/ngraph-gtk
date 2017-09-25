@@ -304,6 +304,10 @@
 	  <attribute name="label" translatable="yes">cross _Gauge</attribute>
 	  <attribute name="action">app.ViewCrossGaugeAction</attribute>
 	</item>
+	<item>
+	  <attribute name="label" translatable="yes">_Grid</attribute>
+	  <attribute name="action">app.ViewGridLineAction</attribute>
+	</item>
       </section>
     </submenu>
     <submenu>

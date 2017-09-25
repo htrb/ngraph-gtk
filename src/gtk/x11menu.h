@@ -70,6 +70,7 @@ enum MenuID {
   MenuIdToggleCToolbar,
   MenuIdTogglePToolbar,
   MenuIdToggleCrossGauge,
+  MenuIdToggleGridLine,
   MenuIdEditOrderTop,
   MenuIdEditOrderUp,
   MenuIdEditOrderDown,

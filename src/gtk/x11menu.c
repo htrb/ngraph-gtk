@@ -199,6 +199,7 @@ enum ActionWidgetIndex {
   ViewCommandToolbarAction,
   ViewToolboxAction,
   ViewCrossGaugeAction,
+  ViewGridLineAction,
   SingleWindowAction,
   SingleWindowSeparator,
   DataPropertyAction,
@@ -2054,6 +2055,22 @@ static struct MenuItem ViewMenu[] = {
     MenuIdToggleCrossGauge,
     ActionWidget + ViewCrossGaugeAction,
     "ViewCrossGaugeAction",
+  },
+  {
+    MENU_TYPE_TOGGLE,
+    N_("_Grid"),
+    NULL,
+    N_("Show grid"),
+    NULL,
+    NULL,
+    "<Ngraph>/View/grid Line",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(toggle_view_cb),
+    MenuIdToggleGridLine,
+    ActionWidget + ViewGridLineAction,
+    "ViewGridLineAction",
   },
   {
     MENU_TYPE_END,
@@ -5071,13 +5088,18 @@ toggle_view(int type, int state)
     break;
   case MenuIdToggleCrossGauge:
     ViewCross(state);
-    break;
-  }
-
-  if (type == MenuIdToggleCrossGauge) {
     set_toggle_action_widget_state(ViewCrossGaugeAction, state);
     lock = FALSE;
     return TRUE;
+    break;
+  case MenuIdToggleGridLine:
+    Menulocal.show_grid = state;
+    set_toggle_action_widget_state(ViewGridLineAction, state);
+    update_bg();
+    gtk_widget_queue_draw(NgraphApp.Viewer.Win);
+    lock = FALSE;
+    return TRUE;
+    break;
   }
 
   if (w1) {
@@ -5156,6 +5178,9 @@ set_widget_visibility(void)
       break;
     case ViewCrossGaugeAction:
       state = Menulocal.show_cross;
+      break;
+    case ViewGridLineAction:
+      state = Menulocal.show_grid;
       break;
     default:
       continue;
@@ -5888,7 +5913,7 @@ UpdateAll(char **objects)
     lobj = getobject("legend");
     ptr = objs;
     lptr = lobjs;
-    do {
+     while (*objects) {
       obj = getobject(*objects);
       if (chkobjparent(obj) != lobj) {
 	*ptr = *objects;
@@ -5898,7 +5923,7 @@ UpdateAll(char **objects)
 	lptr++;
       }
       objects++;
-    } while (*objects);
+    }
     *ptr = NULL;
     *lptr = NULL;
     ViewerWinUpdate(objs);

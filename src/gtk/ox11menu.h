@@ -95,7 +95,7 @@ struct menulocal
   NHASH layers;
   int redrawf, redrawf_num;
   int windpi, data_head_lines;
-  int grid;
+  int grid, show_grid;
   cairo_region_t *region;
   int lock;
   struct gra2cairo_local *local;
