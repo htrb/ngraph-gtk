@@ -5429,13 +5429,13 @@ draw_grid(cairo_t *cr, int w, int h)
   cairo_set_source_rgba(cr, GRIG_COLOR, GRIG_COLOR, GRIG_COLOR, 1);
   cairo_set_dash(cr, dashes, 2, 0);
   for (x = grid; x < Menulocal.PaperWidth; x += grid) {
-    dx = mxd2p(x);
+    dx = mxd2p(x) + 1;
     cairo_move_to(cr, dx, 0);
     cairo_line_to(cr, dx, h);
     cairo_stroke(cr);
   }
   for (y = grid; y < Menulocal.PaperHeight; y += grid) {
-    dy = mxd2p(y);
+    dy = mxd2p(y) + 1;
     cairo_move_to(cr, 0, dy);
     cairo_line_to(cr, w, dy);
     cairo_stroke(cr);
