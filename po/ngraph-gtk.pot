@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.07.04\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2017-09-25 15:05+0900\n"
+"POT-Creation-Date: 2017-09-28 11:42+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,7 @@ msgstr ""
 msgid "Unsaved Graph"
 msgstr ""
 
-#: src/gtk/ox11dlg.c:114 src/gtk/x11commn.c:1562
+#: src/gtk/ox11dlg.c:114 src/gtk/x11commn.c:1575
 msgid "Confirm"
 msgstr ""
 
@@ -600,48 +600,48 @@ msgstr ""
 msgid "No zero"
 msgstr ""
 
-#: src/gtk/x11commn.c:1183 src/gtk/x11menu.c:672
+#: src/gtk/x11commn.c:1196 src/gtk/x11menu.c:672
 msgid "Save NGP file"
 msgstr ""
 
-#: src/gtk/x11commn.c:1207 src/gtk/x11opt.c:1931
+#: src/gtk/x11commn.c:1220 src/gtk/x11opt.c:1931
 #, c-format
 msgid "Saving `%.128s'."
 msgstr ""
 
-#: src/gtk/x11commn.c:1399
+#: src/gtk/x11commn.c:1412
 #, c-format
 msgid "Loading `%.128s'."
 msgstr ""
 
-#: src/gtk/x11commn.c:1561
+#: src/gtk/x11commn.c:1574
 msgid ""
 "This graph is modified.\n"
 "Save this graph?"
 msgstr ""
 
-#: src/gtk/x11commn.c:1772
+#: src/gtk/x11commn.c:1785
 msgid "Ngraph.ini is not found."
 msgstr ""
 
-#: src/gtk/x11commn.c:1775
+#: src/gtk/x11commn.c:1788
 msgid "Ngraph.ini is write protected."
 msgstr ""
 
-#: src/gtk/x11commn.c:1790
+#: src/gtk/x11commn.c:1803
 #, c-format
 msgid "Install `Ngraph.ini' to %s ?"
 msgstr ""
 
-#: src/gtk/x11commn.c:1794
+#: src/gtk/x11commn.c:1807
 msgid "Ngraph.ini could not be copied."
 msgstr ""
 
-#: src/gtk/x11commn.c:1886
+#: src/gtk/x11commn.c:1899
 msgid "_Stop"
 msgstr ""
 
-#: src/gtk/x11commn.c:1929
+#: src/gtk/x11commn.c:1942
 msgid "error"
 msgstr ""
 
