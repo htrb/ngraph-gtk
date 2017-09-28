@@ -462,6 +462,17 @@ ViewCrossGaugeAction_activated(GSimpleAction *action, GVariant *parameter, gpoin
 }
 
 static void
+ViewGridLineAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
+{
+  int state;
+
+  state = g_variant_get_boolean(parameter);
+  if (toggle_view(MenuIdToggleGridLine, state)) {
+    g_simple_action_set_state(action, parameter);
+  }
+}
+
+static void
 DataAddFileAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
   CmFileOpen(NULL, NULL);
@@ -786,6 +797,7 @@ static GActionEntry AppEntries[] =
   { "ViewCommandToolbarAction", NULL, NULL, "true", ViewCommandToolbarAction_activated },
   { "ViewToolboxAction", NULL, NULL, "true", ViewToolboxAction_activated },
   { "ViewCrossGaugeAction", NULL, NULL, "true", ViewCrossGaugeAction_activated },
+  { "ViewGridLineAction", NULL, NULL, "true", ViewGridLineAction_activated },
   { "DataAddFileAction", DataAddFileAction_activated, NULL, NULL, NULL },
   { "DataAddRangeAction", DataAddRangeAction_activated, NULL, NULL, NULL },
   { "DataAddRecentFileAction", DataAddRecentFileAction_activated, NULL, NULL, NULL },
