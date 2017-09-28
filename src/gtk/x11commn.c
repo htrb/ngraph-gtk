@@ -1128,7 +1128,7 @@ SaveDrawrable(char *name, int storedata, int storemerge)
 static int
 get_save_opt(int *sdata, int *smerge, int *path)
 {
-  int ret, fnum, mnum, i;
+  int ret, fnum, mnum, i, src;
   struct objlist *fobj, *mobj;
 
   *path = SAVE_PATH_UNCHANGE;
@@ -1138,11 +1138,24 @@ get_save_opt(int *sdata, int *smerge, int *path)
   fobj = chkobject("data");
   mobj = chkobject("merge");
 
-  fnum = (fobj) ? chkobjlastinst(fobj) : -1;
-  mnum = (mobj) ? chkobjlastinst(mobj) : -1;
+  fnum = chkobjlastinst(fobj) + 1;
+  mnum = chkobjlastinst(mobj) + 1;
 
-  if (fnum < 0 && mnum < 0)
+  /* there are no instances of data and merge objects */
+  if (fnum < 1 && mnum < 1) {
     return IDOK;
+  }
+
+  /* check source field of data objects */
+  for (i = 0; i < fnum; i++) {
+    getobj(fobj, "source", i, 0, NULL, &src);
+    if (src ==  DATA_SOURCE_FILE) {
+      break;
+    }
+  }
+  if (fnum > 0 && mnum < 1 && i == fnum) {
+    return IDOK;
+  }
 
   SaveDialog(&DlgSave, sdata, smerge);
   ret = DialogExecute(TopLevel, &DlgSave);
@@ -1150,11 +1163,11 @@ get_save_opt(int *sdata, int *smerge, int *path)
     return IDCANCEL;
 
   *path = DlgSave.Path;
-  for (i = 0; i <= fnum; i++) {
+  for (i = 0; i < fnum; i++) {
     putobj(fobj, "save_path", i, path);
   }
 
-  for (i = 0; i <= mnum; i++) {
+  for (i = 0; i < mnum; i++) {
     putobj(mobj, "save_path", i, path);
   }
 
