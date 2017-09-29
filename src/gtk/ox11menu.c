@@ -1292,7 +1292,7 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   Menulocal.redrawf_num = 0xffU;
   Menulocal.grid = 200;
   Menulocal.show_grid = TRUE;
-  Menulocal.data_head_lines = 20;
+  Menulocal.data_head_lines = 100;
   Menulocal.use_opacity = FALSE;
   Menulocal.select_data = TRUE;
   Menulocal.local = local;
