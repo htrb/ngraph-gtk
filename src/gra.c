@@ -2519,7 +2519,7 @@ GRAtextextent(char *s, char *font, int style,
   int size2, space2, style2, vspace;
   char *font3;
   int size3, space3, style3;
-  int i, j, k, y, val, x0, y0;
+  int i, j, k, y, val, x0, y0, ofsty;
   int height;
   int alignlen, fx0, fx1, fy0, fy1;
   char ch;
@@ -2533,6 +2533,7 @@ GRAtextextent(char *s, char *font, int style,
   str = NULL;
   x0 = 0;
   y0 = 0;
+  ofsty = 0;
 
   c = GRAexpandtext(s);
   if (c == NULL) {
@@ -2665,6 +2666,8 @@ GRAtextextent(char *s, char *font, int style,
       } else {
 	x0 = 0;
       }
+      y0 -= ofsty;
+      ofsty = 0;
       j++;
       break;
     case '\b':
@@ -2763,7 +2766,9 @@ GRAtextextent(char *s, char *font, int style,
             case 'Y':
               val = strtol(tok, &endptr, 10);
               if (endptr[0] == '\0') {
-		y0 += (int) (val * 100 * 25.4 / 72.0);
+		y = (int) (val * 100 * 25.4 / 72.0);
+		ofsty += y;
+		y0 += y;
 	      }
               break;
             }
