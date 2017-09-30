@@ -1,3 +1,9 @@
+2017-09-30  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gra.c (GRAtextextent, GRAdrawtext): use "g_strndup()"
+	instead of "g_malloc()" and "strncpy()".
+	(GRAtextextent): fix calculation of the bounding-box.
+
 2017-09-28  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11commn.c (get_save_opt): check source field of data
