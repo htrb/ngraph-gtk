@@ -2398,45 +2398,37 @@ GRAdrawtext(int GC, char *s, char *font, int style,
       if ((ptr[1]!='\0') && ( strchr("FJSPNXYCA", toupper(ptr[1]))!=NULL) && (ptr[2]=='{')) {
         for (i = 3; ptr[i] != '\0' && ptr[i] != '}'; i++);
         if (ptr[i] == '}') {
-	  tok=g_malloc(i - 2);
+	  tok = g_strndup(ptr + 3, i - 3);
           if (tok == NULL) {
 	    goto errexit;
 	  }
-          strncpy(tok, ptr + 3, i - 3);
-          tok[i - 3] = '\0';
           if (tok[0] != '\0') {
             switch (toupper(ptr[1])) {
             case 'F':
               g_free(font2);
-              font2=tok;
+              font2 = g_strdup(tok);
               break;
             case 'J':
-              g_free(tok);
               break;
             case 'S':
               val=strtol(tok, &endptr, 10);
               if (endptr[0]=='\0') size2=val * 100;
-              g_free(tok);
               break;
             case 'P':
               val=strtol(tok, &endptr, 10);
               if (endptr[0]=='\0') space2=val * 100;
-              g_free(tok);
               break;
             case 'N':
               val=strtol(tok, &endptr, 10);
               if (endptr[0]=='\0') vspace=val * 100;
-              g_free(tok);
               break;
             case 'X':
               val=strtol(tok, &endptr, 10);
               if (endptr[0]=='\0') GRAmoverel(GC, (int) (val * 100 * 25.4 / 72.0), 0);
-              g_free(tok);
               break;
             case 'Y':
               val=strtol(tok, &endptr, 10);
               if (endptr[0]=='\0') GRAmoverel(GC, 0, (int) (val * 100 * 25.4 / 72.0));
-              g_free(tok);
               break;
             case 'C':
 	      {
@@ -2454,7 +2446,6 @@ GRAdrawtext(int GC, char *s, char *font, int style,
 			   val & 0xff,
 			   -1);
 		}
-		g_free(tok);
 	      }
               break;
             case 'A':
@@ -2462,10 +2453,10 @@ GRAdrawtext(int GC, char *s, char *font, int style,
 	      if (endptr[0]=='\0') {
 		GRAcolor(GC, -1, -1, -1, val);
 	      }
-	      g_free(tok);
               break;
             }
           }
+	  g_free(tok);
         }
         ptr += i + 1;
       } else {
@@ -2731,60 +2722,53 @@ GRAtextextent(char *s, char *font, int style,
       if (c[j + 1] != '\0' && strchr("FJSPNXYCA", toupper(c[j + 1])) && c[j + 2] == '{') {
         for (i = j + 3; c[i] != '\0' && c[i] != '}'; i++);
         if (c[i] == '}') {
-	  tok = g_malloc(i - j - 2);
+	  tok = g_strndup(c + j + 3, i - j - 3);
           if (tok == NULL) {
 	    goto errexit;
 	  }
-          strncpy(tok, c + j + 3, i - j - 3);
-          tok[i - j - 3] = '\0';
           if (tok[0] != '\0') {
             switch (toupper(c[j + 1])) {
             case 'F':
               g_free(font2);
-              font2 = tok;
+              font2 = g_strdup(tok);
               break;
             case 'J':
             case 'C':
             case 'A':
-              g_free(tok);
               break;
             case 'S':
               val = strtol(tok, &endptr, 10);
               if (endptr[0] == '\0') {
 		size2 = val * 100;
 	      }
-              g_free(tok);
               break;
             case 'P':
               val = strtol(tok, &endptr, 10);
               if (endptr[0] == '\0') {
 		space2 = val * 100;
 	      }
-              g_free(tok);
               break;
             case 'N':
               val = strtol(tok, &endptr, 10);
               if (endptr[0] == '\0') {
 		vspace = val * 100;
 	      }
-              g_free(tok);
               break;
             case 'X':
               val = strtol(tok, &endptr, 10);
               if (endptr[0] == '\0') {
 		x0 += (int) (val * 100 * 25.4 / 72.0);
 	      }
-              g_free(tok);
               break;
             case 'Y':
               val = strtol(tok, &endptr, 10);
               if (endptr[0] == '\0') {
 		y0 += (int) (val * 100 * 25.4 / 72.0);
 	      }
-              g_free(tok);
               break;
             }
           }
+	  g_free(tok);
         }
         j = i + 1;
       } else {
