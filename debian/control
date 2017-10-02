@@ -19,6 +19,7 @@ Description: create scientific 2-dimensional graphs
  postscript.
 
 Package: libngraph0
+Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Suggests: fonts-liberation
