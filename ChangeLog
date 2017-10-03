@@ -1,3 +1,8 @@
+2017-10-03  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/ox11menu.c (create_layer): added.
+	(init_layer): use "create_layer()".
+
 2017-09-30  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gra.c (GRAtextextent, GRAdrawtext): use "g_strndup()"
