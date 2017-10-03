@@ -1076,6 +1076,13 @@ select_layer(const char *id)
   return 0;
 }
 
+static void
+create_layer(struct layer *layer, int w, int h)
+{
+  layer->pix = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, w, h);
+  layer->cairo = cairo_create(layer->pix);
+}
+
 void
 init_layer(const char *obj)
 {
@@ -1096,9 +1103,8 @@ init_layer(const char *obj)
     if (layer == NULL) {
       return;
     }
-    layer->pix = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, w, h);
-    layer->cairo = cairo_create(layer->pix);
-    r = nhash_set_ptr(Menulocal.layers, obj, layer);
+    create_layer(layer, w, h);
+    nhash_set_ptr(Menulocal.layers, obj, layer);
   } else {
     layer = ptr;
     lw = cairo_image_surface_get_width(layer->pix);
@@ -1106,8 +1112,7 @@ init_layer(const char *obj)
     if (lw != w || lh != h) {
       cairo_destroy(layer->cairo);
       cairo_surface_destroy(layer->pix);
-      layer->pix = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, w, h);
-      layer->cairo = cairo_create(layer->pix);
+      create_layer(layer, w, h);
     }
   }
   set_cairo_antialias(layer->cairo, Menulocal.antialias);
