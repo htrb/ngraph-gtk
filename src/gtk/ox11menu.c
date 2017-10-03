@@ -1050,7 +1050,7 @@ static int
 free_layers(struct nhash *layers, void *ptr)
 {
   struct layer *layer;
-  layer = ptr;
+  layer = layers->val.p;
   if (layer == NULL) {
     return 0;
   }
