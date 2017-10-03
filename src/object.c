@@ -1746,9 +1746,12 @@ free_inst(struct objlist *obj, N_VALUE *inst)
       break;
     case NIARRAY:
     case NDARRAY:
+    case NIAFUNC:
+    case NDAFUNC:
       arrayfree(inst[j].array);
       break;
     case NSARRAY:
+    case NSAFUNC:
       arrayfree2(inst[j].array);
       break;
     case NSTR:
