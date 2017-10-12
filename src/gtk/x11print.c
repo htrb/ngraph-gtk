@@ -630,6 +630,7 @@ CmOutputPrinter(int select_file, int show_dialog)
 
   page_setup = gtk_page_setup_new();
   gtk_page_setup_set_paper_size(page_setup, paper_size);
+  gtk_paper_size_free(paper_size);
   if (Menulocal.PaperLandscape) {
     gtk_page_setup_set_orientation(page_setup, GTK_PAGE_ORIENTATION_LANDSCAPE);
   } else {
@@ -637,6 +638,8 @@ CmOutputPrinter(int select_file, int show_dialog)
   }
 
   gtk_print_operation_set_default_page_setup(print, page_setup);
+  g_object_unref(page_setup);
+
   gtk_print_operation_set_print_settings(print, PrintSettings);
 
   pobj.graobj = graobj;
