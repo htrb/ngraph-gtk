@@ -15,6 +15,7 @@ class Presentation
     :SUB_LIST,
     :CENTER_LIST,
     :VERB,
+    :QUOTE,
     :ENUM,
     :TITLE,
     :COMMAND,
@@ -22,6 +23,7 @@ class Presentation
     :OPACITY,
     :LINE_HEIGHT,
     :INCLUDE,
+    :INCLUDE_RAW,
     :VERB_INCLUDE,
   ]
 
@@ -151,7 +153,7 @@ class Presentation
     Ngraph::Text.del("CENTER")
   end
 
-  def list_add_sub(str, ofst_x, size, dot_char, raw = false, font = 'Sans-serif')
+  def list_add_sub(str, ofst_x, size, dot_char, raw = false, font = 'Sans-serif', color = 0)
     margin = size / 10
 
     ofst = @ofst_y + @title_h
@@ -176,6 +178,9 @@ class Presentation
     text.raw = raw
     text.font = font
     top = text.bbox[1]
+    text.r = color >> 16
+    text.g = (color >> 8) & 0xff
+    text.b = color & 0xff
     text.y = text.y - top + ofst + margin
   end
 
@@ -204,6 +209,12 @@ class Presentation
     @enum = 0
     ofst_x = @ofst_x
     list_add_sub(str, ofst_x, @list_text_size, nil, true, "Monospace")
+  end
+
+  def quote_add(str)
+    @enum = 0
+    ofst_x = @ofst_x
+    list_add_sub(str, ofst_x, @list_text_size, nil, false, "Sans-serif", 0x660000)
   end
 
   def enum_add(str)
@@ -285,12 +296,12 @@ class Presentation
   end
 
   def verb_include(file)
-    include(file, 'Monospace')
+    include(file, true, 'Monospace')
   end
 
-  def include(file, font = 'Sans-serif')
+  def include(file, raw, font = 'Sans-serif')
     str = IO.read(@path + "/" + file)
-    list_add_sub(str, @ofst_x, @sub_list_text_size, nil, true, font)
+    list_add_sub(str, @ofst_x, @sub_list_text_size, nil, raw, font)
   end
 
   def command(mode, arg, skip_pause)
@@ -309,6 +320,8 @@ class Presentation
       center_list_add(arg)
     when VERB
       verb_add(arg)
+    when QUOTE
+      quote_add(arg)
     when ENUM
       enum_add(arg)
     when TITLE
@@ -316,7 +329,9 @@ class Presentation
     when VERB_INCLUDE
       verb_include(arg)
     when INCLUDE
-      include(arg)
+      include(arg, false)
+    when INCLUDE_RAW
+      include(arg, true)
     when COMMAND
       eval(arg)
     when SLEEP
@@ -406,6 +421,9 @@ class Presentation
       when "@verb"
         mode = VERB
         page_item += 1
+      when "@quote"
+        mode = QUOTE
+        page_item += 1
       when "@enum"
         mode = ENUM
         page_item += 1
@@ -420,6 +438,9 @@ class Presentation
         page_item += 1
       when "@verb_include"
         mode = VERB_INCLUDE
+        page_item += 1
+      when "@include_raw"
+        mode = INCLUDE_RAW
         page_item += 1
       when "@include"
         mode = INCLUDE
