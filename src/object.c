@@ -1714,10 +1714,10 @@ dup_inst_list(struct objlist *obj)
 static void
 free_inst(struct objlist *obj, N_VALUE *inst)
 {
-  int i, j, idn;
+  int i, j, n, idn;
   const char *field;
-  enum ngraph_object_field_type type;
   struct objlist *robj;
+  enum ngraph_object_field_type type;
 
   if (inst == NULL) {
     return;
@@ -1726,7 +1726,8 @@ free_inst(struct objlist *obj, N_VALUE *inst)
   if (obj->free_func) {
     obj->free_func(obj, inst);
   }
-  for (i = 0; i < obj->size; i++) {
+  n = chkobjfieldnum(obj);
+  for (i = 0; i < n; i++) {
     field = chkobjfieldname(obj, i);
     idn = getobjtblpos(obj, field, &robj);
     if (idn == -1) {
@@ -1756,6 +1757,7 @@ free_inst(struct objlist *obj, N_VALUE *inst)
       break;
     case NSTR:
     case NOBJ:
+    case NSFUNC:
       g_free(inst[j].str);
       break;
     default:
