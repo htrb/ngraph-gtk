@@ -25,6 +25,7 @@ class Presentation
     :INCLUDE,
     :INCLUDE_RAW,
     :VERB_INCLUDE,
+    :VSPACE,
   ]
 
   PDF_MODE = [
@@ -332,6 +333,10 @@ class Presentation
       include(arg, false)
     when INCLUDE_RAW
       include(arg, true)
+    when VSPACE
+      arg.to_i.times {
+        verb_add(" ")
+      }
     when COMMAND
       eval(arg)
     when SLEEP
@@ -444,6 +449,9 @@ class Presentation
         page_item += 1
       when "@include"
         mode = INCLUDE
+        page_item += 1
+      when "@vspace"
+        mode = VSPACE
         page_item += 1
       when "@command"
         mode = COMMAND
