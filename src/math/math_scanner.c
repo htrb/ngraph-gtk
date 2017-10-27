@@ -101,7 +101,7 @@ math_scanner_get_token(const char *str, const char **rstr)
     return get_num(str, rstr);
   } else if (math_scanner_is_ope(c)) {
     return get_ope(str, rstr);
-  } else if (isalpha(c) || c == '%') {
+  } else if (isalpha(c) || c == '%' || c == '_') {
     return get_symbol(str, rstr);
   } else if (c == '(' || c == ')') {
     return get_paren(str, rstr);
