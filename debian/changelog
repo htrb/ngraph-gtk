@@ -1,8 +1,8 @@
-ngraph-gtk (6.07.04-1) unreleased; urgency=medium
+ngraph-gtk (6.07.05-1) unreleased; urgency=medium
 
   * New upstream release
 
- -- Hiroyuki Ito <ZXB01226@nifty.com>  Mon, 14 Aug 2017 16:39:26 +0900
+ -- Hiroyuki Ito <ZXB01226@nifty.com>  Thu, 09 Nov 2017 16:39:26 +0900
 
 ngraph-gtk (6.07.02-2) unstable; urgency=medium
 
