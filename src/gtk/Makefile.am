@@ -89,4 +89,4 @@ dir_defs.h: dir_defs.h.in Makefile
 
 libngraphui_la_CFLAGS = $(GTK_CFLAGS) -I$(top_builddir) -I$(builddir) -I$(srcdir)/.. -I$(srcdir)/../math
 
-CLEANFILES = dir_defs.h $(builddir)/data/gtk/menus-appmenu.ui $(BUILT_SOURCES)
+CLEANFILES = dir_defs.h $(builddir)/data/gtk/menus-appmenu.ui $(builddir)/data/gtk/menus-common.ui $(BUILT_SOURCES)
