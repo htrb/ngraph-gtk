@@ -67,6 +67,12 @@ class Presentation
 
     @path = "."
     @enum = 0
+
+    @pdf_file = nil
+  end
+
+  def pdf_filename=(filename)
+    @pdf_file = filename
   end
 
   def save_image(file)
@@ -678,7 +684,11 @@ class Presentation
           @slide_show = false if (@slide_show)
 
           if (@pdf_out)
-            pdf_file = File.basename(@data_file, ".dat") + ".pdf"
+            pdf_file = if (@pdf_file)
+                         @pdf_file
+                       else
+                         File.basename(@data_file, ".dat") + ".pdf"
+                       end
             src_pdf_files = Dir.glob("#{PDF_PREFIX}*.pdf").sort
             if (FileTest.exist?("/dev/null"))
               system("pdfunite #{src_pdf_files.join(" ")} #{pdf_file}")
@@ -715,7 +725,7 @@ while (ARGV[0] && ARGV[0][0] == "-")
     ARGV.shift
     presentation.slide_show_wait = ARGV[0].to_i
   else
-    puts("argument(s): [-pdf|-pdf_expand|-a time] datafile")
+    puts("argument(s): [-pdf|-pdf_expand|-a time] datafile [output file]")
     exit
   end
   ARGV.shift
@@ -727,5 +737,6 @@ unless (data_file && FileTest.readable?(data_file))
   exit
 end
 
+presentation.pdf_filename = ARGV[1] if (ARGV[1])
 presentation.load(data_file)
 presentation.start
