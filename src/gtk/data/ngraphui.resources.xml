@@ -45,6 +45,15 @@
     <file>pixmaps/ngraph_trimming.png</file>
     <file>pixmaps/ngraph_undo.png</file>
     <file>pixmaps/ngraph_zoom.png</file>
+    <file>pixmaps/arrow_begin.png</file>
+    <file>pixmaps/arrow_both.png</file>
+    <file>pixmaps/arrow_end.png</file>
+    <file>pixmaps/arrow_none.png</file>
+    <file>pixmaps/join_bevel.png</file>
+    <file>pixmaps/join_miter.png</file>
+    <file>pixmaps/join_round.png</file>
+    <file>pixmaps/stroke.png</file>
+    <file>pixmaps/fill.png</file>
     <file>css/ngraph.css</file>
   </gresource>
 </gresources>
