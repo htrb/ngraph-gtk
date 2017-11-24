@@ -2455,27 +2455,6 @@ get_graph_modified(void)
   return a;
 }
 
-static void
-graph_modified_sub(int a)
-{
-  if (Menulocal.obj == NULL)
-    return;
-
-  putobj(Menulocal.obj, "modified", 0, &a);
-}
-
-void
-set_graph_modified(void)
-{
-  graph_modified_sub(1);
-}
-
-void
-reset_graph_modified(void)
-{
-  graph_modified_sub(0);
-}
-
 static int
 mx_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
