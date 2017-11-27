@@ -1,3 +1,18 @@
+2017-11-27  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (reset_graph_modified): call "reset_modified_info()".
+	(undo_info_push): initialize the member "modified".
+	(undo_check_modified): added.
+	(menu_undo, menu_redo): save the modified information.
+	(get_graph_modified): return "Menulocal.modified".
+	(set_graph_modified_gra, reset_modified_info): added.
+
+	* src/gtk/x11graph.c (CmGraphShell, CmGraphSwitch, CmGraphPage):
+	call "set_graph_modified_gra()" instead of "set_graph_modified()".
+
+	* src/gtk/ox11menu.c (menuinit): initialize "Menulocal.modified".
+	(mxmodified): set value to "Menulocal.modified".
+
 2017-11-09  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/math/math_parser.c (parse_primary_expression): the

@@ -1119,7 +1119,7 @@ CmGraphSwitch(void *w, gpointer client_data)
     return;
   SwitchDialog(&DlgSwitch);
   if (DialogExecute(TopLevel, &DlgSwitch) == IDOK) {
-    set_graph_modified();
+    set_graph_modified_gra();
     ChangePage();
   }
 }
@@ -1134,7 +1134,7 @@ CmGraphPage(void *w, gpointer client_data)
     SetPageSettingsToGRA();
     ChangePage();
     GetPageSettingsFromGRA();
-    set_graph_modified();
+    set_graph_modified_gra();
   }
 }
 
@@ -1175,7 +1175,7 @@ CmGraphShell(void *w, gpointer client_data)
   }
   unregisterevloop(robj, idn, inst);
   menu_lock(FALSE);
-  set_graph_modified();
+  set_graph_modified_gra();
   UpdateAll(NULL);
 }
 

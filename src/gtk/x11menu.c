@@ -6519,11 +6519,15 @@ set_subwindow_state(enum SubWinType id, enum subwin_state state)
   lock = FALSE;
 }
 
+#define MODIFIED_TYPE_DRAWOBJ 1
+#define MODIFIED_TYPE_GRAOBJ  2
+
 struct undo_info {
   enum MENU_UNDO_TYPE type;
   char **obj;
   time_t time;
   struct undo_info *next;
+  int modified;
 };
 static struct undo_info *UndoInfo = NULL, *RedoInfo = NULL;
 
@@ -6608,6 +6612,7 @@ undo_info_push(enum MENU_UNDO_TYPE type, char **obj)
   info->obj = g_strdupv(obj);
   info->next = UndoInfo;
   info->time = t;
+  info->modified = get_graph_modified();
   UndoInfo = info;
   return info;
 }
@@ -6772,10 +6777,35 @@ undo_update_widgets(struct undo_info *info, int redraw)
   }
 }
 
+static void
+graph_modified_sub(int a)
+{
+  if (Menulocal.obj == NULL)
+    return;
+
+  putobj(Menulocal.obj, "modified", 0, &a);
+}
+
+static int
+undo_check_modified(struct undo_info *info)
+{
+  int modified_saved, modified_current;
+  modified_saved = info->modified;
+  modified_current = get_graph_modified();
+  if (modified_current) {
+    if (! (modified_current & (modified_saved | MODIFIED_TYPE_GRAOBJ))) {
+      graph_modified_sub(0);
+    }
+  } else {
+    set_graph_modified();
+  }
+  return modified_current;
+}
+
 void
 menu_undo(int redraw)
 {
-  int r;
+  int r, modified;
   struct undo_info *info;
   if (UndoInfo == NULL) {
     return;
@@ -6785,10 +6815,12 @@ menu_undo(int redraw)
   if (r) {
     return;
   }
+  modified = undo_check_modified(UndoInfo);
   info = UndoInfo;
   UndoInfo = info->next;
   if (redraw) {
     info->next = RedoInfo;
+    info->modified = modified;
     RedoInfo = info;
     undo_update_widgets(info, redraw);
   } else {
@@ -6802,7 +6834,7 @@ menu_undo(int redraw)
 void
 menu_redo(void)
 {
-  int r;
+  int r, modified;
   struct undo_info *info;
   if (RedoInfo == NULL) {
     return;
@@ -6811,10 +6843,46 @@ menu_redo(void)
   if (r) {
     return;
   }
+  modified = undo_check_modified(RedoInfo);
   info = RedoInfo;
   RedoInfo = info->next;
   info->next = UndoInfo;
+  info->modified = modified;
   UndoInfo = info;
   undo_update_widgets(info, TRUE);
   set_undo_menu_label();
+}
+
+int
+get_graph_modified(void)
+{
+  return Menulocal.modified;
+}
+
+void
+set_graph_modified(void)
+{
+  graph_modified_sub(MODIFIED_TYPE_DRAWOBJ);
+}
+
+void
+set_graph_modified_gra(void)
+{
+  graph_modified_sub(MODIFIED_TYPE_GRAOBJ);
+}
+
+static void
+reset_modified_info(struct undo_info *info)
+{
+  for (; info; info = info->next) {
+      info->modified = 1;
+  }
+}
+
+void
+reset_graph_modified(void)
+{
+  graph_modified_sub(0);
+  reset_modified_info(UndoInfo);
+  reset_modified_info(RedoInfo);
 }
