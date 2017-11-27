@@ -309,5 +309,9 @@ void menu_delete_undo(void);
 void menu_clear_undo(void);
 void menu_undo(int redraw);
 void menu_redo(void);
+int get_graph_modified(void);
+void set_graph_modified(void);
+void set_graph_modified_gra(void);
+void reset_graph_modified(void);
 
 #endif

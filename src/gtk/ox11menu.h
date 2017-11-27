@@ -96,6 +96,7 @@ struct menulocal
   int redrawf, redrawf_num;
   int windpi, data_head_lines;
   int grid, show_grid;
+  int modified;
   cairo_region_t *region;
   int lock;
   struct gra2cairo_local *local;
@@ -180,9 +181,6 @@ int mgtkprintfstdout(const char *fmt, ...);
 void initwindowconfig(void);
 int mgtkwindowconfig(void);
 void menuadddrawrable(struct objlist *parent, struct narray *drawrable);
-int get_graph_modified(void);
-void set_graph_modified(void);
-void reset_graph_modified(void);
 int menu_save_config(int type);
 void main_window_redraw(void);
 void init_layer(const char *obj);

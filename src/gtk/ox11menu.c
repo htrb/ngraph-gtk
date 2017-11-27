@@ -1219,7 +1219,7 @@ static int
 menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct gra2cairo_local *local;
-  int i, layer;
+  int layer;
 
   if (!OpenApplication()) {
     error(obj, ERR_MENU_DISPLAY);
@@ -1344,8 +1344,8 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   if (_putobj(obj, "use_opacity", inst, &Menulocal.use_opacity))
     goto errexit;
 
-  i = 0;
-  if (_putobj(obj, "modified", inst, &i))
+  Menulocal.modified = 0;
+  if (_putobj(obj, "modified", inst, &Menulocal.modified))
     goto errexit;
 
   Menulocal.obj = obj;
@@ -2252,6 +2252,11 @@ mxmodified(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
 
   modified = * (int *) argv[2];
 
+  if (modified) {
+    Menulocal.modified |= modified;
+  } else {
+    Menulocal.modified = modified;
+  }
   SetCaption(modified);
   set_modified_state(modified);
 
@@ -2440,19 +2445,6 @@ mx_addin_list_append(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc
   g_free(addin);
 
   return 0;
-}
-
-int
-get_graph_modified(void)
-{
-  int a;
-
-  if (Menulocal.obj == NULL)
-    return FALSE;
-
-  getobj(Menulocal.obj, "modified", 0, 0, NULL, &a);
-
-  return a;
 }
 
 static int
