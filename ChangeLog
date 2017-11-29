@@ -1,3 +1,9 @@
+2017-11-29  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* addin/timer.nsc: execute "gra::flush".
+
+	* addin/img2gra.nsc: execute "gra::flush".
+
 2017-11-27  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (reset_graph_modified): call "reset_modified_info()".
