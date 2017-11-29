@@ -71,6 +71,7 @@ do
 
     gra::clear
     gra::draw
+    gra::flush
     sleep 1
 done
 
@@ -83,3 +84,4 @@ system:0:recover_instance $OBJ
 
 gra::clear
 gra::draw
+gra::flush

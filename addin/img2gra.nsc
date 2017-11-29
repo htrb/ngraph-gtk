@@ -22,5 +22,6 @@ then
     merge::file="$GRA_FILE"
     gra::clear
     gra::draw
+    gra::flush
     menu::modified=true
 fi
