@@ -205,7 +205,13 @@ DialogExecute(GtkWidget *parent, void *dialog)
 void
 message_beep(GtkWidget * parent)
 {
+#if 1
+  GdkWindow *window;
+  window = gtk_widget_get_window(parent);
+  gdk_window_beep(window);
+#else
   gdk_beep();
+#endif
   reset_event();
 }
 
@@ -865,7 +871,7 @@ fsok(GtkWidget *dlg, struct nGetOpenFileData *data)
 
     tmp = (char *) list->data;
     if (tmp == NULL || strlen(tmp) < 1) {
-      gdk_beep();
+      message_beep(Toplevel);
       continue;
     }
 
@@ -888,14 +894,14 @@ fsok(GtkWidget *dlg, struct nGetOpenFileData *data)
       if (data->mustexist) {
 	if ((nstat(file2, &buf) != 0) || ((buf.st_mode & S_IFMT) != S_IFREG)
 	    || (naccess(file2, R_OK) != 0)) {
-	  gdk_beep();
+	  message_beep(Toplevel);
 	  error22(NULL, 0, "I/O error", file2);
 	  g_free(file2);
 	  continue;
 	}
       } else {
 	if ((nstat(file2, &buf) == 0) && ((buf.st_mode & S_IFMT) != S_IFREG)) {
-	  gdk_beep();
+	  message_beep(Toplevel);
 	  error22(NULL, 0, "I/O error", file2);
 	  g_free(file2);
 	  continue;
