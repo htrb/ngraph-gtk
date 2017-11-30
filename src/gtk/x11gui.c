@@ -871,7 +871,7 @@ fsok(GtkWidget *dlg, struct nGetOpenFileData *data)
 
     tmp = (char *) list->data;
     if (tmp == NULL || strlen(tmp) < 1) {
-      message_beep(Toplevel);
+      message_beep(TopLevel);
       continue;
     }
 
@@ -894,14 +894,14 @@ fsok(GtkWidget *dlg, struct nGetOpenFileData *data)
       if (data->mustexist) {
 	if ((nstat(file2, &buf) != 0) || ((buf.st_mode & S_IFMT) != S_IFREG)
 	    || (naccess(file2, R_OK) != 0)) {
-	  message_beep(Toplevel);
+	  message_beep(TopLevel);
 	  error22(NULL, 0, "I/O error", file2);
 	  g_free(file2);
 	  continue;
 	}
       } else {
 	if ((nstat(file2, &buf) == 0) && ((buf.st_mode & S_IFMT) != S_IFREG)) {
-	  message_beep(Toplevel);
+	  message_beep(TopLevel);
 	  error22(NULL, 0, "I/O error", file2);
 	  g_free(file2);
 	  continue;
