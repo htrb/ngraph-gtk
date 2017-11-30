@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.06.13\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2017-11-29 17:31+0900\n"
+"POT-Creation-Date: 2017-11-30 20:36+0900\n"
 "PO-Revision-Date: 2017-09-25 14:38+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -1071,7 +1071,7 @@ msgstr "X 描画範囲"
 msgid "_Load"
 msgstr "読込(_L)"
 
-#: src/gtk/x11file.c:1547 src/gtk/x11gui.c:1184 src/gtk/x11menu.c:670
+#: src/gtk/x11file.c:1547 src/gtk/x11gui.c:1190 src/gtk/x11menu.c:670
 #: src/gtk/x11menu.c:2723 src/gtk/x11menu.c:3004 src/gtk/x11opt.c:477
 #: src/gtk/x11opt.c:679 src/gtk/x11opt.c:1156 src/gtk/x11opt.c:1345
 #: src/gtk/x11opt.c:1662 src/gtk/x11opt.c:1770
@@ -1438,36 +1438,36 @@ msgstr ""
 "Ngraph は理工系学生、研究者、技術者のために作られた２次元グラフ作成プログラム"
 "です。"
 
-#: src/gtk/x11gui.c:134 src/gtk/x11gui.c:338 src/gtk/x11gui.c:406
-#: src/gtk/x11gui.c:542 src/gtk/x11gui.c:618 src/gtk/x11gui.c:688
-#: src/gtk/x11gui.c:767 src/gtk/x11gui.c:998 src/gtk/x11menu.c:5352
+#: src/gtk/x11gui.c:134 src/gtk/x11gui.c:344 src/gtk/x11gui.c:412
+#: src/gtk/x11gui.c:548 src/gtk/x11gui.c:624 src/gtk/x11gui.c:694
+#: src/gtk/x11gui.c:773 src/gtk/x11gui.c:1004 src/gtk/x11menu.c:5352
 #: src/gtk/x11opt.c:1316
 msgid "_Cancel"
 msgstr "キャンセル(_C)"
 
-#: src/gtk/x11gui.c:146 src/gtk/x11gui.c:339 src/gtk/x11gui.c:407
-#: src/gtk/x11gui.c:543 src/gtk/x11gui.c:619 src/gtk/x11gui.c:689
-#: src/gtk/x11gui.c:768 src/gtk/x11opt.c:1314
+#: src/gtk/x11gui.c:146 src/gtk/x11gui.c:345 src/gtk/x11gui.c:413
+#: src/gtk/x11gui.c:549 src/gtk/x11gui.c:625 src/gtk/x11gui.c:695
+#: src/gtk/x11gui.c:774 src/gtk/x11opt.c:1314
 msgid "_OK"
 msgstr "_OK"
 
-#: src/gtk/x11gui.c:246
+#: src/gtk/x11gui.c:252
 msgid "Error"
 msgstr "エラー"
 
-#: src/gtk/x11gui.c:278
+#: src/gtk/x11gui.c:284
 msgid "_No"
 msgstr "いいえ(_N)"
 
-#: src/gtk/x11gui.c:279
+#: src/gtk/x11gui.c:285
 msgid "_Yes"
 msgstr "はい(_Y)"
 
-#: src/gtk/x11gui.c:850 src/gtk/x11gui.c:1025 src/gtk/x11gui.c:1030
+#: src/gtk/x11gui.c:856 src/gtk/x11gui.c:1031 src/gtk/x11gui.c:1036
 msgid "All"
 msgstr "全てのファイル"
 
-#: src/gtk/x11gui.c:951 src/gtk/x11opt.c:1924
+#: src/gtk/x11gui.c:957 src/gtk/x11opt.c:1924
 #, c-format
 msgid ""
 "`%s'\n"
@@ -1477,16 +1477,16 @@ msgstr ""
 "'%s' というファイルは既に存在します.\n"
 "上書きしてもよろしいですか?"
 
-#: src/gtk/x11gui.c:1002
+#: src/gtk/x11gui.c:1008
 msgid "_Change current directory"
 msgstr "カレントディレクトリを移動(_C)"
 
-#: src/gtk/x11gui.c:1013
+#: src/gtk/x11gui.c:1019
 #, c-format
 msgid "%s file (*.%s)"
 msgstr "%s ファイル (*.%s)"
 
-#: src/gtk/x11gui.c:1117 src/gtk/x11gui.c:1150 src/gtk/x11menu.c:5354
+#: src/gtk/x11gui.c:1123 src/gtk/x11gui.c:1156 src/gtk/x11menu.c:5354
 msgid "_Open"
 msgstr "開く(_O)"
 
