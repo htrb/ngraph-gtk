@@ -1,3 +1,8 @@
+2017-12-01  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11gui.c (message_beep): call "gdk_beep()" whrn the
+	variable "parent"is NULL.
+
 2017-11-30  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11gui.c (message_beep): use "gdk_window_beep()" instead
