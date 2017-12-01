@@ -205,14 +205,14 @@ DialogExecute(GtkWidget *parent, void *dialog)
 void
 message_beep(GtkWidget * parent)
 {
-#if 1
-  GdkWindow *window;
-  window = gtk_widget_get_window(parent);
-  gdk_window_beep(window);
-#else
-  gdk_beep();
-#endif
-  reset_event();
+  if (parent) {
+    GdkWindow *window;
+    window = gtk_widget_get_window(parent);
+    gdk_window_beep(window);
+  } else {
+    gdk_beep();
+  }
+  //  reset_event();
 }
 
 static void
