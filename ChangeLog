@@ -1,3 +1,19 @@
+2017-12-02  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (FileWinFileDraw): save undo information.
+
+	* src/gtk/x11merge.c (MergeWinUpdate): draw merge onject.
+
+	* src/gtk/x11menu.c (UpdateAll): call only "UpdateAll2()".
+	(check_update_obj): added.
+	(UpdateAll2): use "check_update_obj()".
+
+	* src/gtk/x11file.c (FileWinFileDraw): don't call "CmViewerDraw()".
+	(FileWinUpdate): draw data object.
+
+	* src/gtk/x11axis.c (AxisWinUpdate): draw axis, axisgrid and data
+	objects.
+
 2017-12-01  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11gui.c (message_beep): call "gdk_beep()" whrn the
