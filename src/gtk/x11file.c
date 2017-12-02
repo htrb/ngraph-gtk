@@ -4716,7 +4716,7 @@ FileWinFileUpdate(struct obj_list_data *d)
 static void
 FileWinFileDraw(struct obj_list_data *d)
 {
-  int i, sel, hidden, h, num;
+  int i, sel, hidden, h, num, modified;
 
   if (Menulock || Globallock)
     return;
@@ -4724,13 +4724,15 @@ FileWinFileDraw(struct obj_list_data *d)
   sel = list_store_get_selected_index(GTK_WIDGET(d->text));
   num = chkobjlastinst(d->obj);
 
+  modified = FALSE;
+  data_save_undo(UNDO_TYPE_EDIT);
   if ((sel >= 0) && (sel <= num)) {
     for (i = 0; i <= num; i++) {
       hidden = (i != sel);
       getobj(d->obj, "hidden", i, 0, NULL, &h);
       putobj(d->obj, "hidden", i, &hidden);
       if (h != hidden) {
-	set_graph_modified();
+	modified = TRUE;
       }
     }
     d->select = sel;
@@ -4740,10 +4742,15 @@ FileWinFileDraw(struct obj_list_data *d)
       getobj(d->obj, "hidden", i, 0, NULL, &h);
       putobj(d->obj, "hidden", i, &hidden);
       if (h != hidden) {
-	set_graph_modified();
+	modified = TRUE;
       }
     }
     d->select = -1;
+  }
+  if (modified) {
+    set_graph_modified();
+  } else {
+    menu_delete_undo();
   }
   FileWinUpdate(d, FALSE);
 }
