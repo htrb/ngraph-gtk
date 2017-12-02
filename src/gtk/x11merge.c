@@ -315,6 +315,8 @@ MergeWinUpdate(struct obj_list_data *d, int clear)
   if (! clear && d->select >= 0) {
     list_store_select_int(GTK_WIDGET(d->text), MERG_WIN_COL_ID, d->select);
   }
+  NgraphApp.Viewer.allclear = TRUE;
+  update_viewer(d);
 }
 
 static void

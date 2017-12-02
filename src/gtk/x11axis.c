@@ -2842,6 +2842,8 @@ CmAxisGridUpdate(void *w, gpointer client_data)
 void
 AxisWinUpdate(struct obj_list_data *d, int clear)
 {
+  char *objects[4];
+
   if (Menulock || Globallock)
     return;
 
@@ -2857,6 +2859,12 @@ AxisWinUpdate(struct obj_list_data *d, int clear)
   if (! clear && d->select >= 0) {
     list_store_select_int(GTK_WIDGET(d->text), AXIS_WIN_COL_ID, d->select);
   }
+  NgraphApp.Viewer.allclear = TRUE;
+  objects[0] = d->obj->name;
+  objects[1] = "axisgrid";
+  objects[2] = NgraphApp.FileWin.data.data->obj->name;
+  objects[3] = NULL;
+  ViewerWinUpdate(objects);
 }
 
 static void

@@ -5906,41 +5906,34 @@ application(char *file)
 void
 UpdateAll(char **objects)
 {
+  UpdateAll2(objects);
+}
+
+void
+check_update_obj(char **objects, struct obj_list_data *d, int clear)
+{
+  struct objlist *obj;
+  char **ptr;
   if (objects) {
-    /* legends are drawn in LegendWinUpdate(). */
-    char *objs[OBJ_MAX], *lobjs[OBJ_MAX], **ptr, **lptr;
-    struct objlist *lobj, *obj;
-    lobj = getobject("legend");
-    ptr = objs;
-    lptr = lobjs;
-     while (*objects) {
-      obj = getobject(*objects);
-      if (chkobjparent(obj) != lobj) {
-	*ptr = *objects;
-	ptr++;
-      } else {
-	*lptr = *objects;
-	lptr++;
+    for (ptr = objects; *ptr; ptr++) {
+      obj = getobject(*ptr);
+      if (obj == d->obj) {
+	d->update(d, clear);
+	break;
       }
-      objects++;
     }
-    *ptr = NULL;
-    *lptr = NULL;
-    ViewerWinUpdate(objs);
-    UpdateAll2(lobjs);
   } else {
-    ViewerWinUpdate(objects);
-    UpdateAll2(objects);
+    d->update(d, clear);
   }
 }
 
 void
 UpdateAll2(char **objs)
 {
-  FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
-  AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE);
+  check_update_obj(objs, NgraphApp.FileWin.data.data, TRUE);
+  check_update_obj(objs, NgraphApp.AxisWin.data.data, TRUE);
   LegendWinUpdate(objs, TRUE);
-  MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE);
+  check_update_obj(objs, NgraphApp.MergeWin.data.data, TRUE);
   InfoWinUpdate(TRUE);
   CoordWinUpdate(TRUE);
 }

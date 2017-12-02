@@ -4745,7 +4745,6 @@ FileWinFileDraw(struct obj_list_data *d)
     }
     d->select = -1;
   }
-  CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
   FileWinUpdate(d, FALSE);
 }
 
@@ -4776,6 +4775,8 @@ FileWinUpdate(struct obj_list_data *d, int clear)
   if (! clear && d->select >= 0) {
     list_store_select_int(GTK_WIDGET(d->text), FILE_WIN_COL_ID, d->select);
   }
+  NgraphApp.Viewer.allclear = TRUE;
+  update_viewer(d);
 }
 
 static void
