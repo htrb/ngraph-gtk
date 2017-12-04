@@ -1,3 +1,17 @@
+2017-12-04  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11lgnd.c (LegendWinUpdate): add 3rd argument.
+
+	* src/gtk/x11merge.c (MergeWinUpdate): add 3rd argument.
+
+	* src/gtk/x11file.c (FileWinUpdate): add 3rd argument.
+
+	* src/gtk/x11axis.c (AxisWinUpdate): add 3rd argument.
+
+	* src/gtk/x11lgnd.c (TextListUpdate, MarkListUpdate)
+	(RectListUpdate, ArcListUpdate, PathListUpdate): add 3rd argument.
+	(ObjListUpdate): redraw object depend on the 3rd parameter.
+
 2017-12-02  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (FileWinFileDraw): save undo information.
