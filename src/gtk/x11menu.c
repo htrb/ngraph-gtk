@@ -5943,7 +5943,7 @@ UpdateAll2(char **objs)
   if (update_merge) {
     MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE, TRUE);
   }
-  LegendWinUpdate(objs, TRUE);
+  LegendWinUpdate(objs, TRUE, TRUE);
   InfoWinUpdate(TRUE);
   CoordWinUpdate(TRUE);
 }

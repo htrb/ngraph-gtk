@@ -304,7 +304,7 @@ legend_menu_update_object(const char *name, char *(*callback) (struct objlist * 
       }
       objs[0] = obj->name;
       objs[1] = NULL;
-      LegendWinUpdate(objs, TRUE);
+      LegendWinUpdate(objs, TRUE, TRUE);
     }
   }
   arraydel(&array);
@@ -337,7 +337,7 @@ legend_menu_delete_object(const char *name, char *(*callback) (struct objlist * 
       }
       objs[0] = obj->name;
       objs[1] = NULL;
-      LegendWinUpdate(objs, TRUE);
+      LegendWinUpdate(objs, TRUE, TRUE);
     }
   }
   arraydel(&array);
@@ -2190,7 +2190,7 @@ TextListUpdate(struct obj_list_data *d, int clear, int draw)
 }
 
 void
-LegendWinUpdate(char **objects, int clear)
+LegendWinUpdate(char **objects, int clear, int draw)
 {
   struct obj_list_data *d;
   struct objlist *obj;
@@ -2203,12 +2203,12 @@ LegendWinUpdate(char **objects, int clear)
       for (ptr = objects; *ptr; ptr++) {
 	obj = getobject(*ptr);
 	if (obj == d->obj) {
-	  d->update(d, clear, TRUE);
+	  d->update(d, clear, draw);
 	  break;
 	}
       }
     } else {
-      d->update(d, clear, TRUE);
+      d->update(d, clear, draw);
     }
   }
 }
