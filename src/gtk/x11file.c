@@ -4183,7 +4183,7 @@ CmFileHistory(GtkRecentChooser *w, gpointer client_data)
     AddDataFileList(fname);
   }
   g_free(fname);
-  FileWinUpdate(data, TRUE);
+  FileWinUpdate(data, TRUE, TRUE);
 }
 
 void
@@ -4228,7 +4228,7 @@ CmFileNew(void *w, gpointer client_data)
     AddDataFileList(file);
   }
 
-  FileWinUpdate(data, TRUE);
+  FileWinUpdate(data, TRUE, TRUE);
 }
 
 void
@@ -4266,7 +4266,7 @@ CmRangeAdd(void *w, gpointer client_data)
     delobj(obj, id);
   } else {
     set_graph_modified();
-    FileWinUpdate(data, TRUE);
+    FileWinUpdate(data, TRUE, TRUE);
   }
 }
 
@@ -4308,7 +4308,7 @@ CmFileOpen(void *w, gpointer client_data)
   }
 
   if (update_file_obj_multi(obj, &farray, TRUE)) {
-    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, TRUE);
   }
 
   if (n == chkobjlastinst(obj)) {
@@ -4347,7 +4347,7 @@ CmFileClose(void *w, gpointer client_data)
       delete_file_obj(data, array[i]);
       set_graph_modified();
     }
-    FileWinUpdate(data, TRUE);
+    FileWinUpdate(data, TRUE, TRUE);
   }
   arraydel(&farray);
 }
@@ -4441,7 +4441,7 @@ CmFileUpdate(void *w, gpointer client_data)
   }
 
   if (ret == IDOK && update_file_obj_multi(obj, &farray, FALSE)) {
-    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, TRUE);
   }
   arraydel(&farray);
 }
@@ -4590,7 +4590,7 @@ FileWinFileDelete(struct obj_list_data *d)
     } else {
       d->select = sel;
     }
-    FileWinUpdate(d, update);
+    FileWinUpdate(d, update, TRUE);
     set_graph_modified();
   }
 }
@@ -4633,7 +4633,7 @@ FileWinFileCopy(struct obj_list_data *d)
 {
   data_save_undo(UNDO_TYPE_COPY);
   d->select = file_obj_copy(d);
-  FileWinUpdate(d, FALSE);
+  FileWinUpdate(d, FALSE, TRUE);
 }
 
 static void
@@ -4660,7 +4660,7 @@ FileWinFileCopy2(struct obj_list_data *d)
 
   if (id < 0) {
     d->select = sel;
-    FileWinUpdate(d, TRUE);
+    FileWinUpdate(d, TRUE, TRUE);
     return;
   }
 
@@ -4669,7 +4669,7 @@ FileWinFileCopy2(struct obj_list_data *d)
   }
 
   d->select = sel + 1;
-  FileWinUpdate(d, FALSE);
+  FileWinUpdate(d, FALSE, TRUE);
 }
 
 static void
@@ -4709,7 +4709,7 @@ FileWinFileUpdate(struct obj_list_data *d)
       set_graph_modified();
       break;
     }
-    d->update(d, FALSE);
+    d->update(d, FALSE, TRUE);
   }
 }
 
@@ -4752,7 +4752,7 @@ FileWinFileDraw(struct obj_list_data *d)
   } else {
     menu_delete_undo();
   }
-  FileWinUpdate(d, FALSE);
+  FileWinUpdate(d, FALSE, TRUE);
 }
 
 static void
@@ -4765,7 +4765,7 @@ file_draw_popup_func(GtkMenuItem *w, gpointer client_data)
 }
 
 void
-FileWinUpdate(struct obj_list_data *d, int clear)
+FileWinUpdate(struct obj_list_data *d, int clear, int draw)
 {
   if (Menulock || Globallock)
     return;
@@ -4782,8 +4782,10 @@ FileWinUpdate(struct obj_list_data *d, int clear)
   if (! clear && d->select >= 0) {
     list_store_select_int(GTK_WIDGET(d->text), FILE_WIN_COL_ID, d->select);
   }
-  NgraphApp.Viewer.allclear = TRUE;
-  update_viewer(d);
+  if (draw) {
+    NgraphApp.Viewer.allclear = TRUE;
+    update_viewer(d);
+  }
 }
 
 static void
@@ -5743,7 +5745,7 @@ select_type(GtkComboBox *w, gpointer user_data)
   }
 
   d->select = sel;
-  d->update(d, FALSE);
+  d->update(d, FALSE, TRUE);
   set_graph_modified();
 }
 
@@ -5905,7 +5907,7 @@ edited_axis(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer us
   if (str == NULL || d->select < 0)
     return;
 
-  d->update(d, FALSE);
+  d->update(d, FALSE, TRUE);
   set_graph_modified();
 }
 

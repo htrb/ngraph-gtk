@@ -5909,31 +5909,41 @@ UpdateAll(char **objects)
   UpdateAll2(objects);
 }
 
-void
-check_update_obj(char **objects, struct obj_list_data *d, int clear)
+int
+check_update_obj(char **objects, struct obj_list_data *d)
 {
   struct objlist *obj;
   char **ptr;
-  if (objects) {
-    for (ptr = objects; *ptr; ptr++) {
-      obj = getobject(*ptr);
-      if (obj == d->obj) {
-	d->update(d, clear);
-	break;
-      }
-    }
-  } else {
-    d->update(d, clear);
+  if (objects == NULL) {
+    return TRUE;
   }
+  for (ptr = objects; *ptr; ptr++) {
+    obj = getobject(*ptr);
+    if (obj == d->obj) {
+      return TRUE;
+    }
+  }
+  return FALSE;
 }
 
 void
 UpdateAll2(char **objs)
 {
-  check_update_obj(objs, NgraphApp.FileWin.data.data, TRUE);
-  check_update_obj(objs, NgraphApp.AxisWin.data.data, TRUE);
+  int update_axis, update_file, update_merge;
+
+  update_file = check_update_obj(objs, NgraphApp.FileWin.data.data);
+  update_axis = check_update_obj(objs, NgraphApp.AxisWin.data.data);
+  update_merge = check_update_obj(objs, NgraphApp.MergeWin.data.data);
+  if (update_file) {
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, ! update_axis);
+  }
+  if (update_axis) {
+    AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
+  }
+  if (update_merge) {
+    MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE, TRUE);
+  }
   LegendWinUpdate(objs, TRUE);
-  check_update_obj(objs, NgraphApp.MergeWin.data.data, TRUE);
   InfoWinUpdate(TRUE);
   CoordWinUpdate(TRUE);
 }

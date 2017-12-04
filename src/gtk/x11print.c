@@ -679,7 +679,7 @@ CmOutputPrinter(int select_file, int show_dialog)
   delobj(g2wobj, g2wid);
 
   if (select_file && NgraphApp.FileWin.data.data) {
-    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, TRUE);
   }
 }
 
@@ -731,7 +731,7 @@ CmOutputDriver(void)
   delobj(g2wobj, g2wid);
 
   if (Menulocal.select_data) {
-    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, TRUE);
   }
 }
 
@@ -877,7 +877,7 @@ CmPrintGRAFile(void)
   delobj(g2wobj, g2wid);
 
   if (Menulocal.select_data) {
-    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, TRUE);
   }
 }
 
@@ -1002,7 +1002,7 @@ CmOutputImage(int type)
   delobj(g2wobj, g2wid);
 
   if (Menulocal.select_data) {
-    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, TRUE);
   }
 }
 

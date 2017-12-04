@@ -180,7 +180,7 @@ struct obj_list_data
   GtkWidget *popup, **popup_item;
   GtkWidget *text;
   int select, can_focus;
-  void (* update)(struct obj_list_data *data, int);
+  void (* update)(struct obj_list_data *data, int, int);
   void (* delete)(struct obj_list_data *data, int);
   void (* setup_dialog)(struct obj_list_data *data, int id, int user_data);
   void *dialog;

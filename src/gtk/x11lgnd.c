@@ -2135,7 +2135,7 @@ LegendWinTextUpdate(struct obj_list_data *data, int id, int user_data)
 }
 
 static void
-ObjListUpdate(struct obj_list_data *d, int clear, list_sub_window_set_val_func func)
+ObjListUpdate(struct obj_list_data *d, int clear, int draw, list_sub_window_set_val_func func)
 {
   if (Menulock || Globallock)
     return;
@@ -2153,38 +2153,40 @@ ObjListUpdate(struct obj_list_data *d, int clear, list_sub_window_set_val_func f
   if (! clear && d->select >= 0) {
     list_store_select_int(GTK_WIDGET(d->text), COL_ID, d->select);
   }
-  NgraphApp.Viewer.allclear = TRUE;
-  update_viewer(d);
+  if (draw) {
+    NgraphApp.Viewer.allclear = TRUE;
+    update_viewer(d);
+  }
 }
 
-void
-PathListUpdate(struct obj_list_data *d, int clear)
+static void
+PathListUpdate(struct obj_list_data *d, int clear, int draw)
 {
-  ObjListUpdate(d, clear, path_list_set_val);
+  ObjListUpdate(d, clear, draw, path_list_set_val);
 }
 
-void
-ArcListUpdate(struct obj_list_data *d, int clear)
+static void
+ArcListUpdate(struct obj_list_data *d, int clear, int draw)
 {
-  ObjListUpdate(d, clear, arc_list_set_val);
+  ObjListUpdate(d, clear, draw, arc_list_set_val);
 }
 
-void
-RectListUpdate(struct obj_list_data *d ,int clear)
+static void
+RectListUpdate(struct obj_list_data *d ,int clear, int draw)
 {
-  ObjListUpdate(d, clear, rect_list_set_val);
+  ObjListUpdate(d, clear, draw, rect_list_set_val);
 }
 
-void
-MarkListUpdate(struct obj_list_data *d, int clear)
+static void
+MarkListUpdate(struct obj_list_data *d, int clear, int draw)
 {
-  ObjListUpdate(d, clear, mark_list_set_val);
+  ObjListUpdate(d, clear, draw, mark_list_set_val);
 }
 
-void
-TextListUpdate(struct obj_list_data *d, int clear)
+static void
+TextListUpdate(struct obj_list_data *d, int clear, int draw)
 {
-  ObjListUpdate(d, clear, text_list_set_val);
+  ObjListUpdate(d, clear, draw, text_list_set_val);
 }
 
 void
@@ -2201,12 +2203,12 @@ LegendWinUpdate(char **objects, int clear)
       for (ptr = objects; *ptr; ptr++) {
 	obj = getobject(*ptr);
 	if (obj == d->obj) {
-	  d->update(d, clear);
+	  d->update(d, clear, TRUE);
 	  break;
 	}
       }
     } else {
-      d->update(d, clear);
+      d->update(d, clear, TRUE);
     }
   }
 }
@@ -2786,7 +2788,7 @@ pos_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer use
     menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
     exeobj(d->obj, "move", m, 2, argv);
     set_graph_modified();
-    d->update(d, TRUE);
+    d->update(d, TRUE, TRUE);
   }
 
   return;
@@ -2835,7 +2837,7 @@ rect_size_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpoint
     putobj(d->obj, pos1, id, &x1);
     putobj(d->obj, pos2, id, &x2);
     set_graph_modified();
-    d->update(d, TRUE);
+    d->update(d, TRUE, TRUE);
   }
 
   return;
@@ -3117,7 +3119,7 @@ select_type(GtkComboBox *w, gpointer user_data)
   }
 
   d->select = sel;
-  d->update(d, FALSE);
+  d->update(d, FALSE, TRUE);
   set_graph_modified();
 }
 
@@ -3240,7 +3242,7 @@ select_line_type(GtkComboBox *w, gpointer user_data)
   }
 
   d->select = sel;
-  d->update(d, FALSE);
+  d->update(d, FALSE, TRUE);
   set_graph_modified();
 }
 
@@ -3347,7 +3349,7 @@ select_font(GtkComboBox *w, gpointer user_data)
   }
 
   d->select = sel;
-  d->update(d, FALSE);
+  d->update(d, FALSE, TRUE);
   set_graph_modified();
 }
 
@@ -3410,7 +3412,7 @@ start_editing_text(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *
 
 struct legend_data {
   char *icon_file;
-  void (* update_func) (struct obj_list_data *, int);
+  void (* update_func) (struct obj_list_data *, int, int);
   void (* update_dialog_func) (struct obj_list_data *, int, int);
   char *name;
   struct LegendDialog *dialog;

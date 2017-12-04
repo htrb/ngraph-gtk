@@ -639,8 +639,8 @@ data_dropped(char **filenames, int num, int file_type)
     }
   }
 
-  MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE);
-  FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
+  MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE, FALSE);
+  FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
   return 0;
 }
 
@@ -5734,7 +5734,7 @@ Draw(int SelectFile)
   main_window_redraw();
 
   if (SelectFile) {
-    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
   }
 }
 
@@ -5764,8 +5764,8 @@ CmViewerDraw(void *w, gpointer client_data)
 
   Draw(select_file);
 
-  FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
-  AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE);
+  FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
+  AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, FALSE);
 }
 
 void
@@ -5776,7 +5776,7 @@ CmViewerClear(void *w, gpointer client_data)
 
   Clear();
 
-  FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
+  FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
 }
 
 static int

@@ -232,7 +232,7 @@ CmMergeOpen(void *w, gpointer client_data)
   } else {
     g_free(name);
   }
-  MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE);
+  MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE, TRUE);
 }
 
 void
@@ -260,7 +260,7 @@ CmMergeClose(void *w, gpointer client_data)
       delobj(obj, array[i]);
       set_graph_modified();
     }
-    MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE);
+    MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE, TRUE);
   }
   arraydel(&farray);
 }
@@ -295,13 +295,13 @@ CmMergeUpdate(void *w, gpointer client_data)
 	  array[j]--;
       }
     }
-    MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE);
+    MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE, TRUE);
   }
   arraydel(&farray);
 }
 
 void
-MergeWinUpdate(struct obj_list_data *d, int clear)
+MergeWinUpdate(struct obj_list_data *d, int clear, int draw)
 {
   if (d == NULL)
     return;
@@ -315,8 +315,10 @@ MergeWinUpdate(struct obj_list_data *d, int clear)
   if (! clear && d->select >= 0) {
     list_store_select_int(GTK_WIDGET(d->text), MERG_WIN_COL_ID, d->select);
   }
-  NgraphApp.Viewer.allclear = TRUE;
-  update_viewer(d);
+  if (draw) {
+    NgraphApp.Viewer.allclear = TRUE;
+    update_viewer(d);
+  }
 }
 
 static void
