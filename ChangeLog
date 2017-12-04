@@ -1,5 +1,8 @@
 2017-12-04  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11file.c (CmFileHistory, CmFileNew, CmFileOpen)
+	(FileWinFileCopy, FileWinFileCopy2): don't redraw.
+
 	* src/gtk/x11lgnd.c (LegendWinUpdate): add 3rd argument.
 
 	* src/gtk/x11merge.c (MergeWinUpdate): add 3rd argument.
