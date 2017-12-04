@@ -5909,21 +5909,31 @@ UpdateAll(char **objects)
   UpdateAll2(objects);
 }
 
-int
-check_update_obj(char **objects, struct obj_list_data *d)
+static void
+check_update_obj(char **objects,
+		 struct obj_list_data *file, int *update_file,
+		 struct obj_list_data *axis, int *update_axis,
+		 struct obj_list_data *merge, int *update_merge)
 {
   struct objlist *obj;
   char **ptr;
   if (objects == NULL) {
-    return TRUE;
+    *update_file = TRUE;
+    *update_axis = TRUE;
+    *update_merge = TRUE;
+    return;
   }
+
   for (ptr = objects; *ptr; ptr++) {
     obj = getobject(*ptr);
-    if (obj == d->obj) {
-      return TRUE;
+    if (obj == file->obj) {
+      *update_file = TRUE;
+    } else if (obj == axis->obj) {
+      *update_axis = TRUE;
+    } else if (obj == merge->obj) {
+      *update_merge = TRUE;
     }
   }
-  return FALSE;
 }
 
 void
@@ -5931,9 +5941,10 @@ UpdateAll2(char **objs)
 {
   int update_axis, update_file, update_merge;
 
-  update_file = check_update_obj(objs, NgraphApp.FileWin.data.data);
-  update_axis = check_update_obj(objs, NgraphApp.AxisWin.data.data);
-  update_merge = check_update_obj(objs, NgraphApp.MergeWin.data.data);
+  check_update_obj(objs,
+		   NgraphApp.FileWin.data.data, &update_file,
+		   NgraphApp.AxisWin.data.data, &update_axis,
+		   NgraphApp.MergeWin.data.data, &update_merge);
   if (update_file) {
     FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, ! update_axis);
   }
