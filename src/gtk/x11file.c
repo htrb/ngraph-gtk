@@ -4752,7 +4752,8 @@ FileWinFileDraw(struct obj_list_data *d)
   } else {
     menu_delete_undo();
   }
-  FileWinUpdate(d, FALSE, TRUE);
+  CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
+  FileWinUpdate(d, FALSE, FALSE);
 }
 
 static void
