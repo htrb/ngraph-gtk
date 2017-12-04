@@ -4183,7 +4183,7 @@ CmFileHistory(GtkRecentChooser *w, gpointer client_data)
     AddDataFileList(fname);
   }
   g_free(fname);
-  FileWinUpdate(data, TRUE, TRUE);
+  FileWinUpdate(data, TRUE, FALSE);
 }
 
 void
@@ -4228,7 +4228,7 @@ CmFileNew(void *w, gpointer client_data)
     AddDataFileList(file);
   }
 
-  FileWinUpdate(data, TRUE, TRUE);
+  FileWinUpdate(data, TRUE, FALSE);
 }
 
 void
@@ -4308,7 +4308,7 @@ CmFileOpen(void *w, gpointer client_data)
   }
 
   if (update_file_obj_multi(obj, &farray, TRUE)) {
-    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, TRUE);
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
   }
 
   if (n == chkobjlastinst(obj)) {
@@ -4633,7 +4633,7 @@ FileWinFileCopy(struct obj_list_data *d)
 {
   data_save_undo(UNDO_TYPE_COPY);
   d->select = file_obj_copy(d);
-  FileWinUpdate(d, FALSE, TRUE);
+  FileWinUpdate(d, FALSE, FALSE);
 }
 
 static void
@@ -4660,7 +4660,7 @@ FileWinFileCopy2(struct obj_list_data *d)
 
   if (id < 0) {
     d->select = sel;
-    FileWinUpdate(d, TRUE, TRUE);
+    FileWinUpdate(d, TRUE, FALSE);
     return;
   }
 
@@ -4669,7 +4669,7 @@ FileWinFileCopy2(struct obj_list_data *d)
   }
 
   d->select = sel + 1;
-  FileWinUpdate(d, FALSE, TRUE);
+  FileWinUpdate(d, FALSE, FALSE);
 }
 
 static void
@@ -4784,8 +4784,12 @@ FileWinUpdate(struct obj_list_data *d, int clear, int draw)
     list_store_select_int(GTK_WIDGET(d->text), FILE_WIN_COL_ID, d->select);
   }
   if (draw) {
-    NgraphApp.Viewer.allclear = TRUE;
-    update_viewer(d);
+    int redraw;
+    getobj(Menulocal.obj, "redraw_flag", 0, 0, NULL, &redraw);
+    if (redraw) {
+      NgraphApp.Viewer.allclear = TRUE;
+      update_viewer(d);
+    }
   }
 }
 
