@@ -5696,6 +5696,7 @@ Draw(int SelectFile)
   struct Viewer *d;
   N_VALUE *gra_inst;
 
+  draw_notify(FALSE);
   d = &NgraphApp.Viewer;
 
   if (SelectFile && !SetFileHidden())
@@ -5765,7 +5766,7 @@ CmViewerDraw(void *w, gpointer client_data)
   Draw(select_file);
 
   FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
-  AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, FALSE);
+  AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, FILE_DRAW_NONE);
 }
 
 void

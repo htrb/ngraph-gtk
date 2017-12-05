@@ -266,6 +266,12 @@ struct EventLoopInfo {
   guint32 time;
 };
 
+enum FileDrawFlag {
+  FILE_DRAW_NONE = 0,
+  FILE_DRAW_REDRAW = 1,
+  FILE_DRAW_NOTIFY = 2,
+};
+
 int application(char *file);
 
 void set_current_window(GtkWidget *w);
@@ -313,5 +319,6 @@ int get_graph_modified(void);
 void set_graph_modified(void);
 void set_graph_modified_gra(void);
 void reset_graph_modified(void);
+void draw_notify(int notify);
 
 #endif

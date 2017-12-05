@@ -1006,7 +1006,7 @@ update(struct obj_list_data *d)
     set_graph_modified();
     break;
   }
-  d->update(d, FALSE, TRUE);
+  d->update(d, FALSE, FILE_DRAW_NOTIFY);
 }
 
 static void

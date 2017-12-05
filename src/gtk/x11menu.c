@@ -70,8 +70,10 @@
 #define SIDE_PANE_TAB_ID "side_pane"
 int Menulock = FALSE, DnDLock = FALSE;
 struct NgraphApp NgraphApp = {0};
-GtkWidget *TopLevel = NULL;
+GtkWidget *TopLevel = NULL, *DrawButton = NULL;
 GtkAccelGroup *AccelGroup = NULL;
+
+#define DRAW_NOTIFY_CLASS_NAME "draw_notify"
 
 static GtkWidget *CurrentWindow = NULL, *CToolbar = NULL, *PToolbar = NULL;
 static enum {APP_CONTINUE, APP_QUIT, APP_QUIT_FORCE} Hide_window = APP_CONTINUE;
@@ -240,6 +242,7 @@ static int DefaultMode = PointerModeBoth;
 struct ToolItem {
   enum {
     TOOL_TYPE_NORMAL,
+    TOOL_TYPE_DRAW,
     TOOL_TYPE_SAVE,
     TOOL_TYPE_TOGGLE,
     TOOL_TYPE_TOGGLE2,
@@ -702,7 +705,7 @@ static struct ToolItem CommandToolbar[] = {
     "app.AxisScaleClearAction",
   },
   {
-    TOOL_TYPE_NORMAL,
+    TOOL_TYPE_DRAW,
     N_("_Draw"),
     N_("Draw"),
     N_("Draw on Viewer Window"),
@@ -5421,6 +5424,25 @@ create_save_menu(void)
   return menu;
 }
 
+void
+draw_notify(int notify)
+{
+  static int state = FALSE;
+  GtkStyleContext *style;
+  if (state == notify) {
+    return;
+  }
+  state = notify;
+  if (DrawButton == NULL) {
+    return;
+  }
+  style = gtk_widget_get_style_context(DrawButton);
+  if (state) {
+    gtk_style_context_add_class(style, DRAW_NOTIFY_CLASS_NAME);
+  } else {
+    gtk_style_context_remove_class(style, DRAW_NOTIFY_CLASS_NAME);
+  }
+}
 
 static GtkWidget *
 create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
@@ -5447,6 +5469,10 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
       break;
     case TOOL_TYPE_NORMAL:
       widget = gtk_tool_button_new(icon, _(item[i].label));
+      break;
+    case TOOL_TYPE_DRAW:
+      widget = gtk_tool_button_new(icon, _(item[i].label));
+      DrawButton = GTK_WIDGET(widget);
       break;
     case TOOL_TYPE_SAVE:
       widget = gtk_menu_tool_button_new(icon, _(item[i].label));
