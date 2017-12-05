@@ -4791,6 +4791,8 @@ FileWinUpdate(struct obj_list_data *d, int clear, int draw)
     if (redraw) {
       NgraphApp.Viewer.allclear = TRUE;
       update_viewer(d);
+    } else {
+      draw_notify(TRUE);
     }
     break;
   case FILE_DRAW_NOTIFY:
