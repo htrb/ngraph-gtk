@@ -1,3 +1,17 @@
+2017-12-05  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (Draw): call "draw_notify()".
+
+	* src/gtk/x11menu.c (draw_notify): added.
+
+	* src/gtk/x11menu.h (FileDrawFlag): added.
+
+	* src/gtk/x11file.c (FileWinUpdate): call "draw_notify()".
+
+	* src/gtk/gtk_subwin.c (update): redraw flag is now "FILE_DRAW_NOTIFY".
+
+	* src/gtk/data/css/ngraph.css: add definition of "draw_notify" class.
+
 2017-12-04  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (CmFileHistory, CmFileNew, CmFileOpen)
