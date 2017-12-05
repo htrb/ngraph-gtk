@@ -232,7 +232,7 @@ CmMergeOpen(void *w, gpointer client_data)
   } else {
     g_free(name);
   }
-  MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE, TRUE);
+  MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE, FILE_DRAW_NOTIFY);
 }
 
 void
@@ -303,6 +303,10 @@ CmMergeUpdate(void *w, gpointer client_data)
 void
 MergeWinUpdate(struct obj_list_data *d, int clear, int draw)
 {
+  int redraw;
+  if (Menulock || Globallock)
+    return;
+
   if (d == NULL)
     return;
 
@@ -315,9 +319,20 @@ MergeWinUpdate(struct obj_list_data *d, int clear, int draw)
   if (! clear && d->select >= 0) {
     list_store_select_int(GTK_WIDGET(d->text), MERG_WIN_COL_ID, d->select);
   }
-  if (draw) {
-    NgraphApp.Viewer.allclear = TRUE;
-    update_viewer(d);
+
+  switch (draw) {
+  case FILE_DRAW_REDRAW:
+    getobj(Menulocal.obj, "redraw_flag", 0, 0, NULL, &redraw);
+    if (redraw) {
+      NgraphApp.Viewer.allclear = TRUE;
+      update_viewer(d);
+    } else {
+      draw_notify(TRUE);
+    }
+    break;
+  case FILE_DRAW_NOTIFY:
+    draw_notify(TRUE);
+    break;
   }
 }
 
