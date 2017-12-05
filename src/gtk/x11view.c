@@ -423,7 +423,6 @@ graph_dropped(char *fname)
   }
 
   LoadNgpFile(fname, FALSE, "-f");
-  CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
   return 0;
 }
 

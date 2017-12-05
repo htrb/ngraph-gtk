@@ -34,6 +34,7 @@
 #include "gtk_action.h"
 
 #include "init.h"
+#include "osystem.h"
 #include "x11bitmp.h"
 #include "x11dialg.h"
 #include "ogra2cairo.h"
@@ -5878,7 +5879,9 @@ application(char *file)
 
   CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
 
+  system_set_draw_notify_func(draw_notify);
   terminated = AppMainLoop();
+  system_set_draw_notify_func(NULL);
 
   if (CheckIniFile()) {
     if (Menulocal.single_window_mode) {
@@ -5932,7 +5935,7 @@ application(char *file)
 void
 UpdateAll(char **objects)
 {
-  UpdateAll2(objects);
+  UpdateAll2(objects, TRUE);
 }
 
 static void
@@ -5963,7 +5966,7 @@ check_update_obj(char **objects,
 }
 
 void
-UpdateAll2(char **objs)
+UpdateAll2(char **objs, int redraw)
 {
   int update_axis, update_file, update_merge;
 
@@ -5972,15 +5975,15 @@ UpdateAll2(char **objs)
 		   NgraphApp.AxisWin.data.data, &update_axis,
 		   NgraphApp.MergeWin.data.data, &update_merge);
   if (update_file) {
-    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, ! update_axis);
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, redraw && ! update_axis);
   }
   if (update_axis) {
-    AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
+    AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, redraw);
   }
   if (update_merge) {
-    MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE, TRUE);
+    MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE, redraw);
   }
-  LegendWinUpdate(objs, TRUE, TRUE);
+  LegendWinUpdate(objs, TRUE, redraw);
   InfoWinUpdate(TRUE);
   CoordWinUpdate(TRUE);
 }
@@ -5996,6 +5999,7 @@ ChangePage(void)
   OpenGC();
   SetScroller();
   ChangeDPI();
+  draw_notify(TRUE);
 }
 
 static void
@@ -6134,7 +6138,7 @@ PutStderr(const char *s)
   ustr = g_locale_to_utf8(s, len, &rlen, &wlen, NULL);
   message_box(NULL, ustr, _("Error:"), RESPONS_ERROR);
   g_free(ustr);
-  UpdateAll2(arg);
+  UpdateAll2(arg, FALSE);
   return len + 1;
 }
 
@@ -6183,7 +6187,7 @@ InputYN(const char *mes)
   char *arg[] = {NULL};
 
   ret = message_box(get_current_window(), mes, _("Question"), RESPONS_YESNO);
-  UpdateAll2(arg);
+  UpdateAll2(arg, FALSE);
   return (ret == IDYES) ? TRUE : FALSE;
 }
 

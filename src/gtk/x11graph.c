@@ -1068,8 +1068,8 @@ CmGraphNewMenu(void *w, gpointer client_data)
   set_axis_undo_button_sensitivity(FALSE);
   reset_graph_modified();
 
-  UpdateAll(objects);
   CmViewerDraw(NULL, GINT_TO_POINTER(TRUE));
+  UpdateAll2(objects, FALSE);
   InfoWinClear();
   menu_clear_undo();
 }

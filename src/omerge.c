@@ -40,6 +40,7 @@
 #include "gra.h"
 #include "oroot.h"
 #include "odraw.h"
+#include "osystem.h"
 
 #define NAME "merge"
 #define PARENT "draw"
@@ -176,10 +177,11 @@ mergedraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 static int
 mergeredraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
-  int redrawf, dmax, line_num;
+  int redrawf, dmax, line_num, hidden;
   int GC;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
+  _getobj(obj,"hidden",inst,&hidden);
   _getobj(obj,"redraw_flag",inst,&redrawf);
   _getobj(obj,"redraw_num", inst, &dmax);
   _getobj(obj,"line_num", inst, &line_num);
@@ -189,6 +191,9 @@ mergeredraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
   } else {
     struct narray *array;
     int x1, x2, y1, y2, zoom, w, h;
+    if (! hidden) {
+      system_draw_notify();
+    }
     _getobj(obj,"GC",inst,&GC);
     if (GC<0) return 0;
     _getobj(obj, "bbox", inst, &array);

@@ -2097,7 +2097,7 @@ CmOptionTextDef(void *w, gpointer client_data)
     delobj(obj, id);
     objs[0] = obj->name;
     objs[1] = NULL;
-    UpdateAll2(objs);
+    UpdateAll2(objs, TRUE);
     if (! modified) {
       reset_graph_modified();
     }

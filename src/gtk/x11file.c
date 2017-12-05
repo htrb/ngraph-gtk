@@ -4526,7 +4526,7 @@ CmOptionFileDef(void *w, gpointer client_data)
     delobj(obj, id);
     objs[0] = obj->name;
     objs[1] = NULL;
-    UpdateAll2(objs);
+    UpdateAll2(objs, TRUE);
     if (! modified) {
       reset_graph_modified();
     }
@@ -4753,7 +4753,7 @@ FileWinFileDraw(struct obj_list_data *d)
     menu_delete_undo();
   }
   CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
-  FileWinUpdate(d, FALSE, FILE_DRAW_NOTIFY);
+  FileWinUpdate(d, FALSE, FILE_DRAW_NONE);
 }
 
 static void
