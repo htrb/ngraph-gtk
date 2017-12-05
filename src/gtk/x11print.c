@@ -1075,7 +1075,7 @@ CmOutputEMF(int type)
   delobj(g2wobj, g2wid);
 
   if (Menulocal.select_data) {
-    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, TRUE);
   }
 }
 #endif
