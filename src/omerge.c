@@ -63,7 +63,21 @@ static char *mergeerrorlist[]={
 struct mergelocal {
   FILE *storefd;
   int endstore;
+  time_t mtime;
 };
+
+static time_t
+get_mtime(const char *file)
+{
+  GStatBuf buf;
+  int r;
+
+  r = nstat(file, &buf);
+  if (r) {
+    return 0;
+  }
+  return buf.st_mtime;
+}
 
 static int
 mergeinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
@@ -86,6 +100,7 @@ mergeinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 
   mergelocal->storefd=NULL;
   mergelocal->endstore=FALSE;
+  mergelocal->mtime = 0;
   return 0;
 
 errexit:
@@ -110,6 +125,8 @@ mergedraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   char *buf;
   int lm,tm,zm;
   int newgra,rcode,line = 0;
+  struct mergelocal *mergelocal;
+  time_t mtime;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   _getobj(obj,"GC",inst,&GC);
@@ -118,11 +135,17 @@ mergedraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   _getobj(obj,"left_margin",inst,&lm);
   _getobj(obj,"top_margin",inst,&tm);
   _getobj(obj,"zoom",inst,&zm);
+  _getobj(obj,"_local",inst,&mergelocal);
 
   if (file==NULL) {
     error(obj,ERRFILE);
     return 1;
   }
+  mtime = get_mtime(file);
+  if (mtime != mergelocal->mtime) {
+    clear_bbox(obj, inst);
+  }
+  mergelocal->mtime = mtime;
   if ((sys=getobject("system"))==NULL) return 1;
   if (getobj(sys,"GRAF",0,0,NULL,&graf)) return 1;
   if ((fd=nfopen(file,"rt"))==NULL) {
@@ -196,6 +219,9 @@ mergeredraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
     }
     _getobj(obj,"GC",inst,&GC);
     if (GC<0) return 0;
+    if (_exeobj(obj, "bbox", inst, 0, NULL)) {
+      return 1;
+    }
     _getobj(obj, "bbox", inst, &array);
     if (array) {
       x1 = arraynget_int(array,0);
@@ -547,17 +573,32 @@ mergebbox(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 static int
 mergemove(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
-  int lm,tm;
+  int lm, tm, x, y;
+  struct narray *array;
 
   _getobj(obj,"left_margin",inst,&lm);
   _getobj(obj,"top_margin",inst,&tm);
-  lm+=*(int *)argv[2];
-  tm+=*(int *)argv[3];
+  x = *(int *)argv[2];
+  y = *(int *)argv[3];
+  lm += x;
+  tm += y;
   if (_putobj(obj,"left_margin",inst,&lm)) return 1;
   if (_putobj(obj,"top_margin",inst,&tm)) return 1;
 
+#if 0
   if (clear_bbox(obj, inst))
     return 1;
+#else
+  _getobj(obj, "bbox", inst, &array);
+  if (arraynum(array) == 4) {
+    int *bbox;
+    bbox = arraydata(array);
+    bbox[0] += x;
+    bbox[1] += y;
+    bbox[2] += x;
+    bbox[3] += y;
+  }
+#endif
 
   return 0;
 }
@@ -589,8 +630,20 @@ mergezoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   if (_putobj(obj,"top_margin",inst,&tm)) return 1;
   if (_putobj(obj,"zoom",inst,&zm)) return 1;
 
+#if 1
   if (clear_bbox(obj, inst))
     return 1;
+#else
+  _getobj(obj, "bbox", inst, &array);
+  if (arraynum(array) == 4) {
+    int *bbox;
+    bbox = arraydata(array);
+    bbox[0] = (bbox[0] - refx) * zoom + refx;
+    bbox[1] = (bbox[1] - refy) * zoom + refy;;
+    bbox[2] = (bbox[2] - refx) * zoom + refx;
+    bbox[3] = (bbox[3] - refy) * zoom + refy;;
+  }
+#endif
 
   return 0;
 }
@@ -637,6 +690,8 @@ mergegeometry(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
                  int argc,char **argv)
 {
   char *field;
+  int val;
+  struct narray *array;
 
   field=(char *)(argv[1]);
   if (strcmp(field,"zoom")==0) {
@@ -648,9 +703,43 @@ mergegeometry(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
     }
   }
 
+#if 0
   if (clear_bbox(obj, inst)){
     return 1;
   }
+#else
+  val = * (int *) (argv[2]);
+  _getobj(obj, "bbox", inst, &array);
+  if (arraynum(array) == 4) {
+    int *bbox, t, l, z;
+    bbox = arraydata(array);
+    _getobj(obj, "top_margin", inst, &t);
+    _getobj(obj, "left_margin", inst, &l);
+    _getobj(obj, "zoom", inst, &z);
+    switch (field[0]) {
+    case 't':
+      bbox[1] += val - t;
+      bbox[3] += val - t;
+      break;
+    case 'l':
+      bbox[0] += val - l;
+      bbox[2] += val - l;
+      break;
+    case 'z':
+      if (clear_bbox(obj, inst)) {
+	return 1;
+      }
+      /*
+      zoom = 1.0 * val / z;
+      bbox[0] = (bbox[0] - l) * zoom + l;
+      bbox[1] = (bbox[1] - t) * zoom + t;;
+      bbox[2] = (bbox[2] - l) * zoom + l;
+      bbox[3] = (bbox[3] - t) * zoom + t;;
+      */
+      break;
+    }
+  }
+#endif
 
   return 0;
 }
