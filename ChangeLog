@@ -1,5 +1,9 @@
 2017-12-06  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/omerge.c (get_mtime): added.
+	(mergedraw): check mtime.
+	(mergemove, mergegeometry): use saved bounding box.
+
 	* src/odata.c (f2dredraw): check the returned value of the function "f2ddraw()".
 
 2017-12-05  Hiroyuki Ito  <ZXB01226 at nifty.com>
