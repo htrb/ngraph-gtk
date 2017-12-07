@@ -5946,6 +5946,11 @@ check_update_obj(char **objects,
 {
   struct objlist *obj;
   char **ptr;
+
+  *update_file = FALSE;
+  *update_axis = FALSE;
+  *update_merge = FALSE;
+
   if (objects == NULL) {
     *update_file = TRUE;
     *update_axis = TRUE;
