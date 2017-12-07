@@ -16,8 +16,8 @@ dialog
 }
 
 @keyframes flush-bg {
-    0% { background-color: dimgray; }
-    100% { background-color: lightgray; }
+    0% { background-color: @theme_bg_color; }
+    100% { background-color: @theme_fg_color; }
 }
 
 toolbutton.draw_notify > button {
