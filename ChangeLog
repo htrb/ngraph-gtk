@@ -1,3 +1,9 @@
+2017-12-07  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/omerge.c (set_bbox): added.
+	(mergebbox, mergemove, mergezoom, mergegeometry): use
+	"set_bbox()".
+
 2017-12-06  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/omerge.c (get_mtime): added.
