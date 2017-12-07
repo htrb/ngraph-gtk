@@ -23,3 +23,7 @@ dialog
 toolbutton.draw_notify > button {
     animation: flush-bg infinite alternate ease-in-out 1.5s;
 }
+
+toolbutton.draw_notify:focus > button {
+    animation: flush-bg infinite alternate ease-in-out 1.5s;
+}
