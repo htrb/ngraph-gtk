@@ -1,6 +1,13 @@
 2017-12-11  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/gtk/gtk_subwin.c (update): don't call "d->update()" if the
+	returned value of the function "DialogExecute()" id "IDCANCEL".
+
 	* src/gtk/x11file.c (FitDialogResult): use "markup_message_box()".
+	(select_type): check the returned value of the function
+	"show_fit_dialog()".
+	(FileWinFileUpdate): don't call "d->update()" if the returned
+	value of the function "DialogExecute()" id "IDCANCEL".
 
 	* src/gtk/x11gui.c (markup_message_box): added.
 	(message_box): use "markup_message_box()".
