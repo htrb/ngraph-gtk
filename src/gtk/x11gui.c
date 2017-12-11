@@ -242,6 +242,12 @@ get_dialog_position(GtkWidget *w, int *x, int *y)
 int
 message_box(GtkWidget * parent, const char *message, const char *title, int mode)
 {
+  return markup_message_box(parent, message, title, mode, FALSE);
+}
+
+int
+markup_message_box(GtkWidget * parent, const char *message, const char *title, int mode, int markup)
+{
   GtkWidget *dlg;
   int data;
   GtkMessageType dlg_type;
@@ -277,7 +283,10 @@ message_box(GtkWidget * parent, const char *message, const char *title, int mode
 			       GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 			       dlg_type,
 			       dlg_button,
-			       "%.256s", message);
+			       "%.512s", message);
+  if (markup) {
+    gtk_message_dialog_set_markup(GTK_MESSAGE_DIALOG(dlg), message);
+  }
 
   switch (mode) {
   case RESPONS_YESNOCANCEL:
