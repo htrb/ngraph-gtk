@@ -4711,15 +4711,17 @@ FileWinFileUpdate(struct obj_list_data *d)
     ret = DialogExecute(parent, d->dialog);
     switch (ret) {
     case IDCANCEL:
-      menu_undo(FALSE);
+      menu_delete_undo();
       break;
     case IDDELETE:
       delete_file_obj(d, sel);
       d->select = -1;
       set_graph_modified();
+      d->update(d, FALSE, FILE_DRAW_REDRAW);
       break;
+    default:
+      d->update(d, FALSE, FILE_DRAW_NOTIFY);
     }
-    d->update(d, FALSE, FILE_DRAW_REDRAW);
   }
 }
 
@@ -5647,7 +5649,7 @@ create_type_combo_item(GtkTreeStore *list, struct objlist *obj, int id)
 static void
 select_type(GtkComboBox *w, gpointer user_data)
 {
-  int sel, col_type, type, mark_type, curve_type, enum_id, found, active, join;
+  int sel, col_type, type, mark_type, curve_type, enum_id, found, active, join, ret;
   struct objlist *obj;
   struct obj_list_data *d;
   GtkTreeStore *list;
@@ -5746,7 +5748,11 @@ select_type(GtkComboBox *w, gpointer user_data)
     break;
   case FILE_COMBO_ITEM_FIT:
     data_save_undo(UNDO_TYPE_EDIT);
-    show_fit_dialog(obj, sel, (Menulocal.single_window_mode) ? TopLevel : d->parent->Win);
+    ret = show_fit_dialog(obj, sel, (Menulocal.single_window_mode) ? TopLevel : d->parent->Win);
+    if (ret != IDOK) {
+      menu_delete_undo();
+      return;
+    }
     break;
   case FILE_COMBO_ITEM_JOIN:
     gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_ENUM, &enum_id, -1);
