@@ -1004,9 +1004,11 @@ update(struct obj_list_data *d)
     }
     d->select = -1;
     set_graph_modified();
+    d->update(d, FALSE, FILE_DRAW_REDRAW);
     break;
+  default:
+    d->update(d, FALSE, FILE_DRAW_NOTIFY);
   }
-  d->update(d, FALSE, FILE_DRAW_NOTIFY);
 }
 
 static void
