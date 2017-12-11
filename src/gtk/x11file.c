@@ -1084,9 +1084,10 @@ FitDialogResult(GtkWidget *w, gpointer client_data)
 {
   struct FitDialog *d;
   double derror, correlation, coe[FIT_PARM_NUM];
-  char *equation, *math, buf[1024];
+  char *equation, *math;
   N_VALUE *inst;
   int i, j, dim, dimension, type, num;
+  GString *buf;
 
   d = (struct FitDialog *) client_data;
 
@@ -1124,38 +1125,46 @@ FitDialogResult(GtkWidget *w, gpointer client_data)
   if (_getobj(d->Obj, "user_func", inst, &math))
     return;
 
-  if (equation == NULL) {
-    snprintf(buf, sizeof(buf), "Undefined");
-  } else if (type != 4) {
-    i = 0;
+  buf = g_string_new("<tt>");
+  if (buf == NULL) {
+    return;
+  }
 
-    if (type == 0) {
+  if (equation == NULL) {
+    g_string_append_printf(buf, "Undefined");
+  } else if (type != FIT_TYPE_USER) {
+    if (type == FIT_TYPE_POLY) {
       dim = dimension + 1;
     } else {
       dim = 2;
     }
 
-    if (type == 0) {
-      i += snprintf(buf + i, sizeof(buf) - i, "Eq: %%0i*X^i (i=0-%d)\n\n", dim - 1);
-    } else if (type == 1) {
-      i += snprintf(buf + i, sizeof(buf) - i, "Eq: exp(%%00)*X^%%01\n\n");
-    } else if (type == 2) {
-      i += snprintf(buf + i, sizeof(buf) - i, "Eq: exp(%%01*X+%%00)\n\n");
-    } else if (type == 3) {
-      i += snprintf(buf + i, sizeof(buf) - i, "Eq: %%01*Ln(X)+%%00\n\n");
+    switch (type) {
+    case FIT_TYPE_POLY:
+      g_string_append_printf(buf, "Eq: %%0i*X<sup>i</sup> (i=0-%d)\n\n", dim - 1);
+      break;
+    case FIT_TYPE_POW:
+      g_string_append_printf(buf, "Eq: exp(%%00)*X<sup>%%01</sup>\n\n");
+      break;
+    case FIT_TYPE_EXP:
+      g_string_append_printf(buf, "Eq: exp(%%01*X+%%00)\n\n");
+      break;
+    case FIT_TYPE_LOG:
+      g_string_append_printf(buf, "Eq: %%01*Ln(X)+%%00\n\n");
+      break;
     }
 
     for (j = 0; j < dim; j++) {
-      i += snprintf(buf + i, sizeof(buf) - i, "       %%0%d = %.7e\n", j, coe[j]);
+      g_string_append_printf(buf, "       %%0%d = %+.7e\n", j, coe[j]);
     }
-    i += snprintf(buf + i, sizeof(buf) - i, "\n");
-    i += snprintf(buf + i, sizeof(buf) - i, "    points = %d\n", num);
-    i += snprintf(buf + i, sizeof(buf) - i, "    <DY^2> = %.7e\n", derror);
+    g_string_append_printf(buf, "\n");
+    g_string_append_printf(buf, "    points = %d\n", num);
+    g_string_append_printf(buf, "    &lt;DY^2&gt; = %.7e\n", derror);
 
     if (correlation >= 0) {
-      i += snprintf(buf + i, sizeof(buf) - i, "|r| or |R| = %.7e\n", correlation);
+      g_string_append_printf(buf, "|r| or |R| = %.7e\n", correlation);
     } else {
-      i += snprintf(buf + i, sizeof(buf) - i, "|r| or |R| = -------------\n");
+      g_string_append_printf(buf, "|r| or |R| = -------------");
     }
   } else {
     int tbl[FIT_PARM_NUM];
@@ -1181,23 +1190,24 @@ FitDialogResult(GtkWidget *w, gpointer client_data)
       tbl[i] = prm->id[i];
     }
     math_equation_free(code);
-    i = 0;
-    i += snprintf(buf + i, sizeof(buf) - i, "Eq: User defined\n\n");
+    g_string_append_printf(buf, "Eq: User defined\n\n");
 
     for (j = 0; j < dim; j++) {
-      i += snprintf(buf + i, sizeof(buf) - i, "       %%0%d = %.7e\n", tbl[j], coe[tbl[j]]);
+      g_string_append_printf(buf, "       %%0%d = %+.7e\n", tbl[j], coe[tbl[j]]);
     }
-    i += snprintf(buf + i, sizeof(buf) - i, "\n");
-    i += snprintf(buf + i, sizeof(buf) - i, "    points = %d\n", num);
-    i += snprintf(buf + i, sizeof(buf) - i, "    <DY^2> = %.7e\n", derror);
+    g_string_append_printf(buf, "\n");
+    g_string_append_printf(buf, "    points = %d\n", num);
+    g_string_append_printf(buf, "    &lt;DY2&gt; = %.7e\n", derror);
 
     if (correlation >= 0) {
-      i += snprintf(buf + i, sizeof(buf) - i, "|r| or |R| = %.7e\n", correlation);
+      g_string_append_printf(buf, "|r| or |R| = %.7e\n", correlation);
     } else {
-      i += snprintf(buf + i, sizeof(buf) - i, "|r| or |R| = -------------\n");
+      g_string_append_printf(buf, "|r| or |R| = -------------");
     }
   }
-  message_box(d->widget, buf, _("Fitting Results"), RESPONS_OK);
+  g_string_append(buf, "</tt>");
+  markup_message_box(d->widget, buf->str, _("Fitting Results"), RESPONS_OK, TRUE);
+  g_string_free(buf, TRUE);
 }
 
 static int
@@ -1307,7 +1317,7 @@ set_fitdialog_sensitivity(struct FitDialog *d, int type, int through)
     set_widget_sensitivity_with_label(d->p[i], FALSE);
   }
 
-  set_widget_sensitivity_with_label(d->dim, type == 0);
+  set_widget_sensitivity_with_label(d->dim, type == FIT_TYPE_POLY);
   gtk_widget_set_sensitive(d->usr_def_frame, FALSE);
   gtk_widget_set_sensitive(d->usr_def_prm_tbl, FALSE);
   gtk_widget_set_sensitive(d->through_box, through);
