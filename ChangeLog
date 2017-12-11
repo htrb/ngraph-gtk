@@ -1,3 +1,10 @@
+2017-12-11  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (FitDialogResult): use "markup_message_box()".
+
+	* src/gtk/x11gui.c (markup_message_box): added.
+	(message_box): use "markup_message_box()".
+
 2017-12-07  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/omerge.c (set_bbox): added.
