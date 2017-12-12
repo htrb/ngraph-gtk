@@ -1,3 +1,22 @@
+2017-12-12  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (update_file_obj_multi): call
+	"data_save_undo()" befor call "DialogExecute()".
+	(update_file_obj_multi): return modified or not.
+
+	* src/gtk/x11menu.c (MODIFIED_TYPE_UNMODIFIED): added.
+	(undo_check_modified): call "set_graph_modified()" only when
+	"modified_saved"is TRUE.
+
+	* src/gtk/x11menu.h (MENU_UNDO_TYPE): add "UNDO_TYPE_DUMMY".
+
+	* src/gtk/x11view.c (CmEditMenuCB): check "Menulock" and "Globallock".
+
+	* src/gtk/gtk_subwin.c (update): call "d->undo_save" if available.
+	(update): always call "set_graph_modified()" after call
+	"DialogExecute()".
+	(update): use "menu_undo(FALSE)" instead of "menu_delete_undo()".
+
 2017-12-11  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_subwin.c (update): don't call "d->update()" if the
