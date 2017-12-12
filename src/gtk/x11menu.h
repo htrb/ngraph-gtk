@@ -183,6 +183,7 @@ struct obj_list_data
   void (* update)(struct obj_list_data *data, int, int);
   void (* delete)(struct obj_list_data *data, int);
   void (* setup_dialog)(struct obj_list_data *data, int id, int user_data);
+  void (* undo_save)(int type);
   void *dialog;
   gboolean (* ev_key) (GtkWidget *, GdkEvent *, gpointer);
   struct objlist *obj;
@@ -258,6 +259,7 @@ enum MENU_UNDO_TYPE {
   UNDO_TYPE_PASTE,
   UNDO_TYPE_ZOOM,
   UNDO_TYPE_TRIMMING,
+  UNDO_TYPE_DUMMY,
   UNDO_TYPE_NUM,
 };
 

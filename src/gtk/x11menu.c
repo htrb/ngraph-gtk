@@ -6501,8 +6501,9 @@ set_subwindow_state(enum SubWinType id, enum subwin_state state)
   lock = FALSE;
 }
 
-#define MODIFIED_TYPE_DRAWOBJ 1
-#define MODIFIED_TYPE_GRAOBJ  2
+#define MODIFIED_TYPE_UNMODIFIED 0
+#define MODIFIED_TYPE_DRAWOBJ    1
+#define MODIFIED_TYPE_GRAOBJ     2
 
 struct undo_info {
   enum MENU_UNDO_TYPE type;
@@ -6632,6 +6633,7 @@ static char *UndoTypeStr[UNDO_TYPE_NUM] = {
   N_("add range"),
   N_("paste"),
   N_("scale trimming"),
+  N_("edit"),			/* dummy message */
 };
 
 static void
@@ -6776,10 +6778,12 @@ undo_check_modified(struct undo_info *info)
   modified_current = get_graph_modified();
   if (modified_current) {
     if (! (modified_current & (modified_saved | MODIFIED_TYPE_GRAOBJ))) {
-      graph_modified_sub(0);
+      graph_modified_sub(MODIFIED_TYPE_UNMODIFIED);
     }
   } else {
-    set_graph_modified();
+    if (modified_saved) {
+      set_graph_modified();
+    }
   }
   return modified_current;
 }
@@ -6864,7 +6868,7 @@ reset_modified_info(struct undo_info *info)
 void
 reset_graph_modified(void)
 {
-  graph_modified_sub(0);
+  graph_modified_sub(MODIFIED_TYPE_UNMODIFIED);
   reset_modified_info(UndoInfo);
   reset_modified_info(RedoInfo);
 }
