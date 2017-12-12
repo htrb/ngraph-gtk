@@ -1,5 +1,8 @@
 2017-12-12  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11menu.c (set_undo_menu_label): update undo and redo
+	menu label when use GtkBuilder.
+
 	* src/gtk/x11file.c (update_file_obj_multi): call
 	"data_save_undo()" befor call "DialogExecute()".
 	(update_file_obj_multi): return modified or not.

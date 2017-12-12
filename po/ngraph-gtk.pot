@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.07.05\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2017-12-12 16:54+0900\n"
+"POT-Creation-Date: 2017-12-12 18:31+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2140,7 +2140,7 @@ msgstr ""
 msgid "Align _Bottom"
 msgstr ""
 
-#: src/gtk/x11menu.c:2263 src/gtk/x11menu.c:6658
+#: src/gtk/x11menu.c:2263 src/gtk/x11menu.c:6679 src/gtk/x11menu.c:6713
 msgid "_Redo"
 msgstr ""
 
@@ -2148,7 +2148,7 @@ msgstr ""
 msgid "Redo previous command"
 msgstr ""
 
-#: src/gtk/x11menu.c:2279 src/gtk/x11menu.c:6648
+#: src/gtk/x11menu.c:2279 src/gtk/x11menu.c:6688 src/gtk/x11menu.c:6703
 msgid "_Undo"
 msgstr ""
 
@@ -2481,14 +2481,14 @@ msgstr ""
 msgid "scale trimming"
 msgstr ""
 
-#: src/gtk/x11menu.c:6645
-#, c-format
-msgid "_Undo: %s"
-msgstr ""
-
-#: src/gtk/x11menu.c:6655
+#: src/gtk/x11menu.c:6676 src/gtk/x11menu.c:6710
 #, c-format
 msgid "_Redo: %s"
+msgstr ""
+
+#: src/gtk/x11menu.c:6685 src/gtk/x11menu.c:6700
+#, c-format
+msgid "_Undo: %s"
 msgstr ""
 
 #: src/gtk/x11merge.c:53

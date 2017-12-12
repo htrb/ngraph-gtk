@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.06.13\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2017-12-12 16:54+0900\n"
+"POT-Creation-Date: 2017-12-12 18:31+0900\n"
 "PO-Revision-Date: 2017-09-25 14:38+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -2174,7 +2174,7 @@ msgstr "縦中央揃え(_V)"
 msgid "Align _Bottom"
 msgstr "下端揃え(_B)"
 
-#: src/gtk/x11menu.c:2263 src/gtk/x11menu.c:6658
+#: src/gtk/x11menu.c:2263 src/gtk/x11menu.c:6679 src/gtk/x11menu.c:6713
 msgid "_Redo"
 msgstr "やり直し(_R)"
 
@@ -2182,7 +2182,7 @@ msgstr "やり直し(_R)"
 msgid "Redo previous command"
 msgstr "直前に取り消した操作をやり直す"
 
-#: src/gtk/x11menu.c:2279 src/gtk/x11menu.c:6648
+#: src/gtk/x11menu.c:2279 src/gtk/x11menu.c:6688 src/gtk/x11menu.c:6703
 msgid "_Undo"
 msgstr "元に戻す(_U)"
 
@@ -2515,15 +2515,15 @@ msgstr "貼り付け"
 msgid "scale trimming"
 msgstr "軸トリミング"
 
-#: src/gtk/x11menu.c:6645
-#, c-format
-msgid "_Undo: %s"
-msgstr "元に戻す: %s (_U)"
-
-#: src/gtk/x11menu.c:6655
+#: src/gtk/x11menu.c:6676 src/gtk/x11menu.c:6710
 #, c-format
 msgid "_Redo: %s"
 msgstr "やり直し: %s (_R)"
+
+#: src/gtk/x11menu.c:6685 src/gtk/x11menu.c:6700
+#, c-format
+msgid "_Undo: %s"
+msgstr "元に戻す: %s (_U)"
 
 #: src/gtk/x11merge.c:53
 msgid "top"
