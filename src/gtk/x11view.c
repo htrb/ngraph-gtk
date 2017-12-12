@@ -6427,6 +6427,9 @@ CmViewerButtonPressed(GtkWidget *widget, GdkEventButton *event, gpointer user_da
 void
 CmEditMenuCB(void *w, gpointer client_data)
 {
+  if (Menulock || Globallock)
+    return;
+
   switch (GPOINTER_TO_INT(client_data)) {
   case MenuIdEditRedo:
     menu_redo();
