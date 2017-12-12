@@ -990,11 +990,16 @@ update(struct obj_list_data *d)
 
   d->setup_dialog(d, sel, -1);
   d->select = sel;
-  menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
+  if (d->undo_save) {
+    d->undo_save(UNDO_TYPE_EDIT);
+  } else {
+    menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
+  }
   ret = DialogExecute(parent, d->dialog);
+  set_graph_modified();
   switch (ret) {
   case IDCANCEL:
-    menu_delete_undo();
+    menu_undo(FALSE);
     break;
   case IDDELETE:
     if (d->delete) {
@@ -1003,7 +1008,6 @@ update(struct obj_list_data *d)
       delobj(d->obj, sel);
     }
     d->select = -1;
-    set_graph_modified();
     d->update(d, FALSE, FILE_DRAW_REDRAW);
     break;
   default:
@@ -1527,6 +1531,7 @@ list_widget_create(struct SubWin *d, int lisu_num, n_list_store *list, int can_f
   data = g_malloc0(sizeof(*data));
   data->select = -1;
   data->parent = d;
+  data->undo_save = NULL;
   data->can_focus = can_focus;
   data->list = list;
   data->list_col_num = lisu_num;
