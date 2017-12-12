@@ -1197,7 +1197,7 @@ FitDialogResult(GtkWidget *w, gpointer client_data)
     }
     g_string_append_printf(buf, "\n");
     g_string_append_printf(buf, "    points = %d\n", num);
-    g_string_append_printf(buf, "    &lt;DY2&gt; = %.7e\n", derror);
+    g_string_append_printf(buf, "    &lt;DY^2&gt; = %.7e\n", derror);
 
     if (correlation >= 0) {
       g_string_append_printf(buf, "|r| or |R| = %.7e\n", correlation);
