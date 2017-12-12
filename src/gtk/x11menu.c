@@ -6636,6 +6636,61 @@ static char *UndoTypeStr[UNDO_TYPE_NUM] = {
   N_("edit"),			/* dummy message */
 };
 
+#if USE_GTK_BUILDER
+#define EDIT_MENU_INDEX 1
+#define UNDO_MENU_SECTION_INDEX 0
+static void
+set_undo_menu_label(void)
+{
+  GMenuModel *menu;
+  GMenuItem *item;
+  int i, n;
+  char buf[1024], *label;
+
+  menu = gtk_application_get_menubar(GtkApp);
+  if (menu == NULL) {
+    return;
+  }
+
+  menu = g_menu_model_get_item_link(G_MENU_MODEL(menu), EDIT_MENU_INDEX, G_MENU_LINK_SUBMENU);
+  if (menu == NULL) {
+    return;
+  }
+
+  n = g_menu_model_get_n_items(menu);
+  if (n < UNDO_MENU_SECTION_INDEX) {
+    return;
+  }
+
+  menu = g_menu_model_get_item_link(menu, UNDO_MENU_SECTION_INDEX, G_MENU_LINK_SECTION);
+  if (menu == NULL) {
+    return;
+  }
+
+  n = g_menu_model_get_n_items(menu);
+  for (i = 0; i < n; i++) {
+    g_menu_remove(G_MENU(menu), 0);
+  }
+
+  if (RedoInfo) {
+    snprintf(buf, sizeof(buf), _("_Redo: %s"), _(UndoTypeStr[RedoInfo->type]));
+    label = buf;
+  } else {
+    label = _("_Redo");
+  }
+  item = g_menu_item_new(label, "app.EditRedoAction");
+  g_menu_insert_item(G_MENU(menu), 0, item);
+
+  if (UndoInfo) {
+    snprintf(buf, sizeof(buf), _("_Undo: %s"), _(UndoTypeStr[UndoInfo->type]));
+    label = buf;
+  } else {
+    label = _("_Undo");
+  }
+  item = g_menu_item_new(label, "app.EditUndoAction");
+  g_menu_insert_item(G_MENU(menu), 0, item);
+}
+#else
 static void
 set_undo_menu_label(void)
 {
@@ -6660,6 +6715,7 @@ set_undo_menu_label(void)
     gtk_menu_item_set_label(GTK_MENU_ITEM(ActionWidget[EditRedoAction].menu), label);
   }
 }
+#endif
 
 void
 menu_save_undo(enum MENU_UNDO_TYPE type, char **obj)
