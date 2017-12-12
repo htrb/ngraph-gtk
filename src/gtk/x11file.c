@@ -4389,39 +4389,46 @@ update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file)
 	AddDataFileList(name);
       }
     } else {
+      data_save_undo(UNDO_TYPE_DUMMY);
       data = NgraphApp.FileWin.data.data;
       FileDialog(data, array[i], i < num - 1);
       ret = DialogExecute(TopLevel, data->dialog);
       if (ret == IDCANCEL && new_file) {
 	ret = IDDELETE;
       }
-      if (ret == IDDELETE) {
+      switch (ret) {
+      case IDDELETE:
 	delete_file_obj(data, array[i]);
 	if (! new_file) {
 	  set_graph_modified();
+	  modified = TRUE;
 	}
 	for (j = i + 1; j < num; j++) {
 	  array[j]--;
 	}
-      } else {
+	menu_delete_undo();
+	break;
+      case IDFAPPLY:
+	  id0 = i;
+	  /* fall-through */
+      case IDOK:
 	if (new_file) {
 	  getobj(obj, "file", array[i], 0, NULL, &name);
 	  AddDataFileList(name);
 	}
-
-	if (ret == IDFAPPLY) {
-	  id0 = i;
-	}
+	menu_delete_undo();
+	modified = TRUE;
+	break;
+      case IDCANCEL:
+	menu_undo(FALSE);
+	break;
       }
-    }
-    if (ret != IDCANCEL) {
-      modified = TRUE;
     }
   }
   if (! modified) {
     menu_undo(FALSE);
   }
-  return 1;
+  return modified;
 }
 
 void
@@ -4709,14 +4716,14 @@ FileWinFileUpdate(struct obj_list_data *d)
 
     parent = (Menulocal.single_window_mode) ? TopLevel : d->parent->Win;
     ret = DialogExecute(parent, d->dialog);
+    set_graph_modified();
     switch (ret) {
     case IDCANCEL:
-      menu_delete_undo();
+      menu_undo(FALSE);
       break;
     case IDDELETE:
       delete_file_obj(d, sel);
       d->select = -1;
-      set_graph_modified();
       d->update(d, FALSE, FILE_DRAW_REDRAW);
       break;
     default:
@@ -6003,6 +6010,7 @@ FileWinState(struct SubWin *d, int state)
   d->data.data->dialog = &DlgFile;
   d->data.data->ev_key = filewin_ev_key_down;
   d->data.data->delete = delete_file_obj;
+  d->data.data->undo_save = data_save_undo;
   d->data.data->obj = chkobject("data");
 
   sub_win_create_popup_menu(d->data.data, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
