@@ -1,3 +1,9 @@
+2017-12-13  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (CmFileNew): removed.
+	(update_file_obj_multi): "modified" is always true when "IDDELETE"
+	is returned;
+
 2017-12-12  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (set_undo_menu_label): update undo and redo
