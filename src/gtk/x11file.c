@@ -4197,51 +4197,6 @@ CmFileHistory(GtkRecentChooser *w, gpointer client_data)
 }
 
 void
-CmFileNew(void *w, gpointer client_data)
-{
-  char *file;
-  int id, ret;
-  struct objlist *obj;
-  struct obj_list_data *data;
-
-  if (Menulock || Globallock)
-    return;
-
-  if ((obj = chkobject("data")) == NULL)
-    return;
-
-  if (nGetOpenFileName(TopLevel, _("Data new"), NULL, NULL,
-		       NULL, &file, FALSE,
-		       Menulocal.changedirectory) != IDOK) {
-    return;
-  }
-
-  data_save_undo(UNDO_TYPE_OPEN_FILE);
-  id = newobj(obj);
-  if (id < 0) {
-    menu_delete_undo();
-    g_free(file);
-    return;
-  }
-
-  data = NgraphApp.FileWin.data.data;
-  changefilename(file);
-  putobj(obj, "file", id, file);
-  FileDialog(data, id, FALSE);
-  ret = DialogExecute(TopLevel, data->dialog);
-
-  if (ret == IDDELETE || ret == IDCANCEL) {
-    menu_delete_undo();
-    delete_file_obj(data, id);
-  } else {
-    set_graph_modified();
-    AddDataFileList(file);
-  }
-
-  FileWinUpdate(data, TRUE, FILE_DRAW_NOTIFY);
-}
-
-void
 CmRangeAdd(void *w, gpointer client_data)
 {
   int id, ret, val;
