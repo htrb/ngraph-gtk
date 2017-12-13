@@ -4318,12 +4318,13 @@ CmFileOpen(void *w, gpointer client_data)
   }
 
   if (update_file_obj_multi(obj, &farray, TRUE)) {
-    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FILE_DRAW_NOTIFY);
+    menu_delete_undo();
   }
 
   if (n == chkobjlastinst(obj)) {
     menu_delete_undo();
   } else {
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FILE_DRAW_NOTIFY);
     set_graph_modified();
   }
 
@@ -4399,9 +4400,9 @@ update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file)
       switch (ret) {
       case IDDELETE:
 	delete_file_obj(data, array[i]);
+	modified = TRUE;
 	if (! new_file) {
 	  set_graph_modified();
-	  modified = TRUE;
 	}
 	for (j = i + 1; j < num; j++) {
 	  array[j]--;
