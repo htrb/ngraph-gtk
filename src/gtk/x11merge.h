@@ -21,7 +21,7 @@
  *
  */
 
-void MergeWinUpdate(struct obj_list_data *d, int clear);
+void MergeWinUpdate(struct obj_list_data *d, int clear, int draw);
 void CmMergeOpen(void *w, gpointer client_data);
 void CmMergeClose(void *w, gpointer client_data);
 void CmMergeUpdate(void *w, gpointer client_data);

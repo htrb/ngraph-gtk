@@ -423,7 +423,6 @@ graph_dropped(char *fname)
   }
 
   LoadNgpFile(fname, FALSE, "-f");
-  CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
   return 0;
 }
 
@@ -639,8 +638,8 @@ data_dropped(char **filenames, int num, int file_type)
     }
   }
 
-  MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE);
-  FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
+  MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE, FALSE);
+  FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
   return 0;
 }
 
@@ -5696,6 +5695,7 @@ Draw(int SelectFile)
   struct Viewer *d;
   N_VALUE *gra_inst;
 
+  draw_notify(FALSE);
   d = &NgraphApp.Viewer;
 
   if (SelectFile && !SetFileHidden())
@@ -5734,7 +5734,7 @@ Draw(int SelectFile)
   main_window_redraw();
 
   if (SelectFile) {
-    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
   }
 }
 
@@ -5764,8 +5764,8 @@ CmViewerDraw(void *w, gpointer client_data)
 
   Draw(select_file);
 
-  FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
-  AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE);
+  FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
+  AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, FILE_DRAW_NONE);
 }
 
 void
@@ -5776,7 +5776,7 @@ CmViewerClear(void *w, gpointer client_data)
 
   Clear();
 
-  FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
+  FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
 }
 
 static int
@@ -6427,6 +6427,9 @@ CmViewerButtonPressed(GtkWidget *widget, GdkEventButton *event, gpointer user_da
 void
 CmEditMenuCB(void *w, gpointer client_data)
 {
+  if (Menulock || Globallock)
+    return;
+
   switch (GPOINTER_TO_INT(client_data)) {
   case MenuIdEditRedo:
     menu_redo();

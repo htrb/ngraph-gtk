@@ -34,6 +34,7 @@
 #include "gtk_action.h"
 
 #include "init.h"
+#include "osystem.h"
 #include "x11bitmp.h"
 #include "x11dialg.h"
 #include "ogra2cairo.h"
@@ -70,8 +71,10 @@
 #define SIDE_PANE_TAB_ID "side_pane"
 int Menulock = FALSE, DnDLock = FALSE;
 struct NgraphApp NgraphApp = {0};
-GtkWidget *TopLevel = NULL;
+GtkWidget *TopLevel = NULL, *DrawButton = NULL;
 GtkAccelGroup *AccelGroup = NULL;
+
+#define DRAW_NOTIFY_CLASS_NAME "draw_notify"
 
 static GtkWidget *CurrentWindow = NULL, *CToolbar = NULL, *PToolbar = NULL;
 static enum {APP_CONTINUE, APP_QUIT, APP_QUIT_FORCE} Hide_window = APP_CONTINUE;
@@ -240,6 +243,7 @@ static int DefaultMode = PointerModeBoth;
 struct ToolItem {
   enum {
     TOOL_TYPE_NORMAL,
+    TOOL_TYPE_DRAW,
     TOOL_TYPE_SAVE,
     TOOL_TYPE_TOGGLE,
     TOOL_TYPE_TOGGLE2,
@@ -702,7 +706,7 @@ static struct ToolItem CommandToolbar[] = {
     "app.AxisScaleClearAction",
   },
   {
-    TOOL_TYPE_NORMAL,
+    TOOL_TYPE_DRAW,
     N_("_Draw"),
     N_("Draw"),
     N_("Draw on Viewer Window"),
@@ -5488,6 +5492,25 @@ create_save_menu(void)
   return menu;
 }
 
+void
+draw_notify(int notify)
+{
+  static int state = FALSE;
+  GtkStyleContext *style;
+  if (state == notify) {
+    return;
+  }
+  state = notify;
+  if (DrawButton == NULL) {
+    return;
+  }
+  style = gtk_widget_get_style_context(DrawButton);
+  if (state) {
+    gtk_style_context_add_class(style, DRAW_NOTIFY_CLASS_NAME);
+  } else {
+    gtk_style_context_remove_class(style, DRAW_NOTIFY_CLASS_NAME);
+  }
+}
 
 static GtkWidget *
 create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
@@ -5514,6 +5537,10 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
       break;
     case TOOL_TYPE_NORMAL:
       widget = gtk_tool_button_new(icon, _(item[i].label));
+      break;
+    case TOOL_TYPE_DRAW:
+      widget = gtk_tool_button_new(icon, _(item[i].label));
+      DrawButton = GTK_WIDGET(widget);
       break;
     case TOOL_TYPE_SAVE:
       widget = gtk_menu_tool_button_new(icon, _(item[i].label));
@@ -5919,7 +5946,9 @@ application(char *file)
 
   CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
 
+  system_set_draw_notify_func(draw_notify);
   terminated = AppMainLoop();
+  system_set_draw_notify_func(NULL);
 
   if (CheckIniFile()) {
     if (Menulocal.single_window_mode) {
@@ -5973,41 +6002,60 @@ application(char *file)
 void
 UpdateAll(char **objects)
 {
-  if (objects) {
-    /* legends are drawn in LegendWinUpdate(). */
-    char *objs[OBJ_MAX], *lobjs[OBJ_MAX], **ptr, **lptr;
-    struct objlist *lobj, *obj;
-    lobj = getobject("legend");
-    ptr = objs;
-    lptr = lobjs;
-     while (*objects) {
-      obj = getobject(*objects);
-      if (chkobjparent(obj) != lobj) {
-	*ptr = *objects;
-	ptr++;
-      } else {
-	*lptr = *objects;
-	lptr++;
-      }
-      objects++;
+  UpdateAll2(objects, TRUE);
+}
+
+static void
+check_update_obj(char **objects,
+		 struct obj_list_data *file, int *update_file,
+		 struct obj_list_data *axis, int *update_axis,
+		 struct obj_list_data *merge, int *update_merge)
+{
+  struct objlist *obj;
+  char **ptr;
+
+  if (objects == NULL) {
+    *update_file = TRUE;
+    *update_axis = TRUE;
+    *update_merge = TRUE;
+    return;
+  }
+
+  *update_file = FALSE;
+  *update_axis = FALSE;
+  *update_merge = FALSE;
+
+  for (ptr = objects; *ptr; ptr++) {
+    obj = getobject(*ptr);
+    if (obj == file->obj) {
+      *update_file = TRUE;
+    } else if (obj == axis->obj) {
+      *update_axis = TRUE;
+    } else if (obj == merge->obj) {
+      *update_merge = TRUE;
     }
-    *ptr = NULL;
-    *lptr = NULL;
-    ViewerWinUpdate(objs);
-    UpdateAll2(lobjs);
-  } else {
-    ViewerWinUpdate(objects);
-    UpdateAll2(objects);
   }
 }
 
 void
-UpdateAll2(char **objs)
+UpdateAll2(char **objs, int redraw)
 {
-  FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
-  AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE);
-  LegendWinUpdate(objs, TRUE);
-  MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE);
+  int update_axis, update_file, update_merge;
+
+  check_update_obj(objs,
+		   NgraphApp.FileWin.data.data, &update_file,
+		   NgraphApp.AxisWin.data.data, &update_axis,
+		   NgraphApp.MergeWin.data.data, &update_merge);
+  if (update_file) {
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, redraw && ! update_axis);
+  }
+  if (update_axis) {
+    AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, redraw);
+  }
+  if (update_merge) {
+    MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE, redraw);
+  }
+  LegendWinUpdate(objs, TRUE, redraw);
   InfoWinUpdate(TRUE);
   CoordWinUpdate(TRUE);
 }
@@ -6023,6 +6071,7 @@ ChangePage(void)
   OpenGC();
   SetScroller();
   ChangeDPI();
+  draw_notify(TRUE);
 }
 
 static void
@@ -6161,7 +6210,7 @@ PutStderr(const char *s)
   ustr = g_locale_to_utf8(s, len, &rlen, &wlen, NULL);
   message_box(NULL, ustr, _("Error:"), RESPONS_ERROR);
   g_free(ustr);
-  UpdateAll2(arg);
+  UpdateAll2(arg, FALSE);
   return len + 1;
 }
 
@@ -6210,7 +6259,7 @@ InputYN(const char *mes)
   char *arg[] = {NULL};
 
   ret = message_box(get_current_window(), mes, _("Question"), RESPONS_YESNO);
-  UpdateAll2(arg);
+  UpdateAll2(arg, FALSE);
   return (ret == IDYES) ? TRUE : FALSE;
 }
 
@@ -6519,8 +6568,9 @@ set_subwindow_state(enum SubWinType id, enum subwin_state state)
   lock = FALSE;
 }
 
-#define MODIFIED_TYPE_DRAWOBJ 1
-#define MODIFIED_TYPE_GRAOBJ  2
+#define MODIFIED_TYPE_UNMODIFIED 0
+#define MODIFIED_TYPE_DRAWOBJ    1
+#define MODIFIED_TYPE_GRAOBJ     2
 
 struct undo_info {
   enum MENU_UNDO_TYPE type;
@@ -6650,8 +6700,64 @@ static char *UndoTypeStr[UNDO_TYPE_NUM] = {
   N_("add range"),
   N_("paste"),
   N_("scale trimming"),
+  N_("edit"),			/* dummy message */
 };
 
+#if USE_GTK_BUILDER
+#define EDIT_MENU_INDEX 1
+#define UNDO_MENU_SECTION_INDEX 0
+static void
+set_undo_menu_label(void)
+{
+  GMenuModel *menu;
+  GMenuItem *item;
+  int i, n;
+  char buf[1024], *label;
+
+  menu = gtk_application_get_menubar(GtkApp);
+  if (menu == NULL) {
+    return;
+  }
+
+  menu = g_menu_model_get_item_link(G_MENU_MODEL(menu), EDIT_MENU_INDEX, G_MENU_LINK_SUBMENU);
+  if (menu == NULL) {
+    return;
+  }
+
+  n = g_menu_model_get_n_items(menu);
+  if (n < UNDO_MENU_SECTION_INDEX) {
+    return;
+  }
+
+  menu = g_menu_model_get_item_link(menu, UNDO_MENU_SECTION_INDEX, G_MENU_LINK_SECTION);
+  if (menu == NULL) {
+    return;
+  }
+
+  n = g_menu_model_get_n_items(menu);
+  for (i = 0; i < n; i++) {
+    g_menu_remove(G_MENU(menu), 0);
+  }
+
+  if (RedoInfo) {
+    snprintf(buf, sizeof(buf), _("_Redo: %s"), _(UndoTypeStr[RedoInfo->type]));
+    label = buf;
+  } else {
+    label = _("_Redo");
+  }
+  item = g_menu_item_new(label, "app.EditRedoAction");
+  g_menu_insert_item(G_MENU(menu), 0, item);
+
+  if (UndoInfo) {
+    snprintf(buf, sizeof(buf), _("_Undo: %s"), _(UndoTypeStr[UndoInfo->type]));
+    label = buf;
+  } else {
+    label = _("_Undo");
+  }
+  item = g_menu_item_new(label, "app.EditUndoAction");
+  g_menu_insert_item(G_MENU(menu), 0, item);
+}
+#else
 static void
 set_undo_menu_label(void)
 {
@@ -6676,6 +6782,7 @@ set_undo_menu_label(void)
     gtk_menu_item_set_label(GTK_MENU_ITEM(ActionWidget[EditRedoAction].menu), label);
   }
 }
+#endif
 
 void
 menu_save_undo(enum MENU_UNDO_TYPE type, char **obj)
@@ -6794,10 +6901,12 @@ undo_check_modified(struct undo_info *info)
   modified_current = get_graph_modified();
   if (modified_current) {
     if (! (modified_current & (modified_saved | MODIFIED_TYPE_GRAOBJ))) {
-      graph_modified_sub(0);
+      graph_modified_sub(MODIFIED_TYPE_UNMODIFIED);
     }
   } else {
-    set_graph_modified();
+    if (modified_saved) {
+      set_graph_modified();
+    }
   }
   return modified_current;
 }
@@ -6882,7 +6991,7 @@ reset_modified_info(struct undo_info *info)
 void
 reset_graph_modified(void)
 {
-  graph_modified_sub(0);
+  graph_modified_sub(MODIFIED_TYPE_UNMODIFIED);
   reset_modified_info(UndoInfo);
   reset_modified_info(RedoInfo);
 }

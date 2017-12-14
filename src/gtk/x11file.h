@@ -29,7 +29,7 @@ struct evaltype
 };
 
 const char *get_plot_info_str(struct objlist *obj, int id, int src);
-void FileWinUpdate(struct obj_list_data *data, int clear);
+void FileWinUpdate(struct obj_list_data *data, int clear, int draw);
 void CmFileHistory(GtkRecentChooser *w, gpointer client_data);
 
 void CmRangeAdd(void *w, gpointer client_data);

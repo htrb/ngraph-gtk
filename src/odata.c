@@ -35,6 +35,8 @@
 
 #include "common.h"
 #include "nhash.h"
+#include "ngraph.h"
+#include "osystem.h"
 #include "object.h"
 #include "ioutil.h"
 #include "nstring.h"
@@ -6301,24 +6303,32 @@ f2devaluate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
 static int
 f2dredraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
-  int redrawf, num, dmax, type, source;
+  int redrawf, num, dmax, type, source, hidden, r;
   int GC;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
+  _getobj(obj,"hidden",inst,&hidden);
   _getobj(obj,"source",inst,&source);
   _getobj(obj,"redraw_flag",inst,&redrawf);
   _getobj(obj,"data_num",inst,&num);
   _getobj(obj,"redraw_num",inst,&dmax);
   _getobj(obj, "type", inst, &type);
 
+  r = 0;
   if (num > 0 && (dmax == 0 || num <= dmax) && redrawf) {
-    f2ddraw(obj,inst,rval,argc,argv);
+    r = f2ddraw(obj,inst,rval,argc,argv);
   } else if (source == DATA_SOURCE_RANGE && redrawf) {
-    f2ddraw(obj,inst,rval,argc,argv);
+    r = f2ddraw(obj,inst,rval,argc,argv);
   } else {
+    if (! hidden) {
+      system_draw_notify();
+    }
     _getobj(obj,"GC",inst,&GC);
     if (GC<0) return 0;
     GRAaddlist(GC,obj,inst,(char *)argv[0],(char *)argv[1]);
+  }
+  if (r) {
+    system_draw_notify();
   }
   return 0;
 }

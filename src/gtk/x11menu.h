@@ -180,9 +180,10 @@ struct obj_list_data
   GtkWidget *popup, **popup_item;
   GtkWidget *text;
   int select, can_focus;
-  void (* update)(struct obj_list_data *data, int);
+  void (* update)(struct obj_list_data *data, int, int);
   void (* delete)(struct obj_list_data *data, int);
   void (* setup_dialog)(struct obj_list_data *data, int id, int user_data);
+  void (* undo_save)(int type);
   void *dialog;
   gboolean (* ev_key) (GtkWidget *, GdkEvent *, gpointer);
   struct objlist *obj;
@@ -258,6 +259,7 @@ enum MENU_UNDO_TYPE {
   UNDO_TYPE_PASTE,
   UNDO_TYPE_ZOOM,
   UNDO_TYPE_TRIMMING,
+  UNDO_TYPE_DUMMY,
   UNDO_TYPE_NUM,
 };
 
@@ -266,13 +268,19 @@ struct EventLoopInfo {
   guint32 time;
 };
 
+enum FileDrawFlag {
+  FILE_DRAW_NONE = 0,
+  FILE_DRAW_REDRAW = 1,
+  FILE_DRAW_NOTIFY = 2,
+};
+
 int application(char *file);
 
 void set_current_window(GtkWidget *w);
 GtkWidget *get_current_window(void);
 GtkWidget *create_recent_menu(int type);
 void UpdateAll(char **objects);
-void UpdateAll2(char **objects);
+void UpdateAll2(char **objects, int redraw);
 void ChangePage(void);
 void NSetCursor(unsigned int type);
 unsigned int NGetCursor(void);
@@ -313,5 +321,6 @@ int get_graph_modified(void);
 void set_graph_modified(void);
 void set_graph_modified_gra(void);
 void reset_graph_modified(void);
+void draw_notify(int notify);
 
 #endif

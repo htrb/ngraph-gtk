@@ -1,3 +1,135 @@
+2017-12-13  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (CmFileNew): removed.
+	(update_file_obj_multi): "modified" is always true when "IDDELETE"
+	is returned;
+
+2017-12-12  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (set_undo_menu_label): update undo and redo
+	menu label when use GtkBuilder.
+
+	* src/gtk/x11file.c (update_file_obj_multi): call
+	"data_save_undo()" befor call "DialogExecute()".
+	(update_file_obj_multi): return modified or not.
+
+	* src/gtk/x11menu.c (MODIFIED_TYPE_UNMODIFIED): added.
+	(undo_check_modified): call "set_graph_modified()" only when
+	"modified_saved"is TRUE.
+
+	* src/gtk/x11menu.h (MENU_UNDO_TYPE): add "UNDO_TYPE_DUMMY".
+
+	* src/gtk/x11view.c (CmEditMenuCB): check "Menulock" and "Globallock".
+
+	* src/gtk/gtk_subwin.c (update): call "d->undo_save" if available.
+	(update): always call "set_graph_modified()" after call
+	"DialogExecute()".
+	(update): use "menu_undo(FALSE)" instead of "menu_delete_undo()".
+
+2017-12-11  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_subwin.c (update): don't call "d->update()" if the
+	returned value of the function "DialogExecute()" id "IDCANCEL".
+
+	* src/gtk/x11file.c (FitDialogResult): use "markup_message_box()".
+	(select_type): check the returned value of the function
+	"show_fit_dialog()".
+	(FileWinFileUpdate): don't call "d->update()" if the returned
+	value of the function "DialogExecute()" id "IDCANCEL".
+
+	* src/gtk/x11gui.c (markup_message_box): added.
+	(message_box): use "markup_message_box()".
+
+2017-12-07  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/omerge.c (set_bbox): added.
+	(mergebbox, mergemove, mergezoom, mergegeometry): use
+	"set_bbox()".
+
+2017-12-06  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/omerge.c (get_mtime): added.
+	(mergedraw): check mtime.
+	(mergemove, mergegeometry): use saved bounding box.
+
+	* src/odata.c (f2dredraw): check the returned value of the function "f2ddraw()".
+
+2017-12-05  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11merge.c (MergeWinUpdate): call "draw_notify()".
+
+	* src/osystem.c (system_set_draw_notify_func, system_draw_notify):
+	added.
+
+	* src/omerge.c (mergeredraw): call "system_draw_notify()".
+
+	* src/odata.c (f2dredraw): call "system_draw_notify()".
+
+	* src/gtk/x11view.c (graph_dropped): don't call "CmViewerDraw()".
+
+	* src/gtk/x11menu.c (application): call "system_set_draw_notify_func()".
+	(UpdateAll2): add 2nd argment.
+	(ChangePage): call "draw_notify()".
+
+	* src/gtk/x11graph.c (CmGraphNewMenu): call "UpdateAll2()" instead
+	of "UpdateAll()".
+
+	* src/gtk/x11view.c (Draw): call "draw_notify()".
+
+	* src/gtk/x11menu.c (draw_notify): added.
+
+	* src/gtk/x11menu.h (FileDrawFlag): added.
+
+	* src/gtk/x11file.c (FileWinUpdate): call "draw_notify()".
+
+	* src/gtk/gtk_subwin.c (update): redraw flag is now "FILE_DRAW_NOTIFY".
+
+	* src/gtk/data/css/ngraph.css: add definition of "draw_notify" class.
+
+2017-12-04  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (CmFileHistory, CmFileNew, CmFileOpen)
+	(FileWinFileCopy, FileWinFileCopy2): don't redraw.
+
+	* src/gtk/x11lgnd.c (LegendWinUpdate): add 3rd argument.
+
+	* src/gtk/x11merge.c (MergeWinUpdate): add 3rd argument.
+
+	* src/gtk/x11file.c (FileWinUpdate): add 3rd argument.
+
+	* src/gtk/x11axis.c (AxisWinUpdate): add 3rd argument.
+
+	* src/gtk/x11lgnd.c (TextListUpdate, MarkListUpdate)
+	(RectListUpdate, ArcListUpdate, PathListUpdate): add 3rd argument.
+	(ObjListUpdate): redraw object depend on the 3rd parameter.
+
+2017-12-02  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (FileWinFileDraw): save undo information.
+
+	* src/gtk/x11merge.c (MergeWinUpdate): draw merge onject.
+
+	* src/gtk/x11menu.c (UpdateAll): call only "UpdateAll2()".
+	(check_update_obj): added.
+	(UpdateAll2): use "check_update_obj()".
+
+	* src/gtk/x11file.c (FileWinFileDraw): don't call "CmViewerDraw()".
+	(FileWinUpdate): draw data object.
+
+	* src/gtk/x11axis.c (AxisWinUpdate): draw axis, axisgrid and data
+	objects.
+
+2017-12-01  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11gui.c (message_beep): call "gdk_beep()" whrn the
+	variable "parent"is NULL.
+
+2017-11-30  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11gui.c (message_beep): use "gdk_window_beep()" instead
+	of "gdk_beep()".
+	(fsok): use "message_beep()" instead of "gdk_beep()".
+
 2017-11-29  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* addin/timer.nsc: execute "gra::flush".

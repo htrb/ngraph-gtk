@@ -286,7 +286,7 @@ enum_cb(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_d
   if (str == NULL || d->select < 0)
     return;
 
-  d->update(d, FALSE);
+  d->update(d, FALSE, TRUE);
   set_graph_modified();
 }
 
@@ -838,7 +838,7 @@ copy(struct obj_list_data *d)
     obj_copy(d->obj, id, sel);
     set_graph_modified();
     d->select = id;
-    d->update(d, FALSE);
+    d->update(d, FALSE, TRUE);
   }
 }
 
@@ -877,7 +877,7 @@ delete(struct obj_list_data *d)
     d->select = sel;
     update = FALSE;
   }
-  d->update(d, update);
+  d->update(d, update, TRUE);
   set_graph_modified();
 }
 
@@ -900,7 +900,7 @@ move_top(struct obj_list_data *d)
   menu_save_undo_single(UNDO_TYPE_ORDER, d->obj->name);
   movetopobj(d->obj, sel);
   d->select = 0;
-  d->update(d, FALSE);
+  d->update(d, FALSE, TRUE);
   set_graph_modified();
 }
 
@@ -923,7 +923,7 @@ move_last(struct obj_list_data *d)
   menu_save_undo_single(UNDO_TYPE_ORDER, d->obj->name);
   movelastobj(d->obj, sel);
   d->select = num;
-  d->update(d, FALSE);
+  d->update(d, FALSE, TRUE);
   set_graph_modified();
 }
 
@@ -943,7 +943,7 @@ move_up(struct obj_list_data *d)
     menu_save_undo_single(UNDO_TYPE_ORDER, d->obj->name);
     moveupobj(d->obj, sel);
     d->select = sel - 1;
-    d->update(d, FALSE);
+    d->update(d, FALSE, TRUE);
     set_graph_modified();
   }
 }
@@ -964,7 +964,7 @@ move_down(struct obj_list_data *d)
     menu_save_undo_single(UNDO_TYPE_ORDER, d->obj->name);
     movedownobj(d->obj, sel);
     d->select = sel + 1;
-    d->update(d, FALSE);
+    d->update(d, FALSE, TRUE);
     set_graph_modified();
   }
 }
@@ -990,11 +990,16 @@ update(struct obj_list_data *d)
 
   d->setup_dialog(d, sel, -1);
   d->select = sel;
-  menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
+  if (d->undo_save) {
+    d->undo_save(UNDO_TYPE_EDIT);
+  } else {
+    menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
+  }
   ret = DialogExecute(parent, d->dialog);
+  set_graph_modified();
   switch (ret) {
   case IDCANCEL:
-    menu_delete_undo();
+    menu_undo(FALSE);
     break;
   case IDDELETE:
     if (d->delete) {
@@ -1003,10 +1008,11 @@ update(struct obj_list_data *d)
       delobj(d->obj, sel);
     }
     d->select = -1;
-    set_graph_modified();
+    d->update(d, FALSE, FILE_DRAW_REDRAW);
     break;
+  default:
+    d->update(d, FALSE, FILE_DRAW_NOTIFY);
   }
-  d->update(d, FALSE);
 }
 
 static void
@@ -1045,7 +1051,7 @@ toggle_boolean(struct obj_list_data *d, char *field, int sel)
   }
 
   d->select = sel;
-  d->update(d, FALSE);
+  d->update(d, FALSE, TRUE);
   set_graph_modified();
 }
 
@@ -1072,7 +1078,7 @@ modify_numeric(struct obj_list_data *d, char *field, int val)
   getobj(d->obj, field, sel, 0, NULL, &v2);
   if (v1 != v2) {
     d->select = sel;
-    d->update(d, FALSE);
+    d->update(d, FALSE, TRUE);
     set_graph_modified();
   } else {
     menu_delete_undo();
@@ -1100,7 +1106,7 @@ modify_string(struct obj_list_data *d, char *field, char *str)
   }
 
   d->select = sel;
-  d->update(d, FALSE);
+  d->update(d, FALSE, TRUE);
 }
 
 static void
@@ -1125,7 +1131,7 @@ hidden(struct obj_list_data *d)
   hidden = hidden ? FALSE : TRUE;
   putobj(d->obj, "hidden", sel, &hidden);
   d->select = sel;
-  d->update(d, FALSE);
+  d->update(d, FALSE, TRUE);
   set_graph_modified();
 }
 
@@ -1148,7 +1154,7 @@ set_hidden_state(struct obj_list_data *d, int hide)
   if (hidden != hide) {
     putobj(d->obj, "hidden", sel, &hide);
     d->select = sel;
-    d->update(d, FALSE);
+    d->update(d, FALSE, TRUE);
     set_graph_modified();
   }
 }
@@ -1387,7 +1393,7 @@ swin_realized(GtkWidget *widget, gpointer user_data)
 
   ptr = (struct obj_list_data *) user_data;
 
-  ptr->update(ptr, TRUE);
+  ptr->update(ptr, TRUE, TRUE);
 }
 
 static GtkWidget *
@@ -1525,6 +1531,7 @@ list_widget_create(struct SubWin *d, int lisu_num, n_list_store *list, int can_f
   data = g_malloc0(sizeof(*data));
   data->select = -1;
   data->parent = d;
+  data->undo_save = NULL;
   data->can_focus = can_focus;
   data->list = list;
   data->list_col_num = lisu_num;

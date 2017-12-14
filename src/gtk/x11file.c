@@ -1084,9 +1084,10 @@ FitDialogResult(GtkWidget *w, gpointer client_data)
 {
   struct FitDialog *d;
   double derror, correlation, coe[FIT_PARM_NUM];
-  char *equation, *math, buf[1024];
+  char *equation, *math;
   N_VALUE *inst;
   int i, j, dim, dimension, type, num;
+  GString *buf;
 
   d = (struct FitDialog *) client_data;
 
@@ -1124,38 +1125,46 @@ FitDialogResult(GtkWidget *w, gpointer client_data)
   if (_getobj(d->Obj, "user_func", inst, &math))
     return;
 
-  if (equation == NULL) {
-    snprintf(buf, sizeof(buf), "Undefined");
-  } else if (type != 4) {
-    i = 0;
+  buf = g_string_new("<tt>");
+  if (buf == NULL) {
+    return;
+  }
 
-    if (type == 0) {
+  if (equation == NULL) {
+    g_string_append_printf(buf, "Undefined");
+  } else if (type != FIT_TYPE_USER) {
+    if (type == FIT_TYPE_POLY) {
       dim = dimension + 1;
     } else {
       dim = 2;
     }
 
-    if (type == 0) {
-      i += snprintf(buf + i, sizeof(buf) - i, "Eq: %%0i*X^i (i=0-%d)\n\n", dim - 1);
-    } else if (type == 1) {
-      i += snprintf(buf + i, sizeof(buf) - i, "Eq: exp(%%00)*X^%%01\n\n");
-    } else if (type == 2) {
-      i += snprintf(buf + i, sizeof(buf) - i, "Eq: exp(%%01*X+%%00)\n\n");
-    } else if (type == 3) {
-      i += snprintf(buf + i, sizeof(buf) - i, "Eq: %%01*Ln(X)+%%00\n\n");
+    switch (type) {
+    case FIT_TYPE_POLY:
+      g_string_append_printf(buf, "Eq: %%0i*X<sup>i</sup> (i=0-%d)\n\n", dim - 1);
+      break;
+    case FIT_TYPE_POW:
+      g_string_append_printf(buf, "Eq: exp(%%00)*X<sup>%%01</sup>\n\n");
+      break;
+    case FIT_TYPE_EXP:
+      g_string_append_printf(buf, "Eq: exp(%%01*X+%%00)\n\n");
+      break;
+    case FIT_TYPE_LOG:
+      g_string_append_printf(buf, "Eq: %%01*Ln(X)+%%00\n\n");
+      break;
     }
 
     for (j = 0; j < dim; j++) {
-      i += snprintf(buf + i, sizeof(buf) - i, "       %%0%d = %.7e\n", j, coe[j]);
+      g_string_append_printf(buf, "       %%0%d = %+.7e\n", j, coe[j]);
     }
-    i += snprintf(buf + i, sizeof(buf) - i, "\n");
-    i += snprintf(buf + i, sizeof(buf) - i, "    points = %d\n", num);
-    i += snprintf(buf + i, sizeof(buf) - i, "    <DY^2> = %.7e\n", derror);
+    g_string_append_printf(buf, "\n");
+    g_string_append_printf(buf, "    points = %d\n", num);
+    g_string_append_printf(buf, "    &lt;DY^2&gt; = %.7e\n", derror);
 
     if (correlation >= 0) {
-      i += snprintf(buf + i, sizeof(buf) - i, "|r| or |R| = %.7e\n", correlation);
+      g_string_append_printf(buf, "|r| or |R| = %.7e\n", correlation);
     } else {
-      i += snprintf(buf + i, sizeof(buf) - i, "|r| or |R| = -------------\n");
+      g_string_append_printf(buf, "|r| or |R| = -------------");
     }
   } else {
     int tbl[FIT_PARM_NUM];
@@ -1181,23 +1190,24 @@ FitDialogResult(GtkWidget *w, gpointer client_data)
       tbl[i] = prm->id[i];
     }
     math_equation_free(code);
-    i = 0;
-    i += snprintf(buf + i, sizeof(buf) - i, "Eq: User defined\n\n");
+    g_string_append_printf(buf, "Eq: User defined\n\n");
 
     for (j = 0; j < dim; j++) {
-      i += snprintf(buf + i, sizeof(buf) - i, "       %%0%d = %.7e\n", tbl[j], coe[tbl[j]]);
+      g_string_append_printf(buf, "       %%0%d = %+.7e\n", tbl[j], coe[tbl[j]]);
     }
-    i += snprintf(buf + i, sizeof(buf) - i, "\n");
-    i += snprintf(buf + i, sizeof(buf) - i, "    points = %d\n", num);
-    i += snprintf(buf + i, sizeof(buf) - i, "    <DY^2> = %.7e\n", derror);
+    g_string_append_printf(buf, "\n");
+    g_string_append_printf(buf, "    points = %d\n", num);
+    g_string_append_printf(buf, "    &lt;DY^2&gt; = %.7e\n", derror);
 
     if (correlation >= 0) {
-      i += snprintf(buf + i, sizeof(buf) - i, "|r| or |R| = %.7e\n", correlation);
+      g_string_append_printf(buf, "|r| or |R| = %.7e\n", correlation);
     } else {
-      i += snprintf(buf + i, sizeof(buf) - i, "|r| or |R| = -------------\n");
+      g_string_append_printf(buf, "|r| or |R| = -------------");
     }
   }
-  message_box(d->widget, buf, _("Fitting Results"), RESPONS_OK);
+  g_string_append(buf, "</tt>");
+  markup_message_box(d->widget, buf->str, _("Fitting Results"), RESPONS_OK, TRUE);
+  g_string_free(buf, TRUE);
 }
 
 static int
@@ -1307,7 +1317,7 @@ set_fitdialog_sensitivity(struct FitDialog *d, int type, int through)
     set_widget_sensitivity_with_label(d->p[i], FALSE);
   }
 
-  set_widget_sensitivity_with_label(d->dim, type == 0);
+  set_widget_sensitivity_with_label(d->dim, type == FIT_TYPE_POLY);
   gtk_widget_set_sensitive(d->usr_def_frame, FALSE);
   gtk_widget_set_sensitive(d->usr_def_prm_tbl, FALSE);
   gtk_widget_set_sensitive(d->through_box, through);
@@ -4183,52 +4193,7 @@ CmFileHistory(GtkRecentChooser *w, gpointer client_data)
     AddDataFileList(fname);
   }
   g_free(fname);
-  FileWinUpdate(data, TRUE);
-}
-
-void
-CmFileNew(void *w, gpointer client_data)
-{
-  char *file;
-  int id, ret;
-  struct objlist *obj;
-  struct obj_list_data *data;
-
-  if (Menulock || Globallock)
-    return;
-
-  if ((obj = chkobject("data")) == NULL)
-    return;
-
-  if (nGetOpenFileName(TopLevel, _("Data new"), NULL, NULL,
-		       NULL, &file, FALSE,
-		       Menulocal.changedirectory) != IDOK) {
-    return;
-  }
-
-  data_save_undo(UNDO_TYPE_OPEN_FILE);
-  id = newobj(obj);
-  if (id < 0) {
-    menu_delete_undo();
-    g_free(file);
-    return;
-  }
-
-  data = NgraphApp.FileWin.data.data;
-  changefilename(file);
-  putobj(obj, "file", id, file);
-  FileDialog(data, id, FALSE);
-  ret = DialogExecute(TopLevel, data->dialog);
-
-  if (ret == IDDELETE || ret == IDCANCEL) {
-    menu_delete_undo();
-    delete_file_obj(data, id);
-  } else {
-    set_graph_modified();
-    AddDataFileList(file);
-  }
-
-  FileWinUpdate(data, TRUE);
+  FileWinUpdate(data, TRUE, FILE_DRAW_NOTIFY);
 }
 
 void
@@ -4266,7 +4231,7 @@ CmRangeAdd(void *w, gpointer client_data)
     delobj(obj, id);
   } else {
     set_graph_modified();
-    FileWinUpdate(data, TRUE);
+    FileWinUpdate(data, TRUE, FILE_DRAW_REDRAW);
   }
 }
 
@@ -4308,12 +4273,13 @@ CmFileOpen(void *w, gpointer client_data)
   }
 
   if (update_file_obj_multi(obj, &farray, TRUE)) {
-    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
+    menu_delete_undo();
   }
 
   if (n == chkobjlastinst(obj)) {
     menu_delete_undo();
   } else {
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FILE_DRAW_NOTIFY);
     set_graph_modified();
   }
 
@@ -4347,7 +4313,7 @@ CmFileClose(void *w, gpointer client_data)
       delete_file_obj(data, array[i]);
       set_graph_modified();
     }
-    FileWinUpdate(data, TRUE);
+    FileWinUpdate(data, TRUE, FILE_DRAW_REDRAW);
   }
   arraydel(&farray);
 }
@@ -4379,39 +4345,46 @@ update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file)
 	AddDataFileList(name);
       }
     } else {
+      data_save_undo(UNDO_TYPE_DUMMY);
       data = NgraphApp.FileWin.data.data;
       FileDialog(data, array[i], i < num - 1);
       ret = DialogExecute(TopLevel, data->dialog);
       if (ret == IDCANCEL && new_file) {
 	ret = IDDELETE;
       }
-      if (ret == IDDELETE) {
+      switch (ret) {
+      case IDDELETE:
 	delete_file_obj(data, array[i]);
+	modified = TRUE;
 	if (! new_file) {
 	  set_graph_modified();
 	}
 	for (j = i + 1; j < num; j++) {
 	  array[j]--;
 	}
-      } else {
+	menu_delete_undo();
+	break;
+      case IDFAPPLY:
+	  id0 = i;
+	  /* fall-through */
+      case IDOK:
 	if (new_file) {
 	  getobj(obj, "file", array[i], 0, NULL, &name);
 	  AddDataFileList(name);
 	}
-
-	if (ret == IDFAPPLY) {
-	  id0 = i;
-	}
+	menu_delete_undo();
+	modified = TRUE;
+	break;
+      case IDCANCEL:
+	menu_undo(FALSE);
+	break;
       }
-    }
-    if (ret != IDCANCEL) {
-      modified = TRUE;
     }
   }
   if (! modified) {
     menu_undo(FALSE);
   }
-  return 1;
+  return modified;
 }
 
 void
@@ -4441,7 +4414,7 @@ CmFileUpdate(void *w, gpointer client_data)
   }
 
   if (ret == IDOK && update_file_obj_multi(obj, &farray, FALSE)) {
-    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FILE_DRAW_REDRAW);
   }
   arraydel(&farray);
 }
@@ -4526,7 +4499,7 @@ CmOptionFileDef(void *w, gpointer client_data)
     delobj(obj, id);
     objs[0] = obj->name;
     objs[1] = NULL;
-    UpdateAll2(objs);
+    UpdateAll2(objs, TRUE);
     if (! modified) {
       reset_graph_modified();
     }
@@ -4590,7 +4563,7 @@ FileWinFileDelete(struct obj_list_data *d)
     } else {
       d->select = sel;
     }
-    FileWinUpdate(d, update);
+    FileWinUpdate(d, update, FILE_DRAW_REDRAW);
     set_graph_modified();
   }
 }
@@ -4633,7 +4606,7 @@ FileWinFileCopy(struct obj_list_data *d)
 {
   data_save_undo(UNDO_TYPE_COPY);
   d->select = file_obj_copy(d);
-  FileWinUpdate(d, FALSE);
+  FileWinUpdate(d, FALSE, FILE_DRAW_NOTIFY);
 }
 
 static void
@@ -4660,7 +4633,7 @@ FileWinFileCopy2(struct obj_list_data *d)
 
   if (id < 0) {
     d->select = sel;
-    FileWinUpdate(d, TRUE);
+    FileWinUpdate(d, TRUE, FILE_DRAW_NOTIFY);
     return;
   }
 
@@ -4669,7 +4642,7 @@ FileWinFileCopy2(struct obj_list_data *d)
   }
 
   d->select = sel + 1;
-  FileWinUpdate(d, FALSE);
+  FileWinUpdate(d, FALSE, FILE_DRAW_NOTIFY);
 }
 
 static void
@@ -4699,6 +4672,7 @@ FileWinFileUpdate(struct obj_list_data *d)
 
     parent = (Menulocal.single_window_mode) ? TopLevel : d->parent->Win;
     ret = DialogExecute(parent, d->dialog);
+    set_graph_modified();
     switch (ret) {
     case IDCANCEL:
       menu_undo(FALSE);
@@ -4706,17 +4680,18 @@ FileWinFileUpdate(struct obj_list_data *d)
     case IDDELETE:
       delete_file_obj(d, sel);
       d->select = -1;
-      set_graph_modified();
+      d->update(d, FALSE, FILE_DRAW_REDRAW);
       break;
+    default:
+      d->update(d, FALSE, FILE_DRAW_NOTIFY);
     }
-    d->update(d, FALSE);
   }
 }
 
 static void
 FileWinFileDraw(struct obj_list_data *d)
 {
-  int i, sel, hidden, h, num;
+  int i, sel, hidden, h, num, modified;
 
   if (Menulock || Globallock)
     return;
@@ -4724,13 +4699,15 @@ FileWinFileDraw(struct obj_list_data *d)
   sel = list_store_get_selected_index(GTK_WIDGET(d->text));
   num = chkobjlastinst(d->obj);
 
+  modified = FALSE;
+  data_save_undo(UNDO_TYPE_EDIT);
   if ((sel >= 0) && (sel <= num)) {
     for (i = 0; i <= num; i++) {
       hidden = (i != sel);
       getobj(d->obj, "hidden", i, 0, NULL, &h);
       putobj(d->obj, "hidden", i, &hidden);
       if (h != hidden) {
-	set_graph_modified();
+	modified = TRUE;
       }
     }
     d->select = sel;
@@ -4740,13 +4717,18 @@ FileWinFileDraw(struct obj_list_data *d)
       getobj(d->obj, "hidden", i, 0, NULL, &h);
       putobj(d->obj, "hidden", i, &hidden);
       if (h != hidden) {
-	set_graph_modified();
+	modified = TRUE;
       }
     }
     d->select = -1;
   }
+  if (modified) {
+    set_graph_modified();
+  } else {
+    menu_delete_undo();
+  }
   CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
-  FileWinUpdate(d, FALSE);
+  FileWinUpdate(d, FALSE, FILE_DRAW_NONE);
 }
 
 static void
@@ -4759,8 +4741,9 @@ file_draw_popup_func(GtkMenuItem *w, gpointer client_data)
 }
 
 void
-FileWinUpdate(struct obj_list_data *d, int clear)
+FileWinUpdate(struct obj_list_data *d, int clear, int draw)
 {
+  int redraw;
   if (Menulock || Globallock)
     return;
 
@@ -4775,6 +4758,21 @@ FileWinUpdate(struct obj_list_data *d, int clear)
 
   if (! clear && d->select >= 0) {
     list_store_select_int(GTK_WIDGET(d->text), FILE_WIN_COL_ID, d->select);
+  }
+
+  switch (draw) {
+  case FILE_DRAW_REDRAW:
+    getobj(Menulocal.obj, "redraw_flag", 0, 0, NULL, &redraw);
+    if (redraw) {
+      NgraphApp.Viewer.allclear = TRUE;
+      update_viewer(d);
+    } else {
+      draw_notify(TRUE);
+    }
+    break;
+  case FILE_DRAW_NOTIFY:
+    draw_notify(TRUE);
+    break;
   }
 }
 
@@ -5614,7 +5612,7 @@ create_type_combo_item(GtkTreeStore *list, struct objlist *obj, int id)
 static void
 select_type(GtkComboBox *w, gpointer user_data)
 {
-  int sel, col_type, type, mark_type, curve_type, enum_id, found, active, join;
+  int sel, col_type, type, mark_type, curve_type, enum_id, found, active, join, ret;
   struct objlist *obj;
   struct obj_list_data *d;
   GtkTreeStore *list;
@@ -5713,7 +5711,11 @@ select_type(GtkComboBox *w, gpointer user_data)
     break;
   case FILE_COMBO_ITEM_FIT:
     data_save_undo(UNDO_TYPE_EDIT);
-    show_fit_dialog(obj, sel, (Menulocal.single_window_mode) ? TopLevel : d->parent->Win);
+    ret = show_fit_dialog(obj, sel, (Menulocal.single_window_mode) ? TopLevel : d->parent->Win);
+    if (ret != IDOK) {
+      menu_delete_undo();
+      return;
+    }
     break;
   case FILE_COMBO_ITEM_JOIN:
     gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_ENUM, &enum_id, -1);
@@ -5735,7 +5737,7 @@ select_type(GtkComboBox *w, gpointer user_data)
   }
 
   d->select = sel;
-  d->update(d, FALSE);
+  d->update(d, FALSE, FILE_DRAW_REDRAW);
   set_graph_modified();
 }
 
@@ -5897,7 +5899,7 @@ edited_axis(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer us
   if (str == NULL || d->select < 0)
     return;
 
-  d->update(d, FALSE);
+  d->update(d, FALSE, FILE_DRAW_REDRAW);
   set_graph_modified();
 }
 
@@ -5964,6 +5966,7 @@ FileWinState(struct SubWin *d, int state)
   d->data.data->dialog = &DlgFile;
   d->data.data->ev_key = filewin_ev_key_down;
   d->data.data->delete = delete_file_obj;
+  d->data.data->undo_save = data_save_undo;
   d->data.data->obj = chkobject("data");
 
   sub_win_create_popup_menu(d->data.data, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));

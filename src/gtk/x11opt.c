@@ -1874,7 +1874,7 @@ ViewerDialogClose(GtkWidget *w, void *data)
   }
   if (bg) {
     update_bg();
-    UpdateAll2(NULL);
+    UpdateAll2(NULL, TRUE);
   }
 }
 

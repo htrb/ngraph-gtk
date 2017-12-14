@@ -14,3 +14,12 @@ dialog
 {
     -gtk-key-bindings: CloseWindow1;
 }
+
+@keyframes flush-bg {
+    0% { background-color: @theme_bg_color; }
+    100% { background-color: @theme_fg_color; }
+}
+
+toolbutton.draw_notify > button {
+    animation: flush-bg infinite alternate ease-in-out 1.5s;
+}

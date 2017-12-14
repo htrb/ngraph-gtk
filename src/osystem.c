@@ -37,6 +37,7 @@
 #include "shell.h"
 #include "ioutil.h"
 #include "ntime.h"
+#include "osystem.h"
 
 #ifdef HAVE_LIBGSL
 #include <gsl/gsl_errno.h>
@@ -95,6 +96,22 @@ struct ngraph_plugin {
 };
 
 static NHASH Plugins = NULL;
+
+static DRAW_NOTIFY_FUNC DrawNotify = NULL;
+
+void
+system_set_draw_notify_func(DRAW_NOTIFY_FUNC func)
+{
+  DrawNotify = func;
+}
+
+void
+system_draw_notify(void)
+{
+  if (DrawNotify) {
+    DrawNotify(TRUE);
+  }
+}
 
 static int
 sysinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)

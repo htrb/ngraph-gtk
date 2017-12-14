@@ -205,8 +205,14 @@ DialogExecute(GtkWidget *parent, void *dialog)
 void
 message_beep(GtkWidget * parent)
 {
-  gdk_beep();
-  reset_event();
+  if (parent) {
+    GdkWindow *window;
+    window = gtk_widget_get_window(parent);
+    gdk_window_beep(window);
+  } else {
+    gdk_beep();
+  }
+  //  reset_event();
 }
 
 static void
@@ -235,6 +241,12 @@ get_dialog_position(GtkWidget *w, int *x, int *y)
 
 int
 message_box(GtkWidget * parent, const char *message, const char *title, int mode)
+{
+  return markup_message_box(parent, message, title, mode, FALSE);
+}
+
+int
+markup_message_box(GtkWidget * parent, const char *message, const char *title, int mode, int markup)
 {
   GtkWidget *dlg;
   int data;
@@ -271,7 +283,10 @@ message_box(GtkWidget * parent, const char *message, const char *title, int mode
 			       GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 			       dlg_type,
 			       dlg_button,
-			       "%.256s", message);
+			       "%.512s", message);
+  if (markup) {
+    gtk_message_dialog_set_markup(GTK_MESSAGE_DIALOG(dlg), message);
+  }
 
   switch (mode) {
   case RESPONS_YESNOCANCEL:
@@ -865,7 +880,7 @@ fsok(GtkWidget *dlg, struct nGetOpenFileData *data)
 
     tmp = (char *) list->data;
     if (tmp == NULL || strlen(tmp) < 1) {
-      gdk_beep();
+      message_beep(TopLevel);
       continue;
     }
 
@@ -888,14 +903,14 @@ fsok(GtkWidget *dlg, struct nGetOpenFileData *data)
       if (data->mustexist) {
 	if ((nstat(file2, &buf) != 0) || ((buf.st_mode & S_IFMT) != S_IFREG)
 	    || (naccess(file2, R_OK) != 0)) {
-	  gdk_beep();
+	  message_beep(TopLevel);
 	  error22(NULL, 0, "I/O error", file2);
 	  g_free(file2);
 	  continue;
 	}
       } else {
 	if ((nstat(file2, &buf) == 0) && ((buf.st_mode & S_IFMT) != S_IFREG)) {
-	  gdk_beep();
+	  message_beep(TopLevel);
 	  error22(NULL, 0, "I/O error", file2);
 	  g_free(file2);
 	  continue;

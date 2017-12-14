@@ -2446,7 +2446,7 @@ CmAxisNewFrame(void *w, gpointer client_data)
   } else {
     set_graph_modified();
   }
-  AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE);
+  AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
 }
 
 void
@@ -2515,7 +2515,7 @@ CmAxisNewSection(void *w, gpointer client_data)
   } else {
     set_graph_modified();
   }
-  AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE);
+  AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
 }
 
 void
@@ -2559,7 +2559,7 @@ CmAxisNewCross(void *w, gpointer client_data)
     menu_delete_undo();
   } else
     set_graph_modified();
-  AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE);
+  AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
 }
 
 void
@@ -2582,7 +2582,7 @@ CmAxisNewSingle(void *w, gpointer client_data)
     } else {
       set_graph_modified();
     }
-    AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE);
+    AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
   }
 }
 
@@ -2606,8 +2606,8 @@ CmAxisDel(void *w, gpointer client_data)
     axis_save_undo(UNDO_TYPE_DELETE);
     AxisDel(DlgCopy.sel);
     set_graph_modified();
-    AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE);
-    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
+    AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
   }
 }
 
@@ -2636,8 +2636,8 @@ CmAxisUpdate(void *w, gpointer client_data)
   if ((ret = DialogExecute(TopLevel, &DlgAxis)) == IDDELETE) {
     AxisDel(i);
   }
-  AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE);
-  FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
+  AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
+  FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
 }
 
 void
@@ -2683,7 +2683,7 @@ CmAxisZoom(void *w, gpointer client_data)
 	  set_graph_modified();
 	}
       }
-      AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE);
+      AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
     }
     arraydel(&farray);
   }
@@ -2715,7 +2715,7 @@ axiswin_scale_clear(GtkMenuItem *item, gpointer user_data)
     axis_scale_push(obj, sel);
     exeobj(obj, "clear", sel, 0, NULL);
     set_graph_modified();
-    d->update(d, FALSE);
+    d->update(d, FALSE, TRUE);
   }
 }
 
@@ -2745,7 +2745,7 @@ CmAxisClear(void *w, gpointer client_data)
       exeobj(obj, "clear", array[i], 0, NULL);
       set_graph_modified();
     }
-    AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE);
+    AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
   }
   arraydel(&farray);
 }
@@ -2840,8 +2840,10 @@ CmAxisGridUpdate(void *w, gpointer client_data)
 }
 
 void
-AxisWinUpdate(struct obj_list_data *d, int clear)
+AxisWinUpdate(struct obj_list_data *d, int clear, int draw)
 {
+  char *objects[4];
+
   if (Menulock || Globallock)
     return;
 
@@ -2856,6 +2858,14 @@ AxisWinUpdate(struct obj_list_data *d, int clear)
 
   if (! clear && d->select >= 0) {
     list_store_select_int(GTK_WIDGET(d->text), AXIS_WIN_COL_ID, d->select);
+  }
+  if (draw) {
+    NgraphApp.Viewer.allclear = TRUE;
+    objects[0] = d->obj->name;
+    objects[1] = "axisgrid";
+    objects[2] = NgraphApp.FileWin.data.data->obj->name;
+    objects[3] = NULL;
+    ViewerWinUpdate(objects);
   }
 }
 
@@ -3003,7 +3013,7 @@ CmAxisScaleUndo(void *w, gpointer client_data)
     }
     n = check_axis_history(obj);
     set_axis_undo_button_sensitivity(n > 0);
-    AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE);
+    AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
   }
   arraydel(&farray);
 }
@@ -3094,7 +3104,7 @@ pos_edited_common(struct obj_list_data *d, int id, char *str, enum CHANGE_DIR di
     exeobj(d->obj, "move", man, 2, argv);
 
     set_graph_modified();
-    AxisWinUpdate(d, TRUE);
+    AxisWinUpdate(d, TRUE, TRUE);
   }
 }
 
@@ -3147,7 +3157,7 @@ axis_prm_edited_common(struct obj_list_data *d, char *field, gchar *str)
   menu_lock(FALSE);
 
   d->select = sel;
-  d->update(d, FALSE);
+  d->update(d, FALSE, TRUE);
 }
 
 static void
@@ -3465,7 +3475,7 @@ select_type(GtkComboBox *w, gpointer user_data)
   }
 
   d->select = sel;
-  d->update(d, FALSE);
+  d->update(d, FALSE, TRUE);
   set_graph_modified();
 }
 
@@ -3519,8 +3529,8 @@ axiswin_delete_axis(struct obj_list_data *d)
   if ((sel >= 0) && (sel <= num)) {
     axis_save_undo(UNDO_TYPE_DELETE);
     AxisDel(sel);
-    AxisWinUpdate(d, TRUE);
-    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
+    AxisWinUpdate(d, TRUE, TRUE);
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
     set_graph_modified();
     d->select = -1;
   }
@@ -3553,8 +3563,8 @@ AxisWinAxisTop(GtkWidget *w, gpointer client_data)
     movetopobj(d->obj, sel);
     d->select = 0;
     AxisMove(sel,0);
-    AxisWinUpdate(d, FALSE);
-    FileWinUpdate(NgraphApp.FileWin.data.data, FALSE);
+    AxisWinUpdate(d, FALSE, FALSE);
+    FileWinUpdate(NgraphApp.FileWin.data.data, FALSE, FALSE);
     set_graph_modified();
   }
 }
@@ -3577,8 +3587,8 @@ AxisWinAxisLast(GtkWidget *w, gpointer client_data)
     movelastobj(d->obj, sel);
     d->select = num;
     AxisMove(sel, num);
-    AxisWinUpdate(d, FALSE);
-    FileWinUpdate(NgraphApp.FileWin.data.data, FALSE);
+    AxisWinUpdate(d, FALSE, FALSE);
+    FileWinUpdate(NgraphApp.FileWin.data.data, FALSE, FALSE);
     set_graph_modified();
   }
 }
@@ -3601,8 +3611,8 @@ AxisWinAxisUp(GtkWidget *w, gpointer client_data)
     moveupobj(d->obj, sel);
     d->select = sel - 1;
     AxisMove(sel, sel - 1);
-    AxisWinUpdate(d, FALSE);
-    FileWinUpdate(NgraphApp.FileWin.data.data, FALSE);
+    AxisWinUpdate(d, FALSE, FALSE);
+    FileWinUpdate(NgraphApp.FileWin.data.data, FALSE, FALSE);
     set_graph_modified();
   }
 }
@@ -3625,8 +3635,8 @@ AxisWinAxisDown(GtkWidget *w, gpointer client_data)
     movedownobj(d->obj, sel);
     d->select = sel + 1;
     AxisMove(sel, sel + 1);
-    AxisWinUpdate(d, FALSE);
-    FileWinUpdate(NgraphApp.FileWin.data.data, FALSE);
+    AxisWinUpdate(d, FALSE, FALSE);
+    FileWinUpdate(NgraphApp.FileWin.data.data, FALSE, FALSE);
     set_graph_modified();
   }
 }

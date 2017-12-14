@@ -1463,7 +1463,7 @@ LoadNgpFile(char *file, int console, char *option)
   set_axis_undo_button_sensitivity(FALSE);
   GetPageSettingsFromGRA();
   CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
-  UpdateAll2(NULL);
+  UpdateAll2(NULL, FALSE);
   delobj(obj, newid);
   menu_clear_undo();
 
