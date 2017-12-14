@@ -5994,17 +5994,18 @@ ViewUpdate(void)
     }
   }
   PaintLock = FALSE;
-  if (! modified) {
-    menu_undo(FALSE);
-  }
 
   if (arraynum(d->focusobj) == 0)
     clear_focus_obj(d);
 
-  if (! axis)
-    d->allclear = FALSE;
-
-  UpdateAll(objs);
+  if (modified) {
+    if (! axis) {
+      d->allclear = FALSE;
+    }
+    UpdateAll(objs);
+  } else {
+    menu_undo(FALSE);
+  }
   d->ShowFrame = TRUE;
 }
 
