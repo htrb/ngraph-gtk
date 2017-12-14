@@ -5765,7 +5765,7 @@ CmViewerDraw(void *w, gpointer client_data)
   Draw(select_file);
 
   FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
-  AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, FILE_DRAW_NONE);
+  AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, DRAW_NONE);
 }
 
 void

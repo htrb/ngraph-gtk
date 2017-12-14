@@ -232,7 +232,7 @@ CmMergeOpen(void *w, gpointer client_data)
   } else {
     g_free(name);
   }
-  MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE, FILE_DRAW_NOTIFY);
+  MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE, DRAW_NOTIFY);
 }
 
 void
@@ -321,7 +321,7 @@ MergeWinUpdate(struct obj_list_data *d, int clear, int draw)
   }
 
   switch (draw) {
-  case FILE_DRAW_REDRAW:
+  case DRAW_REDRAW:
     getobj(Menulocal.obj, "redraw_flag", 0, 0, NULL, &redraw);
     if (redraw) {
       NgraphApp.Viewer.allclear = TRUE;
@@ -330,7 +330,7 @@ MergeWinUpdate(struct obj_list_data *d, int clear, int draw)
       draw_notify(TRUE);
     }
     break;
-  case FILE_DRAW_NOTIFY:
+  case DRAW_NOTIFY:
     draw_notify(TRUE);
     break;
   }

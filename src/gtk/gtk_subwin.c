@@ -1008,10 +1008,10 @@ update(struct obj_list_data *d)
       delobj(d->obj, sel);
     }
     d->select = -1;
-    d->update(d, FALSE, FILE_DRAW_REDRAW);
+    d->update(d, FALSE, DRAW_REDRAW);
     break;
   default:
-    d->update(d, FALSE, FILE_DRAW_NOTIFY);
+    d->update(d, FALSE, DRAW_NOTIFY);
   }
 }
 
