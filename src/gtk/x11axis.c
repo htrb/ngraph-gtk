@@ -3305,7 +3305,7 @@ create_type_combo_box(GtkWidget *cbox, struct objlist *obj, int id)
 static void
 select_type(GtkComboBox *w, gpointer user_data)
 {
-  int sel, col_type, type, enum_id, found, active, style;
+  int sel, col_type, type, enum_id, found, active, style, draw;
   struct objlist *obj;
   struct obj_list_data *d;
   GtkTreeStore *list;
@@ -3332,12 +3332,14 @@ select_type(GtkComboBox *w, gpointer user_data)
 		     OBJECT_COLUMN_TYPE_ENUM, &enum_id,
 		     -1);
 
+  draw = DRAW_AXIS_ONLY;
   switch (col_type) {
   case AXIS_COMBO_ITEM_SCALE:
     getobj(d->obj, "type", sel, 0, NULL, &type);
     if (type == enum_id) {
       return;
     }
+    draw = DRAW_REDRAW;
     axis_save_undo(UNDO_TYPE_EDIT);
     putobj(d->obj, "type", sel, &enum_id);
     break;
@@ -3475,7 +3477,7 @@ select_type(GtkComboBox *w, gpointer user_data)
   }
 
   d->select = sel;
-  d->update(d, FALSE, TRUE);
+  d->update(d, FALSE, draw);
   set_graph_modified();
 }
 
