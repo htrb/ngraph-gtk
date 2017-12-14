@@ -1,3 +1,8 @@
+2017-12-14  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11axis.c (select_type): redraw data object when "type"
+	field is changed.
+
 2017-12-13  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (CmFileNew): removed.
