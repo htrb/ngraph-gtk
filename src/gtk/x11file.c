@@ -240,6 +240,7 @@ MathTextDialogClose(GtkWidget *w, void *data)
 	return;
       }
       set_graph_modified();
+      d->modified = TRUE;
     }
     g_free(obuf);
   }
@@ -271,6 +272,7 @@ MathTextDialog(struct MathTextDialog *data, char *text, int mode, struct objlist
   data->tree = tree;
   data->Text = text;
   data->Mode = mode;
+  data->modified = FALSE;
   data->Obj = obj;
   data->id_list = list;
 }
@@ -360,9 +362,8 @@ MathDialogList(GtkButton *w, gpointer client_data)
     goto END;
 
   MathTextDialog(&DlgMathText, buf, d->Mode, d->Obj, list, d->list);
-
   DialogExecute(d->widget, &DlgMathText);
-
+  d->modified = DlgMathText.modified;
   g_free(buf);
 
   MathDialogSetupItem(d->widget, d);
@@ -557,6 +558,7 @@ MathDialog(struct MathDialog *data, struct objlist *obj)
   data->SetupWindow = MathDialogSetup;
   data->CloseWindow = MathDialogClose;
   data->Obj = obj;
+  data->modified = FALSE;
 }
 
 static void
@@ -5263,6 +5265,11 @@ CmFileMath(void *w, gpointer client_data)
   menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
   MathDialog(&DlgMath, obj);
   DialogExecute(TopLevel, &DlgMath);
+  if (DlgMath.modified) {
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, DRAW_REDRAW);
+  } else {
+    menu_delete_undo();
+  }
 }
 
 static int

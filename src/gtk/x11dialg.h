@@ -155,7 +155,7 @@ struct MathDialog
   /****** local member *******/
   GtkWidget *list, *func[MATH_FNC_NUM];
   struct objlist *Obj;
-  int Mode;
+  int Mode, modified;
 };
 void MathDialog(struct MathDialog *data, struct objlist *obj);
 
@@ -167,7 +167,7 @@ struct MathTextDialog
   GList *id_list;
   struct objlist *Obj;
   char *Text;
-  int Mode;
+  int Mode, modified;
 };
 void MathTextDialog(struct MathTextDialog *data, char *text, int mode, struct objlist *obj, GList *list, GtkWidget *tree);
 
