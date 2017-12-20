@@ -355,6 +355,7 @@ GridDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct GridDialog *) data;
   if (makewidget) {
+    gtk_dialog_add_button(GTK_DIALOG(wi), _("_Delete"), IDDELETE);
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
     table = gtk_grid_new();
