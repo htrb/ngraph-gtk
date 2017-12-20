@@ -440,7 +440,7 @@ new_merge_obj(char *name, struct objlist *obj)
   putobj(obj, "file", id, name);
   MergeDialog(NgraphApp.MergeWin.data.data, id, -1);
   ret = DialogExecute(TopLevel, &DlgMerge);
-  if ((ret == IDDELETE) || (ret == IDCANCEL)) {
+  if (ret == IDCANCEL) {
     delobj(obj, id);
   } else {
     set_graph_modified();
@@ -572,7 +572,7 @@ new_file_obj(char *name, struct objlist *obj, int *id0, int multi)
 
   FileDialog(NgraphApp.FileWin.data.data, id, multi);
   ret = DialogExecute(TopLevel, &DlgFile);
-  if ((ret == IDDELETE) || (ret == IDCANCEL)) {
+  if (ret == IDCANCEL) {
     FitDel(obj, id);
     delobj(obj, id);
   } else {
@@ -3954,7 +3954,7 @@ create_single_axis(struct Viewer *d)
 	AxisDialog(NgraphApp.AxisWin.data.data, id, TRUE);
 	ret = DialogExecute(TopLevel, &DlgAxis);
 
-	if (ret == IDDELETE || ret == IDCANCEL) {
+	if (ret == IDCANCEL) {
 	  menu_delete_undo();
 	  delobj(obj, id);
 	} else {
@@ -4084,7 +4084,7 @@ create_axis(struct Viewer *d)
 	ret = DialogExecute(TopLevel, &DlgCross);
       }
 
-      if ((ret == IDDELETE) || (ret == IDCANCEL)) {
+      if (ret == IDCANCEL) {
 	if (d->Mode != CrossB) {
 	  delobj(obj, idr);
 	  delobj(obj, idu);
@@ -5920,12 +5920,6 @@ ViewUpdate(void)
 
 	  ret = DialogExecute(TopLevel, &DlgSection);
 
-	  if (ret == IDDELETE) {
-	    AxisDel(id);
-	    set_graph_modified();
-	    arrayndel2(d->focusobj, i);
-	  }
-
 	  if (! findG && idg != -1) {
 	    dinst = chkobjinst(dobj, idg);
 	    if (dinst) {
@@ -5941,22 +5935,10 @@ ViewUpdate(void)
 	  CrossDialog(&DlgCross, x1, y1, lenx, leny, obj, idx, idy);
 
 	  ret = DialogExecute(TopLevel, &DlgCross);
-
-	  if (ret == IDDELETE) {
-	    AxisDel(id);
-	    set_graph_modified();
-	    arrayndel2(d->focusobj, i);
-	  }
 	}
       } else {
 	AxisDialog(NgraphApp.AxisWin.data.data, id, TRUE);
 	ret = DialogExecute(TopLevel, &DlgAxis);
-
-	if (ret == IDDELETE) {
-	  AxisDel(id);
-	  set_graph_modified();
-	  arrayndel2(d->focusobj, i);
-	}
       }
     } else {
       AddInvalidateRect(obj, inst);
