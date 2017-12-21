@@ -585,7 +585,7 @@ SectionDialogGrid(GtkWidget *w, gpointer client_data)
 
   d = (struct SectionDialog *) client_data;
   if (*(d->IDG) == -1) {
-    axis_save_undo(UNDO_TYPE_EDIT);
+    axis_save_undo(UNDO_TYPE_DUMMY);
     if ((*(d->IDG) = newobj(d->Obj2)) >= 0) {
       getobj(d->Obj, "oid", d->IDX, 0, NULL, &oidx);
       ref = g_strdup_printf("axis:^%d", oidx);
@@ -605,24 +605,27 @@ SectionDialogGrid(GtkWidget *w, gpointer client_data)
     ret = DialogExecute(d->widget, &DlgGrid);
     switch (ret) {
     case IDCANCEL:
-      if (! create)
-	break;
-      /* fall through */
-    case IDDELETE:
-      delobj(d->Obj2, *(d->IDG));
-      *(d->IDG) = -1;
+      menu_undo(FALSE);
       if (create) {
-	menu_delete_undo();
-	break;
+        *(d->IDG) = -1;
       }
-      /* fall through */
+      break;
+    case IDDELETE:
+      if (create) {
+        menu_undo(FALSE);
+      } else {
+        delobj(d->Obj2, *(d->IDG));
+        set_graph_modified();
+      }
+      *(d->IDG) = -1;
+      break;
     default:
+      menu_delete_undo();
       set_graph_modified();
     }
   }
   SectionDialogSetupItem(d->widget, d);
 }
-
 
 static void
 SectionDialogSetup(GtkWidget *wi, void *data, int makewidget)
@@ -2435,15 +2438,8 @@ CmAxisNewFrame(void *w, gpointer client_data)
   SectionDialog(&DlgSection, x, y, lenx, leny, obj, idx, idy, idu, idr, obj2,
 		&idg, FALSE);
   ret = DialogExecute(TopLevel, &DlgSection);
-  if ((ret == IDDELETE) || (ret == IDCANCEL)) {
-    if (idg != -1) {
-      delobj(obj2, idg);
-    }
-    delobj(obj, idr);
-    delobj(obj, idu);
-    delobj(obj, idy);
-    delobj(obj, idx);
-    menu_delete_undo();
+  if (ret == IDCANCEL) {
+    menu_undo(FALSE);
   } else {
     set_graph_modified();
   }
@@ -2506,13 +2502,8 @@ CmAxisNewSection(void *w, gpointer client_data)
   SectionDialog(&DlgSection, x, y, lenx, leny, obj, idx, idy, idu, idr, obj2,
 		&idg, TRUE);
   ret = DialogExecute(TopLevel, &DlgSection);
-  if ((ret == IDDELETE) || (ret == IDCANCEL)) {
-    delobj(obj2, idg);
-    delobj(obj, idr);
-    delobj(obj, idu);
-    delobj(obj, idy);
-    delobj(obj, idx);
-    menu_delete_undo();
+  if (ret == IDCANCEL) {
+    menu_undo(FALSE);
   } else {
     set_graph_modified();
   }
@@ -2554,12 +2545,11 @@ CmAxisNewCross(void *w, gpointer client_data)
   arraydel(&group);
   CrossDialog(&DlgCross, x, y, lenx, leny, obj, idx, idy);
   ret = DialogExecute(TopLevel, &DlgCross);
-  if ((ret == IDDELETE) || (ret == IDCANCEL)) {
-    delobj(obj, idy);
-    delobj(obj, idx);
-    menu_delete_undo();
-  } else
+  if (ret == IDCANCEL) {
+    menu_undo(FALSE);
+  } else {
     set_graph_modified();
+  }
   AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
 }
 
@@ -2577,9 +2567,8 @@ CmAxisNewSingle(void *w, gpointer client_data)
   if ((id = newobj(obj)) >= 0) {
     AxisDialog(NgraphApp.AxisWin.data.data, id, -1);
     ret = DialogExecute(TopLevel, &DlgAxis);
-    if ((ret == IDDELETE) || (ret == IDCANCEL)) {
-      delobj(obj, id);
-      menu_delete_undo();
+    if (ret == IDCANCEL) {
+      menu_undo(FALSE);
     } else {
       set_graph_modified();
     }
@@ -2634,11 +2623,13 @@ CmAxisUpdate(void *w, gpointer client_data)
   }
   axis_save_undo(UNDO_TYPE_EDIT);
   AxisDialog(NgraphApp.AxisWin.data.data, i, -1);
-  if ((ret = DialogExecute(TopLevel, &DlgAxis)) == IDDELETE) {
-    AxisDel(i);
+  ret = DialogExecute(TopLevel, &DlgAxis);
+  if (ret == IDCANCEL) {
+    menu_delete_undo();
+  } else {
+    AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
   }
-  AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
-  FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
 }
 
 void
@@ -2769,9 +2760,8 @@ CmAxisGridNew(void *w, gpointer client_data)
   }
   GridDialog(&DlgGrid, obj, id);
   ret = DialogExecute(TopLevel, &DlgGrid);
-  if ((ret == IDDELETE) || (ret == IDCANCEL)) {
-    delobj(obj, id);
-    menu_delete_undo();
+  if (ret == IDCANCEL) {
+    menu_undo(FALSE);
   } else {
     set_graph_modified();
   }
