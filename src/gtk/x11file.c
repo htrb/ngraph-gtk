@@ -4187,9 +4187,8 @@ CmFileHistory(GtkRecentChooser *w, gpointer client_data)
   data = NgraphApp.FileWin.data.data;
   FileDialog(data, id, FALSE);
   ret = DialogExecute(TopLevel, data->dialog);
-  if ((ret == IDDELETE) || (ret == IDCANCEL)) {
-    menu_delete_undo();
-    delete_file_obj(data, id);
+  if (ret == IDCANCEL) {
+    menu_undo(FALSE);
   } else {
     set_graph_modified();
     AddDataFileList(fname);
@@ -4228,9 +4227,8 @@ CmRangeAdd(void *w, gpointer client_data)
   FileDialog(data, id, FALSE);
   ret = DialogExecute(TopLevel, data->dialog);
 
-  if (ret == IDCANCEL || ret == IDDELETE) {
-    menu_delete_undo();
-    delobj(obj, id);
+  if (ret == IDCANCEL) {
+    menu_undo(FALSE);
   } else {
     set_graph_modified();
     FileWinUpdate(data, TRUE, DRAW_REDRAW);
@@ -4678,11 +4676,6 @@ FileWinFileUpdate(struct obj_list_data *d)
     switch (ret) {
     case IDCANCEL:
       menu_undo(FALSE);
-      break;
-    case IDDELETE:
-      delete_file_obj(d, sel);
-      d->select = -1;
-      d->update(d, FALSE, DRAW_REDRAW);
       break;
     default:
       d->update(d, FALSE, DRAW_NOTIFY);
