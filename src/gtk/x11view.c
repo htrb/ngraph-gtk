@@ -4085,18 +4085,7 @@ create_axis(struct Viewer *d)
       }
 
       if (ret == IDCANCEL) {
-	if (d->Mode != CrossB) {
-	  delobj(obj, idr);
-	  delobj(obj, idu);
-	}
-
-	delobj(obj, idy);
-	delobj(obj, idx);
-
-	if ((idg != -1) && (obj2 != NULL)) {
-	  delobj(obj2, idg);
-	}
-	menu_delete_undo();
+	menu_undo(FALSE);
       } else {
 	inst = chkobjinst(obj, idx);
 	if (inst)
