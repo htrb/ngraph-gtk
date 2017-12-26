@@ -67,6 +67,7 @@ static struct funcs FuncAry[] = {
   {"PROG1", {-1, 0, 0, math_func_prog1, NULL, NULL, NULL, NULL}},
   {"PROG2", {-1, 0, 0, math_func_prog2, NULL, NULL, NULL, NULL}},
   {"SHIFT", {1, 0, 0, math_func_shift, NULL, NULL, NULL, NULL}},
+  {"SUMSQ", {-1, 0, 0, math_func_sumsq, NULL, NULL, NULL, NULL}},
   {"SIGN", {1, 0, 0, math_func_sign, NULL, NULL, NULL, NULL}},
   {"FRAC", {1, 0, 0, math_func_frac, NULL, NULL, NULL, NULL}},
   {"SQRT", {1, 0, 0, math_func_sqrt, NULL, NULL, NULL, NULL}},
@@ -232,7 +233,7 @@ math_add_basic_function(MathEquation *eq) {
       ptr[0] = MATH_FUNCTION_ARG_TYPE_ARRAY;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 47:  /*  SORT  */
+    case 48:  /*  SORT  */
       if (FuncAry[i].prm.arg_type) {
         break;
       }
@@ -243,7 +244,7 @@ math_add_basic_function(MathEquation *eq) {
       ptr[0] = MATH_FUNCTION_ARG_TYPE_ARRAY;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 48:  /*  SIZE  */
+    case 49:  /*  SIZE  */
       if (FuncAry[i].prm.arg_type) {
         break;
       }
@@ -254,7 +255,7 @@ math_add_basic_function(MathEquation *eq) {
       ptr[0] = MATH_FUNCTION_ARG_TYPE_ARRAY;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 50:  /*  PUSH  */
+    case 51:  /*  PUSH  */
       if (FuncAry[i].prm.arg_type) {
         break;
       }
@@ -266,7 +267,7 @@ math_add_basic_function(MathEquation *eq) {
       ptr[1] = MATH_FUNCTION_ARG_TYPE_DOUBLE;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 70:  /*  FOR  */
+    case 71:  /*  FOR  */
       if (FuncAry[i].prm.arg_type) {
         break;
       }
@@ -281,7 +282,7 @@ math_add_basic_function(MathEquation *eq) {
       ptr[4] = MATH_FUNCTION_ARG_TYPE_PROC;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 77:  /*  POP  */
+    case 78:  /*  POP  */
       if (FuncAry[i].prm.arg_type) {
         break;
       }
@@ -292,7 +293,7 @@ math_add_basic_function(MathEquation *eq) {
       ptr[0] = MATH_FUNCTION_ARG_TYPE_ARRAY;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 93:  /*  IF  */
+    case 94:  /*  IF  */
       if (FuncAry[i].prm.arg_type) {
         break;
       }
