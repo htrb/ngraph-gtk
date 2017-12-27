@@ -269,7 +269,7 @@ CmMergeUpdate(void *w, gpointer client_data)
 {
   struct narray farray;
   struct objlist *obj;
-  int i, j, ret, modified;
+  int i, ret, modified;
   int *array, num;
 
   if (Menulock || Globallock)
