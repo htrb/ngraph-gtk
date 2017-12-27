@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.06.13\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2017-12-21 09:31+0900\n"
+"POT-Creation-Date: 2017-12-27 14:55+0900\n"
 "PO-Revision-Date: 2017-09-25 14:38+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -707,7 +707,7 @@ msgid "auto"
 msgstr "自動"
 
 #: src/gtk/x11dialg.c:122 src/gtk/x11merge.c:52 src/gtk/x11opt.c:471
-#: src/odata.c:170
+#: src/odata.c:174
 msgid "file"
 msgstr "ファイル"
 
@@ -719,7 +719,7 @@ msgstr "マーク選択"
 msgid "function"
 msgstr "関数"
 
-#: src/gtk/x11dialg.c:134 src/odata.c:171
+#: src/gtk/x11dialg.c:134 src/odata.c:175
 msgid "array"
 msgstr "配列"
 
@@ -739,7 +739,7 @@ msgstr "変換数式"
 msgid "math text"
 msgstr "数式入力"
 
-#: src/gtk/x11dialg.c:155 src/odata.c:197
+#: src/gtk/x11dialg.c:155 src/odata.c:201
 msgid "fit"
 msgstr "フィット"
 
@@ -1662,7 +1662,7 @@ msgstr "ルール"
 msgid "path"
 msgstr "パス"
 
-#: src/gtk/x11lgnd.c:3431 src/odata.c:184
+#: src/gtk/x11lgnd.c:3431 src/odata.c:188
 msgid "rectangle"
 msgstr "矩形"
 
@@ -1670,7 +1670,7 @@ msgstr "矩形"
 msgid "arc"
 msgstr "円"
 
-#: src/gtk/x11lgnd.c:3433 src/odata.c:177
+#: src/gtk/x11lgnd.c:3433 src/odata.c:181
 msgid "mark"
 msgstr "マーク"
 
@@ -3155,79 +3155,79 @@ msgstr "指数関数"
 msgid "user"
 msgstr "ユーザ定義"
 
-#: src/odata.c:172
+#: src/odata.c:176
 msgid "range"
 msgstr "範囲"
 
-#: src/odata.c:178 src/opath.c:81
+#: src/odata.c:182 src/opath.c:81
 msgid "line"
 msgstr "直線"
 
-#: src/odata.c:179
+#: src/odata.c:183
 msgid "polygon"
 msgstr "多角形"
 
-#: src/odata.c:180
+#: src/odata.c:184
 msgid "polygon_solid_fill"
 msgstr "実多角形"
 
-#: src/odata.c:181 src/opath.c:82
+#: src/odata.c:185 src/opath.c:82
 msgid "curve"
 msgstr "曲線"
 
-#: src/odata.c:182
+#: src/odata.c:186
 msgid "diagonal"
 msgstr "対角線"
 
-#: src/odata.c:183
+#: src/odata.c:187
 msgid "arrow"
 msgstr "矢印"
 
-#: src/odata.c:185
+#: src/odata.c:189
 msgid "rectangle_fill"
 msgstr "塗りつぶし矩形"
 
-#: src/odata.c:186
+#: src/odata.c:190
 msgid "rectangle_solid_fill"
 msgstr "実矩形"
 
-#: src/odata.c:187
+#: src/odata.c:191
 msgid "errorbar_x"
 msgstr "横誤差棒"
 
-#: src/odata.c:188
+#: src/odata.c:192
 msgid "errorbar_y"
 msgstr "縦誤差棒"
 
-#: src/odata.c:189
+#: src/odata.c:193
 msgid "staircase_x"
 msgstr "縦階段"
 
-#: src/odata.c:190
+#: src/odata.c:194
 msgid "staircase_y"
 msgstr "横階段"
 
-#: src/odata.c:191
+#: src/odata.c:195
 msgid "bar_x"
 msgstr "空横棒"
 
-#: src/odata.c:192
+#: src/odata.c:196
 msgid "bar_y"
 msgstr "空縦棒"
 
-#: src/odata.c:193
+#: src/odata.c:197
 msgid "bar_fill_x"
 msgstr "塗りつぶし横棒"
 
-#: src/odata.c:194
+#: src/odata.c:198
 msgid "bar_fill_y"
 msgstr "塗りつぶし縦棒"
 
-#: src/odata.c:195
+#: src/odata.c:199
 msgid "bar_solid_fill_x"
 msgstr "実横棒"
 
-#: src/odata.c:196
+#: src/odata.c:200
 msgid "bar_solid_fill_y"
 msgstr "実縦棒"
 

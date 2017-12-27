@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.07.05\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2017-12-21 09:31+0900\n"
+"POT-Creation-Date: 2017-12-27 14:55+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -678,7 +678,7 @@ msgid "auto"
 msgstr ""
 
 #: src/gtk/x11dialg.c:122 src/gtk/x11merge.c:52 src/gtk/x11opt.c:471
-#: src/odata.c:170
+#: src/odata.c:174
 msgid "file"
 msgstr ""
 
@@ -690,7 +690,7 @@ msgstr ""
 msgid "function"
 msgstr ""
 
-#: src/gtk/x11dialg.c:134 src/odata.c:171
+#: src/gtk/x11dialg.c:134 src/odata.c:175
 msgid "array"
 msgstr ""
 
@@ -710,7 +710,7 @@ msgstr ""
 msgid "math text"
 msgstr ""
 
-#: src/gtk/x11dialg.c:155 src/odata.c:197
+#: src/gtk/x11dialg.c:155 src/odata.c:201
 msgid "fit"
 msgstr ""
 
@@ -1629,7 +1629,7 @@ msgstr ""
 msgid "path"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3431 src/odata.c:184
+#: src/gtk/x11lgnd.c:3431 src/odata.c:188
 msgid "rectangle"
 msgstr ""
 
@@ -1637,7 +1637,7 @@ msgstr ""
 msgid "arc"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3433 src/odata.c:177
+#: src/gtk/x11lgnd.c:3433 src/odata.c:181
 msgid "mark"
 msgstr ""
 
@@ -3119,79 +3119,79 @@ msgstr ""
 msgid "user"
 msgstr ""
 
-#: src/odata.c:172
+#: src/odata.c:176
 msgid "range"
 msgstr ""
 
-#: src/odata.c:178 src/opath.c:81
+#: src/odata.c:182 src/opath.c:81
 msgid "line"
 msgstr ""
 
-#: src/odata.c:179
+#: src/odata.c:183
 msgid "polygon"
 msgstr ""
 
-#: src/odata.c:180
+#: src/odata.c:184
 msgid "polygon_solid_fill"
 msgstr ""
 
-#: src/odata.c:181 src/opath.c:82
+#: src/odata.c:185 src/opath.c:82
 msgid "curve"
 msgstr ""
 
-#: src/odata.c:182
+#: src/odata.c:186
 msgid "diagonal"
 msgstr ""
 
-#: src/odata.c:183
+#: src/odata.c:187
 msgid "arrow"
 msgstr ""
 
-#: src/odata.c:185
+#: src/odata.c:189
 msgid "rectangle_fill"
 msgstr ""
 
-#: src/odata.c:186
+#: src/odata.c:190
 msgid "rectangle_solid_fill"
 msgstr ""
 
-#: src/odata.c:187
+#: src/odata.c:191
 msgid "errorbar_x"
 msgstr ""
 
-#: src/odata.c:188
+#: src/odata.c:192
 msgid "errorbar_y"
 msgstr ""
 
-#: src/odata.c:189
+#: src/odata.c:193
 msgid "staircase_x"
 msgstr ""
 
-#: src/odata.c:190
+#: src/odata.c:194
 msgid "staircase_y"
 msgstr ""
 
-#: src/odata.c:191
+#: src/odata.c:195
 msgid "bar_x"
 msgstr ""
 
-#: src/odata.c:192
+#: src/odata.c:196
 msgid "bar_y"
 msgstr ""
 
-#: src/odata.c:193
+#: src/odata.c:197
 msgid "bar_fill_x"
 msgstr ""
 
-#: src/odata.c:194
+#: src/odata.c:198
 msgid "bar_fill_y"
 msgstr ""
 
-#: src/odata.c:195
+#: src/odata.c:199
 msgid "bar_solid_fill_x"
 msgstr ""
 
-#: src/odata.c:196
+#: src/odata.c:200
 msgid "bar_solid_fill_y"
 msgstr ""
 

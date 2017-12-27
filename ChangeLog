@@ -1,3 +1,14 @@
+2017-12-27  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/odata.c (ofile_create_math_equation): use "STDEVPX" and
+	"STDEVPY" instead of "SGX" and "SGY".
+	(f2dstat): add fields "dstdevpx", "dstdevpyy", "dstdevx" and
+	"dstdevy".
+
+2017-12-26  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/math/math_basic_function.c (math_func_sumsq): added.
+
 2017-12-21  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (create_axis): use "menu_undo()" to cancel
