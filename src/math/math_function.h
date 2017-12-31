@@ -65,6 +65,7 @@ int math_func_progn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue
 int math_func_prog1(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
 int math_func_prog2(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
 int math_func_shift(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
+int math_func_sumsq(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
 int math_func_sign(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
 int math_func_frac(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
 int math_func_sqrt(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);

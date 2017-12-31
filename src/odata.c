@@ -70,6 +70,10 @@ enum {
   MATH_CONST_AVY,
   MATH_CONST_SGX,
   MATH_CONST_SGY,
+  MATH_CONST_STDEVPX,
+  MATH_CONST_STDEVPY,
+  MATH_CONST_STDEVX,
+  MATH_CONST_STDEVY,
   TWOPASS_CONST_SIZE,
 };
 
@@ -357,7 +361,7 @@ struct f2dlocal {
   FILE *storefd;
   int endstore;
   double sumx, sumy, sumxx, sumyy, sumxy;
-  double dminx, dmaxx, dminy, dmaxy, davx, davy, dsigx, dsigy;
+  double dminx, dmaxx, dminy, dmaxy, davx, davy, dstdevpx, dstdevpy, dstdevx, dstdevy;
   int num, rcode;
   time_t mtime, mtime_stat;
 };
@@ -1929,6 +1933,10 @@ ofile_create_math_equation(int *id, int prm_digit, int use_fprm, int use_const, 
     "AVY",
     "SGX",
     "SGY",
+    "STDEVPX",
+    "STDEVPY",
+    "STDEVX",
+    "STDEVY",
     /* TWOPASS_CONST */
 
 
@@ -2133,8 +2141,10 @@ f2dinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   f2dlocal->dmaxy = HUGE_VAL;
   f2dlocal->davx = HUGE_VAL;
   f2dlocal->davy = HUGE_VAL;
-  f2dlocal->dsigx = HUGE_VAL;
-  f2dlocal->dsigy = HUGE_VAL;
+  f2dlocal->dstdevpx = HUGE_VAL;
+  f2dlocal->dstdevpy = HUGE_VAL;
+  f2dlocal->dstdevx  = HUGE_VAL;
+  f2dlocal->dstdevy  = HUGE_VAL;
   f2dlocal->num = 0;
   f2dlocal->rcode = 0;
   f2dlocal->minx.val = 0;
@@ -2762,11 +2772,27 @@ set_const(MathEquation *eq, int *const_id, int need2pass, struct f2ddata *fp, in
       val.val = (tmp < 0) ? 0 : sqrt(tmp);
       val.type = MATH_VALUE_NORMAL;
       math_equation_set_const(eq, const_id[MATH_CONST_SGX], &val);
+      math_equation_set_const(eq, const_id[MATH_CONST_STDEVPX], &val);
 
       tmp = fp->sumyy / fp->num - (fp->sumy / fp->num) * (fp->sumy / fp->num);
       val.val = (tmp < 0) ? 0 : sqrt(tmp);
       val.type = MATH_VALUE_NORMAL;
       math_equation_set_const(eq, const_id[MATH_CONST_SGY], &val);
+      math_equation_set_const(eq, const_id[MATH_CONST_STDEVPY], &val);
+    }
+    if (fp->num > 1) {
+      double n;
+
+      n = fp->num;
+      tmp = fp->sumxx / (n - 1) - (fp->sumx / (n - 1)) * (fp->sumx / n);
+      val.val = (tmp < 0) ? 0 : sqrt(tmp);
+      val.type = MATH_VALUE_NORMAL;
+      math_equation_set_const(eq, const_id[MATH_CONST_STDEVX], &val);
+
+      tmp = fp->sumyy / (n - 1) - (fp->sumy / (n - 1)) * (fp->sumy / n);
+      val.val = (tmp < 0) ? 0 : sqrt(tmp);
+      val.type = MATH_VALUE_NORMAL;
+      math_equation_set_const(eq, const_id[MATH_CONST_STDEVY], &val);
     }
   }
 
@@ -7207,7 +7233,7 @@ get_mtime(struct objlist *obj, N_VALUE *inst, time_t *mtime)
 }
 
 struct data_stat {
-  double min, max, ave, sig;
+  double min, max, ave, stdevp, stdev;
 };
 
 static int
@@ -7233,8 +7259,10 @@ f2dstat_sub(struct objlist *obj,N_VALUE *inst, const char *field, struct f2dloca
     stat_y->max = f2dlocal->dmaxy;
     stat_x->ave = f2dlocal->davx;
     stat_y->ave = f2dlocal->davy;
-    stat_x->sig = f2dlocal->dsigx;
-    stat_y->sig = f2dlocal->dsigy;
+    stat_x->stdevp = f2dlocal->dstdevpx;
+    stat_y->stdevp = f2dlocal->dstdevpy;
+    stat_x->stdev  = f2dlocal->dstdevx;
+    stat_y->stdev  = f2dlocal->dstdevy;
     *num = f2dlocal->num;
 
     if (f2dlocal->dminx != HUGE_VAL || strcmp(field, "dnum") == 0) {
@@ -7401,8 +7429,16 @@ f2dstat_sub(struct objlist *obj,N_VALUE *inst, const char *field, struct f2dloca
   stat_y->max = maxy;
   stat_x->ave = sumx;
   stat_y->ave = sumy;
-  stat_x->sig = sumxx;
-  stat_y->sig = sumyy;
+  stat_x->stdevp = sumxx;
+  stat_y->stdevp = sumyy;
+  if (dnum > 1) {
+    tmp = sqrt(dnum / (dnum - 1.0));
+    stat_x->stdev = sumxx * tmp;
+    stat_y->stdev = sumyy * tmp;
+  } else {
+    stat_x->stdev = HUGE_VAL;
+    stat_y->stdev = HUGE_VAL;
+  }
   *num = dnum;
 
   return 0;
@@ -7439,8 +7475,10 @@ f2dstat(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
   f2dlocal->dmaxy = stat_y.max;
   f2dlocal->davx = stat_x.ave;
   f2dlocal->davy = stat_y.ave;
-  f2dlocal->dsigx = stat_x.sig;
-  f2dlocal->dsigy = stat_y.sig;
+  f2dlocal->dstdevpx = stat_x.stdevp;
+  f2dlocal->dstdevpy = stat_y.stdevp;
+  f2dlocal->dstdevx  = stat_x.stdev;
+  f2dlocal->dstdevy  = stat_y.stdev;
 
   ptr = NULL;
   if (strcmp(field, "dnum") == 0) {
@@ -7458,9 +7496,17 @@ f2dstat(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
   } else if (strcmp(field,"davy")==0) {
     ptr = g_strdup_printf("%.15e", stat_y.ave);
   } else if (strcmp(field,"dsigx")==0) {
-    ptr = g_strdup_printf("%.15e", stat_x.sig);
+    ptr = g_strdup_printf("%.15e", stat_x.stdevp);
   } else if (strcmp(field,"dsigy")==0) {
-    ptr = g_strdup_printf("%.15e", stat_y.sig);
+    ptr = g_strdup_printf("%.15e", stat_y.stdevp);
+  } else if (strcmp(field,"dstdevpx")==0) {
+    ptr = g_strdup_printf("%.15e", stat_x.stdevp);
+  } else if (strcmp(field,"dstdevpy")==0) {
+    ptr = g_strdup_printf("%.15e", stat_y.stdevp);
+  } else if (strcmp(field,"dstdevx")==0) {
+    ptr = g_strdup_printf("%.15e", stat_x.stdev);
+  } else if (strcmp(field,"dstdevy")==0) {
+    ptr = g_strdup_printf("%.15e", stat_y.stdev);
   }
 
   if (ptr == NULL) return -1;
@@ -9207,10 +9253,14 @@ static struct objtable file2d[] = {
   {"dmaxx",NSFUNC,NREAD|NEXEC,f2dstat,"",0},
   {"davx",NSFUNC,NREAD|NEXEC,f2dstat,"",0},
   {"dsigx",NSFUNC,NREAD|NEXEC,f2dstat,"",0},
+  {"dstdevpx",NSFUNC,NREAD|NEXEC,f2dstat,"",0},
+  {"dstdevx",NSFUNC,NREAD|NEXEC,f2dstat,"",0},
   {"dminy",NSFUNC,NREAD|NEXEC,f2dstat,"",0},
   {"dmaxy",NSFUNC,NREAD|NEXEC,f2dstat,"",0},
   {"davy",NSFUNC,NREAD|NEXEC,f2dstat,"",0},
   {"dsigy",NSFUNC,NREAD|NEXEC,f2dstat,"",0},
+  {"dstdevpy",NSFUNC,NREAD|NEXEC,f2dstat,"",0},
+  {"dstdevy",NSFUNC,NREAD|NEXEC,f2dstat,"",0},
   {"dx",NSFUNC,NREAD|NEXEC,f2dstat2,"i",0},
   {"dy",NSFUNC,NREAD|NEXEC,f2dstat2,"i",0},
   {"d2",NSFUNC,NREAD|NEXEC,f2dstat2,"i",0},

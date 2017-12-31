@@ -223,16 +223,15 @@ CmMergeOpen(void *w, gpointer client_data)
     putobj(obj, "file", id, name);
     MergeDialog(NgraphApp.MergeWin.data.data, id, -1);
     ret = DialogExecute(TopLevel, &DlgMerge);
-    if ((ret == IDDELETE) || (ret == IDCANCEL)) {
-      menu_delete_undo();
-      delobj(obj, id);
+    if (ret == IDCANCEL) {
+      menu_undo(FALSE);
     } else {
       set_graph_modified();
     }
   } else {
     g_free(name);
   }
-  MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE, FILE_DRAW_NOTIFY);
+  MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE, DRAW_NOTIFY);
 }
 
 void
@@ -270,7 +269,7 @@ CmMergeUpdate(void *w, gpointer client_data)
 {
   struct narray farray;
   struct objlist *obj;
-  int i, j;
+  int i, ret, modified;
   int *array, num;
 
   if (Menulock || Globallock)
@@ -280,6 +279,7 @@ CmMergeUpdate(void *w, gpointer client_data)
   if (chkobjlastinst(obj) == -1)
     return;
   SelectDialog(&DlgSelect, obj, _("merge file property (multi select)"), FileCB, (struct narray *) &farray, NULL);
+  modified = FALSE;
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&farray);
     if (num > 0) {
@@ -288,14 +288,14 @@ CmMergeUpdate(void *w, gpointer client_data)
     array = arraydata(&farray);
     for (i = 0; i < num; i++) {
       MergeDialog(NgraphApp.MergeWin.data.data, array[i], -1);
-      if (DialogExecute(TopLevel, &DlgMerge) == IDDELETE) {
-	delobj(obj, array[i]);
-	set_graph_modified();
-	for (j = i + 1; j < num; j++)
-	  array[j]--;
+      ret = DialogExecute(TopLevel, &DlgMerge);
+      if (ret != IDCANCEL) {
+        modified = TRUE;
       }
     }
-    MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE, TRUE);
+    if (modified) {
+      MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE, TRUE);
+    }
   }
   arraydel(&farray);
 }
@@ -321,7 +321,7 @@ MergeWinUpdate(struct obj_list_data *d, int clear, int draw)
   }
 
   switch (draw) {
-  case FILE_DRAW_REDRAW:
+  case DRAW_REDRAW:
     getobj(Menulocal.obj, "redraw_flag", 0, 0, NULL, &redraw);
     if (redraw) {
       NgraphApp.Viewer.allclear = TRUE;
@@ -330,7 +330,7 @@ MergeWinUpdate(struct obj_list_data *d, int clear, int draw)
       draw_notify(TRUE);
     }
     break;
-  case FILE_DRAW_NOTIFY:
+  case DRAW_NOTIFY:
     draw_notify(TRUE);
     break;
   }

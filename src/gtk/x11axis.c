@@ -355,6 +355,7 @@ GridDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct GridDialog *) data;
   if (makewidget) {
+    gtk_dialog_add_button(GTK_DIALOG(wi), _("_Delete"), IDDELETE);
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
     table = gtk_grid_new();
@@ -584,7 +585,7 @@ SectionDialogGrid(GtkWidget *w, gpointer client_data)
 
   d = (struct SectionDialog *) client_data;
   if (*(d->IDG) == -1) {
-    axis_save_undo(UNDO_TYPE_EDIT);
+    axis_save_undo(UNDO_TYPE_DUMMY);
     if ((*(d->IDG) = newobj(d->Obj2)) >= 0) {
       getobj(d->Obj, "oid", d->IDX, 0, NULL, &oidx);
       ref = g_strdup_printf("axis:^%d", oidx);
@@ -604,24 +605,27 @@ SectionDialogGrid(GtkWidget *w, gpointer client_data)
     ret = DialogExecute(d->widget, &DlgGrid);
     switch (ret) {
     case IDCANCEL:
-      if (! create)
-	break;
-      /* fall through */
-    case IDDELETE:
-      delobj(d->Obj2, *(d->IDG));
-      *(d->IDG) = -1;
+      menu_undo(FALSE);
       if (create) {
-	menu_delete_undo();
-	break;
+        *(d->IDG) = -1;
       }
-      /* fall through */
+      break;
+    case IDDELETE:
+      if (create) {
+        menu_undo(FALSE);
+      } else {
+        delobj(d->Obj2, *(d->IDG));
+        set_graph_modified();
+      }
+      *(d->IDG) = -1;
+      break;
     default:
+      menu_delete_undo();
       set_graph_modified();
     }
   }
   SectionDialogSetupItem(d->widget, d);
 }
-
 
 static void
 SectionDialogSetup(GtkWidget *wi, void *data, int makewidget)
@@ -2434,15 +2438,8 @@ CmAxisNewFrame(void *w, gpointer client_data)
   SectionDialog(&DlgSection, x, y, lenx, leny, obj, idx, idy, idu, idr, obj2,
 		&idg, FALSE);
   ret = DialogExecute(TopLevel, &DlgSection);
-  if ((ret == IDDELETE) || (ret == IDCANCEL)) {
-    if (idg != -1) {
-      delobj(obj2, idg);
-    }
-    delobj(obj, idr);
-    delobj(obj, idu);
-    delobj(obj, idy);
-    delobj(obj, idx);
-    menu_delete_undo();
+  if (ret == IDCANCEL) {
+    menu_undo(FALSE);
   } else {
     set_graph_modified();
   }
@@ -2505,13 +2502,8 @@ CmAxisNewSection(void *w, gpointer client_data)
   SectionDialog(&DlgSection, x, y, lenx, leny, obj, idx, idy, idu, idr, obj2,
 		&idg, TRUE);
   ret = DialogExecute(TopLevel, &DlgSection);
-  if ((ret == IDDELETE) || (ret == IDCANCEL)) {
-    delobj(obj2, idg);
-    delobj(obj, idr);
-    delobj(obj, idu);
-    delobj(obj, idy);
-    delobj(obj, idx);
-    menu_delete_undo();
+  if (ret == IDCANCEL) {
+    menu_undo(FALSE);
   } else {
     set_graph_modified();
   }
@@ -2553,12 +2545,11 @@ CmAxisNewCross(void *w, gpointer client_data)
   arraydel(&group);
   CrossDialog(&DlgCross, x, y, lenx, leny, obj, idx, idy);
   ret = DialogExecute(TopLevel, &DlgCross);
-  if ((ret == IDDELETE) || (ret == IDCANCEL)) {
-    delobj(obj, idy);
-    delobj(obj, idx);
-    menu_delete_undo();
-  } else
+  if (ret == IDCANCEL) {
+    menu_undo(FALSE);
+  } else {
     set_graph_modified();
+  }
   AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
 }
 
@@ -2576,9 +2567,8 @@ CmAxisNewSingle(void *w, gpointer client_data)
   if ((id = newobj(obj)) >= 0) {
     AxisDialog(NgraphApp.AxisWin.data.data, id, -1);
     ret = DialogExecute(TopLevel, &DlgAxis);
-    if ((ret == IDDELETE) || (ret == IDCANCEL)) {
-      delobj(obj, id);
-      menu_delete_undo();
+    if (ret == IDCANCEL) {
+      menu_undo(FALSE);
     } else {
       set_graph_modified();
     }
@@ -2633,11 +2623,13 @@ CmAxisUpdate(void *w, gpointer client_data)
   }
   axis_save_undo(UNDO_TYPE_EDIT);
   AxisDialog(NgraphApp.AxisWin.data.data, i, -1);
-  if ((ret = DialogExecute(TopLevel, &DlgAxis)) == IDDELETE) {
-    AxisDel(i);
+  ret = DialogExecute(TopLevel, &DlgAxis);
+  if (ret == IDCANCEL) {
+    menu_delete_undo();
+  } else {
+    AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
   }
-  AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
-  FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
 }
 
 void
@@ -2768,9 +2760,8 @@ CmAxisGridNew(void *w, gpointer client_data)
   }
   GridDialog(&DlgGrid, obj, id);
   ret = DialogExecute(TopLevel, &DlgGrid);
-  if ((ret == IDDELETE) || (ret == IDCANCEL)) {
-    delobj(obj, id);
-    menu_delete_undo();
+  if (ret == IDCANCEL) {
+    menu_undo(FALSE);
   } else {
     set_graph_modified();
   }
@@ -2863,7 +2854,7 @@ AxisWinUpdate(struct obj_list_data *d, int clear, int draw)
     NgraphApp.Viewer.allclear = TRUE;
     objects[0] = d->obj->name;
     objects[1] = "axisgrid";
-    objects[2] = NgraphApp.FileWin.data.data->obj->name;
+    objects[2] = (draw == DRAW_AXIS_ONLY) ? NULL : NgraphApp.FileWin.data.data->obj->name;
     objects[3] = NULL;
     ViewerWinUpdate(objects);
   }
@@ -3104,7 +3095,7 @@ pos_edited_common(struct obj_list_data *d, int id, char *str, enum CHANGE_DIR di
     exeobj(d->obj, "move", man, 2, argv);
 
     set_graph_modified();
-    AxisWinUpdate(d, TRUE, TRUE);
+    AxisWinUpdate(d, TRUE, DRAW_REDRAW);
   }
 }
 
@@ -3305,7 +3296,7 @@ create_type_combo_box(GtkWidget *cbox, struct objlist *obj, int id)
 static void
 select_type(GtkComboBox *w, gpointer user_data)
 {
-  int sel, col_type, type, enum_id, found, active, style;
+  int sel, col_type, type, enum_id, found, active, style, draw;
   struct objlist *obj;
   struct obj_list_data *d;
   GtkTreeStore *list;
@@ -3332,12 +3323,14 @@ select_type(GtkComboBox *w, gpointer user_data)
 		     OBJECT_COLUMN_TYPE_ENUM, &enum_id,
 		     -1);
 
+  draw = DRAW_AXIS_ONLY;
   switch (col_type) {
   case AXIS_COMBO_ITEM_SCALE:
     getobj(d->obj, "type", sel, 0, NULL, &type);
     if (type == enum_id) {
       return;
     }
+    draw = DRAW_REDRAW;
     axis_save_undo(UNDO_TYPE_EDIT);
     putobj(d->obj, "type", sel, &enum_id);
     break;
@@ -3475,7 +3468,7 @@ select_type(GtkComboBox *w, gpointer user_data)
   }
 
   d->select = sel;
-  d->update(d, FALSE, TRUE);
+  d->update(d, FALSE, draw);
   set_graph_modified();
 }
 
@@ -3529,7 +3522,7 @@ axiswin_delete_axis(struct obj_list_data *d)
   if ((sel >= 0) && (sel <= num)) {
     axis_save_undo(UNDO_TYPE_DELETE);
     AxisDel(sel);
-    AxisWinUpdate(d, TRUE, TRUE);
+    AxisWinUpdate(d, TRUE, DRAW_REDRAW);
     FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
     set_graph_modified();
     d->select = -1;

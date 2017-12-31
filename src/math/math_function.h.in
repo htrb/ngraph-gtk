@@ -99,4 +99,5 @@ time		0	0	0	NULL
 choose		2	0	0	NULL	true
 fmod		2	0	0	NULL
 mjd2unix	1	0	0	NULL
+sumsq		-1	0	0	NULL
 #while		3	1	0	0,2,2

@@ -1486,7 +1486,7 @@ FileAutoScale(void)
   int anum2, aid2;
   N_VALUE *inst;
   char *group, *refgroup;
-  int refother;
+  int refother, modified;
   GString *str;
 
   if ((fobj = chkobject("data")) == NULL)
@@ -1518,6 +1518,8 @@ FileAutoScale(void)
     buf[j] = '\0';
   }
 
+  menu_save_undo_single(UNDO_TYPE_AUTOSCALE, aobj->name);
+  modified = FALSE;
   argv2[0] = (char *) buf;
   argv2[1] = NULL;
   for (i = 0; i <= anum; i++) {
@@ -1547,7 +1549,15 @@ FileAutoScale(void)
     }
     if (! refother && (min == max || inc == 0)) {
       exeobj(aobj, "auto_scale", i, 1, argv2);
+      getobj(aobj, "min", i, 0, NULL, &min);
+      getobj(aobj, "max", i, 0, NULL, &max);
+      if (min != max) {
+        modified = TRUE;
+      }
     }
+  }
+  if (! modified) {
+    menu_delete_undo();
   }
   g_free(buf);
 }

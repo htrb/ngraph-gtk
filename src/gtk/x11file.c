@@ -240,6 +240,7 @@ MathTextDialogClose(GtkWidget *w, void *data)
 	return;
       }
       set_graph_modified();
+      d->modified = TRUE;
     }
     g_free(obuf);
   }
@@ -271,6 +272,7 @@ MathTextDialog(struct MathTextDialog *data, char *text, int mode, struct objlist
   data->tree = tree;
   data->Text = text;
   data->Mode = mode;
+  data->modified = FALSE;
   data->Obj = obj;
   data->id_list = list;
 }
@@ -360,9 +362,8 @@ MathDialogList(GtkButton *w, gpointer client_data)
     goto END;
 
   MathTextDialog(&DlgMathText, buf, d->Mode, d->Obj, list, d->list);
-
   DialogExecute(d->widget, &DlgMathText);
-
+  d->modified = DlgMathText.modified;
   g_free(buf);
 
   MathDialogSetupItem(d->widget, d);
@@ -557,6 +558,7 @@ MathDialog(struct MathDialog *data, struct objlist *obj)
   data->SetupWindow = MathDialogSetup;
   data->CloseWindow = MathDialogClose;
   data->Obj = obj;
+  data->modified = FALSE;
 }
 
 static void
@@ -4185,15 +4187,14 @@ CmFileHistory(GtkRecentChooser *w, gpointer client_data)
   data = NgraphApp.FileWin.data.data;
   FileDialog(data, id, FALSE);
   ret = DialogExecute(TopLevel, data->dialog);
-  if ((ret == IDDELETE) || (ret == IDCANCEL)) {
-    menu_delete_undo();
-    delete_file_obj(data, id);
+  if (ret == IDCANCEL) {
+    menu_undo(FALSE);
   } else {
     set_graph_modified();
     AddDataFileList(fname);
   }
   g_free(fname);
-  FileWinUpdate(data, TRUE, FILE_DRAW_NOTIFY);
+  FileWinUpdate(data, TRUE, DRAW_NOTIFY);
 }
 
 void
@@ -4226,12 +4227,11 @@ CmRangeAdd(void *w, gpointer client_data)
   FileDialog(data, id, FALSE);
   ret = DialogExecute(TopLevel, data->dialog);
 
-  if (ret == IDCANCEL || ret == IDDELETE) {
-    menu_delete_undo();
-    delobj(obj, id);
+  if (ret == IDCANCEL) {
+    menu_undo(FALSE);
   } else {
     set_graph_modified();
-    FileWinUpdate(data, TRUE, FILE_DRAW_REDRAW);
+    FileWinUpdate(data, TRUE, DRAW_REDRAW);
   }
 }
 
@@ -4279,7 +4279,7 @@ CmFileOpen(void *w, gpointer client_data)
   if (n == chkobjlastinst(obj)) {
     menu_delete_undo();
   } else {
-    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FILE_DRAW_NOTIFY);
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, DRAW_NOTIFY);
     set_graph_modified();
   }
 
@@ -4313,7 +4313,7 @@ CmFileClose(void *w, gpointer client_data)
       delete_file_obj(data, array[i]);
       set_graph_modified();
     }
-    FileWinUpdate(data, TRUE, FILE_DRAW_REDRAW);
+    FileWinUpdate(data, TRUE, DRAW_REDRAW);
   }
   arraydel(&farray);
 }
@@ -4414,7 +4414,7 @@ CmFileUpdate(void *w, gpointer client_data)
   }
 
   if (ret == IDOK && update_file_obj_multi(obj, &farray, FALSE)) {
-    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FILE_DRAW_REDRAW);
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, DRAW_REDRAW);
   }
   arraydel(&farray);
 }
@@ -4563,7 +4563,7 @@ FileWinFileDelete(struct obj_list_data *d)
     } else {
       d->select = sel;
     }
-    FileWinUpdate(d, update, FILE_DRAW_REDRAW);
+    FileWinUpdate(d, update, DRAW_REDRAW);
     set_graph_modified();
   }
 }
@@ -4606,7 +4606,7 @@ FileWinFileCopy(struct obj_list_data *d)
 {
   data_save_undo(UNDO_TYPE_COPY);
   d->select = file_obj_copy(d);
-  FileWinUpdate(d, FALSE, FILE_DRAW_NOTIFY);
+  FileWinUpdate(d, FALSE, DRAW_NOTIFY);
 }
 
 static void
@@ -4633,7 +4633,7 @@ FileWinFileCopy2(struct obj_list_data *d)
 
   if (id < 0) {
     d->select = sel;
-    FileWinUpdate(d, TRUE, FILE_DRAW_NOTIFY);
+    FileWinUpdate(d, TRUE, DRAW_NOTIFY);
     return;
   }
 
@@ -4642,7 +4642,7 @@ FileWinFileCopy2(struct obj_list_data *d)
   }
 
   d->select = sel + 1;
-  FileWinUpdate(d, FALSE, FILE_DRAW_NOTIFY);
+  FileWinUpdate(d, FALSE, DRAW_NOTIFY);
 }
 
 static void
@@ -4677,13 +4677,8 @@ FileWinFileUpdate(struct obj_list_data *d)
     case IDCANCEL:
       menu_undo(FALSE);
       break;
-    case IDDELETE:
-      delete_file_obj(d, sel);
-      d->select = -1;
-      d->update(d, FALSE, FILE_DRAW_REDRAW);
-      break;
     default:
-      d->update(d, FALSE, FILE_DRAW_NOTIFY);
+      d->update(d, FALSE, DRAW_NOTIFY);
     }
   }
 }
@@ -4728,7 +4723,7 @@ FileWinFileDraw(struct obj_list_data *d)
     menu_delete_undo();
   }
   CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
-  FileWinUpdate(d, FALSE, FILE_DRAW_NONE);
+  FileWinUpdate(d, FALSE, DRAW_NONE);
 }
 
 static void
@@ -4761,7 +4756,7 @@ FileWinUpdate(struct obj_list_data *d, int clear, int draw)
   }
 
   switch (draw) {
-  case FILE_DRAW_REDRAW:
+  case DRAW_REDRAW:
     getobj(Menulocal.obj, "redraw_flag", 0, 0, NULL, &redraw);
     if (redraw) {
       NgraphApp.Viewer.allclear = TRUE;
@@ -4770,7 +4765,7 @@ FileWinUpdate(struct obj_list_data *d, int clear, int draw)
       draw_notify(TRUE);
     }
     break;
-  case FILE_DRAW_NOTIFY:
+  case DRAW_NOTIFY:
     draw_notify(TRUE);
     break;
   }
@@ -5263,6 +5258,11 @@ CmFileMath(void *w, gpointer client_data)
   menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
   MathDialog(&DlgMath, obj);
   DialogExecute(TopLevel, &DlgMath);
+  if (DlgMath.modified) {
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, DRAW_REDRAW);
+  } else {
+    menu_delete_undo();
+  }
 }
 
 static int
@@ -5737,7 +5737,7 @@ select_type(GtkComboBox *w, gpointer user_data)
   }
 
   d->select = sel;
-  d->update(d, FALSE, FILE_DRAW_REDRAW);
+  d->update(d, FALSE, DRAW_REDRAW);
   set_graph_modified();
 }
 
@@ -5899,7 +5899,7 @@ edited_axis(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer us
   if (str == NULL || d->select < 0)
     return;
 
-  d->update(d, FALSE, FILE_DRAW_REDRAW);
+  d->update(d, FALSE, DRAW_REDRAW);
   set_graph_modified();
 }
 

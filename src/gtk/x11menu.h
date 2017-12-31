@@ -258,6 +258,7 @@ enum MENU_UNDO_TYPE {
   UNDO_TYPE_ADD_RANGE,
   UNDO_TYPE_PASTE,
   UNDO_TYPE_ZOOM,
+  UNDO_TYPE_AUTOSCALE,
   UNDO_TYPE_TRIMMING,
   UNDO_TYPE_DUMMY,
   UNDO_TYPE_NUM,
@@ -268,10 +269,11 @@ struct EventLoopInfo {
   guint32 time;
 };
 
-enum FileDrawFlag {
-  FILE_DRAW_NONE = 0,
-  FILE_DRAW_REDRAW = 1,
-  FILE_DRAW_NOTIFY = 2,
+enum RerawFlag {
+  DRAW_NONE = 0,
+  DRAW_REDRAW = 1,
+  DRAW_NOTIFY = 2,
+  DRAW_AXIS_ONLY = 4,
 };
 
 int application(char *file);

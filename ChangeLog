@@ -1,3 +1,66 @@
+2017-12-31  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11commn.c (FileAutoScale): save undo information.
+
+2017-12-27  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/odata.c (ofile_create_math_equation): use "STDEVPX" and
+	"STDEVPY" instead of "SGX" and "SGY".
+	(f2dstat): add fields "dstdevpx", "dstdevpyy", "dstdevx" and
+	"dstdevy".
+
+2017-12-26  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/math/math_basic_function.c (math_func_sumsq): added.
+
+2017-12-21  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (create_axis): use "menu_undo()" to cancel
+	creation of instances.
+
+	* src/gtk/x11merge.c (CmMergeOpen): use "menu_undo()" to cancel
+	edit.
+	(CmMergeUpdate): call "MergeWinUpdate()" only when merge objects
+	are updated.
+
+	* src/gtk/x11file.c (CmFileHistory, CmRangeAdd): use "menu_undo()"
+	instead of "menu_delete_undo()" to cancel creation of an instance.
+	(FileWinFileUpdate): don't consider "IDDELETE".
+
+	* src/gtk/x11axis.c (SectionDialogGrid): use "menu_undo()" to
+	cancel edit.
+	(CmAxisNewFrame, CmAxisNewSection, CmAxisNewCross)
+	(CmAxisNewSingle, CmAxisGridNew): use "menu_undo()" to cancel
+	creation.
+	(CmAxisUpdate): check the returned value of the function
+	"DialogExecute()" is "IDCANCEL" or not.
+
+2017-12-20  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (new_merge_obj, new_file_obj)
+	(create_single_axis, create_axis): don't consider "IDDELETE".
+	(ViewUpdate): remove dodes related to "IDDELETE".
+
+2017-12-19  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (CmFileMath): check the variable
+	"modified".
+	(MathTextDialog, MathDialog): initialize "modified" member
+	variable.
+	(MathTextDialogClose, MathDialogList): set "modified" member
+	variable.
+
+	* src/gtk/x11dialg.h (MathDialog, MathTextDialog): add member
+	"modified".
+
+2017-12-14  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (ViewUpdate): redraw only when the graph is
+	modified.
+
+	* src/gtk/x11axis.c (select_type): redraw data object when "type"
+	field is changed.
+
 2017-12-13  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (CmFileNew): removed.
@@ -121,8 +184,8 @@
 
 2017-12-01  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
-	* src/gtk/x11gui.c (message_beep): call "gdk_beep()" whrn the
-	variable "parent"is NULL.
+	* src/gtk/x11gui.c (message_beep): call "gdk_beep()" when the
+	variable "parent" is NULL.
 
 2017-11-30  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
