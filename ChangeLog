@@ -1,3 +1,7 @@
+2017-12-31  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11commn.c (FileAutoScale): save undo information.
+
 2017-12-27  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/odata.c (ofile_create_math_equation): use "STDEVPX" and
