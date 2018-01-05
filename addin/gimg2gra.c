@@ -382,6 +382,7 @@ gra_save(GdkPixbuf *im, char *gra_file)
     color2.r = rect[i].r;
     color2.g = rect[i].g;
     color2.b = rect[i].b;
+    color2.a = rect[i].a;
     if(colorcmp(&color2, &color)){
       fputcolor(fp, &color2);
       color = color2;
