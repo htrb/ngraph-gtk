@@ -386,7 +386,9 @@ gra_save(GdkPixbuf *im, char *gra_file)
       fputcolor(fp, &color2);
       color = color2;
     }
-    fprintf(fp, "B,5,%d,%d,%d,%d,1\n", rect[i].x1, rect[i].y1, rect[i].x2, rect[i].y2);
+    if (color2.a > 0) {
+      fprintf(fp, "B,5,%d,%d,%d,%d,1\n", rect[i].x1, rect[i].y1, rect[i].x2, rect[i].y2);
+    }
   }
   fprintf(fp, "E,0\n");
 
@@ -421,5 +423,7 @@ rectcmp(const void *tmpa, const void *tmpb)
 
 static void fputcolor(FILE *fp, struct Color *color)
 {
-  fprintf(fp, "G,4,%d,%d,%d,%d\n", color->r, color->g, color->b, color->a);
+  if (color->a > 0) {
+    fprintf(fp, "G,4,%d,%d,%d,%d\n", color->r, color->g, color->b, color->a);
+  }
 }
