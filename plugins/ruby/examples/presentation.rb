@@ -116,7 +116,6 @@ class Presentation
     }
     Ngraph::Merge.each {|data|
       data.file = @path + "/" + data.file if (data.file && data.file[0] != "/")
-      p data.file
     }
   end
 
@@ -712,6 +711,11 @@ class Presentation
   end
 end
 
+def usage
+  puts("argument(s): [-pdf|-pdf_expand|-a time] datafile [output file]")
+  exit
+end
+
 presentation = Presentation.new
 
 while (ARGV[0] && ARGV[0][0] == "-")
@@ -725,17 +729,13 @@ while (ARGV[0] && ARGV[0][0] == "-")
     ARGV.shift
     presentation.slide_show_wait = ARGV[0].to_i
   else
-    puts("argument(s): [-pdf|-pdf_expand|-a time] datafile [output file]")
-    exit
+    usage
   end
   ARGV.shift
 end
 
 data_file = ARGV[0]
-unless (data_file && FileTest.readable?(data_file))
-  puts("argument(s): [-pdf|-pdf_expand|-a time] datafile")
-  exit
-end
+usage unless (data_file && FileTest.readable?(data_file))
 
 presentation.pdf_filename = ARGV[1] if (ARGV[1])
 presentation.load(data_file)
