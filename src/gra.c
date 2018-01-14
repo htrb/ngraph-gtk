@@ -1020,6 +1020,13 @@ GRAmoveto(int GC,int x,int y)
   GRAClist[GC].cpy=y;
 }
 
+void
+GRAcurrent_point(int GC, int *x, int *y)
+{
+  *x = GRAClist[GC].cpx;
+  *y = GRAClist[GC].cpy;
+}
+
 static void
 GRAmoverel(int GC,int x,int y)
 {

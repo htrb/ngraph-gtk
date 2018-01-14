@@ -175,5 +175,6 @@ void GRAtextstyle(int GC,char *font,int style, int size,int space,int dir);
 void GRAouttext(int GC,char *s);
 void GRAlayer(int GC,const char *s);
 int GRAlayer_support(int GC);
+void GRAcurrent_point(int GC, int *x, int *y);
 
 #endif
