@@ -4,6 +4,7 @@
 	(FileFunc): add drawing functions.
 	(opendata): initialize "fp->GC".
 	(f2ddraw): set "fp->GC".
+	(file_draw_rect, file_draw_arc): check the variable "fp".
 
 	* src/gra.c (GRAcurrent_point): added.
 
