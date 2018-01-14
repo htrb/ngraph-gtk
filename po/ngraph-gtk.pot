@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.07.05\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2017-12-31 23:44+0900\n"
+"POT-Creation-Date: 2018-01-14 14:29+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -51,7 +51,7 @@ msgid "Save file"
 msgstr ""
 
 #: src/gtk/ogra2cairo.c:45 src/gtk/x11axis.c:1105 src/gtk/x11axis.c:2157
-#: src/odraw.c:78 src/oaxis.c:75 src/oaxis.c:90
+#: src/odraw.c:80 src/oaxis.c:75 src/oaxis.c:90
 msgid "none"
 msgstr ""
 
@@ -1284,15 +1284,15 @@ msgstr ""
 msgid "Type"
 msgstr ""
 
-#: src/gtk/x11graph.c:59 src/odraw.c:56
+#: src/gtk/x11graph.c:59 src/odraw.c:58
 msgid "unchange"
 msgstr ""
 
-#: src/gtk/x11graph.c:60 src/odraw.c:57
+#: src/gtk/x11graph.c:60 src/odraw.c:59
 msgid "full"
 msgstr ""
 
-#: src/gtk/x11graph.c:61 src/odraw.c:59
+#: src/gtk/x11graph.c:61 src/odraw.c:61
 msgid "base"
 msgstr ""
 
@@ -3007,47 +3007,47 @@ msgid ""
 "  the error is found at: %s"
 msgstr ""
 
-#: src/odraw.c:58
+#: src/odraw.c:60
 msgid "relative"
 msgstr ""
 
-#: src/odraw.c:64
+#: src/odraw.c:66
 msgid "miter"
 msgstr ""
 
-#: src/odraw.c:65
+#: src/odraw.c:67
 msgid "round"
 msgstr ""
 
-#: src/odraw.c:66
+#: src/odraw.c:68
 msgid "bevel"
 msgstr ""
 
-#: src/odraw.c:79
+#: src/odraw.c:81
 msgid "end"
 msgstr ""
 
-#: src/odraw.c:80
+#: src/odraw.c:82
 msgid "begin"
 msgstr ""
 
-#: src/odraw.c:81 src/oaxis.c:76
+#: src/odraw.c:83 src/oaxis.c:76
 msgid "both"
 msgstr ""
 
-#: src/odraw.c:86
+#: src/odraw.c:88
 msgid "spline"
 msgstr ""
 
-#: src/odraw.c:87
+#: src/odraw.c:89
 msgid "spline_close"
 msgstr ""
 
-#: src/odraw.c:88
+#: src/odraw.c:90
 msgid "bspline"
 msgstr ""
 
-#: src/odraw.c:89
+#: src/odraw.c:91
 msgid "bspline_close"
 msgstr ""
 

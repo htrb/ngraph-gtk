@@ -1,3 +1,20 @@
+2018-01-14  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/odata.c (file_draw_arc, file_draw_rect): added.
+	(FileFunc): add drawing functions.
+	(opendata): initialize "fp->GC".
+	(f2ddraw): set "fp->GC".
+
+	* src/gra.c (GRAcurrent_point): added.
+
+	* src/odraw.c (curve_expand, curve_expand_points): moved from
+	"opath.c".
+
+	* src/opath.c (curve_expand_points): change parameters.
+	(opath_curve_expand_points): added.
+	(arrowdraw, arrowbbox, point_match): use
+	"opath_curve_expand_points()".
+
 2018-01-05  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* addin/gimg2gra.c (gra_save, fputcolor): don't draw fully
