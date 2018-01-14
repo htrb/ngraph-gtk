@@ -27,10 +27,12 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 #include <glib.h>
 
 #include "object.h"
 #include "ioutil.h"
+#include "spline.h"
 #include "gra.h"
 #include "oroot.h"
 #include "odraw.h"
@@ -288,6 +290,221 @@ int
 put_hsb2(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   return put_hsb_color(obj, inst, argc, argv, "%c2");
+}
+
+static int
+curve_expand(double c[], double x0, double y0, diffunc gdiff, intpfunc gintpf, struct narray *expand_points)
+{
+  double d, dx, dy, ddx, ddy, dd, x, y;
+  int gx2, gy2;
+
+  d = 0;
+  while (d < 1) {
+    gdiff(d, c, &dx, &dy, &ddx, &ddy, NULL);
+    if (fabs(dx) + fabs(ddx) / 3 <= 1E-100) {
+      dx = 1;
+    } else {
+      dx = sqrt(fabs(2 / (fabs(dx) + fabs(ddx) / 3)));
+    }
+
+    if (fabs(dy) + fabs(ddy) / 3 <= 1E-100) {
+      dy = 1;
+    } else {
+      dy = sqrt(fabs(2 / (fabs(dy) + fabs(ddy) / 3)));
+    }
+
+    dd = (dx < dy) ? dx : dy;
+    d += dd;
+
+    if (d > 1) {
+      d = 1;
+    }
+
+    gintpf(d, c, x0, y0, &x, &y, NULL);
+
+    gx2 = nround(x);
+    gy2 = nround(y);
+
+    arrayadd(expand_points, &gx2);
+    arrayadd(expand_points, &gy2);
+  }
+
+  return TRUE;
+}
+
+int
+curve_expand_points(int *pdata, int num, int intp, struct narray *expand_points)
+{
+  int i, j, bsize, spcond, x, y;
+  double c[8];
+  double *buf;
+  double bs1[7], bs2[7], bs3[4], bs4[4];
+
+  arrayclear(expand_points);
+
+  switch (intp) {
+  case INTERPOLATION_TYPE_SPLINE:
+  case INTERPOLATION_TYPE_SPLINE_CLOSE:
+    if (num < 2)
+      return 0;
+
+    bsize = num + 1;
+    buf = g_malloc(sizeof(double) * 9 * bsize);
+    if (buf == NULL)
+      return 1;
+
+    for (i = 0; i < bsize; i++)
+      buf[i]=i;
+
+    for (i = 0; i < num; i++) {
+      buf[bsize + i] = pdata[i * 2];
+      buf[bsize * 2 + i] = pdata[i * 2 + 1];
+    }
+
+    if (intp == INTERPOLATION_TYPE_SPLINE) {
+      spcond = SPLCND2NDDIF;
+    } else {
+      spcond = SPLCNDPERIODIC;
+      if (buf[num - 1 + bsize] != buf[bsize] || buf[num - 1 + 2 * bsize] != buf[2 * bsize]) {
+        buf[num + bsize] = buf[bsize];
+        buf[num + 2 * bsize] = buf[2 * bsize];
+        num++;
+      }
+    }
+
+    if (spline(buf,
+	       buf + bsize,
+	       buf + 3 * bsize,
+	       buf + 4 * bsize,
+	       buf + 5 * bsize,
+	       num, spcond, spcond, 0, 0)) {
+      g_free(buf);
+      return 1;
+    }
+
+    if (spline(buf,
+	       buf + 2 * bsize,
+	       buf + 6 * bsize,
+	       buf + 7 * bsize,
+	       buf + 8 * bsize,
+	       num, spcond, spcond, 0, 0)) {
+      g_free(buf);
+      return 1;
+    }
+
+    x = nround(buf[bsize]);
+    y = nround(buf[bsize * 2]);
+    arrayadd(expand_points, &x);
+    arrayadd(expand_points, &y);
+    for (i = 0; i < num - 1; i++) {
+      for (j = 0; j < 6; j++) {
+	c[j] = buf[i + (j + 3) * bsize];
+      }
+
+      if (! curve_expand(c, buf[i + bsize], buf[i + 2 * bsize], splinedif, splineint, expand_points)) {
+        break;
+      }
+    }
+    g_free(buf);
+    break;
+  case INTERPOLATION_TYPE_BSPLINE:
+    if (num < 7) {
+      return 0;
+    }
+
+    for (i = 0; i < 7; i++) {
+      bs1[i] = pdata[i * 2];
+      bs2[i] = pdata[i * 2 + 1];
+    }
+
+    for (j = 0; j < 2; j++) {
+      bspline(j + 1, bs1 + j, c);
+      bspline(j + 1, bs2 + j, c + 4);
+
+      if (j == 0) {
+	x = nround(c[0]);
+	y = nround(c[4]);
+	arrayadd(expand_points, &x);
+	arrayadd(expand_points, &y);
+      }
+
+      if (! curve_expand(c, c[0], c[4], bsplinedif, bsplineint, expand_points)) {
+	return 0;
+      }
+    }
+
+    for (; i < num; i++) {
+      for (j = 1; j < 7; j++) {
+        bs1[j - 1] = bs1[j];
+        bs2[j - 1] = bs2[j];
+      }
+      bs1[6] = pdata[i*2];
+      bs2[6] = pdata[i*2+1];
+      bspline(0, bs1 + 1, c);
+      bspline(0, bs2 + 1, c + 4);
+      if (! curve_expand(c, c[0], c[4], bsplinedif, bsplineint, expand_points)) {
+	return 0;
+      }
+    }
+
+    for (j = 0; j < 2; j++) {
+      bspline(j + 3, bs1 + j + 2, c);
+      bspline(j + 3, bs2 + j + 2, c + 4);
+      if (! curve_expand(c, c[0], c[4], bsplinedif, bsplineint, expand_points)) {
+	return 0;
+      }
+    }
+    break;
+  case INTERPOLATION_TYPE_BSPLINE_CLOSE:
+    if (num < 4) {
+      return 0;
+    }
+
+    for (i = 0; i < 4; i++) {
+      bs1[i] = pdata[i * 2];
+      bs3[i] = pdata[i * 2];
+      bs2[i] = pdata[i * 2 + 1];
+      bs4[i] = pdata[i * 2 + 1];
+    }
+
+    bspline(0, bs1, c);
+    bspline(0, bs2, c + 4);
+    x = nround(c[0]);
+    y = nround(c[4]);
+    arrayadd(expand_points, &x);
+    arrayadd(expand_points, &y);
+
+    if (! curve_expand(c, c[0], c[4], bsplinedif, bsplineint, expand_points)) {
+      return 0;
+    }
+
+    for (; i < num; i++) {
+      for (j = 1; j < 4; j++) {
+        bs1[j - 1] = bs1[j];
+        bs2[j - 1] = bs2[j];
+      }
+
+      bs1[3] = pdata[i * 2];
+      bs2[3] = pdata[i * 2 + 1];
+      bspline(0, bs1, c);
+      bspline(0, bs2, c + 4);
+      if (! curve_expand(c, c[0], c[4], bsplinedif, bsplineint, expand_points)) {
+	return 0;
+      }
+    }
+    for (j = 0; j < 3; j++) {
+      bs1[4 + j] = bs3[j];
+      bs2[4 + j] = bs4[j];
+      bspline(0, bs1 + j + 1, c);
+      bspline(0, bs2 + j + 1, c + 4);
+      if (! curve_expand(c, c[0], c[4], bsplinedif, bsplineint, expand_points)) {
+	return 0;
+      }
+    }
+    break;
+  }
+
+  return 0;
 }
 
 static struct objtable draw[] = {

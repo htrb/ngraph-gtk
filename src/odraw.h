@@ -78,5 +78,6 @@ int put_fill_hsb(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, ch
 int put_stroke_hsb(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv);
 int put_hsb(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv);
 int put_hsb2(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv);
+int curve_expand_points(int *pdata, int num, int intp, struct narray *expand_points);
 
 #endif
