@@ -229,19 +229,12 @@ curve_expand(double c[], double x0, double y0, diffunc gdiff, intpfunc gintpf, s
 }
 
 static int
-curve_expand_points(struct objlist *obj, N_VALUE *inst, int intp, struct narray *expand_points)
+curve_expand_points(int *pdata, int num, int intp, struct narray *expand_points)
 {
-  int i, j, num, bsize, spcond, x, y;
-  struct narray *points;
+  int i, j, bsize, spcond, x, y;
   double c[8];
   double *buf;
   double bs1[7], bs2[7], bs3[4], bs4[4];
-  int *pdata;
-
-  _getobj(obj, "points", inst, &points);
-
-  num = arraynum(points)/2;
-  pdata = arraydata(points);
 
   arrayclear(expand_points);
 
@@ -282,7 +275,6 @@ curve_expand_points(struct objlist *obj, N_VALUE *inst, int intp, struct narray 
 	       buf + 5 * bsize,
 	       num, spcond, spcond, 0, 0)) {
       g_free(buf);
-      error(obj, ERRSPL);
       return 1;
     }
 
@@ -293,7 +285,6 @@ curve_expand_points(struct objlist *obj, N_VALUE *inst, int intp, struct narray 
 	       buf + 8 * bsize,
 	       num, spcond, spcond, 0, 0)) {
       g_free(buf);
-      error(obj, ERRSPL);
       return 1;
     }
 
@@ -410,6 +401,23 @@ curve_expand_points(struct objlist *obj, N_VALUE *inst, int intp, struct narray 
   }
 
   return 0;
+}
+
+static int
+opath_curve_expand_points(struct objlist *obj, N_VALUE *inst, int intp, struct narray *expand_points)
+{
+  int num, r;
+  struct narray *points;
+  int *pdata;
+
+  _getobj(obj, "points", inst, &points);
+  num = arraynum(points) / 2;
+  pdata = arraydata(points);
+  r = curve_expand_points(pdata, num, intp, expand_points);
+  if (r) {
+    error(obj, ERRSPL);
+  }
+  return r;
 }
 
 static void
@@ -590,7 +598,7 @@ arrowdraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
     _getobj(obj, "interpolation", inst, &intp);
     _getobj(obj, "_points",       inst, &points);
     if (arraynum(points) == 0) {
-      curve_expand_points(obj, inst, intp, points);
+      opath_curve_expand_points(obj, inst, intp, points);
     }
     if (intp == INTERPOLATION_TYPE_SPLINE_CLOSE ||
 	intp == INTERPOLATION_TYPE_BSPLINE_CLOSE) {
@@ -674,7 +682,7 @@ arrowbbox(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
     _getobj(obj, "interpolation", inst, &intp);
     _getobj(obj, "_points",       inst, &points);
     if (arraynum(points) == 0) {
-      curve_expand_points(obj, inst, intp, points);
+      opath_curve_expand_points(obj, inst, intp, points);
     }
   } else {
     _getobj(obj, "points", inst, &points);
@@ -861,7 +869,7 @@ point_match(struct objlist *obj, N_VALUE *inst, int type, int fill, int err, int
     _getobj(obj, "interpolation", inst, &intp);
     _getobj(obj, "_points", inst, &points);
     if (arraynum(points) == 0) {
-      curve_expand_points(obj, inst, intp, points);
+      opath_curve_expand_points(obj, inst, intp, points);
     }
   } else {
     _getobj(obj, "points", inst, &points);
