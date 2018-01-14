@@ -992,8 +992,14 @@ file_draw_arc(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
   }
 
   fp = math_equation_get_user_data(eq);
+  if (fp == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
   if (fp->GC < 0) {
-    return 0;
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
   }
 
   x      = exp->buf[0].val.val;
@@ -1077,16 +1083,22 @@ file_draw_rect(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   }
 
   fp = math_equation_get_user_data(eq);
+  if (fp == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  if (fp->GC < 0) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
   x0 = exp->buf[0].val.val;
   y0 = exp->buf[1].val.val;
   x1 = exp->buf[2].val.val;
   y1 = exp->buf[3].val.val;
   stroke = exp->buf[4].val.val;
   fill = exp->buf[5].val.val;
-
-  if (fp->GC < 0) {
-    return 0;
-  }
 
   if (f2drectclipf(&x0, &y0, &x1, &y1, fp)) {
     return 0;
