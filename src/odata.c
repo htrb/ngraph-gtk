@@ -284,7 +284,7 @@ struct f2ddata_buf {
 
 struct f2ddata {
   struct objlist *obj;
-  int id,src;
+  int id,src, GC;
   char *file;
   FILE *fd;
   int x,y;
@@ -369,6 +369,9 @@ struct f2dlocal {
 static int set_data_progress(struct f2ddata *fp);
 static int getminmaxdata(struct f2ddata *fp, struct f2dlocal *local);
 static int calc_fit_equation(struct objlist *obj, N_VALUE *inst, double x, double *y);
+static void f2dtransf(double x,double y,int *gx,int *gy,void *local);
+static int f2drectclipf(double *x0,double *y0,double *x1,double *y1,void *local);
+static int getposition(struct f2ddata *fp,double x,double y,int *gx,int *gy);
 
 #if BUF_TYPE == USE_RING_BUF
 int
@@ -969,6 +972,142 @@ file_fit_prm(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
   return 0;
 }
 
+
+#define ARC_INTERPOLATION 20
+#define DRAW_ARC_ARG_NUM 10
+
+static int
+file_draw_arc(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  struct f2ddata *fp;
+  int i, num, stroke, fill, pie, close, cx, cy, ap[ARC_INTERPOLATION * 2], *pdata;
+  double x, y, rx, ry, start, end, angle;
+  struct narray expand_points;
+
+  rval->val = 0;
+  for (i = 0; i < DRAW_ARC_ARG_NUM; i++) {
+    if (exp->buf[i].val.type != MATH_VALUE_NORMAL) {
+      return 0;
+    }
+  }
+
+  fp = math_equation_get_user_data(eq);
+  if (fp->GC < 0) {
+    return 0;
+  }
+
+  x      = exp->buf[0].val.val;
+  y      = exp->buf[1].val.val;
+  rx     = exp->buf[2].val.val;
+  ry     = exp->buf[3].val.val;
+  start  = exp->buf[4].val.val;
+  end    = exp->buf[5].val.val;
+  stroke = exp->buf[6].val.val;
+  fill   = exp->buf[7].val.val;
+  pie    = exp->buf[8].val.val;
+  close  = exp->buf[9].val.val;
+
+  if (getposition(fp, x, y, &cx, &cy)) {
+    return 0;
+  }
+
+  if (start == end) {
+    start = 0;
+    end = 360;
+    close = TRUE;
+  }
+  for (i = 0; i < ARC_INTERPOLATION; i++) {
+    angle = start + (end - start) / (ARC_INTERPOLATION - 1) * i;
+    angle = MPI * angle / 180.0;
+    f2dtransf(x + rx * cos(angle),
+	      y + ry * sin(angle),
+	      ap + i * 2,
+	      ap + i * 2 + 1, fp);
+  }
+  arrayinit(&expand_points, sizeof(int));
+  if (curve_expand_points(ap, ARC_INTERPOLATION, INTERPOLATION_TYPE_SPLINE, &expand_points)) {
+    arraydel(&expand_points);
+    return 1;
+  }
+  if (pie) {
+    arrayadd(&expand_points, &cx);
+    arrayadd(&expand_points, &cy);
+  }
+  num = arraynum(&expand_points) / 2;
+  pdata = arraydata(&expand_points);
+  if (fill) {
+    GRAcolor(fp->GC, fp->color2.r, fp->color2.g, fp->color2.b, fp->color2.a);
+    GRAdrawpoly(fp->GC, num, pdata, GRA_FILL_MODE_EVEN_ODD);
+  }
+  if (stroke) {
+    GRAcolor(fp->GC, fp->color.r, fp->color.g, fp->color.b, fp->color.a);
+    if (close) {
+      GRAdrawpoly(fp->GC, num, pdata, GRA_FILL_MODE_NONE);
+    } else {
+      int n, px, py;
+      n = (pie) ? num - 1 : num;
+      GRAcurrent_point(fp->GC, &px, &py);
+      GRAmoveto(fp->GC, pdata[0], pdata[1]);
+      for (i = 1; i < n; i++) {
+	GRAlineto(fp->GC, pdata[i * 2], pdata[i * 2 + 1]);
+      }
+      GRAmoveto(fp->GC, px, py);
+    }
+  }
+  arraydel(&expand_points);
+  return 0;
+}
+
+static int
+file_draw_rect(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  struct f2ddata *fp;
+  int stroke, fill, ap[8];;
+  double x0, x1, y0, y1;
+
+  rval->val = 0;
+
+  if (exp->buf[0].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[1].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[2].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[3].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[4].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[5].val.type != MATH_VALUE_NORMAL) {
+    return 0;
+  }
+
+  fp = math_equation_get_user_data(eq);
+  x0 = exp->buf[0].val.val;
+  y0 = exp->buf[1].val.val;
+  x1 = exp->buf[2].val.val;
+  y1 = exp->buf[3].val.val;
+  stroke = exp->buf[4].val.val;
+  fill = exp->buf[5].val.val;
+
+  if (fp->GC < 0) {
+    return 0;
+  }
+
+  if (f2drectclipf(&x0, &y0, &x1, &y1, fp)) {
+    return 0;
+  }
+
+  f2dtransf(x0, y0, ap + 0, ap + 1, fp);
+  f2dtransf(x0, y1, ap + 2, ap + 3, fp);
+  f2dtransf(x1, y1, ap + 4, ap + 5, fp);
+  f2dtransf(x1, y0, ap + 6, ap + 7, fp);
+
+  if (fill) {
+    GRAcolor(fp->GC, fp->color2.r, fp->color2.g, fp->color2.b, fp->color2.a);
+    GRAdrawpoly(fp->GC, 4, ap, GRA_FILL_MODE_EVEN_ODD);
+  }
+  if (stroke) {
+    GRAcolor(fp->GC, fp->color.r, fp->color.g, fp->color.b, fp->color.a);
+    GRAdrawpoly(fp->GC, 4, ap, GRA_FILL_MODE_NONE);
+  }
+  return 0;
+}
+
 struct funcs {
   char *name;
   struct math_function_parameter prm;
@@ -994,6 +1133,8 @@ static struct funcs FileFunc[] = {
   {"HSB2",     {3, 0, 0, file_hsb2,     NULL, NULL, NULL, NULL}},
   {"MARKSIZE", {1, 0, 0, file_marksize, NULL, NULL, NULL, NULL}},
   {"MARKTYPE", {1, 0, 0, file_marktype, NULL, NULL, NULL, NULL}},
+  {"DRAW_RECT", {6, 0, 0, file_draw_rect, NULL, NULL, NULL, NULL}},
+  {"DRAW_ARC", {DRAW_ARC_ARG_NUM, 0, 0, file_draw_arc, NULL, NULL, NULL, NULL}},
 };
 
 static int
@@ -1388,6 +1529,7 @@ opendata(struct objlist *obj,N_VALUE *inst,
   }
   if ((fp=g_malloc(sizeof(struct f2ddata)))==NULL) return NULL;
 
+  fp->GC = -1;
   fp->src = src;
   switch (src) {
   case DATA_SOURCE_FILE:
@@ -5979,6 +6121,7 @@ f2ddraw(struct objlist *obj, N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
     return 1;
   }
 
+  fp->GC = GC;
   if (fp->need2pass || fp->final < -1) {
     if (getminmaxdata(fp, f2dlocal) == -1) {
       closedata(fp,  f2dlocal);
