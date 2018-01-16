@@ -373,6 +373,7 @@ static int calc_fit_equation(struct objlist *obj, N_VALUE *inst, double x, doubl
 static void f2dtransf(double x,double y,int *gx,int *gy,void *local);
 static int f2drectclipf(double *x0,double *y0,double *x1,double *y1,void *local);
 static int getposition(struct f2ddata *fp,double x,double y,int *gx,int *gy);
+static int getposition2(struct f2ddata *fp,int axtype,int aytype,double *x,double *y);
 
 #if BUF_TYPE == USE_RING_BUF
 int
@@ -982,7 +983,7 @@ file_draw_arc(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
 {
   struct f2ddata *fp;
   int i, r, num, stroke, fill, pie, close, cx, cy, ap[ARC_INTERPOLATION * 2], *pdata;
-  double x, y, rx, ry, angle1, angle2, angle;
+  double x, y, rx, ry, px, py, angle1, angle2, angle;
   struct narray expand_points;
 
   rval->val = 0;
@@ -1022,17 +1023,21 @@ file_draw_arc(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
     angle2 = 360;
     close = TRUE;
   }
+  printf("(%G, %G) => (%d, %d)\n", x, y, cx, cy);
   for (i = 0; i < ARC_INTERPOLATION; i++) {
     angle = angle1 + angle2 / (ARC_INTERPOLATION - 1) * i;
     angle = MPI * angle / 180.0;
-    r = getposition(fp,
-		    x + rx * cos(angle),
-		    y + ry * sin(angle),
-		    ap + i * 2,
-		    ap + i * 2 + 1);
+    px = x + rx * cos(angle);
+    py = y + ry * sin(angle);
+    r = getposition2(fp, fp->axtype, fp->aytype, &px, &py);
     if (r) {
-      return 0;
+      rval->type = MATH_VALUE_ERROR;
+      return -1;
     }
+    f2dtransf(px, py,
+	      ap + i * 2,
+	      ap + i * 2 + 1,
+	      fp);
   }
   arrayinit(&expand_points, sizeof(int));
   if (curve_expand_points(ap, ARC_INTERPOLATION, INTERPOLATION_TYPE_SPLINE, &expand_points)) {
