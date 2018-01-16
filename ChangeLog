@@ -1,3 +1,34 @@
+2018-01-16  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/odata.c (f2ddata, f2dlocal): add member "column_array_id_x"
+	and "column_array_id_y".
+	(opendata): initialize "fp->column_array_id_x" and
+	"fp->column_array_id_y".
+	(f2dputmath): check "column" array.
+	(f2dinit): initialize "f2dlocal->column_array_id_x" and
+	"f2dlocal->column_array_id_y".
+	(set_column_array): added.
+	(get_data_from_source): use the function "set_column_array()".
+	(file_draw_mark): added.
+
+2018-01-14  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/odata.c (file_draw_arc, file_draw_rect): added.
+	(FileFunc): add drawing functions.
+	(opendata): initialize "fp->GC".
+	(f2ddraw): set "fp->GC".
+	(file_draw_rect, file_draw_arc): check the variable "fp".
+
+	* src/gra.c (GRAcurrent_point): added.
+
+	* src/odraw.c (curve_expand, curve_expand_points): moved from
+	"opath.c".
+
+	* src/opath.c (curve_expand_points): change parameters.
+	(opath_curve_expand_points): added.
+	(arrowdraw, arrowbbox, point_match): use
+	"opath_curve_expand_points()".
+
 2018-01-05  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* addin/gimg2gra.c (gra_save, fputcolor): don't draw fully
