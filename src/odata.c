@@ -105,6 +105,7 @@ enum {
 #define PARENT		"draw"
 #define OVERSION	"1.00.00"
 #define F2DCONF		"[data]"
+#define COLUMN_ARRAY_NAME "COLUMN"
 
 #define ERRFILE		100
 #define ERROPEN		101
@@ -318,7 +319,7 @@ struct f2ddata {
   int *needx, *needy;
   int dxstat,dystat,d2stat,d3stat;
   double dx,dy,d2,d3;
-  int maxdim;
+  int maxdim, column_array_id_x, column_array_id_y;
   int need2pass;
   double sumx,sumy,sumxx,sumyy,sumxy;
   int num,datanum,prev_datanum;
@@ -354,7 +355,7 @@ struct f2dlocal {
   MathEquation *codex[EQUATION_NUM], *codey[EQUATION_NUM];
   MathValue minx, maxx, miny, maxy;
   int const_id[MATH_CONST_SIZE];
-  int maxdimx,maxdimy;
+  int maxdimx,maxdimy, column_array_id_x, column_array_id_y;
   int need2passx,need2passy,total_line;
   struct f2ddata *data;
   int coord,idx,idy,id2,id3,icx,icy,ic2,ic3,isx,isy,is2,is3,iline;
@@ -998,8 +999,7 @@ file_draw_arc(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
   }
 
   if (fp->GC < 0) {
-    rval->type = MATH_VALUE_ERROR;
-    return 1;
+    return 0;
   }
 
   x      = exp->buf[0].val.val;
@@ -1089,8 +1089,7 @@ file_draw_rect(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   }
 
   if (fp->GC < 0) {
-    rval->type = MATH_VALUE_ERROR;
-    return 1;
+    return 0;
   }
 
   x0 = exp->buf[0].val.val;
@@ -1684,6 +1683,8 @@ opendata(struct objlist *obj,N_VALUE *inst,
     fp->codey[i] = f2dlocal->codey[i];
   }
   fp->const_id = f2dlocal->const_id;
+  fp->column_array_id_x = f2dlocal->column_array_id_x;
+  fp->column_array_id_y = f2dlocal->column_array_id_y;
   switch (fp->type) {
   case TYPE_NORMAL:
     break;
@@ -2013,9 +2014,11 @@ f2dputmath(struct objlist *obj,N_VALUE *inst,char *field,char *math)
   }
 
   if (strcmp(field,"math_x")==0) {
+    f2dlocal->column_array_id_x = -1;
     f2dlocal->maxdimx = 0;
     if (f2dlocal->codex[0]) {
       MathEquationParametar *prm;
+      int array_id;
 
       prm = math_equation_get_parameter(f2dlocal->codex[0], 0, NULL);
       if (prm == NULL) {
@@ -2023,17 +2026,29 @@ f2dputmath(struct objlist *obj,N_VALUE *inst,char *field,char *math)
       }
 
       f2dlocal->maxdimx = prm->id_max;
+      array_id = math_equation_check_array(f2dlocal->codex[0], COLUMN_ARRAY_NAME);
+      f2dlocal->column_array_id_x = array_id;
+      if (array_id >= 0) {
+	f2dlocal->maxdimx = FILE_OBJ_MAXCOL;
+      }
     }
   } else if (strcmp(field,"math_y")==0) {
+    f2dlocal->column_array_id_y = -1;
     f2dlocal->maxdimy = 0;
     if (f2dlocal->codey[0]) {
       MathEquationParametar *prm;
+      int array_id;
 
       prm = math_equation_get_parameter(f2dlocal->codey[0], 0, NULL);
       if (prm == NULL) {
 	return 1;
       }
       f2dlocal->maxdimy = prm->id_max;
+      array_id = math_equation_check_array(f2dlocal->codey[0], COLUMN_ARRAY_NAME);
+      f2dlocal->column_array_id_y = array_id;
+      if (array_id >= 0) {
+	f2dlocal->maxdimx = FILE_OBJ_MAXCOL;
+      }
     }
   }
   return 0;
@@ -2263,6 +2278,8 @@ f2dinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   f2dlocal->codey[0] = NULL;
   f2dlocal->codey[1] = NULL;
   f2dlocal->codey[2] = NULL;
+  f2dlocal->column_array_id_x = -1;
+  f2dlocal->column_array_id_y = -1;
   f2dlocal->maxdimx=0;
   f2dlocal->maxdimy=0;
   f2dlocal->need2passx=FALSE;
@@ -3304,13 +3321,27 @@ array_data(MathValue *gdata, struct narray *array, int i)
   gdata->type = MATH_VALUE_NORMAL;
 }
 
+static void
+set_column_array(MathEquation **code, int id, MathValue *gdata, int maxdim)
+{
+  int i, j;
+  for (i = 0; i <= maxdim; i++) {
+    for (j = 0; j < EQUATION_NUM; j++) {
+      math_equation_set_array_val(code[j], id, i, gdata + i);
+    }
+  }
+}
+
 static int
 get_data_from_source(struct f2ddata *fp, int maxdim, MathValue *gdata)
 {
   char *buf;
   int i, rcode, n;
   double x;
+  MathValue nonum;
 
+  nonum.val = 0;
+  nonum.type = MATH_VALUE_NONUM;
   rcode = 0;
   switch (fp->src) {
   case DATA_SOURCE_FILE:
@@ -3345,9 +3376,8 @@ get_data_from_source(struct f2ddata *fp, int maxdim, MathValue *gdata)
     for (i = 0; i < n; i++) {
       array_data(gdata + i + 1, fp->array_data.ary[i], fp->line);
     }
-    for (i = n; i <= fp->maxdim; i++) {
-      gdata[i + 1].val = 0;
-      gdata[i + 1].type = MATH_VALUE_NONUM;
+    for (i = n + 1; i <= fp->maxdim; i++) {
+      gdata[i] = nonum;
     }
 
     fp->line++;
@@ -3365,13 +3395,18 @@ get_data_from_source(struct f2ddata *fp, int maxdim, MathValue *gdata)
     gdata[1].type = MATH_VALUE_NORMAL;
     gdata[2].val = x;
     gdata[2].type = MATH_VALUE_NORMAL;
-    for (i = 2; i <= fp->maxdim; i++) {
-      gdata[i + 1].val = 0;
-      gdata[i + 1].type = MATH_VALUE_NONUM;
+    for (i = 3; i <= fp->maxdim; i++) {
+      gdata[i] = nonum;
     }
 
     fp->line++;
     break;
+  }
+  if (fp->column_array_id_x >= 0) {
+    set_column_array(fp->codex, fp->column_array_id_x, gdata, fp->maxdim);
+  }
+  if (fp->column_array_id_y >= 0) {
+    set_column_array(fp->codey, fp->column_array_id_y, gdata, fp->maxdim);
   }
   return rcode;
 }
