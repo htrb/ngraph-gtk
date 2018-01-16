@@ -15,7 +15,8 @@ config.status
 configure
 src/gtk/dir_defs.h
 src/gtk/ngraphui.resources.c
-src/gtk/data/gtk/menus-appmenu.ui
+ src/gtk/ngraph.resources.c
+ src/gtk/data/gtk/menus-appmenu.ui
 src/gtk/data/gtk/menus-common.ui
 src/ngraph
 src/terminal
