@@ -1,3 +1,16 @@
+2018-01-16  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/odata.c (f2ddata, f2dlocal): add member "column_array_id_x"
+	and "column_array_id_y".
+	(opendata): initialize "fp->column_array_id_x" and
+	"fp->column_array_id_y".
+	(f2dputmath): check "column" array.
+	(f2dinit): initialize "f2dlocal->column_array_id_x" and
+	"f2dlocal->column_array_id_y".
+	(set_column_array): added.
+	(get_data_from_source): use the function "set_column_array()".
+	(file_draw_mark): added.
+
 2018-01-14  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/odata.c (file_draw_arc, file_draw_rect): added.
