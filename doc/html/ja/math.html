@@ -94,7 +94,7 @@
 <h2><a href="#TOP">数式変換で使用できる定数</a></h2>
 <br>
 <div>
-<table border=1>
+<table border="1">
  <tr><td>PI</td><td>円周率</td></tr>
  <tr><td>E</td><td>自然対数の底</td></tr>
  <tr><td>EULER</td><td>オイラーの定数</td></tr>
@@ -147,7 +147,7 @@
 <h2><a href="#TOP">定数定義</a></h2>
 <br>
 <div>
-<table border=1>
+<table border="1">
  <tr>
   <td>const x:=exp</td>
   <td>
@@ -170,7 +170,7 @@
 <h2><a href="#TOP">数式変換で使用できるパラメータ</a></h2>
 <br>
 <div>
-<table border=1>
+<table border="1">
  <tr><td>%0</td><td>データを読み込んだ順番に1から番号をつけたときの値</td></tr>
  <tr><td>%1〜%999</td><td>同一行中 1〜999 カラムの生データ</td></tr>
  <tr><td>%Fxx1〜%Fxx999</td><td>データ xx の同じ行の 1〜999 カラムの生データ</td></tr>
@@ -187,7 +187,7 @@
 <p>変数は X, Y の変換式で独立です。</p>
 <br>
 <div>
-<table border=1>
+<table border="1">
  <tr><td>PI, E, X, Y 以外の、英字で始まり英数字または _ から構成される2文字以下の文字列、または _ で始まり英数字または _ から構成される文字列。</td><td>ユーザが自由に使用できます (代入されていない変数は 0 に初期化されています) 。</td></tr>
  <tr><td>X</td><td>(X)column の生のデータ (変数への代入は可能ですが、データ読込時に生データで上書きされます) </td></tr>
  <tr><td>Y</td><td>(Y)column の生のデータ (変数への代入は可能ですが、データ読込時に生データで上書きされます) </td></tr>
@@ -202,11 +202,18 @@
 <h2><a href="#TOP">配列</a></h2>
 <br>
 <div>
-<table border=1>
+<table border="1">
  <tr>
-  <td>x[n]</td>
+  <td>COLUMN[n]</td>
   <td>
-   x は英字または _ で始まり英数字または _ から構成される文字列、n は任意の数式。<br>
+    COLUMN[0] から COLUMN[999] までパラメータ %0〜%999 と同じく各カラ
+    ムの生データが代入されます。
+  </td>
+ </tr>
+ <tr>
+  <td>X[n]</td>
+  <td>
+    X は英字または _ で始まり英数字または _ から構成される文字列、n は任意の数式。<br>
    未代入の配列要素は 0 に初期化されています。<br>
    配列の添字は整数に丸められます。<br>
    配列の添字の上限は 65535 です。<br>
@@ -224,7 +231,7 @@
 <h2><a href="#TOP">ユーザ定義関数</a></h2>
 <br>
 <div>
-<table border=1>
+<table border="1">
  <tr>
   <td>def func(a,b,...) {exp} </td>
   <td>
@@ -249,7 +256,7 @@
 <h2><a href="#TOP">数式変換で使用できる演算子</a></h2>
 <br>
 <div>
-<table border=1>
+<table border="1">
  <tr><td>-+</td><td>符号</td></tr>
  <tr><td>+ - * /</td><td>四則演算</td></tr>
  <tr><td>\</td><td>浮動小数点剰余</td></tr>
@@ -304,7 +311,7 @@
 </p>
 <div>
 <h3>変換関数</h3>
-<table border=1>
+<table border="1">
  <tr><td>ABS(x)</td><td>絶対値</td></tr>
  <tr><td>SIGN(x)</td><td>正負の符号 (x < 0 で -1、x >= 0 で 1) </td></tr>
  <tr><td>INT(x)</td><td>0に向かって切捨てた整数部</td></tr>
@@ -316,7 +323,7 @@
 </table>
 <br>
 <h3>初等関数</h3>
-<table border=1>
+<table border="1">
  <tr><td>SQR(x)</td><td>二乗</td></tr>
  <tr><td>SQRT(x)</td><td>平方根</td></tr>
  <tr><td>EXP(x)</td><td>指数(x≦690)</td></tr>
@@ -338,7 +345,7 @@
 </table>
 <br>
 <h3>特殊関数</h3>
-<table border=1>
+<table border="1">
  <tr><td>RAND(x)</td><td>0≦RAND(x)＜x (x＞0のとき)の乱数</td></tr>
  <tr><td>SRAND(x)</td><td>RAND()  関数で作られる疑似乱数系列の新しい種を設定する。</td></tr>
  <tr><td>THETA(x)</td><td>階段関数(x≧0 のとき 1,  それ以外は 0 )</td></tr>
@@ -387,7 +394,7 @@
  <li> 0 を偽, それ以外を真とする。
 </ul>
 </p>
-<table border=1>
+<table border="1">
  <tr><td>EQ(x,y,prec)</td><td>x＝y のとき真(=1)。prec で比較の桁数を指定できる (prec == 0 は完全一致) 。</td></tr>
  <tr><td>NEQ(x,y,prec)</td><td>x≠y のとき真(=1)。prec で比較の桁数を指定できる (prec == 0 は完全一致) 。</td></tr>
  <tr><td>GE(x,y,prec)</td><td>x≧y のとき真(=1)。prec で比較の桁数を指定できる (prec == 0 は桁数指定なし) 。</td></tr>
@@ -401,7 +408,7 @@
 </table>
 <br>
 <h3>配列操作関数</h3>
-<table border=1>
+<table border="1">
  <tr><td>SIZE(a)</td><td>配列 a の要素数</td></tr>
  <tr><td>SORT(a)</td><td>配列 a を整列する</td></tr>
  <tr><td>RSORT(a)</td><td>配列 a を逆順に整列する</td></tr>
@@ -413,14 +420,56 @@
 <br>
 <h3>メモリー操作関数</h3>
 <p>メモリーは全ての数式変換で共有されます。</p>
-<table border=1>
+<table border="1">
  <tr><td>M(n,x)</td><td>引数を第nメモリーに代入する(n=0〜65535) (戻り値は x) </td></tr>
  <tr><td>RM(n)</td><td>現在の第nメモリーの値(n=0〜65535)</td></tr>
  <tr><td>CM(x)</td><td>メモリー全体を x で初期化する (戻り値は x) </td></tr>
 </table>
 <br>
+<h3>図形描画関数</h3>
+<p>図形を描画します。</p>
+<ul>
+  <li> 本来のプロットも描画されるので、不要な場合はプロットタイプを
+    mark に、サイズを 0 にすることで、図形のみ描画させることができます。
+  <li> 描画される図形は軸のオートスケールには考慮されません。
+  <li> 図形の色や線幅・線種はそのファイルオブジェクトの設定が使われま
+    す。変えたい場合は COLOR() 関数などを利用します。
+</ul>
+<table border="1">
+  <tr>
+    <td>
+      DRAW_RECT(x1, y1, x2, y2, stroke, fill)
+    </td>
+    <td>
+      (x1, y1) と (x2, y2) を対角の頂点とする矩形を描画します。stroke,
+      fill が 0 の場合はそれぞれ輪郭、塗りつぶしを描画しません。
+    </td>
+  </tr>
+  <tr>
+    <td>
+      DRAW_ARC(x, y, rx, ry, start, stop, stroke, fill, pieslice, close)
+    </td>
+    <td>
+      (x, y) を中心とし X 方向半径 rx, Y 方向半径 ry の円弧を描画しま
+      す。start, stop で開始角、円弧角を指定します。stroke, fill が 0
+      の場合はそれぞれ輪郭、塗りつぶしを描画しません。pieslice が 0 以
+      外の場合は扇形を描画します。close が 0 以外の場合は輪郭を閉じま
+      す。
+    </td>
+  </tr>
+  <tr>
+    <td>
+      DRAW_MARK(x, y, size)
+    </td>
+    <td>
+      (x, y) にマークを描画します。size でマークのサイズを指定できます。
+      size が 0 のときはファイルオブジェクトのサイズ指定が使われます。
+    </td>
+  </tr>
+</table>
+<br>
 <h3>その他の関数</h3>
-<table border=1>
+<table border="1">
  <tr>
   <td>FIT_PRM(id,x)</td>
   <td>
@@ -499,7 +548,7 @@
 <p>演算子 + - (正負の符号) の優先順位が Version 6.03 以前と異なっています。</p>
 <br>
 <div>
-<table border=1>
+<table border="1">
  <tr><td>高</td><td>!</td></tr>
  <tr><td>↑</td><td>^</td></tr>
  <tr><td>  </td><td>+ - (正負の符号)</td></tr>
