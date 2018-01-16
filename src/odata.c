@@ -981,7 +981,7 @@ static int
 file_draw_arc(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   struct f2ddata *fp;
-  int i, num, stroke, fill, pie, close, cx, cy, ap[ARC_INTERPOLATION * 2], *pdata;
+  int i, r, num, stroke, fill, pie, close, cx, cy, ap[ARC_INTERPOLATION * 2], *pdata;
   double x, y, rx, ry, angle1, angle2, angle;
   struct narray expand_points;
 
@@ -1025,10 +1025,14 @@ file_draw_arc(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
   for (i = 0; i < ARC_INTERPOLATION; i++) {
     angle = angle1 + angle2 / (ARC_INTERPOLATION - 1) * i;
     angle = MPI * angle / 180.0;
-    f2dtransf(x + rx * cos(angle),
-	      y + ry * sin(angle),
-	      ap + i * 2,
-	      ap + i * 2 + 1, fp);
+    r = getposition(fp,
+		    x + rx * cos(angle),
+		    y + ry * sin(angle),
+		    ap + i * 2,
+		    ap + i * 2 + 1);
+    if (r) {
+      return 0;
+    }
   }
   arrayinit(&expand_points, sizeof(int));
   if (curve_expand_points(ap, ARC_INTERPOLATION, INTERPOLATION_TYPE_SPLINE, &expand_points)) {
