@@ -1119,6 +1119,52 @@ file_draw_rect(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   return 0;
 }
 
+static int
+file_draw_mark(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  struct f2ddata *fp;
+  int cx, cy, size;
+  double x, y;
+
+  rval->val = 0;
+  if (exp->buf[0].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[1].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[2].val.type != MATH_VALUE_NORMAL) {
+    return 0;
+  }
+
+  fp = math_equation_get_user_data(eq);
+  if (fp == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  if (fp->GC < 0) {
+    return 0;
+  }
+
+  x    = exp->buf[0].val.val;
+  y    = exp->buf[1].val.val;
+  size = exp->buf[2].val.val * 100;
+
+  if (size <= 0) {
+    size = fp->marksize;
+  }
+
+  if (getposition(fp, x, y, &cx, &cy)) {
+    return 0;
+  }
+  if (size>0) {
+    int px, py;
+    GRAcurrent_point(fp->GC, &px, &py);
+    GRAmark(fp->GC, fp->marktype, cx, cy, size,
+            fp->color.r, fp->color.g, fp->color.b, fp->color.a,
+            fp->color2.r, fp->color2.g, fp->color2.b, fp->color2.a);
+    GRAmoveto(fp->GC, px, py);
+  }
+  return 0;
+}
+
 struct funcs {
   char *name;
   struct math_function_parameter prm;
@@ -1146,6 +1192,7 @@ static struct funcs FileFunc[] = {
   {"MARKTYPE", {1, 0, 0, file_marktype, NULL, NULL, NULL, NULL}},
   {"DRAW_RECT", {6, 0, 0, file_draw_rect, NULL, NULL, NULL, NULL}},
   {"DRAW_ARC", {DRAW_ARC_ARG_NUM, 0, 0, file_draw_arc, NULL, NULL, NULL, NULL}},
+  {"DRAW_MARK", {3, 0, 0, file_draw_mark, NULL, NULL, NULL, NULL}},
 };
 
 static int
