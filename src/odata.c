@@ -1017,7 +1017,7 @@ file_draw_arc(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
     return 0;
   }
 
-  angle2 = fmod(angle1, 360);
+  angle2 = fmod(angle2, 360);
   if (angle2 == 0.0) {
     angle2 = 360;
     close = TRUE;
