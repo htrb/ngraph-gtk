@@ -17,6 +17,16 @@
  <li><a href="#USR_FUNC">ユーザ定義関数</a>
  <li><a href="#FORMULA_OP">演算子</a>
  <li><a href="#FORMULA_FUNC">関数</a>
+   <ul>
+    <li> <a href="#TRANSFORM_FUNC">変換関数</a>
+    <li> <a href="#ELEMENTARY_FUNC">初等関数</a>
+    <li> <a href="#SPECIAL_FUMC">特殊関数</a>
+    <li> <a href="#LOGIC_FUNC">論理関数</a>
+    <li> <a href="#ARRAY_FUNC">配列操作関数</a>
+    <li> <a href="#MEMORY_FUNC">メモリー操作関数</a>
+    <li> <a href="#DRAWING_FUNC">図形描画関数</a>
+    <li> <a href="#OTHER_FUNC">その他の関数</a>
+   </ul>
  <li><a href="#OP_PRECEDENCE">演算子の優先順位</a>
  <li><a href="#OP_EXAMPLE">数式変換の使用例</a>
 </ul>
@@ -26,8 +36,7 @@
 <br>
 
 
-<a name="TRANSFORM">&nbsp;</a>
-<h2><a href="#TOP">概要</a></h2>
+<h2><a name="TRANSFORM" href="#TOP">概要</a></h2>
 <br>
 <div>
 描画は隣接平均, 数式変換などデータの加工を行った後に行われます。
@@ -59,8 +68,7 @@
 <br>
 
 
-<a name="FORMULA_LITERAL">&nbsp;</a>
-<h2><a href="#TOP">数式変換で使用できる数値リテラル</a></h2>
+<h2><a name="FORMULA_LITERAL" href="#TOP">数式変換で使用できる数値リテラル</a></h2>
 <br>
 <div>
 <dl>
@@ -90,8 +98,7 @@
 <hr>
 <br>
 
-<a name="FORMULA_CONST">&nbsp;</a>
-<h2><a href="#TOP">数式変換で使用できる定数</a></h2>
+<h2><a name="FORMULA_CONST" href="#TOP">数式変換で使用できる定数</a></h2>
 <br>
 <div>
 <table border="1">
@@ -143,8 +150,7 @@
 <hr>
 <br>
 
-<a name="CONST_DEF">&nbsp;</a>
-<h2><a href="#TOP">定数定義</a></h2>
+<h2><a name="CONST_DEF" href="#TOP">定数定義</a></h2>
 <br>
 <div>
 <table border="1">
@@ -166,8 +172,7 @@
 <hr>
 <br>
 
-<a name="FORMULA_PAR">&nbsp;</a>
-<h2><a href="#TOP">数式変換で使用できるパラメータ</a></h2>
+<h2><a name="FORMULA_PAR" href="#TOP">数式変換で使用できるパラメータ</a></h2>
 <br>
 <div>
 <table border="1">
@@ -182,8 +187,7 @@
 <br>
 
 
-<a name="FORMULA_VAR">&nbsp;</a>
-<h2><a href="#TOP">数式変換で使用できる変数</a></h2>
+<h2><a name="FORMULA_VAR" href="#TOP">数式変換で使用できる変数</a></h2>
 <p>変数は X, Y の変換式で独立です。</p>
 <br>
 <div>
@@ -198,8 +202,7 @@
 <hr>
 <br>
 
-<a name="ARRAY">&nbsp;</a>
-<h2><a href="#TOP">配列</a></h2>
+<h2><a name="ARRAY" href="#TOP">配列</a></h2>
 <br>
 <div>
 <table border="1">
@@ -227,8 +230,7 @@
 <hr>
 <br>
 
-<a name="USR_FUNC">&nbsp;</a>
-<h2><a href="#TOP">ユーザ定義関数</a></h2>
+<h2><a name="USR_FUNC" href="#TOP">ユーザ定義関数</a></h2>
 <br>
 <div>
 <table border="1">
@@ -252,8 +254,7 @@
 <hr>
 <br>
 
-<a name="FORMULA_OP">&nbsp;</a>
-<h2><a href="#TOP">数式変換で使用できる演算子</a></h2>
+<h2><a name="FORMULA_OP" href="#TOP">数式変換で使用できる演算子</a></h2>
 <br>
 <div>
 <table border="1">
@@ -300,8 +301,7 @@
 
 
 
-<a name="FORMULA_FUNC">&nbsp;</a>
-<h2><a href="#TOP">数式変換で使用できる関数</a></h2>
+<h2><a name="FORMULA_FUNC" href="#TOP">数式変換で使用できる関数</a></h2>
 <p>
 <ul>
  <li> 引数は省略することが出来ます。引数が省略された場合 0 が渡されます。
@@ -310,7 +310,7 @@
 </ul>
 </p>
 <div>
-<h3>変換関数</h3>
+<h3><a name="TRANSFORM_FUNC" href="#TOP">変換関数</a></h3>
 <table border="1">
  <tr><td>ABS(x)</td><td>絶対値</td></tr>
  <tr><td>SIGN(x)</td><td>正負の符号 (x < 0 で -1、x >= 0 で 1) </td></tr>
@@ -322,7 +322,7 @@
  <tr><td>MAX(a,b,c,...)</td><td>引数のうちもっとも大きな値</td></tr>
 </table>
 <br>
-<h3>初等関数</h3>
+<h3><a name="ELEMENTARY_FUNC" href="#TOP">初等関数</a></h3>
 <table border="1">
  <tr><td>SQR(x)</td><td>二乗</td></tr>
  <tr><td>SQRT(x)</td><td>平方根</td></tr>
@@ -344,7 +344,7 @@
  <tr><td>FMOD(x, y)</td><td>x を y で割った浮動小数点剰余</td></tr>
 </table>
 <br>
-<h3>特殊関数</h3>
+<h3><a name="SPECIAL_FUMC">特殊関数</a></h3>
 <table border="1">
  <tr><td>RAND(x)</td><td>0≦RAND(x)＜x (x＞0のとき)の乱数</td></tr>
  <tr><td>SRAND(x)</td><td>RAND()  関数で作られる疑似乱数系列の新しい種を設定する。</td></tr>
@@ -388,7 +388,7 @@
  <tr><td>TIME()</td><td>紀元 (1970年1月1日00:00:00 UTC) からの経過時間を秒単位で返す。</td></tr>
 </table>
 <br>
-<h3>論理関数</h3>
+<h3><a name="LOGIC_FUNC" href="#TOP">論理関数</a></h3>
 <p>
 <ul>
  <li> 0 を偽, それ以外を真とする。
@@ -407,7 +407,7 @@
  <tr><td>XOR(x,y)</td><td>(x≠0) xor (y≠0) のとき真(=1)</td></tr>
 </table>
 <br>
-<h3>配列操作関数</h3>
+<h3><a name="ARRAY_FUNC" href="#TOP">配列操作関数</a></h3>
 <table border="1">
  <tr><td>SIZE(a)</td><td>配列 a の要素数</td></tr>
  <tr><td>SORT(a)</td><td>配列 a を整列する</td></tr>
@@ -418,7 +418,7 @@
  <tr><td>UNSHIFT(a,x)</td><td>配列 a の先頭に x を挿入する (戻り値は x) </td></tr>
 </table>
 <br>
-<h3>メモリー操作関数</h3>
+<h3><a name="MEMORY_FUNC" href="#TOP">メモリー操作関数</a></h3>
 <p>メモリーは全ての数式変換で共有されます。</p>
 <table border="1">
  <tr><td>M(n,x)</td><td>引数を第nメモリーに代入する(n=0〜65535) (戻り値は x) </td></tr>
@@ -426,7 +426,7 @@
  <tr><td>CM(x)</td><td>メモリー全体を x で初期化する (戻り値は x) </td></tr>
 </table>
 <br>
-<h3>図形描画関数</h3>
+<h3><a name="DRAWING_FUNC" href="#TOP">図形描画関数</a></h3>
 <p>図形を描画します。</p>
 <ul>
   <li> 本来のプロットも描画されるので、不要な場合はプロットタイプを
@@ -468,7 +468,7 @@
   </tr>
 </table>
 <br>
-<h3>その他の関数</h3>
+<h3><a name="OTHER_FUNC" href="#TOP">その他の関数</a></h3>
 <table border="1">
  <tr>
   <td>FIT_PRM(id,x)</td>
@@ -543,8 +543,7 @@
 <br>
 
 
-<a name="OP_PRECEDENCE">&nbsp;</a>
-<h2><a href="#TOP">演算子の優先順位</a></h2>
+<h2><a name="OP_PRECEDENCE" href="#TOP">演算子の優先順位</a></h2>
 <p>演算子 + - (正負の符号) の優先順位が Version 6.03 以前と異なっています。</p>
 <br>
 <div>
@@ -566,8 +565,7 @@
 <hr>
 <br>
 
-<a name="OP_EXAMPLE">&nbsp;</a>
-<h2><a href="#TOP">数式変換の使用例</a></h2>
+<h2><a name="OP_EXAMPLE" href="#TOP">数式変換の使用例</a></h2>
 <br>
 <ul>
  <li><b>; 使用例</b>
