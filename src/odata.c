@@ -4246,20 +4246,14 @@ getposition(struct f2ddata *fp, double x, double y, int *gx, int *gy)
           1: outside region
 */
 {
-  double minx, maxx, miny, maxy;
-
   *gx = *gy = 0;
-  minx = fp->axmin;
-  maxx = fp->axmax;
-  miny = fp->aymin;
-  maxy = fp->aymax;
   if (getposition2(fp, fp->axtype, fp->aytype, &x, &y)) {
     return -1;
   }
   if (fp->dataclip &&
-      (((minx > x || x > maxx) && (maxx > x || x > minx)) ||
-       ((miny > y || y > maxy) && (maxy > y || y > miny)))) {
-    /* fix-me: this condition will be simplified as (fp->dataclip && (minx>x || x>maxx || miny>y || y>maxy)) */
+      (((fp->axmin > x || x > fp->axmax) && (fp->axmax > x || x > fp->axmin)) ||
+       ((fp->aymin > y || y > fp->aymax) && (fp->aymax > y || y > fp->aymin)))) {
+    /* fix-me: this condition will be simplified as (fp->dataclip && (fp->axmin>x || x>fp->axmax || fp->aymin>y || y>fp->aymax)) */
     return 1;
   }
   if (_f2dtransf(x, y, gx, gy, fp)) {
