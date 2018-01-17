@@ -1024,7 +1024,6 @@ file_draw_arc(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
     angle2 = 360;
     close = TRUE;
   }
-  printf("(%G, %G) => (%d, %d)\n", x, y, cx, cy);
   for (i = 0; i < ARC_INTERPOLATION; i++) {
     angle = angle1 + angle2 / (ARC_INTERPOLATION - 1) * i;
     angle = MPI * angle / 180.0;
