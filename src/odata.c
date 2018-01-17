@@ -1077,8 +1077,8 @@ static int
 file_draw_rect(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   struct f2ddata *fp;
-  int stroke, fill, ap[8];;
-  double x0, x1, y0, y1;
+  int i, r, stroke, fill, ap[8];;
+  double pos[4];
 
   rval->val = 0;
 
@@ -1101,21 +1101,26 @@ file_draw_rect(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
     return 0;
   }
 
-  x0 = exp->buf[0].val.val;
-  y0 = exp->buf[1].val.val;
-  x1 = exp->buf[2].val.val;
-  y1 = exp->buf[3].val.val;
+  for (i = 0; i < 4; i++) {
+    pos[i] = exp->buf[i].val.val;
+  }
   stroke = exp->buf[4].val.val;
   fill = exp->buf[5].val.val;
 
-  if (f2drectclipf(&x0, &y0, &x1, &y1, fp)) {
+  for (i = 0; i < 2; i++) {
+    r = getposition2(fp, fp->axtype, fp->aytype, pos + i * 2, pos + i * 2 + 1);
+    if (r) {
+      rval->type = MATH_VALUE_ERROR;
+      return -1;
+    }
+  }
+  if (f2drectclipf(pos, pos + 1, pos + 2, pos + 3, fp)) {
     return 0;
   }
-
-  f2dtransf(x0, y0, ap + 0, ap + 1, fp);
-  f2dtransf(x0, y1, ap + 2, ap + 3, fp);
-  f2dtransf(x1, y1, ap + 4, ap + 5, fp);
-  f2dtransf(x1, y0, ap + 6, ap + 7, fp);
+  f2dtransf(pos[0], pos[1], ap + 0, ap + 1, fp);
+  f2dtransf(pos[0], pos[3], ap + 2, ap + 3, fp);
+  f2dtransf(pos[2], pos[3], ap + 4, ap + 5, fp);
+  f2dtransf(pos[2], pos[1], ap + 6, ap + 7, fp);
 
   if (fill) {
     GRAcolor(fp->GC, fp->color2.r, fp->color2.g, fp->color2.b, fp->color2.a);
