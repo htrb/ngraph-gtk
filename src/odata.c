@@ -4240,29 +4240,31 @@ getminmaxdata(struct f2ddata *fp, struct f2dlocal *local)
 }
 
 static int
-getposition(struct f2ddata *fp,double x,double y,int *gx,int *gy)
+getposition(struct f2ddata *fp, double x, double y, int *gx, int *gy)
 /*
   return -1: unable to transform
           0: normal
           1: outside region
 */
 {
-  double minx,maxx,miny,maxy;
+  double minx, maxx, miny, maxy;
 
-  *gx=*gy=0;
-  minx=fp->axmin;
-  maxx=fp->axmax;
-  miny=fp->aymin;
-  maxy=fp->aymax;
+  *gx = *gy = 0;
+  minx = fp->axmin;
+  maxx = fp->axmax;
+  miny = fp->aymin;
+  maxy = fp->aymax;
   if (getposition2(fp, fp->axtype, fp->aytype, &x, &y)) {
     return -1;
   }
   if (fp->dataclip &&
-  ((((minx>x) || (x>maxx)) && ((maxx>x) || (x>minx)))
-   || (((miny>y) || (y>maxy)) && ((maxy>y) || (y>miny))))) return 1;
-  /* fix-me: this condition will be simplified as (fp->dataclip && (minx>x || x>maxx || miny>y || y>maxy)) */
+      (((minx > x || x > maxx) && (maxx > x || x > minx)) ||
+       ((miny > y || y > maxy) && (maxy > y || y > miny)))) {
+    /* fix-me: this condition will be simplified as (fp->dataclip && (minx>x || x>maxx || miny>y || y>maxy)) */
+    return 1;
+  }
   if (_f2dtransf(x, y, gx, gy, fp)) {
-    fp->ignore=TRUE;
+    fp->ignore = TRUE;
     return -1;
   }
   return 0;
