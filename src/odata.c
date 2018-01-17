@@ -371,6 +371,7 @@ static int set_data_progress(struct f2ddata *fp);
 static int getminmaxdata(struct f2ddata *fp, struct f2dlocal *local);
 static int calc_fit_equation(struct objlist *obj, N_VALUE *inst, double x, double *y);
 static void f2dtransf(double x,double y,int *gx,int *gy,void *local);
+static int _f2dtransf(double x,double y,int *gx,int *gy,void *local);
 static int f2drectclipf(double *x0,double *y0,double *x1,double *y1,void *local);
 static int getposition(struct f2ddata *fp,double x,double y,int *gx,int *gy);
 static int getposition2(struct f2ddata *fp,int axtype,int aytype,double *x,double *y);
@@ -4247,72 +4248,22 @@ getposition(struct f2ddata *fp,double x,double y,int *gx,int *gy)
 */
 {
   double minx,maxx,miny,maxy;
-  double v1x,v1y,v2x,v2y,vx,vy;
-  double a,b,c,d;
 
   *gx=*gy=0;
   minx=fp->axmin;
   maxx=fp->axmax;
   miny=fp->aymin;
   maxy=fp->aymax;
-  if (fp->axtype == AXIS_TYPE_LOG) {
-    if (x==0) {
-      fp->ignore=TRUE;
-      return -1;
-    } else if (x<0) {
-      fp->negative=TRUE;
-      x=fabs(x);
-    }
-    x=log10(x);
-  } else if (fp->axtype == AXIS_TYPE_INVERSE) {
-    if (x==0) {
-      fp->ignore=TRUE;
-      return -1;
-    }
-    x=1/x;
-  }
-
-  if (fp->aytype == AXIS_TYPE_LOG) {
-    if (y==0) {
-      fp->ignore=TRUE;
-      return -1;
-    } else if (y<0) {
-      fp->negative=TRUE;
-      y=fabs(y);
-    }
-    y=log10(y);
-  } else if (fp->aytype == AXIS_TYPE_INVERSE) {
-    if (y==0) {
-      fp->ignore=TRUE;
-      return -1;
-    }
-    y=1/y;
+  if (getposition2(fp, fp->axtype, fp->aytype, &x, &y)) {
+    return -1;
   }
   if (fp->dataclip &&
   ((((minx>x) || (x>maxx)) && ((maxx>x) || (x>minx)))
    || (((miny>y) || (y>maxy)) && ((maxy>y) || (y>miny))))) return 1;
   /* fix-me: this condition will be simplified as (fp->dataclip && (minx>x || x>maxx || miny>y || y>maxy)) */
-  v1x=fp->ratex*(x-minx)*fp->axvx;
-  v1y=fp->ratex*(x-minx)*fp->axvy;
-  v2x=fp->ratey*(y-miny)*fp->ayvx;
-  v2y=fp->ratey*(y-miny)*fp->ayvy;
-  vx=fp->ayposx-fp->axposx+v2x-v1x;
-  vy=fp->ayposy-fp->axposy+v2y-v1y;
-  a=fp->ayvy*fp->axvx-fp->ayvx*fp->axvy;
-  c=-fp->ayvy*vx+fp->ayvx*vy;
-  b=fp->axvy*fp->ayvx-fp->axvx*fp->ayvy;
-  d=fp->axvy*vx-fp->axvx*vy;
-  if ((fabs(a)<=1e-16) && (fabs(b)<=1e-16)) {
+  if (_f2dtransf(x, y, gx, gy, fp)) {
     fp->ignore=TRUE;
     return -1;
-  } else if (fabs(b)<=1e-16) {
-    a=c/a;
-    *gx=fp->ayposx+nround(v2x+a*fp->axvx);
-    *gy=fp->ayposy+nround(v2y+a*fp->axvy);
-  } else {
-    b=d/b;
-    *gx=fp->axposx+nround(v1x+b*fp->ayvx);
-    *gy=fp->axposy+nround(v1y+b*fp->ayvy);
   }
   return 0;
 }
@@ -4365,8 +4316,8 @@ getposition2(struct f2ddata *fp,int axtype,int aytype,double *x,double *y)
   return 0;
 }
 
-static void
-f2dtransf(double x,double y,int *gx,int *gy,void *local)
+static int
+_f2dtransf(double x,double y,int *gx,int *gy,void *local)
 {
   struct f2ddata *fp;
   double minx,miny;
@@ -4387,7 +4338,7 @@ f2dtransf(double x,double y,int *gx,int *gy,void *local)
   b=fp->axvy*fp->ayvx-fp->axvx*fp->ayvy;
   d=fp->axvy*vx-fp->axvx*vy;
   if ((fabs(a)<=1e-16) && (fabs(b)<=1e-16)) {
-    return;
+    return 1;
   } else if (fabs(b)<=1e-16) {
     a=c/a;
     *gx=fp->ayposx+nround(v2x+a*fp->axvx);
@@ -4397,6 +4348,13 @@ f2dtransf(double x,double y,int *gx,int *gy,void *local)
     *gx=fp->axposx+nround(v1x+b*fp->ayvx);
     *gy=fp->axposy+nround(v1y+b*fp->ayvy);
   }
+  return 0;
+}
+
+static void
+f2dtransf(double x,double y,int *gx,int *gy,void *local)
+{
+  _f2dtransf(x, y, gx, gy, local);
 }
 
 static int
