@@ -9,6 +9,7 @@
 	* src/math/math_basic_function.c (math_func_array_clear): added.
 	(math_func_array_sum): added.
 	(math_func_array_max, math_func_array_min): added.
+	(math_func_array_compact): added.
 
 	* src/math/math_equation.c (math_equation_clear_array): added.
 
