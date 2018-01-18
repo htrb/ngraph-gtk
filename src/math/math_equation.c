@@ -1386,6 +1386,20 @@ check_array(MathEquation *eq, int id, int index)
 }
 
 int
+math_equation_clear_array(MathEquation *eq, int array)
+{
+  int i;
+
+  i = check_array(eq, array, 0);
+  if (i < 0)
+    return 1;
+
+  eq->array_buf[array].num = 0;
+
+  return 0;
+}
+
+int
 math_equation_set_array_val(MathEquation *eq, int array, int index, const MathValue *val)
 {
   int i;
