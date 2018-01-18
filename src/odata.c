@@ -375,6 +375,7 @@ static int _f2dtransf(double x,double y,int *gx,int *gy,void *local);
 static int f2drectclipf(double *x0,double *y0,double *x1,double *y1,void *local);
 static int getposition(struct f2ddata *fp,double x,double y,int *gx,int *gy);
 static int getposition2(struct f2ddata *fp,int axtype,int aytype,double *x,double *y);
+static void set_column_array(MathEquation **code, int id, MathValue *gdata, int maxdim);
 
 #if BUF_TYPE == USE_RING_BUF
 int
@@ -2605,7 +2606,7 @@ get_value_from_str(char *po, char *po2, int *type)
 }
 
 static int
-getdataarray(char *buf, int maxdim, double *count, MathValue *data, const char *ifs, int csv)
+getdataarray(struct f2ddata *fp, char *buf, int maxdim, MathValue *data)
 {
 /*
    return: 0 no error
@@ -2615,17 +2616,23 @@ getdataarray(char *buf, int maxdim, double *count, MathValue *data, const char *
   char *po, *po2;
   int st;
   double val;
-  int i;
+  int i, r;
   int dim, hex;
-
-  (*count)++;
+  char *ifs, csv;
+  ifs = fp->ifs_buf;
+  csv = fp->csv;
+  fp->count++;
+  r = 1;
   dim=0;
-  data[dim].val = *count;
+  data[dim].val = fp->count;
   data[dim].type = MATH_VALUE_NORMAL;
   po=buf;
   while (*po!='\0') {
     hex = FALSE;
-    if (dim>=maxdim) return 0;
+    if (dim>=maxdim) {
+      r = 0;
+      break;
+    }
     if (csv) {
       for (;*po==' ';po++);
       if (*po=='\0') break;
@@ -2691,7 +2698,9 @@ getdataarray(char *buf, int maxdim, double *count, MathValue *data, const char *
     data[i].val = 0;
     data[i].type = MATH_VALUE_NONUM;
   }
-  return 1;
+  set_column_array(fp->codex, fp->column_array_id_x, data, dim);
+  set_column_array(fp->codey, fp->column_array_id_y, data, dim);
+  return r;
 }
 
 
@@ -3386,8 +3395,13 @@ static void
 set_column_array(MathEquation **code, int id, MathValue *gdata, int maxdim)
 {
   int i, j;
-  for (i = 0; i <= maxdim; i++) {
-    for (j = 0; j < EQUATION_NUM; j++) {
+  if (id < 0) {
+    return;
+  }
+
+  for (j = 0; j < EQUATION_NUM; j++) {
+    math_equation_clear_array(code[j], id);
+    for (i = 0; i <= maxdim; i++) {
       math_equation_set_array_val(code[j], id, i, gdata + i);
     }
   }
@@ -3417,7 +3431,7 @@ get_data_from_source(struct f2ddata *fp, int maxdim, MathValue *gdata)
     for (i = 0; buf[i] && CHECK_IFS(fp->ifs_buf, buf[i]); i++);
     rcode = 2;
     if (buf[i] != '\0' && (! CHECK_REMARK(fp->remark, fp->ifs_buf, buf[i]))) {
-      rcode = getdataarray(buf, maxdim, &fp->count, gdata, fp->ifs_buf, fp->csv);
+      rcode = getdataarray(fp, buf, maxdim, gdata);
       if (rcode != -1) {
 	rcode = 0;
       }
@@ -3441,6 +3455,8 @@ get_data_from_source(struct f2ddata *fp, int maxdim, MathValue *gdata)
       gdata[i] = nonum;
     }
 
+    set_column_array(fp->codex, fp->column_array_id_x, gdata, n);
+    set_column_array(fp->codey, fp->column_array_id_y, gdata, n);
     fp->line++;
     break;
   case DATA_SOURCE_RANGE:
@@ -3461,13 +3477,9 @@ get_data_from_source(struct f2ddata *fp, int maxdim, MathValue *gdata)
     }
 
     fp->line++;
+    set_column_array(fp->codex, fp->column_array_id_x, gdata, 2);
+    set_column_array(fp->codey, fp->column_array_id_y, gdata, 2);
     break;
-  }
-  if (fp->column_array_id_x >= 0) {
-    set_column_array(fp->codex, fp->column_array_id_x, gdata, fp->maxdim);
-  }
-  if (fp->column_array_id_y >= 0) {
-    set_column_array(fp->codey, fp->column_array_id_y, gdata, fp->maxdim);
   }
   return rcode;
 }
