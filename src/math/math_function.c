@@ -20,6 +20,7 @@ static struct funcs FuncAry[] = {
   {NULL, {0, 0, 0, NULL, NULL, NULL, NULL, NULL}},
 #endif
   {"MJD2MONTH", {1, 0, 0, math_func_mjd2month, NULL, NULL, NULL, NULL}},
+  {"ARRAY_SUM", {1, 1, 0, math_func_array_sum, NULL, NULL, NULL, NULL}},
   {"UNIX2MJD", {1, 0, 0, math_func_unix2mjd, NULL, NULL, NULL, NULL}},
   {"MJD2YEAR", {1, 0, 0, math_func_mjd2year, NULL, NULL, NULL, NULL}},
   {"MJD2WDAY", {1, 0, 0, math_func_mjd2wday, NULL, NULL, NULL, NULL}},
@@ -198,7 +199,18 @@ math_add_basic_function(MathEquation *eq) {
       ptr[0] = MATH_FUNCTION_ARG_TYPE_ARRAY;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 13:  /*  UNSHIFT  */
+    case 3:  /*  ARRAY_SUM  */
+      if (FuncAry[i].prm.arg_type) {
+        break;
+      }
+      ptr = g_malloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * 1);
+      if (ptr == NULL) {
+        return 1;
+      }
+      ptr[0] = MATH_FUNCTION_ARG_TYPE_ARRAY;
+      FuncAry[i].prm.arg_type = ptr;
+      break;
+    case 14:  /*  UNSHIFT  */
       if (FuncAry[i].prm.arg_type) {
         break;
       }
@@ -210,7 +222,7 @@ math_add_basic_function(MathEquation *eq) {
       ptr[1] = MATH_FUNCTION_ARG_TYPE_DOUBLE;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 15:  /*  UNLESS  */
+    case 16:  /*  UNLESS  */
       if (FuncAry[i].prm.arg_type) {
         break;
       }
@@ -223,7 +235,7 @@ math_add_basic_function(MathEquation *eq) {
       ptr[2] = MATH_FUNCTION_ARG_TYPE_PROC;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 29:  /*  RSORT  */
+    case 30:  /*  RSORT  */
       if (FuncAry[i].prm.arg_type) {
         break;
       }
@@ -234,7 +246,7 @@ math_add_basic_function(MathEquation *eq) {
       ptr[0] = MATH_FUNCTION_ARG_TYPE_ARRAY;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 34:  /*  SHIFT  */
+    case 35:  /*  SHIFT  */
       if (FuncAry[i].prm.arg_type) {
         break;
       }
@@ -245,7 +257,7 @@ math_add_basic_function(MathEquation *eq) {
       ptr[0] = MATH_FUNCTION_ARG_TYPE_ARRAY;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 49:  /*  SORT  */
+    case 50:  /*  SORT  */
       if (FuncAry[i].prm.arg_type) {
         break;
       }
@@ -256,7 +268,7 @@ math_add_basic_function(MathEquation *eq) {
       ptr[0] = MATH_FUNCTION_ARG_TYPE_ARRAY;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 50:  /*  SIZE  */
+    case 51:  /*  SIZE  */
       if (FuncAry[i].prm.arg_type) {
         break;
       }
@@ -267,7 +279,7 @@ math_add_basic_function(MathEquation *eq) {
       ptr[0] = MATH_FUNCTION_ARG_TYPE_ARRAY;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 52:  /*  PUSH  */
+    case 53:  /*  PUSH  */
       if (FuncAry[i].prm.arg_type) {
         break;
       }
@@ -279,7 +291,7 @@ math_add_basic_function(MathEquation *eq) {
       ptr[1] = MATH_FUNCTION_ARG_TYPE_DOUBLE;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 72:  /*  FOR  */
+    case 73:  /*  FOR  */
       if (FuncAry[i].prm.arg_type) {
         break;
       }
@@ -294,7 +306,7 @@ math_add_basic_function(MathEquation *eq) {
       ptr[4] = MATH_FUNCTION_ARG_TYPE_PROC;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 79:  /*  POP  */
+    case 80:  /*  POP  */
       if (FuncAry[i].prm.arg_type) {
         break;
       }
@@ -305,7 +317,7 @@ math_add_basic_function(MathEquation *eq) {
       ptr[0] = MATH_FUNCTION_ARG_TYPE_ARRAY;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 95:  /*  IF  */
+    case 96:  /*  IF  */
       if (FuncAry[i].prm.arg_type) {
         break;
       }

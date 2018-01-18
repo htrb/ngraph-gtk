@@ -72,6 +72,7 @@ sort		1	1	0	1
 rsort		1	1	0	1
 size		1	1	0	1
 array_clear	1	1	0	1
+array_sum	1	1	0	1
 isnormal	1	0	0	NULL
 isnan		1	0	0	NULL
 isundef		1	0	0	NULL

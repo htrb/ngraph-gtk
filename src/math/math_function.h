@@ -26,6 +26,7 @@ int math_func_array_clear(MathFunctionCallExpression *exp, MathEquation *eq, Mat
 int math_func_zetam1_int(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
 #endif
 int math_func_mjd2month(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
+int math_func_array_sum(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
 int math_func_unix2mjd(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
 int math_func_mjd2year(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
 int math_func_mjd2wday(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
