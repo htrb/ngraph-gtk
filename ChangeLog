@@ -228,7 +228,7 @@
 
 	* src/gtk/x11file.c (FileWinFileDraw): save undo information.
 
-	* src/gtk/x11merge.c (MergeWinUpdate): draw merge onject.
+	* src/gtk/x11merge.c (MergeWinUpdate): draw merge object.
 
 	* src/gtk/x11menu.c (UpdateAll): call only "UpdateAll2()".
 	(check_update_obj): added.
