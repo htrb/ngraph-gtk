@@ -320,6 +320,7 @@
  <tr><td>ROUND(x)</td><td>四捨五入した整数部</td></tr>
  <tr><td>MIN(a,b,c,...)</td><td>引数のうちもっとも小さな値</td></tr>
  <tr><td>MAX(a,b,c,...)</td><td>引数のうちもっとも大きな値</td></tr>
+ <tr><td>SUMSQ(a,b,c,...)</td><td>引数の自乗和</td></tr>
 </table>
 <br>
 <h3><a name="ELEMENTARY_FUNC" href="#TOP">初等関数</a></h3>
@@ -417,9 +418,11 @@
  <tr><td>SHIFT(a)</td><td>配列 a の先頭の要素を取り除いてそれを返す。残りの要素はひとつずつ前に詰められる</td></tr>
  <tr><td>UNSHIFT(a,x)</td><td>配列 a の先頭に x を挿入する (戻り値は x) </td></tr>
  <tr><td>ARRAY_SUM(a)</td><td>配列 a の要素の和を返す </td></tr>
+ <tr><td>ARRAY_SUMSQ(a)</td><td>配列 a の要素の自乗和を返す </td></tr>
  <tr><td>ARRAY_MAX(a)</td><td>配列 a に含まれる最大の値を返す </td></tr>
  <tr><td>ARRAY_MIN(a)</td><td>配列 a に含まれる最小の値を返す </td></tr>
  <tr><td>ARRAY_CLEAR(a)</td><td>配列 a の配列の要素数を 0 にする </td></tr>
+ <tr><td>ARRAY_COMPACT(a)</td><td>配列 a の配列の要素から通常の数値以外を取り除き、取り除いた後の要素数を返す</td></tr>
 </table>
 <br>
 <h3><a name="MEMORY_FUNC" href="#TOP">メモリー操作関数</a></h3>
