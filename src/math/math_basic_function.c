@@ -2787,6 +2787,70 @@ math_func_array_sum(MathFunctionCallExpression *exp, MathEquation *eq, MathValue
 }
 
 int
+math_func_array_min(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int id, i;
+  MathEquationArray *ary;
+  double min;
+
+  rval->val = 0;
+
+  id = (int) exp->buf[0].idx;
+  ary = math_equation_get_array(eq, id);
+
+  if (ary == NULL || ary->num < 1 || ary->data == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  min = ary->data[0].val;
+  for (i = 0; i < ary->num; i++) {
+    if (ary->data[i].type != MATH_VALUE_NORMAL) {
+      rval->type = MATH_VALUE_ERROR;
+      return 1;
+    }
+    if (min > ary->data[i].val) {
+      min = ary->data[i].val;
+    }
+  }
+  rval->val = min;
+
+  return 0;
+}
+
+int
+math_func_array_max(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int id, i;
+  MathEquationArray *ary;
+  double max;
+
+  rval->val = 0;
+
+  id = (int) exp->buf[0].idx;
+  ary = math_equation_get_array(eq, id);
+
+  if (ary == NULL || ary->num < 1 || ary->data == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  max = ary->data[0].val;
+  for (i = 0; i < ary->num; i++) {
+    if (ary->data[i].type != MATH_VALUE_NORMAL) {
+      rval->type = MATH_VALUE_ERROR;
+      return 1;
+    }
+    if (max < ary->data[i].val) {
+      max = ary->data[i].val;
+    }
+  }
+  rval->val = max;
+
+  return 0;
+}
+
+int
 math_func_array_clear(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   int id, r;

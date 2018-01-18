@@ -21,6 +21,8 @@ static struct funcs FuncAry[] = {
 #endif
   {"MJD2MONTH", {1, 0, 0, math_func_mjd2month, NULL, NULL, NULL, NULL}},
   {"ARRAY_SUM", {1, 1, 0, math_func_array_sum, NULL, NULL, NULL, NULL}},
+  {"ARRAY_MIN", {1, 1, 0, math_func_array_min, NULL, NULL, NULL, NULL}},
+  {"ARRAY_MAX", {1, 1, 0, math_func_array_max, NULL, NULL, NULL, NULL}},
   {"UNIX2MJD", {1, 0, 0, math_func_unix2mjd, NULL, NULL, NULL, NULL}},
   {"MJD2YEAR", {1, 0, 0, math_func_mjd2year, NULL, NULL, NULL, NULL}},
   {"MJD2WDAY", {1, 0, 0, math_func_mjd2wday, NULL, NULL, NULL, NULL}},
@@ -210,7 +212,29 @@ math_add_basic_function(MathEquation *eq) {
       ptr[0] = MATH_FUNCTION_ARG_TYPE_ARRAY;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 14:  /*  UNSHIFT  */
+    case 4:  /*  ARRAY_MIN  */
+      if (FuncAry[i].prm.arg_type) {
+        break;
+      }
+      ptr = g_malloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * 1);
+      if (ptr == NULL) {
+        return 1;
+      }
+      ptr[0] = MATH_FUNCTION_ARG_TYPE_ARRAY;
+      FuncAry[i].prm.arg_type = ptr;
+      break;
+    case 5:  /*  ARRAY_MAX  */
+      if (FuncAry[i].prm.arg_type) {
+        break;
+      }
+      ptr = g_malloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * 1);
+      if (ptr == NULL) {
+        return 1;
+      }
+      ptr[0] = MATH_FUNCTION_ARG_TYPE_ARRAY;
+      FuncAry[i].prm.arg_type = ptr;
+      break;
+    case 16:  /*  UNSHIFT  */
       if (FuncAry[i].prm.arg_type) {
         break;
       }
@@ -222,7 +246,7 @@ math_add_basic_function(MathEquation *eq) {
       ptr[1] = MATH_FUNCTION_ARG_TYPE_DOUBLE;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 16:  /*  UNLESS  */
+    case 18:  /*  UNLESS  */
       if (FuncAry[i].prm.arg_type) {
         break;
       }
@@ -235,7 +259,7 @@ math_add_basic_function(MathEquation *eq) {
       ptr[2] = MATH_FUNCTION_ARG_TYPE_PROC;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 30:  /*  RSORT  */
+    case 32:  /*  RSORT  */
       if (FuncAry[i].prm.arg_type) {
         break;
       }
@@ -246,7 +270,7 @@ math_add_basic_function(MathEquation *eq) {
       ptr[0] = MATH_FUNCTION_ARG_TYPE_ARRAY;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 35:  /*  SHIFT  */
+    case 37:  /*  SHIFT  */
       if (FuncAry[i].prm.arg_type) {
         break;
       }
@@ -257,7 +281,7 @@ math_add_basic_function(MathEquation *eq) {
       ptr[0] = MATH_FUNCTION_ARG_TYPE_ARRAY;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 50:  /*  SORT  */
+    case 52:  /*  SORT  */
       if (FuncAry[i].prm.arg_type) {
         break;
       }
@@ -268,7 +292,7 @@ math_add_basic_function(MathEquation *eq) {
       ptr[0] = MATH_FUNCTION_ARG_TYPE_ARRAY;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 51:  /*  SIZE  */
+    case 53:  /*  SIZE  */
       if (FuncAry[i].prm.arg_type) {
         break;
       }
@@ -279,7 +303,7 @@ math_add_basic_function(MathEquation *eq) {
       ptr[0] = MATH_FUNCTION_ARG_TYPE_ARRAY;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 53:  /*  PUSH  */
+    case 55:  /*  PUSH  */
       if (FuncAry[i].prm.arg_type) {
         break;
       }
@@ -291,7 +315,7 @@ math_add_basic_function(MathEquation *eq) {
       ptr[1] = MATH_FUNCTION_ARG_TYPE_DOUBLE;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 73:  /*  FOR  */
+    case 75:  /*  FOR  */
       if (FuncAry[i].prm.arg_type) {
         break;
       }
@@ -306,7 +330,7 @@ math_add_basic_function(MathEquation *eq) {
       ptr[4] = MATH_FUNCTION_ARG_TYPE_PROC;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 80:  /*  POP  */
+    case 82:  /*  POP  */
       if (FuncAry[i].prm.arg_type) {
         break;
       }
@@ -317,7 +341,7 @@ math_add_basic_function(MathEquation *eq) {
       ptr[0] = MATH_FUNCTION_ARG_TYPE_ARRAY;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 96:  /*  IF  */
+    case 98:  /*  IF  */
       if (FuncAry[i].prm.arg_type) {
         break;
       }
