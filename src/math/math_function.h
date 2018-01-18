@@ -21,6 +21,7 @@ struct math_function_parameter {
 int math_scanner_is_func(int chr);
 int math_add_basic_function(MathEquation *eq);
 
+int math_func_array_clear(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
 #ifdef HAVE_LIBGSL
 int math_func_zetam1_int(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
 #endif

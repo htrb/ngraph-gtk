@@ -13,6 +13,7 @@ struct funcs {
 };
 
 static struct funcs FuncAry[] = {
+  {"ARRAY_CLEAR", {1, 1, 0, math_func_array_clear, NULL, NULL, NULL, NULL}},
 #ifdef HAVE_LIBGSL
   {"ZETAM1_INT", {1, 0, 0, math_func_zetam1_int, NULL, NULL, NULL, NULL}},
 #else
@@ -186,7 +187,18 @@ math_add_basic_function(MathEquation *eq) {
       continue;
     }
     switch (i) {
-    case 12:  /*  UNSHIFT  */
+    case 0:  /*  ARRAY_CLEAR  */
+      if (FuncAry[i].prm.arg_type) {
+        break;
+      }
+      ptr = g_malloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * 1);
+      if (ptr == NULL) {
+        return 1;
+      }
+      ptr[0] = MATH_FUNCTION_ARG_TYPE_ARRAY;
+      FuncAry[i].prm.arg_type = ptr;
+      break;
+    case 13:  /*  UNSHIFT  */
       if (FuncAry[i].prm.arg_type) {
         break;
       }
@@ -198,7 +210,7 @@ math_add_basic_function(MathEquation *eq) {
       ptr[1] = MATH_FUNCTION_ARG_TYPE_DOUBLE;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 14:  /*  UNLESS  */
+    case 15:  /*  UNLESS  */
       if (FuncAry[i].prm.arg_type) {
         break;
       }
@@ -211,7 +223,7 @@ math_add_basic_function(MathEquation *eq) {
       ptr[2] = MATH_FUNCTION_ARG_TYPE_PROC;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 28:  /*  RSORT  */
+    case 29:  /*  RSORT  */
       if (FuncAry[i].prm.arg_type) {
         break;
       }
@@ -222,7 +234,7 @@ math_add_basic_function(MathEquation *eq) {
       ptr[0] = MATH_FUNCTION_ARG_TYPE_ARRAY;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 33:  /*  SHIFT  */
+    case 34:  /*  SHIFT  */
       if (FuncAry[i].prm.arg_type) {
         break;
       }
@@ -233,7 +245,7 @@ math_add_basic_function(MathEquation *eq) {
       ptr[0] = MATH_FUNCTION_ARG_TYPE_ARRAY;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 48:  /*  SORT  */
+    case 49:  /*  SORT  */
       if (FuncAry[i].prm.arg_type) {
         break;
       }
@@ -244,7 +256,7 @@ math_add_basic_function(MathEquation *eq) {
       ptr[0] = MATH_FUNCTION_ARG_TYPE_ARRAY;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 49:  /*  SIZE  */
+    case 50:  /*  SIZE  */
       if (FuncAry[i].prm.arg_type) {
         break;
       }
@@ -255,7 +267,7 @@ math_add_basic_function(MathEquation *eq) {
       ptr[0] = MATH_FUNCTION_ARG_TYPE_ARRAY;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 51:  /*  PUSH  */
+    case 52:  /*  PUSH  */
       if (FuncAry[i].prm.arg_type) {
         break;
       }
@@ -267,7 +279,7 @@ math_add_basic_function(MathEquation *eq) {
       ptr[1] = MATH_FUNCTION_ARG_TYPE_DOUBLE;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 71:  /*  FOR  */
+    case 72:  /*  FOR  */
       if (FuncAry[i].prm.arg_type) {
         break;
       }
@@ -282,7 +294,7 @@ math_add_basic_function(MathEquation *eq) {
       ptr[4] = MATH_FUNCTION_ARG_TYPE_PROC;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 78:  /*  POP  */
+    case 79:  /*  POP  */
       if (FuncAry[i].prm.arg_type) {
         break;
       }
@@ -293,7 +305,7 @@ math_add_basic_function(MathEquation *eq) {
       ptr[0] = MATH_FUNCTION_ARG_TYPE_ARRAY;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 94:  /*  IF  */
+    case 95:  /*  IF  */
       if (FuncAry[i].prm.arg_type) {
         break;
       }
