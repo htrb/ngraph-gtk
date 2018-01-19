@@ -334,6 +334,25 @@ new data
 	data::array=
 	data::file='DOCDIRDEF/demo8.dat'
 
+new text
+	text::hidden=false
+	text::R=0
+	text::G=0
+	text::B=0
+	text::A=255
+	text::clip=true
+	text::redraw_flag=true
+	text::text='Demo #8: DRAW\_RECT() and COLUMN[ ]'
+	text::x=4000
+	text::y=6842
+	text::pt=2000
+	text::font='Sans-serif'
+	text::style=1
+	text::space=0
+	text::direction=0
+	text::script_size=7000
+	text::raw=false
+
 new gra name:viewer
 	gra::left_margin=0
 	gra::top_margin=0
