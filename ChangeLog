@@ -1,3 +1,14 @@
+2018-01-19  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/odata.c (column_array_push, column_array_clear): added.
+	(getdataarray): use "column_array_clear()" and
+	"column_array_push()".
+
+	* src/math/math_basic_function.c (math_func_push): use
+	"math_equation_push_array_val()".
+
+	* src/math/math_equation.c (math_equation_push_array_val): added.
+
 2018-01-18  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/odata.c (getdataarray): call the function
