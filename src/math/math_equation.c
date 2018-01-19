@@ -1414,6 +1414,19 @@ math_equation_set_array_val(MathEquation *eq, int array, int index, const MathVa
 }
 
 int
+math_equation_push_array_val(MathEquation *eq, int array, const MathValue *val)
+{
+  MathEquationArray *ary;
+
+  ary = math_equation_get_array(eq, array);
+  if (ary == NULL) {
+    return 1;
+  }
+
+  return math_equation_set_array_val(eq, array, ary->num, val);
+}
+
+int
 math_equation_get_array_val(MathEquation *eq, int array, int index, MathValue *val)
 {
   int i;
