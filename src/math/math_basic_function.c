@@ -2575,19 +2575,12 @@ int
 math_func_push(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   int id;
-  MathEquationArray *ary;
 
   rval->val = 0;
 
   id = (int) exp->buf[0].idx;
-  ary = math_equation_get_array(eq, id);
 
-  if (ary == NULL) {
-    rval->type = MATH_VALUE_ERROR;
-    return 1;
-  }
-
-  if (math_equation_set_array_val(eq, id, ary->num, &exp->buf[1].val)) {
+  if (math_equation_push_array_val(eq, id, &exp->buf[1].val)) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
   }
