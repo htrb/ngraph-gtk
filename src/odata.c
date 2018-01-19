@@ -319,7 +319,7 @@ struct f2ddata {
   int *needx, *needy;
   int dxstat,dystat,d2stat,d3stat;
   double dx,dy,d2,d3;
-  int maxdim, column_array_id_x, column_array_id_y;
+  int maxdim, column_array_id_x, column_array_id_y, use_column_array;
   int need2pass;
   double sumx,sumy,sumxx,sumyy,sumxy;
   int num,datanum,prev_datanum;
@@ -1745,8 +1745,9 @@ opendata(struct objlist *obj,N_VALUE *inst,
     fp->codey[i] = f2dlocal->codey[i];
   }
   fp->const_id = f2dlocal->const_id;
-  fp->column_array_id_x = f2dlocal->column_array_id_x;
-  fp->column_array_id_y = f2dlocal->column_array_id_y;
+  fp->column_array_id_x = -1;
+  fp->column_array_id_y = -1;
+  fp->use_column_array = FALSE;
   switch (fp->type) {
   case TYPE_NORMAL:
     break;
@@ -1803,6 +1804,10 @@ opendata(struct objlist *obj,N_VALUE *inst,
       }
       add_file_prm(fp, prm);
     }
+
+    fp->column_array_id_x = f2dlocal->column_array_id_x;
+    fp->column_array_id_y = f2dlocal->column_array_id_y;
+    fp->use_column_array = (f2dlocal->column_array_id_x >=0 || f2dlocal->column_array_id_y >= 0);
   }
   return fp;
 }
@@ -2090,9 +2095,6 @@ f2dputmath(struct objlist *obj,N_VALUE *inst,char *field,char *math)
       f2dlocal->maxdimx = prm->id_max;
       array_id = math_equation_check_array(f2dlocal->codex[0], COLUMN_ARRAY_NAME);
       f2dlocal->column_array_id_x = array_id;
-      if (array_id >= 0) {
-	f2dlocal->maxdimx = FILE_OBJ_MAXCOL;
-      }
     }
   } else if (strcmp(field,"math_y")==0) {
     f2dlocal->column_array_id_y = -1;
@@ -2108,9 +2110,6 @@ f2dputmath(struct objlist *obj,N_VALUE *inst,char *field,char *math)
       f2dlocal->maxdimy = prm->id_max;
       array_id = math_equation_check_array(f2dlocal->codey[0], COLUMN_ARRAY_NAME);
       f2dlocal->column_array_id_y = array_id;
-      if (array_id >= 0) {
-	f2dlocal->maxdimx = FILE_OBJ_MAXCOL;
-      }
     }
   }
   return 0;
@@ -2605,6 +2604,32 @@ get_value_from_str(char *po, char *po2, int *type)
   return val;
 }
 
+static void
+column_array_clear(MathEquation **code, int id)
+{
+  int j;
+  if (id < 0) {
+    return;
+  }
+
+  for (j = 0; j < EQUATION_NUM; j++) {
+    math_equation_clear_array(code[j], id);
+  }
+}
+
+static void
+column_array_push(MathEquation **code, int id, MathValue *val)
+{
+  int j;
+  if (id < 0) {
+    return;
+  }
+
+  for (j = 0; j < EQUATION_NUM; j++) {
+    math_equation_push_array_val(code[j], id, val);
+  }
+}
+
 static int
 getdataarray(struct f2ddata *fp, char *buf, int maxdim, MathValue *data)
 {
@@ -2627,9 +2652,13 @@ getdataarray(struct f2ddata *fp, char *buf, int maxdim, MathValue *data)
   data[dim].val = fp->count;
   data[dim].type = MATH_VALUE_NORMAL;
   po=buf;
+  if (fp->use_column_array) {
+    column_array_clear(fp->codex, fp->column_array_id_x);
+    column_array_clear(fp->codey, fp->column_array_id_y);
+  }
   while (*po!='\0') {
     hex = FALSE;
-    if (dim>=maxdim) {
+    if (! fp->use_column_array && dim >= maxdim) {
       r = 0;
       break;
     }
@@ -2691,15 +2720,22 @@ getdataarray(struct f2ddata *fp, char *buf, int maxdim, MathValue *data)
     }
     po=po2;
     dim++;
-    data[dim].val = val;
-    data[dim].type = st;
+    if (dim <= maxdim) {
+      data[dim].val = val;
+      data[dim].type = st;
+    }
+    if (fp->use_column_array) {
+      MathValue v;
+      v.val = val;
+      v.type = st;
+      column_array_push(fp->codex, fp->column_array_id_x, &v);
+      column_array_push(fp->codey, fp->column_array_id_y, &v);
+    }
   }
   for (i=dim+1;i<=maxdim;i++) {
     data[i].val = 0;
     data[i].type = MATH_VALUE_NONUM;
   }
-  set_column_array(fp->codex, fp->column_array_id_x, data, dim);
-  set_column_array(fp->codey, fp->column_array_id_y, data, dim);
   return r;
 }
 
