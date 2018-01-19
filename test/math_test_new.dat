@@ -185,3 +185,12 @@ b:=3;b/=2;b#1.5
 b:=3;b\=2;b#1
 b:=3;b^=2;b#9
 fmod(5,3)#2
+array_clear(a)#0
+size(a)#0
+a[0]:=CONT;a[1]:=2;a[2]:=3;a[3]:=NAN;a[4]:=5;#5
+array_compact(a)#3
+a[2]#5
+array_sum(a)#10
+array_sumsq(a)#38
+array_min(a)#2
+array_max(a)#5
