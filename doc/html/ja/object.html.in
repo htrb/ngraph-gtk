@@ -1,6 +1,7 @@
-<html>
+<!DOCTYPE html>
+<html lang="ja">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="UTF-8">
 <title>Object</title>
 </head>
 <body>
@@ -81,6 +82,6 @@ Ngraphオブジェクト階層<br>
 
 <a name="OBJECTLIST">&nbsp;</a>
 <h2><a href="#TOP">Ngraphオブジェクト一覧</a></h2>
-<br>
-各オブジェクトのフィールド一覧を示します。<br>
-<br>
+<p>
+各オブジェクトのフィールド一覧を示します。
+</p>
