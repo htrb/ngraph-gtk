@@ -373,6 +373,7 @@ static int calc_fit_equation(struct objlist *obj, N_VALUE *inst, double x, doubl
 static void f2dtransf(double x,double y,int *gx,int *gy,void *local);
 static int _f2dtransf(double x,double y,int *gx,int *gy,void *local);
 static int f2drectclipf(double *x0,double *y0,double *x1,double *y1,void *local);
+static int f2dlineclipf(double *x0,double *y0,double *x1,double *y1,void *local);
 static int getposition(struct f2ddata *fp,double x,double y,int *gx,int *gy);
 static int getposition2(struct f2ddata *fp,int axtype,int aytype,double *x,double *y);
 static void set_column_array(MathEquation **code, int id, MathValue *gdata, int maxdim);
@@ -1135,6 +1136,56 @@ file_draw_rect(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
 }
 
 static int
+file_draw_line(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  struct f2ddata *fp;
+  int i, r, ap[4];;
+  double pos[4];
+
+  rval->val = 0;
+
+  if (exp->buf[0].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[1].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[2].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[3].val.type != MATH_VALUE_NORMAL) {
+    return 0;
+  }
+
+  fp = math_equation_get_user_data(eq);
+  if (fp == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  if (fp->GC < 0) {
+    return 0;
+  }
+
+  for (i = 0; i < 4; i++) {
+    pos[i] = exp->buf[i].val.val;
+  }
+
+  for (i = 0; i < 2; i++) {
+    r = getposition2(fp, fp->axtype, fp->aytype, pos + i * 2, pos + i * 2 + 1);
+    if (r) {
+      rval->type = MATH_VALUE_ERROR;
+      return -1;
+    }
+  }
+
+  if (f2dlineclipf(pos, pos + 1, pos + 2, pos + 3, fp)) {
+    return 0;
+  }
+  f2dtransf(pos[0], pos[1], ap + 0, ap + 1, fp);
+  f2dtransf(pos[2], pos[3], ap + 2, ap + 3, fp);
+
+  GRAcolor(fp->GC, fp->color.r, fp->color.g, fp->color.b, fp->color.a);
+  GRAline(fp->GC, ap[0], ap[1], ap[2], ap[3]);
+
+  return 0;
+}
+
+static int
 file_draw_mark(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   struct f2ddata *fp;
@@ -1206,6 +1257,7 @@ static struct funcs FileFunc[] = {
   {"MARKSIZE", {1, 0, 0, file_marksize, NULL, NULL, NULL, NULL}},
   {"MARKTYPE", {1, 0, 0, file_marktype, NULL, NULL, NULL, NULL}},
   {"DRAW_RECT", {6, 0, 0, file_draw_rect, NULL, NULL, NULL, NULL}},
+  {"DRAW_LINE", {4, 0, 0, file_draw_line, NULL, NULL, NULL, NULL}},
   {"DRAW_ARC", {DRAW_ARC_ARG_NUM, 0, 0, file_draw_arc, NULL, NULL, NULL, NULL}},
   {"DRAW_MARK", {3, 0, 0, file_draw_mark, NULL, NULL, NULL, NULL}},
 };
