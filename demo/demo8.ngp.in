@@ -334,6 +334,57 @@ new data
 	data::array=
 	data::file='DOCDIRDEF/demo8.dat'
 
+new data
+	data::hidden=false
+	data::R=252
+	data::G=233
+	data::B=79
+	data::A=255
+	data::clip=true
+	data::redraw_flag=true
+	data::source=file
+	data::save_path=unchange
+	data::x=100
+	data::y=128
+	data::type=line
+	data::interpolation=spline
+	data::fit=
+	data::math_x='IF(%0==NUM,G(SIZE(COLUMN),NUM)); X*h()'
+	data::math_y='IF(%0==COLY,FOR(0,1,SIZE(COLUMN)-1,1,F(RM(0),COLUMN[RM(0)],COLUMN[RM(0)+1]))); %0'
+	data::func_f='DRAW_LINE(X-1,Y*H(),X,Z*H())'
+	data::func_g='COLOR(3,128); DRAW_LINE(COLX,0,COLX,Y); DRAW_LINE(0,COLY,X,COLY)'
+	data::func_h=100
+	data::smooth_x=0
+	data::smooth_y=0
+	data::mark_type=0
+	data::mark_size=0
+	data::line_width=40
+	data::line_style=
+	data::line_join=bevel
+	data::line_miter_limit=1000
+	data::R2=255
+	data::G2=255
+	data::B2=255
+	data::A2=255
+	data::remark='#%'\'''
+	data::ifs=' ,	()'
+	data::csv=false
+	data::head_skip=0
+	data::read_step=1
+	data::final_line=-1
+	data::mask=
+	data::move_data=
+	data::move_data_x=
+	data::move_data_y=
+	data::axis_x='axis:0'
+	data::axis_y='axis:1'
+	data::data_clip=true
+	data::range_min=1.000000000000000e+00
+	data::range_max=1.000000000000000e+01
+	data::range_div=512
+	data::array=
+	data::file='DOCDIRDEF/demo8.dat'
+
 new text
 	text::hidden=false
 	text::R=0
@@ -342,7 +393,7 @@ new text
 	text::A=255
 	text::clip=true
 	text::redraw_flag=true
-	text::text='Demo #8: DRAW\_RECT() and COLUMN[ ]'
+	text::text='Demo #8:\nDRAW\_RECT(), DRAW\_LINE() and COLUMN[ ]'
 	text::x=4000
 	text::y=6842
 	text::pt=2000
