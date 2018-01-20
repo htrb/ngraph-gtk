@@ -580,7 +580,7 @@ new data
 	data::type=mark
 	data::interpolation=spline
 	data::fit=
-	data::math_x='a:=0; shift(column); n:=size(column); s:=array_sum(column); for(0,0,n-1,1,progn(hsb2(RM(0)/n,0.7,1),draw_rect(a,Y-0.25,a+=column[RM(0)]/s,Y+0.25,1,1)))'
+	data::math_x='a:=0; shift(col); n:=size(col); s:=array_sum(col); for(0,0,n-1,1,progn(hsb2(RM(0)/n,0.7,1),draw_rect(a,Y-0.25,a+=col[RM(0)]/s,Y+0.25,1,1)))'
 	data::math_y=
 	data::func_f=
 	data::func_g=
@@ -631,7 +631,7 @@ new data
 	data::type=mark
 	data::interpolation=spline
 	data::fit=
-	data::math_x='a:=0; shift(column); n:=size(column); s:=array_sum(column); for(0,0,n-1,1,progn(hsb2(RM(0)/n,0.7,1),r:=column[RM(0)]/s*360,draw_arc(Y,0,.4,.4,sum(r),-r,1,1,1,1)))'
+	data::math_x='a:=0; shift(col); n:=size(col); s:=array_sum(col); for(0,0,n-1,1,progn(hsb2(RM(0)/n,0.7,1),r:=col[RM(0)]/s*360,draw_arc(Y,0,.4,.4,sum(r),-r,1,1,1,1)))'
 	data::math_y=
 	data::func_f=
 	data::func_g=
