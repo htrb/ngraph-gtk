@@ -1,4 +1,11 @@
+2018-01-20  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/odata.c (file_draw_line): added.
+
 2018-01-19  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (set_headline_table_array)
+	(set_headline_table): check maximum column.
 
 	* src/odata.c (column_array_push, column_array_clear): added.
 	(getdataarray): use "column_array_clear()" and
