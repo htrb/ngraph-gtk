@@ -105,7 +105,7 @@ enum {
 #define PARENT		"draw"
 #define OVERSION	"1.00.00"
 #define F2DCONF		"[data]"
-#define COLUMN_ARRAY_NAME "COLUMN"
+#define COLUMN_ARRAY_NAME "COL"
 
 #define ERRFILE		100
 #define ERROPEN		101
