@@ -15,7 +15,7 @@ new axis name:fX1
 	axis::div=0
 	axis::type=linear
 	axis::x=5000
-	axis::y=26600
+	axis::y=24600
 	axis::direction=0
 	axis::baseline=true
 	axis::length=11000
@@ -85,7 +85,7 @@ new axis name:fY1
 	axis::div=0
 	axis::type=linear
 	axis::x=5000
-	axis::y=26600
+	axis::y=24600
 	axis::direction=9000
 	axis::baseline=false
 	axis::length=11000
@@ -155,7 +155,7 @@ new axis name:fU1
 	axis::div=0
 	axis::type=linear
 	axis::x=5000
-	axis::y=15600
+	axis::y=13600
 	axis::direction=0
 	axis::baseline=true
 	axis::length=11000
@@ -225,7 +225,7 @@ new axis name:fR1
 	axis::div=0
 	axis::type=linear
 	axis::x=16000
-	axis::y=26600
+	axis::y=24600
 	axis::direction=9000
 	axis::baseline=true
 	axis::length=11000
@@ -297,7 +297,7 @@ new axis name:fX2
 	axis::div=0
 	axis::type=linear
 	axis::x=1000
-	axis::y=13800
+	axis::y=12400
 	axis::direction=0
 	axis::baseline=false
 	axis::length=19000
@@ -367,7 +367,7 @@ new axis name:fY2
 	axis::div=0
 	axis::type=linear
 	axis::x=1000
-	axis::y=13800
+	axis::y=12400
 	axis::direction=9000
 	axis::baseline=true
 	axis::length=4500
@@ -437,7 +437,7 @@ new axis name:fU2
 	axis::div=0
 	axis::type=linear
 	axis::x=1000
-	axis::y=9300
+	axis::y=7900
 	axis::direction=0
 	axis::baseline=true
 	axis::length=19000
@@ -507,7 +507,7 @@ new axis name:fR2
 	axis::div=0
 	axis::type=linear
 	axis::x=20000
-	axis::y=13800
+	axis::y=12400
 	axis::direction=9000
 	axis::baseline=true
 	axis::length=4500
