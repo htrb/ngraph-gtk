@@ -298,9 +298,9 @@ new data
 	data::type=mark
 	data::interpolation=spline
 	data::fit=
-	data::math_x='for(0, 1, size(col)-1, 1, f(RM(0), Y, col[RM(0)])); X-1'
+	data::math_x='FOR(0, 1, SIZE(COL)-1, 1, F(RM(0), Y, COL[RM(0)])); X-1'
 	data::math_y='Y-1'
-	data::func_f='Z:=(1-Z)*0.68; hsb2(Z,1,1); draw_rect(X-1.1, Y-1.1, X, Y, 0, 1)'
+	data::func_f='Z:=(1-Z)*0.68; HSB2(Z,1,1); DRAW_RECT(X-1.1, Y-1.1, X, Y, 0, 1)'
 	data::func_g=
 	data::func_h=
 	data::smooth_x=0
@@ -349,11 +349,11 @@ new data
 	data::type=line
 	data::interpolation=spline
 	data::fit=
-	data::math_x='IF(%0==NUM,G(SIZE(COL),NUM)); X*h()'
-	data::math_y='IF(%0==COLY,FOR(0,1,SIZE(COL)-1,1,F(RM(0),COL[RM(0)],COL[RM(0)+1]))); %0'
-	data::func_f='DRAW_LINE(X-1,Y*H(),X,Z*H())'
+	data::math_x='IF(%0==NUM,G(SIZE(COL),NUM)); X*H()'
+	data::math_y='n:=AM(COL); IF(%0==COLY,FOR(0,1,n-1,1,F(RM(0)))); %0'
+	data::func_f='DRAW_LINE(X-1,RM(X)*H(),X,RM(X+1)*H())'
 	data::func_g='COLOR(3,128); DRAW_LINE(COLX,0,COLX,Y); DRAW_LINE(0,COLY,X,COLY)'
-	data::func_h=100
+	data::func_h='100'
 	data::smooth_x=0
 	data::smooth_y=0
 	data::mark_type=0
