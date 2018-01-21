@@ -194,3 +194,8 @@ array_sum(a)#10
 array_sumsq(a)#38
 array_min(a)#2
 array_max(a)#5
+array_clear(a)#0
+a[0]:=1;a[1]:=2;a[2]:=3;a[3]:=4;a[4]:=5;#5
+array_average(a)#3
+array_stdevp(a)#1.414213562373095e+00
+array_stdev(a)#1.581138830084190e+00
