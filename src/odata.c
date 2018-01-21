@@ -105,7 +105,7 @@ enum {
 #define PARENT		"draw"
 #define OVERSION	"1.00.00"
 #define F2DCONF		"[data]"
-#define COLUMN_ARRAY_NAME "COLUMN"
+#define COLUMN_ARRAY_NAME "COL"
 
 #define ERRFILE		100
 #define ERROPEN		101
@@ -319,7 +319,7 @@ struct f2ddata {
   int *needx, *needy;
   int dxstat,dystat,d2stat,d3stat;
   double dx,dy,d2,d3;
-  int maxdim, column_array_id_x, column_array_id_y;
+  int maxdim, column_array_id_x, column_array_id_y, use_column_array;
   int need2pass;
   double sumx,sumy,sumxx,sumyy,sumxy;
   int num,datanum,prev_datanum;
@@ -371,8 +371,12 @@ static int set_data_progress(struct f2ddata *fp);
 static int getminmaxdata(struct f2ddata *fp, struct f2dlocal *local);
 static int calc_fit_equation(struct objlist *obj, N_VALUE *inst, double x, double *y);
 static void f2dtransf(double x,double y,int *gx,int *gy,void *local);
+static int _f2dtransf(double x,double y,int *gx,int *gy,void *local);
 static int f2drectclipf(double *x0,double *y0,double *x1,double *y1,void *local);
+static int f2dlineclipf(double *x0,double *y0,double *x1,double *y1,void *local);
 static int getposition(struct f2ddata *fp,double x,double y,int *gx,int *gy);
+static int getposition2(struct f2ddata *fp,int axtype,int aytype,double *x,double *y);
+static void set_column_array(MathEquation **code, int id, MathValue *gdata, int maxdim);
 
 #if BUF_TYPE == USE_RING_BUF
 int
@@ -981,8 +985,8 @@ static int
 file_draw_arc(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   struct f2ddata *fp;
-  int i, num, stroke, fill, pie, close, cx, cy, ap[ARC_INTERPOLATION * 2], *pdata;
-  double x, y, rx, ry, angle1, angle2, angle;
+  int i, r, num, stroke, fill, pie, close, cx, cy, ap[ARC_INTERPOLATION * 2], *pdata;
+  double x, y, rx, ry, px, py, angle1, angle2, angle;
   struct narray expand_points;
 
   rval->val = 0;
@@ -1025,10 +1029,17 @@ file_draw_arc(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
   for (i = 0; i < ARC_INTERPOLATION; i++) {
     angle = angle1 + angle2 / (ARC_INTERPOLATION - 1) * i;
     angle = MPI * angle / 180.0;
-    f2dtransf(x + rx * cos(angle),
-	      y + ry * sin(angle),
+    px = x + rx * cos(angle);
+    py = y + ry * sin(angle);
+    r = getposition2(fp, fp->axtype, fp->aytype, &px, &py);
+    if (r) {
+      rval->type = MATH_VALUE_ERROR;
+      return -1;
+    }
+    f2dtransf(px, py,
 	      ap + i * 2,
-	      ap + i * 2 + 1, fp);
+	      ap + i * 2 + 1,
+	      fp);
   }
   arrayinit(&expand_points, sizeof(int));
   if (curve_expand_points(ap, ARC_INTERPOLATION, INTERPOLATION_TYPE_SPLINE, &expand_points)) {
@@ -1068,8 +1079,8 @@ static int
 file_draw_rect(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   struct f2ddata *fp;
-  int stroke, fill, ap[8];;
-  double x0, x1, y0, y1;
+  int i, r, stroke, fill, ap[8];;
+  double pos[4];
 
   rval->val = 0;
 
@@ -1092,21 +1103,26 @@ file_draw_rect(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
     return 0;
   }
 
-  x0 = exp->buf[0].val.val;
-  y0 = exp->buf[1].val.val;
-  x1 = exp->buf[2].val.val;
-  y1 = exp->buf[3].val.val;
+  for (i = 0; i < 4; i++) {
+    pos[i] = exp->buf[i].val.val;
+  }
   stroke = exp->buf[4].val.val;
   fill = exp->buf[5].val.val;
 
-  if (f2drectclipf(&x0, &y0, &x1, &y1, fp)) {
+  for (i = 0; i < 2; i++) {
+    r = getposition2(fp, fp->axtype, fp->aytype, pos + i * 2, pos + i * 2 + 1);
+    if (r) {
+      rval->type = MATH_VALUE_ERROR;
+      return -1;
+    }
+  }
+  if (f2drectclipf(pos, pos + 1, pos + 2, pos + 3, fp)) {
     return 0;
   }
-
-  f2dtransf(x0, y0, ap + 0, ap + 1, fp);
-  f2dtransf(x0, y1, ap + 2, ap + 3, fp);
-  f2dtransf(x1, y1, ap + 4, ap + 5, fp);
-  f2dtransf(x1, y0, ap + 6, ap + 7, fp);
+  f2dtransf(pos[0], pos[1], ap + 0, ap + 1, fp);
+  f2dtransf(pos[0], pos[3], ap + 2, ap + 3, fp);
+  f2dtransf(pos[2], pos[3], ap + 4, ap + 5, fp);
+  f2dtransf(pos[2], pos[1], ap + 6, ap + 7, fp);
 
   if (fill) {
     GRAcolor(fp->GC, fp->color2.r, fp->color2.g, fp->color2.b, fp->color2.a);
@@ -1116,6 +1132,56 @@ file_draw_rect(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
     GRAcolor(fp->GC, fp->color.r, fp->color.g, fp->color.b, fp->color.a);
     GRAdrawpoly(fp->GC, 4, ap, GRA_FILL_MODE_NONE);
   }
+  return 0;
+}
+
+static int
+file_draw_line(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  struct f2ddata *fp;
+  int i, r, ap[4];;
+  double pos[4];
+
+  rval->val = 0;
+
+  if (exp->buf[0].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[1].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[2].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[3].val.type != MATH_VALUE_NORMAL) {
+    return 0;
+  }
+
+  fp = math_equation_get_user_data(eq);
+  if (fp == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  if (fp->GC < 0) {
+    return 0;
+  }
+
+  for (i = 0; i < 4; i++) {
+    pos[i] = exp->buf[i].val.val;
+  }
+
+  for (i = 0; i < 2; i++) {
+    r = getposition2(fp, fp->axtype, fp->aytype, pos + i * 2, pos + i * 2 + 1);
+    if (r) {
+      rval->type = MATH_VALUE_ERROR;
+      return -1;
+    }
+  }
+
+  if (f2dlineclipf(pos, pos + 1, pos + 2, pos + 3, fp)) {
+    return 0;
+  }
+  f2dtransf(pos[0], pos[1], ap + 0, ap + 1, fp);
+  f2dtransf(pos[2], pos[3], ap + 2, ap + 3, fp);
+
+  GRAcolor(fp->GC, fp->color.r, fp->color.g, fp->color.b, fp->color.a);
+  GRAline(fp->GC, ap[0], ap[1], ap[2], ap[3]);
+
   return 0;
 }
 
@@ -1191,6 +1257,7 @@ static struct funcs FileFunc[] = {
   {"MARKSIZE", {1, 0, 0, file_marksize, NULL, NULL, NULL, NULL}},
   {"MARKTYPE", {1, 0, 0, file_marktype, NULL, NULL, NULL, NULL}},
   {"DRAW_RECT", {6, 0, 0, file_draw_rect, NULL, NULL, NULL, NULL}},
+  {"DRAW_LINE", {4, 0, 0, file_draw_line, NULL, NULL, NULL, NULL}},
   {"DRAW_ARC", {DRAW_ARC_ARG_NUM, 0, 0, file_draw_arc, NULL, NULL, NULL, NULL}},
   {"DRAW_MARK", {3, 0, 0, file_draw_mark, NULL, NULL, NULL, NULL}},
 };
@@ -1730,8 +1797,9 @@ opendata(struct objlist *obj,N_VALUE *inst,
     fp->codey[i] = f2dlocal->codey[i];
   }
   fp->const_id = f2dlocal->const_id;
-  fp->column_array_id_x = f2dlocal->column_array_id_x;
-  fp->column_array_id_y = f2dlocal->column_array_id_y;
+  fp->column_array_id_x = -1;
+  fp->column_array_id_y = -1;
+  fp->use_column_array = FALSE;
   switch (fp->type) {
   case TYPE_NORMAL:
     break;
@@ -1788,6 +1856,10 @@ opendata(struct objlist *obj,N_VALUE *inst,
       }
       add_file_prm(fp, prm);
     }
+
+    fp->column_array_id_x = f2dlocal->column_array_id_x;
+    fp->column_array_id_y = f2dlocal->column_array_id_y;
+    fp->use_column_array = (f2dlocal->column_array_id_x >=0 || f2dlocal->column_array_id_y >= 0);
   }
   return fp;
 }
@@ -2075,9 +2147,6 @@ f2dputmath(struct objlist *obj,N_VALUE *inst,char *field,char *math)
       f2dlocal->maxdimx = prm->id_max;
       array_id = math_equation_check_array(f2dlocal->codex[0], COLUMN_ARRAY_NAME);
       f2dlocal->column_array_id_x = array_id;
-      if (array_id >= 0) {
-	f2dlocal->maxdimx = FILE_OBJ_MAXCOL;
-      }
     }
   } else if (strcmp(field,"math_y")==0) {
     f2dlocal->column_array_id_y = -1;
@@ -2093,9 +2162,6 @@ f2dputmath(struct objlist *obj,N_VALUE *inst,char *field,char *math)
       f2dlocal->maxdimy = prm->id_max;
       array_id = math_equation_check_array(f2dlocal->codey[0], COLUMN_ARRAY_NAME);
       f2dlocal->column_array_id_y = array_id;
-      if (array_id >= 0) {
-	f2dlocal->maxdimx = FILE_OBJ_MAXCOL;
-      }
     }
   }
   return 0;
@@ -2590,8 +2656,34 @@ get_value_from_str(char *po, char *po2, int *type)
   return val;
 }
 
+static void
+column_array_clear(MathEquation **code, int id)
+{
+  int j;
+  if (id < 0) {
+    return;
+  }
+
+  for (j = 0; j < EQUATION_NUM; j++) {
+    math_equation_clear_array(code[j], id);
+  }
+}
+
+static void
+column_array_push(MathEquation **code, int id, MathValue *val)
+{
+  int j;
+  if (id < 0) {
+    return;
+  }
+
+  for (j = 0; j < EQUATION_NUM; j++) {
+    math_equation_push_array_val(code[j], id, val);
+  }
+}
+
 static int
-getdataarray(char *buf, int maxdim, double *count, MathValue *data, const char *ifs, int csv)
+getdataarray(struct f2ddata *fp, char *buf, int maxdim, MathValue *data)
 {
 /*
    return: 0 no error
@@ -2601,17 +2693,30 @@ getdataarray(char *buf, int maxdim, double *count, MathValue *data, const char *
   char *po, *po2;
   int st;
   double val;
-  int i;
+  int i, r;
   int dim, hex;
-
-  (*count)++;
+  char *ifs, csv;
+  MathValue v;
+  ifs = fp->ifs_buf;
+  csv = fp->csv;
+  fp->count++;
+  r = 1;
   dim=0;
-  data[dim].val = *count;
+  data[dim].val = fp->count;
   data[dim].type = MATH_VALUE_NORMAL;
   po=buf;
+  if (fp->use_column_array) {
+    column_array_clear(fp->codex, fp->column_array_id_x);
+    column_array_clear(fp->codey, fp->column_array_id_y);
+    column_array_push(fp->codex, fp->column_array_id_x, data);
+    column_array_push(fp->codey, fp->column_array_id_y, data);
+  }
   while (*po!='\0') {
     hex = FALSE;
-    if (dim>=maxdim) return 0;
+    if (! fp->use_column_array && dim >= maxdim) {
+      r = 0;
+      break;
+    }
     if (csv) {
       for (;*po==' ';po++);
       if (*po=='\0') break;
@@ -2670,14 +2775,21 @@ getdataarray(char *buf, int maxdim, double *count, MathValue *data, const char *
     }
     po=po2;
     dim++;
-    data[dim].val = val;
-    data[dim].type = st;
+    v.val = val;
+    v.type = st;
+    if (dim <= maxdim) {
+      data[dim] = v;
+    }
+    if (fp->use_column_array) {
+      column_array_push(fp->codex, fp->column_array_id_x, &v);
+      column_array_push(fp->codey, fp->column_array_id_y, &v);
+    }
   }
   for (i=dim+1;i<=maxdim;i++) {
     data[i].val = 0;
     data[i].type = MATH_VALUE_NONUM;
   }
-  return 1;
+  return r;
 }
 
 
@@ -3372,8 +3484,13 @@ static void
 set_column_array(MathEquation **code, int id, MathValue *gdata, int maxdim)
 {
   int i, j;
-  for (i = 0; i <= maxdim; i++) {
-    for (j = 0; j < EQUATION_NUM; j++) {
+  if (id < 0) {
+    return;
+  }
+
+  for (j = 0; j < EQUATION_NUM; j++) {
+    math_equation_clear_array(code[j], id);
+    for (i = 0; i <= maxdim; i++) {
       math_equation_set_array_val(code[j], id, i, gdata + i);
     }
   }
@@ -3403,7 +3520,7 @@ get_data_from_source(struct f2ddata *fp, int maxdim, MathValue *gdata)
     for (i = 0; buf[i] && CHECK_IFS(fp->ifs_buf, buf[i]); i++);
     rcode = 2;
     if (buf[i] != '\0' && (! CHECK_REMARK(fp->remark, fp->ifs_buf, buf[i]))) {
-      rcode = getdataarray(buf, maxdim, &fp->count, gdata, fp->ifs_buf, fp->csv);
+      rcode = getdataarray(fp, buf, maxdim, gdata);
       if (rcode != -1) {
 	rcode = 0;
       }
@@ -3427,6 +3544,8 @@ get_data_from_source(struct f2ddata *fp, int maxdim, MathValue *gdata)
       gdata[i] = nonum;
     }
 
+    set_column_array(fp->codex, fp->column_array_id_x, gdata, n);
+    set_column_array(fp->codey, fp->column_array_id_y, gdata, n);
     fp->line++;
     break;
   case DATA_SOURCE_RANGE:
@@ -3447,13 +3566,9 @@ get_data_from_source(struct f2ddata *fp, int maxdim, MathValue *gdata)
     }
 
     fp->line++;
+    set_column_array(fp->codex, fp->column_array_id_x, gdata, 2);
+    set_column_array(fp->codey, fp->column_array_id_y, gdata, 2);
     break;
-  }
-  if (fp->column_array_id_x >= 0) {
-    set_column_array(fp->codex, fp->column_array_id_x, gdata, fp->maxdim);
-  }
-  if (fp->column_array_id_y >= 0) {
-    set_column_array(fp->codey, fp->column_array_id_y, gdata, fp->maxdim);
   }
   return rcode;
 }
@@ -4225,80 +4340,26 @@ getminmaxdata(struct f2ddata *fp, struct f2dlocal *local)
 }
 
 static int
-getposition(struct f2ddata *fp,double x,double y,int *gx,int *gy)
+getposition(struct f2ddata *fp, double x, double y, int *gx, int *gy)
 /*
   return -1: unable to transform
           0: normal
           1: outside region
 */
 {
-  double minx,maxx,miny,maxy;
-  double v1x,v1y,v2x,v2y,vx,vy;
-  double a,b,c,d;
-
-  *gx=*gy=0;
-  minx=fp->axmin;
-  maxx=fp->axmax;
-  miny=fp->aymin;
-  maxy=fp->aymax;
-  if (fp->axtype == AXIS_TYPE_LOG) {
-    if (x==0) {
-      fp->ignore=TRUE;
-      return -1;
-    } else if (x<0) {
-      fp->negative=TRUE;
-      x=fabs(x);
-    }
-    x=log10(x);
-  } else if (fp->axtype == AXIS_TYPE_INVERSE) {
-    if (x==0) {
-      fp->ignore=TRUE;
-      return -1;
-    }
-    x=1/x;
-  }
-
-  if (fp->aytype == AXIS_TYPE_LOG) {
-    if (y==0) {
-      fp->ignore=TRUE;
-      return -1;
-    } else if (y<0) {
-      fp->negative=TRUE;
-      y=fabs(y);
-    }
-    y=log10(y);
-  } else if (fp->aytype == AXIS_TYPE_INVERSE) {
-    if (y==0) {
-      fp->ignore=TRUE;
-      return -1;
-    }
-    y=1/y;
+  *gx = *gy = 0;
+  if (getposition2(fp, fp->axtype, fp->aytype, &x, &y)) {
+    return -1;
   }
   if (fp->dataclip &&
-  ((((minx>x) || (x>maxx)) && ((maxx>x) || (x>minx)))
-   || (((miny>y) || (y>maxy)) && ((maxy>y) || (y>miny))))) return 1;
-  /* fix-me: this condition will be simplified as (fp->dataclip && (minx>x || x>maxx || miny>y || y>maxy)) */
-  v1x=fp->ratex*(x-minx)*fp->axvx;
-  v1y=fp->ratex*(x-minx)*fp->axvy;
-  v2x=fp->ratey*(y-miny)*fp->ayvx;
-  v2y=fp->ratey*(y-miny)*fp->ayvy;
-  vx=fp->ayposx-fp->axposx+v2x-v1x;
-  vy=fp->ayposy-fp->axposy+v2y-v1y;
-  a=fp->ayvy*fp->axvx-fp->ayvx*fp->axvy;
-  c=-fp->ayvy*vx+fp->ayvx*vy;
-  b=fp->axvy*fp->ayvx-fp->axvx*fp->ayvy;
-  d=fp->axvy*vx-fp->axvx*vy;
-  if ((fabs(a)<=1e-16) && (fabs(b)<=1e-16)) {
-    fp->ignore=TRUE;
+      (((fp->axmin > x || x > fp->axmax) && (fp->axmax > x || x > fp->axmin)) ||
+       ((fp->aymin > y || y > fp->aymax) && (fp->aymax > y || y > fp->aymin)))) {
+    /* fix-me: this condition will be simplified as (fp->dataclip && (fp->axmin>x || x>fp->axmax || fp->aymin>y || y>fp->aymax)) */
+    return 1;
+  }
+  if (_f2dtransf(x, y, gx, gy, fp)) {
+    fp->ignore = TRUE;
     return -1;
-  } else if (fabs(b)<=1e-16) {
-    a=c/a;
-    *gx=fp->ayposx+nround(v2x+a*fp->axvx);
-    *gy=fp->ayposy+nround(v2y+a*fp->axvy);
-  } else {
-    b=d/b;
-    *gx=fp->axposx+nround(v1x+b*fp->ayvx);
-    *gy=fp->axposy+nround(v1y+b*fp->ayvy);
   }
   return 0;
 }
@@ -4351,8 +4412,8 @@ getposition2(struct f2ddata *fp,int axtype,int aytype,double *x,double *y)
   return 0;
 }
 
-static void
-f2dtransf(double x,double y,int *gx,int *gy,void *local)
+static int
+_f2dtransf(double x,double y,int *gx,int *gy,void *local)
 {
   struct f2ddata *fp;
   double minx,miny;
@@ -4373,7 +4434,7 @@ f2dtransf(double x,double y,int *gx,int *gy,void *local)
   b=fp->axvy*fp->ayvx-fp->axvx*fp->ayvy;
   d=fp->axvy*vx-fp->axvx*vy;
   if ((fabs(a)<=1e-16) && (fabs(b)<=1e-16)) {
-    return;
+    return 1;
   } else if (fabs(b)<=1e-16) {
     a=c/a;
     *gx=fp->ayposx+nround(v2x+a*fp->axvx);
@@ -4383,6 +4444,13 @@ f2dtransf(double x,double y,int *gx,int *gy,void *local)
     *gx=fp->axposx+nround(v1x+b*fp->ayvx);
     *gy=fp->axposy+nround(v1y+b*fp->ayvy);
   }
+  return 0;
+}
+
+static void
+f2dtransf(double x,double y,int *gx,int *gy,void *local)
+{
+  _f2dtransf(x, y, gx, gy, local);
 }
 
 static int

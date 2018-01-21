@@ -1,6 +1,6 @@
 #!ngraph
 #%creator: Ngraph 
-#%version: 6.06.04
+#%version: 6.07.05
 new axis name:fX1
 	axis::hidden=false
 	axis::R=0
@@ -9,19 +9,19 @@ new axis name:fX1
 	axis::A=255
 	axis::clip=true
 	axis::redraw_flag=true
-	axis::min=-2.500000000000000e+01
-	axis::max=2.500000000000000e+01
-	axis::inc=1.000000000000000e+01
+	axis::min=0.000000000000000e+00
+	axis::max=1.000000000000000e+00
+	axis::inc=1.000000000000000e+00
 	axis::div=0
 	axis::type=linear
-	axis::x=2200
-	axis::y=22000
+	axis::x=5000
+	axis::y=24600
 	axis::direction=0
 	axis::baseline=true
-	axis::length=14000
+	axis::length=11000
 	axis::width=40
 	axis::style=
-	axis::auto_scale_margin=500
+	axis::auto_scale_margin=0
 	axis::adjust_axis=
 	axis::adjust_position=0
 	axis::arrow=none
@@ -31,7 +31,7 @@ new axis name:fX1
 	axis::wave_length=300
 	axis::wave_width=40
 	axis::reference=
-	axis::gauge=left
+	axis::gauge=right
 	axis::gauge_min=0.000000000000000e+00
 	axis::gauge_max=0.000000000000000e+00
 	axis::gauge_style=
@@ -69,6 +69,7 @@ new axis name:fX1
 	axis::num_B=0
 	axis::num_A=255
 	axis::num_date_format=
+	axis::num_math=
 
 new axis name:fY1
 	axis::hidden=false
@@ -78,19 +79,19 @@ new axis name:fY1
 	axis::A=255
 	axis::clip=true
 	axis::redraw_flag=true
-	axis::min=-2.500000000000000e+01
-	axis::max=2.500000000000000e+01
-	axis::inc=1.000000000000000e+01
+	axis::min=7.000000000000000e-01
+	axis::max=4.300000000000000e+00
+	axis::inc=1.000000000000000e+00
 	axis::div=0
 	axis::type=linear
-	axis::x=2200
-	axis::y=22000
+	axis::x=5000
+	axis::y=24600
 	axis::direction=9000
-	axis::baseline=true
-	axis::length=14000
+	axis::baseline=false
+	axis::length=11000
 	axis::width=40
 	axis::style=
-	axis::auto_scale_margin=500
+	axis::auto_scale_margin=1000
 	axis::adjust_axis=
 	axis::adjust_position=0
 	axis::arrow=none
@@ -100,7 +101,7 @@ new axis name:fY1
 	axis::wave_length=300
 	axis::wave_width=40
 	axis::reference=
-	axis::gauge=right
+	axis::gauge=none
 	axis::gauge_min=0.000000000000000e+00
 	axis::gauge_max=0.000000000000000e+00
 	axis::gauge_style=
@@ -138,9 +139,10 @@ new axis name:fY1
 	axis::num_B=0
 	axis::num_A=255
 	axis::num_date_format=
+	axis::num_math=
 
 new axis name:fU1
-	axis::hidden=false
+	axis::hidden=true
 	axis::R=0
 	axis::G=0
 	axis::B=0
@@ -152,11 +154,11 @@ new axis name:fU1
 	axis::inc=0.000000000000000e+00
 	axis::div=0
 	axis::type=linear
-	axis::x=2200
-	axis::y=8000
+	axis::x=5000
+	axis::y=13600
 	axis::direction=0
 	axis::baseline=true
-	axis::length=14000
+	axis::length=11000
 	axis::width=40
 	axis::style=
 	axis::auto_scale_margin=500
@@ -207,9 +209,10 @@ new axis name:fU1
 	axis::num_B=0
 	axis::num_A=255
 	axis::num_date_format=
+	axis::num_math=
 
 new axis name:fR1
-	axis::hidden=false
+	axis::hidden=true
 	axis::R=0
 	axis::G=0
 	axis::B=0
@@ -221,11 +224,11 @@ new axis name:fR1
 	axis::inc=0.000000000000000e+00
 	axis::div=0
 	axis::type=linear
-	axis::x=16200
-	axis::y=22000
+	axis::x=16000
+	axis::y=24600
 	axis::direction=9000
 	axis::baseline=true
-	axis::length=14000
+	axis::length=11000
 	axis::width=40
 	axis::style=
 	axis::auto_scale_margin=500
@@ -276,6 +279,7 @@ new axis name:fR1
 	axis::num_B=0
 	axis::num_A=255
 	axis::num_date_format=
+	axis::num_math=
 
 axis::grouping 1 0 1 2 3
 
@@ -287,19 +291,19 @@ new axis name:fX2
 	axis::A=255
 	axis::clip=true
 	axis::redraw_flag=true
-	axis::min=-1.000000000000000e+00
-	axis::max=1.000000000000000e+00
+	axis::min=5.000000000000000e-01
+	axis::max=4.500000000000000e+00
 	axis::inc=1.000000000000000e+00
 	axis::div=0
 	axis::type=linear
-	axis::x=18000
-	axis::y=22000
+	axis::x=1000
+	axis::y=12400
 	axis::direction=0
-	axis::baseline=true
-	axis::length=600
+	axis::baseline=false
+	axis::length=19000
 	axis::width=40
 	axis::style=
-	axis::auto_scale_margin=500
+	axis::auto_scale_margin=0
 	axis::adjust_axis=
 	axis::adjust_position=0
 	axis::arrow=none
@@ -323,7 +327,7 @@ new axis name:fX2
 	axis::gauge_G=0
 	axis::gauge_B=0
 	axis::gauge_A=255
-	axis::num=none
+	axis::num=right
 	axis::num_begin=0
 	axis::num_step=0
 	axis::num_num=-1
@@ -347,28 +351,29 @@ new axis name:fX2
 	axis::num_B=0
 	axis::num_A=255
 	axis::num_date_format=
+	axis::num_math=
 
 new axis name:fY2
-	axis::hidden=false
+	axis::hidden=true
 	axis::R=0
 	axis::G=0
 	axis::B=0
 	axis::A=255
 	axis::clip=true
 	axis::redraw_flag=true
-	axis::min=0.000000000000000e+00
-	axis::max=0.000000000000000e+00
-	axis::inc=0.000000000000000e+00
+	axis::min=-5.000000000000000e-01
+	axis::max=5.000000000000000e-01
+	axis::inc=1.000000000000000e+00
 	axis::div=0
 	axis::type=linear
-	axis::x=18000
-	axis::y=22000
+	axis::x=1000
+	axis::y=12400
 	axis::direction=9000
 	axis::baseline=true
-	axis::length=14000
+	axis::length=4500
 	axis::width=40
 	axis::style=
-	axis::auto_scale_margin=500
+	axis::auto_scale_margin=1000
 	axis::adjust_axis=
 	axis::adjust_position=0
 	axis::arrow=none
@@ -416,9 +421,10 @@ new axis name:fY2
 	axis::num_B=0
 	axis::num_A=255
 	axis::num_date_format=
+	axis::num_math=
 
 new axis name:fU2
-	axis::hidden=false
+	axis::hidden=true
 	axis::R=0
 	axis::G=0
 	axis::B=0
@@ -430,11 +436,11 @@ new axis name:fU2
 	axis::inc=0.000000000000000e+00
 	axis::div=0
 	axis::type=linear
-	axis::x=18000
-	axis::y=8000
+	axis::x=1000
+	axis::y=7900
 	axis::direction=0
 	axis::baseline=true
-	axis::length=600
+	axis::length=19000
 	axis::width=40
 	axis::style=
 	axis::auto_scale_margin=500
@@ -447,7 +453,7 @@ new axis name:fU2
 	axis::wave_length=300
 	axis::wave_width=40
 	axis::reference='axis:4'
-	axis::gauge=none
+	axis::gauge=right
 	axis::gauge_min=0.000000000000000e+00
 	axis::gauge_max=0.000000000000000e+00
 	axis::gauge_style=
@@ -485,9 +491,10 @@ new axis name:fU2
 	axis::num_B=0
 	axis::num_A=255
 	axis::num_date_format=
+	axis::num_math=
 
 new axis name:fR2
-	axis::hidden=false
+	axis::hidden=true
 	axis::R=0
 	axis::G=0
 	axis::B=0
@@ -495,18 +502,18 @@ new axis name:fR2
 	axis::clip=true
 	axis::redraw_flag=true
 	axis::min=0.000000000000000e+00
-	axis::max=4.000000000000000e+03
-	axis::inc=1.000000000000000e+03
+	axis::max=0.000000000000000e+00
+	axis::inc=0.000000000000000e+00
 	axis::div=0
 	axis::type=linear
-	axis::x=18600
-	axis::y=22000
+	axis::x=20000
+	axis::y=12400
 	axis::direction=9000
 	axis::baseline=true
-	axis::length=14000
+	axis::length=4500
 	axis::width=40
 	axis::style=
-	axis::auto_scale_margin=0
+	axis::auto_scale_margin=500
 	axis::adjust_axis=
 	axis::adjust_position=0
 	axis::arrow=none
@@ -516,7 +523,7 @@ new axis name:fR2
 	axis::wave_length=300
 	axis::wave_width=40
 	axis::reference='axis:5'
-	axis::gauge=none
+	axis::gauge=left
 	axis::gauge_min=0.000000000000000e+00
 	axis::gauge_max=0.000000000000000e+00
 	axis::gauge_style=
@@ -532,7 +539,7 @@ new axis name:fR2
 	axis::gauge_A=255
 	axis::num=right
 	axis::num_begin=0
-	axis::num_step=1
+	axis::num_step=0
 	axis::num_num=-1
 	axis::num_auto_norm=5
 	axis::num_head=
@@ -554,6 +561,7 @@ new axis name:fR2
 	axis::num_B=0
 	axis::num_A=255
 	axis::num_date_format=
+	axis::num_math=
 
 axis::grouping 1 4 5 6 7
 
@@ -565,21 +573,22 @@ new data
 	data::A=255
 	data::clip=true
 	data::redraw_flag=true
+	data::source=file
 	data::save_path=unchange
 	data::x=1
-	data::y=2
-	data::type=polygon_solid_fill
+	data::y=0
+	data::type=mark
 	data::interpolation=spline
 	data::fit=
-	data::math_x=
-	data::math_y='HSB(%03, 1, 1);Y'
-	data::func_f=
+	data::math_x='shift(col); n:=size(col); s:=array_sum(col); a:=0; for(0,0,n-1,1,progn(i:=RM(0),hsb2(i/n,0.7,1),f(a,Y,a+=col[i]/s)))'
+	data::math_y=
+	data::func_f='draw_rect(X,Y-0.25,Z,Y+0.25,1,1)'
 	data::func_g=
 	data::func_h=
 	data::smooth_x=0
 	data::smooth_y=0
 	data::mark_type=0
-	data::mark_size=200
+	data::mark_size=0
 	data::line_width=40
 	data::line_style=
 	data::line_join=bevel
@@ -588,8 +597,8 @@ new data
 	data::G2=255
 	data::B2=255
 	data::A2=255
-	data::remark='#'
-	data::ifs=' ,	('
+	data::remark='#%'\'''
+	data::ifs=' ,	()'
 	data::csv=false
 	data::head_skip=0
 	data::read_step=1
@@ -601,7 +610,11 @@ new data
 	data::axis_x='axis:0'
 	data::axis_y='axis:1'
 	data::data_clip=true
-	data::file='DOCDIRDEF/demo6.dat'
+	data::range_min=1.000000000000000e+00
+	data::range_max=1.000000000000000e+01
+	data::range_div=512
+	data::array=
+	data::file='DOCDIRDEF/demo9.dat'
 
 new data
 	data::hidden=false
@@ -611,68 +624,23 @@ new data
 	data::A=255
 	data::clip=true
 	data::redraw_flag=true
+	data::source=file
 	data::save_path=unchange
 	data::x=1
-	data::y=2
-	data::type=polygon
-	data::interpolation=spline
-	data::fit=
-	data::math_x=
-	data::math_y=
-	data::func_f=
-	data::func_g=
-	data::func_h=
-	data::smooth_x=0
-	data::smooth_y=0
-	data::mark_type=0
-	data::mark_size=200
-	data::line_width=10
-	data::line_style=
-	data::line_join=bevel
-	data::line_miter_limit=1000
-	data::R2=255
-	data::G2=255
-	data::B2=255
-	data::A2=255
-	data::remark='#'
-	data::ifs=' ,	('
-	data::csv=false
-	data::head_skip=0
-	data::read_step=1
-	data::final_line=-1
-	data::mask=
-	data::move_data=
-	data::move_data_x=
-	data::move_data_y=
-	data::axis_x='axis:0'
-	data::axis_y='axis:1'
-	data::data_clip=true
-	data::file='DOCDIRDEF/demo6.dat'
-
-new data
-	data::hidden=false
-	data::R=0
-	data::G=0
-	data::B=0
-	data::A=255
-	data::clip=true
-	data::redraw_flag=true
-	data::save_path=unchange
-	data::x=0
 	data::y=0
-	data::type=line
+	data::type=mark
 	data::interpolation=spline
 	data::fit=
-	data::math_x='0'
-	data::math_y='HSB((Y-1)/MAXY, 1, 1);MAXY-Y'
-	data::func_f=
+	data::math_x='shift(col); n:=size(col); s:=array_sum(col); for(0,0,n-1,1,progn(i:=RM(0),hsb2(i/n,0.7,1),r:=col[i]/s,f(SUM(r),Y,r)))'
+	data::math_y=
+	data::func_f='draw_arc(Y,0,.4,.4,X*360,-Z*360,1,1,1,1)'
 	data::func_g=
 	data::func_h=
 	data::smooth_x=0
 	data::smooth_y=0
 	data::mark_type=0
-	data::mark_size=200
-	data::line_width=600
+	data::mark_size=0
+	data::line_width=40
 	data::line_style=
 	data::line_join=bevel
 	data::line_miter_limit=1000
@@ -680,8 +648,8 @@ new data
 	data::G2=255
 	data::B2=255
 	data::A2=255
-	data::remark='#'
-	data::ifs=' ,	('
+	data::remark='#%'\'''
+	data::ifs=' ,	()'
 	data::csv=false
 	data::head_skip=0
 	data::read_step=1
@@ -691,20 +659,25 @@ new data
 	data::move_data_x=
 	data::move_data_y=
 	data::axis_x='axis:4'
-	data::axis_y='axis:7'
+	data::axis_y='axis:5'
 	data::data_clip=true
-	data::file='DOCDIRDEF/demo6.dat'
+	data::range_min=1.000000000000000e+00
+	data::range_max=1.000000000000000e+01
+	data::range_div=512
+	data::array=
+	data::file='DOCDIRDEF/demo9.dat'
 
 new text
 	text::hidden=false
 	text::R=0
 	text::G=0
 	text::B=0
+	text::A=255
 	text::clip=true
 	text::redraw_flag=true
-	text::text='Demo #6: POLYGON PLOT'
-	text::x=2500
-	text::y=6800
+	text::text='Demo #9:\nDRAW\_RECT() and DRAW\_ARC() FUNCTION'
+	text::x=4000
+	text::y=6842
 	text::pt=2000
 	text::font='Sans-serif'
 	text::style=1
@@ -719,4 +692,4 @@ new gra name:viewer
 	gra::zoom=10000
 	gra::paper_width=21000
 	gra::paper_height=29700
-	gra::draw_obj='axisgrid file axis merge legend rectangle arc path mark text'
+	gra::draw_obj='axisgrid axis data merge legend rectangle arc path mark text'

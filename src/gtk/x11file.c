@@ -3413,7 +3413,7 @@ set_headline_table_array(struct FileDialog *d, int max_lines)
   gtk_tree_view_set_model(GTK_TREE_VIEW(d->comment_table), NULL);
 
   n = (ary.data_num > max_lines) ? max_lines : ary.data_num;
-  m = ary.col_num;
+  m = (ary.col_num < MAX_COLS) ? ary.col_num : MAX_COLS;
   l = 1;
   for (i = 0; i < n; i++) {
     GtkTreeIter iter;
@@ -3515,6 +3515,7 @@ set_headline_table(struct FileDialog *d, char *s, int max_lines)
 
     gtk_list_store_append(model, &iter);
     m = arraynum(lines + i);
+    m = (m < MAX_COLS) ? m : MAX_COLS;
     for (j = 0; j < m; j++) {
       gtk_list_store_set(model, &iter, j + 1, arraynget_str(lines + i, j), -1);
     }

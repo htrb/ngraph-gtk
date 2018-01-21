@@ -1,3 +1,49 @@
+2018-01-21  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/math/math_basic_function.c (math_func_am)
+	(math_func_array_average, math_func_array_stdevp)
+	(math_func_array_stdev): added.
+
+2018-01-20  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/odata.c (file_draw_line): added.
+
+2018-01-19  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (set_headline_table_array)
+	(set_headline_table): check maximum column.
+
+	* src/odata.c (column_array_push, column_array_clear): added.
+	(getdataarray): use "column_array_clear()" and
+	"column_array_push()".
+
+	* src/math/math_basic_function.c (math_func_push): use
+	"math_equation_push_array_val()".
+
+	* src/math/math_equation.c (math_equation_push_array_val): added.
+
+2018-01-18  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/odata.c (getdataarray): call the function
+	"set_column_array()".
+	(set_column_array): call the function
+	"math_equation_clear_array()".
+	(set_column_array): check the parameter "id".
+
+	* src/math/math_basic_function.c (math_func_array_clear): added.
+	(math_func_array_sum): added.
+	(math_func_array_max, math_func_array_min): added.
+	(math_func_array_compact): added.
+
+	* src/math/math_equation.c (math_equation_clear_array): added.
+
+2018-01-17  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/odata.c (getposition): use "getposition2()" and
+	"_f2dtransf()".
+	(f2dtransf): use "_f2dtransf()".
+	(_f2dtransf): return integer.
+
 2018-01-16  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/odata.c (f2ddata, f2dlocal): add member "column_array_id_x"
@@ -206,7 +252,7 @@
 
 	* src/gtk/x11file.c (FileWinFileDraw): save undo information.
 
-	* src/gtk/x11merge.c (MergeWinUpdate): draw merge onject.
+	* src/gtk/x11merge.c (MergeWinUpdate): draw merge object.
 
 	* src/gtk/x11menu.c (UpdateAll): call only "UpdateAll2()".
 	(check_update_obj): added.

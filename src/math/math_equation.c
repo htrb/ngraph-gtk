@@ -1386,6 +1386,20 @@ check_array(MathEquation *eq, int id, int index)
 }
 
 int
+math_equation_clear_array(MathEquation *eq, int array)
+{
+  int i;
+
+  i = check_array(eq, array, 0);
+  if (i < 0)
+    return 1;
+
+  eq->array_buf[array].num = 0;
+
+  return 0;
+}
+
+int
 math_equation_set_array_val(MathEquation *eq, int array, int index, const MathValue *val)
 {
   int i;
@@ -1397,6 +1411,19 @@ math_equation_set_array_val(MathEquation *eq, int array, int index, const MathVa
   eq->array_buf[array].data[i] = *val;
 
   return 0;
+}
+
+int
+math_equation_push_array_val(MathEquation *eq, int array, const MathValue *val)
+{
+  MathEquationArray *ary;
+
+  ary = math_equation_get_array(eq, array);
+  if (ary == NULL) {
+    return 1;
+  }
+
+  return math_equation_set_array_val(eq, array, ary->num, val);
 }
 
 int

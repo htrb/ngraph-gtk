@@ -2411,6 +2411,34 @@ math_func_m(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 }
 
 int
+math_func_am(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int id, n;
+  MathEquationArray *ary;
+
+  rval->val = 0;
+  if (Memory == NULL && init_memory()) {
+    return 1;
+  }
+
+  id = (int) exp->buf[0].idx;
+  ary = math_equation_get_array(eq, id);
+
+  if (ary == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  n = (ary->num > MATH_FUNCTION_MEMORY_NUM) ? MATH_FUNCTION_MEMORY_NUM : ary->num;
+  if (n > 0) {
+    memcpy(Memory, ary->data, sizeof(*Memory) * n);
+  }
+  rval->val = n;
+
+  return 0;
+}
+
+int
 math_func_for(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   int n, r, i;
@@ -2575,19 +2603,12 @@ int
 math_func_push(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   int id;
-  MathEquationArray *ary;
 
   rval->val = 0;
 
   id = (int) exp->buf[0].idx;
-  ary = math_equation_get_array(eq, id);
 
-  if (ary == NULL) {
-    rval->type = MATH_VALUE_ERROR;
-    return 1;
-  }
-
-  if (math_equation_set_array_val(eq, id, ary->num, &exp->buf[1].val)) {
+  if (math_equation_push_array_val(eq, id, &exp->buf[1].val)) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
   }
@@ -2752,6 +2773,266 @@ math_func_size(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   }
 
   rval->val = ary->num;
+
+  return 0;
+}
+
+int
+math_func_array_sum(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int id, i;
+  MathEquationArray *ary;
+  double sum;
+
+  rval->val = 0;
+
+  id = (int) exp->buf[0].idx;
+  ary = math_equation_get_array(eq, id);
+
+  if (ary == NULL || ary->data == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  sum = 0;
+  for (i = 0; i < ary->num; i++) {
+    if (ary->data[i].type != MATH_VALUE_NORMAL) {
+      rval->type = MATH_VALUE_ERROR;
+      return 1;
+    }
+    sum += ary->data[i].val;
+  }
+  rval->val = sum;
+
+  return 0;
+}
+
+int
+math_func_array_sumsq(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int id, i;
+  MathEquationArray *ary;
+  double sum, val;
+
+  rval->val = 0;
+
+  id = (int) exp->buf[0].idx;
+  ary = math_equation_get_array(eq, id);
+
+  if (ary == NULL || ary->data == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  sum = 0;
+  for (i = 0; i < ary->num; i++) {
+    if (ary->data[i].type != MATH_VALUE_NORMAL) {
+      rval->type = MATH_VALUE_ERROR;
+      return 1;
+    }
+    val = ary->data[i].val;
+    sum += val * val;
+  }
+  rval->val = sum;
+
+  return 0;
+}
+
+int
+math_func_array_min(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int id, i;
+  MathEquationArray *ary;
+  double min;
+
+  rval->val = 0;
+
+  id = (int) exp->buf[0].idx;
+  ary = math_equation_get_array(eq, id);
+
+  if (ary == NULL || ary->num < 1 || ary->data == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  min = ary->data[0].val;
+  for (i = 0; i < ary->num; i++) {
+    if (ary->data[i].type != MATH_VALUE_NORMAL) {
+      rval->type = MATH_VALUE_ERROR;
+      return 1;
+    }
+    if (min > ary->data[i].val) {
+      min = ary->data[i].val;
+    }
+  }
+  rval->val = min;
+
+  return 0;
+}
+
+int
+math_func_array_average(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int n;
+
+  rval->val = 0;
+
+  if (math_func_size(exp, eq, rval)) {
+    return 1;
+  }
+  n = rval->val;
+
+  if (math_func_array_sum(exp, eq, rval)) {
+    return 1;
+  }
+  rval->val /= n;
+  return 0;
+}
+
+int
+math_func_array_stdevp(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int n;
+  double sum, sumsq, stdev;
+
+  rval->val = 0;
+
+  if (math_func_size(exp, eq, rval)) {
+    return 1;
+  }
+  n = rval->val;
+  if (n < 1) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  if (math_func_array_sum(exp, eq, rval)) {
+    return 1;
+  }
+  sum = rval->val;
+
+  if (math_func_array_sumsq(exp, eq, rval)) {
+    return 1;
+  }
+  sumsq = rval->val;
+
+  sum /= n;
+  stdev = sumsq / n - sum * sum;
+  if (stdev < 0) {
+    stdev = 0;
+  }
+  rval->val = sqrt(stdev);
+  return 0;
+}
+
+int
+math_func_array_stdev(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int n;
+  double stdev;
+
+  rval->val = 0;
+
+  if (math_func_size(exp, eq, rval)) {
+    return 1;
+  }
+  n = rval->val;
+  if (n < 2) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  if (math_func_array_stdevp(exp, eq, rval)) {
+    return 1;
+  }
+  stdev = rval->val;
+  stdev *= stdev * n;
+  stdev /= n - 1;
+  rval->val = sqrt(stdev);
+  return 0;
+}
+
+int
+math_func_array_max(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int id, i;
+  MathEquationArray *ary;
+  double max;
+
+  rval->val = 0;
+
+  id = (int) exp->buf[0].idx;
+  ary = math_equation_get_array(eq, id);
+
+  if (ary == NULL || ary->num < 1 || ary->data == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  max = ary->data[0].val;
+  for (i = 0; i < ary->num; i++) {
+    if (ary->data[i].type != MATH_VALUE_NORMAL) {
+      rval->type = MATH_VALUE_ERROR;
+      return 1;
+    }
+    if (max < ary->data[i].val) {
+      max = ary->data[i].val;
+    }
+  }
+  rval->val = max;
+
+  return 0;
+}
+
+int
+math_func_array_compact(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int id, i, n;
+  MathEquationArray *ary;
+
+  rval->val = 0;
+
+  id = (int) exp->buf[0].idx;
+  ary = math_equation_get_array(eq, id);
+
+  if (ary == NULL || ary->num < 1 || ary->data == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  n = 0;
+  for (i = 0; i < ary->num; i++) {
+    if (ary->data[i].type != MATH_VALUE_NORMAL) {
+      ary->num--;
+      n++;
+      if (i < ary->num) {
+        memmove(ary->data + i, ary->data + i + 1, sizeof(*ary->data) * (ary->num - i));
+      }
+    }
+  }
+  for (i = 0; i < n; i++) {
+    ary->data[i + ary->num].type = MATH_VALUE_NORMAL;
+    ary->data[i + ary->num].val = 0;
+  }
+  rval->val = ary->num;
+
+  return 0;
+}
+
+int
+math_func_array_clear(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int id, r;
+
+  rval->val = 0;
+
+  id = (int) exp->buf[0].idx;
+
+  r = math_equation_clear_array(eq, id);
+  if (r) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
 
   return 0;
 }

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.07.05\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2018-01-16 15:40+0900\n"
+"POT-Creation-Date: 2018-01-20 10:04+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -916,7 +916,7 @@ msgstr ""
 msgid "_Draw"
 msgstr ""
 
-#: src/gtk/x11file.c:138 src/gtk/x11file.c:530 src/gtk/x11file.c:3710
+#: src/gtk/x11file.c:138 src/gtk/x11file.c:530 src/gtk/x11file.c:3711
 #: src/gtk/x11menu.c:1590 src/gtk/x11menu.c:2939
 msgid "_Edit"
 msgstr ""
@@ -1105,8 +1105,8 @@ msgstr ""
 msgid "_Y smooth:"
 msgstr ""
 
-#: src/gtk/x11file.c:2568 src/gtk/x11file.c:3756 src/gtk/x11file.c:3825
-#: src/gtk/x11file.c:3885 src/gtk/x11file.c:5506
+#: src/gtk/x11file.c:2568 src/gtk/x11file.c:3757 src/gtk/x11file.c:3826
+#: src/gtk/x11file.c:3886 src/gtk/x11file.c:5507
 #, c-format
 msgid "Create"
 msgstr ""
@@ -1171,116 +1171,116 @@ msgstr ""
 msgid "This file contain invalid UTF-8 strings."
 msgstr ""
 
-#: src/gtk/x11file.c:3693
+#: src/gtk/x11file.c:3694
 #, c-format
 msgid "Data %d (File)"
 msgstr ""
 
-#: src/gtk/x11file.c:3697 src/gtk/x11file.c:3789 src/gtk/x11file.c:3853
+#: src/gtk/x11file.c:3698 src/gtk/x11file.c:3790 src/gtk/x11file.c:3854
 msgid "_Apply all"
 msgstr ""
 
-#: src/gtk/x11file.c:3702 src/gtk/x11merge.c:133 src/gtk/x11print.c:161
+#: src/gtk/x11file.c:3703 src/gtk/x11merge.c:133 src/gtk/x11print.c:161
 msgid "_File:"
 msgstr ""
 
-#: src/gtk/x11file.c:3705
+#: src/gtk/x11file.c:3706
 msgid "_Load settings"
 msgstr ""
 
-#: src/gtk/x11file.c:3721 src/gtk/x11file.c:3802 src/gtk/x11file.c:3878
+#: src/gtk/x11file.c:3722 src/gtk/x11file.c:3803 src/gtk/x11file.c:3879
 #: src/gtk/x11view.c:954
 msgid "_Mask"
 msgstr ""
 
-#: src/gtk/x11file.c:3725 src/gtk/x11file.c:3806 src/gtk/x11file.c:3882
+#: src/gtk/x11file.c:3726 src/gtk/x11file.c:3807 src/gtk/x11file.c:3883
 #: src/gtk/x11view.c:955
 msgid "_Move"
 msgstr ""
 
-#: src/gtk/x11file.c:3732
+#: src/gtk/x11file.c:3733
 msgid "_Table"
 msgstr ""
 
-#: src/gtk/x11file.c:3741
+#: src/gtk/x11file.c:3742
 msgid "_Plain"
 msgstr ""
 
-#: src/gtk/x11file.c:3757 src/gtk/x11file.c:3826 src/gtk/x11file.c:3886
+#: src/gtk/x11file.c:3758 src/gtk/x11file.c:3827 src/gtk/x11file.c:3887
 msgid "_Fit:"
 msgstr ""
 
-#: src/gtk/x11file.c:3785
+#: src/gtk/x11file.c:3786
 #, c-format
 msgid "Data %d (Array)"
 msgstr ""
 
-#: src/gtk/x11file.c:3794
+#: src/gtk/x11file.c:3795
 msgid "_Array:"
 msgstr ""
 
-#: src/gtk/x11file.c:3849
+#: src/gtk/x11file.c:3850
 #, c-format
 msgid "Data %d (Range)"
 msgstr ""
 
-#: src/gtk/x11file.c:3860
+#: src/gtk/x11file.c:3861
 msgid "_Minimum:"
 msgstr ""
 
-#: src/gtk/x11file.c:3865
+#: src/gtk/x11file.c:3866
 msgid "_Maximum:"
 msgstr ""
 
-#: src/gtk/x11file.c:3869 src/gtk/x11lgndx.c:420
+#: src/gtk/x11file.c:3870 src/gtk/x11lgndx.c:420
 msgid "_Division:"
 msgstr ""
 
-#: src/gtk/x11file.c:4254 src/gtk/x11menu.c:640
+#: src/gtk/x11file.c:4255 src/gtk/x11menu.c:640
 msgid "Add Data file"
 msgstr ""
 
-#: src/gtk/x11file.c:4304
+#: src/gtk/x11file.c:4305
 msgid "close data (multi select)"
 msgstr ""
 
-#: src/gtk/x11file.c:4412
+#: src/gtk/x11file.c:4413
 msgid "data property (multi select)"
 msgstr ""
 
-#: src/gtk/x11file.c:4458
+#: src/gtk/x11file.c:4459
 msgid "edit data file (single select)"
 msgstr ""
 
-#: src/gtk/x11file.c:5353
+#: src/gtk/x11file.c:5354
 msgid "Data file"
 msgstr ""
 
-#: src/gtk/x11file.c:5359
+#: src/gtk/x11file.c:5360
 msgid "Making data file"
 msgstr ""
 
-#: src/gtk/x11file.c:5360
+#: src/gtk/x11file.c:5361
 msgid "Making data file."
 msgstr ""
 
-#: src/gtk/x11file.c:5558 src/gtk/x11lgnd.c:2928
+#: src/gtk/x11file.c:5559 src/gtk/x11lgnd.c:2928
 msgid "Join"
 msgstr ""
 
-#: src/gtk/x11file.c:5563 src/gtk/x11lgnd.c:2907 src/gtk/gtk_widget.c:1233
+#: src/gtk/x11file.c:5564 src/gtk/x11lgnd.c:2907 src/gtk/gtk_widget.c:1233
 msgid "Color 1"
 msgstr ""
 
-#: src/gtk/x11file.c:5570 src/gtk/x11lgnd.c:2908 src/gtk/gtk_widget.c:1240
+#: src/gtk/x11file.c:5571 src/gtk/x11lgnd.c:2908 src/gtk/gtk_widget.c:1240
 msgid "Color 2"
 msgstr ""
 
-#: src/gtk/x11file.c:5578
+#: src/gtk/x11file.c:5579
 msgid "Clip"
 msgstr ""
 
-#: src/gtk/x11file.c:5590
+#: src/gtk/x11file.c:5591
 msgid "Type"
 msgstr ""
 
