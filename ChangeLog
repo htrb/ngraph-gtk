@@ -1,6 +1,8 @@
 2018-01-21  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
-	* src/math/math_basic_function.c (math_func_am): added.
+	* src/math/math_basic_function.c (math_func_am)
+	(math_func_array_average, math_func_array_stdevp)
+	(math_func_array_stdev): added.
 
 2018-01-20  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
