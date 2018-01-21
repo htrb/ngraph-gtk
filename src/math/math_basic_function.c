@@ -2871,6 +2871,88 @@ math_func_array_min(MathFunctionCallExpression *exp, MathEquation *eq, MathValue
 }
 
 int
+math_func_array_average(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int n;
+
+  rval->val = 0;
+
+  if (math_func_size(exp, eq, rval)) {
+    return 1;
+  }
+  n = rval->val;
+
+  if (math_func_array_sum(exp, eq, rval)) {
+    return 1;
+  }
+  rval->val /= n;
+  return 0;
+}
+
+int
+math_func_array_stdevp(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int n;
+  double sum, sumsq, stdev;
+
+  rval->val = 0;
+
+  if (math_func_size(exp, eq, rval)) {
+    return 1;
+  }
+  n = rval->val;
+  if (n < 1) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  if (math_func_array_sum(exp, eq, rval)) {
+    return 1;
+  }
+  sum = rval->val;
+
+  if (math_func_array_sumsq(exp, eq, rval)) {
+    return 1;
+  }
+  sumsq = rval->val;
+
+  sum /= n;
+  stdev = sumsq / n - sum * sum;
+  if (stdev < 0) {
+    stdev = 0;
+  }
+  rval->val = sqrt(stdev);
+  return 0;
+}
+
+int
+math_func_array_stdev(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int n;
+  double stdev;
+
+  rval->val = 0;
+
+  if (math_func_size(exp, eq, rval)) {
+    return 1;
+  }
+  n = rval->val;
+  if (n < 2) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  if (math_func_array_stdevp(exp, eq, rval)) {
+    return 1;
+  }
+  stdev = rval->val;
+  stdev *= stdev * n;
+  stdev /= n - 1;
+  rval->val = sqrt(stdev);
+  return 0;
+}
+
+int
 math_func_array_max(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   int id, i;

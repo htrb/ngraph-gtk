@@ -75,6 +75,9 @@ size		1	1	0	1
 array_clear	1	1	0	1
 array_sum	1	1	0	1
 array_sumsq	1	1	0	1
+array_average	1	1	0	1
+array_stdevp	1	1	0	1
+array_stdev	1	1	0	1
 array_compact	1	1	0	1
 array_min	1	1	0	1
 array_max	1	1	0	1
