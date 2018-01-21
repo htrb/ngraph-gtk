@@ -156,7 +156,8 @@ static struct funcs FuncAry[] = {
   {"LT", {3, 0, 0, math_func_lt, NULL, NULL, NULL, NULL}},
   {"OR", {2, 0, 0, math_func_or, NULL, NULL, NULL, NULL}},
   {"RM", {1, 1, 0, math_func_rm, NULL, NULL, NULL, NULL}},
-  {"CM", {1, 0, 0, math_func_cm, NULL, NULL, NULL, NULL}},
+  {"CM", {1, 1, 0, math_func_cm, NULL, NULL, NULL, NULL}},
+  {"AM", {1, 1, 0, math_func_am, NULL, NULL, NULL, NULL}},
   {"IF", {3, 0, 0, math_func_if, NULL, NULL, NULL, NULL}},
 #ifdef HAVE_LIBGSL
   {"IN", {2, 0, 0, math_func_in, NULL, NULL, NULL, NULL}},
@@ -365,7 +366,18 @@ math_add_basic_function(MathEquation *eq) {
       ptr[0] = MATH_FUNCTION_ARG_TYPE_ARRAY;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 100:  /*  IF  */
+    case 100:  /*  AM  */
+      if (FuncAry[i].prm.arg_type) {
+        break;
+      }
+      ptr = g_malloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * 1);
+      if (ptr == NULL) {
+        return 1;
+      }
+      ptr[0] = MATH_FUNCTION_ARG_TYPE_ARRAY;
+      FuncAry[i].prm.arg_type = ptr;
+      break;
+    case 101:  /*  IF  */
       if (FuncAry[i].prm.arg_type) {
         break;
       }

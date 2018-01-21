@@ -143,6 +143,7 @@ int math_func_lt(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *r
 int math_func_or(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
 int math_func_rm(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
 int math_func_cm(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
+int math_func_am(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
 int math_func_if(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
 #ifdef HAVE_LIBGSL
 int math_func_in(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);

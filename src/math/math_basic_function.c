@@ -2411,6 +2411,34 @@ math_func_m(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 }
 
 int
+math_func_am(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int id, n;
+  MathEquationArray *ary;
+
+  rval->val = 0;
+  if (Memory == NULL && init_memory()) {
+    return 1;
+  }
+
+  id = (int) exp->buf[0].idx;
+  ary = math_equation_get_array(eq, id);
+
+  if (ary == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  n = (ary->num > MATH_FUNCTION_MEMORY_NUM) ? MATH_FUNCTION_MEMORY_NUM : ary->num;
+  if (n > 0) {
+    memcpy(Memory, ary->data, sizeof(*Memory) * n);
+  }
+  rval->val = n;
+
+  return 0;
+}
+
+int
 math_func_for(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   int n, r, i;
