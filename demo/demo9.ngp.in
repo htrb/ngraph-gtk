@@ -580,10 +580,10 @@ new data
 	data::type=mark
 	data::interpolation=spline
 	data::fit=
-	data::math_x='shift(col); n:=size(col); s:=array_sum(col); a:=0; for(0,0,n-1,1,progn(i:=RM(0),hsb2(i/n,0.7,1),f(a,Y,a+=col[i]/s)))'
+	data::math_x='shift(col); n:=size(col); s:=array_sum(col); a:=0; for(0,0,n-1,1,progn(g(i:=RM(0),n),f(a,Y,a+=col[i]/s)))'
 	data::math_y=
 	data::func_f='draw_rect(X,Y-0.25,Z,Y+0.25,1,1)'
-	data::func_g=
+	data::func_g='hsb2(X/Y,0.7,1)'
 	data::func_h=
 	data::smooth_x=0
 	data::smooth_y=0
@@ -631,10 +631,10 @@ new data
 	data::type=mark
 	data::interpolation=spline
 	data::fit=
-	data::math_x='shift(col); n:=size(col); s:=array_sum(col); for(0,0,n-1,1,progn(i:=RM(0),hsb2(i/n,0.7,1),r:=col[i]/s,f(SUM(r),Y,r)))'
+	data::math_x='shift(col); n:=size(col); s:=array_sum(col); for(0,0,n-1,1,progn(g(i:=RM(0),n),f(r:=col[i]/s,Y,SUM(r))))'
 	data::math_y=
-	data::func_f='draw_arc(Y,0,.4,.4,X*360,-Z*360,1,1,1,1)'
-	data::func_g=
+	data::func_f='draw_arc(Y,0,.4,.4,Z*360,-X*360,1,1,1,1)'
+	data::func_g='hsb2(X/Y,0.7,1)'
 	data::func_h=
 	data::smooth_x=0
 	data::smooth_y=0
