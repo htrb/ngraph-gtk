@@ -174,13 +174,13 @@
 2017-12-11  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_subwin.c (update): don't call "d->update()" if the
-	returned value of the function "DialogExecute()" id "IDCANCEL".
+	returned value of the function "DialogExecute()" is "IDCANCEL".
 
 	* src/gtk/x11file.c (FitDialogResult): use "markup_message_box()".
 	(select_type): check the returned value of the function
 	"show_fit_dialog()".
 	(FileWinFileUpdate): don't call "d->update()" if the returned
-	value of the function "DialogExecute()" id "IDCANCEL".
+	value of the function "DialogExecute()" is "IDCANCEL".
 
 	* src/gtk/x11gui.c (markup_message_box): added.
 	(message_box): use "markup_message_box()".
@@ -9908,7 +9908,7 @@
 	exist.
 
 	* initfile/Ngraph.nsc: use "-q" option for "exist" command.
-	(load_graph): argument of "$LOGIN_SHELL" id full-path filename.
+	(load_graph): argument of "$LOGIN_SHELL" is full-path filename.
 
 2009-07-02  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
@@ -11441,7 +11441,7 @@
 2009-02-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (ViewerEvPaint): call "gdk_draw_drawable()"
-	even if "GlobalLock" id TRUE.
+	even if "GlobalLock" is TRUE.
 	(ViewerEvPaint): don't check "chkobjinstoid(Menulocal.GRAobj,
 	Menulocal.GRAoid)".
 
