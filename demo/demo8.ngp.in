@@ -298,7 +298,7 @@ new data
 	data::type=mark
 	data::interpolation=spline
 	data::fit=
-	data::math_x='FOR(0, 1, SIZE(COL)-1, 1, F(RM(0), Y, COL[RM(0)])); X-1'
+	data::math_x='FOR(0, 1, SIZE(COL)-1, 1, F(i:=RM(0), Y, COL[i])); X-1'
 	data::math_y='Y-1'
 	data::func_f='Z:=(1-Z)*0.68; HSB2(Z,1,1); DRAW_RECT(X-1.1, Y-1.1, X, Y, 0, 1)'
 	data::func_g=
@@ -350,7 +350,7 @@ new data
 	data::interpolation=spline
 	data::fit=
 	data::math_x='IF(%0==NUM,G(SIZE(COL),NUM)); X*H()'
-	data::math_y='n:=AM(COL); IF(%0==COLY,FOR(0,1,n-1,1,F(RM(0)))); %0'
+	data::math_y='IF(%0==COLY,FOR(0,1,AM(COL)-1,1,F(RM(0)))); %0'
 	data::func_f='DRAW_LINE(X-1,RM(X)*H(),X,RM(X+1)*H())'
 	data::func_g='COLOR(3,128); DRAW_LINE(COLX,0,COLX,Y); DRAW_LINE(0,COLY,X,COLY)'
 	data::func_h='100'
