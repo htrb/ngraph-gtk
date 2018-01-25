@@ -1175,7 +1175,7 @@ CmGraphShell(void *w, gpointer client_data)
   }
   unregisterevloop(robj, idn, inst);
   menu_lock(FALSE);
-  set_graph_modified_gra();
+  set_graph_modified();
   UpdateAll(NULL);
 }
 
