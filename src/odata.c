@@ -985,8 +985,8 @@ static int
 file_draw_arc(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   struct f2ddata *fp;
-  int i, r, num, stroke, fill, pie, close, cx, cy, ap[ARC_INTERPOLATION * 2], *pdata;
-  double x, y, rx, ry, px, py, angle1, angle2, angle;
+  int i, r, num, stroke, fill, pie, close, cx, cy, ap[ARC_INTERPOLATION * 2], *pdata, px, py;
+  double x, y, rx, ry, angle1, angle2, angle;
   struct narray expand_points;
 
   rval->val = 0;
@@ -1027,16 +1027,17 @@ file_draw_arc(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
     close = TRUE;
   }
   for (i = 0; i < ARC_INTERPOLATION; i++) {
+    double ax, ay;
     angle = angle1 + angle2 / (ARC_INTERPOLATION - 1) * i;
     angle = MPI * angle / 180.0;
-    px = x + rx * cos(angle);
-    py = y + ry * sin(angle);
-    r = getposition2(fp, fp->axtype, fp->aytype, &px, &py);
+    ax = x + rx * cos(angle);
+    ay = y + ry * sin(angle);
+    r = getposition2(fp, fp->axtype, fp->aytype, &ax, &ay);
     if (r) {
       rval->type = MATH_VALUE_ERROR;
       return -1;
     }
-    f2dtransf(px, py,
+    f2dtransf(ax, ay,
 	      ap + i * 2,
 	      ap + i * 2 + 1,
 	      fp);
@@ -1052,6 +1053,7 @@ file_draw_arc(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
   }
   num = arraynum(&expand_points) / 2;
   pdata = arraydata(&expand_points);
+  GRAcurrent_point(fp->GC, &px, &py);
   if (fill) {
     GRAcolor(fp->GC, fp->color2.r, fp->color2.g, fp->color2.b, fp->color2.a);
     GRAdrawpoly(fp->GC, num, pdata, GRA_FILL_MODE_EVEN_ODD);
@@ -1061,16 +1063,15 @@ file_draw_arc(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
     if (close) {
       GRAdrawpoly(fp->GC, num, pdata, GRA_FILL_MODE_NONE);
     } else {
-      int n, px, py;
+      int n;
       n = (pie) ? num - 1 : num;
-      GRAcurrent_point(fp->GC, &px, &py);
       GRAmoveto(fp->GC, pdata[0], pdata[1]);
       for (i = 1; i < n; i++) {
 	GRAlineto(fp->GC, pdata[i * 2], pdata[i * 2 + 1]);
       }
-      GRAmoveto(fp->GC, px, py);
     }
   }
+  GRAmoveto(fp->GC, px, py);
   arraydel(&expand_points);
   return 0;
 }
@@ -1079,7 +1080,7 @@ static int
 file_draw_rect(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   struct f2ddata *fp;
-  int i, r, stroke, fill, ap[8];;
+  int i, r, stroke, fill, ap[8], px, py;
   double pos[4];
 
   rval->val = 0;
@@ -1124,6 +1125,7 @@ file_draw_rect(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   f2dtransf(pos[2], pos[3], ap + 4, ap + 5, fp);
   f2dtransf(pos[2], pos[1], ap + 6, ap + 7, fp);
 
+  GRAcurrent_point(fp->GC, &px, &py);
   if (fill) {
     GRAcolor(fp->GC, fp->color2.r, fp->color2.g, fp->color2.b, fp->color2.a);
     GRAdrawpoly(fp->GC, 4, ap, GRA_FILL_MODE_EVEN_ODD);
@@ -1132,6 +1134,7 @@ file_draw_rect(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
     GRAcolor(fp->GC, fp->color.r, fp->color.g, fp->color.b, fp->color.a);
     GRAdrawpoly(fp->GC, 4, ap, GRA_FILL_MODE_NONE);
   }
+  GRAmoveto(fp->GC, px, py);
   return 0;
 }
 
@@ -1139,7 +1142,7 @@ static int
 file_draw_line(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   struct f2ddata *fp;
-  int i, r, ap[4];;
+  int i, r, ap[4], px, py;
   double pos[4];
 
   rval->val = 0;
@@ -1179,8 +1182,10 @@ file_draw_line(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   f2dtransf(pos[0], pos[1], ap + 0, ap + 1, fp);
   f2dtransf(pos[2], pos[3], ap + 2, ap + 3, fp);
 
+  GRAcurrent_point(fp->GC, &px, &py);
   GRAcolor(fp->GC, fp->color.r, fp->color.g, fp->color.b, fp->color.a);
   GRAline(fp->GC, ap[0], ap[1], ap[2], ap[3]);
+  GRAmoveto(fp->GC, px, py);
 
   return 0;
 }
