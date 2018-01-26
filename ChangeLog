@@ -1,5 +1,9 @@
 2018-01-26  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11gui.c (FileSelectionDialog): use
+	"gtk_file_chooser_set_extra_widget()" instead of
+	"gtk_box_pack_start()".
+
 	* src/odata.c (file_draw_line, file_draw_rect, file_draw_arc):
 	always restore current point.
 
