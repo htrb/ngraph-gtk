@@ -1,3 +1,9 @@
+2018-01-27  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/math/math_basic_function.c (math_func_m, math_func_rm):
+	accepts negative index.
+	(math_func_cm): add 2nd argument.
+
 2018-01-26  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11gui.c (FileSelectionDialog): use
