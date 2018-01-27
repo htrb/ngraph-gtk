@@ -62,7 +62,7 @@ and		2	0	0	NULL
 xor		2	0	0	NULL
 m		2	1	0	NULL
 rm		1	1	0	NULL
-cm		1	1	0	NULL
+cm		2	1	0	NULL
 am		1	1	0	1
 if		3	0	0	0,2,2
 unless		3	0	0	0,2,2

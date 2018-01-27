@@ -159,7 +159,7 @@ static struct funcs FuncAry[] = {
   {"LT", {3, 0, 0, math_func_lt, NULL, NULL, NULL, NULL}},
   {"OR", {2, 0, 0, math_func_or, NULL, NULL, NULL, NULL}},
   {"RM", {1, 1, 0, math_func_rm, NULL, NULL, NULL, NULL}},
-  {"CM", {1, 1, 0, math_func_cm, NULL, NULL, NULL, NULL}},
+  {"CM", {2, 1, 0, math_func_cm, NULL, NULL, NULL, NULL}},
   {"AM", {1, 1, 0, math_func_am, NULL, NULL, NULL, NULL}},
   {"IF", {3, 0, 0, math_func_if, NULL, NULL, NULL, NULL}},
 #ifdef HAVE_LIBGSL
