@@ -2343,7 +2343,8 @@ init_memory(void)
 int
 math_func_cm(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  int start, n, size;
+  int start, i, n;
+  MathValue val;
 
   if (Memory == NULL && init_memory()) {
     return 1;
@@ -2351,7 +2352,6 @@ math_func_cm(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 
   MATH_CHECK_ARG(rval, exp->buf[1]);
 
-  size = sizeof(*Memory);
   start = 0;
 
   n = exp->buf[1].val.val;
@@ -2366,13 +2366,11 @@ math_func_cm(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
     start = MATH_FUNCTION_MEMORY_NUM + n;
     n = MATH_FUNCTION_MEMORY_NUM;
   }
-  if (exp->buf[0].val.val == 0 && exp->buf[0].val.type != MATH_VALUE_NORMAL) {
-    memset(Memory + start, 0, size * (n - start));
-  } else {
-    int i;
-    MathValue val;
 
-    val = exp->buf[0].val;
+  val = exp->buf[0].val;
+  if (val.val == 0 && val.type == MATH_VALUE_NORMAL) {
+    memset(Memory + start, 0, sizeof(*Memory) * (n - start));
+  } else {
     for (i = start; i < n; i++) {
       Memory[i] = val;
     }
