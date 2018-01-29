@@ -1107,6 +1107,8 @@ file_draw_rect(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   for (i = 0; i < 4; i++) {
     pos[i] = exp->buf[i].val.val;
   }
+  pos[2] += pos[0];
+  pos[3] += pos[1];
   stroke = exp->buf[4].val.val;
   fill = exp->buf[5].val.val;
 
