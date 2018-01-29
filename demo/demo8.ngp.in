@@ -300,7 +300,7 @@ new data
 	data::fit=
 	data::math_x='FOR(0, 1, SIZE(COL)-1, 1, F(i:=RM(0), Y, COL[i])); X-1'
 	data::math_y='Y-1'
-	data::func_f='Z:=(1-Z)*0.68; HSB2(Z,1,1); DRAW_RECT(X-1.1, Y-1.1, X, Y, 0, 1)'
+	data::func_f='Z:=(1-Z)*0.68; HSB2(Z,1,1); DRAW_RECT(X,Y,-1.1,-1.1,0,1)'
 	data::func_g=
 	data::func_h=
 	data::smooth_x=0

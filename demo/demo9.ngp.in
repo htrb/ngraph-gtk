@@ -580,9 +580,9 @@ new data
 	data::type=mark
 	data::interpolation=spline
 	data::fit=
-	data::math_x='shift(col); n:=size(col); s:=array_sum(col); a:=0; for(0,0,n-1,1,progn(g(i:=RM(0),n),f(a,Y,a+=col[i]/s)))'
+	data::math_x='shift(col); n:=size(col); s:=array_sum(col); a:=0; for(0,0,n-1,1,progn(g(i:=RM(0),n),w:=col[i]/s,f(a+=w,Y,-w)))'
 	data::math_y=
-	data::func_f='draw_rect(X,Y-0.25,Z,Y+0.25,1,1)'
+	data::func_f='draw_rect(X,Y-0.25,Z,0.5,1,1)'
 	data::func_g='hsb2(X/Y,0.7,1)'
 	data::func_h=
 	data::smooth_x=0
