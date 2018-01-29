@@ -5874,10 +5874,12 @@ application(char *file)
     ext = getextention(file);
     if (ext && ((strcmp0(ext, "NGP") == 0) || (strcmp0(ext, "ngp") == 0))) {
       LoadNgpFile(file, FALSE, NULL);
+    } else {
+      CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
     }
+  } else {
+    CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
   }
-
-  CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
 
   system_set_draw_notify_func(draw_notify);
   terminated = AppMainLoop();
