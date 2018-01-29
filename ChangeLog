@@ -1,3 +1,8 @@
+2018-01-29  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11commn.c (file_auto_scale): added.
+	(FileAutoScale): use the function "file_auto_scale()".
+
 2018-01-27  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/math/math_basic_function.c (math_func_m, math_func_rm):
