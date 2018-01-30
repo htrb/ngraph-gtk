@@ -2966,7 +2966,7 @@ GRAdata_free(struct GRAdata *data)
 int
 GRAparse(struct GRAdata *data, char *s)
 {
-  int pos,num,i;
+  int pos, num, i;
   char code;
   int *cpar;
   char *cstr;
@@ -3000,18 +3000,21 @@ GRAparse(struct GRAdata *data, char *s)
       return FALSE;
     }
     num++;
-    if ((cpar = g_malloc(sizeof(int) * num))==NULL) {
+    cpar = g_malloc(sizeof(int) * num);
+    if (cpar == NULL) {
       return FALSE;
     }
-    if (!getintpar(s + pos + 1, num, cpar)) {
+    if (! getintpar(s + pos + 1, num, cpar)) {
       goto errexit;
     }
   } else {
-    if ((cpar = g_malloc(sizeof(int))) == NULL) {
+    cpar = g_malloc(sizeof(int));
+    if (cpar == NULL) {
       return FALSE;
     }
     cpar[0] = -1;
-    if ((cstr = g_malloc(strlen(s) - pos))==NULL) {
+    cstr = g_malloc(strlen(s) - pos);
+    if (cstr == NULL) {
       goto errexit;
     }
     strcpy(cstr, s + pos + 1);
