@@ -3013,11 +3013,10 @@ GRAparse(struct GRAdata *data, char *s)
       return FALSE;
     }
     cpar[0] = -1;
-    cstr = g_malloc(strlen(s) - pos);
+    cstr = g_strdup(s + pos + 1);
     if (cstr == NULL) {
       goto errexit;
     }
-    strcpy(cstr, s + pos + 1);
   }
   if (data) {
     data->code = code;
