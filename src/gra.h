@@ -57,6 +57,12 @@ struct GRAbbox {
   int loadfont;
 };
 
+struct GRAdata
+{
+  char code;
+  int *cpar;
+  char *cstr;
+};
 
 typedef int (*clipfunc)(double *x0,double *y0,double *x1,double *y1,
                         void *local);
