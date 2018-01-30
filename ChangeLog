@@ -1,3 +1,8 @@
+2018-01-30  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11commn.c (check_ref_axis, file_auto_scale): added.
+	(FileAutoScale): don't save undo information.
+
 2018-01-29  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (application): call "CmViewerDraw()" when
