@@ -2971,29 +2971,29 @@ GRAparse(struct GRAdata *data, char *s)
   int *cpar;
   char *cstr;
 
-  code='\0';
-  cpar=NULL;
-  cstr=NULL;
-  for (i=0;s[i]!='\0';i++)
-    if (strchr("\n\r",s[i])!=NULL) {
-      s[i]='\0';
+  code = '\0';
+  cpar =NULL;
+  cstr = NULL;
+  for (i = 0; s[i] != '\0'; i++)
+    if (strchr("\n\r", s[i]) != NULL) {
+      s[i] = '\0';
       break;
     }
-  pos=0;
-  while ((s[pos]==' ') || (s[pos]=='\t')) pos++;
-  if (s[pos]=='\0') return TRUE;
-  if (strchr("IE%VAGOMNLTCBPRDFHSK",s[pos])==NULL) return FALSE;
-  code=s[pos];
-  if (strchr("%FSK",code)==NULL) {
-    if (!getintpar(s+pos+1,1,&num)) return FALSE;
+  pos = 0;
+  while ((s[pos] == ' ') || (s[pos] == '\t')) pos++;
+  if (s[pos] == '\0') return TRUE;
+  if (strchr("IE%VAGOMNLTCBPRDFHSK", s[pos])==NULL) return FALSE;
+  code = s[pos];
+  if (strchr("%FSK", code)==NULL) {
+    if (!getintpar(s + pos + 1, 1, &num)) return FALSE;
     num++;
-    if ((cpar=g_malloc(sizeof(int)*num))==NULL) return FALSE;
-    if (!getintpar(s+pos+1,num,cpar)) goto errexit;
+    if ((cpar = g_malloc(sizeof(int) * num))==NULL) return FALSE;
+    if (!getintpar(s + pos + 1, num, cpar)) goto errexit;
   } else {
-    if ((cpar=g_malloc(sizeof(int)))==NULL) return FALSE;
-    cpar[0]=-1;
-    if ((cstr=g_malloc(strlen(s)-pos))==NULL) goto errexit;
-    strcpy(cstr,s+pos+1);
+    if ((cpar = g_malloc(sizeof(int))) == NULL) return FALSE;
+    cpar[0] = -1;
+    if ((cstr = g_malloc(strlen(s) - pos))==NULL) goto errexit;
+    strcpy(cstr, s + pos + 1);
   }
   if (data) {
     data->code = code;
