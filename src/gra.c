@@ -2842,7 +2842,7 @@ getintpar(char *s,int num,int cpar[])
   return TRUE;
 }
 
-static int
+int
 GRAinputdraw(int GC,int leftm,int topm,int rate,
                   char code,int *cpar,char *cstr)
 {
@@ -3022,6 +3022,7 @@ GRAparse(struct GRAdata *data, char *s)
     data->code = code;
     data->cpar = cpar;
     data->cstr = cstr;
+    data->next = NULL;
   }
 
 errexit:

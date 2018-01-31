@@ -62,6 +62,7 @@ struct GRAdata
   char code;
   int *cpar;
   char *cstr;
+  struct GRAdata *next;
 };
 
 typedef int (*clipfunc)(double *x0,double *y0,double *x1,double *y1,
@@ -182,5 +183,8 @@ void GRAouttext(int GC,char *s);
 void GRAlayer(int GC,const char *s);
 int GRAlayer_support(int GC);
 void GRAcurrent_point(int GC, int *x, int *y);
+void GRAdata_free(struct GRAdata *data);
+int GRAparse(struct GRAdata *data, char *s);
+int GRAinputdraw(int GC,int leftm,int topm,int rate,char code,int *cpar,char *cstr);
 
 #endif

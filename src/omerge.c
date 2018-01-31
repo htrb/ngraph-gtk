@@ -203,8 +203,16 @@ mergedraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
       fclose(fd);
       return 1;
     }
-    if (newgra) rcode=GRAinput(GC,buf,lm,tm,zm);
-    else rcode=GRAinputold(GC,buf,lm,tm,zm);
+    if (newgra) {
+      struct GRAdata data;
+      rcode = GRAparse(&data, buf);
+      if (rcode) {
+        rcode = GRAinputdraw(GC, lm, tm, zm, data.code, data.cpar, data.cstr);
+        GRAdata_free(&data);
+      }
+    } else {
+      rcode=GRAinputold(GC,buf,lm,tm,zm);
+    }
     if (!rcode) {
       error2(obj,ERRGRAFM,buf);
       g_free(buf);
