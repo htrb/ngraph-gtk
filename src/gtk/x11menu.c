@@ -35,6 +35,7 @@
 
 #include "init.h"
 #include "osystem.h"
+#include "omerge.h"
 #include "x11bitmp.h"
 #include "x11dialg.h"
 #include "ogra2cairo.h"
@@ -6775,6 +6776,7 @@ menu_clear_undo(void)
   set_undo_menu_label();
   set_action_widget_sensitivity(EditUndoAction, menu_check_undo());
   set_action_widget_sensitivity(EditRedoAction, menu_check_redo());
+  merge_cache_clear();
 }
 
 static void
