@@ -3024,6 +3024,7 @@ GRAparse(struct GRAdata *data, char *s)
     data->cstr = cstr;
     data->next = NULL;
   }
+  return TRUE;
 
 errexit:
   g_free(cpar);
