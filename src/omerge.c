@@ -253,6 +253,31 @@ gra_cache_init(struct gra_cache *cache, time_t mtime)
   cache->mtime = mtime;
 }
 
+static int *
+dup_cpar(const int *cpar)
+{
+  int n;
+
+  n = cpar[0] + 1;
+  if (n < 1) {
+    n = 1;
+  }
+  return g_memdup(cpar, n * sizeof(*cpar));
+}
+
+static int
+draw_gra_data(struct gra_info *info, struct GRAdata *data)
+{
+  int rcode, *cpar;
+  cpar = dup_cpar(data->cpar);
+  if (cpar == NULL) {
+    return FALSE;
+  }
+  rcode = GRAinputdraw(info->GC, info->lm, info->tm, info->zm, data->code, cpar, data->cstr);
+  g_free(cpar);
+  return rcode;
+}
+
 static int
 read_new_gra_file(struct gra_cache *cache, struct gra_info *info, FILE *fd)
 {
@@ -274,6 +299,12 @@ read_new_gra_file(struct gra_cache *cache, struct gra_info *info, FILE *fd)
       goto errexit;
     }
     rcode = GRAparse(data, buf);
+    if (! rcode) {
+      GRAdata_free(data);
+      error2(info->obj, ERRGRAFM, buf);
+      goto errexit;
+    }
+    rcode = draw_gra_data(info, data);
     if (! rcode) {
       GRAdata_free(data);
       error2(info->obj, ERRGRAFM, buf);
@@ -370,23 +401,11 @@ read_gra_file(struct gra_cache *cache, struct gra_info *info, const char *graf, 
   return rcode;
 }
 
-static int *
-dup_cpar(const int *cpar)
-{
-  int n;
-
-  n = cpar[0] + 1;
-  if (n < 1) {
-    n = 1;
-  }
-  return g_memdup(cpar, n * sizeof(*cpar));
-}
-
 static int
 draw_gra(struct gra_cache *cache, struct gra_info *info)
 {
   struct GRAdata *data;
-  int rcode, *cpar;
+  int rcode;
 
   if (cache == NULL) {
     return 0;
@@ -397,12 +416,7 @@ draw_gra(struct gra_cache *cache, struct gra_info *info)
     return 0;
   }
   while (data) {
-    cpar = dup_cpar(data->cpar);
-    if (cpar == NULL) {
-      return 0;
-    }
-    rcode = GRAinputdraw(info->GC, info->lm, info->tm, info->zm, data->code, cpar, data->cstr);
-    g_free(cpar);
+    rcode = draw_gra_data(info, data);
     if (! rcode) {
       return 1;
     }
@@ -445,10 +459,11 @@ read_gra(struct gra_info *info, const char *graf, const char *file)
       gra_cache_free(file);
       return 1;
     }
-  }
-  if (draw_gra(cache, info)) {
-    error2(info->obj, ERRGRAFM, file);
-    return 1;
+  } else {
+    if (draw_gra(cache, info)) {
+      error2(info->obj, ERRGRAFM, file);
+      return 1;
+    }
   }
 
   return 0;
