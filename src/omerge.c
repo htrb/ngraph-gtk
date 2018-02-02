@@ -69,6 +69,13 @@ struct mergelocal {
   int bbox[4];
 };
 
+struct gra_info
+{
+  int GC, lm, tm, zm;
+  time_t mtime;
+  struct objlist *obj;
+};
+
 #define USE_MERGE_CACHE 1
 
 #if USE_MERGE_CACHE
@@ -247,14 +254,14 @@ gra_cache_init(struct gra_cache *cache, time_t mtime)
 }
 
 static int
-read_new_gra_file(struct gra_cache *cache, struct objlist *obj, FILE *fd, time_t mtime)
+read_new_gra_file(struct gra_cache *cache, struct gra_info *info, FILE *fd)
 {
   int r;
   char *buf;
   int rcode;
   struct GRAdata *prev, *data;
 
-  gra_cache_init(cache, mtime);
+  gra_cache_init(cache, info->mtime);
 
   r = 0;
   prev = NULL;
@@ -269,7 +276,7 @@ read_new_gra_file(struct gra_cache *cache, struct objlist *obj, FILE *fd, time_t
     rcode = GRAparse(data, buf);
     if (! rcode) {
       GRAdata_free(data);
-      error2(obj, ERRGRAFM, buf);
+      error2(info->obj, ERRGRAFM, buf);
       goto errexit;
     }
     g_free(buf);
@@ -289,15 +296,15 @@ errexit:
 }
 
 static int
-read_old_gra_file(int GC, int lm, int tm, int zm, struct gra_cache *cache, struct objlist *obj, FILE *fd, const char *file, time_t mtime)
+read_old_gra_file(struct gra_cache *cache, struct gra_info *info, FILE *fd, const char *file)
 {
   int r;
   char *buf;
   int rcode;
   cache->mtime = 0;
-  rcode = fgetline(fd,&buf);
+  rcode = fgetline(fd, &buf);
   if (rcode == 1) {
-    error2(obj, ERRGRA, file);
+    error2(info->obj, ERRGRA, file);
   }
   g_free(buf);
   if (rcode != 0) {
@@ -309,9 +316,9 @@ read_old_gra_file(int GC, int lm, int tm, int zm, struct gra_cache *cache, struc
     if (rcode == -1) {
       return 1;
     }
-    rcode = GRAinputold(GC,buf,lm,tm,zm);
+    rcode = GRAinputold(info->GC, buf, info->lm, info->tm, info->zm);
     if (!rcode) {
-      error2(obj, ERRGRAFM, buf);
+      error2(info->obj, ERRGRAFM, buf);
       g_free(buf);
       return 1;
     }
@@ -321,7 +328,7 @@ read_old_gra_file(int GC, int lm, int tm, int zm, struct gra_cache *cache, struc
 }
 
 static int
-read_gra_file(int GC, int lm, int tm, int zm, struct gra_cache *cache, struct objlist *obj, const char *graf, const char *file, time_t mtime)
+read_gra_file(struct gra_cache *cache, struct gra_info *info, const char *graf, const char *file)
 {
   FILE *fd;
   char *buf;
@@ -329,16 +336,16 @@ read_gra_file(int GC, int lm, int tm, int zm, struct gra_cache *cache, struct ob
 
   fd = nfopen(file, "rt");
   if (fd == NULL) {
-    error2(obj, ERROPEN, file);
+    error2(info->obj, ERROPEN, file);
     return 1;
   }
 
   rcode = fgetline(fd, &buf);
   if (rcode == 1) {
-    error2(obj,ERRGRA,file);
+    error2(info->obj,ERRGRA,file);
   }
   if (rcode != 0) {
-    error2(obj, ERROPEN, file);
+    error2(info->obj, ERROPEN, file);
     fclose(fd);
     return 1;
   }
@@ -347,7 +354,7 @@ read_gra_file(int GC, int lm, int tm, int zm, struct gra_cache *cache, struct ob
   } else if (strcmp(OLD_GRA_HEADER, buf) == 0) {
     newgra = FALSE;
   } else {
-    error2(obj, ERRGRA, file);
+    error2(info->obj, ERRGRA, file);
     g_free(buf);
     fclose(fd);
     return 1;
@@ -355,9 +362,9 @@ read_gra_file(int GC, int lm, int tm, int zm, struct gra_cache *cache, struct ob
   g_free(buf);
 
   if (newgra) {
-    rcode = read_new_gra_file(cache, obj, fd, mtime);
+    rcode = read_new_gra_file(cache, info, fd);
   } else {
-    rcode = read_old_gra_file(GC, lm, tm, zm, cache, obj, fd, file, mtime);
+    rcode = read_old_gra_file(cache, info, fd, file);
   }
   fclose(fd);
   return rcode;
@@ -376,7 +383,7 @@ dup_cpar(const int *cpar)
 }
 
 static int
-draw_gra(int GC, int lm, int tm, int zm, struct objlist *obj, struct gra_cache *cache)
+draw_gra(struct gra_cache *cache, struct gra_info *info)
 {
   struct GRAdata *data;
   int rcode, *cpar;
@@ -394,7 +401,7 @@ draw_gra(int GC, int lm, int tm, int zm, struct objlist *obj, struct gra_cache *
     if (cpar == NULL) {
       return 0;
     }
-    rcode = GRAinputdraw(GC, lm, tm, zm, data->code, cpar, data->cstr);
+    rcode = GRAinputdraw(info->GC, info->lm, info->tm, info->zm, data->code, cpar, data->cstr);
     g_free(cpar);
     if (! rcode) {
       return 1;
@@ -422,7 +429,7 @@ free_cache(struct nhash *hash, void *data)
 }
 
 static int
-read_gra(int GC, int lm, int tm, int zm, struct objlist *obj, const char *graf, const char *file, time_t mtime)
+read_gra(struct gra_info *info, const char *graf, const char *file)
 {
   struct gra_cache *cache;
 
@@ -433,14 +440,14 @@ read_gra(int GC, int lm, int tm, int zm, struct objlist *obj, const char *graf, 
       return 1;
     }
   }
-  if (mtime != cache->mtime) {
-    if (read_gra_file(GC, lm, tm, zm, cache, obj, graf, file, mtime)) {
+  if (info->mtime != cache->mtime) {
+    if (read_gra_file(cache, info, graf, file)) {
       gra_cache_free(file);
       return 1;
     }
   }
-  if (draw_gra(GC, lm, tm, zm, obj, cache)) {
-    error2(obj, ERRGRAFM, file);
+  if (draw_gra(cache, info)) {
+    error2(info->obj, ERRGRAFM, file);
     return 1;
   }
 
@@ -463,12 +470,10 @@ merge_cache_clear(void)
 static int
 mergedraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
-  int GC;
+  struct gra_info info;
   char *file,*graf;
   struct objlist *sys;
-  int lm,tm,zm;
   struct mergelocal *mergelocal;
-  time_t mtime;
 #if ! USE_MERGE_CACHE
   FILE *fd;
   int newgra,rcode;
@@ -476,31 +481,32 @@ mergedraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 #endif
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
-  _getobj(obj,"GC",inst,&GC);
-  if (GC<0) return 0;
+  _getobj(obj,"GC",inst,&info.GC);
+  if (info.GC<0) return 0;
   _getobj(obj,"file",inst,&file);
-  _getobj(obj,"left_margin",inst,&lm);
-  _getobj(obj,"top_margin",inst,&tm);
-  _getobj(obj,"zoom",inst,&zm);
+  _getobj(obj,"left_margin",inst,&info.lm);
+  _getobj(obj,"top_margin",inst,&info.tm);
+  _getobj(obj,"zoom",inst,&info.zm);
   _getobj(obj,"_local",inst,&mergelocal);
-
+  info.obj = obj;
+  
   if (file==NULL) {
     error(obj,ERRFILE);
     return 1;
   }
-  if (get_mtime(file, &mtime)) {
+  if (get_mtime(file, &info.mtime)) {
     clear_bbox(obj, inst);
     error2(obj, ERROPEN, file);
     return 1;
   }
-  if (mtime != mergelocal->mtime) {
+  if (info.mtime != mergelocal->mtime) {
     clear_bbox(obj, inst);
   }
-  mergelocal->mtime = mtime;
+  mergelocal->mtime = info.mtime;
   if ((sys=getobject("system"))==NULL) return 1;
   if (getobj(sys,"GRAF",0,0,NULL,&graf)) return 1;
 #if USE_MERGE_CACHE
-  read_gra(GC, lm, tm, zm, obj, graf, file, mtime);
+  read_gra(&info, graf, file);
 #else  /* USE_MERGE_CACHE */
   if ((fd=nfopen(file,"rt"))==NULL) {
     error2(obj,ERROPEN,file);
@@ -535,9 +541,9 @@ mergedraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
       return 1;
     }
     if (newgra) {
-      rcode=GRAinput(GC,buf,lm,tm,zm);
+      rcode=GRAinput(info.GC, buf, info.lm, info.tm, info.zm);
     } else {
-      rcode=GRAinputold(GC,buf,lm,tm,zm);
+      rcode=GRAinputold(info.GC, buf, info.lm, info.tm, info.zm);
     }
     if (!rcode) {
       error2(obj,ERRGRAFM,buf);
@@ -549,7 +555,7 @@ mergedraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   }
   fclose(fd);
 #endif  /* USE_MERGE_CACHE */
-  GRAaddlist(GC,obj,inst,(char *)argv[0],"redraw");
+  GRAaddlist(info.GC,obj,inst,(char *)argv[0],"redraw");
   return 0;
 }
 
