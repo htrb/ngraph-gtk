@@ -1,3 +1,13 @@
+2018-02-02  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/omerge.c (OLD_GRA_HEADER): added.
+	(USE_MERGE_CACHE): added.
+	(gra_data_new, gra_data_free, gra_cache_new, gra_cache_get)
+	(gra_cache_free, gra_cache_init, read_new_gra_file)
+	(read_old_gra_file, read_gra_file, dup_cpar, draw_gra)
+	(free_cache, read_gra, merge_cache_clear): added.
+	(mergedraw): use "read_gra()" when "USE_MERGE_CACHE" is true.
+
 2018-01-30  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11commn.c (check_ref_axis, file_auto_scale): added.
