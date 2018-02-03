@@ -1,3 +1,8 @@
+2018-02-03  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/omerge.c (get_mtime): removed.
+	(read_gra): check not only "st_mtime" but "st_size".
+
 2018-02-02  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/omerge.c (OLD_GRA_HEADER): added.
