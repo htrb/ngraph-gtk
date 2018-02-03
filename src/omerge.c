@@ -72,7 +72,7 @@ struct mergelocal {
 struct gra_info
 {
   int GC, lm, tm, zm;
-  time_t mtime;
+  GStatBuf gstat;
   struct objlist *obj;
 };
 
@@ -82,25 +82,11 @@ struct gra_info
 struct gra_cache
 {
   struct GRAdata *data;
-  time_t mtime;
+  GStatBuf gstat;
 };
 
 static NHASH GraCache = NULL;
 #endif
-
-static int
-get_mtime(const char *file, time_t *t)
-{
-  GStatBuf buf;
-  int r;
-
-  r = nstat(file, &buf);
-  if (r) {
-    return 1;
-  }
-  *t = buf.st_mtime;
-  return 0;
-}
 
 static void
 set_bbox(struct objlist *obj,N_VALUE *inst, struct narray *array, int l, int t, int z)
@@ -151,7 +137,7 @@ gra_data_free(struct GRAdata *data)
 }
 
 static struct gra_cache *
-gra_cache_new(const char *file, time_t mtime)
+gra_cache_new(const char *file)
 {
   struct gra_cache *cache;
 
@@ -168,7 +154,8 @@ gra_cache_new(const char *file, time_t mtime)
     return NULL;
   }
   cache->data = NULL;
-  cache->mtime = mtime;
+  cache->gstat.st_mtime = 0;
+  cache->gstat.st_size = 0;
 
   nhash_set_ptr(GraCache, file, cache);
   return cache;
@@ -244,13 +231,18 @@ mergedone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 
 #if USE_MERGE_CACHE
 static void
-gra_cache_init(struct gra_cache *cache, time_t mtime)
+gra_cache_init(struct gra_cache *cache, struct gra_info *info)
 {
   if (cache->data) {
     gra_data_free(cache->data);
     cache->data = NULL;
   }
-  cache->mtime = mtime;
+  if (info) {
+    cache->gstat = info->gstat;
+  } else {
+    cache->gstat.st_mtime = 0;
+    cache->gstat.st_size = 0;
+  }
 }
 
 static int *
@@ -286,7 +278,7 @@ read_new_gra_file(struct gra_cache *cache, struct gra_info *info, FILE *fd)
   int rcode;
   struct GRAdata *prev, *data;
 
-  gra_cache_init(cache, info->mtime);
+  gra_cache_init(cache, info);
 
   r = 0;
   prev = NULL;
@@ -322,7 +314,7 @@ read_new_gra_file(struct gra_cache *cache, struct gra_info *info, FILE *fd)
 
 errexit:
   g_free(buf);
-  gra_cache_init(cache, 0);
+  gra_cache_init(cache, NULL);
   return 1;
 }
 
@@ -332,7 +324,8 @@ read_old_gra_file(struct gra_cache *cache, struct gra_info *info, FILE *fd, cons
   int r;
   char *buf;
   int rcode;
-  cache->mtime = 0;
+
+  gra_cache_init(cache, NULL);
   rcode = fgetline(fd, &buf);
   if (rcode == 1) {
     error2(info->obj, ERRGRA, file);
@@ -449,12 +442,13 @@ read_gra(struct gra_info *info, const char *graf, const char *file)
 
   cache = gra_cache_get(file);
   if (cache == NULL) {
-    cache = gra_cache_new(file, -1);
+    cache = gra_cache_new(file);
     if (cache == NULL) {
       return 1;
     }
   }
-  if (info->mtime != cache->mtime) {
+  if (info->gstat.st_mtime != cache->gstat.st_mtime ||
+      info->gstat.st_size != cache->gstat.st_size) {
     if (read_gra_file(cache, info, graf, file)) {
       gra_cache_free(file);
       return 1;
@@ -509,15 +503,15 @@ mergedraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
     error(obj,ERRFILE);
     return 1;
   }
-  if (get_mtime(file, &info.mtime)) {
+  if (nstat(file, &info.gstat)) {
     clear_bbox(obj, inst);
     error2(obj, ERROPEN, file);
     return 1;
   }
-  if (info.mtime != mergelocal->mtime) {
+  if (info.gstat.st_mtime != mergelocal->mtime) {
     clear_bbox(obj, inst);
   }
-  mergelocal->mtime = info.mtime;
+  mergelocal->mtime = info.gstat.st_mtime;
   if ((sys=getobject("system"))==NULL) return 1;
   if (getobj(sys,"GRAF",0,0,NULL,&graf)) return 1;
 #if USE_MERGE_CACHE
