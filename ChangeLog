@@ -1,3 +1,7 @@
+2018-02-06  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c: add multi line input feature for math-transformations.
+
 2018-02-03  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/omerge.c (get_mtime): removed.
