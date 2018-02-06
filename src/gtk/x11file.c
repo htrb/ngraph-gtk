@@ -163,20 +163,97 @@ enum MATH_FNC_TYPE {
 
 static char *FieldStr[] = {"math_x", "math_y", "func_f", "func_g", "func_h"};
 
+static GtkWidget *
+create_source_view(void)
+{
+  GtkWidget *source_view;
+  GtkSourceLanguageManager *lm;
+  GtkSourceBuffer *buffer;
+  GtkSourceLanguage *lang;
+
+  source_view = gtk_source_view_new();
+  lm = gtk_source_language_manager_new();
+  buffer = gtk_source_buffer_new(NULL);
+
+  gtk_text_view_set_buffer(GTK_TEXT_VIEW(source_view), GTK_TEXT_BUFFER(buffer));
+  lang = gtk_source_language_manager_get_language(lm, "c");
+  gtk_source_buffer_set_language(GTK_SOURCE_BUFFER(buffer), lang);
+  gtk_source_buffer_set_highlight_syntax(GTK_SOURCE_BUFFER(buffer), TRUE);
+
+  gtk_source_view_set_auto_indent(GTK_SOURCE_VIEW(source_view), TRUE);
+  gtk_source_view_set_indent_on_tab(GTK_SOURCE_VIEW(source_view), FALSE);
+  gtk_source_view_set_show_line_numbers(GTK_SOURCE_VIEW(source_view), TRUE);
+
+  return source_view;
+}
+
+static gchar *
+get_text_from_buffer(GtkTextBuffer *buffer)
+{
+  GtkTextIter start, end;
+  gtk_text_buffer_get_start_iter(buffer, &start);
+  gtk_text_buffer_get_end_iter(buffer, &end);
+  return gtk_text_buffer_get_text(buffer, &start, &end, FALSE);
+}
+
+static void
+MathTextDialogChangeInputType(GtkNotebook *notebook, GtkWidget *page, guint page_num, gpointer user_data)
+{
+  struct MathTextDialog *d;
+  gchar *text;
+  GtkTextBuffer *buffer;
+
+  d = user_data;
+  d->page = page_num;
+  buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(d->text));
+  switch (page_num) {
+  case 0:
+    text = get_text_from_buffer(buffer);
+    gtk_entry_set_text(GTK_ENTRY(d->list), text);
+    g_free(text);
+    break;
+  case 1:
+    gtk_text_buffer_set_text(buffer, gtk_entry_get_text(GTK_ENTRY(d->list)), -1);
+    break;
+  }
+}
+
 static void
 MathTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *hbox;
+  GtkWidget *w, *title, *hbox, *vbox, *tab, *swin;
   struct MathTextDialog *d;
-  static char *label[] = {N_("_Math X:"), N_("_Math Y:"), "_F(X,Y,Z):", "_G(X,Y,Z):", "_H(X,Y,Z):"};
+  static char *label[] = {N_("Math X:"), N_("Math Y:"), "F(X,Y,Z):", "G(X,Y,Z):", "H(X,Y,Z):"};
 
   d = (struct MathTextDialog *) data;
   if (makewidget) {
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
+    tab = gtk_notebook_new();
+
+    w = gtk_label_new(_("Math:"));
+    gtk_widget_set_valign(w, GTK_ALIGN_START);
+    d->label = w;
+    gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
+    gtk_box_pack_start(GTK_BOX(hbox), tab, TRUE, TRUE, 4);
+
+    title = gtk_label_new(_("single line"));
     w = create_text_entry(TRUE, TRUE);
-    d->label = item_setup(hbox, w, _("_Math:"), TRUE);
+    vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 0);
+    gtk_notebook_append_page(GTK_NOTEBOOK(tab), vbox, title);
     d->list = w;
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
+
+    title = gtk_label_new(_("multi line"));
+    w = create_source_view();
+    swin = gtk_scrolled_window_new(NULL, NULL);
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+    gtk_container_add(GTK_CONTAINER(swin), w);
+    gtk_notebook_append_page(GTK_NOTEBOOK(tab), swin, title);
+    d->text = w;
+
+    g_signal_connect(tab, "switch-page", G_CALLBACK(MathTextDialogChangeInputType), d);
+
+    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
 
@@ -196,6 +273,7 @@ MathTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   gtk_label_set_text_with_mnemonic(GTK_LABEL(d->label), _(label[d->Mode]));
   gtk_entry_set_text(GTK_ENTRY(d->list), d->Text);
+  gtk_text_buffer_set_text(gtk_text_view_get_buffer(GTK_TEXT_VIEW(d->text)), d->Text, -1);
   gtk_window_set_default_size(GTK_WINDOW(wi), 400, -1);
 }
 
@@ -220,8 +298,18 @@ MathTextDialogClose(GtkWidget *w, void *data)
     return;
   }
 
-  p = gtk_entry_get_text(GTK_ENTRY(d->list));
-  ptr = g_strdup(p);
+  switch (d->page) {
+  case 0:
+    p = gtk_entry_get_text(GTK_ENTRY(d->list));
+    ptr = g_strdup(p);
+    break;
+  case 1:
+    ptr = get_text_from_buffer(gtk_text_view_get_buffer(GTK_TEXT_VIEW(d->text)));
+    break;
+  default:
+    /* not reached */
+    return;
+  }
   if (ptr == NULL) {
     return;
   }
@@ -244,21 +332,21 @@ MathTextDialogClose(GtkWidget *w, void *data)
     }
     g_free(obuf);
   }
-  g_free(ptr);
 
   switch (d->Mode) {
   case TYPE_MATH_X:
-    entry_completion_append(NgraphApp.x_math_list, p);
+    entry_completion_append(NgraphApp.x_math_list, ptr);
     break;
   case TYPE_MATH_Y:
-    entry_completion_append(NgraphApp.y_math_list, p);
+    entry_completion_append(NgraphApp.y_math_list, ptr);
     break;
   case TYPE_FUNC_F:
   case TYPE_FUNC_G:
   case TYPE_FUNC_H:
-    entry_completion_append(NgraphApp.func_list, p);
+    entry_completion_append(NgraphApp.func_list, ptr);
     break;
   }
+  g_free(ptr);
 }
 
 void
@@ -477,7 +565,7 @@ MathDialogSetup(GtkWidget *wi, void *data, int makewidget)
   struct MathDialog *d;
   static n_list_store list[] = {
     {"id",       G_TYPE_INT,    TRUE, FALSE, NULL},
-    {N_("math"), G_TYPE_STRING, TRUE, FALSE, NULL},
+    {N_("math"), G_TYPE_STRING, TRUE, FALSE, NULL, 0, 0, 0, 0, PANGO_ELLIPSIZE_END},
   };
   int i;
 
@@ -2245,6 +2333,49 @@ load_tab_set_value(struct FileDialog *d)
 }
 
 static void
+copy_text_to_entry(GtkWidget *text, GtkWidget *entry)
+{
+  GtkTextBuffer *buffer;
+  gchar *str;
+
+  buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text));
+  str = get_text_from_buffer(buffer);
+  gtk_entry_set_text(GTK_ENTRY(entry), str);
+  g_free(str);
+}
+
+static void
+copy_entry_to_text(GtkWidget *text, GtkWidget *entry)
+{
+  GtkTextBuffer *buffer;
+  const gchar *str;
+
+  buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text));
+  str = gtk_entry_get_text(GTK_ENTRY(entry));
+  gtk_text_buffer_set_text(buffer, str, -1);
+}
+
+static void
+copy_text_to_entry_all(struct FileDialog *d)
+{
+  copy_text_to_entry(d->math.text_x, d->math.x);
+  copy_text_to_entry(d->math.text_y, d->math.y);
+  copy_text_to_entry(d->math.text_f, d->math.f);
+  copy_text_to_entry(d->math.text_g, d->math.g);
+  copy_text_to_entry(d->math.text_h, d->math.h);
+}
+
+static void
+copy_entry_to_text_all(struct FileDialog *d)
+{
+  copy_entry_to_text(d->math.text_x, d->math.x);
+  copy_entry_to_text(d->math.text_y, d->math.y);
+  copy_entry_to_text(d->math.text_f, d->math.f);
+  copy_entry_to_text(d->math.text_g, d->math.g);
+  copy_entry_to_text(d->math.text_h, d->math.h);
+}
+
+static void
 math_tab_setup_item(struct FileDialog *d, int id)
 {
   SetWidgetFromObjField(d->math.xsmooth, d->Obj, id, "smooth_x");
@@ -2254,6 +2385,7 @@ math_tab_setup_item(struct FileDialog *d, int id)
   SetWidgetFromObjField(d->math.f, d->Obj, id, "func_f");
   SetWidgetFromObjField(d->math.g, d->Obj, id, "func_g");
   SetWidgetFromObjField(d->math.h, d->Obj, id, "func_h");
+  copy_entry_to_text_all(d);
 
   entry_completion_set_entry(NgraphApp.x_math_list, d->math.x);
   entry_completion_set_entry(NgraphApp.y_math_list, d->math.y);
@@ -2285,10 +2417,64 @@ func_entry_focused(GtkWidget *w, GdkEventFocus *event, gpointer user_data)
   return FALSE;
 }
 
-static int
-math_common_widgets_create(struct FileDialog *d, GtkWidget *table, int i)
+static GtkWidget *
+create_math_test_tab(GtkWidget *tab, const gchar *label)
 {
-  GtkWidget *w;
+  GtkWidget *w, *title, *swin;
+
+  w = create_source_view();
+  swin = gtk_scrolled_window_new(NULL, NULL);
+  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+  gtk_container_add(GTK_CONTAINER(swin), w);
+  title = gtk_label_new_with_mnemonic(label);
+  gtk_notebook_append_page(GTK_NOTEBOOK(tab), swin, title);
+  return w;
+}
+
+static void
+MathDialogChangeInputType(GtkNotebook *notebook, GtkWidget *page, guint page_num, gpointer user_data)
+{
+  struct FileDialog *d;
+
+  d = user_data;
+  d->math_page = page_num;
+
+  switch (page_num) {
+  case 0:
+    copy_text_to_entry_all(d);
+    break;
+  case 1:
+    copy_entry_to_text_all(d);
+    break;
+  }
+}
+
+static GtkWidget *
+math_text_widgets_create(struct FileDialog *d)
+{
+  GtkWidget *tab;
+
+  tab = gtk_notebook_new();
+  d->math_tab = GTK_NOTEBOOK(tab);
+  gtk_notebook_set_tab_pos(GTK_NOTEBOOK(tab), GTK_POS_LEFT);
+  d->math.text_x = create_math_test_tab(tab, _("_X math:"));
+  d->math.text_y = create_math_test_tab(tab, _("_Y math:"));
+  d->math.text_f = create_math_test_tab(tab, "_F(X,Y,Z):");
+  d->math.text_g = create_math_test_tab(tab, "_G(X,Y,Z):");
+  d->math.text_h = create_math_test_tab(tab, "_H(X,Y,Z):");
+
+  return tab;
+}
+
+static int
+math_common_widgets_create(struct FileDialog *d, GtkWidget *grid, int pos)
+{
+  GtkWidget *w, *tab, *title, *table;
+  int i;
+
+  tab = gtk_notebook_new();
+  table = gtk_grid_new();
+  i = 0;
 
   w = create_text_entry(TRUE, TRUE);
   add_widget_to_table(table, w, _("_X math:"), TRUE, i++);
@@ -2313,7 +2499,17 @@ math_common_widgets_create(struct FileDialog *d, GtkWidget *table, int i)
   add_widget_to_table(table, w, "_H(X,Y,Z):", TRUE, i++);
   d->math.h = w;
 
-  return i;
+  title = gtk_label_new(_("single line"));
+  gtk_notebook_append_page(GTK_NOTEBOOK(tab), table, title);
+
+
+  title = gtk_label_new(_("multi line"));
+  w = math_text_widgets_create(d);
+  gtk_notebook_append_page(GTK_NOTEBOOK(tab), w, title);
+  g_signal_connect(tab, "switch-page", G_CALLBACK(MathDialogChangeInputType), d);
+
+  add_widget_to_table(grid, tab, NULL, TRUE, pos++);
+  return pos;
 }
 
 static GtkWidget *
@@ -2347,25 +2543,40 @@ math_tab_create(struct FileDialog *d)
   return vbox;
 }
 
+enum MATH_ERROR_FIELD {
+  MATH_ERROR_FIELD_NONE,
+  MATH_ERROR_FIELD_X,
+  MATH_ERROR_FIELD_Y,
+  MATH_ERROR_FIELD_F,
+  MATH_ERROR_FIELD_G,
+  MATH_ERROR_FIELD_H,
+  MATH_ERROR_FIELD_SX,
+  MATH_ERROR_FIELD_SY,
+};
+
 static int
 math_set_value_common(struct FileDialog *d)
 {
   const char *s;
 
+  if (d->math_page == 1) {
+    copy_text_to_entry_all(d);
+  }
+
   if (SetObjFieldFromWidget(d->math.x, d->Obj, d->Id, "math_x"))
-    return 1;
+    return MATH_ERROR_FIELD_X;
 
   if (SetObjFieldFromWidget(d->math.y, d->Obj, d->Id, "math_y"))
-    return 1;
+    return MATH_ERROR_FIELD_Y;
 
   if (SetObjFieldFromWidget(d->math.f, d->Obj, d->Id, "func_f"))
-    return 1;
+    return MATH_ERROR_FIELD_F;
 
   if (SetObjFieldFromWidget(d->math.g, d->Obj, d->Id, "func_g"))
-    return 1;
+    return MATH_ERROR_FIELD_G;
 
   if (SetObjFieldFromWidget(d->math.h, d->Obj, d->Id, "func_h"))
-    return 1;
+    return MATH_ERROR_FIELD_H;
 
   s = gtk_entry_get_text(GTK_ENTRY(d->math.y));
   entry_completion_append(NgraphApp.y_math_list, s);
@@ -2382,7 +2593,7 @@ math_set_value_common(struct FileDialog *d)
   s = gtk_entry_get_text(GTK_ENTRY(d->math.h));
   entry_completion_append(NgraphApp.func_list, s);
 
-  return 0;
+  return MATH_ERROR_FIELD_NONE;
 }
 
 static int
@@ -2393,16 +2604,12 @@ math_tab_set_value(void *data)
   d = (struct FileDialog *) data;
 
   if (SetObjFieldFromWidget(d->math.xsmooth, d->Obj, d->Id, "smooth_x"))
-    return 1;
+    return MATH_ERROR_FIELD_SX;
 
   if (SetObjFieldFromWidget(d->math.ysmooth, d->Obj, d->Id, "smooth_y"))
-    return 1;
+    return MATH_ERROR_FIELD_SY;
 
-  if (math_set_value_common(d)) {
-    return 1;
-  }
-
-  return 0;
+  return math_set_value_common(d);
 }
 
 static void
@@ -3932,9 +4139,22 @@ plot_tab_set_value(struct FileDialog *d)
   return 0;
 }
 
+static void
+focus_math_widget(struct FileDialog *d, int math_tab_id, GtkWidget *text, GtkWidget *entry)
+{
+  if (d->math_page == 0) {
+    gtk_widget_grab_focus(entry);
+  } else {
+    gtk_notebook_set_current_page(d->math_tab, math_tab_id);
+    gtk_widget_grab_focus(text);
+  }
+}
+
 static int
 FileDialogCloseCommon(GtkWidget *w, struct FileDialog *d)
 {
+  int r;
+
   if (SetObjFieldFromWidget(d->xcol, d->Obj, d->Id, "x"))
     return TRUE;
 
@@ -3952,8 +4172,32 @@ FileDialogCloseCommon(GtkWidget *w, struct FileDialog *d)
     return TRUE;
   }
 
-  if (math_tab_set_value(d)) {
+  r = math_tab_set_value(d);
+  if (r != MATH_ERROR_FIELD_NONE) {
     gtk_notebook_set_current_page(d->tab, d->math.tab_id);
+    switch (r) {
+    case MATH_ERROR_FIELD_X:
+      focus_math_widget(d, r -1, d->math.text_x, d->math.x);
+      break;
+    case MATH_ERROR_FIELD_Y:
+      focus_math_widget(d, r -1, d->math.text_y, d->math.y);
+      break;
+    case MATH_ERROR_FIELD_F:
+      focus_math_widget(d, r -1, d->math.text_f, d->math.f);
+      break;
+    case MATH_ERROR_FIELD_G:
+      focus_math_widget(d, r -1, d->math.text_g, d->math.g);
+      break;
+    case MATH_ERROR_FIELD_H:
+      focus_math_widget(d, r -1, d->math.text_h, d->math.h);
+      break;
+    case MATH_ERROR_FIELD_SX:
+      gtk_widget_grab_focus(d->math.xsmooth);
+      break;
+    case MATH_ERROR_FIELD_SY:
+      gtk_widget_grab_focus(d->math.ysmooth);
+      break;
+    }
     return TRUE;
   }
 

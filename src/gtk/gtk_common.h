@@ -6,6 +6,7 @@
 #include <gdk/gdkkeysyms.h>
 #include <glib.h>
 #include <cairo/cairo.h>
+#include <gtksourceview/gtksource.h>
 
 #include "common.h"
 
