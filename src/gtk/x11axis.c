@@ -565,7 +565,7 @@ SectionDialogAxisR(GtkWidget *w, gpointer client_data)
   }
 }
 
-static void
+static int
 axis_save_undo(int type)
 {
   char *arg[4];
@@ -573,7 +573,7 @@ axis_save_undo(int type)
   arg[1] = "axisgrid";
   arg[2] = "data";
   arg[3] = NULL;
-  menu_save_undo(type, arg);
+  return menu_save_undo(type, arg);
 }
 
 static void
@@ -581,11 +581,11 @@ SectionDialogGrid(GtkWidget *w, gpointer client_data)
 {
   struct SectionDialog *d;
   char *ref;
-  int ret, oidx, oidy, create = FALSE;
+  int ret, oidx, oidy, create = FALSE, undo = -1;
 
   d = (struct SectionDialog *) client_data;
   if (*(d->IDG) == -1) {
-    axis_save_undo(UNDO_TYPE_DUMMY);
+    undo = axis_save_undo(UNDO_TYPE_DUMMY);
     if ((*(d->IDG) = newobj(d->Obj2)) >= 0) {
       getobj(d->Obj, "oid", d->IDX, 0, NULL, &oidx);
       ref = g_strdup_printf("axis:^%d", oidx);
@@ -605,14 +605,14 @@ SectionDialogGrid(GtkWidget *w, gpointer client_data)
     ret = DialogExecute(d->widget, &DlgGrid);
     switch (ret) {
     case IDCANCEL:
-      menu_undo(FALSE);
+      menu_undo_internal(undo);
       if (create) {
         *(d->IDG) = -1;
       }
       break;
     case IDDELETE:
       if (create) {
-        menu_undo(FALSE);
+        menu_undo_internal(undo);
       } else {
         delobj(d->Obj2, *(d->IDG));
         set_graph_modified();
@@ -620,7 +620,7 @@ SectionDialogGrid(GtkWidget *w, gpointer client_data)
       *(d->IDG) = -1;
       break;
     default:
-      menu_delete_undo();
+      menu_delete_undo(undo);
       set_graph_modified();
     }
   }
@@ -2400,7 +2400,7 @@ CmAxisNewFrame(void *w, gpointer client_data)
 {
   struct objlist *obj, *obj2;
   int idx, idy, idu, idr, idg, ret;
-  int type, x, y, lenx, leny;
+  int type, x, y, lenx, leny, undo;
   struct narray group;
   char *argv[2];
 
@@ -2410,7 +2410,7 @@ CmAxisNewFrame(void *w, gpointer client_data)
     return;
   if ((obj2 = getobject("axisgrid")) == NULL)
     return;
-  axis_save_undo(UNDO_TYPE_CREATE);
+  undo = axis_save_undo(UNDO_TYPE_CREATE);
   idx = newobj(obj);
   idy = newobj(obj);
   idu = newobj(obj);
@@ -2439,7 +2439,7 @@ CmAxisNewFrame(void *w, gpointer client_data)
 		&idg, FALSE);
   ret = DialogExecute(TopLevel, &DlgSection);
   if (ret == IDCANCEL) {
-    menu_undo(FALSE);
+    menu_undo_internal(undo);
   } else {
     set_graph_modified();
   }
@@ -2450,7 +2450,7 @@ void
 CmAxisNewSection(void *w, gpointer client_data)
 {
   struct objlist *obj, *obj2;
-  int idx, idy, idu, idr, idg, ret, oidx, oidy;
+  int idx, idy, idu, idr, idg, ret, oidx, oidy, undo;
   int type, x, y, lenx, leny;
   struct narray group;
   char *argv[2];
@@ -2462,7 +2462,7 @@ CmAxisNewSection(void *w, gpointer client_data)
     return;
   if ((obj2 = getobject("axisgrid")) == NULL)
     return;
-  axis_save_undo(UNDO_TYPE_CREATE);
+  undo = axis_save_undo(UNDO_TYPE_CREATE);
   idx = newobj(obj);
   idy = newobj(obj);
   idu = newobj(obj);
@@ -2503,7 +2503,7 @@ CmAxisNewSection(void *w, gpointer client_data)
 		&idg, TRUE);
   ret = DialogExecute(TopLevel, &DlgSection);
   if (ret == IDCANCEL) {
-    menu_undo(FALSE);
+    menu_undo_internal(undo);
   } else {
     set_graph_modified();
   }
@@ -2515,7 +2515,7 @@ CmAxisNewCross(void *w, gpointer client_data)
 {
   struct objlist *obj;
   int idx, idy, ret;
-  int type, x, y, lenx, leny;
+  int type, x, y, lenx, leny, undo;
   struct narray group;
   char *argv[2];
 
@@ -2523,7 +2523,7 @@ CmAxisNewCross(void *w, gpointer client_data)
     return;
   if ((obj = chkobject("axis")) == NULL)
     return;
-  axis_save_undo(UNDO_TYPE_CREATE);
+  undo = axis_save_undo(UNDO_TYPE_CREATE);
   idx = newobj(obj);
   idy = newobj(obj);
   arrayinit(&group, sizeof(int));
@@ -2546,7 +2546,7 @@ CmAxisNewCross(void *w, gpointer client_data)
   CrossDialog(&DlgCross, x, y, lenx, leny, obj, idx, idy);
   ret = DialogExecute(TopLevel, &DlgCross);
   if (ret == IDCANCEL) {
-    menu_undo(FALSE);
+    menu_undo_internal(undo);
   } else {
     set_graph_modified();
   }
@@ -2557,18 +2557,18 @@ void
 CmAxisNewSingle(void *w, gpointer client_data)
 {
   struct objlist *obj;
-  int id, ret;
+  int id, ret, undo;
 
   if (Menulock || Globallock)
     return;
   if ((obj = chkobject("axis")) == NULL)
     return;
-  axis_save_undo(UNDO_TYPE_CREATE);
+  undo = axis_save_undo(UNDO_TYPE_CREATE);
   if ((id = newobj(obj)) >= 0) {
     AxisDialog(NgraphApp.AxisWin.data.data, id, -1);
     ret = DialogExecute(TopLevel, &DlgAxis);
     if (ret == IDCANCEL) {
-      menu_undo(FALSE);
+      menu_undo_internal(undo);
     } else {
       set_graph_modified();
     }
@@ -2605,7 +2605,7 @@ void
 CmAxisUpdate(void *w, gpointer client_data)
 {
   struct objlist *obj;
-  int i, ret;
+  int i, ret, undo;
 
   if (Menulock || Globallock)
     return;
@@ -2621,11 +2621,11 @@ CmAxisUpdate(void *w, gpointer client_data)
   } else {
     return;
   }
-  axis_save_undo(UNDO_TYPE_EDIT);
+  undo = axis_save_undo(UNDO_TYPE_EDIT);
   AxisDialog(NgraphApp.AxisWin.data.data, i, -1);
   ret = DialogExecute(TopLevel, &DlgAxis);
   if (ret == IDCANCEL) {
-    menu_delete_undo();
+    menu_delete_undo(undo);
   } else {
     AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
     FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
@@ -2746,22 +2746,22 @@ void
 CmAxisGridNew(void *w, gpointer client_data)
 {
   struct objlist *obj;
-  int id, ret;
+  int id, ret, undo;
 
   if (Menulock || Globallock)
     return;
   if ((obj = chkobject("axisgrid")) == NULL)
     return;
-  axis_save_undo(UNDO_TYPE_CREATE);
+  undo = axis_save_undo(UNDO_TYPE_CREATE);
   id = newobj(obj);
   if (id < 0) {
-    menu_delete_undo();
+    menu_delete_undo(undo);
     return;
   }
   GridDialog(&DlgGrid, obj, id);
   ret = DialogExecute(TopLevel, &DlgGrid);
   if (ret == IDCANCEL) {
-    menu_undo(FALSE);
+    menu_undo_internal(undo);
   } else {
     set_graph_modified();
   }
