@@ -1203,7 +1203,7 @@ enum SELECT_OBJ_COLOR_RESULT
 select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type)
 {
   GtkWidget *dlg;
-  int r, g, b, a, rr ,gg, bb, aa, response, modified;
+  int r, g, b, a, rr ,gg, bb, aa, response, modified, undo;
   GdkRGBA color;
   char *title;
 
@@ -1297,7 +1297,7 @@ select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type)
   bb = nround(color.blue * 255);
   aa = nround(color.alpha * 255);
 
-  menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
+  undo = menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
   switch (type) {
   case OBJ_FIELD_COLOR_TYPE_STROKE:
     putobj(obj, "stroke_R", id, &rr);
@@ -1343,7 +1343,7 @@ select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type)
 
   if (rr == r && gg == g && bb == b && aa == a) {
     modified = SELECT_OBJ_COLOR_SAME;
-    menu_delete_undo();
+    menu_delete_undo(undo);
   } else {
     modified = SELECT_OBJ_COLOR_DIFFERENT;
   }
