@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.07.05\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2018-02-06 18:54+0900\n"
+"POT-Creation-Date: 2018-02-07 13:53+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1114,7 +1114,7 @@ msgid "_Y smooth:"
 msgstr ""
 
 #: src/gtk/x11file.c:2775 src/gtk/x11file.c:3964 src/gtk/x11file.c:4033
-#: src/gtk/x11file.c:4093 src/gtk/x11file.c:5751
+#: src/gtk/x11file.c:4093 src/gtk/x11file.c:5752
 #, c-format
 msgid "Create"
 msgstr ""
@@ -1260,35 +1260,35 @@ msgstr ""
 msgid "edit data file (single select)"
 msgstr ""
 
-#: src/gtk/x11file.c:5598
+#: src/gtk/x11file.c:5599
 msgid "Data file"
 msgstr ""
 
-#: src/gtk/x11file.c:5604
+#: src/gtk/x11file.c:5605
 msgid "Making data file"
 msgstr ""
 
-#: src/gtk/x11file.c:5605
+#: src/gtk/x11file.c:5606
 msgid "Making data file."
 msgstr ""
 
-#: src/gtk/x11file.c:5803 src/gtk/x11lgnd.c:2928
+#: src/gtk/x11file.c:5804 src/gtk/x11lgnd.c:2928
 msgid "Join"
 msgstr ""
 
-#: src/gtk/x11file.c:5808 src/gtk/x11lgnd.c:2907 src/gtk/gtk_widget.c:1233
+#: src/gtk/x11file.c:5809 src/gtk/x11lgnd.c:2907 src/gtk/gtk_widget.c:1233
 msgid "Color 1"
 msgstr ""
 
-#: src/gtk/x11file.c:5815 src/gtk/x11lgnd.c:2908 src/gtk/gtk_widget.c:1240
+#: src/gtk/x11file.c:5816 src/gtk/x11lgnd.c:2908 src/gtk/gtk_widget.c:1240
 msgid "Color 2"
 msgstr ""
 
-#: src/gtk/x11file.c:5823
+#: src/gtk/x11file.c:5824
 msgid "Clip"
 msgstr ""
 
-#: src/gtk/x11file.c:5835
+#: src/gtk/x11file.c:5836
 msgid "Type"
 msgstr ""
 
@@ -2144,7 +2144,7 @@ msgstr ""
 msgid "Align _Bottom"
 msgstr ""
 
-#: src/gtk/x11menu.c:2264 src/gtk/x11menu.c:6683 src/gtk/x11menu.c:6717
+#: src/gtk/x11menu.c:2264 src/gtk/x11menu.c:6685 src/gtk/x11menu.c:6719
 msgid "_Redo"
 msgstr ""
 
@@ -2152,7 +2152,7 @@ msgstr ""
 msgid "Redo previous command"
 msgstr ""
 
-#: src/gtk/x11menu.c:2280 src/gtk/x11menu.c:6692 src/gtk/x11menu.c:6707
+#: src/gtk/x11menu.c:2280 src/gtk/x11menu.c:6694 src/gtk/x11menu.c:6709
 msgid "_Undo"
 msgstr ""
 
@@ -2417,84 +2417,84 @@ msgstr ""
 msgid "Executing `%.128s'."
 msgstr ""
 
-#: src/gtk/x11menu.c:6622 src/gtk/x11menu.c:6640
+#: src/gtk/x11menu.c:6624 src/gtk/x11menu.c:6642
 msgid "edit"
 msgstr ""
 
-#: src/gtk/x11menu.c:6623
+#: src/gtk/x11menu.c:6625
 msgid "move"
 msgstr ""
 
-#: src/gtk/x11menu.c:6624
+#: src/gtk/x11menu.c:6626
 msgid "rotate"
 msgstr ""
 
-#: src/gtk/x11menu.c:6625
+#: src/gtk/x11menu.c:6627
 msgid "flip"
 msgstr ""
 
-#: src/gtk/x11menu.c:6626
+#: src/gtk/x11menu.c:6628
 msgid "delete object"
 msgstr ""
 
-#: src/gtk/x11menu.c:6627
+#: src/gtk/x11menu.c:6629
 msgid "create object"
 msgstr ""
 
-#: src/gtk/x11menu.c:6628
+#: src/gtk/x11menu.c:6630
 msgid "align"
 msgstr ""
 
-#: src/gtk/x11menu.c:6629
+#: src/gtk/x11menu.c:6631
 msgid "order"
 msgstr ""
 
-#: src/gtk/x11menu.c:6630
+#: src/gtk/x11menu.c:6632
 msgid "duplicate"
 msgstr ""
 
-#: src/gtk/x11menu.c:6631
+#: src/gtk/x11menu.c:6633
 msgid "execute shell"
 msgstr ""
 
-#: src/gtk/x11menu.c:6632
+#: src/gtk/x11menu.c:6634
 msgid "execute add-in"
 msgstr ""
 
-#: src/gtk/x11menu.c:6633
+#: src/gtk/x11menu.c:6635
 msgid "scale clear"
 msgstr ""
 
-#: src/gtk/x11menu.c:6634
+#: src/gtk/x11menu.c:6636
 msgid "scale undo"
 msgstr ""
 
-#: src/gtk/x11menu.c:6635
+#: src/gtk/x11menu.c:6637
 msgid "open file"
 msgstr ""
 
-#: src/gtk/x11menu.c:6636
+#: src/gtk/x11menu.c:6638
 msgid "add range"
 msgstr ""
 
-#: src/gtk/x11menu.c:6637
+#: src/gtk/x11menu.c:6639
 msgid "paste"
 msgstr ""
 
-#: src/gtk/x11menu.c:6638
+#: src/gtk/x11menu.c:6640
 msgid "scale trimming"
 msgstr ""
 
-#: src/gtk/x11menu.c:6639
+#: src/gtk/x11menu.c:6641
 msgid "auto scale"
 msgstr ""
 
-#: src/gtk/x11menu.c:6680 src/gtk/x11menu.c:6714
+#: src/gtk/x11menu.c:6682 src/gtk/x11menu.c:6716
 #, c-format
 msgid "_Redo: %s"
 msgstr ""
 
-#: src/gtk/x11menu.c:6689 src/gtk/x11menu.c:6704
+#: src/gtk/x11menu.c:6691 src/gtk/x11menu.c:6706
 #, c-format
 msgid "_Undo: %s"
 msgstr ""

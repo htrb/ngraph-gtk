@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.06.13\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2018-02-06 18:54+0900\n"
+"POT-Creation-Date: 2018-02-07 13:53+0900\n"
 "PO-Revision-Date: 2017-12-31 23:52+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -1148,7 +1148,7 @@ msgid "_Y smooth:"
 msgstr "_Y 隣接平均:"
 
 #: src/gtk/x11file.c:2775 src/gtk/x11file.c:3964 src/gtk/x11file.c:4033
-#: src/gtk/x11file.c:4093 src/gtk/x11file.c:5751
+#: src/gtk/x11file.c:4093 src/gtk/x11file.c:5752
 #, c-format
 msgid "Create"
 msgstr "作成"
@@ -1294,35 +1294,35 @@ msgstr "データプロパティ (複数選択)"
 msgid "edit data file (single select)"
 msgstr "データファイルの編集 (単一選択)"
 
-#: src/gtk/x11file.c:5598
+#: src/gtk/x11file.c:5599
 msgid "Data file"
 msgstr "データの保存"
 
-#: src/gtk/x11file.c:5604
+#: src/gtk/x11file.c:5605
 msgid "Making data file"
 msgstr "データファイル作成中"
 
-#: src/gtk/x11file.c:5605
+#: src/gtk/x11file.c:5606
 msgid "Making data file."
 msgstr "データファイル作成中"
 
-#: src/gtk/x11file.c:5803 src/gtk/x11lgnd.c:2928
+#: src/gtk/x11file.c:5804 src/gtk/x11lgnd.c:2928
 msgid "Join"
 msgstr "ジョイン"
 
-#: src/gtk/x11file.c:5808 src/gtk/x11lgnd.c:2907 src/gtk/gtk_widget.c:1233
+#: src/gtk/x11file.c:5809 src/gtk/x11lgnd.c:2907 src/gtk/gtk_widget.c:1233
 msgid "Color 1"
 msgstr "色 1"
 
-#: src/gtk/x11file.c:5815 src/gtk/x11lgnd.c:2908 src/gtk/gtk_widget.c:1240
+#: src/gtk/x11file.c:5816 src/gtk/x11lgnd.c:2908 src/gtk/gtk_widget.c:1240
 msgid "Color 2"
 msgstr "色 2"
 
-#: src/gtk/x11file.c:5823
+#: src/gtk/x11file.c:5824
 msgid "Clip"
 msgstr "クリップ"
 
-#: src/gtk/x11file.c:5835
+#: src/gtk/x11file.c:5836
 msgid "Type"
 msgstr "タイプ"
 
@@ -2183,7 +2183,7 @@ msgstr "縦中央揃え(_V)"
 msgid "Align _Bottom"
 msgstr "下端揃え(_B)"
 
-#: src/gtk/x11menu.c:2264 src/gtk/x11menu.c:6683 src/gtk/x11menu.c:6717
+#: src/gtk/x11menu.c:2264 src/gtk/x11menu.c:6685 src/gtk/x11menu.c:6719
 msgid "_Redo"
 msgstr "やり直し(_R)"
 
@@ -2191,7 +2191,7 @@ msgstr "やり直し(_R)"
 msgid "Redo previous command"
 msgstr "直前に取り消した操作をやり直す"
 
-#: src/gtk/x11menu.c:2280 src/gtk/x11menu.c:6692 src/gtk/x11menu.c:6707
+#: src/gtk/x11menu.c:2280 src/gtk/x11menu.c:6694 src/gtk/x11menu.c:6709
 msgid "_Undo"
 msgstr "元に戻す(_U)"
 
@@ -2456,84 +2456,84 @@ msgstr "質問"
 msgid "Executing `%.128s'."
 msgstr "実行中 `%.128s'."
 
-#: src/gtk/x11menu.c:6622 src/gtk/x11menu.c:6640
+#: src/gtk/x11menu.c:6624 src/gtk/x11menu.c:6642
 msgid "edit"
 msgstr "編集"
 
-#: src/gtk/x11menu.c:6623
+#: src/gtk/x11menu.c:6625
 msgid "move"
 msgstr "移動"
 
-#: src/gtk/x11menu.c:6624
+#: src/gtk/x11menu.c:6626
 msgid "rotate"
 msgstr "回転"
 
-#: src/gtk/x11menu.c:6625
+#: src/gtk/x11menu.c:6627
 msgid "flip"
 msgstr "反転"
 
-#: src/gtk/x11menu.c:6626
+#: src/gtk/x11menu.c:6628
 msgid "delete object"
 msgstr "オブジェクトの削除"
 
-#: src/gtk/x11menu.c:6627
+#: src/gtk/x11menu.c:6629
 msgid "create object"
 msgstr "オブジェクトの作成"
 
-#: src/gtk/x11menu.c:6628
+#: src/gtk/x11menu.c:6630
 msgid "align"
 msgstr "位置合わせ"
 
-#: src/gtk/x11menu.c:6629
+#: src/gtk/x11menu.c:6631
 msgid "order"
 msgstr "描画順の変更"
 
-#: src/gtk/x11menu.c:6630
+#: src/gtk/x11menu.c:6632
 msgid "duplicate"
 msgstr "複製"
 
-#: src/gtk/x11menu.c:6631
+#: src/gtk/x11menu.c:6633
 msgid "execute shell"
 msgstr "シェルの実行"
 
-#: src/gtk/x11menu.c:6632
+#: src/gtk/x11menu.c:6634
 msgid "execute add-in"
 msgstr "アドインの実行"
 
-#: src/gtk/x11menu.c:6633
+#: src/gtk/x11menu.c:6635
 msgid "scale clear"
 msgstr "スケールクリア"
 
-#: src/gtk/x11menu.c:6634
+#: src/gtk/x11menu.c:6636
 msgid "scale undo"
 msgstr "スケールアンドゥ"
 
-#: src/gtk/x11menu.c:6635
+#: src/gtk/x11menu.c:6637
 msgid "open file"
 msgstr "ファイルを開く"
 
-#: src/gtk/x11menu.c:6636
+#: src/gtk/x11menu.c:6638
 msgid "add range"
 msgstr "「範囲」の追加"
 
-#: src/gtk/x11menu.c:6637
+#: src/gtk/x11menu.c:6639
 msgid "paste"
 msgstr "貼り付け"
 
-#: src/gtk/x11menu.c:6638
+#: src/gtk/x11menu.c:6640
 msgid "scale trimming"
 msgstr "軸トリミング"
 
-#: src/gtk/x11menu.c:6639
+#: src/gtk/x11menu.c:6641
 msgid "auto scale"
 msgstr "自動スケール"
 
-#: src/gtk/x11menu.c:6680 src/gtk/x11menu.c:6714
+#: src/gtk/x11menu.c:6682 src/gtk/x11menu.c:6716
 #, c-format
 msgid "_Redo: %s"
 msgstr "やり直し: %s (_R)"
 
-#: src/gtk/x11menu.c:6689 src/gtk/x11menu.c:6704
+#: src/gtk/x11menu.c:6691 src/gtk/x11menu.c:6706
 #, c-format
 msgid "_Undo: %s"
 msgstr "元に戻す: %s (_U)"

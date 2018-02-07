@@ -1,3 +1,11 @@
+2018-02-07  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (menu_undo_common, menu_undo_internal): added.
+	(menu_undo): use "menu_undo_common()".
+	(menu_delete_undo): check undo id.
+	(menu_save_undo_single, menu_save_undo): return undo id.
+	(undo_info_push): save undo id.
+
 2018-02-06  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c: add multi line input feature for math-transformations.
