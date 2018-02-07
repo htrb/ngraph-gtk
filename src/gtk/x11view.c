@@ -650,7 +650,7 @@ text_dropped(const char *str, gint x, gint y, struct Viewer *d)
   char *ptr;
   double zoom = Menulocal.PaperZoom / 10000.0;
   struct objlist *obj;
-  int id, x1, y1, r, i, j, l;
+  int id, x1, y1, r, i, j, l, undo;
 
   obj = chkobject("text");
 
@@ -685,7 +685,7 @@ text_dropped(const char *str, gint x, gint y, struct Viewer *d)
   }
   ptr[j] = '\0';
 
-  menu_save_undo_single(UNDO_TYPE_PASTE, obj->name);
+  undo = menu_save_undo_single(UNDO_TYPE_PASTE, obj->name);
   id = newobj(obj);
   if (id < 0) {
     g_free(ptr);
@@ -708,7 +708,7 @@ text_dropped(const char *str, gint x, gint y, struct Viewer *d)
   r = DialogExecute(TopLevel, &DlgLegendText);
 
   if ((r == IDDELETE) || (r == IDCANCEL)) {
-    menu_delete_undo();
+    menu_delete_undo(undo);
     delobj(obj, id);
   } else {
     int oid;
@@ -3638,7 +3638,7 @@ swapint(int *a, int *b)
 static void
 create_legend1(struct Viewer *d)
 {
-  int id, num, x1, y1, ret;
+  int id, num, x1, y1, ret, undo;
   N_VALUE *inst;
   struct objlist *obj = NULL;
   struct Point *po;
@@ -3654,7 +3654,7 @@ create_legend1(struct Viewer *d)
   }
 
   if (obj) {
-    menu_save_undo_single(UNDO_TYPE_CREATE, obj->name);
+    undo = menu_save_undo_single(UNDO_TYPE_CREATE, obj->name);
     id = newobj(obj);
     if (id >= 0) {
       if (num >= 1) {
@@ -3678,7 +3678,7 @@ create_legend1(struct Viewer *d)
 
       if ((ret == IDDELETE) || (ret == IDCANCEL)) {
 	delobj(obj, id);
-	menu_delete_undo();
+	menu_delete_undo(undo);
       } else {
 	AddList(obj, inst);
 	AddInvalidateRect(obj, inst);
@@ -3702,7 +3702,7 @@ create_path(struct Viewer *d)
   struct narray *parray;
   struct Point *po;
   N_VALUE *inst;
-  int i, num, id, ret = IDCANCEL;
+  int i, num, id, ret = IDCANCEL, undo;
   char *objects[2];
 
   d->Capture = FALSE;
@@ -3713,10 +3713,10 @@ create_path(struct Viewer *d)
     goto ExitCreatePath;
   }
 
-  menu_save_undo_single(UNDO_TYPE_CREATE, obj->name);
+  undo = menu_save_undo_single(UNDO_TYPE_CREATE, obj->name);
   id = newobj(obj);
   if (id < 0) {
-    menu_delete_undo();
+    menu_delete_undo(undo);
     goto ExitCreatePath;
   }
 
@@ -3736,7 +3736,7 @@ create_path(struct Viewer *d)
   ret = DialogExecute(TopLevel, &DlgLegendArrow);
 
   if (ret == IDDELETE || ret == IDCANCEL) {
-    menu_delete_undo();
+    menu_delete_undo(undo);
     delobj(obj, id);
   } else {
     AddList(obj, inst);
@@ -3758,7 +3758,7 @@ create_path(struct Viewer *d)
 static void
 create_legend3(struct Viewer *d)
 {
-  int id, num, x1, y1, x2, y2, ret = IDCANCEL;
+  int id, num, x1, y1, x2, y2, ret = IDCANCEL, undo;
   N_VALUE *inst;
   struct objlist *obj = NULL;
   struct Point **pdata;
@@ -3776,7 +3776,7 @@ create_legend3(struct Viewer *d)
     }
 
     if (obj) {
-      menu_save_undo_single(UNDO_TYPE_CREATE, obj->name);
+      undo = menu_save_undo_single(UNDO_TYPE_CREATE, obj->name);
       id = newobj(obj);
       if (id >= 0) {
 	inst = chkobjinst(obj, id);
@@ -3817,7 +3817,7 @@ create_legend3(struct Viewer *d)
 
 	if ((ret == IDDELETE) || (ret == IDCANCEL)) {
 	  delobj(obj, id);
-	  menu_delete_undo();
+	  menu_delete_undo(undo);
 	} else {
 	  AddList(obj, inst);
 	  AddInvalidateRect(obj, inst);
@@ -3838,7 +3838,7 @@ create_legend3(struct Viewer *d)
 static void
 create_legendx(struct Viewer *d)
 {
-  int id, num, x1, y1, x2, y2, ret = IDCANCEL, type;
+  int id, num, x1, y1, x2, y2, ret = IDCANCEL, type, undo;
   N_VALUE *inst;
   struct objlist *obj = NULL;
   struct Point **pdata;
@@ -3852,7 +3852,7 @@ create_legendx(struct Viewer *d)
     obj = chkobject("path");
 
     if (obj) {
-      menu_save_undo_single(UNDO_TYPE_CREATE, obj->name);
+      undo = menu_save_undo_single(UNDO_TYPE_CREATE, obj->name);
       id = newobj(obj);
 
       if (id >= 0) {
@@ -3879,7 +3879,7 @@ create_legendx(struct Viewer *d)
 
 	  if (ret != IDOK) {
 	    delobj(obj, id);
-	    menu_delete_undo();
+	    menu_delete_undo(undo);
 	  } else {
 	    AddList(obj, inst);
 	    AddInvalidateRect(obj, inst);
@@ -3900,7 +3900,7 @@ create_legendx(struct Viewer *d)
 static void
 create_single_axis(struct Viewer *d)
 {
-  int id, num, x1, y1, x2, y2, lenx, dir, ret = IDCANCEL;
+  int id, num, x1, y1, x2, y2, lenx, dir, ret = IDCANCEL, undo;
   double fx1, fy1;
   N_VALUE *inst;
   struct objlist *obj = NULL;
@@ -3914,7 +3914,7 @@ create_single_axis(struct Viewer *d)
   if (num >= 3) {
     obj = chkobject("axis");
     if (obj != NULL) {
-      menu_save_undo_single(UNDO_TYPE_CREATE, obj->name);
+      undo = menu_save_undo_single(UNDO_TYPE_CREATE, obj->name);
       if ((id = newobj(obj)) >= 0) {
 	inst = chkobjinst(obj, id);
 	x1 = pdata[0]->x;
@@ -3955,7 +3955,7 @@ create_single_axis(struct Viewer *d)
 	ret = DialogExecute(TopLevel, &DlgAxis);
 
 	if (ret == IDCANCEL) {
-	  menu_delete_undo();
+	  menu_delete_undo(undo);
 	  delobj(obj, id);
 	} else {
 	  AddList(obj, inst);
@@ -3975,7 +3975,7 @@ static void
 create_axis(struct Viewer *d)
 {
   int idx, idy, idu, idr, idg, oidx, oidy, type,
-    num, x1, y1, x2, y2, lenx, leny, ret = IDCANCEL;
+    num, x1, y1, x2, y2, lenx, leny, ret = IDCANCEL, undo;
   N_VALUE *inst;
   char *argv[3], *ref;
   struct objlist *obj = NULL, *obj2;
@@ -3994,7 +3994,7 @@ create_axis(struct Viewer *d)
     argv[2] = NULL;
 
     if (obj != NULL) {
-      menu_save_undo(UNDO_TYPE_CREATE, argv);
+      undo = menu_save_undo(UNDO_TYPE_CREATE, argv);
       x1 = pdata[0]->x;
       y1 = pdata[0]->y;
       x2 = pdata[1]->x;
@@ -4085,7 +4085,7 @@ create_axis(struct Viewer *d)
       }
 
       if (ret == IDCANCEL) {
-	menu_undo(FALSE);
+	menu_undo_internal(undo);
       } else {
 	inst = chkobjinst(obj, idx);
 	if (inst)
@@ -5835,7 +5835,7 @@ search_axis_group(struct objlist *obj, int id, const char *group,
 static void
 ViewUpdate(void)
 {
-  int i, id, num, modified;
+  int i, id, num, modified, undo;
   struct FocusObj *focus;
   struct objlist *obj, *dobj = NULL;
   N_VALUE *inst, *dinst;
@@ -5861,7 +5861,7 @@ ViewUpdate(void)
   d->ShowRect = FALSE;
 
   get_focused_obj_array(d->focusobj, objs);
-  menu_save_undo(UNDO_TYPE_EDIT, objs);
+  undo = menu_save_undo(UNDO_TYPE_EDIT, objs);
   axis = FALSE;
   PaintLock = TRUE;
   modified = FALSE;
@@ -5975,7 +5975,7 @@ ViewUpdate(void)
     }
     UpdateAll(objs);
   } else {
-    menu_undo(FALSE);
+    menu_undo_internal(undo);
   }
   d->ShowFrame = TRUE;
 }
@@ -6407,7 +6407,7 @@ CmEditMenuCB(void *w, gpointer client_data)
     menu_redo();
     break;
   case MenuIdEditUndo:
-    menu_undo(TRUE);
+    menu_undo();
     break;
   case MenuIdEditCut:
     CutFocusedObjects();
