@@ -1,5 +1,7 @@
 2018-02-07  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* configure.ac: ckeck "gtksourceview-3.0".
+
 	* src/gtk/x11menu.c (menu_undo_common, menu_undo_internal): added.
 	(menu_undo): use "menu_undo_common()".
 	(menu_delete_undo): check undo id.
