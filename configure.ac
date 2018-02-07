@@ -111,6 +111,8 @@ AC_PATH_PROG(GLIB_MKENUMS, glib-mkenums)
 
 AC_SUBST(PKG_CONFIG)
 
+PKG_CHECK_MODULES([GTKSOURCEVIEW], [gtksourceview-3.0])
+
 # Checks for header files.
 AC_PATH_X
 AC_HEADER_DIRENT
