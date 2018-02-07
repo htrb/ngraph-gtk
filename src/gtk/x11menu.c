@@ -6513,7 +6513,7 @@ struct undo_info {
   char **obj;
   time_t time;
   struct undo_info *next;
-  int modified;
+  int modified, id;
 };
 static struct undo_info *UndoInfo = NULL, *RedoInfo = NULL;
 
@@ -6580,6 +6580,7 @@ menu_check_redo(void)
 static struct undo_info *
 undo_info_push(enum MENU_UNDO_TYPE type, char **obj)
 {
+  static int id = 0;
   struct undo_info *info;
   time_t t;
 
@@ -6599,6 +6600,7 @@ undo_info_push(enum MENU_UNDO_TYPE type, char **obj)
   info->next = UndoInfo;
   info->time = t;
   info->modified = get_graph_modified();
+  info->id = id++;
   UndoInfo = info;
   return info;
 }
@@ -6721,14 +6723,14 @@ set_undo_menu_label(void)
 }
 #endif
 
-void
+int
 menu_save_undo(enum MENU_UNDO_TYPE type, char **obj)
 {
   struct undo_info *info;
 
   info = undo_info_push(type, obj);
   if (info == NULL) {
-    return;
+    return -1;
   }
   menu_undo_iteration(undo_save, obj);
   while (RedoInfo) {
@@ -6737,22 +6739,26 @@ menu_save_undo(enum MENU_UNDO_TYPE type, char **obj)
   set_undo_menu_label();
   set_action_widget_sensitivity(EditUndoAction, menu_check_undo());
   set_action_widget_sensitivity(EditRedoAction, menu_check_redo());
+  return info->id;
 }
 
-void
+int
 menu_save_undo_single(enum MENU_UNDO_TYPE type, char *obj)
 {
   char *objs[2];
   objs[0] = obj;
   objs[1] = NULL;
-  menu_save_undo(type, objs);
+  return menu_save_undo(type, objs);
 }
 
 
 void
-menu_delete_undo(void)
+menu_delete_undo(int id)
 {
   if (UndoInfo == NULL) {
+    return;
+  }
+  if (UndoInfo->id != id) {
     return;
   }
   menu_undo_iteration(undo_delete, UndoInfo->obj);
@@ -6780,7 +6786,7 @@ menu_clear_undo(void)
 }
 
 static void
-undo_update_widgets(struct undo_info *info, int redraw)
+undo_update_widgets(struct undo_info *info)
 {
   set_action_widget_sensitivity(EditUndoAction, menu_check_undo());
   set_action_widget_sensitivity(EditRedoAction, menu_check_redo());
@@ -6849,32 +6855,62 @@ undo_check_modified(struct undo_info *info)
   return modified_current;
 }
 
-void
-menu_undo(int redraw)
+static struct undo_info *
+menu_undo_common(int *is_modify)
 {
   int r, modified;
+  struct undo_info *info;
+
+  r = menu_undo_iteration(undo_undo, UndoInfo->obj);
+  if (r) {
+    return NULL;
+  }
+  modified = undo_check_modified(UndoInfo);
+  info = UndoInfo;
+  UndoInfo = info->next;
+  if (is_modify) {
+    *is_modify = modified;
+  }
+  return info;
+}
+
+void
+menu_undo_internal(int id)
+{
+  struct undo_info *info;
+  if (UndoInfo == NULL) {
+    return;
+  }
+  if (UndoInfo->id != id) {
+    return;
+  }
+  info = menu_undo_common(NULL);
+  if (info == NULL) {
+    return;
+  }
+  undo_info_pop(info);
+  set_action_widget_sensitivity(EditUndoAction, menu_check_undo());
+  set_action_widget_sensitivity(EditRedoAction, menu_check_redo());
+  set_undo_menu_label();
+}
+
+void
+menu_undo(void)
+{
+  int modified;
   struct undo_info *info;
   if (UndoInfo == NULL) {
     return;
   }
 
-  r = menu_undo_iteration(undo_undo, UndoInfo->obj);
-  if (r) {
+  info = menu_undo_common(&modified);
+  if (info == NULL) {
     return;
   }
-  modified = undo_check_modified(UndoInfo);
-  info = UndoInfo;
-  UndoInfo = info->next;
-  if (redraw) {
-    info->next = RedoInfo;
-    info->modified = modified;
-    RedoInfo = info;
-    undo_update_widgets(info, redraw);
-  } else {
-    undo_info_pop(info);
-    set_action_widget_sensitivity(EditUndoAction, menu_check_undo());
-    set_action_widget_sensitivity(EditRedoAction, menu_check_redo());
-  }
+  info->next = RedoInfo;
+  info->modified = modified;
+  RedoInfo = info;
+  undo_update_widgets(info);
   set_undo_menu_label();
 }
 
@@ -6896,7 +6932,7 @@ menu_redo(void)
   info->next = UndoInfo;
   info->modified = modified;
   UndoInfo = info;
-  undo_update_widgets(info, TRUE);
+  undo_update_widgets(info);
   set_undo_menu_label();
 }
 
