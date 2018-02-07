@@ -2522,10 +2522,13 @@ math_tab_create(struct FileDialog *d)
 
   i = 0;
   w = create_spin_entry(0, FILE_OBJ_SMOOTH_MAX, 1, FALSE, TRUE);
+  gtk_widget_set_hexpand(w, TRUE);
+  gtk_widget_set_halign (w, GTK_ALIGN_START);
   add_widget_to_table(table, w, _("_X smooth:"), FALSE, i++);
   d->math.xsmooth = w;
 
   w = create_spin_entry(0, FILE_OBJ_SMOOTH_MAX, 1, FALSE, TRUE);
+  gtk_widget_set_halign (w, GTK_ALIGN_START);
   add_widget_to_table(table, w, _("_Y smooth:"), FALSE, i++);
   d->math.ysmooth = w;
 
