@@ -4375,14 +4375,14 @@ delete_file_obj(struct obj_list_data *data, int id)
   /* don't delete darray object */
 }
 
-static void
+static int
 data_save_undo(int type)
 {
   char *arg[3];
   arg[0] = "data";
   arg[1] = "fit";
   arg[2] = NULL;
-  menu_save_undo(type, arg);
+  return menu_save_undo(type, arg);
 }
 
 void
@@ -4390,7 +4390,7 @@ CmFileHistory(GtkRecentChooser *w, gpointer client_data)
 {
   int ret;
   char *name, *fname;
-  int id;
+  int id, undo;
   struct objlist *obj;
   char *uri;
   struct obj_list_data *data;
@@ -4415,16 +4415,16 @@ CmFileHistory(GtkRecentChooser *w, gpointer client_data)
     return;
   }
 
-  data_save_undo(UNDO_TYPE_OPEN_FILE);
+  undo = data_save_undo(UNDO_TYPE_OPEN_FILE);
   id = newobj(obj);
   if (id < 0) {
-    menu_delete_undo();
+    menu_delete_undo(undo);
     return;
   }
 
   fname = g_strdup(name);
   if (fname == NULL) {
-    menu_delete_undo();
+    menu_delete_undo(undo);
     return;
   }
 
@@ -4433,7 +4433,7 @@ CmFileHistory(GtkRecentChooser *w, gpointer client_data)
   FileDialog(data, id, FALSE);
   ret = DialogExecute(TopLevel, data->dialog);
   if (ret == IDCANCEL) {
-    menu_undo(FALSE);
+    menu_undo_internal(undo);
   } else {
     set_graph_modified();
     AddDataFileList(fname);
@@ -4445,7 +4445,7 @@ CmFileHistory(GtkRecentChooser *w, gpointer client_data)
 void
 CmRangeAdd(void *w, gpointer client_data)
 {
-  int id, ret, val;
+  int id, ret, val, undo;
   struct objlist *obj;
   struct obj_list_data *data;
 
@@ -4457,10 +4457,10 @@ CmRangeAdd(void *w, gpointer client_data)
     return;
   }
 
-  data_save_undo(UNDO_TYPE_ADD_RANGE);
+  undo = data_save_undo(UNDO_TYPE_ADD_RANGE);
   id = newobj(obj);
   if (id < 0) {
-    menu_delete_undo();
+    menu_delete_undo(undo);
     return;
   }
 
@@ -4473,7 +4473,7 @@ CmRangeAdd(void *w, gpointer client_data)
   ret = DialogExecute(TopLevel, data->dialog);
 
   if (ret == IDCANCEL) {
-    menu_undo(FALSE);
+    menu_undo_internal(undo);
   } else {
     set_graph_modified();
     FileWinUpdate(data, TRUE, DRAW_REDRAW);
@@ -4483,7 +4483,7 @@ CmRangeAdd(void *w, gpointer client_data)
 void
 CmFileOpen(void *w, gpointer client_data)
 {
-  int id, ret, n;
+  int id, ret, n, undo = -1;
   char *name;
   char **file = NULL, **ptr;
   struct objlist *obj;
@@ -4504,7 +4504,7 @@ CmFileOpen(void *w, gpointer client_data)
 
   arrayinit(&farray, sizeof(int));
   if (ret == IDOK && file) {
-    data_save_undo(UNDO_TYPE_OPEN_FILE);
+    undo = data_save_undo(UNDO_TYPE_OPEN_FILE);
     for (ptr = file; *ptr; ptr++) {
       name = *ptr;
       id = newobj(obj);
@@ -4518,11 +4518,11 @@ CmFileOpen(void *w, gpointer client_data)
   }
 
   if (update_file_obj_multi(obj, &farray, TRUE)) {
-    menu_delete_undo();
+    menu_delete_undo(undo);
   }
 
   if (n == chkobjlastinst(obj)) {
-    menu_delete_undo();
+    menu_delete_undo(undo);
   } else {
     FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, DRAW_NOTIFY);
     set_graph_modified();
@@ -4566,7 +4566,7 @@ CmFileClose(void *w, gpointer client_data)
 int
 update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file)
 {
-  int i, j, num, *array, id0, modified, ret;
+  int i, j, num, *array, id0, modified, ret, undo;
   char *name;
   struct obj_list_data *data;
 
@@ -4590,7 +4590,7 @@ update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file)
 	AddDataFileList(name);
       }
     } else {
-      data_save_undo(UNDO_TYPE_DUMMY);
+      undo = data_save_undo(UNDO_TYPE_DUMMY);
       data = NgraphApp.FileWin.data.data;
       FileDialog(data, array[i], i < num - 1);
       ret = DialogExecute(TopLevel, data->dialog);
@@ -4607,7 +4607,7 @@ update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file)
 	for (j = i + 1; j < num; j++) {
 	  array[j]--;
 	}
-	menu_delete_undo();
+	menu_delete_undo(undo);
 	break;
       case IDFAPPLY:
 	  id0 = i;
@@ -4617,17 +4617,17 @@ update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file)
 	  getobj(obj, "file", array[i], 0, NULL, &name);
 	  AddDataFileList(name);
 	}
-	menu_delete_undo();
+	menu_delete_undo(undo);
 	modified = TRUE;
 	break;
       case IDCANCEL:
-	menu_undo(FALSE);
+	menu_undo_internal(undo);
 	break;
       }
     }
   }
   if (! modified) {
-    menu_undo(FALSE);
+    menu_undo_internal(undo);
   }
   return modified;
 }
@@ -4902,7 +4902,7 @@ file_copy2_popup_func(GtkMenuItem *w, gpointer client_data)
 static void
 FileWinFileUpdate(struct obj_list_data *d)
 {
-  int sel, ret, num;
+  int sel, ret, num, undo;
   GtkWidget *parent;
 
   if (Menulock || Globallock)
@@ -4911,7 +4911,7 @@ FileWinFileUpdate(struct obj_list_data *d)
   num = chkobjlastinst(d->obj);
 
   if ((sel >= 0) && (sel <= num)) {
-    data_save_undo(UNDO_TYPE_EDIT);
+    undo = data_save_undo(UNDO_TYPE_EDIT);
     d->setup_dialog(d, sel, FALSE);
     d->select = sel;
 
@@ -4920,7 +4920,7 @@ FileWinFileUpdate(struct obj_list_data *d)
     set_graph_modified();
     switch (ret) {
     case IDCANCEL:
-      menu_undo(FALSE);
+      menu_undo_internal(undo);
       break;
     default:
       d->update(d, FALSE, DRAW_NOTIFY);
@@ -4931,7 +4931,7 @@ FileWinFileUpdate(struct obj_list_data *d)
 static void
 FileWinFileDraw(struct obj_list_data *d)
 {
-  int i, sel, hidden, h, num, modified;
+  int i, sel, hidden, h, num, modified, undo;
 
   if (Menulock || Globallock)
     return;
@@ -4940,7 +4940,7 @@ FileWinFileDraw(struct obj_list_data *d)
   num = chkobjlastinst(d->obj);
 
   modified = FALSE;
-  data_save_undo(UNDO_TYPE_EDIT);
+  undo = data_save_undo(UNDO_TYPE_EDIT);
   if ((sel >= 0) && (sel <= num)) {
     for (i = 0; i <= num; i++) {
       hidden = (i != sel);
@@ -4965,7 +4965,7 @@ FileWinFileDraw(struct obj_list_data *d)
   if (modified) {
     set_graph_modified();
   } else {
-    menu_delete_undo();
+    menu_delete_undo(undo);
   }
   CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
   FileWinUpdate(d, FALSE, DRAW_NONE);
@@ -5021,7 +5021,7 @@ FileWinFit(struct obj_list_data *d)
 {
   struct objlist *fitobj, *obj2;
   char *fit;
-  int sel, idnum, fitid = 0, ret, num;
+  int sel, idnum, fitid = 0, ret, num, undo;
   struct narray iarray;
   GtkWidget *parent;
 
@@ -5062,13 +5062,13 @@ FileWinFit(struct obj_list_data *d)
   if (fit == NULL)
     return;
 
-  data_save_undo(UNDO_TYPE_EDIT);
+  undo = data_save_undo(UNDO_TYPE_EDIT);
   parent = (Menulocal.single_window_mode) ? TopLevel : d->parent->Win;
   ret = execute_fit_dialog(parent, d->obj, sel, fitobj, fitid);
 
   switch (ret) {
   case IDCANCEL:
-    menu_delete_undo();
+    menu_delete_undo(undo);
     break;
   case IDDELETE:
     delobj(fitobj, fitid);
@@ -5491,6 +5491,7 @@ void
 CmFileMath(void *w, gpointer client_data)
 {
   struct objlist *obj;
+  int undo;
 
   if (Menulock || Globallock)
     return;
@@ -5500,13 +5501,13 @@ CmFileMath(void *w, gpointer client_data)
   if (chkobjlastinst(obj) < 0)
     return;
 
-  menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
+  undo = menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
   MathDialog(&DlgMath, obj);
   DialogExecute(TopLevel, &DlgMath);
   if (DlgMath.modified) {
     FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, DRAW_REDRAW);
   } else {
-    menu_delete_undo();
+    menu_delete_undo(undo);
   }
 }
 
@@ -5857,7 +5858,7 @@ create_type_combo_item(GtkTreeStore *list, struct objlist *obj, int id)
 static void
 select_type(GtkComboBox *w, gpointer user_data)
 {
-  int sel, col_type, type, mark_type, curve_type, enum_id, found, active, join, ret;
+  int sel, col_type, type, mark_type, curve_type, enum_id, found, active, join, ret, undo;
   struct objlist *obj;
   struct obj_list_data *d;
   GtkTreeStore *list;
@@ -5901,7 +5902,7 @@ select_type(GtkComboBox *w, gpointer user_data)
     if (enum_id == type) {
       return;
     }
-    menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
+    undo = menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
     putobj(obj, "type", sel, &enum_id);
     if (enum_id == PLOT_TYPE_FIT) {
       char *fit;
@@ -5911,7 +5912,7 @@ select_type(GtkComboBox *w, gpointer user_data)
       if (fit == NULL) {
 	ret = show_fit_dialog(obj, sel, (Menulocal.single_window_mode) ? TopLevel : d->parent->Win);
 	if (ret != IDOK) {
-	  menu_delete_undo();
+	  menu_delete_undo(undo);
 	  putobj(obj, "type", sel, &type);
 	  return;
 	}
@@ -5955,10 +5956,10 @@ select_type(GtkComboBox *w, gpointer user_data)
     }
     break;
   case FILE_COMBO_ITEM_FIT:
-    data_save_undo(UNDO_TYPE_EDIT);
+    undo = data_save_undo(UNDO_TYPE_EDIT);
     ret = show_fit_dialog(obj, sel, (Menulocal.single_window_mode) ? TopLevel : d->parent->Win);
     if (ret != IDOK) {
-      menu_delete_undo();
+      menu_delete_undo(undo);
       return;
     }
     break;
