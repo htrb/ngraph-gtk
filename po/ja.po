@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.06.13\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
 "POT-Creation-Date: 2018-02-07 17:12+0900\n"
-"PO-Revision-Date: 2017-12-31 23:52+0900\n"
+"PO-Revision-Date: 2018-02-07 17:23+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja\n"
@@ -951,29 +951,24 @@ msgid "_Edit"
 msgstr "編集(_E)"
 
 #: src/gtk/x11file.c:226
-#, fuzzy
 msgid "Math X:"
 msgstr "X 変換式(_M):"
 
 #: src/gtk/x11file.c:226
-#, fuzzy
 msgid "Math Y:"
 msgstr "Y 変換式(_M):"
 
 #: src/gtk/x11file.c:233
-#, fuzzy
 msgid "Math:"
 msgstr "式(_M):"
 
 #: src/gtk/x11file.c:239 src/gtk/x11file.c:2502
-#, fuzzy
 msgid "single line"
-msgstr "単一選択"
+msgstr "１行入力"
 
 #: src/gtk/x11file.c:246 src/gtk/x11file.c:2506
-#, fuzzy
 msgid "multi line"
-msgstr "複数選択"
+msgstr "複数行入力"
 
 #: src/gtk/x11file.c:576
 msgid "_X math"
