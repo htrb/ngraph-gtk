@@ -302,7 +302,7 @@ MathTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
     break;
   }
 
-  gtk_label_set_text_with_mnemonic(GTK_LABEL(d->label), _(label[d->Mode]));
+  gtk_label_set_text(GTK_LABEL(d->label), _(label[d->Mode]));
   gtk_entry_set_text(GTK_ENTRY(d->list), d->Text);
   gtk_text_buffer_set_text(gtk_text_view_get_buffer(GTK_TEXT_VIEW(d->text)), d->Text, -1);
   gtk_window_set_default_size(GTK_WINDOW(wi), 400, -1);
