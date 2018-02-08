@@ -163,19 +163,19 @@ enum MATH_FNC_TYPE {
 
 static char *FieldStr[] = {"math_x", "math_y", "func_f", "func_g", "func_h"};
 
-static GtkWidget *
-create_source_view(void)
+static void
+set_lm_search_path(GtkSourceLanguageManager *lm)
 {
-  GtkWidget *source_view;
-  GtkSourceLanguageManager *lm;
-  GtkSourceBuffer *buffer;
-  GtkSourceLanguage *lang;
   const gchar * const *dirs;
   gchar **new_dirs;
   int n;
+  static int initialized = FALSE;
 
-  source_view = gtk_source_view_new();
-  lm = gtk_source_language_manager_get_default();
+  if (initialized) {
+    return;
+  }
+  initialized = TRUE;
+
   dirs = gtk_source_language_manager_get_search_path(lm);
   for (n = 0; dirs[n]; n++);
   new_dirs = g_malloc((n + 2) * sizeof(*new_dirs));
@@ -191,9 +191,22 @@ create_source_view(void)
     }
     g_free(new_dirs);
   }
-  buffer = gtk_source_buffer_new(NULL);
+}
 
+static GtkWidget *
+create_source_view(void)
+{
+  GtkWidget *source_view;
+  GtkSourceLanguageManager *lm;
+  GtkSourceBuffer *buffer;
+  GtkSourceLanguage *lang;
+
+  source_view = gtk_source_view_new();
+  buffer = gtk_source_buffer_new(NULL);
   gtk_text_view_set_buffer(GTK_TEXT_VIEW(source_view), GTK_TEXT_BUFFER(buffer));
+
+  lm = gtk_source_language_manager_get_default();
+  set_lm_search_path(lm);
   lang = gtk_source_language_manager_get_language(lm, "ngraph_math");
   gtk_source_buffer_set_language(GTK_SOURCE_BUFFER(buffer), lang);
   gtk_source_buffer_set_highlight_syntax(GTK_SOURCE_BUFFER(buffer), TRUE);
@@ -384,6 +397,23 @@ MathTextDialog(struct MathTextDialog *data, char *text, int mode, struct objlist
 }
 
 static void
+set_escaped_str(GtkWidget *list, GtkTreeIter *iter, int col, const char *math)
+{
+  const char *str;
+  char *tmpstr;
+  str = CHK_STR(math);
+  tmpstr = NULL;
+  if (strchr(str, '\n')) {
+    tmpstr = g_strescape(str, "\\");
+    str = tmpstr;
+  }
+  list_store_set_string(list, iter, col, str);
+  if (tmpstr) {
+    g_free(tmpstr);
+  }
+}
+
+static void
 MathDialogSetupItem(GtkWidget *w, struct MathDialog *d)
 {
   int i;
@@ -402,7 +432,7 @@ MathDialogSetupItem(GtkWidget *w, struct MathDialog *d)
     getobj(d->Obj, field, i, 0, NULL, &math);
     list_store_append(d->list, &iter);
     list_store_set_int(d->list, &iter, 0, i);
-    list_store_set_string(d->list, &iter, 1, CHK_STR(math));
+    set_escaped_str(d->list, &iter, 1, math);
   }
 
   if (d->Mode >= 0 && d->Mode < MATH_FNC_NUM)
@@ -5467,7 +5497,7 @@ file_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
 	    list_store_set_string(GTK_WIDGET(d->text), iter, i, "....................");
 	  }
         } else {
-	  list_store_set_string(GTK_WIDGET(d->text), iter, i, str);
+          set_escaped_str(GTK_WIDGET(d->text), iter, i, str);
         }
       }
       break;
