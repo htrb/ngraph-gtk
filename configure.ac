@@ -162,6 +162,7 @@ AC_CONFIG_FILES([Makefile \
 		 test/Makefile \
 		 plugins/Makefile \
 		 plugins/ruby/Makefile \
+		 gtksourceview/Makefile \
 		 mingw/Makefile \
 		 osx/Makefile \
 		 icons/Makefile \

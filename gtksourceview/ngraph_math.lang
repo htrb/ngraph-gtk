@@ -1,0 +1,459 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+This file is part of GtkSourceView
+
+Author: Stefano Palazzo <stefano-palazzo@ubuntu.com>
+Copyright (C) 2012 Stefano Palazzo <stefano-palazzo@ubuntu.com>
+
+GtkSourceView is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+GtkSourceView is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+-->
+
+<language id="ngraph_math" _name="ngraph mathematics transformation" version="2.0" _section="Script">
+  <metadata>
+    <property name="mimetypes">text/x-ngraph-math</property>
+    <property name="line-comment-start">#</property>
+  </metadata>
+
+  <styles>
+    <style id="keyword"             _name="Keyword"                map-to="def:keyword"/>
+    <style id="floating-point"       _name="Floating point number" map-to="def:floating-point"/>
+    <style id="decimal"              _name="Decimal number"        map-to="def:decimal"/>
+    <style id="base-n-integer"       _name="Base-N number"         map-to="def:base-n-integer"/>
+    <style id="numeric-literal"      _name="Numeric literal"       map-to="def:base-n-integer"/>
+    <style id="builtin"              _name="Builtin"               map-to="def:type"/>
+    <style id="constant"             _name="Constant"              map-to="def:type"/>
+    <style id="parameter"            _name="Parameter"             map-to="def:identifier"/>
+    <style id="special-variable"     _name="Special Variable"      map-to="def:identifier"/>
+  </styles>
+
+  <definitions>
+
+    <context id="keywords" style-ref="keyword">
+      <keyword>def</keyword>
+      <keyword>DEF</keyword>
+      <keyword>const</keyword>
+      <keyword>CONST</keyword>
+    </context>
+
+    <context id="parameters" style-ref="special-variable">
+      <match>%[Ff]?[0-9]+</match>
+    </context>
+
+    <context id="builtins" style-ref="builtin">
+      <keyword>abs</keyword>
+      <keyword>ABS</keyword>
+      <keyword>sign</keyword>
+      <keyword>SIGN</keyword>
+      <keyword>int</keyword>
+      <keyword>INT</keyword>
+      <keyword>gauss</keyword>
+      <keyword>GAUSS</keyword>
+      <keyword>frac</keyword>
+      <keyword>FRAC</keyword>
+      <keyword>round</keyword>
+      <keyword>ROUND</keyword>
+      <keyword>min</keyword>
+      <keyword>MIN</keyword>
+      <keyword>max</keyword>
+      <keyword>MAX</keyword>
+      <keyword>sumsq</keyword>
+      <keyword>SUMSQ</keyword>
+      <keyword>sqr</keyword>
+      <keyword>SQR</keyword>
+      <keyword>sqrt</keyword>
+      <keyword>SQRT</keyword>
+      <keyword>exp</keyword>
+      <keyword>EXP</keyword>
+      <keyword>ln</keyword>
+      <keyword>LN</keyword>
+      <keyword>log</keyword>
+      <keyword>LOG</keyword>
+      <keyword>sin</keyword>
+      <keyword>SIN</keyword>
+      <keyword>cos</keyword>
+      <keyword>COS</keyword>
+      <keyword>tan</keyword>
+      <keyword>TAN</keyword>
+      <keyword>asin</keyword>
+      <keyword>ASIN</keyword>
+      <keyword>acos</keyword>
+      <keyword>ACOS</keyword>
+      <keyword>atan</keyword>
+      <keyword>ATAN</keyword>
+      <keyword>sinh</keyword>
+      <keyword>SINH</keyword>
+      <keyword>cosh</keyword>
+      <keyword>COSH</keyword>
+      <keyword>tanh</keyword>
+      <keyword>TANH</keyword>
+      <keyword>asinh</keyword>
+      <keyword>ASINH</keyword>
+      <keyword>acosh</keyword>
+      <keyword>ACOSH</keyword>
+      <keyword>atanh</keyword>
+      <keyword>ATANH</keyword>
+      <keyword>fmod</keyword>
+      <keyword>FMOD</keyword>
+      <keyword>rand</keyword>
+      <keyword>RAND</keyword>
+      <keyword>srand</keyword>
+      <keyword>SRAND</keyword>
+      <keyword>theta</keyword>
+      <keyword>THETA</keyword>
+      <keyword>delta</keyword>
+      <keyword>DELTA</keyword>
+      <keyword>gamma</keyword>
+      <keyword>GAMMA</keyword>
+      <keyword>icgam</keyword>
+      <keyword>ICGAM</keyword>
+      <keyword>erf</keyword>
+      <keyword>ERF</keyword>
+      <keyword>erfc</keyword>
+      <keyword>ERFC</keyword>
+      <keyword>qinv</keyword>
+      <keyword>QINV</keyword>
+      <keyword>ei</keyword>
+      <keyword>EI</keyword>
+      <keyword>beta</keyword>
+      <keyword>BETA</keyword>
+      <keyword>icbeta</keyword>
+      <keyword>ICBETA</keyword>
+      <keyword>jn</keyword>
+      <keyword>JN</keyword>
+      <keyword>yn</keyword>
+      <keyword>YN</keyword>
+      <keyword>in</keyword>
+      <keyword>IN</keyword>
+      <keyword>kn</keyword>
+      <keyword>KN</keyword>
+      <keyword>jl</keyword>
+      <keyword>JL</keyword>
+      <keyword>yl</keyword>
+      <keyword>YL</keyword>
+      <keyword>jnu</keyword>
+      <keyword>JNU</keyword>
+      <keyword>ynu</keyword>
+      <keyword>YNU</keyword>
+      <keyword>inu</keyword>
+      <keyword>INU</keyword>
+      <keyword>knu</keyword>
+      <keyword>KNU</keyword>
+      <keyword>pn</keyword>
+      <keyword>PN</keyword>
+      <keyword>lgn</keyword>
+      <keyword>LGN</keyword>
+      <keyword>hn</keyword>
+      <keyword>HN</keyword>
+      <keyword>tn</keyword>
+      <keyword>TN</keyword>
+      <keyword>zeta</keyword>
+      <keyword>ZETA</keyword>
+      <keyword>zeta_int</keyword>
+      <keyword>zeta_INT</keyword>
+      <keyword>zetam1</keyword>
+      <keyword>ZETAM1</keyword>
+      <keyword>zetam1_int</keyword>
+      <keyword>zetam1_INT</keyword>
+      <keyword>choose</keyword>
+      <keyword>CHOOSE</keyword>
+      <keyword>mjd</keyword>
+      <keyword>MJD</keyword>
+      <keyword>unix2mjd</keyword>
+      <keyword>UNIX2MJD</keyword>
+      <keyword>mjd2unix</keyword>
+      <keyword>MJD2UNIX</keyword>
+      <keyword>mjd2year</keyword>
+      <keyword>MJD2YEAR</keyword>
+      <keyword>mjd2month</keyword>
+      <keyword>MJD2MONTH</keyword>
+      <keyword>mjd2day</keyword>
+      <keyword>MJD2DAY</keyword>
+      <keyword>mjd2wday</keyword>
+      <keyword>MJD2WDAY</keyword>
+      <keyword>mjd2yday</keyword>
+      <keyword>MJD2YDAY</keyword>
+      <keyword>time</keyword>
+      <keyword>TIME</keyword>
+      <keyword>eq</keyword>
+      <keyword>EQ</keyword>
+      <keyword>neq</keyword>
+      <keyword>NEQ</keyword>
+      <keyword>ge</keyword>
+      <keyword>GE</keyword>
+      <keyword>gt</keyword>
+      <keyword>GT</keyword>
+      <keyword>le</keyword>
+      <keyword>LE</keyword>
+      <keyword>lt</keyword>
+      <keyword>LT</keyword>
+      <keyword>not</keyword>
+      <keyword>NOT</keyword>
+      <keyword>or</keyword>
+      <keyword>OR</keyword>
+      <keyword>and</keyword>
+      <keyword>AND</keyword>
+      <keyword>xor</keyword>
+      <keyword>XOR</keyword>
+      <keyword>size</keyword>
+      <keyword>SIZE</keyword>
+      <keyword>sort</keyword>
+      <keyword>SORT</keyword>
+      <keyword>rsort</keyword>
+      <keyword>RSORT</keyword>
+      <keyword>pop</keyword>
+      <keyword>POP</keyword>
+      <keyword>push</keyword>
+      <keyword>PUSH</keyword>
+      <keyword>shift</keyword>
+      <keyword>SHIFT</keyword>
+      <keyword>unshift</keyword>
+      <keyword>UNSHIFT</keyword>
+      <keyword>array_sum</keyword>
+      <keyword>array_SUM</keyword>
+      <keyword>array_sumsq</keyword>
+      <keyword>array_SUMSQ</keyword>
+      <keyword>array_average</keyword>
+      <keyword>array_AVERAGE</keyword>
+      <keyword>array_stdevp</keyword>
+      <keyword>array_STDEVP</keyword>
+      <keyword>array_stdev</keyword>
+      <keyword>array_STDEV</keyword>
+      <keyword>array_max</keyword>
+      <keyword>array_MAX</keyword>
+      <keyword>array_min</keyword>
+      <keyword>array_MIN</keyword>
+      <keyword>array_clear</keyword>
+      <keyword>array_CLEAR</keyword>
+      <keyword>array_compact</keyword>
+      <keyword>array_COMPACT</keyword>
+      <keyword>m</keyword>
+      <keyword>M</keyword>
+      <keyword>rm</keyword>
+      <keyword>RM</keyword>
+      <keyword>cm</keyword>
+      <keyword>CM</keyword>
+      <keyword>am</keyword>
+      <keyword>AM</keyword>
+      <keyword>draw_rect</keyword>
+      <keyword>draw_RECT</keyword>
+      <keyword>draw_arc</keyword>
+      <keyword>draw_ARC</keyword>
+      <keyword>draw_mark</keyword>
+      <keyword>draw_MARK</keyword>
+      <keyword>fit_prm</keyword>
+      <keyword>fit_PRM</keyword>
+      <keyword>fit_calc</keyword>
+      <keyword>fit_CALC</keyword>
+      <keyword>line_number</keyword>
+      <keyword>line_NUMBER</keyword>
+      <keyword>isnormal</keyword>
+      <keyword>ISNORMAL</keyword>
+      <keyword>isbreak</keyword>
+      <keyword>ISBREAK</keyword>
+      <keyword>iscont</keyword>
+      <keyword>ISCONT</keyword>
+      <keyword>isnan</keyword>
+      <keyword>ISNAN</keyword>
+      <keyword>isundef</keyword>
+      <keyword>ISUNDEF</keyword>
+      <keyword>sum</keyword>
+      <keyword>SUM</keyword>
+      <keyword>dif</keyword>
+      <keyword>DIF</keyword>
+      <keyword>f</keyword>
+      <keyword>F</keyword>
+      <keyword>g</keyword>
+      <keyword>G</keyword>
+      <keyword>h</keyword>
+      <keyword>H</keyword>
+      <keyword>color</keyword>
+      <keyword>COLOR</keyword>
+      <keyword>obj_color</keyword>
+      <keyword>obj_COLOR</keyword>
+      <keyword>alpha</keyword>
+      <keyword>ALPHA</keyword>
+      <keyword>obj_alpha</keyword>
+      <keyword>obj_ALPHA</keyword>
+      <keyword>rgb</keyword>
+      <keyword>RGB</keyword>
+      <keyword>rgb2</keyword>
+      <keyword>RGB2</keyword>
+      <keyword>hsb</keyword>
+      <keyword>HSB</keyword>
+      <keyword>hsb2</keyword>
+      <keyword>HSB2</keyword>
+      <keyword>marksize</keyword>
+      <keyword>MARKSIZE</keyword>
+      <keyword>marktype</keyword>
+      <keyword>MARKTYPE</keyword>
+      <keyword>if</keyword>
+      <keyword>IF</keyword>
+      <keyword>unless</keyword>
+      <keyword>UNLESS</keyword>
+      <keyword>for</keyword>
+      <keyword>FOR</keyword>
+      <keyword>prog1</keyword>
+      <keyword>PROG1</keyword>
+      <keyword>prog2</keyword>
+      <keyword>PROG2</keyword>
+      <keyword>progn</keyword>
+      <keyword>PROGN</keyword>
+    </context>
+
+    <context id="special-variables" style-ref="special-variable">
+      <keyword>x</keyword>
+      <keyword>X</keyword>
+      <keyword>y</keyword>
+      <keyword>Y</keyword>
+      <keyword>col</keyword>
+      <keyword>COL</keyword>
+    </context>
+
+    <context id="constants" style-ref="constant">
+      <keyword>pi</keyword>
+      <keyword>PI</keyword>
+      <keyword>e</keyword>
+      <keyword>E</keyword>
+      <keyword>euler</keyword>
+      <keyword>EULER</keyword>
+      <keyword>nan</keyword>
+      <keyword>NAN</keyword>
+      <keyword>undef</keyword>
+      <keyword>UNDEF</keyword>
+      <keyword>cont</keyword>
+      <keyword>CONT</keyword>
+      <keyword>break</keyword>
+      <keyword>BREAK</keyword>
+      <keyword>num</keyword>
+      <keyword>NUM</keyword>
+      <keyword>minx</keyword>
+      <keyword>MINX</keyword>
+      <keyword>maxx</keyword>
+      <keyword>MAXX</keyword>
+      <keyword>miny</keyword>
+      <keyword>MINY</keyword>
+      <keyword>maxy</keyword>
+      <keyword>MAXY</keyword>
+      <keyword>sumx</keyword>
+      <keyword>SUMX</keyword>
+      <keyword>sumy</keyword>
+      <keyword>SUMY</keyword>
+      <keyword>sumxx</keyword>
+      <keyword>SUMXX</keyword>
+      <keyword>sumyy</keyword>
+      <keyword>SUMYY</keyword>
+      <keyword>sumxy</keyword>
+      <keyword>SUMXY</keyword>
+      <keyword>avx</keyword>
+      <keyword>AVX</keyword>
+      <keyword>avy</keyword>
+      <keyword>AVY</keyword>
+      <keyword>stdevpx</keyword>
+      <keyword>STDEVPX</keyword>
+      <keyword>stdevpy</keyword>
+      <keyword>STDEVPY</keyword>
+      <keyword>stdevx</keyword>
+      <keyword>STDEVX</keyword>
+      <keyword>stdevy</keyword>
+      <keyword>STDEVY</keyword>
+      <keyword>first</keyword>
+      <keyword>FIRST</keyword>
+      <keyword>mask</keyword>
+      <keyword>MASK</keyword>
+      <keyword>move</keyword>
+      <keyword>MOVE</keyword>
+      <keyword>colx</keyword>
+      <keyword>COLX</keyword>
+      <keyword>coly</keyword>
+      <keyword>COLY</keyword>
+      <keyword>axisx</keyword>
+      <keyword>AXISX</keyword>
+      <keyword>axisy</keyword>
+      <keyword>AXISY</keyword>
+      <keyword>hskip</keyword>
+      <keyword>HSKIP</keyword>
+      <keyword>rstep</keyword>
+      <keyword>RSTEP</keyword>
+      <keyword>fline</keyword>
+      <keyword>FLINE</keyword>
+      <keyword>data_obj</keyword>
+      <keyword>data_OBJ</keyword>
+      <keyword>path_obj</keyword>
+      <keyword>path_OBJ</keyword>
+      <keyword>rect_obj</keyword>
+      <keyword>rect_OBJ</keyword>
+      <keyword>arc_obj</keyword>
+      <keyword>arc_OBJ</keyword>
+      <keyword>mark_obj</keyword>
+      <keyword>mark_OBJ</keyword>
+      <keyword>text_obj</keyword>
+      <keyword>text_OBJ</keyword>
+      <keyword>%d</keyword>
+      <keyword>%D</keyword>
+      <keyword>%n</keyword>
+      <keyword>%N</keyword>
+    </context>
+
+    <define-regex id="underscore_num">\d( ?\d)*</define-regex>
+
+    <define-regex id="float" extended="true">
+      ( \%{underscore_num}\.\%{underscore_num} ) |
+      ( (\%{underscore_num}(\.\%{underscore_num})?)[eE][+-]?\%{underscore_num} )
+    </define-regex>
+
+    <context id="float" style-ref="floating-point">
+      <match>(?&lt;![\w\.])\%{float}(?![\w\.])</match>
+    </context>
+
+    <context id="decimal" style-ref="decimal">
+      <match>(?&lt;![\w\.])([1-9]( ?[0-9])*|0)(?![\w\.])</match>
+    </context>
+
+    <context id="hex" style-ref="base-n-integer">
+      <match>(?&lt;![\w\.])0[xX][0-9A-Fa-f]( ?[0-9A-Fa-f])*(?![\w\.])</match>
+    </context>
+
+    <context id="octal" style-ref="base-n-integer">
+      <match>(?&lt;![\w\.])0[oO][0-7]( ?[0-7])*(?![\w\.])</match>
+    </context>
+
+    <context id="binary" style-ref="base-n-integer">
+      <match>(?&lt;![\w\.])0[bB][01]( ?[01])*(?![\w\.])</match>
+    </context>
+
+    <context id="numeric-literal" style-ref="numeric-literal">
+      <match>(?&lt;![\w\.])\?((\\[MC]-){1,2}|\\?)\S</match>
+    </context>
+
+    <context id="ngraph_math" class="no-spell-check">
+      <include>
+	<context ref="keywords"/>
+	<context ref="parameters"/>
+	<context ref="builtins"/>
+	<context ref="special-variables"/>
+	<context ref="constants"/>
+	<context ref="float"/>
+	<context ref="decimal"/>
+	<context ref="hex"/>
+	<context ref="octal"/>
+	<context ref="binary"/>
+	<context ref="numeric-literal"/>
+      </include>
+    </context>
+
+  </definitions>
+</language>
