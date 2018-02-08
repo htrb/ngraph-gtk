@@ -1,5 +1,8 @@
 2018-02-08  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/gtk/gtk_action.c (create_application_window): don't use
+	appmenu on Windows.
+
 	* src/gtk/x11file.c (set_escaped_str): added.
 	(file_list_set_val, MathDialogSetupItem): use "set_escaped_str()".
 
