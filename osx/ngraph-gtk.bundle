@@ -164,6 +164,10 @@
     ${prefix}/share/glib-2.0
   </data>
 
+  <data>
+    ${prefix}/share/gtksourceview-3.0
+  </data>
+
   <!-- Copy icons. Note that the .icns file is an Apple format which
        contains up to 4 sizes of icon. You can use
        /Developer/Applications/Utilities/Icon Composer.app to import
