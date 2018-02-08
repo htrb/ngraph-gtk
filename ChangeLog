@@ -1,3 +1,8 @@
+2018-02-08  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (set_escaped_str): added.
+	(file_list_set_val, MathDialogSetupItem): use "set_escaped_str()".
+
 2018-02-07  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_widget.c (create_text_view_with_line_number): use
