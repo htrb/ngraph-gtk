@@ -172,7 +172,7 @@ create_source_view(void)
   GtkSourceLanguage *lang;
 
   source_view = gtk_source_view_new();
-  lm = gtk_source_language_manager_new();
+  lm = gtk_source_language_manager_get_default();
   buffer = gtk_source_buffer_new(NULL);
 
   gtk_text_view_set_buffer(GTK_TEXT_VIEW(source_view), GTK_TEXT_BUFFER(buffer));
