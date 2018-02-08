@@ -5,6 +5,7 @@ etc/ngraph-gtk/zsh/*
 usr/bin
 usr/share/icons
 usr/share/ngraph-gtk/demo
+usr/share/ngraph-gtk/gtksourceview
 misc/ngraph.applications usr/share/application-registry
 misc/ngraph.desktop usr/share/applications
 misc/ngraph.keys usr/share/mime-info
