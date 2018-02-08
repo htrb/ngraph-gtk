@@ -21,11 +21,11 @@ libgdk-3-0.dll libgio-2.0-0.dll libglib-2.0-0.dll libgmodule-2.0-0.dll
 libgobject-2.0-0.dll libgraphite2.dll libgsl-23.dll libgslcblas-0.dll
 libgtk-3-0.dll libharfbuzz-0.dll libiconv-2.dll libintl-8.dll
 libobjc-4.dll libp11-kit-0.dll libpango-1.0-0.dll
-libpangocairo-1.0-0.dll libpangoft2-1.0-0.dll libpangowin32-1.0-0.dll
-libpcre-1.dll libpixman-1-0.dll libpng16-16.dll libstdc++-6.dll
-libtermcap-0.dll libwinpthread-1.dll zlib1.dll libcroco-0.6-3.dll
-liblzma-5.dll librsvg-2-2.dll libxml2-2.dll libngraph-0.dll ngraph.exe
-ngp2"
+libgtksourceview-3-0-1.dll libpangocairo-1.0-0.dll
+libpangoft2-1.0-0.dll libpangowin32-1.0-0.dll libpcre-1.dll
+libpixman-1-0.dll libpng16-16.dll libstdc++-6.dll libtermcap-0.dll
+libwinpthread-1.dll zlib1.dll libcroco-0.6-3.dll liblzma-5.dll
+librsvg-2-2.dll libxml2-2.dll libngraph-0.dll ngraph.exe ngp2"
 
 READLINE7="libreadline7.dll"
 READLINE6="libreadline6.dll"
@@ -85,7 +85,7 @@ make_zip() {
 		done
 		;;
 	    share)
-		for i in GConf glib-2.0 icons themes ngraph-gtk
+		for i in GConf glib-2.0 gtksourceview-3.0 icons themes ngraph-gtk
 		do
 		    cp -r $win_path/$subdir/$i $PKG_DIR/$subdir/
 		done
