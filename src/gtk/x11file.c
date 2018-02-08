@@ -170,13 +170,31 @@ create_source_view(void)
   GtkSourceLanguageManager *lm;
   GtkSourceBuffer *buffer;
   GtkSourceLanguage *lang;
+  const gchar * const *dirs;
+  gchar **new_dirs;
+  int n;
 
   source_view = gtk_source_view_new();
   lm = gtk_source_language_manager_get_default();
+  dirs = gtk_source_language_manager_get_search_path(lm);
+  for (n = 0; dirs[n]; n++);
+  new_dirs = g_malloc((n + 2) * sizeof(*new_dirs));
+  if (new_dirs) {
+    gchar *dir;
+    dir = g_strdup_printf("%s/%s", NDATADIR, "gtksourceview");
+    if (dir) {
+      memcpy(new_dirs, dirs, n * sizeof(*new_dirs));
+      new_dirs[n] = dir;
+      new_dirs[n + 1] = NULL;
+      gtk_source_language_manager_set_search_path(lm, new_dirs);
+      g_free(dir);
+    }
+    g_free(new_dirs);
+  }
   buffer = gtk_source_buffer_new(NULL);
 
   gtk_text_view_set_buffer(GTK_TEXT_VIEW(source_view), GTK_TEXT_BUFFER(buffer));
-  lang = gtk_source_language_manager_get_language(lm, "c");
+  lang = gtk_source_language_manager_get_language(lm, "ngraph_math");
   gtk_source_buffer_set_language(GTK_SOURCE_BUFFER(buffer), lang);
   gtk_source_buffer_set_highlight_syntax(GTK_SOURCE_BUFFER(buffer), TRUE);
 
