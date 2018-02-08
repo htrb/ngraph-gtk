@@ -5,6 +5,7 @@
 
 	* src/gtk/x11file.c (set_escaped_str): added.
 	(file_list_set_val, MathDialogSetupItem): use "set_escaped_str()".
+	(MathTextDialogSetup): don't use mnemonic label.
 
 2018-02-07  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
