@@ -164,6 +164,18 @@ enum MATH_FNC_TYPE {
 static char *FieldStr[] = {"math_x", "math_y", "func_f", "func_g", "func_h"};
 
 static void
+add_completion_provider(GtkWidget *source_view, GtkSourceBuffer *buffer)
+{
+  GtkSourceCompletionWords *words;
+  GtkSourceCompletion *comp;
+
+  words = gtk_source_completion_words_new("current equations", NULL);
+  gtk_source_completion_words_register(words, GTK_TEXT_BUFFER(buffer));
+  comp = gtk_source_view_get_completion(GTK_SOURCE_VIEW(source_view));
+  gtk_source_completion_add_provider(comp, GTK_SOURCE_COMPLETION_PROVIDER(words), NULL);
+}
+
+static void
 set_lm_search_path(GtkSourceLanguageManager *lm)
 {
   const gchar * const *dirs;
@@ -214,6 +226,8 @@ create_source_view(void)
   gtk_source_view_set_auto_indent(GTK_SOURCE_VIEW(source_view), TRUE);
   gtk_source_view_set_indent_on_tab(GTK_SOURCE_VIEW(source_view), FALSE);
   gtk_source_view_set_show_line_numbers(GTK_SOURCE_VIEW(source_view), TRUE);
+
+  add_completion_provider(source_view, buffer);
 
   return source_view;
 }
