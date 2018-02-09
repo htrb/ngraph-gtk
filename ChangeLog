@@ -1,3 +1,8 @@
+2018-02-09  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_entry_completion.c (entry_completion_load): don't
+	save a string which includes line feed.
+
 2018-02-08  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_action.c (create_application_window): don't use
