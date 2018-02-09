@@ -18,7 +18,7 @@ This file is created based on "ruby.lang" which is part of GtkSourceView.
     <style id="builtin"              _name="Builtin"               map-to="def:function"/>
     <style id="constant"             _name="Constant"              map-to="def:constant"/>
     <style id="parameter"            _name="Parameter"             map-to="def:identifier"/>
-    <style id="special-variable"     _name="Special Variable"      map-to="def:variable"/>
+    <style id="special-variable"     _name="Special Variable"      map-to="def:type"/>
   </styles>
 
   <default-regex-options case-sensitive="false"/>
