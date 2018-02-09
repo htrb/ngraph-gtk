@@ -173,6 +173,7 @@ add_completion_provider(GtkWidget *source_view, GtkSourceBuffer *buffer)
   gtk_source_completion_words_register(words, GTK_TEXT_BUFFER(buffer));
   comp = gtk_source_view_get_completion(GTK_SOURCE_VIEW(source_view));
   gtk_source_completion_add_provider(comp, GTK_SOURCE_COMPLETION_PROVIDER(words), NULL);
+  g_object_unref(G_OBJECT(words));
 }
 
 static void
