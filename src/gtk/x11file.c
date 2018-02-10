@@ -163,17 +163,207 @@ enum MATH_FNC_TYPE {
 
 static char *FieldStr[] = {"math_x", "math_y", "func_f", "func_g", "func_h"};
 
+char *MathFunctions = "abs() "\
+"sign() "\
+"int() "\
+"gauss() "\
+"frac() "\
+"round() "\
+"min() "\
+"max() "\
+"sumsq() "\
+"sqr() "\
+"sqrt() "\
+"exp() "\
+"ln() "\
+"log() "\
+"sin() "\
+"cos() "\
+"tan() "\
+"asin() "\
+"acos() "\
+"atan() "\
+"sinh() "\
+"cosh() "\
+"tanh() "\
+"asinh() "\
+"acosh() "\
+"atanh() "\
+"fmod() "\
+"rand() "\
+"srand() "\
+"theta() "\
+"delta() "\
+"gamma() "\
+"icgam() "\
+"erf() "\
+"erfc() "\
+"qinv() "\
+"ei() "\
+"beta() "\
+"icbeta() "\
+"jn() "\
+"yn() "\
+"in() "\
+"kn() "\
+"jl() "\
+"yl() "\
+"jnu() "\
+"ynu() "\
+"inu() "\
+"knu() "\
+"pn() "\
+"lgn() "\
+"hn() "\
+"tn() "\
+"zeta() "\
+"zeta_int() "\
+"zetam1() "\
+"zetam1_int() "\
+"choose() "\
+"mjd() "\
+"unix2mjd() "\
+"mjd2unix() "\
+"mjd2year() "\
+"mjd2month() "\
+"mjd2day() "\
+"mjd2wday() "\
+"mjd2yday() "\
+"time() "\
+"eq() "\
+"neq() "\
+"ge() "\
+"gt() "\
+"le() "\
+"lt() "\
+"not() "\
+"or() "\
+"and() "\
+"xor() "\
+"size() "\
+"sort() "\
+"rsort() "\
+"pop() "\
+"push() "\
+"shift() "\
+"unshift() "\
+"array_sum() "\
+"array_sumsq() "\
+"array_average() "\
+"array_stdevp() "\
+"array_stdev() "\
+"array_max() "\
+"array_min() "\
+"array_clear() "\
+"array_compact() "\
+"m() "\
+"rm() "\
+"cm() "\
+"am() "\
+"draw_rect() "\
+"draw_arc() "\
+"draw_mark() "\
+"fit_prm() "\
+"fit_calc() "\
+"line_number() "\
+"isnormal() "\
+"isbreak() "\
+"iscont() "\
+"isnan() "\
+"isundef() "\
+"sum() "\
+"dif() "\
+"f() "\
+"g() "\
+"h() "\
+"color() "\
+"obj_color() "\
+"alpha() "\
+"obj_alpha() "\
+"rgb() "\
+"rgb2() "\
+"hsb() "\
+"hsb2() "\
+"marksize() "\
+"marktype() "\
+"if() "\
+"unless() "\
+"for() "\
+"prog1() "\
+"prog2() "\
+"progn()";
+
+char *MathConstants = "pi "\
+"e "\
+"euler "\
+"nan "\
+"undef "\
+"cont "\
+"break "\
+"num "\
+"minx "\
+"maxx "\
+"miny "\
+"maxy "\
+"sumx "\
+"sumy "\
+"sumxx "\
+"sumyy "\
+"sumxy "\
+"avx "\
+"avy "\
+"stdevpx "\
+"stdevpy "\
+"stdevx "\
+"stdevy "\
+"first "\
+"mask "\
+"move "\
+"colx "\
+"coly "\
+"axisx "\
+"axisy "\
+"hskip "\
+"rstep "\
+"fline "\
+"data_obj "\
+"path_obj "\
+"rect_obj "\
+"arc_obj "\
+"mark_obj "\
+"text_obj "\
+"%d "\
+"%n";
+
 static void
-add_completion_provider(GtkWidget *source_view, GtkSourceBuffer *buffer)
+add_completion_provider(GtkWidget *source_view, GtkTextBuffer *buffer, const char *title)
 {
   GtkSourceCompletionWords *words;
   GtkSourceCompletion *comp;
 
-  words = gtk_source_completion_words_new("current equations", NULL);
-  gtk_source_completion_words_register(words, GTK_TEXT_BUFFER(buffer));
+  words = gtk_source_completion_words_new(title, NULL);
+  gtk_source_completion_words_register(words, buffer);
   comp = gtk_source_view_get_completion(GTK_SOURCE_VIEW(source_view));
   gtk_source_completion_add_provider(comp, GTK_SOURCE_COMPLETION_PROVIDER(words), NULL);
   g_object_unref(G_OBJECT(words));
+}
+
+static void
+add_completion_provider_text(GtkWidget *source_view, const char *text, const char *title)
+{
+  GtkTextBuffer *buffer;
+  GtkTextIter iter;
+  char *upper_text;
+
+  buffer = gtk_text_buffer_new(NULL);
+  gtk_text_buffer_set_text(buffer, text, -1);
+
+  upper_text = g_ascii_strup(text, -1);
+  gtk_text_buffer_get_end_iter(buffer, &iter);
+  gtk_text_buffer_insert(buffer, &iter, upper_text, -1);
+  g_free(upper_text);
+
+  add_completion_provider(source_view, buffer, title);
 }
 
 static void
@@ -228,7 +418,9 @@ create_source_view(void)
   gtk_source_view_set_indent_on_tab(GTK_SOURCE_VIEW(source_view), FALSE);
   gtk_source_view_set_show_line_numbers(GTK_SOURCE_VIEW(source_view), TRUE);
 
-  add_completion_provider(source_view, buffer);
+  add_completion_provider_text(source_view, MathConstants, "constants");
+  add_completion_provider_text(source_view, MathFunctions, "functions");
+  add_completion_provider(source_view, GTK_TEXT_BUFFER(buffer), "current equations");
 
   return source_view;
 }
