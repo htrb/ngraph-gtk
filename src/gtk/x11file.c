@@ -418,9 +418,9 @@ create_source_view(void)
   gtk_source_view_set_indent_on_tab(GTK_SOURCE_VIEW(source_view), FALSE);
   gtk_source_view_set_show_line_numbers(GTK_SOURCE_VIEW(source_view), TRUE);
 
-  add_completion_provider_text(source_view, MathConstants, "constants");
-  add_completion_provider_text(source_view, MathFunctions, "functions");
-  add_completion_provider(source_view, GTK_TEXT_BUFFER(buffer), "current equations");
+  add_completion_provider_text(source_view, MathConstants, _("constants"));
+  add_completion_provider_text(source_view, MathFunctions, _("functions"));
+  add_completion_provider(source_view, GTK_TEXT_BUFFER(buffer), _("current equations"));
 
   return source_view;
 }
