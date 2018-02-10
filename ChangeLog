@@ -1,3 +1,17 @@
+2018-02-10  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (FileDialogCloseCommon, MathTextDialogSetup)
+	(MathTextDialogClose, FileDialogSetup): save and restore
+	math-transformation intput type.
+
+	* src/gtk/ox11menu.c (menuinit): initialize
+	"Menulocal.math_input_mode".
+
+	* src/gtk/x11dialg.h (FileDialog): add member "math_input_tab".
+	(MathTextDialog): add member "input_tab".
+
+	* src/gtk/ox11menu.h (menulocal): add member "math_input_mode".
+
 2018-02-09  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_entry_completion.c (entry_completion_load): don't
