@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.06.13\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2018-02-10 11:24+0900\n"
-"PO-Revision-Date: 2018-02-08 18:32+0900\n"
+"POT-Creation-Date: 2018-02-10 20:22+0900\n"
+"PO-Revision-Date: 2018-02-10 20:23+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja\n"
@@ -949,6 +949,18 @@ msgstr "描画(_D)"
 #: src/gtk/x11menu.c:1591 src/gtk/x11menu.c:2940
 msgid "_Edit"
 msgstr "編集(_E)"
+
+#: src/gtk/x11file.c:421
+msgid "constants"
+msgstr "定数"
+
+#: src/gtk/x11file.c:422
+msgid "functions"
+msgstr "関数"
+
+#: src/gtk/x11file.c:423
+msgid "current equations"
+msgstr "現在の数式"
 
 #: src/gtk/x11file.c:464
 msgid "Math X:"
