@@ -120,7 +120,7 @@ struct FileDialog
   DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *file, *load_settings, *fit, *xcol, *xaxis, *ycol, *yaxis,
-    *type, *mark_btn, *curve, *col1, *col2,
+    *type, *mark_btn, *curve, *col1, *col2, *math_input_tab,
     *clip, *style, *size, *miter, *join, *min, *max, *div,
     *comment_box, *file_box, *fit_table, *width, *apply_all, *comment_view, *comment_table;
   GtkNotebook *tab, *math_tab;
@@ -163,7 +163,7 @@ struct MathTextDialog
 {
   DIALOG_PROTOTYPE;
   /****** local member *******/
-  GtkWidget *list, *text, *label, *tree;
+  GtkWidget *list, *text, *label, *tree, *input_tab;
   GList *id_list;
   struct objlist *Obj;
   char *Text;

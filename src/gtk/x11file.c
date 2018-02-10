@@ -467,6 +467,7 @@ MathTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
     tab = gtk_notebook_new();
+    d->input_tab = tab;
 
     w = gtk_label_new(_("Math:"));
     gtk_widget_set_valign(w, GTK_ALIGN_START);
@@ -512,7 +513,8 @@ MathTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
   gtk_label_set_text(GTK_LABEL(d->label), _(label[d->Mode]));
   gtk_entry_set_text(GTK_ENTRY(d->list), d->Text);
   gtk_text_buffer_set_text(gtk_text_view_get_buffer(GTK_TEXT_VIEW(d->text)), d->Text, -1);
-  gtk_window_set_default_size(GTK_WINDOW(wi), 400, -1);
+  gtk_notebook_set_current_page(GTK_NOTEBOOK(d->input_tab), Menulocal.math_input_mode);
+  gtk_window_set_default_size(GTK_WINDOW(wi), 600, 400);
 }
 
 static void
@@ -585,6 +587,7 @@ MathTextDialogClose(GtkWidget *w, void *data)
     break;
   }
   g_free(ptr);
+  Menulocal.math_input_mode = gtk_notebook_get_current_page(GTK_NOTEBOOK(d->input_tab));
 }
 
 void
@@ -2673,7 +2676,7 @@ func_entry_focused(GtkWidget *w, GdkEventFocus *event, gpointer user_data)
 }
 
 static GtkWidget *
-create_math_test_tab(GtkWidget *tab, const gchar *label)
+create_math_text_tab(GtkWidget *tab, const gchar *label)
 {
   GtkWidget *w, *title, *swin;
 
@@ -2712,11 +2715,11 @@ math_text_widgets_create(struct FileDialog *d)
   tab = gtk_notebook_new();
   d->math_tab = GTK_NOTEBOOK(tab);
   gtk_notebook_set_tab_pos(GTK_NOTEBOOK(tab), GTK_POS_LEFT);
-  d->math.text_x = create_math_test_tab(tab, _("_X math:"));
-  d->math.text_y = create_math_test_tab(tab, _("_Y math:"));
-  d->math.text_f = create_math_test_tab(tab, "_F(X,Y,Z):");
-  d->math.text_g = create_math_test_tab(tab, "_G(X,Y,Z):");
-  d->math.text_h = create_math_test_tab(tab, "_H(X,Y,Z):");
+  d->math.text_x = create_math_text_tab(tab, _("_X math:"));
+  d->math.text_y = create_math_text_tab(tab, _("_Y math:"));
+  d->math.text_f = create_math_text_tab(tab, "_F(X,Y,Z):");
+  d->math.text_g = create_math_text_tab(tab, "_G(X,Y,Z):");
+  d->math.text_h = create_math_text_tab(tab, "_H(X,Y,Z):");
 
   return tab;
 }
@@ -2728,6 +2731,8 @@ math_common_widgets_create(struct FileDialog *d, GtkWidget *grid, int pos)
   int i;
 
   tab = gtk_notebook_new();
+  d->math_input_tab = tab;
+
   table = gtk_grid_new();
   i = 0;
 
@@ -2756,7 +2761,6 @@ math_common_widgets_create(struct FileDialog *d, GtkWidget *grid, int pos)
 
   title = gtk_label_new(_("single line"));
   gtk_notebook_append_page(GTK_NOTEBOOK(tab), table, title);
-
 
   title = gtk_label_new(_("multi line"));
   w = math_text_widgets_create(d);
@@ -4237,6 +4241,7 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
   set_headline_table_header(d);
   set_headline_table(d, s, line);
   d->head_lines = g_strdup(s);
+  gtk_notebook_set_current_page(GTK_NOTEBOOK(d->math_input_tab), Menulocal.math_input_mode);
 }
 
 static void
@@ -4463,6 +4468,8 @@ FileDialogCloseCommon(GtkWidget *w, struct FileDialog *d)
     gtk_notebook_set_current_page(d->tab, d->load.tab_id);
     return TRUE;
   }
+
+  Menulocal.math_input_mode = gtk_notebook_get_current_page(GTK_NOTEBOOK(d->math_input_tab));
 
   return FALSE;
 }

@@ -293,6 +293,7 @@ static struct menu_config MenuConfigOthers[] = {
   {"arc_tab",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.arc_tab},
   {"mark_tab",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.mark_tab},
   {"text_tab",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.text_tab},
+  {"math_input_mode",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.math_input_mode},
   {NULL},
 };
 
@@ -1284,6 +1285,7 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   Menulocal.arc_tab = 3;
   Menulocal.mark_tab = 4;
   Menulocal.text_tab = 5;
+  Menulocal.math_input_mode = 1;
 
   arrayinit(&(Menulocal.drawrable), sizeof(char *));
   menuadddrawrable(chkobject("draw"), &(Menulocal.drawrable));
