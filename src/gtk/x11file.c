@@ -163,178 +163,6 @@ enum MATH_FNC_TYPE {
 
 static char *FieldStr[] = {"math_x", "math_y", "func_f", "func_g", "func_h"};
 
-char *MathFunctions = "abs() "\
-"sign() "\
-"int() "\
-"gauss() "\
-"frac() "\
-"round() "\
-"min() "\
-"max() "\
-"sumsq() "\
-"sqr() "\
-"sqrt() "\
-"exp() "\
-"ln() "\
-"log() "\
-"sin() "\
-"cos() "\
-"tan() "\
-"asin() "\
-"acos() "\
-"atan() "\
-"sinh() "\
-"cosh() "\
-"tanh() "\
-"asinh() "\
-"acosh() "\
-"atanh() "\
-"fmod() "\
-"rand() "\
-"srand() "\
-"theta() "\
-"delta() "\
-"gamma() "\
-"icgam() "\
-"erf() "\
-"erfc() "\
-"qinv() "\
-"ei() "\
-"beta() "\
-"icbeta() "\
-"jn() "\
-"yn() "\
-"in() "\
-"kn() "\
-"jl() "\
-"yl() "\
-"jnu() "\
-"ynu() "\
-"inu() "\
-"knu() "\
-"pn() "\
-"lgn() "\
-"hn() "\
-"tn() "\
-"zeta() "\
-"zeta_int() "\
-"zetam1() "\
-"zetam1_int() "\
-"choose() "\
-"mjd() "\
-"unix2mjd() "\
-"mjd2unix() "\
-"mjd2year() "\
-"mjd2month() "\
-"mjd2day() "\
-"mjd2wday() "\
-"mjd2yday() "\
-"time() "\
-"eq() "\
-"neq() "\
-"ge() "\
-"gt() "\
-"le() "\
-"lt() "\
-"not() "\
-"or() "\
-"and() "\
-"xor() "\
-"size() "\
-"sort() "\
-"rsort() "\
-"pop() "\
-"push() "\
-"shift() "\
-"unshift() "\
-"array_sum() "\
-"array_sumsq() "\
-"array_average() "\
-"array_stdevp() "\
-"array_stdev() "\
-"array_max() "\
-"array_min() "\
-"array_clear() "\
-"array_compact() "\
-"m() "\
-"rm() "\
-"cm() "\
-"am() "\
-"draw_rect() "\
-"draw_arc() "\
-"draw_mark() "\
-"fit_prm() "\
-"fit_calc() "\
-"line_number() "\
-"isnormal() "\
-"isbreak() "\
-"iscont() "\
-"isnan() "\
-"isundef() "\
-"sum() "\
-"dif() "\
-"f() "\
-"g() "\
-"h() "\
-"color() "\
-"obj_color() "\
-"alpha() "\
-"obj_alpha() "\
-"rgb() "\
-"rgb2() "\
-"hsb() "\
-"hsb2() "\
-"marksize() "\
-"marktype() "\
-"if() "\
-"unless() "\
-"for() "\
-"prog1() "\
-"prog2() "\
-"progn()";
-
-char *MathConstants = "pi "\
-"e "\
-"euler "\
-"nan "\
-"undef "\
-"cont "\
-"break "\
-"num "\
-"minx "\
-"maxx "\
-"miny "\
-"maxy "\
-"sumx "\
-"sumy "\
-"sumxx "\
-"sumyy "\
-"sumxy "\
-"avx "\
-"avy "\
-"stdevpx "\
-"stdevpy "\
-"stdevx "\
-"stdevy "\
-"first "\
-"mask "\
-"move "\
-"colx "\
-"coly "\
-"axisx "\
-"axisy "\
-"hskip "\
-"rstep "\
-"fline "\
-"data_obj "\
-"path_obj "\
-"rect_obj "\
-"arc_obj "\
-"mark_obj "\
-"text_obj "\
-"%d "\
-"%n";
-
 static void
 add_completion_provider(GtkWidget *source_view, GtkTextBuffer *buffer, const char *title)
 {
@@ -348,6 +176,27 @@ add_completion_provider(GtkWidget *source_view, GtkTextBuffer *buffer, const cha
   g_object_unref(G_OBJECT(words));
 }
 
+static int
+add_keyword(struct nhash *hash, void *data)
+{
+  GString *str;
+
+  str = data;
+  g_string_append(str, hash->key);
+  g_string_append_c(str, '\n');
+  return 0;
+}
+
+static gchar *
+create_keyword_list(NHASH hash)
+{
+  GString *str;
+
+  str = g_string_new("");
+  nhash_each(hash, add_keyword, str);
+  return g_string_free(str, FALSE);
+}
+
 static void
 add_completion_provider_text(GtkWidget *source_view, const char *text, const char *title)
 {
@@ -358,12 +207,32 @@ add_completion_provider_text(GtkWidget *source_view, const char *text, const cha
   buffer = gtk_text_buffer_new(NULL);
   gtk_text_buffer_set_text(buffer, text, -1);
 
-  upper_text = g_ascii_strup(text, -1);
+  upper_text = g_ascii_strdown(text, -1);
   gtk_text_buffer_get_end_iter(buffer, &iter);
   gtk_text_buffer_insert(buffer, &iter, upper_text, -1);
   g_free(upper_text);
 
   add_completion_provider(source_view, buffer, title);
+}
+
+static void
+add_completion_provider_math(GtkWidget *source_view)
+{
+  MathEquation *eq;
+  gchar *text;
+
+  eq = ofile_create_math_equation(NULL, 3, TRUE, TRUE, TRUE, TRUE, TRUE);
+  if (eq == NULL) {
+    return;
+  }
+
+  text = create_keyword_list(eq->constant);
+  add_completion_provider_text(source_view, text, _("constants"));
+  g_free(text);
+
+  text = create_keyword_list(eq->function);
+  add_completion_provider_text(source_view, text, _("functions"));
+  g_free(text);
 }
 
 static void
@@ -418,8 +287,7 @@ create_source_view(void)
   gtk_source_view_set_indent_on_tab(GTK_SOURCE_VIEW(source_view), FALSE);
   gtk_source_view_set_show_line_numbers(GTK_SOURCE_VIEW(source_view), TRUE);
 
-  add_completion_provider_text(source_view, MathConstants, _("constants"));
-  add_completion_provider_text(source_view, MathFunctions, _("functions"));
+  add_completion_provider_math(source_view);
   add_completion_provider(source_view, GTK_TEXT_BUFFER(buffer), _("current equations"));
 
   return source_view;
