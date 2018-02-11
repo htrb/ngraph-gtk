@@ -1,3 +1,9 @@
+2018-02-11  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/odata.c (odata_get_functions, create_keyword_list)
+	(get_functions, get_constants): added.
+	(file2d): add fields "functions" and "constants".
+
 2018-02-10  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (FileDialogCloseCommon, MathTextDialogSetup)
