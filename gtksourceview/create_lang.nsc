@@ -4,12 +4,12 @@ cat $1
 
 new data
 echo '    <context id="builtins" style-ref="builtin">'
-get data -field functions | sed -re 's!(.+)!      <keywords>\1</keywords>!'
+get data -field functions | sed -re 's!(.+)!      <keyword>\1</keyword>!'
 echo '    </context>'
 echo
 
 echo '    <context id="constants" style-ref="constant">'
-get data -field constants | sed -re 's!(.+)!      <keywords>\1</keywords>!'
+get data -field constants | sed -re 's!(.+)!      <keyword>\1</keyword>!'
 echo '    </context>'
 echo
 
