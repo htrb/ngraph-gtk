@@ -176,41 +176,20 @@ add_completion_provider(GtkWidget *source_view, GtkTextBuffer *buffer, const cha
   g_object_unref(G_OBJECT(words));
 }
 
-static int
-add_keyword(struct nhash *hash, void *data)
-{
-  GString *str;
-
-  str = data;
-  g_string_append(str, hash->key);
-  g_string_append_c(str, '\n');
-  return 0;
-}
-
-static gchar *
-create_keyword_list(NHASH hash)
-{
-  GString *str;
-
-  str = g_string_new("");
-  nhash_each(hash, add_keyword, str);
-  return g_string_free(str, FALSE);
-}
-
 static void
 add_completion_provider_text(GtkWidget *source_view, const char *text, const char *title)
 {
   GtkTextBuffer *buffer;
   GtkTextIter iter;
-  char *upper_text;
+  char *lower_text;
 
   buffer = gtk_text_buffer_new(NULL);
   gtk_text_buffer_set_text(buffer, text, -1);
 
-  upper_text = g_ascii_strdown(text, -1);
+  lower_text = g_ascii_strdown(text, -1);
   gtk_text_buffer_get_end_iter(buffer, &iter);
-  gtk_text_buffer_insert(buffer, &iter, upper_text, -1);
-  g_free(upper_text);
+  gtk_text_buffer_insert(buffer, &iter, lower_text, -1);
+  g_free(lower_text);
 
   add_completion_provider(source_view, buffer, title);
 }
@@ -218,23 +197,15 @@ add_completion_provider_text(GtkWidget *source_view, const char *text, const cha
 static void
 add_completion_provider_math(GtkWidget *source_view)
 {
-  MathEquation *eq;
   gchar *text;
 
-  eq = ofile_create_math_equation(NULL, 3, TRUE, TRUE, TRUE, TRUE, TRUE);
-  if (eq == NULL) {
-    return;
-  }
-
-  text = create_keyword_list(eq->constant);
+  text = odata_get_functions();
   add_completion_provider_text(source_view, text, _("constants"));
   g_free(text);
 
-  text = create_keyword_list(eq->function);
+  text = odata_get_constants();
   add_completion_provider_text(source_view, text, _("functions"));
   g_free(text);
-
-  math_equation_free(eq);
 }
 
 static void
