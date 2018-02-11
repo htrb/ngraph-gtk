@@ -233,6 +233,8 @@ add_completion_provider_math(GtkWidget *source_view)
   text = create_keyword_list(eq->function);
   add_completion_provider_text(source_view, text, _("functions"));
   g_free(text);
+
+  math_equation_free(eq);
 }
 
 static void
