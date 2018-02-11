@@ -1,6 +1,6 @@
 2018-02-11  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
-	* src/odata.c (odata_get_functions, create_keyword_list)
+	* src/odata.c (odata_get_functions, odata_get_constants)
 	(get_functions, get_constants): added.
 	(file2d): add fields "functions" and "constants".
 
