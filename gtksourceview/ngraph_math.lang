@@ -10,7 +10,7 @@ This file is created based on "ruby.lang" which is part of GtkSourceView.
   </metadata>
 
   <styles>
-    <style id="keyword"             _name="Keyword"                map-to="def:keyword"/>
+    <style id="keyword"              _name="Keyword"               map-to="def:keyword"/>
     <style id="floating-point"       _name="Floating point number" map-to="def:floating-point"/>
     <style id="decimal"              _name="Decimal number"        map-to="def:decimal"/>
     <style id="base-n-integer"       _name="Base-N number"         map-to="def:base-n-integer"/>
