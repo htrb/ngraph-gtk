@@ -9442,10 +9442,12 @@ static gchar *
 create_keyword_list(NHASH hash)
 {
   GString *str;
+  gchar *text;
 
   str = g_string_new("");
   nhash_each(hash, add_keyword, str);
-  return g_string_free(str, FALSE);
+  text = g_string_free(str, FALSE);
+  return g_strstrip(text);
 }
 
 char *
