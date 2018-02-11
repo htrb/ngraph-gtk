@@ -9428,6 +9428,87 @@ get_fit_parameter(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char 
 }
 
 static int
+add_keyword(struct nhash *hash, void *data)
+{
+  GString *str;
+
+  str = data;
+  g_string_append(str, hash->key);
+  g_string_append_c(str, '\n');
+  return 0;
+}
+
+static gchar *
+create_keyword_list(NHASH hash)
+{
+  GString *str;
+
+  str = g_string_new("");
+  nhash_each(hash, add_keyword, str);
+  return g_string_free(str, FALSE);
+}
+
+char *
+odata_get_functions(void)
+{
+  MathEquation *eq;
+  gchar *text;
+
+  eq = ofile_create_math_equation(NULL, 3, TRUE, TRUE, TRUE, TRUE, TRUE);
+  if (eq == NULL) {
+    return NULL;
+  }
+
+  text = create_keyword_list(eq->function);
+
+  math_equation_free(eq);
+  return text;
+}
+
+char *
+odata_get_constants(void)
+{
+  MathEquation *eq;
+  gchar *text;
+
+  eq = ofile_create_math_equation(NULL, 3, TRUE, TRUE, TRUE, TRUE, TRUE);
+  if (eq == NULL) {
+    return NULL;
+  }
+
+  text = create_keyword_list(eq->constant);
+
+  math_equation_free(eq);
+  return text;
+}
+
+static int
+get_functions(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
+{
+  if (_exeparent(obj, argv[1], inst, rval, argc, argv)) return 1;
+
+  g_free(rval->str);
+  rval->str = NULL;
+
+  rval->str = odata_get_functions();
+
+  return 0;
+}
+
+static int
+get_constants(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
+{
+  if (_exeparent(obj, argv[1], inst, rval, argc, argv)) return 1;
+
+  g_free(rval->str);
+  rval->str = NULL;
+
+  rval->str = odata_get_constants();
+
+  return 0;
+}
+
+static int
 set_array(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct array_prm ary;
@@ -9635,6 +9716,8 @@ static struct objtable file2d[] = {
   {FIT_FIELD_PREFIX "bisection",NSFUNC,NREAD|NEXEC,solve_equation,"da",0},
   {FIT_FIELD_PREFIX "calc",NSFUNC,NREAD|NEXEC,calc_equation,"d",0},
   {FIT_FIELD_PREFIX "prm",NSFUNC,NREAD|NEXEC,get_fit_parameter,"i",0},
+  {"functions",NSFUNC,NREAD|NEXEC,get_functions,"",0},
+  {"cnstants",NSFUNC,NREAD|NEXEC,get_constants,"",0},
   {"_local",NPOINTER,0,NULL,NULL,0},
 
   /* for range */

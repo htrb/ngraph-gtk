@@ -54,5 +54,7 @@ MathEquation *ofile_create_math_equation(int *id, int prm_digit, int use_fprm, i
 int get_axis_id(struct objlist *obj, N_VALUE *inst, struct objlist **aobj, int axis);
 int ofile_calc_fit_equation(struct objlist *obj, int id, double x, double *y);
 int open_array(char *objstr, struct array_prm *ary);
+char *odata_get_functions(void);
+char *odata_get_constants(void);
 
 #endif
