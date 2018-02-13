@@ -9718,8 +9718,8 @@ static struct objtable file2d[] = {
   {FIT_FIELD_PREFIX "bisection",NSFUNC,NREAD|NEXEC,solve_equation,"da",0},
   {FIT_FIELD_PREFIX "calc",NSFUNC,NREAD|NEXEC,calc_equation,"d",0},
   {FIT_FIELD_PREFIX "prm",NSFUNC,NREAD|NEXEC,get_fit_parameter,"i",0},
-  {"functions",NSFUNC,NREAD|NEXEC,get_functions,"",0},
-  {"constants",NSFUNC,NREAD|NEXEC,get_constants,"",0},
+  {"math_functions",NSFUNC,NREAD|NEXEC,get_functions,"",0},
+  {"math_constants",NSFUNC,NREAD|NEXEC,get_constants,"",0},
   {"_local",NPOINTER,0,NULL,NULL,0},
 
   /* for range */
