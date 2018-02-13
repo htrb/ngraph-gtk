@@ -200,11 +200,11 @@ add_completion_provider_math(GtkWidget *source_view)
   gchar *text;
 
   text = odata_get_functions();
-  add_completion_provider_text(source_view, text, _("constants"));
+  add_completion_provider_text(source_view, text, _("functions"));
   g_free(text);
 
   text = odata_get_constants();
-  add_completion_provider_text(source_view, text, _("functions"));
+  add_completion_provider_text(source_view, text, _("constants"));
   g_free(text);
 }
 
