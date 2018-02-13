@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.07.05\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2018-02-11 13:40+0900\n"
+"POT-Creation-Date: 2018-02-13 13:41+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -922,11 +922,11 @@ msgid "_Edit"
 msgstr ""
 
 #: src/gtk/x11file.c:203
-msgid "constants"
+msgid "functions"
 msgstr ""
 
 #: src/gtk/x11file.c:207
-msgid "functions"
+msgid "constants"
 msgstr ""
 
 #: src/gtk/x11file.c:264
