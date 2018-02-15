@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 data = []
-File.open(ARGV[0], "r") { |info_file|
+File.open(ARGV[0], "r:utf-8") { |info_file|
   info_file.each { |l|
     info = l.chomp.split(/\t+/)
     text = info[0].sub(/\(.+\)/, '()')
@@ -12,7 +12,7 @@ File.open(ARGV[0], "r") { |info_file|
 }
 
 data.sort!
-File.open(ARGV[1], "w") { |c_file|
+File.open(ARGV[1], "w:utf-8") { |c_file|
   c_file.puts('#include "completion_info.h"')
   c_file.puts("struct completion_info completion_info_func[] = {")
   data.each {|info|
