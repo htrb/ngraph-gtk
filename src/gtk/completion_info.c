@@ -1,15 +1,19 @@
 #include "completion_info.h"
 
-GList *
+static GList *
 completion_info_populate(struct completion_info *info, int num, const char *word, int len)
 {
   GList *ret = NULL;
-  int i;
+  int i, r;
 
   for (i = 0; i < num; i++) {
-    if (g_ascii_strncasecmp(info[i].text, word, len)) {
+    r = strncmp(info[i].lower_text, word, len);
+    if (r < 0) {
       continue;
+    } else if (r > 0) {
+      break;
     }
+
     if (info[i].proposal == NULL) {
       GtkSourceCompletionItem *proposal;
       proposal = gtk_source_completion_item_new2();

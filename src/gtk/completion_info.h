@@ -4,7 +4,7 @@
 
 struct completion_info 
 {
-  char *text, *info;
+  char *lower_text, *text, *info;
   GtkSourceCompletionItem *proposal;
 };
 

@@ -102,7 +102,7 @@ get_end_word(gchar *text)
     return NULL;
   }
 
-  return g_strdup(cur_char);
+  return g_ascii_strdown(cur_char, -1);
 }
 
 static gchar *
