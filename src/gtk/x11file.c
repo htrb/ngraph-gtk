@@ -225,10 +225,15 @@ create_source_view(void)
   GtkSourceBuffer *buffer;
   GtkSourceLanguage *lang;
   GtkSourceCompletionWords *words;
+  GValue value = G_VALUE_INIT;
 
   source_view = gtk_source_view_new();
   buffer = gtk_source_buffer_new(NULL);
   gtk_text_view_set_buffer(GTK_TEXT_VIEW(source_view), GTK_TEXT_BUFFER(buffer));
+
+  g_value_init(&value, G_TYPE_BOOLEAN);
+  g_value_set_boolean(&value, TRUE);
+  g_object_set_property(G_OBJECT(source_view), "remember-info-visibility", &value);
 
   lm = gtk_source_language_manager_get_default();
   set_lm_search_path(lm);
