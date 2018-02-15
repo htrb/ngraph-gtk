@@ -1,0 +1,150 @@
+abs(x)		x の絶対値
+sign(x)		正負の符号 (x < 0 で -1、x >= 0 で 1) 
+int(x)		0に向かって切捨てた整数部
+gauss(x)	ガウスの記号[ ] ([n]はnを越えない最大の整数)
+frac(x)		小数部
+round(x)	四捨五入した整数部
+min(a,b,c,...)	引数のうちもっとも小さな値
+max(a,b,c,...)	引数のうちもっとも大きな値
+sumsq(a,b,c,...)	引数の自乗和
+sqr(x)		二乗
+sqrt(x)		平方根
+exp(x)		指数(x≦690)
+ln(x)		自然対数
+log(x)		常用対数
+sin(x)		サイン
+cos(x)		コサイン
+tan(x)		タンジェント
+asin(x)		逆サイン
+acos(x)		逆コサイン
+atan(x)		逆タンジェント
+sinh(x)		ハイパボリックサイン
+cosh(x)		ハイパボリックコサイン
+tanh(x)		ハイパボリックタンジェント
+asinh(x)	逆ハイパボリックサイン
+acosh(x)	逆ハイパボリックコサイン
+atanh(x)	逆ハイパボリックタンジェント
+fmod(x, y)	x を y で割った浮動小数点剰余
+rand(x)		0≦rand(x)＜x (x＞0のとき)の乱数
+srand(x)	rand()  関数で作られる疑似乱数系列の新しい種を設定する。
+theta(x)	階段関数(x≧0 のとき 1,  それ以外は 0 )
+delta(x)	クロネッカーのδ(x=0 のとき 1, それ以外は 0)
+gamma(x)	ガンマ関数 Γ(x)
+icgam(m,x)	不完全ガンマ関数 Γ(μ,x)
+erf(x)		誤差関数 Erf(x)
+erfc(x)		相補誤差関数 Erfc(x)
+qinv(x)		誤差関数 Erfc(x) の逆関数
+ei(x)		積分指数関数 Ei(x)
+beta(x,y)	ベータ関数 B(p,q)
+icbeta(x,y)	不完全ベータ関数 I(a,b,x) (0 &lt;= x &lt;= 1) 
+jn(n,x)		第1種n次ベッセル関数
+yn(n,x)		第2種n次ベッセル関数
+in(n,x)		第1種n次変形ベッセル関数
+kn(n,x)		第2種n次変形ベッセル関数
+jl(l,x)		第1種l次球ベッセル関数
+yl(l,x)		第2種l次球ベッセル関数
+jnu(nu,x)	第1種nu次ベッセル関数 (nu は正の実数) 
+ynu(nu,x)	第2種nu次ベッセル関数 (nu は正の実数) 
+inu(nu,x)	第1種nu次変形ベッセル関数 (nu は正の実数) 
+knu(nu,x)	第2種nu次変形ベッセル関数 (nu は正の実数) 
+pn(n,x)		ルジャンドル多項式
+lgn(n,a,x)	ラゲール倍多項式
+hn(n,x)		エルミート多項式
+tn(n,x)		チェビシフ多項式
+zeta(x)		リーマンゼータ関数 ζ(x)
+zeta_INT(x)	リーマンゼータ関数 ζ(x) (x は整数) 
+zetam1(x)	リーマンゼータ関数 ζ(x) - 1
+zetam1_INT(x)	リーマンゼータ関数 ζ(x) - 1 (x は整数) 
+choose(n,m)	the combinatorial factor n choose m: n!/(m!(n-m)!)
+mjd(year,month,day,hour,min,sec)	修正ユリウス日(year, month, day はグレゴリオ暦、hour,min,sec は UTC 時刻、うるう秒は考慮されない)
+unix2mjd(time)	修正ユリウス日(time は 1970年1月1日00:00:00 UTC からの経過秒数、うるう秒は考慮されない)
+mjd2unix(mjd)	修正ユリウス日 mjd の1970年1月1日00:00:00 UTC からの経過秒数(うるう秒は考慮されない)
+mjd2year(mjd)	修正ユリウス日に対応するグレゴリオ暦の年
+mjd2month(mjd)	修正ユリウス日に対応するグレゴリオ暦の月
+mjd2day(mjd)	修正ユリウス日に対応するグレゴリオ暦の日
+mjd2wday(mjd)	修正ユリウス日に対応するグレゴリオ暦の曜日 (1:月曜日 から 7:日曜日) 
+mjd2yday(mjd)	修正ユリウス日に対応するグレゴリオ暦の 1 月 1 日からの通算日数 (1 から 366) 
+time()		紀元 (1970年1月1日00:00:00 UTC) からの経過時間を秒単位で返す。
+eq(x,y,prec)	x＝y のとき真(=1)。prec で比較の桁数を指定できる (prec == 0 は完全一致) 。
+neq(x,y,prec)	x≠y のとき真(=1)。prec で比較の桁数を指定できる (prec == 0 は完全一致) 。
+ge(x,y,prec)	x≧y のとき真(=1)。prec で比較の桁数を指定できる (prec == 0 は桁数指定なし) 。
+gt(x,y,prec)	x＞y のとき真(=1)。prec で比較の桁数を指定できる (prec == 0 は桁数指定なし) 。
+le(x,y,prec)	x≦y のとき真(=1)。prec で比較の桁数を指定できる (prec == 0 は桁数指定なし) 。
+lt(x,y,prec)	x＜y のとき真(=1)。prec で比較の桁数を指定できる (prec == 0 は桁数指定なし) 。
+not(x)		x＝0 のとき真(=1)
+or(x,y)		(x≠0) or (y≠0) のとき真(=1)
+and(x,y)	(x≠0) and (y≠0) のとき真(=1)
+xor(x,y)	(x≠0) xor (y≠0) のとき真(=1)
+size(a)		配列 a の要素数
+sort(a)		配列 a を整列する
+rsort(a)	配列 a を逆順に整列する
+pop(a)		配列 a から末尾の要素を取り除いてそれを返す
+push(a,x)	配列 a の末尾に x を追加する (戻り値は x) 
+shift(a)	配列 a の先頭の要素を取り除いてそれを返す。残りの要素はひとつずつ前に詰められる
+unshift(a,x)	配列 a の先頭に x を挿入する (戻り値は x) 
+array_sum(a)	配列 a の要素の和を返す 
+array_sumsq(a)	配列 a の要素の自乗和を返す 
+array_average(a)	配列 a の要素の平均を返す 
+array_stdevp(a)	配列 a の要素の標準偏差を返す 
+array_stdev(a)	配列 a の要素の不偏標準偏差を返す 
+array_max(a)	配列 a に含まれる最大の値を返す 
+array_min(a)	配列 a に含まれる最小の値を返す 
+array_clear(a)	配列 a の配列の要素数を 0 にする 
+array_compact(a)	配列 a の配列の要素から通常の数値以外を取り除き、取り除いた後の要素数を返す
+M(i,x)		引数を第iメモリーに代入する(i=0〜65535)、i が負のときは末尾からのインデックス (戻り値は x) 
+rm(i)		現在の第iメモリーの値(i=0〜65535)、i が負のときは末尾からのインデックス
+cm(x,n)		先頭からn個のメモリーを x で初期化する、n が 0 のときはメモリー全体、n が負のときは末尾から n 個のメモリーを x で初期化する (戻り値は x) 
+am(a)		配列 a の内容をメモリーにコピーする (戻り値はコピーした要素数) 
+draw_RECT(x, y, w, h, stroke, fill)	(x, y) と (x + w, y + h) を対角の頂点とする矩形を描画する。stroke, fill が 0 の場合はそれぞれ輪郭、塗りつぶしを描画しない。
+draw_ARC(x, y, rx, ry, start, stop, stroke, fill, pieslice, close)	(x, y) を中心とし X 方向半径 rx, Y 方向半径 ry の円弧を描画する。start, stop で開始角、円弧角を指定する。stroke, fill が 0 の場合はそれぞれ輪郭、塗りつぶしを描画しない。pieslice が 0 以 外の場合は扇形を描画する。close が 0 以外の場合は輪郭を閉じる。
+draw_mark(x, y, size)	(x, y) にマークを描画する。size でマークのサイズを指定できる。size が 0 のときはファイルオブジェクトのサイズ指定が使われる。
+fit_prm(id,x)	ID が id の data オブジェクトのプロットタイプが fit のとき、対応する fit object のフィールド "%0x" の値。
+fit_calc(id,x)	ID が id の data オブジェクトのプロットタイプが fit のとき、対応する fit 結果 f(x) を計算する。</td> </tr>
+line_number()	処理中のファイル行番号 (1行目が1) 
+ISNORMAL(x)	x が通常の数値の場合真
+isbreak(x)	x が BREAK の場合真
+iscont(x)	x が CONT の場合真
+isnan(x)	x が NAN の場合真
+isundef(x)	x が UNDEF の場合真
+sum(x)		積算
+dif(x)		差分
+F(x,y,z)	ユーザ定義関数
+G(x,y,z)	ユーザ定義関数
+H(x,y,z)	ユーザ定義関数
+color(0,x)	R値を x (0≦x＜256)に設定
+color(1,x)	G値を x (0≦x＜256)に設定
+color(2,x)	B値を x (0≦x＜256)に設定
+color(3,x)	RGB値を x (0≦x＜256)に設定
+color(4,x)	R2値を x (0≦x＜256)に設定
+color(5,x)	G2値を x (0≦x＜256)に設定
+color(6,x)	B2値を x (0≦x＜256)に設定
+color(7,x)	R2, G2, B2 値を x (0≦x＜256)に設定
+color(8,x)	x を 6 桁の 16 進数として、 2 桁ずつ R, G, B 値に設定
+color(9,x)	x を 6 桁の 16 進数として、 2 桁ずつ R2, G2, B2 値に設定
+obj_color(id, DATA_OBJ), OBJ_COLOR(id)	R, G, B, R2, G2, B2 値を ID が id の data オブジェクトと同じ値にする。
+obj_color(id, PATH_OBJ)	R, G, B, R2, G2, B2 値を ID が id の path オブジェクトの stroke_R, stroke_G, stroke_B, fill_R, fill_G, fill_B と同じ値にする。
+obj_color(id, RECT_OBJ)	R, G, B, R2, G2, B2 値を ID が id の rectangle オブジェクトの stroke_R, stroke_G, stroke_B, fill_R, fill_G, fill_B と同じ値にする。
+obj_color(id, ARC_OBJ)	R, G, B, R2, G2, B2 値を ID が id の arc オブジェクトの stroke_R, stroke_G, stroke_B, fill_R, fill_G, fill_B と同じ値にする。
+obj_color(id, MARK_OBJ)	R, G, B, R2, G2, B2 値を ID が id の mark オブジェクトと同じ値にする。
+obj_color(id, TEXT_OBJ)	R, G, B 値を ID が id の text オブジェクトと同じ値にする。
+alpha(x)	A, A2 値を x (0≦x＜256)に設定
+alpha(x,1)	A 値を x (0≦x＜256)に設定
+alpha(x,2)	A2 値を x (0≦x＜256)に設定
+obj_alpha(id, DATA_OBJ), OBJ_ALPHA(id)	A, A2 値を ID が id の data オブジェクトと同じ値にする。
+obj_alpha(id, PATH_OBJ)	A, A2 値を ID が id の path オブジェクトの stroke_A, fill_A と同じ値にする。
+obj_alpha(id, RECT_OBJ)	A, A2 値を ID が id の rectangle オブジェクトの stroke_A, fill_A と同じ値にする。
+obj_alpha(id, ARC_OBJ)	A, A2 値を ID が id の arc オブジェクトの stroke_A, fill_A と同じ値にする。
+obj_alpha(id, MARK_OBJ)	A, A2 値を ID が id の mark オブジェクトと同じ値にする。
+obj_alpha(id, TEXT_OBJ)	A 値を ID が id の text オブジェクトと同じ値にする。
+RGB(r,g,b)	色のRGB値をそれぞれ r, g, b (0≦r,g,b≦1)に設定
+rgb2(r,g,b)	R2, G2, B2, の値を r, g, b (0≦r,g,b≦1)に設定
+hsb(h,s,b)	色のHSB値をそれぞれ h, s, b (0≦h,s,b≦1)に設定
+hsb2(h,s,b)	R2, G2, B2, の値を、HSB値からそれぞれ h, s, b (0≦h,s,b≦1)に設定
+marksize(x)	マークのサイズをXに設定
+marktype(x)	マークの種類をXに設定
+if(x,ex1,ex2)	x ≠ 0 のとき ex1, x = 0 のとき ex2
+unless(x,ex1,ex2)	x ≠ 0 のとき ex2, x = 0 のとき ex1 
+for(m,begin,end,step,ex)	第mメモリーの値に begin から end まで step で 値を設定し、ex を繰り返す。 m が負の時はメモリーへの設定は行われない。最後に評価された ex の値を返す。 
+prog1(arg1,arg2,...)	引数を評価し、最初の引数の値を返す
+prog2(arg1,arg2,...)	引数を評価し、2 番目の引数の値を返す
+progn(arg1,arg2,...)	引数を評価し、最後の引数の値を返す

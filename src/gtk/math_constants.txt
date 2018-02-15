@@ -1,0 +1,41 @@
+PI		円周率
+E		自然対数の底
+EULER		オイラーの定数
+NAN		欠損データ エラー表示
+UNDEF		欠損データ エラー非表示
+CONT		欠損データ (データ線は結合)
+BREAK		欠損データ (データ線は分断)
+NUM		データの個数
+MINX		(X) column の生データの最小値
+MAXX		(X) column の生データの最大値
+MINY		(Y) column の生データの最小値
+MAXY		(Y) column の生データの最大値
+SUMX		(X) column の生データの和
+SUMY		(Y) column の生データの和
+SUMXX		(X) column の生データの二乗和
+SUMYY		(Y) column の生データの二乗和
+SUMXY		(X) column, (Y) column の生データの積和
+AVX		(X) column の生データの平均
+AVY		(Y) column の生データの平均
+STDEVPX		(X) column の生データの標準偏差 (SGX も利用可)
+STDEVPY		(Y) column の生データの標準偏差 (SGY も利用可)
+STDEVX		(X) column の生データの不偏標準偏差
+STDEVY		(Y) column の生データの不偏標準偏差
+FIRST		diagonal, errorbar など一行のデータで2回の変換が行われる場合、1回目の呼出しで真(=1)、2回目の呼出しで偽(=0)
+MASK		マスクに設定された行数
+MOVE		移動に設定された行数
+COLX		「X カラム」に指定された数
+COLY		「Y カラム」に指定された数
+AXISX		「X 軸」に指定された axis オブジェクトの ID
+AXISY		「Y 軸」に指定された axis オブジェクトの ID
+HSKIP		「先頭スキップ行」に指定された行数
+RSTEP		「読込ステップ行」に指定された行数
+FLINE		「最終行」に指定された行数
+DATA_OBJ	data オブジェクトのオブジェクト識別番号
+PATH_OBJ	path オブジェクトのオブジェクト識別番号
+RECT_OBJ	rectangle オブジェクトのオブジェクト識別番号
+ARC_OBJ		arc オブジェクトのオブジェクト識別番号
+MARK_OBJ	mark オブジェクトのオブジェクト識別番号
+TEXT_OBJ	text オブジェクトのオブジェクト識別番号
+%D		データの番号
+%N		データオブジェクトのインスタンス数
