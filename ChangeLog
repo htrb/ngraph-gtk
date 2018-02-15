@@ -1,3 +1,13 @@
+2018-02-15  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/completion_info.h: added.
+
+	* src/gtk/completion_info.c: added.
+
+	* src/gtk/create_const_info.rb: added.
+
+	* src/gtk/create_func_info.rb: added.
+
 2018-02-11  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/odata.c (odata_get_functions, odata_get_constants)
