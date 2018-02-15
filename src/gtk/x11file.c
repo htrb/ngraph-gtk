@@ -62,6 +62,8 @@
 #include "x11view.h"
 #include "x11file.h"
 #include "x11commn.h"
+#include "sourcecompletionwords.h"
+#include "completion_info.h"
 
 static n_list_store Flist[] = {
   {" ",	        G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden"},
@@ -164,48 +166,25 @@ enum MATH_FNC_TYPE {
 static char *FieldStr[] = {"math_x", "math_y", "func_f", "func_g", "func_h"};
 
 static void
-add_completion_provider(GtkWidget *source_view, GtkTextBuffer *buffer, const char *title)
+add_completion_provider(GtkWidget *source_view, GtkSourceCompletionProvider *provider)
 {
-  GtkSourceCompletionWords *words;
   GtkSourceCompletion *comp;
 
-  words = gtk_source_completion_words_new(title, NULL);
-  gtk_source_completion_words_register(words, buffer);
   comp = gtk_source_view_get_completion(GTK_SOURCE_VIEW(source_view));
-  gtk_source_completion_add_provider(comp, GTK_SOURCE_COMPLETION_PROVIDER(words), NULL);
-  g_object_unref(G_OBJECT(words));
-}
-
-static void
-add_completion_provider_text(GtkWidget *source_view, const char *text, const char *title)
-{
-  GtkTextBuffer *buffer;
-  GtkTextIter iter;
-  char *lower_text;
-
-  buffer = gtk_text_buffer_new(NULL);
-  gtk_text_buffer_set_text(buffer, text, -1);
-
-  lower_text = g_ascii_strdown(text, -1);
-  gtk_text_buffer_get_end_iter(buffer, &iter);
-  gtk_text_buffer_insert(buffer, &iter, lower_text, -1);
-  g_free(lower_text);
-
-  add_completion_provider(source_view, buffer, title);
+  gtk_source_completion_add_provider(comp, provider, NULL);
+  g_object_unref(G_OBJECT(provider));
 }
 
 static void
 add_completion_provider_math(GtkWidget *source_view)
 {
-  gchar *text;
+  SourceCompletionWords *words;
 
-  text = odata_get_functions();
-  add_completion_provider_text(source_view, text, _("functions"));
-  g_free(text);
+  words = source_completion_words_new(_("functions"), completion_info_func_populate);
+  add_completion_provider(source_view, GTK_SOURCE_COMPLETION_PROVIDER(words));
 
-  text = odata_get_constants();
-  add_completion_provider_text(source_view, text, _("constants"));
-  g_free(text);
+  words = source_completion_words_new(_("constants"), completion_info_const_populate);
+  add_completion_provider(source_view, GTK_SOURCE_COMPLETION_PROVIDER(words));
 }
 
 static void
@@ -245,6 +224,7 @@ create_source_view(void)
   GtkSourceLanguageManager *lm;
   GtkSourceBuffer *buffer;
   GtkSourceLanguage *lang;
+  GtkSourceCompletionWords *words;
 
   source_view = gtk_source_view_new();
   buffer = gtk_source_buffer_new(NULL);
@@ -261,7 +241,10 @@ create_source_view(void)
   gtk_source_view_set_show_line_numbers(GTK_SOURCE_VIEW(source_view), TRUE);
 
   add_completion_provider_math(source_view);
-  add_completion_provider(source_view, GTK_TEXT_BUFFER(buffer), _("current equations"));
+
+  words = gtk_source_completion_words_new(_("current equations"), NULL);
+  gtk_source_completion_words_register(words, GTK_TEXT_BUFFER(buffer));
+  add_completion_provider(source_view, GTK_SOURCE_COMPLETION_PROVIDER(words));
 
   return source_view;
 }
