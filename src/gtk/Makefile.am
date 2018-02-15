@@ -31,13 +31,16 @@ EXTRA_DIST = dir_defs.h.in data/css/ngraph.css				\
 	data/pixmaps/ngraph_scale.png data/pixmaps/ngraph_section.png	\
 	data/pixmaps/ngraph_single.png data/pixmaps/ngraph_text.png	\
 	data/pixmaps/ngraph_trimming.png data/pixmaps/ngraph_undo.png	\
-	data/pixmaps/ngraph_zoom.png data/ngraphui.resources.xml
+	data/pixmaps/ngraph_zoom.png data/ngraphui.resources.xml	\
+	create_func_info.rb create_const_info.rb math_functions.txt	\
+	math_constants.txt
 
 AM_CPPFLAGS = -DLOCALEDIR=\""@localedir@"\"
 
 noinst_LTLIBRARIES = libngraphui.la
 
-nodist_libngraphui_la_SOURCES = dir_defs.h ngraphui.resources.c
+nodist_libngraphui_la_SOURCES = dir_defs.h ngraphui.resources.c	\
+	completion_info_const.c completion_info_func.c
 
 libngraphui_la_SOURCES = gtk_common.h gtk_combo.c gtk_combo.h		\
 	gtk_entry_completion.c gtk_entry_completion.h gtk_liststore.c	\
@@ -52,7 +55,8 @@ libngraphui_la_SOURCES = gtk_common.h gtk_combo.c gtk_combo.h		\
 	x11merge.h x11opt.c x11opt.h x11opt_proto.h x11print.c		\
 	x11print.h x11view.c x11view.h gtk_widget.c gtk_widget.h	\
 	gtk_ruler.c gtk_ruler.h init.c init.h gtk_action.c		\
-	gtk_action.h
+	gtk_action.h sourcecompletionwords.c sourcecompletionwords.h	\
+	completion_info.c completion_info.h
 
 if OS_WIN32
 APPMENU_UI_SOURCE = $(srcdir)/data/gtk/menus-appmenu.ui.in
@@ -86,6 +90,12 @@ pixmapdir = $(datadir)/pixmaps/$(PACKAGE)
 
 dir_defs.h: dir_defs.h.in Makefile
 	$(SHELL) $(top_srcdir)/pathconv.sh "$(bindir)" "$(docdir)" "$(pkglibexecdir)" "$(pkglibdir)" "$(pkgdatadir)" "$(ngraphconfdir)" $(srcdir)/dir_defs.h.in
+
+completion_info_const.c: $(srcdir)/math_constants.txt $(srcdir)/create_const_info.rb
+	ruby $(srcdir)/create_const_info.rb $(srcdir)/math_constants.txt completion_info_const.c
+
+completion_info_func.c: $(srcdir)/math_functions.txt $(srcdir)/create_func_info.rb
+	ruby $(srcdir)/create_func_info.rb $(srcdir)/math_functions.txt completion_info_func.c
 
 libngraphui_la_CFLAGS = $(GTK_CFLAGS) -I$(top_builddir) -I$(builddir) -I$(srcdir)/.. -I$(srcdir)/../math $(GTKSOURCEVIEW_CFLAGS)
 libngraphui_la_LDFLAGS = $(GTKSOURCEVIEW_LIBS)
