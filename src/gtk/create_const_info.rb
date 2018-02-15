@@ -13,7 +13,7 @@ File.open(ARGV[1], "w") { |c_file|
   c_file.puts("struct completion_info completion_info_const[] = {")
   data.each {|info|
     info_text = info[1].gsub('"', '\\"')
-    c_file.puts(%Q!{"#{info[0]}", "#{info_text}"},!)
+    c_file.puts(%Q!{"#{info[0]}", "#{info_text}, NULL"},!)
   }
   c_file.puts("};")
   c_file.puts("int completion_info_const_num(void) {return sizeof(completion_info_const) / sizeof(*completion_info_const);}")  

@@ -14,7 +14,7 @@ File.open(ARGV[1], "w") { |c_file|
   data.each {|info|
     text = info[0].sub(/\(.+\)/, '()')
     info_text = info[1].gsub('"', '\\"')
-    c_file.puts(%Q!{"#{text}", "#{info[0]}\\n#{info_text}"},!)
+    c_file.puts(%Q!{"#{text}", "#{info[0]}\\n#{info_text}", NULL},!)
   }
   c_file.puts("};")
   c_file.puts("int completion_info_func_num(void) {return sizeof(completion_info_func) / sizeof(*completion_info_func);}")
