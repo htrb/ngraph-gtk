@@ -7,12 +7,14 @@ File.open(ARGV[0], "r:utf-8") { |info_file|
     text = info[0].sub(/\(.+\)/, '()')
     ltext = text.downcase
     info_text = info[1].gsub('"', '\\"')
-    data.push(%Q!{"#{ltext}", "#{text}", "#{info[0]}\\n#{info_text}", NULL},!)
+    data.push(%Q!{"#{ltext}", "#{text}", N_("#{info[0]}\\n#{info_text}"), NULL},!)
   }
 }
 
 data.sort!
 File.open(ARGV[1], "w:utf-8") { |c_file|
+  c_file.puts('/* -*- Mode: C; coding: utf-8 -*- */')
+  c_file.puts('#include "gtk_common.h"')
   c_file.puts('#include "completion_info.h"')
   c_file.puts("struct completion_info completion_info_func[] = {")
   data.each {|info|
