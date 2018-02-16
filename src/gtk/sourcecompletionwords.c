@@ -66,7 +66,7 @@ valid_start_char (gunichar ch)
 static gboolean
 valid_word_char (gunichar ch)
 {
-  return g_unichar_isprint (ch) && (ch == '_' || g_unichar_isalnum (ch));
+  return g_unichar_isprint (ch) && (ch == '_' || ch == '%' || g_unichar_isalnum (ch));
 }
 
 static gchar *
