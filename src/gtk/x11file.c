@@ -234,7 +234,9 @@ create_source_view(void)
 
   comp = gtk_source_view_get_completion(GTK_SOURCE_VIEW(source_view));
   g_value_init(&value, G_TYPE_BOOLEAN);
-  g_value_set_boolean(&value, TRUE);
+  g_value_set_boolean(&value, FALSE); /* fix-me: proposals are not
+                                       * shown 2nd time in linux if
+                                       * TRUE */
   g_object_set_property(G_OBJECT(comp), "remember-info-visibility", &value);
 
   lm = gtk_source_language_manager_get_default();
