@@ -5,7 +5,7 @@ File.open(ARGV[0], "r:utf-8") { |info_file|
   info_file.each { |l|
     info = l.chomp.split(/\t+/)
     info_text = info[1].gsub('"', '\\"')
-    data.push(%Q!{"#{info[0].downcase}", "#{info[0]}", "#{info_text}, NULL"},!)
+    data.push(%Q!{"#{info[0].downcase}", "#{info[0]}", "#{info_text}", NULL},!)
   }
 }
 
