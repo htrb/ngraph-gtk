@@ -1,150 +1,129 @@
-abs(x)		x の絶対値
-sign(x)		正負の符号 (x < 0 で -1、x >= 0 で 1)
-int(x)		0に向かって切捨てた整数部
-gauss(x)	ガウスの記号[ ] ([n]はnを越えない最大の整数)
-frac(x)		小数部
-round(x)	四捨五入した整数部
-min(a,b,c,...)	引数のうちもっとも小さな値
-max(a,b,c,...)	引数のうちもっとも大きな値
-sumsq(a,b,c,...)	引数の自乗和
-sqr(x)		二乗
-sqrt(x)		平方根
-exp(x)		指数(x≦690)
-ln(x)		自然対数
-log(x)		常用対数
-sin(x)		サイン
-cos(x)		コサイン
-tan(x)		タンジェント
-asin(x)		逆サイン
-acos(x)		逆コサイン
-atan(x)		逆タンジェント
-sinh(x)		ハイパボリックサイン
-cosh(x)		ハイパボリックコサイン
-tanh(x)		ハイパボリックタンジェント
-asinh(x)	逆ハイパボリックサイン
-acosh(x)	逆ハイパボリックコサイン
-atanh(x)	逆ハイパボリックタンジェント
-fmod(x, y)	x を y で割った浮動小数点剰余
-rand(x)		0≦rand(x)＜x (x＞0のとき)の乱数
-srand(x)	rand()  関数で作られる疑似乱数系列の新しい種を設定する。
-theta(x)	階段関数(x≧0 のとき 1,  それ以外は 0 )
-delta(x)	クロネッカーのδ(x=0 のとき 1, それ以外は 0)
-gamma(x)	ガンマ関数 Γ(x)
-icgam(m,x)	不完全ガンマ関数 Γ(μ,x)
-erf(x)		誤差関数 Erf(x)
-erfc(x)		相補誤差関数 Erfc(x)
-qinv(x)		誤差関数 Erfc(x) の逆関数
-ei(x)		積分指数関数 Ei(x)
-beta(x,y)	ベータ関数 B(p,q)
-icbeta(x,y)	不完全ベータ関数 I(a,b,x) (0 <= x <= 1)
-jn(n,x)		第1種n次ベッセル関数
-yn(n,x)		第2種n次ベッセル関数
-in(n,x)		第1種n次変形ベッセル関数
-kn(n,x)		第2種n次変形ベッセル関数
-jl(l,x)		第1種l次球ベッセル関数
-yl(l,x)		第2種l次球ベッセル関数
-jnu(nu,x)	第1種nu次ベッセル関数 (nu は正の実数)
-ynu(nu,x)	第2種nu次ベッセル関数 (nu は正の実数)
-inu(nu,x)	第1種nu次変形ベッセル関数 (nu は正の実数)
-knu(nu,x)	第2種nu次変形ベッセル関数 (nu は正の実数)
-pn(n,x)		ルジャンドル多項式
-lgn(n,a,x)	ラゲール倍多項式
-hn(n,x)		エルミート多項式
-tn(n,x)		チェビシフ多項式
-zeta(x)		リーマンゼータ関数 ζ(x)
-zeta_INT(x)	リーマンゼータ関数 ζ(x) (x は整数)
-zetam1(x)	リーマンゼータ関数 ζ(x) - 1
-zetam1_INT(x)	リーマンゼータ関数 ζ(x) - 1 (x は整数)
-choose(n,m)	the combinatorial factor n choose m: n!/(m!(n-m)!)
-mjd(year,month,day,hour,min,sec)	修正ユリウス日(year, month, day はグレゴリオ暦、hour,min,sec は UTC 時刻、うるう秒は考慮されない)
-unix2mjd(time)	修正ユリウス日(time は 1970年1月1日00:00:00 UTC からの経過秒数、うるう秒は考慮されない)
-mjd2unix(mjd)	修正ユリウス日 mjd の1970年1月1日00:00:00 UTC からの経過秒数(うるう秒は考慮されない)
-mjd2year(mjd)	修正ユリウス日に対応するグレゴリオ暦の年
-mjd2month(mjd)	修正ユリウス日に対応するグレゴリオ暦の月
-mjd2day(mjd)	修正ユリウス日に対応するグレゴリオ暦の日
-mjd2wday(mjd)	修正ユリウス日に対応するグレゴリオ暦の曜日 (1:月曜日 から 7:日曜日)
-mjd2yday(mjd)	修正ユリウス日に対応するグレゴリオ暦の 1 月 1 日からの通算日数 (1 から 366)
-time()		紀元 (1970年1月1日00:00:00 UTC) からの経過時間を秒単位で返す。
-eq(x,y,prec)	x＝y のとき真(=1)。prec で比較の桁数を指定できる (prec == 0 は完全一致) 。
-neq(x,y,prec)	x≠y のとき真(=1)。prec で比較の桁数を指定できる (prec == 0 は完全一致) 。
-ge(x,y,prec)	x≧y のとき真(=1)。prec で比較の桁数を指定できる (prec == 0 は桁数指定なし) 。
-gt(x,y,prec)	x＞y のとき真(=1)。prec で比較の桁数を指定できる (prec == 0 は桁数指定なし) 。
-le(x,y,prec)	x≦y のとき真(=1)。prec で比較の桁数を指定できる (prec == 0 は桁数指定なし) 。
-lt(x,y,prec)	x＜y のとき真(=1)。prec で比較の桁数を指定できる (prec == 0 は桁数指定なし) 。
-not(x)		x＝0 のとき真(=1)
-or(x,y)		(x≠0) or (y≠0) のとき真(=1)
-and(x,y)	(x≠0) and (y≠0) のとき真(=1)
-xor(x,y)	(x≠0) xor (y≠0) のとき真(=1)
-size(a)		配列 a の要素数
-sort(a)		配列 a を整列する
-rsort(a)	配列 a を逆順に整列する
-pop(a)		配列 a から末尾の要素を取り除いてそれを返す
-push(a,x)	配列 a の末尾に x を追加する (戻り値は x)
-shift(a)	配列 a の先頭の要素を取り除いてそれを返す。残りの要素はひとつずつ前に詰められる
-unshift(a,x)	配列 a の先頭に x を挿入する (戻り値は x)
-array_sum(a)	配列 a の要素の和を返す
-array_sumsq(a)	配列 a の要素の自乗和を返す
-array_average(a)	配列 a の要素の平均を返す
-array_stdevp(a)	配列 a の要素の標準偏差を返す
-array_stdev(a)	配列 a の要素の不偏標準偏差を返す
-array_max(a)	配列 a に含まれる最大の値を返す
-array_min(a)	配列 a に含まれる最小の値を返す
-array_clear(a)	配列 a の配列の要素数を 0 にする
-array_compact(a)	配列 a の配列の要素から通常の数値以外を取り除き、取り除いた後の要素数を返す
-m(i,x)		引数を第iメモリーに代入する(i=0〜65535)、i が負のときは末尾からのインデックス (戻り値は x)
-rm(i)		現在の第iメモリーの値(i=0〜65535)、i が負のときは末尾からのインデックス
-cm(x,n)		先頭からn個のメモリーを x で初期化する、n が 0 のときはメモリー全体、n が負のときは末尾から n 個のメモリーを x で初期化する (戻り値は x)
-am(a)		配列 a の内容をメモリーにコピーする (戻り値はコピーした要素数)
-draw_rect(x, y, w, h, stroke, fill)	(x, y) と (x + w, y + h) を対角の頂点とする矩形を描画する。stroke, fill が 0 の場合はそれぞれ輪郭、塗りつぶしを描画しない。
-draw_arc(x, y, rx, ry, start, stop, stroke, fill, pieslice, close)	(x, y) を中心とし X 方向半径 rx, Y 方向半径 ry の円弧を描画する。start, stop で開始角、円弧角を指定する。stroke, fill が 0 の場合はそれぞれ輪郭、塗りつぶしを描画しない。pieslice が 0 以 外の場合は扇形を描画する。close が 0 以外の場合は輪郭を閉じる。
-draw_mark(x, y, size)	(x, y) にマークを描画する。size でマークのサイズを指定できる。size が 0 のときはファイルオブジェクトのサイズ指定が使われる。
-fit_prm(id,x)	ID が id の data オブジェクトのプロットタイプが fit のとき、対応する fit object のフィールド "%0x" の値。
-fit_calc(id,x)	ID が id の data オブジェクトのプロットタイプが fit のとき、対応する fit 結果 f(x) を計算する。</td> </tr>
-line_number()	処理中のファイル行番号 (1行目が1)
-isnormal(x)	x が通常の数値の場合真
-isbreak(x)	x が BREAK の場合真
-iscont(x)	x が CONT の場合真
-isnan(x)	x が NAN の場合真
-isundef(x)	x が UNDEF の場合真
-sum(x)		積算
-dif(x)		差分
-F(x,y,z)	ユーザ定義関数
-G(x,y,z)	ユーザ定義関数
-H(x,y,z)	ユーザ定義関数
-color(0,x)	R値を x (0≦x＜256)に設定
-color(1,x)	G値を x (0≦x＜256)に設定
-color(2,x)	B値を x (0≦x＜256)に設定
-color(3,x)	RGB値を x (0≦x＜256)に設定
-color(4,x)	R2値を x (0≦x＜256)に設定
-color(5,x)	G2値を x (0≦x＜256)に設定
-color(6,x)	B2値を x (0≦x＜256)に設定
-color(7,x)	R2, G2, B2 値を x (0≦x＜256)に設定
-color(8,x)	x を 6 桁の 16 進数として、 2 桁ずつ R, G, B 値に設定
-color(9,x)	x を 6 桁の 16 進数として、 2 桁ずつ R2, G2, B2 値に設定
-obj_color(id, DATA_OBJ), OBJ_COLOR(id)	R, G, B, R2, G2, B2 値を ID が id の data オブジェクトと同じ値にする。
-obj_color(id, PATH_OBJ)	R, G, B, R2, G2, B2 値を ID が id の path オブジェクトの stroke_R, stroke_G, stroke_B, fill_R, fill_G, fill_B と同じ値にする。
-obj_color(id, RECT_OBJ)	R, G, B, R2, G2, B2 値を ID が id の rectangle オブジェクトの stroke_R, stroke_G, stroke_B, fill_R, fill_G, fill_B と同じ値にする。
-obj_color(id, ARC_OBJ)	R, G, B, R2, G2, B2 値を ID が id の arc オブジェクトの stroke_R, stroke_G, stroke_B, fill_R, fill_G, fill_B と同じ値にする。
-obj_color(id, MARK_OBJ)	R, G, B, R2, G2, B2 値を ID が id の mark オブジェクトと同じ値にする。
-obj_color(id, TEXT_OBJ)	R, G, B 値を ID が id の text オブジェクトと同じ値にする。
-alpha(x)	A, A2 値を x (0≦x＜256)に設定
-alpha(x,1)	A 値を x (0≦x＜256)に設定
-alpha(x,2)	A2 値を x (0≦x＜256)に設定
-obj_alpha(id, DATA_OBJ), OBJ_ALPHA(id)	A, A2 値を ID が id の data オブジェクトと同じ値にする。
-obj_alpha(id, PATH_OBJ)	A, A2 値を ID が id の path オブジェクトの stroke_A, fill_A と同じ値にする。
-obj_alpha(id, RECT_OBJ)	A, A2 値を ID が id の rectangle オブジェクトの stroke_A, fill_A と同じ値にする。
-obj_alpha(id, ARC_OBJ)	A, A2 値を ID が id の arc オブジェクトの stroke_A, fill_A と同じ値にする。
-obj_alpha(id, MARK_OBJ)	A, A2 値を ID が id の mark オブジェクトと同じ値にする。
-obj_alpha(id, TEXT_OBJ)	A 値を ID が id の text オブジェクトと同じ値にする。
-rgb(r,g,b)	色のRGB値をそれぞれ r, g, b (0≦r,g,b≦1)に設定
-rgb2(r,g,b)	R2, G2, B2, の値を r, g, b (0≦r,g,b≦1)に設定
-hsb(h,s,b)	色のHSB値をそれぞれ h, s, b (0≦h,s,b≦1)に設定
-hsb2(h,s,b)	R2, G2, B2, の値を、HSB値からそれぞれ h, s, b (0≦h,s,b≦1)に設定
-marksize(x)	マークのサイズをXに設定
-marktype(x)	マークの種類をXに設定
-if(x,ex1,ex2)	x ≠ 0 のとき ex1, x = 0 のとき ex2
-unless(x,ex1,ex2)	x ≠ 0 のとき ex2, x = 0 のとき ex1
-for(m,begin,end,step,ex)	第mメモリーの値に begin から end まで step で 値を設定し、ex を繰り返す。 m が負の時はメモリーへの設定は行われない。最後に評価された ex の値を返す。
-prog1(arg1,arg2,...)	引数を評価し、最初の引数の値を返す
-prog2(arg1,arg2,...)	引数を評価し、2 番目の引数の値を返す
-progn(arg1,arg2,...)	引数を評価し、最後の引数の値を返す
+abs(x)		compute the absolute value of <i>x</i>
+sign(x)		positive / negative sign (-1 with <i>x</i> &lt; 0, 1 with <i>x</i> &gt;= 0)
+int(x)		round to integer, toward zero
+gauss(x)	largest integral value not greater than <i>x</i>
+frac(x)		remainder
+round(x)	round to nearest integer, away from zero
+min(a,b,c,...)	The smallest value of arguments
+max(a,b,c,...)	The largest value of arguments
+sumsq(a,b,c,...)	 square sum of arguments
+sqr(x)		squaring
+sqrt(x)		square root
+exp(x)		base-e exponential function (<i>x</i> &lt;= 690)
+ln(x)		natural logarithmic function
+log(x)		base-10 logarithmic function
+sin(x)		sine function
+cos(x)		cosine function
+tan(x)		tangent function
+asin(x)		arc sine function
+acos(x)		arc cosine function
+atan(x)		arc tangent function
+sinh(x)		hyperbolic sine function
+cosh(x)		hyperbolic cosine function
+tanh(x)		hyperbolic tangent function
+asinh(x)	inverse hyperbolic sine function
+acosh(x)	inverse hyperbolic cosine function
+atanh(x)	inverse hyperbolic tangent function
+fmod(x, y)	compute the floating-point remainder of dividing <i>x</i> by <i>y</i>
+rand(x)		returns a random gdouble equally distributed over the range [0..<i>x</i>)
+srand(x)	Sets the seed for the random number generator which is used by the rand() function
+theta(x)	staircase function (1 if <i>x</i> &gt;= 0, 0 otherwise)
+delta(x)	Kronecker delta (1 when <i>x</i> = 0, 0 otherwise)
+gamma(x)	gamma function
+icgam(m,x)	incomplete gamma function
+erf(x)		error function erf(<i>x</i>)
+erfc(x)		complementary error function erfc(<i>x</i>)
+qinv(x)		inverse complementary error function
+ei(x)		compute the exponential integral Ei(<i>x</i>)
+beta(x,y)	beta function
+icbeta(a,b,x)	incomplete beta function
+jn(n,x)		compute the regular cylindrical Bessel function of order <i>n</i>, J<sub>n</sub>(|<i>x</i>|)
+yn(n,x)		compute the irregular cylindrical Bessel function of order <i>n</i>, Y<sub>n</sub>(|<i>x</i>|)
+in(n,x)		compute the regular modified cylindrical Bessel function of order |<i>n</i>|, I<sub>n</sub>(|<i>x</i>|)
+kn(n,x)		compute the irregular modified cylindrical Bessel function of order |<i>n</i>|, K<sub>n</sub>(|<i>x</i>|)
+jl(l,x)		compute the regular spherical Bessel function of order |<i>l</i>|, j<sub>l</sub>(|<i>x</i>|)
+yl(l,x)		compute the irregular spherical Bessel function of order |<i>l</i>|, y<sub>l</sub>(|<i>x</i>|)
+jnu(nu,x)	compute the regular cylindrical Bessel function of fractional order |<i>nu</i>|, J<sub>nu</sub>(|<i>x</i>|)
+ynu(nu,x)	compute the irregular cylindrical Bessel function of fractional order |<i>nu</i>|, Y<sub>nu</sub>(|<i>x</i>|)
+inu(nu,x)	compute the regular modified Bessel function of fractional order |<i>nu</i>|, I<sub>nu</sub>(|<i>x</i>|)
+knu(nu,x)	compute the irregular cylindrical Bessel function of fractional order |<i>nu</i>|, Y<sub>nu</sub>(|<i>x</i>|)
+pn(l,x)		evaluate the Legendre polynomial P<sub>l</sub>(<i>x</i>) for a specific value of <i>l, x</i> subject to <i>l</i> &gt;= 0, |<i>x</i>| &lt;= 1
+lgn(n,a,x)	evaluate the generalized Laguerre polynomials L<sup>a<sup><sub>n</sub>(<i>x</i>) for <i>a</i> %gt; -1, <i>n</i> &gt;= 0
+hn(n,x)		Hermite polynomials
+tn(n,x)		Chebyshev polynomials
+zeta(s)		compute the Riemann zeta function zeta(s) for arbitrary <i>s</i>, <i>s</i> != 1
+zeta_int(n)	compute the Riemann zeta function zeta(n) for integer <i>n</i>, <i>n</i> != 1
+zetam1(s)	compute zeta(<i>s</i>) - 1 for arbitrary <i>s</i>, <i>s</i> != 1
+zetam1_int(n)	compute zeta(<i>n</i>) - 1 for integer <i>n</i>, <i>n</i> != 1
+choose(n,m)	the combinatorial factor <i>n</i> choose <i>m</i>: <i>n!/(m!(n-m)!)</i>
+mjd(year,month,day,hour,min,sec)	Modified Julian Date (date and time are given in UTC)
+unix2mjd(time)	Modified Julian Date\ntime represents the number of seconds elapsed since the Epoch, 1970-01-01 00:00:00 +0000 (UTC))
+mjd2unix(mjd)	time represents the number of seconds elapsed since the Epoch at <i>mjd</i>
+mjd2year(mjd)	year of Gregorian calendar corresponding to Modified Julian Day <i>mjd</i>
+mjd2month(mjd)	month of Gregorian calendar corresponding to Modified Julian Day <i>mjd</i>
+mjd2day(mjd)	Gregorian calendar day corresponding to Modified Julian Day <i>mjd</i>
+mjd2wday(mjd)	The day of the week as a decimal range 1 to 7, Monday being 1 corresponding to <i>mjd</i>
+mjd2yday(mjd)	The day of the year as a decimal number (range 001 to 366) corresponding to <i>mjd</i>
+time()		returns the time as the number of seconds since the Epoch, 1970-01-01 00:00:00 +0000 (UTC)
+eq(x,y,prec)	True (= 1) when <i>x</i> == <i>y</i>.\nThe number of digits of comparison can be specified with <i>prec</i>\n(<i>prec</i> == 0 is exact match).
+neq(x,y,prec)	True (= 1) when <i>x</i> != <i>y</i>.\nThe number of digits of comparison can be specified with <i>prec</i>\n(<i>prec</i> == 0 is exact match).
+ge(x,y,prec)	True (= 1) when <i>x</i> &gt;= <i>y</i>.\nThe precision allows you to specify the number of digits for comparison\n(<i>prec</i> == 0 does not specify the number of digits).
+gt(x,y,prec)	True (= 1) when <i>x</i> &gt; <i>y</i>.\nThe precision allows you to specify the number of digits for comparison\n(<i>prec</i> == 0 does not specify the number of digits).
+le(x,y,prec)	True (= 1) when <i>x</i> &lt;= <i>y</i>.\nThe precision allows you to specify the number of digits for comparison\n(<i>prec</i> == 0 does not specify the number of digits).
+lt(x,y,prec)	True (= 1) when <i>x</i> &lt; <i>y</i>.\nThe precision allows you to specify the number of digits for comparison\n(<i>prec</i> == 0 does not specify the number of digits).
+not(x)		True (= 1) when <i>x</i> == 0
+or(x,y)		True (= 1) when (<i>x</i> != 0) or (<i>y</i> != 0)
+and(x,y)	True (= 1) when (<i>x</i> != 0) and (<i>y</i> != 0)
+xor(x,y)	True (= 1) when (<i>x</i> != 0) xor (<i>y</i> != 0)
+size(a)		number of elements of array <i>a</i>
+sort(a)		sort elements of array <i>a</i>
+rsort(a)	reverse sort elements of array <i>a</i>
+pop(a)		remove the last element of array <i>a</i>, and returns that element
+push(a,x)	adds new elements to the end of an array, and returns that element
+shift(a)	remove the first element of array <i>a</i>, and returns that element
+unshift(a,x)	adds new elements to the beginning of an array, and returns that element
+array_sum(a)	returns the sum of the elements of array <i>a</i>
+array_sumsq(a)	returns the square sum of the elements of array <i>a</i>
+array_average(a)	return the average of the elements of array <i>a</i>
+array_stdevp(a)	return the standard deviation of the elements of array <i>a</i>
+array_stdev(a)	return the corrected sample standard deviation of the elements of array <i>a</i>
+array_max(a)	returns the maximum value contained in array <i>a</i>
+array_min(a)	returns the minimum value contained in array <i>a</i>
+array_clear(a)	set the number of elements of the array <i>a</i> to 0
+array_compact(a)	Remove non-numeric values from the elements of the array of array <i>a</i>\nand return the number of elements after removal
+m(i,x)		assigns <i>x</i> to the <i>i</i>-th memory (<i>i</i> = 0 to 65535)\nthe index from the tail when <i>i</i> is negative\n(return <i>x</i>)
+rm(i)		the value of the current <i>i</i>-th memory (<i>i</i> = 0 to 65535),\nthe index from the tail when <i>i</i> is negative
+cm(x,n)		initialize n memories from the beginning with <i>x</i>\ninitialize memory with the whole memory when <i>n</i> is 0\nand n memories from the end when <i>x</i> is negative\n(return <i>x</i>)
+am(a)		copy the contents of array <i>a</i> to memory (return the number of copied elements)
+draw_rect(x, y, w, h, stroke, fill)	draw a rectangle with (<i>x, y</i>) and (<i>x + w, y + h</i>) as diagonal vertices.\nWhen <i>stroke</i> and <i>fill</i> are 0, do not draw contours and fills respectively.
+draw_arc(x, y, rx, ry, start, angle, stroke, fill, pieslice, close)	draw an arc with the X direction radius <i>rx</i> and the Y direction radius <i>ry</i> centered on (<i>x, y</i>).\n<i>start</i> and <i>angle</i> specify start angle and arc angle.\nWhen <i>stroke</i> and <i>fill</i> are 0, do not draw contours and fills respectively.\nIf <i>pieslice</i> is not 0, draw a sector.\nIf <i>close</i> is not 0, close the outline.
+draw_mark(x, y, size)	draw a mark on (<i>x, y</i>). The <i>size</i> can be specified with size.\nWhen <i>size</i> is 0, specification of the file object is used.
+fit_prm(id,x)	When the plot type of the data object whose ID is <i>id</i> is fit,\nthe value of the field "%0<i>x</i>" of the corresponding fit object.
+fit_calc(id,x)	When the plot type of the data object whose ID is <i>id</i> is fit, the corresponding fit result f(<i>x</i>) is calculated.
+line_number()	File line number being processed (1st line is 1)
+isnormal(x)	True if <i>x</i> is a normal number
+isbreak(x)	True if <i>x</i> is BREAK
+iscont(x)	True if <i>x</i> is CONT
+isnan(x)	True if <i>x</i> is NAN
+isundef(x)	True if <i>x</i> is UNDEF
+sum(x)		Integration
+dif(x)		Difference
+F(x,y,z)	User Defined Function
+G(x,y,z)	User Defined Function
+H(x,y,z)	User Defined Function
+color(i,x)	i = 0: Set the R value set to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\ni = 1: Set the G value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\ni = 2: Set the B value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\ni = 3: Set the R, G and B value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\ni = 4: Set the R2 value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\ni = 5: Set the G2 value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\ni = 6: Set B2 value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\ni = 7: Set R2, G2 and B2 value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\ni = 8: Set R, G and B value to be hexadecimal color of <i>x</i>\ni = 9: Set R2, G2 and B2 value to be hexadecimal color of <i>x</i>
+obj_color(id, obj)	Set the R, G, B, R2, G2 and B2 value to the same value as the instance of <i>obj</i> whose ID is <i>id</i>.\n<i>obj</i> is one of DATA_OBJ, PATH_OBJ, ARC_OBJ, MARK_OBJ or TEXT_OBJ.
+alpha(x,i)	Set A (<i>i</i> == 1) or A2 (<i>i</i> == 2) values to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\nwhen <i>i</i> == 0, set A and A2 values to <i>x</i>
+obj_alpha(id, obj)	Set the A and A2 value to the same value as the instance of <i>obj</i> whose ID is <i>id</i>.\n<i>obj</i> is one of DATA_OBJ, PATH_OBJ, ARC_OBJ, MARK_OBJ or TEXT_OBJ.
+rgb(r,g,b)	Set the R, G and B values of the color to <i>r, g, b</i> (0 &lt;= <i>r, g, b</i> &lt;= 1)
+rgb2(r,g,b)	Set the R2, G2 and B2 values of the color to <i>r, g, b</i> (0 &lt;= <i>r, g, b</i> &lt;= 1)
+hsb(h,s,b)	Set the R, G, B value of color to <i>h, s, b</i> (0 &lt;= <i>h, s, b</i> &lt;=1)  from the HSB value
+hsb2(h,s,b)	Set the R2, G2, B2 value of color to <i>h, s, b</i> (0 &lt;= <i>h, s, b</i> &lt;=1)  from the HSB value
+marksize(x)	Mark size set to <i>x</i>
+marktype(x)	Set mark type to <i>x</i>
+if(x,ex1,ex2)	evaluate <i>ex1</i> when <i>x</i> != 0, evaluate <i>ex2</i> otherwise
+unless(x,ex1,ex2)	evaluate <i>ex2</i> when <i>x</i> != 0, evaluate <i>ex1</i> otherwise
+for(m,begin,end,step,ex)	Set the value in <i>step</i> from <i>begin</i> to <i>end</i> to the <i>m</i>-th memory and repeat <i>ex</i>.\nWhen <i>m</i> is negative, no setting to memory is done.\nReturns the value of <i>ex</i> evaluated last.
+prog1(arg1,arg2,...)	Evaluate the arguments and return the evaluated value of the first argument
+prog2(arg1,arg2,...)	Evaluate the arguments and return the evaluated value of the second argument
+progn(arg1,arg2,...)	Evaluate the arguments and return the evaluated value of the last argument
