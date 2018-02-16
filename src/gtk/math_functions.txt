@@ -4,9 +4,9 @@ int(x)		round to integer, toward zero
 gauss(x)	largest integral value not greater than <i>x</i>
 frac(x)		remainder
 round(x)	round to nearest integer, away from zero
-min(a,b,c,...)	The smallest value of arguments
-max(a,b,c,...)	The largest value of arguments
-sumsq(a,b,c,...)	 square sum of arguments
+min(a, b, c, ...)	The smallest value of arguments
+max(a, b, c, ...)	The largest value of arguments
+sumsq(a, b, c, ...)	square sum of arguments
 sqr(x)		squaring
 sqrt(x)		square root
 exp(x)		base-e exponential function (<i>x</i> &lt;= 690)
@@ -30,33 +30,33 @@ srand(x)	Sets the seed for the random number generator which is used by the rand
 theta(x)	staircase function (1 if <i>x</i> &gt;= 0, 0 otherwise)
 delta(x)	Kronecker delta (1 when <i>x</i> = 0, 0 otherwise)
 gamma(x)	gamma function
-icgam(m,x)	incomplete gamma function
+icgam(m, x)	incomplete gamma function
 erf(x)		error function erf(<i>x</i>)
 erfc(x)		complementary error function erfc(<i>x</i>)
 qinv(x)		inverse complementary error function
 ei(x)		compute the exponential integral Ei(<i>x</i>)
-beta(x,y)	beta function
-icbeta(a,b,x)	incomplete beta function
-jn(n,x)		compute the regular cylindrical Bessel function of order <i>n</i>, J<sub>n</sub>(|<i>x</i>|)
-yn(n,x)		compute the irregular cylindrical Bessel function of order <i>n</i>, Y<sub>n</sub>(|<i>x</i>|)
-in(n,x)		compute the regular modified cylindrical Bessel function of order |<i>n</i>|, I<sub>n</sub>(|<i>x</i>|)
-kn(n,x)		compute the irregular modified cylindrical Bessel function of order |<i>n</i>|, K<sub>n</sub>(|<i>x</i>|)
-jl(l,x)		compute the regular spherical Bessel function of order |<i>l</i>|, j<sub>l</sub>(|<i>x</i>|)
-yl(l,x)		compute the irregular spherical Bessel function of order |<i>l</i>|, y<sub>l</sub>(|<i>x</i>|)
-jnu(nu,x)	compute the regular cylindrical Bessel function of fractional order |<i>nu</i>|, J<sub>nu</sub>(|<i>x</i>|)
-ynu(nu,x)	compute the irregular cylindrical Bessel function of fractional order |<i>nu</i>|, Y<sub>nu</sub>(|<i>x</i>|)
-inu(nu,x)	compute the regular modified Bessel function of fractional order |<i>nu</i>|, I<sub>nu</sub>(|<i>x</i>|)
-knu(nu,x)	compute the irregular modified Bessel function of fractional order |<i>nu</i>|, K<sub>nu</sub>(|<i>x</i>|)
-pn(l,x)		evaluate the Legendre polynomial P<sub>l</sub>(<i>x</i>) for a specific value of <i>l, x</i> subject to <i>l</i> &gt;= 0, |<i>x</i>| &lt;= 1
-lgn(n,a,x)	evaluate the generalized Laguerre polynomials L<sup>a</sup><sub>n</sub>(<i>x</i>) for <i>a</i> %gt; -1, <i>n</i> &gt;= 0
-hn(n,x)		Hermite polynomials
-tn(n,x)		Chebyshev polynomials
+beta(x, y)	beta function
+icbeta(a, b, x)	incomplete beta function
+jn(n, x)	compute the regular cylindrical Bessel function of order <i>n</i>, J<sub>n</sub>(|<i>x</i>|)
+yn(n, x)	compute the irregular cylindrical Bessel function of order <i>n</i>, Y<sub>n</sub>(|<i>x</i>|)
+in(n, x)	compute the regular modified cylindrical Bessel function of order |<i>n</i>|, I<sub>n</sub>(|<i>x</i>|)
+kn(n, x)	compute the irregular modified cylindrical Bessel function of order |<i>n</i>|, K<sub>n</sub>(|<i>x</i>|)
+jl(l, x)	compute the regular spherical Bessel function of order |<i>l</i>|, j<sub>l</sub>(|<i>x</i>|)
+yl(l, x)	compute the irregular spherical Bessel function of order |<i>l</i>|, y<sub>l</sub>(|<i>x</i>|)
+jnu(nu, x)	compute the regular cylindrical Bessel function of fractional order |<i>nu</i>|, J<sub>nu</sub>(|<i>x</i>|)
+ynu(nu, x)	compute the irregular cylindrical Bessel function of fractional order |<i>nu</i>|, Y<sub>nu</sub>(|<i>x</i>|)
+inu(nu, x)	compute the regular modified Bessel function of fractional order |<i>nu</i>|, I<sub>nu</sub>(|<i>x</i>|)
+knu(nu, x)	compute the irregular modified Bessel function of fractional order |<i>nu</i>|, K<sub>nu</sub>(|<i>x</i>|)
+pn(l, x)	evaluate the Legendre polynomial P<sub>l</sub>(<i>x</i>) for a specific value of <i>l, x</i> subject to <i>l</i> &gt;= 0, |<i>x</i>| &lt;= 1
+lgn(n, a, x)	evaluate the generalized Laguerre polynomials L<sup>a</sup><sub>n</sub>(<i>x</i>) for <i>a</i> %gt; -1, <i>n</i> &gt;= 0
+hn(n, x)	Hermite polynomials
+tn(n, x)	Chebyshev polynomials
 zeta(s)		compute the Riemann zeta function zeta(s) for arbitrary <i>s</i>, <i>s</i> != 1
 zeta_int(n)	compute the Riemann zeta function zeta(n) for integer <i>n</i>, <i>n</i> != 1
 zetam1(s)	compute zeta(<i>s</i>) - 1 for arbitrary <i>s</i>, <i>s</i> != 1
 zetam1_int(n)	compute zeta(<i>n</i>) - 1 for integer <i>n</i>, <i>n</i> != 1
-choose(n,m)	the combinatorial factor <i>n</i> choose <i>m</i>: <i>n!/(m!(n-m)!)</i>
-mjd(year,month,day,hour,min,sec)	Modified Julian Date (date and time are given in UTC)
+choose(n, m)	the combinatorial factor <i>n</i> choose <i>m</i>: <i>n!/(m!(n-m)!)</i>
+mjd(year, month, day, hour, min, sec)	Modified Julian Date (date and time are given in UTC)
 unix2mjd(time)	Modified Julian Date\n<i>time</i> represents the number of seconds elapsed since the Epoch,\n1970-01-01 00:00:00 +0000 (UTC))
 mjd2unix(mjd)	time represents the number of seconds elapsed since the Epoch at <i>mjd</i>
 mjd2year(mjd)	year of Gregorian calendar corresponding to Modified Julian Day <i>mjd</i>
@@ -65,23 +65,23 @@ mjd2day(mjd)	Gregorian calendar day corresponding to Modified Julian Day <i>mjd<
 mjd2wday(mjd)	The day of the week as a decimal range 1 to 7, Monday being 1 corresponding to <i>mjd</i>
 mjd2yday(mjd)	The day of the year as a decimal number (range 001 to 366) corresponding to <i>mjd</i>
 time()		returns the time as the number of seconds since the Epoch,\n1970-01-01 00:00:00 +0000 (UTC)
-eq(x,y,prec)	True (= 1) when <i>x</i> == <i>y</i>.\nThe number of digits of comparison can be specified with <i>prec</i>\n(<i>prec</i> == 0 is exact match).
-neq(x,y,prec)	True (= 1) when <i>x</i> != <i>y</i>.\nThe number of digits of comparison can be specified with <i>prec</i>\n(<i>prec</i> == 0 is exact match).
-ge(x,y,prec)	True (= 1) when <i>x</i> &gt;= <i>y</i>.\nThe precision allows you to specify the number of digits for comparison\n(<i>prec</i> == 0 does not specify the number of digits).
-gt(x,y,prec)	True (= 1) when <i>x</i> &gt; <i>y</i>.\nThe precision allows you to specify the number of digits for comparison\n(<i>prec</i> == 0 does not specify the number of digits).
-le(x,y,prec)	True (= 1) when <i>x</i> &lt;= <i>y</i>.\nThe precision allows you to specify the number of digits for comparison\n(<i>prec</i> == 0 does not specify the number of digits).
-lt(x,y,prec)	True (= 1) when <i>x</i> &lt; <i>y</i>.\nThe precision allows you to specify the number of digits for comparison\n(<i>prec</i> == 0 does not specify the number of digits).
+eq(x, y, prec)	True (= 1) when <i>x</i> == <i>y</i>.\nThe number of digits of comparison can be specified with <i>prec</i>\n(<i>prec</i> == 0 is exact match).
+neq(x, y, prec)	True (= 1) when <i>x</i> != <i>y</i>.\nThe number of digits of comparison can be specified with <i>prec</i>\n(<i>prec</i> == 0 is exact match).
+ge(x, y, prec)	True (= 1) when <i>x</i> &gt;= <i>y</i>.\nThe precision allows you to specify the number of digits for comparison\n(<i>prec</i> == 0 does not specify the number of digits).
+gt(x, y, prec)	True (= 1) when <i>x</i> &gt; <i>y</i>.\nThe precision allows you to specify the number of digits for comparison\n(<i>prec</i> == 0 does not specify the number of digits).
+le(x, y, prec)	True (= 1) when <i>x</i> &lt;= <i>y</i>.\nThe precision allows you to specify the number of digits for comparison\n(<i>prec</i> == 0 does not specify the number of digits).
+lt(x, y, prec)	True (= 1) when <i>x</i> &lt; <i>y</i>.\nThe precision allows you to specify the number of digits for comparison\n(<i>prec</i> == 0 does not specify the number of digits).
 not(x)		True (= 1) when <i>x</i> == 0
-or(x,y)		True (= 1) when (<i>x</i> != 0) or (<i>y</i> != 0)
-and(x,y)	True (= 1) when (<i>x</i> != 0) and (<i>y</i> != 0)
-xor(x,y)	True (= 1) when (<i>x</i> != 0) xor (<i>y</i> != 0)
+or(x, y)	True (= 1) when (<i>x</i> != 0) or (<i>y</i> != 0)
+and(x, y)	True (= 1) when (<i>x</i> != 0) and (<i>y</i> != 0)
+xor(x, y)	True (= 1) when (<i>x</i> != 0) xor (<i>y</i> != 0)
 size(a)		number of elements of array <i>a</i>
 sort(a)		sort elements of array <i>a</i>
 rsort(a)	reverse sort elements of array <i>a</i>
 pop(a)		remove the last element of array <i>a</i>, and returns that element
-push(a,x)	adds new element <i>x</i> to the end of an array <i>a</i>, and returns <i>x</i>
+push(a, x)	adds new element <i>x</i> to the end of an array <i>a</i>, and returns <i>x</i>
 shift(a)	remove the first element of array <i>a</i>, and returns that element
-unshift(a,x)	adds new element <i>x</i> to the beginning of an array <i>a</i>, returns <i>x</i>
+unshift(a, x)	adds new element <i>x</i> to the beginning of an array <i>a</i>, returns <i>x</i>
 array_sum(a)	returns the sum of the elements of array <i>a</i>
 array_sumsq(a)	returns the square sum of the elements of array <i>a</i>
 array_average(a)	return the average of the elements of array <i>a</i>
@@ -91,15 +91,15 @@ array_max(a)	returns the maximum value contained in array <i>a</i>
 array_min(a)	returns the minimum value contained in array <i>a</i>
 array_clear(a)	set the number of elements of the array <i>a</i> to 0
 array_compact(a)	Remove non-numeric values from the elements of the array of array <i>a</i>\nand return the number of elements after removal
-m(i,x)		assigns <i>x</i> to the <i>i</i>-th memory (<i>i</i> = 0 to 65535)\nthe index from the tail when <i>i</i> is negative\n(return <i>x</i>)
+m(i, x)		assigns <i>x</i> to the <i>i</i>-th memory (<i>i</i> = 0 to 65535)\nthe index from the tail when <i>i</i> is negative\n(return <i>x</i>)
 rm(i)		the value of the current <i>i</i>-th memory (<i>i</i> = 0 to 65535),\nthe index from the tail when <i>i</i> is negative
-cm(x,n)		initialize <i>n</i> memories from the beginning with <i>x</i>\ninitialize whole memory when <i>n</i> is 0\nand <i>n</i> memories from the end when <i>x</i> is negative\n(return <i>x</i>)
+cm(x, n)	initialize <i>n</i> memories from the beginning with <i>x</i>\ninitialize whole memory when <i>n</i> is 0\nand <i>n</i> memories from the end when <i>x</i> is negative\n(return <i>x</i>)
 am(a)		copy the contents of array <i>a</i> to the memory\n(return the number of copied elements)
 draw_rect(x, y, w, h, stroke, fill)	draw a rectangle with (<i>x, y</i>) and (<i>x + w, y + h</i>) as diagonal vertices.\nWhen <i>stroke</i> and <i>fill</i> are 0, do not draw contours and fills respectively.
 draw_arc(x, y, rx, ry, start, angle, stroke, fill, pieslice, close)	draw an arc with the X direction radius <i>rx</i> and the Y direction radius <i>ry</i> centered on (<i>x, y</i>).\n<i>start</i> and <i>angle</i> specify start angle and arc angle.\nWhen <i>stroke</i> and <i>fill</i> are 0, do not draw contours and fills respectively.\nIf <i>pieslice</i> is not 0, draw a sector.\nIf <i>close</i> is not 0, close the outline.
 draw_mark(x, y, size)	draw a mark on (<i>x, y</i>). The <i>size</i> can be specified with size.\nWhen <i>size</i> is 0, specification of the file object is used.
-fit_prm(id,x)	When the plot type of the data object whose ID is <i>id</i> is fit,\nthe value of the field "%0<i>x</i>" of the corresponding fit object.
-fit_calc(id,x)	When the plot type of the data object whose ID is <i>id</i> is fit,\nthe corresponding fit result f(<i>x</i>) is calculated.
+fit_prm(id, x)	When the plot type of the data object whose ID is <i>id</i> is fit,\nthe value of the field "%0<i>x</i>" of the corresponding fit object.
+fit_calc(id, x)	When the plot type of the data object whose ID is <i>id</i> is fit,\nthe corresponding fit result f(<i>x</i>) is calculated.
 line_number()	File line number being processed (1st line is 1)
 isnormal(x)	True if <i>x</i> is a normal number
 isbreak(x)	True if <i>x</i> is BREAK
@@ -108,19 +108,19 @@ isnan(x)	True if <i>x</i> is NAN
 isundef(x)	True if <i>x</i> is UNDEF
 sum(x)		Integration
 dif(x)		Difference
-color(i,x)	i = 0: Set the R value set to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\ni = 1: Set the G value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\ni = 2: Set the B value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\ni = 3: Set the R, G and B value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\ni = 4: Set the R2 value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\ni = 5: Set the G2 value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\ni = 6: Set B2 value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\ni = 7: Set R2, G2 and B2 value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\ni = 8: Set R, G and B value to be hexadecimal color of <i>x</i>\ni = 9: Set R2, G2 and B2 value to be hexadecimal color of <i>x</i>
+color(i, x)	i = 0: Set the R value set to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\ni = 1: Set the G value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\ni = 2: Set the B value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\ni = 3: Set the R, G and B value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\ni = 4: Set the R2 value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\ni = 5: Set the G2 value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\ni = 6: Set B2 value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\ni = 7: Set R2, G2 and B2 value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\ni = 8: Set R, G and B value to be hexadecimal color of <i>x</i>\ni = 9: Set R2, G2 and B2 value to be hexadecimal color of <i>x</i>
 obj_color(id, obj)	Set the R, G, B, R2, G2 and B2 value to the same value as the instance of <i>obj</i> whose ID is <i>id</i>.\n<i>obj</i> is one of DATA_OBJ, PATH_OBJ, ARC_OBJ, MARK_OBJ or TEXT_OBJ.
-alpha(x,i)	Set A (<i>i</i> == 1) or A2 (<i>i</i> == 2) values to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\nwhen <i>i</i> == 0, set A and A2 values to <i>x</i>
+alpha(x, i)	Set A (<i>i</i> == 1) or A2 (<i>i</i> == 2) values to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\nwhen <i>i</i> == 0, set A and A2 values to <i>x</i>
 obj_alpha(id, obj)	Set the A and A2 value to the same value as the instance of <i>obj</i> whose ID is <i>id</i>.\n<i>obj</i> is one of DATA_OBJ, PATH_OBJ, ARC_OBJ, MARK_OBJ or TEXT_OBJ.
-rgb(r,g,b)	Set the R, G and B values of the color to <i>r, g, b</i> (0 &lt;= <i>r, g, b</i> &lt;= 1)
-rgb2(r,g,b)	Set the R2, G2 and B2 values of the color to <i>r, g, b</i> (0 &lt;= <i>r, g, b</i> &lt;= 1)
-hsb(h,s,b)	Set the R, G, B value of color to <i>h, s, b</i> (0 &lt;= <i>h, s, b</i> &lt;=1) from the HSB value
-hsb2(h,s,b)	Set the R2, G2, B2 value of color to <i>h, s, b</i> (0 &lt;= <i>h, s, b</i> &lt;=1) from the HSB value
+rgb(r, g, b)	Set the R, G and B values of the color to <i>r, g, b</i> (0 &lt;= <i>r, g, b</i> &lt;= 1)
+rgb2(r, g, b)	Set the R2, G2 and B2 values of the color to <i>r, g, b</i> (0 &lt;= <i>r, g, b</i> &lt;= 1)
+hsb(h, s, b)	Set the R, G, B value of color to <i>h, s, b</i> (0 &lt;= <i>h, s, b</i> &lt;=1) from the HSB value
+hsb2(h, s, b)	Set the R2, G2, B2 value of color to <i>h, s, b</i> (0 &lt;= <i>h, s, b</i> &lt;=1) from the HSB value
 marksize(x)	Set mark size to <i>x</i>
 marktype(x)	Set mark type to <i>x</i>
-if(x,ex1,ex2)	evaluate <i>ex1</i> when <i>x</i> != 0, evaluate <i>ex2</i> otherwise
-unless(x,ex1,ex2)	evaluate <i>ex2</i> when <i>x</i> != 0, evaluate <i>ex1</i> otherwise
-for(m,begin,end,step,ex)	Set the value in <i>step</i> from <i>begin</i> to <i>end</i> to the <i>m</i>-th memory and repeat <i>ex</i>.\nWhen <i>m</i> is negative, no setting to memory is done.\nReturns the value of <i>ex</i> evaluated last.
-prog1(arg1,arg2,...)	Evaluate the arguments and return the evaluated value of the first argument
-prog2(arg1,arg2,...)	Evaluate the arguments and return the evaluated value of the second argument
-progn(arg1,arg2,...)	Evaluate the arguments and return the evaluated value of the last argument
+if(x, ex1, ex2)	evaluate <i>ex1</i> when <i>x</i> != 0, evaluate <i>ex2</i> otherwise
+unless(x, ex1, ex2)	evaluate <i>ex2</i> when <i>x</i> != 0, evaluate <i>ex1</i> otherwise
+for(m, begin, end, step, ex)	Set the value in <i>step</i> from <i>begin</i> to <i>end</i> to the <i>m</i>-th memory and repeat <i>ex</i>.\nWhen <i>m</i> is negative, no setting to memory is done.\nReturns the value of <i>ex</i> evaluated last.
+prog1(arg1, arg2, ...)	Evaluate the arguments and return the evaluated value of the first argument
+prog2(arg1, arg2, ...)	Evaluate the arguments and return the evaluated value of the second argument
+progn(arg1, arg2, ...)	Evaluate the arguments and return the evaluated value of the last argument
