@@ -14,7 +14,6 @@ This file is created based on "ruby.lang" which is part of GtkSourceView.
     <style id="floating-point"       _name="Floating point number" map-to="def:floating-point"/>
     <style id="decimal"              _name="Decimal number"        map-to="def:decimal"/>
     <style id="base-n-integer"       _name="Base-N number"         map-to="def:base-n-integer"/>
-    <style id="numeric-literal"      _name="Numeric literal"       map-to="def:base-n-integer"/>
     <style id="builtin"              _name="Builtin"               map-to="def:function"/>
     <style id="constant"             _name="Constant"              map-to="def:constant"/>
     <style id="operator"             _name="Operator"              map-to="def:operator"/>
@@ -66,10 +65,6 @@ This file is created based on "ruby.lang" which is part of GtkSourceView.
 
     <context id="binary" style-ref="base-n-integer">
       <match>(?&lt;![\w\.])0[bB][01]( ?[01])*(?![\w\.])</match>
-    </context>
-
-    <context id="numeric-literal" style-ref="numeric-literal">
-      <match>(?&lt;![\w\.])\?((\\[MC]-){1,2}|\\?)\S</match>
     </context>
 
     <context id="operators" style-ref="operator" extend-parent="false">
