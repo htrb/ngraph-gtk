@@ -252,7 +252,7 @@ SourceCompletionWords *
 source_completion_words_new (const gchar *name, populate_func populate_func)
 {
   SourceCompletionWords *self;
-  
+
   self = g_object_new(SOURCE_TYPE_COMPLETION_WORDS, NULL);
   self->priv->name = g_strdup(name);
   self->priv->populate_func = populate_func;
