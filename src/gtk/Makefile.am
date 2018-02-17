@@ -39,8 +39,7 @@ AM_CPPFLAGS = -DLOCALEDIR=\""@localedir@"\"
 
 noinst_LTLIBRARIES = libngraphui.la
 
-nodist_libngraphui_la_SOURCES = dir_defs.h ngraphui.resources.c	\
-	completion_info_data.c
+nodist_libngraphui_la_SOURCES = dir_defs.h ngraphui.resources.c
 
 libngraphui_la_SOURCES = gtk_common.h gtk_combo.c gtk_combo.h		\
 	gtk_entry_completion.c gtk_entry_completion.h gtk_liststore.c	\
@@ -56,7 +55,7 @@ libngraphui_la_SOURCES = gtk_common.h gtk_combo.c gtk_combo.h		\
 	x11print.h x11view.c x11view.h gtk_widget.c gtk_widget.h	\
 	gtk_ruler.c gtk_ruler.h init.c init.h gtk_action.c		\
 	gtk_action.h sourcecompletionwords.c sourcecompletionwords.h	\
-	completion_info.c completion_info.h
+	completion_info.c completion_info.h completion_info_data.c
 
 if OS_WIN32
 APPMENU_UI_SOURCE = $(srcdir)/data/gtk/menus-appmenu.ui.in
