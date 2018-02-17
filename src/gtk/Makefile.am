@@ -40,7 +40,7 @@ AM_CPPFLAGS = -DLOCALEDIR=\""@localedir@"\"
 noinst_LTLIBRARIES = libngraphui.la
 
 nodist_libngraphui_la_SOURCES = dir_defs.h ngraphui.resources.c	\
-	completion_info_const.c completion_info_func.c
+	completion_info_data.c
 
 libngraphui_la_SOURCES = gtk_common.h gtk_combo.c gtk_combo.h		\
 	gtk_entry_completion.c gtk_entry_completion.h gtk_liststore.c	\
@@ -91,11 +91,8 @@ pixmapdir = $(datadir)/pixmaps/$(PACKAGE)
 dir_defs.h: dir_defs.h.in Makefile
 	$(SHELL) $(top_srcdir)/pathconv.sh "$(bindir)" "$(docdir)" "$(pkglibexecdir)" "$(pkglibdir)" "$(pkgdatadir)" "$(ngraphconfdir)" $(srcdir)/dir_defs.h.in
 
-completion_info_const.c: $(srcdir)/math_constants.txt $(srcdir)/create_const_info.rb
-	ruby $(srcdir)/create_const_info.rb $(srcdir)/math_constants.txt completion_info_const.c
-
-completion_info_func.c: $(srcdir)/math_functions.txt $(srcdir)/create_func_info.rb
-	ruby $(srcdir)/create_func_info.rb $(srcdir)/math_functions.txt completion_info_func.c
+completion_info_data.c: $(srcdir)/completion_info_functions.txt $(srcdir)/completion_info_constants.txt $(srcdir)/create_completion_info.rb
+	ruby $(srcdir)/create_completion_info.rb $(srcdir)/completion_info_functions.txt $(srcdir)/completion_info_constants.txt completion_info_data.c
 
 libngraphui_la_CFLAGS = $(GTK_CFLAGS) -I$(top_builddir) -I$(builddir) -I$(srcdir)/.. -I$(srcdir)/../math $(GTKSOURCEVIEW_CFLAGS)
 libngraphui_la_LDFLAGS = $(GTKSOURCEVIEW_LIBS)
