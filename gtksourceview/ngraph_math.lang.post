@@ -11,6 +11,7 @@
 	<context ref="octal"/>
 	<context ref="binary"/>
 	<context ref="numeric-literal"/>
+        <context ref="operators"/>
       </include>
     </context>
 
