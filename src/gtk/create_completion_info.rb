@@ -13,7 +13,7 @@ class CompletionInfo
 
   def func_struct(info)
     function = info[0].sub(/\(.+\)/, '()')
-    args = ($&) ? $&.sub(/[()]/, '') : ""
+    args = ($&) ? $&.gsub(/[()]/, '') : ""
     func_name = function.split("(")[0]
     lfunc = func_name.downcase
     title = "<b>#{func_name}</b>(<i>#{args}</i>)"
