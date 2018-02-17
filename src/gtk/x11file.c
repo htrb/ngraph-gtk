@@ -268,6 +268,16 @@ get_text_from_buffer(GtkTextBuffer *buffer)
 }
 
 static void
+set_text_to_source_buffer(GtkWidget *view, const char *text)
+{
+  GtkTextBuffer *buffer;
+  buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(view));
+  gtk_source_buffer_begin_not_undoable_action(GTK_SOURCE_BUFFER(buffer));
+  gtk_text_buffer_set_text(buffer, text, -1);
+  gtk_source_buffer_end_not_undoable_action(GTK_SOURCE_BUFFER(buffer));
+}
+
+static void
 MathTextDialogChangeInputType(GtkNotebook *notebook, GtkWidget *page, guint page_num, gpointer user_data)
 {
   struct MathTextDialog *d;
@@ -284,7 +294,7 @@ MathTextDialogChangeInputType(GtkNotebook *notebook, GtkWidget *page, guint page
     g_free(text);
     break;
   case 1:
-    gtk_text_buffer_set_text(buffer, gtk_entry_get_text(GTK_ENTRY(d->list)), -1);
+    set_text_to_source_buffer(d->text, gtk_entry_get_text(GTK_ENTRY(d->list)));
     break;
   }
 }
@@ -345,7 +355,7 @@ MathTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   gtk_label_set_text(GTK_LABEL(d->label), _(label[d->Mode]));
   gtk_entry_set_text(GTK_ENTRY(d->list), d->Text);
-  gtk_text_buffer_set_text(gtk_text_view_get_buffer(GTK_TEXT_VIEW(d->text)), d->Text, -1);
+  set_text_to_source_buffer(d->text, d->Text);
   gtk_notebook_set_current_page(GTK_NOTEBOOK(d->input_tab), Menulocal.math_input_mode);
   gtk_window_set_default_size(GTK_WINDOW(wi), 600, 400);
 }
@@ -2438,12 +2448,10 @@ copy_text_to_entry(GtkWidget *text, GtkWidget *entry)
 static void
 copy_entry_to_text(GtkWidget *text, GtkWidget *entry)
 {
-  GtkTextBuffer *buffer;
   const gchar *str;
 
-  buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text));
   str = gtk_entry_get_text(GTK_ENTRY(entry));
-  gtk_text_buffer_set_text(buffer, str, -1);
+  set_text_to_source_buffer(text, str);
 }
 
 static void
