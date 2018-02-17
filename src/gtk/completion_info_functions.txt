@@ -26,7 +26,7 @@ acosh(x)	inverse hyperbolic cosine function
 atanh(x)	inverse hyperbolic tangent function
 fmod(x, y)	compute the floating-point remainder of dividing <i>x</i> by <i>y</i>
 rand(x)		returns a random gdouble equally distributed over the range [0..<i>x</i>)
-srand(x)	Sets the seed for the random number generator which is used by the rand() function
+srand(x)	Sets the seed for the random number generator which is used by the <b>rand</b>() function
 theta(x)	staircase function (1 if <i>x</i> &gt;= 0, 0 otherwise)
 delta(x)	Kronecker delta (1 when <i>x</i> = 0, 0 otherwise)
 gamma(x)	gamma function
@@ -102,16 +102,16 @@ fit_prm(id, x)	When the plot type of the data object whose ID is <i>id</i> is fi
 fit_calc(id, x)	When the plot type of the data object whose ID is <i>id</i> is fit,\nthe corresponding fit result f(<i>x</i>) is calculated.
 line_number()	File line number being processed (1st line is 1)
 isnormal(x)	True if <i>x</i> is a normal number
-isbreak(x)	True if <i>x</i> is BREAK
-iscont(x)	True if <i>x</i> is CONT
-isnan(x)	True if <i>x</i> is NAN
-isundef(x)	True if <i>x</i> is UNDEF
+isbreak(x)	True if <i>x</i> is <b>BREAK</b>
+iscont(x)	True if <i>x</i> is <b>CONT</b>
+isnan(x)	True if <i>x</i> is <b>NAN</b>
+isundef(x)	True if <i>x</i> is <b>UNDEF</b>
 sum(x)		Integration
 dif(x)		Difference
 color(i, x)	i = 0: Set the R value set to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\ni = 1: Set the G value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\ni = 2: Set the B value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\ni = 3: Set the R, G and B value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\ni = 4: Set the R2 value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\ni = 5: Set the G2 value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\ni = 6: Set B2 value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\ni = 7: Set R2, G2 and B2 value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\ni = 8: Set R, G and B value to be hexadecimal color of <i>x</i>\ni = 9: Set R2, G2 and B2 value to be hexadecimal color of <i>x</i>
-obj_color(id, obj)	Set the R, G, B, R2, G2 and B2 value to the same value as the instance of <i>obj</i> whose ID is <i>id</i>.\n<i>obj</i> is one of DATA_OBJ, PATH_OBJ, ARC_OBJ, MARK_OBJ or TEXT_OBJ.
+obj_color(id, obj)	Set the R, G, B, R2, G2 and B2 value to the same value as the instance of <i>obj</i> whose ID is <i>id</i>.\n<i>obj</i> is one of <b>DATA_OBJ</b>, <b>PATH_OBJ</b>, <b>ARC_OBJ</b>, <b>MARK_OBJ</b> or <b>TEXT_OBJ</b>.
 alpha(x, i)	Set A (<i>i</i> == 1) or A2 (<i>i</i> == 2) values to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\nwhen <i>i</i> == 0, set A and A2 values to <i>x</i>
-obj_alpha(id, obj)	Set the A and A2 value to the same value as the instance of <i>obj</i> whose ID is <i>id</i>.\n<i>obj</i> is one of DATA_OBJ, PATH_OBJ, ARC_OBJ, MARK_OBJ or TEXT_OBJ.
+obj_alpha(id, obj)	Set the A and A2 value to the same value as the instance of <i>obj</i> whose ID is <i>id</i>.\n<i>obj</i> is one of <i>id</i>.\n<i>obj</i> is one of <b>DATA_OBJ</b>, <b>PATH_OBJ</b>, <b>ARC_OBJ</b>, <b>MARK_OBJ</b> or <b>TEXT_OBJ</b>.
 rgb(r, g, b)	Set the R, G and B values of the color to <i>r, g, b</i> (0 &lt;= <i>r, g, b</i> &lt;= 1)
 rgb2(r, g, b)	Set the R2, G2 and B2 values of the color to <i>r, g, b</i> (0 &lt;= <i>r, g, b</i> &lt;= 1)
 hsb(h, s, b)	Set the R, G, B value of color to <i>h, s, b</i> (0 &lt;= <i>h, s, b</i> &lt;=1) from the HSB value
