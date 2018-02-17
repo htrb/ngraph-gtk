@@ -18,8 +18,7 @@ src/gtk/x11view.c
 src/gtk/gtk_widget.c
 src/gtk/gtk_subwin.c
 src/gtk/gtk_liststore.c
-src/gtk/completion_info_const.c
-src/gtk/completion_info_func.c
+src/gtk/completion_info_data.c
 src/math/math_error.c
 src/odraw.c
 src/oaxis.c
