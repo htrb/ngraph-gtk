@@ -1,5 +1,5 @@
 /* -*- Mode: C; coding: utf-8 -*-
- * gtksourcecompletionproviderwords.c
+ * modified from gtksourcecompletionproviderwords.c
  * This file is part of GtkSourceView
  *
  * Copyright (C) 2009 - Jesse van den Kieboom
@@ -244,7 +244,7 @@ source_completion_words_init (SourceCompletionWords *self)
 /**
  * gtk_source_completion_words_new:
  * @name: (nullable): The name for the provider, or %NULL.
- * @icon: (nullable): A specific icon for the provider, or %NULL.
+ * @populate_func:  : The function to populate completion.
  *
  * Returns: a new #GtkSourceCompletionWords provider
  */
