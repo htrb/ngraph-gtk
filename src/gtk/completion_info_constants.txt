@@ -39,3 +39,5 @@ MARK_OBJ	The identification number of the mark object
 TEXT_OBJ	The identification number of the text object
 %D		The ID of the instance of the data object
 %N		The number of instances of data object
+TRUE		the TRUE value (1)
+FALSE		the FALSE value (0)
