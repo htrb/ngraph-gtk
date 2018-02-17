@@ -1,12 +1,12 @@
 #include "completion_info.h"
 
 static GList *
-completion_info_populate(struct completion_info *info, int num, const char *word, int len)
+completion_info_populate(struct completion_info *info, const char *word, int len)
 {
   GList *ret = NULL;
   int i, r;
 
-  for (i = 0; i < num; i++) {
+  for (i = 0; info[i].lower_text; i++) {
     r = strncmp(info[i].lower_text, word, len);
     if (r < 0) {
       continue;
@@ -30,11 +30,11 @@ completion_info_populate(struct completion_info *info, int num, const char *word
 GList *
 completion_info_func_populate(const char *word, int len)
 {
-  return completion_info_populate(completion_info_func, completion_info_func_num(), word, len);
+  return completion_info_populate(completion_info_func, word, len);
 }
 
 GList *
 completion_info_const_populate(const char *word, int len)
 {
-  return completion_info_populate(completion_info_const, completion_info_const_num(), word, len);
+  return completion_info_populate(completion_info_const, word, len);
 }
