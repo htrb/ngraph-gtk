@@ -240,7 +240,6 @@ create_source_view(void)
   gtk_source_view_set_indent_on_tab(source_view, TRUE);
   gtk_source_view_set_auto_indent(source_view, TRUE);
   gtk_source_view_set_show_line_numbers(source_view, TRUE);
-  add_completion_provider_math(source_view);
 
   comp = gtk_source_view_get_completion(source_view);
   g_value_init(&value, G_TYPE_BOOLEAN);
@@ -255,6 +254,7 @@ create_source_view(void)
   gtk_source_buffer_set_language(GTK_SOURCE_BUFFER(buffer), lang);
   gtk_source_buffer_set_highlight_syntax(GTK_SOURCE_BUFFER(buffer), TRUE);
 
+  add_completion_provider_math(source_view);
   words = gtk_source_completion_words_new(_("current equations"), NULL);
   gtk_source_completion_words_register(words, GTK_TEXT_BUFFER(buffer));
   add_completion_provider(source_view, GTK_SOURCE_COMPLETION_PROVIDER(words));
