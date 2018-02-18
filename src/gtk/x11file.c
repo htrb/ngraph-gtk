@@ -232,6 +232,11 @@ create_source_view(void)
   buffer = gtk_source_buffer_new(NULL);
   gtk_text_view_set_buffer(GTK_TEXT_VIEW(source_view), GTK_TEXT_BUFFER(buffer));
   gtk_text_view_set_monospace(GTK_TEXT_VIEW(source_view), TRUE);
+  gtk_source_view_set_tab_width(GTK_SOURCE_VIEW(source_view), 2);
+  gtk_source_view_set_insert_spaces_instead_of_tabs(GTK_SOURCE_VIEW(source_view), TRUE);
+  gtk_source_view_set_smart_home_end(GTK_SOURCE_VIEW(source_view), GTK_SOURCE_SMART_HOME_END_BEFORE);
+  gtk_source_view_set_smart_backspace(GTK_SOURCE_VIEW(source_view), TRUE);
+  gtk_source_view_set_indent_width(GTK_SOURCE_VIEW(source_view), -1);
 
   comp = gtk_source_view_get_completion(GTK_SOURCE_VIEW(source_view));
   g_value_init(&value, G_TYPE_BOOLEAN);
