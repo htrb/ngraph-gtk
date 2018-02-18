@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.07.05\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2018-02-18 10:09+0900\n"
+"POT-Creation-Date: 2018-02-18 12:34+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -107,8 +107,8 @@ msgstr ""
 msgid "Single _Axis"
 msgstr ""
 
-#: src/gtk/x11axis.c:103 src/gtk/x11file.c:132 src/gtk/x11file.c:1989
-#: src/gtk/x11file.c:2206 src/gtk/x11graph.c:696 src/gtk/x11lgnd.c:1090
+#: src/gtk/x11axis.c:103 src/gtk/x11file.c:132 src/gtk/x11file.c:1987
+#: src/gtk/x11file.c:2204 src/gtk/x11graph.c:696 src/gtk/x11lgnd.c:1090
 #: src/gtk/x11menu.c:639 src/gtk/x11menu.c:1013 src/gtk/x11menu.c:1257
 #: src/gtk/x11menu.c:1381 src/gtk/x11menu.c:1543 src/gtk/x11merge.c:68
 #: src/gtk/x11opt.c:921
@@ -121,7 +121,7 @@ msgid "_Duplicate"
 msgstr ""
 
 #: src/gtk/x11axis.c:106 src/gtk/x11axis.c:358 src/gtk/x11file.c:136
-#: src/gtk/x11file.c:821 src/gtk/x11file.c:1653 src/gtk/x11lgnd.c:217
+#: src/gtk/x11file.c:819 src/gtk/x11file.c:1651 src/gtk/x11lgnd.c:217
 #: src/gtk/x11lgnd.c:1095 src/gtk/x11lgnd.c:1309 src/gtk/x11lgnd.c:1450
 #: src/gtk/x11lgnd.c:1549 src/gtk/x11lgnd.c:1680 src/gtk/x11lgnd.c:1921
 #: src/gtk/x11menu.c:1083 src/gtk/x11menu.c:1121 src/gtk/x11menu.c:1159
@@ -299,11 +299,11 @@ msgstr ""
 msgid "autoscale (multi select)"
 msgstr ""
 
-#: src/gtk/x11axis.c:1282 src/gtk/x11axis.c:1610 src/gtk/x11file.c:1720
+#: src/gtk/x11axis.c:1282 src/gtk/x11axis.c:1610 src/gtk/x11file.c:1718
 msgid "_Min:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1286 src/gtk/x11axis.c:1615 src/gtk/x11file.c:1724
+#: src/gtk/x11axis.c:1286 src/gtk/x11axis.c:1615 src/gtk/x11file.c:1722
 msgid "_Max:"
 msgstr ""
 
@@ -319,7 +319,7 @@ msgstr ""
 msgid "_Scale:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1312 src/gtk/x11file.c:1728 src/gtk/x11print.c:250
+#: src/gtk/x11axis.c:1312 src/gtk/x11file.c:1726 src/gtk/x11print.c:250
 msgid "_Div:"
 msgstr ""
 
@@ -339,12 +339,12 @@ msgstr ""
 msgid "Draw _Baseline"
 msgstr ""
 
-#: src/gtk/x11axis.c:1439 src/gtk/x11file.c:3366 src/gtk/x11lgnd.c:1118
+#: src/gtk/x11axis.c:1439 src/gtk/x11file.c:3364 src/gtk/x11lgnd.c:1118
 #: src/gtk/x11lgndx.c:399
 msgid "Line _Style:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1443 src/gtk/x11file.c:3370 src/gtk/x11lgndx.c:403
+#: src/gtk/x11axis.c:1443 src/gtk/x11file.c:3368 src/gtk/x11lgndx.c:403
 msgid "_Line Width:"
 msgstr ""
 
@@ -702,7 +702,7 @@ msgstr ""
 msgid "evaluation"
 msgstr ""
 
-#: src/gtk/x11dialg.c:149 src/gtk/x11file.c:675
+#: src/gtk/x11dialg.c:149 src/gtk/x11file.c:673
 msgid "math"
 msgstr ""
 
@@ -854,8 +854,8 @@ msgstr ""
 msgid "_All"
 msgstr ""
 
-#: src/gtk/x11dialg.c:350 src/gtk/x11file.c:719 src/gtk/x11file.c:2000
-#: src/gtk/x11file.c:2217 src/gtk/x11view.c:970
+#: src/gtk/x11dialg.c:350 src/gtk/x11file.c:717 src/gtk/x11file.c:1998
+#: src/gtk/x11file.c:2215 src/gtk/x11view.c:970
 msgid "Select _All"
 msgstr ""
 
@@ -911,12 +911,12 @@ msgstr ""
 msgid "duplicate _Behind"
 msgstr ""
 
-#: src/gtk/x11file.c:138 src/gtk/x11file.c:1760 src/gtk/x11menu.c:711
+#: src/gtk/x11file.c:138 src/gtk/x11file.c:1758 src/gtk/x11menu.c:711
 #: src/gtk/x11menu.c:1751
 msgid "_Draw"
 msgstr ""
 
-#: src/gtk/x11file.c:140 src/gtk/x11file.c:725 src/gtk/x11file.c:4027
+#: src/gtk/x11file.c:140 src/gtk/x11file.c:723 src/gtk/x11file.c:4025
 #: src/gtk/x11menu.c:1591 src/gtk/x11menu.c:2940
 msgid "_Edit"
 msgstr ""
@@ -929,378 +929,378 @@ msgstr ""
 msgid "constants"
 msgstr ""
 
-#: src/gtk/x11file.c:260
+#: src/gtk/x11file.c:258
 msgid "current equations"
 msgstr ""
 
-#: src/gtk/x11file.c:313
+#: src/gtk/x11file.c:311
 msgid "Math X:"
 msgstr ""
 
-#: src/gtk/x11file.c:313
+#: src/gtk/x11file.c:311
 msgid "Math Y:"
 msgstr ""
 
-#: src/gtk/x11file.c:321
+#: src/gtk/x11file.c:319
 msgid "Math:"
 msgstr ""
 
-#: src/gtk/x11file.c:327 src/gtk/x11file.c:2609
+#: src/gtk/x11file.c:325 src/gtk/x11file.c:2607
 msgid "single line"
 msgstr ""
 
-#: src/gtk/x11file.c:334 src/gtk/x11file.c:2612
+#: src/gtk/x11file.c:332 src/gtk/x11file.c:2610
 msgid "multi line"
 msgstr ""
 
-#: src/gtk/x11file.c:683
+#: src/gtk/x11file.c:681
 msgid "_X math"
 msgstr ""
 
-#: src/gtk/x11file.c:684
+#: src/gtk/x11file.c:682
 msgid "_Y math"
 msgstr ""
 
-#: src/gtk/x11file.c:734 src/gtk/x11menu.c:1045 src/gtk/x11view.c:986
+#: src/gtk/x11file.c:732 src/gtk/x11menu.c:1045 src/gtk/x11view.c:986
 msgid "_Close"
 msgstr ""
 
-#: src/gtk/x11file.c:828
+#: src/gtk/x11file.c:826
 msgid "_Profile:"
 msgstr ""
 
-#: src/gtk/x11file.c:865
+#: src/gtk/x11file.c:863
 msgid "Please specify the profile."
 msgstr ""
 
-#: src/gtk/x11file.c:971
+#: src/gtk/x11file.c:969
 msgid "Setting file not found."
 msgstr ""
 
-#: src/gtk/x11file.c:1010
+#: src/gtk/x11file.c:1008
 msgid "No settings."
 msgstr ""
 
-#: src/gtk/x11file.c:1031
+#: src/gtk/x11file.c:1029
 msgid "Overwrite existing profile?"
 msgstr ""
 
-#: src/gtk/x11file.c:1118
+#: src/gtk/x11file.c:1116
 #, c-format
 msgid "Delete the profile '%s'?"
 msgstr ""
 
-#: src/gtk/x11file.c:1129
+#: src/gtk/x11file.c:1127
 #, c-format
 msgid "The profile '%s' is not exist."
 msgstr ""
 
-#: src/gtk/x11file.c:1212
+#: src/gtk/x11file.c:1210
 #, c-format
 msgid "The profile '%s' is saved."
 msgstr ""
 
-#: src/gtk/x11file.c:1217
+#: src/gtk/x11file.c:1215
 #, c-format
 msgid "The profile '%s' is deleted."
 msgstr ""
 
-#: src/gtk/x11file.c:1406
+#: src/gtk/x11file.c:1404
 msgid "Fitting Results"
 msgstr ""
 
-#: src/gtk/x11file.c:1587
+#: src/gtk/x11file.c:1585
 msgid "_Formula:"
 msgstr ""
 
-#: src/gtk/x11file.c:1593
+#: src/gtk/x11file.c:1591
 msgid "_Converge (%):"
 msgstr ""
 
-#: src/gtk/x11file.c:1596
+#: src/gtk/x11file.c:1594
 msgid "_Derivatives"
 msgstr ""
 
-#: src/gtk/x11file.c:1634
+#: src/gtk/x11file.c:1632
 msgid "User definition"
 msgstr ""
 
-#: src/gtk/x11file.c:1649
+#: src/gtk/x11file.c:1647
 #, c-format
 msgid "Fit %d"
 msgstr ""
 
-#: src/gtk/x11file.c:1661 src/gtk/x11file.c:3334 src/gtk/x11lgnd.c:1327
+#: src/gtk/x11file.c:1659 src/gtk/x11file.c:3332 src/gtk/x11lgnd.c:1327
 msgid "_Type:"
 msgstr ""
 
-#: src/gtk/x11file.c:1670
+#: src/gtk/x11file.c:1668
 msgid "_Dim:"
 msgstr ""
 
-#: src/gtk/x11file.c:1686
+#: src/gtk/x11file.c:1684
 msgid "_Weight:"
 msgstr ""
 
-#: src/gtk/x11file.c:1694
+#: src/gtk/x11file.c:1692
 msgid "_Through"
 msgstr ""
 
-#: src/gtk/x11file.c:1713
+#: src/gtk/x11file.c:1711
 msgid "Action"
 msgstr ""
 
-#: src/gtk/x11file.c:1731
+#: src/gtk/x11file.c:1729
 msgid "_Interpolation"
 msgstr ""
 
-#: src/gtk/x11file.c:1738
+#: src/gtk/x11file.c:1736
 msgid "Draw X range"
 msgstr ""
 
-#: src/gtk/x11file.c:1750 src/gtk/x11file.c:3472
+#: src/gtk/x11file.c:1748 src/gtk/x11file.c:3470
 msgid "_Load"
 msgstr ""
 
-#: src/gtk/x11file.c:1754 src/gtk/x11gui.c:1199 src/gtk/x11menu.c:675
+#: src/gtk/x11file.c:1752 src/gtk/x11gui.c:1199 src/gtk/x11menu.c:675
 #: src/gtk/x11menu.c:2728 src/gtk/x11menu.c:3009 src/gtk/x11opt.c:477
 #: src/gtk/x11opt.c:679 src/gtk/x11opt.c:1156 src/gtk/x11opt.c:1345
 #: src/gtk/x11opt.c:1662 src/gtk/x11opt.c:1770
 msgid "_Save"
 msgstr ""
 
-#: src/gtk/x11file.c:1764
+#: src/gtk/x11file.c:1762
 msgid "_Result"
 msgstr ""
 
-#: src/gtk/x11file.c:1955 src/gtk/x11file.c:2184 src/gtk/x11view.c:944
+#: src/gtk/x11file.c:1953 src/gtk/x11file.c:2182 src/gtk/x11view.c:944
 msgid "Line No."
 msgstr ""
 
-#: src/gtk/x11file.c:1976 src/gtk/x11file.c:2193
+#: src/gtk/x11file.c:1974 src/gtk/x11file.c:2191
 msgid "_Line:"
 msgstr ""
 
-#: src/gtk/x11file.c:1994 src/gtk/x11file.c:2211 src/gtk/x11opt.c:926
+#: src/gtk/x11file.c:1992 src/gtk/x11file.c:2209 src/gtk/x11opt.c:926
 msgid "_Remove"
 msgstr ""
 
-#: src/gtk/x11file.c:2340
+#: src/gtk/x11file.c:2338
 msgid "_Head skip:"
 msgstr ""
 
-#: src/gtk/x11file.c:2344
+#: src/gtk/x11file.c:2342
 msgid "_Read step:"
 msgstr ""
 
-#: src/gtk/x11file.c:2348
+#: src/gtk/x11file.c:2346
 msgid "_Final line:"
 msgstr ""
 
-#: src/gtk/x11file.c:2353
+#: src/gtk/x11file.c:2351
 msgid "_Remark:"
 msgstr ""
 
-#: src/gtk/x11file.c:2357
+#: src/gtk/x11file.c:2355
 msgid "_IFS:"
 msgstr ""
 
-#: src/gtk/x11file.c:2360
+#: src/gtk/x11file.c:2358
 msgid "_CSV"
 msgstr ""
 
-#: src/gtk/x11file.c:2565 src/gtk/x11file.c:2587
+#: src/gtk/x11file.c:2563 src/gtk/x11file.c:2585
 msgid "_X math:"
 msgstr ""
 
-#: src/gtk/x11file.c:2566 src/gtk/x11file.c:2591
+#: src/gtk/x11file.c:2564 src/gtk/x11file.c:2589
 msgid "_Y math:"
 msgstr ""
 
-#: src/gtk/x11file.c:2633
+#: src/gtk/x11file.c:2631
 msgid "_X smooth:"
 msgstr ""
 
-#: src/gtk/x11file.c:2638
+#: src/gtk/x11file.c:2636
 msgid "_Y smooth:"
 msgstr ""
 
-#: src/gtk/x11file.c:2884 src/gtk/x11file.c:4073 src/gtk/x11file.c:4143
-#: src/gtk/x11file.c:4203 src/gtk/x11file.c:5864
+#: src/gtk/x11file.c:2882 src/gtk/x11file.c:4071 src/gtk/x11file.c:4141
+#: src/gtk/x11file.c:4201 src/gtk/x11file.c:5862
 #, c-format
 msgid "Create"
 msgstr ""
 
-#: src/gtk/x11file.c:3339 src/gtk/x11lgnd.c:1706
+#: src/gtk/x11file.c:3337 src/gtk/x11lgnd.c:1706
 msgid "_Mark:"
 msgstr ""
 
-#: src/gtk/x11file.c:3344
+#: src/gtk/x11file.c:3342
 msgid "_Curve:"
 msgstr ""
 
-#: src/gtk/x11file.c:3352
+#: src/gtk/x11file.c:3350
 msgid "_Color 1:"
 msgstr ""
 
-#: src/gtk/x11file.c:3356
+#: src/gtk/x11file.c:3354
 msgid "_Color 2:"
 msgstr ""
 
-#: src/gtk/x11file.c:3374 src/gtk/x11lgnd.c:1711
+#: src/gtk/x11file.c:3372 src/gtk/x11lgnd.c:1711
 msgid "_Size:"
 msgstr ""
 
-#: src/gtk/x11file.c:3378 src/gtk/x11lgnd.c:1128 src/gtk/x11lgndx.c:407
+#: src/gtk/x11file.c:3376 src/gtk/x11lgnd.c:1128 src/gtk/x11lgndx.c:407
 msgid "_Miter:"
 msgstr ""
 
-#: src/gtk/x11file.c:3382 src/gtk/x11lgnd.c:1138 src/gtk/x11lgndx.c:411
+#: src/gtk/x11file.c:3380 src/gtk/x11lgnd.c:1138 src/gtk/x11lgndx.c:411
 msgid "_Join:"
 msgstr ""
 
-#: src/gtk/x11file.c:3385
+#: src/gtk/x11file.c:3383
 msgid "_Clip"
 msgstr ""
 
-#: src/gtk/x11file.c:3415
+#: src/gtk/x11file.c:3413
 msgid "_X column:"
 msgstr ""
 
-#: src/gtk/x11file.c:3421
+#: src/gtk/x11file.c:3419
 msgid "_X axis:"
 msgstr ""
 
-#: src/gtk/x11file.c:3432
+#: src/gtk/x11file.c:3430
 msgid "_Y column:"
 msgstr ""
 
-#: src/gtk/x11file.c:3438
+#: src/gtk/x11file.c:3436
 msgid "_Y axis:"
 msgstr ""
 
-#: src/gtk/x11file.c:3464
+#: src/gtk/x11file.c:3462
 msgid "_Plot"
 msgstr ""
 
-#: src/gtk/x11file.c:3468
+#: src/gtk/x11file.c:3466
 msgid "_Math"
 msgstr ""
 
-#: src/gtk/x11file.c:3503
+#: src/gtk/x11file.c:3501
 msgid "This file contain invalid UTF-8 strings."
 msgstr ""
 
-#: src/gtk/x11file.c:4010
+#: src/gtk/x11file.c:4008
 #, c-format
 msgid "Data %d (File)"
 msgstr ""
 
-#: src/gtk/x11file.c:4014 src/gtk/x11file.c:4107 src/gtk/x11file.c:4171
+#: src/gtk/x11file.c:4012 src/gtk/x11file.c:4105 src/gtk/x11file.c:4169
 msgid "_Apply all"
 msgstr ""
 
-#: src/gtk/x11file.c:4019 src/gtk/x11merge.c:133 src/gtk/x11print.c:161
+#: src/gtk/x11file.c:4017 src/gtk/x11merge.c:133 src/gtk/x11print.c:161
 msgid "_File:"
 msgstr ""
 
-#: src/gtk/x11file.c:4022
+#: src/gtk/x11file.c:4020
 msgid "_Load settings"
 msgstr ""
 
-#: src/gtk/x11file.c:4038 src/gtk/x11file.c:4120 src/gtk/x11file.c:4196
+#: src/gtk/x11file.c:4036 src/gtk/x11file.c:4118 src/gtk/x11file.c:4194
 #: src/gtk/x11view.c:954
 msgid "_Mask"
 msgstr ""
 
-#: src/gtk/x11file.c:4042 src/gtk/x11file.c:4124 src/gtk/x11file.c:4200
+#: src/gtk/x11file.c:4040 src/gtk/x11file.c:4122 src/gtk/x11file.c:4198
 #: src/gtk/x11view.c:955
 msgid "_Move"
 msgstr ""
 
-#: src/gtk/x11file.c:4049
+#: src/gtk/x11file.c:4047
 msgid "_Table"
 msgstr ""
 
-#: src/gtk/x11file.c:4058
+#: src/gtk/x11file.c:4056
 msgid "_Plain"
 msgstr ""
 
-#: src/gtk/x11file.c:4074 src/gtk/x11file.c:4144 src/gtk/x11file.c:4204
+#: src/gtk/x11file.c:4072 src/gtk/x11file.c:4142 src/gtk/x11file.c:4202
 msgid "_Fit:"
 msgstr ""
 
-#: src/gtk/x11file.c:4103
+#: src/gtk/x11file.c:4101
 #, c-format
 msgid "Data %d (Array)"
 msgstr ""
 
-#: src/gtk/x11file.c:4112
+#: src/gtk/x11file.c:4110
 msgid "_Array:"
 msgstr ""
 
-#: src/gtk/x11file.c:4167
+#: src/gtk/x11file.c:4165
 #, c-format
 msgid "Data %d (Range)"
 msgstr ""
 
-#: src/gtk/x11file.c:4178
+#: src/gtk/x11file.c:4176
 msgid "_Minimum:"
 msgstr ""
 
-#: src/gtk/x11file.c:4183
+#: src/gtk/x11file.c:4181
 msgid "_Maximum:"
 msgstr ""
 
-#: src/gtk/x11file.c:4187 src/gtk/x11lgndx.c:420
+#: src/gtk/x11file.c:4185 src/gtk/x11lgndx.c:420
 msgid "_Division:"
 msgstr ""
 
-#: src/gtk/x11file.c:4611 src/gtk/x11menu.c:641
+#: src/gtk/x11file.c:4609 src/gtk/x11menu.c:641
 msgid "Add Data file"
 msgstr ""
 
-#: src/gtk/x11file.c:4661
+#: src/gtk/x11file.c:4659
 msgid "close data (multi select)"
 msgstr ""
 
-#: src/gtk/x11file.c:4769
+#: src/gtk/x11file.c:4767
 msgid "data property (multi select)"
 msgstr ""
 
-#: src/gtk/x11file.c:4815
+#: src/gtk/x11file.c:4813
 msgid "edit data file (single select)"
 msgstr ""
 
-#: src/gtk/x11file.c:5711
+#: src/gtk/x11file.c:5709
 msgid "Data file"
 msgstr ""
 
-#: src/gtk/x11file.c:5717
+#: src/gtk/x11file.c:5715
 msgid "Making data file"
 msgstr ""
 
-#: src/gtk/x11file.c:5718
+#: src/gtk/x11file.c:5716
 msgid "Making data file."
 msgstr ""
 
-#: src/gtk/x11file.c:5916 src/gtk/x11lgnd.c:2928
+#: src/gtk/x11file.c:5914 src/gtk/x11lgnd.c:2928
 msgid "Join"
 msgstr ""
 
-#: src/gtk/x11file.c:5921 src/gtk/x11lgnd.c:2907 src/gtk/gtk_widget.c:1001
+#: src/gtk/x11file.c:5919 src/gtk/x11lgnd.c:2907 src/gtk/gtk_widget.c:1001
 msgid "Color 1"
 msgstr ""
 
-#: src/gtk/x11file.c:5928 src/gtk/x11lgnd.c:2908 src/gtk/gtk_widget.c:1008
+#: src/gtk/x11file.c:5926 src/gtk/x11lgnd.c:2908 src/gtk/gtk_widget.c:1008
 msgid "Color 2"
 msgstr ""
 
-#: src/gtk/x11file.c:5936
+#: src/gtk/x11file.c:5934
 msgid "Clip"
 msgstr ""
 
-#: src/gtk/x11file.c:5948
+#: src/gtk/x11file.c:5946
 msgid "Type"
 msgstr ""
 
