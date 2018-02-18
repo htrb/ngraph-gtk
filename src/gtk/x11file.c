@@ -237,6 +237,10 @@ create_source_view(void)
   gtk_source_view_set_smart_home_end(GTK_SOURCE_VIEW(source_view), GTK_SOURCE_SMART_HOME_END_BEFORE);
   gtk_source_view_set_smart_backspace(GTK_SOURCE_VIEW(source_view), TRUE);
   gtk_source_view_set_indent_width(GTK_SOURCE_VIEW(source_view), -1);
+  gtk_source_view_set_indent_on_tab(GTK_SOURCE_VIEW(source_view), TRUE);
+  gtk_source_view_set_auto_indent(GTK_SOURCE_VIEW(source_view), TRUE);
+  gtk_source_view_set_show_line_numbers(GTK_SOURCE_VIEW(source_view), TRUE);
+  add_completion_provider_math(source_view);
 
   comp = gtk_source_view_get_completion(GTK_SOURCE_VIEW(source_view));
   g_value_init(&value, G_TYPE_BOOLEAN);
@@ -250,12 +254,6 @@ create_source_view(void)
   lang = gtk_source_language_manager_get_language(lm, "ngraph_math");
   gtk_source_buffer_set_language(GTK_SOURCE_BUFFER(buffer), lang);
   gtk_source_buffer_set_highlight_syntax(GTK_SOURCE_BUFFER(buffer), TRUE);
-
-  gtk_source_view_set_auto_indent(GTK_SOURCE_VIEW(source_view), TRUE);
-  gtk_source_view_set_indent_on_tab(GTK_SOURCE_VIEW(source_view), FALSE);
-  gtk_source_view_set_show_line_numbers(GTK_SOURCE_VIEW(source_view), TRUE);
-
-  add_completion_provider_math(source_view);
 
   words = gtk_source_completion_words_new(_("current equations"), NULL);
   gtk_source_completion_words_register(words, GTK_TEXT_BUFFER(buffer));
