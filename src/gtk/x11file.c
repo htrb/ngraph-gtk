@@ -166,17 +166,17 @@ enum MATH_FNC_TYPE {
 static char *FieldStr[] = {"math_x", "math_y", "func_f", "func_g", "func_h"};
 
 static void
-add_completion_provider(GtkWidget *source_view, GtkSourceCompletionProvider *provider)
+add_completion_provider(GtkSourceView *source_view, GtkSourceCompletionProvider *provider)
 {
   GtkSourceCompletion *comp;
 
-  comp = gtk_source_view_get_completion(GTK_SOURCE_VIEW(source_view));
+  comp = gtk_source_view_get_completion(source_view);
   gtk_source_completion_add_provider(comp, provider, NULL);
   g_object_unref(G_OBJECT(provider));
 }
 
 static void
-add_completion_provider_math(GtkWidget *source_view)
+add_completion_provider_math(GtkSourceView *source_view)
 {
   SourceCompletionWords *words;
 
@@ -220,7 +220,7 @@ set_lm_search_path(GtkSourceLanguageManager *lm)
 static GtkWidget *
 create_source_view(void)
 {
-  GtkWidget *source_view;
+  GtkSourceView *source_view;
   GtkSourceLanguageManager *lm;
   GtkSourceBuffer *buffer;
   GtkSourceLanguage *lang;
@@ -228,21 +228,21 @@ create_source_view(void)
   GValue value = G_VALUE_INIT;
   GtkSourceCompletion *comp;
 
-  source_view = gtk_source_view_new();
+  source_view = GTK_SOURCE_VIEW(gtk_source_view_new());
   buffer = gtk_source_buffer_new(NULL);
   gtk_text_view_set_buffer(GTK_TEXT_VIEW(source_view), GTK_TEXT_BUFFER(buffer));
   gtk_text_view_set_monospace(GTK_TEXT_VIEW(source_view), TRUE);
-  gtk_source_view_set_tab_width(GTK_SOURCE_VIEW(source_view), 2);
-  gtk_source_view_set_insert_spaces_instead_of_tabs(GTK_SOURCE_VIEW(source_view), TRUE);
-  gtk_source_view_set_smart_home_end(GTK_SOURCE_VIEW(source_view), GTK_SOURCE_SMART_HOME_END_BEFORE);
-  gtk_source_view_set_smart_backspace(GTK_SOURCE_VIEW(source_view), TRUE);
-  gtk_source_view_set_indent_width(GTK_SOURCE_VIEW(source_view), -1);
-  gtk_source_view_set_indent_on_tab(GTK_SOURCE_VIEW(source_view), TRUE);
-  gtk_source_view_set_auto_indent(GTK_SOURCE_VIEW(source_view), TRUE);
-  gtk_source_view_set_show_line_numbers(GTK_SOURCE_VIEW(source_view), TRUE);
+  gtk_source_view_set_tab_width(source_view, 2);
+  gtk_source_view_set_insert_spaces_instead_of_tabs(source_view, TRUE);
+  gtk_source_view_set_smart_home_end(source_view, GTK_SOURCE_SMART_HOME_END_BEFORE);
+  gtk_source_view_set_smart_backspace(source_view, TRUE);
+  gtk_source_view_set_indent_width(source_view, -1);
+  gtk_source_view_set_indent_on_tab(source_view, TRUE);
+  gtk_source_view_set_auto_indent(source_view, TRUE);
+  gtk_source_view_set_show_line_numbers(source_view, TRUE);
   add_completion_provider_math(source_view);
 
-  comp = gtk_source_view_get_completion(GTK_SOURCE_VIEW(source_view));
+  comp = gtk_source_view_get_completion(source_view);
   g_value_init(&value, G_TYPE_BOOLEAN);
   g_value_set_boolean(&value, FALSE); /* fix-me: proposals are not
                                        * shown 2nd time in linux if
@@ -259,7 +259,7 @@ create_source_view(void)
   gtk_source_completion_words_register(words, GTK_TEXT_BUFFER(buffer));
   add_completion_provider(source_view, GTK_SOURCE_COMPLETION_PROVIDER(words));
 
-  return source_view;
+  return GTK_WIDGET(source_view);
 }
 
 static gchar *
