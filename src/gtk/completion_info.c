@@ -22,10 +22,10 @@ completion_info_populate(struct completion_info *info, const char *word, int len
       gtk_source_completion_item_set_text(proposal, info[i].text);
       gtk_source_completion_item_set_info(proposal, info[i].info);
 #else
-      proposal = gtk_source_completion_item_new(proposal, info[i].text,
-                                                proposal, info[i].text,
+      proposal = gtk_source_completion_item_new(info[i].text,
+                                                info[i].text,
                                                 NULL,
-                                                proposal, info[i].info);
+                                                info[i].info);
 #endif
       info[i].proposal = proposal;
     }
