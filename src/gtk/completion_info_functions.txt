@@ -48,7 +48,7 @@ ynu(nu, x)	compute the irregular cylindrical Bessel function of fractional order
 inu(nu, x)	compute the regular modified Bessel function of fractional order |<i>nu</i>|, I<sub>nu</sub>(|<i>x</i>|)
 knu(nu, x)	compute the irregular modified Bessel function of fractional order |<i>nu</i>|, K<sub>nu</sub>(|<i>x</i>|)
 pn(l, x)	evaluate the Legendre polynomial P<sub>l</sub>(<i>x</i>) for a specific value of <i>l, x</i> subject to <i>l</i> &gt;= 0, |<i>x</i>| &lt;= 1
-lgn(n, a, x)	evaluate the generalized Laguerre polynomials L<sup>a</sup><sub>n</sub>(<i>x</i>) for <i>a</i> %gt; -1, <i>n</i> &gt;= 0
+lgn(n, a, x)	evaluate the generalized Laguerre polynomials L<sup>a</sup><sub>n</sub>(<i>x</i>) for <i>a</i> &gt; -1, <i>n</i> &gt;= 0
 hn(n, x)	Hermite polynomials
 tn(n, x)	Chebyshev polynomials
 zeta(s)		compute the Riemann zeta function zeta(s) for arbitrary <i>s</i>, <i>s</i> != 1
