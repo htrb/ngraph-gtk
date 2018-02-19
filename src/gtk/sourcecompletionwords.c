@@ -125,6 +125,21 @@ get_word_at_iter (GtkTextIter *iter)
   return word;
 }
 
+static gboolean
+text_char_predicate(gunichar ch, gpointer user_data)
+{
+  return ch == '#';
+}
+
+static int
+in_comment(GtkTextIter *iter)
+{
+  GtkTextIter cur;
+  cur = *iter;
+  gtk_text_iter_set_line_offset(iter, 0);
+  return gtk_text_iter_forward_find_char(iter, text_char_predicate, NULL, &cur);
+}
+
 static void
 source_completion_words_populate (GtkSourceCompletionProvider *provider,
                                       GtkSourceCompletionContext  *context)
@@ -137,6 +152,11 @@ source_completion_words_populate (GtkSourceCompletionProvider *provider,
 
   if (!gtk_source_completion_context_get_iter (context, &iter))
   {
+    gtk_source_completion_context_add_proposals (context, provider, NULL, TRUE);
+    return;
+  }
+
+  if (in_comment(&iter)) {
     gtk_source_completion_context_add_proposals (context, provider, NULL, TRUE);
     return;
   }
