@@ -1,5 +1,6 @@
     <context id="ngraph_math" class="no-spell-check">
       <include>
+        <context ref="def:shell-like-comment"/>
 	<context ref="keywords"/>
 	<context ref="parameters"/>
 	<context ref="builtins"/>
