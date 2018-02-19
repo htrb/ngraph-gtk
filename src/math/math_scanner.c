@@ -113,6 +113,11 @@ math_scanner_get_token(const char *str, const char **rstr)
     return get_comma(str, rstr);
   } else if (c == '@') {
     return get_array_prefix(str, rstr);
+  } else if (c == '#') {        /* comment */
+    while (*str != '\0' && *str != '\r' && *str != '\n') {
+      str++;
+    }
+    return math_scanner_get_token(str, rstr);
   }
 
   return get_unknown(str, rstr);
