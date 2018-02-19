@@ -231,11 +231,15 @@ create_source_view(void)
   source_view = GTK_SOURCE_VIEW(gtk_source_view_new());
   buffer = gtk_source_buffer_new(NULL);
   gtk_text_view_set_buffer(GTK_TEXT_VIEW(source_view), GTK_TEXT_BUFFER(buffer));
+#if GTK_CHECK_VERSION(3, 16, 0)
   gtk_text_view_set_monospace(GTK_TEXT_VIEW(source_view), TRUE);
+#endif
   gtk_source_view_set_tab_width(source_view, 2);
   gtk_source_view_set_insert_spaces_instead_of_tabs(source_view, TRUE);
   gtk_source_view_set_smart_home_end(source_view, GTK_SOURCE_SMART_HOME_END_BEFORE);
+#if GTK_SOURCE_CHECK_VERSION(3, 18, 0)
   gtk_source_view_set_smart_backspace(source_view, TRUE);
+#endif
   gtk_source_view_set_indent_width(source_view, -1);
   gtk_source_view_set_indent_on_tab(source_view, TRUE);
   gtk_source_view_set_auto_indent(source_view, TRUE);
@@ -243,7 +247,7 @@ create_source_view(void)
 
   comp = gtk_source_view_get_completion(source_view);
   g_value_init(&value, G_TYPE_BOOLEAN);
-  g_value_set_boolean(&value, FALSE); /* fix-me: proposals are not
+  g_value_set_boolean(&value, TRUE); /* fix-me: proposals are not
                                        * shown 2nd time in linux if
                                        * TRUE */
   g_object_set_property(G_OBJECT(comp), "remember-info-visibility", &value);
