@@ -16,10 +16,17 @@ completion_info_populate(struct completion_info *info, const char *word, int len
 
     if (info[i].proposal == NULL) {
       GtkSourceCompletionItem *proposal;
+#if GTK_SOURCE_CHECK_VERSION(3, 24, 0)
       proposal = gtk_source_completion_item_new2();
       gtk_source_completion_item_set_label(proposal, info[i].text);
       gtk_source_completion_item_set_text(proposal, info[i].text);
       gtk_source_completion_item_set_info(proposal, info[i].info);
+#else
+      proposal = gtk_source_completion_item_new(proposal, info[i].text,
+                                                proposal, info[i].text,
+                                                NULL,
+                                                proposal, info[i].info);
+#endif
       info[i].proposal = proposal;
     }
     ret = g_list_prepend (ret, info[i].proposal);
