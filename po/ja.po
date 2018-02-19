@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.06.13\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2018-02-19 17:24+0900\n"
-"PO-Revision-Date: 2018-02-19 16:38+0900\n"
+"POT-Creation-Date: 2018-02-19 18:34+0900\n"
+"PO-Revision-Date: 2018-02-19 18:44+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja\n"
@@ -3164,42 +3164,60 @@ msgstr ""
 #: src/gtk/completion_info_data.c:27
 msgid ""
 "<b>color</b>(<i>i, x</i>)\n"
-"i = 0: Set the R value set to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\n"
+"i = 0: Set the R value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\n"
 "i = 1: Set the G value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\n"
 "i = 2: Set the B value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\n"
-"i = 3: Set the R, G and B value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\n"
+"i = 3: Set the R, G and B values to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\n"
 "i = 4: Set the R2 value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\n"
 "i = 5: Set the G2 value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\n"
-"i = 6: Set B2 value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\n"
-"i = 7: Set R2, G2 and B2 value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\n"
-"i = 8: Set R, G and B value to be hexadecimal color of <i>x</i>\n"
-"i = 9: Set R2, G2 and B2 value to be hexadecimal color of <i>x</i>"
+"i = 6: Set the B2 value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\n"
+"i = 7: Set the R2, G2 and B2 values to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\n"
+"i = 8: Set the R, G and B values to be hexadecimal color of <i>x</i>\n"
+"i = 9: Set the R2, G2 and B2 values to be hexadecimal color of <i>x</i>"
 msgstr ""
+"<b>color</b>(<i>i, x</i>)\n"
+"i = 0: R 値を <i>x</i> (0 &lt;= <i>x</i> &lt; 256) に設定\n"
+"i = 1: G 値を <i>x</i> (0 &lt;= <i>x</i> &lt; 256) に設定\n"
+"i = 2: B 値を <i>x</i> (0 &lt;= <i>x</i> &lt; 256) に設定\n"
+"i = 3: R, G, B 値を <i>x</i> (0 &lt;= <i>x</i> &lt; 256) に設定\n"
+"i = 4: R2 値を <i>x</i> (0 &lt;= <i>x</i> &lt; 256) に設定\n"
+"i = 5: G2 値を <i>x</i> (0 &lt;= <i>x</i> &lt; 256) に設定\n"
+"i = 6: B2 値を <i>x</i> (0 &lt;= <i>x</i> &lt; 256) に設定\n"
+"i = 7: R2, G2 and B2 値を <i>x</i> (0 &lt;= <i>x</i> &lt; 256) に設定\n"
+"i = 8: <i>x</i> を16進数のカラーコードとして R, G, B 値に設定\n"
+"i = 9: <i>x</i> を16進数のカラーコードとして R2, G2, B2 値に設定"
 
 #: src/gtk/completion_info_data.c:28
-#, fuzzy
 msgid ""
 "<b>cos</b>(<i>x</i>)\n"
 "cosine function"
-msgstr "ファイル/関数"
+msgstr ""
+"<b>cos</b>(<i>x</i>)\n"
+"コサイン"
 
 #: src/gtk/completion_info_data.c:29
 msgid ""
 "<b>cosh</b>(<i>x</i>)\n"
 "hyperbolic cosine function"
 msgstr ""
+"<b>cosh</b>(<i>x</i>)\n"
+"ハイパボリックコサイン"
 
 #: src/gtk/completion_info_data.c:30
 msgid ""
 "<b>delta</b>(<i>x</i>)\n"
 "Kronecker delta (1 when <i>x</i> = 0, 0 otherwise)"
 msgstr ""
+"<b>delta</b>(<i>x</i>)\n"
+"クロネッカーのδ(<i>x</i> = 0 のとき 1, それ以外は 0)"
 
 #: src/gtk/completion_info_data.c:31
 msgid ""
 "<b>dif</b>(<i>x</i>)\n"
 "Difference"
 msgstr ""
+"<b>dif</b>(<i>x</i>)\n"
+"差分"
 
 #: src/gtk/completion_info_data.c:32
 msgid ""
@@ -3213,19 +3231,34 @@ msgid ""
 "If <i>pieslice</i> is not 0, draw a sector.\n"
 "If <i>close</i> is not 0, close the outline."
 msgstr ""
+"<b>draw_arc</b>(<i>x, y, rx, ry, start, angle, stroke, fill, pieslice, "
+"close</i>)\n"
+"(<i>x, y</i>) を中心とし X 方向半径 <i>rx</i>, Y 方向半径 <i>ry</i> の円弧を"
+"描画する。\n"
+"<i>start</i>, <i>angle</i> で開始角、円弧角を指定する。\n"
+"<i>stroke</i>, <i>fill</i> が 0 の場合はそれぞれ輪郭、塗りつぶしを描画しな"
+"い。\n"
+"<i>pieslice</i> が 0 以外の場合は扇形を描画する。\n"
+"<i>close</i> が 0 以外の場合は輪郭を閉じる。"
 
 #: src/gtk/completion_info_data.c:33
+msgid ""
+"<b>draw_line</b>(<i>x1, y1, x2, y2</i>)\n"
+"draw a line form (<i>x1, y1</i>) to (<i>x2, y2</i>)."
+msgstr ""
+"<b>draw_line</b>(<i>x1, y1, x2, y2</i>)\n"
+"(<i>x1, y1</i>) から (<i>x2, y2</i>) に直線を描画する。"
+
+#: src/gtk/completion_info_data.c:34
 msgid ""
 "<b>draw_mark</b>(<i>x, y, size</i>)\n"
 "draw a mark on (<i>x, y</i>). The <i>size</i> can be specified with size.\n"
 "When <i>size</i> is 0, specification of the file object is used."
 msgstr ""
-
-#: src/gtk/completion_info_data.c:34
-msgid ""
-"<b>draw_mark</b>(<i>x1, y1, x2, y2</i>)\n"
-"draw a line form (<i>x1, y1</i>) to (<i>x2, y2</i>)."
-msgstr ""
+"<b>draw_mark</b>(<i>x, y, size</i>)\n"
+"(<i>x, y</i>) にマークを描画する。\n"
+"<i>size</i> でマークのサイズを指定できる。\n"
+"<i>ize</i> が 0 のときはファイルオブジェクトのサイズ指定が使われる。"
 
 #: src/gtk/completion_info_data.c:35
 msgid ""
@@ -3235,12 +3268,18 @@ msgid ""
 "When <i>stroke</i> and <i>fill</i> are 0, do not draw contours and fills "
 "respectively."
 msgstr ""
+"<b>draw_rect</b>(<i>x, y, w, h, stroke, fill</i>)\n"
+"(<i>x, y</i>) と (<i>x + w, y + h</i>) を対角の頂点とする矩形を描画する。\n"
+"<i>stroke</i>, <i>fill</i> が 0 の場合はそれぞれ輪郭、塗りつぶしを描画しな"
+"い。"
 
 #: src/gtk/completion_info_data.c:36
 msgid ""
 "<b>ei</b>(<i>x</i>)\n"
 "compute the exponential integral Ei(<i>x</i>)"
 msgstr ""
+"<b>ei</b>(<i>x</i>)\n"
+"積分指数関数 Ei(<i>x</i>)"
 
 #: src/gtk/completion_info_data.c:37
 msgid ""
@@ -3249,24 +3288,34 @@ msgid ""
 "The number of digits of comparison can be specified with <i>prec</i>\n"
 "(<i>prec</i> == 0 is exact match)."
 msgstr ""
+"<b>eq</b>(<i>x, y, prec</i>)\n"
+"<i>x</i> == <i>y</i> のとき真(=1)。\n"
+"<i>prec</i> で比較の桁数を指定できる\n"
+"(<i>prec</i> == 0 は完全一致)。"
 
 #: src/gtk/completion_info_data.c:38
 msgid ""
 "<b>erf</b>(<i>x</i>)\n"
 "error function erf(<i>x</i>)"
 msgstr ""
+"<b>erf</b>(<i>x</i>)\n"
+"誤差関数 erf(<i>x</i>)"
 
 #: src/gtk/completion_info_data.c:39
 msgid ""
 "<b>erfc</b>(<i>x</i>)\n"
 "complementary error function erfc(<i>x</i>)"
 msgstr ""
+"<b>erfc</b>(<i>x</i>)\n"
+"相補誤差関数 erfc(<i>x</i>)"
 
 #: src/gtk/completion_info_data.c:40
 msgid ""
 "<b>exp</b>(<i>x</i>)\n"
 "base-e exponential function (<i>x</i> &lt;= 690)"
 msgstr ""
+"<b>exp</b>(<i>x</i>)\n"
+"指数関数 (<i>x</i>≦690)"
 
 #: src/gtk/completion_info_data.c:41
 msgid ""
@@ -3274,6 +3323,9 @@ msgid ""
 "When the plot type of the data object whose ID is <i>id</i> is fit,\n"
 "the corresponding fit result f(<i>x</i>) is calculated."
 msgstr ""
+"<b>fit_calc</b>(<i>id, x</i>)\n"
+"ID が <i>id</i> の data オブジェクトのプロットタイプが fit のとき、\n"
+"対応する fit 結果 f(<i>x</i>) を計算する。"
 
 #: src/gtk/completion_info_data.c:42
 msgid ""
@@ -3281,12 +3333,17 @@ msgid ""
 "When the plot type of the data object whose ID is <i>id</i> is fit,\n"
 "the value of the field \"%0<i>x</i>\" of the corresponding fit object."
 msgstr ""
+"<b>fit_prm</b>(<i>id, x</i>)\n"
+"ID が <i>id</i> の data オブジェクトのプロットタイプが fit のとき、\n"
+"対応する fit object のフィールド \"%0<i>x</i>\" の値。"
 
 #: src/gtk/completion_info_data.c:43
 msgid ""
 "<b>fmod</b>(<i>x, y</i>)\n"
 "compute the floating-point remainder of dividing <i>x</i> by <i>y</i>"
 msgstr ""
+"<b>fmod</b>(<i>x, y</i>)\n"
+"<i>x</i> を <i>y</i> で割った浮動小数点剰余"
 
 #: src/gtk/completion_info_data.c:44
 msgid ""
@@ -3296,24 +3353,36 @@ msgid ""
 "When <i>m</i> is negative, no setting to memory is done.\n"
 "Returns the value of <i>ex</i> evaluated last."
 msgstr ""
+"<b>for</b>(<i>m, begin, end, step, ex</i>)\n"
+"第<i>m</i>メモリーの値に <i>begin</i> から <i>end</i> まで <i>step</i> で値を"
+"設定し、\n"
+"<i>ex</i> を繰り返す。\n"
+"<i>m</i> が負の時はメモリーへの設定は行われない。\n"
+"最後に評価された <i>ex</i> の値を返す。"
 
 #: src/gtk/completion_info_data.c:45
 msgid ""
 "<b>frac</b>(<i>x</i>)\n"
 "remainder"
 msgstr ""
+"<b>frac</b>(<i>x</i>)\n"
+"<i>x</i> の小数部"
 
 #: src/gtk/completion_info_data.c:46
 msgid ""
 "<b>gamma</b>(<i>x</i>)\n"
 "gamma function"
 msgstr ""
+"<b>gamma</b>(<i>x</i>)\n"
+"ガンマ関数 Γ(<i>x</i>)"
 
 #: src/gtk/completion_info_data.c:47
 msgid ""
 "<b>gauss</b>(<i>x</i>)\n"
 "largest integral value not greater than <i>x</i>"
 msgstr ""
+"<b>gauss</b>(<i>x</i>)\n"
+"ガウスの記号[ ] ([<i>x</i>]は<i>x</i>を越えない最大の整数)"
 
 #: src/gtk/completion_info_data.c:48
 msgid ""
@@ -3322,6 +3391,10 @@ msgid ""
 "The precision allows you to specify the number of digits for comparison\n"
 "(<i>prec</i> == 0 does not specify the number of digits)."
 msgstr ""
+"<b>ge</b>(<i>x, y, prec</i>)\n"
+"<i>x</i>≧<i>y</i> のとき真(=1)。\n"
+"<i>prec</i> で比較の桁数を指定できる\n"
+"(<i>prec</i> == 0 は桁数指定なし)。"
 
 #: src/gtk/completion_info_data.c:49
 msgid ""
@@ -3330,44 +3403,60 @@ msgid ""
 "The precision allows you to specify the number of digits for comparison\n"
 "(<i>prec</i> == 0 does not specify the number of digits)."
 msgstr ""
+"<b>gt</b>(<i>x, y, prec</i>)\n"
+"<i>x</i>＞<i>y</i> のとき真(=1)。\n"
+"<i>prec</i> で比較の桁数を指定できる\n"
+"(<i>prec</i> == 0 は桁数指定なし)。"
 
 #: src/gtk/completion_info_data.c:50
 msgid ""
 "<b>hn</b>(<i>n, x</i>)\n"
 "Hermite polynomials"
 msgstr ""
+"<b>hn</b>(<i>n, x</i>)\n"
+"エルミート多項式"
 
 #: src/gtk/completion_info_data.c:51
 msgid ""
 "<b>hsb</b>(<i>h, s, b</i>)\n"
-"Set the R, G, B value of color to <i>h, s, b</i> (0 &lt;= <i>h, s, b</i> &lt;"
-"=1) from the HSB value"
+"Set the R, G and B values of color to <i>h, s, b</i> (0 &lt;= <i>h, s, b</i> "
+"&lt;=1) from the HSB value"
 msgstr ""
+"<b>hsb</b>(<i>h, s, b</i>)\n"
+"R, G, B の値をHSB値 <i>h, s, b</i> (0≦<i>h, s, b</i>≦1)から設定"
 
 #: src/gtk/completion_info_data.c:52
 msgid ""
 "<b>hsb2</b>(<i>h, s, b</i>)\n"
-"Set the R2, G2, B2 value of color to <i>h, s, b</i> (0 &lt;= <i>h, s, b</i> "
-"&lt;=1) from the HSB value"
+"Set the R2, G2 and B2 values of color to <i>h, s, b</i> (0 &lt;= <i>h, s, b</"
+"i> &lt;=1) from the HSB value"
 msgstr ""
+"<b>hsb2</b>(<i>h, s, b</i>)\n"
+"R2, G2, B2 の値をHSB値 <i>h, s, b</i> (0≦<i>h, s, b</i>≦1)から設定"
 
 #: src/gtk/completion_info_data.c:53
 msgid ""
 "<b>icbeta</b>(<i>a, b, x</i>)\n"
 "incomplete beta function"
 msgstr ""
+"<b>icbeta</b>(<i>a, b, x</i>)\n"
+"不完全ベータ関数 I(<i>a, b, x</i>) (0 ≦ <i>x</i> ≦ 1) "
 
 #: src/gtk/completion_info_data.c:54
 msgid ""
 "<b>icgam</b>(<i>m, x</i>)\n"
 "incomplete gamma function"
 msgstr ""
+"<b>icgam</b>(<i>m, x</i>)\n"
+"不完全ガンマ関数 Γ(<i>m, x</i>)"
 
 #: src/gtk/completion_info_data.c:55
 msgid ""
 "<b>if</b>(<i>x, ex1, ex2</i>)\n"
 "evaluate <i>ex1</i> when <i>x</i> != 0, evaluate <i>ex2</i> otherwise"
 msgstr ""
+"<b>if</b>(<i>x, ex1, ex2</i>)\n"
+"<i>x</i> ≠ 0 のとき <i>ex1</i>, <i>x</i> == 0 のとき <i>ex2</i>"
 
 #: src/gtk/completion_info_data.c:56
 msgid ""
@@ -3375,12 +3464,16 @@ msgid ""
 "compute the regular modified cylindrical Bessel function of order |<i>n</"
 "i>|, I<sub>n</sub>(|<i>x</i>|)"
 msgstr ""
+"<b>in</b>(<i>n, x</i>)\n"
+"第1種<i>n</i>次変形ベッセル関数 I<sub>n</sub>(|<i>x</i>|)"
 
 #: src/gtk/completion_info_data.c:57
 msgid ""
 "<b>int</b>(<i>x</i>)\n"
 "round to integer, toward zero"
 msgstr ""
+"<b>int</b>(<i>x</i>)\n"
+"0に向かって切捨てた整数部"
 
 #: src/gtk/completion_info_data.c:58
 msgid ""
@@ -3388,36 +3481,49 @@ msgid ""
 "compute the regular modified Bessel function of fractional order |<i>nu</"
 "i>|, I<sub>nu</sub>(|<i>x</i>|)"
 msgstr ""
+"<b>inu</b>(<i>nu, x</i>)\n"
+"第1種<i>nu</i>次変形ベッセル関数 (<i>nu</i> は正の実数) I<sub>nu</sub>(|"
+"<i>x</i>|)"
 
 #: src/gtk/completion_info_data.c:59
 msgid ""
 "<b>isbreak</b>(<i>x</i>)\n"
 "True if <i>x</i> is <b>BREAK</b>"
 msgstr ""
+"<b>isbreak</b>(<i>x</i>)\n"
+"<i>x</i> が <b>BREAK</b> の場合真"
 
 #: src/gtk/completion_info_data.c:60
 msgid ""
 "<b>iscont</b>(<i>x</i>)\n"
 "True if <i>x</i> is <b>CONT</b>"
 msgstr ""
+"<b>iscont</b>(<i>x</i>)\n"
+"<i>x</i> が <b>CONT</b> の場合真"
 
 #: src/gtk/completion_info_data.c:61
 msgid ""
 "<b>isnan</b>(<i>x</i>)\n"
 "True if <i>x</i> is <b>NAN</b>"
 msgstr ""
+"<b>isnan</b>(<i>x</i>)\n"
+"<i>x</i> が <b>NAN</b> の場合真"
 
 #: src/gtk/completion_info_data.c:62
 msgid ""
 "<b>isnormal</b>(<i>x</i>)\n"
 "True if <i>x</i> is a normal number"
 msgstr ""
+"<b>isnormal</b>(<i>x</i>)\n"
+"<i>x</i> が通常の数値の場合真"
 
 #: src/gtk/completion_info_data.c:63
 msgid ""
 "<b>isundef</b>(<i>x</i>)\n"
 "True if <i>x</i> is <b>UNDEF</b>"
 msgstr ""
+"<b>isundef</b>(<i>x</i>)\n"
+"<i>x</i> が <b>UNDEF</b> の場合真"
 
 #: src/gtk/completion_info_data.c:64
 msgid ""
@@ -3425,6 +3531,8 @@ msgid ""
 "compute the regular spherical Bessel function of order |<i>l</i>|, j<sub>l</"
 "sub>(|<i>x</i>|)"
 msgstr ""
+"<b>jl</b>(<i>l, x</i>)\n"
+"第1種<i>l</i>次球ベッセル関数 j<sub>l</sub>(|<i>x</i>|)"
 
 #: src/gtk/completion_info_data.c:65
 msgid ""
@@ -3432,6 +3540,8 @@ msgid ""
 "compute the regular cylindrical Bessel function of order <i>n</i>, J<sub>n</"
 "sub>(|<i>x</i>|)"
 msgstr ""
+"<b>jn</b>(<i>n, x</i>)\n"
+"第1種n次ベッセル関数 J<sub>n</sub>(|<i>x</i>|)"
 
 #: src/gtk/completion_info_data.c:66
 msgid ""
@@ -3439,6 +3549,9 @@ msgid ""
 "compute the regular cylindrical Bessel function of fractional order |<i>nu</"
 "i>|, J<sub>nu</sub>(|<i>x</i>|)"
 msgstr ""
+"<b>jnu</b>(<i>nu, x</i>)\n"
+"第1種<i>nu</i>次ベッセル関数 <i>(nu</i> は正の実数) J<sub>nu</sub>(|<i>x</"
+"i>|)"
 
 #: src/gtk/completion_info_data.c:67
 msgid ""
@@ -3446,6 +3559,8 @@ msgid ""
 "compute the irregular modified cylindrical Bessel function of order |<i>n</"
 "i>|, K<sub>n</sub>(|<i>x</i>|)"
 msgstr ""
+"<b>kn</b>(<i>n, x</i>)\n"
+"第2種<i>n</i>次変形ベッセル関数 K<sub>n</sub>(|<i>x</i>|)"
 
 #: src/gtk/completion_info_data.c:68
 msgid ""
@@ -3453,6 +3568,9 @@ msgid ""
 "compute the irregular modified Bessel function of fractional order |<i>nu</"
 "i>|, K<sub>nu</sub>(|<i>x</i>|)"
 msgstr ""
+"<b>knu</b>(<i>nu, x</i>)\n"
+"第2種<i>nu</i>次変形ベッセル関数 (<i>nu</i> は正の実数) K<sub>nu</sub>(|"
+"<i>x</i>|)"
 
 #: src/gtk/completion_info_data.c:69
 msgid ""
@@ -3461,32 +3579,43 @@ msgid ""
 "The precision allows you to specify the number of digits for comparison\n"
 "(<i>prec</i> == 0 does not specify the number of digits)."
 msgstr ""
+"<b>le</b>(<i>x, y, prec</i>)\n"
+"<i>x</i>≦<i>y</i> のとき真(=1)。\n"
+"<i>prec</i> で比較の桁数を指定できる\n"
+"(<i>prec</i> == 0 は桁数指定なし)。"
 
 #: src/gtk/completion_info_data.c:70
-#, c-format
 msgid ""
 "<b>lgn</b>(<i>n, a, x</i>)\n"
 "evaluate the generalized Laguerre polynomials L<sup>a</sup><sub>n</"
-"sub>(<i>x</i>) for <i>a</i> %gt; -1, <i>n</i> &gt;= 0"
+"sub>(<i>x</i>) for <i>a</i> &gt; -1, <i>n</i> &gt;= 0"
 msgstr ""
+"<b>lgn</b>(<i>n, a, x</i>)\n"
+"ラゲール倍多項式"
 
 #: src/gtk/completion_info_data.c:71
 msgid ""
 "<b>line_number</b>(<i></i>)\n"
 "File line number being processed (1st line is 1)"
 msgstr ""
+"<b>line_number</b>(<i></i>)\n"
+"処理中のファイル行番号 (1行目が1)"
 
 #: src/gtk/completion_info_data.c:72
 msgid ""
 "<b>ln</b>(<i>x</i>)\n"
 "natural logarithmic function"
 msgstr ""
+"<b>ln</b>(<i>x</i>)\n"
+"自然対数"
 
 #: src/gtk/completion_info_data.c:73
 msgid ""
 "<b>log</b>(<i>x</i>)\n"
 "base-10 logarithmic function"
 msgstr ""
+"<b>log</b>(<i>x</i>)\n"
+"常用対数"
 
 #: src/gtk/completion_info_data.c:74
 msgid ""
@@ -3495,6 +3624,10 @@ msgid ""
 "The precision allows you to specify the number of digits for comparison\n"
 "(<i>prec</i> == 0 does not specify the number of digits)."
 msgstr ""
+"<b>lt</b>(<i>x, y, prec</i>)\n"
+"<i>x</i>＜<i>y</i> のとき真(=1)。\n"
+"<i>prec</i> で比較の桁数を指定できる\n"
+"(<i>prec</i> == 0 は桁数指定なし)。"
 
 #: src/gtk/completion_info_data.c:75
 msgid ""
@@ -3599,7 +3732,7 @@ msgstr ""
 #: src/gtk/completion_info_data.c:90
 msgid ""
 "<b>obj_color</b>(<i>id, obj</i>)\n"
-"Set the R, G, B, R2, G2 and B2 value to the same value as the instance of "
+"Set the R, G, B, R2, G2 and B2 values to the same value as the instance of "
 "<i>obj</i> whose ID is <i>id</i>.\n"
 "<i>obj</i> is one of <b>DATA_OBJ</b>, <b>PATH_OBJ</b>, <b>ARC_OBJ</b>, "
 "<b>MARK_OBJ</b> or <b>TEXT_OBJ</b>."

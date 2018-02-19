@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.07.05\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2018-02-19 17:24+0900\n"
+"POT-Creation-Date: 2018-02-19 18:34+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3083,16 +3083,16 @@ msgstr ""
 #: src/gtk/completion_info_data.c:27
 msgid ""
 "<b>color</b>(<i>i, x</i>)\n"
-"i = 0: Set the R value set to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\n"
+"i = 0: Set the R value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\n"
 "i = 1: Set the G value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\n"
 "i = 2: Set the B value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\n"
-"i = 3: Set the R, G and B value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\n"
+"i = 3: Set the R, G and B values to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\n"
 "i = 4: Set the R2 value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\n"
 "i = 5: Set the G2 value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\n"
-"i = 6: Set B2 value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\n"
-"i = 7: Set R2, G2 and B2 value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\n"
-"i = 8: Set R, G and B value to be hexadecimal color of <i>x</i>\n"
-"i = 9: Set R2, G2 and B2 value to be hexadecimal color of <i>x</i>"
+"i = 6: Set the B2 value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\n"
+"i = 7: Set the R2, G2 and B2 values to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\n"
+"i = 8: Set the R, G and B values to be hexadecimal color of <i>x</i>\n"
+"i = 9: Set the R2, G2 and B2 values to be hexadecimal color of <i>x</i>"
 msgstr ""
 
 #: src/gtk/completion_info_data.c:28
@@ -3134,15 +3134,15 @@ msgstr ""
 
 #: src/gtk/completion_info_data.c:33
 msgid ""
-"<b>draw_mark</b>(<i>x, y, size</i>)\n"
-"draw a mark on (<i>x, y</i>). The <i>size</i> can be specified with size.\n"
-"When <i>size</i> is 0, specification of the file object is used."
+"<b>draw_line</b>(<i>x1, y1, x2, y2</i>)\n"
+"draw a line form (<i>x1, y1</i>) to (<i>x2, y2</i>)."
 msgstr ""
 
 #: src/gtk/completion_info_data.c:34
 msgid ""
-"<b>draw_mark</b>(<i>x1, y1, x2, y2</i>)\n"
-"draw a line form (<i>x1, y1</i>) to (<i>x2, y2</i>)."
+"<b>draw_mark</b>(<i>x, y, size</i>)\n"
+"draw a mark on (<i>x, y</i>). The <i>size</i> can be specified with size.\n"
+"When <i>size</i> is 0, specification of the file object is used."
 msgstr ""
 
 #: src/gtk/completion_info_data.c:35
@@ -3258,15 +3258,15 @@ msgstr ""
 #: src/gtk/completion_info_data.c:51
 msgid ""
 "<b>hsb</b>(<i>h, s, b</i>)\n"
-"Set the R, G, B value of color to <i>h, s, b</i> (0 &lt;= <i>h, s, b</i> &lt;"
-"=1) from the HSB value"
+"Set the R, G and B values of color to <i>h, s, b</i> (0 &lt;= <i>h, s, b</i> "
+"&lt;=1) from the HSB value"
 msgstr ""
 
 #: src/gtk/completion_info_data.c:52
 msgid ""
 "<b>hsb2</b>(<i>h, s, b</i>)\n"
-"Set the R2, G2, B2 value of color to <i>h, s, b</i> (0 &lt;= <i>h, s, b</i> "
-"&lt;=1) from the HSB value"
+"Set the R2, G2 and B2 values of color to <i>h, s, b</i> (0 &lt;= <i>h, s, b</"
+"i> &lt;=1) from the HSB value"
 msgstr ""
 
 #: src/gtk/completion_info_data.c:53
@@ -3381,11 +3381,10 @@ msgid ""
 msgstr ""
 
 #: src/gtk/completion_info_data.c:70
-#, c-format
 msgid ""
 "<b>lgn</b>(<i>n, a, x</i>)\n"
 "evaluate the generalized Laguerre polynomials L<sup>a</sup><sub>n</"
-"sub>(<i>x</i>) for <i>a</i> %gt; -1, <i>n</i> &gt;= 0"
+"sub>(<i>x</i>) for <i>a</i> &gt; -1, <i>n</i> &gt;= 0"
 msgstr ""
 
 #: src/gtk/completion_info_data.c:71
@@ -3517,7 +3516,7 @@ msgstr ""
 #: src/gtk/completion_info_data.c:90
 msgid ""
 "<b>obj_color</b>(<i>id, obj</i>)\n"
-"Set the R, G, B, R2, G2 and B2 value to the same value as the instance of "
+"Set the R, G, B, R2, G2 and B2 values to the same value as the instance of "
 "<i>obj</i> whose ID is <i>id</i>.\n"
 "<i>obj</i> is one of <b>DATA_OBJ</b>, <b>PATH_OBJ</b>, <b>ARC_OBJ</b>, "
 "<b>MARK_OBJ</b> or <b>TEXT_OBJ</b>."
