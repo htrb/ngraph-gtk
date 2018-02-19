@@ -1,3 +1,8 @@
+2018-02-19  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/math/math_scanner.c (math_scanner_get_token): support
+	shell-like-comment.
+
 2018-02-17  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (set_text_to_source_buffer): added.
