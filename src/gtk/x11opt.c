@@ -713,7 +713,7 @@ FontSettingDialogSetupItem(GtkWidget *w, struct FontSettingDialog *d)
     char *tmp;
 
     tmp = g_strdup_printf("%s, 16", d->font_str);
-    gtk_font_button_set_font_name(GTK_FONT_BUTTON(d->font_b), tmp);
+    gtk_font_chooser_set_font(GTK_FONT_CHOOSER(d->font_b), tmp);
     g_free(tmp);
   }
 
@@ -1016,7 +1016,7 @@ FontSettingDialogClose(GtkWidget *wi, void *data)
     return;
   }
 
-  font_name = gtk_font_button_get_font_name(GTK_FONT_BUTTON(d->font_b));
+  font_name = gtk_font_chooser_get_font(GTK_FONT_CHOOSER(d->font_b));
   family = get_font_family(font_name);
   if (family == NULL) {
     g_free(alias);
@@ -1211,15 +1211,15 @@ MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
   spin_entry_set_val(d->data_head_lines, Menulocal.data_head_lines);
 
   if (Menulocal.coordwin_font) {
-    gtk_font_button_set_font_name(GTK_FONT_BUTTON(d->coordwin_font), Menulocal.coordwin_font);
+    gtk_font_chooser_set_font(GTK_FONT_CHOOSER(d->coordwin_font), Menulocal.coordwin_font);
   }
 
   if (Menulocal.infowin_font) {
-    gtk_font_button_set_font_name(GTK_FONT_BUTTON(d->infowin_font), Menulocal.infowin_font);
+    gtk_font_chooser_set_font(GTK_FONT_CHOOSER(d->infowin_font), Menulocal.infowin_font);
   }
 
   if (Menulocal.file_preview_font) {
-    gtk_font_button_set_font_name(GTK_FONT_BUTTON(d->file_preview_font), Menulocal.file_preview_font);
+    gtk_font_chooser_set_font(GTK_FONT_CHOOSER(d->file_preview_font), Menulocal.file_preview_font);
   }
 
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->use_opacity), Menulocal.use_opacity);
@@ -1495,7 +1495,7 @@ set_font(char **cfg, GtkWidget *btn)
 {
   const char *buf;
 
-  buf = gtk_font_button_get_font_name(GTK_FONT_BUTTON(btn));
+  buf = gtk_font_chooser_get_font(GTK_FONT_CHOOSER(btn));
   if (buf && *cfg) {
     if (strcmp(*cfg, buf)) {
       g_free(*cfg);

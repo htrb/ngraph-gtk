@@ -210,7 +210,11 @@ message_beep(GtkWidget * parent)
     window = gtk_widget_get_window(parent);
     gdk_window_beep(window);
   } else {
-    gdk_beep();
+    GdkDisplay *disp;
+    disp = gdk_display_get_default();
+    if (disp) {
+      gdk_display_beep(disp);
+    }
   }
   //  reset_event();
 }
