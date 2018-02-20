@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.06.13\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2018-02-19 18:34+0900\n"
-"PO-Revision-Date: 2018-02-19 18:44+0900\n"
+"POT-Creation-Date: 2018-02-20 11:41+0900\n"
+"PO-Revision-Date: 2018-02-20 16:07+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja\n"
@@ -3258,7 +3258,7 @@ msgstr ""
 "<b>draw_mark</b>(<i>x, y, size</i>)\n"
 "(<i>x, y</i>) にマークを描画する。\n"
 "<i>size</i> でマークのサイズを指定できる。\n"
-"<i>ize</i> が 0 のときはファイルオブジェクトのサイズ指定が使われる。"
+"<i>size</i> が 0 のときはファイルオブジェクトのサイズ指定が使われる。"
 
 #: src/gtk/completion_info_data.c:35
 msgid ""
@@ -3419,8 +3419,8 @@ msgstr ""
 #: src/gtk/completion_info_data.c:51
 msgid ""
 "<b>hsb</b>(<i>h, s, b</i>)\n"
-"Set the R, G and B values of color to <i>h, s, b</i> (0 &lt;= <i>h, s, b</i> "
-"&lt;=1) from the HSB value"
+"Set the R, G and B values of the color to <i>h, s, b</i> (0 &lt;= <i>h, s, "
+"b</i> &lt;=1) from the HSB value"
 msgstr ""
 "<b>hsb</b>(<i>h, s, b</i>)\n"
 "R, G, B の値をHSB値 <i>h, s, b</i> (0≦<i>h, s, b</i>≦1)から設定"
@@ -3428,8 +3428,8 @@ msgstr ""
 #: src/gtk/completion_info_data.c:52
 msgid ""
 "<b>hsb2</b>(<i>h, s, b</i>)\n"
-"Set the R2, G2 and B2 values of color to <i>h, s, b</i> (0 &lt;= <i>h, s, b</"
-"i> &lt;=1) from the HSB value"
+"Set the R2, G2 and B2 values of the color to <i>h, s, b</i> (0 &lt;= <i>h, "
+"s, b</i> &lt;=1) from the HSB value"
 msgstr ""
 "<b>hsb2</b>(<i>h, s, b</i>)\n"
 "R2, G2, B2 の値をHSB値 <i>h, s, b</i> (0≦<i>h, s, b</i>≦1)から設定"
@@ -3541,7 +3541,7 @@ msgid ""
 "sub>(|<i>x</i>|)"
 msgstr ""
 "<b>jn</b>(<i>n, x</i>)\n"
-"第1種n次ベッセル関数 J<sub>n</sub>(|<i>x</i>|)"
+"第1種<i>n</i>次ベッセル関数 J<sub>n</sub>(|<i>x</i>|)"
 
 #: src/gtk/completion_info_data.c:66
 msgid ""
@@ -3636,54 +3636,76 @@ msgid ""
 "the index from the tail when <i>i</i> is negative\n"
 "(return <i>x</i>)"
 msgstr ""
+"<b>m</b>(<i>i, x</i>)\n"
+"引数を第<i>i</i>メモリーに代入する(<i>i</i>=0〜65535)\n"
+"<i>i</i> が負のときは末尾からのインデックス\n"
+"(戻り値は <i>x</i>)"
 
 #: src/gtk/completion_info_data.c:76
 msgid ""
 "<b>marksize</b>(<i>x</i>)\n"
 "Set mark size to <i>x</i>"
 msgstr ""
+"<b>marksize</b>(<i>x</i>)\n"
+"マークのサイズを<i>x</i>に設定"
 
 #: src/gtk/completion_info_data.c:77
 msgid ""
 "<b>marktype</b>(<i>x</i>)\n"
 "Set mark type to <i>x</i>"
 msgstr ""
+"<b>marktype</b>(<i>x</i>)\n"
+"マークの種類を<i>x</i>に設定"
 
 #: src/gtk/completion_info_data.c:78
 msgid ""
 "<b>max</b>(<i>a, b, c, ...</i>)\n"
 "The largest value of arguments"
 msgstr ""
+"<b>max</b>(<i>a, b, c, ...</i>)\n"
+"引数のうちもっとも大きな値"
 
 #: src/gtk/completion_info_data.c:79
 msgid ""
 "<b>min</b>(<i>a, b, c, ...</i>)\n"
 "The smallest value of arguments"
 msgstr ""
+"<b>min</b>(<i>a, b, c, ...</i>)\n"
+"引数のうちもっとも小さな値"
 
 #: src/gtk/completion_info_data.c:80
 msgid ""
 "<b>mjd</b>(<i>year, month, day, hour, min, sec</i>)\n"
 "Modified Julian Date (date and time are given in UTC)"
 msgstr ""
+"<b>mjd</b>(<i>year, month, day, hour, min, sec</i>)\n"
+"修正ユリウス日(<i>year</i>, <i>month</i>, <i>day</i> はグレゴリオ暦、"
+"<i>hour</i>, <i>min</i>, <i>sec</i> は UTC 時刻)"
 
 #: src/gtk/completion_info_data.c:81
 msgid ""
 "<b>mjd2day</b>(<i>mjd</i>)\n"
 "Gregorian calendar day corresponding to Modified Julian Day <i>mjd</i>"
 msgstr ""
+"<b>mjd2day</b>(<i>mjd</i>)\n"
+"修正ユリウス日に対応するグレゴリオ暦の日"
 
 #: src/gtk/completion_info_data.c:82
 msgid ""
 "<b>mjd2month</b>(<i>mjd</i>)\n"
 "month of Gregorian calendar corresponding to Modified Julian Day <i>mjd</i>"
 msgstr ""
+"<b>mjd2month</b>(<i>mjd</i>)\n"
+"修正ユリウス日に対応するグレゴリオ暦の月"
 
 #: src/gtk/completion_info_data.c:83
 msgid ""
 "<b>mjd2unix</b>(<i>mjd</i>)\n"
 "time represents the number of seconds elapsed since the Epoch at <i>mjd</i>"
 msgstr ""
+"<b>mjd2unix</b>(<i>mjd</i>)\n"
+"修正ユリウス日 <i>mjd</i> の1970年1月1日00:00:00 UTC からの経過秒数\n"
+"(うるう秒は考慮されない)"
 
 #: src/gtk/completion_info_data.c:84
 msgid ""
@@ -3691,6 +3713,8 @@ msgid ""
 "The day of the week as a decimal range 1 to 7, Monday being 1 corresponding "
 "to <i>mjd</i>"
 msgstr ""
+"<b>mjd2wday</b>(<i>mjd</i>)\n"
+"修正ユリウス日に対応するグレゴリオ暦の曜日 (1:月曜日から 7:日曜日)"
 
 #: src/gtk/completion_info_data.c:85
 msgid ""
@@ -3698,12 +3722,16 @@ msgid ""
 "The day of the year as a decimal number (range 001 to 366) corresponding to "
 "<i>mjd</i>"
 msgstr ""
+"<b>mjd2yday</b>(<i>mjd</i>)\n"
+"修正ユリウス日に対応するグレゴリオ暦の 1 月 1 日からの通算日数 (1 から 366)"
 
 #: src/gtk/completion_info_data.c:86
 msgid ""
 "<b>mjd2year</b>(<i>mjd</i>)\n"
 "year of Gregorian calendar corresponding to Modified Julian Day <i>mjd</i>"
 msgstr ""
+"<b>mjd2year</b>(<i>mjd</i>)\n"
+"修正ユリウス日に対応するグレゴリオ暦の年"
 
 #: src/gtk/completion_info_data.c:87
 msgid ""
@@ -3712,22 +3740,30 @@ msgid ""
 "The number of digits of comparison can be specified with <i>prec</i>\n"
 "(<i>prec</i> == 0 is exact match)."
 msgstr ""
+"<b>neq</b>(<i>x, y, prec</i>)\n"
+"<i>x</i>≠<i>y</i> のとき真(=1)。\n"
+"<i>prec</i> で比較の桁数を指定できる\n"
+"(<i>prec</i> == 0 は完全一致)。"
 
 #: src/gtk/completion_info_data.c:88
 msgid ""
 "<b>not</b>(<i>x</i>)\n"
 "True (= 1) when <i>x</i> == 0"
 msgstr ""
+"<b>not</b>(<i>x</i>)\n"
+"<i>x</i> == 0 のとき真(=1)"
 
 #: src/gtk/completion_info_data.c:89
 msgid ""
 "<b>obj_alpha</b>(<i>id, obj</i>)\n"
 "Set the A and A2 value to the same value as the instance of <i>obj</i> whose "
 "ID is <i>id</i>.\n"
-"<i>obj</i> is one of <i>id</i>.\n"
 "<i>obj</i> is one of <b>DATA_OBJ</b>, <b>PATH_OBJ</b>, <b>ARC_OBJ</b>, "
 "<b>MARK_OBJ</b> or <b>TEXT_OBJ</b>."
 msgstr ""
+"<b>obj_alpha</b>(<i>id, obj</i>)\n"
+"A, A2 値を ID が <i>id</i> の <i>obj</i> で指定したオブジェクトと同じ値にする。\n"
+"<i>obj</i> は <b>DATA_OBJ</b>, <b>PATH_OBJ</b>, <b>ARC_OBJ</b>, <b>MARK_OBJ</b>, <b>TEXT_OBJ</b> のいずれか。"
 
 #: src/gtk/completion_info_data.c:90
 msgid ""
@@ -3737,12 +3773,19 @@ msgid ""
 "<i>obj</i> is one of <b>DATA_OBJ</b>, <b>PATH_OBJ</b>, <b>ARC_OBJ</b>, "
 "<b>MARK_OBJ</b> or <b>TEXT_OBJ</b>."
 msgstr ""
+"<b>obj_color</b>(<i>id, obj</i>)\n"
+"R, G, B, R2, G2, B2 値を ID が <i>id</i> の <i>obj</i> で指定したオブジェクト"
+"と同じ値にする。\n"
+"<i>obj</i> は <b>DATA_OBJ</b>, <b>PATH_OBJ</b>, <b>ARC_OBJ</b>, <b>MARK_OBJ</"
+"b>, <b>TEXT_OBJ</b> のいずれか。"
 
 #: src/gtk/completion_info_data.c:91
 msgid ""
 "<b>or</b>(<i>x, y</i>)\n"
 "True (= 1) when (<i>x</i> != 0) or (<i>y</i> != 0)"
 msgstr ""
+"<b>or</b>(<i>x, y</i>)\n"
+"(<i>x</i>≠0) or (<i>y</i>≠0) のとき真(=1)"
 
 #: src/gtk/completion_info_data.c:92
 msgid ""
@@ -3750,30 +3793,40 @@ msgid ""
 "evaluate the Legendre polynomial P<sub>l</sub>(<i>x</i>) for a specific "
 "value of <i>l, x</i> subject to <i>l</i> &gt;= 0, |<i>x</i>| &lt;= 1"
 msgstr ""
+"<b>pn</b>(<i>l, x</i>)\n"
+"ルジャンドル多項式"
 
 #: src/gtk/completion_info_data.c:93
 msgid ""
 "<b>pop</b>(<i>a</i>)\n"
 "remove the last element of array <i>a</i>, and returns that element"
 msgstr ""
+"<b>pop</b>(<i>a</i>)\n"
+"配列 <i>a</i> から末尾の要素を取り除いてそれを返す"
 
 #: src/gtk/completion_info_data.c:94
 msgid ""
 "<b>prog1</b>(<i>arg1, arg2, ...</i>)\n"
 "Evaluate the arguments and return the evaluated value of the first argument"
 msgstr ""
+"<b>prog1</b>(<i>arg1, arg2, ...</i>)\n"
+"引数を評価し、最初の引数の値を返す"
 
 #: src/gtk/completion_info_data.c:95
 msgid ""
 "<b>prog2</b>(<i>arg1, arg2, ...</i>)\n"
 "Evaluate the arguments and return the evaluated value of the second argument"
 msgstr ""
+"<b>prog2</b>(<i>arg1, arg2, ...</i>)\n"
+"引数を評価し、2 番目の引数の値を返す"
 
 #: src/gtk/completion_info_data.c:96
 msgid ""
 "<b>progn</b>(<i>arg1, arg2, ...</i>)\n"
 "Evaluate the arguments and return the evaluated value of the last argument"
 msgstr ""
+"<b>progn</b>(<i>arg1, arg2, ...</i>)\n"
+"引数を評価し、最後の引数の値を返す"
 
 #: src/gtk/completion_info_data.c:97
 msgid ""
@@ -3781,18 +3834,25 @@ msgid ""
 "adds new element <i>x</i> to the end of an array <i>a</i>, and returns <i>x</"
 "i>"
 msgstr ""
+"<b>push</b>(<i>a, x</i>)\n"
+"配列 <i>a</i> の末尾に <i>x</i> を追加する\n"
+"(戻り値は <i>x</i>)"
 
 #: src/gtk/completion_info_data.c:98
 msgid ""
 "<b>qinv</b>(<i>x</i>)\n"
 "inverse complementary error function"
 msgstr ""
+"<b>qinv</b>(<i>x</i>)\n"
+"誤差関数 Erfc(<i>x</i>) の逆関数"
 
 #: src/gtk/completion_info_data.c:99
 msgid ""
 "<b>rand</b>(<i>x</i>)\n"
 "returns a random gdouble equally distributed over the range [0..<i>x</i>)"
 msgstr ""
+"<b>rand</b>(<i>x</i>)\n"
+"0≦<b>rand</b>(<i>x</i>)＜<i>x</i> (<i>x</i>＞0のとき)の乱数"
 
 #: src/gtk/completion_info_data.c:100
 msgid ""
@@ -3800,6 +3860,8 @@ msgid ""
 "Set the R, G and B values of the color to <i>r, g, b</i> (0 &lt;= <i>r, g, "
 "b</i> &lt;= 1)"
 msgstr ""
+"<b>rgb</b>(<i>r, g, b</i>)\n"
+"R, G, B 値をそれぞれ <i>r, g, b</i> (0≦<i>r, g, b</i>≦1)に設定"
 
 #: src/gtk/completion_info_data.c:101
 msgid ""
@@ -3807,6 +3869,8 @@ msgid ""
 "Set the R2, G2 and B2 values of the color to <i>r, g, b</i> (0 &lt;= <i>r, "
 "g, b</i> &lt;= 1)"
 msgstr ""
+"<b>rgb2</b>(<i>r, g, b</i>)\n"
+"R2, G2, B2 値をそれぞれ <i>r, g, b</i> (0≦<i>r, g, b</i>≦1)に設定"
 
 #: src/gtk/completion_info_data.c:102
 msgid ""
@@ -3814,68 +3878,90 @@ msgid ""
 "the value of the current <i>i</i>-th memory (<i>i</i> = 0 to 65535),\n"
 "the index from the tail when <i>i</i> is negative"
 msgstr ""
+"<b>rm</b>(<i>i</i>)\n"
+"現在の第<i>i</i>メモリーの値(<i>i</i> = 0〜65535)\n"
+"<i>i</i> が負のときは末尾からのインデックス"
 
 #: src/gtk/completion_info_data.c:103
 msgid ""
 "<b>round</b>(<i>x</i>)\n"
 "round to nearest integer, away from zero"
 msgstr ""
+"<b>round</b>(<i>x</i>)\n"
+"四捨五入した整数部"
 
 #: src/gtk/completion_info_data.c:104
 msgid ""
 "<b>rsort</b>(<i>a</i>)\n"
 "reverse sort elements of array <i>a</i>"
 msgstr ""
+"<b>rsort</b>(<i>a</i>)\n"
+"配列 <i>a</i> を逆順に整列する"
 
 #: src/gtk/completion_info_data.c:105
 msgid ""
 "<b>shift</b>(<i>a</i>)\n"
 "remove the first element of array <i>a</i>, and returns that element"
 msgstr ""
+"<b>shift</b>(<i>a</i>)\n"
+"配列 <i>a</i> の先頭の要素を取り除いてそれを返す。\n"
+"残りの要素はひとつずつ前に詰められる"
 
 #: src/gtk/completion_info_data.c:106
 msgid ""
 "<b>sign</b>(<i>x</i>)\n"
 "positive / negative sign (-1 with <i>x</i> &lt; 0, 1 with <i>x</i> &gt;= 0)"
 msgstr ""
+"<b>sign</b>(<i>x</i>)\n"
+"正負の符号 (<i>x</i> < 0 で -1、<i>x</i> >= 0 で 1)"
 
 #: src/gtk/completion_info_data.c:107
-#, fuzzy
 msgid ""
 "<b>sin</b>(<i>x</i>)\n"
 "sine function"
-msgstr "ファイル/関数"
+msgstr ""
+"<b>sin</b>(<i>x</i>)\n"
+"サイン"
 
 #: src/gtk/completion_info_data.c:108
-#, fuzzy
 msgid ""
 "<b>sinh</b>(<i>x</i>)\n"
 "hyperbolic sine function"
-msgstr "ファイル/関数"
+msgstr ""
+"<b>sinh</b>(<i>x</i>)\n"
+"ハイパボリックサイン"
 
 #: src/gtk/completion_info_data.c:109
 msgid ""
 "<b>size</b>(<i>a</i>)\n"
 "number of elements of array <i>a</i>"
 msgstr ""
+"<b>size</b>(<i>a</i>)\n"
+"配列 <i>a</i> の要素数"
 
 #: src/gtk/completion_info_data.c:110
 msgid ""
 "<b>sort</b>(<i>a</i>)\n"
 "sort elements of array <i>a</i>"
 msgstr ""
+"<b>sort</b>(<i>a</i>)\n"
+"配列 <i>a</i> を整列する"
 
 #: src/gtk/completion_info_data.c:111
 msgid ""
 "<b>sqr</b>(<i>x</i>)\n"
 "squaring"
 msgstr ""
+"<b>sqr</b>(<i>x</i>)\n"
+"二乗"
 
 #: src/gtk/completion_info_data.c:112
 msgid ""
 "<b>sqrt</b>(<i>x</i>)\n"
 "square root"
 msgstr ""
+"<b>sqrt</b>(<i>x</i>)\n"
+"平方根"
 
 #: src/gtk/completion_info_data.c:113
 msgid ""
@@ -3883,37 +3969,48 @@ msgid ""
 "Sets the seed for the random number generator which is used by the <b>rand</"
 "b>() function"
 msgstr ""
+"<b>srand</b>(<i>x</i>)\n"
+"<brand</b>() 関数で作られる疑似乱数系列の新しい種を設定する。"
 
 #: src/gtk/completion_info_data.c:114
-#, fuzzy
 msgid ""
 "<b>sum</b>(<i>x</i>)\n"
 "Integration"
-msgstr "補完(_I)"
+msgstr ""
+"<b>sum</b>(<i>x</i>)\n"
+"積算"
 
 #: src/gtk/completion_info_data.c:115
 msgid ""
 "<b>sumsq</b>(<i>a, b, c, ...</i>)\n"
 "square sum of arguments"
 msgstr ""
+"<b>sumsq</b>(<i>a, b, c, ...</i>)\n"
+"引数の自乗和"
 
 #: src/gtk/completion_info_data.c:116
 msgid ""
 "<b>tan</b>(<i>x</i>)\n"
 "tangent function"
 msgstr ""
+"<b>tan</b>(<i>x</i>)\n"
+"タンジェント"
 
 #: src/gtk/completion_info_data.c:117
 msgid ""
 "<b>tanh</b>(<i>x</i>)\n"
 "hyperbolic tangent function"
 msgstr ""
+"<b>tanh</b>(<i>x</i>)\n"
+"ハイパボリックタンジェント"
 
 #: src/gtk/completion_info_data.c:118
 msgid ""
 "<b>theta</b>(<i>x</i>)\n"
 "staircase function (1 if <i>x</i> &gt;= 0, 0 otherwise)"
 msgstr ""
+"<b>theta</b>(<i>x</i>)\n"
+"階段関数(<i>x</i>≧0 のとき 1, それ以外は 0)"
 
 #: src/gtk/completion_info_data.c:119
 msgid ""
@@ -3921,12 +4018,16 @@ msgid ""
 "returns the time as the number of seconds since the Epoch,\n"
 "1970-01-01 00:00:00 +0000 (UTC)"
 msgstr ""
+"<b>time</b>(<i></i>)\n"
+"紀元 (1970年1月1日00:00:00 UTC) からの経過時間を秒単位で返す。"
 
 #: src/gtk/completion_info_data.c:120
 msgid ""
 "<b>tn</b>(<i>n, x</i>)\n"
 "Chebyshev polynomials"
 msgstr ""
+"<b>tn</b>(<i>n, x</i>)\n"
+"チェビシフ多項式"
 
 #: src/gtk/completion_info_data.c:121
 msgid ""
@@ -3935,12 +4036,17 @@ msgid ""
 "<i>time</i> represents the number of seconds elapsed since the Epoch,\n"
 "1970-01-01 00:00:00 +0000 (UTC))"
 msgstr ""
+"<b>unix2mjd</b>(<i>time</i>)\n"
+"修正ユリウス日\n"
+"(<i>time</i> は 1970年1月1日00:00:00 UTC からの経過秒数、うるう秒は考慮されない)"
 
 #: src/gtk/completion_info_data.c:122
 msgid ""
 "<b>unless</b>(<i>x, ex1, ex2</i>)\n"
 "evaluate <i>ex2</i> when <i>x</i> != 0, evaluate <i>ex1</i> otherwise"
 msgstr ""
+"<b>unless</b>(<i>x, ex1, ex2</i>)\n"
+"<i>x</i> ≠ 0 のとき <i>ex2</i>, <i>x</i> = 0 のとき <i>ex1</i>"
 
 #: src/gtk/completion_info_data.c:123
 msgid ""
@@ -3948,12 +4054,16 @@ msgid ""
 "adds new element <i>x</i> to the beginning of an array <i>a</i>, returns "
 "<i>x</i>"
 msgstr ""
+"<b>unshift</b>(<i>a, x</i>)\n"
+"配列 <i>a</i> の先頭に <i>x</i> を挿入する (戻り値は <i>x</i>)"
 
 #: src/gtk/completion_info_data.c:124
 msgid ""
 "<b>xor</b>(<i>x, y</i>)\n"
 "True (= 1) when (<i>x</i> != 0) xor (<i>y</i> != 0)"
 msgstr ""
+"<b>xor</b>(<i>x, y</i>)\n"
+"(<i>x</i>≠0) xor (<i>y</i>≠0) のとき真(=1)"
 
 #: src/gtk/completion_info_data.c:125
 msgid ""
@@ -3961,6 +4071,8 @@ msgid ""
 "compute the irregular spherical Bessel function of order |<i>l</i>|, "
 "y<sub>l</sub>(|<i>x</i>|)"
 msgstr ""
+"<b>yl</b>(<i>l, x</i>)\n"
+"第2種<i>l</i>次球ベッセル関数"
 
 #: src/gtk/completion_info_data.c:126
 msgid ""
@@ -3968,6 +4080,8 @@ msgid ""
 "compute the irregular cylindrical Bessel function of order <i>n</i>, "
 "Y<sub>n</sub>(|<i>x</i>|)"
 msgstr ""
+"<b>yn</b>(<i>n, x</i>)\n"
+"第2種<i>n</i>次ベッセル関数"
 
 #: src/gtk/completion_info_data.c:127
 msgid ""
@@ -3975,6 +4089,8 @@ msgid ""
 "compute the irregular cylindrical Bessel function of fractional order |"
 "<i>nu</i>|, Y<sub>nu</sub>(|<i>x</i>|)"
 msgstr ""
+"<b>ynu</b>(<i>nu, x</i>)\n"
+"第2種<i>nu</i>次ベッセル関数 (<i>nu</i> は正の実数)"
 
 #: src/gtk/completion_info_data.c:128
 msgid ""
@@ -3982,24 +4098,32 @@ msgid ""
 "compute the Riemann zeta function zeta(s) for arbitrary <i>s</i>, <i>s</i> !"
 "= 1"
 msgstr ""
+"<b>zeta</b>(<i>s</i>)\n"
+"リーマンゼータ関数ζ(<i>s</i>)"
 
 #: src/gtk/completion_info_data.c:129
 msgid ""
 "<b>zeta_int</b>(<i>n</i>)\n"
 "compute the Riemann zeta function zeta(n) for integer <i>n</i>, <i>n</i> != 1"
 msgstr ""
+"<b>zeta_int</b>(<i>n</i>)\n"
+"リーマンゼータ関数ζ(<i>n</i>) (<i>n</i> は整数)"
 
 #: src/gtk/completion_info_data.c:130
 msgid ""
 "<b>zetam1</b>(<i>s</i>)\n"
 "compute zeta(<i>s</i>) - 1 for arbitrary <i>s</i>, <i>s</i> != 1"
 msgstr ""
+"<b>zetam1</b>(<i>s</i>)\n"
+"リーマンゼータ関数ζ(<i>s</i>) - 1"
 
 #: src/gtk/completion_info_data.c:131
 msgid ""
 "<b>zetam1_int</b>(<i>n</i>)\n"
 "compute zeta(<i>n</i>) - 1 for integer <i>n</i>, <i>n</i> != 1"
 msgstr ""
+"<b>zetam1_int</b>(<i>n</i>)\n"
+"リーマンゼータ関数ζ(<i>n</i>) - 1 (<i>n</i> は整数)"
 
 #: src/gtk/completion_info_data.c:135
 msgid ""
@@ -4264,7 +4388,7 @@ msgstr ""
 
 #: src/math/math_error.c:13
 msgid "syntax error, unexpected end of equation."
-msgstr "構文エラー, 予期しない数式の終わりです."
+msgstr "<b>zetam1_int</b>(<i>n</i>)"
 
 #: src/math/math_error.c:14
 msgid "syntax error, function definition cannot be nested."
@@ -4555,6 +4679,20 @@ msgstr "偶奇"
 #: src/opath.c:71
 msgid "winding_rule"
 msgstr "ワインディング"
+
+#~ msgid ""
+#~ "<b>obj_alpha</b>(<i>id, obj</i>)\n"
+#~ "Set the A and A2 value to the same value as the instance of <i>obj</i> "
+#~ "whose ID is <i>id</i>.\n"
+#~ "<i>obj</i> is one of <i>id</i>.\n"
+#~ "<i>obj</i> is one of <b>DATA_OBJ</b>, <b>PATH_OBJ</b>, <b>ARC_OBJ</b>, "
+#~ "<b>MARK_OBJ</b> or <b>TEXT_OBJ</b>."
+#~ msgstr ""
+#~ "<b>obj_alpha</b>(<i>id, obj</i>)\n"
+#~ "A, A2 値を ID が <i>id</i> の <i>obj</i> で指定したオブジェクトと同じ値に"
+#~ "する。\n"
+#~ "<i>obj</i> は <b>DATA_OBJ</b>, <b>PATH_OBJ</b>, <b>ARC_OBJ</b>, "
+#~ "<b>MARK_OBJ</b>, <b>TEXT_OBJ</b> のいずれか。"
 
 #~ msgid "Data new"
 #~ msgstr "新規作成"
