@@ -18,12 +18,12 @@ class CompletionInfo
     lfunc = func_name.downcase
     title = "<b>#{func_name}</b>(<i>#{args}</i>)"
     info_text = info[1].gsub('"', '\\"')
-    %Q!{"#{lfunc}", "#{function}", N_("#{title}\\n#{info_text}"), NULL},!
+    %Q!{"#{lfunc}", "#{function}", "#{func_name}", N_("#{title}\\n#{info_text}"), NULL},!
   end
 
   def const_struct(info)
     info_text = info[1].gsub('"', '\\"')
-    %Q!{"#{info[0].downcase}", "#{info[0]}", N_("<b>#{info[0]}</b>\\n#{info_text}"), NULL},!
+    %Q!{"#{info[0].downcase}", "#{info[0]}", NULL, N_("<b>#{info[0]}</b>\\n#{info_text}"), NULL},!
   end
 
   def load_data(type, file, ary)

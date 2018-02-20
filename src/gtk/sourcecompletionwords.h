@@ -51,7 +51,7 @@ struct _SourceCompletionWordsClass {
 
 GType source_completion_words_get_type (void) G_GNUC_CONST;
 
-typedef GList * (* populate_func)(const char *, int);
+typedef GList * (* populate_func)(const char *, int, GtkTextIter *);
 SourceCompletionWords *source_completion_words_new(const gchar *name, populate_func func);
 
 G_END_DECLS

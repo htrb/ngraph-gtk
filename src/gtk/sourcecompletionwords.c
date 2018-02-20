@@ -173,7 +173,7 @@ source_completion_words_populate (GtkSourceCompletionProvider *provider,
     return;
   }
 
-  ret = words->priv->populate_func(word, strlen(word));
+  ret = words->priv->populate_func(word, strlen(word), &iter);
   g_free(word);
   ret = g_list_reverse(ret);
   gtk_source_completion_context_add_proposals(context,
