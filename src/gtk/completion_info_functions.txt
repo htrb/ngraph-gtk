@@ -37,18 +37,18 @@ qinv(x)		inverse complementary error function
 ei(x)		compute the exponential integral Ei(<i>x</i>)
 beta(x, y)	beta function
 icbeta(a, b, x)	incomplete beta function
-jn(n, x)	compute the regular cylindrical Bessel function of order <i>n</i>, J<sub>n</sub>(|<i>x</i>|)
-yn(n, x)	compute the irregular cylindrical Bessel function of order <i>n</i>, Y<sub>n</sub>(|<i>x</i>|)
-in(n, x)	compute the regular modified cylindrical Bessel function of order |<i>n</i>|, I<sub>n</sub>(|<i>x</i>|)
-kn(n, x)	compute the irregular modified cylindrical Bessel function of order |<i>n</i>|, K<sub>n</sub>(|<i>x</i>|)
-jl(l, x)	compute the regular spherical Bessel function of order |<i>l</i>|, j<sub>l</sub>(|<i>x</i>|)
-yl(l, x)	compute the irregular spherical Bessel function of order |<i>l</i>|, y<sub>l</sub>(|<i>x</i>|)
-jnu(nu, x)	compute the regular cylindrical Bessel function of fractional order |<i>nu</i>|, J<sub>nu</sub>(|<i>x</i>|)
-ynu(nu, x)	compute the irregular cylindrical Bessel function of fractional order |<i>nu</i>|, Y<sub>nu</sub>(|<i>x</i>|)
-inu(nu, x)	compute the regular modified Bessel function of fractional order |<i>nu</i>|, I<sub>nu</sub>(|<i>x</i>|)
-knu(nu, x)	compute the irregular modified Bessel function of fractional order |<i>nu</i>|, K<sub>nu</sub>(|<i>x</i>|)
+jn(n, x)	compute the regular cylindrical Bessel function of order <i>n</i>, J<sub><i>n</i></sub>(|<i>x</i>|)
+yn(n, x)	compute the irregular cylindrical Bessel function of order <i>n</i>, Y<sub><i>n</i></sub>(|<i>x</i>|)
+in(n, x)	compute the regular modified cylindrical Bessel function of order |<i>n</i>|, I<sub><i>n</i></sub>(|<i>x</i>|)
+kn(n, x)	compute the irregular modified cylindrical Bessel function of order |<i>n</i>|, K<sub><i>n</i></sub>(|<i>x</i>|)
+jl(l, x)	compute the regular spherical Bessel function of order |<i>l</i>|, j<sub><i>l</i></sub>(|<i>x</i>|)
+yl(l, x)	compute the irregular spherical Bessel function of order |<i>l</i>|, y<sub><i>l</i></sub>(|<i>x</i>|)
+jnu(nu, x)	compute the regular cylindrical Bessel function of fractional order |<i>nu</i>|, J<sub><i>nu</i></sub>(|<i>x</i>|)
+ynu(nu, x)	compute the irregular cylindrical Bessel function of fractional order |<i>nu</i>|, Y<sub><i>nu</i></sub>(|<i>x</i>|)
+inu(nu, x)	compute the regular modified Bessel function of fractional order |<i>nu</i>|, I<sub><i>nu</i></sub>(|<i>x</i>|)
+knu(nu, x)	compute the irregular modified Bessel function of fractional order |<i>nu</i>|, K<sub><i>nu</i></sub>(|<i>x</i>|)
 pn(l, x)	evaluate the Legendre polynomial P<sub>l</sub>(<i>x</i>) for a specific value of <i>l, x</i> subject to <i>l</i> &gt;= 0, |<i>x</i>| &lt;= 1
-lgn(n, a, x)	evaluate the generalized Laguerre polynomials L<sup>a</sup><sub>n</sub>(<i>x</i>) for <i>a</i> &gt; -1, <i>n</i> &gt;= 0
+lgn(n, a, x)	evaluate the generalized Laguerre polynomials L<sup><i>a</i></sup><sub><i>n</i></sub>(<i>x</i>) for <i>a</i> &gt; -1, <i>n</i> &gt;= 0
 hn(n, x)	Hermite polynomials
 tn(n, x)	Chebyshev polynomials
 zeta(s)		compute the Riemann zeta function zeta(s) for arbitrary <i>s</i>, <i>s</i> != 1
