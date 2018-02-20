@@ -1,3 +1,14 @@
+2018-02-20  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11opt.c (FontSettingDialogSetupItem)
+	(MiscDialogSetupItem): use "gtk_font_chooser_set_font()" instead
+	of "gtk_font_button_set_font_name()".
+	(FontSettingDialogAddAlternative, FontSettingDialogClose)
+	(set_font): use "gtk_font_chooser_get_font()" instead of
+	"gtk_font_button_get_font_name()".
+
+	* src/gtk/x11gui.c (message_beep): use "gdk_display_beep()".
+
 2018-02-19  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/math/math_scanner.c (math_scanner_get_token): support
