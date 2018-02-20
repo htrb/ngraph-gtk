@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.07.05\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2018-02-20 11:41+0900\n"
+"POT-Creation-Date: 2018-02-20 18:22+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3083,16 +3083,19 @@ msgstr ""
 #: src/gtk/completion_info_data.c:27
 msgid ""
 "<b>color</b>(<i>i, x</i>)\n"
-"i = 0: Set the R value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\n"
-"i = 1: Set the G value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\n"
-"i = 2: Set the B value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\n"
-"i = 3: Set the R, G and B values to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\n"
-"i = 4: Set the R2 value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\n"
-"i = 5: Set the G2 value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\n"
-"i = 6: Set the B2 value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\n"
-"i = 7: Set the R2, G2 and B2 values to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\n"
-"i = 8: Set the R, G and B values to be hexadecimal color of <i>x</i>\n"
-"i = 9: Set the R2, G2 and B2 values to be hexadecimal color of <i>x</i>"
+"<i>i</i> = 0: Set the R value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\n"
+"<i>i</i> = 1: Set the G value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\n"
+"<i>i</i> = 2: Set the B value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\n"
+"<i>i</i> = 3: Set the R, G and B values to <i>x</i> (0 &lt;= <i>x</i> &lt; "
+"256)\n"
+"<i>i</i> = 4: Set the R2 value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\n"
+"<i>i</i> = 5: Set the G2 value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\n"
+"<i>i</i> = 6: Set the B2 value to <i>x</i> (0 &lt;= <i>x</i> &lt; 256)\n"
+"<i>i</i> = 7: Set the R2, G2 and B2 values to <i>x</i> (0 &lt;= <i>x</i> "
+"&lt; 256)\n"
+"<i>i</i> = 8: Set the R, G and B values to be hexadecimal color of <i>x</i>\n"
+"<i>i</i> = 9: Set the R2, G2 and B2 values to be hexadecimal color of <i>x</"
+"i>"
 msgstr ""
 
 #: src/gtk/completion_info_data.c:28
@@ -3291,7 +3294,7 @@ msgstr ""
 msgid ""
 "<b>in</b>(<i>n, x</i>)\n"
 "compute the regular modified cylindrical Bessel function of order |<i>n</"
-"i>|, I<sub>n</sub>(|<i>x</i>|)"
+"i>|, I<sub><i>n</i></sub>(|<i>x</i>|)"
 msgstr ""
 
 #: src/gtk/completion_info_data.c:57
@@ -3304,7 +3307,7 @@ msgstr ""
 msgid ""
 "<b>inu</b>(<i>nu, x</i>)\n"
 "compute the regular modified Bessel function of fractional order |<i>nu</"
-"i>|, I<sub>nu</sub>(|<i>x</i>|)"
+"i>|, I<sub><i>nu</i></sub>(|<i>x</i>|)"
 msgstr ""
 
 #: src/gtk/completion_info_data.c:59
@@ -3340,36 +3343,36 @@ msgstr ""
 #: src/gtk/completion_info_data.c:64
 msgid ""
 "<b>jl</b>(<i>l, x</i>)\n"
-"compute the regular spherical Bessel function of order |<i>l</i>|, j<sub>l</"
-"sub>(|<i>x</i>|)"
+"compute the regular spherical Bessel function of order |<i>l</i>|, "
+"j<sub><i>l</i></sub>(|<i>x</i>|)"
 msgstr ""
 
 #: src/gtk/completion_info_data.c:65
 msgid ""
 "<b>jn</b>(<i>n, x</i>)\n"
-"compute the regular cylindrical Bessel function of order <i>n</i>, J<sub>n</"
-"sub>(|<i>x</i>|)"
+"compute the regular cylindrical Bessel function of order <i>n</i>, "
+"J<sub><i>n</i></sub>(|<i>x</i>|)"
 msgstr ""
 
 #: src/gtk/completion_info_data.c:66
 msgid ""
 "<b>jnu</b>(<i>nu, x</i>)\n"
 "compute the regular cylindrical Bessel function of fractional order |<i>nu</"
-"i>|, J<sub>nu</sub>(|<i>x</i>|)"
+"i>|, J<sub><i>nu</i></sub>(|<i>x</i>|)"
 msgstr ""
 
 #: src/gtk/completion_info_data.c:67
 msgid ""
 "<b>kn</b>(<i>n, x</i>)\n"
 "compute the irregular modified cylindrical Bessel function of order |<i>n</"
-"i>|, K<sub>n</sub>(|<i>x</i>|)"
+"i>|, K<sub><i>n</i></sub>(|<i>x</i>|)"
 msgstr ""
 
 #: src/gtk/completion_info_data.c:68
 msgid ""
 "<b>knu</b>(<i>nu, x</i>)\n"
 "compute the irregular modified Bessel function of fractional order |<i>nu</"
-"i>|, K<sub>nu</sub>(|<i>x</i>|)"
+"i>|, K<sub><i>nu</i></sub>(|<i>x</i>|)"
 msgstr ""
 
 #: src/gtk/completion_info_data.c:69
@@ -3383,8 +3386,8 @@ msgstr ""
 #: src/gtk/completion_info_data.c:70
 msgid ""
 "<b>lgn</b>(<i>n, a, x</i>)\n"
-"evaluate the generalized Laguerre polynomials L<sup>a</sup><sub>n</"
-"sub>(<i>x</i>) for <i>a</i> &gt; -1, <i>n</i> &gt;= 0"
+"evaluate the generalized Laguerre polynomials L<sup><i>a</i></sup><sub><i>n</"
+"i></sub>(<i>x</i>) for <i>a</i> &gt; -1, <i>n</i> &gt;= 0"
 msgstr ""
 
 #: src/gtk/completion_info_data.c:71
@@ -3739,21 +3742,21 @@ msgstr ""
 msgid ""
 "<b>yl</b>(<i>l, x</i>)\n"
 "compute the irregular spherical Bessel function of order |<i>l</i>|, "
-"y<sub>l</sub>(|<i>x</i>|)"
+"y<sub><i>l</i></sub>(|<i>x</i>|)"
 msgstr ""
 
 #: src/gtk/completion_info_data.c:126
 msgid ""
 "<b>yn</b>(<i>n, x</i>)\n"
 "compute the irregular cylindrical Bessel function of order <i>n</i>, "
-"Y<sub>n</sub>(|<i>x</i>|)"
+"Y<sub><i>n</i></sub>(|<i>x</i>|)"
 msgstr ""
 
 #: src/gtk/completion_info_data.c:127
 msgid ""
 "<b>ynu</b>(<i>nu, x</i>)\n"
 "compute the irregular cylindrical Bessel function of fractional order |"
-"<i>nu</i>|, Y<sub>nu</sub>(|<i>x</i>|)"
+"<i>nu</i>|, Y<sub><i>nu</i></sub>(|<i>x</i>|)"
 msgstr ""
 
 #: src/gtk/completion_info_data.c:128
