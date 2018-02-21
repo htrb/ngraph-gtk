@@ -26,13 +26,12 @@ MathValue MATH_VALUE_ZERO = {0.0, MATH_VALUE_NORMAL};
 
 static struct math_token *st_look_ahead_token = NULL;
 
-static MathExpression * parse_expression(const char **str, MathEquation *eq, int *err);
-static MathExpression * parse_expression_list(const char **str, MathEquation *eq, int inside_block, int *err);
-static MathExpression * parse_unary_expression(const char **str, MathEquation *eq, int *err);
-
+static MathExpression * parse_expression(struct math_string *mstr, MathEquation *eq, int *err);
+static MathExpression * parse_expression_list(struct math_string *mstr, MathEquation *eq, int inside_block, int *err);
+static MathExpression * parse_unary_expression(struct math_string *mstr, MathEquation *eq, int *err);
 
 static struct math_token *
-my_get_token(const char **str)
+my_get_token(struct math_string *str)
 {
   struct math_token *token;
 
@@ -41,7 +40,7 @@ my_get_token(const char **str)
     st_look_ahead_token = token->next;
     token->next = NULL;
   } else {
-    token = math_scanner_get_token(*str, str);
+    token = math_scanner_get_token(str);
   }
 
   return token;
@@ -55,7 +54,7 @@ unget_token(struct math_token *token)
 }
 
 static MathExpression *
-parse_array_expression(const char **str, MathEquation *eq, const char *name, int *err)
+parse_array_expression(struct math_string *str, MathEquation *eq, const char *name, int *err)
 {
   struct math_token *token;
   MathExpression *operand, *exp;
@@ -98,7 +97,7 @@ parse_array_expression(const char **str, MathEquation *eq, const char *name, int
 }
 
 static MathExpression *
-parse_primary_expression(const char **str, MathEquation *eq, int *err)
+parse_primary_expression(struct math_string *str, MathEquation *eq, int *err)
 {
   struct math_token *token, *token2;
   MathExpression *exp;
@@ -199,7 +198,7 @@ free_arg_list(MathExpression **argv)
 }
 
 static MathExpression *
-get_argument(const char **str, MathEquation *eq, struct math_function_parameter *fprm, int i, int *err)
+get_argument(struct math_string *str, MathEquation *eq, struct math_function_parameter *fprm, int i, int *err)
 {
   struct math_token *token;
   MathExpression *exp;
@@ -225,7 +224,7 @@ get_argument(const char **str, MathEquation *eq, struct math_function_parameter 
 }
 
 static int
-parse_argument_list(const char **str, MathEquation *eq, struct math_function_parameter *fprm, MathExpression ***buf, int argc, int *err)
+parse_argument_list(struct math_string *str, MathEquation *eq, struct math_function_parameter *fprm, MathExpression ***buf, int argc, int *err)
 {
   struct math_token *token;
   int i, n;
@@ -294,7 +293,7 @@ parse_argument_list(const char **str, MathEquation *eq, struct math_function_par
 }
 
 static MathExpression *
-create_math_func(const char **str, MathEquation *eq, struct math_token *name, int *err)
+create_math_func(struct math_string *str, MathEquation *eq, struct math_token *name, int *err)
 {
   struct math_function_parameter *fprm;
   int i, arg_max, argc, pos_id;
@@ -371,7 +370,7 @@ create_math_func(const char **str, MathEquation *eq, struct math_token *name, in
 }
 
 static MathExpression *
-parse_func_expression(const char **str, MathEquation *eq, int *err)
+parse_func_expression(struct math_string *str, MathEquation *eq, int *err)
 {
   struct math_token *token1, *token2;
   MathExpression *exp;
@@ -410,7 +409,7 @@ parse_func_expression(const char **str, MathEquation *eq, int *err)
 
 
 static MathExpression *
-parse_factorial_expression(const char **str, MathEquation *eq, int *err)
+parse_factorial_expression(struct math_string *str, MathEquation *eq, int *err)
 {
   struct math_token *token;
   MathExpression *operand, *exp;
@@ -456,7 +455,7 @@ parse_factorial_expression(const char **str, MathEquation *eq, int *err)
 }
 
 static MathExpression *
-parse_power_expression(const char **str, MathEquation *eq, int *err)
+parse_power_expression(struct math_string *str, MathEquation *eq, int *err)
 {
   struct math_token *token;
   MathExpression *left, *right, *exp;
@@ -507,7 +506,7 @@ parse_power_expression(const char **str, MathEquation *eq, int *err)
 }
 
 static MathExpression *
-parse_unary_expression(const char **str, MathEquation *eq, int *err)
+parse_unary_expression(struct math_string *str, MathEquation *eq, int *err)
 {
   struct math_token *token;
   MathExpression *exp, *operand;
@@ -662,7 +661,7 @@ create_variable_assign_expression(MathEquation *eq, enum MATH_OPERATOR_TYPE op,
 }
 
 static MathExpression *
-parse_assign_expression(const char **str, MathEquation *eq, enum MATH_OPERATOR_TYPE op, MathExpression *lexp, int *err)
+parse_assign_expression(struct math_string *str, MathEquation *eq, enum MATH_OPERATOR_TYPE op, MathExpression *lexp, int *err)
 {
   MathExpression *exp, *rexp;
 
@@ -686,7 +685,7 @@ parse_assign_expression(const char **str, MathEquation *eq, enum MATH_OPERATOR_T
 }
 
 static int
-parse_parameter_list(const char **str, MathEquation *eq, MathExpression *func, int *err)
+parse_parameter_list(struct math_string *str, MathEquation *eq, MathExpression *func, int *err)
 {
   struct math_token *token;
   enum MATH_FUNCTION_ARG_TYPE type;
@@ -764,7 +763,7 @@ parse_parameter_list(const char **str, MathEquation *eq, MathExpression *func, i
 }
 
 static MathExpression *
-parse_block_expression(const char **str, MathEquation *eq, int *err)
+parse_block_expression(struct math_string *str, MathEquation *eq, int *err)
 {
   struct math_token *token;
   MathExpression *exp;
@@ -823,7 +822,7 @@ free_func_prm(struct math_function_parameter *prm)
 }
 
 MathExpression *
-parse_func_def_expression(const char **str, MathEquation *eq, int *err)
+parse_func_def_expression(struct math_string *str, MathEquation *eq, int *err)
 {
   struct math_token *fname;
   MathExpression *exp, *block;
@@ -885,7 +884,7 @@ parse_func_def_expression(const char **str, MathEquation *eq, int *err)
 }
 
 MathExpression *
-parse_const_def_expression(const char **str, MathEquation *eq, int *err)
+parse_const_def_expression(struct math_string *str, MathEquation *eq, int *err)
 {
   struct math_token *cname, *token;
   MathExpression *exp, *cdef;
@@ -947,7 +946,7 @@ parse_const_def_expression(const char **str, MathEquation *eq, int *err)
 }
 
 static MathExpression *
-parse_expression(const char **str, MathEquation *eq, int *err)
+parse_expression(struct math_string *str, MathEquation *eq, int *err)
 {
   struct math_token *token;
   MathExpression *exp;
@@ -1013,7 +1012,7 @@ parse_expression(const char **str, MathEquation *eq, int *err)
 }
 
 static MathExpression *
-parse_expression_list(const char ** str, MathEquation *eq, int inside_block, int *err)
+parse_expression_list(struct math_string *str, MathEquation *eq, int inside_block, int *err)
 {
   struct math_token *token;
   MathExpression *exp, *prev, *top;
@@ -1059,7 +1058,7 @@ parse_expression_list(const char ** str, MathEquation *eq, int inside_block, int
       }
       continue;
     case MATH_TOKEN_TYPE_EOEQ:
-      if (*str[0] == '\0') {
+      if (str->cur[0] == '\0') {
 	if (inside_block) {
 	  *err = MATH_ERROR_MISS_RC;
 	  math_equation_set_parse_error(eq, token->ptr);
@@ -1130,14 +1129,15 @@ parse_expression_list(const char ** str, MathEquation *eq, int inside_block, int
 MathExpression *
 math_parser_parse(const char *line, MathEquation *eq, int *err)
 {
-  const char *ptr = line;
   struct math_token *token, *tmp;
   MathExpression *exp;
+  struct math_string str;
 
   *err = MATH_ERROR_NONE;
 
+  math_scanner_init_string(&str, line);
   st_look_ahead_token = NULL;
-  exp = parse_expression_list(&ptr, eq, 0, err);
+  exp = parse_expression_list(&str, eq, 0, err);
 
   token = st_look_ahead_token;
   while (token) {

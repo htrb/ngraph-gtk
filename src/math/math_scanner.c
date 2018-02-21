@@ -83,16 +83,24 @@ math_scanner_free_token(struct math_token *token)
 }
 
 struct math_token *
-math_scanner_get_token(const char *str, const char **rstr)
+math_scanner_get_token(struct math_string *mstr)
 {
   char c;
+  const char *str;
+  const char **rstr;
 
+  str = mstr->cur;
+  rstr = &(mstr->cur);
   if (str == NULL) {
     return NULL;
   }
 
-  while (*str < 0 || *str == ' ' || *str == '\t' || *str == '\n')
+  while (*str < 0 || *str == ' ' || *str == '\t' || *str == '\n') {
+    if (*str == '\n') {
+      mstr->line++;
+    }
     str++;
+  }
 
   c = str[0];
   if (c == '\0') {
@@ -114,10 +122,13 @@ math_scanner_get_token(const char *str, const char **rstr)
   } else if (c == '@') {
     return get_array_prefix(str, rstr);
   } else if (c == '#') {        /* comment */
-    while (*str != '\0' && *str != '\r' && *str != '\n') {
+    while (*str != '\0' && *str != '\n') {
+      if (*str == '\n') {
+        mstr->line++;
+      }
       str++;
     }
-    return math_scanner_get_token(str, rstr);
+    return math_scanner_get_token(mstr);
   }
 
   return get_unknown(str, rstr);
@@ -508,4 +519,12 @@ create_token(const char *str, enum MATH_TOKEN_TYPE type)
   tok->ptr = str;
 
   return tok;
+}
+
+void
+math_scanner_init_string(struct math_string *str, const char *line)
+{
+  str->top = line;
+  str->cur = line;
+  line = 0;
 }
