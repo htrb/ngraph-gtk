@@ -1,6 +1,11 @@
 2018-02-21  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11file.c (move_cursor_to_error_line): added.
+	(MathTextDialogClose, focus_math_widget): use
+	"move_cursor_to_error_line()".
+
 	* src/math/math_error.c (math_err_get_error_message): show line number.
+	(math_err_get_recent_error_line_number): added.
 
 	* src/math/math_equation.c (math_equation_set_parse_error): add 3rd parameter.
 
