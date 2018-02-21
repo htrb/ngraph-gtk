@@ -526,5 +526,5 @@ math_scanner_init_string(struct math_string *str, const char *line)
 {
   str->top = line;
   str->cur = line;
-  line = 0;
+  str->line = 0;
 }

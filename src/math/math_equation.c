@@ -201,12 +201,13 @@ math_equation_clear(MathEquation *eq)
 }
 
 void
-math_equation_set_parse_error(MathEquation *eq, const char *ptr)
+math_equation_set_parse_error(MathEquation *eq, const char *ptr, int line)
 {
   if (eq == NULL)
     return;
 
-  eq->err_info.pos = ptr;
+  eq->err_info.pos.pos = ptr;
+  eq->err_info.pos.line = line + 1;
 }
 
 void

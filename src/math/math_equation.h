@@ -52,7 +52,10 @@ struct _math_equation {
   MathEquationParametar *parameter;
   MathEquationArray *array_buf;
   union {
-    const char *pos;
+    struct {
+      const char *pos;
+      int line;
+    } pos;
     struct {
       int arg_num;
       struct math_function_parameter *fprm;
@@ -126,7 +129,7 @@ void *math_equation_get_user_data(MathEquation *eq);
 
 int math_equation_check_const(MathEquation *eq, int *constant, int n);
 
-void math_equation_set_parse_error(MathEquation *eq, const char *ptr);
+void math_equation_set_parse_error(MathEquation *eq, const char *ptr, int line);
 void math_equation_set_func_arg_num_error(MathEquation *eq, struct math_function_parameter *fprm, int arg_num);
 void math_equation_set_func_error(MathEquation *eq, struct math_function_parameter *fprm);
 void math_equation_set_const_error(MathEquation *eq, int id);
