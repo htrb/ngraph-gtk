@@ -1,3 +1,17 @@
+2018-02-21  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/math/math_basic_function.c (math_func_array): added.
+
+	* src/math/math_equation.c (math_equation_add_func): use
+	"math_function_get_arg_type_num()".
+
+	* src/math/math_parser.c (get_argument): use
+	"math_function_get_arg_type_num()".
+
+	* src/math/math_expression.c (math_function_get_arg_type_num): added.
+	(check_argument, call_func): use
+	"math_function_get_arg_type_num()".
+
 2018-02-20  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11opt.c (FontSettingDialogSetupItem)
