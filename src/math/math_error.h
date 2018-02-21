@@ -38,5 +38,6 @@ enum MATH_ERROR {
 };
 
 char *math_err_get_error_message(MathEquation *eq, const char *code, int err);
+int math_err_get_recent_error_line_number(void);
 
 #endif
