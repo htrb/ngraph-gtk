@@ -145,4 +145,6 @@ MathExpression *math_expression_optimize(MathExpression *exp, int *err);
 void math_expression_free(MathExpression *exp);
 int math_expression_calculate(MathExpression *exp, MathValue *val);
 
+int math_function_get_arg_type_num(struct math_function_parameter *fprm);
+
 #endif

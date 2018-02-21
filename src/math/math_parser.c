@@ -203,8 +203,10 @@ get_argument(const char **str, MathEquation *eq, struct math_function_parameter 
 {
   struct math_token *token;
   MathExpression *exp;
+  int argc;
 
-  if (fprm->arg_type && i < fprm->argc && fprm->arg_type[i] == MATH_FUNCTION_ARG_TYPE_ARRAY) {
+  argc = math_function_get_arg_type_num(fprm);
+  if (fprm->arg_type && i < argc && fprm->arg_type[i] == MATH_FUNCTION_ARG_TYPE_ARRAY) {
     token = my_get_token(str);
     if (token->type != MATH_TOKEN_TYPE_SYMBOL) {
       *err = MATH_ERROR_INVALID_FDEF;
