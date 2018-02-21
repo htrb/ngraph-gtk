@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.06.13\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2018-02-21 14:29+0900\n"
-"PO-Revision-Date: 2018-02-21 14:32+0900\n"
+"POT-Creation-Date: 2018-02-21 16:02+0900\n"
+"PO-Revision-Date: 2018-02-21 16:02+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja\n"
@@ -4570,18 +4570,33 @@ msgstr "数式エラー, この定数は既に存在します."
 msgid "error, calculation error."
 msgstr "エラー, 計算エラー."
 
-#: src/math/math_error.c:82 src/math/math_error.c:90 src/math/math_error.c:108
-#: src/math/math_error.c:116 src/math/math_error.c:124
-#: src/math/math_error.c:132 src/math/math_error.c:140
-#: src/math/math_error.c:148 src/math/math_error.c:156
-#: src/math/math_error.c:164 src/math/math_error.c:172
+#: src/math/math_error.c:82 src/math/math_error.c:90 src/math/math_error.c:109
+#: src/math/math_error.c:117 src/math/math_error.c:125
+#: src/math/math_error.c:133 src/math/math_error.c:141
+#: src/math/math_error.c:149 src/math/math_error.c:157
+#: src/math/math_error.c:165 src/math/math_error.c:173
 #, c-format
 msgid ""
-"%s\n"
+"%s (line %d)\n"
 "  the error is found at: %s"
 msgstr ""
-"%s\n"
+"%s (行 %d)\n"
 "  エラーの起きた場所: %s"
+
+#: src/math/math_error.c:97
+#, c-format
+msgid "%s (%d for %d) '%s()' (line %d)"
+msgstr "%s (%d for %d) '%s()' (行 %d)"
+
+#: src/math/math_error.c:186
+#, c-format
+msgid "%s '%s()' (line %d)"
+msgstr "%s '%s()' (行 %d)"
+
+#: src/math/math_error.c:194
+#, c-format
+msgid "%s '%s' (line %d)"
+msgstr "%s '%s' (行 %d)"
 
 #: src/odraw.c:60
 msgid "relative"
