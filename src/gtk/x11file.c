@@ -369,6 +369,19 @@ MathTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
 }
 
 static void
+move_cursor_to_error_line(GtkWidget *view)
+{
+  GtkTextIter iter;
+  GtkTextBuffer *buffer;
+  int ln;
+
+  ln = math_err_get_recent_error_line_number() - 1;
+  buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(view));
+  gtk_text_buffer_get_iter_at_line(buffer, &iter, ln);
+  gtk_text_buffer_place_cursor(buffer, &iter);
+}
+
+static void
 MathTextDialogClose(GtkWidget *w, void *data)
 {
   struct MathTextDialog *d;
@@ -416,6 +429,15 @@ MathTextDialogClose(GtkWidget *w, void *data)
       if (sputobjfield(d->Obj, id, FieldStr[d->Mode], ptr)) {
 	g_free(ptr);
 	d->ret = IDLOOP;
+        switch (d->page) {
+        case 0:
+          gtk_widget_grab_focus(d->list);
+          break;
+        case 1:
+          gtk_widget_grab_focus(d->text);
+          move_cursor_to_error_line(d->text);
+          break;
+        }
 	return;
       }
       set_graph_modified();
@@ -4259,6 +4281,7 @@ focus_math_widget(struct FileDialog *d, int math_tab_id, GtkWidget *text, GtkWid
   } else {
     gtk_notebook_set_current_page(d->math_tab, math_tab_id);
     gtk_widget_grab_focus(text);
+    move_cursor_to_error_line(text);
   }
 }
 
