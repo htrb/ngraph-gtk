@@ -81,6 +81,7 @@ array_stdev	1	1	0	1
 array_compact	1	1	0	1
 array_min	1	1	0	1
 array_max	1	1	0	1
+array		-2	1	0	1
 isnormal	1	0	0	NULL
 isnan		1	0	0	NULL
 isundef		1	0	0	NULL

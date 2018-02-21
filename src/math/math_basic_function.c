@@ -2799,6 +2799,38 @@ math_func_size(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
 }
 
 int
+math_func_array(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int id, i, r;
+  MathEquationArray *ary;
+
+  rval->val = 0;
+
+  id = (int) exp->buf[0].idx;
+  ary = math_equation_get_array(eq, id);
+  if (ary == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  r = math_equation_clear_array(eq, id);
+  if (r) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+  for (i = 1; i < exp->argc; i++) {
+    if (math_equation_push_array_val(eq, id, &exp->buf[i].val)) {
+      rval->type = MATH_VALUE_ERROR;
+      return 1;
+    }
+  }
+
+  rval->val = exp->argc - 1;
+
+  return 0;
+}
+
+int
 math_func_array_sum(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   int id, i;
