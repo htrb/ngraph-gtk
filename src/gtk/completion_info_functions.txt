@@ -82,6 +82,7 @@ pop(a)		remove the last element of array <i>a</i>, and returns that element
 push(a, x)	adds new element <i>x</i> to the end of an array <i>a</i>, and returns <i>x</i>
 shift(a)	remove the first element of array <i>a</i>, and returns that element
 unshift(a, x)	adds new element <i>x</i> to the beginning of an array <i>a</i>, returns <i>x</i>
+array(a, v1, v2, ...)	initialize an array <i>a</i> with the rest arguments\nreturn the number of elements of the array
 array_sum(a)	returns the sum of the elements of array <i>a</i>
 array_sumsq(a)	returns the square sum of the elements of array <i>a</i>
 array_average(a)	return the average of the elements of array <i>a</i>
