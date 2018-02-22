@@ -1,5 +1,6 @@
 #include "completion_info.h"
 
+#if GTK_SOURCE_CHECK_VERSION(3, 24, 0)
 static int
 check_paren(GtkTextIter *iter)
 {
@@ -17,13 +18,16 @@ check_paren(GtkTextIter *iter)
   }
   return (ch == paren);
 }
+#endif
 
 static GList *
 completion_info_populate(struct completion_info *info, const char *word, int len, GtkTextIter *iter)
 {
   GList *ret = NULL;
   int i, r;
+#if GTK_SOURCE_CHECK_VERSION(3, 24, 0)
   const char *text;
+#endif
 
   for (i = 0; info[i].lower_text; i++) {
     r = strncmp(info[i].lower_text, word, len);
