@@ -1,3 +1,8 @@
+2018-02-22  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/object.c (get_localized_str): added.
+	(error2, error22): use "get_localized_str()".
+
 2018-02-21  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (move_cursor_to_error_line): added.
