@@ -1,3 +1,15 @@
+2018-02-23  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/math/math_error.c (math_err_get_error_message): show error
+	line and line-offset.
+
+	* src/math/math_equation.c (math_equation_set_parse_error): change
+	type of the 3rd parameter from "int" to "const struct math_string
+	*str".
+
+	* src/math/math_scanner.c (math_scanner_get_token): save current
+	line and line-offset.
+
 2018-02-22  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/object.c (get_localized_str): added.
