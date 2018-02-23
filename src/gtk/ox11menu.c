@@ -2170,12 +2170,26 @@ mx_show_lib_version(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 
   g_string_append_printf(str, "%sPango\n"
 	       "%s compile: %s\n"
-	       "%s  linked: %s\n",
+	       "%s  linked: %s\n"
+	       "\n",
 	       h,
 	       h,
 	       PANGO_VERSION_STRING,
 	       h,
 	       pango_version_string());
+
+  g_string_append_printf(str, "%sGtkSourceView\n"
+	       "%s compile: %d.%d.%d\n"
+	       "%s  linked: %d.%d.%d\n",
+	       h,
+	       h,
+               GTK_SOURCE_MAJOR_VERSION,
+	       GTK_SOURCE_MINOR_VERSION,
+	       GTK_SOURCE_MICRO_VERSION,
+	       h,
+               gtk_source_get_major_version(),
+               gtk_source_get_minor_version(),
+               gtk_source_get_micro_version());
 
 #ifdef RL_VERSION_MAJOR
   g_string_append(str, "\n");
