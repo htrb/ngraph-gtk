@@ -105,7 +105,7 @@ math_err_get_error_message(MathEquation *eq, const char *code, int err)
     break;
   case MATH_ERROR_ARG_NUM:
     if (eq->err_info.func.fprm) {
-      buf = g_strdup_printf(_("%s (%d for %d) '%s()' (%d:%d)"),
+      buf = g_strdup_printf("%s (%d for %d) '%s()' (%d:%d)",
                             _(ERR_MSG_ARG_NUM),
 			    eq->err_info.func.arg_num,
 			    eq->err_info.func.fprm->argc,
