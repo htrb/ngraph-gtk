@@ -521,7 +521,7 @@ struct MiscDialog
   GtkWidget *editor, *directory, *path, *datafile,
     *expand, *expanddir, *loadpath, *mergefile, *coordwin_font, *infowin_font,
     *file_preview_font, *hist_size, *info_size, *data_head_lines, *help_browser,
-    *browser, *use_opacity, *select_data, *use_custom_palette;
+    *browser, *use_opacity, *select_data, *use_custom_palette, *source_style;
   struct objlist *Obj;
   struct narray tmp_palette;
   int Id;

@@ -1228,6 +1228,15 @@ MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
 
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->use_custom_palette), Menulocal.use_custom_palette);
   arraycpy(&(d->tmp_palette), &(Menulocal.custom_palette));
+
+  if (Menulocal.source_style_id) {
+    GtkSourceStyleSchemeManager *sman;
+    GtkSourceStyleScheme *style;
+    sman = gtk_source_style_scheme_manager_get_default();
+    style = gtk_source_style_scheme_manager_get_scheme(sman, Menulocal.source_style_id);
+    gtk_source_style_scheme_chooser_set_style_scheme(GTK_SOURCE_STYLE_SCHEME_CHOOSER(d->source_style),
+                                                     style);
+  }
 }
 
 static void
@@ -1479,6 +1488,10 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect(w, "clicked", G_CALLBACK(edit_custom_palette), d);
     add_widget_to_table(table, w, NULL, FALSE, i++);
 
+    w = gtk_source_style_scheme_chooser_button_new();
+    add_widget_to_table(table, w, _("_Source style:"), FALSE, i++);
+    d->source_style = w;
+
     gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(vbox2), frame, TRUE, TRUE, 4);
 
@@ -1538,7 +1551,8 @@ MiscDialogClose(GtkWidget *w, void *data)
   struct MiscDialog *d;
   int a, ret;
   const char *buf;
-  char *buf2;
+  char *buf2, *source_style_id;
+  GtkSourceStyleScheme *source_style;
 
   d = (struct MiscDialog *) data;
 
@@ -1611,6 +1625,14 @@ MiscDialogClose(GtkWidget *w, void *data)
 
   d->ret = ret;
 
+  source_style = gtk_source_style_scheme_chooser_get_style_scheme(GTK_SOURCE_STYLE_SCHEME_CHOOSER(d->source_style));
+  source_style_id = gtk_source_style_scheme_get_id(source_style);
+  if (g_strcmp0(Menulocal.source_style_id, source_style_id)) {
+    if (Menulocal.source_style_id) {
+      g_free(Menulocal.source_style_id);
+    }
+    Menulocal.source_style_id = g_strdup(source_style_id);
+  }
   if (d->ret == IDSAVE) {
     save_config(SAVE_CONFIG_TYPE_MISC);
   }
