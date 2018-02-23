@@ -266,6 +266,32 @@ create_source_view(void)
   return GTK_WIDGET(source_view);
 }
 
+static void
+set_source_style(GtkWidget *view)
+{
+  GtkSourceBuffer *buffer;
+  GtkSourceStyleScheme *style;
+  GtkSourceStyleSchemeManager *sman;
+  const char *style_id;
+
+  if (Menulocal.source_style_id == NULL) {
+    return;
+  }
+
+  buffer = GTK_SOURCE_BUFFER(gtk_text_view_get_buffer(GTK_TEXT_VIEW(view)));
+  style = gtk_source_buffer_get_style_scheme(buffer);
+  style_id = gtk_source_style_scheme_get_id(style);
+  if (g_strcmp0(Menulocal.source_style_id, style_id) == 0) {
+    return;
+  }
+  sman = gtk_source_style_scheme_manager_get_default();
+  style = gtk_source_style_scheme_manager_get_scheme(sman, Menulocal.source_style_id);
+  if (style == NULL) {
+    return;
+  }
+  gtk_source_buffer_set_style_scheme(buffer, style);
+}
+
 static gchar *
 get_text_from_buffer(GtkTextBuffer *buffer)
 {
@@ -361,6 +387,7 @@ MathTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
     break;
   }
 
+  set_source_style(d->text);
   gtk_label_set_text(GTK_LABEL(d->label), _(label[d->Mode]));
   gtk_entry_set_text(GTK_ENTRY(d->list), d->Text);
   set_text_to_source_buffer(d->text, d->Text);
@@ -2520,6 +2547,11 @@ math_tab_setup_item(struct FileDialog *d, int id)
 
   entry_completion_set_entry(NgraphApp.x_math_list, d->math.x);
   entry_completion_set_entry(NgraphApp.y_math_list, d->math.y);
+  set_source_style(d->math.text_x);
+  set_source_style(d->math.text_y);
+  set_source_style(d->math.text_f);
+  set_source_style(d->math.text_g);
+  set_source_style(d->math.text_h);
 }
 
 static void
