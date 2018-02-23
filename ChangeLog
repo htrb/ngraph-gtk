@@ -1,7 +1,16 @@
 2018-02-23  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11file.c (set_source_style): added.
+	(MathTextDialogSetup, math_tab_setup_item): call
+	"set_source_style()".
+
+	* src/gtk/x11opt.c (MiscDialogSetupItem, MiscDialogSetup)
+	(MiscDialogClose): add source style settings.
+
 	* src/gtk/ox11menu.c (mx_show_lib_version): show version of
 	GtkSourceView.
+	(MenuConfigMisc): add "sourece_style_id" setting.
+	(menuinit): initialize "Menulocal.source_style_id".
 
 	* src/math/math_parser.c (parse_primary_expression): don't apply
 	the limitation of the length of a variable.
