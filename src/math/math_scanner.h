@@ -6,6 +6,11 @@
 #ifndef MATH_SCANNER_HEADER
 #define MATH_SCANNER_HEADER
 
+struct math_string {
+  const char *top, *cur;
+  int line, ofst;
+};
+
 #include "math_operator.h"
 #include "math_constant.h"
 
@@ -39,11 +44,6 @@ struct math_token {
   } data;
   const char *ptr;
   struct math_token *next;
-};
-
-struct math_string {
-  const char *top, *cur;
-  int line, ofst;
 };
 
 struct math_token *math_scanner_get_token(struct math_string *rstr);
