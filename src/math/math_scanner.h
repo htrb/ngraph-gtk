@@ -43,7 +43,7 @@ struct math_token {
 
 struct math_string {
   const char *top, *cur;
-  int line;
+  int line, ofst;
 };
 
 struct math_token *math_scanner_get_token(struct math_string *rstr);
