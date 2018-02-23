@@ -375,7 +375,7 @@ move_cursor_to_error_line(GtkWidget *view)
   GtkTextBuffer *buffer;
   int ln, ofst;
 
-  math_err_get_recent_error_pos(&ln, &ofst);
+  math_err_get_recent_error_position(&ln, &ofst);
   ln--;
   ofst--;
   buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(view));
