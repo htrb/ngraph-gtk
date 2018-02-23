@@ -29,7 +29,7 @@
 #define ERR_MSG_CONST_EXIST	N_("error, the constant is already defined.")
 #define ERR_MSG_CALCULATION	N_("error, calculation error.")
 
-static int ErrorLine = 1;
+  static int ErrorLine = 1, ErrorOfst = 1;
 
 static char *
 check_error_position(MathEquation *eq, const char *code)
@@ -65,6 +65,7 @@ check_error_position(MathEquation *eq, const char *code)
   buf[i] = '\0';
 
   ErrorLine = eq->err_info.pos.line;
+  ErrorOfst = eq->err_info.pos.ofst;
   return buf;
 }
 
@@ -220,8 +221,13 @@ math_err_get_error_message(MathEquation *eq, const char *code, int err)
   return buf;
 }
 
-int
-math_err_get_recent_error_line_number(void)
+void
+math_err_get_recent_error_pos(int *line, int *ofst)
 {
-  return ErrorLine;
+  if (line) {
+    *line = ErrorLine;
+  }
+  if (ofst) {
+    *ofst = ErrorOfst;
+  }
 }
