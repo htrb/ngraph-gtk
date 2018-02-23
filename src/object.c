@@ -156,9 +156,9 @@ get_localized_str(const char *str)
 {
   char *local_str;
   if (g_utf8_validate(str, -1, NULL)) {
-    local_str = g_strdup(str);
-  } else {
     local_str = g_locale_from_utf8(str, -1, NULL, NULL, NULL);
+  } else {
+    local_str = g_strdup(str);
   }
   return local_str;
 }
