@@ -245,6 +245,7 @@ static struct menu_config MenuConfigMisc[] = {
   {"select_data_on_export",	MENU_CONFIG_TYPE_BOOL,    NULL, &Menulocal.select_data},
   {"use_custom_palette",	MENU_CONFIG_TYPE_BOOL,    NULL, &Menulocal.use_custom_palette},
   {"custom_palette",		MENU_CONFIG_TYPE_COLOR_ARY, menu_config_set_custom_palette, NULL},
+  {"sourece_style_id",		MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.source_style_id},
   {NULL},
 };
 
@@ -1264,6 +1265,7 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   Menulocal.exwin_use_external = TRUE;
   Menulocal.expand = 1;
   Menulocal.expanddir = g_strdup("./");
+  Menulocal.source_style_id = NULL;
   Menulocal.loadpath = SAVE_PATH_FULL;
   Menulocal.GRAobj = chkobject("gra");
   Menulocal.hist_size = 1000;

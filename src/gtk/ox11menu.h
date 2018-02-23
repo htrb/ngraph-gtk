@@ -140,6 +140,7 @@ struct menulocal
   struct character_map_list *char_map;
   int use_custom_palette;
   struct narray custom_palette;
+  char *source_style_id;
 };
 
 extern struct menulocal Menulocal;
