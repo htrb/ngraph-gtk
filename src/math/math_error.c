@@ -261,7 +261,7 @@ math_err_get_error_message(MathEquation *eq, const char *code, int err)
 }
 
 void
-math_err_get_recent_error_pos(int *line, int *ofst)
+math_err_get_recent_error_position(int *line, int *ofst)
 {
   if (line) {
     *line = ErrorLine;
