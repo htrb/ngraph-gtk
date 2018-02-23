@@ -134,7 +134,7 @@ parse_primary_expression(struct math_string *str, MathEquation *eq, int *err)
 	    math_scanner_free_token(token);
 	    return NULL;
 	  }
-#if 1				/* length of a variable expression is less than 3 other than start with "_". */
+#if 0				/* length of a variable expression is less than 3 other than start with "_". */
 	} else if (token->data.sym[0] == '_' || strlen(token->data.sym) < 3) {
 	  exp = math_variable_expression_new(eq, token->data.sym, err);
 	} else {
