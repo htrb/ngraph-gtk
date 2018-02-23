@@ -1,5 +1,8 @@
 2018-02-23  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/math/math_parser.c (parse_primary_expression): don't apply
+	the limitation of the length of a variable.
+
 	* src/math/math_error.c (math_err_get_error_message): show error
 	line and line-offset.
 
