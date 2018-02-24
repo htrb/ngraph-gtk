@@ -1,3 +1,10 @@
+2018-02-24  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11opt.c (MiscDialogSetup): call
+	"souce_view_initialize()".
+
+	* src/gtk/x11file.c (souce_view_initialize): renamed.
+
 2018-02-23  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (set_source_style): added.
