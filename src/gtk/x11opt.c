@@ -1488,6 +1488,7 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect(w, "clicked", G_CALLBACK(edit_custom_palette), d);
     add_widget_to_table(table, w, NULL, FALSE, i++);
 
+    souce_view_initialize();
     w = gtk_source_style_scheme_chooser_button_new();
     add_widget_to_table(table, w, _("_Source style:"), FALSE, i++);
     d->source_style = w;
@@ -1550,8 +1551,8 @@ MiscDialogClose(GtkWidget *w, void *data)
 {
   struct MiscDialog *d;
   int a, ret;
-  const char *buf;
-  char *buf2, *source_style_id;
+  const char *buf, *source_style_id;
+  char *buf2;
   GtkSourceStyleScheme *source_style;
 
   d = (struct MiscDialog *) data;
