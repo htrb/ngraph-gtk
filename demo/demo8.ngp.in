@@ -298,9 +298,14 @@ new data
 	data::type=mark
 	data::interpolation=spline
 	data::fit=
-	data::math_x='FOR(0, 1, SIZE(COL)-1, 1, F(i:=RM(0), Y, COL[i])); X-1'
-	data::math_y='Y-1'
-	data::func_f='Z:=(1-Z)*0.68; HSB2(Z,1,1); DRAW_RECT(X,Y,-1.1,-1.1,FALSE,TRUE)'
+	data::math_x='for(0, 1, SIZE(col) - 1, 1,         # draw rectangle for each column
+  progn(
+   i := rm(0),                      # index of the column
+   hsb2((1 - col[i]) * 0.68, 1, 1), # set fill color
+   draw_rect(i, y, -1.1, -1.1, FALSE, TRUE)));
+x - 1'
+	data::math_y='y - 1'
+	data::func_f=
 	data::func_g=
 	data::func_h=
 	data::smooth_x=0
@@ -349,10 +354,23 @@ new data
 	data::type=line
 	data::interpolation=spline
 	data::fit=
-	data::math_x='IF(%0==NUM,G(SIZE(COL),NUM)); X*H()'
-	data::math_y='IF(%0==COLY,FOR(0,1,AM(COL)-1,1,F(RM(0)))); %0'
-	data::func_f='DRAW_LINE(X-1,RM(X)*H(),X,RM(X+1)*H())'
-	data::func_g='COLOR(3,128); DRAW_LINE(COLX,0,COLX,Y); DRAW_LINE(0,COLY,X,COLY)'
+	data::math_x='if(%0 == NUM,                              # at the last data
+  progn(
+    color(3,128),                          # set line color
+    draw_line(COLX, 0, COLX, NUM),         # draw a vertical line
+    draw_line(0, COLY, size(col), COLY))); # draw a horizontal line
+x * h();';
+	data::math_y='const SCALE := h();
+n := size(col);              # number of the data
+if(%0 == COLY,               # if data row is COLY
+  for(0, 1, n - 1, 1,        # draw horizontal data
+    progn(
+      i := rm(0),
+      draw_line(i - 1, col[i]     * SCALE,
+                i,     col[i + 1] * SCALE))));
+%0'
+	data::func_f=
+	data::func_g=
 	data::func_h='100'
 	data::smooth_x=0
 	data::smooth_y=0
