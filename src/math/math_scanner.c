@@ -133,6 +133,7 @@ math_scanner_get_token(struct math_string *mstr)
       }
       str++;
     }
+    mstr->cur = str;
     token = math_scanner_get_token(mstr);
   } else {
     token = get_unknown(str, rstr);
