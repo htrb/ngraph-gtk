@@ -47,3 +47,4 @@ void CmOptionFileDef(void *w, gpointer client_data);
 int update_file_obj_multi(struct objlist *obj, struct narray *farray, int newfile);
 void copy_file_obj_field(struct objlist *obj, int id, int sel, int copy_filename);
 void button_set_mark_image(GtkWidget *w, int type);
+void souce_view_initialize(void);
