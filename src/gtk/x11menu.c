@@ -5846,6 +5846,7 @@ souce_view_initialize(void)
 {
   const gchar * const *dirs;
   gchar **new_dirs;
+  gchar *dir;
   int n;
   static int initialized = FALSE;
   GtkSourceLanguageManager *lm;
@@ -5859,18 +5860,18 @@ souce_view_initialize(void)
   dirs = gtk_source_language_manager_get_search_path(lm);
   for (n = 0; dirs[n]; n++);
   new_dirs = g_malloc((n + 2) * sizeof(*new_dirs));
-  if (new_dirs) {
-    gchar *dir;
-    dir = g_strdup_printf("%s/%s", NDATADIR, "gtksourceview");
-    if (dir) {
-      memcpy(new_dirs, dirs, n * sizeof(*new_dirs));
-      new_dirs[n] = dir;
-      new_dirs[n + 1] = NULL;
-      gtk_source_language_manager_set_search_path(lm, new_dirs);
-      g_free(dir);
-    }
-    g_free(new_dirs);
+  if (new_dirs == NULL) {
+    return;
   }
+  dir = g_strdup_printf("%s/%s", NDATADIR, "gtksourceview");
+  if (dir) {
+    memcpy(new_dirs, dirs, n * sizeof(*new_dirs));
+    new_dirs[n] = dir;
+    new_dirs[n + 1] = NULL;
+    gtk_source_language_manager_set_search_path(lm, new_dirs);
+    g_free(dir);
+  }
+  g_free(new_dirs);
 }
 
 int
