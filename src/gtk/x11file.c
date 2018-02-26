@@ -187,38 +187,6 @@ add_completion_provider_math(GtkSourceView *source_view)
   add_completion_provider(source_view, GTK_SOURCE_COMPLETION_PROVIDER(words));
 }
 
-void
-souce_view_initialize(void)
-{
-  const gchar * const *dirs;
-  gchar **new_dirs;
-  int n;
-  static int initialized = FALSE;
-  GtkSourceLanguageManager *lm;
-
-  if (initialized) {
-    return;
-  }
-  initialized = TRUE;
-
-  lm = gtk_source_language_manager_get_default();
-  dirs = gtk_source_language_manager_get_search_path(lm);
-  for (n = 0; dirs[n]; n++);
-  new_dirs = g_malloc((n + 2) * sizeof(*new_dirs));
-  if (new_dirs) {
-    gchar *dir;
-    dir = g_strdup_printf("%s/%s", NDATADIR, "gtksourceview");
-    if (dir) {
-      memcpy(new_dirs, dirs, n * sizeof(*new_dirs));
-      new_dirs[n] = dir;
-      new_dirs[n + 1] = NULL;
-      gtk_source_language_manager_set_search_path(lm, new_dirs);
-      g_free(dir);
-    }
-    g_free(new_dirs);
-  }
-}
-
 static GtkWidget *
 create_source_view(void)
 {
@@ -255,7 +223,6 @@ create_source_view(void)
   g_object_set_property(G_OBJECT(comp), "remember-info-visibility", &value);
 
   lm = gtk_source_language_manager_get_default();
-  souce_view_initialize();
   lang = gtk_source_language_manager_get_language(lm, "ngraph_math");
   gtk_source_buffer_set_language(GTK_SOURCE_BUFFER(buffer), lang);
   gtk_source_buffer_set_highlight_syntax(GTK_SOURCE_BUFFER(buffer), TRUE);
