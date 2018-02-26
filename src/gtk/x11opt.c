@@ -1402,6 +1402,13 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     table = gtk_grid_new();
 
     i = 0;
+    w = combo_box_create();
+    add_widget_to_table(table, w, _("_Path:"), FALSE, i++);
+    for (j = 0; LoadPathStr[j]; j++) {
+      combo_box_append_text(w, _(LoadPathStr[j]));
+    }
+    d->loadpath = w;
+
     w = gtk_check_button_new_with_mnemonic(_("_Expand include file"));
     add_widget_to_table(table, w, NULL, FALSE, i++);
     d->expand = w;
@@ -1409,13 +1416,6 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = create_text_entry(FALSE, TRUE);
     add_widget_to_table(table, w, _("_Expand directory:"), TRUE, i++);
     d->expanddir = w;
-
-    w = combo_box_create();
-    add_widget_to_table(table, w, _("_Path:"), FALSE, i++);
-    for (j = 0; LoadPathStr[j]; j++) {
-      combo_box_append_text(w, _(LoadPathStr[j]));
-    }
-    d->loadpath = w;
 
     gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(vbox2), frame, TRUE, TRUE, 4);
