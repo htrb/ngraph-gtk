@@ -1437,7 +1437,7 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, _("_Length of information view:"), FALSE, i++);
     d->info_size = w;
 
-    w = create_spin_entry(0, SPIN_ENTRY_MAX, 1, FALSE, TRUE);
+    w = create_spin_entry(0, HIST_SIZE_MAX, 1, FALSE, TRUE);
     add_widget_to_table(table, w, _("_Length of data preview:"), FALSE, i++);
     d->data_head_lines = w;
 
