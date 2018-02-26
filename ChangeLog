@@ -1,5 +1,8 @@
 2018-02-26  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11file.c (math_common_widgets_create): call
+	"gtk_widget_set_vexpand()".
+
 	* src/gtk/x11menu.c (souce_view_initialize): moved from
 	"x11file.c".
 	(application): call "souce_view_initialize()".
