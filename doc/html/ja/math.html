@@ -492,6 +492,26 @@
       (x1, y1) から (x2, y2) に直線を描画します。
     </td>
   </tr>
+  <tr>
+    <td>
+      DRAW_ERRORBAR(x, y, erx, ery, size)
+    </td>
+    <td>
+      (x - erx, y) から (x + erx, y) および (x, y - ery) から (x, y +
+      ery) に誤差棒を描画する。size で tick の長さを指定できる。size が
+      0 のときはファイルオブジェクトのサイズ指定が使われる。
+    </td>
+  </tr>
+  <tr>
+    <td>
+      DRAW_ERRORBAR2(x1, y1, x2, y2, size)
+    </td>
+    <td>
+      (x1, y1) から (x2, y2) に誤差棒を描画する。size で tick の長さを
+      指定できる。size が 0 のときはファイルオブジェクトのサイズ指定が
+      使われる。
+    </td>
+  </tr>
 </table>
 <br>
 <h3><a name="OTHER_FUNC" href="#TOP">その他の関数</a></h3>
