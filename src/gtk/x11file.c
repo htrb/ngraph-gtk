@@ -4212,7 +4212,7 @@ RangeDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->max = w;
 
     w = create_spin_entry(2, 65536, 1, FALSE, TRUE);
-    add_widget_to_table(table, w, _("_Division:"), FALSE, i++);
+    add_widget_to_table(table, w, _("di_ViSion:"), FALSE, i++);
     d->div = w;
 
     FileDialogSetupCommon(wi, d);
