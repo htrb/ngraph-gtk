@@ -98,8 +98,10 @@ cm(x, n)	initialize <i>n</i> memories from the beginning with <i>x</i>\ninitiali
 am(a)		copy the contents of array <i>a</i> to the memory\n(return the number of copied elements)
 draw_rect(x, y, w, h, stroke, fill)	draw a rectangle with (<i>x, y</i>) and (<i>x + w, y + h</i>) as diagonal vertices.\nWhen <i>stroke</i> and <i>fill</i> are 0, do not draw contours and fills respectively.
 draw_arc(x, y, rx, ry, start, angle, stroke, fill, pieslice, close)	draw an arc with the X direction radius <i>rx</i> and the Y direction radius <i>ry</i> centered on (<i>x, y</i>).\n<i>start</i> and <i>angle</i> specify start angle and arc angle.\nWhen <i>stroke</i> and <i>fill</i> are 0, do not draw contours and fills respectively.\nIf <i>pieslice</i> is not 0, draw a sector.\nIf <i>close</i> is not 0, close the outline.
-draw_mark(x, y, size)	draw a mark on (<i>x, y</i>). The <i>size</i> can be specified with size.\nWhen <i>size</i> is 0, specification of the file object is used.
+draw_mark(x, y, size)	draw a mark on (<i>x, y</i>). The size of a mark can be specified with <i>size<i>.\nWhen <i>size</i> is 0, specification of the file object is used.
 draw_line(x1, y1, x2, y2)	draw a line form (<i>x1, y1</i>) to (<i>x2, y2</i>).
+draw_errorbar(x, y, erx, ery, size)	draw errorbars from (<i>x - erx, y</i>) to (<i>x + erx, y</i>) and\nfrom (<i>x, y - ery</i>) to (<i>x, y + ery</i>).\nThe length of ticks can be specified with <i>size</i>.\nWhen <i>size</i> is 0, specification of the file object is used.
+draw_errorbar2(x1, y1, x2, y2, size)	draw an errorbar from (<i>x1, y1</i>) to (<i>x2, y2</i>).\nThe length of ticks can be specified with <i>size</i>.\nWhen <i>size</i> is 0, specification of the file object is used.
 fit_prm(id, x)	When the plot type of the data object whose ID is <i>id</i> is fit,\nthe value of the field "%0<i>x</i>" of the corresponding fit object.
 fit_calc(id, x)	When the plot type of the data object whose ID is <i>id</i> is fit,\nthe corresponding fit result f(<i>x</i>) is calculated.
 line_number()	File line number being processed (1st line is 1)
