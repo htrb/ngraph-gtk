@@ -377,6 +377,7 @@ static int f2dlineclipf(double *x0,double *y0,double *x1,double *y1,void *local)
 static int getposition(struct f2ddata *fp,double x,double y,int *gx,int *gy);
 static int getposition2(struct f2ddata *fp,int axtype,int aytype,double *x,double *y);
 static void set_column_array(MathEquation **code, int id, MathValue *gdata, int maxdim);
+static void draw_errorbar(struct f2ddata *fp, int GC, int size, double dx0, double dy0, double  dx1, double dy1);
 
 #if BUF_TYPE == USE_RING_BUF
 int
@@ -1193,6 +1194,99 @@ file_draw_line(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
 }
 
 static int
+file_draw_errorbar(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  struct f2ddata *fp;
+  int px, py;
+  double x, y, erx, ery, size;
+
+  rval->val = 0;
+
+  if (exp->buf[0].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[1].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[2].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[3].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[4].val.type != MATH_VALUE_NORMAL) {
+    return 0;
+  }
+
+  fp = math_equation_get_user_data(eq);
+  if (fp == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  if (fp->GC < 0) {
+    return 0;
+  }
+
+  x = exp->buf[0].val.val;
+  y = exp->buf[1].val.val;
+  erx = exp->buf[2].val.val;
+  ery = exp->buf[3].val.val;
+  size = exp->buf[4].val.val * 100;
+  if (size < 1) {
+    size = fp->marksize;
+  }
+
+  GRAcurrent_point(fp->GC, &px, &py);
+  GRAcolor(fp->GC, fp->color.r, fp->color.g, fp->color.b, fp->color.a);
+  if (erx != 0) {
+    draw_errorbar(fp, fp->GC, size / 2, x - erx, y, x + erx, y);
+  }
+  if (ery != 0) {
+    draw_errorbar(fp, fp->GC, fp->marksize / 2, x, y - ery, x, y + ery);
+  }
+  GRAmoveto(fp->GC, px, py);
+
+  return 0;
+}
+
+static int
+file_draw_errorbar2(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  struct f2ddata *fp;
+  int px, py, size;
+  double x0, y0, x1, y1;
+
+  rval->val = 0;
+
+  if (exp->buf[0].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[1].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[2].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[3].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[4].val.type != MATH_VALUE_NORMAL) {
+    return 0;
+  }
+
+  fp = math_equation_get_user_data(eq);
+  if (fp == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  if (fp->GC < 0) {
+    return 0;
+  }
+
+  x0 = exp->buf[0].val.val;
+  y0 = exp->buf[1].val.val;
+  x1 = exp->buf[2].val.val;
+  y1 = exp->buf[3].val.val;
+  size = exp->buf[4].val.val * 100;
+  if (size < 1) {
+    size = fp->marksize;
+  }
+
+  GRAcurrent_point(fp->GC, &px, &py);
+  GRAcolor(fp->GC, fp->color.r, fp->color.g, fp->color.b, fp->color.a);
+  draw_errorbar(fp, fp->GC, size / 2, x0, y0, x1, y1);
+  GRAmoveto(fp->GC, px, py);
+
+  return 0;
+}
+
+static int
 file_draw_mark(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   struct f2ddata *fp;
@@ -1267,6 +1361,8 @@ static struct funcs FileFunc[] = {
   {"DRAW_LINE", {4, 0, 0, file_draw_line, NULL, NULL, NULL, NULL}},
   {"DRAW_ARC", {DRAW_ARC_ARG_NUM, 0, 0, file_draw_arc, NULL, NULL, NULL, NULL}},
   {"DRAW_MARK", {3, 0, 0, file_draw_mark, NULL, NULL, NULL, NULL}},
+  {"DRAW_ERRORBAR", {5, 0, 0, file_draw_errorbar, NULL, NULL, NULL, NULL}},
+  {"DRAW_ERRORBAR2", {5, 0, 0, file_draw_errorbar2, NULL, NULL, NULL, NULL}},
 };
 
 static int
@@ -5577,13 +5673,54 @@ rectout(struct objlist *obj,struct f2ddata *fp,int GC,
   return 0;
 }
 
+static void
+draw_errorbar(struct f2ddata *fp, int GC, int size, double dx0, double dy0, double  dx1, double dy1)
+{
+  double x0, y0, x1, y1, x, y, r, dirx, diry;
+  int gx0, gy0, gx1, gy1;
+
+  x0 = dx0;
+  y0 = dy0;
+  x1 = dx1;
+  y1 = dy1;
+  if (f2dlineclipf(&x0, &y0, &x1, &y1, fp)) {
+    return;
+  }
+
+  f2dtransf(x0, y0, &gx0, &gy0, fp);
+  f2dtransf(x1, y1, &gx1, &gy1, fp);
+  x = gx1 - gx0;
+  y = gy1 - gy0;
+  r = sqrt(x * x + y * y);
+  if (r == 0) {
+    return;
+
+  }
+  dirx = x / r;
+  diry = y / r;
+
+  GRAline(GC, gx0, gy0, gx1, gy1);
+  if (dx0 == x0 && dy0 == y0) {
+    GRAline(GC,
+            gx0 + nround(size * diry),
+            gy0 - nround(size * dirx),
+            gx0 - nround(size * diry),
+            gy0 + nround(size * dirx));
+  }
+  if (dx1 == x1 && dy1 == y1) {
+      GRAline(GC,
+              gx1 + nround(size * diry),
+              gy1 - nround(size * dirx),
+              gx1 - nround(size * diry),
+              gy1 + nround(size * dirx));
+  }
+}
+
 static int
 errorbarout(struct objlist *obj,struct f2ddata *fp,int GC,
 	    int width,int snum,int *style,int type)
 {
   int emerr,emnonum,emig,emng;
-  double x0,y0,x1,y1;
-  int gx0,gy0,gx1,gy1;
   int size;
 
   emerr=emnonum=emig=emng=FALSE;
@@ -5596,54 +5733,14 @@ errorbarout(struct objlist *obj,struct f2ddata *fp,int GC,
        && (fp->d2stat==MATH_VALUE_NORMAL) && (fp->d3stat==MATH_VALUE_NORMAL)
        && (getposition2(fp,fp->axtype,fp->aytype,&(fp->dx),&(fp->dy))==0)
        && (getposition2(fp,fp->axtype,fp->axtype,&(fp->d2),&(fp->d3))==0)) {
-        x0=fp->d2;
-        y0=fp->dy;
-        x1=fp->d3;
-        y1=fp->dy;
-        if (f2dlineclipf(&x0,&y0,&x1,&y1,fp)==0) {
-          f2dtransf(x0,y0,&gx0,&gy0,fp);
-          f2dtransf(x1,y1,&gx1,&gy1,fp);
-          GRAline(GC,gx0,gy0,gx1,gy1);
-          if (fp->d2==x0) {
-            GRAline(GC,gx0+nround(size*fp->axvy),
-                       gy0-nround(size*fp->axvx),
-                       gx0-nround(size*fp->axvy),
-                       gy0+nround(size*fp->axvx));
-          }
-          if (fp->d3==x1) {
-            GRAline(GC,gx1+nround(size*fp->axvy),
-                       gy1-nround(size*fp->axvx),
-                       gx1-nround(size*fp->axvy),
-                       gy1+nround(size*fp->axvx));
-          }
-        }
+        draw_errorbar(fp, GC, size, fp->d2, fp->dy, fp->d3, fp->dy);
       } else errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
     } else if (type == PLOT_TYPE_ERRORBAR_Y) {
       if ((fp->dxstat==MATH_VALUE_NORMAL) && (fp->dystat==MATH_VALUE_NORMAL)
        && (fp->d2stat==MATH_VALUE_NORMAL) && (fp->d3stat==MATH_VALUE_NORMAL)
        && (getposition2(fp,fp->axtype,fp->aytype,&(fp->dx),&(fp->dy))==0)
        && (getposition2(fp,fp->aytype,fp->aytype,&(fp->d2),&(fp->d3))==0)) {
-        x0=fp->dx;
-        y0=fp->d2;
-        x1=fp->dx;
-        y1=fp->d3;
-        if (f2dlineclipf(&x0,&y0,&x1,&y1,fp)==0) {
-          f2dtransf(x0,y0,&gx0,&gy0,fp);
-          f2dtransf(x1,y1,&gx1,&gy1,fp);
-          GRAline(GC,gx0,gy0,gx1,gy1);
-          if (fp->d2==y0) {
-            GRAline(GC,gx0+nround(size*fp->ayvy),
-                       gy0-nround(size*fp->ayvx),
-                       gx0-nround(size*fp->ayvy),
-                       gy0+nround(size*fp->ayvx));
-          }
-          if (fp->d3==y1) {
-            GRAline(GC,gx1+nround(size*fp->ayvy),
-                       gy1-nround(size*fp->ayvx),
-                       gx1-nround(size*fp->ayvy),
-                       gy1+nround(size*fp->ayvx));
-          }
-        }
+        draw_errorbar(fp, GC, size, fp->dx, fp->d2, fp->dx, fp->d3);
       } else errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
     }
   }
