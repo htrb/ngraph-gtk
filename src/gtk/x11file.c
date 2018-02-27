@@ -2984,6 +2984,7 @@ FileDialogSetupItem(GtkWidget *w, struct FileDialog *d)
   }
 
   gtk_widget_set_sensitive(d->apply_all, d->multi_open);
+  gtk_notebook_set_current_page(GTK_NOTEBOOK(d->math_input_tab), Menulocal.math_input_mode);
 }
 
 static void
@@ -4116,7 +4117,6 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
   set_headline_table_header(d);
   set_headline_table(d, s, line);
   d->head_lines = g_strdup(s);
-  gtk_notebook_set_current_page(GTK_NOTEBOOK(d->math_input_tab), Menulocal.math_input_mode);
 }
 
 static void
