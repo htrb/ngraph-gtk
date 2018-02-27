@@ -1,5 +1,8 @@
 2018-02-27  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11file.c (RangeDialogSetup): update label to avoid
+	collision with the short cut to show information of a completion.
+
 	* src/odata.c (file_draw_errorbar, file_draw_errorbar2)
 	(draw_errorbar): added.
 	(errorbarout): use "draw_errorbar()".
