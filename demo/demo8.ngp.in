@@ -291,14 +291,14 @@ new axis name:cX1
 	axis::A=255
 	axis::clip=true
 	axis::redraw_flag=true
-	axis::min=-2.700000000000000e+02
-	axis::max=0.000000000000000e+00
+	axis::min=0.000000000000000e+00
+	axis::max=2.700000000000000e+02
 	axis::inc=1.000000000000000e+02
 	axis::div=0
 	axis::type=linear
-	axis::x=6600
-	axis::y=27600
-	axis::direction=33000
+	axis::x=6500
+	axis::y=26000
+	axis::direction=4500
 	axis::baseline=true
 	axis::length=5400
 	axis::width=40
@@ -327,7 +327,7 @@ new axis name:cX1
 	axis::gauge_G=0
 	axis::gauge_B=0
 	axis::gauge_A=255
-	axis::num=right
+	axis::num=left
 	axis::num_begin=0
 	axis::num_step=0
 	axis::num_num=-1
@@ -361,13 +361,13 @@ new axis name:cY1
 	axis::A=255
 	axis::clip=true
 	axis::redraw_flag=true
-	axis::min=-3.300000000000000e+00
-	axis::max=1.000000000000000e-01
+	axis::min=0.000000000000000e+00
+	axis::max=3.300000000000000e+00
 	axis::inc=1.000000000000000e+00
 	axis::div=0
 	axis::type=linear
-	axis::x=6600
-	axis::y=27600
+	axis::x=6500
+	axis::y=26000
 	axis::direction=9000
 	axis::baseline=true
 	axis::length=8000
@@ -446,7 +446,7 @@ shift(col);
 n := size(col);
 for(0, 0, n - 1, 1,
   progn(
-    ax[rm(0)] := rm(0) - ofst_x,
+    ax[rm(0)] := rm(0) + ofst_x,
     col[rm(0)] += ofst_y));
 unshift(ax, ax[0]);
 push(ax, ax[-1]);
