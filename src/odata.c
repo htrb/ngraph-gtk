@@ -367,6 +367,10 @@ struct f2dlocal {
   time_t mtime, mtime_stat;
 };
 
+struct point_pos {
+  double x, y, d;
+};
+
 static int set_data_progress(struct f2ddata *fp);
 static int getminmaxdata(struct f2ddata *fp, struct f2dlocal *local);
 static int calc_fit_equation(struct objlist *obj, N_VALUE *inst, double x, double *y);
@@ -378,6 +382,17 @@ static int getposition(struct f2ddata *fp,double x,double y,int *gx,int *gy);
 static int getposition2(struct f2ddata *fp,int axtype,int aytype,double *x,double *y);
 static void set_column_array(MathEquation **code, int id, MathValue *gdata, int maxdim);
 static void draw_errorbar(struct f2ddata *fp, int GC, int size, double dx0, double dy0, double  dx1, double dy1);
+static void poly_add_point(struct narray *pos, double x, double y, struct f2ddata *fp);
+static void poly_add_clip_point(struct narray *pos, double minx, double miny, double maxx, double maxy, double x, double y, struct f2ddata *fp);
+static int poly_pos_sort_cb(const void *a, const void *b);
+static void poly_set_pos(struct point_pos *p, int i, double x, double y, double x0, double y0);
+static int poly_add_elements(struct narray *pos,
+                             double minx, double miny, double maxx, double maxy,
+                             double x0, double y0, double x1, double y1,
+                             struct f2ddata *fp);
+static void add_polygon_point(struct narray *pos, double x0, double y0, double x1, double y1, struct f2ddata *fp);
+static void uniq_points(struct narray *pos);
+static void draw_polygon(struct narray *pos, int GC, int fill);
 
 #if BUF_TYPE == USE_RING_BUF
 int
@@ -1332,6 +1347,118 @@ file_draw_mark(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   return 0;
 }
 
+static void
+draw_lines(struct narray *pos, int GC)
+{
+  int n, *ap;
+
+  uniq_points(pos);
+  ap = (int *) arraydata(pos);
+  n = arraynum(pos);
+  if (n > 4) {
+    GRAlines(GC, n / 2, ap);
+  }
+}
+
+static int
+file_draw_lines(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  struct f2ddata *fp;
+  int i, id, n, first, px, py;
+  int stroke, fill, close;
+  double x0, y0, x1, y1, x2, y2;
+  MathEquationArray *ax, *ay;
+  struct narray pos;
+
+  rval->val = 0;
+  if (exp->buf[2].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[3].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[4].val.type != MATH_VALUE_NORMAL) {
+    return 0;
+  }
+  stroke = exp->buf[2].val.val;
+  fill   = exp->buf[3].val.val;
+  close  = exp->buf[4].val.val;
+
+  id = exp->buf[0].idx;
+  ax = math_equation_get_array(eq, id);
+  if (ax == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+  n = ax->num;
+
+  id = exp->buf[1].idx;
+  ay = math_equation_get_array(eq, id);
+  if (ay == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+  if (ay->num < n) {
+    n = ay->num;
+  }
+
+  fp = math_equation_get_user_data(eq);
+  if (fp == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  if (fp->GC < 0) {
+    return 0;
+  }
+
+  arrayinit(&pos, sizeof(int));
+  first = TRUE;
+  for (i = 0; i < n; i++) {
+    if (ax->data[i].type == MATH_VALUE_NORMAL && ay->data[i].type == MATH_VALUE_NORMAL) {
+      if (first) {
+        first = FALSE;
+	x0 = ax->data[i].val;
+	y0 = ay->data[i].val;
+	x2 = ax->data[i].val;
+	y2 = ay->data[i].val;
+      } else {
+	x1 = x2;
+	y1 = y2;
+	x2 = ax->data[i].val;
+	y2 = ay->data[i].val;
+	add_polygon_point(&pos, x1, y1, x2, y2, fp);
+      }
+    }
+  }
+  if (first) {
+    return 0;
+  }
+  if (close) {
+    add_polygon_point(&pos, x2, y2, x0, y0, fp);
+  }
+
+  if (fill < 0) {
+    fill = GRA_FILL_MODE_NONE;
+  } else if (fill > GRA_FILL_MODE_WINDING) {
+    fill = GRA_FILL_MODE_WINDING;
+  }
+
+  GRAcurrent_point(fp->GC, &px, &py);
+  GRAcolor(fp->GC, fp->color2.r, fp->color2.g, fp->color2.b, fp->color2.a);
+  if (fill) {
+    draw_polygon(&pos, fp->GC, fill);
+  }
+  GRAcolor(fp->GC, fp->color.r, fp->color.g, fp->color.b, fp->color.a);
+  if (stroke) {
+    if (close) {
+      draw_polygon(&pos, fp->GC, GRA_FILL_MODE_NONE);
+    } else {
+      draw_lines(&pos, fp->GC);
+    }
+  }
+  GRAmoveto(fp->GC, px, py);
+  arraydel(&pos);
+
+  return 0;
+}
+
 struct funcs {
   char *name;
   struct math_function_parameter prm;
@@ -1346,23 +1473,32 @@ static struct funcs FitFunc[] = {
   {"FIT_PRM",  {2, 0, 0, file_fit_prm,   NULL, NULL, NULL, NULL}},
 };
 
+static enum MATH_FUNCTION_ARG_TYPE draw_lines_arg_type[] = {
+  MATH_FUNCTION_ARG_TYPE_ARRAY,
+  MATH_FUNCTION_ARG_TYPE_ARRAY,
+  MATH_FUNCTION_ARG_TYPE_DOUBLE,
+  MATH_FUNCTION_ARG_TYPE_DOUBLE,
+  MATH_FUNCTION_ARG_TYPE_DOUBLE,
+};
+
 static struct funcs FileFunc[] = {
   {"OBJ_ALPHA", {2, 0, 0, file_objalpha, NULL, NULL, NULL, NULL}},
   {"OBJ_COLOR", {2, 0, 0, file_objcolor, NULL, NULL, NULL, NULL}},
-  {"COLOR",    {2, 0, 0, file_color,    NULL, NULL, NULL, NULL}},
-  {"ALPHA",    {2, 0, 0, file_alpha,    NULL, NULL, NULL, NULL}},
-  {"RGB",      {3, 0, 0, file_rgb,      NULL, NULL, NULL, NULL}},
-  {"RGB2",     {3, 0, 0, file_rgb2,     NULL, NULL, NULL, NULL}},
-  {"HSB",      {3, 0, 0, file_hsb,      NULL, NULL, NULL, NULL}},
-  {"HSB2",     {3, 0, 0, file_hsb2,     NULL, NULL, NULL, NULL}},
-  {"MARKSIZE", {1, 0, 0, file_marksize, NULL, NULL, NULL, NULL}},
-  {"MARKTYPE", {1, 0, 0, file_marktype, NULL, NULL, NULL, NULL}},
+  {"COLOR",     {2, 0, 0, file_color,    NULL, NULL, NULL, NULL}},
+  {"ALPHA",     {2, 0, 0, file_alpha,    NULL, NULL, NULL, NULL}},
+  {"RGB",       {3, 0, 0, file_rgb,      NULL, NULL, NULL, NULL}},
+  {"RGB2",      {3, 0, 0, file_rgb2,     NULL, NULL, NULL, NULL}},
+  {"HSB",       {3, 0, 0, file_hsb,      NULL, NULL, NULL, NULL}},
+  {"HSB2",      {3, 0, 0, file_hsb2,     NULL, NULL, NULL, NULL}},
+  {"MARKSIZE",  {1, 0, 0, file_marksize, NULL, NULL, NULL, NULL}},
+  {"MARKTYPE",  {1, 0, 0, file_marktype, NULL, NULL, NULL, NULL}},
   {"DRAW_RECT", {6, 0, 0, file_draw_rect, NULL, NULL, NULL, NULL}},
   {"DRAW_LINE", {4, 0, 0, file_draw_line, NULL, NULL, NULL, NULL}},
-  {"DRAW_ARC", {DRAW_ARC_ARG_NUM, 0, 0, file_draw_arc, NULL, NULL, NULL, NULL}},
-  {"DRAW_MARK", {3, 0, 0, file_draw_mark, NULL, NULL, NULL, NULL}},
-  {"DRAW_ERRORBAR", {5, 0, 0, file_draw_errorbar, NULL, NULL, NULL, NULL}},
+  {"DRAW_ARC",  {DRAW_ARC_ARG_NUM, 0, 0, file_draw_arc, NULL, NULL, NULL, NULL}},
+  {"DRAW_MARK",      {3, 0, 0, file_draw_mark, NULL, NULL, NULL, NULL}},
+  {"DRAW_ERRORBAR",  {5, 0, 0, file_draw_errorbar, NULL, NULL, NULL, NULL}},
   {"DRAW_ERRORBAR2", {5, 0, 0, file_draw_errorbar2, NULL, NULL, NULL, NULL}},
+  {"DRAW_LINES",     {5, 0, 0, file_draw_lines, draw_lines_arg_type, NULL, NULL, NULL}},
 };
 
 static int
@@ -4973,10 +5109,6 @@ poly_add_clip_point(struct narray *pos, double minx, double miny, double maxx, d
   poly_add_point(pos, x, y, fp);
 }
 
-struct point_pos {
-  double x, y, d;
-};
-
 static int
 poly_pos_sort_cb(const void *a, const void *b)
 {
@@ -5202,7 +5334,7 @@ uniq_points(struct narray *pos)
 }
 
 static void
-draw_polygon(struct narray *pos, int GC)
+draw_polygon(struct narray *pos, int GC, int fill)
 {
   int n, *ap;
 
@@ -5210,7 +5342,7 @@ draw_polygon(struct narray *pos, int GC)
   ap = (int *) arraydata(pos);
   n = arraynum(pos);
   if (n > 4) {
-    GRAdrawpoly(GC, n / 2, ap, GRA_FILL_MODE_WINDING);
+    GRAdrawpoly(GC, n / 2, ap, fill);
   }
 
 #if 0
@@ -5227,8 +5359,6 @@ draw_polygon(struct narray *pos, int GC)
     GRAdrawtext(GC, buf, "Serif", 0, 2000, 0, 0, 7000);
   }
 #endif
-
-  arraydel(pos);
 }
 
 static int
@@ -5264,7 +5394,8 @@ polyout(struct objlist *obj, struct f2ddata *fp, int GC)
 	if (! first) {
 	  add_polygon_point(&pos, x2, y2, x0, y0, fp);
 	}
-	draw_polygon(&pos, GC);
+	draw_polygon(&pos, GC, GRA_FILL_MODE_WINDING);
+        arraydel(&pos);
         first = TRUE;
       }
       errordisp(obj, fp, &emerr, &emnonum, &emig, &emng);
@@ -5274,7 +5405,8 @@ polyout(struct objlist *obj, struct f2ddata *fp, int GC)
   if (! first) {
     add_polygon_point(&pos, x2, y2, x0, y0, fp);
   }
-  draw_polygon(&pos, GC);
+  draw_polygon(&pos, GC, GRA_FILL_MODE_WINDING);
+  arraydel(&pos);
 
   errordisp(obj, fp, &emerr, &emnonum, &emig, &emng);
   return 0;
