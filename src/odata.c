@@ -1361,24 +1361,15 @@ draw_lines(struct narray *pos, int GC)
 }
 
 static int
-file_draw_lines(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+file_draw_path(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval, int stroke, int fill, int close)
 {
   struct f2ddata *fp;
   int i, id, n, first, px, py;
-  int stroke, fill, close;
   double x0, y0, x1, y1, x2, y2;
   MathEquationArray *ax, *ay;
   struct narray pos;
 
   rval->val = 0;
-  if (exp->buf[2].val.type != MATH_VALUE_NORMAL ||
-      exp->buf[3].val.type != MATH_VALUE_NORMAL ||
-      exp->buf[4].val.type != MATH_VALUE_NORMAL) {
-    return 0;
-  }
-  stroke = exp->buf[2].val.val;
-  fill   = exp->buf[3].val.val;
-  close  = exp->buf[4].val.val;
 
   id = exp->buf[0].idx;
   ax = math_equation_get_array(eq, id);
@@ -1459,6 +1450,25 @@ file_draw_lines(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rv
   return 0;
 }
 
+static int
+file_draw_polyline(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  return file_draw_path(exp, eq, rval, TRUE, FALSE, FALSE);
+}
+
+static int
+file_draw_polygon(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int stroke, fill;
+  if (exp->buf[2].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[3].val.type != MATH_VALUE_NORMAL) {
+    return 0;
+  }
+  stroke = exp->buf[2].val.val;
+  fill   = exp->buf[3].val.val;
+  return file_draw_path(exp, eq, rval, stroke, fill, TRUE);
+}
+
 struct funcs {
   char *name;
   struct math_function_parameter prm;
@@ -1473,7 +1483,12 @@ static struct funcs FitFunc[] = {
   {"FIT_PRM",  {2, 0, 0, file_fit_prm,   NULL, NULL, NULL, NULL}},
 };
 
-static enum MATH_FUNCTION_ARG_TYPE draw_lines_arg_type[] = {
+static enum MATH_FUNCTION_ARG_TYPE draw_polyline_arg_type[] = {
+  MATH_FUNCTION_ARG_TYPE_ARRAY,
+  MATH_FUNCTION_ARG_TYPE_ARRAY,
+};
+
+static enum MATH_FUNCTION_ARG_TYPE draw_polygon_arg_type[] = {
   MATH_FUNCTION_ARG_TYPE_ARRAY,
   MATH_FUNCTION_ARG_TYPE_ARRAY,
   MATH_FUNCTION_ARG_TYPE_DOUBLE,
@@ -1498,7 +1513,8 @@ static struct funcs FileFunc[] = {
   {"DRAW_MARK",      {3, 0, 0, file_draw_mark, NULL, NULL, NULL, NULL}},
   {"DRAW_ERRORBAR",  {5, 0, 0, file_draw_errorbar, NULL, NULL, NULL, NULL}},
   {"DRAW_ERRORBAR2", {5, 0, 0, file_draw_errorbar2, NULL, NULL, NULL, NULL}},
-  {"DRAW_LINES",     {5, 0, 0, file_draw_lines, draw_lines_arg_type, NULL, NULL, NULL}},
+  {"DRAW_POLYLINE",  {2, 0, 0, file_draw_polyline, draw_polyline_arg_type, NULL, NULL, NULL}},
+  {"DRAW_POLYGON",   {4, 0, 0, file_draw_polygon, draw_polygon_arg_type, NULL, NULL, NULL}},
 };
 
 static int
