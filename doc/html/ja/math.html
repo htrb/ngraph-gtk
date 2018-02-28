@@ -494,12 +494,19 @@
   </tr>
   <tr>
     <td>
-      DRAW_LINES(ax, ay, stroke, fill, close)
+      DRAW_POLYLINE(ax, ay)
     </td>
     <td>
       座標 (ax[0], ay[0]), (ax[1], ay[1]), ... を直線で結びます。
-      stroke, fill が 0の場合はそれぞれ輪郭、塗りつぶしを描画しません。
-      close が 0 以外の場合は輪郭を閉じます。
+    </td>
+  </tr>
+  <tr>
+    <td>
+      DRAW_POLYGON(ax, ay, stroke, fill)
+    </td>
+    <td>
+      座標 (ax[0], ay[0]), (ax[1], ay[1]), ... で囲まれた領域を描画します。
+      stroke, fill が 0 の場合はそれぞれ輪郭、塗りつぶしを描画しません。
     </td>
   </tr>
   <tr>
