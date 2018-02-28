@@ -1028,9 +1028,9 @@ file_draw_arc(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
   ry     = exp->buf[3].val.val;
   angle1 = exp->buf[4].val.val;
   angle2 = exp->buf[5].val.val;
-  stroke = exp->buf[6].val.val;
-  fill   = exp->buf[7].val.val;
-  pie    = exp->buf[8].val.val;
+  pie    = exp->buf[6].val.val;
+  stroke = exp->buf[7].val.val;
+  fill   = exp->buf[8].val.val;
   close  = exp->buf[9].val.val;
 
   if (getposition(fp, x, y, &cx, &cy)) {
