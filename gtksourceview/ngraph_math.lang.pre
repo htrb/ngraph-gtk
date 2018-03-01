@@ -13,7 +13,7 @@ This file is created based on "ruby.lang" which is part of GtkSourceView.
     <style id="keyword"              _name="Keyword"               map-to="def:keyword"/>
     <style id="comment"              _name="Comment"               map-to="def:comment"/>
     <style id="floating-point"       _name="Floating point number" map-to="def:floating-point"/>
-    <style id="decimal"              _name="Decimal number"        map-to="def:decimal"/>
+    <style id="decimal"              _name="Decimal number"        map-to="def:floating-point"/>
     <style id="base-n-integer"       _name="Base-N number"         map-to="def:base-n-integer"/>
     <style id="builtin"              _name="Builtin"               map-to="def:function"/>
     <style id="constant"             _name="Constant"              map-to="def:constant"/>
