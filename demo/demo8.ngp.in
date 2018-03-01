@@ -453,7 +453,7 @@ unshift(ax, ax[0]);            # add first x for a polygon mask
 unshift(ay, ofst_y);           # add first y for a polygon mask
 push(ax, ax[-1]);              # add last x for a polygon mask
 push(ay, ofst_y);              # add last y for a polygon mask
-draw_polygon(ax, ay, FALSE, 1);# draw a polygon mask
+draw_polygon(ax, ay, FALSE, FILL_RULE_WINDING);
 shift(ax);                     # remove first x for a polygon mask
 shift(ay);                     # remove first y for a polygon mask
 pop(ax);                       # remove last x for a polygon mask
