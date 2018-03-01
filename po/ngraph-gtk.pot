@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.07.05\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2018-02-28 14:17+0900\n"
+"POT-Creation-Date: 2018-03-01 17:56+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3177,7 +3177,7 @@ msgstr ""
 msgid ""
 "<b>draw_mark</b>(<i>x, y, size</i>)\n"
 "draw a mark on (<i>x, y</i>). The size of a mark can be specified with "
-"<i>size<i>.\n"
+"<i>size</i>.\n"
 "When <i>size</i> is 0, specification of the file object is used."
 msgstr ""
 
@@ -3186,15 +3186,16 @@ msgid ""
 "<b>draw_polygon</b>(<i>ax, ay, stroke, fill</i>)\n"
 "drow polygon defined by coordinates (<i>ax</i>[0], <i>ay</i>[0]), (<i>ax</"
 "i>[1], <i>ay</i>[1]), ....\n"
-"when <i>stroke</i> and <i>fill</i> are 0, do not draw contours and fills "
-"respectively."
+"when <i>stroke</i> is 0, do not draw contours.\n"
+"<i>fill</i> can be specified with one of\n"
+"<b>FILL_RULE_NONE</b>, <b>FILL_RULE_EVEN_ODD</b> or <b>FILL_RULE_WINDING</b>."
 msgstr ""
 
 #: src/gtk/completion_info_data.c:39
 msgid ""
 "<b>draw_polyline</b>(<i>ax, ay</i>)\n"
 "connect coordinates (<i>ax</i>[0], <i>ay</i>[0]), (<i>ax</i>[1], <i>ay</"
-"i>[1]), ... by plyline."
+"i>[1]), ... by polyline."
 msgstr ""
 
 #: src/gtk/completion_info_data.c:40
@@ -3925,169 +3926,190 @@ msgstr ""
 
 #: src/gtk/completion_info_data.c:155
 msgid ""
+"<b>FILL_RULE_EVEN_ODD</b>\n"
+"Defined for the function <b>draw_polygon</b>().\n"
+"fill the polygon with evin-odd rule."
+msgstr ""
+
+#: src/gtk/completion_info_data.c:156
+msgid ""
+"<b>FILL_RULE_NONE</b>\n"
+"Defined for the function <b>draw_polygon</b>().\n"
+"don't fill the polygon."
+msgstr ""
+
+#: src/gtk/completion_info_data.c:157
+msgid ""
+"<b>FILL_RULE_WINDING</b>\n"
+"Defined for the function <b>draw_polygon</b>().\n"
+"fill the polygon with winding rule."
+msgstr ""
+
+#: src/gtk/completion_info_data.c:158
+msgid ""
 "<b>FIRST</b>\n"
 "When conversion is performed twice with one line of data such as diagonal or "
 "errorbar plot,\n"
 "true (1) in the first call, false (0) in the second call."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:156
+#: src/gtk/completion_info_data.c:159
 msgid ""
 "<b>FLINE</b>\n"
 "Number of lines specified as \"Final line\""
 msgstr ""
 
-#: src/gtk/completion_info_data.c:157
+#: src/gtk/completion_info_data.c:160
 msgid ""
 "<b>HSKIP</b>\n"
 "Number of lines specified as \"Head skip\""
 msgstr ""
 
-#: src/gtk/completion_info_data.c:158
+#: src/gtk/completion_info_data.c:161
 msgid ""
 "<b>MARK_OBJ</b>\n"
 "The identification number of the mark object"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:159
+#: src/gtk/completion_info_data.c:162
 msgid ""
 "<b>MASK</b>\n"
 "Number of lines set for mask"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:160
+#: src/gtk/completion_info_data.c:163
 msgid ""
 "<b>MAXX</b>\n"
 "The maximum value of X"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:161
+#: src/gtk/completion_info_data.c:164
 msgid ""
 "<b>MAXY</b>\n"
 "The maximum value of Y"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:162
+#: src/gtk/completion_info_data.c:165
 msgid ""
 "<b>MINX</b>\n"
 "The minimum value of X"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:163
+#: src/gtk/completion_info_data.c:166
 msgid ""
 "<b>MINY</b>\n"
 "The minimum value of Y"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:164
+#: src/gtk/completion_info_data.c:167
 msgid ""
 "<b>MOVE</b>\n"
 "Number of lines set for move"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:165
+#: src/gtk/completion_info_data.c:168
 msgid ""
 "<b>NAN</b>\n"
 "Missing data with error indication"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:166
+#: src/gtk/completion_info_data.c:169
 msgid ""
 "<b>NUM</b>\n"
 "The number of the data"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:167
+#: src/gtk/completion_info_data.c:170
 msgid ""
 "<b>PATH_OBJ</b>\n"
 "The identification number of the path object"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:168
+#: src/gtk/completion_info_data.c:171
 msgid ""
 "<b>PI</b>\n"
 "Pi"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:169
+#: src/gtk/completion_info_data.c:172
 msgid ""
 "<b>RECT_OBJ</b>\n"
 "The identification number of the rectangle object"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:170
+#: src/gtk/completion_info_data.c:173
 msgid ""
 "<b>RSTEP</b>\n"
 "Number of lines specified as \"Read step\""
 msgstr ""
 
-#: src/gtk/completion_info_data.c:171
+#: src/gtk/completion_info_data.c:174
 msgid ""
 "<b>STDEVPX</b>\n"
 "The standard deviation of X"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:172
+#: src/gtk/completion_info_data.c:175
 msgid ""
 "<b>STDEVPY</b>\n"
 "The standard deviation of Y"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:173
+#: src/gtk/completion_info_data.c:176
 msgid ""
 "<b>STDEVX</b>\n"
 "The corrected sample standard deviation of X"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:174
+#: src/gtk/completion_info_data.c:177
 msgid ""
 "<b>STDEVY</b>\n"
 "The corrected sample standard deviation of Y"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:175
+#: src/gtk/completion_info_data.c:178
 msgid ""
 "<b>SUMX</b>\n"
 "Sum of X"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:176
+#: src/gtk/completion_info_data.c:179
 msgid ""
 "<b>SUMXX</b>\n"
 "Square sum of X"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:177
+#: src/gtk/completion_info_data.c:180
 msgid ""
 "<b>SUMXY</b>\n"
 "Product sum of X and Y"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:178
+#: src/gtk/completion_info_data.c:181
 msgid ""
 "<b>SUMY</b>\n"
 "Sum of Y"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:179
+#: src/gtk/completion_info_data.c:182
 msgid ""
 "<b>SUMYY</b>\n"
 "Square sum of Y"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:180
+#: src/gtk/completion_info_data.c:183
 msgid ""
 "<b>TEXT_OBJ</b>\n"
 "The identification number of the text object"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:181
+#: src/gtk/completion_info_data.c:184
 msgid ""
 "<b>TRUE</b>\n"
 "the TRUE value (1)"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:182
+#: src/gtk/completion_info_data.c:185
 msgid ""
 "<b>UNDEF</b>\n"
 "Missing data without error indication"
