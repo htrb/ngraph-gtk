@@ -442,22 +442,23 @@ new data
 	data::fit=
 	data::math_x='ofst_x := %0 * 2.5;
 ofst_y := -%0 / 40;
-shift(col);
-n := size(col);
-for(0, 0, n - 1, 1,
+shift(col);                    # remove %0 from the array col
+n := size(col);                # number of the data
+for(0, 0, n - 1, 1,            # initialize arrays for polyline
   progn(
-    ax[rm(0)] := rm(0) + ofst_x,
-    col[rm(0)] += ofst_y));
-unshift(ax, ax[0]);
-push(ax, ax[-1]);
-unshift(col, ofst_y);
-push(col, ofst_y);
-draw_polygon(ax, col, FALSE, 1);
-shift(ax);
-pop(ax);
-shift(col);
-pop(col);
-draw_polyline(ax, col);
+    i := rm(0),                # index of the array
+    ax[i] := i + ofst_x,
+    ay[i] := col[i] + ofst_y));
+unshift(ax, ax[0]);            # add first x for a polygon mask
+unshift(ay, ofst_y);           # add first y for a polygon mask
+push(ax, ax[-1]);              # add last x for a polygon mask
+push(ay, ofst_y);              # add last y for a polygon mask
+draw_polygon(ax, ay, FALSE, 1);# draw a polygon mask
+shift(ax);                     # remove first x for a polygon mask
+shift(ay);                     # remove first y for a polygon mask
+pop(ax);                       # remove last x for a polygon mask
+pop(ay);                       # remove last y for a polygon mask
+draw_polyline(ax, ay);         # draw a polyline
 x;'
 	data::math_y=
 	data::func_f=
