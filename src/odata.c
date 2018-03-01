@@ -2498,6 +2498,11 @@ ofile_create_math_equation(int *id, int prm_digit, int use_fprm, int use_const, 
     "%D",
     "%N",
   };
+  struct math_const_parameter static_const[] = {
+    {"FILL_RULE_NONE",     MATH_SCANNER_VAL_TYPE_NORMAL, {GRA_FILL_MODE_NONE,     MATH_VALUE_NORMAL}},
+    {"FILL_RULE_EVEN_ODD", MATH_SCANNER_VAL_TYPE_NORMAL, {GRA_FILL_MODE_EVEN_ODD, MATH_VALUE_NORMAL}},
+    {"FILL_RULE_WINDING",  MATH_SCANNER_VAL_TYPE_NORMAL, {GRA_FILL_MODE_WINDING,  MATH_VALUE_NORMAL}},
+  };
 
   code = math_equation_basic_new();
   if (code == NULL)
@@ -2536,6 +2541,12 @@ ofile_create_math_equation(int *id, int prm_digit, int use_fprm, int use_const, 
       }
       if (id) {
 	id[i] = f_id;
+      }
+    }
+    for (i = 0; i < sizeof(static_const) / sizeof(*static_const); i++) {
+      if (math_equation_add_const(code, static_const[i].str, &static_const[i].val) < 0) {
+	math_equation_free(code);
+	return NULL;
       }
     }
   }

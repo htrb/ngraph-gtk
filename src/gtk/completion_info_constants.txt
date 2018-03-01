@@ -41,3 +41,6 @@ TEXT_OBJ	The identification number of the text object
 %N		The number of instances of data object
 TRUE		the TRUE value (1)
 FALSE		the FALSE value (0)
+FILL_RULE_NONE		Defined for the function <b>draw_polygon</b>().\ndon't fill the polygon.
+FILL_RULE_EVEN_ODD	Defined for the function <b>draw_polygon</b>().\nfill the polygon with evin-odd rule.
+FILL_RULE_WINDING	Defined for the function <b>draw_polygon</b>().\nfill the polygon with winding rule.
