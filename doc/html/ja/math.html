@@ -23,6 +23,7 @@
     <li> <a href="#TRANSFORM_FUNC">変換関数</a>
     <li> <a href="#ELEMENTARY_FUNC">初等関数</a>
     <li> <a href="#SPECIAL_FUMC">特殊関数</a>
+    <li> <a href="#DATETIME_FUMC">日付時刻関数</a>
     <li> <a href="#LOGIC_FUNC">論理関数</a>
     <li> <a href="#ARRAY_FUNC">配列操作関数</a>
     <li> <a href="#MEMORY_FUNC">メモリー操作関数</a>
@@ -352,6 +353,7 @@
  <tr><td>ACOSH(x)</td><td>逆ハイパボリックコサイン</td></tr>
  <tr><td>ATANH(x)</td><td>逆ハイパボリックタンジェント</td></tr>
  <tr><td>FMOD(x, y)</td><td>x を y で割った浮動小数点剰余</td></tr>
+ <tr><td>CHOOSE(n,m)</td><td>the combinatorial factor n choose m: n!/(m!(n-m)!)</td></tr>
 </table>
 <br>
 <h3><a name="SPECIAL_FUMC">特殊関数</a></h3>
@@ -386,7 +388,10 @@
  <tr><td>ZETA_INT(x)</td><td>リーマンゼータ関数 ζ(x) (x は整数) </td></tr>
  <tr><td>ZETAM1(x)</td><td>リーマンゼータ関数 ζ(x) - 1</td></tr>
  <tr><td>ZETAM1_INT(x)</td><td>リーマンゼータ関数 ζ(x) - 1 (x は整数) </td></tr>
- <tr><td>CHOOSE(n,m)</td><td>the combinatorial factor n choose m: n!/(m!(n-m)!)</td></tr>
+<br>
+<h3><a name="DATETIME_FUMC" href="#TOP">日付時刻関数</a></h3>
+<br>
+<table border="1">
  <tr><td>MJD(year,month,day,hour,min,sec)</td><td>修正ユリウス日(year, month, day はグレゴリオ暦、hour,min,sec は UTC 時刻、うるう秒は考慮されない)</td></tr>
  <tr><td>UNIX2MJD(time)</td><td>修正ユリウス日(time は 1970年1月1日00:00:00 UTC からの経過秒数、うるう秒は考慮されない)</td></tr>
  <tr><td>MJD2UNIX(mjd)</td><td>修正ユリウス日 mjd の1970年1月1日00:00:00 UTC からの経過秒数(うるう秒は考慮されない)</td></tr>
