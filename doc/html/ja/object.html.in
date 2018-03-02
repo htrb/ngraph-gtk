@@ -18,8 +18,7 @@
 
 
 
-<a name="OBJECT">&nbsp;</a>
-<h2><a href="#TOP">概要</a></h2>
+<h2><a name="OBJECT" href="#TOP">概要</a></h2>
 <br>
 <div>
 Ngraphで描画されるグラフはNgraphオブジェクトの集合から成り立っています。<br>
@@ -90,8 +89,7 @@ Ngraphオブジェクト階層<br>
 
 
 
-<a name="OBJECTLIST">&nbsp;</a>
-<h2><a href="#TOP">Ngraphオブジェクト一覧</a></h2>
+<h2><a name="OBJECTLIST" href="#TOP">Ngraphオブジェクト一覧</a></h2>
 <p>
 各オブジェクトのフィールド一覧を示します。
 </p>
