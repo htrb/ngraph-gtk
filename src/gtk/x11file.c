@@ -341,7 +341,7 @@ MathTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
-    gtk_window_set_default_size(GTK_WINDOW(wi), 600, 400);
+    gtk_window_set_default_size(GTK_WINDOW(wi), 800, 500);
   }
 
   switch (d->Mode) {
