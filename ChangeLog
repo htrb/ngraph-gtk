@@ -1,4 +1,9 @@
-2018-03-01  Hiroyuki Ito  <hito@reich.nict.go.jp>
+2018-03-03  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (MathTextDialogSetup): call
+	"gtk_widget_grab_focus()".
+
+2018-03-01  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/odata.c (ofile_create_math_equation): add static constants
 	definitions.
