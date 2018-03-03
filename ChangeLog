@@ -2,6 +2,8 @@
 
 	* src/gtk/x11file.c (MathTextDialogSetup): call
 	"gtk_widget_grab_focus()".
+	(math_common_widgets_create, MathTextDialogSetup): change position
+	of the tabs.
 
 2018-03-01  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
