@@ -313,6 +313,7 @@ MathTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
     tab = gtk_notebook_new();
+    gtk_notebook_set_tab_pos(GTK_NOTEBOOK(tab), GTK_POS_BOTTOM);
     d->input_tab = tab;
 
     w = gtk_label_new(_("Math:"));
@@ -2608,6 +2609,7 @@ math_common_widgets_create(struct FileDialog *d, GtkWidget *grid, int pos)
   int i;
 
   tab = gtk_notebook_new();
+  gtk_notebook_set_tab_pos(GTK_NOTEBOOK(tab), GTK_POS_BOTTOM);
   gtk_widget_set_vexpand(tab, TRUE);
   d->math_input_tab = tab;
 
