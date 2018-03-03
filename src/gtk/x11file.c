@@ -340,6 +340,7 @@ MathTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
+    gtk_window_set_default_size(GTK_WINDOW(wi), 600, 400);
   }
 
   switch (d->Mode) {
@@ -361,7 +362,11 @@ MathTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
   gtk_entry_set_text(GTK_ENTRY(d->list), d->Text);
   set_text_to_source_buffer(d->text, d->Text);
   gtk_notebook_set_current_page(GTK_NOTEBOOK(d->input_tab), Menulocal.math_input_mode);
-  gtk_window_set_default_size(GTK_WINDOW(wi), 600, 400);
+  if (Menulocal.math_input_mode) {
+    gtk_widget_grab_focus(d->text);
+  } else {
+    gtk_widget_grab_focus(d->list);
+  }
 }
 
 static void
@@ -372,10 +377,8 @@ move_cursor_to_error_line(GtkWidget *view)
   int ln, ofst;
 
   math_err_get_recent_error_position(&ln, &ofst);
-  ln--;
-  ofst--;
   buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(view));
-  gtk_text_buffer_get_iter_at_line_offset(buffer, &iter, ln, ofst);
+  gtk_text_buffer_get_iter_at_line_offset(buffer, &iter, ln - 1, ofst - 1);
   gtk_text_buffer_place_cursor(buffer, &iter);
 }
 
