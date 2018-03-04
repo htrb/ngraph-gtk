@@ -1,10 +1,3 @@
-textview#line_number > text {
-    border-right: 1px solid @fg_color;
-}
-textview#line_number {
-    padding-right: 1px;
-}
-
 @binding-set CloseWindow1
 {
     bind "<Control>w" { "close" () };
