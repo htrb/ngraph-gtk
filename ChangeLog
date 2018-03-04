@@ -1,3 +1,11 @@
+2018-03-04  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11dialg.h (MathTextDialog): remove unused member
+	"label".
+
+	* src/gtk/x11file.c (MathTextDialogSetup): don't use label but
+	window title.
+
 2018-03-03  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (MathTextDialogSetup): call
