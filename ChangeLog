@@ -1,5 +1,7 @@
 2018-03-04  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/gtk/data/css/ngraph.css: remove unused style.
+
 	* src/gtk/x11dialg.h (MathTextDialog): remove unused member
 	"label".
 
