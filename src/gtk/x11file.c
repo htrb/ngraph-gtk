@@ -305,22 +305,15 @@ MathTextDialogChangeInputType(GtkNotebook *notebook, GtkWidget *page, guint page
 static void
 MathTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *title, *hbox, *vbox, *tab, *swin;
+  GtkWidget *w, *title, *vbox, *tab, *swin;
   struct MathTextDialog *d;
-  static char *label[] = {N_("Math X:"), N_("Math Y:"), "F(X,Y,Z):", "G(X,Y,Z):", "H(X,Y,Z):"};
+  static char *label[] = {N_("Math X"), N_("Math Y"), "F(X,Y,Z)", "G(X,Y,Z)", "H(X,Y,Z)"};
 
   d = (struct MathTextDialog *) data;
   if (makewidget) {
-    hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
     tab = gtk_notebook_new();
     gtk_notebook_set_tab_pos(GTK_NOTEBOOK(tab), GTK_POS_BOTTOM);
     d->input_tab = tab;
-
-    w = gtk_label_new(_("Math:"));
-    gtk_widget_set_valign(w, GTK_ALIGN_START);
-    d->label = w;
-    gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
-    gtk_box_pack_start(GTK_BOX(hbox), tab, TRUE, TRUE, 4);
 
     title = gtk_label_new(_("single line"));
     w = create_text_entry(TRUE, TRUE);
@@ -339,7 +332,7 @@ MathTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     g_signal_connect(tab, "switch-page", G_CALLBACK(MathTextDialogChangeInputType), d);
 
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
+    gtk_box_pack_start(GTK_BOX(d->vbox), tab, TRUE, TRUE, 4);
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
     gtk_window_set_default_size(GTK_WINDOW(wi), 800, 500);
   }
@@ -359,7 +352,7 @@ MathTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
   }
 
   set_source_style(d->text);
-  gtk_label_set_text(GTK_LABEL(d->label), _(label[d->Mode]));
+  gtk_window_set_title(GTK_WINDOW(wi), _(label[d->Mode]));
   gtk_entry_set_text(GTK_ENTRY(d->list), d->Text);
   set_text_to_source_buffer(d->text, d->Text);
   gtk_notebook_set_current_page(GTK_NOTEBOOK(d->input_tab), Menulocal.math_input_mode);
