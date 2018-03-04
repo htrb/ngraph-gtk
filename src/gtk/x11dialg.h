@@ -163,7 +163,7 @@ struct MathTextDialog
 {
   DIALOG_PROTOTYPE;
   /****** local member *******/
-  GtkWidget *list, *text, *label, *tree, *input_tab;
+  GtkWidget *list, *text, *tree, *input_tab;
   GList *id_list;
   struct objlist *Obj;
   char *Text;
