@@ -367,6 +367,10 @@ struct f2dlocal {
   time_t mtime, mtime_stat;
 };
 
+struct point_pos {
+  double x, y, d;
+};
+
 static int set_data_progress(struct f2ddata *fp);
 static int getminmaxdata(struct f2ddata *fp, struct f2dlocal *local);
 static int calc_fit_equation(struct objlist *obj, N_VALUE *inst, double x, double *y);
@@ -377,6 +381,18 @@ static int f2dlineclipf(double *x0,double *y0,double *x1,double *y1,void *local)
 static int getposition(struct f2ddata *fp,double x,double y,int *gx,int *gy);
 static int getposition2(struct f2ddata *fp,int axtype,int aytype,double *x,double *y);
 static void set_column_array(MathEquation **code, int id, MathValue *gdata, int maxdim);
+static void draw_errorbar(struct f2ddata *fp, int GC, int size, double dx0, double dy0, double  dx1, double dy1);
+static void poly_add_point(struct narray *pos, double x, double y, struct f2ddata *fp);
+static void poly_add_clip_point(struct narray *pos, double minx, double miny, double maxx, double maxy, double x, double y, struct f2ddata *fp);
+static int poly_pos_sort_cb(const void *a, const void *b);
+static void poly_set_pos(struct point_pos *p, int i, double x, double y, double x0, double y0);
+static int poly_add_elements(struct narray *pos,
+                             double minx, double miny, double maxx, double maxy,
+                             double x0, double y0, double x1, double y1,
+                             struct f2ddata *fp);
+static void add_polygon_point(struct narray *pos, double x0, double y0, double x1, double y1, struct f2ddata *fp);
+static void uniq_points(struct narray *pos);
+static void draw_polygon(struct narray *pos, int GC, int fill);
 
 #if BUF_TYPE == USE_RING_BUF
 int
@@ -985,8 +1001,8 @@ static int
 file_draw_arc(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   struct f2ddata *fp;
-  int i, r, num, stroke, fill, pie, close, cx, cy, ap[ARC_INTERPOLATION * 2], *pdata;
-  double x, y, rx, ry, px, py, angle1, angle2, angle;
+  int i, r, num, stroke, fill, pie, close, cx, cy, ap[ARC_INTERPOLATION * 2], *pdata, px, py;
+  double x, y, rx, ry, angle1, angle2, angle;
   struct narray expand_points;
 
   rval->val = 0;
@@ -1012,9 +1028,9 @@ file_draw_arc(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
   ry     = exp->buf[3].val.val;
   angle1 = exp->buf[4].val.val;
   angle2 = exp->buf[5].val.val;
-  stroke = exp->buf[6].val.val;
-  fill   = exp->buf[7].val.val;
-  pie    = exp->buf[8].val.val;
+  pie    = exp->buf[6].val.val;
+  stroke = exp->buf[7].val.val;
+  fill   = exp->buf[8].val.val;
   close  = exp->buf[9].val.val;
 
   if (getposition(fp, x, y, &cx, &cy)) {
@@ -1027,16 +1043,17 @@ file_draw_arc(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
     close = TRUE;
   }
   for (i = 0; i < ARC_INTERPOLATION; i++) {
+    double ax, ay;
     angle = angle1 + angle2 / (ARC_INTERPOLATION - 1) * i;
     angle = MPI * angle / 180.0;
-    px = x + rx * cos(angle);
-    py = y + ry * sin(angle);
-    r = getposition2(fp, fp->axtype, fp->aytype, &px, &py);
+    ax = x + rx * cos(angle);
+    ay = y + ry * sin(angle);
+    r = getposition2(fp, fp->axtype, fp->aytype, &ax, &ay);
     if (r) {
       rval->type = MATH_VALUE_ERROR;
       return -1;
     }
-    f2dtransf(px, py,
+    f2dtransf(ax, ay,
 	      ap + i * 2,
 	      ap + i * 2 + 1,
 	      fp);
@@ -1052,6 +1069,7 @@ file_draw_arc(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
   }
   num = arraynum(&expand_points) / 2;
   pdata = arraydata(&expand_points);
+  GRAcurrent_point(fp->GC, &px, &py);
   if (fill) {
     GRAcolor(fp->GC, fp->color2.r, fp->color2.g, fp->color2.b, fp->color2.a);
     GRAdrawpoly(fp->GC, num, pdata, GRA_FILL_MODE_EVEN_ODD);
@@ -1061,16 +1079,15 @@ file_draw_arc(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
     if (close) {
       GRAdrawpoly(fp->GC, num, pdata, GRA_FILL_MODE_NONE);
     } else {
-      int n, px, py;
+      int n;
       n = (pie) ? num - 1 : num;
-      GRAcurrent_point(fp->GC, &px, &py);
       GRAmoveto(fp->GC, pdata[0], pdata[1]);
       for (i = 1; i < n; i++) {
 	GRAlineto(fp->GC, pdata[i * 2], pdata[i * 2 + 1]);
       }
-      GRAmoveto(fp->GC, px, py);
     }
   }
+  GRAmoveto(fp->GC, px, py);
   arraydel(&expand_points);
   return 0;
 }
@@ -1079,7 +1096,7 @@ static int
 file_draw_rect(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   struct f2ddata *fp;
-  int i, r, stroke, fill, ap[8];;
+  int i, r, stroke, fill, ap[8], px, py;
   double pos[4];
 
   rval->val = 0;
@@ -1106,6 +1123,8 @@ file_draw_rect(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   for (i = 0; i < 4; i++) {
     pos[i] = exp->buf[i].val.val;
   }
+  pos[2] += pos[0];
+  pos[3] += pos[1];
   stroke = exp->buf[4].val.val;
   fill = exp->buf[5].val.val;
 
@@ -1124,6 +1143,7 @@ file_draw_rect(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   f2dtransf(pos[2], pos[3], ap + 4, ap + 5, fp);
   f2dtransf(pos[2], pos[1], ap + 6, ap + 7, fp);
 
+  GRAcurrent_point(fp->GC, &px, &py);
   if (fill) {
     GRAcolor(fp->GC, fp->color2.r, fp->color2.g, fp->color2.b, fp->color2.a);
     GRAdrawpoly(fp->GC, 4, ap, GRA_FILL_MODE_EVEN_ODD);
@@ -1132,6 +1152,7 @@ file_draw_rect(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
     GRAcolor(fp->GC, fp->color.r, fp->color.g, fp->color.b, fp->color.a);
     GRAdrawpoly(fp->GC, 4, ap, GRA_FILL_MODE_NONE);
   }
+  GRAmoveto(fp->GC, px, py);
   return 0;
 }
 
@@ -1139,7 +1160,7 @@ static int
 file_draw_line(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   struct f2ddata *fp;
-  int i, r, ap[4];;
+  int i, r, ap[4], px, py;
   double pos[4];
 
   rval->val = 0;
@@ -1179,8 +1200,103 @@ file_draw_line(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   f2dtransf(pos[0], pos[1], ap + 0, ap + 1, fp);
   f2dtransf(pos[2], pos[3], ap + 2, ap + 3, fp);
 
+  GRAcurrent_point(fp->GC, &px, &py);
   GRAcolor(fp->GC, fp->color.r, fp->color.g, fp->color.b, fp->color.a);
   GRAline(fp->GC, ap[0], ap[1], ap[2], ap[3]);
+  GRAmoveto(fp->GC, px, py);
+
+  return 0;
+}
+
+static int
+file_draw_errorbar(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  struct f2ddata *fp;
+  int px, py;
+  double x, y, erx, ery, size;
+
+  rval->val = 0;
+
+  if (exp->buf[0].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[1].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[2].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[3].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[4].val.type != MATH_VALUE_NORMAL) {
+    return 0;
+  }
+
+  fp = math_equation_get_user_data(eq);
+  if (fp == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  if (fp->GC < 0) {
+    return 0;
+  }
+
+  x = exp->buf[0].val.val;
+  y = exp->buf[1].val.val;
+  erx = exp->buf[2].val.val;
+  ery = exp->buf[3].val.val;
+  size = exp->buf[4].val.val * 100;
+  if (size < 1) {
+    size = fp->marksize;
+  }
+
+  GRAcurrent_point(fp->GC, &px, &py);
+  GRAcolor(fp->GC, fp->color.r, fp->color.g, fp->color.b, fp->color.a);
+  if (erx != 0) {
+    draw_errorbar(fp, fp->GC, size / 2, x - erx, y, x + erx, y);
+  }
+  if (ery != 0) {
+    draw_errorbar(fp, fp->GC, fp->marksize / 2, x, y - ery, x, y + ery);
+  }
+  GRAmoveto(fp->GC, px, py);
+
+  return 0;
+}
+
+static int
+file_draw_errorbar2(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  struct f2ddata *fp;
+  int px, py, size;
+  double x0, y0, x1, y1;
+
+  rval->val = 0;
+
+  if (exp->buf[0].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[1].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[2].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[3].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[4].val.type != MATH_VALUE_NORMAL) {
+    return 0;
+  }
+
+  fp = math_equation_get_user_data(eq);
+  if (fp == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  if (fp->GC < 0) {
+    return 0;
+  }
+
+  x0 = exp->buf[0].val.val;
+  y0 = exp->buf[1].val.val;
+  x1 = exp->buf[2].val.val;
+  y1 = exp->buf[3].val.val;
+  size = exp->buf[4].val.val * 100;
+  if (size < 1) {
+    size = fp->marksize;
+  }
+
+  GRAcurrent_point(fp->GC, &px, &py);
+  GRAcolor(fp->GC, fp->color.r, fp->color.g, fp->color.b, fp->color.a);
+  draw_errorbar(fp, fp->GC, size / 2, x0, y0, x1, y1);
+  GRAmoveto(fp->GC, px, py);
 
   return 0;
 }
@@ -1231,6 +1347,128 @@ file_draw_mark(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   return 0;
 }
 
+static void
+draw_lines(struct narray *pos, int GC)
+{
+  int n, *ap;
+
+  uniq_points(pos);
+  ap = (int *) arraydata(pos);
+  n = arraynum(pos);
+  if (n > 4) {
+    GRAlines(GC, n / 2, ap);
+  }
+}
+
+static int
+file_draw_path(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval, int stroke, int fill, int close)
+{
+  struct f2ddata *fp;
+  int i, id, n, first, px, py;
+  double x0, y0, x1, y1, x2, y2;
+  MathEquationArray *ax, *ay;
+  struct narray pos;
+
+  rval->val = 0;
+
+  id = exp->buf[0].idx;
+  ax = math_equation_get_array(eq, id);
+  if (ax == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+  n = ax->num;
+
+  id = exp->buf[1].idx;
+  ay = math_equation_get_array(eq, id);
+  if (ay == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+  if (ay->num < n) {
+    n = ay->num;
+  }
+
+  fp = math_equation_get_user_data(eq);
+  if (fp == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  if (fp->GC < 0) {
+    return 0;
+  }
+
+  arrayinit(&pos, sizeof(int));
+  first = TRUE;
+  for (i = 0; i < n; i++) {
+    if (ax->data[i].type == MATH_VALUE_NORMAL && ay->data[i].type == MATH_VALUE_NORMAL) {
+      if (first) {
+        first = FALSE;
+	x0 = ax->data[i].val;
+	y0 = ay->data[i].val;
+	x2 = ax->data[i].val;
+	y2 = ay->data[i].val;
+      } else {
+	x1 = x2;
+	y1 = y2;
+	x2 = ax->data[i].val;
+	y2 = ay->data[i].val;
+	add_polygon_point(&pos, x1, y1, x2, y2, fp);
+      }
+    }
+  }
+  if (first) {
+    return 0;
+  }
+  if (close) {
+    add_polygon_point(&pos, x2, y2, x0, y0, fp);
+  }
+
+  if (fill < 0) {
+    fill = GRA_FILL_MODE_NONE;
+  } else if (fill > GRA_FILL_MODE_WINDING) {
+    fill = GRA_FILL_MODE_WINDING;
+  }
+
+  GRAcurrent_point(fp->GC, &px, &py);
+  GRAcolor(fp->GC, fp->color2.r, fp->color2.g, fp->color2.b, fp->color2.a);
+  if (fill) {
+    draw_polygon(&pos, fp->GC, fill);
+  }
+  GRAcolor(fp->GC, fp->color.r, fp->color.g, fp->color.b, fp->color.a);
+  if (stroke) {
+    if (close) {
+      draw_polygon(&pos, fp->GC, GRA_FILL_MODE_NONE);
+    } else {
+      draw_lines(&pos, fp->GC);
+    }
+  }
+  GRAmoveto(fp->GC, px, py);
+  arraydel(&pos);
+
+  return 0;
+}
+
+static int
+file_draw_polyline(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  return file_draw_path(exp, eq, rval, TRUE, FALSE, FALSE);
+}
+
+static int
+file_draw_polygon(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int stroke, fill;
+  if (exp->buf[2].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[3].val.type != MATH_VALUE_NORMAL) {
+    return 0;
+  }
+  stroke = exp->buf[2].val.val;
+  fill   = exp->buf[3].val.val;
+  return file_draw_path(exp, eq, rval, stroke, fill, TRUE);
+}
+
 struct funcs {
   char *name;
   struct math_function_parameter prm;
@@ -1245,21 +1483,38 @@ static struct funcs FitFunc[] = {
   {"FIT_PRM",  {2, 0, 0, file_fit_prm,   NULL, NULL, NULL, NULL}},
 };
 
+static enum MATH_FUNCTION_ARG_TYPE draw_polyline_arg_type[] = {
+  MATH_FUNCTION_ARG_TYPE_ARRAY,
+  MATH_FUNCTION_ARG_TYPE_ARRAY,
+};
+
+static enum MATH_FUNCTION_ARG_TYPE draw_polygon_arg_type[] = {
+  MATH_FUNCTION_ARG_TYPE_ARRAY,
+  MATH_FUNCTION_ARG_TYPE_ARRAY,
+  MATH_FUNCTION_ARG_TYPE_DOUBLE,
+  MATH_FUNCTION_ARG_TYPE_DOUBLE,
+  MATH_FUNCTION_ARG_TYPE_DOUBLE,
+};
+
 static struct funcs FileFunc[] = {
   {"OBJ_ALPHA", {2, 0, 0, file_objalpha, NULL, NULL, NULL, NULL}},
   {"OBJ_COLOR", {2, 0, 0, file_objcolor, NULL, NULL, NULL, NULL}},
-  {"COLOR",    {2, 0, 0, file_color,    NULL, NULL, NULL, NULL}},
-  {"ALPHA",    {2, 0, 0, file_alpha,    NULL, NULL, NULL, NULL}},
-  {"RGB",      {3, 0, 0, file_rgb,      NULL, NULL, NULL, NULL}},
-  {"RGB2",     {3, 0, 0, file_rgb2,     NULL, NULL, NULL, NULL}},
-  {"HSB",      {3, 0, 0, file_hsb,      NULL, NULL, NULL, NULL}},
-  {"HSB2",     {3, 0, 0, file_hsb2,     NULL, NULL, NULL, NULL}},
-  {"MARKSIZE", {1, 0, 0, file_marksize, NULL, NULL, NULL, NULL}},
-  {"MARKTYPE", {1, 0, 0, file_marktype, NULL, NULL, NULL, NULL}},
+  {"COLOR",     {2, 0, 0, file_color,    NULL, NULL, NULL, NULL}},
+  {"ALPHA",     {2, 0, 0, file_alpha,    NULL, NULL, NULL, NULL}},
+  {"RGB",       {3, 0, 0, file_rgb,      NULL, NULL, NULL, NULL}},
+  {"RGB2",      {3, 0, 0, file_rgb2,     NULL, NULL, NULL, NULL}},
+  {"HSB",       {3, 0, 0, file_hsb,      NULL, NULL, NULL, NULL}},
+  {"HSB2",      {3, 0, 0, file_hsb2,     NULL, NULL, NULL, NULL}},
+  {"MARKSIZE",  {1, 0, 0, file_marksize, NULL, NULL, NULL, NULL}},
+  {"MARKTYPE",  {1, 0, 0, file_marktype, NULL, NULL, NULL, NULL}},
   {"DRAW_RECT", {6, 0, 0, file_draw_rect, NULL, NULL, NULL, NULL}},
   {"DRAW_LINE", {4, 0, 0, file_draw_line, NULL, NULL, NULL, NULL}},
-  {"DRAW_ARC", {DRAW_ARC_ARG_NUM, 0, 0, file_draw_arc, NULL, NULL, NULL, NULL}},
-  {"DRAW_MARK", {3, 0, 0, file_draw_mark, NULL, NULL, NULL, NULL}},
+  {"DRAW_ARC",  {DRAW_ARC_ARG_NUM, 0, 0, file_draw_arc, NULL, NULL, NULL, NULL}},
+  {"DRAW_MARK",      {3, 0, 0, file_draw_mark, NULL, NULL, NULL, NULL}},
+  {"DRAW_ERRORBAR",  {5, 0, 0, file_draw_errorbar, NULL, NULL, NULL, NULL}},
+  {"DRAW_ERRORBAR2", {5, 0, 0, file_draw_errorbar2, NULL, NULL, NULL, NULL}},
+  {"DRAW_POLYLINE",  {2, 0, 0, file_draw_polyline, draw_polyline_arg_type, NULL, NULL, NULL}},
+  {"DRAW_POLYGON",   {4, 0, 0, file_draw_polygon, draw_polygon_arg_type, NULL, NULL, NULL}},
 };
 
 static int
@@ -2243,6 +2498,11 @@ ofile_create_math_equation(int *id, int prm_digit, int use_fprm, int use_const, 
     "%D",
     "%N",
   };
+  struct math_const_parameter static_const[] = {
+    {"FILL_RULE_NONE",     MATH_SCANNER_VAL_TYPE_NORMAL, {GRA_FILL_MODE_NONE,     MATH_VALUE_NORMAL}},
+    {"FILL_RULE_EVEN_ODD", MATH_SCANNER_VAL_TYPE_NORMAL, {GRA_FILL_MODE_EVEN_ODD, MATH_VALUE_NORMAL}},
+    {"FILL_RULE_WINDING",  MATH_SCANNER_VAL_TYPE_NORMAL, {GRA_FILL_MODE_WINDING,  MATH_VALUE_NORMAL}},
+  };
 
   code = math_equation_basic_new();
   if (code == NULL)
@@ -2281,6 +2541,12 @@ ofile_create_math_equation(int *id, int prm_digit, int use_fprm, int use_const, 
       }
       if (id) {
 	id[i] = f_id;
+      }
+    }
+    for (i = 0; i < sizeof(static_const) / sizeof(*static_const); i++) {
+      if (math_equation_add_const(code, static_const[i].str, &static_const[i].val) < 0) {
+	math_equation_free(code);
+	return NULL;
       }
     }
   }
@@ -4870,10 +5136,6 @@ poly_add_clip_point(struct narray *pos, double minx, double miny, double maxx, d
   poly_add_point(pos, x, y, fp);
 }
 
-struct point_pos {
-  double x, y, d;
-};
-
 static int
 poly_pos_sort_cb(const void *a, const void *b)
 {
@@ -5099,7 +5361,7 @@ uniq_points(struct narray *pos)
 }
 
 static void
-draw_polygon(struct narray *pos, int GC)
+draw_polygon(struct narray *pos, int GC, int fill)
 {
   int n, *ap;
 
@@ -5107,7 +5369,7 @@ draw_polygon(struct narray *pos, int GC)
   ap = (int *) arraydata(pos);
   n = arraynum(pos);
   if (n > 4) {
-    GRAdrawpoly(GC, n / 2, ap, GRA_FILL_MODE_WINDING);
+    GRAdrawpoly(GC, n / 2, ap, fill);
   }
 
 #if 0
@@ -5124,8 +5386,6 @@ draw_polygon(struct narray *pos, int GC)
     GRAdrawtext(GC, buf, "Serif", 0, 2000, 0, 0, 7000);
   }
 #endif
-
-  arraydel(pos);
 }
 
 static int
@@ -5161,7 +5421,8 @@ polyout(struct objlist *obj, struct f2ddata *fp, int GC)
 	if (! first) {
 	  add_polygon_point(&pos, x2, y2, x0, y0, fp);
 	}
-	draw_polygon(&pos, GC);
+	draw_polygon(&pos, GC, GRA_FILL_MODE_WINDING);
+        arraydel(&pos);
         first = TRUE;
       }
       errordisp(obj, fp, &emerr, &emnonum, &emig, &emng);
@@ -5171,7 +5432,8 @@ polyout(struct objlist *obj, struct f2ddata *fp, int GC)
   if (! first) {
     add_polygon_point(&pos, x2, y2, x0, y0, fp);
   }
-  draw_polygon(&pos, GC);
+  draw_polygon(&pos, GC, GRA_FILL_MODE_WINDING);
+  arraydel(&pos);
 
   errordisp(obj, fp, &emerr, &emnonum, &emig, &emng);
   return 0;
@@ -5570,13 +5832,54 @@ rectout(struct objlist *obj,struct f2ddata *fp,int GC,
   return 0;
 }
 
+static void
+draw_errorbar(struct f2ddata *fp, int GC, int size, double dx0, double dy0, double  dx1, double dy1)
+{
+  double x0, y0, x1, y1, x, y, r, dirx, diry;
+  int gx0, gy0, gx1, gy1;
+
+  x0 = dx0;
+  y0 = dy0;
+  x1 = dx1;
+  y1 = dy1;
+  if (f2dlineclipf(&x0, &y0, &x1, &y1, fp)) {
+    return;
+  }
+
+  f2dtransf(x0, y0, &gx0, &gy0, fp);
+  f2dtransf(x1, y1, &gx1, &gy1, fp);
+  x = gx1 - gx0;
+  y = gy1 - gy0;
+  r = sqrt(x * x + y * y);
+  if (r == 0) {
+    return;
+
+  }
+  dirx = x / r;
+  diry = y / r;
+
+  GRAline(GC, gx0, gy0, gx1, gy1);
+  if (dx0 == x0 && dy0 == y0) {
+    GRAline(GC,
+            gx0 + nround(size * diry),
+            gy0 - nround(size * dirx),
+            gx0 - nround(size * diry),
+            gy0 + nround(size * dirx));
+  }
+  if (dx1 == x1 && dy1 == y1) {
+      GRAline(GC,
+              gx1 + nround(size * diry),
+              gy1 - nround(size * dirx),
+              gx1 - nround(size * diry),
+              gy1 + nround(size * dirx));
+  }
+}
+
 static int
 errorbarout(struct objlist *obj,struct f2ddata *fp,int GC,
 	    int width,int snum,int *style,int type)
 {
   int emerr,emnonum,emig,emng;
-  double x0,y0,x1,y1;
-  int gx0,gy0,gx1,gy1;
   int size;
 
   emerr=emnonum=emig=emng=FALSE;
@@ -5589,54 +5892,14 @@ errorbarout(struct objlist *obj,struct f2ddata *fp,int GC,
        && (fp->d2stat==MATH_VALUE_NORMAL) && (fp->d3stat==MATH_VALUE_NORMAL)
        && (getposition2(fp,fp->axtype,fp->aytype,&(fp->dx),&(fp->dy))==0)
        && (getposition2(fp,fp->axtype,fp->axtype,&(fp->d2),&(fp->d3))==0)) {
-        x0=fp->d2;
-        y0=fp->dy;
-        x1=fp->d3;
-        y1=fp->dy;
-        if (f2dlineclipf(&x0,&y0,&x1,&y1,fp)==0) {
-          f2dtransf(x0,y0,&gx0,&gy0,fp);
-          f2dtransf(x1,y1,&gx1,&gy1,fp);
-          GRAline(GC,gx0,gy0,gx1,gy1);
-          if (fp->d2==x0) {
-            GRAline(GC,gx0+nround(size*fp->axvy),
-                       gy0-nround(size*fp->axvx),
-                       gx0-nround(size*fp->axvy),
-                       gy0+nround(size*fp->axvx));
-          }
-          if (fp->d3==x1) {
-            GRAline(GC,gx1+nround(size*fp->axvy),
-                       gy1-nround(size*fp->axvx),
-                       gx1-nround(size*fp->axvy),
-                       gy1+nround(size*fp->axvx));
-          }
-        }
+        draw_errorbar(fp, GC, size, fp->d2, fp->dy, fp->d3, fp->dy);
       } else errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
     } else if (type == PLOT_TYPE_ERRORBAR_Y) {
       if ((fp->dxstat==MATH_VALUE_NORMAL) && (fp->dystat==MATH_VALUE_NORMAL)
        && (fp->d2stat==MATH_VALUE_NORMAL) && (fp->d3stat==MATH_VALUE_NORMAL)
        && (getposition2(fp,fp->axtype,fp->aytype,&(fp->dx),&(fp->dy))==0)
        && (getposition2(fp,fp->aytype,fp->aytype,&(fp->d2),&(fp->d3))==0)) {
-        x0=fp->dx;
-        y0=fp->d2;
-        x1=fp->dx;
-        y1=fp->d3;
-        if (f2dlineclipf(&x0,&y0,&x1,&y1,fp)==0) {
-          f2dtransf(x0,y0,&gx0,&gy0,fp);
-          f2dtransf(x1,y1,&gx1,&gy1,fp);
-          GRAline(GC,gx0,gy0,gx1,gy1);
-          if (fp->d2==y0) {
-            GRAline(GC,gx0+nround(size*fp->ayvy),
-                       gy0-nround(size*fp->ayvx),
-                       gx0-nround(size*fp->ayvy),
-                       gy0+nround(size*fp->ayvx));
-          }
-          if (fp->d3==y1) {
-            GRAline(GC,gx1+nround(size*fp->ayvy),
-                       gy1-nround(size*fp->ayvx),
-                       gx1-nround(size*fp->ayvy),
-                       gy1+nround(size*fp->ayvx));
-          }
-        }
+        draw_errorbar(fp, GC, size, fp->dx, fp->d2, fp->dx, fp->d3);
       } else errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
     }
   }
@@ -9421,6 +9684,89 @@ get_fit_parameter(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char 
 }
 
 static int
+add_keyword(struct nhash *hash, void *data)
+{
+  GString *str;
+
+  str = data;
+  g_string_append(str, hash->key);
+  g_string_append_c(str, '\n');
+  return 0;
+}
+
+static gchar *
+create_keyword_list(NHASH hash)
+{
+  GString *str;
+  gchar *text;
+
+  str = g_string_new("");
+  nhash_each(hash, add_keyword, str);
+  text = g_string_free(str, FALSE);
+  return g_strstrip(text);
+}
+
+char *
+odata_get_functions(void)
+{
+  MathEquation *eq;
+  gchar *text;
+
+  eq = ofile_create_math_equation(NULL, 3, TRUE, TRUE, TRUE, TRUE, TRUE);
+  if (eq == NULL) {
+    return NULL;
+  }
+
+  text = create_keyword_list(eq->function);
+
+  math_equation_free(eq);
+  return text;
+}
+
+char *
+odata_get_constants(void)
+{
+  MathEquation *eq;
+  gchar *text;
+
+  eq = ofile_create_math_equation(NULL, 3, TRUE, TRUE, TRUE, TRUE, TRUE);
+  if (eq == NULL) {
+    return NULL;
+  }
+
+  text = create_keyword_list(eq->constant);
+
+  math_equation_free(eq);
+  return text;
+}
+
+static int
+get_functions(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
+{
+  if (_exeparent(obj, argv[1], inst, rval, argc, argv)) return 1;
+
+  g_free(rval->str);
+  rval->str = NULL;
+
+  rval->str = odata_get_functions();
+
+  return 0;
+}
+
+static int
+get_constants(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
+{
+  if (_exeparent(obj, argv[1], inst, rval, argc, argv)) return 1;
+
+  g_free(rval->str);
+  rval->str = NULL;
+
+  rval->str = odata_get_constants();
+
+  return 0;
+}
+
+static int
 set_array(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct array_prm ary;
@@ -9628,6 +9974,8 @@ static struct objtable file2d[] = {
   {FIT_FIELD_PREFIX "bisection",NSFUNC,NREAD|NEXEC,solve_equation,"da",0},
   {FIT_FIELD_PREFIX "calc",NSFUNC,NREAD|NEXEC,calc_equation,"d",0},
   {FIT_FIELD_PREFIX "prm",NSFUNC,NREAD|NEXEC,get_fit_parameter,"i",0},
+  {"math_functions",NSFUNC,NREAD|NEXEC,get_functions,"",0},
+  {"math_constants",NSFUNC,NREAD|NEXEC,get_constants,"",0},
   {"_local",NPOINTER,0,NULL,NULL,0},
 
   /* for range */

@@ -2343,18 +2343,35 @@ init_memory(void)
 int
 math_func_cm(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  int start, i, n;
+  MathValue val;
+
   if (Memory == NULL && init_memory()) {
     return 1;
   }
 
-  if (exp->buf[0].val.val == 0 && exp->buf[0].val.type == MATH_VALUE_NORMAL) {
-    memset(Memory, 0, sizeof(*Memory) * MATH_FUNCTION_MEMORY_NUM);
-  } else {
-    int i;
-    MathValue val;
+  MATH_CHECK_ARG(rval, exp->buf[1]);
 
-    val = exp->buf[0].val;
-    for (i = 0; i < MATH_FUNCTION_MEMORY_NUM; i++) {
+  start = 0;
+
+  n = exp->buf[1].val.val;
+  if (abs(n) >= MATH_FUNCTION_MEMORY_NUM) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  if (n == 0) {
+    n = MATH_FUNCTION_MEMORY_NUM;
+  } else if (n < 0) {
+    start = MATH_FUNCTION_MEMORY_NUM + n;
+    n = MATH_FUNCTION_MEMORY_NUM;
+  }
+
+  val = exp->buf[0].val;
+  if (val.val == 0 && val.type == MATH_VALUE_NORMAL) {
+    memset(Memory + start, 0, sizeof(*Memory) * (n - start));
+  } else {
+    for (i = start; i < n; i++) {
       Memory[i] = val;
     }
   }
@@ -2377,9 +2394,11 @@ math_func_rm(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 
   n = exp->buf[0].val.val;
 
-  if (n < 0 || n >= MATH_FUNCTION_MEMORY_NUM) {
+  if (abs(n) >= MATH_FUNCTION_MEMORY_NUM) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
+  } else if (n < 0) {
+    n += MATH_FUNCTION_MEMORY_NUM;
   }
 
   *rval = Memory[n];
@@ -2400,9 +2419,11 @@ math_func_m(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 
   n = exp->buf[0].val.val;
 
-  if (n < 0 || n >= MATH_FUNCTION_MEMORY_NUM) {
+  if (abs(n) >= MATH_FUNCTION_MEMORY_NUM) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
+  } else if (n < 0) {
+    n += MATH_FUNCTION_MEMORY_NUM;
   }
 
   *rval = Memory[n] = exp->buf[1].val;
@@ -2773,6 +2794,38 @@ math_func_size(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   }
 
   rval->val = ary->num;
+
+  return 0;
+}
+
+int
+math_func_array(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int id, i, r;
+  MathEquationArray *ary;
+
+  rval->val = 0;
+
+  id = (int) exp->buf[0].idx;
+  ary = math_equation_get_array(eq, id);
+  if (ary == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  r = math_equation_clear_array(eq, id);
+  if (r) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+  for (i = 1; i < exp->argc; i++) {
+    if (math_equation_push_array_val(eq, id, &exp->buf[i].val)) {
+      rval->type = MATH_VALUE_ERROR;
+      return 1;
+    }
+  }
+
+  rval->val = exp->argc - 1;
 
   return 0;
 }

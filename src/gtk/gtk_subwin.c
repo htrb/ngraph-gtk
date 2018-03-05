@@ -818,7 +818,7 @@ obj_copy(struct objlist *obj, int dest, int src)
 static void
 copy(struct obj_list_data *d)
 {
-  int sel, id, num;
+  int sel, id, num, undo;
 
   if (Menulock || Globallock)
     return;
@@ -829,10 +829,10 @@ copy(struct obj_list_data *d)
   num = chkobjlastinst(d->obj);
 
   if (sel >= 0 && sel <= num) {
-    menu_save_undo_single(UNDO_TYPE_COPY, d->obj->name);
+    undo = menu_save_undo_single(UNDO_TYPE_COPY, d->obj->name);
     id = newobj(d->obj);
     if (id < 0) {
-      menu_delete_undo();
+      menu_delete_undo(undo);
       return;
     }
     obj_copy(d->obj, id, sel);
@@ -972,7 +972,7 @@ move_down(struct obj_list_data *d)
 static void
 update(struct obj_list_data *d)
 {
-  int sel, ret, num;
+  int sel, ret, num, undo;
   GtkWidget *parent;
 
   if (Menulock || Globallock)
@@ -991,15 +991,15 @@ update(struct obj_list_data *d)
   d->setup_dialog(d, sel, -1);
   d->select = sel;
   if (d->undo_save) {
-    d->undo_save(UNDO_TYPE_EDIT);
+    undo = d->undo_save(UNDO_TYPE_EDIT);
   } else {
-    menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
+    undo = menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
   }
   ret = DialogExecute(parent, d->dialog);
   set_graph_modified();
   switch (ret) {
   case IDCANCEL:
-    menu_undo(FALSE);
+    menu_undo_internal(undo);
     break;
   case IDDELETE:
     if (d->delete) {
@@ -1058,7 +1058,7 @@ toggle_boolean(struct obj_list_data *d, char *field, int sel)
 static void
 modify_numeric(struct obj_list_data *d, char *field, int val)
 {
-  int sel, v1, v2, num;
+  int sel, v1, v2, num, undo;
 
   if (Menulock || Globallock)
     return;
@@ -1069,7 +1069,7 @@ modify_numeric(struct obj_list_data *d, char *field, int val)
     return;
   }
 
-  menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
+  undo = menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
   getobj(d->obj, field, sel, 0, NULL, &v1);
   if (putobj(d->obj, field, sel, &val) < 0) {
     return;
@@ -1081,14 +1081,14 @@ modify_numeric(struct obj_list_data *d, char *field, int val)
     d->update(d, FALSE, TRUE);
     set_graph_modified();
   } else {
-    menu_delete_undo();
+    menu_delete_undo(undo);
   }
 }
 
 static void
 modify_string(struct obj_list_data *d, char *field, char *str)
 {
-  int sel, num;
+  int sel, num, undo;
 
   if (Menulock || Globallock)
     return;
@@ -1099,9 +1099,9 @@ modify_string(struct obj_list_data *d, char *field, char *str)
     return;
   }
 
-  menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
+  undo = menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
   if (chk_sputobjfield(d->obj, sel, field, str)) {
-    menu_delete_undo();
+    menu_delete_undo(undo);
     return;
   }
 

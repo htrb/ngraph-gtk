@@ -2842,7 +2842,7 @@ getintpar(char *s,int num,int cpar[])
   return TRUE;
 }
 
-static int
+int
 GRAinputdraw(int GC,int leftm,int topm,int rate,
                   char code,int *cpar,char *cstr)
 {
@@ -2949,47 +2949,101 @@ GRAinputdraw(int GC,int leftm,int topm,int rate,
   return TRUE;
 }
 
-int
-GRAinput(int GC,char *s,int leftm,int topm,int rate)
+void
+GRAdata_free(struct GRAdata *data)
 {
-  int pos,num,i,r;
+  if (data == NULL) {
+    return;
+  }
+  if (data->cstr) {
+    g_free(data->cstr);
+  }
+  if (data->cpar) {
+    g_free(data->cpar);
+  }
+}
+
+int
+GRAparse(struct GRAdata *data, char *s)
+{
+  int pos, num, i;
   char code;
   int *cpar;
   char *cstr;
 
-  code='\0';
-  cpar=NULL;
-  cstr=NULL;
-  for (i=0;s[i]!='\0';i++)
-    if (strchr("\n\r",s[i])!=NULL) {
-      s[i]='\0';
+  code = '\0';
+  cpar =NULL;
+  cstr = NULL;
+  for (i = 0; s[i] != '\0'; i++) {
+    if (strchr("\n\r", s[i]) != NULL) {
+      s[i] = '\0';
       break;
     }
-  pos=0;
-  while ((s[pos]==' ') || (s[pos]=='\t')) pos++;
-  if (s[pos]=='\0') return TRUE;
-  if (strchr("IE%VAGOMNLTCBPRDFHSK",s[pos])==NULL) return FALSE;
-  code=s[pos];
-  if (strchr("%FSK",code)==NULL) {
-    if (!getintpar(s+pos+1,1,&num)) return FALSE;
-    num++;
-    if ((cpar=g_malloc(sizeof(int)*num))==NULL) return FALSE;
-    if (!getintpar(s+pos+1,num,cpar)) goto errexit;
-  } else {
-    if ((cpar=g_malloc(sizeof(int)))==NULL) return FALSE;
-    cpar[0]=-1;
-    if ((cstr=g_malloc(strlen(s)-pos))==NULL) goto errexit;
-    strcpy(cstr,s+pos+1);
   }
-  r = GRAinputdraw(GC,leftm,topm,rate,code,cpar,cstr);
-  g_free(cpar);
-  g_free(cstr);
-  return r;
+
+  pos = 0;
+  while (s[pos] == ' ' || s[pos] == '\t') {
+    pos++;
+  }
+
+  if (s[pos] == '\0') {
+    return TRUE;
+  }
+
+  if (strchr("IE%VAGOMNLTCBPRDFHSK", s[pos]) == NULL) {
+    return FALSE;
+  }
+
+  code = s[pos];
+  if (strchr("%FSK", code) == NULL) {
+    if (! getintpar(s + pos + 1, 1, &num)) {
+      return FALSE;
+    }
+    num++;
+    cpar = g_malloc(sizeof(int) * num);
+    if (cpar == NULL) {
+      return FALSE;
+    }
+    if (! getintpar(s + pos + 1, num, cpar)) {
+      goto errexit;
+    }
+  } else {
+    cpar = g_malloc(sizeof(int));
+    if (cpar == NULL) {
+      return FALSE;
+    }
+    cpar[0] = -1;
+    cstr = g_strdup(s + pos + 1);
+    if (cstr == NULL) {
+      goto errexit;
+    }
+  }
+  if (data) {
+    data->code = code;
+    data->cpar = cpar;
+    data->cstr = cstr;
+    data->next = NULL;
+  }
+  return TRUE;
 
 errexit:
   g_free(cpar);
   g_free(cstr);
   return FALSE;
+}
+
+int
+GRAinput(int GC,char *s,int leftm,int topm,int rate)
+{
+  int r;
+  struct GRAdata data;
+
+  if (! GRAparse(&data, s)) {
+    return FALSE;
+  }
+  r = GRAinputdraw(GC,leftm,topm,rate,data.code,data.cpar,data.cstr);
+  GRAdata_free(&data);
+  return r;
 }
 
 static char *fonttbl[]={

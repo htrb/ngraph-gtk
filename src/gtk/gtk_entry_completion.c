@@ -154,6 +154,10 @@ entry_completion_append(GtkEntryCompletion *comp, const char *str)
   if (comp == NULL || str == NULL || strlen(str) == 0)
     return;
 
+  if (strchr(str, '\n')) {
+    return;
+  }
+
   model = gtk_entry_completion_get_model(comp);
   if (model == NULL)
     return;

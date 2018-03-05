@@ -580,9 +580,20 @@ new data
 	data::type=mark
 	data::interpolation=spline
 	data::fit=
-	data::math_x='shift(col); n:=size(col); s:=array_sum(col); a:=0; for(0,0,n-1,1,progn(i:=RM(0),hsb2(i/n,0.7,1),f(a,Y,a+=col[i]/s)))'
+	data::math_x='const HEIGHT := 0.5;         # height of a bar graph
+shift(col);                  # remove %0 from the array col
+n := size(col);              # number of the data
+total := array_sum(col);     # summation of the data
+start := 0;                  # start position of a rectangle
+for(0, 0, n - 1, 1,          # draw rectangle for each data
+  progn(
+    i := RM(0),              # index of the array
+    width := col[i] / total, # width of a rectangle
+    hsb2(i / n, 0.7, 1),     # set fill color
+    draw_rect(start, y - HEIGHT / 2, width, HEIGHT, TRUE, TRUE),
+    start += width))'
 	data::math_y=
-	data::func_f='draw_rect(X,Y-0.25,Z,Y+0.25,1,1)'
+	data::func_f=
 	data::func_g=
 	data::func_h=
 	data::smooth_x=0
@@ -631,9 +642,18 @@ new data
 	data::type=mark
 	data::interpolation=spline
 	data::fit=
-	data::math_x='shift(col); n:=size(col); s:=array_sum(col); for(0,0,n-1,1,progn(i:=RM(0),hsb2(i/n,0.7,1),r:=col[i]/s,f(SUM(r),Y,r)))'
+	data::math_x='const R := 0.4;           # radius of a pie chart
+shift(col);               # remove %0 from the array col
+n := size(col);           # number of the data
+total := array_sum(col);  # summation of the data
+for(0, 0, n - 1, 1,       # draw pie-slice for each data
+  progn(
+    i := RM(0),           # index of the array
+    angle := col[i] / total * 360,
+    hsb2(i / n, 0.7, 1),  # set fill color
+    draw_arc(y, 0, R, R, sum(angle), -angle, TRUE, TRUE, TRUE, TRUE)))'
 	data::math_y=
-	data::func_f='draw_arc(Y,0,.4,.4,X*360,-Z*360,1,1,1,1)'
+	data::func_f=
 	data::func_g=
 	data::func_h=
 	data::smooth_x=0

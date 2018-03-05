@@ -31,7 +31,9 @@ EXTRA_DIST = dir_defs.h.in data/css/ngraph.css				\
 	data/pixmaps/ngraph_scale.png data/pixmaps/ngraph_section.png	\
 	data/pixmaps/ngraph_single.png data/pixmaps/ngraph_text.png	\
 	data/pixmaps/ngraph_trimming.png data/pixmaps/ngraph_undo.png	\
-	data/pixmaps/ngraph_zoom.png data/ngraphui.resources.xml
+	data/pixmaps/ngraph_zoom.png data/ngraphui.resources.xml	\
+	create_completion_info.rb completion_info_functions.txt		\
+	completion_info_constants.txt
 
 AM_CPPFLAGS = -DLOCALEDIR=\""@localedir@"\"
 
@@ -52,7 +54,8 @@ libngraphui_la_SOURCES = gtk_common.h gtk_combo.c gtk_combo.h		\
 	x11merge.h x11opt.c x11opt.h x11opt_proto.h x11print.c		\
 	x11print.h x11view.c x11view.h gtk_widget.c gtk_widget.h	\
 	gtk_ruler.c gtk_ruler.h init.c init.h gtk_action.c		\
-	gtk_action.h
+	gtk_action.h sourcecompletionwords.c sourcecompletionwords.h	\
+	completion_info.c completion_info.h completion_info_data.c
 
 if OS_WIN32
 APPMENU_UI_SOURCE = $(srcdir)/data/gtk/menus-appmenu.ui.in
@@ -87,6 +90,10 @@ pixmapdir = $(datadir)/pixmaps/$(PACKAGE)
 dir_defs.h: dir_defs.h.in Makefile
 	$(SHELL) $(top_srcdir)/pathconv.sh "$(bindir)" "$(docdir)" "$(pkglibexecdir)" "$(pkglibdir)" "$(pkgdatadir)" "$(ngraphconfdir)" $(srcdir)/dir_defs.h.in
 
-libngraphui_la_CFLAGS = $(GTK_CFLAGS) -I$(top_builddir) -I$(builddir) -I$(srcdir)/.. -I$(srcdir)/../math
+completion_info_data.c: $(srcdir)/completion_info_functions.txt $(srcdir)/completion_info_constants.txt $(srcdir)/create_completion_info.rb
+	ruby $(srcdir)/create_completion_info.rb $(srcdir)/completion_info_functions.txt $(srcdir)/completion_info_constants.txt completion_info_data.c
+
+libngraphui_la_CFLAGS = $(GTK_CFLAGS) -I$(top_builddir) -I$(builddir) -I$(srcdir)/.. -I$(srcdir)/../math $(GTKSOURCEVIEW_CFLAGS)
+libngraphui_la_LDFLAGS = $(GTKSOURCEVIEW_LIBS)
 
 CLEANFILES = dir_defs.h $(builddir)/data/gtk/menus-appmenu.ui $(builddir)/data/gtk/menus-common.ui $(BUILT_SOURCES)

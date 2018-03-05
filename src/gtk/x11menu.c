@@ -35,6 +35,7 @@
 
 #include "init.h"
 #include "osystem.h"
+#include "omerge.h"
 #include "x11bitmp.h"
 #include "x11dialg.h"
 #include "ogra2cairo.h"
@@ -5907,6 +5908,39 @@ create_toplevel_window(void)
   return 0;
 }
 
+static void
+souce_view_initialize(void)
+{
+  const gchar * const *dirs;
+  gchar **new_dirs;
+  gchar *dir;
+  int n;
+  static int initialized = FALSE;
+  GtkSourceLanguageManager *lm;
+
+  if (initialized) {
+    return;
+  }
+  initialized = TRUE;
+
+  lm = gtk_source_language_manager_get_default();
+  dirs = gtk_source_language_manager_get_search_path(lm);
+  for (n = 0; dirs[n]; n++);
+  new_dirs = g_malloc((n + 2) * sizeof(*new_dirs));
+  if (new_dirs == NULL) {
+    return;
+  }
+  dir = g_strdup_printf("%s/%s", NDATADIR, "gtksourceview");
+  if (dir) {
+    memcpy(new_dirs, dirs, n * sizeof(*new_dirs));
+    new_dirs[n] = dir;
+    new_dirs[n + 1] = NULL;
+    gtk_source_language_manager_set_search_path(lm, new_dirs);
+    g_free(dir);
+  }
+  g_free(new_dirs);
+}
+
 int
 application(char *file)
 {
@@ -5931,6 +5965,8 @@ application(char *file)
     }
   }
 
+  souce_view_initialize();
+
 #if ! WINDOWS
   set_signal(SIGINT, 0, kill_signal_handler, NULL);
   set_signal(SIGTERM, 0, term_signal_handler, NULL);
@@ -5941,10 +5977,12 @@ application(char *file)
     ext = getextention(file);
     if (ext && ((strcmp0(ext, "NGP") == 0) || (strcmp0(ext, "ngp") == 0))) {
       LoadNgpFile(file, FALSE, NULL);
+    } else {
+      CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
     }
+  } else {
+    CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
   }
-
-  CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
 
   system_set_draw_notify_func(draw_notify);
   terminated = AppMainLoop();
@@ -6577,7 +6615,7 @@ struct undo_info {
   char **obj;
   time_t time;
   struct undo_info *next;
-  int modified;
+  int modified, id;
 };
 static struct undo_info *UndoInfo = NULL, *RedoInfo = NULL;
 
@@ -6644,6 +6682,7 @@ menu_check_redo(void)
 static struct undo_info *
 undo_info_push(enum MENU_UNDO_TYPE type, char **obj)
 {
+  static int id = 0;
   struct undo_info *info;
   time_t t;
 
@@ -6663,6 +6702,7 @@ undo_info_push(enum MENU_UNDO_TYPE type, char **obj)
   info->next = UndoInfo;
   info->time = t;
   info->modified = get_graph_modified();
+  info->id = id++;
   UndoInfo = info;
   return info;
 }
@@ -6785,14 +6825,14 @@ set_undo_menu_label(void)
 }
 #endif
 
-void
+int
 menu_save_undo(enum MENU_UNDO_TYPE type, char **obj)
 {
   struct undo_info *info;
 
   info = undo_info_push(type, obj);
   if (info == NULL) {
-    return;
+    return -1;
   }
   menu_undo_iteration(undo_save, obj);
   while (RedoInfo) {
@@ -6801,22 +6841,26 @@ menu_save_undo(enum MENU_UNDO_TYPE type, char **obj)
   set_undo_menu_label();
   set_action_widget_sensitivity(EditUndoAction, menu_check_undo());
   set_action_widget_sensitivity(EditRedoAction, menu_check_redo());
+  return info->id;
 }
 
-void
+int
 menu_save_undo_single(enum MENU_UNDO_TYPE type, char *obj)
 {
   char *objs[2];
   objs[0] = obj;
   objs[1] = NULL;
-  menu_save_undo(type, objs);
+  return menu_save_undo(type, objs);
 }
 
 
 void
-menu_delete_undo(void)
+menu_delete_undo(int id)
 {
   if (UndoInfo == NULL) {
+    return;
+  }
+  if (UndoInfo->id != id) {
     return;
   }
   menu_undo_iteration(undo_delete, UndoInfo->obj);
@@ -6840,10 +6884,11 @@ menu_clear_undo(void)
   set_undo_menu_label();
   set_action_widget_sensitivity(EditUndoAction, menu_check_undo());
   set_action_widget_sensitivity(EditRedoAction, menu_check_redo());
+  merge_cache_clear();
 }
 
 static void
-undo_update_widgets(struct undo_info *info, int redraw)
+undo_update_widgets(struct undo_info *info)
 {
   set_action_widget_sensitivity(EditUndoAction, menu_check_undo());
   set_action_widget_sensitivity(EditRedoAction, menu_check_redo());
@@ -6912,32 +6957,62 @@ undo_check_modified(struct undo_info *info)
   return modified_current;
 }
 
-void
-menu_undo(int redraw)
+static struct undo_info *
+menu_undo_common(int *is_modify)
 {
   int r, modified;
+  struct undo_info *info;
+
+  r = menu_undo_iteration(undo_undo, UndoInfo->obj);
+  if (r) {
+    return NULL;
+  }
+  modified = undo_check_modified(UndoInfo);
+  info = UndoInfo;
+  UndoInfo = info->next;
+  if (is_modify) {
+    *is_modify = modified;
+  }
+  return info;
+}
+
+void
+menu_undo_internal(int id)
+{
+  struct undo_info *info;
+  if (UndoInfo == NULL) {
+    return;
+  }
+  if (UndoInfo->id != id) {
+    return;
+  }
+  info = menu_undo_common(NULL);
+  if (info == NULL) {
+    return;
+  }
+  undo_info_pop(info);
+  set_action_widget_sensitivity(EditUndoAction, menu_check_undo());
+  set_action_widget_sensitivity(EditRedoAction, menu_check_redo());
+  set_undo_menu_label();
+}
+
+void
+menu_undo(void)
+{
+  int modified;
   struct undo_info *info;
   if (UndoInfo == NULL) {
     return;
   }
 
-  r = menu_undo_iteration(undo_undo, UndoInfo->obj);
-  if (r) {
+  info = menu_undo_common(&modified);
+  if (info == NULL) {
     return;
   }
-  modified = undo_check_modified(UndoInfo);
-  info = UndoInfo;
-  UndoInfo = info->next;
-  if (redraw) {
-    info->next = RedoInfo;
-    info->modified = modified;
-    RedoInfo = info;
-    undo_update_widgets(info, redraw);
-  } else {
-    undo_info_pop(info);
-    set_action_widget_sensitivity(EditUndoAction, menu_check_undo());
-    set_action_widget_sensitivity(EditRedoAction, menu_check_redo());
-  }
+  info->next = RedoInfo;
+  info->modified = modified;
+  RedoInfo = info;
+  undo_update_widgets(info);
   set_undo_menu_label();
 }
 
@@ -6959,7 +7034,7 @@ menu_redo(void)
   info->next = UndoInfo;
   info->modified = modified;
   UndoInfo = info;
-  undo_update_widgets(info, TRUE);
+  undo_update_widgets(info);
   set_undo_menu_label();
 }
 

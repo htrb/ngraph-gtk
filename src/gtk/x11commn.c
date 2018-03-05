@@ -1470,23 +1470,80 @@ LoadNgpFile(char *file, int console, char *option)
   return 0;
 }
 
+static int
+check_ref_axis(char *ref, const char *group)
+{
+  int anum, aid;
+  char *refgroup;
+  struct narray iarray;
+  struct objlist *aobj;
+  N_VALUE *inst;
+
+  if (ref == NULL) {
+    return FALSE;
+  }
+
+  arrayinit(&iarray, sizeof(int));
+  if (getobjilist(ref, &aobj, &iarray, FALSE, NULL)) {
+    arraydel(&iarray);
+    return TRUE;
+  }
+
+  anum = arraynum(&iarray);
+  if (anum < 1) {
+    arraydel(&iarray);
+    return TRUE;
+  }
+
+  aid = arraylast_int(&iarray);
+  arraydel(&iarray);
+  inst = getobjinst(aobj, aid);
+  if (inst == NULL) {
+    return TRUE;
+  }
+
+  _getobj(aobj, "group", inst, &refgroup);
+  if (refgroup && group &&
+      refgroup[0] == group[0] &&
+      strcmp(refgroup + 2, group + 2) == 0) {
+    return FALSE;
+  }
+
+  return TRUE;
+}
+
+static int
+file_auto_scale(char *file_obj, struct objlist *aobj, int anum)
+{
+  int i, refother;
+  double min, max, inc;
+  char *group, *ref, *argv[2];
+
+  argv[0] = (char *) file_obj;
+  argv[1] = NULL;
+  for (i = 0; i <= anum; i++) {
+    getobj(aobj, "min", i, 0, NULL, &min);
+    getobj(aobj, "max", i, 0, NULL, &max);
+    getobj(aobj, "inc", i, 0, NULL, &inc);
+    getobj(aobj, "group", i, 0, NULL, &group);
+    getobj(aobj, "reference", i, 0, NULL, &ref);
+    refother = check_ref_axis(ref, group);
+    if (! refother && (min == max || inc == 0)) {
+      exeobj(aobj, "auto_scale", i, 1, argv);
+    }
+  }
+  return 0;
+}
+
 void
 FileAutoScale(void)
 {
   int anum;
-  struct objlist *aobj, *aobj2;
-  double min, max, inc;
-  char *argv2[2];
+  struct objlist *aobj;
   char *buf;
   struct objlist *fobj;
   int lastinst;
-  int i, j, a;
-  char *ref;
-  struct narray iarray;
-  int anum2, aid2;
-  N_VALUE *inst;
-  char *group, *refgroup;
-  int refother, modified;
+  int i, hidden;
   GString *str;
 
   if ((fobj = chkobject("data")) == NULL)
@@ -1506,59 +1563,21 @@ FileAutoScale(void)
   }
 
   for (i = 0; i <= lastinst; i++) {
-    getobj(fobj, "hidden", i, 0, NULL, &a);
-    if (! a) {
+    getobj(fobj, "hidden", i, 0, NULL, &hidden);
+    if (! hidden) {
       g_string_append_printf(str, "%d,", i);
     }
   }
-  j = str->len;
+
+  i = str->len - 1;
   buf = g_string_free(str, FALSE);
+  if (buf[i] != ',') {
+    g_free(buf);
+    return;
+  }
+  buf[i] = '\0';
 
-  if (buf[j] == ',') {
-    buf[j] = '\0';
-  }
-
-  menu_save_undo_single(UNDO_TYPE_AUTOSCALE, aobj->name);
-  modified = FALSE;
-  argv2[0] = (char *) buf;
-  argv2[1] = NULL;
-  for (i = 0; i <= anum; i++) {
-    getobj(aobj, "min", i, 0, NULL, &min);
-    getobj(aobj, "max", i, 0, NULL, &max);
-    getobj(aobj, "inc", i, 0, NULL, &inc);
-    getobj(aobj, "group", i, 0, NULL, &group);
-    getobj(aobj, "reference", i, 0, NULL, &ref);
-    refother = FALSE;
-    if (ref) {
-      refother = TRUE;
-      arrayinit(&iarray, sizeof(int));
-      if (!getobjilist(ref, &aobj2, &iarray, FALSE, NULL)) {
-	anum2 = arraynum(&iarray);
-	if (anum2 > 0) {
-	  aid2 = arraylast_int(&iarray);
-	  arraydel(&iarray);
-	  inst = getobjinst(aobj2, aid2);
-	  if (inst) {
-	    _getobj(aobj2, "group", inst, &refgroup);
-	    if (refgroup && group && refgroup[0] == group[0]
-		&& strcmp(refgroup + 2, group + 2) == 0)
-	      refother = FALSE;
-	  }
-	}
-      }
-    }
-    if (! refother && (min == max || inc == 0)) {
-      exeobj(aobj, "auto_scale", i, 1, argv2);
-      getobj(aobj, "min", i, 0, NULL, &min);
-      getobj(aobj, "max", i, 0, NULL, &max);
-      if (min != max) {
-        modified = TRUE;
-      }
-    }
-  }
-  if (! modified) {
-    menu_delete_undo();
-  }
+  file_auto_scale(buf, aobj, anum);
   g_free(buf);
 }
 

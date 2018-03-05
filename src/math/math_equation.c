@@ -201,12 +201,14 @@ math_equation_clear(MathEquation *eq)
 }
 
 void
-math_equation_set_parse_error(MathEquation *eq, const char *ptr)
+math_equation_set_parse_error(MathEquation *eq, const char *ptr, const struct math_string *str)
 {
   if (eq == NULL)
     return;
 
-  eq->err_info.pos = ptr;
+  eq->err_info.pos.pos = ptr;
+  eq->err_info.pos.line = str->line + 1;
+  eq->err_info.pos.ofst = str->ofst + 1;
 }
 
 void
@@ -826,13 +828,17 @@ math_equation_add_func(MathEquation *eq, const char *name, struct math_function_
   }
 
   if (prm->arg_type) {
-    ptr->arg_type = g_malloc(sizeof(*prm->arg_type) * prm->argc);
-    if (ptr->arg_type == NULL) {
-      g_free(ptr->name);
-      g_free(ptr);
-      return NULL;
+    int argc;
+    argc = math_function_get_arg_type_num(prm);
+    if (argc > 0) {
+      ptr->arg_type = g_malloc(sizeof(*prm->arg_type) * argc);
+      if (ptr->arg_type == NULL) {
+        g_free(ptr->name);
+        g_free(ptr);
+        return NULL;
+      }
+      memcpy(ptr->arg_type, prm->arg_type, sizeof(*prm->arg_type) * argc);
     }
-    memcpy(ptr->arg_type, prm->arg_type, sizeof(*prm->arg_type) * prm->argc);
   }
 
   r = nhash_set_ptr(eq->function, name, ptr);

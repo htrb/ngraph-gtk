@@ -93,7 +93,7 @@ void MarkDialog(struct MarkDialog *data, int type);
 
 struct FileMath
 {
-  GtkWidget *xsmooth, *x, *ysmooth, *y, *f, *g, *h;
+  GtkWidget *xsmooth, *x, *ysmooth, *y, *f, *g, *h, *text_x, *text_y, *text_f, *text_g, *text_h;
   int tab_id;
 };
 
@@ -120,12 +120,12 @@ struct FileDialog
   DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *file, *load_settings, *fit, *xcol, *xaxis, *ycol, *yaxis,
-    *type, *mark_btn, *curve, *col1, *col2,
+    *type, *mark_btn, *curve, *col1, *col2, *math_input_tab,
     *clip, *style, *size, *miter, *join, *min, *max, *div,
     *comment_box, *file_box, *fit_table, *width, *apply_all, *comment_view, *comment_table;
-  GtkNotebook *tab;
+  GtkNotebook *tab, *math_tab;
   struct objlist *Obj;
-  int Id, source;
+  int Id, source, math_page;
   struct MarkDialog mark;
   int R, G, B, R2, G2, B2, alpha, multi_open, fit_row, initialized;
   struct FileMath math;
@@ -163,11 +163,11 @@ struct MathTextDialog
 {
   DIALOG_PROTOTYPE;
   /****** local member *******/
-  GtkWidget *list, *label, *tree;
+  GtkWidget *list, *text, *tree, *input_tab;
   GList *id_list;
   struct objlist *Obj;
   char *Text;
-  int Mode, modified;
+  int Mode, modified, page;
 };
 void MathTextDialog(struct MathTextDialog *data, char *text, int mode, struct objlist *obj, GList *list, GtkWidget *tree);
 
@@ -521,7 +521,7 @@ struct MiscDialog
   GtkWidget *editor, *directory, *path, *datafile,
     *expand, *expanddir, *loadpath, *mergefile, *coordwin_font, *infowin_font,
     *file_preview_font, *hist_size, *info_size, *data_head_lines, *help_browser,
-    *browser, *use_opacity, *select_data, *use_custom_palette;
+    *browser, *use_opacity, *select_data, *use_custom_palette, *source_style;
   struct objlist *Obj;
   struct narray tmp_palette;
   int Id;

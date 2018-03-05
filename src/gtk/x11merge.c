@@ -204,7 +204,7 @@ CmMergeOpen(void *w, gpointer client_data)
 {
   struct objlist *obj;
   char *name = NULL;
-  int id, ret;
+  int id, ret, undo;
 
   if (Menulock || Globallock)
     return;
@@ -216,7 +216,7 @@ CmMergeOpen(void *w, gpointer client_data)
 		       TRUE, Menulocal.changedirectory) != IDOK || ! name)
     return;
 
-  menu_save_undo_single(UNDO_TYPE_CREATE, obj->name);
+  undo = menu_save_undo_single(UNDO_TYPE_CREATE, obj->name);
   id = newobj(obj);
   if (id >= 0) {
     changefilename(name);
@@ -224,7 +224,7 @@ CmMergeOpen(void *w, gpointer client_data)
     MergeDialog(NgraphApp.MergeWin.data.data, id, -1);
     ret = DialogExecute(TopLevel, &DlgMerge);
     if (ret == IDCANCEL) {
-      menu_undo(FALSE);
+      menu_undo_internal(undo);
     } else {
       set_graph_modified();
     }

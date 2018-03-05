@@ -83,39 +83,63 @@ math_scanner_free_token(struct math_token *token)
 }
 
 struct math_token *
-math_scanner_get_token(const char *str, const char **rstr)
+math_scanner_get_token(struct math_string *mstr)
 {
   char c;
+  const char *str;
+  const char **rstr;
+  struct math_token *token;
 
+  str = mstr->cur;
+  rstr = &(mstr->cur);
   if (str == NULL) {
     return NULL;
   }
 
-  while (*str < 0 || *str == ' ' || *str == '\t' || *str == '\n')
+  while (*str < 0 || *str == ' ' || *str == '\t' || *str == '\n') {
+    mstr->ofst++;
+    if (*str == '\n') {
+      mstr->line++;
+      mstr->ofst = 0;
+    }
     str++;
+  }
 
   c = str[0];
   if (c == '\0') {
-    return get_eoeq(str, rstr);
+    token = get_eoeq(str, rstr);
   } else  if (isdigit(c) || c == '.') {
-    return get_num(str, rstr);
+    token = get_num(str, rstr);
   } else if (math_scanner_is_ope(c)) {
-    return get_ope(str, rstr);
+    token = get_ope(str, rstr);
   } else if (isalpha(c) || c == '%' || c == '_') {
-    return get_symbol(str, rstr);
+    token = get_symbol(str, rstr);
   } else if (c == '(' || c == ')') {
-    return get_paren(str, rstr);
+    token = get_paren(str, rstr);
   } else if (c == '[' || c == ']') {
-    return get_bracket(str, rstr);
+    token = get_bracket(str, rstr);
   } else if (c == '{' || c == '}') {
-    return get_curly(str, rstr);
+    token = get_curly(str, rstr);
   } else if (c == ',') {
-    return get_comma(str, rstr);
+    token = get_comma(str, rstr);
   } else if (c == '@') {
-    return get_array_prefix(str, rstr);
+    token = get_array_prefix(str, rstr);
+  } else if (c == '#') {        /* comment */
+    while (*str != '\0' && *str != '\n') {
+      mstr->ofst++;
+      if (*str == '\n') {
+        mstr->line++;
+        mstr->ofst = 0;
+      }
+      str++;
+    }
+    mstr->cur = str;
+    token = math_scanner_get_token(mstr);
+  } else {
+    token = get_unknown(str, rstr);
   }
-
-  return get_unknown(str, rstr);
+  mstr->ofst += (*rstr - str);
+  return token;
 }
 
 static struct math_token *
@@ -503,4 +527,13 @@ create_token(const char *str, enum MATH_TOKEN_TYPE type)
   tok->ptr = str;
 
   return tok;
+}
+
+void
+math_scanner_init_string(struct math_string *str, const char *line)
+{
+  str->top = line;
+  str->cur = line;
+  str->line = 0;
+  str->ofst = 0;
 }

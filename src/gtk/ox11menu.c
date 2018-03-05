@@ -245,6 +245,7 @@ static struct menu_config MenuConfigMisc[] = {
   {"select_data_on_export",	MENU_CONFIG_TYPE_BOOL,    NULL, &Menulocal.select_data},
   {"use_custom_palette",	MENU_CONFIG_TYPE_BOOL,    NULL, &Menulocal.use_custom_palette},
   {"custom_palette",		MENU_CONFIG_TYPE_COLOR_ARY, menu_config_set_custom_palette, NULL},
+  {"sourece_style_id",		MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.source_style_id},
   {NULL},
 };
 
@@ -293,6 +294,7 @@ static struct menu_config MenuConfigOthers[] = {
   {"arc_tab",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.arc_tab},
   {"mark_tab",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.mark_tab},
   {"text_tab",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.text_tab},
+  {"math_input_mode",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.math_input_mode},
   {NULL},
 };
 
@@ -1263,6 +1265,7 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   Menulocal.exwin_use_external = TRUE;
   Menulocal.expand = 1;
   Menulocal.expanddir = g_strdup("./");
+  Menulocal.source_style_id = NULL;
   Menulocal.loadpath = SAVE_PATH_FULL;
   Menulocal.GRAobj = chkobject("gra");
   Menulocal.hist_size = 1000;
@@ -1284,6 +1287,7 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   Menulocal.arc_tab = 3;
   Menulocal.mark_tab = 4;
   Menulocal.text_tab = 5;
+  Menulocal.math_input_mode = 1;
 
   arrayinit(&(Menulocal.drawrable), sizeof(char *));
   menuadddrawrable(chkobject("draw"), &(Menulocal.drawrable));
@@ -2168,12 +2172,26 @@ mx_show_lib_version(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 
   g_string_append_printf(str, "%sPango\n"
 	       "%s compile: %s\n"
-	       "%s  linked: %s\n",
+	       "%s  linked: %s\n"
+	       "\n",
 	       h,
 	       h,
 	       PANGO_VERSION_STRING,
 	       h,
 	       pango_version_string());
+
+  g_string_append_printf(str, "%sGtkSourceView\n"
+	       "%s compile: %d.%d.%d\n"
+	       "%s  linked: %d.%d.%d\n",
+	       h,
+	       h,
+               GTK_SOURCE_MAJOR_VERSION,
+	       GTK_SOURCE_MINOR_VERSION,
+	       GTK_SOURCE_MICRO_VERSION,
+	       h,
+               gtk_source_get_major_version(),
+               gtk_source_get_minor_version(),
+               gtk_source_get_micro_version());
 
 #ifdef RL_VERSION_MAJOR
   g_string_append(str, "\n");

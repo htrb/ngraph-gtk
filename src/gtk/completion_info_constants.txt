@@ -1,0 +1,46 @@
+PI		Pi
+E		The base of natural logarithm (Napier's constant)
+EULER		Euler's constant
+NAN		Missing data with error indication
+UNDEF		Missing data without error indication
+CONT		Missing data (data lines are combined)
+BREAK		Missing data (data lines are not combined)
+NUM		The number of the data
+MINX		The minimum value of X
+MAXX		The maximum value of X
+MINY		The minimum value of Y
+MAXY		The maximum value of Y
+SUMX		Sum of X
+SUMY		Sum of Y
+SUMXX		Square sum of X
+SUMYY		Square sum of Y
+SUMXY		Product sum of X and Y
+AVX		The average of X
+AVY		The average of X
+STDEVPX		The standard deviation of X
+STDEVPY		The standard deviation of Y
+STDEVX		The corrected sample standard deviation of X
+STDEVY		The corrected sample standard deviation of Y
+FIRST		When conversion is performed twice with one line of data such as diagonal or errorbar plot,\ntrue (1) in the first call, false (0) in the second call.
+MASK		Number of lines set for mask
+MOVE		Number of lines set for move
+COLX		The column number specified for X
+COLY		The column number specified for Y
+AXISX		The ID of the axis instance specified as X axis
+AXISY		The ID of the axis instance specified as Y axis
+HSKIP		Number of lines specified as "Head skip"
+RSTEP		Number of lines specified as "Read step"
+FLINE		Number of lines specified as "Final line"
+DATA_OBJ	The identification number of the data object
+PATH_OBJ	The identification number of the path object
+RECT_OBJ	The identification number of the rectangle object
+ARC_OBJ		The identification number of the arc object
+MARK_OBJ	The identification number of the mark object
+TEXT_OBJ	The identification number of the text object
+%D		The ID of the instance of the data object
+%N		The number of instances of data object
+TRUE		the TRUE value (1)
+FALSE		the FALSE value (0)
+FILL_RULE_NONE		Defined for the function <b>draw_polygon</b>().\ndon't fill the polygon.
+FILL_RULE_EVEN_ODD	Defined for the function <b>draw_polygon</b>().\nfill the polygon with evin-odd rule.
+FILL_RULE_WINDING	Defined for the function <b>draw_polygon</b>().\nfill the polygon with winding rule.

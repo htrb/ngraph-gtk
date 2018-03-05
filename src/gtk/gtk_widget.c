@@ -764,122 +764,6 @@ create_color_button(GtkWidget *win)
   return w;
 }
 
-static void
-set_adjustment(GtkAdjustment *adj, gdouble inc)
-{
-  gdouble val, min, max;
-
-  if (adj == NULL || inc == 0) {
-    return;
-  }
-
-  min = gtk_adjustment_get_lower(adj);
-  max = gtk_adjustment_get_upper(adj) - gtk_adjustment_get_page_size(adj);
-  val = gtk_adjustment_get_value(adj);
-  val += inc;
-
-  if (max < min) {
-    return;
-  }
-
-  if (val < min) {
-    val = min;
-  } else if (val > max) {
-    val = max;
-  }
-
-  gtk_adjustment_set_value(adj, val);
-}
-
-static gboolean
-text_view_scroll_event(GtkWidget *widget, GdkEventScroll *event, gpointer user_data)
-{
-  GtkRange *scl;
-  GtkAdjustment *x_adj, *y_adj;
-  gdouble x, y;
-
-  switch (event->direction) {
-  case GDK_SCROLL_UP:
-    scl = g_object_get_data(G_OBJECT(widget), "vscroll");
-    y_adj = gtk_range_get_adjustment(scl);
-    y = - gtk_adjustment_get_step_increment(y_adj);
-    x_adj = NULL;
-    x = 0;
-    break;
-  case GDK_SCROLL_DOWN:
-    scl = g_object_get_data(G_OBJECT(widget), "vscroll");
-    y_adj = gtk_range_get_adjustment(scl);
-    y = gtk_adjustment_get_step_increment(y_adj);
-    x_adj = NULL;
-    x = 0;
-    break;
-  case GDK_SCROLL_LEFT:
-    scl = g_object_get_data(G_OBJECT(widget), "hscroll");
-    x_adj = gtk_range_get_adjustment(scl);
-    x = - gtk_adjustment_get_step_increment(x_adj);
-    y_adj = NULL;
-    y = 0;
-    break;
-  case GDK_SCROLL_RIGHT:
-    scl = g_object_get_data(G_OBJECT(widget), "hscroll");
-    x_adj = gtk_range_get_adjustment(scl);
-    x = gtk_adjustment_get_step_increment(x_adj);
-    y_adj = NULL;
-    y = 0;
-    break;
-  case GDK_SCROLL_SMOOTH:
-    if (gdk_event_get_scroll_deltas((GdkEvent *) event, &x, &y)) {
-      scl = g_object_get_data(G_OBJECT(widget), "hscroll");
-      x_adj = gtk_range_get_adjustment(scl);
-      x *= gtk_adjustment_get_step_increment(x_adj);
-
-      scl = g_object_get_data(G_OBJECT(widget), "vscroll");
-      y_adj = gtk_range_get_adjustment(scl);
-      y *= gtk_adjustment_get_step_increment(y_adj);
-      break;
-    }
-    return FALSE;
-  default:
-    return FALSE;
-  }
-
-  set_adjustment(x_adj, x);
-  set_adjustment(y_adj, y);
-
-  return FALSE;
-}
-
-
-static void
-set_scroll_visibility(GtkWidget *scroll)
-{
-  GtkAdjustment *adj;
-  gdouble min, max, page;
-
-  if (scroll == NULL) {
-    return;
-  }
-
-  adj = gtk_range_get_adjustment(GTK_RANGE(scroll));
-  min = gtk_adjustment_get_lower(adj);
-  max = gtk_adjustment_get_upper(adj);
-  page = gtk_adjustment_get_page_size(adj);
-
-  gtk_widget_set_visible(scroll, max - min > page);
-}
-
-static void
-text_view_size_allocate(GtkWidget*widget, GdkRectangle *allocation, gpointer user_data)
-{
-  GtkWidget *scl;
-
-  scl = g_object_get_data(G_OBJECT(widget), "hscroll");
-  set_scroll_visibility(scl);
-
-  scl = g_object_get_data(G_OBJECT(widget), "vscroll");
-  set_scroll_visibility(scl);
-}
-
 #if GTK_CHECK_VERSION(3, 16, 0)
 void
 set_widget_font(GtkWidget *w, const char *font)
@@ -1034,135 +918,37 @@ set_linumber_color(GtkWidget *w)
 
 #endif	/* ! GTK_CHECK_VERSION(3, 16, 0) */
 
-static void (* get_preferred_width_org) (GtkWidget *w, gint *min, gint *natulal);
-static void (* get_preferred_height_org) (GtkWidget *w, gint *min, gint *natulal);
-
-static void
-get_preferred_width(GtkWidget *w, gint *min, gint *natulal)
-{
-  get_preferred_width_org(w, min, natulal);
-  if (*min > 240) {
-    *min = 0;
-  }
-}
-
-static void
-get_preferred_height(GtkWidget *w, gint *min, gint *natulal)
-{
-  get_preferred_height_org(w, min, natulal);
-  *min = 0;
-}
-
 GtkWidget *
 create_text_view_with_line_number(GtkWidget **v)
 {
-  GtkWidget *view, *ln, *swin, *hs, *vs;
-  GtkAdjustment *hadj, *vadj;
-  GtkTextBuffer *buf;
+  GtkWidget *source_view, *swin;
+  GtkSourceBuffer *buffer;
 
-  buf = gtk_text_buffer_new(NULL);
-  view = gtk_text_view_new_with_buffer(buf);
+  source_view = gtk_source_view_new();
+  gtk_widget_set_hexpand(source_view, TRUE);
+  gtk_widget_set_vexpand(source_view, TRUE);
+  buffer = gtk_source_buffer_new(NULL);
 
-  buf = gtk_text_buffer_new(NULL);
-  ln = gtk_text_view_new_with_buffer(buf);
-#if GTK_CHECK_VERSION(3, 12, 0)
-  gtk_widget_set_margin_end(ln, 4);
-#endif
+  gtk_text_view_set_buffer(GTK_TEXT_VIEW(source_view), GTK_TEXT_BUFFER(buffer));
+  gtk_text_view_set_editable(GTK_TEXT_VIEW(source_view), FALSE);
 
-#if GTK_CHECK_VERSION(3, 16, 0)
-  gtk_widget_set_name(ln, LINE_NUMBER_WIDGET_NAME);
-#else
-  set_linumber_color(ln);
-#endif
+  gtk_source_buffer_set_highlight_syntax(GTK_SOURCE_BUFFER(buffer), FALSE);
+  gtk_source_view_set_show_line_numbers(GTK_SOURCE_VIEW(source_view), TRUE);
 
-  g_object_set_data(G_OBJECT(view), "line_number", ln);
-
-  gtk_widget_set_size_request(GTK_WIDGET(view), 240, 120);
-  gtk_widget_set_size_request(GTK_WIDGET(ln),   -1,  120);
-
-  gtk_text_view_set_editable(GTK_TEXT_VIEW(view), FALSE);
-  gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(view), FALSE);
-
-  gtk_text_view_set_editable(GTK_TEXT_VIEW(ln), FALSE);
-  gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(ln), FALSE);
-
-  swin = gtk_grid_new();
-  hs = gtk_scrollbar_new(GTK_ORIENTATION_HORIZONTAL, NULL);
-  vs = gtk_scrollbar_new(GTK_ORIENTATION_VERTICAL, NULL);
-
-  g_object_set_data(G_OBJECT(view), "hscroll", hs);
-  g_object_set_data(G_OBJECT(view), "vscroll", vs);
-
-  hadj = gtk_range_get_adjustment(GTK_RANGE(hs));
-  vadj = gtk_range_get_adjustment(GTK_RANGE(vs));
-  gtk_scrollable_set_hadjustment(GTK_SCROLLABLE(view), hadj);
-  gtk_scrollable_set_vadjustment(GTK_SCROLLABLE(view), vadj);
-  gtk_scrollable_set_vadjustment(GTK_SCROLLABLE(ln), vadj);
-
-  /* fix-me: is there any other way to set minimum size of GtkTextView? */
-  get_preferred_width_org = GTK_WIDGET_GET_CLASS(view)->get_preferred_width;
-  get_preferred_height_org = GTK_WIDGET_GET_CLASS(view)->get_preferred_height;
-  GTK_WIDGET_GET_CLASS(view)->get_preferred_width = get_preferred_width;
-  GTK_WIDGET_GET_CLASS(view)->get_preferred_height = get_preferred_height;
-
-  g_signal_connect(view, "scroll-event", G_CALLBACK(text_view_scroll_event), NULL);
-  g_signal_connect(view, "size-allocate", G_CALLBACK(text_view_size_allocate), NULL);
-
-  gtk_widget_set_vexpand(ln, TRUE);
-  gtk_grid_attach(GTK_GRID(swin), ln,   0, 0, 1, 1);
-
-  gtk_widget_set_hexpand(view, TRUE);
-  gtk_widget_set_vexpand(view, TRUE);
-  gtk_grid_attach(GTK_GRID(swin), view, 1, 0, 1, 1);
-
-  gtk_widget_set_vexpand(hs, TRUE);
-  gtk_grid_attach(GTK_GRID(swin), hs,   0, 1, 2, 1);
-
-  gtk_widget_set_vexpand(vs, TRUE);
-  gtk_grid_attach(GTK_GRID(swin), vs,   2, 0, 1, 1);
-
-  if (v) {
-    *v = view;
-  }
-
+  swin = gtk_scrolled_window_new(NULL, NULL);
+  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+  gtk_container_add(GTK_CONTAINER(swin), source_view);
+  *v = source_view;
   return swin;
 }
 
 void
 text_view_with_line_number_set_text(GtkWidget *view, const gchar *str)
 {
-  GtkWidget *ln;
-  GtkTextBuffer *buf, *ln_buf;
-  int p, i, n;
-  GString *s;
-  gchar *ptr;
-  GtkTextIter start, end;
+  GtkTextBuffer *buf;
 
   buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(view));
   gtk_text_buffer_set_text(buf, str, -1);
-
-  ln = g_object_get_data(G_OBJECT(view), "line_number");
-  if (ln == NULL) {
-    return;
-  }
-
-  s = g_string_sized_new(256);
-  if (s == NULL) {
-    return;
-  }
-
-  n = gtk_text_buffer_get_line_count(buf);
-  ln_buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(ln));
-  p = ceil(log10(n + 1));
-  for (i = 0; i < n; i++) {
-    g_string_append_printf(s, "%*d \n", p, i + 1);
-  }
-  ptr = g_string_free(s, FALSE);
-  gtk_text_buffer_set_text(ln_buf, ptr, -1);
-  g_free(ptr);
-
-  gtk_text_buffer_get_iter_at_offset(ln_buf, &start, 0);
-  gtk_text_buffer_get_iter_at_offset(ln_buf, &end, -1);
 }
 
 void
@@ -1171,7 +957,6 @@ text_view_with_line_number_set_font(GtkWidget *view, const gchar *font)
 #if ! GTK_CHECK_VERSION(3, 16, 0)
   PangoFontDescription *desc;
 #endif
-  GtkWidget *ln;
 
 #if GTK_CHECK_VERSION(3, 16, 0)
   set_widget_font(view, font);
@@ -1180,30 +965,13 @@ text_view_with_line_number_set_font(GtkWidget *view, const gchar *font)
   gtk_widget_override_font(view, NULL);
   gtk_widget_override_font(view, desc);
 #endif	/* GTK_CHECK_VERSION(3, 16, 0) */
-
-  ln = g_object_get_data(G_OBJECT(view), "line_number");
-  if (ln == NULL) {
-#if ! GTK_CHECK_VERSION(3, 16, 0)
-    pango_font_description_free(desc);
-#endif
-    return;
-  }
-
-#if GTK_CHECK_VERSION(3, 16, 0)
-  set_widget_font(ln, font);
-#else  /* GTK_CHECK_VERSION(3, 16, 0) */
-  gtk_widget_override_font(ln, NULL);
-  gtk_widget_override_font(ln, desc);
-
-  pango_font_description_free(desc);
-#endif	/* GTK_CHECK_VERSION(3, 16, 0) */
 }
 
 enum SELECT_OBJ_COLOR_RESULT
 select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type)
 {
   GtkWidget *dlg;
-  int r, g, b, a, rr ,gg, bb, aa, response, modified;
+  int r, g, b, a, rr ,gg, bb, aa, response, modified, undo;
   GdkRGBA color;
   char *title;
 
@@ -1297,7 +1065,7 @@ select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type)
   bb = nround(color.blue * 255);
   aa = nround(color.alpha * 255);
 
-  menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
+  undo = menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
   switch (type) {
   case OBJ_FIELD_COLOR_TYPE_STROKE:
     putobj(obj, "stroke_R", id, &rr);
@@ -1343,7 +1111,7 @@ select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type)
 
   if (rr == r && gg == g && bb == b && aa == a) {
     modified = SELECT_OBJ_COLOR_SAME;
-    menu_delete_undo();
+    menu_delete_undo(undo);
   } else {
     modified = SELECT_OBJ_COLOR_DIFFERENT;
   }

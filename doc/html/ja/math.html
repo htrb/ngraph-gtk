@@ -9,6 +9,7 @@
 <h1><a href="./ngraph.html">データの加工</a></h1>
 <ul>
  <li><a href="#TRANSFORM">概要</a>
+ <li><a href="#FORMULA_COMMENT">コメント</a>
  <li><a href="#FORMULA_LITERAL">数値リテラル</a>
  <li><a href="#FORMULA_CONST">定数</a>
  <li><a href="#CONST_DEF">定数定義</a>
@@ -22,6 +23,7 @@
     <li> <a href="#TRANSFORM_FUNC">変換関数</a>
     <li> <a href="#ELEMENTARY_FUNC">初等関数</a>
     <li> <a href="#SPECIAL_FUMC">特殊関数</a>
+    <li> <a href="#DATETIME_FUMC">日付時刻関数</a>
     <li> <a href="#LOGIC_FUNC">論理関数</a>
     <li> <a href="#ARRAY_FUNC">配列操作関数</a>
     <li> <a href="#MEMORY_FUNC">メモリー操作関数</a>
@@ -68,6 +70,8 @@
 <hr>
 <br>
 
+<h2><a name="FORMULA_COMMENT" href="#TOP">コメント</a></h2>
+#から行末までをコメントと見なします。
 
 <h2><a name="FORMULA_LITERAL" href="#TOP">数式変換で使用できる数値リテラル</a></h2>
 <br>
@@ -144,6 +148,11 @@
  <tr><td>TEXT_OBJ</td><td>text オブジェクトのオブジェクト識別番号</td></tr>
  <tr><td>%D</td><td>データの番号</td></tr>
  <tr><td>%N</td><td>データオブジェクトのインスタンス数</td></tr>
+ <tr><td>TRUE</td><td>代表的な真の値</td></tr>
+ <tr><td>FALSE</td><td>偽の値</td></tr>
+ <tr><td>FILL_RULE_NONE</td><td>ポリゴンを塗りつぶさない。draw_polygon() 関数で利用する。</td></tr>
+ <tr><td>FILL_RULE_EVEN_ODD</td><td>ポリゴンを偶奇則で塗りつぶす。draw_polygon() 関数で利用する。</td></tr>
+ <tr><td>FILL_RULE_WINDING</td><td>ポリゴンをワインディング則で塗りつぶす。draw_polygon() 関数で利用する。</td></tr>
 </table>
 </div>
 
@@ -344,6 +353,7 @@
  <tr><td>ACOSH(x)</td><td>逆ハイパボリックコサイン</td></tr>
  <tr><td>ATANH(x)</td><td>逆ハイパボリックタンジェント</td></tr>
  <tr><td>FMOD(x, y)</td><td>x を y で割った浮動小数点剰余</td></tr>
+ <tr><td>CHOOSE(n,m)</td><td>the combinatorial factor n choose m: n!/(m!(n-m)!)</td></tr>
 </table>
 <br>
 <h3><a name="SPECIAL_FUMC">特殊関数</a></h3>
@@ -358,8 +368,8 @@
  <tr><td>ERFC(x)</td><td>相補誤差関数 Erfc(x)</td></tr>
  <tr><td>QINV(x)</td><td>誤差関数 Erfc(x) の逆関数</td></tr>
  <tr><td>EI(x)</td><td>積分指数関数 Ei(x)</td></tr>
- <tr><td>BETA(x,y)</td><td>ベータ関数 B(p,q)</td></tr>
- <tr><td>ICBETA(x,y)</td><td>不完全ベータ関数 I(a,b,x) (0 &lt;= x &lt;= 1) </td></tr>
+ <tr><td>BETA(p,q)</td><td>ベータ関数 B(p,q)</td></tr>
+ <tr><td>ICBETA(a,b,x)</td><td>不完全ベータ関数 I(a,b,x) (0 &lt;= x &lt;= 1) </td></tr>
  <tr><td>JN(n,x)</td><td>第1種n次ベッセル関数</td></tr>
  <tr><td>YN(n,x)</td><td>第2種n次ベッセル関数</td></tr>
  <tr><td>IN(n,x)</td><td>第1種n次変形ベッセル関数</td></tr>
@@ -378,7 +388,10 @@
  <tr><td>ZETA_INT(x)</td><td>リーマンゼータ関数 ζ(x) (x は整数) </td></tr>
  <tr><td>ZETAM1(x)</td><td>リーマンゼータ関数 ζ(x) - 1</td></tr>
  <tr><td>ZETAM1_INT(x)</td><td>リーマンゼータ関数 ζ(x) - 1 (x は整数) </td></tr>
- <tr><td>CHOOSE(n,m)</td><td>the combinatorial factor n choose m: n!/(m!(n-m)!)</td></tr>
+<br>
+<h3><a name="DATETIME_FUMC" href="#TOP">日付時刻関数</a></h3>
+<br>
+<table border="1">
  <tr><td>MJD(year,month,day,hour,min,sec)</td><td>修正ユリウス日(year, month, day はグレゴリオ暦、hour,min,sec は UTC 時刻、うるう秒は考慮されない)</td></tr>
  <tr><td>UNIX2MJD(time)</td><td>修正ユリウス日(time は 1970年1月1日00:00:00 UTC からの経過秒数、うるう秒は考慮されない)</td></tr>
  <tr><td>MJD2UNIX(mjd)</td><td>修正ユリウス日 mjd の1970年1月1日00:00:00 UTC からの経過秒数(うるう秒は考慮されない)</td></tr>
@@ -411,6 +424,7 @@
 <br>
 <h3><a name="ARRAY_FUNC" href="#TOP">配列操作関数</a></h3>
 <table border="1">
+ <tr><td>ARRAY(a, v1, v2, ...)</td><td>配列 a を残りの引数で初期化する。配列の要素数を返す。</td></tr>
  <tr><td>SIZE(a)</td><td>配列 a の要素数</td></tr>
  <tr><td>SORT(a)</td><td>配列 a を整列する</td></tr>
  <tr><td>RSORT(a)</td><td>配列 a を逆順に整列する</td></tr>
@@ -432,9 +446,9 @@
 <h3><a name="MEMORY_FUNC" href="#TOP">メモリー操作関数</a></h3>
 <p>メモリーは全ての数式変換で共有されます。</p>
 <table border="1">
- <tr><td>M(n,x)</td><td>引数を第nメモリーに代入する(n=0〜65535) (戻り値は x) </td></tr>
- <tr><td>RM(n)</td><td>現在の第nメモリーの値(n=0〜65535)</td></tr>
- <tr><td>CM(x)</td><td>メモリー全体を x で初期化する (戻り値は x) </td></tr>
+ <tr><td>M(i,x)</td><td>引数を第iメモリーに代入する(i=0〜65535)、i が負のときは末尾からのインデックス (戻り値は x) </td></tr>
+ <tr><td>RM(i)</td><td>現在の第iメモリーの値(i=0〜65535)、i が負のときは末尾からのインデックス</td></tr>
+ <tr><td>CM(x,n)</td><td>先頭からn個のメモリーを x で初期化する、n が 0 のときはメモリー全体、n が負のときは末尾から n 個のメモリーを x で初期化する (戻り値は x) </td></tr>
  <tr><td>AM(a)</td><td>配列 a の内容をメモリーにコピーする (戻り値はコピーした要素数) </td></tr>
 </table>
 <br>
@@ -450,16 +464,16 @@
 <table border="1">
   <tr>
     <td>
-      DRAW_RECT(x1, y1, x2, y2, stroke, fill)
+      DRAW_RECT(x, y, w, h, stroke, fill)
     </td>
     <td>
-      (x1, y1) と (x2, y2) を対角の頂点とする矩形を描画します。stroke,
+      (x, y) と (x + w, y + h) を対角の頂点とする矩形を描画します。stroke,
       fill が 0 の場合はそれぞれ輪郭、塗りつぶしを描画しません。
     </td>
   </tr>
   <tr>
     <td>
-      DRAW_ARC(x, y, rx, ry, start, stop, stroke, fill, pieslice, close)
+      DRAW_ARC(x, y, rx, ry, start, stop, pieslice, stroke, fill, close)
     </td>
     <td>
       (x, y) を中心とし X 方向半径 rx, Y 方向半径 ry の円弧を描画しま
@@ -476,6 +490,51 @@
     <td>
       (x, y) にマークを描画します。size でマークのサイズを指定できます。
       size が 0 のときはファイルオブジェクトのサイズ指定が使われます。
+    </td>
+  </tr>
+  <tr>
+    <td>
+      DRAW_LINE(x1, y1, x2, y2)
+    </td>
+    <td>
+      (x1, y1) から (x2, y2) に直線を描画します。
+    </td>
+  </tr>
+  <tr>
+    <td>
+      DRAW_POLYLINE(ax, ay)
+    </td>
+    <td>
+      座標 (ax[0], ay[0]), (ax[1], ay[1]), ... を直線で結びます。
+    </td>
+  </tr>
+  <tr>
+    <td>
+      DRAW_POLYGON(ax, ay, stroke, fill)
+    </td>
+    <td>
+      座標 (ax[0], ay[0]), (ax[1], ay[1]), ... で囲まれた領域を描画します。
+      stroke, fill が 0 の場合はそれぞれ輪郭、塗りつぶしを描画しません。
+    </td>
+  </tr>
+  <tr>
+    <td>
+      DRAW_ERRORBAR(x, y, erx, ery, size)
+    </td>
+    <td>
+      (x - erx, y) から (x + erx, y) および (x, y - ery) から (x, y +
+      ery) に誤差棒を描画する。size で tick の長さを指定できる。size が
+      0 のときはファイルオブジェクトのサイズ指定が使われる。
+    </td>
+  </tr>
+  <tr>
+    <td>
+      DRAW_ERRORBAR2(x1, y1, x2, y2, size)
+    </td>
+    <td>
+      (x1, y1) から (x2, y2) に誤差棒を描画する。size で tick の長さを
+      指定できる。size が 0 のときはファイルオブジェクトのサイズ指定が
+      使われる。
     </td>
   </tr>
 </table>
