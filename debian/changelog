@@ -1,8 +1,40 @@
-ngraph-gtk (6.07.05-1) unreleased; urgency=medium
+ngraph-gtk (6.07.06-1) unreleased; urgency=medium
 
   * New upstream release
+  * debian/compat
+   - set the debhelper compatibility level to 10.
+  * debian/control
+   - fix priority
+   - bump Standards-Version to 4.1.1
+   - change the section of libngraph0 to libs
+   - remove build dependency: dh-autoreconf
+  * debian/libngraph0-dev.install
+   - install *.a files
+  * debian/libngraph0.install
+   - don't install some resoles
+  * debian/ngraph-gtk-addins-base.install
+   - add img2gra addin
+  * debian/ngraph-gtk-addins.install
+   - add img2gra addin
+  * debian/ngraph-gtk.install
+   - don't install pixmaps
+  * debian/patch/1000_clean_time_file.patch
+   - removed because it was merged to the upstream
+  * debian/patch/1001_fix_misspelling.patch
+   - removed because it was merged to the upstream
+  * debian/patch/1002_use_strdup.patch
+   - removed because it was merged to the upstream
+  * debian/patch/fix_clean_files.patch
+   - clean src/gtk/data/gtk/menus-common.ui file
+  * debian/watch
+   - bump version to 4.1.0
+  * debian/rules
+   - remove "-with autoreconf" option
+  * debian/tests/control
+  * debian/tests/ngraph-test
+   - add test script.
 
- -- Hiroyuki Ito <ZXB01226@nifty.com>  Thu, 09 Nov 2017 16:39:26 +0900
+ -- Hiroyuki Ito <ZXB01226@nifty.com>  Mon, 05 Mar 2018 20:00:01 +0900
 
 ngraph-gtk (6.07.02-2) unstable; urgency=medium
 
