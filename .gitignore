@@ -72,7 +72,7 @@ demo/demo[1-4689].ngp
 
 initfile/Ngraph.ini
 
-plugins/ngraph_resource.rc
+plugins/libruby_resource.rc
 plugins/ruby/Makefile.ruby
 plugins/ruby/mkmf.log
 plugins/ruby/ngraph.so
