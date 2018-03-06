@@ -1,6 +1,7 @@
 *.o
 *.lo
 *.la
+*.exe
 *~
 .DS_Store
 .deps/
@@ -49,6 +50,9 @@ src/math/math_operator.h
 
 src/terminal
 src/ngraph
+src/libngraph_resource.rc
+src/ngraph_resource.rc
+src/ngraph.def
 
 gtksourceview/ngraph_math.lang
 
@@ -68,11 +72,15 @@ demo/demo[1-4689].ngp
 
 initfile/Ngraph.ini
 
+plugins/ngraph_resource.rc
 plugins/ruby/Makefile.ruby
 plugins/ruby/mkmf.log
 plugins/ruby/ngraph.so
+plugins/ruby/ngraph.bundle
 plugins/ruby/obj.txt
 plugins/ruby/ruby_ngraph.h
 
 po/POTFILES
 po/ja.gmo
+
+osx/ngraph.icns
