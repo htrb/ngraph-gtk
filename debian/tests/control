@@ -1,0 +1,2 @@
+Tests: ngraph-test
+Depends: ngraph-gtk
