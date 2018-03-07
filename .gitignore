@@ -8,14 +8,15 @@
 .libs/
 Makefile
 Makefile.in
-GPATH
-GRTAGS
-GTAGS
-aclocal.m4
-config.h
-config.log
-config.status
-configure
+
+/GPATH
+/GRTAGS
+/GTAGS
+/aclocal.m4
+/config.h
+/config.log
+/config.status
+/configure
 /autom4te.cache
 /autoscan.log
 /autoscan-*.log
@@ -30,7 +31,17 @@ configure
 /install-sh
 /missing
 /stamp-h1
+/libtool
 /ltmain.sh
+
+/*.gra
+/*.ngp
+
+m4/libtool.m4
+m4/ltoptions.m4
+m4/ltsugar.m4
+m4/ltversion.m4
+m4/lt~obsolete.m4
 
 src/gtk/dir_defs.h
 src/gtk/ngraphui.resources.c
@@ -82,5 +93,6 @@ plugins/ruby/ruby_ngraph.h
 
 po/POTFILES
 po/ja.gmo
+po/remove-potcdate.sed
 
 osx/ngraph.icns
