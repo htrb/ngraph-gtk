@@ -5857,7 +5857,7 @@ souce_view_set_search_path(void)
   if (dir == NULL) {
     return;
   }
-if (g_strv_contains(dirs, dir)) {
+  if (g_strv_contains(dirs, dir)) {
     g_free(dir);
     return;
   }
@@ -5868,6 +5868,7 @@ if (g_strv_contains(dirs, dir)) {
     g_free(dir);
     return;
   }
+
   memcpy(new_dirs, dirs, n * sizeof(*new_dirs));
   new_dirs[n] = dir;
   new_dirs[n + 1] = NULL;
