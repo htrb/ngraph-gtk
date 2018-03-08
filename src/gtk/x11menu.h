@@ -325,5 +325,6 @@ void set_graph_modified(void);
 void set_graph_modified_gra(void);
 void reset_graph_modified(void);
 void draw_notify(int notify);
+void souce_view_set_search_path(void);
 
 #endif

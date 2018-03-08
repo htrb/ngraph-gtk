@@ -5841,22 +5841,23 @@ create_toplevel_window(void)
   return 0;
 }
 
-static void
-souce_view_initialize(void)
+void
+souce_view_set_search_path(void)
 {
   const gchar * const *dirs;
   gchar **new_dirs;
   gchar *dir;
   int n;
-  static int initialized = FALSE;
   GtkSourceLanguageManager *lm;
-
-  if (initialized) {
-    return;
-  }
-  initialized = TRUE;
+  GtkSourceLanguage *lang;
 
   lm = gtk_source_language_manager_get_default();
+
+  lang = gtk_source_language_manager_get_language(lm, "ngraph_math");
+  if (lang) {
+    return;
+  }
+
   dirs = gtk_source_language_manager_get_search_path(lm);
   for (n = 0; dirs[n]; n++);
   new_dirs = g_malloc((n + 2) * sizeof(*new_dirs));
@@ -5898,7 +5899,7 @@ application(char *file)
     }
   }
 
-  souce_view_initialize();
+  souce_view_set_search_path();
 
 #if ! WINDOWS
   set_signal(SIGINT, 0, kill_signal_handler, NULL);
