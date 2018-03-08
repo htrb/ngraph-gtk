@@ -5849,29 +5849,30 @@ souce_view_set_search_path(void)
   gchar *dir;
   int n;
   GtkSourceLanguageManager *lm;
-  GtkSourceLanguage *lang;
 
   lm = gtk_source_language_manager_get_default();
 
-  lang = gtk_source_language_manager_get_language(lm, "ngraph_math");
-  if (lang) {
+  dirs = gtk_source_language_manager_get_search_path(lm);
+  dir = g_strdup_printf("%s/%s", NDATADIR, "gtksourceview");
+  if (dir == NULL) {
+    return;
+  }
+if (g_strv_contains(dirs, dir)) {
+    g_free(dir);
     return;
   }
 
-  dirs = gtk_source_language_manager_get_search_path(lm);
   for (n = 0; dirs[n]; n++);
   new_dirs = g_malloc((n + 2) * sizeof(*new_dirs));
   if (new_dirs == NULL) {
+    g_free(dir);
     return;
   }
-  dir = g_strdup_printf("%s/%s", NDATADIR, "gtksourceview");
-  if (dir) {
-    memcpy(new_dirs, dirs, n * sizeof(*new_dirs));
-    new_dirs[n] = dir;
-    new_dirs[n + 1] = NULL;
-    gtk_source_language_manager_set_search_path(lm, new_dirs);
-    g_free(dir);
-  }
+  memcpy(new_dirs, dirs, n * sizeof(*new_dirs));
+  new_dirs[n] = dir;
+  new_dirs[n + 1] = NULL;
+  gtk_source_language_manager_set_search_path(lm, new_dirs);
+  g_free(dir);
   g_free(new_dirs);
 }
 
