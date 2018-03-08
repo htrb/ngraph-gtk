@@ -247,8 +247,6 @@ set_source_style(GtkWidget *view)
     return;
   }
 
-  souce_view_set_search_path();
-
   buffer = GTK_SOURCE_BUFFER(gtk_text_view_get_buffer(GTK_TEXT_VIEW(view)));
   style = gtk_source_buffer_get_style_scheme(buffer);
   style_id = gtk_source_style_scheme_get_id(style);
