@@ -1,5 +1,5 @@
 langspecdir = $(pkgdatadir)/gtksourceview
-langspecs = ngraph_math.lang
+langspecs = ngraph-math.lang
 nodist_langspec_DATA = $(langspecs)
 
 EXTRA_DIST = create_lang.nsc $(langspecs).pre $(langspecs).post
