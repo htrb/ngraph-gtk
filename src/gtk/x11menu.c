@@ -5841,7 +5841,7 @@ create_toplevel_window(void)
   return 0;
 }
 
-void
+static void
 souce_view_set_search_path(void)
 {
   const gchar * const *dirs;
