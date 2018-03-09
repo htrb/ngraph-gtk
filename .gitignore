@@ -67,7 +67,7 @@ src/libngraph_resource.rc
 src/ngraph_resource.rc
 src/ngraph.def
 
-gtksourceview/ngraph_math.lang
+gtksourceview/ngraph-math.lang
 
 addin/fft
 addin/fitrslt
