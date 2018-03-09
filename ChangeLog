@@ -1,3 +1,8 @@
+2018-03-09  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/ox11menu.c (mx_show_source_view_search_path): added.
+	(gtkmenu): add field "source_view_search_path".
+
 2018-03-08  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (souce_view_set_search_path): renamed. check
