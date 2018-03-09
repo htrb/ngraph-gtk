@@ -3,7 +3,7 @@
 This file is created based on "ruby.lang" which is part of GtkSourceView.
 -->
 
-<language id="ngraph_math" _name="ngraph mathematics transformation" version="2.0" _section="Script">
+<language id="ngraph-math" _name="ngraph mathematics transformation" version="2.0" _section="Script">
   <metadata>
     <property name="mimetypes">text/x-ngraph-math</property>
     <property name="line-comment-start">#</property>
