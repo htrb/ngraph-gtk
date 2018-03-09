@@ -12,6 +12,7 @@ Makefile.in
 /GPATH
 /GRTAGS
 /GTAGS
+/INSTALL
 /aclocal.m4
 /config.h
 /config.log
