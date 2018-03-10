@@ -374,7 +374,7 @@
 
 	* src/gtk/x11view.c (new_merge_obj, new_file_obj)
 	(create_single_axis, create_axis): don't consider "IDDELETE".
-	(ViewUpdate): remove dodes related to "IDDELETE".
+	(ViewUpdate): remove codes related to "IDDELETE".
 
 2017-12-19  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
