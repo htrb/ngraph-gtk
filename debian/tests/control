@@ -1,2 +1,2 @@
-Tests: ngraph-test
-Depends: ngraph-gtk
+Tests: run-test
+Depends: ngraph-gtk, xvfb, xauth

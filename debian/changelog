@@ -1,23 +1,28 @@
-ngraph-gtk (6.07.06-1) unreleased; urgency=medium
+ngraph-gtk (6.07.06-1) unstable; urgency=medium
 
   * New upstream release
   * debian/compat
-   - set the debhelper compatibility level to 10.
+   - set the debhelper compatibility level to 11.
   * debian/control
    - fix priority
    - bump Standards-Version to 4.1.1
+   - change the section of ngraph-gtk to optional
    - change the section of libngraph0 to libs
    - remove build dependency: dh-autoreconf
+   - add Vcs-Git and Vcs-browser fields
   * debian/libngraph0-dev.install
    - install *.a files
   * debian/libngraph0.install
-   - don't install some resoles
+   - don't install some resources
+  * debian/libngraph0.postrm
+   - remove unused directory
   * debian/ngraph-gtk-addins-base.install
    - add img2gra addin
   * debian/ngraph-gtk-addins.install
    - add img2gra addin
   * debian/ngraph-gtk.install
    - don't install pixmaps
+   - install a GtkSourceView language definition
   * debian/patch/1000_clean_time_file.patch
    - removed because it was merged to the upstream
   * debian/patch/1001_fix_misspelling.patch
@@ -31,10 +36,17 @@ ngraph-gtk (6.07.06-1) unreleased; urgency=medium
   * debian/rules
    - remove "-with autoreconf" option
   * debian/tests/control
+   - use wrapper script
+  * debian/tests/run-test
+   - add wrapper script
   * debian/tests/ngraph-test
-   - add test script.
+   - add test script
+  * debian/copyright
+   - use secure URIs
+  * debian/changelog
+   - remove trailing-whitespace
 
- -- Hiroyuki Ito <ZXB01226@nifty.com>  Mon, 05 Mar 2018 20:00:01 +0900
+ -- Hiroyuki Ito <ZXB01226@nifty.com>  Fri, 16 Mar 2018 00:26:32 +0900
 
 ngraph-gtk (6.07.02-2) unstable; urgency=medium
 
@@ -149,7 +161,7 @@ ngraph-gtk (6.06.13-3) unstable; urgency=medium
  -- Koichi Akabe <vbkaisetsu@gmail.com>  Sat, 11 Jan 2014 18:30:19 +0900
 
 ngraph-gtk (6.06.13-2) unstable; urgency=medium
-   
+
   * debian/upstream-signing-key.pgp
   * debian/watch
   * debian/source/include-binaries

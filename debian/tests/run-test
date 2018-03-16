@@ -1,0 +1,2 @@
+#!/bin/sh
+xvfb-run --server-args='-screen 0 640x480x16' debian/tests/ngraph-test
