@@ -6,6 +6,7 @@
 	<context ref="builtins"/>
 	<context ref="special-variables"/>
 	<context ref="constants"/>
+	<context ref="special-constants"/>
 	<context ref="float"/>
 	<context ref="decimal"/>
 	<context ref="hex"/>
