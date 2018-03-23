@@ -1,3 +1,8 @@
+2018-03-23  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/odata.c (dummyout): added.
+	(fitout): use "dummyout()" when redrawing.
+
 2018-03-20  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* gtksourceview/create_lang.nsc: remove "%D" and "%N" from the
