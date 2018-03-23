@@ -1336,7 +1336,7 @@ file_draw_mark(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   if (getposition(fp, x, y, &cx, &cy)) {
     return 0;
   }
-  if (size>0) {
+  if (size > 0) {
     int px, py;
     GRAcurrent_point(fp->GC, &px, &py);
     GRAmark(fp->GC, fp->marktype, cx, cy, size,
@@ -6449,6 +6449,13 @@ get_fit_obj_id(char *fit, struct objlist **fitobj, N_VALUE **inst)
   return id;
 }
 
+static void
+dummyout(struct objlist *obj, struct f2ddata *fp, int GC, int width, int snum, int *style)
+{
+  GRAlinestyle(GC, snum, style, width, GRA_LINE_CAP_BUTT, GRA_LINE_JOIN_MITER, 1000);
+  while (getdata(fp) == 0);
+}
+
 static int
 fitout(struct objlist *obj,struct f2dlocal *f2dlocal,
        struct f2ddata *fp,int GC,
@@ -6481,6 +6488,8 @@ fitout(struct objlist *obj,struct f2dlocal *f2dlocal,
     if (rcode) {
       return rcode;
     }
+  } else {
+    dummyout(obj, fp, GC, width, snum, style);
   }
 
   return draw_fit(obj, fp, GC, fitobj, inst, width, snum, style, join, miter);
