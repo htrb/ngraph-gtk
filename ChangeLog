@@ -1,3 +1,7 @@
+2018-03-25  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/odata.c (draw_fit): use "fp->col" instead of "fp->fg".
+
 2018-03-23  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/odata.c (dummyout): added.
