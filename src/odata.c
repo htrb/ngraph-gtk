@@ -6450,10 +6450,10 @@ get_fit_obj_id(char *fit, struct objlist **fitobj, N_VALUE **inst)
 }
 
 static void
-dummyout(struct objlist *obj, struct f2ddata *fp, int GC, int width, int snum, int *style)
+dummyout(struct objlist *obj, struct f2ddata *fp, int GC, int width, int snum, int *style, int join, int miter)
 {
-  GRAlinestyle(GC, snum, style, width, GRA_LINE_CAP_BUTT, GRA_LINE_JOIN_MITER, 1000);
-  while (getdata(fp) == 0);
+  GRAlinestyle(GC, snum, style, width, GRA_LINE_CAP_BUTT, join, miter);
+  while (! getdata(fp));
 }
 
 static int
@@ -6489,7 +6489,7 @@ fitout(struct objlist *obj,struct f2dlocal *f2dlocal,
       return rcode;
     }
   } else {
-    dummyout(obj, fp, GC, width, snum, style);
+    dummyout(obj, fp, GC, width, snum, style, join, miter);
   }
 
   return draw_fit(obj, fp, GC, fitobj, inst, width, snum, style, join, miter);
