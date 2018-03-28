@@ -283,6 +283,8 @@ struct f2ddata_buf {
 
 #define EQUATION_NUM 3
 
+struct f2dlocal;
+
 struct f2ddata {
   struct objlist *obj;
   int id,src, GC;
@@ -349,6 +351,7 @@ struct f2ddata {
   struct array_prm array_data;
   double range_min, range_max;
   int range_div;
+  struct f2dlocal *local;
 };
 
 struct f2dlocal {
@@ -1909,6 +1912,7 @@ opendata(struct objlist *obj,N_VALUE *inst,
   }
   if ((fp=g_malloc(sizeof(struct f2ddata)))==NULL) return NULL;
 
+  fp->local = f2dlocal;
   fp->GC = -1;
   fp->src = src;
   switch (src) {
