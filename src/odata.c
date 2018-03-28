@@ -6363,7 +6363,7 @@ draw_fit(struct objlist *obj, struct f2ddata *fp,
     return 1;
   }
 
-  GRAcolor(GC,fp->col.r,fp->col.g,fp->col.b, fp->col.a);
+  GRAcolor(GC,fp->color.r,fp->color.g,fp->color.b, fp->color.a);
 #if EXPAND_DOTTED_LINE
   GRAlinestyle(GC,0,NULL,width,GRA_LINE_CAP_BUTT,join,miter);
 #else
