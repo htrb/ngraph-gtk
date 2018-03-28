@@ -1,6 +1,11 @@
+2018-03-28  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/odata.c (opendata): save "f2dlocal" to "struct f2ddata".
+	(fitout): initialize and check "f2dlocal->use_drawing_func".
+
 2018-03-25  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
-	* src/odata.c (draw_fit): use "fp->col" instead of "fp->fg".
+	* src/odata.c (draw_fit): use "fp->color" instead of "fp->fg".
 
 2018-03-23  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
