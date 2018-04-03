@@ -1,3 +1,32 @@
+2018-03-28  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/odata.c (opendata): save "f2dlocal" to "struct f2ddata".
+	(fitout): initialize and check "f2dlocal->use_drawing_func".
+
+2018-03-25  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/odata.c (draw_fit): use "fp->color" instead of "fp->fg".
+
+2018-03-23  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/odata.c (dummyout): added.
+	(fitout): use "dummyout()" when redrawing.
+
+2018-03-20  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* gtksourceview/create_lang.nsc: remove "%D" and "%N" from the
+	list of constrants.
+
+2018-03-09  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/ox11menu.c (mx_show_source_view_search_path): added.
+	(gtkmenu): add field "source_view_search_path".
+
+2018-03-08  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (souce_view_set_search_path): renamed. check
+	language.
+
 2018-03-04  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/data/css/ngraph.css: remove unused style.
@@ -364,7 +393,7 @@
 
 	* src/gtk/x11view.c (new_merge_obj, new_file_obj)
 	(create_single_axis, create_axis): don't consider "IDDELETE".
-	(ViewUpdate): remove dodes related to "IDDELETE".
+	(ViewUpdate): remove codes related to "IDDELETE".
 
 2017-12-19  Hiroyuki Ito  <ZXB01226 at nifty.com>
 

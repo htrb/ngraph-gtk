@@ -1,4 +1,4 @@
-    <context id="ngraph_math" class="no-spell-check">
+    <context id="ngraph-math" class="no-spell-check">
       <include>
         <context ref="def:shell-like-comment"/>
 	<context ref="keywords"/>
@@ -6,6 +6,7 @@
 	<context ref="builtins"/>
 	<context ref="special-variables"/>
 	<context ref="constants"/>
+	<context ref="special-constants"/>
 	<context ref="float"/>
 	<context ref="decimal"/>
 	<context ref="hex"/>

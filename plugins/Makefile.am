@@ -16,7 +16,7 @@ if OS_WIN32
   libruby_ldflags += -no-undefined -L`ruby -e 'puts(RbConfig::CONFIG["libdir"])'` -export-symbols $(srcdir)/libruby.def -Wl,$(builddir)/libruby_resource.o
   built_sources += libruby_resource.o
   libruby_la_LIBADD = -lngraph
-  clean_files += ngraph_resource.rc
+  clean_files += libruby_resource.rc
 libruby_resource.rc: libruby_resource.rc.in
 	$(AWK) -f $(top_srcdir)/winrc_version.awk -v VERSION=$(VERSION) $^ > $@
 

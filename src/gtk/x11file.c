@@ -223,7 +223,7 @@ create_source_view(void)
   g_object_set_property(G_OBJECT(comp), "remember-info-visibility", &value);
 
   lm = gtk_source_language_manager_get_default();
-  lang = gtk_source_language_manager_get_language(lm, "ngraph_math");
+  lang = gtk_source_language_manager_get_language(lm, "ngraph-math");
   gtk_source_buffer_set_language(GTK_SOURCE_BUFFER(buffer), lang);
   gtk_source_buffer_set_highlight_syntax(GTK_SOURCE_BUFFER(buffer), TRUE);
 

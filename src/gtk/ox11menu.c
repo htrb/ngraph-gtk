@@ -2233,6 +2233,30 @@ mx_show_lib_version(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 }
 
 static int
+mx_show_source_view_search_path(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  const gchar * const *dirs;
+  int i;
+  GtkSourceLanguageManager *lm;
+  GString *str;
+
+  if (rval->str) {
+    g_free(rval->str);
+  }
+  rval->str = NULL;
+
+  str = g_string_new("");
+  lm = gtk_source_language_manager_get_default();
+  dirs = gtk_source_language_manager_get_search_path(lm);
+  for (i = 0; dirs[i]; i++) {
+    g_string_append_printf(str, "%s\n", dirs[i]);
+  }
+  rval->str = g_string_free(str, FALSE);
+
+  return 0;
+}
+
+static int
 mxdraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   if (TopLevel == NULL) {
@@ -2526,6 +2550,7 @@ static struct objtable gtkmenu[] = {
   {"toggle_window", NVFUNC, NREAD | NEXEC, mx_toggle_win, "i", 0},
   {"get_accel_map", NSFUNC, NREAD | NEXEC, mx_get_accel_map, "", 0},
   {"lib_version", NSFUNC, NREAD | NEXEC, mx_show_lib_version, NULL, 0},
+  {"source_view_search_path", NSFUNC, NREAD | NEXEC, mx_show_source_view_search_path, NULL, 0},
   {"focus", NVFUNC, NREAD | NEXEC, mx_focus_obj, "o", 0},
   {"unfocus", NVFUNC, NREAD | NEXEC, mx_unfocus_obj, "", 0},
   {"locale", NSFUNC, NREAD | NEXEC, mx_get_locale, "", 0},

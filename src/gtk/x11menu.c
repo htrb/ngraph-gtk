@@ -5909,35 +5909,38 @@ create_toplevel_window(void)
 }
 
 static void
-souce_view_initialize(void)
+souce_view_set_search_path(void)
 {
   const gchar * const *dirs;
   gchar **new_dirs;
   gchar *dir;
   int n;
-  static int initialized = FALSE;
   GtkSourceLanguageManager *lm;
 
-  if (initialized) {
+  lm = gtk_source_language_manager_get_default();
+
+  dirs = gtk_source_language_manager_get_search_path(lm);
+  dir = g_strdup_printf("%s/%s", NDATADIR, "gtksourceview");
+  if (dir == NULL) {
     return;
   }
-  initialized = TRUE;
+  if (g_strv_contains(dirs, dir)) {
+    g_free(dir);
+    return;
+  }
 
-  lm = gtk_source_language_manager_get_default();
-  dirs = gtk_source_language_manager_get_search_path(lm);
   for (n = 0; dirs[n]; n++);
   new_dirs = g_malloc((n + 2) * sizeof(*new_dirs));
   if (new_dirs == NULL) {
+    g_free(dir);
     return;
   }
-  dir = g_strdup_printf("%s/%s", NDATADIR, "gtksourceview");
-  if (dir) {
-    memcpy(new_dirs, dirs, n * sizeof(*new_dirs));
-    new_dirs[n] = dir;
-    new_dirs[n + 1] = NULL;
-    gtk_source_language_manager_set_search_path(lm, new_dirs);
-    g_free(dir);
-  }
+
+  memcpy(new_dirs, dirs, n * sizeof(*new_dirs));
+  new_dirs[n] = dir;
+  new_dirs[n + 1] = NULL;
+  gtk_source_language_manager_set_search_path(lm, new_dirs);
+  g_free(dir);
   g_free(new_dirs);
 }
 
@@ -5965,7 +5968,7 @@ application(char *file)
     }
   }
 
-  souce_view_initialize();
+  souce_view_set_search_path();
 
 #if ! WINDOWS
   set_signal(SIGINT, 0, kill_signal_handler, NULL);

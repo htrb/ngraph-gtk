@@ -3,7 +3,7 @@
 This file is created based on "ruby.lang" which is part of GtkSourceView.
 -->
 
-<language id="ngraph_math" _name="ngraph mathematics transformation" version="2.0" _section="Script">
+<language id="ngraph-math" _name="ngraph mathematics transformation" version="2.0" _section="Script">
   <metadata>
     <property name="mimetypes">text/x-ngraph-math</property>
     <property name="line-comment-start">#</property>
@@ -20,6 +20,7 @@ This file is created based on "ruby.lang" which is part of GtkSourceView.
     <style id="operator"             _name="Operator"              map-to="def:operator"/>
     <style id="parameter"            _name="Parameter"             map-to="def:identifier"/>
     <style id="special-variable"     _name="Special Variable"      map-to="def:type"/>
+    <style id="special-constants"    _name="Special Constant"      map-to="def:constant"/>
   </styles>
 
   <default-regex-options case-sensitive="false"/>
@@ -32,7 +33,11 @@ This file is created based on "ruby.lang" which is part of GtkSourceView.
     </context>
 
     <context id="parameters" style-ref="parameter">
-      <match>%f?[0-9]+</match>
+      <match>(%f[0-9]{3,5})|(%[0-9]{1,3})</match>
+    </context>
+
+    <context id="special-constants" style-ref="constant">
+      <match>%[ND]</match>
     </context>
 
     <context id="special-variables" style-ref="special-variable">

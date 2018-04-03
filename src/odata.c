@@ -283,6 +283,8 @@ struct f2ddata_buf {
 
 #define EQUATION_NUM 3
 
+struct f2dlocal;
+
 struct f2ddata {
   struct objlist *obj;
   int id,src, GC;
@@ -349,6 +351,7 @@ struct f2ddata {
   struct array_prm array_data;
   double range_min, range_max;
   int range_div;
+  struct f2dlocal *local;
 };
 
 struct f2dlocal {
@@ -363,7 +366,7 @@ struct f2dlocal {
   int endstore;
   double sumx, sumy, sumxx, sumyy, sumxy;
   double dminx, dmaxx, dminy, dmaxy, davx, davy, dstdevpx, dstdevpy, dstdevx, dstdevy;
-  int num, rcode;
+  int num, rcode, use_drawing_func;
   time_t mtime, mtime_stat;
 };
 
@@ -555,6 +558,7 @@ file_obj_color_alpha(MathFunctionCallExpression *exp, MathEquation *eq, MathValu
     break;
   }
 
+  fp->local->use_drawing_func = TRUE;
   return 0;
 }
 
@@ -647,6 +651,7 @@ file_color(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
     return 1;
   }
 
+  fp->local->use_drawing_func = TRUE;
   return 0;
 }
 
@@ -696,6 +701,7 @@ file_alpha(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
     fp->color2.a = alpha;
   }
 
+  fp->local->use_drawing_func = TRUE;
   return 0;
 }
 
@@ -760,6 +766,7 @@ file_rgb_sub(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval,
     fp->color.b = b;
   }
 
+  fp->local->use_drawing_func = TRUE;
   return 0;
 }
 
@@ -839,6 +846,7 @@ file_hsb_sub(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval,
     fp->color.b = bb;
   }
 
+  fp->local->use_drawing_func = TRUE;
   return 0;
 }
 
@@ -1089,6 +1097,7 @@ file_draw_arc(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
   }
   GRAmoveto(fp->GC, px, py);
   arraydel(&expand_points);
+  fp->local->use_drawing_func = TRUE;
   return 0;
 }
 
@@ -1153,6 +1162,7 @@ file_draw_rect(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
     GRAdrawpoly(fp->GC, 4, ap, GRA_FILL_MODE_NONE);
   }
   GRAmoveto(fp->GC, px, py);
+  fp->local->use_drawing_func = TRUE;
   return 0;
 }
 
@@ -1204,6 +1214,7 @@ file_draw_line(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   GRAcolor(fp->GC, fp->color.r, fp->color.g, fp->color.b, fp->color.a);
   GRAline(fp->GC, ap[0], ap[1], ap[2], ap[3]);
   GRAmoveto(fp->GC, px, py);
+  fp->local->use_drawing_func = TRUE;
 
   return 0;
 }
@@ -1253,6 +1264,7 @@ file_draw_errorbar(MathFunctionCallExpression *exp, MathEquation *eq, MathValue 
     draw_errorbar(fp, fp->GC, fp->marksize / 2, x, y - ery, x, y + ery);
   }
   GRAmoveto(fp->GC, px, py);
+  fp->local->use_drawing_func = TRUE;
 
   return 0;
 }
@@ -1297,6 +1309,7 @@ file_draw_errorbar2(MathFunctionCallExpression *exp, MathEquation *eq, MathValue
   GRAcolor(fp->GC, fp->color.r, fp->color.g, fp->color.b, fp->color.a);
   draw_errorbar(fp, fp->GC, size / 2, x0, y0, x1, y1);
   GRAmoveto(fp->GC, px, py);
+  fp->local->use_drawing_func = TRUE;
 
   return 0;
 }
@@ -1336,13 +1349,14 @@ file_draw_mark(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   if (getposition(fp, x, y, &cx, &cy)) {
     return 0;
   }
-  if (size>0) {
+  if (size > 0) {
     int px, py;
     GRAcurrent_point(fp->GC, &px, &py);
     GRAmark(fp->GC, fp->marktype, cx, cy, size,
             fp->color.r, fp->color.g, fp->color.b, fp->color.a,
             fp->color2.r, fp->color2.g, fp->color2.b, fp->color2.a);
     GRAmoveto(fp->GC, px, py);
+    fp->local->use_drawing_func = TRUE;
   }
   return 0;
 }
@@ -1446,6 +1460,7 @@ file_draw_path(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   }
   GRAmoveto(fp->GC, px, py);
   arraydel(&pos);
+  fp->local->use_drawing_func = TRUE;
 
   return 0;
 }
@@ -1909,6 +1924,7 @@ opendata(struct objlist *obj,N_VALUE *inst,
   }
   if ((fp=g_malloc(sizeof(struct f2ddata)))==NULL) return NULL;
 
+  fp->local = f2dlocal;
   fp->GC = -1;
   fp->src = src;
   switch (src) {
@@ -2679,6 +2695,7 @@ f2dinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   f2dlocal->iline=chkobjoffset(obj,"line");
   f2dlocal->storefd=NULL;
   f2dlocal->endstore=FALSE;
+  f2dlocal->use_drawing_func = FALSE;
 
   f2dlocal->sumx = 0;
   f2dlocal->sumy = 0;
@@ -6346,7 +6363,7 @@ draw_fit(struct objlist *obj, struct f2ddata *fp,
     return 1;
   }
 
-  GRAcolor(GC,fp->fg.r,fp->fg.g,fp->fg.b, fp->fg.a);
+  GRAcolor(GC,fp->color.r,fp->color.g,fp->color.b, fp->color.a);
 #if EXPAND_DOTTED_LINE
   GRAlinestyle(GC,0,NULL,width,GRA_LINE_CAP_BUTT,join,miter);
 #else
@@ -6449,6 +6466,13 @@ get_fit_obj_id(char *fit, struct objlist **fitobj, N_VALUE **inst)
   return id;
 }
 
+static void
+dummyout(struct objlist *obj, struct f2ddata *fp, int GC, int width, int snum, int *style, int join, int miter)
+{
+  GRAlinestyle(GC, snum, style, width, GRA_LINE_CAP_BUTT, join, miter);
+  while (! getdata(fp));
+}
+
 static int
 fitout(struct objlist *obj,struct f2dlocal *f2dlocal,
        struct f2ddata *fp,int GC,
@@ -6477,10 +6501,13 @@ fitout(struct objlist *obj,struct f2dlocal *f2dlocal,
   }
 
   if (equation == NULL && redraw == 0) {
+    f2dlocal->use_drawing_func = FALSE;
     rcode = calc_fit(obj, f2dlocal, fp, fitobj, id);
     if (rcode) {
       return rcode;
     }
+  } else if (f2dlocal->use_drawing_func) {
+    dummyout(obj, fp, GC, width, snum, style, join, miter);
   }
 
   return draw_fit(obj, fp, GC, fitobj, inst, width, snum, style, join, miter);
