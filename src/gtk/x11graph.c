@@ -1038,7 +1038,6 @@ void
 CmGraphNewMenu(void *w, gpointer client_data)
 {
   int sel;
-  char *objects[] = {"axis", NULL};
 
   if (Menulock || Globallock)
     return;
@@ -1069,7 +1068,7 @@ CmGraphNewMenu(void *w, gpointer client_data)
   reset_graph_modified();
 
   CmViewerDraw(NULL, GINT_TO_POINTER(TRUE));
-  UpdateAll2(objects, FALSE);
+  UpdateAll2(NULL, FALSE);
   InfoWinClear();
   menu_clear_undo();
 }
