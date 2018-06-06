@@ -1,3 +1,7 @@
+2018-06-06  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11graph.c (CmGraphNewMenu): clear all lists.
+
 2018-03-28  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/odata.c (opendata): save "f2dlocal" to "struct f2ddata".
