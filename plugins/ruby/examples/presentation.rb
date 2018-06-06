@@ -7,6 +7,7 @@ class Presentation
   TITLE_LINE = [  0, 204, 129, 255]
   ENUM_COLOR = [  0,  78, 162].inject("") {|r, v| r + sprintf("%02x", v)}
   ENUM_CHAR  = "✵➢✲✔".chars
+  LINE_SPACE = "%N{4}"
 
   MODE = [
     :CENTER,
@@ -15,6 +16,7 @@ class Presentation
     :SUB_LIST,
     :CENTER_LIST,
     :VERB,
+    :TEXT,
     :QUOTE,
     :ENUM,
     :TITLE,
@@ -175,8 +177,9 @@ class Presentation
     end
     text = Ngraph::Text.new
     text.name = "LIST"
+    line_space = (raw)? "" : LINE_SPACE
     text.text = if (dot_char)
-                  "%C{#{ENUM_COLOR}}#{dot_char}%C{0} #{str}"
+                  "#{line_space}%C{#{ENUM_COLOR}}#{dot_char}%C{0} #{str}"
                 else
                   (str == "　") ? " " : str
                 end
@@ -199,27 +202,28 @@ class Presentation
   end
 
   def sub_list_add(str)
-    @enum = 0
     ofst_x = @ofst_x + @list_text_size / 2
     dot_char = ENUM_CHAR[1]
     list_add_sub(str, ofst_x, @sub_list_text_size, dot_char)
   end
 
   def list_add(str)
-    @enum = 0
     ofst_x = @ofst_x
     dot_char = ENUM_CHAR[0]
     list_add_sub(str, ofst_x, @list_text_size, dot_char)
   end
 
   def verb_add(str)
-    @enum = 0
     ofst_x = @ofst_x
     list_add_sub(str, ofst_x, @list_text_size, nil, true, "Monospace")
   end
 
+  def text_add(str)
+    ofst_x = @ofst_x
+    list_add_sub(str, ofst_x, @list_text_size, nil)
+  end
+
   def quote_add(str)
-    @enum = 0
     ofst_x = @ofst_x
     list_add_sub(str, ofst_x, @list_text_size, nil, false, "Sans-serif", 0x660000)
   end
@@ -348,6 +352,8 @@ class Presentation
       center_list_add(arg)
     when VERB
       verb_add(arg)
+    when TEXT
+      text_add(arg)
     when QUOTE
       quote_add(arg)
     when ENUM
@@ -398,9 +404,10 @@ class Presentation
     text = Ngraph::Text.new
     text.name = "FOOTER1"
     text.text = "#{@page + 1}/#{@last_page}"
-    text.x = margin
     text.y = @page_height - margin
     text.pt = size
+    bbox = text.bbox
+    text.x = (@page_width - bbox[2] + bbox[0]) / 2
 
     text = Ngraph::Text.new
     text.name = "FOOTER2"
@@ -454,6 +461,9 @@ class Presentation
         page_item += 1
       when "@verb"
         mode = VERB
+        page_item += 1
+      when "@text"
+        mode = TEXT
         page_item += 1
       when "@quote"
         mode = QUOTE
