@@ -25,6 +25,7 @@ class Presentation
     :INCLUDE,
     :INCLUDE_RAW,
     :VERB_INCLUDE,
+    :VERB_INCLUDE_N,
     :VSPACE,
   ]
 
@@ -305,8 +306,29 @@ class Presentation
     include(file, true, 'Monospace')
   end
 
+  def verb_include_n(file)
+    include_with_ln(file, true, 'Monospace')
+  end
+
   def include(file, raw, font = 'Sans-serif')
     str = IO.read(@path + "/" + file)
+    list_add_sub(str, @ofst_x, @sub_list_text_size, nil, raw, font)
+  end
+
+  def include_with_ln(file, raw, font = 'Sans-serif')
+    str = IO.read(@path + "/" + file)
+    stra = str.split("\n")
+    ln = stra.size
+    w = if (ln > 9)
+          2
+        else
+          1
+        end
+    i = 0
+    str = stra.map {|s|
+      i += 1
+      sprintf("%#{w}d: %s", i, s)
+    }.join("\n")
     list_add_sub(str, @ofst_x, @sub_list_text_size, nil, raw, font)
   end
 
@@ -334,6 +356,8 @@ class Presentation
       title_add(arg)
     when VERB_INCLUDE
       verb_include(arg)
+    when VERB_INCLUDE_N
+      verb_include_n(arg)
     when INCLUDE
       include(arg, false)
     when INCLUDE_RAW
@@ -448,6 +472,9 @@ class Presentation
         page_item += 1
       when "@verb_include"
         mode = VERB_INCLUDE
+        page_item += 1
+      when "@verb_include_n"
+        mode = VERB_INCLUDE_N
         page_item += 1
       when "@include_raw"
         mode = INCLUDE_RAW
