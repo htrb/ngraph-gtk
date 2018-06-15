@@ -1,5 +1,10 @@
 2018-06-15  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11file.c (RANGE_ENTRY_WIDTH): ad and use the constant.
+
+	* src/nhash.c (hash_each_sub): check returned value of the
+	function "hash_each_sub()".
+
 	* src/gra.c (GRAtextextentraw): fix calculation of the bounding
 	box of a raw-text.
 
