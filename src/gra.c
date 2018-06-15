@@ -2808,6 +2808,9 @@ GRAtextextentraw(char *s,char *font, int style,
   if (s == NULL || font == NULL) return;
 
   len = strlen(s);
+  if (len < 1) {
+    return;
+  }
   *gx1 = GRAstrwidth(s, font, style, size)
     + nround(space / 72.0 * 25.4) * (len - 1);
   for (n = 0, i = 0; i < len; i++) {
@@ -2818,7 +2821,7 @@ GRAtextextentraw(char *s,char *font, int style,
   ha = GRAcharascent(font, style, size);
   *gy0 = - ha;
   hd = GRAchardescent(font, style, size);
-  *gy1 += hd + (ha + hd) * n;
+  *gy1 = hd + (ha + hd) * n;
 }
 
 
