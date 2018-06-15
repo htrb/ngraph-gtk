@@ -153,6 +153,8 @@ static struct subwin_popup_list Popup_list[] = {
 #define POPUP_ITEM_DOWN   12
 #define POPUP_ITEM_BOTTOM 13
 
+#define RANGE_ENTRY_WIDTH 26
+
 #define FITSAVE "fit.ngp"
 
 enum MATH_FNC_TYPE {
@@ -4200,12 +4202,12 @@ RangeDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     i = 0;
     w = create_text_entry(FALSE, TRUE);
-    gtk_entry_set_width_chars(GTK_ENTRY(w), 24);
+    gtk_entry_set_width_chars(GTK_ENTRY(w), RANGE_ENTRY_WIDTH);
     add_widget_to_table(table, w, _("_Minimum:"), FALSE, i++);
     d->min = w;
 
     w = create_text_entry(FALSE, TRUE);
-    gtk_entry_set_width_chars(GTK_ENTRY(w), 24);
+    gtk_entry_set_width_chars(GTK_ENTRY(w), RANGE_ENTRY_WIDTH);
     add_widget_to_table(table, w, _("_Maximum:"), FALSE, i++);
     d->max = w;
 
