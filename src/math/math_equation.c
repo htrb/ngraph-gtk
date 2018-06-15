@@ -1572,18 +1572,20 @@ math_equation_check_const(MathEquation *eq, int *constant, int n)
 
   sc.constant = constant;
   sc.n = n;
+  sc.r = 0;
   nhash_each(eq->function, check_counst_in_func, &sc);
 
   if (sc.r) {
-   return sc.r;
+    return sc.r;
   }
 
   r = 0;
   exp = eq->exp;
   while (exp) {
     r = check_const_sub(exp, constant, n);
-    if (r)
+    if (r) {
       break;
+    }
     exp = exp->next;
   }
 
