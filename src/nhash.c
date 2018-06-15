@@ -410,15 +410,22 @@ nhash_del(NHASH hash, const char *key)
 static int
 hash_each_sub(struct nhash *h, int(* func)(struct nhash *, void *), void *data)
 {
+  int r;
   if (h == NULL)
     return 0;
 
-  if (h->l)
-    hash_each_sub(h->l, func, data);
-
-  if (h->r)
-    hash_each_sub(h->r, func, data);
-
+  if (h->l) {
+    r = hash_each_sub(h->l, func, data);
+    if (r) {
+      return r;
+    }
+  }
+  if (h->r) {
+    r = hash_each_sub(h->r, func, data);
+    if (r) {
+      return r;
+    }
+  }
   return func(h, data);
 }
 
