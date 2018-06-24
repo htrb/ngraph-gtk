@@ -1,3 +1,8 @@
+2018-06-24  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/odata.c (set_const): add constants AXISX_MAX, AXISX_MIN,
+	AXISX_LEN, AXISY_MAX, AXISY_MIN and AXISY_LEN.
+
 2018-06-15  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (RANGE_ENTRY_WIDTH): ad and use the constant.
