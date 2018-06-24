@@ -27,7 +27,13 @@ MOVE		Number of lines set for move
 COLX		The column number specified for X
 COLY		The column number specified for Y
 AXISX		The ID of the axis instance specified as X axis
+AXISX_MIN	The minimum value of the X axis
+AXISX_MAX	The maximum value of the X axis
+AXISX_LEN	Length of the X axis
 AXISY		The ID of the axis instance specified as Y axis
+AXISY_MIN	The minimum value of the Y axis
+AXISY_MAX	The maximum value of the Y axis
+AXISY_LEN	Length of the Y axis
 HSKIP		Number of lines specified as "Head skip"
 RSTEP		Number of lines specified as "Read step"
 FLINE		Number of lines specified as "Final line"
