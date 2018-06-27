@@ -807,6 +807,9 @@ nstat(const gchar *filename, GStatBuf *buf)
 {
   int r;
   char *tmp;
+#if WINDOWS
+  GStatBuf tmp_buf[10];
+#endif
 
   if (filename == NULL || buf == NULL)
     return -1;
@@ -816,7 +819,14 @@ nstat(const gchar *filename, GStatBuf *buf)
     return -1;
   }
 
+#if WINDOWS
+  r = g_stat(tmp, tmp_buf + 5);
+  if (r == 0) {
+    *buf = tmp_buf[5];
+  }
+#else
   r = g_stat(tmp, buf);
+#endif
   g_free(tmp);
 
   return r;
