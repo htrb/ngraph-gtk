@@ -1,3 +1,8 @@
+2018-06-27  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/ioutil.c (nstat): add codes to avoid segmentation fault on
+	Windows.
+
 2018-06-24  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/odata.c (set_const): add constants AXISX_MAX, AXISX_MIN,
