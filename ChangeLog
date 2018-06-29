@@ -1,3 +1,9 @@
+2018-06-29  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/ioutil.c (nstat): remove codes for windows.
+
+	* configure.ac: add AC_SYS_LARGEFILE.
+
 2018-06-27  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/ioutil.c (nstat): add codes to avoid segmentation fault on
