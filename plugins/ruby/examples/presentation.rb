@@ -168,11 +168,7 @@ class Presentation
     ofst = @ofst_y + @title_h
     list = Ngraph::Text["LIST"][-1]
     if (list)
-      is_raw = list.raw
-      list.raw = true
-      padding = (list.bbox[3] - list.bbox[1]) / 100.0 * (@line_height - 100.0)
-      list.raw = is_raw
-      ofst = list.bbox[3] + padding
+      ofst = list.bbox[3] + size * (@line_height - 100.0) / 100
       margin = list.pt / 10
     end
     text = Ngraph::Text.new
@@ -192,6 +188,7 @@ class Presentation
     text.g = (color >> 8) & 0xff
     text.b = color & 0xff
     text.y = text.y - top + ofst + margin
+    text
   end
 
   def center_list_add(str)
@@ -323,7 +320,9 @@ class Presentation
     str = IO.read(@path + "/" + file)
     stra = str.split("\n")
     ln = stra.size
-    w = if (ln > 9)
+    w = if (ln > 99)
+          3
+        elsif (ln > 9)
           2
         else
           1
