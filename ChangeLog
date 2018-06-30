@@ -1,3 +1,7 @@
+2018-06-30  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/common.h: check "G_OS_WIN32" instead of "__MINGW32__".
+
 2018-06-29  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/ioutil.c (nstat): remove codes for windows.
