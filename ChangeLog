@@ -1,3 +1,11 @@
+2018-07-06  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* test/math_test_new.dat: fix some tests related to comparison
+	with precision.
+
+	* src/math/math_basic_function.c (compare_double_with_prec): use
+	"gsl_fcmp()" when available.
+
 2018-06-30  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/common.h: check "G_OS_WIN32" instead of "__MINGW32__".
