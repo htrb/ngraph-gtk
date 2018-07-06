@@ -14,6 +14,7 @@
 #ifdef HAVE_LIBGSL
 #include <gsl/gsl_sf.h>
 #include <gsl/gsl_rng.h>
+#include <gsl/gsl_math.h>
 #endif
 
 #include "ntime.h"
@@ -1461,8 +1462,10 @@ math_func_ge(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 static int
 compare_double_with_prec(long double a, long double b, int prec)
 {
+#ifndef HAVE_LIBGSL
   long double scale, r, dif;
   int order, order_a, order_b;
+#endif
 
   if (a == b) {
     return 0;
@@ -1471,7 +1474,9 @@ compare_double_with_prec(long double a, long double b, int prec)
   if (prec < 1 || prec > 34) {	/* long double (IEEE754-2008 binary128) */
     return (a > b) ? 1 : -1;
   }
-
+#ifdef HAVE_LIBGSL
+  return gsl_fcmp(a, b, pow(10, -prec));
+#else
   if (a == 0.0 || b == 0.0) {
     return (a > b) ? 1 : -1;
   }
@@ -1518,6 +1523,7 @@ compare_double_with_prec(long double a, long double b, int prec)
   }
 
   return 0;
+#endif
 }
 
 int
