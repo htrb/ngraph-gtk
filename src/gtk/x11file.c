@@ -3201,6 +3201,52 @@ FileDialogEdit(GtkWidget *w, gpointer client_data)
   edit_file(file);
 }
 
+#if 1
+static void
+FileDialogType(GtkWidget *w, gpointer client_data)
+{
+  struct FileDialog *d;
+  int type;
+
+  d = (struct FileDialog *) client_data;
+
+  type = combo_box_get_active(w);
+
+  set_widget_sensitivity_with_label(d->curve, TRUE);
+  set_widget_sensitivity_with_label(d->fit, TRUE);
+
+  switch (type) {
+  case PLOT_TYPE_MARK:
+  case PLOT_TYPE_LINE:
+  case PLOT_TYPE_POLYGON:
+  case PLOT_TYPE_DIAGONAL:
+  case PLOT_TYPE_RECTANGLE:
+  case PLOT_TYPE_POLYGON_SOLID_FILL:
+  case PLOT_TYPE_RECTANGLE_SOLID_FILL:
+  case PLOT_TYPE_ARROW:
+  case PLOT_TYPE_RECTANGLE_FILL:
+  case PLOT_TYPE_ERRORBAR_X:
+  case PLOT_TYPE_ERRORBAR_Y:
+  case PLOT_TYPE_STAIRCASE_X:
+  case PLOT_TYPE_STAIRCASE_Y:
+  case PLOT_TYPE_BAR_X:
+  case PLOT_TYPE_BAR_Y:
+  case PLOT_TYPE_BAR_SOLID_FILL_X:
+  case PLOT_TYPE_BAR_SOLID_FILL_Y:
+  case PLOT_TYPE_BAR_FILL_X:
+  case PLOT_TYPE_BAR_FILL_Y:
+    set_widget_sensitivity_with_label(d->curve, FALSE);
+    set_widget_sensitivity_with_label(d->fit, FALSE);
+    break;
+  case PLOT_TYPE_CURVE:
+    set_widget_sensitivity_with_label(d->fit, FALSE);
+    break;
+  case PLOT_TYPE_FIT:
+    set_widget_sensitivity_with_label(d->curve, FALSE);
+    break;
+  }
+}
+#else
 static void
 FileDialogType(GtkWidget *w, gpointer client_data)
 {
@@ -3333,6 +3379,7 @@ FileDialogType(GtkWidget *w, gpointer client_data)
     break;
   }
 }
+#endif
 
 static void
 file_settings_copy(GtkButton *btn, gpointer user_data)
