@@ -1,3 +1,11 @@
+2018-07-17  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* addin/legend.nsc: use "-escape" option to get fields of a data
+	object.
+
+	* src/shellcm.c (put_field_str): added.
+	(cmget): add "escape" option.
+
 2018-07-12  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (FileDialogType): set sensitivity of only
