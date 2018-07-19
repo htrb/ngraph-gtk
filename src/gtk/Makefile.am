@@ -1,7 +1,8 @@
 EXTRA_DIST = dir_defs.h.in data/css/ngraph.css				\
 	data/gtk/menus-common.ui.in data/gtk/menus-common.ui.osx	\
 	data/gtk/menus-appmenu.ui.in data/gtk/help-overlay.ui		\
-	data/gtk/menus-appmenu.ui.osx data/pixmaps/ngraph_align_b.png	\
+	data/gtk/menus-appmenu.ui.osx data/gtk/menus-tool.ui		\
+	data/pixmaps/ngraph_align_b.png					\
 	data/pixmaps/ngraph_align_hc.png				\
 	data/pixmaps/ngraph_align_l.png					\
 	data/pixmaps/ngraph_align_r.png					\
@@ -55,7 +56,8 @@ libngraphui_la_SOURCES = gtk_common.h gtk_combo.c gtk_combo.h		\
 	x11print.h x11view.c x11view.h gtk_widget.c gtk_widget.h	\
 	gtk_ruler.c gtk_ruler.h init.c init.h gtk_action.c		\
 	gtk_action.h sourcecompletionwords.c sourcecompletionwords.h	\
-	completion_info.c completion_info.h completion_info_data.c
+	completion_info.c completion_info.h completion_info_data.c	\
+	gtk_presettings.c gtk_presettings.h
 
 if OS_WIN32
 APPMENU_UI_SOURCE = $(srcdir)/data/gtk/menus-appmenu.ui.in
@@ -79,7 +81,7 @@ $(uidir)/menus-common.ui: $(MENU_UI_SOURCE)
 	$(MKDIR_P) $(uidir)
 	cp $< $@
 
-ngraphui.resources.c: $(srcdir)/data/ngraphui.resources.xml $(uidir)/menus-common.ui $(srcdir)/data/css/ngraph.css $(srcdir)/data/gtk/help-overlay.ui $(uidir)/menus-appmenu.ui
+ngraphui.resources.c: $(srcdir)/data/ngraphui.resources.xml $(uidir)/menus-common.ui $(srcdir)/data/gtk/menus-tool.ui $(srcdir)/data/css/ngraph.css $(srcdir)/data/gtk/help-overlay.ui $(uidir)/menus-appmenu.ui
 	$(GLIB_COMPILE_RESOURCES) --target=$@ --generate-source --sourcedir $(srcdir)/data --sourcedir $(builddir)/data $<
 
 BUILT_SOURCES = ${nodist_libngraphui_la_SOURCES}
