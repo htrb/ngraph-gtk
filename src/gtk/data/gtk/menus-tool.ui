@@ -4,15 +4,15 @@
     <section>
       <item>
 	<attribute name="label" translatable="yes">_Miter</attribute>
-	<attribute name="action">app.EditCutAction</attribute>
+	<attribute name="action">app.JoinTypeMiterAction</attribute>
       </item>
       <item>
 	<attribute name="label" translatable="yes">_Round</attribute>
-	<attribute name="action">app.EditCopyAction</attribute>
+	<attribute name="action">app.JoinTypeRoundAction</attribute>
       </item>
       <item>
 	<attribute name="label" translatable="yes">_bevel</attribute>
-	<attribute name="action">app.EditPasteAction</attribute>
+	<attribute name="action">app.JoinTypeBevelAction</attribute>
       </item>
     </section>
   </menu>
@@ -20,19 +20,19 @@
     <section>
       <item>
 	<attribute name="label" translatable="yes">_None</attribute>
-	<attribute name="action">app.EditCutAction</attribute>
+	<attribute name="action">app.ArrowTypeNoneAction</attribute>
       </item>
       <item>
 	<attribute name="label" translatable="yes">_End</attribute>
-	<attribute name="action">app.EditCopyAction</attribute>
+	<attribute name="action">app.ArrowTypeEndAction</attribute>
       </item>
       <item>
 	<attribute name="label" translatable="yes">_Begin</attribute>
-	<attribute name="action">app.EditPasteAction</attribute>
+	<attribute name="action">app.ArrowTypeBeginAction</attribute>
       </item>
       <item>
 	<attribute name="label" translatable="yes">_Both</attribute>
-	<attribute name="action">app.EditPasteAction</attribute>
+	<attribute name="action">app.ArrowTypeBothAction</attribute>
       </item>
     </section>
   </menu>
