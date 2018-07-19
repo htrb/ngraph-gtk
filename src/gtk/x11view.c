@@ -43,6 +43,7 @@
 #include "gtk_liststore.h"
 #include "gtk_widget.h"
 #include "gtk_ruler.h"
+#include "gtk_presettings.h"
 #include "strconv.h"
 
 #include "x11gui.h"
@@ -3657,6 +3658,7 @@ create_legend1(struct Viewer *d)
     undo = menu_save_undo_single(UNDO_TYPE_CREATE, obj->name);
     id = newobj(obj);
     if (id >= 0) {
+      presetting_set_obj_field(obj, id);
       if (num >= 1) {
 	po = *(struct Point **) arraynget(d->points, 0);
 	x1 = po->x;
@@ -3720,6 +3722,7 @@ create_path(struct Viewer *d)
     goto ExitCreatePath;
   }
 
+  presetting_set_obj_field(obj, id);
   inst = chkobjinst(obj, id);
   parray = arraynew(sizeof(int));
 
@@ -3779,6 +3782,7 @@ create_legend3(struct Viewer *d)
       undo = menu_save_undo_single(UNDO_TYPE_CREATE, obj->name);
       id = newobj(obj);
       if (id >= 0) {
+        presetting_set_obj_field(obj, id);
 	inst = chkobjinst(obj, id);
 	x1 = pdata[0]->x;
 	y1 = pdata[0]->y;
@@ -3856,6 +3860,7 @@ create_legendx(struct Viewer *d)
       id = newobj(obj);
 
       if (id >= 0) {
+        presetting_set_obj_field(obj, id);
 	type = PATH_TYPE_CURVE;
 	putobj(obj, "type", id, &type);
 	inst = chkobjinst(obj, id);
