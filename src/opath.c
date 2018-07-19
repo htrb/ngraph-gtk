@@ -113,7 +113,7 @@ arrowinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
     type = PATH_TYPE_LINE;
   }
 
-  width = 40;
+  width = DEFAULT_LINE_WIDTH;
   headlen = 72426;
   headwidth = 60000;
   miter = 1000;

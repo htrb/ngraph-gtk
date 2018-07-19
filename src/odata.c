@@ -2614,7 +2614,7 @@ f2dinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   rstep=1;
   final=-1;
   msize=200;
-  lwidth=40;
+  lwidth=DEFAULT_LINE_WIDTH;
   r2=255;
   g2=255;
   b2=255;

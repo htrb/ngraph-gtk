@@ -54,7 +54,7 @@ arcinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv)) return 1;
 
   angle2 = 36000;
-  width = 40;
+  width = DEFAULT_LINE_WIDTH;
   pieslice = TRUE;
   miter = 1000;
   join = JOIN_TYPE_BEVEL;

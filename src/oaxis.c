@@ -235,17 +235,17 @@ axisinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   char *font,*format,*group,*name;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
-  width=40;
+  width=DEFAULT_LINE_WIDTH;
   alen=72426;
   awid=60000;
   wlen=300;
-  wwid=40;
+  wwid=DEFAULT_LINE_WIDTH;
   len1=100;
-  wid1=40;
+  wid1=DEFAULT_LINE_WIDTH;
   len2=200;
-  wid2=40;
+  wid2=DEFAULT_LINE_WIDTH;
   len3=300;
-  wid3=40;
+  wid3=DEFAULT_LINE_WIDTH;
   bline=TRUE;
   pt=2000;
   sx=0;
