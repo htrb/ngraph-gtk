@@ -4612,7 +4612,7 @@ setup_toolbar(GtkWidget *window)
 }
 
 static void
-setupwindow(void)
+setupwindow(GtkApplication *app)
 {
   GtkWidget *w, *hbox, *hbox2, *vbox2, *table, *hpane1, *hpane2, *vpane1, *vpane2;
 #if ! USE_APP_HEADER_BAR
@@ -4631,7 +4631,7 @@ setupwindow(void)
   read_keymap_file();
 #endif
   NgraphApp.Viewer.menu = w;
-  add_setting_panel(vbox2);
+  add_setting_panel(vbox2, app);
 
 #if ! USE_APP_HEADER_BAR
   gtk_box_pack_start(GTK_BOX(vbox), CToolbar, FALSE, FALSE, 0);
@@ -5785,7 +5785,7 @@ create_toplevel_window(void)
   setup_toolbar(TopLevel);
   gtk_widget_show_all(GTK_WIDGET(TopLevel));
   reset_event();
-  setupwindow();
+  setupwindow(GtkApp);
   create_addin_menu();
 
   NgraphApp.FileName = NULL;
