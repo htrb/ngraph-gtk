@@ -1,5 +1,6 @@
 #include "gtk_common.h"
 #include "gtk_presettings.h"
+#include "gtk_widget.h"
 #include "object.h"
 #include "odraw.h"
 
@@ -7,6 +8,7 @@ struct presetting_widgets
 {
   GtkWidget *stroke, *stroke_icon, *fill, *fill_icon;
   GtkWidget *line_width;
+  GtkWidget *color1, *color2;
   GtkWidget *fill_rule, *path_type;
   GtkWidget *join_type, *join_bevel, *join_round, *join_miter;
   GtkWidget *arrow_type, *arrow_none, *arrow_begin, *arrow_end, *arrow_both;
@@ -99,6 +101,86 @@ create_images(struct presetting_widgets *widgets)
   g_object_ref(widgets->join_miter);
 }
 
+static void
+set_rgba(GtkWidget *cbutton, int *r, int *g, int *b, int *a)
+{
+  GdkRGBA color;
+  gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(cbutton), &color);
+  *r = color.red * 255;
+  *g = color.green * 255;
+  *b = color.blue * 255;
+  *a = color.alpha * 255;
+}
+
+static void
+set_color(struct objlist *obj, int id, int r1, int g1, int b1, int a1, int r2, int g2, int b2, int a2)
+{
+    putobj(obj, "stroke_R", id, &r1);
+    putobj(obj, "stroke_G", id, &g1);
+    putobj(obj, "stroke_B", id, &b1);
+    putobj(obj, "stroke_A", id, &a1);
+    putobj(obj, "fill_R", id, &r2);
+    putobj(obj, "fill_G", id, &g2);
+    putobj(obj, "fill_B", id, &b2);
+    putobj(obj, "fill_A", id, &a2);
+}
+
+void
+presetting_set_obj_field(struct objlist *obj, int id)
+{
+  const char *name;
+  int ival, r1, g1, b1, a1, r2, g2, b2, a2, stroke, fill, width;
+
+  if (obj == NULL) {
+    return;
+  }
+  name = chkobjectname(obj);
+  if (name == NULL) {
+    return;
+  }
+
+  set_rgba(Widgets.color1, &r1, &g1, &b1, &a1);
+  set_rgba(Widgets.color2, &r2, &g2, &b2, &a2);
+  stroke = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(Widgets.stroke));
+  fill = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(Widgets.fill));
+  width = gtk_spin_button_get_value(GTK_SPIN_BUTTON(Widgets.line_width)) * 100;
+
+  if (strcmp(name, "axis") == 0) {
+  } else if (strcmp(name, "path") == 0) {
+    putobj(obj, "stroke", id, &stroke);
+    putobj(obj, "fill", id, &fill);
+    ival = Widgets.join;
+    putobj(obj, "join", id, &ival);
+    ival = Widgets.arrow;
+    putobj(obj, "arrow", id, &ival);
+    putobj(obj, "width", id, &width);
+    set_color(obj, id, r1, g1, b1, a1, r2, g2, b2, a2);
+  } else if (strcmp(name, "rectangle") == 0) {
+    putobj(obj, "stroke", id, &stroke);
+    putobj(obj, "fill", id, &fill);
+    putobj(obj, "width", id, &width);
+    set_color(obj, id, r1, g1, b1, a1, r2, g2, b2, a2);
+  } else if (strcmp(name, "arc") == 0) {
+    putobj(obj, "stroke", id, &stroke);
+    putobj(obj, "fill", id, &fill);
+    ival = Widgets.join;
+    putobj(obj, "join", id, &ival);
+    putobj(obj, "width", id, &width);
+    set_color(obj, id, r1, g1, b1, a1, r2, g2, b2, a2);
+  } else if (strcmp(name, "mark") == 0) {
+    putobj(obj, "width", id, &width);
+    putobj(obj, "R", id, &r1);
+    putobj(obj, "G", id, &g1);
+    putobj(obj, "B", id, &b1);
+    putobj(obj, "A", id, &a1);
+    putobj(obj, "R2", id, &r2);
+    putobj(obj, "G2", id, &g2);
+    putobj(obj, "B2", id, &b2);
+    putobj(obj, "A2", id, &a2);
+  } else if (strcmp(name, "text") == 0) {
+  }
+}
+
 void
 add_setting_panel(GtkWidget *vbox, GtkApplication *app)
 {
@@ -115,15 +197,18 @@ add_setting_panel(GtkWidget *vbox, GtkApplication *app)
   w = gtk_toggle_button_new();
   gtk_container_add(GTK_CONTAINER(w), Widgets.stroke_icon);
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), TRUE);
   Widgets.stroke = w;
 
   w = gtk_toggle_button_new();
   gtk_container_add(GTK_CONTAINER(w), Widgets.fill_icon);
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), FALSE);
   Widgets.fill = w;
 
   label = gtk_label_new_with_mnemonic(_("_Width:"));
-  w = gtk_spin_button_new(NULL, 1, 0);
+  w = create_spin_entry_type(SPIN_BUTTON_TYPE_WIDTH, FALSE, FALSE);
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), DEFAULT_LINE_WIDTH / 100.0);
   gtk_label_set_mnemonic_widget(GTK_LABEL(label), w);
   gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 0);
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
@@ -134,9 +219,11 @@ add_setting_panel(GtkWidget *vbox, GtkApplication *app)
 
   w = gtk_color_button_new();
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
+  Widgets.color1 = w;
 
   w = gtk_color_button_new();
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
+  Widgets.color2 = w;
   
   w = gtk_menu_button_new();
   menu = G_MENU_MODEL(gtk_builder_get_object(builder, "arrow-type-menu"));
