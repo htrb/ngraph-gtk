@@ -50,7 +50,7 @@ markinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   size=200;
-  width=40;
+  width=DEFAULT_LINE_WIDTH;
   r2=255;
   g2=255;
   b2=255;
