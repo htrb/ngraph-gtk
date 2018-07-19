@@ -1,3 +1,58 @@
+2018-07-17  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* addin/legend.nsc: use "-escape" option to get fields of a data
+	object.
+
+	* src/shellcm.c (put_field_str): added.
+	(cmget): add "escape" option.
+
+2018-07-12  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (FileDialogType): set sensitivity of only
+	curve and fit button (for drawing math-functions).
+
+2018-07-06  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* test/math_test_new.dat: fix some tests related to comparison
+	with precision.
+
+	* src/math/math_basic_function.c (compare_double_with_prec): use
+	"gsl_fcmp()" when available.
+
+2018-06-30  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/common.h: check "G_OS_WIN32" instead of "__MINGW32__".
+
+2018-06-29  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/ioutil.c (nstat): remove codes for windows.
+
+	* configure.ac: add AC_SYS_LARGEFILE.
+
+2018-06-27  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/ioutil.c (nstat): add codes to avoid segmentation fault on
+	Windows.
+
+2018-06-24  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/odata.c (set_const): add constants AXISX_MAX, AXISX_MIN,
+	AXISX_LEN, AXISY_MAX, AXISY_MIN and AXISY_LEN.
+
+2018-06-15  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (RANGE_ENTRY_WIDTH): add and use the constant.
+
+	* src/nhash.c (hash_each_sub): check returned value of the
+	function "hash_each_sub()".
+
+	* src/gra.c (GRAtextextentraw): fix calculation of the bounding
+	box of a raw-text.
+
+2018-06-06  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11graph.c (CmGraphNewMenu): clear all lists.
+
 2018-03-28  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/odata.c (opendata): save "f2dlocal" to "struct f2ddata".

@@ -7,6 +7,7 @@ class Presentation
   TITLE_LINE = [  0, 204, 129, 255]
   ENUM_COLOR = [  0,  78, 162].inject("") {|r, v| r + sprintf("%02x", v)}
   ENUM_CHAR  = "✵➢✲✔".chars
+  LINE_SPACE = "%N{4}"
 
   MODE = [
     :CENTER,
@@ -15,6 +16,7 @@ class Presentation
     :SUB_LIST,
     :CENTER_LIST,
     :VERB,
+    :TEXT,
     :QUOTE,
     :ENUM,
     :TITLE,
@@ -25,6 +27,7 @@ class Presentation
     :INCLUDE,
     :INCLUDE_RAW,
     :VERB_INCLUDE,
+    :VERB_INCLUDE_N,
     :VSPACE,
   ]
 
@@ -165,17 +168,14 @@ class Presentation
     ofst = @ofst_y + @title_h
     list = Ngraph::Text["LIST"][-1]
     if (list)
-      is_raw = list.raw
-      list.raw = true
-      padding = (list.bbox[3] - list.bbox[1]) / 100.0 * (@line_height - 100.0)
-      list.raw = is_raw
-      ofst = list.bbox[3] + padding
+      ofst = list.bbox[3] + size * (@line_height - 100.0) / 100
       margin = list.pt / 10
     end
     text = Ngraph::Text.new
     text.name = "LIST"
+    line_space = (raw)? "" : LINE_SPACE
     text.text = if (dot_char)
-                  "%C{#{ENUM_COLOR}}#{dot_char}%C{0} #{str}"
+                  "#{line_space}%C{#{ENUM_COLOR}}#{dot_char}%C{0} #{str}"
                 else
                   (str == "　") ? " " : str
                 end
@@ -188,6 +188,7 @@ class Presentation
     text.g = (color >> 8) & 0xff
     text.b = color & 0xff
     text.y = text.y - top + ofst + margin
+    text
   end
 
   def center_list_add(str)
@@ -198,27 +199,28 @@ class Presentation
   end
 
   def sub_list_add(str)
-    @enum = 0
     ofst_x = @ofst_x + @list_text_size / 2
     dot_char = ENUM_CHAR[1]
     list_add_sub(str, ofst_x, @sub_list_text_size, dot_char)
   end
 
   def list_add(str)
-    @enum = 0
     ofst_x = @ofst_x
     dot_char = ENUM_CHAR[0]
     list_add_sub(str, ofst_x, @list_text_size, dot_char)
   end
 
   def verb_add(str)
-    @enum = 0
     ofst_x = @ofst_x
     list_add_sub(str, ofst_x, @list_text_size, nil, true, "Monospace")
   end
 
+  def text_add(str)
+    ofst_x = @ofst_x
+    list_add_sub(str, ofst_x, @list_text_size, nil)
+  end
+
   def quote_add(str)
-    @enum = 0
     ofst_x = @ofst_x
     list_add_sub(str, ofst_x, @list_text_size, nil, false, "Sans-serif", 0x660000)
   end
@@ -305,8 +307,31 @@ class Presentation
     include(file, true, 'Monospace')
   end
 
+  def verb_include_n(file)
+    include_with_ln(file, true, 'Monospace')
+  end
+
   def include(file, raw, font = 'Sans-serif')
     str = IO.read(@path + "/" + file)
+    list_add_sub(str, @ofst_x, @sub_list_text_size, nil, raw, font)
+  end
+
+  def include_with_ln(file, raw, font = 'Sans-serif')
+    str = IO.read(@path + "/" + file)
+    stra = str.split("\n")
+    ln = stra.size
+    w = if (ln > 99)
+          3
+        elsif (ln > 9)
+          2
+        else
+          1
+        end
+    i = 0
+    str = stra.map {|s|
+      i += 1
+      sprintf("%#{w}d: %s", i, s)
+    }.join("\n")
     list_add_sub(str, @ofst_x, @sub_list_text_size, nil, raw, font)
   end
 
@@ -326,6 +351,8 @@ class Presentation
       center_list_add(arg)
     when VERB
       verb_add(arg)
+    when TEXT
+      text_add(arg)
     when QUOTE
       quote_add(arg)
     when ENUM
@@ -334,6 +361,8 @@ class Presentation
       title_add(arg)
     when VERB_INCLUDE
       verb_include(arg)
+    when VERB_INCLUDE_N
+      verb_include_n(arg)
     when INCLUDE
       include(arg, false)
     when INCLUDE_RAW
@@ -374,9 +403,10 @@ class Presentation
     text = Ngraph::Text.new
     text.name = "FOOTER1"
     text.text = "#{@page + 1}/#{@last_page}"
-    text.x = margin
     text.y = @page_height - margin
     text.pt = size
+    bbox = text.bbox
+    text.x = (@page_width - bbox[2] + bbox[0]) / 2
 
     text = Ngraph::Text.new
     text.name = "FOOTER2"
@@ -431,6 +461,9 @@ class Presentation
       when "@verb"
         mode = VERB
         page_item += 1
+      when "@text"
+        mode = TEXT
+        page_item += 1
       when "@quote"
         mode = QUOTE
         page_item += 1
@@ -448,6 +481,9 @@ class Presentation
         page_item += 1
       when "@verb_include"
         mode = VERB_INCLUDE
+        page_item += 1
+      when "@verb_include_n"
+        mode = VERB_INCLUDE_N
         page_item += 1
       when "@include_raw"
         mode = INCLUDE_RAW

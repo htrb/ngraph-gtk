@@ -84,7 +84,13 @@ enum {
   MATH_CONST_COLX,
   MATH_CONST_COLY,
   MATH_CONST_AXISX,
+  MATH_CONST_AXISX_MIN,
+  MATH_CONST_AXISX_MAX,
+  MATH_CONST_AXISX_LEN,
   MATH_CONST_AXISY,
+  MATH_CONST_AXISY_MIN,
+  MATH_CONST_AXISY_MAX,
+  MATH_CONST_AXISY_LEN,
   MATH_CONST_HSKIP,
   MATH_CONST_RSTEP,
   MATH_CONST_FLINE,
@@ -2500,7 +2506,13 @@ ofile_create_math_equation(int *id, int prm_digit, int use_fprm, int use_const, 
     "COLX",
     "COLY",
     "AXISX",
+    "AXISX_MIN",
+    "AXISX_MAX",
+    "AXISX_LEN",
     "AXISY",
+    "AXISY_MIN",
+    "AXISY_MAX",
+    "AXISY_LEN",
     "HSKIP",
     "RSTEP",
     "FLINE",
@@ -3433,9 +3445,33 @@ set_const(MathEquation *eq, int *const_id, int need2pass, struct f2ddata *fp, in
   val.type = MATH_VALUE_NORMAL;
   math_equation_set_const(eq, const_id[MATH_CONST_AXISX], &val);
 
+  val.val = fp->axmin2;
+  val.type = MATH_VALUE_NORMAL;
+  math_equation_set_const(eq, const_id[MATH_CONST_AXISX_MIN], &val);
+
+  val.val = fp->axmax2;
+  val.type = MATH_VALUE_NORMAL;
+  math_equation_set_const(eq, const_id[MATH_CONST_AXISX_MAX], &val);
+
+  val.val = fp->axlen;
+  val.type = MATH_VALUE_NORMAL;
+  math_equation_set_const(eq, const_id[MATH_CONST_AXISX_LEN], &val);
+
   val.val = fp->axisy;
   val.type = MATH_VALUE_NORMAL;
   math_equation_set_const(eq, const_id[MATH_CONST_AXISY], &val);
+
+  val.val = fp->aymin2;
+  val.type = MATH_VALUE_NORMAL;
+  math_equation_set_const(eq, const_id[MATH_CONST_AXISY_MIN], &val);
+
+  val.val = fp->aymax2;
+  val.type = MATH_VALUE_NORMAL;
+  math_equation_set_const(eq, const_id[MATH_CONST_AXISY_MAX], &val);
+
+  val.val = fp->aylen;
+  val.type = MATH_VALUE_NORMAL;
+  math_equation_set_const(eq, const_id[MATH_CONST_AXISY_LEN], &val);
 
   val.val = fp->masknum;
   val.type = MATH_VALUE_NORMAL;

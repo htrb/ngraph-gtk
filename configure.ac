@@ -1,11 +1,12 @@
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT(ngraph, 6.07.06, ZXB01226@nifty.com, ngraph-gtk)
+AC_INIT(ngraph, 6.07.07, ZXB01226@nifty.com, ngraph-gtk)
 
 LIBNGRAPH_VERSION=0:0:0
 AC_SUBST(LIBNGRAPH_VERSION)
 
 AC_CANONICAL_HOST
+AC_SYS_LARGEFILE
 
 vsymldflags=
 	AC_MSG_CHECKING([version script options])

@@ -2803,12 +2803,25 @@ void
 GRAtextextentraw(char *s,char *font, int style,
 		 int size,int space,int *gx0,int *gy0,int *gx1,int *gy1)
 {
+  int i, n, len, ha, hd;
   *gx0 = *gy0 = *gx1 = *gy1 = 0;
   if (s == NULL || font == NULL) return;
 
+  len = strlen(s);
+  if (len < 1) {
+    return;
+  }
   *gx1 = GRAstrwidth(s, font, style, size)
-    + nround(space / 72.0 * 25.4) * (strlen(s) - 1);
-  *gy0 = - GRAcharascent(font, style, size);
+    + nround(space / 72.0 * 25.4) * (len - 1);
+  for (n = 0, i = 0; i < len; i++) {
+    if (s[i] == '\n') {
+      n++;
+    }
+  }
+  ha = GRAcharascent(font, style, size);
+  *gy0 = - ha;
+  hd = GRAchardescent(font, style, size);
+  *gy1 = hd + (ha + hd) * n;
 }
 
 

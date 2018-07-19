@@ -964,6 +964,25 @@ cmexist(struct nshell*nshell,int argc,char **argv)
   return 0;
 }
 
+static void
+put_field_str(const char *valstr, int escape)
+{
+  if (valstr == NULL) {
+    return;
+  }
+  if (escape) {
+    char *tmp;
+    tmp = g_strescape(valstr, NULL);
+    if (tmp == NULL) {
+      return;
+    }
+    putstdout(tmp);
+    g_free(tmp);
+  } else {
+    putstdout(valstr);
+  }
+}
+
 int
 cmget(struct nshell*nshell,int argc,char **argv)
 {
@@ -971,7 +990,7 @@ cmget(struct nshell*nshell,int argc,char **argv)
   struct narray iarray;
   char *field,*valstr;
   int i,j,k,l,id,anum,len,*adata;
-  int nowrite,nofield,noid,quote,perm,multi;
+  int nowrite,nofield,noid,quote,perm,multi,escape;
 
   if (argc<2) {
     sherror4(argv[0],ERROBJARG);
@@ -990,12 +1009,14 @@ cmget(struct nshell*nshell,int argc,char **argv)
   nofield=FALSE;
   noid=FALSE;
   quote=FALSE;
+  escape=FALSE;
   for (j=2;j<argc;j++) {
     if (argv[j][0]=='-') {
       if (strcmp0(argv[j]+1,"write")==0) nowrite=TRUE;
       else if (strcmp0(argv[j]+1,"field")==0) nofield=TRUE;
       else if (strcmp0(argv[j]+1,"id")==0) noid=TRUE;
       else if (strcmp0(argv[j]+1,"quote")==0) quote=TRUE;
+      else if (strcmp0(argv[j]+1,"escape")==0) escape=TRUE;
       else {
         sherror3(argv[0],ERROPTION,argv[j]);
         arraydel(&iarray);
@@ -1020,7 +1041,7 @@ cmget(struct nshell*nshell,int argc,char **argv)
           if (multi && !noid) printfstdout("%d: ",id);
           if (!nofield) printfstdout("%.256s:",field);
 	  if (valstr) {
-	    putstdout(valstr);
+	    put_field_str(valstr, escape);
 	    g_free(valstr);
 	  }
         }
@@ -1040,7 +1061,7 @@ cmget(struct nshell*nshell,int argc,char **argv)
             g_free(field);
           }
 	  if (valstr) {
-	    putstdout(valstr);
+	    put_field_str(valstr, escape);
 	    g_free(valstr);
 	  }
         }
