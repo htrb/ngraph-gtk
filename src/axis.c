@@ -29,6 +29,10 @@
 #include "object.h"
 #include "axis.h"
 
+#ifdef HAVE_LIBGSL
+#include <gsl/gsl_math.h>
+#endif
+
 double
 scale(double x)
 {
@@ -179,7 +183,12 @@ getaxisposition(struct axislocal *alocal, /*@out@*/ double *po)
     alocal->counts++;
   }
   if (fabs(*po/alocal->dposs)<1E-14) *po=0;
-  if ((*po-alocal->posst)*(*po-alocal->posed)>0) {
+  if ((*po-alocal->posst)*(*po-alocal->posed)>0
+#ifdef HAVE_LIBGSL
+      && gsl_fcmp(*po, alocal->posst, N_EPSILON)
+      && gsl_fcmp(*po, alocal->posed, N_EPSILON)
+#endif
+      ) {
     if (alocal->dposm>=0) {
       if (((alocal->posst<=alocal->posed) && (*po<alocal->posst))
        || ((alocal->posst>=alocal->posed) && (*po<alocal->posed))) rcode=-1;
