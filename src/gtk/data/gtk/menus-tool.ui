@@ -11,7 +11,7 @@
 	<attribute name="action">app.JoinTypeRoundAction</attribute>
       </item>
       <item>
-	<attribute name="label" translatable="yes">_bevel</attribute>
+	<attribute name="label" translatable="yes">_Bevel</attribute>
 	<attribute name="action">app.JoinTypeBevelAction</attribute>
       </item>
     </section>
