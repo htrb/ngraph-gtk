@@ -24,6 +24,7 @@
 #define MPI 3.1415926535897932385
 #define MEXP1 2.71828182845905
 #define MEULER 0.57721566490153286
+#define N_EPSILON 1E-12
 
 typedef double vector[11];
 typedef vector matrix[11];
