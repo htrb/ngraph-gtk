@@ -51,7 +51,7 @@ cutdown(double x)
 double
 nraise(double x)
 {
-  if (x<0) return (int )x;
+  if (x<0) return (int ) (x - N_EPSILON);
   else if ((x-(int )x)==0.0) return (int )x;
   else return (int )(x+1);
 }
