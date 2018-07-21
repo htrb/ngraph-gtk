@@ -1,4 +1,7 @@
-=======
+2018-07-21  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_presettings.c (add_setting_panel): initialize color button.
+
 2018-07-21  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/axis.c (getaxisposition): compare "*po", "alocal->posst" an
