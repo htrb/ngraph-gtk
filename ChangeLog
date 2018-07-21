@@ -1,3 +1,12 @@
+2018-07-21  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/axis.c (getaxisposition): compare "*po", "alocal->posst" an
+	"alocal->posed" with "N_EPSILON".
+
+	* src/mathfn.c (nraise): use "N_EPSILON" if x is nagative.
+
+	* src/mathfn.h (N_EPSILON): added.
+
 2018-07-17  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* addin/legend.nsc: use "-escape" option to get fields of a data
