@@ -3842,7 +3842,7 @@ create_legend3(struct Viewer *d)
 static void
 create_legendx(struct Viewer *d)
 {
-  int id, num, x1, y1, x2, y2, ret = IDCANCEL, type, undo;
+  int id, num, x1, y1, x2, y2, ret = IDCANCEL, type, fill, undo;
   N_VALUE *inst;
   struct objlist *obj = NULL;
   struct Point **pdata;
@@ -3863,6 +3863,8 @@ create_legendx(struct Viewer *d)
         presetting_set_obj_field(obj, id);
 	type = PATH_TYPE_CURVE;
 	putobj(obj, "type", id, &type);
+	fill = FALSE;
+	putobj(obj, "fill", id, &fill);
 	inst = chkobjinst(obj, id);
 	x1 = pdata[0]->x;
 	y1 = pdata[0]->y;
