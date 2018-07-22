@@ -220,14 +220,14 @@ add_setting_panel(GtkWidget *vbox, GtkApplication *app)
 
   w = gtk_color_button_new();
   color.red = color.green = color.blue = 0;
-  color.alpha = 1
+  color.alpha = 1;
   gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(w), &color);
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
   Widgets.color1 = w;
 
   w = gtk_color_button_new();
   color.red = color.green = color.blue = 1;
-  color.alpha = 1
+  color.alpha = 1;
   gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(w), &color);
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
   Widgets.color2 = w;
