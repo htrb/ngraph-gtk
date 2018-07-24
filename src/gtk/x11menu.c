@@ -78,7 +78,7 @@ GtkAccelGroup *AccelGroup = NULL;
 
 #define DRAW_NOTIFY_CLASS_NAME "draw_notify"
 
-static GtkWidget *CurrentWindow = NULL, *CToolbar = NULL, *PToolbar = NULL;
+static GtkWidget *CurrentWindow = NULL, *CToolbar = NULL, *PToolbar = NULL, *SettingPanel = NULL;
 static enum {APP_CONTINUE, APP_QUIT, APP_QUIT_FORCE} Hide_window = APP_CONTINUE;
 static int DrawLock = FALSE;
 static unsigned int CursorType;
@@ -4602,7 +4602,6 @@ setup_toolbar(GtkWidget *window)
   hbar = gtk_header_bar_new();
   gtk_header_bar_set_title(GTK_HEADER_BAR(hbar), AppName);
   gtk_header_bar_set_show_close_button(GTK_HEADER_BAR(hbar), TRUE);
-  gtk_header_bar_pack_start(GTK_HEADER_BAR(hbar), CToolbar);
   gtk_window_set_titlebar(GTK_WINDOW(window), hbar);
 #endif
   w = create_toolbar(PointerToolbar, sizeof(PointerToolbar) / sizeof(*PointerToolbar), G_CALLBACK(CmViewerButtonPressed));
@@ -4631,11 +4630,10 @@ setupwindow(GtkApplication *app)
   read_keymap_file();
 #endif
   NgraphApp.Viewer.menu = w;
-  add_setting_panel(vbox2, app);
 
-#if ! USE_APP_HEADER_BAR
-  gtk_box_pack_start(GTK_BOX(vbox), CToolbar, FALSE, FALSE, 0);
-#endif
+  SettingPanel = add_setting_panel(app);
+  gtk_box_pack_start(GTK_BOX(vbox2), SettingPanel, FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(vbox2), CToolbar, FALSE, FALSE, 0);
   gtk_box_pack_start(GTK_BOX(hbox), PToolbar, FALSE, FALSE, 0);
 
   w = gtk_menu_new();
@@ -5824,6 +5822,7 @@ create_toplevel_window(void)
   }
 
   gtk_widget_show_all(GTK_WIDGET(TopLevel));
+  gtk_widget_hide(SettingPanel);
   set_widget_visibility();
 
   create_sub_windows();
@@ -6412,6 +6411,8 @@ CmViewerButtonArm(GtkToggleToolButton *action, gpointer client_data)
 
   UnFocus();
 
+  gtk_widget_hide(SettingPanel);
+  gtk_widget_show(CToolbar);
   switch (mode) {
   case PointB:
     DefaultMode = PointerModeBoth;
@@ -6441,6 +6442,8 @@ CmViewerButtonArm(GtkToggleToolButton *action, gpointer client_data)
     break;
   default:
     NSetCursor(GDK_PENCIL);
+    gtk_widget_show(SettingPanel);
+    gtk_widget_hide(CToolbar);
   }
   NgraphApp.Viewer.Mode = mode;
   NgraphApp.Viewer.Capture = FALSE;
