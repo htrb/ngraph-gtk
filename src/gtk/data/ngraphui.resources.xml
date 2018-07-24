@@ -55,6 +55,13 @@
     <file>pixmaps/join_round.png</file>
     <file>pixmaps/stroke.png</file>
     <file>pixmaps/fill.png</file>
+    <file>pixmaps/linewidth_002.png</file>
+    <file>pixmaps/linewidth_004.png</file>
+    <file>pixmaps/linewidth_008.png</file>
+    <file>pixmaps/linewidth_016.png</file>
+    <file>pixmaps/linewidth_032.png</file>
+    <file>pixmaps/linewidth_064.png</file>
+    <file>pixmaps/linewidth_128.png</file>
     <file>css/ngraph.css</file>
   </gresource>
 </gresources>
