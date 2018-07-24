@@ -16,6 +16,38 @@
       </item>
     </section>
   </menu>
+  <menu id="linewidth-menu">
+    <section>
+      <item>
+	<attribute name="label" translatable="yes">0._2</attribute>
+	<attribute name="action">app.LineWidth002Action</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">0._4</attribute>
+	<attribute name="action">app.LineWidth004Action</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">0._8</attribute>
+	<attribute name="action">app.LineWidth008Action</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_1.6</attribute>
+	<attribute name="action">app.LineWidth016Action</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_3.2</attribute>
+	<attribute name="action">app.LineWidth032Action</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_6.4</attribute>
+	<attribute name="action">app.LineWidth064Action</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_12.8</attribute>
+	<attribute name="action">app.LineWidth128Action</attribute>
+      </item>
+    </section>
+  </menu>
   <menu id="arrow-type-menu">
     <section>
       <item>
