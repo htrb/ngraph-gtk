@@ -37,8 +37,12 @@ EXTRA_DIST = dir_defs.h.in data/css/ngraph.css				\
 	data/pixmaps/arrow_end.png data/pixmaps/arrow_none.png		\
 	data/pixmaps/fill.png data/pixmaps/stroke.png			\
 	data/pixmaps/join_bevel.png data/pixmaps/join_miter.png		\
-	data/pixmaps/join_round.png create_completion_info.rb			\
-	completion_info_functions.txt completion_info_constants.txt
+	data/pixmaps/join_round.png data/pixmaps/linewidth_002.png	\
+	data/pixmaps/linewidth_008.png data/pixmaps/linewidth_032.png	\
+	data/pixmaps/linewidth_128.png data/pixmaps/linewidth_004.png	\
+	data/pixmaps/linewidth_016.png data/pixmaps/linewidth_064.png	\
+	create_completion_info.rb completion_info_functions.txt		\
+	completion_info_constants.txt
 
 AM_CPPFLAGS = -DLOCALEDIR=\""@localedir@"\"
 
