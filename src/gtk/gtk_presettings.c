@@ -12,8 +12,10 @@ struct presetting_widgets
   GtkWidget *fill_rule, *path_type;
   GtkWidget *join_type, *join_bevel, *join_round, *join_miter;
   GtkWidget *arrow_type, *arrow_none, *arrow_begin, *arrow_end, *arrow_both;
+  GtkWidget *lw002, *lw004, *lw008, *lw016, *lw032, *lw064, *lw128;
   enum JOIN_TYPE join;
   enum ARROW_POSITION_TYPE arrow;
+  int lw;
 };
 
 static struct presetting_widgets Widgets = {NULL};
@@ -67,6 +69,56 @@ ArrowTypeBothAction_activated(GSimpleAction *action, GVariant *parameter, gpoint
   Widgets.arrow = ARROW_POSITION_BOTH;
 }
 
+static void
+LineWidth002Action_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
+{
+  gtk_button_set_image(GTK_BUTTON(Widgets.line_width), Widgets.lw002);
+  Widgets.lw = 20;
+}
+
+static void
+LineWidth004Action_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
+{
+  gtk_button_set_image(GTK_BUTTON(Widgets.line_width), Widgets.lw004);
+  Widgets.lw = 40;
+}
+
+static void
+LineWidth008Action_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
+{
+  gtk_button_set_image(GTK_BUTTON(Widgets.line_width), Widgets.lw008);
+  Widgets.lw = 80;
+}
+
+static void
+LineWidth016Action_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
+{
+  gtk_button_set_image(GTK_BUTTON(Widgets.line_width), Widgets.lw016);
+  Widgets.lw = 160;
+}
+
+static void
+LineWidth032Action_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
+{
+  gtk_button_set_image(GTK_BUTTON(Widgets.line_width), Widgets.lw032);
+  Widgets.lw = 320;
+}
+
+static void
+LineWidth064Action_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
+{
+  gtk_button_set_image(GTK_BUTTON(Widgets.line_width), Widgets.lw064);
+  Widgets.lw = 640;
+}
+
+
+static void
+LineWidth128Action_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
+{
+  gtk_button_set_image(GTK_BUTTON(Widgets.line_width), Widgets.lw128);
+  Widgets.lw = 1280;
+}
+
 static GActionEntry ToolMenuEntries[] =
 {
   { "JoinTypeMiterAction", JoinTypeMiterAction_activated, NULL, NULL, NULL },
@@ -76,6 +128,13 @@ static GActionEntry ToolMenuEntries[] =
   { "ArrowTypeBeginAction", ArrowTypeBeginAction_activated, NULL, NULL, NULL },
   { "ArrowTypeEndAction",   ArrowTypeEndAction_activated, NULL, NULL, NULL },
   { "ArrowTypeBothAction",  ArrowTypeBothAction_activated, NULL, NULL, NULL },
+  { "LineWidth002Action",  LineWidth002Action_activated, NULL, NULL, NULL },
+  { "LineWidth004Action",  LineWidth004Action_activated, NULL, NULL, NULL },
+  { "LineWidth008Action",  LineWidth008Action_activated, NULL, NULL, NULL },
+  { "LineWidth016Action",  LineWidth016Action_activated, NULL, NULL, NULL },
+  { "LineWidth032Action",  LineWidth032Action_activated, NULL, NULL, NULL },
+  { "LineWidth064Action",  LineWidth064Action_activated, NULL, NULL, NULL },
+  { "LineWidth128Action",  LineWidth128Action_activated, NULL, NULL, NULL },
 };
 
 static void
@@ -99,6 +158,20 @@ create_images(struct presetting_widgets *widgets)
   g_object_ref(widgets->join_round);
   widgets->join_miter = gtk_image_new_from_resource(RESOURCE_PATH "/pixmaps/join_miter.png");
   g_object_ref(widgets->join_miter);
+  widgets->lw002 = gtk_image_new_from_resource(RESOURCE_PATH "/pixmaps/linewidth_002.png");
+  g_object_ref(widgets->lw002);
+  widgets->lw004 = gtk_image_new_from_resource(RESOURCE_PATH "/pixmaps/linewidth_004.png");
+  g_object_ref(widgets->lw004);
+  widgets->lw008 = gtk_image_new_from_resource(RESOURCE_PATH "/pixmaps/linewidth_008.png");
+  g_object_ref(widgets->lw008);
+  widgets->lw016 = gtk_image_new_from_resource(RESOURCE_PATH "/pixmaps/linewidth_016.png");
+  g_object_ref(widgets->lw016);
+  widgets->lw032 = gtk_image_new_from_resource(RESOURCE_PATH "/pixmaps/linewidth_032.png");
+  g_object_ref(widgets->lw032);
+  widgets->lw064 = gtk_image_new_from_resource(RESOURCE_PATH "/pixmaps/linewidth_064.png");
+  g_object_ref(widgets->lw064);
+  widgets->lw128 = gtk_image_new_from_resource(RESOURCE_PATH "/pixmaps/linewidth_128.png");
+  g_object_ref(widgets->lw128);
 }
 
 static void
@@ -129,7 +202,7 @@ void
 presetting_set_obj_field(struct objlist *obj, int id)
 {
   const char *name;
-  int ival, r1, g1, b1, a1, r2, g2, b2, a2, stroke, fill, width;
+  int ival, r1, g1, b1, a1, r2, g2, b2, a2, stroke, fill;
 
   if (obj == NULL) {
     return;
@@ -143,7 +216,6 @@ presetting_set_obj_field(struct objlist *obj, int id)
   set_rgba(Widgets.color2, &r2, &g2, &b2, &a2);
   stroke = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(Widgets.stroke));
   fill = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(Widgets.fill));
-  width = gtk_spin_button_get_value(GTK_SPIN_BUTTON(Widgets.line_width)) * 100;
 
   if (strcmp(name, "axis") == 0) {
   } else if (strcmp(name, "path") == 0) {
@@ -153,22 +225,26 @@ presetting_set_obj_field(struct objlist *obj, int id)
     putobj(obj, "join", id, &ival);
     ival = Widgets.arrow;
     putobj(obj, "arrow", id, &ival);
-    putobj(obj, "width", id, &width);
+    ival = Widgets.lw;
+    putobj(obj, "width", id, &ival);
     set_color(obj, id, r1, g1, b1, a1, r2, g2, b2, a2);
   } else if (strcmp(name, "rectangle") == 0) {
     putobj(obj, "stroke", id, &stroke);
     putobj(obj, "fill", id, &fill);
-    putobj(obj, "width", id, &width);
+    ival = Widgets.lw;
+    putobj(obj, "width", id, &ival);
     set_color(obj, id, r1, g1, b1, a1, r2, g2, b2, a2);
   } else if (strcmp(name, "arc") == 0) {
     putobj(obj, "stroke", id, &stroke);
     putobj(obj, "fill", id, &fill);
     ival = Widgets.join;
     putobj(obj, "join", id, &ival);
-    putobj(obj, "width", id, &width);
+    ival = Widgets.lw;
+    putobj(obj, "width", id, &ival);
     set_color(obj, id, r1, g1, b1, a1, r2, g2, b2, a2);
   } else if (strcmp(name, "mark") == 0) {
-    putobj(obj, "width", id, &width);
+    ival = Widgets.lw;
+    putobj(obj, "width", id, &ival);
     putobj(obj, "R", id, &r1);
     putobj(obj, "G", id, &g1);
     putobj(obj, "B", id, &b1);
@@ -184,7 +260,7 @@ presetting_set_obj_field(struct objlist *obj, int id)
 void
 add_setting_panel(GtkWidget *vbox, GtkApplication *app)
 {
-  GtkWidget *w, *box, *label;
+  GtkWidget *w, *box;
   GtkBuilder *builder;
   GMenuModel *menu;
   GdkRGBA color;
@@ -207,34 +283,34 @@ add_setting_panel(GtkWidget *vbox, GtkApplication *app)
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), FALSE);
   Widgets.fill = w;
 
-  label = gtk_label_new_with_mnemonic(_("_Width:"));
-  w = create_spin_entry_type(SPIN_BUTTON_TYPE_WIDTH, FALSE, FALSE);
-  gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), DEFAULT_LINE_WIDTH / 100.0);
-  gtk_label_set_mnemonic_widget(GTK_LABEL(label), w);
-  gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 0);
+  w = gtk_menu_button_new();
+  menu = G_MENU_MODEL(gtk_builder_get_object(builder, "linewidth-menu"));
+  gtk_menu_button_set_menu_model(GTK_MENU_BUTTON(w), menu);
+  gtk_widget_set_tooltip_text(w, _("Line Width"));
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
   Widgets.line_width = w;
+  LineWidth004Action_activated(NULL, NULL, NULL);
 
-  w = gtk_spin_button_new(NULL, 1, 0);
-  gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
-
-  w = gtk_color_button_new();
+  w = create_color_button(NULL);
   color.red = color.green = color.blue = 0;
   color.alpha = 1;
   gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(w), &color);
+  gtk_widget_set_tooltip_text(w, _("Stroke color"));
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
   Widgets.color1 = w;
 
-  w = gtk_color_button_new();
+  w = create_color_button(NULL);
   color.red = color.green = color.blue = 1;
   color.alpha = 1;
   gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(w), &color);
+  gtk_widget_set_tooltip_text(w, _("Fill color"));
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
   Widgets.color2 = w;
   
   w = gtk_menu_button_new();
   menu = G_MENU_MODEL(gtk_builder_get_object(builder, "arrow-type-menu"));
   gtk_menu_button_set_menu_model(GTK_MENU_BUTTON(w), menu);
+  gtk_widget_set_tooltip_text(w, _("Arrow"));
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
   Widgets.arrow_type = w;
   ArrowTypeNoneAction_activated(NULL, NULL, NULL);
@@ -254,6 +330,7 @@ add_setting_panel(GtkWidget *vbox, GtkApplication *app)
   w = gtk_menu_button_new();
   menu = G_MENU_MODEL(gtk_builder_get_object(builder, "join-type-menu"));
   gtk_menu_button_set_menu_model(GTK_MENU_BUTTON(w), menu);
+  gtk_widget_set_tooltip_text(w, _("Join"));
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
   Widgets.join_type = w;
   JoinTypeMiterAction_activated(NULL, NULL, NULL);
