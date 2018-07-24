@@ -257,8 +257,8 @@ presetting_set_obj_field(struct objlist *obj, int id)
   }
 }
 
-void
-add_setting_panel(GtkWidget *vbox, GtkApplication *app)
+GtkWidget *
+add_setting_panel(GtkApplication *app)
 {
   GtkWidget *w, *box;
   GtkBuilder *builder;
@@ -335,7 +335,6 @@ add_setting_panel(GtkWidget *vbox, GtkApplication *app)
   Widgets.join_type = w;
   JoinTypeMiterAction_activated(NULL, NULL, NULL);
 
-  gtk_box_pack_start(GTK_BOX(vbox), box, FALSE, FALSE, 0);
-
   g_object_unref(builder);
+  return box;
 }

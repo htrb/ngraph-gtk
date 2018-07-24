@@ -3,7 +3,7 @@
 
 #include "object.h"
 
-void add_setting_panel(GtkWidget *vbox, GtkApplication *app);
+GtkWidget *add_setting_panel(GtkApplication *app);
 void presetting_set_obj_field(struct objlist *obj, int id);
 
 #endif	/* GTK_PRESETTINGS_HEADER */
