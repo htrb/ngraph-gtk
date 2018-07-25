@@ -1,5 +1,11 @@
 2018-07-25  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/odraw.h (DEFAULT_FONT_PT): added.
+
+	* src/otext.c (textinit): use "DEFAULT_FONT_PT".
+
+	* src/oaxis.c (axisinit): use "DEFAULT_FONT_PT".
+
 	* src/gtk/x11axis.c (create_num_combo_item, select_type)
 	(numbering_tab_create): now the type of the field "no_zero" is not
 	NBOOL but NENUM.

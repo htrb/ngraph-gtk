@@ -264,7 +264,7 @@ axisinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   len3=300;
   wid3=DEFAULT_LINE_WIDTH;
   bline=TRUE;
-  pt=2000;
+  pt=DEFAULT_FONT_PT;
   sx=0;
   sy=100;
   autonorm=5;
