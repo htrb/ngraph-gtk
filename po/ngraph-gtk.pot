@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.07.07\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2018-07-25 10:58+0900\n"
+"POT-Creation-Date: 2018-07-25 19:09+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2156,7 +2156,7 @@ msgstr ""
 msgid "Align _Bottom"
 msgstr ""
 
-#: src/gtk/x11menu.c:2265 src/gtk/x11menu.c:6725 src/gtk/x11menu.c:6759
+#: src/gtk/x11menu.c:2265 src/gtk/x11menu.c:6733 src/gtk/x11menu.c:6767
 msgid "_Redo"
 msgstr ""
 
@@ -2164,7 +2164,7 @@ msgstr ""
 msgid "Redo previous command"
 msgstr ""
 
-#: src/gtk/x11menu.c:2281 src/gtk/x11menu.c:6734 src/gtk/x11menu.c:6749
+#: src/gtk/x11menu.c:2281 src/gtk/x11menu.c:6742 src/gtk/x11menu.c:6757
 msgid "_Undo"
 msgstr ""
 
@@ -2429,84 +2429,84 @@ msgstr ""
 msgid "Executing `%.128s'."
 msgstr ""
 
-#: src/gtk/x11menu.c:6664 src/gtk/x11menu.c:6682
+#: src/gtk/x11menu.c:6672 src/gtk/x11menu.c:6690
 msgid "edit"
 msgstr ""
 
-#: src/gtk/x11menu.c:6665
+#: src/gtk/x11menu.c:6673
 msgid "move"
 msgstr ""
 
-#: src/gtk/x11menu.c:6666
+#: src/gtk/x11menu.c:6674
 msgid "rotate"
 msgstr ""
 
-#: src/gtk/x11menu.c:6667
+#: src/gtk/x11menu.c:6675
 msgid "flip"
 msgstr ""
 
-#: src/gtk/x11menu.c:6668
+#: src/gtk/x11menu.c:6676
 msgid "delete object"
 msgstr ""
 
-#: src/gtk/x11menu.c:6669
+#: src/gtk/x11menu.c:6677
 msgid "create object"
 msgstr ""
 
-#: src/gtk/x11menu.c:6670
+#: src/gtk/x11menu.c:6678
 msgid "align"
 msgstr ""
 
-#: src/gtk/x11menu.c:6671
+#: src/gtk/x11menu.c:6679
 msgid "order"
 msgstr ""
 
-#: src/gtk/x11menu.c:6672
+#: src/gtk/x11menu.c:6680
 msgid "duplicate"
 msgstr ""
 
-#: src/gtk/x11menu.c:6673
+#: src/gtk/x11menu.c:6681
 msgid "execute shell"
 msgstr ""
 
-#: src/gtk/x11menu.c:6674
+#: src/gtk/x11menu.c:6682
 msgid "execute add-in"
 msgstr ""
 
-#: src/gtk/x11menu.c:6675
+#: src/gtk/x11menu.c:6683
 msgid "scale clear"
 msgstr ""
 
-#: src/gtk/x11menu.c:6676
+#: src/gtk/x11menu.c:6684
 msgid "scale undo"
 msgstr ""
 
-#: src/gtk/x11menu.c:6677
+#: src/gtk/x11menu.c:6685
 msgid "open file"
 msgstr ""
 
-#: src/gtk/x11menu.c:6678
+#: src/gtk/x11menu.c:6686
 msgid "add range"
 msgstr ""
 
-#: src/gtk/x11menu.c:6679
+#: src/gtk/x11menu.c:6687
 msgid "paste"
 msgstr ""
 
-#: src/gtk/x11menu.c:6680
+#: src/gtk/x11menu.c:6688
 msgid "scale trimming"
 msgstr ""
 
-#: src/gtk/x11menu.c:6681
+#: src/gtk/x11menu.c:6689
 msgid "auto scale"
 msgstr ""
 
-#: src/gtk/x11menu.c:6722 src/gtk/x11menu.c:6756
+#: src/gtk/x11menu.c:6730 src/gtk/x11menu.c:6764
 #, c-format
 msgid "_Redo: %s"
 msgstr ""
 
-#: src/gtk/x11menu.c:6731 src/gtk/x11menu.c:6746
+#: src/gtk/x11menu.c:6739 src/gtk/x11menu.c:6754
 #, c-format
 msgid "_Undo: %s"
 msgstr ""
@@ -2854,7 +2854,7 @@ msgid "Spawning external driver."
 msgstr ""
 
 #: src/gtk/x11print.c:726 src/gtk/x11print.c:1000 src/gtk/x11print.c:1073
-#: src/gtk/x11view.c:5704
+#: src/gtk/x11view.c:5706
 msgid "Drawing."
 msgstr ""
 
@@ -2892,15 +2892,15 @@ msgstr ""
 msgid "Data points are moved."
 msgstr ""
 
-#: src/gtk/x11view.c:4190
+#: src/gtk/x11view.c:4192
 msgid "Moving data points is canceled."
 msgstr ""
 
-#: src/gtk/x11view.c:5698
+#: src/gtk/x11view.c:5700
 msgid "Scaling"
 msgstr ""
 
-#: src/gtk/x11view.c:5705
+#: src/gtk/x11view.c:5707
 msgid "Drawing"
 msgstr ""
 
