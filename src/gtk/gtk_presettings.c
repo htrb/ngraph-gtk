@@ -17,6 +17,7 @@ struct presetting_widgets
   GtkWidget *arrow_type, *arrow_none, *arrow_begin, *arrow_end, *arrow_both;
   GtkWidget *lw002, *lw004, *lw008, *lw016, *lw032, *lw064, *lw128;
   GtkWidget *font, *bold, *italic, *pt;
+  GtkWidget *mark, *mark_size;
   enum JOIN_TYPE join;
   enum ARROW_POSITION_TYPE arrow;
   int lw;
@@ -280,6 +281,8 @@ presetting_set_obj_field(struct objlist *obj, int id)
     putobj(obj, "G2", id, &g2);
     putobj(obj, "B2", id, &b2);
     putobj(obj, "A2", id, &a2);
+    ival = gtk_spin_button_get_value(GTK_SPIN_BUTTON(Widgets.mark_size)) * 100;
+    putobj(obj, "size", id, &ival);
   } else if (strcmp(name, "text") == 0) {
     set_text_obj(obj, id);
   }
@@ -345,6 +348,12 @@ add_setting_panel(GtkApplication *app)
 
   img = gtk_image_new_from_resource(RESOURCE_PATH "/pixmaps/fill.png");
   Widgets.fill = create_toggle_button(box, img, FALSE);
+
+  w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, FALSE, FALSE);
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), DEFAULT_MARK_SIZE / 100.0);
+  gtk_entry_set_width_chars(GTK_ENTRY(w), 5);
+  gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
+  Widgets.mark_size = w;
 
   w = gtk_menu_button_new();
   menu = G_MENU_MODEL(gtk_builder_get_object(builder, "linewidth-menu"));
