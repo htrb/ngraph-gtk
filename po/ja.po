@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.07.06\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2018-07-12 15:13+0900\n"
-"PO-Revision-Date: 2018-06-24 20:40+0900\n"
+"POT-Creation-Date: 2018-07-25 10:58+0900\n"
+"PO-Revision-Date: 2018-07-25 10:59+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja\n"
@@ -358,7 +358,7 @@ msgstr "参照軸(_R):"
 msgid "_Auto scale margin:"
 msgstr "自動スケール余白(_A):"
 
-#: src/gtk/x11axis.c:1325 src/gtk/x11axis.c:3288
+#: src/gtk/x11axis.c:1325 src/gtk/x11axis.c:3290
 msgid "Scale"
 msgstr "スケール"
 
@@ -489,9 +489,9 @@ msgstr "ベキ形式(ログ)(_L)"
 msgid "_Add plus"
 msgstr "+追加(_A)"
 
-#: src/gtk/x11axis.c:1944
-msgid "no _Zero"
-msgstr "ゼロ非表示(_Z)"
+#: src/gtk/x11axis.c:1945
+msgid "no _Zero:"
+msgstr "ゼロ非表示(_Z):"
 
 #: src/gtk/x11axis.c:1949
 msgid "numbering _Math:"
@@ -623,7 +623,7 @@ msgstr "方向"
 msgid "Log power"
 msgstr "ベキ形式(ログ)"
 
-#: src/gtk/x11axis.c:3276
+#: src/gtk/x11axis.c:3277
 msgid "No zero"
 msgstr "ゼロ非表示"
 
@@ -4790,31 +4790,35 @@ msgstr "中央"
 msgid "point"
 msgstr "小数点"
 
-#: src/oaxis.c:118
+#: src/oaxis.c:121
+msgid "no_floating_point"
+msgstr "整数表示"
+
+#: src/oaxis.c:135
 msgid "horizontal"
 msgstr "水平"
 
-#: src/oaxis.c:119
+#: src/oaxis.c:136
 msgid "parallel1"
 msgstr "軸と平行1"
 
-#: src/oaxis.c:120
+#: src/oaxis.c:137
 msgid "parallel2"
 msgstr "軸と平行2"
 
-#: src/oaxis.c:121
+#: src/oaxis.c:138
 msgid "normal1"
 msgstr "軸と直交1"
 
-#: src/oaxis.c:122
+#: src/oaxis.c:139
 msgid "normal2"
 msgstr "軸と直交2"
 
-#: src/oaxis.c:123
+#: src/oaxis.c:140
 msgid "oblique1"
 msgstr "軸と斜交1"
 
-#: src/oaxis.c:124
+#: src/oaxis.c:141
 msgid "oblique2"
 msgstr "軸と斜交2"
 
@@ -4922,6 +4926,15 @@ msgstr "偶奇"
 #: src/opath.c:71
 msgid "winding_rule"
 msgstr "ワインディング"
+
+#~ msgid "_Zero display:"
+#~ msgstr "ゼロ非表示 (_Z):"
+
+#~ msgid "Zero display"
+#~ msgstr "ゼロ非表示"
+
+#~ msgid "regular"
+#~ msgstr "通常表示"
 
 #~ msgid "Math:"
 #~ msgstr "式:"

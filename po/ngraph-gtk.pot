@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.07.07\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2018-07-12 15:13+0900\n"
+"POT-Creation-Date: 2018-07-25 10:58+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -331,7 +331,7 @@ msgstr ""
 msgid "_Auto scale margin:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1325 src/gtk/x11axis.c:3288
+#: src/gtk/x11axis.c:1325 src/gtk/x11axis.c:3290
 msgid "Scale"
 msgstr ""
 
@@ -462,8 +462,8 @@ msgstr ""
 msgid "_Add plus"
 msgstr ""
 
-#: src/gtk/x11axis.c:1944
-msgid "no _Zero"
+#: src/gtk/x11axis.c:1945
+msgid "no _Zero:"
 msgstr ""
 
 #: src/gtk/x11axis.c:1949
@@ -596,7 +596,7 @@ msgstr ""
 msgid "Log power"
 msgstr ""
 
-#: src/gtk/x11axis.c:3276
+#: src/gtk/x11axis.c:3277
 msgid "No zero"
 msgstr ""
 
@@ -4306,31 +4306,35 @@ msgstr ""
 msgid "point"
 msgstr ""
 
-#: src/oaxis.c:118
+#: src/oaxis.c:121
+msgid "no_floating_point"
+msgstr ""
+
+#: src/oaxis.c:135
 msgid "horizontal"
 msgstr ""
 
-#: src/oaxis.c:119
+#: src/oaxis.c:136
 msgid "parallel1"
 msgstr ""
 
-#: src/oaxis.c:120
+#: src/oaxis.c:137
 msgid "parallel2"
 msgstr ""
 
-#: src/oaxis.c:121
+#: src/oaxis.c:138
 msgid "normal1"
 msgstr ""
 
-#: src/oaxis.c:122
+#: src/oaxis.c:139
 msgid "normal2"
 msgstr ""
 
-#: src/oaxis.c:123
+#: src/oaxis.c:140
 msgid "oblique1"
 msgstr ""
 
-#: src/oaxis.c:124
+#: src/oaxis.c:141
 msgid "oblique2"
 msgstr ""
 

@@ -1,4 +1,15 @@
-=======
+2018-07-25  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11axis.c (create_num_combo_item, select_type)
+	(numbering_tab_create): now the type of the field "no_zero" is not
+	NBOOL but NENUM.
+
+	* src/oaxis.c (AXIS_NUM_NO_ZERO, anumnozero): added.
+	(get_axis_gauge_num_str): add 3rd argument.
+	(anumnozeroput): added.
+	(axis): the type of the field "num_no_zero" is now "NENUM".
+	(anumnozero): use "false" and "true" for backward compatibility.
+
 2018-07-21  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/axis.c (getaxisposition): compare "*po", "alocal->posst" an
