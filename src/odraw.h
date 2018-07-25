@@ -65,6 +65,7 @@ enum FONT_STYLE {
 
 #define INTERPOLATION_TYPE_NUM (INTERPOLATION_TYPE_BSPLINE_CLOSE + 1)
 #define DEFAULT_LINE_WIDTH 40
+#define DEFAULT_FONT_PT    2000
 
 extern char *pathchar[];
 extern char *joinchar[];
