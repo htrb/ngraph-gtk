@@ -107,6 +107,23 @@ static char *anumalignchar[]={
   NULL
 };
 
+enum AXIS_NUM_NO_ZERO {
+  AXIS_NUM_NO_ZERO_REGULAR,
+  AXIS_NUM_NO_ZERO_NO_ZERO,
+  AXIS_NUM_NO_ZERO_NO_FLOATING_POINT,
+  AXIS_NUM_NO_ZERO_TRUE,
+  AXIS_NUM_NO_ZERO_FALSE,
+};
+
+static char *anumnozero[]={
+  N_("regular"),
+  N_("no_zero"),
+  N_("no_floating_point"),
+  "\0true",			/* for backward compatibility */
+  "\0false",			/* for backward compatibility */
+  NULL
+};
+
 enum AXIS_NUM_ALIGN {
   AXIS_NUM_ALIGN_CENTER,
   AXIS_NUM_ALIGN_LEFT,
@@ -1933,12 +1950,16 @@ mjd_to_date_str(const struct axis_config *aconf, double mjd, const gchar *date_f
 }
 
 static char *
-get_axis_gauge_num_str(const char *format, double a)
+get_axis_gauge_num_str(const char *format, double a, int no_flt_zero)
 {
   int i, j, len;
   char *s;
   char format2[256], pm[] = "±";
   GString *num;
+
+  if (no_flt_zero && a == 0.0) {
+    return g_strdup("0");
+  }
 
   num = g_string_sized_new(16);
   if (num == NULL) {
@@ -2024,7 +2045,7 @@ numformat(char **text, int *nlen, const char *format,
 	  const struct axis_config *aconf,
 	  const struct axislocal *alocal,
 	  int logpow, double po, double norm,
-	  const char *head, const char *tail, const char *date_format)
+	  const char *head, const char *tail, const char *date_format, int nozero)
 {
   int lpow;
   char *num;
@@ -2049,10 +2070,10 @@ numformat(char **text, int *nlen, const char *format,
     if (num) {
       logpow = 0;
     } else {
-      num = get_axis_gauge_num_str(format, a);
+      num = get_axis_gauge_num_str(format, a, nozero == AXIS_NUM_NO_ZERO_NO_FLOATING_POINT);
     }
   } else {
-    num = get_axis_gauge_num_str(format, a);
+    num = get_axis_gauge_num_str(format, a, nozero == AXIS_NUM_NO_ZERO_NO_FLOATING_POINT);
   }
 
   lpow = (logpow && (alocal->atype == AXISLOGBIG || alocal->atype == AXISLOGNORM));
@@ -2266,8 +2287,8 @@ draw_numbering(struct objlist *obj, N_VALUE *inst, struct axislocal *alocal,
       gy0=gy0-sy*cos(aconf->dir)-sx*sin(aconf->dir)+dly;
       if ((cstep==step) || ((alocal->atype==AXISLOGSMALL) && (rcode==3))) {
 	numcount++;
-	if (((numcount<=nnum) || (nnum==-1)) && ((po!=0) || !nozero)) {
-	  value = numformat(&text, &numlen, format, aconf, alocal, logpow, po, norm, head, tail, date_format);
+	if (((numcount<=nnum) || (nnum==-1)) && ((po!=0) || (nozero != AXIS_NUM_NO_ZERO_NO_ZERO))) {
+	  value = numformat(&text, &numlen, format, aconf, alocal, logpow, po, norm, head, tail, date_format, nozero);
 	  if (text == NULL) {
 	    return 1;
 	  }
@@ -2517,9 +2538,9 @@ numbering(struct objlist *obj, N_VALUE *inst, int GC, struct axis_config *aconf,
       numcount++;
 
       if ((numcount <= nnum || nnum == -1) &&
-	  (po != 0 || ! nozero)) {
+	  (po != 0 || (nozero != AXIS_NUM_NO_ZERO_NO_ZERO))) {
 
-	numformat(&text, &numlen, format, aconf, &alocal, logpow, po, norm, head, tail, date_format);
+	numformat(&text, &numlen, format, aconf, &alocal, logpow, po, norm, head, tail, date_format, nozero);
 	if (text == NULL) {
 	  return 1;
 	}
@@ -3866,6 +3887,28 @@ axisscalepop(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,
 }
 
 static int
+anumnozeroput(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  int type;
+
+  type = * (int *) argv[2];
+  switch (type) {
+  case AXIS_NUM_NO_ZERO_REGULAR:
+  case AXIS_NUM_NO_ZERO_NO_ZERO:
+  case AXIS_NUM_NO_ZERO_NO_FLOATING_POINT:
+    break;
+  case AXIS_NUM_NO_ZERO_TRUE:
+    * (int *) argv[2] = AXIS_NUM_NO_ZERO_NO_ZERO;
+    break;
+  case AXIS_NUM_NO_ZERO_FALSE:
+    * (int *) argv[2] = AXIS_NUM_NO_ZERO_REGULAR;
+    break;
+  }
+
+  return 0;
+}
+
+static int
 anumdirput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval, int argc,char **argv)
 {
   int type;
@@ -3989,7 +4032,7 @@ static struct objtable axis[] = {
   {"num_font_style",NINT,NREAD|NWRITE,NULL,NULL,0},
   {"num_script_size",NINT,NREAD|NWRITE,axisput,NULL,0},
   {"num_align",NENUM,NREAD|NWRITE,NULL,anumalignchar,0},
-  {"num_no_zero",NBOOL,NREAD|NWRITE,NULL,NULL,0},
+  {"num_no_zero",NENUM,NREAD|NWRITE,anumnozeroput,anumnozero,0},
   {"num_direction",NENUM,NREAD|NWRITE,anumdirput,anumdirchar,0},
   {"num_shift_p",NINT,NREAD|NWRITE,NULL,NULL,0},
   {"num_shift_n",NINT,NREAD|NWRITE,NULL,NULL,0},
