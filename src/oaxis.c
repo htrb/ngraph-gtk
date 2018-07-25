@@ -116,11 +116,11 @@ enum AXIS_NUM_NO_ZERO {
 };
 
 static char *anumnozero[]={
-  N_("regular"),
-  N_("no_zero"),
+  "false",			/* for backward compatibility */
+  "true",			/* for backward compatibility */
   N_("no_floating_point"),
-  "\0true",			/* for backward compatibility */
-  "\0false",			/* for backward compatibility */
+//  N_("regular"),
+//  N_("no_zero"),
   NULL
 };
 
