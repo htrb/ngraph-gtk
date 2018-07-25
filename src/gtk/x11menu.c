@@ -78,7 +78,7 @@ GtkAccelGroup *AccelGroup = NULL;
 
 #define DRAW_NOTIFY_CLASS_NAME "draw_notify"
 
-static GtkWidget *CurrentWindow = NULL, *CToolbar = NULL, *PToolbar = NULL, *SettingPanel = NULL, *ToolBox;
+static GtkWidget *CurrentWindow = NULL, *CToolbar = NULL, *PToolbar = NULL, *SettingPanel = NULL, *ToolBox = NULL;
 static enum {APP_CONTINUE, APP_QUIT, APP_QUIT_FORCE} Hide_window = APP_CONTINUE;
 static int DrawLock = FALSE;
 static unsigned int CursorType;
@@ -4631,10 +4631,10 @@ setupwindow(GtkApplication *app)
 #endif
   NgraphApp.Viewer.menu = w;
 
-  ToolBox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+  ToolBox = gtk_stack_new();
   SettingPanel = add_setting_panel(app);
-  gtk_box_pack_start(GTK_BOX(ToolBox), SettingPanel, FALSE, FALSE, 0);
-  gtk_box_pack_start(GTK_BOX(ToolBox), CToolbar, FALSE, FALSE, 0);
+  gtk_stack_add_named(GTK_STACK(ToolBox), CToolbar, "CommandToolbar");
+  gtk_stack_add_named(GTK_STACK(ToolBox), SettingPanel, "SettingPanel");
   gtk_box_pack_start(GTK_BOX(vbox2), ToolBox, FALSE, FALSE, 0);
   gtk_box_pack_start(GTK_BOX(hbox), PToolbar, FALSE, FALSE, 0);
 
@@ -5824,7 +5824,6 @@ create_toplevel_window(void)
   }
 
   gtk_widget_show_all(GTK_WIDGET(TopLevel));
-  gtk_widget_hide(SettingPanel);
   set_widget_visibility();
 
   create_sub_windows();
@@ -6413,41 +6412,43 @@ CmViewerButtonArm(GtkToggleToolButton *action, gpointer client_data)
 
   UnFocus();
 
-  gtk_widget_hide(SettingPanel);
-  gtk_widget_show(CToolbar);
   switch (mode) {
   case PointB:
     DefaultMode = PointerModeBoth;
     NSetCursor(GDK_LEFT_PTR);
+    gtk_stack_set_visible_child(GTK_STACK(ToolBox), CToolbar);
     break;
   case LegendB:
     DefaultMode = PointerModeLegend;
     NSetCursor(GDK_LEFT_PTR);
+    gtk_stack_set_visible_child(GTK_STACK(ToolBox), CToolbar);
     break;
   case AxisB:
     DefaultMode = PointerModeAxis;
     NSetCursor(GDK_LEFT_PTR);
+    gtk_stack_set_visible_child(GTK_STACK(ToolBox), CToolbar);
     break;
   case DataB:
     DefaultMode = PointerModeData;
     NSetCursor(GDK_LEFT_PTR);
+    gtk_stack_set_visible_child(GTK_STACK(ToolBox), CToolbar);
     break;
   case TrimB:
   case EvalB:
     NSetCursor(GDK_LEFT_PTR);
+    gtk_stack_set_visible_child(GTK_STACK(ToolBox), CToolbar);
     break;
   case TextB:
     NSetCursor(GDK_XTERM);
-    gtk_widget_show(SettingPanel);
-    gtk_widget_hide(CToolbar);
+    gtk_stack_set_visible_child(GTK_STACK(ToolBox), SettingPanel);
     break;
   case ZoomB:
     NSetCursor(GDK_TARGET);
+    gtk_stack_set_visible_child(GTK_STACK(ToolBox), CToolbar);
     break;
   default:
     NSetCursor(GDK_PENCIL);
-    gtk_widget_show(SettingPanel);
-    gtk_widget_hide(CToolbar);
+    gtk_stack_set_visible_child(GTK_STACK(ToolBox), SettingPanel);
   }
   NgraphApp.Viewer.Mode = mode;
   NgraphApp.Viewer.Capture = FALSE;
