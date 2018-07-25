@@ -78,7 +78,7 @@ GtkAccelGroup *AccelGroup = NULL;
 
 #define DRAW_NOTIFY_CLASS_NAME "draw_notify"
 
-static GtkWidget *CurrentWindow = NULL, *CToolbar = NULL, *PToolbar = NULL, *SettingPanel = NULL;
+static GtkWidget *CurrentWindow = NULL, *CToolbar = NULL, *PToolbar = NULL, *SettingPanel = NULL, *ToolBox;
 static enum {APP_CONTINUE, APP_QUIT, APP_QUIT_FORCE} Hide_window = APP_CONTINUE;
 static int DrawLock = FALSE;
 static unsigned int CursorType;
@@ -4631,9 +4631,11 @@ setupwindow(GtkApplication *app)
 #endif
   NgraphApp.Viewer.menu = w;
 
+  ToolBox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   SettingPanel = add_setting_panel(app);
-  gtk_box_pack_start(GTK_BOX(vbox2), SettingPanel, FALSE, FALSE, 0);
-  gtk_box_pack_start(GTK_BOX(vbox2), CToolbar, FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(ToolBox), SettingPanel, FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(ToolBox), CToolbar, FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(vbox2), ToolBox, FALSE, FALSE, 0);
   gtk_box_pack_start(GTK_BOX(hbox), PToolbar, FALSE, FALSE, 0);
 
   w = gtk_menu_new();
@@ -5085,7 +5087,7 @@ toggle_view(int type, int state)
     break;
   case MenuIdToggleCToolbar:
     Menulocal.ctoolbar = state;
-    w1 = CToolbar;
+    w1 = ToolBox;
     break;
   case MenuIdTogglePToolbar:
     Menulocal.ptoolbar = state;
@@ -5962,7 +5964,7 @@ application(char *file)
 
     gtk_widget_destroy(TopLevel);
     NgraphApp.Viewer.Win = NULL;
-    CurrentWindow = TopLevel = PToolbar = CToolbar = NULL;
+    CurrentWindow = TopLevel = PToolbar = CToolbar = ToolBox = NULL;
 
     free_markpixmap();
     free_cursor();
@@ -6436,6 +6438,8 @@ CmViewerButtonArm(GtkToggleToolButton *action, gpointer client_data)
     break;
   case TextB:
     NSetCursor(GDK_XTERM);
+    gtk_widget_show(SettingPanel);
+    gtk_widget_hide(CToolbar);
     break;
   case ZoomB:
     NSetCursor(GDK_TARGET);
