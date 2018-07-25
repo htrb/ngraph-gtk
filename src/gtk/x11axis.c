@@ -1941,8 +1941,8 @@ numbering_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   d->add_plus = w;
   add_widget_to_table(table, w, NULL, FALSE, i++);
 
-  w = gtk_check_button_new_with_mnemonic(_("no _Zero"));
-  add_widget_to_table(table, w, NULL, FALSE, i++);
+  w = combo_box_create();
+  add_widget_to_table(table, w, _("no _Zero:"), FALSE, i++);
   d->no_zero = w;
 
   w = create_text_entry(FALSE, TRUE);
@@ -3273,7 +3273,9 @@ create_num_combo_item(GtkTreeStore *list, GtkTreeIter *parent, struct objlist *o
   add_text_combo_item_to_cbox(list, NULL, &iter, AXIS_COMBO_ITEM_NUM_COLOR, -1, _("Color"), TOGGLE_NONE, FALSE);
 
   add_bool_combo_item_to_cbox(list, NULL, &iter, AXIS_COMBO_ITEM_NUM_LOG, obj, "num_log_pow", id, _("Log power"));
-  add_bool_combo_item_to_cbox(list, NULL, &iter, AXIS_COMBO_ITEM_NUM_NO_ZERO, obj, "num_no_zero", id, _("No zero"));
+
+  add_text_combo_item_to_cbox(list, &child, &iter, -1, -1, _("No zero"), TOGGLE_NONE, FALSE);
+  add_enum_combo_item_to_cbox(list, NULL, &child, AXIS_COMBO_ITEM_NUM_NO_ZERO, obj, "num_no_zero", id);
 }
 
 static void
@@ -3430,9 +3432,11 @@ select_type(GtkComboBox *w, gpointer user_data)
     break;
   case AXIS_COMBO_ITEM_NUM_NO_ZERO:
     gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);
+    if (type == enum_id) {
+      return;
+    }
     axis_save_undo(UNDO_TYPE_EDIT);
-    active = ! active;
-    putobj(d->obj, "num_no_zero", sel, &active);
+    putobj(d->obj, "num_no_zero", sel, &enum_id);
     break;
   case AXIS_COMBO_ITEM_NUM_COLOR:
     if (select_obj_color(obj, sel, OBJ_FIELD_COLOR_TYPE_AXIS_NUM)) {
