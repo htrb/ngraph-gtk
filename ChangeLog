@@ -1,6 +1,11 @@
 2018-07-25  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/odraw.h (DEFAULT_FONT_PT): added.
+	(DEFAULT_MARK_SIZE): added.
+
+	* src/omark.c (markinit): use "DEFAULT_MARK_SIZE".
+
+	* src/odata.c (f2dinit): use "DEFAULT_MARK_SIZE".
 
 	* src/otext.c (textinit): use "DEFAULT_FONT_PT".
 
