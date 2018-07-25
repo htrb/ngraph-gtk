@@ -49,7 +49,7 @@ markinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   int size,width,r2,g2,b2,a2;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
-  size=200;
+  size=DEFAULT_MARK_SIZE;
   width=DEFAULT_LINE_WIDTH;
   r2=255;
   g2=255;
