@@ -1,7 +1,10 @@
 #include "gtk_common.h"
 #include "gtk_presettings.h"
+#include "gtk_combo.h"
 #include "gtk_widget.h"
 #include "object.h"
+#include "gra.h"
+#include "ogra2cairo.h"
 #include "odraw.h"
 
 struct presetting_widgets
@@ -13,6 +16,7 @@ struct presetting_widgets
   GtkWidget *join_type, *join_bevel, *join_round, *join_miter;
   GtkWidget *arrow_type, *arrow_none, *arrow_begin, *arrow_end, *arrow_both;
   GtkWidget *lw002, *lw004, *lw008, *lw016, *lw032, *lw064, *lw128;
+  GtkWidget *font, *bold, *italic, *pt;
   enum JOIN_TYPE join;
   enum ARROW_POSITION_TYPE arrow;
   int lw;
@@ -140,10 +144,6 @@ static GActionEntry ToolMenuEntries[] =
 static void
 create_images(struct presetting_widgets *widgets)
 {
-  widgets->fill_icon = gtk_image_new_from_resource(RESOURCE_PATH "/pixmaps/fill.png");
-  g_object_ref(widgets->fill_icon);
-  widgets->stroke_icon = gtk_image_new_from_resource(RESOURCE_PATH "/pixmaps/stroke.png");
-  g_object_ref(widgets->stroke_icon);
   widgets->arrow_both = gtk_image_new_from_resource(RESOURCE_PATH "/pixmaps/arrow_both.png");
   g_object_ref(widgets->arrow_both);
   widgets->arrow_begin = gtk_image_new_from_resource(RESOURCE_PATH "/pixmaps/arrow_begin.png");
@@ -196,6 +196,33 @@ set_color(struct objlist *obj, int id, int r1, int g1, int b1, int a1, int r2, i
     putobj(obj, "fill_G", id, &g2);
     putobj(obj, "fill_B", id, &b2);
     putobj(obj, "fill_A", id, &a2);
+}
+
+static void
+set_text_obj(struct objlist *obj, int id)
+{
+  int style, r, g, b, a, bold, italic, pt;
+  char *fontalias;
+  bold = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(Widgets.bold));
+  italic = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(Widgets.italic));
+  if (bold) {
+    style |= GRA_FONT_STYLE_BOLD;
+  }
+  if (italic) {
+    style |= GRA_FONT_STYLE_ITALIC;
+  }
+  putobj(obj, "style", id, &style);
+  fontalias = combo_box_get_active_text(Widgets.font);
+  if (fontalias) {
+    putobj(obj, "font", id, fontalias);
+  }
+  set_rgba(Widgets.color1, &r, &g, &b, &a);
+  putobj(obj, "R", id, &r);
+  putobj(obj, "G", id, &g);
+  putobj(obj, "B", id, &b);
+  putobj(obj, "A", id, &a);
+  pt = gtk_spin_button_get_value(GTK_SPIN_BUTTON(Widgets.pt)) * 100;
+  putobj(obj, "pt", id, &pt);
 }
 
 void
@@ -254,13 +281,38 @@ presetting_set_obj_field(struct objlist *obj, int id)
     putobj(obj, "B2", id, &b2);
     putobj(obj, "A2", id, &a2);
   } else if (strcmp(name, "text") == 0) {
+    set_text_obj(obj, id);
   }
+}
+
+static void
+set_font_family(GtkWidget *cbox)
+{
+  struct fontmap *fcur;
+  combo_box_clear(cbox);
+  fcur = Gra2cairoConf->fontmap_list_root;
+  while (fcur) {
+    combo_box_append_text(cbox, fcur->fontalias);
+    fcur = fcur->next;
+  }
+  combo_box_set_active(cbox, 1);
+}
+
+static GtkWidget *
+create_toggle_button(GtkWidget *box, GtkWidget *img, int state)
+{
+  GtkWidget *w;
+  w = gtk_toggle_button_new();
+  gtk_container_add(GTK_CONTAINER(w), img);
+  gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), state);
+  return w;
 }
 
 GtkWidget *
 add_setting_panel(GtkApplication *app)
 {
-  GtkWidget *w, *box;
+  GtkWidget *w, *box, *img;
   GtkBuilder *builder;
   GMenuModel *menu;
   GdkRGBA color;
@@ -271,17 +323,28 @@ add_setting_panel(GtkApplication *app)
   builder = gtk_builder_new_from_resource(RESOURCE_PATH "/gtk/menus-tool.ui");
   box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
-  w = gtk_toggle_button_new();
-  gtk_container_add(GTK_CONTAINER(w), Widgets.stroke_icon);
+  w = combo_box_create();
+  set_font_family(w);
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), TRUE);
-  Widgets.stroke = w;
+  Widgets.font = w;
 
-  w = gtk_toggle_button_new();
-  gtk_container_add(GTK_CONTAINER(w), Widgets.fill_icon);
+  w = create_spin_entry_type(SPIN_BUTTON_TYPE_POINT, FALSE, FALSE);
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), DEFAULT_FONT_PT / 100.0);
+  gtk_entry_set_width_chars(GTK_ENTRY(w), 5);
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), FALSE);
-  Widgets.fill = w;
+  Widgets.pt = w;
+
+  img = gtk_image_new_from_icon_name("format-text-bold-symbolic", GTK_ICON_SIZE_BUTTON);
+  Widgets.bold = create_toggle_button(box, img, FALSE);
+
+  img = gtk_image_new_from_icon_name("format-text-italic-symbolic", GTK_ICON_SIZE_BUTTON);
+  Widgets.italic = create_toggle_button(box, img, FALSE);
+
+  img = gtk_image_new_from_resource(RESOURCE_PATH "/pixmaps/stroke.png");
+  Widgets.stroke = create_toggle_button(box, img, TRUE);
+
+  img = gtk_image_new_from_resource(RESOURCE_PATH "/pixmaps/fill.png");
+  Widgets.fill = create_toggle_button(box, img, FALSE);
 
   w = gtk_menu_button_new();
   menu = G_MENU_MODEL(gtk_builder_get_object(builder, "linewidth-menu"));
