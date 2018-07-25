@@ -7,6 +7,8 @@
 #include "ogra2cairo.h"
 #include "odraw.h"
 
+#define SETTING_PANEL_MARGIN 4
+
 struct presetting_widgets
 {
   GtkWidget *stroke, *stroke_icon, *fill, *fill_icon;
@@ -325,7 +327,10 @@ add_setting_panel(GtkApplication *app)
 
   builder = gtk_builder_new_from_resource(RESOURCE_PATH "/gtk/menus-tool.ui");
   box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-
+  gtk_widget_set_margin_start(box, SETTING_PANEL_MARGIN);
+  gtk_widget_set_margin_end(box, SETTING_PANEL_MARGIN);
+  gtk_widget_set_margin_top(box, SETTING_PANEL_MARGIN);
+  gtk_widget_set_margin_bottom(box, SETTING_PANEL_MARGIN);
   w = combo_box_create();
   set_font_family(w);
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
@@ -378,7 +383,7 @@ add_setting_panel(GtkApplication *app)
   gtk_widget_set_tooltip_text(w, _("Fill color"));
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
   Widgets.color2 = w;
-  
+
   w = gtk_menu_button_new();
   menu = G_MENU_MODEL(gtk_builder_get_object(builder, "arrow-type-menu"));
   gtk_menu_button_set_menu_model(GTK_MENU_BUTTON(w), menu);
