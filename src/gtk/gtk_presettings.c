@@ -6,12 +6,13 @@
 #include "gra.h"
 #include "ogra2cairo.h"
 #include "odraw.h"
+#include "x11menu.h"
 
 #define SETTING_PANEL_MARGIN 4
 
 struct presetting_widgets
 {
-  GtkWidget *stroke, *stroke_icon, *fill, *fill_icon;
+  GtkWidget *stroke, *fill;
   GtkWidget *line_width;
   GtkWidget *color1, *color2;
   GtkWidget *fill_rule, *path_type;
@@ -314,8 +315,124 @@ create_toggle_button(GtkWidget *box, GtkWidget *img, int state)
   return w;
 }
 
+void
+presetting_set_visibility(enum PointerType type)
+{
+  switch (type) {
+  case PointB:
+  case AxisB:
+  case LegendB:
+  case DataB:
+  case EvalB:
+  case TrimB:
+  case ZoomB:
+    break;
+  case PathB:
+    gtk_widget_set_visible(Widgets.stroke,     TRUE);
+    gtk_widget_set_visible(Widgets.fill,       TRUE);
+    gtk_widget_set_visible(Widgets.line_width, TRUE);
+    gtk_widget_set_visible(Widgets.color1,     TRUE);
+    gtk_widget_set_visible(Widgets.color2,     TRUE);
+    gtk_widget_set_visible(Widgets.fill_rule,  TRUE);
+    gtk_widget_set_visible(Widgets.path_type,  TRUE);
+    gtk_widget_set_visible(Widgets.join_type,  TRUE);
+    gtk_widget_set_visible(Widgets.arrow_type, TRUE);
+    gtk_widget_set_visible(Widgets.font,       FALSE);
+    gtk_widget_set_visible(Widgets.bold,       FALSE);
+    gtk_widget_set_visible(Widgets.italic,     FALSE);
+    gtk_widget_set_visible(Widgets.pt,         FALSE);
+    gtk_widget_set_visible(Widgets.mark_size,  FALSE);
+    break;
+  case RectB:
+    gtk_widget_set_visible(Widgets.stroke,     TRUE);
+    gtk_widget_set_visible(Widgets.fill,       TRUE);
+    gtk_widget_set_visible(Widgets.line_width, TRUE);
+    gtk_widget_set_visible(Widgets.color1,     TRUE);
+    gtk_widget_set_visible(Widgets.color2,     TRUE);
+    gtk_widget_set_visible(Widgets.fill_rule,  FALSE);
+    gtk_widget_set_visible(Widgets.path_type,  FALSE);
+    gtk_widget_set_visible(Widgets.join_type,  FALSE);
+    gtk_widget_set_visible(Widgets.arrow_type, FALSE);
+    gtk_widget_set_visible(Widgets.font,       FALSE);
+    gtk_widget_set_visible(Widgets.bold,       FALSE);
+    gtk_widget_set_visible(Widgets.italic,     FALSE);
+    gtk_widget_set_visible(Widgets.pt,         FALSE);
+    gtk_widget_set_visible(Widgets.mark_size,  FALSE);
+    break;
+  case ArcB:
+    gtk_widget_set_visible(Widgets.stroke,     TRUE);
+    gtk_widget_set_visible(Widgets.fill,       TRUE);
+    gtk_widget_set_visible(Widgets.line_width, TRUE);
+    gtk_widget_set_visible(Widgets.color1,     TRUE);
+    gtk_widget_set_visible(Widgets.color2,     TRUE);
+    gtk_widget_set_visible(Widgets.fill_rule,  FALSE);
+    gtk_widget_set_visible(Widgets.path_type,  FALSE);
+    gtk_widget_set_visible(Widgets.join_type,  TRUE);
+    gtk_widget_set_visible(Widgets.arrow_type, FALSE);
+    gtk_widget_set_visible(Widgets.font,       FALSE);
+    gtk_widget_set_visible(Widgets.bold,       FALSE);
+    gtk_widget_set_visible(Widgets.italic,     FALSE);
+    gtk_widget_set_visible(Widgets.pt,         FALSE);
+    gtk_widget_set_visible(Widgets.mark_size,  FALSE);
+    break;
+  case MarkB:
+    gtk_widget_set_visible(Widgets.stroke,     FALSE);
+    gtk_widget_set_visible(Widgets.fill,       FALSE);
+    gtk_widget_set_visible(Widgets.line_width, TRUE);
+    gtk_widget_set_visible(Widgets.color1,     TRUE);
+    gtk_widget_set_visible(Widgets.color2,     TRUE);
+    gtk_widget_set_visible(Widgets.fill_rule,  FALSE);
+    gtk_widget_set_visible(Widgets.path_type,  FALSE);
+    gtk_widget_set_visible(Widgets.join_type,  FALSE);
+    gtk_widget_set_visible(Widgets.arrow_type, FALSE);
+    gtk_widget_set_visible(Widgets.font,       FALSE);
+    gtk_widget_set_visible(Widgets.bold,       FALSE);
+    gtk_widget_set_visible(Widgets.italic,     FALSE);
+    gtk_widget_set_visible(Widgets.pt,         FALSE);
+    gtk_widget_set_visible(Widgets.mark_size,  TRUE);
+    break;
+  case TextB:
+    gtk_widget_set_visible(Widgets.stroke,     FALSE);
+    gtk_widget_set_visible(Widgets.fill,       FALSE);
+    gtk_widget_set_visible(Widgets.line_width, FALSE);
+    gtk_widget_set_visible(Widgets.color1,     TRUE);
+    gtk_widget_set_visible(Widgets.color2,     FALSE);
+    gtk_widget_set_visible(Widgets.fill_rule,  FALSE);
+    gtk_widget_set_visible(Widgets.path_type,  FALSE);
+    gtk_widget_set_visible(Widgets.join_type,  FALSE);
+    gtk_widget_set_visible(Widgets.arrow_type, FALSE);
+    gtk_widget_set_visible(Widgets.font,       TRUE);
+    gtk_widget_set_visible(Widgets.bold,       TRUE);
+    gtk_widget_set_visible(Widgets.italic,     TRUE);
+    gtk_widget_set_visible(Widgets.pt,         TRUE);
+    gtk_widget_set_visible(Widgets.mark_size,  FALSE);
+    break;
+  case GaussB:
+    gtk_widget_set_visible(Widgets.stroke,     FALSE);
+    gtk_widget_set_visible(Widgets.fill,       FALSE);
+    gtk_widget_set_visible(Widgets.line_width, TRUE);
+    gtk_widget_set_visible(Widgets.color1,     TRUE);
+    gtk_widget_set_visible(Widgets.color2,     FALSE);
+    gtk_widget_set_visible(Widgets.fill_rule,  FALSE);
+    gtk_widget_set_visible(Widgets.path_type,  FALSE);
+    gtk_widget_set_visible(Widgets.join_type,  TRUE);
+    gtk_widget_set_visible(Widgets.arrow_type, FALSE);
+    gtk_widget_set_visible(Widgets.font,       FALSE);
+    gtk_widget_set_visible(Widgets.bold,       FALSE);
+    gtk_widget_set_visible(Widgets.italic,     FALSE);
+    gtk_widget_set_visible(Widgets.pt,         FALSE);
+    gtk_widget_set_visible(Widgets.mark_size,  FALSE);
+    break;
+  case FrameB:
+  case SectionB:
+  case CrossB:
+  case SingleB:
+    break;
+  }
+}
+
 GtkWidget *
-add_setting_panel(GtkApplication *app)
+presetting_create_panel(GtkApplication *app)
 {
   GtkWidget *w, *box, *img;
   GtkBuilder *builder;
