@@ -4632,10 +4632,10 @@ setupwindow(GtkApplication *app)
   NgraphApp.Viewer.menu = w;
 
   ToolBox = gtk_stack_new();
-  SettingPanel = add_setting_panel(app);
+  SettingPanel = presetting_create_panel(app);
   gtk_stack_add_named(GTK_STACK(ToolBox), CToolbar, "CommandToolbar");
   gtk_stack_add_named(GTK_STACK(ToolBox), SettingPanel, "SettingPanel");
-  gtk_box_pack_start(GTK_BOX(vbox2), ToolBox, FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(vbox), ToolBox, FALSE, FALSE, 0);
   gtk_box_pack_start(GTK_BOX(hbox), PToolbar, FALSE, FALSE, 0);
 
   w = gtk_menu_new();
@@ -6453,6 +6453,7 @@ CmViewerButtonArm(GtkToggleToolButton *action, gpointer client_data)
   NgraphApp.Viewer.Mode = mode;
   NgraphApp.Viewer.Capture = FALSE;
   NgraphApp.Viewer.MouseMode = MOUSENONE;
+  presetting_set_visibility(mode);
 
   if (d->MoveData) {
     move_data_cancel(d, TRUE);
