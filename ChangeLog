@@ -1,5 +1,10 @@
 2018-07-27  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* addin/fitrslt.c (set_parameter): use "g_strdup_printf()" instead
+	of "snprintf()".
+
+	* src/shellcm.c (cmget): fix check "NWRITE" flag.
+
 	* src/gtk/x11file.c (FileDialogAxis): increase size of the buffer.
 
 	* src/gtk/init.c (exec_console): increase size of the buffer.
