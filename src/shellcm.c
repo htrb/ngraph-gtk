@@ -1032,8 +1032,8 @@ cmget(struct nshell*nshell,int argc,char **argv)
       for (i=0;i<chkobjfieldnum(obj);i++) {
         field=chkobjfieldname(obj,i);
         perm=chkobjperm(obj,field);
-        if (((perm&NREAD)==1) && ((perm&NEXEC)==0)
-        && (!nowrite || ((perm&NWRITE)==1))) {
+        if (((perm&NREAD)==NREAD) && ((perm&NEXEC)==0)
+        && (!nowrite || ((perm&NWRITE)==NWRITE))) {
           if (sgetfield(obj,id,field,&valstr,FALSE,FALSE,quote)!=0) {
             arraydel(&iarray);
             return ERR;
@@ -1049,7 +1049,7 @@ cmget(struct nshell*nshell,int argc,char **argv)
     } else {
       for (k=j;k<argc;k++) {
         field=argv[k];
-        if (!nowrite || ((chkobjperm(obj,field)&NWRITE)==1)) {
+        if (!nowrite || ((chkobjperm(obj,field)&NWRITE)==NWRITE)) {
           if (sgetfield(obj,id,field,&valstr,FALSE,FALSE,quote)!=0) {
             arraydel(&iarray);
             return ERR;
