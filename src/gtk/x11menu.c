@@ -4635,7 +4635,7 @@ setupwindow(GtkApplication *app)
   SettingPanel = presetting_create_panel(app);
   gtk_stack_add_named(GTK_STACK(ToolBox), CToolbar, "CommandToolbar");
   gtk_stack_add_named(GTK_STACK(ToolBox), SettingPanel, "SettingPanel");
-  gtk_box_pack_start(GTK_BOX(vbox), ToolBox, FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(vbox2), ToolBox, FALSE, FALSE, 0);
   gtk_box_pack_start(GTK_BOX(hbox), PToolbar, FALSE, FALSE, 0);
 
   w = gtk_menu_new();
@@ -5785,6 +5785,7 @@ create_toplevel_window(void)
   setup_toolbar(TopLevel);
   gtk_widget_show_all(GTK_WIDGET(TopLevel));
   reset_event();
+  create_markpixmap(TopLevel);
   setupwindow(GtkApp);
   create_addin_menu();
 
@@ -5792,8 +5793,6 @@ create_toplevel_window(void)
 
   gtk_widget_show_all(GTK_WIDGET(TopLevel));
   ViewerWinSetup();
-
-  create_markpixmap(TopLevel);
 
   if (create_cursor())
     return 1;
