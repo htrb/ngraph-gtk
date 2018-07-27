@@ -2990,7 +2990,7 @@ FileDialogSetupItem(GtkWidget *w, struct FileDialog *d)
 static void
 FileDialogAxis(GtkWidget *w, gpointer client_data)
 {
-  char buf[10];
+  char buf[16];
   int a;
 
   a = combo_box_get_active(w);
