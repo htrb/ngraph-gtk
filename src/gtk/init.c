@@ -395,7 +395,7 @@ exec_console(char *fifo_in, char *fifo_out)
   } else if (pid == 0) {
     pid = fork();
     if (pid == 0) {
-      char buf[256], *s2, *s;
+      char buf[2049], *s2, *s;
       int len;
 #if OSX
       snprintf(buf, sizeof(buf), "%s -e %s/terminal %s %s", Terminal, LIBDIR, fifo_in, fifo_out);
