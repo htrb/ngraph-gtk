@@ -7,18 +7,20 @@
 #include "ogra2cairo.h"
 #include "odraw.h"
 #include "x11menu.h"
+#include "x11dialg.h"
 
 #define SETTING_PANEL_MARGIN 4
+#define LINE_WIDTH_ICON_NUM 7
+#define LINE_STYLE_ICON_NUM 7
 
 struct presetting_widgets
 {
   GtkWidget *stroke, *fill;
-  GtkWidget *line_width;
+  GtkWidget *line_width, *line_style;
   GtkWidget *color1, *color2;
-  GtkWidget *fill_rule, *path_type;
+  GtkWidget *path_type;
   GtkWidget *join_type, *join_bevel, *join_round, *join_miter;
   GtkWidget *arrow_type, *arrow_none, *arrow_begin, *arrow_end, *arrow_both;
-  GtkWidget *lw002, *lw004, *lw008, *lw016, *lw032, *lw064, *lw128;
   GtkWidget *font, *bold, *italic, *pt;
   GtkWidget *mark, *mark_size;
   enum JOIN_TYPE join;
@@ -77,55 +79,6 @@ ArrowTypeBothAction_activated(GSimpleAction *action, GVariant *parameter, gpoint
   Widgets.arrow = ARROW_POSITION_BOTH;
 }
 
-static void
-LineWidth002Action_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
-{
-  gtk_button_set_image(GTK_BUTTON(Widgets.line_width), Widgets.lw002);
-  Widgets.lw = 20;
-}
-
-static void
-LineWidth004Action_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
-{
-  gtk_button_set_image(GTK_BUTTON(Widgets.line_width), Widgets.lw004);
-  Widgets.lw = 40;
-}
-
-static void
-LineWidth008Action_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
-{
-  gtk_button_set_image(GTK_BUTTON(Widgets.line_width), Widgets.lw008);
-  Widgets.lw = 80;
-}
-
-static void
-LineWidth016Action_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
-{
-  gtk_button_set_image(GTK_BUTTON(Widgets.line_width), Widgets.lw016);
-  Widgets.lw = 160;
-}
-
-static void
-LineWidth032Action_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
-{
-  gtk_button_set_image(GTK_BUTTON(Widgets.line_width), Widgets.lw032);
-  Widgets.lw = 320;
-}
-
-static void
-LineWidth064Action_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
-{
-  gtk_button_set_image(GTK_BUTTON(Widgets.line_width), Widgets.lw064);
-  Widgets.lw = 640;
-}
-
-
-static void
-LineWidth128Action_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
-{
-  gtk_button_set_image(GTK_BUTTON(Widgets.line_width), Widgets.lw128);
-  Widgets.lw = 1280;
-}
 
 static GActionEntry ToolMenuEntries[] =
 {
@@ -136,13 +89,6 @@ static GActionEntry ToolMenuEntries[] =
   { "ArrowTypeBeginAction", ArrowTypeBeginAction_activated, NULL, NULL, NULL },
   { "ArrowTypeEndAction",   ArrowTypeEndAction_activated, NULL, NULL, NULL },
   { "ArrowTypeBothAction",  ArrowTypeBothAction_activated, NULL, NULL, NULL },
-  { "LineWidth002Action",  LineWidth002Action_activated, NULL, NULL, NULL },
-  { "LineWidth004Action",  LineWidth004Action_activated, NULL, NULL, NULL },
-  { "LineWidth008Action",  LineWidth008Action_activated, NULL, NULL, NULL },
-  { "LineWidth016Action",  LineWidth016Action_activated, NULL, NULL, NULL },
-  { "LineWidth032Action",  LineWidth032Action_activated, NULL, NULL, NULL },
-  { "LineWidth064Action",  LineWidth064Action_activated, NULL, NULL, NULL },
-  { "LineWidth128Action",  LineWidth128Action_activated, NULL, NULL, NULL },
 };
 
 static void
@@ -162,20 +108,6 @@ create_images(struct presetting_widgets *widgets)
   g_object_ref(widgets->join_round);
   widgets->join_miter = gtk_image_new_from_resource(RESOURCE_PATH "/pixmaps/join_miter.png");
   g_object_ref(widgets->join_miter);
-  widgets->lw002 = gtk_image_new_from_resource(RESOURCE_PATH "/pixmaps/linewidth_002.png");
-  g_object_ref(widgets->lw002);
-  widgets->lw004 = gtk_image_new_from_resource(RESOURCE_PATH "/pixmaps/linewidth_004.png");
-  g_object_ref(widgets->lw004);
-  widgets->lw008 = gtk_image_new_from_resource(RESOURCE_PATH "/pixmaps/linewidth_008.png");
-  g_object_ref(widgets->lw008);
-  widgets->lw016 = gtk_image_new_from_resource(RESOURCE_PATH "/pixmaps/linewidth_016.png");
-  g_object_ref(widgets->lw016);
-  widgets->lw032 = gtk_image_new_from_resource(RESOURCE_PATH "/pixmaps/linewidth_032.png");
-  g_object_ref(widgets->lw032);
-  widgets->lw064 = gtk_image_new_from_resource(RESOURCE_PATH "/pixmaps/linewidth_064.png");
-  g_object_ref(widgets->lw064);
-  widgets->lw128 = gtk_image_new_from_resource(RESOURCE_PATH "/pixmaps/linewidth_128.png");
-  g_object_ref(widgets->lw128);
 }
 
 static void
@@ -190,7 +122,7 @@ set_rgba(GtkWidget *cbutton, int *r, int *g, int *b, int *a)
 }
 
 static void
-set_color(struct objlist *obj, int id, int r1, int g1, int b1, int a1, int r2, int g2, int b2, int a2)
+get_rgba(struct objlist *obj, int id, int r1, int g1, int b1, int a1, int r2, int g2, int b2, int a2)
 {
     putobj(obj, "stroke_R", id, &r1);
     putobj(obj, "stroke_G", id, &g1);
@@ -229,11 +161,26 @@ set_text_obj(struct objlist *obj, int id)
   putobj(obj, "pt", id, &pt);
 }
 
+static void
+set_path_type(struct objlist *obj, int id)
+{
+  int type, interpolation;
+  type = combo_box_get_active(Widgets.path_type);
+  if (type == 0) {
+    putobj(obj, "type", id, &type);
+  } else {
+    interpolation = type - 1;
+    type = 1;
+    putobj(obj, "type", id, &type);
+    putobj(obj, "interpolation", id, &interpolation);
+  }
+}
+
 void
 presetting_set_obj_field(struct objlist *obj, int id)
 {
   const char *name;
-  int ival, r1, g1, b1, a1, r2, g2, b2, a2, stroke, fill;
+  int ival, r1, g1, b1, a1, r2, g2, b2, a2, stroke, fill, width;
 
   if (obj == NULL) {
     return;
@@ -247,6 +194,7 @@ presetting_set_obj_field(struct objlist *obj, int id)
   set_rgba(Widgets.color2, &r2, &g2, &b2, &a2);
   stroke = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(Widgets.stroke));
   fill = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(Widgets.fill));
+  width = (2 << combo_box_get_active(Widgets.line_width)) * 10;
 
   if (strcmp(name, "axis") == 0) {
   } else if (strcmp(name, "path") == 0) {
@@ -256,26 +204,29 @@ presetting_set_obj_field(struct objlist *obj, int id)
     putobj(obj, "join", id, &ival);
     ival = Widgets.arrow;
     putobj(obj, "arrow", id, &ival);
-    ival = Widgets.lw;
-    putobj(obj, "width", id, &ival);
-    set_color(obj, id, r1, g1, b1, a1, r2, g2, b2, a2);
+    putobj(obj, "width", id, &width);
+    get_rgba(obj, id, r1, g1, b1, a1, r2, g2, b2, a2);
+    ival = combo_box_get_active(Widgets.line_style);
+    sputobjfield(obj, id, "style", FwLineStyle[ival].list);
+    set_path_type(obj, id);
   } else if (strcmp(name, "rectangle") == 0) {
     putobj(obj, "stroke", id, &stroke);
     putobj(obj, "fill", id, &fill);
-    ival = Widgets.lw;
-    putobj(obj, "width", id, &ival);
-    set_color(obj, id, r1, g1, b1, a1, r2, g2, b2, a2);
+    putobj(obj, "width", id, &width);
+    get_rgba(obj, id, r1, g1, b1, a1, r2, g2, b2, a2);
+    ival = combo_box_get_active(Widgets.line_style);
+    sputobjfield(obj, id, "style", FwLineStyle[ival].list);
   } else if (strcmp(name, "arc") == 0) {
     putobj(obj, "stroke", id, &stroke);
     putobj(obj, "fill", id, &fill);
     ival = Widgets.join;
     putobj(obj, "join", id, &ival);
-    ival = Widgets.lw;
-    putobj(obj, "width", id, &ival);
-    set_color(obj, id, r1, g1, b1, a1, r2, g2, b2, a2);
+    putobj(obj, "width", id, &width);
+    get_rgba(obj, id, r1, g1, b1, a1, r2, g2, b2, a2);
+    ival = combo_box_get_active(Widgets.line_style);
+    sputobjfield(obj, id, "style", FwLineStyle[ival].list);
   } else if (strcmp(name, "mark") == 0) {
-    ival = Widgets.lw;
-    putobj(obj, "width", id, &ival);
+    putobj(obj, "width", id, &width);
     putobj(obj, "R", id, &r1);
     putobj(obj, "G", id, &g1);
     putobj(obj, "B", id, &b1);
@@ -286,6 +237,10 @@ presetting_set_obj_field(struct objlist *obj, int id)
     putobj(obj, "A2", id, &a2);
     ival = gtk_spin_button_get_value(GTK_SPIN_BUTTON(Widgets.mark_size)) * 100;
     putobj(obj, "size", id, &ival);
+    ival = combo_box_get_active(Widgets.mark);
+    putobj(obj, "type", id, &ival);
+    ival = combo_box_get_active(Widgets.line_style);
+    sputobjfield(obj, id, "style", FwLineStyle[ival].list);
   } else if (strcmp(name, "text") == 0) {
     set_text_obj(obj, id);
   }
@@ -331,9 +286,9 @@ presetting_set_visibility(enum PointerType type)
     gtk_widget_set_visible(Widgets.stroke,     TRUE);
     gtk_widget_set_visible(Widgets.fill,       TRUE);
     gtk_widget_set_visible(Widgets.line_width, TRUE);
+    gtk_widget_set_visible(Widgets.line_style, TRUE);
     gtk_widget_set_visible(Widgets.color1,     TRUE);
     gtk_widget_set_visible(Widgets.color2,     TRUE);
-    gtk_widget_set_visible(Widgets.fill_rule,  TRUE);
     gtk_widget_set_visible(Widgets.path_type,  TRUE);
     gtk_widget_set_visible(Widgets.join_type,  TRUE);
     gtk_widget_set_visible(Widgets.arrow_type, TRUE);
@@ -342,14 +297,15 @@ presetting_set_visibility(enum PointerType type)
     gtk_widget_set_visible(Widgets.italic,     FALSE);
     gtk_widget_set_visible(Widgets.pt,         FALSE);
     gtk_widget_set_visible(Widgets.mark_size,  FALSE);
+    gtk_widget_set_visible(Widgets.mark,       FALSE);
     break;
   case RectB:
     gtk_widget_set_visible(Widgets.stroke,     TRUE);
     gtk_widget_set_visible(Widgets.fill,       TRUE);
     gtk_widget_set_visible(Widgets.line_width, TRUE);
+    gtk_widget_set_visible(Widgets.line_style, TRUE);
     gtk_widget_set_visible(Widgets.color1,     TRUE);
     gtk_widget_set_visible(Widgets.color2,     TRUE);
-    gtk_widget_set_visible(Widgets.fill_rule,  FALSE);
     gtk_widget_set_visible(Widgets.path_type,  FALSE);
     gtk_widget_set_visible(Widgets.join_type,  FALSE);
     gtk_widget_set_visible(Widgets.arrow_type, FALSE);
@@ -358,14 +314,15 @@ presetting_set_visibility(enum PointerType type)
     gtk_widget_set_visible(Widgets.italic,     FALSE);
     gtk_widget_set_visible(Widgets.pt,         FALSE);
     gtk_widget_set_visible(Widgets.mark_size,  FALSE);
+    gtk_widget_set_visible(Widgets.mark,       FALSE);
     break;
   case ArcB:
     gtk_widget_set_visible(Widgets.stroke,     TRUE);
     gtk_widget_set_visible(Widgets.fill,       TRUE);
     gtk_widget_set_visible(Widgets.line_width, TRUE);
+    gtk_widget_set_visible(Widgets.line_style, TRUE);
     gtk_widget_set_visible(Widgets.color1,     TRUE);
     gtk_widget_set_visible(Widgets.color2,     TRUE);
-    gtk_widget_set_visible(Widgets.fill_rule,  FALSE);
     gtk_widget_set_visible(Widgets.path_type,  FALSE);
     gtk_widget_set_visible(Widgets.join_type,  TRUE);
     gtk_widget_set_visible(Widgets.arrow_type, FALSE);
@@ -374,14 +331,15 @@ presetting_set_visibility(enum PointerType type)
     gtk_widget_set_visible(Widgets.italic,     FALSE);
     gtk_widget_set_visible(Widgets.pt,         FALSE);
     gtk_widget_set_visible(Widgets.mark_size,  FALSE);
+    gtk_widget_set_visible(Widgets.mark,       FALSE);
     break;
   case MarkB:
     gtk_widget_set_visible(Widgets.stroke,     FALSE);
     gtk_widget_set_visible(Widgets.fill,       FALSE);
     gtk_widget_set_visible(Widgets.line_width, TRUE);
+    gtk_widget_set_visible(Widgets.line_style, TRUE);
     gtk_widget_set_visible(Widgets.color1,     TRUE);
     gtk_widget_set_visible(Widgets.color2,     TRUE);
-    gtk_widget_set_visible(Widgets.fill_rule,  FALSE);
     gtk_widget_set_visible(Widgets.path_type,  FALSE);
     gtk_widget_set_visible(Widgets.join_type,  FALSE);
     gtk_widget_set_visible(Widgets.arrow_type, FALSE);
@@ -390,14 +348,15 @@ presetting_set_visibility(enum PointerType type)
     gtk_widget_set_visible(Widgets.italic,     FALSE);
     gtk_widget_set_visible(Widgets.pt,         FALSE);
     gtk_widget_set_visible(Widgets.mark_size,  TRUE);
+    gtk_widget_set_visible(Widgets.mark,       TRUE);
     break;
   case TextB:
     gtk_widget_set_visible(Widgets.stroke,     FALSE);
     gtk_widget_set_visible(Widgets.fill,       FALSE);
     gtk_widget_set_visible(Widgets.line_width, FALSE);
+    gtk_widget_set_visible(Widgets.line_style, FALSE);
     gtk_widget_set_visible(Widgets.color1,     TRUE);
     gtk_widget_set_visible(Widgets.color2,     FALSE);
-    gtk_widget_set_visible(Widgets.fill_rule,  FALSE);
     gtk_widget_set_visible(Widgets.path_type,  FALSE);
     gtk_widget_set_visible(Widgets.join_type,  FALSE);
     gtk_widget_set_visible(Widgets.arrow_type, FALSE);
@@ -406,14 +365,15 @@ presetting_set_visibility(enum PointerType type)
     gtk_widget_set_visible(Widgets.italic,     TRUE);
     gtk_widget_set_visible(Widgets.pt,         TRUE);
     gtk_widget_set_visible(Widgets.mark_size,  FALSE);
+    gtk_widget_set_visible(Widgets.mark,       FALSE);
     break;
   case GaussB:
     gtk_widget_set_visible(Widgets.stroke,     FALSE);
     gtk_widget_set_visible(Widgets.fill,       FALSE);
     gtk_widget_set_visible(Widgets.line_width, TRUE);
+    gtk_widget_set_visible(Widgets.line_style, TRUE);
     gtk_widget_set_visible(Widgets.color1,     TRUE);
     gtk_widget_set_visible(Widgets.color2,     FALSE);
-    gtk_widget_set_visible(Widgets.fill_rule,  FALSE);
     gtk_widget_set_visible(Widgets.path_type,  FALSE);
     gtk_widget_set_visible(Widgets.join_type,  TRUE);
     gtk_widget_set_visible(Widgets.arrow_type, FALSE);
@@ -422,6 +382,7 @@ presetting_set_visibility(enum PointerType type)
     gtk_widget_set_visible(Widgets.italic,     FALSE);
     gtk_widget_set_visible(Widgets.pt,         FALSE);
     gtk_widget_set_visible(Widgets.mark_size,  FALSE);
+    gtk_widget_set_visible(Widgets.mark,       FALSE);
     break;
   case FrameB:
   case SectionB:
@@ -429,6 +390,133 @@ presetting_set_visibility(enum PointerType type)
   case SingleB:
     break;
   }
+}
+
+GtkWidget *
+create_mark_combo_box(void)
+{
+  GtkWidget *cbox;
+  GtkListStore *list;
+  GtkTreeIter iter;
+  int j;
+  GtkCellRenderer *rend;
+
+  list = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_OBJECT);
+  cbox = gtk_combo_box_new_with_model(GTK_TREE_MODEL(list));
+  rend = gtk_cell_renderer_text_new();
+  gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(cbox), rend, FALSE);
+  gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "text", 0);
+  rend = gtk_cell_renderer_pixbuf_new();
+  gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(cbox), rend, FALSE);
+  gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "pixbuf", 1);
+  for (j = 0; j < MARK_TYPE_NUM; j++) {
+    GdkPixbuf *pixbuf;
+    pixbuf = gdk_pixbuf_get_from_surface(NgraphApp.markpix[j],
+					 0, 0, MARK_PIX_SIZE, MARK_PIX_SIZE);
+    if (pixbuf) {
+      char buf[64];
+      gtk_list_store_append(list, &iter);
+      snprintf(buf, sizeof(buf), "%02d", j);
+      gtk_list_store_set(list, &iter,
+			 0, buf,
+			 1, pixbuf,
+			 -1);
+      g_object_unref(pixbuf);
+    }
+  }
+  gtk_combo_box_set_active(GTK_COMBO_BOX(cbox), 0);
+  return cbox;
+}
+
+GtkWidget *
+create_line_width_combo_box(void)
+{
+  GtkWidget *cbox;
+  GtkListStore *list;
+  GtkTreeIter iter;
+  int j;
+  GtkCellRenderer *rend;
+
+  list = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_OBJECT);
+  cbox = gtk_combo_box_new_with_model(GTK_TREE_MODEL(list));
+  rend = gtk_cell_renderer_text_new();
+  gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(cbox), rend, FALSE);
+  gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "text", 0);
+  rend = gtk_cell_renderer_pixbuf_new();
+  gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(cbox), rend, FALSE);
+  gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "pixbuf", 1);
+  for (j = 0; j < LINE_WIDTH_ICON_NUM; j++) {
+    GdkPixbuf *pixbuf;
+    GtkWidget *image;
+    char buf[64], *img_file;
+    img_file = g_strdup_printf("%s/pixmaps/linewidth_%03d.png", RESOURCE_PATH, 2 << j);
+    image = gtk_image_new_from_resource(img_file);
+    g_free(img_file);
+    pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(image));
+    if (pixbuf) {
+      gtk_list_store_append(list, &iter);
+      snprintf(buf, sizeof(buf), "%4.1f", (2 << j) / 10.0);
+      gtk_list_store_set(list, &iter,
+			 0, buf,
+			 1, pixbuf,
+			 -1);
+    }
+    gtk_widget_destroy(image);
+  }
+  gtk_combo_box_set_active(GTK_COMBO_BOX(cbox), 1);
+  return cbox;
+}
+
+GtkWidget *
+create_line_style_combo_box(void)
+{
+  GtkWidget *cbox;
+  GtkListStore *list;
+  GtkTreeIter iter;
+  int j;
+  GtkCellRenderer *rend;
+
+  list = gtk_list_store_new(1, G_TYPE_STRING);
+  cbox = gtk_combo_box_new_with_model(GTK_TREE_MODEL(list));
+  rend = gtk_cell_renderer_text_new();
+  gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(cbox), rend, FALSE);
+  gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "text", 0);
+  for (j = 0; j < LINE_STYLE_ICON_NUM; j++) {
+    gtk_list_store_append(list, &iter);
+    gtk_list_store_set(list, &iter,
+                       0, _(FwLineStyle[j].name),
+                       -1);
+  }
+  gtk_combo_box_set_active(GTK_COMBO_BOX(cbox), 0);
+  return cbox;
+}
+
+GtkWidget *
+create_path_type_combo_box(void)
+{
+  GtkWidget *cbox;
+  GtkListStore *list;
+  GtkTreeIter iter;
+  int j;
+  GtkCellRenderer *rend;
+
+  list = gtk_list_store_new(1, G_TYPE_STRING);
+  cbox = gtk_combo_box_new_with_model(GTK_TREE_MODEL(list));
+  rend = gtk_cell_renderer_text_new();
+  gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(cbox), rend, FALSE);
+  gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "text", 0);
+  gtk_list_store_append(list, &iter);
+  gtk_list_store_set(list, &iter,
+                     0, _("line"),
+                     -1);
+  for (j = 0; intpchar[j]; j++) {
+    gtk_list_store_append(list, &iter);
+    gtk_list_store_set(list, &iter,
+                       0, _(intpchar[j]),
+                       -1);
+  }
+  gtk_combo_box_set_active(GTK_COMBO_BOX(cbox), 0);
+  return cbox;
 }
 
 GtkWidget *
@@ -448,6 +536,7 @@ presetting_create_panel(GtkApplication *app)
   gtk_widget_set_margin_end(box, SETTING_PANEL_MARGIN);
   gtk_widget_set_margin_top(box, SETTING_PANEL_MARGIN);
   gtk_widget_set_margin_bottom(box, SETTING_PANEL_MARGIN);
+
   w = combo_box_create();
   set_font_family(w);
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
@@ -466,10 +555,13 @@ presetting_create_panel(GtkApplication *app)
   Widgets.italic = create_toggle_button(box, img, FALSE);
 
   img = gtk_image_new_from_resource(RESOURCE_PATH "/pixmaps/stroke.png");
-  Widgets.stroke = create_toggle_button(box, img, TRUE);
+  w = create_toggle_button(box, img, TRUE);
+  gtk_widget_set_tooltip_text(w, _("Stroke"));
+  Widgets.stroke = w;
 
-  img = gtk_image_new_from_resource(RESOURCE_PATH "/pixmaps/fill.png");
-  Widgets.fill = create_toggle_button(box, img, FALSE);
+  w = create_mark_combo_box();
+  gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
+  Widgets.mark = w;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, FALSE, FALSE);
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), DEFAULT_MARK_SIZE / 100.0);
@@ -477,13 +569,20 @@ presetting_create_panel(GtkApplication *app)
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
   Widgets.mark_size = w;
 
-  w = gtk_menu_button_new();
-  menu = G_MENU_MODEL(gtk_builder_get_object(builder, "linewidth-menu"));
-  gtk_menu_button_set_menu_model(GTK_MENU_BUTTON(w), menu);
+  w = create_path_type_combo_box();
+  menu = G_MENU_MODEL(gtk_builder_get_object(builder, "path-type-menu"));
+  gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
+  Widgets.path_type = w;
+
+  w = create_line_width_combo_box();
   gtk_widget_set_tooltip_text(w, _("Line Width"));
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
   Widgets.line_width = w;
-  LineWidth004Action_activated(NULL, NULL, NULL);
+
+  w = create_line_style_combo_box();
+  gtk_widget_set_tooltip_text(w, _("Line Style"));
+  gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
+  Widgets.line_style = w;
 
   w = create_color_button(NULL);
   color.red = color.green = color.blue = 0;
@@ -492,14 +591,6 @@ presetting_create_panel(GtkApplication *app)
   gtk_widget_set_tooltip_text(w, _("Stroke color"));
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
   Widgets.color1 = w;
-
-  w = create_color_button(NULL);
-  color.red = color.green = color.blue = 1;
-  color.alpha = 1;
-  gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(w), &color);
-  gtk_widget_set_tooltip_text(w, _("Fill color"));
-  gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
-  Widgets.color2 = w;
 
   w = gtk_menu_button_new();
   menu = G_MENU_MODEL(gtk_builder_get_object(builder, "arrow-type-menu"));
@@ -510,18 +601,6 @@ presetting_create_panel(GtkApplication *app)
   ArrowTypeNoneAction_activated(NULL, NULL, NULL);
 
   w = gtk_menu_button_new();
-  menu = G_MENU_MODEL(gtk_builder_get_object(builder, "fill-rule-menu"));
-  gtk_menu_button_set_menu_model(GTK_MENU_BUTTON(w), menu);
-  gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
-  Widgets.fill_rule = w;
-
-  w = gtk_menu_button_new();
-  menu = G_MENU_MODEL(gtk_builder_get_object(builder, "path-type-menu"));
-  gtk_menu_button_set_menu_model(GTK_MENU_BUTTON(w), menu);
-  gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
-  Widgets.path_type = w;
-
-  w = gtk_menu_button_new();
   menu = G_MENU_MODEL(gtk_builder_get_object(builder, "join-type-menu"));
   gtk_menu_button_set_menu_model(GTK_MENU_BUTTON(w), menu);
   gtk_widget_set_tooltip_text(w, _("Join"));
@@ -529,6 +608,19 @@ presetting_create_panel(GtkApplication *app)
   Widgets.join_type = w;
   JoinTypeMiterAction_activated(NULL, NULL, NULL);
 
-  g_object_unref(builder);
+  img = gtk_image_new_from_resource(RESOURCE_PATH "/pixmaps/fill.png");
+  w = create_toggle_button(box, img, FALSE);
+  gtk_widget_set_tooltip_text(w, _("Fill"));
+  Widgets.fill = w;
+
+  w = create_color_button(NULL);
+  color.red = color.green = color.blue = 1;
+  color.alpha = 1;
+  gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(w), &color);
+  gtk_widget_set_tooltip_text(w, _("Fill color"));
+  gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
+  Widgets.color2 = w;
+
+ g_object_unref(builder);
   return box;
 }
