@@ -28,7 +28,7 @@
 #define EXPAND    TRUE
 #define FRAME     TRUE
 
-#define LINE_BUF_SIZE 1024
+#define LINE_BUF_SIZE 8
 #define PRM_NUM       10
 
 enum {
@@ -331,7 +331,7 @@ static void
 set_parameter(struct fit_prm *prm)
 {
   int i, j, accuracy, expand, add_plus, dim[PRM_NUM];
-  char buf[LINE_BUF_SIZE], fmt[LINE_BUF_SIZE];
+  char buf[LINE_BUF_SIZE], fmt[LINE_BUF_SIZE], *prm_str;
   GtkTreeModel *model;
   GtkTreeIter iter;
 
@@ -376,18 +376,15 @@ set_parameter(struct fit_prm *prm)
 	     add_plus ? "+" : "",
 	     accuracy);
     if (expand) {
-      snprintf(buf, sizeof(buf),
-	       fmt,
-	       prm->data[i].prm[j]);
+      prm_str = g_strdup_printf(fmt, prm->data[i].prm[j]);
     } else {
-      snprintf(buf, sizeof(buf),
-	       "%%pf{%s %%{data:%d:fit_prm:%d}}",
-	       fmt,
-	       prm->data[i].file_id,
-	       j);
+      prm_str = g_strdup_printf("%%pf{%s %%{data:%d:fit_prm:%d}}",
+                                fmt,
+                                prm->data[i].file_id,
+                                j);
     }
-    gtk_list_store_set(GTK_LIST_STORE(model), &iter, COLUMN_CHECK, dim[j], COLUMN_VAL, buf, -1);
-
+    gtk_list_store_set(GTK_LIST_STORE(model), &iter, COLUMN_CHECK, dim[j], COLUMN_VAL, prm_str, -1);
+    g_free(prm_str);
     if (! gtk_tree_model_iter_next(model, &iter)) {
       break;
     }
