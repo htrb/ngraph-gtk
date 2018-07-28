@@ -1,3 +1,8 @@
+2018-07-28  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (create_toplevel_window): set toplevel window
+	modal for the GtkColorButton (modal GtkColorChooserDialog).
+
 2018-07-27  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* addin/fitrslt.c (set_parameter): use "g_strdup_printf()" instead
@@ -31,6 +36,7 @@
 	(anumnozeroput): added.
 	(axis): the type of the field "num_no_zero" is now "NENUM".
 	(anumnozero): use "false" and "true" for backward compatibility.
+>>>>>>> d2bc2fde064a82a450f7c6aa30293de51b4b636e
 
 2018-07-21  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
