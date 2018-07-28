@@ -522,11 +522,22 @@ create_path_type_combo_box(void)
 }
 
 GtkWidget *
+create_menu_button(GtkBuilder *builder, const char *menu_name, const char *tooltip)
+{
+  GtkWidget *w;
+  GMenuModel *menu;
+  w = gtk_menu_button_new();
+  menu = G_MENU_MODEL(gtk_builder_get_object(builder, menu_name));
+  gtk_menu_button_set_menu_model(GTK_MENU_BUTTON(w), menu);
+  gtk_widget_set_tooltip_text(w, tooltip);
+  return w;
+}
+
+GtkWidget *
 presetting_create_panel(GtkApplication *app)
 {
   GtkWidget *w, *box, *img;
   GtkBuilder *builder;
-  GMenuModel *menu;
   GdkRGBA color;
 
   g_action_map_add_action_entries(G_ACTION_MAP(app), ToolMenuEntries, G_N_ELEMENTS(ToolMenuEntries), app);
@@ -558,6 +569,11 @@ presetting_create_panel(GtkApplication *app)
   img = gtk_image_new_from_icon_name("format-text-italic-symbolic", GTK_ICON_SIZE_BUTTON);
   Widgets.italic = create_toggle_button(box, img,  _("Italic"), FALSE);
 
+  w = create_path_type_combo_box();
+  gtk_widget_set_margin_end(w, SETTING_PANEL_MARGIN * 4);
+  gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
+  Widgets.path_type = w;
+
   img = gtk_image_new_from_resource(RESOURCE_PATH "/pixmaps/stroke.png");
   w = create_toggle_button(box, img,  _("Stroke"), TRUE);
   Widgets.stroke = w;
@@ -572,11 +588,6 @@ presetting_create_panel(GtkApplication *app)
   gtk_widget_set_tooltip_text(w, _("Mark size"));
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
   Widgets.mark_size = w;
-
-  w = create_path_type_combo_box();
-  menu = G_MENU_MODEL(gtk_builder_get_object(builder, "path-type-menu"));
-  gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
-  Widgets.path_type = w;
 
   w = create_line_width_combo_box();
   gtk_widget_set_tooltip_text(w, _("Line Width"));
@@ -595,18 +606,12 @@ presetting_create_panel(GtkApplication *app)
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
   Widgets.color1 = w;
 
-  w = gtk_menu_button_new();
-  menu = G_MENU_MODEL(gtk_builder_get_object(builder, "arrow-type-menu"));
-  gtk_menu_button_set_menu_model(GTK_MENU_BUTTON(w), menu);
-  gtk_widget_set_tooltip_text(w, _("Arrow"));
+  w = create_menu_button(builder, "arrow-type-menu", _("Arrow"));
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
   Widgets.arrow_type = w;
   ArrowTypeNoneAction_activated(NULL, NULL, NULL);
 
-  w = gtk_menu_button_new();
-  menu = G_MENU_MODEL(gtk_builder_get_object(builder, "join-type-menu"));
-  gtk_menu_button_set_menu_model(GTK_MENU_BUTTON(w), menu);
-  gtk_widget_set_tooltip_text(w, _("Join"));
+  w = create_menu_button(builder, "join-type-menu", _("Join"));
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
   Widgets.join_type = w;
   JoinTypeMiterAction_activated(NULL, NULL, NULL);
@@ -623,6 +628,6 @@ presetting_create_panel(GtkApplication *app)
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
   Widgets.color2 = w;
 
- g_object_unref(builder);
+  g_object_unref(builder);
   return box;
 }
