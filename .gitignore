@@ -6,6 +6,8 @@
 .DS_Store
 .deps/
 .libs/
+working_files/
+
 Makefile
 Makefile.in
 
