@@ -5748,6 +5748,7 @@ create_toplevel_window(void)
 #if USE_APP_MENU
   GtkApp = create_application_window(&popup);
   CurrentWindow = TopLevel = gtk_application_window_new(GtkApp);
+  gtk_window_set_modal(GTK_WINDOW(TopLevel), TRUE); /* for the GtkColorButton (modal GtkColorChooserDialog) */
 #if USE_GTK_BUILDER
   gtk_application_window_set_show_menubar(GTK_APPLICATION_WINDOW(TopLevel), TRUE);
   if (popup) {
