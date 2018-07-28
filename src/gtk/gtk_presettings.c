@@ -351,6 +351,7 @@ presetting_set_visibility(enum PointerType type)
     gtk_widget_set_visible(Widgets.mark,       TRUE);
     break;
   case TextB:
+    set_font_family(Widgets.font);
     gtk_widget_set_visible(Widgets.stroke,     FALSE);
     gtk_widget_set_visible(Widgets.fill,       FALSE);
     gtk_widget_set_visible(Widgets.line_width, FALSE);
