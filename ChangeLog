@@ -1,4 +1,8 @@
-=======
+2018-07-28  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (create_toplevel_window): set toplevel window
+	modal for the GtkColorButton (modal GtkColorChooserDialog).
+
 2018-07-21  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/axis.c (getaxisposition): compare "*po", "alocal->posst" an
