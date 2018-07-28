@@ -3,6 +3,41 @@
 	* src/gtk/x11menu.c (create_toplevel_window): set toplevel window
 	modal for the GtkColorButton (modal GtkColorChooserDialog).
 
+2018-07-27  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* addin/fitrslt.c (set_parameter): use "g_strdup_printf()" instead
+	of "snprintf()".
+
+	* src/shellcm.c (cmget): fix check "NWRITE" flag.
+
+	* src/gtk/x11file.c (FileDialogAxis): increase size of the buffer.
+
+	* src/gtk/init.c (exec_console): increase size of the buffer.
+
+2018-07-25  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/odraw.h (DEFAULT_FONT_PT): added.
+	(DEFAULT_MARK_SIZE): added.
+
+	* src/omark.c (markinit): use "DEFAULT_MARK_SIZE".
+
+	* src/odata.c (f2dinit): use "DEFAULT_MARK_SIZE".
+
+	* src/otext.c (textinit): use "DEFAULT_FONT_PT".
+
+	* src/oaxis.c (axisinit): use "DEFAULT_FONT_PT".
+
+	* src/gtk/x11axis.c (create_num_combo_item, select_type)
+	(numbering_tab_create): now the type of the field "no_zero" is not
+	NBOOL but NENUM.
+
+	* src/oaxis.c (AXIS_NUM_NO_ZERO, anumnozero): added.
+	(get_axis_gauge_num_str): add 3rd argument.
+	(anumnozeroput): added.
+	(axis): the type of the field "num_no_zero" is now "NENUM".
+	(anumnozero): use "false" and "true" for backward compatibility.
+>>>>>>> d2bc2fde064a82a450f7c6aa30293de51b4b636e
+
 2018-07-21  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/axis.c (getaxisposition): compare "*po", "alocal->posst" an

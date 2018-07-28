@@ -2613,7 +2613,7 @@ f2dinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   y=2;
   rstep=1;
   final=-1;
-  msize=200;
+  msize=DEFAULT_MARK_SIZE;
   lwidth=DEFAULT_LINE_WIDTH;
   r2=255;
   g2=255;
