@@ -80,8 +80,7 @@ ArrowTypeBothAction_activated(GSimpleAction *action, GVariant *parameter, gpoint
 }
 
 
-static GActionEntry ToolMenuEntries[] =
-{
+static GActionEntry ToolMenuEntries[] = {
   { "JoinTypeMiterAction", JoinTypeMiterAction_activated, NULL, NULL, NULL },
   { "JoinTypeRoundAction", JoinTypeRoundAction_activated, NULL, NULL, NULL },
   { "JoinTypeBevelAction", JoinTypeBevelAction_activated, NULL, NULL, NULL },
@@ -124,14 +123,14 @@ set_rgba(GtkWidget *cbutton, int *r, int *g, int *b, int *a)
 static void
 get_rgba(struct objlist *obj, int id, int r1, int g1, int b1, int a1, int r2, int g2, int b2, int a2)
 {
-    putobj(obj, "stroke_R", id, &r1);
-    putobj(obj, "stroke_G", id, &g1);
-    putobj(obj, "stroke_B", id, &b1);
-    putobj(obj, "stroke_A", id, &a1);
-    putobj(obj, "fill_R", id, &r2);
-    putobj(obj, "fill_G", id, &g2);
-    putobj(obj, "fill_B", id, &b2);
-    putobj(obj, "fill_A", id, &a2);
+  putobj(obj, "stroke_R", id, &r1);
+  putobj(obj, "stroke_G", id, &g1);
+  putobj(obj, "stroke_B", id, &b1);
+  putobj(obj, "stroke_A", id, &a1);
+  putobj(obj, "fill_R", id, &r2);
+  putobj(obj, "fill_G", id, &g2);
+  putobj(obj, "fill_B", id, &b2);
+  putobj(obj, "fill_A", id, &a2);
 }
 
 static void
