@@ -472,21 +472,11 @@ GtkWidget *
 create_line_style_combo_box(void)
 {
   GtkWidget *cbox;
-  GtkListStore *list;
-  GtkTreeIter iter;
   int j;
-  GtkCellRenderer *rend;
 
-  list = gtk_list_store_new(1, G_TYPE_STRING);
-  cbox = gtk_combo_box_new_with_model(GTK_TREE_MODEL(list));
-  rend = gtk_cell_renderer_text_new();
-  gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(cbox), rend, FALSE);
-  gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "text", 0);
+  cbox = gtk_combo_box_text_new();
   for (j = 0; j < LINE_STYLE_ICON_NUM; j++) {
-    gtk_list_store_append(list, &iter);
-    gtk_list_store_set(list, &iter,
-                       0, _(FwLineStyle[j].name),
-                       -1);
+    gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(cbox), NULL, _(FwLineStyle[j].name));
   }
   gtk_combo_box_set_active(GTK_COMBO_BOX(cbox), 0);
   return cbox;
@@ -496,25 +486,11 @@ GtkWidget *
 create_path_type_combo_box(void)
 {
   GtkWidget *cbox;
-  GtkListStore *list;
-  GtkTreeIter iter;
   int j;
-  GtkCellRenderer *rend;
-
-  list = gtk_list_store_new(1, G_TYPE_STRING);
-  cbox = gtk_combo_box_new_with_model(GTK_TREE_MODEL(list));
-  rend = gtk_cell_renderer_text_new();
-  gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(cbox), rend, FALSE);
-  gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "text", 0);
-  gtk_list_store_append(list, &iter);
-  gtk_list_store_set(list, &iter,
-                     0, _("line"),
-                     -1);
+  cbox = gtk_combo_box_text_new();
+  gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(cbox), NULL, _("line"));
   for (j = 0; intpchar[j]; j++) {
-    gtk_list_store_append(list, &iter);
-    gtk_list_store_set(list, &iter,
-                       0, _(intpchar[j]),
-                       -1);
+    gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(cbox), NULL, _(intpchar[j]));
   }
   gtk_combo_box_set_active(GTK_COMBO_BOX(cbox), 0);
   return cbox;
