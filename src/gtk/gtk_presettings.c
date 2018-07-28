@@ -260,13 +260,14 @@ set_font_family(GtkWidget *cbox)
 }
 
 static GtkWidget *
-create_toggle_button(GtkWidget *box, GtkWidget *img, int state)
+create_toggle_button(GtkWidget *box, GtkWidget *img, const char *tooltip, int state)
 {
   GtkWidget *w;
   w = gtk_toggle_button_new();
   gtk_container_add(GTK_CONTAINER(w), img);
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), state);
+  gtk_widget_set_tooltip_text(w, tooltip);
   return w;
 }
 
@@ -549,14 +550,13 @@ presetting_create_panel(GtkApplication *app)
   Widgets.pt = w;
 
   img = gtk_image_new_from_icon_name("format-text-bold-symbolic", GTK_ICON_SIZE_BUTTON);
-  Widgets.bold = create_toggle_button(box, img, FALSE);
+  Widgets.bold = create_toggle_button(box, img, _("Bold"), FALSE);
 
   img = gtk_image_new_from_icon_name("format-text-italic-symbolic", GTK_ICON_SIZE_BUTTON);
-  Widgets.italic = create_toggle_button(box, img, FALSE);
+  Widgets.italic = create_toggle_button(box, img,  _("Italic"), FALSE);
 
   img = gtk_image_new_from_resource(RESOURCE_PATH "/pixmaps/stroke.png");
-  w = create_toggle_button(box, img, TRUE);
-  gtk_widget_set_tooltip_text(w, _("Stroke"));
+  w = create_toggle_button(box, img,  _("Stroke"), TRUE);
   Widgets.stroke = w;
 
   w = create_mark_combo_box();
@@ -608,8 +608,8 @@ presetting_create_panel(GtkApplication *app)
   JoinTypeMiterAction_activated(NULL, NULL, NULL);
 
   img = gtk_image_new_from_resource(RESOURCE_PATH "/pixmaps/fill.png");
-  w = create_toggle_button(box, img, FALSE);
-  gtk_widget_set_tooltip_text(w, _("Fill"));
+  w = create_toggle_button(box, img, _("Fill"), FALSE);
+  gtk_widget_set_margin_start(w, SETTING_PANEL_MARGIN * 4);
   Widgets.fill = w;
 
   w = create_color_button(NULL);
