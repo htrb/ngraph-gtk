@@ -404,6 +404,7 @@ create_mark_combo_box(void)
 
   list = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_OBJECT);
   cbox = gtk_combo_box_new_with_model(GTK_TREE_MODEL(list));
+  gtk_widget_set_tooltip_text(cbox, _("Mark type"));
   rend = gtk_cell_renderer_text_new();
   gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(cbox), rend, FALSE);
   gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "text", 0);
@@ -540,12 +541,14 @@ presetting_create_panel(GtkApplication *app)
 
   w = combo_box_create();
   set_font_family(w);
+  gtk_widget_set_tooltip_text(w, _("Font name"));
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
   Widgets.font = w;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_POINT, FALSE, FALSE);
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), DEFAULT_FONT_PT / 100.0);
   gtk_entry_set_width_chars(GTK_ENTRY(w), 5);
+  gtk_widget_set_tooltip_text(w, _("Font size"));
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
   Widgets.pt = w;
 
@@ -566,6 +569,7 @@ presetting_create_panel(GtkApplication *app)
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, FALSE, FALSE);
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), DEFAULT_MARK_SIZE / 100.0);
   gtk_entry_set_width_chars(GTK_ENTRY(w), 5);
+  gtk_widget_set_tooltip_text(w, _("Mark size"));
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
   Widgets.mark_size = w;
 
