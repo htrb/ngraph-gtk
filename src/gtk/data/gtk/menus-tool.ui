@@ -3,15 +3,15 @@
   <menu id="join-type-menu">
     <section>
       <item>
-	<attribute name="label" translatable="yes">_Miter</attribute>
+	<attribute name="label" translatable="yes">miter</attribute>
 	<attribute name="action">app.JoinTypeMiterAction</attribute>
       </item>
       <item>
-	<attribute name="label" translatable="yes">_Round</attribute>
+	<attribute name="label" translatable="yes">round</attribute>
 	<attribute name="action">app.JoinTypeRoundAction</attribute>
       </item>
       <item>
-	<attribute name="label" translatable="yes">_Bevel</attribute>
+	<attribute name="label" translatable="yes">bevel</attribute>
 	<attribute name="action">app.JoinTypeBevelAction</attribute>
       </item>
     </section>
@@ -19,19 +19,19 @@
   <menu id="arrow-type-menu">
     <section>
       <item>
-	<attribute name="label" translatable="yes">_None</attribute>
+	<attribute name="label" translatable="yes">none</attribute>
 	<attribute name="action">app.ArrowTypeNoneAction</attribute>
       </item>
       <item>
-	<attribute name="label" translatable="yes">_End</attribute>
+	<attribute name="label" translatable="yes">end</attribute>
 	<attribute name="action">app.ArrowTypeEndAction</attribute>
       </item>
       <item>
-	<attribute name="label" translatable="yes">_Begin</attribute>
+	<attribute name="label" translatable="yes">begin</attribute>
 	<attribute name="action">app.ArrowTypeBeginAction</attribute>
       </item>
       <item>
-	<attribute name="label" translatable="yes">_Both</attribute>
+	<attribute name="label" translatable="yes">both</attribute>
 	<attribute name="action">app.ArrowTypeBothAction</attribute>
       </item>
     </section>
