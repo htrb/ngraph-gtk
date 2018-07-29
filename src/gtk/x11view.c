@@ -3958,6 +3958,7 @@ create_single_axis(struct Viewer *d)
 	_putobj(obj, "length", inst, &lenx);
 	_putobj(obj, "direction", inst, &dir);
 
+	presetting_set_obj_field(obj, id);
 	AxisDialog(NgraphApp.AxisWin.data.data, id, TRUE);
 	ret = DialogExecute(TopLevel, &DlgAxis);
 
@@ -4076,16 +4077,27 @@ create_axis(struct Viewer *d)
       }
 
       if (d->Mode == FrameB) {
+	presetting_set_obj_field(obj, idx);
+	presetting_set_obj_field(obj, idy);
+	presetting_set_obj_field(obj, idu);
+	presetting_set_obj_field(obj, idr);
+	presetting_set_obj_field(obj2, idg);
 	SectionDialog(&DlgSection, x1, y1, lenx, leny, obj,
 		      idx, idy, idu, idr, obj2, &idg, FALSE);
 
 	ret = DialogExecute(TopLevel, &DlgSection);
       } else if (d->Mode == SectionB) {
+	presetting_set_obj_field(obj, idx);
+	presetting_set_obj_field(obj, idy);
+	presetting_set_obj_field(obj, idu);
+	presetting_set_obj_field(obj, idr);
 	SectionDialog(&DlgSection, x1, y1, lenx, leny, obj,
 		      idx, idy, idu, idr, obj2, &idg, TRUE);
 
 	ret = DialogExecute(TopLevel, &DlgSection);
       } else if (d->Mode == CrossB) {
+	presetting_set_obj_field(obj, idx);
+	presetting_set_obj_field(obj, idy);
 	CrossDialog(&DlgCross, x1, y1, lenx, leny, obj, idx, idy);
 
 	ret = DialogExecute(TopLevel, &DlgCross);

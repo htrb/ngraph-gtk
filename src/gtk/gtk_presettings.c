@@ -134,10 +134,9 @@ get_rgba(struct objlist *obj, int id, int r1, int g1, int b1, int a1, int r2, in
 }
 
 static void
-set_text_obj(struct objlist *obj, int id)
+set_font_style(struct objlist *obj, int id, const char *field)
 {
-  int style, r, g, b, a, bold, italic, pt;
-  char *fontalias;
+  int style, bold, italic;
   bold = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(Widgets.bold));
   italic = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(Widgets.italic));
   if (bold) {
@@ -146,11 +145,25 @@ set_text_obj(struct objlist *obj, int id)
   if (italic) {
     style |= GRA_FONT_STYLE_ITALIC;
   }
-  putobj(obj, "style", id, &style);
+  putobj(obj, field, id, &style);
+}
+
+static void
+set_font(struct objlist *obj, int id, const char *field)
+{
+  char *fontalias;
   fontalias = combo_box_get_active_text(Widgets.font);
   if (fontalias) {
-    putobj(obj, "font", id, fontalias);
+    putobj(obj, field, id, fontalias);
   }
+}
+
+static void
+set_text_obj(struct objlist *obj, int id)
+{
+  int r, g, b, a, pt;
+  set_font_style(obj, id, "style");
+  set_font(obj, id, "font");
   set_rgba(Widgets.color1, &r, &g, &b, &a);
   putobj(obj, "R", id, &r);
   putobj(obj, "G", id, &g);
@@ -196,6 +209,33 @@ presetting_set_obj_field(struct objlist *obj, int id)
   width = (2 << combo_box_get_active(Widgets.line_width)) * 10;
 
   if (strcmp(name, "axis") == 0) {
+    putobj(obj, "width", id, &width);
+    putobj(obj, "gauge_width1", id, &width);
+    putobj(obj, "gauge_width2", id, &width);
+    putobj(obj, "gauge_width3", id, &width);
+    putobj(obj, "R", id, &r1);
+    putobj(obj, "G", id, &g1);
+    putobj(obj, "B", id, &b1);
+    putobj(obj, "A", id, &a1);
+    putobj(obj, "gauge_R", id, &r1);
+    putobj(obj, "gauge_G", id, &g1);
+    putobj(obj, "gauge_B", id, &b1);
+    putobj(obj, "gauge_A", id, &a1);
+    putobj(obj, "num_R", id, &r1);
+    putobj(obj, "num_G", id, &g1);
+    putobj(obj, "num_B", id, &b1);
+    putobj(obj, "num_A", id, &a1);
+    set_font_style(obj, id, "num_font_style");
+    set_font(obj, id, "num_font");
+    ival = gtk_spin_button_get_value(GTK_SPIN_BUTTON(Widgets.pt)) * 100;
+    putobj(obj, "num_pt", id, &ival);
+    ival = combo_box_get_active(Widgets.line_style);
+    sputobjfield(obj, id, "style", FwLineStyle[ival].list);
+    sputobjfield(obj, id, "gauge_style", FwLineStyle[ival].list);
+  } else if (strcmp(name, "axisgrid") == 0) {
+    putobj(obj, "width1", id, &width);
+    putobj(obj, "width2", id, &width);
+    putobj(obj, "width3", id, &width);
   } else if (strcmp(name, "path") == 0) {
     putobj(obj, "stroke", id, &stroke);
     putobj(obj, "fill", id, &fill);
