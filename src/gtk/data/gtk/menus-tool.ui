@@ -36,28 +36,4 @@
       </item>
     </section>
   </menu>
-  <menu id="fill-rule-menu">
-    <section>
-      <item>
-	<attribute name="label" translatable="yes">_Even-odd rule</attribute>
-	<attribute name="action">app.EditCutAction</attribute>
-      </item>
-      <item>
-	<attribute name="label" translatable="yes">_Winding rule</attribute>
-	<attribute name="action">app.EditCopyAction</attribute>
-      </item>
-    </section>
-  </menu>
-  <menu id="path-type-menu">
-    <section>
-      <item>
-	<attribute name="label" translatable="yes">_Line</attribute>
-	<attribute name="action">app.EditCutAction</attribute>
-      </item>
-      <item>
-	<attribute name="label" translatable="yes">_Curve</attribute>
-	<attribute name="action">app.EditCopyAction</attribute>
-      </item>
-    </section>
-  </menu>
 </interface>
