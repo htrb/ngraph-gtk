@@ -233,9 +233,12 @@ presetting_set_obj_field(struct objlist *obj, int id)
     sputobjfield(obj, id, "style", FwLineStyle[ival].list);
     sputobjfield(obj, id, "gauge_style", FwLineStyle[ival].list);
   } else if (strcmp(name, "axisgrid") == 0) {
-    putobj(obj, "width1", id, &width);
-    putobj(obj, "width2", id, &width);
-    putobj(obj, "width3", id, &width);
+    ival = width / 2;
+    putobj(obj, "width3", id, &ival);
+    ival = width / 4;
+    putobj(obj, "width2", id, &ival);
+    ival = width / 8;
+    putobj(obj, "width1", id, &ival);
   } else if (strcmp(name, "path") == 0) {
     putobj(obj, "stroke", id, &stroke);
     putobj(obj, "fill", id, &fill);
@@ -295,7 +298,7 @@ set_font_family(GtkWidget *cbox)
     combo_box_append_text(cbox, fcur->fontalias);
     fcur = fcur->next;
   }
-  combo_box_set_active(cbox, 1);
+  combo_box_set_active(cbox, 0);
 }
 
 static GtkWidget *
