@@ -4,15 +4,18 @@
     <section>
       <item>
 	<attribute name="label" translatable="yes">miter</attribute>
-	<attribute name="action">app.JoinTypeMiterAction</attribute>
+	<attribute name="action">app.JoinTypeAction</attribute>
+	<attribute name="target">miter</attribute>
       </item>
       <item>
 	<attribute name="label" translatable="yes">round</attribute>
-	<attribute name="action">app.JoinTypeRoundAction</attribute>
+	<attribute name="action">app.JoinTypeAction</attribute>
+	<attribute name="target">round</attribute>
       </item>
       <item>
 	<attribute name="label" translatable="yes">bevel</attribute>
-	<attribute name="action">app.JoinTypeBevelAction</attribute>
+	<attribute name="action">app.JoinTypeAction</attribute>
+	<attribute name="target">bevel</attribute>
       </item>
     </section>
   </menu>

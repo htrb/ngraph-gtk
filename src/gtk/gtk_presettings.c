@@ -13,13 +13,16 @@
 #define LINE_WIDTH_ICON_NUM 7
 #define LINE_STYLE_ICON_NUM 7
 
+#define DEFAULT_JOIN_TYPE JOIN_TYPE_MITER
+#define DEFAULT_JOIN_STR  "'miter'"
+
 struct presetting_widgets
 {
   GtkWidget *stroke, *fill;
   GtkWidget *line_width, *line_style;
   GtkWidget *color1, *color2;
   GtkWidget *path_type;
-  GtkWidget *join_type, *join_bevel, *join_round, *join_miter;
+  GtkWidget *join_type, *join_icon[3];
   GtkWidget *arrow_type, *arrow_none, *arrow_begin, *arrow_end, *arrow_both;
   GtkWidget *font, *bold, *italic, *pt;
   GtkWidget *mark, *mark_size;
@@ -31,24 +34,19 @@ struct presetting_widgets
 static struct presetting_widgets Widgets = {NULL};
 
 static void
-JoinTypeMiterAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
+JoinTypeAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  gtk_button_set_image(GTK_BUTTON(Widgets.join_type), Widgets.join_miter);
-  Widgets.join = JOIN_TYPE_MITER;
-}
-
-static void
-JoinTypeRoundAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
-{
-  gtk_button_set_image(GTK_BUTTON(Widgets.join_type), Widgets.join_round);
-  Widgets.join = JOIN_TYPE_ROUND;
-}
-
-static void
-JoinTypeBevelAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
-{
-  gtk_button_set_image(GTK_BUTTON(Widgets.join_type), Widgets.join_bevel);
-  Widgets.join = JOIN_TYPE_BEVEL;
+  const char *state;
+  int i;
+  state = g_variant_get_string(parameter, NULL);
+  for (i = 0; joinchar[i]; i++) {
+    if (g_strcmp0(state, joinchar[i]) == 0) {
+      Widgets.join = i;
+      gtk_button_set_image(GTK_BUTTON(Widgets.join_type), Widgets.join_icon[i]);
+      break;
+    }
+  }
+  g_simple_action_set_state(action, parameter);
 }
 
 static void
@@ -56,6 +54,7 @@ ArrowTypeNoneAction_activated(GSimpleAction *action, GVariant *parameter, gpoint
 {
   gtk_button_set_image(GTK_BUTTON(Widgets.arrow_type), Widgets.arrow_none);
   Widgets.arrow = ARROW_POSITION_NONE;
+  g_simple_action_set_state(action, parameter);
 }
 
 static void
@@ -63,6 +62,7 @@ ArrowTypeBeginAction_activated(GSimpleAction *action, GVariant *parameter, gpoin
 {
   gtk_button_set_image(GTK_BUTTON(Widgets.arrow_type), Widgets.arrow_begin);
   Widgets.arrow = ARROW_POSITION_BEGIN;
+  g_simple_action_set_state(action, parameter);
 }
 
 static void
@@ -70,6 +70,7 @@ ArrowTypeEndAction_activated(GSimpleAction *action, GVariant *parameter, gpointe
 {
   gtk_button_set_image(GTK_BUTTON(Widgets.arrow_type), Widgets.arrow_end);
   Widgets.arrow = ARROW_POSITION_END;
+  g_simple_action_set_state(action, parameter);
 }
 
 static void
@@ -77,17 +78,18 @@ ArrowTypeBothAction_activated(GSimpleAction *action, GVariant *parameter, gpoint
 {
   gtk_button_set_image(GTK_BUTTON(Widgets.arrow_type), Widgets.arrow_both);
   Widgets.arrow = ARROW_POSITION_BOTH;
+  g_simple_action_set_state(action, parameter);
 }
 
 
 static GActionEntry ToolMenuEntries[] = {
-  { "JoinTypeMiterAction", JoinTypeMiterAction_activated, NULL, NULL, NULL },
-  { "JoinTypeRoundAction", JoinTypeRoundAction_activated, NULL, NULL, NULL },
-  { "JoinTypeBevelAction", JoinTypeBevelAction_activated, NULL, NULL, NULL },
-  { "ArrowTypeNoneAction",  ArrowTypeNoneAction_activated, NULL, NULL, NULL },
-  { "ArrowTypeBeginAction", ArrowTypeBeginAction_activated, NULL, NULL, NULL },
-  { "ArrowTypeEndAction",   ArrowTypeEndAction_activated, NULL, NULL, NULL },
-  { "ArrowTypeBothAction",  ArrowTypeBothAction_activated, NULL, NULL, NULL },
+  { "JoinTypeAction",  NULL, "s", DEFAULT_JOIN_STR, JoinTypeAction_activated},
+  { "JoinTypeAction",  NULL, "s", DEFAULT_JOIN_STR, JoinTypeAction_activated},
+  { "JoinTypeAction",  NULL, "s", DEFAULT_JOIN_STR, JoinTypeAction_activated},
+  { "ArrowTypeNoneAction",  NULL, NULL, "true",  ArrowTypeNoneAction_activated},
+  { "ArrowTypeBeginAction", NULL, NULL, "false", ArrowTypeBeginAction_activated},
+  { "ArrowTypeEndAction",   NULL, NULL, "false", ArrowTypeEndAction_activated},
+  { "ArrowTypeBothAction",  NULL, NULL, "false", ArrowTypeBothAction_activated},
 };
 
 static void
@@ -101,12 +103,12 @@ create_images(struct presetting_widgets *widgets)
   g_object_ref(widgets->arrow_end);
   widgets->arrow_none = gtk_image_new_from_resource(RESOURCE_PATH "/pixmaps/arrow_none.png");
   g_object_ref(widgets->arrow_none);
-  widgets->join_bevel = gtk_image_new_from_resource(RESOURCE_PATH "/pixmaps/join_bevel.png");
-  g_object_ref(widgets->join_bevel);
-  widgets->join_round = gtk_image_new_from_resource(RESOURCE_PATH "/pixmaps/join_round.png");
-  g_object_ref(widgets->join_round);
-  widgets->join_miter = gtk_image_new_from_resource(RESOURCE_PATH "/pixmaps/join_miter.png");
-  g_object_ref(widgets->join_miter);
+  widgets->join_icon[JOIN_TYPE_BEVEL] = gtk_image_new_from_resource(RESOURCE_PATH "/pixmaps/join_bevel.png");
+  g_object_ref(widgets->join_icon[JOIN_TYPE_BEVEL]);
+  widgets->join_icon[JOIN_TYPE_ROUND] = gtk_image_new_from_resource(RESOURCE_PATH "/pixmaps/join_round.png");
+  g_object_ref(widgets->join_icon[JOIN_TYPE_ROUND]);
+  widgets->join_icon[JOIN_TYPE_MITER] = gtk_image_new_from_resource(RESOURCE_PATH "/pixmaps/join_miter.png");
+  g_object_ref(widgets->join_icon[JOIN_TYPE_MITER]);
 }
 
 static void
@@ -643,12 +645,12 @@ presetting_create_panel(GtkApplication *app)
   w = create_menu_button(builder, "arrow-type-menu", _("Arrow"));
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
   Widgets.arrow_type = w;
-  ArrowTypeNoneAction_activated(NULL, NULL, NULL);
+  //  ArrowTypeNoneAction_activated(NULL, NULL, NULL);
 
   w = create_menu_button(builder, "join-type-menu", _("Join"));
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
   Widgets.join_type = w;
-  JoinTypeMiterAction_activated(NULL, NULL, NULL);
+  gtk_button_set_image(GTK_BUTTON(Widgets.join_type), Widgets.join_icon[DEFAULT_JOIN_TYPE]);
 
   img = gtk_image_new_from_resource(RESOURCE_PATH "/pixmaps/fill.png");
   w = create_toggle_button(box, img, _("Fill"), FALSE);
