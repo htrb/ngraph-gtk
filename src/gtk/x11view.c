@@ -4081,7 +4081,6 @@ create_axis(struct Viewer *d)
 	presetting_set_obj_field(obj, idy);
 	presetting_set_obj_field(obj, idu);
 	presetting_set_obj_field(obj, idr);
-	presetting_set_obj_field(obj2, idg);
 	SectionDialog(&DlgSection, x1, y1, lenx, leny, obj,
 		      idx, idy, idu, idr, obj2, &idg, FALSE);
 
@@ -4091,6 +4090,7 @@ create_axis(struct Viewer *d)
 	presetting_set_obj_field(obj, idy);
 	presetting_set_obj_field(obj, idu);
 	presetting_set_obj_field(obj, idr);
+	presetting_set_obj_field(obj2, idg);
 	SectionDialog(&DlgSection, x1, y1, lenx, leny, obj,
 		      idx, idy, idu, idr, obj2, &idg, TRUE);
 

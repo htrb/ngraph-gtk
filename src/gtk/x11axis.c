@@ -39,6 +39,7 @@
 #include "gtk_subwin.h"
 #include "gtk_combo.h"
 #include "gtk_widget.h"
+#include "gtk_presettings.h"
 
 #include "x11bitmp.h"
 #include "x11gui.h"
@@ -598,6 +599,7 @@ SectionDialogGrid(GtkWidget *w, gpointer client_data)
 	putobj(d->Obj2, "axis_y", *(d->IDG), ref);
       }
       create = TRUE;
+      presetting_set_obj_field(d->Obj2, *(d->IDG));
     }
   }
   if (*(d->IDG) >= 0) {
@@ -2435,6 +2437,10 @@ CmAxisNewFrame(void *w, gpointer client_data)
   argv[1] = NULL;
   exeobj(obj, "default_grouping", idr, 1, argv);
   arraydel(&group);
+  presetting_set_obj_field(obj, idx);
+  presetting_set_obj_field(obj, idy);
+  presetting_set_obj_field(obj, idu);
+  presetting_set_obj_field(obj, idr);
   SectionDialog(&DlgSection, x, y, lenx, leny, obj, idx, idy, idu, idr, obj2,
 		&idg, FALSE);
   ret = DialogExecute(TopLevel, &DlgSection);
@@ -2499,6 +2505,11 @@ CmAxisNewSection(void *w, gpointer client_data)
       putobj(obj2, "axis_y", idg, ref);
     }
   }
+  presetting_set_obj_field(obj, idx);
+  presetting_set_obj_field(obj, idy);
+  presetting_set_obj_field(obj, idu);
+  presetting_set_obj_field(obj, idr);
+  presetting_set_obj_field(obj2, idg);
   SectionDialog(&DlgSection, x, y, lenx, leny, obj, idx, idy, idu, idr, obj2,
 		&idg, TRUE);
   ret = DialogExecute(TopLevel, &DlgSection);
@@ -2543,6 +2554,8 @@ CmAxisNewCross(void *w, gpointer client_data)
   argv[1] = NULL;
   exeobj(obj, "default_grouping", idy, 1, argv);
   arraydel(&group);
+  presetting_set_obj_field(obj, idx);
+  presetting_set_obj_field(obj, idy);
   CrossDialog(&DlgCross, x, y, lenx, leny, obj, idx, idy);
   ret = DialogExecute(TopLevel, &DlgCross);
   if (ret == IDCANCEL) {
@@ -2565,6 +2578,7 @@ CmAxisNewSingle(void *w, gpointer client_data)
     return;
   undo = axis_save_undo(UNDO_TYPE_CREATE);
   if ((id = newobj(obj)) >= 0) {
+    presetting_set_obj_field(obj, id);
     AxisDialog(NgraphApp.AxisWin.data.data, id, -1);
     ret = DialogExecute(TopLevel, &DlgAxis);
     if (ret == IDCANCEL) {
