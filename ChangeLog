@@ -1,3 +1,7 @@
+2018-07-31  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_widget.c (set_linumber_color): removed.
+
 2018-07-30  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/odraw.h (ARROW_POSITION_TYPE_NUM, JOIN_TYPE_NUM): added.
