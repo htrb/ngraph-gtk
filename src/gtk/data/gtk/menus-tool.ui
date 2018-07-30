@@ -23,19 +23,23 @@
     <section>
       <item>
 	<attribute name="label" translatable="yes">none</attribute>
-	<attribute name="action">app.ArrowTypeNoneAction</attribute>
+	<attribute name="action">app.ArrowPositionAction</attribute>
+	<attribute name="target">none</attribute>
       </item>
       <item>
 	<attribute name="label" translatable="yes">end</attribute>
-	<attribute name="action">app.ArrowTypeEndAction</attribute>
+	<attribute name="action">app.ArrowPositionAction</attribute>
+	<attribute name="target">end</attribute>
       </item>
       <item>
 	<attribute name="label" translatable="yes">begin</attribute>
-	<attribute name="action">app.ArrowTypeBeginAction</attribute>
+	<attribute name="action">app.ArrowPositionAction</attribute>
+	<attribute name="target">begin</attribute>
       </item>
       <item>
 	<attribute name="label" translatable="yes">both</attribute>
-	<attribute name="action">app.ArrowTypeBothAction</attribute>
+	<attribute name="action">app.ArrowPositionAction</attribute>
+	<attribute name="target">both</attribute>
       </item>
     </section>
   </menu>

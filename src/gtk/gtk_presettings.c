@@ -16,14 +16,17 @@
 #define DEFAULT_JOIN_TYPE JOIN_TYPE_MITER
 #define DEFAULT_JOIN_STR  "'miter'"
 
+#define DEFAULT_ARROW_POSITION ARROW_POSITION_NONE
+#define DEFAULT_ARROW_STR  "'none'"
+
 struct presetting_widgets
 {
   GtkWidget *stroke, *fill;
   GtkWidget *line_width, *line_style;
   GtkWidget *color1, *color2;
   GtkWidget *path_type;
-  GtkWidget *join_type, *join_icon[3];
-  GtkWidget *arrow_type, *arrow_none, *arrow_begin, *arrow_end, *arrow_both;
+  GtkWidget *join_type, *join_icon[JOIN_TYPE_NUM];
+  GtkWidget *arrow_position, *arrow_icon[ARROW_POSITION_TYPE_NUM];
   GtkWidget *font, *bold, *italic, *pt;
   GtkWidget *mark, *mark_size;
   enum JOIN_TYPE join;
@@ -50,65 +53,47 @@ JoinTypeAction_activated(GSimpleAction *action, GVariant *parameter, gpointer ap
 }
 
 static void
-ArrowTypeNoneAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
+ArrowPositionAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  gtk_button_set_image(GTK_BUTTON(Widgets.arrow_type), Widgets.arrow_none);
-  Widgets.arrow = ARROW_POSITION_NONE;
+  const char *state;
+  int i;
+  state = g_variant_get_string(parameter, NULL);
+  for (i = 0; arrowchar[i]; i++) {
+    if (g_strcmp0(state, arrowchar[i]) == 0) {
+      Widgets.arrow = i;
+      gtk_button_set_image(GTK_BUTTON(Widgets.arrow_position), Widgets.arrow_icon[i]);
+      break;
+    }
+  }
   g_simple_action_set_state(action, parameter);
 }
-
-static void
-ArrowTypeBeginAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
-{
-  gtk_button_set_image(GTK_BUTTON(Widgets.arrow_type), Widgets.arrow_begin);
-  Widgets.arrow = ARROW_POSITION_BEGIN;
-  g_simple_action_set_state(action, parameter);
-}
-
-static void
-ArrowTypeEndAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
-{
-  gtk_button_set_image(GTK_BUTTON(Widgets.arrow_type), Widgets.arrow_end);
-  Widgets.arrow = ARROW_POSITION_END;
-  g_simple_action_set_state(action, parameter);
-}
-
-static void
-ArrowTypeBothAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
-{
-  gtk_button_set_image(GTK_BUTTON(Widgets.arrow_type), Widgets.arrow_both);
-  Widgets.arrow = ARROW_POSITION_BOTH;
-  g_simple_action_set_state(action, parameter);
-}
-
 
 static GActionEntry ToolMenuEntries[] = {
-  { "JoinTypeAction",  NULL, "s", DEFAULT_JOIN_STR, JoinTypeAction_activated},
-  { "JoinTypeAction",  NULL, "s", DEFAULT_JOIN_STR, JoinTypeAction_activated},
-  { "JoinTypeAction",  NULL, "s", DEFAULT_JOIN_STR, JoinTypeAction_activated},
-  { "ArrowTypeNoneAction",  NULL, NULL, "true",  ArrowTypeNoneAction_activated},
-  { "ArrowTypeBeginAction", NULL, NULL, "false", ArrowTypeBeginAction_activated},
-  { "ArrowTypeEndAction",   NULL, NULL, "false", ArrowTypeEndAction_activated},
-  { "ArrowTypeBothAction",  NULL, NULL, "false", ArrowTypeBothAction_activated},
+  { "JoinTypeAction",      NULL, "s", DEFAULT_JOIN_STR,  JoinTypeAction_activated},
+  { "ArrowPositionAction", NULL, "s", DEFAULT_ARROW_STR, ArrowPositionAction_activated},
 };
+
+static void
+create_images_sub(const char *prefix, char **item, GtkWidget **icon)
+{
+  int i;
+  GtkWidget *img;
+  char *img_file;
+
+  for (i = 0; item[i]; i++) {
+    img_file = g_strdup_printf("%s/pixmaps/%s_%s.png", RESOURCE_PATH, prefix, item[i]);
+    img = gtk_image_new_from_resource(img_file);
+    icon[i] = img;
+    g_object_ref(img);
+    g_free(img_file);
+  }
+}
 
 static void
 create_images(struct presetting_widgets *widgets)
 {
-  widgets->arrow_both = gtk_image_new_from_resource(RESOURCE_PATH "/pixmaps/arrow_both.png");
-  g_object_ref(widgets->arrow_both);
-  widgets->arrow_begin = gtk_image_new_from_resource(RESOURCE_PATH "/pixmaps/arrow_begin.png");
-  g_object_ref(widgets->arrow_begin);
-  widgets->arrow_end = gtk_image_new_from_resource(RESOURCE_PATH "/pixmaps/arrow_end.png");
-  g_object_ref(widgets->arrow_end);
-  widgets->arrow_none = gtk_image_new_from_resource(RESOURCE_PATH "/pixmaps/arrow_none.png");
-  g_object_ref(widgets->arrow_none);
-  widgets->join_icon[JOIN_TYPE_BEVEL] = gtk_image_new_from_resource(RESOURCE_PATH "/pixmaps/join_bevel.png");
-  g_object_ref(widgets->join_icon[JOIN_TYPE_BEVEL]);
-  widgets->join_icon[JOIN_TYPE_ROUND] = gtk_image_new_from_resource(RESOURCE_PATH "/pixmaps/join_round.png");
-  g_object_ref(widgets->join_icon[JOIN_TYPE_ROUND]);
-  widgets->join_icon[JOIN_TYPE_MITER] = gtk_image_new_from_resource(RESOURCE_PATH "/pixmaps/join_miter.png");
-  g_object_ref(widgets->join_icon[JOIN_TYPE_MITER]);
+  create_images_sub("arrow", arrowchar, widgets->arrow_icon);
+  create_images_sub("join", joinchar, widgets->join_icon);
 }
 
 static void
@@ -328,127 +313,127 @@ presetting_set_visibility(enum PointerType type)
   case ZoomB:
     break;
   case PathB:
-    gtk_widget_set_visible(Widgets.stroke,     TRUE);
-    gtk_widget_set_visible(Widgets.fill,       TRUE);
-    gtk_widget_set_visible(Widgets.line_width, TRUE);
-    gtk_widget_set_visible(Widgets.line_style, TRUE);
-    gtk_widget_set_visible(Widgets.color1,     TRUE);
-    gtk_widget_set_visible(Widgets.color2,     TRUE);
-    gtk_widget_set_visible(Widgets.path_type,  TRUE);
-    gtk_widget_set_visible(Widgets.join_type,  TRUE);
-    gtk_widget_set_visible(Widgets.arrow_type, TRUE);
-    gtk_widget_set_visible(Widgets.font,       FALSE);
-    gtk_widget_set_visible(Widgets.bold,       FALSE);
-    gtk_widget_set_visible(Widgets.italic,     FALSE);
-    gtk_widget_set_visible(Widgets.pt,         FALSE);
-    gtk_widget_set_visible(Widgets.mark_size,  FALSE);
-    gtk_widget_set_visible(Widgets.mark,       FALSE);
+    gtk_widget_set_visible(Widgets.stroke,         TRUE);
+    gtk_widget_set_visible(Widgets.fill,           TRUE);
+    gtk_widget_set_visible(Widgets.line_width,     TRUE);
+    gtk_widget_set_visible(Widgets.line_style,     TRUE);
+    gtk_widget_set_visible(Widgets.color1,         TRUE);
+    gtk_widget_set_visible(Widgets.color2,         TRUE);
+    gtk_widget_set_visible(Widgets.path_type,      TRUE);
+    gtk_widget_set_visible(Widgets.join_type,      TRUE);
+    gtk_widget_set_visible(Widgets.arrow_position, TRUE);
+    gtk_widget_set_visible(Widgets.font,           FALSE);
+    gtk_widget_set_visible(Widgets.bold,           FALSE);
+    gtk_widget_set_visible(Widgets.italic,         FALSE);
+    gtk_widget_set_visible(Widgets.pt,             FALSE);
+    gtk_widget_set_visible(Widgets.mark_size,      FALSE);
+    gtk_widget_set_visible(Widgets.mark,           FALSE);
     break;
   case RectB:
-    gtk_widget_set_visible(Widgets.stroke,     TRUE);
-    gtk_widget_set_visible(Widgets.fill,       TRUE);
-    gtk_widget_set_visible(Widgets.line_width, TRUE);
-    gtk_widget_set_visible(Widgets.line_style, TRUE);
-    gtk_widget_set_visible(Widgets.color1,     TRUE);
-    gtk_widget_set_visible(Widgets.color2,     TRUE);
-    gtk_widget_set_visible(Widgets.path_type,  FALSE);
-    gtk_widget_set_visible(Widgets.join_type,  FALSE);
-    gtk_widget_set_visible(Widgets.arrow_type, FALSE);
-    gtk_widget_set_visible(Widgets.font,       FALSE);
-    gtk_widget_set_visible(Widgets.bold,       FALSE);
-    gtk_widget_set_visible(Widgets.italic,     FALSE);
-    gtk_widget_set_visible(Widgets.pt,         FALSE);
-    gtk_widget_set_visible(Widgets.mark_size,  FALSE);
-    gtk_widget_set_visible(Widgets.mark,       FALSE);
+    gtk_widget_set_visible(Widgets.stroke,         TRUE);
+    gtk_widget_set_visible(Widgets.fill,           TRUE);
+    gtk_widget_set_visible(Widgets.line_width,     TRUE);
+    gtk_widget_set_visible(Widgets.line_style,     TRUE);
+    gtk_widget_set_visible(Widgets.color1,         TRUE);
+    gtk_widget_set_visible(Widgets.color2,         TRUE);
+    gtk_widget_set_visible(Widgets.path_type,      FALSE);
+    gtk_widget_set_visible(Widgets.join_type,      FALSE);
+    gtk_widget_set_visible(Widgets.arrow_position, FALSE);
+    gtk_widget_set_visible(Widgets.font,           FALSE);
+    gtk_widget_set_visible(Widgets.bold,           FALSE);
+    gtk_widget_set_visible(Widgets.italic,         FALSE);
+    gtk_widget_set_visible(Widgets.pt,             FALSE);
+    gtk_widget_set_visible(Widgets.mark_size,      FALSE);
+    gtk_widget_set_visible(Widgets.mark,           FALSE);
     break;
   case ArcB:
-    gtk_widget_set_visible(Widgets.stroke,     TRUE);
-    gtk_widget_set_visible(Widgets.fill,       TRUE);
-    gtk_widget_set_visible(Widgets.line_width, TRUE);
-    gtk_widget_set_visible(Widgets.line_style, TRUE);
-    gtk_widget_set_visible(Widgets.color1,     TRUE);
-    gtk_widget_set_visible(Widgets.color2,     TRUE);
-    gtk_widget_set_visible(Widgets.path_type,  FALSE);
-    gtk_widget_set_visible(Widgets.join_type,  TRUE);
-    gtk_widget_set_visible(Widgets.arrow_type, FALSE);
-    gtk_widget_set_visible(Widgets.font,       FALSE);
-    gtk_widget_set_visible(Widgets.bold,       FALSE);
-    gtk_widget_set_visible(Widgets.italic,     FALSE);
-    gtk_widget_set_visible(Widgets.pt,         FALSE);
-    gtk_widget_set_visible(Widgets.mark_size,  FALSE);
-    gtk_widget_set_visible(Widgets.mark,       FALSE);
+    gtk_widget_set_visible(Widgets.stroke,         TRUE);
+    gtk_widget_set_visible(Widgets.fill,           TRUE);
+    gtk_widget_set_visible(Widgets.line_width,     TRUE);
+    gtk_widget_set_visible(Widgets.line_style,     TRUE);
+    gtk_widget_set_visible(Widgets.color1,         TRUE);
+    gtk_widget_set_visible(Widgets.color2,         TRUE);
+    gtk_widget_set_visible(Widgets.path_type,      FALSE);
+    gtk_widget_set_visible(Widgets.join_type,      TRUE);
+    gtk_widget_set_visible(Widgets.arrow_position, FALSE);
+    gtk_widget_set_visible(Widgets.font,           FALSE);
+    gtk_widget_set_visible(Widgets.bold,           FALSE);
+    gtk_widget_set_visible(Widgets.italic,         FALSE);
+    gtk_widget_set_visible(Widgets.pt,             FALSE);
+    gtk_widget_set_visible(Widgets.mark_size,      FALSE);
+    gtk_widget_set_visible(Widgets.mark,           FALSE);
     break;
   case MarkB:
-    gtk_widget_set_visible(Widgets.stroke,     FALSE);
-    gtk_widget_set_visible(Widgets.fill,       FALSE);
-    gtk_widget_set_visible(Widgets.line_width, TRUE);
-    gtk_widget_set_visible(Widgets.line_style, TRUE);
-    gtk_widget_set_visible(Widgets.color1,     TRUE);
-    gtk_widget_set_visible(Widgets.color2,     TRUE);
-    gtk_widget_set_visible(Widgets.path_type,  FALSE);
-    gtk_widget_set_visible(Widgets.join_type,  FALSE);
-    gtk_widget_set_visible(Widgets.arrow_type, FALSE);
-    gtk_widget_set_visible(Widgets.font,       FALSE);
-    gtk_widget_set_visible(Widgets.bold,       FALSE);
-    gtk_widget_set_visible(Widgets.italic,     FALSE);
-    gtk_widget_set_visible(Widgets.pt,         FALSE);
-    gtk_widget_set_visible(Widgets.mark_size,  TRUE);
-    gtk_widget_set_visible(Widgets.mark,       TRUE);
+    gtk_widget_set_visible(Widgets.stroke,         FALSE);
+    gtk_widget_set_visible(Widgets.fill,           FALSE);
+    gtk_widget_set_visible(Widgets.line_width,     TRUE);
+    gtk_widget_set_visible(Widgets.line_style,     TRUE);
+    gtk_widget_set_visible(Widgets.color1,         TRUE);
+    gtk_widget_set_visible(Widgets.color2,         TRUE);
+    gtk_widget_set_visible(Widgets.path_type,      FALSE);
+    gtk_widget_set_visible(Widgets.join_type,      FALSE);
+    gtk_widget_set_visible(Widgets.arrow_position, FALSE);
+    gtk_widget_set_visible(Widgets.font,           FALSE);
+    gtk_widget_set_visible(Widgets.bold,           FALSE);
+    gtk_widget_set_visible(Widgets.italic,         FALSE);
+    gtk_widget_set_visible(Widgets.pt,             FALSE);
+    gtk_widget_set_visible(Widgets.mark_size,      TRUE);
+    gtk_widget_set_visible(Widgets.mark,           TRUE);
     break;
   case TextB:
     set_font_family(Widgets.font);
-    gtk_widget_set_visible(Widgets.stroke,     FALSE);
-    gtk_widget_set_visible(Widgets.fill,       FALSE);
-    gtk_widget_set_visible(Widgets.line_width, FALSE);
-    gtk_widget_set_visible(Widgets.line_style, FALSE);
-    gtk_widget_set_visible(Widgets.color1,     TRUE);
-    gtk_widget_set_visible(Widgets.color2,     FALSE);
-    gtk_widget_set_visible(Widgets.path_type,  FALSE);
-    gtk_widget_set_visible(Widgets.join_type,  FALSE);
-    gtk_widget_set_visible(Widgets.arrow_type, FALSE);
-    gtk_widget_set_visible(Widgets.font,       TRUE);
-    gtk_widget_set_visible(Widgets.bold,       TRUE);
-    gtk_widget_set_visible(Widgets.italic,     TRUE);
-    gtk_widget_set_visible(Widgets.pt,         TRUE);
-    gtk_widget_set_visible(Widgets.mark_size,  FALSE);
-    gtk_widget_set_visible(Widgets.mark,       FALSE);
+    gtk_widget_set_visible(Widgets.stroke,         FALSE);
+    gtk_widget_set_visible(Widgets.fill,           FALSE);
+    gtk_widget_set_visible(Widgets.line_width,     FALSE);
+    gtk_widget_set_visible(Widgets.line_style,     FALSE);
+    gtk_widget_set_visible(Widgets.color1,         TRUE);
+    gtk_widget_set_visible(Widgets.color2,         FALSE);
+    gtk_widget_set_visible(Widgets.path_type,      FALSE);
+    gtk_widget_set_visible(Widgets.join_type,      FALSE);
+    gtk_widget_set_visible(Widgets.arrow_position, FALSE);
+    gtk_widget_set_visible(Widgets.font,           TRUE);
+    gtk_widget_set_visible(Widgets.bold,           TRUE);
+    gtk_widget_set_visible(Widgets.italic,         TRUE);
+    gtk_widget_set_visible(Widgets.pt,             TRUE);
+    gtk_widget_set_visible(Widgets.mark_size,      FALSE);
+    gtk_widget_set_visible(Widgets.mark,           FALSE);
     break;
   case GaussB:
-    gtk_widget_set_visible(Widgets.stroke,     FALSE);
-    gtk_widget_set_visible(Widgets.fill,       FALSE);
-    gtk_widget_set_visible(Widgets.line_width, TRUE);
-    gtk_widget_set_visible(Widgets.line_style, TRUE);
-    gtk_widget_set_visible(Widgets.color1,     TRUE);
-    gtk_widget_set_visible(Widgets.color2,     FALSE);
-    gtk_widget_set_visible(Widgets.path_type,  FALSE);
-    gtk_widget_set_visible(Widgets.join_type,  TRUE);
-    gtk_widget_set_visible(Widgets.arrow_type, FALSE);
-    gtk_widget_set_visible(Widgets.font,       FALSE);
-    gtk_widget_set_visible(Widgets.bold,       FALSE);
-    gtk_widget_set_visible(Widgets.italic,     FALSE);
-    gtk_widget_set_visible(Widgets.pt,         FALSE);
-    gtk_widget_set_visible(Widgets.mark_size,  FALSE);
-    gtk_widget_set_visible(Widgets.mark,       FALSE);
+    gtk_widget_set_visible(Widgets.stroke,         FALSE);
+    gtk_widget_set_visible(Widgets.fill,           FALSE);
+    gtk_widget_set_visible(Widgets.line_width,     TRUE);
+    gtk_widget_set_visible(Widgets.line_style,     TRUE);
+    gtk_widget_set_visible(Widgets.color1,         TRUE);
+    gtk_widget_set_visible(Widgets.color2,         FALSE);
+    gtk_widget_set_visible(Widgets.path_type,      FALSE);
+    gtk_widget_set_visible(Widgets.join_type,      TRUE);
+    gtk_widget_set_visible(Widgets.arrow_position, FALSE);
+    gtk_widget_set_visible(Widgets.font,           FALSE);
+    gtk_widget_set_visible(Widgets.bold,           FALSE);
+    gtk_widget_set_visible(Widgets.italic,         FALSE);
+    gtk_widget_set_visible(Widgets.pt,             FALSE);
+    gtk_widget_set_visible(Widgets.mark_size,      FALSE);
+    gtk_widget_set_visible(Widgets.mark,           FALSE);
     break;
   case FrameB:
   case SectionB:
   case CrossB:
   case SingleB:
-    gtk_widget_set_visible(Widgets.stroke,     FALSE);
-    gtk_widget_set_visible(Widgets.fill,       FALSE);
-    gtk_widget_set_visible(Widgets.line_width, TRUE);
-    gtk_widget_set_visible(Widgets.line_style, TRUE);
-    gtk_widget_set_visible(Widgets.color1,     TRUE);
-    gtk_widget_set_visible(Widgets.color2,     FALSE);
-    gtk_widget_set_visible(Widgets.path_type,  FALSE);
-    gtk_widget_set_visible(Widgets.join_type,  FALSE);
-    gtk_widget_set_visible(Widgets.arrow_type, FALSE);
-    gtk_widget_set_visible(Widgets.font,       TRUE);
-    gtk_widget_set_visible(Widgets.bold,       TRUE);
-    gtk_widget_set_visible(Widgets.italic,     TRUE);
-    gtk_widget_set_visible(Widgets.pt,         TRUE);
-    gtk_widget_set_visible(Widgets.mark_size,  FALSE);
-    gtk_widget_set_visible(Widgets.mark,       FALSE);
+    gtk_widget_set_visible(Widgets.stroke,         FALSE);
+    gtk_widget_set_visible(Widgets.fill,           FALSE);
+    gtk_widget_set_visible(Widgets.line_width,     TRUE);
+    gtk_widget_set_visible(Widgets.line_style,     TRUE);
+    gtk_widget_set_visible(Widgets.color1,         TRUE);
+    gtk_widget_set_visible(Widgets.color2,         FALSE);
+    gtk_widget_set_visible(Widgets.path_type,      FALSE);
+    gtk_widget_set_visible(Widgets.join_type,      FALSE);
+    gtk_widget_set_visible(Widgets.arrow_position, FALSE);
+    gtk_widget_set_visible(Widgets.font,           TRUE);
+    gtk_widget_set_visible(Widgets.bold,           TRUE);
+    gtk_widget_set_visible(Widgets.italic,         TRUE);
+    gtk_widget_set_visible(Widgets.pt,             TRUE);
+    gtk_widget_set_visible(Widgets.mark_size,      FALSE);
+    gtk_widget_set_visible(Widgets.mark,           FALSE);
     break;
   }
 }
@@ -644,8 +629,8 @@ presetting_create_panel(GtkApplication *app)
 
   w = create_menu_button(builder, "arrow-type-menu", _("Arrow"));
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
-  Widgets.arrow_type = w;
-  //  ArrowTypeNoneAction_activated(NULL, NULL, NULL);
+  Widgets.arrow_position = w;
+  gtk_button_set_image(GTK_BUTTON(Widgets.arrow_position), Widgets.arrow_icon[DEFAULT_ARROW_POSITION]);
 
   w = create_menu_button(builder, "join-type-menu", _("Join"));
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
