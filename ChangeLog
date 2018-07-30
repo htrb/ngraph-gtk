@@ -1,3 +1,7 @@
+2018-07-30  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/odraw.h (ARROW_POSITION_TYPE_NUM, JOIN_TYPE_NUM): added.
+
 2018-07-28  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (create_toplevel_window): set toplevel window
