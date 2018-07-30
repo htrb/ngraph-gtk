@@ -126,6 +126,7 @@ set_font_style(struct objlist *obj, int id, const char *field)
   int style, bold, italic;
   bold = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(Widgets.bold));
   italic = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(Widgets.italic));
+  style = 0;
   if (bold) {
     style |= GRA_FONT_STYLE_BOLD;
   }
