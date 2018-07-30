@@ -36,36 +36,34 @@ struct presetting_widgets
 
 static struct presetting_widgets Widgets = {NULL};
 
-static void
-JoinTypeAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
+static int
+check_selected_item(GSimpleAction *action, GVariant *parameter, char **item, GtkWidget *button, GtkWidget **icon)
 {
   const char *state;
-  int i;
+  int i, selected;
+  selected = 0;
   state = g_variant_get_string(parameter, NULL);
-  for (i = 0; joinchar[i]; i++) {
-    if (g_strcmp0(state, joinchar[i]) == 0) {
-      Widgets.join = i;
-      gtk_button_set_image(GTK_BUTTON(Widgets.join_type), Widgets.join_icon[i]);
+  for (i = 0; item[i]; i++) {
+    if (g_strcmp0(state, item[i]) == 0) {
+      gtk_button_set_image(GTK_BUTTON(button), icon[i]);
+      selected = i;
       break;
     }
   }
   g_simple_action_set_state(action, parameter);
+  return selected;
+}
+
+static void
+JoinTypeAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
+{
+  Widgets.join = check_selected_item(action, parameter, joinchar, Widgets.join_type, Widgets.join_icon);
 }
 
 static void
 ArrowPositionAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  const char *state;
-  int i;
-  state = g_variant_get_string(parameter, NULL);
-  for (i = 0; arrowchar[i]; i++) {
-    if (g_strcmp0(state, arrowchar[i]) == 0) {
-      Widgets.arrow = i;
-      gtk_button_set_image(GTK_BUTTON(Widgets.arrow_position), Widgets.arrow_icon[i]);
-      break;
-    }
-  }
-  g_simple_action_set_state(action, parameter);
+  Widgets.arrow = check_selected_item(action, parameter, arrowchar, Widgets.arrow_position, Widgets.arrow_icon);
 }
 
 static GActionEntry ToolMenuEntries[] = {
