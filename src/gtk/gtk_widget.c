@@ -880,42 +880,6 @@ set_widget_font(GtkWidget *w, const char *font)
   }
 }
 
-#else  /* GTK_CHECK_VERSION(3, 16, 0) */
-
-#define LINE_NUMBER_R 0xCC00
-#define LINE_NUMBER_G 0xCC00
-#define LINE_NUMBER_B 0xCC00
-
-static void
-set_linumber_color(GtkWidget *w)
-{
-  GdkRGBA col;
-
-  col.red   = LINE_NUMBER_R * 1.0 / 0xFFFF;
-  col.green = LINE_NUMBER_G * 1.0 / 0xFFFF;
-  col.blue  = LINE_NUMBER_B * 1.0 / 0xFFFF;
-  col.alpha = 1.0;
-
-  gtk_widget_override_background_color(w, GTK_STATE_FLAG_NORMAL, &col);
-  gtk_widget_override_background_color(w, GTK_STATE_FLAG_ACTIVE, &col);
-  gtk_widget_override_background_color(w, GTK_STATE_FLAG_PRELIGHT, &col);
-  gtk_widget_override_background_color(w, GTK_STATE_FLAG_SELECTED, &col);
-  gtk_widget_override_background_color(w, GTK_STATE_FLAG_INSENSITIVE, &col);
-
-  col.red   = 0;
-  col.green = 0;
-  col.blue  = 0;
-  col.alpha = 1.0;
-
-  gtk_widget_override_color(w, GTK_STATE_FLAG_NORMAL, &col);
-  gtk_widget_override_color(w, GTK_STATE_FLAG_ACTIVE, &col);
-  gtk_widget_override_color(w, GTK_STATE_FLAG_PRELIGHT, &col);
-  gtk_widget_override_color(w, GTK_STATE_FLAG_SELECTED, &col);
-  gtk_widget_override_color(w, GTK_STATE_FLAG_INSENSITIVE, &col);
-
-  gtk_widget_set_sensitive(w, FALSE);
-}
-
 #endif	/* ! GTK_CHECK_VERSION(3, 16, 0) */
 
 GtkWidget *
