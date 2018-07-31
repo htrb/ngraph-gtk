@@ -53,8 +53,14 @@
     <file>pixmaps/join_bevel.png</file>
     <file>pixmaps/join_miter.png</file>
     <file>pixmaps/join_round.png</file>
-    <file>pixmaps/stroke.png</file>
-    <file>pixmaps/fill.png</file>
+    <file>pixmaps/stroke_fill_0.png</file>
+    <file>pixmaps/stroke_fill_1.png</file>
+    <file>pixmaps/stroke_fill_2.png</file>
+    <file>pixmaps/stroke_fill_3.png</file>
+    <file>pixmaps/stroke_fill_4.png</file>
+    <file>pixmaps/stroke_fill_5.png</file>
+    <file>pixmaps/stroke_fill_6.png</file>
+    <file>pixmaps/stroke_fill_7.png</file>
     <file>pixmaps/linewidth_002.png</file>
     <file>pixmaps/linewidth_004.png</file>
     <file>pixmaps/linewidth_008.png</file>
