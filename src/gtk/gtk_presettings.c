@@ -684,6 +684,7 @@ presetting_create_panel(GtkApplication *app)
   gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(w), &color);
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
   Widgets.color1 = w;
+  gtk_widget_set_name(Widgets.color1, "StrokeColorButton");
 
   w = create_color_button(NULL);
   color.red = color.green = color.blue = 1;
