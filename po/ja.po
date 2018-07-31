@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.07.06\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2018-07-31 16:59+0900\n"
+"POT-Creation-Date: 2018-07-31 18:51+0900\n"
 "PO-Revision-Date: 2018-07-31 17:00+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -391,7 +391,7 @@ msgstr "長さ(_A):"
 msgid "_Arrow width:"
 msgstr "幅(_A):"
 
-#: src/gtk/x11axis.c:1475 src/gtk/x11axis.c:3227 src/gtk/gtk_presettings.c:700
+#: src/gtk/x11axis.c:1475 src/gtk/x11axis.c:3227 src/gtk/gtk_presettings.c:701
 msgid "Arrow"
 msgstr "矢印"
 
@@ -1309,7 +1309,7 @@ msgstr "データファイル作成中"
 msgid "Making data file."
 msgstr "データファイル作成中"
 
-#: src/gtk/x11file.c:5992 src/gtk/x11lgnd.c:2928 src/gtk/gtk_presettings.c:695
+#: src/gtk/x11file.c:5992 src/gtk/x11lgnd.c:2928 src/gtk/gtk_presettings.c:696
 msgid "Join"
 msgstr "ジョイン"
 
