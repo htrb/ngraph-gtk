@@ -1,5 +1,22 @@
 <?xml version="1.0"?>
 <interface>
+  <menu id="stroke-fill-menu">
+    <section>
+      <item>
+	<attribute name="label" translatable="yes">_Stroke</attribute>
+	<attribute name="action">app.StrokeFillStrokeAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Fill</attribute>
+	<attribute name="action">app.StrokeFillFillAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Close path</attribute>
+	<attribute name="action">app.StrokeFillClosePathAction</attribute>
+	<attribute name="hidden-when">action-disabled</attribute>
+      </item>
+    </section>
+  </menu>
   <menu id="join-type-menu">
     <section>
       <item>
