@@ -651,7 +651,7 @@ presetting_create_panel(GtkApplication *app)
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
   Widgets.path_type = w;
 
-  w = create_menu_button(builder, "stroke-fill-menu", "stroke/fill");
+  w = create_menu_button(builder, "stroke-fill-menu", _("stroke/fill"));
   Widgets.stroke_fill = w;
   Widgets.stroke = TRUE;
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
