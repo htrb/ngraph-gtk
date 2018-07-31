@@ -19,19 +19,23 @@
 #define DEFAULT_ARROW_POSITION ARROW_POSITION_NONE
 #define DEFAULT_ARROW_STR  "'none'"
 
+#define DEFAULT_STROKE_FILL_TYPE 1
+#define STROKE_FILL_ICON_NUM 8
+
 struct presetting_widgets
 {
-  GtkWidget *stroke, *fill;
+//  GtkWidget *stroke, *fill;
   GtkWidget *line_width, *line_style;
   GtkWidget *color1, *color2;
   GtkWidget *path_type;
   GtkWidget *join_type, *join_icon[JOIN_TYPE_NUM];
   GtkWidget *arrow_position, *arrow_icon[ARROW_POSITION_TYPE_NUM];
+  GtkWidget *stroke_fill, *stroke_fill_icon[STROKE_FILL_ICON_NUM];
   GtkWidget *font, *bold, *italic, *pt;
   GtkWidget *mark, *mark_size;
   enum JOIN_TYPE join;
   enum ARROW_POSITION_TYPE arrow;
-  int lw;
+  int lw, fill, stroke, close_path;
 };
 
 static struct presetting_widgets Widgets = {NULL};
@@ -66,9 +70,59 @@ ArrowPositionAction_activated(GSimpleAction *action, GVariant *parameter, gpoint
   Widgets.arrow = check_selected_item(action, parameter, arrowchar, Widgets.arrow_position, Widgets.arrow_icon);
 }
 
+static void
+set_stroke_fill_icon(void)
+{
+  int i;
+  i = 0;
+  if (Widgets.stroke) {
+    i |= 1;
+  }
+  if (Widgets.fill) {
+    i |= 2;
+  }
+  if (Widgets.close_path) {
+    i |= 4;
+  }
+  gtk_button_set_image(GTK_BUTTON(Widgets.stroke_fill), Widgets.stroke_fill_icon[i]);
+}
+
+static void
+StrokeFillClosePathAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
+{
+  int state;
+  state = g_variant_get_boolean(parameter);
+  Widgets.close_path = state;
+  set_stroke_fill_icon();
+  g_simple_action_set_state(action, parameter);
+}
+
+static void
+StrokeFillFillAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
+{
+  int state;
+  state = g_variant_get_boolean(parameter);
+  Widgets.fill = state;
+  set_stroke_fill_icon();
+  g_simple_action_set_state(action, parameter);
+}
+
+static void
+StrokeFillStrokeAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
+{
+  int state;
+  state = g_variant_get_boolean(parameter);
+  Widgets.stroke = state;
+  set_stroke_fill_icon();
+  g_simple_action_set_state(action, parameter);
+}
+
 static GActionEntry ToolMenuEntries[] = {
-  { "JoinTypeAction",      NULL, "s", DEFAULT_JOIN_STR,  JoinTypeAction_activated},
-  { "ArrowPositionAction", NULL, "s", DEFAULT_ARROW_STR, ArrowPositionAction_activated},
+  {"JoinTypeAction",            NULL, "s",  DEFAULT_JOIN_STR,  JoinTypeAction_activated},
+  {"ArrowPositionAction",       NULL, "s",  DEFAULT_ARROW_STR, ArrowPositionAction_activated},
+  {"StrokeFillStrokeAction",    NULL, NULL, "true",            StrokeFillStrokeAction_activated},
+  {"StrokeFillFillAction",      NULL, NULL, "false",           StrokeFillFillAction_activated},
+  {"StrokeFillClosePathAction", NULL, NULL, "false",           StrokeFillClosePathAction_activated},
 };
 
 static void
@@ -90,8 +144,18 @@ create_images_sub(const char *prefix, char **item, GtkWidget **icon)
 static void
 create_images(struct presetting_widgets *widgets)
 {
+  int i;
   create_images_sub("arrow", arrowchar, widgets->arrow_icon);
   create_images_sub("join", joinchar, widgets->join_icon);
+  for (i = 0; i < STROKE_FILL_ICON_NUM; i++) {
+    GtkWidget *img;
+    char *img_file;
+    img_file = g_strdup_printf("%s/pixmaps/stroke_fill_%d.png", RESOURCE_PATH, i);
+    img = gtk_image_new_from_resource(img_file);
+    widgets->stroke_fill_icon[i] = img;
+    g_object_ref(img);
+    g_free(img_file);
+  }
 }
 
 static void
@@ -190,8 +254,8 @@ presetting_set_obj_field(struct objlist *obj, int id)
 
   set_rgba(Widgets.color1, &r1, &g1, &b1, &a1);
   set_rgba(Widgets.color2, &r2, &g2, &b2, &a2);
-  stroke = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(Widgets.stroke));
-  fill = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(Widgets.fill));
+  stroke = Widgets.stroke;
+  fill = Widgets.fill;
   width = (2 << combo_box_get_active(Widgets.line_width)) * 10;
 
   if (strcmp(name, "axis") == 0) {
@@ -312,8 +376,7 @@ presetting_set_visibility(enum PointerType type)
   case ZoomB:
     break;
   case PathB:
-    gtk_widget_set_visible(Widgets.stroke,         TRUE);
-    gtk_widget_set_visible(Widgets.fill,           TRUE);
+    gtk_widget_set_visible(Widgets.stroke_fill,    TRUE);
     gtk_widget_set_visible(Widgets.line_width,     TRUE);
     gtk_widget_set_visible(Widgets.line_style,     TRUE);
     gtk_widget_set_visible(Widgets.color1,         TRUE);
@@ -329,8 +392,7 @@ presetting_set_visibility(enum PointerType type)
     gtk_widget_set_visible(Widgets.mark,           FALSE);
     break;
   case RectB:
-    gtk_widget_set_visible(Widgets.stroke,         TRUE);
-    gtk_widget_set_visible(Widgets.fill,           TRUE);
+    gtk_widget_set_visible(Widgets.stroke_fill,    TRUE);
     gtk_widget_set_visible(Widgets.line_width,     TRUE);
     gtk_widget_set_visible(Widgets.line_style,     TRUE);
     gtk_widget_set_visible(Widgets.color1,         TRUE);
@@ -346,8 +408,7 @@ presetting_set_visibility(enum PointerType type)
     gtk_widget_set_visible(Widgets.mark,           FALSE);
     break;
   case ArcB:
-    gtk_widget_set_visible(Widgets.stroke,         TRUE);
-    gtk_widget_set_visible(Widgets.fill,           TRUE);
+    gtk_widget_set_visible(Widgets.stroke_fill,    TRUE);
     gtk_widget_set_visible(Widgets.line_width,     TRUE);
     gtk_widget_set_visible(Widgets.line_style,     TRUE);
     gtk_widget_set_visible(Widgets.color1,         TRUE);
@@ -363,8 +424,7 @@ presetting_set_visibility(enum PointerType type)
     gtk_widget_set_visible(Widgets.mark,           FALSE);
     break;
   case MarkB:
-    gtk_widget_set_visible(Widgets.stroke,         FALSE);
-    gtk_widget_set_visible(Widgets.fill,           FALSE);
+    gtk_widget_set_visible(Widgets.stroke_fill,    FALSE);
     gtk_widget_set_visible(Widgets.line_width,     TRUE);
     gtk_widget_set_visible(Widgets.line_style,     TRUE);
     gtk_widget_set_visible(Widgets.color1,         TRUE);
@@ -381,8 +441,7 @@ presetting_set_visibility(enum PointerType type)
     break;
   case TextB:
     set_font_family(Widgets.font);
-    gtk_widget_set_visible(Widgets.stroke,         FALSE);
-    gtk_widget_set_visible(Widgets.fill,           FALSE);
+    gtk_widget_set_visible(Widgets.stroke_fill,    FALSE);
     gtk_widget_set_visible(Widgets.line_width,     FALSE);
     gtk_widget_set_visible(Widgets.line_style,     FALSE);
     gtk_widget_set_visible(Widgets.color1,         TRUE);
@@ -398,8 +457,7 @@ presetting_set_visibility(enum PointerType type)
     gtk_widget_set_visible(Widgets.mark,           FALSE);
     break;
   case GaussB:
-    gtk_widget_set_visible(Widgets.stroke,         FALSE);
-    gtk_widget_set_visible(Widgets.fill,           FALSE);
+    gtk_widget_set_visible(Widgets.stroke_fill,    FALSE);
     gtk_widget_set_visible(Widgets.line_width,     TRUE);
     gtk_widget_set_visible(Widgets.line_style,     TRUE);
     gtk_widget_set_visible(Widgets.color1,         TRUE);
@@ -418,8 +476,7 @@ presetting_set_visibility(enum PointerType type)
   case SectionB:
   case CrossB:
   case SingleB:
-    gtk_widget_set_visible(Widgets.stroke,         FALSE);
-    gtk_widget_set_visible(Widgets.fill,           FALSE);
+    gtk_widget_set_visible(Widgets.stroke_fill,    FALSE);
     gtk_widget_set_visible(Widgets.line_width,     TRUE);
     gtk_widget_set_visible(Widgets.line_style,     TRUE);
     gtk_widget_set_visible(Widgets.color1,         TRUE);
@@ -594,9 +651,11 @@ presetting_create_panel(GtkApplication *app)
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
   Widgets.path_type = w;
 
-  img = gtk_image_new_from_resource(RESOURCE_PATH "/pixmaps/stroke.png");
-  w = create_toggle_button(box, img,  _("Stroke"), TRUE);
-  Widgets.stroke = w;
+  w = create_menu_button(builder, "stroke-fill-menu", "stroke/fill");
+  Widgets.stroke_fill = w;
+  Widgets.stroke = TRUE;
+  gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
+  set_stroke_fill_icon();
 
   w = create_mark_combo_box();
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
@@ -626,27 +685,22 @@ presetting_create_panel(GtkApplication *app)
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
   Widgets.color1 = w;
 
-  w = create_menu_button(builder, "arrow-type-menu", _("Arrow"));
-  gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
-  Widgets.arrow_position = w;
-  gtk_button_set_image(GTK_BUTTON(Widgets.arrow_position), Widgets.arrow_icon[DEFAULT_ARROW_POSITION]);
-
-  w = create_menu_button(builder, "join-type-menu", _("Join"));
-  gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
-  Widgets.join_type = w;
-  gtk_button_set_image(GTK_BUTTON(Widgets.join_type), Widgets.join_icon[DEFAULT_JOIN_TYPE]);
-
-  img = gtk_image_new_from_resource(RESOURCE_PATH "/pixmaps/fill.png");
-  w = create_toggle_button(box, img, _("Fill"), FALSE);
-  gtk_widget_set_margin_start(w, SETTING_PANEL_MARGIN * 4);
-  Widgets.fill = w;
-
   w = create_color_button(NULL);
   color.red = color.green = color.blue = 1;
   color.alpha = 1;
   gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(w), &color);
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
   Widgets.color2 = w;
+
+  w = create_menu_button(builder, "join-type-menu", _("Join"));
+  gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
+  Widgets.join_type = w;
+  gtk_button_set_image(GTK_BUTTON(Widgets.join_type), Widgets.join_icon[DEFAULT_JOIN_TYPE]);
+
+  w = create_menu_button(builder, "arrow-type-menu", _("Arrow"));
+  gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
+  Widgets.arrow_position = w;
+  gtk_button_set_image(GTK_BUTTON(Widgets.arrow_position), Widgets.arrow_icon[DEFAULT_ARROW_POSITION]);
 
   g_object_unref(builder);
   return box;
