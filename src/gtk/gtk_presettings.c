@@ -242,7 +242,7 @@ void
 presetting_set_obj_field(struct objlist *obj, int id)
 {
   const char *name;
-  int ival, r1, g1, b1, a1, r2, g2, b2, a2, stroke, fill, width;
+  int ival, r1, g1, b1, a1, r2, g2, b2, a2, width;
 
   if (obj == NULL) {
     return;
@@ -254,8 +254,6 @@ presetting_set_obj_field(struct objlist *obj, int id)
 
   set_rgba(Widgets.color1, &r1, &g1, &b1, &a1);
   set_rgba(Widgets.color2, &r2, &g2, &b2, &a2);
-  stroke = Widgets.stroke;
-  fill = Widgets.fill;
   width = (2 << combo_box_get_active(Widgets.line_width)) * 10;
 
   if (strcmp(name, "axis") == 0) {
@@ -290,8 +288,8 @@ presetting_set_obj_field(struct objlist *obj, int id)
     ival = width / 8;
     putobj(obj, "width1", id, &ival);
   } else if (strcmp(name, "path") == 0) {
-    putobj(obj, "stroke", id, &stroke);
-    putobj(obj, "fill", id, &fill);
+    putobj(obj, "stroke", id, &(Widgets.stroke));
+    putobj(obj, "fill", id, &(Widgets.fill));
     ival = Widgets.join;
     putobj(obj, "join", id, &ival);
     ival = Widgets.arrow;
@@ -302,15 +300,15 @@ presetting_set_obj_field(struct objlist *obj, int id)
     sputobjfield(obj, id, "style", FwLineStyle[ival].list);
     set_path_type(obj, id);
   } else if (strcmp(name, "rectangle") == 0) {
-    putobj(obj, "stroke", id, &stroke);
-    putobj(obj, "fill", id, &fill);
+    putobj(obj, "stroke", id, &(Widgets.stroke));
+    putobj(obj, "fill", id, &(Widgets.fill));
     putobj(obj, "width", id, &width);
     get_rgba(obj, id, r1, g1, b1, a1, r2, g2, b2, a2);
     ival = combo_box_get_active(Widgets.line_style);
     sputobjfield(obj, id, "style", FwLineStyle[ival].list);
   } else if (strcmp(name, "arc") == 0) {
-    putobj(obj, "stroke", id, &stroke);
-    putobj(obj, "fill", id, &fill);
+    putobj(obj, "stroke", id, &(Widgets.stroke));
+    putobj(obj, "fill", id, &(Widgets.fill));
     ival = Widgets.join;
     putobj(obj, "join", id, &ival);
     putobj(obj, "width", id, &width);
