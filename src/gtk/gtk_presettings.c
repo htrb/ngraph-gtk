@@ -290,6 +290,7 @@ presetting_set_obj_field(struct objlist *obj, int id)
   } else if (strcmp(name, "path") == 0) {
     putobj(obj, "stroke", id, &(Widgets.stroke));
     putobj(obj, "fill", id, &(Widgets.fill));
+    putobj(obj, "close_path", id, &(Widgets.close_path));
     ival = Widgets.join;
     putobj(obj, "join", id, &ival);
     ival = Widgets.arrow;
@@ -309,6 +310,7 @@ presetting_set_obj_field(struct objlist *obj, int id)
   } else if (strcmp(name, "arc") == 0) {
     putobj(obj, "stroke", id, &(Widgets.stroke));
     putobj(obj, "fill", id, &(Widgets.fill));
+    putobj(obj, "close_path", id, &(Widgets.close_path));
     ival = Widgets.join;
     putobj(obj, "join", id, &ival);
     putobj(obj, "width", id, &width);
