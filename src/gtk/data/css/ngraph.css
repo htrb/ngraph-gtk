@@ -18,8 +18,7 @@ toolbutton.draw_notify > button {
 }
 
 button#StrokeColorButton > colorswatch > overlay {
-    border-top-width: 10px;
-    border-top-color: @theme_bg_color;
-    border-bottom-width: 10px;
-    border-bottom-color: @theme_bg_color;
+    background-color: @theme_bg_color;
+    margin: 3px;
+    border-color: rgba(0,0,0,0);
 }
