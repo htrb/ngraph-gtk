@@ -33,8 +33,11 @@ EXTRA_DIST = dir_defs.h.in data/css/ngraph.css				\
 	data/pixmaps/ngraph_single.png data/pixmaps/ngraph_text.png	\
 	data/pixmaps/ngraph_trimming.png data/pixmaps/ngraph_undo.png	\
 	data/pixmaps/ngraph_zoom.png data/ngraphui.resources.xml	\
-	data/pixmaps/arrow_begin.png data/pixmaps/arrow_both.png	\
-	data/pixmaps/arrow_end.png data/pixmaps/arrow_none.png		\
+	data/pixmaps/none_begin.png data/pixmaps/none_end.png		\
+	data/pixmaps/arrow_begin.png data/pixmaps/arrow_end.png		\
+	data/pixmaps/wave_begin.png data/pixmaps/wave_end.png		\
+	data/pixmaps/mark_begin.png data/pixmaps/mark_end.png		\
+	data/pixmaps/bar_begin.png data/pixmaps/bar_end.png		\
 	data/pixmaps/stroke_fill_0.png data/pixmaps/stroke_fill_1.png	\
 	data/pixmaps/stroke_fill_2.png data/pixmaps/stroke_fill_3.png	\
 	data/pixmaps/stroke_fill_4.png data/pixmaps/stroke_fill_5.png	\

@@ -46,10 +46,16 @@
     <file>pixmaps/ngraph_trimming.png</file>
     <file>pixmaps/ngraph_undo.png</file>
     <file>pixmaps/ngraph_zoom.png</file>
+    <file>pixmaps/none_begin.png</file>
+    <file>pixmaps/none_end.png</file>
     <file>pixmaps/arrow_begin.png</file>
-    <file>pixmaps/arrow_both.png</file>
     <file>pixmaps/arrow_end.png</file>
-    <file>pixmaps/arrow_none.png</file>
+    <file>pixmaps/wave_begin.png</file>
+    <file>pixmaps/wave_end.png</file>
+    <file>pixmaps/mark_begin.png</file>
+    <file>pixmaps/mark_end.png</file>
+    <file>pixmaps/bar_begin.png</file>
+    <file>pixmaps/bar_end.png</file>
     <file>pixmaps/join_bevel.png</file>
     <file>pixmaps/join_miter.png</file>
     <file>pixmaps/join_round.png</file>
