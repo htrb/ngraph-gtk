@@ -84,6 +84,15 @@ char *arrowchar[]={
   NULL
 };
 
+char *marker_type_char[]={
+  N_("none"),
+  N_("arrow"),
+  N_("wave"),
+  N_("mark"),
+  N_("bar"),
+  NULL
+};
+
 char *intpchar[]={
   N_("spline"),
   N_("spline_close"),

@@ -40,6 +40,16 @@ enum ARROW_POSITION_TYPE {
 
 #define ARROW_POSITION_TYPE_NUM (ARROW_POSITION_BOTH + 1)
 
+enum ARROW_TYPE {
+  ARROW_TYPE_NONE,
+  ARROW_TYPE_ARROW,
+  ARROW_TYPE_WAVE,
+  ARROW_TYPE_MARK,
+  ARROW_TYPE_BAR,
+};
+
+#define ARROW_TYPE_NUM (ARROW_TYPE_BAR + 1)
+
 enum SAVE_PATH_TYPE {
   SAVE_PATH_UNCHANGE,
   SAVE_PATH_FULL,
@@ -77,6 +87,7 @@ extern char *joinchar[];
 extern char *fontchar[];
 extern char *intpchar[];
 extern char *arrowchar[];
+extern char *marker_type_char[];
 
 int pathsave(struct objlist *obj,N_VALUE *inst,N_VALUE *rval, int argc,char **argv);
 int clear_bbox(struct objlist *obj, N_VALUE *inst);
