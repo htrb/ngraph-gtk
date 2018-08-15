@@ -16,7 +16,7 @@
 #define DEFAULT_JOIN_TYPE JOIN_TYPE_MITER
 #define DEFAULT_JOIN_STR  "'miter'"
 
-#define DEFAULT_ARROW_POSITION ARROW_POSITION_NONE
+#define DEFAULT_ARROW_TYPE ARROW_TYPE_NONE
 #define DEFAULT_ARROW_STR  "'none'"
 
 #define DEFAULT_STROKE_FILL_TYPE 1
@@ -29,12 +29,13 @@ struct presetting_widgets
   GtkWidget *color1, *color2;
   GtkWidget *path_type;
   GtkWidget *join_type, *join_icon[JOIN_TYPE_NUM];
-  GtkWidget *arrow_position, *arrow_icon[ARROW_POSITION_TYPE_NUM];
+  GtkWidget *arrow_type_begin, *arrow_begin_icon[ARROW_TYPE_NUM];
+  GtkWidget *arrow_type_end, *arrow_end_icon[ARROW_TYPE_NUM];
   GtkWidget *stroke_fill, *stroke_fill_icon[STROKE_FILL_ICON_NUM];
   GtkWidget *font, *bold, *italic, *pt;
   GtkWidget *mark, *mark_size;
   enum JOIN_TYPE join;
-  enum ARROW_POSITION_TYPE arrow;
+  enum ARROW_TYPE arrow_begin, arrow_end;
   int lw, fill, stroke, close_path;
 };
 
@@ -65,9 +66,15 @@ JoinTypeAction_activated(GSimpleAction *action, GVariant *parameter, gpointer ap
 }
 
 static void
-ArrowPositionAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
+ArrowTypeBeginAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  Widgets.arrow = check_selected_item(action, parameter, arrowchar, Widgets.arrow_position, Widgets.arrow_icon);
+  Widgets.arrow_begin = check_selected_item(action, parameter, marker_type_char, Widgets.arrow_type_begin, Widgets.arrow_begin_icon);
+}
+
+static void
+ArrowTypeEndAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
+{
+  Widgets.arrow_end = check_selected_item(action, parameter, marker_type_char, Widgets.arrow_type_end, Widgets.arrow_end_icon);
 }
 
 static void
@@ -119,7 +126,8 @@ StrokeFillStrokeAction_activated(GSimpleAction *action, GVariant *parameter, gpo
 
 static GActionEntry ToolMenuEntries[] = {
   {"JoinTypeAction",            NULL, "s",  DEFAULT_JOIN_STR,  JoinTypeAction_activated},
-  {"ArrowPositionAction",       NULL, "s",  DEFAULT_ARROW_STR, ArrowPositionAction_activated},
+  {"ArrowTypeBeginAction",      NULL, "s",  DEFAULT_ARROW_STR, ArrowTypeBeginAction_activated},
+  {"ArrowTypeEndAction",        NULL, "s",  DEFAULT_ARROW_STR, ArrowTypeEndAction_activated},
   {"StrokeFillStrokeAction",    NULL, NULL, "true",            StrokeFillStrokeAction_activated},
   {"StrokeFillFillAction",      NULL, NULL, "false",           StrokeFillFillAction_activated},
   {"StrokeFillClosePathAction", NULL, NULL, "false",           StrokeFillClosePathAction_activated},
@@ -142,10 +150,27 @@ create_images_sub(const char *prefix, char **item, GtkWidget **icon)
 }
 
 static void
+create_arrow_images_sub(const char *postfix, char **item, GtkWidget **icon)
+{
+  int i;
+  GtkWidget *img;
+  char *img_file;
+
+  for (i = 0; item[i]; i++) {
+    img_file = g_strdup_printf("%s/pixmaps/%s_%s.png", RESOURCE_PATH, item[i], postfix);
+    img = gtk_image_new_from_resource(img_file);
+    icon[i] = img;
+    g_object_ref(img);
+    g_free(img_file);
+  }
+}
+
+static void
 create_images(struct presetting_widgets *widgets)
 {
   int i;
-  create_images_sub("arrow", arrowchar, widgets->arrow_icon);
+  create_arrow_images_sub("begin", marker_type_char, widgets->arrow_begin_icon);
+  create_arrow_images_sub("end", marker_type_char, widgets->arrow_end_icon);
   create_images_sub("join", joinchar, widgets->join_icon);
   for (i = 0; i < STROKE_FILL_ICON_NUM; i++) {
     GtkWidget *img;
@@ -293,8 +318,12 @@ presetting_set_obj_field(struct objlist *obj, int id)
     putobj(obj, "close_path", id, &(Widgets.close_path));
     ival = Widgets.join;
     putobj(obj, "join", id, &ival);
-    ival = Widgets.arrow;
-    putobj(obj, "arrow", id, &ival);
+    ival = Widgets.arrow_begin;
+    putobj(obj, "arrow_begin", id, &ival);
+    ival = Widgets.arrow_end;
+    putobj(obj, "arrow_end", id, &ival);
+    ival = combo_box_get_active(Widgets.mark);
+    putobj(obj, "mark_type", id, &ival);
     putobj(obj, "width", id, &width);
     get_rgba(obj, id, r1, g1, b1, a1, r2, g2, b2, a2);
     ival = combo_box_get_active(Widgets.line_style);
@@ -383,13 +412,14 @@ presetting_set_visibility(enum PointerType type)
     gtk_widget_set_visible(Widgets.color2,         TRUE);
     gtk_widget_set_visible(Widgets.path_type,      TRUE);
     gtk_widget_set_visible(Widgets.join_type,      TRUE);
-    gtk_widget_set_visible(Widgets.arrow_position, TRUE);
+    gtk_widget_set_visible(Widgets.arrow_type_begin, TRUE);
+    gtk_widget_set_visible(Widgets.arrow_type_end, TRUE);
     gtk_widget_set_visible(Widgets.font,           FALSE);
     gtk_widget_set_visible(Widgets.bold,           FALSE);
     gtk_widget_set_visible(Widgets.italic,         FALSE);
     gtk_widget_set_visible(Widgets.pt,             FALSE);
     gtk_widget_set_visible(Widgets.mark_size,      FALSE);
-    gtk_widget_set_visible(Widgets.mark,           FALSE);
+    gtk_widget_set_visible(Widgets.mark,           TRUE);
     break;
   case RectB:
     gtk_widget_set_visible(Widgets.stroke_fill,    TRUE);
@@ -399,7 +429,8 @@ presetting_set_visibility(enum PointerType type)
     gtk_widget_set_visible(Widgets.color2,         TRUE);
     gtk_widget_set_visible(Widgets.path_type,      FALSE);
     gtk_widget_set_visible(Widgets.join_type,      FALSE);
-    gtk_widget_set_visible(Widgets.arrow_position, FALSE);
+    gtk_widget_set_visible(Widgets.arrow_type_begin, FALSE);
+    gtk_widget_set_visible(Widgets.arrow_type_end, FALSE);
     gtk_widget_set_visible(Widgets.font,           FALSE);
     gtk_widget_set_visible(Widgets.bold,           FALSE);
     gtk_widget_set_visible(Widgets.italic,         FALSE);
@@ -415,7 +446,8 @@ presetting_set_visibility(enum PointerType type)
     gtk_widget_set_visible(Widgets.color2,         TRUE);
     gtk_widget_set_visible(Widgets.path_type,      FALSE);
     gtk_widget_set_visible(Widgets.join_type,      TRUE);
-    gtk_widget_set_visible(Widgets.arrow_position, FALSE);
+    gtk_widget_set_visible(Widgets.arrow_type_begin, FALSE);
+    gtk_widget_set_visible(Widgets.arrow_type_end, FALSE);
     gtk_widget_set_visible(Widgets.font,           FALSE);
     gtk_widget_set_visible(Widgets.bold,           FALSE);
     gtk_widget_set_visible(Widgets.italic,         FALSE);
@@ -431,7 +463,8 @@ presetting_set_visibility(enum PointerType type)
     gtk_widget_set_visible(Widgets.color2,         TRUE);
     gtk_widget_set_visible(Widgets.path_type,      FALSE);
     gtk_widget_set_visible(Widgets.join_type,      FALSE);
-    gtk_widget_set_visible(Widgets.arrow_position, FALSE);
+    gtk_widget_set_visible(Widgets.arrow_type_begin, FALSE);
+    gtk_widget_set_visible(Widgets.arrow_type_end, FALSE);
     gtk_widget_set_visible(Widgets.font,           FALSE);
     gtk_widget_set_visible(Widgets.bold,           FALSE);
     gtk_widget_set_visible(Widgets.italic,         FALSE);
@@ -448,7 +481,8 @@ presetting_set_visibility(enum PointerType type)
     gtk_widget_set_visible(Widgets.color2,         FALSE);
     gtk_widget_set_visible(Widgets.path_type,      FALSE);
     gtk_widget_set_visible(Widgets.join_type,      FALSE);
-    gtk_widget_set_visible(Widgets.arrow_position, FALSE);
+    gtk_widget_set_visible(Widgets.arrow_type_begin, FALSE);
+    gtk_widget_set_visible(Widgets.arrow_type_end, FALSE);
     gtk_widget_set_visible(Widgets.font,           TRUE);
     gtk_widget_set_visible(Widgets.bold,           TRUE);
     gtk_widget_set_visible(Widgets.italic,         TRUE);
@@ -464,7 +498,8 @@ presetting_set_visibility(enum PointerType type)
     gtk_widget_set_visible(Widgets.color2,         FALSE);
     gtk_widget_set_visible(Widgets.path_type,      FALSE);
     gtk_widget_set_visible(Widgets.join_type,      TRUE);
-    gtk_widget_set_visible(Widgets.arrow_position, FALSE);
+    gtk_widget_set_visible(Widgets.arrow_type_begin, FALSE);
+    gtk_widget_set_visible(Widgets.arrow_type_end, FALSE);
     gtk_widget_set_visible(Widgets.font,           FALSE);
     gtk_widget_set_visible(Widgets.bold,           FALSE);
     gtk_widget_set_visible(Widgets.italic,         FALSE);
@@ -483,7 +518,8 @@ presetting_set_visibility(enum PointerType type)
     gtk_widget_set_visible(Widgets.color2,         FALSE);
     gtk_widget_set_visible(Widgets.path_type,      FALSE);
     gtk_widget_set_visible(Widgets.join_type,      FALSE);
-    gtk_widget_set_visible(Widgets.arrow_position, FALSE);
+    gtk_widget_set_visible(Widgets.arrow_type_begin, FALSE);
+    gtk_widget_set_visible(Widgets.arrow_type_end, FALSE);
     gtk_widget_set_visible(Widgets.font,           TRUE);
     gtk_widget_set_visible(Widgets.bold,           TRUE);
     gtk_widget_set_visible(Widgets.italic,         TRUE);
@@ -698,10 +734,15 @@ presetting_create_panel(GtkApplication *app)
   Widgets.join_type = w;
   gtk_button_set_image(GTK_BUTTON(Widgets.join_type), Widgets.join_icon[DEFAULT_JOIN_TYPE]);
 
-  w = create_menu_button(builder, "arrow-type-menu", _("Arrow"));
+  w = create_menu_button(builder, "arrow-type-begin-menu", _("arrow _Begin"));
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
-  Widgets.arrow_position = w;
-  gtk_button_set_image(GTK_BUTTON(Widgets.arrow_position), Widgets.arrow_icon[DEFAULT_ARROW_POSITION]);
+  Widgets.arrow_type_begin = w;
+  gtk_button_set_image(GTK_BUTTON(Widgets.arrow_type_begin), Widgets.arrow_begin_icon[DEFAULT_ARROW_TYPE]);
+
+  w = create_menu_button(builder, "arrow-type-end-menu", _("arrow _End"));
+  gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
+  Widgets.arrow_type_end = w;
+  gtk_button_set_image(GTK_BUTTON(Widgets.arrow_type_end), Widgets.arrow_end_icon[DEFAULT_ARROW_TYPE]);
 
   g_object_unref(builder);
   return box;
