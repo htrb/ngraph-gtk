@@ -152,6 +152,9 @@ void GRAcircle(int GC,int x,int y,int rx,int ry,int cs,int ce,int fil);
 void GRArectangle(int GC,int x0,int y0,int x1,int y1,int fil);
 void GRAdrawpoly(int GC,int num,int *point,enum GRA_FILL_MODE fil);
 void GRAlines(int GC,int num,int *point);
+void GRArotate(int x0, int y0, int *pos, int *rpos, int n, double dx, double dy);
+void GRAmark_rotate(int GC,int type,int x0,int y0, double dx, double dy, int size,
+	     int fr,int fg,int fb, int fa, int br,int bg,int bb, int ba);
 void GRAmark(int GC,int type,int x0,int y0,int size,
 	     int fr,int fg,int fb, int fa, int br,int bg,int bb, int ba);
 void GRAdrawtext(int GC,char *s,char *font, int style,
