@@ -36,27 +36,61 @@
       </item>
     </section>
   </menu>
-  <menu id="arrow-type-menu">
+  <menu id="arrow-type-begin-menu">
     <section>
       <item>
 	<attribute name="label" translatable="yes">none</attribute>
-	<attribute name="action">app.ArrowPositionAction</attribute>
+	<attribute name="action">app.ArrowTypeBeginAction</attribute>
 	<attribute name="target">none</attribute>
       </item>
       <item>
-	<attribute name="label" translatable="yes">end</attribute>
-	<attribute name="action">app.ArrowPositionAction</attribute>
-	<attribute name="target">end</attribute>
+	<attribute name="label" translatable="yes">arrow</attribute>
+	<attribute name="action">app.ArrowTypeBeginAction</attribute>
+	<attribute name="target">arrow</attribute>
       </item>
       <item>
-	<attribute name="label" translatable="yes">begin</attribute>
-	<attribute name="action">app.ArrowPositionAction</attribute>
-	<attribute name="target">begin</attribute>
+	<attribute name="label" translatable="yes">wave</attribute>
+	<attribute name="action">app.ArrowTypeBeginAction</attribute>
+	<attribute name="target">wave</attribute>
       </item>
       <item>
-	<attribute name="label" translatable="yes">both</attribute>
-	<attribute name="action">app.ArrowPositionAction</attribute>
-	<attribute name="target">both</attribute>
+	<attribute name="label" translatable="yes">mark</attribute>
+	<attribute name="action">app.ArrowTypeBeginAction</attribute>
+	<attribute name="target">mark</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">bar</attribute>
+	<attribute name="action">app.ArrowTypeBeginAction</attribute>
+	<attribute name="target">bar</attribute>
+      </item>
+    </section>
+  </menu>
+  <menu id="arrow-type-end-menu">
+    <section>
+      <item>
+	<attribute name="label" translatable="yes">none</attribute>
+	<attribute name="action">app.ArrowTypeEndAction</attribute>
+	<attribute name="target">none</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">arrow</attribute>
+	<attribute name="action">app.ArrowTypeEndAction</attribute>
+	<attribute name="target">arrow</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">wave</attribute>
+	<attribute name="action">app.ArrowTypeEndAction</attribute>
+	<attribute name="target">wave</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">mark</attribute>
+	<attribute name="action">app.ArrowTypeEndAction</attribute>
+	<attribute name="target">mark</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">bar</attribute>
+	<attribute name="action">app.ArrowTypeEndAction</attribute>
+	<attribute name="target">bar</attribute>
       </item>
     </section>
   </menu>
