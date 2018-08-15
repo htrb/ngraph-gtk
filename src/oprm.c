@@ -1149,7 +1149,30 @@ prmload(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
         putobj(pobj,"arrow_length",lid,&d1);
         putobj(pobj,"arrow_width",lid,&d2);
       }
-      putobj(pobj,"arrow",lid,&d3);
+      switch (d3) {
+      case ARROW_POSITION_NONE:
+	type = ARROW_TYPE_NONE;
+	putobj(pobj, "arrow_begin", lid, &type);
+	putobj(pobj, "arrow_end", lid, &type);
+	break;
+      case ARROW_POSITION_END:
+	type = ARROW_TYPE_NONE;
+	putobj(pobj, "arrow_begin", lid, &type);
+	type = ARROW_TYPE_ARROW;
+	putobj(pobj, "arrow_end", lid, &type);
+	break;
+      case ARROW_POSITION_BEGIN:
+	type = ARROW_TYPE_ARROW;
+	putobj(pobj, "arrow_begin", lid, &type);
+	type = ARROW_TYPE_NONE;
+	putobj(pobj, "arrow_end", lid, &type);
+	break;
+      case ARROW_POSITION_BOTH:
+	type = ARROW_TYPE_ARROW;
+	putobj(pobj, "arrow_begin", lid, &type);
+	putobj(pobj, "arrow_end", lid, &type);
+	break;
+      }
       iarray=linestyleconv(d6,15);
       putobj(pobj,"style",lid,iarray);
       putobj(pobj,"width",lid,&d7);
