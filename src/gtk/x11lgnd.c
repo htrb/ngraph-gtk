@@ -65,7 +65,7 @@ static n_list_store Plist[] = {
   {" ",            G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden"},
   {"#",            G_TYPE_INT,     TRUE, FALSE, "id"},
   {"type",         G_TYPE_PARAM,   TRUE, TRUE,  "type"},
-  {"marker_start", G_TYPE_ENUM,    TRUE, TRUE,  "marker_start"},
+  {"marker_begin", G_TYPE_ENUM,    TRUE, TRUE,  "marker_begin"},
   {"marker_end",   G_TYPE_ENUM,    TRUE, TRUE,  "marker_end"},
   {N_("color"),    G_TYPE_OBJECT,  TRUE, TRUE,  "color"},
   {"x",            G_TYPE_DOUBLE,  TRUE, TRUE,  "x", - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
