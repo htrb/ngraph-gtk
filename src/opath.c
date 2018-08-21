@@ -387,8 +387,8 @@ draw_stroke(struct objlist *obj, N_VALUE *inst, int GC, int *points2, int *pdata
   _getobj(obj, "style",        inst, &style);
   _getobj(obj, "join",         inst, &join);
   _getobj(obj, "miter_limit",  inst, &miter);
-  _getobj(obj, "arrow_begin",  inst, &head_begin);
-  _getobj(obj, "arrow_end",    inst, &head_end);
+  _getobj(obj, "marker_begin",  inst, &head_begin);
+  _getobj(obj, "marker_end",    inst, &head_end);
 
   _getobj(obj, "arrow_length", inst, &headlen);
   _getobj(obj, "arrow_width",  inst, &headwidth);
@@ -408,13 +408,13 @@ draw_stroke(struct objlist *obj, N_VALUE *inst, int GC, int *points2, int *pdata
   x3 = points2[2 * num - 2];
   y3 = points2[2 * num - 1];
 
-  if (head_begin == ARROW_TYPE_ARROW) {
+  if (head_begin == MARKER_TYPE_ARROW) {
     get_arrow_pos(points2, 0,
 		  width, headlen, headwidth,
 		  x0, y0, x1, y1, ap);
   }
 
-  if (head_end == ARROW_TYPE_ARROW) {
+  if (head_end == MARKER_TYPE_ARROW) {
     get_arrow_pos(points2, num * 2 - 2,
 		  width, headlen, headwidth,
 		  x3, y3, x2, y2, ap2);
@@ -435,33 +435,33 @@ draw_stroke(struct objlist *obj, N_VALUE *inst, int GC, int *points2, int *pdata
   }
 
   switch (head_begin) {
-  case ARROW_TYPE_ARROW:
+  case MARKER_TYPE_ARROW:
     GRAlinestyle(GC, 0, NULL, 1, GRA_LINE_CAP_BUTT, join, miter);
     GRAdrawpoly(GC, 3, ap, GRA_FILL_MODE_EVEN_ODD);
     break;
-  case ARROW_TYPE_WAVE:
+  case MARKER_TYPE_WAVE:
     draw_wave(obj, inst, GC, width, headlen, headwidth, x0, y0, x1, y1);
   break;
-  case ARROW_TYPE_MARK:
+  case MARKER_TYPE_MARK:
     draw_mark(obj, inst, GC, width, headlen, headwidth, x0, y0, x1, y1, fr, fg, fb, fa);
     break;
-  case ARROW_TYPE_BAR:
+  case MARKER_TYPE_BAR:
     draw_bar(obj, inst, GC, width, headlen, headwidth, x0, y0, x1, y1);
     break;
   }
 
   switch (head_end) {
-  case ARROW_TYPE_ARROW:
+  case MARKER_TYPE_ARROW:
     GRAlinestyle(GC, 0, NULL, 1, GRA_LINE_CAP_BUTT, join, miter);
     GRAdrawpoly(GC, 3, ap2, GRA_FILL_MODE_EVEN_ODD);
     break;
-  case ARROW_TYPE_WAVE:
+  case MARKER_TYPE_WAVE:
     draw_wave(obj, inst, GC, width, headlen, headwidth, x3, y3, x2, y2);
     break;
-  case ARROW_TYPE_MARK:
+  case MARKER_TYPE_MARK:
     draw_mark(obj, inst, GC, width, headlen, headwidth, x3, y3, x2, y2, fr, fg, fb, fa);
     break;
-  case ARROW_TYPE_BAR:
+  case MARKER_TYPE_BAR:
     draw_bar(obj, inst, GC, width, headlen, headwidth, x3, y3, x2, y2);
     break;
   }
@@ -605,8 +605,8 @@ arrowbbox(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
   }
 
   _getobj(obj, "width",        inst, &width);
-  _getobj(obj, "arrow_begin",  inst, &head_begin);
-  _getobj(obj, "arrow_end",    inst, &head_end);
+  _getobj(obj, "marker_begin",  inst, &head_begin);
+  _getobj(obj, "marker_end",    inst, &head_end);
   _getobj(obj, "arrow_length", inst, &headlen);
   _getobj(obj, "arrow_width",  inst, &headwidth);
 
@@ -647,13 +647,13 @@ arrowbbox(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
   g_free(points2);
 
   switch (head_begin) {
-  case ARROW_TYPE_ARROW:
+  case MARKER_TYPE_ARROW:
     get_arrow_pos(NULL, 0,
 		  width, headlen, headwidth,
 		  x0, y0, x1, y1, ap);
     break;
-  case ARROW_TYPE_WAVE:
-  case ARROW_TYPE_BAR:
+  case MARKER_TYPE_WAVE:
+  case MARKER_TYPE_BAR:
     ap[0] = x0;
     ap[1] = y0 - awidth;
     ap[2] = x0 + 0.25 * awidth;
@@ -663,7 +663,7 @@ arrowbbox(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
     get_dx_dy(x0, y0, x1, y1, &dx, &dy);
     GRArotate(x0, y0, ap, ap, 3, dx, dy);
     break;
-  case ARROW_TYPE_MARK:
+  case MARKER_TYPE_MARK:
     w = awidth / 2;
     ap[0] = x0 + w;
     ap[1] = y0 + w;
@@ -677,13 +677,13 @@ arrowbbox(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
   }
 
   switch (head_end) {
-  case ARROW_TYPE_ARROW:
+  case MARKER_TYPE_ARROW:
     get_arrow_pos(NULL, 0,
 		  width, headlen, headwidth,
 		  x3, y3, x2, y2, ap2);
     break;
-  case ARROW_TYPE_WAVE:
-  case ARROW_TYPE_BAR:
+  case MARKER_TYPE_WAVE:
+  case MARKER_TYPE_BAR:
     ap2[0] = x3;
     ap2[1] = y3 - awidth;
     ap2[2] = x3 + 0.25 * awidth;
@@ -693,7 +693,7 @@ arrowbbox(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
     get_dx_dy(x3, y3, x2, y2, &dx, &dy);
     GRArotate(x3, y3, ap2, ap2, 3, dx, dy);
     break;
-  case ARROW_TYPE_MARK:
+  case MARKER_TYPE_MARK:
     w = awidth / 2;
     ap2[0] = x3 + w;
     ap2[1] = y3 + w;
@@ -736,7 +736,7 @@ arrowbbox(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
   }
 
   if (stroke) {
-    if (head_begin != ARROW_TYPE_NONE) {
+    if (head_begin != MARKER_TYPE_NONE) {
       for (i = 0; i < 3; i++) {
 	if (ap[i * 2] < minx) minx = ap[i * 2];
 	if (ap[i * 2] > maxx) maxx = ap[i * 2];
@@ -744,7 +744,7 @@ arrowbbox(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
 	if (ap[i * 2 + 1] > maxy) maxy = ap[i * 2 + 1];
       }
     }
-    if (head_end != ARROW_TYPE_NONE) {
+    if (head_end != MARKER_TYPE_NONE) {
       for (i = 0; i < 3 ; i++) {
 	if (ap2[i * 2] < minx) minx = ap2[i * 2];
 	if (ap2[i * 2] > maxx) maxx = ap2[i * 2];
@@ -1018,26 +1018,26 @@ arrowput_arrow(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char
   arrow = * (int *) argv[2];
   switch (arrow) {
   case ARROW_POSITION_NONE:
-    type = ARROW_TYPE_NONE;
-    _putobj(obj, "arrow_begin", inst, &type);
-    _putobj(obj, "arrow_end", inst, &type);
+    type = MARKER_TYPE_NONE;
+    _putobj(obj, "marker_begin", inst, &type);
+    _putobj(obj, "marker_end", inst, &type);
     break;
   case ARROW_POSITION_END:
-    type = ARROW_TYPE_NONE;
-    _putobj(obj, "arrow_begin", inst, &type);
-    type = ARROW_TYPE_ARROW;
-    _putobj(obj, "arrow_end", inst, &type);
+    type = MARKER_TYPE_NONE;
+    _putobj(obj, "marker_begin", inst, &type);
+    type = MARKER_TYPE_ARROW;
+    _putobj(obj, "marker_end", inst, &type);
     break;
   case ARROW_POSITION_BEGIN:
-    type = ARROW_TYPE_ARROW;
-    _putobj(obj, "arrow_begin", inst, &type);
-    type = ARROW_TYPE_NONE;
-    _putobj(obj, "arrow_end", inst, &type);
+    type = MARKER_TYPE_ARROW;
+    _putobj(obj, "marker_begin", inst, &type);
+    type = MARKER_TYPE_NONE;
+    _putobj(obj, "marker_end", inst, &type);
     break;
   case ARROW_POSITION_BOTH:
-    type = ARROW_TYPE_ARROW;
-    _putobj(obj, "arrow_begin", inst, &type);
-    _putobj(obj, "arrow_end", inst, &type);
+    type = MARKER_TYPE_ARROW;
+    _putobj(obj, "marker_begin", inst, &type);
+    _putobj(obj, "marker_end", inst, &type);
     break;
   }
   if (clear_bbox(obj, inst)) {
@@ -1077,8 +1077,8 @@ static struct objtable arrow[] = {
   {"join", NENUM, NREAD|NWRITE, NULL, joinchar, 0},
   {"miter_limit", NINT, NREAD|NWRITE, oputge1, NULL, 0},
 
-  {"arrow_begin", NENUM, NREAD|NWRITE, arrowput, marker_type_char, 0},
-  {"arrow_end", NENUM, NREAD|NWRITE, arrowput, marker_type_char, 0},
+  {"marker_begin", NENUM, NREAD|NWRITE, arrowput, marker_type_char, 0},
+  {"marker_end", NENUM, NREAD|NWRITE, arrowput, marker_type_char, 0},
   {"arrow_length", NINT, NREAD|NWRITE, arrowput, NULL, 0},
   {"arrow_width", NINT, NREAD|NWRITE, arrowput, NULL, 0},
   {"mark_type",NINT,NREAD|NWRITE,oputmarktype,NULL,0},
