@@ -1,8 +1,4 @@
-EXTRA_DIST = dir_defs.h.in data/css/ngraph.css				\
-	data/gtk/menus-common.ui.in data/gtk/menus-common.ui.osx	\
-	data/gtk/menus-appmenu.ui.in data/gtk/help-overlay.ui		\
-	data/gtk/menus-appmenu.ui.osx data/gtk/menus-tool.ui		\
-	data/pixmaps/ngraph_align_b.png					\
+NGRAPH_ICONS = data/pixmaps/ngraph_align_b.png				\
 	data/pixmaps/ngraph_align_hc.png				\
 	data/pixmaps/ngraph_align_l.png					\
 	data/pixmaps/ngraph_align_r.png					\
@@ -46,9 +42,14 @@ EXTRA_DIST = dir_defs.h.in data/css/ngraph.css				\
 	data/pixmaps/join_round.png data/pixmaps/linewidth_002.png	\
 	data/pixmaps/linewidth_008.png data/pixmaps/linewidth_032.png	\
 	data/pixmaps/linewidth_128.png data/pixmaps/linewidth_004.png	\
-	data/pixmaps/linewidth_016.png data/pixmaps/linewidth_064.png	\
+	data/pixmaps/linewidth_016.png data/pixmaps/linewidth_064.png
+
+EXTRA_DIST = dir_defs.h.in data/css/ngraph.css				\
+	data/gtk/menus-common.ui.in data/gtk/menus-common.ui.osx	\
+	data/gtk/menus-appmenu.ui.in data/gtk/help-overlay.ui		\
+	data/gtk/menus-appmenu.ui.osx data/gtk/menus-tool.ui		\
 	create_completion_info.rb completion_info_functions.txt		\
-	completion_info_constants.txt
+	completion_info_constants.txt $(NGRAPH_ICONS)
 
 AM_CPPFLAGS = -DLOCALEDIR=\""@localedir@"\"
 
@@ -95,7 +96,7 @@ $(uidir)/menus-common.ui: $(MENU_UI_SOURCE)
 	$(MKDIR_P) $(uidir)
 	cp $< $@
 
-ngraphui.resources.c: $(srcdir)/data/ngraphui.resources.xml $(uidir)/menus-common.ui $(srcdir)/data/gtk/menus-tool.ui $(srcdir)/data/css/ngraph.css $(srcdir)/data/gtk/help-overlay.ui $(uidir)/menus-appmenu.ui
+ngraphui.resources.c: $(srcdir)/data/ngraphui.resources.xml $(uidir)/menus-common.ui $(srcdir)/data/gtk/menus-tool.ui $(srcdir)/data/css/ngraph.css $(srcdir)/data/gtk/help-overlay.ui $(uidir)/menus-appmenu.ui $(NGRAPH_ICONS)
 	$(GLIB_COMPILE_RESOURCES) --target=$@ --generate-source --sourcedir $(srcdir)/data --sourcedir $(builddir)/data $<
 
 BUILT_SOURCES = ${nodist_libngraphui_la_SOURCES}
