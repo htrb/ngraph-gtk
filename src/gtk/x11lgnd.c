@@ -65,8 +65,8 @@ static n_list_store Plist[] = {
   {" ",            G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden"},
   {"#",            G_TYPE_INT,     TRUE, FALSE, "id"},
   {"type",         G_TYPE_PARAM,   TRUE, TRUE,  "type"},
-  {"arrow_begin",  G_TYPE_ENUM,    TRUE, TRUE,  "arrow_begin"},
-  {"arrow_end",    G_TYPE_ENUM,    TRUE, TRUE,  "arrow_end"},
+  {"marker_start", G_TYPE_ENUM,    TRUE, TRUE,  "marker_start"},
+  {"marker_end",   G_TYPE_ENUM,    TRUE, TRUE,  "marker_end"},
   {N_("color"),    G_TYPE_OBJECT,  TRUE, TRUE,  "color"},
   {"x",            G_TYPE_DOUBLE,  TRUE, TRUE,  "x", - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
   {"y",            G_TYPE_DOUBLE,  TRUE, TRUE,  "y", - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
@@ -79,8 +79,8 @@ enum PATH_LIST_COL {
   PATH_LIST_COL_HIDDEN = 0,
   PATH_LIST_COL_ID,
   PATH_LIST_COL_TYPE,
-  PATH_LIST_COL_ARROW_BEGIN,
-  PATH_LIST_COL_ARROW_END,
+  PATH_LIST_COL_MARKER_BEGIN,
+  PATH_LIST_COL_MARKER_END,
   PATH_LIST_COL_COLOR,
   PATH_LIST_COL_X,
   PATH_LIST_COL_Y,
@@ -629,7 +629,7 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
     {d->fill, "fill"},
     {d->fill_rule, "fill_rule"},
     {d->raw, "raw"},
-    {d->arrow, "arrow_begin"},
+    {d->arrow, "marker_begin"},
     {d->pieslice, "pieslice"},
     {d->size, "size"},
     {d->pt, "pt"},
@@ -735,7 +735,7 @@ legend_dialog_close(GtkWidget *w, void *data)
     {d->fill, "fill"},
     {d->fill_rule, "fill_rule"},
     {d->raw, "raw"},
-    {d->arrow, "arrow_begin"},
+    {d->arrow, "marker_begin"},
     {d->pieslice, "pieslice"},
     {d->size, "size"},
     {d->pt, "pt"},
@@ -2377,8 +2377,8 @@ path_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
 	list_store_set_string(GTK_WIDGET(d->text), iter, i, _(enumlist[interpolation]));
       }
       break;
-    case PATH_LIST_COL_ARROW_BEGIN:
-    case PATH_LIST_COL_ARROW_END:
+    case PATH_LIST_COL_MARKER_BEGIN:
+    case PATH_LIST_COL_MARKER_END:
       sgetobjfield(d->obj, row, d->list[i].name, NULL, &valstr, FALSE, FALSE, FALSE);
       if (valstr) {
 	list_store_set_string(GTK_WIDGET(d->text), iter, i, _(valstr));
