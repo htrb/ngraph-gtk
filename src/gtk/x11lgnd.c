@@ -237,6 +237,7 @@ static struct subwin_popup_list Popup_list[] = {
 typedef void (* LEGEND_DIALOG_SETUP)(struct LegendDialog *data, struct objlist *obj, int id);
 
 
+static void LegendMarkDialogMark(GtkWidget *w, gpointer client_data);
 static void LegendDialogCopy(struct LegendDialog *d);
 static void path_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row);
 static void rect_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row);
@@ -462,7 +463,8 @@ init_legend_dialog_widget_member(struct LegendDialog *d)
   d->angle2 = NULL;
   d->fill = NULL;
   d->fill_rule = NULL;
-  d->arrow = NULL;
+  d->marker_begin = NULL;
+  d->marker_end = NULL;
   d->arrow_length = NULL;
   d->arrow_width = NULL;
   d->view = NULL;
@@ -570,7 +572,8 @@ legend_dialog_set_sensitive(GtkWidget *w, gpointer client_data)
   if (d->stroke &&
       d->interpolation &&
       d->close_path &&
-      d->arrow &&
+      d->marker_begin &&
+      d->marker_end &&
       d->arrow_length &&
       d->arrow_width) {
     int a, ca;
@@ -580,7 +583,8 @@ legend_dialog_set_sensitive(GtkWidget *w, gpointer client_data)
 
     set_widget_sensitivity_with_label(d->miter, a);
     set_widget_sensitivity_with_label(d->join, a);
-    set_widget_sensitivity_with_label(d->arrow, a);
+    set_widget_sensitivity_with_label(d->marker_begin, a);
+    set_widget_sensitivity_with_label(d->marker_end, a);
     set_widget_sensitivity_with_label(d->arrow_length, a);
     set_widget_sensitivity_with_label(d->arrow_width, a);
 
@@ -629,7 +633,8 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
     {d->fill, "fill"},
     {d->fill_rule, "fill_rule"},
     {d->raw, "raw"},
-    {d->arrow, "marker_begin"},
+    {d->marker_begin, "marker_begin"},
+    {d->marker_end, "marker_end"},
     {d->pieslice, "pieslice"},
     {d->size, "size"},
     {d->pt, "pt"},
@@ -643,14 +648,6 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
 
   for (i = 0; i < sizeof(lw) / sizeof(*lw); i++) {
     SetWidgetFromObjField(lw[i].w, d->Obj, id, lw[i].f);
-  }
-
-  if (d->type) {
-    int a;
-
-    getobj(d->Obj, "type", id, 0, NULL, &a);
-    button_set_mark_image(d->type, a);
-    MarkDialog(&d->mark, a);
   }
 
   if (d->arrow_length) {
@@ -670,6 +667,19 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
 
     gtk_range_set_value(GTK_RANGE(d->arrow_width), d->wid / 100);
     gtk_range_set_value(GTK_RANGE(d->arrow_length), d->ang);
+    if (d->type) {
+      int a;
+
+      getobj(d->Obj, "mark_type", id, 0, NULL, &a);
+      button_set_mark_image(d->type, a);
+      MarkDialog(&d->mark, a);
+    }
+  } else if (d->type) {
+    int a;
+
+    getobj(d->Obj, "type", id, 0, NULL, &a);
+    button_set_mark_image(d->type, a);
+    MarkDialog(&d->mark, a);
   }
 
   if (d->x1 && d->y1 && d->x2 && d->y2) {
@@ -735,7 +745,8 @@ legend_dialog_close(GtkWidget *w, void *data)
     {d->fill, "fill"},
     {d->fill_rule, "fill_rule"},
     {d->raw, "raw"},
-    {d->arrow, "marker_begin"},
+    {d->marker_begin, "marker_begin"},
+    {d->marker_end, "marker_end"},
     {d->pieslice, "pieslice"},
     {d->size, "size"},
     {d->pt, "pt"},
@@ -813,9 +824,16 @@ legend_dialog_close(GtkWidget *w, void *data)
       }
       set_graph_modified();
     }
-  }
-
-  if (d->type) {
+    if (d->type) {
+      getobj(d->Obj, "mark_type", d->Id, 0, NULL, &oval);
+      if (oval != d->mark.Type) {
+	if (putobj(d->Obj, "mark_type", d->Id, &(d->mark.Type)) == -1) {
+	  return;
+	}
+	set_graph_modified();
+      }
+    }
+  } else if (d->type) {
     getobj(d->Obj, "type", d->Id, 0, NULL, &oval);
     if (oval != d->mark.Type) {
       if (putobj(d->Obj, "type", d->Id, &(d->mark.Type)) == -1) {
@@ -1345,8 +1363,17 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->close_path = w;
 
     w = combo_box_create();
-    d->arrow = w;
-    add_widget_to_table(table, w, _("_Arrow:"), FALSE, i++);
+    d->marker_begin = w;
+    add_widget_to_table(table, w, _("_Marker begin:"), FALSE, i++);
+
+    w = combo_box_create();
+    d->marker_end = w;
+    add_widget_to_table(table, w, _("_Marker end:"), FALSE, i++);
+
+    w = gtk_button_new();
+    add_widget_to_table(table, w, _("_Mark:"), FALSE, i++);
+    g_signal_connect(w, "clicked", G_CALLBACK(LegendMarkDialogMark), d);
+    d->type = w;
 
     style_setup(d, table, i++);
     width_setup(d, table, i++);
