@@ -1227,7 +1227,7 @@ GRAmark_rotate(int GC,int type,int x0,int y0, double dx, double dy, int size,
 {
   int x1,y1,x2,y2,r;
   int po[12],po2[12],rpo[12],rpo2[12];
-  int type2,sgn;
+  int type2,sgn, ofst;
   double d;
 
   if ((GRAClist[GC].clip==0) || (GRAinview(GC,x0,y0)==0)) {
@@ -1257,17 +1257,28 @@ GRAmark_rotate(int GC,int type,int x0,int y0, double dx, double dy, int size,
           r/=2;
           GRAcircle(GC,x0,y0,r,r,0,36000,0);
         } else if (type!=1) {
+	  if (dy == 0) {
+	    if (dx >= 0) {
+	      ofst = 0;
+	    } else {
+	      ofst = 18000;
+	    }
+	  } else if (dy > 0) {
+	    ofst = acos(-dx) / MPI * 18000;
+	  } else {
+	    ofst = acos(dx) / MPI * 18000 + 18000;
+	  }
           if (type2==4) {
             r/=2;
             GRAcircle(GC,x0,y0,r,r,0,36000,1);
           } else if (type2==6) {
-            GRAcircle(GC,x0,y0,r,r,27000,18000,1);
+            GRAcircle(GC,x0,y0,r,r,27000 + ofst,18000,1);
           } else if (type2==7) {
-            GRAcircle(GC,x0,y0,r,r,9000,18000,1);
+            GRAcircle(GC,x0,y0,r,r,9000 + ofst, 18000,1);
           } else if (type2==8) {
-            GRAcircle(GC,x0,y0,r,r,0,18000,1);
+            GRAcircle(GC,x0,y0,r,r,ofst,18000,1);
           } else if (type2==9) {
-            GRAcircle(GC,x0,y0,r,r,18000,18000,1);
+            GRAcircle(GC,x0,y0,r,r,18000 + ofst, 18000,1);
 	  }
 	}
       }
