@@ -610,7 +610,6 @@ arrowbbox(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
   _getobj(obj, "arrow_length", inst, &headlen);
   _getobj(obj, "arrow_width",  inst, &headwidth);
 
-  printf("headwidth: %d %d\n", headwidth, width);
   awidth = width * (double) headwidth / 10000;
   num = arraynum(points) / 2;
   pdata = arraydata(points);
