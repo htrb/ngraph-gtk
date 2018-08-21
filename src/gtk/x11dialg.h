@@ -334,8 +334,9 @@ struct LegendDialog
   GtkWidget *path_type, *style, *points, *interpolation, *width,
     *miter, *join, *color, *color2, *stroke_color, *fill_color,
     *x, *y, *x1, *y1, *x2, *y2, *rx, *ry, *angle1, *angle2,
-    *pieslice, *close_path, *stroke, *fill, *fill_rule, *arrow,
-    *arrow_length, *arrow_width, *size, *type, *view, *text, *pt,
+    *pieslice, *close_path, *stroke, *fill, *fill_rule,
+    *marker_begin, *marker_end, *arrow_length, *arrow_width,
+    *size, *type, *view, *text, *pt,
     *space, *script_size, *direction, *raw, *font, *font_bold,
     *font_italic;
   struct objlist *Obj;
