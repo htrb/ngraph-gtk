@@ -1151,26 +1151,26 @@ prmload(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
       }
       switch (d3) {
       case ARROW_POSITION_NONE:
-	type = ARROW_TYPE_NONE;
-	putobj(pobj, "arrow_begin", lid, &type);
-	putobj(pobj, "arrow_end", lid, &type);
+	type = MARKER_TYPE_NONE;
+	putobj(pobj, "marker_begin", lid, &type);
+	putobj(pobj, "marker_end", lid, &type);
 	break;
       case ARROW_POSITION_END:
-	type = ARROW_TYPE_NONE;
-	putobj(pobj, "arrow_begin", lid, &type);
-	type = ARROW_TYPE_ARROW;
-	putobj(pobj, "arrow_end", lid, &type);
+	type = MARKER_TYPE_NONE;
+	putobj(pobj, "marker_begin", lid, &type);
+	type = MARKER_TYPE_ARROW;
+	putobj(pobj, "marker_end", lid, &type);
 	break;
       case ARROW_POSITION_BEGIN:
-	type = ARROW_TYPE_ARROW;
-	putobj(pobj, "arrow_begin", lid, &type);
-	type = ARROW_TYPE_NONE;
-	putobj(pobj, "arrow_end", lid, &type);
+	type = MARKER_TYPE_ARROW;
+	putobj(pobj, "marker_begin", lid, &type);
+	type = MARKER_TYPE_NONE;
+	putobj(pobj, "marker_end", lid, &type);
 	break;
       case ARROW_POSITION_BOTH:
-	type = ARROW_TYPE_ARROW;
-	putobj(pobj, "arrow_begin", lid, &type);
-	putobj(pobj, "arrow_end", lid, &type);
+	type = MARKER_TYPE_ARROW;
+	putobj(pobj, "marker_begin", lid, &type);
+	putobj(pobj, "marker_end", lid, &type);
 	break;
       }
       iarray=linestyleconv(d6,15);
