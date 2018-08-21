@@ -667,17 +667,15 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
 
     gtk_range_set_value(GTK_RANGE(d->arrow_width), d->wid / 100);
     gtk_range_set_value(GTK_RANGE(d->arrow_length), d->ang);
-    if (d->type) {
-      int a;
+  }
 
-      getobj(d->Obj, "mark_type", id, 0, NULL, &a);
-      button_set_mark_image(d->type, a);
-      MarkDialog(&d->mark, a);
-    }
-  } else if (d->type) {
+  if (d->type) {
     int a;
-
-    getobj(d->Obj, "type", id, 0, NULL, &a);
+    if (d->marker_begin) {
+      getobj(d->Obj, "mark_type", id, 0, NULL, &a);
+    } else {
+      getobj(d->Obj, "type", id, 0, NULL, &a);
+    }
     button_set_mark_image(d->type, a);
     MarkDialog(&d->mark, a);
   }
@@ -824,19 +822,17 @@ legend_dialog_close(GtkWidget *w, void *data)
       }
       set_graph_modified();
     }
-    if (d->type) {
-      getobj(d->Obj, "mark_type", d->Id, 0, NULL, &oval);
-      if (oval != d->mark.Type) {
-	if (putobj(d->Obj, "mark_type", d->Id, &(d->mark.Type)) == -1) {
-	  return;
-	}
-	set_graph_modified();
-      }
+  }
+  if (d->type) {
+    const char *field;
+    if (d->marker_begin) {
+      field = "mark_type";
+    } else {
+      field = "type";
     }
-  } else if (d->type) {
-    getobj(d->Obj, "type", d->Id, 0, NULL, &oval);
+    getobj(d->Obj, field, d->Id, 0, NULL, &oval);
     if (oval != d->mark.Type) {
-      if (putobj(d->Obj, "type", d->Id, &(d->mark.Type)) == -1) {
+      if (putobj(d->Obj, field, d->Id, &(d->mark.Type)) == -1) {
 	return;
       }
       set_graph_modified();
