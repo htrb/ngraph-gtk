@@ -309,14 +309,12 @@ draw_bar(struct objlist *obj, N_VALUE *inst, int GC,
 
 static void
 draw_mark(struct objlist *obj, N_VALUE *inst, int GC,
-	 int width, int headlen, int headwidth, int x0, int y0, int x1, int y1, int r, int g, int b, int a)
+          int width, int headlen, int headwidth,
+          int x0, int y0, int x1, int y1, int r, int g, int b, int a, int is_begin)
 {
   double awidth, dx, dy;
   int type, br, bg, bb, ba;
 
-  get_dx_dy(x0, y0, x1, y1, &dx, &dy);
-
-  _getobj(obj, "mark_type", inst, &type);
   _getobj(obj, "fill_R", inst, &br);
   _getobj(obj, "fill_G", inst, &bg);
   _getobj(obj, "fill_B", inst, &bb);
@@ -325,6 +323,13 @@ draw_mark(struct objlist *obj, N_VALUE *inst, int GC,
 
   if (awidth == 0) {
     return;
+  }
+  if (is_begin) {
+    _getobj(obj, "mark_type_begin", inst, &type);
+    get_dx_dy(x1, y1, x0, y0, &dx, &dy);
+  } else {
+    _getobj(obj, "mark_type_end", inst, &type);
+    get_dx_dy(x0, y0, x1, y1, &dx, &dy);
   }
   GRAlinestyle(GC, 0, NULL, width, GRA_LINE_CAP_BUTT, GRA_LINE_JOIN_MITER, 1000);
   GRAmark_rotate(GC, type, x0, y0, dx, dy, awidth, r, g, b, a, br, bg, bb, ba);
@@ -443,7 +448,7 @@ draw_stroke(struct objlist *obj, N_VALUE *inst, int GC, int *points2, int *pdata
     draw_wave(obj, inst, GC, width, headlen, headwidth, x0, y0, x1, y1);
   break;
   case MARKER_TYPE_MARK:
-    draw_mark(obj, inst, GC, width, headlen, headwidth, x0, y0, x1, y1, fr, fg, fb, fa);
+    draw_mark(obj, inst, GC, width, headlen, headwidth, x0, y0, x1, y1, fr, fg, fb, fa, TRUE);
     break;
   case MARKER_TYPE_BAR:
     draw_bar(obj, inst, GC, width, headlen, headwidth, x0, y0, x1, y1);
@@ -459,7 +464,7 @@ draw_stroke(struct objlist *obj, N_VALUE *inst, int GC, int *points2, int *pdata
     draw_wave(obj, inst, GC, width, headlen, headwidth, x3, y3, x2, y2);
     break;
   case MARKER_TYPE_MARK:
-    draw_mark(obj, inst, GC, width, headlen, headwidth, x3, y3, x2, y2, fr, fg, fb, fa);
+    draw_mark(obj, inst, GC, width, headlen, headwidth, x3, y3, x2, y2, fr, fg, fb, fa, FALSE);
     break;
   case MARKER_TYPE_BAR:
     draw_bar(obj, inst, GC, width, headlen, headwidth, x3, y3, x2, y2);
@@ -1081,7 +1086,8 @@ static struct objtable arrow[] = {
   {"marker_end", NENUM, NREAD|NWRITE, arrowput, marker_type_char, 0},
   {"arrow_length", NINT, NREAD|NWRITE, arrowput, NULL, 0},
   {"arrow_width", NINT, NREAD|NWRITE, arrowput, NULL, 0},
-  {"mark_type",NINT,NREAD|NWRITE,oputmarktype,NULL,0},
+  {"mark_type_begin",NINT,NREAD|NWRITE,oputmarktype,NULL,0},
+  {"mark_type_end",NINT,NREAD|NWRITE,oputmarktype,NULL,0},
 
   {"draw", NVFUNC, NREAD|NEXEC, arrowdraw, "i", 0},
   {"bbox", NIAFUNC, NREAD|NEXEC, arrowbbox, "", 0},
@@ -1111,4 +1117,3 @@ addpath(void)
 {
   return addobject(NAME, ALIAS, PARENT, OVERSION, TBLNUM, arrow, ERRNUM, patherrorlist, NULL, NULL);
 }
-
