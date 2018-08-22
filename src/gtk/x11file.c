@@ -2841,7 +2841,7 @@ MarkDialogClose(GtkWidget *w, void *data)
 }
 
 void
-MarkDialog(struct MarkDialog *data, int type)
+MarkDialog(struct MarkDialog *data, GtkWidget *parent, int type)
 {
   if (type < 0 || type >= MARK_TYPE_NUM) {
     type = 0;
@@ -2849,6 +2849,7 @@ MarkDialog(struct MarkDialog *data, int type)
   data->SetupWindow = MarkDialogSetup;
   data->CloseWindow = MarkDialogClose;
   data->Type = type;
+  data->parent = parent;
 }
 
 static void
@@ -2925,7 +2926,7 @@ plot_tab_setup_item(struct FileDialog *d, int id)
 
   getobj(d->Obj, "mark_type", id, 0, NULL, &a);
   button_set_mark_image(d->mark_btn, a);
-  MarkDialog(&(d->mark), a);
+  MarkDialog(&(d->mark), d->widget, a);
 
   SetWidgetFromObjField(d->size, d->Obj, id, "mark_size");
 

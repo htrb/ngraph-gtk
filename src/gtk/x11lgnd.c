@@ -459,6 +459,8 @@ init_legend_dialog_widget_member(struct LegendDialog *d)
   d->pieslice = NULL;
   d->size = NULL;
   d->type = NULL;
+  d->mark_type_begin = NULL;
+  d->mark_type_end = NULL;
   d->angle1 = NULL;
   d->angle2 = NULL;
   d->fill = NULL;
@@ -610,6 +612,15 @@ legend_dialog_set_sensitive(GtkWidget *w, gpointer client_data)
 }
 
 static void
+setup_mark_type(struct LegendDialog *d, int id, GtkWidget *type, const char *field, struct MarkDialog *mark)
+{
+  int a;
+  getobj(d->Obj, field, id, 0, NULL, &a);
+  button_set_mark_image(type, a);
+  MarkDialog(mark, d->widget, a);
+}
+
+static void
 legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
 {
   unsigned int i;
@@ -670,14 +681,15 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
   }
 
   if (d->type) {
-    int a;
-    if (d->marker_begin) {
-      getobj(d->Obj, "mark_type", id, 0, NULL, &a);
-    } else {
-      getobj(d->Obj, "type", id, 0, NULL, &a);
-    }
-    button_set_mark_image(d->type, a);
-    MarkDialog(&d->mark, a);
+    setup_mark_type(d, id, d->type, "type", &(d->mark));
+  }
+
+  if (d->mark_type_begin) {
+    setup_mark_type(d, id, d->mark_type_begin, "mark_type_begin", &(d->mark_begin));
+  }
+
+  if (d->mark_type_end) {
+    setup_mark_type(d, id, d->mark_type_end, "mark_type_end", &(d->mark_end));
   }
 
   if (d->x1 && d->y1 && d->x2 && d->y2) {
@@ -716,6 +728,20 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
     set_fill_color(d->fill_color, d->Obj, id);
 
   legend_dialog_set_sensitive(NULL, d);
+}
+
+static int
+set_mark_type(struct LegendDialog *d, const char *field, struct MarkDialog *mark)
+{
+  int oval;
+  getobj(d->Obj, field, d->Id, 0, NULL, &oval);
+  if (oval != mark->Type) {
+    if (putobj(d->Obj, field, d->Id, &(mark->Type)) == -1) {
+      return 1;
+    }
+    set_graph_modified();
+  }
+  return 0;
 }
 
 static void
@@ -823,20 +849,17 @@ legend_dialog_close(GtkWidget *w, void *data)
       set_graph_modified();
     }
   }
+
   if (d->type) {
-    const char *field;
-    if (d->marker_begin) {
-      field = "mark_type";
-    } else {
-      field = "type";
-    }
-    getobj(d->Obj, field, d->Id, 0, NULL, &oval);
-    if (oval != d->mark.Type) {
-      if (putobj(d->Obj, field, d->Id, &(d->mark.Type)) == -1) {
-	return;
-      }
-      set_graph_modified();
-    }
+    set_mark_type(d, "type", &(d->mark));
+  }
+
+  if (d->mark_type_begin) {
+    set_mark_type(d, "mark_type_begin", &(d->mark_begin));
+  }
+
+  if (d->mark_type_end) {
+    set_mark_type(d, "mark_type_end", &(d->mark_end));
   }
 
   if (d->font && d->font_bold && d->font_italic) {
@@ -1367,9 +1390,14 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, _("_Marker end:"), FALSE, i++);
 
     w = gtk_button_new();
-    add_widget_to_table(table, w, _("_Mark:"), FALSE, i++);
-    g_signal_connect(w, "clicked", G_CALLBACK(LegendMarkDialogMark), d);
-    d->type = w;
+    add_widget_to_table(table, w, _("_Mark begin:"), FALSE, i++);
+    g_signal_connect(w, "clicked", G_CALLBACK(LegendMarkDialogMark), &(d->mark_begin));
+    d->mark_type_begin = w;
+
+    w = gtk_button_new();
+    add_widget_to_table(table, w, _("_Mark end:"), FALSE, i++);
+    g_signal_connect(w, "clicked", G_CALLBACK(LegendMarkDialogMark), &(d->mark_end));
+    d->mark_type_end = w;
 
     style_setup(d, table, i++);
     width_setup(d, table, i++);
@@ -1680,11 +1708,11 @@ LegendArcDialog(struct LegendDialog *data, struct objlist *obj, int id)
 static void
 LegendMarkDialogMark(GtkWidget *w, gpointer client_data)
 {
-  struct LegendDialog *d;
+  struct MarkDialog *d;
 
-  d = (struct LegendDialog *) client_data;
-  DialogExecute(d->widget, &(d->mark));
-  button_set_mark_image(w, d->mark.Type);
+  d = (struct MarkDialog *) client_data;
+  DialogExecute(d->parent, d);
+  button_set_mark_image(w, d->Type);
 }
 
 static void
@@ -1729,7 +1757,7 @@ LegendMarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     w = gtk_button_new();
     add_widget_to_table(table, w, _("_Mark:"), FALSE, i++);
-    g_signal_connect(w, "clicked", G_CALLBACK(LegendMarkDialogMark), d);
+    g_signal_connect(w, "clicked", G_CALLBACK(LegendMarkDialogMark), &(d->mark));
     d->type = w;
 
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, TRUE, TRUE);

@@ -86,10 +86,10 @@ struct MarkDialog
 {
   DIALOG_PROTOTYPE;
   /****** local member *******/
-  GtkWidget *toggle[MARK_TYPE_NUM];
+  GtkWidget *parnet, *toggle[MARK_TYPE_NUM];
   int Type, cb_respond;
 };
-void MarkDialog(struct MarkDialog *data, int type);
+void MarkDialog(struct MarkDialog *data, GtkWidget *parent, int type);
 
 struct FileMath
 {
@@ -336,13 +336,13 @@ struct LegendDialog
     *x, *y, *x1, *y1, *x2, *y2, *rx, *ry, *angle1, *angle2,
     *pieslice, *close_path, *stroke, *fill, *fill_rule,
     *marker_begin, *marker_end, *arrow_length, *arrow_width,
-    *size, *type, *view, *text, *pt,
+    *size, *type, *view, *text, *pt, *mark_type_begin, *mark_type_end,
     *space, *script_size, *direction, *raw, *font, *font_bold,
     *font_italic;
   struct objlist *Obj;
   int Id;
   int R, G, B, R2, G2, B2, fill_R, fill_G, fill_B, alpha, wid, ang;
-  struct MarkDialog mark;
+  struct MarkDialog mark, mark_begin, mark_end;
   cairo_surface_t *arrow_pixmap;
 };
 
