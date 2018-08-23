@@ -603,7 +603,17 @@ legend_dialog_set_sensitive(GtkWidget *w, gpointer client_data)
     int a;
 
     a = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->fill));
-    set_widget_sensitivity_with_label(d->fill_color, a);
+    if (d->marker_begin && d->marker_end) {
+      int marker_begin, marker_end;
+      marker_begin = combo_box_get_active(d->marker_begin);
+      marker_end = combo_box_get_active(d->marker_end);
+      set_widget_sensitivity_with_label(d->fill_color,
+                                        marker_begin == MARKER_TYPE_MARK ||
+                                        marker_end == MARKER_TYPE_MARK ||
+                                        a);
+    } else {
+      set_widget_sensitivity_with_label(d->fill_color, a);
+    }
 
     if (d->fill_rule) {
       set_widget_sensitivity_with_label(d->fill_rule, a);
@@ -1379,6 +1389,7 @@ marker_type_changed(GtkWidget *w, gpointer data)
   button = GTK_WIDGET(data);
   i = combo_box_get_active(w);
   gtk_widget_set_sensitive(button, i == MARKER_TYPE_MARK);
+  legend_dialog_set_sensitive(NULL, &DlgLegendArrow);
 }
 
 static void
