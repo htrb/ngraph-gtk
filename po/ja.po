@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.07.06\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2018-08-23 18:08+0900\n"
-"PO-Revision-Date: 2018-08-23 16:57+0900\n"
+"POT-Creation-Date: 2018-08-23 20:03+0900\n"
+"PO-Revision-Date: 2018-08-23 20:04+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja\n"
@@ -490,8 +490,8 @@ msgid "_Add plus"
 msgstr "+追加(_A)"
 
 #: src/gtk/x11axis.c:1947
-msgid "no _Zero:"
-msgstr "ゼロ非表示(_Z):"
+msgid "_Zero:"
+msgstr "ゼロ表示(_Z):"
 
 #: src/gtk/x11axis.c:1951
 msgid "numbering _Math:"
@@ -624,8 +624,8 @@ msgid "Log power"
 msgstr "ベキ形式(ログ)"
 
 #: src/gtk/x11axis.c:3291
-msgid "No zero"
-msgstr "ゼロ非表示"
+msgid "Zero"
+msgstr "ゼロ表示"
 
 #: src/gtk/x11commn.c:1196 src/gtk/x11menu.c:678
 msgid "Save NGP file"
@@ -4834,6 +4834,14 @@ msgstr "中央"
 msgid "point"
 msgstr "小数点"
 
+#: src/oaxis.c:119
+msgid "regular"
+msgstr "通常表示"
+
+#: src/oaxis.c:120
+msgid "no_zero"
+msgstr "ゼロ非表示"
+
 #: src/oaxis.c:121
 msgid "no_floating_point"
 msgstr "整数表示"
@@ -4963,6 +4971,9 @@ msgstr "偶奇"
 msgid "winding_rule"
 msgstr "ワインディング"
 
+#~ msgid "No zero"
+#~ msgstr "ゼロ非表示"
+
 #~ msgid "marker _Begin"
 #~ msgstr "始点マーカ(_B)"
 
@@ -4992,9 +5003,6 @@ msgstr "ワインディング"
 
 #~ msgid "Zero display"
 #~ msgstr "ゼロ非表示"
-
-#~ msgid "regular"
-#~ msgstr "通常表示"
 
 #~ msgid "Math:"
 #~ msgstr "式:"

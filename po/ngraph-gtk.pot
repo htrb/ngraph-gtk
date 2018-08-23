@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.07.07\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2018-08-23 18:08+0900\n"
+"POT-Creation-Date: 2018-08-23 20:03+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -463,7 +463,7 @@ msgid "_Add plus"
 msgstr ""
 
 #: src/gtk/x11axis.c:1947
-msgid "no _Zero:"
+msgid "_Zero:"
 msgstr ""
 
 #: src/gtk/x11axis.c:1951
@@ -597,7 +597,7 @@ msgid "Log power"
 msgstr ""
 
 #: src/gtk/x11axis.c:3291
-msgid "No zero"
+msgid "Zero"
 msgstr ""
 
 #: src/gtk/x11commn.c:1196 src/gtk/x11menu.c:678
@@ -4348,6 +4348,14 @@ msgstr ""
 
 #: src/oaxis.c:106
 msgid "point"
+msgstr ""
+
+#: src/oaxis.c:119
+msgid "regular"
+msgstr ""
+
+#: src/oaxis.c:120
+msgid "no_zero"
 msgstr ""
 
 #: src/oaxis.c:121
