@@ -584,7 +584,7 @@ create_mark_combo_box(const char *tooltop)
   return cbox;
 }
 
-GtkWidget *
+static GtkWidget *
 create_line_width_combo_box(void)
 {
   GtkWidget *cbox;
@@ -623,7 +623,7 @@ create_line_width_combo_box(void)
   return cbox;
 }
 
-GtkWidget *
+static GtkWidget *
 create_line_style_combo_box(void)
 {
   GtkWidget *cbox;
@@ -637,7 +637,7 @@ create_line_style_combo_box(void)
   return cbox;
 }
 
-GtkWidget *
+static GtkWidget *
 create_path_type_combo_box(void)
 {
   GtkWidget *cbox;
