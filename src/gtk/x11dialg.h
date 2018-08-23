@@ -650,4 +650,3 @@ extern struct CopyDialog DlgCopy;
 extern struct OutputImageDialog DlgImageOut;
 
 #endif
-
