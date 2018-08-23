@@ -1944,7 +1944,7 @@ numbering_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   add_widget_to_table(table, w, NULL, FALSE, i++);
 
   w = combo_box_create();
-  add_widget_to_table(table, w, _("no _Zero:"), FALSE, i++);
+  add_widget_to_table(table, w, _("_Zero:"), FALSE, i++);
   d->no_zero = w;
 
   w = create_text_entry(FALSE, TRUE);
@@ -3288,7 +3288,7 @@ create_num_combo_item(GtkTreeStore *list, GtkTreeIter *parent, struct objlist *o
 
   add_bool_combo_item_to_cbox(list, NULL, &iter, AXIS_COMBO_ITEM_NUM_LOG, obj, "num_log_pow", id, _("Log power"));
 
-  add_text_combo_item_to_cbox(list, &child, &iter, -1, -1, _("No zero"), TOGGLE_NONE, FALSE);
+  add_text_combo_item_to_cbox(list, &child, &iter, -1, -1, _("Zero"), TOGGLE_NONE, FALSE);
   add_enum_combo_item_to_cbox(list, NULL, &child, AXIS_COMBO_ITEM_NUM_NO_ZERO, obj, "num_no_zero", id);
 }
 
