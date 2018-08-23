@@ -111,17 +111,17 @@ enum AXIS_NUM_NO_ZERO {
   AXIS_NUM_NO_ZERO_REGULAR,
   AXIS_NUM_NO_ZERO_NO_ZERO,
   AXIS_NUM_NO_ZERO_NO_FLOATING_POINT,
-  AXIS_NUM_NO_ZERO_TRUE,
   AXIS_NUM_NO_ZERO_FALSE,
+  AXIS_NUM_NO_ZERO_TRUE,
 };
 
 static char *anumnozero[]={
-  "false",			/* for backward compatibility */
-  "true",			/* for backward compatibility */
+  N_("regular"),
+  N_("no_zero"),
   N_("no_floating_point"),
-//  N_("regular"),
-//  N_("no_zero"),
-  NULL
+  "\0false",			/* for backward compatibility */
+  "\0true",			/* for backward compatibility */
+  NULL,
 };
 
 enum AXIS_NUM_ALIGN {
@@ -140,7 +140,7 @@ static char *anumdirchar[]={
   N_("oblique1"),
   N_("oblique2"),
   "\0normal",			/* for backward compatibility */
-  "\0parallel",			/* for backward compatibility */
+  "\0parallel",		/* for backward compatibility */
   NULL
 };
 
