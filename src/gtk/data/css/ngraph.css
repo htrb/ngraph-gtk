@@ -24,5 +24,6 @@ button#StrokeColorButton > colorswatch > overlay {
 }
 
 combobox#MarkerType > box > button > box > arrow {
+    opacity: 0;
     min-width: 0;
 }
