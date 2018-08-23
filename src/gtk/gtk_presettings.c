@@ -8,6 +8,8 @@
 #include "odraw.h"
 #include "x11menu.h"
 #include "x11dialg.h"
+#include "x11gui.h"
+#include "x11file.h"
 
 #define SETTING_PANEL_MARGIN 4
 #define LINE_WIDTH_ICON_NUM 7
@@ -31,12 +33,13 @@ struct presetting_widgets
   GtkWidget *join_type, *join_icon[JOIN_TYPE_NUM];
   GtkWidget *marker_type_begin, *marker_begin_icon[MARKER_TYPE_NUM];
   GtkWidget *marker_type_end, *marker_end_icon[MARKER_TYPE_NUM];
-  GtkWidget *mark_begin, *mark_end;
+  GtkWidget *mark_type_begin, *mark_type_end;
   GtkWidget *stroke_fill, *stroke_fill_icon[STROKE_FILL_ICON_NUM];
   GtkWidget *font, *bold, *italic, *pt;
-  GtkWidget *mark, *mark_size;
+  GtkWidget *mark_type, *mark_size;
   enum JOIN_TYPE join;
   enum MARKER_TYPE marker_begin, marker_end;
+  struct MarkDialog mark, mark_begin, mark_end;
   int lw, fill, stroke, close_path;
 };
 
@@ -70,14 +73,14 @@ static void
 MarkerTypeBeginAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
   Widgets.marker_begin = check_selected_item(action, parameter, marker_type_char, Widgets.marker_type_begin, Widgets.marker_begin_icon);
-  gtk_widget_set_sensitive(Widgets.mark_begin, Widgets.marker_begin == MARKER_TYPE_MARK);
+  gtk_widget_set_sensitive(Widgets.mark_type_begin, Widgets.marker_begin == MARKER_TYPE_MARK);
 }
 
 static void
 MarkerTypeEndAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
   Widgets.marker_end = check_selected_item(action, parameter, marker_type_char, Widgets.marker_type_end, Widgets.marker_end_icon);
-  gtk_widget_set_sensitive(Widgets.mark_end, Widgets.marker_end == MARKER_TYPE_MARK);
+  gtk_widget_set_sensitive(Widgets.mark_type_end, Widgets.marker_end == MARKER_TYPE_MARK);
 }
 
 static void
@@ -325,10 +328,8 @@ presetting_set_obj_field(struct objlist *obj, int id)
     putobj(obj, "marker_begin", id, &ival);
     ival = Widgets.marker_end;
     putobj(obj, "marker_end", id, &ival);
-    ival = combo_box_get_active(Widgets.mark_begin);
-    putobj(obj, "mark_type_begin", id, &ival);
-    ival = combo_box_get_active(Widgets.mark_end);
-    putobj(obj, "mark_type_end", id, &ival);
+    putobj(obj, "mark_type_begin", id, &(Widgets.mark_begin.Type));
+    putobj(obj, "mark_type_end", id, &(Widgets.mark_end.Type));
     putobj(obj, "width", id, &width);
     get_rgba(obj, id, r1, g1, b1, a1, r2, g2, b2, a2);
     ival = combo_box_get_active(Widgets.line_style);
@@ -363,8 +364,7 @@ presetting_set_obj_field(struct objlist *obj, int id)
     putobj(obj, "A2", id, &a2);
     ival = gtk_spin_button_get_value(GTK_SPIN_BUTTON(Widgets.mark_size)) * 100;
     putobj(obj, "size", id, &ival);
-    ival = combo_box_get_active(Widgets.mark);
-    putobj(obj, "type", id, &ival);
+    putobj(obj, "type", id, &(Widgets.mark.Type));
     ival = combo_box_get_active(Widgets.line_style);
     sputobjfield(obj, id, "style", FwLineStyle[ival].list);
   } else if (strcmp(name, "text") == 0) {
@@ -424,9 +424,9 @@ presetting_set_visibility(enum PointerType type)
     gtk_widget_set_visible(Widgets.italic,         FALSE);
     gtk_widget_set_visible(Widgets.pt,             FALSE);
     gtk_widget_set_visible(Widgets.mark_size,      FALSE);
-    gtk_widget_set_visible(Widgets.mark,           FALSE);
-    gtk_widget_set_visible(Widgets.mark_begin,     TRUE);
-    gtk_widget_set_visible(Widgets.mark_end,       TRUE);
+    gtk_widget_set_visible(Widgets.mark_type,      FALSE);
+    gtk_widget_set_visible(Widgets.mark_type_begin,TRUE);
+    gtk_widget_set_visible(Widgets.mark_type_end,  TRUE);
     break;
   case RectB:
     gtk_widget_set_visible(Widgets.stroke_fill,    TRUE);
@@ -443,9 +443,9 @@ presetting_set_visibility(enum PointerType type)
     gtk_widget_set_visible(Widgets.italic,         FALSE);
     gtk_widget_set_visible(Widgets.pt,             FALSE);
     gtk_widget_set_visible(Widgets.mark_size,      FALSE);
-    gtk_widget_set_visible(Widgets.mark,           FALSE);
-    gtk_widget_set_visible(Widgets.mark_begin,     FALSE);
-    gtk_widget_set_visible(Widgets.mark_end,       FALSE);
+    gtk_widget_set_visible(Widgets.mark_type,      FALSE);
+    gtk_widget_set_visible(Widgets.mark_type_begin,FALSE);
+    gtk_widget_set_visible(Widgets.mark_type_end,  FALSE);
     break;
   case ArcB:
     gtk_widget_set_visible(Widgets.stroke_fill,    TRUE);
@@ -462,9 +462,9 @@ presetting_set_visibility(enum PointerType type)
     gtk_widget_set_visible(Widgets.italic,         FALSE);
     gtk_widget_set_visible(Widgets.pt,             FALSE);
     gtk_widget_set_visible(Widgets.mark_size,      FALSE);
-    gtk_widget_set_visible(Widgets.mark,           FALSE);
-    gtk_widget_set_visible(Widgets.mark_begin,     FALSE);
-    gtk_widget_set_visible(Widgets.mark_end,       FALSE);
+    gtk_widget_set_visible(Widgets.mark_type,      FALSE);
+    gtk_widget_set_visible(Widgets.mark_type_begin,FALSE);
+    gtk_widget_set_visible(Widgets.mark_type_end,  FALSE);
     break;
   case MarkB:
     gtk_widget_set_visible(Widgets.stroke_fill,    FALSE);
@@ -481,7 +481,9 @@ presetting_set_visibility(enum PointerType type)
     gtk_widget_set_visible(Widgets.italic,         FALSE);
     gtk_widget_set_visible(Widgets.pt,             FALSE);
     gtk_widget_set_visible(Widgets.mark_size,      TRUE);
-    gtk_widget_set_visible(Widgets.mark,           TRUE);
+    gtk_widget_set_visible(Widgets.mark_type,      TRUE);
+    gtk_widget_set_visible(Widgets.mark_type_begin,FALSE);
+    gtk_widget_set_visible(Widgets.mark_type_end,  FALSE);
     break;
   case TextB:
     set_font_family(Widgets.font);
@@ -499,9 +501,9 @@ presetting_set_visibility(enum PointerType type)
     gtk_widget_set_visible(Widgets.italic,         TRUE);
     gtk_widget_set_visible(Widgets.pt,             TRUE);
     gtk_widget_set_visible(Widgets.mark_size,      FALSE);
-    gtk_widget_set_visible(Widgets.mark,           FALSE);
-    gtk_widget_set_visible(Widgets.mark_begin,     FALSE);
-    gtk_widget_set_visible(Widgets.mark_end,       FALSE);
+    gtk_widget_set_visible(Widgets.mark_type,      FALSE);
+    gtk_widget_set_visible(Widgets.mark_type_begin,FALSE);
+    gtk_widget_set_visible(Widgets.mark_type_end,  FALSE);
     break;
   case GaussB:
     gtk_widget_set_visible(Widgets.stroke_fill,    FALSE);
@@ -518,9 +520,9 @@ presetting_set_visibility(enum PointerType type)
     gtk_widget_set_visible(Widgets.italic,         FALSE);
     gtk_widget_set_visible(Widgets.pt,             FALSE);
     gtk_widget_set_visible(Widgets.mark_size,      FALSE);
-    gtk_widget_set_visible(Widgets.mark,           FALSE);
-    gtk_widget_set_visible(Widgets.mark_begin,     FALSE);
-    gtk_widget_set_visible(Widgets.mark_end,       FALSE);
+    gtk_widget_set_visible(Widgets.mark_type,      FALSE);
+    gtk_widget_set_visible(Widgets.mark_type_begin,FALSE);
+    gtk_widget_set_visible(Widgets.mark_type_end,  FALSE);
     break;
   case FrameB:
   case SectionB:
@@ -540,9 +542,9 @@ presetting_set_visibility(enum PointerType type)
     gtk_widget_set_visible(Widgets.italic,         TRUE);
     gtk_widget_set_visible(Widgets.pt,             TRUE);
     gtk_widget_set_visible(Widgets.mark_size,      FALSE);
-    gtk_widget_set_visible(Widgets.mark,           FALSE);
-    gtk_widget_set_visible(Widgets.mark_begin,     FALSE);
-    gtk_widget_set_visible(Widgets.mark_end,       FALSE);
+    gtk_widget_set_visible(Widgets.mark_type,      FALSE);
+    gtk_widget_set_visible(Widgets.mark_type_begin,FALSE);
+    gtk_widget_set_visible(Widgets.mark_type_end,  FALSE);
     break;
   }
 }
@@ -663,6 +665,24 @@ create_menu_button(GtkBuilder *builder, const char *menu_name, const char *toolt
   return w;
 }
 
+static void
+select_mark(GtkWidget *w, gpointer client_data)
+{
+  struct MarkDialog *d;
+
+  d = (struct MarkDialog *) client_data;
+  DialogExecute(d->parent, d);
+  button_set_mark_image(w, d->Type);
+}
+
+static void
+setup_mark_type(GtkWidget *type, struct MarkDialog *mark)
+{
+  int a;
+  button_set_mark_image(type, 0);
+  MarkDialog(mark, TopLevel, 0);
+}
+
 GtkWidget *
 presetting_create_panel(GtkApplication *app)
 {
@@ -710,9 +730,11 @@ presetting_create_panel(GtkApplication *app)
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
   set_stroke_fill_icon();
 
-  w = create_mark_combo_box(_("Mark type"));
+  w = gtk_button_new();
+  g_signal_connect(w, "clicked", G_CALLBACK(select_mark), &(Widgets.mark));
+  setup_mark_type(w, &(Widgets.mark));
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
-  Widgets.mark = w;
+  Widgets.mark_type = w;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, FALSE, FALSE);
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), DEFAULT_MARK_SIZE / 100.0);
@@ -751,9 +773,11 @@ presetting_create_panel(GtkApplication *app)
   Widgets.join_type = w;
   gtk_button_set_image(GTK_BUTTON(Widgets.join_type), Widgets.join_icon[DEFAULT_JOIN_TYPE]);
 
-  w = create_mark_combo_box(_("Mark begin"));
+  w = gtk_button_new();
+  g_signal_connect(w, "clicked", G_CALLBACK(select_mark), &(Widgets.mark_begin));
+  setup_mark_type(w, &(Widgets.mark_begin));
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
-  Widgets.mark_begin = w;
+  Widgets.mark_type_begin = w;
 
   w = create_menu_button(builder, "marker-type-begin-menu", _("marker _Begin"));
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
@@ -767,12 +791,14 @@ presetting_create_panel(GtkApplication *app)
   Widgets.marker_end = DEFAULT_MARKER_TYPE;
   gtk_button_set_image(GTK_BUTTON(Widgets.marker_type_end), Widgets.marker_end_icon[DEFAULT_MARKER_TYPE]);
 
-  w = create_mark_combo_box(_("Mark end"));
+  w = gtk_button_new();
+  g_signal_connect(w, "clicked", G_CALLBACK(select_mark), &(Widgets.mark_end));
+  setup_mark_type(w, &(Widgets.mark_end));
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
-  Widgets.mark_end = w;
+  Widgets.mark_type_end = w;
 
-  gtk_widget_set_sensitive(Widgets.mark_begin, Widgets.marker_begin == MARKER_TYPE_MARK);
-  gtk_widget_set_sensitive(Widgets.mark_end,   Widgets.marker_end   == MARKER_TYPE_MARK);
+  gtk_widget_set_sensitive(Widgets.mark_type_begin, Widgets.marker_begin == MARKER_TYPE_MARK);
+  gtk_widget_set_sensitive(Widgets.mark_type_end,   Widgets.marker_end   == MARKER_TYPE_MARK);
 
   g_object_unref(builder);
   return box;
