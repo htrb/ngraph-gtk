@@ -539,7 +539,7 @@ static void
 legend_dialog_set_sensitive(GtkWidget *w, gpointer client_data)
 {
   struct LegendDialog *d;
-  int path_type;
+  int path_type, marker_type;
 
   d = (struct LegendDialog *) client_data;
 
@@ -586,9 +586,16 @@ legend_dialog_set_sensitive(GtkWidget *w, gpointer client_data)
     set_widget_sensitivity_with_label(d->miter, a);
     set_widget_sensitivity_with_label(d->join, a);
     set_widget_sensitivity_with_label(d->marker_begin, a);
-    set_widget_sensitivity_with_label(d->marker_end, a);
+    gtk_widget_set_sensitive(d->marker_end, a);
     set_widget_sensitivity_with_label(d->arrow_length, a);
     set_widget_sensitivity_with_label(d->arrow_width, a);
+
+    marker_type = combo_box_get_active(d->marker_begin);
+    gtk_widget_set_sensitive(d->mark_type_begin, marker_type == MARKER_TYPE_MARK && a);
+
+    marker_type = combo_box_get_active(d->marker_end);
+    gtk_widget_set_sensitive(d->mark_type_end, marker_type == MARKER_TYPE_MARK && a);
+
 
     if (path_type == PATH_TYPE_CURVE) {
       set_widget_sensitivity_with_label(d->close_path, a &&
@@ -604,12 +611,14 @@ legend_dialog_set_sensitive(GtkWidget *w, gpointer client_data)
 
     a = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->fill));
     if (d->marker_begin && d->marker_end) {
-      int marker_begin, marker_end;
+      int marker_begin, marker_end, stroke;
+      stroke = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->stroke));
       marker_begin = combo_box_get_active(d->marker_begin);
       marker_end = combo_box_get_active(d->marker_end);
       set_widget_sensitivity_with_label(d->fill_color,
-                                        marker_begin == MARKER_TYPE_MARK ||
-                                        marker_end == MARKER_TYPE_MARK ||
+                                        (stroke &&
+                                         (marker_begin == MARKER_TYPE_MARK ||
+                                          marker_end == MARKER_TYPE_MARK)) ||
                                         a);
     } else {
       set_widget_sensitivity_with_label(d->fill_color, a);
@@ -1381,16 +1390,6 @@ create_marker_type_combo_box(const char *postfix, const char *tooltip)
   return cbox;
 }
 
-static void
-marker_type_changed(GtkWidget *w, gpointer data)
-{
-  GtkWidget *button;
-  int i;
-  button = GTK_WIDGET(data);
-  i = combo_box_get_active(w);
-  gtk_widget_set_sensitive(button, i == MARKER_TYPE_MARK);
-  legend_dialog_set_sensitive(NULL, &DlgLegendArrow);
-}
 
 static void
 LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
@@ -1463,8 +1462,8 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect(w, "clicked", G_CALLBACK(LegendMarkDialogMark), &(d->mark_end));
     d->mark_type_end = w;
 
-    g_signal_connect(d->marker_begin, "changed", G_CALLBACK(marker_type_changed), d->mark_type_begin);
-    g_signal_connect(d->marker_end,   "changed", G_CALLBACK(marker_type_changed), d->mark_type_end);
+    g_signal_connect(d->marker_begin, "changed", G_CALLBACK(legend_dialog_set_sensitive), d);
+    g_signal_connect(d->marker_end,   "changed", G_CALLBACK(legend_dialog_set_sensitive), d);
 
     label = gtk_label_new_with_mnemonic(_("_Marker:"));
     gtk_widget_set_halign(label, GTK_ALIGN_START);
