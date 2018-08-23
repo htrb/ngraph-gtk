@@ -22,3 +22,7 @@ button#StrokeColorButton > colorswatch > overlay {
     margin: 3px;
     border-color: rgba(0,0,0,0);
 }
+
+combobox#MarkerType > box > button > box > arrow {
+    min-width: 0;
+}
