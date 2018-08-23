@@ -2506,6 +2506,7 @@ math_tab_setup_item(struct FileDialog *d, int id)
 {
   SetWidgetFromObjField(d->math.xsmooth, d->Obj, id, "smooth_x");
   SetWidgetFromObjField(d->math.ysmooth, d->Obj, id, "smooth_y");
+  SetWidgetFromObjField(d->math.averaging_type, d->Obj, id, "averaging_type");
   SetWidgetFromObjField(d->math.x, d->Obj, id, "math_x");
   SetWidgetFromObjField(d->math.y, d->Obj, id, "math_y");
   SetWidgetFromObjField(d->math.f, d->Obj, id, "func_f");
@@ -2666,6 +2667,10 @@ math_tab_create(struct FileDialog *d)
   add_widget_to_table(table, w, _("_Y smooth:"), FALSE, i++);
   d->math.ysmooth = w;
 
+  w = combo_box_create();
+  add_widget_to_table(table, w, _("_Averaging type:"), FALSE, i++);
+  d->math.averaging_type = w;
+
   math_common_widgets_create(d, table, i);
 
   frame = gtk_frame_new(NULL);
@@ -2745,6 +2750,9 @@ math_tab_set_value(void *data)
 
   if (SetObjFieldFromWidget(d->math.ysmooth, d->Obj, d->Id, "smooth_y"))
     return MATH_ERROR_FIELD_SY;
+
+  if (SetObjFieldFromWidget(d->math.averaging_type, d->Obj, d->Id, "averaging_type"))
+    return MATH_ERROR_FIELD_SX;
 
   return math_set_value_common(d);
 }

@@ -93,7 +93,7 @@ void MarkDialog(struct MarkDialog *data, GtkWidget *parent, int type);
 
 struct FileMath
 {
-  GtkWidget *xsmooth, *x, *ysmooth, *y, *f, *g, *h, *text_x, *text_y, *text_f, *text_g, *text_h;
+  GtkWidget *xsmooth, *x, *ysmooth, *averaging_type, *y, *f, *g, *h, *text_x, *text_y, *text_f, *text_g, *text_h;
   int tab_id;
 };
 
