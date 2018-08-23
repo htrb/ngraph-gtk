@@ -184,6 +184,13 @@ static char *data_type[]={
   NULL
 };
 
+static char *averaging_type_char[]={
+  N_("simple"),
+  N_("weighted"),
+  N_("exponential"),
+  NULL
+};
+
 static char *f2dtypechar[]={
   N_("mark"),
   N_("line"),
@@ -225,6 +232,7 @@ static struct obj_config FileConfig[] = {
   {"type",             OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
   {"smooth_x",         OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
   {"smooth_y",         OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
+  {"averaging_type",   OBJ_CONFIG_TYPE_STRING,  NULL, NULL},
   {"mark_type",        OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
   {"mark_size",        OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
   {"line_width",       OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
@@ -9933,6 +9941,7 @@ static struct objtable file2d[] = {
   {"func_h",NSTR,NREAD|NWRITE,f2dput,NULL,0},
   {"smooth_x",NINT,NREAD|NWRITE,f2dput,NULL,0},
   {"smooth_y",NINT,NREAD|NWRITE,f2dput,NULL,0},
+  {"averaging_type",NENUM,NREAD|NWRITE,NULL,averaging_type_char,0},
 
   {"mark_type",NINT,NREAD|NWRITE,oputmarktype,NULL,0},
   {"mark_size",NINT,NREAD|NWRITE,oputabs,NULL,0},
