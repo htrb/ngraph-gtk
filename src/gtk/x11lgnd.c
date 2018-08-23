@@ -644,8 +644,6 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
     {d->fill, "fill"},
     {d->fill_rule, "fill_rule"},
     {d->raw, "raw"},
-    {d->marker_begin, "marker_begin"},
-    {d->marker_end, "marker_end"},
     {d->pieslice, "pieslice"},
     {d->size, "size"},
     {d->pt, "pt"},
@@ -682,6 +680,15 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
 
   if (d->type) {
     setup_mark_type(d, id, d->type, "type", &(d->mark));
+  }
+
+  if (d->marker_begin) {
+    getobj(d->Obj, "marker_begin", id, 0, NULL, &i);
+    combo_box_set_active(d->marker_begin, i);
+  }
+  if (d->marker_end) {
+    getobj(d->Obj, "marker_end", id, 0, NULL, &i);
+    combo_box_set_active(d->marker_end, i);
   }
 
   if (d->mark_type_begin) {
@@ -1330,10 +1337,52 @@ format_value_degree(GtkScale *scale, gdouble value, gpointer user_data)
   return g_strdup_printf ("%.0f°", value);
 }
 
+static GtkWidget *
+create_mark_type_combo_box(const char *postfix)
+{
+  GtkWidget *cbox;
+  GtkListStore *list;
+  GtkTreeIter iter;
+  int j;
+  GtkCellRenderer *rend;
+
+  list = gtk_list_store_new(1, G_TYPE_OBJECT);
+  cbox = gtk_combo_box_new_with_model(GTK_TREE_MODEL(list));
+  rend = gtk_cell_renderer_pixbuf_new();
+  gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(cbox), rend, FALSE);
+  gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "pixbuf", 0);
+  for (j = 0; j < MARKER_TYPE_NUM; j++) {
+    GdkPixbuf *pixbuf;
+    GtkWidget *image;
+    char buf[64], *img_file;
+    img_file = g_strdup_printf("%s/pixmaps/%s_%s.png", RESOURCE_PATH, marker_type_char[j], postfix);
+    image = gtk_image_new_from_resource(img_file);
+    g_free(img_file);
+    pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(image));
+    if (pixbuf) {
+      gtk_list_store_append(list, &iter);
+      gtk_list_store_set(list, &iter, 0, pixbuf, -1);
+    }
+    gtk_widget_destroy(image);
+  }
+  gtk_combo_box_set_active(GTK_COMBO_BOX(cbox), 1);
+  return cbox;
+}
+
+static void
+marker_type_changed(GtkWidget *w, gpointer data)
+{
+  GtkWidget *button;
+  int i;
+  button = GTK_WIDGET(data);
+  i = combo_box_get_active(w);
+  gtk_widget_set_sensitive(button, i == MARKER_TYPE_MARK);
+}
+
 static void
 LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *hbox, *vbox, *hbox2, *vbox2, *frame, *table;
+  GtkWidget *w, *hbox, *vbox, *hbox2, *vbox2, *hbox3, *frame, *table, *label;
   struct LegendDialog *d;
   char title[64];
   int i;
@@ -1353,7 +1402,7 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     frame = gtk_frame_new(NULL);
     gtk_container_add(GTK_CONTAINER(frame), w);
-   gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
 
     vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 
@@ -1381,23 +1430,34 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, NULL, FALSE, i++);
     d->close_path = w;
 
-    w = combo_box_create();
-    d->marker_begin = w;
-    add_widget_to_table(table, w, _("_Marker begin:"), FALSE, i++);
-
-    w = combo_box_create();
-    d->marker_end = w;
-    add_widget_to_table(table, w, _("_Marker end:"), FALSE, i++);
+    hbox3 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 
     w = gtk_button_new();
-    add_widget_to_table(table, w, _("_Mark begin:"), FALSE, i++);
     g_signal_connect(w, "clicked", G_CALLBACK(LegendMarkDialogMark), &(d->mark_begin));
+    gtk_box_pack_start(GTK_BOX(hbox3), w, FALSE, FALSE, 0);
     d->mark_type_begin = w;
 
+    w = create_mark_type_combo_box("begin");
+    gtk_box_pack_start(GTK_BOX(hbox3), w, FALSE, FALSE, 0);
+    d->marker_begin = w;
+
+    w = create_mark_type_combo_box("end");
+    gtk_box_pack_start(GTK_BOX(hbox3), w, FALSE, FALSE, 0);
+    d->marker_end = w;
+
     w = gtk_button_new();
-    add_widget_to_table(table, w, _("_Mark end:"), FALSE, i++);
+    gtk_box_pack_start(GTK_BOX(hbox3), w, FALSE, FALSE, 0);
     g_signal_connect(w, "clicked", G_CALLBACK(LegendMarkDialogMark), &(d->mark_end));
     d->mark_type_end = w;
+
+    g_signal_connect(d->marker_begin, "changed", G_CALLBACK(marker_type_changed), d->mark_type_begin);
+    g_signal_connect(d->marker_end,   "changed", G_CALLBACK(marker_type_changed), d->mark_type_end);
+
+    label = gtk_label_new_with_mnemonic(_("_Marker:"));
+    gtk_widget_set_halign(label, GTK_ALIGN_START);
+    gtk_label_set_mnemonic_widget(GTK_LABEL(label), d->marker_begin);
+    gtk_grid_attach(GTK_GRID(table), label, 0, i, 1, 1);
+    gtk_grid_attach(GTK_GRID(table), hbox3, 1, i++, 1, 1);
 
     style_setup(d, table, i++);
     width_setup(d, table, i++);
