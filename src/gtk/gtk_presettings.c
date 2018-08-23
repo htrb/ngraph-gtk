@@ -779,13 +779,13 @@ presetting_create_panel(GtkApplication *app)
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
   Widgets.mark_type_begin = w;
 
-  w = create_menu_button(builder, "marker-type-begin-menu", _("marker _Begin"));
+  w = create_menu_button(builder, "marker-type-begin-menu", _("Marker begin"));
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
   Widgets.marker_type_begin = w;
   Widgets.marker_begin = DEFAULT_MARKER_TYPE;
   gtk_button_set_image(GTK_BUTTON(Widgets.marker_type_begin), Widgets.marker_begin_icon[DEFAULT_MARKER_TYPE]);
 
-  w = create_menu_button(builder, "marker-type-end-menu", _("marker _End"));
+  w = create_menu_button(builder, "marker-type-end-menu", _("Marker end"));
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
   Widgets.marker_type_end = w;
   Widgets.marker_end = DEFAULT_MARKER_TYPE;

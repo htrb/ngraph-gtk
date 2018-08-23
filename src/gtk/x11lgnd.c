@@ -1338,7 +1338,7 @@ format_value_degree(GtkScale *scale, gdouble value, gpointer user_data)
 }
 
 static GtkWidget *
-create_marker_type_combo_box(const char *postfix)
+create_marker_type_combo_box(const char *postfix, const char *tooltip)
 {
   GtkWidget *cbox;
   GtkListStore *list;
@@ -1367,6 +1367,7 @@ create_marker_type_combo_box(const char *postfix)
   }
   gtk_combo_box_set_active(GTK_COMBO_BOX(cbox), 1);
   gtk_widget_set_name(cbox, "MarkerType");
+  gtk_widget_set_tooltip_text(cbox, tooltip);
   return cbox;
 }
 
@@ -1438,11 +1439,11 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(hbox3), w, FALSE, FALSE, 0);
     d->mark_type_begin = w;
 
-    w = create_marker_type_combo_box("begin");
+    w = create_marker_type_combo_box("begin", _("Marker begin"));
     gtk_box_pack_start(GTK_BOX(hbox3), w, FALSE, FALSE, 0);
     d->marker_begin = w;
 
-    w = create_marker_type_combo_box("end");
+    w = create_marker_type_combo_box("end", _("Marker end"));
     gtk_box_pack_start(GTK_BOX(hbox3), w, FALSE, FALSE, 0);
     d->marker_end = w;
 
