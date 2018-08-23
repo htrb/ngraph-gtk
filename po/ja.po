@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.07.06\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
 "POT-Creation-Date: 2018-08-23 16:36+0900\n"
-"PO-Revision-Date: 2018-08-22 22:19+0900\n"
+"PO-Revision-Date: 2018-08-23 16:40+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja\n"
@@ -1583,9 +1583,8 @@ msgid "_Close path"
 msgstr "パスを閉じる(_C)"
 
 #: src/gtk/x11lgnd.c:1457
-#, fuzzy
 msgid "_Marker:"
-msgstr "マーク(_M):"
+msgstr "マーカ(_M):"
 
 #: src/gtk/x11lgnd.c:1497 src/gtk/x11lgnd.c:1600 src/gtk/x11lgnd.c:1721
 msgid "_Stroke"
