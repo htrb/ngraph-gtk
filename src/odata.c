@@ -4084,7 +4084,6 @@ calculate_average_weughted(struct f2ddata *fp, int smx, int smy, int sm2, int sm
   struct f2ddata_buf *buf;
   int numx, numy, num2, num3;
   double sumx, sumy, sum2, sum3;
-  double ax, ay, a2, a3;
 
   sumx = sumy = sum2 = sum3 = 0;
   numx = numy = num2 = num3 = 0;
@@ -4285,13 +4284,11 @@ getdata(struct f2ddata *fp)
           1: EOF
 */
 {
-  int i,rcode;
-  double sumx,sumy,sum2,sum3;
-  int numx,numy,num2,num3,num,smx,smy,sm2,sm3;
+  int rcode;
+  int smx,smy,sm2,sm3;
   int filenum,*openfile,*needx,*needy;
   struct narray filedatax,filedatay;
   unsigned int fnumx,fnumy,j;
-  struct f2ddata_buf *buf;
 #if BUF_TYPE == USE_RING_BUF
   int n;
 #endif
