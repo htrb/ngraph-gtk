@@ -1373,7 +1373,7 @@ create_marker_type_combo_box(const char *postfix, const char *tooltip)
   for (j = 0; j < MARKER_TYPE_NUM; j++) {
     GdkPixbuf *pixbuf;
     GtkWidget *image;
-    char buf[64], *img_file;
+    char *img_file;
     img_file = g_strdup_printf("%s/pixmaps/%s_%s.png", RESOURCE_PATH, marker_type_char[j], postfix);
     image = gtk_image_new_from_resource(img_file);
     g_free(img_file);
