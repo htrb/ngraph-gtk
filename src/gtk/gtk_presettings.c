@@ -549,6 +549,7 @@ presetting_set_visibility(enum PointerType type)
   }
 }
 
+#if 0
 static GtkWidget *
 create_mark_combo_box(const char *tooltop)
 {
@@ -585,6 +586,7 @@ create_mark_combo_box(const char *tooltop)
   gtk_combo_box_set_active(GTK_COMBO_BOX(cbox), 0);
   return cbox;
 }
+#endif
 
 static GtkWidget *
 create_line_width_combo_box(void)
@@ -678,7 +680,6 @@ select_mark(GtkWidget *w, gpointer client_data)
 static void
 setup_mark_type(GtkWidget *type, struct MarkDialog *mark)
 {
-  int a;
   button_set_mark_image(type, 0);
   MarkDialog(mark, TopLevel, 0);
 }
