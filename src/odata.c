@@ -351,6 +351,7 @@ struct f2ddata {
 #endif
   int bufnum,bufpo;
   int smooth,smoothx,smoothy;
+  int averaging_type;
   int masknum;
   int *mask;
 #if MASK_SERACH_METHOD == MASK_SERACH_METHOD_CONST
@@ -1825,7 +1826,7 @@ opendata(struct objlist *obj,N_VALUE *inst,
   struct rgba fg, bg;
   int x,y,type,hskip,rstep,final,csv,src;
   char *remark,*ifs, *array;
-  int smoothx,smoothy;
+  int smoothx,smoothy,averaging_type;
   struct narray *mask;
   struct narray *move,*movex,*movey;
   struct f2ddata *fp;
@@ -1866,6 +1867,7 @@ opendata(struct objlist *obj,N_VALUE *inst,
   _getobj(obj,"final_line",inst,&final);
   _getobj(obj,"smooth_x",inst,&smoothx);
   _getobj(obj,"smooth_y",inst,&smoothy);
+  _getobj(obj,"averaging_type",inst,&averaging_type);
   _getobj(obj,"mask",inst,&mask);
   _exeobj(obj,"move_data_adjust",inst,0,NULL);
   _getobj(obj,"move_data",inst,&move);
@@ -2013,6 +2015,7 @@ opendata(struct objlist *obj,N_VALUE *inst,
   fp->smoothx=smoothx;
   fp->smoothy=smoothy;
   fp->dataclip=dataclip;
+  fp->averaging_type = averaging_type;
 
   fp->x=x;
   fp->y=y;
@@ -3936,107 +3939,16 @@ getdata_sub1(struct f2ddata *fp, int fnumx, int fnumy, int *needx, int *needy,
   return 0;
 }
 
-static int
-getdata(struct f2ddata *fp)
-/*
-  return -1: fatal error
-          0: no error
-          1: EOF
-*/
+static void
+calculate_average_simple(struct f2ddata *fp, int smx, int smy, int sm2, int sm3, int num)
 {
-  int i,rcode;
-  double sumx,sumy,sum2,sum3;
-  int numx,numy,num2,num3,num,smx,smy,sm2,sm3;
-  int filenum,*openfile,*needx,*needy;
-  struct narray filedatax,filedatay;
-  unsigned int fnumx,fnumy,j;
+  int i;
   struct f2ddata_buf *buf;
-#if BUF_TYPE == USE_RING_BUF
-  int n;
-#endif
-  MathValue *datax,*datay;
-  static MathValue gdata[FILE_OBJ_MAXCOL + 3];
-  static MathValue math_value_zero = {0, 0};
+  int numx, numy, num2, num3;
+  double sumx, sumy, sum2, sum3;
 
-  fp->dx=fp->dy=fp->d2=fp->d3=0;
-  fp->dxstat=fp->dystat=fp->d2stat=fp->d3stat=MATH_VALUE_UNDEF;
-  filenum=arraynum(&(fp->fileopen));
-  openfile=arraydata(&(fp->fileopen));
-
-  fnumx = fp->fnumx;
-  needx = fp->needx;
-  arrayinit(&filedatax, sizeof(MathValue));
-  for (j = 0; j < fnumx; j++) {
-    arrayadd(&filedatax, &math_value_zero);
-  }
-  if (arraynum(&filedatax) < fnumx) {
-    fnumx = arraynum(&filedatax);
-  }
-  datax = arraydata(&filedatax);
-
-  fnumy = fp->fnumy;
-  needy = fp->needy;
-  arrayinit(&filedatay, sizeof(MathValue));
-  for (j = 0; j < fnumy; j++) {
-    arrayadd(&filedatay, &math_value_zero);
-  }
-  if (arraynum(&filedatay) < fnumy) {
-    fnumy = arraynum(&filedatay);
-  }
-  datay = arraydata(&filedatay);
-
-  rcode = getdata_sub1(fp, fnumx, fnumy, needx, needy, datax, datay, gdata, filenum, openfile);
-
-
-  if (rcode) {
-    return rcode;
-  }
-
-  arraydel(&filedatax);
-  arraydel(&filedatay);
-  if ((fp->bufnum==0) || (fp->bufpo>=fp->bufnum)) {
-    fp->dx=fp->dy=fp->d2=fp->d3=0;
-    fp->dxstat=fp->dystat=fp->d2stat=fp->d3stat=MATH_VALUE_MEOF;
-    return 1;
-  }
-  switch (fp->type) {
-  case TYPE_NORMAL:
-    smx=fp->smoothx;
-    smy=fp->smoothy;
-    sm2=0;
-    sm3=0;
-    break;
-  case TYPE_DIAGONAL:
-    smx=fp->smoothx;
-    smy=fp->smoothy;
-    sm2=fp->smoothx;
-    sm3=fp->smoothy;
-    break;
-  case TYPE_ERR_X:
-    smx=fp->smoothx;
-    smy=fp->smoothy;
-    sm2=fp->smoothx;
-    sm3=fp->smoothx;
-    break;
-  case TYPE_ERR_Y:
-    smx=fp->smoothx;
-    smy=fp->smoothy;
-    sm2=fp->smoothy;
-    sm3=fp->smoothy;
-    break;
-  default:
-    /* never reached */
-    smx = 0;
-    smy = 0;
-    sm2 = 0;
-    sm3 = 0;
-    break;
-  }
   sumx=sumy=sum2=sum3=0;
   numx=numy=num2=num3=0;
-  if (fp->bufpo+fp->smooth>=fp->bufnum) num=fp->bufnum-1;
-  else num=fp->bufpo+fp->smooth;
-
 #if BUF_TYPE == USE_BUF_PTR
   for (i = 0; i <= num; i++) {
     buf = fp->buf_ptr[i];
@@ -4163,6 +4075,305 @@ getdata(struct f2ddata *fp)
   fp->msize=fp->buf[fp->bufpo].marksize;
   fp->mtype=fp->buf[fp->bufpo].marktype;
 #endif	/* BUF_TYPE */
+}
+
+static void
+calculate_average_weughted(struct f2ddata *fp, int smx, int smy, int sm2, int sm3, int num)
+{
+  int i, weight;
+  struct f2ddata_buf *buf;
+  int numx, numy, num2, num3;
+  double sumx, sumy, sum2, sum3;
+  double ax, ay, a2, a3;
+
+  sumx = sumy = sum2 = sum3 = 0;
+  numx = numy = num2 = num3 = 0;
+/*
+           o
+  i: 0 1 2 3 4 5 6 7 8 9 10
+b-i: 3 2 1 0 1 2 3
+  smx: 5
+  bufpo: 3
+  bufpo - smx: -2
+  bufpo + smx: 8
+  if (smx > bufpo) smx = bufpo
+
+                 o
+  i: 0 1 2 3 4 5 6 7 8 9 10 11
+b-i: 6 5 4 3 2 1 0 1 2 3  4  5
+  smx: 5
+  bufpo: 6
+  bufpo - smx: 1
+  bufpo + smx: 11
+  if (smx > bufpo) smx = bufpo
+ */
+  if (smx > fp->bufpo) smx = fp->bufpo;
+  if (smy > fp->bufpo) smy = fp->bufpo;
+  if (sm2 > fp->bufpo) sm2 = fp->bufpo;
+  if (sm3 > fp->bufpo) sm3 = fp->bufpo;
+  for (i = 0; i <= num; i++) {
+    buf = fp->buf_ptr[i];
+    if (buf->dxstat == MATH_VALUE_NORMAL &&
+	i >= fp->bufpo - smx &&
+	i <= fp->bufpo + smx) {
+      weight = smx + 1 - abs(fp->bufpo - i);
+      sumx += buf->dx * weight;
+      numx++;
+    }
+    if (buf->dystat == MATH_VALUE_NORMAL &&
+	i >= fp->bufpo - smy &&
+	i <= fp->bufpo + smy) {
+      weight = smy + 1 - abs(fp->bufpo - i);
+      sumy += buf->dy * weight;
+      numy++;
+    }
+    if (buf->d2stat == MATH_VALUE_NORMAL &&
+	i >= fp->bufpo - sm2 &&
+	i <= fp->bufpo + sm2) {
+      weight = sm2 + 1 - abs(fp->bufpo - i);
+      sum2 += buf->d2 * weight;
+      num2++;
+    }
+    if (buf->d3stat == MATH_VALUE_NORMAL &&
+	i >= fp->bufpo - sm3 &&
+	i <= fp->bufpo + sm3) {
+      weight = sm3 + 1 - abs(fp->bufpo - i);
+      sum3 += buf->d3 * weight;
+      num3++;
+    }
+  }
+
+  buf = fp->buf_ptr[fp->bufpo];
+
+  if (numx != 0) {
+    fp->dx = sumx / (smx + 1) / (smx + 1);
+  }
+  fp->dxstat = buf->dxstat;
+
+  if (numy != 0) {
+    fp->dy = sumy / (smy + 1) / (smy + 1);
+  }
+  fp->dystat = buf->dystat;
+
+  if (num2 != 0) {
+    fp->d2 = sum2 / (sm2 + 1) / (sm2 + 1);
+  }
+  fp->d2stat = buf->d2stat;
+
+  if (num3 != 0) {
+    fp->d3 = sum3 / (sm3 + 1) / (sm3 + 1);
+  }
+  fp->d3stat = buf->d3stat;
+  fp->dline = buf->line;
+  fp->col = buf->col;
+  fp->col2 = buf->col2;
+  fp->msize = buf->marksize;
+  fp->mtype = buf->marktype;
+}
+
+static void
+calculate_average_exponential(struct f2ddata *fp, int smx, int smy, int sm2, int sm3, int num)
+{
+  int i, weight;
+  struct f2ddata_buf *buf;
+  int numx, numy, num2, num3;
+  double sumx, sumy, sum2, sum3, ax, ay, a2, a3;
+
+  sumx = sumy = sum2 = sum3 = 0;
+  numx = numy = num2 = num3 = 0;
+  if (smx > fp->bufpo) smx = fp->bufpo;
+  if (smy > fp->bufpo) smy = fp->bufpo;
+  if (sm2 > fp->bufpo) sm2 = fp->bufpo;
+  if (sm3 > fp->bufpo) sm3 = fp->bufpo;
+  ax = 1 - 2.0 / (smx + 2);
+  ay = 1 - 2.0 / (smy + 2);
+  a2 = 1 - 2.0 / (sm2 + 2);
+  a3 = 1 - 2.0 / (sm3 + 2);
+  for (i = 0; i <= num; i++) {
+    buf = fp->buf_ptr[i];
+    if (buf->dxstat == MATH_VALUE_NORMAL &&
+	i >= fp->bufpo - smx &&
+	i <= fp->bufpo + smx) {
+      weight = pow(ax, abs(fp->bufpo - i));
+      sumx += buf->dx * weight;
+      numx++;
+    }
+    if (buf->dystat == MATH_VALUE_NORMAL &&
+	i >= fp->bufpo - smy &&
+	i <= fp->bufpo + smy) {
+      weight = pow(ay, abs(fp->bufpo - i));
+      sumy += buf->dy * weight;
+      numy++;
+    }
+    if (buf->d2stat == MATH_VALUE_NORMAL &&
+	i >= fp->bufpo - sm2 &&
+	i <= fp->bufpo + sm2) {
+      weight = pow(a2, abs(fp->bufpo - i));
+      sum2 += buf->d2 * weight;
+      num2++;
+    }
+    if (buf->d3stat == MATH_VALUE_NORMAL &&
+	i >= fp->bufpo - sm3 &&
+	i <= fp->bufpo + sm3) {
+      weight = pow(a3, abs(fp->bufpo - i));
+      sum3 += buf->d3 * weight;
+      num3++;
+    }
+  }
+
+  buf = fp->buf_ptr[fp->bufpo];
+  /* TODO: fix weight calculations */
+  if (numx != 0) {
+    weight = 1 + 2 * (pow(ax, smx) - pow(ax, smx + 1)) / (1 - ax);
+    fp->dx = sumx / weight;
+  }
+  fp->dxstat = buf->dxstat;
+
+  if (numy != 0) {
+    weight = 1 + 2 * (pow(ay, smy) - pow(ay, smy + 1)) / (1 - ay);
+    fp->dy = sumy / weight;
+  }
+  fp->dystat = buf->dystat;
+
+  if (num2 != 0) {
+    weight = 1 + 2 * (pow(a2, sm2) - pow(a2, sm2 + 1)) / (1 - a2);
+    fp->d2 = sum2 / weight;
+  }
+  fp->d2stat = buf->d2stat;
+
+  if (num3 != 0) {
+    weight = 1 + 2 * (pow(a3, sm3) - pow(a3, sm3 + 1)) / (1 - a3);
+    fp->d3 = sum3 / weight;
+  }
+  fp->d3stat = buf->d3stat;
+  fp->dline = buf->line;
+  fp->col = buf->col;
+  fp->col2 = buf->col2;
+  fp->msize = buf->marksize;
+  fp->mtype = buf->marktype;
+}
+
+static void
+calculate_average(struct f2ddata *fp, int smx, int smy, int sm2, int sm3)
+{
+  int num;
+
+  if (fp->bufpo + fp->smooth >= fp->bufnum) {
+    num = fp->bufnum - 1;
+  } else {
+    num = fp->bufpo + fp->smooth;
+  }
+
+  switch (fp->averaging_type) {
+  case MOVING_AVERAGE_SIMPLE:
+    calculate_average_simple(fp, smx, smy, sm2, sm3, num);
+    break;
+  case MOVING_AVERAGE_WEIGHTED:
+    calculate_average_weughted(fp, smx, smy, sm2, sm3, num);
+    break;
+  case MOVING_AVERAGE_EXPONENTIAL:
+    calculate_average_exponential(fp, smx, smy, sm2, sm3, num);
+    break;
+  }
+}
+
+static int
+getdata(struct f2ddata *fp)
+/*
+  return -1: fatal error
+          0: no error
+          1: EOF
+*/
+{
+  int i,rcode;
+  double sumx,sumy,sum2,sum3;
+  int numx,numy,num2,num3,num,smx,smy,sm2,sm3;
+  int filenum,*openfile,*needx,*needy;
+  struct narray filedatax,filedatay;
+  unsigned int fnumx,fnumy,j;
+  struct f2ddata_buf *buf;
+#if BUF_TYPE == USE_RING_BUF
+  int n;
+#endif
+  MathValue *datax,*datay;
+  static MathValue gdata[FILE_OBJ_MAXCOL + 3];
+  static MathValue math_value_zero = {0, 0};
+
+  fp->dx=fp->dy=fp->d2=fp->d3=0;
+  fp->dxstat=fp->dystat=fp->d2stat=fp->d3stat=MATH_VALUE_UNDEF;
+  filenum=arraynum(&(fp->fileopen));
+  openfile=arraydata(&(fp->fileopen));
+
+  fnumx = fp->fnumx;
+  needx = fp->needx;
+  arrayinit(&filedatax, sizeof(MathValue));
+  for (j = 0; j < fnumx; j++) {
+    arrayadd(&filedatax, &math_value_zero);
+  }
+  if (arraynum(&filedatax) < fnumx) {
+    fnumx = arraynum(&filedatax);
+  }
+  datax = arraydata(&filedatax);
+
+  fnumy = fp->fnumy;
+  needy = fp->needy;
+  arrayinit(&filedatay, sizeof(MathValue));
+  for (j = 0; j < fnumy; j++) {
+    arrayadd(&filedatay, &math_value_zero);
+  }
+  if (arraynum(&filedatay) < fnumy) {
+    fnumy = arraynum(&filedatay);
+  }
+  datay = arraydata(&filedatay);
+
+  rcode = getdata_sub1(fp, fnumx, fnumy, needx, needy, datax, datay, gdata, filenum, openfile);
+
+
+  if (rcode) {
+    return rcode;
+  }
+
+  arraydel(&filedatax);
+  arraydel(&filedatay);
+  if ((fp->bufnum==0) || (fp->bufpo>=fp->bufnum)) {
+    fp->dx=fp->dy=fp->d2=fp->d3=0;
+    fp->dxstat=fp->dystat=fp->d2stat=fp->d3stat=MATH_VALUE_MEOF;
+    return 1;
+  }
+  switch (fp->type) {
+  case TYPE_NORMAL:
+    smx=fp->smoothx;
+    smy=fp->smoothy;
+    sm2=0;
+    sm3=0;
+    break;
+  case TYPE_DIAGONAL:
+    smx=fp->smoothx;
+    smy=fp->smoothy;
+    sm2=fp->smoothx;
+    sm3=fp->smoothy;
+    break;
+  case TYPE_ERR_X:
+    smx=fp->smoothx;
+    smy=fp->smoothy;
+    sm2=fp->smoothx;
+    sm3=fp->smoothx;
+    break;
+  case TYPE_ERR_Y:
+    smx=fp->smoothx;
+    smy=fp->smoothy;
+    sm2=fp->smoothy;
+    sm3=fp->smoothy;
+    break;
+  default:
+    /* never reached */
+    smx = 0;
+    smy = 0;
+    sm2 = 0;
+    sm3 = 0;
+    break;
+  }
+  calculate_average(fp, smx, smy, sm2, sm3);
 
   switch (fp->type) {
   case TYPE_NORMAL:
