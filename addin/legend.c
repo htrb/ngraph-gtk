@@ -187,8 +187,6 @@ makescript(FILE *f, struct file_data *data, int gx, int gy, int width, int heigh
       (g_strcmp0(data->type, "polygon") == 0) ||
       (g_strcmp0(data->type, "curve") == 0) ||
       (g_strcmp0(data->type, "diagonal") == 0) ||
-      (g_strcmp0(data->type, "errorbar_x") == 0) ||
-      (g_strcmp0(data->type, "errorbar_y") == 0) ||
       (g_strcmp0(data->type, "staircase_x") == 0) ||
       (g_strcmp0(data->type, "staircase_y") == 0) ||
       (g_strcmp0(data->type, "fit") == 0)) {
@@ -201,6 +199,32 @@ makescript(FILE *f, struct file_data *data, int gx, int gy, int width, int heigh
     fprintf(f, "path::stroke_R=%d\n", data->r);
     fprintf(f, "path::stroke_G=%d\n", data->g);
     fprintf(f, "path::stroke_B=%d\n", data->b);
+  } else if (g_strcmp0(data->type, "errorbar_x") == 0) {
+    fprintf(f, "new path type=line\n");
+    fprintf(f, "path::points='%d %d %d %d'\n", gx + width / 4, gy + h, gx + width * 3 / 4, gy + h);
+    fprintf(f, "path::width=%d\n", data->width);
+    if (data->style && data->style[0] != '\0') {
+      fprintf(f, "path::style='%s'\n", data->style);
+    }
+    fprintf(f, "path::stroke_R=%d\n", data->r);
+    fprintf(f, "path::stroke_G=%d\n", data->g);
+    fprintf(f, "path::stroke_B=%d\n", data->b);
+    fprintf(f, "path::marker_begin=bar\n");
+    fprintf(f, "path::marker_end=bar\n");
+    fprintf(f, "path::arrow_width=%d\n", data->size * 5000 / data->width);
+  } else if (g_strcmp0(data->type, "errorbar_y") == 0) {
+    fprintf(f, "new path type=line\n");
+    fprintf(f, "path::points='%d %d %d %d'\n", gx + width / 2, gy + h + h / 2, gx + width / 2, gy + h / 2);
+    fprintf(f, "path::width=%d\n", data->width);
+    if (data->style && data->style[0] != '\0') {
+      fprintf(f, "path::style='%s'\n", data->style);
+    }
+    fprintf(f, "path::stroke_R=%d\n", data->r);
+    fprintf(f, "path::stroke_G=%d\n", data->g);
+    fprintf(f, "path::stroke_B=%d\n", data->b);
+    fprintf(f, "path::marker_begin=bar\n");
+    fprintf(f, "path::marker_end=bar\n");
+    fprintf(f, "path::arrow_width=%d\n", data->size * 5000 / data->width);
   } else if (g_strcmp0(data->type, "arrow") == 0) {
     fprintf(f, "new path type=line\n");
     fprintf(f, "path::points='%d %d %d %d'\n", gx, gy + h, gx + width, gy + h );
@@ -211,7 +235,7 @@ makescript(FILE *f, struct file_data *data, int gx, int gy, int width, int heigh
     fprintf(f, "path::stroke_R=%d\n", data->r);
     fprintf(f, "path::stroke_G=%d\n", data->g);
     fprintf(f, "path::stroke_B=%d\n", data->b);
-    fprintf(f, "path::arrow=end\n");
+    fprintf(f, "path::marker_end=arrow\n");
   } else if ((g_strcmp0(data->type, "polygon_solid_fill") == 0) ||
 	     (g_strcmp0(data->type, "rectangle") == 0) ||
 	     (g_strcmp0(data->type, "rectangle_fill") == 0) ||
