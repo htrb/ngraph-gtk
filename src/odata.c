@@ -4083,10 +4083,11 @@ calculate_average_weughted(struct f2ddata *fp, int smx, int smy, int sm2, int sm
   int i, weight;
   struct f2ddata_buf *buf;
   int numx, numy, num2, num3;
-  double sumx, sumy, sum2, sum3;
+  double sumx, sumy, sum2, sum3, wx, wy, w2, w3;
 
   sumx = sumy = sum2 = sum3 = 0;
   numx = numy = num2 = num3 = 0;
+  wx = wy = w2 = w3 = 0;
 /*
            o
   i: 0 1 2 3 4 5 6 7 8 9 10
@@ -4106,6 +4107,7 @@ b-i: 6 5 4 3 2 1 0 1 2 3  4  5
   bufpo + smx: 11
   if (smx > bufpo) smx = bufpo
  */
+#if 0
   if (smx > fp->bufpo) smx = fp->bufpo;
   if (smy > fp->bufpo) smy = fp->bufpo;
   if (sm2 > fp->bufpo) sm2 = fp->bufpo;
@@ -4114,12 +4116,14 @@ b-i: 6 5 4 3 2 1 0 1 2 3  4  5
   if (smy > num - fp->bufpo) smy = num - fp->bufpo;
   if (sm2 > num - fp->bufpo) sm2 = num - fp->bufpo;
   if (sm3 > num - fp->bufpo) sm3 = num - fp->bufpo;
+#endif
   for (i = 0; i <= num; i++) {
     buf = fp->buf_ptr[i];
     if (buf->dxstat == MATH_VALUE_NORMAL &&
 	i >= fp->bufpo - smx &&
 	i <= fp->bufpo + smx) {
       weight = smx + 1 - abs(fp->bufpo - i);
+      wx += weight;
       sumx += buf->dx * weight;
       numx++;
     }
@@ -4127,6 +4131,7 @@ b-i: 6 5 4 3 2 1 0 1 2 3  4  5
 	i >= fp->bufpo - smy &&
 	i <= fp->bufpo + smy) {
       weight = smy + 1 - abs(fp->bufpo - i);
+      wy += weight;
       sumy += buf->dy * weight;
       numy++;
     }
@@ -4134,6 +4139,7 @@ b-i: 6 5 4 3 2 1 0 1 2 3  4  5
 	i >= fp->bufpo - sm2 &&
 	i <= fp->bufpo + sm2) {
       weight = sm2 + 1 - abs(fp->bufpo - i);
+      w2 += weight;
       sum2 += buf->d2 * weight;
       num2++;
     }
@@ -4141,6 +4147,7 @@ b-i: 6 5 4 3 2 1 0 1 2 3  4  5
 	i >= fp->bufpo - sm3 &&
 	i <= fp->bufpo + sm3) {
       weight = sm3 + 1 - abs(fp->bufpo - i);
+      w3 += weight;
       sum3 += buf->d3 * weight;
       num3++;
     }
@@ -4149,22 +4156,22 @@ b-i: 6 5 4 3 2 1 0 1 2 3  4  5
   buf = fp->buf_ptr[fp->bufpo];
 
   if (numx != 0) {
-    fp->dx = sumx / (smx + 1) / (smx + 1);
+    fp->dx = sumx / wx;
   }
   fp->dxstat = buf->dxstat;
 
   if (numy != 0) {
-    fp->dy = sumy / (smy + 1) / (smy + 1);
+    fp->dy = sumy / wy;
   }
   fp->dystat = buf->dystat;
 
   if (num2 != 0) {
-    fp->d2 = sum2 / (sm2 + 1) / (sm2 + 1);
+    fp->d2 = sum2 / w2;
   }
   fp->d2stat = buf->d2stat;
 
   if (num3 != 0) {
-    fp->d3 = sum3 / (sm3 + 1) / (sm3 + 1);
+    fp->d3 = sum3 / w3;
   }
   fp->d3stat = buf->d3stat;
   fp->dline = buf->line;
@@ -4187,6 +4194,7 @@ calculate_average_exponential(struct f2ddata *fp, int smx, int smy, int sm2, int
   sumx = sumy = sum2 = sum3 = 0;
   numx = numy = num2 = num3 = 0;
   wx = wy = w2 = w3 = 0;
+#if 0
   if (smx > fp->bufpo) smx = fp->bufpo;
   if (smy > fp->bufpo) smy = fp->bufpo;
   if (sm2 > fp->bufpo) sm2 = fp->bufpo;
@@ -4194,6 +4202,7 @@ calculate_average_exponential(struct f2ddata *fp, int smx, int smy, int sm2, int
   if (smy > num - fp->bufpo) smy = num - fp->bufpo;
   if (sm2 > num - fp->bufpo) sm2 = num - fp->bufpo;
   if (sm3 > num - fp->bufpo) sm3 = num - fp->bufpo;
+#endif
   ax = (1 - 2.0 / (smx / HALFLIFE + 2));
   ay = (1 - 2.0 / (smy / HALFLIFE + 2));
   a2 = (1 - 2.0 / (sm2 / HALFLIFE + 2));
