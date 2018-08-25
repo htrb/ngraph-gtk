@@ -446,7 +446,7 @@ draw_stroke(struct objlist *obj, N_VALUE *inst, int GC, int *points2, int *pdata
     break;
   case MARKER_TYPE_WAVE:
     draw_wave(obj, inst, GC, width, headlen, headwidth, x0, y0, x1, y1);
-  break;
+    break;
   case MARKER_TYPE_MARK:
     draw_mark(obj, inst, GC, width, headlen, headwidth, x0, y0, x1, y1, fr, fg, fb, fa, TRUE);
     break;
