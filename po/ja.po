@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.07.06\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2018-08-24 15:56+0900\n"
+"POT-Creation-Date: 2018-08-24 22:12+0900\n"
 "PO-Revision-Date: 2018-08-23 22:57+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -1142,17 +1142,17 @@ msgstr "_X 変換数式:"
 msgid "_Y math:"
 msgstr "_Y 変換数式:"
 
-#: src/gtk/x11file.c:2662
+#: src/gtk/x11file.c:2661
 msgid "_X smooth:"
 msgstr "_X 隣接平均:"
 
-#: src/gtk/x11file.c:2667
-msgid "_Y smooth:"
-msgstr "_Y 隣接平均:"
-
-#: src/gtk/x11file.c:2671
+#: src/gtk/x11file.c:2666
 msgid "_Averaging type:"
 msgstr "平均化手法(_A):"
+
+#: src/gtk/x11file.c:2671
+msgid "_Y smooth:"
+msgstr "_Y 隣接平均:"
 
 #: src/gtk/x11file.c:2921 src/gtk/x11file.c:4158 src/gtk/x11file.c:4227
 #: src/gtk/x11file.c:4287 src/gtk/x11file.c:5949
