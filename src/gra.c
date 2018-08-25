@@ -1264,9 +1264,9 @@ GRAmark_rotate(int GC,int type,int x0,int y0, double dx, double dy, int size,
 	      ofst = 18000;
 	    }
 	  } else if (dy > 0) {
-	    ofst = acos(-dx) / MPI * 18000;
+	    ofst = acos(-dx) / MPI * 18000 + 18000;
 	  } else {
-	    ofst = acos(dx) / MPI * 18000 + 18000;
+	    ofst = acos(dx) / MPI * 18000;
 	  }
           if (type2==4) {
             r/=2;
