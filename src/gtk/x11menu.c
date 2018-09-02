@@ -4116,6 +4116,11 @@ create_icon(void)
   GList *tmp, *list = NULL;
   GdkPixbuf *pixbuf;
 
+  pixbuf = gdk_pixbuf_new_from_resource(NGRAPH_SVG_ICON_FILE, NULL);
+  if (pixbuf) {
+    list = g_list_append(list, pixbuf);
+  }
+
   pixbuf = gdk_pixbuf_new_from_resource(NGRAPH_ICON_FILE, NULL);
   if (pixbuf) {
     list = g_list_append(list, pixbuf);
