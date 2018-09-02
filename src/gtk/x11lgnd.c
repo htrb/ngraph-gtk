@@ -3553,11 +3553,11 @@ LegendWinState(struct SubWin *d, int state)
   GtkTreeViewColumn *col;
 #define LEGENDNUM 5
   struct legend_data legend_data[LEGENDNUM] = {
-    {NGRAPH_LINE_ICON_FILE, PathListUpdate, LegendWinPathUpdate, N_("path"),      &DlgLegendArrow},
-    {NGRAPH_RECT_ICON_FILE, RectListUpdate, LegendWinRectUpdate, N_("rectangle"), &DlgLegendRect},
-    {NGRAPH_ARC_ICON_FILE,  ArcListUpdate,  LegendWinArcUpdate,  N_("arc"),       &DlgLegendArc},
-    {NGRAPH_MARK_ICON_FILE, MarkListUpdate, LegendWinMarkUpdate, N_("mark"),      &DlgLegendMark},
-    {NGRAPH_TEXT_ICON_FILE, TextListUpdate, LegendWinTextUpdate, N_("text"),      &DlgLegendText},
+    {NGRAPH_LINE_ICON, PathListUpdate, LegendWinPathUpdate, N_("path"),      &DlgLegendArrow},
+    {NGRAPH_RECT_ICON, RectListUpdate, LegendWinRectUpdate, N_("rectangle"), &DlgLegendRect},
+    {NGRAPH_ARC_ICON,  ArcListUpdate,  LegendWinArcUpdate,  N_("arc"),       &DlgLegendArc},
+    {NGRAPH_MARK_ICON, MarkListUpdate, LegendWinMarkUpdate, N_("mark"),      &DlgLegendMark},
+    {NGRAPH_TEXT_ICON, TextListUpdate, LegendWinTextUpdate, N_("text"),      &DlgLegendText},
   };
   GtkWidget *icons[LEGENDNUM];
   int noexpand_text_colmns[] = {TEXT_LIST_COL_X, TEXT_LIST_COL_Y, TEXT_LIST_COL_PT, TEXT_LIST_COL_DIR};
@@ -3572,7 +3572,7 @@ LegendWinState(struct SubWin *d, int state)
   }
 
   for (i = 0; i < LEGENDNUM; i++) {
-    icons[i] = gtk_image_new_from_resource(legend_data[i].icon_file);
+    icons[i] = gtk_image_new_from_icon_name(legend_data[i].icon_file, GTK_ICON_SIZE_LARGE_TOOLBAR);
     gtk_widget_set_tooltip_text(GTK_WIDGET(icons[i]), _(legend_data[i].name));
   }
 
