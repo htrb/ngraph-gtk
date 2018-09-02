@@ -29,21 +29,24 @@ NGRAPH_ICONS = data/pixmaps/ngraph_align_b.png				\
 	data/pixmaps/ngraph_single.png data/pixmaps/ngraph_text.png	\
 	data/pixmaps/ngraph_trimming.png data/pixmaps/ngraph_undo.png	\
 	data/pixmaps/ngraph_zoom.png data/ngraphui.resources.xml	\
-	data/pixmaps/none_begin.png data/pixmaps/none_end.png		\
-	data/pixmaps/arrow_begin.png data/pixmaps/arrow_end.png		\
-	data/pixmaps/wave_begin.png data/pixmaps/wave_end.png		\
-	data/pixmaps/mark_begin.png data/pixmaps/mark_end.png		\
-	data/pixmaps/bar_begin.png data/pixmaps/bar_end.png		\
+	data/pixmaps/none_begin-symbolic.svg				\
+	data/pixmaps/none_end-symbolic.svg				\
+	data/pixmaps/arrow_begin-symbolic.svg				\
+	data/pixmaps/arrow_end-symbolic.svg				\
+	data/pixmaps/wave_begin-symbolic.svg				\
+	data/pixmaps/wave_end-symbolic.svg				\
+	data/pixmaps/mark_begin-symbolic.svg				\
+	data/pixmaps/mark_end-symbolic.svg				\
+	data/pixmaps/bar_begin-symbolic.svg				\
+	data/pixmaps/bar_end-symbolic.svg				\
 	data/pixmaps/stroke_fill_0.png data/pixmaps/stroke_fill_1.png	\
 	data/pixmaps/stroke_fill_2.png data/pixmaps/stroke_fill_3.png	\
 	data/pixmaps/stroke_fill_4.png data/pixmaps/stroke_fill_5.png	\
 	data/pixmaps/stroke_fill_6.png data/pixmaps/stroke_fill_7.png	\
-	data/pixmaps/join_bevel.png data/pixmaps/join_miter.png		\
-	data/pixmaps/join_round.png data/pixmaps/linewidth_002.png	\
-	data/pixmaps/linewidth_008.png data/pixmaps/linewidth_032.png	\
-	data/pixmaps/linewidth_128.png data/pixmaps/linewidth_004.png	\
-	data/pixmaps/linewidth_016.png data/pixmaps/linewidth_064.png	\
-	data/pixmaps/ngraph.svg data/pixmaps/ngraph_eval-symbolic.svg	\
+	data/pixmaps/join_bevel-symbolic.svg				\
+	data/pixmaps/join_miter-symbolic.svg				\
+	data/pixmaps/join_round-symbolic.svg data/pixmaps/ngraph.svg	\
+	data/pixmaps/ngraph_eval-symbolic.svg				\
 	data/pixmaps/ngraph_line-symbolic.svg				\
 	data/pixmaps/ngraph_single-symbolic.svg				\
 	data/pixmaps/ngraph_arc-symbolic.svg				\
