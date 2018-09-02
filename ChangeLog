@@ -1,3 +1,8 @@
+2018-09-02  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (application): call
+	"gtk_icon_theme_add_resource_path()".
+
 2018-08-23  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* merge "marker type" feature of the path object.
