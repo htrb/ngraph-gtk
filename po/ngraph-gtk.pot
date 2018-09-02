@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.07.07\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2018-08-24 22:12+0900\n"
+"POT-Creation-Date: 2018-09-02 12:42+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1425,7 +1425,7 @@ msgstr ""
 
 #: src/gtk/x11gui.c:134 src/gtk/x11gui.c:357 src/gtk/x11gui.c:425
 #: src/gtk/x11gui.c:561 src/gtk/x11gui.c:637 src/gtk/x11gui.c:707
-#: src/gtk/x11gui.c:786 src/gtk/x11gui.c:1017 src/gtk/x11menu.c:5359
+#: src/gtk/x11gui.c:786 src/gtk/x11gui.c:1017 src/gtk/x11menu.c:5364
 #: src/gtk/x11opt.c:1325
 msgid "_Cancel"
 msgstr ""
@@ -1469,7 +1469,7 @@ msgstr ""
 msgid "%s file (*.%s)"
 msgstr ""
 
-#: src/gtk/x11gui.c:1136 src/gtk/x11gui.c:1169 src/gtk/x11menu.c:5361
+#: src/gtk/x11gui.c:1136 src/gtk/x11gui.c:1169 src/gtk/x11menu.c:5366
 msgid "_Open"
 msgstr ""
 
@@ -2168,7 +2168,7 @@ msgstr ""
 msgid "Align _Bottom"
 msgstr ""
 
-#: src/gtk/x11menu.c:2265 src/gtk/x11menu.c:6734 src/gtk/x11menu.c:6768
+#: src/gtk/x11menu.c:2265 src/gtk/x11menu.c:6742 src/gtk/x11menu.c:6776
 msgid "_Redo"
 msgstr ""
 
@@ -2176,7 +2176,7 @@ msgstr ""
 msgid "Redo previous command"
 msgstr ""
 
-#: src/gtk/x11menu.c:2281 src/gtk/x11menu.c:6743 src/gtk/x11menu.c:6758
+#: src/gtk/x11menu.c:2281 src/gtk/x11menu.c:6751 src/gtk/x11menu.c:6766
 msgid "_Undo"
 msgstr ""
 
@@ -2412,113 +2412,113 @@ msgstr ""
 msgid "_Flip"
 msgstr ""
 
-#: src/gtk/x11menu.c:4411
+#: src/gtk/x11menu.c:4416
 msgid "data"
 msgstr ""
 
-#: src/gtk/x11menu.c:5355 src/gtk/x11menu.c:5491
+#: src/gtk/x11menu.c:5360 src/gtk/x11menu.c:5496
 msgid "Recent Graphs"
 msgstr ""
 
-#: src/gtk/x11menu.c:5355 src/gtk/x11menu.c:5497
+#: src/gtk/x11menu.c:5360 src/gtk/x11menu.c:5502
 msgid "Recent Data Files"
 msgstr ""
 
-#: src/gtk/x11menu.c:5485
+#: src/gtk/x11menu.c:5490
 msgid "Save menu"
 msgstr ""
 
-#: src/gtk/x11menu.c:6187
+#: src/gtk/x11menu.c:6195
 msgid "Error:"
 msgstr ""
 
-#: src/gtk/x11menu.c:6237
+#: src/gtk/x11menu.c:6245
 msgid "Question"
 msgstr ""
 
-#: src/gtk/x11menu.c:6295
+#: src/gtk/x11menu.c:6303
 #, c-format
 msgid "Executing `%.128s'."
 msgstr ""
 
-#: src/gtk/x11menu.c:6673 src/gtk/x11menu.c:6691
+#: src/gtk/x11menu.c:6681 src/gtk/x11menu.c:6699
 msgid "edit"
 msgstr ""
 
-#: src/gtk/x11menu.c:6674
+#: src/gtk/x11menu.c:6682
 msgid "move"
 msgstr ""
 
-#: src/gtk/x11menu.c:6675
+#: src/gtk/x11menu.c:6683
 msgid "rotate"
 msgstr ""
 
-#: src/gtk/x11menu.c:6676
+#: src/gtk/x11menu.c:6684
 msgid "flip"
 msgstr ""
 
-#: src/gtk/x11menu.c:6677
+#: src/gtk/x11menu.c:6685
 msgid "delete object"
 msgstr ""
 
-#: src/gtk/x11menu.c:6678
+#: src/gtk/x11menu.c:6686
 msgid "create object"
 msgstr ""
 
-#: src/gtk/x11menu.c:6679
+#: src/gtk/x11menu.c:6687
 msgid "align"
 msgstr ""
 
-#: src/gtk/x11menu.c:6680
+#: src/gtk/x11menu.c:6688
 msgid "order"
 msgstr ""
 
-#: src/gtk/x11menu.c:6681
+#: src/gtk/x11menu.c:6689
 msgid "duplicate"
 msgstr ""
 
-#: src/gtk/x11menu.c:6682
+#: src/gtk/x11menu.c:6690
 msgid "execute shell"
 msgstr ""
 
-#: src/gtk/x11menu.c:6683
+#: src/gtk/x11menu.c:6691
 msgid "execute add-in"
 msgstr ""
 
-#: src/gtk/x11menu.c:6684
+#: src/gtk/x11menu.c:6692
 msgid "scale clear"
 msgstr ""
 
-#: src/gtk/x11menu.c:6685
+#: src/gtk/x11menu.c:6693
 msgid "scale undo"
 msgstr ""
 
-#: src/gtk/x11menu.c:6686
+#: src/gtk/x11menu.c:6694
 msgid "open file"
 msgstr ""
 
-#: src/gtk/x11menu.c:6687
+#: src/gtk/x11menu.c:6695
 msgid "add range"
 msgstr ""
 
-#: src/gtk/x11menu.c:6688
+#: src/gtk/x11menu.c:6696
 msgid "paste"
 msgstr ""
 
-#: src/gtk/x11menu.c:6689
+#: src/gtk/x11menu.c:6697
 msgid "scale trimming"
 msgstr ""
 
-#: src/gtk/x11menu.c:6690
+#: src/gtk/x11menu.c:6698
 msgid "auto scale"
 msgstr ""
 
-#: src/gtk/x11menu.c:6731 src/gtk/x11menu.c:6765
+#: src/gtk/x11menu.c:6739 src/gtk/x11menu.c:6773
 #, c-format
 msgid "_Redo: %s"
 msgstr ""
 
-#: src/gtk/x11menu.c:6740 src/gtk/x11menu.c:6755
+#: src/gtk/x11menu.c:6748 src/gtk/x11menu.c:6763
 #, c-format
 msgid "_Undo: %s"
 msgstr ""

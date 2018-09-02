@@ -1,4 +1,4 @@
-ngraph-gtk (6.07.06-1) unstable; urgency=medium
+ngraph-gtk (6.07.07-1) unstable; urgency=medium
 
   * New upstream release
   * debian/compat
