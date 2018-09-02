@@ -132,8 +132,8 @@ StrokeFillStrokeAction_activated(GSimpleAction *action, GVariant *parameter, gpo
 
 static GActionEntry ToolMenuEntries[] = {
   {"JoinTypeAction",            NULL, "s",  DEFAULT_JOIN_STR,  JoinTypeAction_activated},
-  {"MarkerTypeBeginAction",      NULL, "s",  DEFAULT_MARKER_STR, MarkerTypeBeginAction_activated},
-  {"MarkerTypeEndAction",        NULL, "s",  DEFAULT_MARKER_STR, MarkerTypeEndAction_activated},
+  {"MarkerTypeBeginAction",     NULL, "s",  DEFAULT_MARKER_STR, MarkerTypeBeginAction_activated},
+  {"MarkerTypeEndAction",       NULL, "s",  DEFAULT_MARKER_STR, MarkerTypeEndAction_activated},
   {"StrokeFillStrokeAction",    NULL, NULL, "true",            StrokeFillStrokeAction_activated},
   {"StrokeFillFillAction",      NULL, NULL, "false",           StrokeFillFillAction_activated},
   {"StrokeFillClosePathAction", NULL, NULL, "false",           StrokeFillClosePathAction_activated},
