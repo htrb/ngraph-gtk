@@ -66,7 +66,14 @@ NGRAPH_ICONS = data/pixmaps/ngraph_align_b.png				\
 	data/pixmaps/ngraph_scale-symbolic.svg				\
 	data/pixmaps/ngraph_datapoint-symbolic.svg			\
 	data/pixmaps/ngraph_legendwin-symbolic.svg			\
-	data/pixmaps/ngraph_section-symbolic.svg
+	data/pixmaps/ngraph_section-symbolic.svg			\
+	data/pixmaps/linewidth_002-symbolic.svg				\
+	data/pixmaps/linewidth_004-symbolic.svg				\
+	data/pixmaps/linewidth_008-symbolic.svg				\
+	data/pixmaps/linewidth_016-symbolic.svg				\
+	data/pixmaps/linewidth_032-symbolic.svg				\
+	data/pixmaps/linewidth_064-symbolic.svg				\
+	data/pixmaps/linewidth_128-symbolic.svg
 
 EXTRA_DIST = dir_defs.h.in data/css/ngraph.css				\
 	data/gtk/menus-common.ui.in data/gtk/menus-common.ui.osx	\
