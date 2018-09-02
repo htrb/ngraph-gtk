@@ -4257,7 +4257,7 @@ window_to_tab(struct SubWin *win, GtkWidget *tab, const char *icon_file, const c
   g_object_set_data(G_OBJECT(w), OBJ_ID_KEY, GINT_TO_POINTER(obj_id));
   gtk_container_remove(GTK_CONTAINER(dialog), w);
 
-  icon = gtk_image_new_from_resource(icon_file);
+  icon = gtk_image_new_from_icon_name(icon_file, GTK_ICON_SIZE_LARGE_TOOLBAR);
   gtk_widget_set_tooltip_text(icon, tip);
 
   gtk_notebook_append_page(GTK_NOTEBOOK(tab), w, icon);
