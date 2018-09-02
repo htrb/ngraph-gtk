@@ -1365,24 +1365,17 @@ create_marker_type_combo_box(const char *postfix, const char *tooltip)
   int j;
   GtkCellRenderer *rend;
 
-  list = gtk_list_store_new(1, G_TYPE_OBJECT);
+  list = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_INT);
   cbox = gtk_combo_box_new_with_model(GTK_TREE_MODEL(list));
   rend = gtk_cell_renderer_pixbuf_new();
   gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(cbox), rend, FALSE);
-  gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "pixbuf", 0);
+  gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "icon-name", 0);
+  gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "stock-size", 1);
   for (j = 0; j < MARKER_TYPE_NUM; j++) {
-    GdkPixbuf *pixbuf;
-    GtkWidget *image;
-    char *img_file;
-    img_file = g_strdup_printf("%s/pixmaps/%s_%s.png", RESOURCE_PATH, marker_type_char[j], postfix);
-    image = gtk_image_new_from_resource(img_file);
-    g_free(img_file);
-    pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(image));
-    if (pixbuf) {
-      gtk_list_store_append(list, &iter);
-      gtk_list_store_set(list, &iter, 0, pixbuf, -1);
-    }
-    gtk_widget_destroy(image);
+    char img_file[256];
+    snprintf(img_file, sizeof(img_file), "%s_%s-symbolic", marker_type_char[j], postfix);
+    gtk_list_store_append(list, &iter);
+    gtk_list_store_set(list, &iter, 0, img_file, 1, GTK_ICON_SIZE_LARGE_TOOLBAR, -1);
   }
   gtk_combo_box_set_active(GTK_COMBO_BOX(cbox), 1);
   gtk_widget_set_name(cbox, "MarkerType");
