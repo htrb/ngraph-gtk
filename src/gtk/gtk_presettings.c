@@ -144,14 +144,13 @@ create_images_sub(const char *prefix, char **item, GtkWidget **icon)
 {
   int i;
   GtkWidget *img;
-  char *img_file;
+  char img_file[256];
 
   for (i = 0; item[i]; i++) {
-    img_file = g_strdup_printf("%s/pixmaps/%s_%s.png", RESOURCE_PATH, prefix, item[i]);
-    img = gtk_image_new_from_resource(img_file);
+    snprintf(img_file, sizeof(img_file), "%s_%s-symbolic", prefix, item[i]);
+    img = gtk_image_new_from_icon_name(img_file, GTK_ICON_SIZE_LARGE_TOOLBAR);
     icon[i] = img;
     g_object_ref(img);
-    g_free(img_file);
   }
 }
 
@@ -179,12 +178,11 @@ create_images(struct presetting_widgets *widgets)
   create_images_sub("join", joinchar, widgets->join_icon);
   for (i = 0; i < STROKE_FILL_ICON_NUM; i++) {
     GtkWidget *img;
-    char *img_file;
-    img_file = g_strdup_printf("%s/pixmaps/stroke_fill_%d.png", RESOURCE_PATH, i);
-    img = gtk_image_new_from_resource(img_file);
+    char img_file[256];
+    snprintf(img_file, sizeof(img_file), "stroke_fill_%d", i);
+    img = gtk_image_new_from_icon_name(img_file, GTK_ICON_SIZE_LARGE_TOOLBAR);
     widgets->stroke_fill_icon[i] = img;
     g_object_ref(img);
-    g_free(img_file);
   }
 }
 
@@ -596,31 +594,25 @@ create_line_width_combo_box(void)
   int j;
   GtkCellRenderer *rend;
 
-  list = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_OBJECT);
+  list = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT);
   cbox = gtk_combo_box_new_with_model(GTK_TREE_MODEL(list));
   rend = gtk_cell_renderer_text_new();
   gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(cbox), rend, FALSE);
   gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "text", 0);
   rend = gtk_cell_renderer_pixbuf_new();
   gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(cbox), rend, FALSE);
-  gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "pixbuf", 1);
+  gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "icon-name", 1);
+  gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "stock-size", 2);
   for (j = 0; j < LINE_WIDTH_ICON_NUM; j++) {
-    GdkPixbuf *pixbuf;
-    GtkWidget *image;
-    char buf[64], *img_file;
-    img_file = g_strdup_printf("%s/pixmaps/linewidth_%03d.png", RESOURCE_PATH, 2 << j);
-    image = gtk_image_new_from_resource(img_file);
-    g_free(img_file);
-    pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(image));
-    if (pixbuf) {
-      gtk_list_store_append(list, &iter);
-      snprintf(buf, sizeof(buf), "%4.1f", (2 << j) / 10.0);
-      gtk_list_store_set(list, &iter,
-			 0, buf,
-			 1, pixbuf,
-			 -1);
-    }
-    gtk_widget_destroy(image);
+    char buf[64], img_file[256];
+    snprintf(img_file, sizeof(img_file), "linewidth_%03d-symbolic", 2 << j);
+    gtk_list_store_append(list, &iter);
+    snprintf(buf, sizeof(buf), "%4.1f", (2 << j) / 10.0);
+    gtk_list_store_set(list, &iter,
+		       0, buf,
+		       1, img_file,
+		       2, GTK_ICON_SIZE_LARGE_TOOLBAR,
+		       -1);
   }
   gtk_combo_box_set_active(GTK_COMBO_BOX(cbox), 1);
   return cbox;
