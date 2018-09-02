@@ -5898,6 +5898,9 @@ application(char *file)
     OpenGC();
     OpenGRA();
   } else {
+    GtkIconTheme *theme;
+    theme = gtk_icon_theme_get_default();
+    gtk_icon_theme_add_resource_path(theme, NGRAPH_ICON_PATH);
     if (create_toplevel_window()) {
       return 1;
     }
