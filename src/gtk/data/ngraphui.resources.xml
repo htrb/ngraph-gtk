@@ -47,19 +47,19 @@
     <file>pixmaps/ngraph_trimming-symbolic.svg</file>
     <file>pixmaps/ngraph_undo.png</file>
     <file>pixmaps/ngraph_zoom-symbolic.svg</file>
-    <file>pixmaps/none_begin.png</file>
-    <file>pixmaps/none_end.png</file>
-    <file>pixmaps/arrow_begin.png</file>
-    <file>pixmaps/arrow_end.png</file>
-    <file>pixmaps/wave_begin.png</file>
-    <file>pixmaps/wave_end.png</file>
-    <file>pixmaps/mark_begin.png</file>
-    <file>pixmaps/mark_end.png</file>
-    <file>pixmaps/bar_begin.png</file>
-    <file>pixmaps/bar_end.png</file>
-    <file>pixmaps/join_bevel.png</file>
-    <file>pixmaps/join_miter.png</file>
-    <file>pixmaps/join_round.png</file>
+    <file>pixmaps/none_begin-symbolic.svg</file>
+    <file>pixmaps/none_end-symbolic.svg</file>
+    <file>pixmaps/arrow_begin-symbolic.svg</file>
+    <file>pixmaps/arrow_end-symbolic.svg</file>
+    <file>pixmaps/wave_begin-symbolic.svg</file>
+    <file>pixmaps/wave_end-symbolic.svg</file>
+    <file>pixmaps/mark_begin-symbolic.svg</file>
+    <file>pixmaps/mark_end-symbolic.svg</file>
+    <file>pixmaps/bar_begin-symbolic.svg</file>
+    <file>pixmaps/bar_end-symbolic.svg</file>
+    <file>pixmaps/join_bevel-symbolic.svg</file>
+    <file>pixmaps/join_miter-symbolic.svg</file>
+    <file>pixmaps/join_round-symbolic.svg</file>
     <file>pixmaps/stroke_fill_0.png</file>
     <file>pixmaps/stroke_fill_1.png</file>
     <file>pixmaps/stroke_fill_2.png</file>
@@ -68,13 +68,13 @@
     <file>pixmaps/stroke_fill_5.png</file>
     <file>pixmaps/stroke_fill_6.png</file>
     <file>pixmaps/stroke_fill_7.png</file>
-    <file>pixmaps/linewidth_002.png</file>
-    <file>pixmaps/linewidth_004.png</file>
-    <file>pixmaps/linewidth_008.png</file>
-    <file>pixmaps/linewidth_016.png</file>
-    <file>pixmaps/linewidth_032.png</file>
-    <file>pixmaps/linewidth_064.png</file>
-    <file>pixmaps/linewidth_128.png</file>
+    <file>pixmaps/linewidth_002-symbolic.svg</file>
+    <file>pixmaps/linewidth_004-symbolic.svg</file>
+    <file>pixmaps/linewidth_008-symbolic.svg</file>
+    <file>pixmaps/linewidth_016-symbolic.svg</file>
+    <file>pixmaps/linewidth_032-symbolic.svg</file>
+    <file>pixmaps/linewidth_064-symbolic.svg</file>
+    <file>pixmaps/linewidth_128-symbolic.svg</file>
     <file>css/ngraph.css</file>
   </gresource>
 </gresources>
