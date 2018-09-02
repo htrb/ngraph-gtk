@@ -26,7 +26,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="19.136507"
-     inkscape:cx="15.033371"
+     inkscape:cx="10.147422"
      inkscape:cy="10.686594"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
@@ -50,7 +50,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -59,22 +59,8 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-290.64998)">
-    <ellipse
-       style="opacity:0.97000002;fill:#000000;fill-opacity:0;stroke:none;stroke-width:2;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke"
-       id="path817"
-       cx="2.6489136"
-       cy="293.14212"
-       rx="1.9558837"
-       ry="1.5015643" />
-    <ellipse
-       style="opacity:0.97000002;fill:#000000;fill-opacity:0;stroke:none;stroke-width:2;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke"
-       id="path819"
-       cx="2.2792976"
-       cy="292.8649"
-       rx="1.6632712"
-       ry="1.3013557" />
     <path
-       style="opacity:0.97000002;fill:#bebebe;fill-opacity:1;stroke:none;stroke-width:0.99999994;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke"
+       style="opacity:1;fill:#bebebe;fill-opacity:1;stroke:none;stroke-width:0.99999994;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke"
        d="M 1 1 L 1 23 L 23 23 L 23 1 L 1 1 z M 4 4 L 20 4 L 20 20 L 4 20 L 4 4 z "
        transform="matrix(0.26458333,0,0,0.26458333,0,290.64998)"
        id="rect907-7" />

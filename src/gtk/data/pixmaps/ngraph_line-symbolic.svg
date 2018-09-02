@@ -15,7 +15,7 @@
    version="1.1"
    id="svg8"
    inkscape:version="0.92.3 (2405546, 2018-03-11)"
-   sodipodi:docname="ngraph_line.svg">
+   sodipodi:docname="ngraph_line-symbolic.svg">
   <defs
      id="defs2" />
   <sodipodi:namedview
@@ -26,7 +26,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="17.18"
-     inkscape:cx="14.380068"
+     inkscape:cx="11.265982"
      inkscape:cy="12.942535"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
@@ -50,7 +50,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -59,13 +59,6 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-290.64998)">
-    <ellipse
-       style="opacity:0.97000002;fill:#000000;fill-opacity:0;stroke:none;stroke-width:2;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke"
-       id="path819"
-       cx="2.2792976"
-       cy="292.8649"
-       rx="1.6632712"
-       ry="1.3013557" />
     <path
        style="fill:#bebebe;fill-rule:evenodd;stroke:none;stroke-width:0.26458333;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;fill-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
        d="m 5.0270833,290.91456 -4.76249997,4.7625 0.79374997,1.05834 h 5.0270833 v -1.05834 H 1.8520833 l 3.96875,-3.96875 z"
