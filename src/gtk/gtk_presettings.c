@@ -160,14 +160,13 @@ create_marker_images_sub(const char *postfix, char **item, GtkWidget **icon)
 {
   int i;
   GtkWidget *img;
-  char *img_file;
+  char img_file[256];
 
   for (i = 0; item[i]; i++) {
-    img_file = g_strdup_printf("%s/pixmaps/%s_%s.png", RESOURCE_PATH, item[i], postfix);
-    img = gtk_image_new_from_resource(img_file);
+    snprintf(img_file, sizeof(img_file), "%s_%s-symbolic", item[i], postfix);
+    img = gtk_image_new_from_icon_name(img_file, GTK_ICON_SIZE_LARGE_TOOLBAR);
     icon[i] = img;
     g_object_ref(img);
-    g_free(img_file);
   }
 }
 
