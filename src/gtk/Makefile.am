@@ -42,7 +42,31 @@ NGRAPH_ICONS = data/pixmaps/ngraph_align_b.png				\
 	data/pixmaps/join_round.png data/pixmaps/linewidth_002.png	\
 	data/pixmaps/linewidth_008.png data/pixmaps/linewidth_032.png	\
 	data/pixmaps/linewidth_128.png data/pixmaps/linewidth_004.png	\
-	data/pixmaps/linewidth_016.png data/pixmaps/linewidth_064.png
+	data/pixmaps/linewidth_016.png data/pixmaps/linewidth_064.png	\
+	data/pixmaps/ngraph.svg data/pixmaps/ngraph_eval-symbolic.svg	\
+	data/pixmaps/ngraph_line-symbolic.svg				\
+	data/pixmaps/ngraph_single-symbolic.svg				\
+	data/pixmaps/ngraph_arc-symbolic.svg				\
+	data/pixmaps/ngraph_filewin-symbolic.svg			\
+	data/pixmaps/ngraph_mark-symbolic.svg				\
+	data/pixmaps/ngraph_text-symbolic.svg				\
+	data/pixmaps/ngraph_axispoint-symbolic.svg			\
+	data/pixmaps/ngraph_frame-symbolic.svg				\
+	data/pixmaps/ngraph_mergewin-symbolic.svg			\
+	data/pixmaps/ngraph_trimming-symbolic.svg			\
+	data/pixmaps/ngraph_axiswin-symbolic.svg			\
+	data/pixmaps/ngraph_gauss-symbolic.svg				\
+	data/pixmaps/ngraph_point-symbolic.svg				\
+	data/pixmaps/ngraph_zoom-symbolic.svg				\
+	data/pixmaps/ngraph_coordwin-symbolic.svg			\
+	data/pixmaps/ngraph_infowin-symbolic.svg			\
+	data/pixmaps/ngraph_rect-symbolic.svg				\
+	data/pixmaps/ngraph_cross-symbolic.svg				\
+	data/pixmaps/ngraph_legendpoint-symbolic.svg			\
+	data/pixmaps/ngraph_scale-symbolic.svg				\
+	data/pixmaps/ngraph_datapoint-symbolic.svg			\
+	data/pixmaps/ngraph_legendwin-symbolic.svg			\
+	data/pixmaps/ngraph_section-symbolic.svg
 
 EXTRA_DIST = dir_defs.h.in data/css/ngraph.css				\
 	data/gtk/menus-common.ui.in data/gtk/menus-common.ui.osx	\
