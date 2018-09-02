@@ -37,6 +37,8 @@
 #include "olegend.h"
 #include "opath.h"
 
+#define ROTATE_MARK 1
+
 #define NAME		"path"
 #define ALIAS		"line:curve:polygon"
 #define PARENT		"legend"
@@ -312,8 +314,11 @@ draw_mark(struct objlist *obj, N_VALUE *inst, int GC,
           int width, int headlen, int headwidth,
           int x0, int y0, int x1, int y1, int r, int g, int b, int a, int is_begin)
 {
-  double awidth, dx, dy;
+  double awidth;
   int type, br, bg, bb, ba;
+#if ROTATE_MARK
+  double dx, dy;
+#endif
 
   _getobj(obj, "fill_R", inst, &br);
   _getobj(obj, "fill_G", inst, &bg);
@@ -324,6 +329,7 @@ draw_mark(struct objlist *obj, N_VALUE *inst, int GC,
   if (awidth == 0) {
     return;
   }
+#if ROTATE_MARK
   if (is_begin) {
     _getobj(obj, "mark_type_begin", inst, &type);
     get_dx_dy(x1, y1, x0, y0, &dx, &dy);
@@ -333,6 +339,15 @@ draw_mark(struct objlist *obj, N_VALUE *inst, int GC,
   }
   GRAlinestyle(GC, 0, NULL, width, GRA_LINE_CAP_BUTT, GRA_LINE_JOIN_MITER, 1000);
   GRAmark_rotate(GC, type, x0, y0, dx, dy, awidth, r, g, b, a, br, bg, bb, ba);
+#else
+  if (is_begin) {
+    _getobj(obj, "mark_type_begin", inst, &type);
+  } else {
+    _getobj(obj, "mark_type_end", inst, &type);
+  }
+  GRAlinestyle(GC, 0, NULL, width, GRA_LINE_CAP_BUTT, GRA_LINE_JOIN_MITER, 1000);
+  GRAmark_rotate(GC, type, x0, y0, 1, 0, awidth, r, g, b, a, br, bg, bb, ba);
+#endif
 }
 
 static void
