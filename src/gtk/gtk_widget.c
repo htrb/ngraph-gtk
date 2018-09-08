@@ -291,7 +291,7 @@ create_file_entry_with_cb(GCallback cb, gpointer data)
 
   w = create_text_entry(TRUE, TRUE);
 
-  gtk_entry_set_icon_from_icon_name(GTK_ENTRY(w), GTK_ENTRY_ICON_SECONDARY, "document-open");
+  gtk_entry_set_icon_from_icon_name(GTK_ENTRY(w), GTK_ENTRY_ICON_SECONDARY, "document-open-symbolic");
   g_signal_connect(w, "icon-release", cb, data);
 
   return w;
@@ -350,8 +350,8 @@ create_direction_entry(void)
 #if GTK_CHECK_VERSION(3, 12, 0)
   gtk_entry_set_max_width_chars(GTK_ENTRY(w), NUM_ENTRY_WIDTH);
 #endif
-  gtk_entry_set_icon_from_icon_name(GTK_ENTRY(w), GTK_ENTRY_ICON_SECONDARY, "go-up");
-  gtk_entry_set_icon_from_icon_name(GTK_ENTRY(w), GTK_ENTRY_ICON_PRIMARY, "go-down");
+  gtk_entry_set_icon_from_icon_name(GTK_ENTRY(w), GTK_ENTRY_ICON_SECONDARY, "go-up-symbolic");
+  gtk_entry_set_icon_from_icon_name(GTK_ENTRY(w), GTK_ENTRY_ICON_PRIMARY, "go-down-symbolic");
   g_signal_connect(w, "icon-release", G_CALLBACK(direction_icon_released), NULL);
 
   return w;
