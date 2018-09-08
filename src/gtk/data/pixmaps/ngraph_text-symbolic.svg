@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="21.15"
-     inkscape:cx="9.7807343"
-     inkscape:cy="18.503926"
+     inkscape:zoom="17.18"
+     inkscape:cx="14.832225"
+     inkscape:cy="14.853207"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -61,12 +61,12 @@
      transform="translate(0,-290.64998)">
     <g
        aria-label="T"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8.81944561px;line-height:125%;font-family:'TeX Gyre Termes';-inkscape-font-specification:'TeX Gyre Termes';letter-spacing:0px;word-spacing:0px;fill:#bebebe;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       id="text817">
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46666622px;line-height:125%;font-family:'Century Schoolbook L';-inkscape-font-specification:'Century Schoolbook L Bold';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="text2678">
       <path
-         d="m 5.7150003,292.40503 -0.052917,-1.4993 H 0.68791635 l -0.0529167,1.4993 h 0.2116667 C 1.0583331,291.4349 1.2611803,291.27615 2.2489582,291.27615 h 0.4762501 v 4.40972 c 0,0.74965 -0.097014,0.84666 -0.8290279,0.89076 v 0.16757 h 2.5752781 v -0.16757 C 3.748264,296.54135 3.6247917,296.4267 3.6247917,295.78288 v -4.50673 h 0.4762501 c 1.0054168,0 1.1994446,0.15875 1.4022918,1.12888 z"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'TeX Gyre Termes';-inkscape-font-specification:'TeX Gyre Termes';fill:#bebebe;fill-opacity:1;stroke-width:0.26458332px;stroke:none;stroke-opacity:1"
-         id="path4621" />
+         d="M 5.9774665,290.76851 H 0.37253348 l -0.12699999,2.29446 H 0.6942668 c 0.11006666,-0.62653 0.22859998,-0.95673 0.4318,-1.25306 0.2709333,-0.4064 0.5926666,-0.60114 0.9821333,-0.60114 0.2539999,0 0.3047999,0.0593 0.3047999,0.34714 v 4.10633 c 0,0.5334 0,0.56727 -0.059267,0.635 -0.0762,0.0931 -0.254,0.127 -0.7027333,0.127 H 1.4647334 v 0.4572 h 3.4205332 v -0.4572 H 4.6989999 c -0.4487333,0 -0.6265333,-0.0339 -0.7027333,-0.127 C 3.937,296.22951 3.937,296.19564 3.937,295.66224 v -4.10633 c 0,-0.28787 0.0508,-0.34714 0.3047999,-0.34714 0.3640667,0 0.6434667,0.1524 0.9144,0.49954 0.2370666,0.31326 0.3725333,0.66886 0.4995333,1.35466 h 0.4487333 z"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:'Century Schoolbook L';-inkscape-font-specification:'Century Schoolbook L Bold';stroke-width:0.26458332px;fill:#bebebe;fill-opacity:1"
+         id="path2680" />
     </g>
   </g>
 </svg>
