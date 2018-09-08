@@ -44,6 +44,7 @@ gboolean list_sub_window_must_rebuild(struct obj_list_data *d);
 void list_sub_window_build(struct obj_list_data *d, list_sub_window_set_val_func func);
 void list_sub_window_set(struct obj_list_data *d, list_sub_window_set_val_func func);
 
+void list_sub_window_object_name(GtkMenuItem *w, gpointer client_data);
 void list_sub_window_delete(GtkMenuItem *item, gpointer user_data);
 void list_sub_window_copy(GtkMenuItem *item, gpointer user_data);
 void list_sub_window_move_top(GtkMenuItem *item, gpointer user_data);

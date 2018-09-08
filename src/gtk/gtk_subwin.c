@@ -1735,6 +1735,59 @@ ev_popup_menu(GtkWidget *w, gpointer client_data)
   return TRUE;
 }
 
+static int
+set_object_name(struct objlist *obj, int id)
+{
+  char *name, *new_name, buf[256];
+  int r;
+  getobj(obj, "name", id, 0, NULL, &name);
+  new_name = NULL;
+  snprintf(buf, sizeof(buf), "%s:%d:name", chkobjectname(obj), id);
+  r = DialogInput(TopLevel, _("Instance name"), buf, name, NULL, NULL, &new_name, NULL, NULL);
+  if (r != IDOK) {
+    return 0;
+  }
+  if (g_strcmp0(name, new_name) == 0) {
+    return 0;
+  }
+  if (new_name == NULL) {
+    putobj(obj, "name", id, new_name);
+    return 1;
+  }
+  g_strstrip(new_name);
+  if (new_name[0] == '\0') {
+    g_free(new_name);
+    new_name = NULL;
+  }
+  if (putobj(obj, "name", id, new_name) < 0) {
+    g_free(new_name);
+    return 0;
+  }
+  return 1;
+}
+
+void
+list_sub_window_object_name(GtkMenuItem *w, gpointer client_data)
+{
+  struct obj_list_data *d;
+
+  d = (struct obj_list_data*) client_data;
+  int sel, update, num;
+
+  if (Menulock || Globallock)
+    return;
+
+  sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
+  num = chkobjlastinst(d->obj);
+  if (sel < 0 || sel > num) {
+    return;
+  }
+  update = set_object_name(d->obj, sel);
+  if (update) {
+    set_graph_modified();
+  }
+}
+
 static GtkWidget *
 create_popup_menu_sub(struct obj_list_data *d, int top, struct subwin_popup_list *list)
 {
