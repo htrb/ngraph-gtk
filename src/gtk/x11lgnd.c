@@ -220,6 +220,7 @@ static struct subwin_popup_list Popup_list[] = {
   {NULL, NULL, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
   {N_("_Focus"),       G_CALLBACK(list_sub_window_focus), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {N_("_Properties"),  G_CALLBACK(list_sub_window_update), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("_Instance name"), G_CALLBACK(list_sub_window_object_name), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {NULL, NULL, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
   {N_("_Top"),    G_CALLBACK(list_sub_window_move_top), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {N_("_Up"),     G_CALLBACK(list_sub_window_move_up), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
@@ -229,10 +230,10 @@ static struct subwin_popup_list Popup_list[] = {
 };
 
 #define POPUP_ITEM_NUM (sizeof(Popup_list) / sizeof(*Popup_list) - 1)
-#define POPUP_ITEM_TOP 6
-#define POPUP_ITEM_UP 7
-#define POPUP_ITEM_DOWN 8
-#define POPUP_ITEM_BOTTOM 9
+#define POPUP_ITEM_TOP     7
+#define POPUP_ITEM_UP      8
+#define POPUP_ITEM_DOWN    9
+#define POPUP_ITEM_BOTTOM 10
 
 typedef void (* LEGEND_DIALOG_SETUP)(struct LegendDialog *data, struct objlist *obj, int id);
 

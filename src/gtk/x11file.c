@@ -137,6 +137,7 @@ static struct subwin_popup_list Popup_list[] = {
   {NULL, NULL, NULL,  POP_UP_MENU_ITEM_TYPE_SEPARATOR},
   {N_("_Draw"),       G_CALLBACK(file_draw_popup_func), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {N_("_Properties"), G_CALLBACK(list_sub_window_update), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("_Instance name"), G_CALLBACK(list_sub_window_object_name), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {N_("_Edit"),       G_CALLBACK(file_edit_popup_func), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {NULL, NULL, NULL,  POP_UP_MENU_ITEM_TYPE_SEPARATOR},
   {N_("_Top"),        G_CALLBACK(list_sub_window_move_top), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
@@ -147,11 +148,11 @@ static struct subwin_popup_list Popup_list[] = {
 };
 
 #define POPUP_ITEM_NUM (sizeof(Popup_list) / sizeof(*Popup_list) - 1)
-#define POPUP_ITEM_EDIT    8
-#define POPUP_ITEM_TOP    10
-#define POPUP_ITEM_UP     11
-#define POPUP_ITEM_DOWN   12
-#define POPUP_ITEM_BOTTOM 13
+#define POPUP_ITEM_EDIT    9
+#define POPUP_ITEM_TOP    11
+#define POPUP_ITEM_UP     12
+#define POPUP_ITEM_DOWN   13
+#define POPUP_ITEM_BOTTOM 14
 
 #define RANGE_ENTRY_WIDTH 26
 
