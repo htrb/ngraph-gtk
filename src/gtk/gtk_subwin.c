@@ -1386,6 +1386,20 @@ hide_minimize_menu_item(GtkWidget *widget, gpointer user_data)
 }
 #endif
 
+gboolean
+focus_in(GtkWidget *widget, GdkEvent *event, gpointer user_data)
+{
+  gtk_grab_add(GTK_WIDGET(widget));
+  return FALSE;
+}
+
+gboolean
+focus_out(GtkWidget *widget, GdkEvent *event, gpointer user_data)
+{
+  gtk_grab_remove(GTK_WIDGET(widget));
+  return FALSE;
+}
+
 static void
 swin_realized(GtkWidget *widget, gpointer user_data)
 {
@@ -1463,6 +1477,8 @@ sub_window_create(struct SubWin *d, const char *title, GtkWidget *swin, const ch
   g_signal_connect(dlg, "delete-event", G_CALLBACK(cb_del), d);
   g_signal_connect(dlg, "destroy", G_CALLBACK(cb_destroy), d);
   g_signal_connect(dlg, "key-press-event", G_CALLBACK(ev_sub_win_key_down), d);
+  g_signal_connect(dlg, "focus-in-event", G_CALLBACK(focus_in), d);
+  g_signal_connect(dlg, "focus-out-event", G_CALLBACK(focus_out), d);
 
   gtk_widget_show_all(swin);
 
