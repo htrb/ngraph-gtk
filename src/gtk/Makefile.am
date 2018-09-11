@@ -1,10 +1,80 @@
-EXTRA_DIST = dir_defs.h.in
+NGRAPH_ICONS = data/pixmaps/ngraph_align_b.png				\
+	data/pixmaps/ngraph_align_hc.png				\
+	data/pixmaps/ngraph_align_l.png					\
+	data/pixmaps/ngraph_align_r.png					\
+	data/pixmaps/ngraph_align_t.png					\
+	data/pixmaps/ngraph_align_vc.png				\
+	data/pixmaps/ngraph_axiswin48.png				\
+	data/pixmaps/ngraph_coordwin48.png				\
+	data/pixmaps/ngraph_draw.png					\
+	data/pixmaps/ngraph_filewin48.png				\
+	data/pixmaps/ngraph_icon.png data/pixmaps/ngraph_icon64.png	\
+	data/pixmaps/ngraph_infowin48.png				\
+	data/pixmaps/ngraph_legendwin48.png				\
+	data/pixmaps/ngraph_math.png					\
+	data/pixmaps/ngraph_mergewin48.png				\
+	data/pixmaps/ngraph_undo.png data/ngraphui.resources.xml	\
+	data/pixmaps/none_begin-symbolic.svg				\
+	data/pixmaps/none_end-symbolic.svg				\
+	data/pixmaps/arrow_begin-symbolic.svg				\
+	data/pixmaps/arrow_end-symbolic.svg				\
+	data/pixmaps/wave_begin-symbolic.svg				\
+	data/pixmaps/wave_end-symbolic.svg				\
+	data/pixmaps/mark_begin-symbolic.svg				\
+	data/pixmaps/mark_end-symbolic.svg				\
+	data/pixmaps/bar_begin-symbolic.svg				\
+	data/pixmaps/bar_end-symbolic.svg				\
+	data/pixmaps/stroke_fill_0.png data/pixmaps/stroke_fill_1.png	\
+	data/pixmaps/stroke_fill_2.png data/pixmaps/stroke_fill_3.png	\
+	data/pixmaps/stroke_fill_4.png data/pixmaps/stroke_fill_5.png	\
+	data/pixmaps/stroke_fill_6.png data/pixmaps/stroke_fill_7.png	\
+	data/pixmaps/join_bevel-symbolic.svg				\
+	data/pixmaps/join_miter-symbolic.svg				\
+	data/pixmaps/join_round-symbolic.svg data/pixmaps/ngraph.svg	\
+	data/pixmaps/ngraph_eval-symbolic.svg				\
+	data/pixmaps/ngraph_line-symbolic.svg				\
+	data/pixmaps/ngraph_single-symbolic.svg				\
+	data/pixmaps/ngraph_arc-symbolic.svg				\
+	data/pixmaps/ngraph_filewin-symbolic.svg			\
+	data/pixmaps/ngraph_mark-symbolic.svg				\
+	data/pixmaps/ngraph_text-symbolic.svg				\
+	data/pixmaps/ngraph_axispoint-symbolic.svg			\
+	data/pixmaps/ngraph_frame-symbolic.svg				\
+	data/pixmaps/ngraph_mergewin-symbolic.svg			\
+	data/pixmaps/ngraph_trimming-symbolic.svg			\
+	data/pixmaps/ngraph_axiswin-symbolic.svg			\
+	data/pixmaps/ngraph_gauss-symbolic.svg				\
+	data/pixmaps/ngraph_point-symbolic.svg				\
+	data/pixmaps/ngraph_zoom-symbolic.svg				\
+	data/pixmaps/ngraph_coordwin-symbolic.svg			\
+	data/pixmaps/ngraph_infowin-symbolic.svg			\
+	data/pixmaps/ngraph_rect-symbolic.svg				\
+	data/pixmaps/ngraph_cross-symbolic.svg				\
+	data/pixmaps/ngraph_legendpoint-symbolic.svg			\
+	data/pixmaps/ngraph_scale-symbolic.svg				\
+	data/pixmaps/ngraph_datapoint-symbolic.svg			\
+	data/pixmaps/ngraph_legendwin-symbolic.svg			\
+	data/pixmaps/ngraph_section-symbolic.svg			\
+	data/pixmaps/linewidth_002-symbolic.svg				\
+	data/pixmaps/linewidth_004-symbolic.svg				\
+	data/pixmaps/linewidth_008-symbolic.svg				\
+	data/pixmaps/linewidth_016-symbolic.svg				\
+	data/pixmaps/linewidth_032-symbolic.svg				\
+	data/pixmaps/linewidth_064-symbolic.svg				\
+	data/pixmaps/linewidth_128-symbolic.svg
+
+EXTRA_DIST = dir_defs.h.in data/css/ngraph.css				\
+	data/gtk/menus-common.ui.in data/gtk/menus-common.ui.osx	\
+	data/gtk/menus-appmenu.ui.in data/gtk/help-overlay.ui		\
+	data/gtk/menus-appmenu.ui.osx data/gtk/menus-tool.ui		\
+	create_completion_info.rb completion_info_functions.txt		\
+	completion_info_constants.txt $(NGRAPH_ICONS)
 
 AM_CPPFLAGS = -DLOCALEDIR=\""@localedir@"\"
 
 noinst_LTLIBRARIES = libngraphui.la
 
-nodist_libngraphui_la_SOURCES = dir_defs.h
+nodist_libngraphui_la_SOURCES = dir_defs.h ngraphui.resources.c
 
 libngraphui_la_SOURCES = gtk_common.h gtk_combo.c gtk_combo.h		\
 	gtk_entry_completion.c gtk_entry_completion.h gtk_liststore.c	\
@@ -12,13 +82,41 @@ libngraphui_la_SOURCES = gtk_common.h gtk_combo.c gtk_combo.h		\
 	ogra2cairo.c ogra2emf.c ogra2cairo.h ogra2cairofile.c		\
 	ogra2gtkprint.c ogra2cairofile.h ogra2x11.h ogra2gdk.c		\
 	ogra2gdk.h ox11dlg.c ox11menu.c ox11menu.h x11axis.c		\
-	x11axis.h x11bitmp.c x11bitmp.h x11commn.c x11commn.h		\
-	x11cood.c x11cood.h x11dialg.c x11dialg.h x11file.c x11file.h	\
+	x11axis.h x11bitmp.h x11commn.c x11commn.h x11cood.c		\
+	x11cood.h x11dialg.c x11dialg.h x11file.c x11file.h		\
 	x11graph.c x11graph.h x11gui.c x11gui.h x11info.c x11info.h	\
 	x11lgnd.c x11lgnd.h x11lgndx.c x11menu.c x11menu.h x11merge.c	\
 	x11merge.h x11opt.c x11opt.h x11opt_proto.h x11print.c		\
 	x11print.h x11view.c x11view.h gtk_widget.c gtk_widget.h	\
-	gtk_ruler.c gtk_ruler.h init.c init.h gtk_action.c gtk_action.h
+	gtk_ruler.c gtk_ruler.h init.c init.h gtk_action.c		\
+	gtk_action.h sourcecompletionwords.c sourcecompletionwords.h	\
+	completion_info.c completion_info.h completion_info_data.c	\
+	gtk_presettings.c gtk_presettings.h
+
+if OS_WIN32
+APPMENU_UI_SOURCE = $(srcdir)/data/gtk/menus-appmenu.ui.in
+MENU_UI_SOURCE = $(srcdir)/data/gtk/menus-common.ui.in
+else
+if OS_OSX
+APPMENU_UI_SOURCE = $(srcdir)/data/gtk/menus-appmenu.ui.osx
+MENU_UI_SOURCE = $(srcdir)/data/gtk/menus-common.ui.osx
+else
+APPMENU_UI_SOURCE = $(srcdir)/data/gtk/menus-appmenu.ui.in
+MENU_UI_SOURCE = $(srcdir)/data/gtk/menus-common.ui.in
+endif
+endif
+
+uidir = data/gtk
+$(uidir)/menus-appmenu.ui: $(APPMENU_UI_SOURCE)
+	$(MKDIR_P) $(uidir)
+	cp $< $@
+
+$(uidir)/menus-common.ui: $(MENU_UI_SOURCE)
+	$(MKDIR_P) $(uidir)
+	cp $< $@
+
+ngraphui.resources.c: $(srcdir)/data/ngraphui.resources.xml $(uidir)/menus-common.ui $(srcdir)/data/gtk/menus-tool.ui $(srcdir)/data/css/ngraph.css $(srcdir)/data/gtk/help-overlay.ui $(uidir)/menus-appmenu.ui $(NGRAPH_ICONS)
+	$(GLIB_COMPILE_RESOURCES) --target=$@ --generate-source --sourcedir $(srcdir)/data --sourcedir $(builddir)/data $<
 
 BUILT_SOURCES = ${nodist_libngraphui_la_SOURCES}
 
@@ -26,8 +124,12 @@ ngraphconfdir = $(sysconfdir)/$(PACKAGE)
 pixmapdir = $(datadir)/pixmaps/$(PACKAGE)
 
 dir_defs.h: dir_defs.h.in Makefile
-	sh ../../pathconv.sh "$(bindir)" "$(docdir)" "$(pkglibexecdir)" "$(pkglibdir)" "$(pkgdatadir)" "$(ngraphconfdir)" "$(pixmapdir)" dir_defs.h.in
+	$(SHELL) $(top_srcdir)/pathconv.sh "$(bindir)" "$(docdir)" "$(pkglibexecdir)" "$(pkglibdir)" "$(pkgdatadir)" "$(ngraphconfdir)" $(srcdir)/dir_defs.h.in
 
-libngraphui_la_CFLAGS = $(GTK_CFLAGS) -I.. -I../math
+completion_info_data.c: $(srcdir)/completion_info_functions.txt $(srcdir)/completion_info_constants.txt $(srcdir)/create_completion_info.rb
+	ruby $(srcdir)/create_completion_info.rb $(srcdir)/completion_info_functions.txt $(srcdir)/completion_info_constants.txt completion_info_data.c
 
-CLEANFILES = dir_defs.h
+libngraphui_la_CFLAGS = $(GTK_CFLAGS) -I$(top_builddir) -I$(builddir) -I$(srcdir)/.. -I$(srcdir)/../math $(GTKSOURCEVIEW_CFLAGS)
+libngraphui_la_LDFLAGS = $(GTKSOURCEVIEW_LIBS)
+
+CLEANFILES = dir_defs.h $(builddir)/data/gtk/menus-appmenu.ui $(builddir)/data/gtk/menus-common.ui $(BUILT_SOURCES)

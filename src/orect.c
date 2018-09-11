@@ -1,24 +1,24 @@
-/* 
+/*
  * $Id: orect.c,v 1.18 2010-03-04 08:30:16 hito Exp $
- * 
+ *
  * This file is part of "Ngraph for X11".
- * 
+ *
  * Copyright (C) 2002, Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
- * 
+ *
  * "Ngraph for X11" is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * "Ngraph for X11" is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  */
 
 #include "common.h"
@@ -42,14 +42,14 @@ static char *recterrorlist[]={
 
 #define ERRNUM (sizeof(recterrorlist) / sizeof(*recterrorlist))
 
-static int 
+static int
 rectinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int width, stroke, alpha;
 
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv)) return 1;
 
-  width = 40;
+  width = DEFAULT_LINE_WIDTH;
   stroke = TRUE;
   alpha = 255;
 
@@ -61,7 +61,7 @@ rectinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 rectdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
@@ -88,7 +88,7 @@ get_position(struct objlist *obj, N_VALUE *inst, int *x1, int *y1, int *x2, int 
   _getobj(obj, "y2", inst, y2);
 }
 
-static int 
+static int
 rectdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int GC;
@@ -136,7 +136,7 @@ rectdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 rectbbox(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy;
@@ -192,11 +192,11 @@ rectbbox(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 rectrotate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int angle, x1, y1, x2, y2, px, py, use_pivot;
- 
+
   get_position(obj, inst, &x1, &y1, &x2, &y2);
 
   angle = *(int *) argv[2];
@@ -234,7 +234,7 @@ rectrotate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 rectflip(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int x1, y1, x2, y2, p, use_pivot;
@@ -266,7 +266,7 @@ rectflip(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 rectmove(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int x1,y1,x2,y2;
@@ -289,7 +289,7 @@ rectmove(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 rectchange(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int x1,y1,x2,y2;
@@ -337,7 +337,7 @@ rectchange(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 rectzoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int i,snum,*sdata,refx,refy,x1,y1,x2,y2,width,preserve_width;
@@ -389,7 +389,7 @@ rectzoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 rectmatch(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy,err;
@@ -445,7 +445,7 @@ rectmatch(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 rectgeometry(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   if (*(int *)(argv[2])<1) *(int *)(argv[2])=1;
@@ -456,7 +456,7 @@ rectgeometry(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **arg
   return 0;
 }
 
-static int 
+static int
 rect_frame(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int frame, fill, stroke;
@@ -474,7 +474,7 @@ rect_frame(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 put_color2(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,  int argc, char **argv)
 {
   int fill, frame, col, val, val2, f;

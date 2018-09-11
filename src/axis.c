@@ -1,24 +1,24 @@
-/* 
+/*
  * $Id: axis.c,v 1.7 2010-03-04 08:30:16 hito Exp $
- * 
+ *
  * This file is part of "Ngraph for X11".
- * 
+ *
  * Copyright (C) 2002, Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
- * 
+ *
  * "Ngraph for X11" is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * "Ngraph for X11" is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  */
 
 #include "common.h"
@@ -29,19 +29,23 @@
 #include "object.h"
 #include "axis.h"
 
-double 
+#ifdef HAVE_LIBGSL
+#include <gsl/gsl_math.h>
+#endif
+
+double
 scale(double x)
 {
   return pow(10.0,cutdown(log10(fabs(x))));
 }
 
-double 
+double
 roundmin(double min,double sc)
 {
   return nraise(min/sc)*sc;
 }
 
-static void 
+static void
 getaxispositionfirst(struct axislocal *alocal)
 {
   double min,max,inc;
@@ -140,14 +144,14 @@ getaxispositionfirst(struct axislocal *alocal)
   alocal->count=0;
 }
 
-int 
+int
 getaxisposition(struct axislocal *alocal, /*@out@*/ double *po)
 {
   int rcode;
   double dd;
 
   if (alocal->counts>=alocal->countsend) {
-    if (alocal->atype==AXISLOGSMALL) 
+    if (alocal->atype==AXISLOGSMALL)
       *po=alocal->posl+log10(1.0+alocal->countm*alocal->dposm);
     else *po=alocal->posm+alocal->dposm;
     alocal->posm=*po;
@@ -170,7 +174,7 @@ getaxisposition(struct axislocal *alocal, /*@out@*/ double *po)
     } else alocal->countm++;
   } else {
     rcode=1;
-    if (alocal->atype==AXISLOGNORM) 
+    if (alocal->atype==AXISLOGNORM)
       *po=alocal->posm+log10(1.0+alocal->counts*alocal->dposs);
     else if (alocal->atype==AXISLOGSMALL)
       *po=log10(pow(10.0, alocal->posm)
@@ -179,7 +183,12 @@ getaxisposition(struct axislocal *alocal, /*@out@*/ double *po)
     alocal->counts++;
   }
   if (fabs(*po/alocal->dposs)<1E-14) *po=0;
-  if ((*po-alocal->posst)*(*po-alocal->posed)>0) {
+  if ((*po-alocal->posst)*(*po-alocal->posed)>0
+#ifdef HAVE_LIBGSL
+      && gsl_fcmp(*po, alocal->posst, N_EPSILON)
+      && gsl_fcmp(*po, alocal->posed, N_EPSILON)
+#endif
+      ) {
     if (alocal->dposm>=0) {
       if (((alocal->posst<=alocal->posed) && (*po<alocal->posst))
        || ((alocal->posst>=alocal->posed) && (*po<alocal->posed))) rcode=-1;
@@ -196,7 +205,7 @@ getaxisposition(struct axislocal *alocal, /*@out@*/ double *po)
   return rcode;
 }
 
-int 
+int
 getaxispositionini(struct axislocal *alocal, int type,
 		   double min,double max,double inc,int div,int tighten)
 {

@@ -107,6 +107,23 @@ static char *anumalignchar[]={
   NULL
 };
 
+enum AXIS_NUM_NO_ZERO {
+  AXIS_NUM_NO_ZERO_REGULAR,
+  AXIS_NUM_NO_ZERO_NO_ZERO,
+  AXIS_NUM_NO_ZERO_NO_FLOATING_POINT,
+  AXIS_NUM_NO_ZERO_FALSE,
+  AXIS_NUM_NO_ZERO_TRUE,
+};
+
+static char *anumnozero[]={
+  N_("regular"),
+  N_("no_zero"),
+  N_("no_floating_point"),
+  "\0false",			/* for backward compatibility */
+  "\0true",			/* for backward compatibility */
+  NULL,
+};
+
 enum AXIS_NUM_ALIGN {
   AXIS_NUM_ALIGN_CENTER,
   AXIS_NUM_ALIGN_LEFT,
@@ -123,7 +140,7 @@ static char *anumdirchar[]={
   N_("oblique1"),
   N_("oblique2"),
   "\0normal",			/* for backward compatibility */
-  "\0parallel",			/* for backward compatibility */
+  "\0parallel",		/* for backward compatibility */
   NULL
 };
 
@@ -200,7 +217,7 @@ check_group(struct objlist *obj, char type, N_VALUE *inst, int num)
   return inst;
 }
 
-static int 
+static int
 axisuniqgroup(struct objlist *obj,char type)
 {
   int num;
@@ -217,13 +234,13 @@ axisuniqgroup(struct objlist *obj,char type)
   return num;
 }
 
-static int 
+static int
 axisloadconfig(struct objlist *obj,N_VALUE *inst,char *conf)
 {
   return obj_load_config(obj, inst, conf, AxisConfigHash);
 }
 
-static int 
+static int
 axisinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int width;
@@ -235,19 +252,19 @@ axisinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   char *font,*format,*group,*name;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
-  width=40;
+  width=DEFAULT_LINE_WIDTH;
   alen=72426;
   awid=60000;
   wlen=300;
-  wwid=40;
+  wwid=DEFAULT_LINE_WIDTH;
   len1=100;
-  wid1=40;
+  wid1=DEFAULT_LINE_WIDTH;
   len2=200;
-  wid2=40;
+  wid2=DEFAULT_LINE_WIDTH;
   len3=300;
-  wid3=40;
+  wid3=DEFAULT_LINE_WIDTH;
   bline=TRUE;
-  pt=2000;
+  pt=DEFAULT_FONT_PT;
   sx=0;
   sy=100;
   autonorm=5;
@@ -309,7 +326,7 @@ errexit:
   return 1;
 }
 
-static int 
+static int
 axisdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   N_VALUE *inst_array[INST_ARRAY_NUM];
@@ -338,7 +355,7 @@ axisdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 axisput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
             int argc,char **argv)
 {
@@ -425,7 +442,7 @@ axisput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
   return 0;
 }
 
-static int 
+static int
 axisgeometry(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   N_VALUE *inst_array[INST_ARRAY_NUM];
@@ -444,7 +461,7 @@ axisgeometry(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **arg
   return 0;
 }
 
-static int 
+static int
 axisdirection(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int dir;
@@ -495,7 +512,7 @@ axis_get_box(struct objlist *obj,N_VALUE *inst, int *pos)
 }
 
 
-static int 
+static int
 axisbbox2(struct objlist *obj, N_VALUE *inst, struct narray **rval)
 {
   int i, pos[POS_ARRAY_SIZE];
@@ -772,7 +789,7 @@ get_axis_group_box(struct objlist *obj, N_VALUE **inst_array, int type, int *min
   return 0;
 }
 
-static int 
+static int
 axisbbox(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int type, dir;
@@ -810,7 +827,7 @@ axisbbox(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 axismatch2(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy,err;
@@ -875,7 +892,7 @@ axismatch2(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 axismatch(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   int i, n, type;
@@ -914,7 +931,7 @@ axismatch(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
   return 0;
 }
 
-static int 
+static int
 axismove2(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int x,y;
@@ -933,7 +950,7 @@ axismove2(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 axismove(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int i;
@@ -980,7 +997,7 @@ axisrotate2(struct objlist *obj, N_VALUE *inst, int px, int py, int angle)
   return 0;
 }
 
-static int 
+static int
 axisrotate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int i, n, type, angle, use_pivot, px, py, minx, miny, maxx, maxy;
@@ -1099,7 +1116,7 @@ axisflip2(struct objlist *obj, N_VALUE *inst, int px, int py, enum FLIP_DIRECTIO
   return 0;
 }
 
-static int 
+static int
 axisflip(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int i, n, type, use_pivot, px, py, minx, miny, maxx, maxy;
@@ -1142,7 +1159,7 @@ axisflip(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 axischange2(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int len,dir,x,y;
@@ -1347,7 +1364,7 @@ axis_change_point3(struct objlist *obj, int type, N_VALUE **inst_array, int x0, 
   }
 }
 
-static int 
+static int
 axischange(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   N_VALUE *inst_array[INST_ARRAY_NUM];
@@ -1412,7 +1429,7 @@ axischange(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 axiszoom2(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int x,y,len,refx,refy,preserve_width;
@@ -1485,7 +1502,7 @@ axiszoom2(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 axiszoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int i;
@@ -1874,7 +1891,7 @@ static char *
 mjd_to_date_str(const struct axis_config *aconf, double mjd, const gchar *date_format)
 {
   struct tm tm;
-  const gchar 
+  const gchar
     *fmt_y = "%Y",
     *fmt_ym = "%Y-%m",
     *fmt_ymd = "%Y-%m-%d",
@@ -1891,7 +1908,7 @@ mjd_to_date_str(const struct axis_config *aconf, double mjd, const gchar *date_f
 
   if (date_format && date_format[0]) {
     fmt = date_format;
-  }else {
+  } else {
     if (fabs(aconf->max - aconf->min) < 1) {
       if (tm.tm_sec == 0) {
 	fmt = fmt_hm;
@@ -1933,12 +1950,16 @@ mjd_to_date_str(const struct axis_config *aconf, double mjd, const gchar *date_f
 }
 
 static char *
-get_axis_gauge_num_str(const char *format, double a)
+get_axis_gauge_num_str(const char *format, double a, int no_flt_zero)
 {
   int i, j, len;
   char *s;
   char format2[256], pm[] = "±";
   GString *num;
+
+  if (no_flt_zero && a == 0.0) {
+    return g_strdup("0");
+  }
 
   num = g_string_sized_new(16);
   if (num == NULL) {
@@ -2024,7 +2045,7 @@ numformat(char **text, int *nlen, const char *format,
 	  const struct axis_config *aconf,
 	  const struct axislocal *alocal,
 	  int logpow, double po, double norm,
-	  const char *head, const char *tail, const char *date_format)
+	  const char *head, const char *tail, const char *date_format, int nozero)
 {
   int lpow;
   char *num;
@@ -2049,10 +2070,10 @@ numformat(char **text, int *nlen, const char *format,
     if (num) {
       logpow = 0;
     } else {
-      num = get_axis_gauge_num_str(format, a);
+      num = get_axis_gauge_num_str(format, a, nozero == AXIS_NUM_NO_ZERO_NO_FLOATING_POINT);
     }
   } else {
-    num = get_axis_gauge_num_str(format, a);
+    num = get_axis_gauge_num_str(format, a, nozero == AXIS_NUM_NO_ZERO_NO_FLOATING_POINT);
   }
 
   lpow = (logpow && (alocal->atype == AXISLOGBIG || alocal->atype == AXISLOGNORM));
@@ -2266,8 +2287,8 @@ draw_numbering(struct objlist *obj, N_VALUE *inst, struct axislocal *alocal,
       gy0=gy0-sy*cos(aconf->dir)-sx*sin(aconf->dir)+dly;
       if ((cstep==step) || ((alocal->atype==AXISLOGSMALL) && (rcode==3))) {
 	numcount++;
-	if (((numcount<=nnum) || (nnum==-1)) && ((po!=0) || !nozero)) {
-	  value = numformat(&text, &numlen, format, aconf, alocal, logpow, po, norm, head, tail, date_format);
+	if (((numcount<=nnum) || (nnum==-1)) && ((po!=0) || (nozero != AXIS_NUM_NO_ZERO_NO_ZERO))) {
+	  value = numformat(&text, &numlen, format, aconf, alocal, logpow, po, norm, head, tail, date_format, nozero);
 	  if (text == NULL) {
 	    return 1;
 	  }
@@ -2517,9 +2538,9 @@ numbering(struct objlist *obj, N_VALUE *inst, int GC, struct axis_config *aconf,
       numcount++;
 
       if ((numcount <= nnum || nnum == -1) &&
-	  (po != 0 || ! nozero)) {
+	  (po != 0 || (nozero != AXIS_NUM_NO_ZERO_NO_ZERO))) {
 
-	numformat(&text, &numlen, format, aconf, &alocal, logpow, po, norm, head, tail, date_format);
+	numformat(&text, &numlen, format, aconf, &alocal, logpow, po, norm, head, tail, date_format, nozero);
 	if (text == NULL) {
 	  return 1;
 	}
@@ -2925,7 +2946,7 @@ draw_arrow(struct objlist *obj, N_VALUE *inst, struct axis_config *aconf, int GC
   return 0;
 }
 
-static int 
+static int
 axisdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int GC;
@@ -3010,7 +3031,7 @@ exit:
   return 0;
 }
 
-static int 
+static int
 axis_get_numbering(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   int GC;
@@ -3059,7 +3080,7 @@ axis_get_numbering(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, 
 }
 
 
-static int 
+static int
 axisclear(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   double min,max,inc;
@@ -3071,7 +3092,7 @@ axisclear(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 axisadjust(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   char *axis;
@@ -3157,7 +3178,7 @@ axisadjust(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 axischangescale(struct objlist *obj,N_VALUE *inst,
                     double *rmin,double *rmax,double *rinc,int room)
 {
@@ -3231,7 +3252,7 @@ axischangescale(struct objlist *obj,N_VALUE *inst,
   return 0;
 }
 
-static int 
+static int
 axisscale(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int type,room;
@@ -3248,7 +3269,7 @@ axisscale(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 axiscoordinate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int x,y,dx,dy,type,dir,len;
@@ -3288,7 +3309,7 @@ axiscoordinate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **a
   return 0;
 }
 
-static int 
+static int
 axisautoscalefile(struct objlist *obj,N_VALUE *inst,char *fileobj,double *rmin,double *rmax)
 {
   struct objlist *fobj;
@@ -3339,7 +3360,7 @@ axisautoscalefile(struct objlist *obj,N_VALUE *inst,char *fileobj,double *rmin,d
   return 0;
 }
 
-static int 
+static int
 axisautoscale(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
                   int argc,char **argv)
 {
@@ -3368,7 +3389,7 @@ axisautoscale(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
   return 0;
 }
 
-static int 
+static int
 axisgetautoscale(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
                   int argc,char **argv)
 {
@@ -3393,7 +3414,7 @@ axisgetautoscale(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
   return 0;
 }
 
-static int 
+static int
 axisautoscale_margin(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
 		     int argc,char **argv)
 {
@@ -3408,7 +3429,7 @@ axisautoscale_margin(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
   return 0;
 }
 
-static int 
+static int
 axistight(struct objlist *obj,N_VALUE *inst,N_VALUE *rval, int argc,char **argv)
 {
   obj_do_tighten(obj, inst, "reference");
@@ -3443,7 +3464,7 @@ set_group(struct objlist *obj, int gnum, int id, char axis, char type)
   }
 }
 
-static int 
+static int
 axisgrouping(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
                  int argc,char **argv)
 {
@@ -3516,8 +3537,8 @@ set_group_pos(struct objlist *obj, int id, int x, int y, int len, int dir)
     return;
 }
 
-static int 
-axisgrouppos(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, 
+static int
+axisgrouppos(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
 	     int argc, char **argv)
 {
   int x, y, lx, ly;
@@ -3624,7 +3645,7 @@ axis_default_set_adj(struct objlist *obj, int id, int oid, char *conf)
   axis_default_set(obj, id, oid, "adjust_axis", conf);
 }
 
-static int 
+static int
 axisdefgrouping(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
                  int argc,char **argv)
 {
@@ -3670,7 +3691,7 @@ axisdefgrouping(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
     axis_default(obj, data[4], NULL,  9000, AXIS_GAUGE_NONE, AXIS_NUM_POS_RIGHT, AXIS_NUM_ALIGN_LEFT,   NULL);
 
     axis_default_set_ref(obj, data[3], oidx, "[axis_sU]");
-    axis_default_set_ref(obj, data[4], oidy, "[axis_sR]"); 
+    axis_default_set_ref(obj, data[4], oidy, "[axis_sR]");
 
     if (anum < 9)
       return 0;
@@ -3744,7 +3765,7 @@ axis_save_group(struct objlist *obj, int type, N_VALUE **inst_array, N_VALUE *rv
   return 0;
 }
 
-static int 
+static int
 axissave(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int i, r, anum, type;
@@ -3777,7 +3798,7 @@ axissave(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return r;
 }
 
-static int 
+static int
 axismanager(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int i,id,lastinst;
@@ -3804,7 +3825,7 @@ axismanager(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
   return 0;
 }
 
-static int 
+static int
 axisscalepush(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,
                   char **argv)
 {
@@ -3838,7 +3859,7 @@ axisscalepush(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,
   return 0;
 }
 
-static int 
+static int
 axisscalepop(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,
                   char **argv)
 {
@@ -3865,7 +3886,29 @@ axisscalepop(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,
   return 0;
 }
 
-static int 
+static int
+anumnozeroput(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  int type;
+
+  type = * (int *) argv[2];
+  switch (type) {
+  case AXIS_NUM_NO_ZERO_REGULAR:
+  case AXIS_NUM_NO_ZERO_NO_ZERO:
+  case AXIS_NUM_NO_ZERO_NO_FLOATING_POINT:
+    break;
+  case AXIS_NUM_NO_ZERO_TRUE:
+    * (int *) argv[2] = AXIS_NUM_NO_ZERO_NO_ZERO;
+    break;
+  case AXIS_NUM_NO_ZERO_FALSE:
+    * (int *) argv[2] = AXIS_NUM_NO_ZERO_REGULAR;
+    break;
+  }
+
+  return 0;
+}
+
+static int
 anumdirput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval, int argc,char **argv)
 {
   int type;
@@ -3894,7 +3937,7 @@ anumdirput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval, int argc,char **argv
   return 0;
 }
 
-static int 
+static int
 num_put_math(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   MathEquation *code;
@@ -3989,7 +4032,7 @@ static struct objtable axis[] = {
   {"num_font_style",NINT,NREAD|NWRITE,NULL,NULL,0},
   {"num_script_size",NINT,NREAD|NWRITE,axisput,NULL,0},
   {"num_align",NENUM,NREAD|NWRITE,NULL,anumalignchar,0},
-  {"num_no_zero",NBOOL,NREAD|NWRITE,NULL,NULL,0},
+  {"num_no_zero",NENUM,NREAD|NWRITE,anumnozeroput,anumnozero,0},
   {"num_direction",NENUM,NREAD|NWRITE,anumdirput,anumdirchar,0},
   {"num_shift_p",NINT,NREAD|NWRITE,NULL,NULL,0},
   {"num_shift_n",NINT,NREAD|NWRITE,NULL,NULL,0},

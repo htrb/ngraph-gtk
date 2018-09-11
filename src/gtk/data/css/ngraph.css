@@ -1,0 +1,29 @@
+@binding-set CloseWindow1
+{
+    bind "<Control>w" { "close" () };
+}
+
+dialog
+{
+    -gtk-key-bindings: CloseWindow1;
+}
+
+@keyframes flush-bg {
+    0% { background-color: @theme_bg_color; }
+    100% { background-color: @theme_fg_color; }
+}
+
+toolbutton.draw_notify > button {
+    animation: flush-bg infinite alternate ease-in-out 1.5s;
+}
+
+button#StrokeColorButton > colorswatch > overlay {
+    background-color: @theme_bg_color;
+    margin: 3px;
+    border-color: rgba(0,0,0,0);
+}
+
+combobox#MarkerType > box > button > box > arrow {
+    opacity: 0;
+    min-width: 0;
+}

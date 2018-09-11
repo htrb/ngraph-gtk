@@ -1,0 +1,18 @@
+#! /usr/bin/ngraph
+
+SED="$1"
+
+cat "$2"
+
+new data
+echo '    <context id="builtins" style-ref="builtin">'
+get data -field math_functions | "$SED" -Ee 's!.+!      <keyword>&</keyword>!'
+echo '    </context>'
+echo
+
+echo '    <context id="constants" style-ref="constant">'
+get data -field math_constants | "$SED" -E -e '/^%/d' -e 's/.+/      <keyword>&<\/keyword>/'
+echo '    </context>'
+echo
+
+cat "$3"

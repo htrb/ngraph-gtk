@@ -1,0 +1,24 @@
+101 ICON "ngraph.ico"
+1 VERSIONINFO
+FILEVERSION     %VERSION%
+PRODUCTVERSION  %VERSION%
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "040904B0"
+    BEGIN
+      VALUE "CompanyName", ""
+      VALUE "FileDescription", "Ngraph-gtk"
+      VALUE "FileVersion", "%VERSION%"
+      VALUE "InternalName", "ngraph"
+      VALUE "LegalCopyright", "Copyright (C) 2003 Satoshi ISHIZAKA"
+      VALUE "OriginalFilename", "ngraph.exe"
+      VALUE "ProductName", "Ngraph-gtk"
+      VALUE "ProductVersion", "%VERSION%"
+    END
+  END
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x409, 1252
+  END
+END

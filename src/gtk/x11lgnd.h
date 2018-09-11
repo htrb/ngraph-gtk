@@ -24,7 +24,7 @@
 typedef void (* legend_cb_func)(GtkMenuItem *w, gpointer client_data);
 
 
-void LegendWinUpdate(int clear);
+void LegendWinUpdate(char **objects, int clear, int draw);
 
 void CmLineUpdate(void *w, gpointer client_data);
 void CmLineDel(void *w, gpointer client_data);

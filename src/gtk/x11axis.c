@@ -39,6 +39,7 @@
 #include "gtk_subwin.h"
 #include "gtk_combo.h"
 #include "gtk_widget.h"
+#include "gtk_presettings.h"
 
 #include "x11bitmp.h"
 #include "x11gui.h"
@@ -108,6 +109,7 @@ static struct subwin_popup_list Popup_list[] = {
   {N_("_Focus"),      G_CALLBACK(list_sub_window_focus), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {N_("_Clear"),      G_CALLBACK(axiswin_scale_clear), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {N_("_Properties"), G_CALLBACK(list_sub_window_update), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("_Instance name"), G_CALLBACK(list_sub_window_object_name), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {NULL, NULL, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
   {N_("_Top"),        G_CALLBACK(AxisWinAxisTop), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {N_("_Up"),         G_CALLBACK(AxisWinAxisUp), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
@@ -118,10 +120,10 @@ static struct subwin_popup_list Popup_list[] = {
 
 #define POPUP_ITEM_NUM (sizeof(Popup_list) / sizeof(*Popup_list) - 1)
 
-#define POPUP_ITEM_TOP 9
-#define POPUP_ITEM_UP 10
-#define POPUP_ITEM_DOWN 11
-#define POPUP_ITEM_BOTTOM 12
+#define POPUP_ITEM_TOP    10
+#define POPUP_ITEM_UP     11
+#define POPUP_ITEM_DOWN   12
+#define POPUP_ITEM_BOTTOM 13
 
 #define TITLE_BUF_SIZE 128
 
@@ -355,17 +357,10 @@ GridDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct GridDialog *) data;
   if (makewidget) {
-#if GTK_CHECK_VERSION(3, 0, 0)
+    gtk_dialog_add_button(GTK_DIALOG(wi), _("_Delete"), IDDELETE);
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-    hbox = gtk_hbox_new(FALSE, 4);
-#endif
 
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     j = 0;
     w = combo_box_entry_create();
@@ -390,12 +385,7 @@ GridDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 0);
 
-
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     j = 0;
     w = create_color_button(wi);
@@ -417,12 +407,7 @@ GridDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
 
-
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 4, FALSE);
-#endif
 
     j = 0;
     for (i = 0; i < GRID_DIALOG_STYLE_NUM; i++) {
@@ -582,15 +567,27 @@ SectionDialogAxisR(GtkWidget *w, gpointer client_data)
   }
 }
 
+static int
+axis_save_undo(int type)
+{
+  char *arg[4];
+  arg[0] = "axis";
+  arg[1] = "axisgrid";
+  arg[2] = "data";
+  arg[3] = NULL;
+  return menu_save_undo(type, arg);
+}
+
 static void
 SectionDialogGrid(GtkWidget *w, gpointer client_data)
 {
   struct SectionDialog *d;
   char *ref;
-  int ret, oidx, oidy, create = FALSE;
+  int ret, oidx, oidy, create = FALSE, undo = -1;
 
   d = (struct SectionDialog *) client_data;
   if (*(d->IDG) == -1) {
+    undo = axis_save_undo(UNDO_TYPE_DUMMY);
     if ((*(d->IDG) = newobj(d->Obj2)) >= 0) {
       getobj(d->Obj, "oid", d->IDX, 0, NULL, &oidx);
       ref = g_strdup_printf("axis:^%d", oidx);
@@ -603,6 +600,7 @@ SectionDialogGrid(GtkWidget *w, gpointer client_data)
 	putobj(d->Obj2, "axis_y", *(d->IDG), ref);
       }
       create = TRUE;
+      presetting_set_obj_field(d->Obj2, *(d->IDG));
     }
   }
   if (*(d->IDG) >= 0) {
@@ -610,20 +608,27 @@ SectionDialogGrid(GtkWidget *w, gpointer client_data)
     ret = DialogExecute(d->widget, &DlgGrid);
     switch (ret) {
     case IDCANCEL:
-      if (! create)
-	break;
+      menu_undo_internal(undo);
+      if (create) {
+        *(d->IDG) = -1;
+      }
+      break;
     case IDDELETE:
-      delobj(d->Obj2, *(d->IDG));
+      if (create) {
+        menu_undo_internal(undo);
+      } else {
+        delobj(d->Obj2, *(d->IDG));
+        set_graph_modified();
+      }
       *(d->IDG) = -1;
-      if (create)
-	break;
+      break;
     default:
+      menu_delete_undo(undo);
       set_graph_modified();
     }
   }
   SectionDialogSetupItem(d->widget, d);
 }
-
 
 static void
 SectionDialogSetup(GtkWidget *wi, void *data, int makewidget)
@@ -635,17 +640,9 @@ SectionDialogSetup(GtkWidget *wi, void *data, int makewidget)
   d = (struct SectionDialog *) data;
 
   if (makewidget) {
-#if GTK_CHECK_VERSION(3, 0, 0)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-    hbox = gtk_hbox_new(FALSE, 4);
-#endif
 
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i = 0;
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
@@ -658,12 +655,7 @@ SectionDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_box_pack_start(GTK_BOX(hbox), table, TRUE, TRUE, 4);
 
-
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i = 0;
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
@@ -678,15 +670,9 @@ SectionDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
 
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-    hbox = gtk_hbox_new(FALSE, 4);
-
-    vbox = gtk_vbox_new(FALSE, 4);
-#endif
 
     w = gtk_button_new_with_mnemonic(_("_X axis"));
     g_signal_connect(w, "clicked", G_CALLBACK(SectionDialogAxisX), d);
@@ -700,11 +686,7 @@ SectionDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 4);
 
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-    vbox = gtk_vbox_new(FALSE, 4);
-#endif
 
     w = gtk_button_new_with_mnemonic(_("_Y axis"));
     g_signal_connect(w, "clicked", G_CALLBACK(SectionDialogAxisY), d);
@@ -718,11 +700,7 @@ SectionDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 4);
 
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-    vbox = gtk_vbox_new(FALSE, 4);
-#endif
 
     w = gtk_button_new_with_mnemonic(_("_U axis"));
     g_signal_connect(w, "clicked", G_CALLBACK(SectionDialogAxisU), d);
@@ -736,11 +714,7 @@ SectionDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 4);
 
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-    vbox = gtk_vbox_new(FALSE, 4);
-#endif
 
     w = gtk_button_new_with_mnemonic(_("_R axis"));
     g_signal_connect(w, "clicked", G_CALLBACK(SectionDialogAxisR), d);
@@ -754,11 +728,7 @@ SectionDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 4);
 
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-    vbox = gtk_vbox_new(FALSE, 4);
-#endif
 
     w = gtk_button_new_with_mnemonic(_("_Grid"));
     g_signal_connect(w, "clicked", G_CALLBACK(SectionDialogGrid), d);
@@ -894,17 +864,9 @@ CrossDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct CrossDialog *) data;
   if (makewidget) {
-#if GTK_CHECK_VERSION(3, 0, 0)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-    hbox = gtk_hbox_new(FALSE, 4);
-#endif
 
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i = 0;
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
@@ -917,12 +879,7 @@ CrossDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_box_pack_start(GTK_BOX(hbox), table, TRUE, TRUE, 4);
 
-
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i = 0;
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
@@ -938,13 +895,8 @@ CrossDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
 
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-    hbox = gtk_hbox_new(FALSE, 4);
-    vbox = gtk_vbox_new(FALSE, 4);
-#endif
 
     w = gtk_button_new_with_mnemonic(_("_X axis"));
     g_signal_connect(w, "clicked", G_CALLBACK(CrossDialogAxisX), d);
@@ -958,11 +910,7 @@ CrossDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 4);
 
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-    vbox = gtk_vbox_new(FALSE, 4);
-#endif
 
     w = gtk_button_new_with_mnemonic(_("_Y axis"));
     g_signal_connect(w, "clicked", G_CALLBACK(CrossDialogAxisY), d);
@@ -1059,11 +1007,7 @@ ZoomDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct ZoomDialog *) data;
   if (makewidget) {
-#if GTK_CHECK_VERSION(3, 0, 0)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-    vbox = gtk_vbox_new(FALSE, 4);
-#endif
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_PERCENT, TRUE, TRUE);
     item_setup(vbox, w, _("_Zoom:"), TRUE);
     d->zoom_entry = w;
@@ -1207,7 +1151,7 @@ AxisDialogFile(GtkWidget *w, gpointer client_data)
   if (chkobjlastinst(fobj) == -1)
     return;
 
-  SelectDialog(&DlgSelect, fobj, FileCB, (struct narray *) &farray, NULL);
+  SelectDialog(&DlgSelect, fobj, _("autoscale (multi select)"), FileCB, (struct narray *) &farray, NULL);
 
   if (DialogExecute(d->widget, &DlgSelect) == IDOK) {
     int a, i, anum, num, *array;
@@ -1334,11 +1278,7 @@ scale_tab_create(struct AxisDialog *d)
   GtkWidget *parent_box, *w, *frame, *table, *hbox;
   int i;
 
-#if GTK_CHECK_VERSION(3, 4, 0)
   table = gtk_grid_new();
-#else
-  table = gtk_table_new(1, 2, FALSE);
-#endif
 
   i = 0;
   w = combo_box_entry_create();
@@ -1354,11 +1294,7 @@ scale_tab_create(struct AxisDialog *d)
   d->inc = w;
 
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 12);
-#else
-  hbox = gtk_hbox_new(FALSE, 12);
-#endif
 
   w = gtk_button_new_with_mnemonic(_("_Clear"));
   g_signal_connect(w, "clicked", G_CALLBACK(AxisDialogClear), d);
@@ -1393,11 +1329,7 @@ scale_tab_create(struct AxisDialog *d)
   gtk_container_add(GTK_CONTAINER(frame), table);
   set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   parent_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-  parent_box = gtk_vbox_new(FALSE, 4);
-#endif
   gtk_box_pack_start(GTK_BOX(parent_box), frame, TRUE, TRUE, 4);
 
   add_copy_button_to_box(parent_box, G_CALLBACK(scale_tab_copy_clicked), d, "axis");
@@ -1496,17 +1428,9 @@ baseline_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 
   d = &dd->base;
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-#else
-  hbox = gtk_hbox_new(FALSE, 4);
-#endif
 
-#if GTK_CHECK_VERSION(3, 4, 0)
   table = gtk_grid_new();
-#else
-  table = gtk_table_new(1, 2, FALSE);
-#endif
 
   i = 0;
   w = gtk_check_button_new_with_mnemonic(_("Draw _Baseline"));
@@ -1531,16 +1455,8 @@ baseline_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
   gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
 
-#if GTK_CHECK_VERSION(3, 4, 0)
   table = gtk_grid_new();
-#else
-  table = gtk_table_new(1, 2, FALSE);
-#endif
-#if GTK_CHECK_VERSION(3, 0, 0)
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-  vbox = gtk_vbox_new(FALSE, 4);
-#endif
 
   i = 0;
   w = combo_box_create();
@@ -1562,12 +1478,7 @@ baseline_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   set_widget_margin(frame, WIDGET_MARGIN_RIGHT);
   gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
 
-
-#if GTK_CHECK_VERSION(3, 4, 0)
   table = gtk_grid_new();
-#else
-  table = gtk_table_new(1, 2, FALSE);
-#endif
 
   i = 0;
   w = combo_box_create();
@@ -1589,11 +1500,7 @@ baseline_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 
   gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-  vbox = gtk_vbox_new(FALSE, 4);
-#endif
   gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 4);
 
   add_copy_button_to_box(vbox, G_CALLBACK(baseline_tab_copy_clicked), dd, "axis");
@@ -1692,17 +1599,9 @@ gauge_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 
   d = &dd->gauge;
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-  vbox = gtk_vbox_new(FALSE, 4);
-#endif
 
-#if GTK_CHECK_VERSION(3, 4, 0)
   table = gtk_grid_new();
-#else
-  table = gtk_table_new(1, 2, FALSE);
-#endif
 
   j = 0;
   w = combo_box_create();
@@ -1724,12 +1623,7 @@ gauge_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
   gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
 
-
-#if GTK_CHECK_VERSION(3, 4, 0)
   table = gtk_grid_new();
-#else
-  table = gtk_table_new(1, 4, FALSE);
-#endif
 
   j = 0;
   w = combo_box_entry_create();
@@ -1757,11 +1651,7 @@ gauge_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
   gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   parent_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-  parent_box = gtk_vbox_new(FALSE, 4);
-#endif
   gtk_box_pack_start(GTK_BOX(parent_box), vbox, TRUE, TRUE, 4);
   add_copy_button_to_box(parent_box, G_CALLBACK(gauge_tab_copy_clicked), dd, "axis");
 
@@ -1967,23 +1857,11 @@ numbering_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 
   d = &dd->numbering;
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-#else
-  hbox = gtk_hbox_new(FALSE, 4);
 
-  vbox = gtk_vbox_new(FALSE, 0);
-#endif
-
-
-
-#if GTK_CHECK_VERSION(3, 4, 0)
   table = gtk_grid_new();
-#else
-  table = gtk_table_new(1, 2, FALSE);
-#endif
 
   i = 0;
   w = combo_box_create();
@@ -2007,12 +1885,7 @@ numbering_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
   gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
 
-
-#if GTK_CHECK_VERSION(3, 4, 0)
   table = gtk_grid_new();
-#else
-  table = gtk_table_new(1, 2, FALSE);
-#endif
 
   i = 0;
   w = combo_box_create();
@@ -2039,12 +1912,7 @@ numbering_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 
   gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
 
-
-#if GTK_CHECK_VERSION(3, 4, 0)
   table = gtk_grid_new();
-#else
-  table = gtk_table_new(1, 2, FALSE);
-#endif
 
   i = 0;
   w = combo_box_create();
@@ -2076,8 +1944,8 @@ numbering_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   d->add_plus = w;
   add_widget_to_table(table, w, NULL, FALSE, i++);
 
-  w = gtk_check_button_new_with_mnemonic(_("no _Zero"));
-  add_widget_to_table(table, w, NULL, FALSE, i++);
+  w = combo_box_create();
+  add_widget_to_table(table, w, _("_Zero:"), FALSE, i++);
   d->no_zero = w;
 
   w = create_text_entry(FALSE, TRUE);
@@ -2090,11 +1958,7 @@ numbering_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 
   gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-  vbox = gtk_vbox_new(FALSE, 4);
-#endif
   gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 4);
 
   add_copy_button_to_box(vbox, G_CALLBACK(numbering_tab_copy_clicked), dd, "axis");
@@ -2195,11 +2059,7 @@ font_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 
   d = &dd->font;
 
-#if GTK_CHECK_VERSION(3, 4, 0)
   table = gtk_grid_new();
-#else
-  table = gtk_table_new(1, 2, FALSE);
-#endif
 
   i = 0;
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_POINT, TRUE, TRUE);
@@ -2218,11 +2078,7 @@ font_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   add_widget_to_table(table, w, _("_Font:"), FALSE, i++);
   d->font = w;
 
-#if GTK_CHECK_VERSION(3, 2, 0)
   btn_box = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
-#else
-  btn_box = gtk_hbutton_box_new();
-#endif
   gtk_box_set_spacing(GTK_BOX(btn_box), 10);
   w = gtk_check_button_new_with_mnemonic(_("_Bold"));
   set_button_icon(w, "format-text-bold");
@@ -2244,11 +2100,7 @@ font_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   gtk_container_add(GTK_CONTAINER(frame), table);
   set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-  vbox = gtk_vbox_new(FALSE, 4);
-#endif
   gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 4);
 
   add_copy_button_to_box(vbox, G_CALLBACK(font_tab_copy_clicked), dd, "axis");
@@ -2348,11 +2200,7 @@ position_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 
   d = &dd->position;
 
-#if GTK_CHECK_VERSION(3, 4, 0)
   table = gtk_grid_new();
-#else
-  table = gtk_table_new(1, 2, FALSE);
-#endif
 
   i = 0;
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
@@ -2386,11 +2234,7 @@ position_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   gtk_container_add(GTK_CONTAINER(frame), table);
   set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-  vbox = gtk_vbox_new(FALSE, 4);
-#endif
   gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 4);
 
   add_copy_button_to_box(vbox, G_CALLBACK(position_tab_copy_clicked), dd, "axis");
@@ -2559,7 +2403,7 @@ CmAxisNewFrame(void *w, gpointer client_data)
 {
   struct objlist *obj, *obj2;
   int idx, idy, idu, idr, idg, ret;
-  int type, x, y, lenx, leny;
+  int type, x, y, lenx, leny, undo;
   struct narray group;
   char *argv[2];
 
@@ -2569,6 +2413,7 @@ CmAxisNewFrame(void *w, gpointer client_data)
     return;
   if ((obj2 = getobject("axisgrid")) == NULL)
     return;
+  undo = axis_save_undo(UNDO_TYPE_CREATE);
   idx = newobj(obj);
   idy = newobj(obj);
   idu = newobj(obj);
@@ -2593,28 +2438,26 @@ CmAxisNewFrame(void *w, gpointer client_data)
   argv[1] = NULL;
   exeobj(obj, "default_grouping", idr, 1, argv);
   arraydel(&group);
+  presetting_set_obj_field(obj, idx);
+  presetting_set_obj_field(obj, idy);
+  presetting_set_obj_field(obj, idu);
+  presetting_set_obj_field(obj, idr);
   SectionDialog(&DlgSection, x, y, lenx, leny, obj, idx, idy, idu, idr, obj2,
 		&idg, FALSE);
   ret = DialogExecute(TopLevel, &DlgSection);
-  if ((ret == IDDELETE) || (ret == IDCANCEL)) {
-    if (idg != -1) {
-      delobj(obj2, idg);
-    }
-    delobj(obj, idr);
-    delobj(obj, idu);
-    delobj(obj, idy);
-    delobj(obj, idx);
+  if (ret == IDCANCEL) {
+    menu_undo_internal(undo);
   } else {
     set_graph_modified();
   }
-  AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE);
+  AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
 }
 
 void
 CmAxisNewSection(void *w, gpointer client_data)
 {
   struct objlist *obj, *obj2;
-  int idx, idy, idu, idr, idg, ret, oidx, oidy;
+  int idx, idy, idu, idr, idg, ret, oidx, oidy, undo;
   int type, x, y, lenx, leny;
   struct narray group;
   char *argv[2];
@@ -2626,6 +2469,7 @@ CmAxisNewSection(void *w, gpointer client_data)
     return;
   if ((obj2 = getobject("axisgrid")) == NULL)
     return;
+  undo = axis_save_undo(UNDO_TYPE_CREATE);
   idx = newobj(obj);
   idy = newobj(obj);
   idu = newobj(obj);
@@ -2662,19 +2506,20 @@ CmAxisNewSection(void *w, gpointer client_data)
       putobj(obj2, "axis_y", idg, ref);
     }
   }
+  presetting_set_obj_field(obj, idx);
+  presetting_set_obj_field(obj, idy);
+  presetting_set_obj_field(obj, idu);
+  presetting_set_obj_field(obj, idr);
+  presetting_set_obj_field(obj2, idg);
   SectionDialog(&DlgSection, x, y, lenx, leny, obj, idx, idy, idu, idr, obj2,
 		&idg, TRUE);
   ret = DialogExecute(TopLevel, &DlgSection);
-  if ((ret == IDDELETE) || (ret == IDCANCEL)) {
-    delobj(obj2, idg);
-    delobj(obj, idr);
-    delobj(obj, idu);
-    delobj(obj, idy);
-    delobj(obj, idx);
+  if (ret == IDCANCEL) {
+    menu_undo_internal(undo);
   } else {
     set_graph_modified();
   }
-  AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE);
+  AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
 }
 
 void
@@ -2682,7 +2527,7 @@ CmAxisNewCross(void *w, gpointer client_data)
 {
   struct objlist *obj;
   int idx, idy, ret;
-  int type, x, y, lenx, leny;
+  int type, x, y, lenx, leny, undo;
   struct narray group;
   char *argv[2];
 
@@ -2690,6 +2535,7 @@ CmAxisNewCross(void *w, gpointer client_data)
     return;
   if ((obj = chkobject("axis")) == NULL)
     return;
+  undo = axis_save_undo(UNDO_TYPE_CREATE);
   idx = newobj(obj);
   idy = newobj(obj);
   arrayinit(&group, sizeof(int));
@@ -2709,34 +2555,39 @@ CmAxisNewCross(void *w, gpointer client_data)
   argv[1] = NULL;
   exeobj(obj, "default_grouping", idy, 1, argv);
   arraydel(&group);
+  presetting_set_obj_field(obj, idx);
+  presetting_set_obj_field(obj, idy);
   CrossDialog(&DlgCross, x, y, lenx, leny, obj, idx, idy);
   ret = DialogExecute(TopLevel, &DlgCross);
-  if ((ret == IDDELETE) || (ret == IDCANCEL)) {
-    delobj(obj, idy);
-    delobj(obj, idx);
-  } else
+  if (ret == IDCANCEL) {
+    menu_undo_internal(undo);
+  } else {
     set_graph_modified();
-  AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE);
+  }
+  AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
 }
 
 void
 CmAxisNewSingle(void *w, gpointer client_data)
 {
   struct objlist *obj;
-  int id, ret;
+  int id, ret, undo;
 
   if (Menulock || Globallock)
     return;
   if ((obj = chkobject("axis")) == NULL)
     return;
+  undo = axis_save_undo(UNDO_TYPE_CREATE);
   if ((id = newobj(obj)) >= 0) {
+    presetting_set_obj_field(obj, id);
     AxisDialog(NgraphApp.AxisWin.data.data, id, -1);
     ret = DialogExecute(TopLevel, &DlgAxis);
-    if ((ret == IDDELETE) || (ret == IDCANCEL)) {
-      delobj(obj, id);
-    } else
+    if (ret == IDCANCEL) {
+      menu_undo_internal(undo);
+    } else {
       set_graph_modified();
-    AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE);
+    }
+    AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
   }
 }
 
@@ -2754,13 +2605,14 @@ CmAxisDel(void *w, gpointer client_data)
   if (chkobjlastinst(obj) == -1)
     return;
 
-  CopyDialog(&DlgCopy, obj, -1, AxisCB);
+  CopyDialog(&DlgCopy, obj, -1, _("delete axis (single select)"), AxisCB);
 
   if (DialogExecute(TopLevel, &DlgCopy) == IDOK && DlgCopy.sel >= 0) {
+    axis_save_undo(UNDO_TYPE_DELETE);
     AxisDel(DlgCopy.sel);
     set_graph_modified();
-    AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE);
-    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
+    AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
   }
 }
 
@@ -2768,7 +2620,7 @@ void
 CmAxisUpdate(void *w, gpointer client_data)
 {
   struct objlist *obj;
-  int i, ret;
+  int i, ret, undo;
 
   if (Menulock || Globallock)
     return;
@@ -2776,7 +2628,7 @@ CmAxisUpdate(void *w, gpointer client_data)
     return;
   if (chkobjlastinst(obj) == -1)
     return;
-  CopyDialog(&DlgCopy, obj, -1, AxisCB);
+  CopyDialog(&DlgCopy, obj, -1, _("axis property (single select)"), AxisCB);
   if (DialogExecute(TopLevel, &DlgCopy) == IDOK) {
     i = DlgCopy.sel;
     if (i < 0)
@@ -2784,12 +2636,15 @@ CmAxisUpdate(void *w, gpointer client_data)
   } else {
     return;
   }
+  undo = axis_save_undo(UNDO_TYPE_EDIT);
   AxisDialog(NgraphApp.AxisWin.data.data, i, -1);
-  if ((ret = DialogExecute(TopLevel, &DlgAxis)) == IDDELETE) {
-    AxisDel(i);
+  ret = DialogExecute(TopLevel, &DlgAxis);
+  if (ret == IDCANCEL) {
+    menu_delete_undo(undo);
+  } else {
+    AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
   }
-  AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE);
-  FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
 }
 
 void
@@ -2811,10 +2666,13 @@ CmAxisZoom(void *w, gpointer client_data)
   ZoomDialog(&DlgZoom);
   if ((DialogExecute(TopLevel, &DlgZoom) == IDOK) && (DlgZoom.zoom > 0)) {
     zoom = DlgZoom.zoom / 10000.0;
-    SelectDialog(&DlgSelect, obj, AxisCB, (struct narray *) &farray, NULL);
+    SelectDialog(&DlgSelect, obj, _("scale zoom (multi select)"), AxisCB, (struct narray *) &farray, NULL);
     if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
       num = arraynum(&farray);
       array = arraydata(&farray);
+      if (num > 0) {
+	axis_save_undo(UNDO_TYPE_EDIT);
+      }
       for (i = 0; i < num; i++) {
 	getobj(obj, "min", array[i], 0, NULL, &min);
 	getobj(obj, "max", array[i], 0, NULL, &max);
@@ -2832,7 +2690,7 @@ CmAxisZoom(void *w, gpointer client_data)
 	  set_graph_modified();
 	}
       }
-      AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE);
+      AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
     }
     arraydel(&farray);
   }
@@ -2858,12 +2716,13 @@ axiswin_scale_clear(GtkMenuItem *item, gpointer user_data)
   num = chkobjlastinst(d->obj);
 
   if ((sel >= 0) && (sel <= num)) {
+    axis_save_undo(UNDO_TYPE_CLEAR_SCALE);
     d->setup_dialog(d, sel, -1);
     d->select = sel;
     axis_scale_push(obj, sel);
     exeobj(obj, "clear", sel, 0, NULL);
     set_graph_modified();
-    d->update(d, FALSE);
+    d->update(d, FALSE, TRUE);
   }
 }
 
@@ -2881,16 +2740,19 @@ CmAxisClear(void *w, gpointer client_data)
     return;
   if (chkobjlastinst(obj) == -1)
     return;
-  SelectDialog(&DlgSelect, obj, AxisCB, (struct narray *) &farray, NULL);
+  SelectDialog(&DlgSelect, obj, _("scale clear (multi select)"), AxisCB, (struct narray *) &farray, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&farray);
     array = arraydata(&farray);
+    if (num > 0) {
+      axis_save_undo(UNDO_TYPE_CLEAR_SCALE);
+    }
     for (i = 0; i < num; i++) {
       axis_scale_push(obj, array[i]);
       exeobj(obj, "clear", array[i], 0, NULL);
       set_graph_modified();
     }
-    AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE);
+    AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
   }
   arraydel(&farray);
 }
@@ -2899,19 +2761,24 @@ void
 CmAxisGridNew(void *w, gpointer client_data)
 {
   struct objlist *obj;
-  int id, ret;
+  int id, ret, undo;
 
   if (Menulock || Globallock)
     return;
   if ((obj = chkobject("axisgrid")) == NULL)
     return;
-  if ((id = newobj(obj)) >= 0) {
-    GridDialog(&DlgGrid, obj, id);
-    ret = DialogExecute(TopLevel, &DlgGrid);
-    if ((ret == IDDELETE) || (ret == IDCANCEL)) {
-      delobj(obj, id);
-    } else
-      set_graph_modified();
+  undo = axis_save_undo(UNDO_TYPE_CREATE);
+  id = newobj(obj);
+  if (id < 0) {
+    menu_delete_undo(undo);
+    return;
+  }
+  GridDialog(&DlgGrid, obj, id);
+  ret = DialogExecute(TopLevel, &DlgGrid);
+  if (ret == IDCANCEL) {
+    menu_undo_internal(undo);
+  } else {
+    set_graph_modified();
   }
 }
 
@@ -2929,9 +2796,12 @@ CmAxisGridDel(void *w, gpointer client_data)
     return;
   if (chkobjlastinst(obj) == -1)
     return;
-  SelectDialog(&DlgSelect, obj, GridCB, (struct narray *) &farray, NULL);
+  SelectDialog(&DlgSelect, obj, _("delete grid (multi select)"), GridCB, (struct narray *) &farray, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&farray);
+    if (num > 0) {
+      axis_save_undo(UNDO_TYPE_DELETE);
+    }
     array = arraydata(&farray);
     for (i = num - 1; i >= 0; i--) {
       delobj(obj, array[i]);
@@ -2955,9 +2825,12 @@ CmAxisGridUpdate(void *w, gpointer client_data)
     return;
   if (chkobjlastinst(obj) == -1)
     return;
-  SelectDialog(&DlgSelect, obj, GridCB, (struct narray *) &farray, NULL);
+  SelectDialog(&DlgSelect, obj, _("grid property (multi select)"), GridCB, (struct narray *) &farray, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&farray);
+    if (num > 0) {
+      axis_save_undo(UNDO_TYPE_EDIT);
+    }
     array = arraydata(&farray);
     for (i = 0; i < num; i++) {
       GridDialog(&DlgGrid, obj, array[i]);
@@ -2973,8 +2846,10 @@ CmAxisGridUpdate(void *w, gpointer client_data)
 }
 
 void
-AxisWinUpdate(struct obj_list_data *d, int clear)
+AxisWinUpdate(struct obj_list_data *d, int clear, int draw)
 {
+  char *objects[4];
+
   if (Menulock || Globallock)
     return;
 
@@ -2989,6 +2864,14 @@ AxisWinUpdate(struct obj_list_data *d, int clear)
 
   if (! clear && d->select >= 0) {
     list_store_select_int(GTK_WIDGET(d->text), AXIS_WIN_COL_ID, d->select);
+  }
+  if (draw) {
+    NgraphApp.Viewer.allclear = TRUE;
+    objects[0] = d->obj->name;
+    objects[1] = "axisgrid";
+    objects[2] = (draw == DRAW_AXIS_ONLY) ? NULL : NgraphApp.FileWin.data.data->obj->name;
+    objects[3] = NULL;
+    ViewerWinUpdate(objects);
   }
 }
 
@@ -3094,6 +2977,17 @@ check_axis_history(struct objlist *obj)
   return num;
 }
 
+int
+axis_check_history(void)
+{
+  struct objlist *obj;
+  obj = chkobject("axis");
+  if (obj == NULL) {
+    return FALSE;
+  }
+  return check_axis_history(obj);
+}
+
 void
 CmAxisScaleUndo(void *w, gpointer client_data)
 {
@@ -3111,9 +3005,12 @@ CmAxisScaleUndo(void *w, gpointer client_data)
   if (check_axis_history(obj) == 0)
     return;
 
-  SelectDialog(&DlgSelect, obj, AxisHistoryCB, (struct narray *) &farray, NULL);
+  SelectDialog(&DlgSelect, obj, _("scale undo (multi select)"), AxisHistoryCB, (struct narray *) &farray, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&farray);
+    if (num > 0) {
+      axis_save_undo(UNDO_TYPE_UNDO_SCALE);
+    }
     array = arraydata(&farray);
     for (i = num - 1; i >= 0; i--) {
       argv[0] = NULL;
@@ -3122,7 +3019,7 @@ CmAxisScaleUndo(void *w, gpointer client_data)
     }
     n = check_axis_history(obj);
     set_axis_undo_button_sensitivity(n > 0);
-    AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE);
+    AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
   }
   arraydel(&farray);
 }
@@ -3209,10 +3106,11 @@ pos_edited_common(struct obj_list_data *d, int id, char *str, enum CHANGE_DIR di
 
   getobj(d->obj, "group_manager", id, 0, NULL, &man);
   if (man >= 0) {
+    axis_save_undo(UNDO_TYPE_EDIT);
     exeobj(d->obj, "move", man, 2, argv);
 
     set_graph_modified();
-    AxisWinUpdate(d, TRUE);
+    AxisWinUpdate(d, TRUE, DRAW_REDRAW);
   }
 }
 
@@ -3255,8 +3153,8 @@ axis_prm_edited_common(struct obj_list_data *d, char *field, gchar *str)
     return;
   }
 
+  axis_save_undo(UNDO_TYPE_EDIT);
   axis_scale_push(d->obj, sel);
-
   if (chk_sputobjfield(d->obj, sel, field, str)) {
     menu_lock(FALSE);
     return;
@@ -3265,7 +3163,7 @@ axis_prm_edited_common(struct obj_list_data *d, char *field, gchar *str)
   menu_lock(FALSE);
 
   d->select = sel;
-  d->update(d, FALSE);
+  d->update(d, FALSE, TRUE);
 }
 
 static void
@@ -3319,14 +3217,12 @@ create_base_combo_item(GtkTreeStore *list, GtkTreeIter *parent, struct objlist *
   gtk_tree_store_set(list, &iter,
 		     OBJECT_COLUMN_TYPE_STRING, _("Baseline"),
 		     OBJECT_COLUMN_TYPE_PIXBUF, NULL,
-		     OBJECT_COLUMN_TYPE_INT, -1, 
+		     OBJECT_COLUMN_TYPE_INT, -1,
 		     OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, FALSE,
 		     OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
 		     -1);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   add_bool_combo_item_to_cbox(list, NULL, &iter, AXIS_COMBO_ITEM_BASE_DRAW, obj, "baseline", id, _("Draw"));
-#endif
   add_line_style_item_to_cbox(list, &iter, AXIS_COMBO_ITEM_BASE_STYLE, obj, "style", id);
 
   add_text_combo_item_to_cbox(list, &child, &iter, -1, -1, _("Arrow"), TOGGLE_NONE, FALSE);
@@ -3336,10 +3232,6 @@ create_base_combo_item(GtkTreeStore *list, GtkTreeIter *parent, struct objlist *
   add_enum_combo_item_to_cbox(list, NULL, &child, AXIS_COMBO_ITEM_BASE_WAVE, obj, "wave", id);
 
   add_text_combo_item_to_cbox(list, NULL, &iter, AXIS_COMBO_ITEM_BASE_COLOR, -1, _("Color"), TOGGLE_NONE, FALSE);
-#if ! GTK_CHECK_VERSION(3, 0, 0)
-  add_bool_combo_item_to_cbox(list, NULL, &iter, AXIS_COMBO_ITEM_BASE_DRAW, obj, "baseline", id, _("Draw"));
-#endif
-
 }
 
 static void
@@ -3351,7 +3243,7 @@ create_gauge_combo_item(GtkTreeStore *list, GtkTreeIter *parent, struct objlist 
   gtk_tree_store_set(list, &iter,
 		     OBJECT_COLUMN_TYPE_STRING, _("Gauge"),
 		     OBJECT_COLUMN_TYPE_PIXBUF, NULL,
-		     OBJECT_COLUMN_TYPE_INT, -1, 
+		     OBJECT_COLUMN_TYPE_INT, -1,
 		     OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, FALSE,
 		     OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
 		     -1);
@@ -3396,7 +3288,9 @@ create_num_combo_item(GtkTreeStore *list, GtkTreeIter *parent, struct objlist *o
   add_text_combo_item_to_cbox(list, NULL, &iter, AXIS_COMBO_ITEM_NUM_COLOR, -1, _("Color"), TOGGLE_NONE, FALSE);
 
   add_bool_combo_item_to_cbox(list, NULL, &iter, AXIS_COMBO_ITEM_NUM_LOG, obj, "num_log_pow", id, _("Log power"));
-  add_bool_combo_item_to_cbox(list, NULL, &iter, AXIS_COMBO_ITEM_NUM_NO_ZERO, obj, "num_no_zero", id, _("No zero"));
+
+  add_text_combo_item_to_cbox(list, &child, &iter, -1, -1, _("Zero"), TOGGLE_NONE, FALSE);
+  add_enum_combo_item_to_cbox(list, NULL, &child, AXIS_COMBO_ITEM_NUM_NO_ZERO, obj, "num_no_zero", id);
 }
 
 static void
@@ -3419,7 +3313,7 @@ create_type_combo_box(GtkWidget *cbox, struct objlist *obj, int id)
 static void
 select_type(GtkComboBox *w, gpointer user_data)
 {
-  int sel, col_type, type, enum_id, found, active, style;
+  int sel, col_type, type, enum_id, found, active, style, draw;
   struct objlist *obj;
   struct obj_list_data *d;
   GtkTreeStore *list;
@@ -3446,16 +3340,20 @@ select_type(GtkComboBox *w, gpointer user_data)
 		     OBJECT_COLUMN_TYPE_ENUM, &enum_id,
 		     -1);
 
+  draw = DRAW_AXIS_ONLY;
   switch (col_type) {
   case AXIS_COMBO_ITEM_SCALE:
     getobj(d->obj, "type", sel, 0, NULL, &type);
     if (type == enum_id) {
       return;
     }
+    draw = DRAW_REDRAW;
+    axis_save_undo(UNDO_TYPE_EDIT);
     putobj(d->obj, "type", sel, &enum_id);
     break;
   case AXIS_COMBO_ITEM_BASE_DRAW:
     gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);
+    axis_save_undo(UNDO_TYPE_EDIT);
     active = ! active;
     putobj(d->obj, "baseline", sel, &active);
     break;
@@ -3468,6 +3366,7 @@ select_type(GtkComboBox *w, gpointer user_data)
     if (enum_id < 0 || enum_id >= FwNumStyleNum) {
       return;
     }
+    axis_save_undo(UNDO_TYPE_EDIT);
     if (chk_sputobjfield(d->obj, sel, "style", FwLineStyle[enum_id].list) != 0) {
       return;
     }
@@ -3480,6 +3379,7 @@ select_type(GtkComboBox *w, gpointer user_data)
     if (type == enum_id) {
       return;
     }
+    axis_save_undo(UNDO_TYPE_EDIT);
     putobj(d->obj, "arrow", sel, &enum_id);
     break;
   case AXIS_COMBO_ITEM_BASE_WAVE:
@@ -3487,6 +3387,7 @@ select_type(GtkComboBox *w, gpointer user_data)
     if (type == enum_id) {
       return;
     }
+    axis_save_undo(UNDO_TYPE_EDIT);
     putobj(d->obj, "wave", sel, &enum_id);
     break;
   case AXIS_COMBO_ITEM_GAUGE_POS:
@@ -3494,6 +3395,7 @@ select_type(GtkComboBox *w, gpointer user_data)
     if (type == enum_id) {
       return;
     }
+    axis_save_undo(UNDO_TYPE_EDIT);
     putobj(d->obj, "gauge", sel, &enum_id);
     break;
   case AXIS_COMBO_ITEM_GAUGE_COLOR:
@@ -3505,6 +3407,7 @@ select_type(GtkComboBox *w, gpointer user_data)
     if (enum_id < 0 || enum_id >= FwNumStyleNum) {
       return;
     }
+    axis_save_undo(UNDO_TYPE_EDIT);
     if (chk_sputobjfield(d->obj, sel, "gauge_style", FwLineStyle[enum_id].list) != 0) {
       return;
     }
@@ -3517,6 +3420,7 @@ select_type(GtkComboBox *w, gpointer user_data)
     if (type == enum_id) {
       return;
     }
+    axis_save_undo(UNDO_TYPE_EDIT);
     putobj(d->obj, "num", sel, &enum_id);
     break;
   case AXIS_COMBO_ITEM_NUM_ALIGN:
@@ -3524,6 +3428,7 @@ select_type(GtkComboBox *w, gpointer user_data)
     if (type == enum_id) {
       return;
     }
+    axis_save_undo(UNDO_TYPE_EDIT);
     putobj(d->obj, "num_align", sel, &enum_id);
     break;
   case AXIS_COMBO_ITEM_NUM_DIR:
@@ -3531,17 +3436,22 @@ select_type(GtkComboBox *w, gpointer user_data)
     if (type == enum_id) {
       return;
     }
+    axis_save_undo(UNDO_TYPE_EDIT);
     putobj(d->obj, "num_direction", sel, &enum_id);
     break;
   case AXIS_COMBO_ITEM_NUM_LOG:
     gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);
+    axis_save_undo(UNDO_TYPE_EDIT);
     active = ! active;
     putobj(d->obj, "num_log_pow", sel, &active);
     break;
   case AXIS_COMBO_ITEM_NUM_NO_ZERO:
     gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);
-    active = ! active;
-    putobj(d->obj, "num_no_zero", sel, &active);
+    if (type == enum_id) {
+      return;
+    }
+    axis_save_undo(UNDO_TYPE_EDIT);
+    putobj(d->obj, "num_no_zero", sel, &enum_id);
     break;
   case AXIS_COMBO_ITEM_NUM_COLOR:
     if (select_obj_color(obj, sel, OBJ_FIELD_COLOR_TYPE_AXIS_NUM)) {
@@ -3555,17 +3465,20 @@ select_type(GtkComboBox *w, gpointer user_data)
       g_free(font);
       return;
     }
+    axis_save_undo(UNDO_TYPE_EDIT);
     putobj(d->obj, "num_font", sel, font);
     break;
   case AXIS_COMBO_ITEM_NUM_BOLD:
     gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);
     getobj(d->obj, "num_font_style", sel, 0, NULL, &type);
+    axis_save_undo(UNDO_TYPE_EDIT);
     style = (type & GRA_FONT_STYLE_ITALIC) | (active ? 0 : GRA_FONT_STYLE_BOLD);
     putobj(d->obj, "num_font_style", sel, &style);
     break;
   case AXIS_COMBO_ITEM_NUM_ITALIC:
     gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);
     getobj(d->obj, "num_font_style", sel, 0, NULL, &type);
+    axis_save_undo(UNDO_TYPE_EDIT);
     style = (type & GRA_FONT_STYLE_BOLD) | (active ? 0 : GRA_FONT_STYLE_ITALIC);
     putobj(d->obj, "num_font_style", sel, &style);
     break;
@@ -3574,7 +3487,7 @@ select_type(GtkComboBox *w, gpointer user_data)
   }
 
   d->select = sel;
-  d->update(d, FALSE);
+  d->update(d, FALSE, draw);
   set_graph_modified();
 }
 
@@ -3626,9 +3539,10 @@ axiswin_delete_axis(struct obj_list_data *d)
   num = chkobjlastinst(d->obj);
 
   if ((sel >= 0) && (sel <= num)) {
+    axis_save_undo(UNDO_TYPE_DELETE);
     AxisDel(sel);
-    AxisWinUpdate(d, TRUE);
-    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
+    AxisWinUpdate(d, TRUE, DRAW_REDRAW);
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
     set_graph_modified();
     d->select = -1;
   }
@@ -3657,11 +3571,12 @@ AxisWinAxisTop(GtkWidget *w, gpointer client_data)
   num = chkobjlastinst(d->obj);
 
   if ((sel  >=  0) && (sel <= num)) {
+    axis_save_undo(UNDO_TYPE_ORDER);
     movetopobj(d->obj, sel);
     d->select = 0;
     AxisMove(sel,0);
-    AxisWinUpdate(d, FALSE);
-    FileWinUpdate(NgraphApp.FileWin.data.data, FALSE);
+    AxisWinUpdate(d, FALSE, FALSE);
+    FileWinUpdate(NgraphApp.FileWin.data.data, FALSE, FALSE);
     set_graph_modified();
   }
 }
@@ -3680,11 +3595,12 @@ AxisWinAxisLast(GtkWidget *w, gpointer client_data)
   num = chkobjlastinst(d->obj);
 
   if ((sel >= 0) && (sel <= num)) {
+    axis_save_undo(UNDO_TYPE_ORDER);
     movelastobj(d->obj, sel);
     d->select = num;
     AxisMove(sel, num);
-    AxisWinUpdate(d, FALSE);
-    FileWinUpdate(NgraphApp.FileWin.data.data, FALSE);
+    AxisWinUpdate(d, FALSE, FALSE);
+    FileWinUpdate(NgraphApp.FileWin.data.data, FALSE, FALSE);
     set_graph_modified();
   }
 }
@@ -3703,11 +3619,12 @@ AxisWinAxisUp(GtkWidget *w, gpointer client_data)
   num = chkobjlastinst(d->obj);
 
   if ((sel >= 1) && (sel <= num)) {
+    axis_save_undo(UNDO_TYPE_ORDER);
     moveupobj(d->obj, sel);
     d->select = sel - 1;
     AxisMove(sel, sel - 1);
-    AxisWinUpdate(d, FALSE);
-    FileWinUpdate(NgraphApp.FileWin.data.data, FALSE);
+    AxisWinUpdate(d, FALSE, FALSE);
+    FileWinUpdate(NgraphApp.FileWin.data.data, FALSE, FALSE);
     set_graph_modified();
   }
 }
@@ -3726,11 +3643,12 @@ AxisWinAxisDown(GtkWidget *w, gpointer client_data)
   num = chkobjlastinst(d->obj);
 
   if (sel >= 0 && sel <= num-1) {
+    axis_save_undo(UNDO_TYPE_ORDER);
     movedownobj(d->obj, sel);
     d->select = sel + 1;
     AxisMove(sel, sel + 1);
-    AxisWinUpdate(d, FALSE);
-    FileWinUpdate(NgraphApp.FileWin.data.data, FALSE);
+    AxisWinUpdate(d, FALSE, FALSE);
+    FileWinUpdate(NgraphApp.FileWin.data.data, FALSE, FALSE);
     set_graph_modified();
   }
 }
@@ -3755,28 +3673,32 @@ axiswin_ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
     axiswin_delete_axis(d);
     break;
   case GDK_KEY_Home:
-    if (e->state & GDK_SHIFT_MASK)
+    if (e->state & GDK_SHIFT_MASK) {
       AxisWinAxisTop(w, d);
-    else
+    } else {
       return FALSE;
+    }
     break;
   case GDK_KEY_End:
-    if (e->state & GDK_SHIFT_MASK)
+    if (e->state & GDK_SHIFT_MASK) {
       AxisWinAxisLast(w, d);
-    else
+    } else {
       return FALSE;
+    }
     break;
   case GDK_KEY_Up:
-    if (e->state & GDK_SHIFT_MASK)
+    if (e->state & GDK_SHIFT_MASK) {
       AxisWinAxisUp(w, d);
-    else
+    } else {
       return FALSE;
+    }
     break;
   case GDK_KEY_Down:
-    if (e->state & GDK_SHIFT_MASK)
+    if (e->state & GDK_SHIFT_MASK) {
       AxisWinAxisDown(w, d);
-    else
+    } else {
       return FALSE;
+    }
     break;
   default:
     return FALSE;

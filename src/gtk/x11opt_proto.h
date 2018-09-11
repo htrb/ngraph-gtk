@@ -242,7 +242,7 @@ CREATE_NAME(Pref, DialogCreateWidgets)(struct CREATE_NAME(Pref, Dialog) *d, GtkW
   GtkWidget *w, *hbox, *vbox, *swin;
   GtkTreeSelection *sel;
 
-  hbox = gtk_hbox_new(FALSE, 4);
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
   swin = gtk_scrolled_window_new(NULL, NULL);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
@@ -264,7 +264,7 @@ CREATE_NAME(Pref, DialogCreateWidgets)(struct CREATE_NAME(Pref, Dialog) *d, GtkW
   } else {
     gtk_box_pack_start(GTK_BOX(hbox), w, TRUE, TRUE, 4);
   }
-  vbox = gtk_vbox_new(FALSE, 4);
+  vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
 
   w= gtk_button_new_with_mnemonic(_("_Add"));
   set_button_icon(w, "list-add");

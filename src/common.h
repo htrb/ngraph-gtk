@@ -22,12 +22,20 @@
 #include <glib.h>
 #include <glib/gstdio.h>
 
-#ifdef __MINGW32__
+#ifdef G_OS_WIN32
 #define WINDOWS 1
 #ifndef _WIN32_WINNT
 #define _WIN32_WINNT 0x0500
 #endif
 #include <windows.h>
+#else
+#define WINDOWS 0
+#endif
+
+#ifdef __APPLE__
+#define OSX 1
+#else
+#define OSX 0
 #endif
 
 #ifdef __WIN64__
@@ -44,8 +52,6 @@
 #endif
 
 #define COMPILER_NAME (CCNAME " " __VERSION__)
-
-#define USE_MEM_PROFILE 0
 
 #define MARK_TYPE_NUM 90
 

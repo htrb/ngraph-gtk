@@ -80,7 +80,7 @@ main(int argc,char **argv)
     close(fdo);
     return 1;
   }
-  
+
   close(fdo);
   close(fdi);
 

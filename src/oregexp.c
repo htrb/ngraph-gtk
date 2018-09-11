@@ -41,7 +41,7 @@ del_array_element(struct narray *array)
   arraydel(array);
 }
 
-static int 
+static int
 regexpinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct oregexp_local *local;
@@ -67,7 +67,7 @@ regexpinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 regexpdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct oregexp_local *local;
@@ -88,7 +88,7 @@ regexpdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 regexp_set(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct oregexp_local *local;
@@ -131,7 +131,7 @@ regexp_set(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   return 0;
 }
 
-static int 
+static int
 regexp_get(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct oregexp_local *local;
@@ -167,7 +167,7 @@ regexp_get(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 1;
 }
 
-static int 
+static int
 regexp_num(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct oregexp_local *local;
@@ -180,7 +180,7 @@ regexp_num(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 regexp_match(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct oregexp_local *local;
@@ -222,7 +222,7 @@ regexp_match(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **arg
   return 0;
 }
 
-static int 
+static int
 regexp_replace(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct oregexp_local *local;
@@ -261,7 +261,7 @@ regexp_replace(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **a
   return 0;
 }
 
-int 
+int
 regexp_seq(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct oregexp_local *local;
@@ -292,7 +292,7 @@ regexp_seq(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   return 0;
 }
 
-int 
+int
 regexp_rseq(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct oregexp_local *local;

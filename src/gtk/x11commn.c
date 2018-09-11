@@ -52,6 +52,7 @@
 #include "x11commn.h"
 #include "x11info.h"
 #include "x11file.h"
+#include "x11view.h"
 
 #define COMMENT_BUF_SIZE 1024
 
@@ -257,7 +258,7 @@ void
 GetPageSettingsFromGRA(void)
 {
   int i, j, num, otherGC, id;
-  struct objlist *obj;
+  struct objlist *obj, *dobj;
   N_VALUE *inst;
   struct narray *drawrable;
 
@@ -278,8 +279,22 @@ GetPageSettingsFromGRA(void)
     arraydel2(&(Menulocal.drawrable));
     num = arraynum(drawrable);
 
-    for (j = 0; j < num; j++) {
-      arrayadd2(&(Menulocal.drawrable), *(char **) arraynget(drawrable, j));
+    if (num == 0) {
+      menuadddrawrable(chkobject("draw"), &(Menulocal.drawrable));
+    } else {
+      char *name;
+      for (j = 0; j < num; j++) {
+	name = arraynget_str(drawrable, j);
+	if (name == NULL) {
+	  continue;
+	}
+	dobj = chkobject(name);
+	if (dobj == NULL) {
+	  continue;
+	}
+	arrayadd2(&(Menulocal.drawrable), chkobjectname(dobj));
+      }
+      arrayuniq_all_str(&(Menulocal.drawrable));
     }
   }
 
@@ -1113,7 +1128,7 @@ SaveDrawrable(char *name, int storedata, int storemerge)
 static int
 get_save_opt(int *sdata, int *smerge, int *path)
 {
-  int ret, fnum, mnum, i;
+  int ret, fnum, mnum, i, src;
   struct objlist *fobj, *mobj;
 
   *path = SAVE_PATH_UNCHANGE;
@@ -1123,11 +1138,24 @@ get_save_opt(int *sdata, int *smerge, int *path)
   fobj = chkobject("data");
   mobj = chkobject("merge");
 
-  fnum = (fobj) ? chkobjlastinst(fobj) : -1;
-  mnum = (mobj) ? chkobjlastinst(mobj) : -1;
+  fnum = chkobjlastinst(fobj) + 1;
+  mnum = chkobjlastinst(mobj) + 1;
 
-  if (fnum < 0 && mnum < 0)
+  /* there are no instances of data and merge objects */
+  if (fnum < 1 && mnum < 1) {
     return IDOK;
+  }
+
+  /* check source field of data objects */
+  for (i = 0; i < fnum; i++) {
+    getobj(fobj, "source", i, 0, NULL, &src);
+    if (src ==  DATA_SOURCE_FILE) {
+      break;
+    }
+  }
+  if (fnum > 0 && mnum < 1 && i == fnum) {
+    return IDOK;
+  }
 
   SaveDialog(&DlgSave, sdata, smerge);
   ret = DialogExecute(TopLevel, &DlgSave);
@@ -1135,11 +1163,11 @@ get_save_opt(int *sdata, int *smerge, int *path)
     return IDCANCEL;
 
   *path = DlgSave.Path;
-  for (i = 0; i <= fnum; i++) {
+  for (i = 0; i < fnum; i++) {
     putobj(fobj, "save_path", i, path);
   }
 
-  for (i = 0; i <= mnum; i++) {
+  for (i = 0; i < mnum; i++) {
     putobj(mobj, "save_path", i, path);
   }
 
@@ -1231,7 +1259,7 @@ change_filename(char * (*func)(const char *))
   struct objlist *obj;
   int i;
   unsigned int j;
-  char *file, *file2, *objname[] = {"file", "merge"};
+  char *file, *file2, *objname[] = {"data", "merge"};
 
   for (j = 0; j < sizeof(objname) / sizeof(*objname); j++) {
     obj = chkobject(objname[j]);
@@ -1434,9 +1462,76 @@ LoadNgpFile(char *file, int console, char *option)
 
   set_axis_undo_button_sensitivity(FALSE);
   GetPageSettingsFromGRA();
-  UpdateAll();
+  CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
+  UpdateAll2(NULL, FALSE);
   delobj(obj, newid);
+  menu_clear_undo();
 
+  return 0;
+}
+
+static int
+check_ref_axis(char *ref, const char *group)
+{
+  int anum, aid;
+  char *refgroup;
+  struct narray iarray;
+  struct objlist *aobj;
+  N_VALUE *inst;
+
+  if (ref == NULL) {
+    return FALSE;
+  }
+
+  arrayinit(&iarray, sizeof(int));
+  if (getobjilist(ref, &aobj, &iarray, FALSE, NULL)) {
+    arraydel(&iarray);
+    return TRUE;
+  }
+
+  anum = arraynum(&iarray);
+  if (anum < 1) {
+    arraydel(&iarray);
+    return TRUE;
+  }
+
+  aid = arraylast_int(&iarray);
+  arraydel(&iarray);
+  inst = getobjinst(aobj, aid);
+  if (inst == NULL) {
+    return TRUE;
+  }
+
+  _getobj(aobj, "group", inst, &refgroup);
+  if (refgroup && group &&
+      refgroup[0] == group[0] &&
+      strcmp(refgroup + 2, group + 2) == 0) {
+    return FALSE;
+  }
+
+  return TRUE;
+}
+
+static int
+file_auto_scale(char *file_obj, struct objlist *aobj, int anum)
+{
+  int i, refother;
+  double min, max, inc;
+  char *group, *ref, *argv[2];
+
+  argv[0] = (char *) file_obj;
+  argv[1] = NULL;
+  for (i = 0; i <= anum; i++) {
+    getobj(aobj, "min", i, 0, NULL, &min);
+    getobj(aobj, "max", i, 0, NULL, &max);
+    getobj(aobj, "inc", i, 0, NULL, &inc);
+    getobj(aobj, "group", i, 0, NULL, &group);
+    getobj(aobj, "reference", i, 0, NULL, &ref);
+    refother = check_ref_axis(ref, group);
+    if (! refother && (min == max || inc == 0)) {
+      exeobj(aobj, "auto_scale", i, 1, argv);
+    }
+  }
   return 0;
 }
 
@@ -1444,19 +1539,11 @@ void
 FileAutoScale(void)
 {
   int anum;
-  struct objlist *aobj, *aobj2;
-  double min, max, inc;
-  char *argv2[2];
+  struct objlist *aobj;
   char *buf;
   struct objlist *fobj;
   int lastinst;
-  int i, j, a;
-  char *ref;
-  struct narray iarray;
-  int anum2, aid2;
-  N_VALUE *inst;
-  char *group, *refgroup;
-  int refother;
+  int i, hidden;
   GString *str;
 
   if ((fobj = chkobject("data")) == NULL)
@@ -1476,49 +1563,21 @@ FileAutoScale(void)
   }
 
   for (i = 0; i <= lastinst; i++) {
-    getobj(fobj, "hidden", i, 0, NULL, &a);
-    if (! a) {
+    getobj(fobj, "hidden", i, 0, NULL, &hidden);
+    if (! hidden) {
       g_string_append_printf(str, "%d,", i);
     }
   }
-  j = str->len;
+
+  i = str->len - 1;
   buf = g_string_free(str, FALSE);
-
-  if (buf[j] == ',') {
-    buf[j] = '\0';
+  if (buf[i] != ',') {
+    g_free(buf);
+    return;
   }
+  buf[i] = '\0';
 
-  argv2[0] = (char *) buf;
-  argv2[1] = NULL;
-  for (i = 0; i <= anum; i++) {
-    getobj(aobj, "min", i, 0, NULL, &min);
-    getobj(aobj, "max", i, 0, NULL, &max);
-    getobj(aobj, "inc", i, 0, NULL, &inc);
-    getobj(aobj, "group", i, 0, NULL, &group);
-    getobj(aobj, "reference", i, 0, NULL, &ref);
-    refother = FALSE;
-    if (ref) {
-      refother = TRUE;
-      arrayinit(&iarray, sizeof(int));
-      if (!getobjilist(ref, &aobj2, &iarray, FALSE, NULL)) {
-	anum2 = arraynum(&iarray);
-	if (anum2 > 0) {
-	  aid2 = arraylast_int(&iarray);
-	  arraydel(&iarray);
-	  inst = getobjinst(aobj2, aid2);
-	  if (inst) {
-	    _getobj(aobj2, "group", inst, &refgroup);
-	    if (refgroup && group && refgroup[0] == group[0]
-		&& strcmp(refgroup + 2, group + 2) == 0)
-	      refother = FALSE;
-	  }
-	}
-      }
-    }
-    if (! refother && (min == max || inc == 0)) {
-      exeobj(aobj, "auto_scale", i, 1, argv2);
-    }
-  }
+  file_auto_scale(buf, aobj, anum);
   g_free(buf);
 }
 
@@ -1713,7 +1772,7 @@ SetFileHidden(void)
   }
 
   r = 0;
-  SelectDialog(&DlgSelect, fobj, FileCB, &farray, &ifarray);
+  SelectDialog(&DlgSelect, fobj, NULL, FileCB, &farray, &ifarray);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     a = TRUE;
     for (i = 0; i <= lastinst; i++) {
@@ -1793,7 +1852,7 @@ ProgressDialogSetTitle(char *title)
 }
 
 static void
-show_progress(int pos, char *msg, double fraction)
+show_progress(int pos, const char *msg, double fraction)
 {
   GtkProgressBar *bar;
 
@@ -1815,12 +1874,6 @@ show_progress(int pos, char *msg, double fraction)
   gtk_progress_bar_set_text(bar, msg);
 }
 
-static gboolean
-cb_del(GtkWidget *w, GdkEvent *event, gpointer user_data)
-{
-  return TRUE;
-}
-
 static void
 stop_btn_clicked(GtkButton *button, gpointer user_data)
 {
@@ -1835,9 +1888,6 @@ ProgressDialogCreate(char *title)
   if (TopLevel == NULL)
     return;
 
-  if (ProgressDialog)
-    gtk_widget_destroy(ProgressDialog);
-
   reset_interrupt();
 
   SaveCursor = NGetCursor();
@@ -1845,8 +1895,17 @@ ProgressDialogCreate(char *title)
 
   set_draw_lock(DrawLockDraw);
 
+  if (ProgressDialog) {
+    ProgressDialogSetTitle(title);
+    show_progress(0, "", 0);
+    show_progress(1, "", 0);
+    set_progress_func(show_progress);
+    gtk_widget_show_all(ProgressDialog);
+    return;
+  }
+
   ProgressDialog = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-  g_signal_connect(ProgressDialog, "delete-event", G_CALLBACK(cb_del), NULL);
+  g_signal_connect(ProgressDialog, "delete-event", G_CALLBACK(gtk_true), NULL);
   gtk_window_set_title(GTK_WINDOW(ProgressDialog), title);
 
   gtk_window_set_transient_for(GTK_WINDOW(ProgressDialog), GTK_WINDOW(TopLevel));
@@ -1854,38 +1913,33 @@ ProgressDialogCreate(char *title)
   gtk_window_set_position(GTK_WINDOW(ProgressDialog), GTK_WIN_POS_CENTER);
   gtk_window_set_type_hint(GTK_WINDOW(ProgressDialog), GDK_WINDOW_TYPE_HINT_DIALOG);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-  vbox = gtk_vbox_new(FALSE, 4);
-#endif
 
   ProgressBar = GTK_PROGRESS_BAR(gtk_progress_bar_new());
   gtk_progress_bar_set_ellipsize(ProgressBar, PANGO_ELLIPSIZE_MIDDLE);
-#if GTK_CHECK_VERSION(3, 0, 0)
   gtk_progress_bar_set_show_text(ProgressBar, TRUE);
-#endif
   gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(ProgressBar), FALSE, FALSE, 4);
 
   ProgressBar2 = GTK_PROGRESS_BAR(gtk_progress_bar_new());
   gtk_progress_bar_set_ellipsize(ProgressBar2, PANGO_ELLIPSIZE_MIDDLE);
-#if GTK_CHECK_VERSION(3, 0, 0)
   gtk_progress_bar_set_show_text(ProgressBar2, TRUE);
-#endif
   gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(ProgressBar2), FALSE, FALSE, 4);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
-  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-  hbox = gtk_hbox_new(FALSE, 4);
-#endif
   btn = gtk_button_new_with_mnemonic(_("_Stop"));
   set_button_icon(btn, "process-stop");
   g_signal_connect(btn, "clicked", G_CALLBACK(stop_btn_clicked), NULL);
+#if USE_HEADER_BAR
+  hbox = gtk_header_bar_new();
+  gtk_header_bar_set_title(GTK_HEADER_BAR(hbox), title);
+  gtk_header_bar_pack_end(GTK_HEADER_BAR(hbox), btn);
+  gtk_window_set_titlebar(GTK_WINDOW(ProgressDialog), hbox);
+#else
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
   gtk_box_pack_end(GTK_BOX(hbox), btn, FALSE, FALSE, 4);
 
   gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
+#endif
   gtk_container_add(GTK_CONTAINER(ProgressDialog), vbox);
 
   gtk_window_set_default_size(GTK_WINDOW(ProgressDialog), 400, -1);
@@ -1900,12 +1954,9 @@ ProgressDialogFinalize(void)
   if (TopLevel == NULL)
     return;
 
+  gtk_widget_hide(ProgressDialog);
   NSetCursor(SaveCursor);
   set_progress_func(NULL);
-  gtk_widget_destroy(ProgressDialog);
-  ProgressDialog = NULL;
-  ProgressBar = NULL;
-  ProgressBar2 = NULL;
   set_draw_lock(DrawLockNone);
 }
 

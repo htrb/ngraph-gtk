@@ -62,6 +62,8 @@
 #include "x11view.h"
 #include "x11file.h"
 #include "x11commn.h"
+#include "sourcecompletionwords.h"
+#include "completion_info.h"
 
 static n_list_store Flist[] = {
   {" ",	        G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden"},
@@ -135,6 +137,7 @@ static struct subwin_popup_list Popup_list[] = {
   {NULL, NULL, NULL,  POP_UP_MENU_ITEM_TYPE_SEPARATOR},
   {N_("_Draw"),       G_CALLBACK(file_draw_popup_func), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {N_("_Properties"), G_CALLBACK(list_sub_window_update), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("_Instance name"), G_CALLBACK(list_sub_window_object_name), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {N_("_Edit"),       G_CALLBACK(file_edit_popup_func), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {NULL, NULL, NULL,  POP_UP_MENU_ITEM_TYPE_SEPARATOR},
   {N_("_Top"),        G_CALLBACK(list_sub_window_move_top), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
@@ -145,11 +148,13 @@ static struct subwin_popup_list Popup_list[] = {
 };
 
 #define POPUP_ITEM_NUM (sizeof(Popup_list) / sizeof(*Popup_list) - 1)
-#define POPUP_ITEM_EDIT    8
-#define POPUP_ITEM_TOP    10
-#define POPUP_ITEM_UP     11
-#define POPUP_ITEM_DOWN   12
-#define POPUP_ITEM_BOTTOM 13
+#define POPUP_ITEM_EDIT    9
+#define POPUP_ITEM_TOP    11
+#define POPUP_ITEM_UP     12
+#define POPUP_ITEM_DOWN   13
+#define POPUP_ITEM_BOTTOM 14
+
+#define RANGE_ENTRY_WIDTH 26
 
 #define FITSAVE "fit.ngp"
 
@@ -164,24 +169,175 @@ enum MATH_FNC_TYPE {
 static char *FieldStr[] = {"math_x", "math_y", "func_f", "func_g", "func_h"};
 
 static void
+add_completion_provider(GtkSourceView *source_view, GtkSourceCompletionProvider *provider)
+{
+  GtkSourceCompletion *comp;
+
+  comp = gtk_source_view_get_completion(source_view);
+  gtk_source_completion_add_provider(comp, provider, NULL);
+  g_object_unref(G_OBJECT(provider));
+}
+
+static void
+add_completion_provider_math(GtkSourceView *source_view)
+{
+  SourceCompletionWords *words;
+
+  words = source_completion_words_new(_("functions"), completion_info_func_populate);
+  add_completion_provider(source_view, GTK_SOURCE_COMPLETION_PROVIDER(words));
+
+  words = source_completion_words_new(_("constants"), completion_info_const_populate);
+  add_completion_provider(source_view, GTK_SOURCE_COMPLETION_PROVIDER(words));
+}
+
+static GtkWidget *
+create_source_view(void)
+{
+  GtkSourceView *source_view;
+  GtkSourceLanguageManager *lm;
+  GtkSourceBuffer *buffer;
+  GtkSourceLanguage *lang;
+  GtkSourceCompletionWords *words;
+  GValue value = G_VALUE_INIT;
+  GtkSourceCompletion *comp;
+
+  source_view = GTK_SOURCE_VIEW(gtk_source_view_new());
+  buffer = gtk_source_buffer_new(NULL);
+  gtk_text_view_set_buffer(GTK_TEXT_VIEW(source_view), GTK_TEXT_BUFFER(buffer));
+#if GTK_CHECK_VERSION(3, 16, 0)
+  gtk_text_view_set_monospace(GTK_TEXT_VIEW(source_view), TRUE);
+#endif
+  gtk_source_view_set_tab_width(source_view, 2);
+  gtk_source_view_set_insert_spaces_instead_of_tabs(source_view, TRUE);
+  gtk_source_view_set_smart_home_end(source_view, GTK_SOURCE_SMART_HOME_END_BEFORE);
+#if GTK_SOURCE_CHECK_VERSION(3, 18, 0)
+  gtk_source_view_set_smart_backspace(source_view, TRUE);
+#endif
+  gtk_source_view_set_indent_width(source_view, -1);
+  gtk_source_view_set_indent_on_tab(source_view, TRUE);
+  gtk_source_view_set_auto_indent(source_view, TRUE);
+  gtk_source_view_set_show_line_numbers(source_view, TRUE);
+
+  comp = gtk_source_view_get_completion(source_view);
+  g_value_init(&value, G_TYPE_BOOLEAN);
+  g_value_set_boolean(&value, FALSE); /* fix-me: proposals are not
+                                       * shown 2nd time in linux if
+                                       * TRUE */
+  g_object_set_property(G_OBJECT(comp), "remember-info-visibility", &value);
+
+  lm = gtk_source_language_manager_get_default();
+  lang = gtk_source_language_manager_get_language(lm, "ngraph-math");
+  gtk_source_buffer_set_language(GTK_SOURCE_BUFFER(buffer), lang);
+  gtk_source_buffer_set_highlight_syntax(GTK_SOURCE_BUFFER(buffer), TRUE);
+
+  add_completion_provider_math(source_view);
+  words = gtk_source_completion_words_new(_("current equations"), NULL);
+  gtk_source_completion_words_register(words, GTK_TEXT_BUFFER(buffer));
+  add_completion_provider(source_view, GTK_SOURCE_COMPLETION_PROVIDER(words));
+
+  return GTK_WIDGET(source_view);
+}
+
+static void
+set_source_style(GtkWidget *view)
+{
+  GtkSourceBuffer *buffer;
+  GtkSourceStyleScheme *style;
+  GtkSourceStyleSchemeManager *sman;
+  const char *style_id;
+
+  if (Menulocal.source_style_id == NULL) {
+    return;
+  }
+
+  buffer = GTK_SOURCE_BUFFER(gtk_text_view_get_buffer(GTK_TEXT_VIEW(view)));
+  style = gtk_source_buffer_get_style_scheme(buffer);
+  style_id = gtk_source_style_scheme_get_id(style);
+  if (g_strcmp0(Menulocal.source_style_id, style_id) == 0) {
+    return;
+  }
+  sman = gtk_source_style_scheme_manager_get_default();
+  style = gtk_source_style_scheme_manager_get_scheme(sman, Menulocal.source_style_id);
+  if (style == NULL) {
+    return;
+  }
+  gtk_source_buffer_set_style_scheme(buffer, style);
+}
+
+static gchar *
+get_text_from_buffer(GtkTextBuffer *buffer)
+{
+  GtkTextIter start, end;
+  gtk_text_buffer_get_start_iter(buffer, &start);
+  gtk_text_buffer_get_end_iter(buffer, &end);
+  return gtk_text_buffer_get_text(buffer, &start, &end, FALSE);
+}
+
+static void
+set_text_to_source_buffer(GtkWidget *view, const char *text)
+{
+  GtkTextBuffer *buffer;
+  buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(view));
+  gtk_source_buffer_begin_not_undoable_action(GTK_SOURCE_BUFFER(buffer));
+  gtk_text_buffer_set_text(buffer, text, -1);
+  gtk_source_buffer_end_not_undoable_action(GTK_SOURCE_BUFFER(buffer));
+}
+
+static void
+MathTextDialogChangeInputType(GtkNotebook *notebook, GtkWidget *page, guint page_num, gpointer user_data)
+{
+  struct MathTextDialog *d;
+  gchar *text;
+  GtkTextBuffer *buffer;
+
+  d = user_data;
+  d->page = page_num;
+  buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(d->text));
+  switch (page_num) {
+  case 0:
+    text = get_text_from_buffer(buffer);
+    gtk_entry_set_text(GTK_ENTRY(d->list), text);
+    g_free(text);
+    break;
+  case 1:
+    set_text_to_source_buffer(d->text, gtk_entry_get_text(GTK_ENTRY(d->list)));
+    break;
+  }
+}
+
+static void
 MathTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *hbox;
+  GtkWidget *w, *title, *vbox, *tab, *swin;
   struct MathTextDialog *d;
-  static char *label[] = {N_("_Math X:"), N_("_Math Y:"), "_F(X,Y,Z):", "_G(X,Y,Z):", "_H(X,Y,Z):"};
+  static char *label[] = {N_("Math X"), N_("Math Y"), "F(X,Y,Z)", "G(X,Y,Z)", "H(X,Y,Z)"};
 
   d = (struct MathTextDialog *) data;
   if (makewidget) {
-#if GTK_CHECK_VERSION(3, 0, 0)
-    hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-    hbox = gtk_hbox_new(FALSE, 4);
-#endif
+    tab = gtk_notebook_new();
+    gtk_notebook_set_tab_pos(GTK_NOTEBOOK(tab), GTK_POS_BOTTOM);
+    d->input_tab = tab;
+
+    title = gtk_label_new(_("single line"));
     w = create_text_entry(TRUE, TRUE);
-    d->label = item_setup(hbox, w, _("_Math:"), TRUE);
+    vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 0);
+    gtk_notebook_append_page(GTK_NOTEBOOK(tab), vbox, title);
     d->list = w;
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
+
+    title = gtk_label_new(_("multi line"));
+    w = create_source_view();
+    swin = gtk_scrolled_window_new(NULL, NULL);
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+    gtk_container_add(GTK_CONTAINER(swin), w);
+    gtk_notebook_append_page(GTK_NOTEBOOK(tab), swin, title);
+    d->text = w;
+
+    g_signal_connect(tab, "switch-page", G_CALLBACK(MathTextDialogChangeInputType), d);
+
+    gtk_box_pack_start(GTK_BOX(d->vbox), tab, TRUE, TRUE, 4);
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
+    gtk_window_set_default_size(GTK_WINDOW(wi), 800, 500);
   }
 
   switch (d->Mode) {
@@ -198,9 +354,29 @@ MathTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
     break;
   }
 
-  gtk_label_set_text_with_mnemonic(GTK_LABEL(d->label), _(label[d->Mode]));
+  set_source_style(d->text);
+  gtk_window_set_title(GTK_WINDOW(wi), _(label[d->Mode]));
   gtk_entry_set_text(GTK_ENTRY(d->list), d->Text);
-  gtk_window_set_default_size(GTK_WINDOW(wi), 400, -1);
+  set_text_to_source_buffer(d->text, d->Text);
+  gtk_notebook_set_current_page(GTK_NOTEBOOK(d->input_tab), Menulocal.math_input_mode);
+  if (Menulocal.math_input_mode) {
+    gtk_widget_grab_focus(d->text);
+  } else {
+    gtk_widget_grab_focus(d->list);
+  }
+}
+
+static void
+move_cursor_to_error_line(GtkWidget *view)
+{
+  GtkTextIter iter;
+  GtkTextBuffer *buffer;
+  int ln, ofst;
+
+  math_err_get_recent_error_position(&ln, &ofst);
+  buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(view));
+  gtk_text_buffer_get_iter_at_line_offset(buffer, &iter, ln - 1, ofst - 1);
+  gtk_text_buffer_place_cursor(buffer, &iter);
 }
 
 static void
@@ -224,8 +400,18 @@ MathTextDialogClose(GtkWidget *w, void *data)
     return;
   }
 
-  p = gtk_entry_get_text(GTK_ENTRY(d->list));
-  ptr = g_strdup(p);
+  switch (d->page) {
+  case 0:
+    p = gtk_entry_get_text(GTK_ENTRY(d->list));
+    ptr = g_strdup(p);
+    break;
+  case 1:
+    ptr = get_text_from_buffer(gtk_text_view_get_buffer(GTK_TEXT_VIEW(d->text)));
+    break;
+  default:
+    /* not reached */
+    return;
+  }
   if (ptr == NULL) {
     return;
   }
@@ -241,27 +427,38 @@ MathTextDialogClose(GtkWidget *w, void *data)
       if (sputobjfield(d->Obj, id, FieldStr[d->Mode], ptr)) {
 	g_free(ptr);
 	d->ret = IDLOOP;
+        switch (d->page) {
+        case 0:
+          gtk_widget_grab_focus(d->list);
+          break;
+        case 1:
+          gtk_widget_grab_focus(d->text);
+          move_cursor_to_error_line(d->text);
+          break;
+        }
 	return;
       }
       set_graph_modified();
+      d->modified = TRUE;
     }
     g_free(obuf);
   }
-  g_free(ptr);
 
   switch (d->Mode) {
   case TYPE_MATH_X:
-    entry_completion_append(NgraphApp.x_math_list, p);
+    entry_completion_append(NgraphApp.x_math_list, ptr);
     break;
   case TYPE_MATH_Y:
-    entry_completion_append(NgraphApp.y_math_list, p);
+    entry_completion_append(NgraphApp.y_math_list, ptr);
     break;
   case TYPE_FUNC_F:
   case TYPE_FUNC_G:
   case TYPE_FUNC_H:
-    entry_completion_append(NgraphApp.func_list, p);
+    entry_completion_append(NgraphApp.func_list, ptr);
     break;
   }
+  g_free(ptr);
+  Menulocal.math_input_mode = gtk_notebook_get_current_page(GTK_NOTEBOOK(d->input_tab));
 }
 
 void
@@ -275,8 +472,26 @@ MathTextDialog(struct MathTextDialog *data, char *text, int mode, struct objlist
   data->tree = tree;
   data->Text = text;
   data->Mode = mode;
+  data->modified = FALSE;
   data->Obj = obj;
   data->id_list = list;
+}
+
+static void
+set_escaped_str(GtkWidget *list, GtkTreeIter *iter, int col, const char *math)
+{
+  const char *str;
+  char *tmpstr;
+  str = CHK_STR(math);
+  tmpstr = NULL;
+  if (strchr(str, '\n')) {
+    tmpstr = g_strescape(str, "\\");
+    str = tmpstr;
+  }
+  list_store_set_string(list, iter, col, str);
+  if (tmpstr) {
+    g_free(tmpstr);
+  }
 }
 
 static void
@@ -298,7 +513,7 @@ MathDialogSetupItem(GtkWidget *w, struct MathDialog *d)
     getobj(d->Obj, field, i, 0, NULL, &math);
     list_store_append(d->list, &iter);
     list_store_set_int(d->list, &iter, 0, i);
-    list_store_set_string(d->list, &iter, 1, CHK_STR(math));
+    set_escaped_str(d->list, &iter, 1, math);
   }
 
   if (d->Mode >= 0 && d->Mode < MATH_FNC_NUM)
@@ -364,9 +579,8 @@ MathDialogList(GtkButton *w, gpointer client_data)
     goto END;
 
   MathTextDialog(&DlgMathText, buf, d->Mode, d->Obj, list, d->list);
-
   DialogExecute(d->widget, &DlgMathText);
-
+  d->modified = DlgMathText.modified;
   g_free(buf);
 
   MathDialogSetupItem(d->widget, d);
@@ -480,7 +694,7 @@ MathDialogSetup(GtkWidget *wi, void *data, int makewidget)
   struct MathDialog *d;
   static n_list_store list[] = {
     {"id",       G_TYPE_INT,    TRUE, FALSE, NULL},
-    {N_("math"), G_TYPE_STRING, TRUE, FALSE, NULL},
+    {N_("math"), G_TYPE_STRING, TRUE, FALSE, NULL, 0, 0, 0, 0, PANGO_ELLIPSIZE_END},
   };
   int i;
 
@@ -495,13 +709,8 @@ MathDialogSetup(GtkWidget *wi, void *data, int makewidget)
       "_H(X, Y, Z)",
     };
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-    vbox = gtk_vbox_new(FALSE, 4);
-    hbox = gtk_hbox_new(FALSE, 4);
-#endif
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
 
     w = list_store_create(sizeof(list) / sizeof(*list), list);
@@ -527,11 +736,7 @@ MathDialogSetup(GtkWidget *wi, void *data, int makewidget)
       g_signal_connect(w, "toggled", G_CALLBACK(MathDialogMode), d);
     }
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-    hbox = gtk_hbox_new(FALSE, 4);
-#endif
 
     w = gtk_button_new_with_mnemonic(_("Select _All"));
     set_button_icon(w, "edit-select-all");
@@ -551,7 +756,6 @@ MathDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->ok_button = _("_Close");
 
     gtk_window_set_default_size(GTK_WINDOW(wi), -1, 300);
-
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
 
     d->Mode = 0;
@@ -571,6 +775,7 @@ MathDialog(struct MathDialog *data, struct objlist *obj)
   data->SetupWindow = MathDialogSetup;
   data->CloseWindow = MathDialogClose;
   data->Obj = obj;
+  data->modified = FALSE;
 }
 
 static void
@@ -641,11 +846,7 @@ FitSaveDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = combo_box_entry_create();
     combo_box_entry_set_width(w, 20);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-    hbox = gtk_hbox_new(FALSE, 4);
-#endif
     item_setup(hbox, w, _("_Profile:"), TRUE);
     d->profile = w;
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
@@ -1102,9 +1303,10 @@ FitDialogResult(GtkWidget *w, gpointer client_data)
 {
   struct FitDialog *d;
   double derror, correlation, coe[FIT_PARM_NUM];
-  char *equation, *math, buf[1024];
+  char *equation, *math;
   N_VALUE *inst;
   int i, j, dim, dimension, type, num;
+  GString *buf;
 
   d = (struct FitDialog *) client_data;
 
@@ -1142,38 +1344,46 @@ FitDialogResult(GtkWidget *w, gpointer client_data)
   if (_getobj(d->Obj, "user_func", inst, &math))
     return;
 
-  if (equation == NULL) {
-    snprintf(buf, sizeof(buf), "Undefined");
-  } else if (type != 4) {
-    i = 0;
+  buf = g_string_new("<tt>");
+  if (buf == NULL) {
+    return;
+  }
 
-    if (type == 0) {
+  if (equation == NULL) {
+    g_string_append_printf(buf, "Undefined");
+  } else if (type != FIT_TYPE_USER) {
+    if (type == FIT_TYPE_POLY) {
       dim = dimension + 1;
     } else {
       dim = 2;
     }
 
-    if (type == 0) {
-      i += snprintf(buf + i, sizeof(buf) - i, "Eq: %%0i*X^i (i=0-%d)\n\n", dim - 1);
-    } else if (type == 1) {
-      i += snprintf(buf + i, sizeof(buf) - i, "Eq: exp(%%00)*X^%%01\n\n");
-    } else if (type == 2) {
-      i += snprintf(buf + i, sizeof(buf) - i, "Eq: exp(%%01*X+%%00)\n\n");
-    } else if (type == 3) {
-      i += snprintf(buf + i, sizeof(buf) - i, "Eq: %%01*Ln(X)+%%00\n\n");
+    switch (type) {
+    case FIT_TYPE_POLY:
+      g_string_append_printf(buf, "Eq: %%0i*X<sup>i</sup> (i=0-%d)\n\n", dim - 1);
+      break;
+    case FIT_TYPE_POW:
+      g_string_append_printf(buf, "Eq: exp(%%00)*X<sup>%%01</sup>\n\n");
+      break;
+    case FIT_TYPE_EXP:
+      g_string_append_printf(buf, "Eq: exp(%%01*X+%%00)\n\n");
+      break;
+    case FIT_TYPE_LOG:
+      g_string_append_printf(buf, "Eq: %%01*Ln(X)+%%00\n\n");
+      break;
     }
 
     for (j = 0; j < dim; j++) {
-      i += snprintf(buf + i, sizeof(buf) - i, "       %%0%d = %.7e\n", j, coe[j]);
+      g_string_append_printf(buf, "       %%0%d = %+.7e\n", j, coe[j]);
     }
-    i += snprintf(buf + i, sizeof(buf) - i, "\n");
-    i += snprintf(buf + i, sizeof(buf) - i, "    points = %d\n", num);
-    i += snprintf(buf + i, sizeof(buf) - i, "    <DY^2> = %.7e\n", derror);
+    g_string_append_printf(buf, "\n");
+    g_string_append_printf(buf, "    points = %d\n", num);
+    g_string_append_printf(buf, "    &lt;DY^2&gt; = %.7e\n", derror);
 
     if (correlation >= 0) {
-      i += snprintf(buf + i, sizeof(buf) - i, "|r| or |R| = %.7e\n", correlation);
+      g_string_append_printf(buf, "|r| or |R| = %.7e\n", correlation);
     } else {
-      i += snprintf(buf + i, sizeof(buf) - i, "|r| or |R| = -------------\n");
+      g_string_append_printf(buf, "|r| or |R| = -------------");
     }
   } else {
     int tbl[FIT_PARM_NUM];
@@ -1199,23 +1409,24 @@ FitDialogResult(GtkWidget *w, gpointer client_data)
       tbl[i] = prm->id[i];
     }
     math_equation_free(code);
-    i = 0;
-    i += snprintf(buf + i, sizeof(buf) - i, "Eq: User defined\n\n");
+    g_string_append_printf(buf, "Eq: User defined\n\n");
 
     for (j = 0; j < dim; j++) {
-      i += snprintf(buf + i, sizeof(buf) - i, "       %%0%d = %.7e\n", tbl[j], coe[tbl[j]]);
+      g_string_append_printf(buf, "       %%0%d = %+.7e\n", tbl[j], coe[tbl[j]]);
     }
-    i += snprintf(buf + i, sizeof(buf) - i, "\n");
-    i += snprintf(buf + i, sizeof(buf) - i, "    points = %d\n", num);
-    i += snprintf(buf + i, sizeof(buf) - i, "    <DY^2> = %.7e\n", derror);
+    g_string_append_printf(buf, "\n");
+    g_string_append_printf(buf, "    points = %d\n", num);
+    g_string_append_printf(buf, "    &lt;DY^2&gt; = %.7e\n", derror);
 
     if (correlation >= 0) {
-      i += snprintf(buf + i, sizeof(buf) - i, "|r| or |R| = %.7e\n", correlation);
+      g_string_append_printf(buf, "|r| or |R| = %.7e\n", correlation);
     } else {
-      i += snprintf(buf + i, sizeof(buf) - i, "|r| or |R| = -------------\n");
+      g_string_append_printf(buf, "|r| or |R| = -------------");
     }
   }
-  message_box(d->widget, buf, _("Fitting Results"), RESPONS_OK);
+  g_string_append(buf, "</tt>");
+  markup_message_box(d->widget, buf->str, _("Fitting Results"), RESPONS_OK, TRUE);
+  g_string_free(buf, TRUE);
 }
 
 static int
@@ -1325,7 +1536,7 @@ set_fitdialog_sensitivity(struct FitDialog *d, int type, int through)
     set_widget_sensitivity_with_label(d->p[i], FALSE);
   }
 
-  set_widget_sensitivity_with_label(d->dim, type == 0);
+  set_widget_sensitivity_with_label(d->dim, type == FIT_TYPE_POLY);
   gtk_widget_set_sensitive(d->usr_def_frame, FALSE);
   gtk_widget_set_sensitive(d->usr_def_prm_tbl, FALSE);
   gtk_widget_set_sensitive(d->through_box, through);
@@ -1389,17 +1600,9 @@ create_user_fit_frame(struct FitDialog *d)
   GtkWidget *table, *w, *vbox;
   int i, j;
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-  vbox = gtk_vbox_new(FALSE, 4);
-#endif
 
-#if GTK_CHECK_VERSION(3, 4, 0)
   table = gtk_grid_new();
-#else
-  table = gtk_table_new(1, 3, FALSE);
-#endif
 
   j = 0;
   w = create_text_entry(FALSE, TRUE);
@@ -1418,12 +1621,7 @@ create_user_fit_frame(struct FitDialog *d)
 
   gtk_box_pack_start(GTK_BOX(vbox), table, FALSE, FALSE, 0);
 
-
-#if GTK_CHECK_VERSION(3, 4, 0)
   table = gtk_grid_new();
-#else
-  table = gtk_table_new(1, 4, FALSE);
-#endif
 
   for (i = 0; i < FIT_PARM_NUM; i++) {
     char p[] = "%0_0:", dd[] = "dF/d(%0_0):";
@@ -1476,19 +1674,10 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     gtk_dialog_add_button(GTK_DIALOG(wi), _("_Delete"), IDDELETE);
 
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 5, FALSE);
-#endif
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-    vbox = gtk_vbox_new(FALSE, 4);
-    hbox = gtk_hbox_new(FALSE, 4);
-#endif
 
     w = combo_box_create();
     add_widget_to_table_sub(table, w, _("_Type:"), FALSE, 0, 1, 5, 0);
@@ -1498,7 +1687,7 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
       combo_box_append_text(d->type, _(enumlist[i]));
     }
 
-    hbox2 = gtk_hbox_new(FALSE, 4);
+    hbox2 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
     w = combo_box_create();
     add_widget_to_table_sub(table, w, _("_Dim:"), FALSE, 2, 1, 5, 0);
     d->dim = w;
@@ -1508,18 +1697,13 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     }
 
     w = gtk_label_new("");
-#if ! GTK_CHECK_VERSION(3, 4, 0)
-    gtk_misc_set_alignment(GTK_MISC(w), 0, 1);
-#endif
     add_widget_to_table_sub(table, w, NULL, TRUE, 4, 1, 5, 0);
-#if GTK_CHECK_VERSION(3, 4, 0)
     gtk_widget_set_halign(w, GTK_ALIGN_START);
     gtk_widget_set_valign(w, GTK_ALIGN_END);
-#endif
     d->func_label = w;
 
 
-    hbox2 = gtk_hbox_new(FALSE, 4);
+    hbox2 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
     w = create_text_entry(TRUE, TRUE);
     add_widget_to_table_sub(table, w, _("_Weight:"), TRUE, 0, 4, 5, 1);
     d->weight = w;
@@ -1527,17 +1711,13 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(vbox), table, FALSE, FALSE, 4);
 
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-    hbox = gtk_hbox_new(FALSE, 4);
-#endif
 
     w = gtk_check_button_new_with_mnemonic(_("_Through"));
     gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
     d->through_point = w;
 
-    hbox2 = gtk_hbox_new(FALSE, 4);
+    hbox2 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
     w = create_text_entry(TRUE, TRUE);
     item_setup(hbox2, w, "_X:", TRUE);
     d->x = w;
@@ -1556,11 +1736,7 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_container_add(GTK_CONTAINER(frame), vbox);
     gtk_box_pack_start(GTK_BOX(d->vbox), frame, FALSE, FALSE, 4);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-    hbox = gtk_hbox_new(FALSE, 4);
-#endif
 
     w = create_text_entry(TRUE, TRUE);
     item_setup(hbox, w, _("_Min:"), TRUE);
@@ -1578,11 +1754,7 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
     d->interpolation = w;
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-    vbox = gtk_vbox_new(FALSE, 4);
-#endif
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
 
     frame = gtk_frame_new(_("Draw X range"));
@@ -1818,11 +1990,7 @@ move_tab_create(struct FileDialog *d)
   gtk_container_add(GTK_CONTAINER(swin), w);
   set_widget_margin(swin, WIDGET_MARGIN_TOP | WIDGET_MARGIN_BOTTOM);
 
-#if GTK_CHECK_VERSION(3, 4, 0)
   table = gtk_grid_new();
-#else
-  table = gtk_table_new(1, 2, FALSE);
-#endif
 
   i = 0;
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_NATURAL, TRUE, FALSE);
@@ -1857,11 +2025,7 @@ move_tab_create(struct FileDialog *d)
   g_signal_connect(w, "clicked", G_CALLBACK(list_store_select_all_cb), d->move.list);
   set_sensitivity_by_row_num(d->move.list, w);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-  hbox = gtk_hbox_new(FALSE, 4);
-#endif
   gtk_box_pack_start(GTK_BOX(hbox), table, FALSE, FALSE, 4);
   gtk_box_pack_start(GTK_BOX(hbox), swin, TRUE, TRUE, 4);
 
@@ -1869,11 +2033,7 @@ move_tab_create(struct FileDialog *d)
   gtk_container_add(GTK_CONTAINER(w), hbox);
   set_widget_margin(w, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-  vbox = gtk_vbox_new(FALSE, 4);
-#endif
   gtk_box_pack_start(GTK_BOX(vbox), w, TRUE, TRUE, 4);
 
   add_copy_button_to_box(vbox, G_CALLBACK(move_tab_copy), d, "data");
@@ -2047,11 +2207,7 @@ mask_tab_create(struct FileDialog *d)
   };
   int i;
 
-#if GTK_CHECK_VERSION(3, 4, 0)
   table = gtk_grid_new();
-#else
-  table = gtk_table_new(1, 2, FALSE);
-#endif
 
   i = 0;
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_NATURAL, TRUE, FALSE);
@@ -2086,11 +2242,7 @@ mask_tab_create(struct FileDialog *d)
   g_signal_connect(w, "clicked", G_CALLBACK(list_store_select_all_cb), d->mask.list);
   set_sensitivity_by_row_num(d->mask.list, w);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-  hbox = gtk_hbox_new(FALSE, 4);
-#endif
   gtk_box_pack_start(GTK_BOX(hbox), table, FALSE, FALSE, 4);
   gtk_box_pack_start(GTK_BOX(hbox), swin, TRUE, TRUE, 4);
 
@@ -2098,11 +2250,7 @@ mask_tab_create(struct FileDialog *d)
   gtk_container_add(GTK_CONTAINER(frame), hbox);
   set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-  vbox = gtk_vbox_new(FALSE, 4);
-#endif
   gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 4);
 
   add_copy_button_to_box(vbox, G_CALLBACK(mask_tab_copy), d, "data");
@@ -2207,11 +2355,7 @@ load_tab_create(struct FileDialog *d)
   GtkWidget *w, *table, *frame, *vbox;
   int i;
 
-#if GTK_CHECK_VERSION(3, 4, 0)
   table = gtk_grid_new();
-#else
-  table = gtk_table_new(1, 2, FALSE);
-#endif
 
   i = 0;
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_UINT, TRUE, TRUE);
@@ -2244,11 +2388,7 @@ load_tab_create(struct FileDialog *d)
   gtk_container_add(GTK_CONTAINER(frame), table);
   set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-  vbox = gtk_vbox_new(FALSE, 4);
-#endif
   gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 4);
 
   add_copy_button_to_box(vbox, G_CALLBACK(load_tab_copy), d, "data");
@@ -2322,18 +2462,66 @@ load_tab_set_value(struct FileDialog *d)
 }
 
 static void
+copy_text_to_entry(GtkWidget *text, GtkWidget *entry)
+{
+  GtkTextBuffer *buffer;
+  gchar *str;
+
+  buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text));
+  str = get_text_from_buffer(buffer);
+  gtk_entry_set_text(GTK_ENTRY(entry), str);
+  g_free(str);
+}
+
+static void
+copy_entry_to_text(GtkWidget *text, GtkWidget *entry)
+{
+  const gchar *str;
+
+  str = gtk_entry_get_text(GTK_ENTRY(entry));
+  set_text_to_source_buffer(text, str);
+}
+
+static void
+copy_text_to_entry_all(struct FileDialog *d)
+{
+  copy_text_to_entry(d->math.text_x, d->math.x);
+  copy_text_to_entry(d->math.text_y, d->math.y);
+  copy_text_to_entry(d->math.text_f, d->math.f);
+  copy_text_to_entry(d->math.text_g, d->math.g);
+  copy_text_to_entry(d->math.text_h, d->math.h);
+}
+
+static void
+copy_entry_to_text_all(struct FileDialog *d)
+{
+  copy_entry_to_text(d->math.text_x, d->math.x);
+  copy_entry_to_text(d->math.text_y, d->math.y);
+  copy_entry_to_text(d->math.text_f, d->math.f);
+  copy_entry_to_text(d->math.text_g, d->math.g);
+  copy_entry_to_text(d->math.text_h, d->math.h);
+}
+
+static void
 math_tab_setup_item(struct FileDialog *d, int id)
 {
   SetWidgetFromObjField(d->math.xsmooth, d->Obj, id, "smooth_x");
   SetWidgetFromObjField(d->math.ysmooth, d->Obj, id, "smooth_y");
+  SetWidgetFromObjField(d->math.averaging_type, d->Obj, id, "averaging_type");
   SetWidgetFromObjField(d->math.x, d->Obj, id, "math_x");
   SetWidgetFromObjField(d->math.y, d->Obj, id, "math_y");
   SetWidgetFromObjField(d->math.f, d->Obj, id, "func_f");
   SetWidgetFromObjField(d->math.g, d->Obj, id, "func_g");
   SetWidgetFromObjField(d->math.h, d->Obj, id, "func_h");
+  copy_entry_to_text_all(d);
 
   entry_completion_set_entry(NgraphApp.x_math_list, d->math.x);
   entry_completion_set_entry(NgraphApp.y_math_list, d->math.y);
+  set_source_style(d->math.text_x);
+  set_source_style(d->math.text_y);
+  set_source_style(d->math.text_f);
+  set_source_style(d->math.text_g);
+  set_source_style(d->math.text_h);
 }
 
 static void
@@ -2362,10 +2550,68 @@ func_entry_focused(GtkWidget *w, GdkEventFocus *event, gpointer user_data)
   return FALSE;
 }
 
-static int
-math_common_widgets_create(struct FileDialog *d, GtkWidget *table, int i)
+static GtkWidget *
+create_math_text_tab(GtkWidget *tab, const gchar *label)
 {
-  GtkWidget *w;
+  GtkWidget *w, *title, *swin;
+
+  w = create_source_view();
+  swin = gtk_scrolled_window_new(NULL, NULL);
+  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+  gtk_container_add(GTK_CONTAINER(swin), w);
+  title = gtk_label_new_with_mnemonic(label);
+  gtk_notebook_append_page(GTK_NOTEBOOK(tab), swin, title);
+  return w;
+}
+
+static void
+MathDialogChangeInputType(GtkNotebook *notebook, GtkWidget *page, guint page_num, gpointer user_data)
+{
+  struct FileDialog *d;
+
+  d = user_data;
+  d->math_page = page_num;
+
+  switch (page_num) {
+  case 0:
+    copy_text_to_entry_all(d);
+    break;
+  case 1:
+    copy_entry_to_text_all(d);
+    break;
+  }
+}
+
+static GtkWidget *
+math_text_widgets_create(struct FileDialog *d)
+{
+  GtkWidget *tab;
+
+  tab = gtk_notebook_new();
+  d->math_tab = GTK_NOTEBOOK(tab);
+  gtk_notebook_set_tab_pos(GTK_NOTEBOOK(tab), GTK_POS_LEFT);
+  d->math.text_x = create_math_text_tab(tab, _("_X math:"));
+  d->math.text_y = create_math_text_tab(tab, _("_Y math:"));
+  d->math.text_f = create_math_text_tab(tab, "_F(X,Y,Z):");
+  d->math.text_g = create_math_text_tab(tab, "_G(X,Y,Z):");
+  d->math.text_h = create_math_text_tab(tab, "_H(X,Y,Z):");
+
+  return tab;
+}
+
+static int
+math_common_widgets_create(struct FileDialog *d, GtkWidget *grid, int pos)
+{
+  GtkWidget *w, *tab, *title, *table;
+  int i;
+
+  tab = gtk_notebook_new();
+  gtk_notebook_set_tab_pos(GTK_NOTEBOOK(tab), GTK_POS_BOTTOM);
+  gtk_widget_set_vexpand(tab, TRUE);
+  d->math_input_tab = tab;
+
+  table = gtk_grid_new();
+  i = 0;
 
   w = create_text_entry(TRUE, TRUE);
   add_widget_to_table(table, w, _("_X math:"), TRUE, i++);
@@ -2390,7 +2636,16 @@ math_common_widgets_create(struct FileDialog *d, GtkWidget *table, int i)
   add_widget_to_table(table, w, "_H(X,Y,Z):", TRUE, i++);
   d->math.h = w;
 
-  return i;
+  title = gtk_label_new(_("single line"));
+  gtk_notebook_append_page(GTK_NOTEBOOK(tab), table, title);
+
+  title = gtk_label_new(_("multi line"));
+  w = math_text_widgets_create(d);
+  gtk_notebook_append_page(GTK_NOTEBOOK(tab), w, title);
+  g_signal_connect(tab, "switch-page", G_CALLBACK(MathDialogChangeInputType), d);
+
+  add_widget_to_table_sub(grid, tab, NULL, TRUE, 0, 4, 2, pos++);
+  return pos;
 }
 
 static GtkWidget *
@@ -2399,18 +2654,21 @@ math_tab_create(struct FileDialog *d)
   GtkWidget *table, *w, *vbox, *frame;
   int i;
 
-#if GTK_CHECK_VERSION(3, 4, 0)
   table = gtk_grid_new();
-#else
-  table = gtk_table_new(1, 2, FALSE);
-#endif
 
   i = 0;
   w = create_spin_entry(0, FILE_OBJ_SMOOTH_MAX, 1, FALSE, TRUE);
-  add_widget_to_table(table, w, _("_X smooth:"), FALSE, i++);
+  gtk_widget_set_halign (w, GTK_ALIGN_START);
+  add_widget_to_table(table, w, _("_X smooth:"), FALSE, i);
   d->math.xsmooth = w;
 
+  w = combo_box_create();
+  gtk_widget_set_hexpand(w, TRUE);
+  add_widget_to_table_sub(table, w, _("_Averaging type:"), FALSE, 2, 1, 2, i++);
+  d->math.averaging_type = w;
+
   w = create_spin_entry(0, FILE_OBJ_SMOOTH_MAX, 1, FALSE, TRUE);
+  gtk_widget_set_halign (w, GTK_ALIGN_START);
   add_widget_to_table(table, w, _("_Y smooth:"), FALSE, i++);
   d->math.ysmooth = w;
 
@@ -2420,11 +2678,7 @@ math_tab_create(struct FileDialog *d)
   gtk_container_add(GTK_CONTAINER(frame), table);
   set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-  vbox = gtk_vbox_new(FALSE, 4);
-#endif
   gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 4);
 
   add_copy_button_to_box(vbox, G_CALLBACK(math_tab_copy), d, "data");
@@ -2432,25 +2686,40 @@ math_tab_create(struct FileDialog *d)
   return vbox;
 }
 
+enum MATH_ERROR_FIELD {
+  MATH_ERROR_FIELD_NONE,
+  MATH_ERROR_FIELD_X,
+  MATH_ERROR_FIELD_Y,
+  MATH_ERROR_FIELD_F,
+  MATH_ERROR_FIELD_G,
+  MATH_ERROR_FIELD_H,
+  MATH_ERROR_FIELD_SX,
+  MATH_ERROR_FIELD_SY,
+};
+
 static int
 math_set_value_common(struct FileDialog *d)
 {
   const char *s;
 
+  if (d->math_page == 1) {
+    copy_text_to_entry_all(d);
+  }
+
   if (SetObjFieldFromWidget(d->math.x, d->Obj, d->Id, "math_x"))
-    return 1;
+    return MATH_ERROR_FIELD_X;
 
   if (SetObjFieldFromWidget(d->math.y, d->Obj, d->Id, "math_y"))
-    return 1;
+    return MATH_ERROR_FIELD_Y;
 
   if (SetObjFieldFromWidget(d->math.f, d->Obj, d->Id, "func_f"))
-    return 1;
+    return MATH_ERROR_FIELD_F;
 
   if (SetObjFieldFromWidget(d->math.g, d->Obj, d->Id, "func_g"))
-    return 1;
+    return MATH_ERROR_FIELD_G;
 
   if (SetObjFieldFromWidget(d->math.h, d->Obj, d->Id, "func_h"))
-    return 1;
+    return MATH_ERROR_FIELD_H;
 
   s = gtk_entry_get_text(GTK_ENTRY(d->math.y));
   entry_completion_append(NgraphApp.y_math_list, s);
@@ -2467,7 +2736,7 @@ math_set_value_common(struct FileDialog *d)
   s = gtk_entry_get_text(GTK_ENTRY(d->math.h));
   entry_completion_append(NgraphApp.func_list, s);
 
-  return 0;
+  return MATH_ERROR_FIELD_NONE;
 }
 
 static int
@@ -2478,16 +2747,15 @@ math_tab_set_value(void *data)
   d = (struct FileDialog *) data;
 
   if (SetObjFieldFromWidget(d->math.xsmooth, d->Obj, d->Id, "smooth_x"))
-    return 1;
+    return MATH_ERROR_FIELD_SX;
 
   if (SetObjFieldFromWidget(d->math.ysmooth, d->Obj, d->Id, "smooth_y"))
-    return 1;
+    return MATH_ERROR_FIELD_SY;
 
-  if (math_set_value_common(d)) {
-    return 1;
-  }
+  if (SetObjFieldFromWidget(d->math.averaging_type, d->Obj, d->Id, "averaging_type"))
+    return MATH_ERROR_FIELD_SX;
 
-  return 0;
+  return math_set_value_common(d);
 }
 
 static void
@@ -2522,14 +2790,10 @@ button_set_mark_image(GtkWidget *w, int type)
   }
 
   if (NgraphApp.markpix[type]) {
-#if GTK_CHECK_VERSION(3, 0, 0)
     GdkPixbuf *pixbuf;
     pixbuf = gdk_pixbuf_get_from_surface(NgraphApp.markpix[type],
 					 0, 0, MARK_PIX_SIZE, MARK_PIX_SIZE);
     img = gtk_image_new_from_pixbuf(pixbuf);
-#else
-    img = gtk_image_new_from_pixmap(NgraphApp.markpix[type], NULL);
-#endif
     if (img) {
       gtk_button_set_image(GTK_BUTTON(w), img);
     }
@@ -2541,11 +2805,7 @@ button_set_mark_image(GtkWidget *w, int type)
 static void
 MarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-#if GTK_CHECK_VERSION(3, 0, 0)
   GtkWidget *w, *grid;
-#else
-  GtkWidget *w, *hbox,*vbox;
-#endif
   struct MarkDialog *d;
   int type;
 #define COL 10
@@ -2553,7 +2813,6 @@ MarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
   d = (struct MarkDialog *) data;
 
   if (makewidget) {
-#if GTK_CHECK_VERSION(3, 0, 0)
     grid = gtk_grid_new();
     gtk_grid_set_column_spacing(GTK_GRID(grid), 8);
     gtk_grid_set_row_spacing(GTK_GRID(grid), 8);
@@ -2572,26 +2831,6 @@ MarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
       gtk_grid_attach(GTK_GRID(grid), w, type % COL, type / COL, 1, 1);
     }
     gtk_box_pack_start(GTK_BOX(d->vbox), grid, FALSE, FALSE, 4);
-#else
-    hbox = NULL;
-    vbox = gtk_vbox_new(FALSE, 4);
-
-    for (type = 0; type < MARK_TYPE_NUM; type++) {
-      w = gtk_toggle_button_new();
-      button_set_mark_image(w, type);
-      g_signal_connect(w, "clicked", G_CALLBACK(MarkDialogCB), d);
-      d->toggle[type] = w;
-      if (type % COL == 0) {
-	if (hbox) {
-	  gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
-	}
-	hbox = gtk_hbox_new(FALSE, 4);
-      }
-      gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
-    }
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
-    gtk_box_pack_start(GTK_BOX(d->vbox), vbox, FALSE, FALSE, 4);
-#endif
 
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
@@ -2611,7 +2850,7 @@ MarkDialogClose(GtkWidget *w, void *data)
 }
 
 void
-MarkDialog(struct MarkDialog *data, int type)
+MarkDialog(struct MarkDialog *data, GtkWidget *parent, int type)
 {
   if (type < 0 || type >= MARK_TYPE_NUM) {
     type = 0;
@@ -2619,6 +2858,7 @@ MarkDialog(struct MarkDialog *data, int type)
   data->SetupWindow = MarkDialogSetup;
   data->CloseWindow = MarkDialogClose;
   data->Type = type;
+  data->parent = parent;
 }
 
 static void
@@ -2695,7 +2935,7 @@ plot_tab_setup_item(struct FileDialog *d, int id)
 
   getobj(d->Obj, "mark_type", id, 0, NULL, &a);
   button_set_mark_image(d->mark_btn, a);
-  MarkDialog(&(d->mark), a);
+  MarkDialog(&(d->mark), d->widget, a);
 
   SetWidgetFromObjField(d->size, d->Obj, id, "mark_size");
 
@@ -2754,12 +2994,13 @@ FileDialogSetupItem(GtkWidget *w, struct FileDialog *d)
   }
 
   gtk_widget_set_sensitive(d->apply_all, d->multi_open);
+  gtk_notebook_set_current_page(GTK_NOTEBOOK(d->math_input_tab), Menulocal.math_input_mode);
 }
 
 static void
 FileDialogAxis(GtkWidget *w, gpointer client_data)
 {
-  char buf[10];
+  char buf[16];
   int a;
 
   a = combo_box_get_active(w);
@@ -2852,6 +3093,7 @@ show_fit_dialog(struct objlist *obj, int id, GtkWidget *parent)
   case IDCANCEL:
     if (! create)
       break;
+    /* fall through */
   case IDDELETE:
     delobj(fitobj, fitid);
     putobj(obj, "fit", id, NULL);
@@ -2939,7 +3181,11 @@ edit_file(const char *file)
   if (localize_name == NULL)
     return;
 
+#if OSX
+  cmd = g_strdup_printf("%s \"%s\"", Menulocal.editor, localize_name);
+#else
   cmd = g_strdup_printf("\"%s\" \"%s\"", Menulocal.editor, localize_name);
+#endif
   g_free(localize_name);
 
   system_bg(cmd);
@@ -2965,6 +3211,52 @@ FileDialogEdit(GtkWidget *w, gpointer client_data)
   edit_file(file);
 }
 
+#if 1
+static void
+FileDialogType(GtkWidget *w, gpointer client_data)
+{
+  struct FileDialog *d;
+  int type;
+
+  d = (struct FileDialog *) client_data;
+
+  type = combo_box_get_active(w);
+
+  set_widget_sensitivity_with_label(d->curve, TRUE);
+  set_widget_sensitivity_with_label(d->fit, TRUE);
+
+  switch (type) {
+  case PLOT_TYPE_MARK:
+  case PLOT_TYPE_LINE:
+  case PLOT_TYPE_POLYGON:
+  case PLOT_TYPE_DIAGONAL:
+  case PLOT_TYPE_RECTANGLE:
+  case PLOT_TYPE_POLYGON_SOLID_FILL:
+  case PLOT_TYPE_RECTANGLE_SOLID_FILL:
+  case PLOT_TYPE_ARROW:
+  case PLOT_TYPE_RECTANGLE_FILL:
+  case PLOT_TYPE_ERRORBAR_X:
+  case PLOT_TYPE_ERRORBAR_Y:
+  case PLOT_TYPE_STAIRCASE_X:
+  case PLOT_TYPE_STAIRCASE_Y:
+  case PLOT_TYPE_BAR_X:
+  case PLOT_TYPE_BAR_Y:
+  case PLOT_TYPE_BAR_SOLID_FILL_X:
+  case PLOT_TYPE_BAR_SOLID_FILL_Y:
+  case PLOT_TYPE_BAR_FILL_X:
+  case PLOT_TYPE_BAR_FILL_Y:
+    set_widget_sensitivity_with_label(d->curve, FALSE);
+    set_widget_sensitivity_with_label(d->fit, FALSE);
+    break;
+  case PLOT_TYPE_CURVE:
+    set_widget_sensitivity_with_label(d->fit, FALSE);
+    break;
+  case PLOT_TYPE_FIT:
+    set_widget_sensitivity_with_label(d->curve, FALSE);
+    break;
+  }
+}
+#else
 static void
 FileDialogType(GtkWidget *w, gpointer client_data)
 {
@@ -3097,6 +3389,7 @@ FileDialogType(GtkWidget *w, gpointer client_data)
     break;
   }
 }
+#endif
 
 static void
 file_settings_copy(GtkButton *btn, gpointer user_data)
@@ -3118,17 +3411,9 @@ plot_tab_create(GtkWidget *parent, struct FileDialog *d)
   GtkWidget *table, *hbox, *w, *vbox;
   int i;
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-  hbox = gtk_hbox_new(FALSE, 4);
-#endif
 
-#if GTK_CHECK_VERSION(3, 4, 0)
   table = gtk_grid_new();
-#else
-  table = gtk_table_new(1, 2, FALSE);
-#endif
 
   i = 0;
   w = combo_box_create();
@@ -3159,12 +3444,7 @@ plot_tab_create(GtkWidget *parent, struct FileDialog *d)
 
   gtk_box_pack_start(GTK_BOX(hbox), table, FALSE, FALSE, 4);
 
-
-#if GTK_CHECK_VERSION(3, 4, 0)
   table = gtk_grid_new();
-#else
-  table = gtk_table_new(1, 2, FALSE);
-#endif
 
   i = 0;
   w = combo_box_entry_create();
@@ -3198,11 +3478,7 @@ plot_tab_create(GtkWidget *parent, struct FileDialog *d)
   gtk_container_add(GTK_CONTAINER(w), hbox);
   set_widget_margin(w, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-  vbox = gtk_vbox_new(FALSE, 4);
-#endif
   gtk_box_pack_start(GTK_BOX(vbox), w, TRUE, TRUE, 4);
 
   add_copy_button_to_box(vbox, G_CALLBACK(plot_tab_copy), d, "data");
@@ -3216,15 +3492,9 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
   GtkWidget *w, *hbox, *vbox2, *frame, *notebook, *label;
 
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
 
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-  vbox2 = gtk_vbox_new(FALSE, 4);
-
-  hbox = gtk_hbox_new(FALSE, 4);
-#endif
 
   if (d->source != DATA_SOURCE_RANGE) {
     w = create_spin_entry(0, FILE_OBJ_MAXCOL, 1, FALSE, TRUE);
@@ -3241,11 +3511,7 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
   gtk_box_pack_start(GTK_BOX(vbox2), hbox, FALSE, FALSE, 4);
 
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-  hbox = gtk_hbox_new(FALSE, 4);
-#endif
 
   if (d->source != DATA_SOURCE_RANGE) {
     w = create_spin_entry(0, FILE_OBJ_MAXCOL, 1, FALSE, TRUE);
@@ -3263,22 +3529,14 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
 
   add_copy_button_to_box(vbox2, G_CALLBACK(file_settings_copy), d, "data");
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   hbox = gtk_grid_new();
   gtk_grid_set_column_spacing(GTK_GRID(hbox), 4);
-#else
-  hbox = gtk_hbox_new(FALSE, 4);
-#endif
   d->comment_box = hbox;
   frame = gtk_frame_new(NULL);
   gtk_container_add(GTK_CONTAINER(frame), vbox2);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   gtk_widget_set_hexpand(frame, FALSE);
   gtk_grid_attach(GTK_GRID(hbox), frame, 0, 0, 1, 1);
-#else
-  gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 0);
-#endif
   gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
 
   notebook = gtk_notebook_new();
@@ -3557,7 +3815,7 @@ set_headline_table_array(struct FileDialog *d, int max_lines)
   gtk_tree_view_set_model(GTK_TREE_VIEW(d->comment_table), NULL);
 
   n = (ary.data_num > max_lines) ? max_lines : ary.data_num;
-  m = ary.col_num;
+  m = (ary.col_num < MAX_COLS) ? ary.col_num : MAX_COLS;
   l = 1;
   for (i = 0; i < n; i++) {
     GtkTreeIter iter;
@@ -3659,6 +3917,7 @@ set_headline_table(struct FileDialog *d, char *s, int max_lines)
 
     gtk_list_store_append(model, &iter);
     m = arraynum(lines + i);
+    m = (m < MAX_COLS) ? m : MAX_COLS;
     for (j = 0; j < m; j++) {
       gtk_list_store_set(model, &iter, j + 1, arraynget_str(lines + i, j), -1);
     }
@@ -3840,11 +4099,7 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     d->apply_all = gtk_dialog_add_button(GTK_DIALOG(wi), _("_Apply all"), IDFAPPLY);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-    hbox = gtk_hbox_new(FALSE, 4);
-#endif
 
     w = create_file_entry(d->Obj);
     item_setup(GTK_WIDGET(hbox), w, _("_File:"), TRUE);
@@ -3900,11 +4155,7 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect(d->ycol, "changed", G_CALLBACK(update_table_header), d);
     g_signal_connect(d->type, "changed", G_CALLBACK(update_table_header), d);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     gtk_grid_attach(GTK_GRID(d->comment_box), w, 1, 0, 1, 1);
-#else
-    gtk_box_pack_start(GTK_BOX(d->comment_box), w, TRUE, TRUE, 0);
-#endif
     w = gtk_button_new_with_label(_("Create"));
     add_widget_to_table(d->fit_table, w, _("_Fit:"), FALSE, d->fit_row);
     d->fit = w;
@@ -3940,11 +4191,7 @@ ArrayDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     d->apply_all = gtk_dialog_add_button(GTK_DIALOG(wi), _("_Apply all"), IDFAPPLY);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-    hbox = gtk_hbox_new(FALSE, 4);
-#endif
 
     w = create_text_entry(TRUE, TRUE);
     item_setup(GTK_WIDGET(hbox), w, _("_Array:"), TRUE);
@@ -3975,13 +4222,9 @@ ArrayDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect(d->ycol, "changed", G_CALLBACK(update_table_header), d);
     g_signal_connect(d->type, "changed", G_CALLBACK(update_table_header), d);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     gtk_widget_set_hexpand(swin, TRUE);
     gtk_widget_set_vexpand(swin, TRUE);
     gtk_grid_attach(GTK_GRID(d->comment_box), swin, 1, 0, 1, 1);
-#else
-    gtk_box_pack_start(GTK_BOX(d->comment_box), swin, TRUE, TRUE, 0);
-#endif
     w = gtk_button_new_with_label(_("Create"));
     add_widget_to_table(d->fit_table, w, _("_Fit:"), FALSE, d->fit_row);
     d->fit = w;
@@ -4012,35 +4255,27 @@ RangeDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     d->apply_all = gtk_dialog_add_button(GTK_DIALOG(wi), _("_Apply all"), IDFAPPLY);
 
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 3, FALSE);
-#endif
 
     i = 0;
     w = create_text_entry(FALSE, TRUE);
-    gtk_entry_set_width_chars(GTK_ENTRY(w), 24);
+    gtk_entry_set_width_chars(GTK_ENTRY(w), RANGE_ENTRY_WIDTH);
     add_widget_to_table(table, w, _("_Minimum:"), FALSE, i++);
     d->min = w;
 
     w = create_text_entry(FALSE, TRUE);
-    gtk_entry_set_width_chars(GTK_ENTRY(w), 24);
+    gtk_entry_set_width_chars(GTK_ENTRY(w), RANGE_ENTRY_WIDTH);
     add_widget_to_table(table, w, _("_Maximum:"), FALSE, i++);
     d->max = w;
 
     w = create_spin_entry(2, 65536, 1, FALSE, TRUE);
-    add_widget_to_table(table, w, _("_Division:"), FALSE, i++);
+    add_widget_to_table(table, w, _("di_ViSion:"), FALSE, i++);
     d->div = w;
 
     FileDialogSetupCommon(wi, d);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     gtk_grid_insert_column(GTK_GRID(d->comment_box), 0);
     gtk_grid_attach(GTK_GRID(d->comment_box), table, 0, 0, 1, 1);
-#else
-    gtk_box_pack_start(GTK_BOX(d->comment_box), table, TRUE, TRUE, 0);
-#endif
 
     w = mask_tab_create(d);
     label = gtk_label_new_with_mnemonic(_("_Mask"));
@@ -4099,9 +4334,23 @@ plot_tab_set_value(struct FileDialog *d)
   return 0;
 }
 
+static void
+focus_math_widget(struct FileDialog *d, int math_tab_id, GtkWidget *text, GtkWidget *entry)
+{
+  if (d->math_page == 0) {
+    gtk_widget_grab_focus(entry);
+  } else {
+    gtk_notebook_set_current_page(d->math_tab, math_tab_id);
+    gtk_widget_grab_focus(text);
+    move_cursor_to_error_line(text);
+  }
+}
+
 static int
 FileDialogCloseCommon(GtkWidget *w, struct FileDialog *d)
 {
+  int r;
+
   if (SetObjFieldFromWidget(d->xcol, d->Obj, d->Id, "x"))
     return TRUE;
 
@@ -4119,8 +4368,32 @@ FileDialogCloseCommon(GtkWidget *w, struct FileDialog *d)
     return TRUE;
   }
 
-  if (math_tab_set_value(d)) {
+  r = math_tab_set_value(d);
+  if (r != MATH_ERROR_FIELD_NONE) {
     gtk_notebook_set_current_page(d->tab, d->math.tab_id);
+    switch (r) {
+    case MATH_ERROR_FIELD_X:
+      focus_math_widget(d, r -1, d->math.text_x, d->math.x);
+      break;
+    case MATH_ERROR_FIELD_Y:
+      focus_math_widget(d, r -1, d->math.text_y, d->math.y);
+      break;
+    case MATH_ERROR_FIELD_F:
+      focus_math_widget(d, r -1, d->math.text_f, d->math.f);
+      break;
+    case MATH_ERROR_FIELD_G:
+      focus_math_widget(d, r -1, d->math.text_g, d->math.g);
+      break;
+    case MATH_ERROR_FIELD_H:
+      focus_math_widget(d, r -1, d->math.text_h, d->math.h);
+      break;
+    case MATH_ERROR_FIELD_SX:
+      gtk_widget_grab_focus(d->math.xsmooth);
+      break;
+    case MATH_ERROR_FIELD_SY:
+      gtk_widget_grab_focus(d->math.ysmooth);
+      break;
+    }
     return TRUE;
   }
 
@@ -4128,6 +4401,8 @@ FileDialogCloseCommon(GtkWidget *w, struct FileDialog *d)
     gtk_notebook_set_current_page(d->tab, d->load.tab_id);
     return TRUE;
   }
+
+  Menulocal.math_input_mode = gtk_notebook_get_current_page(GTK_NOTEBOOK(d->math_input_tab));
 
   return FALSE;
 }
@@ -4298,12 +4573,22 @@ delete_file_obj(struct obj_list_data *data, int id)
   /* don't delete darray object */
 }
 
+static int
+data_save_undo(int type)
+{
+  char *arg[3];
+  arg[0] = "data";
+  arg[1] = "fit";
+  arg[2] = NULL;
+  return menu_save_undo(type, arg);
+}
+
 void
 CmFileHistory(GtkRecentChooser *w, gpointer client_data)
 {
   int ret;
   char *name, *fname;
-  int id;
+  int id, undo;
   struct objlist *obj;
   char *uri;
   struct obj_list_data *data;
@@ -4328,13 +4613,16 @@ CmFileHistory(GtkRecentChooser *w, gpointer client_data)
     return;
   }
 
+  undo = data_save_undo(UNDO_TYPE_OPEN_FILE);
   id = newobj(obj);
   if (id < 0) {
+    menu_delete_undo(undo);
     return;
   }
 
   fname = g_strdup(name);
   if (fname == NULL) {
+    menu_delete_undo(undo);
     return;
   }
 
@@ -4342,62 +4630,20 @@ CmFileHistory(GtkRecentChooser *w, gpointer client_data)
   data = NgraphApp.FileWin.data.data;
   FileDialog(data, id, FALSE);
   ret = DialogExecute(TopLevel, data->dialog);
-  if ((ret == IDDELETE) || (ret == IDCANCEL)) {
-    delete_file_obj(data, id);
+  if (ret == IDCANCEL) {
+    menu_undo_internal(undo);
   } else {
     set_graph_modified();
     AddDataFileList(fname);
   }
   g_free(fname);
-  FileWinUpdate(data, TRUE);
-}
-
-void
-CmFileNew(void *w, gpointer client_data)
-{
-  char *file;
-  int id, ret;
-  struct objlist *obj;
-  struct obj_list_data *data;
-
-  if (Menulock || Globallock)
-    return;
-
-  if ((obj = chkobject("data")) == NULL)
-    return;
-
-  if (nGetOpenFileName(TopLevel, _("Data new"), NULL, NULL,
-		       NULL, &file, FALSE,
-		       Menulocal.changedirectory) != IDOK) {
-    return;
-  }
-
-  id = newobj(obj);
-  if (id < 0) {
-    g_free(file);
-    return;
-  }
-
-  data = NgraphApp.FileWin.data.data;
-  changefilename(file);
-  putobj(obj, "file", id, file);
-  FileDialog(data, id, FALSE);
-  ret = DialogExecute(TopLevel, data->dialog);
-
-  if (ret == IDDELETE || ret == IDCANCEL) {
-    delete_file_obj(data, id);
-  } else {
-    set_graph_modified();
-    AddDataFileList(file);
-  }
-
-  FileWinUpdate(data, TRUE);
+  FileWinUpdate(data, TRUE, DRAW_NOTIFY);
 }
 
 void
 CmRangeAdd(void *w, gpointer client_data)
 {
-  int id, ret, val;
+  int id, ret, val, undo;
   struct objlist *obj;
   struct obj_list_data *data;
 
@@ -4409,29 +4655,33 @@ CmRangeAdd(void *w, gpointer client_data)
     return;
   }
 
+  undo = data_save_undo(UNDO_TYPE_ADD_RANGE);
   id = newobj(obj);
   if (id < 0) {
+    menu_delete_undo(undo);
     return;
   }
 
   data = NgraphApp.FileWin.data.data;
   val = DATA_SOURCE_RANGE;
   putobj(obj, "source", id, &val);
+  val = PLOT_TYPE_LINE;
+  putobj(obj, "type", id, &val);
   FileDialog(data, id, FALSE);
   ret = DialogExecute(TopLevel, data->dialog);
 
-  if (ret == IDCANCEL || ret == IDDELETE) {
-    delobj(obj, id);
+  if (ret == IDCANCEL) {
+    menu_undo_internal(undo);
   } else {
     set_graph_modified();
-    FileWinUpdate(data, TRUE);
+    FileWinUpdate(data, TRUE, DRAW_REDRAW);
   }
 }
 
 void
 CmFileOpen(void *w, gpointer client_data)
 {
-  int id, ret, n;
+  int id, ret, n, undo = -1;
   char *name;
   char **file = NULL, **ptr;
   struct objlist *obj;
@@ -4452,6 +4702,7 @@ CmFileOpen(void *w, gpointer client_data)
 
   arrayinit(&farray, sizeof(int));
   if (ret == IDOK && file) {
+    undo = data_save_undo(UNDO_TYPE_OPEN_FILE);
     for (ptr = file; *ptr; ptr++) {
       name = *ptr;
       id = newobj(obj);
@@ -4465,10 +4716,13 @@ CmFileOpen(void *w, gpointer client_data)
   }
 
   if (update_file_obj_multi(obj, &farray, TRUE)) {
-    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
+    menu_delete_undo(undo);
   }
 
-  if (n != chkobjlastinst(obj)) {
+  if (n == chkobjlastinst(obj)) {
+    menu_delete_undo(undo);
+  } else {
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, DRAW_NOTIFY);
     set_graph_modified();
   }
 
@@ -4490,16 +4744,19 @@ CmFileClose(void *w, gpointer client_data)
     return;
   if (chkobjlastinst(obj) == -1)
     return;
-  SelectDialog(&DlgSelect, obj, FileCB, (struct narray *) &farray, NULL);
+  SelectDialog(&DlgSelect, obj, _("close data (multi select)"), FileCB, (struct narray *) &farray, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     data = NgraphApp.FileWin.data.data;
     num = arraynum(&farray);
+    if (num > 0) {
+      data_save_undo(UNDO_TYPE_DELETE);
+    }
     array = arraydata(&farray);
     for (i = num - 1; i >= 0; i--) {
       delete_file_obj(data, array[i]);
       set_graph_modified();
     }
-    FileWinUpdate(data, TRUE);
+    FileWinUpdate(data, TRUE, DRAW_REDRAW);
   }
   arraydel(&farray);
 }
@@ -4507,7 +4764,7 @@ CmFileClose(void *w, gpointer client_data)
 int
 update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file)
 {
-  int i, j, num, *array, id0;
+  int i, j, num, *array, id0, modified, ret, undo;
   char *name;
   struct obj_list_data *data;
 
@@ -4519,6 +4776,9 @@ update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file)
   array = arraydata(farray);
   id0 = -1;
 
+  ret = IDCANCEL;
+  modified = FALSE;
+  data_save_undo(UNDO_TYPE_EDIT);
   for (i = 0; i < num; i++) {
     name = NULL;
     if (id0 != -1) {
@@ -4528,36 +4788,46 @@ update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file)
 	AddDataFileList(name);
       }
     } else {
-      int ret;
-
+      undo = data_save_undo(UNDO_TYPE_DUMMY);
       data = NgraphApp.FileWin.data.data;
       FileDialog(data, array[i], i < num - 1);
       ret = DialogExecute(TopLevel, data->dialog);
       if (ret == IDCANCEL && new_file) {
 	ret = IDDELETE;
       }
-      if (ret == IDDELETE) {
+      switch (ret) {
+      case IDDELETE:
 	delete_file_obj(data, array[i]);
+	modified = TRUE;
 	if (! new_file) {
 	  set_graph_modified();
 	}
 	for (j = i + 1; j < num; j++) {
 	  array[j]--;
 	}
-      } else {
+	menu_delete_undo(undo);
+	break;
+      case IDFAPPLY:
+	  id0 = i;
+	  /* fall-through */
+      case IDOK:
 	if (new_file) {
 	  getobj(obj, "file", array[i], 0, NULL, &name);
 	  AddDataFileList(name);
 	}
-
-	if (ret == IDFAPPLY) {
-	  id0 = i;
-	}
+	menu_delete_undo(undo);
+	modified = TRUE;
+	break;
+      case IDCANCEL:
+	menu_undo_internal(undo);
+	break;
       }
     }
   }
-
-  return 1;
+  if (! modified) {
+    menu_undo_internal(undo);
+  }
+  return modified;
 }
 
 void
@@ -4582,12 +4852,12 @@ CmFileUpdate(void *w, gpointer client_data)
     arrayadd(&farray, &last);
     ret = IDOK;
   } else {
-    SelectDialog(&DlgSelect, obj, FileCB, (struct narray *) &farray, NULL);
+    SelectDialog(&DlgSelect, obj, _("data property (multi select)"), FileCB, (struct narray *) &farray, NULL);
     ret = DialogExecute(TopLevel, &DlgSelect);
   }
 
   if (ret == IDOK && update_file_obj_multi(obj, &farray, FALSE)) {
-    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, DRAW_REDRAW);
   }
   arraydel(&farray);
 }
@@ -4628,7 +4898,7 @@ CmFileEdit(void *w, gpointer client_data)
   if (last == -1) {
     return;
   } else {
-    CopyDialog(&DlgCopy, obj, -1, PlotFileCB);
+    CopyDialog(&DlgCopy, obj, -1, _("edit data file (single select)"), PlotFileCB);
     if (DialogExecute(TopLevel, &DlgCopy) == IDOK) {
       i = DlgCopy.sel;
     } else {
@@ -4650,6 +4920,7 @@ CmOptionFileDef(void *w, gpointer client_data)
 {
   struct objlist *obj;
   int id;
+  char *objs[2];
 
   if (Menulock || Globallock)
     return;
@@ -4669,7 +4940,9 @@ CmOptionFileDef(void *w, gpointer client_data)
       }
     }
     delobj(obj, id);
-    UpdateAll2();
+    objs[0] = obj->name;
+    objs[1] = NULL;
+    UpdateAll2(objs, TRUE);
     if (! modified) {
       reset_graph_modified();
     }
@@ -4721,6 +4994,7 @@ FileWinFileDelete(struct obj_list_data *d)
   num = chkobjlastinst(d->obj);
 
   if ((sel >= 0) && (sel <= num)) {
+    data_save_undo(UNDO_TYPE_DELETE);
     delete_file_obj(d, sel);
     num = chkobjlastinst(d->obj);
     update = FALSE;
@@ -4732,7 +5006,7 @@ FileWinFileDelete(struct obj_list_data *d)
     } else {
       d->select = sel;
     }
-    FileWinUpdate(d, update);
+    FileWinUpdate(d, update, DRAW_REDRAW);
     set_graph_modified();
   }
 }
@@ -4773,8 +5047,9 @@ file_obj_copy(struct obj_list_data *d)
 static void
 FileWinFileCopy(struct obj_list_data *d)
 {
+  data_save_undo(UNDO_TYPE_COPY);
   d->select = file_obj_copy(d);
-  FileWinUpdate(d, FALSE);
+  FileWinUpdate(d, FALSE, DRAW_NOTIFY);
 }
 
 static void
@@ -4794,13 +5069,14 @@ FileWinFileCopy2(struct obj_list_data *d)
   if (Menulock || Globallock)
     return;
 
+  data_save_undo(UNDO_TYPE_COPY);
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), FILE_WIN_COL_ID);
   id = file_obj_copy(d);
   num = chkobjlastinst(d->obj);
 
   if (id < 0) {
     d->select = sel;
-    FileWinUpdate(d, TRUE);
+    FileWinUpdate(d, TRUE, DRAW_NOTIFY);
     return;
   }
 
@@ -4809,7 +5085,7 @@ FileWinFileCopy2(struct obj_list_data *d)
   }
 
   d->select = sel + 1;
-  FileWinUpdate(d, FALSE);
+  FileWinUpdate(d, FALSE, DRAW_NOTIFY);
 }
 
 static void
@@ -4824,7 +5100,7 @@ file_copy2_popup_func(GtkMenuItem *w, gpointer client_data)
 static void
 FileWinFileUpdate(struct obj_list_data *d)
 {
-  int sel, ret, num;
+  int sel, ret, num, undo;
   GtkWidget *parent;
 
   if (Menulock || Globallock)
@@ -4833,24 +5109,27 @@ FileWinFileUpdate(struct obj_list_data *d)
   num = chkobjlastinst(d->obj);
 
   if ((sel >= 0) && (sel <= num)) {
+    undo = data_save_undo(UNDO_TYPE_EDIT);
     d->setup_dialog(d, sel, FALSE);
     d->select = sel;
 
     parent = TopLevel;
     ret = DialogExecute(parent, d->dialog);
-    if (ret == IDDELETE) {
-      delete_file_obj(d, sel);
-      d->select = -1;
-      set_graph_modified();
+    set_graph_modified();
+    switch (ret) {
+    case IDCANCEL:
+      menu_undo_internal(undo);
+      break;
+    default:
+      d->update(d, FALSE, DRAW_NOTIFY);
     }
-    d->update(d, FALSE);
   }
 }
 
 static void
 FileWinFileDraw(struct obj_list_data *d)
 {
-  int i, sel, hidden, h, num;
+  int i, sel, hidden, h, num, modified, undo;
 
   if (Menulock || Globallock)
     return;
@@ -4858,13 +5137,15 @@ FileWinFileDraw(struct obj_list_data *d)
   sel = list_store_get_selected_index(GTK_WIDGET(d->text));
   num = chkobjlastinst(d->obj);
 
+  modified = FALSE;
+  undo = data_save_undo(UNDO_TYPE_EDIT);
   if ((sel >= 0) && (sel <= num)) {
     for (i = 0; i <= num; i++) {
       hidden = (i != sel);
       getobj(d->obj, "hidden", i, 0, NULL, &h);
       putobj(d->obj, "hidden", i, &hidden);
       if (h != hidden) {
-	set_graph_modified();
+	modified = TRUE;
       }
     }
     d->select = sel;
@@ -4874,13 +5155,18 @@ FileWinFileDraw(struct obj_list_data *d)
       getobj(d->obj, "hidden", i, 0, NULL, &h);
       putobj(d->obj, "hidden", i, &hidden);
       if (h != hidden) {
-	set_graph_modified();
+	modified = TRUE;
       }
     }
     d->select = -1;
   }
+  if (modified) {
+    set_graph_modified();
+  } else {
+    menu_delete_undo(undo);
+  }
   CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
-  FileWinUpdate(d, FALSE);
+  FileWinUpdate(d, FALSE, DRAW_NONE);
 }
 
 static void
@@ -4893,8 +5179,9 @@ file_draw_popup_func(GtkMenuItem *w, gpointer client_data)
 }
 
 void
-FileWinUpdate(struct obj_list_data *d, int clear)
+FileWinUpdate(struct obj_list_data *d, int clear, int draw)
 {
+  int redraw;
   if (Menulock || Globallock)
     return;
 
@@ -4910,6 +5197,21 @@ FileWinUpdate(struct obj_list_data *d, int clear)
   if (! clear && d->select >= 0) {
     list_store_select_int(GTK_WIDGET(d->text), FILE_WIN_COL_ID, d->select);
   }
+
+  switch (draw) {
+  case DRAW_REDRAW:
+    getobj(Menulocal.obj, "redraw_flag", 0, 0, NULL, &redraw);
+    if (redraw) {
+      NgraphApp.Viewer.allclear = TRUE;
+      update_viewer(d);
+    } else {
+      draw_notify(TRUE);
+    }
+    break;
+  case DRAW_NOTIFY:
+    draw_notify(TRUE);
+    break;
+  }
 }
 
 static void
@@ -4917,7 +5219,7 @@ FileWinFit(struct obj_list_data *d)
 {
   struct objlist *fitobj, *obj2;
   char *fit;
-  int sel, idnum, fitid = 0, ret, num;
+  int sel, idnum, fitid = 0, ret, num, undo;
   struct narray iarray;
   GtkWidget *parent;
 
@@ -4958,12 +5260,18 @@ FileWinFit(struct obj_list_data *d)
   if (fit == NULL)
     return;
 
+  undo = data_save_undo(UNDO_TYPE_EDIT);
   parent = TopLevel;
   ret = execute_fit_dialog(parent, d->obj, sel, fitobj, fitid);
 
-  if (ret == IDDELETE) {
+  switch (ret) {
+  case IDCANCEL:
+    menu_delete_undo(undo);
+    break;
+  case IDDELETE:
     delobj(fitobj, fitid);
     putobj(d->obj, "fit", sel, NULL);
+    break;
   }
 }
 
@@ -5025,11 +5333,7 @@ draw_type_pixbuf(struct objlist *obj, int i)
     type, w, width = 40, height = 20, poly[14], marktype,
     intp, spcond, spnum, lockstate, found, output;
   double spx[CURVE_POINTS_MAX], spy[CURVE_POINTS_MAX];
-#if GTK_CHECK_VERSION(3, 0, 0)
   cairo_surface_t *pix;
-#else
-  GdkPixmap *pix;
-#endif
   GdkPixbuf *pixbuf;
   struct objlist *gobj, *robj;
   N_VALUE *inst;
@@ -5043,14 +5347,8 @@ draw_type_pixbuf(struct objlist *obj, int i)
     return NULL;
   }
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   pix = gra2gdk_create_pixmap(local, width, height,
 			      Menulocal.bg_r, Menulocal.bg_g, Menulocal.bg_b);
-#else
-  pix = gra2gdk_create_pixmap(local, gtk_widget_get_window(TopLevel),
-			      width, height,
-			      Menulocal.bg_r, Menulocal.bg_g, Menulocal.bg_b);
-#endif
   if (pix == NULL) {
     return NULL;
   }
@@ -5247,13 +5545,8 @@ draw_type_pixbuf(struct objlist *obj, int i)
   _GRAclose(ggc);
   gra2cairo_draw_path(local);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   pixbuf = gdk_pixbuf_get_from_surface(pix, 0, 0, width, height);
   cairo_surface_destroy(pix);
-#else
-  pixbuf = gdk_pixbuf_get_from_drawable(NULL, pix, NULL, 0, 0, 0, 0, width, height);
-  g_object_unref(G_OBJECT(pix));
-#endif
 
   Globallock = lockstate;
 
@@ -5351,7 +5644,7 @@ file_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
 	    list_store_set_string(GTK_WIDGET(d->text), iter, i, "....................");
 	  }
         } else {
-	  list_store_set_string(GTK_WIDGET(d->text), iter, i, str);
+          set_escaped_str(GTK_WIDGET(d->text), iter, i, str);
         }
       }
       break;
@@ -5396,6 +5689,7 @@ void
 CmFileMath(void *w, gpointer client_data)
 {
   struct objlist *obj;
+  int undo;
 
   if (Menulock || Globallock)
     return;
@@ -5405,8 +5699,14 @@ CmFileMath(void *w, gpointer client_data)
   if (chkobjlastinst(obj) < 0)
     return;
 
+  undo = menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
   MathDialog(&DlgMath, obj);
   DialogExecute(TopLevel, &DlgMath);
+  if (DlgMath.modified) {
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, DRAW_REDRAW);
+  } else {
+    menu_delete_undo(undo);
+  }
 }
 
 static int
@@ -5434,7 +5734,7 @@ GetDrawFiles(struct narray *farray)
     if (!a)
       arrayadd(&ifarray, &i);
   }
-  SelectDialog(&DlgSelect, fobj, FileCB, farray, &ifarray);
+  SelectDialog(&DlgSelect, fobj, NULL, FileCB, farray, &ifarray);
   if (DialogExecute(TopLevel, &DlgSelect) != IDOK) {
     arraydel(&ifarray);
     arraydel(farray);
@@ -5756,7 +6056,7 @@ create_type_combo_item(GtkTreeStore *list, struct objlist *obj, int id)
 static void
 select_type(GtkComboBox *w, gpointer user_data)
 {
-  int sel, col_type, type, mark_type, curve_type, enum_id, found, active, join;
+  int sel, col_type, type, mark_type, curve_type, enum_id, found, active, join, ret, undo;
   struct objlist *obj;
   struct obj_list_data *d;
   GtkTreeStore *list;
@@ -5800,6 +6100,7 @@ select_type(GtkComboBox *w, gpointer user_data)
     if (enum_id == type) {
       return;
     }
+    undo = menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
     putobj(obj, "type", sel, &enum_id);
     if (enum_id == PLOT_TYPE_FIT) {
       char *fit;
@@ -5809,6 +6110,7 @@ select_type(GtkComboBox *w, gpointer user_data)
       if (fit == NULL) {
 	ret = show_fit_dialog(obj, sel, TopLevel);
 	if (ret != IDOK) {
+	  menu_delete_undo(undo);
 	  putobj(obj, "type", sel, &type);
 	  return;
 	}
@@ -5820,6 +6122,7 @@ select_type(GtkComboBox *w, gpointer user_data)
     if (type == PLOT_TYPE_MARK && enum_id == mark_type)
       return;
 
+    menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
     putobj(obj, "mark_type", sel, &enum_id);
 
     type = PLOT_TYPE_MARK;
@@ -5831,6 +6134,7 @@ select_type(GtkComboBox *w, gpointer user_data)
     if (type == PLOT_TYPE_CURVE && enum_id == curve_type)
       return;
 
+    menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
     putobj(obj, "interpolation", sel, &enum_id);
 
     type = PLOT_TYPE_CURVE;
@@ -5841,6 +6145,7 @@ select_type(GtkComboBox *w, gpointer user_data)
     if (enum_id < 0 || enum_id >= FwNumStyleNum) {
       return;
     }
+    menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
     if (chk_sputobjfield(d->obj, sel, "line_style", FwLineStyle[enum_id].list) != 0) {
       return;
     }
@@ -5849,7 +6154,12 @@ select_type(GtkComboBox *w, gpointer user_data)
     }
     break;
   case FILE_COMBO_ITEM_FIT:
-    show_fit_dialog(obj, sel, TopLevel);
+    undo = data_save_undo(UNDO_TYPE_EDIT);
+    ret = show_fit_dialog(obj, sel, TopLevel);
+    if (ret != IDOK) {
+      menu_delete_undo(undo);
+      return;
+    }
     break;
   case FILE_COMBO_ITEM_JOIN:
     gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_ENUM, &enum_id, -1);
@@ -5857,11 +6167,13 @@ select_type(GtkComboBox *w, gpointer user_data)
     if (join == enum_id) {
       return;
     }
+    menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
     putobj(d->obj, "line_join", sel, &enum_id);
     break;
   case FILE_COMBO_ITEM_CLIP:
     gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);
     active = ! active;
+    menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
     putobj(d->obj, "data_clip", sel, &active);
     break;
   default:
@@ -5869,7 +6181,7 @@ select_type(GtkComboBox *w, gpointer user_data)
   }
 
   d->select = sel;
-  d->update(d, FALSE);
+  d->update(d, FALSE, DRAW_REDRAW);
   set_graph_modified();
 }
 
@@ -5931,6 +6243,7 @@ select_axis(GtkComboBox *w, gpointer user_data, char *axis)
   if (j < 0)
     return;
 
+  data_save_undo(UNDO_TYPE_EDIT);
   snprintf(buf, sizeof(buf), "axis:%d", j);
   if (sputobjfield(d->obj, sel, axis, buf) == 0) {
     d->select = sel;
@@ -6030,7 +6343,7 @@ edited_axis(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer us
   if (str == NULL || d->select < 0)
     return;
 
-  d->update(d, FALSE);
+  d->update(d, FALSE, DRAW_REDRAW);
   set_graph_modified();
 }
 
@@ -6068,6 +6381,19 @@ init_dnd(struct SubWin *d)
 GtkWidget *
 FileWinState(struct SubWin *d)
 {
+  int n;
+  int noexpand_colmns[] = {FILE_WIN_COL_X,
+			   FILE_WIN_COL_Y,
+			   FILE_WIN_COL_X_AXIS,
+			   FILE_WIN_COL_Y_AXIS,
+			   FILE_WIN_COL_TYPE,
+			   FILE_WIN_COL_SIZE,
+			   FILE_WIN_COL_WIDTH,
+			   FILE_WIN_COL_SKIP,
+			   FILE_WIN_COL_STEP,
+			   FILE_WIN_COL_FINAL,
+			   FILE_WIN_COL_DNUM};
+
   if (d->Win) {
     return d->Win;
   }
@@ -6079,6 +6405,7 @@ FileWinState(struct SubWin *d)
   d->data.data->dialog = &DlgFile;
   d->data.data->ev_key = filewin_ev_key_down;
   d->data.data->delete = delete_file_obj;
+  d->data.data->undo_save = data_save_undo;
   d->data.data->obj = chkobject("data");
 
   sub_win_create_popup_menu(d->data.data, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
@@ -6091,6 +6418,9 @@ FileWinState(struct SubWin *d)
   gtk_tree_view_set_enable_search(GTK_TREE_VIEW(d->data.data->text), TRUE);
   gtk_tree_view_set_search_column(GTK_TREE_VIEW(d->data.data->text), FILE_WIN_COL_FILE);
   tree_view_set_tooltip_column(GTK_TREE_VIEW(d->data.data->text), FILE_WIN_COL_TIP);
+
+  n = sizeof(noexpand_colmns) / sizeof(*noexpand_colmns);
+  tree_view_set_no_expand_column(d->data.data->text, noexpand_colmns, n);
 
   set_cell_attribute_source(d, "style", FILE_WIN_COL_FILE, FILE_WIN_COL_MASKED);
 

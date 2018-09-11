@@ -1,5 +1,6 @@
 {
   global:
     ngraph_*;
+    _IO_stdin_used;
   local: *;
 };

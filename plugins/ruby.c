@@ -20,6 +20,18 @@ static char **DummyArgvPtr = DummyArgv;
 static int DummyArgc = 1;
 
 #ifdef __MINGW32__
+#define WINDOWS 1
+#else
+#define WINDOWS 0
+#endif
+
+#ifdef __APPLE__
+#define MAC_OS 1
+#else
+#define MAC_OS 0
+#endif
+
+#if WINDOWS || MAC_OS
 static char *
 get_ext_name(void)
 {
@@ -66,20 +78,35 @@ get_ext_name(void)
 }
 #endif
 
+static VALUE
+require_files(VALUE data)
+{
+  VALUE result;
+
+  rb_require("enc/encdb");
+  rb_require("enc/trans/transdb");
+  rb_require("rubygems");
+
+  result = rb_require((char *) data);
+
+  return result;
+}
+
 int
 ngraph_plugin_open_ruby(void)
 {
   rb_encoding *enc;
-#ifdef __MINGW32__
+#if WINDOWS || MAC_OS
   char *ext_name;
 #endif
-  VALUE result;
+  VALUE result, arg;
+  int status;
 
   if (Initialized) {
     return 0;
   }
 
-#ifdef __MINGW32__
+#if WINDOWS || MAC_OS
   ext_name = get_ext_name();
   if (ext_name == NULL) {
     return 1;
@@ -87,26 +114,32 @@ ngraph_plugin_open_ruby(void)
 #endif
 
   ruby_sysinit(&DummyArgc, &DummyArgvPtr);
-  ruby_init();
-  ruby_script("Embedded Ruby on Ngraph");
-  ruby_init_loadpath();
-  rb_enc_find_index("encdb");	/* http://www.artonx.org/diary/20090206.html */
-  enc = rb_locale_encoding();
-  if (enc) {
-    rb_enc_set_default_external(rb_enc_from_encoding(enc));
-  }
-  rb_enc_set_default_internal(rb_enc_from_encoding(rb_utf8_encoding()));
-  rb_require("enc/encdb");
-  rb_require("enc/trans/transdb");
-  rb_require("rubygems");
-  Initialized = TRUE;
-
-#ifdef __MINGW32__
-  result = rb_require(ext_name);
-  free(ext_name);
+  {
+    RUBY_INIT_STACK;
+    ruby_init();
+    ruby_script("Embedded Ruby on Ngraph");
+    ruby_init_loadpath();
+    rb_enc_find_index("encdb");	/* http://www.artonx.org/diary/20090206.html */
+    enc = rb_locale_encoding();
+    if (enc) {
+      rb_enc_set_default_external(rb_enc_from_encoding(enc));
+    }
+    rb_enc_set_default_internal(rb_enc_from_encoding(rb_utf8_encoding()));
+#if WINDOWS || MAC_OS
+    arg = (VALUE) ext_name;
 #else
-  result = rb_require("ngraph.rb");
+    arg = (VALUE) "ngraph.rb";
 #endif
+    result = rb_protect(require_files, arg, &status);
+  }
+#if WINDOWS || MAC_OS
+  free(ext_name);
+#endif
+  if (status) {
+    return 1;
+  }
+
+  Initialized = TRUE;
 
   return ! RTEST(result);
 }

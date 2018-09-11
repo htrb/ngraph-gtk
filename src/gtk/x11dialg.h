@@ -86,14 +86,14 @@ struct MarkDialog
 {
   DIALOG_PROTOTYPE;
   /****** local member *******/
-  GtkWidget *toggle[MARK_TYPE_NUM];
+  GtkWidget *parnet, *toggle[MARK_TYPE_NUM];
   int Type, cb_respond;
 };
-void MarkDialog(struct MarkDialog *data, int type);
+void MarkDialog(struct MarkDialog *data, GtkWidget *parent, int type);
 
 struct FileMath
 {
-  GtkWidget *xsmooth, *x, *ysmooth, *y, *f, *g, *h;
+  GtkWidget *xsmooth, *x, *ysmooth, *averaging_type, *y, *f, *g, *h, *text_x, *text_y, *text_f, *text_g, *text_h;
   int tab_id;
 };
 
@@ -120,12 +120,12 @@ struct FileDialog
   DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *file, *load_settings, *fit, *xcol, *xaxis, *ycol, *yaxis,
-    *type, *mark_btn, *curve, *col1, *col2,
+    *type, *mark_btn, *curve, *col1, *col2, *math_input_tab,
     *clip, *style, *size, *miter, *join, *min, *max, *div,
     *comment_box, *file_box, *fit_table, *width, *apply_all, *comment_view, *comment_table;
-  GtkNotebook *tab;
+  GtkNotebook *tab, *math_tab;
   struct objlist *Obj;
-  int Id, source;
+  int Id, source, math_page;
   struct MarkDialog mark;
   int R, G, B, R2, G2, B2, alpha, multi_open, fit_row, initialized;
   struct FileMath math;
@@ -155,7 +155,7 @@ struct MathDialog
   /****** local member *******/
   GtkWidget *list, *func[MATH_FNC_NUM];
   struct objlist *Obj;
-  int Mode;
+  int Mode, modified;
 };
 void MathDialog(struct MathDialog *data, struct objlist *obj);
 
@@ -163,11 +163,11 @@ struct MathTextDialog
 {
   DIALOG_PROTOTYPE;
   /****** local member *******/
-  GtkWidget *list, *label, *tree;
+  GtkWidget *list, *text, *tree, *input_tab;
   GList *id_list;
   struct objlist *Obj;
   char *Text;
-  int Mode;
+  int Mode, modified, page;
 };
 void MathTextDialog(struct MathTextDialog *data, char *text, int mode, struct objlist *obj, GList *list, GtkWidget *tree);
 
@@ -334,14 +334,15 @@ struct LegendDialog
   GtkWidget *path_type, *style, *points, *interpolation, *width,
     *miter, *join, *color, *color2, *stroke_color, *fill_color,
     *x, *y, *x1, *y1, *x2, *y2, *rx, *ry, *angle1, *angle2,
-    *pieslice, *close_path, *stroke, *fill, *fill_rule, *arrow,
-    *arrow_length, *arrow_width, *size, *type, *view, *text, *pt,
+    *pieslice, *close_path, *stroke, *fill, *fill_rule,
+    *marker_begin, *marker_end, *arrow_length, *arrow_width,
+    *size, *type, *view, *text, *pt, *mark_type_begin, *mark_type_end,
     *space, *script_size, *direction, *raw, *font, *font_bold,
     *font_italic;
   struct objlist *Obj;
   int Id;
   int R, G, B, R2, G2, B2, fill_R, fill_G, fill_B, alpha, wid, ang;
-  struct MarkDialog mark;
+  struct MarkDialog mark, mark_begin, mark_end;
   cairo_surface_t *arrow_pixmap;
 };
 
@@ -521,8 +522,9 @@ struct MiscDialog
   GtkWidget *editor, *directory, *path, *datafile,
     *expand, *expanddir, *loadpath, *mergefile, *coordwin_font, *infowin_font,
     *file_preview_font, *hist_size, *info_size, *data_head_lines, *help_browser,
-    *browser, *use_opacity, *select_data;
+    *browser, *use_opacity, *select_data, *use_custom_palette, *source_style;
   struct objlist *Obj;
+  struct narray tmp_palette;
   int Id;
 };
 void MiscDialog(struct MiscDialog *data, struct objlist *obj, int id);
@@ -558,10 +560,12 @@ struct SelectDialog
   struct objlist *Obj;
   char *Field;
   GtkWidget *list;
+  const char *title;
   char *(*cb) (struct objlist * obj, int id);
 };
 void SelectDialog(struct SelectDialog *data,
 		  struct objlist *obj,
+		  const char *title,
 		  char *(*callback) (struct objlist * obj, int id),
 		  struct narray *array, struct narray *iarray);
 
@@ -573,11 +577,13 @@ struct CopyDialog
   int Id;
   int sel;
   GtkWidget *list;
+  const char *title;
   char *(*cb) (struct objlist * obj, int id);
 };
 
 void CopyDialog(struct CopyDialog *data,
 		struct objlist *obj, int id,
+		const char *title,
 		char *(*callback) (struct objlist * obj, int id));
 
 struct OutputImageDialog
@@ -644,4 +650,3 @@ extern struct CopyDialog DlgCopy;
 extern struct OutputImageDialog DlgImageOut;
 
 #endif
-

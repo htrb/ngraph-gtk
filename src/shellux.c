@@ -1,24 +1,24 @@
-/* 
+/*
  * $Id: shellux.c,v 1.9 2010-03-04 08:30:16 hito Exp $
- * 
+ *
  * This file is part of "Ngraph for X11".
- * 
+ *
  * Copyright (C) 2002, Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
- * 
+ *
  * "Ngraph for X11" is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * "Ngraph for X11" is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  */
 
 #include "common.h"
@@ -36,22 +36,22 @@
 #include "shell.h"
 #include "shellux.h"
 
-int 
+int
 cmtrue(struct nshell *nshell,int argc,char **argv)
 {
   return 0;
 }
 
-int 
+int
 cmfalse(struct nshell *nshell,int argc,char **argv)
 {
   return 1;
 }
 
-int 
+int
 cmsleep(struct nshell *nshell,int argc,char **argv)
 {
-  int a;
+  double a;
   char *arg,*endptr;
 
   if (argc<2) {
@@ -59,7 +59,7 @@ cmsleep(struct nshell *nshell,int argc,char **argv)
     return ERRSMLARG;
   }
   arg=argv[1];
-  a=strtol(arg,&endptr,10);
+  a=strtod(arg, &endptr);
   if (endptr[0]!='\0') {
     sherror3(argv[0],ERRNUMERIC,arg);
     return ERRNUMERIC;
@@ -70,7 +70,7 @@ cmsleep(struct nshell *nshell,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 testexpand(int pre,int *oppo,int *numpo,
                int numbuf[],char *numbufc[],char opbuf[],int prebuf[])
 {
@@ -194,7 +194,7 @@ testexpand(int pre,int *oppo,int *numpo,
   return TRUE;
 }
 
-int 
+int
 cmtest(struct nshell *nshell,int argc,char **argv)
 {
   int prebuf[20];

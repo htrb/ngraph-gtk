@@ -1,4 +1,4 @@
-; lt-ngraph GtkAccelMap rc-file         -*- scheme -*-
+; ngraph GtkAccelMap rc-file         -*- scheme -*-
 ; this file is an automated accelerator map dump
 ;
 
@@ -14,7 +14,8 @@
 ; (gtk_accel_path "<Ngraph>/Axis/Scale Clear" "<Primary><Shift>c")
 ; (gtk_accel_path "<Ngraph>/Axis/Scale Undo" "")
 ; (gtk_accel_path "<Ngraph>/Axis/Scale Zoom" "")
-; (gtk_accel_path "<Ngraph>/Data/Add" "<Primary>o")
+; (gtk_accel_path "<Ngraph>/Data/Add/Data" "<Primary>o")
+; (gtk_accel_path "<Ngraph>/Data/Add/Range" "")
 ; (gtk_accel_path "<Ngraph>/Data/Close" "")
 ; (gtk_accel_path "<Ngraph>/Data/Edit" "")
 ; (gtk_accel_path "<Ngraph>/Data/Math" "")
@@ -74,7 +75,7 @@
 ; (gtk_accel_path "<Ngraph>/Merge/Add" "")
 ; (gtk_accel_path "<Ngraph>/Merge/Close" "")
 ; (gtk_accel_path "<Ngraph>/Merge/Property" "")
-; (gtk_accel_path "<Ngraph>/Popup/Update" "Return")
+; (gtk_accel_path "<Ngraph>/Popup/Update" "")
 ; (gtk_accel_path "<Ngraph>/Preference/Addin Script" "")
 ; (gtk_accel_path "<Ngraph>/Preference/Data file default" "")
 ; (gtk_accel_path "<Ngraph>/Preference/External Viewer" "")

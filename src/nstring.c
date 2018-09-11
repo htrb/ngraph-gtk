@@ -1,24 +1,24 @@
-/* 
+/*
  * $Id: nstring.c,v 1.10 2010-03-04 08:30:16 hito Exp $
- * 
+ *
  * This file is part of "Ngraph for X11".
- * 
+ *
  * Copyright (C) 2002, Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
- * 
+ *
  * "Ngraph for X11" is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * "Ngraph for X11" is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  */
 
 #include "common.h"
@@ -92,7 +92,7 @@ nstrcat(char *po,char *s)
   /* modified */
 
   if (po == NULL) return NULL;
-  if (s == NULL) return po; 
+  if (s == NULL) return po;
   len = strlen(po);
   for (i = 0; s[i] != '\0'; i++) {
     po = nstraddchar(po, len + i, s[i]);
@@ -111,14 +111,14 @@ nstrncat(char *po,char *s,size_t n)
   size_t i;
 
   if (po==NULL) return NULL;
-  if (s==NULL) return po; 
-  for (i=0;(s[i]!='\0') && (i<n);i++) 
+  if (s==NULL) return po;
+  for (i=0;(s[i]!='\0') && (i<n);i++)
     if ((po=nstrccat(po,s[i]))==NULL) return NULL;
   return po;
 }
 #endif
 
-int 
+int
 strcmp0(const char *s1, const char *s2)
 {
   const char *s3,*s4;
@@ -134,7 +134,7 @@ strcmp0(const char *s1, const char *s2)
   return 1;
 }
 
-int 
+int
 strcmp2(char *s1,char *s2)
 {
   int len1,len2,len,c;
@@ -151,7 +151,7 @@ strcmp2(char *s1,char *s2)
   } else return c;
 }
 
-static int 
+static int
 wildmatch2(const char *pat, const char *s,int flags)
 {
   const char *spo,*patpo,*po;
@@ -164,7 +164,7 @@ wildmatch2(const char *pat, const char *s,int flags)
     else if (*patpo=='\0') return 0;
     else if ((flags & WILD_PATHNAME) && (*spo=='/')) {
       if (*patpo!='/') return 0;
-      patpo++;        
+      patpo++;
       spo++;
     } else if (*patpo=='?') {
       if (*spo=='\0') return 0;
@@ -209,7 +209,7 @@ wildmatch2(const char *pat, const char *s,int flags)
   }
 }
 
-int 
+int
 wildmatch(const char *pat, const char *s,int flags)
 {
   if ((s==NULL) || (pat==NULL)) return 0;
@@ -258,65 +258,120 @@ getitok2(char **s, int *len, const char *ifs)
 }
 
 static char *
-get_printf_format_str(const char *str, int *len)
+get_printf_format_str(const char *str, int *len, int *pow)
 {
   int n;
-  char *fmt;
+  GString *format;
 
-  *len = 0;
+  if (pow) {
+    *pow = FALSE;
+  }
+  if (len) {
+    *len = 0;
+  }
 
   n = 0;
   if (str[n] != '%') {
     return NULL;
   }
+
+  format = g_string_new("");
+  if (format == NULL) {
+    return NULL;
+  }
+  g_string_append_c(format, str[n]);
   n++;
 
-  while (strchr("#0- +", str[n])) {
+  while (strchr("#0- +^", str[n])) {
+    if (str[n] != '^') {
+      g_string_append_c(format, str[n]);
+    } else if (pow) {
+      *pow = TRUE;
+    }
     n++;
   }
 
-  for (; isdigit(str[n]); n++);
+  for (; isdigit(str[n]); n++) {
+    g_string_append_c(format, str[n]);
+  }
 
   if (str[n] == '.') {
+    g_string_append_c(format, str[n]);
     n++;
-    for (; isdigit(str[n]); n++);
+    for (; isdigit(str[n]); n++) {
+      g_string_append_c(format, str[n]);
+    }
   }
 
   if (str[n] == 'l') {
+    g_string_append_c(format, str[n]);
     n++;
   }
 
   if (str[n] == 'l') {
+    g_string_append_c(format, str[n]);
     n++;
   }
 
   if (strchr("diouxXeEfFgGcs", str[n]) == NULL) {
+    g_string_free(format, TRUE);
     return NULL;
   }
 
-  *len = n;
-  n++;
+  g_string_append_c(format, str[n]);
+  if (len) {
+    *len = n;
+  }
 
-  fmt = g_strdup(str);
-  if (fmt == NULL) {
+  return g_string_free(format, FALSE);
+}
+
+static char *
+str_to_pow(const char *str)
+{
+  int n, i, len, pow;
+  GString *pow_str;
+
+  if (str == NULL) {
     return NULL;
   }
-  fmt[n] = '\0';
 
-  return fmt;
+  n = -1;
+  len = strlen(str);
+  for (i = 0; i < len; i++) {
+    if (str[i] == 'E' || str[i] == 'e') {
+      n = i;
+      break;
+    }
+  }
+
+  if (n < 0) {
+    return NULL;
+  }
+
+  pow_str = g_string_new("");
+  if (pow_str == NULL) {
+    return NULL;
+  }
+  pow = atoi(str + n + 1);
+  g_string_append_len(pow_str, str, n);
+  if (pow) {
+    g_string_append_printf(pow_str, "×10^%d@", pow);
+  }
+  return g_string_free(pow_str, FALSE);
 }
 
 int
 add_printf_formated_str(GString *str, const char *format, const char *arg, int *len)
 {
-  int i, formated;
+  int i, formated, pow;
   char *format2, *buf, *endptr;
   int vi;
   long long int vll;
   double vd;
 
   formated = FALSE;
-  format2 = get_printf_format_str(format, &i);
+  format2 = get_printf_format_str(format, &i, &pow);
   if (len) {
     *len = i;
   }
@@ -351,6 +406,14 @@ add_printf_formated_str(GString *str, const char *format, const char *arg, int *
       vd = strtod(arg,&endptr);
     }
     buf = g_strdup_printf(format2, vd);
+    if (pow) {
+      char *new_buf;
+      new_buf = str_to_pow(buf);
+      if (new_buf) {
+	g_free(buf);
+	buf = new_buf;
+      }
+    }
     formated = TRUE;
     break;
   case 's':

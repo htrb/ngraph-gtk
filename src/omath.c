@@ -1,24 +1,24 @@
-/* 
+/*
  * $Id: omath.c,v 1.22 2010-03-04 08:30:16 hito Exp $
- * 
+ *
  * This file is part of "Ngraph for X11".
- * 
+ *
  * Copyright (C) 2002, Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
- * 
+ *
  * "Ngraph for X11" is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * "Ngraph for X11" is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  */
 
 #include "common.h"
@@ -69,7 +69,7 @@ struct mlocal {
   int idpr;
 };
 
-static void 
+static void
 msettbl(N_VALUE *inst,struct mlocal *mlocal)
 {
   inst[mlocal->idpx].d=mlocal->x;
@@ -78,13 +78,13 @@ msettbl(N_VALUE *inst,struct mlocal *mlocal)
   inst[mlocal->idpr].i=mlocal->rcode;
 }
 
-static void 
+static void
 mlocalclear(struct mlocal *mlocal,int memory)
 {
   math_equation_clear(mlocal->code);
 }
 
-static int 
+static int
 minit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct mlocal *mlocal;
@@ -144,7 +144,7 @@ errexit:
   return 1;
 }
 
-static int 
+static int
 mdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct mlocal *mlocal;
@@ -179,7 +179,7 @@ parse_original_formula(struct objlist *obj,N_VALUE *inst, struct mlocal *mlocal)
   }
 }
 
-/* 
+/*
    # following procedure causes error.
 
    new math
@@ -189,7 +189,7 @@ parse_original_formula(struct objlist *obj,N_VALUE *inst, struct mlocal *mlocal)
    get math: formula               # formula:const A:1;A
    get math: calc                  # calc:0.000000000000000e+00
  */
-static int 
+static int
 mformula(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   char *math;
@@ -251,7 +251,7 @@ mformula(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 mparam(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   char *arg;
@@ -274,7 +274,7 @@ mparam(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 mcalc(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct mlocal *mlocal;
@@ -329,7 +329,7 @@ mcalc(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 mclear(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct mlocal *mlocal;

@@ -37,11 +37,11 @@
 #include <locale.h>
 #include <signal.h>
 
-#ifdef WINDOWS
+#if WINDOWS || OSX
 #ifdef LOCALEDIR
 #undef LOCALEDIR
 #endif	/* LOCALEDIR */
-char *DOCDIR, *NDATADIR, *ADDINDIR, *LIBDIR, *PLUGINDIR, *CONFDIR, *LOCALEDIR, *PIXMAPDIR;
+char *DOCDIR, *NDATADIR, *ADDINDIR, *LIBDIR, *PLUGINDIR, *CONFDIR, *LOCALEDIR, *BINDIR;
 #endif	/* WINDOWS */
 
 #include "dir_defs.h"
@@ -66,7 +66,7 @@ char *HistoryFile = NULL;
 #define HIST_FILE "shell_history"
 #endif	/* HAVE_READLINE_READLINE_H */
 
-#define CSS_FILE "ngraph.css"
+#define CSS_PATH RESOURCE_PATH "/css/ngraph.css"
 #define SYSCONF "[Ngraph]"
 
 static char *systemname, *locale;
@@ -112,7 +112,7 @@ void *addpath(void);
 void *addgra2gtk(void);
 void *addmenu(void);
 void *adddialog(void);
-#ifdef WINDOWS
+#if WINDOWS
 void *addgra2emf(void);
 #endif	/* WINDOWS */
 
@@ -120,21 +120,6 @@ void resizeconsole(int col, int row);
 
 // XtAppContext Application=NULL;
 char *AppName = "Ngraph", *AppClass = "Ngraph", *Home;
-char *License = "\
-This program is free software; you can redistribute it and/or modify \
-it under the terms of the GNU General Public License as published by \
-the Free Software Foundation; either version 2 of the License, or \
-(at your option) any later version.\n\
-\n\
-This program is distributed in the hope that it will be useful, \
-but WITHOUT ANY WARRANTY; without even the implied warranty of \
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the \
-GNU General Public License for more details.\n\
-\n\
-You should have received a copy of the GNU General Public License \
-along with this program; if not, write to the Free Software \
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA\
-";
 
 char *Auther[] = {
   "Satoshi ISHIZAKA",
@@ -192,7 +177,7 @@ static void * ( * obj_add_func_ary[]) (void) = {
   addtext,
   addmenu,
   adddialog,
-#ifdef WINDOWS
+#if WINDOWS
   addgra2emf,
 #endif
 };
@@ -281,7 +266,7 @@ resizeconsole(int col, int row)
 
 static char *Terminal = NULL;
 
-#ifdef WINDOWS
+#if WINDOWS
 static HWND ConsoleHandle = NULL;
 
 static int
@@ -410,9 +395,13 @@ exec_console(char *fifo_in, char *fifo_out)
   } else if (pid == 0) {
     pid = fork();
     if (pid == 0) {
-      char buf[256], *s2, *s;
+      char buf[2049], *s2, *s;
       int len;
-
+#if OSX
+      snprintf(buf, sizeof(buf), "%s -e %s/terminal %s %s", Terminal, LIBDIR, fifo_in, fifo_out);
+      system(buf);
+      exit(0);
+#else
       snprintf(buf, sizeof(buf), "%s %s %s", Terminal, fifo_in, fifo_out);
       argv = NULL;
       s = buf;
@@ -420,6 +409,7 @@ exec_console(char *fifo_in, char *fifo_out)
 	arg_add(&argv, s2);
       }
       execvp(argv[0], argv);
+#endif
     } else if (pid != -1) {
       int status;
 
@@ -446,6 +436,19 @@ nallocconsole(void)
 
   if (Terminal == NULL)
     return FALSE;
+
+#if OSX
+  {
+    char *path;
+
+    path = g_find_program_in_path(Terminal);
+    if (path == NULL) {
+      PutStderr("To use this function, please install XQuartz.");
+      return FALSE;
+    }
+    g_free(path);
+  }
+#endif
 
   snprintf(fifo_in, sizeof(fifo_in) - 1, "/tmp/nterm1_%d", getpid());
   snprintf(fifo_out, sizeof(fifo_out) - 1, "/tmp/nterm2_%d", getpid());
@@ -679,7 +682,7 @@ load_config(struct objlist *sys, N_VALUE *inst, int *allocconsole)
   }
 }
 
-#ifdef WINDOWS
+#if WINDOWS
 static int
 set_dir_defs(char *app)
 {
@@ -704,22 +707,60 @@ set_dir_defs(char *app)
     return 1;
   }
 
-  DOCDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "doc");
-  LIBDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "bin");
-  PLUGINDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "lib/plugins");
-  NDATADIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share");
-  ADDINDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/addin");
-  CONFDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "etc");
+  BINDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "bin");
+  DOCDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/doc/ngraph-gtk");
+  LIBDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "lib/ngraph-gtk");
+  PLUGINDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "lib/ngraph-gtk/plugins");
+  NDATADIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/ngraph-gtk");
+  ADDINDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/ngraph-gtk/addin");
+  CONFDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "etc/ngraph-gtk");
   LOCALEDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/locale");
-  PIXMAPDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/pixmaps");
 
   g_free(app_path);
 
-  return (DOCDIR && LIBDIR && CONFDIR);
+  return 0;
 }
 #endif	/* WINDOWS */
 
-#if 0
+#if OSX
+static int
+set_dir_defs(char *app)
+{
+  const char *app_contents;
+  char *app_path;
+
+  app_contents = g_getenv("NGRAPH_APP_CONTENTS");
+  if (app_contents) {
+    app_path = g_strdup_printf("%s%c%s", app_contents, DIRSEP, "Resources");
+    LIBDIR = g_strdup_printf("%s%c%s", app_contents, DIRSEP, "MacOS");
+  } else {
+    char *bin_path;
+    bin_path = g_path_get_dirname(app);
+    app_path = g_path_get_dirname(bin_path);
+    g_free(bin_path);
+    LIBDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "libexec/ngraph-gtk");
+  }
+
+  if (app_path == NULL) {
+    return 1;
+  }
+
+  BINDIR = NULL;
+  DOCDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/doc/ngraph-gtk");
+  PLUGINDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "lib/ngraph-gtk/plugins");
+  NDATADIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/ngraph-gtk");
+  ADDINDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/ngraph-gtk/addin");
+  CONFDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "etc/ngraph-gtk");
+  LOCALEDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/locale");
+
+  g_free(app_path);
+
+  return 0;
+}
+#endif
+
+
+#if WINDOWS
 static void
 set_path_env(char *homedir)
 {
@@ -727,10 +768,14 @@ set_path_env(char *homedir)
   char *pathset;
 
   path = g_getenv("PATH");
-  pathset = g_strdup_printf("%s%s%s%s%s%s%s%s%s", homedir, PATHSEP, ADDINDIR, PATHSEP, LIBDIR, PATHSEP, ".", PATHSEP, CHK_STR(path));
-#ifdef WINDOWS
+  pathset = g_strdup_printf("%s%s%s%s%s%s%s%s%s%s%s",
+			    homedir, PATHSEP,
+			    ADDINDIR, PATHSEP,
+			    LIBDIR, PATHSEP,
+			    BINDIR, PATHSEP,
+			    ".", PATHSEP,
+			    CHK_STR(path));
   path_to_win(pathset);
-#endif	/* WINDOWS */
   g_setenv("PATH", pathset, TRUE);
   g_setenv("NGRAPHLIB",  LIBDIR, TRUE);
   g_setenv("NGRAPHCONF", CONFDIR, TRUE);
@@ -746,25 +791,13 @@ n_getlocale(void)
 
 #if GTK_CHECK_VERSION(3, 16, 0)
 static void
-load_css(const char *file)
+load_css(void)
 {
   GtkCssProvider *css_provider;
-  char *css_file;
 
-  css_file = g_strdup_printf("%s/gtk/%s", CONFDIR, file);
-  if (css_file) {
-    GError *error;
-
-    css_provider = gtk_css_provider_new();
-    error = NULL;
-    gtk_css_provider_load_from_path(css_provider, css_file, &error);
-    if (error) {
-      printfstderr("(%s): %s\n", css_file, error->message);
-    } else {
-      gtk_style_context_add_provider_for_screen(gdk_screen_get_default(), GTK_STYLE_PROVIDER(css_provider), GTK_STYLE_PROVIDER_PRIORITY_USER);
-    }
-    g_free(css_file);
-  }
+  css_provider = gtk_css_provider_new();
+  gtk_css_provider_load_from_resource(css_provider, CSS_PATH);
+  gtk_style_context_add_provider_for_screen(gdk_screen_get_default(), GTK_STYLE_PROVIDER(css_provider), GTK_STYLE_PROVIDER_PRIORITY_USER);
 }
 #endif
 
@@ -785,10 +818,6 @@ n_initialize(int *argc, char ***argv)
     return 0;
   }
 
-#if USE_MEM_PROFILE
-  g_mem_set_vtable(glib_mem_profiler_table);
-#endif
-
 #if ! GLIB_CHECK_VERSION(2, 32, 0)
   g_thread_init(NULL);
 #endif
@@ -797,17 +826,14 @@ n_initialize(int *argc, char ***argv)
   char_type_buf_init();
 #endif
 
-#ifndef WINDOWS
+#if ! WINDOWS
   set_childhandler();
 #endif	/* WINDOWS */
 
-#if ! GTK_CHECK_VERSION(2, 24, 0)
-  gtk_set_locale();
-#endif
   OpenDisplay = gtk_init_check(argc, argv);
   g_set_application_name(AppName);
 
-#ifdef WINDOWS
+#if WINDOWS || OSX
   set_dir_defs((*argv)[0]);
 #endif	/* WINDOWS */
 
@@ -825,7 +851,7 @@ n_initialize(int *argc, char ***argv)
 
 #if GTK_CHECK_VERSION(3, 16, 0)
   if (OpenDisplay) {
-    load_css(CSS_FILE);
+    load_css();
   }
 #endif	/* GTK_CHECK_VERSION(3, 16, 0) */
 
@@ -885,8 +911,9 @@ n_initialize(int *argc, char ***argv)
     }
   }
 
-  /* set_path_env(homedir); */
-  /* it may not necessary to call the function because all environments will be set in the function ngraphenvironment() */
+#if WINDOWS
+  set_path_env(homedir);
+#endif
   set_environ();
 
   if (addobjectroot() == NULL)
@@ -967,7 +994,7 @@ n_initialize(int *argc, char ***argv)
     nallocconsole();
   }
 
-#ifdef WINDOWS
+#if WINDOWS
   ConsoleAc = check_console(allocconsole);
   if (isatty(0) && isatty(1) && isatty(2)) {
     if (! allocconsole) {
@@ -1013,7 +1040,7 @@ n_finalize(void)
   }
 #endif
 
-#ifndef WINDOWS
+#if ! WINDOWS
   if (ConsoleAc && (consolepid != -1)) {
     nfreeconsole();
   }

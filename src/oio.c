@@ -1,24 +1,24 @@
-/* 
+/*
  * $Id: oio.c,v 1.6 2010-03-04 08:30:16 hito Exp $
- * 
+ *
  * This file is part of "Ngraph for X11".
- * 
+ *
  * Copyright (C) 2002, Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
- * 
+ *
  * "Ngraph for X11" is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * "Ngraph for X11" is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  */
 
 #include <stdio.h>
@@ -31,6 +31,7 @@
 #include "common.h"
 
 #include "nhash.h"
+#include "shell.h"
 #include "object.h"
 #include "ioutil.h"
 #include "nstring.h"
@@ -46,6 +47,7 @@ static char *io_errorlist[]={
   "IO is closed.",
   "IO is opened.",
   "I/O error:",
+  "the method is forbidden for the security",
 };
 
 #define ERRNUM (sizeof(io_errorlist) / sizeof(*io_errorlist))
@@ -54,15 +56,16 @@ static char *io_errorlist[]={
 #define PARENT		"object"
 #define OVERSION	"1.00.00"
 
-#define ERRFILE		100
-#define ERRMODE		101
-#define ERROPEN		102
-#define ERRREAD		103
-#define ERRWRITE	104
-#define ERRSEEK		105
-#define ERRCLOSED	106
-#define ERROPENED	107
-#define ERRSTD		108
+#define OIO_ERRFILE		100
+#define OIO_ERRMODE		101
+#define OIO_ERROPEN		102
+#define OIO_ERRREAD		103
+#define OIO_ERRWRITE		104
+#define OIO_ERRSEEK		105
+#define OIO_ERRCLOSED		106
+#define OIO_ERROPENED		107
+#define OIO_ERRSTD		108
+#define OIO_ERRSYSSECURTY	109
 
 char *seek_whence[]={
   N_("set"),
@@ -89,10 +92,10 @@ io_error(struct objlist *obj)
     const char *str;
 
     str = g_strerror(errno);
-    error2(obj, ERRSTD, CHK_STR(str));
+    error2(obj, OIO_ERRSTD, CHK_STR(str));
 }
 
-static int 
+static int
 io_init(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct io_local *io_local;
@@ -144,7 +147,7 @@ io_close_sub(struct io_local *io_local)
   return 0;
 }
 
-static int 
+static int
 io_done(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct io_local *io_local;
@@ -159,12 +162,17 @@ io_done(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 io_open(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct io_local *io_local;
   FILE *fp;
   char *file, *mode;
+
+  if (get_security()) {
+    error(obj, OIO_ERRSYSSECURTY);
+    return 1;
+  }
 
   _getobj(obj, "_local", inst, &io_local);
   _getobj(obj, "mode", inst, &mode);
@@ -174,7 +182,7 @@ io_open(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   }
 
   if (io_local->fp) {
-    error(obj, ERROPENED);
+    error(obj, OIO_ERROPENED);
     return 1;
   }
 
@@ -204,7 +212,7 @@ io_open(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 io_close(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct io_local *io_local;
@@ -226,7 +234,7 @@ io_close(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 io_puts(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct io_local *io_local;
@@ -244,7 +252,7 @@ io_puts(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
     rcode = fputs(argv[2], fp);
   }
   rcode = fputs("\n", fp);
-     
+
   if (rcode == EOF) {
     io_error(obj);
     return 1;
@@ -253,7 +261,7 @@ io_puts(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 io_gets(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct io_local *io_local;
@@ -267,7 +275,7 @@ io_gets(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   _getobj(obj, "_local", inst, &io_local);
   fp = io_local->fp;
   if (fp == NULL) {
-    error(obj, ERRCLOSED);
+    error(obj, OIO_ERRCLOSED);
     return 1;
   }
 
@@ -285,7 +293,7 @@ io_gets(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 io_getc(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct io_local *io_local;
@@ -295,7 +303,7 @@ io_getc(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   _getobj(obj, "_local", inst, &io_local);
   fp = io_local->fp;
   if (fp == NULL) {
-    error(obj, ERRCLOSED);
+    error(obj, OIO_ERRCLOSED);
     return 1;
   }
 
@@ -311,7 +319,7 @@ io_getc(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 io_putc(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct io_local *io_local;
@@ -321,7 +329,7 @@ io_putc(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   _getobj(obj, "_local", inst, &io_local);
   fp = io_local->fp;
   if (fp == NULL) {
-    error(obj, ERRCLOSED);
+    error(obj, OIO_ERRCLOSED);
     return 1;
   }
 
@@ -339,7 +347,7 @@ io_putc(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 io_read(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct io_local *io_local;
@@ -354,7 +362,7 @@ io_read(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   _getobj(obj, "_local", inst, &io_local);
   fp = io_local->fp;
   if (fp == NULL) {
-    error(obj, ERRCLOSED);
+    error(obj, OIO_ERRCLOSED);
     return 1;
   }
 
@@ -388,7 +396,7 @@ io_read(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 io_write(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct io_local *io_local;
@@ -399,7 +407,7 @@ io_write(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   _getobj(obj, "_local", inst, &io_local);
   fp = io_local->fp;
   if (fp == NULL) {
-    error(obj, ERRCLOSED);
+    error(obj, OIO_ERRCLOSED);
     return 1;
   }
 
@@ -422,7 +430,7 @@ io_write(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 io_seek(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct io_local *io_local;
@@ -432,7 +440,7 @@ io_seek(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   _getobj(obj, "_local", inst, &io_local);
   fp = io_local->fp;
   if (fp == NULL) {
-    error(obj, ERRCLOSED);
+    error(obj, OIO_ERRCLOSED);
     return 1;
   }
 
@@ -463,7 +471,7 @@ io_seek(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 io_rewind(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct io_local *io_local;
@@ -472,7 +480,7 @@ io_rewind(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   _getobj(obj, "_local", inst, &io_local);
   fp = io_local->fp;
   if (fp == NULL) {
-    error(obj, ERRCLOSED);
+    error(obj, OIO_ERRCLOSED);
     return 1;
   }
 
@@ -481,7 +489,7 @@ io_rewind(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 io_tell(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct io_local *io_local;
@@ -491,14 +499,14 @@ io_tell(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   _getobj(obj, "_local", inst, &io_local);
   fp = io_local->fp;
   if (fp == NULL) {
-    error(obj, ERRCLOSED);
+    error(obj, OIO_ERRCLOSED);
     return 1;
   }
 
   errno = 0;
   pos = ftell(fp);
   if (pos < 0) {
-    error(obj, ERRSEEK);
+    error(obj, OIO_ERRSEEK);
     return 1;
   }
 
@@ -517,7 +525,7 @@ io_flush(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   _getobj(obj, "_local", inst, &io_local);
   fp = io_local->fp;
   if (fp == NULL) {
-    error(obj, ERRCLOSED);
+    error(obj, OIO_ERRCLOSED);
     return 1;
   }
 
@@ -541,12 +549,12 @@ io_eof(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   _getobj(obj, "_local", inst, &io_local);
   fp = io_local->fp;
   if (fp == NULL) {
-    error(obj, ERRCLOSED);
+    error(obj, OIO_ERRCLOSED);
     return 1;
   }
 
   r = feof(fp);
-  
+
   rval->i = (r) ? TRUE : FALSE;
 
   return r ? 0 : 1;
@@ -577,12 +585,12 @@ static struct objtable io[] = {
   {"_local",NPOINTER,0,NULL,NULL,0},
 };
 
-#define TBLNUM (sizeof(io) / sizeof(*io))
+#define OIO_TBLNUM (sizeof(io) / sizeof(*io))
 
 void *
 addio(void)
 /* addio() returns NULL on error */
 {
-  return addobject(NAME, NULL, PARENT, OVERSION, TBLNUM, io, ERRNUM, io_errorlist, NULL, NULL);
+  return addobject(NAME, NULL, PARENT, OVERSION, OIO_TBLNUM, io, ERRNUM, io_errorlist, NULL, NULL);
 }
 

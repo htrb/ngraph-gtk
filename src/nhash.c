@@ -1,4 +1,4 @@
-/* 
+/*
  * $Id: nhash.c,v 1.16 2009-11-16 12:59:18 hito Exp $
  */
 
@@ -10,7 +10,7 @@
 #include "object.h"
 #include "nhash.h"
 
-#define HASH_SIZE 67
+#define HASH_SIZE 251
 
 NHASH
 nhash_new(void)
@@ -47,7 +47,7 @@ nhash_free(NHASH hash)
   int i;
 
   for (i = 0; i < HASH_SIZE; i++) {
-    free_hash_list(hash[i], 0);
+    free_hash_list(hash[i], FALSE);
   }
   g_free(hash);
 }
@@ -58,7 +58,7 @@ nhash_free_with_memfree_ptr(NHASH hash)
   int i;
 
   for (i = 0; i < HASH_SIZE; i++) {
-    free_hash_list(hash[i], 1);
+    free_hash_list(hash[i], TRUE);
   }
   g_free(hash);
 }
@@ -68,12 +68,12 @@ nhash_clear(NHASH hash)
 {
   int i;
   for (i = 0; i < HASH_SIZE; i++) {
-    free_hash_list(hash[i], 0);
+    free_hash_list(hash[i], FALSE);
   }
   memset(hash, 0, HASH_SIZE * sizeof(struct nhash *));
 }
 
-int 
+int
 nhash_hkey(const char *ptr)
 {
   unsigned int i, v;
@@ -410,15 +410,22 @@ nhash_del(NHASH hash, const char *key)
 static int
 hash_each_sub(struct nhash *h, int(* func)(struct nhash *, void *), void *data)
 {
+  int r;
   if (h == NULL)
     return 0;
 
-  if (h->l)
-    hash_each_sub(h->l, func, data);
-
-  if (h->r)
-    hash_each_sub(h->r, func, data);
-
+  if (h->l) {
+    r = hash_each_sub(h->l, func, data);
+    if (r) {
+      return r;
+    }
+  }
+  if (h->r) {
+    r = hash_each_sub(h->r, func, data);
+    if (r) {
+      return r;
+    }
+  }
   return func(h, data);
 }
 
@@ -474,7 +481,7 @@ nhash_get_ptr_with_hkey(NHASH hash, const char *key, int hkey, void **ptr)
   return 0;
 }
 
-static void 
+static void
 print_hash(struct nhash *h)
 {
   if (h == NULL)

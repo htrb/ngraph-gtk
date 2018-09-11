@@ -14,6 +14,12 @@ rescue LoadError
 end
 
 class NgraphSpellchecker
+  ABORT = 1
+  IGNORE_ALL = 2
+  IGNORE = 3
+  APPLY = 4
+  APPLY_ALL = 5
+
   def initialize
     @speller = Aspell.new("en_US")
     @speller.suggestion_mode = Aspell::NORMAL
@@ -26,6 +32,8 @@ class NgraphSpellchecker
     @apply = {}
 
     @modified = false
+    @x = nil
+    @y = nil
   end
 
   def focused
@@ -38,48 +46,21 @@ class NgraphSpellchecker
     end
   end
 
-  begin
-    require 'gtk3'
-
-    ABORT = 1
-    IGNORE = 2
-    APPLY = 3
-    IGNORE_ALL = 4
-    APPLY_ALL = 5
-    def show_dialog(title, caption, text, item)
-      combo = Gtk::ComboBoxText.new(:entry => true)
-      item.each {|str|
-        combo.append(str, str)
-      }
-      combo.child.text = item[0] ? item[0] : text
-      label = Gtk::Label.new(caption)
-
-      dialog = Gtk::Dialog.new(:title => title,
-                               :buttons => [["_Abort",      ABORT],
-                                            ["_Ignore all", IGNORE_ALL],
-                                            ["_Ignore",     IGNORE],
-                                            ["_Apply all",  APPLY_ALL],
-                                            ["_Apply",      APPLY]])
-      dialog.default_response = Gtk::ResponseType::APPLY
-      dialog.content_area.pack_start(label)
-      dialog.content_area.pack_start(combo)
-      dialog.show_all
-      r = dialog.run
-      s = combo.active_text
-      dialog.destroy
-      [r, s]
-    end
-
-    def spell_check(original_string, id, word)
-      str = nil
-      return word if (@speller.check(word))
-      return word if (@ignore[word])
-      return @apply[word] if (@apply[word])
-
-      response, str = show_dialog("spell check (text:#{id})", 
-                                  "#{original_string}\nPossible correction for '#{word}':",
-                                  word,
-                                  @speller.suggest(word))
+  def spell_check(original_string, id, word)
+    str = nil
+    return word if (@speller.check(word))
+    return word if (@ignore[word])
+    return @apply[word] if (@apply[word])
+    Ngraph::Dialog.new {|dialog|
+      dialog.title = "spell check (text:#{id})"
+      dialog.buttons = ["_Abort", "_Ignore all", "_Ignore", "_Apply all", "_Apply"]
+      dialog.caption = "#{original_string}\nPossible correction for '#{word}':"
+      dialog.x = @x if (@x)
+      dialog.y = @y if (@y)
+      str = dialog.combo_entry(@speller.suggest(word))
+      response = dialog.response_button
+      @x = dialog.x
+      @y = dialog.y
       case response
       when IGNORE
         word
@@ -96,20 +77,7 @@ class NgraphSpellchecker
       else
         word
       end
-    end
-  rescue LoadError
-    def spell_check(original_string, id, word)
-      str = nil
-      return word if (@speller.check(word))
-      return word if (@ignore[word])
-      Ngraph::Dialog.new {|dialog|
-        dialog.title = "spell check (text:#{id})"
-        dialog.caption = "#{original_string}\nPossible correction for '#{word}':"
-        str = dialog.combo_entry(@speller.suggest(word))
-        @ignore[word] = true unless (str)
-      }
-      str || word
-    end
+    }
   end
 
   def skip_bracket(original_string, i, modified_string)

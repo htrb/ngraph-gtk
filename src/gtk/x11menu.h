@@ -37,6 +37,8 @@ enum MenuID {
   MenuIdGraphNewSection,
   MenuIdGraphNewCross,
   MenuIdGraphAllClear,
+  MenuIdEditRedo,
+  MenuIdEditUndo,
   MenuIdEditCut,
   MenuIdEditCopy,
   MenuIdEditPaste,
@@ -68,6 +70,7 @@ enum MenuID {
   MenuIdToggleCToolbar,
   MenuIdTogglePToolbar,
   MenuIdToggleCrossGauge,
+  MenuIdToggleGridLine,
   MenuIdEditOrderTop,
   MenuIdEditOrderUp,
   MenuIdEditOrderDown,
@@ -171,9 +174,10 @@ struct obj_list_data
   GtkWidget *popup, **popup_item;
   GtkWidget *text;
   int select, can_focus;
-  void (* update)(struct obj_list_data *data, int);
+  void (* update)(struct obj_list_data *data, int, int);
   void (* delete)(struct obj_list_data *data, int);
   void (* setup_dialog)(struct obj_list_data *data, int id, int user_data);
+  int (* undo_save)(int type);
   void *dialog;
   gboolean (* ev_key) (GtkWidget *, GdkEvent *, gpointer);
   struct objlist *obj;
@@ -204,11 +208,7 @@ struct NgraphApp
   gint Message1;
   GtkRecentManager *recent_manager;
   GtkEntryCompletion *legend_text_list, *x_math_list, *y_math_list, *func_list, *fit_list;
-#if GTK_CHECK_VERSION(3, 0, 0)
   cairo_surface_t *markpix[MARK_TYPE_NUM];
-#else
-  GdkPixmap *markpix[MARK_TYPE_NUM];
-#endif
   GdkCursor **cursor;
   struct Viewer Viewer;
   struct SubWin FileWin;
@@ -229,13 +229,49 @@ extern GtkAccelGroup *AccelGroup;
 extern GtkApplication *GtkApp;
 #endif
 
+enum MENU_UNDO_TYPE {
+  UNDO_TYPE_EDIT,
+  UNDO_TYPE_MOVE,
+  UNDO_TYPE_ROTATE,
+  UNDO_TYPE_FLIP,
+  UNDO_TYPE_DELETE,
+  UNDO_TYPE_CREATE,
+  UNDO_TYPE_ALIGN,
+  UNDO_TYPE_ORDER,
+  UNDO_TYPE_COPY,
+  UNDO_TYPE_SHLL,
+  UNDO_TYPE_ADDIN,
+  UNDO_TYPE_CLEAR_SCALE,
+  UNDO_TYPE_UNDO_SCALE,
+  UNDO_TYPE_OPEN_FILE,
+  UNDO_TYPE_ADD_RANGE,
+  UNDO_TYPE_PASTE,
+  UNDO_TYPE_ZOOM,
+  UNDO_TYPE_AUTOSCALE,
+  UNDO_TYPE_TRIMMING,
+  UNDO_TYPE_DUMMY,
+  UNDO_TYPE_NUM,
+};
+
+struct EventLoopInfo {
+  int type;
+  guint32 time;
+};
+
+enum RerawFlag {
+  DRAW_NONE = 0,
+  DRAW_REDRAW = 1,
+  DRAW_NOTIFY = 2,
+  DRAW_AXIS_ONLY = 4,
+};
+
 int application(char *file);
 
 void set_current_window(GtkWidget *w);
 GtkWidget *get_current_window(void);
 GtkWidget *create_recent_menu(int type);
-void UpdateAll(void);
-void UpdateAll2(void);
+void UpdateAll(char **objects);
+void UpdateAll2(char **objects, int redraw);
 void ChangePage(void);
 void NSetCursor(unsigned int type);
 unsigned int NGetCursor(void);
@@ -264,5 +300,17 @@ int toggle_view(int type, int state);
 void CmToggleSingleWindowMode(GtkCheckMenuItem *action, gpointer client_data);
 void CmReloadWindowConfig(void *w, gpointer user_data);
 void show_recent_dialog(int type);
+int menu_save_undo(enum MENU_UNDO_TYPE type, char **obj);
+int menu_save_undo_single(enum MENU_UNDO_TYPE type, char *obj);
+void menu_delete_undo(int id);
+void menu_clear_undo(void);
+void menu_undo_internal(int id);
+void menu_undo(void);
+void menu_redo(void);
+int get_graph_modified(void);
+void set_graph_modified(void);
+void set_graph_modified_gra(void);
+void reset_graph_modified(void);
+void draw_notify(int notify);
 
 #endif

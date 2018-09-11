@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<interface>
+  <menu id="stroke-fill-menu">
+    <section>
+      <item>
+	<attribute name="label" translatable="yes">_Stroke</attribute>
+	<attribute name="action">app.StrokeFillStrokeAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Fill</attribute>
+	<attribute name="action">app.StrokeFillFillAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Close path</attribute>
+	<attribute name="action">app.StrokeFillClosePathAction</attribute>
+	<attribute name="hidden-when">action-disabled</attribute>
+      </item>
+    </section>
+  </menu>
+  <menu id="join-type-menu">
+    <section>
+      <item>
+	<attribute name="label" translatable="yes">miter</attribute>
+	<attribute name="action">app.JoinTypeAction</attribute>
+	<attribute name="target">miter</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">round</attribute>
+	<attribute name="action">app.JoinTypeAction</attribute>
+	<attribute name="target">round</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">bevel</attribute>
+	<attribute name="action">app.JoinTypeAction</attribute>
+	<attribute name="target">bevel</attribute>
+      </item>
+    </section>
+  </menu>
+  <menu id="marker-type-begin-menu">
+    <section>
+      <item>
+	<attribute name="label" translatable="yes">none</attribute>
+	<attribute name="action">app.MarkerTypeBeginAction</attribute>
+	<attribute name="target">none</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">arrow</attribute>
+	<attribute name="action">app.MarkerTypeBeginAction</attribute>
+	<attribute name="target">arrow</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">wave</attribute>
+	<attribute name="action">app.MarkerTypeBeginAction</attribute>
+	<attribute name="target">wave</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">mark</attribute>
+	<attribute name="action">app.MarkerTypeBeginAction</attribute>
+	<attribute name="target">mark</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">bar</attribute>
+	<attribute name="action">app.MarkerTypeBeginAction</attribute>
+	<attribute name="target">bar</attribute>
+      </item>
+    </section>
+  </menu>
+  <menu id="marker-type-end-menu">
+    <section>
+      <item>
+	<attribute name="label" translatable="yes">none</attribute>
+	<attribute name="action">app.MarkerTypeEndAction</attribute>
+	<attribute name="target">none</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">arrow</attribute>
+	<attribute name="action">app.MarkerTypeEndAction</attribute>
+	<attribute name="target">arrow</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">wave</attribute>
+	<attribute name="action">app.MarkerTypeEndAction</attribute>
+	<attribute name="target">wave</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">mark</attribute>
+	<attribute name="action">app.MarkerTypeEndAction</attribute>
+	<attribute name="target">mark</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">bar</attribute>
+	<attribute name="action">app.MarkerTypeEndAction</attribute>
+	<attribute name="target">bar</attribute>
+      </item>
+    </section>
+  </menu>
+</interface>

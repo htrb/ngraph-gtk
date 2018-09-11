@@ -1,5 +1,7 @@
-<html><head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
 <title>Text</title></head>
 <body>
 <a name="TOP">&nbsp;</a>
@@ -14,8 +16,7 @@
 <br>
 
 
-<a name="FONT">&nbsp;</a>
-<h2><a href="#TOP">フォントの扱い</a></h2>
+<h2><a name="FONT" href="#TOP">フォントの扱い</a></h2>
 <br>
 <div>
 [Legend]-[Text] で指定するフォント名はすべてエイリアス（別名）です。
@@ -26,9 +27,9 @@ Ngraphでは異なるオペレーティングシステムとの互換性を考�
 <br>
 インストール時に定義されているフォントマッピング<br>
 <br>
-<table border=1>
+<table border="1">
  <tr><th rowspan="2">Ngraph定義名</th><th colspan="2">フォント名</th></tr>
- <tr><th>Windows</th><th>それ以外</th>
+ <tr><th>Windows, macOS</th><th>それ以外</th>
  <tr><td>Serif</td><td>Times New Roman</td><td>Liberation Sans</td></tr>
  <tr><td>Sans-serif</td><td>Arial</td><td>Liberation Serif</td></tr>
  <tr><td>Monospace</td><td>Courier New</td><td>Liberation Mono</td></tr>
@@ -41,14 +42,13 @@ Ngraphでは異なるオペレーティングシステムとの互換性を考�
 
 
 
-<a name="TEXT">&nbsp;</a>
-<h2><a href="#TOP">テキスト描画の制御文字</a></h2>
+<h2><a name="TEXT" href="#TOP">テキスト描画の制御文字</a></h2>
 <br>
 <div>
 Legend textダイアログボックスのTextで文字列中に制御文字を挿入して, 書式を一文字単位で変更することができます。<br>
 <br>
 <b>基本</b>
-<table border=1>
+<table border="1">
 <tr><td>^</td><td>続く文字は上付き文字になる</td></tr>
 <tr><td>_</td><td>続く文字は下付き文字になる</td></tr>
 <tr><td>@</td><td>上付き文字, 下付き文字を解除する</td></tr>
@@ -59,12 +59,12 @@ Legend textダイアログボックスのTextで文字列中に制御文字を�
 <tr><td>\b</td><td>バックスペース(幅は'h')</td></tr>
 <tr><td>\n</td><td>改行</td></tr>
 <tr><td>\-</td><td>ハイフン</td></tr>
-<tr><td>\&</td><td>テキストが\nの改行によって複数行あるとき\&の位置で位置合わせをする</td></tr>
+<tr><td>\&amp;</td><td>テキストが\nの改行によって複数行あるとき\&amp;の位置で位置合わせをする</td></tr>
 <tr><td>\</td><td>次の文字が%\@^_の時, それらを制御文字として扱わずに出力する</td></tr>
 </table><br>
 <br>
 <b>フォント</b>
-<table border=1>
+<table border="1">
 <tr><td>%F{エイリアス名}</td><td>フォントをエイリアス名に変更する</td></tr>
 <tr><td>%S{整数}</td><td>フォントのサイズをポイントで指定する</td></tr>
 <tr><td>%P{整数}</td><td>文字間隔をポイントで指定する</td></tr>
@@ -76,29 +76,34 @@ Legend textダイアログボックスのTextで文字列中に制御文字を�
 </table><br>
 <br>
 <b>数式</b>
-<table border=1>
+<table border="1">
 <tr><td>%[式]</td><td>式の値</td></tr>
 </table><br>
 <br>
 <b>整形</b>
-<table border=1>
+<table border="1">
 <tr><td>%pf{format value}</td><td>value を format で整形して出力する
 <ul>
  <li> format について詳しくは man 3 printf を参照してください。
  <li> 精度指定に '*' や `*m$' は使用できません。
  <li> 長さ修飾子に hh, h, L, q, j, z, Z, t は使用できません。
  <li> 変換指定子に F, a, A, m, n, p, C, S は使用できません。
+ <li> フラグ文字に '^' を指定できます。e, E, g G 変換時に指数表記を "×10<sup>-3</sup>" のように表示します (フィールド幅指定には未対応) 。
 </ul>
-<br>例：<br>%pf{%e 1} は 1.000000e+00<br>%pf{%2.2f %[exp(1)]} は 2.72</td></tr>
+<br>例：<br>
+%pf{%e 1} は 1.000000e+00<br>
+%pf{%^.3e 1E-3} は 1.000×10<sup>-3</sup><br>
+%pf{%2.2f %[exp(1)]} は 2.72
+</td></tr>
 </table><br>
 <br>
 <b>オブジェクト</b>
-<table border=1>
+<table border="1">
 <tr><td>%{object:id:field parameter}</td><td>オブジェクト(object)のインスタンス(id)のフィールド(field)の値</td></tr>
 </table><br>
 <br>
 <b>オブジェクトの指定例</b>
-<table border=1>
+<table border="1">
 <tr><td>%{system::date 0}</td><td>Fri Feb 2 1990 型の日付</td></tr>
 <tr><td>%{system::date 1}</td><td>2-2-1990 型の日付</td></tr>
 <tr><td>%{system::date 2}</td><td>Feb 2 1990 型の日付</td></tr>
@@ -108,25 +113,25 @@ Legend textダイアログボックスのTextで文字列中に制御文字を�
 <tr><td>%{system::time 3}</td><td>12:00 am 型の時刻</td></tr>
 <tr><td>%{menu::ngp}</td><td>ngpファイル名</td></tr>
 <tr><td>%{menu::fullpath_ngp}</td><td>フルパスのNGPファイル名</td></tr>
-<tr><td>%{file:X:file}</td><td>ファイル名 (X はファイル番号)</td></tr>
-<tr><td>%{file:X:basename}</td><td>フォルダ名を除いたファイル名 (X はファイル番号)</td></tr>
-<tr><td>%{file:X:date 0}</td><td>ファイルの日付</td></tr>
-<tr><td>%{file:X:time 0}</td><td>ファイルの時刻</td></tr>
-<tr><td>%{file:X:column:l c}</td><td>ファイルの l 行の c カラムの内容</td></tr>
-<tr><td>%{file:X:dnum}</td><td>ファイルXのデータ数</td></tr>
-<tr><td>%{file:X:dx n}</td><td>ファイルXのn行目の値(x)</td></tr>
-<tr><td>%{file:X:dminx}</td><td>ファイルXの最小値(x)</td></tr>
-<tr><td>%{file:X:dmaxx}</td><td>ファイルXの最大値(x)</td></tr>
-<tr><td>%{file:X:davx}</td><td>ファイルXの平均値(x)</td></tr>
-<tr><td>%{file:X:dsigx}</td><td>ファイルXの標準偏差(x)</td></tr>
-<tr><td>%{file:X:dy n}</td><td>ファイルXのn行目の値(y)</td></tr>
-<tr><td>%{file:X:dminy}</td><td>ファイルXの最小値(y)</td></tr>
-<tr><td>%{file:X:dmaxy}</td><td>ファイルXの最大値(y)</td></tr>
-<tr><td>%{file:X:davy}</td><td>ファイルXの平均値(y)</td></tr>
-<tr><td>%{file:X:dsigy}</td><td>ファイルXの標準偏差(y)</td></tr>
+<tr><td>%{data:X:file}</td><td>ファイル名 (X はファイル番号)</td></tr>
+<tr><td>%{data:X:basename}</td><td>フォルダ名を除いたファイル名 (X はファイル番号)</td></tr>
+<tr><td>%{data:X:date 0}</td><td>ファイルの日付</td></tr>
+<tr><td>%{data:X:time 0}</td><td>ファイルの時刻</td></tr>
+<tr><td>%{data:X:column:l c}</td><td>ファイルの l 行の c カラムの内容</td></tr>
+<tr><td>%{data:X:dnum}</td><td>ファイルXのデータ数</td></tr>
+<tr><td>%{data:X:dx n}</td><td>ファイルXのn行目の値(x)</td></tr>
+<tr><td>%{data:X:dminx}</td><td>ファイルXの最小値(x)</td></tr>
+<tr><td>%{data:X:dmaxx}</td><td>ファイルXの最大値(x)</td></tr>
+<tr><td>%{data:X:davx}</td><td>ファイルXの平均値(x)</td></tr>
+<tr><td>%{data:X:dsigx}</td><td>ファイルXの標準偏差(x)</td></tr>
+<tr><td>%{data:X:dy n}</td><td>ファイルXのn行目の値(y)</td></tr>
+<tr><td>%{data:X:dminy}</td><td>ファイルXの最小値(y)</td></tr>
+<tr><td>%{data:X:dmaxy}</td><td>ファイルXの最大値(y)</td></tr>
+<tr><td>%{data:X:davy}</td><td>ファイルXの平均値(y)</td></tr>
+<tr><td>%{data:X:dsigy}</td><td>ファイルXの標準偏差(y)</td></tr>
 <tr>
  <td>
-  %{file:X:fit_prm:n}
+  %{data:X:fit_prm:n}
  </td>
  <td>
   ファイルXのプロットタイプが Fit のとき、フィットの結果 f(x) に対して
@@ -135,7 +140,7 @@ Legend textダイアログボックスのTextで文字列中に制御文字を�
 </tr>
 <tr>
  <td>
-  %{file:X:fit_calc:a}
+  %{data:X:fit_calc:a}
  </td>
  <td>
   ファイルXのプロットタイプが Fit のとき、フィットの結果 f(x) に対して
@@ -144,7 +149,7 @@ Legend textダイアログボックスのTextで文字列中に制御文字を�
 </tr>
 <tr>
  <td>
-  %{file:X:fit_newton:a b}
+  %{data:X:fit_newton:a b}
  </td>
  <td>
   ファイルXのプロットタイプが Fit のとき、フィットの結果 f(x) に対して
@@ -160,5 +165,3 @@ Legend textダイアログボックスのTextで文字列中に制御文字を�
 <br>
 
 </body></html>
-
-

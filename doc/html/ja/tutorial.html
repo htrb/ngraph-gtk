@@ -1,7 +1,7 @@
-
-<html>
+<!DOCTYPE html>
+<html lang="ja">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="UTF-8">
 <title>Tutorial</title>
 </head>
 <body>
@@ -69,8 +69,7 @@
 
 <hr size="5">
 
-<a name="VIEW">&nbsp;</a>
-<h2><a href="#TOP">外観</a></h2>
+<h2><a name="VIEW" href="#TOP">外観</a></h2>
 <ol>
  <li><h3>起動画面</h3>
       <p>
@@ -142,8 +141,7 @@
 
 <hr>
 
-<a name="GRAPH">&nbsp;</a>
-<h2><a href="#TOP">グラフ作成の概略</a></h2>
+<h2><a name="GRAPH" href="#TOP">グラフ作成の概略</a></h2>
 <ol>
  <li><h3>データファイルを用意する</h3>
       <p>
@@ -158,8 +156,7 @@
       したいグラフの種類を決めます。
       Ngraphでは以下の3つに分類されています。
       </p>
-      <p>
-      <table border=1>
+      <table border="1">
        <tr>
 	<td align=CENTER><img src="./tutorial/graphf.jpg" WIDTH="150" HEIGHT="146" ALT=""></td>
 	<td align=CENTER><img src="./tutorial/graphs.jpg" WIDTH="150" HEIGHT="146" ALT=""></td>
@@ -171,7 +168,6 @@
 	<td>交差グラフ(Cross graph)<br>X-Y２軸のグラフ</td>
        </tr>
       </table>
-      </p>
       <p>
       初期状態ではフレームグラフが一つ作成されています。
       フレームグラフの４つの軸のスケールはまだ設定されていませんので、軸の基線を示す枠だけが表示されています。
@@ -188,6 +184,7 @@
       </p>
       <p>
       データファイルを開く方法は他にも用意されています。
+      </p>
       <ol>
        <li>下図のコントロールボタンを押す。
 	 <p>
@@ -197,7 +194,6 @@
        <li>ファイルマネージャー等からデータファイルを選び、グラフまたは
 	    Data タブ上にドラッグ&amp;ドロップする。
       </ol>
-      </p>
       <p>
       いずれの方法でも、
       データファイルを指定すると次いでプロット方法などを指定するデータダイアログボックスが開きますが、
@@ -214,19 +210,18 @@
       </p>
       <p>
       描画する方法は他にも用意されています。
+      </p>
       <ol>
        <li>[表示]-[描画]([View]-[Draw])メニューを選択する。
        <li>グラフ上でクリックしてスペースキーを押す。
       </ol>
-      </p>
       <p>
       この様にして描画すると軸のスケールは少し余白をとるように自動的に設定され、グラフが描画されます。
       </p>
 </ol>
 <hr>
 
-<a name="SCALE">&nbsp;</a>
-<h2><a href="#TOP">軸のスケール</a></h2>
+<h2><a name="SCALE" href="#TOP">軸のスケール</a></h2>
 <ol>
  <li><h3>スケールを変える</h3>
       <p>
@@ -239,6 +234,7 @@
       </p>
       <p>
       軸ダイアログボックスを開く方法は他にも用意されています。
+      </p>
       <ol>
        <li>[軸]-[設定] ([Axis]-[Update]) メニューでプ変更したい軸を選ぶ。
        <li>下図ボタンのいずれか一方
@@ -249,7 +245,6 @@
 	    <img src="../img/axispo.png" ALT="">
 	    </p>
       </ol>
-      </p>
       <p>
       この様にすると下図の軸ダイアログボックスが開かれます。
       ここで、「最小値」「最大値」「増分」に軸のスケールの最小，最大，増分を指定してください。
@@ -310,8 +305,7 @@
 
 <hr>
 
-<a name="PLOT">&nbsp;</a>
-<h2><a href="#TOP">プロット方法</a></h2>
+<h2><a name="PLOT" href="#TOP">プロット方法</a></h2>
 <ol>
  <li><h3>プロット方法を変える</h3>
       <p>
@@ -322,7 +316,8 @@
       <img src="./tutorial/fwindow.png" WIDTH="580" HEIGHT="236" ALT="">
       </p>
       <p>
-      データダイアログボックスを開く方法はその他に
+      データダイアログボックスはその他に次の方法で開くことができます。
+      </p>
       <ol>
        <li>[データ]-[設定] ([Data]-[Update]) メニューでプロットしたいデータファイルを選ぶ
        <li>下図ボタンを押してデータ選択モードにしてグラフ上でデータをクリックする
@@ -331,19 +326,15 @@
 	 </p>
        <li>Data タブ上でマウス右ボタンを押してポップアップメニューを出し、"プロパティ(P)" メニューを選ぶ
       </ol>
-      があります。
-      </p>
       <p>
       この様にすると下左図に示すデータダイアログボックスが現れます。
       </p>
-      <p>
-      <table border=0>
+      <table border="0">
        <tr>
 	<td><img src="./tutorial/filedlg.png" WIDTH="388" HEIGHT="312" ALT=""></td>
-	<td><img src="./tutorial/fdialog.png" ALT="244" HEIGHT="244" ALT=""></td>
+	<td><img src="./tutorial/fdialog.png" WIDTH="244" HEIGHT="244" ALT=""></td>
        </tr>
       </table>
-      </p>
       <p>
       例えばプロット方法を変更してデータを曲線で結ぶようにするには上右図にの様にプロットタイプを "曲線" にします。
       その後、データダイアログボックスを OK で閉じ、もう一度描画してくだ
@@ -366,27 +357,23 @@
       下左図は Data タブでポップアップメニューを出した状態です。
       "複製(D)"メニューを選ぶ事で下右図のように Data タブには同じファイルが2つリストされるようになります。
       </p>
-      <p>
-      <table border=0>
+      <table border="0">
        <tr>
 	<td><img src="./tutorial/fdup.png" WIDTH="290" HEIGHT="221" ALT=""></td>
 	<td><img src="./tutorial/fwindow2.png" WIDTH="290" HEIGHT="112" ALT=""></td>
        </tr>
       </table>
-      </p>
       <p>
       このようにして2度開いたファイルのプロットの設定を、
       片方のプロットを "マーク" に、もう片方を "曲線" にする事で、
       データは曲線と点の両方でプロットされるようになります。
       </p>
-      <p>
-      <table border=0>
+      <table border="0">
        <tr>
 	<td><img src="./tutorial/fdialog2.png" WIDTH="244" HEIGHT="244" ALT=""></td>
 	<td><img src="./tutorial/fdialog.png" WIDTH="244" HEIGHT="244" ALT=""></td>
        </tr>
       </table>
-      </p>
 
  <li><h3>データ点の評価・マスク・移動</h3>
       <p>
@@ -415,8 +402,7 @@
 
 <hr>
 
-<a name="LEGEND">&nbsp;</a>
-<h2><a href="#TOP">グラフを飾りづける</a></h2>
+<h2><a name="LEGEND" href="#TOP">グラフを飾りづける</a></h2>
 <ol>
  <li><h3>Legend を入れる</h3>
       <p>
@@ -429,8 +415,7 @@
       <p>
       <img src="../img/legend.png" ALT="">
       </p>
-      <p>
-      <table border=1>
+      <table border="1">
        <tr><td><img src="../img/bline.png" WIDTH="20" HEIGHT="20" ALT=""></td><td>直線・曲線を作成します。</td></tr>
        <tr><td><img src="../img/brect.png" WIDTH="20" HEIGHT="20" ALT=""></td><td>矩形を作成します。</td></tr>
        <tr><td><img src="../img/barc.png" WIDTH="20" HEIGHT="20" ALT=""></td><td>円・楕円を作成します。</td></tr>
@@ -438,7 +423,6 @@
        <tr><td><img src="../img/btext.png" WIDTH="20" HEIGHT="20" ALT=""></td><td>テキストを作成します。</td></tr>
        <tr><td><img src="../img/bgauss.png" WIDTH="20" HEIGHT="20" ALT=""></td><td>ガウス関数, ローレンツ関数, 放物線, 正弦曲線を作成します。<br>作成した曲線はただちにレジェンド-曲線に展開されるので, 一度作成すると関数としての変更はできません。</td></tr>
       </table>
-      </p>
       <p>
       文字列をグラフ上にドラッグ&amp;ドロップすることでもテキストを作成できます。
       </p>
@@ -510,8 +494,7 @@
 
 <hr>
 
-<a name="OUTPUT">&nbsp;</a>
-<h2><a href="#TOP">グラフの印刷・保存・読込、ファイルへの出力</a></h2>
+<h2><a name="OUTPUT" href="#TOP">グラフの印刷・保存・読込、ファイルへの出力</a></h2>
 <ol>
  <li><h3>グラフの印刷</h3>
       <p>
@@ -594,21 +577,18 @@
 
 <hr>
 
-<a name="FIT">&nbsp;</a>
-<h2><a href="#TOP">フィッティング</a></h2>
+<h2><a name="FIT" href="#TOP">フィッティング</a></h2>
 <ol>
  <li><h3>通常のフィット</h3>
       <p>
       データのフィッティングをするには下図の様にデータダイアログボックスでプロット形式を fit にします。
       </p>
-      <p>
-      <table border=0>
+      <table border="0">
        <tr>
 	<td><img src="./tutorial/filedlg.png" WIDTH="388" HEIGHT="312" ALT=""></td>
 	<td><img src="./tutorial/fdialog3.png" WIDTH="245" HEIGHT="243" ALT=""></td>
        </tr>
-       </table>
-       </p>
+      </table>
       <p>
       その後、「作成」ボタンを押すと下図のフィットダイアログボックスが開きますので、そこでフィッティングの方法を指定します。
       </p>
@@ -706,8 +686,7 @@
 
 <hr>
 
-<a name="MATH">&nbsp;</a>
-<h2><a href="#TOP">数式変換機能を使う</a></h2>
+<h2><a name="MATH" href="#TOP">数式変換機能を使う</a></h2>
 <ol>
  <li><h3>データを数式で変換してプロットする</h3>
       <p>
@@ -727,18 +706,19 @@
       </pre>
       と入力してください。もしデータダイアログボックスの「(Y)カラム」が 2 となっている場合には
       <pre>
-      %02^2 (あるいは同じ事ですが SQR(%02))
+      %2^2 (あるいは同じ事ですが SQR(%2))
       </pre>
-      でも同じ結果を得ることができます。%02 の意味は "データファイルの2カラム目のデータ"です。
-      このように %01〜%99 で特定のカラムを取り出す事ができます。
+      でも同じ結果を得ることができます。%2 の意味は "データファイルの2カラム目のデータ"です。
+      このように %1〜%999 で特定のカラムを取り出す事ができます。
       一方、Xはデータダイアログボックスの「(X)カラム」に指定したカラムのデータであり、
       Yはデータダイアログボックスの「(Y)カラム」に指定したカラムのデータです。
-      ですから、「(Y)カラム」を 3 にすると、今度は "Y" と "%03" が同じ値を示すようになります。
+      ですから、「(Y)カラム」を 3 にすると、今度は "Y" と "%3" が同じ値を示すようになります。
+      また配列 COL を使って特定のカラムを取り出すこともできます。 COL[1] が1カラム目のデータになります。
       </p>
       <p>
       縦軸データをカラム 1 とカラム2 の和をプロットしたい時には変換数式に
       <pre>
-      %01+%02
+      %1+%2
       </pre>
       と入力してください。このようにカラム間の演算ができます。
       また、0番目(Data タブのリストの先頭の数字)のデータのカラム 1 と、1 番目のデータのカラム2 の和をプロットしたい時には変換数式に
@@ -755,8 +735,7 @@
 
 <hr>
 
-<a name="MULTI">&nbsp;</a>
-<h2><a href="#TOP">複数のグラフ</a></h2>
+<h2><a name="MULTI" href="#TOP">複数のグラフ</a></h2>
 <ol>
  <li><h3>複数のグラフの作り方</h3>
       <ul>
@@ -805,7 +784,7 @@
       軸の名前は以下の形式をしています。
       </p>
       <p>
-      <table border=1>
+      <table border="1">
        <tr align="CENTER"><td>グラフの種類</td><td>軸</td><td>グラフの番号</td></tr>
        <tr><td>f: フレームグラフ<br>s: 方眼グラフ<br>c: 交差グラフ</td>
 	<td>X<br>Y<br>U<br>R</td>

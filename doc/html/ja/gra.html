@@ -1,6 +1,7 @@
-<html>
+<!DOCTYPE html>
+<html lang="ja">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="UTF-8">
 <title>GRA</title>
 </head>
 <body>
@@ -17,8 +18,7 @@
 <br>
 
 
-<a name="GRAFILE">&nbsp;</a>
-<h2><a href="#TOP">概要</a></h2>
+<h2><a name="GRAFILE" href="#TOP">概要</a></h2>
 <br>
 <div>
 <p>
@@ -50,8 +50,7 @@ GRAファイルは, 直線, 円などのグラフィックス命令を記述し�
 
 
 
-<a name="GRAFILESTRUCTURE">&nbsp;</a>
-<h2><a href="#TOP">GRAファイルの構造</a></h2>
+<h2><a name="GRAFILESTRUCTURE"  href="#TOP">GRAファイルの構造</a></h2>
 <br>
 <div>
 下にGRAファイルの例を示します。<br>
@@ -69,18 +68,16 @@ L,4,17500,22000,17500,8000
 E,0
 </pre>
 
-<p>GRAファイルの第一行はGRAファイルの識別子である
+<p>GRAファイルの第一行はGRAファイルの識別子である次の文字列でなければなりません。
 <pre>
 %Ngraph GRAF
 </pre>
-でなければなりません。
-</p>
 <p>
 第2行以降は1行に1つずつグラフィックスコマンドが記述されます。グラフィックスコマンドの形式を示します。
 </p>
 <pre>
 command, n, arg1, arg2, ..., argn
-<pre>
+</pre>
 <ul>
  <li>commandはグラフィックスコマンドを指定するアルファベット一文字で I, E, V, A, G, M, N, L, T, C, B, P, R, D, H のいずれかです。
  <li>n は引数の数(整数)を現します。
@@ -88,9 +85,11 @@ command, n, arg1, arg2, ..., argn
 </ul>
 
 <p>コマンドの区切りにはスペース, タブ, コンマが使えます。
-ただしcommandが%, F, S の場合には
+ただしcommandが%, F, S の場合には次のようにコマンド直後に
+文字列の引数(下の例ではthis is a string)を記述します。
+</p>
 <pre>Sthis is a string</pre>
-のようにコマンド直後に文字列の引数(上の例ではthis is a string)を記述します。
+<p>
 この場合, 文字列引数の中のスペース・タブ・コンマは通常の文字として扱われます。
 </p>
 </div>
@@ -98,8 +97,7 @@ command, n, arg1, arg2, ..., argn
 <hr>
 
 
-<a name="GRACOMMAND">&nbsp;</a>
-<h2><a href="#TOP">GRAファイルのグラフィックコマンド</a></h2>
+<h2><a name="GRACOMMAND" href="#TOP">GRAファイルのグラフィックコマンド</a></h2>
 <div>
 <p>
 グラフィックコマンドの引数は特に指定のない限り単位は0.01mmです。
@@ -107,11 +105,10 @@ X座標増加方向は右, Y座標増加方向は下です。
 数値引数はすべて整数値でなければなりません。
 </p>
 
-<table border=1>
+<table border="1">
  <tr><td>コマンド</td><td>機能</td><td>書式</td></tr>
  <tr><td>I</td><td>初期化命令</td><td>I,5,arg1,arg2,arg3,arg4,arg5</td></tr>
 </table>
-<p>
 <dl>
  <dt> arg1
  <dd> 左マージン
@@ -124,12 +121,11 @@ X座標増加方向は右, Y座標増加方向は下です。
  <dt> arg5
  <dd> 拡大率(0.01%単位)
 </dl>
-</p>
 <ul>
  <li>出力デバイスの初期化を行う。1回の描画で初めに一度だけ呼ばれる。
 </ul>
 
-<table border=1>
+<table border="1">
  <tr><td>コマンド</td><td>機能</td><td>書式</td></tr>
  <tr><td>E</td><td>終了命令</td><td>E,0</td></tr>
 </table>
@@ -137,7 +133,7 @@ X座標増加方向は右, Y座標増加方向は下です。
  <li>一回の描画で最後に一度だけ呼ばれる。出力デバイスの後処理を行う。
 </ul>
 
-<table border=1>
+<table border="1">
  <tr><td>コマンド</td><td>機能</td><td>書式</td></tr>
  <tr><td>%</td><td>コメント</td><td>%comment</td></tr>
 </table>
@@ -145,7 +141,7 @@ X座標増加方向は右, Y座標増加方向は下です。
  <li>文字列引数(コメント)
 </ul>
 
-<table border=1>
+<table border="1">
  <tr><td>コマンド</td><td>機能</td><td>書式</td></tr>
  <tr><td>V</td><td>クリッピング領域, 原点移動命令</td><td>V,5,arg1,arg2,arg3,arg4,arg5</td></tr>
 </table>
@@ -171,7 +167,7 @@ X座標増加方向は右, Y座標増加方向は下です。
  <li>クリッピング処理は基本的にNgraph内部で行っているので必ずしも必要ではないが, クリッピングするのが望ましい(原点移動は必須)。
 </ul>
 
-<table border=1>
+<table border="1">
  <tr><td>コマンド</td><td>機能</td><td>書式</td></tr>
  <tr><td>A</td><td>線属性指定命令</td><td>A,n,arg1,arg2,.... </td></tr>
 </table>
@@ -201,9 +197,8 @@ X座標増加方向は右, Y座標増加方向は下です。
  <dt> arg(i) - arg(i + 5) i = 1 - arg1
  <dd> 点線要素
 </dl>
-</p>
 
-<table border=1>
+<table border="1">
  <tr><td>コマンド</td><td>機能</td><td>書式</td></tr>
  <tr><td>G</td><td>カラー指定命令</td><td>G,4,arg1,arg2,arg3,arg4 </td></tr>
 </table>
@@ -223,7 +218,7 @@ X座標増加方向は右, Y座標増加方向は下です。
  <li> arg4 は設定によって、あるいはドライバによって無視されることがある。
 </ul>
 
-<table border=1>
+<table border="1">
  <tr><td>コマンド</td><td>機能</td><td>書式</td></tr>
  <tr><td>M</td><td>カレントポイント移動命令</td><td>M,2,arg1,arg2 </td></tr>
 </table>
@@ -234,7 +229,7 @@ X座標増加方向は右, Y座標増加方向は下です。
  <dd> Y座標
 </dl>
 
-<table border=1>
+<table border="1">
  <tr><td>コマンド</td><td>機能</td><td>書式</td></tr>
  <tr><td>N</td><td>カレントポイント相対移動命令</td><td>N,2,arg1,arg2 </td></tr>
 </table>
@@ -245,7 +240,7 @@ X座標増加方向は右, Y座標増加方向は下です。
  <dd> Y方向移動量
 </dl>
 
-<table border=1>
+<table border="1">
  <tr><td>コマンド</td><td>機能</td><td>書式</td></tr>
  <tr><td>L</td><td>線描画命令</td><td>L,4,arg1,arg2,arg3,arg4 </td></tr>
 </table>
@@ -262,7 +257,7 @@ X座標増加方向は右, Y座標増加方向は下です。
 </dl>
 
 
-<table border=1>
+<table border="1">
  <tr><td>コマンド</td><td>機能</td><td>書式</td></tr>
  <tr><td>T</td><td>カレントポイント相対・線描画命令</td><td>T,2,arg1,arg2 </td></tr>
 </table>
@@ -278,7 +273,7 @@ X座標増加方向は右, Y座標増加方向は下です。
  <li>本命令実行後, カレントポイントは終点に移動する。
 </ul>
 
-<table border=1>
+<table border="1">
  <tr><td>コマンド</td><td>機能</td><td>書式</td></tr>
  <tr><td>C</td><td>楕円描画命令</td><td>C,7,arg1,arg2,arg3,arg4,arg5,arg6,arg7 </td></tr>
 </table>
@@ -313,7 +308,7 @@ X座標増加方向は右, Y座標増加方向は下です。
  <li>角度は, 楕円 (x/a)^2+(y/b)^2=1 を x=a*cosθ, y=b*sinθ と媒介変数表示した時のθ。
 </ul>
 
-<table border=1>
+<table border="1">
  <tr><td>コマンド</td><td>機能</td><td>書式</td></tr>
  <tr><td>B</td><td>四角形描画命令</td><td>B,5,arg1,arg2,arg3,arg4,arg5 </td></tr>
 </table>
@@ -337,7 +332,7 @@ X座標増加方向は右, Y座標増加方向は下です。
 </dl>
 
 
-<table border=1>
+<table border="1">
  <tr><td>コマンド</td><td>機能</td><td>書式</td></tr>
  <tr><td>P</td><td>点描画命令</td><td>P,2,arg1,arg2 </td></tr>
 </table>
@@ -350,7 +345,7 @@ X座標増加方向は右, Y座標増加方向は下です。
 </dl>
 
 
-<table border=1>
+<table border="1">
  <tr><td>コマンド</td><td>機能</td><td>書式</td></tr>
  <tr><td>R</td><td>多角形描画命令</td><td>R,n,arg1,arg2,... </td></tr>
 </table>
@@ -367,7 +362,7 @@ X座標増加方向は右, Y座標増加方向は下です。
 </dl>
 
 
-<table border=1>
+<table border="1">
  <tr><td>コマンド</td><td>機能</td><td>書式</td></tr>
  <tr><td>D</td><td>閉多角形描画命令</td><td>D,n,arg1,arg2,... </td></tr>
 </table>
@@ -391,7 +386,7 @@ X座標増加方向は右, Y座標増加方向は下です。
 </dl>
 
 
-<table border=1>
+<table border="1">
  <tr><td>コマンド</td><td>機能</td><td>書式</td></tr>
  <tr><td>F</td><td>フォント選択命令</td><td>Ffont</td></tr>
 </table>
@@ -401,7 +396,7 @@ X座標増加方向は右, Y座標増加方向は下です。
  <li> 実際のフォントへのマッピングはドライバに依存
 </ul>
 
-<table border=1>
+<table border="1">
  <tr><td>コマンド</td><td>機能</td><td>書式</td></tr>
  <tr><td>H</td><td>フォントメトリック指定命令</td><td>H,4,arg1,arg2,arg3,arg4 </td></tr>
 </table>
@@ -421,7 +416,7 @@ X座標増加方向は右, Y座標増加方向は下です。
  <li>文字は全てスケーラブルでなければなりません。
 </ul>
 
-<table border=1>
+<table border="1">
  <tr><td>コマンド</td><td>機能</td><td>書式</td></tr>
  <tr><td>S</td><td>文字列描画命令</td><td>Sstring </td></tr>
 </table>

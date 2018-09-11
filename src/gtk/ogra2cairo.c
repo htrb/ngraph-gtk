@@ -630,11 +630,7 @@ gra2cairo_done(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char
 }
 
 int
-#if GTK_CHECK_VERSION(3, 0, 0)
 gra2cairo_clip_region(struct gra2cairo_local *local, cairo_region_t *region)
-#else
-gra2cairo_clip_region(struct gra2cairo_local *local, GdkRegion *region)
-#endif
 {
   if (local == NULL || local->cairo == NULL)
     return 1;
@@ -713,12 +709,11 @@ gra2cairo_set_dpi_y(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 }
 
 void
-gra2cairo_set_antialias(struct gra2cairo_local *local, int antialias)
+set_cairo_antialias(cairo_t *cairo, int antialias)
 {
-  if (local->cairo == NULL)
+  if (cairo == NULL) {
     return;
-
-  local->antialias = antialias;
+  }
 
   switch (antialias) {
   case ANTIALIAS_TYPE_NONE:
@@ -735,7 +730,17 @@ gra2cairo_set_antialias(struct gra2cairo_local *local, int antialias)
     break;
   }
 
-  cairo_set_antialias(local->cairo, antialias);
+  cairo_set_antialias(cairo, antialias);
+}
+
+void
+gra2cairo_set_antialias(struct gra2cairo_local *local, int antialias)
+{
+  if (local->cairo == NULL)
+    return;
+
+  local->antialias = antialias;
+  set_cairo_antialias(local->cairo, antialias);
 }
 
 static int
@@ -1040,7 +1045,7 @@ gra2cairo_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
       error(obj, r);
       return 1;
     }
-  case '%': case 'X':
+  case '%': case 'X': case 'Z':
     break;
   case 'E':
     r = check_cairo_status(local->cairo);

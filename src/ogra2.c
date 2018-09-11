@@ -1,24 +1,24 @@
-/* 
+/*
  * $Id: ogra2.c,v 1.7 2010-03-04 08:30:16 hito Exp $
- * 
+ *
  * This file is part of "Ngraph for X11".
- * 
+ *
  * Copyright (C) 2002, Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
- * 
+ *
  * "Ngraph for X11" is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * "Ngraph for X11" is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  */
 
 #include "common.h"
@@ -41,18 +41,20 @@ static char *gra2errorlist[]={
 
 #define ERRNUM (sizeof(gra2errorlist) / sizeof(*gra2errorlist))
 
-static int 
+static int
 gra2init(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
-  int GC;
+  int GC, layer;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   GC=-1;
   if (_putobj(obj,"_GC",inst,&GC)) return 1;
+  layer = FALSE;
+  if (_putobj(obj,"_layer",inst,&layer)) return 1;
   return 0;
 }
 
-static int 
+static int
 gra2done(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int GC;
@@ -89,7 +91,7 @@ gra2done(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 gra2clear(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int i,num;
@@ -102,7 +104,7 @@ gra2clear(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 }
 
 #ifdef COMPILE_UNUSED_FUNCTIONS
-static int 
+static int
 gra2disconnect(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int GC;
@@ -137,6 +139,7 @@ static struct objtable gra2[] = {
   {"clear",NVFUNC,NREAD|NEXEC,gra2clear,"",0},
   {"_list",NSARRAY,NREAD,NULL,NULL,0},
   {"_GC",NINT,NREAD,NULL,NULL,0},
+  {"_layer",NBOOL,NREAD,NULL,NULL,0},
   {"delete_gra",NBOOL,NREAD|NWRITE,NULL,NULL,0},
   {"disconnect",NVFUNC,NREAD|NEXEC,NULL,"",0},
 };

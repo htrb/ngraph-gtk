@@ -1,0 +1,219 @@
+<interface>
+  <!-- interface-requires gtk+ 3.17 -->
+  <object class="GtkShortcutsWindow" id="help_overlay">
+    <property name="modal">1</property>
+    <child>
+      <object class="GtkShortcutsSection">
+        <property name="visible">1</property>
+        <property name="section-name">shortcuts</property>
+        <property name="max-height">12</property>
+        <child>
+          <object class="GtkShortcutsGroup">
+            <property name="visible">1</property>
+            <property name="title">General</property>
+	    <child>
+	      <object class="GtkShortcutsShortcut">
+		<property name="visible">1</property>
+		<property name="action-name">app.GraphLoadAction</property>
+		<property name="title" translatable="yes">Load a graph (NGP file)</property>
+	      </object>
+	    </child>
+	    <child>
+	      <object class="GtkShortcutsShortcut">
+		<property name="visible">1</property>
+		<property name="action-name">app.GraphSaveAction</property>
+		<property name="title" translatable="yes">Save the graph</property>
+	      </object>
+	    </child>
+	    <child>
+	      <object class="GtkShortcutsShortcut">
+		<property name="visible">1</property>
+		<property name="action-name">app.GraphSaveAsAction</property>
+		<property name="title" translatable="yes">Save the graph with a new filename</property>
+	      </object>
+	    </child>
+	    <child>
+	      <object class="GtkShortcutsShortcut">
+		<property name="visible">1</property>
+		<property name="action-name">app.GraphPrintAction</property>
+		<property name="title" translatable="yes">Print the graph</property>
+	      </object>
+	    </child>
+	    <child>
+	      <object class="GtkShortcutsShortcut">
+		<property name="visible">1</property>
+		<property name="action-name">app.DataAddFileAction</property>
+		<property name="title" translatable="yes">Add data file</property>
+	      </object>
+	    </child>
+	    <child>
+	      <object class="GtkShortcutsShortcut">
+		<property name="visible">1</property>
+		<property name="action-name">app.AxisScaleClearAction</property>
+		<property name="title" translatable="yes">Clear Scale</property>
+	      </object>
+	    </child>
+	    <child>
+	      <object class="GtkShortcutsShortcut">
+		<property name="visible">1</property>
+		<property name="action-name">app.ViewDrawAction</property>
+		<property name="title" translatable="yes">Draw on Viewer Window</property>
+	      </object>
+	    </child>
+	    <child>
+	      <object class="GtkShortcutsShortcut">
+		<property name="visible">1</property>
+		<property name="action-name">app.ViewCrossGaugeAction</property>
+		<property name="title" translatable="yes">Show cross gauge</property>
+	      </object>
+	    </child>
+	    <child>
+	      <object class="GtkShortcutsShortcut">
+		<property name="visible">1</property>
+		<property name="action-name">app.quit</property>
+		<property name="title" translatable="yes">Quit the application</property>
+	      </object>
+	    </child>
+	  </object>
+        </child>
+        <child>
+          <object class="GtkShortcutsGroup">
+            <property name="visible">1</property>
+            <property name="title">Editing</property>
+	    <child>
+	      <object class="GtkShortcutsShortcut">
+		<property name="visible">1</property>
+		<property name="action-name">app.EditUndoAction</property>
+		<property name="title" translatable="yes">Undo previous command</property>
+	      </object>
+	    </child>
+	    <child>
+	      <object class="GtkShortcutsShortcut">
+		<property name="visible">1</property>
+		<property name="action-name">app.EditUndoAction</property>
+		<property name="title" translatable="yes">Redo previous command</property>
+	      </object>
+	    </child>
+	    <child>
+	      <object class="GtkShortcutsShortcut">
+		<property name="visible">1</property>
+		<property name="action-name">app.EditCutAction</property>
+		<property name="title" translatable="yes">Cut selected object to clipboard</property>
+	      </object>
+	    </child>
+	    <child>
+	      <object class="GtkShortcutsShortcut">
+		<property name="visible">1</property>
+		<property name="action-name">app.EditCopyAction</property>
+		<property name="title" translatable="yes">Copy selected object to clipboard</property>
+	      </object>
+	    </child>
+	    <child>
+	      <object class="GtkShortcutsShortcut">
+		<property name="visible">1</property>
+		<property name="action-name">app.EditPasteAction</property>
+		<property name="title" translatable="yes">Paste object from clipboard</property>
+	      </object>
+	    </child>
+	    <child>
+	      <object class="GtkShortcutsShortcut">
+		<property name="visible">1</property>
+		<property name="action-name">app.EditDeleteAction</property>
+		<property name="title" translatable="yes">Delete the selected object</property>
+	      </object>
+	    </child>
+	    <child>
+	      <object class="GtkShortcutsShortcut">
+		<property name="visible">1</property>
+		<property name="action-name">app.EditDuplicateAction</property>
+		<property name="title" translatable="yes">Duplicate the selected object</property>
+	      </object>
+	    </child>
+	    <child>
+	      <object class="GtkShortcutsShortcut">
+		<property name="visible">1</property>
+		<property name="action-name">app.EditOrderTopAction</property>
+		<property name="title" translatable="yes">Rise selection to top</property>
+	      </object>
+	    </child>
+	    <child>
+	      <object class="GtkShortcutsShortcut">
+		<property name="visible">1</property>
+		<property name="action-name">app.EditOrderBottomAction</property>
+		<property name="title" translatable="yes">Lower selection to bottom</property>
+	      </object>
+	    </child>
+	  </object>
+	</child>
+        <child>
+          <object class="GtkShortcutsGroup">
+            <property name="visible">1</property>
+            <property name="title">Window (multi window mode only)</property>
+	    <child>
+	      <object class="GtkShortcutsShortcut">
+		<property name="visible">1</property>
+		<property name="action-name">app.ViewToggleDataWindowAction</property>
+		<property name="title" translatable="yes">Activate Data Window</property>
+	      </object>
+	    </child>
+	    <child>
+	      <object class="GtkShortcutsShortcut">
+		<property name="visible">1</property>
+		<property name="action-name">app.ViewToggleAxisWindowAction</property>
+		<property name="title" translatable="yes">Activate Axis Window</property>
+	      </object>
+	    </child>
+	    <child>
+	      <object class="GtkShortcutsShortcut">
+		<property name="visible">1</property>
+		<property name="action-name">app.ViewToggleLegendWindowAction</property>
+		<property name="title" translatable="yes">Activate Legend Window</property>
+	      </object>
+	    </child>
+	    <child>
+	      <object class="GtkShortcutsShortcut">
+		<property name="visible">1</property>
+		<property name="action-name">app.ViewToggleMergeWindowAction</property>
+		<property name="title" translatable="yes">Activate Merge Window</property>
+	      </object>
+	    </child>
+	    <child>
+	      <object class="GtkShortcutsShortcut">
+		<property name="visible">1</property>
+		<property name="action-name">app.ViewToggleCoordinateWindowAction</property>
+		<property name="title" translatable="yes">Activate Coordinate Window</property>
+	      </object>
+	    </child>
+	    <child>
+	      <object class="GtkShortcutsShortcut">
+		<property name="visible">1</property>
+		<property name="action-name">app.ViewToggleInformationWindowAction</property>
+		<property name="title" translatable="yes">Activate Information Window</property>
+	      </object>
+	    </child>
+	  </object>
+        </child>
+        <child>
+          <object class="GtkShortcutsGroup">
+            <property name="visible">1</property>
+            <property name="title">Help</property>
+	    <child>
+	      <object class="GtkShortcutsShortcut">
+		<property name="visible">1</property>
+		<property name="action-name">app.help</property>
+		<property name="title" translatable="yes">Show the help document</property>
+	      </object>
+	    </child>
+	    <child>
+	      <object class="GtkShortcutsShortcut">
+		<property name="visible">1</property>
+		<property name="action-name">win.show-help-overlay</property>
+		<property name="title" translatable="yes">Show shortcut keys</property>
+	      </object>
+	    </child>
+	  </object>
+	</child>
+      </object>
+    </child>
+  </object>
+</interface>

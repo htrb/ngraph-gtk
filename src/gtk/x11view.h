@@ -51,7 +51,7 @@ enum FOCU_OBJ_TYPE {
 
 void ViewerWinSetup(void);
 void ViewerWinClose(void);
-void ViewerWinUpdate(void);
+void ViewerWinUpdate(char **objects);
 void OpenGC(void);
 void CloseGC(void);
 void SetScroller(void);
@@ -70,3 +70,4 @@ void ViewerUpdateCB(void *w, gpointer client_data);
 int check_focused_obj_type(const struct Viewer *d, int *type);
 void move_data_cancel(struct Viewer *d, gboolean show_message);
 int check_paint_lock(void);
+void update_bg(void);

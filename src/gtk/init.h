@@ -1,7 +1,7 @@
 #ifndef _INIT_HEADER
 #define _INIT_HEADER
 
-extern char *AppName, *AppClass, *Auther[], *Translator, *Documenter[], *License;
+extern char *AppName, *AppClass, *Auther[], *Translator, *Documenter[];
 
 #define NGRAPH_GRAPH_MIME "application/x-ngraph"
 #define NGRAPH_DATA_MIME  "text/plain"

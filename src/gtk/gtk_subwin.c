@@ -9,6 +9,8 @@
 #include <math.h>
 #include <libgen.h>
 
+#include "dir_defs.h"
+
 #include "object.h"
 #include "nstring.h"
 #include "mathfn.h"
@@ -87,15 +89,6 @@ file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointe
   }
 }
 
-#if GTK_CHECK_VERSION(3, 0, 0) && ! GTK_CHECK_VERSION(3, 2, 0)
-static gboolean
-cell_focus_out(GtkWidget *widget, GdkEvent *event, gpointer user_data)
-{
-  menu_lock(FALSE);
-  return FALSE;
-}
-#endif
-
 static void
 select_enum(GtkComboBox *w, gpointer user_data)
 {
@@ -118,6 +111,7 @@ select_enum(GtkComboBox *w, gpointer user_data)
   if (j < 0 || j == val)
     return;
 
+  menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
   if (putobj(d->obj, list->name, sel, &j) >= 0) {
     d->select = sel;
   }
@@ -209,7 +203,7 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
 	char *valstr;
 
 	if (strcmp(list->name, "file") == 0) {
-	  gtk_entry_set_icon_from_icon_name(GTK_ENTRY(editable), GTK_ENTRY_ICON_SECONDARY, "document-open");
+	  gtk_entry_set_icon_from_icon_name(GTK_ENTRY(editable), GTK_ENTRY_ICON_SECONDARY, "document-open-symbolic");
 	  g_signal_connect(editable, "icon-release", G_CALLBACK(file_select), d);
 	}
 	sgetobjfield(d->obj, sel, list->name, NULL, &valstr, FALSE, FALSE, FALSE);
@@ -218,10 +212,6 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
 	  g_free(valstr);
 	}
       }
-#if GTK_CHECK_VERSION(3, 0, 0) && ! GTK_CHECK_VERSION(3, 2, 0)
-      /* this code may need to avoid a bug of GTK+ 3.0 */
-      g_signal_connect(editable, "focus-out-event", G_CALLBACK(cell_focus_out), d);
-#endif
     }
     break;
   case G_TYPE_DOUBLE:
@@ -296,7 +286,7 @@ enum_cb(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_d
   if (str == NULL || d->select < 0)
     return;
 
-  d->update(d, FALSE);
+  d->update(d, FALSE, TRUE);
   set_graph_modified();
 }
 
@@ -504,6 +494,15 @@ set_obj_cell_renderer_cb(struct obj_list_data *d, int i, n_list_store *list, GCa
   g_signal_connect(rend, "editing-canceled", G_CALLBACK(cancel_editing), d);
 }
 
+void
+update_viewer(struct obj_list_data *d)
+{
+  char *objects[2];
+  objects[0] = d->obj->name;
+  objects[1] = NULL;
+  ViewerWinUpdate(objects);
+}
+
 static void
 obj_copy(struct objlist *obj, int dest, int src)
 {
@@ -515,7 +514,7 @@ obj_copy(struct objlist *obj, int dest, int src)
 static void
 copy(struct obj_list_data *d)
 {
-  int sel, id, num;
+  int sel, id, num, undo;
 
   if (Menulock || Globallock)
     return;
@@ -526,13 +525,16 @@ copy(struct obj_list_data *d)
   num = chkobjlastinst(d->obj);
 
   if (sel >= 0 && sel <= num) {
+    undo = menu_save_undo_single(UNDO_TYPE_COPY, d->obj->name);
     id = newobj(d->obj);
-    if (id >= 0) {
-      obj_copy(d->obj, id, sel);
-      set_graph_modified();
-      d->select = id;
-      d->update(d, FALSE);
+    if (id < 0) {
+      menu_delete_undo(undo);
+      return;
     }
+    obj_copy(d->obj, id, sel);
+    set_graph_modified();
+    d->select = id;
+    d->update(d, FALSE, TRUE);
   }
 }
 
@@ -553,6 +555,7 @@ delete(struct obj_list_data *d)
 
   UnFocus();
 
+  menu_save_undo_single(UNDO_TYPE_DELETE, d->obj->name);
   if (d->delete) {
     d->delete(d, sel);
   } else {
@@ -570,7 +573,7 @@ delete(struct obj_list_data *d)
     d->select = sel;
     update = FALSE;
   }
-  d->update(d, update);
+  d->update(d, update, TRUE);
   set_graph_modified();
 }
 
@@ -590,9 +593,10 @@ move_top(struct obj_list_data *d)
 
   UnFocus();
 
+  menu_save_undo_single(UNDO_TYPE_ORDER, d->obj->name);
   movetopobj(d->obj, sel);
   d->select = 0;
-  d->update(d, FALSE);
+  d->update(d, FALSE, TRUE);
   set_graph_modified();
 }
 
@@ -612,9 +616,10 @@ move_last(struct obj_list_data *d)
     return;
   }
 
+  menu_save_undo_single(UNDO_TYPE_ORDER, d->obj->name);
   movelastobj(d->obj, sel);
   d->select = num;
-  d->update(d, FALSE);
+  d->update(d, FALSE, TRUE);
   set_graph_modified();
 }
 
@@ -631,9 +636,10 @@ move_up(struct obj_list_data *d)
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
   num = chkobjlastinst(d->obj);
   if ((sel >= 1) && (sel <= num)) {
+    menu_save_undo_single(UNDO_TYPE_ORDER, d->obj->name);
     moveupobj(d->obj, sel);
     d->select = sel - 1;
-    d->update(d, FALSE);
+    d->update(d, FALSE, TRUE);
     set_graph_modified();
   }
 }
@@ -651,9 +657,10 @@ move_down(struct obj_list_data *d)
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
   num = chkobjlastinst(d->obj);
   if ((sel >= 0) && (sel < num)) {
+    menu_save_undo_single(UNDO_TYPE_ORDER, d->obj->name);
     movedownobj(d->obj, sel);
     d->select = sel + 1;
-    d->update(d, FALSE);
+    d->update(d, FALSE, TRUE);
     set_graph_modified();
   }
 }
@@ -661,7 +668,7 @@ move_down(struct obj_list_data *d)
 static void
 update(struct obj_list_data *d)
 {
-  int sel, ret, num;
+  int sel, ret, num, undo;
   GtkWidget *parent;
 
   if (Menulock || Globallock)
@@ -679,16 +686,29 @@ update(struct obj_list_data *d)
 
   d->setup_dialog(d, sel, -1);
   d->select = sel;
-  if ((ret = DialogExecute(parent, d->dialog)) == IDDELETE) {
+  if (d->undo_save) {
+    undo = d->undo_save(UNDO_TYPE_EDIT);
+  } else {
+    undo = menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
+  }
+  ret = DialogExecute(parent, d->dialog);
+  set_graph_modified();
+  switch (ret) {
+  case IDCANCEL:
+    menu_undo_internal(undo);
+    break;
+  case IDDELETE:
     if (d->delete) {
       d->delete(d, sel);
     } else {
       delobj(d->obj, sel);
     }
     d->select = -1;
-    set_graph_modified();
+    d->update(d, FALSE, DRAW_REDRAW);
+    break;
+  default:
+    d->update(d, FALSE, DRAW_NOTIFY);
   }
-  d->update(d, FALSE);
 }
 
 static void
@@ -719,6 +739,7 @@ toggle_boolean(struct obj_list_data *d, char *field, int sel)
     return;
   }
 
+  menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
   getobj(d->obj, field, sel, 0, NULL, &v1);
   v1 = ! v1;
   if (putobj(d->obj, field, sel, &v1) < 0) {
@@ -726,14 +747,14 @@ toggle_boolean(struct obj_list_data *d, char *field, int sel)
   }
 
   d->select = sel;
-  d->update(d, FALSE);
+  d->update(d, FALSE, TRUE);
   set_graph_modified();
 }
 
 static void
 modify_numeric(struct obj_list_data *d, char *field, int val)
 {
-  int sel, v1, v2, num;
+  int sel, v1, v2, num, undo;
 
   if (Menulock || Globallock)
     return;
@@ -744,8 +765,8 @@ modify_numeric(struct obj_list_data *d, char *field, int val)
     return;
   }
 
+  undo = menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
   getobj(d->obj, field, sel, 0, NULL, &v1);
-
   if (putobj(d->obj, field, sel, &val) < 0) {
     return;
   }
@@ -753,15 +774,17 @@ modify_numeric(struct obj_list_data *d, char *field, int val)
   getobj(d->obj, field, sel, 0, NULL, &v2);
   if (v1 != v2) {
     d->select = sel;
-    d->update(d, FALSE);
+    d->update(d, FALSE, TRUE);
     set_graph_modified();
+  } else {
+    menu_delete_undo(undo);
   }
 }
 
 static void
 modify_string(struct obj_list_data *d, char *field, char *str)
 {
-  int sel, num;
+  int sel, num, undo;
 
   if (Menulock || Globallock)
     return;
@@ -772,11 +795,14 @@ modify_string(struct obj_list_data *d, char *field, char *str)
     return;
   }
 
-  if (chk_sputobjfield(d->obj, sel, field, str))
+  undo = menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
+  if (chk_sputobjfield(d->obj, sel, field, str)) {
+    menu_delete_undo(undo);
     return;
+  }
 
   d->select = sel;
-  d->update(d, FALSE);
+  d->update(d, FALSE, TRUE);
 }
 
 static void
@@ -796,11 +822,12 @@ hidden(struct obj_list_data *d)
 
   UnFocus();
 
+  menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
   getobj(d->obj, "hidden", sel, 0, NULL, &hidden);
   hidden = hidden ? FALSE : TRUE;
   putobj(d->obj, "hidden", sel, &hidden);
   d->select = sel;
-  d->update(d, FALSE);
+  d->update(d, FALSE, TRUE);
   set_graph_modified();
 }
 
@@ -823,7 +850,7 @@ set_hidden_state(struct obj_list_data *d, int hide)
   if (hidden != hide) {
     putobj(d->obj, "hidden", sel, &hide);
     d->select = sel;
-    d->update(d, FALSE);
+    d->update(d, FALSE, TRUE);
     set_graph_modified();
   }
 }
@@ -846,6 +873,12 @@ static void
 do_popup(GdkEventButton *event, struct obj_list_data *d)
 {
 #if GTK_CHECK_VERSION(3, 22, 0)
+  if (d->parent->type == TypeFileWin ||
+      d->parent->type == TypeAxisWin ||
+      d->parent->type == TypeMergeWin ||
+      d->parent->type == TypeLegendWin) {
+    d->select = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
+  }
   gtk_menu_popup_at_pointer(GTK_MENU(d->popup), ((GdkEvent *)event));
 #else
   int button, event_time;
@@ -1010,7 +1043,7 @@ ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
   return TRUE;
 }
 
-#ifdef WINDOWS
+#if WINDOWS
 #include <gdk/gdkwin32.h>
 
 static void
@@ -1025,6 +1058,20 @@ hide_minimize_menu_item(GtkWidget *widget, gpointer user_data)
 }
 #endif
 
+gboolean
+focus_in(GtkWidget *widget, GdkEvent *event, gpointer user_data)
+{
+  gtk_grab_add(GTK_WIDGET(widget));
+  return FALSE;
+}
+
+gboolean
+focus_out(GtkWidget *widget, GdkEvent *event, gpointer user_data)
+{
+  gtk_grab_remove(GTK_WIDGET(widget));
+  return FALSE;
+}
+
 static void
 swin_realized(GtkWidget *widget, gpointer user_data)
 {
@@ -1032,7 +1079,7 @@ swin_realized(GtkWidget *widget, gpointer user_data)
 
   ptr = (struct obj_list_data *) user_data;
 
-  ptr->update(ptr, TRUE);
+  ptr->update(ptr, TRUE, TRUE);
 }
 
 static GtkWidget *
@@ -1040,7 +1087,7 @@ sub_window_create(struct SubWin *d, GtkWidget *swin)
 {
   d->Win = swin;
 
-#ifdef WINDOWS
+#if WINDOWS
   g_signal_connect(dlg, "realize", G_CALLBACK(hide_minimize_menu_item), NULL);
 #endif
 
@@ -1073,12 +1120,8 @@ label_sub_window_create(struct SubWin *d)
   GtkWidget *label, *swin;
 
   label = gtk_label_new(NULL);
-#if GTK_CHECK_VERSION(3, 4, 0)
   gtk_widget_set_halign(label, GTK_ALIGN_START);
   gtk_widget_set_valign(label, GTK_ALIGN_START);
-#else
-  gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.0);
-#endif
   gtk_label_set_selectable(GTK_LABEL(label), TRUE);
   gtk_label_set_line_wrap(GTK_LABEL(label), FALSE);
   gtk_label_set_single_line_mode(GTK_LABEL(label), FALSE);
@@ -1113,6 +1156,7 @@ list_widget_create(struct SubWin *d, int lisu_num, n_list_store *list, int can_f
   data = g_malloc0(sizeof(*data));
   data->select = -1;
   data->parent = d;
+  data->undo_save = NULL;
   data->can_focus = can_focus;
   data->list = list;
   data->list_col_num = lisu_num;
@@ -1314,6 +1358,59 @@ ev_popup_menu(GtkWidget *w, gpointer client_data)
   d = (struct obj_list_data *) client_data;
   do_popup(NULL, d);
   return TRUE;
+}
+
+static int
+set_object_name(struct objlist *obj, int id)
+{
+  char *name, *new_name, buf[256];
+  int r;
+  getobj(obj, "name", id, 0, NULL, &name);
+  new_name = NULL;
+  snprintf(buf, sizeof(buf), "%s:%d:name", chkobjectname(obj), id);
+  r = DialogInput(TopLevel, _("Instance name"), buf, name, NULL, NULL, &new_name, NULL, NULL);
+  if (r != IDOK) {
+    return 0;
+  }
+  if (g_strcmp0(name, new_name) == 0) {
+    return 0;
+  }
+  if (new_name == NULL) {
+    putobj(obj, "name", id, new_name);
+    return 1;
+  }
+  g_strstrip(new_name);
+  if (new_name[0] == '\0') {
+    g_free(new_name);
+    new_name = NULL;
+  }
+  if (putobj(obj, "name", id, new_name) < 0) {
+    g_free(new_name);
+    return 0;
+  }
+  return 1;
+}
+
+void
+list_sub_window_object_name(GtkMenuItem *w, gpointer client_data)
+{
+  struct obj_list_data *d;
+
+  d = (struct obj_list_data*) client_data;
+  int sel, update, num;
+
+  if (Menulock || Globallock)
+    return;
+
+  sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
+  num = chkobjlastinst(d->obj);
+  if (sel < 0 || sel > num) {
+    return;
+  }
+  update = set_object_name(d->obj, sel);
+  if (update) {
+    set_graph_modified();
+  }
 }
 
 static GtkWidget *

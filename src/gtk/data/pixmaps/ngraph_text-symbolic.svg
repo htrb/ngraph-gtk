@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="24"
+   height="24"
+   viewBox="0 0 6.3499999 6.3500002"
+   version="1.1"
+   id="svg8"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   sodipodi:docname="ngraph_text-symbolic.svg">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="17.18"
+     inkscape:cx="14.832225"
+     inkscape:cy="14.853207"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     units="px"
+     inkscape:pagecheckerboard="false"
+     inkscape:window-width="1366"
+     inkscape:window-height="704"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid955" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="レイヤー 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-290.64998)">
+    <g
+       aria-label="T"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46666622px;line-height:125%;font-family:'Century Schoolbook L';-inkscape-font-specification:'Century Schoolbook L Bold';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="text2678">
+      <path
+         d="M 5.9774665,290.76851 H 0.37253348 l -0.12699999,2.29446 H 0.6942668 c 0.11006666,-0.62653 0.22859998,-0.95673 0.4318,-1.25306 0.2709333,-0.4064 0.5926666,-0.60114 0.9821333,-0.60114 0.2539999,0 0.3047999,0.0593 0.3047999,0.34714 v 4.10633 c 0,0.5334 0,0.56727 -0.059267,0.635 -0.0762,0.0931 -0.254,0.127 -0.7027333,0.127 H 1.4647334 v 0.4572 h 3.4205332 v -0.4572 H 4.6989999 c -0.4487333,0 -0.6265333,-0.0339 -0.7027333,-0.127 C 3.937,296.22951 3.937,296.19564 3.937,295.66224 v -4.10633 c 0,-0.28787 0.0508,-0.34714 0.3047999,-0.34714 0.3640667,0 0.6434667,0.1524 0.9144,0.49954 0.2370666,0.31326 0.3725333,0.66886 0.4995333,1.35466 h 0.4487333 z"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:'Century Schoolbook L';-inkscape-font-specification:'Century Schoolbook L Bold';stroke-width:0.26458332px;fill:#bebebe;fill-opacity:1"
+         id="path2680" />
+    </g>
+  </g>
+</svg>

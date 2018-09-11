@@ -25,7 +25,7 @@ AC_ARG_ENABLE(gtktest, [  --disable-gtktest       do not try to compile and run 
 
   no_gtk=""
 
-  AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
+  AC_PATH_TOOL([PKG_CONFIG], [pkg-config], [no])
 
   if test x$PKG_CONFIG != xno ; then
     if $PKG_CONFIG --atleast-pkgconfig-version 0.7 ; then
@@ -178,7 +178,7 @@ main ()
           echo "*** If you have an old version installed, it is best to remove it, although"
           echo "*** you may also be able to get things to work by modifying LD_LIBRARY_PATH" ],
         [ echo "*** The test program failed to compile or link. See the file config.log for the"
-          echo "*** exact error that occured. This usually means GTK+ is incorrectly installed."])
+          echo "*** exact error that occurred. This usually means GTK+ is incorrectly installed."])
           CFLAGS="$ac_save_CFLAGS"
           LIBS="$ac_save_LIBS"
        fi
@@ -201,7 +201,7 @@ AC_DEFUN([GTK_CHECK_BACKEND],
   min_gtk_version=ifelse([$2],,3.0.0,$2)
   pkg_config_args="$pkg_config_args >= $min_gtk_version"
 
-  AC_PATH_PROG(PKG_CONFIG, [pkg-config], [AC_MSG_ERROR([No pkg-config found])])
+  AC_PATH_TOOL([PKG_CONFIG], [pkg-config], [AC_MSG_ERROR([No pkg-config found])])
 
   if $PKG_CONFIG $pkg_config_args ; then
     target_found=yes

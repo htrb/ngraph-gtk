@@ -1,9 +1,9 @@
-/* 
+/*
  * $Id: parse_bin_expression.h,v 1.3 2009-11-10 04:12:20 hito Exp $
- * 
+ *
  */
 
-#define CREATE_PARSER_FUNC(a, b, c, d) parse_ ## a ## _expression(const char **str, MathEquation *eq, int *err) \
+#define CREATE_PARSER_FUNC(a, b, c, d) parse_ ## a ## _expression(struct math_string *str, MathEquation *eq, int *err) \
 {\
   struct math_token *token;\
   MathExpression *left, *right, *exp;\
@@ -55,7 +55,7 @@
   return exp;\
 }
 
-#define CREATE_PARSER2_FUNC(a, b, c, d, e, f) parse_ ## a ## _expression(const char **str, MathEquation *eq, int *err) \
+#define CREATE_PARSER2_FUNC(a, b, c, d, e, f) parse_ ## a ## _expression(struct math_string *str, MathEquation *eq, int *err) \
 {\
   struct math_token *token;\
   MathExpression *left, *right, *exp;\
@@ -116,7 +116,7 @@
   return exp;\
 }
 
-#define CREATE_PARSER3_FUNC(a, b, c, d, e, f, g, h) parse_ ## a ## _expression(const char **str, MathEquation *eq, int *err) \
+#define CREATE_PARSER3_FUNC(a, b, c, d, e, f, g, h) parse_ ## a ## _expression(struct math_string *str, MathEquation *eq, int *err) \
 {\
   struct math_token *token;\
   MathExpression *left, *right, *exp;\
@@ -180,7 +180,7 @@
   return exp;\
 }
 
-#define CREATE_PARSER4_FUNC(a, b, c, d, e, f, g, h, i, j) parse_ ## a ## _expression(const char **str, MathEquation *eq, int *err) \
+#define CREATE_PARSER4_FUNC(a, b, c, d, e, f, g, h, i, j) parse_ ## a ## _expression(struct math_string *str, MathEquation *eq, int *err) \
 {\
   struct math_token *token;\
   MathExpression *left, *right, *exp;\

@@ -1,6 +1,6 @@
 #include "common.h"
 
-#ifdef WINDOWS
+#if WINDOWS
 #include <stdlib.h>
 #include <stdarg.h>
 #include <limits.h>
@@ -1239,7 +1239,7 @@ draw_arc(struct gra2emf_local *local, int x, int y, int w, int h, int start, int
     EndPath(local->hdc);
     StrokePath(local->hdc);
     break;
-  default: 
+  default:
     create_pen(local);
     Arc(local->hdc,
 	x - w, y - h,
@@ -1350,7 +1350,7 @@ draw_polygon(struct gra2emf_local *local, int n, int *points, int fill)
   }
 
   BeginPath(local->hdc);
-  MoveToEx(local->hdc, points[0] + local->offsetx, points[1] + local->offsety, NULL); 
+  MoveToEx(local->hdc, points[0] + local->offsetx, points[1] + local->offsety, NULL);
   for (i = 1; i < n; i++) {
     LineTo(local->hdc,
 	   points[i * 2 + 0] + local->offsetx,
@@ -1521,7 +1521,7 @@ gra2emf_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char
       return 1;
     }
     break;
-  case '%': case 'X':
+  case '%': case 'X': case 'Z':
     break;
   case 'E':
     r = 0;

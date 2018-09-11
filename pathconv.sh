@@ -1,6 +1,6 @@
 #! /bin/sh
 
-if [ $# -ne 8 ]
+if [ $# -ne 7 ]
 then
     echo "error: wrong number of arguments ($0)."
     exit
@@ -18,8 +18,6 @@ DATADIR=$1
 shift
 CONFDIR=$1
 shift
-PIXMAPDIR=$1
-shift
 
 TARGET=`basename $1 .in`
 
@@ -31,5 +29,4 @@ cat $1 | sed -e "s!BINDIRDEF!$BINDIR!g" \
              -e "s!LIBEXECDIRDEF!$LIBEXECDIR!g" \
              -e "s!LIBDIRDEF!$LIBDIR!g" \
              -e "s!DATADIRDEF!$DATADIR!g" \
-             -e "s!PIXMAPDIRDEF!$PIXMAPDIR!g" \
              -e "s!CONFDIRDEF!$CONFDIR!g" > $TARGET

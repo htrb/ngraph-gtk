@@ -44,13 +44,8 @@ InfoWinSetFont(char *font)
     PangoFontDescription *desc;
 
     desc = pango_font_description_from_string(font);
-#if GTK_CHECK_VERSION(3, 0, 0)
     gtk_widget_override_font(GTK_WIDGET(NgraphApp.InfoWin.data.text), NULL);
     gtk_widget_override_font(GTK_WIDGET(NgraphApp.InfoWin.data.text), desc);
-#else
-    gtk_widget_modify_font(GTK_WIDGET(NgraphApp.InfoWin.data.text), NULL);
-    gtk_widget_modify_font(GTK_WIDGET(NgraphApp.InfoWin.data.text), desc);
-#endif
     pango_font_description_free(desc);
 #endif
   }

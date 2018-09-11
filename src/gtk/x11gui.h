@@ -61,14 +61,15 @@ typedef struct _tpoint {
 
 int DialogExecute(GtkWidget *parent, void *dialog);
 void message_beep(GtkWidget *parent);
+int markup_message_box(GtkWidget * parent, const char *message, const char *title, int mode, int markup);
 int message_box(GtkWidget *parent, const char *message, const char *title, int yesno);
-int DialogInput(GtkWidget *parent, const char *title, const char *mes, const char *init_str, char **s, int *x, int *y);
-int DialogRadio(GtkWidget *parent, const char *title, const char *caption, struct narray *ary, int *r, int *x, int *y);
+int DialogInput(GtkWidget *parent, const char *title, const char *mes, const char *init_str, struct narray *buttons, int *res_btn, char **s, int *x, int *y);
+int DialogRadio(GtkWidget *parent, const char *title, const char *caption, struct narray *ary, struct narray *buttons, int *res_btn, int *r, int *x, int *y);
 int DialogButton(GtkWidget *parent, const char *title, const char *caption, struct narray *array, int *x, int *y);
-int DialogCheck(GtkWidget *parent, const char *title, const char *caption, struct narray *array, int *r, int *x, int *y);
-int DialogCombo(GtkWidget *parent, const char *title, const char *caption, struct narray *array, int sel, char **r, int *x, int *y);
-int DialogComboEntry(GtkWidget *parent, const char *title, const char *caption, struct narray *array, int sel, char **r, int *x, int *y);
-int DialogSpinEntry(GtkWidget *parent, const char *title, const char *caption, double min, double max, double inc, double *r, int *x, int *y);
+int DialogCheck(GtkWidget *parent, const char *title, const char *caption, struct narray *array, struct narray *buttons, int *res_btn, int *r, int *x, int *y);
+int DialogCombo(GtkWidget *parent, const char *title, const char *caption, struct narray *array, struct narray *buttons, int *res_btn, int sel, char **r, int *x, int *y);
+int DialogComboEntry(GtkWidget *parent, const char *title, const char *caption, struct narray *array, struct narray *buttons, int *res_btn, int sel, char **r, int *x, int *y);
+int DialogSpinEntry(GtkWidget *parent, const char *title, const char *caption, double min, double max, double inc, struct narray *buttons, int *res_btn, double *r, int *x, int *y);
 int nGetOpenFileNameMulti(GtkWidget * parent,
 			  char *title, char *defext, char **initdir,
 			  const char *initfil, char ***file, int chd);

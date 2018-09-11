@@ -73,7 +73,6 @@ g2g_done(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   return 0;
 }
 
-#if GTK_CHECK_VERSION(3, 0, 0)
 cairo_surface_t *
 gra2gdk_create_pixmap(struct gra2cairo_local *local, int w, int h, double r, double g, double b)
 {
@@ -100,38 +99,6 @@ gra2gdk_create_pixmap(struct gra2cairo_local *local, int w, int h, double r, dou
 
   return pix;
 }
-#else
-GdkPixmap *
-gra2gdk_create_pixmap(struct gra2cairo_local *local, GdkDrawable *drawable, int w, int h, double r, double g, double b)
-{
-  cairo_t *cairo;
-  GdkPixmap *pix;
-
-  if (drawable == NULL) {
-    return NULL;
-  }
-
-  pix = gdk_pixmap_new(drawable, w, h, -1);
-  cairo = gdk_cairo_create(pix);
-
-  if (cairo_status(cairo) != CAIRO_STATUS_SUCCESS) {
-    cairo_destroy(cairo);
-    g_object_unref(pix);
-    return NULL;
-  }
-
-  cairo_set_source_rgb(cairo, r, g, b);
-  cairo_paint(cairo);
-
-  if (local->cairo) {
-    cairo_destroy(local->cairo);
-  }
-
-  local->cairo = cairo;
-
-  return pix;
-}
-#endif
 
 static struct objtable gra2gdk[] = {
   {"init", NVFUNC, NEXEC, g2g_init, NULL, 0},

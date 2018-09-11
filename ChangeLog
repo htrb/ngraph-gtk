@@ -1,3 +1,1244 @@
+2018-09-09  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_subwin.c (focus_out, focus_in): added.
+	(sub_window_create): connect "focus-in-event" and
+	"focus-out-event".
+
+2018-09-08  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_subwin.c (set_object_name)
+	(list_sub_window_object_name): added.
+
+2018-09-02  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (application): call
+	"gtk_icon_theme_add_resource_path()".
+
+2018-08-23  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* merge "marker type" feature of the path object.
+
+2018-07-31  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_widget.c (set_linumber_color): removed.
+
+2018-07-30  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/odraw.h (ARROW_POSITION_TYPE_NUM, JOIN_TYPE_NUM): added.
+
+2018-07-28  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (create_toplevel_window): set toplevel window
+	modal for the GtkColorButton (modal GtkColorChooserDialog).
+
+2018-07-27  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* addin/fitrslt.c (set_parameter): use "g_strdup_printf()" instead
+	of "snprintf()".
+
+	* src/shellcm.c (cmget): fix check "NWRITE" flag.
+
+	* src/gtk/x11file.c (FileDialogAxis): increase size of the buffer.
+
+	* src/gtk/init.c (exec_console): increase size of the buffer.
+
+2018-07-25  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/odraw.h (DEFAULT_FONT_PT): added.
+	(DEFAULT_MARK_SIZE): added.
+
+	* src/omark.c (markinit): use "DEFAULT_MARK_SIZE".
+
+	* src/odata.c (f2dinit): use "DEFAULT_MARK_SIZE".
+
+	* src/otext.c (textinit): use "DEFAULT_FONT_PT".
+
+	* src/oaxis.c (axisinit): use "DEFAULT_FONT_PT".
+
+	* src/gtk/x11axis.c (create_num_combo_item, select_type)
+	(numbering_tab_create): now the type of the field "no_zero" is not
+	NBOOL but NENUM.
+
+	* src/oaxis.c (AXIS_NUM_NO_ZERO, anumnozero): added.
+	(get_axis_gauge_num_str): add 3rd argument.
+	(anumnozeroput): added.
+	(axis): the type of the field "num_no_zero" is now "NENUM".
+	(anumnozero): use "false" and "true" for backward compatibility.
+>>>>>>> d2bc2fde064a82a450f7c6aa30293de51b4b636e
+
+2018-07-21  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/axis.c (getaxisposition): compare "*po", "alocal->posst" an
+	"alocal->posed" with "N_EPSILON".
+
+	* src/mathfn.c (nraise): use "N_EPSILON" if x is nagative.
+
+	* src/mathfn.h (N_EPSILON): added.
+
+2018-07-19  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/odraw.h (DEFAULT_LINE_WIDTH): added.
+
+2018-07-17  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* addin/legend.nsc: use "-escape" option to get fields of a data
+	object.
+
+	* src/shellcm.c (put_field_str): added.
+	(cmget): add "escape" option.
+
+2018-07-12  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (FileDialogType): set sensitivity of only
+	curve and fit button (for drawing math-functions).
+
+2018-07-06  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* test/math_test_new.dat: fix some tests related to comparison
+	with precision.
+
+	* src/math/math_basic_function.c (compare_double_with_prec): use
+	"gsl_fcmp()" when available.
+
+2018-06-30  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/common.h: check "G_OS_WIN32" instead of "__MINGW32__".
+
+2018-06-29  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/ioutil.c (nstat): remove codes for windows.
+
+	* configure.ac: add AC_SYS_LARGEFILE.
+
+2018-06-27  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/ioutil.c (nstat): add codes to avoid segmentation fault on
+	Windows.
+
+2018-06-24  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/odata.c (set_const): add constants AXISX_MAX, AXISX_MIN,
+	AXISX_LEN, AXISY_MAX, AXISY_MIN and AXISY_LEN.
+
+2018-06-15  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (RANGE_ENTRY_WIDTH): add and use the constant.
+
+	* src/nhash.c (hash_each_sub): check returned value of the
+	function "hash_each_sub()".
+
+	* src/gra.c (GRAtextextentraw): fix calculation of the bounding
+	box of a raw-text.
+
+2018-06-06  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11graph.c (CmGraphNewMenu): clear all lists.
+
+2018-03-28  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/odata.c (opendata): save "f2dlocal" to "struct f2ddata".
+	(fitout): initialize and check "f2dlocal->use_drawing_func".
+
+2018-03-25  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/odata.c (draw_fit): use "fp->color" instead of "fp->fg".
+
+2018-03-23  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/odata.c (dummyout): added.
+	(fitout): use "dummyout()" when redrawing.
+
+2018-03-20  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* gtksourceview/create_lang.nsc: remove "%D" and "%N" from the
+	list of constrants.
+
+2018-03-09  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/ox11menu.c (mx_show_source_view_search_path): added.
+	(gtkmenu): add field "source_view_search_path".
+
+2018-03-08  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (souce_view_set_search_path): renamed. check
+	language.
+
+2018-03-04  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/data/css/ngraph.css: remove unused style.
+
+	* src/gtk/x11dialg.h (MathTextDialog): remove unused member
+	"label".
+
+	* src/gtk/x11file.c (MathTextDialogSetup): don't use label but
+	window title.
+
+2018-03-03  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (MathTextDialogSetup): call
+	"gtk_widget_grab_focus()".
+	(math_common_widgets_create, MathTextDialogSetup): change position
+	of the tabs.
+
+2018-03-01  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/odata.c (ofile_create_math_equation): add static constants
+	definitions.
+
+2018-02-28  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/odata.c (file_draw_path, file_draw_polyline)
+	(file_draw_polygon): added.
+	(draw_polygon): add 3rd parameter. don't call "arraydel()".
+
+2018-02-27  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (RangeDialogSetup): update label to avoid
+	collision with the short cut to show information of a completion.
+
+	* src/odata.c (file_draw_errorbar, file_draw_errorbar2)
+	(draw_errorbar): added.
+	(errorbarout): use "draw_errorbar()".
+
+2018-02-26  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (math_common_widgets_create): call
+	"gtk_widget_set_vexpand()".
+
+	* src/gtk/x11menu.c (souce_view_initialize): moved from
+	"x11file.c".
+	(application): call "souce_view_initialize()".
+
+2018-02-24  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11opt.c (MiscDialogSetup): call
+	"souce_view_initialize()".
+
+	* src/gtk/x11file.c (souce_view_initialize): renamed.
+
+2018-02-23  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (set_source_style): added.
+	(MathTextDialogSetup, math_tab_setup_item): call
+	"set_source_style()".
+
+	* src/gtk/x11opt.c (MiscDialogSetupItem, MiscDialogSetup)
+	(MiscDialogClose): add source style settings.
+
+	* src/gtk/ox11menu.c (mx_show_lib_version): show version of
+	GtkSourceView.
+	(MenuConfigMisc): add "sourece_style_id" setting.
+	(menuinit): initialize "Menulocal.source_style_id".
+
+	* src/math/math_parser.c (parse_primary_expression): don't apply
+	the limitation of the length of a variable.
+
+	* src/math/math_error.c (math_err_get_error_message): show error
+	line and line-offset.
+
+	* src/math/math_equation.c (math_equation_set_parse_error): change
+	type of the 3rd parameter from "int" to "const struct math_string
+	*str".
+
+	* src/math/math_scanner.c (math_scanner_get_token): save current
+	line and line-offset.
+
+2018-02-22  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/object.c (get_localized_str): added.
+	(error2, error22): use "get_localized_str()".
+
+2018-02-21  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (move_cursor_to_error_line): added.
+	(MathTextDialogClose, focus_math_widget): use
+	"move_cursor_to_error_line()".
+
+	* src/math/math_error.c (math_err_get_error_message): show line number.
+	(math_err_get_recent_error_line_number): added.
+
+	* src/math/math_equation.c (math_equation_set_parse_error): add 3rd parameter.
+
+	* src/math/math_scanner.c (math_scanner_init_string): added.
+	(math_scanner_free_token): use "struct math_token *".
+
+	* src/math/math_basic_function.c (math_func_array): added.
+
+	* src/math/math_equation.c (math_equation_add_func): use
+	"math_function_get_arg_type_num()".
+
+	* src/math/math_parser.c (get_argument): use
+	"math_function_get_arg_type_num()".
+
+	* src/math/math_expression.c (math_function_get_arg_type_num): added.
+	(check_argument, call_func): use
+	"math_function_get_arg_type_num()".
+
+2018-02-20  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11opt.c (FontSettingDialogSetupItem)
+	(MiscDialogSetupItem): use "gtk_font_chooser_set_font()" instead
+	of "gtk_font_button_set_font_name()".
+	(FontSettingDialogAddAlternative, FontSettingDialogClose)
+	(set_font): use "gtk_font_chooser_get_font()" instead of
+	"gtk_font_button_get_font_name()".
+
+	* src/gtk/x11gui.c (message_beep): use "gdk_display_beep()".
+
+2018-02-19  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/math/math_scanner.c (math_scanner_get_token): support
+	shell-like-comment.
+
+2018-02-17  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (set_text_to_source_buffer): added.
+	(MathTextDialogChangeInputType, MathTextDialogSetup)
+	(copy_entry_to_text): use "set_text_to_source_buffer().
+
+2018-02-15  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/completion_info.h: added.
+
+	* src/gtk/completion_info.c: added.
+
+	* src/gtk/create_const_info.rb: added.
+
+	* src/gtk/create_func_info.rb: added.
+
+2018-02-11  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/odata.c (odata_get_functions, odata_get_constants)
+	(get_functions, get_constants): added.
+	(file2d): add fields "functions" and "constants".
+
+2018-02-10  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (FileDialogCloseCommon, MathTextDialogSetup)
+	(MathTextDialogClose, FileDialogSetup): save and restore
+	math-transformation intput type.
+
+	* src/gtk/ox11menu.c (menuinit): initialize
+	"Menulocal.math_input_mode".
+
+	* src/gtk/x11dialg.h (FileDialog): add member "math_input_tab".
+	(MathTextDialog): add member "input_tab".
+
+	* src/gtk/ox11menu.h (menulocal): add member "math_input_mode".
+
+2018-02-09  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_entry_completion.c (entry_completion_load): don't
+	save a string which includes line feed.
+
+2018-02-08  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_action.c (create_application_window): don't use
+	appmenu on Windows.
+
+	* src/gtk/x11file.c (set_escaped_str): added.
+	(file_list_set_val, MathDialogSetupItem): use "set_escaped_str()".
+	(MathTextDialogSetup): don't use mnemonic label.
+
+2018-02-07  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_widget.c (create_text_view_with_line_number): use
+	"GtkSourceview".
+
+	* configure.ac: ckeck "gtksourceview-3.0".
+
+	* src/gtk/x11menu.c (menu_undo_common, menu_undo_internal): added.
+	(menu_undo): use "menu_undo_common()".
+	(menu_delete_undo): check undo id.
+	(menu_save_undo_single, menu_save_undo): return undo id.
+	(undo_info_push): save undo id.
+
+2018-02-06  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c: add multi line input feature for math-transformations.
+
+2018-02-03  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/omerge.c (get_mtime): removed.
+	(read_gra): check not only "st_mtime" but "st_size".
+
+2018-02-02  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/omerge.c (OLD_GRA_HEADER): added.
+	(USE_MERGE_CACHE): added.
+	(gra_data_new, gra_data_free, gra_cache_new, gra_cache_get)
+	(gra_cache_free, gra_cache_init, read_new_gra_file)
+	(read_old_gra_file, read_gra_file, dup_cpar, draw_gra)
+	(free_cache, read_gra, merge_cache_clear, draw_gra_data): added.
+	(mergedraw): use "read_gra()" when "USE_MERGE_CACHE" is true.
+	(gra_info): added.
+
+2018-01-30  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11commn.c (check_ref_axis, file_auto_scale): added.
+	(FileAutoScale): don't save undo information.
+
+2018-01-29  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (application): call "CmViewerDraw()" when
+	"LoadNgpFile()" is not called.
+
+	* src/gtk/x11commn.c (file_auto_scale): added.
+	(FileAutoScale): use the function "file_auto_scale()".
+
+2018-01-27  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/math/math_basic_function.c (math_func_m, math_func_rm):
+	accepts negative index.
+	(math_func_cm): add 2nd argument.
+
+2018-01-26  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11gui.c (FileSelectionDialog): use
+	"gtk_file_chooser_set_extra_widget()" instead of
+	"gtk_box_pack_start()".
+
+	* src/odata.c (file_draw_line, file_draw_rect, file_draw_arc):
+	always restore current point.
+
+2018-01-25  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11graph.c (CmGraphShell): use "set_graph_modified()"
+	instead of "set_graph_modified_gra()".
+
+2018-01-21  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/math/math_basic_function.c (math_func_am)
+	(math_func_array_average, math_func_array_stdevp)
+	(math_func_array_stdev): added.
+
+2018-01-20  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/odata.c (file_draw_line): added.
+
+2018-01-19  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (set_headline_table_array)
+	(set_headline_table): check maximum column.
+
+	* src/odata.c (column_array_push, column_array_clear): added.
+	(getdataarray): use "column_array_clear()" and
+	"column_array_push()".
+
+	* src/math/math_basic_function.c (math_func_push): use
+	"math_equation_push_array_val()".
+
+	* src/math/math_equation.c (math_equation_push_array_val): added.
+
+2018-01-18  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/odata.c (getdataarray): call the function
+	"set_column_array()".
+	(set_column_array): call the function
+	"math_equation_clear_array()".
+	(set_column_array): check the parameter "id".
+
+	* src/math/math_basic_function.c (math_func_array_clear): added.
+	(math_func_array_sum): added.
+	(math_func_array_max, math_func_array_min): added.
+	(math_func_array_compact): added.
+
+	* src/math/math_equation.c (math_equation_clear_array): added.
+
+2018-01-17  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/odata.c (getposition): use "getposition2()" and
+	"_f2dtransf()".
+	(f2dtransf): use "_f2dtransf()".
+	(_f2dtransf): return integer.
+
+2018-01-16  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/odata.c (f2ddata, f2dlocal): add member "column_array_id_x"
+	and "column_array_id_y".
+	(opendata): initialize "fp->column_array_id_x" and
+	"fp->column_array_id_y".
+	(f2dputmath): check "column" array.
+	(f2dinit): initialize "f2dlocal->column_array_id_x" and
+	"f2dlocal->column_array_id_y".
+	(set_column_array): added.
+	(get_data_from_source): use the function "set_column_array()".
+	(file_draw_mark): added.
+
+2018-01-14  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/odata.c (file_draw_arc, file_draw_rect): added.
+	(FileFunc): add drawing functions.
+	(opendata): initialize "fp->GC".
+	(f2ddraw): set "fp->GC".
+	(file_draw_rect, file_draw_arc): check the variable "fp".
+
+	* src/gra.c (GRAcurrent_point): added.
+
+	* src/odraw.c (curve_expand, curve_expand_points): moved from
+	"opath.c".
+
+	* src/opath.c (curve_expand_points): change parameters.
+	(opath_curve_expand_points): added.
+	(arrowdraw, arrowbbox, point_match): use
+	"opath_curve_expand_points()".
+
+2018-01-05  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* addin/gimg2gra.c (gra_save, fputcolor): don't draw fully
+	transparent color information and image.
+
+2017-12-31  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11commn.c (FileAutoScale): save undo information.
+
+2017-12-27  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/odata.c (ofile_create_math_equation): use "STDEVPX" and
+	"STDEVPY" instead of "SGX" and "SGY".
+	(f2dstat): add fields "dstdevpx", "dstdevpyy", "dstdevx" and
+	"dstdevy".
+
+2017-12-26  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/math/math_basic_function.c (math_func_sumsq): added.
+
+2017-12-21  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (create_axis): use "menu_undo()" to cancel
+	creation of instances.
+
+	* src/gtk/x11merge.c (CmMergeOpen): use "menu_undo()" to cancel
+	edit.
+	(CmMergeUpdate): call "MergeWinUpdate()" only when merge objects
+	are updated.
+
+	* src/gtk/x11file.c (CmFileHistory, CmRangeAdd): use "menu_undo()"
+	instead of "menu_delete_undo()" to cancel creation of an instance.
+	(FileWinFileUpdate): don't consider "IDDELETE".
+
+	* src/gtk/x11axis.c (SectionDialogGrid): use "menu_undo()" to
+	cancel edit.
+	(CmAxisNewFrame, CmAxisNewSection, CmAxisNewCross)
+	(CmAxisNewSingle, CmAxisGridNew): use "menu_undo()" to cancel
+	creation.
+	(CmAxisUpdate): check the returned value of the function
+	"DialogExecute()" is "IDCANCEL" or not.
+
+2017-12-20  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (new_merge_obj, new_file_obj)
+	(create_single_axis, create_axis): don't consider "IDDELETE".
+	(ViewUpdate): remove codes related to "IDDELETE".
+
+2017-12-19  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (CmFileMath): check the variable
+	"modified".
+	(MathTextDialog, MathDialog): initialize "modified" member
+	variable.
+	(MathTextDialogClose, MathDialogList): set "modified" member
+	variable.
+
+	* src/gtk/x11dialg.h (MathDialog, MathTextDialog): add member
+	"modified".
+
+2017-12-14  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (ViewUpdate): redraw only when the graph is
+	modified.
+
+	* src/gtk/x11axis.c (select_type): redraw data object when "type"
+	field is changed.
+
+2017-12-13  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (CmFileNew): removed.
+	(update_file_obj_multi): "modified" is always true when "IDDELETE"
+	is returned;
+
+2017-12-12  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (set_undo_menu_label): update undo and redo
+	menu label when use GtkBuilder.
+
+	* src/gtk/x11file.c (update_file_obj_multi): call
+	"data_save_undo()" befor call "DialogExecute()".
+	(update_file_obj_multi): return modified or not.
+
+	* src/gtk/x11menu.c (MODIFIED_TYPE_UNMODIFIED): added.
+	(undo_check_modified): call "set_graph_modified()" only when
+	"modified_saved"is TRUE.
+
+	* src/gtk/x11menu.h (MENU_UNDO_TYPE): add "UNDO_TYPE_DUMMY".
+
+	* src/gtk/x11view.c (CmEditMenuCB): check "Menulock" and "Globallock".
+
+	* src/gtk/gtk_subwin.c (update): call "d->undo_save" if available.
+	(update): always call "set_graph_modified()" after call
+	"DialogExecute()".
+	(update): use "menu_undo(FALSE)" instead of "menu_delete_undo()".
+
+2017-12-11  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_subwin.c (update): don't call "d->update()" if the
+	returned value of the function "DialogExecute()" is "IDCANCEL".
+
+	* src/gtk/x11file.c (FitDialogResult): use "markup_message_box()".
+	(select_type): check the returned value of the function
+	"show_fit_dialog()".
+	(FileWinFileUpdate): don't call "d->update()" if the returned
+	value of the function "DialogExecute()" is "IDCANCEL".
+
+	* src/gtk/x11gui.c (markup_message_box): added.
+	(message_box): use "markup_message_box()".
+
+2017-12-07  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/omerge.c (set_bbox): added.
+	(mergebbox, mergemove, mergezoom, mergegeometry): use
+	"set_bbox()".
+
+2017-12-06  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/omerge.c (get_mtime): added.
+	(mergedraw): check mtime.
+	(mergemove, mergegeometry): use saved bounding box.
+
+	* src/odata.c (f2dredraw): check the returned value of the function "f2ddraw()".
+
+2017-12-05  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11merge.c (MergeWinUpdate): call "draw_notify()".
+
+	* src/osystem.c (system_set_draw_notify_func, system_draw_notify):
+	added.
+
+	* src/omerge.c (mergeredraw): call "system_draw_notify()".
+
+	* src/odata.c (f2dredraw): call "system_draw_notify()".
+
+	* src/gtk/x11view.c (graph_dropped): don't call "CmViewerDraw()".
+
+	* src/gtk/x11menu.c (application): call "system_set_draw_notify_func()".
+	(UpdateAll2): add 2nd argment.
+	(ChangePage): call "draw_notify()".
+
+	* src/gtk/x11graph.c (CmGraphNewMenu): call "UpdateAll2()" instead
+	of "UpdateAll()".
+
+	* src/gtk/x11view.c (Draw): call "draw_notify()".
+
+	* src/gtk/x11menu.c (draw_notify): added.
+
+	* src/gtk/x11menu.h (FileDrawFlag): added.
+
+	* src/gtk/x11file.c (FileWinUpdate): call "draw_notify()".
+
+	* src/gtk/gtk_subwin.c (update): redraw flag is now "FILE_DRAW_NOTIFY".
+
+	* src/gtk/data/css/ngraph.css: add definition of "draw_notify" class.
+
+2017-12-04  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (CmFileHistory, CmFileNew, CmFileOpen)
+	(FileWinFileCopy, FileWinFileCopy2): don't redraw.
+
+	* src/gtk/x11lgnd.c (LegendWinUpdate): add 3rd argument.
+
+	* src/gtk/x11merge.c (MergeWinUpdate): add 3rd argument.
+
+	* src/gtk/x11file.c (FileWinUpdate): add 3rd argument.
+
+	* src/gtk/x11axis.c (AxisWinUpdate): add 3rd argument.
+
+	* src/gtk/x11lgnd.c (TextListUpdate, MarkListUpdate)
+	(RectListUpdate, ArcListUpdate, PathListUpdate): add 3rd argument.
+	(ObjListUpdate): redraw object depend on the 3rd parameter.
+
+2017-12-02  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (FileWinFileDraw): save undo information.
+
+	* src/gtk/x11merge.c (MergeWinUpdate): draw merge object.
+
+	* src/gtk/x11menu.c (UpdateAll): call only "UpdateAll2()".
+	(check_update_obj): added.
+	(UpdateAll2): use "check_update_obj()".
+
+	* src/gtk/x11file.c (FileWinFileDraw): don't call "CmViewerDraw()".
+	(FileWinUpdate): draw data object.
+
+	* src/gtk/x11axis.c (AxisWinUpdate): draw axis, axisgrid and data
+	objects.
+
+2017-12-01  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11gui.c (message_beep): call "gdk_beep()" when the
+	variable "parent" is NULL.
+
+2017-11-30  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11gui.c (message_beep): use "gdk_window_beep()" instead
+	of "gdk_beep()".
+	(fsok): use "message_beep()" instead of "gdk_beep()".
+
+2017-11-29  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* addin/timer.nsc: execute "gra::flush".
+
+	* addin/img2gra.nsc: execute "gra::flush".
+
+2017-11-27  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (reset_graph_modified): call "reset_modified_info()".
+	(undo_info_push): initialize the member "modified".
+	(undo_check_modified): added.
+	(menu_undo, menu_redo): save the modified information.
+	(get_graph_modified): return "Menulocal.modified".
+	(set_graph_modified_gra, reset_modified_info): added.
+
+	* src/gtk/x11graph.c (CmGraphShell, CmGraphSwitch, CmGraphPage):
+	call "set_graph_modified_gra()" instead of "set_graph_modified()".
+
+	* src/gtk/ox11menu.c (menuinit): initialize "Menulocal.modified".
+	(mxmodified): set value to "Menulocal.modified".
+
+2017-11-09  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/math/math_parser.c (parse_primary_expression): the
+	limitation of the length is not applied when the variable is start
+	with the character '_'.
+
+2017-10-27  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/math/math_scanner.c (math_scanner_get_token): accepts '_' as
+	the first character of a symbol.
+
+2017-10-12  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11print.c (CmOutputPrinter): fix memory leak.
+
+2017-10-03  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/ox11menu.c (create_layer): added.
+	(init_layer): use "create_layer()".
+
+2017-09-30  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gra.c (GRAtextextent, GRAdrawtext): use "g_strndup()"
+	instead of "g_malloc()" and "strncpy()".
+	(GRAtextextent): fix calculation of the bounding-box.
+
+2017-09-28  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11commn.c (get_save_opt): check source field of data
+	objects.
+
+2017-09-25  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/ox11menu.c (MenuConfigToggleView): add "show_grid" configration.
+
+	* src/gtk/x11menu.c (toggle_view): add case for MenuIdToggleGridLine.
+	(ViewMenu): agg grid menu item.
+
+	* src/gtk/x11view.c (draw_grid): added.
+
+2017-09-22  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (UpdateAll2): add parameter.
+
+	* src/gtk/x11lgnd.c (LegendWinUpdate): add first parameter.
+
+2017-09-18  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (UpdateAll): don't redraw legends.
+
+2017-09-12  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11gui.c (DialogExecute): dont connect "key-press-event"
+	signal (use CSS).
+
+2017-09-11  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11dialg.c (CopyDialog, SelectDialog): add "title" parameter.
+
+	* src/gtk/x11commn.c (ProgressDialogCreate): use predefined function "gtk_true()".
+
+	* src/gtk/x11gui.c (DialogExecute): remove redundant call of the
+	function "gtk_window_set_title()".
+	(DialogExecute): use predefined function "gtk_true()".
+
+2017-09-07  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/ox11menu.c (MenuConfigMisc): add custom palette support.
+	(add_color_ary_to_array, menu_config_set_custom_palette)
+	(init_custom_palette): added.
+	(menu_save_config_sub, mgtkloadconfig, menulocal_finalize)
+	(menuinit): add custom palette support.
+
+	* src/gtk/gtk_widget.c (add_default_color, add_default_gray)
+	(set_default_palette, show_color_dialog, set_custom_palette):
+	added.
+	(create_color_button, select_obj_color): add custom palette
+	support.
+
+	* src/gtk/x11opt.c (edit_custom_palette, save_custom_palette)
+	(create_custom_palette_buttons): added.
+	(MiscDialogSetup, MiscDialogClose, MiscDialogSetupItem): add
+	custom palette support.
+
+2017-09-06  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/object.c (arraycmp, arraycpy): added.
+
+2017-09-05  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (ViewerEvLButtonUp): don't call "UpdateAll()".
+	(check_last_insts, focus_new_insts): static function.
+	(focus_new_insts): save created objects.
+
+	* src/odata.c (f2dredraw): don't call "ignorestdio()" and "restorestdio()".
+
+	* src/gtk/ox11menu.c (mx_redraw): call "ignorestdio()" and "restorestdio()".
+
+	* src/odata.c (f2derror): use snprintf() instead of sprintf().
+
+2017-09-04  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (CmEditMenuCB): call the function
+	"set_focus_sensitivity()".
+
+	* src/omerge.c (mergeredraw): draw a rectangle instead of a image.
+
+2017-09-03  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11axis.c (axis_save_undo): save undo information of the
+	data object.
+
+	* src/gtk/ox11menu.c (mx_redraw): use the function "GRArederaw()".
+
+	* src/gra.c (_GRAredraw): now static function.
+
+	* src/gtk/x11graph.c (CmGraphShell): call "set_graph_modified()".
+
+2017-09-02  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/object.c (arraydup): bug fix: array->data can be NULL.
+
+2017-09-01  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/odata.c (f2dredraw): call "ignorestdio()" and "restorestdio()".
+
+	* src/gtk/x11lgnd.c (ObjListUpdate): set "NgraphApp.Viewer.allclear" as TRUE.
+
+	* src/gtk/x11view.c (mouse_down_move_data, Evaluate): call "UpdateAll()".
+
+	* src/gtk/x11commn.c (GetPageSettingsFromGRA): check alias name
+	and duplications.
+
+	* src/object.c (arrayuniq_all_str): added.
+
+2017-08-30  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_subwin.c (update_viewer): added.
+
+	* src/gtk/x11view.c (create_pix): dont set
+	"Menulocal.local->cairo".
+
+	* src/gtk/x11menu.c (script_exec): call "UpdateAll()" instead of
+	"UpdateAll2()".
+
+	* src/gtk/x11lgnd.c (ObjListUpdate): call "ViewerWinUpdate()".
+
+	* src/gtk/x11commn.c (LoadNgpFile): call "CmViewerDraw()".
+
+2017-08-27  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (create_layers): added.
+
+	* src/gtk/ogra2cairo.c (set_cairo_antialias): added.
+
+	* src/ogra.c (oGRAdrawparent, oGRAdraw): call "GRAlayer()".
+
+	* src/gra.c (GRAlayer): added.
+
+2017-08-26  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (ViewerEvPaint): draw background and
+	foreground images.
+	(update_bg): added.
+	(create_pix): create background image.
+	(draw_paper_frame): removed.
+
+	* src/gtk/x11opt.c (ViewerDialogClose): call "update_bg()" anf
+	"UpdateAll2()" when background color is changed.
+
+	* src/gtk/ox11menu.c (mx_clear): fill "empty" image.
+
+	* src/odata.c (file_alpha): add "break" statement.
+
+2017-08-18  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (get_focused_obj_array): added.
+
+	* src/gtk/x11file.c (data_save_undo): added.
+
+	* src/gtk/x11axis.c (axis_save_undo): added.
+
+	* src/gtk/x11menu.c (menu_redo, menu_undo, menu_clear_undo)
+	(menu_delete_undo, menu_save_undo): save undo informations.
+	(menu_save_undo_single): added.
+	(set_undo_menu_label): added.
+	(undo_info_pop, undo_info_push): added.
+	(menu_undo_iteration): add second parameter.
+	(menu_check_undo, menu_check_redo): check undo informations.
+
+	* src/gtk/x11menu.h (MENU_UNDO_TYPE): added.
+
+2017-08-12  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11axis.c (axis_check_history): added.
+
+2017-08-11  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11lgnd.c (legend_menu_update_object): added.
+	(CmLineUpdate, CmRectUpdate, CmArcUpdate, CmMarkUpdate)
+	(CmTextUpdate): use "legend_menu_update_object()".
+	(legend_menu_delete_object): added.
+	(CmLineDel, CmRectDel, CmArcDel, CmMarkDel, CmTextDel): use
+	"legend_menu_delete_object()".
+
+2017-08-10  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/object.c: add undo related functions.
+
+2017-08-09  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/odata.c (data_inst_dup, data_inst_free): added.
+
+	* src/omerge.c (merge_inst_dup, merge_inst_free): added.
+
+	* src/ofit.c (fit_inst_dup, fit_inst_free, create_math_equation): added.
+	(fitput): use "create_math_equation()".
+
+2017-08-08  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (move_objects): added.
+	(mouse_up_drag, ViewerEvKeyUp): use "move_objects()".
+
+2017-07-25  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* addin/gimg2gra.c (create_widgets): added.
+	(main): use create_widgets().
+	(create_widgets): use gdk_pixbuf_new_from_file() and
+	gtk_image_new_from_pixbuf() instead of gtk_image_new_from_file().
+
+2017-06-23  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/init.c (exec_console): use "system" to execute xterm on
+	macOS.
+
+	* src/otext.c (textmatch): fix point coordinates calculation.
+
+2017-06-08  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/odata.c (getdata_skip_step): bug fix: use "rstep" instead of
+	"hskip".
+
+2017-06-07  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (CmRangeAdd): default plot type is "line" when
+	data source is "range".
+
+2017-05-25  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (create_recent_menu): use RECENT_CHOOSER_LIMIT.
+
+	* src/gtk/gtk_common.h (RECENT_CHOOSER_LIMIT): added.
+
+2017-05-16  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/ox11menu.h (paper_id): add PAPER_ID_NORMAL and
+	PAPER_ID_WIDE.
+
+
+	* src/gtk/x11graph.c (pagelist): add "normal display" and "wide
+	display".
+
+2017-04-12  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/oiarray.c (iarray_sdev): check the value befor call sqrt.
+
+	* src/odata.c (f2dstat_sub, set_const): check the value befor call
+	sqrt.
+
+	* src/odarray.c (darray_sdev): check the value befor call sqrt.
+
+2017-03-31  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/ofit.c (show_poly_equation): improve tne notation of an
+	equation.
+
+2017-03-30  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/nstring.c (get_printf_format_str): check '^' flag.
+	(str_to_pow): added.
+	(add_printf_formated_str): support '^' flag.
+
+2017-03-03  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_action.c (create_application_window): set
+	G_APPLICATION_NON_UNIQUE flag to GtkApplication.
+
+	* src/gtk/x11gui.c (FileSelectionDialog): don't use global variable.
+
+2017-03-02  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (setup_toolbar): added.
+	(create_toplevel_window): call "setup_toolbar()" before realize the window.
+
+	* src/gtk/x11commn.c (ProgressDialogCreate): don't destory existent widget.
+	(ProgressDialogFinalize): don't destory widget.
+
+2017-03-01  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/odata.c (getdataarray, f2dcolumn_file): remove extraneous parentheses.
+
+	* src/math/math_parser.c (my_get_token): remove duplicate 'const'.
+
+2017-02-26  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (create_toolbar, create_menu_sub): use
+	"gtk_image_new_from_resource()".
+
+	* src/gtk/x11lgnd.c (LegendWinState): use
+	"gtk_image_new_from_resource()".
+
+	* src/gtk/gtk_widget.c (create_image_from_file): removed.
+
+	* src/gtk/init.c (load_css): use
+	"gtk_css_provider_load_from_resource()".
+
+	* src/gtk/gtk_subwin.c (sub_window_create): use
+	"gdk_pixbuf_new_from_resource()".
+
+	* src/gtk/gtk_action.c (create_application_window): add
+	GtkShortcutsWindow.
+	(help_overlay_action): app menu is automatically generated by
+	GtkApplication.
+
+	* src/gtk/dir_defs.h: remove "PIXMAPDIR".
+
+	* src/gtk/data/ngraph.resources.xml: add resource files as sources.
+
+2017-02-24  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (MainMenu): show "Help" menu because appmenu
+	can be hidden.
+
+	* src/gtk/gtk_action.c (AppEntries): add "preference" action (for macOS).
+	(create_application_window): divide appmenu resource file.
+
+2017-02-22  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (create_toolbar): use
+	"gtk_menu_tool_button_set_arrow_tooltip_text()".
+	(SaveMenu, create_save_menu): added.
+	(create_toolbar): use GtkMenuToolButton for save tool button.
+	(create_save_menu): use GtkAction when "USE_GTK_BUILDER" is true.
+
+2017-02-21  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (FileWinState): use
+	"tree_view_set_no_expand_column()".
+
+	* src/gtk/x11lgnd.c (LegendWinState): use
+	"tree_view_set_no_expand_column()".
+
+	* src/gtk/gtk_liststore.c (tree_view_set_no_expand_column): added.
+
+2017-02-17  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/common.h (OSX): check OSX environment.
+
+2017-02-16  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* configure.ac: check OSX environment.
+
+	* src/gtk/x11menu.c (ObjectMenu): add "Object" menu.
+
+2017-02-13  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11lgnd.c (create_color_combo_box): add "Stroke" and
+	"Fill" menu items under the each submenu.
+
+2017-02-10  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* configure.ac: remove GTK+2 support.
+	(GTK3_REQUIRED_VERSION): support GTK+ 3.4.0 or later.
+
+2017-02-09  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (MainMenu): remove "Help" menu (integrated to
+	the app menu).
+
+2017-02-08  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11lgnd.c (Mlist): change step for mark size.
+	(Tlist): change step size for font size.
+
+	* src/gtk/gtk_widget.c (create_spin_entry_type): change step size for font size.
+
+	* src/gtk/init.c (n_initialize): don't use "g_mem_set_vtable()".
+
+	* src/osystem.c (system_mem_profile): removed.
+
+	* src/common.h (MARK_TYPE_NUM): removed.
+
+	* src/gtk/gtk_subwin.c (do_popup): set "d->select" before call
+	"gtk_menu_popup_at_pointer()".
+
+	* src/odata.c (line_number, add_func_sub, add_basic_func): added.
+	(add_file_func, add_fit_func): use "add_func_sub()".
+	(ofile_create_math_equation): call "add_basic_func()".
+
+	* src/ntime.c (mjd2gd): fix time calculation.
+
+2017-02-05  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/ox11dlg.c (get_toplevel_window): added.
+
+	* addin/spellchecker.rb (NgraphSpellchecker): save and restore
+	dialog position.
+
+2017-02-02  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (do_popup): call "gtk_widget_realize()" when
+	the popup menu is not realized.
+
+2017-02-01  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11lgnd.c (LegendArrowDialogScale): added.
+	(LegendArrowDialogScaleW, LegendArrowDialogScaleL): use
+	"LegendArrowDialogScale()".
+
+2017-02-01  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* plugins/ruby/ngraph.c (wrap_load_script): added.
+	(load_script): use "wrap_load_script()" with "rb_protect()"
+	instead of "rb_load_protect()".
+
+	* plugins/ruby.c (require_files): added.
+	(ngraph_plugin_open_ruby): use "require_files()" with
+	"rb_protect()".
+
+2017-01-31  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_combo.c (set_model): "gtk_cell_renderer_text_new()"
+	shoud be called only when the variable "renderer" is true.
+
+	* plugins/ruby.c (ngraph_plugin_open_ruby): use "rb_protect()" to
+	avoid exception.
+
+2017-01-27  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (set_focus_sensitivity_sub): the merge object
+	can be deleted and duplicated.
+
+	* addin/spellchecker.rb (NgraphSpellchecker#spell_check): use
+	"buttons" and "response_button" fields of the Ngraph::Dialog
+	object.
+
+	* src/gtk/x11gui.c (add_buttons): added.
+	(DialogButton, DialogCombo, DialogComboEntry, DialogSpinEntry)
+	(DialogCheck): use "add_buttons()".
+
+	* src/gtk/ox11dlg.c (dlg_get_buttons): added.
+	(dlginput, dlgradio, dlgcombo, dlgspin, dlgcheck): use
+	"dlg_get_buttons()".
+	(dialog): add "buttons" and "response_button" fields.
+
+2017-01-26  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* plugins/ruby/ngraph.c (set_ngraph_obj_class_name): added.
+	(get_ngraph_obj, add_obj_name_const): use "set_ngraph_obj_class_name()".
+
+2017-01-25  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/odata.c (f2dlocal_array_sub, f2dstat_array, f2dstat_range): removed.
+	(f2dstat_sub): renamed from "f2dstat_file()".
+	(f2dstat): always use "f2dstat_sub()".
+	(opendata): "fp->mtime" is always 1 for the source type
+	"DATA_SOURCE_ARRAY" and "DATA_SOURCE_RANGE".
+
+2017-01-23  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/math/math_parser.c (parse_primary_expression): now accepts
+	two character variable.
+
+	* src/shell.c (nsleep): use g_thread.
+
+	* plugins/ruby/ngraph.c (nsleep): accepts real number (not only
+	integer).
+
+	* src/shellux.c (cmsleep): accepts real number (not only integer).
+
+2017-01-01  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* plugins/ruby/Makefile.am: use "$(MAKE)" and "$(AM_MAKEFLAGS)".
+
+	* src/Makefile.am (ngraph_DEPENDENCIES): set dependency.
+
+2016-12-30  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/oio.c (io_open): check security.
+
+2016-12-26  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_widget.c (set_widget_font): use PangoFontDescription
+	to make css string.
+
+2016-12-23  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (create_icon): use image file for application
+	icon (Windows).
+
+	* src/gtk/gtk_subwin.c (sub_window_create): use image file instead
+	of xpm data.
+
+	* pixmap/Makefile.am (dist_pixmap_DATA): add application icons and
+	48 dot window icons.
+
+2016-12-13  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* mingw/windows64.sh: use mingw package for the installation.
+
+	* src/gtk/init.c (set_dir_defs, set_path_env): add "BINDIR" to the
+	windows "PATH" environment.
+
+2016-11-29  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_ruler.c (_Nruler): hold widget style and foreground
+	color.
+
+	* initfile/Ngraph.ini.win (font): add "Malgun Gothic".
+
+	* debian/control (Build-Depends): depend on "libreadline-dev".
+
+2016-11-28  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_ruler.c (nruler_get_color): use cached color to
+	avoid busy loop in the function "AppMainLoop()".
+
+	* src/gtk/x11menu.c (check_pending_event): removed (redundant
+	event check).
+
+2016-11-25  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/ogra2x11.c (gtk_evloop): use "check_pending_event()"
+	instead of "gtk_events_pending()".
+
 2016-11-01  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_subwin.c (popup_menu_position): not used if the
@@ -39,9 +1280,9 @@
 
 	* addin/cal.nsc: use "ncal" instead of "cal".
 
-	* src/gtk/gtk_widget.c (set_widget_font): us "*" as a selecter.
+	* src/gtk/gtk_widget.c (set_widget_font): us "*" as a selector.
 
-	* initfile/ngraph.css: fix selecer and style.
+	* initfile/ngraph.css: fix selector and style.
 
 2016-07-28  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
@@ -3138,7 +4379,7 @@
 	* src/gtk/ogra2cairo.c (gra2cairo_get_utf8_str): added.
 	(gra2cairo_output): use "gra2cairo_get_utf8_str()".
 
-	* src/gtk/ox11menu.c (menuinit): set default dpi of a EMF file as
+	* src/gtk/ox11menu.c (menuinit): set default dpi of an EMF file as
 	576.
 
 2012-07-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
@@ -3164,7 +4405,7 @@
 
 2012-07-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/gtk/ox11menu.c (menuinit): set default dpi of a EMF file as
+	* src/gtk/ox11menu.c (menuinit): set default dpi of an EMF file as
 	600.
 
 	* src/gtk/ogra2cairofile.c (create_reference_dc): removed.
@@ -8487,15 +9728,15 @@
 
 	* src/gtk/x11lgnd.c (width_edited, pos_edited): add 4th argument
 	for the function "str_calc()".
-	(width_edited, pos_edited): show message on a error.
+	(width_edited, pos_edited): show message on an error.
 
 	* src/gtk/x11axis.c (pos_edited_common): add 4th argument for the
 	function "str_calc()".
-	(pos_edited_common): show message on a error.
+	(pos_edited_common): show message on an error.
 
 	* src/gtk/gtk_widget.c (spin_change_value_cb): add 4th argument
 	for the function "str_calc()".
-	(spin_change_value_cb): show message on a error.
+	(spin_change_value_cb): show message on an error.
 
 	* src/gtk/gtk_subwin.c (numeric_cb): add 4th argument for the
 	function "str_calc()".
@@ -8504,7 +9745,7 @@
 	(str_calc): set error message when "*err_msg" is not NULL.
 	(cmdexpr): show error message created in new math code.
 
-	* src/ofile.c (put_func): show message on a error.
+	* src/ofile.c (put_func): show message on an error.
 	(f2dputmath): don't show error message.
 
 2009-10-27  Ito Hiroyuki  <ZXB01226 at nifty.com>
@@ -9075,7 +10316,7 @@
 	exist.
 
 	* initfile/Ngraph.nsc: use "-q" option for "exist" command.
-	(load_graph): argument of "$LOGIN_SHELL" id full-path filename.
+	(load_graph): argument of "$LOGIN_SHELL" is full-path filename.
 
 2009-07-02  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
@@ -10608,7 +11849,7 @@
 2009-02-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (ViewerEvPaint): call "gdk_draw_drawable()"
-	even if "GlobalLock" id TRUE.
+	even if "GlobalLock" is TRUE.
 	(ViewerEvPaint): don't check "chkobjinstoid(Menulocal.GRAobj,
 	Menulocal.GRAoid)".
 

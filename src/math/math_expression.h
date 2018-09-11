@@ -1,6 +1,6 @@
-/* 
+/*
  * $Id: math_expression.h,v 1.3 2009-11-10 04:12:20 hito Exp $
- * 
+ *
  */
 
 #ifndef EXPRESSION_HEADER
@@ -144,5 +144,7 @@ int math_function_expression_register_arg(MathExpression *func);
 MathExpression *math_expression_optimize(MathExpression *exp, int *err);
 void math_expression_free(MathExpression *exp);
 int math_expression_calculate(MathExpression *exp, MathValue *val);
+
+int math_function_get_arg_type_num(struct math_function_parameter *fprm);
 
 #endif

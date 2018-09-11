@@ -1,6 +1,6 @@
-/* 
+/*
  * $Id: math_equation.c,v 1.13 2009-11-24 06:32:37 hito Exp $
- * 
+ *
  */
 
 #include "config.h"
@@ -201,12 +201,14 @@ math_equation_clear(MathEquation *eq)
 }
 
 void
-math_equation_set_parse_error(MathEquation *eq, const char *ptr)
+math_equation_set_parse_error(MathEquation *eq, const char *ptr, const struct math_string *str)
 {
   if (eq == NULL)
     return;
 
-  eq->err_info.pos = ptr;
+  eq->err_info.pos.pos = ptr;
+  eq->err_info.pos.line = str->line + 1;
+  eq->err_info.pos.ofst = str->ofst + 1;
 }
 
 void
@@ -826,13 +828,17 @@ math_equation_add_func(MathEquation *eq, const char *name, struct math_function_
   }
 
   if (prm->arg_type) {
-    ptr->arg_type = g_malloc(sizeof(*prm->arg_type) * prm->argc);
-    if (ptr->arg_type == NULL) {
-      g_free(ptr->name);
-      g_free(ptr);
-      return NULL;
+    int argc;
+    argc = math_function_get_arg_type_num(prm);
+    if (argc > 0) {
+      ptr->arg_type = g_malloc(sizeof(*prm->arg_type) * argc);
+      if (ptr->arg_type == NULL) {
+        g_free(ptr->name);
+        g_free(ptr);
+        return NULL;
+      }
+      memcpy(ptr->arg_type, prm->arg_type, sizeof(*prm->arg_type) * argc);
     }
-    memcpy(ptr->arg_type, prm->arg_type, sizeof(*prm->arg_type) * prm->argc);
   }
 
   r = nhash_set_ptr(eq->function, name, ptr);
@@ -1386,6 +1392,20 @@ check_array(MathEquation *eq, int id, int index)
 }
 
 int
+math_equation_clear_array(MathEquation *eq, int array)
+{
+  int i;
+
+  i = check_array(eq, array, 0);
+  if (i < 0)
+    return 1;
+
+  eq->array_buf[array].num = 0;
+
+  return 0;
+}
+
+int
 math_equation_set_array_val(MathEquation *eq, int array, int index, const MathValue *val)
 {
   int i;
@@ -1397,6 +1417,19 @@ math_equation_set_array_val(MathEquation *eq, int array, int index, const MathVa
   eq->array_buf[array].data[i] = *val;
 
   return 0;
+}
+
+int
+math_equation_push_array_val(MathEquation *eq, int array, const MathValue *val)
+{
+  MathEquationArray *ary;
+
+  ary = math_equation_get_array(eq, array);
+  if (ary == NULL) {
+    return 1;
+  }
+
+  return math_equation_set_array_val(eq, array, ary->num, val);
 }
 
 int
@@ -1539,18 +1572,20 @@ math_equation_check_const(MathEquation *eq, int *constant, int n)
 
   sc.constant = constant;
   sc.n = n;
+  sc.r = 0;
   nhash_each(eq->function, check_counst_in_func, &sc);
 
   if (sc.r) {
-   return sc.r;
+    return sc.r;
   }
 
   r = 0;
   exp = eq->exp;
   while (exp) {
     r = check_const_sub(exp, constant, n);
-    if (r)
+    if (r) {
       break;
+    }
     exp = exp->next;
   }
 

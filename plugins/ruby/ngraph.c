@@ -433,14 +433,27 @@ obj_field_permission(VALUE klass, VALUE field, const char *name)
   return INT2FIX(perm);
 }
 
+static void
+set_ngraph_obj_class_name(const char *name, char *buf, int len)
+{
+  int i;
+
+  buf[0] = toupper(name[0]);
+  for (i = 1; i < len - 1; i++) {
+    buf[i] = name[i];
+    if (name[i] == '\0') {
+      break;
+    }
+  }
+  buf[len - 1] = '\0';
+}
+
 static VALUE
 get_ngraph_obj(const char *name)
 {
   char buf[64];
 
-  strncpy(buf, name, sizeof(buf) - 1);
-  buf[sizeof(buf) - 1] = '\0';
-  buf[0] = toupper(buf[0]);
+  set_ngraph_obj_class_name(name, buf, sizeof(buf));
 
   return rb_const_get(NgraphModule, rb_intern(buf));
 }
@@ -1580,9 +1593,7 @@ add_obj_name_const(VALUE klass, struct objlist *nobj, const char *name)
     val = Qnil;
   } else {
     obj_name = ngraph_get_object_name(nobj);
-    strncpy(str, obj_name, sizeof(str) - 1);
-    str[sizeof(str) - 1] = '\0';
-    str[0] = toupper(str[0]);
+    set_ngraph_obj_class_name(obj_name, str, sizeof(str));
     val = ID2SYM(rb_intern(str));
   }
   rb_define_const(klass, name, val);
@@ -1713,9 +1724,9 @@ nputerr(VALUE module, VALUE str)
 static VALUE
 nsleep(VALUE module, VALUE arg)
 {
-  int t;
+  double t;
 
-  t = NUM2INT(arg);
+  t = NUM2DBL(arg);
   ngraph_sleep(t);
 
   return Qnil;
@@ -1797,6 +1808,13 @@ ruby_ngraph_exec_loginshell(VALUE module, VALUE cmd, VALUE nobj)
   return INT2FIX(r);
 }
 
+static VALUE
+wrap_load_script(VALUE file)
+{
+  rb_load(file, 1);
+  return Qnil;
+}
+
 static int
 load_script(int argc, char **argv)
 {
@@ -1814,7 +1832,7 @@ load_script(int argc, char **argv)
   }
 
   fname = rb_funcall(rb_cFile, ExpandPath, 1, rb_str_new2(argv[0]));
-  rb_load_protect(fname, 1, &state);
+  rb_protect(wrap_load_script, fname, &state);
   if (state) {
     VALUE errinfo, errstr, errat;
     int n, i;

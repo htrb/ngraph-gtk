@@ -290,11 +290,7 @@ SetScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct SetScriptDialog *) data;
   if (makewidget) {
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i = 0;
 
@@ -486,6 +482,7 @@ PrefScriptDialogClose(GtkWidget *w, void *data)
   switch (d->ret) {
   case IDSAVE:
     save_config(SAVE_CONFIG_TYPE_ADDIN_SCRIPT);
+    /* fall through */
   case IDOK:
     create_addin_menu();
     break;
@@ -532,11 +529,7 @@ SetDriverDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct SetDriverDialog *) data;
   if (makewidget) {
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i = 0;
     w = create_text_entry(FALSE, TRUE);
@@ -710,7 +703,7 @@ FontSettingDialogSetupItem(GtkWidget *w, struct FontSettingDialog *d)
     char *tmp;
 
     tmp = g_strdup_printf("%s, 16", d->font_str);
-    gtk_font_button_set_font_name(GTK_FONT_BUTTON(d->font_b), tmp);
+    gtk_font_chooser_set_font(GTK_FONT_CHOOSER(d->font_b), tmp);
     g_free(tmp);
   }
 
@@ -779,7 +772,6 @@ FontSettingDialogAddAlternative(GtkWidget *w, gpointer client_data)
 
   d = (struct FontSettingDialog *) client_data;
 
-#if GTK_CHECK_VERSION(3, 2, 0)
   dialog = gtk_font_chooser_dialog_new(_("Alternative font"), NULL);
   if (ndialog_run(dialog) != GTK_RESPONSE_CANCEL) {
     const gchar *font_name;
@@ -793,22 +785,6 @@ FontSettingDialogAddAlternative(GtkWidget *w, gpointer client_data)
       list_store_set_string(d->list, &iter, 0, font_name);
     }
   }
-#else
-  dialog = gtk_font_selection_dialog_new(_("Alternative font"));
-  if (ndialog_run(dialog) != GTK_RESPONSE_CANCEL) {
-    gchar *font_name, *family;
-    GtkTreeIter iter;
-
-    font_name = gtk_font_selection_dialog_get_font_name(GTK_FONT_SELECTION_DIALOG(dialog));
-    family = get_font_family(font_name);
-    g_free(font_name);
-    if (family) {
-      list_store_append(d->list, &iter);
-      list_store_set_string(d->list, &iter, 0, family);
-      g_free(family);
-    }
-  }
-#endif
 
   gtk_widget_destroy (dialog);
 }
@@ -900,11 +876,7 @@ FontSettingDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     int j;
 
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     j = 0;
     w = gtk_entry_new();
@@ -920,11 +892,7 @@ FontSettingDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(d->vbox), table, FALSE, FALSE, 4);
 
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-    hbox = gtk_hbox_new(FALSE, 4);
-#endif
 
     swin = gtk_scrolled_window_new(NULL, NULL);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
@@ -938,11 +906,7 @@ FontSettingDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_box_pack_start(GTK_BOX(hbox), swin, TRUE, TRUE, 4);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-    vbox = gtk_vbox_new(FALSE, 4);
-#endif
 
     w= gtk_button_new_with_mnemonic(_("_Add"));
     set_button_icon(w, "list-add");
@@ -1042,7 +1006,7 @@ FontSettingDialogClose(GtkWidget *wi, void *data)
     return;
   }
 
-  font_name = gtk_font_button_get_font_name(GTK_FONT_BUTTON(d->font_b));
+  font_name = gtk_font_chooser_get_font(GTK_FONT_CHOOSER(d->font_b));
   family = get_font_family(font_name);
   if (family == NULL) {
     g_free(alias);
@@ -1181,11 +1145,7 @@ PrefFontDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     gtk_dialog_add_button(GTK_DIALOG(wi), _("_Save"), IDSAVE);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-    vbox = gtk_vbox_new(FALSE, 4);
-#endif
     PrefFontDialogCreateWidgets(d, vbox, sizeof(list) / sizeof(*list), list);
     gtk_window_set_default_size(GTK_WINDOW(wi), 550, 300);
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
@@ -1221,11 +1181,6 @@ MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
   if (Menulocal.help_browser)
     gtk_entry_set_text(GTK_ENTRY(d->help_browser), Menulocal.help_browser);
 
-#if ! GTK_CHECK_VERSION(3, 0, 0)
-  if (Menulocal.browser)
-    gtk_entry_set_text(GTK_ENTRY(d->browser), Menulocal.browser);
-#endif
-
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->directory), Menulocal.changedirectory);
 
   combo_box_set_active(d->path, Menulocal.savepath);
@@ -1246,20 +1201,32 @@ MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
   spin_entry_set_val(d->data_head_lines, Menulocal.data_head_lines);
 
   if (Menulocal.coordwin_font) {
-    gtk_font_button_set_font_name(GTK_FONT_BUTTON(d->coordwin_font), Menulocal.coordwin_font);
+    gtk_font_chooser_set_font(GTK_FONT_CHOOSER(d->coordwin_font), Menulocal.coordwin_font);
   }
 
   if (Menulocal.infowin_font) {
-    gtk_font_button_set_font_name(GTK_FONT_BUTTON(d->infowin_font), Menulocal.infowin_font);
+    gtk_font_chooser_set_font(GTK_FONT_CHOOSER(d->infowin_font), Menulocal.infowin_font);
   }
 
   if (Menulocal.file_preview_font) {
-    gtk_font_button_set_font_name(GTK_FONT_BUTTON(d->file_preview_font), Menulocal.file_preview_font);
+    gtk_font_chooser_set_font(GTK_FONT_CHOOSER(d->file_preview_font), Menulocal.file_preview_font);
   }
 
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->use_opacity), Menulocal.use_opacity);
 
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->select_data), Menulocal.select_data);
+
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->use_custom_palette), Menulocal.use_custom_palette);
+  arraycpy(&(d->tmp_palette), &(Menulocal.custom_palette));
+
+  if (Menulocal.source_style_id) {
+    GtkSourceStyleSchemeManager *sman;
+    GtkSourceStyleScheme *style;
+    sman = gtk_source_style_scheme_manager_get_default();
+    style = gtk_source_style_scheme_manager_get_scheme(sman, Menulocal.source_style_id);
+    gtk_source_style_scheme_chooser_set_style_scheme(GTK_SOURCE_STYLE_SCHEME_CHOOSER(d->source_style),
+                                                     style);
+  }
 }
 
 static void
@@ -1276,6 +1243,94 @@ set_file_in_entry(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, g
   g_free(file);
 }
 
+#define PALETTE_COLUMN 9
+static GtkWidget **
+create_custom_palette_buttons(struct MiscDialog *d, GtkWidget *box)
+{
+  struct narray *palette;
+  GdkRGBA *colors;
+  GtkWidget *btn, *bbox, **btns;
+  int i, n;
+  GValue value = G_VALUE_INIT;
+
+  g_value_init(&value, G_TYPE_BOOLEAN);
+  g_value_set_boolean(&value, TRUE);
+  palette = &(d->tmp_palette);
+  n = arraynum(palette);
+  if (n < 1) {
+    return NULL;
+  }
+  btns = g_malloc(sizeof(*btns) * (n + 1));
+  if (btns == NULL) {
+    return NULL;
+  }
+  colors = arraydata(palette);
+  bbox = NULL;
+  for (i = 0; i < n; i++) {
+    if (i % PALETTE_COLUMN == 0) {
+      if (bbox) {
+	gtk_box_pack_start(GTK_BOX(box), bbox, FALSE, FALSE, 0);
+      }
+      bbox = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
+      gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_START);
+    }
+    btn = gtk_color_button_new_with_rgba(colors + i);
+    g_object_set_property(G_OBJECT(btn), "show-editor", &value);
+    gtk_box_pack_start(GTK_BOX(bbox), btn, FALSE, FALSE, 4);
+    btns[i] = btn;
+  }
+  btns[i] = NULL;
+  if (bbox) {
+    gtk_box_pack_start(GTK_BOX(box), bbox, FALSE, FALSE, 0);
+  }
+  return btns;
+}
+
+static void
+save_custom_palette(struct MiscDialog *d, GtkWidget **btns)
+{
+  struct narray *palette;
+  GdkRGBA rgba;
+  palette = &(d->tmp_palette);
+  arrayclear(palette);
+  while (*btns) {
+    gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(*btns), &rgba);
+    arrayadd(palette, &rgba);
+    btns++;
+  }
+}
+
+static void
+edit_custom_palette(GtkWidget *w, gpointer data)
+{
+  GtkWidget *dialog, *box, **btns;
+  struct MiscDialog *d;
+  gint r;
+  d = data;
+  dialog = gtk_dialog_new_with_buttons(_("custom palette"),
+				       GTK_WINDOW(d->widget),
+				       GTK_DIALOG_MODAL,
+				       _("_OK"),
+				       GTK_RESPONSE_ACCEPT,
+				       _("_Cancel"),
+				       GTK_RESPONSE_REJECT,
+				       NULL);
+  box = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+  btns = create_custom_palette_buttons(d, box);
+  if (btns == NULL) {
+    gtk_widget_destroy(dialog);
+    return;
+  }
+  gtk_widget_show_all(dialog);
+  r = gtk_dialog_run(GTK_DIALOG(dialog));
+  if (r == GTK_RESPONSE_ACCEPT) {
+    save_custom_palette(d, btns);
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->use_custom_palette), TRUE);
+  }
+  g_free(btns);
+  gtk_widget_destroy(dialog);
+}
+
 static void
 MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
@@ -1285,22 +1340,14 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct MiscDialog *) data;
   if (makewidget) {
+    arrayinit(&(d->tmp_palette), sizeof(GdkRGBA));
     gtk_dialog_add_button(GTK_DIALOG(wi), _("_Save"), IDSAVE);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     hbox2 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
     vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-    hbox2 = gtk_hbox_new(FALSE, 4);
-    vbox2 = gtk_vbox_new(FALSE, 4);
-#endif
 
     frame = gtk_frame_new(_("External programs"));
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i = 0;
 
@@ -1312,23 +1359,13 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, _("_Help browser:"), TRUE, i++);
     d->help_browser = w;
 
-#if ! GTK_CHECK_VERSION(3, 0, 0)
-    w = create_file_entry_with_cb(G_CALLBACK(set_file_in_entry), d);
-    add_widget_to_table(table, w, _("_Web browser:"), TRUE, i++);
-    d->browser = w;
-#endif
-
     gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
 
 
     frame = gtk_frame_new(NULL);
     gtk_frame_set_label(GTK_FRAME(frame), _("Save graph"));
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i = 0;
     w = combo_box_create();
@@ -1352,13 +1389,16 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     frame = gtk_frame_new(NULL);
     gtk_frame_set_label(GTK_FRAME(frame), _("Load graph"));
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i = 0;
+    w = combo_box_create();
+    add_widget_to_table(table, w, _("_Path:"), FALSE, i++);
+    for (j = 0; LoadPathStr[j]; j++) {
+      combo_box_append_text(w, _(LoadPathStr[j]));
+    }
+    d->loadpath = w;
+
     w = gtk_check_button_new_with_mnemonic(_("_Expand include file"));
     add_widget_to_table(table, w, NULL, FALSE, i++);
     d->expand = w;
@@ -1367,31 +1407,16 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, _("_Expand directory:"), TRUE, i++);
     d->expanddir = w;
 
-    w = combo_box_create();
-    add_widget_to_table(table, w, _("_Path:"), FALSE, i++);
-    for (j = 0; LoadPathStr[j]; j++) {
-      combo_box_append_text(w, _(LoadPathStr[j]));
-    }
-    d->loadpath = w;
-
     gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(vbox2), frame, TRUE, TRUE, 4);
 
     gtk_box_pack_start(GTK_BOX(hbox2), vbox2, TRUE, TRUE, 4);
 
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-    vbox2 = gtk_vbox_new(FALSE, 4);
-#endif
 
     frame = gtk_frame_new(_("Size"));
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i = 0;
     w = create_spin_entry(1, HIST_SIZE_MAX, 1, FALSE, TRUE);
@@ -1402,7 +1427,7 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, _("_Length of information view:"), FALSE, i++);
     d->info_size = w;
 
-    w = create_spin_entry(0, SPIN_ENTRY_MAX, 1, FALSE, TRUE);
+    w = create_spin_entry(0, HIST_SIZE_MAX, 1, FALSE, TRUE);
     add_widget_to_table(table, w, _("_Length of data preview:"), FALSE, i++);
     d->data_head_lines = w;
 
@@ -1411,11 +1436,7 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
 
     frame = gtk_frame_new(_("Font"));
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i = 0;
     w = gtk_font_button_new();
@@ -1434,11 +1455,7 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
 
     frame = gtk_frame_new(_("Miscellaneous"));
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i = 0;
     w = gtk_check_button_new_with_mnemonic(_("_Check \"change current directory\""));
@@ -1452,6 +1469,18 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = gtk_check_button_new_with_mnemonic(_("_Show select data dialog on exporting"));
     add_widget_to_table(table, w, NULL, FALSE, i++);
     d->select_data = w;
+
+    w = gtk_check_button_new_with_mnemonic(_("use custom _Palette"));
+    add_widget_to_table(table, w, NULL, FALSE, i++);
+    d->use_custom_palette = w;
+
+    w = gtk_button_new_with_mnemonic(_("_Edit custom palette"));
+    g_signal_connect(w, "clicked", G_CALLBACK(edit_custom_palette), d);
+    add_widget_to_table(table, w, NULL, FALSE, i++);
+
+    w = gtk_source_style_scheme_chooser_button_new();
+    add_widget_to_table(table, w, _("_Source style:"), FALSE, i++);
+    d->source_style = w;
 
     gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(vbox2), frame, TRUE, TRUE, 4);
@@ -1469,7 +1498,7 @@ set_font(char **cfg, GtkWidget *btn)
 {
   const char *buf;
 
-  buf = gtk_font_button_get_font_name(GTK_FONT_BUTTON(btn));
+  buf = gtk_font_chooser_get_font(GTK_FONT_CHOOSER(btn));
   if (buf && *cfg) {
     if (strcmp(*cfg, buf)) {
       g_free(*cfg);
@@ -1511,8 +1540,9 @@ MiscDialogClose(GtkWidget *w, void *data)
 {
   struct MiscDialog *d;
   int a, ret;
-  const char *buf;
+  const char *buf, *source_style_id;
   char *buf2;
+  GtkSourceStyleScheme *source_style;
 
   d = (struct MiscDialog *) data;
 
@@ -1524,9 +1554,6 @@ MiscDialogClose(GtkWidget *w, void *data)
 
   set_program_name(d->editor, &Menulocal.editor);
   set_program_name(d->help_browser, &Menulocal.help_browser);
-#if ! GTK_CHECK_VERSION(3, 0, 0)
-  set_program_name(d->browser, &Menulocal.browser);
-#endif
 
   Menulocal.changedirectory =
     gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->directory));
@@ -1580,9 +1607,22 @@ MiscDialogClose(GtkWidget *w, void *data)
   putobj(d->Obj, "use_opacity", d->Id, &Menulocal.use_opacity);
 
   Menulocal.select_data = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->select_data));
+  Menulocal.use_custom_palette = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->use_custom_palette));
+  if (arraycmp(&(Menulocal.custom_palette), &(d->tmp_palette))) {
+    arraycpy(&(Menulocal.custom_palette), &(d->tmp_palette));
+  }
+  arraydel(&(d->tmp_palette));
 
   d->ret = ret;
 
+  source_style = gtk_source_style_scheme_chooser_get_style_scheme(GTK_SOURCE_STYLE_SCHEME_CHOOSER(d->source_style));
+  source_style_id = gtk_source_style_scheme_get_id(source_style);
+  if (g_strcmp0(Menulocal.source_style_id, source_style_id)) {
+    if (Menulocal.source_style_id) {
+      g_free(Menulocal.source_style_id);
+    }
+    Menulocal.source_style_id = g_strdup(source_style_id);
+  }
   if (d->ret == IDSAVE) {
     save_config(SAVE_CONFIG_TYPE_MISC);
   }
@@ -1633,11 +1673,7 @@ ExViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     gtk_dialog_add_button(GTK_DIALOG(wi), _("_Save"), IDSAVE);
 
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i  = 0;
     w = gtk_check_button_new_with_mnemonic(_("use _External previewer"));
@@ -1645,11 +1681,7 @@ ExViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect(w, "toggled", G_CALLBACK(use_external_toggled), d);
     d->use_external = w;
 
-#if GTK_CHECK_VERSION(3, 2, 0)
     w = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 20, 620, 1);
-#else
-    w = gtk_hscale_new_with_range(20, 620, 1);
-#endif
     d->dpi = w;
     add_widget_to_table(table, w, "_DPI:", TRUE, i++);
 
@@ -1699,11 +1731,7 @@ static void
 ViewerDialogSetupItem(GtkWidget *w, struct ViewerDialog *d)
 {
   int a;
-#if GTK_CHECK_VERSION(3, 4, 0)
   GdkRGBA color;
-#else
-  GdkColor color;
-#endif
 
   getobj(d->Obj, "dpi", d->Id, 0, NULL, &(d->dpis));
   gtk_range_set_value(GTK_RANGE(d->dpi), d->dpis);
@@ -1721,20 +1749,12 @@ ViewerDialogSetupItem(GtkWidget *w, struct ViewerDialog *d)
 
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->preserve_width), Menulocal.preserve_width);
 
-#if GTK_CHECK_VERSION(3, 4, 0)
   color.red = Menulocal.bg_r;
   color.green = Menulocal.bg_g;
   color.blue = Menulocal.bg_b;
   color.alpha = 1;
   gtk_color_chooser_set_use_alpha(GTK_COLOR_CHOOSER(d->bgcol), FALSE);
   gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(d->bgcol), &color);
-#else
-  color.red = Menulocal.bg_r * 65535;
-  color.green = Menulocal.bg_g * 65535;
-  color.blue = Menulocal.bg_b * 65535;
-  gtk_color_button_set_use_alpha(GTK_COLOR_BUTTON(d->bgcol), FALSE);
-  gtk_color_button_set_color(GTK_COLOR_BUTTON(d->bgcol), &color);
-#endif
 }
 
 static void
@@ -1761,18 +1781,10 @@ ViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     gtk_dialog_add_button(GTK_DIALOG(wi), _("_Save"), IDSAVE);
 
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i = 0;
-#if GTK_CHECK_VERSION(3, 2, 0)
     w = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 20, 620, 1);
-#else
-    w = gtk_hscale_new_with_range(20, 620, 1);
-#endif
     d->dpi = w;
     add_widget_to_table(table, w, "_DPI:", TRUE, i++);
 
@@ -1821,12 +1833,8 @@ static void
 ViewerDialogClose(GtkWidget *w, void *data)
 {
   struct ViewerDialog *d;
-  int ret, dpi, a;
-#if GTK_CHECK_VERSION(3, 4, 0)
+  int ret, dpi, a, bg;
   GdkRGBA color;
-#else
-  GdkColor color;
-#endif
 
   d = (struct ViewerDialog *) data;
 
@@ -1860,17 +1868,11 @@ ViewerDialogClose(GtkWidget *w, void *data)
   Menulocal.preserve_width =
     gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->preserve_width));
 
-#if GTK_CHECK_VERSION(3, 4, 0)
   gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(d->bgcol), &color);
+  bg = (Menulocal.bg_r != color.red || Menulocal.bg_g != color.green || Menulocal.bg_b != color.blue);
   Menulocal.bg_r = color.red;
   Menulocal.bg_g = color.green;
   Menulocal.bg_b = color.blue;
-#else
-  gtk_color_button_get_color(GTK_COLOR_BUTTON(d->bgcol), &color);
-  Menulocal.bg_r = color.red / 65535.0;
-  Menulocal.bg_g = color.green / 65535.0;
-  Menulocal.bg_b = color.blue / 65535.0;
-#endif
 
   Menulocal.grid = spin_entry_get_val(d->grid);
 
@@ -1881,6 +1883,10 @@ ViewerDialogClose(GtkWidget *w, void *data)
 
   if (d->ret == IDSAVE) {
     save_config(SAVE_CONFIG_TYPE_VIEWER);
+  }
+  if (bg) {
+    update_bg();
+    UpdateAll2(NULL, TRUE);
   }
 }
 

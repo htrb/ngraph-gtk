@@ -120,7 +120,7 @@ enum ngraph_object_field_type ngraph_get_object_field_type(struct objlist *obj, 
 
 int ngraph_puts(const char *s);
 int ngraph_err_puts(const char *s);
-void ngraph_sleep(int t);
+void ngraph_sleep(double t);
 void *ngraph_malloc(size_t size);
 void ngraph_free(void *ptr);
 char *ngraph_strdup(const char *str);

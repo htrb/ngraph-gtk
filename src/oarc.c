@@ -1,24 +1,24 @@
-/* 
+/*
  * $id: oarc.c,v 1.21 2010-03-04 08:30:16 hito Exp $
- * 
+ *
  * This file is part of "Ngraph for X11".
- * 
+ *
  * Copyright (C) 2002, Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
- * 
+ *
  * "Ngraph for X11" is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * "Ngraph for X11" is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  */
 
 #include "common.h"
@@ -46,7 +46,7 @@ static char *arcerrorlist[]={
 
 #define ERRNUM (sizeof(arcerrorlist) / sizeof(*arcerrorlist))
 
-static int 
+static int
 arcinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int angle2, width, pieslice, stroke, miter, join, alpha;
@@ -54,7 +54,7 @@ arcinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv)) return 1;
 
   angle2 = 36000;
-  width = 40;
+  width = DEFAULT_LINE_WIDTH;
   pieslice = TRUE;
   miter = 1000;
   join = JOIN_TYPE_BEVEL;
@@ -73,14 +73,14 @@ arcinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 arcdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
-static int 
+static int
 arcdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int GC;
@@ -143,7 +143,7 @@ arcdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 arcgeometry(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
                  int argc,char **argv)
 {
@@ -183,7 +183,7 @@ arcgeometry(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
   return 0;
 }
 
-static int 
+static int
 arcbbox(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy;
@@ -284,7 +284,7 @@ arcbbox(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 arcmove(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int x,y;
@@ -303,7 +303,7 @@ arcmove(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 arcchange(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   int point, a1, a2, rx, ry, ret;
@@ -347,10 +347,10 @@ arcchange(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
   return 0;
 }
 
-static int 
+static int
 arcrotate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
-  int tmp, angle, rx, ry, a, use_pivot;
+  int angle, rx, ry, a, use_pivot;
 
   _getobj(obj, "rx", inst, &rx);
   _getobj(obj, "ry", inst, &ry);
@@ -365,11 +365,9 @@ arcrotate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   switch (angle) {
   case 9000:
   case 27000:
-    tmp = rx;
-    rx = ry;
-    ry = tmp;
-    _putobj(obj, "rx", inst, &rx);
-    _putobj(obj, "ry", inst, &ry);
+    _putobj(obj, "rx", inst, &ry);
+    _putobj(obj, "ry", inst, &rx);
+    /* fall through */
   case 18000:
     a += angle;
     break;
@@ -399,7 +397,7 @@ arcrotate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 arcflip(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int rx, ry, a1, a2, use_pivot;
@@ -445,7 +443,7 @@ arcflip(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 arczoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int i,snum,*sdata,rx,ry,x,y,refx,refy,width,preserve_width;
@@ -496,7 +494,7 @@ arczoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 arcmatch(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy,err;
@@ -568,7 +566,7 @@ static struct objtable arc[] = {
 
   {"draw",NVFUNC,NREAD|NEXEC,arcdraw,"i",0},
   {"bbox",NIAFUNC,NREAD|NEXEC,arcbbox,"",0},
-  {"move",NVFUNC,NREAD|NEXEC,arcmove,"ii",0}, 
+  {"move",NVFUNC,NREAD|NEXEC,arcmove,"ii",0},
   {"rotate",NVFUNC,NREAD|NEXEC,arcrotate,"iiii",0},
   {"flip",NVFUNC,NREAD|NEXEC,arcflip,"iii",0},
   {"change",NVFUNC,NREAD|NEXEC,arcchange,"iii",0},

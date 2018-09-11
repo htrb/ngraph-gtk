@@ -1,26 +1,26 @@
 #ifndef _SHELL_HEADER
 #define _SHELL_HEADER
-/* 
+/*
  * $Id: shell.h,v 1.14 2010-03-04 08:30:16 hito Exp $
- * 
+ *
  * This file is part of "Ngraph for X11".
- * 
+ *
  * Copyright (C) 2002, Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
- * 
+ *
  * "Ngraph for X11" is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * "Ngraph for X11" is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  */
 
 #include "common.h"
@@ -145,7 +145,7 @@ shell_proc check_cmd(char *name);
 int check_cpcmd(char *name);
 int init_cmd_tbl(void);
 
-void nsleep(int a);
+void nsleep(double a);
 int eval_script(const char *script, int security);
 char *addval(struct nshell *nshell,char *name,char *val);
 char *addexp(struct nshell *nshell,char *name);
@@ -179,7 +179,7 @@ int system_bg(char *cmd);
 void set_interrupt(void);
 int check_interrupt(void);
 void reset_interrupt(void);
-#ifdef WINDOWS
+#if WINDOWS
 void show_system_error(void);
 #else
 int set_signal(int signal, int flags, void (*handler)(int), struct sigaction *oldact);

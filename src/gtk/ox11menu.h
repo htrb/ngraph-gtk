@@ -20,6 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
+#include "nhash.h"
 
 #ifndef _O_X11_MENU_HEADER
 #define _O_X11_MENU_HEADER
@@ -46,6 +47,8 @@ enum paper_id {
   PAPER_ID_B5,
   PAPER_ID_LETTER,
   PAPER_ID_LEGAL,
+  PAPER_ID_NORMAL,
+  PAPER_ID_WIDE,
   PAPER_ID_CUSTOM,
 };
 
@@ -81,17 +84,20 @@ struct character_map_list {
   struct character_map_list *next;
 };
 
+struct layer {
+  cairo_surface_t *pix;
+  cairo_t *cairo;
+};
+
 struct menulocal
 {
-  cairo_surface_t *pix;
+  cairo_surface_t *pix, *bg;
+  NHASH layers;
   int redrawf, redrawf_num;
   int windpi, data_head_lines;
-  int grid;
-#if GTK_CHECK_VERSION(3, 0, 0)
+  int grid, show_grid;
+  int modified;
   cairo_region_t *region;
-#else
-  GdkRegion *region;
-#endif
   int lock;
   struct gra2cairo_local *local;
   int antialias;
@@ -126,6 +132,10 @@ struct menulocal
 #endif
   int png_dpi, ps_version, svg_version;
   struct character_map_list *char_map;
+  int use_custom_palette;
+  struct narray custom_palette;
+  char *source_style_id;
+  int math_input_mode;
 };
 
 extern struct menulocal Menulocal;
@@ -149,12 +159,8 @@ enum SAVE_CONFIG_TYPE {
 				  | SAVE_CONFIG_TYPE_ADDIN_SCRIPT	\
 				  | SAVE_CONFIG_TYPE_MISC)
 
-void mx_redraw(struct objlist *obj, N_VALUE *inst);
-#if GTK_CHECK_VERSION(3, 0, 0)
-void mx_clear(cairo_region_t *region);
-#else
-void mx_clear(GdkRegion *region);
-#endif
+void mx_redraw(struct objlist *obj, N_VALUE *inst, char **objects);
+void mx_clear(cairo_region_t *region, char **objects);
 void mx_inslist(struct objlist *obj, N_VALUE *inst,
 		struct objlist *aobj, N_VALUE *ainst, char *afield, int addn);
 void mx_dellist(struct objlist *obj, N_VALUE *inst, int deln);
@@ -169,10 +175,8 @@ int mgtkprintfstdout(const char *fmt, ...);
 void initwindowconfig(void);
 int mgtkwindowconfig(void);
 void menuadddrawrable(struct objlist *parent, struct narray *drawrable);
-int get_graph_modified(void);
-void set_graph_modified(void);
-void reset_graph_modified(void);
 int menu_save_config(int type);
 void main_window_redraw(void);
+void init_layer(const char *obj);
 
 #endif

@@ -1,24 +1,24 @@
-/* 
+/*
  * $Id: ntime.c,v 1.5 2010-03-04 08:30:16 hito Exp $
- * 
+ *
  * This file is part of "Ngraph for X11".
- * 
+ *
  * Copyright (C) 2002, Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
- * 
+ *
  * "Ngraph for X11" is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * "Ngraph for X11" is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  */
 
 #include "common.h"
@@ -32,6 +32,7 @@
 #include "object.h"
 #include "nstring.h"
 #include "ntime.h"
+#include "mathfn.h"
 
 char *weekstr[7]={"Sun","Mon","Tue","Wed","Thu","Fri","Sat"};
 char *monthstr[12]={"Jan","Feb","Mar","Apr","May","Jun",
@@ -114,7 +115,7 @@ ntime(time_t *timep,int style)
   return c;
 }
 
-int 
+int
 gettimeval(char *s,time_t *time)
 {
   char *endptr;
@@ -148,13 +149,14 @@ void
 mjd2gd(double mjd, struct tm *tm)
 {
   double t;
-  int wd;
+  int wd, sec;
   /* Date */
+
 #if 1
   /* http://en.wikipedia.org/wiki/Julian_day */
   int j, g, dg, c, dc, b, db, a, da, y, m, d, Y, M, D;
 
-  j = floor(mjd + 2400000.5 + 0.5 + 32044);
+  j = floor(mjd + 2400001 + 32044);
   g = j / 146097;
   dg = j % 146097;
   c = (dg / 36524 + 1) * 3 / 4;
@@ -215,14 +217,15 @@ mjd2gd(double mjd, struct tm *tm)
   /* Time */
   t = fmod(mjd, 1);
   t = (t < 0) ? 1 + t : t;
-  t *= 24;
+  sec = nround(t * 86400);
 
-  tm->tm_hour = floor(t);
+  tm->tm_hour = sec / 3600;
+  sec %= 3600;
 
-  t = fmod(t, 1) * 60;
-  tm->tm_min = floor(t);
+  tm->tm_min = sec / 60;
+  sec %= 60;
 
-  tm->tm_sec = fmod(t, 1) * 60;
+  tm->tm_sec = sec;
   tm->tm_isdst = -1;
 }
 

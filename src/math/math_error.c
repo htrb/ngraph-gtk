@@ -1,9 +1,7 @@
-/* 
+/*
  * $Id: math_error.c,v 1.10 2009-12-22 00:57:42 hito Exp $
- * 
+ *
  */
-
-#include "config.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -31,6 +29,8 @@
 #define ERR_MSG_CONST_EXIST	N_("error, the constant is already defined.")
 #define ERR_MSG_CALCULATION	N_("error, calculation error.")
 
+  static int ErrorLine = 1, ErrorOfst = 1;
+
 static char *
 check_error_position(MathEquation *eq, const char *code)
 {
@@ -41,7 +41,7 @@ check_error_position(MathEquation *eq, const char *code)
     return NULL;
 
   len = strlen(code);
-  l = eq->err_info.pos - code;
+  l = eq->err_info.pos.pos - code;
 
   if (l < 0)
     return NULL;
@@ -49,7 +49,7 @@ check_error_position(MathEquation *eq, const char *code)
   if (l >= len)
     return NULL;
 
-  if (eq->err_info.pos[0] == ';' || eq->err_info.pos[0] == '=' || eq->err_info.pos[0] == '\0') 
+  if (eq->err_info.pos.pos[0] == ';' || eq->err_info.pos.pos[0] == '=' || eq->err_info.pos.pos[0] == '\0')
     return NULL;
 
   len -= l;
@@ -58,12 +58,14 @@ check_error_position(MathEquation *eq, const char *code)
     return NULL;
 
   for (i = 0; i < len; i++) {
-    if (eq->err_info.pos[i] == ';' || eq->err_info.pos[i] == '=')
+    if (eq->err_info.pos.pos[i] == ';' || eq->err_info.pos.pos[i] == '=')
       break;
-    buf[i] = eq->err_info.pos[i];
+    buf[i] = eq->err_info.pos.pos[i];
   }
   buf[i] = '\0';
 
+  ErrorLine = eq->err_info.pos.line;
+  ErrorOfst = eq->err_info.pos.ofst;
   return buf;
 }
 
@@ -72,6 +74,7 @@ math_err_get_error_message(MathEquation *eq, const char *code, int err)
 {
   char *code_buf = NULL, *buf = NULL, *ptr;
 
+  ErrorLine = 1;
   switch (err) {
   case MATH_ERROR_NONE:
     break;
@@ -81,7 +84,10 @@ math_err_get_error_message(MathEquation *eq, const char *code, int err)
   case MATH_ERROR_FDEF_NEST:
     code_buf = check_error_position(eq, code);
     if (code_buf) {
-      buf = g_strdup_printf(_("%s\n  the error is found at: %s"), _(ERR_MSG_FUNC_NEST), code_buf);
+      buf = g_strdup_printf(_("%s (%d:%d)\n  the error is found at: %s"),
+                            _(ERR_MSG_FUNC_NEST),
+                            eq->err_info.pos.line, eq->err_info.pos.ofst,
+                            code_buf);
     } else {
       buf = g_strdup(_(ERR_MSG_FUNC_NEST));
     }
@@ -89,17 +95,23 @@ math_err_get_error_message(MathEquation *eq, const char *code, int err)
   case MATH_ERROR_UNEXP_OPE:
     code_buf = check_error_position(eq, code);
     if (code_buf) {
-      buf = g_strdup_printf(_("%s\n  the error is found at: %s"), _(ERR_MSG_UNEXP_OP), code_buf);
+      buf = g_strdup_printf(_("%s (%d:%d)\n  the error is found at: %s"),
+                            _(ERR_MSG_UNEXP_OP),
+                            eq->err_info.pos.line, eq->err_info.pos.ofst,
+                            code_buf);
     } else {
       buf = g_strdup(_(ERR_MSG_UNEXP_OP));
     }
     break;
   case MATH_ERROR_ARG_NUM:
     if (eq->err_info.func.fprm) {
-      buf = g_strdup_printf("%s (%d for %d) '%s()'", _(ERR_MSG_ARG_NUM),
+      buf = g_strdup_printf("%s (%d for %d) '%s()' (%d:%d)",
+                            _(ERR_MSG_ARG_NUM),
 			    eq->err_info.func.arg_num,
 			    eq->err_info.func.fprm->argc,
-			    eq->err_info.func.fprm->name);
+			    eq->err_info.func.fprm->name,
+                            eq->err_info.pos.line,
+                            eq->err_info.pos.ofst);
     } else {
       buf = g_strdup(_(ERR_MSG_ARG_NUM));
     }
@@ -107,7 +119,10 @@ math_err_get_error_message(MathEquation *eq, const char *code, int err)
   case MATH_ERROR_MISS_RP:
     code_buf = check_error_position(eq, code);
     if (code_buf) {
-      buf = g_strdup_printf(_("%s\n  the error is found at: %s"), _(ERR_MSG_MISS_RP), code_buf);
+      buf = g_strdup_printf(_("%s (%d:%d)\n  the error is found at: %s"),
+                            _(ERR_MSG_MISS_RP),
+                            eq->err_info.pos.line, eq->err_info.pos.ofst,
+                            code_buf);
     } else {
       buf = g_strdup(_(ERR_MSG_MISS_RP));
     }
@@ -115,7 +130,10 @@ math_err_get_error_message(MathEquation *eq, const char *code, int err)
   case MATH_ERROR_MISS_RB:
     code_buf = check_error_position(eq, code);
     if (code_buf) {
-      buf = g_strdup_printf(_("%s\n  the error is found at: %s"), _(ERR_MSG_MISS_RB), code_buf);
+      buf = g_strdup_printf(_("%s (%d:%d)\n  the error is found at: %s"),
+                            _(ERR_MSG_MISS_RB),
+                            eq->err_info.pos.line, eq->err_info.pos.ofst,
+                            code_buf);
     } else {
       buf = g_strdup(_(ERR_MSG_MISS_RB));
     }
@@ -123,7 +141,10 @@ math_err_get_error_message(MathEquation *eq, const char *code, int err)
   case MATH_ERROR_MISS_RC:
     code_buf = check_error_position(eq, code);
     if (code_buf) {
-      buf = g_strdup_printf(_("%s\n  the error is found at: %s"), _(ERR_MSG_MISS_RC), code_buf);
+      buf = g_strdup_printf(_("%s (%d:%d)\n  the error is found at: %s"),
+                            _(ERR_MSG_MISS_RC),
+                            eq->err_info.pos.line, eq->err_info.pos.ofst,
+                            code_buf);
     } else {
       buf = g_strdup(_(ERR_MSG_MISS_RC));
     }
@@ -131,7 +152,10 @@ math_err_get_error_message(MathEquation *eq, const char *code, int err)
   case MATH_ERROR_UNKNOWN_FUNC:
     code_buf = check_error_position(eq, code);
     if (code_buf) {
-      buf = g_strdup_printf(_("%s\n  the error is found at: %s"), _(ERR_MSG_UNKNOWN_F), code_buf);
+      buf = g_strdup_printf(_("%s (%d:%d)\n  the error is found at: %s"),
+                            _(ERR_MSG_UNKNOWN_F),
+                            eq->err_info.pos.line, eq->err_info.pos.ofst,
+                            code_buf);
     } else {
       buf = g_strdup(_(ERR_MSG_UNKNOWN_F));
     }
@@ -139,7 +163,10 @@ math_err_get_error_message(MathEquation *eq, const char *code, int err)
   case MATH_ERROR_INVALID_FDEF:
     code_buf = check_error_position(eq, code);
     if (code_buf) {
-      buf = g_strdup_printf(_("%s\n  the error is found at: %s"), _(ERR_MSG_INVALID_F), code_buf);
+      buf = g_strdup_printf(_("%s (%d:%d)\n  the error is found at: %s"),
+                            _(ERR_MSG_INVALID_F),
+                            eq->err_info.pos.line, eq->err_info.pos.ofst,
+                            code_buf);
     } else {
       buf = g_strdup(_(ERR_MSG_INVALID_F));
     }
@@ -147,7 +174,10 @@ math_err_get_error_message(MathEquation *eq, const char *code, int err)
   case MATH_ERROR_INVALID_CDEF:
     code_buf = check_error_position(eq, code);
     if (code_buf) {
-      buf = g_strdup_printf(_("%s\n  the error is found at: %s"), _(ERR_MSG_INVALID_C), code_buf);
+      buf = g_strdup_printf(_("%s (%d:%d)\n  the error is found at: %s"),
+                            _(ERR_MSG_INVALID_C),
+                            eq->err_info.pos.line, eq->err_info.pos.ofst,
+                            code_buf);
     } else {
       buf = g_strdup(_(ERR_MSG_INVALID_C));
     }
@@ -155,7 +185,10 @@ math_err_get_error_message(MathEquation *eq, const char *code, int err)
   case MATH_ERROR_UNEXP_TOKEN:
     code_buf = check_error_position(eq, code);
     if (code_buf) {
-      buf = g_strdup_printf(_("%s\n  the error is found at: %s"), _(ERR_MSG_UNEXP_TOK), code_buf);
+      buf = g_strdup_printf(_("%s (%d:%d)\n  the error is found at: %s"),
+                            _(ERR_MSG_UNEXP_TOK),
+                            eq->err_info.pos.line, eq->err_info.pos.ofst,
+                            code_buf);
     } else {
       buf = g_strdup(_(ERR_MSG_UNEXP_TOK));
     }
@@ -163,7 +196,10 @@ math_err_get_error_message(MathEquation *eq, const char *code, int err)
   case MATH_ERROR_INVALID_PRM:
     code_buf = check_error_position(eq, code);
     if (code_buf) {
-      buf = g_strdup_printf(_("%s\n  the error is found at: %s"), _(ERR_MSG_INVALID_P), code_buf);
+      buf = g_strdup_printf(_("%s (%d:%d)\n  the error is found at: %s"),
+                            _(ERR_MSG_INVALID_P),
+                            eq->err_info.pos.line, eq->err_info.pos.ofst,
+                            code_buf);
     } else {
       buf = g_strdup(_(ERR_MSG_INVALID_P));
     }
@@ -171,7 +207,10 @@ math_err_get_error_message(MathEquation *eq, const char *code, int err)
   case MATH_ERROR_PRM_IN_DEF:
     code_buf = check_error_position(eq, code);
     if (code_buf) {
-      buf = g_strdup_printf(_("%s\n  the error is found at: %s"), _(ERR_MSG_PRM_IN_DEF), code_buf);
+      buf = g_strdup_printf(_("%s (%d:%d)\n  the error is found at: %s"),
+                            _(ERR_MSG_PRM_IN_DEF),
+                            eq->err_info.pos.line, eq->err_info.pos.ofst,
+                            code_buf);
     } else {
       buf = g_strdup(_(ERR_MSG_PRM_IN_DEF));
     }
@@ -184,7 +223,9 @@ math_err_get_error_message(MathEquation *eq, const char *code, int err)
     break;
   case MATH_ERROR_INVALID_FUNC:
     if (eq->err_info.func.fprm) {
-      buf = g_strdup_printf("%s '%s()'", _(ERR_MSG_POS_FUNC), eq->err_info.func.fprm->name);
+      buf = g_strdup_printf("%s '%s()' (%d:%d)",
+                            _(ERR_MSG_POS_FUNC), eq->err_info.func.fprm->name,
+                            eq->err_info.pos.line, eq->err_info.pos.ofst);
     } else {
       buf = g_strdup(_(ERR_MSG_POS_FUNC));
     }
@@ -192,7 +233,9 @@ math_err_get_error_message(MathEquation *eq, const char *code, int err)
   case MATH_ERROR_CONST_EXIST:
     ptr = math_equation_get_const_name(eq, eq->err_info.const_id);
     if (ptr) {
-      buf = g_strdup_printf("%s '%s'", _(ERR_MSG_CONST_EXIST), ptr);
+      buf = g_strdup_printf("%s '%s' (%d:%d)",
+                            _(ERR_MSG_CONST_EXIST), ptr,
+                            eq->err_info.pos.line, eq->err_info.pos.ofst);
     } else {
       buf = g_strdup(_(ERR_MSG_CONST_EXIST));
     }
@@ -215,4 +258,15 @@ math_err_get_error_message(MathEquation *eq, const char *code, int err)
   }
 
   return buf;
+}
+
+void
+math_err_get_recent_error_position(int *line, int *ofst)
+{
+  if (line) {
+    *line = ErrorLine;
+  }
+  if (ofst) {
+    *ofst = ErrorOfst;
+  }
 }

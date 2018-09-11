@@ -71,6 +71,7 @@ static struct subwin_popup_list Popup_list[] = {
   {NULL, NULL, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
   {"_Focus",           G_CALLBACK(list_sub_window_focus), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {N_("_Preferences"), G_CALLBACK(list_sub_window_update), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("_Instance name"), G_CALLBACK(list_sub_window_object_name), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {NULL, NULL, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
   {N_("_Top"),    G_CALLBACK(list_sub_window_move_top), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {N_("_Up"),     G_CALLBACK(list_sub_window_move_up), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
@@ -80,10 +81,10 @@ static struct subwin_popup_list Popup_list[] = {
 };
 
 #define POPUP_ITEM_NUM (sizeof(Popup_list) / sizeof(*Popup_list) - 1)
-#define POPUP_ITEM_TOP 7
-#define POPUP_ITEM_UP 8
-#define POPUP_ITEM_DOWN 9
-#define POPUP_ITEM_BOTTOM 10
+#define POPUP_ITEM_TOP     8
+#define POPUP_ITEM_UP      9
+#define POPUP_ITEM_DOWN   10
+#define POPUP_ITEM_BOTTOM 11
 
 
 static void
@@ -126,11 +127,7 @@ MergeDialogSetup(GtkWidget *wi, void *data, int makewidget)
   gtk_window_set_title(GTK_WINDOW(wi), title);
 
   if (makewidget) {
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i = 0;
     w = create_file_entry(d->Obj);
@@ -208,7 +205,7 @@ CmMergeOpen(void *w, gpointer client_data)
 {
   struct objlist *obj;
   char *name = NULL;
-  int id, ret;
+  int id, ret, undo;
 
   if (Menulock || Globallock)
     return;
@@ -220,21 +217,22 @@ CmMergeOpen(void *w, gpointer client_data)
 		       TRUE, Menulocal.changedirectory) != IDOK || ! name)
     return;
 
+  undo = menu_save_undo_single(UNDO_TYPE_CREATE, obj->name);
   id = newobj(obj);
   if (id >= 0) {
     changefilename(name);
     putobj(obj, "file", id, name);
     MergeDialog(NgraphApp.MergeWin.data.data, id, -1);
     ret = DialogExecute(TopLevel, &DlgMerge);
-    if ((ret == IDDELETE) || (ret == IDCANCEL)) {
-      delobj(obj, id);
+    if (ret == IDCANCEL) {
+      menu_undo_internal(undo);
     } else {
       set_graph_modified();
     }
   } else {
     g_free(name);
   }
-  MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE);
+  MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE, DRAW_NOTIFY);
 }
 
 void
@@ -251,15 +249,18 @@ CmMergeClose(void *w, gpointer client_data)
     return;
   if (chkobjlastinst(obj) == -1)
     return;
-  SelectDialog(&DlgSelect, obj, FileCB, (struct narray *) &farray, NULL);
+  SelectDialog(&DlgSelect, obj, _("close merge file (multi select)"), FileCB, (struct narray *) &farray, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&farray);
+    if (num > 0) {
+      menu_save_undo_single(UNDO_TYPE_DELETE, obj->name);
+    }
     array = arraydata(&farray);
     for (i = num - 1; i >= 0; i--) {
       delobj(obj, array[i]);
       set_graph_modified();
     }
-    MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE);
+    MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE, TRUE);
   }
   arraydel(&farray);
 }
@@ -269,7 +270,7 @@ CmMergeUpdate(void *w, gpointer client_data)
 {
   struct narray farray;
   struct objlist *obj;
-  int i, j;
+  int i, ret, modified;
   int *array, num;
 
   if (Menulock || Globallock)
@@ -278,27 +279,35 @@ CmMergeUpdate(void *w, gpointer client_data)
     return;
   if (chkobjlastinst(obj) == -1)
     return;
-  SelectDialog(&DlgSelect, obj, FileCB, (struct narray *) &farray, NULL);
+  SelectDialog(&DlgSelect, obj, _("merge file property (multi select)"), FileCB, (struct narray *) &farray, NULL);
+  modified = FALSE;
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&farray);
+    if (num > 0) {
+      menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
+    }
     array = arraydata(&farray);
     for (i = 0; i < num; i++) {
       MergeDialog(NgraphApp.MergeWin.data.data, array[i], -1);
-      if (DialogExecute(TopLevel, &DlgMerge) == IDDELETE) {
-	delobj(obj, array[i]);
-	set_graph_modified();
-	for (j = i + 1; j < num; j++)
-	  array[j]--;
+      ret = DialogExecute(TopLevel, &DlgMerge);
+      if (ret != IDCANCEL) {
+        modified = TRUE;
       }
     }
-    MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE);
+    if (modified) {
+      MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE, TRUE);
+    }
   }
   arraydel(&farray);
 }
 
 void
-MergeWinUpdate(struct obj_list_data *d, int clear)
+MergeWinUpdate(struct obj_list_data *d, int clear, int draw)
 {
+  int redraw;
+  if (Menulock || Globallock)
+    return;
+
   if (d == NULL)
     return;
 
@@ -310,6 +319,21 @@ MergeWinUpdate(struct obj_list_data *d, int clear)
 
   if (! clear && d->select >= 0) {
     list_store_select_int(GTK_WIDGET(d->text), MERG_WIN_COL_ID, d->select);
+  }
+
+  switch (draw) {
+  case DRAW_REDRAW:
+    getobj(Menulocal.obj, "redraw_flag", 0, 0, NULL, &redraw);
+    if (redraw) {
+      NgraphApp.Viewer.allclear = TRUE;
+      update_viewer(d);
+    } else {
+      draw_notify(TRUE);
+    }
+    break;
+  case DRAW_NOTIFY:
+    draw_notify(TRUE);
+    break;
   }
 }
 

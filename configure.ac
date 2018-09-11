@@ -1,11 +1,12 @@
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT(ngraph, 6.07.00, ZXB01226@nifty.com, ngraph-gtk)
+AC_INIT(ngraph, 6.07.07, ZXB01226@nifty.com, ngraph-gtk)
 
 LIBNGRAPH_VERSION=0:0:0
 AC_SUBST(LIBNGRAPH_VERSION)
 
 AC_CANONICAL_HOST
+AC_SYS_LARGEFILE
 
 vsymldflags=
 	AC_MSG_CHECKING([version script options])
@@ -19,6 +20,7 @@ AC_MSG_CHECKING([for native Win32])
 case "$host" in
   *-*-mingw*)
     os_win32=yes
+    AC_CHECK_TOOL(WINDRES, windres)
     ;;
   *)
     os_win32=no
@@ -26,6 +28,18 @@ case "$host" in
 esac
 AC_MSG_RESULT([$os_win32])
 AM_CONDITIONAL(OS_WIN32, test "$os_win32" = "yes")
+
+AC_MSG_CHECKING([for native OSX])
+case "$host" in
+  *-apple-darwin*)
+    os_osx=yes
+    ;;
+  *)
+    os_osx=no
+    ;;
+esac
+AC_MSG_RESULT([$os_osx])
+AM_CONDITIONAL(OS_OSX, test "$os_osx" = "yes")
 
 AC_CONFIG_SRCDIR(src/main.c)
 AC_CONFIG_MACRO_DIR([m4])
@@ -42,8 +56,7 @@ AC_SUBST(LIBTOOL_DEPS)
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 
 GSL_REQUIRED_VERSION=0.2.5
-GTK2_REQUIRED_VERSION=2.16.0
-GTK3_REQUIRED_VERSION=3.0.0
+GTK3_REQUIRED_VERSION=3.4.0
 GLIB_REQUIRED_VERSION=2.16.0
 
 dnl Checks for programs.
@@ -89,13 +102,17 @@ dnl AM_PATH_GLIB_2_0($GLIB_REQUIRED_VERSION,,
 dnl   [AC_MSG_ERROR(Test for GLib failed.)],
 dnl   gobject)
 
-AM_PATH_GTK_3_0($GTK3_REQUIRED_VERSION,,
-	 [AM_PATH_GTK_2_0($GTK2_REQUIRED_VERSION,, [AC_MSG_ERROR(Test for GTK failed.)],)],)
+AM_PATH_GTK_3_0($GTK3_REQUIRED_VERSION,,AC_MSG_ERROR(Test for GTK failed.),)
 
 AM_PATH_GSL($GSL_REQUIRED_VERSION,
 	AC_DEFINE([HAVE_LIBGSL], 1, [have GNU Scientific Library]),)
 
+AC_PATH_PROG(GLIB_COMPILE_RESOURCES, glib-compile-resources)
+AC_PATH_PROG(GLIB_MKENUMS, glib-mkenums)
+
 AC_SUBST(PKG_CONFIG)
+
+PKG_CHECK_MODULES([GTKSOURCEVIEW], [gtksourceview-3.0])
 
 # Checks for header files.
 AC_PATH_X
@@ -146,10 +163,9 @@ AC_CONFIG_FILES([Makefile \
 		 test/Makefile \
 		 plugins/Makefile \
 		 plugins/ruby/Makefile \
-		 plugins/ruby/lib/Makefile \
-		 plugins/ruby/lib/ngraph/Makefile \
+		 gtksourceview/Makefile \
 		 mingw/Makefile \
-		 pixmap/Makefile \
+		 osx/Makefile \
 		 icons/Makefile \
 		 icons/scalable/Makefile \
 		 icons/scalable/apps/Makefile \

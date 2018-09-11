@@ -1,24 +1,24 @@
-/* 
+/*
  * $Id: osarray.c,v 1.6 2010-03-04 08:30:16 hito Exp $
- * 
+ *
  * This file is part of "Ngraph for X11".
- * 
+ *
  * Copyright (C) 2002, Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
- * 
+ *
  * "Ngraph for X11" is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * "Ngraph for X11" is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  */
 
 #include "common.h"
@@ -50,7 +50,7 @@ struct osarray_local {
 
 #define ERRNUM (sizeof(sarrayerrorlist) / sizeof(*sarrayerrorlist))
 
-static int 
+static int
 sarrayinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct osarray_local *local;
@@ -72,7 +72,7 @@ sarrayinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 sarraydone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct osarray_local *local;
@@ -88,7 +88,7 @@ sarraydone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 sarrayget(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
@@ -117,7 +117,7 @@ sarrayget(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 sarrayput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
@@ -136,7 +136,7 @@ sarrayput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 sarrayadd(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
@@ -153,7 +153,7 @@ sarrayadd(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 sarraypop(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
@@ -193,7 +193,7 @@ sarraypop(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 sarrayins(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
@@ -217,7 +217,7 @@ sarrayins(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 sarrayunshift(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
@@ -237,7 +237,7 @@ sarrayunshift(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **ar
   return 0;
 }
 
-static int 
+static int
 sarrayshift(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
@@ -271,7 +271,7 @@ sarrayshift(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
   return 0;
 }
 
-static int 
+static int
 sarraydel(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
@@ -296,7 +296,7 @@ sarraydel(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 set_delimiter(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct osarray_local *local;
@@ -324,7 +324,7 @@ set_delimiter(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char 
   return 0;
 }
 
-static int 
+static int
 sarraysplit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc, char **argv)
 {
   struct osarray_local *local;
@@ -378,7 +378,7 @@ sarraysplit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc, char **arg
   return 0;
 }
 
-static int 
+static int
 sarrayjoin(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct narray *array;
@@ -423,7 +423,7 @@ sarrayjoin(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   return 0;
 }
 
-static int 
+static int
 sarraysort(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc, char **argv)
 {
   struct narray *array;
@@ -435,7 +435,7 @@ sarraysort(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc, char **argv
   return 0;
 }
 
-static int 
+static int
 sarrayrsort(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc, char **argv)
 {
   struct narray *array;
@@ -459,7 +459,7 @@ sarrayuniq(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc, char **argv
   return 0;
 }
 
-static int 
+static int
 sarray_slice(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct narray *array;

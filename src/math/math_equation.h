@@ -1,6 +1,6 @@
-/* 
+/*
  * $Id: math_equation.h,v 1.8 2009-11-21 11:39:10 hito Exp $
- * 
+ *
  */
 
 #ifndef MATH_EQUATION_HEADER
@@ -37,6 +37,7 @@ struct _math_array {
   MathValue *data;
 };
 
+#include "math_scanner.h"
 #include "math_expression.h"
 #include "math_function.h"
 #include "math_constant.h"
@@ -52,7 +53,10 @@ struct _math_equation {
   MathEquationParametar *parameter;
   MathEquationArray *array_buf;
   union {
-    const char *pos;
+    struct {
+      const char *pos;
+      int line, ofst;
+    } pos;
     struct {
       int arg_num;
       struct math_function_parameter *fprm;
@@ -116,7 +120,9 @@ int math_equation_get_var(MathEquation *eq, int idx, MathValue *val);
 int math_equation_check_array(MathEquation *eq, const char *name);
 int math_equation_add_array(MathEquation *eq, const char *name);
 int math_equation_set_array_val(MathEquation *eq, int array, int index, const MathValue *val);
+int math_equation_push_array_val(MathEquation *eq, int array, const MathValue *val);
 int math_equation_get_array_val(MathEquation *eq, int array, int index, MathValue *val);
+int math_equation_clear_array(MathEquation *eq, int array);
 MathEquationArray *math_equation_get_array(MathEquation *eq, int array);
 
 void math_equation_set_user_data(MathEquation *eq, void *user_data);
@@ -124,7 +130,7 @@ void *math_equation_get_user_data(MathEquation *eq);
 
 int math_equation_check_const(MathEquation *eq, int *constant, int n);
 
-void math_equation_set_parse_error(MathEquation *eq, const char *ptr);
+void math_equation_set_parse_error(MathEquation *eq, const char *ptr, const struct math_string *str);
 void math_equation_set_func_arg_num_error(MathEquation *eq, struct math_function_parameter *fprm, int arg_num);
 void math_equation_set_func_error(MathEquation *eq, struct math_function_parameter *fprm);
 void math_equation_set_const_error(MathEquation *eq, int id);

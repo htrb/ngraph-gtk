@@ -65,7 +65,8 @@ static n_list_store Plist[] = {
   {" ",            G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden"},
   {"#",            G_TYPE_INT,     TRUE, FALSE, "id"},
   {"type",         G_TYPE_PARAM,   TRUE, TRUE,  "type"},
-  {"arrow",        G_TYPE_ENUM,    TRUE, TRUE,  "arrow"},
+  {"marker_begin", G_TYPE_ENUM,    TRUE, TRUE,  "marker_begin"},
+  {"marker_end",   G_TYPE_ENUM,    TRUE, TRUE,  "marker_end"},
   {N_("color"),    G_TYPE_OBJECT,  TRUE, TRUE,  "color"},
   {"x",            G_TYPE_DOUBLE,  TRUE, TRUE,  "x", - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
   {"y",            G_TYPE_DOUBLE,  TRUE, TRUE,  "y", - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
@@ -78,7 +79,8 @@ enum PATH_LIST_COL {
   PATH_LIST_COL_HIDDEN = 0,
   PATH_LIST_COL_ID,
   PATH_LIST_COL_TYPE,
-  PATH_LIST_COL_ARROW,
+  PATH_LIST_COL_MARKER_BEGIN,
+  PATH_LIST_COL_MARKER_END,
   PATH_LIST_COL_COLOR,
   PATH_LIST_COL_X,
   PATH_LIST_COL_Y,
@@ -150,7 +152,7 @@ static n_list_store Mlist[] = {
   {"mark",         G_TYPE_OBJECT,  TRUE, TRUE,  "type"},
   {"x",            G_TYPE_DOUBLE,  TRUE, TRUE,  "x", - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
   {"y",            G_TYPE_DOUBLE,  TRUE, TRUE,  "y", - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {N_("size"),     G_TYPE_DOUBLE,  TRUE, TRUE,  "size",             0, SPIN_ENTRY_MAX,  20,  100},
+  {N_("size"),     G_TYPE_DOUBLE,  TRUE, TRUE,  "size",             0, SPIN_ENTRY_MAX, 100,  200},
   {"width",        G_TYPE_DOUBLE,  TRUE, TRUE,  "width",            0, SPIN_ENTRY_MAX,  20,  100},
   {"^#",           G_TYPE_INT,     TRUE, FALSE, "oid"},
 };
@@ -174,8 +176,8 @@ static n_list_store Tlist[] = {
   {N_("font"),      G_TYPE_PARAM,   TRUE, TRUE,  "font"},
   {"x",             G_TYPE_DOUBLE,  TRUE, TRUE,  "x", - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
   {"y",             G_TYPE_DOUBLE,  TRUE, TRUE,  "y", - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {N_("pt"),        G_TYPE_DOUBLE,  TRUE, TRUE,  "pt",                0, SPIN_ENTRY_MAX,  20,  100},
-  {N_("direction"), G_TYPE_DOUBLE,  TRUE, TRUE,  "direction",         0, 36000,          100, 1500},
+  {N_("pt"),        G_TYPE_DOUBLE,  TRUE, TRUE,  "pt",               0, SPIN_ENTRY_MAX, 100, 1000},
+  {N_("direction"), G_TYPE_DOUBLE,  TRUE, TRUE,  "direction",        0, 36000,          100, 1500},
   {"raw",           G_TYPE_BOOLEAN, TRUE, TRUE,  "raw"},
   {"^#",            G_TYPE_INT,     TRUE, FALSE, "oid"},
   {"style",         G_TYPE_INT,     FALSE, FALSE, "style"},
@@ -218,6 +220,7 @@ static struct subwin_popup_list Popup_list[] = {
   {NULL, NULL, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
   {N_("_Focus"),       G_CALLBACK(list_sub_window_focus), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {N_("_Properties"),  G_CALLBACK(list_sub_window_update), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("_Instance name"), G_CALLBACK(list_sub_window_object_name), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {NULL, NULL, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
   {N_("_Top"),    G_CALLBACK(list_sub_window_move_top), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {N_("_Up"),     G_CALLBACK(list_sub_window_move_up), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
@@ -227,11 +230,15 @@ static struct subwin_popup_list Popup_list[] = {
 };
 
 #define POPUP_ITEM_NUM (sizeof(Popup_list) / sizeof(*Popup_list) - 1)
-#define POPUP_ITEM_TOP 6
-#define POPUP_ITEM_UP 7
-#define POPUP_ITEM_DOWN 8
-#define POPUP_ITEM_BOTTOM 9
+#define POPUP_ITEM_TOP     7
+#define POPUP_ITEM_UP      8
+#define POPUP_ITEM_DOWN    9
+#define POPUP_ITEM_BOTTOM 10
 
+typedef void (* LEGEND_DIALOG_SETUP)(struct LegendDialog *data, struct objlist *obj, int id);
+
+
+static void LegendMarkDialogMark(GtkWidget *w, gpointer client_data);
 static void LegendDialogCopy(struct LegendDialog *d);
 static void path_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row);
 static void rect_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row);
@@ -265,6 +272,80 @@ struct lwidget {
   GtkWidget *w;
   char *f;
 };
+
+static void
+legend_menu_update_object(const char *name, char *(*callback) (struct objlist * obj, int id), void *dialog, LEGEND_DIALOG_SETUP setup)
+{
+  struct narray array;
+  struct objlist *obj;
+  int i, j;
+  int *data, num;
+  char title[256], *objs[2];
+
+  if (Menulock || Globallock)
+    return;
+  if ((obj = chkobject(name)) == NULL)
+    return;
+  if (chkobjlastinst(obj) == -1)
+    return;
+
+  snprintf(title, sizeof(title), _("%s property (multi select)"), _(obj->name));
+  SelectDialog(&DlgSelect, obj, title, callback, &array, NULL);
+  if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
+    num = arraynum(&array);
+    if (num > 0) {
+      menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
+      data = arraydata(&array);
+      for (i = 0; i < num; i++) {
+	setup(dialog, obj, data[i]);
+	if (DialogExecute(TopLevel, dialog) == IDDELETE) {
+	  delobj(obj, data[i]);
+	  set_graph_modified();
+	  for (j = i + 1; j < num; j++) {
+	    data[j]--;
+	  }
+	}
+      }
+      objs[0] = obj->name;
+      objs[1] = NULL;
+      LegendWinUpdate(objs, TRUE, TRUE);
+    }
+  }
+  arraydel(&array);
+}
+
+static void
+legend_menu_delete_object(const char *name, char *(*callback) (struct objlist * obj, int id))
+{
+  struct narray array;
+  struct objlist *obj;
+  int i;
+  int num, *data;
+  char title[256], *objs[2];
+
+  if (Menulock || Globallock)
+    return;
+  if ((obj = chkobject(name)) == NULL)
+    return;
+  if (chkobjlastinst(obj) == -1)
+    return;
+  snprintf(title, sizeof(title), _("delete %s (multi select)"), _(obj->name));
+  if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
+    num = arraynum(&array);
+    if (num > 0) {
+      menu_save_undo_single(UNDO_TYPE_DELETE, obj->name);
+      data = arraydata(&array);
+      for (i = num - 1; i >= 0; i--) {
+	delobj(obj, data[i]);
+	set_graph_modified();
+      }
+      objs[0] = obj->name;
+      objs[1] = NULL;
+      LegendWinUpdate(objs, TRUE, TRUE);
+    }
+  }
+  arraydel(&array);
+}
 
 static char *
 LegendLineCB(struct objlist *obj, int id)
@@ -379,11 +460,14 @@ init_legend_dialog_widget_member(struct LegendDialog *d)
   d->pieslice = NULL;
   d->size = NULL;
   d->type = NULL;
+  d->mark_type_begin = NULL;
+  d->mark_type_end = NULL;
   d->angle1 = NULL;
   d->angle2 = NULL;
   d->fill = NULL;
   d->fill_rule = NULL;
-  d->arrow = NULL;
+  d->marker_begin = NULL;
+  d->marker_end = NULL;
   d->arrow_length = NULL;
   d->arrow_width = NULL;
   d->view = NULL;
@@ -456,7 +540,7 @@ static void
 legend_dialog_set_sensitive(GtkWidget *w, gpointer client_data)
 {
   struct LegendDialog *d;
-  int path_type;
+  int path_type, marker_type;
 
   d = (struct LegendDialog *) client_data;
 
@@ -491,7 +575,8 @@ legend_dialog_set_sensitive(GtkWidget *w, gpointer client_data)
   if (d->stroke &&
       d->interpolation &&
       d->close_path &&
-      d->arrow &&
+      d->marker_begin &&
+      d->marker_end &&
       d->arrow_length &&
       d->arrow_width) {
     int a, ca;
@@ -501,9 +586,17 @@ legend_dialog_set_sensitive(GtkWidget *w, gpointer client_data)
 
     set_widget_sensitivity_with_label(d->miter, a);
     set_widget_sensitivity_with_label(d->join, a);
-    set_widget_sensitivity_with_label(d->arrow, a);
+    set_widget_sensitivity_with_label(d->marker_begin, a);
+    gtk_widget_set_sensitive(d->marker_end, a);
     set_widget_sensitivity_with_label(d->arrow_length, a);
     set_widget_sensitivity_with_label(d->arrow_width, a);
+
+    marker_type = combo_box_get_active(d->marker_begin);
+    gtk_widget_set_sensitive(d->mark_type_begin, marker_type == MARKER_TYPE_MARK && a);
+
+    marker_type = combo_box_get_active(d->marker_end);
+    gtk_widget_set_sensitive(d->mark_type_end, marker_type == MARKER_TYPE_MARK && a);
+
 
     if (path_type == PATH_TYPE_CURVE) {
       set_widget_sensitivity_with_label(d->close_path, a &&
@@ -518,12 +611,33 @@ legend_dialog_set_sensitive(GtkWidget *w, gpointer client_data)
     int a;
 
     a = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->fill));
-    set_widget_sensitivity_with_label(d->fill_color, a);
+    if (d->marker_begin && d->marker_end) {
+      int marker_begin, marker_end, stroke;
+      stroke = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->stroke));
+      marker_begin = combo_box_get_active(d->marker_begin);
+      marker_end = combo_box_get_active(d->marker_end);
+      set_widget_sensitivity_with_label(d->fill_color,
+                                        (stroke &&
+                                         (marker_begin == MARKER_TYPE_MARK ||
+                                          marker_end == MARKER_TYPE_MARK)) ||
+                                        a);
+    } else {
+      set_widget_sensitivity_with_label(d->fill_color, a);
+    }
 
     if (d->fill_rule) {
       set_widget_sensitivity_with_label(d->fill_rule, a);
     }
   }
+}
+
+static void
+setup_mark_type(struct LegendDialog *d, int id, GtkWidget *type, const char *field, struct MarkDialog *mark)
+{
+  int a;
+  getobj(d->Obj, field, id, 0, NULL, &a);
+  button_set_mark_image(type, a);
+  MarkDialog(mark, d->widget, a);
 }
 
 static void
@@ -550,7 +664,6 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
     {d->fill, "fill"},
     {d->fill_rule, "fill_rule"},
     {d->raw, "raw"},
-    {d->arrow, "arrow"},
     {d->pieslice, "pieslice"},
     {d->size, "size"},
     {d->pt, "pt"},
@@ -564,14 +677,6 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
 
   for (i = 0; i < sizeof(lw) / sizeof(*lw); i++) {
     SetWidgetFromObjField(lw[i].w, d->Obj, id, lw[i].f);
-  }
-
-  if (d->type) {
-    int a;
-
-    getobj(d->Obj, "type", id, 0, NULL, &a);
-    button_set_mark_image(d->type, a);
-    MarkDialog(&d->mark, a);
   }
 
   if (d->arrow_length) {
@@ -591,6 +696,27 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
 
     gtk_range_set_value(GTK_RANGE(d->arrow_width), d->wid / 100);
     gtk_range_set_value(GTK_RANGE(d->arrow_length), d->ang);
+  }
+
+  if (d->type) {
+    setup_mark_type(d, id, d->type, "type", &(d->mark));
+  }
+
+  if (d->marker_begin) {
+    getobj(d->Obj, "marker_begin", id, 0, NULL, &i);
+    combo_box_set_active(d->marker_begin, i);
+  }
+  if (d->marker_end) {
+    getobj(d->Obj, "marker_end", id, 0, NULL, &i);
+    combo_box_set_active(d->marker_end, i);
+  }
+
+  if (d->mark_type_begin) {
+    setup_mark_type(d, id, d->mark_type_begin, "mark_type_begin", &(d->mark_begin));
+  }
+
+  if (d->mark_type_end) {
+    setup_mark_type(d, id, d->mark_type_end, "mark_type_end", &(d->mark_end));
   }
 
   if (d->x1 && d->y1 && d->x2 && d->y2) {
@@ -631,6 +757,20 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
   legend_dialog_set_sensitive(NULL, d);
 }
 
+static int
+set_mark_type(struct LegendDialog *d, const char *field, struct MarkDialog *mark)
+{
+  int oval;
+  getobj(d->Obj, field, d->Id, 0, NULL, &oval);
+  if (oval != mark->Type) {
+    if (putobj(d->Obj, field, d->Id, &(mark->Type)) == -1) {
+      return 1;
+    }
+    set_graph_modified();
+  }
+  return 0;
+}
+
 static void
 legend_dialog_close(GtkWidget *w, void *data)
 {
@@ -656,7 +796,8 @@ legend_dialog_close(GtkWidget *w, void *data)
     {d->fill, "fill"},
     {d->fill_rule, "fill_rule"},
     {d->raw, "raw"},
-    {d->arrow, "arrow"},
+    {d->marker_begin, "marker_begin"},
+    {d->marker_end, "marker_end"},
     {d->pieslice, "pieslice"},
     {d->size, "size"},
     {d->pt, "pt"},
@@ -737,13 +878,15 @@ legend_dialog_close(GtkWidget *w, void *data)
   }
 
   if (d->type) {
-    getobj(d->Obj, "type", d->Id, 0, NULL, &oval);
-    if (oval != d->mark.Type) {
-      if (putobj(d->Obj, "type", d->Id, &(d->mark.Type)) == -1) {
-	return;
-      }
-      set_graph_modified();
-    }
+    set_mark_type(d, "type", &(d->mark));
+  }
+
+  if (d->mark_type_begin) {
+    set_mark_type(d, "mark_type_begin", &(d->mark_begin));
+  }
+
+  if (d->mark_type_end) {
+    set_mark_type(d, "mark_type_end", &(d->mark_end));
   }
 
   if (d->font && d->font_bold && d->font_italic) {
@@ -960,7 +1103,7 @@ points_setup(struct LegendDialog *d)
   gtk_tree_selection_set_mode(sel, GTK_SELECTION_MULTIPLE);
 
   for (i = 0; i < POINTS_DIMENSION; i++) {
-#if GTK_CHECK_VERSION(3, 8, 0) || ! GTK_CHECK_VERSION(3, 0, 0)
+#if GTK_CHECK_VERSION(3, 8, 0)
     renderer = gtk_cell_renderer_spin_new();
 #else
     renderer = gtk_cell_renderer_text_new();
@@ -968,7 +1111,7 @@ points_setup(struct LegendDialog *d)
     g_object_set((GObject *) renderer,
 		 "xalign", 1.0,
 		 "editable", TRUE,
-#if GTK_CHECK_VERSION(3, 8, 0) || ! GTK_CHECK_VERSION(3, 0, 0)
+#if GTK_CHECK_VERSION(3, 8, 0)
 		 "adjustment", gtk_adjustment_new(0,
 						  -SPIN_ENTRY_MAX / 100.0,
 						  SPIN_ENTRY_MAX / 100.0,
@@ -992,19 +1135,11 @@ points_setup(struct LegendDialog *d)
     gtk_tree_view_column_set_expand(col, TRUE);
   }
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-#else
-  vbox = gtk_vbox_new(FALSE, 4);
-#endif
 
   label = gtk_label_new_with_mnemonic(_("_Points:"));
   set_widget_margin(label, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT | WIDGET_MARGIN_TOP | WIDGET_MARGIN_BOTTOM);
-#if GTK_CHECK_VERSION(3, 4, 0)
   gtk_widget_set_halign(label, GTK_ALIGN_START);
-#else
-  gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-#endif
   gtk_label_set_mnemonic_widget(GTK_LABEL(label), tree_view);
   gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 
@@ -1016,11 +1151,7 @@ points_setup(struct LegendDialog *d)
   gtk_container_add(GTK_CONTAINER(swin), tree_view);
   gtk_box_pack_start(GTK_BOX(vbox), swin, TRUE, TRUE, 0);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-#else
-  hbox = gtk_hbox_new(FALSE, 4);
-#endif
 
   btn = gtk_button_new_with_mnemonic(_("_Add"));
   set_button_icon(btn, "list-add");
@@ -1151,17 +1282,9 @@ draw_arrow_pixmap(GtkWidget *win, struct LegendDialog *d)
 }
 
 static void
-#if GTK_CHECK_VERSION(3, 0, 0)
 LegendArrowDialogPaint(GtkWidget *w, cairo_t *cr, gpointer client_data)
-#else
-LegendArrowDialogPaint(GtkWidget *w, GdkEvent *event, gpointer client_data)
-#endif
 {
   struct LegendDialog *d;
-#if ! GTK_CHECK_VERSION(3, 0, 0)
-  GdkWindow *win;
-  cairo_t *cr;
-#endif
 
   d = (struct LegendDialog *) client_data;
 
@@ -1173,84 +1296,53 @@ LegendArrowDialogPaint(GtkWidget *w, GdkEvent *event, gpointer client_data)
     return;
   }
 
-#if ! GTK_CHECK_VERSION(3, 0, 0)
-  win = gtk_widget_get_window(w);
+  cairo_set_source_surface(cr, d->arrow_pixmap, 0, 0);
+  cairo_paint(cr);
+}
+
+static void
+LegendArrowDialogScale(GtkWidget *w, struct LegendDialog *d)
+{
+  GdkWindow *win;
+#if ! GTK_CHECK_VERSION(3, 22, 0)
+  cairo_t *cr;
+#endif
+
+  draw_arrow_pixmap(w, d);
+#if GTK_CHECK_VERSION(3, 22, 0)
+  win = gtk_widget_get_window(d->view);
+  if (win) {
+    gdk_window_invalidate_rect(win, NULL, FALSE);
+  }
+#else  /*  GTK_CHECK_VERSION(3, 22, 0) */
+  win = gtk_widget_get_window(d->view);
   if (win == NULL) {
     return;
   }
-
   cr = gdk_cairo_create(win);
-#endif
-  cairo_set_source_surface(cr, d->arrow_pixmap, 0, 0);
-  cairo_paint(cr);
-#if ! GTK_CHECK_VERSION(3, 0, 0)
+  LegendArrowDialogPaint(d->view, cr, d);
   cairo_destroy(cr);
-#endif
+#endif  /*  GTK_CHECK_VERSION(3, 22, 0) */
 }
 
 static void
 LegendArrowDialogScaleW(GtkWidget *w, gpointer client_data)
 {
   struct LegendDialog *d;
-#if GTK_CHECK_VERSION(3, 0, 0)
-  GdkWindow *win;
-#if ! GTK_CHECK_VERSION(3, 22, 0)
-  cairo_t *cr;
-#endif
-#endif
 
   d = (struct LegendDialog *) client_data;
   d->wid = gtk_range_get_value(GTK_RANGE(w)) * 100;
-  draw_arrow_pixmap(w, d);
-
-#if GTK_CHECK_VERSION(3, 22, 0)
-  win = gtk_widget_get_window(d->view);
-  gdk_window_invalidate_rect(win, NULL, FALSE);
-#else  /*  GTK_CHECK_VERSION(3, 22, 0) */
-#if GTK_CHECK_VERSION(3, 0, 0)
-  win = gtk_widget_get_window(d->view);
-  if (win == NULL) {
-    return;
-  }
-  cr = gdk_cairo_create(win);
-  LegendArrowDialogPaint(d->view, cr, d);
-  cairo_destroy(cr);
-#else
-  LegendArrowDialogPaint(d->view, NULL, d);
-#endif
-#endif  /*  GTK_CHECK_VERSION(3, 22, 0) */
+  LegendArrowDialogScale(w, d);
 }
 
 static void
 LegendArrowDialogScaleL(GtkWidget *w, gpointer client_data)
 {
   struct LegendDialog *d;
-#if GTK_CHECK_VERSION(3, 0, 0)
-  GdkWindow *win;
-#if ! GTK_CHECK_VERSION(3, 22, 0)
-  cairo_t *cr;
-#endif
-#endif
 
   d = (struct LegendDialog *) client_data;
   d->ang = gtk_range_get_value(GTK_RANGE(w));
-  draw_arrow_pixmap(w, d);
-#if GTK_CHECK_VERSION(3, 22, 0)
-  win = gtk_widget_get_window(d->view);
-  gdk_window_invalidate_rect(win, NULL, FALSE);
-#else  /*  GTK_CHECK_VERSION(3, 22, 0) */
-#if GTK_CHECK_VERSION(3, 0, 0)
-  win = gtk_widget_get_window(d->view);
-  if (win == NULL) {
-    return;
-  }
-  cr = gdk_cairo_create(win);
-  LegendArrowDialogPaint(d->view, cr, d);
-  cairo_destroy(cr);
-#else
-  LegendArrowDialogPaint(d->view, NULL, d);
-#endif
-#endif  /*  GTK_CHECK_VERSION(3, 22, 0) */
+  LegendArrowDialogScale(w, d);
 }
 
 static gchar*
@@ -1265,10 +1357,38 @@ format_value_degree(GtkScale *scale, gdouble value, gpointer user_data)
   return g_strdup_printf ("%.0f°", value);
 }
 
+static GtkWidget *
+create_marker_type_combo_box(const char *postfix, const char *tooltip)
+{
+  GtkWidget *cbox;
+  GtkListStore *list;
+  GtkTreeIter iter;
+  int j;
+  GtkCellRenderer *rend;
+
+  list = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_INT);
+  cbox = gtk_combo_box_new_with_model(GTK_TREE_MODEL(list));
+  rend = gtk_cell_renderer_pixbuf_new();
+  gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(cbox), rend, FALSE);
+  gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "icon-name", 0);
+  gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "stock-size", 1);
+  for (j = 0; j < MARKER_TYPE_NUM; j++) {
+    char img_file[256];
+    snprintf(img_file, sizeof(img_file), "%s_%s-symbolic", marker_type_char[j], postfix);
+    gtk_list_store_append(list, &iter);
+    gtk_list_store_set(list, &iter, 0, img_file, 1, GTK_ICON_SIZE_LARGE_TOOLBAR, -1);
+  }
+  gtk_combo_box_set_active(GTK_COMBO_BOX(cbox), 1);
+  gtk_widget_set_name(cbox, "MarkerType");
+  gtk_widget_set_tooltip_text(cbox, tooltip);
+  return cbox;
+}
+
+
 static void
 LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *hbox, *vbox, *hbox2, *vbox2, *frame, *table;
+  GtkWidget *w, *hbox, *vbox, *hbox2, *vbox2, *hbox3, *frame, *table, *label;
   struct LegendDialog *d;
   char title[64];
   int i;
@@ -1282,39 +1402,19 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_dialog_add_button(GTK_DIALOG(wi), _("_Delete"), IDDELETE);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-    hbox = gtk_hbox_new(FALSE, 4);
-#endif
 
     w = points_setup(d);
 
     frame = gtk_frame_new(NULL);
     gtk_container_add(GTK_CONTAINER(frame), w);
-#if GTK_CHECK_VERSION(3, 4, 0)
-   gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
-#else
-    gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 0);
-#endif
+    gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-#else
-    vbox2 = gtk_vbox_new(FALSE, 0);
-#endif
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     hbox2 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-    hbox2 = gtk_hbox_new(FALSE, 4);
-#endif
 
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i = 0;
     w = combo_box_create();
@@ -1329,20 +1429,41 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_box_pack_start(GTK_BOX(vbox2), table, FALSE, FALSE, 0);
 
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i = 0;
     w = gtk_check_button_new_with_mnemonic(_("_Close path"));
     add_widget_to_table(table, w, NULL, FALSE, i++);
     d->close_path = w;
 
-    w = combo_box_create();
-    d->arrow = w;
-    add_widget_to_table(table, w, _("_Arrow:"), FALSE, i++);
+    hbox3 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+
+    w = gtk_button_new();
+    g_signal_connect(w, "clicked", G_CALLBACK(LegendMarkDialogMark), &(d->mark_begin));
+    gtk_box_pack_start(GTK_BOX(hbox3), w, FALSE, FALSE, 0);
+    d->mark_type_begin = w;
+
+    w = create_marker_type_combo_box("begin", _("Marker begin"));
+    gtk_box_pack_start(GTK_BOX(hbox3), w, FALSE, FALSE, 0);
+    d->marker_begin = w;
+
+    w = create_marker_type_combo_box("end", _("Marker end"));
+    gtk_box_pack_start(GTK_BOX(hbox3), w, FALSE, FALSE, 0);
+    d->marker_end = w;
+
+    w = gtk_button_new();
+    gtk_box_pack_start(GTK_BOX(hbox3), w, FALSE, FALSE, 0);
+    g_signal_connect(w, "clicked", G_CALLBACK(LegendMarkDialogMark), &(d->mark_end));
+    d->mark_type_end = w;
+
+    g_signal_connect(d->marker_begin, "changed", G_CALLBACK(legend_dialog_set_sensitive), d);
+    g_signal_connect(d->marker_end,   "changed", G_CALLBACK(legend_dialog_set_sensitive), d);
+
+    label = gtk_label_new_with_mnemonic(_("_Marker:"));
+    gtk_widget_set_halign(label, GTK_ALIGN_START);
+    gtk_label_set_mnemonic_widget(GTK_LABEL(label), d->marker_begin);
+    gtk_grid_attach(GTK_GRID(table), label, 0, i, 1, 1);
+    gtk_grid_attach(GTK_GRID(table), hbox3, 1, i++, 1, 1);
 
     style_setup(d, table, i++);
     width_setup(d, table, i++);
@@ -1353,16 +1474,8 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_box_pack_start(GTK_BOX(hbox2), table, TRUE, TRUE, 0);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-    vbox = gtk_vbox_new(FALSE, 4);
-#endif
-#if GTK_CHECK_VERSION(3, 2, 0)
     w = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 10, 170, 1);
-#else
-    w = gtk_hscale_new_with_range(10, 170, 1);
-#endif
     set_scale_mark(w, GTK_POS_BOTTOM, 15, 15);
 
     g_signal_connect(w, "value-changed", G_CALLBACK(LegendArrowDialogScaleL), d);
@@ -1373,18 +1486,10 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = gtk_drawing_area_new();
     gtk_widget_set_size_request(w, ARROW_VIEW_SIZE, ARROW_VIEW_SIZE);
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-#if GTK_CHECK_VERSION(3, 0, 0)
     g_signal_connect(w, "draw", G_CALLBACK(LegendArrowDialogPaint), d);
-#else
-    g_signal_connect(w, "expose-event", G_CALLBACK(LegendArrowDialogPaint), d);
-#endif
     d->view = w;
 
-#if GTK_CHECK_VERSION(3, 2, 0)
     w = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 100, 2000, 1);
-#else
-    w = gtk_hscale_new_with_range(100, 2000, 1);
-#endif
     set_scale_mark(w, GTK_POS_TOP, 200, 200);
     g_signal_connect(w, "value-changed", G_CALLBACK(LegendArrowDialogScaleW), d);
     g_signal_connect(w, "format-value", G_CALLBACK(format_value_percent), NULL);
@@ -1404,11 +1509,7 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
     set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT | WIDGET_MARGIN_BOTTOM);
     gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 0);
 
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i = 0;
     w = combo_box_create();
@@ -1467,17 +1568,9 @@ LegendRectDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_dialog_add_button(GTK_DIALOG(wi), _("_Delete"), IDDELETE);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-    hbox = gtk_hbox_new(FALSE, 4);
-#endif
 
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i = 0;
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
@@ -1500,16 +1593,8 @@ LegendRectDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 0);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-#else
-    vbox = gtk_vbox_new(FALSE, 0);
-#endif
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i = 0;
 
@@ -1527,11 +1612,7 @@ LegendRectDialogSetup(GtkWidget *wi, void *data, int makewidget)
     set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT | WIDGET_MARGIN_BOTTOM);
     gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
 
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i = 0;
     fill_color_setup(d, table, i++);
@@ -1586,17 +1667,9 @@ LegendArcDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_dialog_add_button(GTK_DIALOG(wi), _("_Delete"), IDDELETE);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-    hbox = gtk_hbox_new(FALSE, 4);
-#endif
 
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i = 0;
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
@@ -1619,12 +1692,7 @@ LegendArcDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 0);
 
-
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i = 0;
     w = create_direction_entry();
@@ -1639,19 +1707,10 @@ LegendArcDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, NULL, FALSE, i++);
     d->pieslice = w;
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-#else
-    vbox = gtk_vbox_new(FALSE, 0);
-#endif
     gtk_box_pack_start(GTK_BOX(vbox), table, FALSE, FALSE, 0);
 
-
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i = 0;
     w = gtk_check_button_new_with_mnemonic(_("_Close path"));
@@ -1674,12 +1733,7 @@ LegendArcDialogSetup(GtkWidget *wi, void *data, int makewidget)
     set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT | WIDGET_MARGIN_BOTTOM);
     gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
 
-
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i = 0;
     fill_color_setup(d, table, i++);
@@ -1720,11 +1774,11 @@ LegendArcDialog(struct LegendDialog *data, struct objlist *obj, int id)
 static void
 LegendMarkDialogMark(GtkWidget *w, gpointer client_data)
 {
-  struct LegendDialog *d;
+  struct MarkDialog *d;
 
-  d = (struct LegendDialog *) client_data;
-  DialogExecute(d->widget, &(d->mark));
-  button_set_mark_image(w, d->mark.Type);
+  d = (struct MarkDialog *) client_data;
+  DialogExecute(d->parent, d);
+  button_set_mark_image(w, d->Type);
 }
 
 static void
@@ -1744,17 +1798,9 @@ LegendMarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_dialog_add_button(GTK_DIALOG(wi), _("_Delete"), IDDELETE);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-    hbox = gtk_hbox_new(FALSE, 4);
-#endif
 
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i = 0;
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
@@ -1769,12 +1815,7 @@ LegendMarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 0);
 
-
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i = 0;
     style_setup(d, table, i++);
@@ -1782,7 +1823,7 @@ LegendMarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     w = gtk_button_new();
     add_widget_to_table(table, w, _("_Mark:"), FALSE, i++);
-    g_signal_connect(w, "clicked", G_CALLBACK(LegendMarkDialogMark), d);
+    g_signal_connect(w, "clicked", G_CALLBACK(LegendMarkDialogMark), &(d->mark));
     d->type = w;
 
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, TRUE, TRUE);
@@ -1841,11 +1882,7 @@ legend_dialog_setup_sub(struct LegendDialog *d, GtkWidget *table, int i)
   add_widget_to_table(table, w, _("_Font:"), FALSE, i++);
   d->font = w;
 
-#if GTK_CHECK_VERSION(3, 2, 0)
   btn_box = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
-#else
-  btn_box = gtk_hbutton_box_new();
-#endif
   gtk_box_set_spacing(GTK_BOX(btn_box), 10);
   w = gtk_check_button_new_with_mnemonic(_("_Bold"));
   set_button_icon(w, "format-text-bold");
@@ -1903,7 +1940,7 @@ create_character_view(GtkWidget *entry, gchar *data)
   GtkListStore *model;
   GtkTreeIter iter;
   gchar *ptr;
-#if GTK_CHECK_VERSION(3, 0, 0) && ! GTK_CHECK_VERSION(3, 8, 0)
+#if ! GTK_CHECK_VERSION(3, 8, 0)
   PangoLayout *layout;
   PangoRectangle ink_rect;
   int width = 0, w;
@@ -1916,9 +1953,7 @@ create_character_view(GtkWidget *entry, gchar *data)
   gtk_icon_view_set_row_spacing(GTK_ICON_VIEW(icon_view), 0);
   gtk_icon_view_set_column_spacing(GTK_ICON_VIEW(icon_view), 0);
   gtk_icon_view_set_margin(GTK_ICON_VIEW(icon_view), 0);
-#if GTK_CHECK_VERSION(2, 18, 0)
   gtk_icon_view_set_item_padding(GTK_ICON_VIEW(icon_view), 0);
-#endif
 #if ! GTK_CHECK_VERSION(3, 8, 0)
   gtk_icon_view_set_columns(GTK_ICON_VIEW(icon_view), 24);
 #endif
@@ -1935,7 +1970,7 @@ create_character_view(GtkWidget *entry, gchar *data)
     str[l] = '\0';
     gtk_list_store_set(model, &iter, 0, str, -1);
 
-#if GTK_CHECK_VERSION(3, 0, 0) && ! GTK_CHECK_VERSION(3, 8, 0)
+#if ! GTK_CHECK_VERSION(3, 8, 0)
     /* fix-me: there exist extra spaces both side of strings when use GTK+3.0 */
     layout = gtk_widget_create_pango_layout(icon_view, str);
     pango_layout_get_pixel_extents(layout, &ink_rect, NULL);
@@ -1947,7 +1982,7 @@ create_character_view(GtkWidget *entry, gchar *data)
 #endif
   }
 
-#if GTK_CHECK_VERSION(3, 0, 0) && ! GTK_CHECK_VERSION(3, 8, 0)
+#if ! GTK_CHECK_VERSION(3, 8, 0)
   gtk_icon_view_set_item_width(GTK_ICON_VIEW(icon_view), width * 1.5);
 #endif
 
@@ -2004,17 +2039,9 @@ LegendTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_dialog_add_button(GTK_DIALOG(wi), _("_Delete"), IDDELETE);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-    hbox = gtk_hbox_new(FALSE, 4);
-#endif
 
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i = 0;
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
@@ -2029,12 +2056,7 @@ LegendTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 0);
 
-
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i = 0;
     w = create_text_entry(FALSE, TRUE);
@@ -2081,11 +2103,7 @@ LegendTextDefDialogSetup(GtkWidget *w, void *data, int makewidget)
   if (makewidget) {
     init_legend_dialog_widget_member(d);
 
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
     legend_dialog_setup_sub(d, table, 0);
 
     frame = gtk_frame_new(NULL);
@@ -2114,301 +2132,61 @@ LegendTextDefDialog(struct LegendDialog *data,
 void
 CmLineDel(void *w, gpointer client_data)
 {
-  struct narray array;
-  struct objlist *obj;
-  int i;
-  int num, *data;
-
-  if (Menulock || Globallock)
-    return;
-  if ((obj = chkobject("path")) == NULL)
-    return;
-  if (chkobjlastinst(obj) == -1)
-    return;
-  SelectDialog(&DlgSelect, obj, LegendLineCB, &array, NULL);
-  if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
-    num = arraynum(&array);
-    data = arraydata(&array);
-    for (i = num - 1; i >= 0; i--) {
-      delobj(obj, data[i]);
-      set_graph_modified();
-    }
-    LegendWinUpdate(TRUE);
-  }
-  arraydel(&array);
+  legend_menu_delete_object("path", LegendLineCB);
 }
 
 void
 CmLineUpdate(void *w, gpointer client_data)
 {
-  struct narray array;
-  struct objlist *obj;
-  int i, j;
-  int *data, num;
-
-  if (Menulock || Globallock)
-    return;
-  if ((obj = chkobject("path")) == NULL)
-    return;
-  if (chkobjlastinst(obj) == -1)
-    return;
-  SelectDialog(&DlgSelect, obj, LegendLineCB, &array, NULL);
-  if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
-    num = arraynum(&array);
-    data = arraydata(&array);
-    for (i = 0; i < num; i++) {
-      LegendArrowDialog(&DlgLegendArrow, obj, data[i]);
-      if (DialogExecute(TopLevel, &DlgLegendArrow) == IDDELETE) {
-	delobj(obj, data[i]);
-	set_graph_modified();
-	for (j = i + 1; j < num; j++) {
-	  data[j]--;
-	}
-      }
-    }
-    LegendWinUpdate(TRUE);
-  }
-  arraydel(&array);
+  legend_menu_update_object("path", LegendLineCB, &DlgLegendArrow, LegendArrowDialog);
 }
 
 void
 CmRectDel(void *w, gpointer client_data)
 {
-  struct narray array;
-  struct objlist *obj;
-  int i;
-  int num, *data;
-
-  if (Menulock || Globallock)
-    return;
-  if ((obj = chkobject("rectangle")) == NULL)
-    return;
-  if (chkobjlastinst(obj) == -1)
-    return;
-  SelectDialog(&DlgSelect, obj, LegendRectCB, &array, NULL);
-  if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
-    num = arraynum(&array);
-    data = arraydata(&array);
-    for (i = num - 1; i >= 0; i--) {
-      delobj(obj, data[i]);
-      set_graph_modified();
-    }
-    LegendWinUpdate(TRUE);
-  }
-  arraydel(&array);
+  legend_menu_delete_object("rectangle", LegendRectCB);
 }
 
 void
 CmRectUpdate(void *w, gpointer client_data)
 {
-  struct narray array;
-  struct objlist *obj;
-  int i, j;
-  int *data, num;
-
-  if (Menulock || Globallock)
-    return;
-  if ((obj = chkobject("rectangle")) == NULL)
-    return;
-  if (chkobjlastinst(obj) == -1)
-    return;
-  SelectDialog(&DlgSelect, obj, LegendRectCB, &array, NULL);
-  if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
-    num = arraynum(&array);
-    data = arraydata(&array);
-    for (i = 0; i < num; i++) {
-      LegendRectDialog(&DlgLegendRect, obj, data[i]);
-      if (DialogExecute(TopLevel, &DlgLegendRect) == IDDELETE) {
-	delobj(obj, data[i]);
-	set_graph_modified();
-	for (j = i + 1; j < num; j++) {
-	  data[j]--;
-	}
-      }
-    }
-    LegendWinUpdate(TRUE);
-  }
-  arraydel(&array);
+  legend_menu_update_object("rectangle", LegendRectCB, &DlgLegendRect, LegendRectDialog);
 }
 
 void
 CmArcDel(void *w, gpointer client_data)
 {
-  struct narray array;
-  struct objlist *obj;
-  int i;
-  int num, *data;
-
-  if (Menulock || Globallock)
-    return;
-  if ((obj = chkobject("arc")) == NULL)
-    return;
-  if (chkobjlastinst(obj) == -1)
-    return;
-  SelectDialog(&DlgSelect, obj, LegendArcCB, &array, NULL);
-  if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
-    num = arraynum(&array);
-    data = arraydata(&array);
-    for (i = num - 1; i >= 0; i--) {
-      delobj(obj, data[i]);
-      set_graph_modified();
-    }
-    LegendWinUpdate(TRUE);
-  }
-  arraydel(&array);
+  legend_menu_delete_object("arc", LegendArcCB);
 }
 
 void
 CmArcUpdate(void *w, gpointer client_data)
 {
-  struct narray array;
-  struct objlist *obj;
-  int i, j;
-  int *data, num;
-
-  if (Menulock || Globallock)
-    return;
-  if ((obj = chkobject("arc")) == NULL)
-    return;
-  if (chkobjlastinst(obj) == -1)
-    return;
-  SelectDialog(&DlgSelect, obj, LegendArcCB, &array, NULL);
-  if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
-    num = arraynum(&array);
-    data = arraydata(&array);
-    for (i = 0; i < num; i++) {
-      LegendArcDialog(&DlgLegendArc, obj, data[i]);
-      if (DialogExecute(TopLevel, &DlgLegendArc) == IDDELETE) {
-	delobj(obj, data[i]);
-	set_graph_modified();
-	for (j = i + 1; j < num; j++) {
-	  data[j]--;
-	}
-      }
-    }
-    LegendWinUpdate(TRUE);
-  }
-  arraydel(&array);
+  legend_menu_update_object("arc", LegendArcCB, &DlgLegendArc, LegendArcDialog);
 }
 
 void
 CmMarkDel(void *w, gpointer client_data)
 {
-  struct narray array;
-  struct objlist *obj;
-  int i;
-  int num, *data;
-
-  if (Menulock || Globallock)
-    return;
-  if ((obj = chkobject("mark")) == NULL)
-    return;
-  if (chkobjlastinst(obj) == -1)
-    return;
-  SelectDialog(&DlgSelect, obj, LegendMarkCB, &array, NULL);
-  if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
-    num = arraynum(&array);
-    data = arraydata(&array);
-    for (i = num - 1; i >= 0; i--) {
-      delobj(obj, data[i]);
-      set_graph_modified();
-    }
-    LegendWinUpdate(TRUE);
-  }
-  arraydel(&array);
+  legend_menu_delete_object("mark", LegendMarkCB);
 }
 
 void
 CmMarkUpdate(void *w, gpointer client_data)
 {
-  struct narray array;
-  struct objlist *obj;
-  int i, j;
-  int *data, num;
-
-  if (Menulock || Globallock)
-    return;
-  if ((obj = chkobject("mark")) == NULL)
-    return;
-  if (chkobjlastinst(obj) == -1)
-    return;
-  SelectDialog(&DlgSelect, obj, LegendMarkCB, &array, NULL);
-  if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
-    num = arraynum(&array);
-    data = arraydata(&array);
-    for (i = 0; i < num; i++) {
-      LegendMarkDialog(&DlgLegendMark, obj, data[i]);
-      if (DialogExecute(TopLevel, &DlgLegendMark) == IDDELETE) {
-	delobj(obj, data[i]);
-	set_graph_modified();
-	for (j = i + 1; j < num; j++) {
-	  data[j]--;
-	}
-      }
-    }
-    LegendWinUpdate(TRUE);
-  }
-  arraydel(&array);
+  legend_menu_update_object("mark", LegendMarkCB, &DlgLegendMark, LegendMarkDialog);
 }
 
 void
 CmTextDel(void *w, gpointer client_data)
 {
-  struct narray array;
-  struct objlist *obj;
-  int i;
-  int num, *data;
-
-  if (Menulock || Globallock)
-    return;
-  if ((obj = chkobject("text")) == NULL)
-    return;
-  if (chkobjlastinst(obj) == -1)
-    return;
-  SelectDialog(&DlgSelect, obj, LegendTextCB, &array, NULL);
-  if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
-    num = arraynum(&array);
-    data = arraydata(&array);
-    for (i = num - 1; i >= 0; i--) {
-      delobj(obj, data[i]);
-      set_graph_modified();
-    }
-    LegendWinUpdate(TRUE);
-  }
-  arraydel(&array);
+  legend_menu_delete_object("text", LegendTextCB);
 }
 
 void
 CmTextUpdate(void *w, gpointer client_data)
 {
-  struct narray array;
-  struct objlist *obj;
-  int i, j;
-  int *data, num;
-
-  if (Menulock || Globallock)
-    return;
-  if ((obj = chkobject("text")) == NULL)
-    return;
-  if (chkobjlastinst(obj) == -1)
-    return;
-  SelectDialog(&DlgSelect, obj, LegendTextCB, &array, NULL);
-  if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
-    num = arraynum(&array);
-    data = arraydata(&array);
-    for (i = 0; i < num; i++) {
-      LegendTextDialog(&DlgLegendText, obj, data[i]);
-      if (DialogExecute(TopLevel, &DlgLegendText) == IDDELETE) {
-	delobj(obj, data[i]);
-	set_graph_modified();
-	for (j = i + 1; j < num; j++) {
-	  data[j]--;
-	}
-      }
-    }
-    LegendWinUpdate(TRUE);
-  }
-  arraydel(&array);
+  legend_menu_update_object("text", LegendTextCB, &DlgLegendText, LegendTextDialog);
 }
 
 void
@@ -2416,6 +2194,7 @@ CmOptionTextDef(void *w, gpointer client_data)
 {
   struct objlist *obj;
   int id;
+  char *objs[2];
 
   if (Menulock || Globallock)
     return;
@@ -2435,7 +2214,9 @@ CmOptionTextDef(void *w, gpointer client_data)
       }
     }
     delobj(obj, id);
-    UpdateAll2();
+    objs[0] = obj->name;
+    objs[1] = NULL;
+    UpdateAll2(objs, TRUE);
     if (! modified) {
       reset_graph_modified();
     }
@@ -2473,7 +2254,7 @@ LegendWinTextUpdate(struct obj_list_data *data, int id, int user_data)
 }
 
 static void
-ObjListUpdate(struct obj_list_data *d, int clear, list_sub_window_set_val_func func)
+ObjListUpdate(struct obj_list_data *d, int clear, int draw, list_sub_window_set_val_func func)
 {
   if (Menulock || Globallock)
     return;
@@ -2491,47 +2272,63 @@ ObjListUpdate(struct obj_list_data *d, int clear, list_sub_window_set_val_func f
   if (! clear && d->select >= 0) {
     list_store_select_int(GTK_WIDGET(d->text), COL_ID, d->select);
   }
+  if (draw) {
+    NgraphApp.Viewer.allclear = TRUE;
+    update_viewer(d);
+  }
 }
 
-void
-PathListUpdate(struct obj_list_data *d, int clear)
+static void
+PathListUpdate(struct obj_list_data *d, int clear, int draw)
 {
-  ObjListUpdate(d, clear, path_list_set_val);
+  ObjListUpdate(d, clear, draw, path_list_set_val);
 }
 
-void
-ArcListUpdate(struct obj_list_data *d, int clear)
+static void
+ArcListUpdate(struct obj_list_data *d, int clear, int draw)
 {
-  ObjListUpdate(d, clear, arc_list_set_val);
+  ObjListUpdate(d, clear, draw, arc_list_set_val);
 }
 
-void
-RectListUpdate(struct obj_list_data *d ,int clear)
+static void
+RectListUpdate(struct obj_list_data *d ,int clear, int draw)
 {
-  ObjListUpdate(d, clear, rect_list_set_val);
+  ObjListUpdate(d, clear, draw, rect_list_set_val);
 }
 
-void
-MarkListUpdate(struct obj_list_data *d, int clear)
+static void
+MarkListUpdate(struct obj_list_data *d, int clear, int draw)
 {
-  ObjListUpdate(d, clear, mark_list_set_val);
+  ObjListUpdate(d, clear, draw, mark_list_set_val);
 }
 
-void
-TextListUpdate(struct obj_list_data *d, int clear)
+static void
+TextListUpdate(struct obj_list_data *d, int clear, int draw)
 {
-  ObjListUpdate(d, clear, text_list_set_val);
+  ObjListUpdate(d, clear, draw, text_list_set_val);
 }
 
 void
-LegendWinUpdate(int clear)
+LegendWinUpdate(char **objects, int clear, int draw)
 {
   struct obj_list_data *d;
+  struct objlist *obj;
+  char **ptr;
   if (Menulock || Globallock)
     return;
 
   for (d = NgraphApp.LegendWin.data.data; d; d = d->next) {
-    d->update(d, clear);
+    if (objects) {
+      for (ptr = objects; *ptr; ptr++) {
+	obj = getobject(*ptr);
+	if (obj == d->obj) {
+	  d->update(d, clear, draw);
+	  break;
+	}
+      }
+    } else {
+      d->update(d, clear, draw);
+    }
   }
 }
 
@@ -2558,11 +2355,7 @@ static GdkPixbuf *
 draw_color_pixbuf(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type, int width)
 {
   int ggc, fr, fg, fb, stroke, fill, close_path, pos[8], height = 20, lockstate, found, output, n;
-#if GTK_CHECK_VERSION(3, 0, 0)
   cairo_surface_t *pix;
-#else
-  GdkPixmap *pix;
-#endif
   GdkPixbuf *pixbuf;
   struct objlist *gobj, *robj;
   N_VALUE *inst;
@@ -2577,14 +2370,8 @@ draw_color_pixbuf(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type, i
     return NULL;
   }
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   pix = gra2gdk_create_pixmap(local, width, height,
 			      Menulocal.bg_r, Menulocal.bg_g, Menulocal.bg_b);
-#else
-  pix = gra2gdk_create_pixmap(local, gtk_widget_get_window(TopLevel),
-			      width, height,
-			      Menulocal.bg_r, Menulocal.bg_g, Menulocal.bg_b);
-#endif
   if (pix == NULL) {
     return NULL;
   }
@@ -2669,13 +2456,8 @@ draw_color_pixbuf(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type, i
   _GRAclose(ggc);
   gra2cairo_draw_path(local);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   pixbuf = gdk_pixbuf_get_from_surface(pix, 0, 0, width, height);
   cairo_surface_destroy(pix);
-#else
-  pixbuf = gdk_pixbuf_get_from_drawable(NULL, pix, NULL, 0, 0, 0, 0, width, height);
-  g_object_unref(G_OBJECT(pix));
-#endif
 
   Globallock = lockstate;
 
@@ -2712,7 +2494,8 @@ path_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
 	list_store_set_string(GTK_WIDGET(d->text), iter, i, _(enumlist[interpolation]));
       }
       break;
-    case PATH_LIST_COL_ARROW:
+    case PATH_LIST_COL_MARKER_BEGIN:
+    case PATH_LIST_COL_MARKER_END:
       sgetobjfield(d->obj, row, d->list[i].name, NULL, &valstr, FALSE, FALSE, FALSE);
       if (valstr) {
 	list_store_set_string(GTK_WIDGET(d->text), iter, i, _(valstr));
@@ -2844,11 +2627,7 @@ draw_mark_pixbuf(struct objlist *obj, int i)
   int ggc, fr, fg, fb, fr2, fg2, fb2,
     width = 20, height = 20, marktype,
     lockstate, found, output;
-#if GTK_CHECK_VERSION(3, 0, 0)
   cairo_surface_t *pix;
-#else
-  GdkPixmap *pix;
-#endif
   GdkPixbuf *pixbuf;
   struct objlist *gobj, *robj;
   N_VALUE *inst;
@@ -2862,14 +2641,8 @@ draw_mark_pixbuf(struct objlist *obj, int i)
     return NULL;
   }
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   pix = gra2gdk_create_pixmap(local, width, height,
 			      Menulocal.bg_r, Menulocal.bg_g, Menulocal.bg_b);
-#else
-  pix = gra2gdk_create_pixmap(local, gtk_widget_get_window(TopLevel),
-			      width, height,
-			      Menulocal.bg_r, Menulocal.bg_g, Menulocal.bg_b);
-#endif
   if (pix == NULL) {
     return NULL;
   }
@@ -2901,13 +2674,8 @@ draw_mark_pixbuf(struct objlist *obj, int i)
   _GRAclose(ggc);
   gra2cairo_draw_path(local);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   pixbuf = gdk_pixbuf_get_from_surface(pix, 0, 0, width, height);
   cairo_surface_destroy(pix);
-#else
-  pixbuf = gdk_pixbuf_get_from_drawable(NULL, pix, NULL, 0, 0, 0, 0, width, height);
-  g_object_unref(G_OBJECT(pix));
-#endif
 
   Globallock = lockstate;
 
@@ -3074,7 +2842,6 @@ pos_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer use
   int x, y, i;
   char *argv[3], *tmp, *ptr;
 
-
   menu_lock(FALSE);
 
   if (str == NULL || path == NULL)
@@ -3138,9 +2905,10 @@ pos_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer use
   argv[2] = NULL;
 
   if (inc != 0 ) {
+    menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
     exeobj(d->obj, "move", m, 2, argv);
     set_graph_modified();
-    d->update(d, TRUE);
+    d->update(d, TRUE, TRUE);
   }
 
   return;
@@ -3184,11 +2952,12 @@ rect_size_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpoint
 
   v = nround(val * 100);
   if (v != x2 - x1) {
+    menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
     x2 = x1 + v;
     putobj(d->obj, pos1, id, &x1);
     putobj(d->obj, pos2, id, &x2);
     set_graph_modified();
-    d->update(d, TRUE);
+    d->update(d, TRUE, TRUE);
   }
 
   return;
@@ -3272,11 +3041,8 @@ create_color_combo_box(GtkWidget *cbox, struct objlist *obj, int id)
 
   list = GTK_TREE_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(cbox)));
 
-#if GTK_CHECK_VERSION(3, 0, 0)
-  add_bool_combo_item_to_cbox(list, &iter, NULL, LEGEND_COMBO_ITEM_TOGGLE_STROKE, obj, "stroke", id, _("Stroke"));
-#else
   add_text_combo_item_to_cbox(list, &iter, NULL, -1, -1, _("Stroke"), TOGGLE_NONE, FALSE);
-#endif
+  add_bool_combo_item_to_cbox(list, NULL, &iter, LEGEND_COMBO_ITEM_TOGGLE_STROKE, obj, "stroke", id, _("Stroke"));
   add_line_style_item_to_cbox(list, &iter, LEGEND_COMBO_ITEM_STYLE, obj, "style", id);
   if (chkobjfield(obj, "join") == 0) {
     add_text_combo_item_to_cbox(list, &parent, &iter, -1, -1, _("Join"), TOGGLE_NONE, FALSE);
@@ -3286,23 +3052,14 @@ create_color_combo_box(GtkWidget *cbox, struct objlist *obj, int id)
   if (chkobjfield(obj, "close_path") == 0) {
     add_bool_combo_item_to_cbox(list, NULL, &iter, LEGEND_COMBO_ITEM_CLOSE_PATH, obj, "close_path", id, _("Close path"));
   }
-#if ! GTK_CHECK_VERSION(3, 0, 0)
-  add_bool_combo_item_to_cbox(list, NULL, &iter, LEGEND_COMBO_ITEM_TOGGLE_STROKE, obj, "stroke", id, _("Draw"));
-#endif
 
-#if GTK_CHECK_VERSION(3, 0, 0)
-  add_bool_combo_item_to_cbox(list, &iter, NULL, LEGEND_COMBO_ITEM_TOGGLE_FILL, obj, "fill", id, _("Fill"));
-#else
   add_text_combo_item_to_cbox(list, &iter, NULL, -1, -1, _("Fill"), TOGGLE_NONE, FALSE);
-#endif
-  add_text_combo_item_to_cbox(list, NULL, &iter, LEGEND_COMBO_ITEM_COLOR_FILL, -1, _("Color"), TOGGLE_NONE, FALSE);
+  add_bool_combo_item_to_cbox(list, NULL, &iter, LEGEND_COMBO_ITEM_TOGGLE_FILL, obj, "fill", id, _("Fill"));
   if (chkobjfield(obj, "fill_rule") == 0) {
     add_text_combo_item_to_cbox(list, &parent, &iter, -1, -1, _("Fill rule"), TOGGLE_NONE, FALSE);
     add_enum_combo_item_to_cbox(list, NULL, &parent, LEGEND_COMBO_ITEM_FILL_RULE, obj, "fill_rule", id);
   }
-#if ! GTK_CHECK_VERSION(3, 0, 0)
-  add_bool_combo_item_to_cbox(list, NULL, &iter, LEGEND_COMBO_ITEM_TOGGLE_FILL, obj, "fill", id, _("Draw"));
-#endif
+  add_text_combo_item_to_cbox(list, NULL, &iter, LEGEND_COMBO_ITEM_COLOR_FILL, -1, _("Color"), TOGGLE_NONE, FALSE);
 }
 
 static int
@@ -3319,6 +3076,7 @@ set_bool_field(struct objlist *obj, char *field, int id, int state)
     return 0;
   }
 
+  menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
   putobj(obj, field, id, &state);
   return 1;
 }
@@ -3381,6 +3139,7 @@ select_type(GtkComboBox *w, gpointer user_data)
     if (enum_id == mark_type) {
       return;
     }
+    menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
     putobj(d->obj, "type", sel, &enum_id);
     break;
   case LEGEND_COMBO_ITEM_STYLE:
@@ -3388,6 +3147,7 @@ select_type(GtkComboBox *w, gpointer user_data)
     if (enum_id < 0 || enum_id >= FwNumStyleNum) {
       return;
     }
+    menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
     if (chk_sputobjfield(d->obj, sel, "style", FwLineStyle[enum_id].list) != 0 && ! modified) {
       return;
     }
@@ -3441,6 +3201,7 @@ select_type(GtkComboBox *w, gpointer user_data)
     if (fill_rule == enum_id && ! modified) {
       return;
     }
+    menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
     fill_rule = enum_id;
     putobj(d->obj, "fill_rule", sel, &fill_rule);
     break;
@@ -3449,10 +3210,12 @@ select_type(GtkComboBox *w, gpointer user_data)
     if (join == enum_id) {
       return;
     }
+    menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
     putobj(d->obj, "join", sel, &enum_id);
     break;
   case LEGEND_COMBO_ITEM_CLOSE_PATH:
     gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);
+    menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
     active = ! active;
     putobj(d->obj, "close_path", sel, &active);
     set_stroke(d->obj, sel, TRUE);
@@ -3461,12 +3224,14 @@ select_type(GtkComboBox *w, gpointer user_data)
     gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);
     getobj(d->obj, "style", sel, 0, NULL, &style);
     style = (style & GRA_FONT_STYLE_ITALIC) | (active ? 0 : GRA_FONT_STYLE_BOLD);
+    menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
     putobj(d->obj, "style", sel, &style);
     break;
   case LEGEND_COMBO_ITEM_STYLE_ITALIC:
     gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);
     getobj(d->obj, "style", sel, 0, NULL, &style);
     style = (style & GRA_FONT_STYLE_BOLD) | (active ? 0 : GRA_FONT_STYLE_ITALIC);
+    menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
     putobj(d->obj, "style", sel, &style);
     break;
   default:
@@ -3474,7 +3239,7 @@ select_type(GtkComboBox *w, gpointer user_data)
   }
 
   d->select = sel;
-  d->update(d, FALSE);
+  d->update(d, FALSE, TRUE);
   set_graph_modified();
 }
 
@@ -3580,7 +3345,7 @@ select_line_type(GtkComboBox *w, gpointer user_data)
       return;
     }
     break;
-  case LEGEND_PATH_LINE_TYPE_CURVE: 
+  case LEGEND_PATH_LINE_TYPE_CURVE:
     if (type == PATH_TYPE_CURVE && enum_id == interpolation) {
       return;
     }
@@ -3589,6 +3354,7 @@ select_line_type(GtkComboBox *w, gpointer user_data)
     return;
   }
 
+  menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
   putobj(d->obj, "type", sel, &col_type);
 
   if (enum_id >= 0) {
@@ -3596,7 +3362,7 @@ select_line_type(GtkComboBox *w, gpointer user_data)
   }
 
   d->select = sel;
-  d->update(d, FALSE);
+  d->update(d, FALSE, TRUE);
   set_graph_modified();
 }
 
@@ -3676,6 +3442,7 @@ select_font(GtkComboBox *w, gpointer user_data)
       g_free(font);
       return;
     }
+    menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
     putobj(d->obj, "font", sel, font);
     break;
   case LEGEND_COMBO_ITEM_COLOR_0:
@@ -3684,12 +3451,14 @@ select_font(GtkComboBox *w, gpointer user_data)
     }
     break;
   case LEGEND_COMBO_ITEM_STYLE_BOLD:
+    menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
     gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);
     getobj(d->obj, "style", sel, 0, NULL, &style);
     style = (style & GRA_FONT_STYLE_ITALIC) | (active ? 0 : GRA_FONT_STYLE_BOLD);
     putobj(d->obj, "style", sel, &style);
     break;
   case LEGEND_COMBO_ITEM_STYLE_ITALIC:
+    menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
     gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);
     getobj(d->obj, "style", sel, 0, NULL, &style);
     style = (style & GRA_FONT_STYLE_BOLD) | (active ? 0 : GRA_FONT_STYLE_ITALIC);
@@ -3700,7 +3469,7 @@ select_font(GtkComboBox *w, gpointer user_data)
   }
 
   d->select = sel;
-  d->update(d, FALSE);
+  d->update(d, FALSE, TRUE);
   set_graph_modified();
 }
 
@@ -3739,14 +3508,12 @@ start_editing_font(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *
 static void
 select_text(GtkWidget *w, gpointer user_data)
 {
-#if GTK_CHECK_VERSION(2, 20, 0)
   gboolean canceled;
 
   g_object_get(w, "editing-canceled", &canceled, NULL);
   if (! canceled) {
     entry_completion_append(NgraphApp.legend_text_list, gtk_entry_get_text(GTK_ENTRY(w)));
   }
-#endif
 
   gtk_entry_set_completion(GTK_ENTRY(w), NULL);
 }
@@ -3765,7 +3532,7 @@ start_editing_text(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *
 
 struct legend_data {
   char *icon_file;
-  void (* update_func) (struct obj_list_data *, int);
+  void (* update_func) (struct obj_list_data *, int, int);
   void (* update_dialog_func) (struct obj_list_data *, int, int);
   char *name;
   struct LegendDialog *dialog;
@@ -3774,17 +3541,17 @@ struct legend_data {
 GtkWidget *
 LegendWinState(struct SubWin *d)
 {
-  int i, j, n;
+  int i, n;
   struct obj_list_data *data;
   GList *list;
   GtkTreeViewColumn *col;
 #define LEGENDNUM 5
   struct legend_data legend_data[LEGENDNUM] = {
-    {NGRAPH_LINE_ICON_FILE, PathListUpdate, LegendWinPathUpdate, N_("path"),      &DlgLegendArrow},
-    {NGRAPH_RECT_ICON_FILE, RectListUpdate, LegendWinRectUpdate, N_("rectangle"), &DlgLegendRect},
-    {NGRAPH_ARC_ICON_FILE,  ArcListUpdate,  LegendWinArcUpdate,  N_("arc"),       &DlgLegendArc},
-    {NGRAPH_MARK_ICON_FILE, MarkListUpdate, LegendWinMarkUpdate, N_("mark"),      &DlgLegendMark},
-    {NGRAPH_TEXT_ICON_FILE, TextListUpdate, LegendWinTextUpdate, N_("text"),      &DlgLegendText},
+    {NGRAPH_LINE_ICON, PathListUpdate, LegendWinPathUpdate, N_("path"),      &DlgLegendArrow},
+    {NGRAPH_RECT_ICON, RectListUpdate, LegendWinRectUpdate, N_("rectangle"), &DlgLegendRect},
+    {NGRAPH_ARC_ICON,  ArcListUpdate,  LegendWinArcUpdate,  N_("arc"),       &DlgLegendArc},
+    {NGRAPH_MARK_ICON, MarkListUpdate, LegendWinMarkUpdate, N_("mark"),      &DlgLegendMark},
+    {NGRAPH_TEXT_ICON, TextListUpdate, LegendWinTextUpdate, N_("text"),      &DlgLegendText},
   };
   GtkWidget *icons[LEGENDNUM];
   int noexpand_text_colmns[] = {TEXT_LIST_COL_X, TEXT_LIST_COL_Y, TEXT_LIST_COL_PT, TEXT_LIST_COL_DIR};
@@ -3794,7 +3561,7 @@ LegendWinState(struct SubWin *d)
   }
 
   for (i = 0; i < LEGENDNUM; i++) {
-    icons[i] = create_image_from_file(legend_data[i].icon_file);
+    icons[i] = gtk_image_new_from_icon_name(legend_data[i].icon_file, GTK_ICON_SIZE_LARGE_TOOLBAR);
     gtk_widget_set_tooltip_text(GTK_WIDGET(icons[i]), _(legend_data[i].name));
   }
 
@@ -3852,10 +3619,7 @@ LegendWinState(struct SubWin *d)
       }
       g_list_free(list);
       n = sizeof(noexpand_text_colmns) / sizeof(*noexpand_text_colmns);
-      for (j = 0; j < n; j++) {
-	col = gtk_tree_view_get_column(GTK_TREE_VIEW(data->text), noexpand_text_colmns[j]);
-	gtk_tree_view_column_set_expand(col, FALSE);
-      }
+      tree_view_set_no_expand_column(data->text, noexpand_text_colmns, n);
       tree_view_set_tooltip_column(GTK_TREE_VIEW(data->text), TEXT_LIST_COL_TEXT);
       break;
     }

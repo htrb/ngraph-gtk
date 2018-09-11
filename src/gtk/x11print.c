@@ -144,11 +144,7 @@ DriverDialogSetup(GtkWidget *wi, void *data, int makewidget)
   d = (struct DriverDialog *) data;
   if (makewidget) {
 
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i = 0;
     w = combo_box_create();
@@ -250,11 +246,7 @@ OutputDataDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     w = create_spin_entry(0, 200, 1, FALSE, TRUE);
     d->div_entry = w;
-#if GTK_CHECK_VERSION(3, 0, 0)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-    hbox = gtk_hbox_new(FALSE, 4);
-#endif
     item_setup(hbox, w, _("_Div:"), TRUE);
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
@@ -288,10 +280,8 @@ OutputImageDialogSetupItem(GtkWidget *w, struct OutputImageDialog *d)
 {
   int i;
   GtkWidget *vlabel;
-#if GTK_CHECK_VERSION(3, 0, 0)
   GtkWidget *window;
   GtkRequisition minimum_size;
-#endif
 
   vlabel = get_mnemonic_label(d->version);
 
@@ -356,13 +346,11 @@ OutputImageDialogSetupItem(GtkWidget *w, struct OutputImageDialog *d)
 #endif	/* CAIRO_HAS_WIN32_SURFACE */
   }
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   window = gtk_widget_get_parent(GTK_WIDGET(d->vbox));
   if (GTK_IS_WINDOW(window)) {
     gtk_widget_get_preferred_size(GTK_WIDGET(d->vbox), &minimum_size, NULL);
     gtk_window_resize(GTK_WINDOW(window), minimum_size.width, minimum_size.height);
   }
-#endif
 }
 
 static void
@@ -622,11 +610,9 @@ CmOutputPrinter(int select_file, int show_dialog)
 
   print = gtk_print_operation_new();
   gtk_print_operation_set_n_pages(print, 1);
-#if GTK_CHECK_VERSION(2, 18, 0)
   gtk_print_operation_set_has_selection(print, FALSE);
   gtk_print_operation_set_support_selection(print, FALSE);
   gtk_print_operation_set_embed_page_setup(print, FALSE);
-#endif
   gtk_print_operation_set_use_full_page(print, TRUE);
 
   if (PrintSettings == NULL)
@@ -644,6 +630,7 @@ CmOutputPrinter(int select_file, int show_dialog)
 
   page_setup = gtk_page_setup_new();
   gtk_page_setup_set_paper_size(page_setup, paper_size);
+  gtk_paper_size_free(paper_size);
   if (Menulocal.PaperLandscape) {
     gtk_page_setup_set_orientation(page_setup, GTK_PAGE_ORIENTATION_LANDSCAPE);
   } else {
@@ -651,6 +638,8 @@ CmOutputPrinter(int select_file, int show_dialog)
   }
 
   gtk_print_operation_set_default_page_setup(print, page_setup);
+  g_object_unref(page_setup);
+
   gtk_print_operation_set_print_settings(print, PrintSettings);
 
   pobj.graobj = graobj;
@@ -695,8 +684,8 @@ CmOutputPrinter(int select_file, int show_dialog)
   delobj(graobj, id);
   delobj(g2wobj, g2wid);
 
-  if (select_file) {
-    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
+  if (select_file && NgraphApp.FileWin.data.data) {
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, TRUE);
   }
 }
 
@@ -748,7 +737,7 @@ CmOutputDriver(void)
   delobj(g2wobj, g2wid);
 
   if (Menulocal.select_data) {
-    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, TRUE);
   }
 }
 
@@ -894,7 +883,7 @@ CmPrintGRAFile(void)
   delobj(g2wobj, g2wid);
 
   if (Menulocal.select_data) {
-    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, TRUE);
   }
 }
 
@@ -1019,11 +1008,11 @@ CmOutputImage(int type)
   delobj(g2wobj, g2wid);
 
   if (Menulocal.select_data) {
-    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, TRUE);
   }
 }
 
-#ifdef WINDOWS
+#if WINDOWS
 static void
 CmOutputEMF(int type)
 {
@@ -1092,7 +1081,7 @@ CmOutputEMF(int type)
   delobj(g2wobj, g2wid);
 
   if (Menulocal.select_data) {
-    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, TRUE);
   }
 }
 #endif
@@ -1120,7 +1109,7 @@ CmOutputMenu(void *wi, gpointer client_data)
 #endif	/* CAIRO_HAS_WIN32_SURFACE */
     CmOutputImage(GPOINTER_TO_INT(client_data));
     break;
-#ifdef WINDOWS
+#if WINDOWS
   case MenuIdOutputEMFFile:
   case MenuIdOutputEMFClipboard:
     CmOutputEMF(GPOINTER_TO_INT(client_data));

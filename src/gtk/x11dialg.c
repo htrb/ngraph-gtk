@@ -346,11 +346,7 @@ SelectDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_container_add(GTK_CONTAINER(w), swin);
     gtk_box_pack_start(GTK_BOX(d->vbox), w, TRUE, TRUE, 4);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-    hbox = gtk_hbox_new(FALSE, 4);
-#endif
     w = gtk_button_new_with_mnemonic(_("Select _All"));
     set_button_icon(w, "edit-select-all");
     g_signal_connect(w, "clicked", G_CALLBACK(list_store_select_all_cb), d->list);
@@ -360,7 +356,7 @@ SelectDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_window_set_default_size(GTK_WINDOW(wi), -1, 300);
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
-
+  gtk_window_set_title(GTK_WINDOW(d->widget), (d->title) ? d->title : d->resource);
   list_store_clear(d->list);
 
   for (i = 0; i <= chkobjlastinst(d->Obj); i++) {
@@ -436,6 +432,7 @@ SelectDialogClose(GtkWidget *w, void *data)
 void
 SelectDialog(struct SelectDialog *data,
 	     struct objlist *obj,
+	     const char *title,
 	     char *(*callback) (struct objlist * obj, int id),
 	     struct narray *array, struct narray *iarray)
 {
@@ -446,6 +443,7 @@ SelectDialog(struct SelectDialog *data,
   arrayinit(array, sizeof(int));
   data->sel = array;
   data->isel = iarray;
+  data->title = title;
 }
 
 static gboolean
@@ -504,7 +502,7 @@ CopyDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_window_set_default_size(GTK_WINDOW(wi), -1, 300);
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
-
+  gtk_window_set_title(GTK_WINDOW(d->widget), (d->title) ? d->title : d->resource);
   list_store_clear(d->list);
 
   for (i = 0; i <= chkobjlastinst(d->Obj); i++) {
@@ -552,6 +550,7 @@ CopyDialogClose(GtkWidget *w, void *data)
 void
 CopyDialog(struct CopyDialog *data,
 	   struct objlist *obj, int id,
+	   const char *title,
 	   char *(*callback) (struct objlist * obj, int id))
 {
   data->SetupWindow = CopyDialogSetup;
@@ -560,6 +559,7 @@ CopyDialog(struct CopyDialog *data,
   data->Id = id;
   data->cb = callback;
   data->sel = id;
+  data->title = title;
 }
 
 int
@@ -568,7 +568,7 @@ CopyClick(GtkWidget *parent, struct objlist *obj, int Id,
 {
   int sel;
 
-  CopyDialog(&DlgCopy, obj, Id, callback);
+  CopyDialog(&DlgCopy, obj, Id, "copy property (single select)", callback);
 
   if (DialogExecute(parent, &DlgCopy) == IDOK) {
     sel = DlgCopy.sel;
@@ -733,20 +733,12 @@ SetObjFieldFromWidget(GtkWidget *w, struct objlist *Obj, int Id, char *field)
     r = SetObjFieldFromSpin(w, Obj, Id, field);
   } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_ENTRY)) {
     r = SetObjFieldFromText(w, Obj, Id, field);
-#if ! GTK_CHECK_VERSION(2, 24, 0)
-  } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_COMBO_BOX_ENTRY)) {
-    r = SetObjFieldFromText(gtk_bin_get_child(GTK_BIN(w)), Obj, Id, field);
-#endif
   } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_COMBO_BOX)) {
-#if GTK_CHECK_VERSION(2, 24, 0)
     if (gtk_combo_box_get_has_entry(GTK_COMBO_BOX(w))) {
       r = SetObjFieldFromText(gtk_bin_get_child(GTK_BIN(w)), Obj, Id, field);
     } else {
       r = SetObjFieldFromList(w, Obj, Id, field);
     }
-#else
-    r = SetObjFieldFromList(w, Obj, Id, field);
-#endif
   } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_TOGGLE_BUTTON)) {
     r = SetObjFieldFromToggle(w, Obj, Id, field);
   }
@@ -769,20 +761,12 @@ SetWidgetFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
     SetSpinFromObjField(w, Obj, Id, field);
   } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_ENTRY)) {
     SetTextFromObjField(w, Obj, Id, field);
-#if ! GTK_CHECK_VERSION(2, 24, 0)
-  } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_COMBO_BOX_ENTRY)) {
-    SetTextFromObjField(gtk_bin_get_child(GTK_BIN(w)), Obj, Id, field);
-#endif
   } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_COMBO_BOX)) {
-#if GTK_CHECK_VERSION(2, 24, 0)
     if (gtk_combo_box_get_has_entry(GTK_COMBO_BOX(w))) {
       SetTextFromObjField(gtk_bin_get_child(GTK_BIN(w)), Obj, Id, field);
     } else {
       SetListFromObjField(w, Obj, Id, field);
     }
-#else
-    SetListFromObjField(w, Obj, Id, field);
-#endif
   } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_TOGGLE_BUTTON)) {
     SetToggleFromObjField(w, Obj, Id, field);
   }
@@ -1081,7 +1065,6 @@ get_style_string(struct objlist *obj, int id, char *field)
   return NULL;
 }
 
-#if GTK_CHECK_VERSION(2, 18, 0)
 static void
 set_entry_from_obj_point(GtkEntry *entry, struct objlist *Obj, int Id, char *field)
 {
@@ -1103,33 +1086,6 @@ set_entry_from_obj_point(GtkEntry *entry, struct objlist *Obj, int Id, char *fie
     pos += l;
   }
 }
-#else
-static void
-set_entry_from_obj_point(GtkEntry *entry, struct objlist *Obj, int Id, char *field)
-{
-  struct narray *array;
-  char buf[128], *tmp;
-  GString *str;
-  int i, n, *points;
-
-  str = g_string_sized_new(256);
-  if (str == NULL) {
-    return;
-  }
-
-  getobj(Obj, field, Id, 0, NULL, &array);
-  n = arraynum(array);
-  points = arraydata(array);
-  for (i = 0; i < n; i++) {
-    g_string_append_printf(str, "%.2f ", points[i] / 100.0);
-  }
-
-  gtk_entry_set_text(entry, str->str);
-
- END:
-  g_string_free(str, TRUE);
-}
-#endif
 
 void
 SetStyleFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
@@ -1314,11 +1270,7 @@ SetObjAxisFieldFromWidget(GtkWidget *w, struct objlist *obj, int id, char *field
 static void
 _set_color(GtkWidget *w, struct objlist *obj, int id, char *prefix, char *postfix)
 {
-#if GTK_CHECK_VERSION(3, 4, 0)
   GdkRGBA color;
-#else
-  GdkColor color;
-#endif
   int r, g, b, a;
   char buf[64];
 
@@ -1337,7 +1289,6 @@ _set_color(GtkWidget *w, struct objlist *obj, int id, char *prefix, char *postfi
     a = 255;
   }
 
-#if GTK_CHECK_VERSION(3, 4, 0)
   color.red = r / 255.0;
   color.green = g / 255.0;
   color.blue = b / 255.0;
@@ -1345,15 +1296,6 @@ _set_color(GtkWidget *w, struct objlist *obj, int id, char *prefix, char *postfi
 
   gtk_color_chooser_set_use_alpha(GTK_COLOR_CHOOSER(w), Menulocal.use_opacity);
   gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(w), &color);
-#else
-  color.red = (r & 0xffU) * 257;
-  color.green = (g & 0xffU) * 257;
-  color.blue = (b & 0xffU) * 257;
-
-  gtk_color_button_set_use_alpha(GTK_COLOR_BUTTON(w), Menulocal.use_opacity);
-  gtk_color_button_set_color(GTK_COLOR_BUTTON(w), &color);
-  gtk_color_button_set_alpha(GTK_COLOR_BUTTON(w), (a & 0xffU) * 257);
-#endif
 
   snprintf(buf, sizeof(buf), "#%02X%02X%02X", r, g, b);
   gtk_widget_set_tooltip_text(w, buf);
@@ -1386,28 +1328,15 @@ set_stroke_color(GtkWidget *w, struct objlist *obj, int id)
 static int
 _putobj_color(GtkWidget *w, struct objlist *obj, int id, char *prefix, char *postfix)
 {
-#if GTK_CHECK_VERSION(3, 4, 0)
   GdkRGBA color;
-#else
-  GdkColor color;
-#endif
   int r, g, b, a, o;
   char buf[64];
 
-#if GTK_CHECK_VERSION(3, 4, 0)
   gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(w), &color);
   a = (Menulocal.use_opacity) ? (color.alpha * 255) : 0xff;
   r = color.red * 255;
   g = color.green * 255;
   b = color.blue * 255;
-#else
-  gtk_color_button_get_color(GTK_COLOR_BUTTON(w), &color);
-  a = (Menulocal.use_opacity) ? gtk_color_button_get_alpha(GTK_COLOR_BUTTON(w)) : 0xffff;
-  a >>= 8;
-  r = (color.red >> 8);
-  g = (color.green >> 8);
-  b = (color.blue >> 8);
-#endif
 
   snprintf(buf, sizeof(buf), "%sR%s", CHK_STR(prefix), CHK_STR(postfix));
 

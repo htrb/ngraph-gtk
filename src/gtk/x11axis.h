@@ -41,4 +41,5 @@ void CmAxisGridUpdate(void *w, gpointer client_data);
 GtkWidget *AxisWinState(struct SubWin *d);
 
 void axis_scale_push(struct objlist *obj, int id);
-void AxisWinUpdate(struct obj_list_data *data, int clear);
+void AxisWinUpdate(struct obj_list_data *data, int clear, int draw);
+int axis_check_history(void);

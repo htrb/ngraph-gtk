@@ -1,24 +1,24 @@
-/* 
+/*
  * $Id: otext.c,v 1.19 2010-03-04 08:30:16 hito Exp $
- * 
+ *
  * This file is part of "Ngraph for X11".
- * 
+ *
  * Copyright (C) 2002, Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
- * 
+ *
  * "Ngraph for X11" is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * "Ngraph for X11" is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  */
 
 #include <stdio.h>
@@ -70,26 +70,26 @@ static struct obj_config TextConfig[] = {
 
 static NHASH TextConfigHash = NULL;
 
-static int 
+static int
 textloadconfig(struct objlist *obj,N_VALUE *inst)
 {
   return obj_load_config(obj, inst, TEXTCONF, TextConfigHash);
 }
 
-static int 
+static int
 textsaveconfig(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   return obj_save_config(obj, inst, TEXTCONF, TextConfig, sizeof(TextConfig) / sizeof(*TextConfig));
 }
 
-static int 
+static int
 textinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int pt,scriptsize;
   char *font;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
-  pt=2000;
+  pt=DEFAULT_FONT_PT;
   scriptsize=7000;
   if (_putobj(obj,"pt",inst,&pt)) return 1;
   if (_putobj(obj,"script_size",inst,&scriptsize)) return 1;
@@ -106,14 +106,14 @@ textinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 textdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
-static int 
+static int
 textgeometry(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
                  int argc,char **argv)
 {
@@ -140,7 +140,7 @@ textgeometry(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
   return 0;
 }
 
-static int 
+static int
 textdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int GC;
@@ -180,7 +180,7 @@ textdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 textprintf(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
@@ -238,7 +238,7 @@ textprintf(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 textbbox(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy;
@@ -301,7 +301,7 @@ textbbox(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 textmove(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int x,y;
@@ -320,11 +320,11 @@ textmove(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 textrotate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int dir, angle, use_pivot;
- 
+
   _getobj(obj, "direction", inst, &dir);
 
   angle = *(int *) argv[2];
@@ -355,7 +355,7 @@ textrotate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 textzoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int x,y,pt,space,refx,refy;
@@ -387,7 +387,7 @@ textzoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 textmatch(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy,err;
@@ -424,19 +424,18 @@ textmatch(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
       GRAtextextent(text,font,style,pt,space,scriptsize,&gx0,&gy0,&gx1,&gy1,FALSE);
     }
 
-    minx-=err;
-    miny-=err;
-    maxx+=err;
-    maxy+=err;
-
     si=sin(dir/18000.0*MPI);
     co=cos(dir/18000.0*MPI);
     px=minx-x;
     py=miny-y;
     px2=px*co-py*si;
     py2=px*si+py*co;
-    if ((gx0<=px2) && (px2<=gx1)
-     && (gy0<=py2) && (py2<=gy1)) rval->i=TRUE;
+    if ((px2 >= gx0 - err) &&
+	(px2 <= gx1 + err) &&
+	(py2 >= gy0 - err) &&
+	(py2 <= gy1 + err)) {
+      rval->i=TRUE;
+    }
   } else {
     if (_exeobj(obj,"bbox",inst,0,NULL)) return 1;
     _getobj(obj,"bbox",inst,&array);
@@ -453,7 +452,7 @@ textmatch(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
-static int 
+static int
 text_set_text(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   char *str, *ptr;

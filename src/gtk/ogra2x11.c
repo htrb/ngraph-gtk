@@ -100,13 +100,8 @@ static int gtk_evloop(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int arg
 		      char **argv);
 static int gtkclose(GtkWidget *widget, GdkEvent  *event, gpointer user_data);
 static void gtkchangedpi(struct gtklocal *gtklocal);
-#if GTK_CHECK_VERSION(3, 0, 0)
 static gboolean gtkevpaint(GtkWidget * w, cairo_t * e,
 			   gpointer user_data);
-#else
-static gboolean gtkevpaint(GtkWidget * w, GdkEventExpose * e,
-			   gpointer user_data);
-#endif
 static int gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 		   char **argv);
 static int gtkdone(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
@@ -119,7 +114,6 @@ static int dot2pixel(struct gtklocal *gtklocal, int r);
 static int gtk_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 		      char **argv);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
 static gboolean
 gtkevpaint(GtkWidget *w, cairo_t *cr, gpointer user_data)
 {
@@ -142,39 +136,6 @@ gtkevpaint(GtkWidget *w, cairo_t *cr, gpointer user_data)
 
   return FALSE;
 }
-#else
-static gboolean
-gtkevpaint(GtkWidget *w, GdkEventExpose *e, gpointer user_data)
-{
-  struct gtklocal *gtklocal;
-  cairo_t *cr;
-
-  gtklocal = (struct gtklocal *) user_data;
-
-  if (e->count != 0) {
-    return TRUE;
-  }
-
-  if (gtklocal->surface == NULL) {
-    return FALSE;
-  }
-
-  cr = gdk_cairo_create(gtk_widget_get_window(w));
-
-  if (gtklocal->redraw) {
-    GRAredraw(gtklocal->obj, gtklocal->inst, FALSE, FALSE);
-    gtklocal->redraw = FALSE;
-  }
-
-  cairo_set_source_surface(cr, gtklocal->surface, 0, 0);
-  gdk_cairo_region(cr, e->region);
-  cairo_fill(cr);
-  gtkMakeRuler(cr, gtklocal);
-  cairo_destroy(cr);
-
-  return FALSE;
-}
-#endif
 
 static int
 gtkclose(GtkWidget *widget, GdkEvent *event, gpointer user_data)
@@ -275,11 +236,7 @@ cursor_moved(GtkWidget *widget, GdkEvent  *event, gpointer user_data)
 
   if (gtklocal->blank_cursor) {
     gdk_window_set_cursor(gtk_widget_get_window(gtklocal->mainwin), NULL);
-#if GTK_CHECK_VERSION(3, 0, 0)
     g_object_unref(gtklocal->blank_cursor);
-#else
-    gdk_cursor_unref(gtklocal->blank_cursor);
-#endif
     gtklocal->blank_cursor = NULL;
   }
 
@@ -314,10 +271,8 @@ scrolled(GtkWidget *widget, GdkEventScroll *event, gpointer user_data)
     gtklocal->action.type = ACTION_TYPE_SCROLL;
     gtklocal->action.val = event->direction;
     break;
-#if GTK_CHECK_VERSION(3, 4, 0)
   case GDK_SCROLL_SMOOTH:
     break;
-#endif
   }
 
   return FALSE;
@@ -421,18 +376,11 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   gtk_container_add(GTK_CONTAINER(gtklocal->mainwin), scrolled_window);
 
   gtklocal->View = gtk_drawing_area_new();
-#if GTK_CHECK_VERSION(3, 0, 0)
   gtk_widget_set_halign(gtklocal->View, GTK_ALIGN_CENTER);
   gtk_widget_set_valign(gtklocal->View, GTK_ALIGN_CENTER);
-#endif
 
-#if GTK_CHECK_VERSION(3, 0, 0)
   g_signal_connect(gtklocal->View, "draw",
 		   G_CALLBACK(gtkevpaint), gtklocal);
-#else
-  g_signal_connect(gtklocal->View, "expose-event",
-		   G_CALLBACK(gtkevpaint), gtklocal);
-#endif
 
   g_signal_connect(gtklocal->mainwin, "size-allocate",
 		   G_CALLBACK(size_allocate), gtklocal);
@@ -502,11 +450,7 @@ gtkdone(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
     return 1;
 
   if (gtklocal->blank_cursor) {
-#if GTK_CHECK_VERSION(3, 0, 0)
     g_object_unref(gtklocal->blank_cursor);
-#else
-    gdk_cursor_unref(gtklocal->blank_cursor);
-#endif
   }
 
   if (gtklocal->mainwin != NULL) {

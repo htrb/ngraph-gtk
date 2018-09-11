@@ -58,7 +58,6 @@ void spin_entry_set_inc(GtkWidget *w, int inc, int page);
 char *entry_get_filename(GtkWidget *w);
 int entry_set_filename(GtkWidget *w, char *filename);
 
-GtkWidget *create_image_from_file(const char *file);
 GtkWidget *create_color_button(GtkWidget *win);
 GtkWidget *create_text_entry(int set_default_size, int set_default_action);
 GtkWidget *create_file_entry(struct objlist *obj);
@@ -82,5 +81,8 @@ void set_scale_mark(GtkWidget *scale, GtkPositionType pos, int start, int inc);
 #if GTK_CHECK_VERSION(3, 16, 0)
 void set_widget_font(GtkWidget *w, const char *font);
 #endif
+void add_default_color(struct narray *palette);
+void add_default_gray(struct narray *palette);
+
 
 #endif

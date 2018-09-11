@@ -1,6 +1,7 @@
-<html>
+<!DOCTYPE html>
+<html lang="ja">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="UTF-8">
 <title>Reference</title></head>
 <body>
 <a name="TOP">&nbsp;</a>
@@ -9,10 +10,17 @@
  <li><a href="#GRAPH_MENU">[グラフ]メニュー</a>
  <li><a href="#EDIT_MENU">[編集]メニュー</a>
  <li><a href="#VIEW_MENU">[表示]メニュー</a>
- <li><a href="#DATA_MENU">[データ]メニュー</a>
- <li><a href="#AXIS_MENU">[軸]メニュー</a>
- <li><a href="#LEGEND_MENU">[レジェンド]メニュー</a>
- <li><a href="#MERGE_MENU">[合成]メニュー</a>
+ <li><a href="#OBJECT_MENU">"[オブジェクト]メニュー</a>
+     <ul>
+      <li><a href="#DATA_MENU">[データ]メニュー</a>
+      <li><a href="#AXIS_MENU">[軸]メニュー</a>
+      <li><a href="#LEGEND_MENU">[パス]メニュー</a>
+      <li><a href="#LEGEND_MENU">[矩形]メニュー</a>
+      <li><a href="#LEGEND_MENU">[円]メニュー</a>
+      <li><a href="#LEGEND_MENU">[マーク]メニュー</a>
+      <li><a href="#LEGEND_MENU">[テキスト]メニュー</a>
+      <li><a href="#MERGE_MENU">[合成]メニュー</a>
+     </ul>
  <li><a href="#PREF_MENU">[設定]メニュー</a>
  <li><a href="#HELP_MENU">[ヘルプ]メニュー</a>
  <li><a href="#DATA_DIALOG">データ・ダイアログボックス</a>
@@ -30,8 +38,7 @@
 <hr>
 <br>
 
-<a name="GRAPH_MENU">&nbsp;</a>
-<h2><a href="#TOP">[グラフ]メニュー</a></h2>
+<h2><a name="GRAPH_MENU" href="#TOP">[グラフ]メニュー</a></h2>
 
 <table border="1">
  <tr>
@@ -125,10 +132,21 @@
 
 
 
-<a name="EDIT_MENU">&nbsp;</a>
-<h2><a href="#TOP">[編集]メニュー</a></h2>
+<h2><a name="EDIT_MENU" href="#TOP">[編集]メニュー</a></h2>
 
 <table border="1">
+ <tr>
+  <td>元に戻す</td>
+  <td>
+    直前の操作を元に戻します (「グラフ」メニューの「描画順」と「ページ設定」は元に戻せません) 。
+  </td>
+ </tr>
+ <tr>
+  <td>やり直し</td>
+  <td>
+    元に戻した操作をやり直します。
+  </td>
+ </tr>
  <tr>
   <td>切り取り<br>コピー</td>
   <td>
@@ -178,15 +196,14 @@
 
 
 
-<a name="VIEW_MENU">&nbsp;</a>
-<h2><a href="#TOP">[表示]メニュー</a></h2>
+<h2><a name="VIEW_MENU" href="#TOP">[表示]メニュー</a></h2>
 
 <table border="1">
  <tr>
   <td>描画</td>
   <td>
    グラフを描画します。
-   <img src="../img/bdraw.png" width="40" height="20" alt="">ボタンを押すほうが簡単です。
+   <img src="../img/bdraw.png" width="20" height="20" alt="">ボタンを押すほうが簡単です。
   </td>
  </tr>
  <tr>
@@ -265,10 +282,9 @@
 <hr>
 <br>
 
+<h2><a name="OBJECT_MENU" href="#TOP">[オブジェクト]メニュー</a></h2>
 
-
-<a name="DATA_MENU">&nbsp;</a>
-<h2><a href="#TOP">[データ]メニュー</a></h2>
+<h3><a name="DATA_MENU" href="#TOP">[データ]メニュー</a></h3>
 
 <table border="1">
  <tr>
@@ -321,8 +337,7 @@
 
 
 
-<a name="AXIS_MENU">&nbsp;</a>
-<h2><a href="#TOP">[軸]メニュー</a></h2>
+<h3><a name="AXIS_MENU" href="#TOP">[軸]メニュー</a></h3>
 
 <table border="1">
  <tr>
@@ -370,8 +385,7 @@
 
 
 
-<a name="LEGEND_MENU">&nbsp;</a>
-<h2><a href="#TOP">[レジェンド]メニュー</a></h2>
+<h3><a name="LEGEND_MENU" href="#TOP">パス、矩形、円、マーク、テキストメニュー</a></h3>
 
 <table border="1">
  <tr>
@@ -383,9 +397,9 @@
   </td>
  </tr>
  <tr>
-  <td>四角形</td>
+  <td>矩形</td>
   <td>
-   凡例(四角形)の設定、削除をします。
+   凡例(矩形)の設定、削除をします。
    新規作成はメニューではできません。
    新規作成は<img src="../img/brect.png" width="20" height="20" alt="">ボタンを押してマウスで位置を指定してください。
   </td>
@@ -423,8 +437,7 @@
 
 
 
-<a name="MERGE_MENU">&nbsp;</a>
-<h2><a href="#TOP">[合成]メニュー</a></h2>
+<h3><a name="MERGE_MENU" href="#TOP">[合成]メニュー</a></h3>
 
 <table border="1">
  <tr>
@@ -459,8 +472,7 @@
 
 
 
-<a name="PREF_MENU">&nbsp;</a>
-<h2><a href="#TOP">[設定]メニュー</a></h2>
+<h2><a name="PREF_MENU" href="#TOP">[設定]メニュー</a></h2>
 
 <table border="1">
  <tr>
@@ -544,8 +556,7 @@
 
 
 
-<a name="HELP_MENU">&nbsp;</a>
-<h2><a href="#TOP">[ヘルプ]メニュー</a></h2>
+<h2><a name="HELP_MENU" href="#TOP">[ヘルプ]メニュー</a></h2>
 
 <table border="1">
  <tr>
@@ -555,7 +566,7 @@
   </td>
  </tr>
  <tr>
-  <td>情報</td>
+  <td>このアプリケーションについて</td>
   <td>
    Ngraphバージョン情報などを表示します。
   </td>
@@ -568,8 +579,7 @@
 <br>
 
 
-<a name="DATA_DIALOG">&nbsp;</a>
-<h2><a href="#TOP">データ・ダイアログボックス</a></h2>
+<h2><a name="DATA_DIALOG" href="#TOP">データ・ダイアログボックス</a></h2>
 
 <img src="./dialogs/data.png" alt=""><br><br>
 <table border="1">
@@ -882,8 +892,7 @@
 
 
 
-<a name="FIT_DIALOG">&nbsp;</a>
-<h2><a href="#TOP">フィット・ダイアログボックス</a></h2>
+<h2><a name="FIT_DIALOG" href="#TOP">フィット・ダイアログボックス</a></h2>
 
 <img src="./dialogs/datafit.png" alt=""><br><br>
 <table border="1">
@@ -997,8 +1006,7 @@
 
 
 
-<a name="AXIS_DIALOG">&nbsp;</a>
-<h2><a href="#TOP">軸・ダイアログボックス</a></h2>
+<h2><a name="AXIS_DIALOG" href="#TOP">軸・ダイアログボックス</a></h2>
 
 <table border="1">
  <tr>
@@ -1444,8 +1452,7 @@
 <hr>
 <br>
 
-<a name="GRID_DIALOG">&nbsp;</a>
-<h2><a href="#TOP">グリッド・ダイアログボックス</a></h2>
+<h2><a name="GRID_DIALOG" href="#TOP">グリッド・ダイアログボックス</a></h2>
 
 <img src="./dialogs/grid.png"><br><br>
 <table border="1">
@@ -1496,8 +1503,7 @@
 
 
 
-<a name="LEGEND_DIALOG">&nbsp;</a>
-<h2><a href="#TOP">レジェンド(凡例)・ダイアログボックス</a></h2>
+<h2><a name="LEGEND_DIALOG" href="#TOP">レジェンド(凡例)・ダイアログボックス</a></h2>
 
 <table border="1">
  <tr>
@@ -1573,7 +1579,7 @@
 	 補間法
 	</td>
 	<td>
-	 曲線の描画に使われる補間法。「スプライン」,「閉スプライン」,「Bスプライン」, 「閉Bスプライン)」から選択。
+	 曲線の描画に使われる補間法。「スプライン」,「閉スプライン」,「Bスプライン」, 「閉Bスプライン」から選択。
 	 Bスプラインを使うには座標点が7点以上必要。
 	</td>
        </tr>
@@ -1933,8 +1939,7 @@
 
 
 
-<a name="MERGE_DIALOG">&nbsp;</a>
-<h2><a href="#TOP">合成ファイル・ダイアログボックス</a></h2>
+<h2><a name="MERGE_DIALOG" href="#TOP">合成ファイル・ダイアログボックス</a></h2>
 
 <img src="./dialogs/merge.png" alt=""><br><br>
 <table border="1">
@@ -1965,8 +1970,7 @@
 
 
 
-<a name="LOADSAVE_DIALOG">&nbsp;</a>
-<h2><a href="#TOP">グラフの読込、保存・ダイアログボックス</a></h2>
+<h2><a name="LOADSAVE_DIALOG" href="#TOP">グラフの読込、保存・ダイアログボックス</a></h2>
 
 <table border="1">
  <tr>
@@ -2045,8 +2049,7 @@
 <hr>
 <br>
 
-<a name="SWITCH_DIALOG">&nbsp;</a>
-<h2><a href="#TOP">描画順・ダイアログボックス</a></h2>
+<h2><a name="SWITCH_DIALOG" href="#TOP">描画順・ダイアログボックス</a></h2>
 
 <img src="./dialogs/pageord.png" alt=""><br>
 <table border="1">
@@ -2076,8 +2079,7 @@
 <hr>
 <br>
 
-<a name="PREFMISC_DIALOG">&nbsp;</a>
-<h2><a href="#TOP">その他設定・ダイアログボックス</a></h2>
+<h2><a name="PREFMISC_DIALOG" href="#TOP">その他設定・ダイアログボックス</a></h2>
 
 <img src="./dialogs/prefmisc.png" alt=""><br><br>
 <table border="1">
@@ -2158,6 +2160,12 @@
   <td>エクスポート時にデータ選択ダイアログを表示</td>
   <td>
    画像にエクスポートする際にファイル選択ダイアログを表示するかどうかを指定する。
+  </td>
+ </tr>
+ <tr>
+  <td>カスタムパレットを使う、カスタムパレットの編集</td>
+  <td>
+    色選択ダイアログで、独自の色を選択できるようにします。
   </td>
  </tr>
 </table>

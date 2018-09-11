@@ -14,8 +14,6 @@
 #include "x11view.h"
 #include "ox11menu.h"
 
-#define UI_FILE "menus.ui"
-
 #if USE_APP_MENU
 static void
 help_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
@@ -175,6 +173,18 @@ GraphAddinAction_activated(GSimpleAction *action, GVariant *parameter, gpointer 
   }
 
   script_exec(NULL, fcur);
+}
+
+static void
+EditRedoAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
+{
+  CmEditMenuCB(NULL, GINT_TO_POINTER(MenuIdEditRedo));
+}
+
+static void
+EditUndoAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
+{
+  CmEditMenuCB(NULL, GINT_TO_POINTER(MenuIdEditUndo));
 }
 
 static void
@@ -387,6 +397,17 @@ ViewCrossGaugeAction_activated(GSimpleAction *action, GVariant *parameter, gpoin
 
   state = g_variant_get_boolean(parameter);
   if (toggle_view(MenuIdToggleCrossGauge, state)) {
+    g_simple_action_set_state(action, parameter);
+  }
+}
+
+static void
+ViewGridLineAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
+{
+  int state;
+
+  state = g_variant_get_boolean(parameter);
+  if (toggle_view(MenuIdToggleGridLine, state)) {
     g_simple_action_set_state(action, parameter);
   }
 }
@@ -654,6 +675,7 @@ static GActionEntry AppEntries[] =
   { "help", help_activated, NULL, NULL, NULL },
   { "about", about_activated, NULL, NULL, NULL },
   { "quit", quit_activated, NULL, NULL, NULL },
+  { "preferences", PreferenceMiscAction_activated, NULL, NULL, NULL },
   { "GraphNewFrameAction", GraphNewFrameAction_activated, NULL, NULL, NULL },
   { "GraphNewSectionAction", GraphNewSectionAction_activated, NULL, NULL, NULL },
   { "GraphNewCrossAction", GraphNewCrossAction_activated, NULL, NULL, NULL },
@@ -675,6 +697,8 @@ static GActionEntry AppEntries[] =
   { "GraphCurrentDirectoryAction", GraphCurrentDirectoryAction_activated, NULL, NULL, NULL },
   { "GraphAddinAction", GraphAddinAction_activated, "i", NULL, NULL },
   { "GraphShellAction", GraphShellAction_activated, NULL, NULL, NULL },
+  { "EditRedoAction", EditRedoAction_activated, NULL, NULL, NULL },
+  { "EditUndoAction", EditUndoAction_activated, NULL, NULL, NULL },
   { "EditCutAction", EditCutAction_activated, NULL, NULL, NULL },
   { "EditCopyAction", EditCopyAction_activated, NULL, NULL, NULL },
   { "EditPasteAction", EditPasteAction_activated, NULL, NULL, NULL },
@@ -705,6 +729,7 @@ static GActionEntry AppEntries[] =
   { "ViewCommandToolbarAction", NULL, NULL, "true", ViewCommandToolbarAction_activated },
   { "ViewToolboxAction", NULL, NULL, "true", ViewToolboxAction_activated },
   { "ViewCrossGaugeAction", NULL, NULL, "true", ViewCrossGaugeAction_activated },
+  { "ViewGridLineAction", NULL, NULL, "true", ViewGridLineAction_activated },
   { "DataAddFileAction", DataAddFileAction_activated, NULL, NULL, NULL },
   { "DataAddRangeAction", DataAddRangeAction_activated, NULL, NULL, NULL },
   { "DataAddRecentFileAction", DataAddRecentFileAction_activated, NULL, NULL, NULL },
@@ -747,39 +772,42 @@ static GActionEntry AppEntries[] =
   { "PreferenceSaveGraphAction", PreferenceSaveGraphAction_activated, NULL, NULL, NULL },
   { "PreferenceDataDefaultAction", PreferenceDataDefaultAction_activated, NULL, NULL, NULL },
   { "PreferenceTextDefaultAction", PreferenceTextDefaultAction_activated, NULL, NULL, NULL },
-  { "PopupUpdateAction", PopupUpdateAction_activated, NULL, NULL, NULL }
+  { "PopupUpdateAction", PopupUpdateAction_activated, NULL, NULL, NULL },
 };
 
 GtkApplication *
 create_application_window(GtkWidget **popup)
 {
   GtkApplication *app;
-  GtkBuilder *builder;
-  GObject *menu;
-  char *filename;
 
-  app = gtk_application_new(NULL, G_APPLICATION_FLAGS_NONE);
+  app = gtk_application_new(APPLICATION_ID, G_APPLICATION_NON_UNIQUE);
   g_application_register(G_APPLICATION(app), NULL, NULL);
-
   g_action_map_add_action_entries(G_ACTION_MAP(app), AppEntries, G_N_ELEMENTS(AppEntries), app);
 
-  filename = g_strdup_printf("%s/gtk/%s", CONFDIR, UI_FILE);
-  builder = gtk_builder_new_from_file(filename);
-  g_free(filename);
-
-  menu = gtk_builder_get_object(builder, "app-menu");
-  gtk_application_set_app_menu(app, G_MENU_MODEL(menu));
-
-#if USE_GTK_BUILDER
-  menu = gtk_builder_get_object(builder, "menubar");
-  gtk_application_set_menubar(app, G_MENU_MODEL(menu));
-
-  menu = gtk_builder_get_object(builder, "popup-menu");
-  *popup = gtk_menu_new_from_model(G_MENU_MODEL(menu));
+#if OSX
+  {
+    /* only for remove "Settings" menu item */
+    GtkBuilder *builder;
+    GObject *menu;
+    builder = gtk_builder_new_from_resource(RESOURCE_PATH "/gtk/menus-appmenu.ui");
+    menu = gtk_builder_get_object(builder, "app-menu");
+    gtk_application_set_app_menu(app, G_MENU_MODEL(menu));
+    g_object_unref(builder);
+  }
 #endif
 
-  g_object_unref(builder);
+#if USE_GTK_BUILDER
+  /*
+  menu = gtk_application_get_menu_by_id(app, "menubar");
+  gtk_application_set_menubar(app, G_MENU_MODEL(menu));
+  */
+  {
+    GMenu *menu;
+    menu = gtk_application_get_menu_by_id(app, "popup-menu");
+    *popup = gtk_menu_new_from_model(G_MENU_MODEL(menu));
+  }
+#endif
 
   return app;
 }
-#endif	/* USE_APP_MENU*/
+#endif	/* USE_APP_MENU */

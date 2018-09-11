@@ -1,30 +1,31 @@
-/* 
+/*
  * $Id: object.h,v 1.20 2010-01-04 05:11:28 hito Exp $
- * 
+ *
  * This file is part of "Ngraph for X11".
- * 
+ *
  * Copyright (C) 2002, Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
- * 
+ *
  * "Ngraph for X11" is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * "Ngraph for X11" is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  */
 
 #ifndef N_OBJECT_HEADER
 #define N_OBJECT_HEADER
 
 #define TEXT_SIZE_MIN 500
+#define OBJ_MAX 128
 
 #include "nhash.h"
 #include "ngraph.h"
@@ -57,6 +58,16 @@ typedef
 typedef
   int (*DoneProc)(struct objlist *obj,void *local);
 
+typedef int (*UNDO_DUP_FUNC)(struct objlist *obj, N_VALUE *src, N_VALUE *dest);
+typedef int (*UNDO_FREE_FUNC)(struct objlist *obj, N_VALUE *inst);
+
+struct undo_inst {
+  int operation;
+  int curinst, lastinst, lastoid, lastinst2;
+  N_VALUE *inst;
+  struct undo_inst *next;
+};
+
 struct objtable {
     char *name;
     enum ngraph_object_field_type type;
@@ -83,11 +94,14 @@ struct objlist {
     N_VALUE *root;
     N_VALUE *root2;
     int lastinst2;
+    struct undo_inst *undo, *redo;
     struct objlist *parent;
     struct objlist *next, *child;
     int idp,oidp,nextp;
     void *local;
     DoneProc doneproc;
+  UNDO_DUP_FUNC dup_func;
+  UNDO_FREE_FUNC free_func;
 };
 
 struct narray {
@@ -206,6 +220,9 @@ void arrayuniq_double(struct narray *array);
 void arrayrsort_str(struct narray *array);
 void arraysort_str(struct narray *array);
 void arrayuniq_str(struct narray *array);
+void arrayuniq_all_str(struct narray *array);
+int arraycmp(struct narray *a, struct narray *b);
+int arraycpy(struct narray *a, struct narray *b);
 
 int getargc(char **arg);
 char **arg_add(char ***arg,void *ptr);
@@ -310,5 +327,16 @@ int vinterrupt(void);
 int vinputyn(const char *mes);
 int copy_obj_field(struct objlist *obj, int dist, int src, char **ignore_field);
 int str_calc(const char *str, double *val, int *r, char **err_msg);
+
+typedef int (*UNDO_FUNC)(struct objlist *obj);
+int undo_save(struct objlist *obj);
+int undo_undo(struct objlist *obj);
+int undo_redo(struct objlist *obj);
+int undo_clear(struct objlist *obj);
+int undo_delete(struct objlist *obj);
+void obj_set_undo_func(struct objlist *obj, UNDO_DUP_FUNC dup_func, UNDO_FREE_FUNC free_func);
+int obj_get_field_pos(struct objlist *obj, const char *field);
+int undo_check_undo(struct objlist *obj);
+int undo_check_redo(struct objlist *obj);
 
 #endif

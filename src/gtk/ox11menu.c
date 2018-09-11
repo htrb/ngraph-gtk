@@ -106,11 +106,13 @@ enum menu_config_type {
   MENU_CONFIG_TYPE_STRING,
   MENU_CONFIG_TYPE_WINDOW,
   MENU_CONFIG_TYPE_COLOR,
+  MENU_CONFIG_TYPE_COLOR_ARY,
   MENU_CONFIG_TYPE_SCRIPT,
   MENU_CONFIG_TYPE_DRIVER,
   MENU_CONFIG_TYPE_CHARMAP,
 };
 
+static int menu_config_set_custom_palette(char *s2, void *data);
 static int menu_config_set_four_elements(char *s2, void *data);
 static int menu_config_set_bgcolor(char *s2, void *data);
 static int menu_config_set_ext_driver(char *s2, void *data);
@@ -168,6 +170,9 @@ static struct menu_config MenuConfigMisc[] = {
   {"data_head_lines",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.data_head_lines},
   {"use_opacity",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.use_opacity},
   {"select_data_on_export",	MENU_CONFIG_TYPE_BOOL,    NULL, &Menulocal.select_data},
+  {"use_custom_palette",	MENU_CONFIG_TYPE_BOOL,    NULL, &Menulocal.use_custom_palette},
+  {"custom_palette",		MENU_CONFIG_TYPE_COLOR_ARY, menu_config_set_custom_palette, NULL},
+  {"sourece_style_id",		MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.source_style_id},
   {NULL},
 };
 
@@ -191,12 +196,13 @@ static struct menu_config MenuConfigToggleView[] = {
   {"command_toolbar",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.ctoolbar},
   {"pointer_toolbar",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.ptoolbar},
   {"cross_gauge",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.show_cross},
+  {"show_grid",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.show_grid},
   {NULL},
 };
 
 static struct menu_config MenuConfigOthers[] = {
   {"png_dpi",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.png_dpi},
-#ifdef WINDOWS
+#if WINDOWS
   {"emf_dpi",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.emf_dpi},
 #endif
   {"ps_version",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.ps_version},
@@ -215,6 +221,7 @@ static struct menu_config MenuConfigOthers[] = {
   {"arc_tab",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.arc_tab},
   {"mark_tab",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.mark_tab},
   {"text_tab",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.text_tab},
+  {"math_input_mode",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.math_input_mode},
   {NULL},
 };
 
@@ -245,59 +252,6 @@ static struct menu_config *MenuConfigArrray[] = {
 };
 
 static NHASH MenuConfigHash = NULL;
-
-#if ! GTK_CHECK_VERSION(3, 4, 0)
-static void
-get_palette(void)
-{
-  GtkSettings *settings;
-  gchar *palette;
-
-  settings = gtk_settings_get_default();
-  if (settings == NULL) {
-    return;
-  }
-
-  palette = NULL;
-  g_object_get(settings, "gtk-color-palette", &palette, NULL);
-  if (palette == NULL) {
-    return;
-  }
-
-  if (Menulocal.Palette) {
-    g_free(Menulocal.Palette);
-  }
-
-  Menulocal.Palette = palette;
-}
-
-static void
-set_palette(void)
-{
-  GtkWidget *sel;
-  int n;
-  GdkColor *colors;
-  GtkSettings *settings;
-
-  if (Menulocal.Palette == NULL) {
-    return;
-  }
-
-  settings = gtk_settings_get_default();
-  if (settings == NULL) {
-    return;
-  }
-
-  sel = gtk_color_selection_new();
-  if (gtk_color_selection_palette_from_string(Menulocal.Palette, &colors, &n)) {
-    g_free(colors);
-    g_object_set(settings, "gtk-color-palette", Menulocal.Palette, NULL);
-  }
-  gtk_widget_destroy(sel);
-
-  return;
-}
-#endif
 
 static void
 add_str_with_int_to_array(struct menu_config *cfg, struct narray *conf)
@@ -344,6 +298,37 @@ add_color_to_array(struct menu_config *cfg, struct narray *conf)
   if (buf) {
     arrayadd(conf, &buf);
   }
+}
+
+static void
+add_color_ary_to_array(struct menu_config *cfg, struct narray *conf)
+{
+  GString *str;
+  char *buf;
+  struct narray *palette;
+  int i, n;
+  GdkRGBA *color;
+  unsigned int r, g, b, a;
+  palette = &(Menulocal.custom_palette);
+  n = arraynum(palette);
+  if (n < 1) {
+    return;
+  }
+
+  str = g_string_new(cfg->name);
+  g_string_append_c(str, '=');
+  for (i = 0; i < n; i++) {
+     color = arraynget(palette, i);
+     r = color->red * 0xff;
+     g = color->green * 0xff;
+     b = color->blue * 0xff;
+     a = color->alpha * 0xff;
+     g_string_append_printf(str, "%02x%02x%02x%02x%s", r, g, b, a, (i == n -1) ? "\n" : ",");
+   }
+   buf = g_string_free(str, FALSE);
+   if (buf) {
+     arrayadd(conf, &buf);
+   }
 }
 
 static void
@@ -443,6 +428,9 @@ menu_save_config_sub(struct menu_config *cfg, struct narray *conf)
     case MENU_CONFIG_TYPE_COLOR:
       add_color_to_array(cfg + i, conf);
       break;
+    case MENU_CONFIG_TYPE_COLOR_ARY:
+      add_color_ary_to_array(cfg + i, conf);
+      break;
     case MENU_CONFIG_TYPE_STRING:
       add_prm_str_to_array(cfg + i, conf);
       break;
@@ -486,9 +474,6 @@ menu_save_config(int type)
   }
 
   if (type & SAVE_CONFIG_TYPE_OTHERS) {
-#if ! GTK_CHECK_VERSION(3, 4, 0)
-    get_palette();
-#endif
     menu_save_config_sub(MenuConfigOthers, &conf);
   }
 
@@ -572,6 +557,35 @@ menu_config_set_bgcolor(char *s2, void *data)
     Menulocal.bg_b = (val & 0xffU) / 255.0;
   }
   g_free(f1);
+  return 0;
+}
+
+static int
+menu_config_set_custom_palette(char *s2, void *data)
+{
+  gchar **colors, **ptr;
+  unsigned int r, g, b, a;
+  struct narray *palette;
+  GdkRGBA color;
+
+  colors = g_strsplit(s2, ",", 0);
+  if (colors == NULL) {
+    return 0;
+  }
+  palette = &(Menulocal.custom_palette);
+  arrayclear(palette);
+  ptr = colors;
+  while (*ptr) {
+    r = g = b = a = 0xff;
+    sscanf(*ptr, "%02x%02x%02x%02x", &r, &g, &b, &a);
+    color.red = r / 255.0;
+    color.green = g / 255.0;
+    color.blue = b / 255.0;
+    color.alpha = a / 255.0;
+    arrayadd(palette, &color);
+    ptr++;
+  }
+  g_strfreev(colors);
   return 0;
 }
 
@@ -770,6 +784,7 @@ mgtkloadconfig(void)
 	break;
       case MENU_CONFIG_TYPE_CHARMAP:
       case MENU_CONFIG_TYPE_COLOR:
+      case MENU_CONFIG_TYPE_COLOR_ARY:
       case MENU_CONFIG_TYPE_SCRIPT:
       case MENU_CONFIG_TYPE_DRIVER:
       case MENU_CONFIG_TYPE_WINDOW:
@@ -825,6 +840,78 @@ free_script_list(struct script *script)
   }
 }
 
+static int
+free_layers(struct nhash *layers, void *ptr)
+{
+  struct layer *layer;
+  layer = layers->val.p;
+  if (layer == NULL) {
+    return 0;
+  }
+  cairo_surface_destroy(layer->pix);
+  cairo_destroy(layer->cairo);
+  g_free(layer);
+  return 0;
+}
+
+int
+select_layer(const char *id)
+{
+  struct layer *layer;
+  void *ptr;
+  int r;
+  r = nhash_get_ptr(Menulocal.layers, id, &ptr);
+  if (r) {
+    return 1;
+  }
+  layer = ptr;
+  Menulocal.local->cairo = layer->cairo;
+  set_cairo_antialias(layer->cairo, Menulocal.antialias);
+  return 0;
+}
+
+static void
+create_layer(struct layer *layer, int w, int h)
+{
+  layer->pix = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, w, h);
+  layer->cairo = cairo_create(layer->pix);
+}
+
+void
+init_layer(const char *obj)
+{
+  struct layer *layer;
+  void *ptr;
+  int r, w, h, lw, lh;
+  if (Menulocal.pix == NULL) {
+    return;
+  }
+  if (obj == NULL) {
+    return;
+  }
+  w = cairo_image_surface_get_width(Menulocal.pix);
+  h = cairo_image_surface_get_height(Menulocal.pix);
+  r = nhash_get_ptr(Menulocal.layers, obj, &ptr);
+  if (r) {
+    layer = g_malloc(sizeof(*layer));
+    if (layer == NULL) {
+      return;
+    }
+    create_layer(layer, w, h);
+    nhash_set_ptr(Menulocal.layers, obj, layer);
+  } else {
+    layer = ptr;
+    lw = cairo_image_surface_get_width(layer->pix);
+    lh = cairo_image_surface_get_height(layer->pix);
+    if (lw != w || lh != h) {
+      cairo_destroy(layer->cairo);
+      cairo_surface_destroy(layer->pix);
+      create_layer(layer, w, h);
+    }
+  }
+  set_cairo_antialias(layer->cairo, Menulocal.antialias);
+}
+
 static void
 menulocal_finalize(void)
 {
@@ -872,9 +959,20 @@ menulocal_finalize(void)
 
   if (Menulocal.pix) {
     cairo_surface_destroy(Menulocal.pix);
+    Menulocal.pix = NULL;
+  }
+  if (Menulocal.bg) {
+    cairo_surface_destroy(Menulocal.bg);
+    Menulocal.bg = NULL;
+  }
+  if (Menulocal.layers) {
+    nhash_each(Menulocal.layers, free_layers, NULL);
+    nhash_free(Menulocal.layers);
+    Menulocal.layers = NULL;
   }
 
   arraydel2(&Menulocal.drawrable);
+  arraydel(&Menulocal.custom_palette);
 
   g_free(Menulocal.fileopendir);
   Menulocal.fileopendir = NULL;
@@ -886,11 +984,36 @@ menulocal_finalize(void)
   Menulocal.local = NULL;
 }
 
+static void
+init_custom_palette(void)
+{
+  struct narray *palette;
+  int i, j, k;
+  unsigned int c[] = {0xff, 0xcc, 0x99};
+  GdkRGBA color;
+
+  palette = &(Menulocal.custom_palette);
+  arrayclear(palette);
+  add_default_color(palette);
+  for (i = 0; i < 3; i++) {
+    for (j = 0; j < 3; j++) {
+      for (k = 0; k < 3; k++) {
+	color.red = c[j] / 255.0;
+	color.green = c[i] / 255.0;
+	color.blue = c[k] / 255.0;
+	color.alpha = 1.0;
+	arrayadd(palette, &color);
+      }
+    }
+  }
+  add_default_gray(palette);
+}
+
 static int
 menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct gra2cairo_local *local;
-  int i;
+  int layer;
 
   if (!OpenApplication()) {
     error(obj, ERR_MENU_DISPLAY);
@@ -900,6 +1023,9 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   if (_exeparent(obj, (char *) argv[1], inst, rval, argc, argv)) {
     return 1;
   }
+
+  layer = TRUE;
+  if (_putobj(obj, "_layer", inst, &layer)) return 1;
 
   if (_getobj(obj, "_local", inst, &local)) {
     local = gra2cairo_free(obj, inst);
@@ -930,6 +1056,7 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   Menulocal.exwin_use_external = TRUE;
   Menulocal.expand = 1;
   Menulocal.expanddir = g_strdup("./");
+  Menulocal.source_style_id = NULL;
   Menulocal.loadpath = SAVE_PATH_FULL;
   Menulocal.GRAobj = chkobject("gra");
   Menulocal.hist_size = 1000;
@@ -950,21 +1077,27 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   Menulocal.arc_tab = 3;
   Menulocal.mark_tab = 4;
   Menulocal.text_tab = 5;
+  Menulocal.math_input_mode = 1;
 
   arrayinit(&(Menulocal.drawrable), sizeof(char *));
   menuadddrawrable(chkobject("draw"), &(Menulocal.drawrable));
+
+  arrayinit(&(Menulocal.custom_palette), sizeof(GdkRGBA));
+  init_custom_palette();
+  Menulocal.use_custom_palette = TRUE;
 
   Menulocal.windpi = DEFAULT_DPI;
   Menulocal.redrawf = TRUE;
   Menulocal.redrawf_num = 0xffU;
   Menulocal.grid = 200;
-  Menulocal.data_head_lines = 20;
+  Menulocal.show_grid = TRUE;
+  Menulocal.data_head_lines = 100;
   Menulocal.use_opacity = FALSE;
   Menulocal.select_data = TRUE;
   Menulocal.local = local;
 
   Menulocal.png_dpi = 72;
-#ifdef WINDOWS
+#if WINDOWS
   Menulocal.emf_dpi = 576;
 #endif
   Menulocal.ps_version = 0;
@@ -1005,18 +1138,16 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   if (_putobj(obj, "use_opacity", inst, &Menulocal.use_opacity))
     goto errexit;
 
-  i = 0;
-  if (_putobj(obj, "modified", inst, &i))
+  Menulocal.modified = 0;
+  if (_putobj(obj, "modified", inst, &Menulocal.modified))
     goto errexit;
 
   Menulocal.obj = obj;
   Menulocal.inst = inst;
   Menulocal.pix = NULL;
+  Menulocal.bg = NULL;
+  Menulocal.layers = nhash_new();
   Menulocal.lock = 0;
-
-#if ! GTK_CHECK_VERSION(3, 4, 0)
-  set_palette();
-#endif
 
   return 0;
 
@@ -1037,6 +1168,7 @@ menudone(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
     return 1;
   }
 
+  Menulocal.local->cairo = NULL;
   if (_exeparent(obj, (char *) argv[1], inst, rval, argc, argv))
     return 1;
 
@@ -1229,12 +1361,14 @@ main_window_redraw(void)
 }
 
 void
-mx_redraw(struct objlist *obj, N_VALUE *inst)
+mx_redraw(struct objlist *obj, N_VALUE *inst, char **objects)
 {
   int n;
+  char *objs[OBJ_MAX];
+  struct savedstdio save;
 
   if (Menulocal.region) {
-    mx_clear(Menulocal.region);
+    mx_clear(Menulocal.region, objects);
   }
 
   if (Menulocal.redrawf) {
@@ -1243,9 +1377,22 @@ mx_redraw(struct objlist *obj, N_VALUE *inst)
     n = 0;
   }
 
-  GRAredraw(obj, inst, TRUE, n);
+  if (objects == NULL) {
+    int i, num;
+    struct narray *array;
+    array = &Menulocal.drawrable;
+    num = arraynum(array);
+    for (i = 0; i < num; i++) {
+      objs[i] = arraynget_str(array, i);
+    }
+    objs[i] = NULL;
+    objects = objs;
+  }
+
+  ignorestdio(&save);
+  GRAredraw_layers(obj, inst, TRUE, n, objects);
+  restorestdio(&save);
   mxflush(obj, inst, NULL, 0, NULL);
-  draw_paper_frame();
 
   main_window_redraw();
 }
@@ -1277,7 +1424,7 @@ mxredraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
     return 1;
   }
 
-  mx_redraw(obj, inst);
+  mx_redraw(obj, inst, NULL);
   return 0;
 }
 
@@ -1306,11 +1453,53 @@ mxdpi(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
   return 0;
 }
 
+static void
+flush_layers(cairo_t *cr)
+{
+  int r, i, n;
+  struct narray *array;
+  struct layer *layer;
+  char *obj;
+  void *ptr;
+
+  array = &Menulocal.drawrable;
+  n = arraynum(array);
+  for (i = 0; i < n; i++) {
+    obj = arraynget_str(array, i);
+    r = nhash_get_ptr(Menulocal.layers, obj, &ptr);
+    if (r) {
+      continue;
+    }
+    layer = ptr;
+    if (layer->pix) {
+      cairo_surface_flush(layer->pix);
+    }
+    cairo_set_source_surface(cr, layer->pix, 0, 0);
+    cairo_paint(cr);
+  }
+}
+
+static void
+clear_region(cairo_t *cr, cairo_region_t *region)
+{
+  cairo_save(cr);
+  cairo_set_source_rgba(cr, 0, 0, 0, 0);
+  cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
+  if (region) {
+    gdk_cairo_region(cr, region);
+    cairo_fill(cr);
+  } else {
+    cairo_reset_clip(cr);
+    cairo_paint(cr);
+  }
+  cairo_restore(cr);
+}
+
 static int
 mxflush(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   cairo_surface_t *surface;
-
+  cairo_t *cr;
   if (TopLevel == NULL) {
     error(obj, ERR_MENU_GUI);
     return 1;
@@ -1325,34 +1514,51 @@ mxflush(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
     }
   }
 
+  if (Menulocal.pix) {
+    cr = cairo_create(Menulocal.pix);
+    clear_region(cr, NULL);
+    flush_layers(cr);
+    cairo_destroy(cr);
+  }
+
+  return 0;
+}
+
+static int
+clear_layer(const char *obj, cairo_region_t *region)
+{
+  struct layer *layer;
+  void *ptr;
+  int r;
+  r = nhash_get_ptr(Menulocal.layers, obj, &ptr);
+  if (r) {
+    return 1;
+  }
+  layer = ptr;
+  clear_region(layer->cairo, region);
   return 0;
 }
 
 void
-#if GTK_CHECK_VERSION(3, 0, 0)
-mx_clear(cairo_region_t *region)
-#else
-mx_clear(GdkRegion *region)
-#endif
+mx_clear(cairo_region_t *region, char **objects)
 {
-  cairo_t *cr;
+  int i, n;
+  struct narray *array;
+  char *obj;
 
-  if (Menulocal.pix == NULL || Menulocal.local->cairo == NULL) {
-    return;
-  }
-
-  cr = Menulocal.local->cairo;
-
-  cairo_set_source_rgb(cr, Menulocal.bg_r, Menulocal.bg_g, Menulocal.bg_b);
-  if (region) {
-    gdk_cairo_region(cr, region);
-    cairo_fill(cr);
+  if (objects) {
+    while(*objects) {
+      clear_layer(*objects, region);
+      objects++;
+    }
   } else {
-    cairo_reset_clip(cr);
-    cairo_paint(cr);
+    array = &Menulocal.drawrable;
+    n = arraynum(array);
+    for (i = 0; i < n; i++) {
+      obj = arraynget_str(array, i);
+      clear_layer(obj, region);
+    }
   }
-
-  draw_paper_frame();
 }
 
 static int
@@ -1366,7 +1572,7 @@ mxclear(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   if (_exeparent(obj, (char *) argv[1], inst, rval, argc, argv))
     return 1;
 
-  mx_clear(NULL);
+  mx_clear(NULL, NULL);
 
   main_window_redraw();
 
@@ -1693,12 +1899,26 @@ mx_show_lib_version(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 
   g_string_append_printf(str, "%sPango\n"
 	       "%s compile: %s\n"
-	       "%s  linked: %s\n",
+	       "%s  linked: %s\n"
+	       "\n",
 	       h,
 	       h,
 	       PANGO_VERSION_STRING,
 	       h,
 	       pango_version_string());
+
+  g_string_append_printf(str, "%sGtkSourceView\n"
+	       "%s compile: %d.%d.%d\n"
+	       "%s  linked: %d.%d.%d\n",
+	       h,
+	       h,
+               GTK_SOURCE_MAJOR_VERSION,
+	       GTK_SOURCE_MINOR_VERSION,
+	       GTK_SOURCE_MICRO_VERSION,
+	       h,
+               gtk_source_get_major_version(),
+               gtk_source_get_minor_version(),
+               gtk_source_get_micro_version());
 
 #ifdef RL_VERSION_MAJOR
   g_string_append(str, "\n");
@@ -1734,6 +1954,30 @@ mx_show_lib_version(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 	       gsl_version);
 #endif	/* HAVE_LIBGSL */
 
+  rval->str = g_string_free(str, FALSE);
+
+  return 0;
+}
+
+static int
+mx_show_source_view_search_path(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  const gchar * const *dirs;
+  int i;
+  GtkSourceLanguageManager *lm;
+  GString *str;
+
+  if (rval->str) {
+    g_free(rval->str);
+  }
+  rval->str = NULL;
+
+  str = g_string_new("");
+  lm = gtk_source_language_manager_get_default();
+  dirs = gtk_source_language_manager_get_search_path(lm);
+  for (i = 0; dirs[i]; i++) {
+    g_string_append_printf(str, "%s\n", dirs[i]);
+  }
   rval->str = g_string_free(str, FALSE);
 
   return 0;
@@ -1777,6 +2021,11 @@ mxmodified(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
 
   modified = * (int *) argv[2];
 
+  if (modified) {
+    Menulocal.modified |= modified;
+  } else {
+    Menulocal.modified = modified;
+  }
   SetCaption(modified);
   set_modified_state(modified);
 
@@ -1967,38 +2216,39 @@ mx_addin_list_append(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc
   return 0;
 }
 
-int
-get_graph_modified(void)
+static int
+mx_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  int a;
+  char code, *cstr, *layer;
+  struct gra2cairo_local *local;
 
-  if (Menulocal.obj == NULL)
-    return FALSE;
+  local = (struct gra2cairo_local *)argv[2];
+  code = *(char *) (argv[3]);
+  cstr = argv[5];
 
-  getobj(Menulocal.obj, "modified", 0, 0, NULL, &a);
+  switch (code) {
+  case 'I':
+    layer = arraynget_str(&Menulocal.drawrable, 0);
+    if (layer){
+      select_layer(layer);
+    }
+    break;
+  case 'Z':
+    gra2cairo_draw_path(local);
+    select_layer(cstr);
+    break;
+  }
 
-  return a;
+  if (_exeparent(obj, argv[1], inst, rval, argc, argv)) {
+    return 1;
+  }
+  return 0;
 }
 
-static void
-graph_modified_sub(int a)
+static int
+mx_exeparent(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  if (Menulocal.obj == NULL)
-    return;
-
-  putobj(Menulocal.obj, "modified", 0, &a);
-}
-
-void
-set_graph_modified(void)
-{
-  graph_modified_sub(1);
-}
-
-void
-reset_graph_modified(void)
-{
-  graph_modified_sub(0);
+  return _exeparent(obj, argv[1], inst, rval, argc, argv);
 }
 
 static struct objtable gtkmenu[] = {
@@ -2024,12 +2274,17 @@ static struct objtable gtkmenu[] = {
   {"clear_info", NVFUNC, NREAD | NEXEC, mx_clear_info, "", 0},
   {"get_accel_map", NSFUNC, NREAD | NEXEC, mx_get_accel_map, "", 0},
   {"lib_version", NSFUNC, NREAD | NEXEC, mx_show_lib_version, NULL, 0},
+  {"source_view_search_path", NSFUNC, NREAD | NEXEC, mx_show_source_view_search_path, NULL, 0},
   {"focus", NVFUNC, NREAD | NEXEC, mx_focus_obj, "o", 0},
   {"unfocus", NVFUNC, NREAD | NEXEC, mx_unfocus_obj, "", 0},
   {"locale", NSFUNC, NREAD | NEXEC, mx_get_locale, "", 0},
   {"active", NBFUNC, NREAD | NEXEC, mx_get_active, "", 0},
   {"addin_list_append", NVFUNC, NREAD | NEXEC, mx_addin_list_append, "o", 0},
   {"_evloop", NVFUNC, 0, mx_evloop, NULL, 0},
+  {"_output", NVFUNC, 0, mx_output, NULL, 0},
+  {"_strwidth", NIFUNC, 0, mx_exeparent, NULL, 0},
+  {"_charascent", NIFUNC, 0, mx_exeparent, NULL, 0},
+  {"_chardescent", NIFUNC, 0, mx_exeparent, NULL, 0},
 };
 
 #define TBLNUM (sizeof(gtkmenu) / sizeof(*gtkmenu))

@@ -71,6 +71,8 @@ struct pagelisttype
 
 static struct pagelisttype pagelist[] = {
   {N_("Custom"),                   "custom",              PAPER_ID_CUSTOM, TRUE,  0,     0},
+  {N_("normal display (4:3)"), "normal display",      PAPER_ID_NORMAL, TRUE,  28000, 21000},
+  {N_("wide display (16:9)"),  "wide display",        PAPER_ID_WIDE,   TRUE,  38400, 21600},
   {"A3 P (297.00x420.00)",     GTK_PAPER_NAME_A3,     PAPER_ID_A3,     FALSE, 29700, 42000},
   {"A4 P (210.00x297.00)",     GTK_PAPER_NAME_A4,     PAPER_ID_A4,     FALSE, 21000, 29700},
   {"A4 L (297.00x210.00)",     GTK_PAPER_NAME_A4,     PAPER_ID_A4,     TRUE,  29700, 21000},
@@ -167,11 +169,7 @@ PageDialogSetup(GtkWidget *wi, void *data, int makewidget)
   d = (struct PageDialog *) data;
 
   if (makewidget) {
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(1, 2, FALSE);
-#endif
 
     i = 0;
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, FALSE, TRUE);
@@ -670,15 +668,9 @@ SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   if (makewidget) {
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-    hbox = gtk_hbox_new(FALSE, 4);
-
-    vbox = gtk_vbox_new(FALSE, 4);
-#endif
 
     label = gtk_label_new_with_mnemonic(_("_Draw order"));
     gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 4);
@@ -699,11 +691,7 @@ SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 4);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-    vbox = gtk_vbox_new(FALSE, 4);
-#endif
 
     w = gtk_button_new_with_mnemonic(_("_Add"));
     set_button_icon(w, "list-add");
@@ -716,11 +704,7 @@ SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
     d->ins = w;
 
-#if GTK_CHECK_VERSION(3, 2, 0)
     w = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
-#else
-    w = gtk_hseparator_new();
-#endif
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
 
     w = gtk_button_new_with_mnemonic(_("_Top"));
@@ -753,20 +737,12 @@ SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
     d->del = w;
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-    vbox2 = gtk_vbox_new(FALSE, 4);
-#endif
     gtk_box_pack_end(GTK_BOX(vbox2), vbox, FALSE, FALSE, 4);
 
     gtk_box_pack_start(GTK_BOX(hbox), vbox2, FALSE, FALSE, 4);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-    vbox = gtk_vbox_new(FALSE, 4);
-#endif
 
     label = gtk_label_new_with_mnemonic(_("_Objects"));
     gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 4);
@@ -839,11 +815,15 @@ SwitchDialogClose(GtkWidget *w, void *data)
   if (d->ret == IDOK) {
     arraydel2(&(Menulocal.drawrable));
     num = arraynum(&(d->idrawrable));
-    for (j = 0; j < num; j++) {
-      buf = (char **) arraynget(&(d->drawrable),
-				arraynget_int(&(d->idrawrable), j));
-      if ((*buf) != NULL)
-	arrayadd2(&(Menulocal.drawrable), *buf);
+    if (num == 0) {
+      menuadddrawrable(chkobject("draw"), &(Menulocal.drawrable));
+    } else {
+      for (j = 0; j < num; j++) {
+	buf = (char **) arraynget(&(d->drawrable),
+				  arraynget_int(&(d->idrawrable), j));
+	if ((*buf) != NULL)
+	  arrayadd2(&(Menulocal.drawrable), *buf);
+      }
     }
   }
   arraydel2(&(d->drawrable));
@@ -868,11 +848,7 @@ DirectoryDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct DirectoryDialog *) data;
   if (makewidget) {
-#if GTK_CHECK_VERSION(3, 4, 0)
     table = gtk_grid_new();
-#else
-    table = gtk_table_new(2, 2, FALSE);
-#endif
 
     w = gtk_file_chooser_button_new(_("directory"), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
     gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(w), TRUE);
@@ -880,27 +856,17 @@ DirectoryDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, _("_Select Dir:"), TRUE, 0);
 
     w = gtk_label_new(_("Current Dir:"));
-#if GTK_CHECK_VERSION(3, 4, 0)
     gtk_widget_set_halign(w, GTK_ALIGN_START);
     g_object_set(w, "margin", GINT_TO_POINTER(4), NULL);
     gtk_grid_attach(GTK_GRID(table), w, 0, 1, 1, 1);
-#else
-    gtk_misc_set_alignment(GTK_MISC(w), 0, 0.5);
-    gtk_table_attach(GTK_TABLE(table), w, 0, 1, 1, 2, 0, 0, 4, 4);
-#endif
 
     w = gtk_label_new("");
     gtk_label_set_ellipsize(GTK_LABEL(w), PANGO_ELLIPSIZE_START);
     d->dir_label = w;
-#if GTK_CHECK_VERSION(3, 4, 0)
     gtk_widget_set_hexpand(w, TRUE);
     gtk_widget_set_halign(w, GTK_ALIGN_START);
     g_object_set(w, "margin", GINT_TO_POINTER(4), NULL);
     gtk_grid_attach(GTK_GRID(table), w, 1, 2, 1, 1);
-#else
-    gtk_misc_set_alignment(GTK_MISC(w), 0, 0.5);
-    gtk_table_attach(GTK_TABLE(table), w, 1, 2, 1, 2, GTK_FILL | GTK_EXPAND, 0, 4, 4);
-#endif
 
     gtk_box_pack_start(GTK_BOX(d->vbox), table, FALSE, FALSE, 4);
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
@@ -952,11 +918,7 @@ LoadDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct LoadDialog *) data;
   if (makewidget) {
-#if GTK_CHECK_VERSION(3, 0, 0)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-    vbox = gtk_vbox_new(FALSE, 4);
-#endif
 
     w = gtk_check_button_new_with_mnemonic(_("_Expand included file"));
     d->expand_file = w;
@@ -1019,11 +981,7 @@ SaveDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct SaveDialog *) data;
   if (makewidget) {
-#if GTK_CHECK_VERSION(3, 0, 0)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
-    vbox = gtk_vbox_new(FALSE, 4);
-#endif
 
     w = combo_box_create();
     item_setup(vbox, w, _("_Path:"), FALSE);
@@ -1109,9 +1067,10 @@ CmGraphNewMenu(void *w, gpointer client_data)
   set_axis_undo_button_sensitivity(FALSE);
   reset_graph_modified();
 
-  UpdateAll();
   CmViewerDraw(NULL, GINT_TO_POINTER(TRUE));
+  UpdateAll2(NULL, FALSE);
   InfoWinClear();
+  menu_clear_undo();
 }
 
 void
@@ -1159,7 +1118,7 @@ CmGraphSwitch(void *w, gpointer client_data)
     return;
   SwitchDialog(&DlgSwitch);
   if (DialogExecute(TopLevel, &DlgSwitch) == IDOK) {
-    set_graph_modified();
+    set_graph_modified_gra();
     ChangePage();
   }
 }
@@ -1174,7 +1133,7 @@ CmGraphPage(void *w, gpointer client_data)
     SetPageSettingsToGRA();
     ChangePage();
     GetPageSettingsFromGRA();
-    set_graph_modified();
+    set_graph_modified_gra();
   }
 }
 
@@ -1199,6 +1158,7 @@ CmGraphShell(void *w, gpointer client_data)
 
   menu_lock(TRUE);
 
+  menu_save_undo(UNDO_TYPE_SHLL, NULL);
   obj = Menulocal.obj;
   inst = Menulocal.inst;
   idn = getobjtblpos(obj, "_evloop", &robj);
@@ -1214,7 +1174,8 @@ CmGraphShell(void *w, gpointer client_data)
   }
   unregisterevloop(robj, idn, inst);
   menu_lock(FALSE);
-  UpdateAll();
+  set_graph_modified();
+  UpdateAll(NULL);
 }
 
 void
@@ -1263,19 +1224,6 @@ CmGraphHistory(GtkRecentChooser *w, gpointer client_data)
   g_free(fname);
 }
 
-#if ! GTK_CHECK_VERSION(2, 24, 0)
-static void
-about_link_activated_cb(GtkAboutDialog *about, const gchar *link, gpointer data)
-{
-  char *cmd;
-
-  cmd = g_strdup_printf("%s \"%s\"", Menulocal.browser, link);
-  system_bg(cmd);
-
-  g_free(cmd);
-}
-#endif
-
 void
 CmHelpAbout(void *w, gpointer client_data)
 {
@@ -1291,19 +1239,12 @@ CmHelpAbout(void *w, gpointer client_data)
   getobj(obj, "copyright", 0, 0, NULL, &copyright);
   getobj(obj, "web", 0, 0, NULL, &web);
 
-#if ! GTK_CHECK_VERSION(2, 24, 0)
-  gtk_about_dialog_set_url_hook(about_link_activated_cb, NULL, NULL);
-#endif
   gtk_show_about_dialog(GTK_WINDOW(TopLevel),
 			"program-name", PACKAGE,
 			"copyright", copyright,
 			"version", VERSION,
 			"website", web,
-#if GTK_CHECK_VERSION(3, 0, 0)
 			"license-type", GTK_LICENSE_GPL_2_0,
-#else
-			"license", License,
-#endif
 			"wrap-license", TRUE,
 			"authors", Auther,
 			"translator-credits", Translator,
