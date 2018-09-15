@@ -38,7 +38,6 @@
 #define NGRAPH_COORDWIN_ICON_FILE	RESOURCE_PATH "/pixmaps/ngraph_coordwin.png"
 #define NGRAPH_CROSS_ICON_FILE		RESOURCE_PATH "/pixmaps/ngraph_cross.png"
 #define NGRAPH_DATAPOINT_ICON_FILE	RESOURCE_PATH "/pixmaps/ngraph_datapoint.png"
-#define NGRAPH_DRAW_ICON_FILE		RESOURCE_PATH "/pixmaps/ngraph_draw.png"
 #define NGRAPH_EVAL_ICON_FILE		RESOURCE_PATH "/pixmaps/ngraph_eval.png"
 #define NGRAPH_FILEWIN_ICON_FILE	RESOURCE_PATH "/pixmaps/ngraph_filewin.png"
 #define NGRAPH_FRAME_ICON_FILE		RESOURCE_PATH "/pixmaps/ngraph_frame.png"
@@ -71,6 +70,7 @@
 #define NGRAPH_ICON_FILE		RESOURCE_PATH "/pixmaps/ngraph_icon.png"
 #define NGRAPH_ICON64_FILE		RESOURCE_PATH "/pixmaps/ngraph_icon64.png"
 
+#define NGRAPH_DRAW_ICON	"ngraph_draw-symbolic"
 #define NGRAPH_POINT_ICON	"ngraph_point-symbolic"
 #define NGRAPH_LEGENDPOINT_ICON	"ngraph_legendpoint-symbolic"
 #define NGRAPH_AXISPOINT_ICON	"ngraph_axispoint-symbolic"
