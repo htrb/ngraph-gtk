@@ -1086,11 +1086,6 @@ static GtkWidget *
 sub_window_create(struct SubWin *d, GtkWidget *swin)
 {
   d->Win = swin;
-
-#if WINDOWS
-  g_signal_connect(dlg, "realize", G_CALLBACK(hide_minimize_menu_item), NULL);
-#endif
-
   return swin;
 }
 
