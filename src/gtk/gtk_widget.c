@@ -1010,6 +1010,9 @@ select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type)
   color.alpha = a / 255.0;
 
   dlg = gtk_color_chooser_dialog_new(title, GTK_WINDOW(TopLevel));
+  if (Menulocal.use_custom_palette) {
+    set_custom_palette(dlg);
+  }
   gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(dlg), &color);
   gtk_color_chooser_set_use_alpha(GTK_COLOR_CHOOSER(dlg), Menulocal.use_opacity);
   response = ndialog_run(dlg);
