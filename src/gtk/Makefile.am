@@ -4,15 +4,9 @@ NGRAPH_ICONS = data/pixmaps/ngraph_align_b.png				\
 	data/pixmaps/ngraph_align_r.png					\
 	data/pixmaps/ngraph_align_t.png					\
 	data/pixmaps/ngraph_align_vc.png				\
-	data/pixmaps/ngraph_axiswin48.png				\
-	data/pixmaps/ngraph_coordwin48.png				\
 	data/pixmaps/ngraph_draw.png					\
-	data/pixmaps/ngraph_filewin48.png				\
 	data/pixmaps/ngraph_icon.png data/pixmaps/ngraph_icon64.png	\
-	data/pixmaps/ngraph_infowin48.png				\
-	data/pixmaps/ngraph_legendwin48.png				\
 	data/pixmaps/ngraph_math.png					\
-	data/pixmaps/ngraph_mergewin48.png				\
 	data/pixmaps/ngraph_undo.png data/ngraphui.resources.xml	\
 	data/pixmaps/none_begin-symbolic.svg				\
 	data/pixmaps/none_end-symbolic.svg				\
@@ -47,14 +41,11 @@ NGRAPH_ICONS = data/pixmaps/ngraph_align_b.png				\
 	data/pixmaps/ngraph_gauss-symbolic.svg				\
 	data/pixmaps/ngraph_point-symbolic.svg				\
 	data/pixmaps/ngraph_zoom-symbolic.svg				\
-	data/pixmaps/ngraph_coordwin-symbolic.svg			\
-	data/pixmaps/ngraph_infowin-symbolic.svg			\
 	data/pixmaps/ngraph_rect-symbolic.svg				\
 	data/pixmaps/ngraph_cross-symbolic.svg				\
 	data/pixmaps/ngraph_legendpoint-symbolic.svg			\
 	data/pixmaps/ngraph_scale-symbolic.svg				\
 	data/pixmaps/ngraph_datapoint-symbolic.svg			\
-	data/pixmaps/ngraph_legendwin-symbolic.svg			\
 	data/pixmaps/ngraph_section-symbolic.svg			\
 	data/pixmaps/linewidth_002-symbolic.svg				\
 	data/pixmaps/linewidth_004-symbolic.svg				\

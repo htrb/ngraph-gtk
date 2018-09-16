@@ -14,30 +14,21 @@
     <file>pixmaps/ngraph_arc-symbolic.svg</file>
     <file>pixmaps/ngraph_axispoint-symbolic.svg</file>
     <file>pixmaps/ngraph_axiswin-symbolic.svg</file>
-    <file>pixmaps/ngraph_axiswin48.png</file>
-    <file>pixmaps/ngraph_coordwin-symbolic.svg</file>
-    <file>pixmaps/ngraph_coordwin48.png</file>
     <file>pixmaps/ngraph_cross-symbolic.svg</file>
     <file>pixmaps/ngraph_datapoint-symbolic.svg</file>
     <file>pixmaps/ngraph_draw-symbolic.svg</file>
     <file>pixmaps/ngraph_eval-symbolic.svg</file>
     <file>pixmaps/ngraph_filewin-symbolic.svg</file>
-    <file>pixmaps/ngraph_filewin48.png</file>
     <file>pixmaps/ngraph_frame-symbolic.svg</file>
     <file>pixmaps/ngraph_gauss-symbolic.svg</file>
     <file>pixmaps/ngraph.svg</file>
     <file>pixmaps/ngraph_icon.png</file>
     <file>pixmaps/ngraph_icon64.png</file>
-    <file>pixmaps/ngraph_infowin-symbolic.svg</file>
-    <file>pixmaps/ngraph_infowin48.png</file>
     <file>pixmaps/ngraph_legendpoint-symbolic.svg</file>
-    <file>pixmaps/ngraph_legendwin-symbolic.svg</file>
-    <file>pixmaps/ngraph_legendwin48.png</file>
     <file>pixmaps/ngraph_line-symbolic.svg</file>
     <file>pixmaps/ngraph_mark-symbolic.svg</file>
     <file>pixmaps/ngraph_math.png</file>
     <file>pixmaps/ngraph_mergewin-symbolic.svg</file>
-    <file>pixmaps/ngraph_mergewin48.png</file>
     <file>pixmaps/ngraph_point-symbolic.svg</file>
     <file>pixmaps/ngraph_rect-symbolic.svg</file>
     <file>pixmaps/ngraph_scale-symbolic.svg</file>
