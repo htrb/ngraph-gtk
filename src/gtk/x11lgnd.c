@@ -62,17 +62,17 @@
 #define ARROW_VIEW_SIZE 160
 
 static n_list_store Plist[] = {
-  {" ",            G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden"},
-  {"#",            G_TYPE_INT,     TRUE, FALSE, "id"},
-  {"type",         G_TYPE_PARAM,   TRUE, TRUE,  "type"},
-  {"marker_begin", G_TYPE_ENUM,    TRUE, TRUE,  "marker_begin"},
-  {"marker_end",   G_TYPE_ENUM,    TRUE, TRUE,  "marker_end"},
-  {N_("color"),    G_TYPE_OBJECT,  TRUE, TRUE,  "color"},
-  {"x",            G_TYPE_DOUBLE,  TRUE, TRUE,  "x", - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {"y",            G_TYPE_DOUBLE,  TRUE, TRUE,  "y", - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {N_("width"),    G_TYPE_DOUBLE,  TRUE, TRUE,  "width",            0, SPIN_ENTRY_MAX,  20,  100},
-  {N_("points"),   G_TYPE_INT,     TRUE, FALSE, "points"},
-  {"^#",           G_TYPE_INT,     TRUE, FALSE, "oid"},
+  {" ",                G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden"},
+  {"#",                G_TYPE_INT,     TRUE, FALSE, "id"},
+  {"type",             G_TYPE_PARAM,   TRUE, TRUE,  "type"},
+  {N_("marker begin"), G_TYPE_ENUM,    TRUE, TRUE,  "marker_begin"},
+  {N_("marker end"),   G_TYPE_ENUM,    TRUE, TRUE,  "marker_end"},
+  {N_("color"),        G_TYPE_OBJECT,  TRUE, TRUE,  "color"},
+  {"x",                G_TYPE_DOUBLE,  TRUE, TRUE,  "x", - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {"y",                G_TYPE_DOUBLE,  TRUE, TRUE,  "y", - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {N_("width"),        G_TYPE_DOUBLE,  TRUE, TRUE,  "width",            0, SPIN_ENTRY_MAX,  20,  100},
+  {N_("points"),       G_TYPE_INT,     TRUE, FALSE, "points"},
+  {"^#",               G_TYPE_INT,     TRUE, FALSE, "oid"},
 };
 
 enum PATH_LIST_COL {
@@ -209,9 +209,6 @@ enum TEXT_LIST_COL {
 #endif
   TEXT_LIST_COL_NUM,
 };
-
-static n_list_store *Llist[] = {Plist, Rlist, Alist, Mlist, Tlist};
-static int Llist_num[] = {PATH_LIST_COL_NUM, RECT_LIST_COL_NUM, ARC_LIST_COL_NUM, MARK_LIST_COL_NUM, TEXT_LIST_COL_NUM};
 
 static struct subwin_popup_list Popup_list[] = {
   {N_("_Duplicate"),   G_CALLBACK(list_sub_window_copy), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
@@ -2314,10 +2311,20 @@ LegendWinUpdate(char **objects, int clear, int draw)
   struct obj_list_data *d;
   struct objlist *obj;
   char **ptr;
+  struct SubWin win[] = {
+    NgraphApp.PathWin,
+    NgraphApp.RectWin,
+    NgraphApp.ArcWin,
+    NgraphApp.MarkWin,
+    NgraphApp.TextWin,
+  };
+  int i, n;
   if (Menulock || Globallock)
     return;
 
-  for (d = NgraphApp.LegendWin.data.data; d; d = d->next) {
+  n = G_N_ELEMENTS(win);
+  for (i = 0; i < n; i++) {
+    d = win[i].data.data;
     if (objects) {
       for (ptr = objects; *ptr; ptr++) {
 	obj = getobject(*ptr);
@@ -3539,91 +3546,128 @@ struct legend_data {
 };
 
 GtkWidget *
-LegendWinState(struct SubWin *d)
+create_path_list(struct SubWin *d)
 {
-  int i, n;
   struct obj_list_data *data;
+
+  list_sub_window_create(d, PATH_LIST_COL_NUM, Plist);
+  data = d->data.data;
+  data->update = PathListUpdate;
+  data->dialog = &DlgLegendArrow;
+  data->setup_dialog = LegendWinPathUpdate;
+  data->ev_key = NULL;
+  data->obj = chkobject("path");
+
+  sub_win_create_popup_menu(data, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
+
+  set_combo_cell_renderer_cb(data, PATH_LIST_COL_TYPE, Plist, G_CALLBACK(start_editing_line_type), NULL);
+  set_editable_cell_renderer_cb(data, PATH_LIST_COL_X, Plist, G_CALLBACK(pos_x_edited));
+  set_editable_cell_renderer_cb(data, PATH_LIST_COL_Y, Plist, G_CALLBACK(pos_y_edited));
+  set_obj_cell_renderer_cb(data, PATH_LIST_COL_COLOR, Plist, G_CALLBACK(start_editing_color));
+  return d->Win;
+}
+
+GtkWidget *
+create_rect_list(struct SubWin *d)
+{
+  struct obj_list_data *data;
+
+  list_sub_window_create(d, RECT_LIST_COL_NUM, Rlist);
+  data = d->data.data;
+  data->update = RectListUpdate;
+  data->dialog = &DlgLegendRect;
+  data->setup_dialog = LegendWinRectUpdate;
+  data->ev_key = NULL;
+  data->obj = chkobject("rectangle");
+
+  sub_win_create_popup_menu(data, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
+
+  set_editable_cell_renderer_cb(data, RECT_LIST_COL_X, Rlist, G_CALLBACK(pos_x_edited));
+  set_editable_cell_renderer_cb(data, RECT_LIST_COL_Y, Rlist, G_CALLBACK(pos_y_edited));
+  set_editable_cell_renderer_cb(data, RECT_LIST_COL_WIDTH, Rlist, G_CALLBACK(rect_width_edited));
+  set_editable_cell_renderer_cb(data, RECT_LIST_COL_HEIGHT, Rlist, G_CALLBACK(rect_height_edited));
+  set_obj_cell_renderer_cb(data, RECT_LIST_COL_COLOR, Rlist, G_CALLBACK(start_editing_color));
+  return d->Win;
+}
+
+GtkWidget *
+create_arc_list(struct SubWin *d)
+{
+  struct obj_list_data *data;
+
+  list_sub_window_create(d, ARC_LIST_COL_NUM, Alist);
+  data = d->data.data;
+  data->update = ArcListUpdate;
+  data->dialog = &DlgLegendArc;
+  data->setup_dialog = LegendWinArcUpdate;
+  data->ev_key = NULL;
+  data->obj = chkobject("arc");
+
+  sub_win_create_popup_menu(data, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
+
+  set_obj_cell_renderer_cb(data, ARC_LIST_COL_COLOR, Alist, G_CALLBACK(start_editing_color));
+  return d->Win;
+}
+
+GtkWidget *
+create_mark_list(struct SubWin *d)
+{
+  struct obj_list_data *data;
+
+  list_sub_window_create(d, MARK_LIST_COL_NUM, Mlist);
+  data = d->data.data;
+  data->update = MarkListUpdate;
+  data->dialog = &DlgLegendMark;
+  data->setup_dialog = LegendWinMarkUpdate;
+  data->ev_key = NULL;
+  data->obj = chkobject("mark");
+
+  sub_win_create_popup_menu(data, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
+
+  set_obj_cell_renderer_cb(data, MARK_LIST_COL_MARK, Mlist, G_CALLBACK(start_editing_mark));
+  return d->Win;
+}
+
+GtkWidget *
+create_text_list(struct SubWin *d)
+{
+  struct obj_list_data *data;
+  int n;
   GList *list;
   GtkTreeViewColumn *col;
-#define LEGENDNUM 5
-  struct legend_data legend_data[LEGENDNUM] = {
-    {NGRAPH_LINE_ICON, PathListUpdate, LegendWinPathUpdate, N_("path"),      &DlgLegendArrow},
-    {NGRAPH_RECT_ICON, RectListUpdate, LegendWinRectUpdate, N_("rectangle"), &DlgLegendRect},
-    {NGRAPH_ARC_ICON,  ArcListUpdate,  LegendWinArcUpdate,  N_("arc"),       &DlgLegendArc},
-    {NGRAPH_MARK_ICON, MarkListUpdate, LegendWinMarkUpdate, N_("mark"),      &DlgLegendMark},
-    {NGRAPH_TEXT_ICON, TextListUpdate, LegendWinTextUpdate, N_("text"),      &DlgLegendText},
-  };
-  GtkWidget *icons[LEGENDNUM];
   int noexpand_text_colmns[] = {TEXT_LIST_COL_X, TEXT_LIST_COL_Y, TEXT_LIST_COL_PT, TEXT_LIST_COL_DIR};
 
-  if (d->Win) {
-    return d->Win;
-  }
-
-  for (i = 0; i < LEGENDNUM; i++) {
-    icons[i] = gtk_image_new_from_icon_name(legend_data[i].icon_file, GTK_ICON_SIZE_LARGE_TOOLBAR);
-    gtk_widget_set_tooltip_text(GTK_WIDGET(icons[i]), _(legend_data[i].name));
-  }
-
-  tree_sub_window_create(d, LEGENDNUM, Llist_num, Llist, icons);
-
+  list_sub_window_create(d, TEXT_LIST_COL_NUM, Tlist);
   data = d->data.data;
-  for (i = 0; i < LEGENDNUM; i++) {
-    data->update = legend_data[i].update_func;
-    data->dialog = legend_data[i].dialog;
-    data->setup_dialog = legend_data[i].update_dialog_func;
-    data->ev_key = NULL;
-    data->obj = chkobject(legend_data[i].name);
+  data->update = TextListUpdate;
+  data->dialog = &DlgLegendText;
+  data->setup_dialog = LegendWinTextUpdate;
+  data->ev_key = NULL;
+  data->obj = chkobject("text");
 
-    g_object_set_data(G_OBJECT(icons[i]), "ngraph_object_data", data);
+  sub_win_create_popup_menu(data, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
 
-    sub_win_create_popup_menu(data, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
-    switch (i) {
-    case LegendTypePath:
-      set_combo_cell_renderer_cb(data, PATH_LIST_COL_TYPE, Llist[i], G_CALLBACK(start_editing_line_type), NULL);
-      set_editable_cell_renderer_cb(data, PATH_LIST_COL_X, Llist[i], G_CALLBACK(pos_x_edited));
-      set_editable_cell_renderer_cb(data, PATH_LIST_COL_Y, Llist[i], G_CALLBACK(pos_y_edited));
-      set_obj_cell_renderer_cb(data, PATH_LIST_COL_COLOR, Llist[i], G_CALLBACK(start_editing_color));
-      break;
-    case LegendTypeRect:
-      set_editable_cell_renderer_cb(data, RECT_LIST_COL_X, Llist[i], G_CALLBACK(pos_x_edited));
-      set_editable_cell_renderer_cb(data, RECT_LIST_COL_Y, Llist[i], G_CALLBACK(pos_y_edited));
-      set_editable_cell_renderer_cb(data, RECT_LIST_COL_WIDTH, Llist[i], G_CALLBACK(rect_width_edited));
-      set_editable_cell_renderer_cb(data, RECT_LIST_COL_HEIGHT, Llist[i], G_CALLBACK(rect_height_edited));
-      set_obj_cell_renderer_cb(data, RECT_LIST_COL_COLOR, Llist[i], G_CALLBACK(start_editing_color));
-      break;
-    case LegendTypeArc:
-      set_obj_cell_renderer_cb(data, ARC_LIST_COL_COLOR, Llist[i], G_CALLBACK(start_editing_color));
-      break;
-    case LegendTypeMark:
-      set_obj_cell_renderer_cb(data, MARK_LIST_COL_MARK, Llist[i], G_CALLBACK(start_editing_mark));
-      break;
-    case LegendTypeText:
-      set_combo_cell_renderer_cb(data, TEXT_LIST_COL_FONT, Llist[i], G_CALLBACK(start_editing_font), NULL);
-      col = gtk_tree_view_get_column(GTK_TREE_VIEW(data->text), TEXT_LIST_COL_TEXT);
-      list = gtk_cell_layout_get_cells(GTK_CELL_LAYOUT(col));
-      if (list == NULL) {
-	break;
-      }
-      if (list->data) {
-	GtkCellRenderer *renderer;
-	renderer = list->data;
-	gtk_tree_view_column_add_attribute(col, renderer, "style", TEXT_LIST_COL_STYLE);
-	gtk_tree_view_column_add_attribute(col, renderer, "weight", TEXT_LIST_COL_WEIGHT);
-#ifdef TEXT_LIST_USE_FONT_FAMILY
-	gtk_tree_view_column_add_attribute(col, renderer, "family", TEXT_LIST_COL_FONT_FAMILY);
-#endif
-	gtk_tree_view_column_add_attribute(col, renderer, "foreground", TEXT_LIST_COL_COLOR);
-	gtk_tree_view_column_add_attribute(col, renderer, "background", TEXT_LIST_COL_BGCOLOR);
-	g_signal_connect_after(renderer, "editing-started", G_CALLBACK(start_editing_text), data);
-      }
-      g_list_free(list);
-      n = sizeof(noexpand_text_colmns) / sizeof(*noexpand_text_colmns);
-      tree_view_set_no_expand_column(data->text, noexpand_text_colmns, n);
-      tree_view_set_tooltip_column(GTK_TREE_VIEW(data->text), TEXT_LIST_COL_TEXT);
-      break;
-    }
-    data = data->next;
+  set_combo_cell_renderer_cb(data, TEXT_LIST_COL_FONT, Tlist, G_CALLBACK(start_editing_font), NULL);
+  col = gtk_tree_view_get_column(GTK_TREE_VIEW(data->text), TEXT_LIST_COL_TEXT);
+  list = gtk_cell_layout_get_cells(GTK_CELL_LAYOUT(col));
+  if (list == NULL) {
+    return NULL;
   }
+  if (list->data) {
+    GtkCellRenderer *renderer;
+    renderer = list->data;
+    gtk_tree_view_column_add_attribute(col, renderer, "style", TEXT_LIST_COL_STYLE);
+    gtk_tree_view_column_add_attribute(col, renderer, "weight", TEXT_LIST_COL_WEIGHT);
+#ifdef TEXT_LIST_USE_FONT_FAMILY
+    gtk_tree_view_column_add_attribute(col, renderer, "family", TEXT_LIST_COL_FONT_FAMILY);
+#endif
+    gtk_tree_view_column_add_attribute(col, renderer, "foreground", TEXT_LIST_COL_COLOR);
+    gtk_tree_view_column_add_attribute(col, renderer, "background", TEXT_LIST_COL_BGCOLOR);
+    g_signal_connect_after(renderer, "editing-started", G_CALLBACK(start_editing_text), data);
+  }
+  g_list_free(list);
+  n = sizeof(noexpand_text_colmns) / sizeof(*noexpand_text_colmns);
+  tree_view_set_no_expand_column(data->text, noexpand_text_colmns, n);
+  tree_view_set_tooltip_column(GTK_TREE_VIEW(data->text), TEXT_LIST_COL_TEXT);
   return d->Win;
 }
