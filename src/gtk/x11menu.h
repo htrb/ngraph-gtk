@@ -161,7 +161,11 @@ struct Viewer
 enum SubWinType {
   TypeFileWin,
   TypeAxisWin,
-  TypeLegendWin,
+  TypePathWin,
+  TypeRectWin,
+  TypeArcWin,
+  TypeMarkWin,
+  TypeTextWin,
   TypeMergeWin,
   TypeCoordWin,
   TypeInfoWin,
@@ -184,7 +188,6 @@ struct obj_list_data
   struct SubWin *parent;
   n_list_store *list;
   int list_col_num;
-  struct obj_list_data *next;
 };
 
 typedef void (* sub_window_state_func) (struct SubWin *d, int state);
@@ -213,7 +216,11 @@ struct NgraphApp
   struct Viewer Viewer;
   struct SubWin FileWin;
   struct SubWin AxisWin;
-  struct SubWin LegendWin;
+  struct SubWin PathWin;
+  struct SubWin RectWin;
+  struct SubWin ArcWin;
+  struct SubWin MarkWin;
+  struct SubWin TextWin;
   struct SubWin MergeWin;
   struct SubWin CoordWin;
   struct SubWin InfoWin;

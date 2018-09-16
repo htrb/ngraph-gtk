@@ -98,7 +98,6 @@ static void create_menu_sub(GtkWidget *parent, struct MenuItem *item, int popup)
 static void create_popup(GtkWidget *parent, struct MenuItem *item);
 static GtkWidget *create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb);
 static void CmViewerButtonArm(GtkToggleToolButton *action, gpointer client_data);
-static void set_subwindow_state(enum SubWinType id);
 
 static GdkCursorType Cursor[] = {
   GDK_LEFT_PTR,
@@ -3979,6 +3978,9 @@ struct obj_tab_info {
   int *conf;
   int obj_id;
   const char *obj_name;
+  GtkWidget * (* init_func)(struct SubWin *);
+  struct SubWin *d;
+  const char *icon;
 };
 
 static int
@@ -4036,7 +4038,7 @@ save_tab_position(void)
   int i, n;
   GtkWidget *tab;
   struct obj_tab_info tab_info[] = {
-    {0, 0, &Menulocal.file_tab,      0, "file"},
+    {0, 0, &Menulocal.file_tab,      0, "data"},
     {0, 0, &Menulocal.axis_tab,      0, "axis"},
     {0, 0, &Menulocal.merge_tab,     0, "merge"},
     {0, 0, &Menulocal.path_tab,      0, "path"},
@@ -4061,59 +4063,35 @@ save_tab_position(void)
 static void
 multi_to_single(void)
 {
-  int i, j, n, tab_n, obj_id;
-  struct obj_list_data *obj_data;
-  GtkWidget *legend_tab, *icon, *w, *tab;
+  int j, tab_n;
+  GtkWidget *tab;
   struct obj_tab_info tab_info[] = {
-    {0, 0, &Menulocal.file_tab,      0, "file"},
-    {0, 0, &Menulocal.axis_tab,      0, "axis"},
-    {0, 0, &Menulocal.merge_tab,     0, "merge"},
-    {0, 0, &Menulocal.path_tab,      0, "path"},
-    {0, 0, &Menulocal.rectangle_tab, 0, "rectangle"},
-    {0, 0, &Menulocal.arc_tab,       0, "arc"},
-    {0, 0, &Menulocal.mark_tab,      0, "mark"},
-    {0, 0, &Menulocal.text_tab,      0, "text"},
+    {0, 0, &Menulocal.file_tab,      0, "data",      FileWinState,     &NgraphApp.FileWin,  NGRAPH_FILEWIN_ICON},
+    {0, 0, &Menulocal.axis_tab,      0, "axis",      AxisWinState,     &NgraphApp.AxisWin,  NGRAPH_AXISWIN_ICON},
+    {0, 0, &Menulocal.merge_tab,     0, "merge",     MergeWinState,    &NgraphApp.MergeWin, NGRAPH_MERGEWIN_ICON},
+    {0, 0, &Menulocal.path_tab,      0, "path",      create_path_list, &NgraphApp.PathWin,  NGRAPH_LINE_ICON},
+    {0, 0, &Menulocal.rectangle_tab, 0, "rectangle", create_rect_list, &NgraphApp.RectWin,  NGRAPH_RECT_ICON},
+    {0, 0, &Menulocal.arc_tab,       0, "arc",       create_arc_list,  &NgraphApp.ArcWin,   NGRAPH_ARC_ICON},
+    {0, 0, &Menulocal.mark_tab,      0, "mark",      create_mark_list, &NgraphApp.MarkWin,  NGRAPH_MARK_ICON},
+    {0, 0, &Menulocal.text_tab,      0, "text",      create_text_list, &NgraphApp.TextWin,  NGRAPH_TEXT_ICON},
   };
 
   tab_n = sizeof(tab_info) / sizeof(*tab_info);
   init_tab_info(tab_info, tab_n);
 
-  legend_tab = NgraphApp.LegendWin.Win;
   for (j = 0; j < tab_n; j++) {
     if (tab_info[j].tab > 0) {
       tab = gtk_paned_get_child2(GTK_PANED(NgraphApp.Viewer.side_pane2));
     } else {
       tab = gtk_paned_get_child1(GTK_PANED(NgraphApp.Viewer.side_pane2));
     }
-    if (strcmp(tab_info[j].obj_name, "file") == 0) {
-      window_to_tab(&NgraphApp.FileWin, tab, NGRAPH_FILEWIN_ICON, _("data"));
-    } else if (strcmp(tab_info[j].obj_name, "axis") == 0) {
-      window_to_tab(&NgraphApp.AxisWin, tab, NGRAPH_AXISWIN_ICON, _(tab_info[j].obj_name));
-    } else if (strcmp(tab_info[j].obj_name, "merge") == 0) {
-      window_to_tab(&NgraphApp.MergeWin, tab, NGRAPH_MERGEWIN_ICON, _(tab_info[j].obj_name));
-    } else {
-      n = gtk_notebook_get_n_pages(GTK_NOTEBOOK(legend_tab));
-      for (i = 0; i < n; i++) {
-	w = gtk_notebook_get_nth_page(GTK_NOTEBOOK(legend_tab), i);
-	icon = gtk_notebook_get_tab_label(GTK_NOTEBOOK(legend_tab), w);
-	obj_data = g_object_get_data(G_OBJECT(icon), "ngraph_object_data");
-	obj_id = chkobjectid(obj_data->obj);
-	if (obj_id == tab_info[j].obj_id) {
-	  g_object_ref(w);
-	  g_object_ref(icon);
-	  g_object_set_data(G_OBJECT(w), OBJ_ID_KEY, GINT_TO_POINTER(obj_id));
-	  gtk_notebook_remove_page(GTK_NOTEBOOK(legend_tab), i);
-	  gtk_notebook_append_page(GTK_NOTEBOOK(tab), w, icon);
-	  gtk_notebook_set_tab_detachable(GTK_NOTEBOOK(tab), w, TRUE);
-	  gtk_notebook_set_tab_reorderable(GTK_NOTEBOOK(tab), w, TRUE);
-	  gtk_notebook_set_menu_label_text(GTK_NOTEBOOK(tab), w, _(tab_info[j].obj_name));
-	  break;
-	}
-      }
-    }
+    tab_info[j].init_func(tab_info[j].d);
+    window_to_tab(tab_info[j].d, tab, tab_info[j].icon, _(tab_info[j].obj_name));
   }
 
+  CoordWinState(&NgraphApp.CoordWin);
   gtk_paned_pack1(GTK_PANED(NgraphApp.Viewer.side_pane3), NgraphApp.CoordWin.Win, FALSE, TRUE);
+  InfoWinState(&NgraphApp.InfoWin);
   gtk_paned_pack2(GTK_PANED(NgraphApp.Viewer.side_pane3), NgraphApp.InfoWin.Win, TRUE, TRUE);
 
   set_pane_position();
@@ -4285,12 +4263,6 @@ setupwindow(GtkApplication *app)
 
   gtk_container_add(GTK_CONTAINER(TopLevel), vbox2);
 
-  set_subwindow_state(TypeInfoWin);
-  set_subwindow_state(TypeCoordWin);
-  set_subwindow_state(TypeMergeWin);
-  set_subwindow_state(TypeLegendWin);
-  set_subwindow_state(TypeAxisWin);
-  set_subwindow_state(TypeFileWin);
   multi_to_single();
 }
 
@@ -4380,8 +4352,20 @@ init_ngraph_app_struct(void)
   memset(&NgraphApp.AxisWin, 0, sizeof(NgraphApp.AxisWin));
   NgraphApp.AxisWin.type = TypeAxisWin;
 
-  memset(&NgraphApp.LegendWin, 0, sizeof(NgraphApp.LegendWin));
-  NgraphApp.LegendWin.type = TypeLegendWin;
+  memset(&NgraphApp.PathWin, 0, sizeof(NgraphApp.PathWin));
+  NgraphApp.PathWin.type = TypePathWin;
+
+  memset(&NgraphApp.RectWin, 0, sizeof(NgraphApp.RectWin));
+  NgraphApp.RectWin.type = TypeRectWin;
+
+  memset(&NgraphApp.ArcWin, 0, sizeof(NgraphApp.ArcWin));
+  NgraphApp.ArcWin.type = TypeArcWin;
+
+  memset(&NgraphApp.MarkWin, 0, sizeof(NgraphApp.MarkWin));
+  NgraphApp.MarkWin.type = TypeMarkWin;
+
+  memset(&NgraphApp.TextWin, 0, sizeof(NgraphApp.TextWin));
+  NgraphApp.TextWin.type = TypeTextWin;
 
   memset(&NgraphApp.MergeWin, 0, sizeof(NgraphApp.MergeWin));
   NgraphApp.MergeWin.type = TypeMergeWin;
@@ -5728,43 +5712,6 @@ CmViewerButtonArm(GtkToggleToolButton *action, gpointer client_data)
   }
 
   gtk_widget_queue_draw(d->Win);
-}
-
-static void
-set_subwindow_state(enum SubWinType id)
-{
-  static int lock = FALSE;
-
-  if (lock) {
-    return;
-  }
-
-  lock = TRUE;
-
-  switch (id) {
-  case TypeFileWin:
-    FileWinState(&NgraphApp.FileWin);
-    break;
-  case TypeAxisWin:
-    AxisWinState(&NgraphApp.AxisWin);
-    break;
-  case TypeLegendWin:
-    LegendWinState(&NgraphApp.LegendWin);
-    break;
-  case TypeMergeWin:
-    MergeWinState(&NgraphApp.MergeWin);
-    break;
-  case TypeCoordWin:
-    CoordWinState(&NgraphApp.CoordWin);
-    break;
-  case TypeInfoWin:
-    InfoWinState(&NgraphApp.InfoWin);
-    break;
-  default:
-    return;
-  }
-
-  lock = FALSE;
 }
 
 #define MODIFIED_TYPE_UNMODIFIED 0
