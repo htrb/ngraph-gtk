@@ -3938,7 +3938,7 @@ create_message_box(GtkWidget **label1, GtkWidget **label2)
 #define OBJ_ID_KEY "ngraph_object_id"
 
 static void
-window_to_tab(struct SubWin *win, GtkWidget *tab, const char *icon_file, const char *tip)
+setup_object_tab(struct SubWin *win, GtkWidget *tab, const char *icon_file, const char *tip)
 {
   GtkWidget *icon;
   int obj_id;
@@ -4061,7 +4061,7 @@ save_tab_position(void)
 }
 
 static void
-multi_to_single(void)
+create_object_tabs(void)
 {
   int j, tab_n;
   GtkWidget *tab;
@@ -4086,12 +4086,12 @@ multi_to_single(void)
       tab = gtk_paned_get_child1(GTK_PANED(NgraphApp.Viewer.side_pane2));
     }
     tab_info[j].init_func(tab_info[j].d);
-    window_to_tab(tab_info[j].d, tab, tab_info[j].icon, _(tab_info[j].obj_name));
+    setup_object_tab(tab_info[j].d, tab, tab_info[j].icon, _(tab_info[j].obj_name));
   }
 
-  CoordWinState(&NgraphApp.CoordWin);
+  CoordWinCreate(&NgraphApp.CoordWin);
   gtk_paned_pack1(GTK_PANED(NgraphApp.Viewer.side_pane3), NgraphApp.CoordWin.Win, FALSE, TRUE);
-  InfoWinState(&NgraphApp.InfoWin);
+  InfoWinCreate(&NgraphApp.InfoWin);
   gtk_paned_pack2(GTK_PANED(NgraphApp.Viewer.side_pane3), NgraphApp.InfoWin.Win, TRUE, TRUE);
 
   set_pane_position();
@@ -4263,7 +4263,7 @@ setupwindow(GtkApplication *app)
 
   gtk_container_add(GTK_CONTAINER(TopLevel), vbox2);
 
-  multi_to_single();
+  create_object_tabs();
 }
 
 static void

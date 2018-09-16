@@ -108,7 +108,7 @@ InfoWinUpdate(int clear)
 }
 
 GtkWidget *
-InfoWinState(struct SubWin *d)
+InfoWinCreate(struct SubWin *d)
 {
   if (d->Win) {
     return d->Win;

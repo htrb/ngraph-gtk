@@ -141,7 +141,7 @@ CoordWinUpdate(int clear)
 }
 
 GtkWidget *
-CoordWinState(struct SubWin *d)
+CoordWinCreate(struct SubWin *d)
 {
   if (d->Win) {
     return d->Win;
