@@ -432,7 +432,7 @@ init_dnd(struct SubWin *d)
 }
 
 GtkWidget *
-MergeWinState(struct SubWin *d)
+dreate_merge_list(struct SubWin *d)
 {
   if (d->Win) {
     return d->Win;

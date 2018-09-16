@@ -4066,14 +4066,14 @@ multi_to_single(void)
   int j, tab_n;
   GtkWidget *tab;
   struct obj_tab_info tab_info[] = {
-    {0, 0, &Menulocal.file_tab,      0, "data",      FileWinState,     &NgraphApp.FileWin,  NGRAPH_FILEWIN_ICON},
-    {0, 0, &Menulocal.axis_tab,      0, "axis",      AxisWinState,     &NgraphApp.AxisWin,  NGRAPH_AXISWIN_ICON},
-    {0, 0, &Menulocal.merge_tab,     0, "merge",     MergeWinState,    &NgraphApp.MergeWin, NGRAPH_MERGEWIN_ICON},
-    {0, 0, &Menulocal.path_tab,      0, "path",      create_path_list, &NgraphApp.PathWin,  NGRAPH_LINE_ICON},
-    {0, 0, &Menulocal.rectangle_tab, 0, "rectangle", create_rect_list, &NgraphApp.RectWin,  NGRAPH_RECT_ICON},
-    {0, 0, &Menulocal.arc_tab,       0, "arc",       create_arc_list,  &NgraphApp.ArcWin,   NGRAPH_ARC_ICON},
-    {0, 0, &Menulocal.mark_tab,      0, "mark",      create_mark_list, &NgraphApp.MarkWin,  NGRAPH_MARK_ICON},
-    {0, 0, &Menulocal.text_tab,      0, "text",      create_text_list, &NgraphApp.TextWin,  NGRAPH_TEXT_ICON},
+    {0, 0, &Menulocal.file_tab,      0, "data",      dreate_data_list,  &NgraphApp.FileWin,  NGRAPH_FILEWIN_ICON},
+    {0, 0, &Menulocal.axis_tab,      0, "axis",      dreate_axis_list,  &NgraphApp.AxisWin,  NGRAPH_AXISWIN_ICON},
+    {0, 0, &Menulocal.merge_tab,     0, "merge",     dreate_merge_list, &NgraphApp.MergeWin, NGRAPH_MERGEWIN_ICON},
+    {0, 0, &Menulocal.path_tab,      0, "path",      create_path_list,  &NgraphApp.PathWin,  NGRAPH_LINE_ICON},
+    {0, 0, &Menulocal.rectangle_tab, 0, "rectangle", create_rect_list,  &NgraphApp.RectWin,  NGRAPH_RECT_ICON},
+    {0, 0, &Menulocal.arc_tab,       0, "arc",       create_arc_list,   &NgraphApp.ArcWin,   NGRAPH_ARC_ICON},
+    {0, 0, &Menulocal.mark_tab,      0, "mark",      create_mark_list,  &NgraphApp.MarkWin,  NGRAPH_MARK_ICON},
+    {0, 0, &Menulocal.text_tab,      0, "text",      create_text_list,  &NgraphApp.TextWin,  NGRAPH_TEXT_ICON},
   };
 
   tab_n = sizeof(tab_info) / sizeof(*tab_info);

@@ -6379,7 +6379,7 @@ init_dnd(struct SubWin *d)
 }
 
 GtkWidget *
-FileWinState(struct SubWin *d)
+dreate_data_list(struct SubWin *d)
 {
   int n;
   int noexpand_colmns[] = {FILE_WIN_COL_X,
