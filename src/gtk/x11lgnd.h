@@ -37,5 +37,10 @@ void CmMarkDel(void *w, gpointer client_data);
 void CmTextUpdate(void *w, gpointer client_data);
 void CmTextDel(void *w, gpointer client_data);
 
-GtkWidget *LegendWinState(struct SubWin *d);
+GtkWidget *create_path_list(struct SubWin *d);
+GtkWidget *create_rect_list(struct SubWin *d);
+GtkWidget *create_arc_list(struct SubWin *d);
+GtkWidget *create_mark_list(struct SubWin *d);
+GtkWidget *create_text_list(struct SubWin *d);
+
 void CmOptionTextDef(void *w, gpointer client_data);
