@@ -876,7 +876,11 @@ do_popup(GdkEventButton *event, struct obj_list_data *d)
   if (d->parent->type == TypeFileWin ||
       d->parent->type == TypeAxisWin ||
       d->parent->type == TypeMergeWin ||
-      d->parent->type == TypeLegendWin) {
+      d->parent->type == TypePathWin ||
+      d->parent->type == TypeRectWin ||
+      d->parent->type == TypeArcWin ||
+      d->parent->type == TypeMarkWin ||
+      d->parent->type == TypeTextWin) {
     d->select = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
   }
   gtk_menu_popup_at_pointer(GTK_MENU(d->popup), ((GdkEvent *)event));
@@ -1155,7 +1159,6 @@ list_widget_create(struct SubWin *d, int lisu_num, n_list_store *list, int can_f
   data->can_focus = can_focus;
   data->list = list;
   data->list_col_num = lisu_num;
-  data->next = NULL;
   lstor = list_store_create(lisu_num, list);
   data->text = lstor;
 
@@ -1202,36 +1205,6 @@ list_sub_window_create(struct SubWin *d, int lisu_num, n_list_store *list)
   d->data.data = data;
 
   return sub_window_create(d, swin);
-}
-
-GtkWidget *
-tree_sub_window_create(struct SubWin *d, int page_num, int *lisu_num, n_list_store **list, GtkWidget **icons)
-{
-  GtkWidget *tab, *swin;
-  int i;
-  struct obj_list_data *data, *prev;
-  char *str;
-
-  tab = gtk_notebook_new();
-  gtk_notebook_popup_enable(GTK_NOTEBOOK(tab));
-
-  prev = NULL;
-  for (i = 0; i < page_num; i++) {
-    data = list_widget_create(d, lisu_num[i], list[i], TRUE, &swin);
-    if (prev) {
-      prev->next = data;
-    } else {
-      d->data.data = data;
-    }
-    gtk_notebook_append_page(GTK_NOTEBOOK(tab), swin, icons[i]);
-    str = gtk_widget_get_tooltip_text(icons[i]);
-    gtk_notebook_set_menu_label_text(GTK_NOTEBOOK(tab), swin, str);
-    g_free(str);
-    prev = data;
-  }
-  gtk_notebook_set_current_page(GTK_NOTEBOOK(tab), 0);
-
-  return sub_window_create(d, tab);
 }
 
 gboolean
