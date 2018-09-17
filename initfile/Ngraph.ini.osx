@@ -42,18 +42,21 @@ character_map=_Physics,µ℃℉ℎℏÅℇ☢
 character_map=_Mathematics,±×÷‰∀∂∃∄∇∈∉∋∌√∛∜∝∞∠∥∦∧∨∩∪∫∬∮≂≃≒≡≦≧≨≩≪≫
 character_map=_Greece,ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩαβγδεζηθικλμνξοπρστυφχψωϕς
 menu_win=12,39,1000,680
-file_win=-343,0,336,188,1
-axis_win=-343,215,336,188,1
-legend_win=-100000,-100000,-100000,-100000,0
-merge_win=-100000,-100000,-100000,-100000,0
-coordinate_win=-343,430,336,188,1
-information_win=-100000,-100000,-100000,-100000,0
 extwin_dpi=40
 extwin_width=400
 extwin_height=600
 use_external_viewer=0
 history_size=1000
 palette=black:white:gray50:red:purple:blue:light blue:green:yellow:orange:lavender:brown:goldenrod4:dodger blue:pink:light green:gray10:gray30:gray75:gray90
+file_tab=0
+axis_tab=100
+merge_tab=101
+path_tab=1
+rectangle_tab=2
+arc_tab=3
+mark_tab=4
+text_tab=5
+sidebar=1
 single_window_mode=1
 
 [gra2cairo]
