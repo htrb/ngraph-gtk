@@ -4,7 +4,6 @@ NGRAPH_ICONS = data/pixmaps/ngraph_align_b.png				\
 	data/pixmaps/ngraph_align_r.png					\
 	data/pixmaps/ngraph_align_t.png					\
 	data/pixmaps/ngraph_align_vc.png				\
-	data/pixmaps/ngraph_draw.png					\
 	data/pixmaps/ngraph_icon.png data/pixmaps/ngraph_icon64.png	\
 	data/pixmaps/ngraph_math.png					\
 	data/pixmaps/ngraph_undo.png data/ngraphui.resources.xml	\
