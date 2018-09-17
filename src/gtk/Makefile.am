@@ -3,9 +3,8 @@ NGRAPH_ICONS = data/pixmaps/ngraph_align_b.png				\
 	data/pixmaps/ngraph_align_l.png					\
 	data/pixmaps/ngraph_align_r.png					\
 	data/pixmaps/ngraph_align_t.png					\
-	data/pixmaps/ngraph_align_vc.png				\
-	data/pixmaps/ngraph_icon.png data/pixmaps/ngraph_icon64.png	\
-	data/pixmaps/ngraph_math.png					\
+	data/pixmaps/ngraph_align_vc.png data/pixmaps/ngraph_icon.png	\
+	data/pixmaps/ngraph_icon64.png data/pixmaps/ngraph_math.png	\
 	data/pixmaps/ngraph_undo.png data/ngraphui.resources.xml	\
 	data/pixmaps/none_begin-symbolic.svg				\
 	data/pixmaps/none_end-symbolic.svg				\
@@ -17,10 +16,14 @@ NGRAPH_ICONS = data/pixmaps/ngraph_align_b.png				\
 	data/pixmaps/mark_end-symbolic.svg				\
 	data/pixmaps/bar_begin-symbolic.svg				\
 	data/pixmaps/bar_end-symbolic.svg				\
-	data/pixmaps/stroke_fill_0.png data/pixmaps/stroke_fill_1.png	\
-	data/pixmaps/stroke_fill_2.png data/pixmaps/stroke_fill_3.png	\
-	data/pixmaps/stroke_fill_4.png data/pixmaps/stroke_fill_5.png	\
-	data/pixmaps/stroke_fill_6.png data/pixmaps/stroke_fill_7.png	\
+	data/pixmaps/stroke_fill_0-symbolic.svg				\
+	data/pixmaps/stroke_fill_1-symbolic.svg				\
+	data/pixmaps/stroke_fill_2-symbolic.svg				\
+	data/pixmaps/stroke_fill_3-symbolic.svg				\
+	data/pixmaps/stroke_fill_4-symbolic.svg				\
+	data/pixmaps/stroke_fill_5-symbolic.svg				\
+	data/pixmaps/stroke_fill_6-symbolic.svg				\
+	data/pixmaps/stroke_fill_7-symbolic.svg				\
 	data/pixmaps/join_bevel-symbolic.svg				\
 	data/pixmaps/join_miter-symbolic.svg				\
 	data/pixmaps/join_round-symbolic.svg data/pixmaps/ngraph.svg	\

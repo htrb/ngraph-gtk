@@ -178,7 +178,7 @@ create_images(struct presetting_widgets *widgets)
   for (i = 0; i < STROKE_FILL_ICON_NUM; i++) {
     GtkWidget *img;
     char img_file[256];
-    snprintf(img_file, sizeof(img_file), "stroke_fill_%d", i);
+    snprintf(img_file, sizeof(img_file), "stroke_fill_%d-symbolic", i);
     img = gtk_image_new_from_icon_name(img_file, GTK_ICON_SIZE_LARGE_TOOLBAR);
     widgets->stroke_fill_icon[i] = img;
     g_object_ref(img);
