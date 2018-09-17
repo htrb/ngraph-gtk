@@ -107,7 +107,6 @@ static int PaintLock = FALSE, ZoomLock = FALSE, KeepMouseMode = FALSE;
 #define EVAL_NUM_MAX 5000
 static struct evaltype EvalList[EVAL_NUM_MAX];
 static struct narray SelList;
-// static char evbuf[256];
 
 #define IDEVMASK        101
 #define IDEVMOVE        102

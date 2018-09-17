@@ -26,7 +26,6 @@
 
 struct presetting_widgets
 {
-//  GtkWidget *stroke, *fill;
   GtkWidget *line_width, *line_style;
   GtkWidget *color1, *color2;
   GtkWidget *path_type;

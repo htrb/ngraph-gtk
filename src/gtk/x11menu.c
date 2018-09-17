@@ -3116,9 +3116,6 @@ init_action_widget_list(void)
     case EditPasteAction:
       ActionWidget[i].type = ACTION_TYPE_FOCUS_EDIT_PASTE;
       break;
-      //    case ViewSidebarAction:
-      //      ActionWidget[i].type = ACTION_TYPE_SINGLE_WINDOW;
-      break;
     case DataPropertyAction:
     case DataCloseAction:
     case DataEditAction:
