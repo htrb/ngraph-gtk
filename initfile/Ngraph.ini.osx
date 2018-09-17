@@ -57,7 +57,6 @@ arc_tab=3
 mark_tab=4
 text_tab=5
 sidebar=1
-single_window_mode=1
 
 [gra2cairo]
 font=Sans-serif,Arial
