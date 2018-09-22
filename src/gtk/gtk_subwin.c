@@ -1086,13 +1086,6 @@ swin_realized(GtkWidget *widget, gpointer user_data)
   ptr->update(ptr, TRUE, TRUE);
 }
 
-static GtkWidget *
-sub_window_create(struct SubWin *d, GtkWidget *swin)
-{
-  d->Win = swin;
-  return swin;
-}
-
 GtkWidget *
 text_sub_window_create(struct SubWin *d)
 {
@@ -1109,8 +1102,9 @@ text_sub_window_create(struct SubWin *d)
   swin = gtk_scrolled_window_new(NULL, NULL);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   gtk_container_add(GTK_CONTAINER(swin), view);
+  d->Win = swin;
 
-  return sub_window_create(d, swin);
+  return swin;
 }
 
 GtkWidget *
@@ -1134,8 +1128,9 @@ label_sub_window_create(struct SubWin *d)
 #else
   gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(swin), label);
 #endif
+  d->Win = swin;
 
-  return sub_window_create(d, swin);
+  return swin;
 }
 
 static gboolean
@@ -1203,8 +1198,9 @@ list_sub_window_create(struct SubWin *d, int lisu_num, n_list_store *list)
 
   data = list_widget_create(d, lisu_num, list, d->type != TypeFileWin, &swin);
   d->data.data = data;
+  d->Win = swin;
 
-  return sub_window_create(d, swin);
+  return swin;
 }
 
 gboolean
