@@ -106,6 +106,7 @@ struct _math_expression {
   int line_number;
   MathExpression *next;
   MathEquation *equation;
+  char *string;
   union {
     MathValue value;
     char *symbol;
@@ -136,6 +137,7 @@ MathExpression *math_func_call_expression_new(MathEquation *eq, struct math_func
 MathExpression *math_parameter_expression_new(MathEquation *eq, char *name, int *err);
 MathExpression *math_constant_definition_expression_new(MathEquation *eq, char *name, MathExpression *exp, int *err);
 MathExpression *math_function_expression_new(MathEquation *eq, const char *name, int *err);
+MathExpression *math_string_expression_new(MathEquation *eq, const char *str, int *err);
 
 int math_function_expression_add_arg(MathExpression *func, const char *arg_name, enum MATH_FUNCTION_ARG_TYPE type);
 int math_function_expression_set_function(MathEquation *eq, MathExpression *func, const char *name, MathExpression *exp);
