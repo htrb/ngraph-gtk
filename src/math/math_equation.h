@@ -13,11 +13,13 @@ typedef struct _math_value MathValue;
 
 #include "math_error.h"
 #include "nhash.h"
+#include "object.h"
 
 #define MATH_EQUATION_ARRAY_INDEX_MAX 65535
 
 struct _math_value {
   double val;
+  const char *str;
   enum {
     MATH_VALUE_NORMAL = 0,
     MATH_VALUE_ERROR  = 1,
@@ -52,6 +54,7 @@ struct _math_equation {
   MathExpression *exp, *opt_exp, *const_def;
   MathEquationParametar *parameter;
   MathEquationArray *array_buf;
+  struct narray strings;
   union {
     struct {
       const char *pos;

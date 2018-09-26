@@ -149,6 +149,7 @@ math_equation_new(void)
   eq->array = nhash_new();
   eq->local_array = nhash_new();
   eq->local_variable = nhash_new();
+  arrayinit(&(eq->strings), sizeof(GString *));
 
   if (eq->function == NULL ||
       eq->constant == NULL ||
@@ -300,6 +301,21 @@ free_array_buf(MathEquationArray *buf, int num)
   g_free(buf);
 }
 
+static void
+free_strings(MathEquation *eq)
+{
+  int i, n;
+  GString **strs;
+  struct narray *ary;
+  ary = &(eq->strings);
+  n = arraynum(ary);
+  strs = arraydata(ary);
+  for (i = 0; i < n; i++) {
+    g_string_free(strs[i], TRUE);
+  }
+  arraydel(ary);
+}
+
 void
 math_equation_free(MathEquation *eq)
 {
@@ -327,6 +343,8 @@ math_equation_free(MathEquation *eq)
   if (eq->const_def) {
     math_expression_free(eq->const_def);
   }
+
+  free_strings(eq);
 
   free_array_buf(eq->array_buf, eq->array_num);
 
@@ -1096,8 +1114,6 @@ math_equation_set_const(MathEquation *eq, int idx, const MathValue *val)
   return 0;
 }
 
-
-
 int
 math_equation_set_var(MathEquation *eq, int idx, const MathValue *val)
 {
@@ -1109,7 +1125,6 @@ math_equation_set_var(MathEquation *eq, int idx, const MathValue *val)
 
   return 0;
 }
-
 
 int
 math_equation_get_const_by_name(MathEquation *eq, const char *name, MathValue *val)
