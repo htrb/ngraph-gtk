@@ -5,6 +5,7 @@
 
 #ifndef MATH_SCANNER_HEADER
 #define MATH_SCANNER_HEADER
+#include <gmodule.h>
 
 struct math_string {
   const char *top, *cur;
@@ -17,6 +18,8 @@ struct math_string {
 enum MATH_TOKEN_TYPE {
   MATH_TOKEN_TYPE_NUMERIC,
   MATH_TOKEN_TYPE_SYMBOL,
+  MATH_TOKEN_TYPE_STRING,
+  MATH_TOKEN_TYPE_UNTERMINATED_STRING,
   MATH_TOKEN_TYPE_OPERATOR,
   MATH_TOKEN_TYPE_LP,
   MATH_TOKEN_TYPE_RP,
@@ -41,6 +44,7 @@ struct math_token {
     } val;
     enum MATH_OPERATOR_TYPE op;
     char *sym;
+    GString *str;
   } data;
   const char *ptr;
   struct math_token *next;

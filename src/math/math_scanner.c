@@ -11,6 +11,7 @@
 #include <math.h>
 #include <limits.h>
 #include <glib.h>
+#include <stdio.h>
 
 #include "object.h"
 
@@ -21,6 +22,7 @@ static struct math_token *get_array_prefix(const char *str, const char ** rstr);
 static struct math_token *get_bracket(const char *str, const char ** rstr);
 static struct math_token *get_unknown(const char *str, const char ** rstr);
 static struct math_token *get_symbol(const char *str, const char ** rstr);
+static struct math_token *get_string(const char *str, const char ** rstr);
 static struct math_token *get_paren(const char *str, const char ** rstr);
 static struct math_token *get_curly(const char *str, const char ** rstr);
 static struct math_token *get_comma(const char *str, const char ** rstr);
@@ -73,9 +75,13 @@ math_scanner_free_token(struct math_token *token)
   case MATH_TOKEN_TYPE_CONST:
   case MATH_TOKEN_TYPE_ARRAY_PREFIX:
   case MATH_TOKEN_TYPE_UNKNOWN:
+  case MATH_TOKEN_TYPE_UNTERMINATED_STRING:
     break;
   case MATH_TOKEN_TYPE_SYMBOL:
     g_free(token->data.sym);
+    break;
+  case MATH_TOKEN_TYPE_STRING:
+    g_string_free(token->data.str, TRUE);
     break;
   }
 
@@ -124,6 +130,8 @@ math_scanner_get_token(struct math_string *mstr)
     token = get_comma(str, rstr);
   } else if (c == '@') {
     token = get_array_prefix(str, rstr);
+  } else if (c == '"') {
+    token = get_string(str, rstr);
   } else if (c == '#') {        /* comment */
     while (*str != '\0' && *str != '\n') {
       mstr->ofst++;
@@ -300,6 +308,76 @@ get_symbol(const char *str,  const char ** rstr)
 
   *rstr = str + n;
 
+  return tok;
+}
+
+static struct math_token *
+get_string(const char *str,  const char ** rstr)
+{
+  struct math_token *tok;
+  int n, escape;
+  GString *gstr;
+
+  gstr = g_string_new("");
+  if (gstr == NULL) {
+    return NULL;
+  }
+
+  escape = FALSE;
+  for (n = 1; str[n]; n++) {
+    if (escape) {
+      switch (str[n]) {
+      case 'a':
+	g_string_append_c(gstr, '\a');
+	break;
+      case 'b':
+	g_string_append_c(gstr, '\b');
+	break;
+      case 'f':
+	g_string_append_c(gstr, '\f');
+	break;
+      case 'n':
+	g_string_append_c(gstr, '\n');
+	break;
+      case 'r':
+	g_string_append_c(gstr, '\r');
+	break;
+      case 't':
+	g_string_append_c(gstr, '\t');
+	break;
+      default:
+	g_string_append_c(gstr, str[n]);
+	break;
+      }
+      escape = FALSE;
+      continue;
+    }
+    if (str[n] == '"' || str[n] == '\n') {
+      break;
+    } else if (str[n] == '\\') {
+      escape = TRUE;
+    } else {
+      g_string_append_c(gstr, str[n]);
+    }
+  }
+
+  if (str[n] == '\0' || str[n] == '\n') {
+    tok = create_token(str, MATH_TOKEN_TYPE_UNTERMINATED_STRING);
+    if (tok == NULL) {
+      return NULL;
+    }
+    return tok;
+  }
+
+  tok = create_token(str, MATH_TOKEN_TYPE_STRING);
+  if (tok == NULL) {
+    g_string_free(gstr, TRUE);
+    return NULL;
+  }
+  tok->data.str = gstr;
+
+  n++;
+  *rstr = str + n;
   return tok;
 }
 
