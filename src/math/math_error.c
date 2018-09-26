@@ -28,6 +28,7 @@
 #define ERR_MSG_POS_FUNC	N_("error, the function cannot be used in a user function or a constant definition.")
 #define ERR_MSG_CONST_EXIST	N_("error, the constant is already defined.")
 #define ERR_MSG_CALCULATION	N_("error, calculation error.")
+#define ERR_MSG_UNTERMINATED_STRING	N_("syntax error, unterminated string.")
 
   static int ErrorLine = 1, ErrorOfst = 1;
 
@@ -242,6 +243,9 @@ math_err_get_error_message(MathEquation *eq, const char *code, int err)
     break;
   case MATH_ERROR_CALCULATION:
     buf = g_strdup(_(ERR_MSG_CALCULATION));
+    break;
+  case MATH_ERROR_UNTERMINATED_STRING:
+    buf = g_strdup(_(ERR_MSG_UNTERMINATED_STRING));
     break;
   default:
     buf = g_strdup(_(ERR_MSG_UNKNOWN));
