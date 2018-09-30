@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.07.06\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2018-09-22 21:22+0900\n"
+"POT-Creation-Date: 2018-09-30 20:09+0900\n"
 "PO-Revision-Date: 2018-09-16 10:31+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -108,13 +108,13 @@ msgstr "単一軸(_A)"
 #: src/gtk/x11axis.c:104 src/gtk/x11file.c:132 src/gtk/x11file.c:2011
 #: src/gtk/x11file.c:2228 src/gtk/x11graph.c:696 src/gtk/x11lgnd.c:1153
 #: src/gtk/x11menu.c:499 src/gtk/x11menu.c:852 src/gtk/x11menu.c:1083
-#: src/gtk/x11menu.c:1200 src/gtk/x11menu.c:1352 src/gtk/x11merge.c:68
+#: src/gtk/x11menu.c:1200 src/gtk/x11menu.c:1352 src/gtk/x11merge.c:69
 #: src/gtk/x11opt.c:911
 msgid "_Add"
 msgstr "追加(_A)"
 
 #: src/gtk/x11axis.c:106 src/gtk/x11file.c:134 src/gtk/x11lgnd.c:214
-#: src/gtk/x11menu.c:1985 src/gtk/x11menu.c:2901 src/gtk/x11merge.c:69
+#: src/gtk/x11menu.c:1985 src/gtk/x11menu.c:2901 src/gtk/x11merge.c:70
 msgid "_Duplicate"
 msgstr "複製(_D)"
 
@@ -125,7 +125,7 @@ msgstr "複製(_D)"
 #: src/gtk/x11menu.c:918 src/gtk/x11menu.c:954 src/gtk/x11menu.c:990
 #: src/gtk/x11menu.c:1026 src/gtk/x11menu.c:1062 src/gtk/x11menu.c:1113
 #: src/gtk/x11menu.c:1226 src/gtk/x11menu.c:1382 src/gtk/x11menu.c:1970
-#: src/gtk/x11menu.c:2886 src/gtk/x11merge.c:70
+#: src/gtk/x11menu.c:2886 src/gtk/x11merge.c:71
 msgid "_Delete"
 msgstr "削除(_D)"
 
@@ -146,31 +146,31 @@ msgid "_Properties"
 msgstr "プロパティ(_P)"
 
 #: src/gtk/x11axis.c:112 src/gtk/x11file.c:140 src/gtk/x11lgnd.c:220
-#: src/gtk/x11merge.c:74
+#: src/gtk/x11merge.c:75
 msgid "_Instance name"
 msgstr "インスタンス名(_I)"
 
 #: src/gtk/x11axis.c:114 src/gtk/x11file.c:143 src/gtk/x11graph.c:710
 #: src/gtk/x11lgnd.c:222 src/gtk/x11menu.c:1725 src/gtk/x11menu.c:2973
-#: src/gtk/x11merge.c:76
+#: src/gtk/x11merge.c:77
 msgid "_Top"
 msgstr "先頭へ(_T)"
 
 #: src/gtk/x11axis.c:115 src/gtk/x11file.c:144 src/gtk/x11graph.c:716
 #: src/gtk/x11lgnd.c:223 src/gtk/x11menu.c:1740 src/gtk/x11menu.c:2988
-#: src/gtk/x11merge.c:77 src/gtk/x11opt.c:930
+#: src/gtk/x11merge.c:78 src/gtk/x11opt.c:930
 msgid "_Up"
 msgstr "上へ(_U)"
 
 #: src/gtk/x11axis.c:116 src/gtk/x11file.c:145 src/gtk/x11graph.c:722
 #: src/gtk/x11lgnd.c:224 src/gtk/x11menu.c:1755 src/gtk/x11menu.c:3003
-#: src/gtk/x11merge.c:78 src/gtk/x11opt.c:923
+#: src/gtk/x11merge.c:79 src/gtk/x11opt.c:923
 msgid "_Down"
 msgstr "下へ(_D)"
 
 #: src/gtk/x11axis.c:117 src/gtk/x11file.c:146 src/gtk/x11graph.c:728
 #: src/gtk/x11lgnd.c:225 src/gtk/x11menu.c:1770 src/gtk/x11menu.c:3018
-#: src/gtk/x11merge.c:79
+#: src/gtk/x11merge.c:80
 msgid "_Bottom"
 msgstr "最後へ(_B)"
 
@@ -323,7 +323,7 @@ msgstr "_R 軸"
 msgid "_Grid"
 msgstr "グリッド(_G)"
 
-#: src/gtk/x11axis.c:1012 src/gtk/x11merge.c:146
+#: src/gtk/x11axis.c:1012
 msgid "_Zoom:"
 msgstr "ズーム(_Z):"
 
@@ -1234,7 +1234,7 @@ msgstr "データ %d (ファイル)"
 msgid "_Apply all"
 msgstr "全てに適用(_A)"
 
-#: src/gtk/x11file.c:4105 src/gtk/x11merge.c:134 src/gtk/x11print.c:161
+#: src/gtk/x11file.c:4105 src/gtk/x11merge.c:136 src/gtk/x11print.c:161
 msgid "_File:"
 msgstr "ファイル名(_F):"
 
@@ -2519,35 +2519,51 @@ msgid "left"
 msgstr "左"
 
 #: src/gtk/x11merge.c:55
-msgid "zoom"
+#, fuzzy
+msgid "zoom_x"
 msgstr "ズーム"
 
-#: src/gtk/x11merge.c:73
+#: src/gtk/x11merge.c:56
+#, fuzzy
+msgid "zoom_y"
+msgstr "ズーム"
+
+#: src/gtk/x11merge.c:74
 msgid "_Preferences"
 msgstr "設定(_P)"
 
-#: src/gtk/x11merge.c:126
+#: src/gtk/x11merge.c:128
 #, c-format
 msgid "Merge %d"
 msgstr "合成 %d"
 
-#: src/gtk/x11merge.c:138
+#: src/gtk/x11merge.c:140
 msgid "_Top Margin:"
 msgstr "上マージン(_T):"
 
-#: src/gtk/x11merge.c:142
+#: src/gtk/x11merge.c:144
 msgid "_Left Margin:"
 msgstr "左マージン(_L):"
 
-#: src/gtk/x11merge.c:216
+#: src/gtk/x11merge.c:148
+#, fuzzy
+msgid "zoom _X:"
+msgstr "ズーム"
+
+#: src/gtk/x11merge.c:152
+#, fuzzy
+msgid "zoom _Y:"
+msgstr "ズーム"
+
+#: src/gtk/x11merge.c:224
 msgid "Add Merge file"
 msgstr "合成ファイルの追加"
 
-#: src/gtk/x11merge.c:252
+#: src/gtk/x11merge.c:260
 msgid "close merge file (multi select)"
 msgstr "合成ファイルを閉じる (複数選択)"
 
-#: src/gtk/x11merge.c:282
+#: src/gtk/x11merge.c:290
 msgid "merge file property (multi select)"
 msgstr "合成プロパティ (複数選択)"
 
@@ -2849,7 +2865,7 @@ msgid "Spawning external driver."
 msgstr "外部ドライバに出力中"
 
 #: src/gtk/x11print.c:732 src/gtk/x11print.c:1006 src/gtk/x11print.c:1079
-#: src/gtk/x11view.c:5717
+#: src/gtk/x11view.c:5755
 msgid "Drawing."
 msgstr "描画中"
 
@@ -2883,19 +2899,19 @@ msgstr "データ評価中"
 msgid "trimming (multi select)"
 msgstr "トリミング (複数選択)"
 
-#: src/gtk/x11view.c:2838
+#: src/gtk/x11view.c:2861
 msgid "Data points are moved."
 msgstr "データは移動されました."
 
-#: src/gtk/x11view.c:4203
+#: src/gtk/x11view.c:4239
 msgid "Moving data points is canceled."
 msgstr "データの移動はキャンセルされました."
 
-#: src/gtk/x11view.c:5711
+#: src/gtk/x11view.c:5749
 msgid "Scaling"
 msgstr "軸スケール設定中"
 
-#: src/gtk/x11view.c:5718
+#: src/gtk/x11view.c:5756
 msgid "Drawing"
 msgstr "描画中"
 
