@@ -447,14 +447,15 @@ static int
 arczoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int i,snum,*sdata,rx,ry,x,y,refx,refy,width,preserve_width;
-  double zoom;
+  double zoom_x, zoom_y;
   struct narray *style;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
-  zoom=(*(int *)argv[2])/10000.0;
-  refx=(*(int *)argv[3]);
-  refy=(*(int *)argv[4]);
-  preserve_width = (*(int *)argv[5]);
+  zoom_x = (*(int *) argv[2]) / 10000.0;
+  zoom_y = (*(int *) argv[3]) / 10000.0;
+  refx = (*(int *)argv[4]);
+  refy = (*(int *)argv[5]);
+  preserve_width = (*(int *)argv[6]);
   _getobj(obj,"x",inst,&x);
   _getobj(obj,"y",inst,&y);
   _getobj(obj,"rx",inst,&rx);
@@ -463,10 +464,10 @@ arczoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   _getobj(obj,"style",inst,&style);
   snum=arraynum(style);
   sdata=arraydata(style);
-  x=(x-refx)*zoom+refx;
-  y=(y-refy)*zoom+refy;
-  rx=rx*zoom;
-  ry=ry*zoom;
+  x=(x-refx)*zoom_x+refx;
+  y=(y-refy)*zoom_y+refy;
+  rx=rx*zoom_x;
+  ry=ry*zoom_y;
 
   if (rx < 1)
     rx = 1;
@@ -475,6 +476,8 @@ arczoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
     ry = 1;
 
   if (! preserve_width) {
+    double zoom;
+    zoom = MIN(zoom_x, zoom_y);
     width=width*zoom;
     for (i=0;i<snum;i++) sdata[i]=sdata[i]*zoom;
   }
@@ -570,7 +573,7 @@ static struct objtable arc[] = {
   {"rotate",NVFUNC,NREAD|NEXEC,arcrotate,"iiii",0},
   {"flip",NVFUNC,NREAD|NEXEC,arcflip,"iii",0},
   {"change",NVFUNC,NREAD|NEXEC,arcchange,"iii",0},
-  {"zooming",NVFUNC,NREAD|NEXEC,arczoom,"iiii",0},
+  {"zooming",NVFUNC,NREAD|NEXEC,arczoom,"iiiii",0},
   {"match",NBFUNC,NREAD|NEXEC,arcmatch,"iiiii",0},
 
   {"fill_hsb", NVFUNC, NREAD|NEXEC, put_fill_hsb,"ddd",0},
