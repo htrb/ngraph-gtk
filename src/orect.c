@@ -341,14 +341,15 @@ static int
 rectzoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int i,snum,*sdata,refx,refy,x1,y1,x2,y2,width,preserve_width;
-  double zoom;
+  double zoom_x, zoom_y;
   struct narray *style;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
-  zoom=(*(int *)argv[2])/10000.0;
-  refx=(*(int *)argv[3]);
-  refy=(*(int *)argv[4]);
-  preserve_width = (*(int *)argv[5]);
+  zoom_x = (*(int *) argv[2]) / 10000.0;
+  zoom_y = (*(int *) argv[3]) / 10000.0;
+  refx = (*(int *)argv[4]);
+  refy = (*(int *)argv[5]);
+  preserve_width = (*(int *)argv[6]);
 
   get_position(obj, inst, &x1, &y1, &x2, &y2);
 
@@ -357,11 +358,13 @@ rectzoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 
   snum=arraynum(style);
   sdata=arraydata(style);
-  x1=(x1-refx)*zoom+refx;
-  y1=(y1-refy)*zoom+refy;
-  x2=(x2-refx)*zoom+refx;
-  y2=(y2-refy)*zoom+refy;
+  x1=(x1-refx)*zoom_x+refx;
+  y1=(y1-refy)*zoom_y+refy;
+  x2=(x2-refx)*zoom_x+refx;
+  y2=(y2-refy)*zoom_y+refy;
   if (! preserve_width) {
+    double zoom;
+    zoom = MIN(zoom_x, zoom_y);
     width = width * zoom;
     for (i=0;i<snum;i++) sdata[i] *= zoom;
   }
@@ -555,7 +558,7 @@ static struct objtable rect[] = {
   {"rotate",NVFUNC,NREAD|NEXEC,rectrotate,"iiii",0},
   {"flip",NVFUNC,NREAD|NEXEC,rectflip,"iii",0},
   {"change",NVFUNC,NREAD|NEXEC,rectchange,"iii",0},
-  {"zooming",NVFUNC,NREAD|NEXEC,rectzoom,"iiii",0},
+  {"zooming",NVFUNC,NREAD|NEXEC,rectzoom,"iiiii",0},
   {"match",NBFUNC,NREAD|NEXEC,rectmatch,"iiiii",0},
 
   {"fill_hsb", NVFUNC, NREAD|NEXEC, put_fill_hsb,"ddd",0},
