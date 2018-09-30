@@ -320,7 +320,7 @@ struct MergeDialog
 {
   DIALOG_PROTOTYPE;
   /****** local member *******/
-  GtkWidget *file, *topmargin, *leftmargin, *zoom;
+  GtkWidget *file, *topmargin, *leftmargin, *zoom_x, *zoom_y;
   struct objlist *Obj;
   int Id;
 };
