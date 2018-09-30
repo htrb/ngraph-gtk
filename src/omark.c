@@ -424,14 +424,16 @@ static int
 markzoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int i,x,y,size,refx,refy,width,snum,*sdata,preserve_width;
-  double zoom;
+  double zoom, zoom_x, zoom_y;
   struct narray *style;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
-  zoom=(*(int *)argv[2])/10000.0;
-  refx=(*(int *)argv[3]);
-  refy=(*(int *)argv[4]);
-  preserve_width = (*(int *)argv[5]);
+  zoom_x = (*(int *) argv[2]) / 10000.0;
+  zoom_y = (*(int *) argv[3]) / 10000.0;
+  zoom = MIN(zoom_x, zoom_y);
+  refx = (*(int *)argv[4]);
+  refy = (*(int *)argv[5]);
+  preserve_width = (*(int *)argv[6]);
   _getobj(obj,"x",inst,&x);
   _getobj(obj,"y",inst,&y);
   _getobj(obj,"size",inst,&size);
@@ -439,8 +441,8 @@ markzoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   _getobj(obj,"style",inst,&style);
   snum=arraynum(style);
   sdata=arraydata(style);
-  x=(x-refx)*zoom+refx;
-  y=(y-refy)*zoom+refy;
+  x=(x-refx)*zoom_x+refx;
+  y=(y-refy)*zoom_y+refy;
   size=size*zoom;
   if (! preserve_width) {
     width=width*zoom;
@@ -549,7 +551,7 @@ static struct objtable mark[] = {
   {"move",NVFUNC,NREAD|NEXEC,markmove,"ii",0},
   {"rotate",NVFUNC,NREAD|NEXEC,markrotate,"iiii",0},
   {"flip",NVFUNC,NREAD|NEXEC,markflip,"iii",0},
-  {"zooming",NVFUNC,NREAD|NEXEC,markzoom,"iiii",0},
+  {"zooming",NVFUNC,NREAD|NEXEC,markzoom,"iiiii",0},
   {"match",NBFUNC,NREAD|NEXEC,markmatch,"iiiii",0},
 
   {"hsb",NVFUNC,NREAD|NEXEC,put_hsb,"ddd",0},
