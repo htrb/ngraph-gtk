@@ -47,13 +47,14 @@
 #include "x11view.h"
 
 static n_list_store Mlist[] = {
-  {" ",        G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden"},
-  {"#",        G_TYPE_INT,     TRUE, FALSE, "id"},
-  {N_("file"), G_TYPE_STRING,  TRUE, TRUE,  "file"},
-  {N_("top"),  G_TYPE_DOUBLE,  TRUE, TRUE,  "top_margin",  - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {N_("left"), G_TYPE_DOUBLE,  TRUE, TRUE,  "left_margin", - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {N_("zoom"), G_TYPE_DOUBLE,  TRUE, TRUE,  "zoom",                       0, SPIN_ENTRY_MAX, 100, 1000},
-  {"^#",       G_TYPE_INT,     TRUE, FALSE, "oid"},
+  {" ",          G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden"},
+  {"#",          G_TYPE_INT,     TRUE, FALSE, "id"},
+  {N_("file"),   G_TYPE_STRING,  TRUE, TRUE,  "file"},
+  {N_("top"),    G_TYPE_DOUBLE,  TRUE, TRUE,  "top_margin",  - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {N_("left"),   G_TYPE_DOUBLE,  TRUE, TRUE,  "left_margin", - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {N_("zoom_x"), G_TYPE_DOUBLE,  TRUE, TRUE,  "zoom_x",                     0, SPIN_ENTRY_MAX, 100, 1000},
+  {N_("zoom_y"), G_TYPE_DOUBLE,  TRUE, TRUE,  "zoom_y",                     0, SPIN_ENTRY_MAX, 100, 1000},
+  {"^#",         G_TYPE_INT,     TRUE, FALSE, "oid"},
 };
 
 #define MERG_WIN_COL_NUM (sizeof(Mlist)/sizeof(*Mlist))
@@ -96,7 +97,8 @@ MergeDialogSetupItem(struct MergeDialog *d, int file, int id)
   }
   SetWidgetFromObjField(d->topmargin, d->Obj, id, "top_margin");
   SetWidgetFromObjField(d->leftmargin, d->Obj, id, "left_margin");
-  SetWidgetFromObjField(d->zoom, d->Obj, id, "zoom");
+  SetWidgetFromObjField(d->zoom_x, d->Obj, id, "zoom_x");
+  SetWidgetFromObjField(d->zoom_y, d->Obj, id, "zoom_y");
 }
 
 static void
@@ -143,8 +145,12 @@ MergeDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->leftmargin = w;
 
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_PERCENT, TRUE, TRUE);
-    add_widget_to_table(table, w, _("_Zoom:"), FALSE, i++);
-    d->zoom = w;
+    add_widget_to_table(table, w, _("zoom _X:"), FALSE, i++);
+    d->zoom_x = w;
+
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_PERCENT, TRUE, TRUE);
+    add_widget_to_table(table, w, _("zoom _Y:"), FALSE, i++);
+    d->zoom_y = w;
 
     frame = gtk_frame_new(NULL);
     gtk_container_add(GTK_CONTAINER(frame), table);
@@ -181,7 +187,9 @@ MergeDialogClose(GtkWidget *w, void *data)
     return;
   if (SetObjFieldFromWidget(d->leftmargin, d->Obj, d->Id, "left_margin"))
     return;
-  if (SetObjFieldFromWidget(d->zoom, d->Obj, d->Id, "zoom"))
+  if (SetObjFieldFromWidget(d->zoom_x, d->Obj, d->Id, "zoom_x"))
+    return;
+  if (SetObjFieldFromWidget(d->zoom_y, d->Obj, d->Id, "zoom_y"))
     return;
 
   d->ret = ret;
