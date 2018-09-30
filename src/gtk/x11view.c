@@ -143,7 +143,7 @@ static void AddInvalidateRect(struct objlist *obj, N_VALUE *inst);
 static void AddList(struct objlist *obj, N_VALUE *inst);
 static void RotateFocusedObj(int direction);
 static void set_mouse_cursor_hover(struct Viewer *d, int x, int y);
-static void CheckGrid(int ofs, unsigned int state, int *x, int *y, double *zoom);
+static void CheckGrid(int ofs, unsigned int state, int *x, int *y, double *zoom_x, double *zoom_y);
 static int check_drawrable(struct objlist *obj);
 
 #define GRAY 0.5
@@ -696,7 +696,7 @@ text_dropped(const char *str, gint x, gint y, struct Viewer *d)
   x1 = calc_mouse_x(x, zoom, d);
   y1 = calc_mouse_y(y, zoom, d);
 
-  CheckGrid(FALSE, 0, &x1, &y1, NULL);
+  CheckGrid(FALSE, 0, &x1, &y1, NULL, NULL);
 
   _putobj(obj, "x", inst, &x1);
   _putobj(obj, "y", inst, &y1);
@@ -2554,7 +2554,7 @@ ShowCrossGauge(cairo_t *cr, const struct Viewer *d)
 }
 
 static void
-CheckGrid(int ofs, unsigned int state, int *x, int *y, double *zoom)
+CheckGrid(int ofs, unsigned int state, int *x, int *y, double *zoom_x, double *zoom_y)
 {
   int offset;
   int grid;
@@ -2586,8 +2586,11 @@ CheckGrid(int ofs, unsigned int state, int *x, int *y, double *zoom)
     *y = ((*y + offset) / grid) * grid;
   }
 
-  if (zoom != NULL) {
-    *zoom = nround(*zoom * grid) / ((double) grid);
+  if (zoom_x != NULL) {
+    *zoom_x = nround(*zoom_x * grid) / ((double) grid);
+  }
+  if (zoom_y != NULL) {
+    *zoom_y = nround(*zoom_y * grid) / ((double) grid);
   }
 }
 
@@ -2605,8 +2608,8 @@ mouse_down_point(unsigned int state, TPoint *point, struct Viewer *d)
   d->ShowRect = TRUE;
 }
 
-static double
-calc_zoom(struct Viewer *d, int vx1, int vy1, int *x2, int *y2)
+static void
+calc_zoom(struct Viewer *d, int vx1, int vy1, int *x2, int *y2, double *zoom_x, double *zoom_y, int preserve_ratio)
 {
   int vx2, vy2;
   double cc, nn, zoom2;
@@ -2620,12 +2623,6 @@ calc_zoom(struct Viewer *d, int vx1, int vy1, int *x2, int *y2)
   cc = 1.0 * vx1 * vx2 + 1.0 * vy1 * vy2;
   nn = 1.0 * vx2 * vx2 + 1.0 * vy2 * vy2;
 
-  if ((nn == 0) || (cc < 0)) {
-    zoom2 = 0;
-  } else {
-    zoom2 = cc / nn;
-  }
-
   if (x2) {
     *x2 = vx2;
   }
@@ -2633,17 +2630,42 @@ calc_zoom(struct Viewer *d, int vx1, int vy1, int *x2, int *y2)
   if (y2) {
     *y2 = vy2;
   }
-
-  return zoom2;
+  if ((nn == 0) || (cc < 0)) {
+    zoom2 = 0;
+  } else {
+    zoom2 = cc / nn;
+  }
+  if (zoom_x) {
+    if (preserve_ratio) {
+      *zoom_x = zoom2;
+    } else {
+      if (vx2 * vx1 <= 0) {
+	*zoom_x = 0;
+      } else {
+	*zoom_x = 1.0 * vx1 / vx2;
+      }
+    }
+  }
+  if (zoom_y) {
+    if (preserve_ratio) {
+      *zoom_y = zoom2;
+    } else {
+      if (vy2 * vy1 <= 0) {
+	*zoom_y = 0;
+      } else {
+	*zoom_y = 1.0 * vy1 / vy2;
+      }
+    }
+  }
 }
 
 static void
-set_zoom_prm(struct Viewer *d, int vx2, int vy2, double zoom2)
+set_zoom_prm(struct Viewer *d, int vx2, int vy2, double zoom_x, double zoom_y)
 {
   int vx1, vy1;
 
-  vx1 = d->RefX1 + vx2 * zoom2;
-  vy1 = d->RefY1 + vy2 * zoom2;
+  vx1 = d->RefX1 + vx2 * zoom_x;
+  vy1 = d->RefY1 + vy2 * zoom_y;
 
   d->MouseX1 = d->RefX1;
   d->MouseY1 = d->RefY1;
@@ -2655,8 +2677,8 @@ set_zoom_prm(struct Viewer *d, int vx2, int vy2, double zoom2)
 static void
 init_zoom(unsigned int state, struct Viewer *d)
 {
-  int vx1, vy1, vx2, vy2;
-  double zoom2;
+  int vx1, vy1, vx2, vy2, preserve_ratio;
+  double zoom_x, zoom_y;
 
   d->ShowFrame = FALSE;
   d->MouseDX = d->RefX2 - d->MouseX1;
@@ -2665,11 +2687,12 @@ init_zoom(unsigned int state, struct Viewer *d)
   vx1 = d->MouseX1;
   vy1 = d->MouseY1;
 
-  zoom2 = calc_zoom(d, vx1, vy1, &vx2, &vy2);
+  preserve_ratio = (state & GDK_CONTROL_MASK);
+  calc_zoom(d, vx1, vy1, &vx2, &vy2, &zoom_x, &zoom_y, preserve_ratio);
 
-  CheckGrid(FALSE, state, NULL, NULL, &zoom2);
+  CheckGrid(FALSE, state, NULL, NULL, &zoom_x, &zoom_y);
 
-  set_zoom_prm(d, vx2, vy2, zoom2);
+  set_zoom_prm(d, vx2, vy2, zoom_x, zoom_y);
 
   d->ShowRect = TRUE;
 }
@@ -3025,7 +3048,7 @@ mouse_down_set_points(unsigned int state, struct Viewer *d, int n)
   x1 = d->MouseX1;
   y1 = d->MouseY1;
 
-  CheckGrid(TRUE, state, &x1, &y1, NULL);
+  CheckGrid(TRUE, state, &x1, &y1, NULL, NULL);
 
   for (i = 0; i < n; i++) {
     po = (struct Point *) g_malloc(sizeof(struct Point));
@@ -3249,7 +3272,7 @@ mouse_up_drag(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
 
   dx = d->MouseX2 - d->MouseX1;
   dy = d->MouseY2 - d->MouseY1;
-  CheckGrid(FALSE, state, &dx, &dy, NULL);
+  CheckGrid(FALSE, state, &dx, &dy, NULL, NULL);
   get_focused_obj_array(d->focusobj, objs);
   axis = move_objects(dx, dy, d, objs);
   if (d->Mode == LegendB || (d->Mode == PointB && !axis)) {
@@ -3261,12 +3284,26 @@ mouse_up_drag(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
   UpdateAll(objs);
 }
 
+static int
+check_zoom(double zoom)
+{
+  int zm;
+  if (zoom * 10000 > G_MAXINT) {
+    return -1;
+  }
+  zm = nround(zoom * 10000);
+  if (zm < 1000) {
+    zm = 1000;
+  }
+  return zm;
+}
+
 static void
 mouse_up_zoom(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
 {
-  int vx1, vy1, zm, i, num, axis;
-  double zoom2;
-  char *argv[5], *objs[OBJ_MAX];
+  int vx1, vy1, zmx, zmy, i, num, axis, preserve_ratio;
+  double zoom_x, zoom_y;
+  char *argv[6], *objs[OBJ_MAX];
   N_VALUE *inst;
   struct FocusObj *focus;
   struct objlist *obj;
@@ -3281,27 +3318,26 @@ mouse_up_zoom(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
   d->MouseX2 = vx1;
   d->MouseY2 = vy1;
 
-  zoom2 = calc_zoom(d, vx1, vy1, NULL, NULL);
+  preserve_ratio = (state & GDK_CONTROL_MASK);
+  calc_zoom(d, vx1, vy1, NULL, NULL, &zoom_x, &zoom_y, preserve_ratio);
 
   if ((d->Mode != DataB) && (d->Mode != EvalB)) {
-    CheckGrid(FALSE, state, NULL, NULL, &zoom2);
+    CheckGrid(FALSE, state, NULL, NULL, &zoom_x, &zoom_y);
   }
 
-  if (zoom2 * 10000 > G_MAXINT) {
+  zmx = check_zoom(zoom_x);
+  zmy = check_zoom(zoom_y);
+  if (zmx < 0 || zmy < 0) {
     return;
   }
-  zm = nround(zoom2 * 10000);
 
-  if (zm < 1000) {
-    zm = 1000;
-  }
-
-  if (zm != 10000) {
-    argv[0] = (char *) &zm;
-    argv[1] = (char *) &(d->RefX1);
-    argv[2] = (char *) &(d->RefY1);
-    argv[3] = (char *) &Menulocal.preserve_width;
-    argv[4] = NULL;
+  if (zmx != 10000 || zmy != 10000) {
+    argv[0] = (char *) &zmx;
+    argv[1] = (char *) &zmy;
+    argv[2] = (char *) &(d->RefX1);
+    argv[3] = (char *) &(d->RefY1);
+    argv[4] = (char *) &Menulocal.preserve_width;
+    argv[5] = NULL;
 
     num = arraynum(d->focusobj);
     PaintLock = TRUE;
@@ -3322,7 +3358,7 @@ mouse_up_zoom(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
       inst = chkobjinstoid(focus->obj, focus->oid);
       if (inst) {
 	AddInvalidateRect(obj, inst);
-	_exeobj(obj, "zooming", inst, 4, argv);
+	_exeobj(obj, "zooming", inst, 5, argv);
 	set_graph_modified();
 	AddInvalidateRect(obj, inst);
       }
@@ -3363,7 +3399,7 @@ mouse_up_change(unsigned int state, TPoint *point, double zoom, struct Viewer *d
     dy = d->MouseY2 - d->MouseY1;
 
     if ((d->Mode != DataB) && (d->Mode != EvalB)) {
-      CheckGrid(FALSE, state, &dx, &dy, NULL);
+      CheckGrid(FALSE, state, &dx, &dy, NULL, NULL);
     }
 
     if (dx != 0 || dy != 0) {
@@ -3430,7 +3466,7 @@ mouse_up_lgend1(unsigned int state, TPoint *point, double zoom, struct Viewer *d
   x1 = d->MouseX1;
   y1 = d->MouseY1;
 
-  CheckGrid(TRUE, state, &x1, &y1, NULL);
+  CheckGrid(TRUE, state, &x1, &y1, NULL, NULL);
 
   num = arraynum(d->points);
   if (num >= 1) {
@@ -3455,7 +3491,7 @@ mouse_up_lgend2(unsigned int state, TPoint *point, double zoom, struct Viewer *d
   x1 = d->MouseX1;
   y1 = d->MouseY1;
 
-  CheckGrid(TRUE, state, &x1, &y1, NULL);
+  CheckGrid(TRUE, state, &x1, &y1, NULL, NULL);
 
   num = arraynum(d->points);
 
@@ -3527,7 +3563,7 @@ SetPoint(struct Viewer *d, int x, int y)
     case MOUSEZOOM2:
     case MOUSEZOOM3:
     case MOUSEZOOM4:
-      snprintf(buf, sizeof(buf), "% .2f%%", d->Zoom * 100);
+      snprintf(buf, sizeof(buf), "% .2f%%, % .2f%%", d->ZoomX * 100, d->ZoomY * 100);
       gtk_label_set_text(GTK_LABEL(NgraphApp.Message_extra), buf);
       break;
     case MOUSEDRAG:
@@ -4234,7 +4270,7 @@ ViewerEvRButtonDown(unsigned int state, TPoint *point, struct Viewer *d, GdkEven
 			  - Menulocal.TopMargin) / zoom;
 	    po->x = d->MouseX1;
 	    po->y = d->MouseY1;
-	    CheckGrid(TRUE, state, &(po->x), &(po->y), NULL);
+	    CheckGrid(TRUE, state, &(po->x), &(po->y), NULL, NULL);
 	  }
 	}
 	break;
@@ -4506,7 +4542,7 @@ mouse_move_drag(unsigned int state, TPoint *point, double zoom, struct Viewer *d
   x = d->MouseX2 - d->MouseX1;
   y = d->MouseY2 - d->MouseY1;
 
-  CheckGrid(FALSE, state, &x, &y, NULL);
+  CheckGrid(FALSE, state, &x, &y, NULL, NULL);
 
   d->FrameOfsX = x;
   d->FrameOfsY = y;
@@ -4515,20 +4551,22 @@ mouse_move_drag(unsigned int state, TPoint *point, double zoom, struct Viewer *d
 static void
 mouse_move_zoom(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
 {
-  double zoom2;
+  double zoom_x, zoom_y, preserve_ratio;
   int vx1, vx2, vy1, vy2;
 
   vx1 = calc_mouse_x(point->x, zoom, d);
   vy1 = calc_mouse_y(point->y, zoom, d);
 
-  zoom2 = calc_zoom(d, vx1, vy1, &vx2, &vy2);
+  preserve_ratio = (state & GDK_CONTROL_MASK);
+  calc_zoom(d, vx1, vy1, &vx2, &vy2, &zoom_x, &zoom_y, preserve_ratio);
 
   if ((d->Mode != DataB) && (d->Mode != EvalB))
-    CheckGrid(FALSE, state, NULL, NULL, &zoom2);
+    CheckGrid(FALSE, state, NULL, NULL, &zoom_x, &zoom_y);
 
-  d->Zoom = zoom2;
+  d->ZoomX = zoom_x;
+  d->ZoomY = zoom_y;
 
-  set_zoom_prm(d, vx2, vy2, zoom2);
+  set_zoom_prm(d, vx2, vy2, zoom_x, zoom_y);
 }
 
 static void
@@ -4543,7 +4581,7 @@ mouse_move_change(unsigned int state, TPoint *point, double zoom, struct Viewer 
   y = d->MouseY2 - d->MouseY1;
 
   if ((d->Mode != DataB) && (d->Mode != EvalB)) {
-    CheckGrid(FALSE, state, &x, &y, NULL);
+    CheckGrid(FALSE, state, &x, &y, NULL, NULL);
   }
 
   d->LineX = x;
@@ -4593,7 +4631,7 @@ mouse_move_draw(unsigned int state, int *dx, int *dy, const struct Viewer *d)
     } else if (d->Mode & POINT_TYPE_DRAW2) {
       calc_snap_angle(d->points, dx, dy);
       if (! (state & GDK_SHIFT_MASK)) {
-	CheckGrid(FALSE, 0, dx, dy, NULL);
+	CheckGrid(FALSE, 0, dx, dy, NULL, NULL);
       }
     }
   }
@@ -4636,7 +4674,7 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
       (d->MouseMode != MOUSEPOINT) &&
       (((d->Mode != PointB) && (d->Mode != LegendB) && (d->Mode != AxisB)) ||
        (d->MouseMode != MOUSENONE))) {
-    CheckGrid(TRUE, state, &dx, &dy, NULL);
+    CheckGrid(TRUE, state, &dx, &dy, NULL, NULL);
   }
 
   d->CrossX = dx;
