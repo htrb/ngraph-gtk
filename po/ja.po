@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.07.06\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
 "POT-Creation-Date: 2018-09-30 20:09+0900\n"
-"PO-Revision-Date: 2018-09-16 10:31+0900\n"
+"PO-Revision-Date: 2018-09-30 20:16+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja\n"
@@ -2519,14 +2519,12 @@ msgid "left"
 msgstr "左"
 
 #: src/gtk/x11merge.c:55
-#, fuzzy
 msgid "zoom_x"
-msgstr "ズーム"
+msgstr "X ズーム"
 
 #: src/gtk/x11merge.c:56
-#, fuzzy
 msgid "zoom_y"
-msgstr "ズーム"
+msgstr "Y ズーム"
 
 #: src/gtk/x11merge.c:74
 msgid "_Preferences"
@@ -2546,14 +2544,12 @@ msgid "_Left Margin:"
 msgstr "左マージン(_L):"
 
 #: src/gtk/x11merge.c:148
-#, fuzzy
 msgid "zoom _X:"
-msgstr "ズーム"
+msgstr "_X ズーム:"
 
 #: src/gtk/x11merge.c:152
-#, fuzzy
 msgid "zoom _Y:"
-msgstr "ズーム"
+msgstr "_Y ズーム:"
 
 #: src/gtk/x11merge.c:224
 msgid "Add Merge file"
@@ -5194,7 +5190,7 @@ msgstr "ワインディング"
 
 #, fuzzy
 #~ msgid "Information Window"
-#~ msgstr "_Information window:"
+#~ msgstr ""
 
 #~ msgid "Merge"
 #~ msgstr "合成"
