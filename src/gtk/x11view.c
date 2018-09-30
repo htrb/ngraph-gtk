@@ -2608,11 +2608,13 @@ mouse_down_point(unsigned int state, TPoint *point, struct Viewer *d)
   d->ShowRect = TRUE;
 }
 
+#define ZOOM_RATIO_LIMIT 0.5
+
 static void
 calc_zoom(struct Viewer *d, int vx1, int vy1, int *x2, int *y2, double *zoom_x, double *zoom_y, int preserve_ratio)
 {
   int vx2, vy2;
-  double cc, nn, zoom2;
+  double cc, nn, zoom2, zmx, zmy, zmr;
 
   vx1 -= d->RefX1 - d->MouseDX;
   vy1 -= d->RefY1 - d->MouseDY;
@@ -2635,26 +2637,36 @@ calc_zoom(struct Viewer *d, int vx1, int vy1, int *x2, int *y2, double *zoom_x, 
   } else {
     zoom2 = cc / nn;
   }
-  if (zoom_x) {
-    if (preserve_ratio) {
-      *zoom_x = zoom2;
-    } else {
-      if (vx2 * vx1 <= 0) {
-	*zoom_x = 0;
-      } else {
-	*zoom_x = 1.0 * vx1 / vx2;
-      }
-    }
+  if (vx2 * vx1 <= 0) {
+    zmx = 0;
+  } else {
+    zmx = 1.0 * vx1 / vx2;
   }
-  if (zoom_y) {
+  if (vy2 * vy1 <= 0) {
+    zmy = 0;
+  } else {
+    zmy = 1.0 * vy1 / vy2;
+  }
+  if (zmx > 0) {
+    zmr = zmy / zmx;
+  } else {
+    zmr = 2;
+  }
+  if (zoom_x && zoom_y) {
     if (preserve_ratio) {
-      *zoom_y = zoom2;
-    } else {
-      if (vy2 * vy1 <= 0) {
-	*zoom_y = 0;
+      if (zmr > 1 + ZOOM_RATIO_LIMIT) {
+	*zoom_x = 1;
+	*zoom_y = zmy;
+      } else if (zmr < ZOOM_RATIO_LIMIT) {
+	*zoom_x = zmx;
+	*zoom_y = 1;
       } else {
-	*zoom_y = 1.0 * vy1 / vy2;
+	*zoom_x = zoom2;
+	*zoom_y = zoom2;
       }
+    } else {
+      *zoom_x = zmx;
+      *zoom_y = zmy;
     }
   }
 }
