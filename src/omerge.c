@@ -71,7 +71,7 @@ struct mergelocal {
 
 struct gra_info
 {
-  int GC, lm, tm, zm;
+  int GC, lm, tm, zmx, zmy;
   GStatBuf gstat;
   struct objlist *obj;
 };
@@ -89,21 +89,22 @@ static NHASH GraCache = NULL;
 #endif
 
 static void
-set_bbox(struct objlist *obj,N_VALUE *inst, struct narray *array, int l, int t, int z)
+set_bbox(struct objlist *obj,N_VALUE *inst, struct narray *array, int l, int t, int zx, int zy)
 {
   int *bbox;
-  double zoom;
+  double zoom_x, zoom_y;
   struct mergelocal *mergelocal;
   _getobj(obj,"_local",inst,&mergelocal);
   if (arraynum(array) != 4) {
     return;
   }
   bbox = arraydata(array);
-  zoom = z / 10000.0;
-  bbox[0] = (mergelocal->bbox[0]) * zoom + l;
-  bbox[1] = (mergelocal->bbox[1]) * zoom + t;
-  bbox[2] = (mergelocal->bbox[2]) * zoom + l;
-  bbox[3] = (mergelocal->bbox[3]) * zoom + t;
+  zoom_x = zx / 10000.0;
+  zoom_y = zy / 10000.0;
+  bbox[0] = (mergelocal->bbox[0]) * zoom_x + l;
+  bbox[1] = (mergelocal->bbox[1]) * zoom_y + t;
+  bbox[2] = (mergelocal->bbox[2]) * zoom_x + l;
+  bbox[3] = (mergelocal->bbox[3]) * zoom_y + t;
 }
 
 #if USE_MERGE_CACHE
@@ -172,7 +173,7 @@ gra_cache_get(const char *file)
   nhash_get_ptr(GraCache, file, &ptr);
   return ptr;
 }
-  
+
 static void
 gra_cache_free(const char *file)
 {
@@ -202,7 +203,8 @@ mergeinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 
   ext = g_strdup("gra");
 
-  if (_putobj(obj,"zoom",inst,&zm)) return 1;
+  if (_putobj(obj,"zoom_x",inst,&zm)) return 1;
+  if (_putobj(obj,"zoom_y",inst,&zm)) return 1;
   if (_putobj(obj,"line_num",inst,&n)) return 1;
   if (_putobj(obj,"ext",inst,ext)) return 1;
   if ((mergelocal=g_malloc(sizeof(struct mergelocal)))==NULL) goto errexit;
@@ -265,7 +267,7 @@ draw_gra_data(struct gra_info *info, struct GRAdata *data)
   if (cpar == NULL) {
     return FALSE;
   }
-  rcode = GRAinputdraw(info->GC, info->lm, info->tm, info->zm, data->code, cpar, data->cstr);
+  rcode = GRAinputdraw(info->GC, info->lm, info->tm, info->zmx, info->zmy, data->code, cpar, data->cstr);
   g_free(cpar);
   return rcode;
 }
@@ -340,7 +342,7 @@ read_old_gra_file(struct gra_cache *cache, struct gra_info *info, FILE *fd, cons
     if (rcode == -1) {
       return 1;
     }
-    rcode = GRAinputold(info->GC, buf, info->lm, info->tm, info->zm);
+    rcode = GRAinputold(info->GC, buf, info->lm, info->tm, info->zmx, info->zmy);
     if (!rcode) {
       error2(info->obj, ERRGRAFM, buf);
       g_free(buf);
@@ -495,10 +497,11 @@ mergedraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   _getobj(obj,"file",inst,&file);
   _getobj(obj,"left_margin",inst,&info.lm);
   _getobj(obj,"top_margin",inst,&info.tm);
-  _getobj(obj,"zoom",inst,&info.zm);
+  _getobj(obj,"zoom_x",inst,&info.zmx);
+  _getobj(obj,"zoom_y",inst,&info.zmy);
   _getobj(obj,"_local",inst,&mergelocal);
   info.obj = obj;
-  
+
   if (file==NULL) {
     error(obj,ERRFILE);
     return 1;
@@ -873,7 +876,7 @@ mergebbox(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
   char *file,*graf;
-  int lm,tm,zm;
+  int lm,tm,zmx,zmy;
   int newgra,rcode;
   struct objlist *sys;
   FILE *fd;
@@ -887,7 +890,8 @@ mergebbox(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   _getobj(obj,"file",inst,&file);
   _getobj(obj,"left_margin",inst,&lm);
   _getobj(obj,"top_margin",inst,&tm);
-  _getobj(obj,"zoom",inst,&zm);
+  _getobj(obj,"zoom_x",inst,&zmx);
+  _getobj(obj,"zoom_y",inst,&zmy);
   if (file==NULL) return 1;
   if ((sys=getobject("system"))==NULL) return 1;
   if (getobj(sys,"GRAF",0,0,NULL,&graf)) return 1;
@@ -923,8 +927,8 @@ mergebbox(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
       fclose(fd);
       return 1;
     }
-    if (newgra) rcode=GRAinput(GC,buf,0,0,10000);
-    else rcode=GRAinputold(GC,buf,0,0,10000);
+    if (newgra) rcode=GRAinput(GC,buf,0,0,10000,10000);
+    else rcode=GRAinputold(GC,buf,0,0,10000,10000);
     if (!rcode) {
       g_free(buf);
       fclose(fd);
@@ -950,7 +954,7 @@ mergebbox(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   mergelocal->bbox[1] = bbox.miny;
   mergelocal->bbox[2] = bbox.maxx;
   mergelocal->bbox[3] = bbox.maxy;
-  set_bbox(obj, inst, array, lm, tm, zm);
+  set_bbox(obj, inst, array, lm, tm, zmx, zmy);
   rval->array=array;
   return 0;
 }
@@ -958,7 +962,7 @@ mergebbox(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 static int
 mergemove(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
-  int lm, tm, zm, x, y;
+  int lm, tm, zmx, zmy, x, y;
   struct narray *array;
 
   _getobj(obj,"left_margin",inst,&lm);
@@ -976,8 +980,9 @@ mergemove(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 #else
   _getobj(obj, "bbox", inst, &array);
   if (arraynum(array) == 4) {
-    _getobj(obj, "zoom", inst, &zm);
-    set_bbox(obj, inst, array, lm, tm, zm);
+    _getobj(obj, "zoom_x", inst, &zmx);
+    _getobj(obj, "zoom_y", inst, &zmy);
+    set_bbox(obj, inst, array, lm, tm, zmx, zmy);
   }
 #endif
 
@@ -989,28 +994,36 @@ mergemove(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 static int
 mergezoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
-  int lm,tm,zm;
-  double zoom;
+  int lm,tm,zmx,zmy;
+  double zoom_x, zoom_y;
   int refx,refy;
   struct narray *array;
 
-  zoom=(*(int *)argv[2])/10000.0;
-  refx=(*(int *)argv[3]);
-  refy=(*(int *)argv[4]);
+  zoom_x=(*(int *)argv[2])/10000.0;
+  zoom_y=(*(int *)argv[3])/10000.0;
+  refx=(*(int *)argv[4]);
+  refy=(*(int *)argv[5]);
   _getobj(obj,"left_margin",inst,&lm);
   _getobj(obj,"top_margin",inst,&tm);
-  _getobj(obj,"zoom",inst,&zm);
-  lm=(lm-refx)*zoom+refx;
-  tm=(tm-refy)*zoom+refy;
+  _getobj(obj,"zoom_x",inst,&zmx);
+  _getobj(obj,"zoom_y",inst,&zmy);
+  lm=(lm-refx)*zoom_x+refx;
+  tm=(tm-refy)*zoom_y+refy;
 
-  if (zm * zoom > ZOOM_MAX) {
+  if (zmx * zoom_x > ZOOM_MAX) {
     return 0;
   }
 
-  zm=zm*zoom;
+  if (zmy * zoom_y > ZOOM_MAX) {
+    return 0;
+  }
+
+  zmx*=zoom_x;
+  zmy*=zoom_y;
   if (_putobj(obj,"left_margin",inst,&lm)) return 1;
   if (_putobj(obj,"top_margin",inst,&tm)) return 1;
-  if (_putobj(obj,"zoom",inst,&zm)) return 1;
+  if (_putobj(obj,"zoom_x",inst,&zmx)) return 1;
+  if (_putobj(obj,"zoom_y",inst,&zmy)) return 1;
 
 #if 0
   if (clear_bbox(obj, inst))
@@ -1018,7 +1031,7 @@ mergezoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 #else
   _getobj(obj, "bbox", inst, &array);
   if (arraynum(array) == 4) {
-    set_bbox(obj, inst, array, lm, tm, zm);
+    set_bbox(obj, inst, array, lm, tm, zmx, zmy);
   }
 #endif
 
@@ -1067,17 +1080,18 @@ mergegeometry(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
                  int argc,char **argv)
 {
   char *field;
-  int val;
+  int zoom, val;
   struct narray *array;
 
   field=(char *)(argv[1]);
-  if (strcmp(field,"zoom")==0) {
-    int *z = (int *) (argv[2]);
-    if (*z > ZOOM_MAX) {
-      *z = ZOOM_MAX;
-    } else if (*z < 1) {
-      *z = 1;
+  if (field[0] == 'z') {
+    zoom = * (int *) (argv[2]);
+    if (zoom > ZOOM_MAX) {
+      zoom = ZOOM_MAX;
+    } else if (zoom < 1) {
+      zoom = 1;
     }
+    * (int *) (argv[2]) = zoom;
   }
 
 #if 0
@@ -1088,10 +1102,11 @@ mergegeometry(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
   val = * (int *) (argv[2]);
   _getobj(obj, "bbox", inst, &array);
   if (arraynum(array) == 4) {
-    int t, l, z;
+    int t, l, zx, zy;
     _getobj(obj, "top_margin", inst, &t);
     _getobj(obj, "left_margin", inst, &l);
-    _getobj(obj, "zoom", inst, &z);
+    _getobj(obj, "zoom_x", inst, &zx);
+    _getobj(obj, "zoom_y", inst, &zy);
     switch (field[0]) {
     case 't':
       t = val;
@@ -1100,10 +1115,19 @@ mergegeometry(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
       l = val;
       break;
     case 'z':
-      z = val;
+      if (strcmp(field, "zoom") == 0) {
+	zx = zoom;
+	zy = zoom;
+	_putobj(obj, "zoom_x", inst, &zoom);
+	_putobj(obj, "zoom_y", inst, &zoom);
+      } else if (strcmp(field, "zoom_x") == 0) {
+	zx = zoom;
+      } else {
+	zy = zoom;
+      }
       break;
     }
-    set_bbox(obj, inst, array, l, t, z);
+    set_bbox(obj, inst, array, l, t, zx, zy);
   }
 #endif
 
@@ -1149,7 +1173,9 @@ static struct objtable merge[] = {
   {"save_path",NENUM,NREAD|NWRITE,NULL,pathchar,0},
   {"top_margin",NINT,NREAD|NWRITE,mergegeometry,NULL,0},
   {"left_margin",NINT,NREAD|NWRITE,mergegeometry,NULL,0},
-  {"zoom",NINT,NREAD|NWRITE,mergegeometry,NULL,0},
+  {"zoom_x",NINT,NREAD|NWRITE,mergegeometry,NULL,0},
+  {"zoom_y",NINT,NREAD|NWRITE,mergegeometry,NULL,0},
+  {"zoom",NINT,NWRITE,mergegeometry,NULL,0},
   {"draw",NVFUNC,NREAD|NEXEC,mergedraw,"i",0},
   {"redraw",NVFUNC,NREAD|NEXEC,mergeredraw,"i",0},
   {"save",NSFUNC,NREAD|NEXEC,pathsave,"sa",0},
@@ -1163,7 +1189,7 @@ static struct objtable merge[] = {
 
   {"bbox",NIAFUNC,NREAD|NEXEC,mergebbox,"",0},
   {"move",NVFUNC,NREAD|NEXEC,mergemove,"ii",0},
-  {"zooming",NVFUNC,NREAD|NEXEC,mergezoom,"iiii",0},
+  {"zooming",NVFUNC,NREAD|NEXEC,mergezoom,"iiiii",0},
   {"match",NBFUNC,NREAD|NEXEC,mergematch,"iiiii",0},
 
   {"ext",NSTR,NREAD,NULL,NULL,0},
