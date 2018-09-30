@@ -329,13 +329,14 @@ legendzoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   struct narray *points,*style;
   int i,num,width,snum,*pdata,*sdata,preserve_width;
   int refx,refy;
-  double zoom;
+  double zoom_x, zoom_y;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
-  zoom=(*(int *)argv[2])/10000.0;
-  refx=(*(int *)argv[3]);
-  refy=(*(int *)argv[4]);
-  preserve_width = (*(int *)argv[5]);
+  zoom_x = (*(int *) argv[2]) / 10000.0;
+  zoom_y = (*(int *) argv[3]) / 10000.0;
+  refx = (*(int *)argv[4]);
+  refy = (*(int *)argv[5]);
+  preserve_width = (*(int *)argv[6]);
   _getobj(obj,"points",inst,&points);
   _getobj(obj,"width",inst,&width);
   _getobj(obj,"style",inst,&style);
@@ -345,10 +346,15 @@ legendzoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   sdata=arraydata(style);
   if (num<4) return 0;
   for (i=0;i<num;i++) {
-    if (i%2==0) pdata[i]=(pdata[i]-refx)*zoom+refx;
-    else pdata[i]=(pdata[i]-refy)*zoom+refy;
+    if (i % 2 == 0) {
+      pdata[i] = (pdata[i] - refx) * zoom_x + refx;
+    } else {
+      pdata[i] = (pdata[i] - refy) * zoom_y + refy;
+    }
   }
   if (! preserve_width) {
+    double zoom;
+    zoom = MIN(zoom_x, zoom_y);
     width=width*zoom;
     for (i=0;i<snum;i++) sdata[i]=sdata[i]*zoom;
   }
@@ -404,7 +410,7 @@ static struct objtable legend[] = {
   {"done",NVFUNC,0,legenddone,NULL,0},
   {"bbox",NIAFUNC,NREAD|NEXEC,NULL,"",0},
   {"move",NVFUNC,NREAD|NEXEC,NULL,"ii",0},
-  {"zooming",NVFUNC,NREAD|NEXEC,NULL,"iiii",0},
+  {"zooming",NVFUNC,NREAD|NEXEC,NULL,"iiiii",0},
   {"match",NBFUNC,NREAD|NEXEC,NULL,"iiiii",0},
 };
 
