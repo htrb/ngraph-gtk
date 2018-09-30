@@ -166,8 +166,8 @@ void GRAtextextent(char *s,char *font, int style,
                  int *gx0,int *gy0,int *gx1,int *gy1,int raw);
 void GRAtextextentraw(char *s,char *font, int style,
                  int size,int space,int *gx0,int *gy0,int *gx1,int *gy1);
-int GRAinput(int GC,char *s,int leftm,int topm,int rate);
-int GRAinputold(int GC,char *s,int leftm,int topm,int rate);
+int GRAinput(int GC,char *s,int leftm,int topm,int rate_x,int rate_y);
+int GRAinputold(int GC,char *s,int leftm,int topm,int rate_x,int rate_y);
 void GRAcurvefirst(int GC,int num,int *dashlist,
       clipfunc clipf,transfunc transf,diffunc diff,intpfunc intpf,void *local,
              double x0,double y0);
@@ -188,6 +188,8 @@ int GRAlayer_support(int GC);
 void GRAcurrent_point(int GC, int *x, int *y);
 void GRAdata_free(struct GRAdata *data);
 int GRAparse(struct GRAdata *data, char *s);
-int GRAinputdraw(int GC,int leftm,int topm,int rate,char code,int *cpar,char *cstr);
+int GRAinputdraw(int GC,int leftm,int topm,int rate_x,int rate_y,char code,int *cpar,char *cstr);
+
+int calc_zoom_direction(int direction, double zx, double zy, double *zp, double *zn);
 
 #endif
