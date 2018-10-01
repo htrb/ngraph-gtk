@@ -1091,7 +1091,12 @@ mergegeometry(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
     } else if (zoom < 1) {
       zoom = 1;
     }
-    * (int *) (argv[2]) = zoom;
+    if (strcmp(field, "zoom") == 0) {
+      _putobj(obj, "zoom_x", inst, &zoom);
+      _putobj(obj, "zoom_y", inst, &zoom);
+    } else {
+      * (int *) (argv[2]) = zoom;
+    }
   }
 
 #if 0
@@ -1118,8 +1123,6 @@ mergegeometry(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
       if (strcmp(field, "zoom") == 0) {
 	zx = zoom;
 	zy = zoom;
-	_putobj(obj, "zoom_x", inst, &zoom);
-	_putobj(obj, "zoom_y", inst, &zoom);
       } else if (strcmp(field, "zoom_x") == 0) {
 	zx = zoom;
       } else {
