@@ -3202,7 +3202,7 @@ GRAinputdraw(int GC,int leftm,int topm,int rate_x,int rate_y,
     if (cpar[0] != cpar[1] * 2 + 1)
       return FALSE;
 
-    for (i=0;i<(2*(cpar[1]));i++) cpar[i+2]=(int )(cpar[i+2]*((i % 2) ? rx : ry));
+    for (i=0;i<(2*(cpar[1]));i++) cpar[i+2]=(int )(cpar[i+2]*((i % 2) ? ry : rx));
     break;
   case 'D':
     if (cpar[0] != cpar[1] * 2 + 2)
