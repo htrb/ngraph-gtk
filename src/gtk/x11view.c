@@ -3343,6 +3343,7 @@ mouse_up_zoom(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
     return;
   }
 
+  objs[0] = NULL;
   if (zmx != 10000 || zmy != 10000) {
     argv[0] = (char *) &zmx;
     argv[1] = (char *) &zmy;
@@ -3354,7 +3355,6 @@ mouse_up_zoom(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
     num = arraynum(d->focusobj);
     PaintLock = TRUE;
 
-    objs[0] = NULL;
     if (num > 0) {
       get_focused_obj_array(d->focusobj, objs);
       menu_save_undo(UNDO_TYPE_ZOOM, objs);
