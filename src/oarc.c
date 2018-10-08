@@ -497,10 +497,12 @@ arcrotate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 
   angle = *(int *) argv[2];
 
+#if ROTATE_MARK
   type_begin = mark_rotate(angle, type_begin);
   type_end = mark_rotate(angle, type_end);
   _putobj(obj, "mark_type_begin", inst, &type_begin);
   _putobj(obj, "mark_type_end", inst, &type_end);
+#endif
 
   angle %= 36000;
   if (angle < 0)
