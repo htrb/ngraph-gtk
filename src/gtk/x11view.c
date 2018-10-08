@@ -5825,17 +5825,6 @@ CmViewerDraw(void *w, gpointer client_data)
   AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, DRAW_NONE);
 }
 
-void
-CmViewerClear(void *w, gpointer client_data)
-{
-  if (Menulock || Globallock)
-    return;
-
-  Clear();
-
-  FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
-}
-
 static int
 search_axis_group(struct objlist *obj, int id, const char *group,
 		  int *findX, int *findY, int *findU, int *findR, int *findG,
