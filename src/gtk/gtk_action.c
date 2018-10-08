@@ -313,12 +313,6 @@ ViewDrawAction_activated(GSimpleAction *action, GVariant *parameter, gpointer ap
 }
 
 static void
-ViewClearAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
-{
-  CmViewerClear(NULL, NULL);
-}
-
-static void
 ViewClearInformationWindowAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
   InfoWinClear();
@@ -720,7 +714,6 @@ static GActionEntry AppEntries[] =
   { "EditFlipVActiopn", EditFlipVActiopn_activated, NULL, NULL, NULL },
   { "ViewDrawDirectAction", ViewDrawDirectAction_activated, NULL, NULL, NULL },
   { "ViewDrawAction", ViewDrawAction_activated, NULL, NULL, NULL },
-  { "ViewClearAction", ViewClearAction_activated, NULL, NULL, NULL },
   { "ViewClearInformationWindowAction", ViewClearInformationWindowAction_activated, NULL, NULL, NULL },
   { "ViewSidebarAction", NULL, NULL, "true", ViewSidebarAction_activated },
   { "ViewStatusbarAction", NULL, NULL, "true", ViewStatusbarAction_activated },
