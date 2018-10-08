@@ -95,9 +95,9 @@ get_dx_dy(int rx, int ry, int angle,
   if (*y == 0) {
     *dx = 0;
     if (*x < 0) {
-      *dy = -1;
-    } else {
       *dy = 1;
+    } else {
+      *dy = -1;
     }
   } else {
     a = 1.0 * ry * ry * (*x) / rx / rx / (*y);
