@@ -556,19 +556,19 @@ arcflip(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   _getobj(obj, "mark_type_begin", inst, &type_begin);
   _getobj(obj, "mark_type_end", inst, &type_end);
 
+  dir = (* (int *) argv[2] == FLIP_DIRECTION_HORIZONTAL) ? FLIP_DIRECTION_HORIZONTAL : FLIP_DIRECTION_VERTICAL;
+
   head = head_end;
   head_end = head_begin;
   head_begin = head;
   _putobj(obj, "marker_begin", inst, &head_begin);
   _putobj(obj, "marker_end", inst, &head_end);
 
-  type = type_end;
-  type_end = type_begin;
+  type = mark_flip(dir, type_end);
+  type_end = mark_flip(dir, type_begin);
   type_begin = type;
   _putobj(obj, "mark_type_begin", inst, &type_begin);
   _putobj(obj, "mark_type_end", inst, &type_end);
-
-  dir = (* (int *) argv[2] == FLIP_DIRECTION_HORIZONTAL) ? FLIP_DIRECTION_HORIZONTAL : FLIP_DIRECTION_VERTICAL;
 
   switch (dir) {
   case FLIP_DIRECTION_VERTICAL:
