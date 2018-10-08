@@ -348,6 +348,12 @@ presetting_set_obj_field(struct objlist *obj, int id)
     get_rgba(obj, id, r1, g1, b1, a1, r2, g2, b2, a2);
     ival = combo_box_get_active(Widgets.line_style);
     sputobjfield(obj, id, "style", FwLineStyle[ival].list);
+    ival = Widgets.marker_begin;
+    putobj(obj, "marker_begin", id, &ival);
+    ival = Widgets.marker_end;
+    putobj(obj, "marker_end", id, &ival);
+    putobj(obj, "mark_type_begin", id, &(Widgets.mark_begin.Type));
+    putobj(obj, "mark_type_end", id, &(Widgets.mark_end.Type));
   } else if (strcmp(name, "mark") == 0) {
     putobj(obj, "width", id, &width);
     putobj(obj, "R", id, &r1);
@@ -451,16 +457,16 @@ presetting_set_visibility(enum PointerType type)
     gtk_widget_set_visible(Widgets.color2,         TRUE);
     gtk_widget_set_visible(Widgets.path_type,      FALSE);
     gtk_widget_set_visible(Widgets.join_type,      TRUE);
-    gtk_widget_set_visible(Widgets.marker_type_begin, FALSE);
-    gtk_widget_set_visible(Widgets.marker_type_end, FALSE);
+    gtk_widget_set_visible(Widgets.marker_type_begin, TRUE);
+    gtk_widget_set_visible(Widgets.marker_type_end, TRUE);
     gtk_widget_set_visible(Widgets.font,           FALSE);
     gtk_widget_set_visible(Widgets.bold,           FALSE);
     gtk_widget_set_visible(Widgets.italic,         FALSE);
     gtk_widget_set_visible(Widgets.pt,             FALSE);
     gtk_widget_set_visible(Widgets.mark_size,      FALSE);
     gtk_widget_set_visible(Widgets.mark_type,      FALSE);
-    gtk_widget_set_visible(Widgets.mark_type_begin,FALSE);
-    gtk_widget_set_visible(Widgets.mark_type_end,  FALSE);
+    gtk_widget_set_visible(Widgets.mark_type_begin,TRUE);
+    gtk_widget_set_visible(Widgets.mark_type_end,  TRUE);
     break;
   case MarkB:
     gtk_widget_set_visible(Widgets.stroke_fill,    FALSE);
