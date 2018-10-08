@@ -42,6 +42,8 @@
 #define PARENT		"legend"
 #define OVERSION	"1.00.01"
 
+#define ROTATE_MARK 1
+
 #define ERRSPL  100
 static char *patherrorlist[]={
   "error: spline interpolation.",
@@ -340,7 +342,11 @@ draw_stroke(struct objlist *obj, N_VALUE *inst, int GC, int *points2, int *pdata
   case MARKER_TYPE_MARK:
     get_dx_dy(x0, y0, x1, y1, &dx, &dy);
     _getobj(obj, "mark_type_begin", inst, &type);
+#if ROTATE_MARK
     draw_marker_mark(obj, inst, GC, width, headlen, headwidth, x0, y0, dx, dy, fr, fg, fb, fa, type);
+#else
+    draw_marker_mark(obj, inst, GC, width, headlen, headwidth, x0, y0, 1, 0, fr, fg, fb, fa, type);
+#endif
     break;
   case MARKER_TYPE_BAR:
     get_dx_dy(x0, y0, x1, y1, &dx, &dy);
@@ -360,7 +366,11 @@ draw_stroke(struct objlist *obj, N_VALUE *inst, int GC, int *points2, int *pdata
   case MARKER_TYPE_MARK:
     get_dx_dy(x3, y3, x2, y2, &dx, &dy);
     _getobj(obj, "mark_type_end", inst, &type);
+#if ROTATE_MARK
     draw_marker_mark(obj, inst, GC, width, headlen, headwidth, x3, y3, dx, dy, fr, fg, fb, fa, type);
+#else
+    draw_marker_mark(obj, inst, GC, width, headlen, headwidth, x3, y3, 1, 0, fr, fg, fb, fa, type);
+#endif
     break;
   case MARKER_TYPE_BAR:
     get_dx_dy(x3, y3, x2, y2, &dx, &dy);
