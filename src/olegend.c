@@ -466,6 +466,204 @@ draw_marker_mark(struct objlist *obj, N_VALUE *inst, int GC,
   GRAmark_rotate(GC, type, x0, y0, dx, dy, awidth, r, g, b, a, br, bg, bb, ba);
 }
 
+static int
+mark_rotate_cw(int mark) {
+  switch (mark) {
+  case 6:
+  case 16:
+  case 26:
+  case 74:
+    return mark + 3;
+  case 7:
+  case 17:
+  case 27:
+  case 72:
+  case 78:
+  case 75:
+    return mark + 1;
+  case 8:
+  case 9:
+  case 18:
+  case 19:
+  case 28:
+  case 29:
+  case 76:
+  case 77:
+    return mark - 2;
+  case 30:
+  case 31:
+  case 32:
+  case 33:
+  case 34:
+  case 35:
+  case 36:
+  case 37:
+    return mark + 30;
+  case 38:
+  case 39:
+  case 48:
+  case 49:
+    return mark + 20;
+  case 40:
+  case 41:
+  case 42:
+  case 43:
+  case 44:
+  case 45:
+  case 46:
+  case 47:
+    return mark + 10;
+  case 50:
+  case 51:
+  case 52:
+  case 53:
+  case 54:
+  case 55:
+  case 58:
+  case 59:
+  case 60:
+  case 61:
+  case 62:
+  case 63:
+  case 64:
+  case 65:
+    return mark - 20;
+  case 56:
+  case 66:
+  case 68:
+    return mark - 19;
+  case 57:
+  case 67:
+  case 69:
+    return mark - 21;
+  case 73:
+  case 79:
+    return mark - 1;
+  default:
+    return mark;
+  }
+}
+
+int
+mark_rotate(int angle, int type)
+{
+  angle %= 36000;
+  if (angle < 0) {
+    angle += 36000;
+  }
+
+  switch (angle) {
+  case 9000:
+    type = mark_rotate_cw(type);
+    /* fall-through */
+  case 18000:
+    type = mark_rotate_cw(type);
+    /* fall-through */
+  case 27000:
+    type = mark_rotate_cw(type);
+    break;
+  }
+  return type;
+}
+
+static int
+mark_v_flip(int mark) {
+  switch (mark) {
+  case 8:
+  case 18:
+  case 28:
+  case 48:
+  case 56:
+  case 66:
+  case 74:
+    return mark + 1;
+  case 9:
+  case 19:
+  case 29:
+  case 49:
+  case 57:
+  case 67:
+  case 75:
+    return mark - 1;
+  case 30:
+  case 31:
+  case 32:
+  case 33:
+  case 34:
+  case 35:
+  case 36:
+  case 37:
+    return mark + 10;
+  case 40:
+  case 41:
+  case 42:
+  case 43:
+  case 44:
+  case 45:
+  case 46:
+  case 47:
+    return mark - 10;
+  default:
+    return mark;
+  }
+}
+
+static int
+mark_h_flip(int mark) {
+  switch (mark) {
+  case 6:
+  case 16:
+  case 26:
+  case 36:
+  case 46:
+  case 68:
+  case 76:
+    return mark + 1;
+  case 7:
+  case 17:
+  case 27:
+  case 37:
+  case 47:
+  case 69:
+  case 77:
+    return mark - 1;
+  case 50:
+  case 51:
+  case 52:
+  case 53:
+  case 54:
+  case 55:
+  case 56:
+  case 57:
+    return mark + 10;
+  case 60:
+  case 61:
+  case 62:
+  case 63:
+  case 64:
+  case 65:
+  case 66:
+  case 67:
+    return mark - 10;
+  default:
+    return mark;
+  }
+}
+
+int
+mark_flip(int dir, int type)
+{
+  switch (dir) {
+  case FLIP_DIRECTION_VERTICAL:
+    type = mark_v_flip(type);
+    break;
+  case FLIP_DIRECTION_HORIZONTAL:
+    type = mark_h_flip(type);
+    break;
+  }
+  return type;
+}
+
 int
 put_color_for_backward_compatibility(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
