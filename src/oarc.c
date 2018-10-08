@@ -562,7 +562,7 @@ arcrotate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 static int
 arcflip(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
-  int rx, ry, a1, a2, use_pivot, head_begin, head_end, head, type_begin, type_end, type;
+  int rx, ry, a1, a2, use_pivot, head_begin, head_end, type_begin, type_end;
   enum FLIP_DIRECTION dir;
 
   _getobj(obj, "rx", inst, &rx);
@@ -576,17 +576,15 @@ arcflip(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 
   dir = (* (int *) argv[2] == FLIP_DIRECTION_HORIZONTAL) ? FLIP_DIRECTION_HORIZONTAL : FLIP_DIRECTION_VERTICAL;
 
-  head = head_end;
-  head_end = head_begin;
-  head_begin = head;
-  _putobj(obj, "marker_begin", inst, &head_begin);
-  _putobj(obj, "marker_end", inst, &head_end);
+  _putobj(obj, "marker_begin", inst, &head_end);
+  _putobj(obj, "marker_end", inst, &head_begin);
 
-  type = mark_flip(dir, type_end);
-  type_end = mark_flip(dir, type_begin);
-  type_begin = type;
-  _putobj(obj, "mark_type_begin", inst, &type_begin);
-  _putobj(obj, "mark_type_end", inst, &type_end);
+#if ROTATE_MARK
+  type_begin = mark_flip(FLIP_DIRECTION_HORIZONTAL, type_begin);
+  type_end = mark_flip(FLIP_DIRECTION_HORIZONTAL, type_end);
+#endif
+  _putobj(obj, "mark_type_begin", inst, &type_end);
+  _putobj(obj, "mark_type_end", inst, &type_begin);
 
   switch (dir) {
   case FLIP_DIRECTION_VERTICAL:
