@@ -220,10 +220,6 @@
 	  <attribute name="label" translatable="yes">_Draw</attribute>
 	  <attribute name="action">app.ViewDrawAction</attribute>
 	</item>
-	<item>
-	  <attribute name="label" translatable="yes">_Clear</attribute>
-	  <attribute name="action">app.ViewClearAction</attribute>
-	</item>
       </section>
       <section>
 	<item>
