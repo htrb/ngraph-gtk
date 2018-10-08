@@ -27,6 +27,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include "spline.h"
+#include "gra.h"
 #include "mathfn.h"
 #include "object.h"
 #include "odraw.h"
@@ -35,6 +37,8 @@
 #define NAME "legend"
 #define PARENT "draw"
 #define OVERSION  "1.00.00"
+
+#define ROTATE_MARK 1
 
 static char *legenderrorlist[]={
   "",
@@ -368,6 +372,104 @@ legendzoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
     return 1;
 
   return 0;
+}
+
+void
+draw_marker_wave(struct objlist *obj, N_VALUE *inst, int GC,
+		 int width, int headlen, int headwidth, int x0, int y0, double dx, double dy, int errspl)
+{
+  int i;
+  double awidth;
+  double wx[5], wxc1[5], wxc2[5], wxc3[5];
+  double wy[5], wyc1[5], wyc2[5], wyc3[5];
+  double ww[5], c[6];
+
+  awidth = width * (double) headwidth / 10000;
+
+  dy = -dy;
+  if (awidth == 0) {
+    return;
+  }
+  for (i = 0; i < 5; i++) {
+    ww[i] = i;
+  }
+  wx[0] = nround(x0 - dy * awidth);
+  wx[1] = nround(x0 - dy * 0.5 * awidth - dx * 0.25 * awidth);
+  wx[2] = x0;
+  wx[3] = nround(x0 + dy * 0.5 * awidth + dx * 0.25 * awidth);
+  wx[4] = nround(x0 + dy * awidth);
+  if (spline(ww, wx, wxc1, wxc2, wxc3, 5, SPLCND2NDDIF, SPLCND2NDDIF, 0, 0)) {
+    error(obj, errspl);
+    return;
+  }
+  wy[0] = nround(y0 - dx * awidth);
+  wy[1] = nround(y0 - dx * 0.5 * awidth + dy * 0.25 * awidth);
+  wy[2] = y0;
+  wy[3] = nround(y0 + dx * 0.5 * awidth - dy * 0.25 * awidth);
+  wy[4] = nround(y0 + dx * awidth);
+  if (spline(ww, wy, wyc1, wyc2, wyc3, 5, SPLCND2NDDIF, SPLCND2NDDIF, 0, 0)) {
+    error(obj, errspl);
+    return;
+  }
+  GRAlinestyle(GC, 0, NULL, width, GRA_LINE_CAP_BUTT, GRA_LINE_JOIN_MITER, 1000);
+  GRAcurvefirst(GC, 0, NULL, NULL, NULL, splinedif, splineint, NULL, wx[0], wy[0]);
+  for (i = 0; i < 4; i++) {
+    c[0] = wxc1[i];
+    c[1] = wxc2[i];
+    c[2] = wxc3[i];
+    c[3] = wyc1[i];
+    c[4] = wyc2[i];
+    c[5] = wyc3[i];
+    if (!GRAcurve(GC, c, wx[i], wy[i])) {
+      break;
+    }
+  }
+}
+
+void
+draw_marker_bar(struct objlist *obj, N_VALUE *inst, int GC,
+		int width, int headlen, int headwidth, int x0, int y0, double dx, double dy)
+{
+  double awidth;
+  int bar[4];
+
+  awidth = width * (double) headwidth / 10000;
+
+  dy = -dy;
+  if (awidth == 0) {
+    return;
+  }
+  bar[0] = nround(x0 - dy * awidth);
+  bar[1] = nround(y0 - dx * awidth);
+  bar[2] = nround(x0 + dy * awidth);
+  bar[3] = nround(y0 + dx * awidth);
+  GRAlinestyle(GC, 0, NULL, width, GRA_LINE_CAP_BUTT, GRA_LINE_JOIN_MITER, 1000);
+  GRAline(GC, bar[0], bar[1], bar[2], bar[3]);
+}
+
+void
+draw_marker_mark(struct objlist *obj, N_VALUE *inst, int GC,
+		 int width, int headlen, int headwidth,
+		 int x0, int y0, double dx, double dy, int r, int g, int b, int a, int type)
+{
+  double awidth;
+  int br, bg, bb, ba;
+
+  _getobj(obj, "fill_R", inst, &br);
+  _getobj(obj, "fill_G", inst, &bg);
+  _getobj(obj, "fill_B", inst, &bb);
+  _getobj(obj, "fill_A", inst, &ba);
+  awidth = width * (double) headwidth / 10000;
+
+  if (awidth == 0) {
+    return;
+  }
+  GRAlinestyle(GC, 0, NULL, width, GRA_LINE_CAP_BUTT, GRA_LINE_JOIN_MITER, 1000);
+#if ROTATE_MARK
+  GRAmark_rotate(GC, type, x0, y0, dx, dy, awidth, r, g, b, a, br, bg, bb, ba);
+#else
+  GRAmark_rotate(GC, type, x0, y0, 1, 0, awidth, r, g, b, a, br, bg, bb, ba);
+#endif
 }
 
 int

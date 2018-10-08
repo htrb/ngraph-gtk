@@ -37,8 +37,6 @@
 #include "olegend.h"
 #include "opath.h"
 
-#define ROTATE_MARK 1
-
 #define NAME		"path"
 #define ALIAS		"line:curve:polygon"
 #define PARENT		"legend"
@@ -153,9 +151,6 @@ arrowdone(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
   return 0;
 }
 
-#define ARROW_SIZE_MIN 10000
-#define ARROW_SIZE_MAX 200000
-
 static int
 arrowput(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
@@ -217,12 +212,6 @@ curve_clear(struct objlist *obj,N_VALUE *inst)
 }
 
 static double
-distance(double x1, double y1)
-{
-  return sqrt(x1 * x1 + y1 * y1);
-}
-
-static double
 get_dx_dy(int x0, int y0, int x1, int y1, double *dx, double *dy)
 {
   double len, x, y;
@@ -232,122 +221,6 @@ get_dx_dy(int x0, int y0, int x1, int y1, double *dx, double *dy)
   *dx = x / len;
   *dy = y / len;
   return len;
-}
-
-static void
-draw_wave(struct objlist *obj, N_VALUE *inst, int GC,
-	  int width, int headlen, int headwidth, int x0, int y0, int x1, int y1)
-{
-  int i;
-  double awidth, dx, dy;
-  double wx[5], wxc1[5], wxc2[5], wxc3[5];
-  double wy[5], wyc1[5], wyc2[5], wyc3[5];
-  double ww[5], c[6];
-
-  awidth = width * (double) headwidth / 10000;
-
-  get_dx_dy(x0, y0, x1, y1, &dx, &dy);
-  dy = -dy;
-  if (awidth == 0) {
-    return;
-  }
-  for (i = 0; i < 5; i++) {
-    ww[i] = i;
-  }
-  wx[0] = nround(x0 - dy * awidth);
-  wx[1] = nround(x0 - dy * 0.5 * awidth - dx * 0.25 * awidth);
-  wx[2] = x0;
-  wx[3] = nround(x0 + dy * 0.5 * awidth + dx * 0.25 * awidth);
-  wx[4] = nround(x0 + dy * awidth);
-  if (spline(ww, wx, wxc1, wxc2, wxc3, 5, SPLCND2NDDIF, SPLCND2NDDIF, 0, 0)) {
-    error(obj, ERRSPL);
-    return;
-  }
-  wy[0] = nround(y0 - dx * awidth);
-  wy[1] = nround(y0 - dx * 0.5 * awidth + dy * 0.25 * awidth);
-  wy[2] = y0;
-  wy[3] = nround(y0 + dx * 0.5 * awidth - dy * 0.25 * awidth);
-  wy[4] = nround(y0 + dx * awidth);
-  if (spline(ww, wy, wyc1, wyc2, wyc3, 5, SPLCND2NDDIF, SPLCND2NDDIF, 0, 0)) {
-    error(obj, ERRSPL);
-    return;
-  }
-  GRAlinestyle(GC, 0, NULL, width, GRA_LINE_CAP_BUTT, GRA_LINE_JOIN_MITER, 1000);
-  GRAcurvefirst(GC, 0, NULL, NULL, NULL, splinedif, splineint, NULL, wx[0], wy[0]);
-  for (i = 0; i < 4; i++) {
-    c[0] = wxc1[i];
-    c[1] = wxc2[i];
-    c[2] = wxc3[i];
-    c[3] = wyc1[i];
-    c[4] = wyc2[i];
-    c[5] = wyc3[i];
-    if (!GRAcurve(GC, c, wx[i], wy[i])) {
-      break;
-    }
-  }
-}
-
-static void
-draw_bar(struct objlist *obj, N_VALUE *inst, int GC,
-	  int width, int headlen, int headwidth, int x0, int y0, int x1, int y1)
-{
-  double awidth, dx, dy;
-  int bar[4];
-
-  awidth = width * (double) headwidth / 10000;
-
-  get_dx_dy(x0, y0, x1, y1, &dx, &dy);
-  dy = -dy;
-  if (awidth == 0) {
-    return;
-  }
-  bar[0] = nround(x0 - dy * awidth);
-  bar[1] = nround(y0 - dx * awidth);
-  bar[2] = nround(x0 + dy * awidth);
-  bar[3] = nround(y0 + dx * awidth);
-  GRAlinestyle(GC, 0, NULL, width, GRA_LINE_CAP_BUTT, GRA_LINE_JOIN_MITER, 1000);
-  GRAline(GC, bar[0], bar[1], bar[2], bar[3]);
-}
-
-static void
-draw_mark(struct objlist *obj, N_VALUE *inst, int GC,
-          int width, int headlen, int headwidth,
-          int x0, int y0, int x1, int y1, int r, int g, int b, int a, int is_begin)
-{
-  double awidth;
-  int type, br, bg, bb, ba;
-#if ROTATE_MARK
-  double dx, dy;
-#endif
-
-  _getobj(obj, "fill_R", inst, &br);
-  _getobj(obj, "fill_G", inst, &bg);
-  _getobj(obj, "fill_B", inst, &bb);
-  _getobj(obj, "fill_A", inst, &ba);
-  awidth = width * (double) headwidth / 10000;
-
-  if (awidth == 0) {
-    return;
-  }
-#if ROTATE_MARK
-  if (is_begin) {
-    _getobj(obj, "mark_type_begin", inst, &type);
-    get_dx_dy(x1, y1, x0, y0, &dx, &dy);
-  } else {
-    _getobj(obj, "mark_type_end", inst, &type);
-    get_dx_dy(x0, y0, x1, y1, &dx, &dy);
-  }
-  GRAlinestyle(GC, 0, NULL, width, GRA_LINE_CAP_BUTT, GRA_LINE_JOIN_MITER, 1000);
-  GRAmark_rotate(GC, type, x0, y0, dx, dy, awidth, r, g, b, a, br, bg, bb, ba);
-#else
-  if (is_begin) {
-    _getobj(obj, "mark_type_begin", inst, &type);
-  } else {
-    _getobj(obj, "mark_type_end", inst, &type);
-  }
-  GRAlinestyle(GC, 0, NULL, width, GRA_LINE_CAP_BUTT, GRA_LINE_JOIN_MITER, 1000);
-  GRAmark_rotate(GC, type, x0, y0, 1, 0, awidth, r, g, b, a, br, bg, bb, ba);
-#endif
 }
 
 static void
@@ -392,11 +265,12 @@ draw_stroke(struct objlist *obj, N_VALUE *inst, int GC, int *points2, int *pdata
 {
   int width, fr, fg, fb, fa, headlen, headwidth;
   int join, miter, head_begin, head_end;
-  int x, y, x0, y0, x1, y1, x2, y2, x3, y3;
+  int x, y, x0, y0, x1, y1, x2, y2, x3, y3, type;
   struct narray *style;
   int snum, *sdata;
   int i;
   int ap[6], ap2[6];
+  double dx, dy;
 
   _getobj(obj, "stroke_R", inst, &fr);
   _getobj(obj, "stroke_G", inst, &fg);
@@ -460,13 +334,17 @@ draw_stroke(struct objlist *obj, N_VALUE *inst, int GC, int *points2, int *pdata
     GRAdrawpoly(GC, 3, ap, GRA_FILL_MODE_EVEN_ODD);
     break;
   case MARKER_TYPE_WAVE:
-    draw_wave(obj, inst, GC, width, headlen, headwidth, x0, y0, x1, y1);
+    get_dx_dy(x0, y0, x1, y1, &dx, &dy);
+    draw_marker_wave(obj, inst, GC, width, headlen, headwidth, x0, y0, dx, dy, ERRSPL);
     break;
   case MARKER_TYPE_MARK:
-    draw_mark(obj, inst, GC, width, headlen, headwidth, x0, y0, x1, y1, fr, fg, fb, fa, TRUE);
+    get_dx_dy(x0, y0, x1, y1, &dx, &dy);
+    _getobj(obj, "mark_type_begin", inst, &type);
+    draw_marker_mark(obj, inst, GC, width, headlen, headwidth, x0, y0, dx, dy, fr, fg, fb, fa, type);
     break;
   case MARKER_TYPE_BAR:
-    draw_bar(obj, inst, GC, width, headlen, headwidth, x0, y0, x1, y1);
+    get_dx_dy(x0, y0, x1, y1, &dx, &dy);
+    draw_marker_bar(obj, inst, GC, width, headlen, headwidth, x0, y0, dx, dy);
     break;
   }
 
@@ -476,13 +354,17 @@ draw_stroke(struct objlist *obj, N_VALUE *inst, int GC, int *points2, int *pdata
     GRAdrawpoly(GC, 3, ap2, GRA_FILL_MODE_EVEN_ODD);
     break;
   case MARKER_TYPE_WAVE:
-    draw_wave(obj, inst, GC, width, headlen, headwidth, x3, y3, x2, y2);
+    get_dx_dy(x3, y3, x2, y2, &dx, &dy);
+    draw_marker_wave(obj, inst, GC, width, headlen, headwidth, x3, y3, dx, dy, ERRSPL);
     break;
   case MARKER_TYPE_MARK:
-    draw_mark(obj, inst, GC, width, headlen, headwidth, x3, y3, x2, y2, fr, fg, fb, fa, FALSE);
+    get_dx_dy(x3, y3, x2, y2, &dx, &dy);
+    _getobj(obj, "mark_type_end", inst, &type);
+    draw_marker_mark(obj, inst, GC, width, headlen, headwidth, x3, y3, dx, dy, fr, fg, fb, fa, type);
     break;
   case MARKER_TYPE_BAR:
-    draw_bar(obj, inst, GC, width, headlen, headwidth, x3, y3, x2, y2);
+    get_dx_dy(x3, y3, x2, y2, &dx, &dy);
+    draw_marker_bar(obj, inst, GC, width, headlen, headwidth, x3, y3, dx, dy);
     break;
   }
 }

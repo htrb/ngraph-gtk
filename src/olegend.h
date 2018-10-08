@@ -40,5 +40,8 @@ void rotate(int px, int py, int angle, int *x, int *y);
 void flip(int pivot, enum FLIP_DIRECTION dir, int *x, int *y);
 int legendflip(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv);
 int put_color_for_backward_compatibility(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,  int argc, char **argv);
+void draw_marker_mark(struct objlist *obj, N_VALUE *inst, int GC, int width, int headlen, int headwidth, int x0, int y0, double dx, double dy, int r, int g, int b, int a, int type);
+void draw_marker_bar(struct objlist *obj, N_VALUE *inst, int GC, int width, int headlen, int headwidth, int x0, int y0, double dx, double dy);
+void draw_marker_wave(struct objlist *obj, N_VALUE *inst, int GC, int width, int headlen, int headwidth, int x0, int y0, double dx, double dy, int errspl);
 
 #endif
