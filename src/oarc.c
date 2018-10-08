@@ -190,7 +190,7 @@ draw_marker(struct objlist *obj, N_VALUE *inst, int GC,
     break;
   case MARKER_TYPE_MARK:
     _getobj(obj, "mark_type_end", inst, &type);
-    draw_marker_mark(obj, inst, GC, width, headlen, headwidth, x1, y1, 1, 0, r, g, b, a, type);
+    draw_marker_mark(obj, inst, GC, width, headlen, headwidth, x1, y1, dx1, dy1, r, g, b, a, type);
     break;
   case MARKER_TYPE_BAR:
     draw_marker_bar(obj, inst, GC, width, headlen, headwidth, x1, y1, dx1, dy1);
