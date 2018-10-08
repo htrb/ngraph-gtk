@@ -38,8 +38,6 @@
 #define PARENT "draw"
 #define OVERSION  "1.00.00"
 
-#define ROTATE_MARK 1
-
 static char *legenderrorlist[]={
   "",
 };
@@ -465,11 +463,7 @@ draw_marker_mark(struct objlist *obj, N_VALUE *inst, int GC,
     return;
   }
   GRAlinestyle(GC, 0, NULL, width, GRA_LINE_CAP_BUTT, GRA_LINE_JOIN_MITER, 1000);
-#if ROTATE_MARK
   GRAmark_rotate(GC, type, x0, y0, dx, dy, awidth, r, g, b, a, br, bg, bb, ba);
-#else
-  GRAmark_rotate(GC, type, x0, y0, 1, 0, awidth, r, g, b, a, br, bg, bb, ba);
-#endif
 }
 
 int
