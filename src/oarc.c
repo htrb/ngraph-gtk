@@ -487,13 +487,20 @@ arcchange(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
 static int
 arcrotate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
-  int angle, rx, ry, a, use_pivot;
+  int angle, rx, ry, a, use_pivot, type_begin, type_end;
 
   _getobj(obj, "rx", inst, &rx);
   _getobj(obj, "ry", inst, &ry);
   _getobj(obj, "angle1", inst, &a);
+  _getobj(obj, "mark_type_begin", inst, &type_begin);
+  _getobj(obj, "mark_type_end", inst, &type_end);
 
   angle = *(int *) argv[2];
+
+  type_begin = mark_rotate(angle, type_begin);
+  type_end = mark_rotate(angle, type_end);
+  _putobj(obj, "mark_type_begin", inst, &type_begin);
+  _putobj(obj, "mark_type_end", inst, &type_end);
 
   angle %= 36000;
   if (angle < 0)
