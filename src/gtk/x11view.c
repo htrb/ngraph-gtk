@@ -5795,20 +5795,6 @@ Draw(int SelectFile)
   }
 }
 
-static void
-Clear(void)
-{
-  N_VALUE *gra_inst;
-
-  gra_inst = chkobjinstoid(Menulocal.GRAobj, Menulocal.GRAoid);
-  if (gra_inst != NULL) {
-    UnFocus();
-    _exeobj(Menulocal.GRAobj, "clear", gra_inst, 0, NULL);
-    ReopenGC();
-  }
-  InfoWinClear();
-}
-
 void
 CmViewerDraw(void *w, gpointer client_data)
 {
