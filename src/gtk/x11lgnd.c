@@ -549,65 +549,66 @@ legend_dialog_set_sensitive(GtkWidget *w, gpointer client_data)
   }
 
   if (d->stroke && d->stroke_color && d->style && d->width) {
-    int a;
+    int stroke;
 
-    a = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->stroke));
-    set_widget_sensitivity_with_label(d->stroke_color, a);
-    set_widget_sensitivity_with_label(d->style, a);
-    set_widget_sensitivity_with_label(d->width, a);
+    stroke = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->stroke));
+    set_widget_sensitivity_with_label(d->stroke_color, stroke);
+    set_widget_sensitivity_with_label(d->style, stroke);
+    set_widget_sensitivity_with_label(d->width, stroke);
   }
 
   if (d->stroke &&
       d->miter &&
       d->join &&
       d->close_path) {
-    int a;
+    int stroke;
 
-    a = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->stroke));
-    set_widget_sensitivity_with_label(d->miter, a);
-    set_widget_sensitivity_with_label(d->join, a);
-    set_widget_sensitivity_with_label(d->close_path, a);
+    stroke = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->stroke));
+    set_widget_sensitivity_with_label(d->miter, stroke);
+    set_widget_sensitivity_with_label(d->join, stroke);
+    set_widget_sensitivity_with_label(d->close_path, stroke);
   }
 
   if (d->stroke &&
-      d->interpolation &&
       d->close_path &&
       d->marker_begin &&
       d->marker_end &&
       d->arrow_length &&
       d->arrow_width) {
-    int a, ca;
+    int stroke;
 
-    a = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->stroke));
-    ca = combo_box_get_active(d->interpolation);
-
-    set_widget_sensitivity_with_label(d->miter, a);
-    set_widget_sensitivity_with_label(d->join, a);
-    set_widget_sensitivity_with_label(d->marker_begin, a);
-    gtk_widget_set_sensitive(d->marker_end, a);
-    set_widget_sensitivity_with_label(d->arrow_length, a);
-    set_widget_sensitivity_with_label(d->arrow_width, a);
+    stroke = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->stroke));
+    set_widget_sensitivity_with_label(d->miter, stroke);
+    set_widget_sensitivity_with_label(d->join, stroke);
+    set_widget_sensitivity_with_label(d->marker_begin, stroke);
+    gtk_widget_set_sensitive(d->marker_end, stroke);
+    set_widget_sensitivity_with_label(d->arrow_length, stroke);
+    set_widget_sensitivity_with_label(d->arrow_width, stroke);
 
     marker_type = combo_box_get_active(d->marker_begin);
-    gtk_widget_set_sensitive(d->mark_type_begin, marker_type == MARKER_TYPE_MARK && a);
+    gtk_widget_set_sensitive(d->mark_type_begin, marker_type == MARKER_TYPE_MARK && stroke);
 
     marker_type = combo_box_get_active(d->marker_end);
-    gtk_widget_set_sensitive(d->mark_type_end, marker_type == MARKER_TYPE_MARK && a);
+    gtk_widget_set_sensitive(d->mark_type_end, marker_type == MARKER_TYPE_MARK && stroke);
 
-
-    if (path_type == PATH_TYPE_CURVE) {
-      set_widget_sensitivity_with_label(d->close_path, a &&
-			       (ca != INTERPOLATION_TYPE_SPLINE_CLOSE &&
-				ca != INTERPOLATION_TYPE_BSPLINE_CLOSE));
-    } else {
-      set_widget_sensitivity_with_label(d->close_path, a);
+    if (d->interpolation) {
+      int cp;
+      cp = combo_box_get_active(d->interpolation);
+      if (path_type == PATH_TYPE_CURVE) {
+	set_widget_sensitivity_with_label(d->close_path, stroke &&
+					  (cp != INTERPOLATION_TYPE_SPLINE_CLOSE &&
+					   cp != INTERPOLATION_TYPE_BSPLINE_CLOSE));
+      }
+    }
+    if (path_type != PATH_TYPE_CURVE) {
+      set_widget_sensitivity_with_label(d->close_path, stroke);
     }
   }
 
   if (d->fill && d->fill_color) {
-    int a;
+    int fill;
 
-    a = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->fill));
+    fill = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->fill));
     if (d->marker_begin && d->marker_end) {
       int marker_begin, marker_end, stroke;
       stroke = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->stroke));
