@@ -837,8 +837,21 @@ curvematch(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
 static int
 curve_flip(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  curve_clear(obj, inst);
+#if ! ROTATE_MARK
+  int type_begin, type_end;
+  enum FLIP_DIRECTION dir;
 
+  dir = (* (int *) argv[2] == FLIP_DIRECTION_HORIZONTAL) ? FLIP_DIRECTION_HORIZONTAL : FLIP_DIRECTION_VERTICAL;
+
+  _getobj(obj, "mark_type_begin", inst, &type_begin);
+  _getobj(obj, "mark_type_end", inst, &type_end);
+  type_begin = mark_flip(dir, type_begin);
+  type_end = mark_flip(dir, type_end);
+  _putobj(obj, "mark_type_begin", inst, &type_begin);
+  _putobj(obj, "mark_type_end", inst, &type_end);
+#endif
+
+  curve_clear(obj, inst);
   return legendflip(obj, inst, rval, argc, argv);
 }
 
