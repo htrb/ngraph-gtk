@@ -326,7 +326,7 @@ static int
 arcbbox(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy;
-  int x,y,x1,y1;
+  int x,y,x1,y1, head_begin, head_end;
   int x0,y0,angle1,angle2,rx,ry,pieslice,fill,stroke,close_path;
   struct narray *array;
   int i,width;
@@ -391,6 +391,26 @@ arcbbox(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
     maxy+=width/2;
   }
 
+  _getobj(obj, "marker_begin",  inst, &head_begin);
+  _getobj(obj, "marker_end",    inst, &head_end);
+  if (head_begin != MARKER_TYPE_NONE || head_end != MARKER_TYPE_NONE) {
+    double awidth;
+    int headwidth;
+    _getobj(obj, "arrow_width",  inst, &headwidth);
+    awidth = width * (double) headwidth / 10000;
+    if (((head_begin == MARKER_TYPE_MARK || head_begin == MARKER_TYPE_ARROW) &&
+	 (head_end == MARKER_TYPE_MARK || head_end == MARKER_TYPE_ARROW)) ||
+	((head_begin == MARKER_TYPE_MARK || head_begin == MARKER_TYPE_ARROW) &&
+	 head_end == MARKER_TYPE_NONE) ||
+	(head_begin == MARKER_TYPE_NONE &&
+	 (head_end == MARKER_TYPE_MARK || head_end == MARKER_TYPE_ARROW))) {
+      awidth /= 2;
+    }
+    minx -= awidth;
+    miny -= awidth;
+    maxx += awidth;
+    maxy += awidth;
+  }
   arrayins(array,&maxy,0);
   arrayins(array,&maxx,0);
   arrayins(array,&miny,0);
