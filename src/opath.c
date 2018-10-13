@@ -881,6 +881,18 @@ curve_move(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
 static int
 curve_rotate(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
+#if ! ROTATE_MARK
+  int type_begin, type_end, angle;
+
+  angle = *(int *) argv[2];
+
+  _getobj(obj, "mark_type_begin", inst, &type_begin);
+  _getobj(obj, "mark_type_end", inst, &type_end);
+  type_begin = mark_rotate(angle, type_begin);
+  type_end = mark_rotate(angle, type_end);
+  _putobj(obj, "mark_type_begin", inst, &type_begin);
+  _putobj(obj, "mark_type_end", inst, &type_end);
+#endif
   curve_clear(obj, inst);
 
   return legendrotate(obj, inst, rval, argc, argv);
