@@ -295,7 +295,6 @@ draw_stroke(struct objlist *obj, N_VALUE *inst, int GC, int *points2, int *pdata
   int snum, *sdata;
   int i;
   int ap[6], ap2[6];
-  double dx, dy;
 
   _getobj(obj, "stroke_R", inst, &fr);
   _getobj(obj, "stroke_G", inst, &fg);
@@ -353,45 +352,10 @@ draw_stroke(struct objlist *obj, N_VALUE *inst, int GC, int *points2, int *pdata
     }
   }
 
-  switch (head_begin) {
-  case MARKER_TYPE_ARROW:
-    GRAlinestyle(GC, 0, NULL, 1, GRA_LINE_CAP_BUTT, join, miter);
-    GRAdrawpoly(GC, 3, ap, GRA_FILL_MODE_EVEN_ODD);
-    break;
-  case MARKER_TYPE_WAVE:
-    get_dx_dy(x0, y0, x1, y1, &dx, &dy);
-    draw_marker_wave(obj, inst, GC, width, headlen, headwidth, x0, y0, dx, dy, ERRSPL);
-    break;
-  case MARKER_TYPE_MARK:
-    get_dx_dy(x0, y0, x1, y1, &dx, &dy);
-    _getobj(obj, "mark_type_begin", inst, &type);
-    draw_marker_mark(obj, inst, GC, width, headlen, headwidth, x0, y0, dx, dy, fr, fg, fb, fa, type);
-    break;
-  case MARKER_TYPE_BAR:
-    get_dx_dy(x0, y0, x1, y1, &dx, &dy);
-    draw_marker_bar(obj, inst, GC, width, headlen, headwidth, x0, y0, dx, dy);
-    break;
-  }
-
-  switch (head_end) {
-  case MARKER_TYPE_ARROW:
-    GRAlinestyle(GC, 0, NULL, 1, GRA_LINE_CAP_BUTT, join, miter);
-    GRAdrawpoly(GC, 3, ap2, GRA_FILL_MODE_EVEN_ODD);
-    break;
-  case MARKER_TYPE_WAVE:
-    get_dx_dy(x3, y3, x2, y2, &dx, &dy);
-    draw_marker_wave(obj, inst, GC, width, headlen, headwidth, x3, y3, dx, dy, ERRSPL);
-    break;
-  case MARKER_TYPE_MARK:
-    get_dx_dy(x3, y3, x2, y2, &dx, &dy);
-    _getobj(obj, "mark_type_end", inst, &type);
-    draw_marker_mark(obj, inst, GC, width, headlen, headwidth, x3, y3, dx, dy, fr, fg, fb, fa, type);
-    break;
-  case MARKER_TYPE_BAR:
-    get_dx_dy(x3, y3, x2, y2, &dx, &dy);
-    draw_marker_bar(obj, inst, GC, width, headlen, headwidth, x3, y3, dx, dy);
-    break;
-  }
+  _getobj(obj, "mark_type_begin", inst, &type);
+  draw_marker(obj, inst, GC, head_begin, type, ap, join, miter, x0, y0, x1, y1, width, fr, fg, fb, fa, headlen, headwidth);
+  _getobj(obj, "mark_type_end", inst, &type);
+  draw_marker(obj, inst, GC, head_end, type, ap2, join, miter, x3, y3, x2, y2, width, fr, fg, fb, fa, headlen, headwidth);
 }
 
 static void
