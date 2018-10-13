@@ -1450,7 +1450,7 @@ create_arrow_setting_widgets(struct LegendDialog *d, GtkWidget *hbox)
 static void
 LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *hbox, *vbox, *hbox2, *vbox2, *hbox3, *frame, *table, *label;
+  GtkWidget *w, *hbox, *hbox2, *vbox2, *frame, *table;
   struct LegendDialog *d;
   char title[64];
   int i;
@@ -1498,34 +1498,7 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, NULL, FALSE, i++);
     d->close_path = w;
 
-    hbox3 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-
-    w = gtk_button_new();
-    g_signal_connect(w, "clicked", G_CALLBACK(LegendMarkDialogMark), &(d->mark_begin));
-    gtk_box_pack_start(GTK_BOX(hbox3), w, FALSE, FALSE, 0);
-    d->mark_type_begin = w;
-
-    w = create_marker_type_combo_box("begin", _("Marker begin"));
-    gtk_box_pack_start(GTK_BOX(hbox3), w, FALSE, FALSE, 0);
-    d->marker_begin = w;
-
-    w = create_marker_type_combo_box("end", _("Marker end"));
-    gtk_box_pack_start(GTK_BOX(hbox3), w, FALSE, FALSE, 0);
-    d->marker_end = w;
-
-    w = gtk_button_new();
-    gtk_box_pack_start(GTK_BOX(hbox3), w, FALSE, FALSE, 0);
-    g_signal_connect(w, "clicked", G_CALLBACK(LegendMarkDialogMark), &(d->mark_end));
-    d->mark_type_end = w;
-
-    g_signal_connect(d->marker_begin, "changed", G_CALLBACK(legend_dialog_set_sensitive), d);
-    g_signal_connect(d->marker_end,   "changed", G_CALLBACK(legend_dialog_set_sensitive), d);
-
-    label = gtk_label_new_with_mnemonic(_("_Marker:"));
-    gtk_widget_set_halign(label, GTK_ALIGN_START);
-    gtk_label_set_mnemonic_widget(GTK_LABEL(label), d->marker_begin);
-    gtk_grid_attach(GTK_GRID(table), label, 0, i, 1, 1);
-    gtk_grid_attach(GTK_GRID(table), hbox3, 1, i++, 1, 1);
+    create_maker_setting_widgets(d, table, i++);
 
     style_setup(d, table, i++);
     width_setup(d, table, i++);
@@ -1536,30 +1509,7 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_box_pack_start(GTK_BOX(hbox2), table, TRUE, TRUE, 0);
 
-    vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-    w = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 10, 170, 1);
-    set_scale_mark(w, GTK_POS_BOTTOM, 15, 15);
-
-    g_signal_connect(w, "value-changed", G_CALLBACK(LegendArrowDialogScaleL), d);
-    g_signal_connect(w, "format-value", G_CALLBACK(format_value_degree), NULL);
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-    d->arrow_length = w;
-
-    w = gtk_drawing_area_new();
-    gtk_widget_set_size_request(w, ARROW_VIEW_SIZE, ARROW_VIEW_SIZE);
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-    g_signal_connect(w, "draw", G_CALLBACK(LegendArrowDialogPaint), d);
-    d->view = w;
-
-    w = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 100, 2000, 1);
-    set_scale_mark(w, GTK_POS_TOP, 200, 200);
-    g_signal_connect(w, "value-changed", G_CALLBACK(LegendArrowDialogScaleW), d);
-    g_signal_connect(w, "format-value", G_CALLBACK(format_value_percent), NULL);
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-    d->arrow_width = w;
-
-    set_widget_margin(vbox, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
-    gtk_box_pack_start(GTK_BOX(hbox2), vbox, FALSE, FALSE, 0);
+    create_arrow_setting_widgets(d, hbox2);
 
     w = gtk_check_button_new_with_mnemonic(_("_Stroke"));
     g_signal_connect(w, "toggled", G_CALLBACK(legend_dialog_set_sensitive), d);
