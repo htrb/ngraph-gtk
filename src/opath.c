@@ -261,6 +261,31 @@ get_arrow_pos(int *points2, int n,
 }
 
 static void
+draw_marker(struct objlist *obj, N_VALUE *inst, int GC, int type, int mark_type, int *ap, int join, int miter,
+	    int x0, int y0, int x1, int y1, int width, int fr, int fg, int fb, int fa, int headlen, int headwidth)
+{
+  double dx, dy;
+  switch (type) {
+  case MARKER_TYPE_ARROW:
+    GRAlinestyle(GC, 0, NULL, 1, GRA_LINE_CAP_BUTT, join, miter);
+    GRAdrawpoly(GC, 3, ap, GRA_FILL_MODE_EVEN_ODD);
+    break;
+  case MARKER_TYPE_WAVE:
+    get_dx_dy(x0, y0, x1, y1, &dx, &dy);
+    draw_marker_wave(obj, inst, GC, width, headlen, headwidth, x0, y0, dx, dy, ERRSPL);
+    break;
+  case MARKER_TYPE_MARK:
+    get_dx_dy(x0, y0, x1, y1, &dx, &dy);
+    draw_marker_mark(obj, inst, GC, width, headlen, headwidth, x0, y0, dx, dy, fr, fg, fb, fa, mark_type);
+    break;
+  case MARKER_TYPE_BAR:
+    get_dx_dy(x0, y0, x1, y1, &dx, &dy);
+    draw_marker_bar(obj, inst, GC, width, headlen, headwidth, x0, y0, dx, dy);
+    break;
+  }
+}
+
+static void
 draw_stroke(struct objlist *obj, N_VALUE *inst, int GC, int *points2, int *pdata, int num, int close_path)
 {
   int width, fr, fg, fb, fa, headlen, headwidth;
