@@ -1665,7 +1665,7 @@ LegendRectDialog(struct LegendDialog *data, struct objlist *obj, int id)
 static void
 LegendArcDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *hbox, *vbox, *table, *frame;
+  GtkWidget *w, *hbox, *hbox2, *vbox, *table, *frame;
   struct LegendDialog *d;
   char title[64];
   int i;
@@ -1722,6 +1722,7 @@ LegendArcDialogSetup(GtkWidget *wi, void *data, int makewidget)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     gtk_box_pack_start(GTK_BOX(vbox), table, FALSE, FALSE, 0);
 
+    hbox2 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
     table = gtk_grid_new();
 
     i = 0;
@@ -1729,11 +1730,17 @@ LegendArcDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, NULL, FALSE, i++);
     d->close_path = w;
 
+    create_maker_setting_widgets(d, table, i++);
+
     style_setup(d, table, i++);
     width_setup(d, table, i++);
     miter_setup(d, table, i++);
     join_setup(d, table, i++);
     stroke_color_setup(d, table, i++);
+
+    gtk_box_pack_start(GTK_BOX(hbox2), table, TRUE, TRUE, 0);
+
+    create_arrow_setting_widgets(d, hbox2);
 
     w = gtk_check_button_new_with_mnemonic(_("_Stroke"));
     g_signal_connect(w, "toggled", G_CALLBACK(legend_dialog_set_sensitive), d);
@@ -1741,7 +1748,7 @@ LegendArcDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     frame = gtk_frame_new(NULL);
     gtk_frame_set_label_widget(GTK_FRAME(frame), w);
-    gtk_container_add(GTK_CONTAINER(frame), table);
+    gtk_container_add(GTK_CONTAINER(frame), hbox2);
     set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT | WIDGET_MARGIN_BOTTOM);
     gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
 
