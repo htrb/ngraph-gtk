@@ -162,7 +162,7 @@ draw_marker(struct objlist *obj, N_VALUE *inst, int GC,
 	    int x, int y, int rx, int ry, int a0, int a1,
 	    int r, int g, int b, int a)
 {
-  double x0, y0, x1, y1, dx0, dy0, dx1, dy1, dx, dy;
+  double x0, y0, x1, y1, dx0, dy0, dx1, dy1;
   int type;
   get_position(x, y, rx, ry, a0, a1, &x0, &y0, &x1, &y1, &dx0, &dy0, &dx1, &dy1);
   switch (head_begin) {
@@ -174,14 +174,7 @@ draw_marker(struct objlist *obj, N_VALUE *inst, int GC,
     break;
   case MARKER_TYPE_MARK:
     _getobj(obj, "mark_type_begin", inst, &type);
-#if ROTATE_MARK
-    dx = dx0;
-    dy = dy0;
-#else
-    dx = 1;
-    dy = 0;
-#endif
-    draw_marker_mark(obj, inst, GC, width, headlen, headwidth, x0, y0, dx, dy, r, g, b, a, type);
+    draw_marker_mark(obj, inst, GC, width, headlen, headwidth, x0, y0, dx0, dy0, r, g, b, a, type);
     break;
   case MARKER_TYPE_BAR:
     draw_marker_bar(obj, inst, GC, width, headlen, headwidth, x0, y0, dx0, dy0);
@@ -197,14 +190,7 @@ draw_marker(struct objlist *obj, N_VALUE *inst, int GC,
     break;
   case MARKER_TYPE_MARK:
     _getobj(obj, "mark_type_end", inst, &type);
-#if ROTATE_MARK
-    dx = dx1;
-    dy = dy1;
-#else
-    dx = 1;
-    dy = 0;
-#endif
-    draw_marker_mark(obj, inst, GC, width, headlen, headwidth, x1, y1, dx, dy, r, g, b, a, type);
+    draw_marker_mark(obj, inst, GC, width, headlen, headwidth, x1, y1, dx1, dy1, r, g, b, a, type);
     break;
   case MARKER_TYPE_BAR:
     draw_marker_bar(obj, inst, GC, width, headlen, headwidth, x1, y1, dx1, dy1);
