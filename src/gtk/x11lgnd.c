@@ -618,13 +618,13 @@ legend_dialog_set_sensitive(GtkWidget *w, gpointer client_data)
                                         (stroke &&
                                          (marker_begin == MARKER_TYPE_MARK ||
                                           marker_end == MARKER_TYPE_MARK)) ||
-                                        a);
+                                        fill);
     } else {
-      set_widget_sensitivity_with_label(d->fill_color, a);
+      set_widget_sensitivity_with_label(d->fill_color, fill);
     }
 
     if (d->fill_rule) {
-      set_widget_sensitivity_with_label(d->fill_rule, a);
+      set_widget_sensitivity_with_label(d->fill_rule, fill);
     }
   }
 }
