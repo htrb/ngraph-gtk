@@ -1416,6 +1416,36 @@ create_maker_setting_widgets(struct LegendDialog *d, GtkWidget *table, int i)
   gtk_grid_attach(GTK_GRID(table), hbox3, 1, i, 1, 1);
 }
 
+static void
+create_arrow_setting_widgets(struct LegendDialog *d, GtkWidget *hbox)
+{
+  GtkWidget *w, *vbox;
+
+  vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
+  w = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 10, 170, 1);
+  set_scale_mark(w, GTK_POS_BOTTOM, 15, 15);
+
+  g_signal_connect(w, "value-changed", G_CALLBACK(LegendArrowDialogScaleL), d);
+  g_signal_connect(w, "format-value", G_CALLBACK(format_value_degree), NULL);
+  gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+  d->arrow_length = w;
+
+  w = gtk_drawing_area_new();
+  gtk_widget_set_size_request(w, ARROW_VIEW_SIZE, ARROW_VIEW_SIZE);
+  gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+  g_signal_connect(w, "draw", G_CALLBACK(LegendArrowDialogPaint), d);
+  d->view = w;
+
+  w = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 100, 2000, 1);
+  set_scale_mark(w, GTK_POS_TOP, 200, 200);
+  g_signal_connect(w, "value-changed", G_CALLBACK(LegendArrowDialogScaleW), d);
+  g_signal_connect(w, "format-value", G_CALLBACK(format_value_percent), NULL);
+  gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+  d->arrow_width = w;
+
+  set_widget_margin(vbox, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
+  gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
+}
 
 static void
 LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
