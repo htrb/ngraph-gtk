@@ -592,12 +592,12 @@ legend_dialog_set_sensitive(GtkWidget *w, gpointer client_data)
     gtk_widget_set_sensitive(d->mark_type_end, marker_type == MARKER_TYPE_MARK && stroke);
 
     if (d->interpolation) {
-      int cp;
-      cp = combo_box_get_active(d->interpolation);
+      int intp;
+      intp = combo_box_get_active(d->interpolation);
       if (path_type == PATH_TYPE_CURVE) {
 	set_widget_sensitivity_with_label(d->close_path, stroke &&
-					  (cp != INTERPOLATION_TYPE_SPLINE_CLOSE &&
-					   cp != INTERPOLATION_TYPE_BSPLINE_CLOSE));
+					  (intp != INTERPOLATION_TYPE_SPLINE_CLOSE &&
+					   intp != INTERPOLATION_TYPE_BSPLINE_CLOSE));
       }
     }
     if (path_type != PATH_TYPE_CURVE) {
