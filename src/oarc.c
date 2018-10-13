@@ -121,6 +121,8 @@ get_position(int x, int y, int rx, int ry, int a0, int a1,
   get_dx_dy(rx, ry, a0, x0, y0, dx0, dy0);
   *x0 += x;
   *y0 += y;
+  *dx0 = -*dx0;
+  *dy0 = -*dy0;
 
   get_dx_dy(rx, ry, a0 + a1, x1, y1, dx1, dy1);
   *x1 += x;
