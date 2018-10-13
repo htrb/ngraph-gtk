@@ -40,8 +40,6 @@
 #define PARENT "legend"
 #define OVERSION  "1.00.00"
 
-#define ROTATE_MARK 1
-
 #define ERRSPL  100
 static char *arcerrorlist[]={
   "error: spline interpolation.",

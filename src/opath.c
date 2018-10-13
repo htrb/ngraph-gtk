@@ -42,8 +42,6 @@
 #define PARENT		"legend"
 #define OVERSION	"1.00.01"
 
-#define ROTATE_MARK 1
-
 #define ERRSPL  100
 static char *patherrorlist[]={
   "error: spline interpolation.",
