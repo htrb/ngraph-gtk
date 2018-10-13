@@ -566,6 +566,9 @@ arcflip(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 #if ROTATE_MARK
   type_begin = mark_flip(FLIP_DIRECTION_HORIZONTAL, type_begin);
   type_end = mark_flip(FLIP_DIRECTION_HORIZONTAL, type_end);
+#else
+  type_begin = mark_flip(dir, type_begin);
+  type_end = mark_flip(dir, type_end);
 #endif
   _putobj(obj, "mark_type_begin", inst, &type_end);
   _putobj(obj, "mark_type_end", inst, &type_begin);
