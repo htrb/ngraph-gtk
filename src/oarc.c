@@ -159,13 +159,19 @@ draw_arrow(int GC, int join, int miter, int width, int headlen, int headwidth, i
 
 static void
 draw_marker(struct objlist *obj, N_VALUE *inst, int GC,
-	    int join, int miter, int width, int headlen, int headwidth,
-	    int head_begin, int head_end,
+	    int join, int miter, int width,
 	    int x, int y, int rx, int ry, int a0, int a1,
 	    int r, int g, int b, int a)
 {
+  int headlen, headwidth, head_begin, head_end;
   double x0, y0, x1, y1, dx0, dy0, dx1, dy1;
   int type;
+
+  _getobj(obj, "marker_begin", inst, &head_begin);
+  _getobj(obj, "marker_end",   inst, &head_end);
+  _getobj(obj, "arrow_length", inst, &headlen);
+  _getobj(obj, "arrow_width",  inst, &headwidth);
+
   get_position(x, y, rx, ry, a0, a1, &x0, &y0, &x1, &y1, &dx0, &dy0, &dx1, &dy1);
   switch (head_begin) {
   case MARKER_TYPE_ARROW:
@@ -205,7 +211,6 @@ arcdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int GC;
   int x,y,rx,ry,angle1,angle2,width,ifill,fr,fg,fb,fa,w,h,stroke,close_path,br,bg,bb, ba, join, miter;
-  int headlen, headwidth, head_begin, head_end;
   int pieslice;
   struct narray *style;
   int snum,*sdata;
@@ -238,11 +243,6 @@ arcdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   _getobj(obj,"close_path",inst,&close_path);
   _getobj(obj,"clip",inst,&clip);
 
-  _getobj(obj, "marker_begin", inst, &head_begin);
-  _getobj(obj, "marker_end",   inst, &head_end);
-  _getobj(obj, "arrow_length", inst, &headlen);
-  _getobj(obj, "arrow_width",  inst, &headwidth);
-
   if (! ifill && ! stroke) {
     return 0;
   }
@@ -263,7 +263,7 @@ arcdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
     GRAlinestyle(GC, snum, sdata, width, GRA_LINE_CAP_BUTT, join, miter);
     GRAcircle(GC, x, y, rx, ry, angle1, angle2,
 	      (close_path) ? ((pieslice) ? 3 : 4) : 0);
-    draw_marker(obj, inst, GC, join, miter, width, headlen, headwidth, head_begin, head_end, x, y, rx, ry, angle1, angle2, fr, fg, fb, fa);
+    draw_marker(obj, inst, GC, join, miter, width, x, y, rx, ry, angle1, angle2, fr, fg, fb, fa);
   }
 
   GRAaddlist(GC,obj,inst,(char *)argv[0],(char *)argv[1]);
