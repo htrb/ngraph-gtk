@@ -1382,6 +1382,40 @@ create_marker_type_combo_box(const char *postfix, const char *tooltip)
   return cbox;
 }
 
+static void
+create_maker_setting_widgets(struct LegendDialog *d, GtkWidget *table, int i)
+{
+  GtkWidget *w, *hbox3, *label;
+  hbox3 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+
+  w = gtk_button_new();
+  g_signal_connect(w, "clicked", G_CALLBACK(LegendMarkDialogMark), &(d->mark_begin));
+  gtk_box_pack_start(GTK_BOX(hbox3), w, FALSE, FALSE, 0);
+  d->mark_type_begin = w;
+
+  w = create_marker_type_combo_box("begin", _("Marker begin"));
+  gtk_box_pack_start(GTK_BOX(hbox3), w, FALSE, FALSE, 0);
+  d->marker_begin = w;
+
+  w = create_marker_type_combo_box("end", _("Marker end"));
+  gtk_box_pack_start(GTK_BOX(hbox3), w, FALSE, FALSE, 0);
+  d->marker_end = w;
+
+  w = gtk_button_new();
+  gtk_box_pack_start(GTK_BOX(hbox3), w, FALSE, FALSE, 0);
+  g_signal_connect(w, "clicked", G_CALLBACK(LegendMarkDialogMark), &(d->mark_end));
+  d->mark_type_end = w;
+
+  g_signal_connect(d->marker_begin, "changed", G_CALLBACK(legend_dialog_set_sensitive), d);
+  g_signal_connect(d->marker_end,   "changed", G_CALLBACK(legend_dialog_set_sensitive), d);
+
+  label = gtk_label_new_with_mnemonic(_("_Marker:"));
+  gtk_widget_set_halign(label, GTK_ALIGN_START);
+  gtk_label_set_mnemonic_widget(GTK_LABEL(label), d->marker_begin);
+  gtk_grid_attach(GTK_GRID(table), label, 0, i, 1, 1);
+  gtk_grid_attach(GTK_GRID(table), hbox3, 1, i, 1, 1);
+}
+
 
 static void
 LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
