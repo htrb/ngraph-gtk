@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.07.06\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2018-10-13 13:48+0900\n"
+"POT-Creation-Date: 2018-10-13 19:42+0900\n"
 "PO-Revision-Date: 2018-09-30 20:16+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -2947,7 +2947,7 @@ msgstr "斜体"
 msgid "Line style"
 msgstr "線種"
 
-#: src/gtk/gtk_presettings.c:646 src/odata.c:196 src/opath.c:83
+#: src/gtk/gtk_presettings.c:646 src/odata.c:196 src/opath.c:81
 msgid "line"
 msgstr "直線"
 
@@ -4879,7 +4879,7 @@ msgstr "多角形"
 msgid "polygon_solid_fill"
 msgstr "実多角形"
 
-#: src/odata.c:199 src/opath.c:84
+#: src/odata.c:199 src/opath.c:82
 msgid "curve"
 msgstr "曲線"
 
@@ -4944,11 +4944,11 @@ msgstr "実縦棒"
 msgid "drawing %s (%.1f%%)"
 msgstr "%s 描画中 (%.1f%%)"
 
-#: src/opath.c:72
+#: src/opath.c:70
 msgid "even_odd_rule"
 msgstr "偶奇"
 
-#: src/opath.c:73
+#: src/opath.c:71
 msgid "winding_rule"
 msgstr "ワインディング"
 

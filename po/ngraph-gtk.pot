@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.07.07\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2018-10-13 13:48+0900\n"
+"POT-Creation-Date: 2018-10-13 19:42+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2913,7 +2913,7 @@ msgstr ""
 msgid "Line style"
 msgstr ""
 
-#: src/gtk/gtk_presettings.c:646 src/odata.c:196 src/opath.c:83
+#: src/gtk/gtk_presettings.c:646 src/odata.c:196 src/opath.c:81
 msgid "line"
 msgstr ""
 
@@ -4395,7 +4395,7 @@ msgstr ""
 msgid "polygon_solid_fill"
 msgstr ""
 
-#: src/odata.c:199 src/opath.c:84
+#: src/odata.c:199 src/opath.c:82
 msgid "curve"
 msgstr ""
 
@@ -4460,10 +4460,10 @@ msgstr ""
 msgid "drawing %s (%.1f%%)"
 msgstr ""
 
-#: src/opath.c:72
+#: src/opath.c:70
 msgid "even_odd_rule"
 msgstr ""
 
-#: src/opath.c:73
+#: src/opath.c:71
 msgid "winding_rule"
 msgstr ""
