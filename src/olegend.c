@@ -463,7 +463,11 @@ draw_marker_mark(struct objlist *obj, N_VALUE *inst, int GC,
     return;
   }
   GRAlinestyle(GC, 0, NULL, width, GRA_LINE_CAP_BUTT, GRA_LINE_JOIN_MITER, 1000);
+#if ROTATE_MARK
   GRAmark_rotate(GC, type, x0, y0, dx, dy, awidth, r, g, b, a, br, bg, bb, ba);
+#else
+  GRAmark(GC, type, x0, y0, awidth, r, g, b, a, br, bg, bb, ba);
+#endif
 }
 
 static int
