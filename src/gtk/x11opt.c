@@ -67,10 +67,6 @@ DefaultDialogSetup(GtkWidget *wi, void *data, int makewidget)
   d = (struct DefaultDialog *) data;
 
   if (makewidget) {
-    w = gtk_check_button_new_with_mnemonic(_("_Geometry"));
-    d->geometry = w;
-    gtk_box_pack_start(GTK_BOX(d->vbox), w, FALSE, FALSE, 4);
-
     w = gtk_check_button_new_with_mnemonic(_("_Viewer"));
     d->viewer = w;
     gtk_box_pack_start(GTK_BOX(d->vbox), w, FALSE, FALSE, 4);
@@ -96,7 +92,6 @@ DefaultDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(d->vbox), w, FALSE, FALSE, 4);
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->geometry), FALSE);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->viewer), FALSE);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->external_viewer), FALSE);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->external_driver), FALSE);
