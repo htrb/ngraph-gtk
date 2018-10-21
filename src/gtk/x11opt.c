@@ -127,7 +127,6 @@ DefaultDialogClose(GtkWidget *win, void *data)
     GtkWidget *btn;
     enum SAVE_CONFIG_TYPE type;
   } btns[] = {
-    {NULL, SAVE_CONFIG_TYPE_GEOMETRY},
     {NULL, SAVE_CONFIG_TYPE_VIEWER},
     {NULL, SAVE_CONFIG_TYPE_EXTERNAL_DRIVER},
     {NULL, SAVE_CONFIG_TYPE_ADDIN_SCRIPT},
@@ -144,13 +143,12 @@ DefaultDialogClose(GtkWidget *win, void *data)
   ret = d->ret;
   d->ret = IDLOOP;
 
-  btns[0].btn = d->geometry;
-  btns[1].btn = d->viewer;
-  btns[2].btn = d->external_driver;
-  btns[3].btn = d->addin_script;
-  btns[4].btn = d->misc;
-  btns[5].btn = d->external_viewer;
-  btns[6].btn = d->fonts;
+  btns[0].btn = d->viewer;
+  btns[1].btn = d->external_driver;
+  btns[2].btn = d->addin_script;
+  btns[3].btn = d->misc;
+  btns[4].btn = d->external_viewer;
+  btns[5].btn = d->fonts;
 
   type = 0;
 
