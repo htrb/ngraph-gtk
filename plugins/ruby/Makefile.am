@@ -4,7 +4,7 @@ if HAVE_RUBY_DEV
   ruby_ext = ngraph.$(RUBY_DLEXT)
 $(ruby_ext): ngraph.c ruby_ngraph.h
 	mv Makefile Makefile.org
-	ruby $(srcdir)/extconf.rb $(prefix) --with-ngraph-include=$(top_srcdir)/src --with-ngraph-lib=$(top_builddir)/src/.libs
+	ARCHFLAGS="-arch x86_64" ruby $(srcdir)/extconf.rb $(prefix) --with-ngraph-include=$(top_srcdir)/src --with-ngraph-lib=$(top_builddir)/src/.libs
 	$(MAKE) $(AM_MAKEFLAGS)
 	mv Makefile Makefile.ruby
 	mv Makefile.org Makefile
