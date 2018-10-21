@@ -1,19 +1,23 @@
 EXTRA_DIST = create_objs.rb extconf.rb getobj.nsc ngraph.c lib/ngraph.rb lib/ngraph.rb.win lib/ngraph.rb.osx lib/ngraph/ngp2.rb
 
 if HAVE_RUBY_DEV
-if OS_OSX
-	RUBY_ARCH_FLAG = 'ARCHFLAGS="-arch x86_64"'
-else
-	RUBY_ARCH_FLAG = ''
-endif
-
   ruby_ext = ngraph.$(RUBY_DLEXT)
+if OS_OSX
 $(ruby_ext): ngraph.c ruby_ngraph.h
 	mv Makefile Makefile.org
-	$(RUBY_ARCH_FLAG) ruby $(srcdir)/extconf.rb $(prefix) --with-ngraph-include=$(top_srcdir)/src --with-ngraph-lib=$(top_builddir)/src/.libs
+	ARCHFLAGS="-arch x86_64" ruby $(srcdir)/extconf.rb $(prefix) --with-ngraph-include=$(top_srcdir)/src --with-ngraph-lib=$(top_builddir)/src/.libs
 	$(MAKE) $(AM_MAKEFLAGS)
 	mv Makefile Makefile.ruby
 	mv Makefile.org Makefile
+else
+$(ruby_ext): ngraph.c ruby_ngraph.h
+	mv Makefile Makefile.org
+	ruby $(srcdir)/extconf.rb $(prefix) --with-ngraph-include=$(top_srcdir)/src --with-ngraph-lib=$(top_builddir)/src/.libs
+	$(MAKE) $(AM_MAKEFLAGS)
+	mv Makefile Makefile.ruby
+	mv Makefile.org Makefile
+endif
+
 
 if OS_WIN32
 install-data-local: $(ruby_ext)
