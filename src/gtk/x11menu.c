@@ -5646,7 +5646,7 @@ static char *UndoTypeStr[UNDO_TYPE_NUM] = {
   N_("open file"),
   N_("add range"),
   N_("paste"),
-  N_("scale selection"),
+  N_("scale"),
   N_("auto scale"),
   N_("scale trimming"),
   N_("edit"),			/* dummy message */
