@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.07.07\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2018-10-21 11:28+0900\n"
+"POT-Creation-Date: 2018-10-27 22:33+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2117,7 +2117,7 @@ msgstr ""
 msgid "Align _Bottom"
 msgstr ""
 
-#: src/gtk/x11menu.c:1876 src/gtk/x11menu.c:5694 src/gtk/x11menu.c:5728
+#: src/gtk/x11menu.c:1876 src/gtk/x11menu.c:5695 src/gtk/x11menu.c:5729
 msgid "_Redo"
 msgstr ""
 
@@ -2125,7 +2125,7 @@ msgstr ""
 msgid "Redo previous command"
 msgstr ""
 
-#: src/gtk/x11menu.c:1891 src/gtk/x11menu.c:5703 src/gtk/x11menu.c:5718
+#: src/gtk/x11menu.c:1891 src/gtk/x11menu.c:5704 src/gtk/x11menu.c:5719
 msgid "_Undo"
 msgstr ""
 
@@ -2386,7 +2386,7 @@ msgstr ""
 msgid "Executing `%.128s'."
 msgstr ""
 
-#: src/gtk/x11menu.c:5633 src/gtk/x11menu.c:5651
+#: src/gtk/x11menu.c:5633 src/gtk/x11menu.c:5652
 msgid "edit"
 msgstr ""
 
@@ -2451,19 +2451,23 @@ msgid "paste"
 msgstr ""
 
 #: src/gtk/x11menu.c:5649
-msgid "scale trimming"
+msgid "scale"
 msgstr ""
 
 #: src/gtk/x11menu.c:5650
 msgid "auto scale"
 msgstr ""
 
-#: src/gtk/x11menu.c:5691 src/gtk/x11menu.c:5725
+#: src/gtk/x11menu.c:5651
+msgid "scale trimming"
+msgstr ""
+
+#: src/gtk/x11menu.c:5692 src/gtk/x11menu.c:5726
 #, c-format
 msgid "_Redo: %s"
 msgstr ""
 
-#: src/gtk/x11menu.c:5700 src/gtk/x11menu.c:5715
+#: src/gtk/x11menu.c:5701 src/gtk/x11menu.c:5716
 #, c-format
 msgid "_Undo: %s"
 msgstr ""
