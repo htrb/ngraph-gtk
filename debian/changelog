@@ -1,4 +1,4 @@
-ngraph-gtk (6.07.07-1) unstable; urgency=medium
+ngraph-gtk (6.08.00-1) unstable; urgency=medium
 
   * New upstream release
   * debian/compat
@@ -46,7 +46,7 @@ ngraph-gtk (6.07.07-1) unstable; urgency=medium
   * debian/changelog
    - remove trailing-whitespace
 
- -- Hiroyuki Ito <ZXB01226@nifty.com>  Fri, 16 Mar 2018 00:26:32 +0900
+ -- Hiroyuki Ito <ZXB01226@nifty.com>  Fri, 2 Nov 2018 00:26:32 +0900
 
 ngraph-gtk (6.07.02-2) unstable; urgency=medium
 
