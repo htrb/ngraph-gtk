@@ -1062,20 +1062,6 @@ hide_minimize_menu_item(GtkWidget *widget, gpointer user_data)
 }
 #endif
 
-gboolean
-focus_in(GtkWidget *widget, GdkEvent *event, gpointer user_data)
-{
-  gtk_grab_add(GTK_WIDGET(widget));
-  return FALSE;
-}
-
-gboolean
-focus_out(GtkWidget *widget, GdkEvent *event, gpointer user_data)
-{
-  gtk_grab_remove(GTK_WIDGET(widget));
-  return FALSE;
-}
-
 static void
 swin_realized(GtkWidget *widget, gpointer user_data)
 {
