@@ -64,7 +64,6 @@
 	(anumnozeroput): added.
 	(axis): the type of the field "num_no_zero" is now "NENUM".
 	(anumnozero): use "false" and "true" for backward compatibility.
->>>>>>> d2bc2fde064a82a450f7c6aa30293de51b4b636e
 
 2018-07-21  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
