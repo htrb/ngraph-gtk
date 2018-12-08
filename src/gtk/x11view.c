@@ -5212,7 +5212,7 @@ ViewerEvVScroll(GtkRange *range, gpointer user_data)
 
   d->vscroll = gtk_range_get_value(range);
   SetVRuler(d);
-  main_window_redraw();
+  gtk_widget_queue_draw(d->Win);
 }
 
 static void
@@ -5224,7 +5224,7 @@ ViewerEvHScroll(GtkRange *range, gpointer user_data)
 
   d->hscroll = gtk_range_get_value(range);
   SetHRuler(d);
-  main_window_redraw();
+  gtk_widget_queue_draw(d->Win);
 }
 
 void
