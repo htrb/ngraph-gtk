@@ -4993,7 +4993,7 @@ move_focus_frame(GdkEventKey *e, struct Viewer *d)
     d->FrameOfsY += dy / zoom;
     d->MouseMode = MOUSEDRAG;
     set_drag_info(d);
-    main_window_redraw();
+    gtk_widget_queue_draw(d->Win);
   }
 }
 
