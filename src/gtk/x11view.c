@@ -5715,7 +5715,7 @@ ChangeDPI(void)
     }
   }
 
-  main_window_redraw();
+  gtk_widget_queue_draw(d->Win);
 
   SetHRuler(d);
   SetVRuler(d);
