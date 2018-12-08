@@ -5271,7 +5271,7 @@ ViewerWinUpdate(char **objects)
   }
 
   PaintLock = lock_state;
-  main_window_redraw();
+  gtk_widget_queue_draw(d->Win);
 
   d->allclear = TRUE;
 }
