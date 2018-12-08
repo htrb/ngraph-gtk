@@ -5448,6 +5448,7 @@ Focus(struct objlist *fobj, int id, int add)
 
   /* this is inconvenient when one use single window mode. */
   /* gtk_widget_grab_focus(d->Win); */
+  gtk_widget_queue_draw(d->Win);
   restorestdio(&save);
 }
 
