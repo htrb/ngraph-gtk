@@ -5788,7 +5788,7 @@ Draw(int SelectFile)
 
   ProgressDialogFinalize();
 
-  main_window_redraw();
+  gtk_widget_queue_draw(d->Win);
 
   if (SelectFile) {
     FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
