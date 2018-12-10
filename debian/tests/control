@@ -1,2 +1,3 @@
 Tests: run-test
 Depends: ngraph-gtk, xvfb, xauth
+Restrictions: allow-stderr
