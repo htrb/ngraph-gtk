@@ -42,3 +42,4 @@ libngraph.so.0 libngraph0 #MINVER#
  ngraph_set_exec_func@Base 6.07.02
  ngraph_sleep@Base 6.07.02
  ngraph_strdup@Base 6.07.02
+* Build-Depends-Package: libngraph0-dev
