@@ -1,6 +1,18 @@
 ngraph-gtk (6.08.00-1) unstable; urgency=medium
 
   * New upstream release
+  * debian/control
+   - bump Standards-Version to 4.2.1
+  * debian/tests/control-test
+   - Restrictions: allow-stderr
+  * debian/upstream-signing-key.pgp
+   - replaced to upstream/signing-key.asc
+
+ -- Hiroyuki Ito <ZXB01226@nifty.com>  Sun, 09 Dec 2018 19:33:32 +0900
+
+ngraph-gtk (6.07.06-1) unstable; urgency=medium
+
+  * New upstream release
   * debian/compat
    - set the debhelper compatibility level to 11.
   * debian/control
@@ -46,7 +58,7 @@ ngraph-gtk (6.08.00-1) unstable; urgency=medium
   * debian/changelog
    - remove trailing-whitespace
 
- -- Hiroyuki Ito <ZXB01226@nifty.com>  Fri, 2 Nov 2018 00:26:32 +0900
+ -- Hiroyuki Ito <ZXB01226@nifty.com>  Fri, 16 Mar 2018 00:26:32 +0900
 
 ngraph-gtk (6.07.02-2) unstable; urgency=medium
 
@@ -504,4 +516,3 @@ ngraph-gtk (6.03.47.gtk-17-1) unreleased; urgency=low
   * Initial release
 
  -- Ito Hiroyuki <ZXB01226@nifty.com>  Fri, 23 Jan 2009 10:10:07 +0900
-
