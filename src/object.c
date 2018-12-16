@@ -5196,6 +5196,7 @@ sputfield(struct objlist *obj,int id,char *arg)
   int len;
 
   s=arg;
+  len = 0;
   if ((s==NULL)
   || (strchr(":=",s[0])!=NULL)
   || ((field=getitok2(&s,&len,":="))==NULL)) {
