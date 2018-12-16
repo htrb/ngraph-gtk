@@ -1278,15 +1278,6 @@ list_sub_window_update(GtkMenuItem *item, gpointer user_data)
 }
 
 void
-list_sub_window_hide(GtkMenuItem *item, gpointer user_data)
-{
-  int hide;
-
-  hide = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(item));
-  set_hidden_state((struct obj_list_data *)user_data, ! hide);
-}
-
-void
 list_sub_window_focus(GtkMenuItem *item, gpointer user_data)
 {
   focus((struct obj_list_data *) user_data, FALSE);
