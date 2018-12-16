@@ -275,7 +275,7 @@ OutputDataDialog(struct OutputDataDialog *data, int div)
 }
 
 static void
-OutputImageDialogSetupItem(GtkWidget *w, struct OutputImageDialog *d)
+OutputImageDialogSetupItem(struct OutputImageDialog *d)
 {
   int i;
   GtkWidget *vlabel;
@@ -407,7 +407,7 @@ OutputImageDialogSetup(GtkWidget *wi, void *data, int makewidget)
   }
 
   gtk_window_set_title(GTK_WINDOW(wi), _(title));
-  OutputImageDialogSetupItem(w, d);
+  OutputImageDialogSetupItem(d);
 }
 
 static void
