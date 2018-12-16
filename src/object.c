@@ -5072,6 +5072,7 @@ schkfield(struct objlist *obj,int id,char *arg,char **valstr,
 
   s=arg;
   *valstr=NULL;
+  len = 0;
   if ((s==NULL)
   || (strchr(":= \t",s[0])!=NULL)
   || ((field=getitok2(&s,&len,":= \t"))==NULL)) {
