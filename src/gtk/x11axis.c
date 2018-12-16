@@ -3446,7 +3446,7 @@ select_type(GtkComboBox *w, gpointer user_data)
     putobj(d->obj, "num_log_pow", sel, &active);
     break;
   case AXIS_COMBO_ITEM_NUM_NO_ZERO:
-    gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);
+    getobj(d->obj, "num_no_zero", sel, 0, NULL, &type);
     if (type == enum_id) {
       return;
     }
