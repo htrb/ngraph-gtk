@@ -3310,6 +3310,19 @@ create_type_combo_box(GtkWidget *cbox, struct objlist *obj, int id)
   create_num_combo_item(list, NULL, obj, id);
 }
 
+static int
+set_enum_field(const char *field, int sel, int enum_id, struct obj_list_data *d)
+{
+  int type;
+  getobj(d->obj, field, sel, 0, NULL, &type);
+  if (type == enum_id) {
+    return 1;
+  }
+  axis_save_undo(UNDO_TYPE_EDIT);
+  putobj(d->obj, field, sel, &enum_id);
+  return 0;
+}
+
 static void
 select_type(GtkComboBox *w, gpointer user_data)
 {
