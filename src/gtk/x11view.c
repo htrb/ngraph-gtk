@@ -5389,7 +5389,7 @@ check_drawrable(struct objlist *obj)
 }
 
 void
-Focus(struct objlist *fobj, int id, int add)
+Focus(struct objlist *fobj, int id, enum FOCUS_MODE mode)
 {
   int oid, focus;
   N_VALUE *inst;
@@ -5413,7 +5413,7 @@ Focus(struct objlist *fobj, int id, int add)
     return;
   }
 
-  if (! add) {
+  if (mode == FOCUS_MODE_NORMAL) {
     UnFocus();
   }
 
@@ -5435,7 +5435,9 @@ Focus(struct objlist *fobj, int id, int add)
   if (focus >= 0) {
     arrayndel2(d->focusobj, focus);
   }
-  add_focus_obj(d->focusobj, fobj, oid);
+  if (focus < 0 || mode != FOCUS_MODE_TOGGLE) {
+    add_focus_obj(d->focusobj, fobj, oid);
+  }
   d->MouseMode = MOUSENONE;
 
   if (arraynum(d->focusobj) == 0) {
