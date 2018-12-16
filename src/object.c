@@ -5279,6 +5279,7 @@ sexefield(struct objlist *obj,int id,char *arg)
   char *s;
 
   s=arg;
+  len = 0;
   if ((s==NULL)
       || (strchr(":= \t",s[0])!=NULL)
       || ((field=getitok2(&s,&len,":= \t"))==NULL)) {
