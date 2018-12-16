@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.07.06\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2018-12-10 23:53+0900\n"
+"POT-Creation-Date: 2018-12-16 15:29+0900\n"
 "PO-Revision-Date: 2018-10-27 22:33+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -2853,7 +2853,7 @@ msgid "Spawning external driver."
 msgstr "外部ドライバに出力中"
 
 #: src/gtk/x11print.c:732 src/gtk/x11print.c:1006 src/gtk/x11print.c:1079
-#: src/gtk/x11view.c:5768
+#: src/gtk/x11view.c:5770
 msgid "Drawing."
 msgstr "描画中"
 
@@ -2895,11 +2895,11 @@ msgstr "データは移動されました."
 msgid "Moving data points is canceled."
 msgstr "データの移動はキャンセルされました."
 
-#: src/gtk/x11view.c:5762
+#: src/gtk/x11view.c:5764
 msgid "Scaling"
 msgstr "軸スケール設定中"
 
-#: src/gtk/x11view.c:5769
+#: src/gtk/x11view.c:5771
 msgid "Drawing"
 msgstr "描画中"
 
@@ -2931,7 +2931,7 @@ msgstr "目盛数字の色"
 msgid "Open"
 msgstr "開く"
 
-#: src/gtk/gtk_subwin.c:1321
+#: src/gtk/gtk_subwin.c:1288
 msgid "Instance name"
 msgstr "インスタンス名"
 
