@@ -139,7 +139,7 @@ DriverDialogSetup(GtkWidget *wi, void *data, int makewidget)
   GtkWidget *w, *table;
   struct DriverDialog *d;
   struct extprinter *pcur;
-  int i, j;
+  int i;
 
   d = (struct DriverDialog *) data;
   if (makewidget) {
@@ -170,7 +170,6 @@ DriverDialogSetup(GtkWidget *wi, void *data, int makewidget)
   while (pcur != NULL) {
     combo_box_append_text(d->driver, pcur->name);
     pcur = pcur->next;
-    j++;
   }
   combo_box_set_active(d->driver, 0);
 }
