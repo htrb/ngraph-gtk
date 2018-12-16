@@ -712,7 +712,7 @@ update(struct obj_list_data *d)
 }
 
 static void
-focus(struct obj_list_data *d, int add)
+focus(struct obj_list_data *d, enum FOCUS_MODE add)
 {
   int sel, num;
 
@@ -829,30 +829,6 @@ hidden(struct obj_list_data *d)
   d->select = sel;
   d->update(d, FALSE, TRUE);
   set_graph_modified();
-}
-
-static void
-set_hidden_state(struct obj_list_data *d, int hide)
-{
-  int sel, num;
-  int hidden;
-
-  if (Menulock || Globallock)
-    return;
-
-  sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
-  num = chkobjlastinst(d->obj);
-  if (sel < 0 || sel > num) {
-    return;
-  }
-
-  getobj(d->obj, "hidden", sel, 0, NULL, &hidden);
-  if (hidden != hide) {
-    putobj(d->obj, "hidden", sel, &hide);
-    d->select = sel;
-    d->update(d, FALSE, TRUE);
-    set_graph_modified();
-  }
 }
 
 #if ! GTK_CHECK_VERSION(3, 22, 0)
@@ -1280,13 +1256,13 @@ list_sub_window_update(GtkMenuItem *item, gpointer user_data)
 void
 list_sub_window_focus(GtkMenuItem *item, gpointer user_data)
 {
-  focus((struct obj_list_data *) user_data, FALSE);
+  focus((struct obj_list_data *) user_data, FOCUS_MODE_NORMAL);
 }
 
 void
 list_sub_window_add_focus(GtkMenuItem *item, gpointer user_data)
 {
-  focus((struct obj_list_data *) user_data, TRUE);
+  focus((struct obj_list_data *) user_data, FOCUS_MODE_TOGGLE);
 }
 
 static gboolean
