@@ -12,6 +12,7 @@ Makefile
 Makefile.in
 
 /GPATH
+/GSYMS
 /GRTAGS
 /GTAGS
 /INSTALL
