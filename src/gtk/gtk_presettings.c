@@ -435,9 +435,40 @@ create_toggle_button(GtkWidget *box, GtkWidget *img, const char *tooltip, int st
   return w;
 }
 
+static void
+set_parameters(struct Viewer *d, int num)
+{
+  struct FocusObj *focus;
+  N_VALUE *inst;
+  int i;
+  struct objlist *obj;
+
+  UpdateFieldsLock = TRUE;
+  for (i = 0; i < num; i++) {
+    focus = *(struct FocusObj **) arraynget(d->focusobj, i);
+    if (focus == NULL) {
+      continue;
+    }
+    inst = chkobjinstoid(focus->obj, focus->oid);
+    if (inst == NULL) {
+      continue;
+    }
+    obj = focus->obj;
+    if (obj == chkobject("axis")) {
+    } else if (obj == chkobject("path")) {
+    } else if (obj == chkobject("rectangle")) {
+    } else if (obj == chkobject("text")) {
+    } else if (obj == chkobject("arc")) {
+    } else if (obj == chkobject("mark")) {
+    }
+  }
+  UpdateFieldsLock = FALSE;
+}
+
 void
 presetting_show_all(void)
 {
+  int num;
   gtk_widget_set_visible(Widgets.stroke_fill,       TRUE);
   gtk_widget_set_visible(Widgets.line_width,        TRUE);
   gtk_widget_set_visible(Widgets.line_style,        TRUE);
