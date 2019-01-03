@@ -1116,6 +1116,7 @@ create_line_style_combo_box(void)
     gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(cbox), NULL, _(FwLineStyle[j].name));
   }
   gtk_combo_box_set_active(GTK_COMBO_BOX(cbox), 0);
+  g_signal_connect(cbox, "changed", G_CALLBACK(update_focused_obj), NULL);
   return cbox;
 }
 
