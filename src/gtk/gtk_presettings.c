@@ -1159,6 +1159,7 @@ select_mark(GtkWidget *w, gpointer client_data)
   d = (struct MarkDialog *) client_data;
   DialogExecute(d->parent, d);
   button_set_mark_image(w, d->Type);
+  update_focused_obj(w, GINT_TO_POINTER(d->Type));
 }
 
 static void
