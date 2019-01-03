@@ -1179,6 +1179,7 @@ presetting_create_panel(GtkApplication *app)
   set_font_family(w);
   gtk_widget_set_tooltip_text(w, _("Font name"));
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
+  g_signal_connect(w, "changed", G_CALLBACK(update_focused_obj), NULL);
   Widgets.font = w;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_POINT, FALSE, FALSE);
@@ -1186,6 +1187,7 @@ presetting_create_panel(GtkApplication *app)
   gtk_entry_set_width_chars(GTK_ENTRY(w), 5);
   gtk_widget_set_tooltip_text(w, _("Font size"));
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
+  g_signal_connect(w, "value-changed", G_CALLBACK(update_focused_obj), NULL);
   Widgets.pt = w;
 
   img = gtk_image_new_from_icon_name("format-text-bold-symbolic", GTK_ICON_SIZE_BUTTON);
@@ -1210,6 +1212,7 @@ presetting_create_panel(GtkApplication *app)
   gtk_entry_set_width_chars(GTK_ENTRY(w), 5);
   gtk_widget_set_tooltip_text(w, _("Mark size"));
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
+  g_signal_connect(w, "value-changed", G_CALLBACK(update_focused_obj), NULL);
   Widgets.mark_size = w;
 
   w = create_menu_button(builder, "stroke-fill-menu", _("stroke/fill"));
@@ -1235,12 +1238,14 @@ presetting_create_panel(GtkApplication *app)
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
   Widgets.color1 = w;
   gtk_widget_set_name(Widgets.color1, "StrokeColorButton");
+  g_signal_connect(w, "color-set", G_CALLBACK(update_focused_obj), NULL);
 
   w = create_color_button(NULL);
   color.red = color.green = color.blue = 1;
   color.alpha = 1;
   gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(w), &color);
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
+  g_signal_connect(w, "color-set", G_CALLBACK(update_focused_obj), NULL);
   Widgets.color2 = w;
 
   w = create_menu_button(builder, "join-type-menu", _("Join"));
