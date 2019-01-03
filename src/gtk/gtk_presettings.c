@@ -932,12 +932,10 @@ update_focused_obj_font_size(GtkWidget *widget, struct Viewer *d, int num)
       continue;
     }
     obj = focus->obj;
-    if (obj == chkobject("text")) {
-      _putobj(obj, "pt", inst, &pt);
-      modified = TRUE;          /* really modified */
-    } else if (obj == chkobject("axis")) {
-      _putobj(obj, "num_pt", inst, &pt);
-      modified = TRUE;          /* really modified */
+    if (chk_update_field(obj, inst, "pt", pt)) {
+      modified = TRUE;
+    } else if (chk_update_field(obj, inst, "num_pt", pt)) {
+      modified = TRUE;
     }
   }
   return modified;
