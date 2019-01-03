@@ -732,6 +732,57 @@ update_focused_obj_line_style(GtkWidget *widget, struct Viewer *d, int num)
   return modified;
 }
 
+static int
+update_focused_obj_color1(GtkWidget *widget, struct Viewer *d, int num)
+{
+  struct FocusObj *focus;
+  N_VALUE *inst;
+  int i, modified, r, g, b, a;
+  struct objlist *obj;
+
+  modified = FALSE;
+  set_rgba(widget, &r, &g, &b, &a);
+  for (i = 0; i < num; i++) {
+    focus = *(struct FocusObj **) arraynget(d->focusobj, i);
+    if (focus == NULL) {
+      continue;
+    }
+    inst = chkobjinstoid(focus->obj, focus->oid);
+    if (inst == NULL) {
+      continue;
+    }
+    obj = focus->obj;
+    if (! chkobjfield(obj, "stroke_R")) {
+      _putobj(obj, "stroke_R", inst, &r);
+      _putobj(obj, "stroke_G", inst, &g);
+      _putobj(obj, "stroke_B", inst, &b);
+      _putobj(obj, "stroke_A", inst, &a);
+      modified = TRUE;          /* really modified */
+    } else if (obj == chkobject("text") || obj == chkobject("mark")) {
+      _putobj(obj, "R", inst, &r);
+      _putobj(obj, "G", inst, &g);
+      _putobj(obj, "B", inst, &b);
+      _putobj(obj, "A", inst, &a);
+      modified = TRUE;          /* really modified */
+    } else if (obj == chkobject("axis")) {
+      _putobj(obj, "R", inst, &r);
+      _putobj(obj, "G", inst, &g);
+      _putobj(obj, "B", inst, &b);
+      _putobj(obj, "A", inst, &a);
+      _putobj(obj, "gauge_R", inst, &r);
+      _putobj(obj, "gauge_G", inst, &g);
+      _putobj(obj, "gauge_B", inst, &b);
+      _putobj(obj, "gauge_A", inst, &a);
+      _putobj(obj, "num_R", inst, &r);
+      _putobj(obj, "num_G", inst, &g);
+      _putobj(obj, "num_B", inst, &b);
+      _putobj(obj, "num_A", inst, &a);
+      modified = TRUE;          /* really modified */
+    }
+  }
+  return modified;
+}
+
 static GtkWidget *
 create_line_width_combo_box(void)
 {
