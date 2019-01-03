@@ -5371,6 +5371,7 @@ static void
 clear_focus_obj(const struct Viewer *d)
 {
   arraydel2(d->focusobj);
+  set_toolbox_mode(TOOLBOX_MODE_TOOLBAR);
 }
 
 static int
