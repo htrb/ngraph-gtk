@@ -691,6 +691,47 @@ update_focused_obj_width(GtkWidget *widget, struct Viewer *d, int num)
   return modified;
 }
 
+static int
+update_focused_obj_line_style(GtkWidget *widget, struct Viewer *d, int num)
+{
+  struct FocusObj *focus;
+  N_VALUE *inst;
+  int i, modified, style, id;
+  struct objlist *obj;
+  char *style_str;
+
+  modified = FALSE;
+  style = combo_box_get_active(widget);
+  style_str = FwLineStyle[style].list;
+  for (i = 0; i < num; i++) {
+    focus = *(struct FocusObj **) arraynget(d->focusobj, i);
+    if (focus == NULL) {
+      continue;
+    }
+    inst = chkobjinstoid(focus->obj, focus->oid);
+    if (inst == NULL) {
+      continue;
+    }
+    obj = focus->obj;
+    _getobj(obj, "id", inst, &id);
+    if (chkobjfield(obj, "style")) {
+      continue;
+    }
+    if (obj == chkobject("text")) {
+      continue;
+    }
+    if (obj == chkobject("axis")) {
+      sputobjfield(obj, id, "gauge_style", style_str);
+      sputobjfield(obj, id, "style", style_str);
+      modified = TRUE;          /* really modified */
+    } else {
+      sputobjfield(obj, id, "style", style_str);
+      modified = TRUE;          /* really modified */
+    }
+  }
+  return modified;
+}
+
 static GtkWidget *
 create_line_width_combo_box(void)
 {
