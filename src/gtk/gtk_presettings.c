@@ -1004,6 +1004,70 @@ update_focused_obj_font_style(GtkWidget *widget, struct Viewer *d, int num, int 
   return modified;
 }
 
+static void
+update_focused_obj(GtkWidget *widget, gpointer user_data)
+{
+  int undo, modified, num;
+  char *objs[OBJ_MAX];
+  struct Viewer *d;
+
+  modified = FALSE;
+  d = &NgraphApp.Viewer;
+  num = arraynum(d->focusobj);
+  if (num < 1) {
+    return;
+  }
+  get_focused_obj_array(d->focusobj, objs);
+  undo = menu_save_undo(UNDO_TYPE_EDIT, objs);
+  if (widget == Widgets.line_width) {
+    modified = update_focused_obj_width(widget, d, num);
+  } else if (widget == Widgets.line_style) {
+    modified = update_focused_obj_line_style(widget, d, num);
+  } else if (widget == Widgets.color1) {
+    modified = update_focused_obj_color1(widget, d, num);
+  } else if (widget == Widgets.color2) {
+    modified = update_focused_obj_color2(widget, d, num);
+  } else if (widget == Widgets.path_type) {
+    modified = update_focused_obj_path_type(widget, d, num);
+  } else if (widget == Widgets.join_type) {
+    modified = update_focused_obj_field_value(widget, d, num, "join", GPOINTER_TO_INT(user_data));
+  } else if (widget == Widgets.marker_type_begin) {
+    modified = update_focused_obj_field_value(widget, d, num, "marker_begin", GPOINTER_TO_INT(user_data));
+  } else if (widget == Widgets.marker_type_end) {
+    modified = update_focused_obj_field_value(widget, d, num, "marker_end", GPOINTER_TO_INT(user_data));
+  } else if (widget == Widgets.mark_type_begin) {
+    modified = update_focused_obj_field_value(widget, d, num, "mark_type_begin", GPOINTER_TO_INT(user_data));
+  } else if (widget == Widgets.mark_type_end) {
+    modified = update_focused_obj_field_value(widget, d, num, "mark_type_end", GPOINTER_TO_INT(user_data));
+  } else if (widget == Widgets.stroke_fill) {
+    modified = update_focused_obj_stroke_fill(widget, d, num, GPOINTER_TO_INT(user_data));
+  } else if (widget == Widgets.font) {
+    modified = update_focused_obj_font(widget, d, num);
+  } else if (widget == Widgets.bold) {
+    int apply;
+    apply = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
+    modified = update_focused_obj_font_style(widget, d, num, GRA_FONT_STYLE_BOLD, apply);
+  } else if (widget == Widgets.italic) {
+    int apply;
+    apply = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
+    modified = update_focused_obj_font_style(widget, d, num, GRA_FONT_STYLE_ITALIC, apply);
+  } else if (widget == Widgets.pt) {
+    modified = update_focused_obj_font_size(widget, d, num);
+  } else if (widget == Widgets.mark_type) {
+    modified = update_focused_obj_field_value(widget, d, num, "type", GPOINTER_TO_INT(user_data));
+  } else if (widget == Widgets.mark_size) {
+    int size;
+    size = gtk_spin_button_get_value(GTK_SPIN_BUTTON(Widgets.mark_size)) * 100;
+    modified = update_focused_obj_field_value(widget, d, num, "mark_type_end", size);
+  }
+  if (modified) {
+    set_graph_modified();
+  } else {
+    menu_undo_internal(undo);
+  }
+  UpdateAll(objs);
+}
+
 static GtkWidget *
 create_line_width_combo_box(void)
 {
