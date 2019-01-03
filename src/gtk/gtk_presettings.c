@@ -77,6 +77,7 @@ MarkerTypeBeginAction_activated(GSimpleAction *action, GVariant *parameter, gpoi
 {
   Widgets.marker_begin = check_selected_item(action, parameter, marker_type_char, Widgets.marker_type_begin, Widgets.marker_begin_icon);
   gtk_widget_set_sensitive(Widgets.mark_type_begin, Widgets.marker_begin == MARKER_TYPE_MARK);
+  update_focused_obj(Widgets.marker_type_begin, GINT_TO_POINTER(Widgets.marker_begin));
 }
 
 static void
