@@ -5362,6 +5362,8 @@ add_focus_obj(struct narray *focusobj, struct objlist *obj, int oid)
   focus->oid = oid;
   arrayadd(focusobj, &focus);
 
+  set_toolbox_mode(TOOLBOX_MODE_SETTING_PANEL);
+
   return TRUE;
 }
 
