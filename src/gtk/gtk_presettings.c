@@ -1199,12 +1199,6 @@ presetting_create_panel(GtkApplication *app)
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
   Widgets.path_type = w;
 
-  w = create_menu_button(builder, "stroke-fill-menu", _("stroke/fill"));
-  Widgets.stroke_fill = w;
-  Widgets.stroke = TRUE;
-  gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
-  set_stroke_fill_icon();
-
   w = gtk_button_new();
   g_signal_connect(w, "clicked", G_CALLBACK(select_mark), &(Widgets.mark));
   setup_mark_type(w, &(Widgets.mark));
@@ -1217,6 +1211,12 @@ presetting_create_panel(GtkApplication *app)
   gtk_widget_set_tooltip_text(w, _("Mark size"));
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
   Widgets.mark_size = w;
+
+  w = create_menu_button(builder, "stroke-fill-menu", _("stroke/fill"));
+  Widgets.stroke_fill = w;
+  Widgets.stroke = TRUE;
+  gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
+  set_stroke_fill_icon();
 
   w = create_line_width_combo_box();
   gtk_widget_set_tooltip_text(w, _("Line Width"));
