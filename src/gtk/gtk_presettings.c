@@ -655,6 +655,42 @@ update_focused_obj_width_axis(struct objlist *obj, N_VALUE *inst, int new_width)
   return modified;
 }
 
+static int
+update_focused_obj_width(GtkWidget *widget, struct Viewer *d, int num)
+{
+  struct FocusObj *focus;
+  N_VALUE *inst;
+  int i, modified, width;
+  struct objlist *obj;
+
+  modified = FALSE;
+  width = get_line_width_setting();
+  for (i = 0; i < num; i++) {
+    focus = *(struct FocusObj **) arraynget(d->focusobj, i);
+    if (focus == NULL) {
+      continue;
+    }
+    inst = chkobjinstoid(focus->obj, focus->oid);
+    if (inst == NULL)
+      continue;
+
+    obj = focus->obj;
+    if (chkobjfield(obj, "width")) {
+      continue;
+    }
+    if (obj == chkobject("axis")) {
+      if (update_focused_obj_width_axis(obj, inst, width)) {
+        modified = TRUE;
+      }
+    } else {
+      if (chk_update_field(obj, inst, "width", width)) {
+        modified = TRUE;
+      }
+    }
+  }
+  return modified;
+}
+
 static GtkWidget *
 create_line_width_combo_box(void)
 {
