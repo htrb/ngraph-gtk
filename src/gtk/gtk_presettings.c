@@ -309,7 +309,7 @@ presetting_set_obj_field(struct objlist *obj, int id)
 
   set_rgba(Widgets.color1, &r1, &g1, &b1, &a1);
   set_rgba(Widgets.color2, &r2, &g2, &b2, &a2);
-  width = (2 << combo_box_get_active(Widgets.line_width)) * 10;
+  width = get_line_width_setting();
 
   if (strcmp(name, "axis") == 0) {
     putobj(obj, "width", id, &width);
