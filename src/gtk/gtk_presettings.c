@@ -435,6 +435,28 @@ create_toggle_button(GtkWidget *box, GtkWidget *img, const char *tooltip, int st
 }
 
 void
+presetting_show_all(void)
+{
+  gtk_widget_set_visible(Widgets.stroke_fill,       TRUE);
+  gtk_widget_set_visible(Widgets.line_width,        TRUE);
+  gtk_widget_set_visible(Widgets.line_style,        TRUE);
+  gtk_widget_set_visible(Widgets.color1,            TRUE);
+  gtk_widget_set_visible(Widgets.color2,            TRUE);
+  gtk_widget_set_visible(Widgets.path_type,         TRUE);
+  gtk_widget_set_visible(Widgets.join_type,         TRUE);
+  gtk_widget_set_visible(Widgets.marker_type_begin, TRUE);
+  gtk_widget_set_visible(Widgets.marker_type_end,   TRUE);
+  gtk_widget_set_visible(Widgets.font,              TRUE);
+  gtk_widget_set_visible(Widgets.bold,              TRUE);
+  gtk_widget_set_visible(Widgets.italic,            TRUE);
+  gtk_widget_set_visible(Widgets.pt,                TRUE);
+  gtk_widget_set_visible(Widgets.mark_size,         TRUE);
+  gtk_widget_set_visible(Widgets.mark_type,         TRUE);
+  gtk_widget_set_visible(Widgets.mark_type_begin,   TRUE);
+  gtk_widget_set_visible(Widgets.mark_type_end,     TRUE);
+}
+
+void
 presetting_set_visibility(enum PointerType type)
 {
   switch (type) {
