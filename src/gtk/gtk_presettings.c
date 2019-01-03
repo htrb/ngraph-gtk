@@ -85,6 +85,7 @@ MarkerTypeEndAction_activated(GSimpleAction *action, GVariant *parameter, gpoint
 {
   Widgets.marker_end = check_selected_item(action, parameter, marker_type_char, Widgets.marker_type_end, Widgets.marker_end_icon);
   gtk_widget_set_sensitive(Widgets.mark_type_end, Widgets.marker_end == MARKER_TYPE_MARK);
+  update_focused_obj(Widgets.marker_type_end, GINT_TO_POINTER(Widgets.marker_end));
 }
 
 #define PATH_TYPE_STROKE 1
