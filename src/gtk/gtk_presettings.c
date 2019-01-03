@@ -618,6 +618,20 @@ create_mark_combo_box(const char *tooltop)
 }
 #endif
 
+static int
+chk_update_field(struct objlist *obj, N_VALUE *inst, const char *field, int new_val)
+{
+  int val;
+  if (_getobj(obj, field, inst, &val) == -1) {
+    return 0;
+  }
+  if (val == new_val) {
+    return 0;
+  }
+  _putobj(obj, field, inst, &new_val);
+  return 1;
+}
+
 static GtkWidget *
 create_line_width_combo_box(void)
 {
