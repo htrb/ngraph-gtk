@@ -651,6 +651,10 @@ static int
 chk_update_field(struct objlist *obj, N_VALUE *inst, const char *field, int new_val)
 {
   int val;
+
+  if (chkobjfield(obj, field)) {
+    return 0;
+  }
   if (_getobj(obj, field, inst, &val) == -1) {
     return 0;
   }
