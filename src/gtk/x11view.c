@@ -1951,7 +1951,7 @@ ShowFocusFrame(cairo_t *cr, const struct Viewer *d)
   restorestdio(&save);
 }
 
-static int
+int
 get_focused_obj_array(struct narray *focusobj, char **objs)
 {
   int i, j, obj_n, n, axis;
