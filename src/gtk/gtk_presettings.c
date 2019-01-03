@@ -107,6 +107,7 @@ set_stroke_fill_icon(void)
     i |= PATH_TYPE_CLOSE;
   }
   gtk_button_set_image(GTK_BUTTON(Widgets.stroke_fill), Widgets.stroke_fill_icon[i]);
+  update_focused_obj(Widgets.stroke_fill, GINT_TO_POINTER(i));
 }
 
 static void
