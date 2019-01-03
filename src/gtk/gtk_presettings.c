@@ -820,6 +820,34 @@ update_focused_obj_color2(GtkWidget *widget, struct Viewer *d, int num)
   return modified;
 }
 
+static int
+update_focused_obj_path_type(GtkWidget *widget, struct Viewer *d, int num)
+{
+  struct FocusObj *focus;
+  N_VALUE *inst;
+  int i, modified, id;
+  struct objlist *obj;
+
+  modified = FALSE;
+  for (i = 0; i < num; i++) {
+    focus = *(struct FocusObj **) arraynget(d->focusobj, i);
+    if (focus == NULL) {
+      continue;
+    }
+    inst = chkobjinstoid(focus->obj, focus->oid);
+    if (inst == NULL) {
+      continue;
+    }
+    obj = focus->obj;
+    _getobj(obj, "id", inst, &id);
+    if (obj == chkobject("path")) {
+      set_path_type(obj, id);
+      modified = TRUE;          /* really modified */
+    }
+  }
+  return modified;
+}
+
 static GtkWidget *
 create_line_width_combo_box(void)
 {
