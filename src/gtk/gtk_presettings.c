@@ -45,6 +45,8 @@ struct presetting_widgets
 
 static struct presetting_widgets Widgets = {NULL};
 
+static void update_focused_obj(GtkWidget *widget, gpointer user_data);
+
 static int
 check_selected_item(GSimpleAction *action, GVariant *parameter, char **item, GtkWidget *button, GtkWidget **icon)
 {
@@ -424,6 +426,7 @@ create_toggle_button(GtkWidget *box, GtkWidget *img, const char *tooltip, int st
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), state);
   gtk_widget_set_tooltip_text(w, tooltip);
+  g_signal_connect(w, "toggled", G_CALLBACK(update_focused_obj), NULL);
   return w;
 }
 
