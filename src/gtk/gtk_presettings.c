@@ -783,6 +783,43 @@ update_focused_obj_color1(GtkWidget *widget, struct Viewer *d, int num)
   return modified;
 }
 
+static int
+update_focused_obj_color2(GtkWidget *widget, struct Viewer *d, int num)
+{
+  struct FocusObj *focus;
+  N_VALUE *inst;
+  int i, modified, r, g, b, a;
+  struct objlist *obj;
+
+  modified = FALSE;
+  set_rgba(widget, &r, &g, &b, &a);
+  for (i = 0; i < num; i++) {
+    focus = *(struct FocusObj **) arraynget(d->focusobj, i);
+    if (focus == NULL) {
+      continue;
+    }
+    inst = chkobjinstoid(focus->obj, focus->oid);
+    if (inst == NULL) {
+      continue;
+    }
+    obj = focus->obj;
+    if (! chkobjfield(obj, "fill_R")) {
+      _putobj(obj, "fill_R", inst, &r);
+      _putobj(obj, "fill_G", inst, &g);
+      _putobj(obj, "fill_B", inst, &b);
+      _putobj(obj, "fill_A", inst, &a);
+      modified = TRUE;          /* really modified */
+    } else if (obj == chkobject("mark")) {
+      _putobj(obj, "R2", inst, &r);
+      _putobj(obj, "G2", inst, &g);
+      _putobj(obj, "B2", inst, &b);
+      _putobj(obj, "A2", inst, &a);
+      modified = TRUE;          /* really modified */
+    }
+  }
+  return modified;
+}
+
 static GtkWidget *
 create_line_width_combo_box(void)
 {
