@@ -486,6 +486,12 @@ presetting_show_all(void)
   gtk_widget_set_visible(Widgets.mark_type,         TRUE);
   gtk_widget_set_visible(Widgets.mark_type_begin,   TRUE);
   gtk_widget_set_visible(Widgets.mark_type_end,     TRUE);
+
+  num = arraynum(NgraphApp.Viewer.focusobj);
+  if (num < 1) {
+    return;
+  }
+  set_parameters(&NgraphApp.Viewer, num);
 }
 
 void
