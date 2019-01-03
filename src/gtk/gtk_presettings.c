@@ -972,6 +972,38 @@ update_focused_obj_stroke_fill(GtkWidget *widget, struct Viewer *d, int num, int
   return modified;
 }
 
+static int
+update_focused_obj_font_style(GtkWidget *widget, struct Viewer *d, int num, int style, int apply)
+{
+  struct FocusObj *focus;
+  N_VALUE *inst;
+  int i, modified;
+  struct objlist *obj;
+
+  modified = FALSE;
+  for (i = 0; i < num; i++) {
+    focus = *(struct FocusObj **) arraynget(d->focusobj, i);
+    if (focus == NULL) {
+      continue;
+    }
+    inst = chkobjinstoid(focus->obj, focus->oid);
+    if (inst == NULL) {
+      continue;
+    }
+    obj = focus->obj;
+    if (obj == chkobject("text")) {
+      if (modify_font_style(obj, inst, "style", style, apply)) {
+        modified = TRUE;
+      }
+    } else  if (obj == chkobject("axis")) {
+      if (modify_font_style(obj, inst, "num_font_style", style, apply)) {
+        modified = TRUE;
+      }
+    }
+  }
+  return modified;
+}
+
 static GtkWidget *
 create_line_width_combo_box(void)
 {
