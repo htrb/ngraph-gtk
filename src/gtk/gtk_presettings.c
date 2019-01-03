@@ -44,6 +44,7 @@ struct presetting_widgets
 };
 
 static struct presetting_widgets Widgets = {NULL};
+static int UpdateFieldsLock = TRUE;
 
 static void update_focused_obj(GtkWidget *widget, gpointer user_data);
 
