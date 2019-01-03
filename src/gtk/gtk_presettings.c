@@ -83,19 +83,23 @@ MarkerTypeEndAction_activated(GSimpleAction *action, GVariant *parameter, gpoint
   gtk_widget_set_sensitive(Widgets.mark_type_end, Widgets.marker_end == MARKER_TYPE_MARK);
 }
 
+#define PATH_TYPE_STROKE 1
+#define PATH_TYPE_FILL   2
+#define PATH_TYPE_CLOSE  4
+
 static void
 set_stroke_fill_icon(void)
 {
   int i;
   i = 0;
   if (Widgets.stroke) {
-    i |= 1;
+    i |= PATH_TYPE_STROKE;
   }
   if (Widgets.fill) {
-    i |= 2;
+    i |= PATH_TYPE_FILL;
   }
   if (Widgets.close_path) {
-    i |= 4;
+    i |= PATH_TYPE_CLOSE;
   }
   gtk_button_set_image(GTK_BUTTON(Widgets.stroke_fill), Widgets.stroke_fill_icon[i]);
 }
