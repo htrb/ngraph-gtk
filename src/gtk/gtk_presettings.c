@@ -287,6 +287,12 @@ set_path_type(struct objlist *obj, int id)
   }
 }
 
+static int
+get_line_width_setting(void)
+{
+  return (2 << combo_box_get_active(Widgets.line_width)) * 10;
+}
+
 void
 presetting_set_obj_field(struct objlist *obj, int id)
 {
