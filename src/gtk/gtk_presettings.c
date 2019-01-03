@@ -879,6 +879,37 @@ update_focused_obj_font(GtkWidget *widget, struct Viewer *d, int num)
   return modified;
 }
 
+static int
+update_focused_obj_font_size(GtkWidget *widget, struct Viewer *d, int num)
+{
+  struct FocusObj *focus;
+  N_VALUE *inst;
+  int i, modified, pt;
+  struct objlist *obj;
+
+  modified = FALSE;
+  pt = gtk_spin_button_get_value(GTK_SPIN_BUTTON(Widgets.pt)) * 100;
+  for (i = 0; i < num; i++) {
+    focus = *(struct FocusObj **) arraynget(d->focusobj, i);
+    if (focus == NULL) {
+      continue;
+    }
+    inst = chkobjinstoid(focus->obj, focus->oid);
+    if (inst == NULL) {
+      continue;
+    }
+    obj = focus->obj;
+    if (obj == chkobject("text")) {
+      _putobj(obj, "pt", inst, &pt);
+      modified = TRUE;          /* really modified */
+    } else if (obj == chkobject("axis")) {
+      _putobj(obj, "num_pt", inst, &pt);
+      modified = TRUE;          /* really modified */
+    }
+  }
+  return modified;
+}
+
 static GtkWidget *
 create_line_width_combo_box(void)
 {
