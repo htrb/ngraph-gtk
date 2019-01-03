@@ -69,6 +69,7 @@ static void
 JoinTypeAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
   Widgets.join = check_selected_item(action, parameter, joinchar, Widgets.join_type, Widgets.join_icon);
+  update_focused_obj(Widgets.join_type, GINT_TO_POINTER(Widgets.join));
 }
 
 static void
