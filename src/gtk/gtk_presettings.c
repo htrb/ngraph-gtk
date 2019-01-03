@@ -910,6 +910,36 @@ update_focused_obj_font_size(GtkWidget *widget, struct Viewer *d, int num)
   return modified;
 }
 
+static int
+update_focused_obj_field_value(GtkWidget *widget, struct Viewer *d, int num, const char *field, int value)
+{
+  struct FocusObj *focus;
+  N_VALUE *inst;
+  int i, modified, old_value;
+  struct objlist *obj;
+
+  modified = FALSE;
+  for (i = 0; i < num; i++) {
+    focus = *(struct FocusObj **) arraynget(d->focusobj, i);
+    if (focus == NULL) {
+      continue;
+    }
+    inst = chkobjinstoid(focus->obj, focus->oid);
+    if (inst == NULL) {
+      continue;
+    }
+    obj = focus->obj;
+    if (! chkobjfield(obj, field)) {
+      _getobj(obj, field, inst, &old_value);
+      if (value != old_value) {
+        _putobj(obj, field, inst, &value);
+        modified = TRUE;
+      }
+    }
+  }
+  return modified;
+}
+
 static GtkWidget *
 create_line_width_combo_box(void)
 {
