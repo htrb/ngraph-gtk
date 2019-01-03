@@ -5473,6 +5473,7 @@ UnFocus(void)
     arraydel2(d->points);
   }
 
+  set_toolbox_mode(TOOLBOX_MODE_TOOLBAR);
   gtk_widget_queue_draw(d->Win);
 }
 
