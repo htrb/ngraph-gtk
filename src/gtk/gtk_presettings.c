@@ -1101,6 +1101,7 @@ create_line_width_combo_box(void)
 		       -1);
   }
   gtk_combo_box_set_active(GTK_COMBO_BOX(cbox), 1);
+  g_signal_connect(cbox, "changed", G_CALLBACK(update_focused_obj), NULL);
   return cbox;
 }
 
