@@ -940,6 +940,38 @@ update_focused_obj_field_value(GtkWidget *widget, struct Viewer *d, int num, con
   return modified;
 }
 
+static int
+update_focused_obj_stroke_fill(GtkWidget *widget, struct Viewer *d, int num, int mode)
+{
+  struct FocusObj *focus;
+  N_VALUE *inst;
+  int i, modified, fill, stroke, close_path;
+  struct objlist *obj;
+
+  modified = FALSE;
+  stroke = (mode & PATH_TYPE_STROKE) ? 1 : 0;
+  fill = (mode & PATH_TYPE_FILL) ? 1 : 0;
+  close_path = (mode & PATH_TYPE_CLOSE) ? 1 : 0;
+  for (i = 0; i < num; i++) {
+    focus = *(struct FocusObj **) arraynget(d->focusobj, i);
+    if (focus == NULL) {
+      continue;
+    }
+    inst = chkobjinstoid(focus->obj, focus->oid);
+    if (inst == NULL) {
+      continue;
+    }
+    obj = focus->obj;
+    if (! chkobjfield(obj, "stroke")) {
+      _putobj(obj, "stroke", inst, &stroke);
+      _putobj(obj, "fill", inst, &fill);
+      _putobj(obj, "close_path", inst, &close_path);
+      modified = TRUE;          /* really modified ? */
+    }
+  }
+  return modified;
+}
+
 static GtkWidget *
 create_line_width_combo_box(void)
 {
