@@ -1046,6 +1046,10 @@ update_focused_obj(GtkWidget *widget, gpointer user_data)
   char *objs[OBJ_MAX];
   struct Viewer *d;
 
+  if (UpdateFieldsLock) {
+    return;
+  }
+
   modified = FALSE;
   d = &NgraphApp.Viewer;
   num = arraynum(d->focusobj);
