@@ -272,6 +272,13 @@ enum RerawFlag {
   DRAW_AXIS_ONLY = 4,
 };
 
+enum TOOLBOX_MODE {
+  TOOLBOX_MODE_TOOLBAR,
+  TOOLBOX_MODE_SETTING_PANEL,
+};
+
+void set_toolbox_mode(enum TOOLBOX_MODE mode);
+
 int application(char *file);
 
 void set_current_window(GtkWidget *w);

@@ -5513,6 +5513,22 @@ CmViewerButtonArm(GtkToggleToolButton *action, gpointer client_data)
   gtk_widget_queue_draw(d->Win);
 }
 
+void
+set_toolbox_mode(enum TOOLBOX_MODE mode)
+{
+  GtkWidget *widget;
+
+  switch (mode) {
+  case TOOLBOX_MODE_TOOLBAR:
+    widget = CToolbar;
+    break;
+  case TOOLBOX_MODE_SETTING_PANEL:
+    widget = SettingPanel;
+    break;
+  }
+  gtk_stack_set_visible_child(GTK_STACK(ToolBox), widget);
+}
+
 #define MODIFIED_TYPE_UNMODIFIED 0
 #define MODIFIED_TYPE_DRAWOBJ    1
 #define MODIFIED_TYPE_GRAOBJ     2
