@@ -995,11 +995,14 @@ update_focused_obj_stroke_fill(GtkWidget *widget, struct Viewer *d, int num, int
       continue;
     }
     obj = focus->obj;
-    if (! chkobjfield(obj, "stroke")) {
-      _putobj(obj, "stroke", inst, &stroke);
-      _putobj(obj, "fill", inst, &fill);
-      _putobj(obj, "close_path", inst, &close_path);
-      modified = TRUE;          /* really modified ? */
+    if (chk_update_field(obj, inst, "stroke", stroke)) {
+      modified = TRUE;
+    }
+    if (chk_update_field(obj, inst, "fill", fill)) {
+      modified = TRUE;
+    }
+    if (chk_update_field(obj, inst, "close_path", close_path)) {
+      modified = TRUE;
     }
   }
   return modified;
