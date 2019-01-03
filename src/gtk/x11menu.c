@@ -5467,39 +5467,39 @@ CmViewerButtonArm(GtkToggleToolButton *action, gpointer client_data)
   case PointB:
     DefaultMode = PointerModeBoth;
     NSetCursor(GDK_LEFT_PTR);
-    gtk_stack_set_visible_child(GTK_STACK(ToolBox), CToolbar);
+    set_toolbox_mode(TOOLBOX_MODE_TOOLBAR);
     break;
   case LegendB:
     DefaultMode = PointerModeLegend;
     NSetCursor(GDK_LEFT_PTR);
-    gtk_stack_set_visible_child(GTK_STACK(ToolBox), CToolbar);
+    set_toolbox_mode(TOOLBOX_MODE_TOOLBAR);
     break;
   case AxisB:
     DefaultMode = PointerModeAxis;
     NSetCursor(GDK_LEFT_PTR);
-    gtk_stack_set_visible_child(GTK_STACK(ToolBox), CToolbar);
+    set_toolbox_mode(TOOLBOX_MODE_TOOLBAR);
     break;
   case DataB:
     DefaultMode = PointerModeData;
     NSetCursor(GDK_LEFT_PTR);
-    gtk_stack_set_visible_child(GTK_STACK(ToolBox), CToolbar);
+    set_toolbox_mode(TOOLBOX_MODE_TOOLBAR);
     break;
   case TrimB:
   case EvalB:
     NSetCursor(GDK_LEFT_PTR);
-    gtk_stack_set_visible_child(GTK_STACK(ToolBox), CToolbar);
+    set_toolbox_mode(TOOLBOX_MODE_TOOLBAR);
     break;
   case TextB:
     NSetCursor(GDK_XTERM);
-    gtk_stack_set_visible_child(GTK_STACK(ToolBox), SettingPanel);
+    set_toolbox_mode(TOOLBOX_MODE_SETTING_PANEL);
     break;
   case ZoomB:
     NSetCursor(GDK_TARGET);
-    gtk_stack_set_visible_child(GTK_STACK(ToolBox), CToolbar);
+    set_toolbox_mode(TOOLBOX_MODE_TOOLBAR);
     break;
   default:
     NSetCursor(GDK_PENCIL);
-    gtk_stack_set_visible_child(GTK_STACK(ToolBox), SettingPanel);
+    set_toolbox_mode(TOOLBOX_MODE_SETTING_PANEL);
   }
   NgraphApp.Viewer.Mode = mode;
   NgraphApp.Viewer.Capture = FALSE;
