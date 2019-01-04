@@ -1,8 +1,10 @@
+#include <math.h>
 #include "gtk_common.h"
 #include "gtk_presettings.h"
 #include "gtk_combo.h"
 #include "gtk_widget.h"
 #include "object.h"
+#include "mathfn.h"
 #include "gra.h"
 #include "ogra2cairo.h"
 #include "odraw.h"
