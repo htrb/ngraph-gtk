@@ -1218,7 +1218,7 @@ update_focused_obj_field_value(GtkWidget *widget, struct Viewer *d, int num, con
 {
   struct FocusObj *focus;
   N_VALUE *inst;
-  int i, modified, old_value;
+  int i, modified, old_value, id;
   struct objlist *obj;
 
   modified = FALSE;
@@ -1235,7 +1235,8 @@ update_focused_obj_field_value(GtkWidget *widget, struct Viewer *d, int num, con
     if (! chkobjfield(obj, field)) {
       _getobj(obj, field, inst, &old_value);
       if (value != old_value) {
-        _putobj(obj, field, inst, &value);
+	_getobj(obj, "id", inst, &id);
+        putobj(obj, field, id, &value);
         modified = TRUE;
       }
     }
