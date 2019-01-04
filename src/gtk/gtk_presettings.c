@@ -458,7 +458,6 @@ widget_set_stroke_fill(struct objlist *obj, N_VALUE *inst)
   if (! chkobjfield(obj, "close_path")) {
     _getobj(obj, "close_path", inst, &(Widgets.close_path));
   }
-  set_stroke_fill_icon();
   set_boolean_action("StrokeFillStrokeAction",    Widgets.stroke);
   set_boolean_action("StrokeFillFillAction",      Widgets.fill);
   set_boolean_action("StrokeFillClosePathAction", Widgets.close_path);
