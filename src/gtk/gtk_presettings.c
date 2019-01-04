@@ -706,7 +706,6 @@ presetting_set_parameters(struct Viewer *d)
 void
 presetting_show_all(void)
 {
-  int num;
   gtk_widget_set_visible(Widgets.stroke_fill,       TRUE);
   gtk_widget_set_visible(Widgets.line_width,        TRUE);
   gtk_widget_set_visible(Widgets.line_style,        TRUE);
@@ -725,11 +724,7 @@ presetting_show_all(void)
   gtk_widget_set_visible(Widgets.mark_type_begin,   TRUE);
   gtk_widget_set_visible(Widgets.mark_type_end,     TRUE);
 
-  num = arraynum(NgraphApp.Viewer.focusobj);
-  if (num < 1) {
-    return;
-  }
-  set_parameters(&NgraphApp.Viewer, num);
+  presetting_set_parameters(&NgraphApp.Viewer);
 }
 
 void
