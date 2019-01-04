@@ -440,6 +440,17 @@ create_toggle_button(GtkWidget *box, GtkWidget *img, const char *tooltip, int st
 
 static void
 set_parameters(struct Viewer *d, int num)
+set_boolean_action(const char *name, int state)
+{
+  GAction *action;
+  action = g_action_map_lookup_action(G_ACTION_MAP(GtkApp), name);
+  if (action) {
+    GVariant *parameter;
+    parameter = g_variant_new_boolean(state);
+    g_action_change_state(action, parameter);
+  }
+}
+
 {
   struct FocusObj *focus;
   N_VALUE *inst;
