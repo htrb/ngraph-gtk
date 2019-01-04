@@ -488,6 +488,22 @@ widget_set_join(struct objlist *obj, N_VALUE *inst)
   set_action_widget(obj, inst, Widgets.join_type, "join", Widgets.join_icon, joinchar, "JoinTypeAction");
 }
 
+static void
+widget_set_line_width(struct objlist *obj, N_VALUE *inst)
+{
+  int width, index;
+  if (_getobj(obj, "width", inst, &width)) {
+    return;
+  }
+  index = nround(log(width / 10) / log(2)) - 1;
+  if (index >= LINE_WIDTH_ICON_NUM) {
+    index = LINE_WIDTH_ICON_NUM - 1;
+  } else if (index < 0) {
+    index = 0;
+  }
+  gtk_combo_box_set_active(GTK_COMBO_BOX(Widgets.line_width), index);
+}
+
 {
   struct FocusObj *focus;
   N_VALUE *inst;
