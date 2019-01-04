@@ -451,6 +451,20 @@ set_boolean_action(const char *name, int state)
   }
 }
 
+static void
+widget_set_stroke_fill(struct objlist *obj, N_VALUE *inst)
+{
+  _getobj(obj, "stroke", inst, &(Widgets.stroke));
+  _getobj(obj, "fill", inst, &(Widgets.fill));
+  if (! chkobjfield(obj, "close_path")) {
+    _getobj(obj, "close_path", inst, &(Widgets.close_path));
+  }
+  set_stroke_fill_icon();
+  set_boolean_action("StrokeFillStrokeAction",    Widgets.stroke);
+  set_boolean_action("StrokeFillFillAction",      Widgets.fill);
+  set_boolean_action("StrokeFillClosePathAction", Widgets.close_path);
+}
+
 {
   struct FocusObj *focus;
   N_VALUE *inst;
