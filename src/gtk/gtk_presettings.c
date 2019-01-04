@@ -242,7 +242,7 @@ set_font_style(struct objlist *obj, int id, const char *field)
 static int
 modify_font_style(struct objlist *obj, N_VALUE *inst, const char *field, int new_style, int apply)
 {
-  int style, old_style;
+  int style, old_style, id;
   if (chkobjfield(obj, field)) {
     return 0;
   }
@@ -252,7 +252,8 @@ modify_font_style(struct objlist *obj, N_VALUE *inst, const char *field, int new
   if (apply) {
     style |= new_style;
   }
-  _putobj(obj, field, inst, &style);
+  _getobj(obj, "id", inst, &id);
+  putobj(obj, field, id, &style);
   return (style != old_style);
 }
 
