@@ -1034,8 +1034,8 @@ SetObjFieldFromStyle(GtkWidget *w, struct objlist *Obj, int Id, char *field)
   return 0;
 }
 
-const char *
-get_style_string(struct objlist *obj, int id, char *field)
+int
+get_style_index(struct objlist *obj, int id, char *field)
 {
   unsigned int j;
   int i;
@@ -1057,12 +1057,14 @@ get_style_string(struct objlist *obj, int id, char *field)
 	}
       }
       if (i == FwLineStyle[j].num) {
-	return FwLineStyle[j].name;
+	return j;
       }
     }
   }
 
-  return NULL;
+  return -1;
+}
+
 }
 
 static void
