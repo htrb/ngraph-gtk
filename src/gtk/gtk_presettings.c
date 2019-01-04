@@ -618,6 +618,18 @@ check_font_index(const char *font)
   return 0;
 }
 
+static void
+widget_set_font(struct objlist *obj, N_VALUE *inst, const char *field)
+{
+  int index;
+  char *font;
+  if (_getobj(obj, field, inst, &font)) {
+    return;
+  }
+  index = check_font_index(font);
+  gtk_combo_box_set_active(GTK_COMBO_BOX(Widgets.font), index);
+}
+
 {
   struct FocusObj *focus;
   N_VALUE *inst;
