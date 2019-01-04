@@ -464,14 +464,13 @@ widget_set_stroke_fill(struct objlist *obj, N_VALUE *inst)
 }
 
 static void
-set_action_widget(struct objlist *obj, N_VALUE *inst, GtkWidget *button, const char *field, GtkWidget **icon, char **prm_str, const char *action_name)
+set_action_widget(struct objlist *obj, N_VALUE *inst, const char *field, char **prm_str, const char *action_name)
 {
   int type;
   GAction *action;
   if (_getobj(obj, field, inst, &type)) {
     return;
   }
-  gtk_button_set_image(GTK_BUTTON(button), icon[type]);
   action = g_action_map_lookup_action(G_ACTION_MAP(GtkApp), action_name);
   if (action) {
     GVariant *parameter;
