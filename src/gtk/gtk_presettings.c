@@ -553,6 +553,18 @@ widget_set_mark_type(struct objlist *obj, N_VALUE *inst, GtkWidget *button, cons
   button_set_mark_image(button, type);
 }
 
+static void
+widget_set_line_style(struct objlist *obj, N_VALUE *inst, char *field)
+{
+  int style, id;
+  _getobj(obj, "id", inst, &id);
+  style = get_style_index(obj, id, field);
+  if (style < 0) {
+    style = 0;
+  }
+  gtk_combo_box_set_active(GTK_COMBO_BOX(Widgets.line_style), style);
+}
+
 {
   struct FocusObj *focus;
   N_VALUE *inst;
