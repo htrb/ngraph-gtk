@@ -67,6 +67,7 @@ int putobj_color2(GtkWidget *w, struct objlist *obj, int id);
 int putobj_fill_color(GtkWidget *w, struct objlist *obj, int id);
 int putobj_stroke_color(GtkWidget *w, struct objlist *obj, int id);
 int chk_sputobjfield(struct objlist *obj, int id, char *field, char *str);
+int get_style_index(struct objlist *obj, int id, char *field);
 const char *get_style_string(struct objlist *obj, int id, char *field);
 
 #define DIALOG_PROTOTYPE GtkWidget *parent, *widget, *focus;	\
