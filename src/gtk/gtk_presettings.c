@@ -565,6 +565,19 @@ widget_set_line_style(struct objlist *obj, N_VALUE *inst, char *field)
   gtk_combo_box_set_active(GTK_COMBO_BOX(Widgets.line_style), style);
 }
 
+static void
+widget_set_path_type(struct objlist *obj, N_VALUE *inst)
+{
+  int type;
+  _getobj(obj, "type", inst, &type);
+  if (type) {
+    int interpolation;
+    _getobj(obj, "interpolation", inst, &interpolation);
+    type = interpolation + 1;
+  }
+  gtk_combo_box_set_active(GTK_COMBO_BOX(Widgets.path_type), type);
+}
+
 {
   struct FocusObj *focus;
   N_VALUE *inst;
