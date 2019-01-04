@@ -524,7 +524,7 @@ widget_set_rgba_color(struct objlist *obj, N_VALUE *inst, GtkWidget *button, con
 static void
 widget_set_marker_type_begin(struct objlist *obj, N_VALUE *inst)
 {
-  set_action_widget(obj, inst, Widgets.marker_type_begin, "marker_begin", Widgets.marker_begin_icon, marker_type_char, "MarkerTypeBeginAction");
+  set_action_widget(obj, inst, "marker_begin", marker_type_char, "MarkerTypeBeginAction");
 }
 
 static void
