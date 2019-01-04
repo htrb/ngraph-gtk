@@ -921,7 +921,7 @@ create_mark_combo_box(const char *tooltop)
 static int
 chk_update_field(struct objlist *obj, N_VALUE *inst, const char *field, int new_val)
 {
-  int val;
+  int val, id;
 
   if (chkobjfield(obj, field)) {
     return 0;
@@ -932,7 +932,8 @@ chk_update_field(struct objlist *obj, N_VALUE *inst, const char *field, int new_
   if (val == new_val) {
     return 0;
   }
-  _putobj(obj, field, inst, &new_val);
+  _getobj(obj, "id", inst, &id);
+  putobj(obj, field, id, &new_val);
   return 1;
 }
 
