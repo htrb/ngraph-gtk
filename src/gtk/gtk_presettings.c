@@ -504,6 +504,26 @@ widget_set_line_width(struct objlist *obj, N_VALUE *inst)
   gtk_combo_box_set_active(GTK_COMBO_BOX(Widgets.line_width), index);
 }
 
+static void
+widget_set_rgba_color(struct objlist *obj, N_VALUE *inst, GtkWidget *button, const char *prefix, const char *postfix)
+{
+  char field[256], *color_str[] = {"R", "G", "B", "A"};
+  int color[4], i;
+  GdkRGBA gcolor;
+
+  for (i = 0; i < (int) G_N_ELEMENTS(color); i++) {
+    snprintf(field, sizeof(field), "%s%s%s", (prefix) ? prefix : "", color_str[i], (postfix) ? postfix : "");
+    if (_getobj(obj, field, inst, color + i)) {
+      return;
+    }
+  }
+  gcolor.red   = color[0] / 255.0;
+  gcolor.green = color[1] / 255.0;
+  gcolor.blue  = color[2] / 255.0;
+  gcolor.alpha = color[3] / 255.0;
+  gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(button), &gcolor);
+}
+
 {
   struct FocusObj *focus;
   N_VALUE *inst;
