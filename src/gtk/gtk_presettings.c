@@ -1510,6 +1510,7 @@ presetting_create_panel(GtkApplication *app)
 
   img = gtk_image_new_from_icon_name("format-text-italic-symbolic", GTK_ICON_SIZE_BUTTON);
   Widgets.italic = create_toggle_button(box, img,  _("Italic"), FALSE);
+  gtk_widget_set_margin_end(Widgets.italic, SETTING_PANEL_MARGIN * 4);
 
   w = create_path_type_combo_box();
   gtk_widget_set_margin_end(w, SETTING_PANEL_MARGIN * 4);
