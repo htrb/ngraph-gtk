@@ -1369,7 +1369,7 @@ update_focused_obj(GtkWidget *widget, gpointer user_data)
   } else if (widget == Widgets.mark_size) {
     int size;
     size = gtk_spin_button_get_value(GTK_SPIN_BUTTON(Widgets.mark_size)) * 100;
-    modified = update_focused_obj_field_value(widget, d, num, "mark_type_end", size);
+    modified = update_focused_obj_field_value(widget, d, num, "size", size);
   }
   if (modified) {
     set_graph_modified();
