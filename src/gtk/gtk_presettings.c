@@ -482,7 +482,7 @@ set_action_widget(struct objlist *obj, N_VALUE *inst, const char *field, char **
 static void
 widget_set_join(struct objlist *obj, N_VALUE *inst)
 {
-  set_action_widget(obj, inst, Widgets.join_type, "join", Widgets.join_icon, joinchar, "JoinTypeAction");
+  set_action_widget(obj, inst, "join", joinchar, "JoinTypeAction");
 }
 
 static void
