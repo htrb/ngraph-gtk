@@ -482,6 +482,12 @@ set_action_widget(struct objlist *obj, N_VALUE *inst, GtkWidget *button, const c
   }
 }
 
+static void
+widget_set_join(struct objlist *obj, N_VALUE *inst)
+{
+  set_action_widget(obj, inst, Widgets.join_type, "join", Widgets.join_icon, joinchar, "JoinTypeAction");
+}
+
 {
   struct FocusObj *focus;
   N_VALUE *inst;
