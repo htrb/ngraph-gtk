@@ -1065,6 +1065,16 @@ get_style_index(struct objlist *obj, int id, char *field)
   return -1;
 }
 
+const char *
+get_style_string(struct objlist *obj, int id, char *field)
+{
+  int i;
+
+  i = get_style_index(obj, id, field);
+  if (i < 0) {
+    return NULL;
+  }
+  return FwLineStyle[i].name;
 }
 
 static void
