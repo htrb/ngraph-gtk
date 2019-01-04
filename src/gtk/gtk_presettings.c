@@ -578,6 +578,14 @@ widget_set_path_type(struct objlist *obj, N_VALUE *inst)
   gtk_combo_box_set_active(GTK_COMBO_BOX(Widgets.path_type), type);
 }
 
+static void
+widget_set_spin_value(struct objlist *obj, N_VALUE *inst, GtkWidget *spin, const char *field)
+{
+  int val;
+  _getobj(obj, field, inst, &val);
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin), val / 100.0);
+}
+
 {
   struct FocusObj *focus;
   N_VALUE *inst;
