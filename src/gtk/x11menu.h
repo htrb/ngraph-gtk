@@ -232,7 +232,7 @@ extern struct NgraphApp NgraphApp;
 extern GtkWidget *TopLevel;
 extern GdkColor white, gray;
 extern GtkAccelGroup *AccelGroup;
-#if USE_GTK_BUILDER
+#if USE_APP_MENU
 extern GtkApplication *GtkApp;
 #endif
 
