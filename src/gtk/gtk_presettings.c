@@ -586,6 +586,17 @@ widget_set_spin_value(struct objlist *obj, N_VALUE *inst, GtkWidget *spin, const
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin), val / 100.0);
 }
 
+static void
+widget_set_font_style(struct objlist *obj, N_VALUE *inst, const char *field)
+{
+  int style, bold, italic;
+  _getobj(obj, field, inst, &style);
+  bold = (style & GRA_FONT_STYLE_BOLD) ? 1 : 0;
+  italic = (style & GRA_FONT_STYLE_ITALIC) ? 1 : 0;
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(Widgets.bold), bold);
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(Widgets.italic), italic);
+}
+
 {
   struct FocusObj *focus;
   N_VALUE *inst;
