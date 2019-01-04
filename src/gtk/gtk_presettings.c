@@ -439,7 +439,6 @@ create_toggle_button(GtkWidget *box, GtkWidget *img, const char *tooltip, int st
 }
 
 static void
-set_parameters(struct Viewer *d, int num)
 set_boolean_action(const char *name, int state)
 {
   GAction *action;
@@ -630,11 +629,18 @@ widget_set_font(struct objlist *obj, N_VALUE *inst, const char *field)
   gtk_combo_box_set_active(GTK_COMBO_BOX(Widgets.font), index);
 }
 
+void
+presetting_set_parameters(struct Viewer *d)
 {
   struct FocusObj *focus;
   N_VALUE *inst;
-  int i;
+  int i, num;
   struct objlist *obj;
+
+  num = arraynum(d->focusobj);
+  if (num < 1) {
+    return;
+  }
 
   UpdateFieldsLock = TRUE;
   for (i = 0; i < num; i++) {
@@ -648,11 +654,50 @@ widget_set_font(struct objlist *obj, N_VALUE *inst, const char *field)
     }
     obj = focus->obj;
     if (obj == chkobject("axis")) {
+      widget_set_line_width(obj, inst);
+      widget_set_rgba_color(obj, inst, Widgets.color1, NULL, NULL);
+      widget_set_line_style(obj, inst, "style");
+      widget_set_font_style(obj, inst, "num_font_style");
+      widget_set_spin_value(obj, inst, Widgets.pt, "num_pt");
+      widget_set_font(obj, inst, "num_font");
     } else if (obj == chkobject("path")) {
+      widget_set_stroke_fill(obj, inst);
+      widget_set_join(obj, inst);
+      widget_set_line_width(obj, inst);
+      widget_set_rgba_color(obj, inst, Widgets.color1, "stroke_", NULL);
+      widget_set_rgba_color(obj, inst, Widgets.color2, "fill_", NULL);
+      widget_set_marker_type(obj, inst);
+      widget_set_mark_type(obj, inst, Widgets.mark_type_begin, "mark_type_begin");
+      widget_set_mark_type(obj, inst, Widgets.mark_type_end, "mark_type_end");
+      widget_set_line_style(obj, inst, "style");
+      widget_set_path_type(obj, inst);
     } else if (obj == chkobject("rectangle")) {
+      widget_set_stroke_fill(obj, inst);
+      widget_set_line_width(obj, inst);
+      widget_set_rgba_color(obj, inst, Widgets.color1, "stroke_", NULL);
+      widget_set_rgba_color(obj, inst, Widgets.color2, "fill_", NULL);
+      widget_set_line_style(obj, inst, "style");
     } else if (obj == chkobject("text")) {
+      widget_set_font_style(obj, inst, "style");
+      widget_set_spin_value(obj, inst, Widgets.pt, "pt");
+      widget_set_font(obj, inst, "font");
     } else if (obj == chkobject("arc")) {
+      widget_set_stroke_fill(obj, inst);
+      widget_set_join(obj, inst);
+      widget_set_line_width(obj, inst);
+      widget_set_rgba_color(obj, inst, Widgets.color1, "stroke_", NULL);
+      widget_set_rgba_color(obj, inst, Widgets.color2, "fill_", NULL);
+      widget_set_marker_type(obj, inst);
+      widget_set_mark_type(obj, inst, Widgets.mark_type_begin, "mark_type_begin");
+      widget_set_mark_type(obj, inst, Widgets.mark_type_end, "mark_type_end");
+      widget_set_line_style(obj, inst, "style");
     } else if (obj == chkobject("mark")) {
+      widget_set_line_width(obj, inst);
+      widget_set_rgba_color(obj, inst, Widgets.color1, NULL, NULL);
+      widget_set_rgba_color(obj, inst, Widgets.color2, NULL, "2");
+      widget_set_mark_type(obj, inst, Widgets.mark_type, "type");
+      widget_set_line_style(obj, inst, "style");
+      widget_set_spin_value(obj, inst, Widgets.mark_size, "size");
     }
   }
   UpdateFieldsLock = FALSE;
