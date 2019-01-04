@@ -465,6 +465,23 @@ widget_set_stroke_fill(struct objlist *obj, N_VALUE *inst)
   set_boolean_action("StrokeFillClosePathAction", Widgets.close_path);
 }
 
+static void
+set_action_widget(struct objlist *obj, N_VALUE *inst, GtkWidget *button, const char *field, GtkWidget **icon, char **prm_str, const char *action_name)
+{
+  int type;
+  GAction *action;
+  if (_getobj(obj, field, inst, &type)) {
+    return;
+  }
+  gtk_button_set_image(GTK_BUTTON(button), icon[type]);
+  action = g_action_map_lookup_action(G_ACTION_MAP(GtkApp), action_name);
+  if (action) {
+    GVariant *parameter;
+    parameter = g_variant_new_string(prm_str[type]);
+    g_action_change_state(action, parameter);
+  }
+}
+
 {
   struct FocusObj *focus;
   N_VALUE *inst;
