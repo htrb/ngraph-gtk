@@ -530,6 +530,12 @@ widget_set_marker_type_begin(struct objlist *obj, N_VALUE *inst)
   set_action_widget(obj, inst, Widgets.marker_type_begin, "marker_begin", Widgets.marker_begin_icon, marker_type_char, "MarkerTypeBeginAction");
 }
 
+static void
+widget_set_marker_type_end(struct objlist *obj, N_VALUE *inst)
+{
+  set_action_widget(obj, inst, Widgets.marker_type_end, "marker_end", Widgets.marker_end_icon, marker_type_char, "MarkerTypeEndAction");
+}
+
 {
   struct FocusObj *focus;
   N_VALUE *inst;
