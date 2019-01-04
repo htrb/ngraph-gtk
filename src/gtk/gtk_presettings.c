@@ -597,6 +597,27 @@ widget_set_font_style(struct objlist *obj, N_VALUE *inst, const char *field)
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(Widgets.italic), italic);
 }
 
+static int
+check_font_index(const char *font)
+{
+  int i;
+  struct fontmap *fcur;
+
+  if (font == NULL) {
+    return 0;
+  }
+  fcur = Gra2cairoConf->fontmap_list_root;
+  i = 0;
+  while (fcur) {
+    if (strcmp(font, fcur->fontalias) == 0) {
+      return i;
+    }
+    i++;
+    fcur = fcur->next;
+  }
+  return 0;
+}
+
 {
   struct FocusObj *focus;
   N_VALUE *inst;
