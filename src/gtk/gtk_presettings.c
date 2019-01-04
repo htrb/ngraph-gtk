@@ -530,7 +530,7 @@ widget_set_marker_type_begin(struct objlist *obj, N_VALUE *inst)
 static void
 widget_set_marker_type_end(struct objlist *obj, N_VALUE *inst)
 {
-  set_action_widget(obj, inst, Widgets.marker_type_end, "marker_end", Widgets.marker_end_icon, marker_type_char, "MarkerTypeEndAction");
+  set_action_widget(obj, inst, "marker_end", marker_type_char, "MarkerTypeEndAction");
 }
 
 static void
