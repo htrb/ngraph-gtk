@@ -5004,15 +5004,9 @@ application(char *file)
   int terminated;
 
   if (TopLevel) {
-#if GTK_CHECK_VERSION(3, 8, 0)
     if (gtk_widget_is_visible(TopLevel)) {
       return 1;
     }
-#else
-    if (GTK_WIDGET_VISIBLE(TopLevel)) {
-      return 1;
-    }
-#endif
     gtk_widget_show(TopLevel);
     OpenGC();
     OpenGRA();
