@@ -508,9 +508,7 @@ _create_spin_entry(enum SPIN_BUTTON_TYPE type, double min, double max,
 
   if (set_default_size) {
     gtk_entry_set_width_chars(GTK_ENTRY(w), NUM_ENTRY_WIDTH);
-#if GTK_CHECK_VERSION(3, 12, 0)
     gtk_entry_set_max_width_chars(GTK_ENTRY(w), NUM_ENTRY_WIDTH);
-#endif
   }
 
   if (set_default_action) {
