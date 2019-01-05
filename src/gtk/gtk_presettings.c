@@ -464,7 +464,7 @@ widget_set_stroke_fill(struct objlist *obj, N_VALUE *inst)
 }
 
 static void
-set_action_widget(struct objlist *obj, N_VALUE *inst, const char *field, char **prm_str, const char *action_name)
+set_radio_action(struct objlist *obj, N_VALUE *inst, const char *field, char **prm_str, const char *action_name)
 {
   int type;
   GAction *action;
@@ -482,7 +482,7 @@ set_action_widget(struct objlist *obj, N_VALUE *inst, const char *field, char **
 static void
 widget_set_join(struct objlist *obj, N_VALUE *inst)
 {
-  set_action_widget(obj, inst, "join", joinchar, "JoinTypeAction");
+  set_radio_action(obj, inst, "join", joinchar, "JoinTypeAction");
 }
 
 static void
@@ -524,13 +524,13 @@ widget_set_rgba_color(struct objlist *obj, N_VALUE *inst, GtkWidget *button, con
 static void
 widget_set_marker_type_begin(struct objlist *obj, N_VALUE *inst)
 {
-  set_action_widget(obj, inst, "marker_begin", marker_type_char, "MarkerTypeBeginAction");
+  set_radio_action(obj, inst, "marker_begin", marker_type_char, "MarkerTypeBeginAction");
 }
 
 static void
 widget_set_marker_type_end(struct objlist *obj, N_VALUE *inst)
 {
-  set_action_widget(obj, inst, "marker_end", marker_type_char, "MarkerTypeEndAction");
+  set_radio_action(obj, inst, "marker_end", marker_type_char, "MarkerTypeEndAction");
 }
 
 static void
