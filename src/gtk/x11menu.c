@@ -4714,16 +4714,7 @@ create_menu_sub(GtkWidget *parent, struct MenuItem *item, int popup)
       widget = gtk_separator_menu_item_new();
       break;
     case MENU_TYPE_NORMAL:
-#if GTK_CHECK_VERSION(3, 10, 0)
       widget = gtk_menu_item_new_with_mnemonic(_(item[i].label));
-#else
-      widget = gtk_image_menu_item_new_with_mnemonic(_(item[i].label));
-      if (item[i].icon) {
-	GtkWidget *icon;
-	icon = gtk_image_new_from_icon_name(item[i].icon, GTK_ICON_SIZE_MENU);
-	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(widget), icon);
-      }
-#endif
       break;
     case MENU_TYPE_TOGGLE:
     case MENU_TYPE_TOGGLE2:
