@@ -657,11 +657,7 @@ static struct MenuItem HelpMenu[] = {
     N_("_Help"),
     NULL,
     N_("Show the help document"),
-#if GTK_CHECK_VERSION(3, 10, 0)
     "help-browser",
-#else
-    NULL,
-#endif
     "<Ngraph>/Help/Help",
     GDK_KEY_F1,
     0,
