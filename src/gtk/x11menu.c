@@ -1261,11 +1261,7 @@ static struct MenuItem AxisMenu[] = {
     N_("Scale _Undo"),
     N_("Scale Undo"),
     N_("Undo Scale Settings"),
-#if GTK_CHECK_VERSION(3, 10, 0)
     "edit-undo",
-#else
-    NGRAPH_UNDO_ICON,
-#endif
     "<Ngraph>/Axis/Scale Undo",
     0,
     0,
