@@ -232,9 +232,7 @@ extern struct NgraphApp NgraphApp;
 extern GtkWidget *TopLevel;
 extern GdkColor white, gray;
 extern GtkAccelGroup *AccelGroup;
-#if USE_APP_MENU
 extern GtkApplication *GtkApp;
-#endif
 
 enum MENU_UNDO_TYPE {
   UNDO_TYPE_EDIT,
