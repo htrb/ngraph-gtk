@@ -15,11 +15,6 @@
 void
 set_button_icon(GtkWidget *w, const char *icon_name)
 {
-#if ! GTK_CHECK_VERSION(3, 12, 0)
-  GtkWidget *icon;
-  icon = gtk_image_new_from_icon_name(icon_name, GTK_ICON_SIZE_BUTTON);
-  gtk_button_set_image(GTK_BUTTON(w), icon);
-#endif
 }
 
 void
