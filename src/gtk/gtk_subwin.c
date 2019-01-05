@@ -137,7 +137,7 @@ start_editing_enum(GtkCellEditable *editable, struct obj_list_data *d, n_list_st
   g_signal_connect(cbox, "changed", G_CALLBACK(select_enum), d);
 }
 
-#if GTK_CHECK_VERSION(3, 8, 0) && ! GTK_CHECK_VERSION(3, 18, 0)
+#if ! GTK_CHECK_VERSION(3, 18, 0)
 static void
 spin_button_size_allocated(GtkWidget *widget, GdkRectangle *allocation, gpointer user_data)
 {
@@ -217,7 +217,7 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
   case G_TYPE_DOUBLE:
   case G_TYPE_INT:
     if (GTK_IS_SPIN_BUTTON(editable)) {
-#if GTK_CHECK_VERSION(3, 8, 0) && ! GTK_CHECK_VERSION(3, 18, 0)
+#if ! GTK_CHECK_VERSION(3, 18, 0)
       g_signal_connect(editable, "size-allocate", G_CALLBACK(spin_button_size_allocated), NULL);
 #endif
       gtk_entry_set_alignment(GTK_ENTRY(editable), 1.0);
