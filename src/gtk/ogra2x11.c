@@ -385,12 +385,7 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   g_signal_connect(gtklocal->mainwin, "size-allocate",
 		   G_CALLBACK(size_allocate), gtklocal);
 
-#if GTK_CHECK_VERSION(3, 8, 0)
   gtk_container_add(GTK_CONTAINER(scrolled_window), gtklocal->View);
-#else
-  gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW
-					(scrolled_window), gtklocal->View);
-#endif
 
   gtk_widget_show_all(gtklocal->mainwin);
 
