@@ -1821,7 +1821,7 @@ GRAmark_rotate(int GC,int type,int x0,int y0, double dx, double dy, int size,
       po[1] = y0;
       po[2] = x0+size/2;
       po[3] = y0;
-      GRArotate(x0, y0, po, rpo, 4, dx, dy);
+      GRArotate(x0, y0, po, rpo, 2, dx, dy);
       GRAline(GC,x0-size/2,y0,x0+size/2,y0);
       break;
     case 79:
@@ -1830,7 +1830,7 @@ GRAmark_rotate(int GC,int type,int x0,int y0, double dx, double dy, int size,
       po[1] = y0-size/2;
       po[2] = x0;
       po[3] = y0+size/2;
-      GRArotate(x0, y0, po, rpo, 4, dx, dy);
+      GRArotate(x0, y0, po, rpo, 2, dx, dy);
       GRAline(GC, rpo[0], rpo[1], rpo[2], rpo[3]);
       break;
     case 80:
