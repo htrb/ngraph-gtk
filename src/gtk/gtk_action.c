@@ -14,7 +14,6 @@
 #include "x11view.h"
 #include "ox11menu.h"
 
-#if USE_APP_MENU
 static void
 help_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
@@ -803,4 +802,3 @@ create_application_window(GtkWidget **popup)
 
   return app;
 }
-#endif	/* USE_APP_MENU */
