@@ -20,7 +20,6 @@ set_button_icon(GtkWidget *w, const char *icon_name)
 void
 set_widget_margin(GtkWidget *w, int margin_pos)
 {
-#if GTK_CHECK_VERSION(3, 12, 0)
   if (margin_pos & WIDGET_MARGIN_LEFT) {
     gtk_widget_set_margin_start(w, 4);
   }
@@ -28,15 +27,6 @@ set_widget_margin(GtkWidget *w, int margin_pos)
   if (margin_pos & WIDGET_MARGIN_RIGHT) {
     gtk_widget_set_margin_end(w, 4);
   }
-#else
-  if (margin_pos & WIDGET_MARGIN_LEFT) {
-    gtk_widget_set_margin_left(w, 4);
-  }
-
-  if (margin_pos & WIDGET_MARGIN_RIGHT) {
-    gtk_widget_set_margin_right(w, 4);
-  }
-#endif
 
   if (margin_pos & WIDGET_MARGIN_BOTTOM) {
     gtk_widget_set_margin_bottom(w, 4);
