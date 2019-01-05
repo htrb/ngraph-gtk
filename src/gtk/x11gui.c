@@ -127,7 +127,7 @@ DialogExecute(GtkWidget *parent, void *dialog)
   if (data->widget == NULL) {
     dlg = gtk_dialog_new_with_buttons(_(data->resource),
 				      GTK_WINDOW(parent),
-#if GTK_CHECK_VERSION(3, 12, 0) && USE_HEADER_BAR
+#if USE_HEADER_BAR
 				      GTK_DIALOG_USE_HEADER_BAR |
 #endif
 				      GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -347,7 +347,7 @@ DialogInput(GtkWidget * parent, const char *title, const char *mes, const char *
 
   dlg = gtk_dialog_new_with_buttons(title,
 				    GTK_WINDOW(parent),
-#if GTK_CHECK_VERSION(3, 12, 0) && USE_HEADER_BAR
+#if USE_HEADER_BAR
 				    GTK_DIALOG_USE_HEADER_BAR |
 #endif
 				    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -415,7 +415,7 @@ DialogRadio(GtkWidget *parent, const char *title, const char *caption, struct na
 
   dlg = gtk_dialog_new_with_buttons(title,
 				    GTK_WINDOW(parent),
-#if GTK_CHECK_VERSION(3, 12, 0) && USE_HEADER_BAR
+#if USE_HEADER_BAR
 				    GTK_DIALOG_USE_HEADER_BAR |
 #endif
 				    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -551,7 +551,7 @@ DialogCombo(GtkWidget *parent, const char *title, const char *caption, struct na
 
   dlg = gtk_dialog_new_with_buttons(title,
 				    GTK_WINDOW(parent),
-#if GTK_CHECK_VERSION(3, 12, 0) && USE_HEADER_BAR
+#if USE_HEADER_BAR
 				    GTK_DIALOG_USE_HEADER_BAR |
 #endif
 				    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -627,7 +627,7 @@ DialogComboEntry(GtkWidget *parent, const char *title, const char *caption, stru
 
   dlg = gtk_dialog_new_with_buttons(title,
 				    GTK_WINDOW(parent),
-#if GTK_CHECK_VERSION(3, 12, 0) && USE_HEADER_BAR
+#if USE_HEADER_BAR
 				    GTK_DIALOG_USE_HEADER_BAR |
 #endif
 				    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -697,7 +697,7 @@ DialogSpinEntry(GtkWidget *parent, const char *title, const char *caption, doubl
 
   dlg = gtk_dialog_new_with_buttons(title,
 				    GTK_WINDOW(parent),
-#if GTK_CHECK_VERSION(3, 12, 0) && USE_HEADER_BAR
+#if USE_HEADER_BAR
 				    GTK_DIALOG_USE_HEADER_BAR |
 #endif
 				    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -776,7 +776,7 @@ DialogCheck(GtkWidget *parent, const char *title, const char *caption, struct na
 
   dlg = gtk_dialog_new_with_buttons(title,
 				    GTK_WINDOW(parent),
-#if GTK_CHECK_VERSION(3, 12, 0) && USE_HEADER_BAR
+#if USE_HEADER_BAR
 				    GTK_DIALOG_USE_HEADER_BAR |
 #endif
 				    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
