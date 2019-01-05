@@ -82,9 +82,7 @@ static GtkWidget *CurrentWindow = NULL, *CToolbar = NULL, *PToolbar = NULL, *Set
 static enum {APP_CONTINUE, APP_QUIT, APP_QUIT_FORCE} Hide_window = APP_CONTINUE;
 static int DrawLock = FALSE;
 static unsigned int CursorType;
-#if USE_APP_MENU
 GtkApplication *GtkApp;
-#endif
 
 #if USE_EXT_DRIVER
 static GtkWidget *ExtDrvOutMenu = NULL
@@ -4832,12 +4830,10 @@ create_toplevel_window(void)
 #else
   GdkScreen *screen;
 #endif
-#if USE_APP_MENU
   GtkWidget *popup;
 #if USE_GTK_BUILDER
   GtkClipboard *clip;
 #endif	/* USE_GTK_BUILDER */
-#endif	/* USE_APP_MENU */
 
   NgraphApp.recent_manager = gtk_recent_manager_get_default();
 
@@ -4885,7 +4881,6 @@ create_toplevel_window(void)
 
   load_hist();
 
-#if USE_APP_MENU
   GtkApp = create_application_window(&popup);
   CurrentWindow = TopLevel = gtk_application_window_new(GtkApp);
   gtk_window_set_modal(GTK_WINDOW(TopLevel), TRUE); /* for the GtkColorButton (modal GtkColorChooserDialog) */
@@ -4899,9 +4894,6 @@ create_toplevel_window(void)
 #else	/* USE_GTK_BUILDER */
   gtk_application_window_set_show_menubar(GTK_APPLICATION_WINDOW(TopLevel),FALSE);
 #endif	/* USE_GTK_BUILDER */
-#else  /* USE_APP_MENU */
-  CurrentWindow = TopLevel = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-#endif	/* USE_APP_MENU */
 
   gtk_window_set_title(GTK_WINDOW(TopLevel), AppName);
   gtk_window_set_default_size(GTK_WINDOW(TopLevel), width, height);
