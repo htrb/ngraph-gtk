@@ -1085,11 +1085,7 @@ label_sub_window_create(struct SubWin *d)
 
   swin = gtk_scrolled_window_new(NULL, NULL);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-#if GTK_CHECK_VERSION(3, 8, 0)
   gtk_container_add(GTK_CONTAINER(swin), label);
-#else
-  gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(swin), label);
-#endif
   d->Win = swin;
 
   return swin;
