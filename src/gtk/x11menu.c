@@ -2361,11 +2361,7 @@ static struct MenuItem GraphMenu[] = {
     N_("Page Set_up"),
     NULL,
     NULL,
-#if GTK_CHECK_VERSION(3, 10, 0)
     "document-page-setup",
-#else
-    NULL,
-#endif
     "<Ngraph>/Graph/Page",
     0,
     0,
