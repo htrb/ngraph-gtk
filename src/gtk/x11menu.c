@@ -614,11 +614,7 @@ static struct ToolItem CommandToolbar[] = {
     N_("Scale _Undo"),
     N_("Scale Undo"),
     N_("Undo Scale Settings"),
-#if GTK_CHECK_VERSION(3, 10, 0)
     "edit-undo-symbolic",
-#else
-    NGRAPH_UNDO_ICON,
-#endif
     NULL,
     0,
     0,
