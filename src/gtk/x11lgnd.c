@@ -1953,11 +1953,6 @@ create_character_view(GtkWidget *entry, gchar *data)
   GtkListStore *model;
   GtkTreeIter iter;
   gchar *ptr;
-#if ! GTK_CHECK_VERSION(3, 8, 0)
-  PangoLayout *layout;
-  PangoRectangle ink_rect;
-  int width = 0, w;
-#endif
 
   model = gtk_list_store_new(1, G_TYPE_STRING);
   icon_view = gtk_icon_view_new_with_model(GTK_TREE_MODEL(model));
@@ -1967,9 +1962,6 @@ create_character_view(GtkWidget *entry, gchar *data)
   gtk_icon_view_set_column_spacing(GTK_ICON_VIEW(icon_view), 0);
   gtk_icon_view_set_margin(GTK_ICON_VIEW(icon_view), 0);
   gtk_icon_view_set_item_padding(GTK_ICON_VIEW(icon_view), 0);
-#if ! GTK_CHECK_VERSION(3, 8, 0)
-  gtk_icon_view_set_columns(GTK_ICON_VIEW(icon_view), 24);
-#endif
   g_signal_connect(icon_view, "item-activated", G_CALLBACK(insert_selcted_char), entry);
 
   for (ptr = data; *ptr; ptr = g_utf8_next_char(ptr)) {
@@ -1982,29 +1974,12 @@ create_character_view(GtkWidget *entry, gchar *data)
     l = g_unichar_to_utf8(ch, str);
     str[l] = '\0';
     gtk_list_store_set(model, &iter, 0, str, -1);
-
-#if ! GTK_CHECK_VERSION(3, 8, 0)
-    /* fix-me: there exist extra spaces both side of strings when use GTK+3.0 */
-    layout = gtk_widget_create_pango_layout(icon_view, str);
-    pango_layout_get_pixel_extents(layout, &ink_rect, NULL);
-    w = ink_rect.x + ink_rect.width;
-    if (w > width) {
-      width = w;
-    }
-    g_object_unref(layout);
-#endif
   }
-
-#if ! GTK_CHECK_VERSION(3, 8, 0)
-  gtk_icon_view_set_item_width(GTK_ICON_VIEW(icon_view), width * 1.5);
-#endif
 
   swin = gtk_scrolled_window_new(NULL, NULL);
 
-#if GTK_CHECK_VERSION(3, 8, 0)
   gtk_icon_view_set_activate_on_single_click(GTK_ICON_VIEW(icon_view),TRUE);
   gtk_widget_set_size_request(GTK_WIDGET(swin), -1, 100);
-#endif
 
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
   gtk_container_add(GTK_CONTAINER(swin), icon_view);
