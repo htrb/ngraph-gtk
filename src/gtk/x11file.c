@@ -2790,6 +2790,7 @@ button_set_mark_image(GtkWidget *w, int type)
     pixbuf = gdk_pixbuf_get_from_surface(NgraphApp.markpix[type],
 					 0, 0, MARK_PIX_SIZE, MARK_PIX_SIZE);
     img = gtk_image_new_from_pixbuf(pixbuf);
+    g_object_unref(pixbuf);
     if (img) {
       gtk_button_set_image(GTK_BUTTON(w), img);
     }
