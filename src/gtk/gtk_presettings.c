@@ -1051,9 +1051,9 @@ update_focused_obj_line_style(GtkWidget *widget, struct Viewer *d, int num)
       continue;
     }
     if (obj == chkobject("axis")) {
-      sputobjfield(obj, id, "gauge_style", style_str);
-      sputobjfield(obj, id, "style", style_str);
-      modified = TRUE;          /* really modified */
+      if (update_focused_obj_line_style_axis(obj, inst, style_str)) {
+        modified = TRUE;
+      }
     } else {
       sputobjfield(obj, id, "style", style_str);
       modified = TRUE;          /* really modified */
