@@ -1259,6 +1259,26 @@ update_focused_obj_font(GtkWidget *widget, struct Viewer *d, int num)
 }
 
 static int
+update_focused_obj_font_size_axis(struct objlist *obj, N_VALUE *inst, int pt)
+{
+  int modified;
+  struct AxisGroupInfo info;
+  int i;
+
+  modified = FALSE;
+  if (axis_get_group(obj, inst,  &info)) {
+    return modified;
+  }
+
+  for (i = 0; i < info.num; i++) {
+    if (chk_update_field(obj, info.inst[i], "num_pt", pt)) {
+      modified = TRUE;
+    }
+  }
+  return modified;
+}
+
+static int
 update_focused_obj_font_size(GtkWidget *widget, struct Viewer *d, int num)
 {
   struct FocusObj *focus;
