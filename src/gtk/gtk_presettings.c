@@ -327,6 +327,7 @@ presetting_set_obj_field(struct objlist *obj, int id)
     putobj(obj, "gauge_width1", id, &width);
     putobj(obj, "gauge_width2", id, &width);
     putobj(obj, "gauge_width3", id, &width);
+    putobj(obj, "wave_width", id, &width);
     putobj(obj, "R", id, &r1);
     putobj(obj, "G", id, &g1);
     putobj(obj, "B", id, &b1);
