@@ -939,22 +939,28 @@ chk_update_field(struct objlist *obj, N_VALUE *inst, const char *field, int new_
 static int
 update_focused_obj_width_axis(struct objlist *obj, N_VALUE *inst, int new_width)
 {
-  char *group;
   int modified;
+  struct AxisGroupInfo info;
+  int i;
 
   modified = FALSE;
-  _getobj(obj, "group", inst, &group);
-  if (chk_update_field(obj, inst, "width", new_width)) {
-    modified = TRUE;
+  if (axis_get_group(obj, inst,  &info)) {
+    return modified;
   }
-  if (chk_update_field(obj, inst, "gauge_width1", new_width)) {
-    modified = TRUE;
-  }
-  if (chk_update_field(obj, inst, "gauge_width2", new_width)) {
-    modified = TRUE;
-  }
-  if (chk_update_field(obj, inst, "gauge_width3", new_width)) {
-    modified = TRUE;
+
+  for (i = 0; i < info.num; i++) {
+    if (chk_update_field(obj, info.inst[i], "width", new_width)) {
+      modified = TRUE;
+    }
+    if (chk_update_field(obj, info.inst[i], "gauge_width1", new_width)) {
+      modified = TRUE;
+    }
+    if (chk_update_field(obj, info.inst[i], "gauge_width2", new_width)) {
+      modified = TRUE;
+    }
+    if (chk_update_field(obj, info.inst[i], "gauge_width3", new_width)) {
+      modified = TRUE;
+    }
   }
   return modified;
 }
