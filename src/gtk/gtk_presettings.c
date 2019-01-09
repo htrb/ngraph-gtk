@@ -962,6 +962,9 @@ update_focused_obj_width_axis(struct objlist *obj, N_VALUE *inst, int new_width)
     if (chk_update_field(obj, info.inst[i], "gauge_width3", new_width)) {
       modified = TRUE;
     }
+    if (chk_update_field(obj, info.inst[i], "wave_width", new_width)) {
+      modified = TRUE;
+    }
   }
   return modified;
 }
