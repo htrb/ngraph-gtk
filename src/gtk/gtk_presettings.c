@@ -1374,6 +1374,26 @@ update_focused_obj_stroke_fill(GtkWidget *widget, struct Viewer *d, int num, int
 }
 
 static int
+update_focused_obj_font_style_axis(struct objlist *obj, N_VALUE *inst, int style, int apply)
+{
+  int modified;
+  struct AxisGroupInfo info;
+  int i;
+
+  modified = FALSE;
+  if (axis_get_group(obj, inst,  &info)) {
+    return modified;
+  }
+
+  for (i = 0; i < info.num; i++) {
+    if (modify_font_style(obj, info.inst[i], "num_font_style", style, apply)) {
+      modified = TRUE;
+    }
+  }
+  return modified;
+}
+
+static int
 update_focused_obj_font_style(GtkWidget *widget, struct Viewer *d, int num, int style, int apply)
 {
   struct FocusObj *focus;
