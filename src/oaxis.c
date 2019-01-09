@@ -19,6 +19,7 @@
 #include "gra.h"
 #include "oroot.h"
 #include "odraw.h"
+#include "oaxis.h"
 #include "olegend.h"
 #include "axis.h"
 #include "nstring.h"
@@ -3801,6 +3802,52 @@ axissave(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
     break;
   }
   return r;
+}
+
+int
+axis_get_group(struct objlist *obj, N_VALUE *inst,  struct AxisGroupInfo *info)
+{
+  int i, lastinst, n;
+  char *group, *group2;
+  N_VALUE *inst2;
+  char group3[20];
+
+  if (_getobj(obj, "group", inst, &group)) {
+    return 1;
+  }
+
+  if (group == NULL || group[0] == 'a') {
+    int id;
+    _getobj(obj, "id", inst, &id);
+    info->type = 'a';
+    info->num = 1;
+    info->inst[0] = inst;
+    info->id[0] = id;
+    return 0;
+  }
+
+  lastinst = chkobjlastinst(obj);
+  info->type = group[0];
+  strncpy(group3, group, sizeof(group3) - 1);
+  group3[sizeof(group3) - 1] = '\0';
+
+  n = 0;
+  for (i = lastinst; i >= 0; i--) {
+    inst2 = chkobjinst(obj, i);
+    _getobj(obj, "group", inst2, &group2);
+    if (group2 &&
+        group2[0] == info->type &&
+        strcmp(group3 + 2, group2 + 2) == 0) {
+      info->id[n] = i;
+      info->inst[n] = inst2;
+      n++;
+      if (n >= AXIS_GROUPE_NUM_MAX) {
+        break;
+      }
+    }
+  }
+  info->num = n;
+  return 0;
 }
 
 static int
