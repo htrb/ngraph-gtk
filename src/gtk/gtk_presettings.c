@@ -1002,6 +1002,26 @@ update_focused_obj_width(GtkWidget *widget, struct Viewer *d, int num)
 }
 
 static int
+update_focused_obj_line_style_axis(struct objlist *obj, N_VALUE *inst, char *style_str)
+{
+  int modified;
+  struct AxisGroupInfo info;
+  int i;
+
+  modified = FALSE;
+  if (axis_get_group(obj, inst,  &info)) {
+    return modified;
+  }
+
+  for (i = 0; i < info.num; i++) {
+    sputobjfield(obj, info.id[i], "gauge_style", style_str);
+    sputobjfield(obj, info.id[i], "style", style_str);
+    modified = TRUE;          /* really modified */
+  }
+  return modified;
+}
+
+static int
 update_focused_obj_line_style(GtkWidget *widget, struct Viewer *d, int num)
 {
   struct FocusObj *focus;
