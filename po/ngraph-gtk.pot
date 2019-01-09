@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.08.00\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2019-01-06 11:25+0900\n"
+"POT-Creation-Date: 2019-01-09 18:43+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -51,7 +51,7 @@ msgid "Save file"
 msgstr ""
 
 #: src/gtk/ogra2cairo.c:45 src/gtk/x11axis.c:1108 src/gtk/x11axis.c:2160
-#: src/odraw.c:80 src/odraw.c:88 src/oaxis.c:75 src/oaxis.c:90
+#: src/odraw.c:80 src/odraw.c:88 src/oaxis.c:76 src/oaxis.c:91
 msgid "none"
 msgstr ""
 
@@ -1289,7 +1289,7 @@ msgstr ""
 msgid "Making data file."
 msgstr ""
 
-#: src/gtk/x11file.c:5994 src/gtk/x11lgnd.c:3046 src/gtk/gtk_presettings.c:1565
+#: src/gtk/x11file.c:5994 src/gtk/x11lgnd.c:3046 src/gtk/gtk_presettings.c:1674
 msgid "Join"
 msgstr ""
 
@@ -1553,11 +1553,11 @@ msgstr ""
 msgid "_Color2:"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:1390 src/gtk/gtk_presettings.c:1576
+#: src/gtk/x11lgnd.c:1390 src/gtk/gtk_presettings.c:1685
 msgid "Marker begin"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:1394 src/gtk/gtk_presettings.c:1582
+#: src/gtk/x11lgnd.c:1394 src/gtk/gtk_presettings.c:1691
 msgid "Marker end"
 msgstr ""
 
@@ -2476,7 +2476,7 @@ msgstr ""
 msgid "top"
 msgstr ""
 
-#: src/gtk/x11merge.c:54 src/oaxis.c:77 src/oaxis.c:91 src/oaxis.c:104
+#: src/gtk/x11merge.c:54 src/oaxis.c:78 src/oaxis.c:92 src/oaxis.c:105
 msgid "left"
 msgstr ""
 
@@ -2601,7 +2601,7 @@ msgstr ""
 msgid "Alternative font"
 msgstr ""
 
-#: src/gtk/x11opt.c:867 src/gtk/gtk_presettings.c:1493
+#: src/gtk/x11opt.c:867 src/gtk/gtk_presettings.c:1602
 msgid "Font name"
 msgstr ""
 
@@ -2901,11 +2901,11 @@ msgstr ""
 msgid "Instance name"
 msgstr ""
 
-#: src/gtk/gtk_liststore.c:162 src/gtk/gtk_presettings.c:1507
+#: src/gtk/gtk_liststore.c:162 src/gtk/gtk_presettings.c:1616
 msgid "Bold"
 msgstr ""
 
-#: src/gtk/gtk_liststore.c:163 src/gtk/gtk_presettings.c:1510
+#: src/gtk/gtk_liststore.c:163 src/gtk/gtk_presettings.c:1619
 msgid "Italic"
 msgstr ""
 
@@ -2913,27 +2913,27 @@ msgstr ""
 msgid "Line style"
 msgstr ""
 
-#: src/gtk/gtk_presettings.c:1435 src/odata.c:196 src/opath.c:81
+#: src/gtk/gtk_presettings.c:1544 src/odata.c:196 src/opath.c:81
 msgid "line"
 msgstr ""
 
-#: src/gtk/gtk_presettings.c:1501
+#: src/gtk/gtk_presettings.c:1610
 msgid "Font size"
 msgstr ""
 
-#: src/gtk/gtk_presettings.c:1527
+#: src/gtk/gtk_presettings.c:1636
 msgid "Mark size"
 msgstr ""
 
-#: src/gtk/gtk_presettings.c:1532
+#: src/gtk/gtk_presettings.c:1641
 msgid "stroke/fill"
 msgstr ""
 
-#: src/gtk/gtk_presettings.c:1539
+#: src/gtk/gtk_presettings.c:1648
 msgid "Line Width"
 msgstr ""
 
-#: src/gtk/gtk_presettings.c:1544
+#: src/gtk/gtk_presettings.c:1653
 msgid "Line Style"
 msgstr ""
 
@@ -4251,7 +4251,7 @@ msgstr ""
 msgid "begin"
 msgstr ""
 
-#: src/odraw.c:83 src/oaxis.c:76
+#: src/odraw.c:83 src/oaxis.c:77
 msgid "both"
 msgstr ""
 
@@ -4287,71 +4287,71 @@ msgstr ""
 msgid "bspline_close"
 msgstr ""
 
-#: src/oaxis.c:67
+#: src/oaxis.c:68
 msgid "linear"
 msgstr ""
 
-#: src/oaxis.c:68 src/ofit.c:88
+#: src/oaxis.c:69 src/ofit.c:88
 msgid "log"
 msgstr ""
 
-#: src/oaxis.c:69
+#: src/oaxis.c:70
 msgid "inverse"
 msgstr ""
 
-#: src/oaxis.c:70
+#: src/oaxis.c:71
 msgid "MJD"
 msgstr ""
 
-#: src/oaxis.c:78 src/oaxis.c:92 src/oaxis.c:105
+#: src/oaxis.c:79 src/oaxis.c:93 src/oaxis.c:106
 msgid "right"
 msgstr ""
 
-#: src/oaxis.c:103
+#: src/oaxis.c:104
 msgid "center"
 msgstr ""
 
-#: src/oaxis.c:106
+#: src/oaxis.c:107
 msgid "point"
 msgstr ""
 
-#: src/oaxis.c:119
+#: src/oaxis.c:120
 msgid "regular"
 msgstr ""
 
-#: src/oaxis.c:120
+#: src/oaxis.c:121
 msgid "no_zero"
 msgstr ""
 
-#: src/oaxis.c:121
+#: src/oaxis.c:122
 msgid "no_floating_point"
 msgstr ""
 
-#: src/oaxis.c:135
+#: src/oaxis.c:136
 msgid "horizontal"
 msgstr ""
 
-#: src/oaxis.c:136
+#: src/oaxis.c:137
 msgid "parallel1"
 msgstr ""
 
-#: src/oaxis.c:137
+#: src/oaxis.c:138
 msgid "parallel2"
 msgstr ""
 
-#: src/oaxis.c:138
+#: src/oaxis.c:139
 msgid "normal1"
 msgstr ""
 
-#: src/oaxis.c:139
+#: src/oaxis.c:140
 msgid "normal2"
 msgstr ""
 
-#: src/oaxis.c:140
+#: src/oaxis.c:141
 msgid "oblique1"
 msgstr ""
 
-#: src/oaxis.c:141
+#: src/oaxis.c:142
 msgid "oblique2"
 msgstr ""
 
