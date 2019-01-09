@@ -1209,6 +1209,25 @@ update_focused_obj_path_type(GtkWidget *widget, struct Viewer *d, int num)
 }
 
 static int
+update_focused_obj_font_axis(struct objlist *obj, N_VALUE *inst)
+{
+  int modified;
+  struct AxisGroupInfo info;
+  int i;
+
+  modified = FALSE;
+  if (axis_get_group(obj, inst,  &info)) {
+    return modified;
+  }
+
+  for (i = 0; i < info.num; i++) {
+    set_font(obj, info.id[i], "num_font");
+    modified = TRUE;          /* really modified */
+  }
+  return modified;
+}
+
+static int
 update_focused_obj_font(GtkWidget *widget, struct Viewer *d, int num)
 {
   struct FocusObj *focus;
