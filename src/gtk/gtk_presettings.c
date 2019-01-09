@@ -1241,8 +1241,9 @@ update_focused_obj_font(GtkWidget *widget, struct Viewer *d, int num)
       set_font(obj, id, "font");
       modified = TRUE;          /* really modified */
     } else if (obj == chkobject("axis")) {
-      set_font(obj, id, "num_font");
-      modified = TRUE;          /* really modified */
+      if (update_focused_obj_font_axis(obj, inst)) {
+        modified = TRUE;
+      }
     }
   }
   return modified;
