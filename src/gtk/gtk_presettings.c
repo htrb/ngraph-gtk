@@ -1063,6 +1063,36 @@ update_focused_obj_line_style(GtkWidget *widget, struct Viewer *d, int num)
 }
 
 static int
+update_focused_obj_color1_axis(struct objlist *obj, N_VALUE *inst, int r, int g, int b, int a)
+{
+  int modified;
+  struct AxisGroupInfo info;
+  int i;
+
+  modified = FALSE;
+  if (axis_get_group(obj, inst,  &info)) {
+    return modified;
+  }
+
+  for (i = 0; i < info.num; i++) {
+    _putobj(obj, "R", info.inst[i], &r);
+    _putobj(obj, "G", info.inst[i], &g);
+    _putobj(obj, "B", info.inst[i], &b);
+    _putobj(obj, "A", info.inst[i], &a);
+    _putobj(obj, "gauge_R", info.inst[i], &r);
+    _putobj(obj, "gauge_G", info.inst[i], &g);
+    _putobj(obj, "gauge_B", info.inst[i], &b);
+    _putobj(obj, "gauge_A", info.inst[i], &a);
+    _putobj(obj, "num_R", info.inst[i], &r);
+    _putobj(obj, "num_G", info.inst[i], &g);
+    _putobj(obj, "num_B", info.inst[i], &b);
+    _putobj(obj, "num_A", info.inst[i], &a);
+    modified = TRUE;          /* really modified */
+  }
+  return modified;
+}
+
+static int
 update_focused_obj_color1(GtkWidget *widget, struct Viewer *d, int num)
 {
   struct FocusObj *focus;
