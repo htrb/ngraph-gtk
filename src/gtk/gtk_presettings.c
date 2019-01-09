@@ -1125,19 +1125,9 @@ update_focused_obj_color1(GtkWidget *widget, struct Viewer *d, int num)
       _putobj(obj, "A", inst, &a);
       modified = TRUE;          /* really modified */
     } else if (obj == chkobject("axis")) {
-      _putobj(obj, "R", inst, &r);
-      _putobj(obj, "G", inst, &g);
-      _putobj(obj, "B", inst, &b);
-      _putobj(obj, "A", inst, &a);
-      _putobj(obj, "gauge_R", inst, &r);
-      _putobj(obj, "gauge_G", inst, &g);
-      _putobj(obj, "gauge_B", inst, &b);
-      _putobj(obj, "gauge_A", inst, &a);
-      _putobj(obj, "num_R", inst, &r);
-      _putobj(obj, "num_G", inst, &g);
-      _putobj(obj, "num_B", inst, &b);
-      _putobj(obj, "num_A", inst, &a);
-      modified = TRUE;          /* really modified */
+      if (update_focused_obj_color1_axis(obj, inst,r, g, b, a)) {
+        modified = TRUE;
+      }
     }
   }
   return modified;
