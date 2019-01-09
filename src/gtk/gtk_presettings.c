@@ -8,6 +8,7 @@
 #include "gra.h"
 #include "ogra2cairo.h"
 #include "odraw.h"
+#include "oaxis.h"
 #include "x11view.h"
 #include "x11menu.h"
 #include "x11dialg.h"
