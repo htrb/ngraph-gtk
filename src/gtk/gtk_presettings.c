@@ -1410,7 +1410,7 @@ update_focused_obj_font_style(GtkWidget *widget, struct Viewer *d, int num, int 
         modified = TRUE;
       }
     } else  if (obj == chkobject("axis")) {
-      if (modify_font_style(obj, inst, "num_font_style", style, apply)) {
+      if (update_focused_obj_font_style_axis(obj, inst, style, apply)) {
         modified = TRUE;
       }
     }
