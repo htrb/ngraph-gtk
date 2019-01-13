@@ -938,6 +938,20 @@ chk_update_field(struct objlist *obj, N_VALUE *inst, const char *field, int new_
   return 1;
 }
 
+typedef int (* AXISGRID_CALLBACK)(struct objlist *, N_VALUE *, void *);
+
+static int
+check_axis_id(struct AxisGroupInfo *info, int id)
+{
+  int i;
+  for (i = 0; i < info->num; i++) {
+    if (info->id[i] == id) {
+      return 1;
+    }
+  }
+  return 0;
+}
+
 static int
 update_focused_obj_width_axis(struct objlist *obj, N_VALUE *inst, int new_width)
 {
