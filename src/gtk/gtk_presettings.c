@@ -1017,7 +1017,8 @@ update_focused_obj_width_axis(struct objlist *obj, N_VALUE *inst, int new_width)
 {
   int modified;
   struct AxisGroupInfo info;
-  int i;
+  int i, j;
+  char *fields[] = {"width", "gauge_width1", "gauge_width2", "gauge_width3", "wave_width"};
 
   modified = FALSE;
   if (axis_get_group(obj, inst,  &info)) {
@@ -1025,20 +1026,10 @@ update_focused_obj_width_axis(struct objlist *obj, N_VALUE *inst, int new_width)
   }
 
   for (i = 0; i < info.num; i++) {
-    if (chk_update_field(obj, info.inst[i], "width", new_width)) {
-      modified = TRUE;
-    }
-    if (chk_update_field(obj, info.inst[i], "gauge_width1", new_width)) {
-      modified = TRUE;
-    }
-    if (chk_update_field(obj, info.inst[i], "gauge_width2", new_width)) {
-      modified = TRUE;
-    }
-    if (chk_update_field(obj, info.inst[i], "gauge_width3", new_width)) {
-      modified = TRUE;
-    }
-    if (chk_update_field(obj, info.inst[i], "wave_width", new_width)) {
-      modified = TRUE;
+    for (j = 0; j < (int) G_N_ELEMENTS(fields); j++) {
+      if (chk_update_field(obj, info.inst[i], fields[j], new_width)) {
+	modified = TRUE;
+      }
     }
   }
   if (check_axisgrid(obj, &info, set_axisgrid_width, &new_width)) {
