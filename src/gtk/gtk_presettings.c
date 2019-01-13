@@ -1041,6 +1041,9 @@ update_focused_obj_width_axis(struct objlist *obj, N_VALUE *inst, int new_width)
       modified = TRUE;
     }
   }
+  if (check_axisgrid(obj, &info, set_axisgrid_width, &new_width)) {
+    modified = TRUE;
+  }
   return modified;
 }
 
