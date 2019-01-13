@@ -995,6 +995,24 @@ check_axisgrid(struct objlist *aobj, struct AxisGroupInfo *info, AXISGRID_CALLBA
 }
 
 static int
+set_axisgrid_width(struct objlist *obj, N_VALUE *inst, void *user_data)
+{
+  int width, pw, modified, i;
+  char *fields[] = {"width3", "width2", "width1"};
+  modified = FALSE;
+  width = * (int *) user_data;
+  for (i = 0; i < (int) G_N_ELEMENTS(fields); i++) {
+    width /= 2;
+    _getobj(obj, fields[i], inst, &pw);
+    if (pw > 0 && pw != width) {
+      _putobj(obj, fields[i], inst, &width);
+      modified = TRUE;
+    }
+  }
+  return modified;
+}
+
+static int
 update_focused_obj_width_axis(struct objlist *obj, N_VALUE *inst, int new_width)
 {
   int modified;
