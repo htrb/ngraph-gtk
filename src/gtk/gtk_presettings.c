@@ -953,6 +953,48 @@ check_axis_id(struct AxisGroupInfo *info, int id)
 }
 
 static int
+check_axisgrid(struct objlist *aobj, struct AxisGroupInfo *info, AXISGRID_CALLBACK cb, void *usr_data)
+{
+  int i, n, aid, r;
+  struct objlist *obj;
+  N_VALUE *inst;
+
+  if (cb == NULL){
+    return 0;
+  }
+
+  obj = getobject("axisgrid");
+  if (obj == NULL) {
+    return 0;
+  }
+
+  r = 0;
+  n = chkobjlastinst(obj);
+  if (n < 0) {
+    return 0;
+  }
+  n++;
+  for (i = 0; i < n; i++) {
+    inst = chkobjinst(obj, i);
+    if (inst == NULL) {
+      continue;
+    }
+
+    aid = get_axis_id(obj, inst, &aobj, AXIS_X);
+    if (check_axis_id(info, aid)) {
+      r = cb(obj, inst, usr_data);
+      continue;
+    }
+
+    aid = get_axis_id(obj, inst, &aobj, AXIS_Y);
+    if (check_axis_id(info, aid)) {
+      r = cb(obj, inst, usr_data);
+    }
+  }
+  return r;
+}
+
+static int
 update_focused_obj_width_axis(struct objlist *obj, N_VALUE *inst, int new_width)
 {
   int modified;
