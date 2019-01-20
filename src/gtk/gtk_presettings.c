@@ -82,24 +82,24 @@ check_selected_item(GSimpleAction *action, GVariant *parameter, char **item, Gtk
 static void
 JoinTypeAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  Widgets.join = check_selected_item(action, parameter, joinchar, Widgets.join_type, Widgets.join_icon);
-  update_focused_obj(Widgets.join_type, GINT_TO_POINTER(Widgets.join));
+  Widgets.join = check_selected_item(action, parameter, joinchar, Widgets.join_type.widget, Widgets.join_icon);
+  update_focused_obj(Widgets.join_type.widget, GINT_TO_POINTER(Widgets.join));
 }
 
 static void
 MarkerTypeBeginAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  Widgets.marker_begin = check_selected_item(action, parameter, marker_type_char, Widgets.marker_type_begin, Widgets.marker_begin_icon);
-  gtk_widget_set_sensitive(Widgets.mark_type_begin, Widgets.marker_begin == MARKER_TYPE_MARK);
-  update_focused_obj(Widgets.marker_type_begin, GINT_TO_POINTER(Widgets.marker_begin));
+  Widgets.marker_begin = check_selected_item(action, parameter, marker_type_char, Widgets.marker_type_begin.widget, Widgets.marker_begin_icon);
+  gtk_widget_set_sensitive(Widgets.mark_type_begin.widget, Widgets.marker_begin == MARKER_TYPE_MARK);
+  update_focused_obj(Widgets.marker_type_begin.widget, GINT_TO_POINTER(Widgets.marker_begin));
 }
 
 static void
 MarkerTypeEndAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  Widgets.marker_end = check_selected_item(action, parameter, marker_type_char, Widgets.marker_type_end, Widgets.marker_end_icon);
-  gtk_widget_set_sensitive(Widgets.mark_type_end, Widgets.marker_end == MARKER_TYPE_MARK);
-  update_focused_obj(Widgets.marker_type_end, GINT_TO_POINTER(Widgets.marker_end));
+  Widgets.marker_end = check_selected_item(action, parameter, marker_type_char, Widgets.marker_type_end.widget, Widgets.marker_end_icon);
+  gtk_widget_set_sensitive(Widgets.mark_type_end.widget, Widgets.marker_end == MARKER_TYPE_MARK);
+  update_focused_obj(Widgets.marker_type_end.widget, GINT_TO_POINTER(Widgets.marker_end));
 }
 
 #define PATH_TYPE_STROKE 1
@@ -120,8 +120,8 @@ set_stroke_fill_icon(void)
   if (Widgets.close_path) {
     i |= PATH_TYPE_CLOSE;
   }
-  gtk_button_set_image(GTK_BUTTON(Widgets.stroke_fill), Widgets.stroke_fill_icon[i]);
-  update_focused_obj(Widgets.stroke_fill, GINT_TO_POINTER(i));
+  gtk_button_set_image(GTK_BUTTON(Widgets.stroke_fill.widget), Widgets.stroke_fill_icon[i]);
+  update_focused_obj(Widgets.stroke_fill.widget, GINT_TO_POINTER(i));
 }
 
 static void
@@ -238,8 +238,8 @@ static void
 set_font_style(struct objlist *obj, int id, const char *field)
 {
   int style, bold, italic;
-  bold = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(Widgets.bold));
-  italic = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(Widgets.italic));
+  bold = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(Widgets.bold.widget));
+  italic = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(Widgets.italic.widget));
   style = 0;
   if (bold) {
     style |= GRA_FONT_STYLE_BOLD;
@@ -272,7 +272,7 @@ static void
 set_font(struct objlist *obj, int id, const char *field)
 {
   char *fontalias;
-  fontalias = combo_box_get_active_text(Widgets.font);
+  fontalias = combo_box_get_active_text(Widgets.font.widget);
   if (fontalias) {
     putobj(obj, field, id, fontalias);
   }
@@ -284,12 +284,12 @@ set_text_obj(struct objlist *obj, int id)
   int r, g, b, a, pt;
   set_font_style(obj, id, "style");
   set_font(obj, id, "font");
-  set_rgba(Widgets.color1, &r, &g, &b, &a);
+  set_rgba(Widgets.color1.widget, &r, &g, &b, &a);
   putobj(obj, "R", id, &r);
   putobj(obj, "G", id, &g);
   putobj(obj, "B", id, &b);
   putobj(obj, "A", id, &a);
-  pt = gtk_spin_button_get_value(GTK_SPIN_BUTTON(Widgets.pt)) * 100;
+  pt = gtk_spin_button_get_value(GTK_SPIN_BUTTON(Widgets.pt.widget)) * 100;
   putobj(obj, "pt", id, &pt);
 }
 
@@ -297,7 +297,7 @@ static void
 set_path_type(struct objlist *obj, int id)
 {
   int type, interpolation;
-  type = combo_box_get_active(Widgets.path_type);
+  type = combo_box_get_active(Widgets.path_type.widget);
   if (type == 0) {
     putobj(obj, "type", id, &type);
   } else {
@@ -311,7 +311,7 @@ set_path_type(struct objlist *obj, int id)
 static int
 get_line_width_setting(void)
 {
-  return (2 << combo_box_get_active(Widgets.line_width)) * 10;
+  return (2 << combo_box_get_active(Widgets.line_width.widget)) * 10;
 }
 
 void
@@ -328,8 +328,8 @@ presetting_set_obj_field(struct objlist *obj, int id)
     return;
   }
 
-  set_rgba(Widgets.color1, &r1, &g1, &b1, &a1);
-  set_rgba(Widgets.color2, &r2, &g2, &b2, &a2);
+  set_rgba(Widgets.color1.widget, &r1, &g1, &b1, &a1);
+  set_rgba(Widgets.color2.widget, &r2, &g2, &b2, &a2);
   width = get_line_width_setting();
 
   if (strcmp(name, "axis") == 0) {
@@ -352,9 +352,9 @@ presetting_set_obj_field(struct objlist *obj, int id)
     putobj(obj, "num_A", id, &a1);
     set_font_style(obj, id, "num_font_style");
     set_font(obj, id, "num_font");
-    ival = gtk_spin_button_get_value(GTK_SPIN_BUTTON(Widgets.pt)) * 100;
+    ival = gtk_spin_button_get_value(GTK_SPIN_BUTTON(Widgets.pt.widget)) * 100;
     putobj(obj, "num_pt", id, &ival);
-    ival = combo_box_get_active(Widgets.line_style);
+    ival = combo_box_get_active(Widgets.line_style.widget);
     sputobjfield(obj, id, "style", FwLineStyle[ival].list);
     sputobjfield(obj, id, "gauge_style", FwLineStyle[ival].list);
   } else if (strcmp(name, "axisgrid") == 0) {
@@ -378,7 +378,7 @@ presetting_set_obj_field(struct objlist *obj, int id)
     putobj(obj, "mark_type_end", id, &(Widgets.mark_end.Type));
     putobj(obj, "width", id, &width);
     get_rgba(obj, id, r1, g1, b1, a1, r2, g2, b2, a2);
-    ival = combo_box_get_active(Widgets.line_style);
+    ival = combo_box_get_active(Widgets.line_style.widget);
     sputobjfield(obj, id, "style", FwLineStyle[ival].list);
     set_path_type(obj, id);
   } else if (strcmp(name, "rectangle") == 0) {
@@ -386,7 +386,7 @@ presetting_set_obj_field(struct objlist *obj, int id)
     putobj(obj, "fill", id, &(Widgets.fill));
     putobj(obj, "width", id, &width);
     get_rgba(obj, id, r1, g1, b1, a1, r2, g2, b2, a2);
-    ival = combo_box_get_active(Widgets.line_style);
+    ival = combo_box_get_active(Widgets.line_style.widget);
     sputobjfield(obj, id, "style", FwLineStyle[ival].list);
   } else if (strcmp(name, "arc") == 0) {
     putobj(obj, "stroke", id, &(Widgets.stroke));
@@ -396,7 +396,7 @@ presetting_set_obj_field(struct objlist *obj, int id)
     putobj(obj, "join", id, &ival);
     putobj(obj, "width", id, &width);
     get_rgba(obj, id, r1, g1, b1, a1, r2, g2, b2, a2);
-    ival = combo_box_get_active(Widgets.line_style);
+    ival = combo_box_get_active(Widgets.line_style.widget);
     sputobjfield(obj, id, "style", FwLineStyle[ival].list);
     ival = Widgets.marker_begin;
     putobj(obj, "marker_begin", id, &ival);
@@ -414,10 +414,10 @@ presetting_set_obj_field(struct objlist *obj, int id)
     putobj(obj, "G2", id, &g2);
     putobj(obj, "B2", id, &b2);
     putobj(obj, "A2", id, &a2);
-    ival = gtk_spin_button_get_value(GTK_SPIN_BUTTON(Widgets.mark_size)) * 100;
+    ival = gtk_spin_button_get_value(GTK_SPIN_BUTTON(Widgets.mark_size.widget)) * 100;
     putobj(obj, "size", id, &ival);
     putobj(obj, "type", id, &(Widgets.mark.Type));
-    ival = combo_box_get_active(Widgets.line_style);
+    ival = combo_box_get_active(Widgets.line_style.widget);
     sputobjfield(obj, id, "style", FwLineStyle[ival].list);
   } else if (strcmp(name, "text") == 0) {
     set_text_obj(obj, id);
@@ -510,7 +510,7 @@ widget_set_line_width(struct objlist *obj, N_VALUE *inst)
   } else if (index < 0) {
     index = 0;
   }
-  gtk_combo_box_set_active(GTK_COMBO_BOX(Widgets.line_width), index);
+  gtk_combo_box_set_active(GTK_COMBO_BOX(Widgets.line_width.widget), index);
 }
 
 static void
@@ -571,7 +571,7 @@ widget_set_line_style(struct objlist *obj, N_VALUE *inst, char *field)
   if (style < 0) {
     style = 0;
   }
-  gtk_combo_box_set_active(GTK_COMBO_BOX(Widgets.line_style), style);
+  gtk_combo_box_set_active(GTK_COMBO_BOX(Widgets.line_style.widget), style);
 }
 
 static void
@@ -584,7 +584,7 @@ widget_set_path_type(struct objlist *obj, N_VALUE *inst)
     _getobj(obj, "interpolation", inst, &interpolation);
     type = interpolation + 1;
   }
-  gtk_combo_box_set_active(GTK_COMBO_BOX(Widgets.path_type), type);
+  gtk_combo_box_set_active(GTK_COMBO_BOX(Widgets.path_type.widget), type);
 }
 
 static void
@@ -602,8 +602,8 @@ widget_set_font_style(struct objlist *obj, N_VALUE *inst, const char *field)
   _getobj(obj, field, inst, &style);
   bold = (style & GRA_FONT_STYLE_BOLD) ? 1 : 0;
   italic = (style & GRA_FONT_STYLE_ITALIC) ? 1 : 0;
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(Widgets.bold), bold);
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(Widgets.italic), italic);
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(Widgets.bold.widget), bold);
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(Widgets.italic.widget), italic);
 }
 
 static int
@@ -636,7 +636,7 @@ widget_set_font(struct objlist *obj, N_VALUE *inst, const char *field)
     return;
   }
   index = check_font_index(font);
-  gtk_combo_box_set_active(GTK_COMBO_BOX(Widgets.font), index);
+  gtk_combo_box_set_active(GTK_COMBO_BOX(Widgets.font.widget), index);
 }
 
 void
@@ -665,49 +665,49 @@ presetting_set_parameters(struct Viewer *d)
     obj = focus->obj;
     if (obj == chkobject("axis")) {
       widget_set_line_width(obj, inst);
-      widget_set_rgba_color(obj, inst, Widgets.color1, NULL, NULL);
+      widget_set_rgba_color(obj, inst, Widgets.color1.widget, NULL, NULL);
       widget_set_line_style(obj, inst, "style");
       widget_set_font_style(obj, inst, "num_font_style");
-      widget_set_spin_value(obj, inst, Widgets.pt, "num_pt");
+      widget_set_spin_value(obj, inst, Widgets.pt.widget, "num_pt");
       widget_set_font(obj, inst, "num_font");
     } else if (obj == chkobject("path")) {
       widget_set_stroke_fill(obj, inst);
       widget_set_join(obj, inst);
       widget_set_line_width(obj, inst);
-      widget_set_rgba_color(obj, inst, Widgets.color1, "stroke_", NULL);
-      widget_set_rgba_color(obj, inst, Widgets.color2, "fill_", NULL);
+      widget_set_rgba_color(obj, inst, Widgets.color1.widget, "stroke_", NULL);
+      widget_set_rgba_color(obj, inst, Widgets.color2.widget, "fill_", NULL);
       widget_set_marker_type(obj, inst);
-      widget_set_mark_type(obj, inst, Widgets.mark_type_begin, "mark_type_begin");
-      widget_set_mark_type(obj, inst, Widgets.mark_type_end, "mark_type_end");
+      widget_set_mark_type(obj, inst, Widgets.mark_type_begin.widget, "mark_type_begin");
+      widget_set_mark_type(obj, inst, Widgets.mark_type_end.widget, "mark_type_end");
       widget_set_line_style(obj, inst, "style");
       widget_set_path_type(obj, inst);
     } else if (obj == chkobject("rectangle")) {
       widget_set_stroke_fill(obj, inst);
       widget_set_line_width(obj, inst);
-      widget_set_rgba_color(obj, inst, Widgets.color1, "stroke_", NULL);
-      widget_set_rgba_color(obj, inst, Widgets.color2, "fill_", NULL);
+      widget_set_rgba_color(obj, inst, Widgets.color1.widget, "stroke_", NULL);
+      widget_set_rgba_color(obj, inst, Widgets.color2.widget, "fill_", NULL);
       widget_set_line_style(obj, inst, "style");
     } else if (obj == chkobject("text")) {
       widget_set_font_style(obj, inst, "style");
-      widget_set_spin_value(obj, inst, Widgets.pt, "pt");
+      widget_set_spin_value(obj, inst, Widgets.pt.widget, "pt");
       widget_set_font(obj, inst, "font");
     } else if (obj == chkobject("arc")) {
       widget_set_stroke_fill(obj, inst);
       widget_set_join(obj, inst);
       widget_set_line_width(obj, inst);
-      widget_set_rgba_color(obj, inst, Widgets.color1, "stroke_", NULL);
-      widget_set_rgba_color(obj, inst, Widgets.color2, "fill_", NULL);
+      widget_set_rgba_color(obj, inst, Widgets.color1.widget, "stroke_", NULL);
+      widget_set_rgba_color(obj, inst, Widgets.color2.widget, "fill_", NULL);
       widget_set_marker_type(obj, inst);
-      widget_set_mark_type(obj, inst, Widgets.mark_type_begin, "mark_type_begin");
-      widget_set_mark_type(obj, inst, Widgets.mark_type_end, "mark_type_end");
+      widget_set_mark_type(obj, inst, Widgets.mark_type_begin.widget, "mark_type_begin");
+      widget_set_mark_type(obj, inst, Widgets.mark_type_end.widget, "mark_type_end");
       widget_set_line_style(obj, inst, "style");
     } else if (obj == chkobject("mark")) {
       widget_set_line_width(obj, inst);
-      widget_set_rgba_color(obj, inst, Widgets.color1, NULL, NULL);
-      widget_set_rgba_color(obj, inst, Widgets.color2, NULL, "2");
-      widget_set_mark_type(obj, inst, Widgets.mark_type, "type");
+      widget_set_rgba_color(obj, inst, Widgets.color1.widget, NULL, NULL);
+      widget_set_rgba_color(obj, inst, Widgets.color2.widget, NULL, "2");
+      widget_set_mark_type(obj, inst, Widgets.mark_type.widget, "type");
       widget_set_line_style(obj, inst, "style");
-      widget_set_spin_value(obj, inst, Widgets.mark_size, "size");
+      widget_set_spin_value(obj, inst, Widgets.mark_size.widget, "size");
     }
   }
   UpdateFieldsLock = FALSE;
@@ -1360,7 +1360,7 @@ update_focused_obj_font_size(GtkWidget *widget, struct Viewer *d, int num)
   struct objlist *obj;
 
   modified = FALSE;
-  pt = gtk_spin_button_get_value(GTK_SPIN_BUTTON(Widgets.pt)) * 100;
+  pt = gtk_spin_button_get_value(GTK_SPIN_BUTTON(Widgets.pt.widget)) * 100;
   for (i = 0; i < num; i++) {
     focus = *(struct FocusObj **) arraynget(d->focusobj, i);
     if (focus == NULL) {
@@ -1519,45 +1519,45 @@ update_focused_obj(GtkWidget *widget, gpointer user_data)
   }
   get_focused_obj_array(d->focusobj, objs);
   undo = menu_save_undo(UNDO_TYPE_EDIT, objs);
-  if (widget == Widgets.line_width) {
+  if (widget == Widgets.line_width.widget) {
     modified = update_focused_obj_width(widget, d, num);
-  } else if (widget == Widgets.line_style) {
+  } else if (widget == Widgets.line_style.widget) {
     modified = update_focused_obj_line_style(widget, d, num);
-  } else if (widget == Widgets.color1) {
+  } else if (widget == Widgets.color1.widget) {
     modified = update_focused_obj_color1(widget, d, num);
-  } else if (widget == Widgets.color2) {
+  } else if (widget == Widgets.color2.widget) {
     modified = update_focused_obj_color2(widget, d, num);
-  } else if (widget == Widgets.path_type) {
+  } else if (widget == Widgets.path_type.widget) {
     modified = update_focused_obj_path_type(widget, d, num);
-  } else if (widget == Widgets.join_type) {
+  } else if (widget == Widgets.join_type.widget) {
     modified = update_focused_obj_field_value(widget, d, num, "join", GPOINTER_TO_INT(user_data));
-  } else if (widget == Widgets.marker_type_begin) {
+  } else if (widget == Widgets.marker_type_begin.widget) {
     modified = update_focused_obj_field_value(widget, d, num, "marker_begin", GPOINTER_TO_INT(user_data));
-  } else if (widget == Widgets.marker_type_end) {
+  } else if (widget == Widgets.marker_type_end.widget) {
     modified = update_focused_obj_field_value(widget, d, num, "marker_end", GPOINTER_TO_INT(user_data));
-  } else if (widget == Widgets.mark_type_begin) {
+  } else if (widget == Widgets.mark_type_begin.widget) {
     modified = update_focused_obj_field_value(widget, d, num, "mark_type_begin", GPOINTER_TO_INT(user_data));
-  } else if (widget == Widgets.mark_type_end) {
+  } else if (widget == Widgets.mark_type_end.widget) {
     modified = update_focused_obj_field_value(widget, d, num, "mark_type_end", GPOINTER_TO_INT(user_data));
-  } else if (widget == Widgets.stroke_fill) {
+  } else if (widget == Widgets.stroke_fill.widget) {
     modified = update_focused_obj_stroke_fill(widget, d, num, GPOINTER_TO_INT(user_data));
-  } else if (widget == Widgets.font) {
+  } else if (widget == Widgets.font.widget) {
     modified = update_focused_obj_font(widget, d, num);
-  } else if (widget == Widgets.bold) {
+  } else if (widget == Widgets.bold.widget) {
     int apply;
     apply = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
     modified = update_focused_obj_font_style(widget, d, num, GRA_FONT_STYLE_BOLD, apply);
-  } else if (widget == Widgets.italic) {
+  } else if (widget == Widgets.italic.widget) {
     int apply;
     apply = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
     modified = update_focused_obj_font_style(widget, d, num, GRA_FONT_STYLE_ITALIC, apply);
-  } else if (widget == Widgets.pt) {
+  } else if (widget == Widgets.pt.widget) {
     modified = update_focused_obj_font_size(widget, d, num);
-  } else if (widget == Widgets.mark_type) {
+  } else if (widget == Widgets.mark_type.widget) {
     modified = update_focused_obj_field_value(widget, d, num, "type", GPOINTER_TO_INT(user_data));
-  } else if (widget == Widgets.mark_size) {
+  } else if (widget == Widgets.mark_size.widget) {
     int size;
-    size = gtk_spin_button_get_value(GTK_SPIN_BUTTON(Widgets.mark_size)) * 100;
+    size = gtk_spin_button_get_value(GTK_SPIN_BUTTON(Widgets.mark_size.widget)) * 100;
     modified = update_focused_obj_field_value(widget, d, num, "size", size);
   }
   if (modified) {
@@ -1684,7 +1684,7 @@ presetting_create_panel(GtkApplication *app)
   gtk_widget_set_tooltip_text(w, _("Font name"));
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
   g_signal_connect(w, "changed", G_CALLBACK(update_focused_obj), NULL);
-  Widgets.font = w;
+  Widgets.font.widget = w;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_POINT, FALSE, FALSE);
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), DEFAULT_FONT_PT / 100.0);
@@ -1692,25 +1692,25 @@ presetting_create_panel(GtkApplication *app)
   gtk_widget_set_tooltip_text(w, _("Font size"));
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
   g_signal_connect(w, "value-changed", G_CALLBACK(update_focused_obj), NULL);
-  Widgets.pt = w;
+  Widgets.pt.widget = w;
 
   img = gtk_image_new_from_icon_name("format-text-bold-symbolic", GTK_ICON_SIZE_BUTTON);
-  Widgets.bold = create_toggle_button(box, img, _("Bold"), FALSE);
+  Widgets.bold.widget = create_toggle_button(box, img, _("Bold"), FALSE);
 
   img = gtk_image_new_from_icon_name("format-text-italic-symbolic", GTK_ICON_SIZE_BUTTON);
-  Widgets.italic = create_toggle_button(box, img,  _("Italic"), FALSE);
-  gtk_widget_set_margin_end(Widgets.italic, SETTING_PANEL_MARGIN * 4);
+  Widgets.italic.widget = create_toggle_button(box, img,  _("Italic"), FALSE);
+  gtk_widget_set_margin_end(Widgets.italic.widget, SETTING_PANEL_MARGIN * 4);
 
   w = create_path_type_combo_box();
   gtk_widget_set_margin_end(w, SETTING_PANEL_MARGIN * 4);
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
-  Widgets.path_type = w;
+  Widgets.path_type.widget = w;
 
   w = gtk_button_new();
-  g_signal_connect(w, "clicked", G_CALLBACK(select_mark), &(Widgets.mark));
+  g_signal_connect(w, "clicked", G_CALLBACK(select_mark), &(Widgets.mark.widget));
   setup_mark_type(w, &(Widgets.mark));
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
-  Widgets.mark_type = w;
+  Widgets.mark_type.widget = w;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, FALSE, FALSE);
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), DEFAULT_MARK_SIZE / 100.0);
@@ -1718,10 +1718,10 @@ presetting_create_panel(GtkApplication *app)
   gtk_widget_set_tooltip_text(w, _("Mark size"));
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
   g_signal_connect(w, "value-changed", G_CALLBACK(update_focused_obj), NULL);
-  Widgets.mark_size = w;
+  Widgets.mark_size.widget = w;
 
   w = create_menu_button(builder, "stroke-fill-menu", _("stroke/fill"));
-  Widgets.stroke_fill = w;
+  Widgets.stroke_fill.widget = w;
   Widgets.stroke = TRUE;
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
   set_stroke_fill_icon();
@@ -1729,20 +1729,20 @@ presetting_create_panel(GtkApplication *app)
   w = create_line_width_combo_box();
   gtk_widget_set_tooltip_text(w, _("Line Width"));
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
-  Widgets.line_width = w;
+  Widgets.line_width.widget = w;
 
   w = create_line_style_combo_box();
   gtk_widget_set_tooltip_text(w, _("Line Style"));
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
-  Widgets.line_style = w;
+  Widgets.line_style.widget = w;
 
   w = create_color_button(NULL);
   color.red = color.green = color.blue = 0;
   color.alpha = 1;
   gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(w), &color);
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
-  Widgets.color1 = w;
-  gtk_widget_set_name(Widgets.color1, "StrokeColorButton");
+  Widgets.color1.widget = w;
+  gtk_widget_set_name(Widgets.color1.widget, "StrokeColorButton");
   g_signal_connect(w, "color-set", G_CALLBACK(update_focused_obj), NULL);
 
   w = create_color_button(NULL);
@@ -1751,39 +1751,39 @@ presetting_create_panel(GtkApplication *app)
   gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(w), &color);
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
   g_signal_connect(w, "color-set", G_CALLBACK(update_focused_obj), NULL);
-  Widgets.color2 = w;
+  Widgets.color2.widget = w;
 
   w = create_menu_button(builder, "join-type-menu", _("Join"));
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
-  Widgets.join_type = w;
-  gtk_button_set_image(GTK_BUTTON(Widgets.join_type), Widgets.join_icon[DEFAULT_JOIN_TYPE]);
+  Widgets.join_type.widget = w;
+  gtk_button_set_image(GTK_BUTTON(Widgets.join_type.widget), Widgets.join_icon[DEFAULT_JOIN_TYPE]);
 
   w = gtk_button_new();
-  g_signal_connect(w, "clicked", G_CALLBACK(select_mark), &(Widgets.mark_begin));
+  g_signal_connect(w, "clicked", G_CALLBACK(select_mark), &(Widgets.mark_begin.widget));
   setup_mark_type(w, &(Widgets.mark_begin));
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
-  Widgets.mark_type_begin = w;
+  Widgets.mark_type_begin.widget = w;
 
   w = create_menu_button(builder, "marker-type-begin-menu", _("Marker begin"));
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
-  Widgets.marker_type_begin = w;
+  Widgets.marker_type_begin.widget = w;
   Widgets.marker_begin = DEFAULT_MARKER_TYPE;
-  gtk_button_set_image(GTK_BUTTON(Widgets.marker_type_begin), Widgets.marker_begin_icon[DEFAULT_MARKER_TYPE]);
+  gtk_button_set_image(GTK_BUTTON(Widgets.marker_type_begin.widget), Widgets.marker_begin_icon[DEFAULT_MARKER_TYPE]);
 
   w = create_menu_button(builder, "marker-type-end-menu", _("Marker end"));
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
-  Widgets.marker_type_end = w;
+  Widgets.marker_type_end.widget = w;
   Widgets.marker_end = DEFAULT_MARKER_TYPE;
-  gtk_button_set_image(GTK_BUTTON(Widgets.marker_type_end), Widgets.marker_end_icon[DEFAULT_MARKER_TYPE]);
+  gtk_button_set_image(GTK_BUTTON(Widgets.marker_type_end.widget), Widgets.marker_end_icon[DEFAULT_MARKER_TYPE]);
 
   w = gtk_button_new();
   g_signal_connect(w, "clicked", G_CALLBACK(select_mark), &(Widgets.mark_end));
   setup_mark_type(w, &(Widgets.mark_end));
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
-  Widgets.mark_type_end = w;
+  Widgets.mark_type_end.widget = w;
 
-  gtk_widget_set_sensitive(Widgets.mark_type_begin, Widgets.marker_begin == MARKER_TYPE_MARK);
-  gtk_widget_set_sensitive(Widgets.mark_type_end,   Widgets.marker_end   == MARKER_TYPE_MARK);
+  gtk_widget_set_sensitive(Widgets.mark_type_begin.widget, Widgets.marker_begin == MARKER_TYPE_MARK);
+  gtk_widget_set_sensitive(Widgets.mark_type_end.widget,   Widgets.marker_end   == MARKER_TYPE_MARK);
 
   g_object_unref(builder);
   return box;
