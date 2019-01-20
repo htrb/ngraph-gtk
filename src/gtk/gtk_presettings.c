@@ -770,6 +770,28 @@ init_focus_obj_info(struct FOCUS_OBJ_INFO *info)
   return 0;
 }
 
+static void
+presetting_set_invisible_all(void)
+{
+  Widgets.stroke_fill.visibility = FALSE;
+  Widgets.line_width.visibility = FALSE;
+  Widgets.line_style.visibility = FALSE;
+  Widgets.color1.visibility = FALSE;
+  Widgets.color2.visibility = FALSE;
+  Widgets.path_type.visibility = FALSE;
+  Widgets.join_type.visibility = FALSE;
+  Widgets.marker_type_begin.visibility = FALSE;
+  Widgets.marker_type_end.visibility = FALSE;
+  Widgets.font.visibility = FALSE;
+  Widgets.bold.visibility = FALSE;
+  Widgets.italic.visibility = FALSE;
+  Widgets.pt.visibility = FALSE;
+  Widgets.mark_size.visibility = FALSE;
+  Widgets.mark_type.visibility = FALSE;
+  Widgets.mark_type_begin.visibility = FALSE;
+  Widgets.mark_type_end.visibility = FALSE;
+}
+
 
   presetting_set_parameters(&NgraphApp.Viewer);
 }
