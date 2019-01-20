@@ -753,6 +753,23 @@ struct FOCUS_OBJ_INFO
   } info[FOCUS_OBJ_N];
 };
 
+static int
+init_focus_obj_info(struct FOCUS_OBJ_INFO *info)
+{
+  char *objs[FOCUS_OBJ_N] = {"axis", "merge", "path", "rectangle", "arc", "mark", "text"};
+  int i;
+
+  for (i = 0; i < FOCUS_OBJ_N; i++) {
+    info->info[i].obj = chkobject(objs[i]);
+    info->info[i].type = i;
+    info->info[i].focused = FALSE;
+    if (info->info[i].obj == NULL) {
+      return 1;
+    }
+  }
+  return 0;
+}
+
 
   presetting_set_parameters(&NgraphApp.Viewer);
 }
