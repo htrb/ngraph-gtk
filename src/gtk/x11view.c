@@ -5442,6 +5442,7 @@ Focus(struct objlist *fobj, int id, enum FOCUS_MODE mode)
     add_focus_obj(d->focusobj, fobj, oid);
   }
   d->MouseMode = MOUSENONE;
+  set_toolbox_mode(TOOLBOX_MODE_SETTING_PANEL);
 
   if (arraynum(d->focusobj) == 0) {
     UnFocus();
