@@ -792,6 +792,71 @@ presetting_set_invisible_all(void)
   Widgets.mark_type_end.visibility = FALSE;
 }
 
+static void
+presetting_set_visible(enum FOCUS_OBJ type)
+{
+  switch (type) {
+  case FOCUS_OBJ_PATH:
+    Widgets.stroke_fill.visibility = TRUE;
+    Widgets.line_width.visibility = TRUE;
+    Widgets.line_style.visibility = TRUE;
+    Widgets.color1.visibility = TRUE;
+    Widgets.color2.visibility = TRUE;
+    Widgets.path_type.visibility = TRUE;
+    Widgets.join_type.visibility = TRUE;
+    Widgets.marker_type_begin.visibility = TRUE;
+    Widgets.marker_type_end.visibility = TRUE;
+    Widgets.mark_type_begin.visibility = TRUE;
+    Widgets.mark_type_end.visibility = TRUE;
+    break;
+  case FOCUS_OBJ_RECTANGLE:
+    Widgets.stroke_fill.visibility = TRUE;
+    Widgets.line_width.visibility = TRUE;
+    Widgets.line_style.visibility = TRUE;
+    Widgets.color1.visibility = TRUE;
+    Widgets.color2.visibility = TRUE;
+    break;
+  case FOCUS_OBJ_ARC:
+    Widgets.stroke_fill.visibility = TRUE;
+    Widgets.line_width.visibility = TRUE;
+    Widgets.line_style.visibility = TRUE;
+    Widgets.color1.visibility = TRUE;
+    Widgets.color2.visibility = TRUE;
+    Widgets.join_type.visibility = TRUE;
+    Widgets.marker_type_begin.visibility = TRUE;
+    Widgets.marker_type_end.visibility = TRUE;
+    Widgets.mark_type_begin.visibility = TRUE;
+    Widgets.mark_type_end.visibility = TRUE;
+    break;
+  case FOCUS_OBJ_MARK:
+    Widgets.line_width.visibility = TRUE;
+    Widgets.line_style.visibility = TRUE;
+    Widgets.color1.visibility = TRUE;
+    Widgets.color2.visibility = TRUE;
+    Widgets.mark_size.visibility = TRUE;
+    Widgets.mark_type.visibility = TRUE;
+    break;
+  case FOCUS_OBJ_TEXT:
+    Widgets.color1.visibility = TRUE;
+    Widgets.font.visibility = TRUE;
+    Widgets.bold.visibility = TRUE;
+    Widgets.italic.visibility = TRUE;
+    Widgets.pt.visibility = TRUE;
+    break;
+  case FOCUS_OBJ_AXIS:
+    Widgets.line_width.visibility = TRUE;
+    Widgets.line_style.visibility = TRUE;
+    Widgets.color1.visibility = TRUE;
+    Widgets.font.visibility = TRUE;
+    Widgets.bold.visibility = TRUE;
+    Widgets.italic.visibility = TRUE;
+    Widgets.pt.visibility = TRUE;
+    break;
+  case FOCUS_OBJ_MERGE:
+  case FOCUS_OBJ_N:
+    break;
+  }
+}
 
   presetting_set_parameters(&NgraphApp.Viewer);
 }
