@@ -5485,7 +5485,7 @@ set_toolbox_mode(enum TOOLBOX_MODE mode)
     widget = CToolbar;
     break;
   case TOOLBOX_MODE_SETTING_PANEL:
-    presetting_show_all();
+    presetting_show_focused();
     widget = SettingPanel;
     break;
   }
