@@ -932,6 +932,27 @@ presetting_set_visibility(enum PointerType type)
   presetting_set_widget_visibility();
 }
 
+static int
+check_focused_obj(struct FOCUS_OBJ_INFO *info)
+{
+  int num, i, j;
+  struct FocusObj *focus;
+
+  if (init_focus_obj_info(info)) {
+    return 1;
+  }
+  num = arraynum(NgraphApp.Viewer.focusobj);
+  for (i = 0; i < num; i++) {
+    focus = *(struct FocusObj **) arraynget(NgraphApp.Viewer.focusobj, i);
+    for (j = 0; j < FOCUS_OBJ_N; j++) {
+      if (chkobjchild(info->info[j].obj, focus->obj)) {
+	info->info[j].focused = TRUE;
+      }
+    }
+  }
+  return 0;
+}
+
 }
 
 #if 0
