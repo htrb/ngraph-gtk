@@ -884,6 +884,8 @@ presetting_set_widget_visibility(void)
 void
 presetting_set_visibility(enum PointerType type)
 {
+  enum FOCUS_OBJ obj_type;
+  presetting_set_invisible_all();
   switch (type) {
   case PointB:
   case AxisB:
@@ -894,143 +896,42 @@ presetting_set_visibility(enum PointerType type)
   case ZoomB:
     break;
   case PathB:
-    gtk_widget_set_visible(Widgets.stroke_fill,    TRUE);
-    gtk_widget_set_visible(Widgets.line_width,     TRUE);
-    gtk_widget_set_visible(Widgets.line_style,     TRUE);
-    gtk_widget_set_visible(Widgets.color1,         TRUE);
-    gtk_widget_set_visible(Widgets.color2,         TRUE);
-    gtk_widget_set_visible(Widgets.path_type,      TRUE);
-    gtk_widget_set_visible(Widgets.join_type,      TRUE);
-    gtk_widget_set_visible(Widgets.marker_type_begin, TRUE);
-    gtk_widget_set_visible(Widgets.marker_type_end, TRUE);
-    gtk_widget_set_visible(Widgets.font,           FALSE);
-    gtk_widget_set_visible(Widgets.bold,           FALSE);
-    gtk_widget_set_visible(Widgets.italic,         FALSE);
-    gtk_widget_set_visible(Widgets.pt,             FALSE);
-    gtk_widget_set_visible(Widgets.mark_size,      FALSE);
-    gtk_widget_set_visible(Widgets.mark_type,      FALSE);
-    gtk_widget_set_visible(Widgets.mark_type_begin,TRUE);
-    gtk_widget_set_visible(Widgets.mark_type_end,  TRUE);
+    obj_type = FOCUS_OBJ_PATH;
+    presetting_set_visible(obj_type);
     break;
   case RectB:
-    gtk_widget_set_visible(Widgets.stroke_fill,    TRUE);
-    gtk_widget_set_visible(Widgets.line_width,     TRUE);
-    gtk_widget_set_visible(Widgets.line_style,     TRUE);
-    gtk_widget_set_visible(Widgets.color1,         TRUE);
-    gtk_widget_set_visible(Widgets.color2,         TRUE);
-    gtk_widget_set_visible(Widgets.path_type,      FALSE);
-    gtk_widget_set_visible(Widgets.join_type,      FALSE);
-    gtk_widget_set_visible(Widgets.marker_type_begin, FALSE);
-    gtk_widget_set_visible(Widgets.marker_type_end, FALSE);
-    gtk_widget_set_visible(Widgets.font,           FALSE);
-    gtk_widget_set_visible(Widgets.bold,           FALSE);
-    gtk_widget_set_visible(Widgets.italic,         FALSE);
-    gtk_widget_set_visible(Widgets.pt,             FALSE);
-    gtk_widget_set_visible(Widgets.mark_size,      FALSE);
-    gtk_widget_set_visible(Widgets.mark_type,      FALSE);
-    gtk_widget_set_visible(Widgets.mark_type_begin,FALSE);
-    gtk_widget_set_visible(Widgets.mark_type_end,  FALSE);
+    obj_type = FOCUS_OBJ_RECTANGLE;
+    presetting_set_visible(obj_type);
     break;
   case ArcB:
-    gtk_widget_set_visible(Widgets.stroke_fill,    TRUE);
-    gtk_widget_set_visible(Widgets.line_width,     TRUE);
-    gtk_widget_set_visible(Widgets.line_style,     TRUE);
-    gtk_widget_set_visible(Widgets.color1,         TRUE);
-    gtk_widget_set_visible(Widgets.color2,         TRUE);
-    gtk_widget_set_visible(Widgets.path_type,      FALSE);
-    gtk_widget_set_visible(Widgets.join_type,      TRUE);
-    gtk_widget_set_visible(Widgets.marker_type_begin, TRUE);
-    gtk_widget_set_visible(Widgets.marker_type_end, TRUE);
-    gtk_widget_set_visible(Widgets.font,           FALSE);
-    gtk_widget_set_visible(Widgets.bold,           FALSE);
-    gtk_widget_set_visible(Widgets.italic,         FALSE);
-    gtk_widget_set_visible(Widgets.pt,             FALSE);
-    gtk_widget_set_visible(Widgets.mark_size,      FALSE);
-    gtk_widget_set_visible(Widgets.mark_type,      FALSE);
-    gtk_widget_set_visible(Widgets.mark_type_begin,TRUE);
-    gtk_widget_set_visible(Widgets.mark_type_end,  TRUE);
+    obj_type = FOCUS_OBJ_ARC;
+    presetting_set_visible(obj_type);
     break;
   case MarkB:
-    gtk_widget_set_visible(Widgets.stroke_fill,    FALSE);
-    gtk_widget_set_visible(Widgets.line_width,     TRUE);
-    gtk_widget_set_visible(Widgets.line_style,     TRUE);
-    gtk_widget_set_visible(Widgets.color1,         TRUE);
-    gtk_widget_set_visible(Widgets.color2,         TRUE);
-    gtk_widget_set_visible(Widgets.path_type,      FALSE);
-    gtk_widget_set_visible(Widgets.join_type,      FALSE);
-    gtk_widget_set_visible(Widgets.marker_type_begin, FALSE);
-    gtk_widget_set_visible(Widgets.marker_type_end, FALSE);
-    gtk_widget_set_visible(Widgets.font,           FALSE);
-    gtk_widget_set_visible(Widgets.bold,           FALSE);
-    gtk_widget_set_visible(Widgets.italic,         FALSE);
-    gtk_widget_set_visible(Widgets.pt,             FALSE);
-    gtk_widget_set_visible(Widgets.mark_size,      TRUE);
-    gtk_widget_set_visible(Widgets.mark_type,      TRUE);
-    gtk_widget_set_visible(Widgets.mark_type_begin,FALSE);
-    gtk_widget_set_visible(Widgets.mark_type_end,  FALSE);
+    obj_type = FOCUS_OBJ_MARK;
+    presetting_set_visible(obj_type);
     break;
   case TextB:
-    set_font_family(Widgets.font);
-    gtk_widget_set_visible(Widgets.stroke_fill,    FALSE);
-    gtk_widget_set_visible(Widgets.line_width,     FALSE);
-    gtk_widget_set_visible(Widgets.line_style,     FALSE);
-    gtk_widget_set_visible(Widgets.color1,         TRUE);
-    gtk_widget_set_visible(Widgets.color2,         FALSE);
-    gtk_widget_set_visible(Widgets.path_type,      FALSE);
-    gtk_widget_set_visible(Widgets.join_type,      FALSE);
-    gtk_widget_set_visible(Widgets.marker_type_begin, FALSE);
-    gtk_widget_set_visible(Widgets.marker_type_end, FALSE);
-    gtk_widget_set_visible(Widgets.font,           TRUE);
-    gtk_widget_set_visible(Widgets.bold,           TRUE);
-    gtk_widget_set_visible(Widgets.italic,         TRUE);
-    gtk_widget_set_visible(Widgets.pt,             TRUE);
-    gtk_widget_set_visible(Widgets.mark_size,      FALSE);
-    gtk_widget_set_visible(Widgets.mark_type,      FALSE);
-    gtk_widget_set_visible(Widgets.mark_type_begin,FALSE);
-    gtk_widget_set_visible(Widgets.mark_type_end,  FALSE);
+    obj_type = FOCUS_OBJ_TEXT;
+    presetting_set_visible(obj_type);
     break;
   case GaussB:
-    gtk_widget_set_visible(Widgets.stroke_fill,    FALSE);
-    gtk_widget_set_visible(Widgets.line_width,     TRUE);
-    gtk_widget_set_visible(Widgets.line_style,     TRUE);
-    gtk_widget_set_visible(Widgets.color1,         TRUE);
-    gtk_widget_set_visible(Widgets.color2,         FALSE);
-    gtk_widget_set_visible(Widgets.path_type,      FALSE);
-    gtk_widget_set_visible(Widgets.join_type,      TRUE);
-    gtk_widget_set_visible(Widgets.marker_type_begin, FALSE);
-    gtk_widget_set_visible(Widgets.marker_type_end, FALSE);
-    gtk_widget_set_visible(Widgets.font,           FALSE);
-    gtk_widget_set_visible(Widgets.bold,           FALSE);
-    gtk_widget_set_visible(Widgets.italic,         FALSE);
-    gtk_widget_set_visible(Widgets.pt,             FALSE);
-    gtk_widget_set_visible(Widgets.mark_size,      FALSE);
-    gtk_widget_set_visible(Widgets.mark_type,      FALSE);
-    gtk_widget_set_visible(Widgets.mark_type_begin,FALSE);
-    gtk_widget_set_visible(Widgets.mark_type_end,  FALSE);
+    Widgets.line_width.visibility = TRUE;
+    Widgets.line_style.visibility = TRUE;
+    Widgets.color1.visibility = TRUE;
+    Widgets.join_type.visibility = TRUE;
     break;
   case FrameB:
   case SectionB:
   case CrossB:
   case SingleB:
-    gtk_widget_set_visible(Widgets.stroke_fill,    FALSE);
-    gtk_widget_set_visible(Widgets.line_width,     TRUE);
-    gtk_widget_set_visible(Widgets.line_style,     TRUE);
-    gtk_widget_set_visible(Widgets.color1,         TRUE);
-    gtk_widget_set_visible(Widgets.color2,         FALSE);
-    gtk_widget_set_visible(Widgets.path_type,      FALSE);
-    gtk_widget_set_visible(Widgets.join_type,      FALSE);
-    gtk_widget_set_visible(Widgets.marker_type_begin, FALSE);
-    gtk_widget_set_visible(Widgets.marker_type_end, FALSE);
-    gtk_widget_set_visible(Widgets.font,           TRUE);
-    gtk_widget_set_visible(Widgets.bold,           TRUE);
-    gtk_widget_set_visible(Widgets.italic,         TRUE);
-    gtk_widget_set_visible(Widgets.pt,             TRUE);
-    gtk_widget_set_visible(Widgets.mark_size,      FALSE);
-    gtk_widget_set_visible(Widgets.mark_type,      FALSE);
-    gtk_widget_set_visible(Widgets.mark_type_begin,FALSE);
-    gtk_widget_set_visible(Widgets.mark_type_end,  FALSE);
+    obj_type = FOCUS_OBJ_AXIS;
+    presetting_set_visible(obj_type);
     break;
   }
+  presetting_set_widget_visibility();
+}
+
 }
 
 #if 0
