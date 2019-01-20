@@ -29,25 +29,34 @@
 #define DEFAULT_STROKE_FILL_TYPE 1
 #define STROKE_FILL_ICON_NUM 8
 
+struct widget_info {
+  GtkWidget *widget;
+  int visibility;
+};
+
 struct presetting_widgets
 {
-  GtkWidget *line_width, *line_style;
-  GtkWidget *color1, *color2;
-  GtkWidget *path_type;
-  GtkWidget *join_type, *join_icon[JOIN_TYPE_NUM];
-  GtkWidget *marker_type_begin, *marker_begin_icon[MARKER_TYPE_NUM];
-  GtkWidget *marker_type_end, *marker_end_icon[MARKER_TYPE_NUM];
-  GtkWidget *mark_type_begin, *mark_type_end;
-  GtkWidget *stroke_fill, *stroke_fill_icon[STROKE_FILL_ICON_NUM];
-  GtkWidget *font, *bold, *italic, *pt;
-  GtkWidget *mark_type, *mark_size;
+  struct widget_info line_width, line_style;
+  struct widget_info color1, color2;
+  struct widget_info path_type;
+  struct widget_info join_type;
+  GtkWidget *join_icon[JOIN_TYPE_NUM];
+  struct widget_info marker_type_begin;
+  GtkWidget *marker_begin_icon[MARKER_TYPE_NUM];
+  struct widget_info marker_type_end;
+  GtkWidget *marker_end_icon[MARKER_TYPE_NUM];
+  struct widget_info mark_type_begin, mark_type_end;
+  struct widget_info stroke_fill;
+  GtkWidget *stroke_fill_icon[STROKE_FILL_ICON_NUM];
+  struct widget_info font, bold, italic, pt;
+  struct widget_info mark_type, mark_size;
   enum JOIN_TYPE join;
   enum MARKER_TYPE marker_begin, marker_end;
   struct MarkDialog mark, mark_begin, mark_end;
   int lw, fill, stroke, close_path;
 };
 
-static struct presetting_widgets Widgets = {NULL};
+static struct presetting_widgets Widgets = {{NULL}};
 static int UpdateFieldsLock = TRUE;
 
 static void update_focused_obj(GtkWidget *widget, gpointer user_data);
