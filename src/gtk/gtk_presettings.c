@@ -858,6 +858,26 @@ presetting_set_visible(enum FOCUS_OBJ type)
   }
 }
 
+static void
+presetting_set_widget_visibility(void)
+{
+  gtk_widget_set_visible(Widgets.stroke_fill.widget, Widgets.stroke_fill.visibility);
+  gtk_widget_set_visible(Widgets.line_width.widget, Widgets.line_width.visibility);
+  gtk_widget_set_visible(Widgets.line_style.widget, Widgets.line_style.visibility);
+  gtk_widget_set_visible(Widgets.color1.widget, Widgets.color1.visibility);
+  gtk_widget_set_visible(Widgets.color2.widget, Widgets.color2.visibility);
+  gtk_widget_set_visible(Widgets.path_type.widget, Widgets.path_type.visibility);
+  gtk_widget_set_visible(Widgets.join_type.widget, Widgets.join_type.visibility);
+  gtk_widget_set_visible(Widgets.marker_type_begin.widget, Widgets.marker_type_begin.visibility);
+  gtk_widget_set_visible(Widgets.marker_type_end.widget, Widgets.marker_type_end.visibility);
+  gtk_widget_set_visible(Widgets.font.widget, Widgets.font.visibility);
+  gtk_widget_set_visible(Widgets.bold.widget, Widgets.bold.visibility);
+  gtk_widget_set_visible(Widgets.italic.widget, Widgets.italic.visibility);
+  gtk_widget_set_visible(Widgets.pt.widget, Widgets.pt.visibility);
+  gtk_widget_set_visible(Widgets.mark_size.widget, Widgets.mark_size.visibility);
+  gtk_widget_set_visible(Widgets.mark_type.widget, Widgets.mark_type.visibility);
+  gtk_widget_set_visible(Widgets.mark_type_begin.widget, Widgets.mark_type_begin.visibility);
+  gtk_widget_set_visible(Widgets.mark_type_end.widget, Widgets.mark_type_end.visibility);
   presetting_set_parameters(&NgraphApp.Viewer);
 }
 
