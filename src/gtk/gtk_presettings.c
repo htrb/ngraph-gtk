@@ -733,6 +733,26 @@ presetting_show_all(void)
   gtk_widget_set_visible(Widgets.mark_type,         TRUE);
   gtk_widget_set_visible(Widgets.mark_type_begin,   TRUE);
   gtk_widget_set_visible(Widgets.mark_type_end,     TRUE);
+enum FOCUS_OBJ {
+		FOCUS_OBJ_AXIS,
+		FOCUS_OBJ_MERGE,
+		FOCUS_OBJ_PATH,
+		FOCUS_OBJ_RECTANGLE,
+		FOCUS_OBJ_ARC,
+		FOCUS_OBJ_MARK,
+		FOCUS_OBJ_TEXT,
+		FOCUS_OBJ_N,
+};
+
+struct FOCUS_OBJ_INFO
+{
+  struct FOCUS_OBJ_INFO_INFO {
+    struct objlist *obj;
+    enum FOCUS_OBJ type;
+    int focused;
+  } info[FOCUS_OBJ_N];
+};
+
 
   presetting_set_parameters(&NgraphApp.Viewer);
 }
