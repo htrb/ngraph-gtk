@@ -953,6 +953,21 @@ check_focused_obj(struct FOCUS_OBJ_INFO *info)
   return 0;
 }
 
+void
+presetting_show_focused(void)
+{
+  int i;
+  struct FOCUS_OBJ_INFO info;
+  presetting_set_invisible_all();
+  if (check_focused_obj(&info)) {
+    return;
+  }
+  for (i = 0; i < FOCUS_OBJ_N; i++) {
+    if (info.info[i].focused) {
+      presetting_set_visible(info.info[i].type);
+    }
+  }
+  presetting_set_widget_visibility();
 }
 
 #if 0
