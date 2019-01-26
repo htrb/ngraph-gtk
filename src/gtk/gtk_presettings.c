@@ -639,6 +639,34 @@ widget_set_font(struct objlist *obj, N_VALUE *inst, const char *field)
   gtk_combo_box_set_active(GTK_COMBO_BOX(Widgets.font.widget), index);
 }
 
+static int
+get_focused_obj_type_array(struct narray *focusobj, struct FocusObj *objs)
+{
+  int i, j, obj_n, n, axis;
+  struct objlist *obj;
+  struct FocusObj **focus;
+
+  n = arraynum(focusobj);
+  focus = arraydata(focusobj);
+  axis = FALSE;
+  obj_n = 0;
+  for (i = 0; i < n; i++) {
+    obj = focus[i]->obj;
+    for (j = 0; j < obj_n; j++) {
+      if (objs[j].obj == obj) {
+	objs[j].oid = focus[i]->oid;
+	break;
+      }
+    }
+    if (j == obj_n) {
+      objs[obj_n].obj = obj;
+      objs[obj_n].oid = focus[i]->oid;
+      obj_n++;
+    }
+  }
+  return obj_n;
+}
+
 void
 presetting_set_parameters(struct Viewer *d)
 {
