@@ -1434,7 +1434,7 @@ update_focused_obj_font_size(GtkWidget *widget, struct Viewer *d, int num)
     obj = focus->obj;
     if (chk_update_field(obj, inst, "pt", pt)) {
       modified = TRUE;
-    } else  if (obj == chkobject("axis")) {
+    } else if (obj == chkobject("axis")) {
       if (update_focused_obj_font_size_axis(obj, inst, pt)) {
         modified = TRUE;
       }
@@ -1552,7 +1552,7 @@ update_focused_obj_font_style(GtkWidget *widget, struct Viewer *d, int num, int 
       if (modify_font_style(obj, inst, "style", style, apply)) {
         modified = TRUE;
       }
-    } else  if (obj == chkobject("axis")) {
+    } else if (obj == chkobject("axis")) {
       if (update_focused_obj_font_style_axis(obj, inst, style, apply)) {
         modified = TRUE;
       }
