@@ -1768,7 +1768,7 @@ presetting_create_panel(GtkApplication *app)
   Widgets.path_type.widget = w;
 
   w = gtk_button_new();
-  g_signal_connect(w, "clicked", G_CALLBACK(select_mark), &(Widgets.mark.widget));
+  g_signal_connect(w, "clicked", G_CALLBACK(select_mark), &(Widgets.mark));
   setup_mark_type(w, &(Widgets.mark));
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
   Widgets.mark_type.widget = w;
@@ -1820,7 +1820,7 @@ presetting_create_panel(GtkApplication *app)
   gtk_button_set_image(GTK_BUTTON(Widgets.join_type.widget), Widgets.join_icon[DEFAULT_JOIN_TYPE]);
 
   w = gtk_button_new();
-  g_signal_connect(w, "clicked", G_CALLBACK(select_mark), &(Widgets.mark_begin.widget));
+  g_signal_connect(w, "clicked", G_CALLBACK(select_mark), &(Widgets.mark_begin));
   setup_mark_type(w, &(Widgets.mark_begin));
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
   Widgets.mark_type_begin.widget = w;
