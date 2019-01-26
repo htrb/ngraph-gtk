@@ -945,16 +945,16 @@ static int
 check_focused_obj(struct FOCUS_OBJ_INFO *info)
 {
   int num, i, j;
-  struct FocusObj *focus;
+  struct FocusObj *focus, objs[OBJ_MAX];
 
   if (init_focus_obj_info(info)) {
     return 1;
   }
-  num = arraynum(NgraphApp.Viewer.focusobj);
+  num = get_focused_obj_type_array(NgraphApp.Viewer.focusobj, objs);
   for (i = 0; i < num; i++) {
-    focus = *(struct FocusObj **) arraynget(NgraphApp.Viewer.focusobj, i);
+    focus = &objs[i];
     for (j = 0; j < FOCUS_OBJ_N; j++) {
-      if (chkobjchild(info->info[j].obj, focus->obj)) {
+      if (info->info[j].obj == focus->obj) {
 	info->info[j].focused = TRUE;
       }
     }
