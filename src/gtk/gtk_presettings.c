@@ -674,15 +674,16 @@ presetting_set_parameters(struct Viewer *d)
   N_VALUE *inst;
   int i, num;
   struct objlist *obj;
+  struct FocusObj objs[OBJ_MAX];
 
-  num = arraynum(d->focusobj);
+  num = get_focused_obj_type_array(d->focusobj, objs);
   if (num < 1) {
     return;
   }
 
   UpdateFieldsLock = TRUE;
   for (i = 0; i < num; i++) {
-    focus = *(struct FocusObj **) arraynget(d->focusobj, i);
+    focus = &objs[i];
     if (focus == NULL) {
       continue;
     }
