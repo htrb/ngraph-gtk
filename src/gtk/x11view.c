@@ -1616,6 +1616,18 @@ select_obj(const char *objname, const struct Viewer *d, struct view_region *regi
   return r;
 }
 
+static int
+Match(const char *objname, int x1, int y1, int x2, int y2, int err, const struct Viewer *d)
+{
+  struct view_region region;
+  region.x1 = x1;
+  region.y1 = y1;
+  region.x2 = x2;
+  region.y2 = y2;
+  region.err = err;
+  return select_obj(objname, d, &region);
+}
+
 static void
 AddList(struct objlist *obj, N_VALUE *inst)
 {
