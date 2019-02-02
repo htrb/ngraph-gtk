@@ -44,6 +44,7 @@ enum MenuID {
   MenuIdEditPaste,
   MenuIdEditDelete,
   MenuIdEditDuplicate,
+  MenuIdEditSelectAll,
   MenuIdAlignLeft,
   MenuIdAlignVCenter,
   MenuIdAlignRight,
