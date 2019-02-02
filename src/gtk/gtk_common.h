@@ -33,7 +33,5 @@
 
 #define CAIRO_COORDINATE_OFFSET 1
 
-#define LINE_NUMBER_WIDGET_NAME "line_number"
-
 #endif
 
