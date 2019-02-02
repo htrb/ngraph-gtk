@@ -217,6 +217,12 @@ EditDuplicateAction_activated(GSimpleAction *action, GVariant *parameter, gpoint
 }
 
 static void
+EditSelectAllAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
+{
+  CmEditMenuCB(NULL, GINT_TO_POINTER(MenuIdEditSelectAll));
+}
+
+static void
 EditOrderTopAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
   CmEditMenuCB(NULL, GINT_TO_POINTER(MenuIdEditOrderTop));
@@ -697,6 +703,7 @@ static GActionEntry AppEntries[] =
   { "EditPasteAction", EditPasteAction_activated, NULL, NULL, NULL },
   { "EditDeleteAction", EditDeleteAction_activated, NULL, NULL, NULL },
   { "EditDuplicateAction", EditDuplicateAction_activated, NULL, NULL, NULL },
+  { "EditSelectAllAction", EditSelectAllAction_activated, NULL, NULL, NULL },
   { "EditOrderTopAction", EditOrderTopAction_activated, NULL, NULL, NULL },
   { "EditOrderUpAction", EditOrderUpAction_activated, NULL, NULL, NULL },
   { "EditOrderDownAction", EditOrderDownAction_activated, NULL, NULL, NULL },
