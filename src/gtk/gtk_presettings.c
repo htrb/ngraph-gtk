@@ -654,7 +654,9 @@ get_focused_obj_type_array(struct narray *focusobj, struct FocusObj *objs)
     obj = focus[i]->obj;
     for (j = 0; j < obj_n; j++) {
       if (objs[j].obj == obj) {
-	objs[j].oid = focus[i]->oid;
+	memmove(objs + j, objs + j + 1, (obj_n - j - 1) * sizeof(*objs));
+	objs[obj_n - 1].obj = obj;
+	objs[obj_n - 1].oid = focus[i]->oid;
 	break;
       }
     }
