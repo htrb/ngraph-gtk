@@ -1523,8 +1523,12 @@ Trimming(int x1, int y1, int x2, int y2, struct Viewer *d)
   arraydel(&farray);
 }
 
+struct view_region {
+  int x1, y1, x2, y2, err;
+};
+
 static int
-Match(char *objname, int x1, int y1, int x2, int y2, int err, const struct Viewer *d)
+select_obj(const char *objname, const struct Viewer *d, struct view_region *region)
 {
   struct objlist *fobj, *aobj;
   char *argv[6];
@@ -1535,20 +1539,23 @@ Match(char *objname, int x1, int y1, int x2, int y2, int err, const struct Viewe
   int did, oid;
   N_VALUE *dinst;
   int i, match, hidden, r;
-  int minx, miny, maxx, maxy;
+  int minx, miny, maxx, maxy, err;
   struct savedstdio save;
 
-  minx = (x1 < x2) ? x1 : x2;
-  miny = (y1 < y2) ? y1 : y2;
-  maxx = (x1 > x2) ? x1 : x2;
-  maxy = (y1 > y2) ? y1 : y2;
+  if (region) {
+    minx = (region->x1 < region->x2) ? region->x1 : region->x2;
+    miny = (region->y1 < region->y2) ? region->y1 : region->y2;
+    maxx = (region->x1 > region->x2) ? region->x1 : region->x2;
+    maxy = (region->y1 > region->y2) ? region->y1 : region->y2;
+    err = region->err;
 
-  argv[0] = (char *) &minx;
-  argv[1] = (char *) &miny;
-  argv[2] = (char *) &maxx;
-  argv[3] = (char *) &maxy;
-  argv[4] = (char *) &err;
-  argv[5] = NULL;
+    argv[0] = (char *) &minx;
+    argv[1] = (char *) &miny;
+    argv[2] = (char *) &maxx;
+    argv[3] = (char *) &maxy;
+    argv[4] = (char *) &err;
+    argv[5] = NULL;
+  }
 
   fobj = chkobject(objname);
   if (! fobj) {
@@ -1592,10 +1599,12 @@ Match(char *objname, int x1, int y1, int x2, int y2, int err, const struct Viewe
 	dinst = chkobjinst(dobj, did);
       }
       _getobj(dobj, "oid", dinst, &oid);
-      _exeobj(dobj, "match", dinst, 5, argv);
-      _getobj(dobj, "match", dinst, &match);
-      if (! match) {
-	continue;
+      if (region) {
+	_exeobj(dobj, "match", dinst, 5, argv);
+	_getobj(dobj, "match", dinst, &match);
+	if (! match) {
+	  continue;
+	}
       }
       if (add_focus_obj(d->focusobj, dobj, oid)) {
 	r++;
