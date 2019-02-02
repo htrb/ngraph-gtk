@@ -6530,6 +6530,9 @@ CmEditMenuCB(void *w, gpointer client_data)
   case MenuIdEditDuplicate:
     ViewCopy();
     break;
+  case MenuIdEditSelectAll:
+    ViewSelectAll();
+    break;
   case MenuIdAlignLeft:
     AlignFocusedObj(VIEW_ALIGN_LEFT);
     break;
