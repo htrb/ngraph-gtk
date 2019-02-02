@@ -173,6 +173,7 @@ enum ActionWidgetIndex {
   EditFlipHAction,
   EditDeleteAction,
   EditDuplicateAction,
+  EditSelectAllAction,
   EditAlignLeftAction,
   EditAlignRightAction,
   EditAlignHCenterAction,
