@@ -1629,6 +1629,40 @@ Match(const char *objname, int x1, int y1, int x2, int y2, int err, const struct
 }
 
 static void
+ViewSelectAll(void)
+{
+  struct Viewer *d;
+  int focus;
+
+  d = &NgraphApp.Viewer;
+  switch (d->Mode) {
+  case PointB:
+    select_obj("axis",   d, NULL);
+    select_obj("legend", d, NULL);
+    select_obj("merge",  d, NULL);
+    focus = TRUE;
+  case AxisB:
+    select_obj("axis",   d, NULL);
+    focus = TRUE;
+    break;
+  case LegendB:
+    select_obj("legend", d, NULL);
+    select_obj("merge",  d, NULL);
+    focus = TRUE;
+    break;
+  default:
+    focus = FALSE;
+    break;
+  }
+  if (focus) {
+    d->FrameOfsX = d->FrameOfsY = 0;
+    d->ShowFrame = TRUE;
+    set_focus_sensitivity(d);
+    gtk_widget_queue_draw(d->Win);
+  }
+}
+
+static void
 AddList(struct objlist *obj, N_VALUE *inst)
 {
   int addi;
