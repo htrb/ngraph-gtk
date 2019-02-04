@@ -642,13 +642,12 @@ widget_set_font(struct objlist *obj, N_VALUE *inst, const char *field)
 static int
 get_focused_obj_type_array(struct narray *focusobj, struct FocusObj *objs)
 {
-  int i, j, obj_n, n, axis;
+  int i, j, obj_n, n;
   struct objlist *obj;
   struct FocusObj **focus;
 
   n = arraynum(focusobj);
   focus = arraydata(focusobj);
-  axis = FALSE;
   obj_n = 0;
   for (i = 0; i < n; i++) {
     obj = focus[i]->obj;
