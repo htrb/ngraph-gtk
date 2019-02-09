@@ -58,6 +58,7 @@ enum FOCUS_MODE {
 void ViewerWinSetup(void);
 void ViewerWinClose(void);
 void ViewerWinUpdate(char **objects);
+void ViewerSelectAllObj(struct objlist *obj);
 void OpenGC(void);
 void CloseGC(void);
 void SetScroller(void);
