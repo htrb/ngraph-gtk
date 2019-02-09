@@ -3030,7 +3030,7 @@ static void
 popup_show_cb(GtkWidget *widget, gpointer user_data)
 {
   unsigned int i;
-  int sel, num;
+  int sel, num, last_id;
   struct obj_list_data *d;
 
   d = (struct obj_list_data *) user_data;
@@ -3039,6 +3039,10 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
   num = chkobjlastinst(d->obj);
   for (i = 1; i < POPUP_ITEM_NUM; i++) {
     switch (i) {
+    case POPUP_ITEM_FOCUS_ALL:
+      last_id = chkobjlastinst(d->obj);
+      gtk_widget_set_sensitive(d->popup_item[i], last_id >= 0);
+      break;
     case POPUP_ITEM_TOP:
     case POPUP_ITEM_UP:
       gtk_widget_set_sensitive(d->popup_item[i], sel > 0 && sel <= num);
