@@ -2808,6 +2808,10 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
   m = list_store_get_selected_int(d->text, COL_ID);
   for (i = 0; i < POPUP_ITEM_NUM; i++) {
     switch (i) {
+    case POPUP_ITEM_FOCUS_ALL:
+      last_id = chkobjlastinst(d->obj);
+      gtk_widget_set_sensitive(d->popup_item[i], last_id >= 0);
+      break;
     case POPUP_ITEM_TOP:
     case POPUP_ITEM_UP:
       gtk_widget_set_sensitive(d->popup_item[i], m > 0);
