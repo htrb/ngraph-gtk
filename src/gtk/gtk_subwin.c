@@ -726,6 +726,16 @@ focus(struct obj_list_data *d, enum FOCUS_MODE add)
     Focus(d->obj, sel, add);
 }
 
+
+static void
+focus_all(struct obj_list_data *d, enum FOCUS_MODE add)
+{
+  if (Menulock || Globallock)
+    return;
+
+  ViewerSelectAllObj(d->obj);
+}
+
 static void
 toggle_boolean(struct obj_list_data *d, char *field, int sel)
 {
