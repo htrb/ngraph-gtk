@@ -21,14 +21,14 @@
  *
  */
 
+#include "common.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
 #include <string.h>
 #include <errno.h>
 #include <glib.h>
-
-#include "common.h"
 
 #include "object.h"
 #include "nstring.h"
