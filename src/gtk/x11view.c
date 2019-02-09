@@ -1662,6 +1662,29 @@ ViewSelectAll(void)
   }
 }
 
+void
+ViewerSelectAllObj(struct objlist *obj)
+{
+  struct Viewer *d;
+  const char *name;
+  int n;
+
+  name = chkobjectname(obj);
+  if (name == NULL) {
+    return;
+  }
+  UnFocus();
+  d = &NgraphApp.Viewer;
+  n = select_obj(name, d, NULL);
+  if (n < 1) {
+    return;
+  }
+  d->FrameOfsX = d->FrameOfsY = 0;
+  d->ShowFrame = TRUE;
+  set_focus_sensitivity(d);
+  gtk_widget_queue_draw(d->Win);
+}
+
 static void
 AddList(struct objlist *obj, N_VALUE *inst)
 {
