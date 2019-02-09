@@ -1266,6 +1266,12 @@ list_sub_window_focus(GtkMenuItem *item, gpointer user_data)
 }
 
 void
+list_sub_window_focus_all(GtkMenuItem *item, gpointer user_data)
+{
+  focus_all((struct obj_list_data *) user_data, FOCUS_MODE_NORMAL);
+}
+
+void
 list_sub_window_add_focus(GtkMenuItem *item, gpointer user_data)
 {
   focus((struct obj_list_data *) user_data, FOCUS_MODE_TOGGLE);
