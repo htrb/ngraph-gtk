@@ -1281,9 +1281,12 @@ update_focused_obj_color1(GtkWidget *widget, struct Viewer *d, int num)
   struct FocusObj *focus;
   N_VALUE *inst;
   int i, modified, r, g, b, a;
-  struct objlist *obj;
+  struct objlist *obj, *text_obj, *mark_obj, *axis_obj;
 
   modified = FALSE;
+  text_obj = chkobject("text");
+  mark_obj = chkobject("mark");
+  axis_obj = chkobject("axis");
   set_rgba(widget, &r, &g, &b, &a);
   for (i = 0; i < num; i++) {
     focus = *(struct FocusObj **) arraynget(d->focusobj, i);
@@ -1301,13 +1304,13 @@ update_focused_obj_color1(GtkWidget *widget, struct Viewer *d, int num)
       _putobj(obj, "stroke_B", inst, &b);
       _putobj(obj, "stroke_A", inst, &a);
       modified = TRUE;          /* really modified */
-    } else if (obj == chkobject("text") || obj == chkobject("mark")) {
+    } else if (obj == text_obj || obj == mark_obj) {
       _putobj(obj, "R", inst, &r);
       _putobj(obj, "G", inst, &g);
       _putobj(obj, "B", inst, &b);
       _putobj(obj, "A", inst, &a);
       modified = TRUE;          /* really modified */
-    } else if (obj == chkobject("axis")) {
+    } else if (obj == axis_obj) {
       if (update_focused_obj_color1_axis(obj, inst,r, g, b, a)) {
         modified = TRUE;
       }
