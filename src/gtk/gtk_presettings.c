@@ -1363,9 +1363,10 @@ update_focused_obj_path_type(GtkWidget *widget, struct Viewer *d, int num)
   struct FocusObj *focus;
   N_VALUE *inst;
   int i, modified, id;
-  struct objlist *obj;
+  struct objlist *obj, *path_obj;
 
   modified = FALSE;
+  path_obj = chkobject("path");
   for (i = 0; i < num; i++) {
     focus = *(struct FocusObj **) arraynget(d->focusobj, i);
     if (focus == NULL) {
@@ -1377,7 +1378,7 @@ update_focused_obj_path_type(GtkWidget *widget, struct Viewer *d, int num)
     }
     obj = focus->obj;
     _getobj(obj, "id", inst, &id);
-    if (obj == chkobject("path")) {
+    if (obj == path_obj) {
       set_path_type(obj, id);
       modified = TRUE;          /* really modified */
     }
