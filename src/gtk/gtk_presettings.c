@@ -1644,15 +1644,15 @@ update_focused_obj(GtkWidget *widget, gpointer user_data)
   } else if (widget == Widgets.path_type.widget) {
     modified = update_focused_obj_path_type(widget, d, num);
   } else if (widget == Widgets.join_type.widget) {
-    modified = update_focused_obj_field_value(widget, d, num, "join", GPOINTER_TO_INT(user_data));
+    modified = update_focused_obj_field_value(widget, d, num, "join", GPOINTER_TO_INT(user_data), NULL);
   } else if (widget == Widgets.marker_type_begin.widget) {
-    modified = update_focused_obj_field_value(widget, d, num, "marker_begin", GPOINTER_TO_INT(user_data));
+    modified = update_focused_obj_field_value(widget, d, num, "marker_begin", GPOINTER_TO_INT(user_data), NULL);
   } else if (widget == Widgets.marker_type_end.widget) {
-    modified = update_focused_obj_field_value(widget, d, num, "marker_end", GPOINTER_TO_INT(user_data));
+    modified = update_focused_obj_field_value(widget, d, num, "marker_end", GPOINTER_TO_INT(user_data), NULL);
   } else if (widget == Widgets.mark_type_begin.widget) {
-    modified = update_focused_obj_field_value(widget, d, num, "mark_type_begin", GPOINTER_TO_INT(user_data));
+    modified = update_focused_obj_field_value(widget, d, num, "mark_type_begin", GPOINTER_TO_INT(user_data), NULL);
   } else if (widget == Widgets.mark_type_end.widget) {
-    modified = update_focused_obj_field_value(widget, d, num, "mark_type_end", GPOINTER_TO_INT(user_data));
+    modified = update_focused_obj_field_value(widget, d, num, "mark_type_end", GPOINTER_TO_INT(user_data), NULL);
   } else if (widget == Widgets.stroke_fill.widget) {
     modified = update_focused_obj_stroke_fill(widget, d, num, GPOINTER_TO_INT(user_data));
   } else if (widget == Widgets.font.widget) {
@@ -1668,11 +1668,15 @@ update_focused_obj(GtkWidget *widget, gpointer user_data)
   } else if (widget == Widgets.pt.widget) {
     modified = update_focused_obj_font_size(widget, d, num);
   } else if (widget == Widgets.mark_type.widget) {
-    modified = update_focused_obj_field_value(widget, d, num, "type", GPOINTER_TO_INT(user_data));
+    struct objlist *mark_obj;
+    mark_obj = chkobject("mark");
+    modified = update_focused_obj_field_value(widget, d, num, "type", GPOINTER_TO_INT(user_data), mark_obj);
   } else if (widget == Widgets.mark_size.widget) {
     int size;
+    struct objlist *mark_obj;
+    mark_obj = chkobject("mark");
     size = gtk_spin_button_get_value(GTK_SPIN_BUTTON(Widgets.mark_size.widget)) * 100;
-    modified = update_focused_obj_field_value(widget, d, num, "size", size);
+    modified = update_focused_obj_field_value(widget, d, num, "size", size, mark_obj);
   }
   if (modified) {
     set_graph_modified();
