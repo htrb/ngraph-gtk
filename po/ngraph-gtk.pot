@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.08.00\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2019-02-09 19:13+0900\n"
+"POT-Creation-Date: 2019-02-24 14:53+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1293,7 +1293,7 @@ msgstr ""
 msgid "Making data file."
 msgstr ""
 
-#: src/gtk/x11file.c:5994 src/gtk/x11lgnd.c:3052 src/gtk/gtk_presettings.c:1847
+#: src/gtk/x11file.c:5994 src/gtk/x11lgnd.c:3052 src/gtk/gtk_presettings.c:1874
 msgid "Join"
 msgstr ""
 
@@ -1557,11 +1557,11 @@ msgstr ""
 msgid "_Color2:"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:1392 src/gtk/gtk_presettings.c:1858
+#: src/gtk/x11lgnd.c:1392 src/gtk/gtk_presettings.c:1885
 msgid "Marker begin"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:1396 src/gtk/gtk_presettings.c:1864
+#: src/gtk/x11lgnd.c:1396 src/gtk/gtk_presettings.c:1891
 msgid "Marker end"
 msgstr ""
 
@@ -2609,7 +2609,7 @@ msgstr ""
 msgid "Alternative font"
 msgstr ""
 
-#: src/gtk/x11opt.c:867 src/gtk/gtk_presettings.c:1775
+#: src/gtk/x11opt.c:867 src/gtk/gtk_presettings.c:1802
 msgid "Font name"
 msgstr ""
 
@@ -2909,11 +2909,11 @@ msgstr ""
 msgid "Instance name"
 msgstr ""
 
-#: src/gtk/gtk_liststore.c:162 src/gtk/gtk_presettings.c:1789
+#: src/gtk/gtk_liststore.c:162 src/gtk/gtk_presettings.c:1816
 msgid "Bold"
 msgstr ""
 
-#: src/gtk/gtk_liststore.c:163 src/gtk/gtk_presettings.c:1792
+#: src/gtk/gtk_liststore.c:163 src/gtk/gtk_presettings.c:1819
 msgid "Italic"
 msgstr ""
 
@@ -2921,27 +2921,27 @@ msgstr ""
 msgid "Line style"
 msgstr ""
 
-#: src/gtk/gtk_presettings.c:1717 src/odata.c:196 src/opath.c:81
+#: src/gtk/gtk_presettings.c:1744 src/odata.c:196 src/opath.c:81
 msgid "line"
 msgstr ""
 
-#: src/gtk/gtk_presettings.c:1783
+#: src/gtk/gtk_presettings.c:1810
 msgid "Font size"
 msgstr ""
 
-#: src/gtk/gtk_presettings.c:1809
+#: src/gtk/gtk_presettings.c:1836
 msgid "Mark size"
 msgstr ""
 
-#: src/gtk/gtk_presettings.c:1814
+#: src/gtk/gtk_presettings.c:1841
 msgid "stroke/fill"
 msgstr ""
 
-#: src/gtk/gtk_presettings.c:1821
+#: src/gtk/gtk_presettings.c:1848
 msgid "Line Width"
 msgstr ""
 
-#: src/gtk/gtk_presettings.c:1826
+#: src/gtk/gtk_presettings.c:1853
 msgid "Line Style"
 msgstr ""
 
