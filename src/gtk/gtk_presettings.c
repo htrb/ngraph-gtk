@@ -1583,9 +1583,11 @@ update_focused_obj_font_style(GtkWidget *widget, struct Viewer *d, int num, int 
   struct FocusObj *focus;
   N_VALUE *inst;
   int i, modified;
-  struct objlist *obj;
+  struct objlist *obj, *text_obj, *axis_obj;
 
   modified = FALSE;
+  text_obj = chkobject("text");
+  axis_obj = chkobject("axis");
   for (i = 0; i < num; i++) {
     focus = *(struct FocusObj **) arraynget(d->focusobj, i);
     if (focus == NULL) {
@@ -1596,11 +1598,11 @@ update_focused_obj_font_style(GtkWidget *widget, struct Viewer *d, int num, int 
       continue;
     }
     obj = focus->obj;
-    if (obj == chkobject("text")) {
+    if (obj == text_obj) {
       if (modify_font_style(obj, inst, "style", style, apply)) {
         modified = TRUE;
       }
-    } else if (obj == chkobject("axis")) {
+    } else if (obj == axis_obj) {
       if (update_focused_obj_font_style_axis(obj, inst, style, apply)) {
         modified = TRUE;
       }
