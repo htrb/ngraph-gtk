@@ -1151,9 +1151,10 @@ update_focused_obj_width(GtkWidget *widget, struct Viewer *d, int num)
   struct FocusObj *focus;
   N_VALUE *inst;
   int i, modified, width;
-  struct objlist *obj;
+  struct objlist *obj, *axis_obj;
 
   modified = FALSE;
+  axis_obj = chkobject("axis");
   width = get_line_width_setting();
   for (i = 0; i < num; i++) {
     focus = *(struct FocusObj **) arraynget(d->focusobj, i);
@@ -1168,7 +1169,7 @@ update_focused_obj_width(GtkWidget *widget, struct Viewer *d, int num)
     if (chkobjfield(obj, "width")) {
       continue;
     }
-    if (obj == chkobject("axis")) {
+    if (obj == axis_obj) {
       if (update_focused_obj_width_axis(obj, inst, width)) {
         modified = TRUE;
       }
