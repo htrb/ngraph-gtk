@@ -1492,7 +1492,7 @@ update_focused_obj_font_size(GtkWidget *widget, struct Viewer *d, int num)
 }
 
 static int
-update_focused_obj_field_value(GtkWidget *widget, struct Viewer *d, int num, const char *field, int value)
+update_focused_obj_field_value(GtkWidget *widget, struct Viewer *d, int num, const char *field, int value, struct objlist *target)
 {
   struct FocusObj *focus;
   N_VALUE *inst;
@@ -1510,6 +1510,9 @@ update_focused_obj_field_value(GtkWidget *widget, struct Viewer *d, int num, con
       continue;
     }
     obj = focus->obj;
+    if (target && obj != target) {
+      continue;
+    }
     if (! chkobjfield(obj, field)) {
       _getobj(obj, field, inst, &old_value);
       if (value != old_value) {
