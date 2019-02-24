@@ -674,13 +674,20 @@ presetting_set_parameters(struct Viewer *d)
   struct FocusObj *focus;
   N_VALUE *inst;
   int i, num;
-  struct objlist *obj;
+  struct objlist *obj, *axis_obj, *path_obj, *rect_obj, *text_obj, *arc_obj, *mark_obj;
   struct FocusObj objs[OBJ_MAX];
 
   num = get_focused_obj_type_array(d->focusobj, objs);
   if (num < 1) {
     return;
   }
+
+  axis_obj = chkobject("axis");
+  path_obj = chkobject("path");
+  rect_obj = chkobject("rectangle");
+  text_obj = chkobject("text");
+  arc_obj  = chkobject("arc");
+  mark_obj = chkobject("mark");
 
   UpdateFieldsLock = TRUE;
   for (i = 0; i < num; i++) {
@@ -693,14 +700,14 @@ presetting_set_parameters(struct Viewer *d)
       continue;
     }
     obj = focus->obj;
-    if (obj == chkobject("axis")) {
+    if (obj == axis_obj) {
       widget_set_line_width(obj, inst);
       widget_set_rgba_color(obj, inst, Widgets.color1.widget, NULL, NULL);
       widget_set_line_style(obj, inst, "style");
       widget_set_font_style(obj, inst, "num_font_style");
       widget_set_spin_value(obj, inst, Widgets.pt.widget, "num_pt");
       widget_set_font(obj, inst, "num_font");
-    } else if (obj == chkobject("path")) {
+    } else if (obj == path_obj) {
       widget_set_stroke_fill(obj, inst);
       widget_set_join(obj, inst);
       widget_set_line_width(obj, inst);
@@ -711,17 +718,17 @@ presetting_set_parameters(struct Viewer *d)
       widget_set_mark_type(obj, inst, Widgets.mark_type_end.widget, "mark_type_end");
       widget_set_line_style(obj, inst, "style");
       widget_set_path_type(obj, inst);
-    } else if (obj == chkobject("rectangle")) {
+    } else if (obj == rect_obj) {
       widget_set_stroke_fill(obj, inst);
       widget_set_line_width(obj, inst);
       widget_set_rgba_color(obj, inst, Widgets.color1.widget, "stroke_", NULL);
       widget_set_rgba_color(obj, inst, Widgets.color2.widget, "fill_", NULL);
       widget_set_line_style(obj, inst, "style");
-    } else if (obj == chkobject("text")) {
+    } else if (obj == text_obj) {
       widget_set_font_style(obj, inst, "style");
       widget_set_spin_value(obj, inst, Widgets.pt.widget, "pt");
       widget_set_font(obj, inst, "font");
-    } else if (obj == chkobject("arc")) {
+    } else if (obj == arc_obj) {
       widget_set_stroke_fill(obj, inst);
       widget_set_join(obj, inst);
       widget_set_line_width(obj, inst);
@@ -731,7 +738,7 @@ presetting_set_parameters(struct Viewer *d)
       widget_set_mark_type(obj, inst, Widgets.mark_type_begin.widget, "mark_type_begin");
       widget_set_mark_type(obj, inst, Widgets.mark_type_end.widget, "mark_type_end");
       widget_set_line_style(obj, inst, "style");
-    } else if (obj == chkobject("mark")) {
+    } else if (obj == mark_obj) {
       widget_set_line_width(obj, inst);
       widget_set_rgba_color(obj, inst, Widgets.color1.widget, NULL, NULL);
       widget_set_rgba_color(obj, inst, Widgets.color2.widget, NULL, "2");
