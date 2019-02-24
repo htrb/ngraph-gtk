@@ -1208,10 +1208,12 @@ update_focused_obj_line_style(GtkWidget *widget, struct Viewer *d, int num)
   struct FocusObj *focus;
   N_VALUE *inst;
   int i, modified, style, id;
-  struct objlist *obj;
+  struct objlist *obj, *axis_obj, *text_obj;
   char *style_str;
 
   modified = FALSE;
+  axis_obj = chkobject("axis");
+  text_obj = chkobject("text");
   style = combo_box_get_active(widget);
   style_str = FwLineStyle[style].list;
   for (i = 0; i < num; i++) {
@@ -1228,10 +1230,10 @@ update_focused_obj_line_style(GtkWidget *widget, struct Viewer *d, int num)
     if (chkobjfield(obj, "style")) {
       continue;
     }
-    if (obj == chkobject("text")) {
+    if (obj == text_obj) {
       continue;
     }
-    if (obj == chkobject("axis")) {
+    if (obj == axis_obj) {
       if (update_focused_obj_line_style_axis(obj, inst, style_str)) {
         modified = TRUE;
       }
