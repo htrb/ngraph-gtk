@@ -1411,9 +1411,11 @@ update_focused_obj_font(GtkWidget *widget, struct Viewer *d, int num)
   struct FocusObj *focus;
   N_VALUE *inst;
   int i, modified, id;
-  struct objlist *obj;
+  struct objlist *obj, *text_obj, *axis_obj;
 
   modified = FALSE;
+  text_obj = chkobject("text");
+  axis_obj = chkobject("axis");
   for (i = 0; i < num; i++) {
     focus = *(struct FocusObj **) arraynget(d->focusobj, i);
     if (focus == NULL) {
@@ -1425,10 +1427,10 @@ update_focused_obj_font(GtkWidget *widget, struct Viewer *d, int num)
     }
     obj = focus->obj;
     _getobj(obj, "id", inst, &id);
-    if (obj == chkobject("text")) {
+    if (obj == text_obj) {
       set_font(obj, id, "font");
       modified = TRUE;          /* really modified */
-    } else if (obj == chkobject("axis")) {
+    } else if (obj == axis_obj) {
       if (update_focused_obj_font_axis(obj, inst)) {
         modified = TRUE;
       }
