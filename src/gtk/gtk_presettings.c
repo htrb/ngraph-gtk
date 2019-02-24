@@ -1465,9 +1465,10 @@ update_focused_obj_font_size(GtkWidget *widget, struct Viewer *d, int num)
   struct FocusObj *focus;
   N_VALUE *inst;
   int i, modified, pt;
-  struct objlist *obj;
+  struct objlist *obj, *axis_obj;
 
   modified = FALSE;
+  axis_obj = chkobject("axis");
   pt = gtk_spin_button_get_value(GTK_SPIN_BUTTON(Widgets.pt.widget)) * 100;
   for (i = 0; i < num; i++) {
     focus = *(struct FocusObj **) arraynget(d->focusobj, i);
@@ -1481,7 +1482,7 @@ update_focused_obj_font_size(GtkWidget *widget, struct Viewer *d, int num)
     obj = focus->obj;
     if (chk_update_field(obj, inst, "pt", pt)) {
       modified = TRUE;
-    } else if (obj == chkobject("axis")) {
+    } else if (obj == axis_obj) {
       if (update_focused_obj_font_size_axis(obj, inst, pt)) {
         modified = TRUE;
       }
