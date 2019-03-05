@@ -293,19 +293,11 @@ parse_argument_list(struct math_string *str, MathEquation *eq, struct math_funct
 }
 
 static MathExpression *
-create_math_func(struct math_string *str, MathEquation *eq, struct math_token *name, int *err)
+create_math_func(struct math_string *str, MathEquation *eq, struct math_function_parameter *fprm, int *err)
 {
-  struct math_function_parameter *fprm;
   int i, arg_max, argc, pos_id;
   MathExpression **argv, *exp;
   struct math_token *token;
-
-  fprm = math_equation_get_func(eq, name->data.sym);
-  if (fprm == NULL) {
-    *err = MATH_ERROR_UNKNOWN_FUNC;
-    math_equation_set_parse_error(eq, name->ptr, str);
-    return NULL;
-  }
 
   arg_max = (fprm->argc < 0) ? MATH_ARG_NUM : fprm->argc;
 
@@ -373,6 +365,7 @@ static MathExpression *
 parse_func_expression(struct math_string *str, MathEquation *eq, int *err)
 {
   struct math_token *token1, *token2;
+  struct math_function_parameter *fprm;
   MathExpression *exp;
 
   token1 = my_get_token(str);
@@ -389,9 +382,23 @@ parse_func_expression(struct math_string *str, MathEquation *eq, int *err)
     }
     switch (token2->type) {
     case MATH_TOKEN_TYPE_LP:
-      exp = create_math_func(str, eq, token1, err);
-      math_scanner_free_token(token2);
-      math_scanner_free_token(token1);
+      fprm = math_equation_get_func(eq, token1->data.sym);
+      if (fprm) {
+	exp = create_math_func(str, eq, fprm, err);
+	math_scanner_free_token(token2);
+	math_scanner_free_token(token1);
+      } else if (math_equation_get_const_by_name(eq, token1->data.sym, NULL) >= 0 ||
+		 math_equation_check_var(eq, token1->data.sym) >= 0) {
+	unget_token(token2);
+	unget_token(token1);
+	exp = parse_primary_expression(str, eq, err);
+      } else {
+	*err = MATH_ERROR_UNKNOWN_FUNC;
+	math_equation_set_parse_error(eq, token1->ptr, str);
+	math_scanner_free_token(token2);
+	math_scanner_free_token(token1);
+	exp = NULL;
+      }
       break;
     default:
       unget_token(token2);
