@@ -293,11 +293,19 @@ parse_argument_list(struct math_string *str, MathEquation *eq, struct math_funct
 }
 
 static MathExpression *
-create_math_func(struct math_string *str, MathEquation *eq, struct math_function_parameter *fprm, int *err)
+create_math_func(struct math_string *str, MathEquation *eq, struct math_token *name, int *err)
 {
+  struct math_function_parameter *fprm;
   int i, arg_max, argc, pos_id;
   MathExpression **argv, *exp;
   struct math_token *token;
+
+  fprm = math_equation_get_func(eq, name->data.sym);
+  if (fprm == NULL) {
+    *err = MATH_ERROR_UNKNOWN_FUNC;
+    math_equation_set_parse_error(eq, name->ptr, str);
+    return NULL;
+  }
 
   arg_max = (fprm->argc < 0) ? MATH_ARG_NUM : fprm->argc;
 
@@ -365,7 +373,6 @@ static MathExpression *
 parse_func_expression(struct math_string *str, MathEquation *eq, int *err)
 {
   struct math_token *token1, *token2;
-  struct math_function_parameter *fprm;
   MathExpression *exp;
 
   token1 = my_get_token(str);
@@ -382,23 +389,9 @@ parse_func_expression(struct math_string *str, MathEquation *eq, int *err)
     }
     switch (token2->type) {
     case MATH_TOKEN_TYPE_LP:
-      fprm = math_equation_get_func(eq, token1->data.sym);
-      if (fprm) {
-	exp = create_math_func(str, eq, fprm, err);
-	math_scanner_free_token(token2);
-	math_scanner_free_token(token1);
-      } else if (math_equation_get_const_by_name(eq, token1->data.sym, NULL) >= 0 ||
-		 math_equation_check_var(eq, token1->data.sym) >= 0) {
-	unget_token(token2);
-	unget_token(token1);
-	exp = parse_primary_expression(str, eq, err);
-      } else {
-	*err = MATH_ERROR_UNKNOWN_FUNC;
-	math_equation_set_parse_error(eq, token1->ptr, str);
-	math_scanner_free_token(token2);
-	math_scanner_free_token(token1);
-	exp = NULL;
-      }
+      exp = create_math_func(str, eq, token1, err);
+      math_scanner_free_token(token2);
+      math_scanner_free_token(token1);
       break;
     default:
       unget_token(token2);
@@ -583,33 +576,33 @@ parse_multiplicative_expression(struct math_string *str, MathEquation *eq, int *
       case MATH_OPERATOR_TYPE_MUL:
       case MATH_OPERATOR_TYPE_DIV:
       case MATH_OPERATOR_TYPE_MOD:
-        right = parse_unary_expression(str, eq, err);
-        if (right == NULL) {
-          math_expression_free(exp);
-          math_scanner_free_token(token);
-          return NULL;
-        }
-        if (token->data.op == MATH_OPERATOR_TYPE_MUL) {
-          type = MATH_EXPRESSION_TYPE_MUL;
-        } else if (token->data.op == MATH_OPERATOR_TYPE_DIV) {
-          type = MATH_EXPRESSION_TYPE_DIV;
-        } else if (token->data.op == MATH_OPERATOR_TYPE_MOD) {
-          type = MATH_EXPRESSION_TYPE_MOD;
-        } else {
-          type = 0;
-        }
-        left = exp;
-        math_scanner_free_token(token);
-        exp = math_binary_expression_new(type, eq, left, right, err);
-        if (exp == NULL) {
-          math_expression_free(left);
-          math_expression_free(right);
-          return NULL;
-        }
-        break;
+	right = parse_unary_expression(str, eq, err);
+	if (right == NULL) {
+	  math_expression_free(exp);
+	  math_scanner_free_token(token);
+	  return NULL;
+	}
+	if (token->data.op == MATH_OPERATOR_TYPE_MUL) {
+	  type = MATH_EXPRESSION_TYPE_MUL;
+	} else if (token->data.op == MATH_OPERATOR_TYPE_DIV) {
+	  type = MATH_EXPRESSION_TYPE_DIV;
+	} else if (token->data.op == MATH_OPERATOR_TYPE_MOD) {
+	  type = MATH_EXPRESSION_TYPE_MOD;
+	} else {
+	  type = 0;
+	}
+	left = exp;
+	math_scanner_free_token(token);
+	exp = math_binary_expression_new(type, eq, left, right, err);
+	if (exp == NULL) {
+	  math_expression_free(left);
+	  math_expression_free(right);
+	  return NULL;
+	}
+	break;
       default:
-        unget_token(token);
-        goto End;
+	unget_token(token);
+	goto End;
       }
       break;
     case MATH_TOKEN_TYPE_CONST:
@@ -619,15 +612,15 @@ parse_multiplicative_expression(struct math_string *str, MathEquation *eq, int *
       unget_token(token);
       right = parse_unary_expression(str, eq, err);
       if (right == NULL) {
-        math_expression_free(exp);
-        return NULL;
+	math_expression_free(exp);
+	return NULL;
       }
       left = exp;
       exp = math_binary_expression_new(MATH_EXPRESSION_TYPE_MUL, eq, left, right, err);
       if (exp == NULL) {
-        math_expression_free(left);
-        math_expression_free(right);
-        return NULL;
+	math_expression_free(left);
+	math_expression_free(right);
+	return NULL;
       }
       break;
     default:
