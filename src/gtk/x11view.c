@@ -5525,7 +5525,9 @@ Focus(struct objlist *fobj, int id, enum FOCUS_MODE mode)
   }
   d->MouseMode = MOUSENONE;
   check_focused_obj_type(d, &type);
-  if (type != FOCUS_OBJ_TYPE_MERGE) {
+  if (type == FOCUS_OBJ_TYPE_MERGE) {
+    set_toolbox_mode(TOOLBOX_MODE_TOOLBAR);
+  } else {
     set_toolbox_mode(TOOLBOX_MODE_SETTING_PANEL);
   }
   if (arraynum(d->focusobj) == 0) {
