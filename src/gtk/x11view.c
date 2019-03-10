@@ -5422,9 +5422,9 @@ check_focused_obj(struct narray *focusobj, struct objlist *fobj, int oid)
 static void
 set_toolbox_mode_by_focus_obj(const struct Viewer *d)
 {
-  int type;
-  check_focused_obj_type(d, &type);
-  if (type == FOCUS_OBJ_TYPE_MERGE) {
+  int type, n;
+  n = check_focused_obj_type(d, &type);
+  if (n == 0 || type == FOCUS_OBJ_TYPE_MERGE) {
     set_toolbox_mode(TOOLBOX_MODE_TOOLBAR);
   } else {
     set_toolbox_mode(TOOLBOX_MODE_SETTING_PANEL);
