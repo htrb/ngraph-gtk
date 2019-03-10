@@ -5435,7 +5435,7 @@ static int
 add_focus_obj(struct narray *focusobj, struct objlist *obj, int oid)
 {
   struct FocusObj *focus;
-  int r, type;
+  int r;
 
   if (chkobjfield(obj, "bbox"))
     return FALSE;
@@ -5452,12 +5452,7 @@ add_focus_obj(struct narray *focusobj, struct objlist *obj, int oid)
   focus->oid = oid;
   arrayadd(focusobj, &focus);
 
-  check_focused_obj_type(&NgraphApp.Viewer, &type);
-  if (type == FOCUS_OBJ_TYPE_MERGE) {
-    set_toolbox_mode(TOOLBOX_MODE_TOOLBAR);
-  } else {
-    set_toolbox_mode(TOOLBOX_MODE_SETTING_PANEL);
-  }
+  set_toolbox_mode_by_focus_obj(&NgraphApp.Viewer);
   return TRUE;
 }
 
