@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ngraph-gtk 6.08.00\n"
+"Project-Id-Version: ngraph-gtk 6.08.01\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2019-02-24 14:53+0900\n"
+"POT-Creation-Date: 2019-03-10 20:27+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2827,7 +2827,7 @@ msgid "Spawning external driver."
 msgstr ""
 
 #: src/gtk/x11print.c:731 src/gtk/x11print.c:1005 src/gtk/x11print.c:1078
-#: src/gtk/x11view.c:5853
+#: src/gtk/x11view.c:5863
 msgid "Drawing."
 msgstr ""
 
@@ -2869,11 +2869,11 @@ msgstr ""
 msgid "Moving data points is canceled."
 msgstr ""
 
-#: src/gtk/x11view.c:5847
+#: src/gtk/x11view.c:5857
 msgid "Scaling"
 msgstr ""
 
-#: src/gtk/x11view.c:5854
+#: src/gtk/x11view.c:5864
 msgid "Drawing"
 msgstr ""
 
