@@ -5474,7 +5474,7 @@ check_drawrable(struct objlist *obj)
 void
 Focus(struct objlist *fobj, int id, enum FOCUS_MODE mode)
 {
-  int oid, focus;
+  int oid, focus, type;
   N_VALUE *inst;
   int man, hidden, legend, axis, merge;
   struct Viewer *d;
@@ -5522,8 +5522,10 @@ Focus(struct objlist *fobj, int id, enum FOCUS_MODE mode)
     add_focus_obj(d->focusobj, fobj, oid);
   }
   d->MouseMode = MOUSENONE;
-  set_toolbox_mode(TOOLBOX_MODE_SETTING_PANEL);
-
+  check_focused_obj_type(d, &type);
+  if (type != FOCUS_OBJ_TYPE_MERGE) {
+    set_toolbox_mode(TOOLBOX_MODE_SETTING_PANEL);
+  }
   if (arraynum(d->focusobj) == 0) {
     UnFocus();
   }
