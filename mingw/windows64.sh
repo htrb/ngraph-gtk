@@ -62,6 +62,7 @@ make_zip() {
 			cp $win_path/$subdir/$i $PKG_DIR/$subdir/
 		    done
 		fi
+		;;
 	    etc)
 		for i in fonts gtk-3.0 ngraph-gtk
 		do
