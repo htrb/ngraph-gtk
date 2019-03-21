@@ -4909,6 +4909,7 @@ create_toplevel_window(void)
   create_addin_menu();
 
   NgraphApp.FileName = NULL;
+  NgraphApp.Viewer.Mode = PointB;
 
   gtk_widget_show_all(GTK_WIDGET(TopLevel));
   ViewerWinSetup();
