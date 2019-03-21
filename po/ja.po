@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.07.06\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2019-03-10 20:27+0900\n"
+"POT-Creation-Date: 2019-03-21 09:45+0900\n"
 "PO-Revision-Date: 2019-02-09 19:14+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -1322,7 +1322,7 @@ msgstr "データファイル作成中"
 msgid "Making data file."
 msgstr "データファイル作成中"
 
-#: src/gtk/x11file.c:5994 src/gtk/x11lgnd.c:3052 src/gtk/gtk_presettings.c:1874
+#: src/gtk/x11file.c:5994 src/gtk/x11lgnd.c:3052 src/gtk/gtk_presettings.c:1878
 msgid "Join"
 msgstr "ジョイン"
 
@@ -1590,11 +1590,11 @@ msgstr "座標(_P):"
 msgid "_Color2:"
 msgstr "色2(_C):"
 
-#: src/gtk/x11lgnd.c:1392 src/gtk/gtk_presettings.c:1885
+#: src/gtk/x11lgnd.c:1392 src/gtk/gtk_presettings.c:1889
 msgid "Marker begin"
 msgstr "始点マーカ"
 
-#: src/gtk/x11lgnd.c:1396 src/gtk/gtk_presettings.c:1891
+#: src/gtk/x11lgnd.c:1396 src/gtk/gtk_presettings.c:1895
 msgid "Marker end"
 msgstr "終点マーカ"
 
@@ -2643,7 +2643,7 @@ msgstr "ドライバ"
 msgid "Alternative font"
 msgstr "代替フォント"
 
-#: src/gtk/x11opt.c:867 src/gtk/gtk_presettings.c:1802
+#: src/gtk/x11opt.c:867 src/gtk/gtk_presettings.c:1806
 msgid "Font name"
 msgstr "フォント"
 
@@ -2943,11 +2943,11 @@ msgstr "開く"
 msgid "Instance name"
 msgstr "インスタンス名"
 
-#: src/gtk/gtk_liststore.c:162 src/gtk/gtk_presettings.c:1816
+#: src/gtk/gtk_liststore.c:162 src/gtk/gtk_presettings.c:1820
 msgid "Bold"
 msgstr "太字"
 
-#: src/gtk/gtk_liststore.c:163 src/gtk/gtk_presettings.c:1819
+#: src/gtk/gtk_liststore.c:163 src/gtk/gtk_presettings.c:1823
 msgid "Italic"
 msgstr "斜体"
 
@@ -2955,27 +2955,27 @@ msgstr "斜体"
 msgid "Line style"
 msgstr "線種"
 
-#: src/gtk/gtk_presettings.c:1744 src/odata.c:196 src/opath.c:81
+#: src/gtk/gtk_presettings.c:1745 src/odata.c:196 src/opath.c:81
 msgid "line"
 msgstr "直線"
 
-#: src/gtk/gtk_presettings.c:1810
+#: src/gtk/gtk_presettings.c:1814
 msgid "Font size"
 msgstr "フォントサイズ"
 
-#: src/gtk/gtk_presettings.c:1836
+#: src/gtk/gtk_presettings.c:1840
 msgid "Mark size"
 msgstr "マークサイズ"
 
-#: src/gtk/gtk_presettings.c:1841
+#: src/gtk/gtk_presettings.c:1845
 msgid "stroke/fill"
 msgstr "ストローク・塗りつぶし"
 
-#: src/gtk/gtk_presettings.c:1848
+#: src/gtk/gtk_presettings.c:1852
 msgid "Line Width"
 msgstr "線幅"
 
-#: src/gtk/gtk_presettings.c:1853
+#: src/gtk/gtk_presettings.c:1857
 msgid "Line Style"
 msgstr "線種"
 
