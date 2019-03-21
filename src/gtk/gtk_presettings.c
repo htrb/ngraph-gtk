@@ -553,13 +553,14 @@ widget_set_marker_type(struct objlist *obj, N_VALUE *inst)
 }
 
 static void
-widget_set_mark_type(struct objlist *obj, N_VALUE *inst, GtkWidget *button, const char *field)
+widget_set_mark_type(struct objlist *obj, N_VALUE *inst, GtkWidget *button, const char *field, struct MarkDialog *d)
 {
   int type;
   if (_getobj(obj, field, inst, &type)) {
     return;
   }
   button_set_mark_image(button, type);
+  d->Type = type;
 }
 
 static void
