@@ -5442,6 +5442,7 @@ CmViewerButtonArm(GtkToggleToolButton *action, gpointer client_data)
 
   UnFocus();
 
+  NgraphApp.Viewer.Mode = mode;
   switch (mode) {
   case PointB:
     DefaultMode = PointerModeBoth;
@@ -5480,7 +5481,6 @@ CmViewerButtonArm(GtkToggleToolButton *action, gpointer client_data)
     NSetCursor(GDK_PENCIL);
     set_toolbox_mode(TOOLBOX_MODE_SETTING_PANEL);
   }
-  NgraphApp.Viewer.Mode = mode;
   NgraphApp.Viewer.Capture = FALSE;
   NgraphApp.Viewer.MouseMode = MOUSENONE;
   presetting_set_visibility(mode);
