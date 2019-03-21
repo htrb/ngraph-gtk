@@ -5499,7 +5499,20 @@ set_toolbox_mode(enum TOOLBOX_MODE mode)
 
   switch (mode) {
   case TOOLBOX_MODE_TOOLBAR:
-    widget = CToolbar;
+    switch (NgraphApp.Viewer.Mode) {
+    case PointB:
+    case LegendB:
+    case AxisB:
+    case DataB:
+    case TrimB:
+    case EvalB:
+    case ZoomB:
+      widget = CToolbar;
+      break;
+    default:
+      widget = SettingPanel;
+      break;
+    }
     break;
   case TOOLBOX_MODE_SETTING_PANEL:
     presetting_show_focused();
