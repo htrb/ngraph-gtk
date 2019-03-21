@@ -715,8 +715,8 @@ presetting_set_parameters(struct Viewer *d)
       widget_set_rgba_color(obj, inst, Widgets.color1.widget, "stroke_", NULL);
       widget_set_rgba_color(obj, inst, Widgets.color2.widget, "fill_", NULL);
       widget_set_marker_type(obj, inst);
-      widget_set_mark_type(obj, inst, Widgets.mark_type_begin.widget, "mark_type_begin");
-      widget_set_mark_type(obj, inst, Widgets.mark_type_end.widget, "mark_type_end");
+      widget_set_mark_type(obj, inst, Widgets.mark_type_begin.widget, "mark_type_begin", &(Widgets.mark_begin));
+      widget_set_mark_type(obj, inst, Widgets.mark_type_end.widget, "mark_type_end", &(Widgets.mark_end));
       widget_set_line_style(obj, inst, "style");
       widget_set_path_type(obj, inst);
     } else if (obj == rect_obj) {
@@ -736,14 +736,14 @@ presetting_set_parameters(struct Viewer *d)
       widget_set_rgba_color(obj, inst, Widgets.color1.widget, "stroke_", NULL);
       widget_set_rgba_color(obj, inst, Widgets.color2.widget, "fill_", NULL);
       widget_set_marker_type(obj, inst);
-      widget_set_mark_type(obj, inst, Widgets.mark_type_begin.widget, "mark_type_begin");
-      widget_set_mark_type(obj, inst, Widgets.mark_type_end.widget, "mark_type_end");
+      widget_set_mark_type(obj, inst, Widgets.mark_type_begin.widget, "mark_type_begin", &(Widgets.mark_begin));
+      widget_set_mark_type(obj, inst, Widgets.mark_type_end.widget, "mark_type_end", &(Widgets.mark_end));
       widget_set_line_style(obj, inst, "style");
     } else if (obj == mark_obj) {
       widget_set_line_width(obj, inst);
       widget_set_rgba_color(obj, inst, Widgets.color1.widget, NULL, NULL);
       widget_set_rgba_color(obj, inst, Widgets.color2.widget, NULL, "2");
-      widget_set_mark_type(obj, inst, Widgets.mark_type.widget, "type");
+      widget_set_mark_type(obj, inst, Widgets.mark_type.widget, "type", &(Widgets.mark));
       widget_set_line_style(obj, inst, "style");
       widget_set_spin_value(obj, inst, Widgets.mark_size.widget, "size");
     }
