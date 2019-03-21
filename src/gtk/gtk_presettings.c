@@ -1767,11 +1767,14 @@ static void
 select_mark(GtkWidget *w, gpointer client_data)
 {
   struct MarkDialog *d;
+  int ret;
 
   d = (struct MarkDialog *) client_data;
-  DialogExecute(d->parent, d);
-  button_set_mark_image(w, d->Type);
-  update_focused_obj(w, GINT_TO_POINTER(d->Type));
+  ret = DialogExecute(d->parent, d);
+  if (ret == IDOK) {
+    button_set_mark_image(w, d->Type);
+    update_focused_obj(w, GINT_TO_POINTER(d->Type));
+  }
 }
 
 static void
