@@ -221,6 +221,29 @@ compare_focused_inst(const void *a, const void *b)
   return (inst_a->id - inst_b->id);
 }
 
+static struct FOCUSED_INST *
+create_focused_inst_array_by_id_order(struct FocusObj **focus, int n)
+{
+  struct FOCUSED_INST *focused_inst;
+  int i, id;
+
+  if (focus == NULL || n < 1) {
+    return NULL;
+  }
+
+  focused_inst = g_malloc(sizeof(*focused_inst) * n);
+  if (focused_inst == NULL) {
+    return NULL;
+  }
+  for (i = 0; i < n; i++) {
+    id = chkobjoid(focus[i]->obj, focus[i]->oid);
+    focused_inst[i].id = id;
+    focused_inst[i].focus = focus[i];
+  }
+  qsort(focused_inst, n, sizeof(*focused_inst), compare_focused_inst);
+  return focused_inst;
+}
+
 static int
 CopyFocusedObjects(void)
 {
