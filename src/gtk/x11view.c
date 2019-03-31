@@ -248,12 +248,13 @@ static int
 CopyFocusedObjects(void)
 {
   struct narray *focus_array;
-  struct FocusObj **focus;
+  struct FocusObj **focus, *inst;
   struct objlist *axis;
   char *s;
   int i, r, n, id, num;
   GtkClipboard* clipboard;
   GString *str;
+  struct FOCUSED_INST *focused_inst;
 
   focus_array = NgraphApp.Viewer.focusobj;
   n = arraynum(focus_array);
@@ -262,26 +263,35 @@ CopyFocusedObjects(void)
     return 1;
 
   focus = arraydata(focus_array);
+  focused_inst = create_focused_inst_array_by_id_order(focus, n);
+  if (focused_inst == NULL) {
+    return 1;
+  }
 
   str = g_string_sized_new(256);
-  if (str == NULL)
+  if (str == NULL) {
+    g_free(focused_inst);
     return 1;
+  }
 
   axis = chkobject("axis");
   g_string_append(str, SCRIPT_IDN);
   num = 0;
   for (i = 0; i < n; i++) {
-    if (focus[i]->obj == axis) {
+    inst = focused_inst[i].focus;
+    if (inst->obj == axis) {
+      g_free(focused_inst);
       g_string_free(str, TRUE);
       return 1;
     }
 
-    id = chkobjoid(focus[i]->obj, focus[i]->oid);
+    id = chkobjoid(inst->obj, inst->oid);
     if (id < 0)
       continue;
 
-    r = getobj(focus[i]->obj, "save", id, 0, NULL, &s);
+    r = getobj(inst->obj, "save", id, 0, NULL, &s);
     if (r < 0 || s == NULL) {
+      g_free(focused_inst);
       g_string_free(str, TRUE);
       return 1;
     }
@@ -295,6 +305,7 @@ CopyFocusedObjects(void)
     gtk_clipboard_set_text(clipboard, str->str, -1);
   }
 
+  g_free(focused_inst);
   g_string_free(str, TRUE);
 
   return 0;
