@@ -6497,6 +6497,7 @@ ViewCopy(void)
   int axis = FALSE;
   struct Viewer *d;
   char *objs[OBJ_MAX];
+  struct FOCUSED_INST *focused_inst;
 
   if (Menulock || Globallock)
     return;
@@ -6515,10 +6516,16 @@ ViewCopy(void)
   axis = FALSE;
   PaintLock = TRUE;
 
+  focused_inst = create_focused_inst_array_by_id_order(arraydata(d->focusobj), num);
+  if (focused_inst == NULL) {
+    return;
+  }
+
   get_focused_obj_array(d->focusobj, objs);
   menu_save_undo(UNDO_TYPE_COPY, objs);
   for (i = 0; i < num; i++) {
-    focus = * (struct FocusObj **) arraynget(d->focusobj, i);
+    focus = focused_inst[i].focus;
+    id = focused_inst[i].id;
     if (focus == NULL)
       continue;
 
@@ -6527,8 +6534,6 @@ ViewCopy(void)
       continue;
 
     obj = focus->obj;
-    _getobj(obj, "id", inst, &id);
-
     if (obj == chkobject("axis")) {
       axis = TRUE;
       ViewCopyAxis(obj, id, focus, inst);
@@ -6546,6 +6551,7 @@ ViewCopy(void)
     }
   }
   PaintLock = FALSE;
+  g_free(focused_inst);
 
   if (! axis)
     d->allclear = FALSE;
