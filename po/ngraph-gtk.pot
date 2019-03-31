@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.08.01\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2019-03-21 23:00+0900\n"
+"POT-Creation-Date: 2019-03-31 13:56+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -864,7 +864,7 @@ msgid "_All"
 msgstr ""
 
 #: src/gtk/x11dialg.c:350 src/gtk/x11file.c:741 src/gtk/x11file.c:2018
-#: src/gtk/x11file.c:2235 src/gtk/x11menu.c:1972 src/gtk/x11view.c:970
+#: src/gtk/x11file.c:2235 src/gtk/x11menu.c:1972 src/gtk/x11view.c:1018
 msgid "Select _All"
 msgstr ""
 
@@ -966,7 +966,7 @@ msgstr ""
 msgid "_Y math"
 msgstr ""
 
-#: src/gtk/x11file.c:756 src/gtk/x11menu.c:873 src/gtk/x11view.c:986
+#: src/gtk/x11file.c:756 src/gtk/x11menu.c:873 src/gtk/x11view.c:1034
 msgid "_Close"
 msgstr ""
 
@@ -1078,7 +1078,7 @@ msgstr ""
 msgid "_Result"
 msgstr ""
 
-#: src/gtk/x11file.c:1973 src/gtk/x11file.c:2202 src/gtk/x11view.c:944
+#: src/gtk/x11file.c:1973 src/gtk/x11file.c:2202 src/gtk/x11view.c:992
 msgid "Line No."
 msgstr ""
 
@@ -1218,12 +1218,12 @@ msgid "_Load settings"
 msgstr ""
 
 #: src/gtk/x11file.c:4116 src/gtk/x11file.c:4197 src/gtk/x11file.c:4273
-#: src/gtk/x11view.c:954
+#: src/gtk/x11view.c:1002
 msgid "_Mask"
 msgstr ""
 
 #: src/gtk/x11file.c:4120 src/gtk/x11file.c:4201 src/gtk/x11file.c:4277
-#: src/gtk/x11view.c:955
+#: src/gtk/x11view.c:1003
 msgid "_Move"
 msgstr ""
 
@@ -2145,7 +2145,7 @@ msgstr ""
 msgid "Cut selected object to clipboard"
 msgstr ""
 
-#: src/gtk/x11menu.c:1912 src/gtk/x11menu.c:2839 src/gtk/x11view.c:975
+#: src/gtk/x11menu.c:1912 src/gtk/x11menu.c:2839 src/gtk/x11view.c:1023
 msgid "_Copy"
 msgstr ""
 
@@ -2827,7 +2827,7 @@ msgid "Spawning external driver."
 msgstr ""
 
 #: src/gtk/x11print.c:731 src/gtk/x11print.c:1005 src/gtk/x11print.c:1078
-#: src/gtk/x11view.c:5863
+#: src/gtk/x11view.c:5911
 msgid "Drawing."
 msgstr ""
 
@@ -2843,37 +2843,37 @@ msgstr ""
 msgid "Making GRA file."
 msgstr ""
 
-#: src/gtk/x11view.c:1238 src/gtk/x11view.c:1240
+#: src/gtk/x11view.c:1286 src/gtk/x11view.c:1288
 #, c-format
 msgid "Searching for data."
 msgstr ""
 
-#: src/gtk/x11view.c:1352
+#: src/gtk/x11view.c:1400
 #, c-format
 msgid "Evaluating."
 msgstr ""
 
-#: src/gtk/x11view.c:1355
+#: src/gtk/x11view.c:1403
 msgid "Evaluating"
 msgstr ""
 
-#: src/gtk/x11view.c:1436
+#: src/gtk/x11view.c:1484
 msgid "trimming (multi select)"
 msgstr ""
 
-#: src/gtk/x11view.c:2951
+#: src/gtk/x11view.c:2999
 msgid "Data points are moved."
 msgstr ""
 
-#: src/gtk/x11view.c:4329
+#: src/gtk/x11view.c:4377
 msgid "Moving data points is canceled."
 msgstr ""
 
-#: src/gtk/x11view.c:5857
+#: src/gtk/x11view.c:5905
 msgid "Scaling"
 msgstr ""
 
-#: src/gtk/x11view.c:5864
+#: src/gtk/x11view.c:5912
 msgid "Drawing"
 msgstr ""
 
