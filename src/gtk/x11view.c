@@ -207,6 +207,20 @@ range_increment(GtkWidget *w, double inc)
 static char SCRIPT_IDN[] = "#! ngraph\n# clipboard\n\n";
 #define SCRIPT_IDN_LEN (sizeof(SCRIPT_IDN) - 1)
 
+struct FOCUSED_INST {
+  int id;
+  struct FocusObj *focus;
+};
+
+static int
+compare_focused_inst(const void *a, const void *b)
+{
+  struct FOCUSED_INST *inst_a, *inst_b;
+  inst_a = (struct FOCUSED_INST *) a;
+  inst_b = (struct FOCUSED_INST *) b;
+  return (inst_a->id - inst_b->id);
+}
+
 static int
 CopyFocusedObjects(void)
 {
