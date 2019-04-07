@@ -137,7 +137,7 @@ start_editing_enum(GtkCellEditable *editable, struct obj_list_data *d, n_list_st
   g_signal_connect(cbox, "changed", G_CALLBACK(select_enum), d);
 }
 
-#if GTK_CHECK_VERSION(3, 8, 0) && ! GTK_CHECK_VERSION(3, 18, 0)
+#if ! GTK_CHECK_VERSION(3, 18, 0)
 static void
 spin_button_size_allocated(GtkWidget *widget, GdkRectangle *allocation, gpointer user_data)
 {
@@ -217,7 +217,7 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
   case G_TYPE_DOUBLE:
   case G_TYPE_INT:
     if (GTK_IS_SPIN_BUTTON(editable)) {
-#if GTK_CHECK_VERSION(3, 8, 0) && ! GTK_CHECK_VERSION(3, 18, 0)
+#if ! GTK_CHECK_VERSION(3, 18, 0)
       g_signal_connect(editable, "size-allocate", G_CALLBACK(spin_button_size_allocated), NULL);
 #endif
       gtk_entry_set_alignment(GTK_ENTRY(editable), 1.0);
@@ -712,7 +712,7 @@ update(struct obj_list_data *d)
 }
 
 static void
-focus(struct obj_list_data *d, int add)
+focus(struct obj_list_data *d, enum FOCUS_MODE add)
 {
   int sel, num;
 
@@ -724,6 +724,16 @@ focus(struct obj_list_data *d, int add)
 
   if ((sel >= 0) && (sel <= num))
     Focus(d->obj, sel, add);
+}
+
+
+static void
+focus_all(struct obj_list_data *d, enum FOCUS_MODE add)
+{
+  if (Menulock || Globallock)
+    return;
+
+  ViewerSelectAllObj(d->obj);
 }
 
 static void
@@ -829,30 +839,6 @@ hidden(struct obj_list_data *d)
   d->select = sel;
   d->update(d, FALSE, TRUE);
   set_graph_modified();
-}
-
-static void
-set_hidden_state(struct obj_list_data *d, int hide)
-{
-  int sel, num;
-  int hidden;
-
-  if (Menulock || Globallock)
-    return;
-
-  sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
-  num = chkobjlastinst(d->obj);
-  if (sel < 0 || sel > num) {
-    return;
-  }
-
-  getobj(d->obj, "hidden", sel, 0, NULL, &hidden);
-  if (hidden != hide) {
-    putobj(d->obj, "hidden", sel, &hide);
-    d->select = sel;
-    d->update(d, FALSE, TRUE);
-    set_graph_modified();
-  }
 }
 
 #if ! GTK_CHECK_VERSION(3, 22, 0)
@@ -1062,20 +1048,6 @@ hide_minimize_menu_item(GtkWidget *widget, gpointer user_data)
 }
 #endif
 
-gboolean
-focus_in(GtkWidget *widget, GdkEvent *event, gpointer user_data)
-{
-  gtk_grab_add(GTK_WIDGET(widget));
-  return FALSE;
-}
-
-gboolean
-focus_out(GtkWidget *widget, GdkEvent *event, gpointer user_data)
-{
-  gtk_grab_remove(GTK_WIDGET(widget));
-  return FALSE;
-}
-
 static void
 swin_realized(GtkWidget *widget, gpointer user_data)
 {
@@ -1123,11 +1095,7 @@ label_sub_window_create(struct SubWin *d)
 
   swin = gtk_scrolled_window_new(NULL, NULL);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-#if GTK_CHECK_VERSION(3, 8, 0)
   gtk_container_add(GTK_CONTAINER(swin), label);
-#else
-  gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(swin), label);
-#endif
   d->Win = swin;
 
   return swin;
@@ -1292,24 +1260,21 @@ list_sub_window_update(GtkMenuItem *item, gpointer user_data)
 }
 
 void
-list_sub_window_hide(GtkMenuItem *item, gpointer user_data)
+list_sub_window_focus(GtkMenuItem *item, gpointer user_data)
 {
-  int hide;
-
-  hide = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(item));
-  set_hidden_state((struct obj_list_data *)user_data, ! hide);
+  focus((struct obj_list_data *) user_data, FOCUS_MODE_NORMAL);
 }
 
 void
-list_sub_window_focus(GtkMenuItem *item, gpointer user_data)
+list_sub_window_focus_all(GtkMenuItem *item, gpointer user_data)
 {
-  focus((struct obj_list_data *) user_data, FALSE);
+  focus_all((struct obj_list_data *) user_data, FOCUS_MODE_NORMAL);
 }
 
 void
 list_sub_window_add_focus(GtkMenuItem *item, gpointer user_data)
 {
-  focus((struct obj_list_data *) user_data, TRUE);
+  focus((struct obj_list_data *) user_data, FOCUS_MODE_TOGGLE);
 }
 
 static gboolean

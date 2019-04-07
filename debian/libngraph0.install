@@ -1,6 +1,0 @@
-etc/ngraph-gtk/Ngraph.ini
-etc/ngraph-gtk/accel_map
-etc/ngraph-gtk/fit.ngp
-usr/lib/*/lib*.so.*
-usr/lib/*/ngraph-gtk/terminal
-usr/share/locale

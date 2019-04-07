@@ -14,7 +14,6 @@
 #define GTK_WIDGET_VISIBLE(w) gtk_widget_get_visible(w)
 #endif
 
-#define USE_APP_MENU GTK_CHECK_VERSION(3, 12, 0)
 #if OSX
 #define USE_GTK_BUILDER 1
 #else
@@ -33,8 +32,6 @@
 #define RESOURCE_PATH "/com/github/htrb/ngraph-gtk"
 
 #define CAIRO_COORDINATE_OFFSET 1
-
-#define LINE_NUMBER_WIDGET_NAME "line_number"
 
 #endif
 

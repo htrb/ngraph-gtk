@@ -47,13 +47,14 @@
 #include "x11view.h"
 
 static n_list_store Mlist[] = {
-  {" ",        G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden"},
-  {"#",        G_TYPE_INT,     TRUE, FALSE, "id"},
-  {N_("file"), G_TYPE_STRING,  TRUE, TRUE,  "file"},
-  {N_("top"),  G_TYPE_DOUBLE,  TRUE, TRUE,  "top_margin",  - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {N_("left"), G_TYPE_DOUBLE,  TRUE, TRUE,  "left_margin", - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {N_("zoom"), G_TYPE_DOUBLE,  TRUE, TRUE,  "zoom",                       0, SPIN_ENTRY_MAX, 100, 1000},
-  {"^#",       G_TYPE_INT,     TRUE, FALSE, "oid"},
+  {" ",          G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden"},
+  {"#",          G_TYPE_INT,     TRUE, FALSE, "id"},
+  {N_("file"),   G_TYPE_STRING,  TRUE, TRUE,  "file"},
+  {N_("top"),    G_TYPE_DOUBLE,  TRUE, TRUE,  "top_margin",  - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {N_("left"),   G_TYPE_DOUBLE,  TRUE, TRUE,  "left_margin", - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {N_("zoom_x"), G_TYPE_DOUBLE,  TRUE, TRUE,  "zoom_x",                     0, SPIN_ENTRY_MAX, 100, 1000},
+  {N_("zoom_y"), G_TYPE_DOUBLE,  TRUE, TRUE,  "zoom_y",                     0, SPIN_ENTRY_MAX, 100, 1000},
+  {"^#",         G_TYPE_INT,     TRUE, FALSE, "oid"},
 };
 
 #define MERG_WIN_COL_NUM (sizeof(Mlist)/sizeof(*Mlist))
@@ -70,6 +71,7 @@ static struct subwin_popup_list Popup_list[] = {
   {N_("_Delete"),       G_CALLBACK(list_sub_window_delete), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {NULL, NULL, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
   {"_Focus",           G_CALLBACK(list_sub_window_focus), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("focus _All"),   G_CALLBACK(list_sub_window_focus_all), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {N_("_Preferences"), G_CALLBACK(list_sub_window_update), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {N_("_Instance name"), G_CALLBACK(list_sub_window_object_name), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {NULL, NULL, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
@@ -81,10 +83,11 @@ static struct subwin_popup_list Popup_list[] = {
 };
 
 #define POPUP_ITEM_NUM (sizeof(Popup_list) / sizeof(*Popup_list) - 1)
-#define POPUP_ITEM_TOP     8
-#define POPUP_ITEM_UP      9
-#define POPUP_ITEM_DOWN   10
-#define POPUP_ITEM_BOTTOM 11
+#define POPUP_ITEM_FOCUS_ALL 5
+#define POPUP_ITEM_TOP       9
+#define POPUP_ITEM_UP       10
+#define POPUP_ITEM_DOWN     11
+#define POPUP_ITEM_BOTTOM   12
 
 
 static void
@@ -96,7 +99,8 @@ MergeDialogSetupItem(struct MergeDialog *d, int file, int id)
   }
   SetWidgetFromObjField(d->topmargin, d->Obj, id, "top_margin");
   SetWidgetFromObjField(d->leftmargin, d->Obj, id, "left_margin");
-  SetWidgetFromObjField(d->zoom, d->Obj, id, "zoom");
+  SetWidgetFromObjField(d->zoom_x, d->Obj, id, "zoom_x");
+  SetWidgetFromObjField(d->zoom_y, d->Obj, id, "zoom_y");
 }
 
 static void
@@ -143,8 +147,12 @@ MergeDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->leftmargin = w;
 
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_PERCENT, TRUE, TRUE);
-    add_widget_to_table(table, w, _("_Zoom:"), FALSE, i++);
-    d->zoom = w;
+    add_widget_to_table(table, w, _("zoom _X:"), FALSE, i++);
+    d->zoom_x = w;
+
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_PERCENT, TRUE, TRUE);
+    add_widget_to_table(table, w, _("zoom _Y:"), FALSE, i++);
+    d->zoom_y = w;
 
     frame = gtk_frame_new(NULL);
     gtk_container_add(GTK_CONTAINER(frame), table);
@@ -181,7 +189,9 @@ MergeDialogClose(GtkWidget *w, void *data)
     return;
   if (SetObjFieldFromWidget(d->leftmargin, d->Obj, d->Id, "left_margin"))
     return;
-  if (SetObjFieldFromWidget(d->zoom, d->Obj, d->Id, "zoom"))
+  if (SetObjFieldFromWidget(d->zoom_x, d->Obj, d->Id, "zoom_x"))
+    return;
+  if (SetObjFieldFromWidget(d->zoom_y, d->Obj, d->Id, "zoom_y"))
     return;
 
   d->ret = ret;
@@ -377,7 +387,7 @@ static void
 popup_show_cb(GtkWidget *widget, gpointer user_data)
 {
   unsigned int i;
-  int sel, num;
+  int sel, num, last_id;
   struct obj_list_data *d;
 
   d = (struct obj_list_data *) user_data;
@@ -386,6 +396,10 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
   num = chkobjlastinst(d->obj);
   for (i = 1; i < POPUP_ITEM_NUM; i++) {
     switch (i) {
+    case POPUP_ITEM_FOCUS_ALL:
+      last_id = chkobjlastinst(d->obj);
+      gtk_widget_set_sensitive(d->popup_item[i], last_id >= 0);
+      break;
     case POPUP_ITEM_TOP:
     case POPUP_ITEM_UP:
       gtk_widget_set_sensitive(d->popup_item[i], sel > 0 && sel <= num);

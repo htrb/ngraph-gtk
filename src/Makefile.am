@@ -38,8 +38,8 @@ lib_LTLIBRARIES = $(ngraph_lib)
 libngraph_la_SOURCES = axis.c axis.h nconfig.c nconfig.h gra.c gra.h	\
 	ioutil.c ioutil.h mathcode.c mathcode.h mathfn.c mathfn.h	\
 	nstring.c nstring.h ntime.c ntime.h oagrid.c oarc.c oarc.h	\
-	oaxis.c object.c object.h odarray.c odouble.c odraw.c odraw.h	\
-	odata.c odata.h ofit.c ofit.h ogra.c ogra.h ogra2.c		\
+	oaxis.h oaxis.c object.c object.h odarray.c odouble.c odraw.c	\
+	odraw.h odata.c odata.h ofit.c ofit.h ogra.c ogra.h ogra2.c	\
 	ogra2fil.c ogra2nul.c ogra2prn.c oiarray.c oiarray.h oint.c	\
 	olegend.c olegend.h omark.c omath.c omerge.c omerge.h oprm.c	\
 	orect.c oroot.c oroot.h osarray.c oshell.c oregexp.c		\

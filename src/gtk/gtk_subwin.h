@@ -52,8 +52,8 @@ void list_sub_window_move_last(GtkMenuItem *item, gpointer user_data);
 void list_sub_window_move_up(GtkMenuItem *item, gpointer user_data);
 void list_sub_window_move_down(GtkMenuItem *item, gpointer user_data);
 void list_sub_window_update(GtkMenuItem *item, gpointer user_data);
-void list_sub_window_hide(GtkMenuItem *item, gpointer user_data);
 void list_sub_window_focus(GtkMenuItem *item, gpointer user_data);
+void list_sub_window_focus_all(GtkMenuItem *item, gpointer user_data);
 void list_sub_window_add_focus(GtkMenuItem *item, gpointer user_data);
 
 void tree_sub_window_delete(GtkMenuItem *item, gpointer user_data);

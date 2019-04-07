@@ -19,6 +19,7 @@
 #include "gra.h"
 #include "oroot.h"
 #include "odraw.h"
+#include "oaxis.h"
 #include "olegend.h"
 #include "axis.h"
 #include "nstring.h"
@@ -1433,16 +1434,18 @@ static int
 axiszoom2(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int x,y,len,refx,refy,preserve_width;
-  double zoom;
-  int pt,space,wid1,wid2,wid3,len1,len2,len3,wid,wlen,wwid;
+  double zoom_x, zoom_y, zoom_n, zoom_p, zoom;
+  int pt,space,wid1,wid2,wid3,len1,len2,len3,wid,wlen,wwid,direction;
   struct narray *style,*gstyle;
   int i,snum,*sdata,gsnum,*gsdata;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
-  zoom=(*(int *)argv[2])/10000.0;
-  refx=(*(int *)argv[3]);
-  refy=(*(int *)argv[4]);
-  preserve_width = (*(int *)argv[5]);
+  zoom_x = (*(int *) argv[2]) / 10000.0;
+  zoom_y = (*(int *) argv[3]) / 10000.0;
+  zoom = MIN(zoom_x, zoom_y);
+  refx = (*(int *)argv[4]);
+  refy = (*(int *)argv[5]);
+  preserve_width = (*(int *)argv[6]);
   _getobj(obj,"x",inst,&x);
   _getobj(obj,"y",inst,&y);
   _getobj(obj,"length",inst,&len);
@@ -1459,17 +1462,19 @@ axiszoom2(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   _getobj(obj,"gauge_width3",inst,&wid3);
   _getobj(obj,"gauge_style",inst,&gstyle);
   _getobj(obj,"style",inst,&style);
+  _getobj(obj,"direction",inst,&direction);
   snum=arraynum(style);
   sdata=arraydata(style);
   gsnum=arraynum(gstyle);
   gsdata=arraydata(gstyle);
-  wlen*=zoom;
-  len1*=zoom;
-  len2*=zoom;
-  len3*=zoom;
-  x=(x-refx)*zoom+refx;
-  y=(y-refy)*zoom+refy;
-  len*=zoom;
+  direction = calc_zoom_direction(direction, zoom_x, zoom_y, &zoom_p, &zoom_n);
+  len*=zoom_p;
+  wlen*=zoom_n;
+  len1*=zoom_n;
+  len2*=zoom_n;
+  len3*=zoom_n;
+  x=(x-refx)*zoom_x+refx;
+  y=(y-refy)*zoom_y+refy;
   pt*=zoom;
   space*=zoom;
   if (! preserve_width) {
@@ -1495,6 +1500,7 @@ axiszoom2(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   if (_putobj(obj,"gauge_width2",inst,&wid2)) return 1;
   if (_putobj(obj,"gauge_length3",inst,&len3)) return 1;
   if (_putobj(obj,"gauge_width3",inst,&wid3)) return 1;
+  if (_putobj(obj,"direction",inst,&direction)) return 1;
 
   if (clear_bbox(obj, inst))
     return 1;
@@ -3798,6 +3804,52 @@ axissave(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return r;
 }
 
+int
+axis_get_group(struct objlist *obj, N_VALUE *inst,  struct AxisGroupInfo *info)
+{
+  int i, lastinst, n;
+  char *group, *group2;
+  N_VALUE *inst2;
+  char group3[20];
+
+  if (_getobj(obj, "group", inst, &group)) {
+    return 1;
+  }
+
+  if (group == NULL || group[0] == 'a') {
+    int id;
+    _getobj(obj, "id", inst, &id);
+    info->type = 'a';
+    info->num = 1;
+    info->inst[0] = inst;
+    info->id[0] = id;
+    return 0;
+  }
+
+  lastinst = chkobjlastinst(obj);
+  info->type = group[0];
+  strncpy(group3, group, sizeof(group3) - 1);
+  group3[sizeof(group3) - 1] = '\0';
+
+  n = 0;
+  for (i = lastinst; i >= 0; i--) {
+    inst2 = chkobjinst(obj, i);
+    _getobj(obj, "group", inst2, &group2);
+    if (group2 &&
+        group2[0] == info->type &&
+        strcmp(group3 + 2, group2 + 2) == 0) {
+      info->id[n] = i;
+      info->inst[n] = inst2;
+      n++;
+      if (n >= AXIS_GROUPE_NUM_MAX) {
+        break;
+      }
+    }
+  }
+  info->num = n;
+  return 0;
+}
+
 static int
 axismanager(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
@@ -4056,7 +4108,7 @@ static struct objtable axis[] = {
   {"rotate",NVFUNC,NREAD|NEXEC,axisrotate,"iiii",0},
   {"flip",NVFUNC,NREAD|NEXEC,axisflip,"iii",0},
   {"change",NVFUNC,NREAD|NEXEC,axischange,"iii",0},
-  {"zooming",NVFUNC,NREAD|NEXEC,axiszoom,"iiii",0},
+  {"zooming",NVFUNC,NREAD|NEXEC,axiszoom,"iiiii",0},
   {"match",NBFUNC,NREAD|NEXEC,axismatch,"iiiii",0},
   {"coordinate",NDFUNC,NREAD|NEXEC,axiscoordinate,"ii",0},
   {"tight",NVFUNC,NREAD|NEXEC,axistight,"",0},

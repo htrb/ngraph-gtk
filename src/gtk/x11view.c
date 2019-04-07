@@ -143,7 +143,7 @@ static void AddInvalidateRect(struct objlist *obj, N_VALUE *inst);
 static void AddList(struct objlist *obj, N_VALUE *inst);
 static void RotateFocusedObj(int direction);
 static void set_mouse_cursor_hover(struct Viewer *d, int x, int y);
-static void CheckGrid(int ofs, unsigned int state, int *x, int *y, double *zoom);
+static void CheckGrid(int ofs, unsigned int state, int *x, int *y, double *zoom_x, double *zoom_y);
 static int check_drawrable(struct objlist *obj);
 
 #define GRAY 0.5
@@ -207,16 +207,54 @@ range_increment(GtkWidget *w, double inc)
 static char SCRIPT_IDN[] = "#! ngraph\n# clipboard\n\n";
 #define SCRIPT_IDN_LEN (sizeof(SCRIPT_IDN) - 1)
 
+struct FOCUSED_INST {
+  int id;
+  struct FocusObj *focus;
+};
+
+static int
+compare_focused_inst(const void *a, const void *b)
+{
+  struct FOCUSED_INST *inst_a, *inst_b;
+  inst_a = (struct FOCUSED_INST *) a;
+  inst_b = (struct FOCUSED_INST *) b;
+  return (inst_a->id - inst_b->id);
+}
+
+static struct FOCUSED_INST *
+create_focused_inst_array_by_id_order(struct FocusObj **focus, int n)
+{
+  struct FOCUSED_INST *focused_inst;
+  int i, id;
+
+  if (focus == NULL || n < 1) {
+    return NULL;
+  }
+
+  focused_inst = g_malloc(sizeof(*focused_inst) * n);
+  if (focused_inst == NULL) {
+    return NULL;
+  }
+  for (i = 0; i < n; i++) {
+    id = chkobjoid(focus[i]->obj, focus[i]->oid);
+    focused_inst[i].id = id;
+    focused_inst[i].focus = focus[i];
+  }
+  qsort(focused_inst, n, sizeof(*focused_inst), compare_focused_inst);
+  return focused_inst;
+}
+
 static int
 CopyFocusedObjects(void)
 {
   struct narray *focus_array;
-  struct FocusObj **focus;
+  struct FocusObj **focus, *inst;
   struct objlist *axis;
   char *s;
   int i, r, n, id, num;
   GtkClipboard* clipboard;
   GString *str;
+  struct FOCUSED_INST *focused_inst;
 
   focus_array = NgraphApp.Viewer.focusobj;
   n = arraynum(focus_array);
@@ -225,26 +263,35 @@ CopyFocusedObjects(void)
     return 1;
 
   focus = arraydata(focus_array);
+  focused_inst = create_focused_inst_array_by_id_order(focus, n);
+  if (focused_inst == NULL) {
+    return 1;
+  }
 
   str = g_string_sized_new(256);
-  if (str == NULL)
+  if (str == NULL) {
+    g_free(focused_inst);
     return 1;
+  }
 
   axis = chkobject("axis");
   g_string_append(str, SCRIPT_IDN);
   num = 0;
   for (i = 0; i < n; i++) {
-    if (focus[i]->obj == axis) {
+    inst = focused_inst[i].focus;
+    if (inst->obj == axis) {
+      g_free(focused_inst);
       g_string_free(str, TRUE);
       return 1;
     }
 
-    id = chkobjoid(focus[i]->obj, focus[i]->oid);
+    id = chkobjoid(inst->obj, inst->oid);
     if (id < 0)
       continue;
 
-    r = getobj(focus[i]->obj, "save", id, 0, NULL, &s);
+    r = getobj(inst->obj, "save", id, 0, NULL, &s);
     if (r < 0 || s == NULL) {
+      g_free(focused_inst);
       g_string_free(str, TRUE);
       return 1;
     }
@@ -258,6 +305,7 @@ CopyFocusedObjects(void)
     gtk_clipboard_set_text(clipboard, str->str, -1);
   }
 
+  g_free(focused_inst);
   g_string_free(str, TRUE);
 
   return 0;
@@ -696,7 +744,7 @@ text_dropped(const char *str, gint x, gint y, struct Viewer *d)
   x1 = calc_mouse_x(x, zoom, d);
   y1 = calc_mouse_y(y, zoom, d);
 
-  CheckGrid(FALSE, 0, &x1, &y1, NULL);
+  CheckGrid(FALSE, 0, &x1, &y1, NULL, NULL);
 
   _putobj(obj, "x", inst, &x1);
   _putobj(obj, "y", inst, &y1);
@@ -1523,8 +1571,12 @@ Trimming(int x1, int y1, int x2, int y2, struct Viewer *d)
   arraydel(&farray);
 }
 
+struct view_region {
+  int x1, y1, x2, y2, err;
+};
+
 static int
-Match(char *objname, int x1, int y1, int x2, int y2, int err, const struct Viewer *d)
+select_obj(const char *objname, const struct Viewer *d, struct view_region *region)
 {
   struct objlist *fobj, *aobj;
   char *argv[6];
@@ -1535,20 +1587,23 @@ Match(char *objname, int x1, int y1, int x2, int y2, int err, const struct Viewe
   int did, oid;
   N_VALUE *dinst;
   int i, match, hidden, r;
-  int minx, miny, maxx, maxy;
+  int minx, miny, maxx, maxy, err;
   struct savedstdio save;
 
-  minx = (x1 < x2) ? x1 : x2;
-  miny = (y1 < y2) ? y1 : y2;
-  maxx = (x1 > x2) ? x1 : x2;
-  maxy = (y1 > y2) ? y1 : y2;
+  if (region) {
+    minx = (region->x1 < region->x2) ? region->x1 : region->x2;
+    miny = (region->y1 < region->y2) ? region->y1 : region->y2;
+    maxx = (region->x1 > region->x2) ? region->x1 : region->x2;
+    maxy = (region->y1 > region->y2) ? region->y1 : region->y2;
+    err = region->err;
 
-  argv[0] = (char *) &minx;
-  argv[1] = (char *) &miny;
-  argv[2] = (char *) &maxx;
-  argv[3] = (char *) &maxy;
-  argv[4] = (char *) &err;
-  argv[5] = NULL;
+    argv[0] = (char *) &minx;
+    argv[1] = (char *) &miny;
+    argv[2] = (char *) &maxx;
+    argv[3] = (char *) &maxy;
+    argv[4] = (char *) &err;
+    argv[5] = NULL;
+  }
 
   fobj = chkobject(objname);
   if (! fobj) {
@@ -1592,10 +1647,12 @@ Match(char *objname, int x1, int y1, int x2, int y2, int err, const struct Viewe
 	dinst = chkobjinst(dobj, did);
       }
       _getobj(dobj, "oid", dinst, &oid);
-      _exeobj(dobj, "match", dinst, 5, argv);
-      _getobj(dobj, "match", dinst, &match);
-      if (! match) {
-	continue;
+      if (region) {
+	_exeobj(dobj, "match", dinst, 5, argv);
+	_getobj(dobj, "match", dinst, &match);
+	if (! match) {
+	  continue;
+	}
       }
       if (add_focus_obj(d->focusobj, dobj, oid)) {
 	r++;
@@ -1605,6 +1662,75 @@ Match(char *objname, int x1, int y1, int x2, int y2, int err, const struct Viewe
 
   restorestdio(&save);
   return r;
+}
+
+static int
+Match(const char *objname, int x1, int y1, int x2, int y2, int err, const struct Viewer *d)
+{
+  struct view_region region;
+  region.x1 = x1;
+  region.y1 = y1;
+  region.x2 = x2;
+  region.y2 = y2;
+  region.err = err;
+  return select_obj(objname, d, &region);
+}
+
+static void
+ViewSelectAll(void)
+{
+  struct Viewer *d;
+  int focus;
+
+  d = &NgraphApp.Viewer;
+  switch (d->Mode) {
+  case PointB:
+    select_obj("axis",   d, NULL);
+    select_obj("legend", d, NULL);
+    select_obj("merge",  d, NULL);
+    focus = TRUE;
+  case AxisB:
+    select_obj("axis",   d, NULL);
+    focus = TRUE;
+    break;
+  case LegendB:
+    select_obj("legend", d, NULL);
+    select_obj("merge",  d, NULL);
+    focus = TRUE;
+    break;
+  default:
+    focus = FALSE;
+    break;
+  }
+  if (focus) {
+    d->FrameOfsX = d->FrameOfsY = 0;
+    d->ShowFrame = TRUE;
+    set_focus_sensitivity(d);
+    gtk_widget_queue_draw(d->Win);
+  }
+}
+
+void
+ViewerSelectAllObj(struct objlist *obj)
+{
+  struct Viewer *d;
+  const char *name;
+  int n;
+
+  name = chkobjectname(obj);
+  if (name == NULL) {
+    return;
+  }
+  UnFocus();
+  d = &NgraphApp.Viewer;
+  n = select_obj(name, d, NULL);
+  if (n < 1) {
+    return;
+  }
+  d->FrameOfsX = d->FrameOfsY = 0;
+  d->ShowFrame = TRUE;
+  set_focus_sensitivity(d);
+  gtk_widget_queue_draw(d->Win);
 }
 
 static void
@@ -1951,7 +2077,7 @@ ShowFocusFrame(cairo_t *cr, const struct Viewer *d)
   restorestdio(&save);
 }
 
-static int
+int
 get_focused_obj_array(struct narray *focusobj, char **objs)
 {
   int i, j, obj_n, n, axis;
@@ -2554,7 +2680,7 @@ ShowCrossGauge(cairo_t *cr, const struct Viewer *d)
 }
 
 static void
-CheckGrid(int ofs, unsigned int state, int *x, int *y, double *zoom)
+CheckGrid(int ofs, unsigned int state, int *x, int *y, double *zoom_x, double *zoom_y)
 {
   int offset;
   int grid;
@@ -2586,8 +2712,11 @@ CheckGrid(int ofs, unsigned int state, int *x, int *y, double *zoom)
     *y = ((*y + offset) / grid) * grid;
   }
 
-  if (zoom != NULL) {
-    *zoom = nround(*zoom * grid) / ((double) grid);
+  if (zoom_x != NULL) {
+    *zoom_x = nround(*zoom_x * grid) / ((double) grid);
+  }
+  if (zoom_y != NULL) {
+    *zoom_y = nround(*zoom_y * grid) / ((double) grid);
   }
 }
 
@@ -2605,11 +2734,13 @@ mouse_down_point(unsigned int state, TPoint *point, struct Viewer *d)
   d->ShowRect = TRUE;
 }
 
-static double
-calc_zoom(struct Viewer *d, int vx1, int vy1, int *x2, int *y2)
+#define ZOOM_RATIO_LIMIT 0.5
+
+static void
+calc_zoom(struct Viewer *d, int vx1, int vy1, int *x2, int *y2, double *zoom_x, double *zoom_y, int preserve_ratio)
 {
   int vx2, vy2;
-  double cc, nn, zoom2;
+  double cc, nn, zoom2, zmx, zmy, zmr;
 
   vx1 -= d->RefX1 - d->MouseDX;
   vy1 -= d->RefY1 - d->MouseDY;
@@ -2620,12 +2751,6 @@ calc_zoom(struct Viewer *d, int vx1, int vy1, int *x2, int *y2)
   cc = 1.0 * vx1 * vx2 + 1.0 * vy1 * vy2;
   nn = 1.0 * vx2 * vx2 + 1.0 * vy2 * vy2;
 
-  if ((nn == 0) || (cc < 0)) {
-    zoom2 = 0;
-  } else {
-    zoom2 = cc / nn;
-  }
-
   if (x2) {
     *x2 = vx2;
   }
@@ -2633,17 +2758,52 @@ calc_zoom(struct Viewer *d, int vx1, int vy1, int *x2, int *y2)
   if (y2) {
     *y2 = vy2;
   }
-
-  return zoom2;
+  if ((nn == 0) || (cc < 0)) {
+    zoom2 = 0;
+  } else {
+    zoom2 = cc / nn;
+  }
+  if (vx2 * vx1 <= 0) {
+    zmx = 0;
+  } else {
+    zmx = 1.0 * vx1 / vx2;
+  }
+  if (vy2 * vy1 <= 0) {
+    zmy = 0;
+  } else {
+    zmy = 1.0 * vy1 / vy2;
+  }
+  if (zmx > 0) {
+    zmr = zmy / zmx;
+  } else {
+    zmr = 2;
+  }
+  if (zoom_x && zoom_y) {
+    if (preserve_ratio) {
+      if (zmr > 1 + ZOOM_RATIO_LIMIT) {
+	*zoom_x = 1;
+	*zoom_y = zmy;
+      } else if (zmr < ZOOM_RATIO_LIMIT) {
+	*zoom_x = zmx;
+	*zoom_y = 1;
+      } else {
+	*zoom_x = zoom2;
+	*zoom_y = zoom2;
+      }
+    } else {
+      *zoom_x = zmx;
+      *zoom_y = zmy;
+    }
+  }
 }
 
 static void
-set_zoom_prm(struct Viewer *d, int vx2, int vy2, double zoom2)
+set_zoom_prm(struct Viewer *d, int vx2, int vy2, double zoom_x, double zoom_y)
 {
   int vx1, vy1;
 
-  vx1 = d->RefX1 + vx2 * zoom2;
-  vy1 = d->RefY1 + vy2 * zoom2;
+  vx1 = d->RefX1 + vx2 * zoom_x;
+  vy1 = d->RefY1 + vy2 * zoom_y;
 
   d->MouseX1 = d->RefX1;
   d->MouseY1 = d->RefY1;
@@ -2655,8 +2815,8 @@ set_zoom_prm(struct Viewer *d, int vx2, int vy2, double zoom2)
 static void
 init_zoom(unsigned int state, struct Viewer *d)
 {
-  int vx1, vy1, vx2, vy2;
-  double zoom2;
+  int vx1, vy1, vx2, vy2, preserve_ratio;
+  double zoom_x, zoom_y;
 
   d->ShowFrame = FALSE;
   d->MouseDX = d->RefX2 - d->MouseX1;
@@ -2665,11 +2825,12 @@ init_zoom(unsigned int state, struct Viewer *d)
   vx1 = d->MouseX1;
   vy1 = d->MouseY1;
 
-  zoom2 = calc_zoom(d, vx1, vy1, &vx2, &vy2);
+  preserve_ratio = (state & GDK_CONTROL_MASK);
+  calc_zoom(d, vx1, vy1, &vx2, &vy2, &zoom_x, &zoom_y, preserve_ratio);
 
-  CheckGrid(FALSE, state, NULL, NULL, &zoom2);
+  CheckGrid(FALSE, state, NULL, NULL, &zoom_x, &zoom_y);
 
-  set_zoom_prm(d, vx2, vy2, zoom2);
+  set_zoom_prm(d, vx2, vy2, zoom_x, zoom_y);
 
   d->ShowRect = TRUE;
 }
@@ -3025,7 +3186,7 @@ mouse_down_set_points(unsigned int state, struct Viewer *d, int n)
   x1 = d->MouseX1;
   y1 = d->MouseY1;
 
-  CheckGrid(TRUE, state, &x1, &y1, NULL);
+  CheckGrid(TRUE, state, &x1, &y1, NULL, NULL);
 
   for (i = 0; i < n; i++) {
     po = (struct Point *) g_malloc(sizeof(struct Point));
@@ -3249,7 +3410,7 @@ mouse_up_drag(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
 
   dx = d->MouseX2 - d->MouseX1;
   dy = d->MouseY2 - d->MouseY1;
-  CheckGrid(FALSE, state, &dx, &dy, NULL);
+  CheckGrid(FALSE, state, &dx, &dy, NULL, NULL);
   get_focused_obj_array(d->focusobj, objs);
   axis = move_objects(dx, dy, d, objs);
   if (d->Mode == LegendB || (d->Mode == PointB && !axis)) {
@@ -3261,12 +3422,26 @@ mouse_up_drag(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
   UpdateAll(objs);
 }
 
+static int
+check_zoom(double zoom)
+{
+  int zm;
+  if (zoom * 10000 > G_MAXINT) {
+    return -1;
+  }
+  zm = nround(zoom * 10000);
+  if (zm < 1000) {
+    zm = 1000;
+  }
+  return zm;
+}
+
 static void
 mouse_up_zoom(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
 {
-  int vx1, vy1, zm, i, num, axis;
-  double zoom2;
-  char *argv[5], *objs[OBJ_MAX];
+  int vx1, vy1, zmx, zmy, i, num, axis, preserve_ratio;
+  double zoom_x, zoom_y;
+  char *argv[6], *objs[OBJ_MAX];
   N_VALUE *inst;
   struct FocusObj *focus;
   struct objlist *obj;
@@ -3281,32 +3456,31 @@ mouse_up_zoom(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
   d->MouseX2 = vx1;
   d->MouseY2 = vy1;
 
-  zoom2 = calc_zoom(d, vx1, vy1, NULL, NULL);
+  preserve_ratio = (state & GDK_CONTROL_MASK);
+  calc_zoom(d, vx1, vy1, NULL, NULL, &zoom_x, &zoom_y, preserve_ratio);
 
   if ((d->Mode != DataB) && (d->Mode != EvalB)) {
-    CheckGrid(FALSE, state, NULL, NULL, &zoom2);
+    CheckGrid(FALSE, state, NULL, NULL, &zoom_x, &zoom_y);
   }
 
-  if (zoom2 * 10000 > G_MAXINT) {
+  zmx = check_zoom(zoom_x);
+  zmy = check_zoom(zoom_y);
+  if (zmx < 0 || zmy < 0) {
     return;
   }
-  zm = nround(zoom2 * 10000);
 
-  if (zm < 1000) {
-    zm = 1000;
-  }
-
-  if (zm != 10000) {
-    argv[0] = (char *) &zm;
-    argv[1] = (char *) &(d->RefX1);
-    argv[2] = (char *) &(d->RefY1);
-    argv[3] = (char *) &Menulocal.preserve_width;
-    argv[4] = NULL;
+  objs[0] = NULL;
+  if (zmx != 10000 || zmy != 10000) {
+    argv[0] = (char *) &zmx;
+    argv[1] = (char *) &zmy;
+    argv[2] = (char *) &(d->RefX1);
+    argv[3] = (char *) &(d->RefY1);
+    argv[4] = (char *) &Menulocal.preserve_width;
+    argv[5] = NULL;
 
     num = arraynum(d->focusobj);
     PaintLock = TRUE;
 
-    objs[0] = NULL;
     if (num > 0) {
       get_focused_obj_array(d->focusobj, objs);
       menu_save_undo(UNDO_TYPE_ZOOM, objs);
@@ -3322,7 +3496,7 @@ mouse_up_zoom(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
       inst = chkobjinstoid(focus->obj, focus->oid);
       if (inst) {
 	AddInvalidateRect(obj, inst);
-	_exeobj(obj, "zooming", inst, 4, argv);
+	_exeobj(obj, "zooming", inst, 5, argv);
 	set_graph_modified();
 	AddInvalidateRect(obj, inst);
       }
@@ -3363,7 +3537,7 @@ mouse_up_change(unsigned int state, TPoint *point, double zoom, struct Viewer *d
     dy = d->MouseY2 - d->MouseY1;
 
     if ((d->Mode != DataB) && (d->Mode != EvalB)) {
-      CheckGrid(FALSE, state, &dx, &dy, NULL);
+      CheckGrid(FALSE, state, &dx, &dy, NULL, NULL);
     }
 
     if (dx != 0 || dy != 0) {
@@ -3430,7 +3604,7 @@ mouse_up_lgend1(unsigned int state, TPoint *point, double zoom, struct Viewer *d
   x1 = d->MouseX1;
   y1 = d->MouseY1;
 
-  CheckGrid(TRUE, state, &x1, &y1, NULL);
+  CheckGrid(TRUE, state, &x1, &y1, NULL, NULL);
 
   num = arraynum(d->points);
   if (num >= 1) {
@@ -3455,7 +3629,7 @@ mouse_up_lgend2(unsigned int state, TPoint *point, double zoom, struct Viewer *d
   x1 = d->MouseX1;
   y1 = d->MouseY1;
 
-  CheckGrid(TRUE, state, &x1, &y1, NULL);
+  CheckGrid(TRUE, state, &x1, &y1, NULL, NULL);
 
   num = arraynum(d->points);
 
@@ -3527,7 +3701,7 @@ SetPoint(struct Viewer *d, int x, int y)
     case MOUSEZOOM2:
     case MOUSEZOOM3:
     case MOUSEZOOM4:
-      snprintf(buf, sizeof(buf), "% .2f%%", d->Zoom * 100);
+      snprintf(buf, sizeof(buf), "% .2f%%, % .2f%%", d->ZoomX * 100, d->ZoomY * 100);
       gtk_label_set_text(GTK_LABEL(NgraphApp.Message_extra), buf);
       break;
     case MOUSEDRAG:
@@ -4234,7 +4408,7 @@ ViewerEvRButtonDown(unsigned int state, TPoint *point, struct Viewer *d, GdkEven
 			  - Menulocal.TopMargin) / zoom;
 	    po->x = d->MouseX1;
 	    po->y = d->MouseY1;
-	    CheckGrid(TRUE, state, &(po->x), &(po->y), NULL);
+	    CheckGrid(TRUE, state, &(po->x), &(po->y), NULL, NULL);
 	  }
 	}
 	break;
@@ -4506,7 +4680,7 @@ mouse_move_drag(unsigned int state, TPoint *point, double zoom, struct Viewer *d
   x = d->MouseX2 - d->MouseX1;
   y = d->MouseY2 - d->MouseY1;
 
-  CheckGrid(FALSE, state, &x, &y, NULL);
+  CheckGrid(FALSE, state, &x, &y, NULL, NULL);
 
   d->FrameOfsX = x;
   d->FrameOfsY = y;
@@ -4515,20 +4689,22 @@ mouse_move_drag(unsigned int state, TPoint *point, double zoom, struct Viewer *d
 static void
 mouse_move_zoom(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
 {
-  double zoom2;
+  double zoom_x, zoom_y, preserve_ratio;
   int vx1, vx2, vy1, vy2;
 
   vx1 = calc_mouse_x(point->x, zoom, d);
   vy1 = calc_mouse_y(point->y, zoom, d);
 
-  zoom2 = calc_zoom(d, vx1, vy1, &vx2, &vy2);
+  preserve_ratio = (state & GDK_CONTROL_MASK);
+  calc_zoom(d, vx1, vy1, &vx2, &vy2, &zoom_x, &zoom_y, preserve_ratio);
 
   if ((d->Mode != DataB) && (d->Mode != EvalB))
-    CheckGrid(FALSE, state, NULL, NULL, &zoom2);
+    CheckGrid(FALSE, state, NULL, NULL, &zoom_x, &zoom_y);
 
-  d->Zoom = zoom2;
+  d->ZoomX = zoom_x;
+  d->ZoomY = zoom_y;
 
-  set_zoom_prm(d, vx2, vy2, zoom2);
+  set_zoom_prm(d, vx2, vy2, zoom_x, zoom_y);
 }
 
 static void
@@ -4543,7 +4719,7 @@ mouse_move_change(unsigned int state, TPoint *point, double zoom, struct Viewer 
   y = d->MouseY2 - d->MouseY1;
 
   if ((d->Mode != DataB) && (d->Mode != EvalB)) {
-    CheckGrid(FALSE, state, &x, &y, NULL);
+    CheckGrid(FALSE, state, &x, &y, NULL, NULL);
   }
 
   d->LineX = x;
@@ -4593,7 +4769,7 @@ mouse_move_draw(unsigned int state, int *dx, int *dy, const struct Viewer *d)
     } else if (d->Mode & POINT_TYPE_DRAW2) {
       calc_snap_angle(d->points, dx, dy);
       if (! (state & GDK_SHIFT_MASK)) {
-	CheckGrid(FALSE, 0, dx, dy, NULL);
+	CheckGrid(FALSE, 0, dx, dy, NULL, NULL);
       }
     }
   }
@@ -4636,7 +4812,7 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
       (d->MouseMode != MOUSEPOINT) &&
       (((d->Mode != PointB) && (d->Mode != LegendB) && (d->Mode != AxisB)) ||
        (d->MouseMode != MOUSENONE))) {
-    CheckGrid(TRUE, state, &dx, &dy, NULL);
+    CheckGrid(TRUE, state, &dx, &dy, NULL, NULL);
   }
 
   d->CrossX = dx;
@@ -4943,7 +5119,7 @@ move_focus_frame(GdkEventKey *e, struct Viewer *d)
     d->FrameOfsY += dy / zoom;
     d->MouseMode = MOUSEDRAG;
     set_drag_info(d);
-    main_window_redraw();
+    gtk_widget_queue_draw(d->Win);
   }
 }
 
@@ -5162,7 +5338,7 @@ ViewerEvVScroll(GtkRange *range, gpointer user_data)
 
   d->vscroll = gtk_range_get_value(range);
   SetVRuler(d);
-  main_window_redraw();
+  gtk_widget_queue_draw(d->Win);
 }
 
 static void
@@ -5174,7 +5350,7 @@ ViewerEvHScroll(GtkRange *range, gpointer user_data)
 
   d->hscroll = gtk_range_get_value(range);
   SetHRuler(d);
-  main_window_redraw();
+  gtk_widget_queue_draw(d->Win);
 }
 
 void
@@ -5221,7 +5397,7 @@ ViewerWinUpdate(char **objects)
   }
 
   PaintLock = lock_state;
-  main_window_redraw();
+  gtk_widget_queue_draw(d->Win);
 
   d->allclear = TRUE;
 }
@@ -5291,6 +5467,18 @@ check_focused_obj(struct narray *focusobj, struct objlist *fobj, int oid)
   return CHECK_FOCUSED_OBJ_NOT_FOUND;
 }
 
+static void
+set_toolbox_mode_by_focus_obj(const struct Viewer *d)
+{
+  int type, n;
+  n = check_focused_obj_type(d, &type);
+  if (n == 0 || type == FOCUS_OBJ_TYPE_MERGE) {
+    set_toolbox_mode(TOOLBOX_MODE_TOOLBAR);
+  } else {
+    set_toolbox_mode(TOOLBOX_MODE_SETTING_PANEL);
+  }
+}
+
 static int
 add_focus_obj(struct narray *focusobj, struct objlist *obj, int oid)
 {
@@ -5312,6 +5500,7 @@ add_focus_obj(struct narray *focusobj, struct objlist *obj, int oid)
   focus->oid = oid;
   arrayadd(focusobj, &focus);
 
+  set_toolbox_mode_by_focus_obj(&NgraphApp.Viewer);
   return TRUE;
 }
 
@@ -5319,6 +5508,7 @@ static void
 clear_focus_obj(const struct Viewer *d)
 {
   arraydel2(d->focusobj);
+  set_toolbox_mode(TOOLBOX_MODE_TOOLBAR);
 }
 
 static int
@@ -5339,7 +5529,7 @@ check_drawrable(struct objlist *obj)
 }
 
 void
-Focus(struct objlist *fobj, int id, int add)
+Focus(struct objlist *fobj, int id, enum FOCUS_MODE mode)
 {
   int oid, focus;
   N_VALUE *inst;
@@ -5363,7 +5553,7 @@ Focus(struct objlist *fobj, int id, int add)
     return;
   }
 
-  if (! add) {
+  if (mode == FOCUS_MODE_NORMAL) {
     UnFocus();
   }
 
@@ -5385,9 +5575,11 @@ Focus(struct objlist *fobj, int id, int add)
   if (focus >= 0) {
     arrayndel2(d->focusobj, focus);
   }
-  add_focus_obj(d->focusobj, fobj, oid);
+  if (focus < 0 || mode != FOCUS_MODE_TOGGLE) {
+    add_focus_obj(d->focusobj, fobj, oid);
+  }
   d->MouseMode = MOUSENONE;
-
+  set_toolbox_mode_by_focus_obj(d);
   if (arraynum(d->focusobj) == 0) {
     UnFocus();
   }
@@ -5398,6 +5590,7 @@ Focus(struct objlist *fobj, int id, int add)
 
   /* this is inconvenient when one use single window mode. */
   /* gtk_widget_grab_focus(d->Win); */
+  gtk_widget_queue_draw(d->Win);
   restorestdio(&save);
 }
 
@@ -5417,6 +5610,7 @@ UnFocus(void)
     arraydel2(d->points);
   }
 
+  set_toolbox_mode(TOOLBOX_MODE_TOOLBAR);
   gtk_widget_queue_draw(d->Win);
 }
 
@@ -5665,7 +5859,7 @@ ChangeDPI(void)
     }
   }
 
-  main_window_redraw();
+  gtk_widget_queue_draw(d->Win);
 
   SetHRuler(d);
   SetVRuler(d);
@@ -5738,25 +5932,11 @@ Draw(int SelectFile)
 
   ProgressDialogFinalize();
 
-  main_window_redraw();
+  gtk_widget_queue_draw(d->Win);
 
   if (SelectFile) {
     FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
   }
-}
-
-static void
-Clear(void)
-{
-  N_VALUE *gra_inst;
-
-  gra_inst = chkobjinstoid(Menulocal.GRAobj, Menulocal.GRAoid);
-  if (gra_inst != NULL) {
-    UnFocus();
-    _exeobj(Menulocal.GRAobj, "clear", gra_inst, 0, NULL);
-    ReopenGC();
-  }
-  InfoWinClear();
 }
 
 void
@@ -5773,17 +5953,6 @@ CmViewerDraw(void *w, gpointer client_data)
 
   FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
   AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, DRAW_NONE);
-}
-
-void
-CmViewerClear(void *w, gpointer client_data)
-{
-  if (Menulock || Globallock)
-    return;
-
-  Clear();
-
-  FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
 }
 
 static int
@@ -6328,6 +6497,7 @@ ViewCopy(void)
   int axis = FALSE;
   struct Viewer *d;
   char *objs[OBJ_MAX];
+  struct FOCUSED_INST *focused_inst;
 
   if (Menulock || Globallock)
     return;
@@ -6346,10 +6516,16 @@ ViewCopy(void)
   axis = FALSE;
   PaintLock = TRUE;
 
+  focused_inst = create_focused_inst_array_by_id_order(arraydata(d->focusobj), num);
+  if (focused_inst == NULL) {
+    return;
+  }
+
   get_focused_obj_array(d->focusobj, objs);
   menu_save_undo(UNDO_TYPE_COPY, objs);
   for (i = 0; i < num; i++) {
-    focus = * (struct FocusObj **) arraynget(d->focusobj, i);
+    focus = focused_inst[i].focus;
+    id = focused_inst[i].id;
     if (focus == NULL)
       continue;
 
@@ -6358,8 +6534,6 @@ ViewCopy(void)
       continue;
 
     obj = focus->obj;
-    _getobj(obj, "id", inst, &id);
-
     if (obj == chkobject("axis")) {
       axis = TRUE;
       ViewCopyAxis(obj, id, focus, inst);
@@ -6377,6 +6551,7 @@ ViewCopy(void)
     }
   }
   PaintLock = FALSE;
+  g_free(focused_inst);
 
   if (! axis)
     d->allclear = FALSE;
@@ -6441,6 +6616,9 @@ CmEditMenuCB(void *w, gpointer client_data)
     break;
   case MenuIdEditDuplicate:
     ViewCopy();
+    break;
+  case MenuIdEditSelectAll:
+    ViewSelectAll();
     break;
   case MenuIdAlignLeft:
     AlignFocusedObj(VIEW_ALIGN_LEFT);

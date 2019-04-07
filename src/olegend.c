@@ -27,6 +27,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include "spline.h"
+#include "gra.h"
 #include "mathfn.h"
 #include "object.h"
 #include "odraw.h"
@@ -329,13 +331,14 @@ legendzoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   struct narray *points,*style;
   int i,num,width,snum,*pdata,*sdata,preserve_width;
   int refx,refy;
-  double zoom;
+  double zoom_x, zoom_y;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
-  zoom=(*(int *)argv[2])/10000.0;
-  refx=(*(int *)argv[3]);
-  refy=(*(int *)argv[4]);
-  preserve_width = (*(int *)argv[5]);
+  zoom_x = (*(int *) argv[2]) / 10000.0;
+  zoom_y = (*(int *) argv[3]) / 10000.0;
+  refx = (*(int *)argv[4]);
+  refy = (*(int *)argv[5]);
+  preserve_width = (*(int *)argv[6]);
   _getobj(obj,"points",inst,&points);
   _getobj(obj,"width",inst,&width);
   _getobj(obj,"style",inst,&style);
@@ -345,10 +348,15 @@ legendzoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   sdata=arraydata(style);
   if (num<4) return 0;
   for (i=0;i<num;i++) {
-    if (i%2==0) pdata[i]=(pdata[i]-refx)*zoom+refx;
-    else pdata[i]=(pdata[i]-refy)*zoom+refy;
+    if (i % 2 == 0) {
+      pdata[i] = (pdata[i] - refx) * zoom_x + refx;
+    } else {
+      pdata[i] = (pdata[i] - refy) * zoom_y + refy;
+    }
   }
   if (! preserve_width) {
+    double zoom;
+    zoom = MIN(zoom_x, zoom_y);
     width=width*zoom;
     for (i=0;i<snum;i++) sdata[i]=sdata[i]*zoom;
   }
@@ -362,6 +370,302 @@ legendzoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
     return 1;
 
   return 0;
+}
+
+void
+draw_marker_wave(struct objlist *obj, N_VALUE *inst, int GC,
+		 int width, int headlen, int headwidth, int x0, int y0, double dx, double dy, int errspl)
+{
+  int i;
+  double awidth;
+  double wx[5], wxc1[5], wxc2[5], wxc3[5];
+  double wy[5], wyc1[5], wyc2[5], wyc3[5];
+  double ww[5], c[6];
+
+  awidth = width * (double) headwidth / 10000;
+
+  dy = -dy;
+  if (awidth == 0) {
+    return;
+  }
+  for (i = 0; i < 5; i++) {
+    ww[i] = i;
+  }
+  wx[0] = nround(x0 - dy * awidth);
+  wx[1] = nround(x0 - dy * 0.5 * awidth - dx * 0.25 * awidth);
+  wx[2] = x0;
+  wx[3] = nround(x0 + dy * 0.5 * awidth + dx * 0.25 * awidth);
+  wx[4] = nround(x0 + dy * awidth);
+  if (spline(ww, wx, wxc1, wxc2, wxc3, 5, SPLCND2NDDIF, SPLCND2NDDIF, 0, 0)) {
+    error(obj, errspl);
+    return;
+  }
+  wy[0] = nround(y0 - dx * awidth);
+  wy[1] = nround(y0 - dx * 0.5 * awidth + dy * 0.25 * awidth);
+  wy[2] = y0;
+  wy[3] = nround(y0 + dx * 0.5 * awidth - dy * 0.25 * awidth);
+  wy[4] = nround(y0 + dx * awidth);
+  if (spline(ww, wy, wyc1, wyc2, wyc3, 5, SPLCND2NDDIF, SPLCND2NDDIF, 0, 0)) {
+    error(obj, errspl);
+    return;
+  }
+  GRAlinestyle(GC, 0, NULL, width, GRA_LINE_CAP_BUTT, GRA_LINE_JOIN_MITER, 1000);
+  GRAcurvefirst(GC, 0, NULL, NULL, NULL, splinedif, splineint, NULL, wx[0], wy[0]);
+  for (i = 0; i < 4; i++) {
+    c[0] = wxc1[i];
+    c[1] = wxc2[i];
+    c[2] = wxc3[i];
+    c[3] = wyc1[i];
+    c[4] = wyc2[i];
+    c[5] = wyc3[i];
+    if (!GRAcurve(GC, c, wx[i], wy[i])) {
+      break;
+    }
+  }
+}
+
+void
+draw_marker_bar(struct objlist *obj, N_VALUE *inst, int GC,
+		int width, int headlen, int headwidth, int x0, int y0, double dx, double dy)
+{
+  double awidth;
+  int bar[4];
+
+  awidth = width * (double) headwidth / 10000;
+
+  dy = -dy;
+  if (awidth == 0) {
+    return;
+  }
+  bar[0] = nround(x0 - dy * awidth);
+  bar[1] = nround(y0 - dx * awidth);
+  bar[2] = nround(x0 + dy * awidth);
+  bar[3] = nround(y0 + dx * awidth);
+  GRAlinestyle(GC, 0, NULL, width, GRA_LINE_CAP_BUTT, GRA_LINE_JOIN_MITER, 1000);
+  GRAline(GC, bar[0], bar[1], bar[2], bar[3]);
+}
+
+void
+draw_marker_mark(struct objlist *obj, N_VALUE *inst, int GC,
+		 int width, int headlen, int headwidth,
+		 int x0, int y0, double dx, double dy, int r, int g, int b, int a, int type)
+{
+  double awidth;
+  int br, bg, bb, ba;
+
+  _getobj(obj, "fill_R", inst, &br);
+  _getobj(obj, "fill_G", inst, &bg);
+  _getobj(obj, "fill_B", inst, &bb);
+  _getobj(obj, "fill_A", inst, &ba);
+  awidth = width * (double) headwidth / 10000;
+
+  if (awidth == 0) {
+    return;
+  }
+  GRAlinestyle(GC, 0, NULL, width, GRA_LINE_CAP_BUTT, GRA_LINE_JOIN_MITER, 1000);
+#if ROTATE_MARK
+  GRAmark_rotate(GC, type, x0, y0, dx, dy, awidth, r, g, b, a, br, bg, bb, ba);
+#else
+  GRAmark(GC, type, x0, y0, awidth, r, g, b, a, br, bg, bb, ba);
+#endif
+}
+
+static int
+mark_rotate_cw(int mark) {
+  switch (mark) {
+  case 6:
+  case 16:
+  case 26:
+  case 74:
+    return mark + 3;
+  case 7:
+  case 17:
+  case 27:
+  case 72:
+  case 78:
+  case 75:
+    return mark + 1;
+  case 8:
+  case 9:
+  case 18:
+  case 19:
+  case 28:
+  case 29:
+  case 76:
+  case 77:
+    return mark - 2;
+  case 30:
+  case 31:
+  case 32:
+  case 33:
+  case 34:
+  case 35:
+  case 36:
+  case 37:
+    return mark + 30;
+  case 38:
+  case 39:
+  case 48:
+  case 49:
+    return mark + 20;
+  case 40:
+  case 41:
+  case 42:
+  case 43:
+  case 44:
+  case 45:
+  case 46:
+  case 47:
+    return mark + 10;
+  case 50:
+  case 51:
+  case 52:
+  case 53:
+  case 54:
+  case 55:
+  case 58:
+  case 59:
+  case 60:
+  case 61:
+  case 62:
+  case 63:
+  case 64:
+  case 65:
+    return mark - 20;
+  case 56:
+  case 66:
+  case 68:
+    return mark - 19;
+  case 57:
+  case 67:
+  case 69:
+    return mark - 21;
+  case 73:
+  case 79:
+    return mark - 1;
+  default:
+    return mark;
+  }
+}
+
+int
+mark_rotate(int angle, int type)
+{
+  angle %= 36000;
+  if (angle < 0) {
+    angle += 36000;
+  }
+
+  switch (angle) {
+  case 9000:
+    type = mark_rotate_cw(type);
+    /* fall-through */
+  case 18000:
+    type = mark_rotate_cw(type);
+    /* fall-through */
+  case 27000:
+    type = mark_rotate_cw(type);
+    break;
+  }
+  return type;
+}
+
+static int
+mark_v_flip(int mark) {
+  switch (mark) {
+  case 8:
+  case 18:
+  case 28:
+  case 48:
+  case 56:
+  case 66:
+  case 74:
+    return mark + 1;
+  case 9:
+  case 19:
+  case 29:
+  case 49:
+  case 57:
+  case 67:
+  case 75:
+    return mark - 1;
+  case 30:
+  case 31:
+  case 32:
+  case 33:
+  case 34:
+  case 35:
+  case 36:
+  case 37:
+    return mark + 10;
+  case 40:
+  case 41:
+  case 42:
+  case 43:
+  case 44:
+  case 45:
+  case 46:
+  case 47:
+    return mark - 10;
+  default:
+    return mark;
+  }
+}
+
+static int
+mark_h_flip(int mark) {
+  switch (mark) {
+  case 6:
+  case 16:
+  case 26:
+  case 36:
+  case 46:
+  case 68:
+  case 76:
+    return mark + 1;
+  case 7:
+  case 17:
+  case 27:
+  case 37:
+  case 47:
+  case 69:
+  case 77:
+    return mark - 1;
+  case 50:
+  case 51:
+  case 52:
+  case 53:
+  case 54:
+  case 55:
+  case 56:
+  case 57:
+    return mark + 10;
+  case 60:
+  case 61:
+  case 62:
+  case 63:
+  case 64:
+  case 65:
+  case 66:
+  case 67:
+    return mark - 10;
+  default:
+    return mark;
+  }
+}
+
+int
+mark_flip(int dir, int type)
+{
+  switch (dir) {
+  case FLIP_DIRECTION_VERTICAL:
+    type = mark_v_flip(type);
+    break;
+  case FLIP_DIRECTION_HORIZONTAL:
+    type = mark_h_flip(type);
+    break;
+  }
+  return type;
 }
 
 int
@@ -404,7 +708,7 @@ static struct objtable legend[] = {
   {"done",NVFUNC,0,legenddone,NULL,0},
   {"bbox",NIAFUNC,NREAD|NEXEC,NULL,"",0},
   {"move",NVFUNC,NREAD|NEXEC,NULL,"ii",0},
-  {"zooming",NVFUNC,NREAD|NEXEC,NULL,"iiii",0},
+  {"zooming",NVFUNC,NREAD|NEXEC,NULL,"iiiii",0},
   {"match",NBFUNC,NREAD|NEXEC,NULL,"iiiii",0},
 };
 

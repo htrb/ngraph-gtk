@@ -1640,11 +1640,7 @@ create_user_fit_frame(struct FitDialog *d)
   }
 
   w = gtk_scrolled_window_new(NULL, NULL);
-#if GTK_CHECK_VERSION(3, 8, 0)
   gtk_container_add(GTK_CONTAINER(w), table);
-#else
-  gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(w), table);
-#endif
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(w), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(w), GTK_SHADOW_NONE);
   gtk_widget_set_size_request(GTK_WIDGET(w), -1, 200);
@@ -2794,6 +2790,7 @@ button_set_mark_image(GtkWidget *w, int type)
     pixbuf = gdk_pixbuf_get_from_surface(NgraphApp.markpix[type],
 					 0, 0, MARK_PIX_SIZE, MARK_PIX_SIZE);
     img = gtk_image_new_from_pixbuf(pixbuf);
+    g_object_unref(pixbuf);
     if (img) {
       gtk_button_set_image(GTK_BUTTON(w), img);
     }
@@ -2816,13 +2813,8 @@ MarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
     grid = gtk_grid_new();
     gtk_grid_set_column_spacing(GTK_GRID(grid), 8);
     gtk_grid_set_row_spacing(GTK_GRID(grid), 8);
-#if GTK_CHECK_VERSION(3, 12, 0)
     gtk_widget_set_margin_end(grid, 4);
     gtk_widget_set_margin_start(grid, 4);
-#else
-    gtk_widget_set_margin_right(grid, 4);
-    gtk_widget_set_margin_left(grid, 4);
-#endif
     for (type = 0; type < MARK_TYPE_NUM; type++) {
       w = gtk_toggle_button_new();
       button_set_mark_image(w, type);

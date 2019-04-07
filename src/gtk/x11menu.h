@@ -44,6 +44,7 @@ enum MenuID {
   MenuIdEditPaste,
   MenuIdEditDelete,
   MenuIdEditDuplicate,
+  MenuIdEditSelectAll,
   MenuIdAlignLeft,
   MenuIdAlignVCenter,
   MenuIdAlignRight,
@@ -155,7 +156,7 @@ struct Viewer
   int allclear;
   int cx, cy;
   int ignoreredraw;
-  double vscroll, hscroll, Zoom;
+  double vscroll, hscroll, ZoomX, ZoomY;
 };
 
 enum SubWinType {
@@ -232,9 +233,7 @@ extern struct NgraphApp NgraphApp;
 extern GtkWidget *TopLevel;
 extern GdkColor white, gray;
 extern GtkAccelGroup *AccelGroup;
-#if USE_GTK_BUILDER
 extern GtkApplication *GtkApp;
-#endif
 
 enum MENU_UNDO_TYPE {
   UNDO_TYPE_EDIT,
@@ -271,6 +270,13 @@ enum RerawFlag {
   DRAW_NOTIFY = 2,
   DRAW_AXIS_ONLY = 4,
 };
+
+enum TOOLBOX_MODE {
+  TOOLBOX_MODE_TOOLBAR,
+  TOOLBOX_MODE_SETTING_PANEL,
+};
+
+void set_toolbox_mode(enum TOOLBOX_MODE mode);
 
 int application(char *file);
 

@@ -358,20 +358,24 @@ textrotate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 static int
 textzoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
-  int x,y,pt,space,refx,refy;
-  double zoom;
+  int x,y,pt,space,refx,refy,dir;
+  double zoom, zoom_x, zoom_y, zoom_p, zoom_n;
 
-  zoom=(*(int *)argv[2])/10000.0;
-  refx=(*(int *)argv[3]);
-  refy=(*(int *)argv[4]);
+  zoom_x = (*(int *) argv[2]) / 10000.0;
+  zoom_y = (*(int *) argv[3]) / 10000.0;
+  refx = (*(int *)argv[4]);
+  refy = (*(int *)argv[5]);
   _getobj(obj,"x",inst,&x);
   _getobj(obj,"y",inst,&y);
   _getobj(obj,"pt",inst,&pt);
   _getobj(obj,"space",inst,&space);
-  x=(x-refx)*zoom+refx;
-  y=(y-refy)*zoom+refy;
-  pt=pt*zoom;
-  space=space*zoom;
+  _getobj(obj,"direction",inst,&dir);
+  dir = calc_zoom_direction(dir, zoom_x, zoom_y, &zoom_p, &zoom_n);
+  zoom = MIN(zoom_n, zoom_p);
+  x=(x-refx)*zoom_x+refx;
+  y=(y-refy)*zoom_y+refy;
+  pt *= zoom;
+  space *= zoom_p;
 
   if (pt < 1)
     pt = 1;
@@ -380,6 +384,7 @@ textzoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   if (_putobj(obj,"y",inst,&y)) return 1;
   if (_putobj(obj,"pt",inst,&pt)) return 1;
   if (_putobj(obj,"space",inst,&space)) return 1;
+  if (_putobj(obj,"direction",inst,&dir)) return 1;
 
   if (clear_bbox(obj, inst))
     return 1;
@@ -512,7 +517,7 @@ static struct objtable text[] = {
   {"bbox",NIAFUNC,NREAD|NEXEC,textbbox,"",0},
   {"move",NVFUNC,NREAD|NEXEC,textmove,"ii",0},
   {"rotate",NVFUNC,NREAD|NEXEC,textrotate,"iiii",0},
-  {"zooming",NVFUNC,NREAD|NEXEC,textzoom,"iiii",0},
+  {"zooming",NVFUNC,NREAD|NEXEC,textzoom,"iiiii",0},
   {"match",NBFUNC,NREAD|NEXEC,textmatch,"iiiii",0},
   {"save_config",NVFUNC,NREAD|NEXEC,textsaveconfig,"",0},
 

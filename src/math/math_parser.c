@@ -563,10 +563,84 @@ parse_unary_expression(struct math_string *str, MathEquation *eq, int *err)
 }
 
 static MathExpression *
-CREATE_PARSER3_FUNC(multiplicative, unary,
-		    MATH_OPERATOR_TYPE_MUL, MATH_EXPRESSION_TYPE_MUL,
-		    MATH_OPERATOR_TYPE_DIV, MATH_EXPRESSION_TYPE_DIV,
-		    MATH_OPERATOR_TYPE_MOD, MATH_EXPRESSION_TYPE_MOD);
+parse_multiplicative_expression(struct math_string *str, MathEquation *eq, int *err)
+{
+  struct math_token *token;
+  MathExpression *left, *right, *exp;
+  enum MATH_EXPRESSION_TYPE type;
+
+  exp = parse_unary_expression(str, eq, err);
+  if (exp == NULL) {
+    return NULL;
+  }
+  for (;;) {
+    token = my_get_token(str);
+    if (token == NULL) {
+      *err = MATH_ERROR_MEMORY;
+      math_expression_free(exp);
+      return NULL;
+    }
+    switch (token->type) {
+    case MATH_TOKEN_TYPE_OPERATOR:
+      switch (token->data.op) {
+      case MATH_OPERATOR_TYPE_MUL:
+      case MATH_OPERATOR_TYPE_DIV:
+      case MATH_OPERATOR_TYPE_MOD:
+	right = parse_unary_expression(str, eq, err);
+	if (right == NULL) {
+	  math_expression_free(exp);
+	  math_scanner_free_token(token);
+	  return NULL;
+	}
+	if (token->data.op == MATH_OPERATOR_TYPE_MUL) {
+	  type = MATH_EXPRESSION_TYPE_MUL;
+	} else if (token->data.op == MATH_OPERATOR_TYPE_DIV) {
+	  type = MATH_EXPRESSION_TYPE_DIV;
+	} else if (token->data.op == MATH_OPERATOR_TYPE_MOD) {
+	  type = MATH_EXPRESSION_TYPE_MOD;
+	} else {
+	  type = 0;
+	}
+	left = exp;
+	math_scanner_free_token(token);
+	exp = math_binary_expression_new(type, eq, left, right, err);
+	if (exp == NULL) {
+	  math_expression_free(left);
+	  math_expression_free(right);
+	  return NULL;
+	}
+	break;
+      default:
+	unget_token(token);
+	goto End;
+      }
+      break;
+    case MATH_TOKEN_TYPE_CONST:
+    case MATH_TOKEN_TYPE_NUMERIC:
+    case MATH_TOKEN_TYPE_SYMBOL:
+    case MATH_TOKEN_TYPE_LP:
+      unget_token(token);
+      right = parse_unary_expression(str, eq, err);
+      if (right == NULL) {
+	math_expression_free(exp);
+	return NULL;
+      }
+      left = exp;
+      exp = math_binary_expression_new(MATH_EXPRESSION_TYPE_MUL, eq, left, right, err);
+      if (exp == NULL) {
+	math_expression_free(left);
+	math_expression_free(right);
+	return NULL;
+      }
+      break;
+    default:
+      unget_token(token);
+      goto End;
+    }
+  }
+ End:
+  return exp;
+}
 
 static MathExpression *
 CREATE_PARSER2_FUNC(additive, multiplicative,

@@ -141,6 +141,10 @@
 	  <attribute name="label" translatable="yes">_Duplicate</attribute>
 	  <attribute name="action">app.EditDuplicateAction</attribute>
 	</item>
+	<item>
+	  <attribute name="label" translatable="yes">Select _All</attribute>
+	  <attribute name="action">app.EditSelectAllAction</attribute>
+	</item>
       </section>
       <section>
 	<submenu>
@@ -219,10 +223,6 @@
 	<item>
 	  <attribute name="label" translatable="yes">_Draw</attribute>
 	  <attribute name="action">app.ViewDrawAction</attribute>
-	</item>
-	<item>
-	  <attribute name="label" translatable="yes">_Clear</attribute>
-	  <attribute name="action">app.ViewClearAction</attribute>
 	</item>
       </section>
       <section>

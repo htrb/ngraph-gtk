@@ -82,9 +82,7 @@ static GtkWidget *CurrentWindow = NULL, *CToolbar = NULL, *PToolbar = NULL, *Set
 static enum {APP_CONTINUE, APP_QUIT, APP_QUIT_FORCE} Hide_window = APP_CONTINUE;
 static int DrawLock = FALSE;
 static unsigned int CursorType;
-#if USE_APP_MENU
 GtkApplication *GtkApp;
-#endif
 
 #if USE_EXT_DRIVER
 static GtkWidget *ExtDrvOutMenu = NULL
@@ -175,6 +173,7 @@ enum ActionWidgetIndex {
   EditFlipHAction,
   EditDeleteAction,
   EditDuplicateAction,
+  EditSelectAllAction,
   EditAlignLeftAction,
   EditAlignRightAction,
   EditAlignHCenterAction,
@@ -616,11 +615,7 @@ static struct ToolItem CommandToolbar[] = {
     N_("Scale _Undo"),
     N_("Scale Undo"),
     N_("Undo Scale Settings"),
-#if GTK_CHECK_VERSION(3, 10, 0)
     "edit-undo-symbolic",
-#else
-    NGRAPH_UNDO_ICON,
-#endif
     NULL,
     0,
     0,
@@ -663,11 +658,7 @@ static struct MenuItem HelpMenu[] = {
     N_("_Help"),
     NULL,
     N_("Show the help document"),
-#if GTK_CHECK_VERSION(3, 10, 0)
     "help-browser",
-#else
-    NULL,
-#endif
     "<Ngraph>/Help/Help",
     GDK_KEY_F1,
     0,
@@ -1271,11 +1262,7 @@ static struct MenuItem AxisMenu[] = {
     N_("Scale _Undo"),
     N_("Scale Undo"),
     N_("Undo Scale Settings"),
-#if GTK_CHECK_VERSION(3, 10, 0)
     "edit-undo",
-#else
-    NGRAPH_UNDO_ICON,
-#endif
     "<Ngraph>/Axis/Scale Undo",
     0,
     0,
@@ -1555,21 +1542,6 @@ static struct MenuItem ViewMenu[] = {
     TRUE,
     NULL,
     "ViewDrawAction",
-  },
-  {
-    MENU_TYPE_NORMAL,
-    N_("_Clear"),
-    N_("Clear Image"),
-    N_("Clear Viewer Window"),
-    "edit-clear",
-    "<Ngraph>/View/Clear",
-    0,
-    0,
-    NULL,
-    G_CALLBACK(CmViewerClear),
-    0,
-    NULL,
-    "ViewClearAction",
   },
   {
     MENU_TYPE_SEPARATOR,
@@ -1996,6 +1968,21 @@ static struct MenuItem EditMenu[] = {
     "EditDuplicateAction",
   },
   {
+    MENU_TYPE_NORMAL,
+    N_("Select _All"),
+    NULL,
+    N_("Select all objects"),
+    NULL,
+    "<Ngraph>/Edit/SelectAll",
+    GDK_KEY_a,
+    GDK_CONTROL_MASK,
+    NULL,
+    G_CALLBACK(CmEditMenuCB),
+    MenuIdEditSelectAll,
+    ActionWidget + EditSelectAllAction,
+    "EditSelectAllAction",
+  },
+  {
     MENU_TYPE_SEPARATOR,
     NULL,
   },
@@ -2390,11 +2377,7 @@ static struct MenuItem GraphMenu[] = {
     N_("Page Set_up"),
     NULL,
     NULL,
-#if GTK_CHECK_VERSION(3, 10, 0)
     "document-page-setup",
-#else
-    NULL,
-#endif
     "<Ngraph>/Graph/Page",
     0,
     0,
@@ -4731,16 +4714,7 @@ create_menu_sub(GtkWidget *parent, struct MenuItem *item, int popup)
       widget = gtk_separator_menu_item_new();
       break;
     case MENU_TYPE_NORMAL:
-#if GTK_CHECK_VERSION(3, 10, 0)
       widget = gtk_menu_item_new_with_mnemonic(_(item[i].label));
-#else
-      widget = gtk_image_menu_item_new_with_mnemonic(_(item[i].label));
-      if (item[i].icon) {
-	GtkWidget *icon;
-	icon = gtk_image_new_from_icon_name(item[i].icon, GTK_ICON_SIZE_MENU);
-	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(widget), icon);
-      }
-#endif
       break;
     case MENU_TYPE_TOGGLE:
     case MENU_TYPE_TOGGLE2:
@@ -4847,12 +4821,10 @@ create_toplevel_window(void)
 #else
   GdkScreen *screen;
 #endif
-#if USE_APP_MENU
   GtkWidget *popup;
 #if USE_GTK_BUILDER
   GtkClipboard *clip;
 #endif	/* USE_GTK_BUILDER */
-#endif	/* USE_APP_MENU */
 
   NgraphApp.recent_manager = gtk_recent_manager_get_default();
 
@@ -4900,7 +4872,6 @@ create_toplevel_window(void)
 
   load_hist();
 
-#if USE_APP_MENU
   GtkApp = create_application_window(&popup);
   CurrentWindow = TopLevel = gtk_application_window_new(GtkApp);
   gtk_window_set_modal(GTK_WINDOW(TopLevel), TRUE); /* for the GtkColorButton (modal GtkColorChooserDialog) */
@@ -4914,9 +4885,6 @@ create_toplevel_window(void)
 #else	/* USE_GTK_BUILDER */
   gtk_application_window_set_show_menubar(GTK_APPLICATION_WINDOW(TopLevel),FALSE);
 #endif	/* USE_GTK_BUILDER */
-#else  /* USE_APP_MENU */
-  CurrentWindow = TopLevel = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-#endif	/* USE_APP_MENU */
 
   gtk_window_set_title(GTK_WINDOW(TopLevel), AppName);
   gtk_window_set_default_size(GTK_WINDOW(TopLevel), width, height);
@@ -4941,6 +4909,7 @@ create_toplevel_window(void)
   create_addin_menu();
 
   NgraphApp.FileName = NULL;
+  NgraphApp.Viewer.Mode = PointB;
 
   gtk_widget_show_all(GTK_WIDGET(TopLevel));
   ViewerWinSetup();
@@ -5027,15 +4996,9 @@ application(char *file)
   int terminated;
 
   if (TopLevel) {
-#if GTK_CHECK_VERSION(3, 8, 0)
     if (gtk_widget_is_visible(TopLevel)) {
       return 1;
     }
-#else
-    if (GTK_WIDGET_VISIBLE(TopLevel)) {
-      return 1;
-    }
-#endif
     gtk_widget_show(TopLevel);
     OpenGC();
     OpenGRA();
@@ -5175,6 +5138,7 @@ UpdateAll2(char **objs, int redraw)
   LegendWinUpdate(objs, TRUE, redraw);
   InfoWinUpdate(TRUE);
   CoordWinUpdate(TRUE);
+  presetting_set_parameters(&NgraphApp.Viewer);
 }
 
 void
@@ -5478,45 +5442,45 @@ CmViewerButtonArm(GtkToggleToolButton *action, gpointer client_data)
 
   UnFocus();
 
+  NgraphApp.Viewer.Mode = mode;
   switch (mode) {
   case PointB:
     DefaultMode = PointerModeBoth;
     NSetCursor(GDK_LEFT_PTR);
-    gtk_stack_set_visible_child(GTK_STACK(ToolBox), CToolbar);
+    set_toolbox_mode(TOOLBOX_MODE_TOOLBAR);
     break;
   case LegendB:
     DefaultMode = PointerModeLegend;
     NSetCursor(GDK_LEFT_PTR);
-    gtk_stack_set_visible_child(GTK_STACK(ToolBox), CToolbar);
+    set_toolbox_mode(TOOLBOX_MODE_TOOLBAR);
     break;
   case AxisB:
     DefaultMode = PointerModeAxis;
     NSetCursor(GDK_LEFT_PTR);
-    gtk_stack_set_visible_child(GTK_STACK(ToolBox), CToolbar);
+    set_toolbox_mode(TOOLBOX_MODE_TOOLBAR);
     break;
   case DataB:
     DefaultMode = PointerModeData;
     NSetCursor(GDK_LEFT_PTR);
-    gtk_stack_set_visible_child(GTK_STACK(ToolBox), CToolbar);
+    set_toolbox_mode(TOOLBOX_MODE_TOOLBAR);
     break;
   case TrimB:
   case EvalB:
     NSetCursor(GDK_LEFT_PTR);
-    gtk_stack_set_visible_child(GTK_STACK(ToolBox), CToolbar);
+    set_toolbox_mode(TOOLBOX_MODE_TOOLBAR);
     break;
   case TextB:
     NSetCursor(GDK_XTERM);
-    gtk_stack_set_visible_child(GTK_STACK(ToolBox), SettingPanel);
+    set_toolbox_mode(TOOLBOX_MODE_SETTING_PANEL);
     break;
   case ZoomB:
     NSetCursor(GDK_TARGET);
-    gtk_stack_set_visible_child(GTK_STACK(ToolBox), CToolbar);
+    set_toolbox_mode(TOOLBOX_MODE_TOOLBAR);
     break;
   default:
     NSetCursor(GDK_PENCIL);
-    gtk_stack_set_visible_child(GTK_STACK(ToolBox), SettingPanel);
+    set_toolbox_mode(TOOLBOX_MODE_SETTING_PANEL);
   }
-  NgraphApp.Viewer.Mode = mode;
   NgraphApp.Viewer.Capture = FALSE;
   NgraphApp.Viewer.MouseMode = MOUSENONE;
   presetting_set_visibility(mode);
@@ -5526,6 +5490,36 @@ CmViewerButtonArm(GtkToggleToolButton *action, gpointer client_data)
   }
 
   gtk_widget_queue_draw(d->Win);
+}
+
+void
+set_toolbox_mode(enum TOOLBOX_MODE mode)
+{
+  GtkWidget *widget;
+
+  switch (mode) {
+  case TOOLBOX_MODE_TOOLBAR:
+    switch (NgraphApp.Viewer.Mode) {
+    case PointB:
+    case LegendB:
+    case AxisB:
+    case DataB:
+    case TrimB:
+    case EvalB:
+    case ZoomB:
+      widget = CToolbar;
+      break;
+    default:
+      widget = SettingPanel;
+      break;
+    }
+    break;
+  case TOOLBOX_MODE_SETTING_PANEL:
+    presetting_show_focused();
+    widget = SettingPanel;
+    break;
+  }
+  gtk_stack_set_visible_child(GTK_STACK(ToolBox), widget);
 }
 
 #define MODIFIED_TYPE_UNMODIFIED 0
@@ -5661,8 +5655,9 @@ static char *UndoTypeStr[UNDO_TYPE_NUM] = {
   N_("open file"),
   N_("add range"),
   N_("paste"),
-  N_("scale trimming"),
+  N_("scale"),
   N_("auto scale"),
+  N_("scale trimming"),
   N_("edit"),			/* dummy message */
 };
 

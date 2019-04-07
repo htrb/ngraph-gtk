@@ -67,10 +67,6 @@ DefaultDialogSetup(GtkWidget *wi, void *data, int makewidget)
   d = (struct DefaultDialog *) data;
 
   if (makewidget) {
-    w = gtk_check_button_new_with_mnemonic(_("_Geometry"));
-    d->geometry = w;
-    gtk_box_pack_start(GTK_BOX(d->vbox), w, FALSE, FALSE, 4);
-
     w = gtk_check_button_new_with_mnemonic(_("_Viewer"));
     d->viewer = w;
     gtk_box_pack_start(GTK_BOX(d->vbox), w, FALSE, FALSE, 4);
@@ -96,7 +92,6 @@ DefaultDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(d->vbox), w, FALSE, FALSE, 4);
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->geometry), FALSE);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->viewer), FALSE);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->external_viewer), FALSE);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->external_driver), FALSE);
@@ -132,7 +127,6 @@ DefaultDialogClose(GtkWidget *win, void *data)
     GtkWidget *btn;
     enum SAVE_CONFIG_TYPE type;
   } btns[] = {
-    {NULL, SAVE_CONFIG_TYPE_GEOMETRY},
     {NULL, SAVE_CONFIG_TYPE_VIEWER},
     {NULL, SAVE_CONFIG_TYPE_EXTERNAL_DRIVER},
     {NULL, SAVE_CONFIG_TYPE_ADDIN_SCRIPT},
@@ -149,13 +143,12 @@ DefaultDialogClose(GtkWidget *win, void *data)
   ret = d->ret;
   d->ret = IDLOOP;
 
-  btns[0].btn = d->geometry;
-  btns[1].btn = d->viewer;
-  btns[2].btn = d->external_driver;
-  btns[3].btn = d->addin_script;
-  btns[4].btn = d->misc;
-  btns[5].btn = d->external_viewer;
-  btns[6].btn = d->fonts;
+  btns[0].btn = d->viewer;
+  btns[1].btn = d->external_driver;
+  btns[2].btn = d->addin_script;
+  btns[3].btn = d->misc;
+  btns[4].btn = d->external_viewer;
+  btns[5].btn = d->fonts;
 
   type = 0;
 

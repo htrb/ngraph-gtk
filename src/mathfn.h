@@ -37,3 +37,4 @@ int matsolv(int dim,matrix a,vector b,vector x);
 void HSB2RGB(double h,double s,double b,int *R,int *G,int *B);
 int bsearch_int(int *ary, int n, int val, int *idx);
 int compare_double(double x, double y);
+double distance(double x1, double y1);

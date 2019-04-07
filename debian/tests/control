@@ -1,2 +1,0 @@
-Tests: run-test
-Depends: ngraph-gtk, xvfb, xauth

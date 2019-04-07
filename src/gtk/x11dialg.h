@@ -67,6 +67,7 @@ int putobj_color2(GtkWidget *w, struct objlist *obj, int id);
 int putobj_fill_color(GtkWidget *w, struct objlist *obj, int id);
 int putobj_stroke_color(GtkWidget *w, struct objlist *obj, int id);
 int chk_sputobjfield(struct objlist *obj, int id, char *field, char *str);
+int get_style_index(struct objlist *obj, int id, char *field);
 const char *get_style_string(struct objlist *obj, int id, char *field);
 
 #define DIALOG_PROTOTYPE GtkWidget *parent, *widget, *focus;	\
@@ -320,7 +321,7 @@ struct MergeDialog
 {
   DIALOG_PROTOTYPE;
   /****** local member *******/
-  GtkWidget *file, *topmargin, *leftmargin, *zoom;
+  GtkWidget *file, *topmargin, *leftmargin, *zoom_x, *zoom_y;
   struct objlist *Obj;
   int Id;
 };
@@ -459,7 +460,7 @@ struct DefaultDialog
 {
   DIALOG_PROTOTYPE;
   /****** local member *******/
-  GtkWidget *geometry, *child_geometry, *viewer, *external_driver, *addin_script, *misc, *external_viewer, *fonts;
+  GtkWidget *viewer, *external_driver, *addin_script, *misc, *external_viewer, *fonts;
 };
 void DefaultDialog(struct DefaultDialog *data);
 

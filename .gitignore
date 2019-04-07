@@ -7,11 +7,13 @@
 .deps/
 .libs/
 working_files/
+debian/
 
 Makefile
 Makefile.in
 
 /GPATH
+/GSYMS
 /GRTAGS
 /GTAGS
 /INSTALL

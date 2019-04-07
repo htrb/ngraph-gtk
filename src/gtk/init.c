@@ -384,7 +384,6 @@ resotre_console(void)
 static int
 exec_console(char *fifo_in, char *fifo_out)
 {
-  char **argv;
   pid_t pid;
 
   pid = fork();
@@ -395,13 +394,14 @@ exec_console(char *fifo_in, char *fifo_out)
   } else if (pid == 0) {
     pid = fork();
     if (pid == 0) {
-      char buf[2049], *s2, *s;
-      int len;
+      char buf[2049];
 #if OSX
       snprintf(buf, sizeof(buf), "%s -e %s/terminal %s %s", Terminal, LIBDIR, fifo_in, fifo_out);
       system(buf);
       exit(0);
 #else
+      char **argv, *s2, *s;
+      int len;
       snprintf(buf, sizeof(buf), "%s %s %s", Terminal, fifo_in, fifo_out);
       argv = NULL;
       s = buf;

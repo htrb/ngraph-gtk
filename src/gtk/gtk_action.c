@@ -14,7 +14,6 @@
 #include "x11view.h"
 #include "ox11menu.h"
 
-#if USE_APP_MENU
 static void
 help_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
@@ -218,6 +217,12 @@ EditDuplicateAction_activated(GSimpleAction *action, GVariant *parameter, gpoint
 }
 
 static void
+EditSelectAllAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
+{
+  CmEditMenuCB(NULL, GINT_TO_POINTER(MenuIdEditSelectAll));
+}
+
+static void
 EditOrderTopAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
   CmEditMenuCB(NULL, GINT_TO_POINTER(MenuIdEditOrderTop));
@@ -310,12 +315,6 @@ static void
 ViewDrawAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
   CmViewerDraw(NULL, GINT_TO_POINTER(TRUE));
-}
-
-static void
-ViewClearAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
-{
-  CmViewerClear(NULL, NULL);
 }
 
 static void
@@ -704,6 +703,7 @@ static GActionEntry AppEntries[] =
   { "EditPasteAction", EditPasteAction_activated, NULL, NULL, NULL },
   { "EditDeleteAction", EditDeleteAction_activated, NULL, NULL, NULL },
   { "EditDuplicateAction", EditDuplicateAction_activated, NULL, NULL, NULL },
+  { "EditSelectAllAction", EditSelectAllAction_activated, NULL, NULL, NULL },
   { "EditOrderTopAction", EditOrderTopAction_activated, NULL, NULL, NULL },
   { "EditOrderUpAction", EditOrderUpAction_activated, NULL, NULL, NULL },
   { "EditOrderDownAction", EditOrderDownAction_activated, NULL, NULL, NULL },
@@ -720,7 +720,6 @@ static GActionEntry AppEntries[] =
   { "EditFlipVActiopn", EditFlipVActiopn_activated, NULL, NULL, NULL },
   { "ViewDrawDirectAction", ViewDrawDirectAction_activated, NULL, NULL, NULL },
   { "ViewDrawAction", ViewDrawAction_activated, NULL, NULL, NULL },
-  { "ViewClearAction", ViewClearAction_activated, NULL, NULL, NULL },
   { "ViewClearInformationWindowAction", ViewClearInformationWindowAction_activated, NULL, NULL, NULL },
   { "ViewSidebarAction", NULL, NULL, "true", ViewSidebarAction_activated },
   { "ViewStatusbarAction", NULL, NULL, "true", ViewStatusbarAction_activated },
@@ -810,4 +809,3 @@ create_application_window(GtkWidget **popup)
 
   return app;
 }
-#endif	/* USE_APP_MENU */

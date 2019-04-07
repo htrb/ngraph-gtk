@@ -141,6 +141,36 @@ static int GRAinview(int GC,int x,int y);
 static int GRArectclip(int GC,int *x0,int *y0,int *x1,int *y1);
 static int GRAlineclip(int GC,int *x0,int *y0,int *x1,int *y1);
 
+int
+calc_zoom_direction(int direction, double zx, double zy, double *zp, double *zn)
+{
+  double x, y, dir;
+  int new_dir;
+  dir = (direction / 100.0) / 180 * MPI;
+
+  if (zn) {
+    x = sin(dir) * zx;
+    y = cos(dir) * zy;
+    *zn = sqrt(x * x + y * y);
+  }
+
+  x = cos(dir) * zx;
+  y = sin(dir) * zy;
+  if (zp) {
+    *zp = sqrt(x * x + y * y);
+  }
+
+  if (x == 0) {
+    if (y > 0) {
+      new_dir = 9000;
+    } else {
+      new_dir = 27000;
+    }
+  } else {
+    new_dir = atan(y / x) / MPI * 18000;
+  }
+  return new_dir;
+}
 
 int
 _GRAopencallback(directfunc direct,struct narray **list,void *local)
@@ -1791,7 +1821,7 @@ GRAmark_rotate(int GC,int type,int x0,int y0, double dx, double dy, int size,
       po[1] = y0;
       po[2] = x0+size/2;
       po[3] = y0;
-      GRArotate(x0, y0, po, rpo, 4, dx, dy);
+      GRArotate(x0, y0, po, rpo, 2, dx, dy);
       GRAline(GC,x0-size/2,y0,x0+size/2,y0);
       break;
     case 79:
@@ -1800,7 +1830,7 @@ GRAmark_rotate(int GC,int type,int x0,int y0, double dx, double dy, int size,
       po[1] = y0-size/2;
       po[2] = x0;
       po[3] = y0+size/2;
-      GRArotate(x0, y0, po, rpo, 4, dx, dy);
+      GRArotate(x0, y0, po, rpo, 2, dx, dy);
       GRAline(GC, rpo[0], rpo[1], rpo[2], rpo[3]);
       break;
     case 80:
@@ -3072,14 +3102,19 @@ getintpar(char *s,int num,int cpar[])
 }
 
 int
-GRAinputdraw(int GC,int leftm,int topm,int rate,
+GRAinputdraw(int GC,int leftm,int topm,int rate_x,int rate_y,
                   char code,int *cpar,char *cstr)
 {
   int i;
-  double r;
+  double r, rx, ry;
 
-  if (GRAClist[GC].mergezoom==0) r=1;
-  else r=((double )rate)/GRAClist[GC].mergezoom;
+  if (GRAClist[GC].mergezoom==0) {
+    rx = ry = 1;
+  } else {
+    rx = ((double )rate_x)/GRAClist[GC].mergezoom;
+    ry = ((double )rate_y)/GRAClist[GC].mergezoom;
+  }
+  r = MIN(rx, ry);
   switch (code) {
   case '%':
   case 'O': case 'Q': case 'F': case 'S': case 'K': case 'Z':
@@ -3107,10 +3142,10 @@ GRAinputdraw(int GC,int leftm,int topm,int rate,
     if (cpar[0] != 5)
       return FALSE;
 
-    cpar[1]=(int )(((cpar[1]-GRAClist[GC].mergeleft)*r)+leftm);
-    cpar[2]=(int )(((cpar[2]-GRAClist[GC].mergetop)*r)+topm);
-    cpar[3]=(int )(((cpar[3]-GRAClist[GC].mergeleft)*r)+leftm);
-    cpar[4]=(int )(((cpar[4]-GRAClist[GC].mergetop)*r)+topm);
+    cpar[1]=(int )(((cpar[1]-GRAClist[GC].mergeleft)*rx)+leftm);
+    cpar[2]=(int )(((cpar[2]-GRAClist[GC].mergetop)*ry)+topm);
+    cpar[3]=(int )(((cpar[3]-GRAClist[GC].mergeleft)*rx)+leftm);
+    cpar[4]=(int )(((cpar[4]-GRAClist[GC].mergetop)*ry)+topm);
     break;
   case 'A':
     if (cpar[0] != cpar[1] + 5)
@@ -3120,57 +3155,60 @@ GRAinputdraw(int GC,int leftm,int topm,int rate,
     for (i=0;i<cpar[1];i++) cpar[i+5]=(int )(cpar[i+5]*r);
     break;
   case 'H':
-    if (cpar[0] != 3 && cpar[0] != 4)
+    if (cpar[0] != 3 && cpar[0] != 4) {
       return FALSE;
-
-    cpar[1]=(int )(cpar[1]*r);
-    cpar[2]=(int )(cpar[2]*r);
+    } else {
+      double rp, rn;
+      cpar[3] = calc_zoom_direction(cpar[3], rx, ry, &rp, &rn);
+      cpar[1]=(int )(cpar[1]*MIN(rp, rn));
+      cpar[2]=(int )(cpar[2]*rp);
+    }
     break;
   case 'M': case 'N': case 'T': case 'P':
     if (cpar[0] != 2)
       return FALSE;
 
-    cpar[1]=(int )(cpar[1]*r);
-    cpar[2]=(int )(cpar[2]*r);
+    cpar[1]=(int )(cpar[1]*rx);
+    cpar[2]=(int )(cpar[2]*ry);
     break;
   case 'L':
     if (cpar[0] != 4)
       return FALSE;
 
-    cpar[1]=(int )(cpar[1]*r);
-    cpar[2]=(int )(cpar[2]*r);
-    cpar[3]=(int )(cpar[3]*r);
-    cpar[4]=(int )(cpar[4]*r);
+    cpar[1]=(int )(cpar[1]*rx);
+    cpar[2]=(int )(cpar[2]*ry);
+    cpar[3]=(int )(cpar[3]*rx);
+    cpar[4]=(int )(cpar[4]*ry);
     break;
   case 'C':
     if (cpar[0] != 7)
       return FALSE;
 
-    cpar[1]=(int )(cpar[1]*r);
-    cpar[2]=(int )(cpar[2]*r);
-    cpar[3]=(int )(cpar[3]*r);
-    cpar[4]=(int )(cpar[4]*r);
+    cpar[1]=(int )(cpar[1]*rx);
+    cpar[2]=(int )(cpar[2]*ry);
+    cpar[3]=(int )(cpar[3]*rx);
+    cpar[4]=(int )(cpar[4]*ry);
     break;
   case 'B':
     if (cpar[0] != 5)
       return FALSE;
 
-    cpar[1]=(int )(cpar[1]*r);
-    cpar[2]=(int )(cpar[2]*r);
-    cpar[3]=(int )(cpar[3]*r);
-    cpar[4]=(int )(cpar[4]*r);
+    cpar[1]=(int )(cpar[1]*rx);
+    cpar[2]=(int )(cpar[2]*ry);
+    cpar[3]=(int )(cpar[3]*rx);
+    cpar[4]=(int )(cpar[4]*ry);
     break;
   case 'R':
     if (cpar[0] != cpar[1] * 2 + 1)
       return FALSE;
 
-    for (i=0;i<(2*(cpar[1]));i++) cpar[i+2]=(int )(cpar[i+2]*r);
+    for (i=0;i<(2*(cpar[1]));i++) cpar[i+2]=(int )(cpar[i+2]*((i % 2) ? ry : rx));
     break;
   case 'D':
     if (cpar[0] != cpar[1] * 2 + 2)
       return FALSE;
 
-    for (i=0;i<(2*(cpar[1]));i++) cpar[i+3]=(int )(cpar[i+3]*r);
+    for (i=0;i<(2*(cpar[1]));i++) cpar[i+3]=(int )(cpar[i+3]*((i % 2) ? ry : rx));
     break;
   }
   if (code!='\0') GRAdraw(GC,code,cpar,cstr);
@@ -3262,7 +3300,7 @@ errexit:
 }
 
 int
-GRAinput(int GC,char *s,int leftm,int topm,int rate)
+GRAinput(int GC,char *s,int leftm,int topm,int rate_x,int rate_y)
 {
   int r;
   struct GRAdata data;
@@ -3270,7 +3308,7 @@ GRAinput(int GC,char *s,int leftm,int topm,int rate)
   if (! GRAparse(&data, s)) {
     return FALSE;
   }
-  r = GRAinputdraw(GC,leftm,topm,rate,data.code,data.cpar,data.cstr);
+  r = GRAinputdraw(GC,leftm,topm,rate_x,rate_y,data.code,data.cpar,data.cstr);
   GRAdata_free(&data);
   return r;
 }
@@ -3297,7 +3335,7 @@ get_gra_font(int i)
 }
 
 int
-GRAinputold(int GC,char *s,int leftm,int topm,int rate)
+GRAinputold(int GC,char *s,int leftm,int topm,int rate_x,int rate_y)
 {
   int pos,num,i,j;
   char code,code2;
@@ -3345,12 +3383,12 @@ GRAinputold(int GC,char *s,int leftm,int topm,int rate)
   case 'X':
     break;
   case '%': case 'S': case 'Z':
-    GRAinputdraw(GC,leftm,topm,rate,code,cpar,cstr);
+    GRAinputdraw(GC,leftm,topm,rate_x,rate_y,code,cpar,cstr);
     break;
   case 'K':
     ustr = sjis_to_utf8(cstr);
     if (ustr) {
-      GRAinputdraw(GC, leftm, topm, rate, 'S', cpar, ustr);
+      GRAinputdraw(GC, leftm, topm, rate_x, rate_y, 'S', cpar, ustr);
       g_free(ustr);
     }
     break;
@@ -3359,17 +3397,17 @@ GRAinputold(int GC,char *s,int leftm,int topm,int rate)
     cpar[5]=nround(cpar[3]/2.1);
     cpar[3]=21000;
     cpar[4]=29700;
-    GRAinputdraw(GC,leftm,topm,rate,code,cpar,cstr);
+    GRAinputdraw(GC,leftm,topm,rate_x,rate_y,code,cpar,cstr);
     break;
   case 'E': case 'M': case 'N': case 'L': case 'T': case 'P':
-    GRAinputdraw(GC,leftm,topm,rate,code,cpar,cstr);
+    GRAinputdraw(GC,leftm,topm,rate_x,rate_y,code,cpar,cstr);
     break;
   case 'V':
     if (cpar[0]==4) {
       cpar[0]=5;
       cpar[5]=0;
     }
-    GRAinputdraw(GC,leftm,topm,rate,code,cpar,cstr);
+    GRAinputdraw(GC,leftm,topm,rate_x,rate_y,code,cpar,cstr);
     break;
   case 'A':
     col=cpar[3];
@@ -3381,12 +3419,12 @@ GRAinputold(int GC,char *s,int leftm,int topm,int rate)
     cpar2[1]=GRAClist[GC].oldFR;
     cpar2[2]=GRAClist[GC].oldFG;
     cpar2[3]=GRAClist[GC].oldFB;
-    GRAinputdraw(GC,leftm,topm,rate,code2,cpar2,cstr);
+    GRAinputdraw(GC,leftm,topm,rate_x,rate_y,code2,cpar2,cstr);
     cpar[0]=5;
     cpar[3]=cpar[4];
     cpar[4]=0;
     cpar[5]=1000;
-    GRAinputdraw(GC,leftm,topm,rate,code,cpar,cstr);
+    GRAinputdraw(GC,leftm,topm,rate_x,rate_y,code,cpar,cstr);
     break;
   case 'O':
     col=cpar[1];
@@ -3414,16 +3452,16 @@ GRAinputold(int GC,char *s,int leftm,int topm,int rate)
       cpar2[1]=GRAClist[GC].oldBR;
       cpar2[2]=GRAClist[GC].oldBG;
       cpar2[3]=GRAClist[GC].oldBB;
-      GRAinputdraw(GC,leftm,topm,rate,code2,cpar2,cstr);
+      GRAinputdraw(GC,leftm,topm,rate_x,rate_y,code2,cpar2,cstr);
 	}
-    GRAinputdraw(GC,leftm,topm,rate,code,cpar,cstr);
+    GRAinputdraw(GC,leftm,topm,rate_x,rate_y,code,cpar,cstr);
     if (cpar[7]==1) {
       code2='G';
       cpar2[0]=3;
       cpar2[1]=GRAClist[GC].oldFR;
       cpar2[2]=GRAClist[GC].oldFG;
       cpar2[3]=GRAClist[GC].oldFB;
-      GRAinputdraw(GC,leftm,topm,rate,code2,cpar2,cstr);
+      GRAinputdraw(GC,leftm,topm,rate_x,rate_y,code2,cpar2,cstr);
     }
     break;
   case 'B':
@@ -3433,16 +3471,16 @@ GRAinputold(int GC,char *s,int leftm,int topm,int rate)
       cpar2[1]=GRAClist[GC].oldBR;
       cpar2[2]=GRAClist[GC].oldBG;
       cpar2[3]=GRAClist[GC].oldBB;
-      GRAinputdraw(GC,leftm,topm,rate,code2,cpar2,cstr);
+      GRAinputdraw(GC,leftm,topm,rate_x,rate_y,code2,cpar2,cstr);
     }
-    GRAinputdraw(GC,leftm,topm,rate,code,cpar,cstr);
+    GRAinputdraw(GC,leftm,topm,rate_x,rate_y,code,cpar,cstr);
     if (cpar[5]==1) {
       code2='G';
       cpar2[0]=3;
       cpar2[1]=GRAClist[GC].oldFR;
       cpar2[2]=GRAClist[GC].oldFG;
       cpar2[3]=GRAClist[GC].oldFB;
-      GRAinputdraw(GC,leftm,topm,rate,code2,cpar2,cstr);
+      GRAinputdraw(GC,leftm,topm,rate_x,rate_y,code2,cpar2,cstr);
     }
     break;
   case 'D':
@@ -3452,23 +3490,23 @@ GRAinputold(int GC,char *s,int leftm,int topm,int rate)
       cpar2[1]=GRAClist[GC].oldBR;
       cpar2[2]=GRAClist[GC].oldBG;
       cpar2[3]=GRAClist[GC].oldBB;
-      GRAinputdraw(GC,leftm,topm,rate,code2,cpar2,cstr);
+      GRAinputdraw(GC,leftm,topm,rate_x,rate_y,code2,cpar2,cstr);
     }
-    GRAinputdraw(GC,leftm,topm,rate,code,cpar,cstr);
+    GRAinputdraw(GC,leftm,topm,rate_x,rate_y,code,cpar,cstr);
     if (cpar[2]==1) {
       code2='G';
       cpar2[0]=3;
       cpar2[1]=GRAClist[GC].oldFR;
       cpar2[2]=GRAClist[GC].oldFG;
       cpar2[3]=GRAClist[GC].oldFB;
-      GRAinputdraw(GC,leftm,topm,rate,code2,cpar2,cstr);
+      GRAinputdraw(GC,leftm,topm,rate_x,rate_y,code2,cpar2,cstr);
     }
     break;
   case 'F':
     code2='F';
     cpar2[0]=-1;
     GRAClist[GC].mergefont=cpar[1]*4+cpar[2];
-    GRAinputdraw(GC,leftm,topm,rate,code2,cpar2,get_gra_font(cpar[1]*4+cpar[2]));
+    GRAinputdraw(GC,leftm,topm,rate_x,rate_y,code2,cpar2,get_gra_font(cpar[1]*4+cpar[2]));
     if (cpar[6] == 1) {
       cpar[6]=9000;
     } else if (cpar[6]<0) {
@@ -3482,7 +3520,7 @@ GRAinputold(int GC,char *s,int leftm,int topm,int rate)
     GRAClist[GC].mergept=cpar2[1];
     GRAClist[GC].mergesp=cpar2[2];
     GRAClist[GC].mergedir=cpar2[3];
-    GRAinputdraw(GC,leftm,topm,rate,code2,cpar2,cstr);
+    GRAinputdraw(GC,leftm,topm,rate_x,rate_y,code2,cpar2,cstr);
     col=cpar[5];
     B=(col & 1)*256;
     G=(col & 2)*128;
@@ -3492,7 +3530,7 @@ GRAinputold(int GC,char *s,int leftm,int topm,int rate)
     cpar2[1]=R;
     cpar2[2]=G;
     cpar2[3]=B;
-    GRAinputdraw(GC,leftm,topm,rate,code2,cpar2,cstr);
+    GRAinputdraw(GC,leftm,topm,rate_x,rate_y,code2,cpar2,cstr);
     break;
   }
   return TRUE;

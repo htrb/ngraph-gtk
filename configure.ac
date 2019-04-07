@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT(ngraph, 6.07.07, ZXB01226@nifty.com, ngraph-gtk)
+AC_INIT(ngraph, 6.08.01, ZXB01226@nifty.com, ngraph-gtk)
 
 LIBNGRAPH_VERSION=0:0:0
 AC_SUBST(LIBNGRAPH_VERSION)
@@ -56,7 +56,7 @@ AC_SUBST(LIBTOOL_DEPS)
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 
 GSL_REQUIRED_VERSION=0.2.5
-GTK3_REQUIRED_VERSION=3.4.0
+GTK3_REQUIRED_VERSION=3.12.0
 GLIB_REQUIRED_VERSION=2.16.0
 
 dnl Checks for programs.

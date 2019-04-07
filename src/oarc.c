@@ -40,8 +40,9 @@
 #define PARENT "legend"
 #define OVERSION  "1.00.00"
 
+#define ERRSPL  100
 static char *arcerrorlist[]={
-  "",
+  "error: spline interpolation.",
 };
 
 #define ERRNUM (sizeof(arcerrorlist) / sizeof(*arcerrorlist))
@@ -49,7 +50,7 @@ static char *arcerrorlist[]={
 static int
 arcinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
-  int angle2, width, pieslice, stroke, miter, join, alpha;
+  int angle2, width, pieslice, stroke, miter, join, alpha, headlen, headwidth;
 
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv)) return 1;
 
@@ -60,6 +61,8 @@ arcinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   join = JOIN_TYPE_BEVEL;
   stroke = TRUE;
   alpha = 255;
+  headlen = 72426;
+  headwidth = 60000;
 
   if (_putobj(obj, "pieslice", inst, &pieslice)) return 1;
   if (_putobj(obj, "angle2", inst, &angle2)) return 1;
@@ -69,6 +72,8 @@ arcinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   if (_putobj(obj, "stroke", inst, &stroke)) return 1;
   if (_putobj(obj, "stroke_A", inst, &alpha)) return 1;
   if (_putobj(obj, "fill_A", inst, &alpha)) return 1;
+  if (_putobj(obj, "arrow_length", inst, &headlen))   return 1;
+  if (_putobj(obj, "arrow_width",  inst, &headwidth)) return 1;
 
   return 0;
 }
@@ -78,6 +83,127 @@ arcdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
+}
+
+static void
+get_dx_dy(int rx, int ry, int angle,
+	  double *x, double *y, double *dx, double *dy)
+{
+  double a, b;
+  *x = rx * cos(- angle * MPI / 18000);
+  *y = ry * sin(- angle * MPI / 18000);
+  if (*y == 0) {
+    *dx = 0;
+    if (*x < 0) {
+      *dy = 1;
+    } else {
+      *dy = -1;
+    }
+  } else {
+    a = 1.0 * ry * ry * (*x) / rx / rx / (*y);
+    b = 1 / sqrt(1 + a * a);
+    if (*y < 0) {
+      *dx = -b;
+    } else {
+      *dx = b;
+    }
+    *dy = - a * (*dx);
+  }
+}
+
+static void
+get_position(int x, int y, int rx, int ry, int a0, int a1,
+	     double *x0, double *y0,
+	     double *x1, double *y1,
+	     double *dx0, double *dy0,
+	     double *dx1, double *dy1)
+{
+  get_dx_dy(rx, ry, a0, x0, y0, dx0, dy0);
+  *x0 += x;
+  *y0 += y;
+  *dx0 = -*dx0;
+  *dy0 = -*dy0;
+
+  get_dx_dy(rx, ry, a0 + a1, x1, y1, dx1, dy1);
+  *x1 += x;
+  *y1 += y;
+}
+
+static void
+draw_arrow(int GC, int join, int miter, int width, int headlen, int headwidth, int x, int y, double dx, double dy)
+{
+  int ax0, ay0, ox, oy;
+  double alen, alen2, awidth;
+  int ap[6];
+
+  alen = width * (double) headlen / 10000;
+  awidth = width * (double) headwidth / 20000;
+
+  ax0 = nround(x - dx * alen);
+  ay0 = nround(y - dy * alen);
+  alen2 = alen * width / awidth / 2;
+  ox = nround(dx * alen2);
+  oy = nround(dy * alen2);
+  ax0 += ox;
+  ay0 += oy;
+
+  ap[0] = nround(ax0 - dy * awidth);
+  ap[1] = nround(ay0 + dx * awidth);
+  ap[2] = x + nround(ox);
+  ap[3] = y + nround(oy);
+  ap[4] = nround(ax0 + dy * awidth);
+  ap[5] = nround(ay0 - dx * awidth);
+  GRAlinestyle(GC, 0, NULL, 1, GRA_LINE_CAP_BUTT, join, miter);
+  GRAdrawpoly(GC, 3, ap, GRA_FILL_MODE_EVEN_ODD);
+}
+
+static void
+draw_marker(struct objlist *obj, N_VALUE *inst, int GC,
+	    int join, int miter, int width,
+	    int x, int y, int rx, int ry, int a0, int a1,
+	    int r, int g, int b, int a)
+{
+  int headlen, headwidth, head_begin, head_end;
+  double x0, y0, x1, y1, dx0, dy0, dx1, dy1;
+  int type;
+
+  _getobj(obj, "marker_begin", inst, &head_begin);
+  _getobj(obj, "marker_end",   inst, &head_end);
+  _getobj(obj, "arrow_length", inst, &headlen);
+  _getobj(obj, "arrow_width",  inst, &headwidth);
+
+  get_position(x, y, rx, ry, a0, a1, &x0, &y0, &x1, &y1, &dx0, &dy0, &dx1, &dy1);
+  switch (head_begin) {
+  case MARKER_TYPE_ARROW:
+    draw_arrow(GC, join, miter, width, headlen, headwidth, x0, y0, dx0, dy0);
+    break;
+  case MARKER_TYPE_WAVE:
+    draw_marker_wave(obj, inst, GC, width, headlen, headwidth, x0, y0, dx0, dy0, ERRSPL);
+    break;
+  case MARKER_TYPE_MARK:
+    _getobj(obj, "mark_type_begin", inst, &type);
+    draw_marker_mark(obj, inst, GC, width, headlen, headwidth, x0, y0, dx0, dy0, r, g, b, a, type);
+    break;
+  case MARKER_TYPE_BAR:
+    draw_marker_bar(obj, inst, GC, width, headlen, headwidth, x0, y0, dx0, dy0);
+    break;
+  }
+
+  switch (head_end) {
+  case MARKER_TYPE_ARROW:
+    draw_arrow(GC, join, miter, width, headlen, headwidth, x1, y1, dx1, dy1);
+    break;
+  case MARKER_TYPE_WAVE:
+    draw_marker_wave(obj, inst, GC, width, headlen, headwidth, x1, y1, dx1, dy1, ERRSPL);
+    break;
+  case MARKER_TYPE_MARK:
+    _getobj(obj, "mark_type_end", inst, &type);
+    draw_marker_mark(obj, inst, GC, width, headlen, headwidth, x1, y1, dx1, dy1, r, g, b, a, type);
+    break;
+  case MARKER_TYPE_BAR:
+    draw_marker_bar(obj, inst, GC, width, headlen, headwidth, x1, y1, dx1, dy1);
+    break;
+  }
 }
 
 static int
@@ -137,6 +263,7 @@ arcdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
     GRAlinestyle(GC, snum, sdata, width, GRA_LINE_CAP_BUTT, join, miter);
     GRAcircle(GC, x, y, rx, ry, angle1, angle2,
 	      (close_path) ? ((pieslice) ? 3 : 4) : 0);
+    draw_marker(obj, inst, GC, join, miter, width, x, y, rx, ry, angle1, angle2, fr, fg, fb, fa);
   }
 
   GRAaddlist(GC,obj,inst,(char *)argv[0],(char *)argv[1]);
@@ -174,6 +301,18 @@ arcgeometry(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
     } else if (val > 36000) {
       val = 36000;
     }
+  } else if (strcmp(field, "arrow_length") == 0) {
+    if (val < ARROW_SIZE_MIN) {
+      val = ARROW_SIZE_MIN;
+    } else if (val > ARROW_SIZE_MAX) {
+      val = ARROW_SIZE_MAX;
+    }
+  } else if (strcmp(field, "arrow_width") == 0) {
+    if (val < ARROW_SIZE_MIN) {
+      val = ARROW_SIZE_MIN;
+    } else if (val > ARROW_SIZE_MAX) {
+      val = ARROW_SIZE_MAX;
+    }
   }
   * (int *)(argv[2]) = val;
 
@@ -187,7 +326,7 @@ static int
 arcbbox(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy;
-  int x,y,x1,y1;
+  int x,y,x1,y1, head_begin, head_end;
   int x0,y0,angle1,angle2,rx,ry,pieslice,fill,stroke,close_path;
   struct narray *array;
   int i,width;
@@ -252,6 +391,26 @@ arcbbox(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
     maxy+=width/2;
   }
 
+  _getobj(obj, "marker_begin",  inst, &head_begin);
+  _getobj(obj, "marker_end",    inst, &head_end);
+  if (head_begin != MARKER_TYPE_NONE || head_end != MARKER_TYPE_NONE) {
+    double awidth;
+    int headwidth;
+    _getobj(obj, "arrow_width",  inst, &headwidth);
+    awidth = width * (double) headwidth / 10000;
+    if (((head_begin == MARKER_TYPE_MARK || head_begin == MARKER_TYPE_ARROW) &&
+	 (head_end == MARKER_TYPE_MARK || head_end == MARKER_TYPE_ARROW)) ||
+	((head_begin == MARKER_TYPE_MARK || head_begin == MARKER_TYPE_ARROW) &&
+	 head_end == MARKER_TYPE_NONE) ||
+	(head_begin == MARKER_TYPE_NONE &&
+	 (head_end == MARKER_TYPE_MARK || head_end == MARKER_TYPE_ARROW))) {
+      awidth /= 2;
+    }
+    minx -= awidth;
+    miny -= awidth;
+    maxx += awidth;
+    maxy += awidth;
+  }
   arrayins(array,&maxy,0);
   arrayins(array,&maxx,0);
   arrayins(array,&miny,0);
@@ -350,13 +509,22 @@ arcchange(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
 static int
 arcrotate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
-  int angle, rx, ry, a, use_pivot;
+  int angle, rx, ry, a, use_pivot, type_begin, type_end;
 
   _getobj(obj, "rx", inst, &rx);
   _getobj(obj, "ry", inst, &ry);
   _getobj(obj, "angle1", inst, &a);
+  _getobj(obj, "mark_type_begin", inst, &type_begin);
+  _getobj(obj, "mark_type_end", inst, &type_end);
 
   angle = *(int *) argv[2];
+
+#if ! ROTATE_MARK
+  type_begin = mark_rotate(angle, type_begin);
+  type_end = mark_rotate(angle, type_end);
+  _putobj(obj, "mark_type_begin", inst, &type_begin);
+  _putobj(obj, "mark_type_end", inst, &type_end);
+#endif
 
   angle %= 36000;
   if (angle < 0)
@@ -400,15 +568,32 @@ arcrotate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 static int
 arcflip(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
-  int rx, ry, a1, a2, use_pivot;
+  int rx, ry, a1, a2, use_pivot, head_begin, head_end, type_begin, type_end;
   enum FLIP_DIRECTION dir;
 
   _getobj(obj, "rx", inst, &rx);
   _getobj(obj, "ry", inst, &ry);
   _getobj(obj, "angle1", inst, &a1);
   _getobj(obj, "angle2", inst, &a2);
+  _getobj(obj, "marker_begin", inst, &head_begin);
+  _getobj(obj, "marker_end", inst, &head_end);
+  _getobj(obj, "mark_type_begin", inst, &type_begin);
+  _getobj(obj, "mark_type_end", inst, &type_end);
 
   dir = (* (int *) argv[2] == FLIP_DIRECTION_HORIZONTAL) ? FLIP_DIRECTION_HORIZONTAL : FLIP_DIRECTION_VERTICAL;
+
+  _putobj(obj, "marker_begin", inst, &head_end);
+  _putobj(obj, "marker_end", inst, &head_begin);
+
+#if ROTATE_MARK
+  type_begin = mark_flip(FLIP_DIRECTION_HORIZONTAL, type_begin);
+  type_end = mark_flip(FLIP_DIRECTION_HORIZONTAL, type_end);
+#else
+  type_begin = mark_flip(dir, type_begin);
+  type_end = mark_flip(dir, type_end);
+#endif
+  _putobj(obj, "mark_type_begin", inst, &type_end);
+  _putobj(obj, "mark_type_end", inst, &type_begin);
 
   switch (dir) {
   case FLIP_DIRECTION_VERTICAL:
@@ -447,14 +632,15 @@ static int
 arczoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int i,snum,*sdata,rx,ry,x,y,refx,refy,width,preserve_width;
-  double zoom;
+  double zoom_x, zoom_y;
   struct narray *style;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
-  zoom=(*(int *)argv[2])/10000.0;
-  refx=(*(int *)argv[3]);
-  refy=(*(int *)argv[4]);
-  preserve_width = (*(int *)argv[5]);
+  zoom_x = (*(int *) argv[2]) / 10000.0;
+  zoom_y = (*(int *) argv[3]) / 10000.0;
+  refx = (*(int *)argv[4]);
+  refy = (*(int *)argv[5]);
+  preserve_width = (*(int *)argv[6]);
   _getobj(obj,"x",inst,&x);
   _getobj(obj,"y",inst,&y);
   _getobj(obj,"rx",inst,&rx);
@@ -463,10 +649,10 @@ arczoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   _getobj(obj,"style",inst,&style);
   snum=arraynum(style);
   sdata=arraydata(style);
-  x=(x-refx)*zoom+refx;
-  y=(y-refy)*zoom+refy;
-  rx=rx*zoom;
-  ry=ry*zoom;
+  x=(x-refx)*zoom_x+refx;
+  y=(y-refy)*zoom_y+refy;
+  rx=rx*zoom_x;
+  ry=ry*zoom_y;
 
   if (rx < 1)
     rx = 1;
@@ -475,6 +661,8 @@ arczoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
     ry = 1;
 
   if (! preserve_width) {
+    double zoom;
+    zoom = MIN(zoom_x, zoom_y);
     width=width*zoom;
     for (i=0;i<snum;i++) sdata[i]=sdata[i]*zoom;
   }
@@ -564,13 +752,20 @@ static struct objtable arc[] = {
   {"join",NENUM,NREAD|NWRITE,NULL,joinchar,0},
   {"miter_limit",NINT,NREAD|NWRITE,oputge1,NULL,0},
 
+  {"marker_begin", NENUM, NREAD|NWRITE, arcgeometry, marker_type_char, 0},
+  {"marker_end", NENUM, NREAD|NWRITE, arcgeometry, marker_type_char, 0},
+  {"arrow_length", NINT, NREAD|NWRITE, arcgeometry, NULL, 0},
+  {"arrow_width", NINT, NREAD|NWRITE, arcgeometry, NULL, 0},
+  {"mark_type_begin",NINT,NREAD|NWRITE,oputmarktype,NULL,0},
+  {"mark_type_end",NINT,NREAD|NWRITE,oputmarktype,NULL,0},
+
   {"draw",NVFUNC,NREAD|NEXEC,arcdraw,"i",0},
   {"bbox",NIAFUNC,NREAD|NEXEC,arcbbox,"",0},
   {"move",NVFUNC,NREAD|NEXEC,arcmove,"ii",0},
   {"rotate",NVFUNC,NREAD|NEXEC,arcrotate,"iiii",0},
   {"flip",NVFUNC,NREAD|NEXEC,arcflip,"iii",0},
   {"change",NVFUNC,NREAD|NEXEC,arcchange,"iii",0},
-  {"zooming",NVFUNC,NREAD|NEXEC,arczoom,"iiii",0},
+  {"zooming",NVFUNC,NREAD|NEXEC,arczoom,"iiiii",0},
   {"match",NBFUNC,NREAD|NEXEC,arcmatch,"iiiii",0},
 
   {"fill_hsb", NVFUNC, NREAD|NEXEC, put_fill_hsb,"ddd",0},

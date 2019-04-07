@@ -30,6 +30,12 @@
 #include <glib.h>
 #include "mathfn.h"
 
+double
+distance(double x1, double y1)
+{
+  return sqrt(x1 * x1 + y1 * y1);
+}
+
 int
 compare_double(double x, double y)
 {

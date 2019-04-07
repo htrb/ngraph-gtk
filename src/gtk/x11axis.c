@@ -107,6 +107,7 @@ static struct subwin_popup_list Popup_list[] = {
   {N_("_Delete"),     G_CALLBACK(axis_delete_popup_func), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {NULL, NULL, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
   {N_("_Focus"),      G_CALLBACK(list_sub_window_focus), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("focus _All"),  G_CALLBACK(list_sub_window_focus_all), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {N_("_Clear"),      G_CALLBACK(axiswin_scale_clear), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {N_("_Properties"), G_CALLBACK(list_sub_window_update), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {N_("_Instance name"), G_CALLBACK(list_sub_window_object_name), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
@@ -120,10 +121,11 @@ static struct subwin_popup_list Popup_list[] = {
 
 #define POPUP_ITEM_NUM (sizeof(Popup_list) / sizeof(*Popup_list) - 1)
 
-#define POPUP_ITEM_TOP    10
-#define POPUP_ITEM_UP     11
-#define POPUP_ITEM_DOWN   12
-#define POPUP_ITEM_BOTTOM 13
+#define POPUP_ITEM_FOCUS_ALL 6
+#define POPUP_ITEM_TOP      11
+#define POPUP_ITEM_UP       12
+#define POPUP_ITEM_DOWN     13
+#define POPUP_ITEM_BOTTOM   14
 
 #define TITLE_BUF_SIZE 128
 
@@ -3028,7 +3030,7 @@ static void
 popup_show_cb(GtkWidget *widget, gpointer user_data)
 {
   unsigned int i;
-  int sel, num;
+  int sel, num, last_id;
   struct obj_list_data *d;
 
   d = (struct obj_list_data *) user_data;
@@ -3037,6 +3039,10 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
   num = chkobjlastinst(d->obj);
   for (i = 1; i < POPUP_ITEM_NUM; i++) {
     switch (i) {
+    case POPUP_ITEM_FOCUS_ALL:
+      last_id = chkobjlastinst(d->obj);
+      gtk_widget_set_sensitive(d->popup_item[i], last_id >= 0);
+      break;
     case POPUP_ITEM_TOP:
     case POPUP_ITEM_UP:
       gtk_widget_set_sensitive(d->popup_item[i], sel > 0 && sel <= num);
@@ -3310,6 +3316,19 @@ create_type_combo_box(GtkWidget *cbox, struct objlist *obj, int id)
   create_num_combo_item(list, NULL, obj, id);
 }
 
+static int
+set_enum_field(const char *field, int sel, int enum_id, struct obj_list_data *d)
+{
+  int type;
+  getobj(d->obj, field, sel, 0, NULL, &type);
+  if (type == enum_id) {
+    return 1;
+  }
+  axis_save_undo(UNDO_TYPE_EDIT);
+  putobj(d->obj, field, sel, &enum_id);
+  return 0;
+}
+
 static void
 select_type(GtkComboBox *w, gpointer user_data)
 {
@@ -3343,13 +3362,10 @@ select_type(GtkComboBox *w, gpointer user_data)
   draw = DRAW_AXIS_ONLY;
   switch (col_type) {
   case AXIS_COMBO_ITEM_SCALE:
-    getobj(d->obj, "type", sel, 0, NULL, &type);
-    if (type == enum_id) {
+    if (set_enum_field("type", sel, enum_id, d)) {
       return;
     }
     draw = DRAW_REDRAW;
-    axis_save_undo(UNDO_TYPE_EDIT);
-    putobj(d->obj, "type", sel, &enum_id);
     break;
   case AXIS_COMBO_ITEM_BASE_DRAW:
     gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);
@@ -3375,28 +3391,19 @@ select_type(GtkComboBox *w, gpointer user_data)
     }
     break;
   case AXIS_COMBO_ITEM_BASE_ARROW:
-    getobj(d->obj, "arrow", sel, 0, NULL, &type);
-    if (type == enum_id) {
+    if (set_enum_field("arrow", sel, enum_id, d)) {
       return;
     }
-    axis_save_undo(UNDO_TYPE_EDIT);
-    putobj(d->obj, "arrow", sel, &enum_id);
     break;
   case AXIS_COMBO_ITEM_BASE_WAVE:
-    getobj(d->obj, "wave", sel, 0, NULL, &type);
-    if (type == enum_id) {
+    if (set_enum_field("wave", sel, enum_id, d)) {
       return;
     }
-    axis_save_undo(UNDO_TYPE_EDIT);
-    putobj(d->obj, "wave", sel, &enum_id);
     break;
   case AXIS_COMBO_ITEM_GAUGE_POS:
-    getobj(d->obj, "gauge", sel, 0, NULL, &type);
-    if (type == enum_id) {
+    if (set_enum_field("gauge", sel, enum_id, d)) {
       return;
     }
-    axis_save_undo(UNDO_TYPE_EDIT);
-    putobj(d->obj, "gauge", sel, &enum_id);
     break;
   case AXIS_COMBO_ITEM_GAUGE_COLOR:
     if (select_obj_color(obj, sel, OBJ_FIELD_COLOR_TYPE_AXIS_GAUGE)) {
@@ -3416,28 +3423,19 @@ select_type(GtkComboBox *w, gpointer user_data)
     }
     break;
   case AXIS_COMBO_ITEM_NUM_POS:
-    getobj(d->obj, "num", sel, 0, NULL, &type);
-    if (type == enum_id) {
+    if (set_enum_field("num", sel, enum_id, d)) {
       return;
     }
-    axis_save_undo(UNDO_TYPE_EDIT);
-    putobj(d->obj, "num", sel, &enum_id);
     break;
   case AXIS_COMBO_ITEM_NUM_ALIGN:
-    getobj(d->obj, "num_align", sel, 0, NULL, &type);
-    if (type == enum_id) {
+    if (set_enum_field("num_align", sel, enum_id, d)) {
       return;
     }
-    axis_save_undo(UNDO_TYPE_EDIT);
-    putobj(d->obj, "num_align", sel, &enum_id);
     break;
   case AXIS_COMBO_ITEM_NUM_DIR:
-    getobj(d->obj, "num_direction", sel, 0, NULL, &type);
-    if (type == enum_id) {
+    if (set_enum_field("num_direction", sel, enum_id, d)) {
       return;
     }
-    axis_save_undo(UNDO_TYPE_EDIT);
-    putobj(d->obj, "num_direction", sel, &enum_id);
     break;
   case AXIS_COMBO_ITEM_NUM_LOG:
     gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);
@@ -3446,12 +3444,9 @@ select_type(GtkComboBox *w, gpointer user_data)
     putobj(d->obj, "num_log_pow", sel, &active);
     break;
   case AXIS_COMBO_ITEM_NUM_NO_ZERO:
-    gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);
-    if (type == enum_id) {
+    if (set_enum_field("num_no_zero", sel, enum_id, d)) {
       return;
     }
-    axis_save_undo(UNDO_TYPE_EDIT);
-    putobj(d->obj, "num_no_zero", sel, &enum_id);
     break;
   case AXIS_COMBO_ITEM_NUM_COLOR:
     if (select_obj_color(obj, sel, OBJ_FIELD_COLOR_TYPE_AXIS_NUM)) {

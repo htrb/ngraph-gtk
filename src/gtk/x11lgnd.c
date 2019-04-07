@@ -216,6 +216,7 @@ static struct subwin_popup_list Popup_list[] = {
   {N_("_Delete"),      G_CALLBACK(list_sub_window_delete), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {NULL, NULL, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
   {N_("_Focus"),       G_CALLBACK(list_sub_window_focus), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("focus _All"),   G_CALLBACK(list_sub_window_focus_all), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {N_("_Properties"),  G_CALLBACK(list_sub_window_update), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {N_("_Instance name"), G_CALLBACK(list_sub_window_object_name), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {NULL, NULL, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
@@ -227,10 +228,11 @@ static struct subwin_popup_list Popup_list[] = {
 };
 
 #define POPUP_ITEM_NUM (sizeof(Popup_list) / sizeof(*Popup_list) - 1)
-#define POPUP_ITEM_TOP     7
-#define POPUP_ITEM_UP      8
-#define POPUP_ITEM_DOWN    9
-#define POPUP_ITEM_BOTTOM 10
+#define POPUP_ITEM_FOCUS_ALL 4
+#define POPUP_ITEM_TOP       8
+#define POPUP_ITEM_UP        9
+#define POPUP_ITEM_DOWN     10
+#define POPUP_ITEM_BOTTOM   11
 
 typedef void (* LEGEND_DIALOG_SETUP)(struct LegendDialog *data, struct objlist *obj, int id);
 
@@ -549,65 +551,66 @@ legend_dialog_set_sensitive(GtkWidget *w, gpointer client_data)
   }
 
   if (d->stroke && d->stroke_color && d->style && d->width) {
-    int a;
+    int stroke;
 
-    a = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->stroke));
-    set_widget_sensitivity_with_label(d->stroke_color, a);
-    set_widget_sensitivity_with_label(d->style, a);
-    set_widget_sensitivity_with_label(d->width, a);
+    stroke = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->stroke));
+    set_widget_sensitivity_with_label(d->stroke_color, stroke);
+    set_widget_sensitivity_with_label(d->style, stroke);
+    set_widget_sensitivity_with_label(d->width, stroke);
   }
 
   if (d->stroke &&
       d->miter &&
       d->join &&
       d->close_path) {
-    int a;
+    int stroke;
 
-    a = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->stroke));
-    set_widget_sensitivity_with_label(d->miter, a);
-    set_widget_sensitivity_with_label(d->join, a);
-    set_widget_sensitivity_with_label(d->close_path, a);
+    stroke = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->stroke));
+    set_widget_sensitivity_with_label(d->miter, stroke);
+    set_widget_sensitivity_with_label(d->join, stroke);
+    set_widget_sensitivity_with_label(d->close_path, stroke);
   }
 
   if (d->stroke &&
-      d->interpolation &&
       d->close_path &&
       d->marker_begin &&
       d->marker_end &&
       d->arrow_length &&
       d->arrow_width) {
-    int a, ca;
+    int stroke;
 
-    a = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->stroke));
-    ca = combo_box_get_active(d->interpolation);
-
-    set_widget_sensitivity_with_label(d->miter, a);
-    set_widget_sensitivity_with_label(d->join, a);
-    set_widget_sensitivity_with_label(d->marker_begin, a);
-    gtk_widget_set_sensitive(d->marker_end, a);
-    set_widget_sensitivity_with_label(d->arrow_length, a);
-    set_widget_sensitivity_with_label(d->arrow_width, a);
+    stroke = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->stroke));
+    set_widget_sensitivity_with_label(d->miter, stroke);
+    set_widget_sensitivity_with_label(d->join, stroke);
+    set_widget_sensitivity_with_label(d->marker_begin, stroke);
+    gtk_widget_set_sensitive(d->marker_end, stroke);
+    set_widget_sensitivity_with_label(d->arrow_length, stroke);
+    set_widget_sensitivity_with_label(d->arrow_width, stroke);
 
     marker_type = combo_box_get_active(d->marker_begin);
-    gtk_widget_set_sensitive(d->mark_type_begin, marker_type == MARKER_TYPE_MARK && a);
+    gtk_widget_set_sensitive(d->mark_type_begin, marker_type == MARKER_TYPE_MARK && stroke);
 
     marker_type = combo_box_get_active(d->marker_end);
-    gtk_widget_set_sensitive(d->mark_type_end, marker_type == MARKER_TYPE_MARK && a);
+    gtk_widget_set_sensitive(d->mark_type_end, marker_type == MARKER_TYPE_MARK && stroke);
 
-
-    if (path_type == PATH_TYPE_CURVE) {
-      set_widget_sensitivity_with_label(d->close_path, a &&
-			       (ca != INTERPOLATION_TYPE_SPLINE_CLOSE &&
-				ca != INTERPOLATION_TYPE_BSPLINE_CLOSE));
-    } else {
-      set_widget_sensitivity_with_label(d->close_path, a);
+    if (d->interpolation) {
+      int intp;
+      intp = combo_box_get_active(d->interpolation);
+      if (path_type == PATH_TYPE_CURVE) {
+	set_widget_sensitivity_with_label(d->close_path, stroke &&
+					  (intp != INTERPOLATION_TYPE_SPLINE_CLOSE &&
+					   intp != INTERPOLATION_TYPE_BSPLINE_CLOSE));
+      }
+    }
+    if (path_type != PATH_TYPE_CURVE) {
+      set_widget_sensitivity_with_label(d->close_path, stroke);
     }
   }
 
   if (d->fill && d->fill_color) {
-    int a;
+    int fill;
 
-    a = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->fill));
+    fill = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->fill));
     if (d->marker_begin && d->marker_end) {
       int marker_begin, marker_end, stroke;
       stroke = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->stroke));
@@ -617,13 +620,13 @@ legend_dialog_set_sensitive(GtkWidget *w, gpointer client_data)
                                         (stroke &&
                                          (marker_begin == MARKER_TYPE_MARK ||
                                           marker_end == MARKER_TYPE_MARK)) ||
-                                        a);
+                                        fill);
     } else {
-      set_widget_sensitivity_with_label(d->fill_color, a);
+      set_widget_sensitivity_with_label(d->fill_color, fill);
     }
 
     if (d->fill_rule) {
-      set_widget_sensitivity_with_label(d->fill_rule, a);
+      set_widget_sensitivity_with_label(d->fill_rule, fill);
     }
   }
 }
@@ -1100,15 +1103,10 @@ points_setup(struct LegendDialog *d)
   gtk_tree_selection_set_mode(sel, GTK_SELECTION_MULTIPLE);
 
   for (i = 0; i < POINTS_DIMENSION; i++) {
-#if GTK_CHECK_VERSION(3, 8, 0)
     renderer = gtk_cell_renderer_spin_new();
-#else
-    renderer = gtk_cell_renderer_text_new();
-#endif
     g_object_set((GObject *) renderer,
 		 "xalign", 1.0,
 		 "editable", TRUE,
-#if GTK_CHECK_VERSION(3, 8, 0)
 		 "adjustment", gtk_adjustment_new(0,
 						  -SPIN_ENTRY_MAX / 100.0,
 						  SPIN_ENTRY_MAX / 100.0,
@@ -1116,7 +1114,6 @@ points_setup(struct LegendDialog *d)
 						  10,
 						  0),
 		 "digits", 2,
-#endif
 		 NULL);
 
     g_signal_connect(renderer, "edited", G_CALLBACK(edited_func[i]), list);
@@ -1381,11 +1378,75 @@ create_marker_type_combo_box(const char *postfix, const char *tooltip)
   return cbox;
 }
 
+static void
+create_maker_setting_widgets(struct LegendDialog *d, GtkWidget *table, int i)
+{
+  GtkWidget *w, *hbox3, *label;
+  hbox3 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+
+  w = gtk_button_new();
+  g_signal_connect(w, "clicked", G_CALLBACK(LegendMarkDialogMark), &(d->mark_begin));
+  gtk_box_pack_start(GTK_BOX(hbox3), w, FALSE, FALSE, 0);
+  d->mark_type_begin = w;
+
+  w = create_marker_type_combo_box("begin", _("Marker begin"));
+  gtk_box_pack_start(GTK_BOX(hbox3), w, FALSE, FALSE, 0);
+  d->marker_begin = w;
+
+  w = create_marker_type_combo_box("end", _("Marker end"));
+  gtk_box_pack_start(GTK_BOX(hbox3), w, FALSE, FALSE, 0);
+  d->marker_end = w;
+
+  w = gtk_button_new();
+  gtk_box_pack_start(GTK_BOX(hbox3), w, FALSE, FALSE, 0);
+  g_signal_connect(w, "clicked", G_CALLBACK(LegendMarkDialogMark), &(d->mark_end));
+  d->mark_type_end = w;
+
+  g_signal_connect(d->marker_begin, "changed", G_CALLBACK(legend_dialog_set_sensitive), d);
+  g_signal_connect(d->marker_end,   "changed", G_CALLBACK(legend_dialog_set_sensitive), d);
+
+  label = gtk_label_new_with_mnemonic(_("_Marker:"));
+  gtk_widget_set_halign(label, GTK_ALIGN_START);
+  gtk_label_set_mnemonic_widget(GTK_LABEL(label), d->marker_begin);
+  gtk_grid_attach(GTK_GRID(table), label, 0, i, 1, 1);
+  gtk_grid_attach(GTK_GRID(table), hbox3, 1, i, 1, 1);
+}
+
+static void
+create_arrow_setting_widgets(struct LegendDialog *d, GtkWidget *hbox)
+{
+  GtkWidget *w, *vbox;
+
+  vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
+  w = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 10, 170, 1);
+  set_scale_mark(w, GTK_POS_BOTTOM, 15, 15);
+
+  g_signal_connect(w, "value-changed", G_CALLBACK(LegendArrowDialogScaleL), d);
+  g_signal_connect(w, "format-value", G_CALLBACK(format_value_degree), NULL);
+  gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+  d->arrow_length = w;
+
+  w = gtk_drawing_area_new();
+  gtk_widget_set_size_request(w, ARROW_VIEW_SIZE, ARROW_VIEW_SIZE);
+  gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+  g_signal_connect(w, "draw", G_CALLBACK(LegendArrowDialogPaint), d);
+  d->view = w;
+
+  w = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 100, 2000, 1);
+  set_scale_mark(w, GTK_POS_TOP, 200, 200);
+  g_signal_connect(w, "value-changed", G_CALLBACK(LegendArrowDialogScaleW), d);
+  g_signal_connect(w, "format-value", G_CALLBACK(format_value_percent), NULL);
+  gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+  d->arrow_width = w;
+
+  set_widget_margin(vbox, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
+  gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
+}
 
 static void
 LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *hbox, *vbox, *hbox2, *vbox2, *hbox3, *frame, *table, *label;
+  GtkWidget *w, *hbox, *hbox2, *vbox2, *frame, *table;
   struct LegendDialog *d;
   char title[64];
   int i;
@@ -1433,34 +1494,7 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, NULL, FALSE, i++);
     d->close_path = w;
 
-    hbox3 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-
-    w = gtk_button_new();
-    g_signal_connect(w, "clicked", G_CALLBACK(LegendMarkDialogMark), &(d->mark_begin));
-    gtk_box_pack_start(GTK_BOX(hbox3), w, FALSE, FALSE, 0);
-    d->mark_type_begin = w;
-
-    w = create_marker_type_combo_box("begin", _("Marker begin"));
-    gtk_box_pack_start(GTK_BOX(hbox3), w, FALSE, FALSE, 0);
-    d->marker_begin = w;
-
-    w = create_marker_type_combo_box("end", _("Marker end"));
-    gtk_box_pack_start(GTK_BOX(hbox3), w, FALSE, FALSE, 0);
-    d->marker_end = w;
-
-    w = gtk_button_new();
-    gtk_box_pack_start(GTK_BOX(hbox3), w, FALSE, FALSE, 0);
-    g_signal_connect(w, "clicked", G_CALLBACK(LegendMarkDialogMark), &(d->mark_end));
-    d->mark_type_end = w;
-
-    g_signal_connect(d->marker_begin, "changed", G_CALLBACK(legend_dialog_set_sensitive), d);
-    g_signal_connect(d->marker_end,   "changed", G_CALLBACK(legend_dialog_set_sensitive), d);
-
-    label = gtk_label_new_with_mnemonic(_("_Marker:"));
-    gtk_widget_set_halign(label, GTK_ALIGN_START);
-    gtk_label_set_mnemonic_widget(GTK_LABEL(label), d->marker_begin);
-    gtk_grid_attach(GTK_GRID(table), label, 0, i, 1, 1);
-    gtk_grid_attach(GTK_GRID(table), hbox3, 1, i++, 1, 1);
+    create_maker_setting_widgets(d, table, i++);
 
     style_setup(d, table, i++);
     width_setup(d, table, i++);
@@ -1471,30 +1505,7 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_box_pack_start(GTK_BOX(hbox2), table, TRUE, TRUE, 0);
 
-    vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-    w = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 10, 170, 1);
-    set_scale_mark(w, GTK_POS_BOTTOM, 15, 15);
-
-    g_signal_connect(w, "value-changed", G_CALLBACK(LegendArrowDialogScaleL), d);
-    g_signal_connect(w, "format-value", G_CALLBACK(format_value_degree), NULL);
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-    d->arrow_length = w;
-
-    w = gtk_drawing_area_new();
-    gtk_widget_set_size_request(w, ARROW_VIEW_SIZE, ARROW_VIEW_SIZE);
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-    g_signal_connect(w, "draw", G_CALLBACK(LegendArrowDialogPaint), d);
-    d->view = w;
-
-    w = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 100, 2000, 1);
-    set_scale_mark(w, GTK_POS_TOP, 200, 200);
-    g_signal_connect(w, "value-changed", G_CALLBACK(LegendArrowDialogScaleW), d);
-    g_signal_connect(w, "format-value", G_CALLBACK(format_value_percent), NULL);
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-    d->arrow_width = w;
-
-    set_widget_margin(vbox, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
-    gtk_box_pack_start(GTK_BOX(hbox2), vbox, FALSE, FALSE, 0);
+    create_arrow_setting_widgets(d, hbox2);
 
     w = gtk_check_button_new_with_mnemonic(_("_Stroke"));
     g_signal_connect(w, "toggled", G_CALLBACK(legend_dialog_set_sensitive), d);
@@ -1650,7 +1661,7 @@ LegendRectDialog(struct LegendDialog *data, struct objlist *obj, int id)
 static void
 LegendArcDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *hbox, *vbox, *table, *frame;
+  GtkWidget *w, *hbox, *hbox2, *vbox, *table, *frame;
   struct LegendDialog *d;
   char title[64];
   int i;
@@ -1707,6 +1718,7 @@ LegendArcDialogSetup(GtkWidget *wi, void *data, int makewidget)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     gtk_box_pack_start(GTK_BOX(vbox), table, FALSE, FALSE, 0);
 
+    hbox2 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
     table = gtk_grid_new();
 
     i = 0;
@@ -1714,11 +1726,17 @@ LegendArcDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, NULL, FALSE, i++);
     d->close_path = w;
 
+    create_maker_setting_widgets(d, table, i++);
+
     style_setup(d, table, i++);
     width_setup(d, table, i++);
     miter_setup(d, table, i++);
     join_setup(d, table, i++);
     stroke_color_setup(d, table, i++);
+
+    gtk_box_pack_start(GTK_BOX(hbox2), table, TRUE, TRUE, 0);
+
+    create_arrow_setting_widgets(d, hbox2);
 
     w = gtk_check_button_new_with_mnemonic(_("_Stroke"));
     g_signal_connect(w, "toggled", G_CALLBACK(legend_dialog_set_sensitive), d);
@@ -1726,7 +1744,7 @@ LegendArcDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     frame = gtk_frame_new(NULL);
     gtk_frame_set_label_widget(GTK_FRAME(frame), w);
-    gtk_container_add(GTK_CONTAINER(frame), table);
+    gtk_container_add(GTK_CONTAINER(frame), hbox2);
     set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT | WIDGET_MARGIN_BOTTOM);
     gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
 
@@ -1937,11 +1955,6 @@ create_character_view(GtkWidget *entry, gchar *data)
   GtkListStore *model;
   GtkTreeIter iter;
   gchar *ptr;
-#if ! GTK_CHECK_VERSION(3, 8, 0)
-  PangoLayout *layout;
-  PangoRectangle ink_rect;
-  int width = 0, w;
-#endif
 
   model = gtk_list_store_new(1, G_TYPE_STRING);
   icon_view = gtk_icon_view_new_with_model(GTK_TREE_MODEL(model));
@@ -1951,9 +1964,6 @@ create_character_view(GtkWidget *entry, gchar *data)
   gtk_icon_view_set_column_spacing(GTK_ICON_VIEW(icon_view), 0);
   gtk_icon_view_set_margin(GTK_ICON_VIEW(icon_view), 0);
   gtk_icon_view_set_item_padding(GTK_ICON_VIEW(icon_view), 0);
-#if ! GTK_CHECK_VERSION(3, 8, 0)
-  gtk_icon_view_set_columns(GTK_ICON_VIEW(icon_view), 24);
-#endif
   g_signal_connect(icon_view, "item-activated", G_CALLBACK(insert_selcted_char), entry);
 
   for (ptr = data; *ptr; ptr = g_utf8_next_char(ptr)) {
@@ -1966,29 +1976,12 @@ create_character_view(GtkWidget *entry, gchar *data)
     l = g_unichar_to_utf8(ch, str);
     str[l] = '\0';
     gtk_list_store_set(model, &iter, 0, str, -1);
-
-#if ! GTK_CHECK_VERSION(3, 8, 0)
-    /* fix-me: there exist extra spaces both side of strings when use GTK+3.0 */
-    layout = gtk_widget_create_pango_layout(icon_view, str);
-    pango_layout_get_pixel_extents(layout, &ink_rect, NULL);
-    w = ink_rect.x + ink_rect.width;
-    if (w > width) {
-      width = w;
-    }
-    g_object_unref(layout);
-#endif
   }
-
-#if ! GTK_CHECK_VERSION(3, 8, 0)
-  gtk_icon_view_set_item_width(GTK_ICON_VIEW(icon_view), width * 1.5);
-#endif
 
   swin = gtk_scrolled_window_new(NULL, NULL);
 
-#if GTK_CHECK_VERSION(3, 8, 0)
   gtk_icon_view_set_activate_on_single_click(GTK_ICON_VIEW(icon_view),TRUE);
   gtk_widget_set_size_request(GTK_WIDGET(swin), -1, 100);
-#endif
 
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
   gtk_container_add(GTK_CONTAINER(swin), icon_view);
@@ -2815,6 +2808,10 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
   m = list_store_get_selected_int(d->text, COL_ID);
   for (i = 0; i < POPUP_ITEM_NUM; i++) {
     switch (i) {
+    case POPUP_ITEM_FOCUS_ALL:
+      last_id = chkobjlastinst(d->obj);
+      gtk_widget_set_sensitive(d->popup_item[i], last_id >= 0);
+      break;
     case POPUP_ITEM_TOP:
     case POPUP_ITEM_UP:
       gtk_widget_set_sensitive(d->popup_item[i], m > 0);

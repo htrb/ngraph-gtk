@@ -15,17 +15,11 @@
 void
 set_button_icon(GtkWidget *w, const char *icon_name)
 {
-#if ! GTK_CHECK_VERSION(3, 12, 0)
-  GtkWidget *icon;
-  icon = gtk_image_new_from_icon_name(icon_name, GTK_ICON_SIZE_BUTTON);
-  gtk_button_set_image(GTK_BUTTON(w), icon);
-#endif
 }
 
 void
 set_widget_margin(GtkWidget *w, int margin_pos)
 {
-#if GTK_CHECK_VERSION(3, 12, 0)
   if (margin_pos & WIDGET_MARGIN_LEFT) {
     gtk_widget_set_margin_start(w, 4);
   }
@@ -33,15 +27,6 @@ set_widget_margin(GtkWidget *w, int margin_pos)
   if (margin_pos & WIDGET_MARGIN_RIGHT) {
     gtk_widget_set_margin_end(w, 4);
   }
-#else
-  if (margin_pos & WIDGET_MARGIN_LEFT) {
-    gtk_widget_set_margin_left(w, 4);
-  }
-
-  if (margin_pos & WIDGET_MARGIN_RIGHT) {
-    gtk_widget_set_margin_right(w, 4);
-  }
-#endif
 
   if (margin_pos & WIDGET_MARGIN_BOTTOM) {
     gtk_widget_set_margin_bottom(w, 4);
@@ -347,9 +332,7 @@ create_direction_entry(void)
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_ANGLE, FALSE, TRUE);
   gtk_entry_set_width_chars(GTK_ENTRY(w), NUM_ENTRY_WIDTH);
-#if GTK_CHECK_VERSION(3, 12, 0)
   gtk_entry_set_max_width_chars(GTK_ENTRY(w), NUM_ENTRY_WIDTH);
-#endif
   gtk_entry_set_icon_from_icon_name(GTK_ENTRY(w), GTK_ENTRY_ICON_SECONDARY, "go-up-symbolic");
   gtk_entry_set_icon_from_icon_name(GTK_ENTRY(w), GTK_ENTRY_ICON_PRIMARY, "go-down-symbolic");
   g_signal_connect(w, "icon-release", G_CALLBACK(direction_icon_released), NULL);
@@ -525,9 +508,7 @@ _create_spin_entry(enum SPIN_BUTTON_TYPE type, double min, double max,
 
   if (set_default_size) {
     gtk_entry_set_width_chars(GTK_ENTRY(w), NUM_ENTRY_WIDTH);
-#if GTK_CHECK_VERSION(3, 12, 0)
     gtk_entry_set_max_width_chars(GTK_ENTRY(w), NUM_ENTRY_WIDTH);
-#endif
   }
 
   if (set_default_action) {

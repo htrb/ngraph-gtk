@@ -49,13 +49,20 @@ enum FOCU_OBJ_TYPE {
   FOCUS_OBJ_TYPE_TEXT   = 0x08,
 };
 
+enum FOCUS_MODE {
+  FOCUS_MODE_NORMAL = 0,
+  FOCUS_MODE_APPEND = 1,
+  FOCUS_MODE_TOGGLE = 2,
+};
+
 void ViewerWinSetup(void);
 void ViewerWinClose(void);
 void ViewerWinUpdate(char **objects);
+void ViewerSelectAllObj(struct objlist *obj);
 void OpenGC(void);
 void CloseGC(void);
 void SetScroller(void);
-void Focus(struct objlist *fobj, int id, int add);
+void Focus(struct objlist *fobj, int id, enum FOCUS_MODE mode);
 void UnFocus(void);
 void ChangeDPI(void);
 void Draw(int SelectFile);
@@ -71,3 +78,4 @@ int check_focused_obj_type(const struct Viewer *d, int *type);
 void move_data_cancel(struct Viewer *d, gboolean show_message);
 int check_paint_lock(void);
 void update_bg(void);
+int get_focused_obj_array(struct narray *focusobj, char **objs);
