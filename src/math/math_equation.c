@@ -843,6 +843,16 @@ math_equation_register_user_func_definition(MathEquation *eq, const char *name, 
   return 0;
 }
 
+static void
+clear_stack_local(struct math_equation_stack *stack, int *vnum)
+{
+  if (vnum) {
+    *vnum = nhash_num(stack->local_variable);
+  }
+  nhash_clear(stack->local_variable);
+  stack->local_num = 0;
+}
+
 int
 math_equation_finish_user_func_definition(MathEquation *eq, int *vnum, int *anum)
 {
