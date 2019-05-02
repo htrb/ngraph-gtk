@@ -1719,6 +1719,17 @@ calc(MathExpression *exp, MathValue *val)
     break;
   case MATH_EXPRESSION_TYPE_ARRAY_ARGUMENT:
     return 1;
+  case MATH_EXPRESSION_TYPE_STRING_VARIABLE:
+  case MATH_EXPRESSION_TYPE_STRING:
+    /* to be implemented */
+    val->val = 0;
+    break;
+  case MATH_EXPRESSION_TYPE_STRING_ASSIGN:
+    if (math_equation_set_var_string(exp->equation, exp->u.assign.left->u.index, exp->u.assign.right->u.string)) {
+      return 1;
+    }
+    /* to be implemented */
+    break;
   case MATH_EXPRESSION_TYPE_FUNC:
   case MATH_EXPRESSION_TYPE_CONST_DEF:
     /* never reached */
