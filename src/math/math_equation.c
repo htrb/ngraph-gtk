@@ -1082,6 +1082,35 @@ math_equation_add_var(MathEquation *eq, const char *name)
     eq->stack_ofst = 0;
     eq->vnum++;
     nhash_set_int(eq->variable, name, i);
+int
+math_equation_add_var_string(MathEquation *eq, const char *name)
+{
+  int i, r;
+
+  if (eq == NULL)
+    return -1;
+
+  if (eq->func_def) {
+    r = nhash_get_int(eq->string_stack.local_variable, name, &i);
+    if (r) {
+      i = eq->string_stack.local_num;
+      nhash_set_int(eq->string_stack.local_variable, name, i);
+      eq->string_stack.local_num++;
+    }
+    return i;
+  }
+
+  r = nhash_get_int(eq->string_stack.variable, name, &i);
+  if (r) {
+    i = eq->string_stack.num;
+    if (expand_stack(&(eq->string_stack), 1)) {
+      /* error: cannot allocate enough memory */
+      return -1;
+    }
+
+    eq->string_stack.ofst = 0;
+    eq->string_stack.num++;
+    nhash_set_int(eq->string_stack.variable, name, i);
   }
 
   return i;
