@@ -132,6 +132,34 @@ math_equation_basic_new(void)
 
 }
 
+static int
+math_stack_init(struct math_equation_stack *stack, int type)
+{
+  int size;
+  if (type == STACK_TYPE_STRING) {
+    size = sizeof(*(stack->stack.str));
+  } else {
+    size = sizeof(*(stack->stack.val));
+  }
+  stack->type = type;
+  stack->variable = nhash_new();
+  if (stack->variable == NULL) {
+    return 1;
+  }
+  stack->local_variable = nhash_new();
+  if (stack->local_variable == NULL) {
+    nhash_free(stack->variable);
+    stack->variable = NULL;
+    return 1;
+  }
+  stack->num  = 0;
+  stack->ofst = 0;
+  stack->end  = 0;
+  stack->size = 0;
+  stack->element_size = size;
+  return 0;
+}
+
 MathEquation *
 math_equation_new(void)
 {
