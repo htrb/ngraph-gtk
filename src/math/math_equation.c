@@ -1388,13 +1388,15 @@ math_equation_get_var(MathEquation *eq, int idx, MathValue *val)
 void
 math_equation_clear_variable(MathEquation *eq)
 {
-  if (eq->vbuf) {
-    g_free(eq->vbuf);
-    eq->vnum = 0;
-    eq->vbuf = NULL;
+  /* to be implemented for string variable */
+  if (eq->stack.stack.val) {
+    clear_variable_array(eq->stack.stack.val, eq->stack.num);
+    g_free(eq->stack.stack.val);
+    eq->stack.num = 0;
+    eq->stack.stack.val = NULL;
   }
 
-  nhash_clear(eq->variable);
+  nhash_clear(eq->stack.variable);
 }
 
 char *
