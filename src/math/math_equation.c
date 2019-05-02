@@ -1023,36 +1023,35 @@ optimize_const_definition(MathEquation *eq)
   return 0;
 }
 
-
 static int
-expand_stack(MathEquation *eq, int size)
+expand_stack(struct math_equation_stack *stack, int size)
 {
-  MathValue *ptr;
+  char *ptr;
   int n, request_size;
 
-  request_size = eq->stack_end + size;
+  request_size = stack->end + size;
 
-  if (eq->vbuf_size <= request_size) {
+  if (stack->size <= request_size) {
     n = (request_size / BUF_UNIT + 1) * BUF_UNIT;
-    ptr = g_realloc(eq->vbuf, sizeof(*ptr) * n);
-    if (ptr == NULL)
+    ptr = g_realloc(stack->stack.ptr, stack->element_size * n);
+    if (ptr == NULL) {
       return 1;
-    eq->vbuf = ptr;
-
-    eq->vbuf_size = n;
+    }
+    stack->stack.ptr = ptr;
+    stack->size = n;
   }
 
-  if (eq->vbuf == NULL)
+  if (stack->stack.ptr == NULL)
     return 1;
 
-  memset(eq->vbuf + eq->stack_end, 0, sizeof(*eq->vbuf) * size);
+  ptr = stack->stack.ptr;
+  memset(ptr + stack->element_size * stack->end, 0, stack->element_size * size);
 
-  eq->stack_ofst = eq->stack_end;
-  eq->stack_end = request_size;
+  stack->ofst = stack->end;
+  stack->end = request_size;
 
   return 0;
 }
-
 
 int
 math_equation_add_var(MathEquation *eq, const char *name)
