@@ -5,7 +5,7 @@ IO.foreach(ARGV[0]) { |l|
   next if (l[0] == ?#)
   l.chomp!
   next if (l.length < 1)
-  func_str.push(l.split) 
+  func_str.push(l.split)
 }
 
 func_str = func_str.uniq.sort {|a, b| b[0].length - a[0].length}
