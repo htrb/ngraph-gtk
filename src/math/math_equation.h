@@ -11,6 +11,7 @@ typedef struct _math_parameter MathEquationParametar;
 typedef struct _math_array MathEquationArray;
 typedef struct _math_value MathValue;
 
+#include <gmodule.h>
 #include "math_error.h"
 #include "nhash.h"
 #include "object.h"
@@ -19,7 +20,6 @@ typedef struct _math_value MathValue;
 
 struct _math_value {
   double val;
-  const char *str;
   enum {
     MATH_VALUE_NORMAL = 0,
     MATH_VALUE_ERROR  = 1,
@@ -118,7 +118,7 @@ int math_equation_set_parameter_data(MathEquation *eq, int type, MathValue *data
 int math_equation_add_pos_func(MathEquation *eq, struct math_function_parameter *fprm);
 struct math_function_parameter *math_equation_start_user_func_definition(MathEquation *eq, const char *name);
 int math_equation_register_user_func_definition(MathEquation *eq, const char *name, MathExpression *exp);
-int math_equation_finish_user_func_definition(MathEquation *eq, int *vnum, int *anum);
+int math_equation_finish_user_func_definition(MathEquation *eq, int *vnum, int *anum, int *snum);
 struct math_function_parameter *math_equation_add_func(MathEquation *eq, const char *name, struct math_function_parameter *prm);
 struct math_function_parameter *math_equation_get_func(MathEquation *eq, const char *name);
 void math_equation_remove_func(MathEquation *eq, const char *name);
@@ -136,6 +136,9 @@ int math_equation_add_var(MathEquation *eq, const char *name);
 int math_equation_set_var(MathEquation *eq, int idx, const MathValue *val);
 int math_equation_check_var(MathEquation *eq, const char *name);
 int math_equation_get_var(MathEquation *eq, int idx, MathValue *val);
+
+int math_equation_add_var_string(MathEquation *eq, const char *name);
+int math_equation_set_var_string(MathEquation *eq, int idx, const char *str);
 
 int math_equation_check_array(MathEquation *eq, const char *name);
 int math_equation_add_array(MathEquation *eq, const char *name);
