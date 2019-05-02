@@ -23,6 +23,7 @@ static struct math_token *get_bracket(const char *str, const char ** rstr);
 static struct math_token *get_unknown(const char *str, const char ** rstr);
 static struct math_token *get_symbol(const char *str, const char ** rstr);
 static struct math_token *get_string(const char *str, const char ** rstr);
+static struct math_token *get_string_variable(const char *str, const char ** rstr);
 static struct math_token *get_paren(const char *str, const char ** rstr);
 static struct math_token *get_curly(const char *str, const char ** rstr);
 static struct math_token *get_comma(const char *str, const char ** rstr);
