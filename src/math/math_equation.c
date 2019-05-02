@@ -194,7 +194,7 @@ math_equation_clear(MathEquation *eq)
   if (eq->array_num > 0 && eq->array_buf) {
     for (i = 0; i < eq->array_num; i++) {
       if (eq->array_buf[i].num > 0 && eq->array_buf[i].data) {
-	memset(eq->array_buf[i].data, 0, sizeof(MathEquationArray) * eq->array_buf[i].num);
+	memset(eq->array_buf[i].data, 0, sizeof(MathValue) * eq->array_buf[i].num);
       }
     }
   }
