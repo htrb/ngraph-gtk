@@ -247,7 +247,7 @@ math_function_expression_register_arg(MathExpression *func)
 int
 math_function_expression_set_function(MathEquation *eq, MathExpression *func, const char *name, MathExpression *exp)
 {
-  int anum, vnum;
+  int anum, vnum, snum;
 
   func->u.func.exp = exp;
 
@@ -261,8 +261,9 @@ math_function_expression_set_function(MathEquation *eq, MathExpression *func, co
 
   func->u.func.fprm->base_usr = func;
   func->u.func.fprm->opt_usr = NULL;
-  math_equation_finish_user_func_definition(eq, &vnum, &anum);
+  math_equation_finish_user_func_definition(eq, &vnum, &anum, &snum);
   func->u.func.local_num = vnum;
+  func->u.func.local_string_num = snum;
   func->u.func.local_array_num = anum;
 
   return 0;
