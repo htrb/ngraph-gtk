@@ -55,7 +55,7 @@ struct math_func_arg_list {
 };
 
 typedef struct _math_function_expression {
-  int argc, local_num, local_array_num;
+  int argc, local_num, local_string_num, local_array_num;
   MathExpression *exp;
   struct math_function_parameter *fprm;
   struct math_func_arg_list *arg_list, *arg_last;
@@ -109,10 +109,10 @@ struct _math_expression {
   int line_number;
   MathExpression *next;
   MathEquation *equation;
-  char *string;
   union {
     MathValue value;
     char *symbol;
+    char *string;
     int index;
     MathBinaryExpression bin;
     MathUnaryExpression unary;
@@ -141,6 +141,7 @@ MathExpression *math_parameter_expression_new(MathEquation *eq, char *name, int 
 MathExpression *math_constant_definition_expression_new(MathEquation *eq, char *name, MathExpression *exp, int *err);
 MathExpression *math_function_expression_new(MathEquation *eq, const char *name, int *err);
 MathExpression *math_string_expression_new(MathEquation *eq, const char *str, int *err);
+MathExpression *math_string_variable_expression_new(MathEquation *eq, const char *str, int *err);
 
 int math_function_expression_add_arg(MathExpression *func, const char *arg_name, enum MATH_FUNCTION_ARG_TYPE type);
 int math_function_expression_set_function(MathEquation *eq, MathExpression *func, const char *name, MathExpression *exp);
