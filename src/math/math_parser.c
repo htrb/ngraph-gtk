@@ -1083,6 +1083,7 @@ parse_expression(struct math_string *str, MathEquation *eq, int *err)
 
   switch (exp->type) {
   case MATH_EXPRESSION_TYPE_VARIABLE:
+  case MATH_EXPRESSION_TYPE_STRING_VARIABLE:
   case MATH_EXPRESSION_TYPE_ARRAY:
     break;
   default:
@@ -1094,6 +1095,12 @@ parse_expression(struct math_string *str, MathEquation *eq, int *err)
     *err = MATH_ERROR_MEMORY;
     math_expression_free(exp);
     return NULL;
+  }
+
+  if (exp->type == MATH_EXPRESSION_TYPE_STRING_VARIABLE) {
+    exp = parse_string_assign_expression(str, eq, token, exp, err);
+    math_scanner_free_token(token);
+    goto End;
   }
 
   switch (token->type) {
