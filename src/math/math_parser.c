@@ -116,8 +116,6 @@ parse_primary_expression(struct math_string *str, MathEquation *eq, int *err)
     exp = math_double_expression_new(eq, &val, err);
     break;
   case MATH_TOKEN_TYPE_STRING:
-    val.val = token->data.val.dnum;
-    val.type = MATH_VALUE_NORMAL;
     exp = math_string_expression_new(eq, token->data.str->str, err);
     break;
   case MATH_TOKEN_TYPE_UNTERMINATED_STRING:
@@ -125,6 +123,10 @@ parse_primary_expression(struct math_string *str, MathEquation *eq, int *err)
     math_equation_set_parse_error(eq, token->ptr, str);
     math_scanner_free_token(token);
     return NULL;
+  case MATH_TOKEN_TYPE_STRING_VARIABLE:
+    /* to be implemented */
+    exp = math_string_variable_expression_new(eq, token->data.sym, err);
+    break;
   case MATH_TOKEN_TYPE_SYMBOL:
     token2 = my_get_token(str);
     unget_token(token2);
