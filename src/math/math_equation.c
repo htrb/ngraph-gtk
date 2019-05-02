@@ -1062,26 +1062,31 @@ math_equation_add_var(MathEquation *eq, const char *name)
     return -1;
 
   if (eq->func_def) {
-    r = nhash_get_int(eq->local_variable, name, &i);
+    r = nhash_get_int(eq->stack.local_variable, name, &i);
     if (r) {
-      i = eq->local_vnum;
-      nhash_set_int(eq->local_variable, name, i);
-      eq->local_vnum++;
+      i = eq->stack.local_num;
+      nhash_set_int(eq->stack.local_variable, name, i);
+      eq->stack.local_num++;
     }
     return i;
   }
 
-  r = nhash_get_int(eq->variable, name, &i);
+  r = nhash_get_int(eq->stack.variable, name, &i);
   if (r) {
-    i = eq->vnum;
-    if (expand_stack(eq, 1)) {
+    i = eq->stack.num;
+    if (expand_stack(&(eq->stack), 1)) {
       /* error: cannot allocate enough memory */
       return -1;
     }
 
-    eq->stack_ofst = 0;
-    eq->vnum++;
-    nhash_set_int(eq->variable, name, i);
+    eq->stack.ofst = 0;
+    eq->stack.num++;
+    nhash_set_int(eq->stack.variable, name, i);
+  }
+
+  return i;
+}
+
 int
 math_equation_add_var_string(MathEquation *eq, const char *name)
 {
