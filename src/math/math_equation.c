@@ -177,6 +177,7 @@ MathEquation *
 math_equation_new(void)
 {
   MathEquation *eq;
+  int r;
 
   eq = g_malloc(sizeof(*eq));
   if (eq == NULL)
@@ -186,17 +187,22 @@ math_equation_new(void)
 
   eq->constant = nhash_new();
   eq->function = nhash_new();
-  eq->variable = nhash_new();
+  r = math_stack_init(&(eq->stack), STACK_TYPE_VALUE);
+  if (r) {
+    math_equation_free(eq);
+    return NULL;
+  }
+  r = math_stack_init(&(eq->string_stack), STACK_TYPE_STRING);
+  if (r) {
+    math_equation_free(eq);
+    return NULL;
+  }
   eq->array = nhash_new();
   eq->local_array = nhash_new();
-  eq->local_variable = nhash_new();
-  arrayinit(&(eq->strings), sizeof(GString *));
 
   if (eq->function == NULL ||
       eq->constant == NULL ||
-      eq->variable == NULL ||
       eq->array == NULL ||
-      eq->local_variable == NULL ||
       eq->local_array == NULL) {
     math_equation_free(eq);
     return NULL;
