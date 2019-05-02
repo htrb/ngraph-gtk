@@ -376,8 +376,8 @@ math_equation_free(MathEquation *eq)
   if (eq->constant)
     nhash_free(eq->constant);
 
-  if (eq->variable)
-    nhash_free(eq->variable);
+  math_stack_free(&eq->stack);
+  math_stack_free(&eq->string_stack);
 
   if (eq->function)
     free_func(eq->function);
@@ -387,9 +387,6 @@ math_equation_free(MathEquation *eq)
 
   if (eq->local_array)
     nhash_free(eq->local_array);
-
-  if (eq->local_variable)
-    nhash_free(eq->local_variable);
 
   if (eq->const_def) {
     math_expression_free(eq->const_def);
@@ -404,7 +401,6 @@ math_equation_free(MathEquation *eq)
   math_expression_free(eq->exp);
   math_expression_free(eq->opt_exp);
   g_free(eq->cbuf);
-  g_free(eq->vbuf);
   g_free(eq->pos_func_buf);
   g_free(eq);
 }
