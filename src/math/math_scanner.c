@@ -83,6 +83,9 @@ math_scanner_free_token(struct math_token *token)
   case MATH_TOKEN_TYPE_STRING:
     g_string_free(token->data.str, TRUE);
     break;
+  case MATH_TOKEN_TYPE_STRING_VARIABLE:
+    /* not implemented yet */
+    break;
   }
 
   g_free(token);
