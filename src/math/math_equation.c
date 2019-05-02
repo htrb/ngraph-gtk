@@ -1286,8 +1286,8 @@ math_equation_call_user_func(MathFunctionCallExpression *exp, MathEquation *eq, 
 
   argv = exp->buf;
 
-  ofst = eq->stack_ofst;
-  end = eq->stack_end;
+  ofst = eq->stack.ofst;
+  end = eq->stack.end;
   prev = eq->array_buf;
   prev_num = eq->array_num;
 
@@ -1309,7 +1309,7 @@ math_equation_call_user_func(MathFunctionCallExpression *exp, MathEquation *eq, 
     }
   }
 
-  if (expand_stack(eq, func->u.func.local_num)) {
+  if (expand_stack(&(eq->stack), func->u.func.local_num)) {
     g_free(local);
     return 1;
   }
@@ -1320,7 +1320,7 @@ math_equation_call_user_func(MathFunctionCallExpression *exp, MathEquation *eq, 
   j = 0;
   for (i = 0; i < exp->argc; i++) {
     if (func->u.func.fprm->arg_type == NULL || func->u.func.fprm->arg_type[i] == MATH_FUNCTION_ARG_TYPE_DOUBLE) {
-      eq->vbuf[eq->stack_ofst + j] = argv[i].val;
+      eq->stack.stack.val[eq->stack.ofst + j] = argv[i].val;
       j++;
     }
   }
@@ -1331,8 +1331,8 @@ math_equation_call_user_func(MathFunctionCallExpression *exp, MathEquation *eq, 
 
   eq->array_num = prev_num;
   eq->array_buf = prev;
-  eq->stack_end = end;
-  eq->stack_ofst = ofst;
+  eq->stack.end = end;
+  eq->stack.ofst = ofst;
 
   if (func->u.func.fprm->arg_type) {
     j = 0;
