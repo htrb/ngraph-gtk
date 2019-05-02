@@ -1515,6 +1515,7 @@ math_equation_clear_array(MathEquation *eq, int array)
   if (i < 0)
     return 1;
 
+  clear_variable_array(eq->array_buf[array].data, eq->array_buf[i].num);
   eq->array_buf[array].num = 0;
 
   return 0;
