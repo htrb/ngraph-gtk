@@ -854,22 +854,19 @@ clear_stack_local(struct math_equation_stack *stack, int *vnum)
 }
 
 int
-math_equation_finish_user_func_definition(MathEquation *eq, int *vnum, int *anum)
+math_equation_finish_user_func_definition(MathEquation *eq, int *vnum, int *anum, int *snum)
 {
   if (eq == NULL || ! eq->func_def)
     return 1;
 
-  if (vnum)
-    *vnum = nhash_num(eq->local_variable);
-
-  nhash_clear(eq->local_variable);
+  clear_stack_local(&eq->stack, vnum);
+  clear_stack_local(&eq->string_stack, snum);
 
   if (anum)
     *anum = nhash_num(eq->local_array);
 
   nhash_clear(eq->local_array);
 
-  eq->local_vnum = 0;
   eq->local_array_num = 0;
   eq->func_def = 0;
 
