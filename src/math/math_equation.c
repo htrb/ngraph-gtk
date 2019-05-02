@@ -1359,9 +1359,9 @@ math_equation_check_var(MathEquation *eq, const char *name)
   int r, i;
 
   if (eq->func_def) {
-    r = nhash_get_int(eq->local_variable, name, &i);
+    r = nhash_get_int(eq->stack.local_variable, name, &i);
   } else {
-    r = nhash_get_int(eq->variable, name, &i);
+    r = nhash_get_int(eq->stack.variable, name, &i);
   }
 
   if (r) {
