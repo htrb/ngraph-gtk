@@ -225,6 +225,12 @@ clear_pos_func_buf(MathEquation *eq)
   }
 }
 
+static void
+clear_variable_array(MathValue *vbuf, int n)
+{
+  memset(vbuf, 0, sizeof(*vbuf) * n);
+}
+
 void
 math_equation_clear(MathEquation *eq)
 {
