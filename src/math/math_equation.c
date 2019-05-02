@@ -1617,6 +1617,7 @@ check_const_sub(MathExpression *exp, int *constant, int n)
     }
     r = check_const_sub(exp->u.bin.right, constant, n);
     break;
+  case MATH_EXPRESSION_TYPE_STRING_ASSIGN:
   case MATH_EXPRESSION_TYPE_ASSIGN:
     r = check_const_sub(exp->u.assign.right, constant, n);
     break;
@@ -1649,6 +1650,8 @@ check_const_sub(MathExpression *exp, int *constant, int n)
   case MATH_EXPRESSION_TYPE_DOUBLE:
   case MATH_EXPRESSION_TYPE_PRM:
   case MATH_EXPRESSION_TYPE_EOEQ:
+  case MATH_EXPRESSION_TYPE_STRING:
+  case MATH_EXPRESSION_TYPE_STRING_VARIABLE:
     break;
   }
 
