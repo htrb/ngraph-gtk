@@ -788,7 +788,7 @@ math_equation_start_user_func_definition(MathEquation *eq, const char *name)
     return NULL;
   }
 
-  eq->local_vnum = 0;
+  eq->stack.local_num = 0;
   eq->local_array_num = 0;
   eq->func_def = 1;
 
