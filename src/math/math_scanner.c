@@ -381,6 +381,27 @@ get_string(const char *str,  const char ** rstr)
   return tok;
 }
 
+static struct math_token *
+get_string_variable(const char *str, const char ** rstr)
+{
+  struct math_token *tok;
+  char *buf;
+  int n;
+  buf = get_symbol_string(str + 1, FALSE, &n);
+  if (buf == NULL) {
+    return NULL;
+  }
+  n++;
+  tok = create_token(str, MATH_TOKEN_TYPE_STRING_VARIABLE);
+  if (tok == NULL) {
+    g_free(buf);
+    return NULL;
+  }
+  tok->data.sym = buf;
+  *rstr = str + n;
+  return tok;
+}
+
 static const char *
 get_oct(const char *str, double *val)
 {
