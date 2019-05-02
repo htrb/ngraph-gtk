@@ -160,6 +160,19 @@ math_stack_init(struct math_equation_stack *stack, int type)
   return 0;
 }
 
+static void
+math_stack_free(struct math_equation_stack *stack)
+{
+  if (stack->variable) {
+    nhash_free(stack->variable);
+    stack->variable = NULL;
+  }
+  if (stack->local_variable) {
+    nhash_free(stack->local_variable);
+    stack->local_variable = NULL;
+  }
+}
+
 MathEquation *
 math_equation_new(void)
 {
