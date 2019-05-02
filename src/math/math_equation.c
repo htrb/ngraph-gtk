@@ -1266,6 +1266,7 @@ math_equation_get_const(MathEquation *eq, int idx, MathValue *val)
 static int
 math_equation_call_user_func(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  /* to be implemented for string variable */
   static int nest = 0;
   int ofst, end, r, i, j, prev_num;
   MathEquationArray *prev, *local = NULL;
