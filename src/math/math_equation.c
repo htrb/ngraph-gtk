@@ -1169,7 +1169,7 @@ math_equation_get_var_name(MathEquation *eq, int idx)
   v.val = idx;
   v.name = NULL;
 
-  nhash_each(eq->variable, search_val_cb, &v);
+  nhash_each(eq->stack.variable, search_val_cb, &v);
 
   return v.name;
 }
