@@ -270,15 +270,18 @@ get_ope(const char *str,  const char ** rstr)
   return tok;
 }
 
-static struct math_token *
-get_symbol(const char *str,  const char ** rstr)
+static char *
+get_symbol_string(const char *str, int prm, int *len)
 {
-  struct math_token *tok;
   char *buf;
   int n, i;
-  enum MATH_TOKEN_TYPE type;
 
-  for (n = (str[0] == '%') ? 1 : 0; isalnum(str[n]) || str[n] == '_'; n++);
+  if (prm && str[0] == '%') {
+    n = 1;
+  } else {
+    n = 0;
+  }
+  for (; isalnum(str[n]) || str[n] == '_'; n++);
 
   buf = g_malloc(n + 1);
   if (buf == NULL)
@@ -288,7 +291,19 @@ get_symbol(const char *str,  const char ** rstr)
     buf[i] = toupper(str[i]);
   }
   buf[i] = '\0';
+  *len = n;
+  return buf;
+}
 
+static struct math_token *
+get_symbol(const char *str,  const char ** rstr)
+{
+  struct math_token *tok;
+  char *buf;
+  int n;
+  enum MATH_TOKEN_TYPE type;
+
+  buf = get_symbol_string(str, TRUE, &n);
   type = check_reserved(buf);
   if (type != MATH_TOKEN_TYPE_UNKNOWN) {
     g_free(buf);
