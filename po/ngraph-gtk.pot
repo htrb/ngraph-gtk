@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.08.01\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2019-03-31 13:56+0900\n"
+"POT-Creation-Date: 2019-05-02 19:38+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -4224,11 +4224,15 @@ msgstr ""
 msgid "error, calculation error."
 msgstr ""
 
-#: src/math/math_error.c:87 src/math/math_error.c:98 src/math/math_error.c:122
-#: src/math/math_error.c:133 src/math/math_error.c:144
-#: src/math/math_error.c:155 src/math/math_error.c:166
-#: src/math/math_error.c:177 src/math/math_error.c:188
-#: src/math/math_error.c:199 src/math/math_error.c:210
+#: src/math/math_error.c:31
+msgid "syntax error, unterminated string."
+msgstr ""
+
+#: src/math/math_error.c:88 src/math/math_error.c:99 src/math/math_error.c:123
+#: src/math/math_error.c:134 src/math/math_error.c:145
+#: src/math/math_error.c:156 src/math/math_error.c:167
+#: src/math/math_error.c:178 src/math/math_error.c:189
+#: src/math/math_error.c:200 src/math/math_error.c:211
 #, c-format
 msgid ""
 "%s (%d:%d)\n"
