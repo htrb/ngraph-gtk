@@ -448,7 +448,8 @@ math_equation_calculate(MathEquation *eq, MathValue *val)
 
   if ((eq == NULL) || (eq->exp == NULL) ||
       (eq->cnum > 0 && eq->cbuf == NULL) ||
-      (eq->vnum > 0 && eq->vbuf == NULL)) {
+      (eq->stack.num > 0 && eq->stack.stack.val == NULL) ||
+      (eq->string_stack.num > 0 && eq->string_stack.stack.ptr == NULL)) {
     return 1;
   }
 
