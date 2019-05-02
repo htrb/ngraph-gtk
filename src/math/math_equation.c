@@ -241,14 +241,12 @@ math_equation_clear(MathEquation *eq)
 
   clear_pos_func_buf(eq);
 
-  if (eq->vnum > 0 && eq->vbuf) {
-    memset(eq->vbuf, 0, sizeof(*eq->vbuf) * eq->vnum);
-  }
+  clear_variable_array(eq->stack.stack.val, eq->stack.num);
 
   if (eq->array_num > 0 && eq->array_buf) {
     for (i = 0; i < eq->array_num; i++) {
       if (eq->array_buf[i].num > 0 && eq->array_buf[i].data) {
-	memset(eq->array_buf[i].data, 0, sizeof(MathEquationArray) * eq->array_buf[i].num);
+	clear_variable_array(eq->array_buf[i].data, eq->array_buf[i].num);
       }
     }
   }
