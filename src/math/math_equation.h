@@ -62,16 +62,16 @@ struct math_equation_stack {
 };
 
 struct _math_equation {
-  NHASH constant, variable, array, function;
-  int cnum, vnum, array_num, pos_func_num;
-  NHASH local_variable, local_array;
-  int local_vnum, local_array_num, func_def;
-  MathValue *cbuf, *vbuf, *pos_func_buf;
-  int stack_ofst, stack_end, vbuf_size;
+  struct math_equation_stack string_stack; /* for string variable */
+  struct math_equation_stack stack;
+  NHASH constant, array, function;
+  int cnum, array_num, pos_func_num;
+  NHASH local_array;
+  int local_array_num, func_def;
+  MathValue *cbuf, *pos_func_buf;
   MathExpression *exp, *opt_exp, *const_def;
   MathEquationParametar *parameter;
   MathEquationArray *array_buf;
-  struct narray strings;
   union {
     struct {
       const char *pos;
