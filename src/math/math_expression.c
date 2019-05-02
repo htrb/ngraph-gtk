@@ -384,6 +384,29 @@ math_variable_expression_new(MathEquation *eq, const char *name, int *err)
 }
 
 MathExpression *
+math_string_variable_expression_new(MathEquation *eq, const char *str, int *err)
+{
+  MathExpression *exp;
+  int i;
+
+  exp = math_expression_new(MATH_EXPRESSION_TYPE_VARIABLE, eq, err);
+  if (exp == NULL) {
+    return NULL;
+  }
+
+  i = math_equation_add_var_string(eq, str);
+  if (i < 0) {
+    *err = MATH_ERROR_MEMORY;
+    math_expression_free(exp);
+    return NULL;
+  }
+
+  exp->u.index = i;
+
+  return exp;
+}
+
+MathExpression *
 math_array_expression_new(MathEquation *eq, const char *name, MathExpression *operand, int *err)
 {
   MathExpression *exp;
