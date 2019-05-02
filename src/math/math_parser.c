@@ -1030,6 +1030,46 @@ parse_const_def_expression(struct math_string *str, MathEquation *eq, int *err)
 }
 
 static MathExpression *
+parse_string_assign_expression(struct math_string *str, MathEquation *eq, struct math_token *token, MathExpression *lexp, int *err)
+{
+  MathExpression *exp, *rexp;
+
+  if (token->type != MATH_TOKEN_TYPE_OPERATOR ||
+      token->data.op != MATH_OPERATOR_TYPE_ASSIGN) {
+    *err = MATH_ERROR_UNEXP_OPE;
+    math_equation_set_parse_error(eq, token->ptr, str);
+    math_expression_free(lexp);
+    return NULL;
+  }
+
+  rexp = parse_expression(str, eq, err);
+  if (rexp == NULL) {
+    math_expression_free(lexp);
+    return NULL;
+  }
+
+  switch (rexp->type) {
+  case MATH_EXPRESSION_TYPE_STRING:
+  case MATH_EXPRESSION_TYPE_STRING_VARIABLE:
+    exp = math_assign_expression_new(MATH_EXPRESSION_TYPE_STRING_ASSIGN, eq, lexp, rexp, token->data.op, err);
+    printf("MATH_EXPRESSION_TYPE_STRING_ASSIGN: %p\n", exp);
+    if (exp == NULL) {
+      math_expression_free(lexp);
+      math_expression_free(rexp);
+      return NULL;
+    }
+    break;
+  default:
+    *err = MATH_ERROR_UNEXP_TOKEN;
+    math_equation_set_parse_error(eq, token->ptr, str);
+    math_expression_free(lexp);
+    math_expression_free(rexp);
+    return NULL;
+  }
+  return exp;
+}
+
+static MathExpression *
 parse_expression(struct math_string *str, MathEquation *eq, int *err)
 {
   struct math_token *token;
