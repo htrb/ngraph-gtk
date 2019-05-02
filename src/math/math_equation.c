@@ -1374,12 +1374,12 @@ math_equation_check_var(MathEquation *eq, const char *name)
 int
 math_equation_get_var(MathEquation *eq, int idx, MathValue *val)
 {
-  if (eq->vbuf == NULL || idx + eq->stack_ofst >= eq->stack_end) {
+  if (eq->stack.stack.val == NULL || idx + eq->stack.ofst >= eq->stack.end) {
     return 1;
   }
 
   if (val) {
-    *val = eq->vbuf[idx + eq->stack_ofst];
+    *val = eq->stack.stack.val[idx + eq->stack.ofst];
   }
 
   return 0;
