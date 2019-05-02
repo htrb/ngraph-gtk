@@ -42,7 +42,6 @@ math_expression_new(enum MATH_EXPRESSION_TYPE type, MathEquation *eq, int *err)
   exp->type = type;
   exp->next = NULL;
   exp->equation = eq;
-  exp->string = NULL;
 
   return exp;
 }
