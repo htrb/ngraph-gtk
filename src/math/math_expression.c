@@ -578,24 +578,12 @@ MathExpression *
 math_string_expression_new(MathEquation *eq, const char *str, int *err)
 {
   MathExpression *exp;
-  double val;
-  char *ptr;
 
-  exp = math_expression_new(MATH_EXPRESSION_TYPE_DOUBLE, eq, err);
+  exp = math_expression_new(MATH_EXPRESSION_TYPE_STRING, eq, err);
   if (exp == NULL)
     return NULL;
 
-  exp->string = g_strdup(str);
-  val = strtod(str, &ptr);
-  exp->u.value.str = exp->string;
-  exp->u.value.val = val;
-  if (isnan(val)) {
-    exp->u.value.type = MATH_VALUE_NAN;
-  } else if (isinf(val)) {
-    exp->u.value.type = MATH_VALUE_NONUM;
-  } else if (val == 0 && ptr == str) {
-    exp->u.value.type = MATH_VALUE_NONUM;
-  }
+  exp->u.string = g_strdup(str);
   return exp;
 }
 
