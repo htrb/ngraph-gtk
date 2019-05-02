@@ -44,6 +44,23 @@ struct _math_array {
 #include "math_function.h"
 #include "math_constant.h"
 
+struct math_equation_stack {
+  enum {
+	STACK_TYPE_VALUE,
+	STACK_TYPE_STRING,
+  } type;
+  NHASH variable;
+  int num, ofst, end, size;
+  NHASH local_variable;
+  int local_num;
+  int element_size;
+  union {
+    void *ptr;			/* using for memory allocation */
+    MathValue *val;
+    GString **str;
+  } stack;
+};
+
 struct _math_equation {
   NHASH constant, variable, array, function;
   int cnum, vnum, array_num, pos_func_num;
