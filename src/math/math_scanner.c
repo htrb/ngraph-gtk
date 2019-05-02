@@ -132,6 +132,8 @@ math_scanner_get_token(struct math_string *mstr)
     token = get_array_prefix(str, rstr);
   } else if (c == '"') {
     token = get_string(str, rstr);
+  } else if (c == '$') {
+    token = get_string_variable(str, rstr);
   } else if (c == '#') {        /* comment */
     while (*str != '\0' && *str != '\n') {
       mstr->ofst++;
