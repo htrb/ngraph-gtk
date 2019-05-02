@@ -651,15 +651,26 @@ math_expression_free_sub(MathExpression *exp)
   case MATH_EXPRESSION_TYPE_CONST:
   case MATH_EXPRESSION_TYPE_VARIABLE:
     break;
+  case MATH_EXPRESSION_TYPE_STRING:
+    if (exp->u.string) {
+      g_free(exp->u.string);
+    }
+    /* free string */
+    break;
+  case MATH_EXPRESSION_TYPE_STRING_VARIABLE:
+    /* free string */
+    break;
+  case MATH_EXPRESSION_TYPE_STRING_ASSIGN:
+    math_expression_free(exp->u.assign.left);
+    math_expression_free(exp->u.assign.right);
+    /* to be implemented */
+    break;
   case MATH_EXPRESSION_TYPE_DOUBLE:
   case MATH_EXPRESSION_TYPE_PRM:
   case MATH_EXPRESSION_TYPE_EOEQ:
     break;
   }
 
-  if (exp->string) {
-    g_free(exp->string);
-  }
   g_free(exp);
 }
 
