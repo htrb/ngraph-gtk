@@ -355,16 +355,15 @@ free_array_buf(MathEquationArray *buf, int num)
 static void
 free_strings(MathEquation *eq)
 {
+  /*
+    to be implemented
   int i, n;
   GString **strs;
   struct narray *ary;
-  ary = &(eq->strings);
-  n = arraynum(ary);
-  strs = arraydata(ary);
   for (i = 0; i < n; i++) {
     g_string_free(strs[i], TRUE);
   }
-  arraydel(ary);
+   */
 }
 
 void
