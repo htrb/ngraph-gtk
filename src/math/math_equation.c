@@ -171,6 +171,8 @@ math_stack_free(struct math_equation_stack *stack)
     nhash_free(stack->local_variable);
     stack->local_variable = NULL;
   }
+  g_free(stack->stack.ptr);
+  stack->stack.ptr = NULL;
 }
 
 MathEquation *
