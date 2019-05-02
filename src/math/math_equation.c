@@ -1202,6 +1202,20 @@ math_equation_set_const(MathEquation *eq, int idx, const MathValue *val)
 }
 
 int
+math_equation_set_var_string(MathEquation *eq, int idx, const char *str)
+{
+  int i;
+
+  i = idx + eq->string_stack.ofst;
+  if (eq->string_stack.stack.str[i] == NULL) {
+    eq->string_stack.stack.str[i] = g_string_new(str);
+  } else {
+    g_string_assign(eq->string_stack.stack.str[i], str);
+  }
+  return 0;
+}
+
+int
 math_equation_set_var(MathEquation *eq, int idx, const MathValue *val)
 {
   if (eq->vbuf == NULL || idx + eq->stack_ofst >= eq->stack_end) {
