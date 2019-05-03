@@ -934,6 +934,13 @@ call_func(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *val)
 	  exp->buf[i].exp = exp->argv[i];
 	}
 	break;
+      case MATH_FUNCTION_ARG_TYPE_STRING_VARIABLE:
+	if (exp->argv[i]->type != MATH_EXPRESSION_TYPE_STRING_VARIABLE) {
+	  val->type = MATH_VALUE_ERROR;
+	  return 1;
+	}
+	exp->buf[i].idx = exp->argv[i]->u.index;
+	break;
       }
     } else if (CALC_EXPRESSION(exp->argv[i], exp->buf[i].val)) {
       return 1;
