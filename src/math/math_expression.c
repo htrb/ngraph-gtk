@@ -1754,8 +1754,21 @@ calc(MathExpression *exp, MathValue *val)
     val->val = 0;
     break;
   case MATH_EXPRESSION_TYPE_STRING_ASSIGN:
-    if (math_equation_set_var_string(exp->equation, exp->u.assign.left->u.index, exp->u.assign.right->u.string)) {
-      return 1;
+    if (exp->u.assign.right->type == MATH_EXPRESSION_TYPE_STRING) {
+      if (math_equation_set_var_string(exp->equation, exp->u.assign.left->u.index, exp->u.assign.right->u.string)) {
+	return 1;
+      }
+    } else {
+      GString *gstr;
+      int id;
+      id = (int) exp->u.assign.right->u.index;
+      math_equation_get_string_var(exp->equation, id, &gstr);
+      if (gstr == NULL) {
+	return 1;
+      }
+      if (math_equation_set_var_string(exp->equation, exp->u.assign.left->u.index, gstr->str)) {
+	return 1;
+      }
     }
     /* to be implemented */
     break;
