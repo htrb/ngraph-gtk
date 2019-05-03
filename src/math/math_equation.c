@@ -1425,6 +1425,20 @@ math_equation_get_var(MathEquation *eq, int idx, MathValue *val)
   return 0;
 }
 
+int
+math_equation_get_string_var(MathEquation *eq, int idx, GString **str)
+{
+  if (eq->string_stack.stack.str == NULL || idx + eq->string_stack.ofst >= eq->string_stack.end) {
+    return 1;
+  }
+
+  if (str) {
+    *str = eq->string_stack.stack.str[idx + eq->string_stack.ofst];
+  }
+
+  return 0;
+}
+
 void
 math_equation_clear_variable(MathEquation *eq)
 {
