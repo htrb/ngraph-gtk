@@ -144,6 +144,7 @@ register_arg(MathExpression *func, const char *arg_name, enum MATH_FUNCTION_ARG_
     math_equation_add_array(func->equation, arg_name);
     break;
   case MATH_FUNCTION_ARG_TYPE_STRING:
+  case MATH_FUNCTION_ARG_TYPE_STRING_VARIABLE:
     if (math_equation_check_string_var(func->equation, arg_name) >= 0) {
       /* the string variable already exists */
       return 1;
