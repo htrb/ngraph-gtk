@@ -397,7 +397,7 @@ math_string_variable_expression_new(MathEquation *eq, const char *str, int *err)
   MathExpression *exp;
   int i;
 
-  exp = math_expression_new(MATH_EXPRESSION_TYPE_VARIABLE, eq, err);
+  exp = math_expression_new(MATH_EXPRESSION_TYPE_STRING_VARIABLE, eq, err);
   if (exp == NULL) {
     return NULL;
   }
