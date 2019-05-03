@@ -1054,7 +1054,6 @@ parse_string_assign_expression(struct math_string *str, MathEquation *eq, struct
   case MATH_EXPRESSION_TYPE_STRING:
   case MATH_EXPRESSION_TYPE_STRING_VARIABLE:
     exp = math_assign_expression_new(MATH_EXPRESSION_TYPE_STRING_ASSIGN, eq, lexp, rexp, token->data.op, err);
-    printf("MATH_EXPRESSION_TYPE_STRING_ASSIGN: %p\n", exp);
     if (exp == NULL) {
       math_expression_free(lexp);
       math_expression_free(rexp);
