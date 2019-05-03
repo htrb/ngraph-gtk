@@ -1105,7 +1105,7 @@ parse_expression(struct math_string *str, MathEquation *eq, int *err)
     case MATH_OPERATOR_TYPE_MUL_ASSIGN:
     case MATH_OPERATOR_TYPE_PLUS_ASSIGN:
     case MATH_OPERATOR_TYPE_MINUS_ASSIGN:
-      if (token->data.op == MATH_OPERATOR_TYPE_ASSIGN) {
+      if (exp->type == MATH_EXPRESSION_TYPE_STRING_VARIABLE) {
 	*err = MATH_ERROR_UNEXP_OPE;
 	math_equation_set_parse_error(eq, token->ptr, str);
 	math_scanner_free_token(token);
@@ -1114,7 +1114,7 @@ parse_expression(struct math_string *str, MathEquation *eq, int *err)
       }
       /* fall through */
     case MATH_OPERATOR_TYPE_ASSIGN:
-      if (token->data.op == MATH_OPERATOR_TYPE_ASSIGN) {
+      if (exp->type == MATH_EXPRESSION_TYPE_STRING_VARIABLE) {
 	exp = parse_string_assign_expression(str, eq, token, exp, err);
       } else {
 	exp = parse_assign_expression(str, eq, token->data.op, exp, err);
