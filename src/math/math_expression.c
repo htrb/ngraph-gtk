@@ -190,6 +190,7 @@ func_set_arg_buf(MathExpression *func)
     switch (list->type) {
     case MATH_FUNCTION_ARG_TYPE_DOUBLE:
     case MATH_FUNCTION_ARG_TYPE_STRING:
+    case MATH_FUNCTION_ARG_TYPE_STRING_VARIABLE:
       break;
     case MATH_FUNCTION_ARG_TYPE_ARRAY:
       have_array = 1;
