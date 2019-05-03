@@ -1381,15 +1381,15 @@ math_equation_call_user_func(MathFunctionCallExpression *exp, MathEquation *eq, 
   return r;
 }
 
-int
-math_equation_check_var(MathEquation *eq, const char *name)
+static int
+math_equation_check_var_common(struct math_equation_stack *stack, const char *name, int func_def)
 {
   int r, i;
 
-  if (eq->func_def) {
-    r = nhash_get_int(eq->stack.local_variable, name, &i);
+  if (func_def) {
+    r = nhash_get_int(stack->local_variable, name, &i);
   } else {
-    r = nhash_get_int(eq->stack.variable, name, &i);
+    r = nhash_get_int(stack->variable, name, &i);
   }
 
   if (r) {
