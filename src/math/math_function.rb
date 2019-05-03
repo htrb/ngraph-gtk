@@ -17,8 +17,10 @@ File.open("#{ARGV[1]}.h", "w") { |f|
 
 enum MATH_FUNCTION_ARG_TYPE {
   MATH_FUNCTION_ARG_TYPE_DOUBLE,
+  MATH_FUNCTION_ARG_TYPE_STRING,
   MATH_FUNCTION_ARG_TYPE_ARRAY,
   MATH_FUNCTION_ARG_TYPE_PROC,
+  MATH_FUNCTION_ARG_TYPE_STRING_VARIABLE,
 };
 
 typedef int (* math_function) (MathFunctionCallExpression *exp, MathEquation *eq, MathValue *r);
@@ -124,6 +126,10 @@ EOF
                  "MATH_FUNCTION_ARG_TYPE_ARRAY;"
              when "2"
                  "MATH_FUNCTION_ARG_TYPE_PROC;"
+             when "3"
+                 "MATH_FUNCTION_ARG_TYPE_STRING;"
+             when "4"
+                 "MATH_FUNCTION_ARG_TYPE_STRING_VARIABLE;"
              end
              )
 
