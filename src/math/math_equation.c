@@ -1266,6 +1266,31 @@ math_equation_get_const(MathEquation *eq, int idx, MathValue *val)
   return 0;
 }
 
+const char *
+math_equation_get_string_from_argument(MathFunctionCallExpression *exp, MathEquation *eq, int i)
+{
+  int id;
+  GString *gstr;
+  const char *str;
+
+  str = NULL;
+  switch (exp->argv[i]->type) {
+  case MATH_EXPRESSION_TYPE_STRING:
+    str = exp->buf[i].exp->u.string;
+    break;
+  case MATH_EXPRESSION_TYPE_STRING_VARIABLE:
+    id = (int) exp->buf[i].idx;
+    math_equation_get_string_var(eq, id, &gstr);
+    if (str) {
+      str = gstr->str;
+    }
+    break;
+  default:
+    break;
+  }
+  return str;
+}
+
 #define USER_FUNC_NEST_MAX 8192
 
 static int
