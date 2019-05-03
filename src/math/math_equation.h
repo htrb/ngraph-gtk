@@ -136,6 +136,8 @@ int math_equation_add_var(MathEquation *eq, const char *name);
 int math_equation_set_var(MathEquation *eq, int idx, const MathValue *val);
 int math_equation_check_var(MathEquation *eq, const char *name);
 int math_equation_get_var(MathEquation *eq, int idx, MathValue *val);
+int math_equation_check_string_var(MathEquation *eq, const char *name);
+int math_equation_get_string_var(MathEquation *eq, int idx, GString **str);
 
 int math_equation_add_var_string(MathEquation *eq, const char *name);
 int math_equation_set_var_string(MathEquation *eq, int idx, const char *str);
@@ -158,5 +160,6 @@ void math_equation_set_func_arg_num_error(MathEquation *eq, struct math_function
 void math_equation_set_func_error(MathEquation *eq, struct math_function_parameter *fprm);
 void math_equation_set_const_error(MathEquation *eq, int id);
 
+const char *math_equation_get_string_from_argument(MathFunctionCallExpression *exp, MathEquation *eq, int i);
 
 #endif
