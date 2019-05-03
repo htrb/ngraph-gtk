@@ -1281,7 +1281,7 @@ math_equation_get_string_from_argument(MathFunctionCallExpression *exp, MathEqua
   case MATH_EXPRESSION_TYPE_STRING_VARIABLE:
     id = (int) exp->buf[i].idx;
     math_equation_get_string_var(eq, id, &gstr);
-    if (str) {
+    if (gstr) {
       str = gstr->str;
     }
     break;
