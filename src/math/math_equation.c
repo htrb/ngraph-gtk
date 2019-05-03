@@ -1406,6 +1406,12 @@ math_equation_check_var(MathEquation *eq, const char *name)
 }
 
 int
+math_equation_check_string_var(MathEquation *eq, const char *name)
+{
+  return math_equation_check_var_common(&(eq->string_stack), name, eq->func_def);
+}
+
+int
 math_equation_get_var(MathEquation *eq, int idx, MathValue *val)
 {
   if (eq->stack.stack.val == NULL || idx + eq->stack.ofst >= eq->stack.end) {
