@@ -1291,6 +1291,19 @@ math_equation_get_string_from_argument(MathFunctionCallExpression *exp, MathEqua
   return str;
 }
 
+GString *
+math_equation_get_string_variable_from_argument(MathFunctionCallExpression *exp, MathEquation *eq, int i)
+{
+  int id;
+  GString *gstr;
+
+  if (exp->argv[i]->type != MATH_EXPRESSION_TYPE_STRING_VARIABLE) {
+    return NULL;
+  }
+  id = (int) exp->buf[i].idx;
+  math_equation_get_string_var(eq, id, &gstr);
+  return gstr;
+}
 #define USER_FUNC_NEST_MAX 8192
 
 static int
