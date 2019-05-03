@@ -1096,23 +1096,29 @@ parse_expression(struct math_string *str, MathEquation *eq, int *err)
     return NULL;
   }
 
-  if (exp->type == MATH_EXPRESSION_TYPE_STRING_VARIABLE) {
-    exp = parse_string_assign_expression(str, eq, token, exp, err);
-    math_scanner_free_token(token);
-    goto End;
-  }
-
   switch (token->type) {
   case MATH_TOKEN_TYPE_OPERATOR:
     switch (token->data.op) {
-    case MATH_OPERATOR_TYPE_ASSIGN:
     case MATH_OPERATOR_TYPE_POW_ASSIGN:
     case MATH_OPERATOR_TYPE_MOD_ASSIGN:
     case MATH_OPERATOR_TYPE_DIV_ASSIGN:
     case MATH_OPERATOR_TYPE_MUL_ASSIGN:
     case MATH_OPERATOR_TYPE_PLUS_ASSIGN:
     case MATH_OPERATOR_TYPE_MINUS_ASSIGN:
-      exp = parse_assign_expression(str, eq, token->data.op, exp, err);
+      if (token->data.op == MATH_OPERATOR_TYPE_ASSIGN) {
+	*err = MATH_ERROR_UNEXP_OPE;
+	math_equation_set_parse_error(eq, token->ptr, str);
+	math_scanner_free_token(token);
+	math_expression_free(exp);
+	return NULL;
+      }
+      /* fall through */
+    case MATH_OPERATOR_TYPE_ASSIGN:
+      if (token->data.op == MATH_OPERATOR_TYPE_ASSIGN) {
+	exp = parse_string_assign_expression(str, eq, token, exp, err);
+      } else {
+	exp = parse_assign_expression(str, eq, token->data.op, exp, err);
+      }
       math_scanner_free_token(token);
       break;
     default:
