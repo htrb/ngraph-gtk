@@ -161,5 +161,6 @@ void math_equation_set_func_error(MathEquation *eq, struct math_function_paramet
 void math_equation_set_const_error(MathEquation *eq, int id);
 
 const char *math_equation_get_string_from_argument(MathFunctionCallExpression *exp, MathEquation *eq, int i);
+GString *math_equation_get_string_variable_from_argument(MathFunctionCallExpression *exp, MathEquation *eq, int i);
 
 #endif
