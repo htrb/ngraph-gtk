@@ -3151,3 +3151,348 @@ math_func_fmod(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
 
   return 0;
 }
+
+int
+math_func_string_append(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  const char *str;
+  GString *dest;
+
+  rval->val = 0;
+  rval->type = MATH_VALUE_NORMAL;
+
+  dest = math_equation_get_string_variable_from_argument(exp, eq, 0);
+  str = math_equation_get_string_from_argument(exp, eq, 1);
+  if (dest == NULL || str == NULL) {
+    return 1;
+  }
+  g_string_append(dest, str);
+  return 0;
+}
+
+int
+math_func_string_prepend(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  const char *str;
+  GString *dest;
+
+  rval->val = 0;
+  rval->type = MATH_VALUE_NORMAL;
+
+  dest = math_equation_get_string_variable_from_argument(exp, eq, 0);
+  str = math_equation_get_string_from_argument(exp, eq, 1);
+  if (dest == NULL || str == NULL) {
+    return 1;
+  }
+  g_string_prepend(dest, str);
+  return 0;
+}
+
+int
+math_func_string_compare(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  const char *str1, *str2;
+
+  rval->val = 0;
+  rval->type = MATH_VALUE_NORMAL;
+
+  str1 = math_equation_get_string_from_argument(exp, eq, 0);
+  str2 = math_equation_get_string_from_argument(exp, eq, 1);
+  if (str1 == NULL || str2 == NULL) {
+    return 1;
+  }
+  rval->val = strcmp(str1, str2);
+  return 0;
+}
+
+int
+math_func_string_up(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  GString *dest;
+  const char *src;
+  char *tmp;
+
+  rval->val = 0;
+  rval->type = MATH_VALUE_NORMAL;
+
+  dest = math_equation_get_string_variable_from_argument(exp, eq, 0);
+  src  = math_equation_get_string_from_argument(exp, eq, 1);
+  if (dest == NULL || src == NULL) {
+    return 1;
+  }
+  tmp = g_ascii_strup(src, -1);
+  if (tmp == NULL) {
+    return 1;
+  }
+  g_string_assign(dest, tmp);
+  g_free(tmp);
+  return 0;
+}
+
+int
+math_func_string_down(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  GString *dest;
+  const char *src;
+  char *tmp;
+
+  rval->val = 0;
+  rval->type = MATH_VALUE_NORMAL;
+
+  dest = math_equation_get_string_variable_from_argument(exp, eq, 0);
+  src  = math_equation_get_string_from_argument(exp, eq, 1);
+  if (dest == NULL || src == NULL) {
+    return 1;
+  }
+  tmp = g_ascii_strdown(src, -1);
+  if (tmp == NULL) {
+    return 1;
+  }
+  g_string_assign(dest, tmp);
+  g_free(tmp);
+  return 0;
+}
+
+int
+math_func_string_put(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  const char *str;
+
+  rval->val = 0;
+  rval->type = MATH_VALUE_NORMAL;
+
+  str = math_equation_get_string_from_argument(exp, eq, 0);
+  if (str == NULL) {
+    return 1;
+  }
+  puts(str);
+  return 0;
+}
+
+int
+math_func_string_length(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  const char *str;
+
+  rval->val = 0;
+  rval->type = MATH_VALUE_NORMAL;
+
+  str = math_equation_get_string_from_argument(exp, eq, 0);
+  if (str == NULL) {
+    return 1;
+  }
+  if (! g_utf8_validate(str, -1, NULL)) {
+    return 1;
+  }
+  rval->val = g_utf8_strlen(str, -1);
+  return 0;
+}
+
+int
+math_func_string_float(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  const char *str;
+
+  rval->val = 0;
+  rval->type = MATH_VALUE_NORMAL;
+
+  str = math_equation_get_string_from_argument(exp, eq, 0);
+  if (str == NULL) {
+    return 1;
+  }
+  rval->val = g_ascii_strtod(str, NULL);
+  return 0;
+}
+
+int
+math_func_string_gsub(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  GString *dest;
+  const char *src, *pattern, *replacement;
+  char *tmp;
+  GRegex *regex;
+  int compile_options, ignore_case;
+
+  dest = math_equation_get_string_variable_from_argument(exp, eq, 0);
+  src         = math_equation_get_string_from_argument(exp, eq, 1);
+  pattern     = math_equation_get_string_from_argument(exp, eq, 2);
+  replacement = math_equation_get_string_from_argument(exp, eq, 3);
+
+  MATH_CHECK_ARG(rval, exp->buf[4]);
+  ignore_case = exp->buf[4].val.val;
+
+  if (dest == NULL || src == NULL || pattern == NULL || replacement == NULL) {
+    return 1;
+  }
+  compile_options = (ignore_case) ? G_REGEX_CASELESS : 0;
+  regex = g_regex_new(pattern, compile_options, 0, NULL);
+  if (regex == NULL) {
+    return 1;
+  }
+  tmp = g_regex_replace(regex, src, -1, 0, replacement, 0, NULL);
+  g_regex_unref(regex);
+  if (tmp == NULL) {
+    return 1;
+  }
+  g_string_assign(dest, tmp);
+  g_free(tmp);
+  return 0;
+}
+
+int
+math_func_string_substring(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  GString *dest;
+  const char *src;
+  char *tmp;
+  int start, end, n;
+
+  MATH_CHECK_ARG(rval, exp->buf[2]);
+  MATH_CHECK_ARG(rval, exp->buf[3]);
+  start = exp->buf[2].val.val;
+  end = exp->buf[3].val.val;
+  if (start < 0 || end < 0) {
+    return 1;
+  }
+  if (start > end) {
+    n = start;
+    start = end;
+    end = n;
+  }
+
+  rval->val = 0;
+  rval->type = MATH_VALUE_NORMAL;
+
+  dest = math_equation_get_string_variable_from_argument(exp, eq, 0);
+  src  = math_equation_get_string_from_argument(exp, eq, 1);
+  if (dest == NULL || src == NULL) {
+    return 1;
+  }
+  if (! g_utf8_validate(src, -1, NULL)) {
+    return 1;
+  }
+  n = g_utf8_strlen(src, -1);
+  if (start >= n) {
+    return 1;
+  }
+  tmp = g_utf8_substring(src, start, end);
+  if (tmp == NULL) {
+    return 1;
+  }
+  g_string_assign(dest, tmp);
+  g_free(tmp);
+  return 0;
+}
+
+int
+math_func_string_reverse(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  GString *dest;
+  const char *src;
+  char *tmp;
+
+  rval->val = 0;
+  rval->type = MATH_VALUE_NORMAL;
+
+  dest = math_equation_get_string_variable_from_argument(exp, eq, 0);
+  src  = math_equation_get_string_from_argument(exp, eq, 1);
+  if (dest == NULL || src == NULL) {
+    return 1;
+  }
+  if (! g_utf8_validate(src, -1, NULL)) {
+    return 1;
+  }
+  tmp = g_utf8_strreverse(src, -1);
+  if (tmp == NULL) {
+    return 1;
+  }
+  g_string_assign(dest, tmp);
+  g_free(tmp);
+  return 0;
+}
+
+int
+math_func_string_strip(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  GString *dest;
+  const char *src;
+  char *tmp;
+
+  rval->val = 0;
+  rval->type = MATH_VALUE_NORMAL;
+
+  dest = math_equation_get_string_variable_from_argument(exp, eq, 0);
+  src  = math_equation_get_string_from_argument(exp, eq, 1);
+  if (dest == NULL || src == NULL) {
+    return 1;
+  }
+  tmp = g_strdup(src);
+  if (tmp == NULL) {
+    return 1;
+  }
+  g_strstrip(tmp);
+  g_string_assign(dest, tmp);
+  g_free(tmp);
+  return 0;
+}
+
+int
+math_func_string_format(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  GString *gstr;
+  double val;
+
+  MATH_CHECK_ARG(rval, exp->buf[1]);
+  val = exp->buf[1].val.val;
+
+  rval->val = val;
+  rval->type = MATH_VALUE_NORMAL;
+
+  gstr = math_equation_get_string_variable_from_argument(exp, eq, 0);
+  if (gstr == NULL) {
+    return 1;
+  }
+  g_string_printf(gstr, "%g", val);
+  return 0;
+}
+
+int
+math_func_string_split(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  GString *dest;
+  const char *delm, *src;
+  char **ary;
+  int column, n;
+
+  MATH_CHECK_ARG(rval, exp->buf[3]);
+  column = exp->buf[3].val.val;
+
+  rval->val = 0;
+  rval->type = MATH_VALUE_NORMAL;
+
+  dest = math_equation_get_string_variable_from_argument(exp, eq, 0);
+  src  = math_equation_get_string_from_argument(exp, eq, 1);
+  delm = math_equation_get_string_from_argument(exp, eq, 2);
+  if (dest == NULL || src == NULL || delm == NULL) {
+    return 1;
+  }
+  n = (column >= 0) ? column + 2 : 0;
+  ary = g_strsplit(src, delm, n);
+  if (ary == NULL) {
+    return 1;
+  }
+  n = g_strv_length(ary);
+  if (column >= n) {
+    return 1;
+  }
+  if (column < 0) {
+    column += n;
+  }
+  if (column < 0) {
+    return 1;
+  }
+  g_string_assign(dest, ary[column]);
+  g_strfreev(ary);
+  return 0;
+}
+
