@@ -1499,6 +1499,57 @@ file_draw_polygon(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *
   return file_draw_path(exp, eq, rval, stroke, fill, TRUE);
 }
 
+static int
+file_draw_text(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  double x, y, pt;
+  int font_id;
+  if (exp->buf[1].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[2].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[3].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[4].val.type != MATH_VALUE_NORMAL) {
+    return 0;
+  }
+  x = exp->buf[1].val.val;
+  y = exp->buf[2].val.val;
+  pt = exp->buf[3].val.val * 100;
+  font_id = exp->buf[4].val.val;
+  if (pt > 0) {
+    struct f2ddata *fp;
+    int px, py, cx, cy;
+    char *str, *font;
+
+    rval->val = 0;
+    rval->type = MATH_VALUE_NORMAL;
+
+    str = (char *) math_equation_get_string_from_argument(exp, eq, 0);
+    if (str == NULL) {
+      return 0;
+    }
+    fp = math_equation_get_user_data(eq);
+    if (getposition(fp, x, y, &cx, &cy)) {
+      return 0;
+    }
+    switch (font_id) {
+    case 1:
+      font = "Serif";
+      break;
+    case 2:
+      font = "Monospace";
+      break;
+    default:
+      font = "Sans-serif";
+      break;
+    }
+    GRAcurrent_point(fp->GC, &px, &py);
+    GRAmoveto(fp->GC, cx, cy);
+    GRAdrawtext(fp->GC, str, font, 0, pt, 0, 0, 0);
+    GRAmoveto(fp->GC, px, py);
+    fp->local->use_drawing_func = TRUE;
+  }
+  return 0;
+}
+
 struct funcs {
   char *name;
   struct math_function_parameter prm;
@@ -1526,6 +1577,14 @@ static enum MATH_FUNCTION_ARG_TYPE draw_polygon_arg_type[] = {
   MATH_FUNCTION_ARG_TYPE_DOUBLE,
 };
 
+static enum MATH_FUNCTION_ARG_TYPE draw_text_arg_type[] = {
+  MATH_FUNCTION_ARG_TYPE_STRING,
+  MATH_FUNCTION_ARG_TYPE_DOUBLE,
+  MATH_FUNCTION_ARG_TYPE_DOUBLE,
+  MATH_FUNCTION_ARG_TYPE_DOUBLE,
+  MATH_FUNCTION_ARG_TYPE_DOUBLE,
+};
+
 static struct funcs FileFunc[] = {
   {"OBJ_ALPHA", {2, 0, 0, file_objalpha, NULL, NULL, NULL, NULL}},
   {"OBJ_COLOR", {2, 0, 0, file_objcolor, NULL, NULL, NULL, NULL}},
@@ -1545,6 +1604,7 @@ static struct funcs FileFunc[] = {
   {"DRAW_ERRORBAR2", {5, 0, 0, file_draw_errorbar2, NULL, NULL, NULL, NULL}},
   {"DRAW_POLYLINE",  {2, 0, 0, file_draw_polyline, draw_polyline_arg_type, NULL, NULL, NULL}},
   {"DRAW_POLYGON",   {4, 0, 0, file_draw_polygon, draw_polygon_arg_type, NULL, NULL, NULL}},
+  {"DRAW_TEXT",      {5, 0, 0, file_draw_text, draw_text_arg_type, NULL, NULL, NULL}},
 };
 
 static int
