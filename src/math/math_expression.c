@@ -633,6 +633,7 @@ math_expression_free_sub(MathExpression *exp)
     math_expression_free(exp->u.bin.right);
     break;
   case MATH_EXPRESSION_TYPE_ASSIGN:
+  case MATH_EXPRESSION_TYPE_STRING_ASSIGN:
     math_expression_free(exp->u.assign.left);
     math_expression_free(exp->u.assign.right);
     break;
@@ -668,12 +669,7 @@ math_expression_free_sub(MathExpression *exp)
     /* free string */
     break;
   case MATH_EXPRESSION_TYPE_STRING_VARIABLE:
-    /* free string */
-    break;
-  case MATH_EXPRESSION_TYPE_STRING_ASSIGN:
-    math_expression_free(exp->u.assign.left);
-    math_expression_free(exp->u.assign.right);
-    /* to be implemented */
+    /* free string (to be implemented) */
     break;
   case MATH_EXPRESSION_TYPE_DOUBLE:
   case MATH_EXPRESSION_TYPE_PRM:
