@@ -354,20 +354,6 @@ free_array_buf(MathEquationArray *buf, int num)
   g_free(buf);
 }
 
-static void
-free_strings(MathEquation *eq)
-{
-  /*
-    to be implemented
-  int i, n;
-  GString **strs;
-  struct narray *ary;
-  for (i = 0; i < n; i++) {
-    g_string_free(strs[i], TRUE);
-  }
-   */
-}
-
 void
 math_equation_free(MathEquation *eq)
 {
