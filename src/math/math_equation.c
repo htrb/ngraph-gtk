@@ -171,6 +171,16 @@ math_stack_free(struct math_equation_stack *stack)
     nhash_free(stack->local_variable);
     stack->local_variable = NULL;
   }
+  if (stack->type == STACK_TYPE_STRING) {
+    int i;
+    GString *str;
+    for (i = 0; i < stack->end; i++) {
+      str = stack->stack.str[i];
+      if (str) {
+	g_string_free(str, TRUE);
+      }
+    }
+  }
   g_free(stack->stack.ptr);
   stack->stack.ptr = NULL;
 }
