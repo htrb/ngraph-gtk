@@ -1750,8 +1750,7 @@ calc(MathExpression *exp, MathValue *val)
     return 1;
   case MATH_EXPRESSION_TYPE_STRING_VARIABLE:
   case MATH_EXPRESSION_TYPE_STRING:
-    /* to be implemented */
-    val->val = 0;
+    val->val = 0;		/* a string is always evaluated as zero */
     break;
   case MATH_EXPRESSION_TYPE_STRING_ASSIGN:
     if (exp->u.assign.right->type == MATH_EXPRESSION_TYPE_STRING) {
@@ -1770,7 +1769,7 @@ calc(MathExpression *exp, MathValue *val)
 	return 1;
       }
     }
-    /* to be implemented */
+    val->val = 0;	    /* a string is always evaluated as zero */
     break;
   case MATH_EXPRESSION_TYPE_FUNC:
   case MATH_EXPRESSION_TYPE_CONST_DEF:
