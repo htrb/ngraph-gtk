@@ -19,6 +19,7 @@ This file is created based on "ruby.lang" which is part of GtkSourceView.
     <style id="constant"             _name="Constant"              map-to="def:constant"/>
     <style id="operator"             _name="Operator"              map-to="def:operator"/>
     <style id="parameter"            _name="Parameter"             map-to="def:identifier"/>
+    <style id="string-variable"      _name="String Variable"       map-to="def:preprocessor"/>
     <style id="special-variable"     _name="Special Variable"      map-to="def:type"/>
     <style id="special-constants"    _name="Special Constant"      map-to="def:constant"/>
   </styles>
@@ -38,6 +39,10 @@ This file is created based on "ruby.lang" which is part of GtkSourceView.
 
     <context id="special-constants" style-ref="constant">
       <match>%[ND]</match>
+    </context>
+
+    <context id="string-variables" style-ref="string-variable">
+      <match>\$[_a-zA-Z]\w*</match>
     </context>
 
     <context id="special-variables" style-ref="special-variable">
