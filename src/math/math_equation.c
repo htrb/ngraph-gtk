@@ -379,8 +379,6 @@ math_equation_free(MathEquation *eq)
     math_expression_free(eq->const_def);
   }
 
-  free_strings(eq);
-
   free_array_buf(eq->array_buf, eq->array_num);
 
   free_parameter(eq);
