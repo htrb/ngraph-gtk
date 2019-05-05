@@ -124,7 +124,6 @@ parse_primary_expression(struct math_string *str, MathEquation *eq, int *err)
     math_scanner_free_token(token);
     return NULL;
   case MATH_TOKEN_TYPE_STRING_VARIABLE:
-    /* to be implemented */
     exp = math_string_variable_expression_new(eq, token->data.sym, err);
     break;
   case MATH_TOKEN_TYPE_SYMBOL:
