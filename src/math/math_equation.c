@@ -1113,7 +1113,11 @@ math_equation_add_var_string(MathEquation *eq, const char *name)
     eq->string_stack.ofst = 0;
     eq->string_stack.num++;
     nhash_set_int(eq->string_stack.variable, name, i);
-    eq->string_stack.stack.str[i] = g_string_new("");
+    if (eq->string_stack.stack.str[i]) {
+      g_string_assign(eq->string_stack.stack.str[i], "");
+    } else {
+      eq->string_stack.stack.str[i] = g_string_new("");
+    }
   }
 
   return i;
