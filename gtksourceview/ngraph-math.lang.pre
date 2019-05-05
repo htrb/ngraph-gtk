@@ -22,6 +22,7 @@ This file is created based on "ruby.lang" which is part of GtkSourceView.
     <style id="string-variable"      _name="String Variable"       map-to="def:preprocessor"/>
     <style id="special-variable"     _name="Special Variable"      map-to="def:type"/>
     <style id="special-constants"    _name="Special Constant"      map-to="def:constant"/>
+    <style id="string"               _name="STring"                map-to="def:string"/>
   </styles>
 
   <default-regex-options case-sensitive="false"/>
@@ -49,6 +50,18 @@ This file is created based on "ruby.lang" which is part of GtkSourceView.
       <keyword>x</keyword>
       <keyword>y</keyword>
       <keyword>col</keyword>
+    </context>
+
+    <context id="inside-interpolated-string">
+      <match>\\((0-7){3}|(x[a-fA-F0-9]{2})|(c\S)|([CM]-\S)|(M-C-\S)|.)</match>
+    </context>
+
+    <context id="double-quoted-string" style-ref="string" class="string" class-disabled="no-spell-check">
+      <start>"</start>
+      <end>"</end>
+      <include>
+        <context ref="inside-interpolated-string"/>
+      </include>
     </context>
 
     <define-regex id="underscore_num">\d( ?\d)*</define-regex>
