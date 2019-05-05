@@ -4,6 +4,7 @@
 	<context ref="keywords"/>
 	<context ref="parameters"/>
 	<context ref="builtins"/>
+	<context ref="string-variables"/>
 	<context ref="special-variables"/>
 	<context ref="constants"/>
 	<context ref="special-constants"/>
