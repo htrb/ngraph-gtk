@@ -3321,6 +3321,9 @@ math_func_string_gsub(MathFunctionCallExpression *exp, MathEquation *eq, MathVal
   GRegex *regex;
   int compile_options, ignore_case;
 
+  rval->val = 0;
+  rval->type = MATH_VALUE_NORMAL;
+
   dest = math_equation_get_string_variable_from_argument(exp, eq, 0);
   src         = math_equation_get_string_from_argument(exp, eq, 1);
   pattern     = math_equation_get_string_from_argument(exp, eq, 2);
