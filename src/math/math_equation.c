@@ -1308,12 +1308,14 @@ math_equation_get_string_variable_from_argument(MathFunctionCallExpression *exp,
 static int
 math_equation_call_user_func(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  /* to be implemented for string variable */
   static int nest = 0;
-  int ofst, end, r, i, j, prev_num;
+  int ofst, end, str_ofst, str_end, r, i, j, k, prev_num;
   MathEquationArray *prev, *local = NULL;
   MathExpression *func;
   MathFunctionArgument *argv;
+  const char *str;
+  GString *gstr;
+  enum MATH_FUNCTION_ARG_TYPE arg_type;
 
   if (nest > USER_FUNC_NEST_MAX)
     return 1;
@@ -1330,6 +1332,8 @@ math_equation_call_user_func(MathFunctionCallExpression *exp, MathEquation *eq, 
 
   ofst = eq->stack.ofst;
   end = eq->stack.end;
+  str_ofst = eq->string_stack.ofst;
+  str_end = eq->string_stack.end;
   prev = eq->array_buf;
   prev_num = eq->array_num;
 
@@ -1356,14 +1360,35 @@ math_equation_call_user_func(MathFunctionCallExpression *exp, MathEquation *eq, 
     return 1;
   }
 
+  if (expand_stack(&(eq->string_stack), func->u.func.local_string_num)) {
+    g_free(local);
+    return 1;
+  }
+
   eq->array_buf = local;
   eq->array_num = func->u.func.local_array_num;
 
-  j = 0;
+  j = k = 0;
   for (i = 0; i < exp->argc; i++) {
-    if (func->u.func.fprm->arg_type == NULL || func->u.func.fprm->arg_type[i] == MATH_FUNCTION_ARG_TYPE_DOUBLE) {
+    arg_type = (func->u.func.fprm->arg_type) ? func->u.func.fprm->arg_type[i] : MATH_FUNCTION_ARG_TYPE_DOUBLE;
+    switch (arg_type) {
+    case MATH_FUNCTION_ARG_TYPE_DOUBLE:
       eq->stack.stack.val[eq->stack.ofst + j] = argv[i].val;
       j++;
+      break;
+    case MATH_FUNCTION_ARG_TYPE_STRING:
+    case MATH_FUNCTION_ARG_TYPE_STRING_VARIABLE:
+      str = math_equation_get_string_from_argument(exp,eq, i);
+      if (str == NULL) {
+	g_free(local);
+	return 1;
+      }
+      gstr = eq->string_stack.stack.str[eq->string_stack.ofst + k];
+      g_string_assign(gstr, str);
+      k++;
+      break;
+    default:
+      break;
     }
   }
 
@@ -1371,10 +1396,18 @@ math_equation_call_user_func(MathFunctionCallExpression *exp, MathEquation *eq, 
   r = math_expression_calculate(func->u.func.exp, rval);
   nest--;
 
+  for (i = 0; i < func->u.func.local_string_num; i++) {
+    j = eq->string_stack.ofst + i;
+    g_string_free(eq->string_stack.stack.str[j], TRUE);
+    eq->string_stack.stack.str[j] = NULL;
+  }
+
   eq->array_num = prev_num;
   eq->array_buf = prev;
   eq->stack.end = end;
   eq->stack.ofst = ofst;
+  eq->string_stack.end = str_end;
+  eq->string_stack.ofst = str_ofst;
 
   if (func->u.func.fprm->arg_type) {
     j = 0;
