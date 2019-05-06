@@ -800,15 +800,22 @@ parse_parameter_list(struct math_string *str, MathEquation *eq, MathExpression *
       return 1;
     }
 
-    if (token->type == MATH_TOKEN_TYPE_ARRAY_PREFIX) {
+    switch (token->type) {
+    case MATH_TOKEN_TYPE_ARRAY_PREFIX:
       type = MATH_FUNCTION_ARG_TYPE_ARRAY;
       math_scanner_free_token(token);
       token = my_get_token(str);
-    } else {
+      break;
+    case MATH_TOKEN_TYPE_STRING_VARIABLE:
+      type = MATH_FUNCTION_ARG_TYPE_STRING;
+      break;
+    default:
       type = MATH_FUNCTION_ARG_TYPE_DOUBLE;
+      break;
     }
 
-    if (token->type != MATH_TOKEN_TYPE_SYMBOL) {
+    if (token->type != MATH_TOKEN_TYPE_SYMBOL &&
+	token->type != MATH_TOKEN_TYPE_STRING_VARIABLE) {
       math_scanner_free_token(token);
       return 1;
     }
