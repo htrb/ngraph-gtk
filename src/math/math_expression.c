@@ -181,10 +181,10 @@ static int
 func_set_arg_buf(MathExpression *func)
 {
   static struct math_func_arg_list *list;
-  int n, i, have_array;
+  int n, i, save_arg_type;
   enum MATH_FUNCTION_ARG_TYPE *arg_type_buf;
 
-  have_array = 0;
+  save_arg_type = 0;
   list = func->u.func.arg_list;
   for (n = 0; list; n++) {
     switch (list->type) {
@@ -193,7 +193,7 @@ func_set_arg_buf(MathExpression *func)
     case MATH_FUNCTION_ARG_TYPE_STRING:
     case MATH_FUNCTION_ARG_TYPE_STRING_VARIABLE:
     case MATH_FUNCTION_ARG_TYPE_ARRAY:
-      have_array = 1;
+      save_arg_type = 1;
       break;
     case MATH_FUNCTION_ARG_TYPE_PROC:
       return 1;
@@ -202,7 +202,7 @@ func_set_arg_buf(MathExpression *func)
     list = list->next;
   }
 
-  if (have_array) {
+  if (save_arg_type) {
     arg_type_buf = g_malloc(sizeof(*arg_type_buf) * n);
     if (arg_type_buf == NULL)
       return 1;
