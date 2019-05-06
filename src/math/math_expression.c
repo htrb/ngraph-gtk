@@ -666,10 +666,9 @@ math_expression_free_sub(MathExpression *exp)
     if (exp->u.string) {
       g_free(exp->u.string);
     }
-    /* free string */
     break;
   case MATH_EXPRESSION_TYPE_STRING_VARIABLE:
-    /* free string (to be implemented) */
+    /* free string in stack (to be implemented) */
     break;
   case MATH_EXPRESSION_TYPE_DOUBLE:
   case MATH_EXPRESSION_TYPE_PRM:
