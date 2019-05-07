@@ -1494,14 +1494,19 @@ math_equation_get_string_var(MathEquation *eq, int idx, GString **str)
 void
 math_equation_clear_variable(MathEquation *eq)
 {
-  /* to be implemented for string variable */
-  if (eq->stack.stack.val) {
-    clear_variable_array(eq->stack.stack.val, eq->stack.num);
-    g_free(eq->stack.stack.val);
+  if (eq->stack.stack.ptr) {
+    switch (eq->stack.type) {
+    case STACK_TYPE_VALUE:
+      clear_variable_array(eq->stack.stack.val, eq->stack.num);
+      break;
+    case STACK_TYPE_STRING:
+      free_stack_strings(&(eq->stack));
+      break;
+    }
+    g_free(eq->stack.stack.ptr);
     eq->stack.num = 0;
-    eq->stack.stack.val = NULL;
+    eq->stack.stack.ptr = NULL;
   }
-
   nhash_clear(eq->stack.variable);
 }
 
