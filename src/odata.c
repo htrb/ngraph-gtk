@@ -1595,7 +1595,13 @@ file_string_coumn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *
   if (str == NULL) {
     return 1;
   }
+
   fp = math_equation_get_user_data(eq);
+  if (fp == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
   if (fp->line_array.line == NULL) {
     return 1;
   }
