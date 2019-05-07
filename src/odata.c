@@ -2227,6 +2227,16 @@ opendata(struct objlist *obj,N_VALUE *inst,
 }
 
 static void
+clear_line_array(struct f2ddata *fp)
+{
+  if (fp->line_array.line) {
+    g_free(fp->line_array.line);
+    fp->line_array.line = NULL;
+  }
+  arraydel2(&(fp->line_array.line_array));
+}
+
+static void
 reopendata(struct f2ddata *fp)
 {
   if (fp->fd) {
