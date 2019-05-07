@@ -1,9 +1,12 @@
-#! ngraph
-new axis name:frameX
+#!ngraph
+#%creator: Ngraph 
+#%version: 6.08.01
+new axis name:fX1
 	axis::hidden=false
 	axis::R=0
 	axis::G=0
 	axis::B=0
+	axis::A=255
 	axis::clip=true
 	axis::redraw_flag=true
 	axis::min=0.000000000000000e+00
@@ -18,6 +21,7 @@ new axis name:frameX
 	axis::length=14000
 	axis::width=40
 	axis::style=
+	axis::auto_scale_margin=500
 	axis::adjust_axis=
 	axis::adjust_position=0
 	axis::arrow=none
@@ -40,6 +44,7 @@ new axis name:frameX
 	axis::gauge_R=0
 	axis::gauge_G=0
 	axis::gauge_B=0
+	axis::gauge_A=255
 	axis::num=right
 	axis::num_begin=0
 	axis::num_step=0
@@ -52,21 +57,26 @@ new axis name:frameX
 	axis::num_pt=2000
 	axis::num_space=0
 	axis::num_font='Sans-serif'
+	axis::num_font_style=0
 	axis::num_script_size=7000
 	axis::num_align=center
-	axis::num_no_zero=true
-	axis::num_direction=normal
+	axis::num_no_zero=no_zero
+	axis::num_direction=horizontal
 	axis::num_shift_p=0
 	axis::num_shift_n=100
 	axis::num_R=0
 	axis::num_G=0
 	axis::num_B=0
+	axis::num_A=255
+	axis::num_date_format=
+	axis::num_math=
 
-new axis name:frameY
+new axis name:fY1
 	axis::hidden=false
 	axis::R=0
 	axis::G=0
 	axis::B=0
+	axis::A=255
 	axis::clip=true
 	axis::redraw_flag=true
 	axis::min=7.000000000000000e-01
@@ -81,6 +91,7 @@ new axis name:frameY
 	axis::length=8000
 	axis::width=40
 	axis::style=
+	axis::auto_scale_margin=500
 	axis::adjust_axis=
 	axis::adjust_position=0
 	axis::arrow=none
@@ -103,6 +114,7 @@ new axis name:frameY
 	axis::gauge_R=0
 	axis::gauge_G=0
 	axis::gauge_B=0
+	axis::gauge_A=255
 	axis::num=left
 	axis::num_begin=0
 	axis::num_step=0
@@ -115,21 +127,26 @@ new axis name:frameY
 	axis::num_pt=2000
 	axis::num_space=0
 	axis::num_font='Sans-serif'
+	axis::num_font_style=0
 	axis::num_script_size=7000
 	axis::num_align=right
-	axis::num_no_zero=false
-	axis::num_direction=normal
+	axis::num_no_zero=regular
+	axis::num_direction=horizontal
 	axis::num_shift_p=0
 	axis::num_shift_n=100
 	axis::num_R=0
 	axis::num_G=0
 	axis::num_B=0
+	axis::num_A=255
+	axis::num_date_format=
+	axis::num_math=
 
-new axis name:frameU
+new axis name:fU1
 	axis::hidden=false
 	axis::R=0
 	axis::G=0
 	axis::B=0
+	axis::A=255
 	axis::clip=true
 	axis::redraw_flag=true
 	axis::min=0.000000000000000e+00
@@ -144,6 +161,7 @@ new axis name:frameU
 	axis::length=14000
 	axis::width=40
 	axis::style=
+	axis::auto_scale_margin=500
 	axis::adjust_axis=
 	axis::adjust_position=0
 	axis::arrow=none
@@ -166,6 +184,7 @@ new axis name:frameU
 	axis::gauge_R=0
 	axis::gauge_G=0
 	axis::gauge_B=0
+	axis::gauge_A=255
 	axis::num=none
 	axis::num_begin=0
 	axis::num_step=0
@@ -178,21 +197,26 @@ new axis name:frameU
 	axis::num_pt=2000
 	axis::num_space=0
 	axis::num_font='Sans-serif'
+	axis::num_font_style=0
 	axis::num_script_size=7000
 	axis::num_align=center
-	axis::num_no_zero=false
-	axis::num_direction=normal
+	axis::num_no_zero=regular
+	axis::num_direction=horizontal
 	axis::num_shift_p=0
 	axis::num_shift_n=100
 	axis::num_R=0
 	axis::num_G=0
 	axis::num_B=0
+	axis::num_A=255
+	axis::num_date_format=
+	axis::num_math=
 
-new axis name:frameR
+new axis name:fR1
 	axis::hidden=false
 	axis::R=0
 	axis::G=0
 	axis::B=0
+	axis::A=255
 	axis::clip=true
 	axis::redraw_flag=true
 	axis::min=0.000000000000000e+00
@@ -207,6 +231,7 @@ new axis name:frameR
 	axis::length=8000
 	axis::width=40
 	axis::style=
+	axis::auto_scale_margin=500
 	axis::adjust_axis=
 	axis::adjust_position=0
 	axis::arrow=none
@@ -229,6 +254,7 @@ new axis name:frameR
 	axis::gauge_R=0
 	axis::gauge_G=0
 	axis::gauge_B=0
+	axis::gauge_A=255
 	axis::num=none
 	axis::num_begin=0
 	axis::num_step=0
@@ -241,21 +267,28 @@ new axis name:frameR
 	axis::num_pt=2000
 	axis::num_space=0
 	axis::num_font='Sans-serif'
+	axis::num_font_style=0
 	axis::num_script_size=7000
 	axis::num_align=left
-	axis::num_no_zero=false
-	axis::num_direction=normal
+	axis::num_no_zero=regular
+	axis::num_direction=horizontal
 	axis::num_shift_p=0
 	axis::num_shift_n=100
 	axis::num_R=0
 	axis::num_G=0
 	axis::num_B=0
+	axis::num_A=255
+	axis::num_date_format=
+	axis::num_math=
+
+axis::grouping 1 0 1 2 3
 
 new axis name:single_a
 	axis::hidden=false
 	axis::R=0
 	axis::G=0
 	axis::B=0
+	axis::A=255
 	axis::clip=true
 	axis::redraw_flag=true
 	axis::min=0.000000000000000e+00
@@ -270,6 +303,7 @@ new axis name:single_a
 	axis::length=2500
 	axis::width=40
 	axis::style=
+	axis::auto_scale_margin=500
 	axis::adjust_axis=
 	axis::adjust_position=0
 	axis::arrow=none
@@ -292,6 +326,7 @@ new axis name:single_a
 	axis::gauge_R=0
 	axis::gauge_G=0
 	axis::gauge_B=0
+	axis::gauge_A=255
 	axis::num=left
 	axis::num_begin=0
 	axis::num_step=0
@@ -304,21 +339,26 @@ new axis name:single_a
 	axis::num_pt=2000
 	axis::num_space=0
 	axis::num_font='Sans-serif'
+	axis::num_font_style=0
 	axis::num_script_size=7000
 	axis::num_align=center
-	axis::num_no_zero=true
-	axis::num_direction=normal
+	axis::num_no_zero=no_zero
+	axis::num_direction=horizontal
 	axis::num_shift_p=0
 	axis::num_shift_n=100
 	axis::num_R=0
 	axis::num_G=0
 	axis::num_B=0
+	axis::num_A=255
+	axis::num_date_format=
+	axis::num_math=
 
 new axis name:single_b
 	axis::hidden=false
 	axis::R=0
 	axis::G=0
 	axis::B=0
+	axis::A=255
 	axis::clip=true
 	axis::redraw_flag=true
 	axis::min=0.000000000000000e+00
@@ -333,6 +373,7 @@ new axis name:single_b
 	axis::length=2500
 	axis::width=40
 	axis::style=
+	axis::auto_scale_margin=500
 	axis::adjust_axis=
 	axis::adjust_position=0
 	axis::arrow=none
@@ -355,6 +396,7 @@ new axis name:single_b
 	axis::gauge_R=0
 	axis::gauge_G=0
 	axis::gauge_B=0
+	axis::gauge_A=255
 	axis::num=none
 	axis::num_begin=0
 	axis::num_step=0
@@ -367,23 +409,29 @@ new axis name:single_b
 	axis::num_pt=2000
 	axis::num_space=0
 	axis::num_font='Sans-serif'
+	axis::num_font_style=0
 	axis::num_script_size=7000
 	axis::num_align=center
-	axis::num_no_zero=false
-	axis::num_direction=normal
+	axis::num_no_zero=regular
+	axis::num_direction=horizontal
 	axis::num_shift_p=0
 	axis::num_shift_n=100
 	axis::num_R=0
 	axis::num_G=0
 	axis::num_B=0
+	axis::num_A=255
+	axis::num_date_format=
+	axis::num_math=
 
 new data
 	data::hidden=false
 	data::R=0
 	data::G=0
 	data::B=0
+	data::A=255
 	data::clip=true
 	data::redraw_flag=true
+	data::source=file
 	data::save_path=unchange
 	data::x=2
 	data::y=3
@@ -397,6 +445,7 @@ new data
 	data::func_h=
 	data::smooth_x=0
 	data::smooth_y=0
+	data::averaging_type=simple
 	data::mark_type=0
 	data::mark_size=100
 	data::line_width=40
@@ -406,8 +455,10 @@ new data
 	data::R2=255
 	data::G2=255
 	data::B2=255
+	data::A2=255
 	data::remark='#%'\'''
 	data::ifs=' ,	()'
+	data::csv=false
 	data::head_skip=0
 	data::read_step=1
 	data::final_line=-1
@@ -417,6 +468,11 @@ new data
 	data::move_data_y=
 	data::axis_x='axis:0'
 	data::axis_y='axis:1'
+	data::data_clip=true
+	data::range_min=1.000000000000000e+00
+	data::range_max=1.000000000000000e+01
+	data::range_div=512
+	data::array=
 	data::file='DOCDIRDEF/demo3.dat'
 
 new data
@@ -424,21 +480,28 @@ new data
 	data::R=0
 	data::G=0
 	data::B=0
+	data::A=255
 	data::clip=true
 	data::redraw_flag=true
+	data::source=file
 	data::save_path=unchange
 	data::x=2
 	data::y=3
 	data::type=mark
 	data::interpolation=spline
 	data::fit=
-	data::math_x=
+	data::math_x='string_column($str, 1);
+ofst := 0;
+if (%0 > 2, dir := -45, ofst := 0.1);
+draw_text($str, x + ofst, y-0.01, 0, 18, dir);
+x;'
 	data::math_y=
 	data::func_f=
 	data::func_g=
 	data::func_h=
 	data::smooth_x=0
 	data::smooth_y=0
+	data::averaging_type=simple
 	data::mark_type=30
 	data::mark_size=400
 	data::line_width=40
@@ -448,8 +511,10 @@ new data
 	data::R2=255
 	data::G2=255
 	data::B2=255
+	data::A2=255
 	data::remark='#%'\'''
 	data::ifs=' ,	()'
+	data::csv=false
 	data::head_skip=0
 	data::read_step=1
 	data::final_line=-1
@@ -459,6 +524,11 @@ new data
 	data::move_data_y=
 	data::axis_x='axis:0'
 	data::axis_y='axis:1'
+	data::data_clip=true
+	data::range_min=1.000000000000000e+00
+	data::range_max=1.000000000000000e+01
+	data::range_div=512
+	data::array=
 	data::file='DOCDIRDEF/demo3.dat'
 
 new data
@@ -466,8 +536,10 @@ new data
 	data::R=0
 	data::G=0
 	data::B=0
+	data::A=255
 	data::clip=true
 	data::redraw_flag=true
+	data::source=file
 	data::save_path=unchange
 	data::x=2
 	data::y=3
@@ -481,6 +553,7 @@ new data
 	data::func_h=
 	data::smooth_x=0
 	data::smooth_y=0
+	data::averaging_type=simple
 	data::mark_type=0
 	data::mark_size=100
 	data::line_width=40
@@ -490,8 +563,10 @@ new data
 	data::R2=255
 	data::G2=255
 	data::B2=255
+	data::A2=255
 	data::remark='#%'\'''
 	data::ifs=' ,	()'
+	data::csv=false
 	data::head_skip=0
 	data::read_step=1
 	data::final_line=-1
@@ -501,6 +576,11 @@ new data
 	data::move_data_y=
 	data::axis_x='axis:0'
 	data::axis_y='axis:4'
+	data::data_clip=true
+	data::range_min=1.000000000000000e+00
+	data::range_max=1.000000000000000e+01
+	data::range_div=512
+	data::array=
 	data::file='DOCDIRDEF/demo3.dat'
 
 new data
@@ -508,21 +588,28 @@ new data
 	data::R=0
 	data::G=0
 	data::B=0
+	data::A=255
 	data::clip=true
 	data::redraw_flag=true
+	data::source=file
 	data::save_path=unchange
 	data::x=2
 	data::y=3
 	data::type=mark
 	data::interpolation=spline
 	data::fit=
-	data::math_x=
+	data::math_x='string_column($str, 1);
+ofst := 0;
+if (%0 > 2, dir := -45, ofst := 0.1);
+draw_text($str, x + ofst, y-0.01, 0, 18, dir);
+x;'
 	data::math_y=
 	data::func_f=
 	data::func_g=
 	data::func_h=
 	data::smooth_x=0
 	data::smooth_y=0
+	data::averaging_type=simple
 	data::mark_type=30
 	data::mark_size=400
 	data::line_width=40
@@ -532,8 +619,10 @@ new data
 	data::R2=255
 	data::G2=255
 	data::B2=255
+	data::A2=255
 	data::remark='#%'\'''
 	data::ifs=' ,	()'
+	data::csv=false
 	data::head_skip=0
 	data::read_step=1
 	data::final_line=-1
@@ -543,69 +632,91 @@ new data
 	data::move_data_y=
 	data::axis_x='axis:0'
 	data::axis_y='axis:4'
+	data::data_clip=true
+	data::range_min=1.000000000000000e+00
+	data::range_max=1.000000000000000e+01
+	data::range_div=512
+	data::array=
 	data::file='DOCDIRDEF/demo3.dat'
-
-new path
-	path::type=line
-	path::hidden=false
-	path::R=0
-	path::G=0
-	path::B=0
-	path::clip=true
-	path::redraw_flag=true
-	path::points='4500 10500 6000 10500'
-	path::width=80
-	path::style=
-	path::join=miter
-	path::miter_limit=1000
-	path::arrow=begin
-	path::arrow_length=44100
-	path::arrow_width=28000
 
 new rectangle
 	rectangle::hidden=false
-	rectangle::fill_R=0
-	rectangle::fill_G=0
-	rectangle::fill_B=0
-	rectangle::fill_A=64
 	rectangle::clip=true
 	rectangle::redraw_flag=true
 	rectangle::x1=11000
 	rectangle::y1=14200
-	rectangle::x2=18200
+	rectangle::x2=18400
 	rectangle::y2=19900
-	rectangle::fill=true
-	rectangle::stroke=false
 	rectangle::stroke_R=0
 	rectangle::stroke_G=0
 	rectangle::stroke_B=0
+	rectangle::stroke_A=255
+	rectangle::fill_R=0
+	rectangle::fill_G=0
+	rectangle::fill_B=0
+	rectangle::fill_A=64
+	rectangle::fill=true
+	rectangle::stroke=false
 	rectangle::width=40
 	rectangle::style=
 
 new rectangle
 	rectangle::hidden=false
-	rectangle::fill_R=128
-	rectangle::fill_G=255
-	rectangle::fill_B=255
 	rectangle::clip=true
 	rectangle::redraw_flag=true
 	rectangle::x1=10700
 	rectangle::y1=13900
-	rectangle::x2=17900
+	rectangle::x2=18100
 	rectangle::y2=19600
-	rectangle::fill=true
-	rectangle::stroke=true
 	rectangle::stroke_R=0
 	rectangle::stroke_G=0
 	rectangle::stroke_B=0
+	rectangle::stroke_A=255
+	rectangle::fill_R=128
+	rectangle::fill_G=255
+	rectangle::fill_B=255
+	rectangle::fill_A=255
+	rectangle::fill=true
+	rectangle::stroke=true
 	rectangle::width=40
 	rectangle::style=
+
+new path
+	path::hidden=false
+	path::clip=true
+	path::redraw_flag=true
+	path::type=line
+	path::points='4500 10500 6000 10500'
+	path::interpolation=spline
+	path::fill_R=0
+	path::fill_G=0
+	path::fill_B=0
+	path::fill_A=255
+	path::stroke_R=0
+	path::stroke_G=0
+	path::stroke_B=0
+	path::stroke_A=255
+	path::fill=false
+	path::fill_rule=even_odd_rule
+	path::stroke=true
+	path::close_path=false
+	path::width=80
+	path::style=
+	path::join=miter
+	path::miter_limit=1000
+	path::marker_begin=arrow
+	path::marker_end=none
+	path::arrow_length=44100
+	path::arrow_width=28000
+	path::mark_type_begin=0
+	path::mark_type_end=0
 
 new text
 	text::hidden=false
 	text::R=0
 	text::G=0
 	text::B=0
+	text::A=255
 	text::clip=true
 	text::redraw_flag=true
 	text::text='0'
@@ -624,6 +735,7 @@ new text
 	text::R=0
 	text::G=0
 	text::B=0
+	text::A=255
 	text::clip=true
 	text::redraw_flag=true
 	text::text='%{file:0:column:1 0}\n%{file:0:column:2 0}\n%{file:0:column:3 0}\n%{file:0:column:4 0}\n%{file:0:column:5 0}\n%{file:0:column:6 0}\n%{file:0:column:7 0}'
@@ -631,6 +743,7 @@ new text
 	text::y=14900
 	text::pt=2000
 	text::font='Monospace'
+	text::style=0
 	text::space=0
 	text::direction=0
 	text::script_size=7000
@@ -641,6 +754,7 @@ new text
 	text::R=0
 	text::G=0
 	text::B=0
+	text::A=255
 	text::clip=true
 	text::redraw_flag=true
 	text::text='Demo #3: AXIS DIVISION'
@@ -659,6 +773,7 @@ new text
 	text::R=0
 	text::G=0
 	text::B=0
+	text::A=255
 	text::clip=true
 	text::redraw_flag=true
 	text::text='Sample length (μm)'
@@ -677,6 +792,7 @@ new text
 	text::R=0
 	text::G=0
 	text::B=0
+	text::A=255
 	text::clip=true
 	text::redraw_flag=true
 	text::text='Resistance (KΩ)'
@@ -695,6 +811,7 @@ new text
 	text::R=0
 	text::G=0
 	text::B=0
+	text::A=255
 	text::clip=true
 	text::redraw_flag=true
 	text::text='critical value'
@@ -714,4 +831,4 @@ new gra name:viewer
 	gra::zoom=10000
 	gra::paper_width=21000
 	gra::paper_height=29700
-	gra::draw_obj='rectangle axisgrid axis file merge legend arc path mark text'
+	gra::draw_obj='rectangle axisgrid axis data merge legend arc path mark text'
