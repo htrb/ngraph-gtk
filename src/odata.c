@@ -2128,6 +2128,9 @@ opendata(struct objlist *obj,N_VALUE *inst,
   fp->count=0;
   fp->eof=FALSE;
 
+  fp->line_array.line = NULL;
+  arrayinit(&(fp->line_array.line_array), sizeof(char *));
+
   fp->axmin=ax_prm.min;
   fp->axmax=ax_prm.max;
   fp->axmin2=ax_prm.min2;
