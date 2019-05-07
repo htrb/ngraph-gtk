@@ -3425,24 +3425,22 @@ math_func_string_reverse(MathFunctionCallExpression *exp, MathEquation *eq, Math
 int
 math_func_string_strip(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  GString *dest;
-  const char *src;
+  GString *src;
   char *tmp;
 
   rval->val = 0;
   rval->type = MATH_VALUE_NORMAL;
 
-  dest = math_equation_get_string_variable_from_argument(exp, eq, 0);
-  src  = math_equation_get_string_from_argument(exp, eq, 1);
-  if (dest == NULL || src == NULL) {
+  src = math_equation_get_string_variable_from_argument(exp, eq, 0);
+  if (src == NULL || src->str == NULL) {
     return 1;
   }
-  tmp = g_strdup(src);
+  tmp = g_strdup(src->str);
   if (tmp == NULL) {
     return 1;
   }
   g_strstrip(tmp);
-  g_string_assign(dest, tmp);
+  g_string_assign(src, tmp);
   g_free(tmp);
   return 0;
 }
