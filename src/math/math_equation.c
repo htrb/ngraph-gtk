@@ -161,6 +161,20 @@ math_stack_init(struct math_equation_stack *stack, int type)
 }
 
 static void
+free_stack_strings(struct math_equation_stack *stack)
+{
+  int i;
+  GString *str;
+  for (i = 0; i < stack->end; i++) {
+    str = stack->stack.str[i];
+    if (str) {
+      g_string_free(str, TRUE);
+      stack->stack.str[i] = NULL;
+    }
+  }
+}
+
+static void
 math_stack_free(struct math_equation_stack *stack)
 {
   if (stack->variable) {
