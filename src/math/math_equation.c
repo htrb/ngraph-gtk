@@ -1497,7 +1497,7 @@ math_equation_clear_variable(MathEquation *eq)
   if (eq->stack.stack.ptr) {
     switch (eq->stack.type) {
     case STACK_TYPE_VALUE:
-      clear_variable_array(eq->stack.stack.val, eq->stack.num);
+      clear_variable_array(eq->stack.stack.val, eq->stack.num); /* which is better to use stack.num or stack.end? */
       break;
     case STACK_TYPE_STRING:
       free_stack_strings(&(eq->stack));
