@@ -1576,7 +1576,7 @@ file_draw_text(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
 }
 
 static int
-file_string_coumn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+file_string_column(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   int n, col;
   struct f2ddata *fp;
@@ -1688,7 +1688,7 @@ static struct funcs FileFunc[] = {
   {"DRAW_POLYLINE",  {2, 0, 0, file_draw_polyline, draw_polyline_arg_type, NULL, NULL, NULL}},
   {"DRAW_POLYGON",   {4, 0, 0, file_draw_polygon, draw_polygon_arg_type, NULL, NULL, NULL}},
   {"DRAW_TEXT",      {8, 0, 0, file_draw_text, draw_text_arg_type, NULL, NULL, NULL}},
-  {"STRING_COLUMN",  {2, 0, 0, file_string_coumn, string_column_arg_type, NULL, NULL, NULL}},
+  {"STRING_COLUMN",  {2, 0, 0, file_string_column, string_column_arg_type, NULL, NULL, NULL}},
 };
 
 static int
