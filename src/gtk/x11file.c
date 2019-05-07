@@ -3588,42 +3588,6 @@ set_headlines(struct FileDialog *d, const char *s)
 #define CHECK_VISIBILITY(i, skip, step, remark, c)    (! CHECK_CHR(remark, c) && (i >= skip && ! ((i - skip) % step)))
 #define CHECK_VISIBILITY_ARRAY(i, skip, step)    ((i >= skip && ! ((i - skip) % step)))
 
-static void
-check_add_str(struct narray *array, const char *str, int len)
-{
-  int valid;
-  char *ptr;
-
-  valid = g_utf8_validate(str, len, NULL);
-
-  if (valid) {
-    ptr = g_strndup(str, len);
-    arrayadd(array, &ptr);
-  } else {
-    ptr = g_locale_to_utf8(str, len, NULL, NULL, NULL);
-    if (ptr == NULL) {
-      GString *s;
-      int i;
-
-      s = g_string_new("");
-      if (s == NULL) {
-	return;
-      }
-      for (i = 0; i < len; i++) {
-	if (g_ascii_isprint(str[i]) || g_ascii_isspace(str[i])) {
-	  g_string_append_c(s, str[i]);
-	} else {
-	  g_string_append(s, "〓");
-	}
-      }
-      ptr = g_string_free(s, FALSE);
-    }
-    if (ptr) {
-      arrayadd(array, &ptr);
-    }
-  }
-}
-
 static const char *
 parse_data_line(struct narray *array, const char *str, const char *ifs, const char *comment, int csv)
 {
