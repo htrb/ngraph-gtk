@@ -3583,53 +3583,8 @@ set_headlines(struct FileDialog *d, const char *s)
   }
 }
 
-#define CHECK_TERMINATE(ch) ((ch) == '\0' || (ch) == '\n')
-#define CHECK_CHR(ifs, ch) (ch && strchr(ifs, ch))
 #define CHECK_VISIBILITY(i, skip, step, remark, c)    (! CHECK_CHR(remark, c) && (i >= skip && ! ((i - skip) % step)))
 #define CHECK_VISIBILITY_ARRAY(i, skip, step)    ((i >= skip && ! ((i - skip) % step)))
-
-static const char *
-parse_data_line(struct narray *array, const char *str, const char *ifs, const char *comment, int csv)
-{
-  const char *po;
-  int len;
-
-  if (str == NULL) {
-    return NULL;
-  }
-
-  po = str;
-  while (! CHECK_TERMINATE(*po)) {
-    if (csv) {
-      for (; *po == ' '; po++);
-      if (CHECK_TERMINATE(*po)) break;
-      if (CHECK_CHR(ifs, *po)) {
-        po++;
-	check_add_str(array, "", 0);
-      } else {
-	len = 0;
-        for (; (! CHECK_TERMINATE(po[len])) && ! CHECK_CHR(ifs, po[len]) && (po[len] != ' '); len++) ;
-	check_add_str(array, po, len);
-	po += len;
-	for (; (*po == ' '); po++);
-	if (CHECK_CHR(ifs, *po)) po++;
-      }
-    } else {
-      for (; (! CHECK_TERMINATE(*po)) && CHECK_CHR(ifs, *po); po++);
-      len = 0;
-      for (; (! CHECK_TERMINATE(po[len])) && ! CHECK_CHR(ifs, po[len]); len++) ;
-      check_add_str(array, po, len);
-      po += len;
-      if (CHECK_TERMINATE(*po)) break;
-    }
-  }
-
-  if (*po == '\n') {
-    po++;
-  }
-
-  return (*po) ? po : NULL;
-}
 
 #define MAX_COLS 100
 #define HEADLINE_FIRST_CHAR_COLUMN (MAX_COLS + 0)
