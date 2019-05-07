@@ -3531,29 +3531,27 @@ int
 math_func_string_insert(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   GString *dest;
-  const char *src, *str;
+  const char *str;
   int upos, pos;
 
-  MATH_CHECK_ARG(rval, exp->buf[3]);
-  upos = exp->buf[3].val.val;
+  MATH_CHECK_ARG(rval, exp->buf[2]);
+  upos = exp->buf[2].val.val;
 
   rval->val = 0;
   rval->type = MATH_VALUE_NORMAL;
 
   dest = math_equation_get_string_variable_from_argument(exp, eq, 0);
-  src  = math_equation_get_string_from_argument(exp, eq, 1);
-  str  = math_equation_get_string_from_argument(exp, eq, 2);
-  if (dest == NULL || src == NULL || str == NULL) {
+  str  = math_equation_get_string_from_argument(exp, eq, 1);
+  if (dest == NULL || str == NULL) {
     return 1;
   }
-  if (! g_utf8_validate(src, -1, NULL)) {
+  if (! g_utf8_validate(dest->str, -1, NULL)) {
     return 1;
   }
-  pos = get_pos_from_upos(src, upos);
+  pos = get_pos_from_upos(dest->str, upos);
   if (pos < 0) {
     return 1;
   }
-  g_string_assign(dest, src);
   g_string_insert(dest, pos, str);
   return 0;
 }
