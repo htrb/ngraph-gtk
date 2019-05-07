@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.07.06\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
 "POT-Creation-Date: 2019-05-02 19:38+0900\n"
-"PO-Revision-Date: 2019-02-09 19:14+0900\n"
+"PO-Revision-Date: 2019-05-07 10:12+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja\n"
@@ -4707,9 +4707,8 @@ msgid "error, calculation error."
 msgstr "エラー, 計算エラー."
 
 #: src/math/math_error.c:31
-#, fuzzy
 msgid "syntax error, unterminated string."
-msgstr "構文エラー, 予期しないトークンです."
+msgstr "構文エラー, 終端のない文字列です."
 
 #: src/math/math_error.c:88 src/math/math_error.c:99 src/math/math_error.c:123
 #: src/math/math_error.c:134 src/math/math_error.c:145
