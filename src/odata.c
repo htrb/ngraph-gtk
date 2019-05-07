@@ -1545,6 +1545,14 @@ file_draw_text(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
     return 0;
   }
   fp = math_equation_get_user_data(eq);
+  if (fp == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  if (fp->GC < 0) {
+    return 0;
+  }
   if (getposition(fp, x, y, &cx, &cy)) {
     return 0;
   }
