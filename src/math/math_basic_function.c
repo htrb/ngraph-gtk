@@ -3594,12 +3594,11 @@ math_func_string_erase(MathFunctionCallExpression *exp, MathEquation *eq, MathVa
 int
 math_func_string_truncate(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  GString *dest;
-  const char *src;
+  GString *src;
   int ulen, len;
 
-  MATH_CHECK_ARG(rval, exp->buf[2]);
-  ulen = exp->buf[2].val.val;
+  MATH_CHECK_ARG(rval, exp->buf[1]);
+  ulen = exp->buf[1].val.val;
 
   rval->val = 0;
   rval->type = MATH_VALUE_NORMAL;
@@ -3607,20 +3606,18 @@ math_func_string_truncate(MathFunctionCallExpression *exp, MathEquation *eq, Mat
   if (ulen < 1) {
     return 1;
   }
-  dest = math_equation_get_string_variable_from_argument(exp, eq, 0);
-  src  = math_equation_get_string_from_argument(exp, eq, 1);
-  if (dest == NULL || src == NULL) {
+  src = math_equation_get_string_variable_from_argument(exp, eq, 0);
+  if (src == NULL || src->str == NULL) {
     return 1;
   }
-  if (! g_utf8_validate(src, -1, NULL)) {
+  if (! g_utf8_validate(src->str, -1, NULL)) {
     return 1;
   }
-  len = get_pos_from_upos(src, ulen);
+  len = get_pos_from_upos(src->str, ulen);
   if (len < 0) {
     return 1;
   }
-  g_string_assign(dest, src);
-  g_string_truncate(dest, len);
+  g_string_truncate(src, len);
   return 0;
 }
 
