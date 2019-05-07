@@ -3900,6 +3900,45 @@ set_column_array(MathEquation **code, int id, MathValue *gdata, int maxdim)
   }
 }
 
+#define CHECK_TERMINATE(ch) ((ch) == '\0' || (ch) == '\n')
+#define CHECK_CHR(ifs, ch) (ch && strchr(ifs, ch))
+
+static void
+check_add_str(struct narray *array, const char *str, int len)
+{
+  int valid;
+  char *ptr;
+
+  valid = g_utf8_validate(str, len, NULL);
+
+  if (valid) {
+    ptr = g_strndup(str, len);
+    arrayadd(array, &ptr);
+  } else {
+    ptr = g_locale_to_utf8(str, len, NULL, NULL, NULL);
+    if (ptr == NULL) {
+      GString *s;
+      int i;
+
+      s = g_string_new("");
+      if (s == NULL) {
+	return;
+      }
+      for (i = 0; i < len; i++) {
+	if (g_ascii_isprint(str[i]) || g_ascii_isspace(str[i])) {
+	  g_string_append_c(s, str[i]);
+	} else {
+	  g_string_append(s, "〓");
+	}
+      }
+      ptr = g_string_free(s, FALSE);
+    }
+    if (ptr) {
+      arrayadd(array, &ptr);
+    }
+  }
+}
+
 static int
 get_data_from_source(struct f2ddata *fp, int maxdim, MathValue *gdata)
 {
