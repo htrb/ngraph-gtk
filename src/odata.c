@@ -2261,6 +2261,7 @@ reopendata(struct f2ddata *fp)
   fp->color=fp->fg;
   fp->marksize=fp->marksize0;
   fp->marktype=fp->marktype0;
+  clear_line_array(fp);
 }
 
 static void
