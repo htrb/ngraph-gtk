@@ -2289,6 +2289,7 @@ closedata(struct f2ddata *fp, struct f2dlocal *f2dlocal)
     _putobj(fp->obj,"data_num",inst,&(fp->datanum));
 
   f2dlocal->num = fp->datanum;
+  clear_line_array(fp);
 
   g_free(fp);
 }
