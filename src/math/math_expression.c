@@ -668,7 +668,6 @@ math_expression_free_sub(MathExpression *exp)
     }
     break;
   case MATH_EXPRESSION_TYPE_STRING_VARIABLE:
-    /* free string in stack (to be implemented) */
     break;
   case MATH_EXPRESSION_TYPE_DOUBLE:
   case MATH_EXPRESSION_TYPE_PRM:
