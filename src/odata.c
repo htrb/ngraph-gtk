@@ -3128,7 +3128,7 @@ getdataarray(struct f2ddata *fp, char *buf, int maxdim, MathValue *data)
 	val = get_value_from_str(po, po2, &st);
         for (;*po2==' ';po2++);
         if (CHECK_IFS(ifs, *po2)) po2++;
-     }
+      }
     } else {
       for (;(*po!='\0') && CHECK_IFS(ifs, *po);po++);
       if (*po=='\0') break;
