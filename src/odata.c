@@ -299,6 +299,11 @@ struct f2ddata_buf {
 
 struct f2dlocal;
 
+struct line_array {
+  char *line;
+  struct narray line_array;
+};
+
 struct f2ddata {
   struct objlist *obj;
   int id,src, GC;
@@ -318,6 +323,7 @@ struct f2ddata {
   int csv;
   char *remark,*ifs, ifs_buf[256];
   int line,dline;
+  struct line_array line_array;
   double count;
   int eof;
   int dataclip;
