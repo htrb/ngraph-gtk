@@ -15,6 +15,7 @@
  <li><a href="#CONST_DEF">定数定義</a>
  <li><a href="#FORMULA_PAR">パラメータ</a>
  <li><a href="#FORMULA_VAR">変数</a>
+ <li><a href="#STRINGS">文字列</a>
  <li><a href="#ARRAY">配列</a>
  <li><a href="#USR_FUNC">ユーザ定義関数</a>
  <li><a href="#FORMULA_OP">演算子</a>
@@ -208,7 +209,8 @@
 <br>
 <div>
 <table border="1">
- <tr><td>PI, E, X, Y 以外の、英字で始まり英数字または _ から構成される2文字以下の文字列、または _ で始まり英数字または _ から構成される文字列。</td><td>ユーザが自由に使用できます (代入されていない変数は 0 に初期化されています) 。</td></tr>
+ <tr><td>PI, E, X, Y 以外の、英字または _ で始まり英数字または _ から構成される文字列。</td>
+  <td>ユーザが自由に使用できます (代入されていない変数は 0 に初期化されています) 。</td></tr>
  <tr><td>X</td><td>(X)column の生のデータ (変数への代入は可能ですが、データ読込時に生データで上書きされます) </td></tr>
  <tr><td>Y</td><td>(Y)column の生のデータ (変数への代入は可能ですが、データ読込時に生データで上書きされます) </td></tr>
 </table>
@@ -245,6 +247,25 @@
 <br>
 <hr>
 <br>
+
+<h2><a name="STRINGS" href="#TOP">数式変換で使用できる文字列と文字列変数</a></h2>
+<h3>注意</h3>
+<p>文字列の扱いについては今の所試験的な実装です。今後、仕様変更などの可能性があります。</p>
+
+<h3>文字列リテラル</h3>
+<p>文字列はダブルクォートで囲まれています。文字列ではバックスラッシュ記法が有効です。</p>
+
+<h3>文字列変数</h3>
+<p>$ に続き英字または _ で始まり英数字または _ から構成される文字列。</p>
+
+<h3>文字列の値</h3>
+<p>数値の計算が行われる箇所で、文字列は 0 として扱われます。</p>
+
+<h3>演算子</h3>
+<p>文字列に対しては、代入演算子 := のみが使用できます。</p>
+
+<h3>文字列操作関数</h3>
+<p><a href="#STRING_FUNC">文字列操作関数</a></p>
 
 <h2><a name="USR_FUNC" href="#TOP">ユーザ定義関数</a></h2>
 <br>
@@ -542,6 +563,154 @@
       (x1, y1) から (x2, y2) に誤差棒を描画する。size で tick の長さを
       指定できる。size が 0 のときはファイルオブジェクトのサイズ指定が
       使われる。
+    </td>
+  </tr>
+</table>
+<br>
+<h3><a name="STRING_FUNC" href="#TOP">文字列操作関数</a></h3>
+<table border="1">
+  <tr>
+    <td>
+     string_float($str)
+    </td>
+    <td>
+      $str を浮動小数点に変換し、その値を返します
+    </td>
+  </tr>
+  <tr>
+    <td>
+     string_length($str)
+    </td>
+    <td>
+      $str に含まれる文字数を返します。UTF-8 以外の文字列では使えません。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     string_format($str, value)
+    </td>
+    <td>
+      数値 value を文字列に変換して $str に代入します。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     string_up($dest, $src)
+    </td>
+    <td>
+     文字列 $src に含まれる ascii 文字を大文字にした文字列を $dest に代入します。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     string_down($dest, $src)
+    </td>
+    <td>
+     文字列 $src に含まれる ascii 文字を小文字にした文字列を $dest に代入します。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     string_strip($dest, $src)
+    </td>
+    <td>
+     文字列 $src の先頭、最後にある空白文字を削除した文字列を $dest に代入します。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     string_append($dest, $src)
+    </td>
+    <td>
+     文字列 $dest の最後に文字列 $src を連結します。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     string_prepend($dest, $src)
+    </td>
+    <td>
+     文字列 $dest の最初に文字列 $src を連結します。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     string_insert($dest, $src, pos)
+    </td>
+    <td>
+     文字列 $dest の pos 番目の文字の前に文字列 $src を挿入します。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     string_reverse($dest, $src)
+    </td>
+    <td>
+     文字列 $src の並びを逆にした文字列を $dest に代入します。UTF-8 以外の文字列では使えません。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     string_compare($str1, $str2, ignore_case)
+    </td>
+    <td>
+      2つの文字列 $str1 と $str2 を比較して $str1 が $str2 に較べて 1)小
+     さい、2)等しい、3)大きい場合に、ゼロよりも 1)小さい、2)等しい、3)大
+     きい整数を返します。ignore_case が 0 以外の場合は文字列に含まれる
+     ascii 文字の大文字小文字を区別せずに比較します。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     string_match($str, $regexp, ignore_case)
+    </td>
+    <td>
+     文字列 $str に対して、文字列 $regexp が表す正規表現によるマッチング
+     を行います。マッチした場合は 0 以外の数値、マッチしなかった場合は 0
+     を返します。ignore_case が 0 以外の場合は文字列に含まれる ascii 文
+     字の大文字小文字を区別せずに比較します。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     string_truncate($dest, $src, len)
+    </td>
+    <td>
+     文字列 $src 先頭 len 文字からなる文字列を $dest に代入します。UTF-8 以外の文字列では使えません。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     string_erase($dest, $src, pos, len)
+    </td>
+    <td>
+     文字列 $src の pos 文字目から始まる len 文字を削除した文字列を $dest に代入します。UTF-8 以外の文字列では使えません。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     string_substring($dest, $src, start, end)
+    </td>
+    <td>
+     文字列 $src の pos 文字目から始まり end 文字までからなる文字列を $dest に代入します。UTF-8 以外の文字列では使えません。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     string_split($dest, $src, $separator, index)
+    </td>
+    <td>
+     文字列 $src を文字列 $separator で分割し、分割された index 番目の文字列を $dest に代入します。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     string_split($dest, $src, $regexp, $replacement, ignore_case)
+    </td>
+    <td>
+     文字列 $src 中の、文字列 $regexp が表す正規表現にマッチする文字列を
+     $replacement で置換します。ignore_case が 0 以外の場合は文字列に含
+     まれる ascii 文字の大文字小文字を区別せずに比較します。
     </td>
   </tr>
 </table>
