@@ -1527,8 +1527,8 @@ file_draw_text(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   y       = exp->buf[2].val.val;
   font_id = exp->buf[3].val.val;
   pt      = exp->buf[4].val.val * 100;
-  space   = exp->buf[5].val.val * 100;
-  dir     = exp->buf[6].val.val * 100;
+  dir     = exp->buf[5].val.val * 100;
+  space   = exp->buf[6].val.val * 100;
   script  = exp->buf[7].val.val * 100;
   if (pt <= 0) {
     pt = 2000;
