@@ -1567,6 +1567,50 @@ file_draw_text(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   return 0;
 }
 
+static int
+file_string_coumn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int n, col;
+  struct f2ddata *fp;
+  GString *str;
+  struct narray *array;
+
+  if (exp->buf[1].val.type != MATH_VALUE_NORMAL) {
+    return 0;
+  }
+  col = exp->buf[1].val.val;
+
+  rval->val = 0;
+  rval->type = MATH_VALUE_NORMAL;
+
+  str = math_equation_get_string_variable_from_argument(exp, eq, 0);
+  if (str == NULL) {
+    return 1;
+  }
+  fp = math_equation_get_user_data(eq);
+  if (fp->line_array.line == NULL) {
+    return 1;
+  }
+  if (col == 0) {
+    g_string_assign(str, fp->line_array.line);
+    return 0;
+  }
+  array = &(fp->line_array.line_array);
+  n = arraynum(array);
+  if (n < 1) {
+    parse_data_line(array, fp->line_array.line, fp->ifs, fp->remark, fp->csv);
+    n = arraynum(array);
+  }
+  if (col < 0) {
+    col += n + 1;
+  }
+  if (n < 1 || col > n || col < 0) {
+    return 0;
+  }
+  g_string_assign(str, arraynget_str(array, col - 1));
+  return 0;
+}
+
 struct funcs {
   char *name;
   struct math_function_parameter prm;
@@ -1605,6 +1649,11 @@ static enum MATH_FUNCTION_ARG_TYPE draw_text_arg_type[] = {
   MATH_FUNCTION_ARG_TYPE_DOUBLE,
 };
 
+static enum MATH_FUNCTION_ARG_TYPE string_column_arg_type[] = {
+  MATH_FUNCTION_ARG_TYPE_STRING,
+  MATH_FUNCTION_ARG_TYPE_DOUBLE,
+};
+
 static struct funcs FileFunc[] = {
   {"OBJ_ALPHA", {2, 0, 0, file_objalpha, NULL, NULL, NULL, NULL}},
   {"OBJ_COLOR", {2, 0, 0, file_objcolor, NULL, NULL, NULL, NULL}},
@@ -1625,6 +1674,7 @@ static struct funcs FileFunc[] = {
   {"DRAW_POLYLINE",  {2, 0, 0, file_draw_polyline, draw_polyline_arg_type, NULL, NULL, NULL}},
   {"DRAW_POLYGON",   {4, 0, 0, file_draw_polygon, draw_polygon_arg_type, NULL, NULL, NULL}},
   {"DRAW_TEXT",      {8, 0, 0, file_draw_text, draw_text_arg_type, NULL, NULL, NULL}},
+  {"STRING_COLUMN",  {2, 0, 0, file_string_coumn, string_column_arg_type, NULL, NULL, NULL}},
 };
 
 static int
