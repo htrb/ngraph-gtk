@@ -705,12 +705,30 @@
   </tr>
   <tr>
     <td>
-     string_split($dest, $src, $regexp, $replacement, ignore_case)
+     string_gsub($dest, $src, $regexp, $replacement, ignore_case)
     </td>
     <td>
      文字列 $src 中の、文字列 $regexp が表す正規表現にマッチする文字列を
      $replacement で置換します。ignore_case が 0 以外の場合は文字列に含
      まれる ascii 文字の大文字小文字を区別せずに比較します。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     string_column($dest, index)
+    </td>
+    <td>
+     データファイルを読み込んだ時に index カラムの文字列を $dest に代入します。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     draw_text($str, x, y, font, pt, dir, space, script)
+    </td>
+    <td>
+     (x, y) に文字列 $str を描画します。font は 0, 1, 2 がそれぞれ
+     Sans-serif, Serif, Monospace に対応します。続く引数で方向、文字間隔、
+     スクリプトサイズを指定できます。
     </td>
   </tr>
 </table>
