@@ -611,10 +611,10 @@
   </tr>
   <tr>
     <td>
-     string_strip($dest, $src)
+     string_strip($str)
     </td>
     <td>
-     文字列 $src の先頭、最後にある空白文字を削除した文字列を $dest に代入します。
+     文字列 $str の先頭、最後にある空白文字を削除します。
     </td>
   </tr>
   <tr>
@@ -673,18 +673,18 @@
   </tr>
   <tr>
     <td>
-     string_truncate($dest, $src, len)
+     string_truncate($str, len)
     </td>
     <td>
-     文字列 $src 先頭 len 文字からなる文字列を $dest に代入します。UTF-8 以外の文字列では使えません。
+     文字列 $str の先頭 len 文字以降を削除します。UTF-8 以外の文字列では使えません。
     </td>
   </tr>
   <tr>
     <td>
-     string_erase($dest, $src, pos, len)
+     string_erase($str, pos, len)
     </td>
     <td>
-     文字列 $src の pos 文字目から始まる len 文字を削除した文字列を $dest に代入します。UTF-8 以外の文字列では使えません。
+     文字列 $str から、pos 文字目から始まる len 文字を削除します。UTF-8 以外の文字列では使えません。
     </td>
   </tr>
   <tr>
@@ -705,7 +705,7 @@
   </tr>
   <tr>
     <td>
-     string_gsub($dest, $src, $regexp, $replacement, ignore_case)
+     string_replace($dest, $src, $regexp, $replacement, ignore_case)
     </td>
     <td>
      文字列 $src 中の、文字列 $regexp が表す正規表現にマッチする文字列を
