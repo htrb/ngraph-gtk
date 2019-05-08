@@ -3313,7 +3313,7 @@ math_func_string_float(MathFunctionCallExpression *exp, MathEquation *eq, MathVa
 }
 
 int
-math_func_string_gsub(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+math_func_string_replace(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   GString *dest;
   const char *src, *pattern, *replacement;
