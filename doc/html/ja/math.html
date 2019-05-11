@@ -725,12 +725,14 @@
   </tr>
   <tr>
     <td>
-     draw_text($str, x, y, font, pt, dir, space, script)
+     draw_text($str, x, y, font, pt, style, dir, space, script)
     </td>
     <td>
      (x, y) に文字列 $str を描画します。font は 0, 1, 2 がそれぞれ
-     Sans-serif, Serif, Monospace に対応します。続く引数でポイント、方向、
-     文字間隔、スクリプトサイズを指定できます。
+     Sans-serif, Serif, Monospace に対応します。pt でフォントサイズを指
+     定できます。style は 0, 1, 2, 3 がそれぞれ normal, bold, italic,
+     bold-italic に対応します。続く引数で方向、文字間隔、スクリプトサイ
+     ズを指定できます。
     </td>
   </tr>
 </table>
