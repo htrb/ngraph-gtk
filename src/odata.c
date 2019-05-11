@@ -1509,7 +1509,7 @@ static int
 file_draw_text(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   double x, y;
-  int font_id, pt, space, dir, script;
+  int font_id, pt, space, dir, script, style;
   int px, py, cx, cy;
   struct f2ddata *fp;
   char *str, *font;
@@ -1527,14 +1527,20 @@ file_draw_text(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   y       = exp->buf[2].val.val;
   font_id = exp->buf[3].val.val;
   pt      = exp->buf[4].val.val * 100;
-  dir     = exp->buf[5].val.val * 100;
-  space   = exp->buf[6].val.val * 100;
-  script  = exp->buf[7].val.val * 100;
+  style   = exp->buf[5].val.val;
+  dir     = exp->buf[6].val.val * 100;
+  space   = exp->buf[7].val.val * 100;
+  script  = exp->buf[8].val.val * 100;
   if (pt <= 0) {
     pt = 2000;
   }
   if (script <= 0) {
     script = 7000;
+  }
+  if (style < 0) {
+    style = 0;
+  } else if (style > GRA_FONT_STYLE_MAX) {
+    style = GRA_FONT_STYLE_MAX;
   }
 
   rval->val = 0;
@@ -1569,7 +1575,7 @@ file_draw_text(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   }
   GRAcurrent_point(fp->GC, &px, &py);
   GRAmoveto(fp->GC, cx, cy);
-  GRAdrawtext(fp->GC, str, font, 0, pt, space, dir, script);
+  GRAdrawtext(fp->GC, str, font, style, pt, space, dir, script);
   GRAmoveto(fp->GC, px, py);
   fp->local->use_drawing_func = TRUE;
   return 0;
