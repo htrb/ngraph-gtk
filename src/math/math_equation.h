@@ -10,6 +10,7 @@ typedef struct _math_equation MathEquation;
 typedef struct _math_parameter MathEquationParametar;
 typedef struct _math_array MathEquationArray;
 typedef struct _math_value MathValue;
+typedef struct _math_stack MathStack;
 
 #include <gmodule.h>
 #include "math_error.h"
@@ -44,7 +45,7 @@ struct _math_array {
 #include "math_function.h"
 #include "math_constant.h"
 
-struct math_equation_stack {
+struct _math_stack {
   enum {
 	STACK_TYPE_VALUE,
 	STACK_TYPE_STRING,
@@ -55,15 +56,14 @@ struct math_equation_stack {
   int local_num;
   int element_size;
   union {
-    void *ptr;			/* using for memory allocation */
+    void *ptr;			/* using for memory manipulation */
     MathValue *val;
     GString **str;
   } stack;
 };
 
 struct _math_equation {
-  struct math_equation_stack string_stack; /* for string variable */
-  struct math_equation_stack stack;
+  MathStack stack, string_stack;
   NHASH constant, array, function;
   int cnum, array_num, pos_func_num;
   NHASH local_array;
