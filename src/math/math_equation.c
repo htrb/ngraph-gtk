@@ -133,7 +133,7 @@ math_equation_basic_new(void)
 }
 
 static int
-math_stack_init(struct math_equation_stack *stack, int type)
+math_stack_init(MathStack *stack, int type)
 {
   int size;
   if (type == STACK_TYPE_STRING) {
@@ -161,7 +161,7 @@ math_stack_init(struct math_equation_stack *stack, int type)
 }
 
 static void
-free_stack_strings(struct math_equation_stack *stack)
+free_stack_strings(MathStack *stack)
 {
   int i;
   GString *str;
@@ -175,7 +175,7 @@ free_stack_strings(struct math_equation_stack *stack)
 }
 
 static void
-math_stack_free(struct math_equation_stack *stack)
+math_stack_free(MathStack *stack)
 {
   if (stack->variable) {
     nhash_free(stack->variable);
@@ -848,7 +848,7 @@ math_equation_register_user_func_definition(MathEquation *eq, const char *name, 
 }
 
 static void
-clear_stack_local(struct math_equation_stack *stack, int *vnum)
+clear_stack_local(MathStack *stack, int *vnum)
 {
   if (vnum) {
     *vnum = nhash_num(stack->local_variable);
@@ -1028,7 +1028,7 @@ optimize_const_definition(MathEquation *eq)
 }
 
 static int
-expand_stack(struct math_equation_stack *stack, int size)
+expand_stack(MathStack *stack, int size)
 {
   char *ptr;
   int n, request_size;
@@ -1434,7 +1434,7 @@ math_equation_call_user_func(MathFunctionCallExpression *exp, MathEquation *eq, 
 }
 
 static int
-math_equation_check_var_common(struct math_equation_stack *stack, const char *name, int func_def)
+math_equation_check_var_common(MathStack *stack, const char *name, int func_def)
 {
   int r, i;
 
