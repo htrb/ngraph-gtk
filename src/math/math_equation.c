@@ -192,6 +192,21 @@ math_stack_free(MathStack *stack)
   stack->stack.ptr = NULL;
 }
 
+static int
+math_array_init(MathArray *array, enum DATA_TYPE type)
+{
+  array->type = type;
+  array->array = nhash_new();
+  array->local_array = nhash_new();
+  if (array->array == NULL || array->local_array == NULL) {
+    return 1;
+  }
+  array->buf = NULL;
+  array->num = 0;
+  array->local_num = 0;
+  return 0;
+}
+
 MathEquation *
 math_equation_new(void)
 {
