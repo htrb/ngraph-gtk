@@ -656,9 +656,11 @@ math_expression_free_sub(MathExpression *exp)
     math_expression_free(exp->u.unary.operand);
     break;
   case MATH_EXPRESSION_TYPE_ARRAY:
+  case MATH_EXPRESSION_TYPE_STRING_ARRAY: /* to be implemented */
     math_expression_free(exp->u.array.operand);
     break;
   case MATH_EXPRESSION_TYPE_ARRAY_ARGUMENT:
+  case MATH_EXPRESSION_TYPE_STRING_ARRAY_ARGUMENT:
   case MATH_EXPRESSION_TYPE_CONST:
   case MATH_EXPRESSION_TYPE_VARIABLE:
     break;
