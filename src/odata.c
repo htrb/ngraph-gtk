@@ -1437,18 +1437,18 @@ file_draw_path(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   arrayinit(&pos, sizeof(int));
   first = TRUE;
   for (i = 0; i < n; i++) {
-    if (ax->data[i].type == MATH_VALUE_NORMAL && ay->data[i].type == MATH_VALUE_NORMAL) {
+    if (ax->data.val[i].type == MATH_VALUE_NORMAL && ay->data.val[i].type == MATH_VALUE_NORMAL) {
       if (first) {
         first = FALSE;
-	x0 = ax->data[i].val;
-	y0 = ay->data[i].val;
-	x2 = ax->data[i].val;
-	y2 = ay->data[i].val;
+	x0 = ax->data.val[i].val;
+	y0 = ay->data.val[i].val;
+	x2 = ax->data.val[i].val;
+	y2 = ay->data.val[i].val;
       } else {
 	x1 = x2;
 	y1 = y2;
-	x2 = ax->data[i].val;
-	y2 = ay->data[i].val;
+	x2 = ax->data.val[i].val;
+	y2 = ay->data.val[i].val;
 	add_polygon_point(&pos, x1, y1, x2, y2, fp);
       }
     }
