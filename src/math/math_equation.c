@@ -231,13 +231,14 @@ math_equation_new(void)
     math_equation_free(eq);
     return NULL;
   }
-  eq->array.array = nhash_new();
-  eq->array.local_array = nhash_new();
+  r = math_array_init(&(eq->array), DATA_TYPE_VALUE);
+  if (r) {
+    math_equation_free(eq);
+    return NULL;
+  }
 
   if (eq->function == NULL ||
-      eq->constant == NULL ||
-      eq->array.array == NULL ||
-      eq->array.local_array == NULL) {
+      eq->constant == NULL) {
     math_equation_free(eq);
     return NULL;
   }
