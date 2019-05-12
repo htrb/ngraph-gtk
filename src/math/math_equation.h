@@ -11,6 +11,7 @@ typedef struct _math_parameter MathEquationParametar;
 typedef struct _math_array MathEquationArray;
 typedef struct _math_value MathValue;
 typedef struct _math_stack MathStack;
+typedef struct _math_array_info MathArray;
 
 #include <gmodule.h>
 #include "math_error.h"
@@ -37,7 +38,17 @@ struct _math_value {
 
 struct _math_array {
   int num, size;
-  MathValue *data;
+  union {
+    void *ptr;			/* using for memory manipulation */
+    MathValue *val;
+    GString **str;
+  } data;
+};
+
+struct _math_array_info {
+  NHASH array, local_array;
+  int num, local_num;
+  MathEquationArray *buf;
 };
 
 #include "math_scanner.h"
