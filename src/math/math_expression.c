@@ -1734,6 +1734,17 @@ calc(MathExpression *exp, MathValue *val)
       return 1;
     }
     break;
+  case MATH_EXPRESSION_TYPE_STRING_ARRAY:
+    /* to be implemented */
+    if (CALC_EXPRESSION(exp->u.array.operand, operand)) {
+      return 1;
+    }
+    /*
+    if (math_equation_get_array_string(exp->equation, exp->u.array.index, operand.val, val)) {
+      return 1;
+    }
+    */
+    break;
   case MATH_EXPRESSION_TYPE_PRM:
     if (exp->u.prm.prm->data == NULL) {
       return 1;
@@ -1744,6 +1755,7 @@ calc(MathExpression *exp, MathValue *val)
     val->val = 0;
     break;
   case MATH_EXPRESSION_TYPE_ARRAY_ARGUMENT:
+  case MATH_EXPRESSION_TYPE_STRING_ARRAY_ARGUMENT:
     return 1;
   case MATH_EXPRESSION_TYPE_STRING_VARIABLE:
   case MATH_EXPRESSION_TYPE_STRING:
