@@ -136,7 +136,7 @@ static int
 math_stack_init(MathStack *stack, int type)
 {
   int size;
-  if (type == STACK_TYPE_STRING) {
+  if (type == DATA_TYPE_STRING) {
     size = sizeof(*(stack->stack.str));
   } else {
     size = sizeof(*(stack->stack.val));
@@ -185,7 +185,7 @@ math_stack_free(MathStack *stack)
     nhash_free(stack->local_variable);
     stack->local_variable = NULL;
   }
-  if (stack->type == STACK_TYPE_STRING) {
+  if (stack->type == DATA_TYPE_STRING) {
     free_stack_strings(stack);
   }
   g_free(stack->stack.ptr);
@@ -206,12 +206,12 @@ math_equation_new(void)
 
   eq->constant = nhash_new();
   eq->function = nhash_new();
-  r = math_stack_init(&(eq->stack), STACK_TYPE_VALUE);
+  r = math_stack_init(&(eq->stack), DATA_TYPE_VALUE);
   if (r) {
     math_equation_free(eq);
     return NULL;
   }
-  r = math_stack_init(&(eq->string_stack), STACK_TYPE_STRING);
+  r = math_stack_init(&(eq->string_stack), DATA_TYPE_STRING);
   if (r) {
     math_equation_free(eq);
     return NULL;
@@ -1048,7 +1048,7 @@ expand_stack(MathStack *stack, int size)
   if (stack->stack.ptr == NULL)
     return 1;
 
-  if (stack->type == STACK_TYPE_STRING) {
+  if (stack->type == DATA_TYPE_STRING) {
     int i;
     for (i = 0; i < size; i++) {
       stack->stack.str[stack->end + i] = g_string_new("");
@@ -1496,10 +1496,10 @@ math_equation_clear_variable(MathEquation *eq)
 {
   if (eq->stack.stack.ptr) {
     switch (eq->stack.type) {
-    case STACK_TYPE_VALUE:
+    case DATA_TYPE_VALUE:
       clear_variable_array(eq->stack.stack.val, eq->stack.num); /* which is better to use stack.num or stack.end? */
       break;
-    case STACK_TYPE_STRING:
+    case DATA_TYPE_STRING:
       free_stack_strings(&(eq->stack));
       break;
     }
