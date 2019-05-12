@@ -100,7 +100,7 @@ add_to_ary_array(MathEquationArray *buf, int *num)
 
   buf[*num].num = 0;
   buf[*num].size = 0;
-  buf[*num].data = NULL;
+  buf[*num].data.ptr = NULL;
 
   (*num)++;
 
@@ -216,13 +216,13 @@ math_equation_new(void)
     math_equation_free(eq);
     return NULL;
   }
-  eq->array = nhash_new();
-  eq->local_array = nhash_new();
+  eq->array.array = nhash_new();
+  eq->array.local_array = nhash_new();
 
   if (eq->function == NULL ||
       eq->constant == NULL ||
-      eq->array == NULL ||
-      eq->local_array == NULL) {
+      eq->array.array == NULL ||
+      eq->array.local_array == NULL) {
     math_equation_free(eq);
     return NULL;
   }
@@ -262,10 +262,10 @@ math_equation_clear(MathEquation *eq)
 
   clear_variable_array(eq->stack.stack.val, eq->stack.num);
 
-  if (eq->array_num > 0 && eq->array_buf) {
-    for (i = 0; i < eq->array_num; i++) {
-      if (eq->array_buf[i].num > 0 && eq->array_buf[i].data) {
-	clear_variable_array(eq->array_buf[i].data, eq->array_buf[i].num);
+  if (eq->array.num > 0 && eq->array.buf) {
+    for (i = 0; i < eq->array.num; i++) {
+      if (eq->array.buf[i].num > 0 && eq->array.buf[i].data.val) {
+	clear_variable_array(eq->array.buf[i].data.val, eq->array.buf[i].num);
       }
     }
   }
@@ -365,7 +365,7 @@ free_array_buf(MathEquationArray *buf, int num)
     return;
 
   for (i = 0; i < num; i++) {
-    g_free(buf[i].data);
+    g_free(buf[i].data.ptr);
   }
 
   g_free(buf);
@@ -386,17 +386,17 @@ math_equation_free(MathEquation *eq)
   if (eq->function)
     free_func(eq->function);
 
-  if (eq->array)
-    nhash_free(eq->array);
+  if (eq->array.array)
+    nhash_free(eq->array.array);
 
-  if (eq->local_array)
-    nhash_free(eq->local_array);
+  if (eq->array.local_array)
+    nhash_free(eq->array.local_array);
 
   if (eq->const_def) {
     math_expression_free(eq->const_def);
   }
 
-  free_array_buf(eq->array_buf, eq->array_num);
+  free_array_buf(eq->array.buf, eq->array.num);
 
   free_parameter(eq);
 
@@ -792,7 +792,7 @@ math_equation_start_user_func_definition(MathEquation *eq, const char *name)
   }
 
   eq->stack.local_num = 0;
-  eq->local_array_num = 0;
+  eq->array.local_num = 0;
   eq->func_def = 1;
 
   return fprm;
@@ -867,11 +867,11 @@ math_equation_finish_user_func_definition(MathEquation *eq, int *vnum, int *anum
   clear_stack_local(&eq->string_stack, snum);
 
   if (anum)
-    *anum = nhash_num(eq->local_array);
+    *anum = nhash_num(eq->array.local_array);
 
-  nhash_clear(eq->local_array);
+  nhash_clear(eq->array.local_array);
 
-  eq->local_array_num = 0;
+  eq->array.local_num = 0;
   eq->func_def = 0;
 
   return 0;
@@ -1341,8 +1341,8 @@ math_equation_call_user_func(MathFunctionCallExpression *exp, MathEquation *eq, 
   end = eq->stack.end;
   str_ofst = eq->string_stack.ofst;
   str_end = eq->string_stack.end;
-  prev = eq->array_buf;
-  prev_num = eq->array_num;
+  prev = eq->array.buf;
+  prev_num = eq->array.num;
 
   if (func->u.func.local_array_num > 0) {
     local = g_malloc(sizeof(*local) * func->u.func.local_array_num);
@@ -1372,8 +1372,8 @@ math_equation_call_user_func(MathFunctionCallExpression *exp, MathEquation *eq, 
     return 1;
   }
 
-  eq->array_buf = local;
-  eq->array_num = func->u.func.local_array_num;
+  eq->array.buf = local;
+  eq->array.num = func->u.func.local_array_num;
 
   j = k = 0;
   for (i = 0; i < exp->argc; i++) {
@@ -1409,8 +1409,8 @@ math_equation_call_user_func(MathFunctionCallExpression *exp, MathEquation *eq, 
     eq->string_stack.stack.str[j] = NULL;
   }
 
-  eq->array_num = prev_num;
-  eq->array_buf = prev;
+  eq->array.num = prev_num;
+  eq->array.buf = prev;
   eq->stack.end = end;
   eq->stack.ofst = ofst;
   eq->string_stack.end = str_end;
@@ -1423,7 +1423,7 @@ math_equation_call_user_func(MathFunctionCallExpression *exp, MathEquation *eq, 
 	prev[argv[i].idx] = local[j];
 	local[j].num = 0;
 	local[j].size = 0;
-	local[j].data = NULL;
+	local[j].data.val = NULL;
 	j++;
       }
     }
@@ -1522,9 +1522,9 @@ math_equation_check_array(MathEquation *eq, const char *name)
   int r, i;
 
   if (eq->func_def) {
-    r = nhash_get_int(eq->local_array, name, &i);
+    r = nhash_get_int(eq->array.local_array, name, &i);
   } else {
-    r = nhash_get_int(eq->array, name, &i);
+    r = nhash_get_int(eq->array.array, name, &i);
   }
 
   if (r) {
@@ -1543,27 +1543,27 @@ math_equation_add_array(MathEquation *eq, const char *name)
     return -1;
 
   if (eq->func_def) {
-    r = nhash_get_int(eq->local_array, name, &i);
+    r = nhash_get_int(eq->array.local_array, name, &i);
     if (r) {
-      i = eq->local_array_num;
-      if (nhash_set_int(eq->local_array, name, i)) {
+      i = eq->array.local_num;
+      if (nhash_set_int(eq->array.local_array, name, i)) {
 	/* error: cannot allocate enough memory */
 	return -1;
       }
-      eq->local_array_num++;
+      eq->array.local_num++;
     }
   } else {
-    r = nhash_get_int(eq->array, name, &i);
+    r = nhash_get_int(eq->array.array, name, &i);
     if (r) {
-      i = eq->array_num;
-      eq->array_buf = add_to_ary_array(eq->array_buf, &eq->array_num);
+      i = eq->array.num;
+      eq->array.buf = add_to_ary_array(eq->array.buf, &eq->array.num);
 
-      if (eq->array == NULL) {
+      if (eq->array.array == NULL) {
 	/* error: cannot allocate enough memory */
 	return -1;
       }
 
-      if (nhash_set_int(eq->array, name, i)) {
+      if (nhash_set_int(eq->array.array, name, i)) {
 	/* error: cannot allocate enough memory */
 	return -1;
       }
@@ -1580,12 +1580,12 @@ check_array(MathEquation *eq, int id, int index)
   MathEquationArray *ary;
   MathValue *ptr;
 
-  if (eq == NULL || eq->array_buf == NULL || id < 0 || id >= eq->array_num) {
+  if (eq == NULL || eq->array.buf == NULL || id < 0 || id >= eq->array.num) {
     /* error: the array is not exist */
     return -1;
   }
 
-  ary = eq->array_buf + id;
+  ary = eq->array.buf + id;
 
   if (index < 0) {
     i = ary->num + index;
@@ -1603,7 +1603,7 @@ check_array(MathEquation *eq, int id, int index)
 
     n = (i / BUF_UNIT + 1) * BUF_UNIT;
 
-    ptr = g_realloc(ary->data, sizeof(*ary->data) * n);
+    ptr = g_realloc(ary->data.val, sizeof(*ary->data.val) * n);
     if (ptr == NULL) {
       /* error: cannot allocate enough memory */
       return -1;
@@ -1611,7 +1611,7 @@ check_array(MathEquation *eq, int id, int index)
 
     memset(ptr + ary->num, 0, sizeof(*ptr) * (n - ary->num));
 
-    ary->data = ptr;
+    ary->data.val = ptr;
     ary->size = n;
   }
 
@@ -1631,8 +1631,8 @@ math_equation_clear_array(MathEquation *eq, int array)
   if (i < 0)
     return 1;
 
-  clear_variable_array(eq->array_buf[array].data, eq->array_buf[i].num);
-  eq->array_buf[array].num = 0;
+  clear_variable_array(eq->array.buf[array].data.val, eq->array.buf[i].num);
+  eq->array.buf[array].num = 0;
 
   return 0;
 }
@@ -1646,7 +1646,7 @@ math_equation_set_array_val(MathEquation *eq, int array, int index, const MathVa
   if (i < 0)
     return 1;
 
-  eq->array_buf[array].data[i] = *val;
+  eq->array.buf[array].data.val[i] = *val;
 
   return 0;
 }
@@ -1673,7 +1673,7 @@ math_equation_get_array_val(MathEquation *eq, int array, int index, MathValue *v
   if (i < 0)
     return 1;
 
-  *val = eq->array_buf[array].data[i];
+  *val = eq->array.buf[array].data.val[i];
 
   return 0;
 }
@@ -1681,12 +1681,12 @@ math_equation_get_array_val(MathEquation *eq, int array, int index, MathValue *v
 MathEquationArray *
 math_equation_get_array(MathEquation *eq, int array)
 {
-  if (array < 0 || array >= eq->array_num || eq->array_buf == NULL) {
+  if (array < 0 || array >= eq->array.num || eq->array.buf == NULL) {
     /* error: the array is not exist */
     return NULL;
   }
 
-  return &eq->array_buf[array];
+  return &eq->array.buf[array];
 }
 
 void
