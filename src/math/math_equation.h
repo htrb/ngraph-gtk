@@ -45,7 +45,13 @@ struct _math_array {
   } data;
 };
 
+enum DATA_TYPE {
+  DATA_TYPE_VALUE,
+  DATA_TYPE_STRING,
+};
+
 struct _math_array_info {
+  enum DATA_TYPE type;
   NHASH array, local_array;
   int num, local_num;
   MathEquationArray *buf;
@@ -57,10 +63,7 @@ struct _math_array_info {
 #include "math_constant.h"
 
 struct _math_stack {
-  enum {
-	STACK_TYPE_VALUE,
-	STACK_TYPE_STRING,
-  } type;
+  enum DATA_TYPE type;
   NHASH variable;
   int num, ofst, end, size;
   NHASH local_variable;
