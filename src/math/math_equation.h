@@ -75,14 +75,13 @@ struct _math_stack {
 
 struct _math_equation {
   MathStack stack, string_stack;
-  NHASH constant, array, function;
-  int cnum, array_num, pos_func_num;
-  NHASH local_array;
-  int local_array_num, func_def;
+  MathArray array;
+  NHASH constant, function;
+  int cnum, pos_func_num;
+  int func_def;
   MathValue *cbuf, *pos_func_buf;
   MathExpression *exp, *opt_exp, *const_def;
   MathEquationParametar *parameter;
-  MathEquationArray *array_buf;
   union {
     struct {
       const char *pos;
