@@ -1079,13 +1079,9 @@ expand_stack(MathStack *stack, int size)
     return 1;
 
   if (stack->type == DATA_TYPE_STRING) {
-    int i;
-    for (i = 0; i < size; i++) {
-      stack->stack.str[stack->end + i] = g_string_new("");
-    }
+    init_string_array(stack->stack.str + stack->end, size);
   } else {
-    ptr = stack->stack.ptr;
-    memset(ptr + stack->element_size * stack->end, 0, stack->element_size * size);
+    memset(stack->stack.val + stack->end, 0, stack->element_size * size);
   }
   stack->ofst = stack->end;
   stack->end = request_size;
