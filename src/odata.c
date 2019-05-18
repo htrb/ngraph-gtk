@@ -1582,6 +1582,39 @@ file_draw_text(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
 }
 
 static int
+file_text_obj_set(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int id;
+  const char *str;
+  char *tmp;
+  struct objlist *text_obj;
+
+  if (exp->buf[0].val.type != MATH_VALUE_NORMAL) {
+    return 0;
+  }
+  id = exp->buf[0].val.val;
+
+  rval->val = 0;
+  rval->type = MATH_VALUE_NORMAL;
+
+  str = math_expression_get_string_from_argument(exp, 1);
+  if (str == NULL) {
+    return 0;
+  }
+
+  text_obj = getobject("text");
+  if (text_obj == NULL) {
+    return 0;
+  }
+  tmp = g_strdup(str);
+  if (tmp == NULL) {
+    return 0;
+  }
+  putobj(text_obj, "text", id, tmp);
+  return 0;
+}
+
+static int
 file_string_column(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   int n, col;
@@ -1669,8 +1702,11 @@ static enum MATH_FUNCTION_ARG_TYPE draw_text_arg_type[] = {
   MATH_FUNCTION_ARG_TYPE_DOUBLE,
 };
 
-static enum MATH_FUNCTION_ARG_TYPE string_column_arg_type[] = {
+static enum MATH_FUNCTION_ARG_TYPE text_obj_set_arg_type[] = {
+  MATH_FUNCTION_ARG_TYPE_DOUBLE,
   MATH_FUNCTION_ARG_TYPE_STRING,
+};
+
   MATH_FUNCTION_ARG_TYPE_DOUBLE,
 };
 
@@ -1694,6 +1730,7 @@ static struct funcs FileFunc[] = {
   {"DRAW_POLYLINE",  {2, 0, 0, file_draw_polyline, draw_polyline_arg_type, NULL, NULL, NULL}},
   {"DRAW_POLYGON",   {4, 0, 0, file_draw_polygon, draw_polygon_arg_type, NULL, NULL, NULL}},
   {"DRAW_TEXT",      {8, 0, 0, file_draw_text, draw_text_arg_type, NULL, NULL, NULL}},
+  {"TEXT_OBJ_SET",   {2, 0, 0, file_text_obj_set, text_obj_set_arg_type, NULL, NULL, NULL}},
   {"STRING_COLUMN",  {2, 0, 0, file_string_column, string_column_arg_type, NULL, NULL, NULL}},
 };
 
