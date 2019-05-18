@@ -300,14 +300,14 @@ get_symbol_string(const char *str, char prefix, int *len)
 }
 
 static struct math_token *
-get_symbol(const char *str,  const char ** rstr)
+get_symbol(const char *str, const char ** rstr)
 {
   struct math_token *tok;
   char *buf;
   int n;
   enum MATH_TOKEN_TYPE type;
 
-  buf = get_symbol_string(str, TRUE, &n);
+  buf = get_symbol_string(str, '%', &n);
   type = check_reserved(buf);
   if (type != MATH_TOKEN_TYPE_UNKNOWN) {
     g_free(buf);
