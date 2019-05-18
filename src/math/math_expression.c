@@ -883,6 +883,40 @@ factorial(unsigned int n)
 }
 
 static int
+set_string_argument(MathFunctionCallExpression *exp, MathEquation *eq, int i)
+{
+  MathValue v;
+  const char *str;
+  GString *gstr;
+
+  switch (exp->argv[i]->type) {
+  case MATH_EXPRESSION_TYPE_STRING:
+    str = exp->argv[i]->u.string;
+    break;
+  case MATH_EXPRESSION_TYPE_STRING_ARRAY:
+    if (CALC_EXPRESSION(exp->argv[i]->u.array.operand, v)) {
+      return 1;
+    }
+    str = math_equation_get_array_cstr(eq, exp->argv[i]->u.array.index, v.val);
+    break;
+  case MATH_EXPRESSION_TYPE_STRING_VARIABLE:
+    math_equation_get_string_var(eq, exp->argv[i]->u.index, &gstr);
+    if (gstr == NULL) {
+      return 1;
+    }
+    str = gstr->str;
+    break;
+  default:
+    return 1;
+  }
+  if (str == NULL) {
+    return 1;
+  }
+  exp->buf[i].str.cstr = str;
+  return 0;
+}
+
+static int
 call_func(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *val)
 {
   int i, n, arg_type_num;
