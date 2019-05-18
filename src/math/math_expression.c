@@ -1558,6 +1558,61 @@ set_val_to_array(MathExpression *exp, MathValue *val, enum MATH_OPERATOR_TYPE op
   }
 
 static int
+assign_string(MathExpression *exp, MathValue *val)
+{
+  GString *gstr;
+  int id;
+  const char *str;
+  MathValue operand;
+  MathExpression *left, *right;
+
+  right = exp->u.assign.right;
+  switch (right->type) {
+  case MATH_EXPRESSION_TYPE_STRING:
+    str = right->u.string;
+    break;
+  case MATH_EXPRESSION_TYPE_STRING_ARRAY:
+    if (CALC_EXPRESSION(right->u.array.operand, operand)) {
+      return 1;
+    }
+    str = math_equation_get_array_cstr(exp->equation, right->u.array.index, operand.val);
+    if (str == NULL) {
+      return 1;
+    }
+    /* to be implemented */
+    break;
+  default:
+    id = (int) right->u.index;
+    math_equation_get_string_var(exp->equation, id, &gstr);
+    if (gstr == NULL) {
+      return 1;
+    }
+    str = gstr->str;
+    break;
+  }
+  left = exp->u.assign.left;
+  if (left->type == MATH_EXPRESSION_TYPE_STRING_VARIABLE) {
+    if (math_equation_set_var_string(exp->equation, left->u.index, str)) {
+      return 1;
+    }
+  } else {
+    MathValue v;
+    int i;
+    if (exp->u.assign.op != MATH_OPERATOR_TYPE_ASSIGN) {
+      return 1;
+    }
+    if (CALC_EXPRESSION(left->u.array.operand, v)) {
+      return 1;
+    }
+    i = v.val;
+    if (math_equation_set_array_str(exp->equation, left->u.array.index, i, str)) {
+      return 1;
+    }
+  }
+  return 0;
+}
+
+static int
 calc(MathExpression *exp, MathValue *val)
 {
   MathValue left, right, operand;
