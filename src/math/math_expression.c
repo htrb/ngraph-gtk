@@ -137,11 +137,12 @@ register_arg(MathExpression *func, const char *arg_name, enum MATH_FUNCTION_ARG_
     math_equation_add_var(func->equation, arg_name);
     break;
   case MATH_FUNCTION_ARG_TYPE_ARRAY:
+  case MATH_FUNCTION_ARG_TYPE_STRING_ARRAY:
     if (math_equation_check_array(func->equation, arg_name) >= 0) {
       /* the array already exist */
       return 1;
     }
-    math_equation_add_array(func->equation, arg_name);
+    math_equation_add_array(func->equation, arg_name, FALSE);
     break;
   case MATH_FUNCTION_ARG_TYPE_STRING:
   case MATH_FUNCTION_ARG_TYPE_STRING_VARIABLE:
