@@ -1597,7 +1597,7 @@ file_string_column(MathFunctionCallExpression *exp, MathEquation *eq, MathValue 
   rval->val = 0;
   rval->type = MATH_VALUE_NORMAL;
 
-  str = math_equation_get_string_variable_from_argument(exp, eq, 0);
+  str = math_equation_get_string_variable_from_argument(exp, 0);
   if (str == NULL) {
     return 1;
   }
