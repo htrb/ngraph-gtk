@@ -226,7 +226,9 @@ get_argument(struct math_string *str, MathEquation *eq, struct math_function_par
   int argc;
 
   argc = math_function_get_arg_type_num(fprm);
-  if (fprm->arg_type && i < argc && fprm->arg_type[i] == MATH_FUNCTION_ARG_TYPE_ARRAY) {
+  if (fprm->arg_type && i < argc &&
+      ( fprm->arg_type[i] == MATH_FUNCTION_ARG_TYPE_ARRAY ||
+	fprm->arg_type[i] == MATH_FUNCTION_ARG_TYPE_STRING_ARRAY)) {
     token = my_get_token(str);
     if (token->type != MATH_TOKEN_TYPE_SYMBOL) {
       *err = MATH_ERROR_INVALID_FDEF;
