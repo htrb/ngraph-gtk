@@ -133,7 +133,7 @@ struct _math_expression {
 
 MathExpression *math_expression_new(enum MATH_EXPRESSION_TYPE type, MathEquation *eq, int *err);
 MathExpression *math_eoeq_expression_new(MathEquation *eq, int *err);
-MathExpression *math_array_expression_new(MathEquation *eq, const char *name, MathExpression *operand, int *err);
+MathExpression *math_array_expression_new(MathEquation *eq, const char *name, MathExpression *operand, int is_string, int *err);
 MathExpression *math_array_argument_expression_new(MathEquation *eq, const char *name, int *err);
 MathExpression *math_unary_expression_new(enum MATH_EXPRESSION_TYPE type, MathEquation *eq, MathExpression *operand, int *err);
 MathExpression *math_binary_expression_new(enum MATH_EXPRESSION_TYPE type, MathEquation *eq, MathExpression *left, MathExpression *right, int *err);
