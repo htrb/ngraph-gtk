@@ -1071,6 +1071,7 @@ parse_string_assign_expression(struct math_string *str, MathEquation *eq, struct
   switch (rexp->type) {
   case MATH_EXPRESSION_TYPE_STRING:
   case MATH_EXPRESSION_TYPE_STRING_VARIABLE:
+  case MATH_EXPRESSION_TYPE_STRING_ARRAY:
     exp = math_assign_expression_new(MATH_EXPRESSION_TYPE_STRING_ASSIGN, eq, lexp, rexp, token->data.op, err);
     if (exp == NULL) {
       math_expression_free(lexp);
