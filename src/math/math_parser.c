@@ -124,13 +124,23 @@ parse_primary_expression(struct math_string *str, MathEquation *eq, int *err)
     math_scanner_free_token(token);
     return NULL;
   case MATH_TOKEN_TYPE_STRING_VARIABLE:
-    exp = math_string_variable_expression_new(eq, token->data.sym, err);
+    token2 = my_get_token(str);
+    unget_token(token2);
+    if (token2->type == MATH_TOKEN_TYPE_LB) {
+      exp = parse_array_expression(str, eq, token->data.sym, TRUE, err);
+      if (exp == NULL) {
+	math_scanner_free_token(token);
+	return NULL;
+      }
+    } else {
+      exp = math_string_variable_expression_new(eq, token->data.sym, err);
+    }
     break;
   case MATH_TOKEN_TYPE_SYMBOL:
     token2 = my_get_token(str);
     unget_token(token2);
     if (token2->type == MATH_TOKEN_TYPE_LB) {
-      exp = parse_array_expression(str, eq, token->data.sym, err);
+      exp = parse_array_expression(str, eq, token->data.sym, FALSE, err);
       if (exp == NULL) {
 	math_scanner_free_token(token);
 	return NULL;
