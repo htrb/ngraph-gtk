@@ -78,7 +78,7 @@ struct _math_stack {
 
 struct _math_equation {
   MathStack stack, string_stack;
-  MathArray array;
+  MathArray array, string_array;
   NHASH constant, function;
   int cnum, pos_func_num;
   int func_def;
