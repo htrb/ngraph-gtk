@@ -1724,6 +1724,23 @@ math_equation_get_array_val(MathEquation *eq, int array, int index, MathValue *v
   return 0;
 }
 
+int
+math_equation_set_array_str(MathEquation *eq, int array, int index, const char *str)
+{
+  int i;
+
+  if (str == NULL || eq == NULL) {
+    return 1;
+  }
+  i = check_array(&eq->string_array, array, index);
+  if (i < 0)
+    return 1;
+
+  g_string_assign(eq->string_array.buf[array].data.str[i], str);
+
+  return 0;
+}
+
 MathEquationArray *
 math_equation_get_array(MathEquation *eq, int array)
 {
