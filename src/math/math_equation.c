@@ -1299,28 +1299,9 @@ math_equation_get_const(MathEquation *eq, int idx, MathValue *val)
 }
 
 const char *
-math_equation_get_string_from_argument(MathFunctionCallExpression *exp, MathEquation *eq, int i)
+math_equation_get_string_from_argument(MathFunctionCallExpression *exp, int i)
 {
-  int id;
-  GString *gstr;
-  const char *str;
-
-  str = NULL;
-  switch (exp->argv[i]->type) {
-  case MATH_EXPRESSION_TYPE_STRING:
-    str = exp->buf[i].exp->u.string;
-    break;
-  case MATH_EXPRESSION_TYPE_STRING_VARIABLE:
-    id = (int) exp->buf[i].idx;
-    math_equation_get_string_var(eq, id, &gstr);
-    if (gstr) {
-      str = gstr->str;
-    }
-    break;
-  default:
-    break;
-  }
-  return str;
+  return exp->buf[i].str.cstr;
 }
 
 GString *
