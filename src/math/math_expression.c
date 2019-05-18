@@ -419,17 +419,19 @@ math_string_variable_expression_new(MathEquation *eq, const char *str, int *err)
 }
 
 MathExpression *
-math_array_expression_new(MathEquation *eq, const char *name, MathExpression *operand, int *err)
+math_array_expression_new(MathEquation *eq, const char *name, MathExpression *operand, int is_string, int *err)
 {
   MathExpression *exp;
   int i;
+  enum MATH_EXPRESSION_TYPE type;
 
-  exp = math_expression_new(MATH_EXPRESSION_TYPE_ARRAY, eq, err);
+  type = (is_string) ? MATH_EXPRESSION_TYPE_STRING_ARRAY : MATH_EXPRESSION_TYPE_ARRAY;
+  exp = math_expression_new(type, eq, err);
   if (exp == NULL) {
     return NULL;
   }
 
-  i = math_equation_add_array(eq, name);
+  i = math_equation_add_array(eq, name, is_string);
   if (i < 0) {
     *err = MATH_ERROR_MEMORY;
     math_expression_free(exp);
