@@ -1892,6 +1892,18 @@ calc(MathExpression *exp, MathValue *val)
   return 0;
 }
 
+const char *
+math_expression_get_string_from_argument(MathFunctionCallExpression *exp, int i)
+{
+  return exp->buf[i].str.cstr;
+}
+
+GString *
+math_expression_get_string_variable_from_argument(MathFunctionCallExpression *exp, int i)
+{
+  return exp->buf[i].str.gstr;
+}
+
 int
 math_expression_calculate(MathExpression *exp, MathValue *val)
 {

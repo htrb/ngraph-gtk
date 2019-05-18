@@ -3161,8 +3161,8 @@ math_func_string_append(MathFunctionCallExpression *exp, MathEquation *eq, MathV
   rval->val = 0;
   rval->type = MATH_VALUE_NORMAL;
 
-  dest = math_equation_get_string_variable_from_argument(exp, 0);
-  str = math_equation_get_string_from_argument(exp, 1);
+  dest = math_expression_get_string_variable_from_argument(exp, 0);
+  str = math_expression_get_string_from_argument(exp, 1);
   if (dest == NULL || str == NULL) {
     return 1;
   }
@@ -3179,8 +3179,8 @@ math_func_string_prepend(MathFunctionCallExpression *exp, MathEquation *eq, Math
   rval->val = 0;
   rval->type = MATH_VALUE_NORMAL;
 
-  dest = math_equation_get_string_variable_from_argument(exp, 0);
-  str = math_equation_get_string_from_argument(exp, 1);
+  dest = math_expression_get_string_variable_from_argument(exp, 0);
+  str = math_expression_get_string_from_argument(exp, 1);
   if (dest == NULL || str == NULL) {
     return 1;
   }
@@ -3197,8 +3197,8 @@ math_func_string_compare(MathFunctionCallExpression *exp, MathEquation *eq, Math
   rval->val = 0;
   rval->type = MATH_VALUE_NORMAL;
 
-  str1 = math_equation_get_string_from_argument(exp, 0);
-  str2 = math_equation_get_string_from_argument(exp, 1);
+  str1 = math_expression_get_string_from_argument(exp, 0);
+  str2 = math_expression_get_string_from_argument(exp, 1);
   if (str1 == NULL || str2 == NULL) {
     return 1;
   }
@@ -3223,8 +3223,8 @@ math_func_string_up(MathFunctionCallExpression *exp, MathEquation *eq, MathValue
   rval->val = 0;
   rval->type = MATH_VALUE_NORMAL;
 
-  dest = math_equation_get_string_variable_from_argument(exp, 0);
-  src  = math_equation_get_string_from_argument(exp, 1);
+  dest = math_expression_get_string_variable_from_argument(exp, 0);
+  src  = math_expression_get_string_from_argument(exp, 1);
   if (dest == NULL || src == NULL) {
     return 1;
   }
@@ -3247,8 +3247,8 @@ math_func_string_down(MathFunctionCallExpression *exp, MathEquation *eq, MathVal
   rval->val = 0;
   rval->type = MATH_VALUE_NORMAL;
 
-  dest = math_equation_get_string_variable_from_argument(exp, 0);
-  src  = math_equation_get_string_from_argument(exp, 1);
+  dest = math_expression_get_string_variable_from_argument(exp, 0);
+  src  = math_expression_get_string_from_argument(exp, 1);
   if (dest == NULL || src == NULL) {
     return 1;
   }
@@ -3269,7 +3269,7 @@ math_func_string_put(MathFunctionCallExpression *exp, MathEquation *eq, MathValu
   rval->val = 0;
   rval->type = MATH_VALUE_NORMAL;
 
-  str = math_equation_get_string_from_argument(exp, 0);
+  str = math_expression_get_string_from_argument(exp, 0);
   if (str == NULL) {
     return 1;
   }
@@ -3285,7 +3285,7 @@ math_func_string_length(MathFunctionCallExpression *exp, MathEquation *eq, MathV
   rval->val = 0;
   rval->type = MATH_VALUE_NORMAL;
 
-  str = math_equation_get_string_from_argument(exp, 0);
+  str = math_expression_get_string_from_argument(exp, 0);
   if (str == NULL) {
     return 1;
   }
@@ -3304,7 +3304,7 @@ math_func_string_float(MathFunctionCallExpression *exp, MathEquation *eq, MathVa
   rval->val = 0;
   rval->type = MATH_VALUE_NORMAL;
 
-  str = math_equation_get_string_from_argument(exp, 0);
+  str = math_expression_get_string_from_argument(exp, 0);
   if (str == NULL) {
     return 1;
   }
@@ -3324,10 +3324,10 @@ math_func_string_replace(MathFunctionCallExpression *exp, MathEquation *eq, Math
   rval->val = 0;
   rval->type = MATH_VALUE_NORMAL;
 
-  dest = math_equation_get_string_variable_from_argument(exp, 0);
-  src         = math_equation_get_string_from_argument(exp, 1);
-  pattern     = math_equation_get_string_from_argument(exp, 2);
-  replacement = math_equation_get_string_from_argument(exp, 3);
+  dest = math_expression_get_string_variable_from_argument(exp, 0);
+  src         = math_expression_get_string_from_argument(exp, 1);
+  pattern     = math_expression_get_string_from_argument(exp, 2);
+  replacement = math_expression_get_string_from_argument(exp, 3);
 
   MATH_CHECK_ARG(rval, exp->buf[4]);
   ignore_case = exp->buf[4].val.val;
@@ -3374,8 +3374,8 @@ math_func_string_substring(MathFunctionCallExpression *exp, MathEquation *eq, Ma
   rval->val = 0;
   rval->type = MATH_VALUE_NORMAL;
 
-  dest = math_equation_get_string_variable_from_argument(exp, 0);
-  src  = math_equation_get_string_from_argument(exp, 1);
+  dest = math_expression_get_string_variable_from_argument(exp, 0);
+  src  = math_expression_get_string_from_argument(exp, 1);
   if (dest == NULL || src == NULL) {
     return 1;
   }
@@ -3405,8 +3405,8 @@ math_func_string_reverse(MathFunctionCallExpression *exp, MathEquation *eq, Math
   rval->val = 0;
   rval->type = MATH_VALUE_NORMAL;
 
-  dest = math_equation_get_string_variable_from_argument(exp, 0);
-  src  = math_equation_get_string_from_argument(exp, 1);
+  dest = math_expression_get_string_variable_from_argument(exp, 0);
+  src  = math_expression_get_string_from_argument(exp, 1);
   if (dest == NULL || src == NULL) {
     return 1;
   }
@@ -3431,7 +3431,7 @@ math_func_string_strip(MathFunctionCallExpression *exp, MathEquation *eq, MathVa
   rval->val = 0;
   rval->type = MATH_VALUE_NORMAL;
 
-  src = math_equation_get_string_variable_from_argument(exp, 0);
+  src = math_expression_get_string_variable_from_argument(exp, 0);
   if (src == NULL || src->str == NULL) {
     return 1;
   }
@@ -3457,7 +3457,7 @@ math_func_string_format(MathFunctionCallExpression *exp, MathEquation *eq, MathV
   rval->val = val;
   rval->type = MATH_VALUE_NORMAL;
 
-  gstr = math_equation_get_string_variable_from_argument(exp, 0);
+  gstr = math_expression_get_string_variable_from_argument(exp, 0);
   if (gstr == NULL) {
     return 1;
   }
@@ -3479,9 +3479,9 @@ math_func_string_split(MathFunctionCallExpression *exp, MathEquation *eq, MathVa
   rval->val = 0;
   rval->type = MATH_VALUE_NORMAL;
 
-  dest = math_equation_get_string_variable_from_argument(exp, 0);
-  src  = math_equation_get_string_from_argument(exp, 1);
-  delm = math_equation_get_string_from_argument(exp, 2);
+  dest = math_expression_get_string_variable_from_argument(exp, 0);
+  src  = math_expression_get_string_from_argument(exp, 1);
+  delm = math_expression_get_string_from_argument(exp, 2);
   if (dest == NULL || src == NULL || delm == NULL) {
     return 1;
   }
@@ -3538,8 +3538,8 @@ math_func_string_insert(MathFunctionCallExpression *exp, MathEquation *eq, MathV
   rval->val = 0;
   rval->type = MATH_VALUE_NORMAL;
 
-  dest = math_equation_get_string_variable_from_argument(exp, 0);
-  str  = math_equation_get_string_from_argument(exp, 1);
+  dest = math_expression_get_string_variable_from_argument(exp, 0);
+  str  = math_expression_get_string_from_argument(exp, 1);
   if (dest == NULL || str == NULL) {
     return 1;
   }
@@ -3571,7 +3571,7 @@ math_func_string_erase(MathFunctionCallExpression *exp, MathEquation *eq, MathVa
   if (ulen < 1) {
     return 1;
   }
-  src = math_equation_get_string_variable_from_argument(exp, 0);
+  src = math_expression_get_string_variable_from_argument(exp, 0);
   if (src == NULL || src->str == NULL) {
     return 1;
   }
@@ -3606,7 +3606,7 @@ math_func_string_truncate(MathFunctionCallExpression *exp, MathEquation *eq, Mat
   if (ulen < 1) {
     return 1;
   }
-  src = math_equation_get_string_variable_from_argument(exp, 0);
+  src = math_expression_get_string_variable_from_argument(exp, 0);
   if (src == NULL || src->str == NULL) {
     return 1;
   }
@@ -3630,8 +3630,8 @@ math_func_string_match(MathFunctionCallExpression *exp, MathEquation *eq, MathVa
   rval->val = 0;
   rval->type = MATH_VALUE_NORMAL;
 
-  src     = math_equation_get_string_from_argument(exp, 0);
-  pattern = math_equation_get_string_from_argument(exp, 1);
+  src     = math_expression_get_string_from_argument(exp, 0);
+  pattern = math_expression_get_string_from_argument(exp, 1);
 
   MATH_CHECK_ARG(rval, exp->buf[2]);
   ignore_case = exp->buf[2].val.val;

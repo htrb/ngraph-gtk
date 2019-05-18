@@ -173,9 +173,6 @@ void math_equation_set_func_arg_num_error(MathEquation *eq, struct math_function
 void math_equation_set_func_error(MathEquation *eq, struct math_function_parameter *fprm);
 void math_equation_set_const_error(MathEquation *eq, int id);
 
-const char *math_equation_get_string_from_argument(MathFunctionCallExpression *exp, int i);
-GString *math_equation_get_string_variable_from_argument(MathFunctionCallExpression *exp, int i);
-
 int math_equation_set_array_str(MathEquation *eq, int array, int index, const char *str);
 int math_equation_push_array_str(MathEquation *eq, int array, const char *str);
 GString *math_equation_get_array_str(MathEquation *eq, int array, int index);

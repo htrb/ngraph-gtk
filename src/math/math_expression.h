@@ -159,4 +159,7 @@ int math_expression_calculate(MathExpression *exp, MathValue *val);
 
 int math_function_get_arg_type_num(struct math_function_parameter *fprm);
 
+const char *math_expression_get_string_from_argument(MathFunctionCallExpression *exp, int i);
+GString *math_expression_get_string_variable_from_argument(MathFunctionCallExpression *exp, int i);
+
 #endif

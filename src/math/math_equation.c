@@ -1298,17 +1298,6 @@ math_equation_get_const(MathEquation *eq, int idx, MathValue *val)
   return 0;
 }
 
-const char *
-math_equation_get_string_from_argument(MathFunctionCallExpression *exp, int i)
-{
-  return exp->buf[i].str.cstr;
-}
-
-GString *
-math_equation_get_string_variable_from_argument(MathFunctionCallExpression *exp, int i)
-{
-  return exp->buf[i].str.gstr;
-}
 #define USER_FUNC_NEST_MAX 8192
 
 static int
@@ -1384,7 +1373,7 @@ math_equation_call_user_func(MathFunctionCallExpression *exp, MathEquation *eq, 
       break;
     case MATH_FUNCTION_ARG_TYPE_STRING:
     case MATH_FUNCTION_ARG_TYPE_STRING_VARIABLE:
-      str = math_equation_get_string_from_argument(exp, i);
+      str = math_expression_get_string_from_argument(exp, i);
       if (str == NULL) {
 	g_free(local);
 	return 1;
