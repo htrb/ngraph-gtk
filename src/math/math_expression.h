@@ -87,6 +87,10 @@ union _math_function_argument {
   MathValue val;
   MathExpression *exp;
   int idx;
+  union {
+    const char *cstr;
+    GString *gstr;
+  } str;
 };
 
 struct _math_function_call_expression {
