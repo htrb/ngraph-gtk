@@ -1858,11 +1858,7 @@ calc(MathExpression *exp, MathValue *val)
     if (CALC_EXPRESSION(exp->u.array.operand, operand)) {
       return 1;
     }
-    /*
-    if (math_equation_get_array_string(exp->equation, exp->u.array.index, operand.val, val)) {
-      return 1;
-    }
-    */
+    val->val = 0;
     break;
   case MATH_EXPRESSION_TYPE_PRM:
     if (exp->u.prm.prm->data == NULL) {
@@ -1881,21 +1877,8 @@ calc(MathExpression *exp, MathValue *val)
     val->val = 0;		/* a string is always evaluated as zero */
     break;
   case MATH_EXPRESSION_TYPE_STRING_ASSIGN:
-    if (exp->u.assign.right->type == MATH_EXPRESSION_TYPE_STRING) {
-      if (math_equation_set_var_string(exp->equation, exp->u.assign.left->u.index, exp->u.assign.right->u.string)) {
-	return 1;
-      }
-    } else {
-      GString *gstr;
-      int id;
-      id = (int) exp->u.assign.right->u.index;
-      math_equation_get_string_var(exp->equation, id, &gstr);
-      if (gstr == NULL) {
-	return 1;
-      }
-      if (math_equation_set_var_string(exp->equation, exp->u.assign.left->u.index, gstr->str)) {
-	return 1;
-      }
+    if (assign_string(exp, val)) {
+      return 1;
     }
     val->val = 0;	    /* a string is always evaluated as zero */
     break;
