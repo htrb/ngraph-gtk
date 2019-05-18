@@ -21,6 +21,7 @@ enum MATH_FUNCTION_ARG_TYPE {
   MATH_FUNCTION_ARG_TYPE_ARRAY,
   MATH_FUNCTION_ARG_TYPE_PROC,
   MATH_FUNCTION_ARG_TYPE_STRING_VARIABLE,
+  MATH_FUNCTION_ARG_TYPE_STRING_ARRAY,
 };
 
 typedef int (* math_function) (MathFunctionCallExpression *exp, MathEquation *eq, MathValue *r);
@@ -130,6 +131,8 @@ EOF
                  "MATH_FUNCTION_ARG_TYPE_STRING;"
              when "4"
                  "MATH_FUNCTION_ARG_TYPE_STRING_VARIABLE;"
+             when "5"
+                 "MATH_FUNCTION_ARG_TYPE_STRING_ARRAY;"
              end
              )
 
