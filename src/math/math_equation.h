@@ -156,7 +156,7 @@ int math_equation_add_var_string(MathEquation *eq, const char *name);
 int math_equation_set_var_string(MathEquation *eq, int idx, const char *str);
 
 int math_equation_check_array(MathEquation *eq, const char *name);
-int math_equation_add_array(MathEquation *eq, const char *name);
+int math_equation_add_array(MathEquation *eq, const char *name, int is_string);
 int math_equation_set_array_val(MathEquation *eq, int array, int index, const MathValue *val);
 int math_equation_push_array_val(MathEquation *eq, int array, const MathValue *val);
 int math_equation_get_array_val(MathEquation *eq, int array, int index, MathValue *val);
@@ -173,7 +173,12 @@ void math_equation_set_func_arg_num_error(MathEquation *eq, struct math_function
 void math_equation_set_func_error(MathEquation *eq, struct math_function_parameter *fprm);
 void math_equation_set_const_error(MathEquation *eq, int id);
 
-const char *math_equation_get_string_from_argument(MathFunctionCallExpression *exp, MathEquation *eq, int i);
-GString *math_equation_get_string_variable_from_argument(MathFunctionCallExpression *exp, MathEquation *eq, int i);
+const char *math_equation_get_string_from_argument(MathFunctionCallExpression *exp, int i);
+GString *math_equation_get_string_variable_from_argument(MathFunctionCallExpression *exp, int i);
+
+int math_equation_set_array_str(MathEquation *eq, int array, int index, const char *str);
+int math_equation_push_array_str(MathEquation *eq, int array, const char *str);
+GString *math_equation_get_array_str(MathEquation *eq, int array, int index);
+const char *math_equation_get_array_cstr(MathEquation *eq, int array, int index);
 
 #endif
