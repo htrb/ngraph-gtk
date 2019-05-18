@@ -1769,6 +1769,18 @@ math_equation_get_array_str(MathEquation *eq, int array, int index)
   return eq->string_array.buf[array].data.str[i];
 }
 
+const char *
+math_equation_get_array_cstr(MathEquation *eq, int array, int index)
+{
+  GString *str;
+  str = math_equation_get_array_str(eq, array, index);
+  if (str == NULL) {
+    return NULL;
+  }
+
+  return str->str;
+}
+
 MathEquationArray *
 math_equation_get_array(MathEquation *eq, int array)
 {
