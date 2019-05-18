@@ -54,7 +54,7 @@ unget_token(struct math_token *token)
 }
 
 static MathExpression *
-parse_array_expression(struct math_string *str, MathEquation *eq, const char *name, int *err)
+parse_array_expression(struct math_string *str, MathEquation *eq, const char *name, int is_string, int *err)
 {
   struct math_token *token;
   MathExpression *operand, *exp;
@@ -87,7 +87,7 @@ parse_array_expression(struct math_string *str, MathEquation *eq, const char *na
 
   math_scanner_free_token(token);
 
-  exp = math_array_expression_new(eq, name, operand, err);
+  exp = math_array_expression_new(eq, name, operand, is_string, err);
   if (exp == NULL) {
     math_expression_free(operand);
     return NULL;
