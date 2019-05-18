@@ -1741,6 +1741,19 @@ math_equation_set_array_str(MathEquation *eq, int array, int index, const char *
   return 0;
 }
 
+int
+math_equation_push_array_str(MathEquation *eq, int array, const char *str)
+{
+  MathEquationArray *ary;
+
+  ary = math_equation_get_array(eq, array);
+  if (ary == NULL) {
+    return 1;
+  }
+
+  return math_equation_set_array_str(eq, array, ary->num, str);
+}
+
 MathEquationArray *
 math_equation_get_array(MathEquation *eq, int array)
 {
