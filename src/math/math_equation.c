@@ -1048,6 +1048,15 @@ optimize_const_definition(MathEquation *eq)
   return 0;
 }
 
+static void
+init_string_array(GString **str, int n)
+{
+  int i;
+  for (i = 0; i < n; i++) {
+    str[i] = g_string_new("");
+  }
+}
+
 static int
 expand_stack(MathStack *stack, int size)
 {
