@@ -1863,10 +1863,12 @@ check_const_sub(MathExpression *exp, int *constant, int n)
     }
     break;
   case MATH_EXPRESSION_TYPE_ARRAY:
+  case MATH_EXPRESSION_TYPE_STRING_ARRAY:
     r = check_const_sub(exp->u.array.operand, constant, n);
     break;
   case MATH_EXPRESSION_TYPE_CONST_DEF:
   case MATH_EXPRESSION_TYPE_ARRAY_ARGUMENT:
+  case MATH_EXPRESSION_TYPE_STRING_ARRAY_ARGUMENT:
   case MATH_EXPRESSION_TYPE_VARIABLE:
   case MATH_EXPRESSION_TYPE_DOUBLE:
   case MATH_EXPRESSION_TYPE_PRM:
