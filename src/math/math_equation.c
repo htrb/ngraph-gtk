@@ -1384,7 +1384,7 @@ math_equation_call_user_func(MathFunctionCallExpression *exp, MathEquation *eq, 
       break;
     case MATH_FUNCTION_ARG_TYPE_STRING:
     case MATH_FUNCTION_ARG_TYPE_STRING_VARIABLE:
-      str = math_equation_get_string_from_argument(exp,eq, i);
+      str = math_equation_get_string_from_argument(exp, i);
       if (str == NULL) {
 	g_free(local);
 	return 1;
