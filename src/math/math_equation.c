@@ -1606,18 +1606,19 @@ math_equation_add_array(MathEquation *eq, const char *name, int is_string)
 }
 
 static int
-check_array(MathEquation *eq, int id, int index)
+check_array(MathArray *array, int id, int index)
 {
   int i;
   MathEquationArray *ary;
-  MathValue *ptr;
+  void *ptr;
+  size_t element_size;
 
-  if (eq == NULL || eq->array.buf == NULL || id < 0 || id >= eq->array.num) {
+  if (array->buf == NULL || id < 0 || id >= array->num) {
     /* error: the array is not exist */
     return -1;
   }
 
-  ary = eq->array.buf + id;
+  ary = array->buf + id;
 
   if (index < 0) {
     i = ary->num + index;
@@ -1630,20 +1631,24 @@ check_array(MathEquation *eq, int id, int index)
     return -1;
   }
 
+  element_size = (array->type == DATA_TYPE_STRING) ? sizeof(*ary->data.str) : sizeof(*ary->data.val);
   if (i >= ary->size) {
     int n;
 
     n = (i / BUF_UNIT + 1) * BUF_UNIT;
 
-    ptr = g_realloc(ary->data.val, sizeof(*ary->data.val) * n);
+    ptr = g_realloc(ary->data.val, element_size * n);
     if (ptr == NULL) {
       /* error: cannot allocate enough memory */
       return -1;
     }
 
-    memset(ptr + ary->num, 0, sizeof(*ptr) * (n - ary->num));
-
-    ary->data.val = ptr;
+    ary->data.ptr = ptr;
+    if (array->type == DATA_TYPE_STRING) {
+      init_string_array(ary->data.str + ary->num, n - ary->num);
+    } else {
+      memset(ary->data.val + ary->num, 0, element_size * (n - ary->num));
+    }
     ary->size = n;
   }
 
