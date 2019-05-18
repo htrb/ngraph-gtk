@@ -1546,7 +1546,7 @@ file_draw_text(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   rval->val = 0;
   rval->type = MATH_VALUE_NORMAL;
 
-  str = (char *) math_equation_get_string_from_argument(exp, eq, 0);
+  str = (char *) math_equation_get_string_from_argument(exp, 0);
   if (str == NULL) {
     return 0;
   }
