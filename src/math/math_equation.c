@@ -1561,35 +1561,41 @@ math_equation_check_array(MathEquation *eq, const char *name)
 }
 
 int
-math_equation_add_array(MathEquation *eq, const char *name)
+math_equation_add_array(MathEquation *eq, const char *name, int is_string)
 {
   int i, r;
+  MathArray *array;
 
   if (eq == NULL)
     return -1;
 
+  if (is_string) {
+    array = &eq->string_array;
+  } else {
+    array = &eq->array;
+  }
   if (eq->func_def) {
-    r = nhash_get_int(eq->array.local_array, name, &i);
+    r = nhash_get_int(array->local_array, name, &i);
     if (r) {
-      i = eq->array.local_num;
-      if (nhash_set_int(eq->array.local_array, name, i)) {
+      i = array->local_num;
+      if (nhash_set_int(array->local_array, name, i)) {
 	/* error: cannot allocate enough memory */
 	return -1;
       }
-      eq->array.local_num++;
+      array->local_num++;
     }
   } else {
-    r = nhash_get_int(eq->array.array, name, &i);
+    r = nhash_get_int(array->array, name, &i);
     if (r) {
-      i = eq->array.num;
-      eq->array.buf = add_to_ary_array(eq->array.buf, &eq->array.num);
+      i = array->num;
+      array->buf = add_to_ary_array(array->buf, &array->num);
 
-      if (eq->array.array == NULL) {
+      if (array->array == NULL) {
 	/* error: cannot allocate enough memory */
 	return -1;
       }
 
-      if (nhash_set_int(eq->array.array, name, i)) {
+      if (nhash_set_int(array->array, name, i)) {
 	/* error: cannot allocate enough memory */
 	return -1;
       }
