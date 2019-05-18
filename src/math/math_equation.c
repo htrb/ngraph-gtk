@@ -1664,7 +1664,10 @@ math_equation_clear_array(MathEquation *eq, int array)
 {
   int i;
 
-  i = check_array(eq, array, 0);
+  if (eq == NULL) {
+    return 1;
+  }
+  i = check_array(&eq->array, array, 0);
   if (i < 0)
     return 1;
 
