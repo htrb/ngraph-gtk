@@ -917,6 +917,32 @@ set_string_argument(MathFunctionCallExpression *exp, MathEquation *eq, int i)
 }
 
 static int
+set_string_variable_argument(MathFunctionCallExpression *exp, MathEquation *eq, int i)
+{
+  MathValue v;
+  GString *gstr;
+
+  switch (exp->argv[i]->type) {
+  case MATH_EXPRESSION_TYPE_STRING_ARRAY:
+    if (CALC_EXPRESSION(exp->argv[i]->u.array.operand, v)) {
+      return 1;
+    }
+    gstr = math_equation_get_array_str(eq, exp->argv[i]->u.array.index, v.val);
+    break;
+  case MATH_EXPRESSION_TYPE_STRING_VARIABLE:
+    math_equation_get_string_var(eq, exp->argv[i]->u.index, &gstr);
+    break;
+  default:
+    return 1;
+  }
+  if (gstr == NULL) {
+    return 1;
+  }
+  exp->buf[i].str.gstr = gstr;
+  return 0;
+}
+
+static int
 call_func(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *val)
 {
   int i, n, arg_type_num;
