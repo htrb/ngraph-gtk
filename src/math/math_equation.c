@@ -1712,7 +1712,10 @@ math_equation_get_array_val(MathEquation *eq, int array, int index, MathValue *v
 {
   int i;
 
-  i = check_array(eq, array, index);
+  if (eq == NULL) {
+    return 1;
+  }
+  i = check_array(&eq->array, array, index);
   if (i < 0)
     return 1;
 
