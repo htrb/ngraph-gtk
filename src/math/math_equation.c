@@ -236,6 +236,11 @@ math_equation_new(void)
     math_equation_free(eq);
     return NULL;
   }
+  r = math_array_init(&(eq->string_array), DATA_TYPE_STRING);
+  if (r) {
+    math_equation_free(eq);
+    return NULL;
+  }
 
   if (eq->function == NULL ||
       eq->constant == NULL) {
