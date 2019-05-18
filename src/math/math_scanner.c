@@ -275,12 +275,12 @@ get_ope(const char *str,  const char ** rstr)
 }
 
 static char *
-get_symbol_string(const char *str, int prm, int *len)
+get_symbol_string(const char *str, char prefix, int *len)
 {
   char *buf;
   int n, i;
 
-  if (prm && str[0] == '%') {
+  if (str[0] == prefix) {
     n = 1;
   } else {
     n = 0;
