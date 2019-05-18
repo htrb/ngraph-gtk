@@ -406,11 +406,10 @@ get_string_variable(const char *str, const char ** rstr)
   struct math_token *tok;
   char *buf;
   int n;
-  buf = get_symbol_string(str + 1, FALSE, &n);
+  buf = get_symbol_string(str, '$', &n);
   if (buf == NULL) {
     return NULL;
   }
-  n++;
   tok = create_token(str, MATH_TOKEN_TYPE_STRING_VARIABLE);
   if (tok == NULL) {
     g_free(buf);
