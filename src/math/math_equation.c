@@ -1754,6 +1754,21 @@ math_equation_push_array_str(MathEquation *eq, int array, const char *str)
   return math_equation_set_array_str(eq, array, ary->num, str);
 }
 
+GString *
+math_equation_get_array_str(MathEquation *eq, int array, int index)
+{
+  int i;
+
+  if (eq == NULL) {
+    return NULL;
+  }
+  i = check_array(&eq->string_array, array, index);
+  if (i < 0)
+    return NULL;
+
+  return eq->string_array.buf[array].data.str[i];
+}
+
 MathEquationArray *
 math_equation_get_array(MathEquation *eq, int array)
 {
