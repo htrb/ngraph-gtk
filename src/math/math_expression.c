@@ -455,7 +455,7 @@ math_array_argument_expression_new(MathEquation *eq, const char *name, int *err)
     return NULL;
   }
 
-  i = math_equation_add_array(eq, name);
+  i = math_equation_add_array(eq, name, FALSE);
   if (i < 0) {
     *err = MATH_ERROR_MEMORY;
     math_expression_free(exp);
