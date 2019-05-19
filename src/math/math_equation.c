@@ -1813,6 +1813,12 @@ math_equation_get_array_common(MathArray *array, int id)
   return &array->buf[id];
 }
 
+MathEquationArray *
+math_equation_get_array(MathEquation *eq, int id)
+{
+  return math_equation_get_array_common(&eq->array, id);
+}
+
 }
 
 void
