@@ -1819,6 +1819,10 @@ math_equation_get_array(MathEquation *eq, int id)
   return math_equation_get_array_common(&eq->array, id);
 }
 
+MathEquationArray *
+math_equation_get_string_array(MathEquation *eq, int id)
+{
+  return math_equation_get_array_common(&eq->string_array, id);
 }
 
 void
