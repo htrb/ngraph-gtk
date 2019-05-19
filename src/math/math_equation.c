@@ -392,6 +392,27 @@ free_array_buf(MathEquationArray *buf, int num)
   g_free(buf);
 }
 
+static void
+free_array_buf_str(MathEquationArray *buf, int num)
+{
+  int i, j, n;
+  GString **ary;
+
+  if (buf == NULL) {
+    return;
+  }
+
+  for (i = 0; i < num; i++) {
+    ary = buf[i].data.str;
+    n = buf[i].num;
+    for (j = 0; j < n; j++) {
+      g_string_free(ary[j], TRUE);
+    }
+    g_free(buf[i].data.ptr);
+  }
+  g_free(buf);
+}
+
 void
 math_equation_free(MathEquation *eq)
 {
