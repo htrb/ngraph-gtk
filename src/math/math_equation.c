@@ -447,20 +447,15 @@ math_equation_free(MathEquation *eq)
   math_stack_free(&eq->stack);
   math_stack_free(&eq->string_stack);
 
+  math_array_free(&eq->array);
+  math_array_free(&eq->string_array);
+
   if (eq->function)
     free_func(eq->function);
-
-  if (eq->array.array)
-    nhash_free(eq->array.array);
-
-  if (eq->array.local_array)
-    nhash_free(eq->array.local_array);
 
   if (eq->const_def) {
     math_expression_free(eq->const_def);
   }
-
-  free_array_buf(eq->array.buf, eq->array.num);
 
   free_parameter(eq);
 
