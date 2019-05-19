@@ -162,6 +162,7 @@ int math_equation_push_array_val(MathEquation *eq, int array, const MathValue *v
 int math_equation_get_array_val(MathEquation *eq, int array, int index, MathValue *val);
 int math_equation_clear_array(MathEquation *eq, int array);
 MathEquationArray *math_equation_get_array(MathEquation *eq, int array);
+MathEquationArray *math_equation_get_string_array(MathEquation *eq, int id);
 
 void math_equation_set_user_data(MathEquation *eq, void *user_data);
 void *math_equation_get_user_data(MathEquation *eq);
