@@ -1364,6 +1364,26 @@ local_array_alloc(MathFunctionExpression *func, MathFunctionArgument *argv, Math
   return local;
 }
 
+static void
+local_array_free(MathFunctionExpression *func, MathFunctionArgument *argv, MathEquationArray *prev, MathEquationArray *local)
+{
+  int i, j;
+  if (func->fprm->arg_type == NULL) {
+    return;
+  }
+  j = 0;
+  for (i = 0; i < func->argc; i++) {
+    if (func->fprm->arg_type[i] == MATH_FUNCTION_ARG_TYPE_ARRAY) {
+      prev[argv[i].idx] = local[j];
+      local[j].num = 0;
+      local[j].size = 0;
+      local[j].data.val = NULL;
+      j++;
+    }
+  }
+  free_array_buf(local, func->local_array_num);
+}
+
 static int
 math_equation_call_user_func(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
