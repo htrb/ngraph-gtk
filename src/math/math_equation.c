@@ -413,6 +413,28 @@ free_array_buf_str(MathEquationArray *buf, int num)
   g_free(buf);
 }
 
+static void
+math_array_free(MathArray *array)
+{
+  if (array == NULL) {
+    return;
+  }
+  if (array->array) {
+    nhash_free(array->array);
+  }
+  if (array->local_array) {
+    nhash_free(array->local_array);
+  }
+  switch (array->type) {
+  case DATA_TYPE_VALUE:
+    free_array_buf(array->buf, array->num);
+    break;
+  case DATA_TYPE_STRING:
+    free_array_buf_str(array->buf, array->num);
+    break;
+  }
+}
+
 void
 math_equation_free(MathEquation *eq)
 {
