@@ -1338,6 +1338,32 @@ math_equation_get_const(MathEquation *eq, int idx, MathValue *val)
 
 #define USER_FUNC_NEST_MAX 8192
 
+static MathEquationArray *
+local_array_alloc(MathFunctionExpression *func, MathFunctionArgument *argv, MathEquationArray *prev)
+{
+  MathEquationArray *local;
+  int i, j;
+  if (func->local_array_num < 1) {
+    return NULL;
+  }
+  local = g_malloc(sizeof(*local) * func->local_array_num);
+  if (local == NULL) {
+    return NULL;
+  }
+  memset(local, 0, sizeof(*local) * func->local_array_num);
+
+  if (func->fprm->arg_type) {
+    j = 0;
+    for (i = 0; i < func->argc; i++) {
+      if (func->fprm->arg_type[i] == MATH_FUNCTION_ARG_TYPE_ARRAY) {
+	local[j] = prev[argv[i].idx];
+	j++;
+      }
+    }
+  }
+  return local;
+}
+
 static int
 math_equation_call_user_func(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
