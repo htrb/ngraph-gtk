@@ -1802,15 +1802,17 @@ math_equation_get_array_cstr(MathEquation *eq, int array, int index)
   return str->str;
 }
 
-MathEquationArray *
-math_equation_get_array(MathEquation *eq, int array)
+static MathEquationArray *
+math_equation_get_array_common(MathArray *array, int id)
 {
-  if (array < 0 || array >= eq->array.num || eq->array.buf == NULL) {
+  if (id < 0 || id >= array->num || array->buf == NULL) {
     /* error: the array is not exist */
     return NULL;
   }
 
-  return &eq->array.buf[array];
+  return &array->buf[id];
+}
+
 }
 
 void
