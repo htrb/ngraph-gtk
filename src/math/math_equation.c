@@ -1416,22 +1416,9 @@ math_equation_call_user_func(MathFunctionCallExpression *exp, MathEquation *eq, 
   prev = eq->array.buf;
   prev_num = eq->array.num;
 
-  if (func->u.func.local_array_num > 0) {
-    local = g_malloc(sizeof(*local) * func->u.func.local_array_num);
-    if (local == NULL)
-      return 1;
-
-    memset(local, 0, sizeof(*local) * func->u.func.local_array_num);
-
-    if (func->u.func.fprm->arg_type) {
-      j = 0;
-      for (i = 0; i < func->u.func.argc; i++) {
-	if (func->u.func.fprm->arg_type[i] == MATH_FUNCTION_ARG_TYPE_ARRAY) {
-	  local[j] = prev[argv[i].idx];
-	  j++;
-	}
-      }
-    }
+  local = local_array_alloc(&func->u.func, argv, prev);
+  if (func->u.func.local_array_num > 0 && local == NULL) {
+    return 1;
   }
 
   if (expand_stack(&(eq->stack), func->u.func.local_num)) {
@@ -1488,19 +1475,7 @@ math_equation_call_user_func(MathFunctionCallExpression *exp, MathEquation *eq, 
   eq->string_stack.end = str_end;
   eq->string_stack.ofst = str_ofst;
 
-  if (func->u.func.fprm->arg_type) {
-    j = 0;
-    for (i = 0; i < func->u.func.argc; i++) {
-      if (func->u.func.fprm->arg_type[i] == MATH_FUNCTION_ARG_TYPE_ARRAY) {
-	prev[argv[i].idx] = local[j];
-	local[j].num = 0;
-	local[j].size = 0;
-	local[j].data.val = NULL;
-	j++;
-      }
-    }
-  }
-  free_array_buf(local, func->u.func.local_array_num);
+  local_array_free(&func->u.func, argv, prev, local);
 
   return r;
 }
