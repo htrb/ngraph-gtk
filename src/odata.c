@@ -1520,7 +1520,8 @@ file_draw_text(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
       exp->buf[4].val.type != MATH_VALUE_NORMAL ||
       exp->buf[5].val.type != MATH_VALUE_NORMAL ||
       exp->buf[6].val.type != MATH_VALUE_NORMAL ||
-      exp->buf[7].val.type != MATH_VALUE_NORMAL) {
+      exp->buf[7].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[8].val.type != MATH_VALUE_NORMAL) {
     return 0;
   }
   x       = exp->buf[1].val.val;
@@ -1733,6 +1734,7 @@ static enum MATH_FUNCTION_ARG_TYPE draw_text_arg_type[] = {
   MATH_FUNCTION_ARG_TYPE_DOUBLE,
   MATH_FUNCTION_ARG_TYPE_DOUBLE,
   MATH_FUNCTION_ARG_TYPE_DOUBLE,
+  MATH_FUNCTION_ARG_TYPE_DOUBLE,
 };
 
 static enum MATH_FUNCTION_ARG_TYPE text_obj_set_arg_type[] = {
@@ -1769,7 +1771,7 @@ static struct funcs FileFunc[] = {
   {"DRAW_ERRORBAR2", {5, 0, 0, file_draw_errorbar2, NULL, NULL, NULL, NULL}},
   {"DRAW_POLYLINE",  {2, 0, 0, file_draw_polyline, draw_polyline_arg_type, NULL, NULL, NULL}},
   {"DRAW_POLYGON",   {4, 0, 0, file_draw_polygon, draw_polygon_arg_type, NULL, NULL, NULL}},
-  {"DRAW_TEXT",      {8, 0, 0, file_draw_text, draw_text_arg_type, NULL, NULL, NULL}},
+  {"DRAW_TEXT",      {9, 0, 0, file_draw_text, draw_text_arg_type, NULL, NULL, NULL}},
   {"TEXT_OBJ_SET",   {2, 0, 0, file_text_obj_set, text_obj_set_arg_type, NULL, NULL, NULL}},
   {"TEXT_OBJ_GET",   {2, 0, 0, file_text_obj_get, text_obj_get_arg_type, NULL, NULL, NULL}},
   {"STRING_COLUMN",  {2, 0, 0, file_string_column, string_column_arg_type, NULL, NULL, NULL}},
