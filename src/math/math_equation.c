@@ -1346,30 +1346,37 @@ math_equation_get_const(MathEquation *eq, int idx, MathValue *val)
 
 #define USER_FUNC_NEST_MAX 8192
 
-static MathEquationArray *
-local_array_alloc(MathFunctionExpression *func, MathFunctionArgument *argv, MathEquationArray *prev)
+struct usr_func_array_info {
+  int prev_num;
+  MathEquationArray *prev, *local;
+};
+
+static int
+local_array_alloc(MathFunctionExpression *func, MathFunctionArgument *argv, struct usr_func_array_info *info)
 {
-  MathEquationArray *local;
   int i, j;
-  if (func->local_array_num < 1) {
-    return NULL;
+  info->local = NULL;
+  if (func->local_array_num < 0) {
+    return 0;
   }
-  local = g_malloc(sizeof(*local) * func->local_array_num);
-  if (local == NULL) {
-    return NULL;
+  info->local = g_malloc(sizeof(*info->local) * func->local_array_num);
+  if (info->local == NULL) {
+    return 1;
   }
-  memset(local, 0, sizeof(*local) * func->local_array_num);
+  memset(info->local, 0, sizeof(*info->local) * func->local_array_num);
 
   if (func->fprm->arg_type) {
     j = 0;
     for (i = 0; i < func->argc; i++) {
       if (func->fprm->arg_type[i] == MATH_FUNCTION_ARG_TYPE_ARRAY) {
-	local[j] = prev[argv[i].idx];
+	info->local[j] = info->prev[argv[i].idx];
 	j++;
       }
     }
   }
-  return local;
+  return 0;
+}
+
 }
 
 static void
