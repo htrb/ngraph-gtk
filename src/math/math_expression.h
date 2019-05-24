@@ -57,7 +57,7 @@ struct math_func_arg_list {
 };
 
 typedef struct _math_function_expression {
-  int argc, local_num, local_string_num, local_array_num;
+  int argc, local_num, local_string_num, local_array_num, local_string_array_num;
   MathExpression *exp;
   struct math_function_parameter *fprm;
   struct math_func_arg_list *arg_list, *arg_last;
