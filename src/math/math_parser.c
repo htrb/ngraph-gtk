@@ -831,9 +831,13 @@ parse_parameter_list(struct math_string *str, MathEquation *eq, MathExpression *
 
     switch (token->type) {
     case MATH_TOKEN_TYPE_ARRAY_PREFIX:
-      type = MATH_FUNCTION_ARG_TYPE_ARRAY;
       math_scanner_free_token(token);
       token = my_get_token(str);
+      if (token->type == MATH_TOKEN_TYPE_SYMBOL) {
+	type = MATH_FUNCTION_ARG_TYPE_ARRAY;
+      } else {
+	type = MATH_FUNCTION_ARG_TYPE_STRING_ARRAY;
+      }
       break;
     case MATH_TOKEN_TYPE_STRING_VARIABLE:
       type = MATH_FUNCTION_ARG_TYPE_STRING;
