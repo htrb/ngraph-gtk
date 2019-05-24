@@ -971,7 +971,7 @@ parse_func_def_expression(struct math_string *str, MathEquation *eq, int *err)
 
   /* get parameters */
   if (parse_parameter_list(str, eq, exp, err)) {
-    math_equation_finish_user_func_definition(eq, NULL, NULL, NULL);
+    math_equation_finish_user_func_definition(eq, NULL, NULL, NULL, NULL);
     free_func_prm(exp->u.func.fprm);
     math_scanner_free_token(fname);
     math_expression_free(exp);
@@ -979,7 +979,7 @@ parse_func_def_expression(struct math_string *str, MathEquation *eq, int *err)
   }
 
   if (math_function_expression_register_arg(exp)) {
-    math_equation_finish_user_func_definition(eq, NULL, NULL, NULL);
+    math_equation_finish_user_func_definition(eq, NULL, NULL, NULL, NULL);
     free_func_prm(exp->u.func.fprm);
     math_scanner_free_token(fname);
     math_expression_free(exp);
@@ -988,7 +988,7 @@ parse_func_def_expression(struct math_string *str, MathEquation *eq, int *err)
   /* get block */
   block = parse_block_expression(str, eq, err);
   if (block == NULL) {
-    math_equation_finish_user_func_definition(eq, NULL, NULL, NULL);
+    math_equation_finish_user_func_definition(eq, NULL, NULL, NULL, NULL);
     free_func_prm(exp->u.func.fprm);
     math_scanner_free_token(fname);
     math_expression_free(exp);
@@ -996,7 +996,7 @@ parse_func_def_expression(struct math_string *str, MathEquation *eq, int *err)
   }
 
   if (math_function_expression_set_function(eq, exp, fname->data.sym, block)) {
-    math_equation_finish_user_func_definition(eq, NULL, NULL, NULL);
+    math_equation_finish_user_func_definition(eq, NULL, NULL, NULL, NULL);
     free_func_prm(exp->u.func.fprm);
     math_scanner_free_token(fname);
     math_expression_free(exp);
