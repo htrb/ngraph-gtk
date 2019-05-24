@@ -1657,6 +1657,24 @@ math_equation_check_array(MathEquation *eq, const char *name)
 }
 
 int
+math_equation_check_string_array(MathEquation *eq, const char *name)
+{
+  int r, i;
+
+  if (eq->func_def) {
+    r = nhash_get_int(eq->string_array.local_array, name, &i);
+  } else {
+    r = nhash_get_int(eq->string_array.array, name, &i);
+  }
+
+  if (r) {
+    return -1;
+  }
+
+  return i;
+}
+
+int
 math_equation_add_array(MathEquation *eq, const char *name, int is_string)
 {
   int i, r;
