@@ -919,7 +919,7 @@ clear_stack_local(MathStack *stack, int *vnum)
 }
 
 int
-math_equation_finish_user_func_definition(MathEquation *eq, int *vnum, int *anum, int *snum)
+math_equation_finish_user_func_definition(MathEquation *eq, int *vnum, int *anum, int *str_anum, int *snum)
 {
   if (eq == NULL || ! eq->func_def)
     return 1;
@@ -927,12 +927,18 @@ math_equation_finish_user_func_definition(MathEquation *eq, int *vnum, int *anum
   clear_stack_local(&eq->stack, vnum);
   clear_stack_local(&eq->string_stack, snum);
 
-  if (anum)
+  if (anum) {
     *anum = nhash_num(eq->array.local_array);
-
+  }
   nhash_clear(eq->array.local_array);
 
+  if (str_anum) {
+    *str_anum = nhash_num(eq->string_array.local_array);
+  }
+  nhash_clear(eq->string_array.local_array);
+
   eq->array.local_num = 0;
+  eq->string_array.local_num = 0;
   eq->func_def = 0;
 
   return 0;
