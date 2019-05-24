@@ -1380,7 +1380,7 @@ local_array_alloc(MathFunctionExpression *func, MathFunctionArgument *argv, stru
 }
 
 static void
-local_array_free(MathFunctionExpression *func, MathFunctionArgument *argv, MathEquationArray *prev, MathEquationArray *local)
+local_array_free(MathFunctionExpression *func, MathFunctionArgument *argv, struct usr_func_array_info *info)
 {
   int i, j;
   if (func->fprm->arg_type == NULL) {
@@ -1389,10 +1389,16 @@ local_array_free(MathFunctionExpression *func, MathFunctionArgument *argv, MathE
   j = 0;
   for (i = 0; i < func->argc; i++) {
     if (func->fprm->arg_type[i] == MATH_FUNCTION_ARG_TYPE_ARRAY) {
-      prev[argv[i].idx] = local[j];
-      local[j].num = 0;
-      local[j].size = 0;
-      local[j].data.val = NULL;
+      info->prev[argv[i].idx] = info->local[j];
+      info->local[j].num = 0;
+      info->local[j].size = 0;
+      info->local[j].data.val = NULL;
+      j++;
+    }
+  }
+  free_array_buf(info->local, func->local_array_num);
+}
+
       j++;
     }
   }
