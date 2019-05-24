@@ -393,7 +393,7 @@ free_array_buf(MathEquationArray *buf, int num)
 }
 
 static void
-free_array_buf_str(MathEquationArray *buf, int num)
+free_string_array_buf(MathEquationArray *buf, int num)
 {
   int i, j, n;
   GString **ary;
