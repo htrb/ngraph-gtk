@@ -432,7 +432,7 @@ math_array_free(MathArray *array)
     free_array_buf(array->buf, array->num);
     break;
   case DATA_TYPE_STRING:
-    free_array_buf_str(array->buf, array->num);
+    free_string_array_buf(array->buf, array->num);
     break;
   }
 }
