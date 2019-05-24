@@ -1447,8 +1447,8 @@ static int
 math_equation_call_user_func(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   static int nest = 0;
-  int ofst, end, str_ofst, str_end, r, i, j, k, prev_num;
-  MathEquationArray *prev, *local = NULL;
+  int ofst, end, str_ofst, str_end, r, i, j, k;
+  struct usr_func_array_info info, str_info;
   MathExpression *func;
   MathFunctionArgument *argv;
   const char *str;
@@ -1472,26 +1472,38 @@ math_equation_call_user_func(MathFunctionCallExpression *exp, MathEquation *eq, 
   end = eq->stack.end;
   str_ofst = eq->string_stack.ofst;
   str_end = eq->string_stack.end;
-  prev = eq->array.buf;
-  prev_num = eq->array.num;
+  info.prev = eq->array.buf;
+  info.prev_num = eq->array.num;
+  str_info.prev = eq->string_array.buf;
+  str_info.prev_num = eq->string_array.num;
 
-  local = local_array_alloc(&func->u.func, argv, prev);
-  if (func->u.func.local_array_num > 0 && local == NULL) {
+  local_array_alloc(&func->u.func, argv, &info);
+  if (func->u.func.local_array_num > 0 && info.local == NULL) {
+    return 1;
+  }
+
+  local_string_array_alloc(&func->u.func, argv, &str_info);
+  if (func->u.func.local_string_array_num > 0 && str_info.local == NULL) {
+    g_free(info.local);
     return 1;
   }
 
   if (expand_stack(&(eq->stack), func->u.func.local_num)) {
-    g_free(local);
+    g_free(info.local);
+    g_free(str_info.local);
     return 1;
   }
 
   if (expand_stack(&(eq->string_stack), func->u.func.local_string_num)) {
-    g_free(local);
+    g_free(info.local);
+    g_free(str_info.local);
     return 1;
   }
 
-  eq->array.buf = local;
+  eq->array.buf = info.local;
   eq->array.num = func->u.func.local_array_num;
+  eq->string_array.buf = str_info.local;
+  eq->string_array.num = func->u.func.local_string_array_num;
 
   j = k = 0;
   for (i = 0; i < exp->argc; i++) {
@@ -1505,7 +1517,8 @@ math_equation_call_user_func(MathFunctionCallExpression *exp, MathEquation *eq, 
     case MATH_FUNCTION_ARG_TYPE_STRING_VARIABLE:
       str = math_expression_get_string_from_argument(exp, i);
       if (str == NULL) {
-	g_free(local);
+	g_free(info.local);
+	g_free(str_info.local);
 	return 1;
       }
       gstr = eq->string_stack.stack.str[eq->string_stack.ofst + k];
@@ -1527,14 +1540,17 @@ math_equation_call_user_func(MathFunctionCallExpression *exp, MathEquation *eq, 
     eq->string_stack.stack.str[j] = NULL;
   }
 
-  eq->array.num = prev_num;
-  eq->array.buf = prev;
+  eq->array.num = info.prev_num;
+  eq->array.buf = info.prev;
+  eq->string_array.num = str_info.prev_num;
+  eq->string_array.buf = str_info.prev;
   eq->stack.end = end;
   eq->stack.ofst = ofst;
   eq->string_stack.end = str_end;
   eq->string_stack.ofst = str_ofst;
 
-  local_array_free(&func->u.func, argv, prev, local);
+  local_array_free(&func->u.func, argv, &info);
+  local_string_array_free(&func->u.func, argv, &str_info);
 
   return r;
 }
