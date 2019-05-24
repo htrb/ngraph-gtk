@@ -1423,10 +1423,24 @@ local_array_free(MathFunctionExpression *func, MathFunctionArgument *argv, struc
   free_array_buf(info->local, func->local_array_num);
 }
 
+static void
+local_string_array_free(MathFunctionExpression *func, MathFunctionArgument *argv, struct usr_func_array_info *info)
+{
+  int i, j;
+  if (func->fprm->arg_type == NULL) {
+    return;
+  }
+  j = 0;
+  for (i = 0; i < func->argc; i++) {
+    if (func->fprm->arg_type[i] == MATH_FUNCTION_ARG_TYPE_STRING_ARRAY) {
+      info->prev[argv[i].idx] = info->local[j];
+      info->local[j].num = 0;
+      info->local[j].size = 0;
+      info->local[j].data.str = NULL;
       j++;
     }
   }
-  free_array_buf(local, func->local_array_num);
+  free_string_array_buf(info->local, func->local_string_array_num);
 }
 
 static int
