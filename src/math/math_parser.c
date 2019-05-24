@@ -226,19 +226,36 @@ get_argument(struct math_string *str, MathEquation *eq, struct math_function_par
   int argc;
 
   argc = math_function_get_arg_type_num(fprm);
-  if (fprm->arg_type && i < argc &&
-      ( fprm->arg_type[i] == MATH_FUNCTION_ARG_TYPE_ARRAY ||
-	fprm->arg_type[i] == MATH_FUNCTION_ARG_TYPE_STRING_ARRAY)) {
-    token = my_get_token(str);
-    if (token->type != MATH_TOKEN_TYPE_SYMBOL) {
-      *err = MATH_ERROR_INVALID_FDEF;
-      math_equation_set_parse_error(eq, token->ptr, str);
+  if (fprm->arg_type && i < argc) {
+    switch (fprm->arg_type[i]) {
+    case MATH_FUNCTION_ARG_TYPE_ARRAY:
+      token = my_get_token(str);
+      if (token->type != MATH_TOKEN_TYPE_SYMBOL) {
+	*err = MATH_ERROR_INVALID_FDEF;
+	math_equation_set_parse_error(eq, token->ptr, str);
+	math_scanner_free_token(token);
+	/* invalid argument */
+	return NULL;
+      }
+      exp = math_array_argument_expression_new(eq, token->data.sym, err);
       math_scanner_free_token(token);
-      /* invalid argument */
-      return NULL;
+      break;
+    case MATH_FUNCTION_ARG_TYPE_STRING_ARRAY:
+      token = my_get_token(str);
+      if (token->type != MATH_TOKEN_TYPE_STRING_VARIABLE) {
+	*err = MATH_ERROR_INVALID_FDEF;
+	math_equation_set_parse_error(eq, token->ptr, str);
+	math_scanner_free_token(token);
+	/* invalid argument */
+	return NULL;
+      }
+      exp = math_string_array_argument_expression_new(eq, token->data.sym, err);
+      math_scanner_free_token(token);
+      break;
+    default:
+      exp = parse_expression(str, eq, err);
+      break;
     }
-    exp = math_array_argument_expression_new(eq, token->data.sym, err);
-    math_scanner_free_token(token);
   } else {
     exp = parse_expression(str, eq, err);
   }
