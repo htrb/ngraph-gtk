@@ -404,9 +404,11 @@ free_string_array_buf(MathEquationArray *buf, int num)
 
   for (i = 0; i < num; i++) {
     ary = buf[i].data.str;
-    n = buf[i].num;
+    n = buf[i].size;
     for (j = 0; j < n; j++) {
-      g_string_free(ary[j], TRUE);
+      if (ary[j]) {
+	g_string_free(ary[j], TRUE);
+      }
     }
     g_free(buf[i].data.ptr);
   }
