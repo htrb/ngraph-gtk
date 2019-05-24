@@ -474,6 +474,29 @@ math_array_argument_expression_new(MathEquation *eq, const char *name, int *err)
   return exp;
 }
 
+MathExpression *
+math_string_array_argument_expression_new(MathEquation *eq, const char *name, int *err)
+{
+  MathExpression *exp;
+  int i;
+
+  exp = math_expression_new(MATH_EXPRESSION_TYPE_STRING_ARRAY_ARGUMENT, eq, err);
+  if (exp == NULL) {
+    return NULL;
+  }
+
+  i = math_equation_add_array(eq, name, TRUE);
+  if (i < 0) {
+    *err = MATH_ERROR_MEMORY;
+    math_expression_free(exp);
+    return NULL;
+  }
+
+  exp->u.array.index = i;
+
+  return exp;
+}
+
 int
 math_function_get_arg_type_num(struct math_function_parameter *fprm)
 {
