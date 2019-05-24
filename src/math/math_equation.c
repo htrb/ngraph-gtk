@@ -1377,6 +1377,30 @@ local_array_alloc(MathFunctionExpression *func, MathFunctionArgument *argv, stru
   return 0;
 }
 
+static int
+local_string_array_alloc(MathFunctionExpression *func, MathFunctionArgument *argv, struct usr_func_array_info *info)
+{
+  int i, j;
+  info->local = NULL;
+  if (func->local_string_array_num < 0) {
+    return 0;
+  }
+  info->local = g_malloc(sizeof(*info->local) * func->local_string_array_num);
+  if (info->local == NULL) {
+    return 1;
+  }
+  memset(info->local, 0, sizeof(*info->local) * func->local_string_array_num);
+
+  if (func->fprm->arg_type) {
+    j = 0;
+    for (i = 0; i < func->argc; i++) {
+      if (func->fprm->arg_type[i] == MATH_FUNCTION_ARG_TYPE_STRING_ARRAY) {
+	info->local[j] = info->prev[argv[i].idx];
+	j++;
+      }
+    }
+  }
+  return 0;
 }
 
 static void
