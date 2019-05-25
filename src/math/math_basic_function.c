@@ -3468,39 +3468,30 @@ math_func_string_format(MathFunctionCallExpression *exp, MathEquation *eq, MathV
 int
 math_func_string_split(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  GString *dest;
   const char *delm, *src;
   char **ary;
-  int column, n;
-
-  MATH_CHECK_ARG(rval, exp->buf[3]);
-  column = exp->buf[3].val.val;
+  int i, id, compile_options, ignore_case;
 
   rval->val = 0;
   rval->type = MATH_VALUE_NORMAL;
 
-  dest = math_expression_get_string_variable_from_argument(exp, 0);
+  id = (int) exp->buf[0].idx;
   src  = math_expression_get_string_from_argument(exp, 1);
   delm = math_expression_get_string_from_argument(exp, 2);
-  if (dest == NULL || src == NULL || delm == NULL) {
+  if (src == NULL || delm == NULL) {
     return 1;
   }
-  n = (column >= 0) ? column + 2 : 0;
-  ary = g_strsplit(src, delm, n);
+  MATH_CHECK_ARG(rval, exp->buf[3]);
+  ignore_case = exp->buf[3].val.val;
+
+  compile_options = (ignore_case) ? G_REGEX_CASELESS : 0;
+  ary = g_regex_split_simple(delm, src, compile_options, 0);
   if (ary == NULL) {
     return 1;
   }
-  n = g_strv_length(ary);
-  if (column >= n) {
-    return 1;
+  for (i = 0; ary[i]; i++) {
+    math_equation_set_array_str(eq, id, i, ary[i]);
   }
-  if (column < 0) {
-    column += n;
-  }
-  if (column < 0) {
-    return 1;
-  }
-  g_string_assign(dest, ary[column]);
   g_strfreev(ary);
   return 0;
 }
