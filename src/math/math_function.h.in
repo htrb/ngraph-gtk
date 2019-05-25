@@ -4,6 +4,7 @@
 #         2: MATH_FUNCTION_ARG_TYPE_PROC
 #         3: MATH_FUNCTION_ARG_TYPE_STRING
 #         4: MATH_FUNCTION_ARG_TYPE_STRING_VARIABLE
+#         5: MATH_FUNCTION_ARG_TYPE_STRING_ARRAY
 abs		1	0	0	NULL
 sign		1	0	0	NULL
 int		1	0	0	NULL
@@ -131,6 +132,6 @@ string_match	3	0	0	3,3,0
 string_erase	3	0	0	4,0,0
 string_insert	3	0	0	4,3,0
 string_substring 4	0	0	4,3,0,0
-string_split	4	0	0	4,3,3,0
+string_split	4	0	0	5,3,3,0
 string_replace	5	0	0	4,3,3,3,0
 #while		3	1	0	0,2,2
