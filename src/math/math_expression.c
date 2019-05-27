@@ -160,6 +160,9 @@ register_arg(MathExpression *func, const char *arg_name, enum MATH_FUNCTION_ARG_
     break;
   case MATH_FUNCTION_ARG_TYPE_PROC:
     return 1;
+  case MATH_FUNCTION_ARG_TYPE_ARRAY_COMMON:
+    /* never reached */
+    return 1;
   }
 
   return 0;
