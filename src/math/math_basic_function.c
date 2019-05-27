@@ -3662,3 +3662,48 @@ math_func_string_match(MathFunctionCallExpression *exp, MathEquation *eq, MathVa
   return 0;
 }
 
+int
+math_func_string_join(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  GString *dest;
+  const char *sep;
+  char **strv, *str;
+  int i, n, id;
+  MathEquationArray *ary;
+
+  rval->val = 0;
+  rval->type = MATH_VALUE_NORMAL;
+
+
+  dest = math_expression_get_string_variable_from_argument(exp, 0);
+  sep  = math_expression_get_string_from_argument(exp, 1);
+  id = (int) exp->buf[2].idx;
+  ary = math_equation_get_string_array(eq, id);
+
+  if (ary == NULL || ary->data.str == NULL || dest == NULL || sep == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  if (ary->num < 1) {
+    g_string_assign(dest, "");
+    return 0;
+  }
+
+  n = ary->num;
+  strv = g_malloc(sizeof(*strv) * (n + 1));
+  if (strv == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  for (i = 0; i < n; i++) {
+    strv[i] = ary->data.str[i]->str;
+  }
+  strv[i] = NULL;
+  str = g_strjoinv(sep, strv);
+  g_free(strv);
+  g_string_assign(dest, str);
+  g_free(str);
+  return 0;
+}
