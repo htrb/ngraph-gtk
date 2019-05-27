@@ -2808,11 +2808,17 @@ math_func_size(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
 {
   int id;
   MathEquationArray *ary;
+  enum DATA_TYPE type;
 
   rval->val = 0;
 
-  id = (int) exp->buf[0].idx;
-  ary = math_equation_get_array(eq, id);
+  id = (int) exp->buf[0].array.idx;
+  type = exp->buf[0].array.array_type;
+  if (type == DATA_TYPE_VALUE) {
+    ary = math_equation_get_array(eq, id);
+  } else {
+    ary = math_equation_get_string_array(eq, id);
+  }
 
   if (ary == NULL) {
     rval->type = MATH_VALUE_ERROR;
