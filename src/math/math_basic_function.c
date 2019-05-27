@@ -2626,6 +2626,17 @@ rcompare_double(const void *p1, const void *p2)
   return 0;
 }
 
+static int
+rcompare_str(const void *p1, const void *p2)
+{
+  GString *s1, *s2;
+
+  s1 = *(GString **) p1;
+  s2 = *(GString **) p2;
+
+  return -g_strcmp0(s1->str, s2->str);
+}
+
 int
 math_func_push(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
