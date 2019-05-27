@@ -520,12 +520,14 @@ check_argument(struct math_function_parameter *fprm, int argc, MathExpression **
     if (fprm->arg_type && i < arg_type_num) {
       switch (argv[i]->type) {
       case MATH_EXPRESSION_TYPE_ARRAY_ARGUMENT:
-	if (fprm->arg_type[i] != MATH_FUNCTION_ARG_TYPE_ARRAY) {
+	if (fprm->arg_type[i] != MATH_FUNCTION_ARG_TYPE_ARRAY &&
+            fprm->arg_type[i] != MATH_FUNCTION_ARG_TYPE_ARRAY_COMMON) {
 	  return 1;
 	}
 	break;
       case MATH_EXPRESSION_TYPE_STRING_ARRAY_ARGUMENT:
-	if (fprm->arg_type[i] != MATH_FUNCTION_ARG_TYPE_STRING_ARRAY) {
+	if (fprm->arg_type[i] != MATH_FUNCTION_ARG_TYPE_STRING_ARRAY &&
+            fprm->arg_type[i] != MATH_FUNCTION_ARG_TYPE_ARRAY_COMMON) {
 	  return 1;
 	}
 	break;
