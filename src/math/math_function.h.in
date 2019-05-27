@@ -75,10 +75,10 @@ unless		3	0	0	0,2,2
 for		5	1	0	0,0,0,0,2
 dif		1	1	1	NULL
 sum		1	1	1	NULL
-sort		1	1	0	6
-rsort		1	1	0	6
+sort		2	1	0	6,0
+rsort		2	1	0	6,0
 size		1	1	0	6
-  array_clear	1	1	0	1
+array_clear	1	1	0	1
 array_sum	1	1	0	1
 array_sumsq	1	1	0	1
 array_average	1	1	0	1
