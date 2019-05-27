@@ -5,6 +5,7 @@
 #         3: MATH_FUNCTION_ARG_TYPE_STRING
 #         4: MATH_FUNCTION_ARG_TYPE_STRING_VARIABLE
 #         5: MATH_FUNCTION_ARG_TYPE_STRING_ARRAY
+#         6: MATH_FUNCTION_ARG_TYPE_ARRAY_COMMON
 abs		1	0	0	NULL
 sign		1	0	0	NULL
 int		1	0	0	NULL
@@ -75,7 +76,7 @@ for		5	1	0	0,0,0,0,2
 dif		1	1	1	NULL
 sum		1	1	1	NULL
 sort		1	1	0	1
-rsort		1	1	0	1
+rsort		1	1	0	6
 size		1	1	0	1
 array_clear	1	1	0	1
 array_sum	1	1	0	1
