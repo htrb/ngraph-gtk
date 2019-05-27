@@ -86,6 +86,10 @@ typedef struct _math_constant_definition_expression {
 union _math_function_argument {
   MathValue val;
   MathExpression *exp;
+  struct math_array_argument_common {
+    enum DATA_TYPE array_type;
+    int idx;
+  } array;
   int idx;
   union {
     const char *cstr;
