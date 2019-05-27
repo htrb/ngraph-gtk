@@ -2637,6 +2637,12 @@ rcompare_str(const void *p1, const void *p2)
   return -compare_str(p1, p2);
 }
 
+static int
+rcase_compare_str(const void *p1, const void *p2)
+{
+  return -case_compare_str(p1, p2);
+}
+
 int
 math_func_push(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
