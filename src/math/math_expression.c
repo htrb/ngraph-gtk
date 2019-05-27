@@ -204,6 +204,7 @@ func_set_arg_buf(MathExpression *func)
     case MATH_FUNCTION_ARG_TYPE_STRING_VARIABLE:
     case MATH_FUNCTION_ARG_TYPE_ARRAY:
     case MATH_FUNCTION_ARG_TYPE_STRING_ARRAY:
+    case MATH_FUNCTION_ARG_TYPE_ARRAY_COMMON:
       save_arg_type = 1;
       break;
     case MATH_FUNCTION_ARG_TYPE_PROC:
