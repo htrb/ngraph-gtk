@@ -2606,24 +2606,7 @@ compare_double(const void *p1, const void *p2)
 static int
 rcompare_double(const void *p1, const void *p2)
 {
-  MathValue *v1, *v2;
-
-  v1 = (MathValue *) p1;
-  v2 = (MathValue *) p2;
-
-  if (v1->type == MATH_VALUE_NORMAL && v2->type == MATH_VALUE_NORMAL) {
-    if (v1->val > v2->val) {
-      return -1;
-    } else if (v1->val < v2->val) {
-      return 1;
-    }
-  } else if (v1->type != MATH_VALUE_NORMAL && v2->type == MATH_VALUE_NORMAL) {
-    return -1;
-  } else if (v1->type == MATH_VALUE_NORMAL && v2->type != MATH_VALUE_NORMAL) {
-    return 1;
-  }
-
-  return 0;
+  return -compare_double(p1, p2);
 }
 
 static int
