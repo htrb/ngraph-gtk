@@ -2795,6 +2795,7 @@ math_func_rsort(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rv
   int id;
   MathEquationArray *ary;
   enum DATA_TYPE type;
+  int ignore_case;
 
   rval->val = 0;
 
@@ -2820,7 +2821,12 @@ math_func_rsort(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rv
   if (type == DATA_TYPE_VALUE) {
     qsort(ary->data.val, ary->num, sizeof(MathValue), rcompare_double);
   } else {
-    qsort(ary->data.str, ary->num, sizeof(GString *), rcompare_str);
+    ignore_case = exp->buf[1].val.val;
+    if (ignore_case) {
+      qsort(ary->data.str, ary->num, sizeof(GString *), rcase_compare_str);
+    } else {
+      qsort(ary->data.str, ary->num, sizeof(GString *), rcompare_str);
+    }
   }
 
   return 0;
