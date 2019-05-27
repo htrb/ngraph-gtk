@@ -1013,11 +1013,15 @@ call_func(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *val)
     if (type && i < arg_type_num) {
       switch (type[i]) {
       case MATH_FUNCTION_ARG_TYPE_ARRAY:
-	if (exp->argv[i]->type != MATH_EXPRESSION_TYPE_ARRAY_ARGUMENT) {
+        switch (exp->argv[i]->type) {
+        case MATH_EXPRESSION_TYPE_ARRAY_ARGUMENT:
+          exp->buf[i].idx = exp->argv[i]->u.array.index;
+          break;
+        default:
 	  val->type = MATH_VALUE_ERROR;
 	  return 1;
-	}
-	exp->buf[i].idx = exp->argv[i]->u.array.index;
+          break;
+        }
 	break;
       case MATH_FUNCTION_ARG_TYPE_PROC:
 	if (exp->argv[i]->type == MATH_EXPRESSION_TYPE_ARRAY_ARGUMENT) {
@@ -1047,11 +1051,15 @@ call_func(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *val)
 	}
 	break;
       case MATH_FUNCTION_ARG_TYPE_STRING_ARRAY:
-	if (exp->argv[i]->type != MATH_EXPRESSION_TYPE_STRING_ARRAY_ARGUMENT) {
+        switch (exp->argv[i]->type) {
+        case MATH_EXPRESSION_TYPE_STRING_ARRAY_ARGUMENT:
+          exp->buf[i].idx = exp->argv[i]->u.array.index;
+          break;
+        default:
 	  val->type = MATH_VALUE_ERROR;
 	  return 1;
-	}
-	exp->buf[i].idx = exp->argv[i]->u.array.index;
+          break;
+        }
 	break;
       }
     } else if (CALC_EXPRESSION(exp->argv[i], exp->buf[i].val)) {
