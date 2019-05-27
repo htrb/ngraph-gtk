@@ -252,6 +252,22 @@ get_argument(struct math_string *str, MathEquation *eq, struct math_function_par
       exp = math_string_array_argument_expression_new(eq, token->data.sym, err);
       math_scanner_free_token(token);
       break;
+    case MATH_FUNCTION_ARG_TYPE_ARRAY_COMMON:
+      token = my_get_token(str);
+      if (token->type == MATH_TOKEN_TYPE_SYMBOL) {
+        exp = math_array_argument_expression_new(eq, token->data.sym, err);
+        math_scanner_free_token(token);
+      } else if (token->type == MATH_TOKEN_TYPE_STRING_VARIABLE) {
+        exp = math_string_array_argument_expression_new(eq, token->data.sym, err);
+        math_scanner_free_token(token);
+      } else {
+	*err = MATH_ERROR_INVALID_FDEF;
+	math_equation_set_parse_error(eq, token->ptr, str);
+	math_scanner_free_token(token);
+        return NULL;
+	/* invalid argument */
+      }
+      break;
     default:
       exp = parse_expression(str, eq, err);
       break;
