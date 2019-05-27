@@ -2734,13 +2734,19 @@ math_func_sort(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
 {
   int id;
   MathEquationArray *ary;
+  enum DATA_TYPE type;
 
   rval->val = 0;
 
-  id = (int) exp->buf[0].idx;
-  ary = math_equation_get_array(eq, id);
+  id = (int) exp->buf[0].array.idx;
+  type = exp->buf[0].array.array_type;
+  if (type == DATA_TYPE_VALUE) {
+    ary = math_equation_get_array(eq, id);
+  } else {
+    ary = math_equation_get_string_array(eq, id);
+  }
 
-  if (ary == NULL || ary->num < 1 || ary->data.val == NULL) {
+  if (ary == NULL || ary->num < 1 || ary->data.str == NULL) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
   }
@@ -2751,7 +2757,11 @@ math_func_sort(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
     return 0;
   }
 
-  qsort(ary->data.val, ary->num, sizeof(MathValue), compare_double);
+  if (type == DATA_TYPE_VALUE) {
+    qsort(ary->data.val, ary->num, sizeof(MathValue), compare_double);
+  } else {
+    qsort(ary->data.str, ary->num, sizeof(GString *), compare_str);
+  }
 
   return 0;
 }
