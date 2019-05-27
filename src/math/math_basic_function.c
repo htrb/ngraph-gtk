@@ -2621,6 +2621,17 @@ compare_str(const void *p1, const void *p2)
 }
 
 static int
+case_compare_str(const void *p1, const void *p2)
+{
+  GString *s1, *s2;
+
+  s1 = *(GString **) p1;
+  s2 = *(GString **) p2;
+
+  return g_ascii_strcasecmp(s1->str, s2->str);
+}
+
+static int
 rcompare_str(const void *p1, const void *p2)
 {
   return -compare_str(p1, p2);
