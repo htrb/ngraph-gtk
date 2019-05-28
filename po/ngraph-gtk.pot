@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.08.01\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2019-05-28 11:25+0900\n"
+"POT-Creation-Date: 2019-05-28 17:06+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -4342,54 +4342,59 @@ msgid "syntax error, invalid function definition."
 msgstr ""
 
 #: src/math/math_error.c:22
-msgid "syntax error, constant cannot be defined in a function definition."
+msgid "syntax error, invalid argument."
 msgstr ""
 
 #: src/math/math_error.c:23
-msgid "error, invalid parameter."
+msgid "syntax error, constant cannot be defined in a function definition."
 msgstr ""
 
 #: src/math/math_error.c:24
+msgid "error, invalid parameter."
+msgstr ""
+
+#: src/math/math_error.c:25
 msgid ""
 "error, a parameter cannot be used in a user function or a constant "
 "definition."
 msgstr ""
 
-#: src/math/math_error.c:25
+#: src/math/math_error.c:26
 msgid "error, unknown function."
 msgstr ""
 
-#: src/math/math_error.c:26
+#: src/math/math_error.c:27
 msgid "error, cannot allocate enough memory."
 msgstr ""
 
-#: src/math/math_error.c:27
+#: src/math/math_error.c:28
 msgid "error, unknown error."
 msgstr ""
 
-#: src/math/math_error.c:28
+#: src/math/math_error.c:29
 msgid ""
 "error, the function cannot be used in a user function or a constant "
 "definition."
 msgstr ""
 
-#: src/math/math_error.c:29
+#: src/math/math_error.c:30
 msgid "error, the constant is already defined."
 msgstr ""
 
-#: src/math/math_error.c:30
+#: src/math/math_error.c:31
 msgid "error, calculation error."
 msgstr ""
 
-#: src/math/math_error.c:31
+#: src/math/math_error.c:32
 msgid "syntax error, unterminated string."
 msgstr ""
 
-#: src/math/math_error.c:88 src/math/math_error.c:99 src/math/math_error.c:123
-#: src/math/math_error.c:134 src/math/math_error.c:145
-#: src/math/math_error.c:156 src/math/math_error.c:167
-#: src/math/math_error.c:178 src/math/math_error.c:189
-#: src/math/math_error.c:200 src/math/math_error.c:211
+#: src/math/math_error.c:89 src/math/math_error.c:100 src/math/math_error.c:124
+#: src/math/math_error.c:135 src/math/math_error.c:146
+#: src/math/math_error.c:157 src/math/math_error.c:168
+#: src/math/math_error.c:179 src/math/math_error.c:190
+#: src/math/math_error.c:201 src/math/math_error.c:212
+#: src/math/math_error.c:223
 #, c-format
 msgid ""
 "%s (%d:%d)\n"
