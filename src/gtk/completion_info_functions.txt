@@ -75,9 +75,9 @@ not(x)		True (= 1) when <i>x</i> == 0
 or(x, y)	True (= 1) when (<i>x</i> != 0) or (<i>y</i> != 0)
 and(x, y)	True (= 1) when (<i>x</i> != 0) and (<i>y</i> != 0)
 xor(x, y)	True (= 1) when (<i>x</i> != 0) xor (<i>y</i> != 0)
-size(a)		number of elements of array <i>a</i>
-sort(a)		sort elements of array <i>a</i>
-rsort(a)	reverse sort elements of array <i>a</i>
+size(a)	number of elements of array <i>a</i>
+sort(a, ignore_case)	sort elements of array <i>a</i>\nfold lower case to upper case characters when <i>ignore_case</i> is not zero.
+rsort(a, ignore_case)	reverse sort elements of array <i>a</i>\nfold lower case to upper case characters when <i>ignore_case</i> is not zero.
 pop(a)		remove the last element of array <i>a</i>, and returns that element
 push(a, x)	adds new element <i>x</i> to the end of an array <i>a</i>, and returns <i>x</i>
 shift(a)	remove the first element of array <i>a</i>, and returns that element
@@ -139,13 +139,14 @@ string_strip($str)	Removes leading and trailing whitespace from the string <i>$s
 string_append($dest, $src)	Adds the string <i>$src</i> onto the end of the string <i>$dest</i>.
 string_prepend($dest, $src)	Adds the string <i>$src</i> onto the start of the string <i>$dest</i>.
 string_insert($dest, $src, pos)	Inserts the string <i>$src</i> into the string <i>$dest</i> at the position <i>pos</i>.
+string_join($dest, $sep, $array)	Joins a number of strings in the array <i>$array</i>\ntogether to form one long string <i>$dest</i>,\nwith the optional separator <i>$sep</i>inserted between each of them.
 string_reverse($dest, $src)	Reverses the UTF-8 string <i>$src</i> and set to the string <i>$dest</i>.
 string_compare($str1, $str2, ignore_case)	Compare two strings, ignoring the case of ASCII characters when <i>ignore_case</i> is not zero.
 string_match($str, $regexp, ignore_case)	Scans for a match in the string <i>$str</i> for the regular expression pattern <i>$regexp</i>.\nReturn non-zero value if the string matched, zero otherwise.
 string_truncate($str, len)	Cuts off the end of the string <i>$str</i>, leaving the first <i>len</i> characters.
 string_erase($str, pos, len)	Removes <i>len</i> characters from the string <i>$str</i>, starting at position <i>pos</i>.
 string_substring($dest, $src, start, end)	Copies a substring out of a UTF-8 encoded string <i>$src</i>.\nThe substring will contain <i>end</i> - <i>start</i> characters.
-string_split($dest, $src, $separator, index)	Splits the string <i>$src</i> into pieces, using the given <i>$separator</i>.\nThe <i>index</i>th sub-string is copied to te string <i>$dest</i>.
-string_replace($dest, $src, $regexp, $replacement, ignore_case)	Replaces all occurrences of the regular expression pattern in <i>$regex</i> with the <i>$replacement</i> text.\nBackreferences of the form '\\number' or '\\g&lt;number&gt;' in the replacement text are interpolated\nby the number-th captured subexpression of the match,\n'\\g&lt;name&gt;' refers to the captured subexpression with the given name.\n'\\0' refers to the complete match,\nbut '\\0' followed by a number is the octal representation of a character.\nLetters in the pattern match both upper- and lowercase letters when <i>ignore_case</i> is not zero.
+string_split($dest, $src, $separator, ignore_case)	Splits the string <i>$src</i> into pieces, using the given <i>$separator</i>.\nEach strings are saved in the array <i>$dest</i>\nLetters in <i>$separator</i> match both upper- and lowercase letters\nwhen <i>ignore_case</i> is not zero.
+string_replace($dest, $src, $regexp, $replacement, ignore_case)	Replaces all occurrences of the regular expression pattern in <i>$regex</i> with the <i>$replacement</i> text.\nBackreferences of the form '\\number' or '\\g&lt;number&gt;' in the replacement text are interpolated\nby the number-th captured subexpression of the match,\n'\\g&lt;name&gt;' refers to the captured subexpression with the given name.\n'\\0' refers to the complete match,\nbut '\\0' followed by a number is the octal representation of a character.\nLetters in <i>$regex</i> match both upper- and lowercase letters\nwhen <i>ignore_case</i> is not zero.
 string_column($dest, index)	Set <i>index</i>th coluimn in the reading data-line to the string <i>$dest</i>.
 draw_text($str, x, y, font, pt, style, dir, space, script)	Draw the string <i>$str</i> at (<i>x, y</i>).\nThe value <i>font</i> 0, 1 and 2 represent "Sans-serif", "Serif" and "Monospace" respectively.\nFont size can be specified by <i>pt</i>.\nThe value <i>style</i> 0, 1, 2 and 3 represent "normal", "bold", "italic" and "bold-italic" respectively.\nDirection, font-spacing and script-size are specified by the following arguments.
