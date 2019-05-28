@@ -3368,6 +3368,39 @@ math_func_string_float(MathFunctionCallExpression *exp, MathEquation *eq, MathVa
 }
 
 int
+math_func_string_float_array(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int src_id, dest_id, i, n;
+  MathEquationArray *src;
+  MathValue val;
+
+  rval->val = 0;
+  rval->type = MATH_VALUE_NORMAL;
+
+  dest_id = (int) exp->buf[0].idx;
+
+  src_id = (int) exp->buf[1].idx;
+  src = math_equation_get_string_array(eq, src_id);
+
+  if (src == NULL || src->data.str == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  val.type = MATH_VALUE_NORMAL;
+  n = src->num;
+  for (i = 0; i < n; i++) {
+    val.val = g_ascii_strtod(src->data.str[i]->str, NULL);
+    if (math_equation_set_array_val(eq, dest_id, i, &val)) {
+      rval->type = MATH_VALUE_ERROR;
+      return 1;
+    }
+  }
+
+  return 0;
+}
+
+int
 math_func_string_replace(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   GString *dest;
