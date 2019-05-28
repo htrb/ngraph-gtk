@@ -53,7 +53,7 @@ mjd		6	0	0	NULL
 unix2mjd	1	0	0	NULL
 mjd2year	1	0	0	NULL
 mjd2month	1	0	0	NULL
-mjd2day		1	0	0	NULL
+mjd2day	1	0	0	NULL
 mjd2wday	1	0	0	NULL
 mjd2yday	1	0	0	NULL
 eq		3	0	0	NULL
@@ -90,8 +90,8 @@ array_max	1	1	0	1
 array		-2	1	0	1
 isnormal	1	0	0	NULL
 isnan		1	0	0	NULL
-isundef		1	0	0	NULL
-isbreak		1	0	0	NULL
+isundef	1	0	0	NULL
+isbreak	1	0	0	NULL
 iscont		1	0	0	NULL
 zeta		1	0	0	NULL	true
 zetam1		1	0	0	NULL	true
@@ -110,7 +110,7 @@ prog1		-1	0	0	NULL
 prog2		-1	0	0	NULL
 push		2	0	0	1,0
 pop		1	0	0	1
-unshift		2	0	0	1,0
+unshift	2	0	0	1,0
 shift		1	0	0	1
 time		0	0	0	NULL
 choose		2	0	0	NULL	true
