@@ -19,6 +19,7 @@
 #define ERR_MSG_MISS_RC		N_("syntax error, unexpected end of equation, expecting '}'.")
 #define ERR_MSG_MISS_RB		N_("syntax error, unexpected end of equation, expecting ']'.")
 #define ERR_MSG_INVALID_F	N_("syntax error, invalid function definition.")
+#define ERR_MSG_INVALID_A	N_("syntax error, invalid argument.")
 #define ERR_MSG_INVALID_C	N_("syntax error, constant cannot be defined in a function definition.")
 #define ERR_MSG_INVALID_P	N_("error, invalid parameter.")
 #define ERR_MSG_PRM_IN_DEF	N_("error, a parameter cannot be used in a user function or a constant definition.")
@@ -170,6 +171,17 @@ math_err_get_error_message(MathEquation *eq, const char *code, int err)
                             code_buf);
     } else {
       buf = g_strdup(_(ERR_MSG_INVALID_F));
+    }
+    break;
+  case MATH_ERROR_INVALID_ARG:
+    code_buf = check_error_position(eq, code);
+    if (code_buf) {
+      buf = g_strdup_printf(_("%s (%d:%d)\n  the error is found at: %s"),
+                            _(ERR_MSG_INVALID_A),
+                            eq->err_info.pos.line, eq->err_info.pos.ofst,
+                            code_buf);
+    } else {
+      buf = g_strdup(_(ERR_MSG_INVALID_A));
     }
     break;
   case MATH_ERROR_INVALID_CDEF:
