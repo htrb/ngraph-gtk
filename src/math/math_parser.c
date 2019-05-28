@@ -231,7 +231,7 @@ get_argument(struct math_string *str, MathEquation *eq, struct math_function_par
     case MATH_FUNCTION_ARG_TYPE_ARRAY:
       token = my_get_token(str);
       if (token->type != MATH_TOKEN_TYPE_SYMBOL) {
-	*err = MATH_ERROR_INVALID_FDEF;
+	*err = MATH_ERROR_INVALID_ARG;
 	math_equation_set_parse_error(eq, token->ptr, str);
 	math_scanner_free_token(token);
 	/* invalid argument */
@@ -243,7 +243,7 @@ get_argument(struct math_string *str, MathEquation *eq, struct math_function_par
     case MATH_FUNCTION_ARG_TYPE_STRING_ARRAY:
       token = my_get_token(str);
       if (token->type != MATH_TOKEN_TYPE_STRING_VARIABLE) {
-	*err = MATH_ERROR_INVALID_FDEF;
+	*err = MATH_ERROR_INVALID_ARG;
 	math_equation_set_parse_error(eq, token->ptr, str);
 	math_scanner_free_token(token);
 	/* invalid argument */
@@ -261,7 +261,7 @@ get_argument(struct math_string *str, MathEquation *eq, struct math_function_par
         exp = math_string_array_argument_expression_new(eq, token->data.sym, err);
         math_scanner_free_token(token);
       } else {
-	*err = MATH_ERROR_INVALID_FDEF;
+	*err = MATH_ERROR_INVALID_ARG;
 	math_equation_set_parse_error(eq, token->ptr, str);
 	math_scanner_free_token(token);
         return NULL;
