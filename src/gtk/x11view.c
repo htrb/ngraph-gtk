@@ -1689,6 +1689,7 @@ ViewSelectAll(void)
     select_obj("legend", d, NULL);
     select_obj("merge",  d, NULL);
     focus = TRUE;
+    break;
   case AxisB:
     select_obj("axis",   d, NULL);
     focus = TRUE;
