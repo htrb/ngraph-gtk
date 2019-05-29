@@ -90,7 +90,6 @@ union _math_function_argument {
     enum DATA_TYPE array_type;
     int idx;
   } array;
-  int idx;
   union {
     const char *cstr;
     GString *gstr;
