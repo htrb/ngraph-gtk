@@ -1369,7 +1369,7 @@ local_array_alloc(MathFunctionExpression *func, MathFunctionArgument *argv, stru
     j = 0;
     for (i = 0; i < func->argc; i++) {
       if (func->fprm->arg_type[i] == MATH_FUNCTION_ARG_TYPE_ARRAY) {
-	info->local[j] = info->prev[argv[i].idx];
+	info->local[j] = info->prev[argv[i].array.idx];
 	j++;
       }
     }
@@ -1395,7 +1395,7 @@ local_string_array_alloc(MathFunctionExpression *func, MathFunctionArgument *arg
     j = 0;
     for (i = 0; i < func->argc; i++) {
       if (func->fprm->arg_type[i] == MATH_FUNCTION_ARG_TYPE_STRING_ARRAY) {
-	info->local[j] = info->prev[argv[i].idx];
+	info->local[j] = info->prev[argv[i].array.idx];
 	j++;
       }
     }
@@ -1413,7 +1413,7 @@ local_array_free(MathFunctionExpression *func, MathFunctionArgument *argv, struc
   j = 0;
   for (i = 0; i < func->argc; i++) {
     if (func->fprm->arg_type[i] == MATH_FUNCTION_ARG_TYPE_ARRAY) {
-      info->prev[argv[i].idx] = info->local[j];
+      info->prev[argv[i].array.idx] = info->local[j];
       info->local[j].num = 0;
       info->local[j].size = 0;
       info->local[j].data.val = NULL;
@@ -1433,7 +1433,7 @@ local_string_array_free(MathFunctionExpression *func, MathFunctionArgument *argv
   j = 0;
   for (i = 0; i < func->argc; i++) {
     if (func->fprm->arg_type[i] == MATH_FUNCTION_ARG_TYPE_STRING_ARRAY) {
-      info->prev[argv[i].idx] = info->local[j];
+      info->prev[argv[i].array.idx] = info->local[j];
       info->local[j].num = 0;
       info->local[j].size = 0;
       info->local[j].data.str = NULL;
