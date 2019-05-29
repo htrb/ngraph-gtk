@@ -1406,7 +1406,7 @@ file_draw_path(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
 
   rval->val = 0;
 
-  id = exp->buf[0].idx;
+  id = exp->buf[0].array.idx;
   ax = math_equation_get_array(eq, id);
   if (ax == NULL) {
     rval->type = MATH_VALUE_ERROR;
@@ -1414,7 +1414,7 @@ file_draw_path(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   }
   n = ax->num;
 
-  id = exp->buf[1].idx;
+  id = exp->buf[1].array.idx;
   ay = math_equation_get_array(eq, id);
   if (ay == NULL) {
     rval->type = MATH_VALUE_ERROR;
