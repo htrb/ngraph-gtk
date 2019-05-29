@@ -2448,7 +2448,7 @@ math_func_am(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
     return 1;
   }
 
-  id = (int) exp->buf[0].idx;
+  id = (int) exp->buf[0].array.idx;
   ary = math_equation_get_array(eq, id);
 
   if (ary == NULL) {
@@ -2650,7 +2650,7 @@ math_func_push(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
 
   rval->val = 0;
 
-  id = (int) exp->buf[0].idx;
+  id = (int) exp->buf[0].array.idx;
 
   if (math_equation_push_array_val(eq, id, &exp->buf[1].val)) {
     rval->type = MATH_VALUE_ERROR;
@@ -2670,7 +2670,7 @@ math_func_pop(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
 
   rval->val = 0;
 
-  id = (int) exp->buf[0].idx;
+  id = (int) exp->buf[0].array.idx;
   ary = math_equation_get_array(eq, id);
 
   if (ary == NULL || ary->num < 1 || ary->data.val == NULL) {
@@ -2695,7 +2695,7 @@ math_func_shift(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rv
 
   rval->val = 0;
 
-  id = (int) exp->buf[0].idx;
+  id = (int) exp->buf[0].array.idx;
   ary = math_equation_get_array(eq, id);
 
   if (ary == NULL || ary->num < 1 || ary->data.val == NULL) {
@@ -2724,7 +2724,7 @@ math_func_unshift(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *
 
   rval->val = 0;
 
-  id = (int) exp->buf[0].idx;
+  id = (int) exp->buf[0].array.idx;
   ary = math_equation_get_array(eq, id);
 
   if (ary == NULL) {
@@ -2867,7 +2867,7 @@ math_func_array(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rv
 
   rval->val = 0;
 
-  id = (int) exp->buf[0].idx;
+  id = (int) exp->buf[0].array.idx;
   ary = math_equation_get_array(eq, id);
   if (ary == NULL) {
     rval->type = MATH_VALUE_ERROR;
@@ -2900,7 +2900,7 @@ math_func_array_sum(MathFunctionCallExpression *exp, MathEquation *eq, MathValue
 
   rval->val = 0;
 
-  id = (int) exp->buf[0].idx;
+  id = (int) exp->buf[0].array.idx;
   ary = math_equation_get_array(eq, id);
 
   if (ary == NULL || ary->data.val == NULL) {
@@ -2930,7 +2930,7 @@ math_func_array_sumsq(MathFunctionCallExpression *exp, MathEquation *eq, MathVal
 
   rval->val = 0;
 
-  id = (int) exp->buf[0].idx;
+  id = (int) exp->buf[0].array.idx;
   ary = math_equation_get_array(eq, id);
 
   if (ary == NULL || ary->data.val == NULL) {
@@ -2961,7 +2961,7 @@ math_func_array_min(MathFunctionCallExpression *exp, MathEquation *eq, MathValue
 
   rval->val = 0;
 
-  id = (int) exp->buf[0].idx;
+  id = (int) exp->buf[0].array.idx;
   ary = math_equation_get_array(eq, id);
 
   if (ary == NULL || ary->num < 1 || ary->data.val == NULL) {
@@ -3075,7 +3075,7 @@ math_func_array_max(MathFunctionCallExpression *exp, MathEquation *eq, MathValue
 
   rval->val = 0;
 
-  id = (int) exp->buf[0].idx;
+  id = (int) exp->buf[0].array.idx;
   ary = math_equation_get_array(eq, id);
 
   if (ary == NULL || ary->num < 1 || ary->data.val == NULL) {
@@ -3106,7 +3106,7 @@ math_func_array_compact(MathFunctionCallExpression *exp, MathEquation *eq, MathV
 
   rval->val = 0;
 
-  id = (int) exp->buf[0].idx;
+  id = (int) exp->buf[0].array.idx;
   ary = math_equation_get_array(eq, id);
 
   if (ary == NULL || ary->num < 1 || ary->data.val == NULL) {
@@ -3140,7 +3140,7 @@ math_func_array_clear(MathFunctionCallExpression *exp, MathEquation *eq, MathVal
 
   rval->val = 0;
 
-  id = (int) exp->buf[0].idx;
+  id = (int) exp->buf[0].array.idx;
 
   r = math_equation_clear_array(eq, id);
   if (r) {
@@ -3377,9 +3377,9 @@ math_func_string_float_array(MathFunctionCallExpression *exp, MathEquation *eq, 
   rval->val = 0;
   rval->type = MATH_VALUE_NORMAL;
 
-  dest_id = (int) exp->buf[0].idx;
+  dest_id = (int) exp->buf[0].array.idx;
 
-  src_id = (int) exp->buf[1].idx;
+  src_id = (int) exp->buf[1].array.idx;
   src = math_equation_get_string_array(eq, src_id);
 
   if (src == NULL || src->data.str == NULL) {
@@ -3563,7 +3563,7 @@ math_func_string_split(MathFunctionCallExpression *exp, MathEquation *eq, MathVa
   rval->val = 0;
   rval->type = MATH_VALUE_NORMAL;
 
-  id = (int) exp->buf[0].idx;
+  id = (int) exp->buf[0].array.idx;
   src  = math_expression_get_string_from_argument(exp, 1);
   delm = math_expression_get_string_from_argument(exp, 2);
   if (src == NULL || delm == NULL) {
@@ -3739,7 +3739,7 @@ math_func_string_join(MathFunctionCallExpression *exp, MathEquation *eq, MathVal
 
   dest = math_expression_get_string_variable_from_argument(exp, 0);
   sep  = math_expression_get_string_from_argument(exp, 1);
-  id = (int) exp->buf[2].idx;
+  id = (int) exp->buf[2].array.idx;
   ary = math_equation_get_string_array(eq, id);
 
   if (ary == NULL || ary->data.str == NULL || dest == NULL || sep == NULL) {
