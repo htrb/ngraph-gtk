@@ -1015,7 +1015,8 @@ call_func(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *val)
       case MATH_FUNCTION_ARG_TYPE_ARRAY:
         switch (exp->argv[i]->type) {
         case MATH_EXPRESSION_TYPE_ARRAY_ARGUMENT:
-          exp->buf[i].idx = exp->argv[i]->u.array.index;
+          exp->buf[i].array.array_type = DATA_TYPE_VALUE;
+          exp->buf[i].array.idx = exp->argv[i]->u.array.index;
           break;
         default:
 	  val->type = MATH_VALUE_ERROR;
@@ -1053,7 +1054,8 @@ call_func(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *val)
       case MATH_FUNCTION_ARG_TYPE_STRING_ARRAY:
         switch (exp->argv[i]->type) {
         case MATH_EXPRESSION_TYPE_STRING_ARRAY_ARGUMENT:
-          exp->buf[i].idx = exp->argv[i]->u.array.index;
+          exp->buf[i].array.array_type = DATA_TYPE_STRING;
+          exp->buf[i].array.idx = exp->argv[i]->u.array.index;
           break;
         default:
 	  val->type = MATH_VALUE_ERROR;
