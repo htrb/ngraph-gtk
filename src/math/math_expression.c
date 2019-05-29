@@ -533,7 +533,8 @@ check_argument(struct math_function_parameter *fprm, int argc, MathExpression **
 	break;
       default:
  	if (fprm->arg_type[i] == MATH_FUNCTION_ARG_TYPE_ARRAY ||
-	    fprm->arg_type[i] == MATH_FUNCTION_ARG_TYPE_STRING_ARRAY) {
+	    fprm->arg_type[i] == MATH_FUNCTION_ARG_TYPE_STRING_ARRAY ||
+	    fprm->arg_type[i] == MATH_FUNCTION_ARG_TYPE_ARRAY_COMMON) {
 	  return 1;
 	}
 	break;
