@@ -90,10 +90,8 @@ union _math_function_argument {
     enum DATA_TYPE array_type;
     int idx;
   } array;
-  union {
-    const char *cstr;
-    GString *gstr;
-  } str;
+  const char *cstr;
+  GString *gstr;
 };
 
 struct _math_function_call_expression {
