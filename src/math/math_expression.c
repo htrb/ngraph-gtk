@@ -965,7 +965,7 @@ set_string_argument(MathFunctionCallExpression *exp, MathEquation *eq, int i)
   if (str == NULL) {
     return 1;
   }
-  exp->buf[i].str.cstr = str;
+  exp->buf[i].cstr = str;
   return 0;
 }
 
@@ -991,7 +991,7 @@ set_string_variable_argument(MathFunctionCallExpression *exp, MathEquation *eq, 
   if (gstr == NULL) {
     return 1;
   }
-  exp->buf[i].str.gstr = gstr;
+  exp->buf[i].gstr = gstr;
   return 0;
 }
 
@@ -1972,13 +1972,13 @@ calc(MathExpression *exp, MathValue *val)
 const char *
 math_expression_get_string_from_argument(MathFunctionCallExpression *exp, int i)
 {
-  return exp->buf[i].str.cstr;
+  return exp->buf[i].cstr;
 }
 
 GString *
 math_expression_get_string_variable_from_argument(MathFunctionCallExpression *exp, int i)
 {
-  return exp->buf[i].str.gstr;
+  return exp->buf[i].gstr;
 }
 
 int
