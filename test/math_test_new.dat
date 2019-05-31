@@ -201,7 +201,7 @@ array_average(a)#3
 array_stdevp(a)#1.414213562373095e+00
 array_stdev(a)#1.581138830084190e+00
 $str:="a b c"#0
-string_split($sary, $str, " ")#0
+string_split($sary, $str, " ")#3
 string_compare($sary[0], "a")#0
 string_compare($sary[1], "a")#1
 string_compare($sary[1], "b")#0
@@ -227,3 +227,11 @@ string_join($str, "", $sary)#0
 string_compare($str, "abc")#0
 string_truncate($ustr, 5)#0
 string_compare($ustr, "１２３_A")#0
+string_split($sa, "1.2 3 4.5 6 7.89", " ")==5#1
+string_float_array(ary, $sa)==5#1
+ary[0]==1.2#1
+ary[1]==3#1
+ary[2]==4.5#1
+ary[3]==6#1
+ary[4]==7.89#1
+string_float($sa[0])==1.2#1
