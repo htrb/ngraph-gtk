@@ -1124,6 +1124,7 @@ optimize_usr_function(MathExpression *exp,int *err)
   new_exp->u.func.local_num = exp->u.func.local_num;
   new_exp->u.func.local_array_num = exp->u.func.local_array_num;
   new_exp->u.func.local_string_num = exp->u.func.local_string_num;
+  new_exp->u.func.local_string_array_num = exp->u.func.local_string_array_num;
   new_exp->u.func.exp = math_expression_optimize(exp->u.func.exp, err);
   new_exp->u.func.fprm = exp->u.func.fprm;
   new_exp->u.func.arg_list = NULL;
