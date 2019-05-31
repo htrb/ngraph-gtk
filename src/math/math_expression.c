@@ -713,7 +713,7 @@ math_expression_free_sub(MathExpression *exp)
     math_expression_free(exp->u.unary.operand);
     break;
   case MATH_EXPRESSION_TYPE_ARRAY:
-  case MATH_EXPRESSION_TYPE_STRING_ARRAY: /* to be implemented */
+  case MATH_EXPRESSION_TYPE_STRING_ARRAY:
     math_expression_free(exp->u.array.operand);
     break;
   case MATH_EXPRESSION_TYPE_ARRAY_ARGUMENT:
@@ -1657,7 +1657,6 @@ assign_string(MathExpression *exp, MathValue *val)
     if (str == NULL) {
       return 1;
     }
-    /* to be implemented */
     break;
   default:
     id = (int) right->u.index;
@@ -1932,7 +1931,6 @@ calc(MathExpression *exp, MathValue *val)
     }
     break;
   case MATH_EXPRESSION_TYPE_STRING_ARRAY:
-    /* to be implemented */
     if (CALC_EXPRESSION(exp->u.array.operand, operand)) {
       return 1;
     }
