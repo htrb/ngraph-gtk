@@ -3581,6 +3581,7 @@ math_func_string_split(MathFunctionCallExpression *exp, MathEquation *eq, MathVa
     math_equation_set_array_str(eq, id, i, ary[i]);
   }
   g_strfreev(ary);
+  rval->val = i;
   return 0;
 }
 
