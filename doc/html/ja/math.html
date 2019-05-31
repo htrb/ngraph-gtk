@@ -585,6 +585,15 @@
   </tr>
   <tr>
     <td>
+     string_float_array(dest, $ary)
+    </td>
+    <td>
+     配列 $ary の各要素を浮動小数点に変換し、その値を配列 dest に代入します。
+     変換された要素数を返します。
+    </td>
+  </tr>
+  <tr>
+    <td>
      string_length($str)
     </td>
     <td>
@@ -695,6 +704,14 @@
   </tr>
   <tr>
     <td>
+     string_join($str, $sep, $ary)
+    </td>
+    <td>
+     配列 $ary に含まれる文字列を結合して $str に代入します。各要素の間には $sep が挿入されます。
+    </td>
+  </tr>
+  <tr>
+    <td>
      string_substring($dest, $src, start, end)
     </td>
     <td>
@@ -709,7 +726,7 @@
      文字列 $src を正規表現の文字列 $separator で分割し、分割された文
      字列を文字列の配列 $dest に代入します。ignore_case が 0 以外の場
      合は $separator に含まれる ascii 文字の大文字小文字を区別せずに分
-     割します。
+     割します。分割された要素数を返します。
     </td>
   </tr>
   <tr>
