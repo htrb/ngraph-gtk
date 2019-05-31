@@ -3396,7 +3396,7 @@ math_func_string_float_array(MathFunctionCallExpression *exp, MathEquation *eq, 
       return 1;
     }
   }
-
+  rval->val = n;
   return 0;
 }
 
