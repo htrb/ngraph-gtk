@@ -131,6 +131,7 @@ prog1(arg1, arg2, ...)	Evaluate the arguments and return the evaluated value of 
 prog2(arg1, arg2, ...)	Evaluate the arguments and return the evaluated value of the second argument
 progn(arg1, arg2, ...)	Evaluate the arguments and return the evaluated value of the last argument
 string_float($str)	Converts the string <i>$str</i> to a floating-point value and return the value.
+string_float_array(dest, $ary)	Converts the string element of the array <i>$ary</i>\nto a floating-point value\nand set them to the array <i>dest</i>.
 string_length($str)	Return the length of the string <i>$str</i> in characters.
 string_format($str, value)	Converts the floating-point value <i>value</i> to a string and cset the string to <i>$str</i>.
 string_up($dest, $src)	Converts all lowercase ASCII letters to uppercase ASCII letters in the string <i>$src</i> and set to the string <i>$dest</i>.
