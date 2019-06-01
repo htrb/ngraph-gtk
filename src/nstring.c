@@ -446,6 +446,72 @@ add_printf_formated_str(GString *str, const char *format, const char *arg, int *
   return formated;
 }
 
+int
+add_printf_formated_double(GString *str, const char *format, double val, int *len)
+{
+  int i, formated, pow;
+  char *format2, *buf;
+  int vi;
+  long long int vll;
+
+  formated = FALSE;
+  format2 = get_printf_format_str(format, &i, &pow);
+  if (len) {
+    *len = i;
+  }
+  if (format2 == NULL) {
+    return formated;
+  }
+
+  buf = NULL;
+  switch (format[i]) {
+  case 'd': case 'i': case 'o': case 'u': case 'x': case 'X':
+    if (i > 2 && strncmp(format2 + i - 2, "ll", 2) == 0) {
+      vll = val;
+      buf = g_strdup_printf(format2, vll);
+    }else {
+      vi = val;
+      buf = g_strdup_printf(format2, vi);
+    }
+    formated = TRUE;
+    break;
+  case 'e': case 'E': case 'f': case 'F': case 'g': case 'G':
+    if (i > 2 && strncmp(format2 + i - 2, "ll", 2) == 0) {
+      break;
+    }
+    buf = g_strdup_printf(format2, val);
+    if (pow) {
+      char *new_buf;
+      new_buf = str_to_pow(buf);
+      if (new_buf) {
+	g_free(buf);
+	buf = new_buf;
+      }
+    }
+    formated = TRUE;
+    break;
+  case 's':
+    break;
+  case 'c':
+    if (i > 1 && format2[i - 1] == 'l') {
+      break;
+    }
+    vi = val;
+    buf = g_strdup_printf(format2, vi);
+    formated = TRUE;
+    break;
+  }
+
+  if (buf) {
+    g_string_append(str, buf);
+    g_free(buf);
+  }
+
+  g_free(format2);
+
+  return formated;
+}
+
 #ifdef COMPILE_UNUSED_FUNCTIONS
 char *
 getitok3(char **s,int *len,char *ifs)
