@@ -450,7 +450,7 @@ int
 add_printf_formated_double(GString *str, const char *format, double val, int *len)
 {
   int i, formated, pow;
-  char *format2, *buf;
+  char *format2, *buf, *tmp;
   int vi;
   long long int vll;
 
@@ -491,6 +491,14 @@ add_printf_formated_double(GString *str, const char *format, double val, int *le
     formated = TRUE;
     break;
   case 's':
+    if (i > 1 && format2[i - 1] == 'l') {
+      break;
+    }
+    tmp = g_strdup_printf("%g", val);
+    if (tmp) {
+      buf = g_strdup_printf(format2, tmp);
+      g_free(tmp);
+    }
     break;
   case 'c':
     if (i > 1 && format2[i - 1] == 'l') {
