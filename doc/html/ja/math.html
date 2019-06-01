@@ -602,10 +602,20 @@
   </tr>
   <tr>
     <td>
-     string_format($str, value)
+     string_format($str, $format, value)
     </td>
     <td>
-      数値 value を文字列に変換して $str に代入します。
+      数値 value を $format に従って文字列に変換して $str に代入します。value を返します。
+      $format の書式は printf(3) に準じます。詳しくは
+     <a href="text.html#FORMAT">フォント/テキスト - 整形</a>を参照してください。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     string($str, value)
+    </td>
+    <td>
+      数値 value を文字列に変換して $str に代入します。value を返します。
     </td>
   </tr>
   <tr>
