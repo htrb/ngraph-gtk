@@ -18,6 +18,7 @@
 #endif
 
 #include "ntime.h"
+#include "nstring.h"
 #include "object.h"
 
 #include "math_equation.h"
@@ -3535,6 +3536,56 @@ math_func_string_strip(MathFunctionCallExpression *exp, MathEquation *eq, MathVa
 
 int
 math_func_string_format(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  GString *gstr;
+  const char *str;
+  char *format;
+  double val;
+  int quote, converted, po, len;
+
+  MATH_CHECK_ARG(rval, exp->buf[2]);
+  val = exp->buf[2].val.val;
+
+  rval->val = val;
+  rval->type = MATH_VALUE_NORMAL;
+
+  gstr = math_expression_get_string_variable_from_argument(exp, 0);
+  str = math_expression_get_string_from_argument(exp, 1);
+  if (gstr == NULL || str == NULL) {
+    return 1;
+  }
+  format = g_strdup(str);
+  if (format == NULL) {
+    return 1;
+  }
+  g_string_assign(gstr, "");
+  po = 0;
+  converted = FALSE;
+  quote = FALSE;
+  for (po = 0; format[po]; po++) {
+    if (!quote && format[po] == '\\') {
+      quote = TRUE;
+      continue;
+    }
+    if (quote) {
+      g_string_append_c(gstr, format[po]);
+      quote = FALSE;
+      continue;
+    }
+    if (! converted && format[po] == '%') {
+      add_printf_formated_double(gstr, format + po, val, &len);
+      po += len;
+      converted = TRUE;
+      continue;
+    }
+    g_string_append_c(gstr, format[po]);
+  }
+  g_free(format);
+  return 0;
+}
+
+int
+math_func_string(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   GString *gstr;
   double val;
