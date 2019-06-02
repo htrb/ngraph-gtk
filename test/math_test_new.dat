@@ -251,3 +251,5 @@ string_float($sa[0])==1.2#1
 $str:="  abcde f	 "#0
 string_strip($str);
 string_compare($str, "abcde f")#0
+string_printf($str, "abc %^.3g def %d", 12345, 67890)#24
+string_compare($str, "abc 1.23×10^4@ def 67890")#0
