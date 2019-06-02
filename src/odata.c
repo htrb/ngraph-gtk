@@ -6388,13 +6388,10 @@ rectout(struct objlist *obj,struct f2ddata *fp,int GC,
 {
   int emerr,emnonum,emig,emng;
   double x0,y0,x1,y1;
-  int gx0,gy0,gx1,gy1,ax0,ay0;
-  double dx,dy,len,alen,awidth;
-  int ap[8],headlen,headwidth;
+  int gx0,gy0,gx1,gy1;
+  int ap[8];
 
   emerr=emnonum=emig=emng=FALSE;
-  headlen=72426;
-  headwidth=60000;
 
   if (type == PLOT_TYPE_DIAGONAL) GRAlinestyle(GC,snum,style,width,GRA_LINE_CAP_BUTT,GRA_LINE_JOIN_MITER,1000);
   else GRAlinestyle(GC,snum,style,width,GRA_LINE_CAP_PROJECTING,GRA_LINE_JOIN_MITER,1000);
@@ -6416,33 +6413,9 @@ rectout(struct objlist *obj,struct f2ddata *fp,int GC,
         }
       }
       if (type == PLOT_TYPE_ARROW) {
-        x0=fp->dx;
-        y0=fp->dy;
-        x1=fp->d2;
-        y1=fp->d3;
-        if (f2dlineclipf(&x0,&y0,&x1,&y1,fp)==0) {
-          f2dtransf(x0,y0,&gx0,&gy0,fp);
-          f2dtransf(x1,y1,&gx1,&gy1,fp);
-          if ((x1==fp->d2) && (y1==fp->d3) && (fp->msize>0)) {
-            alen=fp->msize;
-            awidth=fp->msize*(double )headwidth/(double )headlen/2;
-            dx=gx1-gx0;
-            dy=gy1-gy0;
-            len=sqrt(dx*dx+dy*dy);
-            if (len>0) {
-              ax0=nround(gx1-dx*alen/len);
-              ay0=nround(gy1-dy*alen/len);
-              ap[0]=nround(ax0-dy/len*awidth);
-              ap[1]=nround(ay0+dx/len*awidth);
-              ap[2]=gx1;
-              ap[3]=gy1;
-              ap[4]=nround(ax0+dy/len*awidth);
-              ap[5]=nround(ay0-dx/len*awidth);
-              GRAline(GC,gx0,gy0,ax0,ay0);
-              GRAdrawpoly(GC,3,ap,GRA_FILL_MODE_EVEN_ODD);
-            }
-          } else GRAline(GC,gx0,gy0,gx1,gy1);
-        }
+	struct line_position lp;
+	draw_arrow(fp, GC, fp->dx, fp->dy, fp->d2, fp->d3, fp->msize, &lp);
+	GRAline(GC, lp.x0, lp.y0, lp.x1, lp.y1);
       }
       if (type == PLOT_TYPE_RECTANGLE_FILL || type == PLOT_TYPE_RECTANGLE_SOLID_FILL) {
         if (type == PLOT_TYPE_RECTANGLE_FILL) {
