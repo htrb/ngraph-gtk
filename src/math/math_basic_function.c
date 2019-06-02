@@ -3535,7 +3535,7 @@ math_func_string_strip(MathFunctionCallExpression *exp, MathEquation *eq, MathVa
 }
 
 int
-math_func_string_format(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+math_func_string_printf(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   GString *gstr;
   const char *str;
