@@ -1196,15 +1196,18 @@ static int
 file_draw_line(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   struct f2ddata *fp;
-  int i, r, ap[4], px, py;
+  int i, px, py, msize, arrow;
   double pos[4];
+  struct line_position lp1, lp2;
 
   rval->val = 0;
 
   if (exp->buf[0].val.type != MATH_VALUE_NORMAL ||
       exp->buf[1].val.type != MATH_VALUE_NORMAL ||
       exp->buf[2].val.type != MATH_VALUE_NORMAL ||
-      exp->buf[3].val.type != MATH_VALUE_NORMAL) {
+      exp->buf[3].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[4].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[5].val.type != MATH_VALUE_NORMAL) {
     return 0;
   }
 
@@ -1778,7 +1781,7 @@ static struct funcs FileFunc[] = {
   {"MARKSIZE",  {1, 0, 0, file_marksize, NULL, NULL, NULL, NULL}},
   {"MARKTYPE",  {1, 0, 0, file_marktype, NULL, NULL, NULL, NULL}},
   {"DRAW_RECT", {6, 0, 0, file_draw_rect, NULL, NULL, NULL, NULL}},
-  {"DRAW_LINE", {4, 0, 0, file_draw_line, NULL, NULL, NULL, NULL}},
+  {"DRAW_LINE", {6, 0, 0, file_draw_line, NULL, NULL, NULL, NULL}},
   {"DRAW_ARC",  {DRAW_ARC_ARG_NUM, 0, 0, file_draw_arc, NULL, NULL, NULL, NULL}},
   {"DRAW_MARK",      {3, 0, 0, file_draw_mark, NULL, NULL, NULL, NULL}},
   {"DRAW_ERRORBAR",  {5, 0, 0, file_draw_errorbar, NULL, NULL, NULL, NULL}},
