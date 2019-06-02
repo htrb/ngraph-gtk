@@ -30,6 +30,7 @@
 
 #include "object.h"
 #include "nstring.h"
+#include "math/math_equation.h"
 
 #define NSTRLEN 0x400
 
@@ -482,12 +483,13 @@ check_value_type(GString *str, MathValue *mval)
 }
 
 int
-add_printf_formated_double(GString *str, const char *format, double val, int *len)
+add_printf_formated_double(GString *str, const char *format, MathValue *mval, int *len)
 {
   int i, formated, pow;
   char *format2, *buf, *tmp;
   int vi;
   long long int vll;
+  double val;
 
   formated = FALSE;
   format2 = get_printf_format_str(format, &i, &pow);
@@ -498,6 +500,10 @@ add_printf_formated_double(GString *str, const char *format, double val, int *le
     return formated;
   }
 
+  if (check_value_type(str, mval)) {
+    return TRUE;
+  }
+  val = mval->val;
   buf = NULL;
   switch (format[i]) {
   case 'd': case 'i': case 'o': case 'u': case 'x': case 'X':
