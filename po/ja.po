@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.07.06\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2019-06-01 14:50+0900\n"
-"PO-Revision-Date: 2019-06-01 15:45+0900\n"
+"POT-Creation-Date: 2019-06-02 10:54+0900\n"
+"PO-Revision-Date: 2019-06-02 11:57+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja\n"
@@ -4161,18 +4161,6 @@ msgstr ""
 
 #: src/gtk/completion_info_data.c:128
 msgid ""
-"<b>string_format</b>(<i>$str, $format, value</i>)\n"
-"Converts <i>value</i> to a string according to <i>$format</i>\n"
-"and set to <i>$str</i>.\n"
-"Return the value."
-msgstr ""
-"<b>string_format</b>(<i>$str, $format, value</i>)\n"
-"数値 <i>value</i> を <i>$format</i> に従い\n"
-"文字列に変換して <i>$str</i> に代入する。\n"
-"<i>value</i> を返す。"
-
-#: src/gtk/completion_info_data.c:129
-msgid ""
 "<b>string_insert</b>(<i>$dest, $src, pos</i>)\n"
 "Inserts the string <i>$src</i> into the string <i>$dest</i> at the position "
 "<i>pos</i>."
@@ -4181,7 +4169,7 @@ msgstr ""
 "文字列 <i>$dest</i> の <i>pos</i> 番目の文字の前に文字列 <i>$src</i> を挿入す"
 "る。"
 
-#: src/gtk/completion_info_data.c:130
+#: src/gtk/completion_info_data.c:129
 msgid ""
 "<b>string_join</b>(<i>$dest, $sep, $array</i>)\n"
 "Joins a number of strings in the array <i>$array</i>\n"
@@ -4192,7 +4180,7 @@ msgstr ""
 "文字列の配列 <i>$array</i> の各要素を連結して <i>$dest</i> に代入する。\n"
 "各要素のあいだには、文字列 <i>$sep</i> が挿入される。"
 
-#: src/gtk/completion_info_data.c:131
+#: src/gtk/completion_info_data.c:130
 msgid ""
 "<b>string_length</b>(<i>$str</i>)\n"
 "Return the length of the string <i>$str</i> in characters."
@@ -4201,7 +4189,7 @@ msgstr ""
 "<i>$str</i> に含まれる文字数を返す。\n"
 "UTF-8 以外の文字列では使えない。"
 
-#: src/gtk/completion_info_data.c:132
+#: src/gtk/completion_info_data.c:131
 msgid ""
 "<b>string_match</b>(<i>$str, $regexp, ignore_case</i>)\n"
 "Scans for a match in the string <i>$str</i> for the regular expression "
@@ -4215,13 +4203,25 @@ msgstr ""
 "<i>ignore_case</i> が 0 以外の場合は文字列に含まれる ascii 文字の大文字小文字"
 "を区別せずに比較する。"
 
-#: src/gtk/completion_info_data.c:133
+#: src/gtk/completion_info_data.c:132
 msgid ""
 "<b>string_prepend</b>(<i>$dest, $src</i>)\n"
 "Adds the string <i>$src</i> onto the start of the string <i>$dest</i>."
 msgstr ""
 "<b>string_prepend</b>(<i>$dest, $src</i>)\n"
 "文字列 <i>$dest</i> の最初に文字列 <i>$src</i> を連結する。"
+
+#: src/gtk/completion_info_data.c:133
+msgid ""
+"<b>string_printf</b>(<i>$str, $format, v1, v2, ...</i>)\n"
+"Converts <i>v1, v2, ...</i> to a string according to <i>$format</i>\n"
+"and set to <i>$str</i>.\n"
+"Return the length of the string <i>$str</i> in characters."
+msgstr ""
+"<b>string_printf</b>(<i>$str, $format, v1, v2, ...</i>)\n"
+"数値 <i>v1, v2, ...</i> を <i>$format</i> に従い\n"
+"文字列に変換して <i>$str</i> に代入する。\n"
+"変換された文字列の文字数を返す。"
 
 #: src/gtk/completion_info_data.c:134
 msgid ""
