@@ -3540,13 +3540,9 @@ math_func_string_format(MathFunctionCallExpression *exp, MathEquation *eq, MathV
   GString *gstr;
   const char *str;
   char *format;
-  double val;
-  int quote, converted, po, len;
+  int quote, po, len, i;
 
-  MATH_CHECK_ARG(rval, exp->buf[2]);
-  val = exp->buf[2].val.val;
-
-  rval->val = val;
+  rval->val = 0;
   rval->type = MATH_VALUE_NORMAL;
 
   gstr = math_expression_get_string_variable_from_argument(exp, 0);
@@ -3560,8 +3556,8 @@ math_func_string_format(MathFunctionCallExpression *exp, MathEquation *eq, MathV
   }
   g_string_assign(gstr, "");
   po = 0;
-  converted = FALSE;
   quote = FALSE;
+  i = 2;
   for (po = 0; format[po]; po++) {
     if (!quote && format[po] == '\\') {
       quote = TRUE;
@@ -3572,15 +3568,18 @@ math_func_string_format(MathFunctionCallExpression *exp, MathEquation *eq, MathV
       quote = FALSE;
       continue;
     }
-    if (! converted && format[po] == '%') {
-      add_printf_formated_double(gstr, format + po, val, &len);
+    if (i < exp->argc && format[po] == '%') {
+      add_printf_formated_double(gstr, format + po, &exp->buf[i].val, &len);
       po += len;
-      converted = TRUE;
+      i++;;
       continue;
     }
     g_string_append_c(gstr, format[po]);
   }
   g_free(format);
+  if (g_utf8_validate(gstr->str, -1, NULL)) {
+    rval->val = g_utf8_strlen(gstr->str, -1);
+  }
   return 0;
 }
 
