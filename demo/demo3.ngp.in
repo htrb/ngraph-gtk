@@ -639,6 +639,62 @@ x;'
 	data::array=
 	data::file='DOCDIRDEF/demo3.dat'
 
+new data
+	data::hidden=false
+	data::R=0
+	data::G=0
+	data::B=0
+	data::A=255
+	data::clip=true
+	data::redraw_flag=true
+	data::source=range
+	data::save_path=unchange
+	data::x=1
+	data::y=2
+	data::type=mark
+	data::interpolation=spline
+	data::fit=
+	data::math_x=
+	data::math_y='y := 1.05;
+if(%0 == 3,
+  progn(
+    draw_text("critical value", x + 0.1, y - 0.01),
+    draw_line(0, y, 1, y, 2, 4)));'
+	data::func_f=
+	data::func_g=
+	data::func_h=
+	data::smooth_x=0
+	data::smooth_y=0
+	data::averaging_type=simple
+	data::mark_type=0
+	data::mark_size=0
+	data::line_width=80
+	data::line_style=
+	data::line_join=bevel
+	data::line_miter_limit=1000
+	data::R2=255
+	data::G2=255
+	data::B2=255
+	data::A2=255
+	data::remark='#%'\'''
+	data::ifs=' ,	()'
+	data::csv=false
+	data::head_skip=0
+	data::read_step=1
+	data::final_line=-1
+	data::mask=
+	data::move_data=
+	data::move_data_x=
+	data::move_data_y=
+	data::axis_x='axis:0'
+	data::axis_y='axis:1'
+	data::data_clip=true
+	data::range_min=0.000000000000000e+00
+	data::range_max=1.000000000000000e+00
+	data::range_div=2
+	data::array=
+	data::file=
+
 new rectangle
 	rectangle::hidden=false
 	rectangle::clip=true
@@ -680,36 +736,6 @@ new rectangle
 	rectangle::stroke=true
 	rectangle::width=40
 	rectangle::style=
-
-new path
-	path::hidden=false
-	path::clip=true
-	path::redraw_flag=true
-	path::type=line
-	path::points='4500 10500 6000 10500'
-	path::interpolation=spline
-	path::fill_R=0
-	path::fill_G=0
-	path::fill_B=0
-	path::fill_A=255
-	path::stroke_R=0
-	path::stroke_G=0
-	path::stroke_B=0
-	path::stroke_A=255
-	path::fill=false
-	path::fill_rule=even_odd_rule
-	path::stroke=true
-	path::close_path=false
-	path::width=80
-	path::style=
-	path::join=miter
-	path::miter_limit=1000
-	path::marker_begin=arrow
-	path::marker_end=none
-	path::arrow_length=44100
-	path::arrow_width=28000
-	path::mark_type_begin=0
-	path::mark_type_end=0
 
 new text
 	text::hidden=false
@@ -803,25 +829,6 @@ new text
 	text::style=0
 	text::space=0
 	text::direction=9000
-	text::script_size=7000
-	text::raw=false
-
-new text
-	text::hidden=false
-	text::R=0
-	text::G=0
-	text::B=0
-	text::A=255
-	text::clip=true
-	text::redraw_flag=true
-	text::text='critical value'
-	text::x=6100
-	text::y=10700
-	text::pt=2000
-	text::font='Sans-serif'
-	text::style=0
-	text::space=0
-	text::direction=0
 	text::script_size=7000
 	text::raw=false
 
