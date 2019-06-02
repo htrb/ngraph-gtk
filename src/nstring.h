@@ -24,6 +24,8 @@
 #ifndef NSTRING_HEADER
 #define NSTRING_HEADER
 
+#include "math/math_equation.h"
+
 #define STRLEN 256
 #define CHK_STR(s) (((s) == NULL) ? "" : (s))
 
@@ -40,6 +42,6 @@ int wildmatch(const char *pat, const char *s,int flags);
 char *getitok(char **s, int *len, const char *ifs);
 char *getitok2(char **s, int *len, const char *ifs);
 int add_printf_formated_str(GString *str, const char *format, const char *arg, int *len);
-int add_printf_formated_double(GString *str, const char *format, double val, int *len);
+int add_printf_formated_double(GString *str, const char *format, MathValue *mval, int *len);
 
 #endif
