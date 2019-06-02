@@ -1221,24 +1221,33 @@ file_draw_line(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   for (i = 0; i < 4; i++) {
     pos[i] = exp->buf[i].val.val;
   }
-
-  for (i = 0; i < 2; i++) {
-    r = getposition2(fp, fp->axtype, fp->aytype, pos + i * 2, pos + i * 2 + 1);
-    if (r) {
-      rval->type = MATH_VALUE_ERROR;
-      return -1;
-    }
+  arrow = exp->buf[4].val.val;
+  msize = exp->buf[5].val.val * 100;
+  if (msize <= 0) {
+    msize = fp->marksize;
   }
-
-  if (f2dlineclipf(pos, pos + 1, pos + 2, pos + 3, fp)) {
-    return 0;
-  }
-  f2dtransf(pos[0], pos[1], ap + 0, ap + 1, fp);
-  f2dtransf(pos[2], pos[3], ap + 2, ap + 3, fp);
 
   GRAcurrent_point(fp->GC, &px, &py);
   GRAcolor(fp->GC, fp->color.r, fp->color.g, fp->color.b, fp->color.a);
-  GRAline(fp->GC, ap[0], ap[1], ap[2], ap[3]);
+  switch (arrow) {
+  case ARROW_POSITION_END:
+    draw_arrow(fp, fp->GC, pos[0], pos[1], pos[2], pos[3], msize, &lp1);
+    GRAline(fp->GC, lp1.x0, lp1.y0, lp1.x1, lp1.y1);
+    break;
+  case ARROW_POSITION_BEGIN:
+    draw_arrow(fp, fp->GC, pos[2], pos[3], pos[0], pos[1], msize, &lp1);
+    GRAline(fp->GC, lp1.x1, lp1.y1, lp1.x0, lp1.y0);
+    break;
+  case ARROW_POSITION_BOTH:
+    draw_arrow(fp, fp->GC, pos[0], pos[1], pos[2], pos[3], msize, &lp1);
+    draw_arrow(fp, fp->GC, pos[2], pos[3], pos[0], pos[1], msize, &lp2);
+    GRAline(fp->GC, lp2.x1, lp2.y1, lp1.x1, lp1.y1);
+    break;
+  default:
+    draw_arrow(fp, fp->GC, pos[0], pos[1], pos[2], pos[3], 0, &lp1);
+    GRAline(fp->GC, lp1.x0, lp1.y0, lp1.x1, lp1.y1);
+    break;
+  }
   GRAmoveto(fp->GC, px, py);
   fp->local->use_drawing_func = TRUE;
 
