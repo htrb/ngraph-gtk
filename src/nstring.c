@@ -446,6 +446,41 @@ add_printf_formated_str(GString *str, const char *format, const char *arg, int *
   return formated;
 }
 
+static int
+check_value_type(GString *str, MathValue *mval)
+{
+  switch (mval->type) {
+  case MATH_VALUE_NORMAL:
+    return 0;
+    break;
+  case MATH_VALUE_ERROR:
+    g_string_append(str, "ERROR");
+    break;
+  case MATH_VALUE_NAN:
+    g_string_append(str, "NAN");
+    break;
+  case MATH_VALUE_UNDEF:
+    g_string_append(str, "UNDEF");
+    break;
+  case MATH_VALUE_CONT:
+    g_string_append(str, "CONTINUE");
+    break;
+  case MATH_VALUE_BREAK:
+    g_string_append(str, "BREAK");
+    break;
+  case MATH_VALUE_NONUM:
+    g_string_append(str, "NO-NUMBER");
+    break;
+  case MATH_VALUE_MEOF:
+    g_string_append(str, "EOF");
+    break;
+  case MATH_VALUE_INTERRUPT:
+    g_string_append(str, "INTERRUPTED");
+    break;
+  }
+  return 1;
+}
+
 int
 add_printf_formated_double(GString *str, const char *format, double val, int *len)
 {
