@@ -395,6 +395,11 @@ struct point_pos {
   double x, y, d;
 };
 
+struct line_position {
+  int x0, y0, x1, y1;
+};
+
+static void draw_arrow(struct f2ddata *fp ,int GC, double x0, double y0, double x1, double y1, int msize, struct line_position *lp);
 static int set_data_progress(struct f2ddata *fp);
 static int getminmaxdata(struct f2ddata *fp, struct f2dlocal *local);
 static int calc_fit_equation(struct objlist *obj, N_VALUE *inst, double x, double *y);
@@ -6321,6 +6326,51 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
   }
   errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
   return 0;
+}
+
+static void
+draw_arrow(struct f2ddata *fp ,int GC, double x0, double y0, double x1, double y1, int msize, struct line_position *lp)
+{
+  int gx0, gy0, gx1, gy1, ax0, ay0, ap[8];
+  double d2, d3, dx, dy, len, alen, awidth, headlen, headwidth;
+
+  headlen = 72426;
+  headwidth = 60000;
+
+  d2 = x1;
+  d3 = y1;
+  if (f2dlineclipf(&x0, &y0, &x1, &y1, fp)) {
+    return;
+  }
+  f2dtransf(x0, y0, &gx0, &gy0, fp);
+  f2dtransf(x1, y1, &gx1, &gy1, fp);
+  if ((x1 == d2) && (y1 == d3) && (msize > 0)) {
+    alen = msize;
+    awidth = alen * headwidth / headlen / 2.0;
+    dx = gx1-gx0;
+    dy = gy1-gy0;
+    len = sqrt(dx*dx+dy*dy);
+    if (len > 0) {
+      ax0 = nround(gx1 - dx * alen / len);
+      ay0 = nround(gy1 - dy * alen / len);
+      ap[0] = nround(ax0 - dy / len * awidth);
+      ap[1] = nround(ay0 + dx / len * awidth);
+      ap[2] = gx1;
+      ap[3] = gy1;
+      ap[4] = nround(ax0 + dy / len * awidth);
+      ap[5] = nround(ay0 - dx / len * awidth);
+      GRAdrawpoly(GC, 3, ap, GRA_FILL_MODE_EVEN_ODD);
+      lp->x0 = gx0;
+      lp->y0 = gy0;
+      lp->x1 = ax0;
+      lp->y1 = ay0;
+    }
+  } else {
+    lp->x0 = gx0;
+    lp->y0 = gy0;
+    lp->x1 = gx1;
+    lp->y1 = gy1;
+  }
 }
 
 static int
