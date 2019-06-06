@@ -1640,12 +1640,6 @@ math_equation_clear_variable(MathEquation *eq)
   nhash_clear(eq->stack.variable);
 }
 
-char *
-math_equation_get_array_name(MathEquation *eq, int index)
-{
-  return NULL;
-}
-
 int
 math_equation_check_array(MathEquation *eq, const char *name)
 {
