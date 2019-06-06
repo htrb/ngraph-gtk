@@ -306,22 +306,14 @@ clear_arrays(MathArray *array)
 void
 math_equation_clear(MathEquation *eq)
 {
-  int i;
-
   if (eq == NULL)
     return;
 
   clear_pos_func_buf(eq);
 
   clear_variable_array(eq->stack.stack.val, eq->stack.num);
-
-  if (eq->array.num > 0 && eq->array.buf) {
-    for (i = 0; i < eq->array.num; i++) {
-      if (eq->array.buf[i].num > 0 && eq->array.buf[i].data.val) {
-	clear_variable_array(eq->array.buf[i].data.val, eq->array.buf[i].num);
-      }
-    }
-  }
+  clear_arrays(&eq->array);
+  clear_arrays(&eq->string_array);
 }
 
 void
