@@ -279,6 +279,30 @@ clear_string_array(GString **gstr, int n)
     g_string_set_size(gstr[i], 0);
   }
 }
+
+static void
+clear_arrays(MathArray *array)
+{
+  int i, n;
+  n = array->num;
+  if (n <= 0) {
+    return;
+  }
+  if (array->buf == NULL) {
+    return;
+  }
+  for (i = 0; i < n; i++) {
+    if (array->buf[i].num <= 0 || array->buf[i].data.ptr == NULL) {
+      continue;
+    }
+    if (array->type == DATA_TYPE_VALUE) {
+      clear_variable_array(array->buf[i].data.val, array->buf[i].num);
+    } else {
+      clear_string_array(array->buf[i].data.str, array->buf[i].num);
+    }
+  }
+}
+
 void
 math_equation_clear(MathEquation *eq)
 {
