@@ -1787,7 +1787,7 @@ math_equation_clear_array(MathEquation *eq, int array)
   if (i < 0)
     return 1;
 
-  clear_variable_array(eq->array.buf[array].data.val, eq->array.buf[i].num);
+  clear_variable_array(eq->array.buf[array].data.val, eq->array.buf[array].num);
   eq->array.buf[array].num = 0;
 
   return 0;
