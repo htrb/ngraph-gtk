@@ -3804,7 +3804,7 @@ math_func_string_join(MathFunctionCallExpression *exp, MathEquation *eq, MathVal
   }
 
   if (ary->num < 1) {
-    g_string_assign(dest, "");
+    g_string_set_size(dest, 0);
     return 0;
   }
 
