@@ -3559,7 +3559,7 @@ math_func_string_printf(MathFunctionCallExpression *exp, MathEquation *eq, MathV
   if (format == NULL) {
     return 1;
   }
-  g_string_assign(gstr, "");
+  g_string_set_size(gstr, 0);
   po = 0;
   quote = FALSE;
   i = 2;
