@@ -1794,6 +1794,24 @@ math_equation_clear_array(MathEquation *eq, int array)
 }
 
 int
+math_equation_clear_string_array(MathEquation *eq, int array)
+{
+  int i;
+
+  if (eq == NULL) {
+    return 1;
+  }
+  i = check_array(&eq->string_array, array, 0);
+  if (i < 0)
+    return 1;
+
+  clear_string_array(eq->string_array.buf[array].data.str, eq->string_array.buf[array].num);
+  eq->string_array.buf[array].num = 0;
+
+  return 0;
+}
+
+int
 math_equation_set_array_val(MathEquation *eq, int array, int index, const MathValue *val)
 {
   int i;
