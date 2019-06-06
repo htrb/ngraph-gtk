@@ -271,6 +271,14 @@ clear_variable_array(MathValue *vbuf, int n)
   memset(vbuf, 0, sizeof(*vbuf) * n);
 }
 
+static void
+clear_string_array(GString **gstr, int n)
+{
+  int i;
+  for (i = 0; i < n; i++) {
+    g_string_set_size(gstr[i], 0);
+  }
+}
 void
 math_equation_clear(MathEquation *eq)
 {
