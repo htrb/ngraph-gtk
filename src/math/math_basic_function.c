@@ -3137,13 +3137,18 @@ math_func_array_compact(MathFunctionCallExpression *exp, MathEquation *eq, MathV
 int
 math_func_array_clear(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  int id, r;
+  int id, r, type;
 
   rval->val = 0;
 
   id = (int) exp->buf[0].array.idx;
+  type = exp->buf[0].array.array_type;
+  if (type == DATA_TYPE_VALUE) {
+    r = math_equation_clear_array(eq, id);
+  } else {
+    r = math_equation_clear_string_array(eq, id);
+  }
 
-  r = math_equation_clear_array(eq, id);
   if (r) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
