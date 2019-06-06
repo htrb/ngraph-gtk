@@ -258,3 +258,5 @@ string_printf($str, "abc %^.3g def %d", 12345, 67890)==24#1
 string_compare($str, "abc 1.23×10^4@ def 67890")#0
 string_printf($str, "abc %^.3g def %d", 12345)==21#1
 string_compare($str, "abc 1.23×10^4@ def %d")#0
+string_printf($str, "abc %^.3g def %d")==16#1
+string_compare($str, "abc %^.3g def %d")#0
