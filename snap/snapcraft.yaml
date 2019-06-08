@@ -11,7 +11,7 @@
   confinement: strict
 
   parts:
-    my-part:
+    ngraph-gtk:
       source: https://github.com/htrb/ngraph-gtk/
       source-tag: *version
-      plugin: nil
+      plugin: [autotools, make, ruby]
