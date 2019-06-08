@@ -11,7 +11,7 @@
   confinement: strict
 
   parts:
-    procs:
+    ngraph-gtk-htrb:
       source: https://github.com/htrb/ngraph-gtk/
       source-tag: *version
       plugin: nil
