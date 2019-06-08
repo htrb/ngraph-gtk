@@ -13,8 +13,10 @@ confinement: strict
 parts:
   desktop-gtk3:
     # You may optionally override parts of the remote part definition
+  ngraph-gtk:
+    plugin: [autotools, make, ruby]
 
 apps:
   command: desktop-launch $SNAP/usr/bin/ngraph
-  plugs: [autotools, make, ruby, desktop, desktop-legacy]
+  plugs: [desktop, desktop-legacy]
 
