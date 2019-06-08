@@ -1,13 +1,13 @@
 
   name: ngraph-gtk-htrb
   version: 'v6.08.01'
-  summary: Ngraph is the program to create scientific 2-dimensional graphs for researchers and engineers.
+  summary: the program to create scientific 2-dimensional graphs.
   description: |
     Ngraph is the program to create scientific 2-dimensional graphs
     for researchers and engineers. Graphs can be exported to
     PostScript, SVG, PNG or PDF format.
 
-  grade: stable
+  grade: devel # stable | devel
   confinement: strict
 
   parts:
