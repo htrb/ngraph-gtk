@@ -1,15 +1,20 @@
 
-  name: ngraph-gtk-htrb
-  version: 'v6.08.01'
-  summary: the program to create scientific 2-dimensional graphs.
-  description: |
-    Ngraph is the program to create scientific 2-dimensional graphs
-    for researchers and engineers. Graphs can be exported to
-    PostScript, SVG, PNG or PDF format.
+name: ngraph-gtk-htrb
+version: 'v6.08.01'
+summary: the program to create scientific 2-dimensional graphs.
+description: |
+  Ngraph is the program to create scientific 2-dimensional graphs
+  for researchers and engineers. Graphs can be exported to
+  PostScript, SVG, PNG or PDF format.
 
-  grade: devel # stable | devel
-  confinement: strict
+grade: devel # stable | devel
+confinement: strict
 
-  parts:
-    ngraph-gtk:
-      plugin: [autotools, make, ruby]
+parts:
+  desktop-gtk3:
+    # You may optionally override parts of the remote part definition
+
+apps:
+  command: desktop-launch $SNAP/usr/bin/ngraph
+  plugs: [autotools, make, ruby, desktop, desktop-legacy]
+
