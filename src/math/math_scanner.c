@@ -374,8 +374,9 @@ get_single_quoted_string(const char *str,  const char ** rstr, int *len)
   return gstr;
 }
 
+static GString *
+get_double_quoted_string(const char *str,  const char ** rstr, int *len)
 {
-  struct math_token *tok;
   int n, escape;
   GString *gstr;
 
@@ -421,6 +422,12 @@ get_single_quoted_string(const char *str,  const char ** rstr, int *len)
       g_string_append_c(gstr, str[n]);
     }
   }
+
+  if (len) {
+    * len = n;
+  }
+  return gstr;
+}
 
   if (str[n] == '\0' || str[n] == '\n') {
     tok = create_token(str, MATH_TOKEN_TYPE_UNTERMINATED_STRING);
