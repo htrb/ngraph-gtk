@@ -429,6 +429,22 @@ get_double_quoted_string(const char *str,  const char ** rstr, int *len)
   return gstr;
 }
 
+static struct math_token *
+get_string(const char *str,  const char ** rstr, int quate)
+{
+  struct math_token *tok;
+  int n;
+  GString *gstr;
+
+  if (quate == '"') {
+    gstr = get_double_quoted_string(str, rstr, &n);
+  } else {
+    gstr = get_single_quoted_string(str, rstr, &n);
+  }
+  if (gstr == NULL) {
+    return NULL;
+  }
+
   if (str[n] == '\0' || str[n] == '\n') {
     tok = create_token(str, MATH_TOKEN_TYPE_UNTERMINATED_STRING);
     if (tok == NULL) {
