@@ -11,11 +11,7 @@
   confinement: strict
 
   parts:
-    ngraph-gtk-htrb:
+    my-part:
       source: https://github.com/htrb/ngraph-gtk/
       source-tag: *version
       plugin: nil
-
-  apps:
-    ngraph-gtk-htrb:
-      command: ngraph
