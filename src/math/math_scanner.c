@@ -330,8 +330,50 @@ get_symbol(const char *str, const char ** rstr)
   return tok;
 }
 
-static struct math_token *
-get_string(const char *str,  const char ** rstr)
+static GString *
+get_single_quoted_string(const char *str,  const char ** rstr, int *len)
+{
+  int n, escape;
+  GString *gstr;
+
+  gstr = g_string_new("");
+  if (gstr == NULL) {
+    return NULL;
+  }
+
+  escape = FALSE;
+  for (n = 1; str[n]; n++) {
+    if (escape) {
+      switch (str[n]) {
+      case '\'':
+	g_string_append_c(gstr, '\'');
+	break;
+      case '\\':
+	g_string_append_c(gstr, '\\');
+	break;
+      default:
+	g_string_append_c(gstr, '\\');
+	g_string_append_c(gstr, str[n]);
+	break;
+      }
+      escape = FALSE;
+      continue;
+    }
+    if (str[n] == '\'' || str[n] == '\n') {
+      break;
+    } else if (str[n] == '\\') {
+      escape = TRUE;
+    } else {
+      g_string_append_c(gstr, str[n]);
+    }
+  }
+
+  if (len) {
+    * len = n;
+  }
+  return gstr;
+}
+
 {
   struct math_token *tok;
   int n, escape;
