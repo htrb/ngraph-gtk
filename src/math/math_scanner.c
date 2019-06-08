@@ -22,7 +22,7 @@ static struct math_token *get_array_prefix(const char *str, const char ** rstr);
 static struct math_token *get_bracket(const char *str, const char ** rstr);
 static struct math_token *get_unknown(const char *str, const char ** rstr);
 static struct math_token *get_symbol(const char *str, const char ** rstr);
-static struct math_token *get_string(const char *str, const char ** rstr);
+static struct math_token *get_string(const char *str, const char ** rstr, int quate);
 static struct math_token *get_string_variable(const char *str, const char ** rstr);
 static struct math_token *get_paren(const char *str, const char ** rstr);
 static struct math_token *get_curly(const char *str, const char ** rstr);
@@ -133,7 +133,9 @@ math_scanner_get_token(struct math_string *mstr)
   } else if (c == '@') {
     token = get_array_prefix(str, rstr);
   } else if (c == '"') {
-    token = get_string(str, rstr);
+    token = get_string(str, rstr, c);
+  } else if (c == '\'') {
+    token = get_string(str, rstr, c);
   } else if (c == '$') {
     token = get_string_variable(str, rstr);
   } else if (c == '#') {        /* comment */
