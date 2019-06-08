@@ -12,6 +12,4 @@
 
   parts:
     ngraph-gtk:
-      source: https://github.com/htrb/ngraph-gtk/
-      source-tag: *version
       plugin: [autotools, make, ruby]
