@@ -1162,6 +1162,110 @@ file_getobj_string(MathFunctionCallExpression *exp, MathEquation *eq, MathValue 
   return 0;
 }
 
+static int
+file_getobj_array(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  const char *field;
+  struct objlist *obj;
+  enum ngraph_object_field_type type;
+  enum DATA_TYPE array_type;
+  int array_id;
+  struct narray *array;
+  int id, ret, i, n;
+  int *idata;
+  double *ddata;
+  char **sdata, *str;
+  MathValue val;
+
+  rval->val = 0;
+
+  array_id = exp->buf[0].array.idx;
+  array_type = exp->buf[0].array.array_type;
+  if (array_id < 0) {
+    return 0;
+  }
+  obj = file_getobj_common(exp, eq, rval, 1, &id, &ret, &type);
+  if (obj == NULL) {
+    return ret;
+  }
+  field = math_expression_get_string_from_argument(exp, 2);
+  if (field == NULL) {
+    return 0;
+  }
+  val.type = MATH_VALUE_NORMAL;
+  switch (type) {
+  case NIARRAY:
+    if (array_type != DATA_TYPE_VALUE) {
+      break;
+    }
+    if (getobj(obj, field, id, 0, NULL, &array) < 0) {
+      rval->type = MATH_VALUE_ERROR;
+      return 1;
+    }
+    n = arraynum(array);
+    if (n < 0) {
+      break;
+    }
+    idata = arraydata(array);
+    if (idata == NULL) {
+      break;
+    }
+    for (i = 0; i < n; i++) {
+      val.val = idata[i];
+      math_equation_set_array_val(eq, array_id, i, &val);
+    }
+    break;
+  case NDARRAY:
+    if (array_type != DATA_TYPE_VALUE) {
+      break;
+    }
+    if (getobj(obj, field, id, 0, NULL, &array) < 0) {
+      rval->type = MATH_VALUE_ERROR;
+      return 1;
+    }
+    n = arraynum(array);
+    if (n < 0) {
+      break;
+    }
+    ddata = arraydata(array);
+    if (ddata == NULL) {
+      break;
+    }
+    for (i = 0; i < n; i++) {
+      val.val = ddata[i];
+      math_equation_set_array_val(eq, array_id, i, &val);
+    }
+    break;
+  case NSARRAY:
+    if (array_type != DATA_TYPE_STRING) {
+      break;
+    }
+    if (getobj(obj, field, id, 0, NULL, &array) < 0) {
+      rval->type = MATH_VALUE_ERROR;
+      return 1;
+    }
+    n = arraynum(array);
+    if (n < 0) {
+      break;
+    }
+    sdata = arraydata(array);
+    if (sdata == NULL) {
+      break;
+    }
+    for (i = 0; i < n; i++) {
+      str = sdata[i];
+      if (str == NULL) {
+	str = "";
+      }
+      math_equation_set_array_str(eq, array_id, i, str);
+    }
+    break;
+  default:
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+  return 0;
+}
 
 #define ARC_INTERPOLATION 20
 #define DRAW_ARC_ARG_NUM 10
@@ -1898,6 +2002,13 @@ static enum MATH_FUNCTION_ARG_TYPE getobj_string_arg_type[] = {
   MATH_FUNCTION_ARG_TYPE_DOUBLE,
 };
 
+static enum MATH_FUNCTION_ARG_TYPE getobj_array_arg_type[] = {
+  MATH_FUNCTION_ARG_TYPE_ARRAY_COMMON,
+  MATH_FUNCTION_ARG_TYPE_STRING,
+  MATH_FUNCTION_ARG_TYPE_STRING,
+  MATH_FUNCTION_ARG_TYPE_DOUBLE,
+};
+
 static enum MATH_FUNCTION_ARG_TYPE draw_polyline_arg_type[] = {
   MATH_FUNCTION_ARG_TYPE_ARRAY,
   MATH_FUNCTION_ARG_TYPE_ARRAY,
@@ -1964,6 +2075,7 @@ static struct funcs FileFunc[] = {
   {"STRING_COLUMN",  {2, 0, 0, file_string_column, string_column_arg_type, NULL, NULL, NULL}},
   {"GETOBJ",         {3, 0, 0, file_getobj, getobj_arg_type, NULL, NULL, NULL}},
   {"GETOBJ_STRING",  {4, 0, 0, file_getobj_string, getobj_string_arg_type, NULL, NULL, NULL}},
+  {"GETOBJ_ARRAY",   {4, 0, 0, file_getobj_array, getobj_array_arg_type, NULL, NULL, NULL}},
 };
 
 static int
