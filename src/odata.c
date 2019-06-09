@@ -1214,6 +1214,7 @@ file_getobj_array(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *
       val.val = idata[i];
       math_equation_set_array_val(eq, array_id, i, &val);
     }
+    rval->val = n;
     break;
   case NDARRAY:
     if (array_type != DATA_TYPE_VALUE) {
@@ -1235,6 +1236,7 @@ file_getobj_array(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *
       val.val = ddata[i];
       math_equation_set_array_val(eq, array_id, i, &val);
     }
+    rval->val = n;
     break;
   case NSARRAY:
     if (array_type != DATA_TYPE_STRING) {
@@ -1259,6 +1261,7 @@ file_getobj_array(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *
       }
       math_equation_set_array_str(eq, array_id, i, str);
     }
+    rval->val = n;
     break;
   default:
     rval->type = MATH_VALUE_ERROR;
