@@ -1117,6 +1117,51 @@ file_getobj(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
   return 0;
 }
 
+static int
+file_getobj_string(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  const char *field;
+  struct objlist *obj;
+  enum ngraph_object_field_type type;
+  char *str;
+  GString *gstr;
+  int id, ret;
+
+  rval->val = 0;
+
+  gstr = math_expression_get_string_variable_from_argument(exp, 0);
+  if (gstr == NULL) {
+    return 0;
+  }
+
+  obj = file_getobj_common(exp, eq, rval, 1, &id, &ret, &type);
+  if (obj == NULL) {
+    return ret;
+  }
+  field = math_expression_get_string_from_argument(exp, 2);
+  if (field == NULL) {
+    return 0;
+  }
+  switch (type) {
+  case NSTR:
+    if (getobj(obj, field, id, 0, NULL, &str) < 0) {
+      rval->type = MATH_VALUE_ERROR;
+      return 1;
+    }
+    if (str == NULL) {
+      str = "";
+    } else if (g_utf8_validate(str, -1, NULL)) {
+      rval->val = g_utf8_strlen(str, -1);
+    }
+    g_string_assign(gstr, str);
+    break;
+  default:
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+  return 0;
+}
+
 
 #define ARC_INTERPOLATION 20
 #define DRAW_ARC_ARG_NUM 10
@@ -1846,6 +1891,13 @@ static enum MATH_FUNCTION_ARG_TYPE getobj_arg_type[] = {
   MATH_FUNCTION_ARG_TYPE_DOUBLE,
 };
 
+static enum MATH_FUNCTION_ARG_TYPE getobj_string_arg_type[] = {
+  MATH_FUNCTION_ARG_TYPE_STRING_VARIABLE,
+  MATH_FUNCTION_ARG_TYPE_STRING,
+  MATH_FUNCTION_ARG_TYPE_STRING,
+  MATH_FUNCTION_ARG_TYPE_DOUBLE,
+};
+
 static enum MATH_FUNCTION_ARG_TYPE draw_polyline_arg_type[] = {
   MATH_FUNCTION_ARG_TYPE_ARRAY,
   MATH_FUNCTION_ARG_TYPE_ARRAY,
@@ -1911,6 +1963,7 @@ static struct funcs FileFunc[] = {
   {"TEXT_OBJ_GET",   {2, 0, 0, file_text_obj_get, text_obj_get_arg_type, NULL, NULL, NULL}},
   {"STRING_COLUMN",  {2, 0, 0, file_string_column, string_column_arg_type, NULL, NULL, NULL}},
   {"GETOBJ",         {3, 0, 0, file_getobj, getobj_arg_type, NULL, NULL, NULL}},
+  {"GETOBJ_STRING",  {4, 0, 0, file_getobj_string, getobj_string_arg_type, NULL, NULL, NULL}},
 };
 
 static int
