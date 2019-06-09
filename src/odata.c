@@ -1609,6 +1609,12 @@ file_draw_text_sub(MathFunctionCallExpression *exp, MathEquation *eq, MathValue 
 }
 
 static int
+file_draw_text(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  return file_draw_text_sub(exp, eq, rval, FALSE);
+}
+
+static int
 file_text_obj_set(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   int id;
