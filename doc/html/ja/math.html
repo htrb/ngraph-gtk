@@ -579,6 +579,31 @@
       使われる。
     </td>
   </tr>
+  <tr>
+    <td>
+     draw_text($str, x, y, font, pt, style, dir, space, script)
+    </td>
+    <td>
+     (x, y) に文字列 $str を描画します。font は 0, 1, 2 がそれぞれ
+     Sans-serif, Serif, Monospace に対応します。pt でフォントサイズを指
+     定できます。style は 0, 1, 2, 3 がそれぞれ normal, bold, italic,
+     bold-italic に対応します。続く引数で方向、文字間隔、スクリプトサイ
+     ズを指定できます。
+     <a href="text.html#TEXT">制御文字を使用した書式指定</a>が可能です。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     draw_text($str, x, y, font, pt, style, dir, space)
+    </td>
+    <td>
+     (x, y) に文字列 $str を描画します。font は 0, 1, 2 がそれぞれ
+     Sans-serif, Serif, Monospace に対応します。pt でフォントサイズを指
+     定できます。style は 0, 1, 2, 3 がそれぞれ normal, bold, italic,
+     bold-italic に対応します。続く引数で方向、文字間隔を指定できます。
+     制御文字は使用できません（そのまま表示されます）。
+    </td>
+  </tr>
 </table>
 <br>
 <h3><a name="STRING_FUNC" href="#TOP">文字列操作関数</a></h3>
@@ -767,18 +792,6 @@
     <td>
      データファイルを読み込んだ時に index カラムの文字列を $dest に代入
      します。index が 0 のときは行全体の文字列が代入されます。
-    </td>
-  </tr>
-  <tr>
-    <td>
-     draw_text($str, x, y, font, pt, style, dir, space, script)
-    </td>
-    <td>
-     (x, y) に文字列 $str を描画します。font は 0, 1, 2 がそれぞれ
-     Sans-serif, Serif, Monospace に対応します。pt でフォントサイズを指
-     定できます。style は 0, 1, 2, 3 がそれぞれ normal, bold, italic,
-     bold-italic に対応します。続く引数で方向、文字間隔、スクリプトサイ
-     ズを指定できます。
     </td>
   </tr>
   <tr>
