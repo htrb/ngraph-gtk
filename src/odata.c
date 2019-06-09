@@ -1523,7 +1523,7 @@ file_draw_polygon(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *
 }
 
 static int
-file_draw_text(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+file_draw_text_sub(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval, int raw)
 {
   double x, y;
   int font_id, pt, space, dir, script, style;
@@ -1537,8 +1537,10 @@ file_draw_text(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
       exp->buf[4].val.type != MATH_VALUE_NORMAL ||
       exp->buf[5].val.type != MATH_VALUE_NORMAL ||
       exp->buf[6].val.type != MATH_VALUE_NORMAL ||
-      exp->buf[7].val.type != MATH_VALUE_NORMAL ||
-      exp->buf[8].val.type != MATH_VALUE_NORMAL) {
+      exp->buf[7].val.type != MATH_VALUE_NORMAL) {
+    return 0;
+  }
+  if (! raw && exp->buf[8].val.type != MATH_VALUE_NORMAL) {
     return 0;
   }
   x       = exp->buf[1].val.val;
@@ -1548,7 +1550,10 @@ file_draw_text(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   style   = exp->buf[5].val.val;
   dir     = exp->buf[6].val.val * 100;
   space   = exp->buf[7].val.val * 100;
-  script  = exp->buf[8].val.val * 100;
+  script  = 0;
+  if (! raw) {
+    script  = exp->buf[8].val.val * 100;
+  }
   if (pt <= 0) {
     pt = 2000;
   }
@@ -1593,7 +1598,11 @@ file_draw_text(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   }
   GRAcurrent_point(fp->GC, &px, &py);
   GRAmoveto(fp->GC, cx, cy);
-  GRAdrawtext(fp->GC, str, font, style, pt, space, dir, script);
+  if (raw) {
+    GRAdrawtextraw(fp->GC, str, font, style, pt, space, dir);
+  } else {
+    GRAdrawtext(fp->GC, str, font, style, pt, space, dir, script);
+  }
   GRAmoveto(fp->GC, px, py);
   fp->local->use_drawing_func = TRUE;
   return 0;
