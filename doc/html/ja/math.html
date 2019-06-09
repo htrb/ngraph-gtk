@@ -594,7 +594,7 @@
   </tr>
   <tr>
     <td>
-     draw_text($str, x, y, font, pt, style, dir, space)
+     draw_text_raw($str, x, y, font, pt, style, dir, space)
     </td>
     <td>
      (x, y) に文字列 $str を描画します。font は 0, 1, 2 がそれぞれ
@@ -875,11 +875,38 @@
  <tr><td>MARKSIZE(x)</td><td>マークのサイズをXに設定</td></tr>
  <tr><td>MARKTYPE(x)</td><td>マークの種類をXに設定</td></tr>
  <tr><td>IF(x,ex1,ex2)</td><td>x ≠ 0 のとき ex1, x = 0 のとき ex2</td></tr>
+ <tr>
+  <td>GETOBJ($obj, $field, id)</td>
+  <td>
+   ID が id オブジェクト $obj の フィールド $field の値を返す。field type が
+   int, bool, enum, double の場合に利用できます。
+  </td>
+ </tr>
+ <tr>
+  <td>GETOBJ_STRING($str, $obj, $field, id)</td>
+  <td>
+   ID が id オブジェクト $obj の フィールド $field の値を $str に代入す
+   る。field type が char* の場合に利用できます。正しい UTF-8 文字列の場
+   合、文字列の文字数を返します。
+  </td>
+ </tr>
+ <tr>
+  <td>GETOBJ_ARRAY(array, $obj, $field, id)</td>
+  <td>
+   ID が id オブジェクト $obj の フィールド $field の値を array に代入す
+   る。field type が char*[], double[], int[] の場合に利用できます。設定
+   した配列の要素数を返します。
+  </td>
+ </tr>
  <tr><td>UNLESS(x,ex1,ex2)</td><td>x ≠ 0 のとき ex2, x = 0 のとき ex1 </td></tr>
- <tr><td>FOR(m,begin,end,step,ex)</td><td>第mメモリーの値に begin から end まで step で 値を設定し、ex を繰り返す。
-     m が負の時はメモリーへの設定は行われない。
-     最後に評価された ex の値を返す。
- </td></tr>
+ <tr>
+  <td>FOR(m,begin,end,step,ex)</td>
+  <td>
+   第mメモリーの値に begin から end まで step で 値を設定し、ex を繰り返
+   す。m が負の時はメモリーへの設定は行われない。最後に評価された ex の
+   値を返す。
+  </td>
+ </tr>
  <tr><td>PROG1(arg1,arg2,...)</td><td>引数を評価し、最初の引数の値を返す</td></tr>
  <tr><td>PROG2(arg1,arg2,...)</td><td>引数を評価し、2 番目の引数の値を返す</td></tr>
  <tr><td>PROGN(arg1,arg2,...)</td><td>引数を評価し、最後の引数の値を返す</td></tr>
