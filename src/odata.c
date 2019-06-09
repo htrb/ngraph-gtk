@@ -1836,6 +1836,7 @@ file_draw_text_sub(MathFunctionCallExpression *exp, MathEquation *eq, MathValue 
     break;
   }
   GRAcurrent_point(fp->GC, &px, &py);
+  GRAcolor(fp->GC, fp->color.r, fp->color.g, fp->color.b, fp->color.a);
   GRAmoveto(fp->GC, cx, cy);
   if (raw) {
     GRAdrawtextraw(fp->GC, str, font, style, pt, space, dir);
