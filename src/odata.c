@@ -1615,6 +1615,12 @@ file_draw_text(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
 }
 
 static int
+file_draw_text_raw(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  return file_draw_text_sub(exp, eq, rval, TRUE);
+}
+
+static int
 file_text_obj_set(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   int id;
@@ -1804,6 +1810,7 @@ static struct funcs FileFunc[] = {
   {"DRAW_POLYLINE",  {2, 0, 0, file_draw_polyline, draw_polyline_arg_type, NULL, NULL, NULL}},
   {"DRAW_POLYGON",   {4, 0, 0, file_draw_polygon, draw_polygon_arg_type, NULL, NULL, NULL}},
   {"DRAW_TEXT",      {9, 0, 0, file_draw_text, draw_text_arg_type, NULL, NULL, NULL}},
+  {"DRAW_TEXT_RAW",  {8, 0, 0, file_draw_text_raw, draw_text_arg_type, NULL, NULL, NULL}},
   {"TEXT_OBJ_SET",   {2, 0, 0, file_text_obj_set, text_obj_set_arg_type, NULL, NULL, NULL}},
   {"TEXT_OBJ_GET",   {2, 0, 0, file_text_obj_get, text_obj_get_arg_type, NULL, NULL, NULL}},
   {"STRING_COLUMN",  {2, 0, 0, file_string_column, string_column_arg_type, NULL, NULL, NULL}},
