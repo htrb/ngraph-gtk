@@ -1027,6 +1027,54 @@ file_fit_prm(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
   return 0;
 }
 
+static struct objlist *
+file_getobj_common(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval, int start, int *id, int *ret, enum ngraph_object_field_type *type)
+{
+  const char *objname, *field;
+  struct objlist *obj;
+  int last, i;
+
+  rval->val = 0;
+  *ret = 0;
+  i = start;
+  objname = math_expression_get_string_from_argument(exp, i);
+  i++;
+  field = math_expression_get_string_from_argument(exp, i);
+  i++;
+  if (objname ==  NULL || field == NULL) {
+    return NULL;
+  }
+
+  if (exp->buf[i].val.type != MATH_VALUE_NORMAL) {
+    return NULL;
+  }
+  *id = exp->buf[i].val.val;
+  if (*id < 0) {
+    rval->type = MATH_VALUE_ERROR;
+    *ret = 1;
+    return NULL;
+  }
+
+  obj = getobject(objname);
+  if (obj == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    *ret = 1;
+    return NULL;
+  }
+  last = chkobjlastinst(obj);
+  if (*id > last) {
+    return NULL;
+  }
+  if (chkobjfield(obj, field)) {
+    rval->type = MATH_VALUE_ERROR;
+    *ret = 1;
+    return NULL;
+  }
+
+  *type = chkobjfieldtype(obj, field);
+  return obj;
+}
+
 
 #define ARC_INTERPOLATION 20
 #define DRAW_ARC_ARG_NUM 10
