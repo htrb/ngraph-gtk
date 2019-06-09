@@ -1075,6 +1075,48 @@ file_getobj_common(MathFunctionCallExpression *exp, MathEquation *eq, MathValue 
   return obj;
 }
 
+static int
+file_getobj(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  const char *field;
+  struct objlist *obj;
+  enum ngraph_object_field_type type;
+  int ival, id, ret;
+  double dval;
+
+  rval->val = 0;
+  obj = file_getobj_common(exp, eq, rval, 0, &id, &ret, &type);
+  if (obj == NULL) {
+    return ret;
+  }
+  field = math_expression_get_string_from_argument(exp, 1);
+  if (field == NULL) {
+    return 0;
+  }
+  switch (type) {
+  case NINT:
+  case NENUM:
+  case NBOOL:
+    if (getobj(obj, field, id, 0, NULL, &ival) < 0) {
+      rval->type = MATH_VALUE_ERROR;
+      return 1;
+    }
+    rval->val = ival;
+    break;
+  case NDOUBLE:
+    if (getobj(obj, field, id, 0, NULL, &dval) < 0) {
+      rval->type = MATH_VALUE_ERROR;
+      return 1;
+    }
+    rval->val = dval;
+    break;
+  default:
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+  return 0;
+}
+
 
 #define ARC_INTERPOLATION 20
 #define DRAW_ARC_ARG_NUM 10
@@ -1798,6 +1840,12 @@ static struct funcs FitFunc[] = {
   {"FIT_PRM",  {2, 0, 0, file_fit_prm,   NULL, NULL, NULL, NULL}},
 };
 
+static enum MATH_FUNCTION_ARG_TYPE getobj_arg_type[] = {
+  MATH_FUNCTION_ARG_TYPE_STRING,
+  MATH_FUNCTION_ARG_TYPE_STRING,
+  MATH_FUNCTION_ARG_TYPE_DOUBLE,
+};
+
 static enum MATH_FUNCTION_ARG_TYPE draw_polyline_arg_type[] = {
   MATH_FUNCTION_ARG_TYPE_ARRAY,
   MATH_FUNCTION_ARG_TYPE_ARRAY,
@@ -1862,6 +1910,7 @@ static struct funcs FileFunc[] = {
   {"TEXT_OBJ_SET",   {2, 0, 0, file_text_obj_set, text_obj_set_arg_type, NULL, NULL, NULL}},
   {"TEXT_OBJ_GET",   {2, 0, 0, file_text_obj_get, text_obj_get_arg_type, NULL, NULL, NULL}},
   {"STRING_COLUMN",  {2, 0, 0, file_string_column, string_column_arg_type, NULL, NULL, NULL}},
+  {"GETOBJ",         {3, 0, 0, file_getobj, getobj_arg_type, NULL, NULL, NULL}},
 };
 
 static int
