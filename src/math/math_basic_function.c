@@ -3825,3 +3825,261 @@ math_func_string_join(MathFunctionCallExpression *exp, MathEquation *eq, MathVal
   g_free(str);
   return 0;
 }
+
+static struct objlist *
+math_func_getobj_common(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval, int start, int *id, int *ret, enum ngraph_object_field_type *type)
+{
+  const char *objname, *field;
+  struct objlist *obj;
+  int last, i, permission;
+
+  rval->val = 0;
+  *ret = 0;
+  i = start;
+  objname = math_expression_get_string_from_argument(exp, i);
+  i++;
+  field = math_expression_get_string_from_argument(exp, i);
+  i++;
+  if (objname ==  NULL || field == NULL) {
+    return NULL;
+  }
+
+  if (exp->buf[i].val.type != MATH_VALUE_NORMAL) {
+    return NULL;
+  }
+  *id = exp->buf[i].val.val;
+  if (*id < 0) {
+    rval->type = MATH_VALUE_ERROR;
+    *ret = 1;
+    return NULL;
+  }
+
+  obj = getobject(objname);
+  if (obj == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    *ret = 1;
+    return NULL;
+  }
+  last = chkobjlastinst(obj);
+  if (*id > last) {
+    return NULL;
+  }
+  if (chkobjfield(obj, field)) {
+    rval->type = MATH_VALUE_ERROR;
+    *ret = 1;
+    return NULL;
+  }
+
+  permission = chkobjperm(obj, field);
+  if ((permission & NREAD) == 0) {
+    rval->type = MATH_VALUE_ERROR;
+    *ret = 1;
+    return NULL;
+  }
+  if (permission & NEXEC) {
+    rval->type = MATH_VALUE_ERROR;
+    *ret = 1;
+    return NULL;
+  }
+
+  *type = chkobjfieldtype(obj, field);
+  return obj;
+}
+
+int
+math_func_getobj(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  const char *field;
+  struct objlist *obj;
+  enum ngraph_object_field_type type;
+  int ival, id, ret;
+  double dval;
+
+  rval->val = 0;
+  obj = math_func_getobj_common(exp, eq, rval, 0, &id, &ret, &type);
+  if (obj == NULL) {
+    return ret;
+  }
+  field = math_expression_get_string_from_argument(exp, 1);
+  if (field == NULL) {
+    return 0;
+  }
+  switch (type) {
+  case NINT:
+  case NENUM:
+  case NBOOL:
+    if (getobj(obj, field, id, 0, NULL, &ival) < 0) {
+      rval->type = MATH_VALUE_ERROR;
+      return 1;
+    }
+    rval->val = ival;
+    break;
+  case NDOUBLE:
+    if (getobj(obj, field, id, 0, NULL, &dval) < 0) {
+      rval->type = MATH_VALUE_ERROR;
+      return 1;
+    }
+    rval->val = dval;
+    break;
+  default:
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+  return 0;
+}
+
+int
+math_func_getobj_string(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  const char *field;
+  struct objlist *obj;
+  enum ngraph_object_field_type type;
+  char *str;
+  GString *gstr;
+  int id, ret;
+
+  rval->val = 0;
+
+  gstr = math_expression_get_string_variable_from_argument(exp, 0);
+  if (gstr == NULL) {
+    return 0;
+  }
+
+  obj = math_func_getobj_common(exp, eq, rval, 1, &id, &ret, &type);
+  if (obj == NULL) {
+    return ret;
+  }
+  field = math_expression_get_string_from_argument(exp, 2);
+  if (field == NULL) {
+    return 0;
+  }
+  switch (type) {
+  case NSTR:
+    if (getobj(obj, field, id, 0, NULL, &str) < 0) {
+      rval->type = MATH_VALUE_ERROR;
+      return 1;
+    }
+    if (str == NULL) {
+      str = "";
+    } else if (g_utf8_validate(str, -1, NULL)) {
+      rval->val = g_utf8_strlen(str, -1);
+    }
+    g_string_assign(gstr, str);
+    break;
+  default:
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+  return 0;
+}
+
+int
+math_func_getobj_array(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  const char *field;
+  struct objlist *obj;
+  enum ngraph_object_field_type type;
+  enum DATA_TYPE array_type;
+  int array_id;
+  struct narray *array;
+  int id, ret, i, n;
+  int *idata;
+  double *ddata;
+  char **sdata, *str;
+  MathValue val;
+
+  rval->val = 0;
+
+  array_id = exp->buf[0].array.idx;
+  array_type = exp->buf[0].array.array_type;
+  if (array_id < 0) {
+    return 0;
+  }
+  obj = math_func_getobj_common(exp, eq, rval, 1, &id, &ret, &type);
+  if (obj == NULL) {
+    return ret;
+  }
+  field = math_expression_get_string_from_argument(exp, 2);
+  if (field == NULL) {
+    return 0;
+  }
+  val.type = MATH_VALUE_NORMAL;
+  switch (type) {
+  case NIARRAY:
+    if (array_type != DATA_TYPE_VALUE) {
+      rval->type = MATH_VALUE_ERROR;
+      return 1;
+    }
+    if (getobj(obj, field, id, 0, NULL, &array) < 0) {
+      rval->type = MATH_VALUE_ERROR;
+      return 1;
+    }
+    n = arraynum(array);
+    if (n < 0) {
+      break;
+    }
+    idata = arraydata(array);
+    if (idata == NULL) {
+      break;
+    }
+    for (i = 0; i < n; i++) {
+      val.val = idata[i];
+      math_equation_set_array_val(eq, array_id, i, &val);
+    }
+    rval->val = n;
+    break;
+  case NDARRAY:
+    if (array_type != DATA_TYPE_VALUE) {
+      rval->type = MATH_VALUE_ERROR;
+      return 1;
+    }
+    if (getobj(obj, field, id, 0, NULL, &array) < 0) {
+      rval->type = MATH_VALUE_ERROR;
+      return 1;
+    }
+    n = arraynum(array);
+    if (n < 0) {
+      break;
+    }
+    ddata = arraydata(array);
+    if (ddata == NULL) {
+      break;
+    }
+    for (i = 0; i < n; i++) {
+      val.val = ddata[i];
+      math_equation_set_array_val(eq, array_id, i, &val);
+    }
+    rval->val = n;
+    break;
+  case NSARRAY:
+    if (array_type != DATA_TYPE_STRING) {
+      rval->type = MATH_VALUE_ERROR;
+      return 1;
+    }
+    if (getobj(obj, field, id, 0, NULL, &array) < 0) {
+      rval->type = MATH_VALUE_ERROR;
+      return 1;
+    }
+    n = arraynum(array);
+    if (n < 0) {
+      break;
+    }
+    sdata = arraydata(array);
+    if (sdata == NULL) {
+      break;
+    }
+    for (i = 0; i < n; i++) {
+      str = sdata[i];
+      if (str == NULL) {
+	str = "";
+      }
+      math_equation_set_array_str(eq, array_id, i, str);
+    }
+    rval->val = n;
+    break;
+  default:
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+  return 0;
+}
