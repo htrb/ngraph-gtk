@@ -260,3 +260,9 @@ string_printf($str, 'abc %^.3g def %d', 12345)==21#1
 string_compare($str, 'abc 1.23×10^4@ def %d')#0
 string_printf($str, 'abc %^.3g def %d')==16#1
 string_compare($str, 'abc %^.3g def %d')#0
+getobj("system", "id", 0)==0#1
+getobj_string($str, "system", "e-mail", 0)==18#1
+string_compare($str, "ZXB01226@nifty.com")#0
+getobj_string($str, "io", "mode", 0)==1#1
+string_compare($str, "r")#0
+getobj_array($sa, "system", "temp_list", 0)==0#1
