@@ -3539,7 +3539,7 @@ math_func_string_strip(MathFunctionCallExpression *exp, MathEquation *eq, MathVa
 }
 
 static int
-math_func_string_printf_common(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval, GString *gstr, int index)
+math_func_printf_common(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval, GString *gstr, int index)
 {
   const char *str;
   char *format;
@@ -3597,7 +3597,7 @@ math_func_string_printf(MathFunctionCallExpression *exp, MathEquation *eq, MathV
   if (gstr == NULL) {
     return 1;
   }
-  return math_func_string_printf_common(exp, eq, rval, gstr, 1);
+  return math_func_printf_common(exp, eq, rval, gstr, 1);
 }
 
 int
@@ -3632,7 +3632,7 @@ math_func_printf(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *r
   if (gstr == NULL) {
     return 1;
   }
-  r = math_func_string_printf_common(exp, eq, rval, gstr, 0);
+  r = math_func_printf_common(exp, eq, rval, gstr, 0);
   if (r) {
     g_string_free(gstr, TRUE);
     return r;
