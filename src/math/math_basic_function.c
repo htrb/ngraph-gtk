@@ -3357,6 +3357,43 @@ math_func_string_float(MathFunctionCallExpression *exp, MathEquation *eq, MathVa
 }
 
 int
+math_func_map(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int src_id, dest_id, i, n;
+  MathEquationArray *src;
+  MathValue val, *vptr;
+
+  rval->val = 0;
+  rval->type = MATH_VALUE_NORMAL;
+
+  dest_id = (int) exp->buf[0].array.idx;
+  src_id = (int) exp->buf[1].array.idx;
+  src = math_equation_get_array(eq, src_id);
+  vptr = exp->buf[2].vptr;
+  if (vptr == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  val.type = MATH_VALUE_NORMAL;
+  n = src->num;
+  for (i = 0; i < n; i++) {
+    if (math_equation_get_array_val(eq, src_id, i, &val)) {
+      rval->type = MATH_VALUE_ERROR;
+      return 1;
+    }
+    *vptr = val;
+    math_expression_calculate(exp->buf[3].exp, &val);
+    if (math_equation_set_array_val(eq, dest_id, i, &val)) {
+      rval->type = MATH_VALUE_ERROR;
+      return 1;
+    }
+  }
+  rval->val = n;
+  return 0;
+}
+
+int
 math_func_string_float_array(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   int src_id, dest_id, i, n;
