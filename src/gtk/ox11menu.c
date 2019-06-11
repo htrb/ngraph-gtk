@@ -1200,7 +1200,10 @@ mgtkputstderr(const char *s)
 int
 mgtkputstdout(const char *s)
 {
-  return PutStdout(s);
+  int r;
+  r = PutStdout(s);
+  PutStdout("\n");
+  return r;
 }
 
 int
