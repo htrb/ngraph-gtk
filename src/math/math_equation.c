@@ -1623,6 +1623,16 @@ math_equation_get_var(MathEquation *eq, int idx, MathValue *val)
   return 0;
 }
 
+MathValue *
+math_equation_get_var_ptr(MathEquation *eq, int idx)
+{
+  if (eq->stack.stack.val == NULL || idx + eq->stack.ofst >= eq->stack.end) {
+    return NULL;
+  }
+
+  return eq->stack.stack.val + (idx + eq->stack.ofst);
+}
+
 int
 math_equation_get_string_var(MathEquation *eq, int idx, GString **str)
 {
