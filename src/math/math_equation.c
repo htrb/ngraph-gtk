@@ -1363,7 +1363,9 @@ math_equation_get_const(MathEquation *eq, int idx, MathValue *val)
     return 1;
   }
 
-  *val = eq->cbuf[idx];
+  if (val) {
+    *val = eq->cbuf[idx];
+  }
 
   return 0;
 }
