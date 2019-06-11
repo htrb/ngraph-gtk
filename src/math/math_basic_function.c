@@ -3586,6 +3586,21 @@ math_func_string_printf_common(MathFunctionCallExpression *exp, MathEquation *eq
 }
 
 int
+math_func_string_printf(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  GString *gstr;
+
+  rval->val = 0;
+  rval->type = MATH_VALUE_NORMAL;
+
+  gstr = math_expression_get_string_variable_from_argument(exp, 0);
+  if (gstr == NULL) {
+    return 1;
+  }
+  return math_func_string_printf_common(exp, eq, rval, gstr, 1);
+}
+
+int
 math_func_string(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   GString *gstr;
