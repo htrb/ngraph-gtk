@@ -1879,7 +1879,9 @@ math_equation_get_array_val(MathEquation *eq, int array, int index, MathValue *v
   if (i < 0)
     return 1;
 
-  *val = eq->array.buf[array].data.val[i];
+  if (val) {
+    *val = eq->array.buf[array].data.val[i];
+  }
 
   return 0;
 }
