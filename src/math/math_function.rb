@@ -20,6 +20,7 @@ enum MATH_FUNCTION_ARG_TYPE {
   MATH_FUNCTION_ARG_TYPE_STRING,
   MATH_FUNCTION_ARG_TYPE_ARRAY,
   MATH_FUNCTION_ARG_TYPE_PROC,
+  MATH_FUNCTION_ARG_TYPE_VARIABLE,
   MATH_FUNCTION_ARG_TYPE_STRING_VARIABLE,
   MATH_FUNCTION_ARG_TYPE_STRING_ARRAY,
   MATH_FUNCTION_ARG_TYPE_ARRAY_COMMON,
@@ -125,16 +126,18 @@ EOF
              when "0"
                  "MATH_FUNCTION_ARG_TYPE_DOUBLE;"
              when "1"
-                 "MATH_FUNCTION_ARG_TYPE_ARRAY;"
+                 "MATH_FUNCTION_ARG_TYPE_VARIABLE;"
              when "2"
-                 "MATH_FUNCTION_ARG_TYPE_PROC;"
+                 "MATH_FUNCTION_ARG_TYPE_ARRAY;"
              when "3"
-                 "MATH_FUNCTION_ARG_TYPE_STRING;"
+                 "MATH_FUNCTION_ARG_TYPE_PROC;"
              when "4"
-                 "MATH_FUNCTION_ARG_TYPE_STRING_VARIABLE;"
+                 "MATH_FUNCTION_ARG_TYPE_STRING;"
              when "5"
-                 "MATH_FUNCTION_ARG_TYPE_STRING_ARRAY;"
+                 "MATH_FUNCTION_ARG_TYPE_STRING_VARIABLE;"
              when "6"
+                 "MATH_FUNCTION_ARG_TYPE_STRING_ARRAY;"
+             when "7"
                  "MATH_FUNCTION_ARG_TYPE_ARRAY_COMMON;"
              end
              )
