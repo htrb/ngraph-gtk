@@ -3538,10 +3538,9 @@ math_func_string_strip(MathFunctionCallExpression *exp, MathEquation *eq, MathVa
   return 0;
 }
 
-int
-math_func_string_printf(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+static int
+math_func_string_printf_common(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval, GString *gstr, int index)
 {
-  GString *gstr;
   const char *str;
   char *format;
   int quote, po, len, i;
@@ -3549,8 +3548,7 @@ math_func_string_printf(MathFunctionCallExpression *exp, MathEquation *eq, MathV
   rval->val = 0;
   rval->type = MATH_VALUE_NORMAL;
 
-  gstr = math_expression_get_string_variable_from_argument(exp, 0);
-  str = math_expression_get_string_from_argument(exp, 1);
+  str = math_expression_get_string_from_argument(exp, index);
   if (gstr == NULL || str == NULL) {
     return 1;
   }
@@ -3561,7 +3559,7 @@ math_func_string_printf(MathFunctionCallExpression *exp, MathEquation *eq, MathV
   g_string_set_size(gstr, 0);
   po = 0;
   quote = FALSE;
-  i = 2;
+  i = index + 1;
   for (po = 0; format[po]; po++) {
     if (!quote && format[po] == '\\') {
       quote = TRUE;
