@@ -1035,6 +1035,12 @@ call_func(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *val)
   for (i = 0; i < n; i++) {
     if (type && i < arg_type_num) {
       switch (type[i]) {
+      case MATH_FUNCTION_ARG_TYPE_VARIABLE:
+	if (set_variable_argument(exp, eq, i)) {
+	  val->type = MATH_VALUE_ERROR;
+	  return 1;
+	}
+	break;
       case MATH_FUNCTION_ARG_TYPE_ARRAY:
         switch (exp->argv[i]->type) {
         case MATH_EXPRESSION_TYPE_ARRAY_ARGUMENT:
