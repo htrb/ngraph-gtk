@@ -149,6 +149,7 @@ int math_equation_add_var(MathEquation *eq, const char *name);
 int math_equation_set_var(MathEquation *eq, int idx, const MathValue *val);
 int math_equation_check_var(MathEquation *eq, const char *name);
 int math_equation_get_var(MathEquation *eq, int idx, MathValue *val);
+MathValue *math_equation_get_var_ptr(MathEquation *eq, int idx);
 int math_equation_check_string_var(MathEquation *eq, const char *name);
 int math_equation_get_string_var(MathEquation *eq, int idx, GString **str);
 
@@ -161,6 +162,7 @@ int math_equation_add_array(MathEquation *eq, const char *name, int is_string);
 int math_equation_set_array_val(MathEquation *eq, int array, int index, const MathValue *val);
 int math_equation_push_array_val(MathEquation *eq, int array, const MathValue *val);
 int math_equation_get_array_val(MathEquation *eq, int array, int index, MathValue *val);
+MathValue * math_equation_get_array_ptr(MathEquation *eq, int array, int index);
 int math_equation_clear_array(MathEquation *eq, int array);
 int math_equation_clear_string_array(MathEquation *eq, int array);
 MathEquationArray *math_equation_get_array(MathEquation *eq, int array);
