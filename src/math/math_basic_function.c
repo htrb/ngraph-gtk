@@ -3620,6 +3620,29 @@ math_func_puts(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
 }
 
 int
+math_func_printf(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  GString *gstr;
+  int r;
+
+  rval->val = 0;
+  rval->type = MATH_VALUE_NORMAL;
+
+  gstr = g_string_new("");
+  if (gstr == NULL) {
+    return 1;
+  }
+  r = math_func_string_printf_common(exp, eq, rval, gstr, 0);
+  if (r) {
+    g_string_free(gstr, TRUE);
+    return r;
+  }
+  printfstdout("%s", gstr->str);
+  g_string_free(gstr, TRUE);
+  return 0;
+}
+
+int
 math_func_string(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   GString *gstr;
