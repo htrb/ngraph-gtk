@@ -130,6 +130,7 @@ register_arg(MathExpression *func, const char *arg_name, enum MATH_FUNCTION_ARG_
 {
   switch (type) {
   case MATH_FUNCTION_ARG_TYPE_DOUBLE:
+  case MATH_FUNCTION_ARG_TYPE_VARIABLE:
     if (math_equation_check_var(func->equation, arg_name) >= 0) {
       /* the variable already exist */
       return 1;
