@@ -3601,6 +3601,25 @@ math_func_string_printf(MathFunctionCallExpression *exp, MathEquation *eq, MathV
 }
 
 int
+math_func_puts(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  const char *str;
+
+  rval->val = 0;
+  rval->type = MATH_VALUE_NORMAL;
+
+  str = math_expression_get_string_from_argument(exp, 0);
+  if (str == NULL) {
+    str = "";
+  }
+  putstdout(str);
+  if (g_utf8_validate(str, -1, NULL)) {
+    rval->val = g_utf8_strlen(str, -1);
+  }
+  return 0;
+}
+
+int
 math_func_string(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   GString *gstr;
