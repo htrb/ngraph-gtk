@@ -1884,6 +1884,21 @@ math_equation_get_array_val(MathEquation *eq, int array, int index, MathValue *v
   return 0;
 }
 
+MathValue *
+math_equation_get_array_ptr(MathEquation *eq, int array, int index)
+{
+  int i;
+
+  if (eq == NULL) {
+    return NULL;
+  }
+  i = check_array(&eq->array, array, index);
+  if (i < 0)
+    return NULL;
+
+  return eq->array.buf[array].data.val + i;
+}
+
 int
 math_equation_set_array_str(MathEquation *eq, int array, int index, const char *str)
 {
