@@ -3586,7 +3586,7 @@ math_func_printf_common(MathFunctionCallExpression *exp, MathEquation *eq, MathV
 }
 
 int
-math_func_string_printf(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+math_func_sprintf(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   GString *gstr;
 
