@@ -635,7 +635,29 @@
   </tr>
   <tr>
     <td>
-     string_printf($str, $format, v1, v2, ...)
+      puts($str, $format, v1, v2, ...)
+    </td>
+    <td>
+      文字列 $str と開業を information window に表示します。正しい
+      UTF-8 文字列の場合、文字列の文字数を返します。
+    </td>
+  </tr>
+  <tr>
+    <td>
+      printf($str, $format, v1, v2, ...)
+    </td>
+    <td>
+      数値 v1, v2, ... を $format に従って文字列に変換して information
+      window に表示します。正しい UTF-8 文字列の場合、変換された文字列
+      の文字数を返します。$format の書式は printf(3) に準じます。詳し
+      くは
+      <a href="text.html#FORMAT">フォント/テキスト - 整形</a>を参照し
+      てください。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     sprintf($str, $format, v1, v2, ...)
     </td>
     <td>
       数値 v1, v2, ... を $format に従って文字列に変換して $str に代入し
