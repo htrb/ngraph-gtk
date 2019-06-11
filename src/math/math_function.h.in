@@ -133,6 +133,8 @@ string_compare	3	0	0	3,3,0
 string_match	3	0	0	3,3,0
 string_erase	3	0	0	4,0,0
 string_printf	-3	0	0	4,3
+printf		-2	0	0	3
+puts		1	0	0	3
 string_insert	3	0	0	4,3,0
 string_join	3	0	0	4,3,5
 string_substring 4	0	0	4,3,0,0
