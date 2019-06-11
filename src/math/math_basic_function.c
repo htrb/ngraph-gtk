@@ -3322,22 +3322,6 @@ math_func_string_down(MathFunctionCallExpression *exp, MathEquation *eq, MathVal
 }
 
 int
-math_func_string_put(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
-{
-  const char *str;
-
-  rval->val = 0;
-  rval->type = MATH_VALUE_NORMAL;
-
-  str = math_expression_get_string_from_argument(exp, 0);
-  if (str == NULL) {
-    return 1;
-  }
-  puts(str);
-  return 0;
-}
-
-int
 math_func_string_length(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   const char *str;
