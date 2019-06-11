@@ -131,7 +131,9 @@ prog1(arg1, arg2, ...)	Evaluate the arguments and return the evaluated value of 
 prog2(arg1, arg2, ...)	Evaluate the arguments and return the evaluated value of the second argument
 progn(arg1, arg2, ...)	Evaluate the arguments and return the evaluated value of the last argument
 string($str, value)	Converts <i>value</i> to a string and set to <i>$str</i>.\nReturn the value.
-string_printf($str, $format, v1, v2, ...)	Converts <i>v1, v2, ...</i> to a string according to <i>$format</i>\nand set to <i>$str</i>.\nReturn the length of the string <i>$str</i> in characters.
+puts($str)	Show <i>$str</i> in the information window.\nReturn the length of the string <i>$str</i> in characters.
+printf($format, v1, v2, ...)	Converts <i>v1, v2, ...</i> to a string according to <i>$format</i>\nand show in the information window.\nReturn the length of the string <i>$str</i> in characters.
+sprintf($str, $format, v1, v2, ...)	Converts <i>v1, v2, ...</i> to a string according to <i>$format</i>\nand set to <i>$str</i>.\nReturn the length of the string <i>$str</i> in characters.
 string_float($str)	Converts the string <i>$str</i> to a floating-point value and return the value.
 string_float_array(dest, $ary)	Converts the string element of the array <i>$ary</i>\nto a floating-point value\nand set them to the array <i>dest</i>.
 string_length($str)	Return the length of the string <i>$str</i> in characters.
