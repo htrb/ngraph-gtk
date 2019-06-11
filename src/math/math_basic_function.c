@@ -2293,7 +2293,6 @@ math_func_choose(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *r
   MATH_CHECK_ARG(rval, exp->buf[1]);
 
   if (exp->buf[0].val.val < 0 || exp->buf[1].val.val < 0) {
-    printf("math_func_choose\n");
     rval->type = MATH_VALUE_ERROR;
     return 1;
   }
