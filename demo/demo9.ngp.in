@@ -585,13 +585,14 @@ shift(col);                  # remove %0 from the array col
 n := size(col);              # number of the data
 total := array_sum(col);     # summation of the data
 start := 0;                  # start position of a rectangle
-for(0, 0, n - 1, 1,          # draw rectangle for each data
+each_with_index(col, w, i,   # draw rectangle for each data
   progn(
-    i := RM(0),              # index of the array
-    width := col[i] / total, # width of a rectangle
+    width := w / total,      # width of a rectangle
     hsb2(i / n, 0.7, 1),     # set fill color
     draw_rect(start, y - HEIGHT / 2, width, HEIGHT, TRUE, TRUE),
-    start += width))'
+    sprintf($str, "%.1f%", width * 100),
+    draw_text_raw($str, start + width * 0.1, y - 0.04, 0, 10, 0, a),
+    start += width));'
 	data::math_y=
 	data::func_f=
 	data::func_g=
@@ -646,12 +647,20 @@ new data
 shift(col);               # remove %0 from the array col
 n := size(col);           # number of the data
 total := array_sum(col);  # summation of the data
-for(0, 0, n - 1, 1,       # draw pie-slice for each data
+angle2 := 0;
+array_clear(ang);
+map(ang, col, a, a / total * 360);
+each_with_index(ang, a, i,# draw pie-slice for each data
   progn(
-    i := RM(0),           # index of the array
-    angle := col[i] / total * 360,
     hsb2(i / n, 0.7, 1),  # set fill color
-    draw_arc(y, 0, R, R, sum(angle), -angle, TRUE, TRUE, TRUE, TRUE)))'
+    angle2 += a,
+    draw_arc(y, 0, R, R, angle2, -a, TRUE, TRUE, TRUE, TRUE),
+    sprintf($str, "%.1f%", a / 3.60),
+    a := angle2 - a * 0.6,
+    tr := R * 0.3,
+    tx := y + tr * cos(a / 180 * PI),
+    ty := 0 + tr * sin(a / 180 * PI),
+    draw_text_raw($str, tx, ty, 0, 10, 0, a)));'
 	data::math_y=
 	data::func_f=
 	data::func_g=
