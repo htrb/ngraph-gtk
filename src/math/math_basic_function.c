@@ -2521,6 +2521,46 @@ math_func_for(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
 }
 
 int
+math_func_times(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int n, r, i;
+  MathFunctionArgument *argv;
+  MathValue *index;
+
+  argv = exp->buf;
+
+  MATH_CHECK_ARG(rval, argv[0]);
+  n = argv[0].val.val;
+  if (n <= 0) {
+    return 0;
+  }
+
+  index = exp->buf[1].vptr;
+  if (index == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  index->type = MATH_VALUE_NORMAL;
+  for (i = 0; i < n; i++) {
+    if ((i & 0xff) == 0 && ninterrupt()) {
+      rval->type = MATH_VALUE_INTERRUPT;
+      return 1;
+    }
+    index->val = i;
+    r = math_expression_calculate(argv[2].exp, rval);
+    if(r) {
+      return r;
+    }
+    if (rval->type == MATH_VALUE_ERROR) {
+      return 1;
+    }
+  }
+
+  return 0;
+}
+
+int
 math_func_while(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   int n, r, i;
