@@ -480,6 +480,18 @@
  <tr><td>ARRAY_MIN(a)</td><td>配列 a に含まれる最小の値を返す </td></tr>
  <tr><td>ARRAY_CLEAR(a)</td><td>配列 a の配列の要素数を 0 にする </td></tr>
  <tr><td>ARRAY_COMPACT(a)</td><td>配列 a の配列の要素から通常の数値以外を取り除き、取り除いた後の要素数を返す</td></tr>
+ <tr><td>MAP(dest, src, item, ex)</td><td>配列 src の各要素に対して式 ex を計算し、その結果を配列 dest に格納する。第2引数に指定した変数 (item) で配列の要素を参照できる。</td></tr>
+ <tr><td>REDUCE(a, item, result, ex)</td>
+   <td>配列 a の各要素に対して、
+     式 ex を実行し、最後に実行した結果を返す。第2引数に指定した変数
+     (item) で配列の要素を、第3引数に指定した変数 (result) で前回の繰り返
+     しにおける計算結果を参照できる。
+   </td>
+ </tr>
+ <tr><td>EACH(a, item, ex)</td><td>配列 a の各要素に対して、式 ex を実行する。第2引数に指定した変数 (item) で配列の要素を参照できる。</td></tr>
+ <tr><td>EACH_WITH_INDEX(a, item, index, ex)</td><td>配列 a の各要素に対して、式 ex を実行する。第2引数に指定した変数 (item) で配列の要素を、第3引数に指定した変数 (index) で繰り返しのカウンタを参照できる。</td></tr>
+ <tr><td>FILTER(dest, src, item, ex)</td><td>配列 src の各要素に対して式 ex を計算し、その結果が真であった要素を配列 dest に格納する。第3引数に指定した変数 (item) で配列の要素を参照できる。</td></tr>
+ <tr><td>FIND(a, item, ex)</td><td>配列 a の各要素に対して式 ex を計算し、その結果が真であった最初の要素を返す。第2引数に指定した変数 (item) で配列の要素を参照できる。</td></tr>
 </table>
 <br>
 <h3><a name="MEMORY_FUNC" href="#TOP">メモリー操作関数</a></h3>
@@ -927,6 +939,13 @@
    第mメモリーの値に begin から end まで step で値を設定し、ex を繰り返
    す。m が負の時はメモリーへの設定は行われない。最後に評価された ex の
    値を返す。
+  </td>
+ </tr>
+ <tr>
+  <td>TIMES(n, item, ex)</td>
+  <td>
+    ex を n 回繰り返す。第2引数に指定した変数で、繰り返しのカウンタ (0
+    〜 n-1) を参照できる。最後に評価された ex の値を返す。
   </td>
  </tr>
  <tr><td>PROG1(arg1,arg2,...)</td><td>引数を評価し、最初の引数の値を返す</td></tr>
