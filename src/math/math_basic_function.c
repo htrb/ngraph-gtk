@@ -3392,7 +3392,7 @@ math_func_map(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
 }
 
 int
-math_func_collect(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+math_func_find(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   int src_id, dest_id, i, j, n;
   MathEquationArray *src;
