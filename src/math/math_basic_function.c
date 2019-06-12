@@ -3450,11 +3450,10 @@ math_func_each(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
 
   n = src->num;
   for (i = 0; i < n; i++) {
-    if (math_equation_get_array_val(eq, src_id, i, &val)) {
+    if (math_equation_get_array_val(eq, src_id, i, vptr)) {
       rval->type = MATH_VALUE_ERROR;
       return 1;
     }
-    *vptr = val;
     math_expression_calculate(exp->buf[2].exp, &val);
   }
   rval->val = n;
