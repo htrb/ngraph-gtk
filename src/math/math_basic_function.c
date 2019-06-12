@@ -3375,14 +3375,12 @@ math_func_map(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
     return 1;
   }
 
-  val.type = MATH_VALUE_NORMAL;
   n = src->num;
   for (i = 0; i < n; i++) {
-    if (math_equation_get_array_val(eq, src_id, i, &val)) {
+    if (math_equation_get_array_val(eq, src_id, i, vptr)) {
       rval->type = MATH_VALUE_ERROR;
       return 1;
     }
-    *vptr = val;
     math_expression_calculate(exp->buf[3].exp, &val);
     if (math_equation_set_array_val(eq, dest_id, i, &val)) {
       rval->type = MATH_VALUE_ERROR;
