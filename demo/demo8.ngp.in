@@ -444,11 +444,10 @@ new data
 ofst_y := -%0 / 40;
 shift(col);                    # remove %0 from the array col
 n := size(col);                # number of the data
-for(0, 0, n - 1, 1,            # initialize arrays for polyline
+each_with_index(col, y, i,     # initialize arrays for polyline
   progn(
-    i := rm(0),                # index of the array
     ax[i] := i + ofst_x,
-    ay[i] := col[i] + ofst_y));
+    ay[i] := y + ofst_y));
 unshift(ax, ax[0]);            # add first x for a polygon mask
 unshift(ay, ofst_y);           # add first y for a polygon mask
 push(ax, ax[-1]);              # add last x for a polygon mask
@@ -510,11 +509,11 @@ new data
 	data::type=mark
 	data::interpolation=spline
 	data::fit=
-	data::math_x='for(0, 1, SIZE(col) - 1, 1,         # draw rectangle for each column
+	data::math_x='shift(col);
+each_with_index(col, c, i,     # draw rectangle for each column
   progn(
-   i := rm(0),                      # index of the column
-   hsb2((1 - col[i]) * 0.68, 1, 1), # set fill color
-   draw_rect(i, y, -1.1, -1.1, FALSE, TRUE)));
+   hsb2((1 - c) * 0.68, 1, 1), # set fill color
+   draw_rect(i + 1, y, -1.1, -1.1, FALSE, TRUE)));
 x - 1'
 	data::math_y='y - 1'
 	data::func_f=
@@ -575,11 +574,9 @@ x * h();'
 	data::math_y='const SCALE := h();
 n := size(col);              # number of the data
 if(%0 == COLY,               # if data row is COLY
-  for(0, 1, n - 1, 1,        # draw horizontal data
-    progn(
-      i := rm(0),
-      draw_line(i - 1, col[i]     * SCALE,
-                i,     col[i + 1] * SCALE))));
+  times(n - 2, i,        # draw horizontal data
+    draw_line(i,     col[i + 1] * SCALE,
+              i + 1, col[i + 2] * SCALE)));
 %0'
 	data::func_f=
 	data::func_g=
