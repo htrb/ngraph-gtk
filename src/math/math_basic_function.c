@@ -3527,7 +3527,7 @@ math_func_each_with_index(MathFunctionCallExpression *exp, MathEquation *eq, Mat
 }
 
 int
-math_func_inject(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+math_func_reduce(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   int src_id, i, n;
   MathEquationArray *src;
