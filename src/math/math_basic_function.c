@@ -3425,6 +3425,40 @@ math_func_each(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
 }
 
 int
+math_func_each_with_index(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int src_id, i, n;
+  MathEquationArray *src;
+  MathValue val, *vptr, *index;
+
+  rval->val = 0;
+  rval->type = MATH_VALUE_NORMAL;
+
+  src_id = (int) exp->buf[0].array.idx;
+  src = math_equation_get_array(eq, src_id);
+  vptr = exp->buf[1].vptr;
+  index = exp->buf[2].vptr;
+  if (vptr == NULL || index == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  index->type = MATH_VALUE_NORMAL;
+  n = src->num;
+  for (i = 0; i < n; i++) {
+    if (math_equation_get_array_val(eq, src_id, i, &val)) {
+      rval->type = MATH_VALUE_ERROR;
+      return 1;
+    }
+    *vptr = val;
+    index->val = i;
+    math_expression_calculate(exp->buf[3].exp, &val);
+  }
+  rval->val = n;
+  return 0;
+}
+
+int
 math_func_string_float_array(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   int src_id, dest_id, i, n;
