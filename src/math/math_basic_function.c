@@ -3498,7 +3498,7 @@ math_func_inject(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *r
 {
   int src_id, i, n;
   MathEquationArray *src;
-  MathValue *vptr, *result;
+  MathValue val, *vptr, *result;
 
   rval->val = 0;
   rval->type = MATH_VALUE_NORMAL;
@@ -3518,7 +3518,8 @@ math_func_inject(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *r
       rval->type = MATH_VALUE_ERROR;
       return 1;
     }
-    math_expression_calculate(exp->buf[3].exp, result);
+    math_expression_calculate(exp->buf[3].exp, &val);
+    *result = val;
   }
   *rval = *result;
   return 0;
