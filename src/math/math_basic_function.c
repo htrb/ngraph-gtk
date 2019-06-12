@@ -3482,11 +3482,10 @@ math_func_each_with_index(MathFunctionCallExpression *exp, MathEquation *eq, Mat
   index->type = MATH_VALUE_NORMAL;
   n = src->num;
   for (i = 0; i < n; i++) {
-    if (math_equation_get_array_val(eq, src_id, i, &val)) {
+    if (math_equation_get_array_val(eq, src_id, i, vptr)) {
       rval->type = MATH_VALUE_ERROR;
       return 1;
     }
-    *vptr = val;
     index->val = i;
     math_expression_calculate(exp->buf[3].exp, &val);
   }
