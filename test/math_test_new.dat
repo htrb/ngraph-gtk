@@ -281,3 +281,10 @@ dest[0]==2#1
 dest[1]==4#1
 find(b, item, item\2)==1#1
 find(b, item, item\2==0)==2#1
+string_split($sa, "1 12 123 1234 12345", " ")==5#1
+map(a, $sa, $str, string_length($str))#5
+a[0]==1#1
+a[1]==2#1
+a[2]==3#1
+a[3]==4#1
+a[4]==5#1
