@@ -6,6 +6,7 @@
 #        12: MATH_FUNCTION_ARG_TYPE_ARRAY_COMMON
 #        20: MATH_FUNCTION_ARG_TYPE_VARIABLE
 #        21: MATH_FUNCTION_ARG_TYPE_STRING_VARIABLE
+#        22: MATH_FUNCTION_ARG_TYPE_VARIABLE_COMMON
 #        30: MATH_FUNCTION_ARG_TYPE_PROC
 abs		1	0	0	NULL
 sign		1	0	0	NULL
@@ -80,13 +81,13 @@ sum		1	1	1	NULL
 sort		2	1	0	12,0
 rsort		2	1	0	12,0
 size		1	1	0	12
-map		4	1	0	10,10,20,30
+map		4	1	0	10,12,22,30
 filter		4	1	0	10,10,20,30
 find		3	1	0	10,20,30
 each		3	1	0	10,20,30
 each_with_index 4	1	0	10,20,20,30
 reduce		4	1	0	10,20,20,30
-  array_copy	2	1	0	12,12
+array_copy	2	1	0	12,12
 array_clear	1	1	0	12
 array_sum	1	1	0	10
 array_sumsq	1	1	0	10
