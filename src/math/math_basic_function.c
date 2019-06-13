@@ -3431,6 +3431,27 @@ math_func_map(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
   return 0;
 }
 
+static int
+copy_array_val(MathEquation *eq, int src_id, int dest_id, MathValue *rval)
+{
+  int i, n;
+  MathEquationArray *src;
+  MathValue val;
+  src = math_equation_get_array(eq, src_id);
+  n = src->num;
+  for (i = 0; i < n; i++) {
+    if (math_equation_get_array_val(eq, src_id, i, &val)) {
+      rval->type = MATH_VALUE_ERROR;
+      return -1;
+    }
+    if (math_equation_set_array_val(eq, dest_id, i, &val)) {
+      rval->type = MATH_VALUE_ERROR;
+      return -1;
+    }
+  }
+  return n;
+}
+
 int
 math_func_filter(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
