@@ -2000,6 +2000,12 @@ calc(MathExpression *exp, MathValue *val)
   return 0;
 }
 
+enum DATA_TYPE
+math_expression_get_variable_type_from_argument(MathFunctionCallExpression *exp, int i)
+{
+  return exp->buf[i].variable.type;
+}
+
 const char *
 math_expression_get_string_from_argument(MathFunctionCallExpression *exp, int i)
 {
