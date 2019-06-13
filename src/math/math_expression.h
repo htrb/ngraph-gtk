@@ -86,8 +86,11 @@ typedef struct _math_constant_definition_expression {
 union _math_function_argument {
   MathValue val;
   struct math_variable_argument_common {
-    enum DATA_TYPE array_type;
-    MathValue *vptr;
+    enum DATA_TYPE type;
+    union math_variable_argument_data {
+      MathValue *vptr;
+      GString *str;
+    } data;
   } variable;
   MathExpression *exp;
   struct math_array_argument_common {
@@ -95,7 +98,6 @@ union _math_function_argument {
     int idx;
   } array;
   const char *cstr;
-  GString *gstr;
 };
 
 struct _math_function_call_expression {
@@ -167,5 +169,6 @@ int math_function_get_arg_type_num(struct math_function_parameter *fprm);
 
 const char *math_expression_get_string_from_argument(MathFunctionCallExpression *exp, int i);
 GString *math_expression_get_string_variable_from_argument(MathFunctionCallExpression *exp, int i);
+MathValue *math_expression_get_variable_from_argument(MathFunctionCallExpression *exp, int i);
 
 #endif
