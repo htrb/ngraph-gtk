@@ -2007,7 +2007,12 @@ math_expression_get_string_from_argument(MathFunctionCallExpression *exp, int i)
 GString *
 math_expression_get_string_variable_from_argument(MathFunctionCallExpression *exp, int i)
 {
-  return exp->buf[i].gstr;
+  if (exp->buf[i].variable.type != DATA_TYPE_STRING) {
+    return NULL;
+  }
+  return exp->buf[i].variable.data.str;
+}
+
 }
 
 int
