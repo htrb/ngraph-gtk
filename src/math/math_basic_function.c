@@ -3475,6 +3475,45 @@ copy_array_str(MathEquation *eq, int src_id, int dest_id, MathValue *rval)
 }
 
 int
+math_func_array_copy(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int src_id, dest_id, n;
+  enum DATA_TYPE src_type, dest_type;
+
+  rval->val = 0;
+  rval->type = MATH_VALUE_NORMAL;
+
+  dest_id = (int) exp->buf[0].array.idx;
+  dest_type = exp->buf[0].array.array_type;
+  src_id = (int) exp->buf[1].array.idx;
+  src_type = exp->buf[1].array.array_type;
+
+  if (dest_type != src_type) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  switch (src_type) {
+  case DATA_TYPE_VALUE:
+    n = copy_array_val(eq, src_id, dest_id, rval);
+    if (n < 0) {
+      rval->type = MATH_VALUE_ERROR;
+      return 1;
+    }
+    break;
+  case DATA_TYPE_STRING:
+    n = copy_array_str(eq, src_id, dest_id, rval);
+    if (n < 0) {
+      rval->type = MATH_VALUE_ERROR;
+      return 1;
+    }
+    break;
+  }
+  rval->val = n;
+  return 0;
+}
+
+int
 math_func_filter(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   int src_id, dest_id, i, j, n;

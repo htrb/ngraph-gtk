@@ -86,6 +86,7 @@ find		3	1	0	10,20,30
 each		3	1	0	10,20,30
 each_with_index 4	1	0	10,20,20,30
 reduce		4	1	0	10,20,20,30
+  array_copy	2	1	0	12,12
 array_clear	1	1	0	12
 array_sum	1	1	0	10
 array_sumsq	1	1	0	10
