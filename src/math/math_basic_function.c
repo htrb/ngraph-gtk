@@ -2535,7 +2535,7 @@ math_func_times(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rv
     return 0;
   }
 
-  index = exp->buf[1].vptr;
+  index = exp->buf[1].variable.vptr;
   if (index == NULL) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
@@ -3409,7 +3409,7 @@ math_func_map(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
   dest_id = (int) exp->buf[0].array.idx;
   src_id = (int) exp->buf[1].array.idx;
   src = math_equation_get_array(eq, src_id);
-  vptr = exp->buf[2].vptr;
+  vptr = exp->buf[2].variable.vptr;
   if (vptr == NULL) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
@@ -3526,7 +3526,7 @@ math_func_filter(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *r
   dest_id = (int) exp->buf[0].array.idx;
   src_id = (int) exp->buf[1].array.idx;
   src = math_equation_get_array(eq, src_id);
-  vptr = exp->buf[2].vptr;
+  vptr = exp->buf[2].variable.vptr;
   if (vptr == NULL) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
@@ -3564,7 +3564,7 @@ math_func_find(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
 
   src_id = (int) exp->buf[0].array.idx;
   src = math_equation_get_array(eq, src_id);
-  vptr = exp->buf[1].vptr;
+  vptr = exp->buf[1].variable.vptr;
   if (vptr == NULL) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
@@ -3597,7 +3597,7 @@ math_func_each(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
 
   src_id = (int) exp->buf[0].array.idx;
   src = math_equation_get_array(eq, src_id);
-  vptr = exp->buf[1].vptr;
+  vptr = exp->buf[1].variable.vptr;
   if (vptr == NULL) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
@@ -3627,8 +3627,8 @@ math_func_each_with_index(MathFunctionCallExpression *exp, MathEquation *eq, Mat
 
   src_id = (int) exp->buf[0].array.idx;
   src = math_equation_get_array(eq, src_id);
-  vptr = exp->buf[1].vptr;
-  index = exp->buf[2].vptr;
+  vptr = exp->buf[1].variable.vptr;
+  index = exp->buf[2].variable.vptr;
   if (vptr == NULL || index == NULL) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
@@ -3660,8 +3660,8 @@ math_func_reduce(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *r
 
   src_id = (int) exp->buf[0].array.idx;
   src = math_equation_get_array(eq, src_id);
-  vptr = exp->buf[1].vptr;
-  result = exp->buf[2].vptr;
+  vptr = exp->buf[1].variable.vptr;
+  result = exp->buf[2].variable.vptr;
   if (vptr == NULL || result == NULL) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
