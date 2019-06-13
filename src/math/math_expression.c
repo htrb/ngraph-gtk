@@ -1048,6 +1048,28 @@ call_func(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *val)
 	  return 1;
 	}
 	break;
+      case MATH_FUNCTION_ARG_TYPE_VARIABLE_COMMON:
+        switch (exp->argv[i]->type) {
+        case MATH_EXPRESSION_TYPE_ARRAY:
+        case MATH_EXPRESSION_TYPE_VARIABLE:
+          if (set_variable_argument(exp, eq, i)) {
+            val->type = MATH_VALUE_ERROR;
+            return 1;
+          }
+          break;
+        case MATH_EXPRESSION_TYPE_STRING_ARRAY:
+        case MATH_EXPRESSION_TYPE_STRING_VARIABLE:
+          if (set_string_variable_argument(exp, eq, i)) {
+            val->type = MATH_VALUE_ERROR;
+            return 1;
+          }
+          break;
+        default:
+          val->type = MATH_VALUE_ERROR;
+          return 1;
+          break;
+        }
+        break;
       case MATH_FUNCTION_ARG_TYPE_ARRAY:
         switch (exp->argv[i]->type) {
         case MATH_EXPRESSION_TYPE_ARRAY_ARGUMENT:
