@@ -1016,7 +1016,8 @@ set_string_variable_argument(MathFunctionCallExpression *exp, MathEquation *eq, 
   if (gstr == NULL) {
     return 1;
   }
-  exp->buf[i].gstr = gstr;
+  exp->buf[i].variable.type = DATA_TYPE_STRING;
+  exp->buf[i].variable.data.str = gstr;
   return 0;
 }
 
