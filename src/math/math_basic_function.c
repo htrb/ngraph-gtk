@@ -3396,37 +3396,31 @@ math_func_string_float(MathFunctionCallExpression *exp, MathEquation *eq, MathVa
   return 0;
 }
 
-int
-math_func_map(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+static int
+map_value(MathFunctionCallExpression *exp, MathEquation *eq, int src_id, int dest_id, int var_index)
 {
-  int src_id, dest_id, i, n;
+  int i, n;
   MathEquationArray *src;
   MathValue val, *vptr;
-
-  rval->val = 0;
-  rval->type = MATH_VALUE_NORMAL;
-
-  dest_id = (int) exp->buf[0].array.idx;
-  src_id = (int) exp->buf[1].array.idx;
   src = math_equation_get_array(eq, src_id);
-  vptr = math_expression_get_variable_from_argument(exp, 2);
-  if (vptr == NULL) {
-    rval->type = MATH_VALUE_ERROR;
-    return 1;
+  vptr = math_expression_get_variable_from_argument(exp, var_index);
+  if (src == NULL || vptr == NULL) {
+    return -1;
   }
 
   n = src->num;
   for (i = 0; i < n; i++) {
     if (math_equation_get_array_val(eq, src_id, i, vptr)) {
-      rval->type = MATH_VALUE_ERROR;
-      return 1;
+      return -1;
     }
     math_expression_calculate(exp->buf[3].exp, &val);
     if (math_equation_set_array_val(eq, dest_id, i, &val)) {
-      rval->type = MATH_VALUE_ERROR;
-      return 1;
+      return -1;
     }
   }
+  return n;
+}
+
   rval->val = n;
   return 0;
 }
