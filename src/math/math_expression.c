@@ -2013,6 +2013,13 @@ math_expression_get_string_variable_from_argument(MathFunctionCallExpression *ex
   return exp->buf[i].variable.data.str;
 }
 
+MathValue *
+math_expression_get_variable_from_argument(MathFunctionCallExpression *exp, int i)
+{
+  if (exp->buf[i].variable.type != DATA_TYPE_VALUE) {
+    return NULL;
+  }
+  return exp->buf[i].variable.data.vptr;
 }
 
 int
