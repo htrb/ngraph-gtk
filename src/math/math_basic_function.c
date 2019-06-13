@@ -3452,6 +3452,28 @@ copy_array_val(MathEquation *eq, int src_id, int dest_id, MathValue *rval)
   return n;
 }
 
+static int
+copy_array_str(MathEquation *eq, int src_id, int dest_id, MathValue *rval)
+{
+  int i, n;
+  MathEquationArray *src;
+  const char *str;
+  src = math_equation_get_string_array(eq, src_id);
+  n = src->num;
+  for (i = 0; i < n; i++) {
+    str = math_equation_get_array_cstr(eq, src_id, i);
+    if (str == NULL) {
+      rval->type = MATH_VALUE_ERROR;
+      return -1;
+    }
+    if (math_equation_set_array_str(eq, dest_id, i, str)) {
+      rval->type = MATH_VALUE_ERROR;
+      return -1;
+    }
+  }
+  return n;
+}
+
 int
 math_func_filter(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
