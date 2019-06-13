@@ -989,7 +989,8 @@ set_variable_argument(MathFunctionCallExpression *exp, MathEquation *eq, int i)
   default:
     return 1;
   }
-  exp->buf[i].vptr = ptr;
+  exp->buf[i].variable.data.vptr = ptr;
+  exp->buf[i].variable.type = DATA_TYPE_VALUE;
   return 0;
 }
 
