@@ -3882,30 +3882,36 @@ reduce_string(MathFunctionCallExpression *exp, MathEquation *eq, int src_id, Mat
 int
 math_func_reduce(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  int src_id, i, n;
-  MathEquationArray *src;
-  MathValue val, *vptr, *result;
+  int src_id, n;
+  enum DATA_TYPE src_type, vtype;
+  MathValue *result;
 
   rval->val = 0;
   rval->type = MATH_VALUE_NORMAL;
 
   src_id = (int) exp->buf[0].array.idx;
-  src = math_equation_get_array(eq, src_id);
-  vptr = math_expression_get_variable_from_argument(exp, 1);
-  result = math_expression_get_variable_from_argument(exp, 2);
-  if (vptr == NULL || result == NULL) {
+  src_type = exp->buf[0].array.array_type;
+  vtype = math_expression_get_variable_type_from_argument(exp, 1);
+  if (src_type != vtype) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
   }
-
-  n = src->num;
-  for (i = 0; i < n; i++) {
-    if (math_equation_get_array_val(eq, src_id, i, vptr)) {
-      rval->type = MATH_VALUE_ERROR;
-      return 1;
-    }
-    math_expression_calculate(exp->buf[3].exp, &val);
-    *result = val;
+  result = math_expression_get_variable_from_argument(exp, 2);
+  if (result == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+  switch (src_type) {
+  case DATA_TYPE_VALUE:
+    n = reduce_val(exp, eq, src_id, result, 1, 3);
+    break;
+  case DATA_TYPE_STRING:
+    n = reduce_string(exp, eq, src_id, result, 1, 3);
+    break;
+  }
+  if (n < 0) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
   }
   *rval = *result;
   return 0;
