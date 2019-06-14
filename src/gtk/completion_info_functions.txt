@@ -92,10 +92,11 @@ array_max(a)	returns the maximum value contained in array <i>a</i>
 array_min(a)	returns the minimum value contained in array <i>a</i>
 array_clear(a)	set the number of elements of the array <i>a</i> to 0
 array_compact(a)	Remove non-numeric values from the elements of the array of array <i>a</i>\nand return the number of elements after removal
+array_copy(dest, src)	copy the contents of the array <i>src</i> to the array <i>dest</i>.\n(return the number of copied elements)
 m(i, x)		assigns <i>x</i> to the <i>i</i>-th memory (<i>i</i> = 0 to 65535)\nthe index from the tail when <i>i</i> is negative\n(return <i>x</i>)
 rm(i)		the value of the current <i>i</i>-th memory (<i>i</i> = 0 to 65535),\nthe index from the tail when <i>i</i> is negative
 cm(x, n)	initialize <i>n</i> memories from the beginning with <i>x</i>\ninitialize whole memory when <i>n</i> is 0\nand <i>n</i> memories from the end when <i>x</i> is negative\n(return <i>x</i>)
-am(a)		copy the contents of array <i>a</i> to the memory\n(return the number of copied elements)
+am(a)		copy the contents of the array <i>a</i> to the memory\n(return the number of copied elements)
 draw_rect(x, y, w, h, stroke, fill)	draw a rectangle with (<i>x, y</i>) and (<i>x + w, y + h</i>) as diagonal vertices.\nWhen <i>stroke</i> and <i>fill</i> are 0, do not draw contours and fills respectively.
 draw_arc(x, y, rx, ry, start, arc, pieslice, stroke, fill, close)	draw an arc with the X direction radius <i>rx</i> and the Y direction radius <i>ry</i> centered on (<i>x, y</i>).\n<i>start</i> and <i>arc</i> specify start angle and arc angle respectively.\nWhen <i>stroke</i> and <i>fill</i> are 0, do not draw contours and fills respectively.\nIf <i>pieslice</i> is not 0, draw a sector.\nIf <i>close</i> is not 0, close the outline.
 draw_mark(x, y, size)	draw a mark on (<i>x, y</i>). \nThe size of a mark can be specified with <i>size</i>.\nWhen <i>size</i> is 0, specification of the file object is used.
