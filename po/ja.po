@@ -3075,7 +3075,8 @@ msgid ""
 "(return the number of copied elements)"
 msgstr ""
 "<b>array_copy</b>(<i>dest, src</i>)\n"
-"配列 <i>src</i> の内容を配列 <i>dest</i> にコピーする (戻り値はコピーした要素数)"
+"配列 <i>src</i> の内容を配列 <i>dest</i> にコピーする (戻り値はコピーした要素"
+"数)"
 
 #: src/gtk/completion_info_data.c:16
 msgid ""
