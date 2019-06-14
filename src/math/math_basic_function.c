@@ -3569,42 +3569,36 @@ math_func_array_copy(MathFunctionCallExpression *exp, MathEquation *eq, MathValu
   return 0;
 }
 
-int
-math_func_filter(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+static int
+filter_val(MathFunctionCallExpression *exp, MathEquation *eq, int src_id, int dest_id, int index)
 {
-  int src_id, dest_id, i, j, n;
+  int i, j, n;
   MathEquationArray *src;
   MathValue val, *vptr;
-
-  rval->val = 0;
-  rval->type = MATH_VALUE_NORMAL;
-
-  dest_id = (int) exp->buf[0].array.idx;
-  src_id = (int) exp->buf[1].array.idx;
   src = math_equation_get_array(eq, src_id);
-  vptr = math_expression_get_variable_from_argument(exp, 2);
-  if (vptr == NULL) {
-    rval->type = MATH_VALUE_ERROR;
-    return 1;
+  vptr = math_expression_get_variable_from_argument(exp, index);
+  if (vptr == NULL || src == NULL) {
+    return -1;
   }
 
+  index++;
   j = 0;
   n = src->num;
   for (i = 0; i < n; i++) {
     if (math_equation_get_array_val(eq, src_id, i, vptr)) {
-      rval->type = MATH_VALUE_ERROR;
-      return 1;
+      return -1;
     }
-    math_expression_calculate(exp->buf[3].exp, &val);
+    math_expression_calculate(exp->buf[index].exp, &val);
     if (val.type == MATH_VALUE_NORMAL && val.val) {
       if (math_equation_set_array_val(eq, dest_id, j, vptr)) {
-        rval->type = MATH_VALUE_ERROR;
-        return 1;
+        return -1;
       }
       j++;
     }
   }
-  rval->val = j;
+  return j;
+}
+
   return 0;
 }
 
