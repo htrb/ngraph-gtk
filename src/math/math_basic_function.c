@@ -3599,6 +3599,40 @@ filter_val(MathFunctionCallExpression *exp, MathEquation *eq, int src_id, int de
   return j;
 }
 
+static int
+filter_string(MathFunctionCallExpression *exp, MathEquation *eq, int src_id, int dest_id, int index)
+{
+  int i, j, n;
+  MathEquationArray *src;
+  MathValue val;
+  GString *gstr;
+  const char *str;
+  src = math_equation_get_string_array(eq, src_id);
+  gstr = math_expression_get_string_variable_from_argument(exp, index);
+  if (gstr == NULL || src == NULL) {
+    return -1;
+  }
+
+  index++;
+  j = 0;
+  n = src->num;
+  for (i = 0; i < n; i++) {
+    str = math_equation_get_array_cstr(eq, src_id, i);
+    if (str == NULL) {
+      return -1;
+    }
+    g_string_assign(gstr, str);
+    math_expression_calculate(exp->buf[index].exp, &val);
+    if (val.type == MATH_VALUE_NORMAL && val.val) {
+      if (math_equation_set_array_str(eq, dest_id, j, str)) {
+        return -1;
+      }
+      j++;
+    }
+  }
+  return j;
+}
+
   return 0;
 }
 
