@@ -3790,23 +3790,42 @@ math_func_each(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
 int
 math_func_each_with_index(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  int src_id, i, n;
-  MathEquationArray *src;
-  MathValue val, *vptr, *index;
+  int src_id, n;
+  enum DATA_TYPE src_type, vtype;
+  MathValue *index;
 
   rval->val = 0;
   rval->type = MATH_VALUE_NORMAL;
 
   src_id = (int) exp->buf[0].array.idx;
-  src = math_equation_get_array(eq, src_id);
-  vptr = math_expression_get_variable_from_argument(exp, 1);
+  src_type = exp->buf[0].array.array_type;
+  vtype = math_expression_get_variable_type_from_argument(exp, 1);
+  if (src_type != vtype) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
   index = math_expression_get_variable_from_argument(exp, 2);
-  if (vptr == NULL || index == NULL) {
+  if (index == NULL) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
   }
 
   index->type = MATH_VALUE_NORMAL;
+  switch (src_type) {
+  case DATA_TYPE_VALUE:
+    n = each_val(exp, eq, src_id, index, 1, 3);
+    break;
+  case DATA_TYPE_STRING:
+    n = each_string(exp, eq, src_id, index, 1, 3);
+    break;
+  }
+  if (n < 0) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+  rval->val = n;
+  return 0;
+}
 
 static int
 reduce_val(MathFunctionCallExpression *exp, MathEquation *eq, int src_id, MathValue *result, int v_index, int e_index)
