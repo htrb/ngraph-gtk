@@ -3773,6 +3773,32 @@ reduce_val(MathFunctionCallExpression *exp, MathEquation *eq, int src_id, MathVa
   return n;
 }
 
+static int
+reduce_string(MathFunctionCallExpression *exp, MathEquation *eq, int src_id, MathValue *result, int v_index, int e_index)
+{
+  int i, n;
+  MathEquationArray *src;
+  MathValue val;
+  GString *gstr;
+  const char *str;
+
+  src = math_equation_get_string_array(eq, src_id);
+  gstr = math_expression_get_string_variable_from_argument(exp, v_index);
+  if (src == NULL || gstr == NULL) {
+    return -1;
+  }
+
+  n = src->num;
+  for (i = 0; i < n; i++) {
+    str = math_equation_get_array_cstr(eq, src_id, i);
+    if (str == NULL) {
+      return -1;
+    }
+    g_string_assign(gstr, str);
+    math_expression_calculate(exp->buf[e_index].exp, &val);
+    *result = val;
+  }
+  return n;
 }
 
 int
