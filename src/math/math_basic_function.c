@@ -3755,6 +3755,33 @@ each_string(MathFunctionCallExpression *exp, MathEquation *eq, int src_id, MathV
   return n;
 }
 
+int
+math_func_each(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int src_id, n;
+  enum DATA_TYPE src_type, vtype;
+
+  rval->val = 0;
+  rval->type = MATH_VALUE_NORMAL;
+
+  src_id = (int) exp->buf[0].array.idx;
+  src_type = exp->buf[0].array.array_type;
+  vtype = math_expression_get_variable_type_from_argument(exp, 1);
+  if (src_type != vtype) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+  switch (src_type) {
+  case DATA_TYPE_VALUE:
+    n = each_val(exp, eq, src_id, NULL, 1, 2);
+    break;
+  case DATA_TYPE_STRING:
+    n = each_string(exp, eq, src_id, NULL, 1, 2);
+    break;
+  }
+  if (n < 0) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
   }
   rval->val = n;
   return 0;
