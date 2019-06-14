@@ -3748,17 +3748,31 @@ math_func_each_with_index(MathFunctionCallExpression *exp, MathEquation *eq, Mat
   }
 
   index->type = MATH_VALUE_NORMAL;
+
+static int
+reduce_val(MathFunctionCallExpression *exp, MathEquation *eq, int src_id, MathValue *result, int v_index, int e_index)
+{
+  int i, n;
+  MathEquationArray *src;
+  MathValue val, *vptr;
+
+  src = math_equation_get_array(eq, src_id);
+  vptr = math_expression_get_variable_from_argument(exp, v_index);
+  if (vptr == NULL) {
+    return -1;
+  }
+
   n = src->num;
   for (i = 0; i < n; i++) {
     if (math_equation_get_array_val(eq, src_id, i, vptr)) {
-      rval->type = MATH_VALUE_ERROR;
-      return 1;
+      return -1;
     }
-    index->val = i;
-    math_expression_calculate(exp->buf[3].exp, &val);
+    math_expression_calculate(exp->buf[e_index].exp, &val);
+    *result = val;
   }
-  rval->val = n;
-  return 0;
+  return n;
+}
+
 }
 
 int
