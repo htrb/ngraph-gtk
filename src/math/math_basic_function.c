@@ -3633,6 +3633,38 @@ filter_string(MathFunctionCallExpression *exp, MathEquation *eq, int src_id, int
   return j;
 }
 
+int
+math_func_filter(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int src_id, dest_id, n;
+  enum DATA_TYPE src_type, dest_type, vtype;
+
+  rval->val = 0;
+  rval->type = MATH_VALUE_NORMAL;
+
+  dest_id = (int) exp->buf[0].array.idx;
+  dest_type = exp->buf[0].array.array_type;
+  src_id = (int) exp->buf[1].array.idx;
+  src_type = exp->buf[1].array.array_type;
+  vtype = math_expression_get_variable_type_from_argument(exp, 2);
+  if (src_type != dest_type || src_type != vtype) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  switch (src_type) {
+  case DATA_TYPE_VALUE:
+    n = filter_val(exp, eq, src_id, dest_id, 2);
+    break;
+  case DATA_TYPE_STRING:
+    n = filter_string(exp, eq, src_id, dest_id, 2);
+    break;
+  }
+  if (n < 0) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+  rval->val = n;
   return 0;
 }
 
