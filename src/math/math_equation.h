@@ -58,6 +58,14 @@ struct _math_variable {
   } data;
 };
 
+struct _math_common_value {
+  enum DATA_TYPE type;
+  union {
+    MathValue val;
+    const char *cstr;
+  } data;
+};
+
 struct _math_array_info {
   enum DATA_TYPE type;
   NHASH array, local_array;
