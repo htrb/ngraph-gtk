@@ -1960,6 +1960,25 @@ math_equation_get_array_cstr(MathEquation *eq, int array, int index)
   return str->str;
 }
 
+int
+math_equation_get_array_common_value(MathEquation *eq, int array, int index, enum DATA_TYPE type, MathCommonValue *val)
+{
+  switch (type) {
+  case DATA_TYPE_VALUE:
+    val->type = DATA_TYPE_VALUE;
+    return math_equation_get_array_val(eq, array, index, &val->data.val);
+    break;
+  case DATA_TYPE_STRING:
+    val->type = DATA_TYPE_STRING;
+    val->data.cstr = math_equation_get_array_cstr(eq, array, index);
+    if (val->data.cstr == NULL) {
+      return 1;
+    }
+    break;
+  }
+  return 0;
+}
+
 static MathEquationArray *
 math_equation_get_array_common(MathArray *array, int id)
 {
