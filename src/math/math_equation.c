@@ -2016,6 +2016,20 @@ math_equation_get_string_array(MathEquation *eq, int id)
   return math_equation_get_array_common(&eq->string_array, id);
 }
 
+MathEquationArray *
+math_equation_get_type_array(MathEquation *eq, enum DATA_TYPE type, int id)
+{
+  switch (type) {
+  case DATA_TYPE_VALUE:
+    return math_equation_get_array(eq, id);
+    break;
+  case DATA_TYPE_STRING:
+    return math_equation_get_string_array(eq, id);
+    break;
+  }
+  return NULL;
+}
+
 void
 math_equation_set_user_data(MathEquation *eq, void *user_data)
 {
