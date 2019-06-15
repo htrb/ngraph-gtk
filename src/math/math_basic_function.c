@@ -3653,8 +3653,12 @@ math_func_each(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
 int
 math_func_each_with_index(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  int src_id, n;
-  enum DATA_TYPE src_type, vtype;
+  int src_id, i, n;
+  MathEquationArray *src;
+  MathCommonValue cval;
+  MathValue val;
+  MathVariable variable;
+  enum DATA_TYPE src_type;
   MathValue *index;
 
   rval->val = 0;
@@ -3662,8 +3666,11 @@ math_func_each_with_index(MathFunctionCallExpression *exp, MathEquation *eq, Mat
 
   src_id = (int) exp->buf[0].array.idx;
   src_type = exp->buf[0].array.array_type;
-  vtype = math_expression_get_variable_type_from_argument(exp, 1);
-  if (src_type != vtype) {
+  if (math_function_call_expression_get_variable(exp, 1, &variable)) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+  if (src_type != variable.type) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
   }
@@ -3674,72 +3681,22 @@ math_func_each_with_index(MathFunctionCallExpression *exp, MathEquation *eq, Mat
   }
 
   index->type = MATH_VALUE_NORMAL;
-  switch (src_type) {
-  case DATA_TYPE_VALUE:
-    n = each_val(exp, eq, src_id, index, 1, 3);
-    break;
-  case DATA_TYPE_STRING:
-    n = each_string(exp, eq, src_id, index, 1, 3);
-    break;
-  }
-  if (n < 0) {
-    rval->type = MATH_VALUE_ERROR;
-    return 1;
+  src = math_equation_get_type_array(eq, src_type, src_id);
+  n = src->num;
+  for (i = 0; i < n; i++) {
+    if(math_equation_get_array_common_value(eq, src_id, i, src_type, &cval)) {
+      rval->type = MATH_VALUE_ERROR;
+      return 1;
+    }
+    if (math_variable_set_common_value(&variable, &cval)) {
+      rval->type = MATH_VALUE_ERROR;
+      return 1;
+    }
+    index->val = i;
+    math_expression_calculate(exp->buf[3].exp, &val);
   }
   rval->val = n;
   return 0;
-}
-
-static int
-reduce_val(MathFunctionCallExpression *exp, MathEquation *eq, int src_id, MathValue *result, int v_index, int e_index)
-{
-  int i, n;
-  MathEquationArray *src;
-  MathValue val, *vptr;
-
-  src = math_equation_get_array(eq, src_id);
-  vptr = math_expression_get_variable_from_argument(exp, v_index);
-  if (vptr == NULL) {
-    return -1;
-  }
-
-  n = src->num;
-  for (i = 0; i < n; i++) {
-    if (math_equation_get_array_val(eq, src_id, i, vptr)) {
-      return -1;
-    }
-    math_expression_calculate(exp->buf[e_index].exp, &val);
-    *result = val;
-  }
-  return n;
-}
-
-static int
-reduce_string(MathFunctionCallExpression *exp, MathEquation *eq, int src_id, MathValue *result, int v_index, int e_index)
-{
-  int i, n;
-  MathEquationArray *src;
-  MathValue val;
-  GString *gstr;
-  const char *str;
-
-  src = math_equation_get_string_array(eq, src_id);
-  gstr = math_expression_get_string_variable_from_argument(exp, v_index);
-  if (src == NULL || gstr == NULL) {
-    return -1;
-  }
-
-  n = src->num;
-  for (i = 0; i < n; i++) {
-    str = math_equation_get_array_cstr(eq, src_id, i);
-    if (str == NULL) {
-      return -1;
-    }
-    g_string_assign(gstr, str);
-    math_expression_calculate(exp->buf[e_index].exp, &val);
-    *result = val;
-  }
-  return n;
 }
 
 int
