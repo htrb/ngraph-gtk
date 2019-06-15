@@ -2046,6 +2046,23 @@ math_expression_get_string_variable_from_argument(MathFunctionCallExpression *ex
   return exp->buf[i].variable.data.str;
 }
 
+int
+math_function_call_expression_get_variable(MathFunctionCallExpression *exp, int i, MathVariable *var)
+{
+  var->type = exp->buf[i].variable.type;
+  switch (var->type) {
+  case DATA_TYPE_VALUE:
+    var->type = DATA_TYPE_VALUE;
+    var->data.vptr = exp->buf[i].variable.data.vptr;
+    break;
+  case DATA_TYPE_STRING:
+    var->type = DATA_TYPE_STRING;
+    var->data.str = exp->buf[i].variable.data.str;
+    break;
+  }
+  return 0;
+}
+
 MathValue *
 math_expression_get_variable_from_argument(MathFunctionCallExpression *exp, int i)
 {
