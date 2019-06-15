@@ -2063,6 +2063,23 @@ math_function_call_expression_get_variable(MathFunctionCallExpression *exp, int 
   return 0;
 }
 
+int
+math_variable_set_common_value(MathVariable *variable, MathCommonValue *val)
+{
+  if (variable->type != val->type) {
+    return 1;
+  }
+  switch (variable->type) {
+  case DATA_TYPE_VALUE:
+    *(variable->data.vptr) = val->data.val;
+    break;
+  case DATA_TYPE_STRING:
+    g_string_assign(variable->data.str, val->data.cstr);
+    break;
+  }
+  return 0;
+}
+
 MathValue *
 math_expression_get_variable_from_argument(MathFunctionCallExpression *exp, int i)
 {
