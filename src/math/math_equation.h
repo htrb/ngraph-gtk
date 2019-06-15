@@ -50,6 +50,14 @@ enum DATA_TYPE {
   DATA_TYPE_STRING,
 };
 
+struct _math_variable {
+  enum DATA_TYPE type;
+  union {
+    MathValue *vptr;
+    GString *str;
+  } data;
+};
+
 struct _math_array_info {
   enum DATA_TYPE type;
   NHASH array, local_array;
