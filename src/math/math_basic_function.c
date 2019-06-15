@@ -3487,55 +3487,13 @@ math_func_map(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
   return 0;
 }
 
-static int
-copy_array_val(MathEquation *eq, int src_id, int dest_id, MathValue *rval)
-{
-  int i, n;
-  MathEquationArray *src;
-  MathValue val;
-  src = math_equation_get_array(eq, src_id);
-  n = src->num;
-  for (i = 0; i < n; i++) {
-    if (math_equation_get_array_val(eq, src_id, i, &val)) {
-      rval->type = MATH_VALUE_ERROR;
-      return -1;
-    }
-    if (math_equation_set_array_val(eq, dest_id, i, &val)) {
-      rval->type = MATH_VALUE_ERROR;
-      return -1;
-    }
-  }
-  return n;
-}
-
-static int
-copy_array_str(MathEquation *eq, int src_id, int dest_id, MathValue *rval)
-{
-  int i, n;
-  MathEquationArray *src;
-  const char *str;
-  src = math_equation_get_string_array(eq, src_id);
-  n = src->num;
-  for (i = 0; i < n; i++) {
-    str = math_equation_get_array_cstr(eq, src_id, i);
-    if (str == NULL) {
-      rval->type = MATH_VALUE_ERROR;
-      return -1;
-    }
-    if (math_equation_set_array_str(eq, dest_id, i, str)) {
-      rval->type = MATH_VALUE_ERROR;
-      return -1;
-    }
-  }
-  return n;
-}
-
 int
 math_func_array_copy(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  int src_id, dest_id, n;
+  int src_id, dest_id, i, n;
   enum DATA_TYPE src_type, dest_type;
-
+  MathEquationArray *src;
+  MathCommonValue val;
   rval->val = 0;
   rval->type = MATH_VALUE_NORMAL;
 
@@ -3549,21 +3507,17 @@ math_func_array_copy(MathFunctionCallExpression *exp, MathEquation *eq, MathValu
     return 1;
   }
 
-  switch (src_type) {
-  case DATA_TYPE_VALUE:
-    n = copy_array_val(eq, src_id, dest_id, rval);
-    if (n < 0) {
+  src = math_equation_get_type_array(eq, src_type, src_id);
+  n = src->num;
+  for (i = 0; i < n; i++) {
+    if(math_equation_get_array_common_value(eq, src_id, i, src_type, &val)) {
       rval->type = MATH_VALUE_ERROR;
       return 1;
     }
-    break;
-  case DATA_TYPE_STRING:
-    n = copy_array_str(eq, src_id, dest_id, rval);
-    if (n < 0) {
+    if (math_equation_set_array_common_value(eq, dest_id, i, &val)) {
       rval->type = MATH_VALUE_ERROR;
       return 1;
     }
-    break;
   }
   rval->val = n;
   return 0;
