@@ -1979,6 +1979,20 @@ math_equation_get_array_common_value(MathEquation *eq, int array, int index, enu
   return 0;
 }
 
+int
+math_equation_set_array_common_value(MathEquation *eq, int array, int index, MathCommonValue *val)
+{
+  switch (val->type) {
+  case DATA_TYPE_VALUE:
+    return math_equation_set_array_val(eq, array, index, &val->data.val);
+    break;
+  case DATA_TYPE_STRING:
+    return math_equation_set_array_str(eq, array, index, val->data.cstr);
+    break;
+  }
+  return 0;
+}
+
 static MathEquationArray *
 math_equation_get_array_common(MathArray *array, int id)
 {
