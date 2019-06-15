@@ -12,6 +12,8 @@ typedef struct _math_array MathEquationArray;
 typedef struct _math_value MathValue;
 typedef struct _math_stack MathStack;
 typedef struct _math_array_info MathArray;
+typedef struct _math_variable MathVariable;
+typedef struct _math_common_value MathCommonValue;
 
 #include <gmodule.h>
 #include "math_error.h"
@@ -183,6 +185,7 @@ int math_equation_clear_array(MathEquation *eq, int array);
 int math_equation_clear_string_array(MathEquation *eq, int array);
 MathEquationArray *math_equation_get_array(MathEquation *eq, int array);
 MathEquationArray *math_equation_get_string_array(MathEquation *eq, int id);
+MathEquationArray *math_equation_get_type_array(MathEquation *eq, enum DATA_TYPE type, int id);
 
 void math_equation_set_user_data(MathEquation *eq, void *user_data);
 void *math_equation_get_user_data(MathEquation *eq);
@@ -198,5 +201,8 @@ int math_equation_set_array_str(MathEquation *eq, int array, int index, const ch
 int math_equation_push_array_str(MathEquation *eq, int array, const char *str);
 GString *math_equation_get_array_str(MathEquation *eq, int array, int index);
 const char *math_equation_get_array_cstr(MathEquation *eq, int array, int index);
+
+int math_equation_get_array_common_value(MathEquation *eq, int array, int index, enum DATA_TYPE type, MathCommonValue *val);
+int math_equation_set_array_common_value(MathEquation *eq, int array, int index, MathCommonValue *val);
 
 #endif
