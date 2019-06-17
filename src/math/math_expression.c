@@ -597,33 +597,16 @@ static int
 check_argument(struct math_function_parameter *fprm, int argc, MathExpression **argv)
 {
   int i, arg_type_num;
+  enum MATH_FUNCTION_ARG_TYPE arg_type;
 
   arg_type_num = math_function_get_arg_type_num(fprm);
   for (i = 0; i < argc; i++) {
     if (fprm->arg_type && i < arg_type_num) {
-      switch (argv[i]->type) {
-      case MATH_EXPRESSION_TYPE_ARRAY_ARGUMENT:
-	if (fprm->arg_type[i] != MATH_FUNCTION_ARG_TYPE_ARRAY &&
-            fprm->arg_type[i] != MATH_FUNCTION_ARG_TYPE_ARRAY_COMMON) {
-	  return 1;
-	}
-	break;
-      case MATH_EXPRESSION_TYPE_STRING_ARRAY_ARGUMENT:
-	if (fprm->arg_type[i] != MATH_FUNCTION_ARG_TYPE_STRING_ARRAY &&
-            fprm->arg_type[i] != MATH_FUNCTION_ARG_TYPE_ARRAY_COMMON) {
-	  return 1;
-	}
-	break;
-      default:
- 	if (fprm->arg_type[i] == MATH_FUNCTION_ARG_TYPE_ARRAY ||
-	    fprm->arg_type[i] == MATH_FUNCTION_ARG_TYPE_STRING_ARRAY ||
-	    fprm->arg_type[i] == MATH_FUNCTION_ARG_TYPE_ARRAY_COMMON) {
-	  return 1;
-	}
-	break;
-      }
-    } else if (argv[i]->type == MATH_EXPRESSION_TYPE_ARRAY_ARGUMENT ||
-	       argv[i]->type == MATH_EXPRESSION_TYPE_STRING_ARRAY_ARGUMENT) {
+      arg_type = fprm->arg_type[i];
+    } else {
+      arg_type = MATH_FUNCTION_ARG_TYPE_DOUBLE;
+    }
+    if (check_argument_sub(arg_type, argv[i]->type)) {
       return 1;
     }
   }
