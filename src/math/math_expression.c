@@ -621,6 +621,7 @@ math_func_call_expression_new(MathEquation *eq, struct math_function_parameter *
   MathFunctionArgument *buf;
 
   if (check_argument(fprm, argc, argv)) {
+    *err = MATH_ERROR_INVALID_ARG;
     return NULL;
   }
 
@@ -628,6 +629,7 @@ math_func_call_expression_new(MathEquation *eq, struct math_function_parameter *
   if (argc > 0) {
     buf = g_malloc(sizeof(*buf) * argc);
     if (buf == NULL) {
+      *err = MATH_ERROR_MEMORY;
       return NULL;
     }
   }
