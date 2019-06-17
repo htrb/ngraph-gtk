@@ -417,6 +417,9 @@ create_math_func(struct math_string *str, MathEquation *eq, struct math_token *n
 
   exp = math_func_call_expression_new(eq, fprm, argc, argv, pos_id, err);
   if (exp == NULL) {
+    if (*err == MATH_ERROR_INVALID_ARG) {
+      math_equation_set_parse_error(eq, token->ptr, str);
+    }
     free_arg_list(argv);
     g_free(argv);
     return NULL;
