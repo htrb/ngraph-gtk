@@ -567,6 +567,7 @@ check_argument_sub(enum MATH_FUNCTION_ARG_TYPE arg_type, enum MATH_EXPRESSION_TY
   case MATH_FUNCTION_ARG_TYPE_VARIABLE:
     switch (type) {
     case MATH_EXPRESSION_TYPE_VARIABLE:
+    case MATH_EXPRESSION_TYPE_ARRAY:
       break;
     default:
       return 1;
@@ -575,6 +576,7 @@ check_argument_sub(enum MATH_FUNCTION_ARG_TYPE arg_type, enum MATH_EXPRESSION_TY
   case MATH_FUNCTION_ARG_TYPE_STRING_VARIABLE:
     switch (type) {
     case MATH_EXPRESSION_TYPE_STRING_VARIABLE:
+    case MATH_EXPRESSION_TYPE_STRING_ARRAY:
       break;
     default:
       return 1;
@@ -583,7 +585,9 @@ check_argument_sub(enum MATH_FUNCTION_ARG_TYPE arg_type, enum MATH_EXPRESSION_TY
   case MATH_FUNCTION_ARG_TYPE_VARIABLE_COMMON:
     switch (type) {
     case MATH_EXPRESSION_TYPE_VARIABLE:
+    case MATH_EXPRESSION_TYPE_ARRAY:
     case MATH_EXPRESSION_TYPE_STRING_VARIABLE:
+    case MATH_EXPRESSION_TYPE_STRING_ARRAY:
       break;
     default:
       return 1;
