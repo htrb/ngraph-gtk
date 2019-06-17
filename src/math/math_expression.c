@@ -516,6 +516,84 @@ math_function_get_arg_type_num(struct math_function_parameter *fprm)
 }
 
 static int
+check_argument_sub(enum MATH_FUNCTION_ARG_TYPE arg_type, enum MATH_EXPRESSION_TYPE type)
+{
+  switch (arg_type) {
+  case MATH_FUNCTION_ARG_TYPE_DOUBLE:
+  case MATH_FUNCTION_ARG_TYPE_PROC:
+    switch (type) {
+    case MATH_EXPRESSION_TYPE_ARRAY_ARGUMENT:
+    case MATH_EXPRESSION_TYPE_STRING_ARRAY_ARGUMENT:
+      return 1;
+    default:
+      break;
+    }
+    break;
+  case MATH_FUNCTION_ARG_TYPE_STRING:
+    switch (type) {
+    case MATH_EXPRESSION_TYPE_STRING:
+    case MATH_EXPRESSION_TYPE_STRING_VARIABLE:
+    case MATH_EXPRESSION_TYPE_STRING_ARRAY:
+      break;
+    default:
+      return 1;
+    }
+    break;
+  case MATH_FUNCTION_ARG_TYPE_ARRAY:
+    switch (type) {
+    case MATH_EXPRESSION_TYPE_ARRAY_ARGUMENT:
+      break;
+    default:
+      return 1;
+    }
+    break;
+  case MATH_FUNCTION_ARG_TYPE_STRING_ARRAY:
+    switch (type) {
+    case MATH_EXPRESSION_TYPE_STRING_ARRAY_ARGUMENT:
+      break;
+    default:
+      return 1;
+    }
+    break;
+  case MATH_FUNCTION_ARG_TYPE_ARRAY_COMMON:
+    switch (type) {
+    case MATH_EXPRESSION_TYPE_ARRAY_ARGUMENT:
+    case MATH_EXPRESSION_TYPE_STRING_ARRAY_ARGUMENT:
+      break;
+    default:
+      return 1;
+    }
+    break;
+  case MATH_FUNCTION_ARG_TYPE_VARIABLE:
+    switch (type) {
+    case MATH_EXPRESSION_TYPE_VARIABLE:
+      break;
+    default:
+      return 1;
+    }
+    break;
+  case MATH_FUNCTION_ARG_TYPE_STRING_VARIABLE:
+    switch (type) {
+    case MATH_EXPRESSION_TYPE_STRING_VARIABLE:
+      break;
+    default:
+      return 1;
+    }
+    break;
+  case MATH_FUNCTION_ARG_TYPE_VARIABLE_COMMON:
+    switch (type) {
+    case MATH_EXPRESSION_TYPE_VARIABLE:
+    case MATH_EXPRESSION_TYPE_STRING_VARIABLE:
+      break;
+    default:
+      return 1;
+    }
+    break;
+  }
+  return 0;
+}
+
+static int
 check_argument(struct math_function_parameter *fprm, int argc, MathExpression **argv)
 {
   int i, arg_type_num;
