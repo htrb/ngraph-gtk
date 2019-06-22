@@ -10,14 +10,15 @@ if OS_WIN32
 libngraph_ldflags += -no-undefined -export-symbols ngraph.def -Wl,libngraph_resource.o
 ngraph_ldflags += -Wl,ngraph_resource.o
 
+MINGW_DIR = $(top_srcdir)/mingw
 BUILT_SOURCES = ngraph.def libngraph_resource.o ngraph_resource.o
 CLEANFILES = $(BUILT_SOURCES) libngraph_resource.rc ngraph_resource.rc
 
 ngraph_resource.rc: ngraph_resource.rc.in
-	$(AWK) -f $(top_srcdir)/winrc_version.awk -v VERSION=$(VERSION) $^ > $@
+	$(AWK) -f $(MINGW_DIR)/winrc_version.awk -v VERSION=$(VERSION) $^ > $@
 
 libngraph_resource.rc: libngraph_resource.rc.in
-	$(AWK) -f $(top_srcdir)/winrc_version.awk -v VERSION=$(VERSION) $^ > $@
+	$(AWK) -f $(MINGW_DIR)/winrc_version.awk -v VERSION=$(VERSION) $^ > $@
 
 .rc.o:
 	$(WINDRES) -I $(top_srcdir)/src -o $@ $<
