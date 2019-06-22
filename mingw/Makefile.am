@@ -1,1 +1,1 @@
-EXTRA_DIST = windows64.sh associate.bat
+EXTRA_DIST = windows64.sh associate.bat winrc_version.awk
