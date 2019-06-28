@@ -804,6 +804,9 @@ math_expression_free_sub(MathExpression *exp)
   case MATH_EXPRESSION_TYPE_PRM:
   case MATH_EXPRESSION_TYPE_EOEQ:
     break;
+  case MATH_EXPRESSION_TYPE_BLOCK:
+    math_expression_free(exp->u.exp);
+    break;
   }
 
   g_free(exp);
