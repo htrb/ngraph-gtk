@@ -929,6 +929,8 @@ parse_block_expression(struct math_string *str, MathEquation *eq, int *err)
 
   token = my_get_token(str);
   if (token->type != MATH_TOKEN_TYPE_RC) {
+    *err = MATH_ERROR_MISS_RC;
+    math_equation_set_parse_error(eq, token->ptr, str);
     math_scanner_free_token(token);
     math_expression_free(exp);
     return NULL;
