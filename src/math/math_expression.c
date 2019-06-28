@@ -1610,6 +1610,9 @@ optimize(MathExpression *exp, int *err)
   MathExpression *new_exp;
 
   switch (exp->type) {
+  case MATH_EXPRESSION_TYPE_BLOCK:
+    new_exp = optimize_block_expression(exp, err);
+    break;
   case MATH_EXPRESSION_TYPE_OR:
     new_exp = optimize_or_expression(exp, err);
     break;
