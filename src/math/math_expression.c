@@ -1589,6 +1589,22 @@ optimize_array_expression(MathExpression *exp, int *err)
 }
 
 static MathExpression *
+optimize_block_expression(MathExpression *exp, int *err)
+{
+  MathExpression *operand, *new_exp;
+  operand = math_expression_optimize(exp->u.exp, err);
+  if (operand == NULL) {
+    return NULL;
+  }
+  new_exp = math_expression_new(exp->type, exp->equation, err);
+  if (new_exp == NULL) {
+    return NULL;
+  }
+  new_exp->u.exp = operand;
+  return new_exp;
+}
+
+static MathExpression *
 optimize(MathExpression *exp, int *err)
 {
   MathExpression *new_exp;
