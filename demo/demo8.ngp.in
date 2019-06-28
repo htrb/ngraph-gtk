@@ -571,8 +571,8 @@ new data
   {
     color(3,128);                          # set line color
     draw_line(COLX, 0, COLX, NUM);         # draw a vertical line
-    draw_line(0, COLY, size(col), COLY));
-  }; # draw a horizontal line
+    draw_line(0, COLY, size(col), COLY);
+  }); # draw a horizontal line
 x * h();'
 	data::math_y='const SCALE := h();
 n := size(col);              # number of the data
