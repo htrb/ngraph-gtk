@@ -29,6 +29,7 @@ static struct math_token *st_look_ahead_token = NULL;
 static MathExpression * parse_expression(struct math_string *mstr, MathEquation *eq, int *err);
 static MathExpression * parse_expression_list(struct math_string *mstr, MathEquation *eq, int inside_block, int *err);
 static MathExpression * parse_unary_expression(struct math_string *mstr, MathEquation *eq, int *err);
+static MathExpression * parse_block_expression(struct math_string *str, MathEquation *eq, int *err);
 
 static struct math_token *
 my_get_token(struct math_string *str)
