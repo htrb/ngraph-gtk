@@ -969,6 +969,7 @@ parse_func_def_expression(struct math_string *str, MathEquation *eq, int *err)
 {
   struct math_token *fname;
   MathExpression *exp, *block;
+  struct math_token *token;
 
   /* get name of the function */
   fname = my_get_token(str);
@@ -1004,6 +1005,15 @@ parse_func_def_expression(struct math_string *str, MathEquation *eq, int *err)
   }
 
   /* get block */
+  token = my_get_token(str);
+  if (token == NULL) {
+    return NULL;
+  }
+  if (token->type != MATH_TOKEN_TYPE_LC) {
+    math_scanner_free_token(token);
+    return NULL;
+  }
+  math_scanner_free_token(token);
   block = parse_block_expression(str, eq, err);
   if (block == NULL) {
     math_equation_finish_user_func_definition(eq, NULL, NULL, NULL, NULL);
