@@ -1843,6 +1843,12 @@ calc(MathExpression *exp, MathValue *val)
   val->type = MATH_VALUE_NORMAL;
 
   switch (exp->type) {
+  case MATH_EXPRESSION_TYPE_BLOCK:
+    if (math_expression_calculate(exp->u.exp, &operand)) {
+      return 1;
+    }
+    *val = operand;
+    break;
   case MATH_EXPRESSION_TYPE_OR:
     if (CALC_EXPRESSION(exp->u.bin.left, left)) {
       return 1;
