@@ -448,7 +448,7 @@ each_with_index(col, y, i,     # initialize arrays for polyline
   {
     ax[i] := i + ofst_x;
     ay[i] := y + ofst_y;
-   });
+  });
 unshift(ax, ax[0]);            # add first x for a polygon mask
 unshift(ay, ofst_y);           # add first y for a polygon mask
 push(ax, ax[-1]);              # add last x for a polygon mask
