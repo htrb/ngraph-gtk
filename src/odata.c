@@ -2875,9 +2875,9 @@ ofile_create_math_equation(int *id, int prm_digit, int use_fprm, int use_const, 
   }
 
   if (usr_func) {
-    math_equation_parse(code, "def f(x,y,z){0}");
-    math_equation_parse(code, "def g(x,y,z){0}");
-    math_equation_parse(code, "def h(x,y,z){0}");
+    math_equation_parse(code, "def f(x,y,z){}");
+    math_equation_parse(code, "def g(x,y,z){}");
+    math_equation_parse(code, "def h(x,y,z){}");
   }
 
   if (use_fobj_func) {
