@@ -2502,7 +2502,7 @@ static int
 set_user_fnc(MathEquation **eq, const char *str, const char *fname, char **err_msg)
 {
   int r, i;
-  char *buf, default_func[] = "def f(x,y,z){0}";
+  char *buf, default_func[] = "def f(x,y,z){}";
   //                           01234
 
   if (err_msg)
