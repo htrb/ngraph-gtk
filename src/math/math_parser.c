@@ -918,8 +918,11 @@ parse_block_expression(struct math_string *str, MathEquation *eq, int *err)
 
   token = my_get_token(str);
   if (token->type == MATH_TOKEN_TYPE_RC) {
+    MathValue val;
     math_scanner_free_token(token);
-    return NULL;
+    val.val = 0;
+    val.type = MATH_VALUE_NORMAL;
+    return math_double_expression_new(eq, &val, err);
   }
   unget_token(token);
 
@@ -942,7 +945,7 @@ parse_block_expression(struct math_string *str, MathEquation *eq, int *err)
     math_expression_free(exp);
     return NULL;
   }
-  block->u.exp =exp;
+  block->u.exp = exp;
   return block;
 }
 
