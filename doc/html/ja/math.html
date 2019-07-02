@@ -931,11 +931,27 @@
  <tr><td>marksize(x)</td><td>マークのサイズをXに設定</td></tr>
  <tr><td>marktype(x)</td><td>マークの種類をXに設定</td></tr>
  <tr><td>if(x,ex1,ex2)</td><td>x ≠ 0 のとき ex1, x = 0 のとき ex2</td></tr>
+ <tr><td>unless(x,ex1,ex2)</td><td>x ≠ 0 のとき ex2, x = 0 のとき ex1 </td></tr>
+ <tr>
+  <td>for(m,begin,end,step,ex)</td>
+  <td>
+   第mメモリーの値に begin から end まで step で値を設定し、ex を繰り返
+   す。m が負の時はメモリーへの設定は行われない。最後に評価された ex の
+   値を返す。
+  </td>
+ </tr>
+ <tr>
+  <td>times(n, index, ex)</td>
+  <td>
+    ex を n 回繰り返す。第2引数に指定した変数で、繰り返しのカウンタ (0
+    〜 n-1) を参照できる。最後に評価された ex の値を返す。
+  </td>
+ </tr>
  <tr>
   <td>getobj($obj, $field, id)</td>
   <td>
    ID が id のオブジェクト $obj のフィールド $field の値を返す。field
-   type がint, bool, enum, double の場合に利用できます。
+   type が int, bool, enum, double の場合に利用できます。
   </td>
  </tr>
  <tr>
@@ -952,22 +968,6 @@
    ID が id のオブジェクト $obj のフィールド $field の値を array に代
    入する。field type が char*[], double[], int[] の場合に利用できます。
    設定した配列の要素数を返します。
-  </td>
- </tr>
- <tr><td>unless(x,ex1,ex2)</td><td>x ≠ 0 のとき ex2, x = 0 のとき ex1 </td></tr>
- <tr>
-  <td>for(m,begin,end,step,ex)</td>
-  <td>
-   第mメモリーの値に begin から end まで step で値を設定し、ex を繰り返
-   す。m が負の時はメモリーへの設定は行われない。最後に評価された ex の
-   値を返す。
-  </td>
- </tr>
- <tr>
-  <td>times(n, index, ex)</td>
-  <td>
-    ex を n 回繰り返す。第2引数に指定した変数で、繰り返しのカウンタ (0
-    〜 n-1) を参照できる。最後に評価された ex の値を返す。
   </td>
  </tr>
  <tr><td>prog1(arg1,arg2,...)</td><td>引数を評価し、最初の引数の値を返す</td></tr>
@@ -1041,7 +1041,7 @@
       0
       </pre>
       <p>
-      このような場合に、３番目の引数で比較の桁数を指定すると期待する結果
+      このような場合に、3番目の引数で比較の桁数を指定すると期待する結果
       が得られることが多くなります。
       </p>
       <pre>
