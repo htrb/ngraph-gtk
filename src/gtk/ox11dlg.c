@@ -653,7 +653,7 @@ dlggetopenfiles(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
   char *filter = NULL, *initfile = NULL;
   int locksave;
   int ret;
-  char **file = NULL, *name;
+  char **file = NULL;
   struct narray *farray;
 
   locksave = Globallock;
@@ -682,7 +682,7 @@ dlggetopenfiles(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
     farray = arraynew(sizeof(char *));
     for (i = 0; file[i]; i++) {
       changefilename(file[i]);
-      arrayadd(farray, &name);
+      arrayadd(farray, file + i);
     }
     rval->array = farray;
   }
