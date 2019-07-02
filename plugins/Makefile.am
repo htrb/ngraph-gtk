@@ -18,7 +18,7 @@ if OS_WIN32
   libruby_la_LIBADD = -lngraph
   clean_files += libruby_resource.rc
 libruby_resource.rc: libruby_resource.rc.in
-	$(AWK) -f $(top_srcdir)/winrc_version.awk -v VERSION=$(VERSION) $^ > $@
+	$(AWK) -f $(top_srcdir)/mingw/winrc_version.awk -v VERSION=$(VERSION) $^ > $@
 
 .rc.o:
 	$(WINDRES) -o $@ $<
