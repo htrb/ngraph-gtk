@@ -23,6 +23,7 @@ static void free_func(NHASH func);
 static void optimize_func(NHASH func);
 static int optimize_const_definition(MathEquation *eq);
 static int math_equation_call_user_func(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
+static int check_const_in_expression_list(MathExpression *exp, int *constant, int n);
 
 static MathValue *
 add_to_ary(MathValue *buf, int *num, int *size, const MathValue *val)
@@ -2142,6 +2143,20 @@ check_counst_in_func(struct nhash *hash, void *ptr)
   return r;
 }
 
+static int
+check_const_in_expression_list(MathExpression *exp, int *constant, int n)
+{
+  int r;
+  r = 0;
+  while (exp) {
+    r = check_const_sub(exp, constant, n);
+    if (r) {
+      break;
+    }
+    exp = exp->next;
+  }
+  return r;
+}
 
 int
 math_equation_check_const(MathEquation *eq, int *constant, int n)
