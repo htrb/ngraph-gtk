@@ -2163,7 +2163,6 @@ math_equation_check_const(MathEquation *eq, int *constant, int n)
 {
   int r;
   struct search_const sc;
-  MathExpression *exp;
 
   if (eq == NULL || constant == NULL)
     return 0;
@@ -2177,15 +2176,6 @@ math_equation_check_const(MathEquation *eq, int *constant, int n)
     return sc.r;
   }
 
-  r = 0;
-  exp = eq->exp;
-  while (exp) {
-    r = check_const_sub(exp, constant, n);
-    if (r) {
-      break;
-    }
-    exp = exp->next;
-  }
-
+  r = check_const_in_expression_list(eq->exp, constant, n);
   return r;
 }
