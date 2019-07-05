@@ -1504,6 +1504,11 @@ scope_info_push(MathFunctionExpression *func, MathFunctionArgument *argv, MathEq
     return NULL;
   }
 
+  eq->array.buf = scope.array.local;
+  eq->array.num = func->local_array_num;
+  eq->string_array.buf = scope.string_array.local;
+  eq->string_array.num = func->local_string_array_num;
+
   array = arrayadd(eq->scope_info, &scope);
   if (array == NULL) {
     return NULL;
