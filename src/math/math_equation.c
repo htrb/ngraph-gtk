@@ -1481,6 +1481,24 @@ local_string_array_free(MathFunctionExpression *func, MathFunctionArgument *argv
 }
 
 static int
+scope_info_push(MathEquation *eq)
+{
+  struct narray *array;
+  struct scope_info scope;
+  scope.variable_offset = eq->stack.ofst;
+  scope.string_offset = eq->string_stack.ofst;
+  scope.array.prev = eq->array.buf;
+  scope.array.prev_num = eq->array.num;
+  scope.string_array.prev = eq->string_array.buf;
+  scope.string_array.prev_num = eq->string_array.num;
+  array = arrayadd(eq->scope_info, &scope);
+  if (array == NULL) {
+    return 1;
+  }
+  return 0;
+}
+
+static int
 math_equation_call_user_func(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   static int nest = 0;
