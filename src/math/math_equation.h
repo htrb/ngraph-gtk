@@ -103,6 +103,7 @@ struct _math_equation {
   MathValue *cbuf, *pos_func_buf;
   MathExpression *exp, *opt_exp, *const_def;
   MathEquationParametar *parameter;
+  struct narray *scope_info;
   union {
     struct {
       const char *pos;
