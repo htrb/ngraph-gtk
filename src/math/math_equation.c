@@ -1480,7 +1480,7 @@ local_string_array_free(MathFunctionExpression *func, MathFunctionArgument *argv
   free_string_array_buf(info->local, func->local_string_array_num);
 }
 
-static int
+struct scope_info *
 scope_info_push(MathEquation *eq)
 {
   struct narray *array;
@@ -1493,9 +1493,9 @@ scope_info_push(MathEquation *eq)
   scope.string_array.prev_num = eq->string_array.num;
   array = arrayadd(eq->scope_info, &scope);
   if (array == NULL) {
-    return 1;
+    return NULL;
   }
-  return 0;
+  return arraylast(eq->scope_info);
 }
 
 static void
