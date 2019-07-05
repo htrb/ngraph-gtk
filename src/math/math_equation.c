@@ -1542,7 +1542,7 @@ math_equation_call_user_func(MathFunctionCallExpression *exp, MathEquation *eq, 
 {
   static int nest = 0;
   int end, str_end, r, i, j, k;
-  struct usr_func_array_info info, str_info;
+  struct scope_info *scope;
   MathExpression *func;
   MathFunctionArgument *argv;
   const char *str;
@@ -1562,37 +1562,23 @@ math_equation_call_user_func(MathFunctionCallExpression *exp, MathEquation *eq, 
 
   argv = exp->buf;
 
-  scope_info_push(eq);
+  scope = scope_info_push(&func->u.func, argv, eq);
   end = eq->stack.end;
   str_end = eq->string_stack.end;
 
-  local_array_alloc(&func->u.func, argv, &info);
-  if (func->u.func.local_array_num > 0 && info.local == NULL) {
-    return 1;
-  }
-
-  local_string_array_alloc(&func->u.func, argv, &str_info);
-  if (func->u.func.local_string_array_num > 0 && str_info.local == NULL) {
-    g_free(info.local);
+  if (scope == NULL) {
     return 1;
   }
 
   if (expand_stack(&(eq->stack), func->u.func.local_num)) {
-    g_free(info.local);
-    g_free(str_info.local);
+    scope_info_pop(&func->u.func, argv, eq);
     return 1;
   }
 
   if (expand_stack(&(eq->string_stack), func->u.func.local_string_num)) {
-    g_free(info.local);
-    g_free(str_info.local);
+    scope_info_pop(&func->u.func, argv, eq);
     return 1;
   }
-
-  eq->array.buf = info.local;
-  eq->array.num = func->u.func.local_array_num;
-  eq->string_array.buf = str_info.local;
-  eq->string_array.num = func->u.func.local_string_array_num;
 
   j = k = 0;
   for (i = 0; i < exp->argc; i++) {
@@ -1606,9 +1592,8 @@ math_equation_call_user_func(MathFunctionCallExpression *exp, MathEquation *eq, 
     case MATH_FUNCTION_ARG_TYPE_STRING_VARIABLE:
       str = math_expression_get_string_from_argument(exp, i);
       if (str == NULL) {
-	g_free(info.local);
-	g_free(str_info.local);
-	return 1;
+        scope_info_pop(&func->u.func, argv, eq);
+        return 1;
       }
       gstr = eq->string_stack.stack.str[eq->string_stack.ofst + k];
       g_string_assign(gstr, str);
@@ -1629,12 +1614,9 @@ math_equation_call_user_func(MathFunctionCallExpression *exp, MathEquation *eq, 
     eq->string_stack.stack.str[j] = NULL;
   }
 
-  scope_info_pop(eq);
+  scope_info_pop(&func->u.func, argv, eq);
   eq->stack.end = end;
   eq->string_stack.end = str_end;
-
-  local_array_free(&func->u.func, argv, &info);
-  local_string_array_free(&func->u.func, argv, &str_info);
 
   return r;
 }
