@@ -1521,7 +1521,7 @@ static int
 math_equation_call_user_func(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   static int nest = 0;
-  int ofst, end, str_ofst, str_end, r, i, j, k;
+  int end, str_end, r, i, j, k;
   struct usr_func_array_info info, str_info;
   MathExpression *func;
   MathFunctionArgument *argv;
@@ -1542,14 +1542,9 @@ math_equation_call_user_func(MathFunctionCallExpression *exp, MathEquation *eq, 
 
   argv = exp->buf;
 
-  ofst = eq->stack.ofst;
+  scope_info_push(eq);
   end = eq->stack.end;
-  str_ofst = eq->string_stack.ofst;
   str_end = eq->string_stack.end;
-  info.prev = eq->array.buf;
-  info.prev_num = eq->array.num;
-  str_info.prev = eq->string_array.buf;
-  str_info.prev_num = eq->string_array.num;
 
   local_array_alloc(&func->u.func, argv, &info);
   if (func->u.func.local_array_num > 0 && info.local == NULL) {
@@ -1614,14 +1609,9 @@ math_equation_call_user_func(MathFunctionCallExpression *exp, MathEquation *eq, 
     eq->string_stack.stack.str[j] = NULL;
   }
 
-  eq->array.num = info.prev_num;
-  eq->array.buf = info.prev;
-  eq->string_array.num = str_info.prev_num;
-  eq->string_array.buf = str_info.prev;
+  scope_info_pop(eq);
   eq->stack.end = end;
-  eq->stack.ofst = ofst;
   eq->string_stack.end = str_end;
-  eq->string_stack.ofst = str_ofst;
 
   local_array_free(&func->u.func, argv, &info);
   local_string_array_free(&func->u.func, argv, &str_info);
