@@ -17,6 +17,18 @@
 
 #define BUF_UNIT 64
 
+struct usr_func_array_info {
+  int prev_num;
+  MathEquationArray *prev, *local;
+};
+
+struct scope_info
+{
+  int variable_offset;
+  int string_offset;
+  struct usr_func_array_info array, string_array;
+};
+
 static void init_parameter(MathEquation *eq);
 static void free_parameter(MathEquation *eq);
 static void free_func(NHASH func);
@@ -1372,11 +1384,6 @@ math_equation_get_const(MathEquation *eq, int idx, MathValue *val)
 }
 
 #define USER_FUNC_NEST_MAX 8192
-
-struct usr_func_array_info {
-  int prev_num;
-  MathEquationArray *prev, *local;
-};
 
 static int
 local_array_alloc(MathFunctionExpression *func, MathFunctionArgument *argv, struct usr_func_array_info *info)
