@@ -500,6 +500,7 @@ math_equation_free(MathEquation *eq)
 
   free_parameter(eq);
 
+  arrayfree(eq->scope_info);
   math_expression_free(eq->exp);
   math_expression_free(eq->opt_exp);
   g_free(eq->cbuf);
