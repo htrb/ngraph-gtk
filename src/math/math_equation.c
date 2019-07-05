@@ -234,6 +234,7 @@ math_equation_new(void)
 
   eq->constant = nhash_new();
   eq->function = nhash_new();
+  eq->scope_info = arraynew(sizeof(struct scope_info));
   r = math_stack_init(&(eq->stack), DATA_TYPE_VALUE);
   if (r) {
     math_equation_free(eq);
@@ -256,7 +257,8 @@ math_equation_new(void)
   }
 
   if (eq->function == NULL ||
-      eq->constant == NULL) {
+      eq->constant == NULL ||
+      eq->scope_info == NULL) {
     math_equation_free(eq);
     return NULL;
   }
