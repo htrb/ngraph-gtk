@@ -2116,7 +2116,7 @@ check_const_sub(MathExpression *exp, int *constant, int n)
   case MATH_EXPRESSION_TYPE_STRING_VARIABLE:
     break;
   case MATH_EXPRESSION_TYPE_BLOCK:
-    r = check_const_in_expression_list(exp, constant, n);
+    r = check_const_in_expression_list(exp->u.exp, constant, n);
     break;
   }
 
