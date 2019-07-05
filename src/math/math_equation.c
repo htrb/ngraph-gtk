@@ -1512,15 +1512,17 @@ scope_info_push(MathFunctionExpression *func, MathFunctionArgument *argv, MathEq
 }
 
 static void
-scope_info_pop(MathEquation *eq)
+scope_info_pop(MathFunctionExpression *func, MathFunctionArgument *argv, MathEquation *eq)
 {
   struct scope_info *scope;
-  int n;
-  n = arraynum(eq->scope_info);
-  if (n < 1) {
+  scope = arraylast(eq->scope_info);
+  if (scope == NULL) {
     return;
   }
-  scope = arraynget(eq->scope_info, n - 1);
+
+  local_array_free(func, argv, &scope->array);
+  local_string_array_free(func, argv, &scope->string_array);
+
   eq->stack.ofst = scope->variable_offset;
   eq->string_stack.ofst = scope->string_offset;
   eq->array.buf = scope->array.prev;
