@@ -1481,7 +1481,7 @@ local_string_array_free(MathFunctionExpression *func, MathFunctionArgument *argv
 }
 
 struct scope_info *
-scope_info_push(MathEquation *eq)
+scope_info_push(MathFunctionExpression *func, MathFunctionArgument *argv, MathEquation *eq)
 {
   struct narray *array;
   struct scope_info scope;
@@ -1489,8 +1489,21 @@ scope_info_push(MathEquation *eq)
   scope.string_offset = eq->string_stack.ofst;
   scope.array.prev = eq->array.buf;
   scope.array.prev_num = eq->array.num;
+  scope.array.local = NULL;
   scope.string_array.prev = eq->string_array.buf;
   scope.string_array.prev_num = eq->string_array.num;
+  scope.string_array.local = NULL;
+
+  local_array_alloc(func, argv, &scope.array);
+  if (func->local_array_num > 0 && scope.array.local == NULL) {
+    return NULL;
+  }
+
+  local_string_array_alloc(func, argv, &scope.string_array);
+  if (func->local_string_array_num > 0 && scope.string_array.local == NULL) {
+    return NULL;
+  }
+
   array = arrayadd(eq->scope_info, &scope);
   if (array == NULL) {
     return NULL;
