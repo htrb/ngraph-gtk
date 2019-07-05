@@ -1498,6 +1498,25 @@ scope_info_push(MathEquation *eq)
   return 0;
 }
 
+static void
+scope_info_pop(MathEquation *eq)
+{
+  struct scope_info *scope;
+  int n;
+  n = arraynum(eq->scope_info);
+  if (n < 1) {
+    return;
+  }
+  scope = arraynget(eq->scope_info, n - 1);
+  eq->stack.ofst = scope->variable_offset;
+  eq->string_stack.ofst = scope->string_offset;
+  eq->array.buf = scope->array.prev;
+  eq->array.num = scope->array.prev_num;
+  eq->string_array.buf = scope->string_array.prev;
+  eq->string_array.num = scope->string_array.prev_num;
+  eq->scope_info->num--;
+}
+
 static int
 math_equation_call_user_func(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
