@@ -3,6 +3,7 @@ SUBDIRS = math gtk
 EXTRA_DIST = ngraph_export.map ngraph_resource.rc.in libngraph_resource.rc.in ngraph.ico
 
 libngraph_ldflags = -version-info $(LIBNGRAPH_VERSION) $(READLINE_LIBS) $(GTK_LIBS) $(GLIB_LIBS) $(GSL_LIBS)
+libngraph_cflags = ""
 ngraph_ldflags = -lngraph
 ngraph_lib = libngraph.la
 
@@ -34,6 +35,11 @@ terminal_SOURCES = terminal.c
 terminal_CFLAGS = $(GTK_CFLAGS)
 endif
 
+if OS_OSX
+  libngraph_ldflags += $(MAC_INTEGRATION_LIBS)
+  libngraph_cflags += $(MAC_INTEGRATION_CFLAGS)
+endif
+
 lib_LTLIBRARIES = $(ngraph_lib)
 
 libngraph_la_SOURCES = axis.c axis.h nconfig.c nconfig.h gra.c gra.h	\
@@ -49,7 +55,7 @@ libngraph_la_SOURCES = axis.c axis.h nconfig.c nconfig.h gra.c gra.h	\
 	spline.c spline.h common.h nhash.h nhash.c strconv.c		\
 	strconv.h oio.c gettext.h ngraph_api.c
 
-libngraph_la_CFLAGS = $(GTK_CFLAGS) $(GSL_CFLAGS) -I$(top_builddir) -DCCNAME='"'$(CC)'"'
+libngraph_la_CFLAGS = $(GTK_CFLAGS) $(GSL_CFLAGS) $(libngraph_cflags) -I$(top_builddir) -DCCNAME='"'$(CC)'"'
 libngraph_la_LIBADD = gtk/libngraphui.la math/libmath.la
 libngraph_la_LDFLAGS = $(libngraph_ldflags)
 
