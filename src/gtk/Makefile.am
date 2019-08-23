@@ -87,6 +87,8 @@ libngraphui_la_SOURCES = gtk_common.h gtk_combo.c gtk_combo.h		\
 	completion_info.c completion_info.h completion_info_data.c	\
 	gtk_presettings.c gtk_presettings.h
 
+libngraph_cflags = ""
+
 if OS_WIN32
 APPMENU_UI_SOURCE = $(srcdir)/data/gtk/menus-appmenu.ui.in
 MENU_UI_SOURCE = $(srcdir)/data/gtk/menus-common.ui.in
@@ -94,6 +96,7 @@ else
 if OS_OSX
 APPMENU_UI_SOURCE = $(srcdir)/data/gtk/menus-appmenu.ui.osx
 MENU_UI_SOURCE = $(srcdir)/data/gtk/menus-common.ui.osx
+libngraph_cflags += $(MAC_INTEGRATION_CFLAGS)
 else
 APPMENU_UI_SOURCE = $(srcdir)/data/gtk/menus-appmenu.ui.in
 MENU_UI_SOURCE = $(srcdir)/data/gtk/menus-common.ui.in
@@ -123,7 +126,7 @@ dir_defs.h: dir_defs.h.in Makefile
 completion_info_data.c: $(srcdir)/completion_info_functions.txt $(srcdir)/completion_info_constants.txt $(srcdir)/create_completion_info.rb
 	ruby $(srcdir)/create_completion_info.rb $(srcdir)/completion_info_functions.txt $(srcdir)/completion_info_constants.txt completion_info_data.c
 
-libngraphui_la_CFLAGS = $(GTK_CFLAGS) -I$(top_builddir) -I$(builddir) -I$(srcdir)/.. -I$(srcdir)/../math $(GTKSOURCEVIEW_CFLAGS)
+libngraphui_la_CFLAGS = $(GTK_CFLAGS) $(libngraph_cflags) -I$(top_builddir) -I$(builddir) -I$(srcdir)/.. -I$(srcdir)/../math $(GTKSOURCEVIEW_CFLAGS)
 libngraphui_la_LDFLAGS = $(GTKSOURCEVIEW_LIBS)
 
 CLEANFILES = dir_defs.h $(builddir)/data/gtk/menus-appmenu.ui $(builddir)/data/gtk/menus-common.ui $(BUILT_SOURCES)
