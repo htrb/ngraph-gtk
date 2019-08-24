@@ -806,6 +806,16 @@ load_css(void)
 }
 #endif
 
+void
+n_application_ready(void)
+{
+#if OSX
+  if (GtkMacIntegration) {
+    gtkosx_application_ready(GtkMacIntegration);
+  }
+#endif
+}
+
 int
 n_initialize(int *argc, char ***argv)
 {
