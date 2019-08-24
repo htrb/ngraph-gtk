@@ -37,6 +37,11 @@
 #include <locale.h>
 #include <signal.h>
 
+#if OSX
+#include <gtkosxapplication.h>
+static GtkosxApplication *GtkMacIntegration = NULL;
+#endif
+
 #if WINDOWS || OSX
 #ifdef LOCALEDIR
 #undef LOCALEDIR
@@ -832,6 +837,9 @@ n_initialize(int *argc, char ***argv)
 
   OpenDisplay = gtk_init_check(argc, argv);
   g_set_application_name(AppName);
+#if OSX
+  GtkMacIntegration = gtkosx_application_get();
+#endif
 
 #if WINDOWS || OSX
   set_dir_defs((*argv)[0]);
