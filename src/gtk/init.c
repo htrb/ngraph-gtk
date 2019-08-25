@@ -816,6 +816,14 @@ n_application_ready(void)
 #endif
 }
 
+#if OSX
+static gboolean
+osx_open_file(GtkosxApplication *app, gchar *path, gpointer user_data)
+{
+  return TRUE;
+}
+#endif
+
 int
 n_initialize(int *argc, char ***argv)
 {
