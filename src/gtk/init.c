@@ -857,7 +857,7 @@ n_initialize(int *argc, char ***argv)
   g_set_application_name(AppName);
 #if OSX
   GtkMacIntegration = gtkosx_application_get();
-  g_signal_connect(GtkMacIntegration, "NSApplicationOpenFile", osx_open_file, NULL);
+  g_signal_connect(GtkMacIntegration, "NSApplicationOpenFile", G_CALLBACK(osx_open_file), NULL);
 #endif
 
 #if WINDOWS || OSX
