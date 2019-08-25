@@ -4,7 +4,7 @@ const_str = [];
 IO.foreach(ARGV[0]) { |l|
   l.chomp!
   next if (l.length < 1)
-  const_str.push(l.split) 
+  const_str.push(l.split)
 }
 
 const_str = const_str.uniq.sort {|a, b| b[0].length - a[0].length}
