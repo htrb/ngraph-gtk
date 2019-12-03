@@ -3,7 +3,7 @@ SUBDIRS = math gtk
 EXTRA_DIST = ngraph_export.map ngraph_resource.rc.in libngraph_resource.rc.in ngraph.ico
 
 libngraph_ldflags = -version-info $(LIBNGRAPH_VERSION) $(READLINE_LIBS) $(GTK_LIBS) $(GLIB_LIBS) $(GSL_LIBS)
-libngraph_cflags = ""
+libngraph_cflags =
 ngraph_ldflags = -lngraph
 ngraph_lib = libngraph.la
 

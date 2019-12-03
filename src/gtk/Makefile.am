@@ -87,7 +87,7 @@ libngraphui_la_SOURCES = gtk_common.h gtk_combo.c gtk_combo.h		\
 	completion_info.c completion_info.h completion_info_data.c	\
 	gtk_presettings.c gtk_presettings.h
 
-libngraph_cflags = ""
+libngraph_cflags =
 
 if OS_WIN32
 APPMENU_UI_SOURCE = $(srcdir)/data/gtk/menus-appmenu.ui.in
