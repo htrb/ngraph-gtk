@@ -821,13 +821,14 @@
   </tr>
   <tr>
     <td>
-     string_split($dest, $src, $separator, ignore_case)
+     string_split($dest, $src, $separator, use_regexp)
     </td>
     <td>
-     文字列 $src を正規表現の文字列 $separator で分割し、分割された文
-     字列を文字列の配列 $dest に代入します。ignore_case が 0 以外の場
-     合は $separator に含まれる ascii 文字の大文字小文字を区別せずに分
-     割します。分割された要素数を返します。
+     文字列 $src を文字列 $separator で分割し、分割された文字列を文字
+     列の配列 $dest に代入します。use_regexp が 0 以外の場合は
+     $separator を正規表現として解釈します。use_regexp が 2 の場合は
+     $separatorに含まれる ascii 文字の大文字小文字を区別せずに分割しま
+     す。分割された要素数を返します。
     </td>
   </tr>
   <tr>
