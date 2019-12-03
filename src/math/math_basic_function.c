@@ -4042,7 +4042,7 @@ math_func_string_split(MathFunctionCallExpression *exp, MathEquation *eq, MathVa
 {
   const char *delm, *src;
   char **ary;
-  int i, id, compile_options, ignore_case;
+  int i, id, use_regexp;
 
   rval->val = 0;
   rval->type = MATH_VALUE_NORMAL;
@@ -4054,10 +4054,15 @@ math_func_string_split(MathFunctionCallExpression *exp, MathEquation *eq, MathVa
     return 1;
   }
   MATH_CHECK_ARG(rval, exp->buf[3]);
-  ignore_case = exp->buf[3].val.val;
+  use_regexp = exp->buf[3].val.val;
 
-  compile_options = (ignore_case) ? G_REGEX_CASELESS : 0;
-  ary = g_regex_split_simple(delm, src, compile_options, 0);
+  if (use_regexp) {
+    int compile_options;
+    compile_options = (use_regexp == 2) ? G_REGEX_CASELESS : 0;
+    ary = g_regex_split_simple(delm, src, compile_options, 0);
+  } else {
+    ary = g_strsplit(src, delm, -1);
+  }
   if (ary == NULL) {
     return 1;
   }
