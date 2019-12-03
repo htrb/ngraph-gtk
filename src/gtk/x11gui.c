@@ -107,6 +107,9 @@ DialogExecute(GtkWidget *parent, void *dialog)
   GtkWidget *dlg, *win_ptr, *btn;
   struct DialogType *data;
   gint res_id, lockstate;
+#if OSX
+  int menulock;
+#endif
 
   lockstate = DnDLock;
   DnDLock = TRUE;
@@ -164,6 +167,10 @@ DialogExecute(GtkWidget *parent, void *dialog)
   data->widget = dlg;
   data->ret = IDLOOP;
 
+#if OSX
+  menulock = Menulock;
+  Menulock = TRUE;
+#endif
   gtk_widget_show(dlg);
   win_ptr = get_current_window();
   set_current_window(dlg);
@@ -190,6 +197,9 @@ DialogExecute(GtkWidget *parent, void *dialog)
       data->CloseWindow(dlg, data);
     }
   }
+#if OSX
+  Menulock = menulock;
+#endif
 
   //  gtk_widget_destroy(dlg);
   //  data->widget = NULL;
