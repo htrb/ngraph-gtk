@@ -744,8 +744,7 @@ set_dir_defs(char *app)
   } else {
     bin_path = g_path_get_dirname(app_path);
     g_free(app_path);
-    app_path = g_path_get_dirname(bin_path);
-    g_free(bin_path);
+    app_path = bin_path;
     LIBDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "libexec/ngraph-gtk");
   }
 
