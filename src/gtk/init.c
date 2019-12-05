@@ -823,7 +823,7 @@ osx_open_file(GtkosxApplication *app, gchar *path, gpointer user_data)
 {
   char *dir;
   if (path == NULL) {
-    return 1;
+    return TRUE;
   }
   dir = getdirname(path);
   if (dir) {
