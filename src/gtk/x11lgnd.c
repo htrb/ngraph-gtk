@@ -2318,6 +2318,9 @@ LegendWinUpdate(char **objects, int clear, int draw)
   n = G_N_ELEMENTS(win);
   for (i = 0; i < n; i++) {
     d = win[i].data.data;
+    if (d == NULL) {
+      return;
+    }
     if (objects) {
       for (ptr = objects; *ptr; ptr++) {
 	obj = getobject(*ptr);
