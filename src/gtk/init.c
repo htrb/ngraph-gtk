@@ -733,15 +733,16 @@ static int
 set_dir_defs(char *app)
 {
   const char *app_contents;
-  char *app_path;
+  char *app_path, *bin_path;
 
   app_contents = g_getenv("NGRAPH_APP_CONTENTS");
   if (app_contents) {
-    app_path = g_strdup_printf("%s%c%s", app_contents, DIRSEP, "Resources");
-    LIBDIR = g_strdup_printf("%s%c%s", app_contents, DIRSEP, "MacOS");
+    app_path = gtkosx_application_get_resource_path();
+    bin_path = gtkosx_application_get_executable_path();
+    LIBDIR = g_path_get_dirname(bin_path);
+    g_free(bin_path);
   } else {
-    char *bin_path;
-    bin_path = g_path_get_dirname(app);
+    bin_path = g_path_get_dirname(app_path);
     app_path = g_path_get_dirname(bin_path);
     g_free(bin_path);
     LIBDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "libexec/ngraph-gtk");
