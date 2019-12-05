@@ -736,13 +736,14 @@ set_dir_defs(char *app)
   char *app_path, *bin_path;
 
   app_contents = g_getenv("NGRAPH_APP_CONTENTS");
+  app_path = gtkosx_application_get_resource_path();
   if (app_contents) {
-    app_path = gtkosx_application_get_resource_path();
     bin_path = gtkosx_application_get_executable_path();
     LIBDIR = g_path_get_dirname(bin_path);
     g_free(bin_path);
   } else {
     bin_path = g_path_get_dirname(app_path);
+    g_free(app_path);
     app_path = g_path_get_dirname(bin_path);
     g_free(bin_path);
     LIBDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "libexec/ngraph-gtk");
