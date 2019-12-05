@@ -64,6 +64,7 @@ char *DOCDIR, *NDATADIR, *ADDINDIR, *LIBDIR, *PLUGINDIR, *CONFDIR, *LOCALEDIR, *
 #include "x11menu.h"
 #include "ogra2x11.h"
 #include "ogra2cairo.h"
+#include "x11commn.h"
 #include <assert.h>
 static char **attempt_shell_completion(char *text, int start, int end);
 char *HistoryFile = NULL;
