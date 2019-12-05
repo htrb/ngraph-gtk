@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.07.06\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2019-12-03 18:10+0900\n"
-"PO-Revision-Date: 2019-12-03 18:10+0900\n"
+"POT-Creation-Date: 2019-12-05 15:01+0900\n"
+"PO-Revision-Date: 2019-12-05 15:03+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja\n"
@@ -290,8 +290,8 @@ msgid "_Background Color:"
 msgstr "背景色(_B):"
 
 #: src/gtk/x11axis.c:406 src/gtk/x11axis.c:3240 src/gtk/x11axis.c:3261
-#: src/gtk/x11axis.c:3294 src/gtk/x11lgnd.c:3055 src/gtk/x11lgnd.c:3066
-#: src/gtk/x11lgnd.c:3506 src/gtk/gtk_widget.c:939
+#: src/gtk/x11axis.c:3294 src/gtk/x11lgnd.c:3058 src/gtk/x11lgnd.c:3069
+#: src/gtk/x11lgnd.c:3509 src/gtk/gtk_widget.c:939
 msgid "Color"
 msgstr "色"
 
@@ -535,7 +535,7 @@ msgid "_Italic"
 msgstr "斜体(_I)"
 
 #: src/gtk/x11axis.c:2101 src/gtk/x11axis.c:3287 src/gtk/x11dialg.c:249
-#: src/gtk/x11lgnd.c:3504 src/gtk/x11opt.c:1431
+#: src/gtk/x11lgnd.c:3507 src/gtk/x11opt.c:1431
 msgid "Font"
 msgstr "フォント"
 
@@ -1096,7 +1096,7 @@ msgstr "X 描画範囲"
 msgid "_Load"
 msgstr "読込(_L)"
 
-#: src/gtk/x11file.c:1772 src/gtk/x11gui.c:1203 src/gtk/x11menu.c:532
+#: src/gtk/x11file.c:1772 src/gtk/x11gui.c:1213 src/gtk/x11menu.c:532
 #: src/gtk/x11menu.c:2314 src/gtk/x11menu.c:2574 src/gtk/x11opt.c:460
 #: src/gtk/x11opt.c:662 src/gtk/x11opt.c:1139 src/gtk/x11opt.c:1337
 #: src/gtk/x11opt.c:1667 src/gtk/x11opt.c:1775
@@ -1322,15 +1322,15 @@ msgstr "データファイル作成中"
 msgid "Making data file."
 msgstr "データファイル作成中"
 
-#: src/gtk/x11file.c:5913 src/gtk/x11lgnd.c:3052 src/gtk/gtk_presettings.c:1878
+#: src/gtk/x11file.c:5913 src/gtk/x11lgnd.c:3055 src/gtk/gtk_presettings.c:1878
 msgid "Join"
 msgstr "ジョイン"
 
-#: src/gtk/x11file.c:5918 src/gtk/x11lgnd.c:3031 src/gtk/gtk_widget.c:946
+#: src/gtk/x11file.c:5918 src/gtk/x11lgnd.c:3034 src/gtk/gtk_widget.c:946
 msgid "Color 1"
 msgstr "色 1"
 
-#: src/gtk/x11file.c:5925 src/gtk/x11lgnd.c:3032 src/gtk/gtk_widget.c:953
+#: src/gtk/x11file.c:5925 src/gtk/x11lgnd.c:3035 src/gtk/gtk_widget.c:953
 msgid "Color 2"
 msgstr "色 2"
 
@@ -1463,36 +1463,36 @@ msgstr ""
 "Ngraph は理工系学生、研究者、技術者のために作られた２次元グラフ作成プログラム"
 "です。"
 
-#: src/gtk/x11gui.c:134 src/gtk/x11gui.c:357 src/gtk/x11gui.c:425
-#: src/gtk/x11gui.c:561 src/gtk/x11gui.c:637 src/gtk/x11gui.c:707
-#: src/gtk/x11gui.c:786 src/gtk/x11gui.c:1017 src/gtk/x11menu.c:4501
+#: src/gtk/x11gui.c:137 src/gtk/x11gui.c:367 src/gtk/x11gui.c:435
+#: src/gtk/x11gui.c:571 src/gtk/x11gui.c:647 src/gtk/x11gui.c:717
+#: src/gtk/x11gui.c:796 src/gtk/x11gui.c:1027 src/gtk/x11menu.c:4501
 #: src/gtk/x11opt.c:1308
 msgid "_Cancel"
 msgstr "キャンセル(_C)"
 
-#: src/gtk/x11gui.c:146 src/gtk/x11gui.c:358 src/gtk/x11gui.c:426
-#: src/gtk/x11gui.c:562 src/gtk/x11gui.c:638 src/gtk/x11gui.c:708
-#: src/gtk/x11gui.c:787 src/gtk/x11opt.c:1306
+#: src/gtk/x11gui.c:149 src/gtk/x11gui.c:368 src/gtk/x11gui.c:436
+#: src/gtk/x11gui.c:572 src/gtk/x11gui.c:648 src/gtk/x11gui.c:718
+#: src/gtk/x11gui.c:797 src/gtk/x11opt.c:1306
 msgid "_OK"
 msgstr "_OK"
 
-#: src/gtk/x11gui.c:262
+#: src/gtk/x11gui.c:272
 msgid "Error"
 msgstr "エラー"
 
-#: src/gtk/x11gui.c:297
+#: src/gtk/x11gui.c:307
 msgid "_No"
 msgstr "いいえ(_N)"
 
-#: src/gtk/x11gui.c:298
+#: src/gtk/x11gui.c:308
 msgid "_Yes"
 msgstr "はい(_Y)"
 
-#: src/gtk/x11gui.c:869 src/gtk/x11gui.c:1044 src/gtk/x11gui.c:1049
+#: src/gtk/x11gui.c:879 src/gtk/x11gui.c:1054 src/gtk/x11gui.c:1059
 msgid "All"
 msgstr "全てのファイル"
 
-#: src/gtk/x11gui.c:970 src/gtk/x11opt.c:1929
+#: src/gtk/x11gui.c:980 src/gtk/x11opt.c:1929
 #, c-format
 msgid ""
 "`%s'\n"
@@ -1502,16 +1502,16 @@ msgstr ""
 "'%s' というファイルは既に存在します.\n"
 "上書きしてもよろしいですか?"
 
-#: src/gtk/x11gui.c:1021
+#: src/gtk/x11gui.c:1031
 msgid "_Change current directory"
 msgstr "カレントディレクトリを移動(_C)"
 
-#: src/gtk/x11gui.c:1032
+#: src/gtk/x11gui.c:1042
 #, c-format
 msgid "%s file (*.%s)"
 msgstr "%s ファイル (*.%s)"
 
-#: src/gtk/x11gui.c:1136 src/gtk/x11gui.c:1169 src/gtk/x11menu.c:4503
+#: src/gtk/x11gui.c:1146 src/gtk/x11gui.c:1179 src/gtk/x11menu.c:4503
 msgid "_Open"
 msgstr "開く(_O)"
 
@@ -1683,23 +1683,23 @@ msgstr "テキスト %d"
 msgid "_Text:"
 msgstr "テキスト(_T):"
 
-#: src/gtk/x11lgnd.c:3027 src/gtk/x11menu.c:359 src/gtk/x11menu.c:360
+#: src/gtk/x11lgnd.c:3030 src/gtk/x11menu.c:359 src/gtk/x11menu.c:360
 msgid "Mark"
 msgstr "マーク"
 
-#: src/gtk/x11lgnd.c:3048 src/gtk/x11lgnd.c:3049
+#: src/gtk/x11lgnd.c:3051 src/gtk/x11lgnd.c:3052
 msgid "Stroke"
 msgstr "ストローク"
 
-#: src/gtk/x11lgnd.c:3057
+#: src/gtk/x11lgnd.c:3060
 msgid "Close path"
 msgstr "パスを閉じる"
 
-#: src/gtk/x11lgnd.c:3060 src/gtk/x11lgnd.c:3061
+#: src/gtk/x11lgnd.c:3063 src/gtk/x11lgnd.c:3064
 msgid "Fill"
 msgstr "塗りつぶし"
 
-#: src/gtk/x11lgnd.c:3063
+#: src/gtk/x11lgnd.c:3066
 msgid "Fill rule"
 msgstr "ルール"
 
@@ -4171,7 +4171,8 @@ msgstr ""
 "<b>rsort</b>(<i>a, ignore_case</i>)\n"
 "配列 <i>a</i> を逆順に整列する\n"
 "<i>a</i>が文字列の配列で <i>ignore_case</i> が 0 以外の場合は\n"
-"文字列に含まれる ascii 文字の大文字小文字を区別せずに比較する。"
+"文字列に含まれる ascii 文字の\n"
+"大文字小文字を区別せずに比較する。"
 
 #: src/gtk/completion_info_data.c:124
 msgid ""
@@ -4223,7 +4224,8 @@ msgstr ""
 "<b>sort</b>(<i>a, ignore_case</i>)\n"
 "配列 <i>a</i> を整列する\n"
 "<i>a</i>が文字列の配列で <i>ignore_case</i> が 0 以外の場合は\n"
-"文字列に含まれる ascii 文字の大文字小文字を区別せずに比較する。"
+"文字列に含まれる ascii 文字の\n"
+"大文字小文字を区別せずに比較する。"
 
 #: src/gtk/completion_info_data.c:130
 msgid ""
@@ -4287,8 +4289,8 @@ msgid ""
 "i>."
 msgstr ""
 "<b>string_column</b>(<i>$dest, index</i>)\n"
-"データファイルを読み込んだ時に <i>index</i> カラムの文字列を <i>$dest</i> に"
-"代入する。\n"
+"データファイルを読み込んだ時に <i>index</i> カラムの\n"
+"文字列を <i>$dest</i> に代入する。\n"
 "<i>index</i> が 0 のときは行全体の文字列が代入される。"
 
 #: src/gtk/completion_info_data.c:137
