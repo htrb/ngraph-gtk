@@ -820,6 +820,16 @@ n_application_ready(void)
 static gboolean
 osx_open_file(GtkosxApplication *app, gchar *path, gpointer user_data)
 {
+  char *dir;
+  if (path == NULL) {
+    return 1;
+  }
+  dir = getdirname(path);
+  if (dir) {
+    nchdir(dir);
+    g_free(dir);
+  }
+  LoadNgpFile(path, FALSE, "-f");
   return TRUE;
 }
 #endif
