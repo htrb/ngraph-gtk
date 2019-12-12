@@ -59,10 +59,10 @@ NGRAPH_ICONS = data/pixmaps/ngraph_align_b.png				\
 
 EXTRA_DIST = dir_defs.h.in data/css/ngraph.css				\
 	data/gtk/menus-common.ui.in data/gtk/menus-common.ui.osx	\
-	data/gtk/menus-appmenu.ui.in data/gtk/help-overlay.ui		\
-	data/gtk/menus-appmenu.ui.osx data/gtk/menus-tool.ui		\
-	create_completion_info.rb completion_info_functions.txt		\
-	completion_info_constants.txt $(NGRAPH_ICONS)
+	data/gtk/menus-appmenu.ui data/gtk/help-overlay.ui		\
+	data/gtk/menus-tool.ui create_completion_info.rb		\
+	completion_info_functions.txt completion_info_constants.txt	\
+	$(NGRAPH_ICONS)
 
 AM_CPPFLAGS = -DLOCALEDIR=\""@localedir@"\"
 
@@ -90,21 +90,21 @@ libngraphui_la_SOURCES = gtk_common.h gtk_combo.c gtk_combo.h		\
 libngraph_cflags =
 
 if OS_WIN32
-APPMENU_UI_SOURCE = $(srcdir)/data/gtk/menus-appmenu.ui.in
+UI_RESOURCES_SOURCE = $(srcdir)/data/ngraphui.resources.xml.in
 MENU_UI_SOURCE = $(srcdir)/data/gtk/menus-common.ui.in
 else
 if OS_OSX
-APPMENU_UI_SOURCE = $(srcdir)/data/gtk/menus-appmenu.ui.osx
+UI_RESOURCES_SOURCE = $(srcdir)/data/ngraphui.resources.xml.osx
 MENU_UI_SOURCE = $(srcdir)/data/gtk/menus-common.ui.osx
 libngraph_cflags += $(MAC_INTEGRATION_CFLAGS)
 else
-APPMENU_UI_SOURCE = $(srcdir)/data/gtk/menus-appmenu.ui.in
+UI_RESOURCES_SOURCE = $(srcdir)/data/ngraphui.resources.xml.in
 MENU_UI_SOURCE = $(srcdir)/data/gtk/menus-common.ui.in
 endif
 endif
 
 uidir = data/gtk
-$(uidir)/menus-appmenu.ui: $(APPMENU_UI_SOURCE)
+data/ngraphui.resources.xml: $(UI_RESOURCES_SOURCE)
 	$(MKDIR_P) $(uidir)
 	cp $< $@
 
