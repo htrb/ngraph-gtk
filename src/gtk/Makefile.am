@@ -5,7 +5,7 @@ NGRAPH_ICONS = data/pixmaps/ngraph_align_b.png				\
 	data/pixmaps/ngraph_align_t.png					\
 	data/pixmaps/ngraph_align_vc.png data/pixmaps/ngraph_icon.png	\
 	data/pixmaps/ngraph_icon64.png data/pixmaps/ngraph_math.png	\
-	data/pixmaps/ngraph_undo.png data/ngraphui.resources.xml	\
+	data/pixmaps/ngraph_undo.png					\
 	data/pixmaps/none_begin-symbolic.svg				\
 	data/pixmaps/none_end-symbolic.svg				\
 	data/pixmaps/arrow_begin-symbolic.svg				\
@@ -62,7 +62,7 @@ EXTRA_DIST = dir_defs.h.in data/css/ngraph.css				\
 	data/gtk/menus-appmenu.ui data/gtk/help-overlay.ui		\
 	data/gtk/menus-tool.ui create_completion_info.rb		\
 	completion_info_functions.txt completion_info_constants.txt	\
-	$(NGRAPH_ICONS)
+	data/ngraphui.resources.xml.in $(NGRAPH_ICONS)
 
 AM_CPPFLAGS = -DLOCALEDIR=\""@localedir@"\"
 
