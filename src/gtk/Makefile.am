@@ -129,4 +129,4 @@ completion_info_data.c: $(srcdir)/completion_info_functions.txt $(srcdir)/comple
 libngraphui_la_CFLAGS = $(GTK_CFLAGS) $(libngraph_cflags) -I$(top_builddir) -I$(builddir) -I$(srcdir)/.. -I$(srcdir)/../math $(GTKSOURCEVIEW_CFLAGS)
 libngraphui_la_LDFLAGS = $(GTKSOURCEVIEW_LIBS)
 
-CLEANFILES = dir_defs.h $(builddir)/data/gtk/menus-appmenu.ui $(builddir)/data/gtk/menus-common.ui $(BUILT_SOURCES)
+CLEANFILES = dir_defs.h $(builddir)/data/gtk/menus-common.ui $(builddir)/data/ngraphui.resources.xml $(BUILT_SOURCES) 
