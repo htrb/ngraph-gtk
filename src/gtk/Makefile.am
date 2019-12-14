@@ -62,7 +62,8 @@ EXTRA_DIST = dir_defs.h.in data/css/ngraph.css				\
 	data/gtk/menus-appmenu.ui data/gtk/help-overlay.ui		\
 	data/gtk/menus-tool.ui create_completion_info.rb		\
 	completion_info_functions.txt completion_info_constants.txt	\
-	data/ngraphui.resources.xml.in $(NGRAPH_ICONS)
+	data/ngraphui.resources.xml.in					\
+	data/ngraphui.resources.xml.osx $(NGRAPH_ICONS)
 
 AM_CPPFLAGS = -DLOCALEDIR=\""@localedir@"\"
 
