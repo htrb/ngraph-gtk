@@ -4065,6 +4065,17 @@ string_split(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
   return ary;
 }
 
+int
+math_func_string_split(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  char **ary;
+  int i, id;
+
+  rval->val = 0;
+  rval->type = MATH_VALUE_NORMAL;
+
+  id = (int) exp->buf[0].array.idx;
+  ary = string_split(exp, eq, rval);
   if (ary == NULL) {
     return 1;
   }
