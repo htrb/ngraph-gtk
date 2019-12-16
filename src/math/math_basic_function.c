@@ -4087,6 +4087,31 @@ math_func_string_split(MathFunctionCallExpression *exp, MathEquation *eq, MathVa
   return 0;
 }
 
+int
+math_func_string_split_float(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  char **ary;
+  int i, id;
+  MathValue val;
+
+  rval->val = 0;
+  rval->type = MATH_VALUE_NORMAL;
+
+  id = (int) exp->buf[0].array.idx;
+  ary = string_split(exp, eq, rval);
+  if (ary == NULL) {
+    return 1;
+  }
+  for (i = 0; ary[i]; i++) {
+    val.type = MATH_VALUE_NORMAL;
+    val.val = g_ascii_strtod(ary[i], NULL);
+    math_equation_set_array_val(eq, id, i, &val);
+  }
+  g_strfreev(ary);
+  rval->val = i;
+  return 0;
+}
+
 static int
 get_pos_from_upos(const char *src, int upos)
 {
