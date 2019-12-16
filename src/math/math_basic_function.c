@@ -4037,21 +4037,20 @@ math_func_string(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *r
   return 0;
 }
 
-int
-math_func_string_split(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+static char **
+string_split(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   const char *delm, *src;
   char **ary;
-  int i, id, use_regexp;
+  int use_regexp;
 
   rval->val = 0;
   rval->type = MATH_VALUE_NORMAL;
 
-  id = (int) exp->buf[0].array.idx;
   src  = math_expression_get_string_from_argument(exp, 1);
   delm = math_expression_get_string_from_argument(exp, 2);
   if (src == NULL || delm == NULL) {
-    return 1;
+    return NULL;
   }
   MATH_CHECK_ARG(rval, exp->buf[3]);
   use_regexp = exp->buf[3].val.val;
@@ -4063,6 +4062,9 @@ math_func_string_split(MathFunctionCallExpression *exp, MathEquation *eq, MathVa
   } else {
     ary = g_strsplit(src, delm, -1);
   }
+  return ary;
+}
+
   if (ary == NULL) {
     return 1;
   }
