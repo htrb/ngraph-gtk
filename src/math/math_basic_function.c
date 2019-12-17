@@ -18,6 +18,7 @@
 #endif
 
 #include "ntime.h"
+#include "odata.h"
 #include "nstring.h"
 #include "object.h"
 
@@ -3392,7 +3393,7 @@ math_func_string_float(MathFunctionCallExpression *exp, MathEquation *eq, MathVa
   if (str == NULL) {
     return 1;
   }
-  rval->val = g_ascii_strtod(str, NULL);
+  n_strtod(str, rval);
   return 0;
 }
 
@@ -3770,7 +3771,7 @@ math_func_string_float_array(MathFunctionCallExpression *exp, MathEquation *eq, 
   val.type = MATH_VALUE_NORMAL;
   n = src->num;
   for (i = 0; i < n; i++) {
-    val.val = g_ascii_strtod(src->data.str[i]->str, NULL);
+    n_strtod(src->data.str[i]->str, &val);
     if (math_equation_set_array_val(eq, dest_id, i, &val)) {
       rval->type = MATH_VALUE_ERROR;
       return 1;
@@ -4103,8 +4104,7 @@ math_func_string_split_float(MathFunctionCallExpression *exp, MathEquation *eq, 
     return 1;
   }
   for (i = 0; ary[i]; i++) {
-    val.type = MATH_VALUE_NORMAL;
-    val.val = g_ascii_strtod(ary[i], NULL);
+    n_strtod(ary[i], &val);
     math_equation_set_array_val(eq, id, i, &val);
   }
   g_strfreev(ary);
