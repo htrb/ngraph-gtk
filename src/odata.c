@@ -3244,6 +3244,28 @@ get_value_from_str(char *po, char *po2, int *type)
   return val;
 }
 
+int
+n_strtod(const char *str, MathValue *val)
+{
+  char *po, *po2;
+  size_t l;
+  int type;
+  if (val == NULL || str == NULL) {
+    return 1;
+  }
+  po = g_ascii_strup(str, -1);
+  if (po == NULL) {
+    return 1;
+  }
+  l = strlen(po);
+  po2 = po + l;
+  val->type = MATH_VALUE_NORMAL;
+  val->val = get_value_from_str(po, po2, &type);
+  g_free(po);
+  val->type = type;
+  return 0;
+}
+
 static void
 column_array_clear(MathEquation **code, int id)
 {

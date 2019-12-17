@@ -66,5 +66,6 @@ int open_array(char *objstr, struct array_prm *ary);
 char *odata_get_functions(void);
 char *odata_get_constants(void);
 const char *parse_data_line(struct narray *array, const char *str, const char *ifs, const char *comment, int csv);
+int n_strtod(const char *str, MathValue *val);
 
 #endif
