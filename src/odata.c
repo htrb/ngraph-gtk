@@ -3153,8 +3153,6 @@ f2dput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval, int argc,char **argv)
   return 0;
 }
 
-#define ACCEPT_PARTIAL_VAL 0
-
 static double
 get_value_from_str(char *po, char *po2, int *type)
 {
