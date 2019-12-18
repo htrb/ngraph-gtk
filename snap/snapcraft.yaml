@@ -1,6 +1,6 @@
 
 name: ngraph-gtk-htrb
-version: 'v6.08.01'
+version: 'v6.08.02'
 summary: the program to create scientific 2-dimensional graphs.
 description: |
   Ngraph is the program to create scientific 2-dimensional graphs
@@ -10,12 +10,39 @@ description: |
 grade: devel # stable | devel
 confinement: strict
 
-parts:
-  desktop-gtk3:
-    # You may optionally override parts of the remote part definition
-  ngraph-gtk:
-
 apps:
-  command: desktop-launch $SNAP/usr/bin/ngraph
-  plugs: [desktop, desktop-legacy]
+  ngraph-gtk:
+    command: usr/bin/ngraph
+    extensions: [gnome-3-28]
+    plugs:
+      - gsettings # For desktop theme detection under Wayland session
+      - home
+    slots:
+      - dbus-daemon
+    common-id: com.github.htrb.ngraph-gtk.desktop
+    desktop: usr/share/applications/com.github.htrb.ngraph-gtk.desktop
 
+parts:
+  foliate:
+    source: https://github.com/htrb/ngraph-gtk.git
+    source-branch: 1.x
+    meson-parameters: [--prefix=/snap/htrb/current/usr]
+    build-packages:
+      - libgsl-dev
+      - gettext
+      - libreadline-dev
+      - ruby-dev
+      - libgtksourceview-3.0-dev
+    parse-info: [usr/share/metainfo/com.github.htrb.ngraph-gtk.appdata.xml]
+
+  libraries:
+    plugin: nil
+    stage-packages:
+      - gsl
+      - ruby
+
+slots:
+  dbus-daemon:
+    interface: dbus
+    bus: session
+    name: com.github.johnfactotum.Foliate
