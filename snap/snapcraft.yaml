@@ -39,7 +39,7 @@ parts:
   libraries:
     plugin: nil
     stage-packages:
-      - gsl
+      - libgsl23
       - ruby
 
 slots:
