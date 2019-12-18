@@ -21,7 +21,7 @@ apps:
     slots:
       - dbus-daemon
     common-id: com.github.htrb.ngraph-gtk.desktop
-    desktop: usr/share/applications/com.github.htrb.ngraph-gtk.desktop
+#    desktop: usr/share/applications/ngraph.desktop
 
 parts:
   ngraph-gtk:
