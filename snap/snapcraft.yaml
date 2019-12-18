@@ -9,6 +9,7 @@ description: |
 
 grade: devel # stable | devel
 confinement: strict
+base: core18
 
 apps:
   ngraph-gtk:
@@ -23,10 +24,10 @@ apps:
     desktop: usr/share/applications/com.github.htrb.ngraph-gtk.desktop
 
 parts:
-  foliate:
+  ngraph-gtk:
     source: https://github.com/htrb/ngraph-gtk.git
     source-branch: 1.x
-    meson-parameters: [--prefix=/snap/htrb/current/usr]
+    plugin: nil
     build-packages:
       - libgsl-dev
       - gettext
