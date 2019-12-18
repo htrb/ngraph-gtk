@@ -1,4 +1,8 @@
-prefix = ARGV.shift
+if (ARGV.size > 2)
+	prefix = ARGV.shift
+else
+	prefix = ""
+end
 
 require 'mkmf'
 
