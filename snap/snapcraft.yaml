@@ -26,7 +26,7 @@ apps:
 parts:
   ngraph-gtk:
     source: https://github.com/htrb/ngraph-gtk.git
-    source-branch: 1.x
+    source-branch: master
     plugin: nil
     build-packages:
       - libgsl-dev
