@@ -27,7 +27,7 @@ parts:
   ngraph-gtk:
     source: https://github.com/htrb/ngraph-gtk.git
     source-branch: master
-    plugin: nil
+    plugin: autotools
     build-packages:
       - libgsl-dev
       - gettext
