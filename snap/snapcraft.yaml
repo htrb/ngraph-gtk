@@ -34,7 +34,7 @@ parts:
       - libreadline-dev
       - ruby-dev
       - libgtksourceview-3.0-dev
-    parse-info: [usr/share/metainfo/com.github.htrb.ngraph-gtk.appdata.xml]
+#    parse-info: [usr/share/metainfo/com.github.htrb.ngraph-gtk.appdata.xml]
 
   libraries:
     plugin: nil
