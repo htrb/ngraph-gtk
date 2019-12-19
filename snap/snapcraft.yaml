@@ -87,4 +87,4 @@ slots:
   dbus-daemon:
     interface: dbus
     bus: session
-    name: com.github.johnfactotum.Foliate
+    name: com.github.htrb.ngraph-gtk
