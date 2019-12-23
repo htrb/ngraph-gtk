@@ -42,12 +42,7 @@
 static GtkosxApplication *GtkMacIntegration = NULL;
 #endif
 
-#if WINDOWS || OSX
-#ifdef LOCALEDIR
-#undef LOCALEDIR
-#endif	/* LOCALEDIR */
-char *DOCDIR, *NDATADIR, *ADDINDIR, *LIBDIR, *PLUGINDIR, *CONFDIR, *LOCALEDIR, *BINDIR;
-#endif	/* WINDOWS */
+char *DOCDIR, *NDATADIR, *ADDINDIR, *LIBDIR, *PLUGINDIR, *CONFDIR, *NLOCALEDIR, *BINDIR;
 
 #include "dir_defs.h"
 #include "object.h"
@@ -720,15 +715,13 @@ set_dir_defs(char *app)
   NDATADIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/ngraph-gtk");
   ADDINDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/ngraph-gtk/addin");
   CONFDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "etc/ngraph-gtk");
-  LOCALEDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/locale");
+  NLOCALEDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/locale");
 
   g_free(app_path);
 
   return 0;
 }
-#endif	/* WINDOWS */
-
-#if OSX
+#elif OSX
 static int
 set_dir_defs(char *app)
 {
@@ -758,22 +751,47 @@ set_dir_defs(char *app)
   NDATADIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/ngraph-gtk");
   ADDINDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/ngraph-gtk/addin");
   CONFDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "etc/ngraph-gtk");
-  LOCALEDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/locale");
+  NLOCALEDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/locale");
 
   g_free(app_path);
 
   return 0;
 }
+#else
+static int
+set_dir_defs(char *app)
+{
+  const char *snap;
+
+  snap = g_getenv("NGRAPH_APP_CONTENTS");
+  if (snap) {
+    BINDIR = g_strdup_printf("%s%c%s", snap, DIRSEP, "bin");
+  } else {
+    BINDIR = NULL;
+    snap = "";
+  }
+
+  DOCDIR = g_strdup_printf("%s%s", snap, _DOCDIR);
+  LIBDIR = g_strdup_printf("%s%s", snap, _LIBDIR);
+  PLUGINDIR = g_strdup_printf("%s%s", snap, _PLUGINDIR);
+  NDATADIR = g_strdup_printf("%s%s", snap, _NDATADIR);
+  ADDINDIR = g_strdup_printf("%s%s", snap, _ADDINDIR);
+  CONFDIR = g_strdup_printf("%s%s", snap, _CONFDIR);
+  NLOCALEDIR = g_strdup_printf("%s%s", snap, LOCALEDIR);
+
+  return 0;
+}
 #endif
 
-
-#if WINDOWS
 static void
 set_path_env(char *homedir)
 {
   const char *path;
   char *pathset;
 
+  if (BINDIR == NULL) {
+    return;
+  }
   path = g_getenv("PATH");
   pathset = g_strdup_printf("%s%s%s%s%s%s%s%s%s%s%s",
 			    homedir, PATHSEP,
@@ -788,7 +806,6 @@ set_path_env(char *homedir)
   g_setenv("NGRAPHCONF", CONFDIR, TRUE);
   g_free(pathset);
 }
-#endif
 
 const char *
 n_getlocale(void)
@@ -872,9 +889,7 @@ n_initialize(int *argc, char ***argv)
   g_signal_connect(GtkMacIntegration, "NSApplicationOpenFile", G_CALLBACK(osx_open_file), NULL);
 #endif
 
-#if WINDOWS || OSX
   set_dir_defs((*argv)[0]);
-#endif	/* WINDOWS */
 
   if (init_cmd_tbl()) {
     exit(1);
@@ -896,7 +911,7 @@ n_initialize(int *argc, char ***argv)
 
 #ifdef HAVE_GETTEXT
   setlocale(LC_ALL, "");
-  bindtextdomain(PACKAGE, LOCALEDIR);
+  bindtextdomain(PACKAGE, NLOCALEDIR);
   bind_textdomain_codeset(PACKAGE, "UTF-8");
   textdomain(PACKAGE);
 #endif	/* HAVE_GETTEXT */
@@ -950,9 +965,7 @@ n_initialize(int *argc, char ***argv)
     }
   }
 
-#if WINDOWS
   set_path_env(homedir);
-#endif
   set_environ();
 
   if (addobjectroot() == NULL)
