@@ -1,20 +1,18 @@
-/* 
+/*
  * $Id: dir_defs.h.in,v 1.3 2009-06-18 11:32:11 hito Exp $
  */
 
 #ifndef _DIR_DEFS_HEADER
 #define _DIR_DEFS_HEADER
 
-#if WINDOWS || OSX
 extern char *DOCDIR, *NDATADIR, *ADDINDIR, *LIBDIR, *PLUGINDIR, *CONFDIR;
-#else  /* WINDOWS */
-#define DOCDIR    "DOCDIRDEF"
-#define LIBDIR    "LIBEXECDIRDEF"
-#define PLUGINDIR "LIBDIRDEF/plugins"
-#define NDATADIR  "DATADIRDEF"
-#define ADDINDIR  "DATADIRDEF/addin"
-#define CONFDIR   "CONFDIRDEF"
-#endif	/* WINDOWS */
+
+#define _DOCDIR    "DOCDIRDEF"
+#define _LIBDIR    "LIBEXECDIRDEF"
+#define _PLUGINDIR "LIBDIRDEF/plugins"
+#define _NDATADIR  "DATADIRDEF"
+#define _ADDINDIR  "DATADIRDEF/addin"
+#define _CONFDIR   "CONFDIRDEF"
 
 #if WINDOWS
 #define HOME_DIR "Ngraph"
