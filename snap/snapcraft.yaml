@@ -82,9 +82,9 @@ parts:
       - libxml2
       - libxrandr2
       - libxrender1
-
-slots:
-  dbus-daemon:
-    interface: dbus
-    bus: session
-    name: com.github.htrb.ngraph-gtk
+#
+# slots:
+#   dbus-daemon:
+#     interface: dbus
+#     bus: session
+#     name: com.github.htrb.ngraph-gtk
