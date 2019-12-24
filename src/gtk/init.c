@@ -763,7 +763,7 @@ set_dir_defs(char *app)
 {
   const char *snap;
 
-  snap = g_getenv("NGRAPH_APP_CONTENTS");
+  snap = g_getenv("SNAP");
   if (snap) {
     BINDIR = g_strdup_printf("%s%c%s", snap, DIRSEP, "bin");
   } else {
