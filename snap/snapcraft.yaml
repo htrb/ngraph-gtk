@@ -18,6 +18,12 @@ apps:
     plugs:
       - gsettings # For desktop theme detection under Wayland session
       - home
+      - cups-control
+      - desktop
+      - desktop-legacy
+      - x11
+      - wayland
+      - removable-media
 #    slots:
 #      - dbus-daemon
     common-id: com.github.htrb.ngraph-gtk.desktop
