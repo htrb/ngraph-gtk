@@ -3,6 +3,8 @@ EXTRA_DIST = regexp_test.nsc io_test.nsc math_test.nsc		\
 	darray_test.nsc sarray_test.nsc string_test.nsc
 NGRAPH=../src/ngraph
 
+TESTS = test.sh
+
 test: math_test io_test regexp_test iarray_test darray_test sarray_test string_test
 
 string_test: string_test.nsc
