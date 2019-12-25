@@ -13,7 +13,7 @@ base: core18
 
 apps:
   ngraph-gtk:
-    command: bin/ngraph
+    command: usr/bin/ngraph
     extensions: [gnome-3-28]
     plugs:
       - gsettings # For desktop theme detection under Wayland session
@@ -34,6 +34,8 @@ parts:
     source: https://github.com/htrb/ngraph-gtk.git
     source-branch: master
     plugin: autotools
+    configflags:
+      - --prefix=/usr
     build-packages:
       - libgsl-dev
       - gettext
@@ -88,6 +90,7 @@ parts:
       - libxml2
       - libxrandr2
       - libxrender1
+      - packagekit-gtk3-module
 #
 # slots:
 #   dbus-daemon:
