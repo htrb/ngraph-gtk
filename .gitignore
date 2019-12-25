@@ -39,6 +39,7 @@ Makefile.in
 /stamp-h1
 /libtool
 /ltmain.sh
+/test-driver
 
 /*.gra
 /*.ngp
@@ -102,3 +103,6 @@ po/ja.gmo
 po/remove-potcdate.sed
 
 osx/ngraph.icns
+
+test/*.log
+test/test.sh.trs
