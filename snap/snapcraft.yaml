@@ -38,8 +38,8 @@ parts:
       - --prefix=/usr
       - --sysconfdir=/etc
     override-build: |
-	snapcraftctl build
-	cd po; make update-po; cd ..
+      snapcraftctl build
+      (cd po; make update-po)
     build-packages:
       - libgsl-dev
       - gettext
