@@ -37,7 +37,7 @@ parts:
     configflags:
       - --prefix=/usr
       - --sysconfdir=/etc
-    override-build:
+    override-build: |
 	snapcraftctl build
 	(cd po; make update-po)
     build-packages:
