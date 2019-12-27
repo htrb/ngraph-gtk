@@ -37,9 +37,6 @@ parts:
     configflags:
       - --prefix=/usr
       - --sysconfdir=/etc
-    override-build: |
-      snapcraftctl build
-      (cd po; make update-po; make install)
     build-packages:
       - libgsl-dev
       - gettext
