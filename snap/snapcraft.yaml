@@ -14,6 +14,8 @@ base: core18
 apps:
   ngraph-gtk:
     command: usr/bin/ngraph
+    environment:
+      RUBYLIB: '$SNAP/usr/lib/ruby/vendor_ruby/2.5.0:$SNAP/usr/lib/$SNAP_LAUNCHER_ARCH_TRIPLET/ruby/vendor_ruby/2.5.0:$SNAP/usr/lib/ruby/vendor_ruby:$SNAP/usr/lib/ruby/2.5.0:$SNAP/usr/lib/$SNAP_LAUNCHER_ARCH_TRIPLET/ruby/2.5.0'
     extensions: [gnome-3-28]
     plugs:
       - gsettings # For desktop theme detection under Wayland session
@@ -43,13 +45,18 @@ parts:
       - libreadline-dev
       - ruby-dev
       - libgtksourceview-3.0-dev
+    stage-packages:
+      - ruby
+      - xterm
+      - aspell
+      - aspell-en
+      - raspell
 #    parse-info: [usr/share/metainfo/com.github.htrb.ngraph-gtk.appdata.xml]
 
   libraries:
     plugin: nil
     stage-packages:
       - libgsl23
-      - ruby
       - libatk-bridge2.0-0
       - libatk1.0-0
       - libatspi2.0-0
@@ -91,7 +98,6 @@ parts:
       - libxml2
       - libxrandr2
       - libxrender1
-      - packagekit-gtk3-module
 #
 # slots:
 #   dbus-daemon:
