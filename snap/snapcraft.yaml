@@ -7,7 +7,7 @@ description: |
   for researchers and engineers. Graphs can be exported to
   PostScript, SVG, PNG or PDF format.
 
-grade: devel # stable | devel
+grade: stable # stable | devel
 confinement: strict
 base: core18
 
@@ -39,8 +39,6 @@ parts:
       - --sysconfdir=/etc
     override-build: |
        snapcraftctl build
-       mkdir -p $SNAPCRAFT_PART_INSTALL/meta/gui/
-       cp misc/ngraph.desktop $SNAPCRAFT_PART_INSTALL/meta/gui/
        cp snap/local/ngraph-snap.sh $SNAPCRAFT_PART_INSTALL/usr/bin/
     build-packages:
       - libgsl-dev
