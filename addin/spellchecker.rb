@@ -19,9 +19,15 @@ class NgraphSpellchecker
   IGNORE = 3
   APPLY = 4
   APPLY_ALL = 5
+  DICT_LANG = "en_US"
 
   def initialize
-    @speller = Aspell.new("en_US")
+    snap = ENV["SNAP"]
+    if (snap)
+      @speller = Aspell.new1("lang" = > DICT_LANG, "prefix" => "#{snap}/usr")
+    else
+      @speller = Aspell.new(DICT_LANG)
+    end
     @speller.suggestion_mode = Aspell::NORMAL
     @speller.set_option("ignore-case", "true")
 
@@ -40,7 +46,7 @@ class NgraphSpellchecker
     return nil unless (@menu)
     inst = @menu.focused("text")
     if (inst.empty?)
-      nil 
+      nil
     else
       inst.map {|inst| Ngraph.str2inst(inst)[0]}
     end
