@@ -2218,3 +2218,43 @@ math_equation_check_const(MathEquation *eq, int *constant, int n)
   r = check_const_in_expression_list(eq->exp, constant, n);
   return r;
 }
+
+const char *
+math_special_value_to_string(MathValue *val)
+{
+  char *str;
+  if (val == NULL) {
+    return NULL;
+  }
+  str = NULL;
+  switch (val->type) {
+  case MATH_VALUE_NORMAL:
+    str = NULL;
+    break;
+  case MATH_VALUE_ERROR:
+    str = "ERROR";
+    break;
+  case MATH_VALUE_NAN:
+    str = "NAN";
+    break;
+  case MATH_VALUE_UNDEF:
+    str = "UNDEF";
+    break;
+  case MATH_VALUE_CONT:
+    str = "CONTINUE";
+    break;
+  case MATH_VALUE_BREAK:
+    str = "BREAK";
+    break;
+  case MATH_VALUE_NONUM:
+    str = "NO-NUMBER";
+    break;
+  case MATH_VALUE_MEOF:
+    str = "EOF";
+    break;
+  case MATH_VALUE_INTERRUPT:
+    str = "INTERRUPTED";
+    break;
+  }
+  return str;
+}
