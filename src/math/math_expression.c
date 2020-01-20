@@ -14,6 +14,7 @@
 #include <glib.h>
 
 #include "nhash.h"
+#include "odata.h"
 
 #include "math_expression.h"
 #include "math_function.h"
@@ -2116,6 +2117,14 @@ calc(MathExpression *exp, MathValue *val)
       return 1;
     }
     val->val = 0;
+    {
+      const char *str;
+      str = math_equation_get_array_cstr(exp->equation, exp->u.array.index, operand.val);
+      if (str == NULL) {
+        return 1;
+      }
+      n_strtod(str, val);
+    }
     break;
   case MATH_EXPRESSION_TYPE_PRM:
     if (exp->u.prm.prm->data == NULL) {
@@ -2130,11 +2139,23 @@ calc(MathExpression *exp, MathValue *val)
   case MATH_EXPRESSION_TYPE_STRING_ARRAY_ARGUMENT:
     return 1;
   case MATH_EXPRESSION_TYPE_STRING_VARIABLE:
+    val->val = 0;
+    {
+      GString *gstr;
+      math_equation_get_string_var(exp->equation, exp->u.index, &gstr);
+      if (gstr && gstr->str) {
+        n_strtod(gstr->str, val);
+      }
+    }
+    break;
   case MATH_EXPRESSION_TYPE_STRING:
-    val->val = 0;		/* a string is always evaluated as zero */
+    val->val = 0;
+    if (exp->u.string) {
+      n_strtod(exp->u.string, val);
+    }
     break;
   case MATH_EXPRESSION_TYPE_STRING_ASSIGN:
-    if (assign_string(exp, val)) {
+    if (assign_string(exp)) {
       return 1;
     }
     val->val = 0;	    /* a string is always evaluated as zero */
