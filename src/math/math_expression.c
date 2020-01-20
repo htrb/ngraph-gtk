@@ -1825,7 +1825,7 @@ assign_string(MathExpression *exp)
       return 1;
     }
     break;
-  default:
+  case MATH_EXPRESSION_TYPE_STRING_VARIABLE:
     id = (int) right->u.index;
     math_equation_get_string_var(exp->equation, id, &gstr);
     if (gstr == NULL) {
@@ -1833,6 +1833,11 @@ assign_string(MathExpression *exp)
     }
     str = gstr->str;
     break;
+  default:
+    if (CALC_EXPRESSION(right, operand)) {
+      return 1;
+    }
+    str = tmp = val2str(&operand);
   }
   left = exp->u.assign.left;
   if (left->type == MATH_EXPRESSION_TYPE_STRING_VARIABLE) {
@@ -1852,6 +1857,9 @@ assign_string(MathExpression *exp)
     if (math_equation_set_array_str(exp->equation, left->u.array.index, i, str)) {
       return 1;
     }
+  }
+  if (tmp) {
+    g_free(tmp);
   }
   return 0;
 }
