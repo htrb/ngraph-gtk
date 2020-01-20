@@ -1781,15 +1781,36 @@ set_val_to_array(MathExpression *exp, MathValue *val, enum MATH_OPERATOR_TYPE op
     break;								\
   }
 
+static char *
+val2str(MathValue *val)
+{
+  char *str;
+  const char *tmp;
+
+  if (val == NULL) {
+    return NULL;
+  }
+
+  tmp = math_special_value_to_string(val);
+  if (tmp == NULL) {
+    str = g_strdup_printf("%G", val->val);
+  } else {
+    str = g_strdup(tmp);
+  }
+  return str;
+}
+
 static int
-assign_string(MathExpression *exp, MathValue *val)
+assign_string(MathExpression *exp)
 {
   GString *gstr;
   int id;
   const char *str;
+  char *tmp;
   MathValue operand;
   MathExpression *left, *right;
 
+  tmp = NULL;
   right = exp->u.assign.right;
   switch (right->type) {
   case MATH_EXPRESSION_TYPE_STRING:
