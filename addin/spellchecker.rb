@@ -23,8 +23,9 @@ class NgraphSpellchecker
 
   def initialize
     snap = ENV["SNAP"]
+    p snap
     if (snap)
-      @speller = Aspell.new1("lang" = > DICT_LANG, "prefix" => "#{snap}/usr")
+      @speller = Aspell.new1("lang" => DICT_LANG, "prefix" => "#{snap}/usr")
     else
       @speller = Aspell.new(DICT_LANG)
     end
