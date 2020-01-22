@@ -234,4 +234,3 @@ addshell(void)
 {
   return addobject(NAME,NULL,PARENT,OVERSION,TBLNUM,shell,ERRNUM,sherrorlist,NULL,NULL);
 }
-
