@@ -1,10 +1,11 @@
-#! /usr/bin/ngraph
+#! ../src/ngraph -i
 
 set +e
 
 TEST_STR="test str..."
 TEST_STR2="123"
 TEST_FILE=${system::temp_file}
+STATUS=0
 
 new io
 
@@ -17,6 +18,7 @@ str=${io::gets}
 if [ "$str" != "$TEST_STR" ]
 then
     echo "error. (gets and puts)"
+    STATUS=1
 else
     echo "OK. (gets and puts)"
 fi
@@ -30,6 +32,7 @@ ch=${io::getc}
 if [ "$ch" -ne $TEST_CHAR ]
 then
     echo "error. (getc and putc)"
+    STATUS=1
 else
     echo "OK. (getc and putc)"
 fi
@@ -45,6 +48,7 @@ then
     echo "error. (read and write)"
     echo "$str"
     echo "$TEST_STR"
+    STATUS=1
 else
     echo "OK. (read and write)"
 fi
@@ -56,6 +60,7 @@ io::flush
 if [ ${io::tell} -ne 16 ]
 then
     echo "error. (tell)"
+    STATUS=1
 else
     echo "OK. (tell)"
 fi
@@ -68,6 +73,7 @@ then
     echo "OK. (eof)"
 else
     echo "error. (eof)"
+    STATUS=1
 fi
 
 io::close
@@ -79,7 +85,10 @@ str=${io::gets}
 if [ $str !=  "io_test.nsc" ]
 then
     echo "error. (popen)"
+    STATUS=1
 else
     echo "OK. (popen)"
 fi
 io::close
+
+exit $STATUS
