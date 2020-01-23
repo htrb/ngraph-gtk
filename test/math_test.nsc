@@ -1,5 +1,6 @@
-#! /usr/bin/ngraph
+#! ../src/ngraph -i
 
+STATUS=0
 check_val() {
     if [ "$1" = "nan" -o  "$1" = "undefined" ]
     then
@@ -33,6 +34,7 @@ do
 	    echo '    expected:' "$val"
 	    echo '      result:' "$RESULT"
 	    echo '  difference:' `dexpr $RESULT-$val`
+	    STATUS=1
 	else
 	    echo "OK. ($eqn)"
 	fi
@@ -41,3 +43,5 @@ do
     io::close
     shift
 done
+
+exit $STATUS
