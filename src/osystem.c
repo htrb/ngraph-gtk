@@ -117,7 +117,7 @@ static int
 sysinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   char *wd;
-  int expand, pid;
+  int expand, pid, status;
   char *exdir;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
@@ -137,6 +137,8 @@ sysinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   if ((wd=ngetcwd())==NULL) return 1;
   pid = getpid();
   if (_putobj(obj,"pid",inst,&pid)) return 1;
+  status = 0;
+  if (_putobj(obj, "shell_status", inst, &status)) return 1;
   if (_putobj(obj,"cwd",inst,wd)) {
     g_free(wd);
     return 1;
