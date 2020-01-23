@@ -3946,11 +3946,15 @@ math_func_printf_common(MathFunctionCallExpression *exp, MathEquation *eq, MathV
       quote = FALSE;
       continue;
     }
-    if (i < exp->argc && format[po] == '%') {
-      add_printf_formated_double(gstr, format + po, &exp->buf[i].val, &len);
-      po += len;
-      i++;;
-      continue;
+    if (format[po] == '%') {
+      if (format[po + 1] == '%') {
+        po++;
+      } else if (i < exp->argc) {
+        add_printf_formated_double(gstr, format + po, &exp->buf[i].val, &len);
+        po += len;
+        i++;;
+        continue;
+      }
     }
     g_string_append_c(gstr, format[po]);
   }
