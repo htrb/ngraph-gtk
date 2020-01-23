@@ -104,6 +104,7 @@ cmdshell(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   struct shlocal *shlocal;
   struct nshell *nshell;
   struct narray *sarray;
+  struct objlist *sys;
   char **sdata;
   int i,snum;
   int err;
@@ -197,6 +198,14 @@ cmdshell(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   err=0;
 
 errexit:
+  sys = getobject("system");
+  if (sys) {
+    N_VALUE *inst;
+    inst = chkobjinst(sys, 0);
+    if (inst) {
+      _putobj(sys, "shell_status", inst, &(nshell->status));
+    }
+  }
 #if ! WINDOWS
   ninterrupt = save_interrupt;
   sigaction(SIGINT, &oldact, NULL);
