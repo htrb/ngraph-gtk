@@ -1,9 +1,13 @@
+#! ../src/ngraph -i
+
+STATUS=0
 show_result() {
     if [ "$2" = "$3" ]
     then
 	echo "OK. ($1)"
     else
 	echo "error. ($1)  $2  $3"
+	STATUS=1
     fi
 }
 
@@ -91,3 +95,5 @@ sarray::@="0 9 8 7 6 5 4 3 2 1"
 sarray::ins 4 100
 s="${sarray::join}"
 show_result "ins" "$s" "0,9,8,7,100,6,5,4,3,2,1"
+
+exit $STATUS
