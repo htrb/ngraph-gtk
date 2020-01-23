@@ -224,6 +224,12 @@ textprintf(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
       continue;
     }
 
+    if (format[po + 1] == '%') {
+      g_string_append_c(ret, '%');
+      po += 2;
+      continue;
+    }
+
     arg_str = (arg < argc2 && argv2[arg]) ? argv2[arg] : NULL;
     r = add_printf_formated_str(ret, format + po, arg_str, &i);
 
