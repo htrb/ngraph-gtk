@@ -1,0 +1,27 @@
+$str:="a b c"#0
+string_split($sary, $str, " ")#3
+string_join($str, "_", $sary)#0
+string_up($ustr, $str)#0
+string_append($ustr, "_def")#0
+string_compare($ustr, "A_B_C_def")#0
+string_prepend($ustr, "１２３_")#0
+string_compare($ustr, "１２３_A_B_C_def")#0
+string_length($ustr)==13#1
+string_replace($str, $ustr, "[a-z]+", ".")#0
+string_compare($str, "１２３_A_B_C_.")#0
+string_replace($str, $ustr, "[a-z]+", ".", TRUE)#0
+string_compare($str, "１２３_._._._.")#0
+string_reverse($rstr, $ustr)#0
+string_compare($rstr, "fed_C_B_A_３２１")#0
+string_erase($rstr, 8, 3)#0
+string_compare($rstr, "fed_C_B_２１")#0
+string_insert($rstr, "あ", 9)#0
+string_compare($rstr, "fed_C_B_２あ１")#0
+string_substring($str, $ustr, 4, 9)#0
+string_compare($str, "A_B_C")#0
+string_truncate($ustr, 5)#0
+string_compare($ustr, "１２３_A")#0
+sprintf($str, 'abc %^.3g def %d', 12345, 67890)==24#1
+string_compare($str, 'abc 1.23×10^4@ def 67890')#0
+sprintf($str, 'abc %^.3g def %d', 12345)==21#1
+string_compare($str, 'abc 1.23×10^4@ def %d')#0
