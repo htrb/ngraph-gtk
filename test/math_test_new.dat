@@ -217,29 +217,12 @@ string_compare($dstr, $ustr, TRUE)#0
 string_compare($dstr, $str)#0
 string_append($ustr, "_def")#0
 string_compare($ustr, "A_B_C_def")#0
-string_prepend($ustr, "１２３_")#0
-string_compare($ustr, "１２３_A_B_C_def")#0
-string_length($ustr)==13#1
-string_replace($str, $ustr, "[a-z]+", ".")#0
-string_compare($str, "１２３_A_B_C_.")#0
-string_replace($str, $ustr, "[a-z]+", ".", TRUE)#0
-string_compare($str, "１２３_._._._.")#0
-string_reverse($rstr, $ustr)#0
-string_compare($rstr, "fed_C_B_A_３２１")#0
-string_erase($rstr, 8, 3)#0
-string_compare($rstr, "fed_C_B_２１")#0
-string_insert($rstr, "あ", 9)#0
-string_compare($rstr, "fed_C_B_２あ１")#0
-string_substring($str, $ustr, 4, 9)#0
-string_compare($str, "A_B_C")#0
 rsort($sary)#3
 string_join($str, "", $sary)#0
 string_compare($str, "cba")#0
 sort($sary)#3
 string_join($str, "", $sary)#0
 string_compare($str, "abc")#0
-string_truncate($ustr, 5)#0
-string_compare($ustr, "１２３_A")#0
 string_split($sa, "1.2 3 4.5 6 7.89", " ")==5#1
 size($sa)==5#1
 string_float_array(ary, $sa)==5#1
@@ -254,10 +237,6 @@ size($sa)==0#1
 $str:="  abcde f	 "#0
 string_strip($str);
 string_compare($str, 'abcde f')#0
-sprintf($str, 'abc %^.3g def %d', 12345, 67890)==24#1
-string_compare($str, 'abc 1.23×10^4@ def 67890')#0
-sprintf($str, 'abc %^.3g def %d', 12345)==21#1
-string_compare($str, 'abc 1.23×10^4@ def %d')#0
 sprintf($str, 'abc %^.3g def %d')==16#1
 string_compare($str, 'abc %^.3g def %d')#0
 getobj("system", "id", 0)==0#1
@@ -301,3 +280,9 @@ times(10,i,sum(i+1))==55#1
 {1;2;3}==3#1
 {1;2;3;{4;5;6}}==6#1
 {}==0#1
+123.4=="123.4"#1
+isbreak("BREAK")#1
+iscont("CONT")#1
+isnan("nan")#1
+$a:=0.0112233#0
+string_compare($a, "0.0112233")#0
