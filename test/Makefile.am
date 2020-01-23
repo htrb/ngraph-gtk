@@ -1,32 +1,9 @@
-TESTS = test.sh
+TESTS = math_test.sh math_test_utf8.sh string_test.nsc			\
+	iarray_test.nsc darray_test.nsc sarray_test.nsc io_test.nsc	\
+	regexp_test.nsc
 
-EXTRA_DIST = regexp_test.nsc io_test.nsc math_test.nsc			\
-	math_test_new.dat math_test_old.dat iarray_test.nsc		\
-	darray_test.nsc sarray_test.nsc string_test.nsc $(TESTS)
-NGRAPH=../src/ngraph
-
-test: math_test io_test regexp_test iarray_test darray_test sarray_test string_test
-
-string_test: string_test.nsc
-	$(NGRAPH) -i string_test.nsc
-
-iarray_test: iarray_test.nsc
-	$(NGRAPH) -i iarray_test.nsc
-
-darray_test: darray_test.nsc
-	$(NGRAPH) -i darray_test.nsc
-
-sarray_test: sarray_test.nsc
-	$(NGRAPH) -i sarray_test.nsc
-
-io_test: io_test.nsc
-	$(NGRAPH) -i io_test.nsc
-
-regexp_test: regexp_test.nsc
-	$(NGRAPH) -i regexp_test.nsc
-
-math_test: math_test.nsc math_test_old.dat  math_test_new.dat
-	$(NGRAPH) -i math_test.nsc math_test_old.dat math_test_new.dat
+EXTRA_DIST = math_test.nsc math_test_utf8.dat math_test_new.dat	\
+	math_test_old.dat $(TESTS)
 
 # original Ngraph causes following errors
 #
