@@ -1,9 +1,13 @@
+#! ../src/ngraph -i
+
+STATUS=0
 show_result() {
     if [ "$2" = "$3" ]
     then
 	echo "OK. ($1)"
     else
 	echo "error. ($1)  $2  $3"
+	STATUS=1
     fi
 }
 
@@ -13,6 +17,7 @@ show_result_val() {
 	echo "OK. ($1)"
     else
 	echo "error. ($1)  $2  $3"
+	STATUS=1
     fi
 }
 
@@ -121,3 +126,4 @@ iarray::map "i"
 s="${iarray::join}"
 show_result "map" "$s" "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18"
 
+exit $STATUS
