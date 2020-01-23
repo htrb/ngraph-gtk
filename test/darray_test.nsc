@@ -1,9 +1,13 @@
+#! ../src/ngraph -i
+
+STATUS=0
 show_result() {
     if [ "$2" = "$3" ]
     then
 	echo "OK. ($1)"
     else
 	echo "error. ($1)  $2  $3"
+	STATUS=1
     fi
 }
 
@@ -13,6 +17,7 @@ show_result_val() {
 	echo "OK. ($1)"
     else
 	echo "error. ($1)  $2  $3"
+	STATUS=1
     fi
 }
 
@@ -124,3 +129,5 @@ show_result "map" "$s" "1.000000000000000e+00,4.000000000000000e+00,9.0000000000
 darray::map "i"
 s="${darray::join}"
 show_result "map" "$s" "0.000000000000000e+00,1.000000000000000e+00,2.000000000000000e+00"
+
+exit $STATUS
