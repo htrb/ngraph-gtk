@@ -176,7 +176,7 @@ static int
 sysdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct objlist *objcur;
-  int i, n;
+  int i, n, status;
   char *s;
   struct narray *array;
   struct objlist *objectcur,*objectdel;
@@ -194,6 +194,9 @@ sysdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
     }
     objcur=objcur->next;
   }
+  status = 0;
+  _getobj(obj, "shell_status", inst, &status);
+
   _getobj(obj,"conf_dir",inst,&s);
   g_free(s);
   _getobj(obj,"data_dir",inst,&s);
@@ -248,7 +251,7 @@ sysdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 
   nhash_free(Plugins);
 
-  exit(0);
+  exit(status);
   return 0;
 }
 
