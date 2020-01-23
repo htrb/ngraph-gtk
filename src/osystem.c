@@ -834,6 +834,7 @@ static struct objtable nsystem[] = {
   {"plugin_dir",NSTR,NREAD,NULL,NULL,0},
   {"home_dir",NSTR,NREAD,NULL,NULL,0},
   {"pid",NINT,NREAD,NULL,NULL,0},
+  {"shell_status",NINT,NREAD,NULL,NULL,0},
   {"time",NSFUNC,NREAD|NEXEC,systime,"i",0},
   {"date",NSFUNC,NREAD|NEXEC,sysdate,"i",0},
   {"temp_file",NSFUNC,NREAD|NEXEC,systemp,"",0},
@@ -861,4 +862,3 @@ addsystem()
   }
   return addobject(NAME,NULL,PARENT,VERSION,TBLNUM,nsystem,ERRNUM,syserrorlist,NULL,NULL);
 }
-
