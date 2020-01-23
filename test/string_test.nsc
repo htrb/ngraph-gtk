@@ -1,9 +1,13 @@
+#! ../src/ngraph -i
+
+STATUS=0
 show_result() {
     if [ "$2" = "$3" ]
     then
 	echo "OK. ($1)"
     else
 	echo "error. ($1)  '$2'  '$3'"
+	STATUS=1
     fi
 }
 
@@ -23,3 +27,5 @@ show_result "rindex"   "${string::rindex:'a 1'}"    "1"
 show_result "rindex"   "${string::rindex:'b 20'}"   "10"
 show_result "match"    "${string::match:'f.Ｂ'}"    "true"
 show_result "match"    "${string::match:'a[^b]+c'}" "false"
+
+exit $STATUS
