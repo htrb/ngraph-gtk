@@ -1,9 +1,10 @@
-TESTS = math_test.sh math_test_utf8.sh string_test.nsc			\
-	iarray_test.nsc darray_test.nsc sarray_test.nsc io_test.nsc	\
-	regexp_test.nsc
+TESTS = math_test.sh math_test_utf8.sh string_test.sh iarray_test.sh	\
+	darray_test.sh sarray_test.sh io_test.sh regexp_test.sh
 
-EXTRA_DIST = math_test.nsc math_test_utf8.dat math_test_new.dat	\
-	math_test_old.dat $(TESTS)
+EXTRA_DIST = math_test.nsc math_test_utf8.dat math_test_new.dat		\
+	string_test.nsc iarray_test.nsc darray_test.nsc			\
+	sarray_test.nsc io_test.nsc regexp_test.nsc math_test_old.dat	\
+	test.sh $(TESTS)
 
 # original Ngraph causes following errors
 #
