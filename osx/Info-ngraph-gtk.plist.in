@@ -30,5 +30,13 @@
     <string>10.4</string>
     <key>GtkOSXLaunchScriptFile</key>
     <string>ngraph-launcher.sh</string>
+    <key>NSDesktopFolderUsageDescription</key>
+    <string>ngraph-gtk needs your permission to access the Desktop folder.</string>
+    <key>NSDocumentsFolderUsageDescription</key>
+    <string>ngraph-gtk needs your permission to access the Documents folder.</string>
+    <key>NSDownloadsFolderUsageDescription</key>
+    <string>ngraph-gtk needs your permission to access the Downloads folder.</string>
+    <key>NSRemoveableVolumesUsageDescription</key>
+    <string>ngraph-gtk needs your permission to access removable volumes.</string>
   </dict>
 </plist>
