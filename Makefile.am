@@ -15,6 +15,7 @@ endif
 if OS_OSX
 
 ngraph_app = ~/Desktop/$(PACKAGE).app
+ngraph_app_bin = $(ngraph_app)/Contents/MacOS
 ngraph_package = $(PACKAGE)-$(PACKAGE_VERSION)-x86_64.dmg
 
 bundler: $(ngraph_app)
@@ -22,6 +23,7 @@ bundler: $(ngraph_app)
 $(ngraph_app): osx/ngraph-gtk.bundle $(bindir)/ngraph
 	rm -rf $(ngraph_app)
 	gtk-mac-bundler $<
+	mv $(ngraph_app_bin)/ngraph-gtk-bin $(ngraph_app_bin)/ngraph-gtk
 
 dmg: $(ngraph_package)
 
