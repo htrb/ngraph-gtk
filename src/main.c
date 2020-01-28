@@ -23,6 +23,14 @@
 
 #include <stdlib.h>
 #include <string.h>
+#ifdef __APPLE__
+#include <limits.h>
+#include <stdio.h>
+#include <libgen.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#endif
 
 #include "ngraph.h"
 
@@ -112,6 +120,52 @@ get_login_shell(struct objlist *sys)
   return loginshell;
 }
 
+#ifdef __APPLE__
+static void
+osx_set_env(const char *app)
+{
+  char *bundle, rpath[PATH_MAX];
+  char bundle_contents[PATH_MAX], bundle_res[PATH_MAX], bundle_lib[PATH_MAX], bundle_bin[PATH_MAX], bundle_dat[PATH_MAX], bundle_etc[PATH_MAX];
+  char xdg[PATH_MAX], ruby[PATH_MAX], pango[PATH_MAX], pixbuf[PATH_MAX], immodule[PATH_MAX];
+  int r;
+  struct stat stat_buf;
+
+  realpath(app, rpath);
+  bundle = dirname(dirname(dirname(rpath)));
+  snprintf(bundle_contents, PATH_MAX, "%s/%s", bundle, "Contents");
+
+  r = stat(bundle_contents, &stat_buf);
+  if (r || ! S_ISDIR(stat_buf.st_mode)) {
+    return;
+  }
+
+  snprintf(bundle_res, PATH_MAX, "%s/%s", bundle_contents, "Resources");
+  snprintf(bundle_lib, PATH_MAX, "%s/%s", bundle_res, "lib");
+  snprintf(bundle_bin, PATH_MAX, "%s/%s", bundle_res, "bin");
+  snprintf(bundle_dat, PATH_MAX, "%s/%s", bundle_res, "share");
+  snprintf(bundle_etc, PATH_MAX, "%s/%s", bundle_res, "etc");
+
+  setenv("DYLD_LIBRARY_PATH", bundle_lib, 1);
+  snprintf(xdg, PATH_MAX, "%s/%s", bundle_etc, "xdg");
+  setenv("XDG_CONFIG_DIRS", xdg, 1);
+  setenv("XDG_DATA_DIRS", bundle_dat, 1);
+  setenv("GTK_DATA_PREFIX", bundle_res, 1);
+  setenv("GTK_EXE_PREFIX", bundle_res, 1);
+  setenv("GTK_PATH", bundle_res, 1);
+  setenv("NGRAPH_APP_CONTENTS", bundle_contents, 1);
+  snprintf(ruby, PATH_MAX, "%s/%s", bundle_lib, "ngraph-gtk/ruby");
+  setenv("RUBYLIB", ruby, 1);
+  snprintf(pango, PATH_MAX, "%s/%s", bundle_etc, "pango/pangorc");
+  setenv("PANGO_RC_FILE", pango, 1);
+  setenv("PANGO_SYSCONFDIR", bundle_etc, 1);
+  setenv("PANGO_LIBDIR", bundle_lib, 1);
+  snprintf(pixbuf, PATH_MAX, "%s/%s", bundle_lib, "gdk-pixbuf-2.0/2.10.0/loaders.cache");
+  setenv("GDK_PIXBUF_MODULE_FILE", pixbuf, 1);
+  snprintf(immodule, PATH_MAX, "%s/%s", bundle_etc, "gtk-3.0/gtk.immodules");
+  setenv("GTK_IM_MODULE_FILE", immodule, 1);
+}
+#endif
+
 int
 main(int argc, char **argv)
 {
@@ -119,6 +173,21 @@ main(int argc, char **argv)
   struct objlist *sys, *obj;
   int id;
 
+#ifdef __APPLE__
+  /* remove MacOS session identifier from the command line args */
+  int i, newargc = 0;
+  for (i = 0; i < argc; i++) {
+    if (strncmp (argv[i], "-psn_", 5)){
+      argv[newargc] = argv[i];
+      newargc++;
+    }
+  }
+  if (argc > newargc) {
+    argv[newargc] = NULL; /* glib expects NULL terminated array */
+    argc = newargc;
+  }
+  osx_set_env(argv[0]);
+#endif
   if (ngraph_initialize(&argc, &argv)) {
     exit(1);
   }
