@@ -71,6 +71,16 @@ This file is created based on "ruby.lang" which is part of GtkSourceView.
       </include>
     </context>
 
+    <context id="single-quoted-string" style-ref="string" class="string" class-disabled="no-spell-check">
+      <start>'</start>
+      <end>'</end>
+      <include>
+        <context style-ref="escape">
+          <match>\\['\\]</match>
+        </context>
+      </include>
+    </context>
+
     <define-regex id="underscore_num">\d( ?\d)*</define-regex>
 
     <define-regex id="float" extended="true">
