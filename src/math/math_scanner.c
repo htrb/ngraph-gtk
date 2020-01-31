@@ -376,6 +376,25 @@ get_single_quoted_string(const char *str,  const char ** rstr, int *len)
   return gstr;
 }
 
+static int
+append_hex(GString *gstr, const char *str)
+{
+  int c, i;
+  c = 0;
+  for (i = 0; i < 2; i++) {
+    if (g_ascii_isxdigit(str[i])) {
+      c <<= 4;
+      c += g_ascii_xdigit_value(str[i]);
+    } else {
+      break;
+    }
+  }
+  if (c) {
+    g_string_append_c(gstr, c);
+  }
+  return i;
+}
+
 static GString *
 get_double_quoted_string(const char *str,  const char ** rstr, int *len)
 {
