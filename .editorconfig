@@ -8,7 +8,7 @@ indent_style = tab
 trim_trailing_whitespace = true
 tab_width = 8
 
-[*.{c,h,rb}]
+[*.{c,h,rb,lang,lang.pre,lang.post}]
 indent_size = 2
 
 [*.nsc]
