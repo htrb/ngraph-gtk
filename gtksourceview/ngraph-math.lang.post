@@ -15,6 +15,7 @@
 	<context ref="binary"/>
         <context ref="operators"/>
         <context ref="double-quoted-string"/>
+        <context ref="single-quoted-string"/>
       </include>
     </context>
 
