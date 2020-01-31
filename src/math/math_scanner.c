@@ -447,6 +447,16 @@ get_double_quoted_string(const char *str,  const char ** rstr, int *len)
       case 't':
 	g_string_append_c(gstr, '\t');
 	break;
+      case 'v':
+	g_string_append_c(gstr, '\v');
+	break;
+      case 'x':
+        n += append_hex(gstr, str + n + 1);
+	break;
+      case '0': case '1': case '2': case '3':
+      case '4': case '5': case '6': case '7':
+        n += append_oct(gstr, str + n) - 1;
+	break;
       default:
 	g_string_append_c(gstr, str[n]);
 	break;
