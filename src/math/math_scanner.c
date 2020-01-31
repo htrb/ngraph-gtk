@@ -395,6 +395,25 @@ append_hex(GString *gstr, const char *str)
   return i;
 }
 
+static int
+append_oct(GString *gstr, const char *str)
+{
+  int c, i;
+  c = 0;
+  for (i = 0; i < 3; i++) {
+    if ('0' <= str[i] && str[i] <= '7') {
+      c <<= 3;
+      c += str[i] - '0';
+      printf("%c: %x\n", str[i], c);
+    } else {
+      break;
+    }
+  }
+  if (c) {
+    g_string_append_c(gstr, c);
+  }
+  return i;
+}
 static GString *
 get_double_quoted_string(const char *str,  const char ** rstr, int *len)
 {
