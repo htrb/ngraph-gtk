@@ -1,4 +1,4 @@
-HTML_FILE = index.html
+HTML_FILE = index.html ngraph.css
 
 EXTRA_DIST = objlist.nsc
 
