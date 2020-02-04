@@ -2,9 +2,11 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<link rel="stylesheet" href="../ngraph.css" media="screen" type="text/css"/>
 <title>Math</title>
 </head>
 <body>
+<div class="toc">
 <a name="TOP">&nbsp;</a>
 <h1><a href="./ngraph.html">データの加工</a></h1>
 <ul>
@@ -35,13 +37,10 @@
  <li><a href="#OP_PRECEDENCE">演算子の優先順位</a>
  <li><a href="#OP_EXAMPLE">数式変換の使用例</a>
 </ul>
+</div>
+<div class="chapter">
 
-<br>
-<hr size="5">
-<br>
-
-
-<h2><a name="TRANSFORM" href="#TOP">概要</a></h2>
+<h2><a name="TRANSFORM">概要</a></h2>
 <br>
 <div>
 描画は隣接平均, 数式変換などデータの加工を行った後に行われます。
@@ -68,11 +67,7 @@
 最小二乗法に関してはロググラフでも通常の線形グラフと同じ係数を求めます。<br>
 </div>
 
-<br>
-<hr>
-<br>
-
-<h2><a name="FORMULA_BLOCK" href="#TOP">ブロック</a></h2>
+<h2><a name="FORMULA_BLOCK">ブロック</a></h2>
 <ul>
  <li> 複数の式を {} で囲むことにより、一つの式（ブロック）として扱うことができます。
  <li> {} 内で最後に評価された式の値がブロックの値となります。
@@ -82,19 +77,11 @@
  <li> ブロックは変数のスコープには影響しません。
 </ul>
 
-<br>
-<hr>
-<br>
-
-<h2><a name="FORMULA_COMMENT" href="#TOP">数式変換で使用できるコメント</a></h2>
+<h2><a name="FORMULA_COMMENT">数式変換で使用できるコメント</a></h2>
 #から行末までをコメントと見なします。
 
 
-<br>
-<hr>
-<br>
-
-<h2><a name="FORMULA_LITERAL" href="#TOP">数式変換で使用できる数値リテラル</a></h2>
+<h2><a name="FORMULA_LITERAL">数式変換で使用できる数値リテラル</a></h2>
 <br>
 <div>
 <dl>
@@ -120,11 +107,7 @@
 <p>数字が連続している部分は見やすくするため任意の箇所に空白を入れることができます (例 123 456.789 E8) 。</p>
 </div>
 
-<br>
-<hr>
-<br>
-
-<h2><a name="FORMULA_CONST" href="#TOP">数式変換で使用できる定数</a></h2>
+<h2><a name="FORMULA_CONST">数式変換で使用できる定数</a></h2>
 <br>
 <div>
 <table border="1">
@@ -183,11 +166,7 @@
 </table>
 </div>
 
-<br>
-<hr>
-<br>
-
-<h2><a name="CONST_DEF" href="#TOP">定数定義</a></h2>
+<h2><a name="CONST_DEF">定数定義</a></h2>
 <br>
 <div>
 <table border="1">
@@ -205,11 +184,7 @@
 </table>
 </div>
 
-<br>
-<hr>
-<br>
-
-<h2><a name="FORMULA_PAR" href="#TOP">数式変換で使用できるパラメータ</a></h2>
+<h2><a name="FORMULA_PAR">数式変換で使用できるパラメータ</a></h2>
 <br>
 <div>
 <table border="1">
@@ -219,12 +194,8 @@
 </table>
 </div>
 
-<br>
-<hr>
-<br>
 
-
-<h2><a name="FORMULA_VAR" href="#TOP">数式変換で使用できる変数</a></h2>
+<h2><a name="FORMULA_VAR">数式変換で使用できる変数</a></h2>
 <p>変数は X, Y の変換式で独立です。</p>
 <br>
 <div>
@@ -236,11 +207,7 @@
 </table>
 </div>
 
-<br>
-<hr>
-<br>
-
-<h2><a name="ARRAY" href="#TOP">配列</a></h2>
+<h2><a name="ARRAY">配列</a></h2>
 <br>
 <div>
 <table border="1">
@@ -264,11 +231,7 @@
 </table>
 </div>
 
-<br>
-<hr>
-<br>
-
-<h2><a name="STRINGS" href="#TOP">数式変換で使用できる文字列、文字列変数と文字列の配列</a></h2>
+<h2><a name="STRINGS">数式変換で使用できる文字列、文字列変数と文字列の配列</a></h2>
 <h3>注意</h3>
 <p>文字列の扱いについては今の所試験的な実装です。今後、仕様変更などの可能性があります。</p>
 
@@ -306,10 +269,13 @@
 <p>$ に続き英字または _ で始まり英数字または _ から構成される文字列。</p>
 
 <h3>文字列変数の配列</h3>
-<p>$ に続き英字または _ で始まり英数字または _ から構成される文字列。</p>
-<p>配列の添字は整数に丸められます。<br>
-   配列の添字の上限は 65535 です。<br>
-   配列の添字に負の数値を使用した場合、配列の末尾からのインデックスとみなします。</p>
+<p>$x[n]</p>
+<ul>
+	<li>x は英字または _ で始まり英数字または _ から構成される文字列。</li>
+	<li>配列の添字は整数に丸められます。</li>
+	<li>配列の添字の上限は 65535 です。</li>
+	<li>配列の添字に負の数値を使用した場合、配列の末尾からのインデックスとみなします。</li>
+</ul>
 
 <h3>文字列の値</h3>
 <p>数値の計算が行われる箇所で、文字列は数値に変換されます。</p>
@@ -321,11 +287,7 @@
 <h3>文字列操作関数</h3>
 <p><a href="#STRING_FUNC">文字列操作関数</a></p>
 
-<br>
-<hr>
-<br>
-
-<h2><a name="USR_FUNC" href="#TOP">ユーザ定義関数</a></h2>
+<h2><a name="USR_FUNC">ユーザ定義関数</a></h2>
 <br>
 <div>
 <table border="1">
@@ -346,11 +308,7 @@
 </table>
 </div>
 
-<br>
-<hr>
-<br>
-
-<h2><a name="FORMULA_OP" href="#TOP">数式変換で使用できる演算子</a></h2>
+<h2><a name="FORMULA_OP">数式変換で使用できる演算子</a></h2>
 <br>
 <div>
 <table border="1">
@@ -391,13 +349,9 @@
 
 </div>
 
-<br>
-<hr>
-<br>
 
 
-
-<h2><a name="FORMULA_FUNC" href="#TOP">数式変換で使用できる関数</a></h2>
+<h2><a name="FORMULA_FUNC">数式変換で使用できる関数</a></h2>
 <p>
 <ul>
  <li> 引数は省略することができます。引数が省略された場合 0 が渡されます。
@@ -406,7 +360,7 @@
 </ul>
 </p>
 <div>
-<h3><a name="TRANSFORM_FUNC" href="#TOP">変換関数</a></h3>
+<h3><a name="TRANSFORM_FUNC">変換関数</a></h3>
 <table border="1">
  <tr><td>abs(x)</td><td>絶対値</td></tr>
  <tr><td>sign(x)</td><td>正負の符号 (x < 0 で -1、x >= 0 で 1) </td></tr>
@@ -419,7 +373,7 @@
  <tr><td>sumsq(a,b,c,...)</td><td>引数の自乗和</td></tr>
 </table>
 <br>
-<h3><a name="ELEMENTARY_FUNC" href="#TOP">初等関数</a></h3>
+<h3><a name="ELEMENTARY_FUNC">初等関数</a></h3>
 <table border="1">
  <tr><td>sqr(x)</td><td>二乗</td></tr>
  <tr><td>sqrt(x)</td><td>平方根</td></tr>
@@ -442,7 +396,7 @@
  <tr><td>choose(n,m)</td><td>the combinatorial factor n choose m: n!/(m!(n-m)!)</td></tr>
 </table>
 <br>
-<h3><a name="SPECIAL_FUMC" href="#TOP">特殊関数</a></h3>
+<h3><a name="SPECIAL_FUMC">特殊関数</a></h3>
 <table border="1">
  <tr><td>rand(x)</td><td>0≦RAND(x)＜x (x＞0のとき)の乱数</td></tr>
  <tr><td>srand(x)</td><td>RAND()  関数で作られる疑似乱数系列の新しい種を設定する。</td></tr>
@@ -476,8 +430,7 @@
  <tr><td>zetam1_int(x)</td><td>リーマンゼータ関数 ζ(x) - 1 (x は整数) </td></tr>
 </table>
 <br>
-<h3><a name="DATETIME_FUMC" href="#TOP">日付時刻関数</a></h3>
-<br>
+<h3><a name="DATETIME_FUMC">日付時刻関数</a></h3>
 <table border="1">
  <tr><td>mjd(year,month,day,hour,min,sec)</td><td>修正ユリウス日(year, month, day はグレゴリオ暦、hour,min,sec は UTC 時刻、うるう秒は考慮されない)</td></tr>
  <tr><td>unix2mjd(time)</td><td>修正ユリウス日(time は 1970年1月1日00:00:00 UTC からの経過秒数、うるう秒は考慮されない)</td></tr>
@@ -490,7 +443,7 @@
  <tr><td>time()</td><td>紀元 (1970年1月1日00:00:00 UTC) からの経過時間を秒単位で返す。</td></tr>
 </table>
 <br>
-<h3><a name="LOGIC_FUNC" href="#TOP">論理関数</a></h3>
+<h3><a name="LOGIC_FUNC">論理関数</a></h3>
 <p>
 <ul>
  <li> 0 を偽, それ以外を真とする。
@@ -509,7 +462,7 @@
  <tr><td>xor(x,y)</td><td>(x≠0) xor (y≠0) のとき真(=1)</td></tr>
 </table>
 <br>
-<h3><a name="ARRAY_FUNC" href="#TOP">配列操作関数</a></h3>
+<h3><a name="ARRAY_FUNC">配列操作関数</a></h3>
 <table border="1">
  <tr><td>array(a, v1, v2, ...)</td><td>配列 a を残りの引数で初期化する。配列の要素数を返す。</td></tr>
  <tr><td>size(a)</td><td>配列 a の要素数</td></tr>
@@ -543,7 +496,7 @@
  <tr><td>find(a, item, ex)</td><td>配列 a の各要素に対して式 ex を計算し、その結果が真であった最初の要素を返す。第2引数に指定した変数 (item) で配列の要素を参照できる。</td></tr>
 </table>
 <br>
-<h3><a name="MEMORY_FUNC" href="#TOP">メモリー操作関数</a></h3>
+<h3><a name="MEMORY_FUNC">メモリー操作関数</a></h3>
 <p>メモリーは全ての数式変換で共有されます。</p>
 <table border="1">
  <tr><td>m(i,x)</td><td>引数を第iメモリーに代入する(i=0〜65535)、i が負のときは末尾からのインデックス (戻り値は x) </td></tr>
@@ -552,7 +505,7 @@
  <tr><td>am(a)</td><td>配列 a の内容をメモリーにコピーする (戻り値はコピーした要素数) </td></tr>
 </table>
 <br>
-<h3><a name="DRAWING_FUNC" href="#TOP">図形描画関数</a></h3>
+<h3><a name="DRAWING_FUNC">図形描画関数</a></h3>
 <p>図形を描画します。</p>
 <ul>
   <li> 本来のプロットも描画されるので、不要な場合はプロットタイプを
@@ -667,7 +620,7 @@
   </tr>
 </table>
 <br>
-<h3><a name="STRING_FUNC" href="#TOP">文字列操作関数</a></h3>
+<h3><a name="STRING_FUNC">文字列操作関数</a></h3>
 <table border="1">
   <tr>
     <td>
@@ -912,7 +865,7 @@
   </tr>
 </table>
 <br>
-<h3><a name="OTHER_FUNC" href="#TOP">その他の関数</a></h3>
+<h3><a name="OTHER_FUNC">その他の関数</a></h3>
 <table border="1">
  <tr>
   <td>fit_prm(id,x)</td>
@@ -1016,12 +969,8 @@
 </table>
 </div>
 
-<br>
-<hr>
-<br>
 
-
-<h2><a name="OP_PRECEDENCE" href="#TOP">演算子の優先順位</a></h2>
+<h2><a name="OP_PRECEDENCE">演算子の優先順位</a></h2>
 <p>演算子 + - (正負の符号) の優先順位が Version 6.03 以前と異なっています。</p>
 <br>
 <div>
@@ -1039,11 +988,7 @@
 </table>
 </div>
 
-<br>
-<hr>
-<br>
-
-<h2><a name="OP_EXAMPLE" href="#TOP">数式変換の使用例</a></h2>
+<h2><a name="OP_EXAMPLE">数式変換の使用例</a></h2>
 <br>
 <ul>
  <li><b>; 使用例</b>
@@ -1305,6 +1250,6 @@
       画します。
    </p>
 </ul>
-
+</div>
 </body>
 </html>

@@ -2,9 +2,11 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<link rel="stylesheet" href="../ngraph.css" media="screen" type="text/css"/>
 <title>Add-in</title>
 </head>
 <body>
+<div class="toc">
 <a name="TOP">&nbsp;</a>
 <h1><a href="./ngraph.html">アドイン</a></h1>
 <ul>
@@ -13,12 +15,10 @@
  <li><a href="#STRUCTURE">アドインスクリプトの形式</a>
  <li><a href="#DATA">データを扱うアドインスクリプト</a>
 </ul>
+</div>
 
-<br>
-<hr size="5">
-<br>
-
-<h2><a name="ADDIN" href="#TOP">概要</a></h2>
+<div class="chapter">
+<h2><a name="ADDIN">概要</a></h2>
 
 <p>
 Ngraph の[アドイン]メニューで登録されているアドインを選ぶと Ngraph はそれ
@@ -87,13 +87,10 @@ Ngraph 内部の設定パラメター全てを参照、変更する機能があ�
 以下で説明します。
 </p>
 
-<br>
-<hr>
-<br>
 
 
 
-<h2><a name="LEGEND_NSC" href="#TOP">legend.nsc の動作</a></h2>
+<h2><a name="LEGEND_NSC">legend.nsc の動作</a></h2>
 <p>
 legend.nsc が起動する外部プログラムは legend です。
 まず legend が必要とする現在の Ngraph の状態を記述した中間ファイルを
@@ -185,13 +182,10 @@ system:0:unlink_temp_file "$SCRIPT"
 </p>
 
 
-<br>
-<hr>
-<br>
 
 
 
-<h2><a name="STRUCTURE" href="#TOP">アドインスクリプトの形式</a></h2>
+<h2><a name="STRUCTURE">アドインスクリプトの形式</a></h2>
 <p>
 外部プログラムを起動するアドインスクリプトは、
 </p>
@@ -229,13 +223,10 @@ system:0:unlink_temp_file "$SCRIPT"
 <p>だけで十分です。</p>
 
 
-<br>
-<hr>
-<br>
 
 
 
-<h2><a name="DATA" href="#TOP">データを扱うアドインスクリプト</a></h2>
+<h2><a name="DATA">データを扱うアドインスクリプト</a></h2>
 <p>
 
 アドインスクリプトの中からデータを直接扱う事もできます。その例として
@@ -332,9 +323,6 @@ data::coord_x, data::coord_y の値は不定となりますが、その代わり
 れていなくてもエラーにはなりません。</p>
 
 
-<br>
-<hr>
-<br>
-
+</div>
 </body>
 </html>

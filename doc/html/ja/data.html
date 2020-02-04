@@ -2,8 +2,10 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<link rel="stylesheet" href="../ngraph.css" media="screen" type="text/css"/>
 <title>Data file</title></head>
 <body>
+<div class="toc">
 <a name="TOP">&nbsp;</a>
 <h1><a href="./ngraph.html">データファイル</a></h1>
 <ul>
@@ -14,13 +16,11 @@
  <li><a href="#DATAFILE_ERRBARY">データプロット形式 error_bar_y のデータファイル</a>
  <li><a href="#DATAFILEOPTION">データファイル埋め込みオプション</a>
 </ul>
-
-<br>
-<hr size="5">
-<br>
+</div>
 
 
-<h2><a name="DATAFILE" href="#TOP">データファイルの形式</a></h2>
+<div class="chapter">
+<h2><a name="DATAFILE">データファイルの形式</a></h2>
 <br>
 <div>
 データファイルはテキストファイルで、基本的には次のようなフォーマットです。<br>
@@ -101,13 +101,10 @@
 </ul>
 </div>
 
-<br>
-<hr>
-<br>
 
 
 
-<h2><a name="DATAFILE_EMPTY" href="#TOP">欠損データを含むデータファイル</a></h2>
+<h2><a name="DATAFILE_EMPTY">欠損データを含むデータファイル</a></h2>
 <br>
 <div>
 Ngraph で欠損データを指定する方法を示します。例として，2行目のデータが欠落している場合を考えます。<br>
@@ -153,7 +150,7 @@ Ngraph で欠損データを指定する方法を示します。例として，2
        <li>データプロット形式がlineなどの線類では異なります。
 	    | では欠損データの前後を直線・曲線で結びます。
 	    = ではその前後で直線・曲線が分断されます。
-      </ul> 
+      </ul>
       <br>
  <li>欠損データの別表記法
       <br>
@@ -209,13 +206,10 @@ Ngraph で欠損データを指定する方法を示します。例として，2
 </ul>
 </div>
 
-<br>
-<hr>
-<br>
 
 
 
-<h2><a name="DATAFILE_DIAGONAL" href="#TOP">データプロット形式 diagonal, arrow, rectangle のデータファイル</a></h2>
+<h2><a name="DATAFILE_DIAGONAL">データプロット形式 diagonal, arrow, rectangle のデータファイル</a></h2>
 <br>
 <div>
 データプロット形式 diagonal, arrow, rectangle, rectangle_fill, rectangle_solid_fill などを用いて対角線や矩形をプロットしたい時に用いるデータファイル形式です。<br>
@@ -232,12 +226,9 @@ Ngraph で欠損データを指定する方法を示します。例として，2
 (4つが連続している必要はありません)
 </div>
 
-<br>
-<hr>
-<br>
 
 
-<h2><a name="DATAFILE_ERRBARX" href="#TOP">データプロット形式error_bar_xのデータファイル</a></h2>
+<h2><a name="DATAFILE_ERRBARX">データプロット形式error_bar_xのデータファイル</a></h2>
 <br>
 <div>
 データプロット形式error_bar_xを用いて誤差棒をプロットすることができます。
@@ -263,13 +254,10 @@ Ngraph で欠損データを指定する方法を示します。例として，2
 X, Xの誤差下限, Xの誤差上限 の3つのカラムは連続していなければなりません。<br>
 </div>
 
-<br>
-<hr>
-<br>
 
 
 
-<h2><a name="DATAFILE_ERRBARY" href="#TOP">データプロット形式error_bar_yのデータファイル</a></h2>
+<h2><a name="DATAFILE_ERRBARY">データプロット形式error_bar_yのデータファイル</a></h2>
 <br>
 <div>
 データプロット形式error_bar_yを用いて誤差棒をプロットすることができます。<br>
@@ -294,13 +282,10 @@ X, Xの誤差下限, Xの誤差上限 の3つのカラムは連続していな�
 Y, Yの誤差下限, Yの誤差上限 の3つのカラムは連続していなければなりません。<br>
 </div>
 
-<br>
-<hr>
-<br>
 
 
 
-<h2><a name="DATAFILEOPTION"  href="#TOP">データファイル埋め込みオプション</a></h2>
+<h2><a name="DATAFILEOPTION">データファイル埋め込みオプション</a></h2>
 <br>
 <div>
 データファイルの一行目にデータファイル埋め込みオプションを記述しておくと、Dataダイアログボックスの [Load settings]ボタンで各種設定を取り込む事ができます。
@@ -330,9 +315,6 @@ Y, Yの誤差下限, Yの誤差上限 の3つのカラムは連続していな�
  <tr><td>-z{x|y}min, max, inc</td><td>軸の最小, 最大, 増分を min,  max,  inc で指定します。</td></tr>
 </table>
 </div>
-
-<br>
-<hr>
-<br>
+</div>
 </body>
 </html>

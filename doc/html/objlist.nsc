@@ -1,4 +1,4 @@
-#! /usr/bin/ngraph -i 
+#! /usr/bin/ngraph -i
 
 TMP_FILE=${system::temp_file}
 
@@ -51,9 +51,7 @@ do
     echo
 done
 
-echo '<br>'
-echo '<hr>'
-echo '<br>'
+echo '</div>'
 echo '</body>'
 echo '</html>'
 

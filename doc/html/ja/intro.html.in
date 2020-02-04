@@ -2,9 +2,11 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<link rel="stylesheet" href="../ngraph.css" media="screen" type="text/css"/>
 <title>Introduction</title>
 </head>
 <body>
+<div class="toc">
 <a name="TOP">&nbsp;</a>
 <h1><a href="./ngraph.html">Ngraphの概要</a></h1>
 <ul>
@@ -12,13 +14,11 @@
  <li><a href="#USAGE">使用・配布規定</a>
  <li><a href="#INSTALL">環境設定</a>
 </ul>
-
-<br>
-<hr size="5">
-<br>
+</div>
 
 
-<h2><a name="ABSTRACT" href="#TOP">Ngraphとは？</a></h2>
+<div class="chapter">
+<h2><a name="ABSTRACT">Ngraphとは？</a></h2>
 <br>
 <ul>
  <li> Ngraph は理工系学生、研究者、技術者のために作られた２次元グラフ作成
@@ -29,12 +29,9 @@
  <li> 簡単なデータ解析をアシストします。
 </ul>
 
-<br>
-<hr>
-<br>
 
 
-<h2><a name="USAGE" href="#TOP">使用規定・配布等</a></h2>
+<h2><a name="USAGE">使用規定・配布等</a></h2>
 <br>
 <div>
 <p>Ngraph, Ngraph for X11 の著作権は石坂智（いしざかさとし）が保有しています。</p>
@@ -60,12 +57,9 @@ Temple Place, Suite 330, Boston, MA 02111-1307 USA)。
 </p>
 </div>
 
-<br>
-<hr>
-<br>
 
 
-<h2><a name="INSTALL" href="#TOP">環境設定</a></h2>
+<h2><a name="INSTALL">環境設定</a></h2>
 <br>
 <div>
 <ul>
@@ -118,8 +112,5 @@ Ngraphは2つの初期化ファイルを必要とします。
 </ol>
 </div>
 
-<br>
-<hr>
-<br>
-
+</div>
 </body></html>

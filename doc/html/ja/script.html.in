@@ -2,9 +2,11 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<link rel="stylesheet" href="../ngraph.css" media="screen" type="text/css"/>
 <title>Script</title>
 </head>
 <body>
+<div class="toc">
 <a name="TOP">&nbsp;</a>
 <h1><a href="./ngraph.html">Ngraphスクリプト</a></h1>
 <ul>
@@ -13,26 +15,20 @@
 <li><a href="#SCRIPT_STARTUP">スタートアップスクリプト</a>
 <li><a href="#COMMANDLINE">コマンドラインオプション</a>
 </ul>
+</div>
 
-<br>
-<hr size="5">
-<br>
-
-
-<h2><a name="SCRIPT" href="#TOP">概要</a></h2>
+<div class="chapter">
+<h2><a name="SCRIPT">概要</a></h2>
 <br>
 <p>
 Ngraph はスクリプト言語(Ngraph スクリプト)のインタープリタを備えています。
 グラフの設定(実際には各オブジェクトOBJECTのフィールド値)もNgraph スクリプト形式で保存されます。<br>
 </p>
 
-<br>
-<hr>
-<br>
 
 
 
-<h2><a name="SCRIPT_SYNTAX" href="#TOP">スクリプトの文法</a></h2>
+<h2><a name="SCRIPT_SYNTAX">スクリプトの文法</a></h2>
 <br>
 <p>Ngraph スクリプトの文法は， UNIX の sh (シェル) からジョブ制御機能を取り去り, オブジェクト操作命令を追加したものになっています。</p>
 <p>shと同等の文法・コマンドは以下の通りです(sh の文法の詳細については UNIX のマニュアルを参照してください)。</p>
@@ -167,11 +163,8 @@ dexpr exp<br>
 iexpr exp<br>
 </p>
 
-<br>
-<hr>
-<br>
 
-<h2><a name="SCRIPT_STARTUP" href="#TOP">スタートアップスクリプト</a></h2>
+<h2><a name="SCRIPT_STARTUP">スタートアップスクリプト</a></h2>
 <br>
 <div>
 Ngraph は実行時に<br>
@@ -201,12 +194,9 @@ Ngraph は実行時に<br>
 </ul>
 </div>
 
-<br>
-<hr>
-<br>
 
 
-<h2><a name="COMMANDLINE" href="#TOP">コマンドラインオプション</a></h2>
+<h2><a name="COMMANDLINE">コマンドラインオプション</a></h2>
 <br>
 <div>
 Ngraph を起動する時のコマンドラインオプションの形式は
@@ -272,8 +262,5 @@ Ngraph を起動する時のコマンドラインオプションの形式は
 </dl>
 </div>
 
-<br>
-<hr>
-<br>
-
+</div>
 </body></html>
