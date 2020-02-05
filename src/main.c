@@ -127,6 +127,7 @@ osx_set_env(const char *app)
   char *bundle, rpath[PATH_MAX];
   char bundle_contents[PATH_MAX], bundle_res[PATH_MAX], bundle_lib[PATH_MAX], bundle_bin[PATH_MAX], bundle_dat[PATH_MAX], bundle_etc[PATH_MAX];
   char xdg[PATH_MAX], ruby[PATH_MAX], pango[PATH_MAX], pixbuf[PATH_MAX], immodule[PATH_MAX];
+  const char *home;
   int r;
   struct stat stat_buf;
 
@@ -163,6 +164,10 @@ osx_set_env(const char *app)
   setenv("GDK_PIXBUF_MODULE_FILE", pixbuf, 1);
   snprintf(immodule, PATH_MAX, "%s/%s", bundle_etc, "gtk-3.0/gtk.immodules");
   setenv("GTK_IM_MODULE_FILE", immodule, 1);
+  home = getenv("HOME");
+  if (home) {
+    chdir(home);
+  }
 }
 #endif
 
