@@ -2755,23 +2755,13 @@ static int
 alloc_axis_math(struct objlist *obj, N_VALUE *inst, struct axis_config *aconf)
 {
   char *math;
-  MathEquation *code;
 
   aconf->code = NULL;
-
   _getobj(obj, "num_math", inst, &math);
-  if (math == NULL) {
+  if (math == NULL || math[0] == '\0') {
     return 0;
   }
-
-  if (math == NULL || math[0] == '\0') {
-    code = NULL;
-  } else {
-    code = get_axis_math(obj, math);
-  }
-
-  aconf->code = code;
-
+  aconf->code = get_axis_math(obj, math);
   return 0;
 }
 
