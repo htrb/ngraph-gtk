@@ -40,10 +40,6 @@ struct file_data {
   int id, source, x, y, mark, size, width, r, g, b, r2, g2, b2, show, mix;
 };
 
-struct caption_widget {
-  GtkWidget *check, *caption, *val, *label;
-};
-
 struct file_prm {
   GtkWidget *window, *x,*y, *width, *mix, *type, *caption, *frame, *shadow, *files;
   struct font_prm font;
