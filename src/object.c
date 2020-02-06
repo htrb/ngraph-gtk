@@ -136,8 +136,13 @@ error(struct objlist *obj,int code)
                    objname,errormsg1,errtable[code],errormsg2);
     }
   } else {
-    errtable=obj->errtable;
-    errnum=obj->errnum;
+    if (obj) {
+      errtable=obj->errtable;
+      errnum=obj->errnum;
+    } else {
+      errtable = NULL;
+      errnum = 0;
+    }
     code=code-100;
     if ((errtable==NULL) || (code>=errnum)) {
       printfstderr("%.64s: %.256s(%d)%.256s\n",objname,errormsg1,code,errormsg2);
@@ -5460,4 +5465,3 @@ match:
   return name;
 }
 #endif /* COMPILE_UNUSED_FUNCTIONS */
-
