@@ -4181,7 +4181,7 @@ create_axis(struct Viewer *d)
     argv[1] = obj2->name;
     argv[2] = NULL;
 
-    if (obj != NULL) {
+    if (obj && obj2) {
       undo = menu_save_undo(UNDO_TYPE_CREATE, argv);
       x1 = pdata[0]->x;
       y1 = pdata[0]->y;
@@ -4312,12 +4312,12 @@ create_axis(struct Viewer *d)
 	}
 	set_graph_modified();
       }
+      d->allclear = TRUE;
+      argv[0] = obj->name;
+      argv[1] = obj2->name;
+      argv[2] = NULL;
+      UpdateAll(argv);
     }
-    d->allclear = TRUE;
-    argv[0] = obj->name;
-    argv[1] = obj2->name;
-    argv[2] = NULL;
-    UpdateAll(argv);
   }
   arraydel2(d->points);
 }
