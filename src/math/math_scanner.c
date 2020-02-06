@@ -141,10 +141,6 @@ math_scanner_get_token(struct math_string *mstr)
   } else if (c == '#') {        /* comment */
     while (*str != '\0' && *str != '\n') {
       mstr->ofst++;
-      if (*str == '\n') {
-        mstr->line++;
-        mstr->ofst = 0;
-      }
       str++;
     }
     mstr->cur = str;
