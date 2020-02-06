@@ -51,8 +51,6 @@ typedef struct _Nruler {
 
 struct _NrulerMetric
 {
-  gchar *metric_name;
-  gchar *abbrev;
   /* This should be points_per_unit. This is the size of the unit
    * in 1/72nd's of an inch and has nothing to do with screen pixels */
   gdouble pixels_per_unit;
@@ -61,7 +59,7 @@ struct _NrulerMetric
 };
 
 static const struct _NrulerMetric Metric = {
-  "Centimeters", "Cn", 28.35, { 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000 }, { 1, 5, 10, 50, 100 }
+  28.35, { 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000 }, { 1, 5, 10, 50, 100 }
 };
 
 #define RULER_DATA_KEY "nruler"
