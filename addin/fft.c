@@ -17,8 +17,8 @@ double fr[MAXDATA], fi[MAXDATA], gr[MAXDATA], gi[MAXDATA];
 double workr[MAXDATA / 2], worki[MAXDATA / 2];
 
 static void fft(int p,int num);
-static int read_data(const char *fname1, int *n, int *p, double *min, double *max);
-static int save_data(const char *fname2, int n, int p, double minx, double maxx);
+static int read_data(const char *fname1, int *p, int *n, double *min, double *max);
+static int save_data(const char *fname2, int p, int n, double minx, double maxx);
 
 int
 main(int argc,char **argv)
