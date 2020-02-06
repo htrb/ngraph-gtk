@@ -105,4 +105,4 @@ po/remove-potcdate.sed
 osx/ngraph.icns
 
 test/*.log
-test/test.sh.trs
+test/*.sh.trs
