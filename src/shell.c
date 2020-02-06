@@ -4538,19 +4538,22 @@ void
 show_system_error(void)
 {
   LPVOID *msg;
+  int r;
 
-  FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER |
-		FORMAT_MESSAGE_FROM_SYSTEM |
-		FORMAT_MESSAGE_IGNORE_INSERTS,
-		NULL,
-		GetLastError(),
-		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-		(LPSTR) &msg,
-		0,
-		NULL);
+  r = FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER |
+                    FORMAT_MESSAGE_FROM_SYSTEM |
+                    FORMAT_MESSAGE_IGNORE_INSERTS,
+                    NULL,
+                    GetLastError(),
+                    MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+                    (LPSTR) &msg,
+                    0,
+                    NULL);
 
-  shputstderr((char *)msg);
-  LocalFree(msg);
+  if (r) {
+    shputstderr((char *)msg);
+    LocalFree(msg);
+  }
 }
 
 static void *
