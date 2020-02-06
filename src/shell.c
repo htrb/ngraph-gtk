@@ -3882,7 +3882,6 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 	      goto errexit;
 	    }
 	    if (nshell->quit) break;
-	    if (nshell->quit) break;
 	    /* exec inner command */
 	  } else {
 	    proc = check_cmd(prmcur->str);
