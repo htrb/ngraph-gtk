@@ -1835,7 +1835,7 @@ load_script(int argc, char **argv)
   rb_protect(wrap_load_script, fname, &state);
   if (state) {
     VALUE errinfo, errstr, errat;
-    int n, i;
+    int n;
     const char *cstr;
 
     errinfo = rb_errinfo();
