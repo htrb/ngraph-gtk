@@ -1832,11 +1832,11 @@ undo_save(struct objlist *obj)
 {
   struct undo_inst *inst;
 
-  undo_clear_redo(obj);
-
   if (obj == NULL) {
     return 1;
   }
+  undo_clear_redo(obj);
+
   if (obj->idp == -1) {
     return 1;
   }
