@@ -4177,11 +4177,11 @@ create_axis(struct Viewer *d)
   if (num >= 3) {
     obj = chkobject("axis");
     obj2 = chkobject("axisgrid");
-    argv[0] = obj->name;
-    argv[1] = obj2->name;
-    argv[2] = NULL;
 
     if (obj && obj2) {
+      argv[0] = obj->name;
+      argv[1] = obj2->name;
+      argv[2] = NULL;
       undo = menu_save_undo(UNDO_TYPE_CREATE, argv);
       x1 = pdata[0]->x;
       y1 = pdata[0]->y;
