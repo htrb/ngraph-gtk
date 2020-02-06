@@ -1535,8 +1535,7 @@ optimize_div_expression(MathExpression *exp, int *err)
       math_expression_free(new_exp);
       new_exp = left;
     } else if (right->u.value.val == 0.0) {
-      right->u.value.val = right->u.value.val;
-      new_exp->type = MATH_EXPRESSION_TYPE_DIV;
+      new_exp->type = MATH_EXPRESSION_TYPE_DIV; /* noting to do (a run-time error will be caused) */
     } else {
       right->u.value.val = 1.0 / right->u.value.val;
       new_exp->type = MATH_EXPRESSION_TYPE_MUL;
