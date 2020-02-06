@@ -48,10 +48,6 @@ struct fit_data {
   double prm[PRM_NUM];
 };
 
-struct caption_widget {
-  GtkWidget *check, *caption, *val, *label;
-};
-
 struct fit_prm {
   GtkWidget *window, *x,*y, *add_plus, *accuracy, *expand, *frame, *shadow, *combo;
   struct font_prm font;
