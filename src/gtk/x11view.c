@@ -4022,7 +4022,6 @@ create_legendx(struct Viewer *d)
   N_VALUE *inst;
   struct objlist *obj = NULL;
   struct Point **pdata;
-  char *objects[2];
 
   d->Capture = FALSE;
   num = arraynum(d->points);
@@ -4074,10 +4073,13 @@ create_legendx(struct Viewer *d)
     }
   }
   arraydel2(d->points);
-  d->allclear = FALSE;
-  objects[0] = obj->name;
-  objects[1] = NULL;
-  UpdateAll(objects);
+  if (obj) {
+    char *objects[2];
+    d->allclear = FALSE;
+    objects[0] = obj->name;
+    objects[1] = NULL;
+    UpdateAll(objects);
+  }
 }
 
 static void
