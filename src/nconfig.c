@@ -626,7 +626,6 @@ copyconfig(void)
     g_free(homename);
     fclose(homefp);
     g_free(libname);
-    fclose(libfp);
     return FALSE;
   }
   g_free(homename);
