@@ -88,7 +88,6 @@ cmecho(struct nshell *nshell,int argc,char **argv)
 int
 cmbasename(struct nshell *nshell,int argc,char **argv)
 {
-  int len, ext_len;
   char *bname;
 
   if (argc < 2) {
@@ -104,9 +103,8 @@ cmbasename(struct nshell *nshell,int argc,char **argv)
     return 1;
   }
 
-  if (argc == 2) {
-    len = strlen(bname);
-  } else {
+  if (argc > 2) {
+    int len, ext_len;
     len = strlen(bname);
     ext_len = strlen(argv[2]);
 
