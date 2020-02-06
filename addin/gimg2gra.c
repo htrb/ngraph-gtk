@@ -320,7 +320,7 @@ gra_save(GdkPixbuf *im, char *gra_file)
 	  "I,5,0,0,%d,%d,10000\n"
 	  "V,5,0,0,%d,%d,1\n"
 	  "A,5,0,1,0,0,1000\n",
-	  (PRGNAME) ? PRGNAME : "",
+	  PRGNAME,
 	  w * DotSize, h * DotSize,
 	  w * DotSize, h * DotSize);
 
