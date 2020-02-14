@@ -65,7 +65,7 @@ int ofile_calc_fit_equation(struct objlist *obj, int id, double x, double *y);
 int open_array(char *objstr, struct array_prm *ary);
 char *odata_get_functions(void);
 char *odata_get_constants(void);
-const char *parse_data_line(struct narray *array, const char *str, const char *ifs, const char *comment, int csv);
+const char *parse_data_line(struct narray *array, const char *str, const char *ifs, int csv);
 int n_strtod(const char *str, MathValue *val);
 
 #endif
