@@ -4170,7 +4170,7 @@ check_add_str(struct narray *array, const char *str, int len)
 }
 
 const char *
-parse_data_line(struct narray *array, const char *str, const char *ifs, const char *comment, int csv)
+parse_data_line(struct narray *array, const char *str, const char *ifs, int csv)
 {
   const char *po;
   int len;
