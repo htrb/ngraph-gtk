@@ -3805,7 +3805,7 @@ set_headline_table(struct FileDialog *d, char *s, int max_lines)
   po = s;
   for (n = 0; n < max_lines; n++) {
     arrayinit(lines + n, sizeof(char *));
-    po = parse_data_line(lines + n, po, ifs->str, remark, csv);
+    po = parse_data_line(lines + n, po, ifs->str, csv);
     if (po == NULL) {
       n++;
       break;
