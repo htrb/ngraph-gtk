@@ -53,9 +53,9 @@ exec_init_script(int argc, char **argv, struct objlist *obj, int id)
 	exit(1);
       }
 #if WINDOWS
-      for (j = 0; inifile[i] != '\0'; i++) {
-	if (inifile[i] == '\\') {
-	  name[i] = '/';
+      for (j = 0; inifile[j] != '\0'; j++) {
+	if (inifile[j] == '\\') {
+	  name[j] = '/';
 	}
       }
 #endif  /* WINDOWS */
