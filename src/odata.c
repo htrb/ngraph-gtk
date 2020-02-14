@@ -10037,7 +10037,7 @@ bisection(MathEquation *eq, double a, double b, double y, double tolerance, doub
   if (b < a) {
     c = a;
     a = b;
-    a = c;
+    b = c;
   }
 
   val.type = MATH_VALUE_NORMAL;
