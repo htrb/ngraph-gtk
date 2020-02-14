@@ -1723,7 +1723,7 @@ file_string_column(MathFunctionCallExpression *exp, MathEquation *eq, MathValue 
   array = &(fp->line_array.line_array);
   n = arraynum(array);
   if (n < 1) {
-    parse_data_line(array, fp->line_array.line, fp->ifs, fp->remark, fp->csv);
+    parse_data_line(array, fp->line_array.line, fp->ifs, fp->csv);
     n = arraynum(array);
   }
   if (col < 0) {
