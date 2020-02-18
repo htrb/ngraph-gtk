@@ -2934,7 +2934,7 @@ mouse_down_move_data(struct Viewer *d)
       arraydel(&iarray);
     }
 
-    if (ax == -1 || ax == -1)
+    if (ax == -1 || ay == -1)
       goto ErrEnd;
 
     argv[0] = (char *) &(d->MouseX1);
