@@ -478,7 +478,7 @@ g2nul_strwidth(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
 		int argc, char **argv)
 {
   char *font, *s, *ptr;
-  int size, width, i, style, w;
+  int size, i, style, w;
   gunichar ch;
 
   s = argv[3];
@@ -492,6 +492,7 @@ g2nul_strwidth(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
 
   w = 0;
   for (ptr = s; ptr[0]; ptr = g_utf8_next_char(ptr)) {
+    int width;
     ch = g_utf8_get_char(ptr);
     width = -1;
     if (ch < 256 && nhash_get_int(FontDataHash, font, &i) == 0) {
