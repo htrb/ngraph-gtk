@@ -900,7 +900,7 @@ fitfit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   struct fitlocal *fitlocal;
   int i,through,dimension,deriv,disp;
   enum FIT_OBJ_TYPE type;
-  double x,y,x0,y0,converge,wt;
+  double x0,y0,converge,wt;
   struct narray *darray;
   double *data,*wdata;
   char *equation,*func,prm[32];
@@ -978,6 +978,7 @@ fitfit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   num=0;
   err2=err3=FALSE;
   for (i=0;i<dnum;i++) {
+    double x, y;
     x=data[i*2];
     y=data[i*2+1];
     if (weight) {
