@@ -219,7 +219,7 @@ static struct nhash *
 nhash_get(NHASH hash, const char *key)
 {
   struct nhash *ptr;
-  int hk, r;
+  int hk;
 
   if (key == NULL)
     return NULL;
@@ -229,6 +229,7 @@ nhash_get(NHASH hash, const char *key)
   ptr = hash[hk];
 
   while (ptr) {
+    int r;
     r = strcmp(key, ptr->key);
 
     if (r < 0) {
