@@ -190,7 +190,7 @@ ngraph_object_put(struct objlist *obj, const char *vname, int id, ngraph_value *
 static const char **
 allocate_obj_arg(struct objlist *obj, const char *vname, ngraph_arg *arg)
 {
-  int i, n, num, is_a;
+  int i, num;
   const char *arglist;
   const char **ary;
 
@@ -215,8 +215,10 @@ allocate_obj_arg(struct objlist *obj, const char *vname, ngraph_arg *arg)
       ary[i] = arg->ary[i].str;
     }
   } else {
+    int n;
     n = 0;
     for (i = 0; arglist[i]; i++) {
+      int is_a;
       if (n >= num) {
 	break;
       }
