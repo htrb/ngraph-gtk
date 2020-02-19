@@ -496,7 +496,6 @@ list_store_set_sort_all(GtkWidget *tview)
 {
   GList *list, *ptr;
   int i;
-  GtkTreeViewColumn *column;
 
   list = gtk_tree_view_get_columns(GTK_TREE_VIEW(tview));
 
@@ -504,6 +503,7 @@ list_store_set_sort_all(GtkWidget *tview)
     return;
 
   for (ptr = list, i = 0; ptr; ptr = ptr->next, i++) {
+    GtkTreeViewColumn *column;
     column = GTK_TREE_VIEW_COLUMN(ptr->data);
     gtk_tree_view_column_set_sort_column_id(column, i);
     gtk_tree_view_column_set_clickable(column, TRUE);
