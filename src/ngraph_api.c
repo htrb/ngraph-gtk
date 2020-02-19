@@ -49,7 +49,7 @@ allocate_iarray(ngraph_arg *arg)
 static struct narray *
 allocate_darray(ngraph_arg *arg)
 {
-  struct narray *array, *ptr;
+  struct narray *array;
   int i;
 
   if (arg == NULL) {
@@ -66,6 +66,7 @@ allocate_darray(ngraph_arg *arg)
   }
 
   for (i = 0; i < arg->num; i++) {
+    struct narray *ptr;
     ptr = arrayadd(array, &arg->ary[i].d);
     if (ptr == NULL) {
       arrayfree(array);
