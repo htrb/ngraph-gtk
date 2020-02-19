@@ -1077,7 +1077,7 @@ int
 cmput(struct nshell*nshell,int argc,char **argv)
 {
   struct objlist *obj;
-  int i,j,id,anum,*adata;
+  int i,j,anum,*adata;
   struct narray iarray;
 
   if (argc<2) {
@@ -1099,6 +1099,7 @@ cmput(struct nshell*nshell,int argc,char **argv)
     return ERRNOFIELD;
   }
   for (i=0;i<anum;i++) {
+    int id;
     id=adata[i];
     for (j=2;j<argc;j++) {
       if (sputfield(obj,id,argv[j])!=0) {
