@@ -362,7 +362,6 @@ darrayjoin(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   GString *str;
   int i, n;
   char *sep, *ptr;
-  double val;
   struct darray_local *local;
 
   _getobj(obj, "_local", inst, &local);
@@ -394,6 +393,7 @@ darrayjoin(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   }
 
   for (i = 0; i < n; i++) {
+    double val;
     val = arraynget_double(array, i);
     g_string_append_printf(str, "%.15e%s", val, (i == n - 1) ? "" : sep);
   }
