@@ -1273,7 +1273,7 @@ cmexe(struct nshell*nshell,int argc,char **argv)
 {
   struct objlist *obj;
   struct narray iarray;
-  int i,j,id,anum,*adata;
+  int i,j,anum,*adata;
 
   if (argc<2) {
     sherror4(argv[0],ERROBJARG);
@@ -1294,6 +1294,7 @@ cmexe(struct nshell*nshell,int argc,char **argv)
     return ERRNOFIELD;
   }
   for (j=0;j<anum;j++) {
+    int id;
     id=adata[j];
     for (i=2;i<argc;i++) {
       if (sexefield(obj,id,argv[i])!=0) {
