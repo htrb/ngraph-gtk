@@ -631,7 +631,7 @@ arcflip(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 static int
 arczoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
-  int i,snum,*sdata,rx,ry,x,y,refx,refy,width,preserve_width;
+  int snum,*sdata,rx,ry,x,y,refx,refy,width,preserve_width;
   double zoom_x, zoom_y;
   struct narray *style;
 
@@ -661,6 +661,7 @@ arczoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
     ry = 1;
 
   if (! preserve_width) {
+    int i;
     double zoom;
     zoom = MIN(zoom_x, zoom_y);
     width=width*zoom;
