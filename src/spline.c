@@ -198,7 +198,7 @@ spline(double x[],double y[],double c1[],double c2[],double c3[],
            int num,int bc0,int bc1,double df0,double df1)
 {
   int i;
-  double h,xx,m;
+  double xx;
 
   if (splinecheck(c1,c2,c3,x,y,num)!=0) return -1;
   if (splineboundary(c1,c2,c3,x,y,num,bc0,bc1,df0,df1)!=0) return -1;
@@ -208,6 +208,7 @@ spline(double x[],double y[],double c1[],double c2[],double c3[],
   c3[num-1]=c1[num-1];
   for (i=num-2;i>=0;i--) c3[i]=c1[i]-c2[i]*c3[i+1];
   for (i=0;i<num-1;i++) {
+    double h, m;
      h=x[i+1]-x[i];
      m=c3[i];
      c3[i]=(c3[i+1]-m)/6/h;
