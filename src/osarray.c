@@ -384,7 +384,7 @@ sarrayjoin(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   struct narray *array;
   GString *str;
   int i, n;
-  char *sep, *val, *ptr;
+  char *sep, *ptr;
 
   g_free(rval->str);
   rval->str = NULL;
@@ -412,6 +412,7 @@ sarrayjoin(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   }
 
   for (i = 0; i < n; i++) {
+    char *val;
     val = arraynget_str(array, i);
     g_string_append_printf(str, "%s%s", val, (i == n - 1) ? "" : sep);
   }
