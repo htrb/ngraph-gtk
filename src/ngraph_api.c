@@ -18,7 +18,7 @@ union ngraph_val {
 static struct narray *
 allocate_iarray(ngraph_arg *arg)
 {
-  struct narray *array, *ptr;
+  struct narray *array;
   int i;
 
   if (arg == NULL) {
@@ -35,6 +35,7 @@ allocate_iarray(ngraph_arg *arg)
   }
 
   for (i = 0; i < arg->num; i++) {
+    struct narray *ptr;
     ptr = arrayadd(array, &arg->ary[i].i);
     if (ptr == NULL) {
       arrayfree(array);
