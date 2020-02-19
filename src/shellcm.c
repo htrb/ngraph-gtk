@@ -1363,8 +1363,8 @@ cmdexpr(struct nshell*nshell,int argc,char **argv)
 int
 cmread(struct nshell *nshell,int argc,char **argv)
 {
-  int c,i,len;
-  char *po,*s2,*ifs;
+  int c,len;
+  char *po;
   GString *s;
 
   s = g_string_sized_new(64);
@@ -1383,9 +1383,12 @@ cmread(struct nshell *nshell,int argc,char **argv)
   if (argc == 1) {
     addval(nshell, "REPLY", s->str);
   } else {
+    char *ifs;
+    int i;
     po = s->str;
     ifs = getval(nshell, "IFS");
     for (i = 1; i < argc; i++) {
+      char *s2;
       s2 = getitok2(&po, &len, ifs);
       if (s2) {
         addval(nshell, argv[i], s2);
