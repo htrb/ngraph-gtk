@@ -989,7 +989,7 @@ cmget(struct nshell*nshell,int argc,char **argv)
   struct objlist *obj;
   struct narray iarray;
   char *field,*valstr;
-  int i,j,k,l,id,anum,len,*adata;
+  int i,j,k,l,anum,len,*adata;
   int nowrite,nofield,noid,quote,perm,multi,escape;
 
   if (argc<2) {
@@ -1027,6 +1027,7 @@ cmget(struct nshell*nshell,int argc,char **argv)
   if (anum==1) multi=FALSE;
   else multi=TRUE;
   for (l=0;l<anum;l++) {
+    int id;
     id=adata[l];
     if (j==argc) {
       for (i=0;i<chkobjfieldnum(obj);i++) {
