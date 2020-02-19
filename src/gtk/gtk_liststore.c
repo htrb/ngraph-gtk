@@ -140,12 +140,12 @@ add_font_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *
 {
   struct fontmap *fcur;
   char *font;
-  int match;
 
   getobj(obj, field, id, 0, NULL, &font);
 
   fcur = Gra2cairoConf->fontmap_list_root;
   while (fcur) {
+    int match;
     match = ! g_strcmp0(font, fcur->fontalias);
     add_text_combo_item_to_cbox(list, iter, parent, column_id, -1, fcur->fontalias, TOGGLE_RADIO, match);
     fcur = fcur->next;
