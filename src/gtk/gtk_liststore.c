@@ -967,11 +967,11 @@ list_store_select_int(GtkWidget *w, int col, int id)
   GtkTreeIter iter;
   GtkTreeModel *model;
   gboolean state;
-  int val;
 
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(w));
   state = gtk_tree_model_get_iter_first(model, &iter);
   while (state) {
+    int val;
     val = list_store_get_int(w, &iter, col);
     if (val == id) {
       list_store_select_iter(w, &iter);
