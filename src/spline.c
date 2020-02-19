@@ -29,12 +29,13 @@
 static int
 splinecheck(double d[],double mu[],double ram[],double x[],double y[], int num)
 {
-  double h1,h2;
+  double h1;
   int i;
 
   h1=x[1]-x[0];
   if (h1==0) return -1;
   for (i=1;i<num-1;i++) {
+    double h2;
     h2=x[i+1]-x[i];
     if ((h2==0) || (h1==0) || (h1+h2==0)) return -1;
     h1=h2;
