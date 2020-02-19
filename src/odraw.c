@@ -304,11 +304,12 @@ put_hsb2(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
 static int
 curve_expand(double c[], double x0, double y0, diffunc gdiff, intpfunc gintpf, struct narray *expand_points)
 {
-  double d, dx, dy, ddx, ddy, dd, x, y;
+  double d, dx, dy, ddx, ddy, x, y;
   int gx2, gy2;
 
   d = 0;
   while (d < 1) {
+    double dd;
     gdiff(d, c, &dx, &dy, &ddx, &ddy, NULL);
     if (fabs(dx) + fabs(ddx) / 3 <= 1E-100) {
       dx = 1;
