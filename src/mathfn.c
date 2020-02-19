@@ -125,10 +125,10 @@ matsolv(int dim,matrix a,vector b,vector x)
 {
   matrix ai;
   int i,j;
-  double d;
 
   if (matinv(dim,a,ai)) return -1;
   for (i=0;i<dim;i++) {
+    double d;
     d=0;
     for (j=0;j<dim;j++) d+=ai[i][j]*b[j];
     x[i]=d;
