@@ -576,9 +576,8 @@ void *
 addgra2null(void)
 /* addgra2null() returns NULL on error */
 {
-  unsigned int i;
-
   if (FontDataHash == NULL) {
+    unsigned int i;
     FontDataHash = nhash_new();
     if (FontDataHash == NULL) {
       return NULL;
