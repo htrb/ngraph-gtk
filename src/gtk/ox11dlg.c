@@ -503,7 +503,7 @@ dlgspin(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
 static int
 dlgcheck(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  int locksave, *r, i, n, inum, *ptr, x, y, ret;
+  int locksave, *r, i, n, inum, x, y, ret;
   struct narray *array, *sarray, *iarray;
   char *title, *caption;
   struct narray *buttons;
@@ -554,6 +554,7 @@ dlgcheck(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
 
   inum = arraynum(iarray);
   for (i = 0; i < inum; i++) {
+    int *ptr;
     ptr = (int *) arraynget(iarray, i);
     if (ptr && *ptr >= 0 && *ptr < n)
       r[*ptr] = 1;
