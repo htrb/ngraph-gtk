@@ -265,11 +265,11 @@ printexp(struct nhash *h, void *data)
 int
 cmexport(struct nshell *nshell,int argc,char **argv)
 {
-  int i;
 #if USE_HASH
   if (argv[1] == NULL) {
     nhash_each(nshell->exproot, printexp, NULL);
   } else {
+    int i;
     for (i = 1; i < argc; i++) {
       if (addexp(nshell, argv[i]) == NULL)
 	return ERR;
@@ -287,6 +287,7 @@ cmexport(struct nshell *nshell,int argc,char **argv)
     }
     return 0;
   } else {
+    int i;
     for (i=1;i<argc;i++)
       if (addexp(nshell,argv[i])==NULL) return ERR;
     return 0;
