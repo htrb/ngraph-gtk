@@ -288,7 +288,6 @@ gra2cairofile_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
   char code, *fname;
   int *cpar, format, r;
   struct gra2cairo_local *local;
-  cairo_surface_t *surface;
 
   local = (struct gra2cairo_local *)argv[2];
   code = *(char *)(argv[3]);
@@ -306,6 +305,7 @@ gra2cairofile_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
   case 'E':
     _getobj(obj, "format", inst, &format);
     if (local->cairo) {
+      cairo_surface_t *surface;
       switch (format) {
       case TYPE_PNG:
 	gra2cairo_draw_path(local);
