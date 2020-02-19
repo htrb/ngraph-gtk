@@ -438,7 +438,7 @@ fitpoly(struct fitlocal *fitlocal,
 */
 {
   int i,j,k,dim;
-  double yy,y1,y2,derror,sy,correlation,wt,sum;
+  double yy,derror,sy,correlation,wt,sum;
   vector b,x1,x2,coe;
   matrix m;
 
@@ -453,6 +453,7 @@ fitpoly(struct fitlocal *fitlocal,
   }
   sum=0;
   for (k=0;k<num;k++) {
+    double y1;
     if (weight) wt=wdata[k];
     else wt=1;
     sum+=wt;
@@ -477,6 +478,7 @@ fitpoly(struct fitlocal *fitlocal,
       }
   }
   if (through) {
+    double y2;
     y2=y0;
     x2[0]=1;
     for (i=1;i<dim;i++) x2[i]=x2[i-1]*x0;
