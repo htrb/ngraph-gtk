@@ -46,12 +46,13 @@ splinecheck(double d[],double mu[],double ram[],double x[],double y[], int num)
 static void
 splinesetval(double d[],double mu[],double ram[],double x[],double y[], int num)
 {
-  double h1,h2,y1,y2;
+  double h1,y1;
   int i;
 
   h1=x[1]-x[0];
   y1=y[1]-y[0];
   for (i=1;i<num-1;i++) {
+    double h2, y2;
     h2=x[i+1]-x[i];
     y2=y[i+1]-y[i];
     ram[i]=h2/(h1+h2);
