@@ -576,7 +576,7 @@ copyconfig(void)
 {
   struct objlist *sys;
   char *libdir,*homedir,*buf;
-  char *libname,*homename,*bak;
+  char *libname,*homename;
   FILE *libfp,*homefp;
   int r;
   GStatBuf sbuf;
@@ -595,6 +595,7 @@ copyconfig(void)
   }
 
   if (findfilename(homedir,CONFSEP,CONF)) {
+    char *bak;
     if ((bak=getfilename(homedir,CONFSEP,CONFBAK))!=NULL) {
       if (findfilename(homedir,CONFSEP,CONFBAK)) g_unlink(bak);
       if ((homename=getfilename(homedir,CONFSEP,CONF))!=NULL) {
