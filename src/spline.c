@@ -89,12 +89,12 @@ static int
 splinesolv2(double d[],double mu[],double ram[],double x[],double y[], int num,double *xx)
 {
   int i;
-  double h;
 
   *xx=-ram[num-1]*0.5;
   d[num-1]=d[num-1]*0.5;
   ram[num-1]=mu[num-1]*0.5;
   for (i=num-2;i>=0;i--) {
+    double h;
     h=2-ram[i]*ram[i+1];
     if (h==0) return -1;
     *xx=-ram[i]*(*xx)/h;
