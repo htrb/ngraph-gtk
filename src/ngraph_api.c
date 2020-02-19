@@ -272,7 +272,7 @@ allocate_obj_arg(struct objlist *obj, const char *vname, ngraph_arg *arg)
 static void
 free_obj_arg(const char **ary, struct objlist *obj, const char *vname, ngraph_arg *arg)
 {
-  int i, n, num, is_a;
+  int i, n, num;
   const char *arglist;
 
   num = arg->num;
@@ -287,6 +287,7 @@ free_obj_arg(const char **ary, struct objlist *obj, const char *vname, ngraph_ar
 
   n = 0;
   for (i = 0; arglist[i]; i++) {
+    int is_a;
     if (n >= num) {
       break;
     }
