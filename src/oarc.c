@@ -89,7 +89,6 @@ static void
 get_dx_dy(int rx, int ry, int angle,
 	  double *x, double *y, double *dx, double *dy)
 {
-  double a, b;
   *x = rx * cos(- angle * MPI / 18000);
   *y = ry * sin(- angle * MPI / 18000);
   if (*y == 0) {
@@ -100,6 +99,7 @@ get_dx_dy(int rx, int ry, int angle,
       *dy = -1;
     }
   } else {
+    double a, b;
     a = 1.0 * ry * ry * (*x) / rx / rx / (*y);
     b = 1 / sqrt(1 + a * a);
     if (*y < 0) {
