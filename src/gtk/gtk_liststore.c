@@ -258,7 +258,7 @@ void
 add_line_style_item_to_cbox(GtkTreeStore *list, GtkTreeIter *parent, int column_id, struct objlist *obj, const char *field, int id)
 {
   GtkTreeIter iter;
-  int i, active;
+  int i;
   char *str;
 
   sgetobjfield(obj, id, field, NULL, &str, FALSE, FALSE, FALSE);
@@ -268,6 +268,7 @@ add_line_style_item_to_cbox(GtkTreeStore *list, GtkTreeIter *parent, int column_
 
   add_text_combo_item_to_cbox(list, &iter, parent, -1, -1, _("Line style"), TOGGLE_NONE, FALSE);
   for (i = 0; FwLineStyle[i].name; i++) {
+    int active;
     active = ! g_strcmp0(str, FwLineStyle[i].list);
     add_text_combo_item_to_cbox(list, NULL, &iter, column_id, i, _(FwLineStyle[i].name), TOGGLE_RADIO, active);
   }
