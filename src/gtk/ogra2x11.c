@@ -140,13 +140,13 @@ gtkevpaint(GtkWidget *w, cairo_t *cr, gpointer user_data)
 static int
 gtkclose(GtkWidget *widget, GdkEvent *event, gpointer user_data)
 {
-  N_VALUE *inst;
   struct gtklocal *local;
   int i, id;
   struct objlist *obj;
 
   obj = chkobject("gra2gtk");
   for (i = 0; i <= chkobjlastinst(obj); i++) {
+    N_VALUE *inst;
     inst = chkobjinst(obj, i);
     _getobj(obj, "_gtklocal", inst, &local);
     if (local->mainwin == widget) {
