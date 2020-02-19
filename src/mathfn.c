@@ -83,7 +83,6 @@ static int
 matinv(int dim,matrix m,matrix mi)
 {
   int i,j,k;
-  double max;
   int pivot;
   vector vec;
 
@@ -92,6 +91,7 @@ matinv(int dim,matrix m,matrix mi)
       if (i==j) mi[i][j]=1;
       else mi[i][j]=0;
   for (i=0;i<dim;i++) {
+    double max;
     max=0;
     for (j=i;j<dim;j++) {
       if (fabs(m[j][i])>max) {
