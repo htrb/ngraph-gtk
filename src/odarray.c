@@ -410,7 +410,7 @@ cache_data(struct objlist *obj, N_VALUE *inst, struct darray_local *local)
 {
   struct narray *array;
   double min, max, sum, ssum, *data;
-  int i, n;
+  int n;
 
   _getobj(obj, "@", inst, &array);
   n = arraynum(array);
@@ -420,6 +420,7 @@ cache_data(struct objlist *obj, N_VALUE *inst, struct darray_local *local)
   sum = 0;
   ssum = 0;
   if (n > 0) {
+    int i;
     min = max = data[0];
     for (i = 0; i < n; i++) {
       sum += data[i];
