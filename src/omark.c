@@ -232,7 +232,7 @@ markflip(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 static int
 markzoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
-  int i,x,y,size,refx,refy,width,snum,*sdata,preserve_width;
+  int x,y,size,refx,refy,width,snum,*sdata,preserve_width;
   double zoom, zoom_x, zoom_y;
   struct narray *style;
 
@@ -254,6 +254,7 @@ markzoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   y=(y-refy)*zoom_y+refy;
   size=size*zoom;
   if (! preserve_width) {
+    int i;
     width=width*zoom;
     for (i=0;i<snum;i++) sdata[i]=sdata[i]*zoom;
   }
