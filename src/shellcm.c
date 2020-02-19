@@ -1161,7 +1161,7 @@ cmcpy(struct nshell*nshell,int argc,char **argv)
 {
   struct objlist *obj;
   struct narray iarray;
-  int i,j,anum,sid,did,*adata;
+  int i,j,anum,*adata;
 
   if (argc<2) {
     sherror4(argv[0],ERROBJARG);
@@ -1177,6 +1177,7 @@ cmcpy(struct nshell*nshell,int argc,char **argv)
     return ERRTWOINST;
   }
   for (i=1;i<anum;i++) {
+    int sid, did;
     sid=adata[0];
     did=adata[i];
     if (argc == 2) {
