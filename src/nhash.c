@@ -304,11 +304,11 @@ static void
 btree_cat(struct nhash *dest, struct nhash *src)
 {
   struct nhash *h;
-  int r;
 
   h = dest;
 
   while (1) {
+    int r;
     r = strcmp(h->key, src->key);
     if (r < 0) {
       if (h->l == NULL) {
