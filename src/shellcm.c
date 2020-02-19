@@ -1117,7 +1117,7 @@ cmdup(struct nshell *nshell, int argc, char **argv)
 {
   struct objlist *obj;
   struct narray iarray;
-  int i, anum, sid, did, *adata;
+  int i, anum, *adata;
 
   if (argc < 2) {
     sherror4(argv[0], ERROBJARG);
@@ -1138,6 +1138,7 @@ cmdup(struct nshell *nshell, int argc, char **argv)
   }
 
   for (i = 0; i < anum; i++) {
+    int sid, did;
     sid = adata[i];
     did = newobj(obj);
     if (did < 0) {
