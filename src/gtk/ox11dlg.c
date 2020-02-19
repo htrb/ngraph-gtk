@@ -650,7 +650,7 @@ dlggetopenfiles(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
 {
   struct narray *array;
   char **d;
-  int anum, i;
+  int anum;
   char *filter = NULL, *initfile = NULL;
   int locksave;
   int ret;
@@ -680,6 +680,7 @@ dlggetopenfiles(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
   ret = nGetOpenFileNameMulti(get_toplevel_window(), _("Open files"),
 			      filter, NULL, initfile, &file, TRUE);
   if (ret == IDOK) {
+    int i;
     farray = arraynew(sizeof(char *));
     for (i = 0; file[i]; i++) {
       changefilename(file[i]);
