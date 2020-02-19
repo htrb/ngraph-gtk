@@ -414,7 +414,6 @@ iarrayjoin(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   GString *str;
   int i, n;
   char *sep, *ptr;
-  int val;
 
   g_free(rval->str);
   rval->str = NULL;
@@ -442,6 +441,7 @@ iarrayjoin(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   }
 
   for (i = 0; i < n; i++) {
+    int val;
     val = arraynget_int(array, i);
     g_string_append_printf(str, "%d%s", val, (i == n - 1) ? "" : sep);
   }
