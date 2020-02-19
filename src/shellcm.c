@@ -728,7 +728,6 @@ cmobject(struct nshell *nshell,int argc,char **argv)
 {
   struct objlist *obj;
   int i,j,tab;
-  char *name;
 
   if (argc<2) {
     tab=0;
@@ -754,6 +753,7 @@ cmobject(struct nshell *nshell,int argc,char **argv)
     printfstdout("current instance: %d\n",chkobjcurinst(obj));
     printfstdout("last instance id: %d\n",chkobjlastinst(obj));
     for (i=0;i<chkobjfieldnum(obj);i++) {
+      char *name;
       name=chkobjfieldname(obj,i);
       dispfield(obj,name);
     }
