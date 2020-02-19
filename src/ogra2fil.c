@@ -80,10 +80,8 @@ gra2f_output(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
                  int argc,char **argv)
 {
   struct gra2flocal *gra2flocal;
-  struct objlist *sys;
   char code;
   int *cpar;
-  int i;
   char *cstr;
   char *fname,*graf,*sname,*sver;
 
@@ -93,6 +91,7 @@ gra2f_output(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
   cstr=argv[5];
 
   if (code=='I') {
+    struct objlist *sys;
     if (gra2flocal->fil!=NULL) fclose(gra2flocal->fil);
     gra2flocal->fil=NULL;
     _getobj(obj,"file",inst,&fname);
@@ -109,6 +108,7 @@ gra2f_output(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
     fprintf(gra2flocal->fil,"%%Creator: %s ver %s\n",sname,sver);
   }
   if (gra2flocal->fil!=NULL) {
+    int i;
     fputc(code,gra2flocal->fil);
     if (cpar[0]==-1) {
       for (i=0;cstr[i]!='\0';i++)
