@@ -13,7 +13,7 @@
 gchar *
 ascii2greece(const gchar *src)
 {
-  int i, j, k, c, len, slen, dlen;
+  int i, j, k, c, slen, dlen;
   static char *u[] = {"Α", "Β", "Χ", "Δ", "Ε", "Φ", "Γ", "Η", "Ι",
 		      "ϑ", "Κ", "Λ", "Μ", "Ν", "Ο", "Π", "Θ", "Ρ",
 		      "Σ", "Τ", "Υ", "ϛ", "Ω", "Ξ", "Ψ", "Ζ"};
@@ -31,6 +31,7 @@ ascii2greece(const gchar *src)
 
   tmp[0] = '\0';
   for (i = j = 0; i < slen; i++) {
+    int len;
     if (src[i] >= 'a' && src[i] <= 'z') {
       c = src[i] - 'a';
       ch = l[c];
@@ -101,4 +102,3 @@ utf8_to_sjis(char *src)
 {
   return str2utf8(src, "utf-8", "CP932//TRANSLIT");
 }
-
