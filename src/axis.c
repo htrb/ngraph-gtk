@@ -148,7 +148,6 @@ int
 getaxisposition(struct axislocal *alocal, /*@out@*/ double *po)
 {
   int rcode;
-  double dd;
 
   if (alocal->counts>=alocal->countsend) {
     if (alocal->atype==AXISLOGSMALL)
@@ -163,6 +162,7 @@ getaxisposition(struct axislocal *alocal, /*@out@*/ double *po)
       alocal->countm=1;
       rcode=3;
       if (alocal->atype==AXISINVERSE) {
+        double dd;
         if (((alocal->dposm>=0) && (alocal->min>=0))
          || ((alocal->dposm<0) && (alocal->min<0))) dd=10;
         else dd=0.1;
