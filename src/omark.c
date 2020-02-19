@@ -172,8 +172,6 @@ markrotate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   px = *(int *) argv[4];
   py = *(int *) argv[5];
 
-  angle = *(int *) argv[2];
-
 #if MODIFY_MARK_TYPE
   _getobj(obj, "type", inst, &type);
   type = mark_rotate(angle, type)
