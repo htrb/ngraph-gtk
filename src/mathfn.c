@@ -184,7 +184,7 @@ HSB2RGB(double h, double s, double b, int *R, int *G, int *B)
 int
 bsearch_int(int *ary, int n, int val, int *idx)
 {
-  int min, max, i;
+  int min, max;
 
   if (n == 0 || ary == NULL) {
     if (idx) {
@@ -197,6 +197,7 @@ bsearch_int(int *ary, int n, int val, int *idx)
   max = n - 1;
 
   while (1) {
+    int i;
     i = (min + max) / 2;
 
     if (ary[i] == val) {
