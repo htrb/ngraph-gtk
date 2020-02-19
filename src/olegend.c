@@ -72,10 +72,6 @@ int
 legendmatch(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy,err;
-  int bminx,bminy,bmaxx,bmaxy;
-  int i,num,*data;
-  double x1,y1,x2,y2;
-  double r,r2,r3,ip;
   struct narray *array;
 
   rval->i=FALSE;
@@ -89,9 +85,11 @@ legendmatch(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
   maxy=*(int *)argv[5];
   err=*(int *)argv[6];
   if ((minx==maxx) && (miny==maxy)) {
+    int i, *data, num;
     num=arraynum(array)-4;
     data=arraydata(array);
     for (i=0;i<num-2;i+=2) {
+      double x1, y1, x2, y2, r, r2, r3;
       x1=data[4+i];
       y1=data[5+i];
       x2=data[6+i];
@@ -104,6 +102,7 @@ legendmatch(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
         break;
       }
       if (r2!=0) {
+        int ip;
         ip=((x2-x1)*(minx-x1)+(y2-y1)*(miny-y1))/r2;
         if ((0<=ip) && (ip<=r2)) {
           x2=x1+(x2-x1)*ip/r2;
@@ -117,6 +116,7 @@ legendmatch(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
       }
     }
   } else {
+    int bminx, bminy, bmaxx, bmaxy;
     if (arraynum(array)<4) return 1;
     bminx=arraynget_int(array,0);
     bminy=arraynget_int(array,1);
