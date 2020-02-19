@@ -558,11 +558,12 @@ cmtype(struct nshell *nshell,int argc,char **argv)
 {
   struct prmlist *prm2;
   struct cmdlist *cmdcur;
-  int i,j;
+  int j;
   char *cmdname;
   shell_proc proc;
 
   for (j=1;j<argc;j++) {
+    int i;
     i = check_cpcmd(argv[j]);
     if (i >= 0) {
       printfstdout("%.256s is a shell keyword.\n", argv[j]);
