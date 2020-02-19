@@ -340,7 +340,7 @@ rectchange(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 static int
 rectzoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
-  int i,snum,*sdata,refx,refy,x1,y1,x2,y2,width,preserve_width;
+  int snum,*sdata,refx,refy,x1,y1,x2,y2,width,preserve_width;
   double zoom_x, zoom_y;
   struct narray *style;
 
@@ -363,6 +363,7 @@ rectzoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   x2=(x2-refx)*zoom_x+refx;
   y2=(y2-refy)*zoom_y+refy;
   if (! preserve_width) {
+    int i;
     double zoom;
     zoom = MIN(zoom_x, zoom_y);
     width = width * zoom;
