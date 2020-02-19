@@ -647,7 +647,6 @@ dispfield(struct objlist *obj,char *name)
   int j;
   enum ngraph_object_field_type ftype;
   char perm[4],type[10];
-  const char *alist;
   char **enumlist;
 
   ftype=chkobjfieldtype(obj,name);
@@ -692,6 +691,7 @@ dispfield(struct objlist *obj,char *name)
   printfstdout("%3s %16.256s  %.256s",
                    (char *)perm,(char *)name,(char *)type);
   if (ftype>=NVFUNC) {
+    const char *alist;
     if ((alist=chkobjarglist(obj,name))!=NULL) {
       if (alist[0]=='\0') printfstdout(" void");
       else
