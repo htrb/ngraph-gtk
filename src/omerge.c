@@ -760,11 +760,9 @@ mergeload(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   char *s;
   int len;
-  char *file,*fullname,*oldfile,*mes;
+  char *file,*fullname,*oldfile;
   time_t ftime;
   int mkdata;
-  char buf[2];
-  FILE *fp;
   struct utimbuf tm;
 
   s=(char *)argv[2];
@@ -782,6 +780,7 @@ mergeload(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   }
   if (naccess(file,R_OK)!=0) mkdata=TRUE;
   else {
+    char *mes;
     if ((mes=g_malloc(strlen(file)+256))==NULL) {
       g_free(file);
       return 1;
@@ -791,6 +790,8 @@ mergeload(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
     g_free(mes);
   }
   if (mkdata) {
+    char buf[2];
+    FILE *fp;
     if ((fp=nfopen(file,"wt"))==NULL) {
       error2(obj,ERROPEN,file);
       g_free(file);
