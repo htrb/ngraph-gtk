@@ -962,7 +962,7 @@ arrowput_arrow(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char
   return 0;
 }
 
-static struct objtable arrow[] = {
+static struct objtable path_obj[] = {
   {"init", NVFUNC, NEXEC, arrowinit, NULL, 0},
   {"done", NVFUNC, NEXEC, arrowdone, NULL, 0},
   {"next", NPOINTER, 0, NULL, NULL, 0},
@@ -1020,11 +1020,11 @@ static struct objtable arrow[] = {
   {"arrow", NENUM, NWRITE, arrowput_arrow, arrowchar, 0},
 };
 
-#define TBLNUM (sizeof(arrow) / sizeof(*arrow))
+#define TBLNUM (sizeof(path_obj) / sizeof(*path_obj))
 
 void *
 addpath(void)
 /* addarrow() returns NULL on error */
 {
-  return addobject(NAME, ALIAS, PARENT, OVERSION, TBLNUM, arrow, ERRNUM, patherrorlist, NULL, NULL);
+  return addobject(NAME, ALIAS, PARENT, OVERSION, TBLNUM, path_obj, ERRNUM, patherrorlist, NULL, NULL);
 }
