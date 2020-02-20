@@ -788,7 +788,9 @@ curvematch(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
 
   if (minx == maxx && miny == maxy) {
     rval->i = point_match(obj, inst, type, fill, err, minx, miny);
-  } else {
+    return 0;
+  }
+
     if (_exeobj(obj, "bbox", inst, 0, NULL)) {
       return 1;
     }
@@ -812,7 +814,6 @@ curvematch(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
 	miny <= bmaxy && bmaxy <= maxy) {
       rval->i = TRUE;
     }
-  }
   return 0;
 }
 
