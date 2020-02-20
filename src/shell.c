@@ -3871,7 +3871,6 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 	    g_free(str);
 	    if (errlevel==-1) goto errexit;
 	    nshell->status=errlevel;
-	    nshell->status=errlevel;
 	    lastc=cmdstackgetlast(&stroot);
 	    if ((lastc!=CPIF) && (lastc!=CPELIF)
 		&& (lastc!=CPWHILE) && (lastc!=CPUNTIL)
