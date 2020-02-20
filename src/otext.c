@@ -501,7 +501,7 @@ text_set_text(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **ar
   return 1;
 }
 
-static struct objtable text[] = {
+static struct objtable text_obj[] = {
   {"init",NVFUNC,NEXEC,textinit,NULL,0},
   {"done",NVFUNC,NEXEC,textdone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},
@@ -533,7 +533,7 @@ static struct objtable text[] = {
   {"jfont",NSTR,NWRITE,textgeometry,NULL,0},
 };
 
-#define TBLNUM (sizeof(text) / sizeof(*text))
+#define TBLNUM (sizeof(text_obj) / sizeof(*text_obj))
 
 void *
 addtext()
@@ -554,5 +554,5 @@ addtext()
     }
   }
 
-  return addobject(NAME,NULL,PARENT,OVERSION,TBLNUM,text,ERRNUM,texterrorlist,NULL,NULL);
+  return addobject(NAME,NULL,PARENT,OVERSION,TBLNUM,text_obj,ERRNUM,texterrorlist,NULL,NULL);
 }
