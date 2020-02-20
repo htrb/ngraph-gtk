@@ -400,7 +400,6 @@ static int
 draw_gra(struct gra_cache *cache, struct gra_info *info)
 {
   struct GRAdata *data;
-  int rcode;
 
   if (cache == NULL) {
     return 0;
@@ -411,6 +410,7 @@ draw_gra(struct gra_cache *cache, struct gra_info *info)
     return 0;
   }
   while (data) {
+    int rcode;
     rcode = draw_gra_data(info, data);
     if (! rcode) {
       return 1;
