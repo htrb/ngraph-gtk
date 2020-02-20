@@ -142,10 +142,10 @@ addfontcontrol(char *s,int *po,int *fchange,int *jchange,
                     int *fff,int *ffb,int *ffj,int script)
 {
   int j;
-  char *style;
 
   j=*po;
   if (fchange[script]) {
+    char *style;
     j+=sprintf(s+j,"%%F{%s}",fontchar[fff[script]]);
     switch (ffb[script]) {
     case FONT_STYLE_NORMAL:
