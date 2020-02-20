@@ -539,9 +539,8 @@ void *
 addtext()
 /* addtext() returns NULL on error */
 {
-  unsigned int i;
-
   if (TextConfigHash == NULL) {
+    unsigned int i;
     TextConfigHash = nhash_new();
     if (TextConfigHash == NULL)
       return NULL;
