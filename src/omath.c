@@ -79,7 +79,7 @@ msettbl(N_VALUE *inst,struct mlocal *mlocal)
 }
 
 static void
-mlocalclear(struct mlocal *mlocal,int memory)
+mlocalclear(struct mlocal *mlocal)
 {
   math_equation_clear(mlocal->code);
 }
@@ -126,7 +126,7 @@ minit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   math_equation_parse(mlocal->code, "def h(x,y,z){0}");
 
   mlocal->rcode=MATH_VALUE_NORMAL;
-  mlocalclear(mlocal,TRUE);
+  mlocalclear(mlocal);
   if (_putobj(obj,"formula",inst,NULL)) goto errexit;
   if (_putobj(obj,"f",inst,NULL)) goto errexit;
   if (_putobj(obj,"g",inst,NULL)) goto errexit;
@@ -335,7 +335,7 @@ mclear(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   struct mlocal *mlocal;
 
   _getobj(obj,"_local",inst,&mlocal);
-  mlocalclear(mlocal,TRUE);
+  mlocalclear(mlocal);
   msettbl(inst,mlocal);
   return 0;
 }
