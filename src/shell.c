@@ -241,8 +241,7 @@ void
 set_environ(void)
 {
   int i, n;
-  char *name, **list, **env;
-  const char *val;
+  char **list, **env;
 
   MainEnviron = NULL;
 
@@ -261,6 +260,8 @@ set_environ(void)
   }
 
   for (i = 0; i < n; i++) {
+    char *name;
+    const char *val;
     name = env[i];
     val = g_getenv(name);
     list[i] = g_strdup_printf("%s=%s", name, val);
