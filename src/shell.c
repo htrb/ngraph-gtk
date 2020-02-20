@@ -4175,7 +4175,7 @@ struct nshell *
 newshell(void)
 {
   struct nshell *nshell;
-  char *name,**env,*tok;
+  char **env,*tok;
   int i,len;
 
   nshell = g_malloc(sizeof(struct nshell));
@@ -4194,6 +4194,7 @@ newshell(void)
 
   i=0;
   while (env && env[i]) {
+    char *name;
     tok=env[i];
     name=getitok2(&tok,&len,"=");
     if (tok[0]=='=') tok++;
