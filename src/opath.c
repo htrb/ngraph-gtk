@@ -290,10 +290,9 @@ draw_stroke(struct objlist *obj, N_VALUE *inst, int GC, int *points2, int *pdata
 {
   int width, fr, fg, fb, fa, headlen, headwidth;
   int join, miter, head_begin, head_end;
-  int x, y, x0, y0, x1, y1, x2, y2, x3, y3, type;
+  int x0, y0, x1, y1, x2, y2, x3, y3, type;
   struct narray *style;
   int snum, *sdata;
-  int i;
   int ap[6], ap2[6];
 
   _getobj(obj, "stroke_R", inst, &fr);
@@ -341,6 +340,7 @@ draw_stroke(struct objlist *obj, N_VALUE *inst, int GC, int *points2, int *pdata
   if (num > 2 && close_path) {
     GRAdrawpoly(GC, num, pdata, GRA_FILL_MODE_NONE);
   } else {
+    int x, y, i;
     x = points2[0];
     y = points2[1];
 
