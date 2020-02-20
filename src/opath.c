@@ -791,29 +791,29 @@ curvematch(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
     return 0;
   }
 
-    if (_exeobj(obj, "bbox", inst, 0, NULL)) {
-      return 1;
-    }
-    _getobj(obj, "bbox", inst, &array);
+  if (_exeobj(obj, "bbox", inst, 0, NULL)) {
+    return 1;
+  }
+  _getobj(obj, "bbox", inst, &array);
 
-    if (array == NULL) {
-      return 0;
-    }
+  if (array == NULL) {
+    return 0;
+  }
 
-    if (arraynum(array) < 4) {
-      return 1;
-    }
+  if (arraynum(array) < 4) {
+    return 1;
+  }
 
-    bminx = arraynget_int(array, 0);
-    bminy = arraynget_int(array, 1);
-    bmaxx = arraynget_int(array, 2);
-    bmaxy = arraynget_int(array, 3);
-    if (minx <= bminx && bminx <= maxx &&
-	minx <= bmaxx && bmaxx <= maxx &&
-	miny <= bminy && bminy <= maxy &&
-	miny <= bmaxy && bmaxy <= maxy) {
-      rval->i = TRUE;
-    }
+  bminx = arraynget_int(array, 0);
+  bminy = arraynget_int(array, 1);
+  bmaxx = arraynget_int(array, 2);
+  bmaxy = arraynget_int(array, 3);
+  if (minx <= bminx && bminx <= maxx &&
+      minx <= bmaxx && bmaxx <= maxx &&
+      miny <= bminy && bminy <= maxy &&
+      miny <= bmaxy && bmaxy <= maxy) {
+    rval->i = TRUE;
+  }
   return 0;
 }
 
