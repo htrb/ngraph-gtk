@@ -438,8 +438,6 @@ sscanf2(char *buffer,char *format,...)
 {
   va_list ap;
   int i,num;
-  int *d;
-  double *e;
   char *s;
   char *endptr;
 
@@ -449,12 +447,14 @@ sscanf2(char *buffer,char *format,...)
   i=0;
   while (format[i]!='\0') {
     if (format[i]=='d') {
+      int *d;
       d=va_arg(ap,int *);
       *d=strtol(s,&endptr,10);
       num++;
       if (endptr[0]=='\0') break;
       s=endptr;
     } else if (format[i]=='e') {
+      double *e;
       e=va_arg(ap,double *);
       *e=strtod(s,&endptr);
       num++;
