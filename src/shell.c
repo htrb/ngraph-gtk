@@ -806,10 +806,11 @@ prmfree(struct prmlist *prmroot)
 static void
 cmdfree(struct cmdlist *cmdroot)
 {
-  struct cmdlist *cmdcur,*cmddel;
+  struct cmdlist *cmdcur;
 
   cmdcur=cmdroot;
   while (cmdcur!=NULL) {
+    struct cmdlist *cmddel;
     prmfree(cmdcur->prm);
     cmddel=cmdcur;
     cmdcur=cmdcur->next;
