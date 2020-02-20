@@ -3007,12 +3007,13 @@ quote_args(char **args)
 
   ptr = cmd;
   for (i = 0; args[i]; i++) {
-    char *arg, ch;
+    char *arg;
 
     *ptr = '"';
     ptr++;
     arg = args[i];
     while (*arg) {
+      char ch;
       ch = *arg;
       if (ch == '"') {
 	*ptr = '\\';
