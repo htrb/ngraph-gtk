@@ -187,7 +187,7 @@ textprintf(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   char **argv2;
   int argc2;
   char *format;
-  int po, arg, i, quote, r;
+  int po, arg, i, r;
   GString *ret;
   char *arg_str;
 
@@ -207,6 +207,7 @@ textprintf(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   po=0;
   arg=1;
   while (format[po]!='\0') {
+    int quote;
     quote=FALSE;
     for (i=po;(quote || (format[i]!='%')) && (format[i]!='\0');i++) {
       if (quote) {
