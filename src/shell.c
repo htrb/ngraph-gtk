@@ -3927,7 +3927,7 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 #if WINDOWS
 		{
 		  GThread *thread;
-		  char *ptr, *cmd;
+		  char *ptr, *win_cmd;
 
 		  ptr = quote_args(argv);
 		  if (ptr == NULL) {
@@ -3935,18 +3935,18 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 		    goto errexit;
 		  }
 
-		  cmd = g_locale_from_utf8(ptr, -1, NULL, NULL, NULL);
+		  win_cmd = g_locale_from_utf8(ptr, -1, NULL, NULL, NULL);
 		  g_free(ptr);
-		  if (cmd == NULL) {
+		  if (win_cmd == NULL) {
 		    sherror(ERRMEMORY);
 		    goto errexit;
 		  }
 
 		  errlevel = 0;
 #if GLIB_CHECK_VERSION(2, 32, 0)
-		  thread= g_thread_new("process", proc_in_thread, cmd);
+		  thread= g_thread_new("process", proc_in_thread, win_cmd);
 #else
-		  thread = g_thread_create(proc_in_thread, cmd, TRUE, NULL);
+		  thread = g_thread_create(proc_in_thread, win_cmd, TRUE, NULL);
 #endif
 		  if (thread) {
 		    WaitProc = 1;
@@ -3956,7 +3956,7 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 		    }
 		    errlevel = GPOINTER_TO_INT(g_thread_join(thread));
 		  }
-		  g_free(cmd);
+		  g_free(win_cmd);
 		}
 #else	/* WINDOWS */
 		unset_childhandler();
