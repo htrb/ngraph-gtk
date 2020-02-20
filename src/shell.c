@@ -1104,12 +1104,12 @@ restoreval(struct nshell *nshell,struct vallist *newvalroot)
 {
 #if USE_HASH
   struct vallist *valcur,*valnext, *valcur2;
-  int hk;
 
   nhash_each(nshell->valroot, delete_save_val, nshell);
 
   valcur = newvalroot;
   while (valcur) {
+    int hk;
     valnext = valcur->next;
     hk = nhash_hkey(valcur->name);
     nhash_get_ptr_with_hkey(nshell->valroot, valcur->name, hk, (void **) &valcur2);
