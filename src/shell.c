@@ -1800,13 +1800,13 @@ unquotation(char *s,int *quoted)
 static char *
 fnexpand(struct nshell *nshell,char *str)
 {
-  int escape,expand,noexpand,quote,i,j,len,num;
+  int escape,str_expand,str_noexpand,quote,i,j,len,num;
   char *po;
   char *s,*s2;
   char **namelist;
 
   po=str;
-  escape=expand=noexpand=FALSE;
+  escape=str_expand=str_noexpand=FALSE;
   quote='\0';
   if ((s=nstrnew())==NULL) return NULL;
   if ((s2=nstrnew())==NULL) return NULL;
@@ -1815,7 +1815,7 @@ fnexpand(struct nshell *nshell,char *str)
     if (escape && (po[i]!='\0')) {
       escape=FALSE;
       if ((s=nstrccat(s,po[i]))==NULL) goto errexit;
-      if (strchr("*?[",po[i])!=NULL) noexpand=TRUE;
+      if (strchr("*?[",po[i])!=NULL) str_noexpand=TRUE;
     } else if (po[i]=='\\') {
       if (!quote
       || ((quote=='"') && (strchr("\"\\'$",po[i+1])!=NULL))) escape=TRUE;
@@ -1823,7 +1823,7 @@ fnexpand(struct nshell *nshell,char *str)
     } else if (po[i]==(char )0x02) escape=TRUE;
     else if ((po[i]==(char )0x01) || (po[i]=='\0')) {
       if (strlen(s)!=0) {
-        if (!nshell->optionf && expand && !noexpand) {
+        if (!nshell->optionf && str_expand && !str_noexpand) {
           if ((num=nglob(s,&namelist))==-1) goto errexit;
           for (j=0;j<num;j++) {
             if (((s2=nstrcat(s2,(char *)(namelist[j])))==NULL)
@@ -1838,18 +1838,18 @@ fnexpand(struct nshell *nshell,char *str)
           if ((s2=nstrccat(s2,(char )0x01))==NULL) goto errexit;
         }
       }
-      expand=FALSE;
+      str_expand=FALSE;
       if (po[i]==(char )0x01) for (;po[i+1]==(char )0x01;i++);
       g_free(s);
       if ((s=nstrnew())==NULL) goto errexit;
     } else if ((quote=='"') || (quote=='\'')) {
       if (po[i]==quote) quote='\0';
       else if ((s=nstrccat(s,po[i]))==NULL) goto errexit;
-      if (strchr("*?[",po[i])!=NULL) noexpand=TRUE;
+      if (strchr("*?[",po[i])!=NULL) str_noexpand=TRUE;
     } else if (po[i]=='\'' || po[i]=='"') quote=po[i];
     else {
       if ((s=nstrccat(s,po[i]))==NULL) goto errexit;
-      if (strchr("*?[",po[i])!=NULL) expand=TRUE;
+      if (strchr("*?[",po[i])!=NULL) str_expand=TRUE;
     }
   }
 
