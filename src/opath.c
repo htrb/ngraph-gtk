@@ -379,7 +379,7 @@ arrowdraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
   int GC, w, h, intp, i, j, num, close_path;
   struct narray *points;
   int *points2, *pdata;
-  int x0, y0, x1, y1, type, stroke, fill, clip, zoom;
+  int x1, y1, type, stroke, fill, clip, zoom;
 
   if (_exeparent(obj, argv[1], inst, rval, argc, argv)) {
     return 1;
@@ -424,6 +424,7 @@ arrowdraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
   j = 0;
   x1 = y1 = 0;
   for (i = 0; i < num; i++) {
+    int x0, y0;
     x0 = pdata[2 * i];
     y0 = pdata[2 * i + 1];
     if (i == 0 || x0 != x1 || y0 != y1) {
