@@ -195,7 +195,7 @@ mformula(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   char *math;
   struct mlocal *mlocal;
   int rcode;
-  char *ptr, *err_msg;
+  char *err_msg;
   MathEquationParametar *prm;
 
   math=argv[2];
@@ -223,6 +223,7 @@ mformula(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
       }
     }
   } else {
+    char *ptr;
     if (math) {
       ptr = create_func_def_str(argv[1], math);
     } else {
