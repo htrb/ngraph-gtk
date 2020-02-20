@@ -487,11 +487,11 @@ shget(struct nshell *nshell)
       } else if(strlen(str_ptr) > 0) {
 	if (MultiLine && history_length > 0) {
 	  HIST_ENTRY *entry;
-	  char *tmp;
 
 	  entry = remove_history(history_length - 1);
 	  remove_duplicate_history(str_ptr);
 	  if (entry) {
+            char *tmp;
 	    tmp = g_strdup_printf("%s\n%s", entry->line, str_ptr);
 	    free_history_entry(entry);
 	    if (tmp) {
