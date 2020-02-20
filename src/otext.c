@@ -402,11 +402,8 @@ static int
 textmatch(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy,err;
-  int bminx,bminy,bmaxx,bmaxy;
   struct narray *array;
   int gx0,gy0,gx1,gy1;
-  int px,py,px2,py2;
-  double si,co;
   int x,y,pt,space,dir,scriptsize,raw, style;
   char *font;
   char *text;
@@ -429,6 +426,8 @@ textmatch(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   maxy=*(int *)(argv[5]);
   err=*(int *)(argv[6]);
   if ((minx==maxx) && (miny==maxy)) {
+    int px,py,px2,py2;
+    double si,co;
     if (raw) {
       GRAtextextentraw(text,font,style,pt,space,&gx0,&gy0,&gx1,&gy1);
     } else {
@@ -448,6 +447,7 @@ textmatch(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
       rval->i=TRUE;
     }
   } else {
+    int bminx,bminy,bmaxx,bmaxy;
     if (_exeobj(obj,"bbox",inst,0,NULL)) return 1;
     _getobj(obj,"bbox",inst,&array);
     if (arraynum(array)<4) return 1;
