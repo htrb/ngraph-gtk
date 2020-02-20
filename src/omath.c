@@ -341,7 +341,7 @@ mclear(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 }
 
 
-static struct objtable math[] = {
+static struct objtable math_obj[] = {
   {"init",NVFUNC,NEXEC,minit,NULL,0},
   {"done",NVFUNC,NEXEC,mdone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},
@@ -358,11 +358,11 @@ static struct objtable math[] = {
   {"_local",NPOINTER,0,NULL,NULL,0},
 };
 
-#define TBLNUM (sizeof(math) / sizeof(*math))
+#define TBLNUM (sizeof(math_obj) / sizeof(*math_obj))
 
 void *
 addmath(void)
 /* addmath() returns NULL on error */
 {
-  return addobject(NAME,NULL,PARENT,OVERSION,TBLNUM,math,ERRNUM,matherrorlist,NULL,NULL);
+  return addobject(NAME,NULL,PARENT,OVERSION,TBLNUM,math_obj,ERRNUM,matherrorlist,NULL,NULL);
 }
