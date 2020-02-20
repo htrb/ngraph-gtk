@@ -4450,7 +4450,6 @@ ngraphenvironment(struct nshell *nshell)
   char *sver,*lib,*home,*conf,*data,*addin;
   struct objlist *sobj;
   char *systemname;
-  char *pathset;
 
   sobj=chkobject("system");
   getobj(sobj,"name",0,0,NULL,&systemname);
@@ -4471,6 +4470,7 @@ ngraphenvironment(struct nshell *nshell)
 
   addin = g_strdup_printf("%s/addin", data);
   if (addin) {
+    char *pathset;
     pathset = g_strdup_printf("PATH='%s%s%s%s%s%s%s%s'$PATH", home, PATHSEP, addin, PATHSEP, lib, PATHSEP, ".", PATHSEP);
     if (pathset) {
 #if WINDOWS
