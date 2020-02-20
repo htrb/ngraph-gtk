@@ -822,7 +822,7 @@ mergestoredum(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **ar
   if (mergelocal->endstore) {
     mergelocal->endstore=FALSE;
     return 1;
-  } else {
+  }
     _getobj(obj,"file",inst,&file);
     if (file==NULL) return 1;
     style=3;
@@ -850,7 +850,6 @@ mergestoredum(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **ar
     rval->str=buf;
     mergelocal->endstore=TRUE;
     return 0;
-  }
 }
 
 static int
