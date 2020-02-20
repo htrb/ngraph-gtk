@@ -790,11 +790,12 @@ check_cpcmd(char *name)
 static void
 prmfree(struct prmlist *prmroot)
 {
-  struct prmlist *prmcur,*prmdel;
+  struct prmlist *prmcur;
 
   if (prmroot==NULL) return;
   prmcur=prmroot;
   while (prmcur!=NULL) {
+    struct prmlist *prmdel;
     prmdel=prmcur;
     prmcur=prmcur->next;
     g_free(prmdel->str);
