@@ -840,10 +840,11 @@ static int
 curve_move(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct narray *points;
-  int i, num, *pdata, type;
+  int type;
 
   _getobj(obj, "type", inst, &type);
   if (type  == PATH_TYPE_CURVE) {
+    int i, num, *pdata;
     _getobj(obj, "_points", inst, &points);
     num = arraynum(points);
     pdata = arraydata(points);
