@@ -2655,12 +2655,13 @@ syntax(struct nshell *nshell,
 {
   struct cmdlist *cmdcur;
   struct prmlist *prmcur;
-  int i,cmd,c;
+  int i;
   char *s;
   struct cmdstack *st;
 
   cmdcur=cmdroot;
   while (cmdcur!=NULL) {
+    int cmd, c;
     cmd=cmdcur->cmdno;
     c=cmdstackgetlast(sx);
     if ((c==CPFOR) && (cmd!=CPDO)) {
