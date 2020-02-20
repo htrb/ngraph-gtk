@@ -821,10 +821,11 @@ cmdfree(struct cmdlist *cmdroot)
 static void
 cmdstackfree(struct cmdstack *stroot)
 {
-  struct cmdstack *stcur,*stdel;
+  struct cmdstack *stcur;
 
   stcur=stroot;
   while (stcur!=NULL) {
+    struct cmdstack *stdel;
     stdel=stcur;
     stcur=stcur->next;
     prmfree(stdel->prm);
