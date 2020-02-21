@@ -984,8 +984,6 @@ eval_data_sel_cb(GtkTreeSelection *sel, gpointer user_data)
 static void
 EvalDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *swin, *hbox;
-  GtkTreeSelection *sel;
   struct EvalDialog *d;
   n_list_store list[] = {
     {"#",           G_TYPE_INT,    TRUE,  FALSE, NULL},
@@ -998,6 +996,8 @@ EvalDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct EvalDialog *) data;
   if (makewidget) {
+    GtkWidget *w, *swin, *hbox;
+    GtkTreeSelection *sel;
     gtk_dialog_add_buttons(GTK_DIALOG(wi),
 			   _("_Mask"), IDEVMASK,
 			   _("_Move"), IDEVMOVE,
