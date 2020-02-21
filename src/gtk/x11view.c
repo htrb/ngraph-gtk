@@ -4085,9 +4085,7 @@ create_legendx(struct Viewer *d)
 static void
 create_single_axis(struct Viewer *d)
 {
-  int id, num, x1, y1, x2, y2, lenx, dir, ret = IDCANCEL, undo;
-  double fx1, fy1;
-  N_VALUE *inst;
+  int num;
   struct objlist *obj = NULL;
   struct Point **pdata;
 
@@ -4098,9 +4096,13 @@ create_single_axis(struct Viewer *d)
   if (num >= 3) {
     obj = chkobject("axis");
     if (obj != NULL) {
+      int id, x1, y1, lenx, dir, undo;
       undo = menu_save_undo_single(UNDO_TYPE_CREATE, obj->name);
       if ((id = newobj(obj)) >= 0) {
-	inst = chkobjinst(obj, id);
+        int x2, y2, ret;
+        double fx1, fy1;
+        N_VALUE *inst;
+
 	x1 = pdata[0]->x;
 	y1 = pdata[0]->y;
 	x2 = pdata[1]->x;
