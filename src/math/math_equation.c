@@ -275,10 +275,10 @@ clear_pos_func_buf(MathEquation *eq)
   if (eq->pos_func_buf == NULL) {
     return;
   }
-    for (i = 0; i < eq->pos_func_num; i++) {
-      eq->pos_func_buf[i].val = 0;
-      eq->pos_func_buf[i].type = MATH_VALUE_UNDEF;
-    }
+  for (i = 0; i < eq->pos_func_num; i++) {
+    eq->pos_func_buf[i].val = 0;
+    eq->pos_func_buf[i].type = MATH_VALUE_UNDEF;
+  }
 }
 
 static void
