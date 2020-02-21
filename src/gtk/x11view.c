@@ -4018,8 +4018,7 @@ create_legend3(struct Viewer *d)
 static void
 create_legendx(struct Viewer *d)
 {
-  int id, num, x1, y1, x2, y2, ret = IDCANCEL, type, fill, undo;
-  N_VALUE *inst;
+  int num, x1, y1, x2, y2, type, fill;
   struct objlist *obj = NULL;
   struct Point **pdata;
 
@@ -4031,10 +4030,12 @@ create_legendx(struct Viewer *d)
     obj = chkobject("path");
 
     if (obj) {
+      int id, undo;
       undo = menu_save_undo_single(UNDO_TYPE_CREATE, obj->name);
       id = newobj(obj);
 
       if (id >= 0) {
+        N_VALUE *inst;
         presetting_set_obj_field(obj, id);
 	type = PATH_TYPE_CURVE;
 	putobj(obj, "type", id, &type);
@@ -4055,6 +4056,7 @@ create_legendx(struct Viewer *d)
 	PaintLock = TRUE;
 
 	if ((x1 != x2) && (y1 != y2)) {
+          int ret;
 	  LegendGaussDialog(&DlgLegendGauss, obj, id, x1, y1,
 			    x2 - x1, y2 - y1);
 	  ret = DialogExecute(TopLevel, &DlgLegendGauss);
