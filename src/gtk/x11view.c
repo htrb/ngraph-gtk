@@ -637,7 +637,7 @@ new_file_obj(char *name, struct objlist *obj, int *id0, int multi)
 int
 data_dropped(char **filenames, int num, int file_type)
 {
-  char *name, *ext, *arg[4];
+  char *ext, *arg[4];
   int i, id0, type, ret;
   struct objlist *obj, *mobj;
 
@@ -658,6 +658,7 @@ data_dropped(char **filenames, int num, int file_type)
   arg[3] = NULL;
   menu_save_undo(UNDO_TYPE_PASTE, arg);
   for (i = 0; i < num; i++) {
+    char *name;
     name = g_filename_from_uri(filenames[i], NULL, NULL);
     if (name == NULL) {
       continue;
