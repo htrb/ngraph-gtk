@@ -179,7 +179,7 @@ sysdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   int i, n, status;
   char *s;
   struct narray *array;
-  struct objlist *objectcur,*objectdel;
+  struct objlist *objectcur;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
 
@@ -235,6 +235,7 @@ sysdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 
   objectcur=chkobjroot();
   while (objectcur!=NULL) {
+    struct objlist *objectdel;
     objectdel=objectcur;
     objectcur=objectcur->next;
 
