@@ -87,22 +87,22 @@ oGRAdisconnect(struct objlist *obj,void *inst,int clear)
   if (device == NULL) {
     return 0;
   }
-    if (((dobj=getobjlist(device,&did,&dfield,NULL))!=NULL)
-    && ((dinst=chkobjinstoid(dobj,did))!=NULL)) {
-      if ((!chkobjfield(dobj,"_list"))
-      && (!_getobj(dobj,"_list",dinst,&sarray)) && (sarray!=NULL)) {
-        struct objlist *gobj;
-        char *list;
-        list=arraynget_str(sarray,0);
-        if (((gobj=getobjlist(list,&gid,&gfield,NULL))!=NULL)
-        && (gobj==obj) && (gid==oid) && (strcmp(gfield,"open")==0)) {
-          arrayfree2(sarray);
-          _putobj(dobj,"_list",dinst,NULL);
-          _exeobj(dobj,"disconnect",dinst,0,NULL);
-          if (clear) _exeobj(dobj,"disconnect",dinst,0,NULL);
-        }
+  if (((dobj=getobjlist(device,&did,&dfield,NULL))!=NULL)
+      && ((dinst=chkobjinstoid(dobj,did))!=NULL)) {
+    if ((!chkobjfield(dobj,"_list"))
+        && (!_getobj(dobj,"_list",dinst,&sarray)) && (sarray!=NULL)) {
+      struct objlist *gobj;
+      char *list;
+      list=arraynget_str(sarray,0);
+      if (((gobj=getobjlist(list,&gid,&gfield,NULL))!=NULL)
+          && (gobj==obj) && (gid==oid) && (strcmp(gfield,"open")==0)) {
+        arrayfree2(sarray);
+        _putobj(dobj,"_list",dinst,NULL);
+        _exeobj(dobj,"disconnect",dinst,0,NULL);
+        if (clear) _exeobj(dobj,"disconnect",dinst,0,NULL);
       }
     }
+  }
   g_free(device);
   return 0;
 }
