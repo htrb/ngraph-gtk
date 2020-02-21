@@ -2836,8 +2836,7 @@ delobj(struct objlist *obj,int delid)
 {
   struct objlist *robj,*objcur;
   N_VALUE *instcur,*instprev,*inst;
-  int i,nextp,idp,donen,donep,rcode,offset;
-  int argc;
+  int i,nextp,idp,donen,donep,offset;
   char **argv;
   struct narray *array;
 
@@ -2856,6 +2855,7 @@ delobj(struct objlist *obj,int delid)
   }
   if (getobjprev(obj,delid,&instcur,&instprev)==NULL) return -1;
   if (robj->table[donen].proc!=NULL) {
+    int argc, rcode;;
     argv=NULL;
     if (arg_add2(&argv,2,obj->name,"done")==NULL) {
       g_free(argv);
