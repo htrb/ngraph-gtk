@@ -434,14 +434,15 @@ free_array_buf(MathEquationArray *buf, int num)
 static void
 free_string_array_buf(MathEquationArray *buf, int num)
 {
-  int i, j, n;
-  GString **ary;
+  int i;
 
   if (buf == NULL) {
     return;
   }
 
   for (i = 0; i < num; i++) {
+    int j, n;
+    GString **ary;
     ary = buf[i].data.str;
     n = buf[i].size;
     for (j = 0; j < n; j++) {
