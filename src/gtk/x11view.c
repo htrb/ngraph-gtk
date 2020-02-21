@@ -1464,13 +1464,8 @@ Trimming(int x1, int y1, int x2, int y2, struct Viewer *d)
 {
   struct narray farray;
   struct objlist *obj;
-  int i, id;
-  int *array, num;
-  int vx1, vy1, vx2, vy2;
   int maxx, maxy, minx, miny;
-  int dir, rcode1, rcode2, room;
-  double ax, ay, ip1, ip2, min, max;
-  char *argv[4];
+  int dir, room;
 
   if ((x1 == x2) && (y1 == y2))
     return;
@@ -1484,6 +1479,10 @@ Trimming(int x1, int y1, int x2, int y2, struct Viewer *d)
   SelectDialog(&DlgSelect, obj, _("trimming (multi select)"), AxisCB, (struct narray *) &farray, NULL);
 
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
+    int i;
+    int *array, num;
+    int vx1, vy1, vx2, vy2;
+    char *argv[4];
     vx1 = x1 - x2;
     vy1 = y1 - y2;
     vx2 = x2 - x1;
@@ -1496,6 +1495,8 @@ Trimming(int x1, int y1, int x2, int y2, struct Viewer *d)
       menu_save_undo_single(UNDO_TYPE_TRIMMING, obj->name);
     }
     for (i = 0; i < num; i++) {
+      double ax, ay, ip1, ip2, min, max;
+      int id;
       id = array[i];
       getobj(obj, "direction", id, 0, NULL, &dir);
 
@@ -1538,6 +1539,7 @@ Trimming(int x1, int y1, int x2, int y2, struct Viewer *d)
       }
 
       if ((minx != maxx) && (miny != maxy)) {
+        int rcode1, rcode2;
 	argv[0] = (char *) &minx;
 	argv[1] = (char *) &miny;
 	argv[2] = NULL;
