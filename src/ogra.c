@@ -75,9 +75,8 @@ oGRAinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 static int
 oGRAdisconnect(struct objlist *obj,void *inst,int clear)
 {
-  struct objlist *dobj,*gobj;
+  struct objlist *dobj;
   struct narray *sarray;
-  char *list;
   N_VALUE *dinst;
   char *device,*dfield,*gfield;
   int oid,did,gid;
@@ -90,6 +89,8 @@ oGRAdisconnect(struct objlist *obj,void *inst,int clear)
     && ((dinst=chkobjinstoid(dobj,did))!=NULL)) {
       if ((!chkobjfield(dobj,"_list"))
       && (!_getobj(dobj,"_list",dinst,&sarray)) && (sarray!=NULL)) {
+        struct objlist *gobj;
+        char *list;
         list=arraynget_str(sarray,0);
         if (((gobj=getobjlist(list,&gid,&gfield,NULL))!=NULL)
         && (gobj==obj) && (gid==oid) && (strcmp(gfield,"open")==0)) {
