@@ -2469,7 +2469,7 @@ math_func_am(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 int
 math_func_for(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  int n, r, i;
+  int n, i;
   double v, start, stop, step;
   MathFunctionArgument *argv;
 
@@ -2501,6 +2501,7 @@ math_func_for(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
   i = 0;
   rval->val = 0;
   for (v = start; (step < 0) ?  (v >= stop) : (v <= stop); v += step) {
+    int r;
     if ((i & 0xff) == 0 && ninterrupt()) {
       rval->type = MATH_VALUE_INTERRUPT;
       return 1;
