@@ -411,7 +411,7 @@ append_oct(GString *gstr, const char *str)
   return i;
 }
 static GString *
-get_double_quoted_string(const char *str,  const char ** rstr, int *len)
+get_double_quoted_string(const char *str, int *len)
 {
   int n, escape;
   GString *gstr;
@@ -483,7 +483,7 @@ get_string(const char *str,  const char ** rstr, int quate)
   GString *gstr;
 
   if (quate == '"') {
-    gstr = get_double_quoted_string(str, rstr, &n);
+    gstr = get_double_quoted_string(str, &n);
   } else {
     gstr = get_single_quoted_string(str, &n);
   }
