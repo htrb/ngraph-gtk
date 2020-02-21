@@ -4561,8 +4561,6 @@ getargument(int type, const char *arglist, char *val, int *argc, char ***rargv)
   }
 
   if (arglist == NULL) {
-    int sargc;
-
     if (val[0] == '\0') {
       *argc = getargc(argv);
       *rargv = argv;
