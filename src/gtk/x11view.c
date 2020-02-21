@@ -6310,22 +6310,21 @@ static void
 ViewCopyAxis(struct objlist *obj, int id, struct FocusObj *focus, N_VALUE *inst)
 {
   int id2;
-  struct objlist *dobj;
   N_VALUE *inst2;
   int findX, findY, findU, findR, findG;
-  char *axisx, *axisy;
   int oidx, oidy;
   int idx = 0, idy = 0, idu = 0, idr = 0, idg;
-  int idx2, idy2, idu2, idr2, idg2;
-  char type;
+  int idx2, idy2, idu2, idr2;
   char *group;
   int tp;
   struct narray agroup;
-  char *argv[2];
 
   _getobj(obj, "group", inst, &group);
 
   if (group && group[0] != 'a') {
+    char *axisx, *axisy;
+    char type;
+    char *argv[2];
     type = search_axis_group(obj, id, group,
 			     &findX, &findY, &findU, &findR, &findG,
 			     &idx, &idy, &idu, &idr, &idg);
@@ -6411,6 +6410,8 @@ ViewCopyAxis(struct objlist *obj, int id, struct FocusObj *focus, N_VALUE *inst)
       }
 
       if (findG) {
+        struct objlist *dobj;
+        int idg2;
 	dobj = chkobject("axisgrid");
 	if ((idg2 = newobj(dobj)) >= 0) {
 	  ncopyobj(dobj, idg2, idg);
