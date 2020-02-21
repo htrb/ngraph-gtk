@@ -1319,10 +1319,11 @@ ViewerWinFileUpdate(int x1, int y1, int x2, int y2, int err)
 static void
 mask_selected_data(struct objlist *fileobj, int selnum, struct narray *sel_list)
 {
-  int masknum, i, j, sel;
+  int i, j;
   struct narray *mask;
 
   for (i = 0; i < selnum; i++) {
+    int masknum, sel;
     sel = arraynget_int(sel_list, i);
     getobj(fileobj, "mask", EvalList[sel].id, 0, NULL, &mask);
 
