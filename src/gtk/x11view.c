@@ -5456,13 +5456,13 @@ static int
 check_focused_obj(struct narray *focusobj, struct objlist *fobj, int oid)
 {
   int i, num;
-  struct FocusObj *focus;
 
   if (fobj == NULL)
     return CHECK_FOCUSED_OBJ_ERROR;
 
   num = arraynum(focusobj);
   for (i = 0; i < num; i++) {
+    struct FocusObj *focus;
     focus = *(struct FocusObj **) arraynget(focusobj, i);
     if (focus == NULL)
       continue;
