@@ -383,13 +383,13 @@ syshideinstance(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **
   if (array == NULL) {
     return 0;
   }
-    anum=arraynum(array);
-    objdata=arraydata(array);
-    for (j=0;j<anum;j++) {
-      struct objlist *obj2;
-      obj2=getobject(objdata[j]);
-      if ((obj2!=obj) && (obj2!=NULL)) hideinstance(obj2);
-    }
+  anum=arraynum(array);
+  objdata=arraydata(array);
+  for (j=0;j<anum;j++) {
+    struct objlist *obj2;
+    obj2=getobject(objdata[j]);
+    if ((obj2!=obj) && (obj2!=NULL)) hideinstance(obj2);
+  }
   return 0;
 }
 
