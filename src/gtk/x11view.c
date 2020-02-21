@@ -1583,7 +1583,6 @@ select_obj(const char *objname, const struct Viewer *d, struct view_region *regi
   struct narray *sarray;
   char **sdata;
   int snum, dnum;
-  struct objlist *dobj;
   int did, oid;
   N_VALUE *dinst;
   int i, match, hidden, r;
@@ -1622,6 +1621,7 @@ select_obj(const char *objname, const struct Viewer *d, struct view_region *regi
 
   r = 0;
   for (i = 0; i < snum; i++) {
+    struct objlist *dobj;
     dobj = getobject(sdata[i]);
     if (dobj == NULL) {
       continue;
