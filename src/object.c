@@ -3275,7 +3275,6 @@ copyobj(struct objlist *obj, const char *vname,int did,int sid)
   char value[8];
   char *po;
   struct narray *array;
-  char *s;
 
   if ((idn=getobjtblpos(obj,vname,&robj))==-1) return -1;
   if (((robj->table[idn].attrib & NREAD)==0)
@@ -3305,8 +3304,9 @@ copyobj(struct objlist *obj, const char *vname,int did,int sid)
     if (*(char **)po==NULL) {
       if (putobj(obj,vname,did,NULL)==-1) return -1;
     } else {
-      if ((s=g_malloc(strlen(*(char **)po)+1))==NULL) return -1;
-      strcpy(s,*(char **)po);
+      char *s;
+      s = g_strdup(*(char **)po);
+      if (s == NULL) return -1;
       if (putobj(obj,vname,did,s)==-1) return -1;
     }
     break;
