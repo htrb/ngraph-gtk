@@ -343,11 +343,12 @@ static void
 focus_new_insts(struct objlist *parent, struct narray *array, char **objects)
 {
   struct objlist *ocur;
-  int i, instnum, prev_instnum, oid;
+  int i, oid;
   N_VALUE *inst;
 
   ocur = parent->child;
   while (chkobjparent(ocur) == parent) {
+    int instnum, prev_instnum;
     instnum = chkobjlastinst(ocur);
     prev_instnum = arraynget_int(array, 0);
     arrayndel(array, 0);
