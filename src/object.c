@@ -3096,8 +3096,7 @@ getobj(struct objlist *obj, const char *vname,int id,
 {
   struct objlist *robj;
   N_VALUE *instcur;
-  int i,idp,idn;
-  int argc2,rcode;
+  int idp,idn;
   char **argv2;
 
   if ((idn=getobjtblpos(obj,vname,&robj))==-1) return -1;
@@ -3110,6 +3109,7 @@ getobj(struct objlist *obj, const char *vname,int id,
     return -1;
   }
   if ((robj->table[idn].type>=NVFUNC) && (robj->table[idn].proc!=NULL)) {
+    int i, argc2, rcode;
     argv2=NULL;
     if (arg_add2(&argv2,2,obj->name,vname)==NULL) {
       g_free(argv2);
