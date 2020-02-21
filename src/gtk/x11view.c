@@ -6179,8 +6179,6 @@ ViewDelete(void)
 {
   int i, id, num;
   struct FocusObj *focus;
-  struct objlist *obj;
-  N_VALUE *inst;
   int axis;
   struct Viewer *d;
   char *objs[OBJ_MAX];
@@ -6197,7 +6195,7 @@ ViewDelete(void)
   }
 
   num = arraynum(d->focusobj);
-  if (num  <1) {
+  if (num < 1) {
     return;
   }
 
@@ -6208,6 +6206,8 @@ ViewDelete(void)
   get_focused_obj_array(d->focusobj, objs);
   menu_save_undo(UNDO_TYPE_DELETE, objs);
   for (i = num - 1; i >= 0; i--) {
+    struct objlist *obj;
+    N_VALUE *inst;
     focus = *(struct FocusObj **) arraynget(d->focusobj, i);
     obj = focus->obj;
 
