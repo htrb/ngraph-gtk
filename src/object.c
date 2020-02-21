@@ -545,7 +545,6 @@ arrayadd(struct narray *array,const void *val)
 struct narray *
 arrayadd2(struct narray *array,const char *val)
 {
-  int size;
   char **data;
   char *s;
 
@@ -561,6 +560,7 @@ arrayadd2(struct narray *array,const char *val)
     }
   }
   if (array->num == array->size) {
+    int size;
     size = array->size+ALLOCSIZE;
     data=g_realloc(array->data,array->base*size);
     if (data == NULL) {
