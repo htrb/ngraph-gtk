@@ -3935,8 +3935,7 @@ create_path(struct Viewer *d)
 static void
 create_legend3(struct Viewer *d)
 {
-  int id, num, x1, y1, x2, y2, ret = IDCANCEL, undo;
-  N_VALUE *inst;
+  int num, x1, y1, x2, y2;
   struct objlist *obj = NULL;
   struct Point **pdata;
 
@@ -3952,9 +3951,12 @@ create_legend3(struct Viewer *d)
     }
 
     if (obj) {
+      int id, undo;
       undo = menu_save_undo_single(UNDO_TYPE_CREATE, obj->name);
       id = newobj(obj);
       if (id >= 0) {
+        N_VALUE *inst;
+        int ret = IDCANCEL;
         presetting_set_obj_field(obj, id);
 	inst = chkobjinst(obj, id);
 	x1 = pdata[0]->x;
