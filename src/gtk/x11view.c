@@ -2543,10 +2543,9 @@ ShowFocusLine(cairo_t *cr, struct Viewer *d)
 static void
 ShowPoints(cairo_t *cr, const struct Viewer *d)
 {
-  int i, num, x1, y1, x2, y2;
+  int num, x1, y1;
   struct Point **po;
   double zoom;
-  int minx, miny, height, width;
   double dash[] = {DOT_LENGTH};
 
   cairo_set_source_rgb(cr, GRAY, GRAY, GRAY);
@@ -2559,6 +2558,8 @@ ShowPoints(cairo_t *cr, const struct Viewer *d)
 
   if (d->Mode & POINT_TYPE_DRAW1) {
     if (num >= 2) {
+      int x2, y2;
+      int minx, miny, height, width;
       cairo_set_dash(cr, dash, sizeof(dash) / sizeof(*dash), 0);
 
       x1 = coord_conv_x(po[0]->x, zoom, d);
@@ -2580,6 +2581,7 @@ ShowPoints(cairo_t *cr, const struct Viewer *d)
       cairo_stroke(cr);
     }
   } else {
+    int i;
     cairo_set_dash(cr, NULL, 0, 0);
     for (i = 0; i < num; i++) {
       x1 = coord_conv_x(po[i]->x, zoom, d);
