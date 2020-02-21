@@ -1062,10 +1062,10 @@ static void
 EvalDialogClose(GtkWidget *w, void *data)
 {
   struct EvalDialog *d;
-  GtkTreeSelection *selected;
 
   d = (struct EvalDialog *) data;
   if ((d->ret == IDEVMASK) || (d->ret == IDEVMOVE)) {
+    GtkTreeSelection *selected;
     selected = gtk_tree_view_get_selection(GTK_TREE_VIEW(d->list));
     gtk_tree_selection_selected_foreach(selected, select_data_cb, d);
   }
