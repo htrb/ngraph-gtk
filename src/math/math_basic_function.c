@@ -2350,7 +2350,7 @@ init_memory(void)
 int
 math_func_cm(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  int start, i, n;
+  int start, n;
   MathValue val;
 
   if (Memory == NULL && init_memory()) {
@@ -2378,6 +2378,7 @@ math_func_cm(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
   if (val.val == 0 && val.type == MATH_VALUE_NORMAL) {
     memset(Memory + start, 0, sizeof(*Memory) * (n - start));
   } else {
+    int i;
     for (i = start; i < n; i++) {
       Memory[i] = val;
     }
