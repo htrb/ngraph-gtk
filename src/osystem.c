@@ -552,7 +552,7 @@ get_plugin_from_name(const char *name)
 }
 
 struct ngraph_plugin *
-load_plugin(struct objlist *obj, N_VALUE *inst, const char *arg, int *rval)
+load_plugin(struct objlist *obj, const char *arg, int *rval)
 {
   char *name;
   struct ngraph_plugin *plugin;
@@ -610,7 +610,7 @@ system_plugin_load(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, 
   struct ngraph_plugin *plugin;
 
   rval->i = 0;
-  plugin = load_plugin(obj, inst, argv[2], &rval->i);
+  plugin = load_plugin(obj, argv[2], &rval->i);
 
   return (plugin) ? 0 : 1;
 }
@@ -702,7 +702,7 @@ system_plugin_exec(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, 
 
   plugin = get_plugin_from_name(argv[2]);
   if (plugin == NULL) {
-    plugin = load_plugin(obj, inst, argv[2], NULL);
+    plugin = load_plugin(obj, argv[2], NULL);
     if (plugin == NULL) {
       return 1;
     }
