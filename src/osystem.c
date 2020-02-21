@@ -401,7 +401,9 @@ sysrecoverinstance(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char
   int j,anum;
 
   array=(struct narray *)argv[2];
-  if (array!=NULL) {
+  if (array==NULL) {
+    return 0;
+  }
     anum=arraynum(array);
     objdata=arraydata(array);
     for (j=0;j<anum;j++) {
@@ -409,7 +411,6 @@ sysrecoverinstance(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char
       obj2=getobject(objdata[j]);
       recoverinstance(obj2);
     }
-  }
   return 0;
 }
 
