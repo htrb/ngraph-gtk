@@ -1405,13 +1405,13 @@ local_array_alloc(MathFunctionExpression *func, MathFunctionArgument *argv, stru
   if (func->fprm->arg_type == NULL) {
     return 0;
   }
-    j = 0;
-    for (i = 0; i < func->argc; i++) {
-      if (func->fprm->arg_type[i] == MATH_FUNCTION_ARG_TYPE_ARRAY) {
-	info->local[j] = info->prev[argv[i].array.idx];
-	j++;
-      }
+  j = 0;
+  for (i = 0; i < func->argc; i++) {
+    if (func->fprm->arg_type[i] == MATH_FUNCTION_ARG_TYPE_ARRAY) {
+      info->local[j] = info->prev[argv[i].array.idx];
+      j++;
     }
+  }
   return 0;
 }
 
