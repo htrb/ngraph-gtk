@@ -605,7 +605,6 @@ struct narray *
 arrayins2(struct narray *array, const char *val, unsigned int idx)
 {
   unsigned int i;
-  int size;
   char **data;
   char *s;
 
@@ -628,6 +627,7 @@ arrayins2(struct narray *array, const char *val, unsigned int idx)
   }
 
   if (array->num == array->size) {
+    int size;
     size = array->size+ALLOCSIZE;
     data = g_realloc(array->data,array->base*size);
     if (data == NULL) {
