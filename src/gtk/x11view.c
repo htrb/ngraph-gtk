@@ -4163,9 +4163,7 @@ static void
 create_axis(struct Viewer *d)
 {
   int idx, idy, idu, idr, idg, oidx, oidy, type,
-    num, x1, y1, x2, y2, lenx, leny, ret = IDCANCEL, undo;
-  N_VALUE *inst;
-  char *argv[3], *ref;
+    num, x1, y1, lenx, leny;
   struct objlist *obj = NULL, *obj2;
   struct Point **pdata;
   struct narray group;
@@ -4179,6 +4177,8 @@ create_axis(struct Viewer *d)
     obj2 = chkobject("axisgrid");
 
     if (obj && obj2) {
+      int undo, x2, y2, ret = IDCANCEL;
+      char *argv[3];
       argv[0] = obj->name;
       argv[1] = obj2->name;
       argv[2] = NULL;
@@ -4240,6 +4240,7 @@ create_axis(struct Viewer *d)
       if ((d->Mode == SectionB) && (obj2 != NULL)) {
 	idg = newobj(obj2);
 	if (idg >= 0) {
+          char *ref;
 	  getobj(obj, "oid", idx, 0, NULL, &oidx);
 	  ref = g_strdup_printf("axis:^%d", oidx);
 	  if (ref) {
@@ -4286,6 +4287,7 @@ create_axis(struct Viewer *d)
       if (ret == IDCANCEL) {
 	menu_undo_internal(undo);
       } else {
+        N_VALUE *inst;
 	inst = chkobjinst(obj, idx);
 	if (inst)
 	  AddList(obj, inst);
