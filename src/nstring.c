@@ -113,7 +113,7 @@ nstrncat(char *po,char *s,size_t n)
 
   if (po==NULL) return NULL;
   if (s==NULL) return po;
-  for (i=0;(s[i]!='\0') && (i<n);i++)
+  for (i=0; (i < n) && (s[i] != '\0'); i++)
     if ((po=nstrccat(po,s[i]))==NULL) return NULL;
   return po;
 }
