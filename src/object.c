@@ -4933,26 +4933,26 @@ freeargument(int type,const char *arglist,int argc,char **argv,int full)
   if (argv == NULL) {
     return;
   }
-    if (arglist==NULL) {
-      for (i=0;i<argc;i++) g_free(argv[i]);
-      g_free(argv);
-    } else if (full) {
-      if ((type!=NENUM) && (argc>0)
-      && (arglist[0]!='\0') && (arglist[1]=='a')) {
-        if ((arglist[0]=='i') || (arglist[0]=='d'))
-          arrayfree((struct narray *)(argv[0]));
-        else if (arglist[0]=='s')
-          arrayfree2((struct narray *)(argv[0]));
-      } else for (i=0;i<argc;i++) g_free(argv[i]);
-      g_free(argv);
-    } else {
-      if ((type==NENUM) || (arglist[0]=='\0') || (arglist[1]!='a')) {
-        for (i=0;i<argc;i++)
-          if ((type==NENUM) || (strchr("bcid",arglist[i])!=NULL))
-            g_free(argv[i]);
-      }
-      g_free(argv);
+  if (arglist==NULL) {
+    for (i=0;i<argc;i++) g_free(argv[i]);
+    g_free(argv);
+  } else if (full) {
+    if ((type!=NENUM) && (argc>0)
+        && (arglist[0]!='\0') && (arglist[1]=='a')) {
+      if ((arglist[0]=='i') || (arglist[0]=='d'))
+        arrayfree((struct narray *)(argv[0]));
+      else if (arglist[0]=='s')
+        arrayfree2((struct narray *)(argv[0]));
+    } else for (i=0;i<argc;i++) g_free(argv[i]);
+    g_free(argv);
+  } else {
+    if ((type==NENUM) || (arglist[0]=='\0') || (arglist[1]!='a')) {
+      for (i=0;i<argc;i++)
+        if ((type==NENUM) || (strchr("bcid",arglist[i])!=NULL))
+          g_free(argv[i]);
     }
+    g_free(argv);
+  }
 }
 
 int
