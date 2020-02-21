@@ -2793,7 +2793,6 @@ math_func_sort(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   int id;
   MathEquationArray *ary;
   enum DATA_TYPE type;
-  int ignore_case;
 
   rval->val = 0;
 
@@ -2819,6 +2818,7 @@ math_func_sort(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   if (type == DATA_TYPE_VALUE) {
     qsort(ary->data.val, ary->num, sizeof(MathValue), compare_double);
   } else {
+    int ignore_case;
     ignore_case = exp->buf[1].val.val;
     if (ignore_case) {
       qsort(ary->data.str, ary->num, sizeof(GString *), case_compare_str);
