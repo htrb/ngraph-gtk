@@ -1570,7 +1570,7 @@ obj_set_undo_func(struct objlist *obj, UNDO_DUP_FUNC dup_func, UNDO_FREE_FUNC fr
 void
 hideinstance(struct objlist *obj)
 {
-  N_VALUE *instcur,*instprev;
+  N_VALUE *instcur;
   int nextp,idp;
 
   if ((idp=obj->idp)==-1) return;
@@ -1580,6 +1580,7 @@ hideinstance(struct objlist *obj)
     obj->root2=obj->root;
     obj->lastinst2=obj->lastinst;
   } else {
+    N_VALUE *instprev;
     instcur=obj->root;
     while (instcur!=NULL) {
       instcur[idp].i+=obj->lastinst2+1;
