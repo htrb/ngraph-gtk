@@ -4925,7 +4925,6 @@ check_focused_obj_type(const struct Viewer *d, int *type)
 {
   int num, i, t;
   static struct objlist *axis, *merge, *legend, *text;
-  struct FocusObj *focus;
 
   num = arraynum(d->focusobj);
 
@@ -4947,6 +4946,7 @@ check_focused_obj_type(const struct Viewer *d, int *type)
 
   t = 0;
   for (i = 0; i < num; i++) {
+    struct FocusObj *focus;
     focus = *(struct FocusObj **) arraynget(d->focusobj, i);
     if (chkobjchild(legend, focus->obj)) {
       t |= FOCUS_OBJ_TYPE_LEGEND;
