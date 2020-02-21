@@ -1565,8 +1565,8 @@ math_func_neq(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
 int
 math_func_tn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  double l1, l2, tmp1, x, val;
-  int i, n;
+  double l1, x, val;
+  int n;
 
   MATH_CHECK_ARG(rval, exp->buf[0]);
   MATH_CHECK_ARG(rval, exp->buf[1]);
@@ -1583,10 +1583,13 @@ math_func_tn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
   if (n == 0) {
     val = l1;
   } else {
+    double l2;
     l2 = x;
     if (n == 1) {
       val = l2;
     } else {
+      int i;
+      double tmp1;
       tmp1 = x + x;
       for (i = 2; i <= n; i++) {
 	val = tmp1 * l2 - l1;
