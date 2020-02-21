@@ -4123,9 +4123,9 @@ void *
 addaxis(void)
 /* addaxis() returns NULL on error */
 {
-  unsigned int i;
 
   if (AxisConfigHash == NULL) {
+    unsigned int i;
     AxisConfigHash = nhash_new();
     if (AxisConfigHash == NULL)
       return NULL;
