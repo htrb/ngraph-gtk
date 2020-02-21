@@ -1646,8 +1646,7 @@ static N_VALUE *
 dup_inst(struct objlist *obj, N_VALUE *inst)
 {
   N_VALUE *inst_new;
-  int i, j, n, idn;
-  const char *field;
+  int i, n;
   struct objlist *robj;
   enum ngraph_object_field_type type;
   inst_new = g_memdup(inst, obj->size * sizeof(N_VALUE));
@@ -1660,6 +1659,8 @@ dup_inst(struct objlist *obj, N_VALUE *inst)
   }
   n = chkobjfieldnum(obj);
   for (i = 0; i < n; i++) {
+    int j, idn;
+    const char *field;
     field = chkobjfieldname(obj, i);
     idn = getobjtblpos(obj, field, &robj);
     if (idn == -1) {
