@@ -3595,7 +3595,6 @@ static void
 mouse_up_lgend1(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
 {
   int x1, y1, num;
-  struct Point *po;
 
   d->Capture = FALSE;
 
@@ -3609,6 +3608,7 @@ mouse_up_lgend1(unsigned int state, TPoint *point, double zoom, struct Viewer *d
 
   num = arraynum(d->points);
   if (num >= 1) {
+    struct Point *po;
     po = *(struct Point **) arraynget(d->points, 0);
     po->x = x1;
     po->y = y1;
