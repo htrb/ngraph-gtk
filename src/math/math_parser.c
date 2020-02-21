@@ -356,7 +356,7 @@ static MathExpression *
 create_math_func(struct math_string *str, MathEquation *eq, struct math_token *name, int *err)
 {
   struct math_function_parameter *fprm;
-  int i, arg_max, argc, pos_id;
+  int arg_max, argc, pos_id;
   MathExpression **argv, *exp;
   struct math_token *token;
 
@@ -393,6 +393,7 @@ create_math_func(struct math_string *str, MathEquation *eq, struct math_token *n
   math_scanner_free_token(token);
 
   if (argc < fprm->argc) {
+    int i;
     for (i = argc; i < fprm->argc; i++) {
       argv[i] = math_double_expression_new(eq, &MATH_VALUE_ZERO, err);
       if (argv[i] == NULL) {
