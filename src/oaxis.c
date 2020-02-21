@@ -3312,7 +3312,7 @@ axisautoscalefile(struct objlist *obj,N_VALUE *inst,char *fileobj,double *rmin,d
   int fnum;
   int *fdata;
   struct narray iarray;
-  double min,max,min1,max1, frac;
+  double min,max,min1,max1;
   int i,id,set;
   char buf[20], msgbuf[64], *group;
   char *argv2[4];
@@ -3330,6 +3330,7 @@ axisautoscalefile(struct objlist *obj,N_VALUE *inst,char *fileobj,double *rmin,d
   min = max = 0;	/* this initialization is added to avoid compile warnings. */
   set=FALSE;
   for (i=0;i<fnum;i++) {
+    double frac;
     frac = 1.0 * i / fnum;
     snprintf(msgbuf, sizeof(msgbuf), "%s (%.1f%%)", (group) ? group : buf, frac * 100);
     set_progress(1, msgbuf, frac);
