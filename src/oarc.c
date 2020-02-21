@@ -490,7 +490,7 @@ arcchange(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
     break;
   case ARC_POINT_TYPE_ANGLE1:
   case ARC_POINT_TYPE_ANGLE2:
-    ret = _putobj(obj, "angle1", inst, &a1);
+    _putobj(obj, "angle1", inst, &a1);
     ret = _putobj(obj, "angle2", inst, &a2);
     break;
   default:
