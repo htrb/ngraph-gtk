@@ -2275,7 +2275,6 @@ chkobjname(struct objlist *obj,int *id,char *name)
 {
   int i,id2;
   char *iname;
-  N_VALUE *inst;
 
   if (id == NULL) {
     id2 = 0;
@@ -2288,6 +2287,7 @@ chkobjname(struct objlist *obj,int *id,char *name)
   }
 
   for (i = id2; i <= obj->lastinst; i++) {
+    N_VALUE *inst;
     inst = chkobjinst(obj, i);
     if (inst == NULL) {
       return -1;
