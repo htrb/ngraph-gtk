@@ -225,12 +225,12 @@ free_arg_list(MathExpression **argv)
 static MathExpression *
 get_argument(struct math_string *str, MathEquation *eq, struct math_function_parameter *fprm, int i, int *err)
 {
-  struct math_token *token;
   MathExpression *exp;
   int argc;
 
   argc = math_function_get_arg_type_num(fprm);
   if (fprm->arg_type && i < argc) {
+    struct math_token *token;
     switch (fprm->arg_type[i]) {
     case MATH_FUNCTION_ARG_TYPE_ARRAY:
       token = my_get_token(str);
