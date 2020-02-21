@@ -2564,7 +2564,7 @@ math_func_times(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rv
 int
 math_func_while(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  int n, r, i;
+  int n, i;
   MathFunctionArgument *argv;
   MathValue condition;
 
@@ -2592,6 +2592,7 @@ math_func_while(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rv
   condition.val = 0;
   condition.type = MATH_VALUE_NORMAL;
   for (i = 0; ; i++) {
+    int r;
     if ((i & 0xff) == 0 && ninterrupt()) {
       rval->type = MATH_VALUE_INTERRUPT;
       return 1;
@@ -2601,7 +2602,7 @@ math_func_while(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rv
       Memory[n].val = i;
     }
 
-     r = math_expression_calculate(argv[1].exp, &condition);
+    r = math_expression_calculate(argv[1].exp, &condition);
     if(r) {
       return r;
     }
