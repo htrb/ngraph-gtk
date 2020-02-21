@@ -1164,7 +1164,7 @@ void
 arrayuniq_all_str(struct narray *array)
 {
   int i, j, num;
-  char **adata, *val;
+  char **adata;
 
   if (array == NULL) {
     return;
@@ -1177,6 +1177,7 @@ arrayuniq_all_str(struct narray *array)
 
   adata = arraydata(array);
   for (j = 0; j < num - 1; j++) {
+    char *val;
     val = adata[j];
     for (i = j + 1; i < num;) {
       if (g_strcmp0(adata[i], val) == 0) {
