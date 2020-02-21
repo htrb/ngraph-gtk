@@ -3214,11 +3214,12 @@ _exeobj(struct objlist *obj,const char *vname,N_VALUE *inst,int argc,char **argv
       g_free(argv2);
       return -1;
     }
-    for (i=0;i<argc;i++)
+    for (i=0;i<argc;i++) {
       if (arg_add(&argv2,((char **)argv)[i])==NULL) {
         g_free(argv2);
         return -1;
       }
+    }
     argc2=getargc(argv2);
     rcode=robj->table[idn].proc(robj,inst,inst+idp,argc2,argv2);
     g_free(argv2);
