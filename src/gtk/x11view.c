@@ -1358,7 +1358,6 @@ Evaluate(int x1, int y1, int x2, int y2, int err, struct Viewer *d)
   char *argv[7];
   int snum, hidden;
   int limit;
-  N_VALUE *dinst;
   int i, j;
   struct narray *eval;
   int evalnum, tot;
@@ -1366,8 +1365,6 @@ Evaluate(int x1, int y1, int x2, int y2, int err, struct Viewer *d)
   struct savedstdio save;
   double line, dx, dy;
   char mes[256];
-  int ret;
-  int selnum;
 
   minx = (x1 < x2) ? x1 : x2;
   miny = (y1 < y2) ? y1 : y2;
@@ -1405,6 +1402,7 @@ Evaluate(int x1, int y1, int x2, int y2, int err, struct Viewer *d)
   tot = 0;
 
   for (i = 0; i < snum; i++) {
+    N_VALUE *dinst;
     dinst = chkobjinst(fileobj, i);
     if (dinst == NULL) {
       continue;
@@ -1434,6 +1432,7 @@ Evaluate(int x1, int y1, int x2, int y2, int err, struct Viewer *d)
   ResetStatusBar();
 
   if (tot > 0) {
+    int ret, selnum;
     EvalDialog(&DlgEval, fileobj, tot, &SelList);
     ret = DialogExecute(TopLevel, &DlgEval);
     selnum = arraynum(&SelList);
