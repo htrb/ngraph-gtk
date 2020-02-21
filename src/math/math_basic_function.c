@@ -1802,8 +1802,8 @@ math_func_yn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
   int r;
   gsl_sf_result val;
 #else
-  int m, i, l;
-  double t1, t2, t3, s, ss, w, j0, j1, y0, y1, y2, val;
+  int i;
+  double t1, j0, j1, y0, y1, y2, val;
 #endif
 
   MATH_CHECK_ARG(rval, exp->buf[0]);
@@ -1852,6 +1852,8 @@ math_func_yn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
       }
     }
   } else {
+    int m;
+    double t2, t3, s, ss;
     if (x2 >= 100) {
       m = (int) (1.073 * x2 + 47);
     } else if (x2 >= 10) {
@@ -1870,6 +1872,7 @@ math_func_yn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
     for (i = m - 1; i >= 0; i--) {
       t1 = 2 * (i + 1) / x2 * t2 - t3;
       if ((i % 2 == 0) && (i != 0)) {
+        int l;
 	s += t1;
 	l = i / 2;
 	if (l % 2 == 0) {
@@ -1896,6 +1899,7 @@ math_func_yn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
       y1 = (j1 * y0 - 2 / MPI / x2) / j0;
       for (i = 2; i <= n2; i++) {
 	if (y1 <= -1E65) {
+          double w;
 	  w = y1 * 1E-10;
 	  y2 = 2 * (i - 1) / x2 * w - y0 * 1E-10;
 	  if (fabs(y2) >= 1E65) {
