@@ -177,8 +177,8 @@ static void
 free_stack_strings(MathStack *stack)
 {
   int i;
-  GString *str;
   for (i = 0; i < stack->end; i++) {
+    GString *str;
     str = stack->stack.str[i];
     if (str) {
       g_string_free(str, TRUE);
