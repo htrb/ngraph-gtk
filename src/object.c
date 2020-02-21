@@ -5356,10 +5356,9 @@ obj_do_tighten(struct objlist *obj, N_VALUE *inst, const char *field)
 void
 obj_do_tighten_all(struct objlist *obj, N_VALUE *inst, const char *field)
 {
-  char *dest, *ptr;
+  char *dest;
   struct narray iarray;
   struct objlist *dobj;
-  int anum, id, oid, i;
   GString *dest2;
 
   if (_getobj(obj, field, inst, &dest))
@@ -5374,9 +5373,12 @@ obj_do_tighten_all(struct objlist *obj, N_VALUE *inst, const char *field)
   }
   arrayinit(&iarray, sizeof(int));
   if (! getobjilist(dest, &dobj, &iarray, FALSE, NULL)) {
+    char *ptr;
+    int anum, oid, i;
     anum = arraynum(&iarray);
     g_string_printf(dest2, "%s:", chkobjectname(dobj));
     for (i = 0; i < anum; i++) {
+      int id;
       id = arraynget_int(&iarray, i);
       if (getobj(dobj, "oid", id, 0, NULL, &oid) != -1) {
 	g_string_append_printf(dest2, "%s^%d", (i == 0) ? "" : ",", oid);
