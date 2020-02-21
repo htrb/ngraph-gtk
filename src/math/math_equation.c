@@ -1402,7 +1402,9 @@ local_array_alloc(MathFunctionExpression *func, MathFunctionArgument *argv, stru
   }
   memset(info->local, 0, sizeof(*info->local) * func->local_array_num);
 
-  if (func->fprm->arg_type) {
+  if (func->fprm->arg_type == NULL) {
+    return 0;
+  }
     j = 0;
     for (i = 0; i < func->argc; i++) {
       if (func->fprm->arg_type[i] == MATH_FUNCTION_ARG_TYPE_ARRAY) {
@@ -1410,7 +1412,6 @@ local_array_alloc(MathFunctionExpression *func, MathFunctionArgument *argv, stru
 	j++;
       }
     }
-  }
   return 0;
 }
 
