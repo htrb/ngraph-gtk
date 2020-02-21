@@ -4229,11 +4229,13 @@ getvaluestr(struct objlist *obj,const char *field,void *val,int cr,int quote)
 static int
 add_arg_object(char *s2, char ***argv)
 {
-  char *p, *oname,*os;
-  int olen, i;
-  struct objlist *obj2;
+  char *p,*os;
+  int olen;
 
   if (s2 && s2[0]) {
+    char *oname;
+    int i;
+    struct objlist *obj2;
     os = s2;
     oname = getitok2(&os, &olen, ":");
     if (oname == NULL) {
