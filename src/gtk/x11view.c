@@ -3327,22 +3327,23 @@ mouse_up_point(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
 static int
 move_objects(int dx, int dy, struct Viewer *d, char **objs)
 {
-  int i, num, axis;
-  char *argv[5];
-  N_VALUE *inst;
+  int num, axis;
   struct FocusObj *focus;
-  struct objlist *obj;
 
   d->ShowFrame = FALSE;
   num = arraynum(d->focusobj);
   axis = FALSE;
   PaintLock = TRUE;
   if (dx != 0 || dy != 0) {
+    char *argv[5];
+    int i;
     menu_save_undo(UNDO_TYPE_MOVE, objs);
     argv[0] = (char *) &dx;
     argv[1] = (char *) &dy;
     argv[2] = NULL;
     for (i = num - 1; i >= 0; i--) {
+      struct objlist *obj;
+      N_VALUE *inst;
       focus = *(struct FocusObj **) arraynget(d->focusobj, i);
       obj = focus->obj;
       if (obj == chkobject("axis"))
