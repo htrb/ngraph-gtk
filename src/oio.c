@@ -249,7 +249,7 @@ io_puts(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 
   errno = 0;
   if (argv[2]) {
-    rcode = fputs(argv[2], fp);
+    fputs(argv[2], fp);
   }
   rcode = fputs("\n", fp);
 
@@ -593,4 +593,3 @@ addio(void)
 {
   return addobject(NAME, NULL, PARENT, OVERSION, OIO_TBLNUM, io, ERRNUM, io_errorlist, NULL, NULL);
 }
-
