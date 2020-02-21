@@ -895,7 +895,7 @@ qinv2(double y)
 int
 math_func_qinv(MathFunctionCallExpression *expl, MathEquation *eq, MathValue *rval)
 {
-  double x, x2, m2, c0, c1, y0, y1, val;
+  double x, x2, m2, y0, y1, val;
 
   MATH_CHECK_ARG(rval, expl->buf[0]);
 
@@ -914,6 +914,7 @@ math_func_qinv(MathFunctionCallExpression *expl, MathEquation *eq, MathValue *rv
 
   m2 = sqrt(2 * MPI);
   if (x2 <= 0.01) {
+    double c0, c1;
     c0 = sqrt(-2 * log(m2 * 3 * x2));
     c1 = c0 + 1 / c0;
     y1 = sqrt(-2 * log(m2 * c1 * x2));
