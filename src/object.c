@@ -3232,8 +3232,7 @@ exeobj(struct objlist *obj, const char *vname,int id,int argc,char **argv)
 {
   struct objlist *robj;
   N_VALUE *instcur;
-  int i,idn,idp,rcode;
-  int argc2;
+  int idn,idp,rcode;
   char **argv2;
 
   if ((idn=getobjtblpos(obj,vname,&robj))==-1) return -1;
@@ -3247,6 +3246,7 @@ exeobj(struct objlist *obj, const char *vname,int id,int argc,char **argv)
     return -1;
   }
   if (robj->table[idn].proc!=NULL) {
+    int i, argc2;
     argv2=NULL;
     if (arg_add2(&argv2,2,obj->name,vname)==NULL) {
       g_free(argv2);
