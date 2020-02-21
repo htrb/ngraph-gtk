@@ -297,7 +297,7 @@ axisinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   if (_putobj(obj,"num_num",inst,&num)) return 1;
   if (_putobj(obj,"num_A",inst,&alpha)) return 1;
 
-  format = font = group = name = NULL;
+  font = group = name = NULL;
 
   format = g_strdup("%g");
   if (format == NULL) goto errexit;
