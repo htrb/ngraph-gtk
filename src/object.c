@@ -3186,10 +3186,11 @@ int
 __exeobj(struct objlist *obj,int idn,N_VALUE *inst,int argc,char **argv)
 /* __exeobj() returns errorlevel or -1 on error */
 {
-  int rcode,idp;
+  int rcode;
 
   if (obj->table[idn].type<NVFUNC) return -1;
   if (obj->table[idn].proc!=NULL) {
+    int idp;
     idp=chkobjoffset2(obj,idn);
     rcode=obj->table[idn].proc(obj,inst,inst+idp,argc,argv);
   } else rcode=0;
