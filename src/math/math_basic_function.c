@@ -1155,8 +1155,7 @@ math_func_lgn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
   int r;
   gsl_sf_result val;
 #else
-  int i;
-  double l1, l2, tmp1, tmp2, val;
+  double l1, val;
 #endif
 
   MATH_CHECK_ARG(rval, exp->buf[0]);
@@ -1192,10 +1191,13 @@ math_func_lgn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
   if (n == 0) {
     val = l1;
   } else {
+    double l2;
     l2 = 1 - x + alp;
     if (n == 1) {
       val = l2;
     } else {
+      double tmp1, tmp2;
+      int i;
       tmp1 = 1 + x - alp;
       tmp2 = 1 - alp;
       for (i = 2; i <= n; i++) {
