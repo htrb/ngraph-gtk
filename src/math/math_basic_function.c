@@ -3428,7 +3428,6 @@ map_string(MathFunctionCallExpression *exp, MathEquation *eq, int src_id, int de
   int i, n;
   MathEquationArray *src;
   GString *gstr;
-  const char *str;
   MathValue val;
 
   src = math_equation_get_string_array(eq, src_id);
@@ -3439,6 +3438,7 @@ map_string(MathFunctionCallExpression *exp, MathEquation *eq, int src_id, int de
 
   n = src->num;
   for (i = 0; i < n; i++) {
+    const char *str;
     str = math_equation_get_array_cstr(eq, src_id, i);
     if (str == NULL) {
       return -1;
