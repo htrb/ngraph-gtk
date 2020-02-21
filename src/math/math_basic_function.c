@@ -790,8 +790,6 @@ math_func_erfc(MathFunctionCallExpression *expl, MathEquation *eq, MathValue *rv
   }
   return r;
 #else
-
-
   x2 = fabs(x);
   if (x2 <= 0.1) {
     sum = 0;
@@ -820,7 +818,7 @@ math_func_erfc(MathFunctionCallExpression *expl, MathEquation *eq, MathValue *rv
     if (x2 < 6) {
       sum += 0.5 / (x2 * x2);
       sum *= 2 * x2 / MPI * exp(-x2 * x2) * h;
-      sum -= 2 / (exp(2 * MPI * x2 / h) - 1);
+      sum -= 2 / expm1(2 * MPI * x2 / h);
     } else {
       sum += 0.5 / (x2 * x2);
       sum *= 2 * x2 / MPI * exp(-x2 * x2) * h;
