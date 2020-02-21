@@ -84,7 +84,9 @@ oGRAdisconnect(struct objlist *obj,void *inst,int clear)
   _getobj(obj,"oid",inst,&oid);
   _getobj(obj,"_device",inst,&device);
   _putobj(obj,"_device",inst,NULL);
-  if (device!=NULL) {
+  if (device == NULL) {
+    return 0;
+  }
     if (((dobj=getobjlist(device,&did,&dfield,NULL))!=NULL)
     && ((dinst=chkobjinstoid(dobj,did))!=NULL)) {
       if ((!chkobjfield(dobj,"_list"))
@@ -101,7 +103,6 @@ oGRAdisconnect(struct objlist *obj,void *inst,int clear)
         }
       }
     }
-  }
   g_free(device);
   return 0;
 }
