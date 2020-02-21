@@ -2450,9 +2450,10 @@ draw_frame_rect(cairo_t *gc, int change, double zoom, int *bbox, const struct Vi
 static void
 draw_focus_line(cairo_t *gc, int change, double zoom, int bboxnum, int *bbox, int close_path, const struct Viewer *d)
 {
-  int j, ofsx, ofsy, x1, y1;
+  int j, ofsx, ofsy;
 
   for (j = 4; j < bboxnum; j += 2) {
+    int x1, y1;
     if (change == (j - 4) / 2) {
       ofsx = d->LineX;
       ofsy = d->LineY;
