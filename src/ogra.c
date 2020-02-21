@@ -301,12 +301,13 @@ oGRAredraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   field=(char *)(argv[1]);
   _getobj(obj,"oid",inst,&oid);
   _getobj(obj,"_device",inst,&device);
-  if (device!=NULL) {
+  if (device == NULL) {
+    return 0;
+  }
     if (((dobj=getobjlist(device,&did,&dfield,NULL))!=NULL)
     && ((dinst=chkobjinstoid(dobj,did))!=NULL)) {
       if (chkobjfield(dobj,field)==0) _exeobj(dobj,field,dinst,0,NULL);
     }
-  }
   return 0;
 }
 
