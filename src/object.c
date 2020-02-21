@@ -1601,7 +1601,7 @@ hideinstance(struct objlist *obj)
 void
 recoverinstance(struct objlist *obj)
 {
-  N_VALUE *instcur,*instprev;
+  N_VALUE *instcur;
   int nextp,idp;
 
   if ((idp=obj->idp)==-1) return;
@@ -1611,6 +1611,7 @@ recoverinstance(struct objlist *obj)
     obj->root=obj->root2;
     obj->lastinst=obj->lastinst2;
   } else {
+    N_VALUE *instprev;
     instcur=obj->root;
     while (instcur!=NULL) {
       instcur[idp].i+=obj->lastinst2+1;
