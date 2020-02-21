@@ -5393,9 +5393,10 @@ copy_obj_field(struct objlist *obj, int dist, int src, char **ignore_field)
 {
   int perm, ignore, j;
   enum ngraph_object_field_type type;
-  char *field, **ptr;
+  char **ptr;
 
   for (j = 0; j < chkobjfieldnum(obj); j++) {
+    char *field;
     field = chkobjfieldname(obj, j);
     if (field == NULL) {
       continue;
