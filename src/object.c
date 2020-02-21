@@ -1303,10 +1303,11 @@ unregisterevloop(struct objlist *obj,int idn,N_VALUE *inst)
 static void
 unregisterallevloop(void)
 {
-  struct loopproc *lpcur,*lpdel;
+  struct loopproc *lpcur;
 
   lpcur=looproot;
   while (lpcur!=NULL) {
+    struct loopproc *lpdel;
     lpdel=lpcur;
     lpcur=lpcur->next;
     g_free(lpdel);
