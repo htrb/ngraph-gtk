@@ -524,11 +524,12 @@ arrayfree2(struct narray *array)
 struct narray *
 arrayadd(struct narray *array,const void *val)
 {
-  int size,base;
+  int base;
   char *data;
 
   if (array==NULL || val == NULL) return NULL;
   if (array->num==array->size) {
+    int size;
     size=array->size+ALLOCSIZE;
     if ((data=g_realloc(array->data,array->base*size))==NULL) {
       return NULL;
