@@ -74,7 +74,9 @@ gra2done(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
     error2(obj,ERRLOCK,argv[0]);
     return 1;
   }
-  if (n) {
+  if (n < 1) {
+    return 0;
+  }
     gobj=getobjlist(arraynget_str(sarray,0),&gid,&gfield,NULL);
     if (gobj==NULL) return 0;
     if ((ginst=getobjinstoid(gobj,gid))==NULL) return 0;
@@ -87,7 +89,6 @@ gra2done(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
       if (_getobj(gobj,"id",ginst,&id)) return 0;
       delobj(gobj,id);
     }
-  }
   return 0;
 }
 
