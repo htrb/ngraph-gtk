@@ -3179,13 +3179,13 @@ axischangescale(struct objlist *obj,N_VALUE *inst,
                     double *rmin,double *rmax,double *rinc,int room)
 {
   int type;
-  double min,max,inc,ming,maxg,order,mmin;
-  double a;
+  double min,max,inc,ming,maxg,order;
 
   _getobj(obj,"type",inst,&type);
   ming=*rmin;
   maxg=*rmax;
   if (ming>maxg) {
+    double a;
     a=ming;
     ming=maxg;
     maxg=a;
@@ -3227,6 +3227,7 @@ axischangescale(struct objlist *obj,N_VALUE *inst,
   }
   if (min==max) max=min+1;
   if (type!=AXIS_TYPE_INVERSE) {
+    double mmin;
     inc=scale(max-min);
     if (max<min) inc*=-1;
     mmin=roundmin(min,inc)+inc;
