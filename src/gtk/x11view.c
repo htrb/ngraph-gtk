@@ -5797,9 +5797,8 @@ get_range_max(GtkWidget *w)
 void
 ChangeDPI(void)
 {
-  int width, height, i, num, XPos, YPos, XRange = 0, YRange = 0;
+  int width, height, XPos, YPos, XRange = 0, YRange = 0;
   gint w, h;
-  N_VALUE *inst;
   double ratex, ratey;
   struct objlist *obj;
   struct narray *array;
@@ -5857,8 +5856,10 @@ ChangeDPI(void)
   d->vscroll = YPos;
 
   if ((obj = chkobject("text")) != NULL) {
+    int i, num;
     num = chkobjlastinst(obj);
     for (i = 0; i <= num; i++) {
+      N_VALUE *inst;
       inst = chkobjinst(obj, i);
       _getobj(obj, "bbox", inst, &array);
       arrayfree(array);
