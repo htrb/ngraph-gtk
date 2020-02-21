@@ -822,7 +822,7 @@ parse_assign_expression(struct math_string *str, MathEquation *eq, enum MATH_OPE
 }
 
 static int
-parse_parameter_list(struct math_string *str, MathEquation *eq, MathExpression *func, int *err)
+parse_parameter_list(struct math_string *str, MathExpression *func, int *err)
 {
   struct math_token *token;
   enum MATH_FUNCTION_ARG_TYPE type;
@@ -995,7 +995,7 @@ parse_func_def_expression(struct math_string *str, MathEquation *eq, int *err)
   }
 
   /* get parameters */
-  if (parse_parameter_list(str, eq, exp, err)) {
+  if (parse_parameter_list(str, exp, err)) {
     math_equation_finish_user_func_definition(eq, NULL, NULL, NULL, NULL);
     free_func_prm(exp->u.func.fprm);
     math_scanner_free_token(fname);
