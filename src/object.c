@@ -3201,14 +3201,14 @@ _exeobj(struct objlist *obj,const char *vname,N_VALUE *inst,int argc,char **argv
 /* _exeobj() returns errorlevel or -1 on error */
 {
   struct objlist *robj;
-  int i,idn,idp,rcode;
-  int argc2;
+  int idn,idp,rcode;
   char **argv2;
 
   if ((idn=getobjtblpos(obj,vname,&robj))==-1) return -1;
   idp=chkobjoffset2(robj,idn);
   if (robj->table[idn].type<NVFUNC) return -1;
   if (robj->table[idn].proc!=NULL) {
+    int i, argc2;
     argv2=NULL;
     if (arg_add2(&argv2,2,obj->name,vname)==NULL) {
       g_free(argv2);
