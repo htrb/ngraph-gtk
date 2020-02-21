@@ -3520,8 +3520,6 @@ static void
 mouse_up_change(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
 {
   int dx, dy, axis;
-  char *argv[5];
-  N_VALUE *inst;
   struct FocusObj *focus;
   struct objlist *obj;
 
@@ -3531,6 +3529,7 @@ mouse_up_change(unsigned int state, TPoint *point, double zoom, struct Viewer *d
   obj = NULL;
 
   if ((d->MouseX1 != d->MouseX2) || (d->MouseY1 != d->MouseY2)) {
+    char *argv[5];
     d->MouseX2 = calc_mouse_x(point->x, zoom, d);
     d->MouseY2 = calc_mouse_y(point->y, zoom, d);
 
@@ -3542,6 +3541,7 @@ mouse_up_change(unsigned int state, TPoint *point, double zoom, struct Viewer *d
     }
 
     if (dx != 0 || dy != 0) {
+      N_VALUE *inst;
       argv[0] = (char *) &(d->ChangePoint);
       argv[1] = (char *) &dx;
       argv[2] = (char *) &dy;
