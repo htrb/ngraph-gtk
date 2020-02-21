@@ -556,7 +556,6 @@ load_plugin(struct objlist *obj, N_VALUE *inst, const char *arg, int *rval)
 {
   char *name;
   struct ngraph_plugin *plugin;
-  int r;
 
   if (arg == NULL) {
     error(obj, ERRSYSNOMODULE);
@@ -591,6 +590,7 @@ load_plugin(struct objlist *obj, N_VALUE *inst, const char *arg, int *rval)
   g_free(name);
 
   if (plugin->open) {
+    int r;
     r = plugin->open();
     if (rval) {
       *rval = r;
