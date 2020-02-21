@@ -896,9 +896,9 @@ axismatch2(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 static int
 axismatch(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  int i, n, type;
+  int n, type;
   N_VALUE *inst_array[INST_ARRAY_NUM];
-  int rval2, match;
+  int rval2;
 
   rval->i = FALSE;
 
@@ -919,6 +919,7 @@ axismatch(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
   }
 
   if (n) {
+    int i, match;
     match = FALSE;
 
     for (i = 0; i < n; i++) {
