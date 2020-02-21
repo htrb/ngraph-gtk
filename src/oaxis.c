@@ -1437,7 +1437,7 @@ axiszoom2(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   double zoom_x, zoom_y, zoom_n, zoom_p, zoom;
   int pt,space,wid1,wid2,wid3,len1,len2,len3,wid,wlen,wwid,direction;
   struct narray *style,*gstyle;
-  int i,snum,*sdata,gsnum,*gsdata;
+  int snum,*sdata,gsnum,*gsdata;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   zoom_x = (*(int *) argv[2]) / 10000.0;
@@ -1478,6 +1478,7 @@ axiszoom2(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   pt*=zoom;
   space*=zoom;
   if (! preserve_width) {
+    int i;
     wid*=zoom;
     wid1*=zoom;
     wid2*=zoom;
