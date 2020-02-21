@@ -1604,8 +1604,8 @@ math_func_tn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 int
 math_func_hn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  double l1, l2, val, x;
-  int i, n;
+  double l1, val, x;
+  int n;
 
   MATH_CHECK_ARG(rval, exp->buf[0]);
   MATH_CHECK_ARG(rval, exp->buf[1]);
@@ -1622,10 +1622,12 @@ math_func_hn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
   if (n == 0) {
     val = l1;
   } else {
+    double l2;
     l2 = 2 * x;
     if (n == 1) {
       val = l2;
     } else {
+      int i;
       for (i = 2; i <= n; i++) {
 	val = x * l2 - (i - 1) * l1;
 	val += val;
@@ -1726,7 +1728,6 @@ math_func_pn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
   gsl_sf_result val;
 #else
   double l1, val;
-  int i;
 #endif
 
   MATH_CHECK_ARG(rval, exp->buf[0]);
@@ -1775,9 +1776,9 @@ math_func_pn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
     if (n == 1) {
       val = l2;
     } else {
-      double tmp1, tmp2;
-
+      int i;
       for (i = 2; i <= n; i++) {
+        double tmp1, tmp2;
 	tmp1 = x * l2;
 	tmp2 = tmp1 - l1;
 	val = tmp2 + tmp1 - tmp2 / i;
