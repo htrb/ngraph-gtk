@@ -3846,7 +3846,6 @@ axismanager(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
   int i,id,lastinst;
   char *group,*group2;
   char type;
-  N_VALUE *inst2;
 
   _getobj(obj,"id",inst,&id);
   _getobj(obj,"group",inst,&group);
@@ -3858,6 +3857,7 @@ axismanager(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
   id=-1;
   type=group[0];
   for (i=0;i<=lastinst;i++) {
+    N_VALUE *inst2;
     inst2=chkobjinst(obj,i);
     _getobj(obj,"group",inst2,&group2);
     if ((group2!=NULL) && (group2[0]==type) && (strcmp(group+2,group2+2)==0))
