@@ -5969,14 +5969,13 @@ search_axis_group(struct objlist *obj, int id, const char *group,
 {
   int j, id2, type;
   struct objlist *aobj, *gobj;
-  N_VALUE *inst2, *dinst;
   char *group2;
-  int snum;
 
   *findX = *findY = *findU = *findR = *findG = FALSE;
   type = group[0];
 
   for (j = 0; j <= id; j++) {
+    N_VALUE *inst2;
     inst2 = chkobjinst(obj, j);
     _getobj(obj, "group", inst2, &group2);
     _getobj(obj, "id", inst2, &id2);
@@ -6006,10 +6005,12 @@ search_axis_group(struct objlist *obj, int id, const char *group,
   if ((type == 's' || type == 'f') &&
       *findX && *findY &&
       ! check_drawrable(gobj)) {
+    int snum;
 
     snum = chkobjlastinst(gobj) + 1;
     for (j = 0; j < snum; j++) {
       int aid1, aid2;
+      N_VALUE *dinst;
       dinst = chkobjinst(gobj, j);
       if (dinst == NULL) {
 	continue;
