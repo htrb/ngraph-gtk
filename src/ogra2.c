@@ -77,18 +77,18 @@ gra2done(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   if (n < 1) {
     return 0;
   }
-    gobj=getobjlist(arraynget_str(sarray,0),&gid,&gfield,NULL);
-    if (gobj==NULL) return 0;
-    if ((ginst=getobjinstoid(gobj,gid))==NULL) return 0;
-    if (GC!=-1) _exeobj(gobj,"close",ginst,0,NULL);
-    if (!_getobj(gobj,"_device",ginst,&device)) {
-      g_free(device);
-      _putobj(gobj,"_device",ginst,NULL);
-    }
-    if (deletegra) {
-      if (_getobj(gobj,"id",ginst,&id)) return 0;
-      delobj(gobj,id);
-    }
+  gobj=getobjlist(arraynget_str(sarray,0),&gid,&gfield,NULL);
+  if (gobj==NULL) return 0;
+  if ((ginst=getobjinstoid(gobj,gid))==NULL) return 0;
+  if (GC!=-1) _exeobj(gobj,"close",ginst,0,NULL);
+  if (!_getobj(gobj,"_device",ginst,&device)) {
+    g_free(device);
+    _putobj(gobj,"_device",ginst,NULL);
+  }
+  if (deletegra) {
+    if (_getobj(gobj,"id",ginst,&id)) return 0;
+    delobj(gobj,id);
+  }
   return 0;
 }
 
