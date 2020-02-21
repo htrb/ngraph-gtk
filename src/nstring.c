@@ -367,8 +367,6 @@ add_printf_formated_str(GString *str, const char *format, const char *arg, int *
 {
   int i, formated, pow;
   char *format2, *buf, *endptr;
-  int vi;
-  long long int vll;
   double vd;
 
   formated = FALSE;
@@ -384,12 +382,14 @@ add_printf_formated_str(GString *str, const char *format, const char *arg, int *
   switch (format[i]) {
   case 'd': case 'i': case 'o': case 'u': case 'x': case 'X':
     if (i > 2 && strncmp(format2 + i - 2, "ll", 2) == 0) {
+      long long int vll;
       vll = 0;
       if (arg) {
 	vll = strtod(arg, &endptr);
       }
       buf = g_strdup_printf(format2, vll);
-    }else {
+    } else {
+      int vi;
       vi = 0;
       if (arg) {
 	vi = strtod(arg, &endptr);
