@@ -6497,7 +6497,7 @@ ViewCopyAxis(struct objlist *obj, int id, struct FocusObj *focus, N_VALUE *inst)
 static void
 ViewCopy(void)
 {
-  int i, id, id2, num;
+  int i, id2, num;
   struct FocusObj *focus;
   struct objlist *obj;
   N_VALUE *inst, *inst2;
@@ -6531,6 +6531,7 @@ ViewCopy(void)
   get_focused_obj_array(d->focusobj, objs);
   menu_save_undo(UNDO_TYPE_COPY, objs);
   for (i = 0; i < num; i++) {
+    int id;
     focus = focused_inst[i].focus;
     id = focused_inst[i].id;
     if (focus == NULL)
