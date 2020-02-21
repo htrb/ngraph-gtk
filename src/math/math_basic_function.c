@@ -354,7 +354,7 @@ math_func_min(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
 int
 math_func_sumsq(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  double sum, val;
+  double sum;
   int i;
 
   if (exp->argc < 1) {
@@ -364,6 +364,7 @@ math_func_sumsq(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rv
 
   sum = 0;
   for (i = 0; i < exp->argc; i++) {
+    double val;
     MATH_CHECK_ARG(rval, exp->buf[i]);
     val = exp->buf[i].val.val;
     sum += val * val;
