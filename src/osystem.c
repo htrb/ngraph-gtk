@@ -344,7 +344,7 @@ sysunlink(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   char *tmpfil;
   struct narray *array;
-  int i,num;
+  int num;
   char **data;
 
   _getobj(obj,"temp_list",inst,&array);
@@ -352,6 +352,7 @@ sysunlink(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   num=arraynum(array);
   data=arraydata(array);
   if (num>0) {
+    int i;
     tmpfil=(char *)argv[2];
     if (tmpfil==NULL) tmpfil=data[num-1];
     for (i=num-1;i>=0;i--)
