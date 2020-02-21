@@ -3677,14 +3677,13 @@ reset_drag_info(struct Viewer *d)
 static void
 SetPoint(struct Viewer *d, int x, int y)
 {
-  char buf[128];
-  struct Point *po;
-  unsigned int num;
-
   //  x += Menulocal.LeftMargin;
   //  y += Menulocal.TopMargin;
 
   if (NgraphApp.Message && GTK_WIDGET_VISIBLE(NgraphApp.Message)) {
+    char buf[128];
+    struct Point *po;
+    unsigned int num;
     snprintf(buf, sizeof(buf), "% 6.2f, % 6.2f", x / 100.0, y / 100.0);
     gtk_label_set_text(GTK_LABEL(NgraphApp.Message_pos), buf);
 
