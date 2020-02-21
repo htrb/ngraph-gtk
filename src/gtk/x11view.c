@@ -673,7 +673,6 @@ data_dropped(char **filenames, int num, int file_type)
       }
     }
 
-    ret = 1;
     if (type == FILE_TYPE_MERGE) {
       ret = new_merge_obj(name, mobj);
     } else {
