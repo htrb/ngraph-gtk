@@ -196,7 +196,6 @@ char *
 getrelativepath(const char *name)
 {
   char *utf8_name, *str;
-  GString *s;
 
   if (name == NULL) {
     return NULL;
@@ -211,7 +210,7 @@ getrelativepath(const char *name)
     str = utf8_name;
     pathresolv(str);
   } else {
-    int i, j, top, depth;
+    int top;
 
     top = 0;
 #if WINDOWS
@@ -226,7 +225,9 @@ getrelativepath(const char *name)
 	name[0] == DIRSEP
 #endif	/* WINDOWS */
 	) {
+      GString *s;
       char *cwd, *cwd2;
+      int i, j, depth;
 
       cwd = ngetcwd();
       if (cwd == NULL) {
