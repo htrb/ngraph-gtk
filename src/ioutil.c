@@ -647,7 +647,6 @@ int
 nglob(char *path,char ***namelist)
 {
   int num;
-  char *s;
 
   *namelist=NULL;
   num=0;
@@ -656,10 +655,11 @@ nglob(char *path,char ***namelist)
     return -1;
   }
   if (num==0) {
-    if ((s=g_malloc(strlen(path)+1))==NULL) return -1;
-    strcpy(s,path);
+    char *s;
+    s = g_strdup(path);
+    if (s == NULL) return -1;
     if (arg_add(namelist,s)==NULL) return -1;
-    return 1;
+    num = 1;
   }
   return num;
 }
