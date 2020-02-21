@@ -5682,11 +5682,11 @@ create_layers(void)
 {
   int i, n;
   struct narray *array;
-  char *obj;
 
   array = &Menulocal.drawrable;
   n = arraynum(array);
   for (i = 0; i < n; i++) {
+    char *obj;
     obj = arraynget_str(array, i);
     init_layer(obj);
   }
