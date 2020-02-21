@@ -4930,7 +4930,9 @@ freeargument(int type,const char *arglist,int argc,char **argv,int full)
 {
   int i;
 
-  if (argv!=NULL) {
+  if (argv == NULL) {
+    return;
+  }
     if (arglist==NULL) {
       for (i=0;i<argc;i++) g_free(argv[i]);
       g_free(argv);
@@ -4951,7 +4953,6 @@ freeargument(int type,const char *arglist,int argc,char **argv,int full)
       }
       g_free(argv);
     }
-  }
 }
 
 int
