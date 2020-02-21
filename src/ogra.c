@@ -392,10 +392,7 @@ oGRAdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   int GC, layer;
   struct objlist *draw;
   struct narray *array;
-  char **drawrable;
-  const char *objname;
   char *oGRAargv[2];
-  int j,i,anum,instnum;
 
   _getobj(obj,"GC",inst,&GC);
   if (GC==-1) {
@@ -411,6 +408,9 @@ oGRAdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
     if ((draw=getobject("draw"))==NULL) return 1;
     oGRAdrawparent(draw, oGRAargv, layer);
   } else {
+    char **drawrable;
+    const char *objname;
+    int j,i,anum,instnum;
     anum=arraynum(array);
     drawrable=arraydata(array);
     for (j=0;j<anum;j++) {
