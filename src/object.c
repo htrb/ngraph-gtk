@@ -5324,10 +5324,9 @@ sexeobj(char *arg)
 void
 obj_do_tighten(struct objlist *obj, N_VALUE *inst, const char *field)
 {
-  char *dest, *dest2;
+  char *dest;
   struct narray iarray;
   struct objlist *dobj;
-  int anum, id, oid;
 
   if (_getobj(obj, field, inst, &dest))
     return;
@@ -5337,10 +5336,13 @@ obj_do_tighten(struct objlist *obj, N_VALUE *inst, const char *field)
 
   arrayinit(&iarray, sizeof(int));
   if (! getobjilist(dest, &dobj, &iarray, FALSE, NULL)) {
+    int anum;
     anum = arraynum(&iarray);
     if (anum > 0) {
+      int id, oid;
       id = arraylast_int(&iarray);
       if (getobj(dobj, "oid", id, 0, NULL, &oid) != -1) {
+        char *dest2;
 	dest2 = (char *) g_malloc(strlen(chkobjectname(dobj)) + 10);
 	if (dest2) {
 	  sprintf(dest2, "%s:^%d", chkobjectname(dobj), oid);
