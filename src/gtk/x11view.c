@@ -2124,7 +2124,6 @@ AlignFocusedObj(int align)
   struct FocusObj **focus;
   struct narray *abbox;
   char *argv[4], *objs[OBJ_MAX];
-  N_VALUE *inst;
   struct Viewer *d;
 
   if (Menulock || Globallock)
@@ -2156,6 +2155,7 @@ AlignFocusedObj(int align)
   get_focused_obj_array(d->focusobj, objs);
   menu_save_undo(UNDO_TYPE_ALIGN, objs);
   for (i = 0; i < num; i++) {
+    N_VALUE *inst;
     inst = chkobjinstoid(focus[i]->obj, focus[i]->oid);
     if (inst == NULL) {
       continue;
