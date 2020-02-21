@@ -132,8 +132,7 @@ pathresolv(char *name)
 char *
 getfullpath(const char *name)
 {
-  char *s, *cwd, *utf8_name;
-  int top;
+  char *s, *utf8_name;
 
   if (name == NULL) {
     return NULL;
@@ -149,6 +148,7 @@ getfullpath(const char *name)
   if (utf8_name[0] == DIRSEP && utf8_name[1] == DIRSEP) {
     s = utf8_name;
   } else {
+    int top;
     if (isalpha(utf8_name[0]) && utf8_name[1] == ':') {
       top = 2;
     } else {
@@ -157,6 +157,7 @@ getfullpath(const char *name)
     if (utf8_name[top] == DIRSEP) {
       s = utf8_name;
     } else {
+      char *cwd;
       cwd = ngetcwd();
       if (cwd == NULL) {
 	g_free(utf8_name);
