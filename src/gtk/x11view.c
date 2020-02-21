@@ -1744,7 +1744,7 @@ AddList(struct objlist *obj, N_VALUE *inst)
   struct objlist **objlist;
   struct objlist *obj2;
   N_VALUE *inst2, *ainst;
-  char *field, **objname;
+  char *field;
   struct narray *draw, drawrable;
 
   aobj = obj;
@@ -1769,6 +1769,7 @@ AddList(struct objlist *obj, N_VALUE *inst)
 
   po = 0;
   for (i = 0; i < num; i++) {
+    char **objname;
     objname = (char **) arraynget(draw, i);
     objlist[i] = chkobject(*objname);
     if (objlist[i] == obj)
