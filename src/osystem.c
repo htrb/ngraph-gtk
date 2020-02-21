@@ -426,8 +426,8 @@ systemresize(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **arg
   if (num < 2) {
     return 0;
   }
-    data=arraydata(iarray);
-    resizeconsole(data[0], data[1]);
+  data=arraydata(iarray);
+  resizeconsole(data[0], data[1]);
   return 0;
 }
 
