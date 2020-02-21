@@ -454,7 +454,7 @@ ngetcwd(void)
 char *
 nsearchpath(char *path,char *name,int shellscript)
 {
-  char *cmdname,*tok;
+  char *cmdname;
   int len;
 
   if (name==NULL) return NULL;
@@ -466,6 +466,7 @@ nsearchpath(char *path,char *name,int shellscript)
   }
 
   if (strchr(name,DIRSEP)==NULL) {
+    char *tok;
     while ((tok=getitok(&path,&len,PATHSEP))!=NULL) {
       g_free(cmdname);
       if ((cmdname=g_malloc(strlen(name)+len+2))==NULL) return NULL;
