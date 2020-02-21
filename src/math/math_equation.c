@@ -601,11 +601,10 @@ math_equation_add_parameter(MathEquation *eq, int type, int min, int max, int us
 static int
 add_parameter_data(MathEquationParametar *ptr, int val)
 {
-  int i;
-
   if (ptr->id == NULL) {
     ptr->id = add_to_ary_int(ptr->id, &ptr->id_num, val);
   } else {
+    int i;
     for (i = 0; i < ptr->id_num; i++) {
       if (ptr->id[i] == val) {
 	return i;
