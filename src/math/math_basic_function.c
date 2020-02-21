@@ -4461,7 +4461,7 @@ math_func_getobj_array(MathFunctionCallExpression *exp, MathEquation *eq, MathVa
   int id, ret, i, n;
   int *idata;
   double *ddata;
-  char **sdata, *str;
+  char **sdata;
   MathValue val;
 
   rval->val = 0;
@@ -4545,6 +4545,7 @@ math_func_getobj_array(MathFunctionCallExpression *exp, MathEquation *eq, MathVa
       break;
     }
     for (i = 0; i < n; i++) {
+      char *str;
       str = sdata[i];
       if (str == NULL) {
 	str = "";
