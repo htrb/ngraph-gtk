@@ -2779,9 +2779,8 @@ static int
 get_reference_parameter(struct objlist *obj, N_VALUE *inst,  struct axis_config *aconf)
 {
   char *axis;
-  N_VALUE *inst1;
   struct objlist *aobj;
-  int anum, id;
+  int anum;
   struct narray iarray;
   int type;
 
@@ -2797,6 +2796,8 @@ get_reference_parameter(struct objlist *obj, N_VALUE *inst,  struct axis_config 
 
   anum=arraynum(&iarray);
   if (anum>0) {
+    N_VALUE *inst1;
+    int id;
     id=arraylast_int(&iarray);
     arraydel(&iarray);
     if ((anum>0) && ((inst1=getobjinst(aobj,id))!=NULL)) {
