@@ -329,7 +329,7 @@ get_symbol(const char *str, const char ** rstr)
 }
 
 static GString *
-get_single_quoted_string(const char *str,  const char ** rstr, int *len)
+get_single_quoted_string(const char *str, int *len)
 {
   int n, escape;
   GString *gstr;
@@ -485,7 +485,7 @@ get_string(const char *str,  const char ** rstr, int quate)
   if (quate == '"') {
     gstr = get_double_quoted_string(str, rstr, &n);
   } else {
-    gstr = get_single_quoted_string(str, rstr, &n);
+    gstr = get_single_quoted_string(str, &n);
   }
   if (gstr == NULL) {
     return NULL;
