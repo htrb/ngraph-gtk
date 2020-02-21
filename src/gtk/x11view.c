@@ -5523,10 +5523,10 @@ check_drawrable(struct objlist *obj)
 {
   struct narray *array;
   int i, n;
-  char *name;
   array = &Menulocal.drawrable;
   n = arraynum(array);
   for (i = 0; i < n; i++) {
+    char *name;
     name = arraynget_str(array, i);
     if (g_strcmp0(name, obj->name) == 0) {
       return 0;
