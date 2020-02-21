@@ -2967,7 +2967,7 @@ math_func_array_sumsq(MathFunctionCallExpression *exp, MathEquation *eq, MathVal
 {
   int id, i;
   MathEquationArray *ary;
-  double sum, val;
+  double sum;
 
   rval->val = 0;
 
@@ -2981,6 +2981,7 @@ math_func_array_sumsq(MathFunctionCallExpression *exp, MathEquation *eq, MathVal
 
   sum = 0;
   for (i = 0; i < ary->num; i++) {
+    double val;
     if (ary->data.val[i].type != MATH_VALUE_NORMAL) {
       rval->type = MATH_VALUE_ERROR;
       return 1;
