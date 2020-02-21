@@ -2973,7 +2973,7 @@ putobj(struct objlist *obj, const char *vname,int id,void *val)
   struct objlist *robj;
   struct narray *array;
   N_VALUE *instcur;
-  int idp,idn,rcode,argc;
+  int idp,idn;
   char **argv;
 
   if ((idn=getobjtblpos(obj,vname,&robj))==-1) return -1;
@@ -2987,6 +2987,7 @@ putobj(struct objlist *obj, const char *vname,int id,void *val)
   }
 
   if ((robj->table[idn].type<NVFUNC) && (robj->table[idn].proc!=NULL)) {
+    int rcode,argc;
     argv=NULL;
     if (arg_add2(&argv,3,obj->name,vname,val)==NULL) {
       g_free(argv);
