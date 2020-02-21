@@ -4018,7 +4018,7 @@ put_num_hsb(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **
   return put_hsb_color(obj, inst, argc, argv, "num_%c");
 }
 
-static struct objtable axis[] = {
+static struct objtable axis_obj[] = {
   {"init",NVFUNC,NEXEC,axisinit,NULL,0},
   {"done",NVFUNC,NEXEC,axisdone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},
@@ -4117,7 +4117,7 @@ static struct objtable axis[] = {
   {"num_jfont",NSTR,NWRITE,NULL,NULL,0},
 };
 
-#define TBLNUM (sizeof(axis) / sizeof(*axis))
+#define TBLNUM (sizeof(axis_obj) / sizeof(*axis_obj))
 
 void *
 addaxis(void)
@@ -4138,5 +4138,5 @@ addaxis(void)
     }
   }
 
-  return addobject(NAME, NULL, PARENT, OVERSION, TBLNUM, axis, ERRNUM, axiserrorlist, NULL, NULL);
+  return addobject(NAME, NULL, PARENT, OVERSION, TBLNUM, axis_obj, ERRNUM, axiserrorlist, NULL, NULL);
 }
