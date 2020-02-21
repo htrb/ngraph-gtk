@@ -903,13 +903,13 @@ int
 math_equation_register_user_func_definition(MathEquation *eq, const char *name, MathExpression *exp)
 {
   struct math_function_parameter *fprm;
-  int r;
 
   if (eq == NULL || ! eq->func_def || name == NULL || exp == NULL)
     return 1;
 
   fprm = math_equation_get_func(eq, name);
   if (fprm == NULL) {
+    int r;
     r = nhash_set_ptr(eq->function, name, exp->u.func.fprm);
     return r;
   }
