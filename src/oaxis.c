@@ -1960,7 +1960,7 @@ get_axis_gauge_num_str(const char *format, double a, int no_flt_zero)
 {
   int i, j, len;
   char *s;
-  char format2[256], pm[] = "±";
+  char pm[] = "±";
   GString *num;
 
   if (no_flt_zero && a == 0.0) {
@@ -1974,6 +1974,7 @@ get_axis_gauge_num_str(const char *format, double a, int no_flt_zero)
 
   s = strchr(format, '+');
   if (a == 0 && s) {
+    char format2[256];
     len = strlen(format);
     for (j = 0; j < (int) sizeof(pm) - 1; j++) {
       format2[j] = pm[j];
