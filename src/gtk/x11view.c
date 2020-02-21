@@ -3813,8 +3813,7 @@ swapint(int *a, int *b)
 static void
 create_legend1(struct Viewer *d)
 {
-  int id, num, x1, y1, ret, undo;
-  N_VALUE *inst;
+  int num;
   struct objlist *obj = NULL;
   struct Point *po;
   char *objects[2];
@@ -3829,9 +3828,12 @@ create_legend1(struct Viewer *d)
   }
 
   if (obj) {
+    int id, x1, y1, undo;
     undo = menu_save_undo_single(UNDO_TYPE_CREATE, obj->name);
     id = newobj(obj);
     if (id >= 0) {
+      int ret;
+      N_VALUE *inst;
       presetting_set_obj_field(obj, id);
       if (num >= 1) {
 	po = *(struct Point **) arraynget(d->points, 0);
