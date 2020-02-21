@@ -2214,10 +2214,10 @@ AlignFocusedObj(int align)
 static void
 execute_selected_instances(struct FocusObj **focus, int num, int argc, char **argv, char *field)
 {
-  N_VALUE *inst;
   int i;
 
   for (i = 0; i < num; i++) {
+    N_VALUE *inst;
     inst = chkobjinstoid(focus[i]->obj, focus[i]->oid);
     if (inst == NULL) {
       continue;
