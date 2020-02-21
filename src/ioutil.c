@@ -557,9 +557,8 @@ nalphasort(char **a,char **b)
 static int
 nglob2(char *path,int po,int *num,char ***list)
 {
-  int i,j,p1,escape,scannum,len,err;
-  char *s,*s1,*s2,*s3,*path2;
-  char **namelist;
+  int i,j,p1,escape;
+  char **namelist, *s;
 
   if (path==NULL) return 0;
   p1=po;
@@ -585,6 +584,8 @@ nglob2(char *path,int po,int *num,char ***list)
       (*num)++;
     }
   } else {
+    int scannum,len,err;
+    char *s1,*s2,*s3,*path2;
     for (;(path[i]!='\0') && (path[i]!=DIRSEP);i++) ;
     s1 = g_malloc(p1 + 1);
     s2 = g_malloc(i - p1 + 1);
