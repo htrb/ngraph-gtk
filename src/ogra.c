@@ -150,17 +150,14 @@ close_gc(struct objlist *obj, N_VALUE *inst, int GC)
 static int
 oGRAopen(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
-  int anum,id;
   struct narray iarray;
   int GC, r;
   char *device,*dev,*gfield;
-  struct objlist *dobj,*gobj,*robj;
-  N_VALUE *dinst,*ginst;
+  struct objlist *dobj,*robj;
+  N_VALUE *dinst;
   void *local;
-  struct narray **list;
   int oid,gid;
   int topm,leftm,width,height,zoom;
-  int output,charheight,chardescent,strwidth;
 
   _getobj(obj,"device",inst,&device);
   _getobj(obj,"GC",inst,&GC);
@@ -180,6 +177,9 @@ oGRAopen(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
       return 1;
     }
   } else {
+    int anum,id;
+    struct narray **list;
+    int output, charheight, chardescent, strwidth;
     arrayinit(&iarray,sizeof(int));
     if (getobjilist(device,&dobj,&iarray,FALSE,NULL)) return 1;
     anum=arraynum(&iarray);
@@ -249,6 +249,8 @@ oGRAopen(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 
     /* clear gra connected to target device */
     if ((list!=NULL) && (*list!=NULL) && (arraynum(*list)!=0)) {
+      struct objlist *gobj;
+      N_VALUE *ginst;
       if (((gobj=getobjlist(arraynget_str(*list,0),&gid,&gfield,NULL))!=NULL)
       && ((ginst=chkobjinstoid(gobj,gid))!=NULL)
       && (!_getobj(gobj,"_device",ginst,&dev))) {
