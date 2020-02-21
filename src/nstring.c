@@ -465,7 +465,6 @@ add_printf_formated_double(GString *str, const char *format, MathValue *mval, in
   int i, formated, pow;
   char *format2, *buf, *tmp;
   int vi;
-  long long int vll;
   double val;
 
   formated = FALSE;
@@ -485,6 +484,7 @@ add_printf_formated_double(GString *str, const char *format, MathValue *mval, in
   switch (format[i]) {
   case 'd': case 'i': case 'o': case 'u': case 'x': case 'X':
     if (i > 2 && strncmp(format2 + i - 2, "ll", 2) == 0) {
+      long long int vll;
       vll = val;
       buf = g_strdup_printf(format2, vll);
     }else {
