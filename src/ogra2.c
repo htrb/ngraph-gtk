@@ -110,21 +110,23 @@ gra2disconnect(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **a
 {
   int GC;
   struct narray *sarray;
-  struct objlist *gobj;
   int gid;
   char *gfield;
-  char *ginst,*device;
 
   _getobj(obj,"_GC",inst,&GC);
   _getobj(obj,"_list",inst,&sarray);
   _putobj(obj,"_list",inst,NULL);
-  if (arraynum(sarray)!=0) {
+  if (arraynum(sarray)) {
+    struct objlist *gobj;
     gobj=getobjlist(arraynget_str(sarray,0),&gid,&gfield,NULL);
-    if (gobj!=NULL) {
+    if (gobj) {
+      char *ginst,*device;
       if ((ginst=getobjinstoid(gobj,gid))==NULL) return 0;
       if (GC!=-1) _exeobj(gobj,"close",ginst,0,NULL);
       if (!_getobj(gobj,"_device",ginst,&device)) {
-        g_free(device);
+        if (device) {
+          g_free(device);
+        }
         _putobj(gobj,"_device",ginst,NULL);
       }
     }
