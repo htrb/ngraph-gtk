@@ -2697,8 +2697,7 @@ newobj_alias(struct objlist *obj, const char *name)
 {
   struct objlist *robj;
   N_VALUE *instcur,*instnew,*inst;
-  int nextp,id,idp,oidp,rcode,initn,initp;
-  int argc;
+  int nextp,id,idp,oidp,initn,initp;
   char **argv;
 
   if (obj == NULL || name == NULL) {
@@ -2780,6 +2779,7 @@ newobj_alias(struct objlist *obj, const char *name)
     instnew[oidp].i = obj->lastoid;
   }
   if (robj->table[initn].proc) {
+    int argc, rcode;
     argv = NULL;
     if (arg_add2(&argv, 2, name, "init") == NULL) {
       g_free(argv);
