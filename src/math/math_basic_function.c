@@ -1940,8 +1940,8 @@ math_func_jn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
   int r;
   gsl_sf_result val;
 #else
-  int m, l, i;
-  double t1, t2, t3, s, j;
+  int i;
+  double t1, t2, t3, j;
 #endif
 
   MATH_CHECK_ARG(rval, exp->buf[0]);
@@ -1994,6 +1994,8 @@ math_func_jn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
       }
     }
   } else {
+    double s;
+    int m, l;
     if (n2 > x2) {
       m = n2;
     } else {
