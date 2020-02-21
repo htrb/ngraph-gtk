@@ -1147,11 +1147,12 @@ static int
 expand_stack(MathStack *stack, int size)
 {
   char *ptr;
-  int n, request_size;
+  int request_size;
 
   request_size = stack->end + size;
 
   if (stack->size <= request_size) {
+    int n;
     n = (request_size / BUF_UNIT + 1) * BUF_UNIT;
     ptr = g_realloc(stack->stack.ptr, stack->element_size * n);
     if (ptr == NULL) {
