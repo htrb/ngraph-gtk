@@ -580,12 +580,13 @@ struct narray *
 arrayins(struct narray *array,const void *val,unsigned int idx)
 {
   unsigned int i;
-  int size,base;
+  int base;
   char *data;
 
   if (array==NULL) return NULL;
   if (idx>array->num) return NULL;
   if (array->num==array->size) {
+    int size;
     size=array->size+ALLOCSIZE;
     if ((data=g_realloc(array->data,array->base*size))==NULL) {
       return NULL;
