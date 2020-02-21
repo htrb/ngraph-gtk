@@ -480,7 +480,7 @@ get_plugin_name(const char *name)
 }
 
 static int
-load_plugin_sub(struct objlist *obj, N_VALUE *inst, const char *name, struct ngraph_plugin *plugin)
+load_plugin_sub(struct objlist *obj, const char *name, struct ngraph_plugin *plugin)
 {
   GModule *module;
   void *loaded;
@@ -582,7 +582,7 @@ load_plugin(struct objlist *obj, N_VALUE *inst, const char *arg, int *rval)
     return NULL;
   }
 
-  if (load_plugin_sub(obj, inst, name, plugin)) {
+  if (load_plugin_sub(obj, name, plugin)) {
     g_free(name);
     g_free(plugin);
     return NULL;
