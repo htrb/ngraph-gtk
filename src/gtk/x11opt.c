@@ -1327,12 +1327,12 @@ edit_custom_palette(GtkWidget *w, gpointer data)
 static void
 MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *hbox2, *vbox2, *frame, *table;
   struct MiscDialog *d;
-  int i, j;
 
   d = (struct MiscDialog *) data;
   if (makewidget) {
+    GtkWidget *w, *hbox2, *vbox2, *frame, *table;
+    int i, j;
     arrayinit(&(d->tmp_palette), sizeof(GdkRGBA));
     gtk_dialog_add_button(GTK_DIALOG(wi), _("_Save"), IDSAVE);
 
