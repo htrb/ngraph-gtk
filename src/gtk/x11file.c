@@ -4896,7 +4896,7 @@ file_edit_popup_func(GtkMenuItem *w, gpointer client_data)
 static void
 FileWinFileDelete(struct obj_list_data *d)
 {
-  int sel, update, num;
+  int sel, num;
 
   if (Menulock || Globallock)
     return;
@@ -4905,6 +4905,7 @@ FileWinFileDelete(struct obj_list_data *d)
   num = chkobjlastinst(d->obj);
 
   if ((sel >= 0) && (sel <= num)) {
+    int update;
     data_save_undo(UNDO_TYPE_DELETE);
     delete_file_obj(d, sel);
     num = chkobjlastinst(d->obj);
