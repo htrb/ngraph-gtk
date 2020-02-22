@@ -3557,7 +3557,7 @@ static void
 set_headlines(struct FileDialog *d, const char *s)
 {
   gboolean valid;
-  const gchar *ptr;
+  const gchar *sptr;
 
   if (s == NULL) {
     return;
@@ -3566,7 +3566,7 @@ set_headlines(struct FileDialog *d, const char *s)
   if (Menulocal.file_preview_font) {
     text_view_with_line_number_set_font(d->comment_view, Menulocal.file_preview_font);
   }
-  valid = g_utf8_validate(s, -1, &ptr);
+  valid = g_utf8_validate(s, -1, &sptr);
 
   if (valid) {
     text_view_with_line_number_set_text(d->comment_view, s);
