@@ -2040,13 +2040,11 @@ move_tab_create(struct FileDialog *d)
 static int
 move_tab_set_value(struct FileDialog *d)
 {
-  unsigned int j, movenum;
   int line, a;
   double x, y;
   struct narray *move, *movex, *movey;
   GtkTreeIter iter;
   gboolean state;
-  char *ptr, *endptr;
 
   if (d->move.changed == FALSE) {
     return 0;
@@ -2072,6 +2070,8 @@ move_tab_set_value(struct FileDialog *d)
 
   state = list_store_get_iter_first(d->move.list, &iter);
   while (state) {
+    unsigned int j, movenum;
+    char *ptr, *endptr;
     a = list_store_get_int(d->move.list, &iter, 0);
 
     ptr = list_store_get_string(d->move.list, &iter, 1);
