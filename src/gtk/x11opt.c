@@ -1126,7 +1126,6 @@ PrefFontDialogAdd(GtkWidget *w, gpointer client_data)
 static void
 PrefFontDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *vbox;
   struct PrefFontDialog *d;
   n_list_store list[] = {
     {N_("alias"), G_TYPE_STRING, TRUE, FALSE, NULL},
@@ -1136,6 +1135,7 @@ PrefFontDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct PrefFontDialog *) data;
   if (makewidget) {
+    GtkWidget *vbox;
     gtk_dialog_add_button(GTK_DIALOG(wi), _("_Save"), IDSAVE);
 
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
