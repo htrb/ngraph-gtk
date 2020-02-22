@@ -1018,9 +1018,7 @@ CmOutputEMF(int type)
   struct objlist *graobj, *g2wobj;
   int id, g2wid, g2woid;
   N_VALUE *g2winst;
-  int ret;
-  char *title, *ext_str;
-  char *file, *tmp;
+  char *title, *file;
 
   if (Menulock || Globallock)
     return;
@@ -1029,6 +1027,8 @@ CmOutputEMF(int type)
 
   file = NULL;
   if (type == MenuIdOutputEMFFile) {
+    int ret;
+    char *ext_str, *tmp;
     ext_str = "emf";
     tmp = get_base_ngp_name();
     ret = nGetSaveFileName(TopLevel, title, ext_str, NULL, tmp,
