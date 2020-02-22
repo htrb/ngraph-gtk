@@ -250,8 +250,6 @@ CmMergeClose(void *w, gpointer client_data)
 {
   struct narray farray;
   struct objlist *obj;
-  int i;
-  int num, *array;
 
   if (Menulock || Globallock)
     return;
@@ -261,6 +259,7 @@ CmMergeClose(void *w, gpointer client_data)
     return;
   SelectDialog(&DlgSelect, obj, _("close merge file (multi select)"), FileCB, (struct narray *) &farray, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
+    int i, num, *array;
     num = arraynum(&farray);
     if (num > 0) {
       menu_save_undo_single(UNDO_TYPE_DELETE, obj->name);
