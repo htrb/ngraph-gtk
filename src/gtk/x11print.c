@@ -692,8 +692,7 @@ void
 CmOutputDriver(void)
 {
   struct objlist *graobj, *g2wobj;
-  int id, g2wid, g2woid;
-  N_VALUE *g2winst;
+  int g2wid, g2woid;
   int ret;
   struct savedstdio stdio;
 
@@ -722,6 +721,8 @@ CmOutputDriver(void)
   ret = DialogExecute(TopLevel, &DlgDriver);
 
   if (ret == IDOK) {
+    int id;
+    N_VALUE *g2winst;
     SetStatusBar(_("Spawning external driver."));
     g2winst = chkobjinst(g2wobj, g2wid);
     _getobj(g2wobj, "oid", g2winst, &g2woid);
