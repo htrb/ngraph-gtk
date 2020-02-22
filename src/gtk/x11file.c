@@ -2124,14 +2124,16 @@ move_tab_set_value(struct FileDialog *d)
 static void
 mask_tab_setup_item(struct FileDialog *d, int id)
 {
-  int line, j, masknum;
+  int masknum;
   struct narray *mask;
   GtkTreeIter iter;
 
   list_store_clear(d->mask.list);
   getobj(d->Obj, "mask", id, 0, NULL, &mask);
   if ((masknum = arraynum(mask)) > 0) {
+    int j;
     for (j = 0; j < masknum; j++) {
+      int line;
       line = arraynget_int(mask, j);
       list_store_append(d->mask.list, &iter);
       list_store_set_int(d->mask.list, &iter, 0, line);
