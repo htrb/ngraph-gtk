@@ -4645,9 +4645,6 @@ CmFileClose(void *w, gpointer client_data)
 {
   struct narray farray;
   struct objlist *obj;
-  int i;
-  int *array, num;
-  struct obj_list_data *data;
 
   if (Menulock || Globallock)
     return;
@@ -4657,6 +4654,8 @@ CmFileClose(void *w, gpointer client_data)
     return;
   SelectDialog(&DlgSelect, obj, _("close data (multi select)"), FileCB, (struct narray *) &farray, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
+    int i, *array, num;
+    struct obj_list_data *data;
     data = NgraphApp.FileWin.data.data;
     num = arraynum(&farray);
     if (num > 0) {
