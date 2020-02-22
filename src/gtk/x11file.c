@@ -5356,12 +5356,6 @@ draw_type_pixbuf(struct objlist *obj, int i)
     GRAline(ggc, 1, height - 1, width - 1, 1);
     break;
   case PLOT_TYPE_ARROW:
-    spx[0] = 1;
-    spy[0] = height - 1;
-
-    spx[1] = width - 1;
-    spy[1] = 1;
-
     GRAline(ggc, 1, height - 1, width - 1, 1);
     poly[0] = width - 8;
     poly[1] = 1;
