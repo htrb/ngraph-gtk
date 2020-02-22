@@ -238,11 +238,11 @@ OutputDataDialogSetupItem(GtkWidget *w, struct OutputDataDialog *d)
 static void
 OutputDataDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *hbox;
   struct OutputDataDialog *d;
 
   d = (struct OutputDataDialog *) data;
   if (makewidget) {
+    GtkWidget *w, *hbox;
     w = create_spin_entry(0, 200, 1, FALSE, TRUE);
     d->div_entry = w;
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
