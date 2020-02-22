@@ -627,7 +627,6 @@ DialogComboEntry(GtkWidget *parent, const char *title, const char *caption, stru
   int data;
   gint res_id;
   char **d;
-  const char *s;
   int i, anum;
 
   d = arraydata(array);
@@ -674,6 +673,7 @@ DialogComboEntry(GtkWidget *parent, const char *title, const char *caption, stru
   res_id = ndialog_run(dlg);
 
   if (res_id > 0 || res_id == GTK_RESPONSE_OK) {
+    const char *s;
     s = combo_box_entry_get_text(combo);
     if (s) {
       *r = g_strdup(s);
