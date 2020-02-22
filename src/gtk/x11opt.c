@@ -1766,12 +1766,12 @@ load_file_toggled(GtkToggleButton *togglebutton, gpointer user_data)
 static void
 ViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *table;
   struct ViewerDialog *d;
-  int i, j;
 
   d = (struct ViewerDialog *) data;
   if (makewidget) {
+    GtkWidget *w, *table;
+    int i, j;
     gtk_dialog_add_button(GTK_DIALOG(wi), _("_Save"), IDSAVE);
 
     table = gtk_grid_new();
