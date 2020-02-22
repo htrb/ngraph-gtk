@@ -120,10 +120,8 @@ MergeDialogCopy(GtkWidget *w, gpointer data)
 static void
 MergeDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *frame, *table;
   struct MergeDialog *d;
   char title[64];
-  int i;
 
   d = (struct MergeDialog *) data;
 
@@ -131,6 +129,8 @@ MergeDialogSetup(GtkWidget *wi, void *data, int makewidget)
   gtk_window_set_title(GTK_WINDOW(wi), title);
 
   if (makewidget) {
+    GtkWidget *w, *frame, *table;
+    int i;
     table = gtk_grid_new();
 
     i = 0;
