@@ -3036,8 +3036,7 @@ show_fit_dialog(struct objlist *obj, int id, GtkWidget *parent)
 {
   struct objlist *fitobj, *robj;
   char *fit;
-  N_VALUE *inst;
-  int idnum, fitid = 0, fitoid, ret, create = FALSE;
+  int fitid = 0, fitoid, ret, create = FALSE;
   struct narray iarray;
 
   if ((fitobj = chkobject("fit")) == NULL)
@@ -3047,6 +3046,7 @@ show_fit_dialog(struct objlist *obj, int id, GtkWidget *parent)
     return -1;
 
   if (fit) {
+    int idnum;
     arrayinit(&iarray, sizeof(int));
     if (getobjilist(fit, &robj, &iarray, FALSE, NULL))
       return -1;
@@ -3064,6 +3064,7 @@ show_fit_dialog(struct objlist *obj, int id, GtkWidget *parent)
   }
 
   if (fit == NULL) {
+    N_VALUE *inst;
     fitid = newobj(fitobj);
     inst = getobjinst(fitobj, fitid);
 
