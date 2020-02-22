@@ -570,7 +570,6 @@ CmOutputPrinter(int select_file, int show_dialog)
 {
   GtkPrintOperation *print;
   GtkPrintOperationResult res;
-  char buf[MESSAGE_BUF_SIZE];
   struct objlist *graobj, *g2wobj;
   int id, g2wid, g2woid, opt;
   N_VALUE *g2winst;
@@ -661,15 +660,16 @@ CmOutputPrinter(int select_file, int show_dialog)
     opt = GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG;
   }
 
-#ifdef __WIN64__  
+#ifdef __WIN64__
   gtk_widget_set_visible(NgraphApp.Viewer.side_pane1, FALSE);
 #endif
   res = gtk_print_operation_run(print, opt, GTK_WINDOW(TopLevel), &error);
-#ifdef __WIN64__  
+#ifdef __WIN64__
   gtk_widget_set_visible(NgraphApp.Viewer.side_pane1, Menulocal.sidebar);
 #endif
 
   if (res == GTK_PRINT_OPERATION_RESULT_ERROR) {
+    char buf[MESSAGE_BUF_SIZE];
     snprintf(buf, sizeof(buf), _("Printing error: %s"), error->message);
     message_box(NULL, buf, _("Print"), RESPONS_ERROR);
     g_error_free(error);
