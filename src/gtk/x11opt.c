@@ -856,13 +856,13 @@ FontSettingDialogUpAlternative(GtkWidget *wi, gpointer data)
 static void
 FontSettingDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *hbox, *vbox, *table, *frame, *swin;
   struct FontSettingDialog *d;
-  GtkTreeSelection *sel;
 
   d = (struct FontSettingDialog *) data;
 
   if (makewidget) {
+    GtkWidget *w, *hbox, *vbox, *table, *frame, *swin;
+    GtkTreeSelection *sel;
     n_list_store list[] = {
       {N_("Font name"),  G_TYPE_STRING, TRUE, FALSE, NULL},
     };
