@@ -2802,7 +2802,6 @@ button_set_mark_image(GtkWidget *w, int type)
 static void
 MarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *grid;
   struct MarkDialog *d;
   int type;
 #define COL 10
@@ -2810,6 +2809,7 @@ MarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
   d = (struct MarkDialog *) data;
 
   if (makewidget) {
+    GtkWidget *w, *grid;
     grid = gtk_grid_new();
     gtk_grid_set_column_spacing(GTK_GRID(grid), 8);
     gtk_grid_set_row_spacing(GTK_GRID(grid), 8);
