@@ -248,11 +248,10 @@ static int
 CopyFocusedObjects(void)
 {
   struct narray *focus_array;
-  struct FocusObj **focus, *inst;
+  struct FocusObj **focus;
   struct objlist *axis;
   char *s;
-  int i, r, n, id, num;
-  GtkClipboard* clipboard;
+  int i, r, n, num;
   GString *str;
   struct FOCUSED_INST *focused_inst;
 
@@ -278,6 +277,8 @@ CopyFocusedObjects(void)
   g_string_append(str, SCRIPT_IDN);
   num = 0;
   for (i = 0; i < n; i++) {
+    struct FocusObj *inst;
+    int id;
     inst = focused_inst[i].focus;
     if (inst->obj == axis) {
       g_free(focused_inst);
@@ -301,6 +302,7 @@ CopyFocusedObjects(void)
   }
 
   if (num > 0) {
+    GtkClipboard* clipboard;
     clipboard = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
     gtk_clipboard_set_text(clipboard, str->str, -1);
   }
