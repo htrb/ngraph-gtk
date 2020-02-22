@@ -5011,8 +5011,7 @@ file_copy2_popup_func(GtkMenuItem *w, gpointer client_data)
 static void
 FileWinFileUpdate(struct obj_list_data *d)
 {
-  int sel, ret, num, undo;
-  GtkWidget *parent;
+  int sel, num;
 
   if (Menulock || Globallock)
     return;
@@ -5020,6 +5019,8 @@ FileWinFileUpdate(struct obj_list_data *d)
   num = chkobjlastinst(d->obj);
 
   if ((sel >= 0) && (sel <= num)) {
+    int ret, undo;
+    GtkWidget *parent;
     undo = data_save_undo(UNDO_TYPE_EDIT);
     d->setup_dialog(d, sel, FALSE);
     d->select = sel;
