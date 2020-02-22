@@ -3997,7 +3997,6 @@ update_table_header(GtkEditable *editable, gpointer user_data)
 static void
 FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *hbox, *view, *label, *swin;
   struct FileDialog *d;
   int line;
   char title[32], *argv[2], *s;
@@ -4008,6 +4007,7 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
   gtk_window_set_title(GTK_WINDOW(wi), title);
 
   if (makewidget) {
+    GtkWidget *w, *hbox, *view, *label;
     d->apply_all = gtk_dialog_add_button(GTK_DIALOG(wi), _("_Apply all"), IDFAPPLY);
 
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
@@ -4043,6 +4043,7 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     view = create_preview_table(d);
     if (view) {
+      GtkWidget *swin;
       label = gtk_label_new_with_mnemonic(_("_Table"));
       swin = gtk_scrolled_window_new(NULL, NULL);
       gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
