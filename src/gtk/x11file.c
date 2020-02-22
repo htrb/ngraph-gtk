@@ -4090,7 +4090,6 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
 static void
 ArrayDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *hbox, *view, *label, *swin;
   struct FileDialog *d;
   char title[32];
 
@@ -4100,6 +4099,7 @@ ArrayDialogSetup(GtkWidget *wi, void *data, int makewidget)
   gtk_window_set_title(GTK_WINDOW(wi), title);
 
   if (makewidget) {
+    GtkWidget *w, *hbox, *view, *label, *swin;
     d->apply_all = gtk_dialog_add_button(GTK_DIALOG(wi), _("_Apply all"), IDFAPPLY);
 
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
