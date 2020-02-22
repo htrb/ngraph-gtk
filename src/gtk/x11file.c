@@ -4153,10 +4153,8 @@ ArrayDialogSetup(GtkWidget *wi, void *data, int makewidget)
 static void
 RangeDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *table, *label;
   struct FileDialog *d;
   char title[32];
-  int i;
 
   d = (struct FileDialog *) data;
 
@@ -4164,6 +4162,8 @@ RangeDialogSetup(GtkWidget *wi, void *data, int makewidget)
   gtk_window_set_title(GTK_WINDOW(wi), title);
 
   if (makewidget) {
+    GtkWidget *w, *table, *label;
+    int i;
     d->apply_all = gtk_dialog_add_button(GTK_DIALOG(wi), _("_Apply all"), IDFAPPLY);
 
     table = gtk_grid_new();
