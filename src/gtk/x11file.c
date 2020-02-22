@@ -4593,8 +4593,7 @@ void
 CmFileOpen(void *w, gpointer client_data)
 {
   int id, ret, n, undo = -1;
-  char *name;
-  char **file = NULL, **ptr;
+  char **file = NULL;
   struct objlist *obj;
   struct narray farray;
 
@@ -4613,8 +4612,10 @@ CmFileOpen(void *w, gpointer client_data)
 
   arrayinit(&farray, sizeof(int));
   if (ret == IDOK && file) {
+    char **ptr;
     undo = data_save_undo(UNDO_TYPE_OPEN_FILE);
     for (ptr = file; *ptr; ptr++) {
+      char *name;
       name = *ptr;
       id = newobj(obj);
       if (id >= 0) {
