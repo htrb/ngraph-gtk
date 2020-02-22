@@ -232,7 +232,6 @@ static void
 SetScriptDialogSetupItem(GtkWidget *w, struct SetScriptDialog *d)
 {
   struct script *addin;
-  char *title;
 
   combo_box_clear(d->addins);
   combo_box_append_text(d->addins, "Custom");
@@ -241,6 +240,7 @@ SetScriptDialogSetupItem(GtkWidget *w, struct SetScriptDialog *d)
   } else {
     set_widget_sensitivity_with_label(d->addins, TRUE);
     for (addin = Menulocal.addin_list; addin; addin = addin->next) {
+      char *title;
       title = g_strdup(addin->name);
       if (title) {
 	remove_char(title, '_');
