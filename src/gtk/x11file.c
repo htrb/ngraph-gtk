@@ -6180,7 +6180,7 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
   GtkTreeStore *list;
   struct obj_list_data *d;
   GtkComboBox *cbox;
-  int lastinst, j, sel, id = 0, is_oid;
+  int lastinst, j, sel, id = 0;
   struct objlist *aobj;
   char *name, *ptr;
 
@@ -6204,6 +6204,7 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
 
   name = get_axis_obj_str(d->obj, sel, (axis == AXIS_X) ? "axis_x" : "axis_y");
   if (name) {
+    int is_oid;
     is_oid = (name[0] == '^');
     id = strtol(name + is_oid, &ptr, 10);
     if (*ptr == '\0') {
