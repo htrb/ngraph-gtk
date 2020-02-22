@@ -215,7 +215,7 @@ CmMergeOpen(void *w, gpointer client_data)
 {
   struct objlist *obj;
   char *name = NULL;
-  int id, ret, undo;
+  int id, undo;
 
   if (Menulock || Globallock)
     return;
@@ -230,6 +230,7 @@ CmMergeOpen(void *w, gpointer client_data)
   undo = menu_save_undo_single(UNDO_TYPE_CREATE, obj->name);
   id = newobj(obj);
   if (id >= 0) {
+    int ret;
     changefilename(name);
     putobj(obj, "file", id, name);
     MergeDialog(NgraphApp.MergeWin.data.data, id, -1);
