@@ -2778,14 +2778,13 @@ MarkDialogCB(GtkWidget *w, gpointer client_data)
 void
 button_set_mark_image(GtkWidget *w, int type)
 {
-  GtkWidget *img;
-  char buf[64];
-
   if (type < 0 || type >= MARK_TYPE_NUM) {
     type = 0;
   }
 
   if (NgraphApp.markpix[type]) {
+    GtkWidget *img;
+    char buf[64];
     GdkPixbuf *pixbuf;
     pixbuf = gdk_pixbuf_get_from_surface(NgraphApp.markpix[type],
 					 0, 0, MARK_PIX_SIZE, MARK_PIX_SIZE);
