@@ -2951,7 +2951,6 @@ static void
 FileDialogSetupItem(GtkWidget *w, struct FileDialog *d)
 {
   char *valstr;
-  int i;
 
   plot_tab_setup_item(d, d->Id);
   math_tab_setup_item(d, d->Id);
@@ -2977,6 +2976,7 @@ FileDialogSetupItem(GtkWidget *w, struct FileDialog *d)
 
   sgetobjfield(d->Obj, d->Id, "fit", NULL, &valstr, FALSE, FALSE, FALSE);
   if (valstr) {
+    int i;
     for (i = 0; (valstr[i] != '\0') && (valstr[i] != ':'); i++);
     if (valstr[i] == ':') {
       i++;
