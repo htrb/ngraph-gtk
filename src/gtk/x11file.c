@@ -5130,7 +5130,7 @@ FileWinFit(struct obj_list_data *d)
 {
   struct objlist *fitobj, *obj2;
   char *fit;
-  int sel, idnum, fitid = 0, ret, num, undo;
+  int sel, fitid = 0, ret, num, undo;
   struct narray iarray;
   GtkWidget *parent;
 
@@ -5150,6 +5150,7 @@ FileWinFit(struct obj_list_data *d)
     return;
 
   if (fit) {
+    int idnum;
     arrayinit(&iarray, sizeof(int));
     if (getobjilist(fit, &obj2, &iarray, FALSE, NULL)) {
       arraydel(&iarray);
