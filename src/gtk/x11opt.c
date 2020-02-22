@@ -1658,12 +1658,12 @@ use_external_toggled(GtkToggleButton *togglebutton, gpointer user_data)
 static void
 ExViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *table;
   struct ExViewerDialog *d;
-  int i;
 
   d = (struct ExViewerDialog *) data;
   if (makewidget) {
+    GtkWidget *w, *table;
+    int i;
     gtk_dialog_add_button(GTK_DIALOG(wi), _("_Save"), IDSAVE);
 
     table = gtk_grid_new();
