@@ -280,8 +280,7 @@ CmMergeUpdate(void *w, gpointer client_data)
 {
   struct narray farray;
   struct objlist *obj;
-  int i, ret, modified;
-  int *array, num;
+  int modified;
 
   if (Menulock || Globallock)
     return;
@@ -292,12 +291,14 @@ CmMergeUpdate(void *w, gpointer client_data)
   SelectDialog(&DlgSelect, obj, _("merge file property (multi select)"), FileCB, (struct narray *) &farray, NULL);
   modified = FALSE;
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
+    int i, *array, num;
     num = arraynum(&farray);
     if (num > 0) {
       menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
     }
     array = arraydata(&farray);
     for (i = 0; i < num; i++) {
+      int ret;
       MergeDialog(NgraphApp.MergeWin.data.data, array[i], -1);
       ret = DialogExecute(TopLevel, &DlgMerge);
       if (ret != IDCANCEL) {
