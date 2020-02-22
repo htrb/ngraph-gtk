@@ -225,7 +225,7 @@ static struct FOCUSED_INST *
 create_focused_inst_array_by_id_order(struct FocusObj **focus, int n)
 {
   struct FOCUSED_INST *focused_inst;
-  int i, id;
+  int i;
 
   if (focus == NULL || n < 1) {
     return NULL;
@@ -236,6 +236,7 @@ create_focused_inst_array_by_id_order(struct FocusObj **focus, int n)
     return NULL;
   }
   for (i = 0; i < n; i++) {
+    int id;
     id = chkobjoid(focus[i]->obj, focus[i]->oid);
     focused_inst[i].id = id;
     focused_inst[i].focus = focus[i];
