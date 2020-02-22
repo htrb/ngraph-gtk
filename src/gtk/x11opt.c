@@ -277,12 +277,12 @@ SetScriptDialogBrowse(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *even
 static void
 SetScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *table;
   struct SetScriptDialog *d;
-  int i;
 
   d = (struct SetScriptDialog *) data;
   if (makewidget) {
+    GtkWidget *w, *table;
+    int i;
     table = gtk_grid_new();
 
     i = 0;
