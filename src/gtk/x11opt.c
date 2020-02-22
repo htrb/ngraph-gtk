@@ -767,12 +767,12 @@ FontSettingDialogAddAlternative(GtkWidget *w, gpointer client_data)
 
   dialog = gtk_font_chooser_dialog_new(_("Alternative font"), NULL);
   if (ndialog_run(dialog) != GTK_RESPONSE_CANCEL) {
-    const gchar *font_name;
     PangoFontFamily *family;
     GtkTreeIter iter;
 
     family = gtk_font_chooser_get_font_family(GTK_FONT_CHOOSER(dialog));
     if (family) {
+      const gchar *font_name;
       font_name = pango_font_family_get_name(family);
       list_store_append(d->list, &iter);
       list_store_set_string(d->list, &iter, 0, font_name);
