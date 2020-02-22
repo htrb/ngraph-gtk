@@ -136,13 +136,13 @@ DriverDialogBrowseCB(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event
 static void
 DriverDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *table;
   struct DriverDialog *d;
   struct extprinter *pcur;
-  int i;
 
   d = (struct DriverDialog *) data;
   if (makewidget) {
+    GtkWidget *w, *table;
+    int i;
 
     table = gtk_grid_new();
 
