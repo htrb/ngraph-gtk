@@ -6015,7 +6015,6 @@ select_type(GtkComboBox *w, gpointer user_data)
     putobj(obj, "type", sel, &enum_id);
     if (enum_id == PLOT_TYPE_FIT) {
       char *fit;
-      int ret;
 
       getobj(obj, "fit", sel, 0, NULL, &fit);
       if (fit == NULL) {
