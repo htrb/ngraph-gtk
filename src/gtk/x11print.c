@@ -540,7 +540,6 @@ static void
 init_graobj(struct objlist *graobj, int id, char *dev_name, int dev_oid)
 {
   struct narray *drawrable;
-  unsigned int i, n;
   char *device;
 
   putobj(graobj, "paper_width", id, &(Menulocal.PaperWidth));
@@ -549,6 +548,7 @@ init_graobj(struct objlist *graobj, int id, char *dev_name, int dev_oid)
   putobj(graobj, "top_margin", id, &(Menulocal.TopMargin));
   putobj(graobj, "zoom", id, &(Menulocal.PaperZoom));
   if (arraynum(&(Menulocal.drawrable)) > 0) {
+    unsigned int i, n;
     drawrable = arraynew(sizeof(char *));
     n = arraynum(&(Menulocal.drawrable));
     for (i = 0; i < n; i++) {
