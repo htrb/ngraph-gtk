@@ -2857,10 +2857,10 @@ static void
 set_axis_combo_box(struct objlist *obj, int id, const char *field, GtkWidget *combo)
 {
   char *valstr;
-  int i;
 
   sgetobjfield(obj, id, field, NULL, &valstr, FALSE, FALSE, FALSE);
   if (valstr) {
+    int i;
     for (i = 0; (valstr[i] != '\0') && (valstr[i] != ':'); i++);
     if (valstr[i] == ':')
       i++;
