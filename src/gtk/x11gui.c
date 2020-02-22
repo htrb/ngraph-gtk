@@ -104,7 +104,7 @@ ndialog_run(GtkWidget *dlg)
 int
 DialogExecute(GtkWidget *parent, void *dialog)
 {
-  GtkWidget *dlg, *win_ptr, *btn;
+  GtkWidget *dlg, *win_ptr;
   struct DialogType *data;
   gint res_id, lockstate;
 #if OSX
@@ -152,6 +152,7 @@ DialogExecute(GtkWidget *parent, void *dialog)
     gtk_dialog_add_button(GTK_DIALOG(dlg), data->ok_button, GTK_RESPONSE_OK);
 
     if (! data->show_cancel) {
+      GtkWidget *btn;
       btn = gtk_dialog_get_widget_for_response(GTK_DIALOG(dlg), GTK_RESPONSE_CANCEL);
       gtk_widget_hide(btn);
     }
