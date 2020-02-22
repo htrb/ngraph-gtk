@@ -3105,7 +3105,6 @@ static void
 FileDialogFit(GtkWidget *w, gpointer client_data)
 {
   struct FileDialog *d;
-  int i;
   char *valstr;
 
   d = (struct FileDialog *) client_data;
@@ -3114,6 +3113,7 @@ FileDialogFit(GtkWidget *w, gpointer client_data)
 
   sgetobjfield(d->Obj, d->Id, "fit", NULL, &valstr, FALSE, FALSE, FALSE);
   if (valstr) {
+    int i;
     for (i = 0; (valstr[i] != '\0') && (valstr[i] != ':'); i++);
     if (valstr[i] == ':')
       i++;
