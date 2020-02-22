@@ -3730,14 +3730,14 @@ set_headline_table_array(struct FileDialog *d, int max_lines)
   l = 1;
   for (i = 0; i < n; i++) {
     GtkTreeIter iter;
-    double val;
-    void *ptr;
     int v;
 
     gtk_list_store_append(model, &iter);
     for (j = 0; j < m; j++) {
+      void *ptr;
       ptr = arraynget(ary.ary[j], i);
       if (ptr) {
+        double val;
 	val = * (double *) ptr;
 	snprintf(buf, sizeof(buf), "%G", val);
 	gtk_list_store_set(model, &iter, j + 1, buf, -1);
