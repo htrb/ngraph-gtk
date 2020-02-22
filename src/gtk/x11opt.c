@@ -516,12 +516,12 @@ SetDriverDialogBrowse(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *even
 static void
 SetDriverDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *table;
   struct SetDriverDialog *d;
-  int i;
 
   d = (struct SetDriverDialog *) data;
   if (makewidget) {
+    GtkWidget *w, *table;
+    int i;
     table = gtk_grid_new();
 
     i = 0;
