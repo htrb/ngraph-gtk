@@ -4831,7 +4831,6 @@ CmOptionFileDef(void *w, gpointer client_data)
 {
   struct objlist *obj;
   int id;
-  char *objs[2];
 
   if (Menulock || Globallock)
     return;
@@ -4842,6 +4841,7 @@ CmOptionFileDef(void *w, gpointer client_data)
   id = newobj(obj);
   if (id >= 0) {
     int modified;
+    char *objs[2];
 
     modified = get_graph_modified();
     FileDefDialog(&DlgFileDef, obj, id);
