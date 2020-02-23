@@ -264,7 +264,6 @@ static void
 SwitchDialogSetupItem(GtkWidget *w, struct SwitchDialog *d)
 {
   int j, num;
-  char **buf;
   GtkTreeIter iter;
 
   d->btn_lock = TRUE;
@@ -272,6 +271,7 @@ SwitchDialogSetupItem(GtkWidget *w, struct SwitchDialog *d)
   list_store_clear(d->drawlist);
   num = arraynum(&(d->idrawrable));
   for (j = 0; j < num; j++) {
+    char **buf;
     buf = (char **) arraynget(&(d->drawrable),
 			      arraynget_int(&(d->idrawrable), j));
     list_store_append(d->drawlist, &iter);
