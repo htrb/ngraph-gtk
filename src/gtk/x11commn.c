@@ -1703,7 +1703,7 @@ free_console(int allocnow)
 static char *
 get_plot_cb_str(struct objlist *obj, int id, int source)
 {
-  char *valstr, *s;
+  char *s;
   const char *str;
 
   str = get_plot_info_str(obj, id, source);
@@ -1712,6 +1712,7 @@ get_plot_cb_str(struct objlist *obj, int id, int source)
   }
 
   if (source == DATA_SOURCE_FILE) {
+    char *valstr;
     valstr = getbasename(str);
     s = g_strdup_printf("%s", (valstr) ? valstr : "....................");
     if (valstr != NULL) {
