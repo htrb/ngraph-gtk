@@ -1864,23 +1864,23 @@ move_tab_setup_item(struct FileDialog *d, int id)
   if (movenum < 1) {
     return;
   }
-    for (j = 0; j < movenum; j++) {
-      int line;
-      double x, y;
-      char buf[64];
-      line = arraynget_int(move, j);
-      x = arraynget_double(movex, j);
-      y = arraynget_double(movey, j);
+  for (j = 0; j < movenum; j++) {
+    int line;
+    double x, y;
+    char buf[64];
+    line = arraynget_int(move, j);
+    x = arraynget_double(movex, j);
+    y = arraynget_double(movey, j);
 
-      list_store_append(d->move.list, &iter);
-      list_store_set_int(d->move.list, &iter, 0, line);
+    list_store_append(d->move.list, &iter);
+    list_store_set_int(d->move.list, &iter, 0, line);
 
-      snprintf(buf, sizeof(buf), "%+.15e", x);
-      list_store_set_string(d->move.list, &iter, 1, buf);
+    snprintf(buf, sizeof(buf), "%+.15e", x);
+    list_store_set_string(d->move.list, &iter, 1, buf);
 
-      snprintf(buf, sizeof(buf), "%+.15e", y);
-      list_store_set_string(d->move.list, &iter, 2, buf);
-    }
+    snprintf(buf, sizeof(buf), "%+.15e", y);
+    list_store_set_string(d->move.list, &iter, 2, buf);
+  }
 }
 
 static void
