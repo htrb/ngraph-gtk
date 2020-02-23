@@ -340,13 +340,13 @@ static void
 AxisDel2(int id)
 {
   struct objlist *obj, *aobj;
-  int i, aid1, aid2;
+  int i, aid1;
   char *axis2;
-  N_VALUE *inst;
 
   obj = getobject("axisgrid");
   if (obj) {
     for (i = chkobjlastinst(obj); i >= 0; i--) {
+      N_VALUE *inst;
       inst = chkobjinst(obj, i);
       if (inst == NULL) {
 	continue;
@@ -370,6 +370,7 @@ AxisDel2(int id)
     return;
   }
   for (i = 0; i <= chkobjlastinst(obj); i++) {
+    int aid2;
     aid1 = get_new_axis_id(obj, &aobj, i, id, AXIS_X);
     aid2 = get_new_axis_id(obj, &aobj, i, id, AXIS_Y);
     if ((aid1 >= 0) && (aid2 >= 0)) {
