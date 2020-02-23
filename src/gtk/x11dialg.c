@@ -1158,8 +1158,7 @@ SetObjFieldFromList(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 static void
 SetListFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 {
-  char **enumlist;
-  int j, a, count;
+  int count, a;
 
   if (w == NULL) {
     return;
@@ -1167,6 +1166,8 @@ SetListFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 
   count = combo_box_get_num(w);
   if (count == 0) {
+    char **enumlist;
+    int j;
     enumlist = (char **) chkobjarglist(Obj, field);
     for (j = 0; enumlist[j] && enumlist[j][0]; j++) {
       combo_box_append_text(w, _(enumlist[j]));
