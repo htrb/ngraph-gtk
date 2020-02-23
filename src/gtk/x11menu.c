@@ -3800,10 +3800,11 @@ tab_info_compare(const void * a, const void * b)
 static void
 init_tab_info(struct obj_tab_info *info, int n)
 {
-  int i, position;
-  struct objlist *obj;
+  int i;
 
   for (i = 0; i < n; i++) {
+    int position;
+    struct objlist *obj;
     position = *info[i].conf;
     if (position > 99) {
       info[i].tab = 1;
