@@ -270,14 +270,14 @@ initdialog(void)
 static gboolean
 multi_list_default_cb(GtkWidget *w, GdkEventAny *e, gpointer user_data)
 {
-  GtkTreeSelection *sel;
   struct SelectDialog *d;
-  int n;
 
   d = (struct SelectDialog *) user_data;
 
   if (e->type == GDK_2BUTTON_PRESS ||
-      (e->type == GDK_KEY_PRESS && ((GdkEventKey *)e)->keyval == GDK_KEY_Return)){
+      (e->type == GDK_KEY_PRESS && ((GdkEventKey *)e)->keyval == GDK_KEY_Return)) {
+    GtkTreeSelection *sel;
+    int n;
 
     sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(d->list));
     n = gtk_tree_selection_count_selected_rows(sel);
