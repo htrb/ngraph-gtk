@@ -1548,7 +1548,6 @@ FitDialogSetSensitivity(GtkWidget *widget, gpointer user_data)
 {
   struct FitDialog *d;
   int type, through, deriv, dim;
-  char buf[1024];
 
   d = (struct FitDialog *) user_data;
 
@@ -1562,6 +1561,7 @@ FitDialogSetSensitivity(GtkWidget *widget, gpointer user_data)
     if (dim == 0) {
       gtk_label_set_markup(GTK_LABEL(d->func_label), "Equation: Y=<i>a·</i>X<i>+b</i>");
     } else {
+      char buf[1024];
       snprintf(buf, sizeof(buf), "Equation: Y=<i>∑ a<sub>i</sub>·</i>X<sup><i>i</i></sup> (<i>i=0-%d</i>)", dim + 1);
       gtk_label_set_markup(GTK_LABEL(d->func_label), buf);
     }
