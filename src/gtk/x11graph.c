@@ -287,7 +287,7 @@ SwitchDialogAdd(GtkWidget *w, gpointer client_data)
   struct SwitchDialog *d;
   GtkTreeSelection *selected;
   GList *list, *ptr;
-  int duplicate, num, *data, i;
+  int num, *data, i;
 
   d = (struct SwitchDialog *) client_data;
 
@@ -298,7 +298,7 @@ SwitchDialogAdd(GtkWidget *w, gpointer client_data)
   num = arraynum(&(d->idrawrable));
 
   for (ptr = list; ptr; ptr = ptr->next) {
-    int *ary, a;
+    int *ary, a, duplicate;
 
     duplicate = FALSE;
     ary = gtk_tree_path_get_indices((GtkTreePath *)(ptr->data));
@@ -309,7 +309,7 @@ SwitchDialogAdd(GtkWidget *w, gpointer client_data)
 	break;
       }
     }
-    if ( !duplicate) {
+    if (!duplicate) {
       arrayadd(&(d->idrawrable), &a);
     }
   }
