@@ -842,12 +842,12 @@ SwitchDialog(struct SwitchDialog *data)
 static void
 DirectoryDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *table;
   struct DirectoryDialog *d;
   char *cwd;
 
   d = (struct DirectoryDialog *) data;
   if (makewidget) {
+    GtkWidget *w, *table;
     table = gtk_grid_new();
 
     w = gtk_file_chooser_button_new(_("directory"), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
