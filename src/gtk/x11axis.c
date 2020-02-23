@@ -1042,12 +1042,11 @@ static void
 scale_tab_setup_item(struct AxisDialog *d, int id)
 {
   char *valstr;
-  int i, j;
-  double min, max, inc, pmin, pmax, pinc;
+  int j;
+  double min, max, inc;
   int lastinst;
   char *name;
   struct narray *array;
-  int num;
   double *data;
   char buf[30];
 
@@ -1061,6 +1060,8 @@ scale_tab_setup_item(struct AxisDialog *d, int id)
 
   getobj(d->Obj, "scale_history", d->Id, 0, NULL, &array);
   if (array) {
+    double pmin, pmax, pinc;
+    int num;
     pmin = min;
     pmax = max;
     pinc = inc;
@@ -1116,6 +1117,7 @@ scale_tab_setup_item(struct AxisDialog *d, int id)
 
   sgetobjfield(d->Obj, id, "reference", NULL, &valstr, FALSE, FALSE, FALSE);
   if (valstr) {
+    int i;
     for (i = 0; (valstr[i] != '\0') && (valstr[i] != ':'); i++);
     if (valstr[i] == ':') {
       i++;
