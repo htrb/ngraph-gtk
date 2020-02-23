@@ -5092,7 +5092,6 @@ check_update_obj(char **objects,
 		 struct obj_list_data *axis, int *update_axis,
 		 struct obj_list_data *merge, int *update_merge)
 {
-  struct objlist *obj;
   char **ptr;
 
   if (objects == NULL) {
@@ -5107,6 +5106,7 @@ check_update_obj(char **objects,
   *update_merge = FALSE;
 
   for (ptr = objects; *ptr; ptr++) {
+    struct objlist *obj;
     obj = getobject(*ptr);
     if (obj == file->obj) {
       *update_file = TRUE;
