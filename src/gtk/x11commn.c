@@ -1322,9 +1322,9 @@ LoadNgpFile(char *file, int console, char *option)
 {
   struct objlist *sys;
   char *expanddir;
-  struct objlist *obj, *aobj;
+  struct objlist *obj;
   char *name;
-  int i, r, newid, allocnow = FALSE, tmp;
+  int r, newid, allocnow = FALSE, tmp;
   char *s;
   int len;
   char *argv[2];
@@ -1427,6 +1427,8 @@ LoadNgpFile(char *file, int console, char *option)
   _exeobj(obj, "security", inst, 1, argv);
 
   if (r == 0) {
+    struct objlist *aobj;
+    int i;
     if ((aobj = getobject("axis")) != NULL) {
       for (i = 0; i <= chkobjlastinst(aobj); i++)
 	exeobj(aobj, "tight", i, 0, NULL);
