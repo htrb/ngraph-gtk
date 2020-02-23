@@ -161,14 +161,14 @@ PageDialogPage(GtkWidget *w, gpointer client_data)
 static void
 PageDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *table;
-  unsigned int j;
   struct PageDialog *d;
-  int i;
 
   d = (struct PageDialog *) data;
 
   if (makewidget) {
+    GtkWidget *w, *table;
+    unsigned int j;
+    int i;
     table = gtk_grid_new();
 
     i = 0;
