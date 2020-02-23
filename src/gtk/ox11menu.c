@@ -386,11 +386,12 @@ save_ext_driver_config(struct narray *conf)
 static void
 save_script_config(struct narray *conf)
 {
-  char *buf, *script, *option, *description;
+  char *buf;
   struct script *scur;
 
   scur = Menulocal.scriptroot;
   while (scur) {
+    char *script, *option, *description;
     script = CHK_STR(scur->script);
     option = CHK_STR(scur->option);
     description = CHK_STR(scur->description);
