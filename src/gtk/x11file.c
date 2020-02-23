@@ -1683,7 +1683,6 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
       combo_box_append_text(d->type, _(enumlist[i]));
     }
 
-    hbox2 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
     w = combo_box_create();
     add_widget_to_table_sub(table, w, _("_Dim:"), FALSE, 2, 1, 5, 0);
     d->dim = w;
@@ -1698,8 +1697,6 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_widget_set_valign(w, GTK_ALIGN_END);
     d->func_label = w;
 
-
-    hbox2 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
     w = create_text_entry(TRUE, TRUE);
     add_widget_to_table_sub(table, w, _("_Weight:"), TRUE, 0, 4, 5, 1);
     d->weight = w;
