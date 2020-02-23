@@ -800,7 +800,7 @@ static void
 del_darray(struct objlist *data_obj)
 {
   char *array;
-  int i, j, n, id, last;
+  int i, j, n, last;
   struct array_prm ary;
   struct narray *id_array;
   struct objlist *darray_obj;
@@ -836,6 +836,7 @@ del_darray(struct objlist *data_obj)
 
   n = arraynum(id_array);
   for (i = 0; i < n; i++) {
+    int id;
     id = arraynget_int(id_array, n - 1 - i);
     delobj(darray_obj, id);
   }
