@@ -629,60 +629,60 @@ load_config(struct objlist *sys, N_VALUE *inst, int *allocconsole)
   if (fp == NULL) {
     return;
   }
-    while ((tok = getconfig(fp, &str)) != NULL) {
-      s2 = str;
-      if (strcmp(tok, "login_shell") == 0) {
-	f1 = getitok2(&s2, &len, " \t,");
-	if (_putobj(sys, "login_shell", inst, f1))
-	  exit(1);
-      } else if (strcmp(tok, "create_object") == 0) {
-	while ((f1 = getitok2(&s2, &len, " \t,")) != NULL) {
-	  struct objlist *obj;
-	  obj = getobject(f1);
-	  if (obj) {
-	    newobj(obj);
-	  }
-	  g_free(f1);
-	}
-      } else if (strcmp(tok, "alloc_console") == 0) {
-	f1 = getitok2(&s2, &len, " \t,");
-	val = strtol(f1, &endptr, 10);
-	if (endptr[0] == '\0') {
-	  if (val == 0)
-	    *allocconsole = FALSE;
-	  else
-	    *allocconsole = TRUE;
-	}
-	g_free(f1);
-      } else if (strcmp(tok, "console_size") == 0) {
-	f1 = getitok2(&s2, &len, " \x09,");
-	val = strtol(f1, &endptr, 10);
-	if (endptr[0] == '\0')
-	  consolecol = val;
-	g_free(f1);
-	f1 = getitok2(&s2, &len, " \x09,");
-	val = strtol(f1, &endptr, 10);
-	if (endptr[0] == '\0')
-	  consolerow = val;
-	g_free(f1);
-#ifdef HAVE_READLINE_READLINE_H
-      } else if (strcmp(tok, "history_size") == 0) {
-	f1 = getitok2(&s2, &len, " \t,");
-	val = strtol(f1, &endptr, 10);
-	if (endptr[0] == '\0' && val > 0) {
-	  *history_size = val;
-	}
-	g_free(f1);
-#endif
-      } else if (strcmp(tok, "terminal") == 0) {
-	Terminal = getitok2(&s2, &len, "");
-      } else {
-	fprintf(stderr, "(%s): configuration '%s' in section %s is not used.\n", AppName, tok, SYSCONF);
+  while ((tok = getconfig(fp, &str)) != NULL) {
+    s2 = str;
+    if (strcmp(tok, "login_shell") == 0) {
+      f1 = getitok2(&s2, &len, " \t,");
+      if (_putobj(sys, "login_shell", inst, f1))
+        exit(1);
+    } else if (strcmp(tok, "create_object") == 0) {
+      while ((f1 = getitok2(&s2, &len, " \t,")) != NULL) {
+        struct objlist *obj;
+        obj = getobject(f1);
+        if (obj) {
+          newobj(obj);
+        }
+        g_free(f1);
       }
-      g_free(tok);
-      g_free(str);
+    } else if (strcmp(tok, "alloc_console") == 0) {
+      f1 = getitok2(&s2, &len, " \t,");
+      val = strtol(f1, &endptr, 10);
+      if (endptr[0] == '\0') {
+        if (val == 0)
+          *allocconsole = FALSE;
+        else
+          *allocconsole = TRUE;
+      }
+      g_free(f1);
+    } else if (strcmp(tok, "console_size") == 0) {
+      f1 = getitok2(&s2, &len, " \x09,");
+      val = strtol(f1, &endptr, 10);
+      if (endptr[0] == '\0')
+        consolecol = val;
+      g_free(f1);
+      f1 = getitok2(&s2, &len, " \x09,");
+      val = strtol(f1, &endptr, 10);
+      if (endptr[0] == '\0')
+        consolerow = val;
+      g_free(f1);
+#ifdef HAVE_READLINE_READLINE_H
+    } else if (strcmp(tok, "history_size") == 0) {
+      f1 = getitok2(&s2, &len, " \t,");
+      val = strtol(f1, &endptr, 10);
+      if (endptr[0] == '\0' && val > 0) {
+        *history_size = val;
+      }
+      g_free(f1);
+#endif
+    } else if (strcmp(tok, "terminal") == 0) {
+      Terminal = getitok2(&s2, &len, "");
+    } else {
+      fprintf(stderr, "(%s): configuration '%s' in section %s is not used.\n", AppName, tok, SYSCONF);
     }
-    closeconfig(fp);
+    g_free(tok);
+    g_free(str);
+  }
+  closeconfig(fp);
 }
 
 #if WINDOWS
