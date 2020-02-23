@@ -447,8 +447,8 @@ static void
 axis_move_each_obj(char *axis_str, int i, struct objlist *obj, int id1, int id2)
 {
   struct objlist *aobj;
-  int spc, aid;
-  char *axis, *axis2;
+  int spc;
+  char *axis;
   struct narray iarray;
   int anum;
 
@@ -461,6 +461,8 @@ axis_move_each_obj(char *axis_str, int i, struct objlist *obj, int id1, int id2)
 
   anum = arraynum(&iarray);
   if (anum > 0 && spc == OBJ_LIST_SPECIFIED_BY_ID) {
+    int aid;
+    char *axis2;
     aid = arraylast_int(&iarray);
     if (aid == id1) {
       aid = id2;
