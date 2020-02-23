@@ -1177,7 +1177,6 @@ get_save_opt(int *sdata, int *smerge, int *path)
 int
 GraphSave(int overwrite)
 {
-  char mes[256];
   int path;
   int sdata, smerge;
   int ret;
@@ -1217,6 +1216,7 @@ GraphSave(int overwrite)
 
     ret = get_save_opt(&sdata, &smerge, &path);
     if (ret == IDOK) {
+      char mes[256];
       snprintf(mes, sizeof(mes), _("Saving `%.128s'."), file);
       SetStatusBar(mes);
       if(SaveDrawrable(file, sdata, smerge)) {
