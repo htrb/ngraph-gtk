@@ -1841,11 +1841,8 @@ static void
 move_tab_setup_item(struct FileDialog *d, int id)
 {
   unsigned int j, movenum;
-  int line;
-  double x, y;
   struct narray *move, *movex, *movey;
   GtkTreeIter iter;
-  char buf[64];
 
   list_store_clear(d->move.list);
 
@@ -1866,6 +1863,9 @@ move_tab_setup_item(struct FileDialog *d, int id)
 
   if (movenum > 0) {
     for (j = 0; j < movenum; j++) {
+      int line;
+      double x, y;
+      char buf[64];
       line = arraynget_int(move, j);
       x = arraynget_double(movex, j);
       y = arraynget_double(movey, j);
