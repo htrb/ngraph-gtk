@@ -719,24 +719,23 @@ FitCopy(struct objlist *obj, int did, int sid)
 {
   char *fit;
   struct objlist *fitobj;
-  int fitid;
   struct narray iarray;
   struct narray iarray2;
-  int id2, idnum, idnum2;
-  char *field[] = {"name", "equation", NULL};
   int fitoid;
-  N_VALUE *inst;
 
   if ((getobj(obj, "fit", sid, 0, NULL, &fit) >= 0) && (fit != NULL)) {
     arrayinit(&iarray, sizeof(int));
     if (getobjilist(fit, &fitobj, &iarray, FALSE, NULL) == 0) {
+      int idnum;
       idnum = arraynum(&iarray);
       if (idnum >= 1) {
+        int fitid, id2;
 	fitid = arraylast_int(&iarray);
 	if ((getobj(obj, "fit", did, 0, NULL, &fit) >= 0)
 	    && (fit != NULL)) {
 	  arrayinit(&iarray2, sizeof(int));
 	  if (getobjilist(fit, &fitobj, &iarray2, FALSE, NULL) == 0) {
+            int idnum2;
 	    idnum2 = arraynum(&iarray2);
 	    if (idnum2 >= 1) {
 	      id2 = arraylast_int(&iarray2);
@@ -745,9 +744,12 @@ FitCopy(struct objlist *obj, int did, int sid)
 	  } else
 	    id2 = newobj(fitobj);
 	  arraydel(&iarray2);
-	} else
+	} else {
 	  id2 = newobj(fitobj);
+        }
 	if (id2 >= 0) {
+          char *field[] = {"name", "equation", NULL};
+          N_VALUE *inst;
 	  copy_obj_field(fitobj, id2, fitid, field);
 	  inst = getobjinst(fitobj, id2);
 	  _getobj(fitobj, "oid", inst, &fitoid);
