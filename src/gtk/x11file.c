@@ -1861,7 +1861,9 @@ move_tab_setup_item(struct FileDialog *d, int id)
     movenum = arraynum(movey);
   }
 
-  if (movenum > 0) {
+  if (movenum < 1) {
+    return;
+  }
     for (j = 0; j < movenum; j++) {
       int line;
       double x, y;
@@ -1879,7 +1881,6 @@ move_tab_setup_item(struct FileDialog *d, int id)
       snprintf(buf, sizeof(buf), "%+.15e", y);
       list_store_set_string(d->move.list, &iter, 2, buf);
     }
-  }
 }
 
 static void
