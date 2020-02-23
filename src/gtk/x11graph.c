@@ -639,12 +639,12 @@ drawlist_sel_cb(GtkTreeSelection *sel, gpointer user_data)
 static gboolean
 objlist_sel_cb(GtkTreeSelection *sel, gpointer user_data)
 {
-  int n;
   struct SwitchDialog *d;
 
   d = (struct SwitchDialog *) user_data;
 
   if (! d->btn_lock) {
+    int n;
     n = gtk_tree_selection_count_selected_rows(sel);
     set_objlist_btn_state(d, n);
   }
