@@ -234,7 +234,7 @@ bg_button_toggled(GtkToggleButton *button, gpointer user_data)
 }
 
 static void
-GridDialogSetupItem(GtkWidget *w, struct GridDialog *d, int id)
+GridDialogSetupItem(struct GridDialog *d, int id)
 {
   char *valstr;
   int i, j;
@@ -305,7 +305,7 @@ grid_copy_clicked(GtkButton *btn, gpointer user_data)
 
   sel = CopyClick(d->widget, d->Obj, d->Id, GridCB);
   if (sel != -1) {
-    GridDialogSetupItem(d->widget, d, sel);
+    GridDialogSetupItem(d, sel);
   }
 }
 
@@ -424,7 +424,7 @@ GridDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
 
-  GridDialogSetupItem(wi, d, d->Id);
+  GridDialogSetupItem(d, d->Id);
 }
 
 static void
