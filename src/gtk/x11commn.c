@@ -846,10 +846,10 @@ void
 DeleteDrawable(void)
 {
   struct objlist *fileobj, *drawobj;
-  int i;
 
   fileobj = chkobject("data");
   if (fileobj) {
+    int i;
     for (i = 0; i <= chkobjlastinst(fileobj); i++) {
       FitDel(fileobj, i);
     }
