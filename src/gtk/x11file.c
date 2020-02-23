@@ -1658,16 +1658,18 @@ create_user_fit_frame(struct FitDialog *d)
 static void
 FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *hbox, *hbox2, *vbox, *frame, *table;
   struct FitDialog *d;
-  char title[20], **enumlist, mes[10];
-  int i;
+  char title[20];
 
   d = (struct FitDialog *) data;
   snprintf(title, sizeof(title), _("Fit %d"), d->Id);
   gtk_window_set_title(GTK_WINDOW(wi), title);
 
   if (makewidget) {
+    char **enumlist, mes[10];
+    GtkWidget *w, *hbox, *hbox2, *vbox, *frame, *table;
+    int i;
+
     gtk_dialog_add_button(GTK_DIALOG(wi), _("_Delete"), IDDELETE);
 
     table = gtk_grid_new();
