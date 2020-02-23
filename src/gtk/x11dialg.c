@@ -1082,7 +1082,7 @@ set_entry_from_obj_point(GtkEntry *entry, struct objlist *Obj, int Id, char *fie
 {
   struct narray *array;
   char buf[128];
-  int i, n, *points, l, pos;
+  int i, n, *points, pos;
   GtkEntryBuffer *t_buf;
 
   t_buf = gtk_entry_get_buffer(entry);
@@ -1093,6 +1093,7 @@ set_entry_from_obj_point(GtkEntry *entry, struct objlist *Obj, int Id, char *fie
   points = arraydata(array);
   pos = 0;
   for (i = 0; i < n / 2; i++) {
+    int l;
     l = snprintf(buf, sizeof(buf), "%.2f %.2f ", points[i * 2] / 100.0, points[i * 2 + 1] / 100.0);
     gtk_entry_buffer_insert_text(t_buf, pos, buf, l);
     pos += l;
