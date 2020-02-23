@@ -385,7 +385,7 @@ MathTextDialogClose(GtkWidget *w, void *data)
   struct MathTextDialog *d;
   const char *p;
   char *obuf, *ptr;
-  int r, id;
+  int id;
   GList *id_ptr;
 
   d = (struct MathTextDialog *) data;
@@ -417,6 +417,7 @@ MathTextDialogClose(GtkWidget *w, void *data)
   }
 
   for (id_ptr = d->id_list; id_ptr; id_ptr = id_ptr->next) {
+    int r;
     r = list_store_path_get_int(d->tree, id_ptr->data, 0, &id);
     if (r) {
       continue;
