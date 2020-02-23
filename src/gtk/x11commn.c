@@ -257,9 +257,8 @@ SetPageSettingsToGRA(void)
 void
 GetPageSettingsFromGRA(void)
 {
-  int i, j, num, otherGC, id;
-  struct objlist *obj, *dobj;
-  N_VALUE *inst;
+  int i, otherGC;
+  struct objlist *obj;
   struct narray *drawrable;
 
   if ((obj = chkobject("gra")) == NULL)
@@ -272,6 +271,8 @@ GetPageSettingsFromGRA(void)
   }
 
   if (i >= 0) {
+    int id, num;
+    N_VALUE *inst;
     id = i;
     inst = chkobjinst(obj, id);
     CheckPage();
@@ -282,8 +283,10 @@ GetPageSettingsFromGRA(void)
     if (num == 0) {
       menuadddrawrable(chkobject("draw"), &(Menulocal.drawrable));
     } else {
-      char *name;
+      struct objlist *dobj;
+      int j;
       for (j = 0; j < num; j++) {
+        char *name;
 	name = arraynget_str(drawrable, j);
 	if (name == NULL) {
 	  continue;
