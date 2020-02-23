@@ -1153,7 +1153,7 @@ attempt_shell_completion(char *text, int start, int end)
     in_command_position++;
   }
 
-  if (!matches && in_command_position)
+  if (in_command_position)
     matches = rl_completion_matches(text, command_word_completion_function);
 
   if (!matches)
