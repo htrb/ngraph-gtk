@@ -938,7 +938,6 @@ CrossDialogClose(GtkWidget *w, void *data)
   int ret;
   int type;
   struct narray group;
-  char *argv[2];
 
   d = (struct CrossDialog *) data;
   if (d->ret != IDOK)
@@ -956,6 +955,7 @@ CrossDialogClose(GtkWidget *w, void *data)
 
   if ((d->X != d->X0) || (d->Y != d->Y0)
       || (d->LenX != d->LenX0) || (d->LenY != d->LenY0)) {
+    char *argv[2];
     arrayinit(&group, sizeof(int));
     type = 3;
     arrayadd(&group, &type);
