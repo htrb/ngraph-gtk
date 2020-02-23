@@ -348,10 +348,8 @@ gauge_syle_setup(struct GridDialog *d, GtkWidget *table, int n, int j)
 static void
 GridDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *frame, *w, *hbox, *table;
   struct GridDialog *d;
   char title[TITLE_BUF_SIZE];
-  int i, j;
 
   d = (struct GridDialog *) data;
   snprintf(title, sizeof(title), _("Grid %d"), d->Id);
@@ -359,6 +357,8 @@ GridDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct GridDialog *) data;
   if (makewidget) {
+    GtkWidget *frame, *w, *hbox, *table;
+    int i, j;
     gtk_dialog_add_button(GTK_DIALOG(wi), _("_Delete"), IDDELETE);
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
