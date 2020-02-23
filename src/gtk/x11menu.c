@@ -3821,11 +3821,12 @@ init_tab_info(struct obj_tab_info *info, int n)
 static void
 save_tab_position_sub(GtkWidget *tab, struct obj_tab_info *tab_info, int offset)
 {
-  int i, n, obj_id;
-  GtkWidget *w;
+  int i, n;
 
   n = gtk_notebook_get_n_pages(GTK_NOTEBOOK(tab));
   for (i = 0; i < n; i++){
+    int obj_id;
+    GtkWidget *w;
     w = gtk_notebook_get_nth_page(GTK_NOTEBOOK(tab), i);
     obj_id = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(w), OBJ_ID_KEY));
     if (obj_id == tab_info->obj_id) {
