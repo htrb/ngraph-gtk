@@ -2295,10 +2295,9 @@ static struct objtable gtkmenu[] = {
 void *
 addmenu(void)
 {
-  unsigned int i, j;
-  struct menu_config *cfg;
-
   if (MenuConfigHash == NULL) {
+    unsigned int i, j;
+    struct menu_config *cfg;
     MenuConfigHash = nhash_new();
     if (MenuConfigHash ==NULL)
       return NULL;
