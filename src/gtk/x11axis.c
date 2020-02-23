@@ -635,13 +635,13 @@ SectionDialogGrid(GtkWidget *w, gpointer client_data)
 static void
 SectionDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *hbox, *vbox, *table;
   struct SectionDialog *d;
-  int i;
 
   d = (struct SectionDialog *) data;
 
   if (makewidget) {
+    GtkWidget *w, *hbox, *vbox, *table;
+    int i;
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
     table = gtk_grid_new();
