@@ -347,11 +347,12 @@ add_prm_str_to_array(struct menu_config *cfg, struct narray *conf)
 static void
 save_char_map_config(struct narray *conf)
 {
-  char *title, *data, *buf;
+  char *buf;
   struct character_map_list *pcur;
 
   pcur = Menulocal.char_map;
   while (pcur) {
+    char *title, *data;
     title = CHK_STR(pcur->title);
     data = CHK_STR(pcur->data);
 
