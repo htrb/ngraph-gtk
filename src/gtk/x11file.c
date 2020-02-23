@@ -308,12 +308,12 @@ MathTextDialogChangeInputType(GtkNotebook *notebook, GtkWidget *page, guint page
 static void
 MathTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *title, *vbox, *tab, *swin;
   struct MathTextDialog *d;
   static char *label[] = {N_("Math X"), N_("Math Y"), "F(X,Y,Z)", "G(X,Y,Z)", "H(X,Y,Z)"};
 
   d = (struct MathTextDialog *) data;
   if (makewidget) {
+    GtkWidget *w, *title, *vbox, *tab, *swin;
     tab = gtk_notebook_new();
     gtk_notebook_set_tab_pos(GTK_NOTEBOOK(tab), GTK_POS_BOTTOM);
     d->input_tab = tab;
