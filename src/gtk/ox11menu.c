@@ -1501,14 +1501,13 @@ clear_region(cairo_t *cr, cairo_region_t *region)
 static int
 mxflush(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  cairo_surface_t *surface;
-  cairo_t *cr;
   if (TopLevel == NULL) {
     error(obj, ERR_MENU_GUI);
     return 1;
   }
 
   if (Menulocal.local->cairo) {
+    cairo_surface_t *surface;
     gra2cairo_draw_path(Menulocal.local);
 
     surface = cairo_get_target(Menulocal.local->cairo);
@@ -1518,6 +1517,7 @@ mxflush(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   }
 
   if (Menulocal.pix) {
+    cairo_t *cr;
     cr = cairo_create(Menulocal.pix);
     clear_region(cr, NULL);
     flush_layers(cr);
