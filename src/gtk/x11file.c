@@ -1254,7 +1254,7 @@ check_fit_func(GtkEditable *w, gpointer client_data)
   MathEquation *code;
   MathEquationParametar *prm;
   const char *math;
-  int dim, i, n, deriv;
+  int dim, i, deriv;
 
   d = (struct FitDialog *) client_data;
 
@@ -1283,6 +1283,7 @@ check_fit_func(GtkEditable *w, gpointer client_data)
   }
 
   for (i = 0; i < dim; i++) {
+    int n;
     n = prm->id[i];
 
     if (n < FIT_PARM_NUM) {
