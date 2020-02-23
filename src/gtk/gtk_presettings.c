@@ -1066,7 +1066,6 @@ check_axisgrid(struct objlist *aobj, struct AxisGroupInfo *info, AXISGRID_CALLBA
 {
   int i, n, aid, r;
   struct objlist *obj;
-  N_VALUE *inst;
 
   if (cb == NULL){
     return 0;
@@ -1084,6 +1083,7 @@ check_axisgrid(struct objlist *aobj, struct AxisGroupInfo *info, AXISGRID_CALLBA
   }
   n++;
   for (i = 0; i < n; i++) {
+    N_VALUE *inst;
     inst = chkobjinst(obj, i);
     if (inst == NULL) {
       continue;
