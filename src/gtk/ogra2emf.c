@@ -1498,7 +1498,6 @@ gra2emf_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char
   int *cpar, r;
   double x, y, w, h, fontdir;
   struct gra2emf_local *local;
-  DWORD *line_style;
   POINT lpoint[2];
 
   local = (struct gra2emf_local *)argv[2];
@@ -1557,8 +1556,8 @@ gra2emf_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char
     local->line_style = NULL;
     local->line_style_num = 0;
     if (cpar[1]) {
-      local->line_style = g_malloc(sizeof(* line_style) * cpar[1]);
       int i;
+      local->line_style = g_malloc(sizeof(* (local->line_style)) * cpar[1]);
       if (local->line_style == NULL) {
 	break;
       }
