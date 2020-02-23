@@ -3275,12 +3275,6 @@ reset_event(void)
   }
 }
 
-struct WmStateHint
-{
-  unsigned long state;
-  GtkWindow icon;
-};
-
 static gboolean
 CloseCallback(GtkWidget *w, GdkEvent *event, gpointer user_data)
 {
