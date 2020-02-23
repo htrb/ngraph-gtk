@@ -648,7 +648,7 @@ gra2cairo_clip_region(struct gra2cairo_local *local, cairo_region_t *region)
 }
 
 static double
-gra2cairo_get_pixel_dot(struct objlist *obj, N_VALUE *inst, char **argv)
+gra2cairo_get_pixel_dot(char **argv)
 {
   int dpi;
 
@@ -679,7 +679,7 @@ gra2cairo_set_dpi(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, c
   _putobj(obj, "dpiy", inst, &dpi);
 
   local->pixel_dot_x =
-    local->pixel_dot_y = gra2cairo_get_pixel_dot(obj, inst, argv);
+    local->pixel_dot_y = gra2cairo_get_pixel_dot(argv);
 
   return 0;
 }
@@ -691,7 +691,7 @@ gra2cairo_set_dpi_x(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 
   _getobj(obj, "_local", inst, &local);
 
-  local->pixel_dot_x = gra2cairo_get_pixel_dot(obj, inst, argv);
+  local->pixel_dot_x = gra2cairo_get_pixel_dot(argv);
 
   return 0;
 }
@@ -703,7 +703,7 @@ gra2cairo_set_dpi_y(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 
   _getobj(obj, "_local", inst, &local);
 
-  local->pixel_dot_y = gra2cairo_get_pixel_dot(obj, inst, argv);
+  local->pixel_dot_y = gra2cairo_get_pixel_dot(argv);
 
   return 0;
 }
