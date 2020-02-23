@@ -2463,7 +2463,6 @@ CmAxisNewSection(void *w, gpointer client_data)
   int type, x, y, lenx, leny;
   struct narray group;
   char *argv[2];
-  char *ref;
 
   if (Menulock || Globallock)
     return;
@@ -2497,6 +2496,7 @@ CmAxisNewSection(void *w, gpointer client_data)
   exeobj(obj, "default_grouping", idr, 1, argv);
   arraydel(&group);
   if (idg >= 0) {
+    char *ref;
     getobj(obj, "oid", idx, 0, NULL, &oidx);
     ref = g_strdup_printf("axis:^%d", oidx);
     if (ref) {
