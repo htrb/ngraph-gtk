@@ -1151,7 +1151,7 @@ CmGraphShell(void *w, gpointer client_data)
 {
   struct objlist *obj, *robj, *shell;
   N_VALUE *inst;
-  int idn, allocnow, n;
+  int idn;
 
   if (Menulock || Globallock)
     return;
@@ -1164,6 +1164,7 @@ CmGraphShell(void *w, gpointer client_data)
   idn = getobjtblpos(obj, "_evloop", &robj);
   registerevloop(chkobjectname(obj), "_evloop", robj, idn, inst, NULL);
   if ((shell = chkobject("shell")) != NULL) {
+    int allocnow, n;
     n = chkobjlastinst(shell);
     if (n < 0) {
       newobj(shell);
