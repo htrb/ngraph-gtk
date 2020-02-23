@@ -1256,12 +1256,12 @@ GraphSave(int overwrite)
 static void
 change_filename(char * (*func)(const char *))
 {
-  struct objlist *obj;
   int i;
   unsigned int j;
   char *file, *file2, *objname[] = {"data", "merge"};
 
   for (j = 0; j < sizeof(objname) / sizeof(*objname); j++) {
+    struct objlist *obj;
     obj = chkobject(objname[j]);
     if (obj == NULL)
       continue;
