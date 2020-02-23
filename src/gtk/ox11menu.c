@@ -1459,15 +1459,16 @@ mxdpi(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 static void
 flush_layers(cairo_t *cr)
 {
-  int r, i, n;
+  int i, n;
   struct narray *array;
   struct layer *layer;
-  char *obj;
   void *ptr;
 
   array = &Menulocal.drawrable;
   n = arraynum(array);
   for (i = 0; i < n; i++) {
+    int r;
+    char *obj;
     obj = arraynget_str(array, i);
     r = nhash_get_ptr(Menulocal.layers, obj, &ptr);
     if (r) {
