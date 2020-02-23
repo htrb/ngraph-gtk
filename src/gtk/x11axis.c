@@ -2573,7 +2573,7 @@ void
 CmAxisNewSingle(void *w, gpointer client_data)
 {
   struct objlist *obj;
-  int id, ret, undo;
+  int id, undo;
 
   if (Menulock || Globallock)
     return;
@@ -2581,6 +2581,7 @@ CmAxisNewSingle(void *w, gpointer client_data)
     return;
   undo = axis_save_undo(UNDO_TYPE_CREATE);
   if ((id = newobj(obj)) >= 0) {
+    int ret;
     presetting_set_obj_field(obj, id);
     AxisDialog(NgraphApp.AxisWin.data.data, id, -1);
     ret = DialogExecute(TopLevel, &DlgAxis);
