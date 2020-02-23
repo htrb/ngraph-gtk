@@ -502,17 +502,17 @@ AxisNameToGroup(void)		/* this function may exist for compatibility with older v
   struct objlist *obj;
   char *name, *name2, *gp;
   struct narray group, iarray;
-  int a, j, anum;
+  int a, j;
   char *argv[2];
-  int *data;
-  N_VALUE *inst;
-
 
   if ((obj = (struct objlist *) chkobject("axis")) == NULL)
     return;
   num = chkobjlastinst(obj);
   arrayinit(&iarray, sizeof(int));
   for (id = 0; id <= num; id++) {
+    int anum;
+    int *data;
+    N_VALUE *inst;
     anum = arraynum(&iarray);
     data = arraydata(&iarray);
     for (j = 0; j < anum; j++)
