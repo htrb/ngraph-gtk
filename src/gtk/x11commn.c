@@ -397,7 +397,7 @@ AxisDel(int id)
   int i, lastinst, *id_array, n;
   char *group, *group2;
   char type;
-  N_VALUE *inst, *inst2;
+  N_VALUE *inst;
   char group3[20];
 
   obj = chkobject("axis");
@@ -426,6 +426,7 @@ AxisDel(int id)
 
   n = 0;
   for (i = lastinst; i >= 0; i--) {
+    N_VALUE *inst2;
     inst2 = chkobjinst(obj, i);
     _getobj(obj, "group", inst2, &group2);
     if (group2 && group2[0] == type) {
