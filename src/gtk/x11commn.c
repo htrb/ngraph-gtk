@@ -1751,7 +1751,7 @@ SetFileHidden(void)
   struct objlist *fobj;
   int lastinst;
   struct narray farray, ifarray;
-  int i, a, r, num, inum, *array;
+  int i, a, r;
 
   fobj = chkobject("data");
   if (fobj == NULL) {
@@ -1774,6 +1774,7 @@ SetFileHidden(void)
   r = 0;
   SelectDialog(&DlgSelect, fobj, NULL, FileCB, &farray, &ifarray);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
+    int num, inum, *array;
     a = TRUE;
     for (i = 0; i <= lastinst; i++) {
       putobj(fobj, "hidden", i, &a);
