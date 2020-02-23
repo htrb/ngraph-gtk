@@ -1156,20 +1156,21 @@ AxisDialogFile(GtkWidget *w, gpointer client_data)
   SelectDialog(&DlgSelect, fobj, _("autoscale (multi select)"), FileCB, (struct narray *) &farray, NULL);
 
   if (DialogExecute(d->widget, &DlgSelect) == IDOK) {
-    int a, i, anum, num, *array;
+    int a, anum, num, *array;
 
     num = arraynum(&farray);
     array = arraydata(&farray);
     anum = chkobjlastinst(d->Obj);
 
     if (num > 0 && anum != 0) {
-      char *buf, *argv2[2];
       GString *str;
       int type;
       struct narray *result;
 
       str = g_string_sized_new(32);
       if (str) {
+        char *buf, *argv2[2];
+        int i;
 	g_string_append(str, "file:");
 	for (i = 0; i < num; i++) {
 	  if (i == num - 1) {
