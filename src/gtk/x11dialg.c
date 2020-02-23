@@ -317,10 +317,8 @@ search_id(GtkWidget *list, int id)
 static void
 SelectDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  char *s;
   struct SelectDialog *d;
   int i, *seldata, selnum, a;
-  GtkWidget *swin, *w, *hbox;
   GtkTreeIter iter;
   n_list_store list[] = {
     {"id",       G_TYPE_INT,    TRUE, FALSE, NULL, 0, 0, 0, 0, PANGO_ELLIPSIZE_NONE, 0},
@@ -330,6 +328,7 @@ SelectDialogSetup(GtkWidget *wi, void *data, int makewidget)
   d = (struct SelectDialog *) data;
 
   if (makewidget) {
+    GtkWidget *swin, *w, *hbox;
     d->list = list_store_create(sizeof(list) / sizeof(*list), list);
     list_store_set_sort_all(d->list);
     list_store_set_selection_mode(d->list, GTK_SELECTION_MULTIPLE);
@@ -360,6 +359,7 @@ SelectDialogSetup(GtkWidget *wi, void *data, int makewidget)
   list_store_clear(d->list);
 
   for (i = 0; i <= chkobjlastinst(d->Obj); i++) {
+    char *s;
     s = d->cb(d->Obj, i);
     if (s) {
       list_store_append(d->list, &iter);
