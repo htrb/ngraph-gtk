@@ -625,7 +625,10 @@ load_config(struct objlist *sys, N_VALUE *inst, int *allocconsole)
   int len;
   long val;
 
-  if ((fp = openconfig(SYSCONF)) != NULL) {
+  fp = openconfig(SYSCONF);
+  if (fp == NULL) {
+    return;
+  }
     while ((tok = getconfig(fp, &str)) != NULL) {
       s2 = str;
       if (strcmp(tok, "login_shell") == 0) {
@@ -680,7 +683,6 @@ load_config(struct objlist *sys, N_VALUE *inst, int *allocconsole)
       g_free(str);
     }
     closeconfig(fp);
-  }
 }
 
 #if WINDOWS
