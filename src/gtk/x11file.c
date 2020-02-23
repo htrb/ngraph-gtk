@@ -1673,7 +1673,6 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     table = gtk_grid_new();
 
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-    hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
     w = combo_box_create();
     add_widget_to_table_sub(table, w, _("_Type:"), FALSE, 0, 1, 5, 0);
