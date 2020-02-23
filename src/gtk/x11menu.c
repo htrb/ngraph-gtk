@@ -4776,11 +4776,12 @@ create_menu_sub(GtkWidget *parent, struct MenuItem *item, int popup)
 	item[i].action->action = g_action_map_lookup_action(G_ACTION_MAP(GtkApp), item[i].action_name);
       }
       if (item[i].accel_key) {
-	char *key, accel[128], action[128];
-	const char *accels[2];
+	char *key, accel[128];
 
 	key = gdk_keyval_name(item[i].accel_key);
 	if (key) {
+          char action[128];
+          const char *accels[2];
 	  snprintf(accel, sizeof(accel), "%s%s%s",
 		   (item[i].accel_mods & GDK_CONTROL_MASK) ? "<Control>" : "",
 		   (item[i].accel_mods & GDK_SHIFT_MASK) ? "<Shift>" : "",
