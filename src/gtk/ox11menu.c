@@ -366,11 +366,12 @@ save_char_map_config(struct narray *conf)
 static void
 save_ext_driver_config(struct narray *conf)
 {
-  char *buf, *driver, *ext, *option;
+  char *buf;
   struct extprinter *pcur;
 
   pcur = Menulocal.extprinterroot;
   while (pcur) {
+    char *driver, *ext, *option;
     driver = CHK_STR(pcur->driver);
     ext = CHK_STR(pcur->ext);
     option= CHK_STR(pcur->option);
