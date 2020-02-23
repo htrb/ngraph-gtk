@@ -2818,8 +2818,6 @@ CmAxisGridUpdate(void *w, gpointer client_data)
 {
   struct narray farray;
   struct objlist *obj;
-  int i, j, ret;
-  int *array, num;
 
   if (Menulock || Globallock)
     return;
@@ -2829,18 +2827,24 @@ CmAxisGridUpdate(void *w, gpointer client_data)
     return;
   SelectDialog(&DlgSelect, obj, _("grid property (multi select)"), GridCB, (struct narray *) &farray, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
+    int *array, num;
+    int i;
     num = arraynum(&farray);
     if (num > 0) {
       axis_save_undo(UNDO_TYPE_EDIT);
     }
     array = arraydata(&farray);
     for (i = 0; i < num; i++) {
+      int ret;
       GridDialog(&DlgGrid, obj, array[i]);
-      if ((ret = DialogExecute(TopLevel, &DlgGrid)) == IDDELETE) {
+      ret = DialogExecute(TopLevel, &DlgGrid);
+      if (ret == IDDELETE) {
+        int j;
 	delobj(obj, array[i]);
 	set_graph_modified();
-	for (j = i + 1; j < num; j++)
+	for (j = i + 1; j < num; j++) {
 	  array[j]--;
+        }
       }
     }
   }
