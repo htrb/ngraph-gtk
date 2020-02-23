@@ -757,7 +757,6 @@ SectionDialogClose(GtkWidget *w, void *data)
   int ret;
   int type;
   struct narray group;
-  char *argv[2];
 
   d = (struct SectionDialog *) data;
   if (d->ret != IDOK)
@@ -774,6 +773,7 @@ SectionDialogClose(GtkWidget *w, void *data)
 
   if ((d->X != d->X0) || (d->Y != d->Y0)
       || (d->LenX0 != d->LenX) || (d->LenY0 != d->LenY)) {
+    char *argv[2];
     arrayinit(&group, sizeof(int));
     if (d->Section)
       type = 2;
