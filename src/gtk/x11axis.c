@@ -1004,11 +1004,11 @@ ZoomDialogSetupItem(GtkWidget *w, struct ZoomDialog *d)
 static void
 ZoomDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *vbox;
   struct ZoomDialog *d;
 
   d = (struct ZoomDialog *) data;
   if (makewidget) {
+    GtkWidget *w, *vbox;
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_PERCENT, TRUE, TRUE);
     item_setup(vbox, w, _("_Zoom:"), TRUE);
