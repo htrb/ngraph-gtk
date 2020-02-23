@@ -2789,8 +2789,6 @@ CmAxisGridDel(void *w, gpointer client_data)
 {
   struct narray farray;
   struct objlist *obj;
-  int i;
-  int num, *array;
 
   if (Menulock || Globallock)
     return;
@@ -2800,6 +2798,7 @@ CmAxisGridDel(void *w, gpointer client_data)
     return;
   SelectDialog(&DlgSelect, obj, _("delete grid (multi select)"), GridCB, (struct narray *) &farray, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
+    int i, num, *array;
     num = arraynum(&farray);
     if (num > 0) {
       axis_save_undo(UNDO_TYPE_DELETE);
