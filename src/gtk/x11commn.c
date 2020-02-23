@@ -1515,13 +1515,14 @@ check_ref_axis(char *ref, const char *group)
 static int
 file_auto_scale(char *file_obj, struct objlist *aobj, int anum)
 {
-  int i, refother;
+  int i;
   double min, max, inc;
   char *group, *ref, *argv[2];
 
   argv[0] = (char *) file_obj;
   argv[1] = NULL;
   for (i = 0; i <= anum; i++) {
+    int refother;
     getobj(aobj, "min", i, 0, NULL, &min);
     getobj(aobj, "max", i, 0, NULL, &max);
     getobj(aobj, "inc", i, 0, NULL, &inc);
