@@ -425,7 +425,7 @@ SwitchDialogUp(GtkWidget *w, gpointer client_data)
   GtkTreeSelection *selected;
   GList *list, *ptr;
   struct SwitchDialog *d;
-  int i, k, modified, *ary;
+  int k, modified, *ary;
   GtkTreePath *path;
 
   d = (struct SwitchDialog *) client_data;
@@ -438,6 +438,7 @@ SwitchDialogUp(GtkWidget *w, gpointer client_data)
 
   modified = FALSE;
   for (ptr = list; ptr; ptr = g_list_next(ptr)) {
+    int i;
     path = (GtkTreePath *) ptr->data;
     ary = gtk_tree_path_get_indices(path);
 
