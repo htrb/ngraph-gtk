@@ -897,7 +897,7 @@ select_font(struct gra2emf_local *local, const char *fontname, int charset)
   }
 
   id_font.lfCharSet = charset;
-  id_font.lfOutPrecision = OUT_DEFAULT_PRECIS;
+//  id_font.lfOutPrecision = OUT_DEFAULT_PRECIS;
   id_font.lfOutPrecision = OUT_TT_ONLY_PRECIS;
   id_font.lfClipPrecision = CLIP_STROKE_PRECIS;
   id_font.lfQuality = PROOF_QUALITY;
