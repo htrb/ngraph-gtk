@@ -1020,7 +1020,7 @@ static void
 FitDialogLoad(GtkButton *btn, gpointer user_data)
 {
   struct FitDialog *d;
-  int lastid, id;
+  int lastid;
 
   d = (struct FitDialog *) user_data;
 
@@ -1036,6 +1036,7 @@ FitDialogLoad(GtkButton *btn, gpointer user_data)
   FitLoadDialog(&DlgFitLoad, d->Obj, d->Lastid + 1);
   if ((DialogExecute(d->widget, &DlgFitLoad) == IDOK)
       && (DlgFitLoad.sel >= 0)) {
+    int id;
     id = DlgFitLoad.sel + d->Lastid + 1;
     FitDialogSetupItem(d->widget, d, id);
   }
