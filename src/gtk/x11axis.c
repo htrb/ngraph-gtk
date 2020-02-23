@@ -2733,8 +2733,6 @@ CmAxisClear(void *w, gpointer client_data)
 {
   struct narray farray;
   struct objlist *obj;
-  int i;
-  int *array, num;
 
   if (Menulock || Globallock)
     return;
@@ -2744,6 +2742,7 @@ CmAxisClear(void *w, gpointer client_data)
     return;
   SelectDialog(&DlgSelect, obj, _("scale clear (multi select)"), AxisCB, (struct narray *) &farray, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
+    int *array, num, i;
     num = arraynum(&farray);
     array = arraydata(&farray);
     if (num > 0) {
