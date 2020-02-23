@@ -826,10 +826,11 @@ menuadddrawrable(struct objlist *parent, struct narray *drawrable)
 static void
 free_script_list(struct script *script)
 {
-  struct script *scur, *sdel;
+  struct script *scur;
 
   scur = script;
   while (scur) {
+    struct script *sdel;
     sdel = scur;
     scur = scur->next;
     g_free(sdel->name);
