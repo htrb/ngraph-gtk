@@ -3303,7 +3303,6 @@ find_gra2gdk_inst(struct objlist **o, N_VALUE **i, struct objlist **ro, int *rou
   static struct objlist *obj = NULL, *robj = NULL;
   static int pos;
   N_VALUE *inst = NULL;
-  int id;
 
   if (obj == NULL) {
     obj = chkobject("gra2gdk");
@@ -3315,6 +3314,7 @@ find_gra2gdk_inst(struct objlist **o, N_VALUE **i, struct objlist **ro, int *rou
 
   inst = chkobjinst(obj, 0);
   if (inst == NULL) {
+    int id;
     id = newobj(obj);
     if (id < 0)
       return FALSE;
