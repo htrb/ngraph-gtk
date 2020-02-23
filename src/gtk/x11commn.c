@@ -685,15 +685,16 @@ field_obj_del(struct objlist *obj, int id, const char *field)
 {
   char *fit;
   struct objlist *fitobj;
-  int fitid, idnum, i;
   struct narray iarray;
 
   if ((getobj(obj, field, id, 0, NULL, &fit) >= 0) && (fit != NULL)) {
     arrayinit(&iarray, sizeof(int));
     if (getobjilist(fit, &fitobj, &iarray, FALSE, NULL) == 0) {
+      int idnum, i;
       idnum = arraynum(&iarray);
       arraysort_int(&iarray);
       for (i = idnum - 1; i >= 0; i--) {
+        int fitid;
 	fitid = arraynget_int(&iarray, i);
 	delobj(fitobj, fitid);
       }
