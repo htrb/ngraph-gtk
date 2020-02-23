@@ -1597,9 +1597,8 @@ AdjustAxis(void)
 int
 CheckSave(void)
 {
-  int ret;
-
   if (get_graph_modified()) {
+    int ret;
     ret = message_box(TopLevel, _("This graph is modified.\nSave this graph?"),
 		      _("Confirm"), RESPONS_YESNOCANCEL);
     if (ret == IDYES) {
