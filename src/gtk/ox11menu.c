@@ -1679,12 +1679,12 @@ static int
 mx_print(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   int show_dialog, select_file, create_window = FALSE, lock;
-  GtkWidget *label;
 
   select_file = * (int *) argv[2];
   show_dialog = * (int *) argv[3];
 
   if (TopLevel == NULL) {
+    GtkWidget *label;
     create_window = TRUE;
     TopLevel = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_type_hint(GTK_WINDOW(TopLevel), GDK_WINDOW_TYPE_HINT_DIALOG);
