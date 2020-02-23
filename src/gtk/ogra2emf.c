@@ -1040,13 +1040,14 @@ draw_str(struct gra2emf_local *local, const char *str)
   const char *ptr;
   GString *sub_str;
   const char *font, *prev_font;
-  int charset, prev_charset;
+  int prev_charset;
 
   sub_str = g_string_new("");
   prev_font = NULL;
   prev_charset = DEFAULT_CHARSET;
 
   for (ptr = str; *ptr; ptr = g_utf8_next_char(ptr)) {
+    int charset;
     ch = g_utf8_get_char(ptr);
     charset = get_char_set(ch);
     font = check_font_indices(local, ch);
