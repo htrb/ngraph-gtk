@@ -68,7 +68,6 @@ static void ToRalativePath(void);
 void
 OpenGRA(void)
 {
-  unsigned int j;
   int i, id, otherGC;
   char *device, *name, *name_str = "viewer";
   struct narray *drawrable;
@@ -113,6 +112,7 @@ OpenGRA(void)
   }
 
   if (arraynum(&(Menulocal.drawrable)) > 0) {
+    unsigned int j;
     drawrable = arraynew(sizeof(char *));
     for (j = 0; j < arraynum(&(Menulocal.drawrable)); j++) {
       arrayadd2(drawrable, *(char **)arraynget(&(Menulocal.drawrable), j));
