@@ -1102,7 +1102,6 @@ set_entry_from_obj_point(GtkEntry *entry, struct objlist *Obj, int Id, char *fie
 void
 SetStyleFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 {
-  unsigned int j;
   GtkEntry *entry;
   int count;
   const char *s;
@@ -1115,6 +1114,7 @@ SetStyleFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 
   count = combo_box_get_num(w);
   if (count == 0) {
+    unsigned int j;
     for (j = 0; j < CLINESTYLE; j++) {
       combo_box_append_text(w, _(FwLineStyle[j].name));
     }
