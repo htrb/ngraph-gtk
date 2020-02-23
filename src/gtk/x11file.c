@@ -832,13 +832,13 @@ FitLoadDialog(struct FitLoadDialog *data, struct objlist *obj, int sid)
 static void
 FitSaveDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *hbox;
   struct FitSaveDialog *d;
   int i;
   char *s;
 
   d = (struct FitSaveDialog *) data;
   if (makewidget) {
+    GtkWidget *w, *hbox;
     gtk_dialog_add_buttons(GTK_DIALOG(wi),
 			   _("_Delete"), IDDELETE,
 			   NULL);
