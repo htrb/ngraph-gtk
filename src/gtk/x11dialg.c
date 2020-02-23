@@ -473,10 +473,8 @@ single_list_default_cb(GtkWidget *w, GdkEventAny *e, gpointer user_data)
 static void
 CopyDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  char *s;
   struct CopyDialog *d;
   int i, a;
-  GtkWidget *swin, *w;
   GtkTreeIter iter;
   n_list_store copy_list[] = {
     {"id",       G_TYPE_INT,    TRUE, FALSE, NULL, 0, 0, 0, 0, PANGO_ELLIPSIZE_NONE, 0},
@@ -485,6 +483,7 @@ CopyDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct CopyDialog *) data;
   if (makewidget) {
+    GtkWidget *swin, *w;
     d->list = list_store_create(sizeof(copy_list) / sizeof(*copy_list), copy_list);
     list_store_set_sort_all(d->list);
     list_store_set_selection_mode(d->list, GTK_SELECTION_SINGLE);
@@ -506,6 +505,7 @@ CopyDialogSetup(GtkWidget *wi, void *data, int makewidget)
   list_store_clear(d->list);
 
   for (i = 0; i <= chkobjlastinst(d->Obj); i++) {
+    char *s;
     s = d->cb(d->Obj, i);
     if (s) {
       list_store_append(d->list, &iter);
