@@ -808,17 +808,18 @@ static void
 SwitchDialogClose(GtkWidget *w, void *data)
 {
   struct SwitchDialog *d;
-  int j, num;
-  char **buf;
 
   d = (struct SwitchDialog *) data;
   if (d->ret == IDOK) {
+    int num;
     arraydel2(&(Menulocal.drawrable));
     num = arraynum(&(d->idrawrable));
     if (num == 0) {
       menuadddrawrable(chkobject("draw"), &(Menulocal.drawrable));
     } else {
+      int j;
       for (j = 0; j < num; j++) {
+        char **buf;
 	buf = (char **) arraynget(&(d->drawrable),
 				  arraynget_int(&(d->idrawrable), j));
 	if ((*buf) != NULL)
