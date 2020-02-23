@@ -980,14 +980,14 @@ static int
 FitDialogLoadConfig(struct FitDialog *d, int errmes)
 {
   int lastid;
-  int newid;
-  struct objlist *shell;
-  struct narray sarray;
-  char *argv[2];
-  char *file;
 
   lastid = chkobjlastinst(d->Obj);
   if (lastid == d->Lastid) {
+    struct objlist *shell;
+    struct narray sarray;
+    char *argv[2];
+    char *file;
+    int newid;
     if ((file = searchscript(FITSAVE)) == NULL) {
       if (errmes)
 	message_box(d->widget, _("Setting file not found."), FITSAVE, RESPONS_OK);
