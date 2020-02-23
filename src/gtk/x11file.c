@@ -1162,8 +1162,8 @@ delete_fitobj(struct FitDialog *d, char *profile)
 static void
 FitDialogSave(GtkWidget *w, gpointer client_data)
 {
-  int i, r, len;
-  char *s, *ngpfile, *ptr;
+  int r;
+  char *s, *ngpfile;
   int error;
   int hFile;
   struct FitDialog *d;
@@ -1213,7 +1213,9 @@ FitDialogSave(GtkWidget *w, gpointer client_data)
   if (hFile < 0) {
     error = TRUE;
   } else {
+    int i;
     for (i = d->Lastid + 1; i <= chkobjlastinst(d->Obj); i++) {
+      int len;
       getobj(d->Obj, "save", i, 0, NULL, &s);
       len = strlen(s);
 
@@ -1229,6 +1231,7 @@ FitDialogSave(GtkWidget *w, gpointer client_data)
   if (error) {
     ErrorMessage();
   } else {
+    char *ptr;
     switch (r) {
     case IDOK:
       ptr = g_strdup_printf(_("The profile '%s' is saved."), DlgFitSave.Profile);
