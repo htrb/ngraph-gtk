@@ -3839,7 +3839,6 @@ static void
 save_tab_position(void)
 {
   int i, n;
-  GtkWidget *tab;
   struct obj_tab_info tab_info[] = {
     {0, 0, &Menulocal.file_tab,      0, "data"},
     {0, 0, &Menulocal.axis_tab,      0, "axis"},
@@ -3855,6 +3854,7 @@ save_tab_position(void)
   init_tab_info(tab_info, n);
 
   for (i = 0; i < n; i++) {
+    GtkWidget *tab;
     tab = gtk_paned_get_child1(GTK_PANED(NgraphApp.Viewer.side_pane2));
     save_tab_position_sub(tab, tab_info + i, 0);
 
