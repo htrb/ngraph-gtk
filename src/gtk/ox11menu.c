@@ -1545,19 +1545,18 @@ clear_layer(const char *obj, cairo_region_t *region)
 void
 mx_clear(cairo_region_t *region, char **objects)
 {
-  int i, n;
-  struct narray *array;
-  char *obj;
-
   if (objects) {
     while(*objects) {
       clear_layer(*objects, region);
       objects++;
     }
   } else {
+    int i, n;
+    struct narray *array;
     array = &Menulocal.drawrable;
     n = arraynum(array);
     for (i = 0; i < n; i++) {
+      char *obj;
       obj = arraynget_str(array, i);
       clear_layer(obj, region);
     }
