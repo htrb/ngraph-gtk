@@ -214,9 +214,8 @@ ChangeGRA(void)
 void
 SetPageSettingsToGRA(void)
 {
-  int i, j, num, otherGC, id;
+  int i, otherGC;
   struct objlist *obj;
-  N_VALUE *inst;
   struct narray *drawrable;
 
   if ((obj = chkobject("gra")) == NULL)
@@ -229,6 +228,8 @@ SetPageSettingsToGRA(void)
   }
 
   if (i >= 0) {
+    int id, j, num;
+    N_VALUE *inst;
     id = i;
     inst = chkobjinst(obj, id);
 
