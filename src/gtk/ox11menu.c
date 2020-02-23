@@ -882,7 +882,7 @@ init_layer(const char *obj)
 {
   struct layer *layer;
   void *ptr;
-  int r, w, h, lw, lh;
+  int r, w, h;
   if (Menulocal.pix == NULL) {
     return;
   }
@@ -900,6 +900,7 @@ init_layer(const char *obj)
     create_layer(layer, w, h);
     nhash_set_ptr(Menulocal.layers, obj, layer);
   } else {
+    int lw, lh;
     layer = ptr;
     lw = cairo_image_surface_get_width(layer->pix);
     lh = cairo_image_surface_get_height(layer->pix);
