@@ -975,12 +975,12 @@ LoadDialog(struct LoadDialog *data)
 static void
 SaveDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *vbox;
-  int j;
   struct SaveDialog *d;
 
   d = (struct SaveDialog *) data;
   if (makewidget) {
+    GtkWidget *w, *vbox;
+    int j;
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
 
     w = combo_box_create();
