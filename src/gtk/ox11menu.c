@@ -1775,7 +1775,7 @@ static int
 mx_get_accel_map(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
 #if USE_GTK_BUILDER
-  char **actions, **accels;
+  char **actions;
   int i, j;
   GString *str;
 
@@ -1787,6 +1787,7 @@ mx_get_accel_map(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, ch
   str = g_string_new("");
   actions = gtk_application_list_action_descriptions(GtkApp);
   for (i = 0; actions[i]; i++) {
+    char **accels;
     accels = gtk_application_get_accels_for_action(GtkApp, actions[i]);
     for (j = 0; accels[j]; j++) {
       g_string_append_printf(str, "%s %s\n", actions[i], accels[j]);
