@@ -912,12 +912,12 @@ DirectoryDialog(struct DirectoryDialog *data)
 static void
 LoadDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *vbox;
   struct LoadDialog *d;
-  int j;
 
   d = (struct LoadDialog *) data;
   if (makewidget) {
+    GtkWidget *w, *vbox;
+    int j;
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
 
     w = gtk_check_button_new_with_mnemonic(_("_Expand included file"));
