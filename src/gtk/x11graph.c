@@ -624,12 +624,12 @@ SwitchDialogRemove(GtkWidget *w, gpointer client_data)
 static gboolean
 drawlist_sel_cb(GtkTreeSelection *sel, gpointer user_data)
 {
-  int n;
   struct SwitchDialog *d;
 
   d = (struct SwitchDialog *) user_data;
 
   if (! d->btn_lock) {
+    int n;
     n = gtk_tree_selection_count_selected_rows(sel);
     set_drawlist_btn_state(d, n);
   }
