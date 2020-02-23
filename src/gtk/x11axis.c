@@ -2654,10 +2654,6 @@ CmAxisZoom(void *w, gpointer client_data)
 {
   struct narray farray;
   struct objlist *obj;
-  int i;
-  int *array, num, room;
-  double zoom, min, max, mid, wd;
-  char *argv[4];
 
   if (Menulock || Globallock)
     return;
@@ -2667,19 +2663,24 @@ CmAxisZoom(void *w, gpointer client_data)
     return;
   ZoomDialog(&DlgZoom);
   if ((DialogExecute(TopLevel, &DlgZoom) == IDOK) && (DlgZoom.zoom > 0)) {
+    double zoom, min, max, room;
     zoom = DlgZoom.zoom / 10000.0;
     SelectDialog(&DlgSelect, obj, _("scale zoom (multi select)"), AxisCB, (struct narray *) &farray, NULL);
     if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
+      int *array, num, i;
       num = arraynum(&farray);
       array = arraydata(&farray);
       if (num > 0) {
 	axis_save_undo(UNDO_TYPE_EDIT);
       }
       for (i = 0; i < num; i++) {
+        double wd;
 	getobj(obj, "min", array[i], 0, NULL, &min);
 	getobj(obj, "max", array[i], 0, NULL, &max);
 	wd = (max - min) / 2;
 	if (wd != 0) {
+          char *argv[4];
+          double mid;
 	  mid = (min + max) / 2;
 	  min = mid - wd * zoom;
 	  max = mid + wd * zoom;
