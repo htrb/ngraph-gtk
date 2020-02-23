@@ -690,17 +690,17 @@ set_sensitivity_by_selection(GtkWidget *tree, GtkWidget *btn)
 static void
 MathDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *swin, *vbox, *hbox;
   struct MathDialog *d;
-  static n_list_store list[] = {
-    {"id",       G_TYPE_INT,    TRUE, FALSE, NULL},
-    {N_("math"), G_TYPE_STRING, TRUE, FALSE, NULL, 0, 0, 0, 0, PANGO_ELLIPSIZE_END},
-  };
-  int i;
 
   d = (struct MathDialog *) data;
 
   if (makewidget) {
+    int i;
+    GtkWidget *w, *swin, *vbox, *hbox;
+    static n_list_store list[] = {
+      {"id",       G_TYPE_INT,    TRUE, FALSE, NULL},
+      {N_("math"), G_TYPE_STRING, TRUE, FALSE, NULL, 0, 0, 0, 0, PANGO_ELLIPSIZE_END},
+    };
     char *button_str[] = {
       N_("_X math"),
       N_("_Y math"),
