@@ -318,17 +318,17 @@ add_color_ary_to_array(struct menu_config *cfg, struct narray *conf)
   g_string_append_c(str, '=');
   for (i = 0; i < n; i++) {
     unsigned int r, g, b, a;
-     color = arraynget(palette, i);
-     r = color->red * 0xff;
-     g = color->green * 0xff;
-     b = color->blue * 0xff;
-     a = color->alpha * 0xff;
-     g_string_append_printf(str, "%02x%02x%02x%02x%s", r, g, b, a, (i == n -1) ? "\n" : ",");
-   }
-   buf = g_string_free(str, FALSE);
-   if (buf) {
-     arrayadd(conf, &buf);
-   }
+    color = arraynget(palette, i);
+    r = color->red * 0xff;
+    g = color->green * 0xff;
+    b = color->blue * 0xff;
+    a = color->alpha * 0xff;
+    g_string_append_printf(str, "%02x%02x%02x%02x%s", r, g, b, a, (i == n -1) ? "\n" : ",");
+  }
+  buf = g_string_free(str, FALSE);
+  if (buf) {
+    arrayadd(conf, &buf);
+  }
 }
 
 static void
