@@ -2993,10 +2993,8 @@ axis_check_history(void)
 void
 CmAxisScaleUndo(void *w, gpointer client_data)
 {
-  char *argv[1];
   struct objlist *obj;
   struct narray farray;
-  int i, n, num, *array;
 
   if (Menulock || Globallock)
     return;
@@ -3009,6 +3007,8 @@ CmAxisScaleUndo(void *w, gpointer client_data)
 
   SelectDialog(&DlgSelect, obj, _("scale undo (multi select)"), AxisHistoryCB, (struct narray *) &farray, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
+    int i, n, num, *array;
+    char *argv[1];
     num = arraynum(&farray);
     if (num > 0) {
       axis_save_undo(UNDO_TYPE_UNDO_SCALE);
