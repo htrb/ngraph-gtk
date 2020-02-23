@@ -584,13 +584,13 @@ static void
 SectionDialogGrid(GtkWidget *w, gpointer client_data)
 {
   struct SectionDialog *d;
-  char *ref;
-  int ret, oidx, oidy, create = FALSE, undo = -1;
+  int oidx, oidy, create = FALSE, undo = -1;
 
   d = (struct SectionDialog *) client_data;
   if (*(d->IDG) == -1) {
     undo = axis_save_undo(UNDO_TYPE_DUMMY);
     if ((*(d->IDG) = newobj(d->Obj2)) >= 0) {
+      char *ref;
       getobj(d->Obj, "oid", d->IDX, 0, NULL, &oidx);
       ref = g_strdup_printf("axis:^%d", oidx);
       if (ref) {
@@ -606,6 +606,7 @@ SectionDialogGrid(GtkWidget *w, gpointer client_data)
     }
   }
   if (*(d->IDG) >= 0) {
+    int ret;
     GridDialog(&DlgGrid, d->Obj2, *(d->IDG));
     ret = DialogExecute(d->widget, &DlgGrid);
     switch (ret) {
