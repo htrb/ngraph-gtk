@@ -450,12 +450,12 @@ static gboolean
 single_list_default_cb(GtkWidget *w, GdkEventAny *e, gpointer user_data)
 {
   struct CopyDialog *d;
-  int i;
 
   d = (struct CopyDialog *) user_data;
 
   if (e->type == GDK_2BUTTON_PRESS ||
-      (e->type == GDK_KEY_PRESS && ((GdkEventKey *)e)->keyval == GDK_KEY_Return)){
+      (e->type == GDK_KEY_PRESS && ((GdkEventKey *)e)->keyval == GDK_KEY_Return)) {
+    int i;
 
     i = list_store_get_selected_index(d->list);
     if (i < 0) {
