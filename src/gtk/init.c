@@ -1170,11 +1170,11 @@ obj_member_completion_function(const char *text, int state)
 {
   static char **list = (char **) NULL;
   static int list_index = 0, first_char_loc;
-  struct objlist *objcur;
 
   /* If we don't have any state, make some. */
   if (!state) {
     static char *obj, *instances, *member, *val;
+    struct objlist *objcur;
 
     if (list)
       g_free(list);
