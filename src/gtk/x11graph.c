@@ -654,12 +654,10 @@ objlist_sel_cb(GtkTreeSelection *sel, gpointer user_data)
 static void
 SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *hbox, *vbox, *vbox2, *label, *frame;
   GtkTreeIter iter;
   struct SwitchDialog *d;
   int num2, num1, j, k, *obj_check;
   char **buf;
-  GtkTreeSelection *sel;
   static n_list_store list[] = {
     {N_("Object"), G_TYPE_STRING, TRUE, FALSE, NULL},
   };
@@ -667,6 +665,8 @@ SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
   d = (struct SwitchDialog *) data;
 
   if (makewidget) {
+    GtkWidget *w, *hbox, *vbox, *vbox2, *label, *frame;
+    GtkTreeSelection *sel;
 
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
