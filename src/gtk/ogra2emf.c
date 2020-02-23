@@ -161,8 +161,10 @@ get_char_set(gunichar ch)
     char_set = DEFAULT_CHARSET;
     break;
   case G_UNICODE_SCRIPT_HAN:
+/*
     char_set = CHINESEBIG5_CHARSET;
     char_set = GB2312_CHARSET;
+*/
     char_set = SHIFTJIS_CHARSET;
     break;
   case G_UNICODE_SCRIPT_HANGUL:
