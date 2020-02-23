@@ -2142,7 +2142,7 @@ static void
 position_tab_setup_item(struct AxisDialog *axis, int id)
 {
   char *valstr;
-  int i, j;
+  int j;
   int lastinst;
   char *name;
   struct AxisPos *d;
@@ -2168,6 +2168,7 @@ position_tab_setup_item(struct AxisDialog *axis, int id)
 
   sgetobjfield(axis->Obj, id, "adjust_axis", NULL, &valstr, FALSE, FALSE, FALSE);
   if (valstr) {
+    int i;
     for (i = 0; (valstr[i] != '\0') && (valstr[i] != ':'); i++);
     if (valstr[i] == ':')
       i++;
