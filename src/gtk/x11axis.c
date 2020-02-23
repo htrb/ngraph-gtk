@@ -860,12 +860,12 @@ CrossDialogAxisY(GtkWidget *w, gpointer client_data)
 static void
 CrossDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *hbox, *vbox, *table;
   struct CrossDialog *d;
-  int i;
 
   d = (struct CrossDialog *) data;
   if (makewidget) {
+    GtkWidget *w, *hbox, *vbox, *table;
+    int i;
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
     table = gtk_grid_new();
