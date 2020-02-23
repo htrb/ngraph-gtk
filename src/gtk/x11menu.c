@@ -4345,9 +4345,9 @@ static void
 check_instance(struct objlist *obj)
 {
   int i;
-  struct objlist *dobj;
 
   for (i = 0; i < ActionWidgetNum; i++) {
+    struct objlist *dobj;
     dobj = NULL;
     switch (i) {
     case DataPropertyAction:
