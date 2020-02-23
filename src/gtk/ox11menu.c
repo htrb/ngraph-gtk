@@ -308,7 +308,6 @@ add_color_ary_to_array(struct menu_config *cfg, struct narray *conf)
   struct narray *palette;
   int i, n;
   GdkRGBA *color;
-  unsigned int r, g, b, a;
   palette = &(Menulocal.custom_palette);
   n = arraynum(palette);
   if (n < 1) {
@@ -318,6 +317,7 @@ add_color_ary_to_array(struct menu_config *cfg, struct narray *conf)
   str = g_string_new(cfg->name);
   g_string_append_c(str, '=');
   for (i = 0; i < n; i++) {
+    unsigned int r, g, b, a;
      color = arraynget(palette, i);
      r = color->red * 0xff;
      g = color->green * 0xff;
