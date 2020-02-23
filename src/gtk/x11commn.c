@@ -1071,12 +1071,9 @@ int
 SaveDrawrable(char *name, int storedata, int storemerge)
 {
   int hFile;
-  struct objlist *sysobj, *drawobj, *graobj;
-  int id, len, error;
-  char *arg[2];
+  int error;
   struct narray sarray;
-  N_VALUE *inst;
-  char *ver, *sysname, *s, *opt, comment[COMMENT_BUF_SIZE];
+  char *ver, *sysname, *s, *opt;
 
   error = FALSE;
 
@@ -1085,6 +1082,10 @@ SaveDrawrable(char *name, int storedata, int storemerge)
   if (hFile < 0) {
     error = TRUE;
   } else {
+    int len;
+    struct objlist *sysobj, *drawobj;
+    N_VALUE *inst;
+    char comment[COMMENT_BUF_SIZE];
     sysobj = chkobject("system");
     inst = chkobjinst(sysobj, 0);
     _getobj(sysobj, "name", inst, &sysname);
@@ -1097,10 +1098,13 @@ SaveDrawrable(char *name, int storedata, int storemerge)
       error = TRUE;
 
     if ((drawobj = chkobject("draw")) != NULL) {
+      struct objlist *graobj;
       SaveParent(hFile, drawobj, storedata, storemerge);
       if ((graobj = chkobject("gra")) != NULL) {
+        int id;
 	id = ValidGRA();
 	if (id != -1) {
+          char *arg[2];
 	  arrayinit(&sarray, sizeof(char *));
 	  opt = "device";
 	  arrayadd(&sarray, &opt);
