@@ -9799,7 +9799,7 @@ save_data_file(struct objlist *obj, N_VALUE *inst, struct f2dlocal *f2dlocal,
 	       struct f2ddata *fp, const char *data_file, const char *file,
 	       int div, int append)
 {
-  int rcode, type, intp, r;
+  int type, intp, r;
   FILE *fp2;
 
   if (fp->need2pass || fp->final < -1) {
@@ -9837,6 +9837,7 @@ save_data_file(struct objlist *obj, N_VALUE *inst, struct f2dlocal *f2dlocal,
       return 1;
     }
   } else {
+    int rcode;
     while ((rcode=getdata(fp))==0) {
       switch (fp->type) {
       case TYPE_NORMAL:
