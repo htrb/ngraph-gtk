@@ -1781,8 +1781,6 @@ static VALUE
 ruby_ngraph_exec_loginshell(VALUE module, VALUE cmd, VALUE nobj)
 {
   int r;
-  size_t len;
-  const char *str;
   char *loginshell;
   static struct ngraph_instance *inst;
 
@@ -1793,6 +1791,8 @@ ruby_ngraph_exec_loginshell(VALUE module, VALUE cmd, VALUE nobj)
   if (NIL_P(cmd)) {
     loginshell = NULL;
   } else {
+    size_t len;
+    const char *str;
     str = StringValueCStr(cmd);
     len = strlen(str) + 1;
     loginshell = ALLOCA_N(char, len);
