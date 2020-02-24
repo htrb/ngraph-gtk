@@ -3304,7 +3304,7 @@ getdataarray(struct f2ddata *fp, char *buf, int maxdim, MathValue *data)
   int st;
   double val;
   int i, r;
-  int dim, hex;
+  int dim;
   char *ifs, csv;
   MathValue v;
   ifs = fp->ifs_buf;
@@ -3322,6 +3322,7 @@ getdataarray(struct f2ddata *fp, char *buf, int maxdim, MathValue *data)
     column_array_push(fp->codey, fp->column_array_id_y, data);
   }
   while (*po!='\0') {
+    int hex;
     hex = FALSE;
     if (! fp->use_column_array && dim >= maxdim) {
       r = 0;
