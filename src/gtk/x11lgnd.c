@@ -3543,14 +3543,6 @@ start_editing_text(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *
   return;
 }
 
-struct legend_data {
-  char *icon_file;
-  void (* update_func) (struct obj_list_data *, int, int);
-  void (* update_dialog_func) (struct obj_list_data *, int, int);
-  char *name;
-  struct LegendDialog *dialog;
-};
-
 GtkWidget *
 create_path_list(struct SubWin *d)
 {
