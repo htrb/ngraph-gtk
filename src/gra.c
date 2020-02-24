@@ -1173,10 +1173,9 @@ GRArectangle(int GC,int x0,int y0,int x1,int y1,int fil)
 static void
 GRAputpixel(int GC,int x,int y)
 {
-  char code;
-  int cpar[3];
-
   if ((GRAClist[GC].clip==0) || (GRAinview(GC,x,y)==0)) {
+    char code;
+    int cpar[3];
     code='P';
     cpar[0]=2;
     cpar[1]=x;
