@@ -1585,13 +1585,13 @@ get_str_func_argv(VALUE self, VALUE argv, const char *field)
 static void
 add_obj_name_const(VALUE klass, struct objlist *nobj, const char *name)
 {
-  const char *obj_name;
-  char str[64];
   VALUE val;
 
   if (nobj == NULL) {
     val = Qnil;
   } else {
+    const char *obj_name;
+    char str[64];
     obj_name = ngraph_get_object_name(nobj);
     set_ngraph_obj_class_name(obj_name, str, sizeof(str));
     val = ID2SYM(rb_intern(str));
