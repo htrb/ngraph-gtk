@@ -3548,7 +3548,7 @@ GRAinputold(int GC,char *s,int leftm,int topm,int rate_x,int rate_y)
 static int
 GRAlineclip(int GC,int *x0,int *y0,int *x1,int *y1)
 {
-  int a,xl,yl,xg,yg;
+  int xl,yl,xg,yg;
   int minx,miny,maxx,maxy;
 
   if (GRAClist[GC].gminx>GRAClist[GC].gmaxx) {
@@ -3578,7 +3578,7 @@ GRAlineclip(int GC,int *x0,int *y0,int *x1,int *y1)
     xl=minx; yl=(*y1-*y0)*(minx-*x0)/(*x1-*x0)+*y0;
   }
   if (yl>yg) {
-
+    int a;
     a=yl;  yl=yg;  yg=a;  a=xl;  xl=xg;  xg=a;
   }
   if ((yg<miny) || (yl>maxy)) return 1;
