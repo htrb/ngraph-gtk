@@ -728,7 +728,7 @@ focus(struct obj_list_data *d, enum FOCUS_MODE add)
 
 
 static void
-focus_all(struct obj_list_data *d, enum FOCUS_MODE add)
+focus_all(struct obj_list_data *d)
 {
   if (Menulock || Globallock)
     return;
@@ -1268,7 +1268,7 @@ list_sub_window_focus(GtkMenuItem *item, gpointer user_data)
 void
 list_sub_window_focus_all(GtkMenuItem *item, gpointer user_data)
 {
-  focus_all((struct obj_list_data *) user_data, FOCUS_MODE_NORMAL);
+  focus_all((struct obj_list_data *) user_data);
 }
 
 void
