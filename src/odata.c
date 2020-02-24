@@ -5397,7 +5397,7 @@ f2dtransf(double x,double y,int *gx,int *gy,void *local)
 static int
 f2dlineclipf(double *x0,double *y0,double *x1,double *y1,void *local)
 {
-  double a,xl,yl,xg,yg;
+  double xl,yl,xg,yg;
   double minx,miny,maxx,maxy;
   struct f2ddata *fp;
 
@@ -5430,6 +5430,7 @@ f2dlineclipf(double *x0,double *y0,double *x1,double *y1,void *local)
     xl=minx; yl=(*y1-*y0)*(minx-*x0)/(*x1-*x0)+*y0;
   }
   if (yl>yg) {
+    double a;
     a=yl;  yl=yg;  yg=a;  a=xl;  xl=xg;  xg=a;
   }
   if ((yg<miny) || (yl>maxy)) return 1;
