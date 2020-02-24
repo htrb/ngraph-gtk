@@ -633,7 +633,6 @@ GRAredraw_layers(struct objlist *obj, N_VALUE *inst, int setredrawf, int redraw_
 int
 GRAdraw(int GC,char code,int *cpar,char *cstr)
 {
-  char *argv[7];
   double zoom;
   int i, zoomf, style, alpha;
 
@@ -757,6 +756,7 @@ GRAdraw(int GC,char code,int *cpar,char *cstr)
     break;
   }
   if (GRAClist[GC].direct==NULL) {
+    char *argv[7];
     argv[0]=(char *) GRAClist[GC].objname;
     argv[1]=(char *) GRAClist[GC].outputname;
     argv[2]=GRAClist[GC].local;
