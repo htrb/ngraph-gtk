@@ -3661,7 +3661,6 @@ set_const(MathEquation *eq, int *const_id, int need2pass, struct f2ddata *fp, in
   };
   MathValue val;
   int i;
-  double tmp;
 
   if (eq == NULL || eq->exp == NULL)
     return 0;
@@ -3700,6 +3699,7 @@ set_const(MathEquation *eq, int *const_id, int need2pass, struct f2ddata *fp, in
     math_equation_set_const(eq, const_id[MATH_CONST_SUMXY], &val);
 
     if (fp->num > 0) {
+      double tmp;
       val.val = fp->sumx / fp->num;
       val.type = MATH_VALUE_NORMAL;
       math_equation_set_const(eq, const_id[MATH_CONST_AVX], &val);
@@ -3721,7 +3721,7 @@ set_const(MathEquation *eq, int *const_id, int need2pass, struct f2ddata *fp, in
       math_equation_set_const(eq, const_id[MATH_CONST_STDEVPY], &val);
     }
     if (fp->num > 1) {
-      double n;
+      double n, tmp;
 
       n = fp->num;
       tmp = fp->sumxx / (n - 1) - (fp->sumx / (n - 1)) * (fp->sumx / n);
