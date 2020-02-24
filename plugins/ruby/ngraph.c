@@ -1161,7 +1161,7 @@ inst_put_darray(VALUE self, VALUE arg, const char *field)
   VALUE tmpstr;
   struct ngraph_instance *inst;
   ngraph_value ary;
-  int num, i;
+  int num;
 
   inst = check_id(self);
   if (inst == NULL) {
@@ -1183,6 +1183,7 @@ inst_put_darray(VALUE self, VALUE arg, const char *field)
     ary.ary = rb_alloc_tmp_buffer(&tmpstr, sizeof(*ary.ary) + sizeof(ngraph_value) * num);
     ary.ary->num = num;
     if (ary.ary) {
+      int i;
       for (i = 0; i < num; i++) {
         ary.ary->ary[i].d = NUM2DBL(rb_ary_entry(arg, i));
       }
