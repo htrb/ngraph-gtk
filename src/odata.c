@@ -2950,7 +2950,7 @@ f2dinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   if (_putobj(obj,"range_max",inst,&max)) return 1;
   if (_putobj(obj,"range_div",inst,&div)) return 1;
 
-  s1 = s2 = s3 = s4 = NULL;
+  s2 = s3 = s4 = NULL;
   f2dlocal=NULL;
 
   s1 = g_strdup("#%'");
