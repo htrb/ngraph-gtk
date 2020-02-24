@@ -1528,7 +1528,7 @@ update_focused_obj_field_value(struct Viewer *d, int num, const char *field, int
 }
 
 static int
-update_focused_obj_stroke_fill(GtkWidget *widget, struct Viewer *d, int num, int mode)
+update_focused_obj_stroke_fill(struct Viewer *d, int num, int mode)
 {
   struct FocusObj *focus;
   N_VALUE *inst;
@@ -1656,7 +1656,7 @@ update_focused_obj(GtkWidget *widget, gpointer user_data)
   } else if (widget == Widgets.mark_type_end.widget) {
     modified = update_focused_obj_field_value(d, num, "mark_type_end", GPOINTER_TO_INT(user_data), NULL);
   } else if (widget == Widgets.stroke_fill.widget) {
-    modified = update_focused_obj_stroke_fill(widget, d, num, GPOINTER_TO_INT(user_data));
+    modified = update_focused_obj_stroke_fill(d, num, GPOINTER_TO_INT(user_data));
   } else if (widget == Widgets.font.widget) {
     modified = update_focused_obj_font(widget, d, num);
   } else if (widget == Widgets.bold.widget) {
