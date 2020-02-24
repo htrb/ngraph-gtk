@@ -108,7 +108,7 @@ static struct ngraph_instance *
 check_id(VALUE klass)
 {
   struct ngraph_instance *inst;
-  int id, r, last;
+  int id, last;
   ngraph_arg arg;
   ngraph_returned_value oid;
 
@@ -120,6 +120,7 @@ check_id(VALUE klass)
 
   last = ngraph_get_object_last_id(inst->obj);
   if (inst->id <= last) {
+    int r;
     arg.num = 0;
     r = ngraph_object_get(inst->obj, "oid", inst->id, &arg, &oid);
 
