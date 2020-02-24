@@ -3247,7 +3247,6 @@ GRAparse(struct GRAdata *data, char *s)
   int *cpar;
   char *cstr;
 
-  code = '\0';
   cpar =NULL;
   cstr = NULL;
   for (i = 0; s[i] != '\0'; i++) {
