@@ -486,7 +486,7 @@ LegendGaussDialogClose(GtkWidget *w, void *data)
 {
   struct LegendGaussDialog *d;
   int ret, a, i, amp, wd, gx, gy;
-  double x, y = 0, tmp;
+  double y = 0, tmp;
   struct narray *parray;
 
   d = (struct LegendGaussDialog *) data;
@@ -524,6 +524,7 @@ LegendGaussDialogClose(GtkWidget *w, void *data)
 
   parray = arraynew(sizeof(int));
   for (i = 0; i <= d->Div; i++) {
+    double x;
     x = wd / ((double) (d->Div)) * i;
     if (d->Mode == 0) {
       tmp =
