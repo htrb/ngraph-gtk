@@ -1155,10 +1155,9 @@ GRAcircle(int GC,int x,int y,int rx,int ry,int cs,int ce,int fil)
 void
 GRArectangle(int GC,int x0,int y0,int x1,int y1,int fil)
 {
-  char code;
-  int cpar[6];
-
   if ((GRAClist[GC].clip==0) || (GRArectclip(GC,&x0,&y0,&x1,&y1)==0)) {
+    char code;
+    int cpar[6];
     code='B';
     cpar[0]=5;
     cpar[1]=x0;
