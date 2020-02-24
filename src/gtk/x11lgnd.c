@@ -521,11 +521,12 @@ set_font(struct LegendDialog *d, int id)
     /* for backward compatibility */
     style = compatible->style;
     if (d->text && compatible->symbol) {
-      char buf[] = "%F{Sym}", *tmp;
+      char buf[] = "%F{Sym}";
       const char *str;
 
       str = gtk_entry_get_text(GTK_ENTRY(d->text));
       if (str && strncmp(str, buf, sizeof(buf) - 1)) {
+        char *tmp;
 	tmp = g_strdup_printf("%s%s", buf, str);
 	gtk_entry_set_text(GTK_ENTRY(d->text), tmp);
 	g_free(tmp);
