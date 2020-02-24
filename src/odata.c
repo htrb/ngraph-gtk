@@ -2153,7 +2153,6 @@ opendata(struct objlist *obj,N_VALUE *inst,
   int axid,ayid;
   int marksize,marktype;
   int prev_datanum;
-  double ip1,ip2;
   int dataclip;
   struct stat stat_buf;
   struct axis_prm ax_prm, ay_prm;
@@ -2229,6 +2228,7 @@ opendata(struct objlist *obj,N_VALUE *inst,
   }
 
   if (axis) {
+    double ip1,ip2;
     axid = get_axis_prm(obj, inst, AXIS_X, &ax_prm);
     if (axid  < 0) {
       error(obj, - axid);
