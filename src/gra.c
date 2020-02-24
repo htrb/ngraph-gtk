@@ -1087,10 +1087,9 @@ GRAmoverel(int GC,int x,int y)
 void
 GRAline(int GC,int x0,int y0,int x1,int y1)
 {
-  char code;
-  int cpar[5];
-
   if ((GRAClist[GC].clip==0) || (GRAlineclip(GC,&x0,&y0,&x1,&y1)==0)) {
+    char code;
+    int cpar[5];
     code='L';
     cpar[0]=4;
     cpar[1]=x0;
