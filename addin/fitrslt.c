@@ -62,7 +62,6 @@ loaddatalist(struct fit_prm *prm, const char *datalist)
 {
   FILE *f;
   int i, j, fitnum;
-  char *source, *file, *array;
 
   if (datalist == NULL) {
     return 1;
@@ -82,6 +81,7 @@ loaddatalist(struct fit_prm *prm, const char *datalist)
   prm->data = g_malloc(sizeof(*prm->data) * fitnum);
   prm->fit_num = fitnum;
   for (i = 0; i < fitnum; i++) {
+    char *source, *file, *array;
     prm->data[i].file_id = fgets_int(f);
 
     source = fgets_str(f);
