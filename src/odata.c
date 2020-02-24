@@ -4845,7 +4845,6 @@ getdata2(struct f2ddata *fp, MathEquation *code, int maxdim, double *dd, int *dd
           1: EOF
 */
 {
-  int rcode;
   MathValue val, gdata[FILE_OBJ_MAXCOL + 3], dx2, dy2;
   int masked;
   int find;
@@ -4854,6 +4853,7 @@ getdata2(struct f2ddata *fp, MathEquation *code, int maxdim, double *dd, int *dd
   *ddstat=MATH_VALUE_UNDEF;
   find=FALSE;
   while (!fp->eof && (!find)) {
+    int rcode;
     if ((fp->final>=0) && (fp->line>=fp->final)) {
       fp->eof=TRUE;
       break;
