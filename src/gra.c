@@ -459,21 +459,22 @@ _GRAredraw(int GC,int snum,char **sdata,int setredrawf,int redraw_num,
     if (dinst == NULL) {
       continue;
     }
-        if (setredrawf) {
-	  int t = (redraw_num != 0);
-          _getobj(dobj,"redraw_flag",dinst,&redrawfsave);
-          _putobj(dobj,"redraw_flag",dinst, &t);
-          _putobj(dobj,"redraw_num",dinst, &redraw_num);
-        }
-	if (layer) {
-	  GRAlayer(GC, dobj->name);
-	}
-        _exeobj(dobj,dfield,dinst,1,dargv);
-        if (setredrawf) {
-          _putobj(dobj,"redraw_flag",dinst,&redrawfsave);
-        }
-        if ((addn==i) && (obj!=NULL) && (inst!=NULL) && (field!=NULL))
-          _exeobj(obj,field,inst,1,dargv);
+    if (setredrawf) {
+      int t = (redraw_num != 0);
+      _getobj(dobj,"redraw_flag",dinst,&redrawfsave);
+      _putobj(dobj,"redraw_flag",dinst, &t);
+      _putobj(dobj,"redraw_num",dinst, &redraw_num);
+    }
+    if (layer) {
+      GRAlayer(GC, dobj->name);
+    }
+    _exeobj(dobj,dfield,dinst,1,dargv);
+    if (setredrawf) {
+      _putobj(dobj,"redraw_flag",dinst,&redrawfsave);
+    }
+    if ((addn==i) && (obj!=NULL) && (inst!=NULL) && (field!=NULL)) {
+      _exeobj(obj,field,inst,1,dargv);
+    }
   }
 }
 
