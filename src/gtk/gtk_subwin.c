@@ -514,7 +514,7 @@ obj_copy(struct objlist *obj, int dest, int src)
 static void
 copy(struct obj_list_data *d)
 {
-  int sel, id, num, undo;
+  int sel, num;
 
   if (Menulock || Globallock)
     return;
@@ -525,6 +525,7 @@ copy(struct obj_list_data *d)
   num = chkobjlastinst(d->obj);
 
   if (sel >= 0 && sel <= num) {
+    int id, undo;
     undo = menu_save_undo_single(UNDO_TYPE_COPY, d->obj->name);
     id = newobj(d->obj);
     if (id < 0) {
