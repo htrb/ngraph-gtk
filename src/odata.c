@@ -3895,7 +3895,6 @@ static int
 getdata_sub2(struct f2ddata *fp, int fnumx, int fnumy, int *needx, int *needy, MathValue *datax, MathValue *datay,
 	     MathValue *gdata, int filenum, int *openfile)
 {
-  int i,j;
   int masked,moved,moven;
   struct f2ddata_buf *buf;
   MathValue dx, dy, dx2, dy2, dx3, dy3, d2, d3;
@@ -3916,6 +3915,7 @@ getdata_sub2(struct f2ddata *fp, int fnumx, int fnumy, int *needx, int *needy, M
 
   moved = FALSE;
   if (! masked) {
+    int i, j;
     for (j = 0; j < fp->movenum; j++) {
       if (fp->move[j] == fp->line) {
 	moved = TRUE;
