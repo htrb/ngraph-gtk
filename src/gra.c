@@ -3345,10 +3345,10 @@ get_gra_font(int i)
 int
 GRAinputold(int GC,char *s,int leftm,int topm,int rate_x,int rate_y)
 {
-  int pos,num,i,j;
+  int pos,num,i;
   char code,code2;
   int cpar[50],cpar2[50];
-  char cstr[256],*po,*ustr;
+  char cstr[256],*ustr;
   int col,B,R,G;
 
   for (i=0;s[i]!='\0';i++)
@@ -3366,6 +3366,8 @@ GRAinputold(int GC,char *s,int leftm,int topm,int rate_x,int rate_y)
     num++;
     if (!getintpar(s+pos+1,num,cpar)) return FALSE;
   } else {
+    int j;
+    char *po;
     cpar[0]=-1;
     if ((po=strchr(s+pos+1,','))==NULL) return FALSE;
     if ((po=strchr(po+1,','))==NULL) return FALSE;
