@@ -2694,15 +2694,15 @@ put_func(struct objlist *obj, N_VALUE *inst, struct f2dlocal *f2dlocal, char *fi
   case 'h':
     switch (type) {
     case 'f':
-      rcode = set_equation(f2dlocal, f2dlocal->codex, eq, g, h, x, NULL);
+      set_equation(f2dlocal, f2dlocal->codex, eq, g, h, x, NULL);
       rcode = set_equation(f2dlocal, f2dlocal->codey, eq, g, h, y, &err_msg);
       break;
     case 'g':
-      rcode = set_equation(f2dlocal, f2dlocal->codex, f, eq, h, x, NULL);
+      set_equation(f2dlocal, f2dlocal->codex, f, eq, h, x, NULL);
       rcode = set_equation(f2dlocal, f2dlocal->codey, f, eq, h, y, &err_msg);
       break;
     case 'h':
-      rcode = set_equation(f2dlocal, f2dlocal->codex, f, g, eq, x, NULL);
+      set_equation(f2dlocal, f2dlocal->codex, f, g, eq, x, NULL);
       rcode = set_equation(f2dlocal, f2dlocal->codey, f, g, eq, y, &err_msg);
       break;
     default:
