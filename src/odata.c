@@ -3554,13 +3554,13 @@ static int
 getdata_skip_step(struct f2ddata *fp, int progress)
 {
   char *buf;
-  int i, step, rcode;
+  int i, step;
 
-  rcode = 0;
   switch (fp->src) {
   case DATA_SOURCE_FILE:
     step = 1;
     while (step < fp->rstep) {
+      int rcode;
       if (progress && (fp->line & UPDATE_PROGRESS_LINE_NUM) == 0 && set_data_progress(fp)) {
 	return 1;
       }
