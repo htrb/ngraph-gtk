@@ -451,8 +451,14 @@ _GRAredraw(int GC,int snum,char **sdata,int setredrawf,int redraw_num,
   for (i=1;i<snum;i++) {
     struct objlist *dobj;
     if (ninterrupt()) return;
-    if ((dobj=getobjlist(sdata[i],&did,&dfield,NULL))!=NULL) {
-      if ((dinst=chkobjinstoid(dobj,did))!=NULL) {
+    dobj = getobjlist(sdata[i], &did, &dfield, NULL);
+    if (dobj == NULL) {
+      continue;
+    }
+    dinst = chkobjinstoid(dobj, did);
+    if (dinst == NULL) {
+      continue;
+    }
         if (setredrawf) {
 	  int t = (redraw_num != 0);
           _getobj(dobj,"redraw_flag",dinst,&redrawfsave);
@@ -468,8 +474,6 @@ _GRAredraw(int GC,int snum,char **sdata,int setredrawf,int redraw_num,
         }
         if ((addn==i) && (obj!=NULL) && (inst!=NULL) && (field!=NULL))
           _exeobj(obj,field,inst,1,dargv);
-      }
-    }
   }
 }
 
