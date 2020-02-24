@@ -1235,7 +1235,7 @@ inst_put_sarray(VALUE self, VALUE arg, const char *field)
 {
   struct ngraph_instance *inst;
   ngraph_value ary;
-  int num, i;
+  int num;
   VALUE str, tmpstr;
 
   inst = check_id(self);
@@ -1258,6 +1258,7 @@ inst_put_sarray(VALUE self, VALUE arg, const char *field)
     ary.ary =  rb_alloc_tmp_buffer(&tmpstr, sizeof(*ary.ary) + sizeof(ngraph_value) * num);
     ary.ary->num = num;
     if (ary.ary) {
+      int i;
       for (i = 0; i < num; i++) {
         str = rb_ary_entry(arg, i);
         ary.ary->ary[i].str = StringValueCStr(str);
