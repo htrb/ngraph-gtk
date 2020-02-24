@@ -1835,7 +1835,6 @@ load_script(int argc, char **argv)
   rb_protect(wrap_load_script, fname, &state);
   if (state) {
     VALUE errinfo, errstr, errat;
-    int n;
     const char *cstr;
 
     errinfo = rb_errinfo();
@@ -1845,6 +1844,7 @@ load_script(int argc, char **argv)
       ngraph_err_puts(cstr);
       errat = rb_funcall(errinfo, rb_intern("backtrace"), 0);
       if (! NIL_P(errat)) {
+        int n;
 	n = RARRAY_LEN(errat);
 	for (i = 0; i < n; i ++) {
 	  errstr = rb_str_new2("\tfrom ");
