@@ -1451,16 +1451,16 @@ create_arrow_setting_widgets(struct LegendDialog *d, GtkWidget *hbox)
 static void
 LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *hbox, *hbox2, *vbox2, *frame, *table;
   struct LegendDialog *d;
   char title[64];
-  int i;
 
   d = (struct LegendDialog *) data;
   snprintf(title, sizeof(title), _("Legend line %d"), d->Id);
   gtk_window_set_title(GTK_WINDOW(wi), title);
 
   if (makewidget) {
+    GtkWidget *w, *hbox, *hbox2, *vbox2, *frame, *table;
+    int i;
     init_legend_dialog_widget_member(d);
 
     gtk_dialog_add_button(GTK_DIALOG(wi), _("_Delete"), IDDELETE);
