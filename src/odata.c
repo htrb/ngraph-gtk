@@ -4912,7 +4912,7 @@ getdataraw(struct f2ddata *fp, int maxdim, MathValue *data)
 		  1: EOF
 */
 {
-  int i,rcode;
+  int i;
   int masked;
   double dx,dy,d2,d3;
   char dxstat,dystat,d2stat,d3stat;
@@ -4922,6 +4922,7 @@ getdataraw(struct f2ddata *fp, int maxdim, MathValue *data)
   fp->dxstat=fp->dystat=fp->d2stat=fp->d3stat=MATH_VALUE_UNDEF;
   datanum=0;
   while (!fp->eof && (datanum==0)) {
+    int rcode;
     if ((fp->final>=0) && (fp->line>=fp->final)) {
       fp->eof=TRUE;
       break;
