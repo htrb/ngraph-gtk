@@ -2327,7 +2327,7 @@ errexit:
 static gchar *
 GRAexpandtext(char *s)
 {
-  int i,j,len;
+  int j,len;
   GString *str;
   char *snew,*s2;
 
@@ -2343,6 +2343,7 @@ GRAexpandtext(char *s)
   len = strlen(s);
   j = 0;
   do {
+    int i;
     i = j;
     while (j < len && s[j] != '\\' && s[j] != '%') {
       j++;
