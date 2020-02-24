@@ -9502,7 +9502,7 @@ f2dstoredum(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
   if (f2dlocal->endstore) {
     f2dlocal->endstore=FALSE;
     return 1;
-  } else {
+  }
     _getobj(obj,"file",inst,&file);
     if (file==NULL) return 1;
     style=3;
@@ -9530,7 +9530,6 @@ f2dstoredum(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
     rval->str=buf;
     f2dlocal->endstore=TRUE;
     return 0;
-  }
 }
 
 static int
