@@ -3406,16 +3406,17 @@ getdataarray(struct f2ddata *fp, char *buf, int maxdim, MathValue *data)
 static int
 hskipdata(struct f2ddata *fp)
 {
-  int skip,rcode;
+  int skip;
   char *buf;
 
   switch (fp->src) {
   case DATA_SOURCE_FILE:
     skip=0;
     while (skip<fp->hskip) {
+      int rcode;
       if ((fp->line & UPDATE_PROGRESS_LINE_NUM) == 0 && set_data_progress(fp)) {
 	return 0;
-    }
+      }
       rcode=fgetline(fp->fd,&buf);
       if (rcode==-1) return -1;
       if (rcode==1) {
