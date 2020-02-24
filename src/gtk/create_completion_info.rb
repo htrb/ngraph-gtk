@@ -46,7 +46,7 @@ class CompletionInfo
     data.each {|info|
       c_file.puts(info)
     }
-    c_file.puts("{NULL, NULL, NULL, NULL}")
+    c_file.puts("{NULL, NULL, NULL, NULL, NULL}")
     c_file.puts("};")
   end
 
