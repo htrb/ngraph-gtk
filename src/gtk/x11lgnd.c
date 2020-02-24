@@ -320,9 +320,7 @@ legend_menu_delete_object(const char *name, char *(*callback) (struct objlist * 
 {
   struct narray array;
   struct objlist *obj;
-  int i;
-  int num, *data;
-  char title[256], *objs[2];
+  char title[256];
 
   if (Menulock || Globallock)
     return;
@@ -332,8 +330,11 @@ legend_menu_delete_object(const char *name, char *(*callback) (struct objlist * 
     return;
   snprintf(title, sizeof(title), _("delete %s (multi select)"), _(obj->name));
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
+    int num;
     num = arraynum(&array);
     if (num > 0) {
+      int i, *data;
+      char *objs[2];
       menu_save_undo_single(UNDO_TYPE_DELETE, obj->name);
       data = arraydata(&array);
       for (i = num - 1; i >= 0; i--) {
