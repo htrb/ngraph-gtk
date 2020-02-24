@@ -1086,7 +1086,7 @@ inst_put_iarray(VALUE self, VALUE arg, const char *field)
   VALUE tmpstr;
   struct ngraph_instance *inst;
   ngraph_value ary;
-  int num, i;
+  int num;
 
   inst = check_id(self);
   if (inst == NULL) {
