@@ -112,9 +112,9 @@ static gboolean
 LegendGaussDialogPaint(GtkWidget *w, cairo_t *cr, gpointer client_data)
 {
   struct LegendGaussDialog *d;
-  int i, j, k, pw, dw, minx, miny, maxx, maxy,
-    amp, wd, GC, spnum, output, found;
-  double ppd, x, y = 0, tmp, spc2[6], dashes[] = {4.0};
+  int pw, dw, minx, miny, maxx, maxy,
+    amp, wd, output, found;
+  double ppd, dashes[] = {4.0};
   GdkWindow *win;
   struct objlist *gobj, *robj;
   N_VALUE *inst;
@@ -160,10 +160,13 @@ LegendGaussDialogPaint(GtkWidget *w, cairo_t *cr, gpointer client_data)
   }
 
   if (d->alloc) {
+    int GC;
     GC = _GRAopen("gra2gdk", "_output",
 		  robj, inst, output, -1, -1, -1, NULL, local);
     GRAlinestyle(GC, 0, NULL, 1, GRA_LINE_CAP_BUTT, GRA_LINE_JOIN_MITER, 1000);
     if (GC >= 0) {
+      int i, j, k, spnum;
+      double tmp, y = 0, spc2[6];
       GRAview(GC, minx, miny, maxx, maxy, 1);
 
       if (d->Div > DIV_MAX) {
@@ -171,6 +174,7 @@ LegendGaussDialogPaint(GtkWidget *w, cairo_t *cr, gpointer client_data)
       }
 
       for (i = 0; i <= (d->Div); i++) {
+        double x;
 	x = wd / ((double) (d->Div)) * i;
 	if (d->Mode == 0) {
 	  tmp = (x - wd * 0.5 - wd * d->Position * 0.5) /
