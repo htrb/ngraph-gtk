@@ -1180,7 +1180,7 @@ static int
 file_draw_rect(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   struct f2ddata *fp;
-  int i, r, stroke, fill, ap[8], px, py;
+  int i, stroke, fill, ap[8], px, py;
   double pos[4];
 
   rval->val = 0;
@@ -1213,6 +1213,7 @@ file_draw_rect(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   fill = exp->buf[5].val.val;
 
   for (i = 0; i < 2; i++) {
+    int r;
     r = getposition2(fp, fp->axtype, fp->aytype, pos + i * 2, pos + i * 2 + 1);
     if (r) {
       rval->type = MATH_VALUE_ERROR;
