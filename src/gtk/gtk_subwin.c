@@ -666,7 +666,7 @@ move_down(struct obj_list_data *d)
 }
 
 static void
-update(struct obj_list_data *d)
+swin_update(struct obj_list_data *d)
 {
   int sel, ret, num, undo;
   GtkWidget *parent;
@@ -921,7 +921,7 @@ ev_button_down(GtkWidget *w, GdkEventButton *event,  gpointer user_data)
   switch (event->button) {
   case 1:
     if (event->type == GDK_2BUTTON_PRESS) {
-      update(d);
+      swin_update(d);
       return TRUE;
     }
     break;
@@ -1009,7 +1009,7 @@ ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
       return FALSE;
     }
 
-    update(d);
+    swin_update(d);
     break;
   case GDK_KEY_BackSpace:
     hidden(d);
@@ -1256,7 +1256,7 @@ list_sub_window_move_down(GtkMenuItem *item, gpointer user_data)
 void
 list_sub_window_update(GtkMenuItem *item, gpointer user_data)
 {
-  update((struct obj_list_data *) user_data);
+  swin_update((struct obj_list_data *) user_data);
 }
 
 void
