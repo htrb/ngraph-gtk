@@ -61,11 +61,11 @@ int
 main(int argc, char *argv[])
 {
   static gchar *img_file = NULL, *gra_file = NULL;
-  static char *usage = "Usage: %s resolution image_file gra_file\n";
   struct AppData app_data;
 
   gtk_init(&argc, &argv);
   if (argc != 4) {
+    static char *usage = "Usage: %s resolution image_file gra_file\n";
     gchar *error;
     error = g_strdup_printf(usage, g_path_get_basename(argv[0]));
     print_error_exit(error);
