@@ -2377,7 +2377,6 @@ checkcmd(struct nshell *nshell,struct cmdlist **cmdroot)
   char *s,*eof, *prompt;
   int quoted,ch;
   int eoflen,match,len;
-  struct objlist *sys;
   char *tmpfil;
   int sout;
   int ignore_indent, remove_tab;
@@ -2458,6 +2457,7 @@ checkcmd(struct nshell *nshell,struct cmdlist **cmdroot)
               if (prmcur->str[0]=='>')
                 prmcur->prmno=PPSO2;
               else {
+                struct objlist *sys;
                 prmcur->prmno=PPSI2;
                 if ((eof=unquotation((prmcur->next)->str,&quoted))==NULL)
                   return -1;
