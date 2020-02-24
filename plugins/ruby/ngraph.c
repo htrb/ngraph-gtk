@@ -1108,6 +1108,7 @@ inst_put_iarray(VALUE self, VALUE arg, const char *field)
     ary.ary = rb_alloc_tmp_buffer(&tmpstr, sizeof(*ary.ary) + sizeof(ngraph_value) * num);
     ary.ary->num = num;
     if (ary.ary) {
+      int i;
       for (i = 0; i < num; i++) {
         ary.ary->ary[i].i = NUM2INT(rb_ary_entry(arg, i));
       }
