@@ -6573,11 +6573,11 @@ errorbarout(struct objlist *obj,struct f2ddata *fp,int GC,
 	    int width,int snum,int *style,int type)
 {
   int emerr,emnonum,emig,emng;
-  int size;
 
   emerr=emnonum=emig=emng=FALSE;
   GRAlinestyle(GC,snum,style,width,GRA_LINE_CAP_BUTT,GRA_LINE_JOIN_MITER,1000);
   while (getdata(fp)==0) {
+    int size;
     size=fp->marksize0/2;
     GRAcolor(GC,fp->col.r,fp->col.g,fp->col.b, fp->col.a);
     if (type == PLOT_TYPE_ERRORBAR_X) {
@@ -6723,12 +6723,12 @@ barout(struct objlist *obj,struct f2ddata *fp,int GC,
   int emerr,emnonum,emig,emng;
   double x0,y0,x1,y1;
   int gx0,gy0,gx1,gy1;
-  int size;
   int ap[8];
 
   emerr=emnonum=emig=emng=FALSE;
   if (type <= PLOT_TYPE_BAR_FILL_Y) GRAlinestyle(GC,snum,style,width,GRA_LINE_CAP_PROJECTING,GRA_LINE_JOIN_MITER,1000);
   while (getdata(fp)==0) {
+    int size;
     size=fp->marksize0/2;
     if (fp->dxstat != MATH_VALUE_NORMAL ||
 	fp->dystat != MATH_VALUE_NORMAL ||
