@@ -1949,7 +1949,7 @@ struct axis_prm {
 static int
 get_axis_prm(struct objlist *obj, N_VALUE *inst, int axis, struct axis_prm *prm)
 {
-  int aid, id, dir;
+  int aid, dir;
   N_VALUE *inst1;
   struct objlist *aobj;
   double min, max, ddir;
@@ -1993,6 +1993,7 @@ get_axis_prm(struct objlist *obj, N_VALUE *inst, int axis, struct axis_prm *prm)
   }
 
   if (min == 0 && max == 0) {
+    int id;
     id = get_axis_id(aobj, inst1, &aobj, AXIS_REFERENCE);
     if (id >= 0) {
       inst1 = getobjinst(aobj, id);
