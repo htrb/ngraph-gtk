@@ -2044,7 +2044,7 @@ get_axis_prm(struct objlist *obj, N_VALUE *inst, int axis, struct axis_prm *prm)
 int
 open_array(char *objstr, struct array_prm *ary)
 {
-  int i, n, dnum, id, id_max;
+  int i, n, dnum, id_max;
   struct narray iarray, *darray;
   struct objlist *dobj, *obj;
 
@@ -2081,6 +2081,7 @@ open_array(char *objstr, struct array_prm *ary)
 
   id_max = chkobjlastinst(obj);
   for (i = 0; i < n; i++) {
+    int id;
     id = arraynget_int(&iarray, i);
     if (id > id_max) {
       continue;
