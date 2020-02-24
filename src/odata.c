@@ -2516,7 +2516,7 @@ static void
 closedata(struct f2ddata *fp, struct f2dlocal *f2dlocal)
 {
   int j,num2,*data2;
-  N_VALUE *inst1,*inst;
+  N_VALUE *inst;
 
   if (fp==NULL) return;
 
@@ -2525,6 +2525,7 @@ closedata(struct f2ddata *fp, struct f2dlocal *f2dlocal)
   num2=arraynum(&(fp->fileopen));
   data2=arraydata(&(fp->fileopen));
   for (j=0;j<num2;j++) {
+    N_VALUE *inst1;
     if ((inst1=chkobjinst(fp->obj,data2[j]))!=NULL) {
       _exeobj(fp->obj,"closedata_raw",inst1,0,NULL);
     }
