@@ -3875,11 +3875,12 @@ GRAcmatchtod(double x,double y,struct cmatchtype *data)
 int
 GRAcmatch(double c[],double x0,double y0,struct cmatchtype *data)
 {
-  double d,dx,dy,ddx,ddy,dd,x,y;
+  double d,dx,dy,ddx,ddy,x,y;
 
   if (ninterrupt()) return FALSE;
   d=0;
   while (d<1) {
+    double dd;
     data->gdiff(d,c,&dx,&dy,&ddx,&ddy,data->gflocal);
     if ((fabs(dx)+fabs(ddx)/3)==0) dx=1;
     else dx=sqrt(fabs(2/(fabs(dx)+fabs(ddx)/3)));
