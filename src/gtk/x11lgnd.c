@@ -780,7 +780,7 @@ legend_dialog_close(GtkWidget *w, void *data)
 {
   struct LegendDialog *d = (struct LegendDialog *) data;
   unsigned int i;
-  int ret, x1, y1, x2, y2, oval;
+  int ret, x2, y2, oval;
   struct lwidget lw[] = {
     {d->stroke, "stroke"},
     {d->path_type, "type"},
@@ -836,6 +836,7 @@ legend_dialog_close(GtkWidget *w, void *data)
     return;
 
   if (d->x1 && d->y1 && d->x2 && d->y2) {
+    int x1, y1;
     x1 = spin_entry_get_val(d->x1);
     x2 = spin_entry_get_val(d->x2);
     y1 = spin_entry_get_val(d->y1);
