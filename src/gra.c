@@ -438,7 +438,6 @@ _GRAredraw(int GC,int snum,char **sdata,int setredrawf,int redraw_num,
   int i;
   char *dargv[2];
   int redrawfsave;
-  struct objlist *dobj;
   int did, layer;
   char *dfield;
   N_VALUE *dinst;
@@ -450,6 +449,7 @@ _GRAredraw(int GC,int snum,char **sdata,int setredrawf,int redraw_num,
     _exeobj(obj,field,inst,1,dargv);
   if (addn>snum) addn=snum-1;
   for (i=1;i<snum;i++) {
+    struct objlist *dobj;
     if (ninterrupt()) return;
     if ((dobj=getobjlist(sdata[i],&did,&dfield,NULL))!=NULL) {
       if ((dinst=chkobjinstoid(dobj,did))!=NULL) {
