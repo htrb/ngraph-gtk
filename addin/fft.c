@@ -128,7 +128,7 @@ read_data(const char *fname1, int *fft_p, int *fft_n, double *min, double *max)
 static void
 fft(int p,int n)
 {
-  int i,j,k,l,l1,l2,m,n2;
+  int i,j,k,l,l1,m,n2;
   double ar,ai,br,bi;
 
   n2=n/2;
@@ -145,6 +145,7 @@ fft(int p,int n)
   }
   l1=1;
   for (l=1;l<p;l++) {
+    int l2;
     l1*=2;
     l2=n2/l1;
     for (i=0;i<n;i++) {
