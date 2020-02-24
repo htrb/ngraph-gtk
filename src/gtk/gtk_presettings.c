@@ -1583,7 +1583,7 @@ update_focused_obj_font_style_axis(struct objlist *obj, N_VALUE *inst, int style
 }
 
 static int
-update_focused_obj_font_style(GtkWidget *widget, struct Viewer *d, int num, int style, int apply)
+update_focused_obj_font_style(struct Viewer *d, int num, int style, int apply)
 {
   struct FocusObj *focus;
   N_VALUE *inst;
@@ -1662,11 +1662,11 @@ update_focused_obj(GtkWidget *widget, gpointer user_data)
   } else if (widget == Widgets.bold.widget) {
     int apply;
     apply = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
-    modified = update_focused_obj_font_style(widget, d, num, GRA_FONT_STYLE_BOLD, apply);
+    modified = update_focused_obj_font_style(d, num, GRA_FONT_STYLE_BOLD, apply);
   } else if (widget == Widgets.italic.widget) {
     int apply;
     apply = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
-    modified = update_focused_obj_font_style(widget, d, num, GRA_FONT_STYLE_ITALIC, apply);
+    modified = update_focused_obj_font_style(d, num, GRA_FONT_STYLE_ITALIC, apply);
   } else if (widget == Widgets.pt.widget) {
     modified = update_focused_obj_font_size(widget, d, num);
   } else if (widget == Widgets.mark_type.widget) {
