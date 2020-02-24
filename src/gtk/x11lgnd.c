@@ -2092,10 +2092,10 @@ static void
 LegendTextDefDialogSetup(GtkWidget *w, void *data, int makewidget)
 {
   struct LegendDialog *d;
-  GtkWidget *table, *frame;
 
   d = (struct LegendDialog *) data;
   if (makewidget) {
+    GtkWidget *table, *frame;
     init_legend_dialog_widget_member(d);
 
     table = gtk_grid_new();
