@@ -542,15 +542,15 @@ copy(struct obj_list_data *d)
 static void
 delete(struct obj_list_data *d)
 {
-  int sel, num;
-  int update;
+  int sel, inst_num;
+  int updated;
 
   if (Menulock || Globallock)
     return;
 
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
-  num = chkobjlastinst(d->obj);
-  if (sel < 0 || sel > num) {
+  inst_num = chkobjlastinst(d->obj);
+  if (sel < 0 || sel > inst_num) {
     return;
   }
 
@@ -563,18 +563,18 @@ delete(struct obj_list_data *d)
     delobj(d->obj, sel);
   }
 
-  num = chkobjlastinst(d->obj);
-  if (num < 0) {
+  inst_num = chkobjlastinst(d->obj);
+  if (inst_num < 0) {
     d->select = -1;
-    update = TRUE;
-  } else if (sel > num) {
-    d->select = num;
-    update = FALSE;
+    updated = TRUE;
+  } else if (sel > inst_num) {
+    d->select = inst_num;
+    updated = FALSE;
   } else {
     d->select = sel;
-    update = FALSE;
+    updated = FALSE;
   }
-  d->update(d, update, TRUE);
+  d->update(d, updated, TRUE);
   set_graph_modified();
 }
 
