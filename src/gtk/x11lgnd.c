@@ -2306,7 +2306,6 @@ TextListUpdate(struct obj_list_data *d, int clear, int draw)
 void
 LegendWinUpdate(char **objects, int clear, int draw)
 {
-  struct obj_list_data *d;
   struct objlist *obj;
   char **ptr;
   struct SubWin win[] = {
@@ -2322,6 +2321,7 @@ LegendWinUpdate(char **objects, int clear, int draw)
 
   n = G_N_ELEMENTS(win);
   for (i = 0; i < n; i++) {
+    struct obj_list_data *d;
     d = win[i].data.data;
     if (d == NULL) {
       return;
