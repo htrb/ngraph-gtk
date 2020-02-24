@@ -10027,7 +10027,7 @@ static int
 bisection(MathEquation *eq, double a, double b, double y, double tolerance, double *x)
 {
   int r, i;
-  double c, fa, fb, fc;
+  double c, fa, fb;
   MathValue val, rval;
 
   if (tolerance < 0) {
@@ -10074,6 +10074,7 @@ bisection(MathEquation *eq, double a, double b, double y, double tolerance, doub
 
   i = 0;
   while (1) {
+    double fc;
     c = (a + b) / 2;
     if (c - a <= tolerance || b - c <= tolerance) {
       break;
