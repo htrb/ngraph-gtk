@@ -1068,12 +1068,11 @@ GRAcurrent_point(int GC, int *x, int *y)
 static void
 GRAmoverel(int GC,int x,int y)
 {
-  char code;
-  int cpar[3];
-
   GRAClist[GC].cpx+=x;
   GRAClist[GC].cpy+=y;
   if ((x!=0) || (y!=0)) {
+    char code;
+    int cpar[3];
 /*    if ((GRAClist[GC].clip==0)
     || (GRAinview(GC,GRAClist[GC].cpx,GRAClist[GC].cpy)==0)) {  */
       code='N';
