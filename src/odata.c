@@ -9503,33 +9503,33 @@ f2dstoredum(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
     f2dlocal->endstore=FALSE;
     return 1;
   }
-    _getobj(obj,"file",inst,&file);
-    if (file==NULL) return 1;
-    style=3;
-    argv2[0]=(char *)&style;
-    argv2[1]=NULL;
-    if (_exeobj(obj,"date",inst,1,argv2)) return 1;
-    style=0;
-    argv2[0]=(char *)&style;
-    argv2[1]=NULL;
-    if (_exeobj(obj,"time",inst,1,argv2)) return 1;
-    _getobj(obj,"date",inst,&date);
-    if(date == NULL) {
-      date = "1-1-1970";
-    }
-    _getobj(obj,"time",inst,&time);
-    if(time == NULL) {
-      time = "00:00:00";
-    }
-    if ((base=getbasename(file))==NULL) return 1;
-    buf = g_strdup_printf("file::load_dummy '%s' '%s %s'\n", base, date, time);
-    g_free(base);
-    if (buf == NULL) {
-      return 1;
-    }
-    rval->str=buf;
-    f2dlocal->endstore=TRUE;
-    return 0;
+  _getobj(obj,"file",inst,&file);
+  if (file==NULL) return 1;
+  style=3;
+  argv2[0]=(char *)&style;
+  argv2[1]=NULL;
+  if (_exeobj(obj,"date",inst,1,argv2)) return 1;
+  style=0;
+  argv2[0]=(char *)&style;
+  argv2[1]=NULL;
+  if (_exeobj(obj,"time",inst,1,argv2)) return 1;
+  _getobj(obj,"date",inst,&date);
+  if(date == NULL) {
+    date = "1-1-1970";
+  }
+  _getobj(obj,"time",inst,&time);
+  if(time == NULL) {
+    time = "00:00:00";
+  }
+  if ((base=getbasename(file))==NULL) return 1;
+  buf = g_strdup_printf("file::load_dummy '%s' '%s %s'\n", base, date, time);
+  g_free(base);
+  if (buf == NULL) {
+    return 1;
+  }
+  rval->str=buf;
+  f2dlocal->endstore=TRUE;
+  return 0;
 }
 
 static int
