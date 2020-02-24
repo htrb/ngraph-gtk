@@ -1226,8 +1226,8 @@ void
 GRArotate(int x0, int y0, int *pos, int *rpos, int n, double dx, double dy)
 {
   int i;
-  double x, y;
   for (i = 0; i < n; i++) {
+    double x, y;
     x = pos[i * 2] - x0;
     y = pos[i * 2 + 1] - y0;
     rpos[i * 2] = nround(dx * x - dy * y) + x0;
