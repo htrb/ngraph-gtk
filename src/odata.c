@@ -2551,9 +2551,9 @@ create_func_def_str(const char *name, const char *code)
 static int
 set_user_fnc(MathEquation **eq, const char *str, const char *fname, char **err_msg)
 {
-  int r, i;
-  char *buf, default_func[] = "def f(x,y,z){}";
-  //                           01234
+  int i;
+  char default_func[] = "def f(x,y,z){}";
+  //                     01234
 
   if (err_msg)
     *err_msg = NULL;
@@ -2567,11 +2567,13 @@ set_user_fnc(MathEquation **eq, const char *str, const char *fname, char **err_m
   default_func[4] = fname[0];
 
   if (str) {
+    char *buf;
     buf = create_func_def_str(fname, str);
     if (buf == NULL)
       return MATH_ERROR_MEMORY;
 
     for (i = 0; i < EQUATION_NUM; i++) {
+      int r;
       r = math_equation_parse(eq[i], buf);
       if (r) {
 	if (err_msg) {
