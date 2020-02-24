@@ -9243,10 +9243,9 @@ static int
 f2dstore_file(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct f2dlocal *f2dlocal;
-  char *file,*base,*date,*time;
-  int style, r;
+  char *file,*date,*time;
+  int style;
   char *buf;
-  char *argv2[2];
 
   g_free(rval->str);
   rval->str=NULL;
@@ -9257,6 +9256,7 @@ f2dstore_file(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **ar
   }
 
   if (f2dlocal->storefd == NULL) {
+    char *base, *argv2[2];
     _getobj(obj,"file",inst,&file);
     if (file==NULL) return 1;
     style=3;
@@ -9289,6 +9289,7 @@ f2dstore_file(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **ar
     }
     rval->str=buf;
   } else {
+    int r;
     r = fgetline(f2dlocal->storefd, &buf);
     if (r) {
       fclose(f2dlocal->storefd);
