@@ -106,6 +106,56 @@ enum {
   MATH_CONST_SIZE,
 };
 
+static char *FileConstant[MATH_CONST_SIZE] = {
+  "NUM",
+  "MINX",
+  "MAXX",
+  "MINY",
+  "MAXY",
+  "SUMX",
+  "SUMY",
+  "SUMXX",
+  "SUMYY",
+  "SUMXY",
+  "AVX",
+  "AVY",
+  "SGX",
+  "SGY",
+  "STDEVPX",
+  "STDEVPY",
+  "STDEVX",
+  "STDEVY",
+  /* TWOPASS_CONST */
+
+
+
+  "MASK",
+  "MOVE",
+  "FIRST",
+  "COLX",
+  "COLY",
+  "AXISX",
+  "AXISX_MIN",
+  "AXISX_MAX",
+  "AXISX_LEN",
+  "AXISY",
+  "AXISY_MIN",
+  "AXISY_MAX",
+  "AXISY_LEN",
+  "HSKIP",
+  "RSTEP",
+  "FLINE",
+  "DATA_OBJ",
+  "FILE_OBJ",
+  "PATH_OBJ",
+  "RECT_OBJ",
+  "ARC_OBJ",
+  "MARK_OBJ",
+  "TEXT_OBJ",
+  "%D",
+  "%N",
+};
+
 #define NAME		"data"
 #define ALIAS		"file"
 #define PARENT		"draw"
@@ -2772,55 +2822,6 @@ ofile_create_math_equation(int *id, int prm_digit, int use_fprm, int use_const, 
   MathEquation *code;
   unsigned int i;
   int f_id;
-  char *file_constant[MATH_CONST_SIZE] = {
-    "NUM",
-    "MINX",
-    "MAXX",
-    "MINY",
-    "MAXY",
-    "SUMX",
-    "SUMY",
-    "SUMXX",
-    "SUMYY",
-    "SUMXY",
-    "AVX",
-    "AVY",
-    "SGX",
-    "SGY",
-    "STDEVPX",
-    "STDEVPY",
-    "STDEVX",
-    "STDEVY",
-    /* TWOPASS_CONST */
-
-
-
-    "MASK",
-    "MOVE",
-    "FIRST",
-    "COLX",
-    "COLY",
-    "AXISX",
-    "AXISX_MIN",
-    "AXISX_MAX",
-    "AXISX_LEN",
-    "AXISY",
-    "AXISY_MIN",
-    "AXISY_MAX",
-    "AXISY_LEN",
-    "HSKIP",
-    "RSTEP",
-    "FLINE",
-    "DATA_OBJ",
-    "FILE_OBJ",
-    "PATH_OBJ",
-    "RECT_OBJ",
-    "ARC_OBJ",
-    "MARK_OBJ",
-    "TEXT_OBJ",
-    "%D",
-    "%N",
-  };
   struct math_const_parameter static_const[] = {
     {"FILL_RULE_NONE",     MATH_SCANNER_VAL_TYPE_NORMAL, {GRA_FILL_MODE_NONE,     MATH_VALUE_NORMAL}},
     {"FILL_RULE_EVEN_ODD", MATH_SCANNER_VAL_TYPE_NORMAL, {GRA_FILL_MODE_EVEN_ODD, MATH_VALUE_NORMAL}},
