@@ -3725,10 +3725,6 @@ GRAdashlinetod(int GC,double x,double y)
 {
   double x1,y1,x2,y2;
   int gx1,gy1,gx2,gy2;
-#if EXPAND_DOTTED_LINE
-  double dx,dy,dd,len,len2;
-  int gx,gy;
-#endif
 
   x1=GRAClist[GC].x0;
   y1=GRAClist[GC].y0;
@@ -3750,11 +3746,14 @@ GRAdashlinetod(int GC,double x,double y)
 #if EXPAND_DOTTED_LINE
     if (GRAClist[GC].gdashn==0) GRAlineto(GC,gx2,gy2);
     else {
+      double dx,dy,len,len2;
       dx=(gx2-gx1);
       dy=(gy2-gy1);
       len2=len=sqrt(dx*dx+dy*dy);
       while (len2
       >((GRAClist[GC].gdashlist)[GRAClist[GC].gdashi]-GRAClist[GC].gdashlen)) {
+        double dd;
+        int gx,gy;
         dd=(len-len2+(GRAClist[GC].gdashlist)[GRAClist[GC].gdashi]
            -GRAClist[GC].gdashlen)/len;
         gx=gx1+nround(dx*dd);
