@@ -2189,7 +2189,6 @@ CmOptionTextDef(void *w, gpointer client_data)
 {
   struct objlist *obj;
   int id;
-  char *objs[2];
 
   if (Menulock || Globallock)
     return;
@@ -2199,6 +2198,7 @@ CmOptionTextDef(void *w, gpointer client_data)
 
   id = newobj(obj);
   if (id >= 0) {
+    char *objs[2];
     int modified;
 
     modified = get_graph_modified();
