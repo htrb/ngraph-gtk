@@ -3351,7 +3351,6 @@ GRAinputold(int GC,char *s,int leftm,int topm,int rate_x,int rate_y)
   char cstr[256],*po,*ustr;
   int col,B,R,G;
 
-  code='\0';
   for (i=0;s[i]!='\0';i++)
     if (strchr("\n\r",s[i])!=NULL) {
       s[i]='\0';
