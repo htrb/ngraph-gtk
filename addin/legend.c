@@ -78,7 +78,7 @@ loaddatalist(struct file_prm *prm, const char *datalist)
 {
   FILE *f;
   int i, j, filenum;
-  char *hidden, *str, *file;
+  char *str;
 
   if (datalist == NULL) {
     return 1;
@@ -98,6 +98,7 @@ loaddatalist(struct file_prm *prm, const char *datalist)
   prm->data = g_malloc(sizeof(*prm->data) * filenum);
   prm->file_num = filenum;
   for (i = 0; i < filenum; i++) {
+    char *hidden, *file;
     str = fgets_str(f);
     if (g_strcmp0(str, "array") == 0) {
       prm->data[i].source = PLOT_SOURCE_ARRAY;
