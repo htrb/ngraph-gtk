@@ -2362,7 +2362,7 @@ get_points(struct objlist *obj, int id, int *x, int *y, int *n)
 static GdkPixbuf *
 draw_color_pixbuf(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type, int width)
 {
-  int ggc, fr, fg, fb, stroke, fill, close_path, pos[8], height = 20, lockstate, found, output, n;
+  int ggc, fr, fg, fb, stroke, fill, close_path, height = 20, lockstate, found, output, n;
   cairo_surface_t *pix;
   GdkPixbuf *pixbuf;
   struct objlist *gobj, *robj;
@@ -2430,6 +2430,7 @@ draw_color_pixbuf(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type, i
 
     getobj(obj, "stroke", id, 0, NULL, &stroke);
     if (stroke) {
+      int pos[8];
       if (chkobjfield(obj, "close_path") == 0) {
 	getobj(obj, "close_path", id, 0, NULL, &close_path);
       } else {
