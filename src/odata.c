@@ -7159,7 +7159,6 @@ fitout(struct objlist *obj,struct f2dlocal *f2dlocal,
   int id;
   N_VALUE *inst;
   char *equation;
-  int rcode;
 
   if (fit == NULL) {
     error(obj, ERRNOFIT);
@@ -7177,6 +7176,7 @@ fitout(struct objlist *obj,struct f2dlocal *f2dlocal,
   }
 
   if (equation == NULL && redraw == 0) {
+    int rcode;
     f2dlocal->use_drawing_func = FALSE;
     rcode = calc_fit(obj, f2dlocal, fp, fitobj, id);
     if (rcode) {
