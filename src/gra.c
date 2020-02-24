@@ -488,7 +488,7 @@ GRAredraw2(struct objlist *obj,N_VALUE *inst,int setredrawf,int redraw_num,
   int oid,gid,xid,GC,GCnew;
   char *gfield,*xfield;
   N_VALUE *ginst;
-  struct objlist *gobj,*xobj;
+  struct objlist *gobj;
   char *device;
 
   if (_getobj(obj,"_list",inst,&sarray)) return;
@@ -511,8 +511,9 @@ GRAredraw2(struct objlist *obj,N_VALUE *inst,int setredrawf,int redraw_num,
     sdata[0]=NULL;
     GRAreopen(GC);
   } else {
-  /* gra is already closed */
+    /* gra is already closed */
     /* check consistency */
+    struct objlist *xobj;
     if (_getobj(gobj,"_device",ginst,&device) || (device==NULL)
     || ((xobj=getobjlist(device,&xid,&xfield,NULL))==NULL)
     || (xobj!=obj) || (xid!=oid) || (strcmp(xfield,"_output")!=0)) {
