@@ -1463,7 +1463,7 @@ static VALUE
 obj_func_obj(VALUE self, VALUE argv, const char *field, int type)
 {
   VALUE arg, rstr, val;
-  int i, n;
+  int i;
   struct ngraph_instance *inst;
   ngraph_arg carg;
   int argc;
@@ -1481,6 +1481,7 @@ obj_func_obj(VALUE self, VALUE argv, const char *field, int type)
   } else {
     arg = rb_ary_entry(argv, 0);
     if (RB_TYPE_P(arg, T_ARRAY)) {
+      int n;
       if (argc > 1) {
 	return Qnil;
       }
