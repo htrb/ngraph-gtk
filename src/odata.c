@@ -4295,9 +4295,8 @@ static int
 getdata_sub1(struct f2ddata *fp, int fnumx, int fnumy, int *needx, int *needy,
 	     MathValue *datax, MathValue *datay, MathValue *gdata, int filenum, int *openfile)
 {
-  int rcode;
-
   while (! fp->eof && fp->bufnum < DXBUFSIZE) {
+    int rcode;
     if (fp->final >= 0 && fp->line >= fp->final) {
       fp->eof=TRUE;
       break;
