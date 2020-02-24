@@ -4951,7 +4951,7 @@ getdataraw(struct f2ddata *fp, int maxdim, MathValue *data)
     masked = search_mask(fp->mask, fp->masknum, &(fp->mask_index), fp->line);
 #endif
     dx=dy=d2=d3=0;
-    dxstat=dystat=d2stat=d3stat=MATH_VALUE_UNDEF;
+    dystat=d2stat=d3stat=MATH_VALUE_UNDEF;
     dx = data[fp->x].val;
     dxstat = data[fp->x].type;
 
