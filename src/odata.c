@@ -10180,7 +10180,7 @@ solve_equation(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **a
   int r, n, type, fit_id;
   char *equation, *fit, prefix[] = FIT_FIELD_PREFIX;
   N_VALUE *fit_inst;
-  double a, b, x, y, tolerance, *data;
+  double x, y, *data;
   struct narray *darray;
   struct objlist *fit_obj;
 
@@ -10234,6 +10234,7 @@ solve_equation(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **a
   }
 
   if (argv[1][sizeof(prefix) - 1] == 'b') {
+    double a, b, tolerance;
     if (n < 2) {
       error(obj, ERR_SMALL_ARGS);
       math_equation_free(eq);
