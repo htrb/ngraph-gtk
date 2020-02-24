@@ -543,7 +543,7 @@ static void
 legend_dialog_set_sensitive(GtkWidget *w, gpointer client_data)
 {
   struct LegendDialog *d;
-  int path_type, marker_type;
+  int path_type;
 
   d = (struct LegendDialog *) client_data;
 
@@ -581,7 +581,7 @@ legend_dialog_set_sensitive(GtkWidget *w, gpointer client_data)
       d->marker_end &&
       d->arrow_length &&
       d->arrow_width) {
-    int stroke;
+    int stroke, marker_type;
 
     stroke = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->stroke));
     set_widget_sensitivity_with_label(d->miter, stroke);
