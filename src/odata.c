@@ -10700,9 +10700,9 @@ addfile(void)
 /* addfile() returns NULL on error */
 {
   struct objlist *data_obj;
-  unsigned int i;
 
   if (FileConfigHash == NULL) {
+    unsigned int i;
     FileConfigHash = nhash_new();
     if (FileConfigHash == NULL)
       return NULL;
