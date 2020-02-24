@@ -357,17 +357,17 @@ LegendGaussDialogDiv(GtkWidget *w, gpointer client_data)
 static void
 LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *button, *hbox, *hbox2, *vbox, *table;
   GSList *func_list, *dir_list;
   struct LegendGaussDialog *d;
   char title[256];
-  int i;
 
   d = (struct LegendGaussDialog *) data;
   snprintf(title, sizeof(title), _("Legend Gaussian/Lorentzian/Parabola/Sin %d"), d->Id);
   gtk_window_set_title(GTK_WINDOW(wi), title);
 
   if (makewidget) {
+    GtkWidget *w, *button, *hbox, *hbox2, *vbox, *table;
+    int i;
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
     button = NULL;
