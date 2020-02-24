@@ -10113,8 +10113,8 @@ bisection(MathEquation *eq, double a, double b, double y, double tolerance, doub
 static int
 newton(MathEquation *eq, double *xx, double y)
 {
-  int r, i, n;
-  double h, x, fx, df, x_prev, fx_prev;
+  int r, n;
+  double x, fx;
   MathValue val, rval;
 
   val.type = MATH_VALUE_NORMAL;
@@ -10131,7 +10131,8 @@ newton(MathEquation *eq, double *xx, double y)
 
   n = 0;
   while (! compare_double(fx, 0)) {
-    double dx;
+    double dx, df, h, x_prev, fx_prev;
+    int i;
 
     dx = (x == 0) ? 1E-6 : x * 1E-6;
     val.val = x + dx;
