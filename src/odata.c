@@ -7638,7 +7638,6 @@ f2dcolumn_file(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **a
   int cline,ccol;
   int line,col;
   FILE *fd;
-  int rcode;
   char *buf,*buf2;
   char *po,*po2;
 
@@ -7655,6 +7654,7 @@ f2dcolumn_file(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **a
   if ((fd=nfopen(file,"rt"))==NULL) return 0;
   cline=0;
   while (TRUE) {
+    int rcode;
     if ((rcode=fgetline(fd,&buf))!=0) {
       fclose(fd);
       return 1;
