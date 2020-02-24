@@ -9412,7 +9412,7 @@ static int
 f2dload_file(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int expand;
-  char *s, *fullname, *mes;
+  char *s, *fullname;
   int mkdata;
   time_t ftime;
 
@@ -9430,6 +9430,7 @@ f2dload_file(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **arg
   if (naccess(fullname, R_OK) != 0) {
     mkdata = TRUE;
   } else {
+    char *mes;
 
     mes = g_strdup_printf("`%s' Overwrite existing file?", fullname);
     if (mes == NULL)
