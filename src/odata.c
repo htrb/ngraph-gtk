@@ -3485,17 +3485,17 @@ static void
 getdata_get_other_files(struct f2ddata *fp, int fnumx, int fnumy, int *needx, int *needy,
 			MathValue *datax, MathValue *datay, int filenum, int *openfile)
 {
-  int *idata,inum,argc;
   char *argv[2];
   int i,j,k;
   double *ddata;
   int colnum;
-  N_VALUE *inst1;
   struct narray iarray;
-  int id,col;
+  int col;
   struct narray *coldata;
 
   for (i = 0; i < filenum; i++) {
+    int *idata, inum, argc, id;
+    N_VALUE *inst1;
     id = openfile[i];
     arrayinit(&iarray,sizeof(int));
     for (j = 0; j < fnumx; j++) {
