@@ -3082,12 +3082,13 @@ GRAtextextentraw(char *s,char *font, int style,
 static int
 getintpar(char *s,int num,int cpar[])
 {
-  int i,pos1,pos2;
+  int i,pos1;
   char s2[256];
   char *endptr;
 
   pos1=0;
   for (i=0;i<num;i++) {
+    int pos2;
     while ((s[pos1]!='\0') &&
           ((s[pos1]==' ') || (s[pos1]=='\t') || (s[pos1]==','))) pos1++;
     if (s[pos1]=='\0') return FALSE;
