@@ -3700,11 +3700,12 @@ GRAcurvefirst(int GC,int num,int *dashlist,
 int
 GRAcurve(int GC,double c[],double x0,double y0)
 {
-  double d,dx,dy,ddx,ddy,dd,x,y;
+  double d,dx,dy,ddx,ddy,x,y;
 
   if (ninterrupt()) return FALSE;
   d=0;
   while (d<1) {
+    double dd;
     GRAClist[GC].gdiff(d,c,&dx,&dy,&ddx,&ddy,GRAClist[GC].gflocal);
     if ((fabs(dx)+fabs(ddx)/3)<=1e-100) dx=1;
     else dx=sqrt(fabs(2/(fabs(dx)+fabs(ddx)/3)));
