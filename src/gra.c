@@ -1260,7 +1260,9 @@ GRAmark_rotate(int GC,int type,int x0,int y0, double dx, double dy, int size,
   int type2,sgn;
   double d;
 
-  if ((GRAClist[GC].clip==0) || (GRAinview(GC,x0,y0)==0)) {
+  if ((GRAClist[GC].clip!=0) && (GRAinview(GC,x0,y0)!=0)) {
+    return;
+  }
     switch (type) {
     case 0: case 1: case 2: case 3: case 4:
     case 5: case 6: case 7: case 8: case 9:
@@ -2004,7 +2006,6 @@ GRAmark_rotate(int GC,int type,int x0,int y0, double dx, double dy, int size,
       GRAputpixel(GC,x0,y0);
       break;
     }
-  }
 }
 
 void
