@@ -6897,14 +6897,14 @@ calc_weight(struct objlist *obj, struct f2dlocal *f2dlocal, struct f2ddata *fp, 
 static int
 calc_fit(struct objlist *obj, struct f2dlocal *f2dlocal, struct f2ddata *fp, struct objlist *fitobj, int fit_id)
 {
-  int emerr, emserr, emnonum, emig, emng, i, rcode;
+  int emerr, emnonum, emig, emng, i;
   struct narray data, index;
   char *weight, *argv[2];
   double dnum;
 
   arrayinit(&data,sizeof(double));
   arrayinit(&index,sizeof(int));
-  emerr = emserr = emnonum = emig = emng = FALSE;
+  emerr = emnonum = emig = emng = FALSE;
 
   for (i = 0; getdata(fp)==0; i++) {
     if ((fp->dxstat==MATH_VALUE_NORMAL) && (fp->dystat==MATH_VALUE_NORMAL)) {
@@ -6941,6 +6941,7 @@ calc_fit(struct objlist *obj, struct f2dlocal *f2dlocal, struct f2ddata *fp, str
   }
 
   if (weight) {
+    int rcode;
     rcode = calc_weight(obj, f2dlocal, fp, weight, &data, &index);
     if (rcode) {
       arraydel(&index);
