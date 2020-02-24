@@ -277,9 +277,7 @@ legend_menu_update_object(const char *name, char *(*callback) (struct objlist * 
 {
   struct narray array;
   struct objlist *obj;
-  int i, j;
-  int *data, num;
-  char title[256], *objs[2];
+  char title[256];
 
   if (Menulock || Globallock)
     return;
@@ -291,8 +289,12 @@ legend_menu_update_object(const char *name, char *(*callback) (struct objlist * 
   snprintf(title, sizeof(title), _("%s property (multi select)"), _(obj->name));
   SelectDialog(&DlgSelect, obj, title, callback, &array, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
+    int num;
+
     num = arraynum(&array);
     if (num > 0) {
+      char *objs[2];
+      int i, j, *data;
       menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
       data = arraydata(&array);
       for (i = 0; i < num; i++) {
