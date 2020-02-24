@@ -1088,8 +1088,6 @@ points_setup(struct LegendDialog *d)
 {
   GtkWidget *label, *swin, *vbox, *hbox, *tree_view, *btn;
   GtkTreeModel *list;
-  GtkCellRenderer *renderer;
-  GtkTreeViewColumn *col;
   GtkTreeSelection *sel;
   char *title[] = {"x", "y"};
   int i;
@@ -1108,6 +1106,8 @@ points_setup(struct LegendDialog *d)
   gtk_tree_selection_set_mode(sel, GTK_SELECTION_MULTIPLE);
 
   for (i = 0; i < POINTS_DIMENSION; i++) {
+    GtkCellRenderer *renderer;
+    GtkTreeViewColumn *col;
     renderer = gtk_cell_renderer_spin_new();
     g_object_set((GObject *) renderer,
 		 "xalign", 1.0,
