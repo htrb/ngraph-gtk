@@ -9430,14 +9430,11 @@ f2dload_file(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **arg
   if (naccess(fullname, R_OK) != 0) {
     mkdata = TRUE;
   } else {
-    int len;
 
-    len = strlen(fullname) + 256;
-    mes = g_malloc(len);
+    mes = g_strdup_printf("`%s' Overwrite existing file?", fullname);
     if (mes == NULL)
       return 1;
 
-    snprintf(mes, len, "`%s' Overwrite existing file?", fullname);
     mkdata = inputyn(mes);
     g_free(mes);
   }
