@@ -41,25 +41,28 @@ exec_init_script(int argc, char **argv, struct objlist *obj, int id)
 {
   char *inifile;
   ngraph_arg *sarray, sarg;
-  int i, j, n, r;
+  int ofst, r;
 
-  i = 1;
+  ofst = 1;
 
   if (argc > 1 && strcmp(argv[1], "-i") == 0) {
-    i++;
+    ofst++;
     if (argc > 2) {
+#if WINDOWS
+      int i;
+#endif  /* WINDOWS */
       inifile = ngraph_strdup(argv[2]);
       if (inifile == NULL) {
 	exit(1);
       }
 #if WINDOWS
-      for (j = 0; inifile[j] != '\0'; j++) {
-	if (inifile[j] == '\\') {
-	  inifile[j] = '/';
+      for (i = 0; inifile[i] != '\0'; i++) {
+	if (inifile[i] == '\\') {
+	  inifile[i] = '/';
 	}
       }
 #endif  /* WINDOWS */
-      i++;
+      ofst++;
     } else {
       inifile = NULL;
     }
@@ -68,7 +71,8 @@ exec_init_script(int argc, char **argv, struct objlist *obj, int id)
   }
 
   if (inifile) {
-    n = argc - i + 1;
+    int i, n;
+    n = argc - ofst + 1;
     sarray = ngraph_malloc(sizeof(*sarray) + sizeof(ngraph_value) * n);
     if (sarray == NULL) {
       exit(1);
@@ -76,8 +80,8 @@ exec_init_script(int argc, char **argv, struct objlist *obj, int id)
 
     sarray->num = n;
     sarray->ary[0].str = inifile;
-    for (j = 1; j < n; j++) {
-      sarray->ary[j].str = argv[j - 1 + i];
+    for (i = 1; i < n; i++) {
+      sarray->ary[i].str = argv[i - 1 + ofst];
     }
   } else {
     sarray = ngraph_malloc(sizeof(*sarray));
