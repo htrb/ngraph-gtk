@@ -2820,8 +2820,6 @@ MathEquation *
 ofile_create_math_equation(int *id, int prm_digit, int use_fprm, int use_const, int usr_func, int use_fobj_func, int use_fit_func)
 {
   MathEquation *code;
-  unsigned int i;
-  int f_id;
   struct math_const_parameter static_const[] = {
     {"FILL_RULE_NONE",     MATH_SCANNER_VAL_TYPE_NORMAL, {GRA_FILL_MODE_NONE,     MATH_VALUE_NORMAL}},
     {"FILL_RULE_EVEN_ODD", MATH_SCANNER_VAL_TYPE_NORMAL, {GRA_FILL_MODE_EVEN_ODD, MATH_VALUE_NORMAL}},
@@ -2857,8 +2855,10 @@ ofile_create_math_equation(int *id, int prm_digit, int use_fprm, int use_const, 
   }
 
   if (use_const) {
+    unsigned int i;
     for (i = 0; i < MATH_CONST_SIZE; i++) {
-      f_id = math_equation_add_const(code, file_constant[i], NULL);
+      int f_id;
+      f_id = math_equation_add_const(code, FileConstant[i], NULL);
       if (f_id < 0) {
 	math_equation_free(code);
 	return NULL;
