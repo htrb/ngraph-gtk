@@ -6385,8 +6385,8 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
 static void
 draw_arrow(struct f2ddata *fp ,int GC, double x0, double y0, double x1, double y1, int msize, struct line_position *lp)
 {
-  int gx0, gy0, gx1, gy1, ax0, ay0, ap[8];
-  double d2, d3, dx, dy, len, alen, awidth, headlen, headwidth;
+  int gx0, gy0, gx1, gy1;
+  double d2, d3, headlen, headwidth;
 
   headlen = 72426;
   headwidth = 60000;
@@ -6399,12 +6399,14 @@ draw_arrow(struct f2ddata *fp ,int GC, double x0, double y0, double x1, double y
   f2dtransf(x0, y0, &gx0, &gy0, fp);
   f2dtransf(x1, y1, &gx1, &gy1, fp);
   if ((x1 == d2) && (y1 == d3) && (msize > 0)) {
+    double dx, dy, len, alen, awidth;
     alen = msize;
     awidth = alen * headwidth / headlen / 2.0;
     dx = gx1-gx0;
     dy = gy1-gy0;
     len = sqrt(dx*dx+dy*dy);
     if (len > 0) {
+      int ax0, ay0, ap[8];
       ax0 = nround(gx1 - dx * alen / len);
       ay0 = nround(gy1 - dy * alen / len);
       ap[0] = nround(ax0 - dy / len * awidth);
