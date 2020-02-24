@@ -2020,16 +2020,16 @@ create_character_panel(GtkWidget *entry)
 static void
 LegendTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *hbox, *frame, *table;
   struct LegendDialog *d;
   char title[64];
-  int i;
 
   d = (struct LegendDialog *) data;
   snprintf(title, sizeof(title), _("Legend text %d"), d->Id);
   gtk_window_set_title(GTK_WINDOW(wi), title);
 
   if (makewidget) {
+    GtkWidget *w, *hbox, *frame, *table;
+    int i;
     init_legend_dialog_widget_member(d);
 
     gtk_dialog_add_button(GTK_DIALOG(wi), _("_Delete"), IDDELETE);
