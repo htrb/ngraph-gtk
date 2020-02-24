@@ -910,7 +910,6 @@ static void
 eval_dialog_copy_selected(GtkWidget *w, gpointer *user_data)
 {
   GtkTreeView *tv;
-  GtkClipboard *clip;
   GtkTreeSelection *sel;
   GtkTreeIter iter;
   GtkTreeModel *model;
@@ -958,6 +957,7 @@ eval_dialog_copy_selected(GtkWidget *w, gpointer *user_data)
   }
 
   if (str->len > 0) {
+    GtkClipboard *clip;
     clip = gtk_clipboard_get(GDK_SELECTION_PRIMARY);
     gtk_clipboard_set_text(clip, str->str, -1);
 
