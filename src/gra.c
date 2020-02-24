@@ -1103,14 +1103,15 @@ GRAline(int GC,int x0,int y0,int x1,int y1)
 void
 GRAlineto(int GC,int x,int y)
 {
-  char code;
-  int cpar[3],x0,y0,x1,y1;
+  int x0,y0,x1,y1;
 
   x0=GRAClist[GC].cpx;
   y0=GRAClist[GC].cpy;
   x1=x;
   y1=y;
   if ((GRAClist[GC].clip==0) || (GRAlineclip(GC,&x0,&y0,&x1,&y1)==0)) {
+    char code;
+    int cpar[3];
     if ((x0==GRAClist[GC].cpx) && (y0==GRAClist[GC].cpy)) {
       code='T';
       cpar[0]=2;
