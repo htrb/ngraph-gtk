@@ -545,7 +545,7 @@ GRAredraw_layers(struct objlist *obj, N_VALUE *inst, int setredrawf, int redraw_
   int i, n, snum;
   char *dargv[2], *device, **sdata;
   int redrawfsave;
-  struct objlist *dobj, *gobj, *xobj;
+  struct objlist *gobj;
   int xid, gid, oid, layer, GC, GCnew;
   char *dfield, *xfield, *gfield;
   N_VALUE *dinst, *ginst;
@@ -569,6 +569,7 @@ GRAredraw_layers(struct objlist *obj, N_VALUE *inst, int setredrawf, int redraw_
     GCnew=GC;
     GRAreopen(GC);
   } else {
+    struct objlist *xobj;
     /* gra is already closed */
     /* check consistency */
     if (_getobj(gobj,"_device",ginst,&device) || (device==NULL)
@@ -591,6 +592,7 @@ GRAredraw_layers(struct objlist *obj, N_VALUE *inst, int setredrawf, int redraw_
 
   dargv[0]=(char *)&GC;
   while (*objects) {
+    struct objlist *dobj;
     dobj = getobject(*objects);
     objects++;
     if (dobj == NULL) {
