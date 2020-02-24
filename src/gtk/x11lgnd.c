@@ -1666,16 +1666,16 @@ LegendRectDialog(struct LegendDialog *data, struct objlist *obj, int id)
 static void
 LegendArcDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *hbox, *hbox2, *vbox, *table, *frame;
   struct LegendDialog *d;
   char title[64];
-  int i;
 
   d = (struct LegendDialog *) data;
   snprintf(title, sizeof(title), _("Legend arc %d"), d->Id);
   gtk_window_set_title(GTK_WINDOW(wi), title);
 
   if (makewidget) {
+    GtkWidget *w, *hbox, *hbox2, *vbox, *table, *frame;
+    int i;
     init_legend_dialog_widget_member(d);
 
     gtk_dialog_add_button(GTK_DIALOG(wi), _("_Delete"), IDDELETE);
