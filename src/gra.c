@@ -3899,12 +3899,12 @@ GRAcmatch(double c[],double x0,double y0,struct cmatchtype *data)
 static void
 setbbminmax(struct GRAbbox *bbox,int x1,int y1,int x2,int y2,int lw)
 {
-  int x,y;
-
   if (x1>x2) {
+    int x;
     x=x1; x1=x2; x2=x;
   }
   if (y1>y2) {
+    int y;
     y=y1; y1=y2; y2=y;
   }
   if (lw) {
@@ -4134,4 +4134,3 @@ GRAboundingbox(char code, int *cpar, char *cstr, void *local)
   }
   return 0;
 }
-
