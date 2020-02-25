@@ -357,11 +357,7 @@ set_shellevloop(int sig)
   if (EvLoopActive)
     return;
 
-#if GLIB_CHECK_VERSION(2, 32, 0)
   EvLoopThread = g_thread_new("evloop", shellevloop, NULL);
-#else
-  EvLoopThread = g_thread_create(shellevloop, NULL, TRUE, NULL);
-#endif
 
   if (EvLoopThread == NULL)
     return;
