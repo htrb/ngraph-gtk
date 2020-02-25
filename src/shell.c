@@ -3627,7 +3627,7 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 	    else sout=nopen(fstdout,O_CREAT|O_WRONLY|O_TRUNC,NFMODE);
 	    /* pipe */
 	  } else if (pipef) {
-	    if ((sys=getobject("system"))==NULL) goto errexit;
+	    if ((sys=getobject("system"))==NULL) goto errexit; /* fix-me: assigned value of the variable "sys" is never used */
 	    sout = n_mkstemp(getval(nshell,"TMPDIR"), TEMPPFX, &tmpfil);
 	    if (sout < 0)
 	      goto errexit;
