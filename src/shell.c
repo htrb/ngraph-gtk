@@ -424,11 +424,7 @@ nreadline(char *prompt)
 
 
   ReadlineLock = TRUE;
-#if GLIB_CHECK_VERSION(2, 32, 0)
   thread= g_thread_new("readline", readline_thread, prompt);
-#else
-  thread = g_thread_create(readline_thread, prompt, TRUE, NULL);
-#endif
   if (thread == NULL) {
     ReadlineLock = FALSE;
     return NULL;
