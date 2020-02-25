@@ -223,11 +223,7 @@ nsleep(double a)
   if (th.msec < 1) {
     return;
   }
-#if GLIB_CHECK_VERSION(2, 32, 0)
   thread= g_thread_new("sleep", sleep_thread, &th);
-#else
-  thread = g_thread_create(sleep_thread, &th, TRUE, NULL);
-#endif
   while (th.sleep) {
     eventloop();
     msleep(1);
