@@ -68,10 +68,11 @@ obj_load_config(struct objlist *obj, N_VALUE *inst, char *title, NHASH hash)
       case OBJ_CONFIG_TYPE_NUMERIC:
 	f1 = getitok2(&s2, &len, " \t,");
         if (f1) {
-	val = strtol(f1, &endptr, 10);
-	if (endptr[0] == '\0')
-	  _putobj(obj, cfg->name, inst, &val);
-	g_free(f1);
+          val = strtol(f1, &endptr, 10);
+          if (endptr[0] == '\0') {
+            _putobj(obj, cfg->name, inst, &val);
+          }
+          g_free(f1);
 	}
 	break;
       case OBJ_CONFIG_TYPE_STRING:
