@@ -3931,11 +3931,7 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 		  }
 
 		  errlevel = 0;
-#if GLIB_CHECK_VERSION(2, 32, 0)
 		  thread= g_thread_new("process", proc_in_thread, win_cmd);
-#else
-		  thread = g_thread_create(proc_in_thread, win_cmd, TRUE, NULL);
-#endif
 		  if (thread) {
 		    WaitProc = 1;
 		    while (WaitProc) {
