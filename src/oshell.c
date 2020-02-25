@@ -200,10 +200,10 @@ cmdshell(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 errexit:
   sys = getobject("system");
   if (sys) {
-    N_VALUE *inst;
-    inst = chkobjinst(sys, 0);
-    if (inst) {
-      _putobj(sys, "shell_status", inst, &(nshell->status));
+    N_VALUE *sys_inst;
+    sys_inst = chkobjinst(sys, 0);
+    if (sys_inst) {
+      _putobj(sys, "shell_status", sys_inst, &(nshell->status));
     }
   }
 #if ! WINDOWS
