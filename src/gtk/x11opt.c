@@ -1494,19 +1494,20 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
 static int
 set_font(char **cfg, GtkWidget *btn)
 {
-  const char *buf;
+  char *buf;
 
   buf = gtk_font_chooser_get_font(GTK_FONT_CHOOSER(btn));
   if (buf && *cfg) {
     if (strcmp(*cfg, buf)) {
       g_free(*cfg);
     } else {
+      g_free(buf);
       buf = NULL;
     }
   }
 
   if (buf) {
-    *cfg = g_strdup(buf);
+    *cfg = buf;
     return 1;
   }
 
