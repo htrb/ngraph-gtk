@@ -282,7 +282,7 @@ static struct obj_config FileConfig[] = {
   {"type",             OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
   {"smooth_x",         OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
   {"smooth_y",         OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
-  {"averaging_type",   OBJ_CONFIG_TYPE_STRING,  NULL, NULL},
+  {"averaging_type",   OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
   {"mark_type",        OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
   {"mark_size",        OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
   {"line_width",       OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
