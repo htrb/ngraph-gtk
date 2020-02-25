@@ -872,10 +872,6 @@ n_initialize(int *argc, char ***argv)
     return 0;
   }
 
-#if ! GLIB_CHECK_VERSION(2, 32, 0)
-  g_thread_init(NULL);
-#endif
-
 #if EOF == -1
   char_type_buf_init();
 #endif
