@@ -2462,7 +2462,7 @@ checkcmd(struct nshell *nshell,struct cmdlist **cmdroot)
 
                 /* get << contents */
 
-                if ((sys=getobject("system"))==NULL) return -1;
+                if ((sys=getobject("system"))==NULL) return -1; /* fix-me: assigned value of the variable "sys" is never used */
 		sout = n_mkstemp(getval(nshell,"TMPDIR"), TEMPPFX, &tmpfil);
 		if (sout < 0)
 		  return -1;
