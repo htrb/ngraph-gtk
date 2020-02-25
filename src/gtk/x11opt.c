@@ -971,7 +971,7 @@ FontSettingDialogClose(GtkWidget *wi, void *data)
 {
   struct FontSettingDialog *d;
   gchar *alias, *family, *font;
-  const gchar *font_name;
+  gchar *font_name;
   struct fontmap *fmap;
   GString *alt;
   GtkTreeIter iter;
@@ -1000,7 +1000,12 @@ FontSettingDialogClose(GtkWidget *wi, void *data)
   }
 
   font_name = gtk_font_chooser_get_font(GTK_FONT_CHOOSER(d->font_b));
+  if (font_name == NULL) {
+    g_free(alias);
+    return;
+  }
   family = get_font_family(font_name);
+  g_free(font_name);
   if (family == NULL) {
     g_free(alias);
     return;
