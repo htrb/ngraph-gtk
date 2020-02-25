@@ -4588,19 +4588,11 @@ system_bg(char *cmd)
 
   ptr = g_locale_from_utf8(cmd, -1, NULL, NULL, NULL);
 
-#if GLIB_CHECK_VERSION(2, 32, 0)
   thread= g_thread_new("process", system_in_thread, ptr);
-#else
-  thread = g_thread_create(proc_in_thread, cmd, TRUE, NULL);
-  thread = g_thread_create(system_in_thread, ptr, FALSE, NULL);
-#endif
   if (thread == NULL) {
     return 1;
   }
-
-#if GLIB_CHECK_VERSION(2, 32, 0)
   g_thread_unref(thread);
-#endif
 
   return 0;
 #else  /* WINDOWS */
