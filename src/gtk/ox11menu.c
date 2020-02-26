@@ -1030,6 +1030,10 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
     return 1;
   }
 
+#if GTK_SOURCE_CHECK_VERSION(4, 0, 0)
+  gtk_source_init();
+#endif
+
   layer = TRUE;
   if (_putobj(obj, "_layer", inst, &layer)) return 1;
 
