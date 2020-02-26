@@ -52,7 +52,7 @@ parts:
       - gettext
       - libreadline-dev
       - ruby-dev
-      - libgtksourceview-4-dev
+      - libgtksourceview-3.0-dev
     stage-packages:
       - ruby
       - xterm
@@ -77,7 +77,7 @@ parts:
       - libgdk-pixbuf2.0-0
       - libgraphite2-3
       - libgtk-3-0
-      - libgtksourceview-4-0
+      - libgtksourceview-3.0-1
       - libharfbuzz0b
       - libicu60
       - libpango-1.0-0
