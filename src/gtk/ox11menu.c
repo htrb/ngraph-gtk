@@ -1184,6 +1184,10 @@ menudone(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
 
   menulocal_finalize();
 
+#if GTK_SOURCE_CHECK_VERSION(4, 0, 0)
+  gtk_source_finalize();
+#endif
+
   return 0;
 }
 
