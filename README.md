@@ -5,4 +5,4 @@ Ngraph is the program to create scientific 2-dimensional graphs for researchers 
 
 [![Snap Status](https://build.snapcraft.io/badge/htrb/ngraph-gtk.svg)](https://build.snapcraft.io/user/htrb/ngraph-gtk)
 
-[![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/ngraph-gtk-htrb)
+[![ngraph-gtk-htrb](https://snapcraft.io/ngraph-gtk-htrb/badge.svg)](https://snapcraft.io/ngraph-gtk-htrb)
