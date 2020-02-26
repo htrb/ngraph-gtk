@@ -41,7 +41,11 @@ completion_info_populate(struct completion_info *info, const char *word, int len
     if (info[i].proposal == NULL) {
       GtkSourceCompletionItem *proposal;
 #if GTK_SOURCE_CHECK_VERSION(3, 24, 0)
+#if GTK_SOURCE_CHECK_VERSION(4, 0, 0)
+      proposal = gtk_source_completion_item_new();
+#else
       proposal = gtk_source_completion_item_new2();
+#endif
       gtk_source_completion_item_set_label(proposal, info[i].text);
       gtk_source_completion_item_set_text(proposal, info[i].text);
       gtk_source_completion_item_set_info(proposal, _(info[i].info));
