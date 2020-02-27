@@ -293,7 +293,7 @@ new data
 	data::move_data_y=
 	data::axis_x='axis:0'
 	data::axis_y='axis:1'
-	data::file='DOCDIRDEF/demo1.dat'
+	data::file='demo1.dat'
 
 new data
 	data::hidden=false
@@ -335,7 +335,7 @@ new data
 	data::move_data_y=
 	data::axis_x='axis:0'
 	data::axis_y='axis:1'
-	data::file='DOCDIRDEF/demo1.dat'
+	data::file='demo1.dat'
 
 new data
 	data::hidden=false
@@ -377,7 +377,7 @@ new data
 	data::move_data_y=
 	data::axis_x='axis:0'
 	data::axis_y='axis:1'
-	data::file='DOCDIRDEF/demo1.dat'
+	data::file='demo1.dat'
 
 new data
 	data::hidden=false
@@ -419,7 +419,7 @@ new data
 	data::move_data_y=
 	data::axis_x='axis:0'
 	data::axis_y='axis:1'
-	data::file='DOCDIRDEF/demo1.dat'
+	data::file='demo1.dat'
 
 new text
 	text::hidden=false

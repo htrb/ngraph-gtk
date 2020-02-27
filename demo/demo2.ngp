@@ -1,5 +1,5 @@
 #! ngraph
-#%creator: Ngraph for GTK+ 
+#%creator: Ngraph for GTK+
 #%version: 6.03.48.gtk-23
 new axis name:cX1
 	axis::hidden=false
@@ -171,7 +171,7 @@ new data
 	data::axis_x='axis:0'
 	data::axis_y='axis:1'
 	data::data_clip=true
-	data::file='DOCDIRDEF/demo2.dat'
+	data::file='demo2.dat'
 
 new data
 	data::hidden=false
@@ -215,7 +215,7 @@ new data
 	data::axis_x='axis:0'
 	data::axis_y='axis:1'
 	data::data_clip=true
-	data::file='DOCDIRDEF/demo2.dat'
+	data::file='demo2.dat'
 
 new fit
 	fit::profile=
@@ -295,7 +295,7 @@ new data
 	data::axis_x='axis:0'
 	data::axis_y='axis:1'
 	data::data_clip=true
-	data::file='DOCDIRDEF/demo2.dat'
+	data::file='demo2.dat'
 	data::fit='fit:^'${fit::oid}
 
 new fit
@@ -376,7 +376,7 @@ new data
 	data::axis_x='axis:0'
 	data::axis_y='axis:1'
 	data::data_clip=true
-	data::file='DOCDIRDEF/demo2.dat'
+	data::file='demo2.dat'
 	data::fit='fit:^'${fit::oid}
 
 new rectangle

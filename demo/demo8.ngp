@@ -1,5 +1,5 @@
 #!ngraph
-#%creator: Ngraph 
+#%creator: Ngraph
 #%version: 6.07.05
 new axis name:fX1
 	axis::hidden=false
@@ -10,15 +10,15 @@ new axis name:fX1
 	axis::clip=true
 	axis::redraw_flag=true
 	axis::min=0.000000000000000e+00
-	axis::max=1.000000000000000e+00
-	axis::inc=1.000000000000000e+00
+	axis::max=2.550000000000000e+02
+	axis::inc=1.000000000000000e+02
 	axis::div=0
 	axis::type=linear
-	axis::x=5000
-	axis::y=24600
+	axis::x=3600
+	axis::y=22000
 	axis::direction=0
 	axis::baseline=true
-	axis::length=11000
+	axis::length=14000
 	axis::width=40
 	axis::style=
 	axis::auto_scale_margin=0
@@ -79,19 +79,19 @@ new axis name:fY1
 	axis::A=255
 	axis::clip=true
 	axis::redraw_flag=true
-	axis::min=7.000000000000000e-01
-	axis::max=4.300000000000000e+00
-	axis::inc=1.000000000000000e+00
+	axis::min=0.000000000000000e+00
+	axis::max=2.550000000000000e+02
+	axis::inc=1.000000000000000e+02
 	axis::div=0
 	axis::type=linear
-	axis::x=5000
-	axis::y=24600
+	axis::x=3600
+	axis::y=22000
 	axis::direction=9000
-	axis::baseline=false
-	axis::length=11000
+	axis::baseline=true
+	axis::length=14000
 	axis::width=40
 	axis::style=
-	axis::auto_scale_margin=1000
+	axis::auto_scale_margin=0
 	axis::adjust_axis=
 	axis::adjust_position=0
 	axis::arrow=none
@@ -101,7 +101,7 @@ new axis name:fY1
 	axis::wave_length=300
 	axis::wave_width=40
 	axis::reference=
-	axis::gauge=none
+	axis::gauge=left
 	axis::gauge_min=0.000000000000000e+00
 	axis::gauge_max=0.000000000000000e+00
 	axis::gauge_style=
@@ -133,7 +133,7 @@ new axis name:fY1
 	axis::num_no_zero=false
 	axis::num_direction=horizontal
 	axis::num_shift_p=0
-	axis::num_shift_n=100
+	axis::num_shift_n=400
 	axis::num_R=0
 	axis::num_G=0
 	axis::num_B=0
@@ -142,7 +142,7 @@ new axis name:fY1
 	axis::num_math=
 
 new axis name:fU1
-	axis::hidden=true
+	axis::hidden=false
 	axis::R=0
 	axis::G=0
 	axis::B=0
@@ -154,11 +154,11 @@ new axis name:fU1
 	axis::inc=0.000000000000000e+00
 	axis::div=0
 	axis::type=linear
-	axis::x=5000
-	axis::y=13600
+	axis::x=3600
+	axis::y=8000
 	axis::direction=0
 	axis::baseline=true
-	axis::length=11000
+	axis::length=14000
 	axis::width=40
 	axis::style=
 	axis::auto_scale_margin=500
@@ -171,7 +171,7 @@ new axis name:fU1
 	axis::wave_length=300
 	axis::wave_width=40
 	axis::reference='axis:0'
-	axis::gauge=right
+	axis::gauge=left
 	axis::gauge_min=0.000000000000000e+00
 	axis::gauge_max=0.000000000000000e+00
 	axis::gauge_style=
@@ -212,7 +212,7 @@ new axis name:fU1
 	axis::num_math=
 
 new axis name:fR1
-	axis::hidden=true
+	axis::hidden=false
 	axis::R=0
 	axis::G=0
 	axis::B=0
@@ -224,11 +224,11 @@ new axis name:fR1
 	axis::inc=0.000000000000000e+00
 	axis::div=0
 	axis::type=linear
-	axis::x=16000
-	axis::y=24600
+	axis::x=17600
+	axis::y=22000
 	axis::direction=9000
 	axis::baseline=true
-	axis::length=11000
+	axis::length=14000
 	axis::width=40
 	axis::style=
 	axis::auto_scale_margin=500
@@ -241,7 +241,7 @@ new axis name:fR1
 	axis::wave_length=300
 	axis::wave_width=40
 	axis::reference='axis:1'
-	axis::gauge=left
+	axis::gauge=right
 	axis::gauge_min=0.000000000000000e+00
 	axis::gauge_max=0.000000000000000e+00
 	axis::gauge_style=
@@ -283,51 +283,51 @@ new axis name:fR1
 
 axis::grouping 1 0 1 2 3
 
-new axis name:fX2
-	axis::hidden=false
+new axis name:cX1
+	axis::hidden=true
 	axis::R=0
 	axis::G=0
 	axis::B=0
 	axis::A=255
 	axis::clip=true
 	axis::redraw_flag=true
-	axis::min=5.000000000000000e-01
-	axis::max=4.500000000000000e+00
-	axis::inc=1.000000000000000e+00
+	axis::min=0.000000000000000e+00
+	axis::max=2.700000000000000e+02
+	axis::inc=1.000000000000000e+02
 	axis::div=0
 	axis::type=linear
-	axis::x=1000
-	axis::y=12400
-	axis::direction=0
-	axis::baseline=false
-	axis::length=19000
+	axis::x=6500
+	axis::y=26000
+	axis::direction=4500
+	axis::baseline=true
+	axis::length=5400
 	axis::width=40
 	axis::style=
-	axis::auto_scale_margin=0
+	axis::auto_scale_margin=500
 	axis::adjust_axis=
 	axis::adjust_position=0
 	axis::arrow=none
 	axis::arrow_length=72426
 	axis::arrow_width=60000
 	axis::wave=none
-	axis::wave_length=300
+	axis::wave_length=178
 	axis::wave_width=40
 	axis::reference=
-	axis::gauge=none
+	axis::gauge=both
 	axis::gauge_min=0.000000000000000e+00
 	axis::gauge_max=0.000000000000000e+00
 	axis::gauge_style=
-	axis::gauge_length1=100
+	axis::gauge_length1=59
 	axis::gauge_width1=40
-	axis::gauge_length2=200
+	axis::gauge_length2=119
 	axis::gauge_width2=40
-	axis::gauge_length3=300
+	axis::gauge_length3=178
 	axis::gauge_width3=40
 	axis::gauge_R=0
 	axis::gauge_G=0
 	axis::gauge_B=0
 	axis::gauge_A=255
-	axis::num=right
+	axis::num=left
 	axis::num_begin=0
 	axis::num_step=0
 	axis::num_num=-1
@@ -336,7 +336,7 @@ new axis name:fX2
 	axis::num_format='%g'
 	axis::num_tail=
 	axis::num_log_pow=true
-	axis::num_pt=2000
+	axis::num_pt=1191
 	axis::num_space=0
 	axis::num_font='Sans-serif'
 	axis::num_font_style=0
@@ -353,7 +353,7 @@ new axis name:fX2
 	axis::num_date_format=
 	axis::num_math=
 
-new axis name:fY2
+new axis name:cY1
 	axis::hidden=true
 	axis::R=0
 	axis::G=0
@@ -361,37 +361,37 @@ new axis name:fY2
 	axis::A=255
 	axis::clip=true
 	axis::redraw_flag=true
-	axis::min=-5.000000000000000e-01
-	axis::max=5.000000000000000e-01
+	axis::min=0.000000000000000e+00
+	axis::max=3.300000000000000e+00
 	axis::inc=1.000000000000000e+00
 	axis::div=0
 	axis::type=linear
-	axis::x=1000
-	axis::y=12400
+	axis::x=6500
+	axis::y=26000
 	axis::direction=9000
 	axis::baseline=true
-	axis::length=4500
+	axis::length=8000
 	axis::width=40
 	axis::style=
-	axis::auto_scale_margin=1000
+	axis::auto_scale_margin=500
 	axis::adjust_axis=
 	axis::adjust_position=0
 	axis::arrow=none
 	axis::arrow_length=72426
 	axis::arrow_width=60000
 	axis::wave=none
-	axis::wave_length=300
+	axis::wave_length=178
 	axis::wave_width=40
 	axis::reference=
-	axis::gauge=right
+	axis::gauge=both
 	axis::gauge_min=0.000000000000000e+00
 	axis::gauge_max=0.000000000000000e+00
 	axis::gauge_style=
-	axis::gauge_length1=100
+	axis::gauge_length1=59
 	axis::gauge_width1=40
-	axis::gauge_length2=200
+	axis::gauge_length2=119
 	axis::gauge_width2=40
-	axis::gauge_length3=300
+	axis::gauge_length3=178
 	axis::gauge_width3=40
 	axis::gauge_R=0
 	axis::gauge_G=0
@@ -406,7 +406,7 @@ new axis name:fY2
 	axis::num_format='%g'
 	axis::num_tail=
 	axis::num_log_pow=true
-	axis::num_pt=2000
+	axis::num_pt=1191
 	axis::num_space=0
 	axis::num_font='Sans-serif'
 	axis::num_font_style=0
@@ -415,7 +415,7 @@ new axis name:fY2
 	axis::num_no_zero=false
 	axis::num_direction=horizontal
 	axis::num_shift_p=0
-	axis::num_shift_n=100
+	axis::num_shift_n=400
 	axis::num_R=0
 	axis::num_G=0
 	axis::num_B=0
@@ -423,147 +423,7 @@ new axis name:fY2
 	axis::num_date_format=
 	axis::num_math=
 
-new axis name:fU2
-	axis::hidden=true
-	axis::R=0
-	axis::G=0
-	axis::B=0
-	axis::A=255
-	axis::clip=true
-	axis::redraw_flag=true
-	axis::min=0.000000000000000e+00
-	axis::max=0.000000000000000e+00
-	axis::inc=0.000000000000000e+00
-	axis::div=0
-	axis::type=linear
-	axis::x=1000
-	axis::y=7900
-	axis::direction=0
-	axis::baseline=true
-	axis::length=19000
-	axis::width=40
-	axis::style=
-	axis::auto_scale_margin=500
-	axis::adjust_axis=
-	axis::adjust_position=0
-	axis::arrow=none
-	axis::arrow_length=72426
-	axis::arrow_width=60000
-	axis::wave=none
-	axis::wave_length=300
-	axis::wave_width=40
-	axis::reference='axis:4'
-	axis::gauge=right
-	axis::gauge_min=0.000000000000000e+00
-	axis::gauge_max=0.000000000000000e+00
-	axis::gauge_style=
-	axis::gauge_length1=100
-	axis::gauge_width1=40
-	axis::gauge_length2=200
-	axis::gauge_width2=40
-	axis::gauge_length3=300
-	axis::gauge_width3=40
-	axis::gauge_R=0
-	axis::gauge_G=0
-	axis::gauge_B=0
-	axis::gauge_A=255
-	axis::num=left
-	axis::num_begin=0
-	axis::num_step=0
-	axis::num_num=-1
-	axis::num_auto_norm=5
-	axis::num_head=
-	axis::num_format='%g'
-	axis::num_tail=
-	axis::num_log_pow=true
-	axis::num_pt=2000
-	axis::num_space=0
-	axis::num_font='Sans-serif'
-	axis::num_font_style=0
-	axis::num_script_size=7000
-	axis::num_align=center
-	axis::num_no_zero=false
-	axis::num_direction=horizontal
-	axis::num_shift_p=0
-	axis::num_shift_n=100
-	axis::num_R=0
-	axis::num_G=0
-	axis::num_B=0
-	axis::num_A=255
-	axis::num_date_format=
-	axis::num_math=
-
-new axis name:fR2
-	axis::hidden=true
-	axis::R=0
-	axis::G=0
-	axis::B=0
-	axis::A=255
-	axis::clip=true
-	axis::redraw_flag=true
-	axis::min=0.000000000000000e+00
-	axis::max=0.000000000000000e+00
-	axis::inc=0.000000000000000e+00
-	axis::div=0
-	axis::type=linear
-	axis::x=20000
-	axis::y=12400
-	axis::direction=9000
-	axis::baseline=true
-	axis::length=4500
-	axis::width=40
-	axis::style=
-	axis::auto_scale_margin=500
-	axis::adjust_axis=
-	axis::adjust_position=0
-	axis::arrow=none
-	axis::arrow_length=72426
-	axis::arrow_width=60000
-	axis::wave=none
-	axis::wave_length=300
-	axis::wave_width=40
-	axis::reference='axis:5'
-	axis::gauge=left
-	axis::gauge_min=0.000000000000000e+00
-	axis::gauge_max=0.000000000000000e+00
-	axis::gauge_style=
-	axis::gauge_length1=100
-	axis::gauge_width1=40
-	axis::gauge_length2=200
-	axis::gauge_width2=40
-	axis::gauge_length3=300
-	axis::gauge_width3=40
-	axis::gauge_R=0
-	axis::gauge_G=0
-	axis::gauge_B=0
-	axis::gauge_A=255
-	axis::num=right
-	axis::num_begin=0
-	axis::num_step=0
-	axis::num_num=-1
-	axis::num_auto_norm=5
-	axis::num_head=
-	axis::num_format='%g'
-	axis::num_tail=
-	axis::num_log_pow=true
-	axis::num_pt=2000
-	axis::num_space=0
-	axis::num_font='Sans-serif'
-	axis::num_font_style=0
-	axis::num_script_size=7000
-	axis::num_align=left
-	axis::num_no_zero=false
-	axis::num_direction=horizontal
-	axis::num_shift_p=0
-	axis::num_shift_n=100
-	axis::num_R=0
-	axis::num_G=0
-	axis::num_B=0
-	axis::num_A=255
-	axis::num_date_format=
-	axis::num_math=
-
-axis::grouping 1 4 5 6 7
+axis::grouping 3 4 5
 
 new data
 	data::hidden=false
@@ -575,29 +435,155 @@ new data
 	data::redraw_flag=true
 	data::source=file
 	data::save_path=unchange
-	data::x=1
-	data::y=0
+	data::x=0
+	data::y=2
 	data::type=mark
 	data::interpolation=spline
 	data::fit=
-	data::math_x='const HEIGHT := 0.5;         # height of a bar graph
-shift(col);                  # remove %0 from the array col
-n := size(col);              # number of the data
-total := array_sum(col);     # summation of the data
-start := 0;                  # start position of a rectangle
-each_with_index(col, w, i,   # draw rectangle for each data
+	data::math_x='ofst_x := %0 * 2.5;
+ofst_y := -%0 / 40;
+shift(col);                    # remove %0 from the array col
+n := size(col);                # number of the data
+each_with_index(col, y, i,     # initialize arrays for polyline
   {
-    width := w / total;      # width of a rectangle
-    hsb2(i / n, 0.7, 1);     # set fill color
-    draw_rect(start, y - HEIGHT / 2, width, HEIGHT, TRUE, TRUE);
-    sprintf($str, "%.1f%", width * 100);
-    draw_text_raw($str, start + width * 0.1, y - 0.04, 0, 10, 0, a);
-    start += width;
-  });'
+    ax[i] := i + ofst_x;
+    ay[i] := y + ofst_y;
+  });
+unshift(ax, ax[0]);            # add first x for a polygon mask
+unshift(ay, ofst_y);           # add first y for a polygon mask
+push(ax, ax[-1]);              # add last x for a polygon mask
+push(ay, ofst_y);              # add last y for a polygon mask
+draw_polygon(ax, ay, FALSE, FILL_RULE_WINDING);
+shift(ax);                     # remove first x for a polygon mask
+shift(ay);                     # remove first y for a polygon mask
+pop(ax);                       # remove last x for a polygon mask
+pop(ay);                       # remove last y for a polygon mask
+draw_polyline(ax, ay);         # draw a polyline
+x;'
 	data::math_y=
 	data::func_f=
 	data::func_g=
 	data::func_h=
+	data::smooth_x=0
+	data::smooth_y=0
+	data::mark_type=0
+	data::mark_size=0
+	data::line_width=20
+	data::line_style=
+	data::line_join=bevel
+	data::line_miter_limit=1000
+	data::R2=255
+	data::G2=255
+	data::B2=255
+	data::A2=255
+	data::remark='#%'\'''
+	data::ifs=' ,	()'
+	data::csv=false
+	data::head_skip=0
+	data::read_step=2
+	data::final_line=-1
+	data::mask=
+	data::move_data=
+	data::move_data_x=
+	data::move_data_y=
+	data::axis_x='axis:4'
+	data::axis_y='axis:5'
+	data::data_clip=false
+	data::range_min=1.000000000000000e+00
+	data::range_max=1.000000000000000e+01
+	data::range_div=512
+	data::array=
+	data::file='demo8.dat'
+
+new data
+	data::hidden=false
+	data::R=0
+	data::G=0
+	data::B=0
+	data::A=255
+	data::clip=true
+	data::redraw_flag=true
+	data::source=file
+	data::save_path=unchange
+	data::x=0
+	data::y=0
+	data::type=mark
+	data::interpolation=spline
+	data::fit=
+	data::math_x='shift(col);
+each_with_index(col, c, i,     # draw rectangle for each column
+  {
+    hsb2((1 - c) * 0.68, 1, 1); # set fill color
+    draw_rect(i + 1, y, -1.1, -1.1, FALSE, TRUE);
+  });
+x - 1'
+	data::math_y='y - 1'
+	data::func_f=
+	data::func_g=
+	data::func_h=
+	data::smooth_x=0
+	data::smooth_y=0
+	data::mark_type=0
+	data::mark_size=0
+	data::line_width=10
+	data::line_style=
+	data::line_join=bevel
+	data::line_miter_limit=1000
+	data::R2=255
+	data::G2=255
+	data::B2=255
+	data::A2=255
+	data::remark='#%'\'''
+	data::ifs=' ,	()'
+	data::csv=false
+	data::head_skip=0
+	data::read_step=1
+	data::final_line=-1
+	data::mask=
+	data::move_data=
+	data::move_data_x=
+	data::move_data_y=
+	data::axis_x='axis:0'
+	data::axis_y='axis:1'
+	data::data_clip=true
+	data::range_min=1.000000000000000e+00
+	data::range_max=1.000000000000000e+01
+	data::range_div=512
+	data::array=
+	data::file='demo8.dat'
+
+new data
+	data::hidden=false
+	data::R=252
+	data::G=233
+	data::B=79
+	data::A=255
+	data::clip=true
+	data::redraw_flag=true
+	data::source=file
+	data::save_path=unchange
+	data::x=96
+	data::y=128
+	data::type=line
+	data::interpolation=spline
+	data::fit=
+	data::math_x='if(%0 == NUM,                              # at the last data
+  {
+    color(3,128);                          # set line color
+    draw_line(COLX, 0, COLX, NUM);         # draw a vertical line
+    draw_line(0, COLY, size(col), COLY);
+  }); # draw a horizontal line
+x * h();'
+	data::math_y='const SCALE := h();
+n := size(col);              # number of the data
+if(%0 == COLY,               # if data row is COLY
+  times(n - 2, i,        # draw horizontal data
+    draw_line(i,     col[i + 1] * SCALE,
+              i + 1, col[i + 2] * SCALE)));
+%0'
+	data::func_f=
+	data::func_g=
+	data::func_h='100'
 	data::smooth_x=0
 	data::smooth_y=0
 	data::mark_type=0
@@ -627,76 +613,7 @@ each_with_index(col, w, i,   # draw rectangle for each data
 	data::range_max=1.000000000000000e+01
 	data::range_div=512
 	data::array=
-	data::file='DOCDIRDEF/demo9.dat'
-
-new data
-	data::hidden=false
-	data::R=0
-	data::G=0
-	data::B=0
-	data::A=255
-	data::clip=true
-	data::redraw_flag=true
-	data::source=file
-	data::save_path=unchange
-	data::x=1
-	data::y=0
-	data::type=mark
-	data::interpolation=spline
-	data::fit=
-	data::math_x='const R := 0.4;           # radius of a pie chart
-shift(col);               # remove %0 from the array col
-n := size(col);           # number of the data
-total := array_sum(col);  # summation of the data
-angle2 := 0;
-array_clear(ang);
-map(ang, col, a, a / total * 360);
-each_with_index(ang, a, i,# draw pie-slice for each data
-  {
-    hsb2(i / n, 0.7, 1);  # set fill color
-    angle2 += a;
-    draw_arc(y, 0, R, R, angle2, -a, TRUE, TRUE, TRUE, TRUE);
-    sprintf($str, "%.1f%", a / 3.60);
-    a := angle2 - a * 0.6;
-    tr := R * 0.3;
-    tx := y + tr * cos(a / 180 * PI);
-    ty := 0 + tr * sin(a / 180 * PI);
-    draw_text_raw($str, tx, ty, 0, 10, 0, a);
-  });'
-	data::math_y=
-	data::func_f=
-	data::func_g=
-	data::func_h=
-	data::smooth_x=0
-	data::smooth_y=0
-	data::mark_type=0
-	data::mark_size=0
-	data::line_width=40
-	data::line_style=
-	data::line_join=bevel
-	data::line_miter_limit=1000
-	data::R2=255
-	data::G2=255
-	data::B2=255
-	data::A2=255
-	data::remark='#%'\'''
-	data::ifs=' ,	()'
-	data::csv=false
-	data::head_skip=0
-	data::read_step=1
-	data::final_line=-1
-	data::mask=
-	data::move_data=
-	data::move_data_x=
-	data::move_data_y=
-	data::axis_x='axis:4'
-	data::axis_y='axis:5'
-	data::data_clip=true
-	data::range_min=1.000000000000000e+00
-	data::range_max=1.000000000000000e+01
-	data::range_div=512
-	data::array=
-	data::file='DOCDIRDEF/demo9.dat'
+	data::file='demo8.dat'
 
 new text
 	text::hidden=false
@@ -706,7 +623,7 @@ new text
 	text::A=255
 	text::clip=true
 	text::redraw_flag=true
-	text::text='Demo #9:\nDRAW\_RECT() and DRAW\_ARC() FUNCTION'
+	text::text='Demo #8:\nDRAW\_RECT(), DRAW\_LINE() and COL[ ]'
 	text::x=4000
 	text::y=6842
 	text::pt=2000

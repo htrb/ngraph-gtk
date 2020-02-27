@@ -1,5 +1,5 @@
 #!ngraph
-#%creator: Ngraph 
+#%creator: Ngraph
 #%version: 6.08.01
 new axis name:fX1
 	axis::hidden=false
@@ -473,7 +473,7 @@ new data
 	data::range_max=1.000000000000000e+01
 	data::range_div=512
 	data::array=
-	data::file='DOCDIRDEF/demo3.dat'
+	data::file='demo3.dat'
 
 new data
 	data::hidden=false
@@ -529,7 +529,7 @@ x;'
 	data::range_max=1.000000000000000e+01
 	data::range_div=512
 	data::array=
-	data::file='DOCDIRDEF/demo3.dat'
+	data::file='demo3.dat'
 
 new data
 	data::hidden=false
@@ -581,7 +581,7 @@ new data
 	data::range_max=1.000000000000000e+01
 	data::range_div=512
 	data::array=
-	data::file='DOCDIRDEF/demo3.dat'
+	data::file='demo3.dat'
 
 new data
 	data::hidden=false
@@ -637,7 +637,7 @@ x;'
 	data::range_max=1.000000000000000e+01
 	data::range_div=512
 	data::array=
-	data::file='DOCDIRDEF/demo3.dat'
+	data::file='demo3.dat'
 
 new data
 	data::hidden=false
@@ -803,7 +803,7 @@ new text
 	text::A=255
 	text::clip=true
 	text::redraw_flag=true
-	text::text='Sample length (μm)'
+	text::text='Sample length (亮m)'
 	text::x=9000
 	text::y=22000
 	text::pt=2000
@@ -822,7 +822,7 @@ new text
 	text::A=255
 	text::clip=true
 	text::redraw_flag=true
-	text::text='Resistance (KΩ)'
+	text::text='Resistance (K立)'
 	text::x=3000
 	text::y=17000
 	text::pt=2000
