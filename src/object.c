@@ -3980,7 +3980,7 @@ chkobjilist2(char **s,struct objlist **obj,struct narray *iarray,int def)
   num=chkilist(*obj,ilist,iarray,def,&spc);
   g_free(ilist);
   if (num==-1) return -1;
-  if (((*s)[0]!='\0') && ((*s)[0]==':')) (*s)++;
+  if ((*s)[0]==':') (*s)++;
   return 0;
 }
 
