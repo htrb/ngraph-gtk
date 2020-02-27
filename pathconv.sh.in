@@ -1,23 +1,16 @@
 #! /bin/sh
 
-if [ $# -ne 7 ]
-then
-    echo "error: wrong number of arguments ($0)."
-    exit
-fi
+prefix="@prefix@"
+datarootdir="@datarootdir@"
+exec_prefix="@exec_prefix@"
+PACKAGE_TARNAME="@PACKAGE_TARNAME@"
 
-BINDIR=$1
-shift
-DOCDIR=$1
-shift
-LIBEXECDIR=$1
-shift
-LIBDIR=$1
-shift
-DATADIR=$1
-shift
-CONFDIR=$1
-shift
+BINDIR="@bindir@"
+DOCDIR="@docdir@"
+LIBEXECDIR="@libexecdir@/@PACKAGE@"
+LIBDIR="@libdir@/@PACKAGE@"
+DATADIR="@datadir@/@PACKAGE@"
+CONFDIR="@sysconfdir@/@PACKAGE@"
 
 TARGET=`basename $1 .in`
 
