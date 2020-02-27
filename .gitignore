@@ -85,9 +85,6 @@ doc/html/ja/script.html
 
 driver/ngp2
 
-demo/demo.ngp
-demo/demo[1-4689].ngp
-
 initfile/Ngraph.ini
 
 plugins/libruby_resource.rc
