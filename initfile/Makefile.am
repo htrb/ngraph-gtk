@@ -21,8 +21,8 @@ if OS_OSX
 Ngraph.ini: Ngraph.ini.osx
 	cp $< $@
 else
-Ngraph.ini: $(srcdir)/Ngraph.ini.in Makefile
-	$(SHELL) $(top_srcdir)/pathconv.sh "$(bindir)" "$(docdir)" "$(pkglibexecdir)" "$(pkglibdir)" "$(pkgdatadir)" "$(ngraphconfdir)" $<
+Ngraph.ini: $(srcdir)/Ngraph.ini.in $(top_srcdir)/pathconv.sh
+	$(SHELL) $(top_srcdir)/pathconv.sh "$(ngraphconfdir)" $<
 endif
 endif
 
