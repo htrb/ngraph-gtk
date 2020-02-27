@@ -121,8 +121,8 @@ BUILT_SOURCES = ${nodist_libngraphui_la_SOURCES}
 ngraphconfdir = $(sysconfdir)/$(PACKAGE)
 pixmapdir = $(datadir)/pixmaps/$(PACKAGE)
 
-dir_defs.h: dir_defs.h.in Makefile
-	$(SHELL) $(top_srcdir)/pathconv.sh "$(bindir)" "$(docdir)" "$(pkglibexecdir)" "$(pkglibdir)" "$(pkgdatadir)" "$(ngraphconfdir)" $(srcdir)/dir_defs.h.in
+dir_defs.h: dir_defs.h.in $(top_srcdir)/pathconv.sh
+	$(SHELL) $(top_srcdir)/pathconv.sh $(srcdir)/dir_defs.h.in
 
 completion_info_data.c: $(srcdir)/completion_info_functions.txt $(srcdir)/completion_info_constants.txt $(srcdir)/create_completion_info.rb
 	ruby $(srcdir)/create_completion_info.rb $(srcdir)/completion_info_functions.txt $(srcdir)/completion_info_constants.txt completion_info_data.c
