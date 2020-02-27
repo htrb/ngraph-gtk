@@ -931,7 +931,7 @@ set_obj_points_from_text(GtkWidget *w, struct objlist *Obj, int Id, char *field)
   array = arraynew(sizeof(int));
   ptr = buf;
   while (1) {
-    while (ptr && isspace(*ptr))
+    while (*ptr && isspace(*ptr))
       ptr++;
 
     if (*ptr == '\0') {
