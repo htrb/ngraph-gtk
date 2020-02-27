@@ -40,6 +40,7 @@ Makefile.in
 /libtool
 /ltmain.sh
 /test-driver
+/pathconv.sh
 
 /*.gra
 /*.ngp
