@@ -155,6 +155,7 @@ AC_FUNC_MMAP
 AC_CHECK_FUNCS([sigaction sigsuspend alarm dup2 getcwd mkdir pow powl log10l fabsl floorl sqrt strchr strdup strerror strncasecmp strstr strtol utime isfinite finite nanosleep sleep])
 
 AC_CONFIG_FILES([Makefile \
+		 pathconv.sh \
 		 src/Makefile \
 		 src/gtk/Makefile \
 		 src/math/Makefile \
@@ -162,7 +163,7 @@ AC_CONFIG_FILES([Makefile \
 		 addin/Makefile \
 		 po/Makefile.in \
 		 m4/Makefile \
-		 demo/Makefile
+		 demo/Makefile \
 		 initfile/Makefile \
 		 doc/Makefile \
 		 doc/html/Makefile \
