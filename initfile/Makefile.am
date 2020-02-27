@@ -22,7 +22,7 @@ Ngraph.ini: Ngraph.ini.osx
 	cp $< $@
 else
 Ngraph.ini: $(srcdir)/Ngraph.ini.in $(top_srcdir)/pathconv.sh
-	$(SHELL) $(top_srcdir)/pathconv.sh "$(ngraphconfdir)" $<
+	$(SHELL) $(top_srcdir)/pathconv.sh $<
 endif
 endif
 
