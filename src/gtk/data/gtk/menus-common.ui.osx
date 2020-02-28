@@ -511,12 +511,16 @@
       <attribute name="label" translatable="yes">_Help</attribute>
       <section>
         <item>
-          <attribute name="label" translatable="yes">Shortcuts...</attribute>
+          <attribute name="label" translatable="yes">_Keyboard shortcus</attribute>
           <attribute name="action">win.show-help-overlay</attribute>
         </item>
 	<item>
 	  <attribute name="label" translatable="yes">_Help</attribute>
 	  <attribute name="action">app.help</attribute>
+	</item>
+	<item>
+	  <attribute name="label" translatable="yes">_Demonstration</attribute>
+	  <attribute name="action">app.demo</attribute>
 	</item>
       </section>
     </submenu>
