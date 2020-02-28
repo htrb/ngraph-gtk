@@ -27,6 +27,12 @@ about_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 }
 
 static void
+demo_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
+{
+  CmHelpDemo(NULL, NULL);
+}
+
+static void
 quit_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
   CmGraphQuit(NULL, NULL);
@@ -673,6 +679,7 @@ static GActionEntry AppEntries[] =
 {
   { "help", help_activated, NULL, NULL, NULL },
   { "about", about_activated, NULL, NULL, NULL },
+  { "demo", demo_activated, NULL, NULL, NULL },
   { "quit", quit_activated, NULL, NULL, NULL },
   { "preferences", PreferenceMiscAction_activated, NULL, NULL, NULL },
   { "GraphNewFrameAction", GraphNewFrameAction_activated, NULL, NULL, NULL },
