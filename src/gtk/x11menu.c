@@ -57,7 +57,7 @@
 #include "x11view.h"
 
 #define DUMMY_AXISGRID N_("axisgrid") /* only for translation */
-#define DUMMY_SHORTCUT N_("Show shortcut keys") /* only for translation */
+#define DUMMY_SHORTCUT N_("_Keyboard shortcus") /* only for translation */
 
 #define TEXT_HISTORY     "text_history"
 #define MATH_X_HISTORY   "math_x_history"
