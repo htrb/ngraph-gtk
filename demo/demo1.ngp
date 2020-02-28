@@ -482,7 +482,7 @@ new text
 	text::B=0
 	text::clip=true
 	text::redraw_flag=true
-	text::text='COLOR(), RGB(), HSB() and MARKSIZE() FUNCTION'
+	text::text='color(), rgb(), hsb() and marksize() FUNCTION'
 	text::x=1900
 	text::y=7300
 	text::pt=2000

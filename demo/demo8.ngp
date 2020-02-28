@@ -623,7 +623,7 @@ new text
 	text::A=255
 	text::clip=true
 	text::redraw_flag=true
-	text::text='Demo #8:\nDRAW\_RECT(), DRAW\_LINE() and COL[ ]'
+	text::text='Demo #8:\ndraw\_rect(), draw\_line() and col[ ]'
 	text::x=4000
 	text::y=6842
 	text::pt=2000

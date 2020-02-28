@@ -706,7 +706,7 @@ new text
 	text::A=255
 	text::clip=true
 	text::redraw_flag=true
-	text::text='Demo #9:\nDRAW\_RECT() and DRAW\_ARC() FUNCTION'
+	text::text='Demo #9:\ndraw\_rect() and draw\_arc() FUNCTION'
 	text::x=4000
 	text::y=6842
 	text::pt=2000

@@ -13,7 +13,7 @@ do
 done
 
 new sarray name="CAPTION"
-sarray::add "Demo #_1: COLOR(), RGB(), HSB() and MARKSIZE() FUNCTION"
+sarray::add "Demo #_1: color(), rgb(), hsb() and marksize() FUNCTION"
 sarray::add "Demo #_2: LEAST SQUARE FIT"
 sarray::add "Demo #_3: AXIS DIVISION"
 sarray::add "Demo #_4: MULTI GRAPH"
@@ -24,9 +24,9 @@ sarray::add "Demo #5_D: CURVE"
 sarray::add "Demo #5_E: AXIS"
 sarray::add "Demo #_6: POLYGON PLOT"
 sarray::add "Demo #_7: FUNCTION PLOT"
-sarray::add 'Demo #_8: DRAW__RECT(), DRAW__LINE() and COL[]'
-sarray::add 'Demo #_9: DRAW__RECT() and DRAW__ARC() FUNCTION'
-sarray::add "_Quit demo"
+sarray::add 'Demo #_8: draw__rect(), draw__line() and col[]'
+sarray::add 'Demo #_9: draw__rect() and draw__arc() FUNCTION'
+sarray::add "_Quit demonstration"
 
 caption="'${sarray::join="' '"}'"
 caption_num="${sarray:CAPTION:num}"
