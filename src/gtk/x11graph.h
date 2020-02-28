@@ -33,6 +33,7 @@ void CmGraphShell(void *w, gpointer client_data);
 void CmGraphDirectory(void *w, gpointer client_data);
 void CmHelpHelp(void *w, gpointer client_data);
 void CmHelpAbout(void *w, gpointer client_data);
+void CmHelpDemo(void *w, gpointer client_data);
 void CmGraphSwitch(void *w, gpointer client_data);
 void CmGraphPage(void *w, gpointer client_data);
 

@@ -1257,6 +1257,38 @@ CmHelpAbout(void *w, gpointer client_data)
 			NULL);
 }
 
+void
+CmHelpDemo(void *w, gpointer client_data)
+{
+  struct objlist *obj;
+  char *demo_file, *data_dir;
+
+  if (Menulock || Globallock)
+    return;
+
+  obj = chkobject("system");
+  if (obj == NULL) {
+    return;
+  }
+
+  getobj(obj, "data_dir", 0, 0, NULL, &data_dir);
+  if (data_dir == NULL) {
+    return;
+  }
+
+  if (!CheckSave()) {
+    return;
+  }
+
+  demo_file = g_strdup_printf("%s/demo/demo.ngp", data_dir);
+  if (demo_file == NULL) {
+    return;
+  }
+
+  LoadNgpFile(demo_file, Menulocal.scriptconsole, "-f");
+  g_free(demo_file);
+}
+
 static char *
 check_help_file(void)
 {
