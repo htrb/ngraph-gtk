@@ -104,3 +104,4 @@ osx/ngraph.icns
 
 test/*.log
 test/*.sh.trs
+/src/gtk/data/ngraphui.resources.xml
