@@ -4607,42 +4607,37 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
   int i;
   GSList *list;
   GtkToolItem *widget;
-  GtkWidget *toolbar, *icon, *menu;
+  GtkWidget *toolbar, *menu;
 
   toolbar = gtk_toolbar_new();
   list = NULL;
-  icon = NULL;
   for (i = 0; i < n; i++) {
-    if (item[i].icon) {
-      icon = gtk_image_new_from_icon_name(item[i].icon, GTK_ICON_SIZE_SMALL_TOOLBAR);
-    }
-
     switch (item[i].type) {
     case TOOL_TYPE_SEPARATOR:
       widget = gtk_separator_tool_item_new();
       gtk_separator_tool_item_set_draw(GTK_SEPARATOR_TOOL_ITEM(widget), TRUE);
       break;
     case TOOL_TYPE_NORMAL:
-      widget = gtk_tool_button_new(icon, _(item[i].label));
+      widget = gtk_tool_button_new(NULL, _(item[i].label));
       break;
     case TOOL_TYPE_DRAW:
-      widget = gtk_tool_button_new(icon, _(item[i].label));
+      widget = gtk_tool_button_new(NULL, _(item[i].label));
       DrawButton = GTK_WIDGET(widget);
       break;
     case TOOL_TYPE_SAVE:
-      widget = gtk_menu_tool_button_new(icon, _(item[i].label));
+      widget = gtk_menu_tool_button_new(NULL, _(item[i].label));
       menu = create_save_menu();
       gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(widget), menu);
       gtk_menu_tool_button_set_arrow_tooltip_text(GTK_MENU_TOOL_BUTTON(widget), _("Save menu"));
       break;
     case TOOL_TYPE_RECENT_GRAPH:
-      widget = gtk_menu_tool_button_new(icon, _(item[i].label));
+      widget = gtk_menu_tool_button_new(NULL, _(item[i].label));
       menu = create_recent_menu(RECENT_TYPE_GRAPH);
       gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(widget), menu);
       gtk_menu_tool_button_set_arrow_tooltip_text(GTK_MENU_TOOL_BUTTON(widget), _("Recent Graphs"));
       break;
     case TOOL_TYPE_RECENT_DATA:
-      widget = gtk_menu_tool_button_new(icon, _(item[i].label));
+      widget = gtk_menu_tool_button_new(NULL, _(item[i].label));
       menu = create_recent_menu(RECENT_TYPE_DATA);
       gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(widget), menu);
       gtk_menu_tool_button_set_arrow_tooltip_text(GTK_MENU_TOOL_BUTTON(widget), _("Recent Data Files"));
@@ -4650,17 +4645,11 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
     case TOOL_TYPE_TOGGLE:
     case TOOL_TYPE_TOGGLE2:
       widget = gtk_toggle_tool_button_new();
-      if (icon) {
-	gtk_tool_button_set_icon_widget(GTK_TOOL_BUTTON(widget), icon);
-      }
       break;
     case TOOL_TYPE_RADIO:
       widget = gtk_radio_tool_button_new(list);
       list = gtk_radio_tool_button_get_group(GTK_RADIO_TOOL_BUTTON(widget));
       gtk_tool_button_set_label(GTK_TOOL_BUTTON(widget), _(item[i].label));
-      if (icon) {
-	gtk_tool_button_set_icon_widget(GTK_TOOL_BUTTON(widget), icon);
-      }
       if (btn_press_cb) {
 	g_signal_connect(gtk_bin_get_child(GTK_BIN(widget)), "button-press-event", btn_press_cb, NULL);
       }
@@ -4671,6 +4660,10 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
 
     if (widget == NULL) {
       continue;
+    }
+
+    if (item[i].icon) {
+      gtk_tool_button_set_icon_name(GTK_TOOL_BUTTON(widget), item[i].icon);
     }
 
 #if USE_GTK_BUILDER
