@@ -76,8 +76,6 @@ struct NgraphApp NgraphApp = {0};
 GtkWidget *TopLevel = NULL, *DrawButton = NULL;
 GtkAccelGroup *AccelGroup = NULL;
 
-#define DRAW_NOTIFY_CLASS_NAME "draw_notify"
-
 static GtkWidget *CurrentWindow = NULL, *CToolbar = NULL, *PToolbar = NULL, *SettingPanel = NULL, *ToolBox = NULL;
 static enum {APP_CONTINUE, APP_QUIT, APP_QUIT_FORCE} Hide_window = APP_CONTINUE;
 static int DrawLock = FALSE;
