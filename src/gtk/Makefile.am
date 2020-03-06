@@ -28,6 +28,7 @@ NGRAPH_ICONS = data/pixmaps/ngraph_align_b.png				\
 	data/pixmaps/join_miter-symbolic.svg				\
 	data/pixmaps/join_round-symbolic.svg data/pixmaps/ngraph.svg	\
 	data/pixmaps/ngraph_draw-symbolic.svg				\
+	data/pixmaps/ngraph_draw-attention-symbolic.svg			\
 	data/pixmaps/ngraph_eval-symbolic.svg				\
 	data/pixmaps/ngraph_line-symbolic.svg				\
 	data/pixmaps/ngraph_single-symbolic.svg				\
