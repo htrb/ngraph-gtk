@@ -4585,7 +4585,7 @@ void
 draw_notify(int notify)
 {
   static int state = FALSE;
-  GtkStyleContext *style;
+  const char *icon_name;
   if (state == notify) {
     return;
   }
@@ -4593,12 +4593,9 @@ draw_notify(int notify)
   if (DrawButton == NULL) {
     return;
   }
-  style = gtk_widget_get_style_context(DrawButton);
-  if (state) {
-    gtk_style_context_add_class(style, DRAW_NOTIFY_CLASS_NAME);
-  } else {
-    gtk_style_context_remove_class(style, DRAW_NOTIFY_CLASS_NAME);
-  }
+  icon_name = (state) ? "ngraph_draw-attention-symbolic" : "ngraph_draw-symbolic";
+  gtk_tool_button_set_icon_name(GTK_TOOL_BUTTON(DrawButton), icon_name);
+  gtk_widget_queue_draw(DrawButton);
 }
 
 static GtkWidget *
