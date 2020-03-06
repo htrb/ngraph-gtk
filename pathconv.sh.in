@@ -13,13 +13,14 @@ DATADIR="@datadir@/@PACKAGE@"
 CONFDIR="@sysconfdir@/@PACKAGE@"
 
 TARGET=`basename $1 .in`
+SED="@SED@"
 
 LC_ALL=C
 export LC_ALL
 
-cat $1 | sed -e "s!BINDIRDEF!$BINDIR!g" \
-             -e "s!DOCDIRDEF!$DOCDIR!g" \
-             -e "s!LIBEXECDIRDEF!$LIBEXECDIR!g" \
-             -e "s!LIBDIRDEF!$LIBDIR!g" \
-             -e "s!DATADIRDEF!$DATADIR!g" \
-             -e "s!CONFDIRDEF!$CONFDIR!g" > $TARGET
+cat $1 | "$SED" -e "s!BINDIRDEF!$BINDIR!g" \
+		-e "s!DOCDIRDEF!$DOCDIR!g" \
+		-e "s!LIBEXECDIRDEF!$LIBEXECDIR!g" \
+		-e "s!LIBDIRDEF!$LIBDIR!g" \
+		-e "s!DATADIRDEF!$DATADIR!g" \
+		-e "s!CONFDIRDEF!$CONFDIR!g" > $TARGET
