@@ -16,6 +16,7 @@
     <file>pixmaps/ngraph_cross-symbolic.svg</file>
     <file>pixmaps/ngraph_datapoint-symbolic.svg</file>
     <file>pixmaps/ngraph_draw-symbolic.svg</file>
+    <file>pixmaps/ngraph_draw-attention-symbolic.svg</file>
     <file>pixmaps/ngraph_eval-symbolic.svg</file>
     <file>pixmaps/ngraph_filewin-symbolic.svg</file>
     <file>pixmaps/ngraph_frame-symbolic.svg</file>
@@ -68,4 +69,3 @@
     <file>css/ngraph.css</file>
   </gresource>
 </gresources>
-
