@@ -2107,7 +2107,6 @@ AlignFocusedObj(int align)
   if (maxx < minx || maxy < miny)
     return;
 
-  d->allclear = FALSE;
   PaintLock = TRUE;
   get_focused_obj_array(d->focusobj, objs);
   menu_save_undo(UNDO_TYPE_ALIGN, objs);
@@ -2154,10 +2153,6 @@ AlignFocusedObj(int align)
     argv[0] = (char *) &dx;
     argv[1] = (char *) &dy;
     argv[2] = NULL;
-
-    if (focus[i]->obj == chkobject("axis")) {
-      d->allclear = TRUE;
-    }
 
     _exeobj(focus[i]->obj, "move", inst, 2, argv);
     set_graph_modified();
