@@ -5869,10 +5869,6 @@ Draw(int SelectFile)
   ProgressDialogSetTitle(_("Drawing"));
 
   ReopenGC();
-  if (region) {
-    cairo_region_destroy(region);
-  }
-  region = NULL;
 
   gra_inst = chkobjinstoid(Menulocal.GRAobj, Menulocal.GRAoid);
   if (gra_inst != NULL) {
