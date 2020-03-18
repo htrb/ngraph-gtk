@@ -139,7 +139,6 @@ static void ViewDelete(void);
 static int text_dropped(const char *str, gint x, gint y, struct Viewer *d);
 static int add_focus_obj(struct narray *focusobj, struct objlist *obj, int oid);
 static void ShowFocusFrame(cairo_t *cr, const struct Viewer *d);
-static void AddInvalidateRect(struct objlist *obj, N_VALUE *inst);
 static void AddList(struct objlist *obj, N_VALUE *inst);
 static void RotateFocusedObj(int direction);
 static void set_mouse_cursor_hover(struct Viewer *d, int x, int y);
@@ -1831,39 +1830,6 @@ DelList(struct objlist *obj, N_VALUE *inst, const struct Viewer *d)
     if ((obj2 == obj) && (oid == oid2))
       mx_dellist(Menulocal.obj, Menulocal.inst, i);
     i++;
-  }
-}
-
-static void
-AddInvalidateRect(struct objlist *obj, N_VALUE *inst)
-{
-  struct narray *abbox;
-  int bboxnum, *bbox;
-  double zoom;
-  cairo_rectangle_int_t rect;
-  if (chkobjfield(obj, "bbox")) {
-    return;
-  }
-
-  _exeobj(obj, "bbox", inst, 0, NULL);
-  _getobj(obj, "bbox", inst, &abbox);
-  bboxnum = arraynum(abbox);
-  bbox = arraydata(abbox);
-  if (bboxnum < 4) {
-    return;
-  }
-
-  zoom = Menulocal.PaperZoom / 10000.0;
-
-  rect.x = mxd2p(bbox[0] * zoom + Menulocal.LeftMargin) - 7;
-  rect.y = mxd2p(bbox[1] * zoom + Menulocal.TopMargin) - 7;
-  rect.width = mxd2p(bbox[2] * zoom + Menulocal.LeftMargin) - rect.x + 7;
-  rect.height = mxd2p(bbox[3] * zoom + Menulocal.TopMargin) - rect.y + 7;
-
-  if (region == NULL) {
-    region = cairo_region_create_rectangle(&rect);
-  } else {
-    cairo_region_union_rectangle(region, &rect);
   }
 }
 
