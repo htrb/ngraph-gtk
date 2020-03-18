@@ -5316,15 +5316,10 @@ ViewerWinUpdate(char **objects)
     clear_focus_obj(d);
   }
 
-  if (d->allclear) {
-    mx_clear(NULL, objects);
-    mx_redraw(Menulocal.obj, Menulocal.inst, objects);
-  }
+  mx_redraw(Menulocal.obj, Menulocal.inst, objects);
 
   PaintLock = lock_state;
   gtk_widget_queue_draw(d->Win);
-
-  d->allclear = TRUE;
 }
 
 static void
