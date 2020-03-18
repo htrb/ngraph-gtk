@@ -386,21 +386,6 @@ GRAaddlist(int GC,struct objlist *obj,N_VALUE *inst,
   GRAaddlist2(GC,draw);
 }
 
-void
-GRAdellist(int GC,int n)
-{
-  struct narray **array;
-
-  if (GRAClist[GC].output==-1) return;
-  if (GC<0) return;
-  if (GC>=GRAClimit) return;
-  if (GRAClist[GC].output==-1) return;
-  array=GRAClist[GC].list;
-  if (array!=NULL) {
-    arrayndel2(*array,n);
-  }
-}
-
 struct objlist *
 GRAgetlist(int GC,int *oid,char **field,int n)
 {
