@@ -567,7 +567,6 @@ mergedraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   }
   fclose(fd);
 #endif  /* USE_MERGE_CACHE */
-  GRAaddlist(info.GC,obj,inst,(char *)argv[0],"redraw");
   return 0;
 }
 
