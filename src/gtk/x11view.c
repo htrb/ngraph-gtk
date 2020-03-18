@@ -3798,7 +3798,6 @@ create_legend1(struct Viewer *d)
   }
 
   arraydel2(d->points);
-  d->allclear = FALSE;
   objects[0] = obj->name;
   objects[1] = NULL;
   UpdateAll(objects);
