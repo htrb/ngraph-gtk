@@ -3857,7 +3857,6 @@ create_legend1(struct Viewer *d)
 	menu_delete_undo(undo);
       } else {
 	AddList(obj, inst);
-	AddInvalidateRect(obj, inst);
 	set_graph_modified();
       }
       PaintLock = FALSE;
