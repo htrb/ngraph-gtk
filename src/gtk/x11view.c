@@ -766,7 +766,6 @@ text_dropped(const char *str, gint x, gint y, struct Viewer *d)
 
     getobj(obj, "oid", id, 0, NULL, &oid);
     add_focus_obj(NgraphApp.Viewer.focusobj, obj, oid);
-    d->allclear = FALSE;
     AddList(obj, inst);
 
     set_graph_modified();
