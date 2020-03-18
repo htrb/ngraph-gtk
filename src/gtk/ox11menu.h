@@ -160,7 +160,6 @@ enum SAVE_CONFIG_TYPE {
 
 void mx_inslist(struct objlist *obj, N_VALUE *inst,
 		struct objlist *aobj, N_VALUE *ainst, char *afield, int addn);
-void mx_dellist(struct objlist *obj, N_VALUE *inst, int deln);
 void mx_redraw(struct objlist *obj, N_VALUE *inst, char const **objects);
 void mx_clear(cairo_region_t *region, char const **objects);
 void mgtkdisplaydialog(const char *str);

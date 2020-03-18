@@ -1421,15 +1421,6 @@ mx_inslist(struct objlist *obj, N_VALUE *inst,
   GRAinslist(gc, aobj, ainst, chkobjectname(aobj), afield, addn);
 }
 
-void
-mx_dellist(struct objlist *obj, N_VALUE *inst, int deln)
-{
-  int gc;
-
-  _getobj(obj, "_GC", inst, &gc);
-  GRAdellist(gc, deln);
-}
-
 static int
 mxredraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
