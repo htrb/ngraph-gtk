@@ -101,7 +101,6 @@ enum ViewerAlignType {
 #define FOCUS_FRAME_OFST 5
 #define FOCUS_RECT_SIZE 6
 
-static cairo_region_t *region = NULL;
 static int PaintLock = FALSE, ZoomLock = FALSE, KeepMouseMode = FALSE;
 
 #define EVAL_NUM_MAX 5000
