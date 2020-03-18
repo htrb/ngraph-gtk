@@ -5978,7 +5978,6 @@ ViewDelete(void)
     if (inst == NULL)
       continue;
 
-    DelList(obj, inst, d);
     _getobj(obj, "id", inst, &id);
 
     if (obj == chkobject("axis")) {
