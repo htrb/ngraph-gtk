@@ -124,7 +124,6 @@ static gboolean ViewerEvMouseMotion(GtkWidget *w, GdkEventMotion *e, gpointer cl
 static gboolean ViewerEvScroll(GtkWidget *w, GdkEventScroll *e, gpointer client_data);
 static gboolean ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data);
 static gboolean ViewerEvKeyUp(GtkWidget *w, GdkEventKey *e, gpointer client_data);
-static void DelList(struct objlist *obj, N_VALUE *inst, const struct Viewer *d);
 static void ViewUpdate(void);
 static void ViewCopy(void);
 static void do_popup(GdkEventButton *event, struct Viewer *d);
@@ -1718,23 +1717,6 @@ ViewerSelectAllObj(struct objlist *obj)
   d->ShowFrame = TRUE;
   set_focus_sensitivity(d);
   gtk_widget_queue_draw(d->Win);
-}
-
-
-static void
-DelList(struct objlist *obj, N_VALUE *inst, const struct Viewer *d)
-{
-  int i, oid, oid2;
-  struct objlist *obj2;
-  char *field;
-
-  _getobj(obj, "oid", inst, &oid);
-  i = 0;
-  while ((obj2 = GRAgetlist(Menulocal.GC, &oid2, &field, i)) != NULL) {
-    if ((obj2 == obj) && (oid == oid2))
-      mx_dellist(Menulocal.obj, Menulocal.inst, i);
-    i++;
-  }
 }
 
 static void
