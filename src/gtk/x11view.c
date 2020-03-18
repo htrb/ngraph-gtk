@@ -5702,8 +5702,6 @@ OpenGC(void)
     height = 1;
 
   create_pix(width, height);
-
-  Menulocal.region = NULL;
 }
 
 void
