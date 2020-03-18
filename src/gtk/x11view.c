@@ -5286,11 +5286,6 @@ ViewerEvPaint(GtkWidget *w, cairo_t *cr, gpointer client_data)
     }
   }
 
-  if (! PaintLock && region) {
-    cairo_region_destroy(region);
-    region = NULL;
-  }
-
   return FALSE;
 }
 
