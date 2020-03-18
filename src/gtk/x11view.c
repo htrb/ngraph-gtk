@@ -5278,7 +5278,7 @@ ViewerEvHScroll(GtkRange *range, gpointer user_data)
 }
 
 void
-ViewerWinUpdate(char **objects)
+ViewerWinUpdate(char const **objects)
 {
   int i, num, lock_state;
   struct FocusObj **focus;
