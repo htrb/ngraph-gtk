@@ -1551,7 +1551,6 @@ Trimming(int x1, int y1, int x2, int y2, struct Viewer *d)
       }
     }
     AdjustAxis();
-    d->allclear = TRUE;
     argv[0] = "data";
     argv[1] = "axis";
     argv[2] = "axisgrid";
