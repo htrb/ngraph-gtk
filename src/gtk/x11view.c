@@ -6181,7 +6181,6 @@ ViewCopyAxis(struct objlist *obj, int id, struct FocusObj *focus, N_VALUE *inst)
 	ncopyobj(obj, idy2, idy);
 	inst2 = chkobjinst(obj, idy2);
 	_getobj(obj, "oid", inst2, &oidy);
-	AddList(obj, inst2);
 	set_graph_modified();
       }
 
@@ -6194,7 +6193,6 @@ ViewCopyAxis(struct objlist *obj, int id, struct FocusObj *focus, N_VALUE *inst)
 	    putobj(obj, "reference", idu2, axisx);
 	  }
 	}
-	AddList(obj, inst2);
 	set_graph_modified();
       }
 
@@ -6230,7 +6228,6 @@ ViewCopyAxis(struct objlist *obj, int id, struct FocusObj *focus, N_VALUE *inst)
 
 	_getobj(obj, "oid", inst2, &(focus->oid));
 
-	AddList(obj, inst2);
 	set_graph_modified();
       }
 
@@ -6253,7 +6250,6 @@ ViewCopyAxis(struct objlist *obj, int id, struct FocusObj *focus, N_VALUE *inst)
 	      putobj(dobj, "axis_y", idg2, axisy);
 	    }
 	  }
-	  AddList(dobj, inst2);
 	  set_graph_modified();
 	}
       }
@@ -6262,7 +6258,6 @@ ViewCopyAxis(struct objlist *obj, int id, struct FocusObj *focus, N_VALUE *inst)
 	ncopyobj(obj, idx2, idx);
 	inst2 = chkobjinst(obj, idx2);
 	_getobj(obj, "oid", inst2, &oidx);
-	AddList(obj, inst2);
 	set_graph_modified();
       }
 
@@ -6284,7 +6279,6 @@ ViewCopyAxis(struct objlist *obj, int id, struct FocusObj *focus, N_VALUE *inst)
 	arraydel(&agroup);
 
 	focus->oid = oidy;
-	AddList(obj, inst2);
 	set_graph_modified();
       }
 
@@ -6304,7 +6298,6 @@ ViewCopyAxis(struct objlist *obj, int id, struct FocusObj *focus, N_VALUE *inst)
       ncopyobj(obj, id2, id);
       inst2 = chkobjinst(obj, id2);
       _getobj(obj, "oid", inst2, &(focus->oid));
-      AddList(obj, inst2);
       set_graph_modified();
     }
   }
