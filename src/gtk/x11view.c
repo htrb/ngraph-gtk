@@ -771,7 +771,6 @@ text_dropped(const char *str, gint x, gint y, struct Viewer *d)
     add_focus_obj(NgraphApp.Viewer.focusobj, obj, oid);
     d->allclear = FALSE;
     AddList(obj, inst);
-    AddInvalidateRect(obj, inst);
 
     set_graph_modified();
     d->ShowFrame = TRUE;
