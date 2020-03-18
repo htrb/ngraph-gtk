@@ -3029,7 +3029,6 @@ axisdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 
 exit:
   free_axis_math(&aconf);
-  GRAaddlist(GC,obj,inst,(char *)argv[0],(char *)argv[1]);
   return 0;
 }
 
