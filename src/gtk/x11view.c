@@ -6179,7 +6179,6 @@ reorder_object(enum object_move_type type)
   }
   AddList(obj, inst);
   set_graph_modified();
-  d->allclear = TRUE;
   objects[0] = obj->name;
   objects[1] = NULL;
   UpdateAll(objects);
