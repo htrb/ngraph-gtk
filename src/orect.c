@@ -132,7 +132,6 @@ rectdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
     GRArectangle(GC,x1,y1,x2,y2,0);
   }
 
-  GRAaddlist(GC,obj,inst,(char *)argv[0],(char *)argv[1]);
   return 0;
 }
 
