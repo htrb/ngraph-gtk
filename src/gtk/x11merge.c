@@ -336,7 +336,7 @@ MergeWinUpdate(struct obj_list_data *d, int clear, int draw)
   case DRAW_REDRAW:
     getobj(Menulocal.obj, "redraw_flag", 0, 0, NULL, &redraw);
     if (redraw) {
-      NgraphApp.Viewer.allclear = TRUE;
+//      NgraphApp.Viewer.allclear = TRUE;
       update_viewer(d);
     } else {
       draw_notify(TRUE);
