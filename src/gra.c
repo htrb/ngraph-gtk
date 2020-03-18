@@ -533,6 +533,30 @@ GRAredraw2(struct objlist *obj,N_VALUE *inst,int setredrawf,int redraw_num,
   if (GC==-1) _exeobj(gobj,"close",ginst,0,NULL);
 }
 
+static int
+add_draw_obj(struct objlist *parent, char const **objects, int index)
+{
+  struct objlist *ocur;
+  const char *objname;
+
+  ocur = chkobjroot();
+  while (ocur != NULL) {
+    if (chkobjparent(ocur) == parent) {
+      int instnum;
+      instnum = chkobjlastinst(ocur);
+      if (instnum != -1) {
+	objname = chkobjectname(ocur);
+        objects[index] = objname;
+        index++;
+        objects[index] = NULL;
+      }
+      index = add_draw_obj(ocur, objects, index);
+    }
+    ocur=ocur->next;
+  }
+  return index;
+}
+
 void
 GRAredraw(struct objlist *obj,N_VALUE *inst,int setredrawf,int redraw_num)
 {
