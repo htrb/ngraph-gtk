@@ -6132,8 +6132,6 @@ ViewUpdate(void)
 	ret = DialogExecute(TopLevel, &DlgAxis);
       }
     } else {
-      AddInvalidateRect(obj, inst);
-
       if (obj == chkobject("path")) {
 	LegendArrowDialog(&DlgLegendArrow, obj, id);
 	ret = DialogExecute(TopLevel, &DlgLegendArrow);
@@ -6158,9 +6156,6 @@ ViewUpdate(void)
 	set_graph_modified();
 	delobj(obj, id);
       }
-
-      if (ret == IDOK)
-	AddInvalidateRect(obj, inst);
     }
     if (ret != IDCANCEL) {
       modified = TRUE;
