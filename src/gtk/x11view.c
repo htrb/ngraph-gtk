@@ -6032,7 +6032,6 @@ reorder_object(enum object_move_type type)
     return;
 
   menu_save_undo_single(UNDO_TYPE_ORDER, obj->name);
-  DelList(obj, inst, d);
   _getobj(obj, "id", inst, &id);
   switch (type) {
   case OBJECT_MOVE_TYPE_TOP:
