@@ -3360,9 +3360,6 @@ mouse_up_drag(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
   CheckGrid(FALSE, state, &dx, &dy, NULL, NULL);
   get_focused_obj_array(d->focusobj, objs);
   axis = move_objects(dx, dy, d, objs);
-  if (d->Mode == LegendB || (d->Mode == PointB && !axis)) {
-    d->allclear=FALSE;
-  }
   if (axis) {
     add_data_grid_to_objs(objs);
   }
