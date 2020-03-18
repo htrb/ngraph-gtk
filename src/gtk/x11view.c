@@ -1155,7 +1155,6 @@ ViewerWinSetup(void)
   d->ShowFrame = FALSE;
   d->ShowLine = FALSE;
   d->ShowRect = FALSE;
-  d->allclear = TRUE;
   d->ignoreredraw = FALSE;
   d->KeyMask = 0;
   OpenGC();
