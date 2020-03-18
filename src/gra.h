@@ -134,8 +134,6 @@ void GRAredraw(struct objlist *obj,N_VALUE *inst,int setredrawf,int redrawf);
 void GRAredraw_layers(struct objlist *obj, N_VALUE *inst, int setredrawf, int redraw_num, char const **objects);
 void GRAaddlist(int GC,struct objlist *obj,N_VALUE *inst,
                 const char *objname, const char *field);
-void GRAinslist(int GC,struct objlist *obj,N_VALUE *inst,
-                const char *objname, const char *field,int n);
 void GRAdellist(int GC,int n);
 struct objlist *GRAgetlist(int GC,int *oid,char **field,int n);
 int GRAdraw(int GC,char code,int *cpar,char *cstr);

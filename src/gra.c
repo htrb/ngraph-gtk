@@ -387,19 +387,6 @@ GRAaddlist(int GC,struct objlist *obj,N_VALUE *inst,
 }
 
 void
-GRAinslist(int GC,struct objlist *obj,N_VALUE *inst,
-                const char *objname, const char *field,int n)
-{
-  int oid;
-  char *draw;
-
-  if (GRAClist[GC].output==-1) return;
-  if (_getobj(obj,"oid",inst,&oid)==-1) return;
-  if ((draw=mkobjlist(NULL,objname,oid,field,TRUE))==NULL) return;
-  GRAinslist2(GC,draw,n);
-}
-
-void
 GRAdellist(int GC,int n)
 {
   struct narray **array;
