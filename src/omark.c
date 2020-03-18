@@ -104,7 +104,6 @@ markdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   GRAview(GC,0,0,w*10000.0/zoom,h*10000.0/zoom,clip);
   GRAlinestyle(GC,snum,sdata,width,GRA_LINE_CAP_BUTT,GRA_LINE_JOIN_MITER,1000);
   GRAmark(GC,type,x,y,size,fr,fg,fb,fa,br,bg,bb,ba);
-  GRAaddlist(GC,obj,inst,(char *)argv[0],(char *)argv[1]);
   return 0;
 }
 
