@@ -1556,7 +1556,7 @@ clear_layer(const char *obj, cairo_region_t *region)
 }
 
 void
-mx_clear(cairo_region_t *region, char **objects)
+mx_clear(cairo_region_t *region, char const **objects)
 {
   if (objects) {
     while(*objects) {
