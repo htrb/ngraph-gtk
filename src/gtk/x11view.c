@@ -4204,31 +4204,6 @@ create_axis(struct Viewer *d)
       if (ret == IDCANCEL) {
 	menu_undo_internal(undo);
       } else {
-        N_VALUE *inst;
-	inst = chkobjinst(obj, idx);
-	if (inst)
-	  AddList(obj, inst);
-
-	inst = chkobjinst(obj, idy);
-	if (inst)
-	  AddList(obj, inst);
-
-	if (d->Mode != CrossB) {
-	  inst = chkobjinst(obj, idu);
-	  if (inst)
-	    AddList(obj, inst);
-
-	  inst = chkobjinst(obj, idr);
-	  if (inst)
-	    AddList(obj, inst);
-	}
-	if ((idg != -1) && (obj2 != NULL)) {
-
-	  inst = chkobjinst(obj2, idg);
-	  if (inst)
-	    AddList(obj2, inst);
-
-	}
 	set_graph_modified();
       }
       argv[0] = obj->name;
