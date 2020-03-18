@@ -266,7 +266,6 @@ arcdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
     draw_marker(obj, inst, GC, join, miter, width, x, y, rx, ry, angle1, angle2, fr, fg, fb, fa);
   }
 
-  GRAaddlist(GC,obj,inst,(char *)argv[0],(char *)argv[1]);
   return 0;
 }
 
