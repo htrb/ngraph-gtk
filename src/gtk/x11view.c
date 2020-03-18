@@ -4006,7 +4006,6 @@ create_legendx(struct Viewer *d)
   arraydel2(d->points);
   if (obj) {
     char *objects[2];
-    d->allclear = FALSE;
     objects[0] = obj->name;
     objects[1] = NULL;
     UpdateAll(objects);
