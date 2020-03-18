@@ -3511,9 +3511,6 @@ mouse_up_change(unsigned int state, TPoint *point, double zoom, struct Viewer *d
     }
     d->FrameOfsX = d->FrameOfsY = 0;
     d->ShowFrame = TRUE;
-    if (d->Mode == LegendB || (d->Mode == PointB && !axis)) {
-      d->allclear = FALSE;
-    }
     argv[0] = (obj) ? obj->name : NULL;
     argv[1] = NULL;
     if (axis) {
