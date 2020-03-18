@@ -3171,10 +3171,6 @@ ViewerEvLButtonDown(unsigned int state, TPoint *point, struct Viewer *d)
   if (Menulock || Globallock)
     return FALSE;
 
-  if (region) {
-    return FALSE;
-  }
-
   zoom = Menulocal.PaperZoom / 10000.0;
 
   d->MouseX1 = d->MouseX2 = calc_mouse_x(point->x, zoom, d);
