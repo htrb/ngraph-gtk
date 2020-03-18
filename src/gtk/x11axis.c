@@ -2875,7 +2875,7 @@ AxisWinUpdate(struct obj_list_data *d, int clear, int draw)
     list_store_select_int(GTK_WIDGET(d->text), AXIS_WIN_COL_ID, d->select);
   }
   if (draw) {
-    char *objects[4];
+    char const *objects[4];
 //    NgraphApp.Viewer.allclear = TRUE;
     objects[0] = d->obj->name;
     objects[1] = "axisgrid";
