@@ -6531,10 +6531,7 @@ ViewCopy(void)
 	inst2 = chkobjinst(obj, id2);
 	_getobj(obj, "oid", inst2, &(focus->oid));
 	AddList(obj, inst2);
-	AddInvalidateRect(obj, inst2);
 	set_graph_modified();
-      } else {
-	AddInvalidateRect(obj, inst);
       }
     }
   }
