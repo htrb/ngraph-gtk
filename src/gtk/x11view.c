@@ -5183,9 +5183,7 @@ ViewerEvKeyUp(GtkWidget *w, GdkEventKey *e, gpointer client_data)
     dy = d->FrameOfsY;
     get_focused_obj_array(d->focusobj, objs);
     axis = move_objects(dx, dy, d, objs);
-    if (! axis) {
-      d->allclear = FALSE;
-    } else {
+    if (axis) {
       add_data_grid_to_objs(objs);
     }
     UpdateAll(objs);
