@@ -5348,12 +5348,6 @@ ViewerWinUpdate(char **objects)
   if (d->allclear) {
     mx_clear(NULL, objects);
     mx_redraw(Menulocal.obj, Menulocal.inst, objects);
-  } else if (region) {
-    Menulocal.region = region;
-    gra2cairo_clip_region(Menulocal.local, region);
-    mx_redraw(Menulocal.obj, Menulocal.inst, objects);
-    gra2cairo_clip_region(Menulocal.local, NULL);
-    Menulocal.region = NULL;
   }
 
   PaintLock = lock_state;
