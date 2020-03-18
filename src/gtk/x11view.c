@@ -3703,7 +3703,6 @@ ViewerEvLButtonUp(unsigned int state, TPoint *point, struct Viewer *d)
       mouse_up_point(state, point, zoom, d);
 #if 0
       if (d->Mode & POINT_TYPE_POINT) {
-	d->allclear = FALSE;
 	UpdateAll(NULL);
       } else {
 	gtk_widget_queue_draw(d->Win);
