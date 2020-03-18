@@ -414,7 +414,6 @@ paste_cb(GtkClipboard *clipboard, const gchar *text, gpointer data)
 
   if (arraynum(NgraphApp.Viewer.focusobj) > 0) {
     set_graph_modified();
-    NgraphApp.Viewer.allclear = FALSE;
     NgraphApp.Viewer.ShowFrame = TRUE;
     gtk_widget_grab_focus(NgraphApp.Viewer.Win);
     UpdateAll(objects);
