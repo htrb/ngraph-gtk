@@ -613,7 +613,6 @@ mergeredraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
       GRAlinestyle(GC, 0, NULL, 10, GRA_LINE_CAP_BUTT, GRA_LINE_JOIN_MITER, 1000);
       GRArectangle(GC, x1, y1, x2, y2, 0);
     }
-    GRAaddlist(GC,obj,inst,(char *)argv[0],(char *)argv[1]);
   }
 #endif  /* USE_MERGE_CACHE */
   return 0;
