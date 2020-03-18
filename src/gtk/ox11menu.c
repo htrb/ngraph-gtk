@@ -1411,16 +1411,6 @@ mx_redraw(struct objlist *obj, N_VALUE *inst, char const **objects)
   main_window_redraw();
 }
 
-void
-mx_inslist(struct objlist *obj, N_VALUE *inst,
-	   struct objlist *aobj, N_VALUE *ainst, char *afield, int addn)
-{
-  int gc;
-
-  _getobj(obj, "_GC", inst, &gc);
-  GRAinslist(gc, aobj, ainst, chkobjectname(aobj), afield, addn);
-}
-
 static int
 mxredraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
