@@ -540,7 +540,7 @@ GRAredraw(struct objlist *obj,N_VALUE *inst,int setredrawf,int redraw_num)
 }
 
 void
-GRAredraw_layers(struct objlist *obj, N_VALUE *inst, int setredrawf, int redraw_num, char **objects)
+GRAredraw_layers(struct objlist *obj, N_VALUE *inst, int setredrawf, int redraw_num, char const **objects)
 {
   int i, n, snum;
   char *dargv[2], *device, **sdata;
