@@ -3916,7 +3916,6 @@ create_path(struct Viewer *d)
     delobj(obj, id);
   } else {
     AddList(obj, inst);
-    AddInvalidateRect(obj, inst);
     set_graph_modified();
   }
 
