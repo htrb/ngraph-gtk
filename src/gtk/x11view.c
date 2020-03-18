@@ -6422,9 +6422,6 @@ ViewCopy(void)
   PaintLock = FALSE;
   g_free(focused_inst);
 
-  if (! axis)
-    d->allclear = FALSE;
-
   UpdateAll(objs);
   d->ShowFrame = TRUE;
 }
