@@ -3838,7 +3838,6 @@ create_path(struct Viewer *d)
     menu_delete_undo(undo);
     delobj(obj, id);
   } else {
-    AddList(obj, inst);
     set_graph_modified();
   }
 
