@@ -497,7 +497,7 @@ set_obj_cell_renderer_cb(struct obj_list_data *d, int i, n_list_store *list, GCa
 void
 update_viewer(struct obj_list_data *d)
 {
-  char *objects[2];
+  char const *objects[2];
   objects[0] = d->obj->name;
   objects[1] = NULL;
   ViewerWinUpdate(objects);
