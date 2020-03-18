@@ -3857,7 +3857,6 @@ create_path(struct Viewer *d)
  ExitCreatePath:
   arraydel2(d->points);
 
-  d->allclear = FALSE;
   objects[0] = obj->name;
   objects[1] = NULL;
   UpdateAll(objects);
