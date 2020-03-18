@@ -3383,12 +3383,10 @@ check_zoom(double zoom)
 static void
 mouse_up_zoom(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
 {
-  int vx1, vy1, zmx, zmy, axis, preserve_ratio;
+  int vx1, vy1, zmx, zmy, preserve_ratio;
   double zoom_x, zoom_y;
   char *objs[OBJ_MAX];
   struct FocusObj *focus;
-
-  axis = FALSE;
 
   d->ShowRect = FALSE;
 
@@ -3434,11 +3432,6 @@ mouse_up_zoom(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
       struct objlist *obj;
       focus = *(struct FocusObj **) arraynget(d->focusobj, i);
       obj = focus->obj;
-
-      if (obj == chkobject("axis")) {
-	axis = TRUE;
-      }
-
       inst = chkobjinstoid(focus->obj, focus->oid);
       if (inst) {
 	_exeobj(obj, "zooming", inst, 5, argv);
