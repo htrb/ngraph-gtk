@@ -5822,12 +5822,6 @@ ChangeDPI(void)
 void
 CloseGC(void)
 {
-  if (Menulocal.region != NULL) {
-    cairo_region_destroy(Menulocal.region);
-  }
-
-  Menulocal.region = NULL;
-
   UnFocus();
 }
 
