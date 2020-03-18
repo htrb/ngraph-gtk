@@ -3565,10 +3565,8 @@ mouse_up_change(unsigned int state, TPoint *point, double zoom, struct Viewer *d
 
       if (inst) {
 	menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
-	AddInvalidateRect(obj, inst);
 	_exeobj(obj, "change", inst, 3, argv);
 	set_graph_modified();
-	AddInvalidateRect(obj, inst);
       }
 
       PaintLock = FALSE;
