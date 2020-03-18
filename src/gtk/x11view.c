@@ -343,7 +343,6 @@ focus_new_insts(struct objlist *parent, struct narray *array, char **objects)
 {
   struct objlist *ocur;
   int i, oid;
-  N_VALUE *inst;
 
   ocur = parent->child;
   while (chkobjparent(ocur) == parent) {
@@ -360,7 +359,6 @@ focus_new_insts(struct objlist *parent, struct narray *array, char **objects)
       for (i = prev_instnum + 1; i <= instnum; i++) {
 	getobj(ocur, "oid", i, 0, NULL, &oid);
 	add_focus_obj(NgraphApp.Viewer.focusobj, ocur, oid);
-	inst = chkobjinst(ocur, i);
       }
     }
     if (ocur->child) {
