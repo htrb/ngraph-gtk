@@ -2224,10 +2224,8 @@ execute_selected_instances(struct FocusObj **focus, int num, int argc, char **ar
       continue;
     }
     if (chkobjfield(focus[i]->obj, field) == 0) {
-      AddInvalidateRect(focus[i]->obj, inst);
       _exeobj(focus[i]->obj, field, inst, argc, argv);
       set_graph_modified();
-      AddInvalidateRect(focus[i]->obj, inst);
     }
   }
 }
