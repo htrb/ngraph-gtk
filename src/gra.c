@@ -560,7 +560,47 @@ add_draw_obj(struct objlist *parent, char const **objects, int index)
 void
 GRAredraw(struct objlist *obj,N_VALUE *inst,int setredrawf,int redraw_num)
 {
-  GRAredraw2(obj,inst,setredrawf,redraw_num,-1,NULL,NULL,NULL);
+  struct objlist *gobj;
+  int gid, snum;
+  char *gfield;
+  N_VALUE *ginst;
+  char const *objects[OBJ_MAX] = {NULL};
+  char **sdata;
+  struct narray *sarray, *array;
+
+  if (_getobj(obj, "_list", inst, &sarray)) {
+    return;
+  }
+  snum = arraynum(sarray);
+  if (snum == 0) {
+    return;
+  }
+  sdata = arraydata(sarray);
+  gobj = getobjlist(sdata[0], &gid, &gfield, NULL);
+  if (gobj == NULL) {
+    return;
+  }
+  ginst = getobjinstoid(gobj, gid);
+  if (ginst == NULL) {
+    return;
+  }
+  _getobj(gobj, "draw_obj", ginst, &array);
+  if (array) {
+    int i, n;
+    n = arraynum(array);
+    for (i = 0; i < n; i++) {
+      objects[i] = arraynget_str(array, i);
+    }
+    objects[i] = NULL;
+  } else {
+    struct objlist *draw;
+    draw = getobject("draw");
+    if (draw == NULL) {
+      return;
+    }
+    add_draw_obj(draw, objects, 0);
+  }
+  GRAredraw_layers(obj,inst, setredrawf, redraw_num, objects);
 }
 
 void
