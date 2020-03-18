@@ -6174,7 +6174,6 @@ ViewCopyAxis(struct objlist *obj, int id, struct FocusObj *focus, N_VALUE *inst)
 	ncopyobj(obj, idx2, idx);
 	inst2 = chkobjinst(obj, idx2);
 	_getobj(obj, "oid", inst2, &oidx);
-	AddList(obj, inst2);
 	set_graph_modified();
       }
 
