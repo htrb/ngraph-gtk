@@ -431,53 +431,6 @@ GRAgetlist(int GC,int *oid,char **field,int n)
   return getobjlist(sdata[n],oid,field,NULL);
 }
 
-static void
-_GRAredraw(int GC,int snum,char **sdata,int setredrawf,int redraw_num,
-                int addn,struct objlist *obj,N_VALUE *inst,const char *field)
-{
-  int i;
-  char *dargv[2];
-  int redrawfsave;
-  int did, layer;
-  char *dfield;
-  N_VALUE *dinst;
-
-  if (ninterrupt()) return;
-  layer = GRAlayer_support(GC);
-  dargv[0]=(char *)&GC;
-  if ((addn==0) && (obj!=NULL) && (inst!=NULL) && (field!=NULL))
-    _exeobj(obj,field,inst,1,dargv);
-  if (addn>snum) addn=snum-1;
-  for (i=1;i<snum;i++) {
-    struct objlist *dobj;
-    if (ninterrupt()) return;
-    dobj = getobjlist(sdata[i], &did, &dfield, NULL);
-    if (dobj == NULL) {
-      continue;
-    }
-    dinst = chkobjinstoid(dobj, did);
-    if (dinst == NULL) {
-      continue;
-    }
-    if (setredrawf) {
-      int t = (redraw_num != 0);
-      _getobj(dobj,"redraw_flag",dinst,&redrawfsave);
-      _putobj(dobj,"redraw_flag",dinst, &t);
-      _putobj(dobj,"redraw_num",dinst, &redraw_num);
-    }
-    if (layer) {
-      GRAlayer(GC, dobj->name);
-    }
-    _exeobj(dobj,dfield,dinst,1,dargv);
-    if (setredrawf) {
-      _putobj(dobj,"redraw_flag",dinst,&redrawfsave);
-    }
-    if ((addn==i) && (obj!=NULL) && (inst!=NULL) && (field!=NULL)) {
-      _exeobj(obj,field,inst,1,dargv);
-    }
-  }
-}
-
 static int
 add_draw_obj(struct objlist *parent, char const **objects, int index)
 {
