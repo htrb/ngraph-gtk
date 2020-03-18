@@ -7635,7 +7635,6 @@ f2dredraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
     }
     _getobj(obj,"GC",inst,&GC);
     if (GC<0) return 0;
-    GRAaddlist(GC,obj,inst,(char *)argv[0],(char *)argv[1]);
   }
   if (r) {
     system_draw_notify();
