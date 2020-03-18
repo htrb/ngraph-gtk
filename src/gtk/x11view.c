@@ -6058,9 +6058,6 @@ ViewUpdate(void)
     clear_focus_obj(d);
 
   if (modified) {
-    if (! axis) {
-      d->allclear = FALSE;
-    }
     UpdateAll(objs);
   } else {
     menu_undo_internal(undo);
