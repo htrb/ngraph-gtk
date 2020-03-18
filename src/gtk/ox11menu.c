@@ -1378,10 +1378,10 @@ main_window_redraw(void)
 }
 
 void
-mx_redraw(struct objlist *obj, N_VALUE *inst, char **objects)
+mx_redraw(struct objlist *obj, N_VALUE *inst, char const **objects)
 {
   int n;
-  char *objs[OBJ_MAX];
+  char const *objs[OBJ_MAX];
   struct savedstdio save;
 
   mx_clear(NULL, objects);
