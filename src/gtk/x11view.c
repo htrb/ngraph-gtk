@@ -366,7 +366,6 @@ focus_new_insts(struct objlist *parent, struct narray *array, char **objects)
 	add_focus_obj(NgraphApp.Viewer.focusobj, ocur, oid);
 	inst = chkobjinst(ocur, i);
 	AddList(ocur, inst);
-	AddInvalidateRect(ocur, inst);
       }
     }
     if (ocur->child) {
