@@ -1384,8 +1384,6 @@ mx_redraw(struct objlist *obj, N_VALUE *inst, char const **objects)
   char const *objs[OBJ_MAX];
   struct savedstdio save;
 
-  mx_clear(NULL, objects);
-
   if (Menulocal.redrawf) {
     n = Menulocal.redrawf_num;
   } else {
@@ -1404,6 +1402,7 @@ mx_redraw(struct objlist *obj, N_VALUE *inst, char const **objects)
     objects = objs;
   }
 
+  mx_clear(NULL, objects);
   ignorestdio(&save);
   GRAredraw_layers(obj, inst, TRUE, n, objects);
   restorestdio(&save);
