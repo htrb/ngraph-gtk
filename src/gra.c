@@ -386,23 +386,6 @@ GRAaddlist(int GC,struct objlist *obj,N_VALUE *inst,
   GRAaddlist2(GC,draw);
 }
 
-struct objlist *
-GRAgetlist(int GC,int *oid,char **field,int n)
-{
-  struct narray **array;
-  char **sdata;
-  int snum;
-
-  if (GC<0) return NULL;
-  if (GC>=GRAClimit) return NULL;
-  if (GRAClist[GC].output==-1) return NULL;
-  array=GRAClist[GC].list;
-  snum=arraynum(*array);
-  if (n>=snum) return NULL;
-  sdata=arraydata(*array);
-  return getobjlist(sdata[n],oid,field,NULL);
-}
-
 static int
 add_draw_obj(struct objlist *parent, char const **objects, int index)
 {
