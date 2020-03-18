@@ -3499,10 +3499,8 @@ mouse_up_zoom(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
 
       inst = chkobjinstoid(focus->obj, focus->oid);
       if (inst) {
-	AddInvalidateRect(obj, inst);
 	_exeobj(obj, "zooming", inst, 5, argv);
 	set_graph_modified();
-	AddInvalidateRect(obj, inst);
       }
     }
   }
