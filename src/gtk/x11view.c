@@ -6119,9 +6119,6 @@ ViewDelete(void)
   }
   PaintLock = FALSE;
 
-  if (! axis)
-    d->allclear = FALSE;
-
   if (num != 0)
     UpdateAll(objs);
 
