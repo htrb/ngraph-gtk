@@ -1223,12 +1223,6 @@ ViewerWinClose(void)
 
   d->focusobj = NULL;
   d->points = NULL;
-
-  if (region) {
-    cairo_region_destroy(region);
-    region = NULL;
-  }
-
 }
 
 static int
