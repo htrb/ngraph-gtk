@@ -610,10 +610,6 @@ GRAredraw_layers(struct objlist *obj, N_VALUE *inst, int setredrawf, int redraw_
   }
 
   layer = GRAlayer_support(GC);
-  if (! layer) {
-    return;
-  }
-
   dargv[0]=(char *)&GC;
   while (*objects) {
     struct objlist *dobj;
@@ -626,7 +622,9 @@ GRAredraw_layers(struct objlist *obj, N_VALUE *inst, int setredrawf, int redraw_
     if (n < 1) {
       continue;
     }
-    GRAlayer(GC, dobj->name);
+    if (layer) {
+      GRAlayer(GC, dobj->name);
+    }
     for (i = 0; i < n; i++) {
       if (ninterrupt()) {
 	return;
