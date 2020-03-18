@@ -97,7 +97,6 @@ struct menulocal
   int windpi, data_head_lines;
   int grid, show_grid;
   int modified;
-  cairo_region_t *region;
   int lock;
   struct gra2cairo_local *local;
   int antialias;
