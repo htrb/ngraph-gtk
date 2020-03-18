@@ -6359,7 +6359,6 @@ ViewCopy(void)
 	ncopyobj(obj, id2, id);
 	inst2 = chkobjinst(obj, id2);
 	_getobj(obj, "oid", inst2, &(focus->oid));
-	AddList(obj, inst2);
 	set_graph_modified();
       }
     }
