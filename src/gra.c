@@ -358,21 +358,6 @@ GRAaddlist2(int GC,char *draw)
   }
 }
 
-static void
-GRAinslist2(int GC,char *draw,int n)
-{
-  struct narray **array;
-
-  if (GC<0) return;
-  if (GC>=GRAClimit) return;
-  if (GRAClist[GC].output==-1) return;
-  array=GRAClist[GC].list;
-  if (array!=NULL) {
-    if (*array==NULL) *array=arraynew(sizeof(char *));
-    arrayins(*array,&draw,n);
-  }
-}
-
 void
 GRAaddlist(int GC,struct objlist *obj,N_VALUE *inst,
                 const char *objname, const char *field)
