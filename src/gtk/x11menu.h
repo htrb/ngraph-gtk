@@ -153,7 +153,6 @@ struct Viewer
   int MouseX1, MouseY1, MouseX2, MouseY2, MouseDX, MouseDY;
   int RefX1, RefY1, RefX2, RefY2, ChangePoint;
   int LineX, LineY, CrossX, CrossY, Angle;
-  int allclear;
   int cx, cy;
   int ignoreredraw;
   double vscroll, hscroll, ZoomX, ZoomY;
