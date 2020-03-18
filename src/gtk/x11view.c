@@ -138,7 +138,6 @@ static void ViewDelete(void);
 static int text_dropped(const char *str, gint x, gint y, struct Viewer *d);
 static int add_focus_obj(struct narray *focusobj, struct objlist *obj, int oid);
 static void ShowFocusFrame(cairo_t *cr, const struct Viewer *d);
-static void AddList(struct objlist *obj, N_VALUE *inst);
 static void RotateFocusedObj(int direction);
 static void set_mouse_cursor_hover(struct Viewer *d, int x, int y);
 static void CheckGrid(int ofs, unsigned int state, int *x, int *y, double *zoom_x, double *zoom_y);
@@ -1721,87 +1720,6 @@ ViewerSelectAllObj(struct objlist *obj)
   gtk_widget_queue_draw(d->Win);
 }
 
-static void
-AddList(struct objlist *obj, N_VALUE *inst)
-{
-  int addi;
-  struct objlist *aobj;
-  char *afield;
-  int i, j, po, num, oid, id, id2;
-  struct objlist **objlist;
-  struct objlist *obj2;
-  N_VALUE *inst2, *ainst;
-  char *field;
-  struct narray *draw, drawrable;
-
-  aobj = obj;
-  ainst = inst;
-  afield = "draw";
-  addi = -1;
-  _getobj(obj, "id", inst, &id);
-
-  draw = &(Menulocal.drawrable);
-  num = arraynum(draw);
-
-  if (num == 0) {
-    arrayinit(&drawrable, sizeof(char *));
-    menuadddrawrable(chkobject("draw"), &drawrable);
-    draw = &drawrable;
-    num = arraynum(draw);
-  }
-
-  objlist = (struct objlist **) g_malloc(sizeof(struct objlist *) * num);
-  if (objlist == NULL)
-    return;
-
-  po = 0;
-  for (i = 0; i < num; i++) {
-    char **objname;
-    objname = (char **) arraynget(draw, i);
-    objlist[i] = chkobject(*objname);
-    if (objlist[i] == obj)
-      po = i;
-  }
-
-  i = 1;
-  j = 0;
-  while ((obj2 = GRAgetlist(Menulocal.GC, &oid, &field, i)) != NULL) {
-    for (; j < num; j++) {
-      if (objlist[j] == obj2) break;
-    }
-    if (j == po) {
-      inst2 = chkobjinstoid(obj2, oid);
-      if (inst2 == NULL) {
-	GRAdellist(Menulocal.GC, i);
-	continue;
-      }
-      _getobj(obj2, "id", inst2, &id2);
-      if (id2 > id) {
-	addi = i;
-	g_free(objlist);
-	mx_inslist(Menulocal.obj, Menulocal.inst, aobj, ainst, afield, addi);
-	if (draw != &(Menulocal.drawrable)) {
-	  arraydel2(draw);
-	}
-	return;
-      }
-    } else if (j > po) {
-      addi = i;
-      g_free(objlist);
-      mx_inslist(Menulocal.obj, Menulocal.inst, aobj, ainst, afield, addi);
-      if (draw != &(Menulocal.drawrable)) {
-	arraydel2(draw);
-      }
-      return;
-    }
-    i++;
-  }
-  addi = i;
-  g_free(objlist);
-  mx_inslist(Menulocal.obj, Menulocal.inst, aobj, ainst, afield, addi);
-  if (draw != &(Menulocal.drawrable))
-    arraydel2(draw);
-}
 
 static void
 DelList(struct objlist *obj, N_VALUE *inst, const struct Viewer *d)
