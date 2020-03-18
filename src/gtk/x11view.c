@@ -4831,8 +4831,7 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
 
   SetPoint(d, dx, dy);
 
-  if ((region == NULL && Menulocal.show_cross && gtk_widget_is_drawable(d->Win)) ||
-      (d->Mode & POINT_TYPE_DRAW_ALL) ||
+  if ((Menulocal.show_cross && gtk_widget_is_drawable(d->Win)) || (d->Mode & POINT_TYPE_DRAW_ALL) ||
       d->MouseMode != MOUSENONE) {
     gtk_widget_queue_draw(d->Win);
   }
