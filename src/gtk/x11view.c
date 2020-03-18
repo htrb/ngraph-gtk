@@ -2205,10 +2205,8 @@ AlignFocusedObj(int align)
       d->allclear = TRUE;
     }
 
-    AddInvalidateRect(focus[i]->obj, inst);
     _exeobj(focus[i]->obj, "move", inst, 2, argv);
     set_graph_modified();
-    AddInvalidateRect(focus[i]->obj, inst);
   }
   PaintLock = FALSE;
   UpdateAll(objs);
