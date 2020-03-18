@@ -6218,7 +6218,6 @@ ViewDelete(void)
     if (inst == NULL)
       continue;
 
-    AddInvalidateRect(obj, inst);
     DelList(obj, inst, d);
     _getobj(obj, "id", inst, &id);
 
