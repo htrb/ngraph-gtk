@@ -3352,10 +3352,8 @@ move_objects(int dx, int dy, struct Viewer *d, char **objs)
 	axis = TRUE;
       inst = chkobjinstoid(focus->obj, focus->oid);
       if (inst) {
-	AddInvalidateRect(obj, inst);
 	_exeobj(obj, "move", inst, 2, argv);
 	set_graph_modified();
-	AddInvalidateRect(obj, inst);
       }
     }
   }
