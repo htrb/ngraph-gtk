@@ -5504,7 +5504,6 @@ Focus(struct objlist *fobj, int id, enum FOCUS_MODE mode)
     UnFocus();
   }
 
-  d->allclear = FALSE;
   //  UpdateAll();
   d->ShowFrame = TRUE;
 
