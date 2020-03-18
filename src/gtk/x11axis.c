@@ -2876,7 +2876,7 @@ AxisWinUpdate(struct obj_list_data *d, int clear, int draw)
   }
   if (draw) {
     char *objects[4];
-    NgraphApp.Viewer.allclear = TRUE;
+//    NgraphApp.Viewer.allclear = TRUE;
     objects[0] = d->obj->name;
     objects[1] = "axisgrid";
     objects[2] = (draw == DRAW_AXIS_ONLY) ? NULL : NgraphApp.FileWin.data.data->obj->name;
