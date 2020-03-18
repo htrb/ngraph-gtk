@@ -5892,7 +5892,7 @@ ViewUpdate(void)
   int i, id, num, modified, undo;
   struct FocusObj *focus;
   struct objlist *obj, *dobj = NULL;
-  N_VALUE *inst, *dinst;
+  N_VALUE *inst;
   int ret;
   int x1, y1;
   int idx = 0, idy = 0, idu = 0, idr = 0, idg, lenx, leny;
@@ -5962,13 +5962,6 @@ ViewUpdate(void)
 			idx, idy, idu, idr, dobj, &idg, type == 's');
 
 	  ret = DialogExecute(TopLevel, &DlgSection);
-
-	  if (! findG && idg != -1) {
-	    dinst = chkobjinst(dobj, idg);
-	    if (dinst) {
-	      AddList(dobj, dinst);
-	    }
-	  }
 	} else if ((type == 'c') && findX && findY) {
 	  getobj(obj, "x", idx, 0, NULL, &x1);
 	  getobj(obj, "y", idy, 0, NULL, &y1);
