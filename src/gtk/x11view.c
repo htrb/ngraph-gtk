@@ -4084,7 +4084,6 @@ create_single_axis(struct Viewer *d)
   arraydel2(d->points);
   if (obj) {
     char *objects[2];
-    d->allclear = TRUE;
     objects[0] = obj->name;
     objects[1] = NULL;
     UpdateAll(objects);
