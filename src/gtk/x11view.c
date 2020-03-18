@@ -5831,11 +5831,6 @@ ReopenGC(void)
   Menulocal.local->pixel_dot_x =
   Menulocal.local->pixel_dot_y =
     Menulocal.windpi / 25.4 / 100;
-
-  if (Menulocal.region != NULL) {
-    cairo_region_destroy(Menulocal.region);
-  }
-  Menulocal.region = NULL;
 }
 
 void
