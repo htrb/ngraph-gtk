@@ -6338,10 +6338,7 @@ ViewCopyAxis(struct objlist *obj, int id, struct FocusObj *focus, N_VALUE *inst)
 	inst2 = chkobjinst(obj, idx2);
 	_getobj(obj, "oid", inst2, &oidx);
 	AddList(obj, inst2);
-	AddInvalidateRect(obj, inst2);
 	set_graph_modified();
-      } else {
-	AddInvalidateRect(obj, inst);
       }
 
       if ((idy2 = newobj(obj)) >= 0) {
@@ -6349,10 +6346,7 @@ ViewCopyAxis(struct objlist *obj, int id, struct FocusObj *focus, N_VALUE *inst)
 	inst2 = chkobjinst(obj, idy2);
 	_getobj(obj, "oid", inst2, &oidy);
 	AddList(obj, inst2);
-	AddInvalidateRect(obj, inst2);
 	set_graph_modified();
-      } else {
-	AddInvalidateRect(obj, inst);
       }
 
       if ((idu2 = newobj(obj)) >= 0) {
@@ -6365,10 +6359,7 @@ ViewCopyAxis(struct objlist *obj, int id, struct FocusObj *focus, N_VALUE *inst)
 	  }
 	}
 	AddList(obj, inst2);
-	AddInvalidateRect(obj, inst2);
 	set_graph_modified();
-      } else {
-	AddInvalidateRect(obj, inst);
       }
 
       if ((idr2 = newobj(obj)) >= 0) {
@@ -6404,11 +6395,7 @@ ViewCopyAxis(struct objlist *obj, int id, struct FocusObj *focus, N_VALUE *inst)
 	_getobj(obj, "oid", inst2, &(focus->oid));
 
 	AddList(obj, inst2);
-	AddInvalidateRect(obj, inst2);
-
 	set_graph_modified();
-      } else {
-	AddInvalidateRect(obj, inst);
       }
 
       if (findG) {
@@ -6440,10 +6427,7 @@ ViewCopyAxis(struct objlist *obj, int id, struct FocusObj *focus, N_VALUE *inst)
 	inst2 = chkobjinst(obj, idx2);
 	_getobj(obj, "oid", inst2, &oidx);
 	AddList(obj, inst2);
-	AddInvalidateRect(obj, inst2);
 	set_graph_modified();
-      } else {
-	AddInvalidateRect(obj, inst);
       }
 
       if ((idy2 = newobj(obj)) >= 0) {
@@ -6465,11 +6449,7 @@ ViewCopyAxis(struct objlist *obj, int id, struct FocusObj *focus, N_VALUE *inst)
 
 	focus->oid = oidy;
 	AddList(obj, inst2);
-	AddInvalidateRect(obj, inst2);
 	set_graph_modified();
-
-      } else {
-	AddInvalidateRect(obj, inst);
       }
 
       if (idx2 >= 0 && idy2 >= 0) {
@@ -6489,10 +6469,7 @@ ViewCopyAxis(struct objlist *obj, int id, struct FocusObj *focus, N_VALUE *inst)
       inst2 = chkobjinst(obj, id2);
       _getobj(obj, "oid", inst2, &(focus->oid));
       AddList(obj, inst2);
-      AddInvalidateRect(obj, inst2);
       set_graph_modified();
-    } else {
-      AddInvalidateRect(obj, inst);
     }
   }
 }
