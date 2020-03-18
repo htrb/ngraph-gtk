@@ -1161,7 +1161,6 @@ ViewerWinSetup(void)
   d->allclear = TRUE;
   d->ignoreredraw = FALSE;
   d->KeyMask = 0;
-  region = NULL;
   OpenGC();
   OpenGRA();
   SetScroller();
