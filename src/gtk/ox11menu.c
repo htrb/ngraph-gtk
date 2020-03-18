@@ -1384,9 +1384,7 @@ mx_redraw(struct objlist *obj, N_VALUE *inst, char **objects)
   char *objs[OBJ_MAX];
   struct savedstdio save;
 
-  if (Menulocal.region) {
-    mx_clear(Menulocal.region, objects);
-  }
+  mx_clear(NULL, objects);
 
   if (Menulocal.redrawf) {
     n = Menulocal.redrawf_num;
