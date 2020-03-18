@@ -399,8 +399,6 @@ agriddraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
     }
   }
 
-  GRAaddlist(GC, obj, inst, (char *) argv[0], (char *) argv[1]);
-
  error_exit:
   return 0;
 }
