@@ -3851,13 +3851,11 @@ create_legendx(struct Viewer *d)
       id = newobj(obj);
 
       if (id >= 0) {
-        N_VALUE *inst;
         presetting_set_obj_field(obj, id);
 	type = PATH_TYPE_CURVE;
 	putobj(obj, "type", id, &type);
 	fill = FALSE;
 	putobj(obj, "fill", id, &fill);
-	inst = chkobjinst(obj, id);
 	x1 = pdata[0]->x;
 	y1 = pdata[0]->y;
 	x2 = pdata[1]->x;
