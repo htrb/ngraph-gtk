@@ -478,61 +478,6 @@ _GRAredraw(int GC,int snum,char **sdata,int setredrawf,int redraw_num,
   }
 }
 
-static void
-GRAredraw2(struct objlist *obj,N_VALUE *inst,int setredrawf,int redraw_num,
-                int addn,struct objlist *aobj,N_VALUE *ainst,char *afield)
-{
-  struct narray *sarray;
-  char **sdata;
-  int snum;
-  int oid,gid,xid,GC,GCnew;
-  char *gfield,*xfield;
-  N_VALUE *ginst;
-  struct objlist *gobj;
-  char *device;
-
-  if (_getobj(obj,"_list",inst,&sarray)) return;
-  if (_getobj(obj,"oid",inst,&oid)) return;
-  if ((snum=arraynum(sarray))==0) return;
-  sdata=arraydata(sarray);
-  if ((_putobj(obj,"_list",inst,NULL)) || (_getobj(obj,"_GC",inst,&GC))) {
-    arrayfree2(sarray);
-    return;
-  }
-  if (((gobj=getobjlist(sdata[0],&gid,&gfield,NULL))==NULL)
-  || ((ginst=getobjinstoid(gobj,gid))==NULL)) {
-    arrayfree2(sarray);
-    return;
-  }
-  if (GC!=-1) {
-  /* gra is still opened */
-    GRAaddlist2(GC,sdata[0]);
-    GCnew=GC;
-    sdata[0]=NULL;
-    GRAreopen(GC);
-  } else {
-    /* gra is already closed */
-    /* check consistency */
-    struct objlist *xobj;
-    if (_getobj(gobj,"_device",ginst,&device) || (device==NULL)
-    || ((xobj=getobjlist(device,&xid,&xfield,NULL))==NULL)
-    || (xobj!=obj) || (xid!=oid) || (strcmp(xfield,"_output")!=0)) {
-      arrayfree2(sarray);
-      return;
-    }
-    /* open GRA */
-    if ((_exeobj(gobj,"open",ginst,0,NULL))
-    || (_getobj(gobj,"open",ginst,&GCnew))
-    || (GRAopened(GCnew)==-1)) {
-      arrayfree2(sarray);
-      return;
-    }
-  }
-  _GRAredraw(GCnew,snum,sdata,setredrawf,redraw_num,addn,aobj,ainst,afield);
-  arrayfree2(sarray);
-  if (GC==-1) _exeobj(gobj,"close",ginst,0,NULL);
-}
-
 static int
 add_draw_obj(struct objlist *parent, char const **objects, int index)
 {
