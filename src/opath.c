@@ -453,7 +453,6 @@ arrowdraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
   }
 
   g_free(points2);
-  GRAaddlist(GC, obj, inst, argv[0], argv[1]);
   return 0;
 }
 
