@@ -3452,10 +3452,6 @@ mouse_up_zoom(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
   d->FrameOfsX = d->FrameOfsY = 0;
   d->ShowFrame = TRUE;
 
-  if (d->Mode == LegendB || (d->Mode == PointB && !axis)) {
-    d->allclear = FALSE;
-  }
-
   UpdateAll(objs);
 }
 
