@@ -4245,7 +4245,6 @@ create_axis(struct Viewer *d)
 	}
 	set_graph_modified();
       }
-      d->allclear = TRUE;
       argv[0] = obj->name;
       argv[1] = obj2->name;
       argv[2] = NULL;
