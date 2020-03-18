@@ -176,7 +176,6 @@ textdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   } else {
     GRAdrawtext(GC,text,font,style,pt,space,dir,scriptsize);
   }
-  GRAaddlist(GC,obj,inst,(char *)argv[0],(char *)argv[1]);
   return 0;
 }
 
