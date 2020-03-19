@@ -5968,8 +5968,7 @@ ViewDelete(void)
   }
   PaintLock = FALSE;
 
-  if (num != 0)
-    UpdateAll(objs);
+  UpdateAll(objs);
 
   NSetCursor(GDK_LEFT_PTR);
 }
