@@ -362,6 +362,7 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   gtklocal->title = mkobjlist(obj, NULL, oid, NULL, TRUE);
 
   gtklocal->mainwin = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+  gtk_window_set_modal(GTK_WINDOW(gtklocal->mainwin), TRUE);
   gtk_window_set_default_size(GTK_WINDOW(gtklocal->mainwin), width, height);
   g_signal_connect_swapped(gtklocal->mainwin,
 			   "delete-event",
