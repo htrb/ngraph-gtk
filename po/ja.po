@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.07.06\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2020-03-06 17:39+0900\n"
+"POT-Creation-Date: 2020-03-19 21:17+0900\n"
 "PO-Revision-Date: 2020-02-28 11:23+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/gtk/ox11menu.c:2025
+#: src/gtk/ox11menu.c:2003
 msgid "Unsaved Graph"
 msgstr "新規グラフ"
 
@@ -893,7 +893,7 @@ msgid "_All"
 msgstr "全て(_A)"
 
 #: src/gtk/x11dialg.c:349 src/gtk/x11file.c:742 src/gtk/x11file.c:2023
-#: src/gtk/x11file.c:2242 src/gtk/x11menu.c:1985 src/gtk/x11view.c:1020
+#: src/gtk/x11file.c:2242 src/gtk/x11menu.c:1985 src/gtk/x11view.c:1008
 msgid "Select _All"
 msgstr "すべて選択(_A)"
 
@@ -995,7 +995,7 @@ msgstr "_X 変換式"
 msgid "_Y math"
 msgstr "_Y 変換式"
 
-#: src/gtk/x11file.c:757 src/gtk/x11menu.c:886 src/gtk/x11view.c:1036
+#: src/gtk/x11file.c:757 src/gtk/x11menu.c:886 src/gtk/x11view.c:1024
 msgid "_Close"
 msgstr "閉じる(_C)"
 
@@ -1107,7 +1107,7 @@ msgstr "保存(_S)"
 msgid "_Result"
 msgstr "フィット結果(_R)"
 
-#: src/gtk/x11file.c:1978 src/gtk/x11file.c:2209 src/gtk/x11view.c:992
+#: src/gtk/x11file.c:1978 src/gtk/x11file.c:2209 src/gtk/x11view.c:980
 msgid "Line No."
 msgstr "行"
 
@@ -1247,12 +1247,12 @@ msgid "_Load settings"
 msgstr "ファイルから設定読込(_L)"
 
 #: src/gtk/x11file.c:4042 src/gtk/x11file.c:4124 src/gtk/x11file.c:4200
-#: src/gtk/x11view.c:1004
+#: src/gtk/x11view.c:992
 msgid "_Mask"
 msgstr "マスク(_M)"
 
 #: src/gtk/x11file.c:4046 src/gtk/x11file.c:4128 src/gtk/x11file.c:4204
-#: src/gtk/x11view.c:1005
+#: src/gtk/x11view.c:993
 msgid "_Move"
 msgstr "移動(_M)"
 
@@ -2183,7 +2183,7 @@ msgstr "切り取り(_T)"
 msgid "Cut selected object to clipboard"
 msgstr "選択したオブジェクトをクリップボードにカット"
 
-#: src/gtk/x11menu.c:1925 src/gtk/x11menu.c:2852 src/gtk/x11view.c:1025
+#: src/gtk/x11menu.c:1925 src/gtk/x11menu.c:2852 src/gtk/x11view.c:1013
 msgid "_Copy"
 msgstr "コピー(_C)"
 
@@ -2865,7 +2865,7 @@ msgid "Spawning external driver."
 msgstr "外部ドライバに出力中"
 
 #: src/gtk/x11print.c:732 src/gtk/x11print.c:1006 src/gtk/x11print.c:1079
-#: src/gtk/x11view.c:5941
+#: src/gtk/x11view.c:5677
 msgid "Drawing."
 msgstr "描画中"
 
@@ -2881,37 +2881,37 @@ msgstr "合成ファイルの保存"
 msgid "Making GRA file."
 msgstr "合成ファイル作成中"
 
-#: src/gtk/x11view.c:1288 src/gtk/x11view.c:1290
+#: src/gtk/x11view.c:1268 src/gtk/x11view.c:1270
 #, c-format
 msgid "Searching for data."
 msgstr "データ検索中"
 
-#: src/gtk/x11view.c:1400
+#: src/gtk/x11view.c:1380
 #, c-format
 msgid "Evaluating."
 msgstr "データ評価中"
 
-#: src/gtk/x11view.c:1403
+#: src/gtk/x11view.c:1383
 msgid "Evaluating"
 msgstr "データ評価中"
 
-#: src/gtk/x11view.c:1481
+#: src/gtk/x11view.c:1461
 msgid "trimming (multi select)"
 msgstr "トリミング (複数選択)"
 
-#: src/gtk/x11view.c:3008
+#: src/gtk/x11view.c:2847
 msgid "Data points are moved."
 msgstr "データは移動されました."
 
-#: src/gtk/x11view.c:4404
+#: src/gtk/x11view.c:4173
 msgid "Moving data points is canceled."
 msgstr "データの移動はキャンセルされました."
 
-#: src/gtk/x11view.c:5935
+#: src/gtk/x11view.c:5671
 msgid "Scaling"
 msgstr "軸スケール設定中"
 
-#: src/gtk/x11view.c:5942
+#: src/gtk/x11view.c:5678
 msgid "Drawing"
 msgstr "描画中"
 
