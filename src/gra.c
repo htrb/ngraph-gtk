@@ -390,7 +390,7 @@ add_draw_obj(struct objlist *parent, char const **objects, int index)
       }
       index = add_draw_obj(ocur, objects, index);
     }
-    ocur=ocur->next;
+    ocur = ocur->next;
   }
   return index;
 }
