@@ -71,24 +71,6 @@ static GtkPrintSettings *PrintSettings = NULL;
 
 
 static void
-DriverDialogBrowseCB(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointer user_data)
-{
-  char *file;
-  const char *str;
-  struct DriverDialog *d;
-
-  d = (struct DriverDialog *) user_data;
-
-  str = gtk_entry_get_text(w);
-
-  if (nGetSaveFileName(d->widget, _("External Driver Output"), d->ext, NULL,
-		       str, &file, TRUE, Menulocal.changedirectory) == IDOK) {
-    gtk_entry_set_text(w, file);
-  }
-  g_free(file);
-}
-
-static void
 DriverDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   struct DriverDialog *d;
