@@ -510,14 +510,6 @@ extprinter_init(struct extprinter *fnew)
   fnew->ext = NULL;
 }
 
-#define LIST_TYPE   extprinter
-#define LIST_ROOT   Menulocal.extprinterroot
-#define SET_DIALOG  DlgSetDriver
-#define LIST_FREE   extprinter_free
-#define LIST_INIT   extprinter_init
-#define CREATE_NAME(a, c) a ## Driver ## c
-#include "x11opt_proto.h"
-
 static void
 PrefDriverDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
