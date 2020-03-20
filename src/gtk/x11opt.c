@@ -490,14 +490,6 @@ PrefScriptDialog(struct PrefScriptDialog *data)
 }
 
 
-void
-SetDriverDialog(struct SetDriverDialog *data, struct extprinter *prn)
-{
-  data->SetupWindow = SetDriverDialogSetup;
-  data->CloseWindow = SetDriverDialogClose;
-  data->Driver = prn;
-}
-
 static void
 PrefDriverDialogSetupItem(struct PrefDriverDialog *d)
 {
