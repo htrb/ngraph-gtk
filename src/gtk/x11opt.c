@@ -1783,17 +1783,6 @@ CmOptionPrefFont(void *w, gpointer client_data)
   DialogExecute(TopLevel, &DlgPrefFont);
 }
 
-#if 0
-static void
-CmOptionPrefDriver(void)
-{
-  if (Menulock || Globallock)
-    return;
-  PrefDriverDialog(&DlgPrefDriver);
-  DialogExecute(TopLevel, &DlgPrefDriver);
-}
-#endif
-
 void
 CmOptionScript(void *w, gpointer client_datavoid)
 {
