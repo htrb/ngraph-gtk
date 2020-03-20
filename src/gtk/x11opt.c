@@ -490,18 +490,6 @@ PrefScriptDialog(struct PrefScriptDialog *data)
 }
 
 
-static void
-PrefDriverDialogClose(GtkWidget *w, void *data)
-{
-  struct PrefDriverDialog *d;
-
-  d = (struct PrefDriverDialog *) data;
-
-  if (d->ret == IDSAVE) {
-    save_config(SAVE_CONFIG_TYPE_EXTERNAL_DRIVER);
-  }
-}
-
 void
 PrefDriverDialog(struct PrefDriverDialog *data)
 {
