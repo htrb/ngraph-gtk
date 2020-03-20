@@ -69,17 +69,6 @@ struct print_obj {
 
 static GtkPrintSettings *PrintSettings = NULL;
 
-
-void
-DriverDialog(struct DriverDialog *data, struct objlist *obj, int id)
-{
-  data->SetupWindow = DriverDialogSetup;
-  data->CloseWindow = DriverDialogClose;
-  data->Obj = obj;
-  data->Id = id;
-  data->ext = NULL;
-}
-
 static void
 OutputDataDialogSetupItem(GtkWidget *w, struct OutputDataDialog *d)
 {
