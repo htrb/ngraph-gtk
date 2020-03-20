@@ -461,12 +461,6 @@ menu_save_config(int type)
 
   arrayinit(&conf, sizeof(char *));
 
-  if (type & SAVE_CONFIG_TYPE_EXTERNAL_DRIVER) {
-    if (Menulocal.extprinterroot == NULL) {
-      add_str_to_array(&conf, "ext_driver");
-    }
-  }
-
   if (type & SAVE_CONFIG_TYPE_ADDIN_SCRIPT) {
     if (Menulocal.scriptroot == NULL) {
       add_str_to_array(&conf, "script");
