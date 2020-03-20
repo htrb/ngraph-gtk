@@ -115,7 +115,6 @@ enum menu_config_type {
 static int menu_config_set_custom_palette(char *s2, void *data);
 static int menu_config_set_four_elements(char *s2, void *data);
 static int menu_config_set_bgcolor(char *s2, void *data);
-static int menu_config_set_ext_driver(char *s2, void *data);
 static int menu_config_set_script(char *s2, void *data);
 static int menu_config_set_char_map(char *s2, void *data);
 
@@ -609,57 +608,6 @@ menu_config_set_char_map(char *s2, void *data)
 
   *pptr = pcur;
 
-  return 0;
-}
-
-static int
-menu_config_set_ext_driver(char *s2, void *data)
-{
-  char *f[4] = {NULL, NULL, NULL, NULL};
-  int len, i;
-  struct extprinter *pnew, *pcur, **pptr;
-
-  pptr = (struct extprinter **) data;
-  pcur = *pptr;
-
-  f[0] = getitok2(&s2, &len, ",");
-  f[1] = getitok2(&s2, &len, ",");
-
-  if (s2[1] == ',') {
-    f[2] = NULL;
-  } else {
-    f[2] = getitok2(&s2, &len, ",");
-  }
-
-  for (; (s2[0] != '\0') && (strchr(" \t,", s2[0])); s2++);
-
-  f[3] = getitok2(&s2, &len, "");
-
-  if (f[0] && f[1]) {
-    pnew = (struct extprinter *) g_malloc(sizeof(struct extprinter));
-    if (pnew == NULL) {
-      for (i = 0; i < 4; i++) {
-	g_free(f[i]);
-      }
-      return 1;
-    }
-    if (pcur == NULL) {
-      Menulocal.extprinterroot = pnew;
-    } else {
-      pcur->next = pnew;
-    }
-    *pptr = pnew;
-    pcur = pnew;
-    pcur->next = NULL;
-    pcur->name = f[0];
-    pcur->driver = f[1];
-    pcur->ext = f[2];
-    pcur->option = f[3];
-  } else {
-    for (i = 0; i < 4; i++) {
-      g_free(f[i]);
-    }
-  }
   return 0;
 }
 
