@@ -529,59 +529,6 @@ CmOutputPrinter(int select_file, int show_dialog)
 }
 
 void
-CmOutputDriver(void)
-{
-  struct objlist *graobj, *g2wobj;
-  int g2wid, g2woid;
-  int ret;
-  struct savedstdio stdio;
-
-  if (Menulock || Globallock)
-    return;
-
-  if (Menulocal.select_data && ! SetFileHidden())
-    return;
-
-  FileAutoScale();
-  AdjustAxis();
-
-  graobj = chkobject("gra");
-  if (graobj == NULL)
-    return;
-
-  g2wobj = chkobject("gra2prn");
-  if (g2wobj == NULL)
-    return;
-
-  g2wid = newobj(g2wobj);
-  if (g2wid < 0)
-    return;
-
-  DriverDialog(&DlgDriver, g2wobj, g2wid);
-  ret = DialogExecute(TopLevel, &DlgDriver);
-
-  if (ret == IDOK) {
-    int id;
-    N_VALUE *g2winst;
-    SetStatusBar(_("Spawning external driver."));
-    g2winst = chkobjinst(g2wobj, g2wid);
-    _getobj(g2wobj, "oid", g2winst, &g2woid);
-    id = newobj(graobj);
-    init_graobj(graobj, id, "gra2prn", g2woid);
-    ignorestdio(&stdio);
-    draw_gra(graobj, id, _("Drawing."), TRUE);
-    restorestdio(&stdio);
-    delobj(graobj, id);
-    ResetStatusBar();
-  }
-  delobj(g2wobj, g2wid);
-
-  if (Menulocal.select_data) {
-    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, TRUE);
-  }
-}
-
-void
 CmOutputViewerB(void *wi, gpointer client_data)
 {
   if (Menulock || Globallock)
