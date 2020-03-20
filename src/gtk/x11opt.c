@@ -491,40 +491,6 @@ PrefScriptDialog(struct PrefScriptDialog *data)
 
 
 static void
-SetDriverDialogSetup(GtkWidget *wi, void *data, int makewidget)
-{
-  struct SetDriverDialog *d;
-
-  d = (struct SetDriverDialog *) data;
-  if (makewidget) {
-    GtkWidget *w, *table;
-    int i;
-    table = gtk_grid_new();
-
-    i = 0;
-    w = create_text_entry(FALSE, TRUE);
-    add_widget_to_table(table, w, _("_Name:"), TRUE, i++);
-    d->name = w;
-
-    w = create_file_entry_with_cb(G_CALLBACK(SetDriverDialogBrowse), d);
-    add_widget_to_table(table, w, _("_Driver:"), TRUE, i++);
-    d->driver = w;
-
-    w = create_text_entry(FALSE, TRUE);
-    add_widget_to_table(table, w, _("_Option:"), TRUE, i++);
-    d->option = w;
-
-    w = create_text_entry(FALSE, TRUE);
-    add_widget_to_table(table, w, _("_Extension:"), TRUE, i++);
-    d->ext = w;
-
-    gtk_box_pack_start(GTK_BOX(d->vbox), table, FALSE, FALSE, 4);
-    gtk_widget_show_all(GTK_WIDGET(d->vbox));
-  }
-  SetDriverDialogSetupItem(wi, d);
-}
-
-static void
 SetDriverDialogClose(GtkWidget *w, void *data)
 {
   const char *buf;
