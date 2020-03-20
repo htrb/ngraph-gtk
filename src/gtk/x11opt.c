@@ -491,20 +491,6 @@ PrefScriptDialog(struct PrefScriptDialog *data)
 
 
 static void
-SetDriverDialogBrowse(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointer user_data)
-{
-  char *file;
-  struct SetDriverDialog *d;
-
-  d = (struct SetDriverDialog *) user_data;
-  if (nGetOpenFileName(d->widget, _("External Driver"), NULL, NULL,
-		       NULL, &file, TRUE, FALSE) == IDOK) {
-    entry_set_filename(GTK_WIDGET(w), file);
-  }
-  g_free(file);
-}
-
-static void
 SetDriverDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   struct SetDriverDialog *d;
