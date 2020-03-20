@@ -818,7 +818,6 @@ init_layer(const char *obj)
 static void
 menulocal_finalize(void)
 {
-  struct extprinter *pcur;
   struct character_map_list *cmap, *cmap_tmp;
   int i, j;
   struct menu_config *cfg;
@@ -841,19 +840,6 @@ menulocal_finalize(void)
     g_free(cmap_tmp);
   }
   Menulocal.char_map = NULL;
-
-  pcur = Menulocal.extprinterroot;
-  while (pcur) {
-    struct extprinter *pdel;
-    pdel = pcur;
-    pcur = pcur->next;
-    g_free(pdel->name);
-    g_free(pdel->driver);
-    g_free(pdel->ext);
-    g_free(pdel->option);
-    g_free(pdel);
-  }
-  Menulocal.extprinterroot = NULL;
 
   free_script_list(Menulocal.scriptroot);
   Menulocal.scriptroot = NULL;
