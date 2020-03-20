@@ -240,7 +240,6 @@ static struct menu_config MenuConfigExtView[] = {
 
 static struct menu_config *MenuConfigArrray[] = {
   MenuConfig,
-  MenuConfigDriver,
   MenuConfigScript,
   MenuConfigMisc,
   MenuConfigViewer,
