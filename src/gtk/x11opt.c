@@ -491,24 +491,6 @@ PrefScriptDialog(struct PrefScriptDialog *data)
 
 
 static void
-PrefDriverDialogSetup(GtkWidget *wi, void *data, int makewidget)
-{
-  struct PrefDriverDialog *d;
-  n_list_store list[] = {
-    {N_("Driver"), G_TYPE_STRING, TRUE, FALSE, NULL},
-  };
-
-  d = (struct PrefDriverDialog *) data;
-  if (makewidget) {
-    gtk_dialog_add_button(GTK_DIALOG(wi), _("_Save"), IDSAVE);
-    PrefDriverDialogCreateWidgets(d, NULL, sizeof(list) / sizeof(*list), list);
-    gtk_window_set_default_size(GTK_WINDOW(wi), 400, 300);
-    gtk_widget_show_all(GTK_WIDGET(d->vbox));
-  }
-  PrefDriverDialogSetupItem(d);
-}
-
-static void
 PrefDriverDialogClose(GtkWidget *w, void *data)
 {
   struct PrefDriverDialog *d;
