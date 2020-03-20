@@ -79,10 +79,6 @@ DefaultDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->fonts = w;
     gtk_box_pack_start(GTK_BOX(d->vbox), w, FALSE, FALSE, 4);
 
-    w = gtk_check_button_new_with_mnemonic(_("_External Driver"));
-    d->external_driver = w;
-    gtk_box_pack_start(GTK_BOX(d->vbox), w, FALSE, FALSE, 4);
-
     w = gtk_check_button_new_with_mnemonic(_("_Add-in Script"));
     d->addin_script = w;
     gtk_box_pack_start(GTK_BOX(d->vbox), w, FALSE, FALSE, 4);
@@ -94,7 +90,6 @@ DefaultDialogSetup(GtkWidget *wi, void *data, int makewidget)
   }
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->viewer), FALSE);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->external_viewer), FALSE);
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->external_driver), FALSE);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->addin_script), FALSE);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->misc), FALSE);
 }
