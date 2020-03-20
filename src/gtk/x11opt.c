@@ -489,14 +489,6 @@ PrefScriptDialog(struct PrefScriptDialog *data)
   data->CloseWindow = PrefScriptDialogClose;
 }
 
-
-void
-PrefDriverDialog(struct PrefDriverDialog *data)
-{
-  data->SetupWindow = PrefDriverDialogSetup;
-  data->CloseWindow = PrefDriverDialogClose;
-}
-
 static void
 FontSettingDialogSetupItem(GtkWidget *w, struct FontSettingDialog *d)
 {
