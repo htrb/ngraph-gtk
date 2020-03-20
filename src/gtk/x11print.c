@@ -70,51 +70,6 @@ struct print_obj {
 static GtkPrintSettings *PrintSettings = NULL;
 
 
-static void
-DriverDialogClose(GtkWidget *w, void *data)
-{
-  int a, i;
-  struct extprinter *pcur;
-  struct DriverDialog *d;
-  const char *s, *file;
-  char *driver, *option;
-
-  d = (struct DriverDialog *) data;
-
-  if (d->ret == IDCANCEL)
-    return;
-
-  a = combo_box_get_active(d->driver);
-  pcur = Menulocal.extprinterroot;
-  i = 0;
-  while (pcur != NULL) {
-    if (i == a && pcur->driver) {
-      driver = g_strdup(pcur->driver);
-      if (driver) {
-	putobj(d->Obj, "driver", d->Id, driver);
-      }
-      break;
-    }
-    pcur = pcur->next;
-    i++;
-  }
-
-  s = gtk_entry_get_text(GTK_ENTRY(d->option));
-  file = gtk_entry_get_text(GTK_ENTRY(d->file));
-
-  option = NULL;
-
-  if (s || file) {
-    option = g_strdup_printf("%s%s%s%s",
-		  (file) ? "-o '" : "",
-		  CHK_STR(file),
-		  (file) ? "' " : "",
-		  CHK_STR(s));
-  }
-
-  putobj(d->Obj, "option", d->Id, option);
-}
-
 void
 DriverDialog(struct DriverDialog *data, struct objlist *obj, int id)
 {
