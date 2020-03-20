@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.07.06\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2020-03-20 11:33+0900\n"
+"POT-Creation-Date: 2020-03-20 21:12+0900\n"
 "PO-Revision-Date: 2020-02-28 11:23+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -2894,7 +2894,7 @@ msgstr "目盛数字の色"
 msgid "Open"
 msgstr "開く"
 
-#: src/gtk/gtk_subwin.c:1302
+#: src/gtk/gtk_subwin.c:1287
 msgid "Instance name"
 msgstr "インスタンス名"
 

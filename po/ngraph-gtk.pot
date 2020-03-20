@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.08.04\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2020-03-20 11:33+0900\n"
+"POT-Creation-Date: 2020-03-20 21:12+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2860,7 +2860,7 @@ msgstr ""
 msgid "Open"
 msgstr ""
 
-#: src/gtk/gtk_subwin.c:1302
+#: src/gtk/gtk_subwin.c:1287
 msgid "Instance name"
 msgstr ""
 
