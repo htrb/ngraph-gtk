@@ -477,10 +477,6 @@ menu_save_config(int type)
     menu_save_config_sub(MenuConfigOthers, &conf);
   }
 
-  if (type & SAVE_CONFIG_TYPE_EXTERNAL_DRIVER) {
-    menu_save_config_sub(MenuConfigDriver, &conf);
-  }
-
   if (type & SAVE_CONFIG_TYPE_ADDIN_SCRIPT) {
     menu_save_config_sub(MenuConfigScript, &conf);
   }
