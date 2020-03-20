@@ -638,7 +638,6 @@ mgtkloadconfig(void)
   int val;
   char *endptr;
   int len;
-  struct extprinter *pcur;
   struct script *scur;
   struct menu_config *cfg;
 
@@ -646,14 +645,7 @@ mgtkloadconfig(void)
   if (fp == NULL)
     return 0;
 
-  pcur = Menulocal.extprinterroot;
   scur = Menulocal.scriptroot;
-
-  if (nhash_get_ptr(MenuConfigHash, "ext_driver", (void *) &cfg) == 0) {
-    if (cfg) {
-      cfg->data = &pcur;
-    }
-  }
 
   if (nhash_get_ptr(MenuConfigHash, "script", (void *) &cfg) == 0) {
     if (cfg) {
