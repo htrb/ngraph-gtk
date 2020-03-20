@@ -141,11 +141,6 @@ static struct menu_config MenuConfig[] = {
   {NULL},
 };
 
-static struct menu_config MenuConfigDriver[] = {
-  {"ext_driver", MENU_CONFIG_TYPE_DRIVER, menu_config_set_ext_driver, NULL},
-  {NULL},
-};
-
 static struct menu_config MenuConfigScript[] = {
   {"script", MENU_CONFIG_TYPE_SCRIPT, menu_config_set_script, NULL},
   {NULL},
