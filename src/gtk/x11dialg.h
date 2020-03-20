@@ -460,7 +460,7 @@ struct DefaultDialog
 {
   DIALOG_PROTOTYPE;
   /****** local member *******/
-  GtkWidget *viewer, *external_driver, *addin_script, *misc, *external_viewer, *fonts;
+  GtkWidget *viewer, *addin_script, *misc, *external_viewer, *fonts;
 };
 void DefaultDialog(struct DefaultDialog *data);
 
