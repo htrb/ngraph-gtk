@@ -491,15 +491,6 @@ PrefScriptDialog(struct PrefScriptDialog *data)
 
 
 static void
-SetDriverDialogSetupItem(GtkWidget *w, struct SetDriverDialog *d)
-{
-  gtk_entry_set_text(GTK_ENTRY(d->name), CHK_STR(d->Driver->name));
-  gtk_entry_set_text(GTK_ENTRY(d->driver), CHK_STR(d->Driver->driver));
-  gtk_entry_set_text(GTK_ENTRY(d->option), CHK_STR(d->Driver->option));
-  gtk_entry_set_text(GTK_ENTRY(d->ext), CHK_STR(d->Driver->ext));
-}
-
-static void
 SetDriverDialogBrowse(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointer user_data)
 {
   char *file;
