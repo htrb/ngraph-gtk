@@ -52,15 +52,6 @@ enum paper_id {
   PAPER_ID_CUSTOM,
 };
 
-struct extprinter
-{
-  char *name;
-  char *driver;
-  char *ext;
-  char *option;
-  struct extprinter *next;
-};
-
 struct script
 {
   char *name;
