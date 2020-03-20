@@ -491,16 +491,6 @@ PrefScriptDialog(struct PrefScriptDialog *data)
 
 
 static void
-extprinter_init(struct extprinter *fnew)
-{
-  fnew->next = NULL;
-  fnew->name = NULL;
-  fnew->driver = NULL;
-  fnew->option = NULL;
-  fnew->ext = NULL;
-}
-
-static void
 PrefDriverDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   struct PrefDriverDialog *d;
