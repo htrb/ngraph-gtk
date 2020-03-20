@@ -460,15 +460,6 @@ struct PrefScriptDialog
 };
 void PrefScriptDialog(struct PrefScriptDialog *data);
 
-struct SetDriverDialog
-{
-  DIALOG_PROTOTYPE;
-  /****** local member *******/
-  GtkWidget *name, *driver, *option, *ext;
-  struct extprinter *Driver;
-};
-void SetDriverDialog(struct SetDriverDialog *data, struct extprinter *prn);
-
 struct PrefDriverDialog
 {
   DIALOG_PROTOTYPE;
@@ -616,7 +607,6 @@ extern struct OutputDataDialog DlgOutputData;
 extern struct DefaultDialog DlgDefault;
 extern struct SetScriptDialog DlgSetScript;
 extern struct PrefScriptDialog DlgPrefScript;
-extern struct SetDriverDialog DlgSetDriver;
 extern struct PrefDriverDialog DlgPrefDriver;
 extern struct PrefFontDialog DlgPrefFont;
 extern struct FontSettingDialog DlgFontSetting;
