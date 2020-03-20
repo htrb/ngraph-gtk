@@ -71,47 +71,6 @@ static GtkPrintSettings *PrintSettings = NULL;
 
 
 static void
-DriverDialogSetup(GtkWidget *wi, void *data, int makewidget)
-{
-  struct DriverDialog *d;
-  struct extprinter *pcur;
-
-  d = (struct DriverDialog *) data;
-  if (makewidget) {
-    GtkWidget *w, *table;
-    int i;
-
-    table = gtk_grid_new();
-
-    i = 0;
-    w = combo_box_create();
-    d->driver = w;
-    add_widget_to_table(table, w, _("_Driver:"), FALSE, i++);
-    g_signal_connect(d->driver, "changed", G_CALLBACK(DriverDialogSelectCB), d);
-
-    w = create_text_entry(FALSE, TRUE);
-    d->option = w;
-    add_widget_to_table(table, w, _("_Option:"), TRUE, i++);
-
-    w = create_file_entry_with_cb(G_CALLBACK(DriverDialogBrowseCB), d);
-    d->file = w;
-    add_widget_to_table(table, w, _("_File:"), TRUE, i++);
-
-    gtk_box_pack_start(GTK_BOX(d->vbox), table, FALSE, FALSE, 4);
-    gtk_widget_show_all(GTK_WIDGET(d->vbox));
-  }
-
-  combo_box_clear(d->driver);
-
-  pcur = Menulocal.extprinterroot;
-  while (pcur != NULL) {
-    combo_box_append_text(d->driver, pcur->name);
-    pcur = pcur->next;
-  }
-  combo_box_set_active(d->driver, 0);
-}
-
-static void
 DriverDialogClose(GtkWidget *w, void *data)
 {
   int a, i;
