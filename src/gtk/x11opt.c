@@ -490,57 +490,6 @@ PrefScriptDialog(struct PrefScriptDialog *data)
 }
 
 
-static void
-SetDriverDialogClose(GtkWidget *w, void *data)
-{
-  const char *buf;
-  char *buf2;
-  int ret;
-  struct SetDriverDialog *d;
-
-  d = (struct SetDriverDialog *) data;
-
-  if (d->ret != IDOK)
-    return;
-
-  ret = d->ret;
-  d->ret = IDLOOP;
-
-  buf = gtk_entry_get_text(GTK_ENTRY(d->name));
-  if (strlen(buf) == 0) {
-    message_box(d->widget, _("Please specify driver name."), NULL, RESPONS_OK);
-    return;
-  }
-
-  buf2 = g_strdup(buf);
-  if (buf2) {
-    g_free(d->Driver->name);
-    d->Driver->name = buf2;
-  }
-
-  buf2 = entry_get_filename(d->driver);
-  if (buf2) {
-    g_free(d->Driver->driver);
-    d->Driver->driver = buf2;
-  }
-
-  buf = gtk_entry_get_text(GTK_ENTRY(d->ext));
-  buf2 = g_strdup(buf);
-  if (buf2) {
-    g_free(d->Driver->ext);
-    d->Driver->ext = buf2;
-  }
-
-  buf = gtk_entry_get_text(GTK_ENTRY(d->option));
-  buf2 = g_strdup(buf);
-  if (buf2) {
-    g_free(d->Driver->option);
-    d->Driver->option = buf2;
-  }
-
-  d->ret = ret;
-}
-
 void
 SetDriverDialog(struct SetDriverDialog *data, struct extprinter *prn)
 {
