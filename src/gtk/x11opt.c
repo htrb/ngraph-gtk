@@ -491,21 +491,6 @@ PrefScriptDialog(struct PrefScriptDialog *data)
 
 
 static void
-PrefDriverDialogSetupItem(struct PrefDriverDialog *d)
-{
-  struct extprinter *fcur;
-  GtkTreeIter iter;
-
-  list_store_clear(d->list);
-  fcur = Menulocal.extprinterroot;
-  while (fcur) {
-    list_store_append(d->list, &iter);
-    list_store_set_string(d->list, &iter, 0, fcur->name);
-    fcur = fcur->next;
-  }
-}
-
-static void
 extprinter_free(struct extprinter *fdel)
 {
   g_free(fdel->name);
