@@ -61,15 +61,6 @@ struct script
   struct script *next;
 };
 
-struct prnprinter
-{
-  char *name;
-  char *driver;
-  char *option;
-  char *prn;
-  struct prnprinter *next;
-};
-
 struct character_map_list {
   char *title, *data;
   struct character_map_list *next;
