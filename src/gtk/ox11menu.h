@@ -94,7 +94,6 @@ struct menulocal
   int LeftMargin, TopMargin;
   int PaperZoom;
   struct narray drawrable;
-  struct extprinter *extprinterroot;
   struct script *scriptroot, *addin_list;
   int menuheight, menuwidth, menux, menuy;
   int exwindpi, exwinwidth, exwinheight, exwin_use_external;
