@@ -69,51 +69,6 @@ struct print_obj {
 
 static GtkPrintSettings *PrintSettings = NULL;
 
-static void
-DriverDialogSelectCB(GtkWidget *wi, gpointer client_data)
-{
-  int a, i, l, n;
-  struct extprinter *pcur;
-  struct DriverDialog *d;
-  char *ptr, ngp_ext[] = ".ngp";
-
-  d = (struct DriverDialog *) client_data;
-
-  a = combo_box_get_active(d->driver);
-
-  if (a < 0)
-    return;
-
-  pcur = Menulocal.extprinterroot;
-  i = 0;
-  while (pcur) {
-    if (i != a) {
-      pcur = pcur->next;
-      i++;
-      continue;
-    }
-
-    if (pcur->ext && pcur->ext[0] != '\0') {
-      if (NgraphApp.FileName) {
-	l = strlen(NgraphApp.FileName);
-	n = sizeof(ngp_ext) - 1;
-	if (l > n && strcasecmp(NgraphApp.FileName + l - n, ngp_ext) == 0) {
-	  l -= n;
-	}
-	ptr = g_strdup_printf("%.*s.%s", l, NgraphApp.FileName, CHK_STR(pcur->ext));
-	gtk_entry_set_text(GTK_ENTRY(d->file), CHK_STR(ptr));
-	g_free(ptr);
-      }
-      d->ext = pcur->ext;
-    } else {
-      gtk_entry_set_text(GTK_ENTRY(d->file), "");
-      d->ext = NULL;
-    }
-
-    gtk_entry_set_text(GTK_ENTRY(d->option), CHK_STR(pcur->option));
-    break;
-  }
-}
 
 static void
 DriverDialogBrowseCB(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointer user_data)
