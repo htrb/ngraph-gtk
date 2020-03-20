@@ -1034,21 +1034,6 @@ ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
   return TRUE;
 }
 
-#if WINDOWS
-#include <gdk/gdkwin32.h>
-
-static void
-hide_minimize_menu_item(GtkWidget *widget, gpointer user_data)
-{
-  HWND handle;
-  HMENU menu;
-
-  handle = GDK_WINDOW_HWND(gtk_widget_get_window(widget));
-  menu = GetSystemMenu(handle, FALSE);
-  RemoveMenu(menu, SC_MINIMIZE, MF_BYCOMMAND);
-}
-#endif
-
 static void
 swin_realized(GtkWidget *widget, gpointer user_data)
 {
