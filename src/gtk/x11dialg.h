@@ -426,16 +426,6 @@ struct SaveDialog
 };
 void SaveDialog(struct SaveDialog *data, int *sdata, int *smerge);
 
-struct DriverDialog
-{
-  DIALOG_PROTOTYPE;
-  /****** local member *******/
-  GtkWidget *driver, *file, *option;
-  char *ext;
-  struct objlist *Obj;
-  int Id;
-};
-void DriverDialog(struct DriverDialog *data, struct objlist *obj, int id);
 
 struct PrintDialog
 {
@@ -633,7 +623,6 @@ extern struct SwitchDialog DlgSwitch;
 extern struct DirectoryDialog DlgDirectory;
 extern struct LoadDialog DlgLoad;
 extern struct SaveDialog DlgSave;
-extern struct DriverDialog DlgDriver;
 extern struct PrintDialog DlgPrinter;
 extern struct OutputDataDialog DlgOutputData;
 extern struct DefaultDialog DlgDefault;
