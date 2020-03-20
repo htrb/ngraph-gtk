@@ -491,16 +491,6 @@ PrefScriptDialog(struct PrefScriptDialog *data)
 
 
 static void
-extprinter_free(struct extprinter *fdel)
-{
-  g_free(fdel->name);
-  g_free(fdel->driver);
-  g_free(fdel->option);
-  g_free(fdel->ext);
-  g_free(fdel);
-}
-
-static void
 extprinter_init(struct extprinter *fnew)
 {
   fnew->next = NULL;
