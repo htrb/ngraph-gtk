@@ -786,7 +786,6 @@ mgtkloadconfig(void)
       case MENU_CONFIG_TYPE_COLOR:
       case MENU_CONFIG_TYPE_COLOR_ARY:
       case MENU_CONFIG_TYPE_SCRIPT:
-      case MENU_CONFIG_TYPE_DRIVER:
       case MENU_CONFIG_TYPE_WINDOW:
 	if (cfg->proc && cfg->proc(s2, cfg->data)) {
 	  g_free(tok);
