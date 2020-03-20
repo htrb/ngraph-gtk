@@ -1027,9 +1027,9 @@ static void
 set_file_in_entry(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointer user_data)
 {
   char *file;
-  struct SetDriverDialog *d;
+  struct MiscDialog *d;
 
-  d = (struct SetDriverDialog *) user_data;
+  d = (struct MiscDialog *) user_data;
   if (nGetOpenFileName(d->widget, _("Select program"), NULL, NULL,
 		       NULL, &file, TRUE, FALSE) == IDOK) {
     entry_set_filename(GTK_WIDGET(w), file);
