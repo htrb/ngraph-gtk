@@ -357,27 +357,6 @@ save_char_map_config(struct narray *conf)
 }
 
 static void
-save_ext_driver_config(struct narray *conf)
-{
-  char *buf;
-  struct extprinter *pcur;
-
-  pcur = Menulocal.extprinterroot;
-  while (pcur) {
-    char *driver, *ext, *option;
-    driver = CHK_STR(pcur->driver);
-    ext = CHK_STR(pcur->ext);
-    option= CHK_STR(pcur->option);
-
-    buf = g_strdup_printf("ext_driver=%s,%s,%s,%s", pcur->name, driver, ext, option);
-    if (buf) {
-      arrayadd(conf, &buf);
-    }
-    pcur = pcur->next;
-  }
-}
-
-static void
 save_script_config(struct narray *conf)
 {
   char *buf;
