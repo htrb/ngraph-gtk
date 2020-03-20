@@ -443,9 +443,6 @@ menu_save_config_sub(struct menu_config *cfg, struct narray *conf)
     case MENU_CONFIG_TYPE_SCRIPT:
       save_script_config(conf);
       break;
-    case MENU_CONFIG_TYPE_DRIVER:
-      save_ext_driver_config(conf);
-      break;
     case MENU_CONFIG_TYPE_CHARMAP:
       save_char_map_config(conf);
       break;
