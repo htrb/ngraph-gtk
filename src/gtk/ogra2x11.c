@@ -368,6 +368,10 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   if (TopLevel) {
     gtk_window_set_modal(GTK_WINDOW(gtklocal->mainwin), TRUE);
     gtk_window_set_transient_for(GTK_WINDOW(gtklocal->mainwin), GTK_WINDOW(TopLevel));
+#if OSX
+    gtklocal->menulock = Menulock;
+    Menulock = TRUE;
+#endif
   }
   gtk_window_set_default_size(GTK_WINDOW(gtklocal->mainwin), width, height);
   g_signal_connect_swapped(gtklocal->mainwin,
