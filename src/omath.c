@@ -262,13 +262,13 @@ mparam(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   arg = argv[1];
   switch (arg[0]) {
   case 'x':
-    mlocal->x = * (double *) argv[2];
+    mlocal->x = arg_to_double(argv, 2);
     break;
   case 'y':
-    mlocal->y = * (double *) argv[2];
+    mlocal->y = arg_to_double(argv, 2);
     break;
   case 'z':
-    mlocal->z = * (double *) argv[2];
+    mlocal->z = arg_to_double(argv, 2);
     break;
   }
   msettbl(inst, mlocal);
