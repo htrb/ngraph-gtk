@@ -329,6 +329,9 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   gtklocal->bg_g = 1.0;
   gtklocal->bg_b = 1.0;
   gtklocal->local = local;
+#if OSX
+  gtklocal->menulock = FALSE;
+#endif
 
   if (gtklocal->windpi < 1)
     gtklocal->windpi = 1;
