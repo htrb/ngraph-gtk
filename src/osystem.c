@@ -799,7 +799,6 @@ int
 system_set_exec_func(const char *name, ngraph_plugin_exec func)
 {
   struct ngraph_plugin *plugin;
-  int r;
 
   if (name == NULL || func == NULL) {
     return 1;
@@ -807,6 +806,7 @@ system_set_exec_func(const char *name, ngraph_plugin_exec func)
 
   plugin = get_plugin_from_name(name);
   if (plugin == NULL) {
+    int r;
     plugin = g_malloc0(sizeof(struct ngraph_plugin));
     if (plugin == NULL) {
       return 1;
