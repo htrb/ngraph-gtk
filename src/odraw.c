@@ -241,9 +241,9 @@ put_hsb_color(struct objlist *obj, N_VALUE *inst, int argc, char **argv, char *f
   int rr, gg, bb;
   char buf[64];
 
-  h =  * (double *) argv[2];
-  s =  * (double *) argv[3];
-  b =  * (double *) argv[4];
+  h =  arg_to_double(argv, 2);
+  s =  arg_to_double(argv, 3);
+  b =  arg_to_double(argv, 4);
 
   if (h < 0) {
     h = 0;
