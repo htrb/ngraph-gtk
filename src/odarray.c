@@ -235,7 +235,7 @@ darrayunshift(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **ar
   _getobj(obj, "_local", inst, &local);
   local->modified = TRUE;
 
-  val = * (double *) argv[2];
+  val = arg_to_double(argv, 2);
 
   array = oarray_get_array(obj, inst, sizeof(double));
   if (array == NULL) {
