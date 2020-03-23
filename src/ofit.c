@@ -1120,7 +1120,7 @@ fitcalc(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 
   rval->d = 0;
 
-  x = * (double *) argv[2];
+  x = arg_to_double(argv, 2);
 
   _getobj(obj,"_local",inst,&fitlocal);
   if (fitlocal->result_code == NULL) {
