@@ -635,11 +635,23 @@ static int
 gtkbg(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct gtklocal *gtklocal;
+  const char *field;
 
   if (_getobj(obj, "_gtklocal", inst, &gtklocal))
     return 1;
 
-  gtklocal->bg_g = get_color(gtklocal, argc, argv);
+  field = argv[1];
+  switch(field[1]) {
+  case 'R':
+    gtklocal->bg_r = get_color(gtklocal, argc, argv);
+    break;
+  case 'G':
+    gtklocal->bg_g = get_color(gtklocal, argc, argv);
+    break;
+  case 'B':
+    gtklocal->bg_b = get_color(gtklocal, argc, argv);
+    break;
+  }
   return 0;
 }
 
