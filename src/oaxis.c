@@ -3261,8 +3261,8 @@ axisscale(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   double min,max,inc;
 
   _getobj(obj,"type",inst,&type);
-  min=*(double *)argv[2];
-  max=*(double *)argv[3];
+  min = arg_to_double(argv, 2);
+  max = arg_to_double(argv, 3);
   room=*(int *)argv[4];
   axischangescale(obj,inst,&min,&max,&inc,room);
   if (_putobj(obj,"min",inst,&min)) return 1;
