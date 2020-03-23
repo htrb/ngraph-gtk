@@ -477,6 +477,11 @@ gtkdone(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
 
   g_free(gtklocal->title);
 
+#if OSX
+  if (TopLevel) {
+    Menulock = gtklocal->menulock;
+  }
+#endif
   return 0;
 }
 
