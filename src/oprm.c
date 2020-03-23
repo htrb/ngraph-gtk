@@ -269,7 +269,7 @@ remarkconv(char *str,int ff,int fj,int fb,int *fnameid,char *prmfile)
         addfontcontrol(s2,&j,fchange,jchange,fff,ffb,ffj,script);
         j+=sprintf(s2+j,"%%{system:0:time:2}");
         i++;
-      } else if (s[i+1]=='t') {
+      } else if (s[i+1]=='T') {
         addfontcontrol(s2,&j,fchange,jchange,fff,ffb,ffj,script);
         j+=sprintf(s2+j,"%%{system:0:time:3}");
         i++;
@@ -303,7 +303,7 @@ remarkconv(char *str,int ff,int fj,int fb,int *fnameid,char *prmfile)
           addfontcontrol(s2,&j,fchange,jchange,fff,ffb,ffj,script);
           j+=sprintf(s2+j,"%%{file:%d:time:4}",fnameid[file]);
           i+=3;
-        } else if (s[i+3]=='t') {
+        } else if (s[i+3]=='T') {
           addfontcontrol(s2,&j,fchange,jchange,fff,ffb,ffj,script);
           j+=sprintf(s2+j,"%%{system:%d:time:3}",fnameid[file]);
           i+=3;
