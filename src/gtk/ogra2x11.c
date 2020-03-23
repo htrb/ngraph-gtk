@@ -606,19 +606,6 @@ get_color(struct gtklocal *gtklocal, int argc, char **argv)
   return c / 255.0;
 }
 
-
-static int
-gtkbb(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
-{
-  struct gtklocal *gtklocal;
-
-  if (_getobj(obj, "_gtklocal", inst, &gtklocal))
-    return 1;
-
-  gtklocal->bg_b = get_color(gtklocal, argc, argv);
-  return 0;
-}
-
 static int
 gtkbg(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
