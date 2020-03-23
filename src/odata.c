@@ -10333,7 +10333,7 @@ calc_equation(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **ar
   g_free(rval->str);
   rval->str = NULL;
 
-  x = * (double *) argv[2];
+  x = arg_to_double(argv, 2);
   r = calc_fit_equation(obj, inst, x, &y);
 
   switch (r) {
