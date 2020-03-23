@@ -113,7 +113,7 @@ darrayput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   local->modified = TRUE;
 
   num=*(int *)argv[2];
-  val=*(double *)argv[3];
+  val = arg_to_double(argv, 3);
   _getobj(obj,"@",inst,&array);
   num = oarray_get_index(array, num);
   if (num < 0) {
