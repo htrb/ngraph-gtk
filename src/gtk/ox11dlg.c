@@ -457,10 +457,10 @@ dlgspin(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   type = argv[1][0];
   switch (type) {
   case 'd':
-    min = * (double *) argv[2];
-    max = * (double *) argv[3];
-    inc = * (double *) argv[4];
-    r = * (double *) argv[5];
+    min = arg_to_double(argv, 2);
+    max = arg_to_double(argv, 3);
+    inc = arg_to_double(argv, 4);
+    r   = arg_to_double(argv, 5);
     break;
   case 'i':
     min = * (int *) argv[2];
