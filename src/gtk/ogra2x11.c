@@ -93,6 +93,9 @@ struct gtklocal
   struct action_type action;
   double bg_r, bg_g, bg_b;
   struct gra2cairo_local *local;
+#if OSX
+  int menulock;
+#endif
 };
 
 static void gtkMakeRuler(cairo_t *cr, struct gtklocal *gtklocal);
