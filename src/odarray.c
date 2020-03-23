@@ -208,7 +208,7 @@ darrayins(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   local->modified = TRUE;
 
   num=*(int *)argv[2];
-  val=*(double *)argv[3];
+  val = arg_to_double(argv, 3);
 
   array = oarray_get_array(obj, inst, sizeof(double));
   if (array==NULL) {
