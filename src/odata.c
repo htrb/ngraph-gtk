@@ -7355,8 +7355,8 @@ f2dgetcoord(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
   struct narray *array;
   struct axis_prm ax_prm, ay_prm;
 
-  x=*(double *)argv[2];
-  y=*(double *)argv[3];
+  x = arg_to_double(argv, 2);
+  y = arg_to_double(argv, 3);
   _getobj(obj,"data_clip",inst,&dataclip);
 
   id = get_axis_prm(obj, inst, AXIS_X, &ax_prm);
