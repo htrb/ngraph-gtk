@@ -338,5 +338,6 @@ void obj_set_undo_func(struct objlist *obj, UNDO_DUP_FUNC dup_func, UNDO_FREE_FU
 int obj_get_field_pos(struct objlist *obj, const char *field);
 int undo_check_undo(struct objlist *obj);
 int undo_check_redo(struct objlist *obj);
+double arg_to_double(char **argv, int index);
 
 #endif

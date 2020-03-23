@@ -5440,6 +5440,16 @@ copy_obj_field(struct objlist *obj, int dist, int src, char **ignore_field)
   return 0;
 }
 
+double
+arg_to_double(char **argv, int index)
+{
+  void *ptr;
+  double val;
+  ptr = argv[index];
+  val = * (double *) ptr;
+  return val;
+}
+
 #ifdef COMPILE_UNUSED_FUNCTIONS
 static char *
 getuniqname(struct objlist *obj,char *prefix,char sep)
