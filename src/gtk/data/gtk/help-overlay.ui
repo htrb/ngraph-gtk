@@ -148,54 +148,6 @@
         <child>
           <object class="GtkShortcutsGroup">
             <property name="visible">1</property>
-            <property name="title">Window (multi window mode only)</property>
-	    <child>
-	      <object class="GtkShortcutsShortcut">
-		<property name="visible">1</property>
-		<property name="action-name">app.ViewToggleDataWindowAction</property>
-		<property name="title" translatable="yes">Activate Data Window</property>
-	      </object>
-	    </child>
-	    <child>
-	      <object class="GtkShortcutsShortcut">
-		<property name="visible">1</property>
-		<property name="action-name">app.ViewToggleAxisWindowAction</property>
-		<property name="title" translatable="yes">Activate Axis Window</property>
-	      </object>
-	    </child>
-	    <child>
-	      <object class="GtkShortcutsShortcut">
-		<property name="visible">1</property>
-		<property name="action-name">app.ViewToggleLegendWindowAction</property>
-		<property name="title" translatable="yes">Activate Legend Window</property>
-	      </object>
-	    </child>
-	    <child>
-	      <object class="GtkShortcutsShortcut">
-		<property name="visible">1</property>
-		<property name="action-name">app.ViewToggleMergeWindowAction</property>
-		<property name="title" translatable="yes">Activate Merge Window</property>
-	      </object>
-	    </child>
-	    <child>
-	      <object class="GtkShortcutsShortcut">
-		<property name="visible">1</property>
-		<property name="action-name">app.ViewToggleCoordinateWindowAction</property>
-		<property name="title" translatable="yes">Activate Coordinate Window</property>
-	      </object>
-	    </child>
-	    <child>
-	      <object class="GtkShortcutsShortcut">
-		<property name="visible">1</property>
-		<property name="action-name">app.ViewToggleInformationWindowAction</property>
-		<property name="title" translatable="yes">Activate Information Window</property>
-	      </object>
-	    </child>
-	  </object>
-        </child>
-        <child>
-          <object class="GtkShortcutsGroup">
-            <property name="visible">1</property>
             <property name="title">Help</property>
 	    <child>
 	      <object class="GtkShortcutsShortcut">
