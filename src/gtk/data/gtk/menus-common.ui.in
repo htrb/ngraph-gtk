@@ -648,4 +648,51 @@
       </item>
     </section>
   </menu>
+  <menu id="save-menu">
+    <section>
+      <item>
+	<attribute name="label" translatable="yes">_Save</attribute>
+	<attribute name="action">app.GraphSaveAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">Save _As</attribute>
+	<attribute name="action">app.GraphSaveAsAction</attribute>
+      </item>
+    </section>
+    <section>
+      <submenu>
+	<attribute name="label" translatable="yes">_Export image</attribute>
+	<item>
+          <attribute name="label" translatable="yes">_GRA file</attribute>
+	  <attribute name="action">app.GraphExportGRAAction</attribute>
+	</item>
+	<item>
+	  <attribute name="label" translatable="yes">_PS file</attribute>
+	  <attribute name="action">app.GraphExportPSAction</attribute>
+	</item>
+	<item>
+          <attribute name="label" translatable="yes">_EPS file</attribute>
+	  <attribute name="action">app.GraphExportEPSAction</attribute>
+	</item>
+	<item>
+          <attribute name="label" translatable="yes">P_DF file</attribute>
+	  <attribute name="action">app.GraphExportPDFAction</attribute>
+	</item>
+	<item>
+          <attribute name="label" translatable="yes">_SVG file</attribute>
+	  <attribute name="action">app.GraphExportSVGAction</attribute>
+	</item>
+	<item>
+          <attribute name="label" translatable="yes">P_NG file</attribute>
+	  <attribute name="action">app.GraphExportPNGAction</attribute>
+	</item>
+      </submenu>
+    </section>
+    <section>
+      <item>
+	<attribute name="label" translatable="yes">_Save data</attribute>
+	<attribute name="action">app.DataSaveAction</attribute>
+      </item>
+    </section>
+  </menu>
 </interface>
