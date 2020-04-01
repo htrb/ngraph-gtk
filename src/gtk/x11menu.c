@@ -4561,6 +4561,9 @@ create_save_menu(void)
 
 #if USE_GTK_BUILDER
   gmenu = gtk_application_get_menu_by_id(GtkApp, "save-menu");
+  if (gmenu == NULL) {
+    return NULL;
+  }
   menu = gtk_menu_new_from_model(G_MENU_MODEL(gmenu));
 #else
   menu = gtk_menu_new();
