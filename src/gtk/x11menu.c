@@ -4637,10 +4637,6 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
       gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(widget), menu);
       gtk_menu_tool_button_set_arrow_tooltip_text(GTK_MENU_TOOL_BUTTON(widget), _("Recent Data Files"));
       break;
-    case TOOL_TYPE_TOGGLE:
-    case TOOL_TYPE_TOGGLE2:
-      widget = gtk_toggle_tool_button_new();
-      break;
     case TOOL_TYPE_RADIO:
       widget = gtk_radio_tool_button_new(list);
       list = gtk_radio_tool_button_get_group(GTK_RADIO_TOOL_BUTTON(widget));
@@ -4667,13 +4663,7 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
     } else
 #endif
     if (item[i].callback) {
-      switch (item[i].type) {
-      case TOOL_TYPE_TOGGLE:
-	g_signal_connect(widget, "toggled", G_CALLBACK(item[i].callback), GINT_TO_POINTER(item[i].user_data));
-	break;
-      default:
-	g_signal_connect(widget, "clicked", G_CALLBACK(item[i].callback), GINT_TO_POINTER(item[i].user_data));
-      }
+      g_signal_connect(widget, "clicked", G_CALLBACK(item[i].callback), GINT_TO_POINTER(item[i].user_data));
     }
 
     if (item[i].tip) {
