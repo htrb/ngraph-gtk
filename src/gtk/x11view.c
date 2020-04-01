@@ -5795,7 +5795,6 @@ ViewUpdate(void)
   int findX, findY, findU, findR, findG;
   char type;
   char *group, *objs[OBJ_MAX];
-  int axis;
   struct Viewer *d;
 
   if (Menulock || Globallock)
@@ -5812,7 +5811,6 @@ ViewUpdate(void)
 
   get_focused_obj_array(d->focusobj, objs);
   undo = menu_save_undo(UNDO_TYPE_EDIT, objs);
-  axis = FALSE;
   PaintLock = TRUE;
   modified = FALSE;
 
@@ -5830,7 +5828,6 @@ ViewUpdate(void)
     ret = IDCANCEL;
 
     if (obj == chkobject("axis")) {
-      axis = TRUE;
       _getobj(obj, "group", inst, &group);
 
       if (group && group[0] != 'a') {
