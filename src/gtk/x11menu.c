@@ -4556,22 +4556,15 @@ create_save_menu(void)
 {
   GtkWidget *menu;
 #if USE_GTK_BUILDER
-  int i;
-  char *action;
+  GMenu *gmenu;
 #endif
 
+#if USE_GTK_BUILDER
+  gmenu = gtk_application_get_menu_by_id(GtkApp, "save-menu");
+  menu = gtk_menu_new_from_model(G_MENU_MODEL(gmenu));
+#else
   menu = gtk_menu_new();
   create_menu_sub(menu, SaveMenu, TRUE);
-#if USE_GTK_BUILDER
-  for (i = 0; SaveMenu[i].type != MENU_TYPE_END; i++) {
-    if (SaveMenu[i].action_name && SaveMenu[i].action) {
-      action = g_strdup_printf("app.%s", SaveMenu[i].action_name);
-      if (action) {
-	gtk_actionable_set_action_name(GTK_ACTIONABLE(SaveMenu[i].action->popup), action);
-	g_free(action);
-      }
-    }
-  }
 #endif
   gtk_widget_show_all(menu);
   return menu;
