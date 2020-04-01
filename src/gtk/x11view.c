@@ -6203,7 +6203,6 @@ ViewCopy(void)
   struct FocusObj *focus;
   struct objlist *obj;
   N_VALUE *inst, *inst2;
-  int axis = FALSE;
   struct Viewer *d;
   char *objs[OBJ_MAX];
   struct FOCUSED_INST *focused_inst;
@@ -6222,7 +6221,6 @@ ViewCopy(void)
   }
 
   d->ShowFrame = FALSE;
-  axis = FALSE;
   PaintLock = TRUE;
 
   focused_inst = create_focused_inst_array_by_id_order(arraydata(d->focusobj), num);
@@ -6245,7 +6243,6 @@ ViewCopy(void)
 
     obj = focus->obj;
     if (obj == chkobject("axis")) {
-      axis = TRUE;
       ViewCopyAxis(obj, id, focus, inst);
     } else {
       if ((id2 = newobj(obj)) >= 0) {
