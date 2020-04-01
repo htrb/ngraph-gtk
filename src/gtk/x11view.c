@@ -5920,7 +5920,6 @@ ViewDelete(void)
 {
   int i, id, num;
   struct FocusObj *focus;
-  int axis;
   struct Viewer *d;
   char *objs[OBJ_MAX];
 
@@ -5941,7 +5940,6 @@ ViewDelete(void)
   }
 
   d->ShowFrame = FALSE;
-  axis = FALSE;
   PaintLock = TRUE;
 
   get_focused_obj_array(d->focusobj, objs);
@@ -5960,7 +5958,6 @@ ViewDelete(void)
 
     if (obj == chkobject("axis")) {
       AxisDel(id);
-      axis = TRUE;
     } else {
       delobj(obj, id);
     }
