@@ -30,6 +30,7 @@
 	<item>
 	  <attribute name="label" translatable="yes">_Load graph</attribute>
 	  <attribute name="action">app.GraphLoadAction</attribute>
+          <attribute name="accel">&lt;Primary&gt;R</attribute>
 	</item>
 	<item>
 	  <attribute name="label" translatable="yes">_Recent graphs</attribute>
@@ -40,10 +41,12 @@
 	<item>
 	  <attribute name="label" translatable="yes">_Save</attribute>
 	  <attribute name="action">app.GraphSaveAction</attribute>
+          <attribute name="accel">&lt;Primary&gt;S</attribute>
 	</item>
 	<item>
 	  <attribute name="label" translatable="yes">Save _As</attribute>
 	  <attribute name="action">app.GraphSaveAsAction</attribute>
+          <attribute name="accel">&lt;Primary&gt;&lt;Shift&gt;S</attribute>
 	</item>
       </section>
       <section>
@@ -93,6 +96,7 @@
 	<item>
 	  <attribute name="label" translatable="yes">_Print</attribute>
 	  <attribute name="action">app.GraphPrintAction</attribute>
+          <attribute name="accel">&lt;Primary&gt;P</attribute>
 	</item>
       </section>
       <section>
@@ -114,36 +118,44 @@
 	<item>
 	  <attribute name="label" translatable="yes">_Redo</attribute>
 	  <attribute name="action">app.EditRedoAction</attribute>
+          <attribute name="accel">&lt;Primary&gt;Y</attribute>
 	</item>
 	<item>
 	  <attribute name="label" translatable="yes">_Undo</attribute>
 	  <attribute name="action">app.EditUndoAction</attribute>
+          <attribute name="accel">&lt;Primary&gt;Z</attribute>
 	</item>
       </section>
       <section>
 	<item>
 	  <attribute name="label" translatable="yes">Cu_t</attribute>
 	  <attribute name="action">app.EditCutAction</attribute>
+          <attribute name="accel">&lt;Primary&gt;X</attribute>
 	</item>
 	<item>
 	  <attribute name="label" translatable="yes">_Copy</attribute>
 	  <attribute name="action">app.EditCopyAction</attribute>
+          <attribute name="accel">&lt;Primary&gt;C</attribute>
 	</item>
 	<item>
 	  <attribute name="label" translatable="yes">_Paste</attribute>
 	  <attribute name="action">app.EditPasteAction</attribute>
+          <attribute name="accel">&lt;Primary&gt;V</attribute>
 	</item>
 	<item>
 	  <attribute name="label" translatable="yes">_Delete</attribute>
 	  <attribute name="action">app.EditDeleteAction</attribute>
+          <attribute name="accel">Delete</attribute>
 	</item>
 	<item>
 	  <attribute name="label" translatable="yes">_Duplicate</attribute>
 	  <attribute name="action">app.EditDuplicateAction</attribute>
+          <attribute name="accel">Insert</attribute>
 	</item>
 	<item>
 	  <attribute name="label" translatable="yes">Select _All</attribute>
 	  <attribute name="action">app.EditSelectAllAction</attribute>
+          <attribute name="accel">&lt;Primary&gt;A</attribute>
 	</item>
       </section>
       <section>
@@ -153,6 +165,7 @@
 	    <item>
               <attribute name="label" translatable="yes">_Top</attribute>
 	      <attribute name="action">app.EditOrderTopAction</attribute>
+              <attribute name="accel">&lt;Shift&gt;Home</attribute>
 	    </item>
 	    <item>
               <attribute name="label" translatable="yes">_Up</attribute>
@@ -165,6 +178,7 @@
 	    <item>
               <attribute name="label" translatable="yes">_Bottom</attribute>
 	      <attribute name="action">app.EditOrderBottomAction</attribute>
+              <attribute name="accel">&lt;Shift&gt;End</attribute>
 	    </item>
 	  </section>
 	</submenu>
@@ -223,6 +237,7 @@
 	<item>
 	  <attribute name="label" translatable="yes">_Draw</attribute>
 	  <attribute name="action">app.ViewDrawAction</attribute>
+          <attribute name="accel">&lt;Primary&gt;D</attribute>
 	</item>
       </section>
       <section>
@@ -259,6 +274,7 @@
 	<item>
 	  <attribute name="label" translatable="yes">cross _Gauge</attribute>
 	  <attribute name="action">app.ViewCrossGaugeAction</attribute>
+          <attribute name="accel">&lt;Primary&gt;G</attribute>
 	</item>
 	<item>
 	  <attribute name="label" translatable="yes">_Grid</attribute>
@@ -278,6 +294,7 @@
 		<item>
 		  <attribute name="label" translatable="yes">_File</attribute>
 		  <attribute name="action">app.DataAddFileAction</attribute>
+		  <attribute name="accel">&lt;Primary&gt;O</attribute>
 		</item>
 		<item>
 		  <attribute name="label" translatable="yes">_Range</attribute>
@@ -354,6 +371,7 @@
 	    <item>
 	      <attribute name="label" translatable="yes">Scale _Clear</attribute>
 	      <attribute name="action">app.AxisScaleClearAction</attribute>
+              <attribute name="accel">&lt;Primary&gt;&lt;Shift&gt;C</attribute>
 	    </item>
 	    <item>
 	      <attribute name="label" translatable="yes">Scale _Undo</attribute>
@@ -510,14 +528,15 @@
     <submenu>
       <attribute name="label" translatable="yes">_Help</attribute>
       <section>
+	<item>
+	  <attribute name="label" translatable="yes">_Help</attribute>
+	  <attribute name="action">app.help</attribute>
+          <attribute name="accel">F1</attribute>
+	</item>
         <item>
           <attribute name="label" translatable="yes">_Keyboard shortcus</attribute>
           <attribute name="action">win.show-help-overlay</attribute>
         </item>
-	<item>
-	  <attribute name="label" translatable="yes">_Help</attribute>
-	  <attribute name="action">app.help</attribute>
-	</item>
 	<item>
 	  <attribute name="label" translatable="yes">_Demonstration</attribute>
 	  <attribute name="action">app.demo</attribute>
