@@ -491,7 +491,7 @@
       <attribute name="label" translatable="yes">_Preference</attribute>
       <section>
 	<item>
-	  <attribute name="label" translatable="yes">Viewer</attribute>
+	  <attribute name="label" translatable="yes">_Viewer</attribute>
 	  <attribute name="action">app.PreferenceViewerAction</attribute>
 	</item>
 	<item>
