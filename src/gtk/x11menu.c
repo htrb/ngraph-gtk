@@ -2579,6 +2579,7 @@ static struct MenuItem MainMenu[] = {
   },
 };
 
+#if ! USE_GTK_BUILDER
 static struct MenuItem SaveMenu[] = {
   {
     MENU_TYPE_NORMAL,
@@ -2590,11 +2591,7 @@ static struct MenuItem SaveMenu[] = {
     GDK_KEY_s,
     GDK_CONTROL_MASK,
     NULL,
-#if USE_GTK_BUILDER
-    NULL,
-#else
     G_CALLBACK(CmGraphOverWrite),
-#endif
     0,
     ActionWidget + GraphSaveAction,
     "GraphSaveAction",
@@ -2643,11 +2640,7 @@ static struct MenuItem SaveMenu[] = {
     0,
     0,
     NULL,
-#if USE_GTK_BUILDER
-    NULL,
-#else
     G_CALLBACK(CmFileSaveData),
-#endif
     0,
     ActionWidget + DataSaveAction,
     "DataSaveAction",
@@ -2656,6 +2649,7 @@ static struct MenuItem SaveMenu[] = {
     MENU_TYPE_END,
   },
 };
+#endif
 
 static struct MenuItem PopupRotateMenu[] = {
   {
