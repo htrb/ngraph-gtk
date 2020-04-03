@@ -306,7 +306,7 @@ EditFlipHAction_activated(GSimpleAction *action, GVariant *parameter, gpointer a
 }
 
 static void
-EditFlipVActiopn_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
+EditFlipVAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
   CmEditMenuCB(NULL, GINT_TO_POINTER(MenuIdEditFlipVertically));
 }
@@ -724,7 +724,7 @@ static GActionEntry AppEntries[] =
   { "EditRotateCWAction", EditRotateCWAction_activated, NULL, NULL, NULL },
   { "EditRotateCCWAction", EditRotateCCWAction_activated, NULL, NULL, NULL },
   { "EditFlipHAction", EditFlipHAction_activated, NULL, NULL, NULL },
-  { "EditFlipVActiopn", EditFlipVActiopn_activated, NULL, NULL, NULL },
+  { "EditFlipVAction", EditFlipVAction_activated, NULL, NULL, NULL },
   { "ViewDrawDirectAction", ViewDrawDirectAction_activated, NULL, NULL, NULL },
   { "ViewDrawAction", ViewDrawAction_activated, NULL, NULL, NULL },
   { "ViewClearInformationWindowAction", ViewClearInformationWindowAction_activated, NULL, NULL, NULL },
