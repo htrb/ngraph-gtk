@@ -234,7 +234,7 @@
 	</item>
 	<item>
 	  <attribute name="label" translatable="yes">flip _Vertically</attribute>
-	  <attribute name="action">app.EditFlipVActiopn</attribute>
+	  <attribute name="action">app.EditFlipVAction</attribute>
 	</item>
       </section>
     </submenu>
@@ -638,7 +638,7 @@
 	  </item>
 	  <item>
 	    <attribute name="label" translatable="yes">flip _Vertically</attribute>
-	    <attribute name="action">app.EditFlipVActiopn</attribute>
+	    <attribute name="action">app.EditFlipVAction</attribute>
 	  </item>
 	</section>
       </submenu>
