@@ -2077,7 +2077,7 @@ static struct MenuItem EditMenu[] = {
     G_CALLBACK(CmEditMenuCB),
     MenuIdEditFlipVertically,
     ActionWidget + EditFlipVAction,
-    "EditFlipVActiopn",
+    "EditFlipVAction",
   },
   {
     MENU_TYPE_END,
@@ -2716,7 +2716,7 @@ static struct MenuItem PopupFlipMenu[] = {
     G_CALLBACK(CmEditMenuCB),
     MenuIdEditFlipVertically,
     ActionWidget + EditFlipVAction,
-    "EditFlipVActiopn",
+    "EditFlipVAction",
   },
   {
     MENU_TYPE_END,
