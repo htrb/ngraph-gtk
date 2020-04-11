@@ -729,6 +729,7 @@ presetting_set_parameters(struct Viewer *d)
       widget_set_font_style(obj, inst, "style");
       widget_set_spin_value(obj, inst, Widgets.pt.widget, "pt");
       widget_set_font(obj, inst, "font");
+      widget_set_rgba_color(obj, inst, Widgets.color1.widget, NULL, NULL);
     } else if (obj == arc_obj) {
       widget_set_stroke_fill(obj, inst);
       widget_set_join(obj, inst);
