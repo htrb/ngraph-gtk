@@ -3936,7 +3936,7 @@ math_func_printf_common(MathFunctionCallExpression *exp, MathEquation *eq, MathV
 {
   const char *str;
   char *format;
-  int quote, po, len, i;
+  int po, len, i;
 
   rval->val = 0;
   rval->type = MATH_VALUE_NORMAL;
@@ -3951,18 +3951,8 @@ math_func_printf_common(MathFunctionCallExpression *exp, MathEquation *eq, MathV
   }
   g_string_set_size(gstr, 0);
   po = 0;
-  quote = FALSE;
   i = index + 1;
   for (po = 0; format[po]; po++) {
-    if (!quote && format[po] == '\\') {
-      quote = TRUE;
-      continue;
-    }
-    if (quote) {
-      g_string_append_c(gstr, format[po]);
-      quote = FALSE;
-      continue;
-    }
     if (format[po] == '%') {
       if (format[po + 1] == '%') {
         po++;
