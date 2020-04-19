@@ -201,7 +201,7 @@ EditCutAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app
 static void
 EditCopyAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmEditMenuCB(NULL, GINT_TO_POINTER(MenuIdEditCut));
+  CmEditMenuCB(NULL, GINT_TO_POINTER(MenuIdEditCopy));
 }
 
 static void
