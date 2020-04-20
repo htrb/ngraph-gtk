@@ -4,7 +4,7 @@ set +e
 
 ID=${gra:viewer:id}
 
-cd ${system::data_dir}/demo/
+cd "${system::data_dir}/demo/"
 
 new sarray name="FILE"
 for demo in demo1 demo2 demo3 demo4 demo5a demo5b demo5c demo5d demo5e demo6 demo7 demo8 demo9
