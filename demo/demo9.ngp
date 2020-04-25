@@ -1,6 +1,6 @@
 #!ngraph
-#%creator: Ngraph
-#%version: 6.07.05
+#%creator: Ngraph 
+#%version: 6.08.04
 new axis name:fX1
 	axis::hidden=false
 	axis::R=0
@@ -60,7 +60,7 @@ new axis name:fX1
 	axis::num_font_style=0
 	axis::num_script_size=7000
 	axis::num_align=center
-	axis::num_no_zero=false
+	axis::num_no_zero=regular
 	axis::num_direction=horizontal
 	axis::num_shift_p=0
 	axis::num_shift_n=100
@@ -130,7 +130,7 @@ new axis name:fY1
 	axis::num_font_style=0
 	axis::num_script_size=7000
 	axis::num_align=right
-	axis::num_no_zero=false
+	axis::num_no_zero=regular
 	axis::num_direction=horizontal
 	axis::num_shift_p=0
 	axis::num_shift_n=100
@@ -200,7 +200,7 @@ new axis name:fU1
 	axis::num_font_style=0
 	axis::num_script_size=7000
 	axis::num_align=center
-	axis::num_no_zero=false
+	axis::num_no_zero=regular
 	axis::num_direction=horizontal
 	axis::num_shift_p=0
 	axis::num_shift_n=100
@@ -270,7 +270,7 @@ new axis name:fR1
 	axis::num_font_style=0
 	axis::num_script_size=7000
 	axis::num_align=left
-	axis::num_no_zero=false
+	axis::num_no_zero=regular
 	axis::num_direction=horizontal
 	axis::num_shift_p=0
 	axis::num_shift_n=100
@@ -342,7 +342,7 @@ new axis name:fX2
 	axis::num_font_style=0
 	axis::num_script_size=7000
 	axis::num_align=center
-	axis::num_no_zero=false
+	axis::num_no_zero=regular
 	axis::num_direction=horizontal
 	axis::num_shift_p=0
 	axis::num_shift_n=100
@@ -412,7 +412,7 @@ new axis name:fY2
 	axis::num_font_style=0
 	axis::num_script_size=7000
 	axis::num_align=right
-	axis::num_no_zero=false
+	axis::num_no_zero=regular
 	axis::num_direction=horizontal
 	axis::num_shift_p=0
 	axis::num_shift_n=100
@@ -482,7 +482,7 @@ new axis name:fU2
 	axis::num_font_style=0
 	axis::num_script_size=7000
 	axis::num_align=center
-	axis::num_no_zero=false
+	axis::num_no_zero=regular
 	axis::num_direction=horizontal
 	axis::num_shift_p=0
 	axis::num_shift_n=100
@@ -552,7 +552,7 @@ new axis name:fR2
 	axis::num_font_style=0
 	axis::num_script_size=7000
 	axis::num_align=left
-	axis::num_no_zero=false
+	axis::num_no_zero=regular
 	axis::num_direction=horizontal
 	axis::num_shift_p=0
 	axis::num_shift_n=100
@@ -591,7 +591,8 @@ each_with_index(col, w, i,   # draw rectangle for each data
     hsb2(i / n, 0.7, 1);     # set fill color
     draw_rect(start, y - HEIGHT / 2, width, HEIGHT, TRUE, TRUE);
     sprintf($str, "%.1f%", width * 100);
-    draw_text_raw($str, start + width * 0.1, y - 0.04, 0, 10, 0, a);
+    set_text_align(0, 0.5);
+    draw_text_raw($str, start + 0.01, y, 0, 10, 0, a);
     start += width;
   });'
 	data::math_y=
@@ -600,6 +601,7 @@ each_with_index(col, w, i,   # draw rectangle for each data
 	data::func_h=
 	data::smooth_x=0
 	data::smooth_y=0
+	data::averaging_type=simple
 	data::mark_type=0
 	data::mark_size=0
 	data::line_width=40
@@ -656,12 +658,9 @@ each_with_index(ang, a, i,# draw pie-slice for each data
     hsb2(i / n, 0.7, 1);  # set fill color
     angle2 += a;
     draw_arc(y, 0, R, R, angle2, -a, TRUE, TRUE, TRUE, TRUE);
-    sprintf($str, "%.1f%", a / 3.60);
-    a := angle2 - a * 0.6;
-    tr := R * 0.3;
-    tx := y + tr * cos(a / 180 * PI);
-    ty := 0 + tr * sin(a / 180 * PI);
-    draw_text_raw($str, tx, ty, 0, 10, 0, a);
+    sprintf($str, "     %.1f%", a / 3.60);
+    set_text_align(0, 0.5);
+    draw_text_raw($str, y, 0, 0, 10, 0, angle2 - a * 0.5);
   });'
 	data::math_y=
 	data::func_f=
@@ -669,6 +668,7 @@ each_with_index(ang, a, i,# draw pie-slice for each data
 	data::func_h=
 	data::smooth_x=0
 	data::smooth_y=0
+	data::averaging_type=simple
 	data::mark_type=0
 	data::mark_size=0
 	data::line_width=40
