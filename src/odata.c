@@ -1606,10 +1606,10 @@ file_draw_text_sub(MathFunctionCallExpression *exp, MathEquation *eq, MathValue 
     script  = exp->buf[8].val.val * 100;
   }
   if (pt <= 0) {
-    pt = 2000;
+    pt = DEFAULT_FONT_PT;
   }
   if (script <= 0) {
-    script = 7000;
+    script = DEFAULT_SCRIPT_SIZE;
   }
   if (style < 0) {
     style = 0;
