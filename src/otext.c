@@ -90,7 +90,7 @@ textinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   pt=DEFAULT_FONT_PT;
-  scriptsize=7000;
+  scriptsize=DEFAULT_SCRIPT_SIZE;
   if (_putobj(obj,"pt",inst,&pt)) return 1;
   if (_putobj(obj,"script_size",inst,&scriptsize)) return 1;
 
