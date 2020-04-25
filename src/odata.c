@@ -1606,9 +1606,10 @@ file_set_text_align(MathFunctionCallExpression *exp, MathEquation *eq, MathValue
 static int
 file_draw_text_sub(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval, int raw)
 {
-  double x, y;
+  double x, y, si, co, rdir, h_shift, v_shift;
   int font_id, pt, space, dir, script, style;
   int px, py, cx, cy;
+  int w, h, bbox[4];
   struct f2ddata *fp;
   char *str, *font;
 
@@ -1677,6 +1678,16 @@ file_draw_text_sub(MathFunctionCallExpression *exp, MathEquation *eq, MathValue 
     font = "Sans-serif";
     break;
   }
+  text_get_bbox(0, 0, str, font, style, pt, 0, space, script, raw, bbox);
+  w = bbox[2] - bbox[0];
+  h = bbox[3] - bbox[1];
+  rdir = dir / 18000.0 * MPI;
+  si = sin(rdir);
+  co = cos(rdir);
+  h_shift = bbox[0] + w * fp->text_align_h;
+  v_shift = bbox[1] + h * fp->text_align_v;
+  cx = cx - h_shift * co - v_shift * si;
+  cy = cy + h_shift * si - v_shift * co;
   GRAcurrent_point(fp->GC, &px, &py);
   GRAcolor(fp->GC, fp->color.r, fp->color.g, fp->color.b, fp->color.a);
   GRAmoveto(fp->GC, cx, cy);
