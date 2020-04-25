@@ -1575,6 +1575,35 @@ file_draw_polygon(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *
 }
 
 static int
+file_set_text_align(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  struct f2ddata *fp;
+
+  if (exp->buf[0].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[1].val.type != MATH_VALUE_NORMAL) {
+    return 0;
+  }
+  fp = math_equation_get_user_data(eq);
+  if (fp == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+  fp->text_align_h = exp->buf[0].val.val;
+  if (fp->text_align_h < 0) {
+    fp->text_align_h = 0;
+  } else if (fp->text_align_h > 1) {
+    fp->text_align_h = 1;
+  }
+  fp->text_align_v = exp->buf[1].val.val;
+  if (fp->text_align_v < 0) {
+    fp->text_align_v = 0;
+  } else if (fp->text_align_v > 1) {
+    fp->text_align_v = 1;
+  }
+  return 0;
+}
+
+static int
 file_draw_text_sub(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval, int raw)
 {
   double x, y;
@@ -1864,6 +1893,7 @@ static struct funcs FileFunc[] = {
   {"DRAW_POLYGON",   {4, 0, 0, file_draw_polygon, draw_polygon_arg_type, NULL, NULL, NULL}},
   {"DRAW_TEXT",      {9, 0, 0, file_draw_text, draw_text_arg_type, NULL, NULL, NULL}},
   {"DRAW_TEXT_RAW",  {8, 0, 0, file_draw_text_raw, draw_text_arg_type, NULL, NULL, NULL}},
+  {"SET_TEXT_ALIGN", {2, 0, 0, file_set_text_align, NULL, NULL, NULL, NULL}},
   {"TEXT_OBJ_SET",   {2, 0, 0, file_text_obj_set, text_obj_set_arg_type, NULL, NULL, NULL}},
   {"TEXT_OBJ_GET",   {2, 0, 0, file_text_obj_get, text_obj_get_arg_type, NULL, NULL, NULL}},
   {"STRING_COLUMN",  {2, 0, 0, file_string_column, string_column_arg_type, NULL, NULL, NULL}},
