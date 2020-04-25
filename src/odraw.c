@@ -517,6 +517,46 @@ curve_expand_points(int *pdata, int num, int intp, struct narray *expand_points)
   return 0;
 }
 
+void
+text_get_bbox(int x, int y, char *text, char *font, int style, int pt, int dir, int space, int scriptsize, int raw, int *bbox)
+{
+  int gx0, gy0, gx1, gy1;
+  int i, ggx[4], ggy[4];
+  int minx, miny, maxx, maxy;
+  double si, co, rdir;
+
+  if (raw) {
+    GRAtextextentraw(text, font, style, pt, space, &gx0, &gy0, &gx1, &gy1);
+  } else {
+    GRAtextextent(text, font, style, pt, space, scriptsize, &gx0, &gy0, &gx1, &gy1, FALSE);
+  }
+  rdir = dir / 18000.0 * MPI;
+  si = -sin(rdir);
+  co =  cos(rdir);
+  ggx[0] = x + gx0 * co - gy0 * si;
+  ggy[0] = y + gx0 * si + gy0 * co;
+  ggx[1] = x + gx1 * co - gy0 * si;
+  ggy[1] = y + gx1 * si + gy0 * co;
+  ggx[2] = x + gx0 * co - gy1 * si;
+  ggy[2] = y + gx0 * si + gy1 * co;
+  ggx[3] = x + gx1 * co - gy1 * si;
+  ggy[3] = y + gx1 * si + gy1 * co;
+  minx = ggx[0];
+  maxx = ggx[0];
+  miny = ggy[0];
+  maxy = ggy[0];
+  for (i = 1; i < 4; i++) {
+    if (ggx[i]<minx) minx = ggx[i];
+    if (ggx[i]>maxx) maxx = ggx[i];
+    if (ggy[i]<miny) miny = ggy[i];
+    if (ggy[i]>maxy) maxy = ggy[i];
+  }
+  bbox[0] = minx;
+  bbox[1] = miny;
+  bbox[2] = maxx;
+  bbox[3] = maxy;
+}
+
 static struct objtable draw[] = {
   {"init",NVFUNC,0,drawinit,NULL,0},
   {"done",NVFUNC,0,drawdone,NULL,0},
