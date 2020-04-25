@@ -2449,6 +2449,8 @@ opendata(struct objlist *obj,N_VALUE *inst,
   fp->marksize=marksize;
   fp->marktype0=marktype;
   fp->marktype=marktype;
+  fp->text_align_h = 0.0;
+  fp->text_align_v = 0.0;
   fp->ignore=fp->negative=FALSE;
   arrayinit(&(fp->fileopen),sizeof(int));
   if (!raw) {
