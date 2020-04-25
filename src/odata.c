@@ -423,6 +423,7 @@ struct f2ddata {
   double range_min, range_max;
   int range_div;
   struct f2dlocal *local;
+  double text_align_h, text_align_v;
 };
 
 struct f2dlocal {
