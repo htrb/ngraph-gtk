@@ -247,14 +247,11 @@ textprintf(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 static int
 textbbox(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
-  int minx,miny,maxx,maxy;
   struct narray *array;
   int x,y,pt,space,dir,scriptsize,raw,style;
   char *font;
   char *text;
-  int gx0,gy0,gx1,gy1;
-  int i,ggx[4],ggy[4];
-  double si,co;
+  int bbox[4];
 
   array=rval->array;
   if (arraynum(array)!=0) return 0;
@@ -268,36 +265,12 @@ textbbox(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   _getobj(obj,"raw",inst,&raw);
   _getobj(obj,"font",inst,&font);
   _getobj(obj,"style",inst,&style);
-  if (raw) {
-    GRAtextextentraw(text,font,style,pt,space,&gx0,&gy0,&gx1,&gy1);
-  } else {
-    GRAtextextent(text,font,style,pt,space,scriptsize,&gx0,&gy0,&gx1,&gy1,FALSE);
-  }
-  si=-sin(dir/18000.0*MPI);
-  co=cos(dir/18000.0*MPI);
-  ggx[0]=x+gx0*co-gy0*si;
-  ggy[0]=y+gx0*si+gy0*co;
-  ggx[1]=x+gx1*co-gy0*si;
-  ggy[1]=y+gx1*si+gy0*co;
-  ggx[2]=x+gx0*co-gy1*si;
-  ggy[2]=y+gx0*si+gy1*co;
-  ggx[3]=x+gx1*co-gy1*si;
-  ggy[3]=y+gx1*si+gy1*co;
-  minx=ggx[0];
-  maxx=ggx[0];
-  miny=ggy[0];
-  maxy=ggy[0];
-  for (i=1;i<4;i++) {
-    if (ggx[i]<minx) minx=ggx[i];
-    if (ggx[i]>maxx) maxx=ggx[i];
-    if (ggy[i]<miny) miny=ggy[i];
-    if (ggy[i]>maxy) maxy=ggy[i];
-  }
+  text_get_bbox(x, y, text, font, style, pt, dir, space, scriptsize, raw, bbox);
   if ((array==NULL) && ((array=arraynew(sizeof(int)))==NULL)) return 1;
-  arrayins(array,&(maxy),0);
-  arrayins(array,&(maxx),0);
-  arrayins(array,&(miny),0);
-  arrayins(array,&(minx),0);
+  arrayins(array, bbox + 3, 0);
+  arrayins(array, bbox + 2, 0);
+  arrayins(array, bbox + 1, 0);
+  arrayins(array, bbox, 0);
   if (arraynum(array)==0) {
     arrayfree(array);
     rval->array = NULL;
