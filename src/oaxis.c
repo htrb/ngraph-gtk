@@ -270,7 +270,7 @@ axisinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   sy=100;
   autonorm=5;
   logpow=TRUE;
-  scriptsize=7000;
+  scriptsize=DEFAULT_SCRIPT_SIZE;
   num=-1;
   alpha=255;
   margin=500;
