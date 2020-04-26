@@ -1685,7 +1685,7 @@ file_draw_text_sub(MathFunctionCallExpression *exp, MathEquation *eq, MathValue 
   si = sin(rdir);
   co = cos(rdir);
   h_shift = bbox[0] + w * fp->text_align_h;
-  v_shift = bbox[1] + h * fp->text_align_v;
+  v_shift = bbox[1] + h * (1 - fp->text_align_v);
   cx = cx - h_shift * co - v_shift * si;
   cy = cy + h_shift * si - v_shift * co;
   GRAcurrent_point(fp->GC, &px, &py);
