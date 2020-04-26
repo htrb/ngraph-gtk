@@ -167,3 +167,4 @@ each_with_index(a, item, index, ex)	Evaluate <i>ex</i> for each element of the a
 filter(dest, src, item, ex)	Find elements in the array <i>src</i>\nthat satisfies that the evaluated value of <i>ex</i> is true\nand set them to the array <i>dest</i>.\nAn element of the array <i>src</i> can be referred by the variable <i>item</i>.
 find(a, item, ex)	Return the value of the first element in the array <i>a</i>\nthat satisfies that the evaluated value of <i>ex</i> is true.\nAn element of the array can be referred by the variable <i>item</i>.
 times(n, index, ex)	Repeat <i>ex</i> <i>n</i> times.\nThe loop count can be referred by the variable <i>index</i>.
+text_align(x, y)	Set alignment of a text drawing.\n<i>x</i> and <i>y</i> represent alignment of parallel and normal direction respectively.\n(0 &lt;= <i>x, y</i> &lt;= 1)
