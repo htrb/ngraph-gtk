@@ -591,7 +591,7 @@ each_with_index(col, w, i,   # draw rectangle for each data
     hsb2(i / n, 0.7, 1);     # set fill color
     draw_rect(start, y - HEIGHT / 2, width, HEIGHT, TRUE, TRUE);
     sprintf($str, "%.1f%", width * 100);
-    set_text_align(0, 0.5);
+    text_align(0, 0.5);
     draw_text_raw($str, start + 0.01, y, 0, 10, 0, a);
     start += width;
   });'
@@ -659,7 +659,7 @@ each_with_index(ang, a, i,# draw pie-slice for each data
     angle2 += a;
     draw_arc(y, 0, R, R, angle2, -a, TRUE, TRUE, TRUE, TRUE);
     sprintf($str, "     %.1f%", a / 3.60);
-    set_text_align(0, 0.5);
+    text_align(0, 0.5);
     draw_text_raw($str, y, 0, 0, 10, 0, angle2 - a * 0.5);
   });'
 	data::math_y=
