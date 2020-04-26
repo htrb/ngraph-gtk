@@ -1,6 +1,6 @@
 #!ngraph
-#%creator: Ngraph
-#%version: 6.08.01
+#%creator: Ngraph 
+#%version: 6.08.04
 new axis name:fX1
 	axis::hidden=false
 	axis::R=0
@@ -658,7 +658,8 @@ new data
 	data::math_y='y := 1.05;
 if(%0 == 3,
   {
-    draw_text("critical value", x + 0.1, y - 0.01);
+    text_align(0, 0.5);
+    draw_text("critical value", x + 0.1, y);
     draw_line(0, y, 1, y, 2, 4);
   });'
 	data::func_f=
@@ -803,7 +804,7 @@ new text
 	text::A=255
 	text::clip=true
 	text::redraw_flag=true
-	text::text='Sample length (亮m)'
+	text::text='Sample length (μm)'
 	text::x=9000
 	text::y=22000
 	text::pt=2000
@@ -822,7 +823,7 @@ new text
 	text::A=255
 	text::clip=true
 	text::redraw_flag=true
-	text::text='Resistance (K立)'
+	text::text='Resistance (KΩ)'
 	text::x=3000
 	text::y=17000
 	text::pt=2000
