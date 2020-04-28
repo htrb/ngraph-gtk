@@ -86,6 +86,9 @@ enum FONT_STYLE {
 #define DEFAULT_FONT_PT    2000
 #define DEFAULT_SCRIPT_SIZE 7000
 
+#define SCRIPT_SIZE_MIN 1000
+#define SCRIPT_SIZE_MAX 100000
+
 extern char *pathchar[];
 extern char *joinchar[];
 extern char *fontchar[];
