@@ -1628,23 +1628,31 @@ file_draw_text_sub(MathFunctionCallExpression *exp, MathEquation *eq, MathValue 
   }
   x       = exp->buf[1].val.val;
   y       = exp->buf[2].val.val;
-  font_id = exp->buf[3].val.val;
-  pt      = exp->buf[4].val.val * 100;
-  style   = exp->buf[5].val.val;
-  dir     = exp->buf[6].val.val * 100;
+  dir     = exp->buf[3].val.val * 100;
+  font_id = exp->buf[4].val.val;
+  pt      = exp->buf[5].val.val * 100;
+  style   = exp->buf[6].val.val;
   space   = exp->buf[7].val.val * 100;
   script  = 0;
+  fp = math_equation_get_user_data(eq);
+  if (fp == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
   if (! raw) {
     script  = exp->buf[8].val.val * 100;
   }
+  if (font_id <= 0) {
+    font_id = fp->text_font;
+  }
   if (pt <= 0) {
-    pt = DEFAULT_FONT_PT;
+    pt = fp->text_pt;
   }
   if (script <= 0) {
-    script = DEFAULT_SCRIPT_SIZE;
+    script = fp->text_script;
   }
-  if (style < 0) {
-    style = 0;
+  if (style <= 0) {
+    style = fp->text_style;
   } else if (style > GRA_FONT_STYLE_MAX) {
     style = GRA_FONT_STYLE_MAX;
   }
@@ -1655,11 +1663,6 @@ file_draw_text_sub(MathFunctionCallExpression *exp, MathEquation *eq, MathValue 
   str = (char *) math_expression_get_string_from_argument(exp, 0);
   if (str == NULL) {
     return 0;
-  }
-  fp = math_equation_get_user_data(eq);
-  if (fp == NULL) {
-    rval->type = MATH_VALUE_ERROR;
-    return 1;
   }
 
   if (fp->GC < 0) {
