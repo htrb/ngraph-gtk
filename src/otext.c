@@ -125,10 +125,10 @@ textgeometry(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
       *(int *)(argv[2])=TEXT_SIZE_MIN;
     }
   } else if (strcmp(field,"script_size")==0) {
-    if (*(int *)(argv[2]) < TEXT_OBJ_SCRIPT_SIZE_MIN) {
-      *(int *)(argv[2])=TEXT_OBJ_SCRIPT_SIZE_MIN;
-    } else if (*(int *)(argv[2])>TEXT_OBJ_SCRIPT_SIZE_MAX) {
-      *(int *)(argv[2])=TEXT_OBJ_SCRIPT_SIZE_MAX;
+    if (*(int *)(argv[2]) < SCRIPT_SIZE_MIN) {
+      *(int *)(argv[2])=SCRIPT_SIZE_MIN;
+    } else if (*(int *)(argv[2])>SCRIPT_SIZE_MAX) {
+      *(int *)(argv[2])=SCRIPT_SIZE_MAX;
     }
   } else if (strcmp(field,"style") == 0) {
     * (int *) (argv[2]) &= (GRA_FONT_STYLE_BOLD | GRA_FONT_STYLE_ITALIC);
