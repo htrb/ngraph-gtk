@@ -2493,6 +2493,11 @@ opendata(struct objlist *obj,N_VALUE *inst,
   fp->marktype=marktype;
   fp->text_align_h = 0.0;
   fp->text_align_v = 0.0;
+  fp->text_pt = DEFAULT_FONT_PT;
+  fp->text_script = DEFAULT_SCRIPT_SIZE;
+  fp->text_style = 0;
+  fp->text_font = 0;
+  fp->text_space = 0;
   fp->ignore=fp->negative=FALSE;
   arrayinit(&(fp->fileopen),sizeof(int));
   if (!raw) {
