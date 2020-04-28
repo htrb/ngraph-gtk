@@ -1605,6 +1605,49 @@ file_text_align(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rv
 }
 
 static int
+file_text_font(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  struct f2ddata *fp;
+
+  if (exp->buf[0].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[1].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[2].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[3].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[4].val.type != MATH_VALUE_NORMAL) {
+    return 0;
+  }
+  fp = math_equation_get_user_data(eq);
+  if (fp == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+  fp->text_font   = exp->buf[0].val.val;
+  fp->text_pt     = exp->buf[1].val.val * 100;
+  fp->text_style  = exp->buf[2].val.val;
+  fp->text_space  = exp->buf[3].val.val * 100;
+  fp->text_script = exp->buf[4].val.val * 100;
+  if (fp->text_font <= 0) {
+    fp->text_pt = 0;
+  }
+  if (fp->text_pt <= 0) {
+    fp->text_pt = DEFAULT_FONT_PT;
+  }
+  if (fp->text_style < 0) {
+    fp->text_style = 0;
+  } else if (fp->text_style > GRA_FONT_STYLE_MAX) {
+    fp->text_style = GRA_FONT_STYLE_MAX;
+  }
+  if (fp->text_script <= 0) {
+    fp->text_script = DEFAULT_SCRIPT_SIZE;
+  } else if (fp->text_script < SCRIPT_SIZE_MIN) {
+    fp->text_script = SCRIPT_SIZE_MIN;
+  } else if (fp->text_script > SCRIPT_SIZE_MAX) {
+    fp->text_script = SCRIPT_SIZE_MAX;
+  }
+  return 0;
+}
+
+static int
 file_draw_text_sub(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval, int raw)
 {
   double x, y, si, co, rdir, h_shift, v_shift;
@@ -1909,6 +1952,7 @@ static struct funcs FileFunc[] = {
   {"DRAW_TEXT",      {9, 0, 0, file_draw_text, draw_text_arg_type, NULL, NULL, NULL}},
   {"DRAW_TEXT_RAW",  {8, 0, 0, file_draw_text_raw, draw_text_arg_type, NULL, NULL, NULL}},
   {"TEXT_ALIGN",     {2, 0, 0, file_text_align, NULL, NULL, NULL, NULL}},
+  {"TEXT_FONT",      {5, 0, 0, file_text_font, NULL, NULL, NULL, NULL}},
   {"TEXT_OBJ_SET",   {2, 0, 0, file_text_obj_set, text_obj_set_arg_type, NULL, NULL, NULL}},
   {"TEXT_OBJ_GET",   {2, 0, 0, file_text_obj_get, text_obj_get_arg_type, NULL, NULL, NULL}},
   {"STRING_COLUMN",  {2, 0, 0, file_string_column, string_column_arg_type, NULL, NULL, NULL}},
