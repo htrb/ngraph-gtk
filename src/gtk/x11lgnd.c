@@ -38,7 +38,6 @@
 #include "ogra2cairo.h"
 #include "ogra2gdk.h"
 #include "odraw.h"
-#include "otext.h"
 #include "opath.h"
 #include "nstring.h"
 #include "mathfn.h"
