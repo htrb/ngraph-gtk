@@ -34,7 +34,6 @@
 #include "gra.h"
 #include "oroot.h"
 #include "odraw.h"
-#include "otext.h"
 #include "olegend.h"
 #include "mathfn.h"
 #include "nstring.h"
