@@ -424,6 +424,7 @@ struct f2ddata {
   int range_div;
   struct f2dlocal *local;
   double text_align_h, text_align_v;
+  int text_font, text_style, text_pt, text_space, text_script;
 };
 
 struct f2dlocal {
