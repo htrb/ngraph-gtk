@@ -1894,7 +1894,7 @@ legend_dialog_setup_sub(struct LegendDialog *d, GtkWidget *table, int i)
   d->space = w;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_PERCENT, TRUE, TRUE);
-  spin_entry_set_range(w, TEXT_OBJ_SCRIPT_SIZE_MIN, TEXT_OBJ_SCRIPT_SIZE_MAX);
+  spin_entry_set_range(w, SCRIPT_SIZE_MIN, SCRIPT_SIZE_MAX);
   add_widget_to_table(table, w, _("_Script:"), FALSE, i++);
   d->script_size = w;
 
