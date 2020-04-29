@@ -623,15 +623,30 @@
   </tr>
   <tr>
     <td>
-     text_font(font, pt, style, space, script)
+     text_font(font)
     </td>
     <td>
-     文字列を描画するときのフォント設定などを指定します。
+     文字列を描画するときのフォントを指定します。
      fontは 0, 1, 2 がそれぞれ Sans-serif, Serif, Monospace に対応します。
-     pt でフォントサイズを指定できます。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     text_style(style)
+    </td>
+    <td>
+     文字列を描画するときのスタイルを指定します。
      style は 0, 1, 2, 3 がそれぞれ normal, bold, italic, bold-italic に対応します。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     text_size(pt, space, script)
+    </td>
+    <td>
+     文字列を描画するときのフォントサイズなどを指定します。
+     pt でフォントサイズを指定できます。
      続く引数で文字間隔、スクリプトサイズを指定できます。
-     <a href="text.html#TEXT">制御文字を使用した書式指定</a>が可能です。
     </td>
   </tr>
 </table>
