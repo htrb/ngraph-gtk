@@ -493,7 +493,7 @@ new data
 	data::math_x='string_column($str, 1);
 ofst := 0;
 if (%0 > 2, dir := -45, ofst := 0.1);
-text_font(0, 18);
+text_size(18);
 draw_text($str, x + ofst, y - 0.02, dir);
 x;'
 	data::math_y=
@@ -602,7 +602,7 @@ new data
 	data::math_x='string_column($str, 1);
 ofst := 0;
 if (%0 > 2, dir := -45, ofst := 0.1);
-text_font(0, 18);
+text_size(18);
 draw_text($str, x + ofst, y - 0.02, dir);
 x;'
 	data::math_y=
