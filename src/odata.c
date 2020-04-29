@@ -1624,12 +1624,28 @@ file_text_font(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   return 0;
 }
 
+static int
+file_text_style(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  struct f2ddata *fp;
+
+  if (exp->buf[0].val.type != MATH_VALUE_NORMAL) {
+    return 0;
   }
+  fp = math_equation_get_user_data(eq);
+  if (fp == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+  fp->text_style  = exp->buf[0].val.val;
   if (fp->text_style < 0) {
     fp->text_style = 0;
   } else if (fp->text_style > GRA_FONT_STYLE_MAX) {
     fp->text_style = GRA_FONT_STYLE_MAX;
   }
+  return 0;
+}
+
   if (fp->text_script <= 0) {
     fp->text_script = DEFAULT_SCRIPT_SIZE;
   } else if (fp->text_script < SCRIPT_SIZE_MIN) {
@@ -1946,6 +1962,7 @@ static struct funcs FileFunc[] = {
   {"DRAW_TEXT_RAW",  {8, 0, 0, file_draw_text_raw, draw_text_arg_type, NULL, NULL, NULL}},
   {"TEXT_ALIGN",     {2, 0, 0, file_text_align, NULL, NULL, NULL, NULL}},
   {"TEXT_FONT",      {1, 0, 0, file_text_font, NULL, NULL, NULL, NULL}},
+  {"TEXT_STYLE",     {1, 0, 0, file_text_style, NULL, NULL, NULL, NULL}},
   {"TEXT_OBJ_SET",   {2, 0, 0, file_text_obj_set, text_obj_set_arg_type, NULL, NULL, NULL}},
   {"TEXT_OBJ_GET",   {2, 0, 0, file_text_obj_get, text_obj_get_arg_type, NULL, NULL, NULL}},
   {"STRING_COLUMN",  {2, 0, 0, file_string_column, string_column_arg_type, NULL, NULL, NULL}},
