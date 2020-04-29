@@ -168,4 +168,6 @@ filter(dest, src, item, ex)	Find elements in the array <i>src</i>\nthat satisfie
 find(a, item, ex)	Return the value of the first element in the array <i>a</i>\nthat satisfies that the evaluated value of <i>ex</i> is true.\nAn element of the array can be referred by the variable <i>item</i>.
 times(n, index, ex)	Repeat <i>ex</i> <i>n</i> times.\nThe loop count can be referred by the variable <i>index</i>.
 text_align(x, y)	Set alignment of a text drawing.\n<i>x</i> and <i>y</i> represent alignment of parallel and normal direction respectively.\n(0 &lt;= <i>x, y</i> &lt;= 1)
-text_font(font, pt, style, space, script)	Set font and other settings of drawing texts.\nThe value <i>font</i> 0, 1 and 2 represent "Sans-serif", "Serif" and "Monospace" respectively.\nFont size can be specified by <i>pt</i>.\nThe value <i>style</i> 0, 1, 2 and 3 represent "normal", "bold", "italic" and "bold-italic" respectively.\nFont-spacing and script-size are specified by the following arguments.
+text_font(font)		Set font setting of drawing texts.\nThe value <i>font</i> 0, 1 and 2 represent "Sans-serif", "Serif" and "Monospace" respectively.
+text_style(style)	Set font style settings of drawing texts.\nThe value <i>style</i> 0, 1, 2 and 3 represent "normal", "bold", "italic" and "bold-italic" respectively.
+text_size(pt, space, script)	Set font size and other settings of drawing texts.\nFont size can be specified by <i>pt</i>.\nFont-spacing and script-size are specified by the following arguments.
