@@ -1702,8 +1702,8 @@ file_draw_text_sub(MathFunctionCallExpression *exp, MathEquation *eq, MathValue 
   x       = exp->buf[1].val.val;
   y       = exp->buf[2].val.val;
   dir     = exp->buf[3].val.val * 100;
-  font_id = exp->buf[4].val.val;
-  pt      = exp->buf[5].val.val * 100;
+  pt      = exp->buf[4].val.val * 100;
+  font_id = exp->buf[5].val.val;
   style   = exp->buf[6].val.val;
   space   = exp->buf[7].val.val * 100;
   script  = 0;
