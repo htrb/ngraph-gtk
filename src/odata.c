@@ -1646,6 +1646,27 @@ file_text_style(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rv
   return 0;
 }
 
+static int
+file_text_size(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  struct f2ddata *fp;
+
+  if (exp->buf[0].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[1].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[2].val.type != MATH_VALUE_NORMAL) {
+    return 0;
+  }
+  fp = math_equation_get_user_data(eq);
+  if (fp == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+  fp->text_pt     = exp->buf[0].val.val * 100;
+  fp->text_space  = exp->buf[1].val.val * 100;
+  fp->text_script = exp->buf[2].val.val * 100;
+  if (fp->text_pt <= 0) {
+    fp->text_pt = DEFAULT_FONT_PT;
+  }
   if (fp->text_script <= 0) {
     fp->text_script = DEFAULT_SCRIPT_SIZE;
   } else if (fp->text_script < SCRIPT_SIZE_MIN) {
@@ -1963,6 +1984,7 @@ static struct funcs FileFunc[] = {
   {"TEXT_ALIGN",     {2, 0, 0, file_text_align, NULL, NULL, NULL, NULL}},
   {"TEXT_FONT",      {1, 0, 0, file_text_font, NULL, NULL, NULL, NULL}},
   {"TEXT_STYLE",     {1, 0, 0, file_text_style, NULL, NULL, NULL, NULL}},
+  {"TEXT_SIZE",      {3, 0, 0, file_text_size, NULL, NULL, NULL, NULL}},
   {"TEXT_OBJ_SET",   {2, 0, 0, file_text_obj_set, text_obj_set_arg_type, NULL, NULL, NULL}},
   {"TEXT_OBJ_GET",   {2, 0, 0, file_text_obj_get, text_obj_get_arg_type, NULL, NULL, NULL}},
   {"STRING_COLUMN",  {2, 0, 0, file_string_column, string_column_arg_type, NULL, NULL, NULL}},
