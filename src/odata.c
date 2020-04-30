@@ -1723,6 +1723,10 @@ file_draw_text_sub(MathFunctionCallExpression *exp, MathEquation *eq, MathValue 
   }
   if (script <= 0) {
     script = fp->text_script;
+  } else if (script < SCRIPT_SIZE_MIN) {
+    script = SCRIPT_SIZE_MIN;
+  } else if (script > SCRIPT_SIZE_MAX) {
+    script = SCRIPT_SIZE_MAX;
   }
   if (style <= 0) {
     style = fp->text_style;
