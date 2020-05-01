@@ -148,6 +148,7 @@ struct _math_expression {
     MathArrayExpression array;
     MathConstantDefinitionExpression const_def;
     MathAssignExpression assign;
+    MathStringExpression str;
     MathExpression *exp;
   } u;
 };
