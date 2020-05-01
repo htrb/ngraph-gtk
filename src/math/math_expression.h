@@ -119,6 +119,11 @@ typedef struct _math_array_expression {
   MathExpression *operand;
 } MathArrayExpression;
 
+struct embedded_variable {
+  int start, length;
+  char *variable;
+}
+
 struct _math_expression {
   enum MATH_EXPRESSION_TYPE type;
   int line_number;
