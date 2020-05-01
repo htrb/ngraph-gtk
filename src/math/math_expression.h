@@ -11,6 +11,7 @@ typedef struct _math_function_call_expression MathFunctionCallExpression;
 typedef union _math_function_argument MathFunctionArgument;
 
 #include "nhash.h"
+#include "object.h"
 #include "math_equation.h"
 #include "math_function.h"
 #include "math_operator.h"
