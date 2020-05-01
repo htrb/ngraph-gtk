@@ -124,6 +124,12 @@ struct embedded_variable {
   char *variable;
 }
 
+typedef struct _math_string_expression {
+  char *string;
+  GString *expanded;
+  struct narray variables;
+} MathStringExpression;
+
 struct _math_expression {
   enum MATH_EXPRESSION_TYPE type;
   int line_number;
