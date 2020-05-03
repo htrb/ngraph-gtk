@@ -955,9 +955,7 @@ math_expression_free_sub(MathExpression *exp)
   case MATH_EXPRESSION_TYPE_VARIABLE:
     break;
   case MATH_EXPRESSION_TYPE_STRING:
-    if (exp->u.string) {
-      g_free(exp->u.string);
-    }
+    math_string_expression_free(&exp->u.str);
     break;
   case MATH_EXPRESSION_TYPE_STRING_VARIABLE:
     break;
