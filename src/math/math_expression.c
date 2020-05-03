@@ -1972,7 +1972,7 @@ assign_string(MathExpression *exp)
   right = exp->u.assign.right;
   switch (right->type) {
   case MATH_EXPRESSION_TYPE_STRING:
-    str = right->u.string;
+    str = math_expression_get_string(right);
     break;
   case MATH_EXPRESSION_TYPE_STRING_ARRAY:
     if (CALC_EXPRESSION(right->u.array.operand, operand)) {
