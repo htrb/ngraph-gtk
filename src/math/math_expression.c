@@ -856,6 +856,21 @@ math_expression_get_string(MathExpression *expression)
   return gstr->str;
 }
 
+static void
+free_expand_variables(struct narray *array)
+{
+  int i, n;
+  struct embedded_variable *data;
+  if (array == NULL) {
+    return;
+  }
+  n = arraynum(array);
+  data = arraydata(array);
+  for (i = 0; i < n; i++) {
+    g_free(data[i].variable);
+  }
+}
+
 MathExpression *
 math_eoeq_expression_new(MathEquation *eq, int *err)
 {
