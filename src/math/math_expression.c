@@ -871,6 +871,22 @@ free_expand_variables(struct narray *array)
   }
 }
 
+static const char *
+math_string_expression_free(MathStringExpression *exp)
+{
+  if (exp->string) {
+    g_free(exp->string);
+  }
+  if (exp->expanded) {
+    g_string_free(exp->expanded, TRUE);
+  }
+  if (exp->variables) {
+    free_expand_variables(exp->variables);
+    arrayfree(exp->variables);
+  }
+  return exp->string;
+}
+
 MathExpression *
 math_eoeq_expression_new(MathEquation *eq, int *err)
 {
