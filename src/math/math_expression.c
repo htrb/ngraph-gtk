@@ -16,6 +16,7 @@
 #include "nhash.h"
 #include "odata.h"
 
+#include "math_scanner.h"
 #include "math_expression.h"
 #include "math_function.h"
 
