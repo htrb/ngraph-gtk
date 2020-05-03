@@ -714,6 +714,46 @@ math_double_expression_new(MathEquation *eq, const MathValue *val, int *err)
   return exp;
 }
 
+static void
+check_expand(MathStringExpression *str)
+{
+  char *ptr, *name;
+  int in_variable, start, end, i;
+  struct embedded_variable variable;
+
+  in_variable = FALSE;
+  ptr = str->string;
+  for (i = 0; ptr[i]; i++) {
+    switch (ptr[i]) {
+    case MATH_VARIABLE_EXPAND_PREFIX:
+      if (ptr[i + 1] == '{') {
+	in_variable = TRUE;
+	start = i;
+	i++;
+	continue;
+      }
+      break;
+    case '}':
+      if (in_variable) {
+	end = i;
+	variable.start = start;
+	variable.end = end;
+	name = g_strndup(ptr + start + 2, end - start - 2);
+	if (name) {
+	  g_strstrip(name);
+	  if (g_str_is_ascii(name)) {
+	    variable.variable = g_ascii_strup(name, -1);
+	    arrayadd(str->variables, &variable);
+	  }
+	  g_free(name);
+	}
+	in_variable = FALSE;
+      }
+      break;
+    }
+  }
+}
+
 MathExpression *
 math_string_expression_new(MathEquation *eq, const char *str, int *err)
 {
