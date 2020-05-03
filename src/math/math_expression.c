@@ -1178,7 +1178,7 @@ set_string_argument(MathFunctionCallExpression *exp, MathEquation *eq, int i)
 
   switch (exp->argv[i]->type) {
   case MATH_EXPRESSION_TYPE_STRING:
-    str = exp->argv[i]->u.string;
+    str = math_expression_get_string(exp->argv[i]);
     break;
   case MATH_EXPRESSION_TYPE_STRING_ARRAY:
     if (CALC_EXPRESSION(exp->argv[i]->u.array.operand, v)) {
