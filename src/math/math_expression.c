@@ -797,6 +797,65 @@ math_string_expression_new(MathEquation *eq, const char *str, int expand, int *e
   return exp;
 }
 
+static const char *
+math_expression_get_string(MathExpression *expression)
+{
+  int i, n;
+  struct embedded_variable *var;
+  GString *gstr, *varstr;
+  char *ptr, *variable;
+  int top, len;
+  MathStringExpression *exp;
+
+  if (expression == NULL) {
+    return NULL;
+  }
+  exp = &(expression->u.str);
+  if (exp->variables == NULL) {
+    return exp->string;
+  }
+  n = arraynum(exp->variables);
+  if (n < 1) {
+    return exp->string;
+  }
+  gstr = exp->expanded;
+  g_string_set_size(gstr, 0);
+  ptr = exp->string;
+  top = 0;
+  var = arraydata(exp->variables);
+  for (i = 0; i < n; i++) {
+    int id;
+    len = var[i].start - top;
+    g_string_append_len(gstr, ptr + top, len);
+    variable = var[i].variable;
+    if (variable[0] == '$') {
+      id = math_equation_check_string_var(expression->equation, variable);
+      if (id >= 0) {
+	if (math_equation_get_string_var(expression->equation, id, &varstr) == 0) {
+	  g_string_append(gstr, varstr->str);
+	}
+      }
+    } else {
+      MathValue val;
+      val.type = MATH_VALUE_ERROR;
+      if (math_equation_get_const_by_name(expression->equation, variable, &val) < 0) {
+	id = math_equation_check_var(expression->equation, variable);
+	if (id >= 0) {
+	  math_equation_get_var(expression->equation, id, &val);
+	}
+      }
+      if (val.type == MATH_VALUE_NORMAL) {
+	g_string_append_printf(gstr, "%G", val.val);
+      }
+    }
+    top = var[i].end + 1;
+    if (i == n - 1) {
+      g_string_append(gstr, ptr + var[i].end + 1);
+    }
+  }
+  return gstr->str;
+}
+
 MathExpression *
 math_eoeq_expression_new(MathEquation *eq, int *err)
 {
