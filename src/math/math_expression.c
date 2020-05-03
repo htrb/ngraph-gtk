@@ -2307,8 +2307,12 @@ calc(MathExpression *exp, MathValue *val)
     break;
   case MATH_EXPRESSION_TYPE_STRING:
     val->val = 0;
-    if (exp->u.string) {
-      n_strtod(exp->u.string, val);
+    {
+      const char *str;
+      str = math_expression_get_string(exp);
+      if (str) {
+	n_strtod(str, val);
+      }
     }
     break;
   case MATH_EXPRESSION_TYPE_STRING_ASSIGN:
