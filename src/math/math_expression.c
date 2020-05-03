@@ -756,7 +756,7 @@ check_expand(MathStringExpression *str)
 }
 
 MathExpression *
-math_string_expression_new(MathEquation *eq, const char *str, int *err)
+math_string_expression_new(MathEquation *eq, const char *str, int expand, int *err)
 {
   MathExpression *exp;
 
@@ -764,7 +764,36 @@ math_string_expression_new(MathEquation *eq, const char *str, int *err)
   if (exp == NULL)
     return NULL;
 
-  exp->u.string = g_strdup(str);
+  exp->u.str.variables = NULL;
+  exp->u.str.expanded = NULL;
+  exp->u.str.string = g_strdup(str);
+  if (exp->u.str.string == NULL) {
+    *err = MATH_ERROR_MEMORY;
+    math_expression_free(exp);
+    return NULL;
+  }
+  if (! expand) {
+    return exp;
+  }
+
+  exp->u.str.variables = arraynew(sizeof(struct embedded_variable));
+  if (exp->u.str.variables == NULL) {
+    *err = MATH_ERROR_MEMORY;
+    math_expression_free(exp);
+    return NULL;
+  }
+  check_expand(&exp->u.str);
+  if (arraynum(exp->u.str.variables) == 0) {
+    arrayfree(exp->u.str.variables);
+    exp->u.str.variables = NULL;
+  }
+  if (exp->u.str.variables) {
+    exp->u.str.expanded = g_string_new("");
+    if (exp->u.str.expanded == NULL) {
+      arrayfree(exp->u.str.variables);
+      exp->u.str.variables = NULL;
+    }
+  }
   return exp;
 }
 
