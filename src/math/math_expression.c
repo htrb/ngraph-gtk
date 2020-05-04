@@ -717,11 +717,12 @@ math_double_expression_new(MathEquation *eq, const MathValue *val, int *err)
 }
 
 static void
-check_expand(MathStringExpression *str)
+check_expand(MathEquation *eq, MathStringExpression *str)
 {
-  char *ptr, *name;
+  char *ptr, *eqn;
   int in_variable, start, end, i;
   struct embedded_variable variable;
+  MathExpression *exp;
 
   in_variable = FALSE;
   ptr = str->string;
@@ -740,14 +741,17 @@ check_expand(MathStringExpression *str)
 	end = i;
 	variable.start = start;
 	variable.end = end;
-	name = g_strndup(ptr + start + 2, end - start - 2);
-	if (name) {
-	  g_strstrip(name);
-	  if (g_str_is_ascii(name)) {
-	    variable.variable = g_ascii_strup(name, -1);
-	    arrayadd(str->variables, &variable);
+	eqn = g_strndup(ptr + start + 2, end - start - 2);
+	if (eqn) {
+	  int err;
+	  exp = math_parser_parse(eqn, eq, &err);
+	  if (exp) {
+	    variable.exp = exp;
+	    if (arrayadd(str->variables, &variable) == NULL) {
+	      math_expression_free(exp);
+	    }
 	  }
-	  g_free(name);
+	  g_free(eqn);
 	}
 	in_variable = FALSE;
       }
