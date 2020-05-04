@@ -413,7 +413,7 @@ append_oct(GString *gstr, const char *str)
 static GString *
 get_double_quoted_string(const char *str, int *len)
 {
-  int n, escape;
+  int n, escape, chr;
   GString *gstr;
 
   gstr = g_string_new("");
@@ -465,7 +465,12 @@ get_double_quoted_string(const char *str, int *len)
     } else if (str[n] == '\\') {
       escape = TRUE;
     } else {
-      g_string_append_c(gstr, str[n]);
+      if (str[n] == '#' && str[n + 1] == '{') {
+	chr = MATH_VARIABLE_EXPAND_PREFIX;
+      } else {
+	chr = str[n];
+      }
+      g_string_append_c(gstr, chr);
     }
   }
 
