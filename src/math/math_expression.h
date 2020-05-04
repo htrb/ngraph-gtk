@@ -121,7 +121,7 @@ typedef struct _math_array_expression {
 
 struct embedded_variable {
   int start, end;
-  char *variable;
+  MathExpression *exp;
 };
 
 typedef struct _math_string_expression {
