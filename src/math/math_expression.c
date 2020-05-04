@@ -885,7 +885,7 @@ free_expand_variables(struct narray *array)
   n = arraynum(array);
   data = arraydata(array);
   for (i = 0; i < n; i++) {
-    g_free(data[i].variable);
+    math_expression_free(data[i].exp);
   }
 }
 
