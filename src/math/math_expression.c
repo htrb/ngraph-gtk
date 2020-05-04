@@ -807,50 +807,63 @@ math_expression_get_string(MathExpression *expression)
 {
   int i, n;
   struct embedded_variable *var;
-  GString *gstr, *varstr;
-  char *ptr, *variable;
+  GString *gstr;
+  char *ptr;
   int top, len;
-  MathStringExpression *exp;
+  MathStringExpression *str_exp;
 
   if (expression == NULL) {
     return NULL;
   }
-  exp = &(expression->u.str);
-  if (exp->variables == NULL) {
-    return exp->string;
+  str_exp = &(expression->u.str);
+  if (str_exp->variables == NULL) {
+    return str_exp->string;
   }
-  n = arraynum(exp->variables);
+  n = arraynum(str_exp->variables);
   if (n < 1) {
-    return exp->string;
+    return str_exp->string;
   }
-  gstr = exp->expanded;
+  gstr = str_exp->expanded;
   g_string_set_size(gstr, 0);
-  ptr = exp->string;
+  ptr = str_exp->string;
   top = 0;
-  var = arraydata(exp->variables);
+  var = arraydata(str_exp->variables);
   for (i = 0; i < n; i++) {
+    MathExpression *exp;
+    GString *varstr;
+    MathValue val;
     int id;
     len = var[i].start - top;
     g_string_append_len(gstr, ptr + top, len);
-    variable = var[i].variable;
-    if (variable[0] == '$') {
-      id = math_equation_check_string_var(expression->equation, variable);
-      if (id >= 0) {
-	if (math_equation_get_string_var(expression->equation, id, &varstr) == 0) {
-	  g_string_append(gstr, varstr->str);
+    exp = var[i].exp;
+    switch (exp->type) {
+    case MATH_EXPRESSION_TYPE_STRING:
+      g_string_append(gstr, exp->u.str.string);
+      break;
+    case MATH_EXPRESSION_TYPE_STRING_VARIABLE:
+      id = exp->u.index;
+      math_equation_get_string_var(expression->equation, id, &varstr);
+      if (varstr) {
+	g_string_append(gstr, varstr->str);
+      }
+      break;
+    case MATH_EXPRESSION_TYPE_STRING_ARRAY:
+      id = exp->u.index;
+      if (math_expression_calculate(exp->u.array.operand, &val) == 0) {
+	if (val.type == MATH_VALUE_NORMAL) {
+	  const char *str;
+	  str = math_equation_get_array_cstr(expression->equation, id, val.val);
+	  if (str) {
+	    g_string_append(gstr, str);
+	  }
 	}
       }
-    } else {
-      MathValue val;
-      val.type = MATH_VALUE_ERROR;
-      if (math_equation_get_const_by_name(expression->equation, variable, &val) < 0) {
-	id = math_equation_check_var(expression->equation, variable);
-	if (id >= 0) {
-	  math_equation_get_var(expression->equation, id, &val);
+      break;
+    default:
+      if (math_expression_calculate(exp, &val) == 0) {
+	if (val.type == MATH_VALUE_NORMAL) {
+	  g_string_append_printf(gstr, "%G", val.val);
 	}
-      }
-      if (val.type == MATH_VALUE_NORMAL) {
-	g_string_append_printf(gstr, "%G", val.val);
       }
     }
     top = var[i].end + 1;
