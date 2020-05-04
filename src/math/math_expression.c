@@ -726,7 +726,7 @@ check_expand(MathEquation *eq, MathStringExpression *str)
 {
   char *ptr, *eqn;
   int in_variable, start, end, i;
-  struct embedded_variable variable;
+  struct embedded_expression variable;
   MathExpression *exp;
 
   in_variable = FALSE;
@@ -786,7 +786,7 @@ math_string_expression_new(MathEquation *eq, const char *str, int expand, int *e
     return exp;
   }
 
-  exp->u.str.variables = arraynew(sizeof(struct embedded_variable));
+  exp->u.str.variables = arraynew(sizeof(struct embedded_expression));
   if (exp->u.str.variables == NULL) {
     *err = MATH_ERROR_MEMORY;
     math_expression_free(exp);
@@ -811,7 +811,7 @@ static const char *
 math_expression_get_string(MathExpression *expression)
 {
   int i, n;
-  struct embedded_variable *var;
+  struct embedded_expression *var;
   GString *gstr;
   char *ptr;
   int top, len;
@@ -883,7 +883,7 @@ static void
 free_expand_variables(struct narray *array)
 {
   int i, n;
-  struct embedded_variable *data;
+  struct embedded_expression *data;
   if (array == NULL) {
     return;
   }
