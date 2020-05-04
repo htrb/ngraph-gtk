@@ -787,7 +787,7 @@ math_string_expression_new(MathEquation *eq, const char *str, int expand, int *e
     math_expression_free(exp);
     return NULL;
   }
-  check_expand(&exp->u.str);
+  check_expand(eq, &exp->u.str);
   if (arraynum(exp->u.str.variables) == 0) {
     arrayfree(exp->u.str.variables);
     exp->u.str.variables = NULL;
