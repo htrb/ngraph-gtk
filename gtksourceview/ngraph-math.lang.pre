@@ -57,9 +57,18 @@ This file is created based on "ruby.lang" which is part of GtkSourceView.
       <match>\\([0-7]{1,3}|(x[a-fA-F0-9]{1,2})|.)</match>
     </context>
 
+    <context id="complex-interpolation">
+      <start>#{</start>
+      <end>}</end>
+      <include>
+        <context ref="ngraph-math:*"/>
+      </include>
+    </context>
+
     <context id="inside-interpolated-string">
       <include>
 	<context ref="escape"/>
+        <context ref="complex-interpolation"/>
       </include>
     </context>
 
