@@ -7,6 +7,8 @@
 #define MATH_SCANNER_HEADER
 #include <gmodule.h>
 
+#define MATH_VARIABLE_EXPAND_PREFIX 0x01
+
 struct math_string {
   const char *top, *cur;
   int line, ofst;
