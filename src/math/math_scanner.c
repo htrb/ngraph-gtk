@@ -479,13 +479,16 @@ static struct math_token *
 get_string(const char *str,  const char ** rstr, int quate)
 {
   struct math_token *tok;
+  enum MATH_TOKEN_TYPE type;
   int n;
   GString *gstr;
 
   if (quate == '"') {
     gstr = get_double_quoted_string(str, &n);
+    type = MATH_TOKEN_TYPE_DOUBLE_QUOTED_STRING;
   } else {
     gstr = get_single_quoted_string(str, &n);
+    type = MATH_TOKEN_TYPE_SINGLE_QUOTED_STRING;
   }
   if (gstr == NULL) {
     return NULL;
@@ -499,7 +502,7 @@ get_string(const char *str,  const char ** rstr, int quate)
     return tok;
   }
 
-  tok = create_token(str, MATH_TOKEN_TYPE_STRING);
+  tok = create_token(str, type);
   if (tok == NULL) {
     g_string_free(gstr, TRUE);
     return NULL;
