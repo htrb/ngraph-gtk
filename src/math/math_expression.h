@@ -127,7 +127,7 @@ struct embedded_variable {
 typedef struct _math_string_expression {
   char *string;
   GString *expanded;
-  struct narray variables;
+  struct narray *variables;
 } MathStringExpression;
 
 struct _math_expression {
