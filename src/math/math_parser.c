@@ -116,8 +116,11 @@ parse_primary_expression(struct math_string *str, MathEquation *eq, int *err)
     val.type = MATH_VALUE_NORMAL;
     exp = math_double_expression_new(eq, &val, err);
     break;
-  case MATH_TOKEN_TYPE_STRING:
-    exp = math_string_expression_new(eq, token->data.str->str, err);
+  case MATH_TOKEN_TYPE_DOUBLE_QUOTED_STRING:
+    exp = math_string_expression_new(eq, token->data.str->str, TRUE, err);
+    break;
+  case MATH_TOKEN_TYPE_SINGLE_QUOTED_STRING:
+    exp = math_string_expression_new(eq, token->data.str->str, FALSE, err);
     break;
   case MATH_TOKEN_TYPE_UNTERMINATED_STRING:
     *err = MATH_ERROR_UNTERMINATED_STRING;
