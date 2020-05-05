@@ -809,7 +809,7 @@ math_expression_get_string(MathExpression *expression)
   struct embedded_expression *var;
   GString *gstr;
   char *ptr;
-  int top, len;
+  int top;
   MathStringExpression *str_exp;
 
   if (expression == NULL) {
@@ -832,7 +832,7 @@ math_expression_get_string(MathExpression *expression)
     MathExpression *exp;
     GString *varstr;
     MathValue val;
-    int id;
+    int id, len;
     len = var[i].start - top;
     g_string_append_len(gstr, ptr + top, len);
     exp = var[i].exp;
