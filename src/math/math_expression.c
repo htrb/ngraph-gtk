@@ -1857,6 +1857,7 @@ optimize(MathExpression *exp, int *err)
     new_exp = optimize_bin_expression(exp, err);
     break;
   case MATH_EXPRESSION_TYPE_ASSIGN:
+  case MATH_EXPRESSION_TYPE_STRING_ASSIGN:
     new_exp = optimize_assign_expression(exp, err);
     break;
   case MATH_EXPRESSION_TYPE_MUL:
