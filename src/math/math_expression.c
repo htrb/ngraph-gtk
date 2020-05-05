@@ -1905,6 +1905,7 @@ optimize(MathExpression *exp, int *err)
     new_exp = math_eoeq_expression_new(exp->equation, err);
     break;
   case MATH_EXPRESSION_TYPE_ARRAY:
+  case MATH_EXPRESSION_TYPE_STRING_ARRAY:
     new_exp = optimize_array_expression(exp, err);
     break;
   case MATH_EXPRESSION_TYPE_ARRAY_ARGUMENT:
