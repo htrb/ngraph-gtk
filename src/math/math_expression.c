@@ -1887,6 +1887,7 @@ optimize(MathExpression *exp, int *err)
     }
     break;
   case MATH_EXPRESSION_TYPE_VARIABLE:
+  case MATH_EXPRESSION_TYPE_STRING_VARIABLE:
     new_exp = math_expression_new(exp->type, exp->equation, err);
     if (new_exp)
       new_exp->u.index = exp->u.index;
