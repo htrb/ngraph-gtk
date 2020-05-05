@@ -36,6 +36,7 @@ static void optimize_func(NHASH func);
 static int optimize_const_definition(MathEquation *eq);
 static int math_equation_call_user_func(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
 static int check_const_in_expression_list(MathExpression *exp, int *constant, int n);
+static int check_const_sub(MathExpression *exp, int *constant, int n);
 
 static MathValue *
 add_to_ary(MathValue *buf, int *num, int *size, const MathValue *val)
@@ -2086,6 +2087,26 @@ void *
 math_equation_get_user_data(MathEquation *eq)
 {
   return (eq) ? eq->user_data : NULL;
+}
+
+static int
+check_const_in_string(MathStringExpression *exp, int *constant, int n)
+{
+  int i, r, array_size;
+  struct embedded_expression *data;
+
+  if (exp->variables == NULL) {
+    return 0;
+  }
+  array_size = arraynum(exp->variables);
+  data = arraydata(exp->variables);
+  for (i = 0; i < array_size; i++) {
+    r = check_const_sub(data[i].exp, constant, n);
+    if (r) {
+      return r;
+    }
+  }
+  return 0;
 }
 
 static int
