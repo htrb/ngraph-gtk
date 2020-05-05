@@ -889,7 +889,7 @@ free_expand_variables(struct narray *array)
   }
 }
 
-static const char *
+static void
 math_string_expression_free(MathStringExpression *exp)
 {
   if (exp->string) {
@@ -902,7 +902,6 @@ math_string_expression_free(MathStringExpression *exp)
     free_expand_variables(exp->variables);
     arrayfree(exp->variables);
   }
-  return exp->string;
 }
 
 MathExpression *
