@@ -1916,6 +1916,9 @@ optimize(MathExpression *exp, int *err)
     }
     break;
   default:
+  case MATH_EXPRESSION_TYPE_STRING:
+    new_exp = optimize_string_expression(exp, err);
+    break;
     new_exp = NULL; /* never reached */
   }
 
