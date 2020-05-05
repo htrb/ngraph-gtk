@@ -716,11 +716,6 @@ math_double_expression_new(MathEquation *eq, const MathValue *val, int *err)
   return exp;
 }
 
-struct embedded_expression {
-  int start, end;
-  MathExpression *exp;
-};
-
 static void
 check_expand(MathEquation *eq, MathStringExpression *str)
 {

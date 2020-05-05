@@ -119,6 +119,11 @@ typedef struct _math_array_expression {
   MathExpression *operand;
 } MathArrayExpression;
 
+struct embedded_expression {
+  int start, end;
+  MathExpression *exp;
+};
+
 typedef struct _math_string_expression {
   char *string;
   GString *expanded;
