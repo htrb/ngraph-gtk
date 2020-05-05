@@ -2092,7 +2092,7 @@ math_equation_get_user_data(MathEquation *eq)
 static int
 check_const_in_string(MathStringExpression *exp, int *constant, int n)
 {
-  int i, r, array_size;
+  int i, array_size;
   struct embedded_expression *data;
 
   if (exp->variables == NULL) {
@@ -2101,6 +2101,7 @@ check_const_in_string(MathStringExpression *exp, int *constant, int n)
   array_size = arraynum(exp->variables);
   data = arraydata(exp->variables);
   for (i = 0; i < array_size; i++) {
+    int r;
     r = check_const_sub(data[i].exp, constant, n);
     if (r) {
       return r;
