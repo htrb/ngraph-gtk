@@ -1776,6 +1776,60 @@ optimize_block_expression(MathExpression *exp, int *err)
 }
 
 static MathExpression *
+optimize_string_expression(MathExpression *exp, int *err)
+{
+  MathExpression *new_exp;
+  int i, n, is_fail;
+  struct embedded_expression *org_data, *new_data;
+
+  new_exp = math_expression_new(MATH_EXPRESSION_TYPE_STRING, exp->equation, err);
+  if (new_exp == NULL) {
+    return NULL;
+  }
+  new_exp->u.str.expanded = NULL;
+  new_exp->u.str.variables = NULL;
+  new_exp->u.str.string = g_strdup(exp->u.str.string);
+  if (new_exp->u.str.string == NULL) {
+    g_free(new_exp);
+    return NULL;
+  }
+
+  if (exp->u.str.expanded == NULL) {
+    return new_exp;
+  }
+
+  new_exp->u.str.expanded = g_string_new("");
+  if (new_exp->u.str.expanded == NULL) {
+    math_expression_free(new_exp);
+    return NULL;
+  }
+
+  new_exp->u.str.variables = arraydup(exp->u.str.variables);
+  if (new_exp->u.str.variables == NULL) {
+    math_expression_free(new_exp);
+    return NULL;
+  }
+
+  is_fail = FALSE;
+  n = arraynum(new_exp->u.str.variables);
+  new_data = arraydata(new_exp->u.str.variables);
+  org_data = arraydata(exp->u.str.variables);
+  for (i = 0; i < n; i++) {
+    new_data[i].exp = optimize(org_data[i].exp, err);
+    if (new_data[i].exp == NULL) {
+      is_fail = TRUE;
+    }
+  }
+
+  if (is_fail) {
+    math_expression_free(new_exp);
+    return NULL;
+  }
+
+  return new_exp;
+}
+
+static MathExpression *
 optimize(MathExpression *exp, int *err)
 {
   MathExpression *new_exp;
