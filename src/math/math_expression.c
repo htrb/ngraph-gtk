@@ -1630,10 +1630,6 @@ optimize_assign_expression(MathExpression *exp, int *err)
     return NULL;
   }
 
-  if (left->type == MATH_EXPRESSION_TYPE_DOUBLE &&
-      right->type == MATH_EXPRESSION_TYPE_DOUBLE) {
-    new_exp = reduce_expression(new_exp, err);
-  }
   return new_exp;
 }
 
