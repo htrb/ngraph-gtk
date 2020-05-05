@@ -1915,10 +1915,10 @@ optimize(MathExpression *exp, int *err)
       new_exp->u.array.index = exp->u.array.index;
     }
     break;
-  default:
   case MATH_EXPRESSION_TYPE_STRING:
     new_exp = optimize_string_expression(exp, err);
     break;
+  case MATH_EXPRESSION_TYPE_CONST_DEF:
     new_exp = NULL; /* never reached */
   }
 
