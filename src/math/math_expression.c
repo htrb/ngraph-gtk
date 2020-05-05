@@ -1909,6 +1909,7 @@ optimize(MathExpression *exp, int *err)
     new_exp = optimize_array_expression(exp, err);
     break;
   case MATH_EXPRESSION_TYPE_ARRAY_ARGUMENT:
+  case MATH_EXPRESSION_TYPE_STRING_ARRAY_ARGUMENT:
     new_exp = math_expression_new(exp->type, exp->equation, err);
     if (new_exp) {
       new_exp->u.array.index = exp->u.array.index;
