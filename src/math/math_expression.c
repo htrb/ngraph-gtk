@@ -883,6 +883,14 @@ math_expression_get_string(MathExpression *expression)
       if (math_expression_calculate(exp, &val) == 0) {
 	if (val.type == MATH_VALUE_NORMAL) {
 	  g_string_append_printf(gstr, "%G", val.val);
+	} else {
+	  const char *str;
+	  str = math_special_value_to_string(&val);
+	  if (str) {
+	    g_string_append_c(gstr, '[');
+	    g_string_append(gstr, str);
+	    g_string_append_c(gstr, ']');
+	  }
 	}
       }
     }
