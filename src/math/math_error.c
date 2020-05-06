@@ -257,7 +257,16 @@ math_err_get_error_message(MathEquation *eq, const char *code, int err)
     buf = g_strdup(_(ERR_MSG_CALCULATION));
     break;
   case MATH_ERROR_UNTERMINATED_STRING:
-    buf = g_strdup(_(ERR_MSG_UNTERMINATED_STRING));
+    code_buf = check_error_position(eq, code);
+    if (code_buf) {
+    buf = g_strdup_printf("%s (%d:%d)\n  the error is found at: %s",
+			  _(ERR_MSG_UNTERMINATED_STRING),
+			  eq->err_info.pos.line,
+			  eq->err_info.pos.ofst,
+			  code_buf);
+    } else {
+      buf = g_strdup(_(ERR_MSG_UNTERMINATED_STRING));
+    }
     break;
   default:
     buf = g_strdup(_(ERR_MSG_UNKNOWN));
