@@ -118,6 +118,11 @@ parse_primary_expression(struct math_string *str, MathEquation *eq, int *err)
     break;
   case MATH_TOKEN_TYPE_DOUBLE_QUOTED_STRING:
     exp = math_string_expression_new(eq, token->data.str->str, TRUE, err);
+    if (exp == NULL) {
+      math_equation_set_parse_error(eq, token->ptr, str);
+      math_scanner_free_token(token);
+      return NULL;
+    }
     break;
   case MATH_TOKEN_TYPE_SINGLE_QUOTED_STRING:
     exp = math_string_expression_new(eq, token->data.str->str, FALSE, err);
