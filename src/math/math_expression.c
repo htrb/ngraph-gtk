@@ -716,14 +716,15 @@ math_double_expression_new(MathEquation *eq, const MathValue *val, int *err)
   return exp;
 }
 
-static void
-check_expand(MathEquation *eq, MathStringExpression *str)
+static int
+check_expand(MathEquation *eq, MathStringExpression *str, int *err)
 {
-  char *ptr, *eqn;
+  char *ptr, *eqn, error;
   int in_variable, start, end, i;
   struct embedded_expression variable;
   MathExpression *exp;
 
+  error = FALSE;
   in_variable = FALSE;
   ptr = str->string;
   for (i = 0; ptr[i]; i++) {
@@ -742,22 +743,38 @@ check_expand(MathEquation *eq, MathStringExpression *str)
 	variable.start = start;
 	variable.end = end;
 	eqn = g_strndup(ptr + start + 2, end - start - 2);
-	if (eqn) {
-	  int err;
-	  exp = math_parser_parse(eqn, eq, &err);
-	  if (exp) {
-	    variable.exp = exp;
-	    if (arrayadd(str->variables, &variable) == NULL) {
-	      math_expression_free(exp);
-	    }
-	  }
-	  g_free(eqn);
+	if (eqn == NULL) {
+	  *err = MATH_ERROR_MEMORY;
+	  error =TRUE;
+	  goto End;
 	}
+	exp = math_parser_parse(eqn, eq, err);
+	if (exp == NULL) {
+	  error = TRUE;
+	  g_free(eqn);
+	  goto End;
+	}
+	variable.exp = exp;
+	if (arrayadd(str->variables, &variable) == NULL) {
+	  *err = MATH_ERROR_MEMORY;
+	  error = TRUE;
+	  math_expression_free(exp);
+	}
+	g_free(eqn);
 	in_variable = FALSE;
+	if (error) {
+	  goto End;
+	}
       }
       break;
     }
   }
+  if (! error && in_variable) {
+    *err = MATH_ERROR_UNTERMINATED_STRING;
+    error = TRUE;
+  }
+ End:
+  return error;
 }
 
 MathExpression *
