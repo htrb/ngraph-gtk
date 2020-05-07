@@ -117,16 +117,16 @@ math_func_round(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rv
 #else
   double val, prec;
 #endif
+  int digit;
+
   MATH_CHECK_ARG(rval, exp->buf[0]);
   MATH_CHECK_ARG(rval, exp->buf[1]);
 
-  prec = exp->buf[1].val.val;
-  if (prec <= 0) {
-    prec = 1;
-  }
-
   val = exp->buf[0].val.val;
-  val /= prec;
+  digit = exp->buf[1].val.val;
+  prec = powl(10, digit);
+
+  val *= prec;
 #if HAVE_ROUNDL
   val = roundl(val);
 #else
@@ -140,7 +140,7 @@ math_func_round(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rv
     val = val - (val - (int) val);
   }
 #endif
-  val *= prec;
+  val /= prec;
 
   rval->val = val;
   return 0;
