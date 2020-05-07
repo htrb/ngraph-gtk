@@ -22,7 +22,7 @@ do
     while l=`get io -field gets`
     do
 	eqn=${l%#*}
-	val=`check_val ${l#*#}`
+	val=`check_val ${l##*#}`
 
 	RESULT=`dexpr "$eqn"`
 	RESULT=`check_val $RESULT`
