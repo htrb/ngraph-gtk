@@ -13,7 +13,7 @@ sign		1	0	0	NULL
 int		1	0	0	NULL
 gauss		1	0	0	NULL
 frac		1	0	0	NULL
-round		1	0	0	NULL
+round		2	0	0	NULL
 min		-1	0	0	NULL
 max		-1	0	0	NULL
 sqr		1	0	0	NULL
