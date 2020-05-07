@@ -276,6 +276,13 @@ each_with_index($sa, $s, i, dest[i] := string_float($s))==5#1
 dest[0]==1#1
 dest[2]==123#1
 dest[4]==12345#1
+string_compare("a#{$sa[2]}b", "a123b")#0
+string_compare("a#{$sa[2]/2}b", "a61.5b")#0
+string_compare("a#{dest[4]}b", "a12345b")#0
+string_compare("a#{dest[4]*2}b", "a24690b")#0
+string_compare("a#{'xyz'}b", "axyzb")#0
+$str:=$sa[2]#0
+string_compare("a#{$str}b", "a123b")#0
 times(10,i,sum(i+1))==55#1
 {1;2;3}==3#1
 {1;2;3;{4;5;6}}==6#1
