@@ -112,19 +112,35 @@ math_func_gauss(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rv
 int
 math_func_round(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  double val;
-
+#if HAVE_ROUNDL
+  long double val, prec;
+#else
+  double val, prec;
+#endif
   MATH_CHECK_ARG(rval, exp->buf[0]);
+  MATH_CHECK_ARG(rval, exp->buf[1]);
 
-  if (fabs(exp->buf[0].val.val - (int) exp->buf[0].val.val) >= 0.5) {
-    if (exp->buf[0].val.val >= 0) {
-      val = exp->buf[0].val.val - (exp->buf[0].val.val - (int) exp->buf[0].val.val) + 1;
+  prec = exp->buf[1].val.val;
+  if (prec <= 0) {
+    prec = 1;
+  }
+
+  val = exp->buf[0].val.val;
+  val /= prec;
+#if HAVE_ROUNDL
+  val = roundl(val);
+#else
+  if (fabs(val - (int) val) >= 0.5) {
+    if (val >= 0) {
+      val = val - (val - (int) val) + 1;
     } else {
-      val = exp->buf[0].val.val - (exp->buf[0].val.val - (int) exp->buf[0].val.val) - 1;
+      val = val - (val - (int) val) - 1;
     }
   } else {
-    val = exp->buf[0].val.val - (exp->buf[0].val.val - (int) exp->buf[0].val.val);
+    val = val - (val - (int) val);
   }
+#endif
+  val *= prec;
 
   rval->val = val;
   return 0;
