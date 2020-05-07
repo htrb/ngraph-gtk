@@ -3,7 +3,7 @@ sign(x)		positive / negative sign (-1 with <i>x</i> &lt; 0, 1 with <i>x</i> &gt;
 int(x)		round to integer, toward zero
 gauss(x)	largest integral value not greater than <i>x</i>
 frac(x)		remainder
-round(x)	round to nearest integer, away from zero
+round(x, digit)	round the number <i>x</i>, away from zero.\n<i>digit</i> is the number of digits to which you want to round <i>x</i>.
 min(a, b, c, ...)	The smallest value of arguments
 max(a, b, c, ...)	The largest value of arguments
 sumsq(a, b, c, ...)	square sum of arguments
