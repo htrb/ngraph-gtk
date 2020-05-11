@@ -367,7 +367,7 @@ new axis name:single_b
 	axis::div=0
 	axis::type=linear
 	axis::x=18500
-	axis::y=20500
+	axis::y=20700
 	axis::direction=9000
 	axis::baseline=true
 	axis::length=2500
@@ -490,11 +490,10 @@ new data
 	data::type=mark
 	data::interpolation=spline
 	data::fit=
-	data::math_x='string_column($str, 1);
-ofst := 0;
-if (%0 > 2, dir := -45, ofst := 0.1);
+	data::math_x='if (%0 > 2, dir := -45);
+text_align(0, 1);
 text_size(18);
-draw_text($str, x + ofst, y - 0.02, dir);
+draw_text($col[1], x + 0.1, y, dir);
 x;'
 	data::math_y=
 	data::func_f=
@@ -599,11 +598,10 @@ new data
 	data::type=mark
 	data::interpolation=spline
 	data::fit=
-	data::math_x='string_column($str, 1);
-ofst := 0;
-if (%0 > 2, dir := -45, ofst := 0.1);
+	data::math_x='if (%0 > 2, dir := -45);
+text_align(0, 1);
 text_size(18);
-draw_text($str, x + ofst, y - 0.02, dir);
+draw_text($col[1], x + 0.1, y, dir);
 x;'
 	data::math_y=
 	data::func_f=
@@ -704,9 +702,9 @@ new rectangle
 	rectangle::clip=true
 	rectangle::redraw_flag=true
 	rectangle::x1=11000
-	rectangle::y1=14400
+	rectangle::y1=14600
 	rectangle::x2=18400
-	rectangle::y2=20100
+	rectangle::y2=20300
 	rectangle::stroke_R=0
 	rectangle::stroke_G=0
 	rectangle::stroke_B=0
@@ -725,9 +723,9 @@ new rectangle
 	rectangle::clip=true
 	rectangle::redraw_flag=true
 	rectangle::x1=10700
-	rectangle::y1=14100
+	rectangle::y1=14300
 	rectangle::x2=18100
-	rectangle::y2=19800
+	rectangle::y2=20000
 	rectangle::stroke_R=0
 	rectangle::stroke_G=0
 	rectangle::stroke_B=0
@@ -770,7 +768,7 @@ new text
 	text::redraw_flag=true
 	text::text='%{file:0:column:1 0}\n%{file:0:column:2 0}\n%{file:0:column:3 0}\n%{file:0:column:4 0}\n%{file:0:column:5 0}\n%{file:0:column:6 0}\n%{file:0:column:7 0}'
 	text::x=11000
-	text::y=15100
+	text::y=15300
 	text::pt=2000
 	text::font='Monospace'
 	text::style=0
