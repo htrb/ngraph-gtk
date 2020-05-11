@@ -4385,6 +4385,22 @@ set_column_string_array_equation(int id, MathEquation **code, const char *firts_
   }
 }
 
+static void
+set_column_string_array(struct f2ddata *fp)
+{
+  int n;
+  struct narray *array;
+  const char **data;
+  const char *line;
+  array = &(fp->line_array.line_array);
+  line = fp->line_array.line;
+  parse_data_line(array, line, fp->ifs, fp->csv);
+  n = arraynum(array);
+  data = arraydata(array);
+  set_column_string_array_equation(fp->column_string_array_id_x, fp->codex, line, data, n);
+  set_column_string_array_equation(fp->column_string_array_id_y, fp->codey, line, data, n);
+}
+
 static int
 get_data_from_source(struct f2ddata *fp, int maxdim, MathValue *gdata)
 {
