@@ -2125,6 +2125,20 @@ assign_string(MathExpression *exp)
 }
 
 static int
+math_expression_kind_of_string(MathExpression *exp)
+{
+  switch (exp->type) {
+  case MATH_EXPRESSION_TYPE_STRING_VARIABLE:
+  case MATH_EXPRESSION_TYPE_STRING_ARRAY:
+  case MATH_EXPRESSION_TYPE_STRING:
+    return TRUE;
+  default:
+    return FALSE;
+  }
+  return FALSE;
+}
+
+static int
 calc(MathExpression *exp, MathValue *val)
 {
   MathValue left, right, operand;
