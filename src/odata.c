@@ -391,7 +391,8 @@ struct f2ddata {
   int *needx, *needy;
   int dxstat,dystat,d2stat,d3stat;
   double dx,dy,d2,d3;
-  int maxdim, column_array_id_x, column_array_id_y, use_column_array;
+  int maxdim, use_column_array, use_column_string_array;
+  int column_array_id_x, column_array_id_y, column_string_array_id_x, column_string_array_id_y;
   int need2pass;
   double sumx,sumy,sumxx,sumyy,sumxy;
   int num,datanum,prev_datanum;
