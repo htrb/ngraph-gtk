@@ -2226,6 +2226,13 @@ calc(MathExpression *exp, MathValue *val)
     *val = right;
     break;
   case MATH_EXPRESSION_TYPE_EQ:
+    if (math_expression_kind_of_string(exp->u.bin.left) &&
+	math_expression_kind_of_string(exp->u.bin.right)) {
+      if (compare_string(exp->u.bin.left, exp->u.bin.right, TRUE, val)) {
+	return 1;
+      }
+      break;
+    }
     if (CALC_EXPRESSION(exp->u.bin.left, left)) {
       return 1;
     }
@@ -2237,6 +2244,13 @@ calc(MathExpression *exp, MathValue *val)
     val->val = (left.val == right.val);
     break;
   case MATH_EXPRESSION_TYPE_NE:
+    if (math_expression_kind_of_string(exp->u.bin.left) &&
+	math_expression_kind_of_string(exp->u.bin.right)) {
+      if (compare_string(exp->u.bin.left, exp->u.bin.right, FALSE, val)) {
+	return 1;
+      }
+      break;
+    }
     if (CALC_EXPRESSION(exp->u.bin.left, left)) {
       return 1;
     }
