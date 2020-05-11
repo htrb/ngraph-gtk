@@ -4369,6 +4369,22 @@ parse_data_line(struct narray *array, const char *str, const char *ifs, int csv)
   return (*po) ? po : NULL;
 }
 
+static void
+set_column_string_array_equation(int id, MathEquation **code, const char *firts_line, const char **data, int n)
+{
+  int i, eqn;
+  if (id < 0) {
+    return;
+  }
+  for (eqn = 0; eqn < EQUATION_NUM; eqn++) {
+    math_equation_clear_string_array(code[eqn], id);
+    math_equation_set_array_str(code[eqn], id, 0, firts_line);
+    for (i = 0; i < n; i++) {
+      math_equation_set_array_str(code[eqn], id, i + 1, data[i]);
+    }
+  }
+}
+
 static int
 get_data_from_source(struct f2ddata *fp, int maxdim, MathValue *gdata)
 {
