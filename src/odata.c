@@ -2903,6 +2903,7 @@ f2dputmath(struct objlist *obj,N_VALUE *inst,char *field,char *math)
 
   if (strcmp(field,"math_x")==0) {
     f2dlocal->column_array_id_x = -1;
+    f2dlocal->column_string_array_id_x = -1;
     f2dlocal->maxdimx = 0;
     if (f2dlocal->codex[0]) {
       MathEquationParametar *prm;
@@ -2916,6 +2917,8 @@ f2dputmath(struct objlist *obj,N_VALUE *inst,char *field,char *math)
       f2dlocal->maxdimx = prm->id_max;
       array_id = math_equation_check_array(f2dlocal->codex[0], COLUMN_ARRAY_NAME);
       f2dlocal->column_array_id_x = array_id;
+      array_id = math_equation_check_string_array(f2dlocal->codex[0], "$" COLUMN_ARRAY_NAME);
+      f2dlocal->column_string_array_id_x = array_id;
     }
   } else if (strcmp(field,"math_y")==0) {
     f2dlocal->column_array_id_y = -1;
@@ -2931,6 +2934,8 @@ f2dputmath(struct objlist *obj,N_VALUE *inst,char *field,char *math)
       f2dlocal->maxdimy = prm->id_max;
       array_id = math_equation_check_array(f2dlocal->codey[0], COLUMN_ARRAY_NAME);
       f2dlocal->column_array_id_y = array_id;
+      array_id = math_equation_check_string_array(f2dlocal->codey[0], "$" COLUMN_ARRAY_NAME);
+      f2dlocal->column_string_array_id_y = array_id;
     }
   }
   return 0;
