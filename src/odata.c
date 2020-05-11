@@ -2540,7 +2540,10 @@ opendata(struct objlist *obj,N_VALUE *inst,
   fp->const_id = f2dlocal->const_id;
   fp->column_array_id_x = -1;
   fp->column_array_id_y = -1;
+  fp->column_string_array_id_x = -1;
+  fp->column_string_array_id_y = -1;
   fp->use_column_array = FALSE;
+  fp->use_column_string_array = FALSE;
   switch (fp->type) {
   case TYPE_NORMAL:
     break;
@@ -2608,6 +2611,9 @@ opendata(struct objlist *obj,N_VALUE *inst,
     fp->column_array_id_x = f2dlocal->column_array_id_x;
     fp->column_array_id_y = f2dlocal->column_array_id_y;
     fp->use_column_array = (f2dlocal->column_array_id_x >=0 || f2dlocal->column_array_id_y >= 0);
+    fp->column_string_array_id_x = f2dlocal->column_string_array_id_x;
+    fp->column_string_array_id_y = f2dlocal->column_string_array_id_y;
+    fp->use_column_string_array = (f2dlocal->column_string_array_id_x >=0 || f2dlocal->column_string_array_id_y >= 0);
   }
   return fp;
 }
