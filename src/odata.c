@@ -4424,6 +4424,9 @@ get_data_from_source(struct f2ddata *fp, int maxdim, MathValue *gdata)
 
     clear_line_array(fp);
     fp->line_array.line = g_strdup(buf);
+    if (fp->use_column_string_array) {
+      set_column_string_array(fp);
+    }
     for (i = 0; buf[i] && CHECK_IFS(fp->ifs_buf, buf[i]); i++);
     rcode = 2;
     if (buf[i] != '\0' && (! CHECK_REMARK(fp->remark, fp->ifs_buf, buf[i]))) {
