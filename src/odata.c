@@ -3135,6 +3135,8 @@ f2dinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   f2dlocal->codey[2] = NULL;
   f2dlocal->column_array_id_x = -1;
   f2dlocal->column_array_id_y = -1;
+  f2dlocal->column_string_array_id_x = -1;
+  f2dlocal->column_string_array_id_y = -1;
   f2dlocal->maxdimx=0;
   f2dlocal->maxdimy=0;
   f2dlocal->need2passx=FALSE;
