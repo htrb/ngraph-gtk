@@ -432,7 +432,7 @@ struct f2dlocal {
   MathEquation *codex[EQUATION_NUM], *codey[EQUATION_NUM];
   MathValue minx, maxx, miny, maxy;
   int const_id[MATH_CONST_SIZE];
-  int maxdimx,maxdimy, column_array_id_x, column_array_id_y;
+  int maxdimx,maxdimy, column_array_id_x, column_array_id_y, column_string_array_id_x, column_string_array_id_y;
   int need2passx,need2passy,total_line;
   struct f2ddata *data;
   int coord,idx,idy,id2,id3,icx,icy,ic2,ic3,isx,isy,is2,is3,iline;
