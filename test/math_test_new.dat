@@ -207,6 +207,11 @@ string_compare($sary[1], "a")#1
 string_compare($sary[1], "b")#0
 string_compare($sary[1], "c")#-1
 string_compare($sary[2], "c")#0
+($sary[0] == "a") != 0#1
+($sary[1] != "a") != 0#1
+($sary[1] != "b") == 0#1
+($sary[1] == "c") == 0#1
+($sary[2] == "c") != 0#1
 string_join($str, "_", $sary)#0
 string_compare($str, "a_b_c")#0
 string_up($ustr, $str)#0
