@@ -166,7 +166,7 @@ register_arg(MathExpression *func, const char *arg_name, enum MATH_FUNCTION_ARG_
     return 1;
   case MATH_FUNCTION_ARG_TYPE_VARIABLE_COMMON:
   case MATH_FUNCTION_ARG_TYPE_ARRAY_COMMON:
-    /* thie function is called only at the user function definition. */
+    /* this function is called only at the user function definition. */
     /* never reached */
     return 1;
   }
