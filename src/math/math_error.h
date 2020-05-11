@@ -1,10 +1,12 @@
-/* 
+/*
  * $Id: math_error.h,v 1.5 2009-11-21 11:39:10 hito Exp $
- * 
+ *
  */
 
 #ifndef MATH_ERROR_HEADER
 #define MATH_ERROR_HEADER
+
+#include "math_equation.h"
 
 #define MATH_ERROR_TYPE_SYNTAX	0x00010000
 #define MATH_ERROR_TYPE_PARSE	0x00020000
