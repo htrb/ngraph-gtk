@@ -2168,6 +2168,22 @@ get_cstring_from_expression(MathExpression *exp)
 }
 
 static int
+compare_string(MathExpression *left, MathExpression *right, int equal, MathValue *val)
+{
+  const char *lstr, *rstr;
+  int result;
+
+  lstr = get_cstring_from_expression(left);
+  rstr = get_cstring_from_expression(right);
+  if (left == NULL || right == NULL) {
+    return 1;
+  }
+  result = g_strcmp0(lstr, rstr);
+  val->val = (equal) ? ! result : result;
+  return 0;
+}
+
+static int
 calc(MathExpression *exp, MathValue *val)
 {
   MathValue left, right, operand;
