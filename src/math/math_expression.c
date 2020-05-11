@@ -2138,6 +2138,35 @@ math_expression_kind_of_string(MathExpression *exp)
   return FALSE;
 }
 
+static const char *
+get_cstring_from_expression(MathExpression *exp)
+{
+  const char *cstr;
+  GString *gstr;
+  MathValue val;
+
+  cstr = NULL;
+  switch (exp->type) {
+  case MATH_EXPRESSION_TYPE_STRING_VARIABLE:
+    math_equation_get_string_var(exp->equation, exp->u.index, &gstr);
+    if (gstr && gstr->str) {
+      cstr = gstr->str;
+    }
+    break;
+  case MATH_EXPRESSION_TYPE_STRING_ARRAY:
+    if (CALC_EXPRESSION(exp->u.array.operand, val) == 0) {
+      cstr = math_equation_get_array_cstr(exp->equation, exp->u.array.index, val.val);
+    }
+    break;
+  case MATH_EXPRESSION_TYPE_STRING:
+    cstr = math_expression_get_string(exp);
+    break;
+  default:
+    break;
+  }
+  return cstr;
+}
+
 static int
 calc(MathExpression *exp, MathValue *val)
 {
