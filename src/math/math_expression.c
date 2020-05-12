@@ -1257,6 +1257,9 @@ set_string_variable_argument(MathFunctionCallExpression *exp, MathEquation *eq, 
     if (CALC_EXPRESSION(exp->argv[i]->u.array.operand, v)) {
       return 1;
     }
+    if (v.type != MATH_VALUE_NORMAL) {
+      return 1;
+    }
     gstr = math_equation_get_array_str(eq, exp->argv[i]->u.array.index, v.val);
     break;
   case MATH_EXPRESSION_TYPE_STRING_VARIABLE:
