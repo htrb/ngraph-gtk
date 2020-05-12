@@ -1205,32 +1205,14 @@ factorial(unsigned int n)
 }
 
 static int
-set_string_argument(MathFunctionCallExpression *exp, MathEquation *eq, int i)
+set_string_argument(MathFunctionCallExpression *exp, int i)
 {
-  MathValue v;
   const char *str;
-  GString *gstr;
 
-  switch (exp->argv[i]->type) {
-  case MATH_EXPRESSION_TYPE_STRING:
-    str = math_expression_get_string(exp->argv[i]);
-    break;
-  case MATH_EXPRESSION_TYPE_STRING_ARRAY:
-    if (CALC_EXPRESSION(exp->argv[i]->u.array.operand, v)) {
-      return 1;
-    }
-    str = math_equation_get_array_cstr(eq, exp->argv[i]->u.array.index, v.val);
-    break;
-  case MATH_EXPRESSION_TYPE_STRING_VARIABLE:
-    math_equation_get_string_var(eq, exp->argv[i]->u.index, &gstr);
-    if (gstr == NULL) {
-      return 1;
-    }
-    str = gstr->str;
-    break;
-  default:
+  if (! math_expression_kind_of_string(exp->argv[i])) {
     return 1;
   }
+  str = get_cstring_from_expression(exp->argv[i]);
   if (str == NULL) {
     return 1;
   }
@@ -1362,7 +1344,7 @@ call_func(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *val)
 	  return 1;
 	break;
       case MATH_FUNCTION_ARG_TYPE_STRING:
-	if (set_string_argument(exp, eq, i)) {
+	if (set_string_argument(exp, i)) {
 	  val->type = MATH_VALUE_ERROR;
 	  return 1;
 	}
