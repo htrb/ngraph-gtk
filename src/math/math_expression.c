@@ -2096,6 +2096,10 @@ get_cstring_from_expression(MathExpression *exp)
   GString *gstr;
   MathValue val;
 
+  if (exp == NULL) {
+    return NULL;
+  }
+
   cstr = NULL;
   switch (exp->type) {
   case MATH_EXPRESSION_TYPE_STRING_VARIABLE:
