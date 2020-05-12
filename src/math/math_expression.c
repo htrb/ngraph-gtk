@@ -1230,6 +1230,9 @@ set_variable_argument(MathFunctionCallExpression *exp, MathEquation *eq, int i)
     if (CALC_EXPRESSION(exp->argv[i]->u.array.operand, v)) {
       return 1;
     }
+    if (v.type != MATH_VALUE_NORMAL) {
+      return 1;
+    }
     ptr = math_equation_get_array_ptr(eq, exp->argv[i]->u.array.index, v.val);
     break;
   case MATH_EXPRESSION_TYPE_VARIABLE:
