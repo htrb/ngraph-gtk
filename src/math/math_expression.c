@@ -852,9 +852,9 @@ math_expression_get_string(MathExpression *expression)
   var = arraydata(str_exp->variables);
   for (i = 0; i < n; i++) {
     MathExpression *exp;
-    GString *varstr;
     MathValue val;
-    int id, len;
+    int len;
+    const char *cstr;
     len = var[i].start - top;
     g_string_append_len(gstr, ptr + top, len);
     exp = var[i].exp;
@@ -863,22 +863,10 @@ math_expression_get_string(MathExpression *expression)
       g_string_append(gstr, exp->u.str.string);
       break;
     case MATH_EXPRESSION_TYPE_STRING_VARIABLE:
-      id = exp->u.index;
-      math_equation_get_string_var(expression->equation, id, &varstr);
-      if (varstr) {
-	g_string_append(gstr, varstr->str);
-      }
-      break;
     case MATH_EXPRESSION_TYPE_STRING_ARRAY:
-      id = exp->u.index;
-      if (math_expression_calculate(exp->u.array.operand, &val) == 0) {
-	if (val.type == MATH_VALUE_NORMAL) {
-	  const char *str;
-	  str = math_equation_get_array_cstr(expression->equation, id, val.val);
-	  if (str) {
-	    g_string_append(gstr, str);
-	  }
-	}
+      cstr = get_cstring_from_expression(exp);
+      if (cstr) {
+	g_string_append(gstr, cstr);
       }
       break;
     default:
