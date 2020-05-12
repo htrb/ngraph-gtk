@@ -2403,12 +2403,18 @@ calc(MathExpression *exp, MathValue *val)
     if (CALC_EXPRESSION(exp->u.array.operand, operand)) {
       return 1;
     }
+    if (operand.type != MATH_VALUE_NORMAL) {
+      return 1;
+    }
     if (math_equation_get_array_val(exp->equation, exp->u.array.index, operand.val, val)) {
       return 1;
     }
     break;
   case MATH_EXPRESSION_TYPE_STRING_ARRAY:
     if (CALC_EXPRESSION(exp->u.array.operand, operand)) {
+      return 1;
+    }
+    if (operand.type != MATH_VALUE_NORMAL) {
       return 1;
     }
     val->val = 0;
