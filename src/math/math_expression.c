@@ -2035,8 +2035,6 @@ val2str(MathValue *val)
 static int
 assign_string(MathExpression *exp)
 {
-  GString *gstr;
-  int id;
   const char *str;
   char *tmp;
   MathValue operand;
@@ -2044,28 +2042,9 @@ assign_string(MathExpression *exp)
 
   tmp = NULL;
   right = exp->u.assign.right;
-  switch (right->type) {
-  case MATH_EXPRESSION_TYPE_STRING:
-    str = math_expression_get_string(right);
-    break;
-  case MATH_EXPRESSION_TYPE_STRING_ARRAY:
-    if (CALC_EXPRESSION(right->u.array.operand, operand)) {
-      return 1;
-    }
-    str = math_equation_get_array_cstr(exp->equation, right->u.array.index, operand.val);
-    if (str == NULL) {
-      return 1;
-    }
-    break;
-  case MATH_EXPRESSION_TYPE_STRING_VARIABLE:
-    id = (int) right->u.index;
-    math_equation_get_string_var(exp->equation, id, &gstr);
-    if (gstr == NULL) {
-      return 1;
-    }
-    str = gstr->str;
-    break;
-  default:
+  if (math_expression_kind_of_string(right)) {
+    str = get_cstring_from_expression(right);
+  } else {
     if (CALC_EXPRESSION(right, operand)) {
       return 1;
     }
