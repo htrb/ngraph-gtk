@@ -2116,7 +2116,9 @@ get_cstring_from_expression(MathExpression *exp)
     break;
   case MATH_EXPRESSION_TYPE_STRING_ARRAY:
     if (CALC_EXPRESSION(exp->u.array.operand, val) == 0) {
-      cstr = math_equation_get_array_cstr(exp->equation, exp->u.array.index, val.val);
+      if (val.type == MATH_VALUE_NORMAL) {
+	cstr = math_equation_get_array_cstr(exp->equation, exp->u.array.index, val.val);
+      }
     }
     break;
   case MATH_EXPRESSION_TYPE_STRING:
