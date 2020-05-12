@@ -23,6 +23,8 @@
 
 static int calc(MathExpression *exp, MathValue *val);
 static MathExpression *optimize(MathExpression *exp, int *err);
+static const char *get_cstring_from_expression(MathExpression *exp);
+static int math_expression_kind_of_string(MathExpression *exp);
 
 #define CALC_EXPRESSION(e, v)				\
   ((e->type == MATH_EXPRESSION_TYPE_DOUBLE) ?		\
