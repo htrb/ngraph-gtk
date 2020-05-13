@@ -2863,6 +2863,7 @@ CmAxisGridUpdate(void *w, gpointer client_data)
         }
       }
     }
+    update_viewer_axisgrid();
   }
   arraydel(&farray);
 }
