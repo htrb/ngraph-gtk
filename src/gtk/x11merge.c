@@ -288,7 +288,7 @@ CmMergeUpdate(void *w, gpointer client_data)
     return;
   if (chkobjlastinst(obj) == -1)
     return;
-  SelectDialog(&DlgSelect, obj, _("merge file property (multi select)"), FileCB, (struct narray *) &farray, NULL);
+  SelectDialog(&DlgSelect, obj, _("merge file property (multi select)"), MergeFileCB, (struct narray *) &farray, NULL);
   modified = FALSE;
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     int i, *array, num;
