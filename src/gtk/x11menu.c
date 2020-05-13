@@ -5085,17 +5085,20 @@ check_update_obj(char **objects,
 void
 UpdateAll2(char **objs, int redraw)
 {
-  int update_axis, update_file, update_merge;
+  int update_axisgrid, update_axis, update_file, update_merge;
 
   check_update_obj(objs,
 		   NgraphApp.FileWin.data.data, &update_file,
 		   NgraphApp.AxisWin.data.data, &update_axis,
-		   NgraphApp.MergeWin.data.data, &update_merge);
+		   NgraphApp.MergeWin.data.data, &update_merge,
+		   &update_axisgrid);
   if (update_file) {
     FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, redraw && ! update_axis);
   }
   if (update_axis) {
     AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, redraw);
+  } else if (update_axisgrid) {
+    update_viewer_axisgrid();
   }
   if (update_merge) {
     MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE, redraw);
