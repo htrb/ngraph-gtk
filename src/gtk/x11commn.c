@@ -1726,13 +1726,13 @@ get_plot_cb_str(struct objlist *obj, int id, int source)
 
   str = get_plot_info_str(obj, id, source);
   if (str == NULL) {
-    return g_strdup("....................");
+    return g_strdup(FILL_STRING);
   }
 
   if (source == DATA_SOURCE_FILE) {
     char *valstr;
     valstr = getbasename(str);
-    s = g_strdup_printf("%s", (valstr) ? valstr : "....................");
+    s = g_strdup_printf("%s", (valstr) ? valstr : FILL_STRING);
     if (valstr != NULL) {
       g_free(valstr);
     }
