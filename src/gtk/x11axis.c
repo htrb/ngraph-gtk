@@ -2928,8 +2928,8 @@ axis_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
     case AXIS_WIN_COL_MAX:
       getobj(d->obj, "max", row, 0, NULL, &max);
       if ((min == 0) && (max == 0)) {
-	list_store_set_string(GTK_WIDGET(d->text), iter, i - 1, "---------");
-	list_store_set_string(GTK_WIDGET(d->text), iter, i, "---------");
+	list_store_set_string(GTK_WIDGET(d->text), iter, i - 1, FILL_STRING);
+	list_store_set_string(GTK_WIDGET(d->text), iter, i, FILL_STRING);
       } else {
 	snprintf(buf, sizeof(buf), "%g", min);
 	list_store_set_string(GTK_WIDGET(d->text), iter, i - 1, buf);
@@ -2948,7 +2948,7 @@ axis_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
     case AXIS_WIN_COL_INC:
       getobj(d->obj, "inc", row, 0, NULL, &inc);
       if (inc == 0) {
-	list_store_set_string(GTK_WIDGET(d->text), iter, i, "---------");
+	list_store_set_string(GTK_WIDGET(d->text), iter, i, FILL_STRING);
       } else {
 	snprintf(buf, sizeof(buf), "%g", inc);
 	list_store_set_string(GTK_WIDGET(d->text), iter, i, buf);
