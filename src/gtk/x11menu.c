@@ -5051,7 +5051,8 @@ static void
 check_update_obj(char **objects,
 		 struct obj_list_data *file, int *update_file,
 		 struct obj_list_data *axis, int *update_axis,
-		 struct obj_list_data *merge, int *update_merge)
+		 struct obj_list_data *merge, int *update_merge,
+		 int *update_axisgrid)
 {
   char **ptr;
 
@@ -5075,6 +5076,8 @@ check_update_obj(char **objects,
       *update_axis = TRUE;
     } else if (obj == merge->obj) {
       *update_merge = TRUE;
+    } else if (strcmp0(*ptr, "axisgrid") == 0) {
+      *update_axisgrid = TRUE;
     }
   }
 }
