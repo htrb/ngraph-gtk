@@ -2847,7 +2847,7 @@ CmAxisGridUpdate(void *w, gpointer client_data)
     int i;
     num = arraynum(&farray);
     if (num > 0) {
-      axis_save_undo(UNDO_TYPE_EDIT);
+      menu_save_undo_single(UNDO_TYPE_EDIT, "axisgrid");
     }
     array = arraydata(&farray);
     for (i = 0; i < num; i++) {
