@@ -216,7 +216,7 @@ GridCB(struct objlist *obj, int id)
 
   getobj(obj, "axis_x", id, 0, NULL, &s1);
   getobj(obj, "axis_y", id, 0, NULL, &s2);
-  s = g_strdup_printf("%.8s %.8s", (s1)? s1: "-----", (s2)? s2: "-----");
+  s = g_strdup_printf("%.8s %.8s", (s1)? s1: FILL_STRING, (s2)? s2: FILL_STRING);
 
   return s;
 }
