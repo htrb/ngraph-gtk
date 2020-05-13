@@ -2796,6 +2796,7 @@ CmAxisGridNew(void *w, gpointer client_data)
     menu_undo_internal(undo);
   } else {
     set_graph_modified();
+    update_viewer_axisgrid();
   }
 }
 
