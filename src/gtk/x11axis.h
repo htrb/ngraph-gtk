@@ -43,3 +43,4 @@ GtkWidget *dreate_axis_list(struct SubWin *d);
 void axis_scale_push(struct objlist *obj, int id);
 void AxisWinUpdate(struct obj_list_data *data, int clear, int draw);
 int axis_check_history(void);
+void update_viewer_axisgrid(void);

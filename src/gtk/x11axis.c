@@ -2766,6 +2766,15 @@ CmAxisClear(void *w, gpointer client_data)
 }
 
 void
+update_viewer_axisgrid(void)
+{
+  char const *objects[2];
+  objects[0] = "axisgrid";
+  objects[1] = NULL;
+  ViewerWinUpdate(objects);
+}
+
+void
 CmAxisGridNew(void *w, gpointer client_data)
 {
   struct objlist *obj;
