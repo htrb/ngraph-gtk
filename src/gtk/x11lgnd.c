@@ -328,6 +328,7 @@ legend_menu_delete_object(const char *name, char *(*callback) (struct objlist * 
   if (chkobjlastinst(obj) == -1)
     return;
   snprintf(title, sizeof(title), _("delete %s (multi select)"), _(obj->name));
+  SelectDialog(&DlgSelect, obj, title, callback, &array, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     int num;
     num = arraynum(&array);
