@@ -363,7 +363,7 @@ LegendLineCB(struct objlist *obj, int id)
   data = arraydata(array);
 
   if (num < 2) {
-    s = g_strdup("------");
+    s = g_strdup(FILL_STRING);
   } else {
     s = g_strdup_printf("%s (X:%.2f Y:%.2f)-",
 			_(enum_path_type[path_type]),
