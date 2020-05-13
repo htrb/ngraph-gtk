@@ -1744,6 +1744,22 @@ get_plot_cb_str(struct objlist *obj, int id, int source)
 }
 
 char *
+MergeFileCB(struct objlist *obj, int id)
+{
+  char *file, *bname;
+
+  getobj(obj, "file", id, 0, NULL, &file);
+  if (file == NULL) {
+    return g_strdup(FILL_STRING);
+  }
+  bname = getbasename(file);
+  if (bname == NULL) {
+    return g_strdup(FILL_STRING);
+  }
+  return bname;
+}
+
+char *
 FileCB(struct objlist *obj, int id)
 {
   int source;

@@ -49,6 +49,7 @@ int allocate_console(void);
 void free_console(int allocnow);
 char *FileCB(struct objlist *obj, int id);
 char *PlotFileCB(struct objlist *obj, int id);
+char *MergeFileCB(struct objlist *obj, int id);
 int SetFileHidden(void);
 void ProgressDialogCreate(char *title);
 void ProgressDialogSetTitle(char *title);
