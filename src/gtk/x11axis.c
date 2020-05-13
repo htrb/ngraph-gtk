@@ -2784,7 +2784,7 @@ CmAxisGridNew(void *w, gpointer client_data)
     return;
   if ((obj = chkobject("axisgrid")) == NULL)
     return;
-  undo = axis_save_undo(UNDO_TYPE_CREATE);
+  undo = menu_save_undo_single(UNDO_TYPE_CREATE, "axisgrid");
   id = newobj(obj);
   if (id < 0) {
     menu_delete_undo(undo);
