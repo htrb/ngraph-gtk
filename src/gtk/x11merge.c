@@ -364,7 +364,7 @@ merge_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
 	list_store_set_string(GTK_WIDGET(d->text), iter, i, CHK_STR(bfile));
 	g_free(bfile);
       } else {
-	list_store_set_string(GTK_WIDGET(d->text), iter, i, "....................");
+	list_store_set_string(GTK_WIDGET(d->text), iter, i, FILL_STRING);
       }
       break;
     case MERG_WIN_COL_HIDDEN:
