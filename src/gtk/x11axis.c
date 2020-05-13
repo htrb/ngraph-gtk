@@ -2824,6 +2824,7 @@ CmAxisGridDel(void *w, gpointer client_data)
       delobj(obj, array[i]);
       set_graph_modified();
     }
+    update_viewer_axisgrid();
   }
   arraydel(&farray);
 }
