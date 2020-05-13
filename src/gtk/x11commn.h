@@ -21,6 +21,8 @@
  *
  */
 
+#define FILL_STRING "...................."
+
 void OpenGRA(void);
 void CloseGRA(void);
 void ChangeGRA(void);
