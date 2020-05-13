@@ -111,7 +111,7 @@ MergeDialogCopy(GtkWidget *w, gpointer data)
 
   d = (struct MergeDialog *) data;
 
-  sel = CopyClick(d->widget, d->Obj, d->Id, FileCB);
+  sel = CopyClick(d->widget, d->Obj, d->Id, MergeFileCB);
   if (sel != -1) {
     MergeDialogSetupItem(d, FALSE, sel);
   }
