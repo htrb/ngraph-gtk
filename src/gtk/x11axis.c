@@ -2817,7 +2817,7 @@ CmAxisGridDel(void *w, gpointer client_data)
     int i, num, *array;
     num = arraynum(&farray);
     if (num > 0) {
-      axis_save_undo(UNDO_TYPE_DELETE);
+      menu_save_undo_single(UNDO_TYPE_DELETE, "axisgrid");
     }
     array = arraydata(&farray);
     for (i = num - 1; i >= 0; i--) {
