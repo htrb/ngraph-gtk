@@ -5549,7 +5549,7 @@ file_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
     case FILE_WIN_COL_FILE:
       str = get_plot_info_str(d->obj, row, src);
       if (str == NULL) {
-	list_store_set_string(GTK_WIDGET(d->text), iter, i, "....................");
+	list_store_set_string(GTK_WIDGET(d->text), iter, i, FILL_STRING);
       } else {
 	if (src == DATA_SOURCE_FILE) {
 	  bfile = getbasename(str);
@@ -5557,7 +5557,7 @@ file_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
 	    list_store_set_string(GTK_WIDGET(d->text), iter, i, bfile);
 	    g_free(bfile);
 	  } else {
-	    list_store_set_string(GTK_WIDGET(d->text), iter, i, "....................");
+	    list_store_set_string(GTK_WIDGET(d->text), iter, i, FILL_STRING);
 	  }
         } else {
           set_escaped_str(GTK_WIDGET(d->text), iter, i, str);
