@@ -2777,7 +2777,7 @@ math_func_pop(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
 int
 math_func_shift(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  int id;
+  int id, i, n;
   MathEquationArray *ary;
 
   rval->val = 0;
@@ -2785,20 +2785,35 @@ math_func_shift(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rv
   id = (int) exp->buf[0].array.idx;
   ary = math_equation_get_array(eq, id);
 
+  MATH_CHECK_ARG(rval, exp->buf[1]);
+  n = exp->buf[1].val.val;
+
   if (ary == NULL || ary->num < 1 || ary->data.val == NULL) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
   }
 
-  *rval = ary->data.val[0];
-
-  ary->num--;
-  if (ary->num > 0) {
-    memmove(ary->data.val, ary->data.val + 1, sizeof(*ary->data.val) * ary->num);
+  if (n < 0) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+  if (n == 0) {
+    n = 1;
+  }
+  if (n > ary->num) {
+    n = ary->num;
   }
 
-  ary->data.val[ary->num].val = 0;
-  ary->data.val[ary->num].type = MATH_VALUE_NORMAL;
+  *rval = ary->data.val[0];
+  if (ary->num - n > 0) {
+    memmove(ary->data.val, ary->data.val + n, sizeof(*ary->data.val) * (ary->num - n));
+  }
+
+  for (i = 0; i < n; i++) {
+    ary->data.val[ary->num - i - 1].val = 0;
+    ary->data.val[ary->num - i - 1].type = MATH_VALUE_NORMAL;
+  }
+  ary->num -= n;
 
   return 0;
 }
