@@ -2767,13 +2767,15 @@ math_func_pop(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
   if (n > ary->num) {
     n = ary->num;
   }
-  *rval = ary->data.val[ary->num - 1];
 
   for (i = 0; i < n; i++) {
     ary->data.val[ary->num - i - 1].val = 0;
     ary->data.val[ary->num - i - 1].type = MATH_VALUE_NORMAL;
   }
   ary->num -= n;
+
+  rval->val = ary->num;
+  rval->type = MATH_VALUE_NORMAL;
   return 0;
 }
 
