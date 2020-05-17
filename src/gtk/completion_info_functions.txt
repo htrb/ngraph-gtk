@@ -78,10 +78,10 @@ xor(x, y)	True (= 1) when (<i>x</i> != 0) xor (<i>y</i> != 0)
 size(a)	number of elements of array <i>a</i>
 sort(a, ignore_case)	sort elements of array <i>a</i>\nfold lower case to upper case characters when <i>ignore_case</i> is not zero.
 rsort(a, ignore_case)	reverse sort elements of array <i>a</i>\nfold lower case to upper case characters when <i>ignore_case</i> is not zero.
-pop(a)		remove the last element of array <i>a</i>, and returns that element
-push(a, x)	adds new element <i>x</i> to the end of an array <i>a</i>, and returns <i>x</i>
-shift(a)	remove the first element of array <i>a</i>, and returns that element
-unshift(a, x)	adds new element <i>x</i> to the beginning of an array <i>a</i>, returns <i>x</i>
+pop(a ,n)		remove the last <i>n</n> elements of array <i>a</i> (<i>n</i> = 0 is as same as <i>n</i> = 1).\nReturns the new size of the array.
+push(a, x)	adds new element <i>x</i> to the end of an array <i>a</i>.\nReturns the new size of the array.
+shift(a, n)	remove the first <i>n</i> elements of array <i>a</i> (<i>n</i> = 0 is as same as <i>n</i> = 1).\nReturns the new size of the array.
+unshift(a, x)	adds new element <i>x</i> to the beginning of an array <i>a</i>.\nReturns the new size of the array.
 array(a, v1, v2, ...)	initialize an array <i>a</i> with the rest arguments\nreturn the number of elements of the array
 array_sum(a)	returns the sum of the elements of array <i>a</i>
 array_sumsq(a)	returns the square sum of the elements of array <i>a</i>
@@ -171,3 +171,4 @@ text_align(x, y)	Set alignment of a text drawing.\n<i>x</i> and <i>y</i> represe
 text_font(font)		Set font setting of drawing texts.\nThe value <i>font</i> 0, 1 and 2 represent "Sans-serif", "Serif" and "Monospace" respectively.
 text_style(style)	Set font style settings of drawing texts.\nThe value <i>style</i> 0, 1, 2 and 3 represent "normal", "bold", "italic" and "bold-italic" respectively.
 text_size(pt, space, script)	Set font size and other settings of drawing texts.\nFont size can be specified by <i>pt</i>.\nFont-spacing and script-size are specified by the following arguments.
+end_proc(proc)	Evaluate <i>proc</i> after plottong the data object.
