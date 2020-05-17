@@ -2720,6 +2720,7 @@ int
 math_func_push(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   int id;
+  MathEquationArray *ary;
 
   rval->val = 0;
 
@@ -2730,7 +2731,9 @@ math_func_push(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
     return 1;
   }
 
-  *rval = exp->buf[1].val;
+  ary = math_equation_get_array(eq, id);
+  rval->val = ary->num;
+  rval->type = MATH_VALUE_NORMAL;
 
   return 0;
 }
