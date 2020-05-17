@@ -2849,7 +2849,8 @@ math_func_unshift(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *
     memmove(ary->data.val + 1, ary->data.val, sizeof(*ary->data.val) * (ary->num - 1));
   }
 
-  *rval = ary->data.val[0] = exp->buf[1].val;
+  rval->val = ary->num;
+  rval->type = MATH_VALUE_NORMAL;
 
   return 0;
 }
