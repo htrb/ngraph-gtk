@@ -3645,6 +3645,40 @@ math_func_find(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
 }
 
 int
+math_func_index(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int src_id, i, n;
+  MathEquationArray *src;
+  MathValue val, *vptr;
+
+  rval->val = 0;
+  rval->type = MATH_VALUE_UNDEF;
+
+  src_id = (int) exp->buf[0].array.idx;
+  src = math_equation_get_array(eq, src_id);
+  vptr = math_expression_get_variable_from_argument(exp, 1);
+  if (vptr == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  n = src->num;
+  for (i = 0; i < n; i++) {
+    if (math_equation_get_array_val(eq, src_id, i, vptr)) {
+      rval->type = MATH_VALUE_ERROR;
+      return 1;
+    }
+    math_expression_calculate(exp->buf[2].exp, &val);
+    if (val.type == MATH_VALUE_NORMAL && val.val) {
+      rval->type = MATH_VALUE_NORMAL;
+      rval->val = i;
+      return 0;
+    }
+  }
+  return 0;
+}
+
+int
 math_func_each(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   int src_id, i, n;
