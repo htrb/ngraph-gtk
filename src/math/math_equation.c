@@ -317,6 +317,7 @@ clear_arrays(MathArray *array)
     } else {
       clear_string_array(array->buf[i].data.str, array->buf[i].num);
     }
+    array->buf[i].num = 0;
   }
 }
 
