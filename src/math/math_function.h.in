@@ -122,7 +122,7 @@ prog2		-1	0	0	NULL
 push		2	0	0	10,0
 pop		2	0	0	10,0
 unshift		2	0	0	10,0
-shift		1	0	0	10
+shift		2	0	0	10,0
 time		0	0	0	NULL
 choose		2	0	0	NULL	true
 fmod		2	0	0	NULL
