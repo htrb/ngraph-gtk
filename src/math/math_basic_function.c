@@ -2809,7 +2809,6 @@ math_func_shift(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rv
     n = ary->num;
   }
 
-  *rval = ary->data.val[0];
   if (ary->num - n > 0) {
     memmove(ary->data.val, ary->data.val + n, sizeof(*ary->data.val) * (ary->num - n));
   }
