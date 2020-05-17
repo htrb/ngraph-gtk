@@ -487,10 +487,10 @@
  <tr><td>size(a)</td><td>配列 a の要素数</td></tr>
  <tr><td>sort(a)</td><td>配列 a を整列する</td></tr>
  <tr><td>rsort(a)</td><td>配列 a を逆順に整列する</td></tr>
- <tr><td>pop(a)</td><td>配列 a から末尾の要素を取り除いてそれを返す</td></tr>
- <tr><td>push(a,x)</td><td>配列 a の末尾に x を追加する (戻り値は x) </td></tr>
- <tr><td>shift(a)</td><td>配列 a の先頭の要素を取り除いてそれを返す。残りの要素はひとつずつ前に詰められる</td></tr>
- <tr><td>unshift(a,x)</td><td>配列 a の先頭に x を挿入する (戻り値は x) </td></tr>
+ <tr><td>pop(a, n)</td><td>配列 a から末尾の要素を取り除く。n が指定された場合は末尾からその個数の要素を取り除く。戻り値は操作後の配列の要素数。</td></tr>
+ <tr><td>push(a,x)</td><td>配列 a の末尾に x を追加する (戻り値は操作後の配列の要素数) </td></tr>
+ <tr><td>shift(a, n)</td><td>配列 a の先頭の要素を取り除いてそれを返す。残りの要素はひとつずつ前に詰められる。。n が指定された場合は先頭からその個数の要素を取り除く。戻り値は操作後の配列の要素数。</td></tr>
+ <tr><td>unshift(a,x)</td><td>配列 a の先頭に x を挿入する (戻り値は操作後の配列の要素数) </td></tr>
  <tr><td>array_sum(a)</td><td>配列 a の要素の和を返す </td></tr>
  <tr><td>array_sumsq(a)</td><td>配列 a の要素の自乗和を返す </td></tr>
  <tr><td>array_average(a)</td><td>配列 a の要素の平均を返す </td></tr>
@@ -513,6 +513,7 @@
  <tr><td>each_with_index(a, item, index, ex)</td><td>配列 a の各要素に対して、式 ex を実行する。第2引数に指定した変数 (item) で配列の要素を、第3引数に指定した変数 (index) で繰り返しのカウンタを参照できる。</td></tr>
  <tr><td>filter(dest, src, item, ex)</td><td>配列 src の各要素に対して式 ex を計算し、その結果が真であった要素を配列 dest に格納する。第3引数に指定した変数 (item) で配列の要素を参照できる。</td></tr>
  <tr><td>find(a, item, ex)</td><td>配列 a の各要素に対して式 ex を計算し、その結果が真であった最初の要素を返す。第2引数に指定した変数 (item) で配列の要素を参照できる。</td></tr>
+ <tr><td>index(a, item, ex)</td><td>配列 a の各要素に対して式 ex を計算し、その結果が真であった最初の要素の位置を返す。第2引数に指定した変数 (item) で配列の要素を参照できる。</td></tr>
 </table>
 <br>
 <h3><a name="MEMORY_FUNC">メモリー操作関数</a></h3>
@@ -1016,6 +1017,7 @@
  <tr><td>prog1(arg1,arg2,...)</td><td>引数を評価し、最初の引数の値を返す</td></tr>
  <tr><td>prog2(arg1,arg2,...)</td><td>引数を評価し、2 番目の引数の値を返す</td></tr>
  <tr><td>progn(arg1,arg2,...)</td><td>引数を評価し、最後の引数の値を返す</td></tr>
+ <tr><td>end_proc(proc)</td><td>data オブジェクトの描画終了後に proc を評価する。複数回呼び出すことが可能だが、最後に指定された数式のみが評価される。</td></tr>
 </table>
 </div>
 
