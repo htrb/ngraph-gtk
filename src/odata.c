@@ -2663,9 +2663,14 @@ closedata(struct f2ddata *fp, struct f2dlocal *f2dlocal)
 {
   int j,num2,*data2;
   N_VALUE *inst;
+  MathValue val;
 
   if (fp==NULL) return;
 
+  if (fp->end_expression) {
+    math_expression_calculate(fp->end_expression, &val);
+    fp->end_expression = NULL;
+  }
   set_data_progress(fp);
 
   num2=arraynum(&(fp->fileopen));
