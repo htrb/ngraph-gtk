@@ -1797,6 +1797,22 @@ file_draw_text_raw(MathFunctionCallExpression *exp, MathEquation *eq, MathValue 
 }
 
 static int
+file_end_proc(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  MathExpression *end_exp;
+  struct f2ddata *fp;
+
+  end_exp = exp->buf[0].exp;
+  fp = math_equation_get_user_data(eq);
+  if (fp == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+  fp ->end_expression = end_exp;
+  return 0;
+}
+
+static int
 file_text_obj_set(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   int id;
