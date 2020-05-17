@@ -401,7 +401,6 @@ append_oct(GString *gstr, const char *str)
     if ('0' <= str[i] && str[i] <= '7') {
       c <<= 3;
       c += str[i] - '0';
-      printf("%c: %x\n", str[i], c);
     } else {
       break;
     }
