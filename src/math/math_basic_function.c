@@ -2819,6 +2819,8 @@ math_func_shift(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rv
   }
   ary->num -= n;
 
+  rval->val = ary->num;
+  rval->type = MATH_VALUE_NORMAL;
   return 0;
 }
 
