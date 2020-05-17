@@ -426,6 +426,7 @@ struct f2ddata {
   struct f2dlocal *local;
   double text_align_h, text_align_v;
   int text_font, text_style, text_pt, text_space, text_script;
+  MathExpression *end_expression;
 };
 
 struct f2dlocal {
