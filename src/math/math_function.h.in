@@ -120,7 +120,7 @@ progn		-1	0	0	NULL
 prog1		-1	0	0	NULL
 prog2		-1	0	0	NULL
 push		2	0	0	10,0
-pop		1	0	0	10
+pop		2	0	0	10,0
 unshift		2	0	0	10,0
 shift		1	0	0	10
 time		0	0	0	NULL
