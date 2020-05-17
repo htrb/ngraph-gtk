@@ -2738,7 +2738,7 @@ math_func_push(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
 int
 math_func_pop(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  int id;
+  int id, i, n;
   MathEquationArray *ary;
 
   rval->val = 0;
@@ -2746,17 +2746,31 @@ math_func_pop(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
   id = (int) exp->buf[0].array.idx;
   ary = math_equation_get_array(eq, id);
 
+  MATH_CHECK_ARG(rval, exp->buf[1]);
+  n = exp->buf[1].val.val;
+
   if (ary == NULL || ary->num < 1 || ary->data.val == NULL) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
   }
 
-  ary->num--;
-  *rval = ary->data.val[ary->num];
+  if (n < 0) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+  if (n == 0) {
+    n = 1;
+  }
+  if (n > ary->num) {
+    n = ary->num;
+  }
+  *rval = ary->data.val[ary->num - 1];
 
-  ary->data.val[ary->num].val = 0;
-  ary->data.val[ary->num].type = MATH_VALUE_NORMAL;
-
+  for (i = 0; i < n; i++) {
+    ary->data.val[ary->num - i - 1].val = 0;
+    ary->data.val[ary->num - i - 1].type = MATH_VALUE_NORMAL;
+  }
+  ary->num -= n;
   return 0;
 }
 
