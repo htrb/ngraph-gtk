@@ -1982,6 +1982,10 @@ static enum MATH_FUNCTION_ARG_TYPE string_column_arg_type[] = {
   MATH_FUNCTION_ARG_TYPE_DOUBLE,
 };
 
+static enum MATH_FUNCTION_ARG_TYPE end_proc_arg_type[] = {
+  MATH_FUNCTION_ARG_TYPE_PROC,
+};
+
 static struct funcs FileFunc[] = {
   {"OBJ_ALPHA", {2, 0, 0, file_objalpha, NULL, NULL, NULL, NULL}},
   {"OBJ_COLOR", {2, 0, 0, file_objcolor, NULL, NULL, NULL, NULL}},
@@ -2010,6 +2014,7 @@ static struct funcs FileFunc[] = {
   {"TEXT_OBJ_SET",   {2, 0, 0, file_text_obj_set, text_obj_set_arg_type, NULL, NULL, NULL}},
   {"TEXT_OBJ_GET",   {2, 0, 0, file_text_obj_get, text_obj_get_arg_type, NULL, NULL, NULL}},
   {"STRING_COLUMN",  {2, 0, 0, file_string_column, string_column_arg_type, NULL, NULL, NULL}},
+  {"END_PROC",       {1, 0, 0, file_end_proc,     end_proc_arg_type,     NULL, NULL, NULL}},
 };
 
 static int
