@@ -110,6 +110,7 @@ math_err_get_error_message(MathEquation *eq, const char *code, int err)
     }
     break;
   case MATH_ERROR_ARG_NUM:
+    code_buf = check_error_position(eq, code);
     if (eq->err_info.func.fprm) {
       buf = g_strdup_printf("%s (%d for %d) '%s()' (%d:%d)",
                             _(ERR_MSG_ARG_NUM),
