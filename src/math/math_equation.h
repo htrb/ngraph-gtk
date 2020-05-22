@@ -104,7 +104,7 @@ struct _math_equation {
   MathExpression *exp, *opt_exp, *const_def;
   MathEquationParametar *parameter;
   struct narray *scope_info;
-  union {
+  struct {
     struct {
       const char *pos;
       int line, ofst;
