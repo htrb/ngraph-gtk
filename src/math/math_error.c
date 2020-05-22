@@ -42,6 +42,10 @@ check_error_position(MathEquation *eq, const char *code)
   if (code == NULL)
     return NULL;
 
+  if (eq->err_info.pos.pos == NULL) {
+    return NULL;
+  }
+
   len = strlen(code);
   l = eq->err_info.pos.pos - code;
 
