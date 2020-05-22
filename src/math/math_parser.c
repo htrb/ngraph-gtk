@@ -398,13 +398,13 @@ create_math_func(struct math_string *str, MathEquation *eq, struct math_token *n
     math_scanner_free_token(token);
     return NULL;
   }
-  math_scanner_free_token(token);
 
   if (argc < fprm->argc) {
     int i;
     for (i = argc; i < fprm->argc; i++) {
       argv[i] = math_double_expression_new(eq, &MATH_VALUE_ZERO, err);
       if (argv[i] == NULL) {
+        math_scanner_free_token(token);
 	free_arg_list(argv);
 	g_free(argv);
 	return NULL;
@@ -414,6 +414,7 @@ create_math_func(struct math_string *str, MathEquation *eq, struct math_token *n
   } else if (fprm->argc >= 0 && argc > fprm->argc) {
     *err = MATH_ERROR_ARG_NUM;
     math_equation_set_func_arg_num_error(eq, fprm, argc);
+    math_scanner_free_token(token);
     free_arg_list(argv);
     g_free(argv);
     return NULL;
@@ -423,6 +424,7 @@ create_math_func(struct math_string *str, MathEquation *eq, struct math_token *n
   if (pos_id == MATH_ERROR_INVALID_FUNC) {
     *err = MATH_ERROR_INVALID_FUNC;
     math_equation_set_func_error(eq, fprm);
+    math_scanner_free_token(token);
     free_arg_list(argv);
     g_free(argv);
     return NULL;
@@ -433,10 +435,12 @@ create_math_func(struct math_string *str, MathEquation *eq, struct math_token *n
     if (*err == MATH_ERROR_INVALID_ARG) {
       math_equation_set_parse_error(eq, token->ptr, str);
     }
+    math_scanner_free_token(token);
     free_arg_list(argv);
     g_free(argv);
     return NULL;
   }
+  math_scanner_free_token(token);
 
   return exp;
 }
