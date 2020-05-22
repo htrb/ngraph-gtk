@@ -377,6 +377,7 @@ move_cursor_to_error_line(GtkWidget *view)
   buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(view));
   gtk_text_buffer_get_iter_at_line_offset(buffer, &iter, ln - 1, ofst - 1);
   gtk_text_buffer_place_cursor(buffer, &iter);
+  gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW(view), &iter, 0, FALSE, 0, 0);
 }
 
 static void
