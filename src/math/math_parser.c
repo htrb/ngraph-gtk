@@ -413,6 +413,7 @@ create_math_func(struct math_string *str, MathEquation *eq, struct math_token *n
     argc = fprm->argc;
   } else if (fprm->argc >= 0 && argc > fprm->argc) {
     *err = MATH_ERROR_ARG_NUM;
+    math_equation_set_parse_error(eq, token->ptr, str);
     math_equation_set_func_arg_num_error(eq, fprm, argc);
     math_scanner_free_token(token);
     free_arg_list(argv);
