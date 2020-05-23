@@ -1462,7 +1462,7 @@ draw_lines(struct narray *pos, int GC)
   uniq_points(pos);
   ap = (int *) arraydata(pos);
   n = arraynum(pos);
-  if (n > 4) {
+  if (n > 3) {
     GRAlines(GC, n / 2, ap);
   }
 }
