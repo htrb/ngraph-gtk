@@ -3194,6 +3194,7 @@ menu_lock(int lock)
   if (w) {
     gtk_widget_set_sensitive(w, ! Menulock);
   }
+  gtk_widget_set_sensitive(ToolBox, ! Menulock);
 }
 
 static void
