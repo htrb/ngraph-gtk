@@ -3980,9 +3980,9 @@ setupwindow(GtkApplication *app)
   gtk_box_pack_start(GTK_BOX(vbox2), ToolBox, FALSE, FALSE, 0);
   gtk_box_pack_start(GTK_BOX(hbox), PToolbar, FALSE, FALSE, 0);
 
+#if ! USE_GTK_BUILDER
   w = gtk_menu_new();
   create_popup(w, PopupMenu);
-#if ! USE_GTK_BUILDER
   gtk_menu_set_accel_group(GTK_MENU(w), AccelGroup);
   NgraphApp.Viewer.popup = w;
   gtk_widget_show_all(w);
