@@ -2651,7 +2651,6 @@ static struct MenuItem SaveMenu[] = {
     MENU_TYPE_END,
   },
 };
-#endif
 
 static struct MenuItem PopupRotateMenu[] = {
   {
@@ -3040,7 +3039,7 @@ static struct MenuItem PopupMenu[] = {
     MENU_TYPE_END,
   },
 };
-
+#endif
 
 void
 set_pointer_mode(int id)
