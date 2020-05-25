@@ -91,7 +91,9 @@ struct ToolItem;
 
 static void create_menu(GtkWidget *w, struct MenuItem *item);
 static void create_menu_sub(GtkWidget *parent, struct MenuItem *item, int popup);
+#if ! USE_GTK_BUILDER
 static void create_popup(GtkWidget *parent, struct MenuItem *item);
+#endif
 static GtkWidget *create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb);
 static void CmViewerButtonArm(GtkToggleToolButton *action, gpointer client_data);
 
@@ -4767,11 +4769,13 @@ create_menu(GtkWidget *parent, struct MenuItem *item)
   create_menu_sub(parent, item, FALSE);
 }
 
+#if ! USE_GTK_BUILDER
 static void
 create_popup(GtkWidget *parent, struct MenuItem *item)
 {
   create_menu_sub(parent, item, TRUE);
 }
+#endif
 
 static int
 create_toplevel_window(void)
