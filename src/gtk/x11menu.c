@@ -5674,6 +5674,7 @@ set_undo_menu_label(void)
   }
   item = g_menu_item_new(label, "app.EditRedoAction");
   g_menu_insert_item(G_MENU(menu), 0, item);
+  g_object_unref(item);
 
   if (UndoInfo) {
     snprintf(buf, sizeof(buf), _("_Undo: %s"), _(UndoTypeStr[UndoInfo->type]));
@@ -5683,6 +5684,7 @@ set_undo_menu_label(void)
   }
   item = g_menu_item_new(label, "app.EditUndoAction");
   g_menu_insert_item(G_MENU(menu), 0, item);
+  g_object_unref(item);
 }
 #else
 static void
