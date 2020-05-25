@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.07.06\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2020-05-24 21:10+0900\n"
-"PO-Revision-Date: 2020-05-17 15:45+0900\n"
+"POT-Creation-Date: 2020-05-25 15:38+0900\n"
+"PO-Revision-Date: 2020-05-25 15:39+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja\n"
@@ -3372,14 +3372,6 @@ msgstr ""
 
 #: src/gtk/completion_info_data.c:47
 msgid ""
-"<b>end_proc</b>(<i>proc</i>)\n"
-"Evaluate <i>proc</i> after plottong the data object."
-msgstr ""
-"<b>end_proc</b>(<i>proc</i>)\n"
-"data オブジェクトの描画後に<i>proc</i>を評価する。"
-
-#: src/gtk/completion_info_data.c:48
-msgid ""
 "<b>eq</b>(<i>x, y, prec</i>)\n"
 "True (= 1) when <i>x</i> == <i>y</i>.\n"
 "The number of digits of comparison can be specified with <i>prec</i>\n"
@@ -3390,7 +3382,7 @@ msgstr ""
 "<i>prec</i> で比較の桁数を指定できる\n"
 "(<i>prec</i> == 0 は完全一致)。"
 
-#: src/gtk/completion_info_data.c:49
+#: src/gtk/completion_info_data.c:48
 msgid ""
 "<b>erf</b>(<i>x</i>)\n"
 "error function erf(<i>x</i>)"
@@ -3398,7 +3390,7 @@ msgstr ""
 "<b>erf</b>(<i>x</i>)\n"
 "誤差関数 erf(<i>x</i>)"
 
-#: src/gtk/completion_info_data.c:50
+#: src/gtk/completion_info_data.c:49
 msgid ""
 "<b>erfc</b>(<i>x</i>)\n"
 "complementary error function erfc(<i>x</i>)"
@@ -3406,7 +3398,7 @@ msgstr ""
 "<b>erfc</b>(<i>x</i>)\n"
 "相補誤差関数 erfc(<i>x</i>)"
 
-#: src/gtk/completion_info_data.c:51
+#: src/gtk/completion_info_data.c:50
 msgid ""
 "<b>exp</b>(<i>x</i>)\n"
 "base-e exponential function (<i>x</i> &lt;= 690)"
@@ -3414,7 +3406,7 @@ msgstr ""
 "<b>exp</b>(<i>x</i>)\n"
 "指数関数 (<i>x</i>≦690)"
 
-#: src/gtk/completion_info_data.c:52
+#: src/gtk/completion_info_data.c:51
 msgid ""
 "<b>filter</b>(<i>dest, src, item, ex</i>)\n"
 "Find elements in the array <i>src</i>\n"
@@ -3428,7 +3420,7 @@ msgstr ""
 "その結果が真である要素を配列 <i>dest</i> に設定する。\n"
 "配列の各要素は、第三引数に指定した変数 (<i>item</i>) で参照できる。"
 
-#: src/gtk/completion_info_data.c:53
+#: src/gtk/completion_info_data.c:52
 msgid ""
 "<b>find</b>(<i>a, item, ex</i>)\n"
 "Return the value of the first element in the array <i>a</i>\n"
@@ -3440,7 +3432,7 @@ msgstr ""
 "その結果が真である最初の要素を返す。\n"
 "配列の各要素は、第二引数に指定した変数 (<i>item</i>) で参照できる。"
 
-#: src/gtk/completion_info_data.c:54
+#: src/gtk/completion_info_data.c:53
 msgid ""
 "<b>fit_calc</b>(<i>id, x</i>)\n"
 "When the plot type of the data object whose ID is <i>id</i> is fit,\n"
@@ -3450,7 +3442,7 @@ msgstr ""
 "ID が <i>id</i> の data オブジェクトのプロットタイプが fit のとき、\n"
 "対応する fit 結果 f(<i>x</i>) を計算する。"
 
-#: src/gtk/completion_info_data.c:55
+#: src/gtk/completion_info_data.c:54
 msgid ""
 "<b>fit_prm</b>(<i>id, x</i>)\n"
 "When the plot type of the data object whose ID is <i>id</i> is fit,\n"
@@ -3460,7 +3452,7 @@ msgstr ""
 "ID が <i>id</i> の data オブジェクトのプロットタイプが fit のとき、\n"
 "対応する fit object のフィールド \"%0<i>x</i>\" の値。"
 
-#: src/gtk/completion_info_data.c:56
+#: src/gtk/completion_info_data.c:55
 msgid ""
 "<b>fmod</b>(<i>x, y</i>)\n"
 "compute the floating-point remainder of dividing <i>x</i> by <i>y</i>"
@@ -3468,7 +3460,7 @@ msgstr ""
 "<b>fmod</b>(<i>x, y</i>)\n"
 "<i>x</i> を <i>y</i> で割った浮動小数点剰余"
 
-#: src/gtk/completion_info_data.c:57
+#: src/gtk/completion_info_data.c:56
 msgid ""
 "<b>for</b>(<i>m, begin, end, step, ex</i>)\n"
 "Set the value in <i>step</i> from <i>begin</i> to <i>end</i> to the <i>m</i>-"
@@ -3483,7 +3475,7 @@ msgstr ""
 "<i>m</i> が負の時はメモリーへの設定は行われない。\n"
 "最後に評価された <i>ex</i> の値を返す。"
 
-#: src/gtk/completion_info_data.c:58
+#: src/gtk/completion_info_data.c:57
 msgid ""
 "<b>frac</b>(<i>x</i>)\n"
 "remainder"
@@ -3491,7 +3483,7 @@ msgstr ""
 "<b>frac</b>(<i>x</i>)\n"
 "<i>x</i> の小数部"
 
-#: src/gtk/completion_info_data.c:59
+#: src/gtk/completion_info_data.c:58
 msgid ""
 "<b>gamma</b>(<i>x</i>)\n"
 "gamma function"
@@ -3499,7 +3491,7 @@ msgstr ""
 "<b>gamma</b>(<i>x</i>)\n"
 "ガンマ関数 Γ(<i>x</i>)"
 
-#: src/gtk/completion_info_data.c:60
+#: src/gtk/completion_info_data.c:59
 msgid ""
 "<b>gauss</b>(<i>x</i>)\n"
 "largest integral value not greater than <i>x</i>"
@@ -3507,7 +3499,7 @@ msgstr ""
 "<b>gauss</b>(<i>x</i>)\n"
 "ガウスの記号[ ] ([<i>x</i>]は<i>x</i>を越えない最大の整数)"
 
-#: src/gtk/completion_info_data.c:61
+#: src/gtk/completion_info_data.c:60
 msgid ""
 "<b>ge</b>(<i>x, y, prec</i>)\n"
 "True (= 1) when <i>x</i> &gt;= <i>y</i>.\n"
@@ -3519,7 +3511,7 @@ msgstr ""
 "<i>prec</i> で比較の桁数を指定できる\n"
 "(<i>prec</i> == 0 は桁数指定なし)。"
 
-#: src/gtk/completion_info_data.c:62
+#: src/gtk/completion_info_data.c:61
 msgid ""
 "<b>getobj</b>(<i>$obj, $field, id</i>)\n"
 "Return the value of the <i>$field</i> of the <i>$obj</i> object which ID is "
@@ -3531,7 +3523,7 @@ msgstr ""
 "返す。\n"
 "field type が int, bool, enum, double の場合に利用できる。"
 
-#: src/gtk/completion_info_data.c:63
+#: src/gtk/completion_info_data.c:62
 msgid ""
 "<b>getobj_array</b>(<i>array, $obj, $field, id</i>)\n"
 "Set values of the <i>$field</i> of the <i>$obj</i> object which ID is <i>id</"
@@ -3545,7 +3537,7 @@ msgstr ""
 "field type が char*[], double[], int[] の場合に利用できる。\n"
 "設定した配列の要素数を返す。"
 
-#: src/gtk/completion_info_data.c:64
+#: src/gtk/completion_info_data.c:63
 msgid ""
 "<b>getobj_string</b>(<i>$str, $obj, $field, id</i>)\n"
 "Set the value of the <i>$field</i> of the <i>$obj</i> object which ID is "
@@ -3559,7 +3551,7 @@ msgstr ""
 "field type が char* の場合に利用できる。\n"
 "正しい UTF-8 文字列の場合、文字列の文字数を返す。"
 
-#: src/gtk/completion_info_data.c:65
+#: src/gtk/completion_info_data.c:64
 msgid ""
 "<b>gt</b>(<i>x, y, prec</i>)\n"
 "True (= 1) when <i>x</i> &gt; <i>y</i>.\n"
@@ -3571,7 +3563,7 @@ msgstr ""
 "<i>prec</i> で比較の桁数を指定できる\n"
 "(<i>prec</i> == 0 は桁数指定なし)。"
 
-#: src/gtk/completion_info_data.c:66
+#: src/gtk/completion_info_data.c:65
 msgid ""
 "<b>hn</b>(<i>n, x</i>)\n"
 "Hermite polynomials"
@@ -3579,7 +3571,7 @@ msgstr ""
 "<b>hn</b>(<i>n, x</i>)\n"
 "エルミート多項式"
 
-#: src/gtk/completion_info_data.c:67
+#: src/gtk/completion_info_data.c:66
 msgid ""
 "<b>hsb</b>(<i>h, s, b</i>)\n"
 "Set the R, G and B values of the color to <i>h, s, b</i> (0 &lt;= <i>h, s, "
@@ -3588,7 +3580,7 @@ msgstr ""
 "<b>hsb</b>(<i>h, s, b</i>)\n"
 "R, G, B の値をHSB値 <i>h, s, b</i> (0≦<i>h, s, b</i>≦1)から設定"
 
-#: src/gtk/completion_info_data.c:68
+#: src/gtk/completion_info_data.c:67
 msgid ""
 "<b>hsb2</b>(<i>h, s, b</i>)\n"
 "Set the R2, G2 and B2 values of the color to <i>h, s, b</i> (0 &lt;= <i>h, "
@@ -3597,7 +3589,7 @@ msgstr ""
 "<b>hsb2</b>(<i>h, s, b</i>)\n"
 "R2, G2, B2 の値をHSB値 <i>h, s, b</i> (0≦<i>h, s, b</i>≦1)から設定"
 
-#: src/gtk/completion_info_data.c:69
+#: src/gtk/completion_info_data.c:68
 msgid ""
 "<b>icbeta</b>(<i>a, b, x</i>)\n"
 "incomplete beta function"
@@ -3605,7 +3597,7 @@ msgstr ""
 "<b>icbeta</b>(<i>a, b, x</i>)\n"
 "不完全ベータ関数 I(<i>a, b, x</i>) (0 ≦ <i>x</i> ≦ 1) "
 
-#: src/gtk/completion_info_data.c:70
+#: src/gtk/completion_info_data.c:69
 msgid ""
 "<b>icgam</b>(<i>m, x</i>)\n"
 "incomplete gamma function"
@@ -3613,7 +3605,7 @@ msgstr ""
 "<b>icgam</b>(<i>m, x</i>)\n"
 "不完全ガンマ関数 Γ(<i>m, x</i>)"
 
-#: src/gtk/completion_info_data.c:71
+#: src/gtk/completion_info_data.c:70
 msgid ""
 "<b>if</b>(<i>x, ex1, ex2</i>)\n"
 "evaluate <i>ex1</i> when <i>x</i> != 0, evaluate <i>ex2</i> otherwise"
@@ -3621,7 +3613,7 @@ msgstr ""
 "<b>if</b>(<i>x, ex1, ex2</i>)\n"
 "<i>x</i> ≠ 0 のとき <i>ex1</i>, <i>x</i> == 0 のとき <i>ex2</i>"
 
-#: src/gtk/completion_info_data.c:72
+#: src/gtk/completion_info_data.c:71
 msgid ""
 "<b>in</b>(<i>n, x</i>)\n"
 "compute the regular modified cylindrical Bessel function of order |<i>n</"
@@ -3630,7 +3622,7 @@ msgstr ""
 "<b>in</b>(<i>n, x</i>)\n"
 "第1種<i>n</i>次変形ベッセル関数 I<sub><i>n</i></sub>(|<i>x</i>|)"
 
-#: src/gtk/completion_info_data.c:73
+#: src/gtk/completion_info_data.c:72
 msgid ""
 "<b>int</b>(<i>x</i>)\n"
 "round to integer, toward zero"
@@ -3638,7 +3630,7 @@ msgstr ""
 "<b>int</b>(<i>x</i>)\n"
 "0に向かって切捨てた整数部"
 
-#: src/gtk/completion_info_data.c:74
+#: src/gtk/completion_info_data.c:73
 msgid ""
 "<b>inu</b>(<i>nu, x</i>)\n"
 "compute the regular modified Bessel function of fractional order |<i>nu</"
@@ -3648,7 +3640,7 @@ msgstr ""
 "第1種<i>nu</i>次変形ベッセル関数 (<i>nu</i> は正の実数) I<sub><i>nu</i></"
 "sub>(|<i>x</i>|)"
 
-#: src/gtk/completion_info_data.c:75
+#: src/gtk/completion_info_data.c:74
 msgid ""
 "<b>isbreak</b>(<i>x</i>)\n"
 "True if <i>x</i> is <b>BREAK</b>"
@@ -3656,7 +3648,7 @@ msgstr ""
 "<b>isbreak</b>(<i>x</i>)\n"
 "<i>x</i> が <b>BREAK</b> の場合真"
 
-#: src/gtk/completion_info_data.c:76
+#: src/gtk/completion_info_data.c:75
 msgid ""
 "<b>iscont</b>(<i>x</i>)\n"
 "True if <i>x</i> is <b>CONT</b>"
@@ -3664,7 +3656,7 @@ msgstr ""
 "<b>iscont</b>(<i>x</i>)\n"
 "<i>x</i> が <b>CONT</b> の場合真"
 
-#: src/gtk/completion_info_data.c:77
+#: src/gtk/completion_info_data.c:76
 msgid ""
 "<b>isnan</b>(<i>x</i>)\n"
 "True if <i>x</i> is <b>NAN</b>"
@@ -3672,7 +3664,7 @@ msgstr ""
 "<b>isnan</b>(<i>x</i>)\n"
 "<i>x</i> が <b>NAN</b> の場合真"
 
-#: src/gtk/completion_info_data.c:78
+#: src/gtk/completion_info_data.c:77
 msgid ""
 "<b>isnormal</b>(<i>x</i>)\n"
 "True if <i>x</i> is a normal number"
@@ -3680,7 +3672,7 @@ msgstr ""
 "<b>isnormal</b>(<i>x</i>)\n"
 "<i>x</i> が通常の数値の場合真"
 
-#: src/gtk/completion_info_data.c:79
+#: src/gtk/completion_info_data.c:78
 msgid ""
 "<b>isundef</b>(<i>x</i>)\n"
 "True if <i>x</i> is <b>UNDEF</b>"
@@ -3688,7 +3680,7 @@ msgstr ""
 "<b>isundef</b>(<i>x</i>)\n"
 "<i>x</i> が <b>UNDEF</b> の場合真"
 
-#: src/gtk/completion_info_data.c:80
+#: src/gtk/completion_info_data.c:79
 msgid ""
 "<b>jl</b>(<i>l, x</i>)\n"
 "compute the regular spherical Bessel function of order |<i>l</i>|, "
@@ -3697,7 +3689,7 @@ msgstr ""
 "<b>jl</b>(<i>l, x</i>)\n"
 "第1種<i>l</i>次球ベッセル関数 j<sub><i>l</i></sub>(|<i>x</i>|)"
 
-#: src/gtk/completion_info_data.c:81
+#: src/gtk/completion_info_data.c:80
 msgid ""
 "<b>jn</b>(<i>n, x</i>)\n"
 "compute the regular cylindrical Bessel function of order <i>n</i>, "
@@ -3706,7 +3698,7 @@ msgstr ""
 "<b>jn</b>(<i>n, x</i>)\n"
 "第1種<i>n</i>次ベッセル関数 J<sub><i>n</i></sub>(|<i>x</i>|)"
 
-#: src/gtk/completion_info_data.c:82
+#: src/gtk/completion_info_data.c:81
 msgid ""
 "<b>jnu</b>(<i>nu, x</i>)\n"
 "compute the regular cylindrical Bessel function of fractional order |<i>nu</"
@@ -3716,7 +3708,7 @@ msgstr ""
 "第1種<i>nu</i>次ベッセル関数 (<i>nu</i> は正の実数) J<sub><i>nu</i></sub>(|"
 "<i>x</i>|)"
 
-#: src/gtk/completion_info_data.c:83
+#: src/gtk/completion_info_data.c:82
 msgid ""
 "<b>kn</b>(<i>n, x</i>)\n"
 "compute the irregular modified cylindrical Bessel function of order |<i>n</"
@@ -3725,7 +3717,7 @@ msgstr ""
 "<b>kn</b>(<i>n, x</i>)\n"
 "第2種<i>n</i>次変形ベッセル関数 K<sub><i>n</i></sub>(|<i>x</i>|)"
 
-#: src/gtk/completion_info_data.c:84
+#: src/gtk/completion_info_data.c:83
 msgid ""
 "<b>knu</b>(<i>nu, x</i>)\n"
 "compute the irregular modified Bessel function of fractional order |<i>nu</"
@@ -3735,7 +3727,7 @@ msgstr ""
 "第2種<i>nu</i>次変形ベッセル関数 (<i>nu</i> は正の実数) K<sub><i>nu</i></"
 "sub>(|<i>x</i>|)"
 
-#: src/gtk/completion_info_data.c:85
+#: src/gtk/completion_info_data.c:84
 msgid ""
 "<b>le</b>(<i>x, y, prec</i>)\n"
 "True (= 1) when <i>x</i> &lt;= <i>y</i>.\n"
@@ -3747,7 +3739,7 @@ msgstr ""
 "<i>prec</i> で比較の桁数を指定できる\n"
 "(<i>prec</i> == 0 は桁数指定なし)。"
 
-#: src/gtk/completion_info_data.c:86
+#: src/gtk/completion_info_data.c:85
 msgid ""
 "<b>lgn</b>(<i>n, a, x</i>)\n"
 "evaluate the generalized Laguerre polynomials L<sup><i>a</i></sup><sub><i>n</"
@@ -3756,7 +3748,7 @@ msgstr ""
 "<b>lgn</b>(<i>n, a, x</i>)\n"
 "ラゲール倍多項式"
 
-#: src/gtk/completion_info_data.c:87
+#: src/gtk/completion_info_data.c:86
 msgid ""
 "<b>line_number</b>(<i></i>)\n"
 "File line number being processed (1st line is 1)"
@@ -3764,7 +3756,7 @@ msgstr ""
 "<b>line_number</b>(<i></i>)\n"
 "処理中のファイル行番号 (1行目が1)"
 
-#: src/gtk/completion_info_data.c:88
+#: src/gtk/completion_info_data.c:87
 msgid ""
 "<b>ln</b>(<i>x</i>)\n"
 "natural logarithmic function"
@@ -3772,7 +3764,7 @@ msgstr ""
 "<b>ln</b>(<i>x</i>)\n"
 "自然対数"
 
-#: src/gtk/completion_info_data.c:89
+#: src/gtk/completion_info_data.c:88
 msgid ""
 "<b>log</b>(<i>x</i>)\n"
 "base-10 logarithmic function"
@@ -3780,7 +3772,7 @@ msgstr ""
 "<b>log</b>(<i>x</i>)\n"
 "常用対数"
 
-#: src/gtk/completion_info_data.c:90
+#: src/gtk/completion_info_data.c:89
 msgid ""
 "<b>lt</b>(<i>x, y, prec</i>)\n"
 "True (= 1) when <i>x</i> &lt; <i>y</i>.\n"
@@ -3792,7 +3784,7 @@ msgstr ""
 "<i>prec</i> で比較の桁数を指定できる\n"
 "(<i>prec</i> == 0 は桁数指定なし)。"
 
-#: src/gtk/completion_info_data.c:91
+#: src/gtk/completion_info_data.c:90
 msgid ""
 "<b>m</b>(<i>i, x</i>)\n"
 "assigns <i>x</i> to the <i>i</i>-th memory (<i>i</i> = 0 to 65535)\n"
@@ -3804,7 +3796,7 @@ msgstr ""
 "<i>i</i> が負のときは末尾からのインデックス\n"
 "(戻り値は <i>x</i>)"
 
-#: src/gtk/completion_info_data.c:92
+#: src/gtk/completion_info_data.c:91
 msgid ""
 "<b>map</b>(<i>dest, src, item, ex</i>)\n"
 "Evaluate <i>ex</i> for each element of the array <i>src</i>\n"
@@ -3816,7 +3808,7 @@ msgstr ""
 "その結果を配列 <i>dest</i> に設定する。\n"
 "配列の各要素は、第三引数に指定した変数 (<i>item</i>) で参照できる。"
 
-#: src/gtk/completion_info_data.c:93
+#: src/gtk/completion_info_data.c:92
 msgid ""
 "<b>marksize</b>(<i>x</i>)\n"
 "Set mark size to <i>x</i>"
@@ -3824,7 +3816,7 @@ msgstr ""
 "<b>marksize</b>(<i>x</i>)\n"
 "マークのサイズを<i>x</i>に設定"
 
-#: src/gtk/completion_info_data.c:94
+#: src/gtk/completion_info_data.c:93
 msgid ""
 "<b>marktype</b>(<i>x</i>)\n"
 "Set mark type to <i>x</i>"
@@ -3832,7 +3824,7 @@ msgstr ""
 "<b>marktype</b>(<i>x</i>)\n"
 "マークの種類を<i>x</i>に設定"
 
-#: src/gtk/completion_info_data.c:95
+#: src/gtk/completion_info_data.c:94
 msgid ""
 "<b>max</b>(<i>a, b, c, ...</i>)\n"
 "The largest value of arguments"
@@ -3840,7 +3832,7 @@ msgstr ""
 "<b>max</b>(<i>a, b, c, ...</i>)\n"
 "引数のうちもっとも大きな値"
 
-#: src/gtk/completion_info_data.c:96
+#: src/gtk/completion_info_data.c:95
 msgid ""
 "<b>min</b>(<i>a, b, c, ...</i>)\n"
 "The smallest value of arguments"
@@ -3848,7 +3840,7 @@ msgstr ""
 "<b>min</b>(<i>a, b, c, ...</i>)\n"
 "引数のうちもっとも小さな値"
 
-#: src/gtk/completion_info_data.c:97
+#: src/gtk/completion_info_data.c:96
 msgid ""
 "<b>mjd</b>(<i>year, month, day, hour, min, sec</i>)\n"
 "Modified Julian Date (date and time are given in UTC)"
@@ -3857,7 +3849,7 @@ msgstr ""
 "修正ユリウス日(<i>year</i>, <i>month</i>, <i>day</i> はグレゴリオ暦、"
 "<i>hour</i>, <i>min</i>, <i>sec</i> は UTC 時刻)"
 
-#: src/gtk/completion_info_data.c:98
+#: src/gtk/completion_info_data.c:97
 msgid ""
 "<b>mjd2day</b>(<i>mjd</i>)\n"
 "Gregorian calendar day corresponding to Modified Julian Day <i>mjd</i>"
@@ -3865,7 +3857,7 @@ msgstr ""
 "<b>mjd2day</b>(<i>mjd</i>)\n"
 "修正ユリウス日に対応するグレゴリオ暦の日"
 
-#: src/gtk/completion_info_data.c:99
+#: src/gtk/completion_info_data.c:98
 msgid ""
 "<b>mjd2month</b>(<i>mjd</i>)\n"
 "month of Gregorian calendar corresponding to Modified Julian Day <i>mjd</i>"
@@ -3873,7 +3865,7 @@ msgstr ""
 "<b>mjd2month</b>(<i>mjd</i>)\n"
 "修正ユリウス日に対応するグレゴリオ暦の月"
 
-#: src/gtk/completion_info_data.c:100
+#: src/gtk/completion_info_data.c:99
 msgid ""
 "<b>mjd2unix</b>(<i>mjd</i>)\n"
 "time represents the number of seconds elapsed since the Epoch at <i>mjd</i>"
@@ -3882,7 +3874,7 @@ msgstr ""
 "修正ユリウス日 <i>mjd</i> の1970年1月1日00:00:00 UTC からの経過秒数\n"
 "(うるう秒は考慮されない)"
 
-#: src/gtk/completion_info_data.c:101
+#: src/gtk/completion_info_data.c:100
 msgid ""
 "<b>mjd2wday</b>(<i>mjd</i>)\n"
 "The day of the week as a decimal range 1 to 7, Monday being 1 corresponding "
@@ -3891,7 +3883,7 @@ msgstr ""
 "<b>mjd2wday</b>(<i>mjd</i>)\n"
 "修正ユリウス日に対応するグレゴリオ暦の曜日 (1:月曜日から 7:日曜日)"
 
-#: src/gtk/completion_info_data.c:102
+#: src/gtk/completion_info_data.c:101
 msgid ""
 "<b>mjd2yday</b>(<i>mjd</i>)\n"
 "The day of the year as a decimal number (range 001 to 366) corresponding to "
@@ -3900,7 +3892,7 @@ msgstr ""
 "<b>mjd2yday</b>(<i>mjd</i>)\n"
 "修正ユリウス日に対応するグレゴリオ暦の 1 月 1 日からの通算日数 (1 から 366)"
 
-#: src/gtk/completion_info_data.c:103
+#: src/gtk/completion_info_data.c:102
 msgid ""
 "<b>mjd2year</b>(<i>mjd</i>)\n"
 "year of Gregorian calendar corresponding to Modified Julian Day <i>mjd</i>"
@@ -3908,7 +3900,7 @@ msgstr ""
 "<b>mjd2year</b>(<i>mjd</i>)\n"
 "修正ユリウス日に対応するグレゴリオ暦の年"
 
-#: src/gtk/completion_info_data.c:104
+#: src/gtk/completion_info_data.c:103
 msgid ""
 "<b>neq</b>(<i>x, y, prec</i>)\n"
 "True (= 1) when <i>x</i> != <i>y</i>.\n"
@@ -3920,7 +3912,7 @@ msgstr ""
 "<i>prec</i> で比較の桁数を指定できる\n"
 "(<i>prec</i> == 0 は完全一致)。"
 
-#: src/gtk/completion_info_data.c:105
+#: src/gtk/completion_info_data.c:104
 msgid ""
 "<b>not</b>(<i>x</i>)\n"
 "True (= 1) when <i>x</i> == 0"
@@ -3928,7 +3920,7 @@ msgstr ""
 "<b>not</b>(<i>x</i>)\n"
 "<i>x</i> == 0 のとき真(=1)"
 
-#: src/gtk/completion_info_data.c:106
+#: src/gtk/completion_info_data.c:105
 msgid ""
 "<b>obj_alpha</b>(<i>id, obj</i>)\n"
 "Set the A and A2 value to the same value as the instance of <i>obj</i> whose "
@@ -3942,7 +3934,7 @@ msgstr ""
 "<i>obj</i> は <b>DATA_OBJ</b>, <b>PATH_OBJ</b>, <b>ARC_OBJ</b>, <b>MARK_OBJ</"
 "b>, <b>TEXT_OBJ</b> のいずれか。"
 
-#: src/gtk/completion_info_data.c:107
+#: src/gtk/completion_info_data.c:106
 msgid ""
 "<b>obj_color</b>(<i>id, obj</i>)\n"
 "Set the R, G, B, R2, G2 and B2 values to the same value as the instance of "
@@ -3955,6 +3947,14 @@ msgstr ""
 "と同じ値にする。\n"
 "<i>obj</i> は <b>DATA_OBJ</b>, <b>PATH_OBJ</b>, <b>ARC_OBJ</b>, <b>MARK_OBJ</"
 "b>, <b>TEXT_OBJ</b> のいずれか。"
+
+#: src/gtk/completion_info_data.c:107
+msgid ""
+"<b>on_end</b>(<i>proc</i>)\n"
+"Evaluate <i>proc</i> at the end of plottong the data object."
+msgstr ""
+"<b>end_proc</b>(<i>proc</i>)\n"
+"data オブジェクトの描画終了時に<i>proc</i>を評価する。"
 
 #: src/gtk/completion_info_data.c:108
 msgid ""

@@ -171,4 +171,4 @@ text_align(x, y)	Set alignment of a text drawing.\n<i>x</i> and <i>y</i> represe
 text_font(font)		Set font setting of drawing texts.\nThe value <i>font</i> 0, 1 and 2 represent "Sans-serif", "Serif" and "Monospace" respectively.
 text_style(style)	Set font style settings of drawing texts.\nThe value <i>style</i> 0, 1, 2 and 3 represent "normal", "bold", "italic" and "bold-italic" respectively.
 text_size(pt, space, script)	Set font size and other settings of drawing texts.\nFont size can be specified by <i>pt</i>.\nFont-spacing and script-size are specified by the following arguments.
-end_proc(proc)	Evaluate <i>proc</i> after plottong the data object.
+on_end(proc)	Evaluate <i>proc</i> at the end of plottong the data object.

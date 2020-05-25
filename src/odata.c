@@ -1797,7 +1797,7 @@ file_draw_text_raw(MathFunctionCallExpression *exp, MathEquation *eq, MathValue 
 }
 
 static int
-file_end_proc(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+file_on_end(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   MathExpression *end_exp;
   struct f2ddata *fp;
@@ -1982,7 +1982,7 @@ static enum MATH_FUNCTION_ARG_TYPE string_column_arg_type[] = {
   MATH_FUNCTION_ARG_TYPE_DOUBLE,
 };
 
-static enum MATH_FUNCTION_ARG_TYPE end_proc_arg_type[] = {
+static enum MATH_FUNCTION_ARG_TYPE on_end_arg_type[] = {
   MATH_FUNCTION_ARG_TYPE_PROC,
 };
 
@@ -2014,7 +2014,7 @@ static struct funcs FileFunc[] = {
   {"TEXT_OBJ_SET",   {2, 0, 0, file_text_obj_set, text_obj_set_arg_type, NULL, NULL, NULL}},
   {"TEXT_OBJ_GET",   {2, 0, 0, file_text_obj_get, text_obj_get_arg_type, NULL, NULL, NULL}},
   {"STRING_COLUMN",  {2, 0, 0, file_string_column, string_column_arg_type, NULL, NULL, NULL}},
-  {"END_PROC",       {1, 0, 0, file_end_proc,     end_proc_arg_type,     NULL, NULL, NULL}},
+  {"ON_END",         {1, 0, 0, file_on_end,       on_end_arg_type,     NULL, NULL, NULL}},
 };
 
 static int
