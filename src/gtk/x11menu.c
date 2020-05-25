@@ -3382,6 +3382,7 @@ add_addin_menu(void)
       snprintf(buf, sizeof(buf), "app.GraphAddinAction(%d)", i);
       item = g_menu_item_new(fcur->name, buf);
       g_menu_append_item(addin_menu, item);
+      g_object_unref(item);
     }
     fcur = fcur->next;
     i++;
