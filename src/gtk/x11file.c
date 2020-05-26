@@ -3581,7 +3581,7 @@ set_headlines(struct FileDialog *d, const char *s)
   } else {
     char *ptr;
 
-    ptr = g_locale_to_utf8(s, -1, NULL, NULL, NULL);
+    ptr = n_locale_to_utf8(s);
     if (ptr) {
       text_view_with_line_number_set_text(d->comment_view, ptr);
       g_free(ptr);
