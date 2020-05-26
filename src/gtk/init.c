@@ -691,7 +691,7 @@ set_dir_defs(char *app)
 {
   char *utf8_name, *app_path, *tmp;
 
-  utf8_name = g_locale_to_utf8(app, -1, NULL, NULL, NULL);
+  utf8_name = n_locale_to_utf8(app);
   if (utf8_name == NULL) {
     return 1;
   }
