@@ -5232,7 +5232,10 @@ DisplayDialog(const char *str)
   if (str == NULL)
     return;
 
-  ustr = g_locale_to_utf8(CHK_STR(str), -1, NULL, NULL, NULL);
+  ustr = n_locale_to_utf8(CHK_STR(str));
+  if (ustr == NULL) {
+    return;
+  }
   InfoWinDrawInfoText(ustr);
   g_free(ustr);
 }
