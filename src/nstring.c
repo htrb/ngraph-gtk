@@ -586,3 +586,18 @@ getitok4(char **s,int *len,char *ifs)
   return po;
 }
 #endif /* COMPILE_UNUSED_FUNCTIONS */
+
+char *
+n_locale_to_utf8(const char *s)
+{
+  char *ustr;
+  if (s == NULL) {
+    return NULL;
+  }
+  if (g_utf8_validate(s, -1, NULL)) {
+    ustr = g_strdup(s);
+  } else {
+    ustr = g_locale_to_utf8(s, -1, NULL, NULL, NULL);
+  }
+  return ustr;
+}
