@@ -5256,16 +5256,18 @@ PutStdout(const char *s)
 int
 PutStderr(const char *s)
 {
-  gssize len;
-  gsize rlen, wlen;
+  size_t len;
   char *ustr, *arg[] = {NULL};
 
   if (s == NULL)
     return 0;
 
-  len = strlen(s);
-  ustr = g_locale_to_utf8(s, len, &rlen, &wlen, NULL);
+  ustr = n_locale_to_utf8(s);
+  if (ustr == NULL) {
+    return 0;
+  }
   message_box(NULL, ustr, _("Error:"), RESPONS_ERROR);
+  len = strlen(ustr);
   g_free(ustr);
   UpdateAll2(arg, FALSE);
   return len + 1;
