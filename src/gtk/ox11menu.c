@@ -1144,7 +1144,10 @@ mgtkinputyn(const char *mes)
   char *ptr;
   int r;
 
-  ptr = g_locale_to_utf8(CHK_STR(mes), -1, NULL, NULL, NULL);
+  ptr = n_locale_to_utf8(CHK_STR(mes));
+  if (ptr == NULL) {
+    return 0;
+  }
   r = InputYN(ptr);
   g_free(ptr);
 
