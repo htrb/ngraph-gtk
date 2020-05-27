@@ -24,7 +24,7 @@ libp11-kit-0.dll libpango-1.0-0.dll libfribidi-0.dll
 libgtksourceview-4-0.dll libpangocairo-1.0-0.dll
 libpangoft2-1.0-0.dll libpangowin32-1.0-0.dll libpcre-1.dll
 libpixman-1-0.dll libpng16-16.dll libstdc++-6.dll libtermcap-0.dll
-libwinpthread-1.dll zlib1.dll libcroco-0.6-3.dll liblzma-5.dll
+libwinpthread-1.dll zlib1.dll liblzma-5.dll
 libthai-0.dll libdatrie-1.dll libreadline8.dll libpdcurses.dll
 librsvg-2-2.dll libxml2-2.dll libngraph-0.dll gdbus.exe ngraph.exe
 ngp2"
