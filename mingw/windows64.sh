@@ -15,7 +15,7 @@ MO_FILES="gtk30.mo ngraph-gtk.mo"
 VERSION=`basename $ARCHIVE '.tar.gz' | sed -e 's/ngraph-gtk-//'`
 
 BINFILES="libatk-1.0-0.dll libbz2-1.dll libcairo-2.dll
-libcairo-gobject-2.dll libepoxy-0.dll libexpat-1.dll libffi-6.dll
+libcairo-gobject-2.dll libepoxy-0.dll libexpat-1.dll libffi-7.dll
 libfontconfig-1.dll libfreetype-6.dll libgdk_pixbuf-2.0-0.dll
 libgdk-3-0.dll libgio-2.0-0.dll libglib-2.0-0.dll libgmodule-2.0-0.dll
 libgobject-2.0-0.dll libgraphite2.dll libgsl-25.dll libgslcblas-0.dll
