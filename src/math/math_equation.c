@@ -753,7 +753,7 @@ math_equation_add_pos_func(MathEquation *eq, struct math_function_parameter *fpr
 {
   int n;
 
-  if (! fprm->positional)
+  if (fprm->type != MATH_FUNCTION_TYPE_POSITIONAL)
     return -1;
 
   if (eq->func_def)
