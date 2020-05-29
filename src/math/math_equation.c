@@ -883,7 +883,7 @@ math_equation_start_user_func_definition(MathEquation *eq, const char *name)
 
   fprm->argc = 0;
   fprm->side_effect = 1;
-  fprm->positional = 0;
+  fprm->type = MATH_FUNCTION_TYPE_NORMAL;
   fprm->func = math_equation_call_user_func;
   fprm->base_usr = NULL;
   fprm->opt_usr = NULL;
