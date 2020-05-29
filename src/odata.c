@@ -6264,7 +6264,7 @@ draw_polygon(struct narray *pos, int GC, int fill)
   uniq_points(pos);
   ap = (int *) arraydata(pos);
   n = arraynum(pos);
-  if (n > 4) {
+  if (n > 3) {
     GRAdrawpoly(GC, n / 2, ap, fill);
   }
 
