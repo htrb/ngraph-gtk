@@ -1109,22 +1109,25 @@ parse_const_def_expression(struct math_string *str, MathEquation *eq, int *err)
     math_scanner_free_token(cname);
     return NULL;
   }
-  math_scanner_free_token(token);
 
   eq->func_def = TRUE;
   exp = parse_expression(str, eq, err);
   eq->func_def = FALSE;
   if (exp == NULL) {
     math_scanner_free_token(cname);
+    math_scanner_free_token(token);
     return NULL;
   }
 
   cdef = math_constant_definition_expression_new(eq, cname->data.sym, exp, err);
   math_scanner_free_token(cname);
   if (cdef == NULL) {
+    math_equation_set_parse_error(eq, token->ptr, str);
     math_expression_free(exp);
+    math_scanner_free_token(token);
     return NULL;
   }
+  math_scanner_free_token(token);
 
   return cdef;
 }
