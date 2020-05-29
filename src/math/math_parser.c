@@ -424,6 +424,17 @@ create_math_func(struct math_string *str, MathEquation *eq, struct math_token *n
   pos_id = math_equation_add_pos_func(eq, fprm);
   if (pos_id == MATH_ERROR_INVALID_FUNC) {
     *err = MATH_ERROR_INVALID_FUNC;
+    math_equation_set_parse_error(eq, token->ptr, str);
+    math_equation_set_func_error(eq, fprm);
+    math_scanner_free_token(token);
+    free_arg_list(argv);
+    g_free(argv);
+    return NULL;
+  }
+
+  if (fprm->type == MATH_FUNCTION_TYPE_CALLBACK && eq->func_def) {
+    *err = MATH_ERROR_INVALID_FUNC;
+    math_equation_set_parse_error(eq, token->ptr, str);
     math_equation_set_func_error(eq, fprm);
     math_scanner_free_token(token);
     free_arg_list(argv);
