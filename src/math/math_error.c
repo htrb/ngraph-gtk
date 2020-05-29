@@ -240,6 +240,7 @@ math_err_get_error_message(MathEquation *eq, const char *code, int err)
     buf = g_strdup(_(ERR_MSG_UNKNOWN));
     break;
   case MATH_ERROR_INVALID_FUNC:
+    code_buf = check_error_position(eq, code);
     if (eq->err_info.func.fprm) {
       buf = g_strdup_printf("%s '%s()' (%d:%d)",
                             _(ERR_MSG_POS_FUNC), eq->err_info.func.fprm->name,
@@ -249,6 +250,7 @@ math_err_get_error_message(MathEquation *eq, const char *code, int err)
     }
     break;
   case MATH_ERROR_CONST_EXIST:
+    code_buf = check_error_position(eq, code);
     ptr = math_equation_get_const_name(eq, eq->err_info.const_id);
     if (ptr) {
       buf = g_strdup_printf("%s '%s' (%d:%d)",
