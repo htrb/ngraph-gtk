@@ -9,6 +9,11 @@ IO.foreach(ARGV[0]) { |l|
 }
 
 func_str = func_str.uniq.sort {|a, b| b[0].length - a[0].length}
+MathFunctionType = [
+  "MATH_FUNCTION_TYPE_NORMAL",
+  "MATH_FUNCTION_TYPE_POSITIONAL",
+  "MATH_FUNCTION_TYPE_CALLBACK",
+]
 
 File.open("#{ARGV[1]}.h", "w") { |f|
   f.puts <<EOF
@@ -27,11 +32,16 @@ enum MATH_FUNCTION_ARG_TYPE {
   MATH_FUNCTION_ARG_TYPE_PROC,
 };
 
+enum MATH_FUNCTION_TYPE {
+  #{MathFunctionType.join(', ')}
+};
+
 typedef int (* math_function) (MathFunctionCallExpression *exp, MathEquation *eq, MathValue *r);
 
 struct math_function_parameter {
   int argc;
-  int side_effect, positional;
+  int side_effect;
+  enum MATH_FUNCTION_TYPE type;
   math_function func;
   enum MATH_FUNCTION_ARG_TYPE *arg_type;
   MathExpression *opt_usr, *base_usr;
@@ -76,15 +86,16 @@ EOF
   func = []
   i = 0;
   func_str.each {|s|
+    type = MathFunctionType[s[3].to_i]
     if (s.length == 5)
-      f.puts("  {\"#{s[0].upcase}\", {#{s[1]}, #{s[2]}, #{s[3]}, math_func_#{s[0]}, NULL, NULL, NULL, NULL}},")
+      f.puts("  {\"#{s[0].upcase}\", {#{s[1]}, #{s[2]}, #{type}, math_func_#{s[0]}, NULL, NULL, NULL, NULL}},")
       if (s[4] != "NULL")
         func.push([i, s[4].split(","), s[0].upcase])
       end
       i += 1
     elsif (s.length == 6)
       f.puts("#ifdef HAVE_LIBGSL")
-      f.puts("  {\"#{s[0].upcase}\", {#{s[1]}, #{s[2]}, #{s[3]}, math_func_#{s[0]}, NULL, NULL, NULL, NULL}},")
+      f.puts("  {\"#{s[0].upcase}\", {#{s[1]}, #{s[2]}, #{type}, math_func_#{s[0]}, NULL, NULL, NULL, NULL}},")
       if (s[4] != "NULL")
         func.push([i, s[4].split(","), s[0].upcase])
       end
