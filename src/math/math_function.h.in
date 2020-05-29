@@ -1,4 +1,9 @@
-#name	argc	side_effect	positional	arg_type	use_GSL
+#name	argc	side_effect	type	arg_type	use_GSL
+#
+#type     0: MATH_FUNCTION_TYPE_NORMAL
+#         1: MATH_FUNCTION_TYPE_POSITIONAL
+#         2: MATH_FUNCTION_TYPE_CALLBACK
+#
 #arg_type 0: MATH_FUNCTION_ARG_TYPE_DOUBLE
 #         1: MATH_FUNCTION_ARG_TYPE_STRING
 #        10: MATH_FUNCTION_ARG_TYPE_ARRAY
@@ -8,6 +13,7 @@
 #        21: MATH_FUNCTION_ARG_TYPE_STRING_VARIABLE
 #        22: MATH_FUNCTION_ARG_TYPE_VARIABLE_COMMON
 #        30: MATH_FUNCTION_ARG_TYPE_PROC
+#
 abs		1	0	0	NULL
 sign		1	0	0	NULL
 int		1	0	0	NULL
