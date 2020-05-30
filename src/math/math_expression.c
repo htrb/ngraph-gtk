@@ -977,6 +977,7 @@ math_expression_free_sub(MathExpression *exp)
     g_free(exp->u.func_call.buf);
     break;
   case MATH_EXPRESSION_TYPE_MINUS:
+  case MATH_EXPRESSION_TYPE_NOT:
   case MATH_EXPRESSION_TYPE_FACT:
     math_expression_free(exp->u.unary.operand);
     break;
