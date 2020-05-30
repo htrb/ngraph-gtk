@@ -2157,6 +2157,7 @@ check_const_sub(MathExpression *exp, int *constant, int n)
     }
     break;
   case MATH_EXPRESSION_TYPE_MINUS:
+  case MATH_EXPRESSION_TYPE_NOT:
   case MATH_EXPRESSION_TYPE_FACT:
     r = check_const_sub(exp->u.unary.operand, constant, n);
     break;
