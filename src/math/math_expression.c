@@ -2355,6 +2355,13 @@ calc(MathExpression *exp, MathValue *val)
     MATH_CHECK_VAL(val, operand);
     val->val = - operand.val;
     break;
+  case MATH_EXPRESSION_TYPE_NOT:
+    if (CALC_EXPRESSION(exp->u.unary.operand, operand)) {
+      return 1;
+    }
+    MATH_CHECK_VAL(val, operand);
+    val->val = ! operand.val;
+    break;
   case MATH_EXPRESSION_TYPE_FACT:
     if (CALC_EXPRESSION(exp->u.unary.operand, operand)) {
       return 1;
