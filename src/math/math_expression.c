@@ -1874,6 +1874,7 @@ optimize(MathExpression *exp, int *err)
     new_exp = optimize_div_expression(exp, err);
     break;
   case MATH_EXPRESSION_TYPE_MINUS:
+  case MATH_EXPRESSION_TYPE_NOT:
   case MATH_EXPRESSION_TYPE_FACT:
     new_exp = optimize_una_expression(exp, err);
     break;
