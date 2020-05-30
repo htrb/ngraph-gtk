@@ -624,6 +624,19 @@ parse_unary_expression(struct math_string *str, MathEquation *eq, int *err)
 	return NULL;
       }
       break;
+    case MATH_OPERATOR_TYPE_FACT:
+      operand = parse_unary_expression(str, eq, err);
+      if (operand == NULL) {
+	math_scanner_free_token(token);
+	return NULL;
+      }
+      exp = math_unary_expression_new(MATH_EXPRESSION_TYPE_NOT, eq, operand, err);
+      if (exp == NULL) {
+	math_scanner_free_token(token);
+	math_expression_free(operand);
+	return NULL;
+      }
+      break;
     default:
       *err = MATH_ERROR_UNEXP_OPE;
       math_equation_set_parse_error(eq, token->ptr, str);
