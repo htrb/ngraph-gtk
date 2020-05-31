@@ -1148,23 +1148,21 @@ parse_string_assign_expression(struct math_string *str, MathEquation *eq, struct
 {
   MathExpression *exp, *rexp;
 
-  if (token->type != MATH_TOKEN_TYPE_OPERATOR ||
+  if ((token->type != MATH_TOKEN_TYPE_OPERATOR &&
+       token->type != MATH_TOKEN_TYPE_EOEQ_ASSIGN) ||
       token->data.op != MATH_OPERATOR_TYPE_ASSIGN) {
     *err = MATH_ERROR_UNEXP_OPE;
     math_equation_set_parse_error(eq, token->ptr, str);
-    math_expression_free(lexp);
     return NULL;
   }
 
   rexp = parse_expression(str, eq, err);
   if (rexp == NULL) {
-    math_expression_free(lexp);
     return NULL;
   }
 
   exp = math_assign_expression_new(MATH_EXPRESSION_TYPE_STRING_ASSIGN, eq, lexp, rexp, token->data.op, err);
   if (exp == NULL) {
-    math_expression_free(lexp);
     math_expression_free(rexp);
     return NULL;
   }
