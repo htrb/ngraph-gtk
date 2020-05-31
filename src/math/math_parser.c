@@ -1110,7 +1110,9 @@ parse_const_def_expression(struct math_string *str, MathEquation *eq, int *err)
     return NULL;
   }
 
-  if (token->type != MATH_TOKEN_TYPE_OPERATOR || token->data.op != MATH_OPERATOR_TYPE_ASSIGN) {
+  if ((token->type != MATH_TOKEN_TYPE_OPERATOR &&
+       token->type != MATH_TOKEN_TYPE_EOEQ_ASSIGN) ||
+      token->data.op != MATH_OPERATOR_TYPE_ASSIGN) {
     if (token->type == MATH_TOKEN_TYPE_EOEQ) {
       *err = MATH_ERROR_EOEQ;
     } else {
