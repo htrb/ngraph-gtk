@@ -1173,7 +1173,7 @@ static MathExpression *
 parse_expression(struct math_string *str, MathEquation *eq, int *err)
 {
   struct math_token *token;
-  MathExpression *exp;
+  MathExpression *exp, *prev_exp;
 
   exp = parse_or_expression(str, eq, err);
   if (exp == NULL)
@@ -1197,6 +1197,7 @@ parse_expression(struct math_string *str, MathEquation *eq, int *err)
   }
 
   switch (token->type) {
+  case MATH_TOKEN_TYPE_EOEQ_ASSIGN:
   case MATH_TOKEN_TYPE_OPERATOR:
     switch (token->data.op) {
     case MATH_OPERATOR_TYPE_POW_ASSIGN:
@@ -1215,11 +1216,20 @@ parse_expression(struct math_string *str, MathEquation *eq, int *err)
       }
       /* fall through */
     case MATH_OPERATOR_TYPE_ASSIGN:
+      prev_exp = exp;
       if (exp->type == MATH_EXPRESSION_TYPE_STRING_VARIABLE ||
 	  exp->type == MATH_EXPRESSION_TYPE_STRING_ARRAY) {
 	exp = parse_string_assign_expression(str, eq, token, exp, err);
       } else {
 	exp = parse_assign_expression(str, eq, token->data.op, exp, err);
+      }
+      if (exp == NULL) {
+	if (token->type == MATH_TOKEN_TYPE_EOEQ_ASSIGN && *err == MATH_ERROR_EOEQ) {
+	  *err = MATH_ERROR_NONE;
+	  exp = prev_exp;
+	} else {
+	  math_expression_free(prev_exp);
+	}
       }
       math_scanner_free_token(token);
       break;
