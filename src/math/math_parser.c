@@ -1225,7 +1225,7 @@ parse_expression(struct math_string *str, MathEquation *eq, int *err)
       }
       if (exp == NULL) {
 	if (token->type == MATH_TOKEN_TYPE_EOEQ_ASSIGN && *err == MATH_ERROR_EOEQ) {
-	  *err = MATH_ERROR_NONE;
+	  *err = MATH_ERROR_NONE; /* Fix-me: this accepts an invalid equation such as "b=2(" */
 	  exp = prev_exp;
 	} else {
 	  math_expression_free(prev_exp);
