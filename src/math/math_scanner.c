@@ -66,6 +66,7 @@ math_scanner_free_token(struct math_token *token)
   case MATH_TOKEN_TYPE_OPERATOR:
   case MATH_TOKEN_TYPE_COMMA:
   case MATH_TOKEN_TYPE_EOEQ:
+  case MATH_TOKEN_TYPE_EOEQ_ASSIGN:
   case MATH_TOKEN_TYPE_LP:
   case MATH_TOKEN_TYPE_RP:
   case MATH_TOKEN_TYPE_LB:
