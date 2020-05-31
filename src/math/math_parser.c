@@ -842,7 +842,6 @@ parse_assign_expression(struct math_string *str, MathEquation *eq, enum MATH_OPE
 
   rexp = parse_expression(str, eq, err);
   if (rexp == NULL) {
-    math_expression_free(lexp);
     return NULL;
   }
 
@@ -851,7 +850,6 @@ parse_assign_expression(struct math_string *str, MathEquation *eq, enum MATH_OPE
   } else {
     exp = math_assign_expression_new(MATH_EXPRESSION_TYPE_ASSIGN, eq, lexp, rexp, op, err);
     if (exp == NULL) {
-      math_expression_free(lexp);
       math_expression_free(rexp);
     }
   }
