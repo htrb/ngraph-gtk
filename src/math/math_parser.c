@@ -1308,6 +1308,7 @@ parse_expression_list(struct math_string *str, MathEquation *eq, int inside_bloc
 	return NULL;
       }
       continue;
+    case MATH_TOKEN_TYPE_EOEQ_ASSIGN:
     case MATH_TOKEN_TYPE_EOEQ:
       if (str->cur[0] == '\0') {
 	if (inside_block) {
@@ -1359,7 +1360,8 @@ parse_expression_list(struct math_string *str, MathEquation *eq, int inside_bloc
       return NULL;
     }
 
-    if (token->type != MATH_TOKEN_TYPE_EOEQ) {
+    if (token->type != MATH_TOKEN_TYPE_EOEQ &&
+	token->type != MATH_TOKEN_TYPE_EOEQ_ASSIGN) {
       if (token->type == MATH_TOKEN_TYPE_RC && inside_block) {
 	unget_token(token);
 	goto End;
