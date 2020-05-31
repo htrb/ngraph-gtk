@@ -204,6 +204,7 @@ parse_primary_expression(struct math_string *str, MathEquation *eq, int *err)
   case MATH_TOKEN_TYPE_LC:
     exp = parse_block_expression(str, eq, err);
     break;
+  case MATH_TOKEN_TYPE_EOEQ_ASSIGN:
   case MATH_TOKEN_TYPE_EOEQ:
     *err = MATH_ERROR_EOEQ;
     math_scanner_free_token(token);
