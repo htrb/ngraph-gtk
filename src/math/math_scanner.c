@@ -259,6 +259,12 @@ get_ope(const char *str,  const char ** rstr)
   case MATH_OPERATOR_TYPE_EOEQ:
     tok = create_token(str, MATH_TOKEN_TYPE_EOEQ);
     break;
+  case MATH_OPERATOR_TYPE_EOEQ_ASSIGN:
+    tok = create_token(str, MATH_TOKEN_TYPE_EOEQ_ASSIGN);
+    if (tok) {
+      tok->data.op = MATH_OPERATOR_TYPE_ASSIGN;
+    }
+    break;
   case MATH_OPERATOR_TYPE_UNKNOWN:
     tok = create_token(str, MATH_TOKEN_TYPE_UNKNOWN);
     break;
