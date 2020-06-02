@@ -61,6 +61,18 @@ unget_token(struct math_token *token)
   st_look_ahead_token = token;
 }
 
+static void
+free_token(struct math_token *token)
+{
+  struct math_token *tmp;
+
+  while (token) {
+    tmp = token->next;
+    math_scanner_free_token(token);
+    token = tmp;
+  }
+}
+
 static MathExpression *
 parse_array_expression(struct math_string *str, MathEquation *eq, const char *name, int is_string, int *err)
 {
