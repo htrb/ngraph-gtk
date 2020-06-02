@@ -1257,7 +1257,8 @@ static MathExpression *
 parse_expression(struct math_string *str, MathEquation *eq, int *err)
 {
   struct math_token *token;
-  MathExpression *exp, *prev_exp;
+  MathExpression *exp;
+  struct parsing_info *info;
 
   exp = parse_or_expression(str, eq, err);
   if (exp == NULL)
@@ -1300,7 +1301,13 @@ parse_expression(struct math_string *str, MathEquation *eq, int *err)
       }
       /* fall through */
     case MATH_OPERATOR_TYPE_ASSIGN:
-      prev_exp = exp;
+      info = save_parsing_info(str, exp);
+      if (info == NULL) {
+	*err = MATH_ERROR_MEMORY;
+	math_scanner_free_token(token);
+	math_expression_free(exp);
+	return NULL;
+      }
       if (exp->type == MATH_EXPRESSION_TYPE_STRING_VARIABLE ||
 	  exp->type == MATH_EXPRESSION_TYPE_STRING_ARRAY) {
 	exp = parse_string_assign_expression(str, eq, token, exp, err);
@@ -1308,14 +1315,18 @@ parse_expression(struct math_string *str, MathEquation *eq, int *err)
 	exp = parse_assign_expression(str, eq, token->data.op, exp, err);
       }
       if (exp == NULL) {
-	if (token->type == MATH_TOKEN_TYPE_EOEQ_ASSIGN && *err == MATH_ERROR_EOEQ) {
-	  *err = MATH_ERROR_NONE; /* Fix-me: this accepts an invalid equation such as "b=2(" */
-	  exp = prev_exp;
+	if (token->type == MATH_TOKEN_TYPE_EOEQ_ASSIGN && *err != MATH_ERROR_NONE) {
+	  *err = MATH_ERROR_NONE;
+	  exp = restore_parsing_info(info, str);
+	  unget_token(token);
 	} else {
-	  math_expression_free(prev_exp);
+	  math_expression_free(info->exp);
+	  math_scanner_free_token(token);
 	}
+      } else {
+	math_scanner_free_token(token);
       }
-      math_scanner_free_token(token);
+      free_parsing_info(info);
       break;
     default:
       *err = MATH_ERROR_UNEXP_OPE;
