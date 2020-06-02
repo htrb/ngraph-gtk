@@ -1465,7 +1465,6 @@ parse_expression_list(struct math_string *str, MathEquation *eq, int inside_bloc
 MathExpression *
 math_parser_parse(const char *line, MathEquation *eq, int *err)
 {
-  struct math_token *token, *tmp;
   MathExpression *exp;
   struct math_string str;
 
@@ -1475,13 +1474,7 @@ math_parser_parse(const char *line, MathEquation *eq, int *err)
   st_look_ahead_token = NULL;
   exp = parse_expression_list(&str, eq, 0, err);
 
-  token = st_look_ahead_token;
-  while (token) {
-    tmp = token->next;
-    math_scanner_free_token(token);
-    token = tmp;
-  }
-  st_look_ahead_token = NULL;
+  reset_token(NULL);
 
   return exp;
 }
