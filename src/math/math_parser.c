@@ -73,6 +73,13 @@ free_token(struct math_token *token)
   }
 }
 
+static void
+reset_token(struct math_token *cur)
+{
+  free_token(st_look_ahead_token);
+  st_look_ahead_token = cur;
+}
+
 static MathExpression *
 parse_array_expression(struct math_string *str, MathEquation *eq, const char *name, int is_string, int *err)
 {
