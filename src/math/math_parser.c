@@ -792,6 +792,7 @@ parse_multiplicative_expression(struct math_string *str, MathEquation *eq, int *
     case MATH_TOKEN_TYPE_NUMERIC:
     case MATH_TOKEN_TYPE_SYMBOL:
     case MATH_TOKEN_TYPE_LP:
+    case MATH_TOKEN_TYPE_LC:
       unget_token(token);
       right = parse_unary_expression(str, eq, err);
       if (right == NULL) {
