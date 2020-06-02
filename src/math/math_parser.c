@@ -80,6 +80,17 @@ reset_token(struct math_token *cur)
   st_look_ahead_token = cur;
 }
 
+static struct math_token *
+dup_token(struct math_token *token)
+{
+  struct math_token *new_token;
+  new_token = math_scanner_dup_token(token);
+  if (token->next) {
+    new_token->next = dup_token(token->next);
+  }
+  return new_token;
+}
+
 static MathExpression *
 parse_array_expression(struct math_string *str, MathEquation *eq, const char *name, int is_string, int *err)
 {
