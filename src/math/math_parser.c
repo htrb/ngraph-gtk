@@ -31,6 +31,13 @@ static MathExpression * parse_expression_list(struct math_string *mstr, MathEqua
 static MathExpression * parse_unary_expression(struct math_string *mstr, MathEquation *eq, int *err);
 static MathExpression * parse_block_expression(struct math_string *str, MathEquation *eq, int *err);
 
+struct parsing_info
+{
+  struct math_string str;
+  struct math_token *st_look_ahead_token;
+  MathExpression *exp;
+};
+
 static struct math_token *
 my_get_token(struct math_string *str)
 {
