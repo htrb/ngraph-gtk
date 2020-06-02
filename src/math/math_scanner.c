@@ -93,6 +93,57 @@ math_scanner_free_token(struct math_token *token)
 }
 
 struct math_token *
+math_scanner_dup_token(struct math_token *token)
+{
+  struct math_token *new_token;
+  if (token == NULL) {
+    return NULL;
+  }
+
+  new_token = g_malloc0(sizeof(*new_token));
+  if (new_token == NULL) {
+    return NULL;
+  }
+  *new_token = *token;
+  switch (token->type) {
+  case MATH_TOKEN_TYPE_NUMERIC:
+  case MATH_TOKEN_TYPE_OPERATOR:
+  case MATH_TOKEN_TYPE_COMMA:
+  case MATH_TOKEN_TYPE_EOEQ:
+  case MATH_TOKEN_TYPE_EOEQ_ASSIGN:
+  case MATH_TOKEN_TYPE_LP:
+  case MATH_TOKEN_TYPE_RP:
+  case MATH_TOKEN_TYPE_LB:
+  case MATH_TOKEN_TYPE_RB:
+  case MATH_TOKEN_TYPE_LC:
+  case MATH_TOKEN_TYPE_RC:
+  case MATH_TOKEN_TYPE_DEF:
+  case MATH_TOKEN_TYPE_CONST:
+  case MATH_TOKEN_TYPE_ARRAY_PREFIX:
+  case MATH_TOKEN_TYPE_UNKNOWN:
+  case MATH_TOKEN_TYPE_UNTERMINATED_STRING:
+    break;
+  case MATH_TOKEN_TYPE_SYMBOL:
+  case MATH_TOKEN_TYPE_STRING_VARIABLE:
+    new_token->data.sym = g_strdup(token->data.sym);
+    if (new_token->data.sym == NULL) {
+      g_free(new_token);
+      new_token = NULL;
+    }
+    break;
+  case MATH_TOKEN_TYPE_DOUBLE_QUOTED_STRING:
+  case MATH_TOKEN_TYPE_SINGLE_QUOTED_STRING:
+    new_token->data.str = g_string_new(token->data.str->str);
+    if (new_token->data.str == NULL) {
+      g_free(new_token);
+      new_token = NULL;
+    }
+    break;
+  }
+  return new_token;
+}
+
+struct math_token *
 math_scanner_get_token(struct math_string *mstr)
 {
   char c;
