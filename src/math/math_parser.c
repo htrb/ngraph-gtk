@@ -124,6 +124,18 @@ free_parsing_info(struct parsing_info *info)
 }
 
 static MathExpression *
+restore_parsing_info(struct parsing_info *info, struct math_string *str)
+{
+  if (info == NULL) {
+    return NULL;
+  }
+  *str = info->str;
+  reset_token(info->st_look_ahead_token);
+  info->st_look_ahead_token = NULL;
+  return info->exp;
+}
+
+static MathExpression *
 parse_array_expression(struct math_string *str, MathEquation *eq, const char *name, int is_string, int *err)
 {
   struct math_token *token;
