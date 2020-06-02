@@ -91,6 +91,26 @@ dup_token(struct math_token *token)
   return new_token;
 }
 
+static struct parsing_info *
+save_parsing_info(struct math_string *str, MathExpression *exp)
+{
+  struct parsing_info *info;
+  info = g_malloc0(sizeof(*info));
+  if (info == NULL) {
+    return NULL;
+  }
+  info->str = *str;
+  if (st_look_ahead_token) {
+    info->st_look_ahead_token = dup_token(st_look_ahead_token);
+    if (info->st_look_ahead_token == NULL) {
+      g_free(info);
+      return NULL;
+    }
+  }
+  info->exp = exp;
+  return info;
+}
+
 static MathExpression *
 parse_array_expression(struct math_string *str, MathEquation *eq, const char *name, int is_string, int *err)
 {
