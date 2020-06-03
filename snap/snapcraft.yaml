@@ -9,7 +9,7 @@ description: |
 
 grade: stable # stable | devel
 confinement: strict
-base: core20
+base: core18
 
 apps:
   ngraph-gtk:
@@ -53,7 +53,7 @@ parts:
       - gettext
       - libreadline-dev
       - ruby-dev
-      - libgtksourceview-4-dev
+      - libgtksourceview-3.0-dev
     stage-packages:
       - ruby
       - xterm
