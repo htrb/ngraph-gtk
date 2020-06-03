@@ -232,14 +232,14 @@ remarkconv(char *str,int ff,int fj,int fb,int *fnameid,char *prmfile)
         j+=7;
       } else if ((toupper(s[i+1])=='F') && (strchr("THCthc",s[i+2])!=NULL)) {
         fchange[script]=TRUE;
-        if (toupper(s[i+2]=='T')) fff[script]=FONT_TYPE_SERIF;
-        else if (toupper(s[i+2]=='H')) fff[script]=FONT_TYPE_SANS_SERIF;
-        else if (toupper(s[i+2]=='C')) fff[script]=FONT_TYPE_MONOSPACE;
+        if (toupper(s[i+2])=='T') fff[script]=FONT_TYPE_SERIF;
+        else if (toupper(s[i+2])=='H') fff[script]=FONT_TYPE_SANS_SERIF;
+        else if (toupper(s[i+2])=='C') fff[script]=FONT_TYPE_MONOSPACE;
         i+=2;
       } else if ((toupper(s[i+1])=='J') && (strchr("GMgm",s[i+2])!=NULL)) {
         jchange[script]=TRUE;
-        if (toupper(s[i+2]=='M')) ffj[script]=0;
-        else if (toupper(s[i+2]=='G')) ffj[script]=1;
+        if (toupper(s[i+2])=='M') ffj[script]=0;
+        else if (toupper(s[i+2])=='G') ffj[script]=1;
         i+=2;
       } else if (toupper(s[i+1])=='R') {
         fchange[script]=TRUE;
