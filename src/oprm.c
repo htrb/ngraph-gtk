@@ -341,6 +341,7 @@ mathconv(char *math)
    F(,) ---> F(,,)
    NAN ---> CONT
    UNDEF ---> BREAK
+   =  ---> ;\n
 */
 {
   int i,j;
@@ -381,6 +382,11 @@ mathconv(char *math)
     } else if (strncmp(math+i,"G(",2)==0) {
       g++;
       gb[g]=0;
+    } else if (math[i]=='=') {
+      m[j] = ';';
+      j++;
+      m[j] = '\n';
+      j++;
     } else if (math[i]=='(') {
       if (f) fb[f]++;
       if (g) gb[f]++;
