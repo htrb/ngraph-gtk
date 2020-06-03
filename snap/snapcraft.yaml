@@ -41,12 +41,13 @@ parts:
     override-build: |
        snapcraftctl build
        cp snap/local/ngraph-snap.sh $SNAPCRAFT_PART_INSTALL/usr/bin/
-       mkdir -p $SNAPCRAFT_PART_INSTALL/meta/gui
+       mkdir -p $SNAPCRAFT_PRIME/meta/gui
        sed -i.bak -e 's|Exec=ngraph|Exec=ngraph-gtk-htrb.ngraph-gtk|g' misc/ngraph.desktop
        mkdir -p $SNAPCRAFT_PART_INSTALL/usr/share/applications
        cp misc/ngraph.desktop $SNAPCRAFT_PART_INSTALL/usr/share/applications/
        mkdir -p $SNAPCRAFT_PART_INSTALL/usr/share/icons/hicolor/256x256/apps
        cp osx/ngraph.iconset/icon_256x256.png $SNAPCRAFT_PART_INSTALL/usr/share/icons/hicolor/256x256/apps/ngraph.png
+       cp osx/ngraph.iconset/icon_256x256.png $SNAPCRAFT_PRIME/meta/gui/ngraph.png
     build-packages:
       - libgsl-dev
       - gettext
