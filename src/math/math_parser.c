@@ -31,6 +31,13 @@ static MathExpression * parse_expression_list(struct math_string *mstr, MathEqua
 static MathExpression * parse_unary_expression(struct math_string *mstr, MathEquation *eq, int *err);
 static MathExpression * parse_block_expression(struct math_string *str, MathEquation *eq, int *err);
 
+struct parsing_info
+{
+  struct math_string str;
+  struct math_token *st_look_ahead_token;
+  MathExpression *exp;
+};
+
 static struct math_token *
 my_get_token(struct math_string *str)
 {
@@ -52,6 +59,80 @@ unget_token(struct math_token *token)
 {
   token->next = st_look_ahead_token;
   st_look_ahead_token = token;
+}
+
+static void
+free_token(struct math_token *token)
+{
+  struct math_token *tmp;
+
+  while (token) {
+    tmp = token->next;
+    math_scanner_free_token(token);
+    token = tmp;
+  }
+}
+
+static void
+reset_token(struct math_token *cur)
+{
+  free_token(st_look_ahead_token);
+  st_look_ahead_token = cur;
+}
+
+static struct math_token *
+dup_token(struct math_token *token)
+{
+  struct math_token *new_token;
+  new_token = math_scanner_dup_token(token);
+  if (token->next) {
+    new_token->next = dup_token(token->next);
+  }
+  return new_token;
+}
+
+static struct parsing_info *
+save_parsing_info(struct math_string *str, MathExpression *exp)
+{
+  struct parsing_info *info;
+  info = g_malloc0(sizeof(*info));
+  if (info == NULL) {
+    return NULL;
+  }
+  info->str = *str;
+  if (st_look_ahead_token) {
+    info->st_look_ahead_token = dup_token(st_look_ahead_token);
+    if (info->st_look_ahead_token == NULL) {
+      g_free(info);
+      return NULL;
+    }
+  }
+  info->exp = exp;
+  return info;
+}
+
+static void
+free_parsing_info(struct parsing_info *info)
+{
+  if (info == NULL) {
+    return;
+  }
+  if (info->st_look_ahead_token) {
+    free_token(info->st_look_ahead_token);
+  }
+  g_free(info);
+}
+
+static MathExpression *
+restore_parsing_info(struct parsing_info *info, struct math_string *str)
+{
+  if (info == NULL) {
+    return NULL;
+  }
+  *str = info->str;
+  reset_token(info->st_look_ahead_token);
+  info->st_look_ahead_token = NULL;
+  return info->exp;
 }
 
 static MathExpression *
@@ -204,6 +285,7 @@ parse_primary_expression(struct math_string *str, MathEquation *eq, int *err)
   case MATH_TOKEN_TYPE_LC:
     exp = parse_block_expression(str, eq, err);
     break;
+  case MATH_TOKEN_TYPE_EOEQ_ASSIGN:
   case MATH_TOKEN_TYPE_EOEQ:
     *err = MATH_ERROR_EOEQ;
     math_scanner_free_token(token);
@@ -843,7 +925,6 @@ parse_assign_expression(struct math_string *str, MathEquation *eq, enum MATH_OPE
 
   rexp = parse_expression(str, eq, err);
   if (rexp == NULL) {
-    math_expression_free(lexp);
     return NULL;
   }
 
@@ -852,7 +933,6 @@ parse_assign_expression(struct math_string *str, MathEquation *eq, enum MATH_OPE
   } else {
     exp = math_assign_expression_new(MATH_EXPRESSION_TYPE_ASSIGN, eq, lexp, rexp, op, err);
     if (exp == NULL) {
-      math_expression_free(lexp);
       math_expression_free(rexp);
     }
   }
@@ -1112,7 +1192,9 @@ parse_const_def_expression(struct math_string *str, MathEquation *eq, int *err)
     return NULL;
   }
 
-  if (token->type != MATH_TOKEN_TYPE_OPERATOR || token->data.op != MATH_OPERATOR_TYPE_ASSIGN) {
+  if ((token->type != MATH_TOKEN_TYPE_OPERATOR &&
+       token->type != MATH_TOKEN_TYPE_EOEQ_ASSIGN) ||
+      token->data.op != MATH_OPERATOR_TYPE_ASSIGN) {
     if (token->type == MATH_TOKEN_TYPE_EOEQ) {
       *err = MATH_ERROR_EOEQ;
     } else {
@@ -1151,23 +1233,21 @@ parse_string_assign_expression(struct math_string *str, MathEquation *eq, struct
 {
   MathExpression *exp, *rexp;
 
-  if (token->type != MATH_TOKEN_TYPE_OPERATOR ||
+  if ((token->type != MATH_TOKEN_TYPE_OPERATOR &&
+       token->type != MATH_TOKEN_TYPE_EOEQ_ASSIGN) ||
       token->data.op != MATH_OPERATOR_TYPE_ASSIGN) {
     *err = MATH_ERROR_UNEXP_OPE;
     math_equation_set_parse_error(eq, token->ptr, str);
-    math_expression_free(lexp);
     return NULL;
   }
 
   rexp = parse_expression(str, eq, err);
   if (rexp == NULL) {
-    math_expression_free(lexp);
     return NULL;
   }
 
   exp = math_assign_expression_new(MATH_EXPRESSION_TYPE_STRING_ASSIGN, eq, lexp, rexp, token->data.op, err);
   if (exp == NULL) {
-    math_expression_free(lexp);
     math_expression_free(rexp);
     return NULL;
   }
@@ -1179,6 +1259,7 @@ parse_expression(struct math_string *str, MathEquation *eq, int *err)
 {
   struct math_token *token;
   MathExpression *exp;
+  struct parsing_info *info;
 
   exp = parse_or_expression(str, eq, err);
   if (exp == NULL)
@@ -1202,6 +1283,7 @@ parse_expression(struct math_string *str, MathEquation *eq, int *err)
   }
 
   switch (token->type) {
+  case MATH_TOKEN_TYPE_EOEQ_ASSIGN:
   case MATH_TOKEN_TYPE_OPERATOR:
     switch (token->data.op) {
     case MATH_OPERATOR_TYPE_POW_ASSIGN:
@@ -1220,13 +1302,32 @@ parse_expression(struct math_string *str, MathEquation *eq, int *err)
       }
       /* fall through */
     case MATH_OPERATOR_TYPE_ASSIGN:
+      info = save_parsing_info(str, exp);
+      if (info == NULL) {
+	*err = MATH_ERROR_MEMORY;
+	math_scanner_free_token(token);
+	math_expression_free(exp);
+	return NULL;
+      }
       if (exp->type == MATH_EXPRESSION_TYPE_STRING_VARIABLE ||
 	  exp->type == MATH_EXPRESSION_TYPE_STRING_ARRAY) {
 	exp = parse_string_assign_expression(str, eq, token, exp, err);
       } else {
 	exp = parse_assign_expression(str, eq, token->data.op, exp, err);
       }
-      math_scanner_free_token(token);
+      if (exp == NULL) {
+	if (token->type == MATH_TOKEN_TYPE_EOEQ_ASSIGN && *err != MATH_ERROR_NONE) {
+	  *err = MATH_ERROR_NONE;
+	  exp = restore_parsing_info(info, str);
+	  unget_token(token);
+	} else {
+	  math_expression_free(info->exp);
+	  math_scanner_free_token(token);
+	}
+      } else {
+	math_scanner_free_token(token);
+      }
+      free_parsing_info(info);
       break;
     default:
       *err = MATH_ERROR_UNEXP_OPE;
@@ -1302,6 +1403,7 @@ parse_expression_list(struct math_string *str, MathEquation *eq, int inside_bloc
 	return NULL;
       }
       continue;
+    case MATH_TOKEN_TYPE_EOEQ_ASSIGN:
     case MATH_TOKEN_TYPE_EOEQ:
       if (str->cur[0] == '\0') {
 	if (inside_block) {
@@ -1353,7 +1455,8 @@ parse_expression_list(struct math_string *str, MathEquation *eq, int inside_bloc
       return NULL;
     }
 
-    if (token->type != MATH_TOKEN_TYPE_EOEQ) {
+    if (token->type != MATH_TOKEN_TYPE_EOEQ &&
+	token->type != MATH_TOKEN_TYPE_EOEQ_ASSIGN) {
       if (token->type == MATH_TOKEN_TYPE_RC && inside_block) {
 	unget_token(token);
 	goto End;
@@ -1374,7 +1477,6 @@ parse_expression_list(struct math_string *str, MathEquation *eq, int inside_bloc
 MathExpression *
 math_parser_parse(const char *line, MathEquation *eq, int *err)
 {
-  struct math_token *token, *tmp;
   MathExpression *exp;
   struct math_string str;
 
@@ -1384,13 +1486,7 @@ math_parser_parse(const char *line, MathEquation *eq, int *err)
   st_look_ahead_token = NULL;
   exp = parse_expression_list(&str, eq, 0, err);
 
-  token = st_look_ahead_token;
-  while (token) {
-    tmp = token->next;
-    math_scanner_free_token(token);
-    token = tmp;
-  }
-  st_look_ahead_token = NULL;
+  reset_token(NULL);
 
   return exp;
 }
