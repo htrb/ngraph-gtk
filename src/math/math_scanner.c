@@ -299,7 +299,7 @@ get_eoeq(const char *str,  const char ** rstr)
 }
 
 static struct math_token *
-get_ope(const char *str,  const char ** rstr)
+get_ope(const char *str,  const char ** rstr, MathEquation *eq)
 {
   struct math_token *tok;
   int len;
@@ -311,9 +311,22 @@ get_ope(const char *str,  const char ** rstr)
     tok = create_token(str, MATH_TOKEN_TYPE_EOEQ);
     break;
   case MATH_OPERATOR_TYPE_EOEQ_ASSIGN:
-    tok = create_token(str, MATH_TOKEN_TYPE_EOEQ_ASSIGN);
-    if (tok) {
-      tok->data.op = MATH_OPERATOR_TYPE_ASSIGN;
+    switch (eq->eoeq_assign_type) {
+    case EOEQ_ASSIGN_TYPE_BOTH:
+      tok = create_token(str, MATH_TOKEN_TYPE_EOEQ_ASSIGN);
+      if (tok) {
+	tok->data.op = MATH_OPERATOR_TYPE_ASSIGN;
+      }
+      break;
+    case EOEQ_ASSIGN_TYPE_EOEQ:
+      tok = create_token(str, MATH_TOKEN_TYPE_EOEQ);
+      break;
+    case EOEQ_ASSIGN_TYPE_ASSIGN:
+      tok = create_token(str, MATH_TOKEN_TYPE_OPERATOR);
+      if (tok) {
+	tok->data.op = MATH_OPERATOR_TYPE_ASSIGN;
+      }
+      break;
     }
     break;
   case MATH_OPERATOR_TYPE_UNKNOWN:
