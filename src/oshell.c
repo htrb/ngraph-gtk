@@ -241,6 +241,7 @@ static struct objtable shell[] = {
   {"next",NPOINTER,0,NULL,NULL,0},
   {"shell",NVFUNC,NREAD|NEXEC,cmdshell,"sa",0},
   {"security",NVFUNC,0,cmdsecurity,"b",0},
+  {"set_security",NVFUNC,NREAD|NEXEC,cmd_set_security,"",0},
   {"_local",NPOINTER,0,NULL,NULL,0}};
 
 #define TBLNUM (sizeof(shell) / sizeof(*shell))
