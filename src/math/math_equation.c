@@ -264,6 +264,7 @@ math_equation_new(void)
     return NULL;
   }
 
+  eq->eoeq_assign_type = EOEQ_ASSIGN_TYPE_BOTH;
 
   return eq;
 }
