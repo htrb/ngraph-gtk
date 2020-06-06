@@ -221,6 +221,15 @@ math_array_init(MathArray *array, enum DATA_TYPE type)
   return 0;
 }
 
+void
+math_equation_set_eoeq_assign_type(MathEquation *eq, enum EOEQ_ASSIGN_TYPE type)
+{
+  if (eq == NULL) {
+    return;
+  }
+  eq->eoeq_assign_type = type;
+}
+
 MathEquation *
 math_equation_new(void)
 {

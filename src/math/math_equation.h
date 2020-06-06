@@ -196,6 +196,8 @@ MathEquationArray *math_equation_get_type_array(MathEquation *eq, enum DATA_TYPE
 void math_equation_set_user_data(MathEquation *eq, void *user_data);
 void *math_equation_get_user_data(MathEquation *eq);
 
+void math_equation_set_eoeq_assign_type(MathEquation *eq, enum EOEQ_ASSIGN_TYPE type);
+
 int math_equation_check_const(MathEquation *eq, int *constant, int n);
 
 void math_equation_set_parse_error(MathEquation *eq, const char *ptr, const struct math_string *str);
