@@ -28,7 +28,7 @@ static struct math_token *get_paren(const char *str, const char ** rstr);
 static struct math_token *get_curly(const char *str, const char ** rstr);
 static struct math_token *get_comma(const char *str, const char ** rstr);
 static struct math_token *get_eoeq(const char *str, const char ** rstr);
-static struct math_token *get_ope(const char *str, const char ** rstr);
+static struct math_token *get_ope(const char *str, const char ** rstr, MathEquation *eq);
 static struct math_token *get_num(const char *str, const char ** rstr);
 
 struct reserved {
@@ -144,7 +144,7 @@ math_scanner_dup_token(struct math_token *token)
 }
 
 struct math_token *
-math_scanner_get_token(struct math_string *mstr)
+math_scanner_get_token(struct math_string *mstr, MathEquation *eq)
 {
   char c;
   const char *str;
@@ -172,7 +172,7 @@ math_scanner_get_token(struct math_string *mstr)
   } else  if (isdigit(c) || c == '.') {
     token = get_num(str, rstr);
   } else if (math_scanner_is_ope(c)) {
-    token = get_ope(str, rstr);
+    token = get_ope(str, rstr, eq);
   } else if (isalpha(c) || c == '%' || c == '_') {
     token = get_symbol(str, rstr);
   } else if (c == '(' || c == ')') {
@@ -197,7 +197,7 @@ math_scanner_get_token(struct math_string *mstr)
       str++;
     }
     mstr->cur = str;
-    token = math_scanner_get_token(mstr);
+    token = math_scanner_get_token(mstr, eq);
   } else {
     token = get_unknown(str, rstr);
   }
