@@ -14,7 +14,7 @@
   }\
 \
   for (;;) {\
-    token = my_get_token(str);\
+    token = my_get_token(str, eq);\
     if (token == NULL) {\
       *err = MATH_ERROR_MEMORY;\
       math_expression_free(exp);\
@@ -67,7 +67,7 @@
   }\
 \
   for (;;) {\
-    token = my_get_token(str);\
+    token = my_get_token(str, eq);\
     if (token == NULL) {\
       *err = MATH_ERROR_MEMORY;\
       math_expression_free(exp);\
@@ -128,7 +128,7 @@
   }\
 \
   for (;;) {\
-    token = my_get_token(str);\
+    token = my_get_token(str, eq);\
     if (token == NULL) {\
       *err = MATH_ERROR_MEMORY;\
       math_expression_free(exp);\
@@ -192,7 +192,7 @@
   }\
 \
   for (;;) {\
-    token = my_get_token(str);\
+    token = my_get_token(str, eq);\
     if (token == NULL) {\
       *err = MATH_ERROR_MEMORY;\
       math_expression_free(exp);\
