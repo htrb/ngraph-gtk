@@ -699,15 +699,17 @@ int
 eval_script(const char *script, int security)
 {
   struct nshell *nshell;
+  int security_save;
 
   nshell = newshell();
   if (nshell == NULL)
     return 1;
 
+  security_save = get_security();
   set_security(security);
   ngraphenvironment(nshell);
   cmdexecute(nshell, script);
-  set_security(FALSE);
+  set_security(security_save);
   delshell(nshell);
 
   return 0;
