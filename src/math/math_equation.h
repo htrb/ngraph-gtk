@@ -103,6 +103,11 @@ struct _math_equation {
   MathValue *cbuf, *pos_func_buf;
   MathExpression *exp, *opt_exp, *const_def;
   MathEquationParametar *parameter;
+  enum EOEQ_ASSIGN_TYPE {
+		       EOEQ_ASSIGN_TYPE_BOTH,
+		       EOEQ_ASSIGN_TYPE_EOEQ,
+		       EOEQ_ASSIGN_TYPE_ASSIGN,
+  } eoeq_assign_type;
   struct narray *scope_info;
   struct {
     struct {
