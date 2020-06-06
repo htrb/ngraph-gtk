@@ -39,7 +39,7 @@ struct parsing_info
 };
 
 static struct math_token *
-my_get_token(struct math_string *str)
+my_get_token(struct math_string *str, MathEquation *eq)
 {
   struct math_token *token;
 
@@ -48,7 +48,7 @@ my_get_token(struct math_string *str)
     st_look_ahead_token = token->next;
     token->next = NULL;
   } else {
-    token = math_scanner_get_token(str);
+    token = math_scanner_get_token(str, eq);
   }
 
   return token;
