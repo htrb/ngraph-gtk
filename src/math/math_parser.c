@@ -141,7 +141,7 @@ parse_array_expression(struct math_string *str, MathEquation *eq, const char *na
   struct math_token *token;
   MathExpression *operand, *exp;
 
-  token = my_get_token(str);
+  token = my_get_token(str, eq);
   if (token == NULL) {
     *err = MATH_ERROR_MEMORY;
     return NULL;
@@ -152,7 +152,7 @@ parse_array_expression(struct math_string *str, MathEquation *eq, const char *na
   if (operand == NULL)
     return NULL;
 
-  token = my_get_token(str);
+  token = my_get_token(str, eq);
   if (token == NULL) {
     *err = MATH_ERROR_MEMORY;
     math_expression_free(operand);
@@ -185,7 +185,7 @@ parse_primary_expression(struct math_string *str, MathEquation *eq, int *err)
   MathExpression *exp;
   MathValue val;
 
-  token = my_get_token(str);
+  token = my_get_token(str, eq);
   if (token == NULL) {
     *err = MATH_ERROR_MEMORY;
     return NULL;
@@ -214,7 +214,7 @@ parse_primary_expression(struct math_string *str, MathEquation *eq, int *err)
     math_scanner_free_token(token);
     return NULL;
   case MATH_TOKEN_TYPE_STRING_VARIABLE:
-    token2 = my_get_token(str);
+    token2 = my_get_token(str, eq);
     unget_token(token2);
     if (token2->type == MATH_TOKEN_TYPE_LB) {
       exp = parse_array_expression(str, eq, token->data.sym, TRUE, err);
@@ -227,7 +227,7 @@ parse_primary_expression(struct math_string *str, MathEquation *eq, int *err)
     }
     break;
   case MATH_TOKEN_TYPE_SYMBOL:
-    token2 = my_get_token(str);
+    token2 = my_get_token(str, eq);
     unget_token(token2);
     if (token2->type == MATH_TOKEN_TYPE_LB) {
       exp = parse_array_expression(str, eq, token->data.sym, FALSE, err);
@@ -267,7 +267,7 @@ parse_primary_expression(struct math_string *str, MathEquation *eq, int *err)
     if (exp == NULL)
       return NULL;
 
-    token = my_get_token(str);
+    token = my_get_token(str, eq);
     if (token == NULL) {
       *err = MATH_ERROR_MEMORY;
       math_expression_free(exp);
@@ -323,7 +323,7 @@ get_argument(struct math_string *str, MathEquation *eq, struct math_function_par
     struct math_token *token;
     switch (fprm->arg_type[i]) {
     case MATH_FUNCTION_ARG_TYPE_ARRAY:
-      token = my_get_token(str);
+      token = my_get_token(str, eq);
       if (token->type != MATH_TOKEN_TYPE_SYMBOL) {
 	*err = MATH_ERROR_INVALID_ARG;
 	math_equation_set_parse_error(eq, token->ptr, str);
@@ -335,7 +335,7 @@ get_argument(struct math_string *str, MathEquation *eq, struct math_function_par
       math_scanner_free_token(token);
       break;
     case MATH_FUNCTION_ARG_TYPE_STRING_ARRAY:
-      token = my_get_token(str);
+      token = my_get_token(str, eq);
       if (token->type != MATH_TOKEN_TYPE_STRING_VARIABLE) {
 	*err = MATH_ERROR_INVALID_ARG;
 	math_equation_set_parse_error(eq, token->ptr, str);
@@ -347,7 +347,7 @@ get_argument(struct math_string *str, MathEquation *eq, struct math_function_par
       math_scanner_free_token(token);
       break;
     case MATH_FUNCTION_ARG_TYPE_ARRAY_COMMON:
-      token = my_get_token(str);
+      token = my_get_token(str, eq);
       if (token->type == MATH_TOKEN_TYPE_SYMBOL) {
         exp = math_array_argument_expression_new(eq, token->data.sym, err);
         math_scanner_free_token(token);
@@ -382,7 +382,7 @@ parse_argument_list(struct math_string *str, MathEquation *eq, struct math_funct
 
   argv = *buf;
 
-  token = my_get_token(str);
+  token = my_get_token(str, eq);
   unget_token(token);
   if (token->type == MATH_TOKEN_TYPE_RP) {
     return 0;
@@ -397,7 +397,7 @@ parse_argument_list(struct math_string *str, MathEquation *eq, struct math_funct
   argv[0] = exp;
   argv[1] = NULL;
   for (i = 1; ; i++) {
-    token = my_get_token(str);
+    token = my_get_token(str, eq);
     if (token == NULL) {
       *err = MATH_ERROR_MEMORY;
       free_arg_list(argv);
@@ -471,7 +471,7 @@ create_math_func(struct math_string *str, MathEquation *eq, struct math_token *n
     return NULL;
   }
 
-  token = my_get_token(str);
+  token = my_get_token(str, eq);
   if (token->type != MATH_TOKEN_TYPE_RP) {
     *err = MATH_ERROR_MISS_RP;
     math_equation_set_parse_error(eq, token->ptr, str);
@@ -545,14 +545,14 @@ parse_func_expression(struct math_string *str, MathEquation *eq, int *err)
   struct math_token *token1, *token2;
   MathExpression *exp;
 
-  token1 = my_get_token(str);
+  token1 = my_get_token(str, eq);
   if (token1 == NULL) {
     return NULL;
   }
 
   switch (token1->type) {
   case MATH_TOKEN_TYPE_SYMBOL:
-    token2 = my_get_token(str);
+    token2 = my_get_token(str, eq);
     if (token2 == NULL) {
       math_scanner_free_token(token1);
       return NULL;
@@ -590,7 +590,7 @@ parse_factorial_expression(struct math_string *str, MathEquation *eq, int *err)
   }
 
   for (;;) {
-    token = my_get_token(str);
+    token = my_get_token(str, eq);
     if (token == NULL) {
       *err = MATH_ERROR_MEMORY;
       math_expression_free(exp);
@@ -635,7 +635,7 @@ parse_power_expression(struct math_string *str, MathEquation *eq, int *err)
     return NULL;
   }
 
-  token = my_get_token(str);
+  token = my_get_token(str, eq);
   if (token == NULL) {
     *err = MATH_ERROR_MEMORY;
     math_expression_free(exp);
@@ -681,7 +681,7 @@ parse_unary_expression(struct math_string *str, MathEquation *eq, int *err)
   struct math_token *token;
   MathExpression *exp, *operand;
 
-  token = my_get_token(str);
+  token = my_get_token(str, eq);
   if (token == NULL) {
     *err = MATH_ERROR_MEMORY;
     return NULL;
@@ -747,7 +747,7 @@ parse_multiplicative_expression(struct math_string *str, MathEquation *eq, int *
     return NULL;
   }
   for (;;) {
-    token = my_get_token(str);
+    token = my_get_token(str, eq);
     if (token == NULL) {
       *err = MATH_ERROR_MEMORY;
       math_expression_free(exp);
@@ -945,8 +945,10 @@ parse_parameter_list(struct math_string *str, MathExpression *func, int *err)
 {
   struct math_token *token;
   enum MATH_FUNCTION_ARG_TYPE type;
+  MathEquation *eq;
 
-  token = my_get_token(str);
+  eq = func->equation;
+  token = my_get_token(str, eq);
   if (token == NULL) {
     *err = MATH_ERROR_MEMORY;
     return 1;
@@ -958,14 +960,14 @@ parse_parameter_list(struct math_string *str, MathExpression *func, int *err)
   }
   math_scanner_free_token(token);
 
-  token = my_get_token(str);
+  token = my_get_token(str, eq);
   if (token->type == MATH_TOKEN_TYPE_RP) {
     return 0;
   }
 
   unget_token(token);
   for (;;) {
-    token = my_get_token(str);
+    token = my_get_token(str, eq);
     if (token == NULL) {
       *err = MATH_ERROR_MEMORY;
       return 1;
@@ -974,7 +976,7 @@ parse_parameter_list(struct math_string *str, MathExpression *func, int *err)
     switch (token->type) {
     case MATH_TOKEN_TYPE_ARRAY_PREFIX:
       math_scanner_free_token(token);
-      token = my_get_token(str);
+      token = my_get_token(str, eq);
       if (token->type == MATH_TOKEN_TYPE_SYMBOL) {
 	type = MATH_FUNCTION_ARG_TYPE_ARRAY;
       } else {
@@ -1001,7 +1003,7 @@ parse_parameter_list(struct math_string *str, MathExpression *func, int *err)
     }
     math_scanner_free_token(token);
 
-    token = my_get_token(str);
+    token = my_get_token(str, eq);
     if (token == NULL) {
       *err = MATH_ERROR_MEMORY;
       return 1;
@@ -1014,7 +1016,7 @@ parse_parameter_list(struct math_string *str, MathExpression *func, int *err)
     math_scanner_free_token(token);
   }
 
-  token = my_get_token(str);
+  token = my_get_token(str, eq);
   if (token == NULL) {
     *err = MATH_ERROR_MEMORY;
     return 1;
@@ -1035,7 +1037,7 @@ parse_block_expression(struct math_string *str, MathEquation *eq, int *err)
   struct math_token *token;
   MathExpression *exp, *block;
 
-  token = my_get_token(str);
+  token = my_get_token(str, eq);
   if (token->type == MATH_TOKEN_TYPE_RC) {
     MathValue val;
     math_scanner_free_token(token);
@@ -1049,7 +1051,7 @@ parse_block_expression(struct math_string *str, MathEquation *eq, int *err)
   if (exp == NULL)
     return NULL;
 
-  token = my_get_token(str);
+  token = my_get_token(str, eq);
   if (token->type != MATH_TOKEN_TYPE_RC) {
     *err = MATH_ERROR_MISS_RC;
     math_equation_set_parse_error(eq, token->ptr, str);
@@ -1097,7 +1099,7 @@ parse_func_def_expression(struct math_string *str, MathEquation *eq, int *err)
   struct math_token *token;
 
   /* get name of the function */
-  fname = my_get_token(str);
+  fname = my_get_token(str, eq);
   if (fname == NULL) {
     return NULL;
   }
@@ -1130,7 +1132,7 @@ parse_func_def_expression(struct math_string *str, MathEquation *eq, int *err)
   }
 
   /* get block */
-  token = my_get_token(str);
+  token = my_get_token(str, eq);
   if (token == NULL) {
     return NULL;
   }
@@ -1173,7 +1175,7 @@ parse_const_def_expression(struct math_string *str, MathEquation *eq, int *err)
   }
 
   /* get name of the constant */
-  cname = my_get_token(str);
+  cname = my_get_token(str, eq);
   if (cname == NULL) {
     return NULL;
   }
@@ -1185,7 +1187,7 @@ parse_const_def_expression(struct math_string *str, MathEquation *eq, int *err)
     return NULL;
   }
 
-  token = my_get_token(str);
+  token = my_get_token(str, eq);
   if (token == NULL) {
     *err = MATH_ERROR_MEMORY;
     math_scanner_free_token(cname);
@@ -1275,7 +1277,7 @@ parse_expression(struct math_string *str, MathEquation *eq, int *err)
     goto End;
   }
 
-  token = my_get_token(str);
+  token = my_get_token(str, eq);
   if (token == NULL) {
     *err = MATH_ERROR_MEMORY;
     math_expression_free(exp);
@@ -1365,7 +1367,7 @@ parse_expression_list(struct math_string *str, MathEquation *eq, int inside_bloc
 
   top = prev = NULL;
   for (;;) {
-    token = my_get_token(str);
+    token = my_get_token(str, eq);
     if (token == NULL) {
       *err = MATH_ERROR_MEMORY;
       math_expression_free(top);
@@ -1448,7 +1450,7 @@ parse_expression_list(struct math_string *str, MathEquation *eq, int inside_bloc
 
     prev = exp;
 
-    token = my_get_token(str);
+    token = my_get_token(str, eq);
     if (token == NULL) {
       *err = MATH_ERROR_MEMORY;
       math_expression_free(top);
