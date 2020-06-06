@@ -228,6 +228,13 @@ cmdsecurity(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
   return 0;
 }
 
+static int
+cmd_set_security(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
+{
+  set_security(TRUE);
+  return 0;
+}
+
 static struct objtable shell[] = {
   {"init",NVFUNC,NEXEC,cmdinit,NULL,0},
   {"done",NVFUNC,NEXEC,cmddone,NULL,0},
