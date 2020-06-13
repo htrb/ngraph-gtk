@@ -844,3 +844,40 @@ math_scanner_init_string(struct math_string *str, const char *line)
   str->line = 0;
   str->ofst = 0;
 }
+
+void
+replace_eoeq_token(char *eq)
+{
+  int i;
+  const char *ptr;
+  struct math_token *tok;
+  if (eq == NULL) {
+    return;
+  }
+  if (eq[0] == '=') {
+    eq[0] = ';';
+  }
+  for (i = 0; eq[i]; i++) {
+    switch (eq[i]) {
+    case '=':
+      if (i > 0) {
+	if (eq[i + 1] == '=') {
+	  i++;
+	}
+	if (! strchr("!+*/><:\\^=", eq[i - 1])) {
+	  eq[i] = ';';
+	}
+      }
+      break;
+    case '"':
+    case '\'':
+      tok = get_string(eq + i, &ptr, eq[i]);
+      if (tok == NULL) {
+	return;
+      }
+      i = ptr - eq - 1;
+      math_scanner_free_token(tok);
+      break;
+    }
+  }
+}

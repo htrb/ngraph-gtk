@@ -59,5 +59,6 @@ struct math_token *math_scanner_get_token(struct math_string *rstr, MathEquation
 struct math_token *math_scanner_dup_token(struct math_token *token);
 void math_scanner_free_token(struct math_token *token);
 void math_scanner_init_string(struct math_string *str, const char *line);
+void replace_eoeq_token(char *eq);
 
 #endif
