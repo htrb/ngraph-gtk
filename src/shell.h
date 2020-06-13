@@ -28,45 +28,6 @@
 
 #define SHELLBUFSIZE 4096
 
-#define ERRUEXPEOF	100
-#define ERRBADSUB	101
-#define ERRSYNTAX	102
-#define ERRUEXPTOK	103
-#define ERRIDENT	104
-#define ERRCFOUND	105
-#define ERRSYSTEM	106
-#define ERREXTARG	107
-#define ERRSMLARG	108
-#define ERRMANYARG	109
-#define ERRNOFILE	110
-#define ERREOF		111
-#define ERRNOFIL	112
-#define ERRREAD		113
-#define ERROPEN		114
-#define ERROBJARG	115
-#define ERRINSTARG	116
-#define ERRNEWINST	117
-#define ERRCMFIELD	118
-#define ERRVALUE	119
-#define ERRTWOINST	120
-#define ERRNONEINST	121
-#define ERRNOFIELD	122
-#define ERRNUMERIC	123
-#define ERROPTION	124
-#define ERRILOPS	125
-#define ERRUNSET	126
-#define ERRNODIR	127
-#define ERRMSYNTAX	128
-#define ERRMILLEGAL	129
-#define ERRMNEST	130
-#define ERRMARG		131
-#define ERRMFAT		132
-#define ERRTESTNEST	133
-#define ERRTESTSYNTAX	134
-#define ERRSECURITY	135
-#define ERRMEMORY	136
-#define ERRUNKNOWNSH	137
-
 struct prmlist;
 struct prmlist {
   struct prmlist *next;
