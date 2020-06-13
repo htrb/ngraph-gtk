@@ -34,6 +34,7 @@
 #include "object.h"
 #include "ioutil.h"
 #include "shell.h"
+#include "shell_error.h"
 #include "shellux.h"
 
 int
