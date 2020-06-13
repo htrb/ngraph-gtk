@@ -39,6 +39,7 @@
 #include "ioutil.h"
 #include "mathfn.h"
 #include "shell.h"
+#include "shell_error.h"
 #include "shellcm.h"
 
 #include "math/math_equation.h"
