@@ -36,6 +36,7 @@
 #include "common.h"
 #include "nhash.h"
 #include "ngraph.h"
+#include "shell.h"
 #include "osystem.h"
 #include "object.h"
 #include "ioutil.h"
