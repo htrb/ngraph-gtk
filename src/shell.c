@@ -132,6 +132,7 @@ static int MultiLine = FALSE;
 #include "nstring.h"
 #include "ioutil.h"
 #include "shell.h"
+#include "shell_error.h"
 #include "shellcm.h"
 #include "shellux.h"
 #include "math/math_equation.h"
