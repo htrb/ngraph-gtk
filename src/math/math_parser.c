@@ -1406,6 +1406,8 @@ parse_expression_list(struct math_string *str, MathEquation *eq, int inside_bloc
       }
       continue;
     case MATH_TOKEN_TYPE_EOEQ_ASSIGN:
+      eq->use_eoeq_assign = TRUE;
+      /* fall-through */
     case MATH_TOKEN_TYPE_EOEQ:
       if (str->cur[0] == '\0') {
 	if (inside_block) {
