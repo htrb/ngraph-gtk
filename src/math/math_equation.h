@@ -108,6 +108,7 @@ struct _math_equation {
 		       EOEQ_ASSIGN_TYPE_EOEQ,
 		       EOEQ_ASSIGN_TYPE_ASSIGN,
   } eoeq_assign_type;
+  int use_eoeq_assign;
   struct narray *scope_info;
   struct {
     struct {
