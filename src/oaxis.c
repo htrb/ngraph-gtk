@@ -24,6 +24,7 @@
 #include "axis.h"
 #include "nstring.h"
 #include "nconfig.h"
+#include "shell.h"
 
 #include "math/math_equation.h"
 
