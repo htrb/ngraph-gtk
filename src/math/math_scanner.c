@@ -864,7 +864,7 @@ replace_eoeq_token(char *eq)
 	if (eq[i + 1] == '=') {
 	  i++;
 	}
-	if (! strchr("!+*/><:\\^=", eq[i - 1])) {
+	if (! strchr("!-+*/><:\\^=", eq[i - 1])) {
 	  eq[i] = ';';
 	}
       }
