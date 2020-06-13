@@ -2728,15 +2728,17 @@ get_axis_parameter(struct objlist *obj, N_VALUE *inst, struct axis_config *aconf
 }
 
 static MathEquation *
-get_axis_math(struct objlist *obj, const char *math)
+get_axis_math(struct objlist *obj, char *math)
 {
   MathEquation *code;
-  int rcode;
+  int rcode, security;
 
   code = math_equation_basic_new();
   if (code == NULL) {
     return NULL;
   }
+  security = get_security();
+  math_equation_set_eoeq_assign_type(code, (security) ? EOEQ_ASSIGN_TYPE_BOTH : EOEQ_ASSIGN_TYPE_ASSIGN);
 
   if (math_equation_add_var(code, "X") != 0) {
     math_equation_free(code);
