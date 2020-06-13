@@ -2746,7 +2746,9 @@ get_axis_math(struct objlist *obj, char *math)
   }
 
   rcode = math_equation_parse(code, math);
-  if (rcode) {
+  if (rcode == 0 && code->use_eoeq_assign) {
+    replace_eoeq_token(math);
+  } else if (rcode) {
     char *err_msg;;
 
     err_msg = math_err_get_error_message(code, math, rcode);
