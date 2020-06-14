@@ -10693,7 +10693,7 @@ odata_get_constants(void)
   MathEquation *eq;
   gchar *text;
 
-  eq = ofile_create_math_equation(NULL, 3, TRUE, TRUE, TRUE, TRUE, TRUE);
+  eq = ofile_create_math_equation(NULL, EOEQ_ASSIGN_TYPE_ASSIGN, 3, TRUE, TRUE, TRUE, TRUE, TRUE);
   if (eq == NULL) {
     return NULL;
   }
