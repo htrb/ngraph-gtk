@@ -51,9 +51,9 @@ libngraph_la_SOURCES = axis.c axis.h nconfig.c nconfig.h gra.c gra.h	\
 	olegend.c olegend.h omark.c omath.c omerge.c omerge.h oprm.c	\
 	orect.c oroot.c oroot.h osarray.c oshell.c oregexp.c		\
 	ostring.c osystem.c osystem.h otext.c opath.c opath.h shell.c	\
-	shell.h shellcm.c shellcm.h shellux.c shellux.h spline.c	\
-	spline.h common.h nhash.h nhash.c strconv.c strconv.h oio.c	\
-	gettext.h ngraph_api.c
+	shell.h shell_error.h shellcm.c shellcm.h shellux.c shellux.h	\
+	spline.c spline.h common.h nhash.h nhash.c strconv.c		\
+	strconv.h oio.c gettext.h ngraph_api.c
 
 libngraph_la_CFLAGS = $(GTK_CFLAGS) $(GSL_CFLAGS) $(libngraph_cflags) -I$(top_builddir) -DCCNAME='"'$(CC)'"'
 libngraph_la_LIBADD = gtk/libngraphui.la math/libmath.la
