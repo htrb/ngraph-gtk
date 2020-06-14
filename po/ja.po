@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.07.06\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2020-05-27 16:30+0900\n"
+"POT-Creation-Date: 2020-06-14 15:26+0900\n"
 "PO-Revision-Date: 2020-05-25 15:39+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -49,7 +49,7 @@ msgid "Save file"
 msgstr "別名で保存"
 
 #: src/gtk/ogra2cairo.c:45 src/gtk/x11axis.c:1112 src/gtk/x11axis.c:2166
-#: src/odraw.c:80 src/odraw.c:88 src/oaxis.c:76 src/oaxis.c:91
+#: src/odraw.c:80 src/odraw.c:88 src/oaxis.c:77 src/oaxis.c:92
 msgid "none"
 msgstr "なし"
 
@@ -716,7 +716,7 @@ msgid "auto"
 msgstr "自動"
 
 #: src/gtk/x11dialg.c:118 src/gtk/x11merge.c:52 src/gtk/x11opt.c:447
-#: src/odata.c:231
+#: src/odata.c:232
 msgid "file"
 msgstr "ファイル"
 
@@ -728,7 +728,7 @@ msgstr "マーク選択"
 msgid "function"
 msgstr "関数"
 
-#: src/gtk/x11dialg.c:130 src/odata.c:232
+#: src/gtk/x11dialg.c:130 src/odata.c:233
 msgid "array"
 msgstr "配列"
 
@@ -748,7 +748,7 @@ msgstr "変換数式"
 msgid "math text"
 msgstr "数式入力"
 
-#: src/gtk/x11dialg.c:151 src/odata.c:265
+#: src/gtk/x11dialg.c:151 src/odata.c:266
 msgid "fit"
 msgstr "フィット"
 
@@ -2506,7 +2506,7 @@ msgstr "元に戻す: %s (_U)"
 msgid "top"
 msgstr "上"
 
-#: src/gtk/x11merge.c:54 src/oaxis.c:78 src/oaxis.c:92 src/oaxis.c:105
+#: src/gtk/x11merge.c:54 src/oaxis.c:79 src/oaxis.c:93 src/oaxis.c:106
 msgid "left"
 msgstr "左"
 
@@ -2910,7 +2910,7 @@ msgstr "斜体"
 msgid "Line style"
 msgstr "線種"
 
-#: src/gtk/gtk_presettings.c:1747 src/odata.c:246 src/opath.c:81
+#: src/gtk/gtk_presettings.c:1747 src/odata.c:247 src/opath.c:81
 msgid "line"
 msgstr "直線"
 
@@ -5225,11 +5225,11 @@ msgstr "終点"
 msgid "begin"
 msgstr "始点"
 
-#: src/odraw.c:83 src/oaxis.c:77
+#: src/odraw.c:83 src/oaxis.c:78
 msgid "both"
 msgstr "両方"
 
-#: src/odraw.c:89 src/odata.c:251
+#: src/odraw.c:89 src/odata.c:252
 msgid "arrow"
 msgstr "矢印"
 
@@ -5237,7 +5237,7 @@ msgstr "矢印"
 msgid "wave"
 msgstr "波型"
 
-#: src/odraw.c:91 src/odata.c:245
+#: src/odraw.c:91 src/odata.c:246
 msgid "mark"
 msgstr "マーク"
 
@@ -5261,171 +5261,171 @@ msgstr "Bスプライン"
 msgid "bspline_close"
 msgstr "閉Bスプライン"
 
-#: src/oaxis.c:68
+#: src/oaxis.c:69
 msgid "linear"
 msgstr "線形"
 
-#: src/oaxis.c:69 src/ofit.c:88
+#: src/oaxis.c:70 src/ofit.c:89
 msgid "log"
 msgstr "対数"
 
-#: src/oaxis.c:70
+#: src/oaxis.c:71
 msgid "inverse"
 msgstr "逆数"
 
-#: src/oaxis.c:71
+#: src/oaxis.c:72
 msgid "MJD"
 msgstr "MJD"
 
-#: src/oaxis.c:79 src/oaxis.c:93 src/oaxis.c:106
+#: src/oaxis.c:80 src/oaxis.c:94 src/oaxis.c:107
 msgid "right"
 msgstr "右"
 
-#: src/oaxis.c:104
+#: src/oaxis.c:105
 msgid "center"
 msgstr "中央"
 
-#: src/oaxis.c:107
+#: src/oaxis.c:108
 msgid "point"
 msgstr "小数点"
 
-#: src/oaxis.c:120
+#: src/oaxis.c:121
 msgid "regular"
 msgstr "通常表示"
 
-#: src/oaxis.c:121
+#: src/oaxis.c:122
 msgid "no_zero"
 msgstr "ゼロ非表示"
 
-#: src/oaxis.c:122
+#: src/oaxis.c:123
 msgid "no_floating_point"
 msgstr "整数表示"
 
-#: src/oaxis.c:136
+#: src/oaxis.c:137
 msgid "horizontal"
 msgstr "水平"
 
-#: src/oaxis.c:137
+#: src/oaxis.c:138
 msgid "parallel1"
 msgstr "軸と平行1"
 
-#: src/oaxis.c:138
+#: src/oaxis.c:139
 msgid "parallel2"
 msgstr "軸と平行2"
 
-#: src/oaxis.c:139
+#: src/oaxis.c:140
 msgid "normal1"
 msgstr "軸と直交1"
 
-#: src/oaxis.c:140
+#: src/oaxis.c:141
 msgid "normal2"
 msgstr "軸と直交2"
 
-#: src/oaxis.c:141
+#: src/oaxis.c:142
 msgid "oblique1"
 msgstr "軸と斜交1"
 
-#: src/oaxis.c:142
+#: src/oaxis.c:143
 msgid "oblique2"
 msgstr "軸と斜交2"
 
-#: src/ofit.c:85
+#: src/ofit.c:86
 msgid "poly"
 msgstr "多項式"
 
-#: src/ofit.c:86
+#: src/ofit.c:87
 msgid "pow"
 msgstr "べき関数"
 
-#: src/ofit.c:87
+#: src/ofit.c:88
 msgid "exp"
 msgstr "指数関数"
 
-#: src/ofit.c:89
+#: src/ofit.c:90
 msgid "user"
 msgstr "ユーザ定義"
 
-#: src/odata.c:233
+#: src/odata.c:234
 msgid "range"
 msgstr "範囲"
 
-#: src/odata.c:238
+#: src/odata.c:239
 msgid "simple"
 msgstr "単純移動平均"
 
-#: src/odata.c:239
+#: src/odata.c:240
 msgid "weighted"
 msgstr "加重移動平均"
 
-#: src/odata.c:240
+#: src/odata.c:241
 msgid "exponential"
 msgstr "指数移動平均"
 
-#: src/odata.c:247
+#: src/odata.c:248
 msgid "polygon"
 msgstr "多角形"
 
-#: src/odata.c:248
+#: src/odata.c:249
 msgid "polygon_solid_fill"
 msgstr "実多角形"
 
-#: src/odata.c:249 src/opath.c:82
+#: src/odata.c:250 src/opath.c:82
 msgid "curve"
 msgstr "曲線"
 
-#: src/odata.c:250
+#: src/odata.c:251
 msgid "diagonal"
 msgstr "対角線"
 
-#: src/odata.c:252
+#: src/odata.c:253
 msgid "rectangle"
 msgstr "矩形"
 
-#: src/odata.c:253
+#: src/odata.c:254
 msgid "rectangle_fill"
 msgstr "塗りつぶし矩形"
 
-#: src/odata.c:254
+#: src/odata.c:255
 msgid "rectangle_solid_fill"
 msgstr "実矩形"
 
-#: src/odata.c:255
+#: src/odata.c:256
 msgid "errorbar_x"
 msgstr "横誤差棒"
 
-#: src/odata.c:256
+#: src/odata.c:257
 msgid "errorbar_y"
 msgstr "縦誤差棒"
 
-#: src/odata.c:257
+#: src/odata.c:258
 msgid "staircase_x"
 msgstr "縦階段"
 
-#: src/odata.c:258
+#: src/odata.c:259
 msgid "staircase_y"
 msgstr "横階段"
 
-#: src/odata.c:259
+#: src/odata.c:260
 msgid "bar_x"
 msgstr "空横棒"
 
-#: src/odata.c:260
+#: src/odata.c:261
 msgid "bar_y"
 msgstr "空縦棒"
 
-#: src/odata.c:261
+#: src/odata.c:262
 msgid "bar_fill_x"
 msgstr "塗りつぶし横棒"
 
-#: src/odata.c:262
+#: src/odata.c:263
 msgid "bar_fill_y"
 msgstr "塗りつぶし縦棒"
 
-#: src/odata.c:263
+#: src/odata.c:264
 msgid "bar_solid_fill_x"
 msgstr "実横棒"
 
-#: src/odata.c:264
+#: src/odata.c:265
 msgid "bar_solid_fill_y"
 msgstr "実縦棒"
 

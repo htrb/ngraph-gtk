@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.08.05\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2020-05-27 16:30+0900\n"
+"POT-Creation-Date: 2020-06-14 15:26+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -51,7 +51,7 @@ msgid "Save file"
 msgstr ""
 
 #: src/gtk/ogra2cairo.c:45 src/gtk/x11axis.c:1112 src/gtk/x11axis.c:2166
-#: src/odraw.c:80 src/odraw.c:88 src/oaxis.c:76 src/oaxis.c:91
+#: src/odraw.c:80 src/odraw.c:88 src/oaxis.c:77 src/oaxis.c:92
 msgid "none"
 msgstr ""
 
@@ -687,7 +687,7 @@ msgid "auto"
 msgstr ""
 
 #: src/gtk/x11dialg.c:118 src/gtk/x11merge.c:52 src/gtk/x11opt.c:447
-#: src/odata.c:231
+#: src/odata.c:232
 msgid "file"
 msgstr ""
 
@@ -699,7 +699,7 @@ msgstr ""
 msgid "function"
 msgstr ""
 
-#: src/gtk/x11dialg.c:130 src/odata.c:232
+#: src/gtk/x11dialg.c:130 src/odata.c:233
 msgid "array"
 msgstr ""
 
@@ -719,7 +719,7 @@ msgstr ""
 msgid "math text"
 msgstr ""
 
-#: src/gtk/x11dialg.c:151 src/odata.c:265
+#: src/gtk/x11dialg.c:151 src/odata.c:266
 msgid "fit"
 msgstr ""
 
@@ -2472,7 +2472,7 @@ msgstr ""
 msgid "top"
 msgstr ""
 
-#: src/gtk/x11merge.c:54 src/oaxis.c:78 src/oaxis.c:92 src/oaxis.c:105
+#: src/gtk/x11merge.c:54 src/oaxis.c:79 src/oaxis.c:93 src/oaxis.c:106
 msgid "left"
 msgstr ""
 
@@ -2876,7 +2876,7 @@ msgstr ""
 msgid "Line style"
 msgstr ""
 
-#: src/gtk/gtk_presettings.c:1747 src/odata.c:246 src/opath.c:81
+#: src/gtk/gtk_presettings.c:1747 src/odata.c:247 src/opath.c:81
 msgid "line"
 msgstr ""
 
@@ -4565,11 +4565,11 @@ msgstr ""
 msgid "begin"
 msgstr ""
 
-#: src/odraw.c:83 src/oaxis.c:77
+#: src/odraw.c:83 src/oaxis.c:78
 msgid "both"
 msgstr ""
 
-#: src/odraw.c:89 src/odata.c:251
+#: src/odraw.c:89 src/odata.c:252
 msgid "arrow"
 msgstr ""
 
@@ -4577,7 +4577,7 @@ msgstr ""
 msgid "wave"
 msgstr ""
 
-#: src/odraw.c:91 src/odata.c:245
+#: src/odraw.c:91 src/odata.c:246
 msgid "mark"
 msgstr ""
 
@@ -4601,171 +4601,171 @@ msgstr ""
 msgid "bspline_close"
 msgstr ""
 
-#: src/oaxis.c:68
+#: src/oaxis.c:69
 msgid "linear"
 msgstr ""
 
-#: src/oaxis.c:69 src/ofit.c:88
+#: src/oaxis.c:70 src/ofit.c:89
 msgid "log"
 msgstr ""
 
-#: src/oaxis.c:70
+#: src/oaxis.c:71
 msgid "inverse"
 msgstr ""
 
-#: src/oaxis.c:71
+#: src/oaxis.c:72
 msgid "MJD"
 msgstr ""
 
-#: src/oaxis.c:79 src/oaxis.c:93 src/oaxis.c:106
+#: src/oaxis.c:80 src/oaxis.c:94 src/oaxis.c:107
 msgid "right"
 msgstr ""
 
-#: src/oaxis.c:104
+#: src/oaxis.c:105
 msgid "center"
 msgstr ""
 
-#: src/oaxis.c:107
+#: src/oaxis.c:108
 msgid "point"
 msgstr ""
 
-#: src/oaxis.c:120
+#: src/oaxis.c:121
 msgid "regular"
 msgstr ""
 
-#: src/oaxis.c:121
+#: src/oaxis.c:122
 msgid "no_zero"
 msgstr ""
 
-#: src/oaxis.c:122
+#: src/oaxis.c:123
 msgid "no_floating_point"
 msgstr ""
 
-#: src/oaxis.c:136
+#: src/oaxis.c:137
 msgid "horizontal"
 msgstr ""
 
-#: src/oaxis.c:137
+#: src/oaxis.c:138
 msgid "parallel1"
 msgstr ""
 
-#: src/oaxis.c:138
+#: src/oaxis.c:139
 msgid "parallel2"
 msgstr ""
 
-#: src/oaxis.c:139
+#: src/oaxis.c:140
 msgid "normal1"
 msgstr ""
 
-#: src/oaxis.c:140
+#: src/oaxis.c:141
 msgid "normal2"
 msgstr ""
 
-#: src/oaxis.c:141
+#: src/oaxis.c:142
 msgid "oblique1"
 msgstr ""
 
-#: src/oaxis.c:142
+#: src/oaxis.c:143
 msgid "oblique2"
 msgstr ""
 
-#: src/ofit.c:85
+#: src/ofit.c:86
 msgid "poly"
 msgstr ""
 
-#: src/ofit.c:86
+#: src/ofit.c:87
 msgid "pow"
 msgstr ""
 
-#: src/ofit.c:87
+#: src/ofit.c:88
 msgid "exp"
 msgstr ""
 
-#: src/ofit.c:89
+#: src/ofit.c:90
 msgid "user"
 msgstr ""
 
-#: src/odata.c:233
+#: src/odata.c:234
 msgid "range"
 msgstr ""
 
-#: src/odata.c:238
+#: src/odata.c:239
 msgid "simple"
 msgstr ""
 
-#: src/odata.c:239
+#: src/odata.c:240
 msgid "weighted"
 msgstr ""
 
-#: src/odata.c:240
+#: src/odata.c:241
 msgid "exponential"
 msgstr ""
 
-#: src/odata.c:247
+#: src/odata.c:248
 msgid "polygon"
 msgstr ""
 
-#: src/odata.c:248
+#: src/odata.c:249
 msgid "polygon_solid_fill"
 msgstr ""
 
-#: src/odata.c:249 src/opath.c:82
+#: src/odata.c:250 src/opath.c:82
 msgid "curve"
 msgstr ""
 
-#: src/odata.c:250
+#: src/odata.c:251
 msgid "diagonal"
 msgstr ""
 
-#: src/odata.c:252
+#: src/odata.c:253
 msgid "rectangle"
 msgstr ""
 
-#: src/odata.c:253
+#: src/odata.c:254
 msgid "rectangle_fill"
 msgstr ""
 
-#: src/odata.c:254
+#: src/odata.c:255
 msgid "rectangle_solid_fill"
 msgstr ""
 
-#: src/odata.c:255
+#: src/odata.c:256
 msgid "errorbar_x"
 msgstr ""
 
-#: src/odata.c:256
+#: src/odata.c:257
 msgid "errorbar_y"
 msgstr ""
 
-#: src/odata.c:257
+#: src/odata.c:258
 msgid "staircase_x"
 msgstr ""
 
-#: src/odata.c:258
+#: src/odata.c:259
 msgid "staircase_y"
 msgstr ""
 
-#: src/odata.c:259
+#: src/odata.c:260
 msgid "bar_x"
 msgstr ""
 
-#: src/odata.c:260
+#: src/odata.c:261
 msgid "bar_y"
 msgstr ""
 
-#: src/odata.c:261
+#: src/odata.c:262
 msgid "bar_fill_x"
 msgstr ""
 
-#: src/odata.c:262
+#: src/odata.c:263
 msgid "bar_fill_y"
 msgstr ""
 
-#: src/odata.c:263
+#: src/odata.c:264
 msgid "bar_solid_fill_x"
 msgstr ""
 
-#: src/odata.c:264
+#: src/odata.c:265
 msgid "bar_solid_fill_y"
 msgstr ""
 
