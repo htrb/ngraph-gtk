@@ -10771,14 +10771,14 @@ data_inst_dup(struct objlist *obj, N_VALUE *src, N_VALUE *dest)
     for (i = 0; i < EQUATION_NUM; i++) {
       local_new->codex[i] = NULL;
     }
-    put_func(obj, dest, local_new, "math_x", math);
+    put_func(obj, dest, local_new, EOEQ_ASSIGN_TYPE_ASSIGN, "math_x", math, NULL);
   }
   if (local_src->codey[0]) {
     _getobj(obj, "math_y", src, &math);
     for (i = 0; i < EQUATION_NUM; i++) {
       local_new->codey[i] = NULL;
     }
-    put_func(obj, dest, local_new, "math_y", math);
+    put_func(obj, dest, local_new, EOEQ_ASSIGN_TYPE_ASSIGN, "math_y", math, NULL);
   }
 
   return 0;
