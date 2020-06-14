@@ -388,7 +388,7 @@ show_poly_equation(struct fitlocal *fitlocal, enum FIT_OBJ_TYPE type, vector coe
 }
 
 static int
-show_poly_result(struct fitlocal *fitlocal, enum FIT_OBJ_TYPE type, vector coe, int num)
+show_poly_result(struct fitlocal *fitlocal, enum FIT_OBJ_TYPE type, vector coe)
 {
   int j;
   GString *info;
@@ -520,7 +520,7 @@ fitpoly(struct fitlocal *fitlocal,
     return FitError_Fatal;
   }
 
-  if (disp && show_poly_result(fitlocal, type, coe, derror)) {
+  if (disp && show_poly_result(fitlocal, type, coe)) {
     return FitError_Fatal;
   }
 
