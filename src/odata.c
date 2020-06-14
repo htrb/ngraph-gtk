@@ -7278,7 +7278,7 @@ draw_fit(struct objlist *obj, struct f2ddata *fp,
     min=fp->axmin2;
     max=fp->axmax2;
   } else if (min==max) return 0;
-  code = ofile_create_math_equation(NULL, 0, FALSE, FALSE, FALSE, FALSE, TRUE);
+  code = ofile_create_math_equation(NULL, EOEQ_ASSIGN_TYPE_ASSIGN, 0, FALSE, FALSE, FALSE, FALSE, TRUE);
   if (code == NULL) {
     return 1;
   }
