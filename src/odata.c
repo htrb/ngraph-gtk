@@ -3005,10 +3005,13 @@ static int
 set_math_config(struct objlist *obj, N_VALUE *inst, char *field, char *str)
 {
   char *f1;
-  int len;
+  int len, use_eoeq_assign;
 
   f1 = getitok2(&str, &len, "");
-  if (f2dputmath(obj, inst, field, f1) == 0) {
+  if (f2dputmath(obj, inst, EOEQ_ASSIGN_TYPE_BOTH, field, f1, &use_eoeq_assign) == 0) {
+    if (use_eoeq_assign) {
+      replace_eoeq_token(f1);
+    }
     _putobj(obj, field, inst, f1);
   } else {
     g_free(f1);
