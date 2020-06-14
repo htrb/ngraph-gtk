@@ -2924,7 +2924,7 @@ put_func(struct objlist *obj, N_VALUE *inst, struct f2dlocal *f2dlocal, enum EOE
 }
 
 static int
-f2dputmath(struct objlist *obj,N_VALUE *inst,char *field,char *math)
+f2dputmath(struct objlist *obj, N_VALUE *inst, enum EOEQ_ASSIGN_TYPE type, char *field, char *math, int *use_eoeq_assign)
 {
   int rcode;
   struct f2dlocal *f2dlocal;
@@ -2938,7 +2938,7 @@ f2dputmath(struct objlist *obj,N_VALUE *inst,char *field,char *math)
     }
   }
 
-  rcode = put_func(obj, inst, f2dlocal, field, math);
+  rcode = put_func(obj, inst, f2dlocal, type, field, math, use_eoeq_assign);
   if (rcode) {
     return 1;
   }
