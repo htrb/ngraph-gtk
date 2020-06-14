@@ -2984,6 +2984,24 @@ f2dputmath(struct objlist *obj, N_VALUE *inst, enum EOEQ_ASSIGN_TYPE type, char 
 }
 
 static int
+check_putmath(struct objlist *obj, N_VALUE *inst, char *field, char *math)
+{
+  int security, use_eoeq_assign;
+  int rcode;
+
+  security = get_security();
+  if (security) {
+    rcode = f2dputmath(obj, inst, EOEQ_ASSIGN_TYPE_BOTH, field, math, &use_eoeq_assign);
+    if (rcode == 0 && use_eoeq_assign) {
+      replace_eoeq_token(math);
+    }
+  } else {
+    rcode = f2dputmath(obj, inst, EOEQ_ASSIGN_TYPE_ASSIGN, field, math, NULL);
+  }
+  return rcode;
+}
+
+static int
 set_math_config(struct objlist *obj, N_VALUE *inst, char *field, char *str)
 {
   char *f1;
