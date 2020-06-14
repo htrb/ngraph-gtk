@@ -10471,7 +10471,7 @@ solve_equation(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **a
   n = arraynum(darray);
   data = arraydata(darray);
 
-  eq = ofile_create_math_equation(NULL, 0, FALSE, FALSE, FALSE, FALSE, TRUE);
+  eq = ofile_create_math_equation(NULL, EOEQ_ASSIGN_TYPE_ASSIGN, 0, FALSE, FALSE, FALSE, FALSE, TRUE);
   if (eq == NULL) {
     return 1;
   }
