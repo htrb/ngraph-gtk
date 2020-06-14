@@ -205,18 +205,23 @@ fitequation(struct objlist *obj,N_VALUE *inst,N_VALUE *rval, int argc,char **arg
 }
 
 static MathEquation *
-create_math_equation(struct objlist *obj, const char *math, const char *field)
+create_math_equation(struct objlist *obj, char *math, const char *field)
 {
   MathEquation *code;
-  int rcode;
+  int rcode, security;
+  enum EOEQ_ASSIGN_TYPE type;
 
-  code = ofile_create_math_equation(NULL, 2, FALSE, FALSE, FALSE, FALSE, TRUE);
+  security = get_security();
+  type = (security) ? EOEQ_ASSIGN_TYPE_BOTH : EOEQ_ASSIGN_TYPE_ASSIGN;
+  code = ofile_create_math_equation(NULL, type, 2, FALSE, FALSE, FALSE, FALSE, TRUE);
   if (code == NULL) {
     return NULL;
   }
 
   rcode = math_equation_parse(code, math);
-  if (rcode) {
+  if (rcode == 0 && code->use_eoeq_assign) {
+    replace_eoeq_token(math);
+  } else if (rcode) {
     show_eqn_error(obj, code, math, field, rcode);
     math_equation_free(code);
     return NULL;
