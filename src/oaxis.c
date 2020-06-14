@@ -2810,7 +2810,8 @@ get_reference_parameter(struct objlist *obj, N_VALUE *inst,  struct axis_config 
     int id;
     id=arraylast_int(&iarray);
     arraydel(&iarray);
-    if ((anum>0) && ((inst1=getobjinst(aobj,id))!=NULL)) {
+    inst1 = getobjinst(aobj,id);
+    if (inst1) {
       get_axis_parameter(aobj, inst1, aconf);
     }
   }
