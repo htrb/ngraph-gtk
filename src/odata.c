@@ -2769,9 +2769,9 @@ set_user_fnc(MathEquation **eq, const char *str, const char *fname, char **err_m
 }
 
 static int
-set_equation(struct f2dlocal *f2dlocal, MathEquation **eq, const char *f, const char *g, const char *h, const char *str, char **err_msg)
+set_equation(struct f2dlocal *f2dlocal, MathEquation **eq, enum EOEQ_ASSIGN_TYPE type, const char *f, const char *g, const char *h, const char *str, char **err_msg)
 {
-  int i, rcode;
+  int i, rcode, use_eoeq_assign;
 
   if (err_msg) {
     *err_msg = NULL;
@@ -2785,7 +2785,7 @@ set_equation(struct f2dlocal *f2dlocal, MathEquation **eq, const char *f, const 
   }
 
   for (i = 0; i < EQUATION_NUM; i++) {
-    eq[i] = ofile_create_math_equation(f2dlocal->const_id, 3, TRUE, TRUE, TRUE, TRUE, TRUE);
+    eq[i] = ofile_create_math_equation(f2dlocal->const_id, type, 3, TRUE, TRUE, TRUE, TRUE, TRUE);
   }
 
   for (i = 0; i < EQUATION_NUM; i++) {
@@ -2809,7 +2809,7 @@ set_equation(struct f2dlocal *f2dlocal, MathEquation **eq, const char *f, const 
     if (rcode)
       return rcode;
   }
-
+  use_eoeq_assign = eq[0]->use_eoeq_assign;
   if (str == NULL)
     return 0;
 
@@ -2820,6 +2820,9 @@ set_equation(struct f2dlocal *f2dlocal, MathEquation **eq, const char *f, const 
 	*err_msg = math_err_get_error_message(eq[i], str, rcode);
       }
       return rcode;
+    }
+    if (use_eoeq_assign) {
+      eq[i]->use_eoeq_assign = TRUE;
     }
   }
 
