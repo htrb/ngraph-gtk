@@ -2998,7 +2998,7 @@ f2dsaveconfig(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **ar
 }
 
 MathEquation *
-ofile_create_math_equation(int *id, int prm_digit, int use_fprm, int use_const, int usr_func, int use_fobj_func, int use_fit_func)
+ofile_create_math_equation(int *id, enum EOEQ_ASSIGN_TYPE type, int prm_digit, int use_fprm, int use_const, int usr_func, int use_fobj_func, int use_fit_func)
 {
   MathEquation *code;
   struct math_const_parameter static_const[] = {
@@ -3010,6 +3010,8 @@ ofile_create_math_equation(int *id, int prm_digit, int use_fprm, int use_const, 
   code = math_equation_basic_new();
   if (code == NULL)
     return NULL;
+
+  math_equation_set_eoeq_assign_type(code, type);
 
   if (prm_digit > 0) {
     if (math_equation_add_parameter(code, 0, 1, prm_digit, MATH_EQUATION_PARAMETAR_USE_ID)) {
