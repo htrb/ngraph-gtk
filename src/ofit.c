@@ -1131,7 +1131,7 @@ fitcalc(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
       return 0;
     }
 
-    eq = ofile_create_math_equation(NULL, 0, FALSE, FALSE, FALSE, FALSE, TRUE);
+    eq = ofile_create_math_equation(NULL, EOEQ_ASSIGN_TYPE_ASSIGN, 0, FALSE, FALSE, FALSE, FALSE, TRUE);
     if (eq == NULL) {
       return 1;
     }
