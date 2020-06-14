@@ -849,24 +849,32 @@ void
 replace_eoeq_token(char *eq)
 {
   int i;
-  const char *ptr;
-  struct math_token *tok;
   if (eq == NULL) {
     return;
   }
-  if (eq[0] == '=') {
-    eq[0] = ';';
-  }
   for (i = 0; eq[i]; i++) {
+    const char *ptr;
+    struct math_token *tok;
     switch (eq[i]) {
     case '=':
-      if (i > 0) {
-	if (eq[i + 1] == '=') {
-	  i++;
-	}
-	if (! strchr("!-+*/><:\\^=", eq[i - 1])) {
-	  eq[i] = ';';
-	}
+      if (eq[i + 1] == '=') {
+	i++;
+      } else {
+	eq[i] = ';';
+      }
+      break;
+    case '!':
+    case '-':
+    case '+':
+    case '*':
+    case '/':
+    case '>':
+    case '<':
+    case ':':
+    case '\\':
+    case '^':
+      if (eq[i + 1] == '=') {
+	i++;
       }
       break;
     case '"':
