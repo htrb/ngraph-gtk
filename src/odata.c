@@ -3360,7 +3360,7 @@ f2dput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval, int argc,char **argv)
           || (strcmp(field,"func_f")==0) || (strcmp(field,"func_g")==0)
           || (strcmp(field,"func_h")==0)) {
     math=(char *)(argv[2]);
-    return f2dputmath(obj,inst,field,math);
+    return check_putmath(obj, inst, field, math);
   } else if (strcmp(field,"ifs")==0) {
     if (strlen((char *)argv[2])==0) {
       error(obj,ERRIFS);
