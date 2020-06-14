@@ -7086,7 +7086,7 @@ calc_weight(struct objlist *obj, struct f2dlocal *f2dlocal, struct f2ddata *fp, 
   int emerr, emserr, emnonum, emig, emng, two_pass, maxdim, ddstat, rcode, datanum2, i, j;
   int const_id[MATH_CONST_SIZE];
 
-  code = ofile_create_math_equation(const_id, 3, FALSE, TRUE, FALSE, FALSE, TRUE);
+  code = ofile_create_math_equation(const_id, EOEQ_ASSIGN_TYPE_ASSIGN, 3, FALSE, TRUE, FALSE, FALSE, TRUE);
   if (code == NULL) {
     return 1;
   }
