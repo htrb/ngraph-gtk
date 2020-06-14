@@ -290,7 +290,8 @@ fit_put_weight_func(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
 {
   char *math;
   MathEquation *code;
-  int rcode;
+  int rcode, security;
+  enum EOEQ_ASSIGN_TYPE type;
 
   math = argv[2];
   if (math == NULL) {
@@ -304,12 +305,16 @@ fit_put_weight_func(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
     return 0;
   }
 
-  code = ofile_create_math_equation(NULL, 3, FALSE, TRUE, FALSE, FALSE, TRUE);
+  security = get_security();
+  type = (security) ? EOEQ_ASSIGN_TYPE_BOTH : EOEQ_ASSIGN_TYPE_ASSIGN;
+  code = ofile_create_math_equation(NULL, type, 3, FALSE, TRUE, FALSE, FALSE, TRUE);
   if (code == NULL)
     return 1;
 
   rcode = math_equation_parse(code, math);
-  if (rcode) {
+  if (rcode == 0 && code->use_eoeq_assign) {
+    replace_eoeq_token(math);
+  } else if (rcode) {
     show_eqn_error(obj, code, math, argv[1], rcode);
   }
 
