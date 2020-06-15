@@ -3163,6 +3163,37 @@ moving_average(MathEquation *eq, int dest, MathEquationArray *src, int avg_n, in
 }
 
 int
+math_func_array_moving_average(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int n, dest_id, src_id, type, avg_n;
+  MathEquationArray *src;
+
+  MATH_CHECK_ARG(rval, exp->buf[2]);
+  MATH_CHECK_ARG(rval, exp->buf[3]);
+
+  dest_id = (int) exp->buf[0].array.idx;
+  src_id = (int) exp->buf[1].array.idx;
+  type = exp->buf[2].val.val;
+  avg_n = exp->buf[3].val.val;
+
+  rval->val = 0;
+  rval->type = MATH_VALUE_NORMAL;
+
+  src = math_equation_get_array(eq, src_id);
+  if (src == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+  n = src->num;
+  if (moving_average(eq, dest_id, src, avg_n, n, type)) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+  rval->val = n;
+  return 0;
+}
+
+int
 math_func_array_stdevp(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   int n;
