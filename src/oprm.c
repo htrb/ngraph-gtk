@@ -343,38 +343,35 @@ mathconv(char *math)
    =  ---> ;
 */
 {
-  int i,j;
+  int i;
   char *m;
+  GString *new_math;
 
-  if ((m=g_malloc(strlen(math)+100))==NULL) return NULL;
-  j=0;
+  new_math = g_string_new("");
+  if (new_math == NULL) {
+    return NULL;
+  }
   for (i=0;math[i]!='\0';i++) {
     if (strncmp(math+i,"NAN",3)==0) {
-      strcpy(m+j,"CONT");
+      g_string_append(new_math, "CONT");
       i+=2;
-      j+=4;
     } else if (strncmp(math+i,"NONE",3)==0) {
-      strcpy(m+j,"BREAK");
+      g_string_append(new_math, "BREAK");
       i+=3;
-      j+=5;
     } else if (strncmp(math+i,"INTEG",5)==0) {
-      strcpy(m+j,"SUM");
+      g_string_append(new_math, "sum");
       i+=4;
-      j+=3;
     } else if (math[i]=='=') {
-      m[j] = ';';
-      j++;
-      m[j] = '\n';
-      j++;
+      g_string_append(new_math, ";\n");
     } else if ((math[i]!=' ') && (math[i]!='\t')) {
-      m[j]=math[i];
-      j++;
+      g_string_append_c(new_math, math[i]);
     }
   }
-  m[j]='\0';
-  if (m[0]=='\0') {
-    g_free(m);
+  if (new_math->len == 0) {
+    g_string_free(new_math, TRUE);
     m=NULL;
+  } else {
+    m = g_string_free(new_math, FALSE);
   }
   return m;
 }
