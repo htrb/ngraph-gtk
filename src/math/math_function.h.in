@@ -99,6 +99,7 @@ array_clear	1	1	0	12
 array_sum	1	1	0	10
 array_sumsq	1	1	0	10
 array_average	1	1	0	10
+array_moving_average	4	1	0	10,10,0,0
 array_stdevp	1	1	0	10
 array_stdev	1	1	0	10
 array_compact	1	1	0	10
