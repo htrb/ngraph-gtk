@@ -338,19 +338,16 @@ remarkconv(char *str,int ff,int fj,int fb,int *fnameid,char *prmfile)
 static char *
 mathconv(char *math)
 /* INTEG ---> SUM
-   F(,) ---> F(,,)
    NAN ---> CONT
-   UNDEF ---> BREAK
-   =  ---> ;\n
+   NONE ---> BREAK
+   =  ---> ;
 */
 {
   int i,j;
-  int f,g,fb[50],gb[50];
   char *m;
 
   if ((m=g_malloc(strlen(math)+100))==NULL) return NULL;
   j=0;
-  f=g=0;
   for (i=0;math[i]!='\0';i++) {
     if (strncmp(math+i,"NAN",3)==0) {
       strcpy(m+j,"CONT");
@@ -364,54 +361,10 @@ mathconv(char *math)
       strcpy(m+j,"SUM");
       i+=4;
       j+=3;
-    } else if (strncmp(math+i,"DIF(",4)==0) {
-      strcpy(m+j,"DIF");
-      i+=2;
-      j+=3;
-    } else if (strncmp(math+i,"IF(",3)==0) {
-      strcpy(m+j,"IF");
-      i++;
-      j+=2;
-    } else if (strncmp(math+i,"LOG(",4)==0) {
-      strcpy(m+j,"LOG");
-      i+=2;
-      j+=3;
-    } else if (strncmp(math+i,"F(",2)==0) {
-      f++;
-      fb[f]=0;
-    } else if (strncmp(math+i,"G(",2)==0) {
-      g++;
-      gb[g]=0;
     } else if (math[i]=='=') {
       m[j] = ';';
       j++;
       m[j] = '\n';
-      j++;
-    } else if (math[i]=='(') {
-      if (f) fb[f]++;
-      if (g) gb[f]++;
-      m[j]=math[i];
-      j++;
-    } else if (math[i]==')') {
-      if (f) {
-        fb[f]--;
-        if (fb[f]==0) {
-          m[j]=',';
-          m[j+1]='0';
-          f--;
-          j+=2;
-        }
-      }
-      if (g) {
-        gb[g]--;
-        if (gb[g]==0) {
-          m[j]=',';
-          m[j+1]='0';
-          g--;
-          j+=2;
-        }
-      }
-      m[j]=math[i];
       j++;
     } else if ((math[i]!=' ') && (math[i]!='\t')) {
       m[j]=math[i];
