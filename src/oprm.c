@@ -337,7 +337,7 @@ remarkconv(char *str,int ff,int fj,int fb,int *fnameid,char *prmfile)
 
 static char *
 mathconv(char *math)
-/* INTEG ---> SUM
+/* INTEG ---> sum
    NAN ---> CONT
    NONE ---> BREAK
    =  ---> ;
@@ -355,10 +355,10 @@ mathconv(char *math)
     if (strncmp(math + i, "NAN", 3) == 0) {
       g_string_append(new_math, "CONT");
       i += 2;
-    } else if (strncmp(math + i, "NONE", 3)==0) {
+    } else if (strncmp(math + i, "NONE", 4) == 0) {
       g_string_append(new_math, "BREAK");
       i += 3;
-    } else if (strncmp(math + i, "INTEG", 5)==0) {
+    } else if (strncmp(math + i, "INTEG", 5) == 0) {
       g_string_append(new_math, "sum");
       i += 4;
     } else if (math[i] == '=') {
