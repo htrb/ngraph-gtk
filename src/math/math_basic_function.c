@@ -3113,6 +3113,55 @@ math_func_array_average(MathFunctionCallExpression *exp, MathEquation *eq, MathV
   return 0;
 }
 
+static int
+moving_average(MathEquation *eq, int dest, MathEquationArray *src, int avg_n, int n, int type)
+{
+  int i, r;
+
+  if (math_equation_clear_array(eq, dest)) {
+    return 1;
+  }
+
+  r = (type) ? 1 : 0;
+  avg_n = abs(avg_n);
+  for (i = 0; i < n; i++) {
+    int j, sum_n, weight;
+    double sum;
+
+    if (src->data.val[i].type != MATH_VALUE_NORMAL) {
+      if (math_equation_push_array_val(eq, dest, src->data.val + i)) {
+        return 1;
+      }
+      continue;
+    }
+
+    weight = avg_n * r + 1;
+    sum = src->data.val[i].val * weight;
+    sum_n = weight;
+    for (j = 0; j < avg_n; j++) {
+      int k;
+      MathValue val;
+      weight = (avg_n - j) * r + 1;
+      k = i - j - 1;
+      if (k >= 0 && src->data.val[k].type == MATH_VALUE_NORMAL) {
+        sum += src->data.val[k].val * weight;
+        sum_n += weight;
+      }
+      k = i + j + 1;
+      if (k < n && src->data.val[k].type == MATH_VALUE_NORMAL) {
+        sum += src->data.val[k].val * weight;
+        sum_n += weight;
+      }
+      val.val = sum / sum_n;
+      val.type = MATH_VALUE_NORMAL;
+      if (math_equation_push_array_val(eq, dest, &val)) {
+        return 1;
+      }
+    }
+  }
+  return 0;
+}
+
 int
 math_func_array_stdevp(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
