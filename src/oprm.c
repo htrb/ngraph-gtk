@@ -351,25 +351,25 @@ mathconv(char *math)
   if (new_math == NULL) {
     return NULL;
   }
-  for (i=0;math[i]!='\0';i++) {
-    if (strncmp(math+i,"NAN",3)==0) {
+  for (i = 0; math[i]; i++) {
+    if (strncmp(math + i, "NAN", 3) == 0) {
       g_string_append(new_math, "CONT");
-      i+=2;
-    } else if (strncmp(math+i,"NONE",3)==0) {
+      i += 2;
+    } else if (strncmp(math + i, "NONE", 3)==0) {
       g_string_append(new_math, "BREAK");
-      i+=3;
-    } else if (strncmp(math+i,"INTEG",5)==0) {
+      i += 3;
+    } else if (strncmp(math + i, "INTEG", 5)==0) {
       g_string_append(new_math, "sum");
-      i+=4;
-    } else if (math[i]=='=') {
+      i += 4;
+    } else if (math[i] == '=') {
       g_string_append(new_math, ";\n");
-    } else if ((math[i]!=' ') && (math[i]!='\t')) {
+    } else if ((math[i] != ' ') && (math[i] != '\t')) {
       g_string_append_c(new_math, math[i]);
     }
   }
   if (new_math->len == 0) {
     g_string_free(new_math, TRUE);
-    m=NULL;
+    m = NULL;
   } else {
     m = g_string_free(new_math, FALSE);
   }
