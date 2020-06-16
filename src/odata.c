@@ -1490,6 +1490,19 @@ restore_line_style(int GC, struct LineStyleInfo *info)
   }
 }
 
+static void
+set_line_style(struct f2ddata *fp)
+{
+  int width, join, miter;
+  struct narray *style;
+
+  getobj(fp->obj, "line_width", fp->id, 0, NULL, &width);
+  getobj(fp->obj, "line_style", fp->id, 0, NULL, &style);
+  getobj(fp->obj, "line_join", fp->id, 0, NULL, &join);
+  getobj(fp->obj, "line_miter_limit", fp->id, 0, NULL, &miter);
+  GRAlinestyle(fp->GC, 0, NULL, width, GRA_LINE_CAP_BUTT, join, miter);
+}
+
 static int
 file_draw_path(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval, int stroke, int fill, int close)
 {
