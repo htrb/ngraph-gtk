@@ -1511,6 +1511,7 @@ file_draw_path(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   double x0, y0, x1, y1, x2, y2;
   MathEquationArray *ax, *ay;
   struct narray pos;
+  struct LineStyleInfo info;
 
   rval->val = 0;
 
@@ -1542,6 +1543,8 @@ file_draw_path(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
     return 0;
   }
 
+  save_line_style(fp->GC, &info);
+  set_line_style(fp);
   arrayinit(&pos, sizeof(int));
   first = TRUE;
   for (i = 0; i < n; i++) {
@@ -1562,7 +1565,7 @@ file_draw_path(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
     }
   }
   if (first) {
-    return 0;
+    goto End;
   }
   if (close) {
     add_polygon_point(&pos, x2, y2, x0, y0, fp);
@@ -1591,6 +1594,8 @@ file_draw_path(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   arraydel(&pos);
   fp->local->use_drawing_func = TRUE;
 
+ End:
+  restore_line_style(fp->GC, &info);
   return 0;
 }
 
