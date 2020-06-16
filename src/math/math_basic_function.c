@@ -3173,8 +3173,8 @@ math_func_array_moving_average(MathFunctionCallExpression *exp, MathEquation *eq
 
   dest_id = (int) exp->buf[0].array.idx;
   src_id = (int) exp->buf[1].array.idx;
-  type = exp->buf[2].val.val;
-  avg_n = exp->buf[3].val.val;
+  avg_n = exp->buf[2].val.val;
+  type = exp->buf[3].val.val;
 
   rval->val = 0;
   rval->type = MATH_VALUE_NORMAL;
