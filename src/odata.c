@@ -1468,6 +1468,12 @@ draw_lines(struct narray *pos, int GC)
   }
 }
 
+struct LineStyleInfo {
+  int num, *type, width, miter;
+  enum GRA_LINE_CAP cap;
+  enum GRA_LINE_JOIN join;
+};
+
 static int
 file_draw_path(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval, int stroke, int fill, int close)
 {
