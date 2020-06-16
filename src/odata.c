@@ -1480,6 +1480,16 @@ save_line_style(int GC, struct LineStyleInfo *info)
   GRA_get_linestyle(GC, &info->num, &info->type, &info->width, &info->cap, &info->join, &info->miter);
 }
 
+static void
+restore_line_style(int GC, struct LineStyleInfo *info)
+{
+  GRAlinestyle(GC, info->num, info->type, info->width, info->cap, info->join, info->miter);
+  if (info->type) {
+    g_free(info->type);
+    info->type = NULL;
+  }
+}
+
 static int
 file_draw_path(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval, int stroke, int fill, int close)
 {
