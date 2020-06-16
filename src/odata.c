@@ -1474,6 +1474,12 @@ struct LineStyleInfo {
   enum GRA_LINE_JOIN join;
 };
 
+static void
+save_line_style(int GC, struct LineStyleInfo *info)
+{
+  GRA_get_linestyle(GC, &info->num, &info->type, &info->width, &info->cap, &info->join, &info->miter);
+}
+
 static int
 file_draw_path(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval, int stroke, int fill, int close)
 {
