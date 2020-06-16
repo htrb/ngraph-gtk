@@ -3127,6 +3127,7 @@ moving_average(MathEquation *eq, int dest, MathEquationArray *src, int avg_n, in
   for (i = 0; i < n; i++) {
     int j, sum_n, weight;
     double sum;
+    MathValue val;
 
     if (src->data.val[i].type != MATH_VALUE_NORMAL) {
       if (math_equation_push_array_val(eq, dest, src->data.val + i)) {
@@ -3140,8 +3141,7 @@ moving_average(MathEquation *eq, int dest, MathEquationArray *src, int avg_n, in
     sum_n = weight;
     for (j = 0; j < avg_n; j++) {
       int k;
-      MathValue val;
-      weight = (avg_n - j) * r + 1;
+      weight = (avg_n - j - 1) * r + 1;
       k = i - j - 1;
       if (k >= 0 && src->data.val[k].type == MATH_VALUE_NORMAL) {
         sum += src->data.val[k].val * weight;
@@ -3152,11 +3152,11 @@ moving_average(MathEquation *eq, int dest, MathEquationArray *src, int avg_n, in
         sum += src->data.val[k].val * weight;
         sum_n += weight;
       }
-      val.val = sum / sum_n;
-      val.type = MATH_VALUE_NORMAL;
-      if (math_equation_push_array_val(eq, dest, &val)) {
-        return 1;
-      }
+    }
+    val.val = sum / sum_n;
+    val.type = MATH_VALUE_NORMAL;
+    if (math_equation_push_array_val(eq, dest, &val)) {
+      return 1;
     }
   }
   return 0;
