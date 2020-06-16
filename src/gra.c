@@ -888,6 +888,35 @@ GRAlinestyle(int GC,int num,int *type,int width,enum GRA_LINE_CAP cap,enum GRA_L
 }
 
 void
+GRA_get_linestyle(int GC, int *num, int **type, int *width, enum GRA_LINE_CAP *cap, enum GRA_LINE_JOIN *join, int *miter)
+{
+  int *linedash;
+  size_t n;
+
+  if (GC < 0) {
+    return;
+  }
+
+  *num   = GRAClist[GC].linedashn;
+  *width = GRAClist[GC].linewidth;
+  *cap   = GRAClist[GC].linecap;
+  *join  = GRAClist[GC].linejoin;
+  *miter = GRAClist[GC].linemiter;
+  *type = NULL;
+
+  n = *num * sizeof(*linedash);
+  if (n == 0 || GRAClist[GC].linedash == NULL) {
+    return;
+  }
+  linedash = g_malloc(n);
+  if (linedash == NULL) {
+    return;
+  }
+  memcpy(linedash, GRAClist[GC].linedash, n);
+  *type = linedash;
+}
+
+void
 GRAcolor(int GC, int fr, int fg, int fb, int fa)
 {
   char code;

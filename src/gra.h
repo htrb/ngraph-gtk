@@ -189,5 +189,6 @@ int GRAparse(struct GRAdata *data, char *s);
 int GRAinputdraw(int GC,int leftm,int topm,int rate_x,int rate_y,char code,int *cpar,char *cstr);
 
 int calc_zoom_direction(int direction, double zx, double zy, double *zp, double *zn);
+void GRA_get_linestyle(int GC, int *num, int **type, int *width, enum GRA_LINE_CAP *cap, enum GRA_LINE_JOIN *join, int *miter);
 
 #endif
