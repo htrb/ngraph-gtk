@@ -3860,7 +3860,6 @@ math_func_each_with_index(MathFunctionCallExpression *exp, MathEquation *eq, Mat
 {
   int src_id, i, n;
   MathEquationArray *src;
-  MathCommonValue cval;
   MathValue val;
   MathVariable variable;
   enum DATA_TYPE src_type;
@@ -3892,11 +3891,37 @@ math_func_each_with_index(MathFunctionCallExpression *exp, MathEquation *eq, Mat
   return 0;
 }
 
+int
+math_func_zip(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int src1_id, src2_id, i, n;
+  MathEquationArray *src1, *src2;
+  MathValue val;
+  MathVariable variable1, variable2;
+  enum DATA_TYPE src1_type, src2_type;
+
+  rval->val = 0;
+  rval->type = MATH_VALUE_NORMAL;
+
+  if (get_common_array(exp, eq, 0, 2, &src1_id, &src1_type, &variable1, &src1)) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+  if (get_common_array(exp, eq, 1, 3, &src2_id, &src2_type, &variable2, &src2)) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+  n = MIN(src1->num, src2->num);
+  for (i = 0; i < n; i++) {
+    if (set_common_array(eq, src1_id, i, src1_type, &variable1)) {
       rval->type = MATH_VALUE_ERROR;
       return 1;
     }
-    index->val = i;
-    math_expression_calculate(exp->buf[3].exp, &val);
+    if (set_common_array(eq, src2_id, i, src2_type, &variable2)) {
+      rval->type = MATH_VALUE_ERROR;
+      return 1;
+    }
+    math_expression_calculate(exp->buf[4].exp, &val);
   }
   rval->val = n;
   return 0;
