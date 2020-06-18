@@ -3869,13 +3869,7 @@ math_func_each_with_index(MathFunctionCallExpression *exp, MathEquation *eq, Mat
   rval->val = 0;
   rval->type = MATH_VALUE_NORMAL;
 
-  src_id = (int) exp->buf[0].array.idx;
-  src_type = exp->buf[0].array.array_type;
-  if (math_function_call_expression_get_variable(exp, 1, &variable)) {
-    rval->type = MATH_VALUE_ERROR;
-    return 1;
-  }
-  if (src_type != variable.type) {
+  if (get_common_array(exp, eq, 0, 1, &src_id, &src_type, &variable, &src)) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
   }
@@ -3884,16 +3878,20 @@ math_func_each_with_index(MathFunctionCallExpression *exp, MathEquation *eq, Mat
     rval->type = MATH_VALUE_ERROR;
     return 1;
   }
-
   index->type = MATH_VALUE_NORMAL;
-  src = math_equation_get_type_array(eq, src_type, src_id);
   n = src->num;
   for (i = 0; i < n; i++) {
-    if(math_equation_get_array_common_value(eq, src_id, i, src_type, &cval)) {
+    if (set_common_array(eq, src_id, i, src_type, &variable)) {
       rval->type = MATH_VALUE_ERROR;
       return 1;
     }
-    if (math_variable_set_common_value(&variable, &cval)) {
+    index->val = i;
+    math_expression_calculate(exp->buf[3].exp, &val);
+  }
+  rval->val = n;
+  return 0;
+}
+
       rval->type = MATH_VALUE_ERROR;
       return 1;
     }
