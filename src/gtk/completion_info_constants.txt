@@ -43,6 +43,7 @@ RECT_OBJ	The identification number of the rectangle object
 ARC_OBJ		The identification number of the arc object
 MARK_OBJ	The identification number of the mark object
 TEXT_OBJ	The identification number of the text object
+FILE_OBJ	The identification number of the file object
 %D		The ID of the instance of the data object
 %N		The number of instances of data object
 TRUE		the TRUE value (1)
