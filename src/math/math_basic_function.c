@@ -3814,6 +3814,19 @@ get_common_array(MathFunctionCallExpression *exp, MathEquation *eq, int ary_arg,
   return 0;
 }
 
+static int
+set_common_array(MathEquation *eq, int id, int i, enum DATA_TYPE type, MathVariable *variable)
+{
+  MathCommonValue cval;
+  if(math_equation_get_array_common_value(eq, id, i, type, &cval)) {
+    return 1;
+  }
+  if (math_variable_set_common_value(variable, &cval)) {
+    return 1;
+  }
+  return 0;
+}
+
 int
 math_func_each(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
