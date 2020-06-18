@@ -164,11 +164,16 @@ map(dest, src, item, ex)	Evaluate <i>ex</i> for each element of the array <i>src
 reduce(a, item, result, ex)	Evaluate <i>ex</i> for each element of the array <i>a</i>\nand return last evaluated value of <i>ex</i>.\nThe element of the array and the result of previous evaluation\ncan be referred by the variable <i>item</i> and <i>result</i>.
 each(a, item, ex)	Evaluate <i>ex</i> for each element of the array <i>a</i>.\nThe element of the array can be referred by the variable <i>item</i>.
 each_with_index(a, item, index, ex)	Evaluate <i>ex</i> for each element of the array <i>a</i>.\nThe element of the array and the loop count can be referred\nby the variable <i>item</i> and <i>index</i> respectively.
+zip(a1, a2, item1, item2, ex)	Evaluate <i>ex</i> for each element of two arrays <i>a1</i> and <i>a2</i>.\nThe elements of the arrays can be referred by the variable <i>item1</i> and <i>item2</i>.
 filter(dest, src, item, ex)	Find elements in the array <i>src</i>\nthat satisfies that the evaluated value of <i>ex</i> is true\nand set them to the array <i>dest</i>.\nAn element of the array <i>src</i> can be referred by the variable <i>item</i>.
-find(a, item, ex)	Return the value of the first element in the array <i>a</i>\nthat satisfies that the evaluated value of <i>ex</i> is true.\nAn element of the array can be referred by the variable <i>item</i>.
+find(a, item, ex)	Returns the value of the first element in the array <i>a</i>\nthat satisfies that the evaluated value of <i>ex</i> is true.\nAn element of the array can be referred by the variable <i>item</i>.
+index(a, item, ex)	Returns the first index at which a given element in the array <i>a</i>\nthat satisfies that the evaluated value of <i>ex</i> is true.\nAn element of the array can be referred by the variable <i>item</i>.
 times(n, index, ex)	Repeat <i>ex</i> <i>n</i> times.\nThe loop count can be referred by the variable <i>index</i>.
 text_align(x, y)	Set alignment of a text drawing.\n<i>x</i> and <i>y</i> represent alignment of parallel and normal direction respectively.\n(0 &lt;= <i>x, y</i> &lt;= 1)
 text_font(font)		Set font setting of drawing texts.\nThe value <i>font</i> 0, 1 and 2 represent "Sans-serif", "Serif" and "Monospace" respectively.
 text_style(style)	Set font style settings of drawing texts.\nThe value <i>style</i> 0, 1, 2 and 3 represent "normal", "bold", "italic" and "bold-italic" respectively.
 text_size(pt, space, script)	Set font size and other settings of drawing texts.\nFont size can be specified by <i>pt</i>.\nFont-spacing and script-size are specified by the following arguments.
+text_obj_get(id, $text)	assign text of the the text object which ID is <i>id</i> to the variable <i>$text</i>.
+text_obj_set(id, $text)	set text of the the text object which ID is <i>id</i> as the variable <i>$text</i>.
+array_moving_average(dest, src, n, type)	calculate moving average of (<i>n</i> * 2 + 1) sample of the array <i>src</i>\nand set them to the array <i>dest</i>.\nWeighted moving average is used when <i>type</i> is 1.
 on_end(proc)	Evaluate <i>proc</i> at the end of plottong the data object.
