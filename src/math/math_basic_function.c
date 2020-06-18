@@ -3794,6 +3794,26 @@ math_func_index(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rv
   return 0;
 }
 
+static int
+get_common_array(MathFunctionCallExpression *exp, MathEquation *eq, int ary_arg, int var_arg, int *id, enum DATA_TYPE *type, MathVariable *variable, MathEquationArray **src)
+{
+  int src_id;
+  enum DATA_TYPE src_type;
+
+  src_id = (int) exp->buf[ary_arg].array.idx;
+  src_type = exp->buf[ary_arg].array.array_type;
+  if (math_function_call_expression_get_variable(exp, var_arg, variable)) {
+    return 1;
+  }
+  if (src_type != variable->type) {
+    return 1;
+  }
+  *src = math_equation_get_type_array(eq, src_type, src_id);
+  *id = src_id;
+  *type = src_type;
+  return 0;
+}
+
 int
 math_func_each(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
