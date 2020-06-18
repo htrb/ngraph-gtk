@@ -3832,7 +3832,6 @@ math_func_each(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
 {
   int src_id, i, n;
   MathEquationArray *src;
-  MathCommonValue cval;
   MathValue val;
   MathVariable variable;
   enum DATA_TYPE src_type;
@@ -3840,24 +3839,13 @@ math_func_each(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   rval->val = 0;
   rval->type = MATH_VALUE_NORMAL;
 
-  src_id = (int) exp->buf[0].array.idx;
-  src_type = exp->buf[0].array.array_type;
-  if (math_function_call_expression_get_variable(exp, 1, &variable)) {
+  if (get_common_array(exp, eq, 0, 1, &src_id, &src_type, &variable, &src)) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
   }
-  if (src_type != variable.type) {
-    rval->type = MATH_VALUE_ERROR;
-    return 1;
-  }
-  src = math_equation_get_type_array(eq, src_type, src_id);
   n = src->num;
   for (i = 0; i < n; i++) {
-    if(math_equation_get_array_common_value(eq, src_id, i, src_type, &cval)) {
-      rval->type = MATH_VALUE_ERROR;
-      return 1;
-    }
-    if (math_variable_set_common_value(&variable, &cval)) {
+    if (set_common_array(eq, src_id, i, src_type, &variable)) {
       rval->type = MATH_VALUE_ERROR;
       return 1;
     }
