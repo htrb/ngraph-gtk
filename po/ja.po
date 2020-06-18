@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.07.06\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
 "POT-Creation-Date: 2020-06-18 15:52+0900\n"
-"PO-Revision-Date: 2020-06-18 15:51+0900\n"
+"PO-Revision-Date: 2020-06-18 18:23+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja\n"
@@ -3050,7 +3050,6 @@ msgstr ""
 "配列 <i>a</i> に含まれる最小の値を返す"
 
 #: src/gtk/completion_info_data.c:18
-#, fuzzy
 msgid ""
 "<b>array_moving_average</b>(<i>dest, src, n, type</i>)\n"
 "calculate moving average of (<i>n</i> * 2 + 1) sample of the array <i>src</"
@@ -3058,7 +3057,7 @@ msgid ""
 "and set them to the array <i>dest</i>.\n"
 "Weighted moving average is used when <i>type</i> is 1."
 msgstr ""
-"<b>map</b>(<i>dest, src, item, ex</i>)\n"
+"<b>array_moving_average</b>(<i>dest, src, n, type</i>)\n"
 "配列 <i>src</i> の隣接平均を計算し、配列 <i>dest</i> に格納する。\n"
 "隣接平均の計算に使われるデータ数を <i>n</i> で指定する\n"
 "(1 の時、前後1つのデータと合わせて3つのデータの平均がとられる)。\n"
@@ -4902,13 +4901,12 @@ msgstr ""
 "偽の値 (0)"
 
 #: src/gtk/completion_info_data.c:208
-#, fuzzy
 msgid ""
 "<b>FILE_OBJ</b>\n"
 "The identification number of the file object"
 msgstr ""
-"<b>TEXT_OBJ</b>\n"
-"text オブジェクトのオブジェクト識別番号"
+"<b>FILE_OBJ</b>\n"
+"file オブジェクトのオブジェクト識別番号"
 
 #: src/gtk/completion_info_data.c:209
 msgid ""
