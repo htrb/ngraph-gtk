@@ -3606,33 +3606,31 @@ map_string(MathFunctionCallExpression *exp, MathEquation *eq, int src_id, int de
 int
 math_func_map(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  int src_id, dest_id, n;
-  enum DATA_TYPE src_type, vtype;
+  int src_id, dest_id, i, n;
+  enum DATA_TYPE src_type;
+  MathEquationArray *src;
+  MathValue val;
+  MathVariable variable;
 
   rval->val = 0;
   rval->type = MATH_VALUE_NORMAL;
 
   dest_id = (int) exp->buf[0].array.idx;
-  src_id = (int) exp->buf[1].array.idx;
-  src_type = exp->buf[1].array.array_type;
-  vtype = math_expression_get_variable_type_from_argument(exp, 2);
-  if (src_type != vtype) {
+  if (get_common_array(exp, eq, 1, 2, &src_id, &src_type, &variable, &src)) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
   }
 
-  switch (src_type) {
-  case DATA_TYPE_VALUE:
-    n = map_value(exp, eq, src_id, dest_id, 2);
-    break;
-  case DATA_TYPE_STRING:
-    n = map_string(exp, eq, src_id, dest_id, 2);
-    break;
-  }
-
-  if (n < 0) {
-    rval->type = MATH_VALUE_ERROR;
-    return 1;
+  n = src->num;
+  for (i = 0; i < n; i++) {
+    if (set_common_array(eq, src_id, i, src_type, &variable)) {
+      rval->type = MATH_VALUE_ERROR;
+      return 1;
+    }
+    math_expression_calculate(exp->buf[3].exp, &val);
+    if (math_equation_set_array_val(eq, dest_id, i, &val)) {
+      return 1;
+    }
   }
 
   rval->val = n;
