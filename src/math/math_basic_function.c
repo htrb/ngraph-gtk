@@ -3132,7 +3132,7 @@ moving_average(MathEquation *eq, int dest, MathEquationArray *src, int avg_n, in
     MathValue val;
 
     if (src->data.val[i].type != MATH_VALUE_NORMAL) {
-      arrayadd(&array, &val);
+      arrayadd(&array, src->data.val + i);
       continue;
     }
 
