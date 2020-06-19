@@ -3118,11 +3118,11 @@ math_func_array_average(MathFunctionCallExpression *exp, MathEquation *eq, MathV
 static int
 moving_average(MathEquation *eq, int dest, MathEquationArray *src, int avg_n, int n, int type)
 {
-  int i, r;
+  int i, r, dest_n;
+  struct narray array;
+  MathValue *val_array;
 
-  if (math_equation_clear_array(eq, dest)) {
-    return 1;
-  }
+  arrayinit(&array, sizeof(*val_array));
 
   r = (type) ? 1 : 0;
   avg_n = abs(avg_n);
@@ -3132,9 +3132,7 @@ moving_average(MathEquation *eq, int dest, MathEquationArray *src, int avg_n, in
     MathValue val;
 
     if (src->data.val[i].type != MATH_VALUE_NORMAL) {
-      if (math_equation_push_array_val(eq, dest, src->data.val + i)) {
-        return 1;
-      }
+      arrayadd(&array, &val);
       continue;
     }
 
@@ -3157,10 +3155,22 @@ moving_average(MathEquation *eq, int dest, MathEquationArray *src, int avg_n, in
     }
     val.val = sum / sum_n;
     val.type = MATH_VALUE_NORMAL;
-    if (math_equation_push_array_val(eq, dest, &val)) {
+    arrayadd(&array, &val);
+  }
+  dest_n = arraynum(&array);
+  val_array = arraydata(&array);
+  for (i = 0; i < n; i++) {
+    if (math_equation_set_array_val(eq, dest, i, val_array + i)) {
+      arraydel(&array);
       return 1;
     }
   }
+  arraydel(&array);
+
+  if (n != dest_n) {
+    return 1;
+  }
+
   return 0;
 }
 
