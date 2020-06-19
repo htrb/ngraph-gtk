@@ -94,6 +94,7 @@ index		3	1	0	10,20,30
 each		3	1	0	12,22,30
 each_with_index 4	1	0	12,22,20,30
 zip		5	1	0	12,12,22,22,30
+zip_map		6	1	0	10,12,12,22,22,30
 reduce		4	1	0	12,22,20,30
 array_copy	2	1	0	12,12
 array_clear	1	1	0	12
