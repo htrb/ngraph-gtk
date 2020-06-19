@@ -10,7 +10,7 @@
 2*!3#0
 2!3#6
 const a:123*4;a#492
-const bbb:=123*4;bbb#492
+const bbb=123*4;bbb#492
 def f(x,y){x*y};f(2,3)#6
 ICBETA(2,3,0.4)#0.5248
 ISNORMAL(0)#1
@@ -26,14 +26,14 @@ ISUNDEF(dif(2))#1
 ISUNDEF(UNDEF)#1
 ISCONT(OR(1,cont))#1
 ISBREAK(AND(0,break))#1
-a[0]:=2;a[1]:=1;SORT(a);a[0]#1
+a[0]=2;a[1]=1;SORT(a);a[0]#1
 a[10]#0
-a[0]:1=a[1]:=2;RSORT(a);a[0]#2
-a[10]:=10;SIZE(a)#11
-b[0]:=2;b[1]:=1;SORT(b);b[0]#1
+a[0]:1=a[1]=2;RSORT(a);a[0]#2
+a[10]=10;SIZE(a)#11
+b[0]=2;b[1]=1;SORT(b);b[0]#1
 b[10]#0
-b[0]:=1;b[1]:=2;RSORT(b);b[0]#2
-b[10]:=10;SIZE(b)#11
+b[0]=1;b[1]=2;RSORT(b);b[0]#2
+b[10]=10;SIZE(b)#11
 UNLESS(1,2,3)#3
 UNLESS(0,2,3)#2
 break::break#0
@@ -113,7 +113,7 @@ inu(1.5,2.3)#1.5208328933032E+00
 knu(1.5,2.3)#1.1887891043736E-01
 prog1(1,2,3)#1
 prog2(1,b:2,3)#2
-prog2(1,b:=2,3)#2
+prog2(1,b=2,3)#2
 b#2
 progn(1,2,3)#3
 progn(1,2,UNDEF)#undefined
@@ -188,12 +188,21 @@ ge(0.00501, 0.0050, 3)#1
 9.000 000 000 000 002==9.000 000 000 000 000#0
 0.6==0.60#1
 0.3==0.30#1
-b:=3;b*=2;b#6
-b:=3;b+=2;b#5
-b:=3;b-=2;b#1
-b:=3;b/=2;b#1.5
-b:=3;b\=2;b#1
-b:=3;b^=2;b#9
+b=3;b*=2#6
+b=3;b+=2#5
+b=3;b-=2#1
+b=3;b/=2#1.5
+b=3;b\=2#1
+b=3;b^=2#9
+array_clear(a)#0
+i=0#0
+a[i+=1]+=1#1
+a[0]#0
+a[1]#1
+i=0#0
+a[i+=1]=a[i+=1]+1#2
+a[1]#1
+a[2]#2
 fmod(5,3)#2
 array_clear(a)#0
 size(a)#0
@@ -210,7 +219,7 @@ array(a, 1, 2, 3, 4, 5)#5
 array_average(a)#3
 array_stdevp(a)#1.414213562373095e+00
 array_stdev(a)#1.581138830084190e+00
-$str:="a b c"#0
+$str="a b c"#0
 string_split($sary, $str, " ")#3
 string_compare($sary[0], "a")#0
 string_compare($sary[1], "a")#1
@@ -249,7 +258,7 @@ ary[4]==7.89#1
 string_float($sa[0])==1.2#1
 array_clear($sa)#0
 size($sa)==0#1
-$str:="  abcde f	 "#0
+$str="  abcde f	 "#0
 string_strip($str);
 string_compare($str, 'abcde f')#0
 sprintf($str, 'abc %^.3g def %d')==16#1
@@ -264,7 +273,7 @@ array(b, 1, 2, 3, 4, 5)#5
 map(dest, b, b, b^2)#5
 dest[0]==1#1
 dest[4]==25#1
-r:=1#1
+r=1#1
 reduce(b, item, r, item*r)==120#1
 filter(dest, b, item, item\2)#3
 dest[0]==1#1
@@ -283,12 +292,12 @@ a[2]==3#1
 a[3]==4#1
 a[4]==5#1
 index(a, item, item==3)==2#1
-r:=0#0
+r=0#0
 reduce($sa, $str, r, r + string_length($str))==15#1
 filter($sa2, $sa, $str, string_length($str)\2==0)==2#1
 string_compare($sa2[0], "12")#0
 string_compare($sa2[1], "1234")#0
-each_with_index($sa, $s, i, dest[i] := string_float($s))==5#1
+each_with_index($sa, $s, i, dest[i] = string_float($s))==5#1
 dest[0]==1#1
 dest[2]==123#1
 dest[4]==12345#1
@@ -297,8 +306,13 @@ string_compare("a#{$sa[2]/2}b", "a61.5b")#0
 string_compare("a#{dest[4]}b", "a12345b")#0
 string_compare("a#{dest[4]*2}b", "a24690b")#0
 string_compare("a#{'xyz'}b", "axyzb")#0
-$str:=$sa[2]#0
-string_compare("a#{$str}b", "a123b")#0
+"a#{$sa[2]}b"=="a123b"#1
+"a#{$sa[2]/2}b"!="a61.5b"#0
+"a#{dest[4]}b"=="a12345b"#1
+"a#{dest[4]*2}b"!="a24690b"#0
+"a#{'xyz'}b"=="axyzb"#1
+$str=$sa[2]#0
+"a#{$str}b"=="a123b"#1
 times(10,i,sum(i+1))==55#1
 {1;2;3}==3#1
 {1;2;3;{4;5;6}}==6#1
@@ -308,7 +322,28 @@ times(10,i,sum(i+1))==55#1
 isbreak("BREAK")#1
 iscont("CONT")#1
 isnan("nan")#1
-$a:=0.0112233#0
+$a=0.0112233#0
 string_compare($a, "0.0112233")#0
 round(1.25, 1)#1.3
 round(125, -1)#130
+array(a, 3, 7, 1, 4, 5, 8, 2, 9, 6)#9
+array_moving_average(b, a, 2)#9
+b[0]#3.6666666666666666666
+b[1]#3.75
+b[2]#4
+b[3]#5
+b[4]#4
+b[5]#5.6
+b[6]#6
+b[7]#6.25
+b[8]#5.66666666666666666666
+array_moving_average(a, a, 2, TRUE)#9
+a[0]#4
+a[1]#4.125
+a[2]#3.66666666666666666666
+a[3]#4.33333333333333333333
+a[4]#4.66666666666666666666
+a[5]#5.66666666666666666666
+a[6]#5.66666666666666666666
+a[7]#6.375
+a[8]#6.33333333333333333333
