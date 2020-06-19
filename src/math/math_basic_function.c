@@ -3549,31 +3549,6 @@ math_func_string_float(MathFunctionCallExpression *exp, MathEquation *eq, MathVa
 }
 
 static int
-map_value(MathFunctionCallExpression *exp, MathEquation *eq, int src_id, int dest_id, int var_index)
-{
-  int i, n;
-  MathEquationArray *src;
-  MathValue val, *vptr;
-  src = math_equation_get_array(eq, src_id);
-  vptr = math_expression_get_variable_from_argument(exp, var_index);
-  if (src == NULL || vptr == NULL) {
-    return -1;
-  }
-
-  n = src->num;
-  for (i = 0; i < n; i++) {
-    if (math_equation_get_array_val(eq, src_id, i, vptr)) {
-      return -1;
-    }
-    math_expression_calculate(exp->buf[3].exp, &val);
-    if (math_equation_set_array_val(eq, dest_id, i, &val)) {
-      return -1;
-    }
-  }
-  return n;
-}
-
-static int
 map_string(MathFunctionCallExpression *exp, MathEquation *eq, int src_id, int dest_id, int var_index)
 {
   int i, n;
