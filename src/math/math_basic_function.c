@@ -39,6 +39,8 @@
 static MathValue *Memory = NULL;
 
 static int compare_double_with_prec(long double a, long double b, int prec);
+static int set_common_array(MathEquation *eq, int id, int i, enum DATA_TYPE type, MathVariable *variable);
+static int get_common_array(MathFunctionCallExpression *exp, MathEquation *eq, int ary_arg, int var_arg, int *id, enum DATA_TYPE *type, MathVariable *variable, MathEquationArray **src);
 
 int
 math_func_time(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
