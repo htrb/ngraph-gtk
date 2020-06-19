@@ -3883,6 +3883,47 @@ math_func_zip(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
 }
 
 int
+math_func_zip_map(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int dest_id, src1_id, src2_id, i, n;
+  MathEquationArray *src1, *src2;
+  MathValue val;
+  MathVariable variable1, variable2;
+  enum DATA_TYPE src1_type, src2_type;
+
+  rval->val = 0;
+  rval->type = MATH_VALUE_NORMAL;
+
+  dest_id = (int) exp->buf[0].array.idx;
+  if (get_common_array(exp, eq, 1, 3, &src1_id, &src1_type, &variable1, &src1)) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+  if (get_common_array(exp, eq, 2, 4, &src2_id, &src2_type, &variable2, &src2)) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+  n = MIN(src1->num, src2->num);
+  for (i = 0; i < n; i++) {
+    if (set_common_array(eq, src1_id, i, src1_type, &variable1)) {
+      rval->type = MATH_VALUE_ERROR;
+      return 1;
+    }
+    if (set_common_array(eq, src2_id, i, src2_type, &variable2)) {
+      rval->type = MATH_VALUE_ERROR;
+      return 1;
+    }
+    math_expression_calculate(exp->buf[5].exp, &val);
+    if (math_equation_set_array_val(eq, dest_id, i, &val)) {
+      return 1;
+    }
+  }
+
+  rval->val = n;
+  return 0;
+}
+
+int
 math_func_reduce(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   int src_id, i, n;
