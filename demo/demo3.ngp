@@ -1,6 +1,6 @@
 #!ngraph
 #%creator: Ngraph 
-#%version: 6.08.04
+#%version: 6.08.05
 new axis name:fX1
 	axis::hidden=false
 	axis::R=0
@@ -490,7 +490,7 @@ new data
 	data::type=mark
 	data::interpolation=spline
 	data::fit=
-	data::math_x='if (%0 > 2, dir := -45);
+	data::math_x='if (%0 > 2, dir = -45);
 text_align(0, 1);
 text_size(18);
 draw_text($col[1], x + 0.1, y, dir);
@@ -598,7 +598,7 @@ new data
 	data::type=mark
 	data::interpolation=spline
 	data::fit=
-	data::math_x='if (%0 > 2, dir := -45);
+	data::math_x='if (%0 > 2, dir = -45);
 text_align(0, 1);
 text_size(18);
 draw_text($col[1], x + 0.1, y, dir);
@@ -655,7 +655,7 @@ new data
 	data::interpolation=spline
 	data::fit=
 	data::math_x=
-	data::math_y='y := 1.05;
+	data::math_y='y = 1.05;
 if(%0 == 3,
   {
     text_align(0, 0.5);
