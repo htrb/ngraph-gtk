@@ -1,6 +1,6 @@
 #!ngraph
-#%creator: Ngraph
-#%version: 6.07.05
+#%creator: Ngraph 
+#%version: 6.08.05
 new axis name:fX1
 	axis::hidden=false
 	axis::R=0
@@ -60,7 +60,7 @@ new axis name:fX1
 	axis::num_font_style=0
 	axis::num_script_size=7000
 	axis::num_align=center
-	axis::num_no_zero=false
+	axis::num_no_zero=regular
 	axis::num_direction=horizontal
 	axis::num_shift_p=0
 	axis::num_shift_n=100
@@ -130,7 +130,7 @@ new axis name:fY1
 	axis::num_font_style=0
 	axis::num_script_size=7000
 	axis::num_align=right
-	axis::num_no_zero=false
+	axis::num_no_zero=regular
 	axis::num_direction=horizontal
 	axis::num_shift_p=0
 	axis::num_shift_n=400
@@ -200,7 +200,7 @@ new axis name:fU1
 	axis::num_font_style=0
 	axis::num_script_size=7000
 	axis::num_align=center
-	axis::num_no_zero=false
+	axis::num_no_zero=regular
 	axis::num_direction=horizontal
 	axis::num_shift_p=0
 	axis::num_shift_n=100
@@ -270,7 +270,7 @@ new axis name:fR1
 	axis::num_font_style=0
 	axis::num_script_size=7000
 	axis::num_align=left
-	axis::num_no_zero=false
+	axis::num_no_zero=regular
 	axis::num_direction=horizontal
 	axis::num_shift_p=0
 	axis::num_shift_n=100
@@ -342,7 +342,7 @@ new axis name:cX1
 	axis::num_font_style=0
 	axis::num_script_size=7000
 	axis::num_align=center
-	axis::num_no_zero=false
+	axis::num_no_zero=regular
 	axis::num_direction=horizontal
 	axis::num_shift_p=0
 	axis::num_shift_n=100
@@ -412,7 +412,7 @@ new axis name:cY1
 	axis::num_font_style=0
 	axis::num_script_size=7000
 	axis::num_align=right
-	axis::num_no_zero=false
+	axis::num_no_zero=regular
 	axis::num_direction=horizontal
 	axis::num_shift_p=0
 	axis::num_shift_n=400
@@ -440,14 +440,14 @@ new data
 	data::type=mark
 	data::interpolation=spline
 	data::fit=
-	data::math_x='ofst_x := %0 * 2.5;
-ofst_y := -%0 / 40;
+	data::math_x='ofst_x = %0 * 2.5;
+ofst_y = -%0 / 40;
 shift(col);                    # remove %0 from the array col
-n := size(col);                # number of the data
+n = size(col);                # number of the data
 each_with_index(col, y, i,     # initialize arrays for polyline
   {
-    ax[i] := i + ofst_x;
-    ay[i] := y + ofst_y;
+    ax[i] = i + ofst_x;
+    ay[i] = y + ofst_y;
   });
 unshift(ax, ax[0]);            # add first x for a polygon mask
 unshift(ay, ofst_y);           # add first y for a polygon mask
@@ -466,6 +466,7 @@ x;'
 	data::func_h=
 	data::smooth_x=0
 	data::smooth_y=0
+	data::averaging_type=simple
 	data::mark_type=0
 	data::mark_size=0
 	data::line_width=20
@@ -523,6 +524,7 @@ x - 1'
 	data::func_h=
 	data::smooth_x=0
 	data::smooth_y=0
+	data::averaging_type=simple
 	data::mark_type=0
 	data::mark_size=0
 	data::line_width=10
@@ -574,8 +576,8 @@ new data
     draw_line(0, COLY, size(col), COLY);
   }); # draw a horizontal line
 x * h();'
-	data::math_y='const SCALE := h();
-n := size(col);              # number of the data
+	data::math_y='const SCALE = h();
+n = size(col);              # number of the data
 if(%0 == COLY,               # if data row is COLY
   times(n - 2, i,        # draw horizontal data
     draw_line(i,     col[i + 1] * SCALE,
@@ -586,6 +588,7 @@ if(%0 == COLY,               # if data row is COLY
 	data::func_h='100'
 	data::smooth_x=0
 	data::smooth_y=0
+	data::averaging_type=simple
 	data::mark_type=0
 	data::mark_size=0
 	data::line_width=40
