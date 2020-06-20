@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.08.05\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2020-06-18 15:52+0900\n"
+"POT-Creation-Date: 2020-06-20 20:21+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2794,41 +2794,41 @@ msgstr ""
 msgid "Making GRA file."
 msgstr ""
 
-#: src/gtk/x11print.c:793 src/gtk/x11print.c:866 src/gtk/x11view.c:5677
+#: src/gtk/x11print.c:793 src/gtk/x11print.c:866 src/gtk/x11view.c:5679
 msgid "Drawing."
 msgstr ""
 
-#: src/gtk/x11view.c:1268 src/gtk/x11view.c:1270
+#: src/gtk/x11view.c:1270 src/gtk/x11view.c:1272
 #, c-format
 msgid "Searching for data."
 msgstr ""
 
-#: src/gtk/x11view.c:1380
+#: src/gtk/x11view.c:1382
 #, c-format
 msgid "Evaluating."
 msgstr ""
 
-#: src/gtk/x11view.c:1383
+#: src/gtk/x11view.c:1385
 msgid "Evaluating"
 msgstr ""
 
-#: src/gtk/x11view.c:1461
+#: src/gtk/x11view.c:1463
 msgid "trimming (multi select)"
 msgstr ""
 
-#: src/gtk/x11view.c:2847
+#: src/gtk/x11view.c:2849
 msgid "Data points are moved."
 msgstr ""
 
-#: src/gtk/x11view.c:4173
+#: src/gtk/x11view.c:4175
 msgid "Moving data points is canceled."
 msgstr ""
 
-#: src/gtk/x11view.c:5671
+#: src/gtk/x11view.c:5673
 msgid "Scaling"
 msgstr ""
 
-#: src/gtk/x11view.c:5678
+#: src/gtk/x11view.c:5680
 msgid "Drawing"
 msgstr ""
 
@@ -4167,160 +4167,170 @@ msgid ""
 "<i>item2</i>."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:187
+#: src/gtk/completion_info_data.c:184
+msgid ""
+"<b>zip_map</b>(<i>dest, src1, src2, item1, item2, ex</i>)\n"
+"Evaluate <i>ex</i> for each element of two arrays <i>src1</i> and <i>sec2</"
+"i>\n"
+"and set them to the array <i>dest</i>..\n"
+"The elements of the arrays can be referred by the variable <i>item1</i> and "
+"<i>item2</i>."
+msgstr ""
+
+#: src/gtk/completion_info_data.c:188
 msgid ""
 "<b>%D</b>\n"
 "The ID of the instance of the data object"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:188
+#: src/gtk/completion_info_data.c:189
 msgid ""
 "<b>%N</b>\n"
 "The number of instances of data object"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:189
+#: src/gtk/completion_info_data.c:190
 msgid ""
 "<b>ARC_OBJ</b>\n"
 "The identification number of the arc object"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:190
+#: src/gtk/completion_info_data.c:191
 msgid ""
 "<b>AVX</b>\n"
 "The average of X"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:191
+#: src/gtk/completion_info_data.c:192
 msgid ""
 "<b>AVY</b>\n"
 "The average of X"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:192
+#: src/gtk/completion_info_data.c:193
 msgid ""
 "<b>AXISX</b>\n"
 "The ID of the axis instance specified as X axis"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:193
+#: src/gtk/completion_info_data.c:194
 msgid ""
 "<b>AXISX_LEN</b>\n"
 "Length of the X axis"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:194
+#: src/gtk/completion_info_data.c:195
 msgid ""
 "<b>AXISX_MAX</b>\n"
 "The maximum value of the X axis"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:195
+#: src/gtk/completion_info_data.c:196
 msgid ""
 "<b>AXISX_MIN</b>\n"
 "The minimum value of the X axis"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:196
+#: src/gtk/completion_info_data.c:197
 msgid ""
 "<b>AXISY</b>\n"
 "The ID of the axis instance specified as Y axis"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:197
+#: src/gtk/completion_info_data.c:198
 msgid ""
 "<b>AXISY_LEN</b>\n"
 "Length of the Y axis"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:198
+#: src/gtk/completion_info_data.c:199
 msgid ""
 "<b>AXISY_MAX</b>\n"
 "The maximum value of the Y axis"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:199
+#: src/gtk/completion_info_data.c:200
 msgid ""
 "<b>AXISY_MIN</b>\n"
 "The minimum value of the Y axis"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:200
+#: src/gtk/completion_info_data.c:201
 msgid ""
 "<b>BREAK</b>\n"
 "Missing data (data lines are not combined)"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:201
+#: src/gtk/completion_info_data.c:202
 msgid ""
 "<b>COLX</b>\n"
 "The column number specified for X"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:202
+#: src/gtk/completion_info_data.c:203
 msgid ""
 "<b>COLY</b>\n"
 "The column number specified for Y"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:203
+#: src/gtk/completion_info_data.c:204
 msgid ""
 "<b>CONT</b>\n"
 "Missing data (data lines are combined)"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:204
+#: src/gtk/completion_info_data.c:205
 msgid ""
 "<b>DATA_OBJ</b>\n"
 "The identification number of the data object"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:205
+#: src/gtk/completion_info_data.c:206
 msgid ""
 "<b>E</b>\n"
 "The base of natural logarithm (Napier's constant)"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:206
+#: src/gtk/completion_info_data.c:207
 msgid ""
 "<b>EULER</b>\n"
 "Euler's constant"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:207
+#: src/gtk/completion_info_data.c:208
 msgid ""
 "<b>FALSE</b>\n"
 "the FALSE value (0)"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:208
+#: src/gtk/completion_info_data.c:209
 msgid ""
 "<b>FILE_OBJ</b>\n"
 "The identification number of the file object"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:209
+#: src/gtk/completion_info_data.c:210
 msgid ""
 "<b>FILL_RULE_EVEN_ODD</b>\n"
 "Defined for the function <b>draw_polygon</b>().\n"
 "fill the polygon with evin-odd rule."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:210
+#: src/gtk/completion_info_data.c:211
 msgid ""
 "<b>FILL_RULE_NONE</b>\n"
 "Defined for the function <b>draw_polygon</b>().\n"
 "don't fill the polygon."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:211
+#: src/gtk/completion_info_data.c:212
 msgid ""
 "<b>FILL_RULE_WINDING</b>\n"
 "Defined for the function <b>draw_polygon</b>().\n"
 "fill the polygon with winding rule."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:212
+#: src/gtk/completion_info_data.c:213
 msgid ""
 "<b>FIRST</b>\n"
 "When conversion is performed twice with one line of data such as diagonal or "
@@ -4328,163 +4338,163 @@ msgid ""
 "true (1) in the first call, false (0) in the second call."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:213
+#: src/gtk/completion_info_data.c:214
 msgid ""
 "<b>FLINE</b>\n"
 "Number of lines specified as \"Final line\""
 msgstr ""
 
-#: src/gtk/completion_info_data.c:214
+#: src/gtk/completion_info_data.c:215
 msgid ""
 "<b>HSKIP</b>\n"
 "Number of lines specified as \"Head skip\""
 msgstr ""
 
-#: src/gtk/completion_info_data.c:215
+#: src/gtk/completion_info_data.c:216
 msgid ""
 "<b>MARK_OBJ</b>\n"
 "The identification number of the mark object"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:216
+#: src/gtk/completion_info_data.c:217
 msgid ""
 "<b>MASK</b>\n"
 "Number of lines set for mask"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:217
+#: src/gtk/completion_info_data.c:218
 msgid ""
 "<b>MAXX</b>\n"
 "The maximum value of X"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:218
+#: src/gtk/completion_info_data.c:219
 msgid ""
 "<b>MAXY</b>\n"
 "The maximum value of Y"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:219
+#: src/gtk/completion_info_data.c:220
 msgid ""
 "<b>MINX</b>\n"
 "The minimum value of X"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:220
+#: src/gtk/completion_info_data.c:221
 msgid ""
 "<b>MINY</b>\n"
 "The minimum value of Y"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:221
+#: src/gtk/completion_info_data.c:222
 msgid ""
 "<b>MOVE</b>\n"
 "Number of lines set for move"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:222
+#: src/gtk/completion_info_data.c:223
 msgid ""
 "<b>NAN</b>\n"
 "Missing data with error indication"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:223
+#: src/gtk/completion_info_data.c:224
 msgid ""
 "<b>NUM</b>\n"
 "The number of the data"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:224
+#: src/gtk/completion_info_data.c:225
 msgid ""
 "<b>PATH_OBJ</b>\n"
 "The identification number of the path object"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:225
+#: src/gtk/completion_info_data.c:226
 msgid ""
 "<b>PI</b>\n"
 "Pi"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:226
+#: src/gtk/completion_info_data.c:227
 msgid ""
 "<b>RECT_OBJ</b>\n"
 "The identification number of the rectangle object"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:227
+#: src/gtk/completion_info_data.c:228
 msgid ""
 "<b>RSTEP</b>\n"
 "Number of lines specified as \"Read step\""
 msgstr ""
 
-#: src/gtk/completion_info_data.c:228
+#: src/gtk/completion_info_data.c:229
 msgid ""
 "<b>STDEVPX</b>\n"
 "The standard deviation of X"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:229
+#: src/gtk/completion_info_data.c:230
 msgid ""
 "<b>STDEVPY</b>\n"
 "The standard deviation of Y"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:230
+#: src/gtk/completion_info_data.c:231
 msgid ""
 "<b>STDEVX</b>\n"
 "The corrected sample standard deviation of X"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:231
+#: src/gtk/completion_info_data.c:232
 msgid ""
 "<b>STDEVY</b>\n"
 "The corrected sample standard deviation of Y"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:232
+#: src/gtk/completion_info_data.c:233
 msgid ""
 "<b>SUMX</b>\n"
 "Sum of X"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:233
+#: src/gtk/completion_info_data.c:234
 msgid ""
 "<b>SUMXX</b>\n"
 "Square sum of X"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:234
+#: src/gtk/completion_info_data.c:235
 msgid ""
 "<b>SUMXY</b>\n"
 "Product sum of X and Y"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:235
+#: src/gtk/completion_info_data.c:236
 msgid ""
 "<b>SUMY</b>\n"
 "Sum of Y"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:236
+#: src/gtk/completion_info_data.c:237
 msgid ""
 "<b>SUMYY</b>\n"
 "Square sum of Y"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:237
+#: src/gtk/completion_info_data.c:238
 msgid ""
 "<b>TEXT_OBJ</b>\n"
 "The identification number of the text object"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:238
+#: src/gtk/completion_info_data.c:239
 msgid ""
 "<b>TRUE</b>\n"
 "the TRUE value (1)"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:239
+#: src/gtk/completion_info_data.c:240
 msgid ""
 "<b>UNDEF</b>\n"
 "Missing data without error indication"
