@@ -190,5 +190,6 @@ enum DATA_TYPE math_expression_get_variable_type_from_argument(MathFunctionCallE
 
 int math_function_call_expression_get_variable(MathFunctionCallExpression *exp, int i, MathVariable *var);
 int math_variable_set_common_value(MathVariable *variable, MathCommonValue *val);
+const char *math_expression_get_cstring(MathExpression *exp);
 
 #endif

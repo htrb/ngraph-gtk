@@ -2132,6 +2132,12 @@ get_cstring_from_expression(MathExpression *exp)
   return cstr;
 }
 
+const char *
+math_expression_get_cstring(MathExpression *exp)
+{
+  return get_cstring_from_expression(exp);
+}
+
 static int
 compare_string(MathExpression *left, MathExpression *right, int equal, MathValue *val)
 {
