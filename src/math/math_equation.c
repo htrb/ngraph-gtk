@@ -1983,7 +1983,7 @@ math_equation_push_array_str(MathEquation *eq, int array, const char *str)
 {
   MathEquationArray *ary;
 
-  ary = math_equation_get_array(eq, array);
+  ary = math_equation_get_string_array(eq, array);
   if (ary == NULL) {
     return 1;
   }
