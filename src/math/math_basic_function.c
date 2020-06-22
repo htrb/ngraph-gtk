@@ -2848,26 +2848,40 @@ math_func_shift(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rv
 int
 math_func_unshift(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  enum DATA_TYPE type;
   int id;
   MathEquationArray *ary;
+  MathExpression *arg_exp;
+  MathValue val;
 
   rval->val = 0;
 
   id = (int) exp->buf[0].array.idx;
-  ary = math_equation_get_array(eq, id);
-
+  type = exp->buf[0].array.array_type;
+  ary = math_equation_get_type_array(eq, type, id);
   if (ary == NULL) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
   }
 
-  if (math_equation_set_array_val(eq, id, ary->num, &exp->buf[1].val)) {
-    rval->type = MATH_VALUE_ERROR;
-    return 1;
-  }
-
-  if (ary->num > 1) {
-    memmove(ary->data.val + 1, ary->data.val, sizeof(*ary->data.val) * (ary->num - 1));
+  arg_exp = exp->buf[1].exp;
+  if (type == DATA_TYPE_VALUE) {
+    math_expression_calculate(arg_exp, &val);
+    if (math_equation_unshift_array_val(eq, id, &val)) {
+      rval->type = MATH_VALUE_ERROR;
+      return 1;
+    }
+  } else {
+    const char *str;
+    str = math_expression_get_cstring(arg_exp);
+    if (str == NULL) {
+      rval->type = MATH_VALUE_ERROR;
+      return 1;
+    }
+    if (math_equation_unshift_array_str(eq, id, str)) {
+      rval->type = MATH_VALUE_ERROR;
+      return 1;
+    }
   }
 
   rval->val = ary->num;
