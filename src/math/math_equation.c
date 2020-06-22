@@ -2104,6 +2104,31 @@ math_equation_get_array_common(MathArray *array, int id)
   return &array->buf[id];
 }
 
+int
+math_equation_pop_array(MathEquation *eq, int array, int type)
+{
+  MathEquationArray *ary;
+  int i;
+
+  ary = math_equation_get_type_array(eq, type, array);
+  if (ary == NULL) {
+    return 1;
+  }
+  if (ary->num < 1) {
+    return 1;
+  }
+  i = ary->num - 1;
+  if (type == DATA_TYPE_VALUE) {
+    ary->data.val[i].val = 0;
+    ary->data.val[i].type = MATH_VALUE_NORMAL;
+  } else {
+    g_string_set_size(ary->data.str[i], 0);
+  }
+  ary->num--;
+
+  return 0;
+}
+
 MathEquationArray *
 math_equation_get_array(MathEquation *eq, int id)
 {

@@ -214,6 +214,7 @@ const char *math_equation_get_array_cstr(MathEquation *eq, int array, int index)
 int math_equation_get_array_common_value(MathEquation *eq, int array, int index, enum DATA_TYPE type, MathCommonValue *val);
 int math_equation_set_array_common_value(MathEquation *eq, int array, int index, MathCommonValue *val);
 
+int math_equation_pop_array(MathEquation *eq, int array, int type);
 int math_equation_unshift_array_val(MathEquation *eq, int array, const MathValue *val);
 int math_equation_unshift_array_str(MathEquation *eq, int array, const char *cstr);
 
