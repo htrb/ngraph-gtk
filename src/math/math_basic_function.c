@@ -3751,24 +3751,23 @@ math_func_find(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
 int
 math_func_index(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  enum DATA_TYPE src_type;
   int src_id, i, n;
   MathEquationArray *src;
-  MathValue val, *vptr;
+  MathValue val;
+  MathVariable variable;
 
   rval->val = 0;
   rval->type = MATH_VALUE_UNDEF;
 
-  src_id = (int) exp->buf[0].array.idx;
-  src = math_equation_get_array(eq, src_id);
-  vptr = math_expression_get_variable_from_argument(exp, 1);
-  if (vptr == NULL) {
+  if (get_common_array(exp, eq, 0, 1, &src_id, &src_type, &variable, &src)) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
   }
 
   n = src->num;
   for (i = 0; i < n; i++) {
-    if (math_equation_get_array_val(eq, src_id, i, vptr)) {
+    if (set_common_array(eq, src_id, i, src_type, &variable)) {
       rval->type = MATH_VALUE_ERROR;
       return 1;
     }
