@@ -2766,18 +2766,20 @@ math_func_push(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
 int
 math_func_pop(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  enum DATA_TYPE type;
   int id, i, n;
   MathEquationArray *ary;
 
   rval->val = 0;
 
   id = (int) exp->buf[0].array.idx;
-  ary = math_equation_get_array(eq, id);
+  type = exp->buf[0].array.array_type;
+  ary = math_equation_get_type_array(eq, type, id);
 
   MATH_CHECK_ARG(rval, exp->buf[1]);
   n = exp->buf[1].val.val;
 
-  if (ary == NULL || ary->num < 1 || ary->data.val == NULL) {
+  if (ary == NULL || ary->num < 1) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
   }
@@ -2794,10 +2796,8 @@ math_func_pop(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
   }
 
   for (i = 0; i < n; i++) {
-    ary->data.val[ary->num - i - 1].val = 0;
-    ary->data.val[ary->num - i - 1].type = MATH_VALUE_NORMAL;
+    math_equation_pop_array(eq, id, type);
   }
-  ary->num -= n;
 
   rval->val = ary->num;
   rval->type = MATH_VALUE_NORMAL;
