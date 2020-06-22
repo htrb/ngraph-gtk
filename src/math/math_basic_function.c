@@ -2721,19 +2721,42 @@ rcase_compare_str(const void *p1, const void *p2)
 int
 math_func_push(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  enum DATA_TYPE type;
   int id;
   MathEquationArray *ary;
+  MathExpression *arg_exp;
+  MathValue val;
 
   rval->val = 0;
 
   id = (int) exp->buf[0].array.idx;
-
-  if (math_equation_push_array_val(eq, id, &exp->buf[1].val)) {
+  type = exp->buf[0].array.array_type;
+  ary = math_equation_get_type_array(eq, type, id);
+  if (ary == NULL) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
   }
 
-  ary = math_equation_get_array(eq, id);
+  arg_exp = exp->buf[1].exp;
+  if (type == DATA_TYPE_VALUE) {
+    math_expression_calculate(arg_exp, &val);
+    if (math_equation_push_array_val(eq, id, &val)) {
+      rval->type = MATH_VALUE_ERROR;
+      return 1;
+    }
+  } else {
+    const char *str;
+    str = math_expression_get_cstring(arg_exp);
+    if (str == NULL) {
+      rval->type = MATH_VALUE_ERROR;
+      return 1;
+    }
+    if (math_equation_push_array_str(eq, id, str)) {
+      rval->type = MATH_VALUE_ERROR;
+      return 1;
+    }
+  }
+
   rval->val = ary->num;
   rval->type = MATH_VALUE_NORMAL;
 
