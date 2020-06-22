@@ -90,7 +90,7 @@ size		1	1	0	12
 map		4	1	0	10,12,22,30
 filter		4	1	0	12,12,22,30
 find		3	1	0	10,20,30
-index		3	1	0	10,20,30
+index		3	1	0	12,22,30
 each		3	1	0	12,22,30
 each_with_index 4	1	0	12,22,20,30
 zip		5	1	0	12,12,22,22,30
@@ -128,10 +128,10 @@ knu		2	0	0	NULL	true
 progn		-1	0	0	NULL
 prog1		-1	0	0	NULL
 prog2		-1	0	0	NULL
-push		2	0	0	10,0
-pop		2	0	0	10,0
-unshift		2	0	0	10,0
-shift		2	0	0	10,0
+push		2	0	0	12,30
+pop		2	0	0	12,0
+unshift		2	0	0	12,30
+shift		2	0	0	12,0
 time		0	0	0	NULL
 choose		2	0	0	NULL	true
 fmod		2	0	0	NULL
