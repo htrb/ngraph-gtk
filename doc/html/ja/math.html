@@ -924,6 +924,21 @@
     <td>array_clear($a)</td>
     <td>配列 $a の配列の要素数を 0 にする </td>
   </tr>
+ <tr><td>pop($a, n)</td><td>配列 $a から末尾のn要素を取り除く (n = 0 は n = 1 と同義) 。戻り値は操作後の配列の要素数。</td></tr>
+ <tr><td>push($a, $x)</td><td>配列 $a の末尾に $x を追加する (戻り値は操作後の配列の要素数) </td></tr>
+ <tr><td>shift($a, n)</td><td>配列 $a の先頭のn要素を取り除く (n = 0 は n = 1 と同義) 。残りの要素は前に詰められる。戻り値は操作後の配列の要素数。</td></tr>
+ <tr><td>unshift($a, $x)</td><td>配列 $a の先頭に $x を挿入する (戻り値は操作後の配列の要素数) </td></tr>
+ <tr><td>index($a, $item, ex)</td><td>配列 $a の各要素に対して式 ex を計算し、その結果が真であった最初の要素の位置を返す。第2引数に指定した変数 ($item) で配列の要素を参照できる。</td></tr>
+ <tr><td>filter($dest, $src, $item, ex)</td><td>配列 $src の各要素に対して式 ex を計算し、その結果が真であった要素を配列 $dest に格納する。第3引数に指定した変数 ($item) で配列の要素を参照できる。</td></tr>
+ <tr><td>array_copy($dest, $src)</td><td>配列 $src の各要素を配列 $dest に設定する。</td></tr>
+ <tr><td>map(dest, $src, $item, ex)</td><td>配列 $src の各要素に対して式 ex を計算し、その結果を配列 dest に格納する。第2引数に指定した変数 ($item) で配列の要素を参照できる。</td></tr>
+ <tr><td>reduce($a, $item, result, ex)</td>
+   <td>配列 $a の各要素に対して、
+     式 ex を実行し、最後に実行した結果を返す。第2引数に指定した変数
+     ($item) で配列の要素を、第3引数に指定した変数 (result) で前回の繰り返
+     しにおける計算結果を参照できる。
+   </td>
+ </tr>
 </table>
 <br>
 <h3><a name="OTHER_FUNC">その他の関数</a></h3>
