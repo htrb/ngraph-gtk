@@ -1991,6 +1991,26 @@ math_equation_push_array_str(MathEquation *eq, int array, const char *str)
   return math_equation_set_array_str(eq, array, ary->num, str);
 }
 
+int
+math_equation_unshift_array_val(MathEquation *eq, int array, const MathValue *val)
+{
+  MathEquationArray *ary;
+
+  if (math_equation_push_array_val(eq, array, val)) {
+    return 1;
+  }
+  ary = math_equation_get_array(eq, array);
+  if (ary == NULL) {
+    return 1;
+  }
+  if (ary->num == 1) {
+    return 0;
+  }
+  memmove(ary->data.val + 1, ary->data.val, sizeof(*ary->data.val) * (ary->num - 1));
+  ary->data.val[0] = *val;
+  return 0;
+}
+
 GString *
 math_equation_get_array_str(MathEquation *eq, int array, int index)
 {
