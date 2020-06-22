@@ -2011,6 +2011,28 @@ math_equation_unshift_array_val(MathEquation *eq, int array, const MathValue *va
   return 0;
 }
 
+int
+math_equation_unshift_array_str(MathEquation *eq, int array, const char *cstr)
+{
+  MathEquationArray *ary;
+  GString *str;
+
+  if (math_equation_push_array_str(eq, array, cstr)) {
+    return 1;
+  }
+  ary = math_equation_get_string_array(eq, array);
+  if (ary == NULL) {
+    return 1;
+  }
+  if (ary->num == 1) {
+    return 0;
+  }
+  str = ary->data.str[ary->num - 1];
+  memmove(ary->data.str + 1, ary->data.str, sizeof(*ary->data.str) * (ary->num - 1));
+  ary->data.str[0] = str;
+  return 0;
+}
+
 GString *
 math_equation_get_array_str(MathEquation *eq, int array, int index)
 {
