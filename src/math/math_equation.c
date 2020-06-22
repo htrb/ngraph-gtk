@@ -2129,6 +2129,36 @@ math_equation_pop_array(MathEquation *eq, int array, int type)
   return 0;
 }
 
+int
+math_equation_shift_array(MathEquation *eq, int array, int type)
+{
+  MathEquationArray *ary;
+  int i;
+
+  ary = math_equation_get_type_array(eq, type, array);
+  if (ary == NULL) {
+    return 1;
+  }
+  if (ary->num < 1) {
+    return 1;
+  }
+  i = ary->num - 1;
+  if (type == DATA_TYPE_VALUE) {
+    memmove(ary->data.val, ary->data.val + 1, sizeof(*ary->data.val) * (ary->num - 1));
+    ary->data.val[i].val = 0;
+    ary->data.val[i].type = MATH_VALUE_NORMAL;
+  } else {
+    GString *str;
+    str = ary->data.str[0];
+    memmove(ary->data.str, ary->data.str + 1, sizeof(*ary->data.str) * (ary->num - 1));
+    g_string_set_size(str, 0);
+    ary->data.str[i] = str;
+  }
+  ary->num--;
+
+  return 0;
+}
+
 MathEquationArray *
 math_equation_get_array(MathEquation *eq, int id)
 {
