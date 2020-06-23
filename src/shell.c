@@ -2265,7 +2265,9 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
             }
             if (k > (int) strlen(c2)) {
 	      k=0;
-	    }
+	    } else if (k < 0) {
+              k = 0;            /* fix-me: is it proper? */
+            }
             g_free(c1);
             c1=quotation(nshell,c2+k,quote2);
             g_free(c2);
