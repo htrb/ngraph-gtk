@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.08.05\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2020-06-20 20:21+0900\n"
+"POT-Creation-Date: 2020-06-23 10:19+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2794,41 +2794,41 @@ msgstr ""
 msgid "Making GRA file."
 msgstr ""
 
-#: src/gtk/x11print.c:793 src/gtk/x11print.c:866 src/gtk/x11view.c:5679
+#: src/gtk/x11print.c:793 src/gtk/x11print.c:866 src/gtk/x11view.c:5677
 msgid "Drawing."
 msgstr ""
 
-#: src/gtk/x11view.c:1270 src/gtk/x11view.c:1272
+#: src/gtk/x11view.c:1268 src/gtk/x11view.c:1270
 #, c-format
 msgid "Searching for data."
 msgstr ""
 
-#: src/gtk/x11view.c:1382
+#: src/gtk/x11view.c:1380
 #, c-format
 msgid "Evaluating."
 msgstr ""
 
-#: src/gtk/x11view.c:1385
+#: src/gtk/x11view.c:1383
 msgid "Evaluating"
 msgstr ""
 
-#: src/gtk/x11view.c:1463
+#: src/gtk/x11view.c:1461
 msgid "trimming (multi select)"
 msgstr ""
 
-#: src/gtk/x11view.c:2849
+#: src/gtk/x11view.c:2847
 msgid "Data points are moved."
 msgstr ""
 
-#: src/gtk/x11view.c:4175
+#: src/gtk/x11view.c:4173
 msgid "Moving data points is canceled."
 msgstr ""
 
-#: src/gtk/x11view.c:5673
+#: src/gtk/x11view.c:5671
 msgid "Scaling"
 msgstr ""
 
-#: src/gtk/x11view.c:5680
+#: src/gtk/x11view.c:5678
 msgid "Drawing"
 msgstr ""
 

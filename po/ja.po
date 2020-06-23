@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.07.06\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2020-06-20 20:21+0900\n"
+"POT-Creation-Date: 2020-06-23 10:19+0900\n"
 "PO-Revision-Date: 2020-06-20 20:24+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -2828,41 +2828,41 @@ msgstr "合成ファイルの保存"
 msgid "Making GRA file."
 msgstr "合成ファイル作成中"
 
-#: src/gtk/x11print.c:793 src/gtk/x11print.c:866 src/gtk/x11view.c:5679
+#: src/gtk/x11print.c:793 src/gtk/x11print.c:866 src/gtk/x11view.c:5677
 msgid "Drawing."
 msgstr "描画中"
 
-#: src/gtk/x11view.c:1270 src/gtk/x11view.c:1272
+#: src/gtk/x11view.c:1268 src/gtk/x11view.c:1270
 #, c-format
 msgid "Searching for data."
 msgstr "データ検索中"
 
-#: src/gtk/x11view.c:1382
+#: src/gtk/x11view.c:1380
 #, c-format
 msgid "Evaluating."
 msgstr "データ評価中"
 
-#: src/gtk/x11view.c:1385
+#: src/gtk/x11view.c:1383
 msgid "Evaluating"
 msgstr "データ評価中"
 
-#: src/gtk/x11view.c:1463
+#: src/gtk/x11view.c:1461
 msgid "trimming (multi select)"
 msgstr "トリミング (複数選択)"
 
-#: src/gtk/x11view.c:2849
+#: src/gtk/x11view.c:2847
 msgid "Data points are moved."
 msgstr "データは移動されました."
 
-#: src/gtk/x11view.c:4175
+#: src/gtk/x11view.c:4173
 msgid "Moving data points is canceled."
 msgstr "データの移動はキャンセルされました."
 
-#: src/gtk/x11view.c:5673
+#: src/gtk/x11view.c:5671
 msgid "Scaling"
 msgstr "軸スケール設定中"
 
-#: src/gtk/x11view.c:5680
+#: src/gtk/x11view.c:5678
 msgid "Drawing"
 msgstr "描画中"
 
