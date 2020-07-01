@@ -167,6 +167,7 @@ enum SubWinType {
   TypeMarkWin,
   TypeTextWin,
   TypeMergeWin,
+  TypeParameterWin,
   TypeCoordWin,
   TypeInfoWin,
 };
