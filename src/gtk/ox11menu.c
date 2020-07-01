@@ -967,6 +967,7 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   Menulocal.file_tab = 0;
   Menulocal.axis_tab = 100;
   Menulocal.merge_tab = 101;
+  Menulocal.parameter_tab = 102;
   Menulocal.path_tab = 1;
   Menulocal.rectangle_tab = 2;
   Menulocal.arc_tab = 3;
