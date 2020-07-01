@@ -327,6 +327,16 @@ struct MergeDialog
 };
 void MergeDialog(struct obj_list_data *data, int id, int Sub_id);
 
+struct ParameterDialog
+{
+  DIALOG_PROTOTYPE;
+  /****** local member *******/
+  GtkWidget *type, *min, *max, *step, *active, *value, *items, *redraw, *title;
+  struct objlist *Obj;
+  int Id;
+};
+void ParameterDialog(struct obj_list_data *data, int id, int Sub_id);
+
 struct LegendDialog
 {
   DIALOG_PROTOTYPE;
@@ -583,6 +593,7 @@ extern struct NumDialog DlgNum;
 extern struct AxisFontDialog DlgAxisFont;
 extern struct GaugeDialog DlgGauge;
 extern struct MergeDialog DlgMerge;
+extern struct ParameterDialog DlgParameter;
 extern struct LegendDialog DlgLegendArrow;
 extern struct LegendDialog DlgLegendRect;
 extern struct LegendDialog DlgLegendArc;
