@@ -18,6 +18,7 @@
     <file>pixmaps/ngraph_draw-symbolic.svg</file>
     <file>pixmaps/ngraph_draw-attention-symbolic.svg</file>
     <file>pixmaps/ngraph_eval-symbolic.svg</file>
+    <file>pixmaps/ngraph_parameter-symbolic.svg</file>
     <file>pixmaps/ngraph_filewin-symbolic.svg</file>
     <file>pixmaps/ngraph_frame-symbolic.svg</file>
     <file>pixmaps/ngraph_gauss-symbolic.svg</file>

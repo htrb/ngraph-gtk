@@ -56,7 +56,8 @@ NGRAPH_ICONS = data/pixmaps/ngraph_align_b.png				\
 	data/pixmaps/linewidth_016-symbolic.svg				\
 	data/pixmaps/linewidth_032-symbolic.svg				\
 	data/pixmaps/linewidth_064-symbolic.svg				\
-	data/pixmaps/linewidth_128-symbolic.svg
+	data/pixmaps/linewidth_128-symbolic.svg				\
+	data/pixmaps/ngraph_parameter-symbolic.svg
 
 EXTRA_DIST = dir_defs.h.in data/css/ngraph.css				\
 	data/gtk/menus-common.ui.in data/gtk/menus-common.ui.osx	\
