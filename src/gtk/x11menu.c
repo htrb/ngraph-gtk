@@ -47,6 +47,7 @@
 #include "x11cood.h"
 #include "x11gui.h"
 #include "x11merge.h"
+#include "x11parameter.h"
 #include "x11commn.h"
 #include "x11lgnd.h"
 #include "x11axis.h"
@@ -3881,6 +3882,7 @@ create_object_tabs(void)
     {0, 0, &Menulocal.arc_tab,       0, "arc",       create_arc_list,   &NgraphApp.ArcWin,   NGRAPH_ARC_ICON},
     {0, 0, &Menulocal.mark_tab,      0, "mark",      create_mark_list,  &NgraphApp.MarkWin,  NGRAPH_MARK_ICON},
     {0, 0, &Menulocal.text_tab,      0, "text",      create_text_list,  &NgraphApp.TextWin,  NGRAPH_TEXT_ICON},
+    {0, 0, &Menulocal.parameter_tab, 0, "parameter", create_parameter_list,  &NgraphApp.ParameterWin,  NGRAPH_PARAMETER_ICON},
   };
 
   tab_n = sizeof(tab_info) / sizeof(*tab_info);
