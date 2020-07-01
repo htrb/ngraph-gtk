@@ -223,6 +223,7 @@ struct NgraphApp
   struct SubWin MarkWin;
   struct SubWin TextWin;
   struct SubWin MergeWin;
+  struct SubWin ParameterWin;
   struct SubWin CoordWin;
   struct SubWin InfoWin;
 };
