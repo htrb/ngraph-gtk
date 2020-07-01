@@ -1,0 +1,443 @@
+/*
+ * $Id: x11parameter.c,v 1.33 2010-03-04 08:30:17 hito Exp $
+ *
+ * This file is part of "Ngraph for X11".
+ *
+ * Copyright (C) 2002, Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
+ *
+ * "Ngraph for X11" is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * "Ngraph for X11" is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ */
+
+#include "gtk_common.h"
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+
+#include "object.h"
+#include "nstring.h"
+#include "oparameter.h"
+
+#include "gtk_liststore.h"
+#include "gtk_subwin.h"
+#include "gtk_combo.h"
+#include "gtk_widget.h"
+
+#include "x11bitmp.h"
+#include "x11gui.h"
+#include "x11dialg.h"
+#include "x11menu.h"
+#include "ox11menu.h"
+#include "x11file.h"
+#include "x11commn.h"
+#include "x11view.h"
+#include "x11parameter.h"
+
+static struct subwin_popup_list Popup_list[] = {
+  {N_("_Add"),         G_CALLBACK(CmParameterAdd), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {NULL, NULL, NULL, POP_UP_MENU_ITEM_TYPE_END},
+};
+
+#define POPUP_ITEM_NUM (sizeof(Popup_list) / sizeof(*Popup_list) - 1)
+
+static void
+ParameterDialogSetupItem(struct ParameterDialog *d, int id)
+{
+  SetWidgetFromObjField(d->title, d->Obj, id, "title");
+  SetWidgetFromObjField(d->type, d->Obj, id, "type");
+  SetWidgetFromObjField(d->min, d->Obj, id, "min");
+  SetWidgetFromObjField(d->max, d->Obj, id, "max");
+  SetWidgetFromObjField(d->step, d->Obj, id, "step");
+  SetWidgetFromObjField(d->items, d->Obj, id, "items");
+  SetWidgetFromObjField(d->redraw, d->Obj, id, "redraw");
+  SetWidgetFromObjField(d->active, d->Obj, id, "active");
+  SetWidgetFromObjField(d->value, d->Obj, id, "value");
+}
+
+static char *
+ParameterCB(struct objlist *obj, int id)
+{
+  char *s, *title;
+
+  getobj(obj, "title", id, 0, NULL, &title);
+  s = g_strdup(title);
+  return s;
+}
+
+static void
+ParameterDialogCopy(GtkWidget *w, gpointer data)
+{
+  struct ParameterDialog *d;
+  int sel;
+
+  d = (struct ParameterDialog *) data;
+
+  sel = CopyClick(d->widget, d->Obj, d->Id, ParameterCB);
+  if (sel != -1) {
+    ParameterDialogSetupItem(d, sel);
+  }
+}
+
+static void
+ParameterDialogSetup(GtkWidget *wi, void *data, int makewidget)
+{
+  struct ParameterDialog *d;
+  char title[64];
+
+  d = (struct ParameterDialog *) data;
+
+  snprintf(title, sizeof(title), _("Parameter %d"), d->Id);
+  gtk_window_set_title(GTK_WINDOW(wi), title);
+
+  if (makewidget) {
+    GtkWidget *w, *frame, *table;
+    int i;
+    table = gtk_grid_new();
+
+    i = 0;
+    w = create_text_entry(TRUE, TRUE);
+    add_widget_to_table(table, w, _("_Title:"), TRUE, i++);
+    d->title = w;
+
+    w = combo_box_create();
+    add_widget_to_table(table, w, _("_Type:"), TRUE, i++);
+    d->type = w;
+
+    w = create_text_entry(TRUE, TRUE);
+    add_widget_to_table(table, w, _("_Min:"), TRUE, i++);
+    d->min = w;
+
+    w = create_text_entry(TRUE, TRUE);
+    add_widget_to_table(table, w, _("_Max:"), TRUE, i++);
+    d->max = w;
+
+    w = create_text_entry(TRUE, TRUE);
+    add_widget_to_table(table, w, _("_Step:"), TRUE, i++);
+    d->step = w;
+
+    w = create_text_entry(TRUE, TRUE);
+    add_widget_to_table(table, w, _("_Value:"), TRUE, i++);
+    d->step = w;
+
+    w = gtk_check_button_new_with_mnemonic(_("_Active"));
+    add_widget_to_table(table, w, NULL, FALSE, i++);
+    d->active = w;
+
+    w = gtk_check_button_new_with_mnemonic(_("_Redraw"));
+    add_widget_to_table(table, w, NULL, FALSE, i++);
+    d->active = w;
+
+    frame = gtk_frame_new(NULL);
+    gtk_container_add(GTK_CONTAINER(frame), table);
+    gtk_box_pack_start(GTK_BOX(d->vbox), frame, TRUE, TRUE, 4);
+
+    add_copy_button_to_box(GTK_WIDGET(d->vbox), G_CALLBACK(ParameterDialogCopy), d, "parameter");
+
+    gtk_widget_show_all(GTK_WIDGET(d->vbox));
+  }
+  ParameterDialogSetupItem(d, d->Id);
+}
+
+static void
+ParameterDialogClose(GtkWidget *w, void *data)
+{
+  struct ParameterDialog *d;
+  int ret;
+
+  d = (struct ParameterDialog *) data;
+
+  switch(d->ret) {
+  case IDOK:
+    break;
+  default:
+    return;
+  }
+
+  ret = d->ret;
+  d->ret = IDLOOP;
+
+  if (SetObjFieldFromWidget(d->title, d->Obj, d->Id, "title"))
+    return;
+  if (SetObjFieldFromWidget(d->type, d->Obj, d->Id, "type"))
+    return;
+  if (SetObjFieldFromWidget(d->min, d->Obj, d->Id, "min"))
+    return;
+  if (SetObjFieldFromWidget(d->max, d->Obj, d->Id, "max"))
+    return;
+  if (SetObjFieldFromWidget(d->step, d->Obj, d->Id, "step"))
+    return;
+  if (SetObjFieldFromWidget(d->active, d->Obj, d->Id, "active"))
+    return;
+
+  d->ret = ret;
+}
+
+void
+ParameterDialog(struct obj_list_data *data, int id, int user_data)
+{
+  struct ParameterDialog *d;
+
+  d = (struct ParameterDialog *) data->dialog;
+
+  d->SetupWindow = ParameterDialogSetup;
+  d->CloseWindow = ParameterDialogClose;
+  d->Obj = data->obj;
+  d->Id = id;
+}
+
+void
+CmParameterAdd(void *w, gpointer client_data)
+{
+  struct objlist *obj;
+  char *name = NULL;
+  int id, undo, ret;
+
+  if (Menulock || Globallock)
+    return;
+
+  if ((obj = chkobject("parameter")) == NULL)
+    return;
+
+  undo = menu_save_undo_single(UNDO_TYPE_CREATE, obj->name);
+  id = newobj(obj);
+  if (id >= 0) {
+    ParameterDialog(NgraphApp.ParameterWin.data.data, id, -1);
+    ret = DialogExecute(TopLevel, &DlgParameter);
+    if (ret == IDCANCEL) {
+      menu_undo_internal(undo);
+    } else {
+      set_graph_modified();
+    }
+  } else {
+    g_free(name);
+  }
+  ParameterWinUpdate(NgraphApp.ParameterWin.data.data, FALSE, FALSE);
+}
+
+void
+CmParameterClose(void *w, gpointer client_data)
+{
+  struct narray farray;
+  struct objlist *obj;
+
+  if (Menulock || Globallock)
+    return;
+  if ((obj = chkobject("parameter")) == NULL)
+    return;
+  if (chkobjlastinst(obj) == -1)
+    return;
+  SelectDialog(&DlgSelect, obj, _("close parameter file (multi select)"), ParameterCB, (struct narray *) &farray, NULL);
+  if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
+    int i, num, *array;
+    num = arraynum(&farray);
+    if (num > 0) {
+      menu_save_undo_single(UNDO_TYPE_DELETE, obj->name);
+    }
+    array = arraydata(&farray);
+    for (i = num - 1; i >= 0; i--) {
+      delobj(obj, array[i]);
+      set_graph_modified();
+    }
+//    ParameterWinUpdate(NgraphApp.ParameterWin.data.data, TRUE, TRUE);
+  }
+  arraydel(&farray);
+}
+
+void
+CmParameterUpdate(void *w, gpointer client_data)
+{
+  struct narray farray;
+  struct objlist *obj;
+  int modified;
+
+  if (Menulock || Globallock)
+    return;
+  if ((obj = chkobject("parameter")) == NULL)
+    return;
+  if (chkobjlastinst(obj) == -1)
+    return;
+  SelectDialog(&DlgSelect, obj, _("parameter file property (multi select)"), ParameterCB, (struct narray *) &farray, NULL);
+  modified = FALSE;
+  if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
+    int i, *array, num;
+    num = arraynum(&farray);
+    if (num > 0) {
+      menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
+    }
+    array = arraydata(&farray);
+    for (i = 0; i < num; i++) {
+      int ret;
+//      ParameterDialog(NgraphApp.ParameterWin.data.data, array[i], -1);
+      ret = DialogExecute(TopLevel, &DlgParameter);
+      if (ret != IDCANCEL) {
+        modified = TRUE;
+      }
+    }
+    if (modified) {
+//      ParameterWinUpdate(NgraphApp.ParameterWin.data.data, TRUE, TRUE);
+    }
+  }
+  arraydel(&farray);
+}
+
+static void
+add_button(GtkWidget *grid, int row, int col, const char *icon, const char *tooltip)
+{
+  GtkWidget *w;
+  w = gtk_button_new_from_icon_name(icon, GTK_ICON_SIZE_BUTTON);
+  gtk_widget_set_tooltip_text(GTK_WIDGET(w), tooltip);
+  gtk_widget_set_vexpand(GTK_WIDGET(w), FALSE);
+  gtk_widget_set_valign(GTK_WIDGET(w), GTK_ALIGN_CENTER);
+  gtk_grid_attach(GTK_GRID(grid), w, col, row, 1, 1);
+}
+
+static void
+create_widget(struct obj_list_data *d, int id, int n)
+{
+  int type, active, col;
+  double min, max, step, value;
+  GtkWidget *w, *hbox, *label, *separator;
+  char buf[32], *title;
+
+  getobj(d->obj, "title", id, 0, NULL, &title);
+  getobj(d->obj, "type", id, 0, NULL, &type);
+  getobj(d->obj, "min", id, 0, NULL, &min);
+  getobj(d->obj, "max", id, 0, NULL, &max);
+  getobj(d->obj, "step", id, 0, NULL, &step);
+  getobj(d->obj, "active", id, 0, NULL, &active);
+  getobj(d->obj, "value", id, 0, NULL, &value);
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
+  switch (type) {
+  case PARAMETER_TYPE_SPIN:
+    w = gtk_spin_button_new_with_range(min, max, step);
+    gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), value);
+    gtk_widget_set_halign(GTK_WIDGET(w), GTK_ALIGN_START);
+    gtk_widget_set_hexpand(GTK_WIDGET(w), FALSE);
+    break;
+  case PARAMETER_TYPE_SCALE:
+    w = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, min, max, step);
+    gtk_widget_set_size_request(GTK_WIDGET(w), 200, -1);
+    break;
+  case PARAMETER_TYPE_CHECK:
+    w = gtk_check_button_new();
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), active);
+    break;
+  case PARAMETER_TYPE_COMBO:
+    w = combo_box_create();
+    break;
+  case PARAMETER_TYPE_SWITCH:
+    w = gtk_switch_new();
+    gtk_switch_set_state(GTK_SWITCH(w), active);
+    gtk_widget_set_hexpand(GTK_WIDGET(w), FALSE);
+    gtk_widget_set_vexpand(GTK_WIDGET(w), FALSE);
+    gtk_widget_set_halign(GTK_WIDGET(w), GTK_ALIGN_START);
+    gtk_widget_set_valign(GTK_WIDGET(w), GTK_ALIGN_CENTER);
+    break;
+  }
+
+  col = 0;
+  snprintf(buf, sizeof(buf), "%2d", id);
+  label = gtk_label_new(buf);
+  gtk_widget_set_halign(GTK_WIDGET(label), GTK_ALIGN_END);
+  gtk_grid_attach(GTK_GRID(d->text), label, col, id, 1, 1);
+
+  col++;
+  separator = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
+  gtk_grid_attach(GTK_GRID(d->text), separator, col, id, 1, 1);
+
+  col++;
+  if (title) {
+    label = gtk_label_new_with_mnemonic(title);
+    gtk_widget_set_halign(GTK_WIDGET(label), GTK_ALIGN_END);
+    gtk_label_set_mnemonic_widget(GTK_LABEL(label), w);
+    gtk_grid_attach(GTK_GRID (d->text), label, col, id, 1, 1);
+  }
+  col++;
+  gtk_grid_attach(GTK_GRID(d->text), w, col, id, 1, 1);
+
+  col++;
+  separator = gtk_frame_new(NULL);
+  gtk_frame_set_shadow_type(GTK_FRAME(separator), GTK_SHADOW_NONE);
+  gtk_widget_set_hexpand(GTK_WIDGET(separator), TRUE);
+  gtk_grid_attach(GTK_GRID(d->text), separator, col, id, 1, 1);
+
+  col++;
+  separator = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
+  gtk_grid_attach(GTK_GRID(d->text), separator, col, id, 1, 1);
+
+  col++;
+  if (id > 0) {
+    add_button(d->text, id, col, "go-up-symbolic", "Up");
+  }
+
+  col++;
+  if (id < n) {
+    add_button(d->text, id, col, "go-down-symbolic", "Down");
+  }
+
+  col++;
+  add_button(d->text, id, col, "preferences-system-symbolic", "Preference");
+
+  col++;
+  add_button(d->text, id, col, "edit-delete-symbolic", "Delete");
+}
+
+void
+ParameterWinUpdate(struct obj_list_data *d, int clear, int draw)
+{
+  int num, i;
+  GtkWidget *row;
+
+  if (Menulock || Globallock)
+    return;
+
+  if (d == NULL) {
+    return;
+  }
+
+  while (1) {
+    row = gtk_grid_get_child_at(GTK_GRID(d->text), 0, 0);
+    if (row == NULL) {
+      break;
+    }
+    gtk_grid_remove_row(GTK_GRID(d->text), 0);
+  }
+  num = chkobjlastinst(d->obj);
+  for (i = 0; i <= num; i++) {
+    create_widget(d, i, num);
+  }
+  gtk_widget_show_all(GTK_WIDGET(d->text));
+}
+
+GtkWidget *
+create_parameter_list(struct SubWin *d)
+{
+  if (d->Win) {
+    return d->Win;
+  }
+
+  parameter_sub_window_create(d);
+
+  d->data.data->update = ParameterWinUpdate;
+  d->data.data->setup_dialog = ParameterDialog;
+  d->data.data->dialog = &DlgParameter;
+  d->data.data->obj = chkobject("parameter");
+
+  sub_win_create_popup_menu(d->data.data, POPUP_ITEM_NUM, Popup_list, NULL);
+
+  return d->Win;
+}
