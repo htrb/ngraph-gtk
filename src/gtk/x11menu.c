@@ -4179,6 +4179,9 @@ init_ngraph_app_struct(void)
   memset(&NgraphApp.MergeWin, 0, sizeof(NgraphApp.MergeWin));
   NgraphApp.MergeWin.type = TypeMergeWin;
 
+  memset(&NgraphApp.ParameterWin, 0, sizeof(NgraphApp.ParameterWin));
+  NgraphApp.ParameterWin.type = TypeParameterWin;
+
   memset(&NgraphApp.InfoWin, 0, sizeof(NgraphApp.InfoWin));
   NgraphApp.InfoWin.type = TypeInfoWin;
 
