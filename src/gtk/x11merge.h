@@ -25,4 +25,4 @@ void MergeWinUpdate(struct obj_list_data *d, int clear, int draw);
 void CmMergeOpen(void *w, gpointer client_data);
 void CmMergeClose(void *w, gpointer client_data);
 void CmMergeUpdate(void *w, gpointer client_data);
-GtkWidget *dreate_merge_list(struct SubWin *d);
+GtkWidget *create_merge_list(struct SubWin *d);

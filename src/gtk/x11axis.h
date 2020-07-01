@@ -38,7 +38,7 @@ void CmAxisGridNew(void *w, gpointer client_data);
 void CmAxisGridDel(void *w, gpointer client_data);
 void CmAxisGridUpdate(void *w, gpointer client_data);
 
-GtkWidget *dreate_axis_list(struct SubWin *d);
+GtkWidget *create_axis_list(struct SubWin *d);
 
 void axis_scale_push(struct objlist *obj, int id);
 void AxisWinUpdate(struct obj_list_data *data, int clear, int draw);

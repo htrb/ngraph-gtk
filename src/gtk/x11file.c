@@ -6296,7 +6296,7 @@ init_dnd(struct SubWin *d)
 }
 
 GtkWidget *
-dreate_data_list(struct SubWin *d)
+create_data_list(struct SubWin *d)
 {
   int n;
   int noexpand_colmns[] = {FILE_WIN_COL_X,

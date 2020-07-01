@@ -3873,9 +3873,9 @@ create_object_tabs(void)
   int j, tab_n;
   GtkWidget *tab;
   struct obj_tab_info tab_info[] = {
-    {0, 0, &Menulocal.file_tab,      0, "data",      dreate_data_list,  &NgraphApp.FileWin,  NGRAPH_FILEWIN_ICON},
-    {0, 0, &Menulocal.axis_tab,      0, "axis",      dreate_axis_list,  &NgraphApp.AxisWin,  NGRAPH_AXISWIN_ICON},
-    {0, 0, &Menulocal.merge_tab,     0, "merge",     dreate_merge_list, &NgraphApp.MergeWin, NGRAPH_MERGEWIN_ICON},
+    {0, 0, &Menulocal.file_tab,      0, "data",      create_data_list,  &NgraphApp.FileWin,  NGRAPH_FILEWIN_ICON},
+    {0, 0, &Menulocal.axis_tab,      0, "axis",      create_axis_list,  &NgraphApp.AxisWin,  NGRAPH_AXISWIN_ICON},
+    {0, 0, &Menulocal.merge_tab,     0, "merge",     create_merge_list, &NgraphApp.MergeWin, NGRAPH_MERGEWIN_ICON},
     {0, 0, &Menulocal.path_tab,      0, "path",      create_path_list,  &NgraphApp.PathWin,  NGRAPH_LINE_ICON},
     {0, 0, &Menulocal.rectangle_tab, 0, "rectangle", create_rect_list,  &NgraphApp.RectWin,  NGRAPH_RECT_ICON},
     {0, 0, &Menulocal.arc_tab,       0, "arc",       create_arc_list,   &NgraphApp.ArcWin,   NGRAPH_ARC_ICON},

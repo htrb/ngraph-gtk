@@ -3722,7 +3722,7 @@ axiswin_ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
 }
 
 GtkWidget *
-dreate_axis_list(struct SubWin *d)
+create_axis_list(struct SubWin *d)
 {
   if (d->Win) {
     return d->Win;
