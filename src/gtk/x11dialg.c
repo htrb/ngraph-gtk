@@ -76,6 +76,7 @@ struct AxisDialog DlgAxis;
 struct GridDialog DlgGrid;
 struct ZoomDialog DlgZoom;
 struct MergeDialog DlgMerge;
+struct ParameterDialog DlgParameter;
 struct LegendDialog DlgLegendArrow;
 struct LegendDialog DlgLegendRect;
 struct LegendDialog DlgLegendArc;
@@ -175,6 +176,9 @@ initdialog(void)
   DlgMerge.widget = NULL;
   DlgMerge.focus = NULL;
   DlgMerge.resource = N_("merge");
+  DlgParameter.widget = NULL;
+  DlgParameter.focus = NULL;
+  DlgParameter.resource = N_("parameter");
   DlgLegendArrow.widget = NULL;
   DlgLegendArrow.focus = NULL;
   DlgLegendArrow.arrow_pixmap = NULL;
