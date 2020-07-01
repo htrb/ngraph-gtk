@@ -214,6 +214,7 @@ static struct menu_config MenuConfigOthers[] = {
   {"arc_tab",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.arc_tab},
   {"mark_tab",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.mark_tab},
   {"text_tab",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.text_tab},
+  {"parameter_tab",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.parameter_tab},
   {"math_input_mode",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.math_input_mode},
   {NULL},
 };
