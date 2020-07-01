@@ -109,6 +109,7 @@ void *addaxis(void);
 void *addagrid(void);
 void *addprm(void);
 void *addpath(void);
+void *addparameter(void);
 
 void *addgra2gtk(void);
 void *addmenu(void);
@@ -176,6 +177,7 @@ static void * ( * obj_add_func_ary[]) (void) = {
   addpath,
   addmark,
   addtext,
+  addparameter,
   addmenu,
   adddialog,
 #if WINDOWS
