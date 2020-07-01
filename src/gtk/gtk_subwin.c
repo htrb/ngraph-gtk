@@ -1087,6 +1087,39 @@ label_sub_window_create(struct SubWin *d)
   return swin;
 }
 
+GtkWidget *
+parameter_sub_window_create(struct SubWin *d)
+{
+  GtkWidget *grid, *swin;
+  struct obj_list_data *data;
+
+  grid = gtk_grid_new();
+  gtk_grid_set_column_spacing(GTK_GRID(grid), 4);
+
+  data = g_malloc0(sizeof(*data));
+  if (data == NULL) {
+    return NULL;
+  }
+  data->select = -1;
+  data->parent = d;
+  data->undo_save = NULL;
+  data->can_focus = FALSE;
+  data->list = NULL;
+  data->list_col_num = 0;
+  data->text = grid;
+
+  swin = gtk_scrolled_window_new(NULL, NULL);
+  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+  gtk_container_add(GTK_CONTAINER(swin), grid);
+  d->data.data = data;
+  d->Win = swin;
+
+  gtk_widget_add_events(swin, GDK_BUTTON_PRESS_MASK);
+  g_signal_connect(swin, "button-press-event", G_CALLBACK(ev_button_up), data);
+
+  return swin;
+}
+
 static gboolean
 list_focused(GtkWidget *widget, GdkEvent *ev, gpointer user_data)
 {

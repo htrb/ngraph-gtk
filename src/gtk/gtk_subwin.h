@@ -28,6 +28,7 @@ struct subwin_popup_list {
 GtkWidget *label_sub_window_create(struct SubWin *d);
 GtkWidget *text_sub_window_create(struct SubWin *d);
 GtkWidget *list_sub_window_create(struct SubWin *d, int lisu_num, n_list_store *list);
+GtkWidget *parameter_sub_window_create(struct SubWin *d);
 GtkWidget *tree_sub_window_create(struct SubWin *d, int page_num, int *lisu_num, n_list_store **list, GtkWidget **icons);
 void sub_window_set_geometry(struct SubWin *d, int resize);
 void sub_window_save_geometry(struct SubWin *d);
