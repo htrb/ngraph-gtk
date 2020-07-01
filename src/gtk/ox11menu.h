@@ -106,7 +106,7 @@ struct menulocal
   double bg_r, bg_g, bg_b;
   int focus_frame_type, use_opacity, select_data;
   int side_pane1_pos, side_pane2_pos, side_pane3_pos, main_pane_pos;
-  int file_tab, axis_tab, merge_tab, path_tab, rectangle_tab, arc_tab, mark_tab, text_tab;
+  int file_tab, axis_tab, merge_tab, path_tab, rectangle_tab, arc_tab, mark_tab, text_tab, parameter_tab;
 #ifdef WINDOWS
   int emf_dpi;
 #endif
