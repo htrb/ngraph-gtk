@@ -49,15 +49,24 @@
 static void
 ParameterDialogSetupItem(struct ParameterDialog *d, int id)
 {
+  char *text;
+  GtkTextBuffer *buf;
+
   SetWidgetFromObjField(d->title, d->Obj, id, "title");
   SetWidgetFromObjField(d->type, d->Obj, id, "type");
   SetWidgetFromObjField(d->min, d->Obj, id, "min");
   SetWidgetFromObjField(d->max, d->Obj, id, "max");
   SetWidgetFromObjField(d->step, d->Obj, id, "step");
-  SetWidgetFromObjField(d->items, d->Obj, id, "items");
   SetWidgetFromObjField(d->redraw, d->Obj, id, "redraw");
-  SetWidgetFromObjField(d->active, d->Obj, id, "active");
+  SetWidgetFromObjField(d->checked, d->Obj, id, "checked");
   SetWidgetFromObjField(d->value, d->Obj, id, "value");
+
+  getobj(d->Obj, "items", id, 0, NULL, &text);
+  if (text == NULL) {
+    text = "";
+  }
+  buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(d->items));
+  gtk_text_buffer_set_text(buf, text, -1);
 }
 
 static char *
