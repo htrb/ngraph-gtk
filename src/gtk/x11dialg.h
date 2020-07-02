@@ -331,7 +331,7 @@ struct ParameterDialog
 {
   DIALOG_PROTOTYPE;
   /****** local member *******/
-  GtkWidget *type, *min, *max, *step, *active, *value, *items, *redraw, *title;
+  GtkWidget *type, *min, *max, *step, *checked, *selected, *value, *items, *redraw, *title, *stack;
   struct objlist *Obj;
   int Id;
 };
