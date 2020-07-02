@@ -854,6 +854,19 @@ del_darray(struct objlist *data_obj)
   arrayfree(id_array);
 }
 
+static void
+delete_instances(struct objlist *obj)
+{
+  int instnum, i;
+  instnum = chkobjlastinst(obj);
+  if (instnum == -1) {
+    return;
+  }
+  for (i = instnum; i >= 0; i--) {
+    delobj(obj, i);
+  }
+}
+
 void
 DeleteDrawable(void)
 {
