@@ -211,31 +211,20 @@ ParameterDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     w = combo_box_create();
     add_widget_to_table(table, w, _("_Type:"), TRUE, i++);
+    g_signal_connect(w, "changed", G_CALLBACK(parameter_type_changed), d);
     d->type = w;
 
-    w = create_text_entry(TRUE, TRUE);
-    add_widget_to_table(table, w, _("_Min:"), TRUE, i++);
-    d->min = w;
+    w = gtk_stack_new();
+    add_widget_to_table(table, w, NULL, TRUE, i++);
+    d->stack = w;
 
-    w = create_text_entry(TRUE, TRUE);
-    add_widget_to_table(table, w, _("_Max:"), TRUE, i++);
-    d->max = w;
-
-    w = create_text_entry(TRUE, TRUE);
-    add_widget_to_table(table, w, _("_Step:"), TRUE, i++);
-    d->step = w;
-
-    w = create_text_entry(TRUE, TRUE);
-    add_widget_to_table(table, w, _("_Value:"), TRUE, i++);
-    d->step = w;
-
-    w = gtk_check_button_new_with_mnemonic(_("_Active"));
-    add_widget_to_table(table, w, NULL, FALSE, i++);
-    d->active = w;
+    add_page_spin(d);
+    add_page_check(d);
+    add_page_combo(d);
 
     w = gtk_check_button_new_with_mnemonic(_("_Redraw"));
     add_widget_to_table(table, w, NULL, FALSE, i++);
-    d->active = w;
+    d->redraw = w;
 
     frame = gtk_frame_new(NULL);
     gtk_container_add(GTK_CONTAINER(frame), table);
