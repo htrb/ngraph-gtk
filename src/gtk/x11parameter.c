@@ -391,6 +391,27 @@ CmParameterUpdate(void *w, gpointer client_data)
 }
 
 static void
+parameter_update(GtkButton *btn, gpointer data)
+{
+  int id, undo, ret;
+  struct objlist *obj;
+  obj = chkobject("parameter");
+  if (obj == NULL) {
+    return;
+  }
+  id = GPOINTER_TO_INT(data);
+  undo = menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
+  ParameterDialog(NgraphApp.ParameterWin.data.data, id, -1);
+  ret = DialogExecute(TopLevel, &DlgParameter);
+  if (ret == IDCANCEL) {
+    menu_undo_internal(undo);
+  } else {
+    ParameterWinUpdate(NgraphApp.ParameterWin.data.data, FALSE, FALSE);
+    set_graph_modified();
+  }
+}
+
+static void
 add_button(GtkWidget *grid, int row, int col, const char *icon, const char *tooltip, GCallback proc)
 {
   GtkWidget *w;
