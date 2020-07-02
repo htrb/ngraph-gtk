@@ -163,6 +163,32 @@ add_page_combo(struct ParameterDialog *d)
 }
 
 static void
+parameter_type_changed(GtkComboBox *combo, gpointer user_data)
+{
+  struct ParameterDialog *d;
+  int type;
+
+  d = user_data;
+  type = gtk_combo_box_get_active(combo);
+  if (type < 0) {
+    return;
+  }
+  switch (type) {
+  case PARAMETER_TYPE_SPIN:
+  case PARAMETER_TYPE_SCALE:
+    gtk_stack_set_visible_child_name(GTK_STACK(d->stack), TYPE_SPIN_NAME);
+    break;
+  case PARAMETER_TYPE_SWITCH:
+  case PARAMETER_TYPE_CHECK:
+    gtk_stack_set_visible_child_name(GTK_STACK(d->stack), TYPE_CHECK_NAME);
+    break;
+  case PARAMETER_TYPE_COMBO:
+    gtk_stack_set_visible_child_name(GTK_STACK(d->stack), TYPE_COMBO_NAME);
+    break;
+  }
+ }
+
+static void
 ParameterDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   struct ParameterDialog *d;
