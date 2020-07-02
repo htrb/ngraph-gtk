@@ -83,6 +83,6 @@ void set_widget_font(GtkWidget *w, const char *font);
 #endif
 void add_default_color(struct narray *palette);
 void add_default_gray(struct narray *palette);
-
+gchar *get_text_from_buffer(GtkTextBuffer *buffer);
 
 #endif
