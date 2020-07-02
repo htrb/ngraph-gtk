@@ -300,7 +300,6 @@ void
 CmParameterAdd(void *w, gpointer client_data)
 {
   struct objlist *obj;
-  char *name = NULL;
   int id, undo, ret;
 
   if (Menulock || Globallock)
