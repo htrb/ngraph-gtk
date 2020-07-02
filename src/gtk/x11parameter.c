@@ -444,6 +444,22 @@ parameter_down(GtkButton *btn, gpointer data)
 }
 
 static void
+parameter_delete(GtkButton *btn, gpointer data)
+{
+  int id;
+  struct objlist *obj;
+  obj = chkobject("parameter");
+  if (obj == NULL) {
+    return;
+  }
+  id = GPOINTER_TO_INT(data);
+  menu_save_undo_single(UNDO_TYPE_DELETE, obj->name);
+  delobj(obj, id);
+  ParameterWinUpdate(NgraphApp.ParameterWin.data.data, FALSE, FALSE);
+  set_graph_modified();
+}
+
+static void
 add_button(GtkWidget *grid, int row, int col, const char *icon, const char *tooltip, GCallback proc)
 {
   GtkWidget *w;
