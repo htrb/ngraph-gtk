@@ -471,6 +471,30 @@ add_button(GtkWidget *grid, int row, int col, const char *icon, const char *tool
   g_signal_connect(w, "clicked", proc, GINT_TO_POINTER(row));
 }
 
+static GtkWidget *
+create_combo_box(char *str, int selected)
+{
+  char **items;
+  int i;
+  GtkWidget *w;
+
+  w = combo_box_create();
+  if (str == NULL) {
+    return w;
+  }
+  items = g_strsplit(str, "\n", -1);
+  if (items == NULL) {
+    return w;
+  }
+  for (i = 0; items[i]; i++) {
+    combo_box_append_text(w, items[i]);
+  }
+  g_strfreev(items);
+  combo_box_set_active(w, selected);
+  return w;
+}
+
+
 static void
 create_widget(struct obj_list_data *d, int id, int n)
 {
