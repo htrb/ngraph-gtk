@@ -47,7 +47,7 @@ static int
 parameter_init(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   double min, max, step, value;
-  int active, type;
+  int checked, type;
 
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv)) {
     return 1;
@@ -57,14 +57,14 @@ parameter_init(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char
   max = 100;
   step = 1;
   value = min;
-  active = FALSE;
+  checked = FALSE;
   type = PARAMETER_TYPE_SWITCH;
 
   _putobj(obj, "min", inst, &min);
   _putobj(obj, "max", inst, &max);
   _putobj(obj, "step", inst, &step);
   _putobj(obj, "value", inst, &value);
-  _putobj(obj, "active", inst, &active);
+  _putobj(obj, "checked", inst, &checked);
   _putobj(obj, "type", inst, &type);
 
   return 0;
@@ -89,7 +89,7 @@ static struct objtable parameter[] = {
   {"step",      NDOUBLE,  NREAD | NWRITE, NULL, NULL, 0},
   {"items",     NSTR,     NREAD | NWRITE, NULL, NULL, 0},
   {"redraw",    NBOOL,    NREAD | NWRITE, NULL, NULL, 0},
-  {"active",    NBOOL,    NREAD | NWRITE, NULL, NULL, 0},
+  {"checked",   NBOOL,    NREAD | NWRITE, NULL, NULL, 0},
   {"selected",  NINT,     NREAD | NWRITE, NULL, NULL, 0},
   {"value",     NDOUBLE,  NREAD | NWRITE, NULL, NULL, 0},
   {"parameter", NDOUBLE,  NREAD,          NULL, NULL, 0},
