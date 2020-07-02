@@ -310,18 +310,17 @@ CmParameterAdd(void *w, gpointer client_data)
 
   undo = menu_save_undo_single(UNDO_TYPE_CREATE, obj->name);
   id = newobj(obj);
-  if (id >= 0) {
-    ParameterDialog(NgraphApp.ParameterWin.data.data, id, -1);
-    ret = DialogExecute(TopLevel, &DlgParameter);
-    if (ret == IDCANCEL) {
-      menu_undo_internal(undo);
-    } else {
-      set_graph_modified();
-    }
-  } else {
-    g_free(name);
+  if (id < 0) {
+    return;
   }
-  ParameterWinUpdate(NgraphApp.ParameterWin.data.data, FALSE, FALSE);
+  ParameterDialog(NgraphApp.ParameterWin.data.data, id, -1);
+  ret = DialogExecute(TopLevel, &DlgParameter);
+  if (ret == IDCANCEL) {
+    menu_undo_internal(undo);
+  } else {
+    set_graph_modified();
+    ParameterWinUpdate(NgraphApp.ParameterWin.data.data, FALSE, FALSE);
+  }
 }
 
 void
