@@ -391,7 +391,7 @@ CmParameterUpdate(void *w, gpointer client_data)
 }
 
 static void
-add_button(GtkWidget *grid, int row, int col, const char *icon, const char *tooltip)
+add_button(GtkWidget *grid, int row, int col, const char *icon, const char *tooltip, GCallback proc)
 {
   GtkWidget *w;
   w = gtk_button_new_from_icon_name(icon, GTK_ICON_SIZE_BUTTON);
@@ -399,6 +399,7 @@ add_button(GtkWidget *grid, int row, int col, const char *icon, const char *tool
   gtk_widget_set_vexpand(GTK_WIDGET(w), FALSE);
   gtk_widget_set_valign(GTK_WIDGET(w), GTK_ALIGN_CENTER);
   gtk_grid_attach(GTK_GRID(grid), w, col, row, 1, 1);
+  g_signal_connect(w, "clicked", proc, GINT_TO_POINTER(row));
 }
 
 static void
