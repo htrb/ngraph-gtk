@@ -1114,9 +1114,6 @@ parameter_sub_window_create(struct SubWin *d)
   d->data.data = data;
   d->Win = swin;
 
-  gtk_widget_add_events(swin, GDK_BUTTON_PRESS_MASK);
-  g_signal_connect(swin, "button-press-event", G_CALLBACK(ev_button_up), data);
-
   return swin;
 }
 
