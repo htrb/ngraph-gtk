@@ -93,6 +93,37 @@ ParameterDialogCopy(GtkWidget *w, gpointer data)
   }
 }
 
+#define TYPE_SPIN_NAME  "spin"
+#define TYPE_CHECK_NAME "check"
+#define TYPE_COMBO_NAME "combo"
+
+static void
+add_page_spin(struct ParameterDialog *d)
+{
+  GtkWidget *w, *table;
+  int i;
+
+  table = gtk_grid_new();
+
+  i = 0;
+  w = create_text_entry(TRUE, TRUE);
+  add_widget_to_table(table, w, _("_Min:"), TRUE, i++);
+  d->min = w;
+
+  w = create_text_entry(TRUE, TRUE);
+  add_widget_to_table(table, w, _("_Max:"), TRUE, i++);
+  d->max = w;
+
+  w = create_text_entry(TRUE, TRUE);
+  add_widget_to_table(table, w, _("_Step:"), TRUE, i++);
+  d->step = w;
+
+  w = create_text_entry(TRUE, TRUE);
+  add_widget_to_table(table, w, _("_Value:"), TRUE, i++);
+  d->value = w;
+
+  gtk_stack_add_named(GTK_STACK(d->stack), table, TYPE_SPIN_NAME);
+}
 static void
 ParameterDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
