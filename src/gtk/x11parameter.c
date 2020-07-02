@@ -324,7 +324,7 @@ CmParameterAdd(void *w, gpointer client_data)
 }
 
 void
-CmParameterClose(void *w, gpointer client_data)
+CmParameterDelete(void *w, gpointer client_data)
 {
   struct narray farray;
   struct objlist *obj;
@@ -335,7 +335,7 @@ CmParameterClose(void *w, gpointer client_data)
     return;
   if (chkobjlastinst(obj) == -1)
     return;
-  SelectDialog(&DlgSelect, obj, _("close parameter file (multi select)"), ParameterCB, (struct narray *) &farray, NULL);
+  SelectDialog(&DlgSelect, obj, _("delete parameter (multi select)"), ParameterCB, (struct narray *) &farray, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     int i, num, *array;
     num = arraynum(&farray);
@@ -347,7 +347,7 @@ CmParameterClose(void *w, gpointer client_data)
       delobj(obj, array[i]);
       set_graph_modified();
     }
-//    ParameterWinUpdate(NgraphApp.ParameterWin.data.data, TRUE, TRUE);
+    ParameterWinUpdate(NgraphApp.ParameterWin.data.data, FALSE, FALSE);
   }
   arraydel(&farray);
 }
