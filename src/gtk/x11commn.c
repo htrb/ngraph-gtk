@@ -1061,6 +1061,22 @@ save_data(struct objlist *ocur, int hFile, int storedata, int i, int *array_data
 }
 
 static void
+save_inst(int hFile, struct objlist *ocur)
+{
+  int i, instnum;
+  char *s;
+  instnum = chkobjlastinst(ocur);
+  if (instnum == -1) {
+    return;
+  }
+  for (i = 0; i <= instnum; i++) {
+    getobj(ocur, "save", i, 0, NULL, &s);
+    nwrite(hFile, s, strlen(s));
+    nwrite(hFile, "\n", 1);
+  }
+}
+
+static void
 SaveParent(int hFile, struct objlist *parent, int storedata,
 	   int storemerge)
 {
