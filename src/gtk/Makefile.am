@@ -88,7 +88,8 @@ libngraphui_la_SOURCES = gtk_common.h gtk_combo.c gtk_combo.h		\
 	gtk_ruler.c gtk_ruler.h init.c init.h gtk_action.c		\
 	gtk_action.h sourcecompletionwords.c sourcecompletionwords.h	\
 	completion_info.c completion_info.h completion_info_data.c	\
-	gtk_presettings.c gtk_presettings.h x11parameter.c
+	gtk_presettings.c gtk_presettings.h x11parameter.c		\
+	x11parameter.h
 
 libngraph_cflags =
 
