@@ -136,6 +136,33 @@ add_page_check(struct ParameterDialog *d)
 }
 
 static void
+add_page_combo(struct ParameterDialog *d)
+{
+  GtkWidget *w, *table, *swin;
+  GtkTextBuffer *buf;
+  int i;
+
+  table = gtk_grid_new();
+
+  i = 0;
+
+  buf = gtk_text_buffer_new(NULL);
+  w = gtk_text_view_new_with_buffer(buf);
+  gtk_widget_set_vexpand(w, TRUE);
+  swin = gtk_scrolled_window_new(NULL, NULL);
+  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+  gtk_container_add(GTK_CONTAINER(swin), w);
+  add_widget_to_table(table, swin, _("_Items:"), TRUE, i++);
+  d->items = w;
+
+  w = create_spin_entry_type(SPIN_BUTTON_TYPE_UINT, TRUE, TRUE);
+  add_widget_to_table(table, w, _("_Selected:"), FALSE, i++);
+  d->selected = w;
+
+  gtk_stack_add_named(GTK_STACK(d->stack), table, TYPE_COMBO_NAME);
+}
+
+static void
 ParameterDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   struct ParameterDialog *d;
