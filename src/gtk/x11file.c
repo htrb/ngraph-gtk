@@ -264,15 +264,6 @@ set_source_style(GtkWidget *view)
   gtk_source_buffer_set_style_scheme(buffer, style);
 }
 
-static gchar *
-get_text_from_buffer(GtkTextBuffer *buffer)
-{
-  GtkTextIter start, end;
-  gtk_text_buffer_get_start_iter(buffer, &start);
-  gtk_text_buffer_get_end_iter(buffer, &end);
-  return gtk_text_buffer_get_text(buffer, &start, &end, FALSE);
-}
-
 static void
 set_text_to_source_buffer(GtkWidget *view, const char *text)
 {
