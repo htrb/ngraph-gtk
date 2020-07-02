@@ -241,7 +241,9 @@ static void
 ParameterDialogClose(GtkWidget *w, void *data)
 {
   struct ParameterDialog *d;
+  GtkTextBuffer *buf;
   int ret;
+  char *text;
 
   d = (struct ParameterDialog *) data;
 
@@ -265,8 +267,18 @@ ParameterDialogClose(GtkWidget *w, void *data)
     return;
   if (SetObjFieldFromWidget(d->step, d->Obj, d->Id, "step"))
     return;
-  if (SetObjFieldFromWidget(d->active, d->Obj, d->Id, "active"))
+  if (SetObjFieldFromWidget(d->checked, d->Obj, d->Id, "checked"))
     return;
+  if (SetObjFieldFromWidget(d->selected, d->Obj, d->Id, "selected"))
+    return;
+
+  buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(d->items));
+  text = get_text_from_buffer(buf);
+  if (chk_sputobjfield(d->Obj, d->Id, "items", text)) {
+    g_free(text);
+    return;
+  }
+  g_free(text);
 
   d->ret = ret;
 }
