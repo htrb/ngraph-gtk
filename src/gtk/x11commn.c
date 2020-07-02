@@ -870,7 +870,7 @@ delete_instances(struct objlist *obj)
 void
 DeleteDrawable(void)
 {
-  struct objlist *fileobj, *drawobj;
+  struct objlist *fileobj, *drawobj, *prmobj;
 
   fileobj = chkobject("data");
   if (fileobj) {
@@ -884,6 +884,11 @@ DeleteDrawable(void)
   drawobj = chkobject("draw");
   if (drawobj) {
     delchildobj(drawobj);
+  }
+
+  prmobj = chkobject("parameter");
+  if (prmobj) {
+    delete_instances(prmobj);
   }
 }
 
