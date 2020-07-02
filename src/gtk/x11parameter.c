@@ -497,19 +497,20 @@ create_combo_box(char *str, int selected)
 static void
 create_widget(struct obj_list_data *d, int id, int n)
 {
-  int type, active, col;
+  int type, checked, col, selected;
   double min, max, step, value;
-  GtkWidget *w, *hbox, *label, *separator;
-  char buf[32], *title;
+  GtkWidget *w, *label, *separator;
+  char buf[32], *title, *items;
 
   getobj(d->obj, "title", id, 0, NULL, &title);
   getobj(d->obj, "type", id, 0, NULL, &type);
   getobj(d->obj, "min", id, 0, NULL, &min);
   getobj(d->obj, "max", id, 0, NULL, &max);
   getobj(d->obj, "step", id, 0, NULL, &step);
-  getobj(d->obj, "active", id, 0, NULL, &active);
+  getobj(d->obj, "items", id, 0, NULL, &items);
+  getobj(d->obj, "checked", id, 0, NULL, &checked);
+  getobj(d->obj, "selected", id, 0, NULL, &selected);
   getobj(d->obj, "value", id, 0, NULL, &value);
-  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
   switch (type) {
   case PARAMETER_TYPE_SPIN:
     w = gtk_spin_button_new_with_range(min, max, step);
@@ -523,14 +524,16 @@ create_widget(struct obj_list_data *d, int id, int n)
     break;
   case PARAMETER_TYPE_CHECK:
     w = gtk_check_button_new();
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), active);
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), checked);
     break;
   case PARAMETER_TYPE_COMBO:
-    w = combo_box_create();
+    w = create_combo_box(items, selected);
+    gtk_widget_set_halign(GTK_WIDGET(w), GTK_ALIGN_START);
+    gtk_widget_set_hexpand(w, FALSE);
     break;
   case PARAMETER_TYPE_SWITCH:
     w = gtk_switch_new();
-    gtk_switch_set_state(GTK_SWITCH(w), active);
+    gtk_switch_set_state(GTK_SWITCH(w), checked);
     gtk_widget_set_hexpand(GTK_WIDGET(w), FALSE);
     gtk_widget_set_vexpand(GTK_WIDGET(w), FALSE);
     gtk_widget_set_halign(GTK_WIDGET(w), GTK_ALIGN_START);
@@ -570,19 +573,19 @@ create_widget(struct obj_list_data *d, int id, int n)
 
   col++;
   if (id > 0) {
-    add_button(d->text, id, col, "go-up-symbolic", "Up");
+    add_button(d->text, id, col, "go-up-symbolic", "Up", G_CALLBACK(parameter_up));
   }
 
   col++;
   if (id < n) {
-    add_button(d->text, id, col, "go-down-symbolic", "Down");
+    add_button(d->text, id, col, "go-down-symbolic", "Down", G_CALLBACK(parameter_down));
   }
 
   col++;
-  add_button(d->text, id, col, "preferences-system-symbolic", "Preference");
+  add_button(d->text, id, col, "preferences-system-symbolic", "Preference", G_CALLBACK(parameter_update));
 
   col++;
-  add_button(d->text, id, col, "edit-delete-symbolic", "Delete");
+  add_button(d->text, id, col, "edit-delete-symbolic", "Delete", G_CALLBACK(parameter_delete));
 }
 
 void
