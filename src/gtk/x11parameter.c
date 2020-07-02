@@ -42,17 +42,9 @@
 #include "x11dialg.h"
 #include "x11menu.h"
 #include "ox11menu.h"
-#include "x11file.h"
 #include "x11commn.h"
 #include "x11view.h"
 #include "x11parameter.h"
-
-static struct subwin_popup_list Popup_list[] = {
-  {N_("_Add"),         G_CALLBACK(CmParameterAdd), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {NULL, NULL, NULL, POP_UP_MENU_ITEM_TYPE_END},
-};
-
-#define POPUP_ITEM_NUM (sizeof(Popup_list) / sizeof(*Popup_list) - 1)
 
 static void
 ParameterDialogSetupItem(struct ParameterDialog *d, int id)
@@ -436,8 +428,6 @@ create_parameter_list(struct SubWin *d)
   d->data.data->setup_dialog = ParameterDialog;
   d->data.data->dialog = &DlgParameter;
   d->data.data->obj = chkobject("parameter");
-
-  sub_win_create_popup_menu(d->data.data, POPUP_ITEM_NUM, Popup_list, NULL);
 
   return d->Win;
 }
