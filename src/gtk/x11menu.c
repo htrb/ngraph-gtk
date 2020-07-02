@@ -5116,6 +5116,7 @@ UpdateAll2(char **objs, int redraw)
   LegendWinUpdate(objs, TRUE, redraw);
   InfoWinUpdate(TRUE);
   CoordWinUpdate(TRUE);
+  ParameterWinUpdate(NgraphApp.ParameterWin.data.data, FALSE, redraw);
   presetting_set_parameters(&NgraphApp.Viewer);
 }
 
