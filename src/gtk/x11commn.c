@@ -1144,8 +1144,12 @@ SaveDrawrable(char *name, int storedata, int storemerge)
       error = TRUE;
 
     if ((drawobj = chkobject("draw")) != NULL) {
-      struct objlist *graobj;
+      struct objlist *graobj, *prmobj;
       SaveParent(hFile, drawobj, storedata, storemerge);
+      prmobj = chkobject("parameter");
+      if (prmobj) {
+	save_inst(hFile, prmobj);
+      }
       if ((graobj = chkobject("gra")) != NULL) {
         int id;
 	id = ValidGRA();
