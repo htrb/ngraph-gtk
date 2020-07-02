@@ -612,6 +612,8 @@ ParameterWinUpdate(struct obj_list_data *d, int clear, int draw)
   for (i = 0; i <= num; i++) {
     create_widget(d, i, num);
   }
+  add_button(d->text, num + 1, 0, "list-add-symbolic", "Add", G_CALLBACK(CmParameterAdd));
+
   gtk_widget_show_all(GTK_WIDGET(d->text));
 }
 
