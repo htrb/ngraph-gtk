@@ -166,6 +166,7 @@ static struct objtable parameter[] = {
   {"min",       NDOUBLE,  NREAD | NWRITE, NULL, NULL, 0},
   {"max",       NDOUBLE,  NREAD | NWRITE, NULL, NULL, 0},
   {"step",      NDOUBLE,  NREAD | NWRITE, NULL, NULL, 0},
+  {"wrap",      NBOOL,    NREAD | NWRITE, NULL, NULL, 0},
   {"items",     NSTR,     NREAD | NWRITE, NULL, NULL, 0},
   {"redraw",    NBOOL,    NREAD | NWRITE, NULL, NULL, 0},
   {"active",    NBOOL,    NREAD | NWRITE, parameter_put, NULL, 0},
