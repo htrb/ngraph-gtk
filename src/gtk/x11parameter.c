@@ -180,7 +180,11 @@ parameter_type_changed(GtkComboBox *combo, gpointer user_data)
   }
   switch (type) {
   case PARAMETER_TYPE_SPIN:
+    gtk_widget_show(d->wrap);
+    gtk_stack_set_visible_child_name(GTK_STACK(d->stack), TYPE_SPIN_NAME);
+    break;
   case PARAMETER_TYPE_SCALE:
+    gtk_widget_hide(d->wrap);
     gtk_stack_set_visible_child_name(GTK_STACK(d->stack), TYPE_SPIN_NAME);
     break;
   case PARAMETER_TYPE_SWITCH:
