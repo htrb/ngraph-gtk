@@ -340,8 +340,6 @@ create_direction_entry(void)
   return w;
 }
 
-
-
 GtkWidget *
 create_text_entry(int set_default_size, int set_default_action)
 {
@@ -356,6 +354,15 @@ create_text_entry(int set_default_size, int set_default_action)
     gtk_entry_set_activates_default(GTK_ENTRY(w), TRUE);
   }
 
+  return w;
+}
+
+GtkWidget *
+create_number_entry(int set_default_size, int set_default_action)
+{
+  GtkWidget *w;
+  w = create_text_entry(set_default_size, set_default_action);
+  gtk_entry_set_input_purpose(GTK_ENTRY(w), GTK_INPUT_PURPOSE_NUMBER);
   return w;
 }
 
