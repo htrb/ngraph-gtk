@@ -540,6 +540,14 @@ toggled(GtkToggleButton *toggle_button, gpointer user_data)
   set_parameter(active, user_data);
 }
 
+static void
+switched(GtkSwitch *sw, GParamSpec *pspec, gpointer user_data)
+{
+  int active;
+  active = gtk_switch_get_active(sw);
+  set_parameter(active, user_data);
+}
+
 
 static void
 create_widget(struct obj_list_data *d, int id, int n)
