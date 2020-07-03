@@ -123,6 +123,10 @@ add_page_spin(struct ParameterDialog *d)
   add_widget_to_table(table, w, _("_Value:"), TRUE, i++);
   d->value = w;
 
+  w = gtk_check_button_new_with_mnemonic(_("_Wrap"));
+  add_widget_to_table(table, w, NULL, FALSE, i++);
+  d->wrap = w;
+
   gtk_stack_add_named(GTK_STACK(d->stack), table, TYPE_SPIN_NAME);
 }
 
