@@ -524,6 +524,14 @@ scale_changed(GtkRange *range, gpointer user_data)
   set_parameter(value, user_data);
 }
 
+static void
+value_changed(GtkAdjustment *adjustment, gpointer user_data)
+{
+  double value;
+  value = gtk_adjustment_get_value(adjustment);
+  set_parameter(value, user_data);
+}
+
 
 static void
 create_widget(struct obj_list_data *d, int id, int n)
