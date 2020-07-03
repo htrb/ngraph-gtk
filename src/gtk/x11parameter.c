@@ -572,39 +572,54 @@ combo_changed(GtkComboBox *combo_box, gpointer user_data)
 static void
 create_widget(struct obj_list_data *d, int id, int n)
 {
-  int type, checked, col, selected;
-  double min, max, step, value;
+  int type, checked, col, selected, width, wrap;
+  double min, max, step, parameter;
   GtkWidget *w, *label, *separator;
   char buf[32], *title, *items;
+  GtkAdjustment *adj;
 
+  width = 1;
   getobj(d->obj, "title", id, 0, NULL, &title);
   getobj(d->obj, "type", id, 0, NULL, &type);
   getobj(d->obj, "min", id, 0, NULL, &min);
   getobj(d->obj, "max", id, 0, NULL, &max);
   getobj(d->obj, "step", id, 0, NULL, &step);
+  getobj(d->obj, "wrap", id, 0, NULL, &wrap);
   getobj(d->obj, "items", id, 0, NULL, &items);
-  getobj(d->obj, "checked", id, 0, NULL, &checked);
-  getobj(d->obj, "selected", id, 0, NULL, &selected);
-  getobj(d->obj, "value", id, 0, NULL, &value);
+  getobj(d->obj, "parameter", id, 0, NULL, &parameter);
+  checked = selected = parameter;
   switch (type) {
   case PARAMETER_TYPE_SPIN:
     w = gtk_spin_button_new_with_range(min, max, step);
-    gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), value);
+    gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), parameter);
+    gtk_spin_button_set_wrap(GTK_SPIN_BUTTON(w), wrap);
     gtk_widget_set_halign(GTK_WIDGET(w), GTK_ALIGN_START);
     gtk_widget_set_hexpand(GTK_WIDGET(w), FALSE);
+    adj = gtk_spin_button_get_adjustment(GTK_SPIN_BUTTON(w));
+    g_signal_connect(adj, "value-changed", G_CALLBACK(value_changed), GINT_TO_POINTER(id));
     break;
   case PARAMETER_TYPE_SCALE:
     w = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, min, max, step);
     gtk_widget_set_size_request(GTK_WIDGET(w), 200, -1);
+    gtk_range_set_value(GTK_RANGE(w), parameter);
+    g_signal_connect(w, "value-changed", G_CALLBACK(scale_changed), GINT_TO_POINTER(id));
     break;
   case PARAMETER_TYPE_CHECK:
-    w = gtk_check_button_new();
+    if (title) {
+      w = gtk_check_button_new_with_mnemonic(title);
+      g_signal_connect(w, "toggled", G_CALLBACK(toggled), GINT_TO_POINTER(id));
+      title = NULL;
+    } else {
+      w = gtk_check_button_new();
+    }
+    width = 2;
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), checked);
     break;
   case PARAMETER_TYPE_COMBO:
     w = create_combo_box(items, selected);
     gtk_widget_set_halign(GTK_WIDGET(w), GTK_ALIGN_START);
     gtk_widget_set_hexpand(w, FALSE);
+    g_signal_connect(w, "changed", G_CALLBACK(combo_changed), GINT_TO_POINTER(id));
     break;
   case PARAMETER_TYPE_SWITCH:
     w = gtk_switch_new();
@@ -613,13 +628,14 @@ create_widget(struct obj_list_data *d, int id, int n)
     gtk_widget_set_vexpand(GTK_WIDGET(w), FALSE);
     gtk_widget_set_halign(GTK_WIDGET(w), GTK_ALIGN_START);
     gtk_widget_set_valign(GTK_WIDGET(w), GTK_ALIGN_CENTER);
+    g_signal_connect(w, "notify::active", G_CALLBACK(switched), GINT_TO_POINTER(id));
     break;
   }
 
   col = 0;
-  snprintf(buf, sizeof(buf), "%2d", id);
-  label = gtk_label_new(buf);
-  gtk_widget_set_halign(GTK_WIDGET(label), GTK_ALIGN_END);
+  snprintf(buf, sizeof(buf), "%d", id);
+  label = gtk_button_new_with_label(buf);
+  g_signal_connect(label, "clicked", G_CALLBACK(parameter_update), GINT_TO_POINTER(id));
   gtk_grid_attach(GTK_GRID(d->text), label, col, id, 1, 1);
 
   col++;
@@ -629,12 +645,12 @@ create_widget(struct obj_list_data *d, int id, int n)
   col++;
   if (title) {
     label = gtk_label_new_with_mnemonic(title);
-    gtk_widget_set_halign(GTK_WIDGET(label), GTK_ALIGN_END);
+    gtk_widget_set_halign(GTK_WIDGET(label), GTK_ALIGN_START);
     gtk_label_set_mnemonic_widget(GTK_LABEL(label), w);
     gtk_grid_attach(GTK_GRID (d->text), label, col, id, 1, 1);
   }
   col++;
-  gtk_grid_attach(GTK_GRID(d->text), w, col, id, 1, 1);
+  gtk_grid_attach(GTK_GRID(d->text), w, col - width + 1, id, width, 1);
 
   col++;
   separator = gtk_frame_new(NULL);
@@ -655,9 +671,6 @@ create_widget(struct obj_list_data *d, int id, int n)
   if (id < n) {
     add_button(d->text, id, col, "go-down-symbolic", "Down", G_CALLBACK(parameter_down));
   }
-
-  col++;
-  add_button(d->text, id, col, "preferences-system-symbolic", "Preference", G_CALLBACK(parameter_update));
 
   col++;
   add_button(d->text, id, col, "edit-delete-symbolic", "Delete", G_CALLBACK(parameter_delete));
@@ -705,6 +718,7 @@ create_parameter_list(struct SubWin *d)
   d->data.data->setup_dialog = ParameterDialog;
   d->data.data->dialog = &DlgParameter;
   d->data.data->obj = chkobject("parameter");
+  ParameterWinUpdate(d->data.data, FALSE, FALSE);
 
   return d->Win;
 }
