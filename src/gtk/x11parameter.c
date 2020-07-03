@@ -532,6 +532,14 @@ value_changed(GtkAdjustment *adjustment, gpointer user_data)
   set_parameter(value, user_data);
 }
 
+static void
+toggled(GtkToggleButton *toggle_button, gpointer user_data)
+{
+  int active;
+  active = gtk_toggle_button_get_active(toggle_button);
+  set_parameter(active, user_data);
+}
+
 
 static void
 create_widget(struct obj_list_data *d, int id, int n)
