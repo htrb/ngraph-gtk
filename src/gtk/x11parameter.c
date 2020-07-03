@@ -548,6 +548,13 @@ switched(GtkSwitch *sw, GParamSpec *pspec, gpointer user_data)
   set_parameter(active, user_data);
 }
 
+static void
+combo_changed(GtkComboBox *combo_box, gpointer user_data)
+{
+  int selected;
+  selected = gtk_combo_box_get_active(combo_box);
+  set_parameter(selected, user_data);
+}
 
 static void
 create_widget(struct obj_list_data *d, int id, int n)
