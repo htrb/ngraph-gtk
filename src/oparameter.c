@@ -100,6 +100,13 @@ set_parameter(struct objlist *obj, N_VALUE *inst, int type)
   return;
 }
 
+static int
+parameter_type_put(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  int type;
+
+  type = *(int *)(argv[2]);
+  set_parameter(obj, inst, type);
   return 0;
 }
 
@@ -155,7 +162,7 @@ static struct objtable parameter[] = {
   {"done",      NVFUNC,   NEXEC, parameter_done, NULL, 0},
   {"next",      NPOINTER, 0,              NULL, NULL, 0},
   {"title",     NSTR,     NREAD | NWRITE, NULL, NULL, 0},
-  {"type",      NENUM,    NREAD | NWRITE, NULL, parameter_type, 0},
+  {"type",      NENUM,    NREAD | NWRITE, parameter_type_put, parameter_type, 0},
   {"min",       NDOUBLE,  NREAD | NWRITE, NULL, NULL, 0},
   {"max",       NDOUBLE,  NREAD | NWRITE, NULL, NULL, 0},
   {"step",      NDOUBLE,  NREAD | NWRITE, NULL, NULL, 0},
