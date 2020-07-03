@@ -3853,6 +3853,7 @@ save_tab_position(void)
     {0, 0, &Menulocal.arc_tab,       0, "arc"},
     {0, 0, &Menulocal.mark_tab,      0, "mark"},
     {0, 0, &Menulocal.text_tab,      0, "text"},
+    {0, 0, &Menulocal.parameter_tab, 0, "parameter"},
   };
 
   n = sizeof(tab_info) / sizeof(*tab_info);
