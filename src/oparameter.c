@@ -70,6 +70,45 @@ parameter_init(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char
   return 0;
 }
 
+static int
+parameter_put(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  int type, checked, selected;
+  double value, prm;
+  char *field;
+
+  field = argv[1];
+  _getobj(obj, "type", inst, &type);
+  switch (type) {
+  case PARAMETER_TYPE_SPIN:
+  case PARAMETER_TYPE_SCALE:
+    if (strcmp(field, "value")) {
+      return 0;
+    }
+    value = arg_to_double(argv, 2);
+    prm = value;
+    break;
+  case PARAMETER_TYPE_SWITCH:
+  case PARAMETER_TYPE_CHECK:
+    if (strcmp(field, "active")) {
+      return 0;
+    }
+    checked = *(int *)(argv[2]);
+    prm = checked;
+    break;
+  case PARAMETER_TYPE_COMBO:
+    if (strcmp(field, "selected")) {
+        return 0;
+    }
+    selected = *(int *)(argv[2]);
+    prm = selected;
+    break;
+  default:
+    return 0;
+  }
+  _putobj(obj, "parameter", inst, &prm);
+  return 0;
+}
 
 static int
 parameter_done(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
@@ -89,9 +128,9 @@ static struct objtable parameter[] = {
   {"step",      NDOUBLE,  NREAD | NWRITE, NULL, NULL, 0},
   {"items",     NSTR,     NREAD | NWRITE, NULL, NULL, 0},
   {"redraw",    NBOOL,    NREAD | NWRITE, NULL, NULL, 0},
-  {"checked",   NBOOL,    NREAD | NWRITE, NULL, NULL, 0},
-  {"selected",  NINT,     NREAD | NWRITE, NULL, NULL, 0},
-  {"value",     NDOUBLE,  NREAD | NWRITE, NULL, NULL, 0},
+  {"active",    NBOOL,    NREAD | NWRITE, parameter_put, NULL, 0},
+  {"selected",  NINT,     NREAD | NWRITE, parameter_put, NULL, 0},
+  {"value",     NDOUBLE,  NREAD | NWRITE, parameter_put, NULL, 0},
   {"parameter", NDOUBLE,  NREAD,          NULL, NULL, 0},
 };
 
