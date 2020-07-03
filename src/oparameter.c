@@ -31,7 +31,7 @@
 
 char *parameter_type[]={
   N_("SpinButton"),
-  N_("ScaleButton"),
+  N_("Scale"),
   N_("CheckButton"),
   N_("ComboBox"),
   N_("Switch"),
