@@ -137,6 +137,7 @@ choose		2	0	0	NULL	true
 fmod		2	0	0	NULL
 mjd2unix	1	0	0	NULL
 sumsq		-1	0	0	NULL
+parameter	1	1	0	NULL
 string_float	1	1	0	1
 string_length	1	1	0	1
 string_strip	1	1	0	21

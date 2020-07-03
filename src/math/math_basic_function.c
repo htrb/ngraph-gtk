@@ -4805,3 +4805,27 @@ math_func_getobj_array(MathFunctionCallExpression *exp, MathEquation *eq, MathVa
   }
   return 0;
 }
+int
+math_func_parameter(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int id;
+  double prm;
+  struct objlist *obj;
+
+  rval->val = 0;
+  rval->type = MATH_VALUE_ERROR;
+
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+  id = exp->buf[0].val.val;
+  obj = chkobject("parameter");
+  if (obj == NULL) {
+    return 1;
+  }
+  if (getobj(obj, "parameter", id, 0, NULL, &prm) < 0) {
+    return -1;
+  }
+
+  rval->type = MATH_VALUE_NORMAL;
+  rval->val = prm;
+  return 0;
+}
