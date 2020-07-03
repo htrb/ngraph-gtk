@@ -516,6 +516,14 @@ set_parameter(double prm, gpointer user_data)
   ViewerWinUpdate(objects);
 }
 
+static void
+scale_changed(GtkRange *range, gpointer user_data)
+{
+  double value;
+  value = gtk_range_get_value(range);
+  set_parameter(value, user_data);
+}
+
 
 static void
 create_widget(struct obj_list_data *d, int id, int n)
