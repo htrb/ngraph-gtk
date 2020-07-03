@@ -4163,7 +4163,7 @@ getvaluestr(struct objlist *obj,const char *field,void *val,int cr,int quote)
     g_string_append_printf(str,"%d",*(int *)po);
     break;
   case NDOUBLE: case NDFUNC:
-    g_string_append_printf(str,"%.15e",*(double *)po);
+    g_string_append_printf(str,"%.15g",*(double *)po);
     break;
   case NSTR: case NSFUNC: case NOBJ:
     if (*(char **)po==NULL) break;
