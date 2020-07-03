@@ -276,9 +276,13 @@ ParameterDialogClose(GtkWidget *w, void *data)
     return;
   if (SetObjFieldFromWidget(d->step, d->Obj, d->Id, "step"))
     return;
-  if (SetObjFieldFromWidget(d->checked, d->Obj, d->Id, "checked"))
+  if (SetObjFieldFromWidget(d->wrap, d->Obj, d->Id, "wrap"))
+    return;
+  if (SetObjFieldFromWidget(d->checked, d->Obj, d->Id, "active"))
     return;
   if (SetObjFieldFromWidget(d->selected, d->Obj, d->Id, "selected"))
+    return;
+  if (SetObjFieldFromWidget(d->value, d->Obj, d->Id, "value"))
     return;
 
   buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(d->items));
