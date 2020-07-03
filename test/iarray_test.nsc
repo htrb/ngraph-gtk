@@ -12,7 +12,7 @@ show_result() {
 }
 
 show_result_val() {
-    if [ `iexpr "EQ($2, $3, 15)"` = "1" ]
+    if [ `iexpr "EQ($2, $3, 14)"` = "1" ]
     then
 	echo "OK. ($1)"
     else
@@ -93,13 +93,13 @@ s="${iarray::sum}"
 show_result "sum" "$s" "90"
 
 s="${iarray::average}"
-show_result "average" "$s" "$avg"
+show_result_val "average" "$s" "$avg"
 
 s="${iarray::RMS}"
 show_result_val "RMS" "$s" "$rms"
 
 s="${iarray::sdev}"
-show_result "sdev" "$s" "$sig"
+show_result_val "sdev" "$s" "$sig"
 
 s="${iarray::min}"
 show_result_val "min" "$s" "$min"
