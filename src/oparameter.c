@@ -67,6 +67,33 @@ parameter_init(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char
   _putobj(obj, "checked", inst, &checked);
   _putobj(obj, "type", inst, &type);
 
+static void
+set_parameter(struct objlist *obj, N_VALUE *inst, int type)
+{
+  int checked, selected;
+  double value, prm;
+  switch (type) {
+  case PARAMETER_TYPE_SPIN:
+  case PARAMETER_TYPE_SCALE:
+    _getobj(obj, "value", inst, &value);
+    prm = value;
+    break;
+  case PARAMETER_TYPE_CHECK:
+    _getobj(obj, "active", inst, &checked);
+    prm = checked;
+    break;
+  case PARAMETER_TYPE_COMBO:
+  case PARAMETER_TYPE_SWITCH:
+    _getobj(obj, "selected", inst, &selected);
+    prm = selected;
+    break;
+  default:
+    return;
+  }
+  _putobj(obj, "parameter", inst, &prm);
+  return;
+}
+
   return 0;
 }
 
