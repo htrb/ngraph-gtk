@@ -493,6 +493,29 @@ create_combo_box(char *str, int selected)
   return w;
 }
 
+static void
+set_parameter(double prm, gpointer user_data)
+{
+  struct objlist *obj;
+  N_VALUE *inst;
+  int id;
+  char const *objects[] = {"data", NULL};
+
+  id = GPOINTER_TO_INT(user_data);
+  obj = chkobject("parameter");
+  if (obj == NULL) {
+    return;
+  }
+
+  inst = chkobjinst(obj, id);
+  if (inst == NULL) {
+    return;
+  }
+
+  _putobj(obj, "parameter", inst, &prm);
+  ViewerWinUpdate(objects);
+}
+
 
 static void
 create_widget(struct obj_list_data *d, int id, int n)
