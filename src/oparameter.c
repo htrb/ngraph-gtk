@@ -43,6 +43,8 @@ static char *parameter_errorlist[] = {
 
 #define ERRNUM (sizeof(parameter_errorlist) / sizeof(*parameter_errorlist))
 
+static void set_parameter(struct objlist *obj, N_VALUE *inst, int type);
+
 static int
 parameter_init(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
@@ -58,14 +60,18 @@ parameter_init(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char
   step = 1;
   value = min;
   checked = FALSE;
-  type = PARAMETER_TYPE_SWITCH;
+  type = PARAMETER_TYPE_SPIN;
 
   _putobj(obj, "min", inst, &min);
   _putobj(obj, "max", inst, &max);
   _putobj(obj, "step", inst, &step);
   _putobj(obj, "value", inst, &value);
-  _putobj(obj, "checked", inst, &checked);
+  _putobj(obj, "active", inst, &checked);
   _putobj(obj, "type", inst, &type);
+
+  set_parameter(obj, inst, type);
+  return 0;
+}
 
 static void
 set_parameter(struct objlist *obj, N_VALUE *inst, int type)
