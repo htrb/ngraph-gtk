@@ -599,6 +599,9 @@ static void
 scale_changed(GtkRange *range, gpointer user_data)
 {
   double value;
+  if (Menulock || Globallock)
+    return;
+
   value = gtk_range_get_value(range);
   set_parameter(value, user_data);
 }
