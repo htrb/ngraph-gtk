@@ -158,10 +158,17 @@ parameter_put(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char 
     break;
   case PARAMETER_TYPE_COMBO:
     if (strcmp(field, "selected")) {
-        return 0;
+      return 0;
     }
     selected = *(int *)(argv[2]);
     prm = selected;
+    break;
+  case PARAMETER_TYPE_TRANSITION:
+    if (strcmp(field, "stop")) {
+      return 0;
+    }
+    value = arg_to_double(argv, 2);
+    prm = value;
     break;
   default:
     return 0;
