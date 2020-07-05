@@ -99,6 +99,10 @@ set_parameter(struct objlist *obj, N_VALUE *inst, int type)
     _getobj(obj, "selected", inst, &selected);
     prm = selected;
     break;
+  case PARAMETER_TYPE_TRANSITION:
+    _getobj(obj, "stop", inst, &value);
+    prm = value;
+    break;
   default:
     return;
   }
