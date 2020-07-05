@@ -99,6 +99,7 @@ ParameterDialogCopy(GtkWidget *w, gpointer data)
 #define TYPE_SPIN_NAME  "spin"
 #define TYPE_CHECK_NAME "check"
 #define TYPE_COMBO_NAME "combo"
+#define TYPE_TRANSITION_NAME "transition"
 
 static void
 add_page_spin(struct ParameterDialog *d)
