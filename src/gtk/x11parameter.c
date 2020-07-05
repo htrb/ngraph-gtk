@@ -610,6 +610,9 @@ static void
 value_changed(GtkAdjustment *adjustment, gpointer user_data)
 {
   double value;
+  if (Menulock || Globallock)
+    return;
+
   value = gtk_adjustment_get_value(adjustment);
   set_parameter(value, user_data);
 }
