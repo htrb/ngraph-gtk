@@ -632,6 +632,9 @@ static void
 switched(GtkSwitch *sw, GParamSpec *pspec, gpointer user_data)
 {
   int active;
+  if (Menulock || Globallock)
+    return;
+
   active = gtk_switch_get_active(sw);
   set_parameter(active, user_data);
 }
