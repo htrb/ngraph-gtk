@@ -792,16 +792,16 @@ create_widget(struct obj_list_data *d, int id, int n)
 
   col++;
   if (id > 0) {
-    add_button(d->text, id, col, "go-up-symbolic", "Up", G_CALLBACK(parameter_up));
+    add_button(d->text, id, col, "go-up-symbolic", _("Up"), G_CALLBACK(parameter_up));
   }
 
   col++;
   if (id < n) {
-    add_button(d->text, id, col, "go-down-symbolic", "Down", G_CALLBACK(parameter_down));
+    add_button(d->text, id, col, "go-down-symbolic", _("Down"), G_CALLBACK(parameter_down));
   }
 
   col++;
-  add_button(d->text, id, col, "edit-delete-symbolic", "Delete", G_CALLBACK(parameter_delete));
+  add_button(d->text, id, col, "edit-delete-symbolic", _("Delete"), G_CALLBACK(parameter_delete));
 }
 
 void
