@@ -349,17 +349,16 @@ ParameterDialog(struct obj_list_data *data, int id, int user_data)
 void
 CmParameterAdd(void *w, gpointer client_data)
 {
-  struct objlist *obj;
   int id, undo, ret;
+  struct obj_list_data *d;
 
   if (Menulock || Globallock)
     return;
 
-  if ((obj = chkobject("parameter")) == NULL)
-    return;
+  d = NgraphApp.ParameterWin.data.data;
 
-  undo = menu_save_undo_single(UNDO_TYPE_CREATE, obj->name);
-  id = newobj(obj);
+  undo = menu_save_undo_single(UNDO_TYPE_CREATE, d->obj->name);
+  id = newobj(d->obj);
   if (id < 0) {
     return;
   }
