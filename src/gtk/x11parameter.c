@@ -443,13 +443,14 @@ static void
 parameter_update(GtkButton *btn, gpointer data)
 {
   int id, undo, ret;
-  struct objlist *obj;
-  obj = chkobject("parameter");
-  if (obj == NULL) {
+  struct obj_list_data *d;
+
+  if (Menulock || Globallock)
     return;
-  }
+
+  d = NgraphApp.ParameterWin.data.data;
   id = GPOINTER_TO_INT(data);
-  undo = menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
+  undo = menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
   ParameterDialog(NgraphApp.ParameterWin.data.data, id, -1);
   ret = DialogExecute(TopLevel, &DlgParameter);
   if (ret == IDCANCEL) {
