@@ -50,7 +50,7 @@ static int
 parameter_init(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   double min, max, step, value;
-  int checked, type;
+  int checked, type, wait;
 
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv)) {
     return 1;
@@ -60,13 +60,18 @@ parameter_init(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char
   max = 100;
   step = 1;
   value = min;
+  wait = 10;
   checked = FALSE;
   type = PARAMETER_TYPE_SPIN;
 
   _putobj(obj, "min", inst, &min);
   _putobj(obj, "max", inst, &max);
   _putobj(obj, "step", inst, &step);
+  _putobj(obj, "start", inst, &min);
+  _putobj(obj, "stop", inst, &max);
+  _putobj(obj, "transition_step", inst, &step);
   _putobj(obj, "value", inst, &value);
+  _putobj(obj, "wait", inst, &wait);
   _putobj(obj, "active", inst, &checked);
   _putobj(obj, "type", inst, &type);
 
