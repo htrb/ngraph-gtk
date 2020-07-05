@@ -643,6 +643,9 @@ static void
 combo_changed(GtkComboBox *combo_box, gpointer user_data)
 {
   int selected;
+  if (Menulock || Globallock)
+    return;
+
   selected = gtk_combo_box_get_active(combo_box);
   set_parameter(selected, user_data);
 }
