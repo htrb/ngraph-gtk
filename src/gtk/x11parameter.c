@@ -599,9 +599,9 @@ create_scale(double min, double max, double inc, double value)
 static void
 create_widget(struct obj_list_data *d, int id, int n)
 {
-  int type, checked, col, selected, width, wrap;
-  double min, max, step, parameter;
-  GtkWidget *w, *label, *separator;
+  int type, checked, col, selected, width, wrap, loop;
+  double min, max, step, parameter, start, stop, transition_step;
+  GtkWidget *w, *label, *separator, *button;
   char buf[32], *title, *items;
   GtkAdjustment *adj;
 
@@ -612,6 +612,10 @@ create_widget(struct obj_list_data *d, int id, int n)
   getobj(d->obj, "max", id, 0, NULL, &max);
   getobj(d->obj, "step", id, 0, NULL, &step);
   getobj(d->obj, "wrap", id, 0, NULL, &wrap);
+  getobj(d->obj, "start", id, 0, NULL, &start);
+  getobj(d->obj, "stop", id, 0, NULL, &stop);
+  getobj(d->obj, "transition_step", id, 0, NULL, &transition_step);
+  getobj(d->obj, "loop", id, 0, NULL, &loop);
   getobj(d->obj, "items", id, 0, NULL, &items);
   getobj(d->obj, "parameter", id, 0, NULL, &parameter);
   checked = selected = parameter;
@@ -655,6 +659,11 @@ create_widget(struct obj_list_data *d, int id, int n)
     gtk_widget_set_valign(GTK_WIDGET(w), GTK_ALIGN_CENTER);
     g_signal_connect(w, "notify::active", G_CALLBACK(switched), GINT_TO_POINTER(id));
     break;
+  case PARAMETER_TYPE_TRANSITION:
+    w = create_scale(start, stop, step, parameter);
+    gtk_scale_set_has_origin(GTK_SCALE(w), FALSE);
+    g_signal_connect(w, "value-changed", G_CALLBACK(scale_changed), GINT_TO_POINTER(id));
+    break;
   }
 
   col = 0;
@@ -676,6 +685,19 @@ create_widget(struct obj_list_data *d, int id, int n)
   }
   col++;
   gtk_grid_attach(GTK_GRID(d->text), w, col - width + 1, id, width, 1);
+
+  col++;
+  if (type == PARAMETER_TYPE_TRANSITION) {
+    button = gtk_button_new_from_icon_name("media-playback-start-symbolic", GTK_ICON_SIZE_BUTTON);
+    gtk_widget_set_tooltip_text(GTK_WIDGET(button), _("Start"));
+    gtk_widget_set_vexpand(GTK_WIDGET(button), FALSE);
+    gtk_widget_set_valign(GTK_WIDGET(button), GTK_ALIGN_CENTER);
+    gtk_widget_set_hexpand(GTK_WIDGET(button), FALSE);
+    gtk_widget_set_halign(GTK_WIDGET(button), GTK_ALIGN_START);
+    g_object_set_data(G_OBJECT(button), "user-data", w);
+    g_signal_connect(button, "clicked", G_CALLBACK(parameter_play), GINT_TO_POINTER(id));
+    gtk_grid_attach(GTK_GRID(d->text), button, col, id, 1, 1);
+  }
 
   col++;
   separator = gtk_frame_new(NULL);
