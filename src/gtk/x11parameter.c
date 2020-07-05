@@ -472,6 +472,36 @@ parameter_delete(GtkButton *btn, gpointer data)
 }
 
 static void
+parameter_play(GtkButton *btn, gpointer data)
+{
+  int id, loop, wait;
+  double start, stop, step, prm;
+  struct obj_list_data *d;
+  GtkWidget *scale;
+
+  if (Menulock || Globallock)
+    return;
+
+  scale = g_object_get_data(G_OBJECT(btn), "user-data");
+  id = GPOINTER_TO_INT(data);
+  d = NgraphApp.ParameterWin.data.data;
+  getobj(d->obj, "start", id, 0, NULL, &start);
+  getobj(d->obj, "stop", id, 0, NULL, &stop);
+  getobj(d->obj, "transition_step", id, 0, NULL, &step);
+  getobj(d->obj, "loop", id, 0, NULL, &loop);
+  getobj(d->obj, "wait", id, 0, NULL, &wait);
+  menu_lock(TRUE);
+  for (prm = start; fabs(prm - start) <= fabs(stop - start); prm += step) {
+    gtk_range_set_value(GTK_RANGE(scale), prm);
+    set_parameter(prm, data);
+    reset_event();
+    msleep(wait * 10);
+    prm = gtk_range_get_value(GTK_RANGE(scale));
+  }
+  menu_lock(FALSE);
+}
+
+static void
 add_button(GtkWidget *grid, int row, int col, const char *icon, const char *tooltip, GCallback proc)
 {
   GtkWidget *w;
