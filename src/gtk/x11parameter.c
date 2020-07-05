@@ -27,9 +27,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <math.h>
 
 #include "object.h"
-#include "nstring.h"
+#include "shell.h"
 #include "oparameter.h"
 
 #include "gtk_liststore.h"
@@ -37,7 +38,6 @@
 #include "gtk_combo.h"
 #include "gtk_widget.h"
 
-#include "x11bitmp.h"
 #include "x11gui.h"
 #include "x11dialg.h"
 #include "x11menu.h"
@@ -45,6 +45,8 @@
 #include "x11commn.h"
 #include "x11view.h"
 #include "x11parameter.h"
+
+static void set_parameter(double prm, gpointer user_data);
 
 static void
 ParameterDialogSetupItem(struct ParameterDialog *d, int id)
