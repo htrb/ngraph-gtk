@@ -131,6 +131,40 @@ add_page_spin(struct ParameterDialog *d)
 }
 
 static void
+add_page_transition(struct ParameterDialog *d)
+{
+  GtkWidget *w, *table;
+  int i;
+
+  table = gtk_grid_new();
+
+  i = 0;
+  w = create_text_entry(TRUE, TRUE);
+  add_widget_to_table(table, w, _("_Start:"), TRUE, i++);
+  d->start = w;
+
+  w = create_text_entry(TRUE, TRUE);
+  add_widget_to_table(table, w, _("_Stop:"), TRUE, i++);
+  d->stop = w;
+
+  w = create_text_entry(TRUE, TRUE);
+  add_widget_to_table(table, w, _("_Step:"), TRUE, i++);
+  d->transition_step = w;
+
+  w = create_spin_entry_type(SPIN_BUTTON_TYPE_PERCENT, TRUE, TRUE);
+  gtk_spin_button_set_range(GTK_SPIN_BUTTON(w), OPARAMETER_WAIT_MIN / 100.0, OPARAMETER_WAIT_MAX / 100.0);
+  gtk_spin_button_set_increments(GTK_SPIN_BUTTON(w), 0.1, 1);
+  add_widget_to_table(table, w, _("_Wait:"), TRUE, i++);
+  d->wait = w;
+
+  w = gtk_check_button_new_with_mnemonic(_("_Loop"));
+  add_widget_to_table(table, w, NULL, FALSE, i++);
+  d->loop = w;
+
+  gtk_stack_add_named(GTK_STACK(d->stack), table, TYPE_TRANSITION_NAME);
+}
+
+static void
 add_page_check(struct ParameterDialog *d)
 {
   GtkWidget *w;
