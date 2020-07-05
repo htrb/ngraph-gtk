@@ -35,6 +35,7 @@ char *parameter_type[]={
   N_("CheckButton"),
   N_("ComboBox"),
   N_("Switch"),
+  N_("Transition"),
   NULL,
 };
 
