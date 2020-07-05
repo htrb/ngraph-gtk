@@ -626,9 +626,7 @@ create_widget(struct obj_list_data *d, int id, int n)
     g_signal_connect(adj, "value-changed", G_CALLBACK(value_changed), GINT_TO_POINTER(id));
     break;
   case PARAMETER_TYPE_SCALE:
-    w = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, min, max, step);
-    gtk_widget_set_size_request(GTK_WIDGET(w), 200, -1);
-    gtk_range_set_value(GTK_RANGE(w), parameter);
+    w = create_scale(min, max, step, parameter);
     g_signal_connect(w, "value-changed", G_CALLBACK(scale_changed), GINT_TO_POINTER(id));
     break;
   case PARAMETER_TYPE_CHECK:
