@@ -111,6 +111,20 @@ parameter_type_put(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, 
 }
 
 static int
+parameter_put_wait(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  int wait;
+
+  wait = *(int *) (argv[2]);
+  if (wait < OPARAMETER_WAIT_MIN) {
+    *(int *)(argv[2]) = OPARAMETER_WAIT_MIN;
+  } else if (wait > OPARAMETER_WAIT_MAX) {
+    *(int *)(argv[2]) = OPARAMETER_WAIT_MAX;
+  }
+  return 0;
+}
+
+static int
 parameter_put(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   int type, checked, selected;
