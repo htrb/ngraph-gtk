@@ -1,6 +1,9 @@
 #ifndef _O_PARAMETER_HEADER
 #define _O_PARAMETER_HEADER
 
+#define OPARAMETER_WAIT_MIN 10
+#define OPARAMETER_WAIT_MAX 1000
+
 extern char *parameter_type[];
 
 enum PARAMETER_TYPE {
