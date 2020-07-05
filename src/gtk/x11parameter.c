@@ -406,22 +406,22 @@ void
 CmParameterUpdate(void *w, gpointer client_data)
 {
   struct narray farray;
-  struct objlist *obj;
   int modified;
+  struct obj_list_data *d;
 
   if (Menulock || Globallock)
     return;
-  if ((obj = chkobject("parameter")) == NULL)
+
+  d = NgraphApp.ParameterWin.data.data;
+  if (chkobjlastinst(d->obj) == -1)
     return;
-  if (chkobjlastinst(obj) == -1)
-    return;
-  SelectDialog(&DlgSelect, obj, _("parameter property (multi select)"), ParameterCB, (struct narray *) &farray, NULL);
+  SelectDialog(&DlgSelect, d->obj, _("parameter property (multi select)"), ParameterCB, (struct narray *) &farray, NULL);
   modified = FALSE;
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     int i, *array, num;
     num = arraynum(&farray);
     if (num > 0) {
-      menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
+      menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
     }
     array = arraydata(&farray);
     for (i = 0; i < num; i++) {
