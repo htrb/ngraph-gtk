@@ -569,6 +569,33 @@ combo_changed(GtkComboBox *combo_box, gpointer user_data)
   set_parameter(selected, user_data);
 }
 
+static GtkWidget *
+create_scale(double min, double max, double inc, double value)
+{
+  int invert;
+  GtkWidget *scale;
+
+  invert = FALSE;
+  if (inc < 0) {
+    invert = TRUE;
+    inc = -inc;
+  }
+  if (min == max) {
+    max += inc;
+  } else if (min > max) {
+    double tmp;
+    tmp = min;
+    min = max;
+    max = tmp;
+  }
+  scale = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, min, max, inc);
+  gtk_widget_set_size_request(GTK_WIDGET(scale), 200, -1);
+  gtk_range_set_inverted(GTK_RANGE(scale), invert);
+  gtk_range_set_value(GTK_RANGE(scale), value);
+
+  return scale;
+}
+
 static void
 create_widget(struct obj_list_data *d, int id, int n)
 {
