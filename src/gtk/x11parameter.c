@@ -237,6 +237,9 @@ parameter_type_changed(GtkComboBox *combo, gpointer user_data)
   case PARAMETER_TYPE_COMBO:
     gtk_stack_set_visible_child_name(GTK_STACK(d->stack), TYPE_COMBO_NAME);
     break;
+  case PARAMETER_TYPE_TRANSITION:
+    gtk_stack_set_visible_child_name(GTK_STACK(d->stack), TYPE_TRANSITION_NAME);
+    break;
   }
  }
 
