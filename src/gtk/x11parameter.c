@@ -298,8 +298,9 @@ ParameterDialogClose(GtkWidget *w, void *data)
 {
   struct ParameterDialog *d;
   GtkTextBuffer *buf;
-  int ret;
+  int ret, type;
   char *text;
+  double min, max, value, step;
 
   d = (struct ParameterDialog *) data;
 
@@ -321,9 +322,15 @@ ParameterDialogClose(GtkWidget *w, void *data)
     return;
   if (SetObjFieldFromWidget(d->max, d->Obj, d->Id, "max"))
     return;
-  if (SetObjFieldFromWidget(d->step, d->Obj, d->Id, "step"))
-    return;
   if (SetObjFieldFromWidget(d->wrap, d->Obj, d->Id, "wrap"))
+    return;
+  if (SetObjFieldFromWidget(d->start, d->Obj, d->Id, "start"))
+    return;
+  if (SetObjFieldFromWidget(d->stop, d->Obj, d->Id, "stop"))
+    return;
+  if (SetObjFieldFromWidget(d->wait, d->Obj, d->Id, "wait"))
+    return;
+  if (SetObjFieldFromWidget(d->loop, d->Obj, d->Id, "loop"))
     return;
   if (SetObjFieldFromWidget(d->checked, d->Obj, d->Id, "active"))
     return;
@@ -332,6 +339,17 @@ ParameterDialogClose(GtkWidget *w, void *data)
   if (SetObjFieldFromWidget(d->value, d->Obj, d->Id, "value"))
     return;
 
+  type = gtk_combo_box_get_active(GTK_COMBO_BOX(d->type));
+  if (type == PARAMETER_TYPE_TRANSITION) {
+    if (SetObjFieldFromWidget(d->transition_step, d->Obj, d->Id, "step")) {
+      return;
+    }
+  } else {
+    if (SetObjFieldFromWidget(d->step, d->Obj, d->Id, "step")) {
+      return;
+    }
+  }
+
   buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(d->items));
   text = get_text_from_buffer(buf);
   if (chk_sputobjfield(d->Obj, d->Id, "items", text)) {
@@ -339,6 +357,21 @@ ParameterDialogClose(GtkWidget *w, void *data)
     return;
   }
   g_free(text);
+
+  getobj(d->Obj, "min", d->Id, 0, NULL, &min);
+  getobj(d->Obj, "max", d->Id, 0, NULL, &max);
+  getobj(d->Obj, "step", d->Id, 0, NULL, &step);
+  getobj(d->Obj, "value", d->Id, 0, NULL, &value);
+  check_min_max(&min, &max, &step);
+  if (value < min) {
+    value = min;
+  } else if (value > max) {
+    value = max;
+  }
+  putobj(d->Obj, "min", d->Id, &min);
+  putobj(d->Obj, "max", d->Id, &max);
+  putobj(d->Obj, "step", d->Id, &step);
+  putobj(d->Obj, "value", d->Id, &value);
 
   d->ret = ret;
 }
