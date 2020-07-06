@@ -670,6 +670,21 @@ check_min_max(double *min, double *max, double *inc)
 }
 
 static GtkWidget *
+create_spin_button(double min, double max, double inc, int wrap, double value)
+{
+  GtkWidget *spin_button;
+
+  check_min_max(&min, &max, &inc);
+  spin_button = gtk_spin_button_new_with_range(min, max, inc);
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin_button), value);
+  gtk_spin_button_set_wrap(GTK_SPIN_BUTTON(spin_button), wrap);
+  gtk_widget_set_halign(GTK_WIDGET(spin_button), GTK_ALIGN_START);
+  gtk_widget_set_hexpand(GTK_WIDGET(spin_button), FALSE);
+
+  return spin_button;
+}
+
+static GtkWidget *
 create_scale(double min, double max, double inc, double value)
 {
   int invert;
