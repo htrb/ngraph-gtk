@@ -911,7 +911,7 @@ create_widget(struct obj_list_data *d, int id, int n)
     g_object_set_data(G_OBJECT(button), "user-data", w);
 
     col++;
-    button = add_button(d->text, id, col, "media-playback-start-symbolic", _("Play"), G_CALLBACK(parameter_play));
+    button = add_button(d->text, id, col, "media-playback-start-symbolic", _("Start"), G_CALLBACK(parameter_play));
     g_object_set_data(G_OBJECT(button), "user-data", w);
 
     col++;
