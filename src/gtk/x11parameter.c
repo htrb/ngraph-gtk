@@ -47,6 +47,7 @@
 #include "x11parameter.h"
 
 static void set_parameter(double prm, gpointer user_data);
+static void check_min_max(double *min, double *max, double *inc);
 
 static void
 ParameterDialogSetupItem(struct ParameterDialog *d, int id)
@@ -648,6 +649,24 @@ combo_changed(GtkComboBox *combo_box, gpointer user_data)
 
   selected = gtk_combo_box_get_active(combo_box);
   set_parameter(selected, user_data);
+}
+
+static void
+check_min_max(double *min, double *max, double *inc)
+{
+  double span;
+  span = fabs(*max - *min);
+  if (*inc == 0) {
+    *inc = span / 10;
+  }
+  if (*min == *max) {
+    *max += *inc;
+  } else if (*min > *max) {
+    double tmp;
+    tmp = *min;
+    *min = *max;
+    *max = tmp;
+  }
 }
 
 static GtkWidget *
