@@ -562,13 +562,18 @@ parameter_play(GtkButton *btn, gpointer data)
   int id, loop, wait;
   double start, stop, step, prm;
   struct obj_list_data *d;
-  GtkWidget *scale;
+  GtkWidget *scale, *icon;
+
+  id = GPOINTER_TO_INT(data);
+
+  if (Playing == id) {
+    Playing = -1;
+  }
 
   if (Menulock || Globallock)
     return;
 
   scale = g_object_get_data(G_OBJECT(btn), "user-data");
-  id = GPOINTER_TO_INT(data);
   d = NgraphApp.ParameterWin.data.data;
   getobj(d->obj, "start", id, 0, NULL, &start);
   getobj(d->obj, "stop", id, 0, NULL, &stop);
@@ -583,16 +588,35 @@ parameter_play(GtkButton *btn, gpointer data)
   }
   if (start > stop) {
     step = -step;
-    return;
   }
   menu_lock(TRUE);
-  for (prm = start; fabs(prm - start) <= fabs(stop - start); prm += step) {
-    gtk_range_set_value(GTK_RANGE(scale), prm);
-    set_parameter(prm, data);
-    reset_event();
-    msleep(wait * 10);
-    prm = gtk_range_get_value(GTK_RANGE(scale));
+
+  icon = gtk_image_new_from_icon_name("media-playback-stop-symbolic", GTK_ICON_SIZE_BUTTON);
+  gtk_button_set_image(btn, icon);
+  gtk_widget_set_tooltip_text(GTK_WIDGET(btn), _("Stop"));
+
+  Playing = id;
+  while (1) {
+    for (prm = start; fabs(prm - start) <= fabs(stop - start); prm += step) {
+      gtk_range_set_value(GTK_RANGE(scale), prm);
+      set_parameter(prm, data);
+      reset_event();
+      msleep(wait * 10);
+      prm = gtk_range_get_value(GTK_RANGE(scale));
+      if (Playing != id) {
+	goto EndPlaying;
+      }
+    }
+    if (loop == FALSE) {
+      break;
+    }
   }
+ EndPlaying:
+  Playing = -1;
+  icon = gtk_image_new_from_icon_name("media-playback-start-symbolic", GTK_ICON_SIZE_BUTTON);
+  gtk_button_set_image(btn, icon);
+  gtk_widget_set_tooltip_text(GTK_WIDGET(btn), _("Start"));
+  set_parameter(prm, data);
   menu_lock(FALSE);
 }
 
