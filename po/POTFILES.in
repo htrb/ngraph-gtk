@@ -15,6 +15,7 @@ src/gtk/x11merge.c
 src/gtk/x11opt.c
 src/gtk/x11print.c
 src/gtk/x11view.c
+src/gtk/x11parameter.c
 src/gtk/gtk_widget.c
 src/gtk/gtk_subwin.c
 src/gtk/gtk_liststore.c
@@ -27,3 +28,4 @@ src/ofit.c
 src/odata.c
 src/ogra.c
 src/opath.c
+src/oparameter.c
