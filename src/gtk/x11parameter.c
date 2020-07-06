@@ -570,9 +570,19 @@ parameter_play(GtkButton *btn, gpointer data)
   d = NgraphApp.ParameterWin.data.data;
   getobj(d->obj, "start", id, 0, NULL, &start);
   getobj(d->obj, "stop", id, 0, NULL, &stop);
-  getobj(d->obj, "transition_step", id, 0, NULL, &step);
+  getobj(d->obj, "step", id, 0, NULL, &step);
   getobj(d->obj, "loop", id, 0, NULL, &loop);
   getobj(d->obj, "wait", id, 0, NULL, &wait);
+  if (start == stop) {
+    return;
+  }
+  if (step == 0) {
+    return;
+  }
+  if (start > stop) {
+    step = -step;
+    return;
+  }
   menu_lock(TRUE);
   for (prm = start; fabs(prm - start) <= fabs(stop - start); prm += step) {
     gtk_range_set_value(GTK_RANGE(scale), prm);
