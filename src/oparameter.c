@@ -135,6 +135,19 @@ parameter_put_wait(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, 
 }
 
 static int
+parameter_put_step(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  double step;
+
+  step = arg_to_double(argv, 2);
+  if (step <= 0) {
+    step = 1;
+    *(double *)(argv[2]) = step;
+  }
+  return 0;
+}
+
+static int
 parameter_put(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   int type, checked, selected;
@@ -196,7 +209,7 @@ static struct objtable parameter[] = {
   {"type",      NENUM,    NREAD | NWRITE, parameter_type_put, parameter_type, 0},
   {"min",       NDOUBLE,  NREAD | NWRITE, NULL, NULL, 0},
   {"max",       NDOUBLE,  NREAD | NWRITE, NULL, NULL, 0},
-  {"step",      NDOUBLE,  NREAD | NWRITE, NULL, NULL, 0},
+  {"step",      NDOUBLE,  NREAD | NWRITE, parameter_put_step, NULL, 0},
   {"start",     NDOUBLE,  NREAD | NWRITE, NULL, NULL, 0},
   {"stop",      NDOUBLE,  NREAD | NWRITE, parameter_put, NULL, 0},
   {"transition_step", NDOUBLE,  NREAD | NWRITE, NULL, NULL, 0},
