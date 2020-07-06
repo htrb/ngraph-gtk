@@ -49,6 +49,8 @@
 static void set_parameter(double prm, gpointer user_data);
 static void check_min_max(double *min, double *max, double *inc);
 
+static int Playing = -1;
+
 static void
 ParameterDialogSetupItem(struct ParameterDialog *d, int id)
 {
