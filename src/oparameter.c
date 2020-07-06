@@ -69,7 +69,6 @@ parameter_init(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char
   _putobj(obj, "step", inst, &step);
   _putobj(obj, "start", inst, &min);
   _putobj(obj, "stop", inst, &max);
-  _putobj(obj, "transition_step", inst, &step);
   _putobj(obj, "value", inst, &value);
   _putobj(obj, "wait", inst, &wait);
   _putobj(obj, "active", inst, &checked);
@@ -212,7 +211,6 @@ static struct objtable parameter[] = {
   {"step",      NDOUBLE,  NREAD | NWRITE, parameter_put_step, NULL, 0},
   {"start",     NDOUBLE,  NREAD | NWRITE, NULL, NULL, 0},
   {"stop",      NDOUBLE,  NREAD | NWRITE, parameter_put, NULL, 0},
-  {"transition_step", NDOUBLE,  NREAD | NWRITE, NULL, NULL, 0},
   {"wait",      NINT,     NREAD | NWRITE, parameter_put_wait, NULL, 0},
   {"wrap",      NBOOL,    NREAD | NWRITE, NULL, NULL, 0},
   {"loop",      NBOOL,    NREAD | NWRITE, NULL, NULL, 0},
