@@ -276,6 +276,7 @@ ParameterDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_page_spin(d);
     add_page_check(d);
     add_page_combo(d);
+    add_page_transition(d);
 
     w = gtk_check_button_new_with_mnemonic(_("_Redraw"));
     add_widget_to_table(table, w, NULL, FALSE, i++);
