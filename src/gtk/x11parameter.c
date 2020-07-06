@@ -595,6 +595,25 @@ parameter_play(GtkButton *btn, gpointer data)
 }
 
 static void
+parameter_skip_backward(GtkButton *btn, gpointer data)
+{
+  int id;
+  double start;
+  struct obj_list_data *d;
+  GtkWidget *scale;
+
+  id = GPOINTER_TO_INT(data);
+
+  if (Playing != id && (Menulock || Globallock)) {
+    return;
+  }
+
+  scale = g_object_get_data(G_OBJECT(btn), "user-data");
+  d = NgraphApp.ParameterWin.data.data;
+  getobj(d->obj, "start", id, 0, NULL, &start);
+  gtk_range_set_value(GTK_RANGE(scale), start);
+}
+
 add_button(GtkWidget *grid, int row, int col, const char *icon, const char *tooltip, GCallback proc)
 {
   GtkWidget *w;
