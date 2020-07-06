@@ -634,6 +634,7 @@ parameter_skip_forward(GtkButton *btn, gpointer data)
   gtk_range_set_value(GTK_RANGE(scale), stop);
 }
 
+static GtkWidget *
 add_button(GtkWidget *grid, int row, int col, const char *icon, const char *tooltip, GCallback proc)
 {
   GtkWidget *w;
@@ -645,6 +646,7 @@ add_button(GtkWidget *grid, int row, int col, const char *icon, const char *tool
   gtk_widget_set_halign(GTK_WIDGET(w), GTK_ALIGN_START);
   gtk_grid_attach(GTK_GRID(grid), w, col, row, 1, 1);
   g_signal_connect(w, "clicked", proc, GINT_TO_POINTER(row));
+  return w;
 }
 
 static GtkWidget *
