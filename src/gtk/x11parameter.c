@@ -687,25 +687,11 @@ create_spin_button(double min, double max, double inc, int wrap, double value)
 static GtkWidget *
 create_scale(double min, double max, double inc, double value)
 {
-  int invert;
   GtkWidget *scale;
 
-  invert = FALSE;
-  if (inc < 0) {
-    invert = TRUE;
-    inc = -inc;
-  }
-  if (min == max) {
-    max += inc;
-  } else if (min > max) {
-    double tmp;
-    tmp = min;
-    min = max;
-    max = tmp;
-  }
+  check_min_max(&min, &max, &inc);
   scale = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, min, max, inc);
   gtk_widget_set_size_request(GTK_WIDGET(scale), 200, -1);
-  gtk_range_set_inverted(GTK_RANGE(scale), invert);
   gtk_range_set_value(GTK_RANGE(scale), value);
 
   return scale;
