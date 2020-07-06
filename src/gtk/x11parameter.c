@@ -755,7 +755,7 @@ static void
 create_widget(struct obj_list_data *d, int id, int n)
 {
   int type, checked, col, selected, width, wrap, loop;
-  double min, max, step, parameter, start, stop, transition_step;
+  double min, max, step, parameter, start, stop;
   GtkWidget *w, *label, *separator, *button;
   char buf[32], *title, *items;
   GtkAdjustment *adj;
@@ -769,18 +769,13 @@ create_widget(struct obj_list_data *d, int id, int n)
   getobj(d->obj, "wrap", id, 0, NULL, &wrap);
   getobj(d->obj, "start", id, 0, NULL, &start);
   getobj(d->obj, "stop", id, 0, NULL, &stop);
-  getobj(d->obj, "transition_step", id, 0, NULL, &transition_step);
   getobj(d->obj, "loop", id, 0, NULL, &loop);
   getobj(d->obj, "items", id, 0, NULL, &items);
   getobj(d->obj, "parameter", id, 0, NULL, &parameter);
   checked = selected = parameter;
   switch (type) {
   case PARAMETER_TYPE_SPIN:
-    w = gtk_spin_button_new_with_range(min, max, step);
-    gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), parameter);
-    gtk_spin_button_set_wrap(GTK_SPIN_BUTTON(w), wrap);
-    gtk_widget_set_halign(GTK_WIDGET(w), GTK_ALIGN_START);
-    gtk_widget_set_hexpand(GTK_WIDGET(w), FALSE);
+    w = create_spin_button(min, max, step, wrap, parameter);
     adj = gtk_spin_button_get_adjustment(GTK_SPIN_BUTTON(w));
     g_signal_connect(adj, "value-changed", G_CALLBACK(value_changed), GINT_TO_POINTER(id));
     break;
