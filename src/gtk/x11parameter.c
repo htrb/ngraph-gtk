@@ -881,15 +881,29 @@ create_widget(struct obj_list_data *d, int id, int n)
 
   col++;
   if (type == PARAMETER_TYPE_TRANSITION) {
-    button = gtk_button_new_from_icon_name("media-playback-start-symbolic", GTK_ICON_SIZE_BUTTON);
-    gtk_widget_set_tooltip_text(GTK_WIDGET(button), _("Start"));
-    gtk_widget_set_vexpand(GTK_WIDGET(button), FALSE);
-    gtk_widget_set_valign(GTK_WIDGET(button), GTK_ALIGN_CENTER);
-    gtk_widget_set_hexpand(GTK_WIDGET(button), FALSE);
-    gtk_widget_set_halign(GTK_WIDGET(button), GTK_ALIGN_START);
+    char *icon;
+
+    button = add_button(d->text, id, col, "media-skip-backward-symbolic", _("To start"), G_CALLBACK(parameter_skip_backward));
     g_object_set_data(G_OBJECT(button), "user-data", w);
-    g_signal_connect(button, "clicked", G_CALLBACK(parameter_play), GINT_TO_POINTER(id));
+
+    col++;
+    button = add_button(d->text, id, col, "media-playback-start-symbolic", _("Play"), G_CALLBACK(parameter_play));
+    g_object_set_data(G_OBJECT(button), "user-data", w);
+
+    col++;
+    button = add_button(d->text, id, col, "media-skip-forward-symbolic", _("To stop"), G_CALLBACK(parameter_skip_forward));
+    g_object_set_data(G_OBJECT(button), "user-data", w);
+
+    col++;
+    if (loop) {
+      icon = "media-playlist-repeat-symbolic";
+    } else {
+      icon = "media-playlist-consecutive-symbolic";
+    }
+    button = gtk_image_new_from_icon_name(icon, GTK_ICON_SIZE_BUTTON);
     gtk_grid_attach(GTK_GRID(d->text), button, col, id, 1, 1);
+  } else {
+    col += 3;
   }
 
   col++;
