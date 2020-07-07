@@ -517,7 +517,7 @@ GRAredraw_layers(struct objlist *obj, N_VALUE *inst, int setredrawf, int redraw_
 	continue;
       }
       if (setredrawf) {
-	int t = (redraw_num != 0);
+	int t = TRUE;
 	_getobj(dobj, "redraw_flag", dinst, &redrawfsave);
 	_putobj(dobj, "redraw_flag", dinst, &t);
 	_putobj(dobj, "redraw_num", dinst, &redraw_num);
