@@ -561,6 +561,15 @@ parameter_delete(GtkButton *btn, gpointer data)
 
 static void
 parameter_play(GtkButton *btn, gpointer data)
+static void
+set_play_icon(GtkButton *btn)
+{
+  GtkWidget *icon;
+  icon = gtk_image_new_from_icon_name("media-playback-start-symbolic", GTK_ICON_SIZE_BUTTON);
+  gtk_widget_set_tooltip_text(GTK_WIDGET(btn), _("Play"));
+  gtk_button_set_image(btn, icon);
+}
+
 {
   int id, loop, wait;
   double start, stop, step, prm;
