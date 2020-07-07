@@ -410,13 +410,13 @@ CmParameterAdd(void *w, gpointer client_data)
   if (id < 0) {
     return;
   }
-  ParameterDialog(NgraphApp.ParameterWin.data.data, id, -1);
+  ParameterDialog(d, id, -1);
   ret = DialogExecute(TopLevel, &DlgParameter);
   if (ret == IDCANCEL) {
     menu_undo_internal(undo);
   } else {
     set_graph_modified();
-    ParameterWinUpdate(NgraphApp.ParameterWin.data.data, FALSE, FALSE);
+    ParameterWinUpdate(d, FALSE, FALSE);
   }
 }
 
