@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.07.06\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2020-07-06 20:48+0900\n"
-"PO-Revision-Date: 2020-07-06 20:49+0900\n"
+"POT-Creation-Date: 2020-07-07 17:56+0900\n"
+"PO-Revision-Date: 2020-07-07 18:02+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja\n"
@@ -336,12 +336,12 @@ msgid "autoscale (multi select)"
 msgstr "自動スケール (複数選択)"
 
 #: src/gtk/x11axis.c:1291 src/gtk/x11axis.c:1619 src/gtk/x11file.c:1734
-#: src/gtk/x11parameter.c:122
+#: src/gtk/x11parameter.c:129
 msgid "_Min:"
 msgstr "最小値(_M):"
 
 #: src/gtk/x11axis.c:1295 src/gtk/x11axis.c:1624 src/gtk/x11file.c:1738
-#: src/gtk/x11parameter.c:126
+#: src/gtk/x11parameter.c:133
 msgid "_Max:"
 msgstr "最大値(_M):"
 
@@ -443,7 +443,7 @@ msgstr "位置(_N):"
 msgid "_Begin:"
 msgstr "開始点(_B):"
 
-#: src/gtk/x11axis.c:1882 src/gtk/x11parameter.c:130 src/gtk/x11parameter.c:162
+#: src/gtk/x11axis.c:1882 src/gtk/x11parameter.c:137 src/gtk/x11parameter.c:169
 msgid "_Step:"
 msgstr "間隔(_S):"
 
@@ -1055,7 +1055,7 @@ msgid "Fit %d"
 msgstr "フィット %d"
 
 #: src/gtk/x11file.c:1678 src/gtk/x11file.c:3411 src/gtk/x11lgnd.c:1484
-#: src/gtk/x11parameter.c:270
+#: src/gtk/x11parameter.c:273
 msgid "_Type:"
 msgstr "タイプ(_T):"
 
@@ -2873,92 +2873,92 @@ msgstr "軸スケール設定中"
 msgid "Drawing"
 msgstr "描画中"
 
-#: src/gtk/x11parameter.c:134
+#: src/gtk/x11parameter.c:141
 msgid "_Value:"
 msgstr "初期値(_V):"
 
-#: src/gtk/x11parameter.c:137
+#: src/gtk/x11parameter.c:144
 msgid "_Wrap"
 msgstr "_Wrap"
 
-#: src/gtk/x11parameter.c:154
+#: src/gtk/x11parameter.c:161
 msgid "_Start:"
 msgstr "開始(_S):"
 
-#: src/gtk/x11parameter.c:158
+#: src/gtk/x11parameter.c:165
 msgid "_Stop:"
 msgstr "終了(_S):"
 
-#: src/gtk/x11parameter.c:168
+#: src/gtk/x11parameter.c:175
 msgid "_Wait:"
 msgstr "ウェイト(_W):"
 
-#: src/gtk/x11parameter.c:171
-msgid "_Loop"
-msgstr "繰り返し(_L)"
-
-#: src/gtk/x11parameter.c:182
+#: src/gtk/x11parameter.c:185
 msgid "_Active"
 msgstr "有効(_A)"
 
-#: src/gtk/x11parameter.c:205
+#: src/gtk/x11parameter.c:208
 msgid "_Items:"
 msgstr "項目(_I):"
 
-#: src/gtk/x11parameter.c:209
+#: src/gtk/x11parameter.c:212
 msgid "_Selected:"
 msgstr "選択項目(_S):"
 
-#: src/gtk/x11parameter.c:256
+#: src/gtk/x11parameter.c:259
 #, c-format
 msgid "Parameter %d"
 msgstr "パラメータ %d"
 
-#: src/gtk/x11parameter.c:266
+#: src/gtk/x11parameter.c:269
 msgid "_Title:"
 msgstr "タイトル(_T):"
 
-#: src/gtk/x11parameter.c:283
+#: src/gtk/x11parameter.c:286
 msgid "_Redraw"
 msgstr "再描画(_R)"
 
-#: src/gtk/x11parameter.c:432
+#: src/gtk/x11parameter.c:435
 msgid "delete parameter (multi select)"
 msgstr "パラメータ削除 (複数選択)"
 
-#: src/gtk/x11parameter.c:462
+#: src/gtk/x11parameter.c:465
 msgid "parameter property (multi select)"
 msgstr "パラメータプロパティ (複数選択)"
 
-#: src/gtk/x11parameter.c:596
-msgid "Stop"
-msgstr "停止"
+#: src/gtk/x11parameter.c:560
+msgid "Pause"
+msgstr "一時停止"
 
-#: src/gtk/x11parameter.c:618 src/gtk/x11parameter.c:914
-msgid "Start"
+#: src/gtk/x11parameter.c:569 src/gtk/x11parameter.c:921
+msgid "Play"
 msgstr "開始"
 
-#: src/gtk/x11parameter.c:910
+#: src/gtk/x11parameter.c:918
 msgid "To start"
 msgstr "最初の値へ"
 
-#: src/gtk/x11parameter.c:918
+#: src/gtk/x11parameter.c:924
 msgid "To stop"
 msgstr "最後の値へ"
 
-#: src/gtk/x11parameter.c:945
+#: src/gtk/x11parameter.c:927
+msgid "Repeat"
+msgstr "リピート"
+
+#: src/gtk/x11parameter.c:1050
 msgid "Up"
 msgstr "上へ"
 
-#: src/gtk/x11parameter.c:950
+#: src/gtk/x11parameter.c:1055
 msgid "Down"
 msgstr "下へ"
 
-#: src/gtk/x11parameter.c:954
+#: src/gtk/x11parameter.c:1059
 msgid "Delete"
 msgstr "削除"
 
-#: src/gtk/x11parameter.c:981
+#: src/gtk/x11parameter.c:1086
 msgid "Add"
 msgstr "追加"
 
@@ -5637,7 +5637,13 @@ msgstr "スイッチ"
 msgid "Transition"
 msgstr "遷移"
 
-#~ msgid "Play"
+#~ msgid "_Loop"
+#~ msgstr "繰り返し(_L)"
+
+#~ msgid "Stop"
+#~ msgstr "停止"
+
+#~ msgid "Start"
 #~ msgstr "開始"
 
 #~ msgid ""
