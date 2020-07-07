@@ -886,6 +886,12 @@ create_scale(double min, double max, double inc, double value)
 }
 
 static void
+delete_parameter_data(gpointer data)
+{
+  g_free(data);
+}
+
+static void
 create_widget(struct obj_list_data *d, int id, int n)
 {
   int type, checked, col, selected, width, wrap, loop;
