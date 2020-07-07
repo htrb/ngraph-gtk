@@ -473,14 +473,14 @@ CmParameterUpdate(void *w, gpointer client_data)
     array = arraydata(&farray);
     for (i = 0; i < num; i++) {
       int ret;
-      ParameterDialog(NgraphApp.ParameterWin.data.data, array[i], -1);
+      ParameterDialog(d, array[i], -1);
       ret = DialogExecute(TopLevel, &DlgParameter);
       if (ret != IDCANCEL) {
         modified = TRUE;
       }
     }
     if (modified) {
-      ParameterWinUpdate(NgraphApp.ParameterWin.data.data, FALSE, FALSE);
+      ParameterWinUpdate(d, FALSE, FALSE);
     }
   }
   arraydel(&farray);
