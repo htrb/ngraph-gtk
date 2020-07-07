@@ -653,23 +653,19 @@ parameter_skip_backward(GtkButton *btn, gpointer user_data)
 }
 
 static void
-parameter_skip_forward(GtkButton *btn, gpointer data)
+parameter_skip_forward(GtkButton *btn, gpointer user_data)
 {
-  int id;
   double stop;
-  struct obj_list_data *d;
-  GtkWidget *scale;
+  struct parameter_data *data;
 
-  id = GPOINTER_TO_INT(data);
+  data = user_data;
 
-  if (Playing != id && (Menulock || Globallock)) {
+  if ((! data->playing) && (Menulock || Globallock)) {
     return;
   }
 
-  scale = g_object_get_data(G_OBJECT(btn), "user-data");
-  d = NgraphApp.ParameterWin.data.data;
-  getobj(d->obj, "stop", id, 0, NULL, &stop);
-  gtk_range_set_value(GTK_RANGE(scale), stop);
+  getobj(data->obj, "stop", data->id, 0, NULL, &stop);
+  gtk_range_set_value(GTK_RANGE(data->scale), stop);
 }
 
 static void
