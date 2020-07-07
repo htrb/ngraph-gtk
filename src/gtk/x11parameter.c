@@ -335,9 +335,9 @@ ParameterDialogClose(GtkWidget *w, void *data)
     return;
   if (SetObjFieldFromWidget(d->wait, d->Obj, d->Id, "wait"))
     return;
-  if (SetObjFieldFromWidget(d->loop, d->Obj, d->Id, "loop"))
-    return;
   if (SetObjFieldFromWidget(d->checked, d->Obj, d->Id, "active"))
+    return;
+  if (SetObjFieldFromWidget(d->redraw, d->Obj, d->Id, "redraw"))
     return;
   if (SetObjFieldFromWidget(d->selected, d->Obj, d->Id, "selected"))
     return;
