@@ -7,6 +7,7 @@
 
 #include "common.h"
 
+#include "gtk_common.h"
 #include "gtk_liststore.h"
 
 #include "object.h"
