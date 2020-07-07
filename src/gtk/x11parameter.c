@@ -891,6 +891,25 @@ delete_parameter_data(gpointer data)
   g_free(data);
 }
 
+static struct parameter_data *
+create_parameter_data(struct obj_list_data *d, int id)
+{
+  struct parameter_data *data;
+
+  data = g_malloc(sizeof(*data));
+  if (data == NULL) {
+    return NULL;
+  }
+  data->playing = FALSE;
+  data->scale = NULL;
+  data->repeat = NULL;
+  data->obj = d->obj;
+  data->id = id;
+  data->obj_list_data = d;
+  data->inst = chkobjinst(d->obj, id);
+  return data;
+}
+
 static void
 create_widget(struct obj_list_data *d, int id, int n)
 {
