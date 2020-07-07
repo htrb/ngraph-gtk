@@ -215,7 +215,6 @@ static struct objtable parameter[] = {
   {"stop",      NDOUBLE,  NREAD | NWRITE, parameter_put, NULL, 0},
   {"wait",      NINT,     NREAD | NWRITE, parameter_put_wait, NULL, 0},
   {"wrap",      NBOOL,    NREAD | NWRITE, NULL, NULL, 0},
-  {"loop",      NBOOL,    NREAD | NWRITE, NULL, NULL, 0},
   {"items",     NSTR,     NREAD | NWRITE, NULL, NULL, 0},
   {"redraw",    NBOOL,    NREAD | NWRITE, NULL, NULL, 0},
   {"active",    NBOOL,    NREAD | NWRITE, parameter_put, NULL, 0},
