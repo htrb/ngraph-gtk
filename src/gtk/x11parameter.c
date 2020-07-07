@@ -49,7 +49,15 @@
 static void set_parameter(double prm, gpointer user_data);
 static void check_min_max(double *min, double *max, double *inc);
 
-static int Playing = -1;
+struct parameter_data
+{
+  int playing;
+  GtkWidget *scale, *repeat;
+  struct objlist *obj;
+  int id;
+  N_VALUE *inst;
+  struct obj_list_data *obj_list_data;
+};
 
 static void
 ParameterDialogSetupItem(struct ParameterDialog *d, int id)
