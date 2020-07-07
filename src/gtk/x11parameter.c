@@ -934,11 +934,12 @@ create_play_buttons(GtkWidget *grid, int id, int col, GtkWidget *scale, struct p
 static void
 create_widget(struct obj_list_data *d, int id, int n)
 {
-  int type, checked, col, selected, width, wrap, loop;
+  int type, checked, col, selected, width, wrap;
   double min, max, step, parameter, start, stop;
-  GtkWidget *w, *label, *separator, *button;
+  GtkWidget *w, *label, *separator;
   char buf[32], *title, *items;
   GtkAdjustment *adj;
+  struct parameter_data *data;
 
   width = 1;
   getobj(d->obj, "title", id, 0, NULL, &title);
@@ -949,36 +950,40 @@ create_widget(struct obj_list_data *d, int id, int n)
   getobj(d->obj, "wrap", id, 0, NULL, &wrap);
   getobj(d->obj, "start", id, 0, NULL, &start);
   getobj(d->obj, "stop", id, 0, NULL, &stop);
-  getobj(d->obj, "loop", id, 0, NULL, &loop);
   getobj(d->obj, "items", id, 0, NULL, &items);
   getobj(d->obj, "parameter", id, 0, NULL, &parameter);
   checked = selected = parameter;
+
+  data = create_parameter_data(d, id);
+  if (data == NULL) {
+    return;
+  }
   switch (type) {
   case PARAMETER_TYPE_SPIN:
     w = create_spin_button(min, max, step, wrap, parameter);
     adj = gtk_spin_button_get_adjustment(GTK_SPIN_BUTTON(w));
-    g_signal_connect(adj, "value-changed", G_CALLBACK(value_changed), GINT_TO_POINTER(id));
+    g_signal_connect(adj, "value-changed", G_CALLBACK(value_changed), data);
     break;
   case PARAMETER_TYPE_SCALE:
     w = create_scale(min, max, step, parameter);
-    g_signal_connect(w, "value-changed", G_CALLBACK(scale_changed), GINT_TO_POINTER(id));
+    g_signal_connect(w, "value-changed", G_CALLBACK(scale_changed), data);
     break;
   case PARAMETER_TYPE_CHECK:
     if (title) {
       w = gtk_check_button_new_with_mnemonic(title);
-      g_signal_connect(w, "toggled", G_CALLBACK(toggled), GINT_TO_POINTER(id));
       title = NULL;
     } else {
       w = gtk_check_button_new();
     }
     width = 2;
+    g_signal_connect(w, "toggled", G_CALLBACK(toggled), data);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), checked);
     break;
   case PARAMETER_TYPE_COMBO:
     w = create_combo_box(items, selected);
     gtk_widget_set_halign(GTK_WIDGET(w), GTK_ALIGN_START);
     gtk_widget_set_hexpand(w, FALSE);
-    g_signal_connect(w, "changed", G_CALLBACK(combo_changed), GINT_TO_POINTER(id));
+    g_signal_connect(w, "changed", G_CALLBACK(combo_changed), data);
     break;
   case PARAMETER_TYPE_SWITCH:
     w = gtk_switch_new();
@@ -987,19 +992,23 @@ create_widget(struct obj_list_data *d, int id, int n)
     gtk_widget_set_vexpand(GTK_WIDGET(w), FALSE);
     gtk_widget_set_halign(GTK_WIDGET(w), GTK_ALIGN_START);
     gtk_widget_set_valign(GTK_WIDGET(w), GTK_ALIGN_CENTER);
-    g_signal_connect(w, "notify::active", G_CALLBACK(switched), GINT_TO_POINTER(id));
+    g_signal_connect(w, "notify::active", G_CALLBACK(switched), data);
     break;
   case PARAMETER_TYPE_TRANSITION:
     w = create_scale(start, stop, step, parameter);
     gtk_scale_set_has_origin(GTK_SCALE(w), FALSE);
-    g_signal_connect(w, "value-changed", G_CALLBACK(scale_changed), GINT_TO_POINTER(id));
+    g_signal_connect(w, "value-changed", G_CALLBACK(scale_changed), data);
     break;
+  default:
+    g_free(data);
+    return;
   }
 
   col = 0;
   snprintf(buf, sizeof(buf), "%d", id);
   label = gtk_button_new_with_label(buf);
-  g_signal_connect(label, "clicked", G_CALLBACK(parameter_update), GINT_TO_POINTER(id));
+  g_signal_connect(label, "clicked", G_CALLBACK(parameter_update), data);
+  g_object_set_data_full(G_OBJECT(label), "user-data", data, delete_parameter_data);
   gtk_grid_attach(GTK_GRID(d->text), label, col, id, 1, 1);
 
   col++;
@@ -1018,27 +1027,10 @@ create_widget(struct obj_list_data *d, int id, int n)
 
   col++;
   if (type == PARAMETER_TYPE_TRANSITION) {
-    char *icon;
-
-    button = add_button(d->text, id, col, "media-skip-backward-symbolic", _("To start"), G_CALLBACK(parameter_skip_backward));
-    g_object_set_data(G_OBJECT(button), "user-data", w);
-
-    col++;
-    button = add_button(d->text, id, col, "media-playback-start-symbolic", _("Start"), G_CALLBACK(parameter_play));
-    g_object_set_data(G_OBJECT(button), "user-data", w);
-
-    col++;
-    button = add_button(d->text, id, col, "media-skip-forward-symbolic", _("To stop"), G_CALLBACK(parameter_skip_forward));
-    g_object_set_data(G_OBJECT(button), "user-data", w);
-
-    col++;
-    if (loop) {
-      icon = "media-playlist-repeat-symbolic";
-    } else {
-      icon = "media-playlist-consecutive-symbolic";
+    col = create_play_buttons(d->text, id, col, w, data);
+    if (col < 0) {
+      return;
     }
-    button = gtk_image_new_from_icon_name(icon, GTK_ICON_SIZE_BUTTON);
-    gtk_grid_attach(GTK_GRID(d->text), button, col, id, 1, 1);
   } else {
     col += 3;
   }
@@ -1055,16 +1047,16 @@ create_widget(struct obj_list_data *d, int id, int n)
 
   col++;
   if (id > 0) {
-    add_button(d->text, id, col, "go-up-symbolic", _("Up"), G_CALLBACK(parameter_up));
+    add_button(d->text, id, col, "go-up-symbolic", _("Up"), G_CALLBACK(parameter_up), data);
   }
 
   col++;
   if (id < n) {
-    add_button(d->text, id, col, "go-down-symbolic", _("Down"), G_CALLBACK(parameter_down));
+    add_button(d->text, id, col, "go-down-symbolic", _("Down"), G_CALLBACK(parameter_down), data);
   }
 
   col++;
-  add_button(d->text, id, col, "edit-delete-symbolic", _("Delete"), G_CALLBACK(parameter_delete));
+  add_button(d->text, id, col, "edit-delete-symbolic", _("Delete"), G_CALLBACK(parameter_delete), data);
 }
 
 void
