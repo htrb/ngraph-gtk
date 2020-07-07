@@ -810,9 +810,12 @@ static void
 toggled(GtkToggleButton *toggle_button, gpointer user_data)
 {
   int active;
-  if (Menulock || Globallock)
+  if (Menulock || Globallock) {
+    gtk_toggle_button_set_inconsistent(toggle_button, TRUE);
     return;
+  }
 
+  gtk_toggle_button_set_inconsistent(toggle_button, FALSE);
   active = gtk_toggle_button_get_active(toggle_button);
   set_parameter(active, user_data);
 }
