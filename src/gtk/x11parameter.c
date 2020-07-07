@@ -416,8 +416,8 @@ CmParameterAdd(void *w, gpointer client_data)
     menu_undo_internal(undo);
   } else {
     set_graph_modified();
-    ParameterWinUpdate(d, FALSE, FALSE);
   }
+  ParameterWinUpdate(d, FALSE, FALSE);
 }
 
 void
