@@ -560,7 +560,14 @@ parameter_delete(GtkButton *btn, gpointer data)
 }
 
 static void
-parameter_play(GtkButton *btn, gpointer data)
+set_pause_icon(GtkButton *btn)
+{
+  GtkWidget *icon;
+  icon = gtk_image_new_from_icon_name("media-playback-pause-symbolic", GTK_ICON_SIZE_BUTTON);
+  gtk_widget_set_tooltip_text(GTK_WIDGET(btn), _("Pause"));
+  gtk_button_set_image(btn, icon);
+}
+
 static void
 set_play_icon(GtkButton *btn)
 {
