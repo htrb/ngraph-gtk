@@ -5,6 +5,7 @@
 #ifndef _GTK_LISTSTORE_HEADER
 #define _GTK_LISTSTORE_HEADER
 
+#include "gtk_common.h"
 #include "object.h"
 
 enum TOGGLE_TYPE {
