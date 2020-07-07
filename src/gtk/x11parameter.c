@@ -910,6 +910,27 @@ create_parameter_data(struct obj_list_data *d, int id)
   return data;
 }
 
+static int
+create_play_buttons(GtkWidget *grid, int id, int col, GtkWidget *scale, struct parameter_data *data)
+{
+  GtkWidget *button;
+
+  add_button(grid, id, col, "media-skip-backward-symbolic", _("To start"), G_CALLBACK(parameter_skip_backward), data);
+
+  col++;
+  add_button(grid, id, col, "media-playback-start-symbolic", _("Play"), G_CALLBACK(parameter_play), data);
+
+  col++;
+  add_button(grid, id, col, "media-skip-forward-symbolic", _("To stop"), G_CALLBACK(parameter_skip_forward), data);
+
+  col++;
+  button = add_toggle_button(grid, id, col, "media-playlist-repeat-symbolic", _("Repeat"), NULL, NULL);
+  data->repeat = button;
+  data->scale = scale;
+
+  return col;
+}
+
 static void
 create_widget(struct obj_list_data *d, int id, int n)
 {
