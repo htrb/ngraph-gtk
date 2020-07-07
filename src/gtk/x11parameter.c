@@ -540,17 +540,15 @@ parameter_down(GtkButton *btn, gpointer data)
 static void
 parameter_delete(GtkButton *btn, gpointer data)
 {
-  int id;
-  struct obj_list_data *d;
+  struct parameter_data *d;
 
   if (Menulock || Globallock)
     return;
 
-  d = NgraphApp.ParameterWin.data.data;
-  id = GPOINTER_TO_INT(data);
+  d = data;
   menu_save_undo_single(UNDO_TYPE_DELETE, d->obj->name);
-  delobj(d->obj, id);
-  ParameterWinUpdate(NgraphApp.ParameterWin.data.data, FALSE, FALSE);
+  delobj(d->obj, d->id);
+  ParameterWinUpdate(d->obj_list_data, FALSE, FALSE);
   set_graph_modified();
 }
 
