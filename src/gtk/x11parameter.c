@@ -489,21 +489,20 @@ CmParameterUpdate(void *w, gpointer client_data)
 static void
 parameter_update(GtkButton *btn, gpointer data)
 {
-  int id, undo, ret;
-  struct obj_list_data *d;
+  int undo, ret;
+  struct parameter_data *d;
 
   if (Menulock || Globallock)
     return;
 
-  d = NgraphApp.ParameterWin.data.data;
-  id = GPOINTER_TO_INT(data);
+  d = data;
   undo = menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
-  ParameterDialog(NgraphApp.ParameterWin.data.data, id, -1);
+  ParameterDialog(d->obj_list_data, d->id, -1);
   ret = DialogExecute(TopLevel, &DlgParameter);
   if (ret == IDCANCEL) {
     menu_undo_internal(undo);
   } else {
-    ParameterWinUpdate(NgraphApp.ParameterWin.data.data, FALSE, FALSE);
+    ParameterWinUpdate(d->obj_list_data, FALSE, FALSE);
     set_graph_modified();
   }
 }
