@@ -444,7 +444,7 @@ CmParameterDelete(void *w, gpointer client_data)
       delobj(d->obj, array[i]);
       set_graph_modified();
     }
-    ParameterWinUpdate(NgraphApp.ParameterWin.data.data, FALSE, FALSE);
+    ParameterWinUpdate(d, FALSE, FALSE);
   }
   arraydel(&farray);
 }
