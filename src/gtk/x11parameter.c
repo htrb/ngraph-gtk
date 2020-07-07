@@ -570,28 +570,28 @@ set_play_icon(GtkButton *btn)
   gtk_button_set_image(btn, icon);
 }
 
+static void
+parameter_play(GtkButton *btn, gpointer user_data)
 {
-  int id, loop, wait;
+  int wait;
   double start, stop, step, prm;
-  struct obj_list_data *d;
-  GtkWidget *scale, *icon;
+  GtkWidget *scale;
+  struct parameter_data *data;
 
-  id = GPOINTER_TO_INT(data);
+  data = user_data;
 
-  if (Playing == id) {
-    Playing = -1;
+  if (data->playing) {
+    data->playing = FALSE;
   }
 
   if (Menulock || Globallock)
     return;
 
-  scale = g_object_get_data(G_OBJECT(btn), "user-data");
-  d = NgraphApp.ParameterWin.data.data;
-  getobj(d->obj, "start", id, 0, NULL, &start);
-  getobj(d->obj, "stop", id, 0, NULL, &stop);
-  getobj(d->obj, "step", id, 0, NULL, &step);
-  getobj(d->obj, "loop", id, 0, NULL, &loop);
-  getobj(d->obj, "wait", id, 0, NULL, &wait);
+  scale = data->scale;
+  getobj(data->obj, "start", data->id, 0, NULL, &start);
+  getobj(data->obj, "stop", data->id, 0, NULL, &stop);
+  getobj(data->obj, "step", data->id, 0, NULL, &step);
+  getobj(data->obj, "wait", data->id, 0, NULL, &wait);
   if (start == stop) {
     return;
   }
@@ -603,31 +603,35 @@ set_play_icon(GtkButton *btn)
   }
   menu_lock(TRUE);
 
-  icon = gtk_image_new_from_icon_name("media-playback-stop-symbolic", GTK_ICON_SIZE_BUTTON);
-  gtk_button_set_image(btn, icon);
-  gtk_widget_set_tooltip_text(GTK_WIDGET(btn), _("Stop"));
-
-  Playing = id;
+  set_pause_icon(btn);
+  prm = gtk_range_get_value(GTK_RANGE(scale));
+  if (prm >= stop) {
+    prm = start;
+  }
+  data->playing = TRUE;
   while (1) {
-    for (prm = start; fabs(prm - start) <= fabs(stop - start); prm += step) {
+    while (fabs(prm - start) <= fabs(stop - start)) {
       gtk_range_set_value(GTK_RANGE(scale), prm);
       set_parameter(prm, data);
       reset_event();
       msleep(wait * 10);
       prm = gtk_range_get_value(GTK_RANGE(scale));
-      if (Playing != id) {
+      if (! data->playing) {
 	goto EndPlaying;
       }
+      prm += step;
     }
-    if (loop == FALSE) {
+    if (! gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(data->repeat))) {
       break;
     }
+    prm = start;
   }
  EndPlaying:
-  Playing = -1;
-  icon = gtk_image_new_from_icon_name("media-playback-start-symbolic", GTK_ICON_SIZE_BUTTON);
-  gtk_button_set_image(btn, icon);
-  gtk_widget_set_tooltip_text(GTK_WIDGET(btn), _("Start"));
+  if (prm > stop) {
+    prm = stop;
+  }
+  data->playing = FALSE;
+  set_play_icon(btn);
   set_parameter(prm, data);
   menu_lock(FALSE);
 }
