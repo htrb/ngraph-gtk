@@ -679,8 +679,7 @@ parameter_skip_forward(GtkButton *btn, gpointer data)
   gtk_range_set_value(GTK_RANGE(scale), stop);
 }
 
-static GtkWidget *
-add_button(GtkWidget *grid, int row, int col, const char *icon, const char *tooltip, GCallback proc)
+static void
 add_button_common(GtkWidget *w, GtkWidget *grid, int row, int col, const char *tooltip, GCallback proc, gpointer data)
 {
   gtk_widget_set_tooltip_text(GTK_WIDGET(w), tooltip);
@@ -692,6 +691,15 @@ add_button_common(GtkWidget *w, GtkWidget *grid, int row, int col, const char *t
   if (proc) {
     g_signal_connect(w, "clicked", proc, data);
   }
+}
+
+static GtkWidget *
+add_button(GtkWidget *grid, int row, int col, const char *icon, const char *tooltip, GCallback proc, gpointer data)
+{
+  GtkWidget *w;
+  w = gtk_button_new_from_icon_name(icon, GTK_ICON_SIZE_BUTTON);
+  add_button_common(w, grid, row, col, tooltip, proc, data);
+  return w;
 }
 
   return w;
