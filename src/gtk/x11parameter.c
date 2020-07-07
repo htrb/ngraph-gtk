@@ -736,6 +736,11 @@ create_combo_box(char *str, int selected)
   return w;
 }
 
+struct redraw_info
+{
+  int redraw_flag, redraw_num;
+};
+
 static void
 set_parameter(double prm, gpointer user_data)
 {
