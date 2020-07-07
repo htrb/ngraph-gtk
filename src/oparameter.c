@@ -50,7 +50,7 @@ static int
 parameter_init(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   double min, max, step, value;
-  int checked, type, wait;
+  int checked, type, wait, redraw;
 
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv)) {
     return 1;
@@ -62,6 +62,7 @@ parameter_init(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char
   value = min;
   wait = 10;
   checked = FALSE;
+  redraw = TRUE;
   type = PARAMETER_TYPE_SPIN;
 
   _putobj(obj, "min", inst, &min);
@@ -72,6 +73,7 @@ parameter_init(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char
   _putobj(obj, "value", inst, &value);
   _putobj(obj, "wait", inst, &wait);
   _putobj(obj, "active", inst, &checked);
+  _putobj(obj, "redraw", inst, &redraw);
   _putobj(obj, "type", inst, &type);
 
   set_parameter(obj, inst, type);
