@@ -741,6 +741,18 @@ struct redraw_info
   int redraw_flag, redraw_num;
 };
 
+static int
+get_redraw_info(struct redraw_info *info)
+{
+  if (getobj(Menulocal.obj, "redraw_num", 0, 0, NULL, &info->redraw_num) == -1) {
+    return 1;
+  }
+  if (getobj(Menulocal.obj, "redraw_flag", 0, 0, NULL, &info->redraw_flag) == -1) {
+    return 1;
+  }
+  return 0;
+}
+
 static void
 set_parameter(double prm, gpointer user_data)
 {
