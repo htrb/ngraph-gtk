@@ -681,16 +681,19 @@ parameter_skip_forward(GtkButton *btn, gpointer data)
 
 static GtkWidget *
 add_button(GtkWidget *grid, int row, int col, const char *icon, const char *tooltip, GCallback proc)
+add_button_common(GtkWidget *w, GtkWidget *grid, int row, int col, const char *tooltip, GCallback proc, gpointer data)
 {
-  GtkWidget *w;
-  w = gtk_button_new_from_icon_name(icon, GTK_ICON_SIZE_BUTTON);
   gtk_widget_set_tooltip_text(GTK_WIDGET(w), tooltip);
   gtk_widget_set_vexpand(GTK_WIDGET(w), FALSE);
   gtk_widget_set_valign(GTK_WIDGET(w), GTK_ALIGN_CENTER);
   gtk_widget_set_hexpand(GTK_WIDGET(w), FALSE);
   gtk_widget_set_halign(GTK_WIDGET(w), GTK_ALIGN_START);
   gtk_grid_attach(GTK_GRID(grid), w, col, row, 1, 1);
-  g_signal_connect(w, "clicked", proc, GINT_TO_POINTER(row));
+  if (proc) {
+    g_signal_connect(w, "clicked", proc, data);
+  }
+}
+
   return w;
 }
 
