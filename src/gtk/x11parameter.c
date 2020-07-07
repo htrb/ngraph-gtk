@@ -757,20 +757,31 @@ put_redraw_info(struct redraw_info *info)
 static void
 set_parameter(double prm, gpointer user_data)
 {
-  N_VALUE *inst;
-  int id;
+  int redraw;
   char const *objects[] = {"data", NULL};
-  struct obj_list_data *d;
+  struct parameter_data *d;
 
-  d = NgraphApp.ParameterWin.data.data;
-  id = GPOINTER_TO_INT(user_data);
-  inst = chkobjinst(d->obj, id);
-  if (inst == NULL) {
+  d = user_data;
+  if (d->inst == NULL) {
     return;
   }
-
-  _putobj(d->obj, "parameter", inst, &prm);
-  ViewerWinUpdate(objects);
+  _putobj(d->obj, "parameter", d->inst, &prm);
+  _getobj(d->obj, "redraw", d->inst, &redraw);
+  if (redraw) {
+    struct redraw_info save_info, info;
+    if (get_redraw_info(&save_info)) {
+      return;
+    }
+    info.redraw_num = 0;
+    info.redraw_flag = TRUE;
+    if (put_redraw_info(&info)) {
+      return;
+    }
+    ViewerWinUpdate(objects);
+    if (put_redraw_info(&save_info)) {
+      return;
+    }
+  }
 }
 
 static void
