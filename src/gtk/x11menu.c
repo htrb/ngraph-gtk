@@ -4436,6 +4436,10 @@ check_instance(struct objlist *obj)
     case DataMathAction:
       dobj = chkobject("data");
       break;
+    case ParameterPropertyAction:
+    case ParameterDeleteAction:
+      dobj = chkobject("parameter");
+      break;
     case AxisPropertyAction:
     case AxisDeleteAction:
     case AxisScaleZoomAction:
