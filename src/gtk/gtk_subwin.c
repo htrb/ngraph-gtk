@@ -693,7 +693,6 @@ swin_update(struct obj_list_data *d)
     undo = menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
   }
   ret = DialogExecute(parent, d->dialog);
-  set_graph_modified();
   switch (ret) {
   case IDCANCEL:
     menu_undo_internal(undo);
