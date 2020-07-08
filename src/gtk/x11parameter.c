@@ -93,6 +93,9 @@ ParameterCB(struct objlist *obj, int id)
   char *s, *title;
 
   getobj(obj, "title", id, 0, NULL, &title);
+  if (title == NULL) {
+    title = "";
+  }
   s = g_strdup(title);
   return s;
 }
