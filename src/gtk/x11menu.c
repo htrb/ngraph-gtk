@@ -1497,17 +1497,6 @@ static struct MenuItem DataMenu[] = {
     "DataMathAction",
   },
   {
-    MENU_TYPE_NORMAL,
-    N_("_Parameter"),
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    0,
-    0,
-    ParameterMenu,
-  },
-  {
     MENU_TYPE_END,
   },
 };
@@ -1600,6 +1589,17 @@ static struct MenuItem ObjectMenu[] = {
     0,
     0,
     MergeMenu,
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Parameter"),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    0,
+    0,
+    ParameterMenu,
   },
   {
     MENU_TYPE_END,
