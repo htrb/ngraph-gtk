@@ -178,3 +178,4 @@ text_obj_get(id, $text)	assign text of the the text object which ID is <i>id</i>
 text_obj_set(id, $text)	set text of the the text object which ID is <i>id</i> as the variable <i>$text</i>.
 array_moving_average(dest, src, n, type)	calculate moving average of (<i>n</i> * 2 + 1) sample of the array <i>src</i>\nand set them to the array <i>dest</i>.\nWeighted moving average is used when <i>type</i> is 1.
 on_end(proc)	Evaluate <i>proc</i> at the end of plottong the data object.
+parameter(id)	Returns the value of the prameter object which ID is <i>id</i>.
