@@ -4992,6 +4992,7 @@ create_toplevel_window(void)
 
   set_focus_sensitivity(&NgraphApp.Viewer);
   check_exist_instances(chkobject("draw"));
+  check_instance(chkobject("parameter"));
 
   set_newobj_cb(check_instance);
   set_delobj_cb(check_instance);
