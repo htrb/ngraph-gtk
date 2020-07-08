@@ -472,6 +472,12 @@ ParameterAddAction_activated(GSimpleAction *action, GVariant *parameter, gpointe
 }
 
 static void
+ParameterPropertyAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
+{
+  CmParameterUpdate(NULL, NULL);
+}
+
+static void
 AxisAddFrameAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
   CmAxisNewFrame(NULL, NULL);
