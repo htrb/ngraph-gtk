@@ -466,6 +466,12 @@ DataMathAction_activated(GSimpleAction *action, GVariant *parameter, gpointer ap
 }
 
 static void
+ParameterAddAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
+{
+  CmParameterAdd(NULL, NULL);
+}
+
+static void
 AxisAddFrameAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
   CmAxisNewFrame(NULL, NULL);
