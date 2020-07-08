@@ -5871,6 +5871,7 @@ undo_update_widgets(struct undo_info *info)
   set_action_widget_sensitivity(EditUndoAction, menu_check_undo());
   set_action_widget_sensitivity(EditRedoAction, menu_check_redo());
   check_exist_instances(chkobject("draw"));
+  check_instance(chkobject("parameter"));
   set_axis_undo_button_sensitivity(axis_check_history());
   if (info->obj == NULL) {
     UpdateAll(NULL);
