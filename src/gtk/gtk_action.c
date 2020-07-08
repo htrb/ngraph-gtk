@@ -8,6 +8,7 @@
 #include "x11lgnd.h"
 #include "x11axis.h"
 #include "x11file.h"
+#include "x11parameter.h"
 #include "x11graph.h"
 #include "x11print.h"
 #include "x11opt.h"
@@ -475,6 +476,12 @@ static void
 ParameterPropertyAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
   CmParameterUpdate(NULL, NULL);
+}
+
+static void
+ParameterDeleteAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
+{
+  CmParameterDelete(NULL, NULL);
 }
 
 static void
