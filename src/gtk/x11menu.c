@@ -201,6 +201,8 @@ enum ActionWidgetIndex {
   DataEditAction,
   DataSaveAction,
   DataMathAction,
+  ParameterPropertyAction,
+  ParameterDeleteAction,
   AxisPropertyAction,
   AxisDeleteAction,
   AxisScaleZoomAction,
