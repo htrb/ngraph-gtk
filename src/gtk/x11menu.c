@@ -1350,6 +1350,57 @@ static struct MenuItem PlotAddMenu[] = {
   },
 };
 
+static struct MenuItem ParameterMenu[] = {
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Add"),
+    NULL,
+    NULL,
+    "list-add",
+    "<Ngraph>/Data/Parameter/Add",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmParameterAdd),
+    0,
+    NULL,
+    "ParameterAddAction",
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Properties"),
+    NULL,
+    NULL,
+    "document-properties",
+    "<Ngraph>/Data/Parameter/Property",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmParameterUpdate),
+    0,
+    ActionWidget + ParameterPropertyAction,
+    "ParameterPropertyAction",
+  },
+  {
+    MENU_TYPE_NORMAL,
+    N_("_Delete"),
+    NULL,
+    NULL,
+    NULL,
+    "<Ngraph>/Data/Parameter/Delete",
+    0,
+    0,
+    NULL,
+    G_CALLBACK(CmParameterDelete),
+    0,
+    ActionWidget + ParameterDeleteAction,
+    "ParameterDeleteAction",
+  },
+  {
+    MENU_TYPE_END,
+  },
+};
+
 static struct MenuItem DataMenu[] = {
   {
     MENU_TYPE_NORMAL,
