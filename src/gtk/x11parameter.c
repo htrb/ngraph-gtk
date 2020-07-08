@@ -637,12 +637,10 @@ parameter_play(GtkButton *btn, gpointer user_data)
     prm = start;
   }
  EndPlaying:
-  if (prm > stop) {
-    prm = stop;
-  }
+  prm = gtk_range_get_value(GTK_RANGE(scale));
+  set_parameter(prm, data);
   data->playing = FALSE;
   set_play_icon(btn);
-  set_parameter(prm, data);
   menu_lock(FALSE);
 }
 
