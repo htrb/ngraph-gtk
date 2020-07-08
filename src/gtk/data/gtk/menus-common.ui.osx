@@ -330,6 +330,23 @@
 	      <attribute name="label" translatable="yes">_Math Transformation</attribute>
 	      <attribute name="action">app.DataMathAction</attribute>
 	    </item>
+	    <submenu>
+	      <attribute name="label" translatable="yes">_Parameter</attribute>
+	      <section>
+		<item>
+		  <attribute name="label" translatable="yes">_Add</attribute>
+		  <attribute name="action">app.ParameterAddAction</attribute>
+		</item>
+		<item>
+		  <attribute name="label" translatable="yes">_Properties</attribute>
+		  <attribute name="action">app.ParameterPropertyAction</attribute>
+		</item>
+		<item>
+		  <attribute name="label" translatable="yes">_Delete</attribute>
+		  <attribute name="action">app.ParameterDeleteAction</attribute>
+		</item>
+	      </section>
+	    </submenu>
 	  </section>
 	</submenu>
 	<submenu>
