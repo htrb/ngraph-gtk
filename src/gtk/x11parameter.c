@@ -1010,6 +1010,7 @@ create_widget(struct obj_list_data *d, int id, int n)
     gtk_widget_set_halign(GTK_WIDGET(w), GTK_ALIGN_START);
     gtk_widget_set_valign(GTK_WIDGET(w), GTK_ALIGN_CENTER);
     g_signal_connect(w, "notify::active", G_CALLBACK(switched), data);
+    g_signal_connect(w, "state-set", G_CALLBACK(switch_set), NULL);
     break;
   case PARAMETER_TYPE_TRANSITION:
     w = create_scale(start, stop, step, parameter);
