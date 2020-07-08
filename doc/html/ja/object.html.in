@@ -78,6 +78,7 @@ Ngraphオブジェクト階層<br>
 		   <li> <a href="#text">text</a>
 		  </ul>
 	    </ul>
+       <li> <a href="#parameter">parameter</a>
        <li> <a href="#dialog">dialog</a>
       </ul>
 </ul>
