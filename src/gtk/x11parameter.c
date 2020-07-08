@@ -504,8 +504,6 @@ parameter_update(GtkButton *btn, gpointer data)
   ret = DialogExecute(TopLevel, &DlgParameter);
   if (ret == IDCANCEL) {
     menu_undo_internal(undo);
-  } else {
-    set_graph_modified();
   }
   ParameterWinUpdate(d->obj_list_data, FALSE, FALSE);
 }
