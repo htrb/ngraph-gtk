@@ -3178,6 +3178,10 @@ init_action_widget_list(void)
     case DataMathAction:
       ActionWidget[i].type = ACTION_TYPE_FILE;
       break;
+    case ParameterPropertyAction:
+    case ParameterDeleteAction:
+      ActionWidget[i].type = ACTION_TYPE_PARAMETER;
+      break;
     case AxisPropertyAction:
     case AxisDeleteAction:
     case AxisScaleZoomAction:
