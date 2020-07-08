@@ -601,15 +601,19 @@ parameter_play(GtkButton *btn, gpointer user_data)
   if (step == 0) {
     return;
   }
-  if (start > stop) {
-    step = -step;
-  }
   menu_lock(TRUE);
 
   set_pause_icon(btn);
   prm = gtk_range_get_value(GTK_RANGE(scale));
-  if (prm >= stop) {
-    prm = start;
+  if (start > stop) {
+    step = -step;
+    if (prm + step < stop) {
+      prm = start;
+    }
+  } else {
+    if (prm + step > stop) {
+      prm = start;
+    }
   }
   data->playing = TRUE;
   while (1) {
