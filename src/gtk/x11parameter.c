@@ -839,6 +839,12 @@ switched(GtkSwitch *sw, GParamSpec *pspec, gpointer user_data)
   set_parameter(active, user_data);
 }
 
+static gboolean
+switch_set(GtkSwitch *sw, gboolean state, gpointer user_data)
+{
+  return (Menulock || Globallock);
+}
+
 static void
 combo_changed(GtkComboBox *combo_box, gpointer user_data)
 {
