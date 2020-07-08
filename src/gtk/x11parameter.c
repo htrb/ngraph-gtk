@@ -618,14 +618,17 @@ parameter_play(GtkButton *btn, gpointer user_data)
   data->playing = TRUE;
   while (1) {
     while (fabs(prm - start) <= fabs(stop - start)) {
+      int i;
       gtk_range_set_value(GTK_RANGE(scale), prm);
       set_parameter(prm, data);
-      reset_event();
-      msleep(wait * 10);
-      prm = gtk_range_get_value(GTK_RANGE(scale));
-      if (! data->playing) {
-	goto EndPlaying;
+      for (i = 1; i < wait; i++) {
+	msleep(10);
+	reset_event();
+	if (! data->playing) {
+	  goto EndPlaying;
+	}
       }
+      prm = gtk_range_get_value(GTK_RANGE(scale));
       prm += step;
     }
     if (! gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(data->repeat))) {
