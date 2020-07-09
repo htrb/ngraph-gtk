@@ -22,7 +22,8 @@
       <li><a href="#LEGEND_MENU">[マーク]メニュー</a>
       <li><a href="#LEGEND_MENU">[テキスト]メニュー</a>
       <li><a href="#MERGE_MENU">[合成]メニュー</a>
-     </ul>
+      <li><a href="#PARAMETER_MENU">[パラメータ]メニュー</a>
+    </ul>
  <li><a href="#PREF_MENU">[設定]メニュー</a>
  <li><a href="#HELP_MENU">[ヘルプ]メニュー</a>
  <li><a href="#DATA_DIALOG">データ・ダイアログボックス</a>
@@ -31,6 +32,7 @@
  <li><a href="#GRID_DIALOG">グリッド・ダイアログボックス</a>
  <li><a href="#LEGEND_DIALOG">レジェンド(凡例)・ダイアログボックス</a>
  <li><a href="#MERGE_DIALOG">合成ファイル・ダイアログボックス</a>
+ <li><a href="#PARAMETER_DIALOG">パラメータ・ダイアログボックス</a>
  <li><a href="#LOADSAVE_DIALOG">グラフの読込、保存・ダイアログボックス</a>
  <li><a href="#SWITCH_DIALOG">描画順・ダイアログボックス</a>
  <li><a href="#PREFMISC_DIALOG">その他設定・ダイアログボックス</a>
@@ -399,13 +401,13 @@
 
 <table border="1">
  <tr>
-  <td>開く</td>
+  <td>追加</td>
   <td>
    合成する合成ファイル(*.GRA)を開きます。
   </td>
  </tr>
  <tr>
-  <td>設定</td>
+  <td>プロパティ</td>
   <td>
    合成の位置、拡大率などの設定を行います。
   </td>
@@ -418,11 +420,28 @@
  </tr>
 </table>
 
+<h3><a name="PARAMETER_MENU">[パラメータ]メニュー</a></h3>
 
-
-
-
-
+<table border="1">
+ <tr>
+  <td>追加</td>
+  <td>
+   新しい parameter オブジェクトを作成します。
+  </td>
+ </tr>
+ <tr>
+  <td>設定</td>
+  <td>
+   parameter オブジェクトの設定を行います。
+  </td>
+ </tr>
+ <tr>
+  <td>削除</td>
+  <td>
+   parameter オブジェクトを削除します。
+  </td>
+ </tr>
+</table>
 
 <h2><a name="PREF_MENU">[設定]メニュー</a></h2>
 
@@ -1913,6 +1932,30 @@
  </tr>
 </table>
 
+
+<h2><a name="PARAMETER_DIALOG">パラメータ・ダイアログボックス</a></h2>
+
+<img src="./dialogs/parameter.png" alt=""><br><br>
+<table border="1">
+ <tr>
+  <td>タイトル</td>
+  <td>
+   パラメータのタイトルを設定する。
+  </td>
+ </tr>
+ <tr>
+  <td>タイプ</td>
+  <td>
+   パラメータのタイプを選択する。
+  </td>
+ </tr>
+ <tr>
+  <td>再描画</td>
+  <td>
+   チェックすると、パラメータを変更した特にデータを再描画する (ビューアの設定にかかわらず再描画します) 。
+  </td>
+ </tr>
+</table>
 
 
 
