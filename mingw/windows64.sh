@@ -26,8 +26,8 @@ libbrotlicommon.dll libpangoft2-1.0-0.dll libpangowin32-1.0-0.dll
 libpcre-1.dll libpixman-1-0.dll libpng16-16.dll libstdc++-6.dll
 libtermcap-0.dll libwinpthread-1.dll zlib1.dll liblzma-5.dll
 libthai-0.dll libdatrie-1.dll libreadline8.dll libpdcurses.dll
-librsvg-2-2.dll libxml2-2.dll libngraph-0.dll gdbus.exe ngraph.exe
-ngp2"
+libssp-0.dll librsvg-2-2.dll libxml2-2.dll libngraph-0.dll gdbus.exe
+ngraph.exe ngp2"
 
 BINFILES64="libgcc_s_seh-1.dll gspawn-win64-helper-console.exe"
 BINFILES32="libgcc_s_dw2-1.dll gspawn-win32-helper-console.exe"
