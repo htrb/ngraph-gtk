@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.08.05\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2020-07-08 18:25+0900\n"
+"POT-Creation-Date: 2020-07-11 10:13+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2120,7 +2120,7 @@ msgstr ""
 msgid "Align _Bottom"
 msgstr ""
 
-#: src/gtk/x11menu.c:1942 src/gtk/x11menu.c:5763 src/gtk/x11menu.c:5799
+#: src/gtk/x11menu.c:1942 src/gtk/x11menu.c:5767 src/gtk/x11menu.c:5803
 msgid "_Redo"
 msgstr ""
 
@@ -2128,7 +2128,7 @@ msgstr ""
 msgid "Redo previous command"
 msgstr ""
 
-#: src/gtk/x11menu.c:1957 src/gtk/x11menu.c:5773 src/gtk/x11menu.c:5789
+#: src/gtk/x11menu.c:1957 src/gtk/x11menu.c:5777 src/gtk/x11menu.c:5793
 msgid "_Undo"
 msgstr ""
 
@@ -2393,88 +2393,88 @@ msgstr ""
 msgid "Executing `%.128s'."
 msgstr ""
 
-#: src/gtk/x11menu.c:5701 src/gtk/x11menu.c:5720
+#: src/gtk/x11menu.c:5705 src/gtk/x11menu.c:5724
 msgid "edit"
 msgstr ""
 
-#: src/gtk/x11menu.c:5702
+#: src/gtk/x11menu.c:5706
 msgid "move"
 msgstr ""
 
-#: src/gtk/x11menu.c:5703
+#: src/gtk/x11menu.c:5707
 msgid "rotate"
 msgstr ""
 
-#: src/gtk/x11menu.c:5704
+#: src/gtk/x11menu.c:5708
 msgid "flip"
 msgstr ""
 
-#: src/gtk/x11menu.c:5705
+#: src/gtk/x11menu.c:5709
 msgid "delete object"
 msgstr ""
 
-#: src/gtk/x11menu.c:5706
+#: src/gtk/x11menu.c:5710
 msgid "create object"
 msgstr ""
 
-#: src/gtk/x11menu.c:5707
+#: src/gtk/x11menu.c:5711
 msgid "align"
 msgstr ""
 
-#: src/gtk/x11menu.c:5708
+#: src/gtk/x11menu.c:5712
 msgid "order"
 msgstr ""
 
-#: src/gtk/x11menu.c:5709
+#: src/gtk/x11menu.c:5713
 msgid "duplicate"
 msgstr ""
 
-#: src/gtk/x11menu.c:5710
+#: src/gtk/x11menu.c:5714
 msgid "execute shell"
 msgstr ""
 
-#: src/gtk/x11menu.c:5711
+#: src/gtk/x11menu.c:5715
 msgid "execute add-in"
 msgstr ""
 
-#: src/gtk/x11menu.c:5712
+#: src/gtk/x11menu.c:5716
 msgid "scale clear"
 msgstr ""
 
-#: src/gtk/x11menu.c:5713
+#: src/gtk/x11menu.c:5717
 msgid "scale undo"
 msgstr ""
 
-#: src/gtk/x11menu.c:5714
+#: src/gtk/x11menu.c:5718
 msgid "open file"
 msgstr ""
 
-#: src/gtk/x11menu.c:5715
+#: src/gtk/x11menu.c:5719
 msgid "add range"
 msgstr ""
 
-#: src/gtk/x11menu.c:5716
+#: src/gtk/x11menu.c:5720
 msgid "paste"
 msgstr ""
 
-#: src/gtk/x11menu.c:5717
+#: src/gtk/x11menu.c:5721
 msgid "scale"
 msgstr ""
 
-#: src/gtk/x11menu.c:5718
+#: src/gtk/x11menu.c:5722
 msgid "auto scale"
 msgstr ""
 
-#: src/gtk/x11menu.c:5719
+#: src/gtk/x11menu.c:5723
 msgid "scale trimming"
 msgstr ""
 
-#: src/gtk/x11menu.c:5760 src/gtk/x11menu.c:5796
+#: src/gtk/x11menu.c:5764 src/gtk/x11menu.c:5800
 #, c-format
 msgid "_Redo: %s"
 msgstr ""
 
-#: src/gtk/x11menu.c:5770 src/gtk/x11menu.c:5786
+#: src/gtk/x11menu.c:5774 src/gtk/x11menu.c:5790
 #, c-format
 msgid "_Undo: %s"
 msgstr ""
