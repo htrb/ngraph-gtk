@@ -5627,16 +5627,20 @@ menu_undo_iteration(UNDO_FUNC func, char **objs)
       objs++;
     }
   } else {
+    char *extra_objs[] = {"fit", "parameter", NULL};
+    int i;
     obj = getobject("draw");
     if (obj == NULL) {
       return 1;
     }
     iterate_undo_func(obj, func);
-    obj = getobject("fit");
-    if (obj == NULL) {
-      return 1;
+    for (i = 0; extra_objs[i]; i++) {
+      obj = getobject(extra_objs[i]);
+      if (obj == NULL) {
+	return 1;
+      }
+      r = func(obj);;
     }
-    r = func(obj);;
   }
 
   return r;
