@@ -39,6 +39,12 @@ char *parameter_type[]={
   NULL,
 };
 
+char *transition_init[]={
+  N_("start"),
+  N_("stop"),
+  NULL,
+};
+
 static char *parameter_errorlist[] = {
 };
 
