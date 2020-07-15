@@ -128,6 +128,20 @@ parameter_type_put(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, 
 }
 
 static int
+parameter_transition_put(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  int transition;
+  const char *field;
+  double value;
+
+  transition = *(int *)(argv[2]);
+  field = (transition == TRANSITION_INIT_STOP) ? "stop" : "start";
+  _getobj(obj, field, inst, &value);
+  _putobj(obj, "parameter", inst, &value);
+  return 0;
+}
+
+static int
 parameter_put_wait(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   int wait;
