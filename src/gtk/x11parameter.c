@@ -513,7 +513,7 @@ parameter_update(GtkButton *btn, gpointer data)
   if (ret == IDCANCEL) {
     menu_undo_internal(undo);
   }
-  ParameterWinUpdate(d->obj_list_data, FALSE, FALSE);
+  update_parameter(d->obj_list_data);
 }
 
 static void
