@@ -33,8 +33,8 @@ char *parameter_type[]={
   N_("SpinButton"),
   N_("Scale"),
   N_("CheckButton"),
-  N_("ComboBox"),
   N_("Switch"),
+  N_("ComboBox"),
   N_("Transition"),
   NULL,
 };
