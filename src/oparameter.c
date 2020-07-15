@@ -89,8 +89,9 @@ parameter_init(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char
 static void
 set_parameter(struct objlist *obj, N_VALUE *inst, int type)
 {
-  int checked, selected;
+  int checked, selected, transition;
   double value, prm;
+  const char *field;
   switch (type) {
   case PARAMETER_TYPE_SPIN:
   case PARAMETER_TYPE_SCALE:
@@ -107,7 +108,9 @@ set_parameter(struct objlist *obj, N_VALUE *inst, int type)
     prm = selected;
     break;
   case PARAMETER_TYPE_TRANSITION:
-    _getobj(obj, "stop", inst, &value);
+    _getobj(obj, "transition", inst, &transition);
+    field = (transition == TRANSITION_INIT_STOP) ? "stop" : "start";
+    _getobj(obj, field, inst, &value);
     prm = value;
     break;
   default:
