@@ -47,7 +47,7 @@
 #include "x11parameter.h"
 
 static void set_parameter(double prm, gpointer user_data);
-static void check_min_max(double *min, double *max, double *inc);
+static int check_min_max(double *min, double *max, double *inc);
 
 struct parameter_data
 {
@@ -854,10 +854,13 @@ combo_changed(GtkComboBox *combo_box, gpointer user_data)
   set_parameter(selected, user_data);
 }
 
-static void
+static int
 check_min_max(double *min, double *max, double *inc)
 {
   double span;
+  int inverted;
+
+  inverted = FALSE;
   span = fabs(*max - *min);
   if (*inc == 0) {
     *inc = span / 10;
@@ -866,10 +869,12 @@ check_min_max(double *min, double *max, double *inc)
     *max += *inc;
   } else if (*min > *max) {
     double tmp;
+    inverted = TRUE;
     tmp = *min;
     *min = *max;
     *max = tmp;
   }
+  return inverted;
 }
 
 static GtkWidget *
