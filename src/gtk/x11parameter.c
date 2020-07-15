@@ -491,7 +491,7 @@ CmParameterUpdate(void *w, gpointer client_data)
       }
     }
     if (modified) {
-      ParameterWinUpdate(d, FALSE, FALSE);
+      update_parameter(d);
     }
   }
   arraydel(&farray);
