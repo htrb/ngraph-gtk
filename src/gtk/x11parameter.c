@@ -142,7 +142,7 @@ add_page_spin(struct ParameterDialog *d)
   d->step = w;
 
   w = create_text_entry(TRUE, TRUE);
-  add_widget_to_table(table, w, _("_Value:"), TRUE, i++);
+  add_widget_to_table(table, w, _("_Initial value:"), TRUE, i++);
   d->value = w;
 
   w = gtk_check_button_new_with_mnemonic(_("_Wrap"));
