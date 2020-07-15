@@ -452,6 +452,14 @@ CmParameterDelete(void *w, gpointer client_data)
   arraydel(&farray);
 }
 
+static void
+update_parameter(struct obj_list_data *d)
+{
+  char const *objects[] = {"data", NULL};
+  ParameterWinUpdate(d, FALSE, FALSE);
+  ViewerWinUpdate(objects);
+}
+
 void
 CmParameterUpdate(void *w, gpointer client_data)
 {
