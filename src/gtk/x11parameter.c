@@ -896,11 +896,13 @@ static GtkWidget *
 create_scale(double min, double max, double inc, double value)
 {
   GtkWidget *scale;
+  int inverted;
 
-  check_min_max(&min, &max, &inc);
+  inverted = check_min_max(&min, &max, &inc);
   scale = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, min, max, inc);
   gtk_widget_set_size_request(GTK_WIDGET(scale), 200, -1);
   gtk_range_set_value(GTK_RANGE(scale), value);
+  gtk_range_set_inverted(GTK_RANGE(scale), inverted);
 
   return scale;
 }
