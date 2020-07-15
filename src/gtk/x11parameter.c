@@ -190,7 +190,7 @@ static void
 add_page_check(struct ParameterDialog *d)
 {
   GtkWidget *w;
-  w = gtk_check_button_new_with_mnemonic(_("_Active"));
+  w = gtk_check_button_new_with_mnemonic(_("_Active (initial state)"));
   gtk_widget_set_valign(GTK_WIDGET(w), GTK_ALIGN_START);
   d->checked = w;
   gtk_stack_add_named(GTK_STACK(d->stack), w, TYPE_CHECK_NAME);
