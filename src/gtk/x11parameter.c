@@ -78,6 +78,7 @@ ParameterDialogSetupItem(struct ParameterDialog *d, int id)
   SetWidgetFromObjField(d->checked, d->Obj, id, "active");
   SetWidgetFromObjField(d->selected, d->Obj, id, "selected");
   SetWidgetFromObjField(d->value, d->Obj, id, "value");
+  SetWidgetFromObjField(d->transition, d->Obj, id, "transition");
 
   getobj(d->Obj, "items", id, 0, NULL, &text);
   if (text == NULL) {
