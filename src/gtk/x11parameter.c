@@ -351,6 +351,8 @@ ParameterDialogClose(GtkWidget *w, void *data)
     return;
   if (SetObjFieldFromWidget(d->value, d->Obj, d->Id, "value"))
     return;
+  if (SetObjFieldFromWidget(d->transition, d->Obj, d->Id, "transition"))
+    return;
 
   type = gtk_combo_box_get_active(GTK_COMBO_BOX(d->type));
   if (type == PARAMETER_TYPE_TRANSITION) {
