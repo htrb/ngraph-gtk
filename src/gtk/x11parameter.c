@@ -178,6 +178,10 @@ add_page_transition(struct ParameterDialog *d)
   add_widget_to_table(table, w, _("_Wait:"), TRUE, i++);
   d->wait = w;
 
+  w = combo_box_create();
+  add_widget_to_table(table, w, _("_Initial value:"), TRUE, i++);
+  d->transition = w;
+
   gtk_stack_add_named(GTK_STACK(d->stack), table, TYPE_TRANSITION_NAME);
 }
 
