@@ -171,9 +171,9 @@ parameter_put_step(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, 
 static int
 parameter_put(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  int type, checked, selected;
+  int type, checked, selected, transition;
   double value, prm;
-  char *field;
+  char *field, *transition_field;
 
   field = argv[1];
   _getobj(obj, "type", inst, &type);
@@ -202,7 +202,9 @@ parameter_put(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char 
     prm = selected;
     break;
   case PARAMETER_TYPE_TRANSITION:
-    if (strcmp(field, "stop")) {
+    _getobj(obj, "transition", inst, &transition);
+    transition_field = (transition == TRANSITION_INIT_STOP) ? "stop" : "start";
+    if (strcmp(field, transition_field)) {
       return 0;
     }
     value = arg_to_double(argv, 2);
