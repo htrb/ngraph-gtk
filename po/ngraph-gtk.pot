@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.08.05\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2020-07-15 18:03+0900\n"
+"POT-Creation-Date: 2020-07-16 11:35+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2892,43 +2892,43 @@ msgstr ""
 msgid "delete parameter (multi select)"
 msgstr ""
 
-#: src/gtk/x11parameter.c:483
+#: src/gtk/x11parameter.c:485
 msgid "parameter property (multi select)"
 msgstr ""
 
-#: src/gtk/x11parameter.c:576
+#: src/gtk/x11parameter.c:583
 msgid "Pause"
 msgstr ""
 
-#: src/gtk/x11parameter.c:585 src/gtk/x11parameter.c:958
+#: src/gtk/x11parameter.c:592 src/gtk/x11parameter.c:965
 msgid "Play"
 msgstr ""
 
-#: src/gtk/x11parameter.c:955
+#: src/gtk/x11parameter.c:962
 msgid "To start"
 msgstr ""
 
-#: src/gtk/x11parameter.c:961
+#: src/gtk/x11parameter.c:968
 msgid "To stop"
 msgstr ""
 
-#: src/gtk/x11parameter.c:964
+#: src/gtk/x11parameter.c:971
 msgid "Repeat"
 msgstr ""
 
-#: src/gtk/x11parameter.c:1088
+#: src/gtk/x11parameter.c:1095
 msgid "Up"
 msgstr ""
 
-#: src/gtk/x11parameter.c:1093
+#: src/gtk/x11parameter.c:1100
 msgid "Down"
 msgstr ""
 
-#: src/gtk/x11parameter.c:1097
+#: src/gtk/x11parameter.c:1104
 msgid "Delete"
 msgstr ""
 
-#: src/gtk/x11parameter.c:1124
+#: src/gtk/x11parameter.c:1131
 msgid "Add"
 msgstr ""
 
