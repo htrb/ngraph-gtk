@@ -502,6 +502,8 @@ CmParameterUpdate(void *w, gpointer client_data)
     }
     if (modified) {
       update_parameter(d);
+    } else if (undo >= 0) {
+      menu_undo_internal(undo);
     }
  EndUpdate:
   arraydel(&farray);
