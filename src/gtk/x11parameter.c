@@ -473,6 +473,7 @@ CmParameterUpdate(void *w, gpointer client_data)
   struct narray farray;
   int modified;
   struct obj_list_data *d;
+  int i, *array, num, undo;
 
   if (Menulock || Globallock)
     return;
@@ -482,12 +483,14 @@ CmParameterUpdate(void *w, gpointer client_data)
     return;
   SelectDialog(&DlgSelect, d->obj, _("parameter property (multi select)"), ParameterCB, (struct narray *) &farray, NULL);
   modified = FALSE;
-  if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
-    int i, *array, num;
+  if (DialogExecute(TopLevel, &DlgSelect) != IDOK) {
+    goto EndUpdate;
+  }
     num = arraynum(&farray);
-    if (num > 0) {
-      menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
+    if (num <= 0) {
+      goto EndUpdate;
     }
+    undo = menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
     array = arraydata(&farray);
     for (i = 0; i < num; i++) {
       int ret;
@@ -500,7 +503,7 @@ CmParameterUpdate(void *w, gpointer client_data)
     if (modified) {
       update_parameter(d);
     }
-  }
+ EndUpdate:
   arraydel(&farray);
 }
 
