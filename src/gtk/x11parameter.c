@@ -479,32 +479,33 @@ CmParameterUpdate(void *w, gpointer client_data)
     return;
 
   d = NgraphApp.ParameterWin.data.data;
-  if (chkobjlastinst(d->obj) == -1)
+  if (chkobjlastinst(d->obj) == -1) {
     return;
+  }
   SelectDialog(&DlgSelect, d->obj, _("parameter property (multi select)"), ParameterCB, (struct narray *) &farray, NULL);
   modified = FALSE;
   if (DialogExecute(TopLevel, &DlgSelect) != IDOK) {
     goto EndUpdate;
   }
-    num = arraynum(&farray);
-    if (num <= 0) {
-      goto EndUpdate;
+  num = arraynum(&farray);
+  if (num <= 0) {
+    goto EndUpdate;
+  }
+  undo = menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
+  array = arraydata(&farray);
+  for (i = 0; i < num; i++) {
+    int ret;
+    ParameterDialog(d, array[i], -1);
+    ret = DialogExecute(TopLevel, &DlgParameter);
+    if (ret != IDCANCEL) {
+      modified = TRUE;
     }
-    undo = menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
-    array = arraydata(&farray);
-    for (i = 0; i < num; i++) {
-      int ret;
-      ParameterDialog(d, array[i], -1);
-      ret = DialogExecute(TopLevel, &DlgParameter);
-      if (ret != IDCANCEL) {
-        modified = TRUE;
-      }
-    }
-    if (modified) {
-      update_parameter(d);
-    } else if (undo >= 0) {
-      menu_undo_internal(undo);
-    }
+  }
+  if (modified) {
+    update_parameter(d);
+  } else if (undo >= 0) {
+    menu_undo_internal(undo);
+  }
  EndUpdate:
   arraydel(&farray);
 }
