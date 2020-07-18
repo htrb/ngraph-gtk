@@ -1,6 +1,40 @@
 #!ngraph
 #%creator: Ngraph 
 #%version: 6.08.05
+new parameter
+	parameter::title='_Start angle:'
+	parameter::type=SpinButton
+	parameter::min=0
+	parameter::max=360
+	parameter::step=1
+	parameter::start=0
+	parameter::stop=100
+	parameter::wait=10
+	parameter::wrap=true
+	parameter::items=
+	parameter::redraw=true
+	parameter::active=false
+	parameter::selected=0
+	parameter::value=150
+	parameter::transition=stop
+
+new parameter
+	parameter::title='_Color:'
+	parameter::type=Switch
+	parameter::min=0
+	parameter::max=100
+	parameter::step=1
+	parameter::start=0
+	parameter::stop=100
+	parameter::wait=10
+	parameter::wrap=true
+	parameter::items=
+	parameter::redraw=true
+	parameter::active=true
+	parameter::selected=0
+	parameter::value=0
+	parameter::transition=stop
+
 new axis name:fX1
 	axis::hidden=false
 	axis::R=0
@@ -9,9 +43,9 @@ new axis name:fX1
 	axis::A=255
 	axis::clip=true
 	axis::redraw_flag=true
-	axis::min=0.000000000000000e+00
-	axis::max=1.000000000000000e+00
-	axis::inc=1.000000000000000e+00
+	axis::min=0
+	axis::max=1
+	axis::inc=1
 	axis::div=0
 	axis::type=linear
 	axis::x=5000
@@ -32,8 +66,8 @@ new axis name:fX1
 	axis::wave_width=40
 	axis::reference=
 	axis::gauge=right
-	axis::gauge_min=0.000000000000000e+00
-	axis::gauge_max=0.000000000000000e+00
+	axis::gauge_min=0
+	axis::gauge_max=0
 	axis::gauge_style=
 	axis::gauge_length1=100
 	axis::gauge_width1=40
@@ -79,9 +113,9 @@ new axis name:fY1
 	axis::A=255
 	axis::clip=true
 	axis::redraw_flag=true
-	axis::min=7.000000000000000e-01
-	axis::max=4.300000000000000e+00
-	axis::inc=1.000000000000000e+00
+	axis::min=0.7
+	axis::max=4.3
+	axis::inc=1
 	axis::div=0
 	axis::type=linear
 	axis::x=5000
@@ -102,8 +136,8 @@ new axis name:fY1
 	axis::wave_width=40
 	axis::reference=
 	axis::gauge=none
-	axis::gauge_min=0.000000000000000e+00
-	axis::gauge_max=0.000000000000000e+00
+	axis::gauge_min=0
+	axis::gauge_max=0
 	axis::gauge_style=
 	axis::gauge_length1=100
 	axis::gauge_width1=40
@@ -149,9 +183,9 @@ new axis name:fU1
 	axis::A=255
 	axis::clip=true
 	axis::redraw_flag=true
-	axis::min=0.000000000000000e+00
-	axis::max=0.000000000000000e+00
-	axis::inc=0.000000000000000e+00
+	axis::min=0
+	axis::max=0
+	axis::inc=0
 	axis::div=0
 	axis::type=linear
 	axis::x=5000
@@ -172,8 +206,8 @@ new axis name:fU1
 	axis::wave_width=40
 	axis::reference='axis:0'
 	axis::gauge=right
-	axis::gauge_min=0.000000000000000e+00
-	axis::gauge_max=0.000000000000000e+00
+	axis::gauge_min=0
+	axis::gauge_max=0
 	axis::gauge_style=
 	axis::gauge_length1=100
 	axis::gauge_width1=40
@@ -219,9 +253,9 @@ new axis name:fR1
 	axis::A=255
 	axis::clip=true
 	axis::redraw_flag=true
-	axis::min=0.000000000000000e+00
-	axis::max=0.000000000000000e+00
-	axis::inc=0.000000000000000e+00
+	axis::min=0
+	axis::max=0
+	axis::inc=0
 	axis::div=0
 	axis::type=linear
 	axis::x=16000
@@ -242,8 +276,8 @@ new axis name:fR1
 	axis::wave_width=40
 	axis::reference='axis:1'
 	axis::gauge=left
-	axis::gauge_min=0.000000000000000e+00
-	axis::gauge_max=0.000000000000000e+00
+	axis::gauge_min=0
+	axis::gauge_max=0
 	axis::gauge_style=
 	axis::gauge_length1=100
 	axis::gauge_width1=40
@@ -291,9 +325,9 @@ new axis name:fX2
 	axis::A=255
 	axis::clip=true
 	axis::redraw_flag=true
-	axis::min=5.000000000000000e-01
-	axis::max=4.500000000000000e+00
-	axis::inc=1.000000000000000e+00
+	axis::min=0.5
+	axis::max=4.5
+	axis::inc=1
 	axis::div=0
 	axis::type=linear
 	axis::x=1000
@@ -314,8 +348,8 @@ new axis name:fX2
 	axis::wave_width=40
 	axis::reference=
 	axis::gauge=none
-	axis::gauge_min=0.000000000000000e+00
-	axis::gauge_max=0.000000000000000e+00
+	axis::gauge_min=0
+	axis::gauge_max=0
 	axis::gauge_style=
 	axis::gauge_length1=100
 	axis::gauge_width1=40
@@ -361,9 +395,9 @@ new axis name:fY2
 	axis::A=255
 	axis::clip=true
 	axis::redraw_flag=true
-	axis::min=-5.000000000000000e-01
-	axis::max=5.000000000000000e-01
-	axis::inc=1.000000000000000e+00
+	axis::min=-0.5
+	axis::max=0.5
+	axis::inc=1
 	axis::div=0
 	axis::type=linear
 	axis::x=1000
@@ -384,8 +418,8 @@ new axis name:fY2
 	axis::wave_width=40
 	axis::reference=
 	axis::gauge=right
-	axis::gauge_min=0.000000000000000e+00
-	axis::gauge_max=0.000000000000000e+00
+	axis::gauge_min=0
+	axis::gauge_max=0
 	axis::gauge_style=
 	axis::gauge_length1=100
 	axis::gauge_width1=40
@@ -431,9 +465,9 @@ new axis name:fU2
 	axis::A=255
 	axis::clip=true
 	axis::redraw_flag=true
-	axis::min=0.000000000000000e+00
-	axis::max=0.000000000000000e+00
-	axis::inc=0.000000000000000e+00
+	axis::min=0
+	axis::max=0
+	axis::inc=0
 	axis::div=0
 	axis::type=linear
 	axis::x=1000
@@ -454,8 +488,8 @@ new axis name:fU2
 	axis::wave_width=40
 	axis::reference='axis:4'
 	axis::gauge=right
-	axis::gauge_min=0.000000000000000e+00
-	axis::gauge_max=0.000000000000000e+00
+	axis::gauge_min=0
+	axis::gauge_max=0
 	axis::gauge_style=
 	axis::gauge_length1=100
 	axis::gauge_width1=40
@@ -501,9 +535,9 @@ new axis name:fR2
 	axis::A=255
 	axis::clip=true
 	axis::redraw_flag=true
-	axis::min=0.000000000000000e+00
-	axis::max=0.000000000000000e+00
-	axis::inc=0.000000000000000e+00
+	axis::min=0
+	axis::max=0
+	axis::inc=0
 	axis::div=0
 	axis::type=linear
 	axis::x=20000
@@ -524,8 +558,8 @@ new axis name:fR2
 	axis::wave_width=40
 	axis::reference='axis:5'
 	axis::gauge=left
-	axis::gauge_min=0.000000000000000e+00
-	axis::gauge_max=0.000000000000000e+00
+	axis::gauge_min=0
+	axis::gauge_max=0
 	axis::gauge_style=
 	axis::gauge_length1=100
 	axis::gauge_width1=40
@@ -581,16 +615,17 @@ new data
 	data::interpolation=spline
 	data::fit=
 	data::math_x='const HEIGHT = 0.5;         # height of a bar graph
-shift(col);                  # remove %0 from the array col
+const FILL = parameter(1);  # fill or not
+shift(col);                 # remove %0 from the array col
 n = size(col);              # number of the data
 total = array_sum(col);     # summation of the data
 start = 0;                  # start position of a rectangle
-text_size(10);               # set font size
-each_with_index(col, w, i,   # draw rectangle for each data
+text_size(10);              # set font size
+each_with_index(col, w, i,  # draw rectangle for each data
   {
     width = w / total;      # width of a rectangle
-    hsb2(i / n, 0.7, 1);     # set fill color
-    draw_rect(start, y - HEIGHT / 2, width, HEIGHT, TRUE, TRUE);
+    hsb2(i / n, 0.7, 1);    # set fill color
+    draw_rect(start, y - HEIGHT / 2, width, HEIGHT, TRUE, FILL);
     sprintf($str, "%.1f%%", width * 100);
     text_align(0, 0.5);
     draw_text_raw($str, start + 0.01, y, a);
@@ -626,8 +661,8 @@ each_with_index(col, w, i,   # draw rectangle for each data
 	data::axis_x='axis:0'
 	data::axis_y='axis:1'
 	data::data_clip=true
-	data::range_min=1.000000000000000e+00
-	data::range_max=1.000000000000000e+01
+	data::range_min=1
+	data::range_max=10
 	data::range_div=512
 	data::array=
 	data::file='demo9.dat'
@@ -648,10 +683,11 @@ new data
 	data::interpolation=spline
 	data::fit=
 	data::math_x='const R = 0.4;           # radius of a pie chart
-shift(col);               # remove %0 from the array col
+const FILL = parameter(1);  # fill or not
+shift(col);              # remove %0 from the array col
 n = size(col);           # number of the data
 total = array_sum(col);  # summation of the data
-angle2 = 0;
+angle2 = parameter(0);
 array_clear(ang);
 map(ang, col, a, a / total * 360);
 text_size(10);
@@ -659,7 +695,7 @@ each_with_index(ang, a, i,# draw pie-slice for each data
   {
     hsb2(i / n, 0.7, 1);  # set fill color
     angle2 += a;
-    draw_arc(y, 0, R, R, angle2, -a, TRUE, TRUE, TRUE, TRUE);
+    draw_arc(y, 0, R, R, angle2, -a, TRUE, TRUE, FILL, TRUE);
     sprintf($str, "%.1f%%", a / 3.60);
     text_align(0.5, 0.6);
     a = (angle2 - a * 0.5) * PI / 180;
@@ -695,8 +731,8 @@ each_with_index(ang, a, i,# draw pie-slice for each data
 	data::axis_x='axis:4'
 	data::axis_y='axis:5'
 	data::data_clip=true
-	data::range_min=1.000000000000000e+00
-	data::range_max=1.000000000000000e+01
+	data::range_min=1
+	data::range_max=10
 	data::range_div=512
 	data::array=
 	data::file='demo9.dat'
@@ -709,8 +745,8 @@ new text
 	text::A=255
 	text::clip=true
 	text::redraw_flag=true
-	text::text='Demo #9:\ndraw\_rect() and draw\_arc() FUNCTION'
-	text::x=4000
+	text::text='Demo #9:\ndraw\_rect(), draw\_arc() and parameter() FUNCTIONS'
+	text::x=2000
 	text::y=6842
 	text::pt=2000
 	text::font='Sans-serif'
