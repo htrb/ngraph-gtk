@@ -135,9 +135,14 @@ parameter_type_put(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, 
 static int
 parameter_transition_put(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  int transition;
+  int transition, type;
   const char *field;
   double value;
+
+  _getobj(obj, "type", inst, &type);
+  if (type != PARAMETER_TYPE_TRANSITION) {
+    return 0;
+  }
 
   transition = *(int *)(argv[2]);
   field = (transition == TRANSITION_INIT_STOP) ? "stop" : "start";
