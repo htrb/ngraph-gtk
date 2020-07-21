@@ -1108,8 +1108,7 @@ create_widget(struct obj_list_data *d, int id, int n)
 void
 ParameterWinUpdate(struct obj_list_data *d, int clear, int draw)
 {
-  int num, i;
-  GtkWidget *row;
+  int num, i, col;
 
   if (Menulock || Globallock)
     return;
@@ -1119,6 +1118,7 @@ ParameterWinUpdate(struct obj_list_data *d, int clear, int draw)
   }
 
   while (1) {
+    GtkWidget *row;
     row = gtk_grid_get_child_at(GTK_GRID(d->text), 0, 0);
     if (row == NULL) {
       break;
@@ -1127,7 +1127,14 @@ ParameterWinUpdate(struct obj_list_data *d, int clear, int draw)
   }
   num = chkobjlastinst(d->obj);
   for (i = 0; i <= num; i++) {
-    create_widget(d, i, num);
+    col = create_widget(d, i, num);
+  }
+
+  if (num >= 0) {
+    GtkWidget *separator;
+    num++;
+    separator = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
+    gtk_grid_attach(GTK_GRID(d->text), separator, 0, num, col, 1);
   }
   add_button(d->text, num + 1, 0, "list-add-symbolic", _("Add"), G_CALLBACK(CmParameterAdd), NULL);
 
