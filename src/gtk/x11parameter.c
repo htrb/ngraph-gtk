@@ -975,7 +975,7 @@ create_play_buttons(GtkWidget *grid, int id, int col, GtkWidget *scale, struct p
   return col;
 }
 
-static void
+static int
 create_widget(struct obj_list_data *d, int id, int n)
 {
   int type, checked, col, selected, width, wrap;
@@ -1000,7 +1000,7 @@ create_widget(struct obj_list_data *d, int id, int n)
 
   data = create_parameter_data(d, id);
   if (data == NULL) {
-    return;
+    return 0;
   }
   switch (type) {
   case PARAMETER_TYPE_SPIN:
@@ -1046,7 +1046,7 @@ create_widget(struct obj_list_data *d, int id, int n)
     break;
   default:
     g_free(data);
-    return;
+    return 0;
   }
 
   col = 0;
@@ -1074,7 +1074,7 @@ create_widget(struct obj_list_data *d, int id, int n)
   if (type == PARAMETER_TYPE_TRANSITION) {
     col = create_play_buttons(d->text, id, col, w, data);
     if (col < 0) {
-      return;
+      return 0;
     }
   } else {
     col += 3;
@@ -1102,6 +1102,7 @@ create_widget(struct obj_list_data *d, int id, int n)
 
   col++;
   add_button(d->text, id, col, "edit-delete-symbolic", _("Delete"), G_CALLBACK(parameter_delete), data);
+  return col + 1;
 }
 
 void
