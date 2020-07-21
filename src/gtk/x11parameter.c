@@ -786,7 +786,6 @@ static void
 set_parameter(double prm, gpointer user_data)
 {
   int redraw;
-  char const *objects[] = {"data", NULL};
   struct parameter_data *d;
 
   d = user_data;
@@ -796,6 +795,7 @@ set_parameter(double prm, gpointer user_data)
   _putobj(d->obj, "parameter", d->inst, &prm);
   _getobj(d->obj, "redraw", d->inst, &redraw);
   if (redraw) {
+    char const *objects[] = {"data", NULL};
     struct redraw_info save_info, info;
     if (get_redraw_info(&save_info)) {
       return;
