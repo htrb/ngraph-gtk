@@ -288,9 +288,7 @@ arcgeometry(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
   } else if (strcmp(field, "angle1") == 0){
     if (val < 0) {
       val %= 36000;
-      if (val < 0) {
-	val += 36000;
-      }
+      val += 36000;
     } else if (val > 36000) {
       val %= 36000;
     }
