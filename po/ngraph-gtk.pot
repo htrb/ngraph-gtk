@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.08.05\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2020-07-16 11:35+0900\n"
+"POT-Creation-Date: 2020-07-21 18:31+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2805,7 +2805,7 @@ msgstr ""
 msgid "Making GRA file."
 msgstr ""
 
-#: src/gtk/x11print.c:793 src/gtk/x11print.c:866 src/gtk/x11view.c:5677
+#: src/gtk/x11print.c:793 src/gtk/x11print.c:866 src/gtk/x11view.c:5675
 msgid "Drawing."
 msgstr ""
 
@@ -2827,19 +2827,19 @@ msgstr ""
 msgid "trimming (multi select)"
 msgstr ""
 
-#: src/gtk/x11view.c:2847
+#: src/gtk/x11view.c:2845
 msgid "Data points are moved."
 msgstr ""
 
-#: src/gtk/x11view.c:4173
+#: src/gtk/x11view.c:4171
 msgid "Moving data points is canceled."
 msgstr ""
 
-#: src/gtk/x11view.c:5671
+#: src/gtk/x11view.c:5669
 msgid "Scaling"
 msgstr ""
 
-#: src/gtk/x11view.c:5678
+#: src/gtk/x11view.c:5676
 msgid "Drawing"
 msgstr ""
 
@@ -2928,7 +2928,7 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
-#: src/gtk/x11parameter.c:1131
+#: src/gtk/x11parameter.c:1139
 msgid "Add"
 msgstr ""
 
