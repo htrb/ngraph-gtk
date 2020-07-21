@@ -420,6 +420,15 @@ nruler_draw_ticks(Nruler *ruler, GtkWidget *widget)
   g_object_unref(layout);
 }
 
+static void
+style_changed(GtkStyleContext *stylecontext, gpointer user_data)
+{
+  Nruler *ruler;
+
+  ruler = user_data;
+  gtk_style_context_get_color(stylecontext, GTK_STATE_FLAG_NORMAL, &ruler->saved_fg);
+}
+
 static GtkStyleContext *
 nruler_get_color(Nruler *ruler, GdkRGBA *fg)
 {
