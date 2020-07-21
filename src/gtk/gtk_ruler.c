@@ -435,6 +435,7 @@ nruler_get_color(Nruler *ruler, GdkRGBA *fg)
   if (ruler->saved_style == NULL) {
     ruler->saved_style = gtk_widget_get_style_context(TopLevel);
     gtk_style_context_get_color(ruler->saved_style, GTK_STATE_FLAG_NORMAL, &ruler->saved_fg);
+    g_signal_connect(ruler->saved_style, "changed", G_CALLBACK(style_changed), ruler);
   }
 
   if (fg == NULL) {
