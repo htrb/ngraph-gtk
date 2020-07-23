@@ -631,6 +631,7 @@ parameter_play(GtkButton *btn, gpointer user_data)
   }
   menu_lock(TRUE);
 
+  set_inst_info_to_parameter_data(data);
   set_pause_icon(btn);
   prm = gtk_range_get_value(GTK_RANGE(scale));
   if (start > stop) {
