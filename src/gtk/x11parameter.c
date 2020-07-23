@@ -856,6 +856,7 @@ toggled(GtkToggleButton *toggle_button, gpointer user_data)
 
   gtk_toggle_button_set_inconsistent(toggle_button, FALSE);
   active = gtk_toggle_button_get_active(toggle_button);
+  set_inst_info_to_parameter_data(user_data);
   set_parameter(active, user_data);
 }
 
