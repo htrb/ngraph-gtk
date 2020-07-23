@@ -841,6 +841,7 @@ value_changed(GtkAdjustment *adjustment, gpointer user_data)
     return;
 
   value = gtk_adjustment_get_value(adjustment);
+  set_inst_info_to_parameter_data(user_data);
   set_parameter(value, user_data);
 }
 
