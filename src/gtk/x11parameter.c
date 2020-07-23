@@ -594,7 +594,7 @@ set_play_icon(GtkButton *btn)
 }
 
 static void
-set_obj_inst_info(gpointer user_data)
+set_inst_info_to_parameter_data(gpointer user_data)
 {
   struct parameter_data *data;
   data = user_data;
