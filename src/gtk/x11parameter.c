@@ -55,7 +55,6 @@ struct parameter_data
   GtkWidget *scale, *repeat;
   struct objlist *obj;
   int id;
-  N_VALUE *inst;
   struct obj_list_data *obj_list_data;
 };
 
@@ -952,7 +951,6 @@ create_parameter_data(struct obj_list_data *d, int id)
   data->obj = d->obj;
   data->id = id;
   data->obj_list_data = d;
-  data->inst = NULL;
   return data;
 }
 
