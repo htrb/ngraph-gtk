@@ -964,7 +964,7 @@ create_parameter_data(struct obj_list_data *d, int id)
   data->obj = d->obj;
   data->id = id;
   data->obj_list_data = d;
-  data->inst = chkobjinst(d->obj, id);
+  data->inst = NULL;
   return data;
 }
 
