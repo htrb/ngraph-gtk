@@ -868,6 +868,7 @@ switched(GtkSwitch *sw, GParamSpec *pspec, gpointer user_data)
     return;
 
   active = gtk_switch_get_active(sw);
+  set_inst_info_to_parameter_data(user_data);
   set_parameter(active, user_data);
 }
 
