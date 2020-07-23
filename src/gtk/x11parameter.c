@@ -886,6 +886,7 @@ combo_changed(GtkComboBox *combo_box, gpointer user_data)
     return;
 
   selected = gtk_combo_box_get_active(combo_box);
+  set_inst_info_to_parameter_data(user_data);
   set_parameter(selected, user_data);
 }
 
