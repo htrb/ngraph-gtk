@@ -829,6 +829,7 @@ scale_changed(GtkRange *range, gpointer user_data)
     return;
 
   value = gtk_range_get_value(range);
+  set_inst_info_to_parameter_data(user_data);
   set_parameter(value, user_data);
 }
 
