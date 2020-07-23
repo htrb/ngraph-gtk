@@ -594,6 +594,14 @@ set_play_icon(GtkButton *btn)
 }
 
 static void
+set_obj_inst_info(gpointer user_data)
+{
+  struct parameter_data *data;
+  data = user_data;
+  data->inst = chkobjinst(data->obj, data->id);
+}
+
+static void
 parameter_play(GtkButton *btn, gpointer user_data)
 {
   int wait;
