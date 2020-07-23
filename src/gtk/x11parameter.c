@@ -594,14 +594,6 @@ set_play_icon(GtkButton *btn)
 }
 
 static void
-set_inst_info_to_parameter_data(gpointer user_data)
-{
-  struct parameter_data *data;
-  data = user_data;
-  data->inst = chkobjinst(data->obj, data->id);
-}
-
-static void
 parameter_play(GtkButton *btn, gpointer user_data)
 {
   int wait;
@@ -631,7 +623,6 @@ parameter_play(GtkButton *btn, gpointer user_data)
   }
   menu_lock(TRUE);
 
-  set_inst_info_to_parameter_data(data);
   set_pause_icon(btn);
   prm = gtk_range_get_value(GTK_RANGE(scale));
   if (start > stop) {
@@ -829,7 +820,6 @@ scale_changed(GtkRange *range, gpointer user_data)
     return;
 
   value = gtk_range_get_value(range);
-  set_inst_info_to_parameter_data(user_data);
   set_parameter(value, user_data);
 }
 
@@ -841,7 +831,6 @@ value_changed(GtkAdjustment *adjustment, gpointer user_data)
     return;
 
   value = gtk_adjustment_get_value(adjustment);
-  set_inst_info_to_parameter_data(user_data);
   set_parameter(value, user_data);
 }
 
@@ -856,7 +845,6 @@ toggled(GtkToggleButton *toggle_button, gpointer user_data)
 
   gtk_toggle_button_set_inconsistent(toggle_button, FALSE);
   active = gtk_toggle_button_get_active(toggle_button);
-  set_inst_info_to_parameter_data(user_data);
   set_parameter(active, user_data);
 }
 
@@ -868,7 +856,6 @@ switched(GtkSwitch *sw, GParamSpec *pspec, gpointer user_data)
     return;
 
   active = gtk_switch_get_active(sw);
-  set_inst_info_to_parameter_data(user_data);
   set_parameter(active, user_data);
 }
 
@@ -886,7 +873,6 @@ combo_changed(GtkComboBox *combo_box, gpointer user_data)
     return;
 
   selected = gtk_combo_box_get_active(combo_box);
-  set_inst_info_to_parameter_data(user_data);
   set_parameter(selected, user_data);
 }
 
