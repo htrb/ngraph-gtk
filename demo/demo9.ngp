@@ -5,7 +5,7 @@ new parameter
 	parameter::title='_Start angle:'
 	parameter::type=SpinButton
 	parameter::min=0
-	parameter::max=360
+	parameter::max=359
 	parameter::step=1
 	parameter::start=0
 	parameter::stop=100
@@ -27,7 +27,7 @@ new parameter
 	parameter::start=0
 	parameter::stop=100
 	parameter::wait=10
-	parameter::wrap=true
+	parameter::wrap=false
 	parameter::items=
 	parameter::redraw=true
 	parameter::active=true
