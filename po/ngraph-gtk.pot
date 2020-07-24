@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.08.06\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2020-07-23 18:40+0900\n"
+"POT-Creation-Date: 2020-07-24 20:22+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -309,12 +309,12 @@ msgid "autoscale (multi select)"
 msgstr ""
 
 #: src/gtk/x11axis.c:1291 src/gtk/x11axis.c:1619 src/gtk/x11file.c:1734
-#: src/gtk/x11parameter.c:132
+#: src/gtk/x11parameter.c:133
 msgid "_Min:"
 msgstr ""
 
 #: src/gtk/x11axis.c:1295 src/gtk/x11axis.c:1624 src/gtk/x11file.c:1738
-#: src/gtk/x11parameter.c:136
+#: src/gtk/x11parameter.c:137
 msgid "_Max:"
 msgstr ""
 
@@ -416,7 +416,7 @@ msgstr ""
 msgid "_Begin:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1882 src/gtk/x11parameter.c:140 src/gtk/x11parameter.c:172
+#: src/gtk/x11axis.c:1882 src/gtk/x11parameter.c:141 src/gtk/x11parameter.c:173
 msgid "_Step:"
 msgstr ""
 
@@ -1026,7 +1026,7 @@ msgid "Fit %d"
 msgstr ""
 
 #: src/gtk/x11file.c:1678 src/gtk/x11file.c:3411 src/gtk/x11lgnd.c:1484
-#: src/gtk/x11parameter.c:280
+#: src/gtk/x11parameter.c:281
 msgid "_Type:"
 msgstr ""
 
@@ -2843,92 +2843,92 @@ msgstr ""
 msgid "Drawing"
 msgstr ""
 
-#: src/gtk/x11parameter.c:144 src/gtk/x11parameter.c:182
+#: src/gtk/x11parameter.c:145 src/gtk/x11parameter.c:183
 msgid "_Initial value:"
 msgstr ""
 
-#: src/gtk/x11parameter.c:147
+#: src/gtk/x11parameter.c:148
 msgid "_Wrap"
 msgstr ""
 
-#: src/gtk/x11parameter.c:164
+#: src/gtk/x11parameter.c:165
 msgid "_Start:"
 msgstr ""
 
-#: src/gtk/x11parameter.c:168
+#: src/gtk/x11parameter.c:169
 msgid "_Stop:"
 msgstr ""
 
-#: src/gtk/x11parameter.c:178
+#: src/gtk/x11parameter.c:179
 msgid "_Wait:"
 msgstr ""
 
-#: src/gtk/x11parameter.c:192
+#: src/gtk/x11parameter.c:193
 msgid "_Active (initial state)"
 msgstr ""
 
-#: src/gtk/x11parameter.c:215
+#: src/gtk/x11parameter.c:216
 msgid "_Items:"
 msgstr ""
 
-#: src/gtk/x11parameter.c:219
+#: src/gtk/x11parameter.c:220
 msgid "_Selected:"
 msgstr ""
 
-#: src/gtk/x11parameter.c:266
+#: src/gtk/x11parameter.c:267
 #, c-format
 msgid "Parameter %d"
 msgstr ""
 
-#: src/gtk/x11parameter.c:276
+#: src/gtk/x11parameter.c:277
 msgid "_Title:"
 msgstr ""
 
-#: src/gtk/x11parameter.c:293
+#: src/gtk/x11parameter.c:294
 msgid "_Redraw"
 msgstr ""
 
-#: src/gtk/x11parameter.c:444
+#: src/gtk/x11parameter.c:445
 msgid "delete parameter (multi select)"
 msgstr ""
 
-#: src/gtk/x11parameter.c:484
+#: src/gtk/x11parameter.c:485
 msgid "parameter property (multi select)"
 msgstr ""
 
-#: src/gtk/x11parameter.c:582
+#: src/gtk/x11parameter.c:583
 msgid "Pause"
 msgstr ""
 
-#: src/gtk/x11parameter.c:591 src/gtk/x11parameter.c:965
+#: src/gtk/x11parameter.c:592 src/gtk/x11parameter.c:966
 msgid "Play"
 msgstr ""
 
-#: src/gtk/x11parameter.c:962
+#: src/gtk/x11parameter.c:963
 msgid "To start"
 msgstr ""
 
-#: src/gtk/x11parameter.c:968
+#: src/gtk/x11parameter.c:969
 msgid "To stop"
 msgstr ""
 
-#: src/gtk/x11parameter.c:971
+#: src/gtk/x11parameter.c:972
 msgid "Repeat"
 msgstr ""
 
-#: src/gtk/x11parameter.c:1095
+#: src/gtk/x11parameter.c:1096
 msgid "Up"
 msgstr ""
 
-#: src/gtk/x11parameter.c:1100
+#: src/gtk/x11parameter.c:1101
 msgid "Down"
 msgstr ""
 
-#: src/gtk/x11parameter.c:1104
+#: src/gtk/x11parameter.c:1105
 msgid "Delete"
 msgstr ""
 
-#: src/gtk/x11parameter.c:1139
+#: src/gtk/x11parameter.c:1140
 msgid "Add"
 msgstr ""
 
