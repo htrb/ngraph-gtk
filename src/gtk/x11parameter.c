@@ -1051,8 +1051,8 @@ create_widget(struct obj_list_data *d, int id, int n)
   }
 
   col = 0;
-  snprintf(buf, sizeof(buf), "%d", id);
-  label = gtk_button_new_with_label(buf);
+  snprintf(buf, sizeof(buf), (id < 10) ? "_%d" : "%d", id);
+  label = gtk_button_new_with_mnemonic(buf);
   g_signal_connect(label, "clicked", G_CALLBACK(parameter_update), data);
   g_object_set_data_full(G_OBJECT(label), "user-data", data, delete_parameter_data);
   gtk_grid_attach(GTK_GRID(d->text), label, col, id, 1, 1);
