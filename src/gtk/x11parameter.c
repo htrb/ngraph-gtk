@@ -1135,7 +1135,7 @@ ParameterWinUpdate(struct obj_list_data *d, int clear, int draw)
     GtkWidget *separator;
     num++;
     separator = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
-    gtk_grid_attach(GTK_GRID(d->text), separator, 0, num, col, 1);
+    gtk_grid_attach(GTK_GRID(d->text), separator, 1, num, col - 4, 1);
   }
   add_button(d->text, num + 1, 0, "list-add-symbolic", _("Add"), G_CALLBACK(CmParameterAdd), NULL);
 
