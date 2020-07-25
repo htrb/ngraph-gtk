@@ -1106,6 +1106,13 @@ create_widget(struct obj_list_data *d, int id, int n)
   return col + 1;
 }
 
+static void
+remove_child(GtkWidget *widget, gpointer data)
+{
+  GtkContainer *container = data;
+  gtk_container_remove(container, widget);
+}
+
 void
 ParameterWinUpdate(struct obj_list_data *d, int clear, int draw)
 {
