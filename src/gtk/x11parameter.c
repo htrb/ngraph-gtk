@@ -1125,14 +1125,7 @@ ParameterWinUpdate(struct obj_list_data *d, int clear, int draw)
     return;
   }
 
-  while (1) {
-    GtkWidget *row;
-    row = gtk_grid_get_child_at(GTK_GRID(d->text), 0, 0);
-    if (row == NULL) {
-      break;
-    }
-    gtk_grid_remove_row(GTK_GRID(d->text), 0);
-  }
+  gtk_container_foreach(GTK_CONTAINER(d->text), remove_child, d->text);
   num = chkobjlastinst(d->obj);
   for (i = 0; i <= num; i++) {
     col = create_widget(d, i, num);
