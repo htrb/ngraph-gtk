@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.08.06\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2020-07-24 20:22+0900\n"
+"POT-Creation-Date: 2020-07-25 16:01+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2900,35 +2900,35 @@ msgstr ""
 msgid "Pause"
 msgstr ""
 
-#: src/gtk/x11parameter.c:592 src/gtk/x11parameter.c:966
+#: src/gtk/x11parameter.c:592 src/gtk/x11parameter.c:967
 msgid "Play"
 msgstr ""
 
-#: src/gtk/x11parameter.c:963
+#: src/gtk/x11parameter.c:964
 msgid "To start"
 msgstr ""
 
-#: src/gtk/x11parameter.c:969
+#: src/gtk/x11parameter.c:970
 msgid "To stop"
 msgstr ""
 
-#: src/gtk/x11parameter.c:972
+#: src/gtk/x11parameter.c:973
 msgid "Repeat"
 msgstr ""
 
-#: src/gtk/x11parameter.c:1096
+#: src/gtk/x11parameter.c:1097
 msgid "Up"
 msgstr ""
 
-#: src/gtk/x11parameter.c:1101
+#: src/gtk/x11parameter.c:1102
 msgid "Down"
 msgstr ""
 
-#: src/gtk/x11parameter.c:1105
+#: src/gtk/x11parameter.c:1106
 msgid "Delete"
 msgstr ""
 
-#: src/gtk/x11parameter.c:1140
+#: src/gtk/x11parameter.c:1141
 msgid "Add"
 msgstr ""
 

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.07.06\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2020-07-24 20:22+0900\n"
+"POT-Creation-Date: 2020-07-25 16:01+0900\n"
 "PO-Revision-Date: 2020-07-15 16:45+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -2934,35 +2934,35 @@ msgstr "パラメータプロパティ (複数選択)"
 msgid "Pause"
 msgstr "停止"
 
-#: src/gtk/x11parameter.c:592 src/gtk/x11parameter.c:966
+#: src/gtk/x11parameter.c:592 src/gtk/x11parameter.c:967
 msgid "Play"
 msgstr "開始"
 
-#: src/gtk/x11parameter.c:963
+#: src/gtk/x11parameter.c:964
 msgid "To start"
 msgstr "最初の値へ"
 
-#: src/gtk/x11parameter.c:969
+#: src/gtk/x11parameter.c:970
 msgid "To stop"
 msgstr "最後の値へ"
 
-#: src/gtk/x11parameter.c:972
+#: src/gtk/x11parameter.c:973
 msgid "Repeat"
 msgstr "リピート"
 
-#: src/gtk/x11parameter.c:1096
+#: src/gtk/x11parameter.c:1097
 msgid "Up"
 msgstr "上へ"
 
-#: src/gtk/x11parameter.c:1101
+#: src/gtk/x11parameter.c:1102
 msgid "Down"
 msgstr "下へ"
 
-#: src/gtk/x11parameter.c:1105
+#: src/gtk/x11parameter.c:1106
 msgid "Delete"
 msgstr "削除"
 
-#: src/gtk/x11parameter.c:1140
+#: src/gtk/x11parameter.c:1141
 msgid "Add"
 msgstr "追加"
 
