@@ -62,3 +62,4 @@
 #define NGRAPH_FILEWIN_ICON	"ngraph_filewin-symbolic"
 #define NGRAPH_MERGEWIN_ICON	"ngraph_mergewin-symbolic"
 #define NGRAPH_PARAMETER_ICON	"ngraph_parameter-symbolic"
+#define NGRAPH_EXCHANGE_ICON	"ngraph_exchange-symbolic"
