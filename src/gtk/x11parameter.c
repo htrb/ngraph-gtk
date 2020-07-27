@@ -193,6 +193,8 @@ add_page_transition(struct ParameterDialog *d)
   add_widget_to_table(table, w, _("_Start:"), TRUE, i++);
   d->start = w;
 
+  add_button(table, i++, 1, "ngraph_exchange-symbolic", _("Exchange"), G_CALLBACK(exchange_start_stop), d);
+
   w = create_text_entry(TRUE, TRUE);
   add_widget_to_table(table, w, _("_Stop:"), TRUE, i++);
   d->stop = w;
