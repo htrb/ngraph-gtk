@@ -48,6 +48,7 @@
 
 static void set_parameter(double prm, gpointer user_data);
 static int check_min_max(double *min, double *max, double *inc);
+static GtkWidget *add_button(GtkWidget *grid, int row, int col, const char *icon, const char *tooltip, GCallback proc, gpointer data);
 
 struct parameter_data
 {
@@ -150,6 +151,33 @@ add_page_spin(struct ParameterDialog *d)
   d->wrap = w;
 
   gtk_stack_add_named(GTK_STACK(d->stack), table, TYPE_SPIN_NAME);
+}
+
+static void
+exchange_start_stop(GtkButton *btn, gpointer user_data)
+{
+  struct ParameterDialog *d;
+  const char *str;
+  char *start, *stop;
+
+  d = user_data;
+
+  str = gtk_entry_get_text(GTK_ENTRY(d->start));
+  if (str == NULL) {
+    str = "";
+  }
+  start = g_strdup(str);
+
+  str = gtk_entry_get_text(GTK_ENTRY(d->stop));
+  if (str == NULL) {
+    str = "";
+  }
+  stop = g_strdup(str);
+
+  gtk_entry_set_text(GTK_ENTRY(d->start), stop);
+  gtk_entry_set_text(GTK_ENTRY(d->stop), start);
+  g_free(start);
+  g_free(stop);
 }
 
 static void
