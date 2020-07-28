@@ -150,6 +150,8 @@ MergeDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, _("zoom _X:"), FALSE, i++);
     d->zoom_x = w;
 
+    d->link = add_toggle_button(table, i++, 1, NGRAPH_LINK_ICON, _("Link"), G_CALLBACK(link_toggled), d);
+
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_PERCENT, TRUE, TRUE);
     add_widget_to_table(table, w, _("zoom _Y:"), FALSE, i++);
     d->zoom_y = w;
