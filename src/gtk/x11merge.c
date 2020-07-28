@@ -133,6 +133,19 @@ zoom_changed(GtkSpinButton *spin_button, gpointer user_data)
 }
 
 static void
+link_toggled(GtkToggleButton *button, gpointer user_data)
+{
+  struct MergeDialog *d;
+  int linked;
+  d = user_data;
+  linked = gtk_toggle_button_get_active(button);
+  gtk_widget_set_sensitive(d->zoom_y, ! linked);
+  if (linked) {
+    zoom_changed(GTK_SPIN_BUTTON(d->zoom_x), user_data);
+  }
+}
+
+static void
 MergeDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   struct MergeDialog *d;
