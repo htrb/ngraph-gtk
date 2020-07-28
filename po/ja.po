@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.07.06\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2020-07-27 20:41+0900\n"
-"PO-Revision-Date: 2020-07-27 20:43+0900\n"
+"POT-Creation-Date: 2020-07-28 20:46+0900\n"
+"PO-Revision-Date: 2020-07-28 20:47+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja\n"
@@ -336,12 +336,12 @@ msgid "autoscale (multi select)"
 msgstr "自動スケール (複数選択)"
 
 #: src/gtk/x11axis.c:1291 src/gtk/x11axis.c:1619 src/gtk/x11file.c:1734
-#: src/gtk/x11parameter.c:134
+#: src/gtk/x11parameter.c:133
 msgid "_Min:"
 msgstr "最小値(_M):"
 
 #: src/gtk/x11axis.c:1295 src/gtk/x11axis.c:1624 src/gtk/x11file.c:1738
-#: src/gtk/x11parameter.c:138
+#: src/gtk/x11parameter.c:137
 msgid "_Max:"
 msgstr "最大値(_M):"
 
@@ -443,7 +443,7 @@ msgstr "位置(_N):"
 msgid "_Begin:"
 msgstr "開始点(_B):"
 
-#: src/gtk/x11axis.c:1882 src/gtk/x11parameter.c:142 src/gtk/x11parameter.c:203
+#: src/gtk/x11axis.c:1882 src/gtk/x11parameter.c:141 src/gtk/x11parameter.c:202
 msgid "_Step:"
 msgstr "間隔(_S):"
 
@@ -1055,7 +1055,7 @@ msgid "Fit %d"
 msgstr "フィット %d"
 
 #: src/gtk/x11file.c:1678 src/gtk/x11file.c:3411 src/gtk/x11lgnd.c:1484
-#: src/gtk/x11parameter.c:311
+#: src/gtk/x11parameter.c:310
 msgid "_Type:"
 msgstr "タイプ(_T):"
 
@@ -1229,7 +1229,7 @@ msgstr "データ %d (ファイル)"
 msgid "_Apply all"
 msgstr "全てに適用(_A)"
 
-#: src/gtk/x11file.c:4015 src/gtk/x11merge.c:138
+#: src/gtk/x11file.c:4015 src/gtk/x11merge.c:170
 msgid "_File:"
 msgstr "ファイル名(_F):"
 
@@ -2533,36 +2533,40 @@ msgstr "Y ズーム"
 msgid "_Preferences"
 msgstr "設定(_P)"
 
-#: src/gtk/x11merge.c:128
+#: src/gtk/x11merge.c:160
 #, c-format
 msgid "Merge %d"
 msgstr "合成 %d"
 
-#: src/gtk/x11merge.c:142
+#: src/gtk/x11merge.c:174
 msgid "_Top Margin:"
 msgstr "上マージン(_T):"
 
-#: src/gtk/x11merge.c:146
+#: src/gtk/x11merge.c:178
 msgid "_Left Margin:"
 msgstr "左マージン(_L):"
 
-#: src/gtk/x11merge.c:150
+#: src/gtk/x11merge.c:182
 msgid "zoom _X:"
 msgstr "_X ズーム:"
 
-#: src/gtk/x11merge.c:154
+#: src/gtk/x11merge.c:186
+msgid "Link"
+msgstr "リンク"
+
+#: src/gtk/x11merge.c:189
 msgid "zoom _Y:"
 msgstr "_Y ズーム:"
 
-#: src/gtk/x11merge.c:226
+#: src/gtk/x11merge.c:261
 msgid "Add Merge file"
 msgstr "合成ファイルの追加"
 
-#: src/gtk/x11merge.c:261
+#: src/gtk/x11merge.c:296
 msgid "close merge file (multi select)"
 msgstr "合成ファイルを閉じる (複数選択)"
 
-#: src/gtk/x11merge.c:291
+#: src/gtk/x11merge.c:326
 msgid "merge file property (multi select)"
 msgstr "合成プロパティ (複数選択)"
 
@@ -2877,96 +2881,96 @@ msgstr "軸スケール設定中"
 msgid "Drawing"
 msgstr "描画中"
 
-#: src/gtk/x11parameter.c:146 src/gtk/x11parameter.c:213
+#: src/gtk/x11parameter.c:145 src/gtk/x11parameter.c:212
 msgid "_Initial value:"
 msgstr "初期値(_I):"
 
-#: src/gtk/x11parameter.c:149
+#: src/gtk/x11parameter.c:148
 msgid "_Wrap"
 msgstr "_Wrap"
 
-#: src/gtk/x11parameter.c:193
+#: src/gtk/x11parameter.c:192
 msgid "_Start:"
 msgstr "開始(_S):"
 
-#: src/gtk/x11parameter.c:196
+#: src/gtk/x11parameter.c:195
 msgid "Exchange"
 msgstr "交換"
 
-#: src/gtk/x11parameter.c:199
+#: src/gtk/x11parameter.c:198
 msgid "_Stop:"
 msgstr "終了(_S):"
 
-#: src/gtk/x11parameter.c:209
+#: src/gtk/x11parameter.c:208
 msgid "_Wait:"
 msgstr "ウェイト(_W):"
 
-#: src/gtk/x11parameter.c:223
+#: src/gtk/x11parameter.c:222
 msgid "_Active (initial state)"
 msgstr "アクティブ (初期状態) (_A)"
 
-#: src/gtk/x11parameter.c:246
+#: src/gtk/x11parameter.c:245
 msgid "_Items:"
 msgstr "項目(_I):"
 
-#: src/gtk/x11parameter.c:250
+#: src/gtk/x11parameter.c:249
 msgid "_Selected:"
 msgstr "選択項目(_S):"
 
-#: src/gtk/x11parameter.c:297
+#: src/gtk/x11parameter.c:296
 #, c-format
 msgid "Parameter %d"
 msgstr "パラメータ %d"
 
-#: src/gtk/x11parameter.c:307
+#: src/gtk/x11parameter.c:306
 msgid "_Title:"
 msgstr "タイトル(_T):"
 
-#: src/gtk/x11parameter.c:324
+#: src/gtk/x11parameter.c:323
 msgid "_Redraw"
 msgstr "再描画(_R)"
 
-#: src/gtk/x11parameter.c:475
+#: src/gtk/x11parameter.c:474
 msgid "delete parameter (multi select)"
 msgstr "パラメータ削除 (複数選択)"
 
-#: src/gtk/x11parameter.c:515
+#: src/gtk/x11parameter.c:514
 msgid "parameter property (multi select)"
 msgstr "パラメータプロパティ (複数選択)"
 
-#: src/gtk/x11parameter.c:613
+#: src/gtk/x11parameter.c:612
 msgid "Pause"
 msgstr "停止"
 
-#: src/gtk/x11parameter.c:622 src/gtk/x11parameter.c:997
+#: src/gtk/x11parameter.c:621 src/gtk/x11parameter.c:962
 msgid "Play"
 msgstr "開始"
 
-#: src/gtk/x11parameter.c:994
+#: src/gtk/x11parameter.c:959
 msgid "To start"
 msgstr "最初の値へ"
 
-#: src/gtk/x11parameter.c:1000
+#: src/gtk/x11parameter.c:965
 msgid "To stop"
 msgstr "最後の値へ"
 
-#: src/gtk/x11parameter.c:1003
+#: src/gtk/x11parameter.c:968
 msgid "Repeat"
 msgstr "リピート"
 
-#: src/gtk/x11parameter.c:1127
+#: src/gtk/x11parameter.c:1092
 msgid "Up"
 msgstr "上へ"
 
-#: src/gtk/x11parameter.c:1132
+#: src/gtk/x11parameter.c:1097
 msgid "Down"
 msgstr "下へ"
 
-#: src/gtk/x11parameter.c:1136
+#: src/gtk/x11parameter.c:1101
 msgid "Delete"
 msgstr "削除"
 
-#: src/gtk/x11parameter.c:1171
+#: src/gtk/x11parameter.c:1136
 msgid "Add"
 msgstr "追加"
 
