@@ -726,17 +726,6 @@ parameter_skip_forward(GtkButton *btn, gpointer user_data)
 }
 
 static GtkWidget *
-add_toggle_button(GtkWidget *grid, int row, int col, const char *icon_name, const char *tooltip, GCallback proc, gpointer data)
-{
-  GtkWidget *w, *icon;
-  w = gtk_toggle_button_new();
-  icon = gtk_image_new_from_icon_name(icon_name, GTK_ICON_SIZE_BUTTON);
-  gtk_button_set_image(GTK_BUTTON(w), icon);
-  add_button_common(w, grid, row, col, tooltip, proc, data);
-  return w;
-}
-
-static GtkWidget *
 create_combo_box(char *str, int selected)
 {
   char **items;
