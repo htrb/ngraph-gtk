@@ -85,5 +85,6 @@ void set_widget_font(GtkWidget *w, const char *font);
 void add_default_color(struct narray *palette);
 void add_default_gray(struct narray *palette);
 gchar *get_text_from_buffer(GtkTextBuffer *buffer);
+GtkWidget *add_button(GtkWidget *grid, int row, int col, const char *icon, const char *tooltip, GCallback proc, gpointer data);
 
 #endif

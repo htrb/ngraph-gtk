@@ -48,7 +48,6 @@
 
 static void set_parameter(double prm, gpointer user_data);
 static int check_min_max(double *min, double *max, double *inc);
-static GtkWidget *add_button(GtkWidget *grid, int row, int col, const char *icon, const char *tooltip, GCallback proc, gpointer data);
 
 struct parameter_data
 {
@@ -724,15 +723,6 @@ parameter_skip_forward(GtkButton *btn, gpointer user_data)
 
   getobj(data->obj, "stop", data->id, 0, NULL, &stop);
   gtk_range_set_value(GTK_RANGE(data->scale), stop);
-}
-
-static GtkWidget *
-add_button(GtkWidget *grid, int row, int col, const char *icon, const char *tooltip, GCallback proc, gpointer data)
-{
-  GtkWidget *w;
-  w = gtk_button_new_from_icon_name(icon, GTK_ICON_SIZE_BUTTON);
-  add_button_common(w, grid, row, col, tooltip, proc, data);
-  return w;
 }
 
 static GtkWidget *
