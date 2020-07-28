@@ -93,6 +93,7 @@ static struct subwin_popup_list Popup_list[] = {
 static void
 MergeDialogSetupItem(struct MergeDialog *d, int file, int id)
 {
+  double zm_x, zm_y;
   if (file) {
     SetWidgetFromObjField(d->file, d->Obj, id, "file");
     gtk_editable_set_position(GTK_EDITABLE(d->file), -1);
@@ -101,6 +102,9 @@ MergeDialogSetupItem(struct MergeDialog *d, int file, int id)
   SetWidgetFromObjField(d->leftmargin, d->Obj, id, "left_margin");
   SetWidgetFromObjField(d->zoom_x, d->Obj, id, "zoom_x");
   SetWidgetFromObjField(d->zoom_y, d->Obj, id, "zoom_y");
+  zm_x = gtk_spin_button_get_value(GTK_SPIN_BUTTON(d->zoom_x));
+  zm_y = gtk_spin_button_get_value(GTK_SPIN_BUTTON(d->zoom_y));
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->link), zm_x == zm_y);
 }
 
 static void
