@@ -41,6 +41,7 @@
     <file>pixmaps/ngraph_undo.png</file>
     <file>pixmaps/ngraph_zoom-symbolic.svg</file>
     <file>pixmaps/ngraph_exchange-symbolic.svg</file>
+    <file>pixmaps/ngraph_link-symbolic.svg</file>
     <file>pixmaps/none_begin-symbolic.svg</file>
     <file>pixmaps/none_end-symbolic.svg</file>
     <file>pixmaps/arrow_begin-symbolic.svg</file>
