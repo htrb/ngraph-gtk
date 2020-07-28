@@ -51,6 +51,7 @@ NGRAPH_ICONS = data/pixmaps/ngraph_align_b.png				\
 	data/pixmaps/ngraph_datapoint-symbolic.svg			\
 	data/pixmaps/ngraph_section-symbolic.svg			\
 	data/pixmaps/ngraph_exchange-symbolic.svg			\
+	data/pixmaps/ngraph_link-symbolic.svg				\
 	data/pixmaps/linewidth_002-symbolic.svg				\
 	data/pixmaps/linewidth_004-symbolic.svg				\
 	data/pixmaps/linewidth_008-symbolic.svg				\
