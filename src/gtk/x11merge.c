@@ -118,6 +118,21 @@ MergeDialogCopy(GtkWidget *w, gpointer data)
 }
 
 static void
+zoom_changed(GtkSpinButton *spin_button, gpointer user_data)
+{
+  struct MergeDialog *d;
+  int linked;
+  double zoom;
+  d = user_data;
+  linked = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->link));
+  if (! linked) {
+    return;
+  }
+  zoom = gtk_spin_button_get_value(spin_button);
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(d->zoom_y), zoom);
+}
+
+static void
 MergeDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   struct MergeDialog *d;
