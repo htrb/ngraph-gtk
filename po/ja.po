@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.07.06\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2020-07-28 20:46+0900\n"
+"POT-Creation-Date: 2020-08-01 14:57+0900\n"
 "PO-Revision-Date: 2020-07-28 20:47+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -369,7 +369,7 @@ msgstr "参照軸(_R):"
 msgid "_Auto scale margin:"
 msgstr "自動スケール余白(_A):"
 
-#: src/gtk/x11axis.c:1334 src/gtk/x11axis.c:3331 src/oparameter.c:34
+#: src/gtk/x11axis.c:1334 src/gtk/x11axis.c:3331 src/oparameter.c:36
 msgid "Scale"
 msgstr "スケール"
 
@@ -2942,35 +2942,35 @@ msgstr "パラメータプロパティ (複数選択)"
 msgid "Pause"
 msgstr "停止"
 
-#: src/gtk/x11parameter.c:621 src/gtk/x11parameter.c:962
+#: src/gtk/x11parameter.c:621 src/gtk/x11parameter.c:963
 msgid "Play"
 msgstr "開始"
 
-#: src/gtk/x11parameter.c:959
+#: src/gtk/x11parameter.c:960
 msgid "To start"
 msgstr "最初の値へ"
 
-#: src/gtk/x11parameter.c:965
+#: src/gtk/x11parameter.c:966
 msgid "To stop"
 msgstr "最後の値へ"
 
-#: src/gtk/x11parameter.c:968
+#: src/gtk/x11parameter.c:969
 msgid "Repeat"
 msgstr "リピート"
 
-#: src/gtk/x11parameter.c:1092
+#: src/gtk/x11parameter.c:1093
 msgid "Up"
 msgstr "上へ"
 
-#: src/gtk/x11parameter.c:1097
+#: src/gtk/x11parameter.c:1098
 msgid "Down"
 msgstr "下へ"
 
-#: src/gtk/x11parameter.c:1101
+#: src/gtk/x11parameter.c:1102
 msgid "Delete"
 msgstr "削除"
 
-#: src/gtk/x11parameter.c:1136
+#: src/gtk/x11parameter.c:1137
 msgid "Add"
 msgstr "追加"
 
@@ -5637,31 +5637,31 @@ msgstr "偶奇"
 msgid "winding_rule"
 msgstr "ワインディング"
 
-#: src/oparameter.c:33
+#: src/oparameter.c:35
 msgid "SpinButton"
 msgstr "スピンボタン"
 
-#: src/oparameter.c:35
+#: src/oparameter.c:37
 msgid "CheckButton"
 msgstr "チェックボタン"
 
-#: src/oparameter.c:36
+#: src/oparameter.c:38
 msgid "Switch"
 msgstr "スイッチ"
 
-#: src/oparameter.c:37
+#: src/oparameter.c:39
 msgid "ComboBox"
 msgstr "コンボボックス"
 
-#: src/oparameter.c:38
+#: src/oparameter.c:40
 msgid "Transition"
 msgstr "遷移"
 
-#: src/oparameter.c:43
+#: src/oparameter.c:45
 msgid "start"
 msgstr "開始"
 
-#: src/oparameter.c:44
+#: src/oparameter.c:46
 msgid "stop"
 msgstr "終了"
 

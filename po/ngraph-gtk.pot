@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.08.06\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2020-07-28 20:46+0900\n"
+"POT-Creation-Date: 2020-08-01 14:57+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -342,7 +342,7 @@ msgstr ""
 msgid "_Auto scale margin:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1334 src/gtk/x11axis.c:3331 src/oparameter.c:34
+#: src/gtk/x11axis.c:1334 src/gtk/x11axis.c:3331 src/oparameter.c:36
 msgid "Scale"
 msgstr ""
 
@@ -2908,35 +2908,35 @@ msgstr ""
 msgid "Pause"
 msgstr ""
 
-#: src/gtk/x11parameter.c:621 src/gtk/x11parameter.c:962
+#: src/gtk/x11parameter.c:621 src/gtk/x11parameter.c:963
 msgid "Play"
 msgstr ""
 
-#: src/gtk/x11parameter.c:959
+#: src/gtk/x11parameter.c:960
 msgid "To start"
 msgstr ""
 
-#: src/gtk/x11parameter.c:965
+#: src/gtk/x11parameter.c:966
 msgid "To stop"
 msgstr ""
 
-#: src/gtk/x11parameter.c:968
+#: src/gtk/x11parameter.c:969
 msgid "Repeat"
 msgstr ""
 
-#: src/gtk/x11parameter.c:1092
+#: src/gtk/x11parameter.c:1093
 msgid "Up"
 msgstr ""
 
-#: src/gtk/x11parameter.c:1097
+#: src/gtk/x11parameter.c:1098
 msgid "Down"
 msgstr ""
 
-#: src/gtk/x11parameter.c:1101
+#: src/gtk/x11parameter.c:1102
 msgid "Delete"
 msgstr ""
 
-#: src/gtk/x11parameter.c:1136
+#: src/gtk/x11parameter.c:1137
 msgid "Add"
 msgstr ""
 
@@ -4951,30 +4951,30 @@ msgstr ""
 msgid "winding_rule"
 msgstr ""
 
-#: src/oparameter.c:33
+#: src/oparameter.c:35
 msgid "SpinButton"
 msgstr ""
 
-#: src/oparameter.c:35
+#: src/oparameter.c:37
 msgid "CheckButton"
 msgstr ""
 
-#: src/oparameter.c:36
+#: src/oparameter.c:38
 msgid "Switch"
 msgstr ""
 
-#: src/oparameter.c:37
+#: src/oparameter.c:39
 msgid "ComboBox"
 msgstr ""
 
-#: src/oparameter.c:38
+#: src/oparameter.c:40
 msgid "Transition"
 msgstr ""
 
-#: src/oparameter.c:43
+#: src/oparameter.c:45
 msgid "start"
 msgstr ""
 
-#: src/oparameter.c:44
+#: src/oparameter.c:46
 msgid "stop"
 msgstr ""
