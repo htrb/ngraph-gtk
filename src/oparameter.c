@@ -21,6 +21,8 @@
  *
  */
 
+#include <math.h>
+
 #include "common.h"
 #include "object.h"
 #include "oparameter.h"
@@ -256,6 +258,56 @@ count_items(const char *str)
   num = g_strv_length(items);
   g_strfreev(items);
   return num;
+}
+
+static int
+parameter_set(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
+{
+  int type, num;
+  double val, min, max;
+  char *items;
+
+  val = arg_to_double(argv, 2);
+  _getobj(obj, "type", inst, &type);
+  switch (type) {
+  case PARAMETER_TYPE_SPIN:
+  case PARAMETER_TYPE_SCALE:
+    _getobj(obj, "min", inst, &min);
+    _getobj(obj, "max", inst, &max);
+    if (val < min || val > max) {
+      return 1;
+    }
+    break;
+  case PARAMETER_TYPE_SWITCH:
+  case PARAMETER_TYPE_CHECK:
+    val = (val) ? 1 : 0;
+    break;
+  case PARAMETER_TYPE_COMBO:
+    _getobj(obj, "items", inst, &items);
+    num = count_items(items);
+    val = ceil(val);
+    if (val < 0 || val >= num) {
+      return 1;
+    }
+    break;
+  case PARAMETER_TYPE_TRANSITION:
+    _getobj(obj, "start", inst, &min);
+    _getobj(obj, "stop", inst, &max);
+    if (min > max) {
+      double tmp;
+      tmp = min;
+      min = max;
+      max = tmp;
+    }
+    if (val < min || val > max) {
+      return 1;
+    }
+    break;
+  default:
+    return 1;
+  }
+  _putobj(obj, "parameter", inst, &val);
+  return 0;
 }
 
 static int
