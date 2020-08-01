@@ -782,15 +782,13 @@ set_parameter(double prm, gpointer user_data)
 {
   int redraw;
   struct parameter_data *d;
-  N_VALUE *inst;
+  char *argv[2];
 
   d = user_data;
-  inst = chkobjinst(d->obj, d->id);
-  if (inst == NULL) {
-    return;
-  }
-  _putobj(d->obj, "parameter", inst, &prm);
-  _getobj(d->obj, "redraw", inst, &redraw);
+  argv[0] = (char *) &prm;
+  argv[1] = NULL;
+  exeobj(d->obj, "set", d->id, 1, argv);
+  getobj(d->obj, "redraw", d->id, 0, NULL, &redraw);
   if (redraw) {
     char const *objects[] = {"data", NULL};
     struct redraw_info save_info, info;
