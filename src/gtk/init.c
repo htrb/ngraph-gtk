@@ -771,6 +771,7 @@ set_dir_defs(char *app)
   snap = g_getenv("SNAP");
   if (snap) {
     BINDIR = g_strdup_printf("%s%c%s", snap, DIRSEP, "bin");
+    Snap = snap;
   } else {
     BINDIR = NULL;
     snap = "";
