@@ -744,6 +744,9 @@ create_combo_box(char *str, int selected)
     combo_box_append_text(w, items[i]);
   }
   g_strfreev(items);
+  if (selected < 0 || selected >= i) {
+    selected = 0;
+  }
   combo_box_set_active(w, selected);
   return w;
 }
