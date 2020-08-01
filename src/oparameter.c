@@ -242,6 +242,23 @@ parameter_put(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char 
 }
 
 static int
+count_items(const char *str)
+{
+  char **items;
+  int num;
+  if (str == NULL) {
+    return 0;
+  }
+  items = g_strsplit(str, "\n", -1);
+  if (items == NULL) {
+    return 0;
+  }
+  num = g_strv_length(items);
+  g_strfreev(items);
+  return num;
+}
+
+static int
 parameter_done(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv)) return 1;
