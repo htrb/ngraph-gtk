@@ -336,6 +336,7 @@ static struct objtable parameter[] = {
   {"selected",  NINT,     NREAD | NWRITE, parameter_put, NULL, 0},
   {"value",     NDOUBLE,  NREAD | NWRITE, parameter_put, NULL, 0},
   {"transition",NENUM,    NREAD | NWRITE, parameter_transition_put, transition_init, 0},
+  {"set",       NVFUNC,   NREAD | NEXEC,  parameter_set, "d", 0},
   {"parameter", NDOUBLE,  NREAD,          NULL, NULL, 0},
 };
 
