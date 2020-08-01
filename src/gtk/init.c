@@ -122,6 +122,7 @@ void resizeconsole(int col, int row);
 
 // XtAppContext Application=NULL;
 char *AppName = "Ngraph", *AppClass = "Ngraph", *Home;
+static const char *Snap = NULL;
 
 char *Auther[] = {
   "Satoshi ISHIZAKA",
