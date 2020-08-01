@@ -166,6 +166,20 @@ parameter_put_wait(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, 
 }
 
 static int
+parameter_put_items(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  char *str;
+
+  str = argv[2];
+  if (str == NULL) {
+    return 0;
+  }
+
+  g_strstrip(str);
+  return 0;
+}
+
+static int
 parameter_put_step(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   double step;
@@ -247,7 +261,7 @@ static struct objtable parameter[] = {
   {"stop",      NDOUBLE,  NREAD | NWRITE, parameter_put, NULL, 0},
   {"wait",      NINT,     NREAD | NWRITE, parameter_put_wait, NULL, 0},
   {"wrap",      NBOOL,    NREAD | NWRITE, NULL, NULL, 0},
-  {"items",     NSTR,     NREAD | NWRITE, NULL, NULL, 0},
+  {"items",     NSTR,     NREAD | NWRITE, parameter_put_items, NULL, 0},
   {"redraw",    NBOOL,    NREAD | NWRITE, NULL, NULL, 0},
   {"active",    NBOOL,    NREAD | NWRITE, parameter_put, NULL, 0},
   {"selected",  NINT,     NREAD | NWRITE, parameter_put, NULL, 0},
