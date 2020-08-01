@@ -410,6 +410,10 @@ exec_console(char *fifo_in, char *fifo_out)
       argv = NULL;
       s = buf;
       while ((s2 = getitok2(&s, &len, " \t")) != NULL) {
+	if (Snap && strstr(s2, "terminal")) {
+	  g_free(s2);
+	  s2 = g_strdup_printf("%s/terminal", LIBDIR);
+	}
 	arg_add(&argv, s2);
       }
       execvp(argv[0], argv);
