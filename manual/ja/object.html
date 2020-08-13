@@ -1,0 +1,1809 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../ngraph.css" media="screen" type="text/css"/>
+<title>Object</title>
+</head>
+<body>
+<div class="toc">
+<a name="TOP">&nbsp;</a>
+<h1><a href="./ngraph.html">Ngraphオブジェクト</a></h1>
+<ul>
+<li><a href="#OBJECT">概要</a>
+<li><a href="#OBJECTLIST">Ngraphオブジェクト一覧</a>
+</ul>
+</div>
+
+
+
+<div class="chapter">
+<h2><a name="OBJECT">概要</a></h2>
+<br>
+<div>
+Ngraphで描画されるグラフはNgraphオブジェクトの集合から成り立っています。<br>
+Ngraphでのグラフの作成は, グラフを構成するNgraphオブジェクトのフィールド値を設定することにより行われます。<br>
+フィールド値の設定は, メニューやダイアログボックスでの指定, あるいは *.ngp ファイルに記述されしたスクリプトをインタープリタで実行して行われます。<br>
+<br>
+<ul>
+<li>オブジェクトの一覧を表示するには[Graph]-[Ngraph shell]でスクリプト・インタープリタを起動し、object コマンドを実行して見る事ができます。
+<li>オブジェクトのフィールドを表示するには object object_name と object コマンドの引数にオブジェクト名を指定します。
+</ul>
+<br>
+Ngraphオブジェクト階層<br>
+<br>
+<ul>
+ <li> <a href="#object">object</a>
+      <ul>
+       <li> <a href="#system">system</a>
+       <li> <a href="#shell">shell</a>
+       <li> <a href="#gra">gra</a>
+       <li> <a href="#gra2">gra2</a>
+	    <ul>
+	     <li> <a href="#gra2null">gra2null</a>
+	     <li> <a href="#gra2file">gra2file</a>
+	     <li> <a href="#gra2prn">gra2prn</a>
+	     <li> <a href="#gra2cairo">gra2cairo</a>
+		  <ul>
+		   <li> <a href="#gra2cairofile">gra2cairofile</a>
+		   <li> <a href="#gra2gtkprint">gra2gtkprint</a>
+		   <li> <a href="#gra2gtk">gra2gtk</a>
+		   <li> <a href="#gra2gdk">gra2gdk</a>
+		   <li> <a href="#menu">menu</a>
+		  </ul>
+	    </ul>
+       <li> <a href="#io">io</a>
+       <li> <a href="#int">int</a>
+       <li> <a href="#double">double</a>
+       <li> <a href="#string">string</a>
+       <li> <a href="#regexp">regexp</a>
+       <li> <a href="#iarray">iarray</a>
+       <li> <a href="#darray">darray</a>
+       <li> <a href="#sarray">sarray</a>
+       <li> <a href="#math">math</a>
+       <li> <a href="#fit">fit</a>
+       <li> <a href="#prm">prm</a>
+       <li> <a href="#draw">draw</a>
+	    <ul>
+	     <li> <a href="#axisgrid">axisgrid</a>
+	     <li> <a href="#axis">axis</a>
+	     <li> <a href="#data">data</a>
+	     <li> <a href="#merge">merge</a>
+	     <li> <a href="#legend">legend</a>
+		  <ul>
+		   <li> <a href="#rectangle">rectangle</a>
+		   <li> <a href="#arc">arc</a>
+		   <li> <a href="#path">path</a>
+		   <li> <a href="#mark">mark</a>
+		   <li> <a href="#text">text</a>
+		  </ul>
+	    </ul>
+       <li> <a href="#parameter">parameter</a>
+       <li> <a href="#dialog">dialog</a>
+      </ul>
+</ul>
+</div>
+
+
+
+
+<h2><a name="OBJECTLIST">Ngraphオブジェクト一覧</a></h2>
+<p>
+各オブジェクトのフィールド一覧を示します。
+</p>
+<h3><a name="object">object</a></h3>
+<pre>
+object: object
+version: 1.00.00
+parent: (null)
+object id: 1
+number of fields: 6
+size of instance: 32
+</pre>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
+<tr><td>--x</td><td align="right">init</td><td>void( )</td></tr>
+<tr><td>--x</td><td align="right">done</td><td>void( )</td></tr>
+<tr><td>r--</td><td align="right">id</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
+<tr><td>r-x</td><td align="right">save</td><td>char*( char*[] )</td></tr>
+</table>
+
+<h3><a name="system">system</a></h3>
+<pre>
+object: system
+version: 6.08.05
+parent: object
+object id: 2
+number of fields: 39
+size of instance: 272
+</pre>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
+<tr><td>r--</td><td align="right">id</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
+<tr><td>r-x</td><td align="right">save</td><td>char*( char*[] )</td></tr>
+<tr><td>--x</td><td align="right">init</td><td>void( )</td></tr>
+<tr><td>--x</td><td align="right">done</td><td>void( )</td></tr>
+<tr><td>r--</td><td align="right">name</td><td>char*</td></tr>
+<tr><td>r--</td><td align="right">version</td><td>char*</td></tr>
+<tr><td>r--</td><td align="right">copyright</td><td>char*</td></tr>
+<tr><td>r--</td><td align="right">e-mail</td><td>char*</td></tr>
+<tr><td>r--</td><td align="right">web</td><td>char*</td></tr>
+<tr><td>r--</td><td align="right">compiler</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">login_shell</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">cwd</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">ignore_path</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">expand_file</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">expand_dir</td><td>char*</td></tr>
+<tr><td>r--</td><td align="right">GRAF</td><td>char*</td></tr>
+<tr><td>r--</td><td align="right">temp_prefix</td><td>char*</td></tr>
+<tr><td>r--</td><td align="right">conf_dir</td><td>char*</td></tr>
+<tr><td>r--</td><td align="right">data_dir</td><td>char*</td></tr>
+<tr><td>r--</td><td align="right">doc_dir</td><td>char*</td></tr>
+<tr><td>r--</td><td align="right">lib_dir</td><td>char*</td></tr>
+<tr><td>r--</td><td align="right">plugin_dir</td><td>char*</td></tr>
+<tr><td>r--</td><td align="right">home_dir</td><td>char*</td></tr>
+<tr><td>r--</td><td align="right">pid</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">shell_status</td><td>int</td></tr>
+<tr><td>r-x</td><td align="right">time</td><td>char*( int )</td></tr>
+<tr><td>r-x</td><td align="right">date</td><td>char*( int )</td></tr>
+<tr><td>r-x</td><td align="right">temp_file</td><td>char*( void )</td></tr>
+<tr><td>r--</td><td align="right">temp_list</td><td>char*[]</td></tr>
+<tr><td>r-x</td><td align="right">unlink_temp_file</td><td>void( )</td></tr>
+<tr><td>r-x</td><td align="right">hide_instance</td><td>void( char*[] )</td></tr>
+<tr><td>r-x</td><td align="right">recover_instance</td><td>void( char*[] )</td></tr>
+<tr><td>r-x</td><td align="right">resize</td><td>void( int[] )</td></tr>
+<tr><td>r-x</td><td align="right">plugin_check</td><td>int( char* )</td></tr>
+<tr><td>r-x</td><td align="right">plugin_load</td><td>int( char* )</td></tr>
+<tr><td>r-x</td><td align="right">plugin_exec</td><td>int( )</td></tr>
+<tr><td>r-x</td><td align="right">plugin_module</td><td>char*( char* )</td></tr>
+<tr><td>r-x</td><td align="right">plugins</td><td>char*[]( void )</td></tr>
+</table>
+
+<h3><a name="shell">shell</a></h3>
+<pre>
+object: shell
+version: 1.00.00
+parent: object
+object id: 3
+number of fields: 11
+size of instance: 48
+</pre>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
+<tr><td>r--</td><td align="right">id</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
+<tr><td>r-x</td><td align="right">save</td><td>char*( char*[] )</td></tr>
+<tr><td>--x</td><td align="right">init</td><td>void( )</td></tr>
+<tr><td>--x</td><td align="right">done</td><td>void( )</td></tr>
+<tr><td>---</td><td align="right">next</td><td>void*</td></tr>
+<tr><td>r-x</td><td align="right">shell</td><td>void( char*[] )</td></tr>
+<tr><td>---</td><td align="right">security</td><td>void( bool )</td></tr>
+<tr><td>r-x</td><td align="right">set_security</td><td>void( void )</td></tr>
+<tr><td>---</td><td align="right">_local</td><td>void*</td></tr>
+</table>
+
+<h3><a name="gra">gra</a></h3>
+<pre>
+object: gra
+version: 1.00.00
+parent: object
+object id: 4
+number of fields: 22
+size of instance: 120
+</pre>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
+<tr><td>r--</td><td align="right">id</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
+<tr><td>r-x</td><td align="right">save</td><td>char*( char*[] )</td></tr>
+<tr><td>--x</td><td align="right">init</td><td>void( )</td></tr>
+<tr><td>--x</td><td align="right">done</td><td>void( )</td></tr>
+<tr><td>---</td><td align="right">next</td><td>void*</td></tr>
+<tr><td>rw-</td><td align="right">device</td><td>obj</td></tr>
+<tr><td>r-x</td><td align="right">open</td><td>int( void )</td></tr>
+<tr><td>r-x</td><td align="right">close</td><td>void( void )</td></tr>
+<tr><td>rw-</td><td align="right">left_margin</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">top_margin</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">zoom</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">paper_width</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">paper_height</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">draw_obj</td><td>char*[]</td></tr>
+<tr><td>r--</td><td align="right">GC</td><td>int</td></tr>
+<tr><td>r-x</td><td align="right">redraw</td><td>void( void )</td></tr>
+<tr><td>r-x</td><td align="right">flush</td><td>void( void )</td></tr>
+<tr><td>r-x</td><td align="right">clear</td><td>void( void )</td></tr>
+<tr><td>r--</td><td align="right">_device</td><td>char*</td></tr>
+<tr><td>r-x</td><td align="right">draw</td><td>void( void )</td></tr>
+</table>
+
+<h3><a name="gra2">gra2</a></h3>
+<pre>
+object: gra2
+version: 1.00.00
+parent: object
+object id: 5
+number of fields: 12
+size of instance: 64
+</pre>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
+<tr><td>r--</td><td align="right">id</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
+<tr><td>r-x</td><td align="right">save</td><td>char*( char*[] )</td></tr>
+<tr><td>--x</td><td align="right">init</td><td>void( )</td></tr>
+<tr><td>--x</td><td align="right">done</td><td>void( )</td></tr>
+<tr><td>r-x</td><td align="right">clear</td><td>void( void )</td></tr>
+<tr><td>r--</td><td align="right">_list</td><td>char*[]</td></tr>
+<tr><td>r--</td><td align="right">_GC</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">_layer</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">delete_gra</td><td>bool</td></tr>
+<tr><td>r-x</td><td align="right">disconnect</td><td>void( void )</td></tr>
+</table>
+
+<h3><a name="gra2null">gra2null</a></h3>
+<pre>
+object: gra2null
+version: 1.00.00
+parent: gra2
+object id: 6
+number of fields: 16
+size of instance: 96
+</pre>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
+<tr><td>r--</td><td align="right">id</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
+<tr><td>r-x</td><td align="right">save</td><td>char*( char*[] )</td></tr>
+<tr><td>r-x</td><td align="right">clear</td><td>void( void )</td></tr>
+<tr><td>r--</td><td align="right">_list</td><td>char*[]</td></tr>
+<tr><td>r--</td><td align="right">_GC</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">_layer</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">delete_gra</td><td>bool</td></tr>
+<tr><td>r-x</td><td align="right">disconnect</td><td>void( void )</td></tr>
+<tr><td>--x</td><td align="right">init</td><td>void( )</td></tr>
+<tr><td>--x</td><td align="right">done</td><td>void( )</td></tr>
+<tr><td>---</td><td align="right">next</td><td>void*</td></tr>
+<tr><td>---</td><td align="right">_strwidth</td><td>int( )</td></tr>
+<tr><td>---</td><td align="right">_charascent</td><td>int( )</td></tr>
+<tr><td>---</td><td align="right">_chardescent</td><td>int( )</td></tr>
+</table>
+
+<h3><a name="gra2file">gra2file</a></h3>
+<pre>
+object: gra2file
+version: 1.00.00
+parent: gra2
+object id: 7
+number of fields: 16
+size of instance: 88
+</pre>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
+<tr><td>r--</td><td align="right">id</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
+<tr><td>r-x</td><td align="right">save</td><td>char*( char*[] )</td></tr>
+<tr><td>r-x</td><td align="right">clear</td><td>void( void )</td></tr>
+<tr><td>r--</td><td align="right">_list</td><td>char*[]</td></tr>
+<tr><td>r--</td><td align="right">_GC</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">_layer</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">delete_gra</td><td>bool</td></tr>
+<tr><td>r-x</td><td align="right">disconnect</td><td>void( void )</td></tr>
+<tr><td>--x</td><td align="right">init</td><td>void( )</td></tr>
+<tr><td>--x</td><td align="right">done</td><td>void( )</td></tr>
+<tr><td>---</td><td align="right">next</td><td>void*</td></tr>
+<tr><td>rw-</td><td align="right">file</td><td>char*</td></tr>
+<tr><td>---</td><td align="right">_local</td><td>void*</td></tr>
+<tr><td>---</td><td align="right">_output</td><td>void( )</td></tr>
+</table>
+
+<h3><a name="gra2prn">gra2prn</a></h3>
+<pre>
+object: gra2prn
+version: 1.00.00
+parent: gra2
+object id: 8
+number of fields: 18
+size of instance: 104
+</pre>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
+<tr><td>r--</td><td align="right">id</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
+<tr><td>r-x</td><td align="right">save</td><td>char*( char*[] )</td></tr>
+<tr><td>r-x</td><td align="right">clear</td><td>void( void )</td></tr>
+<tr><td>r--</td><td align="right">_list</td><td>char*[]</td></tr>
+<tr><td>r--</td><td align="right">_GC</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">_layer</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">delete_gra</td><td>bool</td></tr>
+<tr><td>r-x</td><td align="right">disconnect</td><td>void( void )</td></tr>
+<tr><td>--x</td><td align="right">init</td><td>void( )</td></tr>
+<tr><td>--x</td><td align="right">done</td><td>void( )</td></tr>
+<tr><td>---</td><td align="right">next</td><td>void*</td></tr>
+<tr><td>rw-</td><td align="right">driver</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">option</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">prn</td><td>char*</td></tr>
+<tr><td>---</td><td align="right">_local</td><td>void*</td></tr>
+<tr><td>---</td><td align="right">_output</td><td>void( )</td></tr>
+</table>
+
+<h3><a name="gra2cairo">gra2cairo</a></h3>
+<pre>
+object: gra2cairo
+version: 1.00.00
+parent: gra2
+object id: 9
+number of fields: 23
+size of instance: 136
+</pre>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
+<tr><td>r--</td><td align="right">id</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
+<tr><td>r-x</td><td align="right">save</td><td>char*( char*[] )</td></tr>
+<tr><td>r-x</td><td align="right">clear</td><td>void( void )</td></tr>
+<tr><td>r--</td><td align="right">_list</td><td>char*[]</td></tr>
+<tr><td>r--</td><td align="right">_GC</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">_layer</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">delete_gra</td><td>bool</td></tr>
+<tr><td>r-x</td><td align="right">disconnect</td><td>void( void )</td></tr>
+<tr><td>---</td><td align="right">init</td><td>void( )</td></tr>
+<tr><td>---</td><td align="right">done</td><td>void( )</td></tr>
+<tr><td>rw-</td><td align="right">dpi</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">dpix</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">dpiy</td><td>int</td></tr>
+<tr><td>r-x</td><td align="right">flush</td><td>void( void )</td></tr>
+<tr><td>rw-</td><td align="right">antialias</td><td>enum( none default gray )</td></tr>
+<tr><td>rw-</td><td align="right">use_opacity</td><td>bool</td></tr>
+<tr><td>---</td><td align="right">_output</td><td>void( )</td></tr>
+<tr><td>---</td><td align="right">_strwidth</td><td>int( )</td></tr>
+<tr><td>---</td><td align="right">_charascent</td><td>int( )</td></tr>
+<tr><td>---</td><td align="right">_chardescent</td><td>int( )</td></tr>
+<tr><td>---</td><td align="right">_local</td><td>void*</td></tr>
+</table>
+
+<h3><a name="gra2cairofile">gra2cairofile</a></h3>
+<pre>
+object: gra2cairofile
+version: 1.00.00
+parent: gra2cairo
+object id: 10
+number of fields: 27
+size of instance: 192
+</pre>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
+<tr><td>r--</td><td align="right">id</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
+<tr><td>r-x</td><td align="right">save</td><td>char*( char*[] )</td></tr>
+<tr><td>r-x</td><td align="right">clear</td><td>void( void )</td></tr>
+<tr><td>r--</td><td align="right">_list</td><td>char*[]</td></tr>
+<tr><td>r--</td><td align="right">_GC</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">_layer</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">delete_gra</td><td>bool</td></tr>
+<tr><td>r-x</td><td align="right">disconnect</td><td>void( void )</td></tr>
+<tr><td>rw-</td><td align="right">dpi</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">dpix</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">dpiy</td><td>int</td></tr>
+<tr><td>r-x</td><td align="right">flush</td><td>void( void )</td></tr>
+<tr><td>rw-</td><td align="right">antialias</td><td>enum( none default gray )</td></tr>
+<tr><td>rw-</td><td align="right">use_opacity</td><td>bool</td></tr>
+<tr><td>---</td><td align="right">_local</td><td>void*</td></tr>
+<tr><td>--x</td><td align="right">init</td><td>void( )</td></tr>
+<tr><td>--x</td><td align="right">done</td><td>void( )</td></tr>
+<tr><td>---</td><td align="right">next</td><td>void*</td></tr>
+<tr><td>rw-</td><td align="right">file</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">text2path</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">format</td><td>enum( ps2 ps3 eps2 eps3 pdf svg1.1 svg1.2 png )</td></tr>
+<tr><td>---</td><td align="right">_output</td><td>void( )</td></tr>
+<tr><td>---</td><td align="right">_strwidth</td><td>int( )</td></tr>
+<tr><td>---</td><td align="right">_charascent</td><td>int( )</td></tr>
+<tr><td>---</td><td align="right">_chardescent</td><td>int( )</td></tr>
+</table>
+
+<h3><a name="gra2gtkprint">gra2gtkprint</a></h3>
+<pre>
+object: gra2gtkprint
+version: 1.00.00
+parent: gra2cairo
+object id: 11
+number of fields: 24
+size of instance: 136
+</pre>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
+<tr><td>r--</td><td align="right">id</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
+<tr><td>r-x</td><td align="right">save</td><td>char*( char*[] )</td></tr>
+<tr><td>r-x</td><td align="right">clear</td><td>void( void )</td></tr>
+<tr><td>r--</td><td align="right">_list</td><td>char*[]</td></tr>
+<tr><td>r--</td><td align="right">_GC</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">_layer</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">delete_gra</td><td>bool</td></tr>
+<tr><td>r-x</td><td align="right">disconnect</td><td>void( void )</td></tr>
+<tr><td>rw-</td><td align="right">dpi</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">dpix</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">dpiy</td><td>int</td></tr>
+<tr><td>r-x</td><td align="right">flush</td><td>void( void )</td></tr>
+<tr><td>rw-</td><td align="right">antialias</td><td>enum( none default gray )</td></tr>
+<tr><td>rw-</td><td align="right">use_opacity</td><td>bool</td></tr>
+<tr><td>---</td><td align="right">_output</td><td>void( )</td></tr>
+<tr><td>---</td><td align="right">_strwidth</td><td>int( )</td></tr>
+<tr><td>---</td><td align="right">_charascent</td><td>int( )</td></tr>
+<tr><td>---</td><td align="right">_chardescent</td><td>int( )</td></tr>
+<tr><td>---</td><td align="right">_local</td><td>void*</td></tr>
+<tr><td>--x</td><td align="right">init</td><td>void( )</td></tr>
+<tr><td>--x</td><td align="right">done</td><td>void( )</td></tr>
+<tr><td>---</td><td align="right">_context</td><td>void( )</td></tr>
+</table>
+
+<h3><a name="gra2gtk">gra2gtk</a></h3>
+<pre>
+object: gra2gtk
+alias: gra2win:gra2x11
+version: 1.00.00
+parent: gra2cairo
+object id: 12
+number of fields: 37
+size of instance: 264
+</pre>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
+<tr><td>r--</td><td align="right">id</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
+<tr><td>r-x</td><td align="right">save</td><td>char*( char*[] )</td></tr>
+<tr><td>r--</td><td align="right">_list</td><td>char*[]</td></tr>
+<tr><td>r--</td><td align="right">_GC</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">_layer</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">delete_gra</td><td>bool</td></tr>
+<tr><td>r-x</td><td align="right">disconnect</td><td>void( void )</td></tr>
+<tr><td>rw-</td><td align="right">antialias</td><td>enum( none default gray )</td></tr>
+<tr><td>rw-</td><td align="right">use_opacity</td><td>bool</td></tr>
+<tr><td>---</td><td align="right">_local</td><td>void*</td></tr>
+<tr><td>--x</td><td align="right">init</td><td>void( )</td></tr>
+<tr><td>--x</td><td align="right">done</td><td>void( )</td></tr>
+<tr><td>---</td><td align="right">next</td><td>void*</td></tr>
+<tr><td>rw-</td><td align="right">dpi</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">dpix</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">dpiy</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">width</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">height</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">fit</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">frame</td><td>bool</td></tr>
+<tr><td>r-x</td><td align="right">expose</td><td>void( void )</td></tr>
+<tr><td>r-x</td><td align="right">flush</td><td>void( void )</td></tr>
+<tr><td>r-x</td><td align="right">clear</td><td>void( void )</td></tr>
+<tr><td>r-x</td><td align="right">present</td><td>void( void )</td></tr>
+<tr><td>r-x</td><td align="right">fullscreen</td><td>void( bool )</td></tr>
+<tr><td>rw-</td><td align="right">BR</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">BG</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">BB</td><td>int</td></tr>
+<tr><td>r-x</td><td align="right">wait_action</td><td>char*( void )</td></tr>
+<tr><td>---</td><td align="right">_gtklocal</td><td>void*</td></tr>
+<tr><td>---</td><td align="right">_output</td><td>void( )</td></tr>
+<tr><td>---</td><td align="right">_strwidth</td><td>int( )</td></tr>
+<tr><td>---</td><td align="right">_charascent</td><td>int( )</td></tr>
+<tr><td>---</td><td align="right">_chardescent</td><td>int( )</td></tr>
+<tr><td>---</td><td align="right">_evloop</td><td>void( )</td></tr>
+</table>
+
+<h3><a name="gra2gdk">gra2gdk</a></h3>
+<pre>
+object: gra2gdk
+version: 1.00.00
+parent: gra2cairo
+object id: 13
+number of fields: 24
+size of instance: 144
+</pre>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
+<tr><td>r--</td><td align="right">id</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
+<tr><td>r-x</td><td align="right">save</td><td>char*( char*[] )</td></tr>
+<tr><td>r-x</td><td align="right">clear</td><td>void( void )</td></tr>
+<tr><td>r--</td><td align="right">_list</td><td>char*[]</td></tr>
+<tr><td>r--</td><td align="right">_GC</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">_layer</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">delete_gra</td><td>bool</td></tr>
+<tr><td>r-x</td><td align="right">disconnect</td><td>void( void )</td></tr>
+<tr><td>rw-</td><td align="right">dpi</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">dpix</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">dpiy</td><td>int</td></tr>
+<tr><td>r-x</td><td align="right">flush</td><td>void( void )</td></tr>
+<tr><td>rw-</td><td align="right">antialias</td><td>enum( none default gray )</td></tr>
+<tr><td>rw-</td><td align="right">use_opacity</td><td>bool</td></tr>
+<tr><td>---</td><td align="right">_output</td><td>void( )</td></tr>
+<tr><td>---</td><td align="right">_strwidth</td><td>int( )</td></tr>
+<tr><td>---</td><td align="right">_charascent</td><td>int( )</td></tr>
+<tr><td>---</td><td align="right">_chardescent</td><td>int( )</td></tr>
+<tr><td>---</td><td align="right">_local</td><td>void*</td></tr>
+<tr><td>--x</td><td align="right">init</td><td>void( )</td></tr>
+<tr><td>--x</td><td align="right">done</td><td>void( )</td></tr>
+<tr><td>---</td><td align="right">next</td><td>void*</td></tr>
+</table>
+
+<h3><a name="menu">menu</a></h3>
+<pre>
+object: menu
+alias: winmenu:gtkmenu
+version: 1.00.00
+parent: gra2cairo
+object id: 37
+number of fields: 46
+size of instance: 272
+</pre>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
+<tr><td>r--</td><td align="right">id</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
+<tr><td>r-x</td><td align="right">save</td><td>char*( char*[] )</td></tr>
+<tr><td>r--</td><td align="right">_list</td><td>char*[]</td></tr>
+<tr><td>r--</td><td align="right">_GC</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">_layer</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">delete_gra</td><td>bool</td></tr>
+<tr><td>r-x</td><td align="right">disconnect</td><td>void( void )</td></tr>
+<tr><td>rw-</td><td align="right">dpix</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">dpiy</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">antialias</td><td>enum( none default gray )</td></tr>
+<tr><td>---</td><td align="right">_local</td><td>void*</td></tr>
+<tr><td>--x</td><td align="right">init</td><td>void( )</td></tr>
+<tr><td>--x</td><td align="right">done</td><td>void( )</td></tr>
+<tr><td>r-x</td><td align="right">menu</td><td>void( char* )</td></tr>
+<tr><td>rw-</td><td align="right">ngp</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">fullpath_ngp</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">data_head_lines</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">modified</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">dpi</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">redraw_flag</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">redraw_num</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">use_opacity</td><td>bool</td></tr>
+<tr><td>r-x</td><td align="right">redraw</td><td>void( void )</td></tr>
+<tr><td>r-x</td><td align="right">draw</td><td>void( void )</td></tr>
+<tr><td>r-x</td><td align="right">flush</td><td>void( void )</td></tr>
+<tr><td>r-x</td><td align="right">clear</td><td>void( void )</td></tr>
+<tr><td>r-x</td><td align="right">focused</td><td>char*[]( char*[] )</td></tr>
+<tr><td>r-x</td><td align="right">print</td><td>void( bool int )</td></tr>
+<tr><td>r-x</td><td align="right">echo</td><td>void( char* )</td></tr>
+<tr><td>r-x</td><td align="right">cat</td><td>void( char* )</td></tr>
+<tr><td>r-x</td><td align="right">clear_info</td><td>void( void )</td></tr>
+<tr><td>r-x</td><td align="right">get_accel_map</td><td>char*( void )</td></tr>
+<tr><td>r-x</td><td align="right">lib_version</td><td>char*( )</td></tr>
+<tr><td>r-x</td><td align="right">source_view_search_path</td><td>char*( )</td></tr>
+<tr><td>r-x</td><td align="right">focus</td><td>void( obj )</td></tr>
+<tr><td>r-x</td><td align="right">unfocus</td><td>void( void )</td></tr>
+<tr><td>r-x</td><td align="right">locale</td><td>char*( void )</td></tr>
+<tr><td>r-x</td><td align="right">active</td><td>bool( void )</td></tr>
+<tr><td>r-x</td><td align="right">addin_list_append</td><td>void( obj )</td></tr>
+<tr><td>---</td><td align="right">_evloop</td><td>void( )</td></tr>
+<tr><td>---</td><td align="right">_output</td><td>void( )</td></tr>
+<tr><td>---</td><td align="right">_strwidth</td><td>int( )</td></tr>
+<tr><td>---</td><td align="right">_charascent</td><td>int( )</td></tr>
+<tr><td>---</td><td align="right">_chardescent</td><td>int( )</td></tr>
+</table>
+
+<h3><a name="io">io</a></h3>
+<pre>
+object: io
+version: 1.00.00
+parent: object
+object id: 14
+number of fields: 25
+size of instance: 128
+</pre>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
+<tr><td>r--</td><td align="right">id</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
+<tr><td>r-x</td><td align="right">save</td><td>char*( char*[] )</td></tr>
+<tr><td>--x</td><td align="right">init</td><td>void( )</td></tr>
+<tr><td>--x</td><td align="right">done</td><td>void( )</td></tr>
+<tr><td>---</td><td align="right">next</td><td>void*</td></tr>
+<tr><td>r--</td><td align="right">file</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">mode</td><td>char*</td></tr>
+<tr><td>r-x</td><td align="right">open</td><td>void( char* )</td></tr>
+<tr><td>r-x</td><td align="right">popen</td><td>void( char* )</td></tr>
+<tr><td>r-x</td><td align="right">close</td><td>void( void )</td></tr>
+<tr><td>r-x</td><td align="right">puts</td><td>void( char* )</td></tr>
+<tr><td>r-x</td><td align="right">putc</td><td>int( int )</td></tr>
+<tr><td>r-x</td><td align="right">gets</td><td>char*( void )</td></tr>
+<tr><td>r-x</td><td align="right">getc</td><td>int( void )</td></tr>
+<tr><td>r-x</td><td align="right">read</td><td>char*( int )</td></tr>
+<tr><td>r-x</td><td align="right">write</td><td>int( char* )</td></tr>
+<tr><td>rw-</td><td align="right">whence</td><td>enum( set cur end )</td></tr>
+<tr><td>r-x</td><td align="right">seek</td><td>void( int )</td></tr>
+<tr><td>r-x</td><td align="right">tell</td><td>int( void )</td></tr>
+<tr><td>r-x</td><td align="right">rewind</td><td>void( void )</td></tr>
+<tr><td>r-x</td><td align="right">flush</td><td>void( void )</td></tr>
+<tr><td>r-x</td><td align="right">eof</td><td>bool( void )</td></tr>
+<tr><td>---</td><td align="right">_local</td><td>void*</td></tr>
+</table>
+
+<h3><a name="int">int</a></h3>
+<pre>
+object: int
+version: 1.00.00
+parent: object
+object id: 15
+number of fields: 11
+size of instance: 72
+</pre>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
+<tr><td>r--</td><td align="right">id</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
+<tr><td>r-x</td><td align="right">save</td><td>char*( char*[] )</td></tr>
+<tr><td>--x</td><td align="right">init</td><td>void( )</td></tr>
+<tr><td>--x</td><td align="right">done</td><td>void( )</td></tr>
+<tr><td>---</td><td align="right">next</td><td>void*</td></tr>
+<tr><td>rw-</td><td align="right">@</td><td>int</td></tr>
+<tr><td>r-x</td><td align="right">times</td><td>int( void )</td></tr>
+<tr><td>r-x</td><td align="right">inc</td><td>int( void )</td></tr>
+<tr><td>r-x</td><td align="right">dec</td><td>int( void )</td></tr>
+</table>
+
+<h3><a name="double">double</a></h3>
+<pre>
+object: double
+version: 1.00.00
+parent: object
+object id: 16
+number of fields: 8
+size of instance: 48
+</pre>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
+<tr><td>r--</td><td align="right">id</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
+<tr><td>r-x</td><td align="right">save</td><td>char*( char*[] )</td></tr>
+<tr><td>--x</td><td align="right">init</td><td>void( )</td></tr>
+<tr><td>--x</td><td align="right">done</td><td>void( )</td></tr>
+<tr><td>---</td><td align="right">next</td><td>void*</td></tr>
+<tr><td>rw-</td><td align="right">@</td><td>double</td></tr>
+</table>
+
+<h3><a name="string">string</a></h3>
+<pre>
+object: string
+version: 1.00.00
+parent: object
+object id: 17
+number of fields: 19
+size of instance: 136
+</pre>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
+<tr><td>r--</td><td align="right">id</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
+<tr><td>r-x</td><td align="right">save</td><td>char*( char*[] )</td></tr>
+<tr><td>--x</td><td align="right">init</td><td>void( )</td></tr>
+<tr><td>--x</td><td align="right">done</td><td>void( )</td></tr>
+<tr><td>---</td><td align="right">next</td><td>void*</td></tr>
+<tr><td>rw-</td><td align="right">@</td><td>char*</td></tr>
+<tr><td>r--</td><td align="right">length</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">byte</td><td>int</td></tr>
+<tr><td>r-x</td><td align="right">strip</td><td>char*( void )</td></tr>
+<tr><td>r-x</td><td align="right">upcase</td><td>char*( void )</td></tr>
+<tr><td>r-x</td><td align="right">downcase</td><td>char*( void )</td></tr>
+<tr><td>r-x</td><td align="right">reverse</td><td>char*( void )</td></tr>
+<tr><td>r-x</td><td align="right">slice</td><td>char*( int int )</td></tr>
+<tr><td>r-x</td><td align="right">match</td><td>bool( char* )</td></tr>
+<tr><td>r-x</td><td align="right">replace</td><td>char*( char* char* )</td></tr>
+<tr><td>r-x</td><td align="right">index</td><td>int( char* int )</td></tr>
+<tr><td>r-x</td><td align="right">rindex</td><td>int( char* int )</td></tr>
+</table>
+
+<h3><a name="regexp">regexp</a></h3>
+<pre>
+object: regexp
+version: 1.00.00
+parent: object
+object id: 18
+number of fields: 15
+size of instance: 104
+</pre>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
+<tr><td>r--</td><td align="right">id</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
+<tr><td>r-x</td><td align="right">save</td><td>char*( char*[] )</td></tr>
+<tr><td>--x</td><td align="right">init</td><td>void( )</td></tr>
+<tr><td>--x</td><td align="right">done</td><td>void( )</td></tr>
+<tr><td>---</td><td align="right">next</td><td>void*</td></tr>
+<tr><td>rw-</td><td align="right">@</td><td>char*</td></tr>
+<tr><td>r-x</td><td align="right">match</td><td>int( char* )</td></tr>
+<tr><td>r-x</td><td align="right">replace</td><td>char*( char* char* )</td></tr>
+<tr><td>r-x</td><td align="right">get</td><td>char*( int int )</td></tr>
+<tr><td>r-x</td><td align="right">num</td><td>int( void )</td></tr>
+<tr><td>r-x</td><td align="right">seq</td><td>char*( void )</td></tr>
+<tr><td>r-x</td><td align="right">rseq</td><td>char*( void )</td></tr>
+<tr><td>---</td><td align="right">_local</td><td>void*</td></tr>
+</table>
+
+<h3><a name="iarray">iarray</a></h3>
+<pre>
+object: iarray
+version: 1.00.00
+parent: object
+object id: 19
+number of fields: 33
+size of instance: 152
+</pre>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
+<tr><td>r--</td><td align="right">id</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
+<tr><td>r-x</td><td align="right">save</td><td>char*( char*[] )</td></tr>
+<tr><td>--x</td><td align="right">init</td><td>void( )</td></tr>
+<tr><td>--x</td><td align="right">done</td><td>void( )</td></tr>
+<tr><td>---</td><td align="right">next</td><td>void*</td></tr>
+<tr><td>rw-</td><td align="right">@</td><td>int[]</td></tr>
+<tr><td>r-x</td><td align="right">get</td><td>int( int )</td></tr>
+<tr><td>r-x</td><td align="right">put</td><td>void( int int )</td></tr>
+<tr><td>r-x</td><td align="right">add</td><td>void( int )</td></tr>
+<tr><td>r-x</td><td align="right">push</td><td>void( int )</td></tr>
+<tr><td>r-x</td><td align="right">pop</td><td>int( void )</td></tr>
+<tr><td>r-x</td><td align="right">ins</td><td>void( int int )</td></tr>
+<tr><td>r-x</td><td align="right">unshift</td><td>void( int )</td></tr>
+<tr><td>r-x</td><td align="right">shift</td><td>int( void )</td></tr>
+<tr><td>r-x</td><td align="right">del</td><td>void( int )</td></tr>
+<tr><td>r-x</td><td align="right">join</td><td>char*( char* )</td></tr>
+<tr><td>r-x</td><td align="right">sort</td><td>void( void )</td></tr>
+<tr><td>r-x</td><td align="right">rsort</td><td>void( void )</td></tr>
+<tr><td>r-x</td><td align="right">uniq</td><td>void( void )</td></tr>
+<tr><td>r-x</td><td align="right">sum</td><td>int( void )</td></tr>
+<tr><td>r-x</td><td align="right">average</td><td>double( void )</td></tr>
+<tr><td>r-x</td><td align="right">sdev</td><td>double( void )</td></tr>
+<tr><td>r-x</td><td align="right">RMS</td><td>double( void )</td></tr>
+<tr><td>r-x</td><td align="right">min</td><td>int( void )</td></tr>
+<tr><td>r-x</td><td align="right">max</td><td>int( void )</td></tr>
+<tr><td>r-x</td><td align="right">num</td><td>int( void )</td></tr>
+<tr><td>r-x</td><td align="right">seq</td><td>char*( void )</td></tr>
+<tr><td>r-x</td><td align="right">rseq</td><td>char*( void )</td></tr>
+<tr><td>r-x</td><td align="right">reverse</td><td>void( void )</td></tr>
+<tr><td>r-x</td><td align="right">slice</td><td>void( int int )</td></tr>
+<tr><td>r-x</td><td align="right">map</td><td>void( char* )</td></tr>
+</table>
+
+<h3><a name="darray">darray</a></h3>
+<pre>
+object: darray
+version: 1.00.00
+parent: object
+object id: 20
+number of fields: 34
+size of instance: 160
+</pre>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
+<tr><td>r--</td><td align="right">id</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
+<tr><td>r-x</td><td align="right">save</td><td>char*( char*[] )</td></tr>
+<tr><td>--x</td><td align="right">init</td><td>void( )</td></tr>
+<tr><td>--x</td><td align="right">done</td><td>void( )</td></tr>
+<tr><td>---</td><td align="right">next</td><td>void*</td></tr>
+<tr><td>rw-</td><td align="right">@</td><td>double[]</td></tr>
+<tr><td>r-x</td><td align="right">get</td><td>double( int )</td></tr>
+<tr><td>r-x</td><td align="right">put</td><td>void( int double )</td></tr>
+<tr><td>r-x</td><td align="right">add</td><td>void( double )</td></tr>
+<tr><td>r-x</td><td align="right">push</td><td>void( double )</td></tr>
+<tr><td>r-x</td><td align="right">pop</td><td>double( void )</td></tr>
+<tr><td>r-x</td><td align="right">ins</td><td>void( int double )</td></tr>
+<tr><td>r-x</td><td align="right">unshift</td><td>void( double )</td></tr>
+<tr><td>r-x</td><td align="right">shift</td><td>double( void )</td></tr>
+<tr><td>r-x</td><td align="right">del</td><td>void( int )</td></tr>
+<tr><td>r-x</td><td align="right">join</td><td>char*( char* )</td></tr>
+<tr><td>r-x</td><td align="right">sort</td><td>void( void )</td></tr>
+<tr><td>r-x</td><td align="right">rsort</td><td>void( void )</td></tr>
+<tr><td>r-x</td><td align="right">uniq</td><td>void( void )</td></tr>
+<tr><td>r-x</td><td align="right">sum</td><td>double( void )</td></tr>
+<tr><td>r-x</td><td align="right">average</td><td>double( void )</td></tr>
+<tr><td>r-x</td><td align="right">sdev</td><td>double( void )</td></tr>
+<tr><td>r-x</td><td align="right">RMS</td><td>double( void )</td></tr>
+<tr><td>r-x</td><td align="right">min</td><td>double( void )</td></tr>
+<tr><td>r-x</td><td align="right">max</td><td>double( void )</td></tr>
+<tr><td>r-x</td><td align="right">num</td><td>int( void )</td></tr>
+<tr><td>r-x</td><td align="right">seq</td><td>char*( void )</td></tr>
+<tr><td>r-x</td><td align="right">rseq</td><td>char*( void )</td></tr>
+<tr><td>r-x</td><td align="right">reverse</td><td>void( void )</td></tr>
+<tr><td>r-x</td><td align="right">slice</td><td>void( int int )</td></tr>
+<tr><td>r-x</td><td align="right">map</td><td>void( char* )</td></tr>
+<tr><td>---</td><td align="right">_local</td><td>void*</td></tr>
+</table>
+
+<h3><a name="sarray">sarray</a></h3>
+<pre>
+object: sarray
+version: 1.00.00
+parent: object
+object id: 21
+number of fields: 29
+size of instance: 128
+</pre>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
+<tr><td>r--</td><td align="right">id</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
+<tr><td>r-x</td><td align="right">save</td><td>char*( char*[] )</td></tr>
+<tr><td>--x</td><td align="right">init</td><td>void( )</td></tr>
+<tr><td>--x</td><td align="right">done</td><td>void( )</td></tr>
+<tr><td>---</td><td align="right">next</td><td>void*</td></tr>
+<tr><td>rw-</td><td align="right">@</td><td>char*[]</td></tr>
+<tr><td>rw-</td><td align="right">delimiter</td><td>char*</td></tr>
+<tr><td>r-x</td><td align="right">get</td><td>char*( int )</td></tr>
+<tr><td>r-x</td><td align="right">put</td><td>void( int char* )</td></tr>
+<tr><td>r-x</td><td align="right">add</td><td>void( char* )</td></tr>
+<tr><td>r-x</td><td align="right">push</td><td>void( char* )</td></tr>
+<tr><td>r-x</td><td align="right">pop</td><td>char*( void )</td></tr>
+<tr><td>r-x</td><td align="right">ins</td><td>void( int char* )</td></tr>
+<tr><td>r-x</td><td align="right">unshift</td><td>void( char* )</td></tr>
+<tr><td>r-x</td><td align="right">shift</td><td>char*( void )</td></tr>
+<tr><td>r-x</td><td align="right">del</td><td>void( int )</td></tr>
+<tr><td>r-x</td><td align="right">split</td><td>void( char* )</td></tr>
+<tr><td>r-x</td><td align="right">join</td><td>char*( char* )</td></tr>
+<tr><td>r-x</td><td align="right">sort</td><td>void( char* )</td></tr>
+<tr><td>r-x</td><td align="right">rsort</td><td>void( char* )</td></tr>
+<tr><td>r-x</td><td align="right">uniq</td><td>char*( void )</td></tr>
+<tr><td>r-x</td><td align="right">num</td><td>int( void )</td></tr>
+<tr><td>r-x</td><td align="right">seq</td><td>char*( void )</td></tr>
+<tr><td>r-x</td><td align="right">rseq</td><td>char*( void )</td></tr>
+<tr><td>r-x</td><td align="right">reverse</td><td>void( void )</td></tr>
+<tr><td>r-x</td><td align="right">slice</td><td>void( int int )</td></tr>
+<tr><td>---</td><td align="right">_local</td><td>void*</td></tr>
+</table>
+
+<h3><a name="math">math</a></h3>
+<pre>
+object: math
+version: 1.00.00
+parent: object
+object id: 22
+number of fields: 18
+size of instance: 120
+</pre>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
+<tr><td>r--</td><td align="right">id</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
+<tr><td>r-x</td><td align="right">save</td><td>char*( char*[] )</td></tr>
+<tr><td>--x</td><td align="right">init</td><td>void( )</td></tr>
+<tr><td>--x</td><td align="right">done</td><td>void( )</td></tr>
+<tr><td>---</td><td align="right">next</td><td>void*</td></tr>
+<tr><td>rw-</td><td align="right">formula</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">f</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">g</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">h</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">x</td><td>double</td></tr>
+<tr><td>rw-</td><td align="right">y</td><td>double</td></tr>
+<tr><td>rw-</td><td align="right">z</td><td>double</td></tr>
+<tr><td>r--</td><td align="right">status</td><td>enum( noerr err nan undef syntax cont break nonum eof )</td></tr>
+<tr><td>r-x</td><td align="right">calc</td><td>double( double[] )</td></tr>
+<tr><td>r-x</td><td align="right">clear</td><td>void( void )</td></tr>
+<tr><td>---</td><td align="right">_local</td><td>void*</td></tr>
+</table>
+
+<h3><a name="fit">fit</a></h3>
+<pre>
+object: fit
+version: 1.00.01
+parent: object
+object id: 23
+number of fields: 59
+size of instance: 448
+</pre>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
+<tr><td>r--</td><td align="right">id</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
+<tr><td>r-x</td><td align="right">save</td><td>char*( char*[] )</td></tr>
+<tr><td>--x</td><td align="right">init</td><td>void( )</td></tr>
+<tr><td>--x</td><td align="right">done</td><td>void( )</td></tr>
+<tr><td>---</td><td align="right">next</td><td>void*</td></tr>
+<tr><td>rw-</td><td align="right">profile</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">type</td><td>enum( poly pow exp log user )</td></tr>
+<tr><td>rw-</td><td align="right">min</td><td>double</td></tr>
+<tr><td>rw-</td><td align="right">max</td><td>double</td></tr>
+<tr><td>rw-</td><td align="right">div</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">interpolation</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">through_point</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">point_x</td><td>double</td></tr>
+<tr><td>rw-</td><td align="right">point_y</td><td>double</td></tr>
+<tr><td>rw-</td><td align="right">equation</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">poly_dimension</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">weight_func</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">user_func</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">derivative</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">derivative0</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">derivative1</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">derivative2</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">derivative3</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">derivative4</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">derivative5</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">derivative6</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">derivative7</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">derivative8</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">derivative9</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">converge</td><td>double</td></tr>
+<tr><td>rw-</td><td align="right">parameter0</td><td>double</td></tr>
+<tr><td>rw-</td><td align="right">parameter1</td><td>double</td></tr>
+<tr><td>rw-</td><td align="right">parameter2</td><td>double</td></tr>
+<tr><td>rw-</td><td align="right">parameter3</td><td>double</td></tr>
+<tr><td>rw-</td><td align="right">parameter4</td><td>double</td></tr>
+<tr><td>rw-</td><td align="right">parameter5</td><td>double</td></tr>
+<tr><td>rw-</td><td align="right">parameter6</td><td>double</td></tr>
+<tr><td>rw-</td><td align="right">parameter7</td><td>double</td></tr>
+<tr><td>rw-</td><td align="right">parameter8</td><td>double</td></tr>
+<tr><td>rw-</td><td align="right">parameter9</td><td>double</td></tr>
+<tr><td>r--</td><td align="right">%00</td><td>double</td></tr>
+<tr><td>r--</td><td align="right">%01</td><td>double</td></tr>
+<tr><td>r--</td><td align="right">%02</td><td>double</td></tr>
+<tr><td>r--</td><td align="right">%03</td><td>double</td></tr>
+<tr><td>r--</td><td align="right">%04</td><td>double</td></tr>
+<tr><td>r--</td><td align="right">%05</td><td>double</td></tr>
+<tr><td>r--</td><td align="right">%06</td><td>double</td></tr>
+<tr><td>r--</td><td align="right">%07</td><td>double</td></tr>
+<tr><td>r--</td><td align="right">%08</td><td>double</td></tr>
+<tr><td>r--</td><td align="right">%09</td><td>double</td></tr>
+<tr><td>r--</td><td align="right">number</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">error</td><td>double</td></tr>
+<tr><td>r--</td><td align="right">correlation</td><td>double</td></tr>
+<tr><td>rw-</td><td align="right">display</td><td>bool</td></tr>
+<tr><td>r-x</td><td align="right">fit</td><td>void( double[] )</td></tr>
+<tr><td>r-x</td><td align="right">calc</td><td>double( double )</td></tr>
+<tr><td>---</td><td align="right">_local</td><td>void*</td></tr>
+</table>
+
+<h3><a name="prm">prm</a></h3>
+<pre>
+object: prm
+version: 1.00.00
+parent: object
+object id: 24
+number of fields: 10
+size of instance: 56
+</pre>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
+<tr><td>r--</td><td align="right">id</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
+<tr><td>r-x</td><td align="right">save</td><td>char*( char*[] )</td></tr>
+<tr><td>--x</td><td align="right">init</td><td>void( )</td></tr>
+<tr><td>--x</td><td align="right">done</td><td>void( )</td></tr>
+<tr><td>---</td><td align="right">next</td><td>void*</td></tr>
+<tr><td>rw-</td><td align="right">file</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">ignore_path</td><td>bool</td></tr>
+<tr><td>r-x</td><td align="right">load</td><td>void( void )</td></tr>
+</table>
+
+<h3><a name="draw">draw</a></h3>
+<pre>
+object: draw
+version: 1.00.00
+parent: object
+object id: 25
+number of fields: 17
+size of instance: 104
+</pre>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
+<tr><td>r--</td><td align="right">id</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
+<tr><td>r-x</td><td align="right">save</td><td>char*( char*[] )</td></tr>
+<tr><td>---</td><td align="right">init</td><td>void( )</td></tr>
+<tr><td>---</td><td align="right">done</td><td>void( )</td></tr>
+<tr><td>---</td><td align="right">GC</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">hidden</td><td>bool</td></tr>
+<tr><td>r-x</td><td align="right">draw</td><td>void( int )</td></tr>
+<tr><td>r-x</td><td align="right">redraw</td><td>void( int )</td></tr>
+<tr><td>rw-</td><td align="right">R</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">G</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">B</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">A</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">clip</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">redraw_flag</td><td>bool</td></tr>
+<tr><td>---</td><td align="right">redraw_num</td><td>int</td></tr>
+</table>
+
+<h3><a name="axisgrid">axisgrid</a></h3>
+<pre>
+object: axisgrid
+version: 1.00.00
+parent: draw
+object id: 26
+number of fields: 35
+size of instance: 232
+</pre>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
+<tr><td>r--</td><td align="right">id</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
+<tr><td>r-x</td><td align="right">save</td><td>char*( char*[] )</td></tr>
+<tr><td>---</td><td align="right">GC</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">hidden</td><td>bool</td></tr>
+<tr><td>r-x</td><td align="right">redraw</td><td>void( int )</td></tr>
+<tr><td>rw-</td><td align="right">R</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">G</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">B</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">A</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">clip</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">redraw_flag</td><td>bool</td></tr>
+<tr><td>---</td><td align="right">redraw_num</td><td>int</td></tr>
+<tr><td>--x</td><td align="right">init</td><td>void( )</td></tr>
+<tr><td>--x</td><td align="right">done</td><td>void( )</td></tr>
+<tr><td>---</td><td align="right">next</td><td>void*</td></tr>
+<tr><td>rw-</td><td align="right">axis_x</td><td>obj</td></tr>
+<tr><td>rw-</td><td align="right">axis_y</td><td>obj</td></tr>
+<tr><td>rw-</td><td align="right">grid_x</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">grid_y</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">width1</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">style1</td><td>int[]</td></tr>
+<tr><td>rw-</td><td align="right">width2</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">style2</td><td>int[]</td></tr>
+<tr><td>rw-</td><td align="right">width3</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">style3</td><td>int[]</td></tr>
+<tr><td>rw-</td><td align="right">background</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">BR</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">BG</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">BB</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">BA</td><td>int</td></tr>
+<tr><td>r-x</td><td align="right">draw</td><td>void( int )</td></tr>
+<tr><td>r-x</td><td align="right">tight</td><td>void( void )</td></tr>
+<tr><td>r-x</td><td align="right">hsb</td><td>void( double double double )</td></tr>
+</table>
+
+<h3><a name="axis">axis</a></h3>
+<pre>
+object: axis
+version: 1.00.00
+parent: draw
+object id: 27
+number of fields: 106
+size of instance: 680
+</pre>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
+<tr><td>r--</td><td align="right">id</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
+<tr><td>---</td><td align="right">GC</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">hidden</td><td>bool</td></tr>
+<tr><td>r-x</td><td align="right">redraw</td><td>void( int )</td></tr>
+<tr><td>rw-</td><td align="right">R</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">G</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">B</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">A</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">clip</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">redraw_flag</td><td>bool</td></tr>
+<tr><td>---</td><td align="right">redraw_num</td><td>int</td></tr>
+<tr><td>--x</td><td align="right">init</td><td>void( )</td></tr>
+<tr><td>--x</td><td align="right">done</td><td>void( )</td></tr>
+<tr><td>---</td><td align="right">next</td><td>void*</td></tr>
+<tr><td>r--</td><td align="right">group</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">min</td><td>double</td></tr>
+<tr><td>rw-</td><td align="right">max</td><td>double</td></tr>
+<tr><td>rw-</td><td align="right">inc</td><td>double</td></tr>
+<tr><td>rw-</td><td align="right">div</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">type</td><td>enum( linear log inverse MJD )</td></tr>
+<tr><td>rw-</td><td align="right">x</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">y</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">direction</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">baseline</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">length</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">width</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">style</td><td>int[]</td></tr>
+<tr><td>rw-</td><td align="right">auto_scale_margin</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">adjust_axis</td><td>obj</td></tr>
+<tr><td>rw-</td><td align="right">adjust_position</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">arrow</td><td>enum( none end begin both )</td></tr>
+<tr><td>rw-</td><td align="right">arrow_length</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">arrow_width</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">wave</td><td>enum( none end begin both )</td></tr>
+<tr><td>rw-</td><td align="right">wave_length</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">wave_width</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">reference</td><td>obj</td></tr>
+<tr><td>rw-</td><td align="right">gauge</td><td>enum( none both left right )</td></tr>
+<tr><td>rw-</td><td align="right">gauge_min</td><td>double</td></tr>
+<tr><td>rw-</td><td align="right">gauge_max</td><td>double</td></tr>
+<tr><td>rw-</td><td align="right">gauge_style</td><td>int[]</td></tr>
+<tr><td>rw-</td><td align="right">gauge_length1</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">gauge_width1</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">gauge_length2</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">gauge_width2</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">gauge_length3</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">gauge_width3</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">gauge_R</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">gauge_G</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">gauge_B</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">gauge_A</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">num</td><td>enum( none left right )</td></tr>
+<tr><td>rw-</td><td align="right">num_begin</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">num_step</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">num_num</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">num_auto_norm</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">num_head</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">num_format</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">num_tail</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">num_log_pow</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">num_pt</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">num_space</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">num_font</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">num_font_style</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">num_script_size</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">num_align</td><td>enum( center left right point )</td></tr>
+<tr><td>rw-</td><td align="right">num_no_zero</td><td>enum( regular no_zero no_floating_point )</td></tr>
+<tr><td>rw-</td><td align="right">num_direction</td><td>enum( horizontal parallel1 parallel2 normal1 normal2 oblique1 oblique2 )</td></tr>
+<tr><td>rw-</td><td align="right">num_shift_p</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">num_shift_n</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">num_R</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">num_G</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">num_B</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">num_A</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">num_date_format</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">num_math</td><td>char*</td></tr>
+<tr><td>r-x</td><td align="right">scale_push</td><td>void( void )</td></tr>
+<tr><td>r-x</td><td align="right">scale_pop</td><td>void( void )</td></tr>
+<tr><td>r--</td><td align="right">scale_history</td><td>double[]</td></tr>
+<tr><td>r-x</td><td align="right">scale</td><td>void( double double int )</td></tr>
+<tr><td>r-x</td><td align="right">auto_scale</td><td>void( obj )</td></tr>
+<tr><td>r-x</td><td align="right">get_auto_scale</td><td>double[]( obj )</td></tr>
+<tr><td>r-x</td><td align="right">clear</td><td>void( void )</td></tr>
+<tr><td>r-x</td><td align="right">adjust</td><td>void( void )</td></tr>
+<tr><td>r-x</td><td align="right">draw</td><td>void( int )</td></tr>
+<tr><td>r-x</td><td align="right">bbox</td><td>int[]( void )</td></tr>
+<tr><td>r-x</td><td align="right">move</td><td>void( int int )</td></tr>
+<tr><td>r-x</td><td align="right">rotate</td><td>void( int int int int )</td></tr>
+<tr><td>r-x</td><td align="right">flip</td><td>void( int int int )</td></tr>
+<tr><td>r-x</td><td align="right">change</td><td>void( int int int )</td></tr>
+<tr><td>r-x</td><td align="right">zooming</td><td>void( int int int int int )</td></tr>
+<tr><td>r-x</td><td align="right">match</td><td>bool( int int int int int )</td></tr>
+<tr><td>r-x</td><td align="right">coordinate</td><td>double( int int )</td></tr>
+<tr><td>r-x</td><td align="right">tight</td><td>void( void )</td></tr>
+<tr><td>r-x</td><td align="right">grouping</td><td>void( int[] )</td></tr>
+<tr><td>r-x</td><td align="right">default_grouping</td><td>void( int[] )</td></tr>
+<tr><td>r-x</td><td align="right">group_position</td><td>void( int[] )</td></tr>
+<tr><td>r-x</td><td align="right">group_manager</td><td>int( void )</td></tr>
+<tr><td>r-x</td><td align="right">get_numbering</td><td>char*[]( void )</td></tr>
+<tr><td>r-x</td><td align="right">save</td><td>char*( char*[] )</td></tr>
+<tr><td>r-x</td><td align="right">hsb</td><td>void( double double double )</td></tr>
+<tr><td>r-x</td><td align="right">gauge_hsb</td><td>void( double double double )</td></tr>
+<tr><td>r-x</td><td align="right">num_hsb</td><td>void( double double double )</td></tr>
+<tr><td>-w-</td><td align="right">num_jfont</td><td>char*</td></tr>
+</table>
+
+<h3><a name="data">data</a></h3>
+<pre>
+object: data
+alias: file
+version: 1.00.00
+parent: draw
+object id: 28
+number of fields: 135
+size of instance: 920
+</pre>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
+<tr><td>r--</td><td align="right">id</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
+<tr><td>---</td><td align="right">GC</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">hidden</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">R</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">G</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">B</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">A</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">clip</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">redraw_flag</td><td>bool</td></tr>
+<tr><td>---</td><td align="right">redraw_num</td><td>int</td></tr>
+<tr><td>--x</td><td align="right">init</td><td>void( )</td></tr>
+<tr><td>--x</td><td align="right">done</td><td>void( )</td></tr>
+<tr><td>---</td><td align="right">next</td><td>void*</td></tr>
+<tr><td>rw-</td><td align="right">source</td><td>enum( file array range )</td></tr>
+<tr><td>rw-</td><td align="right">file</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">save_path</td><td>enum( unchange full relative base )</td></tr>
+<tr><td>rw-</td><td align="right">x</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">y</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">type</td><td>enum( mark line polygon polygon_solid_fill curve diagonal arrow rectangle rectangle_fill rectangle_solid_fill errorbar_x errorbar_y staircase_x staircase_y bar_x bar_y bar_fill_x bar_fill_y bar_solid_fill_x bar_solid_fill_y fit )</td></tr>
+<tr><td>rw-</td><td align="right">interpolation</td><td>enum( spline spline_close bspline bspline_close )</td></tr>
+<tr><td>rw-</td><td align="right">fit</td><td>obj</td></tr>
+<tr><td>rw-</td><td align="right">math_x</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">math_y</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">func_f</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">func_g</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">func_h</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">smooth_x</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">smooth_y</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">averaging_type</td><td>enum( simple weighted exponential )</td></tr>
+<tr><td>rw-</td><td align="right">mark_type</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">mark_size</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">line_width</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">line_style</td><td>int[]</td></tr>
+<tr><td>rw-</td><td align="right">line_join</td><td>enum( miter round bevel )</td></tr>
+<tr><td>rw-</td><td align="right">line_miter_limit</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">R2</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">G2</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">B2</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">A2</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">remark</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">ifs</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">csv</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">head_skip</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">read_step</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">final_line</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">mask</td><td>int[]</td></tr>
+<tr><td>rw-</td><td align="right">move_data</td><td>int[]</td></tr>
+<tr><td>rw-</td><td align="right">move_data_x</td><td>double[]</td></tr>
+<tr><td>rw-</td><td align="right">move_data_y</td><td>double[]</td></tr>
+<tr><td>r-x</td><td align="right">move_data_adjust</td><td>void( void )</td></tr>
+<tr><td>rw-</td><td align="right">axis_x</td><td>obj</td></tr>
+<tr><td>rw-</td><td align="right">axis_y</td><td>obj</td></tr>
+<tr><td>rw-</td><td align="right">data_clip</td><td>bool</td></tr>
+<tr><td>r-x</td><td align="right">dnum</td><td>char*( void )</td></tr>
+<tr><td>r-x</td><td align="right">dminx</td><td>char*( void )</td></tr>
+<tr><td>r-x</td><td align="right">dmaxx</td><td>char*( void )</td></tr>
+<tr><td>r-x</td><td align="right">davx</td><td>char*( void )</td></tr>
+<tr><td>r-x</td><td align="right">dsigx</td><td>char*( void )</td></tr>
+<tr><td>r-x</td><td align="right">dstdevpx</td><td>char*( void )</td></tr>
+<tr><td>r-x</td><td align="right">dstdevx</td><td>char*( void )</td></tr>
+<tr><td>r-x</td><td align="right">dminy</td><td>char*( void )</td></tr>
+<tr><td>r-x</td><td align="right">dmaxy</td><td>char*( void )</td></tr>
+<tr><td>r-x</td><td align="right">davy</td><td>char*( void )</td></tr>
+<tr><td>r-x</td><td align="right">dsigy</td><td>char*( void )</td></tr>
+<tr><td>r-x</td><td align="right">dstdevpy</td><td>char*( void )</td></tr>
+<tr><td>r-x</td><td align="right">dstdevy</td><td>char*( void )</td></tr>
+<tr><td>r-x</td><td align="right">dx</td><td>char*( int )</td></tr>
+<tr><td>r-x</td><td align="right">dy</td><td>char*( int )</td></tr>
+<tr><td>r-x</td><td align="right">d2</td><td>char*( int )</td></tr>
+<tr><td>r-x</td><td align="right">d3</td><td>char*( int )</td></tr>
+<tr><td>r--</td><td align="right">data_num</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">data_x</td><td>double</td></tr>
+<tr><td>r--</td><td align="right">data_y</td><td>double</td></tr>
+<tr><td>r--</td><td align="right">data_2</td><td>double</td></tr>
+<tr><td>r--</td><td align="right">data_3</td><td>double</td></tr>
+<tr><td>r--</td><td align="right">coord_x</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">coord_y</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">coord_2</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">coord_3</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">stat_x</td><td>enum( noerr err nan undef syntax cont break nonum eof )</td></tr>
+<tr><td>r--</td><td align="right">stat_y</td><td>enum( noerr err nan undef syntax cont break nonum eof )</td></tr>
+<tr><td>r--</td><td align="right">stat_2</td><td>enum( noerr err nan undef syntax cont break nonum eof )</td></tr>
+<tr><td>r--</td><td align="right">stat_3</td><td>enum( noerr err nan undef syntax cont break nonum eof )</td></tr>
+<tr><td>r--</td><td align="right">minx</td><td>double</td></tr>
+<tr><td>r--</td><td align="right">maxx</td><td>double</td></tr>
+<tr><td>r--</td><td align="right">miny</td><td>double</td></tr>
+<tr><td>r--</td><td align="right">maxy</td><td>double</td></tr>
+<tr><td>r--</td><td align="right">stat_minx</td><td>enum( noerr err nan undef syntax cont break nonum eof )</td></tr>
+<tr><td>r--</td><td align="right">stat_maxx</td><td>enum( noerr err nan undef syntax cont break nonum eof )</td></tr>
+<tr><td>r--</td><td align="right">stat_miny</td><td>enum( noerr err nan undef syntax cont break nonum eof )</td></tr>
+<tr><td>r--</td><td align="right">stat_maxy</td><td>enum( noerr err nan undef syntax cont break nonum eof )</td></tr>
+<tr><td>r--</td><td align="right">line</td><td>int</td></tr>
+<tr><td>r-x</td><td align="right">draw</td><td>void( int )</td></tr>
+<tr><td>r-x</td><td align="right">getcoord</td><td>int[]( double double )</td></tr>
+<tr><td>r-x</td><td align="right">redraw</td><td>void( int )</td></tr>
+<tr><td>r-x</td><td align="right">opendata</td><td>void( void )</td></tr>
+<tr><td>r-x</td><td align="right">opendatac</td><td>void( void )</td></tr>
+<tr><td>r-x</td><td align="right">getdata</td><td>void( void )</td></tr>
+<tr><td>r-x</td><td align="right">closedata</td><td>void( void )</td></tr>
+<tr><td>--x</td><td align="right">opendata_raw</td><td>void( void )</td></tr>
+<tr><td>--x</td><td align="right">getdata_raw</td><td>double[]( int[] )</td></tr>
+<tr><td>--x</td><td align="right">closedata_raw</td><td>void( void )</td></tr>
+<tr><td>r-x</td><td align="right">column</td><td>char*( int int )</td></tr>
+<tr><td>r-x</td><td align="right">basename</td><td>char*( void )</td></tr>
+<tr><td>r-x</td><td align="right">head_lines</td><td>char*( int )</td></tr>
+<tr><td>r-x</td><td align="right">boundings</td><td>void( bool )</td></tr>
+<tr><td>r-x</td><td align="right">bounding</td><td>double[]( obj )</td></tr>
+<tr><td>r-x</td><td align="right">load_settings</td><td>void( void )</td></tr>
+<tr><td>r-x</td><td align="right">time</td><td>char*( int )</td></tr>
+<tr><td>r-x</td><td align="right">date</td><td>char*( int )</td></tr>
+<tr><td>r-x</td><td align="right">save</td><td>char*( char*[] )</td></tr>
+<tr><td>r-x</td><td align="right">evaluate</td><td>double[]( int int int int int int )</td></tr>
+<tr><td>r-x</td><td align="right">store_data</td><td>char*( void )</td></tr>
+<tr><td>r-x</td><td align="right">load_data</td><td>void( char* )</td></tr>
+<tr><td>r-x</td><td align="right">store_dummy</td><td>char*( void )</td></tr>
+<tr><td>r-x</td><td align="right">load_dummy</td><td>void( char* )</td></tr>
+<tr><td>r-x</td><td align="right">tight</td><td>void( void )</td></tr>
+<tr><td>r-x</td><td align="right">save_config</td><td>void( void )</td></tr>
+<tr><td>r-x</td><td align="right">output_file</td><td>void( char* int bool )</td></tr>
+<tr><td>--x</td><td align="right">modified</td><td>void( void )</td></tr>
+<tr><td>r-x</td><td align="right">hsb</td><td>void( double double double )</td></tr>
+<tr><td>r-x</td><td align="right">hsb2</td><td>void( double double double )</td></tr>
+<tr><td>r-x</td><td align="right">fit_newton</td><td>char*( double[] )</td></tr>
+<tr><td>r-x</td><td align="right">fit_bisection</td><td>char*( double[] )</td></tr>
+<tr><td>r-x</td><td align="right">fit_calc</td><td>char*( double )</td></tr>
+<tr><td>r-x</td><td align="right">fit_prm</td><td>char*( int )</td></tr>
+<tr><td>r-x</td><td align="right">math_functions</td><td>char*( void )</td></tr>
+<tr><td>r-x</td><td align="right">math_constants</td><td>char*( void )</td></tr>
+<tr><td>---</td><td align="right">_local</td><td>void*</td></tr>
+<tr><td>rw-</td><td align="right">range_min</td><td>double</td></tr>
+<tr><td>rw-</td><td align="right">range_max</td><td>double</td></tr>
+<tr><td>rw-</td><td align="right">range_div</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">array</td><td>obj</td></tr>
+</table>
+
+<h3><a name="merge">merge</a></h3>
+<pre>
+object: merge
+version: 1.00.00
+parent: draw
+object id: 29
+number of fields: 39
+size of instance: 256
+</pre>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
+<tr><td>r--</td><td align="right">id</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
+<tr><td>---</td><td align="right">GC</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">hidden</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">R</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">G</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">B</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">A</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">clip</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">redraw_flag</td><td>bool</td></tr>
+<tr><td>---</td><td align="right">redraw_num</td><td>int</td></tr>
+<tr><td>--x</td><td align="right">init</td><td>void( )</td></tr>
+<tr><td>--x</td><td align="right">done</td><td>void( )</td></tr>
+<tr><td>---</td><td align="right">next</td><td>void*</td></tr>
+<tr><td>rw-</td><td align="right">file</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">save_path</td><td>enum( unchange full relative base )</td></tr>
+<tr><td>rw-</td><td align="right">top_margin</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">left_margin</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">zoom_x</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">zoom_y</td><td>int</td></tr>
+<tr><td>-w-</td><td align="right">zoom</td><td>int</td></tr>
+<tr><td>r-x</td><td align="right">draw</td><td>void( int )</td></tr>
+<tr><td>r-x</td><td align="right">redraw</td><td>void( int )</td></tr>
+<tr><td>r-x</td><td align="right">save</td><td>char*( char*[] )</td></tr>
+<tr><td>r-x</td><td align="right">store_data</td><td>char*( void )</td></tr>
+<tr><td>r-x</td><td align="right">load_data</td><td>void( char* )</td></tr>
+<tr><td>r-x</td><td align="right">store_dummy</td><td>char*( void )</td></tr>
+<tr><td>r-x</td><td align="right">load_dummy</td><td>void( char* )</td></tr>
+<tr><td>r-x</td><td align="right">time</td><td>char*( int )</td></tr>
+<tr><td>r-x</td><td align="right">date</td><td>char*( int )</td></tr>
+<tr><td>r--</td><td align="right">line_num</td><td>int</td></tr>
+<tr><td>r-x</td><td align="right">bbox</td><td>int[]( void )</td></tr>
+<tr><td>r-x</td><td align="right">move</td><td>void( int int )</td></tr>
+<tr><td>r-x</td><td align="right">zooming</td><td>void( int int int int int )</td></tr>
+<tr><td>r-x</td><td align="right">match</td><td>bool( int int int int int )</td></tr>
+<tr><td>r--</td><td align="right">ext</td><td>char*</td></tr>
+<tr><td>---</td><td align="right">_local</td><td>void*</td></tr>
+<tr><td>-w-</td><td align="right">symbol_greek</td><td>bool</td></tr>
+</table>
+
+<h3><a name="legend">legend</a></h3>
+<pre>
+object: legend
+version: 1.00.00
+parent: draw
+object id: 30
+number of fields: 21
+size of instance: 120
+</pre>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
+<tr><td>r--</td><td align="right">id</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
+<tr><td>r-x</td><td align="right">save</td><td>char*( char*[] )</td></tr>
+<tr><td>---</td><td align="right">GC</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">hidden</td><td>bool</td></tr>
+<tr><td>r-x</td><td align="right">draw</td><td>void( int )</td></tr>
+<tr><td>r-x</td><td align="right">redraw</td><td>void( int )</td></tr>
+<tr><td>rw-</td><td align="right">R</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">G</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">B</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">A</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">clip</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">redraw_flag</td><td>bool</td></tr>
+<tr><td>---</td><td align="right">redraw_num</td><td>int</td></tr>
+<tr><td>---</td><td align="right">init</td><td>void( )</td></tr>
+<tr><td>---</td><td align="right">done</td><td>void( )</td></tr>
+<tr><td>r-x</td><td align="right">bbox</td><td>int[]( void )</td></tr>
+<tr><td>r-x</td><td align="right">move</td><td>void( int int )</td></tr>
+<tr><td>r-x</td><td align="right">zooming</td><td>void( int int int int int )</td></tr>
+<tr><td>r-x</td><td align="right">match</td><td>bool( int int int int int )</td></tr>
+</table>
+
+<h3><a name="rectangle">rectangle</a></h3>
+<pre>
+object: rectangle
+version: 1.00.00
+parent: legend
+object id: 31
+number of fields: 47
+size of instance: 336
+</pre>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
+<tr><td>r--</td><td align="right">id</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
+<tr><td>r-x</td><td align="right">save</td><td>char*( char*[] )</td></tr>
+<tr><td>---</td><td align="right">GC</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">hidden</td><td>bool</td></tr>
+<tr><td>r-x</td><td align="right">redraw</td><td>void( int )</td></tr>
+<tr><td>rw-</td><td align="right">clip</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">redraw_flag</td><td>bool</td></tr>
+<tr><td>---</td><td align="right">redraw_num</td><td>int</td></tr>
+<tr><td>--x</td><td align="right">init</td><td>void( )</td></tr>
+<tr><td>--x</td><td align="right">done</td><td>void( )</td></tr>
+<tr><td>---</td><td align="right">next</td><td>void*</td></tr>
+<tr><td>rw-</td><td align="right">x1</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">y1</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">x2</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">y2</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">stroke_R</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">stroke_G</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">stroke_B</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">stroke_A</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">fill_R</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">fill_G</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">fill_B</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">fill_A</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">fill</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">stroke</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">width</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">style</td><td>int[]</td></tr>
+<tr><td>r-x</td><td align="right">draw</td><td>void( int )</td></tr>
+<tr><td>r-x</td><td align="right">bbox</td><td>int[]( void )</td></tr>
+<tr><td>r-x</td><td align="right">move</td><td>void( int int )</td></tr>
+<tr><td>r-x</td><td align="right">rotate</td><td>void( int int int int )</td></tr>
+<tr><td>r-x</td><td align="right">flip</td><td>void( int int int )</td></tr>
+<tr><td>r-x</td><td align="right">change</td><td>void( int int int )</td></tr>
+<tr><td>r-x</td><td align="right">zooming</td><td>void( int int int int int )</td></tr>
+<tr><td>r-x</td><td align="right">match</td><td>bool( int int int int int )</td></tr>
+<tr><td>r-x</td><td align="right">fill_hsb</td><td>void( double double double )</td></tr>
+<tr><td>r-x</td><td align="right">stroke_hsb</td><td>void( double double double )</td></tr>
+<tr><td>-w-</td><td align="right">frame</td><td>bool</td></tr>
+<tr><td>-w-</td><td align="right">R</td><td>int</td></tr>
+<tr><td>-w-</td><td align="right">G</td><td>int</td></tr>
+<tr><td>-w-</td><td align="right">B</td><td>int</td></tr>
+<tr><td>-w-</td><td align="right">A</td><td>int</td></tr>
+<tr><td>-w-</td><td align="right">R2</td><td>int</td></tr>
+<tr><td>-w-</td><td align="right">G2</td><td>int</td></tr>
+<tr><td>-w-</td><td align="right">B2</td><td>int</td></tr>
+</table>
+
+<h3><a name="arc">arc</a></h3>
+<pre>
+object: arc
+version: 1.00.00
+parent: legend
+object id: 32
+number of fields: 55
+size of instance: 400
+</pre>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
+<tr><td>r--</td><td align="right">id</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
+<tr><td>r-x</td><td align="right">save</td><td>char*( char*[] )</td></tr>
+<tr><td>---</td><td align="right">GC</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">hidden</td><td>bool</td></tr>
+<tr><td>r-x</td><td align="right">redraw</td><td>void( int )</td></tr>
+<tr><td>rw-</td><td align="right">clip</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">redraw_flag</td><td>bool</td></tr>
+<tr><td>---</td><td align="right">redraw_num</td><td>int</td></tr>
+<tr><td>--x</td><td align="right">init</td><td>void( )</td></tr>
+<tr><td>--x</td><td align="right">done</td><td>void( )</td></tr>
+<tr><td>---</td><td align="right">next</td><td>void*</td></tr>
+<tr><td>rw-</td><td align="right">x</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">y</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">rx</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">ry</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">angle1</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">angle2</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">pieslice</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">fill_R</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">fill_G</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">fill_B</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">fill_A</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">stroke_R</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">stroke_G</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">stroke_B</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">stroke_A</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">fill</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">stroke</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">close_path</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">width</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">style</td><td>int[]</td></tr>
+<tr><td>rw-</td><td align="right">join</td><td>enum( miter round bevel )</td></tr>
+<tr><td>rw-</td><td align="right">miter_limit</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">marker_begin</td><td>enum( none arrow wave mark bar )</td></tr>
+<tr><td>rw-</td><td align="right">marker_end</td><td>enum( none arrow wave mark bar )</td></tr>
+<tr><td>rw-</td><td align="right">arrow_length</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">arrow_width</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">mark_type_begin</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">mark_type_end</td><td>int</td></tr>
+<tr><td>r-x</td><td align="right">draw</td><td>void( int )</td></tr>
+<tr><td>r-x</td><td align="right">bbox</td><td>int[]( void )</td></tr>
+<tr><td>r-x</td><td align="right">move</td><td>void( int int )</td></tr>
+<tr><td>r-x</td><td align="right">rotate</td><td>void( int int int int )</td></tr>
+<tr><td>r-x</td><td align="right">flip</td><td>void( int int int )</td></tr>
+<tr><td>r-x</td><td align="right">change</td><td>void( int int int )</td></tr>
+<tr><td>r-x</td><td align="right">zooming</td><td>void( int int int int int )</td></tr>
+<tr><td>r-x</td><td align="right">match</td><td>bool( int int int int int )</td></tr>
+<tr><td>r-x</td><td align="right">fill_hsb</td><td>void( double double double )</td></tr>
+<tr><td>r-x</td><td align="right">stroke_hsb</td><td>void( double double double )</td></tr>
+<tr><td>-w-</td><td align="right">R</td><td>int</td></tr>
+<tr><td>-w-</td><td align="right">G</td><td>int</td></tr>
+<tr><td>-w-</td><td align="right">B</td><td>int</td></tr>
+<tr><td>-w-</td><td align="right">A</td><td>int</td></tr>
+</table>
+
+<h3><a name="path">path</a></h3>
+<pre>
+object: path
+alias: line:curve:polygon
+version: 1.00.01
+parent: legend
+object id: 33
+number of fields: 54
+size of instance: 392
+</pre>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
+<tr><td>r--</td><td align="right">id</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
+<tr><td>r-x</td><td align="right">save</td><td>char*( char*[] )</td></tr>
+<tr><td>---</td><td align="right">GC</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">hidden</td><td>bool</td></tr>
+<tr><td>r-x</td><td align="right">redraw</td><td>void( int )</td></tr>
+<tr><td>rw-</td><td align="right">clip</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">redraw_flag</td><td>bool</td></tr>
+<tr><td>---</td><td align="right">redraw_num</td><td>int</td></tr>
+<tr><td>--x</td><td align="right">init</td><td>void( )</td></tr>
+<tr><td>--x</td><td align="right">done</td><td>void( )</td></tr>
+<tr><td>---</td><td align="right">next</td><td>void*</td></tr>
+<tr><td>rw-</td><td align="right">type</td><td>enum( line curve )</td></tr>
+<tr><td>rw-</td><td align="right">points</td><td>int[]</td></tr>
+<tr><td>r--</td><td align="right">_points</td><td>int[]</td></tr>
+<tr><td>rw-</td><td align="right">interpolation</td><td>enum( spline spline_close bspline bspline_close )</td></tr>
+<tr><td>rw-</td><td align="right">fill_R</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">fill_G</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">fill_B</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">fill_A</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">stroke_R</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">stroke_G</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">stroke_B</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">stroke_A</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">fill</td><td>enum( false true )</td></tr>
+<tr><td>rw-</td><td align="right">fill_rule</td><td>enum( even_odd_rule winding_rule )</td></tr>
+<tr><td>rw-</td><td align="right">stroke</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">close_path</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">width</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">style</td><td>int[]</td></tr>
+<tr><td>rw-</td><td align="right">join</td><td>enum( miter round bevel )</td></tr>
+<tr><td>rw-</td><td align="right">miter_limit</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">marker_begin</td><td>enum( none arrow wave mark bar )</td></tr>
+<tr><td>rw-</td><td align="right">marker_end</td><td>enum( none arrow wave mark bar )</td></tr>
+<tr><td>rw-</td><td align="right">arrow_length</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">arrow_width</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">mark_type_begin</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">mark_type_end</td><td>int</td></tr>
+<tr><td>r-x</td><td align="right">draw</td><td>void( int )</td></tr>
+<tr><td>r-x</td><td align="right">bbox</td><td>int[]( void )</td></tr>
+<tr><td>r-x</td><td align="right">move</td><td>void( int int )</td></tr>
+<tr><td>r-x</td><td align="right">rotate</td><td>void( int int int int )</td></tr>
+<tr><td>r-x</td><td align="right">flip</td><td>void( int int int )</td></tr>
+<tr><td>r-x</td><td align="right">change</td><td>void( int int int )</td></tr>
+<tr><td>r-x</td><td align="right">zooming</td><td>void( int int int int )</td></tr>
+<tr><td>r-x</td><td align="right">match</td><td>bool( int int int int int )</td></tr>
+<tr><td>r-x</td><td align="right">fill_hsb</td><td>void( double double double )</td></tr>
+<tr><td>r-x</td><td align="right">stroke_hsb</td><td>void( double double double )</td></tr>
+<tr><td>-w-</td><td align="right">R</td><td>int</td></tr>
+<tr><td>-w-</td><td align="right">G</td><td>int</td></tr>
+<tr><td>-w-</td><td align="right">B</td><td>int</td></tr>
+<tr><td>-w-</td><td align="right">A</td><td>int</td></tr>
+<tr><td>-w-</td><td align="right">arrow</td><td>enum( none end begin both )</td></tr>
+</table>
+
+<h3><a name="mark">mark</a></h3>
+<pre>
+object: mark
+version: 1.00.00
+parent: legend
+object id: 34
+number of fields: 36
+size of instance: 224
+</pre>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
+<tr><td>r--</td><td align="right">id</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
+<tr><td>r-x</td><td align="right">save</td><td>char*( char*[] )</td></tr>
+<tr><td>---</td><td align="right">GC</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">hidden</td><td>bool</td></tr>
+<tr><td>r-x</td><td align="right">redraw</td><td>void( int )</td></tr>
+<tr><td>rw-</td><td align="right">R</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">G</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">B</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">A</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">clip</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">redraw_flag</td><td>bool</td></tr>
+<tr><td>---</td><td align="right">redraw_num</td><td>int</td></tr>
+<tr><td>--x</td><td align="right">init</td><td>void( )</td></tr>
+<tr><td>--x</td><td align="right">done</td><td>void( )</td></tr>
+<tr><td>---</td><td align="right">next</td><td>void*</td></tr>
+<tr><td>rw-</td><td align="right">x</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">y</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">size</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">type</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">R2</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">G2</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">B2</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">A2</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">width</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">style</td><td>int[]</td></tr>
+<tr><td>r-x</td><td align="right">draw</td><td>void( int )</td></tr>
+<tr><td>r-x</td><td align="right">bbox</td><td>int[]( void )</td></tr>
+<tr><td>r-x</td><td align="right">move</td><td>void( int int )</td></tr>
+<tr><td>r-x</td><td align="right">rotate</td><td>void( int int int int )</td></tr>
+<tr><td>r-x</td><td align="right">flip</td><td>void( int int int )</td></tr>
+<tr><td>r-x</td><td align="right">zooming</td><td>void( int int int int int )</td></tr>
+<tr><td>r-x</td><td align="right">match</td><td>bool( int int int int int )</td></tr>
+<tr><td>r-x</td><td align="right">hsb</td><td>void( double double double )</td></tr>
+<tr><td>r-x</td><td align="right">hsb2</td><td>void( double double double )</td></tr>
+</table>
+
+<h3><a name="text">text</a></h3>
+<pre>
+object: text
+version: 1.00.00
+parent: legend
+object id: 35
+number of fields: 37
+size of instance: 240
+</pre>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
+<tr><td>r--</td><td align="right">id</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
+<tr><td>r-x</td><td align="right">save</td><td>char*( char*[] )</td></tr>
+<tr><td>---</td><td align="right">GC</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">hidden</td><td>bool</td></tr>
+<tr><td>r-x</td><td align="right">redraw</td><td>void( int )</td></tr>
+<tr><td>rw-</td><td align="right">R</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">G</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">B</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">A</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">clip</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">redraw_flag</td><td>bool</td></tr>
+<tr><td>---</td><td align="right">redraw_num</td><td>int</td></tr>
+<tr><td>--x</td><td align="right">init</td><td>void( )</td></tr>
+<tr><td>--x</td><td align="right">done</td><td>void( )</td></tr>
+<tr><td>---</td><td align="right">next</td><td>void*</td></tr>
+<tr><td>rw-</td><td align="right">text</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">x</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">y</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">pt</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">font</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">style</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">space</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">direction</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">script_size</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">raw</td><td>bool</td></tr>
+<tr><td>r-x</td><td align="right">draw</td><td>void( int )</td></tr>
+<tr><td>r-x</td><td align="right">printf</td><td>char*( char*[] )</td></tr>
+<tr><td>r-x</td><td align="right">bbox</td><td>int[]( void )</td></tr>
+<tr><td>r-x</td><td align="right">move</td><td>void( int int )</td></tr>
+<tr><td>r-x</td><td align="right">rotate</td><td>void( int int int int )</td></tr>
+<tr><td>r-x</td><td align="right">zooming</td><td>void( int int int int int )</td></tr>
+<tr><td>r-x</td><td align="right">match</td><td>bool( int int int int int )</td></tr>
+<tr><td>r-x</td><td align="right">save_config</td><td>void( void )</td></tr>
+<tr><td>r-x</td><td align="right">hsb</td><td>void( double double double )</td></tr>
+<tr><td>-w-</td><td align="right">jfont</td><td>char*</td></tr>
+</table>
+
+<h3><a name="parameter">parameter</a></h3>
+<pre>
+object: parameter
+version: 1.00.00
+parent: object
+object id: 36
+number of fields: 23
+size of instance: 168
+</pre>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
+<tr><td>r--</td><td align="right">id</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
+<tr><td>r-x</td><td align="right">save</td><td>char*( char*[] )</td></tr>
+<tr><td>--x</td><td align="right">init</td><td>void( )</td></tr>
+<tr><td>--x</td><td align="right">done</td><td>void( )</td></tr>
+<tr><td>---</td><td align="right">next</td><td>void*</td></tr>
+<tr><td>rw-</td><td align="right">title</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">type</td><td>enum( SpinButton Scale CheckButton Switch ComboBox Transition )</td></tr>
+<tr><td>rw-</td><td align="right">min</td><td>double</td></tr>
+<tr><td>rw-</td><td align="right">max</td><td>double</td></tr>
+<tr><td>rw-</td><td align="right">step</td><td>double</td></tr>
+<tr><td>rw-</td><td align="right">start</td><td>double</td></tr>
+<tr><td>rw-</td><td align="right">stop</td><td>double</td></tr>
+<tr><td>rw-</td><td align="right">wait</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">wrap</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">items</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">redraw</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">active</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">selected</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">value</td><td>double</td></tr>
+<tr><td>rw-</td><td align="right">transition</td><td>enum( start stop )</td></tr>
+<tr><td>r--</td><td align="right">parameter</td><td>double</td></tr>
+</table>
+
+<h3><a name="dialog">dialog</a></h3>
+<pre>
+object: dialog
+version: 1.00.00
+parent: object
+object id: 38
+number of fields: 28
+size of instance: 192
+</pre>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
+<tr><td>r--</td><td align="right">id</td><td>int</td></tr>
+<tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
+<tr><td>r-x</td><td align="right">save</td><td>char*( char*[] )</td></tr>
+<tr><td>--x</td><td align="right">init</td><td>void( )</td></tr>
+<tr><td>--x</td><td align="right">done</td><td>void( )</td></tr>
+<tr><td>---</td><td align="right">next</td><td>void*</td></tr>
+<tr><td>rw-</td><td align="right">x</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">y</td><td>int</td></tr>
+<tr><td>rw-</td><td align="right">title</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">caption</td><td>char*</td></tr>
+<tr><td>rw-</td><td align="right">select</td><td>int[]</td></tr>
+<tr><td>rw-</td><td align="right">buttons</td><td>char*[]</td></tr>
+<tr><td>r--</td><td align="right">response_button</td><td>int</td></tr>
+<tr><td>r-x</td><td align="right">yesno</td><td>int( char* )</td></tr>
+<tr><td>r-x</td><td align="right">message</td><td>void( char* )</td></tr>
+<tr><td>r-x</td><td align="right">input</td><td>char*( char* )</td></tr>
+<tr><td>r-x</td><td align="right">radio</td><td>int( char*[] )</td></tr>
+<tr><td>r-x</td><td align="right">check</td><td>int[]( char*[] )</td></tr>
+<tr><td>r-x</td><td align="right">button</td><td>char*( char*[] )</td></tr>
+<tr><td>r-x</td><td align="right">combo</td><td>char*( char*[] )</td></tr>
+<tr><td>r-x</td><td align="right">combo_entry</td><td>char*( char*[] )</td></tr>
+<tr><td>r-x</td><td align="right">double_entry</td><td>double( double double double double )</td></tr>
+<tr><td>r-x</td><td align="right">integer_entry</td><td>int( int int int int )</td></tr>
+<tr><td>r-x</td><td align="right">beep</td><td>void( void )</td></tr>
+<tr><td>r-x</td><td align="right">get_open_file</td><td>char*( char*[] )</td></tr>
+<tr><td>r-x</td><td align="right">get_open_files</td><td>char*[]( char*[] )</td></tr>
+<tr><td>r-x</td><td align="right">get_save_file</td><td>char*( char*[] )</td></tr>
+</table>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../ngraph.css" media="screen" type="text/css"/>
+<title>Text</title></head>
+<body>
+<div class="toc">
+<a name="TOP">&nbsp;</a>
+<h1><a href="./ngraph.html">フォント/テキスト</a></h1>
+<ul>
+<li><a href="#FONT">フォントの扱い</a>
+<li><a href="#TEXT">テキスト描画の制御文字</a>
+</ul>
+</div>
+
+
+<div class="chapter">
+<h2><a name="FONT">フォントの扱い</a></h2>
+<br>
+<div>
+[Legend]-[Text] で指定するフォント名はすべてエイリアス（別名）です。
+Ngraphでは異なるオペレーティングシステムとの互換性を考えており, フォント名を直接指定する事はできません。<br>
+<br>
+フォントの選択・出力は, エイリアス名から実際のフォント名にマッピングして行ってます。マッピング情報は Ngraph.ini に記述されています。<br>
+<br>
+<br>
+インストール時に定義されているフォントマッピング<br>
+<br>
+<table border="1">
+ <tr><th rowspan="2">Ngraph定義名</th><th colspan="2">フォント名</th></tr>
+ <tr><th>Windows, macOS</th><th>それ以外</th>
+ <tr><td>Serif</td><td>Times New Roman</td><td>Liberation Serif</td></tr>
+ <tr><td>Sans-serif</td><td>Arial</td><td>Liberation Sans</td></tr>
+ <tr><td>Monospace</td><td>Courier New</td><td>Liberation Mono</td></tr>
+</table>
+</div>
+
+
+
+
+<h2><a name="TEXT">テキスト描画の制御文字</a></h2>
+<br>
+<div>
+Legend textダイアログボックスのTextで文字列中に制御文字を挿入して, 書式を一文字単位で変更することができます。<br>
+<br>
+<b>基本</b>
+<table border="1">
+<tr><td>^</td><td>続く文字は上付き文字になる</td></tr>
+<tr><td>_</td><td>続く文字は下付き文字になる</td></tr>
+<tr><td>@</td><td>上付き文字, 下付き文字を解除する</td></tr>
+<tr><td>\B</td><td>続く文字は太字 (bold) になる</td></tr>
+<tr><td>\I</td><td>続く文字は斜体 (italic) になる</td></tr>
+<tr><td>\N</td><td>太字、斜体を解除する</td></tr>
+<tr><td>\.</td><td>スペースと同等</td></tr>
+<tr><td>\b</td><td>バックスペース(幅は'h')</td></tr>
+<tr><td>\n</td><td>改行</td></tr>
+<tr><td>\-</td><td>ハイフン</td></tr>
+<tr><td>\&amp;</td><td>テキストが\nの改行によって複数行あるとき\&amp;の位置で位置合わせをする</td></tr>
+<tr><td>\</td><td>次の文字が%\@^_の時, それらを制御文字として扱わずに出力する</td></tr>
+</table><br>
+<br>
+<b>フォント</b>
+<table border="1">
+<tr><td>%F{エイリアス名}</td><td>フォントをエイリアス名に変更する</td></tr>
+<tr><td>%S{整数}</td><td>フォントのサイズをポイントで指定する</td></tr>
+<tr><td>%P{整数}</td><td>文字間隔をポイントで指定する</td></tr>
+<tr><td>%N{整数}</td><td>\nで改行した時の行間をポイントで指定する</td></tr>
+<tr><td>%X{整数}</td><td>カレントポイントを右方向に移動させる量をポイントで指定する</td></tr>
+<tr><td>%Y{整数}</td><td>カレントポイントを下方向に移動させる量をポイントで指定する</td></tr>
+<tr><td>%C{整数}</td><td>文字の色を16進形式で指定する。</td></tr>
+<tr><td>%A{整数}</td><td>文字の不透明度 (0-255) を指定する。</td></tr>
+</table><br>
+<br>
+<b>数式</b>
+<table border="1">
+<tr><td>%[式]</td><td>式の値</td></tr>
+</table><br>
+<br>
+<b><a name="FORMAT">整形</a></b>
+<table border="1">
+<tr><td>%pf{format value}</td><td>value を format で整形して出力する
+<ul>
+ <li> format について詳しくは man 3 printf を参照してください。
+ <li> 精度指定に '*' や `*m$' は使用できません。
+ <li> 長さ修飾子に hh, h, L, q, j, z, Z, t は使用できません。
+ <li> 変換指定子に F, a, A, m, n, p, C, S は使用できません。
+ <li> フラグ文字に '^' を指定できます。e, E, g G 変換時に指数表記を "×10<sup>-3</sup>" のように表示します (フィールド幅指定には未対応) 。
+</ul>
+<br>例：<br>
+%pf{%e 1} は 1.000000e+00<br>
+%pf{%^.3e 1E-3} は 1.000×10<sup>-3</sup><br>
+%pf{%2.2f %[exp(1)]} は 2.72
+</td></tr>
+</table><br>
+<br>
+<b>オブジェクト</b>
+<table border="1">
+<tr><td>%{object:id:field parameter}</td><td>オブジェクト(object)のインスタンス(id)のフィールド(field)の値</td></tr>
+</table><br>
+<br>
+<b>オブジェクトの指定例</b>
+<table border="1">
+<tr><td>%{system::date 0}</td><td>Fri Feb 2 1990 型の日付</td></tr>
+<tr><td>%{system::date 1}</td><td>2-2-1990 型の日付</td></tr>
+<tr><td>%{system::date 2}</td><td>Feb 2 1990 型の日付</td></tr>
+<tr><td>%{system::time 0}</td><td>00:00:00 型の時刻</td></tr>
+<tr><td>%{system::time 1}</td><td>12:00:00 am 型の時刻</td></tr>
+<tr><td>%{system::time 2}</td><td>00:00 型の時刻</td></tr>
+<tr><td>%{system::time 3}</td><td>12:00 am 型の時刻</td></tr>
+<tr><td>%{menu::ngp}</td><td>ngpファイル名</td></tr>
+<tr><td>%{menu::fullpath_ngp}</td><td>フルパスのNGPファイル名</td></tr>
+<tr><td>%{data:X:file}</td><td>ファイル名 (X はファイル番号)</td></tr>
+<tr><td>%{data:X:basename}</td><td>フォルダ名を除いたファイル名 (X はファイル番号)</td></tr>
+<tr><td>%{data:X:date 0}</td><td>ファイルの日付</td></tr>
+<tr><td>%{data:X:time 0}</td><td>ファイルの時刻</td></tr>
+<tr><td>%{data:X:column:l c}</td><td>ファイルの l 行の c カラムの内容</td></tr>
+<tr><td>%{data:X:dnum}</td><td>ファイルXのデータ数</td></tr>
+<tr><td>%{data:X:dx n}</td><td>ファイルXのn行目の値(x)</td></tr>
+<tr><td>%{data:X:dminx}</td><td>ファイルXの最小値(x)</td></tr>
+<tr><td>%{data:X:dmaxx}</td><td>ファイルXの最大値(x)</td></tr>
+<tr><td>%{data:X:davx}</td><td>ファイルXの平均値(x)</td></tr>
+<tr><td>%{data:X:dsigx}</td><td>ファイルXの標準偏差(x)</td></tr>
+<tr><td>%{data:X:dy n}</td><td>ファイルXのn行目の値(y)</td></tr>
+<tr><td>%{data:X:dminy}</td><td>ファイルXの最小値(y)</td></tr>
+<tr><td>%{data:X:dmaxy}</td><td>ファイルXの最大値(y)</td></tr>
+<tr><td>%{data:X:davy}</td><td>ファイルXの平均値(y)</td></tr>
+<tr><td>%{data:X:dsigy}</td><td>ファイルXの標準偏差(y)</td></tr>
+<tr>
+ <td>
+  %{data:X:fit_prm:n}
+ </td>
+ <td>
+  ファイルXのプロットタイプが Fit のとき、フィットの結果 f(x) に対して
+  %0n を返す。
+ </td>
+</tr>
+<tr>
+ <td>
+  %{data:X:fit_calc:a}
+ </td>
+ <td>
+  ファイルXのプロットタイプが Fit のとき、フィットの結果 f(x) に対して
+  f(a) を計算する。
+ </td>
+</tr>
+<tr>
+ <td>
+  %{data:X:fit_newton:a b}
+ </td>
+ <td>
+  ファイルXのプロットタイプが Fit のとき、フィットの結果 f(x) に対して
+  f(x)=b となる xを初期値 x=a としてニュートン法で求める。
+ </td>
+</tr>
+<tr><td>%{fit:0:%00}</td><td>fit:0:%00</td></tr>
+</table>
+</div>
+
+</div>
+</body></html>

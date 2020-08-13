@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../ngraph.css" media="screen" type="text/css"/>
+<title>Introduction</title>
+</head>
+<body>
+<div class="toc">
+<a name="TOP">&nbsp;</a>
+<h1><a href="./ngraph.html">Ngraphの概要</a></h1>
+<ul>
+ <li><a href="#ABSTRACT">Ngraphとは？</a>
+ <li><a href="#USAGE">使用・配布規定</a>
+ <li><a href="#INSTALL">環境設定</a>
+</ul>
+</div>
+
+
+<div class="chapter">
+<h2><a name="ABSTRACT">Ngraphとは？</a></h2>
+<br>
+<ul>
+ <li> Ngraph は理工系学生、研究者、技術者のために作られた２次元グラフ作成
+      プログラムです。
+ <li> 汎用性のあるテキストファイルから数値データを読み込みグラフにプロッ
+      トすることができます。
+ <li> プレゼンテーション用、論文用グラフの作成ができます。
+ <li> 簡単なデータ解析をアシストします。
+</ul>
+
+
+
+<h2><a name="USAGE">使用規定・配布等</a></h2>
+<br>
+<div>
+<p>Ngraph, Ngraph for X11 の著作権は石坂智（いしざかさとし）が保有しています。</p>
+
+<p>Copyright (C) 2002, Satoshi ISHIZAKA.</p>
+
+<p>
+このプログラムはフリーソフトウェアです。あなたはこれを、フリーソフトウェ
+ア財団によって発行された GNU一般公衆利用許諾契約書(バージョン2か、希望
+によってはそれ以降のバージョンのうちどれか)の定める条件の下で再頒布ま
+たは改変することができます。
+</p>
+<p>
+このプログラムは有用であることを願って頒布されますが、*全くの無保証*
+です。商業可能性の保証や特定の目的への適合性は、言外に示されたものも含
+め全く存在しません。詳しくはGNU一般公衆利用許諾契約書をご覧ください。
+</p>
+<p>
+あなたはこのプログラムと共に、GNU一般公衆利用許諾契約書の複製物を一部
+受け取ったはずです。もし受け取っていなければ、フリーソフトウェア財団ま
+で請求してください(宛先は the Free Software Foundation, Inc., 59
+Temple Place, Suite 330, Boston, MA 02111-1307 USA)。
+</p>
+</div>
+
+
+
+<h2><a name="INSTALL">環境設定</a></h2>
+<br>
+<div>
+<ul>
+ <li> Ngraphをバージョンアップした際には、~/.Ngraph に作成された
+      Ngraph.ini を削除するのを忘れないで下さい。そうしないと Ngraph.ini
+      の構成が変更されたとしても古い Ngraph.ini がロードされてしまいます。
+</ul>
+
+<p>以下に、Ngraph が使用するファイルのディレクトリ検索順を記述します。</p>
+
+<h3>(1) 初期化ファイルの読込</h3>
+<p>
+Ngraphは2つの初期化ファイルを必要とします。
+</p>
+
+<dl>
+ <dt> Ngraph.nsc
+ <dd> デフォルトのグラフスタイルの読み込みやコマンドラインオプションの解
+      析を行うスクリプトファイル。このスクリプトファイルは更に
+      Ngraph.ngp を読み込みます。
+ <dt> Ngraph.ini
+ <dd> Ngraphの設定初期値を列挙したファイル
+</dl>
+
+<p>これらのファイル読み込みの検索順は以下の通りです。</p>
+<ol>
+ <li>~/.Ngraph
+ <li> /etc/ngraph-gtk
+</ol>
+
+<h3>(2) 初期化ファイルの書き込み</h3>
+<p>
+ Ngraph 終了時には ~/.Ngraph に Ngraph.ini を作成します。また、
+ [Graph]-[save as default(Graph)] メニューでは Ngraph.ngp を作成します。
+ これらファイルの作成ディレクトリの優先順は以下の通りです。
+</p>
+<ol>
+ <li> ~/.Ngraph
+ <li> /etc/ngraph-gtk
+</ol>
+
+<h3>(3) プリンタドライバ、アドインスクリプトの実行</h3>
+
+<p>プリンタドライバやアドインスクリプトなどの外部プログラムの検索順は以下の通りです。</p>
+<ol>
+ <li> ~/.Ngraph
+ <li> /usr/share/ngraph-gtk
+ <li> /usr/lib/x86_64-linux-gnu/ngraph-gtk
+ <li> 環境変数 PATH
+</ol>
+</div>
+
+</div>
+</body></html>

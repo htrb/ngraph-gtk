@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../ngraph.css" media="screen" type="text/css"/>
+<title>Script</title>
+</head>
+<body>
+<div class="toc">
+<a name="TOP">&nbsp;</a>
+<h1><a href="./ngraph.html">Ngraphスクリプト</a></h1>
+<ul>
+<li><a href="#SCRIPT">概要</a>
+<li><a href="#SCRIPT_SYNTAX">スクリプトの文法</a>
+<li><a href="#SCRIPT_STARTUP">スタートアップスクリプト</a>
+<li><a href="#COMMANDLINE">コマンドラインオプション</a>
+</ul>
+</div>
+
+<div class="chapter">
+<h2><a name="SCRIPT">概要</a></h2>
+<br>
+<p>
+Ngraph はスクリプト言語(Ngraph スクリプト)のインタープリタを備えています。
+グラフの設定(実際には各オブジェクトOBJECTのフィールド値)もNgraph スクリプト形式で保存されます。<br>
+</p>
+
+
+
+
+<h2><a name="SCRIPT_SYNTAX">スクリプトの文法</a></h2>
+<br>
+<p>Ngraph スクリプトの文法は， UNIX の sh (シェル) からジョブ制御機能を取り去り, オブジェクト操作命令を追加したものになっています。</p>
+<p>shと同等の文法・コマンドは以下の通りです(sh の文法の詳細については UNIX のマニュアルを参照してください)。</p>
+<h3>コマンド</h3>
+<p>
+name1=val1 name2=val2 ... command arg1 arg2 arg3 ...
+</p>
+<h3>コメント</h3>
+<p>
+# comment
+</p>
+
+<h3>制御構造</h3>
+<p>
+(for,  case,  if,  while,  until 文)
+</p>
+<p>
+for name [in word] do list done<br>
+case word in [pattern [|pattern] ...list;;] ... esac<br>
+if list then list [elif list then list]...[else list] fi<br>
+while list do list done<br>
+until list do list done<br>
+</p>
+<h3>関数定義</h3>
+<p>
+name() { list; }
+</p>
+<p> ({}は常に必要)</p>
+
+<h3>ファイル名置換</h3>
+<p>
+*?[]
+</p>
+
+<h3>コマンド置換</h3>
+<p>
+`command`
+</p>
+
+<h3>変数定義</h3>
+<p>
+name=value [ name=value ] ...
+</p>
+
+<h3>変数置換</h3>
+<p>
+$# $? $num $* $@<br>
+${name}<br>
+${name:-word}<br>
+${name:=word}<br>
+${name:?word}<br>
+${name:+word}<br>
+${name#word}<br>
+${name##word}<br>
+${name&#37;word}<br>
+${name&#37;&#37;word}<br>
+</p>
+
+<h3>リダイレクト・パイプ</h3>
+<p>
+&lt; file<br>
+&lt;&lt;[-]word<br>
+&gt; file<br>
+&gt;&gt; file<br>
+command | command<br>
+</p>
+
+<h3>特殊コマンド</h3>
+<p>
+:<br>
+. file<br>
+break [n]<br>
+continue [n]<br>
+cd<br>
+echo [-q]<br>
+eval [arg]<br>
+exit [n]<br>
+export [name]<br>
+pwd<br>
+return [n]<br>
+set<br>
+shift [n]<br>
+unset<br>
+test<br>
+[<br>
+sleep<br>
+true<br>
+false<br>
+read [val]<br>
+seq [last | first last | first incr last]<br>
+basename name [suffix]<br>
+dirname name<br>
+which [-q]<br>
+</p>
+<br>
+<br>
+<p>独自に追加した文法・コマンドは以下の通りです。</p>
+<br>
+<h3>オブジェクト定義</h3>
+<p>(objectのinstance_listのfieldにvalueを設定)</p>
+<p>
+object:instance_list:field=value
+</p>
+<h3>オブジェクト置換</h3>
+<p> (objectのinstance_listのfieldの値)</p>
+<p>
+${object:instance_list:field=argument}
+</p>
+<h3>オブジェクト操作コマンド</h3>
+<p>
+new object [field=value,  ...]<br>
+del object:instance_list <br>
+exist [-q] object:instance_list <br>
+get object:instance_list [-write -field -id -quote] field=argument ...<br>
+put object:instance_list field=value ...<br>
+exe object:instance_list field=argument ...<br>
+cpy object:source,destination[,destination,...] field ...<br>
+dup object:instance_list <br>
+move object:instance1,instance2<br>
+movetop object:instance<br>
+movelast object:instance<br>
+exch object:instance1,instance2<br>
+object [object1 object2 ... [-name -version -parent -id -field -size
+-current -last -instnace -instances] [field ...]]<br>
+derive [-instance] object<br>
+</p>
+
+<h3>評価コマンド</h3>
+<p> (数式expを評価)</p>
+<p>
+dexpr exp<br>
+iexpr exp<br>
+</p>
+
+
+<h2><a name="SCRIPT_STARTUP">スタートアップスクリプト</a></h2>
+<br>
+<div>
+Ngraph は実行時に<br>
+<ol>
+ <li> ~/.Ngraph
+ <li> /etc/ngraph-gtk
+</ol>
+をこの順番で検索し, はじめに見つかったスタートアップスクリプトファイル
+(Ngraph.nsc) を自動的に読み込みます。<br>
+<br>
+コマンドラインオプション
+<p>-i script_name</p>
+でスタートアップスクリプトを明示的に指定する事もできます。<br>
+スタートアップスクリプトファイルは Ngraph 独自のマクロ言語 (Ngraph スク
+リプト) で記述されており, ユーザがカスタマイズすることもできます。<br>
+<br>
+<ul>
+<li>Ngraph のコマンドラインオプションは(上記 -i オプションを除いて)全てスタートアップスクリプトファイルに渡されます。
+<li>配布状態では, スタートアップスクリプトファイルは
+<ol>
+<li>起動するユーザインターフェースの指定(system::login_shell)
+<li>アドインスクリプト設定メニューの登録
+<li>Ngraph.ngp の読込 (Ngraph.ngp は[設定]-[初期状態として保存(グラフ)]で作成できます)
+<li>コマンドラインオプションの解析
+</ol>
+を行います。
+</ul>
+</div>
+
+
+
+<h2><a name="COMMANDLINE">コマンドラインオプション</a></h2>
+<br>
+<div>
+Ngraph を起動する時のコマンドラインオプションの形式は
+<p>ngraph [-i script_name] [option1 option2 ...]</p>
+で、-i オプションでスタートアップスクリプトを指定します。
+残りのオプションは全てスタートアップスクリプトに渡され、その中で解析されます。
+スタートアップスクリプトはユーザがカスタマイズする事ができるので、独自のコマンドラインオプションを作成する事ができます。<br>
+<br>
+配布状態のスタートアップスクリプト(Ngraph.nsc)で有効なコマンドラインオプションは以下の通りです。
+<dl>
+<dt>-x num
+<dd>x 軸のデータカラムを num にします。</dd>
+<dt>-y num
+<dd>y 軸のデータカラムを num にします。</dd>
+<dt>-X -U
+<dd>データの x 軸をそれぞれ X, U 軸にします。
+<dt>-Y -R
+<dd>データの y 軸をそれぞれ Y, R 軸にします。
+<dt>-d type
+<dd>プロットタイプを type にします。</dd>
+<dt>-m num
+<dd>マークを num にします。</dd>
+<dt>-o num
+<dd>マークのサイズ num にします。</dd>
+<dt>-l sylte
+<dd>線種を style にします(-l "100 100" の様に指定)。</dd>
+<dt>-w num
+<dd>線幅を num にします。</dd>
+<dt>-cr R -cg G -cb B
+<dd>プロット色を R G B にします。</dd>
+<dt>-CR R -CG G -CB B
+<dd>第二プロット色を R G B にします。</dd>
+<dt>-s num
+<dd>先頭スキップ行を num にします。</dd>
+<dt>-r num
+<dd>読込ステップ行数を num にします。</dd>
+<dt>-f num
+<dd>最終行数を num にします。</dd>
+<dt>-vx num
+<dd>x 隣接平均数を num にします。</dd>
+<dt>-vy num
+<dd>y 隣接平均数を num にします。</dd>
+<dt>-mx math
+<dd>x 変換数式を math にします。</dd>
+<dt>-my math
+<dd>y 変換数式を math にします。</dd>
+<dt>-ex type
+<dd>x 軸のスケール方法を type (linear, log, inverse) にします。</dd>
+<dt>-ey type
+<dd>y 軸のスケール方法を type (linear, log, inverse) にします。</dd>
+<dt>-minx min -maxx max -incx inc
+<dd>x 軸のスケールを min, max, inc にします。</dd>
+<dt>-miny min -maxy max -incy inc
+<dd>y 軸のスケールを min, max, inc にします。</dd>
+<dt>-g
+<dd>データファイルから設定を読み込みます。</dd>
+<dt>-png file -pdf file -ps file -eps file -svg file -gra file
+<dd>ngp ファイルをそれぞれの画像ファイルに変換します。
+<dt> -p ngp_file
+<dd> ngp_file を印刷します。
+<dt> -P
+<dd> ngp ファイルを外部ドライバを利用して印刷します。
+</dl>
+</div>
+
+</div>
+</body></html>

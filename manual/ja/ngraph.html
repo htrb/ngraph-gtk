@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <title>Ngraph-gtk User's Manual</title>
+  </head>
+  <body>
+    <h1><i>Ngraph-gtk User's Manual</i></h1>
+    <p><a href="http://hito.music.coocan.jp/ngraph/ngraph-gtk.html"><img src="../img/icon.png" width="64" height="64" alt="Ngraph logo" border="0"></a></p>
+    <p>Copyright (C) 2002, Satoshi ISHIZAKA.</p>
+    <br>
+    <ol>
+      <li><a href="./intro.html">Ngraphの概要</a>
+	<ul>
+	  <li><a href="./intro.html#ABSTRACT">Ngraphとは？</a>
+	  <li><a href="./intro.html#USAGE">使用・配布規定</a>
+	  <li><a href="./intro.html#INSTALL">環境設定</a>
+	</ul>
+      <li><a href="./tutorial.html">チュートリアル</a>
+	<ul>
+	  <li><a href="./tutorial.html#VIEW">外観</a>
+	  <li><a href="./tutorial.html#GRAPH">グラフ作成の概略</a>
+	  <li><a href="./tutorial.html#SCALE">軸のスケール</a>
+	  <li><a href="./tutorial.html#PLOT">プロット方法</a>
+	  <li><a href="./tutorial.html#LEGEND">グラフを飾りづける</a>
+	  <li><a href="./tutorial.html#OUTPUT">グラフの印刷、ファイルへの出力、保存、読込</a>
+	  <li><a href="./tutorial.html#FIT">フィッティング</a>
+	  <li><a href="./tutorial.html#MATH">数式変換機能を使う</a>
+	  <li><a href="./tutorial.html#MULTI">複数のグラフ</a>
+	</ul>
+      <li><a href="./operate.html">操作方法</a>
+	<ul>
+	  <li><a href="./operate.html#WINDOW">ウィンドウ</a>
+	  <li><a href="./operate.html#CONTROL_BUTTON">コントロールボタン</a>
+	  <li><a href="./operate.html#MOUSE">マウス</a>
+	  <li><a href="./operate.html#PARAMETER">数値パラメタ</a>
+	</ul>
+      <li><a href="./refer.html">リファレンス</a>
+	<ul>
+	  <li><a href="./refer.html#GRAPH_MENU">[グラフ]メニュー</a>
+	  <li><a href="./refer.html#EDIT_MENU">[編集]メニュー</a>
+	  <li><a href="./refer.html#VIEW_MENU">[表示]メニュー</a>
+	  <li><a href="./refer.html#OBJECT_MENU">[オブジェクト]メニュー</a>
+	    <ul>
+	      <li><a href="./refer.html#DATA_MENU">[データ]メニュー</a>
+	      <li><a href="./refer.html#AXIS_MENU">[軸]メニュー</a>
+	      <li><a href="./refer.html#LEGEND_MENU">[パス]メニュー</a>
+	      <li><a href="./refer.html#LEGEND_MENU">[矩形]メニュー</a>
+	      <li><a href="./refer.html#LEGEND_MENU">[円]メニュー</a>
+	      <li><a href="./refer.html#LEGEND_MENU">[マーク]メニュー</a>
+	      <li><a href="./refer.html#LEGEND_MENU">[テキスト]メニュー</a>
+	      <li><a href="./refer.html#MERGE_MENU">[合成]メニュー</a>
+	      <li><a href="./refer.html#PARAMETER_MENU">[パラメータ]メニュー</a>
+	    </ul>
+	  <li><a href="./refer.html#PREF_MENU">[設定]メニュー</a>
+	  <li><a href="./refer.html#HELP_MENU">[ヘルプ]メニュー</a>
+	  <li><a href="./refer.html#DATA_DIALOG">データ・ダイアログボックス</a>
+	  <li><a href="./refer.html#FIT_DIALOG">フィット・ダイアログボックス</a>
+	  <li><a href="./refer.html#AXIS_DIALOG">軸・ダイアログボックス</a>
+	  <li><a href="./refer.html#GRID_DIALOG">グリッド・ダイアログボックス</a>
+	  <li><a href="./refer.html#LEGEND_DIALOG">レジェンド(凡例)・ダイアログボックス</a>
+	  <li><a href="./refer.html#MERGE_DIALOG">合成ファイル・ダイアログボックス</a>
+	  <li><a href="./refer.html#PARAMETER_DIALOG">パラメータ・ダイアログボックス</a>
+	  <li><a href="./refer.html#LOADSAVE_DIALOG">グラフの読込、保存・ダイアログボックス</a>
+	  <li><a href="./refer.html#SWITCH_DIALOG">描画順・ダイアログボックス</a>
+	  <li><a href="./refer.html#PREFMISC_DIALOG">その他設定・ダイアログボックス</a>
+	</ul>
+      <li><a href="./data.html">データファイル</a>
+	<ul>
+	  <li><a href="./data.html#DATAFILE">データファイルの形式</a>
+	  <li><a href="./data.html#DATAFILE_EMPTY">欠損データを含むデータファイル</a>
+	  <li><a href="./data.html#DATAFILE_DIAGONAL">データプロット形式 diagonal, rectangle のデータファイル</a>
+	  <li><a href="./data.html#DATAFILE_ERRBARX">データプロット形式 error_bar_x のデータファイル</a>
+	  <li><a href="./data.html#DATAFILE_ERRBARY">データプロット形式 error_bar_y のデータファイル</a>
+	  <li><a href="./data.html#DATAFILEOPTION">データファイル埋め込みオプション</a>
+	</ul>
+      <li><a href="./math.html">データの加工</a>
+	<ul>
+	  <li><a href="./math.html#TRANSFORM">概要</a>
+	  <li><a href="./math.html#FORMULA_BLOCK">ブロック</a>
+	  <li><a href="./math.html#FORMULA_COMMENT">コメント</a>
+	  <li><a href="./math.html#FORMULA_LITERAL">数値リテラル</a>
+	  <li><a href="./math.html#FORMULA_CONST">定数</a>
+	  <li><a href="./math.html#CONST_DEF">定数定義</a>
+	  <li><a href="./math.html#FORMULA_PAR">パラメータ</a>
+	  <li><a href="./math.html#FORMULA_VAR">変数</a>
+	  <li><a href="./math.html#STRINGS">文字列</a>
+	  <li><a href="./math.html#ARRAY">配列</a>
+	  <li><a href="./math.html#USR_FUNC">ユーザ定義関数</a>
+	  <li><a href="./math.html#FORMULA_OP">演算子</a>
+	  <li><a href="./math.html#FORMULA_FUNC">関数</a>
+	    <ul>
+	      <li> <a href="./math.html#TRANSFORM_FUNC">変換関数</a>
+	      <li> <a href="./math.html#ELEMENTARY_FUNC">初等関数</a>
+	      <li> <a href="./math.html#SPECIAL_FUMC">特殊関数</a>
+	      <li> <a href="./math.html#DATETIME_FUMC">日付時刻関数</a>
+	      <li> <a href="./math.html#LOGIC_FUNC">論理関数</a>
+	      <li> <a href="./math.html#ARRAY_FUNC">配列操作関数</a>
+	      <li> <a href="./math.html#MEMORY_FUNC">メモリー操作関数</a>
+	      <li> <a href="./math.html#DRAWING_FUNC">図形描画関数</a>
+	      <li> <a href="./math.html#STRING_FUNC">文字列操作関数</a>
+	      <li> <a href="./math.html#OTHER_FUNC">その他の関数</a>
+	    </ul>
+	  <li><a href="./math.html#OP_PRECEDENCE">演算子の優先順位</a>
+	  <li><a href="./math.html#OP_EXAMPLE">使用例</a>
+	</ul>
+      <li><a href="./text.html">フォント/テキスト</a>
+	<ul>
+	  <li><a href="./text.html#FONT">フォントの扱い</a>
+	  <li><a href="./text.html#TEXT">テキスト描画の制御文字</a>
+	</ul>
+      <li><a href="./gra.html">GRAファイル</a>
+	<ul>
+	  <li><a href="./gra.html#GRAFILE">概要</a>
+	  <li><a href="./gra.html#GRAFILESTRUCTURE">GRAファイルの構造</a>
+	  <li><a href="./gra.html#GRACOMMAND">GRAファイルのグラフィックスコマンド</a>
+	</ul>
+      <li><a href="./script.html">Ngraphスクリプト</a>
+	<ul>
+	  <li><a href="./script.html#SCRIPT">概要</a>
+	  <li><a href="./script.html#SCRIPT_SYNTAX">スクリプトの文法</a>
+	  <li><a href="./script.html#SCRIPT_STARTUP">スタートアップスクリプト</a>
+	  <li><a href="./script.html#COMMANDLINE">コマンドラインオプション</a>
+	</ul>
+      <li><a href="./object.html">Ngraphオブジェクト</a>
+	<ul>
+	  <li><a href="./object.html#OBJECT">概要</a>
+	  <li><a href="./object.html#OBJECTLIST">Ngraphオブジェクト一覧</a>
+	</ul>
+      <li><a href="./addin.html">アドイン</a>
+	<ul>
+	  <li><a href="./addin.html#ADDIN">概要</a>
+	  <li><a href="./addin.html#LEGEND_NSC">legend.nscの動作</a>
+	  <li><a href="./addin.html#STRUCTURE">アドインスクリプトの形式</a>
+	  <li><a href="./addin.html#DATA">データを扱うアドインスクリプト</a>
+	</ul>
+      <li><a href="./copyrigh.html">その他</a>
+	<ul>
+	  <li><a href="./copyrigh.html#COPYRIGHT">著作権・連絡先・謝辞</a>
+	</ul>
+    </ol>
+  </body>
+</html>

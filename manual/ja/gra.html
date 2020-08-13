@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../ngraph.css" media="screen" type="text/css"/>
+<title>GRA</title>
+</head>
+<body>
+<div class="toc">
+<a name="TOP">&nbsp;</a>
+<h1><a href="./ngraph.html">GRAファイル</a></h1>
+<ul>
+ <li><a href="#GRAFILE">概要</a>
+ <li><a href="#GRAFILESTRUCTURE">GRAファイルの構造</a>
+ <li><a href="#GRACOMMAND">GRAファイルのグラフィックスコマンド</a>
+</ul>
+</div>
+
+
+<div class="chapter">
+<h2><a name="GRAFILE">概要</a></h2>
+<br>
+<div>
+<p>
+GRAファイルは, 直線, 円などのグラフィックス命令を記述した, グラフのマージ等に使われるNgraph独自のファイル形式です。
+</p>
+<p>
+また、External driverへグラフィックス命令を送るのにも使われます。
+</p>
+<h3>GRAファイルの互換性</h3>
+<ul>
+ <li> Ngraph version 6.x の GRA ファイルは, DOS 版 Ngraph (version 5.x)
+      の GRA ファイルと僅かに異なるため,互換性はありません。
+ <li> ただしNgraph version 6.x で DOS 版 Ngraph (version 5.x) の GRA ファ
+      イルをマージすることは可能です。
+ <li> DOS 版 Ngraph の GRA ファイルの構造およびコマンドについては DOS 版
+      Ngraph に添付されているマニュアルを参照してください。
+ <li> Ngraph version 6.04 で H コマンド (フォントメトリック指定命令) が拡
+      張されました。 version 6.04 で作成した GRA ファイルはそれ以前のバー
+      ジョンで読み込むことはできません。
+ <li> Ngraph version 6.05 で C コマンド (楕円描画命令) と G コマンド(カラー
+      指定命令) が拡張されました。 version 6.05 で作成した GRAファイルは
+      それ以前のバージョンで読み込むことはできません。
+</ul>
+</div>
+
+
+
+
+<h2><a name="GRAFILESTRUCTURE" >GRAファイルの構造</a></h2>
+<br>
+<div>
+下にGRAファイルの例を示します。<br>
+<pre>
+%Ngraph GRAF
+%Creator: Ngraph ver 6.00.01
+I,5,0,0,21000,29700,10000
+V,5,0,0,21000,29700,1
+G,3,0,0,0
+A,5,0,40,2,0,1000
+L,4,3500,22000,17500,22000
+L,4,3500,22000,3500,8000
+L,4,3500,8000,17500,8000
+L,4,17500,22000,17500,8000
+E,0
+</pre>
+
+<p>GRAファイルの第一行はGRAファイルの識別子である次の文字列でなければなりません。
+<pre>
+%Ngraph GRAF
+</pre>
+<p>
+第2行以降は1行に1つずつグラフィックスコマンドが記述されます。グラフィックスコマンドの形式を示します。
+</p>
+<pre>
+command, n, arg1, arg2, ..., argn
+</pre>
+<ul>
+ <li>commandはグラフィックスコマンドを指定するアルファベット一文字で I, E, V, A, G, M, N, L, T, C, B, P, R, D, H のいずれかです。
+ <li>n は引数の数(整数)を現します。
+ <li>arg1, ..., argnはグラフィックスコマンドの引数(整数)です。
+</ul>
+
+<p>コマンドの区切りにはスペース, タブ, コンマが使えます。
+ただしcommandが%, F, S の場合には次のようにコマンド直後に
+文字列の引数(下の例ではthis is a string)を記述します。
+</p>
+<pre>Sthis is a string</pre>
+<p>
+この場合, 文字列引数の中のスペース・タブ・コンマは通常の文字として扱われます。
+</p>
+</div>
+
+<h2><a name="GRACOMMAND">GRAファイルのグラフィックコマンド</a></h2>
+<div>
+<p>
+グラフィックコマンドの引数は特に指定のない限り単位は0.01mmです。
+X座標増加方向は右, Y座標増加方向は下です。
+数値引数はすべて整数値でなければなりません。
+</p>
+
+<table border="1">
+ <tr><td>コマンド</td><td>機能</td><td>書式</td></tr>
+ <tr><td>I</td><td>初期化命令</td><td>I,5,arg1,arg2,arg3,arg4,arg5</td></tr>
+</table>
+<dl>
+ <dt> arg1
+ <dd> 左マージン
+ <dt> arg2
+ <dd> 上マージン
+ <dt> arg3
+ <dd> 出力用紙幅
+ <dt> arg4
+ <dd> 出力用紙高
+ <dt> arg5
+ <dd> 拡大率(0.01%単位)
+</dl>
+<ul>
+ <li>出力デバイスの初期化を行う。1回の描画で初めに一度だけ呼ばれる。
+</ul>
+
+<table border="1">
+ <tr><td>コマンド</td><td>機能</td><td>書式</td></tr>
+ <tr><td>E</td><td>終了命令</td><td>E,0</td></tr>
+</table>
+<ul>
+ <li>一回の描画で最後に一度だけ呼ばれる。出力デバイスの後処理を行う。
+</ul>
+
+<table border="1">
+ <tr><td>コマンド</td><td>機能</td><td>書式</td></tr>
+ <tr><td>%</td><td>コメント</td><td>%comment</td></tr>
+</table>
+<ul>
+ <li>文字列引数(コメント)
+</ul>
+
+<table border="1">
+ <tr><td>コマンド</td><td>機能</td><td>書式</td></tr>
+ <tr><td>V</td><td>クリッピング領域, 原点移動命令</td><td>V,5,arg1,arg2,arg3,arg4,arg5</td></tr>
+</table>
+<dl>
+ <dt> arg1
+ <dd> 左上X座標, 新しいX座標原点
+ <dt> arg2
+ <dd> 左上Y座標, 新しいY座標原点
+ <dt> arg3
+ <dd> 右下X座標
+ <dt> arg4
+ <dd> 右下Y座標
+ <dt> arg5
+ <dd>
+      <ul>
+       <li> 0:クリッピングオフ
+       <li> 1:クリッピングオン
+      </ul>
+</dl>
+<ul>
+ <li>この命令以降, V命令を除くすべての命令は原点をクリッピング領域左上としたものになる。
+ <li>パラメタは A4用紙左上を原点とする0.01mm単位で指定します。
+ <li>クリッピング処理は基本的にNgraph内部で行っているので必ずしも必要ではないが, クリッピングするのが望ましい(原点移動は必須)。
+</ul>
+
+<table border="1">
+ <tr><td>コマンド</td><td>機能</td><td>書式</td></tr>
+ <tr><td>A</td><td>線属性指定命令</td><td>A,n,arg1,arg2,.... </td></tr>
+</table>
+<dl>
+ <dt> n
+ <dd> 点線要素の数+5
+ <dt> arg1
+ <dd> 0:実線   >1:点線要素の数
+ <dt> arg2
+ <dd> 線幅
+ <dt> arg3
+ <dd> 線端形状
+      <ul>
+       <li> 0:Butt
+       <li> 1:Round
+       <li> 2:Projecting
+      </ul>
+ <dt> arg4
+ <dd> 線交差形状
+<ul>
+ <li> 0:Miter
+ <li> 1:Round
+ <li> 2:Bevel
+</ul>
+ <dt> arg5
+ <dd> Miter limit
+ <dt> arg(i) - arg(i + 5) i = 1 - arg1
+ <dd> 点線要素
+</dl>
+
+<table border="1">
+ <tr><td>コマンド</td><td>機能</td><td>書式</td></tr>
+ <tr><td>G</td><td>カラー指定命令</td><td>G,4,arg1,arg2,arg3,arg4 </td></tr>
+</table>
+
+<dl>
+ <dt> arg1
+ <dd> R(8bit)
+ <dt> arg2
+ <dd> G(8bit)
+ <dt> arg3
+ <dd> B(8bit)
+ <dt> arg4
+ <dd> A(8bit) (不透明度)
+</dl>
+
+<ul>
+ <li> arg4 は設定によって、あるいはドライバによって無視されることがある。
+</ul>
+
+<table border="1">
+ <tr><td>コマンド</td><td>機能</td><td>書式</td></tr>
+ <tr><td>M</td><td>カレントポイント移動命令</td><td>M,2,arg1,arg2 </td></tr>
+</table>
+<dl>
+ <dt> arg1
+ <dd> X座標
+ <dt> arg2
+ <dd> Y座標
+</dl>
+
+<table border="1">
+ <tr><td>コマンド</td><td>機能</td><td>書式</td></tr>
+ <tr><td>N</td><td>カレントポイント相対移動命令</td><td>N,2,arg1,arg2 </td></tr>
+</table>
+<dl>
+ <dt> arg1
+ <dd> X方向移動量
+ <dt> arg2
+ <dd> Y方向移動量
+</dl>
+
+<table border="1">
+ <tr><td>コマンド</td><td>機能</td><td>書式</td></tr>
+ <tr><td>L</td><td>線描画命令</td><td>L,4,arg1,arg2,arg3,arg4 </td></tr>
+</table>
+
+<dl>
+ <dt> arg1
+ <dd> 始点X座標
+ <dt> arg2
+ <dd> 始点Y座標
+ <dt> arg3
+ <dd> 終点X座標
+ <dt> arg4
+ <dd> 終点Y座標
+</dl>
+
+
+<table border="1">
+ <tr><td>コマンド</td><td>機能</td><td>書式</td></tr>
+ <tr><td>T</td><td>カレントポイント相対・線描画命令</td><td>T,2,arg1,arg2 </td></tr>
+</table>
+
+<dl>
+ <dt> arg1
+ <dd> 終点X座標, 新しいカレントポイントX座標
+ <dt> arg2
+ <dd> 終点Y座標, 新しいカレントポイントY座標
+</dl>
+
+<ul>
+ <li>本命令実行後, カレントポイントは終点に移動する。
+</ul>
+
+<table border="1">
+ <tr><td>コマンド</td><td>機能</td><td>書式</td></tr>
+ <tr><td>C</td><td>楕円描画命令</td><td>C,7,arg1,arg2,arg3,arg4,arg5,arg6,arg7 </td></tr>
+</table>
+
+<dl>
+ <dt> arg1
+ <dd> 中心のX座標
+ <dt> arg2
+ <dd> 中心のY座標
+ <dt> arg3
+ <dd> X方向半径
+ <dt> arg4
+ <dd> Y方向半径
+ <dt> arg5
+ <dd> 楕円弧開始角度, 0.01度単位(0-36000)
+ <dt> arg6
+ <dd> 楕円弧開始角度, 0.01度単位(0-36000)
+ <dt> arg7
+ <dd>
+      <ul>
+       <li> 0:円の輪郭（内部は塗りつぶさない）
+       <li> 1:扇形内部を塗りつぶす
+       <li> 2:円弧内部を塗りつぶす
+       <li> 3:扇形に輪郭を描画
+       <li> 4:弓形に輪郭を描画
+      </ul>
+
+</dl>
+
+<ul>
+ <li>arg5から開始してarg6の角度だけ反時計回りに楕円弧を描く。
+ <li>角度は, 楕円 (x/a)^2+(y/b)^2=1 を x=a*cosθ, y=b*sinθ と媒介変数表示した時のθ。
+</ul>
+
+<table border="1">
+ <tr><td>コマンド</td><td>機能</td><td>書式</td></tr>
+ <tr><td>B</td><td>四角形描画命令</td><td>B,5,arg1,arg2,arg3,arg4,arg5 </td></tr>
+</table>
+
+<dl>
+ <dt> arg1
+ <dd> X座標
+ <dt> arg2
+ <dd> Y座標
+ <dt> arg3
+ <dd> 対角のX座標
+ <dt> arg4
+ <dd> 対角のY座標
+ <dt> arg5
+ <dd>
+<ul>
+ <li> 0:四角形の輪郭（内部は塗りつぶさない）
+ <li> 1:内部を塗りつぶす
+</ul>
+
+</dl>
+
+
+<table border="1">
+ <tr><td>コマンド</td><td>機能</td><td>書式</td></tr>
+ <tr><td>P</td><td>点描画命令</td><td>P,2,arg1,arg2 </td></tr>
+</table>
+
+<dl>
+ <dt> arg1
+ <dd> X座標
+ <dt> arg2
+ <dd> Y座標
+</dl>
+
+
+<table border="1">
+ <tr><td>コマンド</td><td>機能</td><td>書式</td></tr>
+ <tr><td>R</td><td>多角形描画命令</td><td>R,n,arg1,arg2,... </td></tr>
+</table>
+
+<dl>
+ <dt> n
+ <dd> 座標点の数*2+1
+ <dt> arg1
+ <dd> 座標点の数
+ <dt> arg(i * 2 + 0) i = 1 - arg1
+ <dd> X座標
+ <dt> arg(i * 2 + 1) i = 1 - arg1
+ <dd> Y座標
+</dl>
+
+
+<table border="1">
+ <tr><td>コマンド</td><td>機能</td><td>書式</td></tr>
+ <tr><td>D</td><td>閉多角形描画命令</td><td>D,n,arg1,arg2,... </td></tr>
+</table>
+
+<dl>
+ <dt> n
+ <dd> 座標点の数*2+2
+ <dt> arg1
+ <dd> 座標点の数
+ <dt> arg2
+ <dd>
+      <ul>
+       <li> 0:多角形の輪郭（内部は塗りつぶさない）
+       <li> 1:内部を塗りつぶす(EvenOddRule)
+       <li> 2:内部を塗りつぶす(WindingRule)
+      </ul>
+ <dt> arg(i * 2 + 1) i = 1 - arg1
+ <dd> X座標
+ <dt> arg(i * 2 + 2) i = 1 - arg1
+ <dd> Y座標
+</dl>
+
+
+<table border="1">
+ <tr><td>コマンド</td><td>機能</td><td>書式</td></tr>
+ <tr><td>F</td><td>フォント選択命令</td><td>Ffont</td></tr>
+</table>
+
+<ul>
+ <li> 文字列引数(font フォントエイリアス名)
+ <li> 実際のフォントへのマッピングはドライバに依存
+</ul>
+
+<table border="1">
+ <tr><td>コマンド</td><td>機能</td><td>書式</td></tr>
+ <tr><td>H</td><td>フォントメトリック指定命令</td><td>H,4,arg1,arg2,arg3,arg4 </td></tr>
+</table>
+
+<dl>
+ <dt> arg1
+ <dd> 文字のポイントサイズ, 0.01pt単位（1pt=1/72inch）
+ <dt> arg2
+ <dd> 文字スペーシング・ポイント量, 0.01pt単位
+ <dt> arg3
+ <dd> 描画方向, X軸から反時計回りに0.01度単位
+ <dt> arg4
+ <dd> スタイル, 0:normal, 1: bold, 2:italic の和
+</dl>
+
+<ul>
+ <li>文字は全てスケーラブルでなければなりません。
+</ul>
+
+<table border="1">
+ <tr><td>コマンド</td><td>機能</td><td>書式</td></tr>
+ <tr><td>S</td><td>文字列描画命令</td><td>Sstring </td></tr>
+</table>
+<ul>
+ <li> 文字列引数 (string は UTF-8 文字列)
+</ul>
+</div>
+
+</div>
+</body>
+</html>

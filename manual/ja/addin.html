@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../ngraph.css" media="screen" type="text/css"/>
+<title>Add-in</title>
+</head>
+<body>
+<div class="toc">
+<a name="TOP">&nbsp;</a>
+<h1><a href="./ngraph.html">アドイン</a></h1>
+<ul>
+ <li><a href="#ADDIN">概要</a>
+ <li><a href="#LEGEND_NSC">legend.nscの動作</a>
+ <li><a href="#STRUCTURE">アドインスクリプトの形式</a>
+ <li><a href="#DATA">データを扱うアドインスクリプト</a>
+</ul>
+</div>
+
+<div class="chapter">
+<h2><a name="ADDIN">概要</a></h2>
+
+<p>
+Ngraph の[アドイン]メニューで登録されているアドインを選ぶと Ngraph はそれ
+を「Ngraphマクロスクリプト」として実行します。アドインプログラムの追加は
+[Preference]-[Addin script]で行います。以下のアドインプログラムは配布パッ
+ケージに含まれており、簡単に追加できるようになっています。
+</p>
+
+<dl>
+ <dt> legend.nsc
+ <dd> <p>凡例を自動生成する為のアドイン。「Mix:」をチェックするとファイル
+      名、Xカラム、Yカラムが同じデータをまとめて一つの凡例として扱うよう
+      になります。リストボックスからデータファイル名を選び、「Caption:」
+      に凡例テキストを入力してください。デフォルトではデータファイル名が
+      使われます。</p>
+ <dt> fitrslt.nsc
+ <dd> <p>フィッティングの結果の凡例を作成する為のアドイン。「Expand」を
+      チェックした場合、現在のフィット結果の数値をLegend-Text として生成
+      しますので、フィット結果が変わっても Legend-Textは変更されません。
+      非チェックの場合にはLegend-Textのオブジェクト置換機能を使いますので、
+      フィット結果が変われば、Legend-Textの内容も自動的に変化します。</p>
+ <dt> append.nsc
+ <dd> <p>すでに読み込んであるグラフをクリアせずにNGPファイルを読み込む為
+      のアドインスクリプト。</p>
+ <dt> math.nsc
+ <dd> <p>一行電卓の為のアドイン。数式を入力すると答えを表示します。
+      Ngraphの数式変換機能の関数が使えます。</p>
+ <dt> text-in.nsc
+ <dd> <p>データファイルの指定したカラムを legend-text としてプロットデー
+      タ点の隣に挿入するアドインスクリプト。データを扱うスクリプトの例に
+      もなっています。</p>
+ <dt> cal.nsc
+ <dd> <p>インフォメーションウィンドウにカレンダーを表示するアドインです。
+      /usr/bin/cal を利用しています。</p>
+ <dt> ps2gra.nsc
+ <dd> <p>PostScript を GRA に変換してインポートするマクロです。ビットマッ
+      プを使用したものなど、正常に変換できない場合もあります。文字は直線、
+      曲線に展開され文字としての情報は失われています。実行には ruby 及び
+      pstoedit が必要です。</p>
+ <dt> tex_equation.nsc
+ <dd> <p>LaTeX の数式を GRA ファイルとしてインポートするアドインです。レ
+      ジェンドテキストに LaTeX の数式を入力して、そのテキストを選択状態に
+      してから実行すると GRA ファイルが生成され、マージファイルとして登録
+      されます。数式は直線、曲線で構成され文字の情報は失われています。実
+      行には ruby, pdflatex 及び pstoedit が必要です。</p>
+ <dt> load_prm.nsc
+   <dd> <p>DOS版Ngraphのグラフ (PRM ファイル) を読み込むアドインです。</p>
+ <dt> spellchecker.rb
+   <dd> <p>レジェンドテキストのスペルチェックを行うためのマクロです。
+       raspell ライブラリを使用できる Ruby が必要です。</p>
+</dl>
+
+<p>
+アドインプログラムはユーザが作成する事もできます。マクロスクリプトには
+Ngraph 内部の設定パラメター全てを参照、変更する機能がありますので、アドイ
+ンプログラムは Ngraph の状態変数にアクセスして，現在の Ngraph の状態を取
+得したり，変更したりすることができます。マクロスクリプトだけでもかなりの
+事ができるのですが、ユーザインターフェースなどの点から、独立した個々のプ
+ログラムを起動した方が効率が良い場合があります。マクロスクリプトには外部
+プログラムを起動する機能がありますので、これも可能ですが、その場合には
+<ul>
+ <li>どうのように外部プログラムに Ngraph の状態を知らせるか？
+ <li>外部プログラムから、どの様に Ngraph の状態を変更させるか？
+</ul>
+が問題となります。その簡単な一つの方法の例として legend.nsc を取り上げ、
+以下で説明します。
+</p>
+
+
+
+
+<h2><a name="LEGEND_NSC">legend.nsc の動作</a></h2>
+<p>
+legend.nsc が起動する外部プログラムは legend です。
+まず legend が必要とする現在の Ngraph の状態を記述した中間ファイルを
+作成します。
+</p>
+
+<pre>
+DATALIST=${system:0:temp_file}
+object data -instance > "$DATALIST"
+get data:0-! -id -field file x y type >> "$DATALIST"
+</pre>
+
+<p>
+ここでは、system:0:temp_file でテンポラリファイル名を取得し、objectコマンド
+で data (データファイル)のインスタンスの数を、get コマンドで各種設定パラメ
+ターを取得し、テンポラリファイルに書き込んでいます。この中間ファイルのフォ
+ーマットは起動する外部プログラム（今の場合には legend）固有のフォーマッ
+トになります。このファイルの中身は現在の Ngraph のデータファイルの設定状況
+をリストした
+</p>
+
+<pre>
+1
+demo1.dat
+1
+2
+mark
+</pre>
+
+<p>
+の様なものになります。次に
+</p>
+<pre>
+SCRIPT=${system:0:temp_file}
+</pre>
+
+<p>
+で legend の出力用に別のテンポラリファイル名を取得し、変数SCRIPT
+に格納しています。後にこのファイルが Ngraph マクロスクリプトとして実行
+されます。従って、このファイルの中身はマクロスクリプトの文法に則ってい
+なければなりません。
+</p>
+<pre>
+legend "$DATALIST" "$SCRIPT"
+</pre>
+
+<p>
+ここで外部プログラム legend を起動しています。legend は コマン
+ドラインの1番目に指定されたファイルから Ngraph の状態を取得し、2番目
+に指定されたファイルに変更すべき状態をマクロスクリプトとして出力する
+ように設計されています。例えば "STRING" と言う legend-text を(0,0)に生
+成するには、$SCRIPT のファイルの内容は
+</p>
+<pre>
+new text
+text::x=0
+text::y=0
+text::text="STRING"
+</pre>
+
+<p>
+となります。またグラフに変更を加えたときは、"menu::modified=TRUE" を実行
+して、グラフを閉じるときに保存の確認が行われるようにしておきます。このス
+クリプトを実行するのは
+</p>
+<pre>
+if [ -f "$SCRIPT" ];
+then
+new shell
+shell::shell "$SCRIPT"
+del shell
+fi
+</pre>
+
+<p>
+です。ここで、変数 SCRIPT に格納したファイルが存在しいている場合(if文)
+に、shell オプジェクトのインスタンスを生成(new)し、そのインスタンスに
+そのファイルを解釈実行(shell)させ、最後に不要になったインスタンスを削
+除(del)しています。
+</p>
+<pre>
+system:0:unlink_temp_file "$DATALIST"
+system:0:unlink_temp_file "$SCRIPT"
+</pre>
+
+<p>
+最後に不必要になった中間ファイル($DATALIST)とスクリプトファイル($SCRIPT)
+を削除します。
+</p>
+
+
+
+
+
+<h2><a name="STRUCTURE">アドインスクリプトの形式</a></h2>
+<p>
+外部プログラムを起動するアドインスクリプトは、
+</p>
+<pre>
+... 外部プログラムに必要な中間ファイルを生成する ...
+SCRIPT=${system:0:temp_file}
+外部プログラム名  中間ファイル名  "$SCRIPT"
+if [ -f "$SCRIPT" ];
+then
+new shell
+shell::shell "$SCRIPT"
+del shell
+fi
+system:0:unlink_temp_file "$SCRIPT"
+</pre>
+
+<p>
+となります。
+</p>
+<p>
+もちろん、Ngraphの現在の状態を取得する必要がなければ、
+</p>
+<pre>
+SCRIPT=${system:0:temp_file}
+外部プログラム名  "$SCRIPT"
+if [ -f "$SCRIPT" ];
+then
+new shell
+shell::shell "$SCRIPT"
+del shell
+fi
+system:0:unlink_temp_file "$SCRIPT"
+</pre>
+
+<p>だけで十分です。</p>
+
+
+
+
+
+<h2><a name="DATA">データを扱うアドインスクリプト</a></h2>
+<p>
+
+アドインスクリプトの中からデータを直接扱う事もできます。その例として
+text-in.nsc を説明します。次のようなデータファイルが有るとします。
+</p>
+<pre>
+=====test.dat=========
+0 0 sampleA
+1 1 sampleB
+2 2 sampleC
+======================
+</pre>
+
+<p>
+第一カラムをx座標に、第二カラムをy座標にしたグラフを作成したとします。
+Ngraphにはすでにtest.datが開いてあり、プロットタイプ "mark" でプロット
+されているとします。ここで text-in.nsc を実行し、
+"Input legend-text column" に 3 を入力すると、データ点の隣に第三カラム
+のテキストをlegend-textとして挿入することができます。
+</p>
+<p>
+このスクリプトでは、まず dialog オブジェクトを使って、legend-text のカラ
+ム数を入力させ、変数(COLUMN)に代入します。
+</p>
+<pre>
+new dialog
+COLUMN=${dialog::input:'Input legend-text column'}
+del dialog
+</pre>
+
+<p>
+次に data オブジェクトの data::opendatac を使ってデータファイルを開き、
+data::getdata でデータが無くなるまでデータを取得し、最後に
+data::closedata でデータを閉じます。
+</p>
+<pre>
+data:0:opendatac
+while data:0:getdata
+do
+... テキストの設定 ...
+done
+data:0:closedata
+</pre>
+
+<p>
+while ループの中では、まず text オブジェクトを生成します。
+</p>
+<pre>
+new text
+</pre>
+
+<p>
+また data::getdata を実行した時、データの数値は data::data_x, data::data_y
+に入り、0.01mm単位での用紙上での位置は data::coord_x, data::coord_y に入
+り、行番号は data::line に入ります。これらを用いて生成したtextの座標値を設
+定しています。
+</p>
+<pre>
+text::x=${data:0:coord_x}
+text::y=${data:0:coord_y}
+</pre>
+
+<p>
+また data::column を用いてカラムのトークンを取り出しています。data::column
+の第一引数はファイルの行数で、data::line を使い、第二引数は取り出すカラム数
+で変数 COLUMN の値を用いています。取り出したトークンを text::text に設定し
+ます。
+</p>
+<pre>
+text::text=`get data:0 -field column:"${data:0:line} ${COLUMN}"`
+</pre>
+
+<p>
+ただし、data::column は呼び出される毎にファイルの先頭から走査して目的の文字
+列を取得しますので、データファイルが大きい場合には動作が遅いです。
+</p>
+<p>
+一般的にデータを扱うアドインスクリプトは、
+</p>
+
+<pre>
+data::opendatac
+while data::getdata
+do
+... 目的の操作
+data::data_x data::data_y data::coord_x data::coord_y data::line が使える
+done
+data::closedata
+</pre>
+
+<p>
+となります。data::opendatac の代わりに data::opendata を用いた場合、
+data::coord_x, data::coord_y の値は不定となりますが、その代わり軸の設定がなさ
+れていなくてもエラーにはなりません。</p>
+
+
+</div>
+</body>
+</html>

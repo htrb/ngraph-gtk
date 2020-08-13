@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../ngraph.css" media="screen" type="text/css"/>
+<title>Operation</title>
+</head>
+<body>
+<div class="toc">
+<a name="TOP">&nbsp;</a>
+<h1><a href="./ngraph.html">操作方法</a></h1>
+<ul>
+<li><a href="#WINDOW">ウィンドウ</a>
+<li><a href="#CONTROL_BUTTON">コントロールボタン</a>
+<li><a href="#MOUSE">マウス</a>
+<li><a href="#PARAMETER">数値パラメタ</a>
+</ul>
+</div>
+
+<div class="chapter">
+<h2><a name="WINDOW">ウィンドウ</a></h2>
+<br>
+<div>
+Ngraph で使用するウィンドウを説明します。<br>
+<br>
+<table border="1">
+<tr><td>Main Window</td><td>グラフが表示されているウィンドウです。マウスによる各種設定ができます</td></tr>
+</table>
+<p>シングルウィンドウモードでない場合は下記のウィンドウも表示・非表示を切り替えて使用できます。</p>
+<table border="1">
+<tr><td>Data Window</td><td><img src="../img/windata.png" width="20" height="20" alt="">を押すと開かれるウィンドウです。データのパラメタを一覧表示します</td></tr>
+<tr><td>Axis Window</td><td><img src="../img/winaxis.png" width="20" height="20" alt="">を押すと開かれるウィンドウです。軸のパラメタを一覧表示します</td></tr>
+<tr><td>Legend Window</td><td><img src="../img/winlgnd.png" width="20" height="20" alt="">を押すと開かれるウィンドウです。凡例のパラメタを一覧表示します</td></tr>
+<tr><td>Merge Window</td><td><img src="../img/winmerge.png" width="20" height="20" alt="">を押すと開かれるウィンドウです。マージするファイルのパラメタを一覧表示します</td></tr>
+<tr><td>Coordinate Window</td><td><img src="../img/wincoord.png" width="20" height="20" alt="">を押すと開かれるウィンドウです。Viewer Window 上のマウスカーソル位置の1mm単位での座標値を表示します。軸が設定されていれば対応する数値を表示します</td></tr>
+<tr><td>Information Window</td><td><img src="../img/wininfo.png" width="20" height="20" alt="">を押すと開かれるウィンドウです。フィッティングの結果を表示します</td></tr>
+</table>
+</div>
+
+
+
+
+<h2><a name="CONTROL_BUTTON">コントロールボタン</a></h2>
+<br>
+<div>
+メニューの下のコントロールボタンを使って, より効果的にグラフを作成できます。
+コントロールボタンではLegend位置のマウスによる入力や評価機能など，メニューにはない機能も割り当てられています。
+<br>
+<br>
+
+<p>次のボタンはシングルウィンドウモードの場合は表示されません。</p>
+<table border="1">
+<tr><td><img src="../img/windata.png" width="20" height="20" alt=""></td><td>Data Window を開きます</td></tr>
+<tr><td><img src="../img/winaxis.png" width="20" height="20" alt=""></td><td>Axis Window を開きます</td></tr>
+<tr><td><img src="../img/winlgnd.png" width="20" height="20" alt=""></td><td>Legend Window を開きます</td></tr>
+<tr><td><img src="../img/winmerge.png" width="20" height="20" alt=""></td><td>Merge Window を開きます</td></tr>
+<tr><td><img src="../img/wincoord.png" width="20" height="20" alt=""></td><td>Coodinate Window を開きます</td></tr>
+<tr><td><img src="../img/wininfo.png" width="20" height="20" alt=""></td><td>Information Window を開きます</td></tr>
+</table>
+<br>
+
+<table border="1">
+<tr><td><img src="../img/bdataopn.png" width="20" height="20" alt=""></td><td>データファイルを開きます。メニューの[データ]-[追加]-[ファイル]と同じです</td></tr>
+<tr><td><img src="../img/bload.png" width="20" height="20" alt=""></td><td>グラフの開いて読み込みます。メニューの[グラフ]-[開く]と同じです</td></tr>
+<tr><td><img src="../img/bsave.png" width="20" height="20" alt=""></td><td>グラフを保存します。メニューの[グラフ]-[保存]と同じです</td></tr>
+<tr><td><img src="../img/bscale.png" width="20" height="20" alt=""></td><td>軸の設定をクリアします。メニューの[軸]-[スケールクリア]と同じです</td></tr>
+<tr><td><img src="../img/bdraw.png" WIDTH="20" HEIGHT="20" ALT=""></td><td>Viewer Window を消去し, 新たにグラフの描画を行います。その際データの選択を行わずに描画を行います</td></tr>
+<tr><td><img src="../img/bprint.png" width="20" height="20" alt=""></td><td>グラフを印刷します。メニューの[グラフ]-[印刷]と同じです</td></tr>
+<tr><td><img src="../img/bmath.png" width="20" height="20" alt=""></td><td>変換数式を複数のデータにまたがって入力します</td></tr>
+<tr><td><img src="../img/bscundo.png" width="20" height="20" alt=""></td><td>各軸の min, max, inc の設定を自動的に保存されている履歴に従って元に戻します</td></tr>
+</table>
+<br>
+
+使用可能なコントロールボタン<br>
+<br>
+
+次のボタンは Viewer Window でのマウス操作モードを設定します。<br>
+<br>
+
+<table border="1">
+<tr><td><img src="../img/bpoint.png" width="20" height="20" alt=""></td><td>軸と凡例の選択, パラメタの変更をします。</td></tr>
+<tr><td><img src="../img/blgndpo.png" width="20" height="20" alt=""></td><td>凡例の選択, パラメタの変更をします。軸を選択することはできません。</td></tr>
+<tr><td><img src="../img/baxispo.png" width="20" height="20" alt=""></td><td>軸の選択, パラメタの変更をします。凡例の選択をすることはできません。</td></tr>
+<tr><td><img src="../img/bdatapo.png" width="20" height="20" alt=""></td><td>データ点をクリックして、プロットパラメタを変更します。</td></tr>
+<tr><td><img src="../img/bline.png" width="20" height="20" alt=""></td><td>直線・曲線を作成します。複数作成したいときは SHIFT キーを押しながらボタンを押してください。</td></tr>
+<tr><td><img src="../img/brect.png" width="20" height="20" alt=""></td><td>矩形を作成します。複数作成したいときは SHIFT キーを押しながらボタンを押してください。</td></tr>
+<tr><td><img src="../img/barc.png" width="20" height="20" alt=""></td><td>円・楕円を作成します。複数作成したいときは SHIFT キーを押しながらボタンを押してください。</td></tr>
+<tr><td><img src="../img/bmark.png" width="20" height="20" alt=""></td><td>データプロット形式 "mark"に対応するマークを作成します。複数作成したいときは SHIFT キーを押しながらボタンを押してください。</td></tr>
+<tr><td><img src="../img/btext.png" width="20" height="20" alt=""></td><td>テキストを作成します。複数作成したいときは SHIFT キーを押しながらボタンを押してください。</td></tr>
+<tr><td><img src="../img/bgauss.png" width="20" height="20" alt=""></td><td>ガウス関数, ローレンツ関数, 放物線, 正弦曲線を作成します。作成した曲線はただちにレジェンド-曲線に展開されるので, 一度作成すると関数としての変更はできません。複数作成したいときは SHIFT キーを押しながらボタンを押してください。</td></tr>
+<tr><td><img src="../img/bframe.png" width="20" height="20" alt=""></td><td>フレームグラフを作成します。複数作成したいときは SHIFT キーを押しながらボタンを押してください。</td></tr>
+<tr><td><img src="../img/bsection.png" width="20" height="20" alt=""></td><td>方眼グラフを作成します。複数作成したいときは SHIFT キーを押しながらボタンを押してください。</td></tr>
+<tr><td><img src="../img/bcross.png" width="20" height="20" alt=""></td><td>交差グラフを作成します。複数作成したいときは SHIFT キーを押しながらボタンを押してください。</td></tr>
+<tr><td><img src="../img/bsingle.png" width="20" height="20" alt=""></td><td>単独の軸を作成します。複数作成したいときは SHIFT キーを押しながらボタンを押してください。</td></tr>
+<tr><td><img src="../img/btrim.png" width="20" height="20" alt=""></td><td>指定した範囲に軸の最大・最小をトリミングします</td></tr>
+<tr><td><img src="../img/beval.png" width="20" height="20" alt=""></td><td>マウスで指定した範囲内のデータ点の値を表示します。値の表示後, それらデータ点をマスクすることもできます</td></tr>
+<tr><td><img src="../img/bzoom.png" width="20" height="20" alt=""></td><td>グラフの表示を拡大縮小します。マウス左ボタンで拡大、右ボタンで縮小します。SHIFTキーを押しながらマウスボタンを押すと、センタリングツールになります</td></tr>
+</table>
+</div>
+
+
+
+
+<h2><a name="MOUSE">マウスによる操作</a></h2>
+<br>
+<div>
+Data タブ, Axis タブ, 各種 Legend タブ, Merge タブのパラメタ一覧では...
+<ul>
+ <li> 左ボタンクリックでフォーカスします。
+ <li> 左ボタンのダブルクリックでダイアログボックスをオープンします。
+ <li> 右ボタンでポップアップメニューが現れ、各種操作が行えます。
+ <li> いくつかのパラメタについては、選択されている行のカラムをクリックす
+      るか、カーソルをそのカラムに移動して Shift + Enter でダイアログを
+      開かずに、直接設定の変更ができます。
+</ul>
+<br>
+グリッド： グラフ上では，凡例や軸の新規作成, 移動はグリッドに沿って行われます。
+<ul>
+<li>グリッドの大きさは [設定]-[ビューア] で行います。
+<li>SHIFTキー押下中はグリッドが解除されます。
+</ul>
+<br>
+オブジェクトの選択
+<ul>
+<li> グラフ上でLegendや軸の選択を行うときには選択したいグラフィックス
+     オブジェクトに有ったマウスモードを選び(コントロールボタン
+     <img SRC="../img/bpoint.png" width="20" height="20" alt="">
+     <img SRC="../img/blgndpo.png" width="20" height="20" alt="">
+     <img SRC="../img/baxispo.png" width="20" height="20" alt="">
+     のいずれかを選びます)、マウスでクリックするか、囲むようにして選択します。
+<li> グラフ上でLegendや軸の選択を行うときに、それらが込み合っていてマウス
+     での個別選択が困難な時には、各種 Legend タブ、Axis タブで選択したい
+     オブジェクトを選び[Space]を押します(あるいはポップアップメニューを出
+     して"Focus"メニューを選びます)。すると、対応するグラフィックスオブジェ
+     クトがグラフ上で選択状態になります。SHIFT キーを押しながら [SPACE]
+     を押すことで複数のオブジェクトを選択状態にできます。
+</ul>
+<br>
+複数点からなる凡例の作成
+<ul>
+ <li>レジェンドの path の作成： 複数の点をマウスで指定します。
+ <li>作成を終了： 左ボタンをダブルクリックします。
+ <li>ひとつ前の点の入力に戻る： 右ボタンをクリックします。
+ <li> 凡例の作成後はマウスモードが直前に選択されていたオブジェクト選択モー
+      ドになります。複数の凡例を一度に作成したい場合は SHIFT キーを押しな
+      がらコントロールボタンを選択することで、凡例の作成後もマウスモード
+      が変わらなくなります。
+</ul>
+</div>
+
+
+<h2><a name="PARAMETER">数値パラメタ</a></h2>
+
+<p>いくつかのダイアログボックスの数値入力では数式を用いることができます。</p>
+<p>例えば軸ダイアログボックスの「増分」に PIを入力すれば 3.141592653589793e+00 が入力されます。</p>
+</div>
+</body></html>

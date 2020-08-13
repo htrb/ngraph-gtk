@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../ngraph.css" media="screen" type="text/css"/>
+<title>Data file</title></head>
+<body>
+<div class="toc">
+<a name="TOP">&nbsp;</a>
+<h1><a href="./ngraph.html">データファイル</a></h1>
+<ul>
+ <li><a href="#DATAFILE">データファイルの形式</a>
+ <li><a href="#DATAFILE_EMPTY">欠損データを含むデータファイル</a>
+ <li><a href="#DATAFILE_DIAGONAL">データプロット形式 diagonal, arrow, rectangle のデータファイル</a>
+ <li><a href="#DATAFILE_ERRBARX">データプロット形式 error_bar_x のデータファイル</a>
+ <li><a href="#DATAFILE_ERRBARY">データプロット形式 error_bar_y のデータファイル</a>
+ <li><a href="#DATAFILEOPTION">データファイル埋め込みオプション</a>
+</ul>
+</div>
+
+
+<div class="chapter">
+<h2><a name="DATAFILE">データファイルの形式</a></h2>
+<br>
+<div>
+データファイルはテキストファイルで、基本的には次のようなフォーマットです。<br>
+<br>
+<table border="1">
+ <tr>
+  <td>
+   <table>
+    <tr>
+     <td colspan="4"> コメント行</td>
+    </tr>
+    <tr>
+     <td colspan="4"> …  (コメントは無くても構いません)</td>
+    </tr>
+    <tr>
+     <td colspan="4"> コメント行</td>
+    </tr>
+    <tr>
+     <td>カラム1</td><td>カラム2</td><td>カラム3</td><td>カラム4 … </td>
+    </tr>
+    <tr>
+     <td>カラム1</td><td>カラム2</td><td>カラム3</td><td>カラム4 … </td>
+    </tr>
+    <tr>
+     <td colspan="4">% コメント行</td>
+    </tr>
+    <tr>
+     <td>カラム1</td><td>カラム2</td><td>カラム3</td><td>カラム4 … </td>
+    </tr>
+    <tr>
+     <td>カラム1</td><td>カラム2</td><td>カラム3</td><td>カラム4 … </td>
+    </tr>
+    <tr>
+     <td>…</td><td>…</td><td>…</td><td>…</td>
+    </tr>
+   </table>
+  </td>
+ </tr>
+</table>
+<br>
+データファイル中のコメント
+<ul>
+ <li>データファイル先頭部分はDataダイアログボックスの[Load...]の先頭スキップ行数で指定した行数だけまとめて読み飛ばせるので, コメントなどを入れておくことができます。
+ <li>デフォルトでこの行数は0行です。
+ <li>コメントはなくてもかまいません。
+</ul>
+<br>
+ファイル途中へのコメントの挿入
+<ul>
+ <li>ファイル途中にコメントを入れるには行頭にDataダイアログボックスの[Load...]でRemarkに設定されている文字を入れます。
+ <li>デフォルトでは # % ' です。
+</ul>
+<br>
+データファイルからの読み込み
+<ul>
+ <li>データファイルの第一行目にデータファイル埋め込みオプションを記述しておくと Dataダイアログボックスの[Load settings]ボタンを押して各種設定をデータファイルから読み取る事ができます。
+</ul>
+<br>
+データ
+<ul>
+ <li>カラム1, カラム2, カラム3, ... に数値データを入れます。
+ <li>データファイルの最大カラム数は999個です。
+ <li>一行の最大文字数は特に制限がありません。
+ <li>カラムの区切りはDataダイアログボックス[Load...]のIFSで設定できます。
+ <li>デフォルトではスペース, コンマ, タブ, 括弧です。
+ <li>改行コードは LF, CR LF, CR のいずれかです。
+</ul>
+<br>
+数値データの指数部指定
+<ul>
+ <li>数値データの指数部指定子には e, E, Dが使えます。
+ <li>(例) 1.0D+002
+</ul>
+<br>
+空行の扱い
+<ul>
+ <li>ヌル行(IFSのみからなる行)は読み飛ばします。
+</ul>
+</div>
+
+
+
+
+<h2><a name="DATAFILE_EMPTY">欠損データを含むデータファイル</a></h2>
+<br>
+<div>
+Ngraph で欠損データを指定する方法を示します。例として，2行目のデータが欠落している場合を考えます。<br>
+<br>
+<table border="1" CELLPADDING="3" CELLSPACING="0">
+ <tr><td>X</td><td>Y</td><td>Z</td></tr>
+ <tr><td>1.0</td><td>2.0</td><td>3.0</td></tr>
+ <tr><td>2.0</td><td>   </td><td>4.0</td><td>← Yが欠落している</td></tr>
+ <tr><td>3.0</td><td>4.0</td><td>5.0</td></tr>
+</table>
+<br>
+このまま, Dataダイアログボックスで(X) columnを1, (Y) columnを2にして描画すると, 2行目のYにはZの値が使われてしまいます。<br>
+<br>
+欠損データを正しく描画するには | あるいは = を欠損部分に入れます。<br><br>
+<table border="0">
+ <tr><td>
+      <table border="1" CELLPADDING="3" CELLSPACING="0">
+       <tr><td>1.0</td><td>2.0</td><td>3.0</td></tr>
+       <tr><td>2.0</td><td align="CENTER"> |  </td><td>4.0</td></tr>
+       <tr><td>3.0</td><td>4.0</td><td>5.0</td></tr>
+      </table>
+     </td>
+  <td>
+   あるいは
+  </td><td>
+	<table border="1" CELLPADDING="3" CELLSPACING="0">
+	 <tr><td>1.0</td><td>2.0</td><td>3.0</td></tr>
+	 <tr><td>2.0</td><td align="CENTER"> =  </td><td>4.0</td></tr>
+	 <tr><td>3.0</td><td>4.0</td><td>5.0</td></tr>
+	</table>
+       </td>
+ </tr>
+</table>
+<br>
+これでYの欠損データを正しくスキップします。<br>
+<br>
+<ul>
+ <li>| と = の違い
+      <br>
+      <br>
+      <ul>
+       <li>データプロット形式がmarkなどの点類とFitの場合は区別がありません。どちらでも同じグラフになります。<br>
+       <li>データプロット形式がlineなどの線類では異なります。
+	    | では欠損データの前後を直線・曲線で結びます。
+	    = ではその前後で直線・曲線が分断されます。
+      </ul>
+      <br>
+ <li>欠損データの別表記法
+      <br>
+      <br>
+      <ul>
+       <li>'CONT' は '|' と同等です。
+       <li>'BREAK'は '=' と同等です。
+      </ul>
+</ul>
+<br>
+欠損データの(あまりお勧めしない)指定方法<br>
+<br>
+<ul>
+ <li>欠損部分を数値データではない文字で埋めます。
+      <br>
+      <br>
+      <table border="1" CELLPADDING="3" CELLSPACING="0">
+       <tr><td>1.0</td><td>2.0</td><td>3.0</td></tr>
+       <tr><td>2.0</td><td align="CENTER"> A  </td><td>4.0</td></tr>
+       <tr><td>3.0</td><td>4.0</td><td>5.0</td></tr>
+      </table><br>
+      この方法では, 描画の度にエラーが出て一時停止します。<br>
+      <br>
+ <li>2行目の先頭に%#'のいずれかの記号(DataダイアログボックスのRemarkで変更可能)を入れて2行目全体をスキップさせます。
+      <br>
+      <br>
+      <table border="1" CELLPADDING="3" CELLSPACING="0">
+       <tr><td>1.0</td><td>2.0</td><td>3.0</td></tr>
+       <tr><td>%2.0</td><td>   </td><td>4.0</td></tr>
+       <tr><td>3.0</td><td>4.0</td><td>5.0</td></tr>
+      </table><br>
+      これでは2行目のデータはX, Y, Zとも初めから存在しないのと同じ事です。
+      従って, (Y) columnを3にしたとき, Z=4.0もスキップしてしまいます。
+</ul>
+<br>
+欠損データを利用した複数グラフの描画<br>
+<br>
+<ul>
+ <li>欠損データの指定を応用して，データを = = で分断すれば一つのファイルで複数本のグラフを描画できます。<br>
+      <br>
+ <li>[例]データを = = で分断して2本の直線からなるグラフを描く例を示します。
+      <br>
+      <br>
+      <table border="1" CELLPADDING="3" CELLSPACING="0">
+       <tr><td>1.0</td><td>2.0</td></tr>
+       <tr><td>2.0</td><td>3.0</td></tr>
+       <tr><td>3.0</td><td>4.0</td></tr>
+       <tr><td align="CENTER"> = </td><td align="CENTER"> = </td></tr>
+       <tr><td>4.0</td><td>5.0</td></tr>
+       <tr><td>5.0</td><td>6.0</td></tr>
+       <tr><td>6.0</td><td>7.0</td></tr>
+      </table><br>
+</ul>
+</div>
+
+
+
+
+<h2><a name="DATAFILE_DIAGONAL">データプロット形式 diagonal, arrow, rectangle のデータファイル</a></h2>
+<br>
+<div>
+データプロット形式 diagonal, arrow, rectangle, rectangle_fill, rectangle_solid_fill などを用いて対角線や矩形をプロットしたい時に用いるデータファイル形式です。<br>
+<br>
+[例](0, 0)-(1, 1) と (1, 1)-(1, 2) に対角線, あるいは矩形を描きたいとき次のようなファイルを作り, (X) columnを1, (Y) columnを3にします。
+<br>
+<br>
+<table border="1" CELLPADDING="3" CELLSPACING="0">
+ <tr><td>0.0</td><td>0.0</td><td>1.0</td><td>1.0</td></tr>
+ <tr><td>1.0</td><td>1.0</td><td>1.0</td><td>2.0</td></tr>
+</table><br>
+<br>
+始点のXとY, 終点のXとYはそれぞれ連続していなければなりません。
+(4つが連続している必要はありません)
+</div>
+
+
+
+<h2><a name="DATAFILE_ERRBARX">データプロット形式error_bar_xのデータファイル</a></h2>
+<br>
+<div>
+データプロット形式error_bar_xを用いて誤差棒をプロットすることができます。
+<br>
+<br>
+例えば次のようなデータを考えます。
+<br>
+<br>
+<table border="1" CELLPADDING="3" CELLSPACING="0">
+ <tr><td>X</td><td>Error(X)</td><td>Y</td></tr>
+ <tr><td>1.0</td><td>+/-0.5</td><td>2.0</td></tr>
+ <tr><td>2.0</td><td>+/-1.0</td><td>3.0</td></tr>
+</table><br>
+<br>
+このとき, 次のようなデータファイルを作り (X) columnを1、 (Y) column を4にします。
+<br>
+<br>
+<table border="1" CELLPADDING="3" CELLSPACING="0">
+ <tr><td>1.0</td><td>-0.5</td><td>+0.5</td><td>2.0</td></tr>
+ <tr><td>2.0</td><td>-1.0</td><td>+1.0</td><td>3.0</td></tr>
+</table><br>
+<br>
+X, Xの誤差下限, Xの誤差上限 の3つのカラムは連続していなければなりません。<br>
+</div>
+
+
+
+
+<h2><a name="DATAFILE_ERRBARY">データプロット形式error_bar_yのデータファイル</a></h2>
+<br>
+<div>
+データプロット形式error_bar_yを用いて誤差棒をプロットすることができます。<br>
+<br>
+例えば次のようなデータを考えます。
+<br>
+<br>
+<table border="1" CELLPADDING="3" CELLSPACING="0">
+ <tr><td>X</td><td>Y</td><td>Error(Y)</td></tr>
+ <tr><td>1.0</td><td>2.0</td><td>+/-0.5</td></tr>
+ <tr><td>2.0</td><td>3.0</td><td>+/-1.0</td></tr>
+</table><br>
+<br>
+このとき, 次のようなデータファイルを作り, (X) columnを1, (Y) column を2にします。
+<br>
+<br>
+<table border="1" CELLPADDING="3" CELLSPACING="0">
+ <tr><td>1.0</td><td>2.0</td><td>-0.5</td><td>+0.5</td></tr>
+ <tr><td>2.0</td><td>3.0</td><td>-1.0</td><td>+1.0</td></tr>
+</table><br>
+<br>
+Y, Yの誤差下限, Yの誤差上限 の3つのカラムは連続していなければなりません。<br>
+</div>
+
+
+
+
+<h2><a name="DATAFILEOPTION">データファイル埋め込みオプション</a></h2>
+<br>
+<div>
+データファイルの一行目にデータファイル埋め込みオプションを記述しておくと、Dataダイアログボックスの [Load settings]ボタンで各種設定を取り込む事ができます。
+複数のオプションを記述する場合には, 各オプションはスペース, タブで区切らなければなりません。
+<br>
+<br>
+<table border="1">
+ <tr><td>-xcolumn</td><td>(X) Column を column にします。</td></tr>
+ <tr><td>-ycolumn</td><td>(Y) Column を column にします。</td></tr>
+ <tr><td>-dtype[,{mark_type|interpolation}]</td><td>プロットタイプを type にします。
+						 type が mark の時にはカンマに続いてマークの種類を数字で指定します。
+						 type が curve の時にはカンマに続いて補間方式(spline,  spline_close,  bspline,  bspline_close)を指定します。<br>
+						 [例] -dline  -dmark,10  -dcurve,spline_close</td></tr>
+ <tr><td>-omark_size</td><td>マークの大きさをmark_size にします。</td></tr>
+ <tr><td>-lline_style</td><td>ラインスタイルを指定します。<br>
+			   例) -l100,40,40,40</td></tr>
+ <tr><td>-wline_width</td><td>ライン幅を line_width にします。</td></tr>
+ <tr><td>-cR, G, B</td><td>プロットカラーをRGBで指定します。</td></tr>
+ <tr><td>-CR, G, B</td><td>プロットタイプがmarkの時に使用される第2カラーをRGBで指定します。</td></tr>
+ <tr><td>-v{x|y}smooth</td><td>隣接平均数を smooth にします。</td></tr>
+ <tr><td>-sskip</td><td>先頭スキップ行数を skip にします。</td></tr>
+ <tr><td>-rstep</td><td>読込ステップ行数を step にします。</td></tr>
+ <tr><td>-ffinal_line</td><td>読込最終行数を final_line にします。</td></tr>
+ <tr><td>-m{x|y}math</td><td>変換数式を math にします。</td></tr>
+ <tr><td>-e{x|y}scale_type</td><td>軸のスケールタイプを scale_type にします。<br>
+				scal_type には linear,  log,  inverse を指定します。</td></tr>
+ <tr><td>-z{x|y}min, max, inc</td><td>軸の最小, 最大, 増分を min,  max,  inc で指定します。</td></tr>
+</table>
+</div>
+</div>
+</body>
+</html>

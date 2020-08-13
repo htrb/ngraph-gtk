@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../ngraph.css" media="screen" type="text/css"/>
+<title>Math</title>
+</head>
+<body>
+<div class="toc">
+<a name="TOP">&nbsp;</a>
+<h1><a href="./ngraph.html">データの加工</a></h1>
+<ul>
+ <li><a href="#TRANSFORM">概要</a>
+ <li><a href="#FORMULA_BLOCK">ブロック</a>
+ <li><a href="#FORMULA_COMMENT">コメント</a>
+ <li><a href="#FORMULA_LITERAL">数値リテラル</a>
+ <li><a href="#FORMULA_CONST">定数</a>
+ <li><a href="#CONST_DEF">定数定義</a>
+ <li><a href="#FORMULA_PAR">パラメータ</a>
+ <li><a href="#FORMULA_VAR">変数</a>
+ <li><a href="#STRINGS">文字列</a>
+ <li><a href="#ARRAY">配列</a>
+ <li><a href="#USR_FUNC">ユーザ定義関数</a>
+ <li><a href="#FORMULA_OP">演算子</a>
+ <li><a href="#FORMULA_FUNC">関数</a>
+   <ul>
+    <li> <a href="#TRANSFORM_FUNC">変換関数</a>
+    <li> <a href="#ELEMENTARY_FUNC">初等関数</a>
+    <li> <a href="#SPECIAL_FUMC">特殊関数</a>
+    <li> <a href="#DATETIME_FUMC">日付時刻関数</a>
+    <li> <a href="#LOGIC_FUNC">論理関数</a>
+    <li> <a href="#ARRAY_FUNC">配列操作関数</a>
+    <li> <a href="#MEMORY_FUNC">メモリー操作関数</a>
+    <li> <a href="#DRAWING_FUNC">図形描画関数</a>
+    <li> <a href="#STRING_FUNC">文字列操作関数</a>
+    <li> <a href="#OTHER_FUNC">その他の関数</a>
+   </ul>
+ <li><a href="#OP_PRECEDENCE">演算子の優先順位</a>
+ <li><a href="#OP_EXAMPLE">数式変換の使用例</a>
+</ul>
+</div>
+<div class="chapter">
+
+<h2><a name="TRANSFORM">概要</a></h2>
+<br>
+<div>
+描画は隣接平均, 数式変換などデータの加工を行った後に行われます。
+グラフを作成する際その処理手順を意識することが重要な場合があります。
+以下にデータの流れを示します。<br>
+<br>
+<center>
+データ<br>
+↓<br>
+数式変換<br>
+↓<br>
+マスクされたデータを削除<br>
+↓<br>
+移動されたデータを移動<br>
+↓<br>
+隣接平均<br>
+↓<br>
+[曲線の補間係数, 最小二乗フィットの係数を求める]<br>
+↓<br>
+出力(グラフ描画)<br>
+</center>
+<br>
+ロググラフを作成する場合, 曲線の補間はデータを対数変換した後に行われるので通常の線形グラフとロググラフでは結果が異なります。
+最小二乗法に関してはロググラフでも通常の線形グラフと同じ係数を求めます。<br>
+</div>
+
+<h2><a name="FORMULA_BLOCK">ブロック</a></h2>
+<ul>
+ <li> 複数の式を {} で囲むことにより、一つの式（ブロック）として扱うことができます。
+ <li> {} 内で最後に評価された式の値がブロックの値となります。
+ <li> 後述する if() 関数などの引数に使うことで複雑な処理を行うことができるようになります。
+ <li> ブロック内部では関数・定数の定義は行なえません。
+ <li> 空のブロックは 0 と等価です。
+ <li> ブロックは変数のスコープには影響しません。
+</ul>
+
+<h2><a name="FORMULA_COMMENT">数式変換で使用できるコメント</a></h2>
+#から行末までをコメントと見なします。
+
+
+<h2><a name="FORMULA_LITERAL">数式変換で使用できる数値リテラル</a></h2>
+<br>
+<div>
+<dl>
+ <dt>1</dt>
+ <dt>1.0</dt>
+ <dt>1.0E3</dt>
+ <dd>
+      <p>浮動小数点</p>
+      </dd>
+ <dt>0xffff</dt>
+ <dd>
+      <p>16進整数</p>
+      </dd>
+ <dt>0b1011</dt>
+ <dd>
+      <p>2進整数</p>
+      </dd>
+ <dt>0o377</dt>
+ <dd>
+      <p>8進整数</p>
+      </dd>
+</dl>
+<p>数字が連続している部分は見やすくするため任意の箇所に空白を入れることができます (例 123 456.789 E8) 。</p>
+</div>
+
+<h2><a name="FORMULA_CONST">数式変換で使用できる定数</a></h2>
+<br>
+<div>
+<table border="1">
+ <tr><td>PI</td><td>円周率</td></tr>
+ <tr><td>E</td><td>自然対数の底</td></tr>
+ <tr><td>EULER</td><td>オイラーの定数</td></tr>
+ <tr><td>NAN</td><td>欠損データ エラー表示</td></tr>
+ <tr><td>UNDEF</td><td>欠損データ エラー非表示</td></tr>
+ <tr><td>CONT</td><td>欠損データ (データ線は結合)</td></tr>
+ <tr><td>BREAK</td><td>欠損データ (データ線は分断)</td></tr>
+ <tr><td>NUM</td><td>データの個数</td></tr>
+ <tr><td>MINX</td><td>(X) column の生データの最小値</td></tr>
+ <tr><td>MAXX</td><td>(X) column の生データの最大値</td></tr>
+ <tr><td>MINY</td><td>(Y) column の生データの最小値</td></tr>
+ <tr><td>MAXY</td><td>(Y) column の生データの最大値</td></tr>
+ <tr><td>SUMX</td><td>(X) column の生データの和</td></tr>
+ <tr><td>SUMY</td><td>(Y) column の生データの和</td></tr>
+ <tr><td>SUMXX</td><td>(X) column の生データの二乗和</td></tr>
+ <tr><td>SUMYY</td><td>(Y) column の生データの二乗和</td></tr>
+ <tr><td>SUMXY</td><td>(X) column, (Y) column の生データの積和</td></tr>
+ <tr><td>AVX</td><td>(X) column の生データの平均</td></tr>
+ <tr><td>AVY</td><td>(Y) column の生データの平均</td></tr>
+ <tr><td>STDEVPX</td><td>(X) column の生データの標準偏差 (SGX も利用可)</td></tr>
+ <tr><td>STDEVPY</td><td>(Y) column の生データの標準偏差 (SGY も利用可)</td></tr>
+ <tr><td>STDEVX</td><td>(X) column の生データの不偏標準偏差</td></tr>
+ <tr><td>STDEVY</td><td>(Y) column の生データの不偏標準偏差</td></tr>
+ <tr><td>FIRST</td><td>diagonal, errorbar など一行のデータで2回の変換が行われる場合、1回目の呼出しで真(=1)、2回目の呼出しで偽(=0)</td></tr>
+ <tr><td>MASK</td><td>マスクに設定された行数</td></tr>
+ <tr><td>MOVE</td><td>移動に設定された行数</td></tr>
+ <tr><td>COLX</td><td>「X カラム」に指定された数</td></tr>
+ <tr><td>COLY</td><td>「Y カラム」に指定された数</td></tr>
+ <tr><td>AXISX</td><td>「X 軸」に指定された axis オブジェクトの ID</td></tr>
+ <tr><td>AXISX_MIN</td><td>「X 軸」の最小値</td></tr>
+ <tr><td>AXISX_MAX</td><td>「X 軸」の最大値</td></tr>
+ <tr><td>AXISX_LEN</td><td>「X 軸」の長さ</td></tr>
+ <tr><td>AXISY</td><td>「Y 軸」に指定された axis オブジェクトの ID</td></tr>
+ <tr><td>AXISY_MIN</td><td>「Y 軸」の最小値</td></tr>
+ <tr><td>AXISY_MAX</td><td>「X 軸」の最大値</td></tr>
+ <tr><td>AXISY_LEN</td><td>「Y 軸」の長さ</td></tr>
+ <tr><td>HSKIP</td><td>「先頭スキップ行」に指定された行数</td></tr>
+ <tr><td>RSTEP</td><td>「読込ステップ行」に指定された行数</td></tr>
+ <tr><td>FLINE</td><td>「最終行」に指定された行数</td></tr>
+ <tr><td>DATA_OBJ</td><td>data オブジェクトのオブジェクト識別番号</td></tr>
+ <tr><td>PATH_OBJ</td><td>path オブジェクトのオブジェクト識別番号</td></tr>
+ <tr><td>RECT_OBJ</td><td>rectangle オブジェクトのオブジェクト識別番号</td></tr>
+ <tr><td>ARC_OBJ</td><td>arc オブジェクトのオブジェクト識別番号</td></tr>
+ <tr><td>MARK_OBJ</td><td>mark オブジェクトのオブジェクト識別番号</td></tr>
+ <tr><td>TEXT_OBJ</td><td>text オブジェクトのオブジェクト識別番号</td></tr>
+ <tr><td>%D</td><td>データの番号</td></tr>
+ <tr><td>%N</td><td>データオブジェクトのインスタンス数</td></tr>
+ <tr><td>TRUE</td><td>代表的な真の値</td></tr>
+ <tr><td>FALSE</td><td>偽の値</td></tr>
+ <tr><td>FILL_RULE_NONE</td><td>ポリゴンを塗りつぶさない。draw_polygon() 関数で利用する。</td></tr>
+ <tr><td>FILL_RULE_EVEN_ODD</td><td>ポリゴンを偶奇則で塗りつぶす。draw_polygon() 関数で利用する。</td></tr>
+ <tr><td>FILL_RULE_WINDING</td><td>ポリゴンをワインディング則で塗りつぶす。draw_polygon() 関数で利用する。</td></tr>
+</table>
+</div>
+
+<h2><a name="CONST_DEF">定数定義</a></h2>
+<br>
+<div>
+<table border="1">
+ <tr>
+  <td>const x=exp</td>
+  <td>
+   x は英字または _ で始まり英数字または _ から構成される文字列、exp は任意の数式。<br>
+   <ul>
+    <li> 既存の定数は上書きできません。
+    <li> 数式 exp は数式変換実行時ではなく構文解析時に評価されます。
+    <li> 数式 exp 中ではパラメータ、関数 sum(), dif(), on_end() は使用できません。
+   </ul>
+  </td>
+ </tr>
+</table>
+</div>
+
+<h2><a name="FORMULA_PAR">数式変換で使用できるパラメータ</a></h2>
+<br>
+<div>
+<table border="1">
+ <tr><td>%0</td><td>データを読み込んだ順番に1から番号をつけたときの値</td></tr>
+ <tr><td>%1〜%999</td><td>同一行中 1〜999 カラムの生データ</td></tr>
+ <tr><td>%Fxx1〜%Fxx999</td><td>データ xx の同じ行の 1〜999 カラムの生データ</td></tr>
+</table>
+</div>
+
+
+<h2><a name="FORMULA_VAR">数式変換で使用できる変数</a></h2>
+<p>変数は X, Y の変換式で独立です。</p>
+<br>
+<div>
+<table border="1">
+ <tr><td>定数に使用されていない、英字または _ で始まり英数字または _ から構成される文字列（X, Y 以外）。</td>
+  <td>ユーザが自由に使用できます (代入されていない変数は 0 に初期化されています) 。</td></tr>
+ <tr><td>X</td><td>(X)column の生のデータ (変数への代入は可能ですが、データ読込時に生データで上書きされます) </td></tr>
+ <tr><td>Y</td><td>(Y)column の生のデータ (変数への代入は可能ですが、データ読込時に生データで上書きされます) </td></tr>
+</table>
+</div>
+
+<h2><a name="ARRAY">配列</a></h2>
+<br>
+<div>
+<table border="1">
+ <tr>
+  <td>col[n]</td>
+  <td>
+   <ul>
+    <li> col[0] はパラメータ %0 とおなじ、それ以外は同一行中 n カラムの
+	 生データ (999 カラム以降も参照可能)。</li>
+    <li> 配列の要素への代入は可能ですが、データ読込時に生データで上書きされます。</li>
+   </ul>
+  </td>
+ </tr>
+ <tr>
+  <td>X[n]</td>
+  <td>
+    x は英字または _ で始まり英数字または _ から構成される文字列、n は任意の数式。<br>
+   未代入の配列要素は 0 に初期化されています。<br>
+   配列の添字は整数に丸められます。<br>
+   配列の添字の上限は 65535 です。<br>
+   配列の添字に負の数値を使用した場合、配列の末尾からのインデックスとみなします。<br>
+  </td>
+ </tr>
+</table>
+</div>
+
+<h2><a name="STRINGS">数式変換で使用できる文字列、文字列変数と文字列の配列</a></h2>
+<h3>注意</h3>
+<p>文字列の扱いについては今の所試験的な実装です。今後、仕様変更などの可能性があります。</p>
+
+<h3>文字列リテラル</h3>
+<ul>
+ <li> 文字列はダブルクォートまたはシングルクォートで囲まれています。
+ <li> ダブルクォートで囲まれた文字列ではバックスラッシュ記法が有効です。
+ <li> シングルクォートで囲まれた文字列では \\ と \' を除いて文字列の中身
+      の解釈は行われません。
+</ul>
+
+<h4>バックスラッシュ記法</h4>
+<dl>
+	<dt>\t</dt>
+	<dd>タブ(0x09)</dd>
+	<dt>\n</dt>
+	<dd>改行(0x0a)</dd>
+	<dt>\r</dt>
+	<dd>キャリッジリターン(0x0d)</dd>
+	<dt>\f</dt>
+	<dd>改ページ(0x0c)</dd>
+	<dt>\b</dt>
+	<dd>バックスペース (0x08)</dd>
+	<dt>\a</dt>
+	<dd>ベル (0x07)</dd>
+	<dt>\v</dt>
+	<dd>垂直タブ (0x0b)</dd>
+	<dt>\nnn</dt>
+	<dd>8 進数表記 (n は 0-7)</dd>
+	<dt>\xnn</dt>
+	<dd>16 進数表記 (n は 0-9,a-f)</dd>
+</dl>
+
+<h4>式展開</h4>
+<p>
+ダブルクォートで囲まれた文字列の中では#{式}という形式で式の内容(を文字列
+化したもの)を埋め込むことができます。文字#に続く文字が {でなければ、その
+まま文字#として解釈されます。明示的に式展開を止めるには#の前にバックスラッ
+シュを置きます。式が文字列リテラル、文字列変数、文字列配列の要素の場合は
+その文字列が埋め込まれます。それ以外の場合は式を評価した値が適当な文字列
+に変換されて埋め込まれます。
+</P>
+
+<h3>文字列変数</h3>
+<p>$ に続き英字または _ で始まり英数字または _ から構成される文字列。</p>
+
+<h3>文字列変数の配列</h3>
+<ul>
+ <li>$col[n]</li>
+      <ul>
+       <li> $col[0]は読み込み中のデータの行全体、それ以外は同一行中 n カラムの文字列。</li>
+       <li> 配列の要素への代入は可能ですが、データ読込時に生データで上書きされます。</li>
+      </ul>
+ <li>$x[n]</li>
+      <ul>
+       <li>x は英字または _ で始まり英数字または _ から構成される文字列。</li>
+       <li>配列の添字は整数に丸められます。</li>
+       <li>配列の添字の上限は 65535 です。</li>
+       <li>配列の添字に負の数値を使用した場合、配列の末尾からのインデックスとみなします。</li>
+      </ul>
+</ul>
+
+<h3>文字列の値</h3>
+<p>数値の計算が行われる箇所で、文字列は数値に変換されます。</p>
+
+<h3>演算子</h3>
+<p>文字列変数に対しては、代入演算子 = 及び比較演算子 ==, != のみが使用できます。</p>
+<p>比較演算子 ==, != の両辺が文字列リテラル、文字列変数、文字列配列の場合は文字列としての比較が行われます。</p>
+<p>文字列変数に対する代入演算子 = の右辺に数値がある場合は文字列に変換した数値が代入されます。</p>
+
+<h3>文字列操作関数</h3>
+<p><a href="#STRING_FUNC">文字列操作関数</a></p>
+
+<h2><a name="USR_FUNC">ユーザ定義関数</a></h2>
+<br>
+<div>
+<table border="1">
+ <tr>
+  <td>def func(a,b,...) {exp} </td>
+  <td>
+   仮引数 a, b, ... の関数 func を定義します。 <br>
+   配列を渡すときは仮引数を @a の様に指定してください。配列は参照渡しとなります。<br>
+   exp には任意の数式を指定できますが、以下の制限があります。<br>
+   <ul>
+    <li> パラメータ (%0, %F0001 など) は使用できません。
+    <li> 関数 dif(), sum(), on_end() は使用できません。
+    <li> 関数定義はネストできません。
+    <li> 関数は変数に関して独立したスコープを持ちます。
+   </ul>
+  </td>
+ </tr>
+</table>
+</div>
+
+<h2><a name="FORMULA_OP">数式変換で使用できる演算子</a></h2>
+<br>
+<div>
+<table border="1">
+ <tr><td>-+</td><td>符号</td></tr>
+ <tr><td>!(前置) </td><td>論理否定</td></tr>
+ <tr><td>+ - * /</td><td>四則演算</td></tr>
+ <tr><td>\</td><td>浮動小数点剰余</td></tr>
+ <tr><td>^</td><td>ベキ乗</td></tr>
+ <tr><td>!(後置)</td><td>階乗(引数は 169 以下の正の整数)</td></tr>
+ <tr><td>=</td><td>代入</td></tr>
+ <tr><td>-=</td><td>自己代入</td></tr>
+ <tr><td>+=</td><td>自己代入</td></tr>
+ <tr><td>*=</td><td>自己代入</td></tr>
+ <tr><td>/=</td><td>自己代入</td></tr>
+ <tr><td>\=</td><td>自己代入</td></tr>
+ <tr><td>^=</td><td>自己代入</td></tr>
+ <tr><td>==</td><td>比較</td></tr>
+ <tr><td>!=</td><td>比較</td></tr>
+ <tr><td>&lt;=</td><td>比較</td></tr>
+ <tr><td>&gt;=</td><td>比較</td></tr>
+ <tr><td>&lt;</td><td>比較</td></tr>
+ <tr><td>&gt;</td><td>比較</td></tr>
+ <tr><td>&amp;&amp;</td><td>論理積</td></tr>
+ <tr><td>||</td><td>論理和</td></tr>
+</table>
+
+<dl>
+ <dt> exp1 &amp;&amp; exp2 と AND(exp1, exp2) の違い。</dt>
+ <dd> <p>exp1 &amp;&amp; exp2 は exp1 が偽の時 exp2 を評価しません。また exp1 が真の場合、exp2 を評価した値を返します。</p></dd>
+ <dt> exp1 || exp2 と OR(exp1, exp2) の違い。</dt>
+ <dd> <p>exp1 || exp2 は exp1 が真の時 exp2 を評価しません。また exp1 が真の場合は exp1、exp1 が偽の場合は exp2 を評価した値を返します。</p></dd>
+ <dt> ;
+ <dd> <p>; は式の終端を表します(省略可能)。; の後に別の式を後に続けることができます。</p>
+ <dt> 括弧 ()
+ <dd> <p>括弧 () の数に制限はありません。</p>
+ <dt> 乗算演算子 *
+ <dd> <p>乗算であることが明らかな場合には乗算演算子を省略することができます。 (例：2 * Pi * x → 2 Pi x) </p>
+
+
+</dl>
+
+</div>
+
+
+
+<h2><a name="FORMULA_FUNC">数式変換で使用できる関数</a></h2>
+<p>
+<ul>
+ <li> 引数は省略することができます。引数が省略された場合 0 が渡されます。
+ <li> IF() 関数のネスト数、DIF(), SUM() 関数の数の制限はなくなりました。
+ <li> 引数は左から評価されます。
+</ul>
+</p>
+<div>
+<h3><a name="TRANSFORM_FUNC">変換関数</a></h3>
+<table border="1">
+ <tr><td>abs(x)</td><td>絶対値</td></tr>
+ <tr><td>sign(x)</td><td>正負の符号 (x < 0 で -1、x >= 0 で 1) </td></tr>
+ <tr><td>int(x)</td><td>0に向かって切捨てた整数部</td></tr>
+ <tr><td>gauss(x)</td><td>ガウスの記号[ ] ([n]はnを越えない最大の整数)</td></tr>
+ <tr><td>frac(x)</td><td>小数部</td></tr>
+ <tr><td>round(x, digit)</td><td>四捨五入した値。 digit で四捨五入した結果の桁数を指定します。 (例：round(1.25, 1) → 1.3) </td></tr>
+ <tr><td>min(a,b,c,...)</td><td>引数のうちもっとも小さな値</td></tr>
+ <tr><td>max(a,b,c,...)</td><td>引数のうちもっとも大きな値</td></tr>
+ <tr><td>sumsq(a,b,c,...)</td><td>引数の自乗和</td></tr>
+</table>
+<br>
+<h3><a name="ELEMENTARY_FUNC">初等関数</a></h3>
+<table border="1">
+ <tr><td>sqr(x)</td><td>二乗</td></tr>
+ <tr><td>sqrt(x)</td><td>平方根</td></tr>
+ <tr><td>exp(x)</td><td>指数(x≦690)</td></tr>
+ <tr><td>ln(x)</td><td>自然対数</td></tr>
+ <tr><td>log(x)</td><td>常用対数</td></tr>
+ <tr><td>sin(x)</td><td>サイン</td></tr>
+ <tr><td>cos(x)</td><td>コサイン</td></tr>
+ <tr><td>tan(x)</td><td>タンジェント</td></tr>
+ <tr><td>asin(x)</td><td>逆サイン</td></tr>
+ <tr><td>acos(x)</td><td>逆コサイン</td></tr>
+ <tr><td>atan(x)</td><td>逆タンジェント</td></tr>
+ <tr><td>sinh(x)</td><td>ハイパボリックサイン</td></tr>
+ <tr><td>cosh(x)</td><td>ハイパボリックコサイン</td></tr>
+ <tr><td>tanh(x)</td><td>ハイパボリックタンジェント</td></tr>
+ <tr><td>asinh(x)</td><td>逆ハイパボリックサイン</td></tr>
+ <tr><td>acosh(x)</td><td>逆ハイパボリックコサイン</td></tr>
+ <tr><td>atanh(x)</td><td>逆ハイパボリックタンジェント</td></tr>
+ <tr><td>fmod(x, y)</td><td>x を y で割った浮動小数点剰余</td></tr>
+ <tr><td>choose(n,m)</td><td>the combinatorial factor n choose m: n!/(m!(n-m)!)</td></tr>
+</table>
+<br>
+<h3><a name="SPECIAL_FUMC">特殊関数</a></h3>
+<table border="1">
+ <tr><td>rand(x)</td><td>0≦RAND(x)＜x (x＞0のとき)の乱数</td></tr>
+ <tr><td>srand(x)</td><td>RAND()  関数で作られる疑似乱数系列の新しい種を設定する。</td></tr>
+ <tr><td>theta(x)</td><td>階段関数(x≧0 のとき 1,  それ以外は 0 )</td></tr>
+ <tr><td>delta(x)</td><td>クロネッカーのδ(x=0 のとき 1, それ以外は 0)</td></tr>
+ <tr><td>gamma(x)</td><td>ガンマ関数 Γ(x)</td></tr>
+ <tr><td>icgam(m,x)</td><td>不完全ガンマ関数 Γ(μ,x)</td></tr>
+ <tr><td>erf(x)</td><td>誤差関数 Erf(x)</td></tr>
+ <tr><td>erfc(x)</td><td>相補誤差関数 Erfc(x)</td></tr>
+ <tr><td>qinv(x)</td><td>誤差関数 Erfc(x) の逆関数</td></tr>
+ <tr><td>ei(x)</td><td>積分指数関数 Ei(x)</td></tr>
+ <tr><td>beta(p,q)</td><td>ベータ関数 B(p,q)</td></tr>
+ <tr><td>icbeta(a,b,x)</td><td>不完全ベータ関数 I(a,b,x) (0 &lt;= x &lt;= 1) </td></tr>
+ <tr><td>jn(n,x)</td><td>第1種n次ベッセル関数</td></tr>
+ <tr><td>yn(n,x)</td><td>第2種n次ベッセル関数</td></tr>
+ <tr><td>in(n,x)</td><td>第1種n次変形ベッセル関数</td></tr>
+ <tr><td>kn(n,x)</td><td>第2種n次変形ベッセル関数</td></tr>
+ <tr><td>jl(l,x)</td><td>第1種l次球ベッセル関数</td></tr>
+ <tr><td>yl(l,x)</td><td>第2種l次球ベッセル関数</td></tr>
+ <tr><td>jnu(nu,x)</td><td>第1種nu次ベッセル関数 (nu は正の実数) </td></tr>
+ <tr><td>ynu(nu,x)</td><td>第2種nu次ベッセル関数 (nu は正の実数) </td></tr>
+ <tr><td>inu(nu,x)</td><td>第1種nu次変形ベッセル関数 (nu は正の実数) </td></tr>
+ <tr><td>knu(nu,x)</td><td>第2種nu次変形ベッセル関数 (nu は正の実数) </td></tr>
+ <tr><td>pn(n,x)</td><td>ルジャンドル多項式</td></tr>
+ <tr><td>lgn(n,a,x)</td><td>ラゲール倍多項式</td></tr>
+ <tr><td>hn(n,x)</td><td>エルミート多項式</td></tr>
+ <tr><td>tn(n,x)</td><td>チェビシフ多項式</td></tr>
+ <tr><td>zeta(x)</td><td>リーマンゼータ関数 ζ(x)</td></tr>
+ <tr><td>zeta_int(x)</td><td>リーマンゼータ関数 ζ(x) (x は整数) </td></tr>
+ <tr><td>zetam1(x)</td><td>リーマンゼータ関数 ζ(x) - 1</td></tr>
+ <tr><td>zetam1_int(x)</td><td>リーマンゼータ関数 ζ(x) - 1 (x は整数) </td></tr>
+</table>
+<br>
+<h3><a name="DATETIME_FUMC">日付時刻関数</a></h3>
+<table border="1">
+ <tr><td>mjd(year,month,day,hour,min,sec)</td><td>修正ユリウス日(year, month, day はグレゴリオ暦、hour,min,sec は UTC 時刻、うるう秒は考慮されない)</td></tr>
+ <tr><td>unix2mjd(time)</td><td>修正ユリウス日(time は 1970年1月1日00:00:00 UTC からの経過秒数、うるう秒は考慮されない)</td></tr>
+ <tr><td>mjd2unix(mjd)</td><td>修正ユリウス日 mjd の1970年1月1日00:00:00 UTC からの経過秒数(うるう秒は考慮されない)</td></tr>
+ <tr><td>mjd2year(mjd)</td><td>修正ユリウス日に対応するグレゴリオ暦の年</td></tr>
+ <tr><td>mjd2month(mjd)</td><td>修正ユリウス日に対応するグレゴリオ暦の月</td></tr>
+ <tr><td>mjd2day(mjd)</td><td>修正ユリウス日に対応するグレゴリオ暦の日</td></tr>
+ <tr><td>mjd2wday(mjd)</td><td>修正ユリウス日に対応するグレゴリオ暦の曜日 (1:月曜日 から 7:日曜日) </td></tr>
+ <tr><td>mjd2yday(mjd)</td><td>修正ユリウス日に対応するグレゴリオ暦の 1 月 1 日からの通算日数 (1 から 366) </td></tr>
+ <tr><td>time()</td><td>紀元 (1970年1月1日00:00:00 UTC) からの経過時間を秒単位で返す。</td></tr>
+</table>
+<br>
+<h3><a name="LOGIC_FUNC">論理関数</a></h3>
+<p>
+<ul>
+ <li> 0 を偽, それ以外を真とする。
+</ul>
+</p>
+<table border="1">
+ <tr><td>eq(x,y,prec)</td><td>x＝y のとき真(=1)。prec で比較の桁数を指定できる (prec == 0 は完全一致) 。</td></tr>
+ <tr><td>neq(x,y,prec)</td><td>x≠y のとき真(=1)。prec で比較の桁数を指定できる (prec == 0 は完全一致) 。</td></tr>
+ <tr><td>ge(x,y,prec)</td><td>x≧y のとき真(=1)。prec で比較の桁数を指定できる (prec == 0 は桁数指定なし) 。</td></tr>
+ <tr><td>gt(x,y,prec)</td><td>x＞y のとき真(=1)。prec で比較の桁数を指定できる (prec == 0 は桁数指定なし) 。</td></tr>
+ <tr><td>le(x,y,prec)</td><td>x≦y のとき真(=1)。prec で比較の桁数を指定できる (prec == 0 は桁数指定なし) 。</td></tr>
+ <tr><td>lt(x,y,prec)</td><td>x＜y のとき真(=1)。prec で比較の桁数を指定できる (prec == 0 は桁数指定なし) 。</td></tr>
+ <tr><td>not(x)</td><td>x＝0 のとき真(=1)</td></tr>
+ <tr><td>or(x,y)</td><td>(x≠0) or (y≠0) のとき真(=1)</td></tr>
+ <tr><td>and(x,y)</td><td>(x≠0) and (y≠0) のとき真(=1)</td></tr>
+ <tr><td>xor(x,y)</td><td>(x≠0) xor (y≠0) のとき真(=1)</td></tr>
+</table>
+<br>
+<h3><a name="ARRAY_FUNC">配列操作関数</a></h3>
+<table border="1">
+ <tr><td>array(a, v1, v2, ...)</td><td>配列 a を残りの引数で初期化する。配列の要素数を返す。</td></tr>
+ <tr><td>size(a)</td><td>配列 a の要素数</td></tr>
+ <tr><td>sort(a)</td><td>配列 a を整列する</td></tr>
+ <tr><td>rsort(a)</td><td>配列 a を逆順に整列する</td></tr>
+ <tr><td>pop(a, n)</td><td>配列 a から末尾のn要素を取り除く (n = 0 は n = 1 と同義) 。戻り値は操作後の配列の要素数。</td></tr>
+ <tr><td>push(a,x)</td><td>配列 a の末尾に x を追加する (戻り値は操作後の配列の要素数) </td></tr>
+ <tr><td>shift(a, n)</td><td>配列 a の先頭のn要素を取り除く (n = 0 は n = 1 と同義) 。残りの要素は前に詰められる。戻り値は操作後の配列の要素数。</td></tr>
+ <tr><td>unshift(a,x)</td><td>配列 a の先頭に x を挿入する (戻り値は操作後の配列の要素数) </td></tr>
+ <tr><td>array_sum(a)</td><td>配列 a の要素の和を返す </td></tr>
+ <tr><td>array_sumsq(a)</td><td>配列 a の要素の自乗和を返す </td></tr>
+ <tr><td>array_average(a)</td><td>配列 a の要素の平均を返す </td></tr>
+ <tr><td>array_stdevp(a)</td><td>配列 a の要素の標準偏差を返す </td></tr>
+ <tr><td>array_stdev(a)</td><td>配列 a の要素の不偏標準偏差を返す </td></tr>
+ <tr><td>array_max(a)</td><td>配列 a に含まれる最大の値を返す </td></tr>
+ <tr><td>array_min(a)</td><td>配列 a に含まれる最小の値を返す </td></tr>
+ <tr><td>array_moving_average(dest, src, n, type)</td>
+  <td>
+   配列 src の隣接平均を計算し、配列 dest に格納する。
+   隣接平均の計算に使われるデータ数を n で指定する (1 の時、前後1つのデータと合わせて3つのデータの平均がとられる)。
+   type が 0 の時は単純移動平均、1 の時は加重移動平均を計算する。
+  </td></tr>
+ <tr><td>array_clear(a)</td><td>配列 a の配列の要素数を 0 にする </td></tr>
+ <tr><td>array_compact(a)</td><td>配列 a の配列の要素から通常の数値以外を取り除き、取り除いた後の要素数を返す</td></tr>
+ <tr><td>array_copy(dest, src)</td><td>配列 src の各要素を配列 dest に設定する。</td></tr>
+ <tr><td>map(dest, src, item, ex)</td><td>配列 src の各要素に対して式 ex を計算し、その結果を配列 dest に格納する。第2引数に指定した変数 (item) で配列の要素を参照できる。</td></tr>
+ <tr><td>reduce(a, item, result, ex)</td>
+   <td>配列 a の各要素に対して、
+     式 ex を実行し、最後に実行した結果を返す。第2引数に指定した変数
+     (item) で配列の要素を、第3引数に指定した変数 (result) で前回の繰り返
+     しにおける計算結果を参照できる。
+   </td>
+ </tr>
+ <tr><td>each(a, item, ex)</td><td>配列 a の各要素に対して、式 ex を実行する。第2引数に指定した変数 (item) で配列の要素を参照できる。</td></tr>
+ <tr><td>each_with_index(a, item, index, ex)</td><td>配列 a の各要素に対して、式 ex を実行する。第2引数に指定した変数 (item) で配列の要素を、第3引数に指定した変数 (index) で繰り返しのカウンタを参照できる。</td></tr>
+ <tr><td>zip(a1, a2, item1, item2, ex)</td><td>配列 a1, a2 の各要素に対して、式 ex を実行する。第3引数、第4引数に指定した変数 (item1, item2) で配列の要素を参照できる。</td></tr>
+ <tr><td>zip_map(dest, src1, src2, item1, item2, ex)</td><td>配列 a1, a2 の各要素に対して、式 ex を実行、その結果を配列 dest に格納する。第4引数、第5引数に指定した変数 (item1, item2) で配列の要素を参照できる。</td></tr>
+ <tr><td>filter(dest, src, item, ex)</td><td>配列 src の各要素に対して式 ex を計算し、その結果が真であった要素を配列 dest に格納する。第3引数に指定した変数 (item) で配列の要素を参照できる。</td></tr>
+ <tr><td>find(a, item, ex)</td><td>配列 a の各要素に対して式 ex を計算し、その結果が真であった最初の要素を返す。第2引数に指定した変数 (item) で配列の要素を参照できる。</td></tr>
+ <tr><td>index(a, item, ex)</td><td>配列 a の各要素に対して式 ex を計算し、その結果が真であった最初の要素の位置を返す。第2引数に指定した変数 (item) で配列の要素を参照できる。</td></tr>
+</table>
+<br>
+<h3><a name="MEMORY_FUNC">メモリー操作関数</a></h3>
+<p>メモリーは全ての数式変換で共有されます。</p>
+<table border="1">
+ <tr><td>m(i,x)</td><td>引数を第iメモリーに代入する(i=0〜65535)、i が負のときは末尾からのインデックス (戻り値は x) </td></tr>
+ <tr><td>rm(i)</td><td>現在の第iメモリーの値(i=0〜65535)、i が負のときは末尾からのインデックス</td></tr>
+ <tr><td>cm(x,n)</td><td>先頭からn個のメモリーを x で初期化する、n が 0 のときはメモリー全体、n が負のときは末尾から n 個のメモリーを x で初期化する (戻り値は x) </td></tr>
+ <tr><td>am(a)</td><td>配列 a の内容をメモリーにコピーする (戻り値はコピーした要素数) </td></tr>
+</table>
+<br>
+<h3><a name="DRAWING_FUNC">図形描画関数</a></h3>
+<p>図形を描画します。</p>
+<ul>
+  <li> 本来のプロットも描画されるので、不要な場合はプロットタイプを
+    mark に、サイズを 0 にすることで、図形のみ描画させることができます。
+  <li> 描画される図形は軸のオートスケールには考慮されません。
+  <li> 図形の色や線幅・線種はそのデータオブジェクトの設定が使われま
+    す。変えたい場合は COLOR() 関数などを利用します。
+</ul>
+<table border="1">
+  <tr>
+    <td>
+     draw_rect(x, y, w, h, stroke, fill)
+    </td>
+    <td>
+      (x, y) と (x + w, y + h) を対角の頂点とする矩形を描画します。stroke,
+      fill が 0 の場合はそれぞれ輪郭、塗りつぶしを描画しません。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     draw_arc(x, y, rx, ry, start, stop, pieslice, stroke, fill, close)
+    </td>
+    <td>
+      (x, y) を中心とし X 方向半径 rx, Y 方向半径 ry の円弧を描画しま
+      す。start, stop で開始角、円弧角を指定します。stroke, fill が 0
+      の場合はそれぞれ輪郭、塗りつぶしを描画しません。pieslice が 0 以
+      外の場合は扇形を描画します。close が 0 以外の場合は輪郭を閉じま
+      す。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     draw_mark(x, y, size)
+    </td>
+    <td>
+      (x, y) にマークを描画します。size でマークのサイズを指定できます。
+      size が 0 のときはデータオブジェクトのサイズ指定が使われます。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     draw_line(x1, y1, x2, y2, arrow, size)
+    </td>
+    <td>
+      (x1, y1) から (x2, y2) に直線を描画します。arrow が 1 のときは終点、
+     2 の時は始点、3 の時は両端に矢印を描画します。size で矢印の大きさを
+     指定できます。size が 0 以下の時はデータオブジェクトのサイズ指定が
+     使われます。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     draw_polyline(ax, ay)
+    </td>
+    <td>
+      座標 (ax[0], ay[0]), (ax[1], ay[1]), ... を直線で結びます。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     draw_polygon(ax, ay, stroke, fill)
+    </td>
+    <td>
+      座標 (ax[0], ay[0]), (ax[1], ay[1]), ... で囲まれた領域を描画します。
+      stroke, fill が 0 の場合はそれぞれ輪郭、塗りつぶしを描画しません。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     draw_errorbar(x, y, erx, ery, size)
+    </td>
+    <td>
+      (x - erx, y) から (x + erx, y) および (x, y - ery) から (x, y +
+      ery) に誤差棒を描画する。size で tick の長さを指定できる。size が
+      0 のときはデータオブジェクトのサイズ指定が使われる。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     draw_errorbar2(x1, y1, x2, y2, size)
+    </td>
+    <td>
+      (x1, y1) から (x2, y2) に誤差棒を描画する。size で tick の長さを
+      指定できる。size が 0 のときはデータオブジェクトのサイズ指定が
+      使われる。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     draw_text($str, x, y, dir)
+    </td>
+    <td>
+     (x, y) に文字列 $str を描画します。dir で方向を指定できます。
+     <a href="text.html#TEXT">制御文字を使用した書式指定</a>が可能です。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     draw_text_raw($str, x, y, dir)
+    </td>
+    <td>
+     (x, y) に文字列 $str を描画します。dir で方向を指定できます。
+     制御文字は使用できません（そのまま表示されます）。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     text_align(x, y)
+    </td>
+    <td>
+     文字列を描画するときの位置合わせを指定します。
+     x は文字列の描画方向、y はそれと直行する方向の位置を0〜1の値で指定します。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     text_font(font)
+    </td>
+    <td>
+     文字列を描画するときのフォントを指定します。
+     fontは 0, 1, 2 がそれぞれ Sans-serif, Serif, Monospace に対応します。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     text_style(style)
+    </td>
+    <td>
+     文字列を描画するときのスタイルを指定します。
+     style は 0, 1, 2, 3 がそれぞれ normal, bold, italic, bold-italic に対応します。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     text_size(pt, space, script)
+    </td>
+    <td>
+     文字列を描画するときのフォントサイズなどを指定します。
+     pt でフォントサイズを指定できます。
+     続く引数で文字間隔、スクリプトサイズを指定できます。
+     それぞれ 0 を指定した時は初期値に設定されます。
+    </td>
+  </tr>
+</table>
+<br>
+<h3><a name="STRING_FUNC">文字列操作関数</a></h3>
+<table border="1">
+  <tr>
+    <td>
+     string_float($str)
+    </td>
+    <td>
+      $str を浮動小数点に変換し、その値を返します。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     string_float_array(dest, $ary)
+    </td>
+    <td>
+     配列 $ary の各要素を浮動小数点に変換し、その値を配列 dest に代入します。
+     変換された要素数を返します。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     string_length($str)
+    </td>
+    <td>
+      $str に含まれる文字数を返します。UTF-8 以外の文字列では使えません。
+    </td>
+  </tr>
+  <tr>
+    <td>
+      puts($str, $format, v1, v2, ...)
+    </td>
+    <td>
+      文字列 $str と改行を information window に表示します。正しい
+      UTF-8 文字列の場合、文字列の文字数を返します。
+    </td>
+  </tr>
+  <tr>
+    <td>
+      printf($str, $format, v1, v2, ...)
+    </td>
+    <td>
+      数値 v1, v2, ... を $format に従って文字列に変換して information
+      window に表示します。正しい UTF-8 文字列の場合、変換された文字列
+      の文字数を返します。$format の書式は printf(3) に準じます。詳し
+      くは
+      <a href="text.html#FORMAT">フォント/テキスト - 整形</a>を参照し
+      てください。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     sprintf($str, $format, v1, v2, ...)
+    </td>
+    <td>
+      数値 v1, v2, ... を $format に従って文字列に変換して $str に代入し
+     ます。正しい UTF-8 文字列の場合、変換された文字列の文字数を返します。
+     $format の書式は printf(3) に準じます。詳しくは
+     <a href="text.html#FORMAT">フォント/テキスト - 整形</a>を参照してくだ
+     さい。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     string($str, value)
+    </td>
+    <td>
+      数値 value を文字列に変換して $str に代入します。value を返します。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     string_up($dest, $src)
+    </td>
+    <td>
+     文字列 $src に含まれる ascii 文字を大文字にした文字列を $dest に代入します。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     string_down($dest, $src)
+    </td>
+    <td>
+     文字列 $src に含まれる ascii 文字を小文字にした文字列を $dest に代入します。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     string_strip($str)
+    </td>
+    <td>
+     文字列 $str の先頭、最後にある空白文字を削除します。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     string_append($dest, $src)
+    </td>
+    <td>
+     文字列 $dest の最後に文字列 $src を連結します。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     string_prepend($dest, $src)
+    </td>
+    <td>
+     文字列 $dest の最初に文字列 $src を連結します。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     string_insert($dest, $src, pos)
+    </td>
+    <td>
+     文字列 $dest の pos 番目の文字の前に文字列 $src を挿入します。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     string_reverse($dest, $src)
+    </td>
+    <td>
+     文字列 $src の並びを逆にした文字列を $dest に代入します。UTF-8 以外の文字列では使えません。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     string_compare($str1, $str2, ignore_case)
+    </td>
+    <td>
+      2つの文字列 $str1 と $str2 を比較して $str1 が $str2 に較べて 1)小
+     さい、2)等しい、3)大きい場合に、ゼロよりも 1)小さい、2)等しい、3)大
+     きい整数を返します。ignore_case が 0 以外の場合は文字列に含まれる
+     ascii 文字の大文字小文字を区別せずに比較します。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     string_match($str, $regexp, ignore_case)
+    </td>
+    <td>
+     文字列 $str に対して、文字列 $regexp が表す正規表現によるマッチング
+     を行います。マッチした場合は 0 以外の数値、マッチしなかった場合は 0
+     を返します。ignore_case が 0 以外の場合は文字列に含まれる ascii 文
+     字の大文字小文字を区別せずに比較します。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     string_truncate($str, len)
+    </td>
+    <td>
+     文字列 $str の先頭 len 文字以降を削除します。UTF-8 以外の文字列では使えません。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     string_erase($str, pos, len)
+    </td>
+    <td>
+     文字列 $str から、pos 文字目から始まる len 文字を削除します。UTF-8 以外の文字列では使えません。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     string_join($str, $sep, $ary)
+    </td>
+    <td>
+     配列 $ary に含まれる文字列を結合して $str に代入します。各要素の間には $sep が挿入されます。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     string_substring($dest, $src, start, end)
+    </td>
+    <td>
+     文字列 $src の pos 文字目から始まり end 文字までからなる文字列を $dest に代入します。UTF-8 以外の文字列では使えません。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     string_split($dest, $src, $separator, use_regexp)
+    </td>
+    <td>
+     文字列 $src を文字列 $separator で分割し、分割された文字列を文字
+     列の配列 $dest に代入します。use_regexp が 0 以外の場合は
+     $separator を正規表現として解釈します。use_regexp が 2 の場合は
+     $separatorに含まれる ascii 文字の大文字小文字を区別せずに分割しま
+     す。分割された要素数を返します。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     string_split_float(dest, $src, $separator, use_regexp)
+    </td>
+    <td>
+     文字列 $src を文字列 $separator で分割し、分割された文字列を浮動
+     小数点に変換して配列 dest に代入します。use_regexp が 0 以外の場
+     合は$separator を正規表現として解釈します。use_regexp が 2 の場合
+     は$separatorに含まれる ascii 文字の大文字小文字を区別せずに分割し
+     ます。分割された要素数を返します。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     string_replace($dest, $src, $regexp, $replacement, ignore_case)
+    </td>
+    <td>
+     文字列 $src 中の、文字列 $regexp が表す正規表現にマッチする文字列を
+     $replacement で置換した文字列を $dest に代入します。ignore_case が
+     0 以外の場合は文字列に含まれる ascii 文字の大文字小文字を区別せずに
+     比較します。
+    </td>
+  </tr>
+  <tr>
+    <td>
+     string_column($dest, index)
+    </td>
+    <td>
+     データファイルを読み込んだ時に index カラムの文字列を $dest に代入
+     します。index が 0 のときは行全体の文字列が代入されます。
+    </td>
+  </tr>
+  <tr>
+    <td>size($a)</td>
+    <td>配列 $a の要素数を返します。</td>
+  </tr>
+  <tr>
+    <td>sort($a, ignore_case)</td>
+    <td>配列 $a を整列します。ignore_case が0 以外の場合は文字列に含ま
+      れる ascii 文字の大文字小文字を区別せずに比較します。
+    </td>
+  </tr>
+  <tr>
+    <td>rsort($a, ignore_case)</td>
+    <td>配列 $a を逆順に整列します。ignore_case が0 以外の場合は文字列
+      に含まれる ascii 文字の大文字小文字を区別せずに比較します。
+    </td>
+  </tr>
+  <tr>
+    <td>array_clear($a)</td>
+    <td>配列 $a の配列の要素数を 0 にする </td>
+  </tr>
+ <tr><td>pop($a, n)</td><td>配列 $a から末尾のn要素を取り除く (n = 0 は n = 1 と同義) 。戻り値は操作後の配列の要素数。</td></tr>
+ <tr><td>push($a, $x)</td><td>配列 $a の末尾に $x を追加する (戻り値は操作後の配列の要素数) </td></tr>
+ <tr><td>shift($a, n)</td><td>配列 $a の先頭のn要素を取り除く (n = 0 は n = 1 と同義) 。残りの要素は前に詰められる。戻り値は操作後の配列の要素数。</td></tr>
+ <tr><td>unshift($a, $x)</td><td>配列 $a の先頭に $x を挿入する (戻り値は操作後の配列の要素数) </td></tr>
+ <tr><td>index($a, $item, ex)</td><td>配列 $a の各要素に対して式 ex を計算し、その結果が真であった最初の要素の位置を返す。第2引数に指定した変数 ($item) で配列の要素を参照できる。</td></tr>
+ <tr><td>filter($dest, $src, $item, ex)</td><td>配列 $src の各要素に対して式 ex を計算し、その結果が真であった要素を配列 $dest に格納する。第3引数に指定した変数 ($item) で配列の要素を参照できる。</td></tr>
+ <tr><td>array_copy($dest, $src)</td><td>配列 $src の各要素を配列 $dest に設定する。</td></tr>
+ <tr><td>map(dest, $src, $item, ex)</td><td>配列 $src の各要素に対して式 ex を計算し、その結果を配列 dest に格納する。第2引数に指定した変数 ($item) で配列の要素を参照できる。</td></tr>
+ <tr><td>reduce($a, $item, result, ex)</td>
+   <td>配列 $a の各要素に対して、
+     式 ex を実行し、最後に実行した結果を返す。第2引数に指定した変数
+     ($item) で配列の要素を、第3引数に指定した変数 (result) で前回の繰り返
+     しにおける計算結果を参照できる。
+   </td>
+ </tr>
+</table>
+<br>
+<h3><a name="OTHER_FUNC">その他の関数</a></h3>
+<table border="1">
+ <tr>
+  <td>fit_prm(id,x)</td>
+  <td>
+   ID が id の data オブジェクトのプロットタイプが fit のとき、対応す
+   る fit object のフィールド "%0x" の値。
+  </td>
+ </tr>
+ <tr>
+  <td>fit_calc(id,x)</td>
+  <td>
+   ID が id の data オブジェクトのプロットタイプが fit のとき、対応する
+   fit 結果 f(x) を計算する。
+  </td>
+ </tr>
+ <tr><td>line_number()</td><td>処理中のファイル行番号 (1行目が1) </td></tr>
+ <tr><td>isnormal(x)</td><td>x が通常の数値の場合真</td></tr>
+ <tr><td>isbreak(x)</td><td>x が BREAK の場合真</td></tr>
+ <tr><td>iscont(x)</td><td>x が CONT の場合真</td></tr>
+ <tr><td>isnan(x)</td><td>x が NAN の場合真</td></tr>
+ <tr><td>isundef(x)</td><td>x が UNDEF の場合真</td></tr>
+ <tr><td>sum(x)</td><td>積算</td></tr>
+ <tr><td>dif(x)</td><td>差分</td></tr>
+ <tr><td>f(x,y,z)</td><td>ユーザ定義関数</td></tr>
+ <tr><td>g(x,y,z)</td><td>ユーザ定義関数</td></tr>
+ <tr><td>h(x,y,z)</td><td>ユーザ定義関数</td></tr>
+ <tr><td>color(0,x)</td><td>R値を x (0≦x＜256)に設定</td></tr>
+ <tr><td>color(1,x)</td><td>G値を x (0≦x＜256)に設定</td></tr>
+ <tr><td>color(2,x)</td><td>B値を x (0≦x＜256)に設定</td></tr>
+ <tr><td>color(3,x)</td><td>RGB値を x (0≦x＜256)に設定</td></tr>
+ <tr><td>color(4,x)</td><td>R2値を x (0≦x＜256)に設定</td></tr>
+ <tr><td>color(5,x)</td><td>G2値を x (0≦x＜256)に設定</td></tr>
+ <tr><td>color(6,x)</td><td>B2値を x (0≦x＜256)に設定</td></tr>
+ <tr><td>color(7,x)</td><td>R2, G2, B2 値を x (0≦x＜256)に設定</td></tr>
+ <tr><td>color(8,x)</td><td>x を 6 桁の 16 進数として、 2 桁ずつ R, G, B 値に設定</td></tr>
+ <tr><td>color(9,x)</td><td>x を 6 桁の 16 進数として、 2 桁ずつ R2, G2, B2 値に設定</td></tr>
+ <tr><td>obj_color(id, DATA_OBJ), obj_color(id)</td><td>R, G, B, R2, G2, B2 値を ID が id の data オブジェクトと同じ値にする。</td></tr>
+ <tr><td>obj_color(id, PATH_OBJ)</td><td>R, G, B, R2, G2, B2 値を ID が id の path オブジェクトの stroke_R, stroke_G, stroke_B, fill_R, fill_G, fill_B と同じ値にする。</td></tr>
+ <tr><td>obj_color(id, RECT_OBJ)</td><td>R, G, B, R2, G2, B2 値を ID が id の rectangle オブジェクトの stroke_R, stroke_G, stroke_B, fill_R, fill_G, fill_B と同じ値にする。</td></tr>
+ <tr><td>obj_color(id, ARC_OBJ)</td><td>R, G, B, R2, G2, B2 値を ID が id の arc オブジェクトの stroke_R, stroke_G, stroke_B, fill_R, fill_G, fill_B と同じ値にする。</td></tr>
+ <tr><td>obj_color(id, MARK_OBJ)</td><td>R, G, B, R2, G2, B2 値を ID が id の mark オブジェクトと同じ値にする。</td></tr>
+ <tr><td>obj_color(id, TEXT_OBJ)</td><td>R, G, B 値を ID が id の text オブジェクトと同じ値にする。</td></tr>
+ <tr><td>alpha(x)</td><td>A, A2 値を x (0≦x＜256)に設定</td></tr>
+ <tr><td>alpha(x,1)</td><td>A 値を x (0≦x＜256)に設定</td></tr>
+ <tr><td>ALPHA(x,2)</td><td>A2 値を x (0≦x＜256)に設定</td></tr>
+ <tr><td>obj_alpha(id, DATA_OBJ), OBJ_ALPHA(id)</td><td>A, A2 値を ID が id の data オブジェクトと同じ値にする。</td></tr>
+ <tr><td>obj_alpha(id, PATH_OBJ)</td><td>A, A2 値を ID が id の path オブジェクトの stroke_A, fill_A と同じ値にする。</td></tr>
+ <tr><td>obj_alpha(id, RECT_OBJ)</td><td>A, A2 値を ID が id の rectangle オブジェクトの stroke_A, fill_A と同じ値にする。</td></tr>
+ <tr><td>obj_alpha(id, ARC_OBJ)</td><td>A, A2 値を ID が id の arc オブジェクトの stroke_A, fill_A と同じ値にする。</td></tr>
+ <tr><td>obj_alpha(id, MARK_OBJ)</td><td>A, A2 値を ID が id の mark オブジェクトと同じ値にする。</td></tr>
+ <tr><td>obj_alpha(id, TEXT_OBJ)</td><td>A 値を ID が id の text オブジェクトと同じ値にする。</td></tr>
+ <tr><td>rgb(r,g,b)</td><td>色のRGB値をそれぞれ r, g, b (0≦r,g,b≦1)に設定</td></tr>
+ <tr><td>rgb2(r,g,b)</td><td>R2, G2, B2, の値を r, g, b (0≦r,g,b≦1)に設定</td></tr>
+ <tr><td>hsb(h,s,b)</td><td>色のHSB値をそれぞれ h, s, b (0≦h,s,b≦1)に設定</td></tr>
+ <tr><td>hsb2(h,s,b)</td><td>R2, G2, B2, の値を、HSB値からそれぞれ h, s, b (0≦h,s,b≦1)に設定</td></tr>
+ <tr><td>marksize(x)</td><td>マークのサイズをXに設定</td></tr>
+ <tr><td>marktype(x)</td><td>マークの種類をXに設定</td></tr>
+ <tr><td>if(x,ex1,ex2)</td><td>x ≠ 0 のとき ex1, x = 0 のとき ex2</td></tr>
+ <tr><td>unless(x,ex1,ex2)</td><td>x ≠ 0 のとき ex2, x = 0 のとき ex1 </td></tr>
+ <tr>
+  <td>for(m,begin,end,step,ex)</td>
+  <td>
+   第mメモリーの値に begin から end まで step で値を設定し、ex を繰り返
+   す。m が負の時はメモリーへの設定は行われない。最後に評価された ex の
+   値を返す。
+  </td>
+ </tr>
+ <tr>
+  <td>times(n, index, ex)</td>
+  <td>
+    ex を n 回繰り返す。第2引数に指定した変数で、繰り返しのカウンタ (0
+    〜 n-1) を参照できる。最後に評価された ex の値を返す。
+  </td>
+ </tr>
+ <tr>
+  <td>getobj($obj, $field, id)</td>
+  <td>
+   ID が id のオブジェクト $obj のフィールド $field の値を返す。field
+   type が int, bool, enum, double の場合に利用できます。
+  </td>
+ </tr>
+ <tr>
+  <td>getobj_string($str, $obj, $field, id)</td>
+  <td>
+   ID が id のオブジェクト $obj のフィールド $field の値を $str に代入
+   する。field type が char* の場合に利用できます。正しい UTF-8 文字列
+   の場合、文字列の文字数を返します。
+  </td>
+ </tr>
+ <tr>
+  <td>getobj_array(array, $obj, $field, id)</td>
+  <td>
+   ID が id のオブジェクト $obj のフィールド $field の値を array に代
+   入する。field type が char*[], double[], int[] の場合に利用できます。
+   設定した配列の要素数を返します。
+  </td>
+ </tr>
+ <tr>
+  <td>text_obj_get(id, $text)</td>
+  <td>
+   $text にID が id の text オブジェクトの文字列を設定する。
+  </td>
+ </tr>
+ <tr>
+  <td>text_obj_set(id, $text)</td>
+  <td>
+   ID が id の text オブジェクトの文字列を $text に設定する。
+  </td>
+ </tr>
+ <tr><td>prog1(arg1,arg2,...)</td><td>引数を評価し、最初の引数の値を返す</td></tr>
+ <tr><td>prog2(arg1,arg2,...)</td><td>引数を評価し、2 番目の引数の値を返す</td></tr>
+ <tr><td>progn(arg1,arg2,...)</td><td>引数を評価し、最後の引数の値を返す</td></tr>
+ <tr><td>parameter(id)</td><td>ID が id の parameter オブジェクトの設定値を返す</td></tr>
+ <tr><td>on_end(proc)</td><td>data オブジェクトの描画終了時に proc を評価する。複数回呼び出すことが可能だが、最後に指定された数式のみが評価される。</td></tr>
+</table>
+</div>
+
+
+<h2><a name="OP_PRECEDENCE">演算子の優先順位</a></h2>
+<p>演算子 + - (正負の符号) の優先順位が Version 6.03 以前と異なっています。</p>
+<br>
+<div>
+<table border="1">
+ <tr><td>高</td><td>!(後置)</td></tr>
+ <tr><td>↑</td><td>^</td></tr>
+ <tr><td>  </td><td>!(前置) + - (正負の符号)</td></tr>
+ <tr><td>  </td><td>* / \</td></tr>
+ <tr><td>  </td><td>+ -</td></tr>
+ <tr><td>  </td><td>&lt; &lt;= &gt; &gt;=</td></tr>
+ <tr><td>  </td><td>== !=</td></tr>
+ <tr><td>  </td><td>&amp;&amp;</td></tr>
+ <tr><td>↓</td><td>||</td></tr>
+ <tr><td>低</td><td>=(+=, -= ... )</td></tr>
+</table>
+</div>
+
+<h2><a name="OP_EXAMPLE">数式変換の使用例</a></h2>
+<br>
+<ul>
+ <li><b>; 使用例</b>
+      <p>
+      ;  は式の終端を示しますが、さらに続けて別の式を書くことができます。
+      式の値は一番最後の式の値になります。
+      例えば、長い式が何度も現れるとき変数への代入と組み合わせて
+      <pre>
+      a = ...式...;
+      ... a ....;
+      </pre>
+      のようにすれば同じ式は１度書くだけですみます。また式最後の ; は省略できます。
+      </p>
+      <p>
+      (従来は式の終端として "=" が使われていましたが version 6.06.10 以降
+      は ";" を推奨、version 6.08.06 以降は式の終端としての "=" を禁止しています)
+      </p>
+      </li>
+
+ <li><b>メモリー関数 m(), rm() 使用例</b>
+      <br>
+      <p>
+      M() はメモリーへの代入、RM() は読みだしです。全ての数式変換でメモリーは
+      共有されるため、データ間での値の受け渡しに利用できます。メ
+      モリーは 65536 個 (0〜65535) まで利用できます。また、未使用のメモリーは
+      0 に初期化されています。
+      </p>
+      </li>
+
+ <li><b>比較関数 eq(), neq(), lt(), gt(), le(), ge() 使用例</b><br>
+
+      <p>数値の比較を行う関数ですが、下記の例のように浮動小数点誤差により
+      思った通りの結果が得られない場合があります。</p>
+      <pre>
+      Ngraph$ iexpr 'eq(0.5 - 0.4, 0.1)'
+      0
+      </pre>
+      <p>
+      このような場合に、3番目の引数で比較の桁数を指定すると期待する結果
+      が得られることが多くなります。
+      </p>
+      <pre>
+      Ngraph$ iexpr 'eq(0.5 - 0.4, 0.1, 14)'
+      1
+      </pre>
+      <p>
+      計算によっては浮動小数点誤差の影響が大きくなる場合もありますので注
+      意が必要です。
+      </p>
+      </li>
+
+ <li><b>関数 dif() 使用例</b>
+      <br>
+      <br>
+      関数 dif() は微分でなく差分を返す関数です。
+      現在のデータがデータ中 n 番目としそれを y(n) で表すとすると
+      <p>
+      dif(y)=y(n) - y(n-1)
+      </p>
+      です。これを用い簡単に微分近似値を求めるには
+      <pre>
+      dif(y)/dif(x)
+      </pre>
+      とします。
+      <p>
+      dif(y)/dif(x)は {y(n)-y(n-1)} / {x(n)-x(n-1)} になります。
+      </p>
+      この時、Xの変換数式を
+      <pre>
+      x-dif(x)*0.5
+      </pre>
+      としてXを"現在のデータと一つ前のデータの中間値"としておいた方がより真に近いグラフが得られると思われます。
+      <p>
+      X変換式: x-dif(x)*0.5 (これは { x(n-1)+x(n) }*0.5 になります)<br>
+      Y変換式: dif(y)/dif(x) (これは { y(n)-y(n-1) } / { x(n)-x(n-1) } になります)
+      </p>
+      <p>
+      dif()  は現在のデータと一つ前のデータとの差分を返しますから、y-dif(y) とすることで一つ前のデータを取り出すことができます。
+      同様に y-dif(y)-dif(y-dif(y)) で2つ前のデータを取り出すことができます。
+      y-dif(y)-dif(y-dif(y))-dif(y-dif(y)-dif(y-dif(y)))は3つ前のデータです．
+      </p>
+      <p>
+      一番初めの dif() の戻り値は"不定"です．このため，式全体の値も"不定"となり、結果としてデータの個数は1つ減ります(一番初めのデータに差分は存在しない)。
+      また dif() をいくつも含む式では、全ての dif() が初期化されるまで式全体の値は"不定"です。
+      例えば dif() をネストして dif(dif()) のように使った場合、一番初めのデータでは内側の dif() が初期化されその戻り値は不定の為、外側の dif() の初期化は行われません。
+      外側の dif() が初期化されるのは 2番目のデータの時です。
+      従ってデータの個数は2つ減ることになります。
+      </p>
+      <br>
+      <br>
+      </li>
+
+ <li><b>関数 sum() 使用例</b>
+      <br>
+      <br>
+      関数 sum() は積算を返す関数です。
+      現在のデータが n 番目としそれを Y(n) で表すとすると
+      <p>
+      sum(y)=Σ y(n) (n=1..n)
+      </p>
+      これを用い簡単に積分近似値を求めるには
+      <pre>
+      sum(y*dif(x))
+      </pre>
+      とします。
+      <p>
+      sum(y * dif(x)) は Σ y(n) * {x(n) - x(n-1)} (n = 1..n) になります。
+      </p>
+      また、台形公式を用いて積分近似値を評価したい場合
+      <pre>
+      sum(0.5 * (2 * y - dif(y)) * dif(x))
+      </pre>
+      とします。
+      <p>
+      sum(0.5 * (2 * y - dif(y)) * dif(x)) は Σ(y(n-1) + y(n)) / 2  *{x(n) - x(n-1)} (n = 1..n) になります。
+      </p>
+      さらに積分の上限(b)、下限(a)を指定したい場合は階段関数 theta() を用い
+      <pre>
+      sum(0.5 * (2 * y-dif(y)) * dif(x) * theta(x-a) * theta(b-x))
+      </pre>
+      とします。if() を使って
+      <pre>
+      if(x &gt;= a && x &lt;= b, sum(0.5 * (2 * y - dif(y)) * dif(x)), 0)
+      </pre>
+      としても可能です。
+      <br>
+      <br>
+      </li>
+
+ <li><b>関数 if() 使用例</b>
+      <br>
+      <br>
+      if(x,ex1,ex2) は x が真(&lt;&gt;0)のとき ex1 を，偽(=0)のとき ex2 を返す関数です。例えば次の式
+      <pre>
+      if( x &lt; 0, 0, sqrt(x) )
+      </pre>
+      は x&lt;0 のとき 0、x&gt;=0 のとき√x を返す関数になります。また必ず  ex1, ex2 どちらか一方しか評価されません。
+      <br>
+      <br>
+
+ <li><b>関数 marksize(), color() 使用例</b>
+      <br>
+      <br>
+      marksize()、color()関数は数学関数では無く、それぞれプロットされたマークのサイズ、色を指定する関数です。
+      例えば、(x,y,z) の 3 カラムから成るデータがあり、マークのサイズを z の値で変更したいような場合には
+      <pre>
+      marksize(%03)
+      </pre>
+      とします。ただこれですと、プロットされるデータも %03 となりますので、前述の ; を使って
+      <pre>
+      marksize(%03);
+      y
+      </pre>
+      とするのが正しい使い方です。
+      color()関数も同様で
+      <pre>
+      color(3, %03);
+      y
+      </pre>
+      のように使います。
+      <br>
+
+ <li><b>関数 obj_color() 使用例</b>
+      <p>
+      data, path, rectangle, arc, mark, text の各オブジェクトの設定色を描
+      画色にします。例えばいくつかのフィッティング結果をもとにフィッティ
+      ングパラメータをグラフにするような場合、
+      <pre>
+      obj_color(x);
+      fit_prm(x,1)
+      </pre>
+      のようにして、フィッティングとプロットの色を揃えることができます。
+      この時 x はフィッティングプロットにした data オブジェクトのインスタ
+      ンス ID です。
+      </p>
+
+ <li><b>関数 fit_prm(),  fit_calc() 使用例</b>
+      <p>
+      フィッティングの結果からそのパラメータや、フィッティング式の計算を
+      行う関数です。
+      </p>
+      <p>
+      例えば、いくつかの１次フィットからその傾きをプロットしたい場合、
+      <pre>
+      fit_prm(x,1)
+      </pre>
+      のようにします。この時 x はフィッティングプロットにした data オブジェ
+      クトのインスタンス ID です。
+      </p>
+
+      <p>
+      また、１次ドリフトのあるデータからドリフト成分を引いてプロットし
+      たい場合 (id が 0 の data オブジェクトでフィッティングを行ってい
+      るとして)、
+      <pre>
+      y-fit_calc(0,X)
+      </pre>
+      のようにします。
+      </p>
+
+      <p>
+      これらの関数はフィッティングの結果が確定していないと計算に失敗しま
+      す。データの描画順に注意してください。また、初回のプロットでオー
+      トスケールに反映されないことがあります。
+      </p>
+
+ <li><b>ブロック使用例</b>
+      <p>
+      ブロックは if(), unless(), for() などの関数の引数に使用して複数
+      の式を評価するために利用できます。下記の例では x の値が 1 以上変
+      化する毎に y の平均値を計算しています (x は1 よりも大きいことを
+      仮定) 。
+      </p>
+      <pre>
+        if(x - a &lt; 1,
+          {
+            b += y;
+            n += 1;
+            CONT;
+          },
+          {
+            r = if(n, b / n, CONT);
+            b = y;
+            n = 1;
+            a = x;
+            r;
+          })
+      </pre>
+      </li>
+ <li><b>関数 prog1(), prog2(), progn() 使用例</b>
+      <p>
+      関数 prog1(), prog1(), progn() は複数の引数を評価して、最初、2番
+      目または最後の引数の値を返す関数です。if(), unless(), for() など
+      の関数の引数に使用して複数の式を評価するために利用できます。下記
+      の例では x の値が 1 以上変化する毎に y の平均値を計算しています
+      (x は1 よりも大きいことを仮定) 。
+      </p>
+      <pre>
+      if(x - a &lt; 1, progn(b += y, n += 1, CONT), prog1(if(n, b / n, CONT), b := y, n := 1, a := x))
+      </pre>
+      </li>
+ <li><b>図形描画関数の使用例</b>
+   <p>
+     データから円や矩形を描画できます。例えば、以下のようなデータから
+     円グラフを作成することができます。
+   </p>
+   <p>データ</p>
+   <pre>
+     1
+     2
+     3
+     4
+   </pre>
+   <p>変換式</p>
+   <pre>
+   hsb2(%0/NUM,1,1); x*=360/SUMX; draw_arc(0,0,1,1,sum(x),-x,1,1,1,1)
+   </pre>
+   <p>
+      hsb2() 関数で塗りつぶしの色を変えながら draw_arc() 関数で扇形を描
+      画します。
+   </p>
+ <li><b>parameter 関数の使用例</b>
+	 <p>
+		 parameter object を作成すると、そのパラメータの値を parameter 関数で参照できます。
+		 データの設定を変更せずに条件を変えてプロットすることができます。
+	 </p>
+</ul>
+</div>
+</body>
+</html>
