@@ -9,15 +9,15 @@ EXTRA_DIST = object.html.in intro.html.in script.html.in
 
 htmldir = $(docdir)/html/ja
 
-object.html: $(top_builddir)/src/libngraph.la object.html.in $(srcdir)/../objlist.nsc
-	cat $(srcdir)/object.html.in > object.html
-	$(top_builddir)/src/ngraph -i $(srcdir)/../objlist.nsc >> object.html
+object.html: $(srcdir)/../objlist.nsc $(top_builddir)/src/libngraph.la $(srcdir)/object.html.in
+	cat $(srcdir)/object.html.in > $@
+	$(top_builddir)/src/ngraph -i $< >> $@
 
-intro.html: intro.html.in $(top_srcdir)/pathconv.sh
-	$(SHELL) $(top_srcdir)/pathconv.sh $(srcdir)/intro.html.in
+intro.html: $(srcdir)/intro.html.in $(top_srcdir)/pathconv.sh
+	$(SHELL) $(top_srcdir)/pathconv.sh $<
 
-script.html: script.html.in $(top_srcdir)/pathconv.sh
-	$(SHELL) $(top_srcdir)/pathconv.sh $(srcdir)/script.html.in
+script.html: $(srcdir)/script.html.in $(top_srcdir)/pathconv.sh
+	$(SHELL) $(top_srcdir)/pathconv.sh $<
 
 CLEANFILES = intro.html script.html
 DISTCLEANFILES = object.html
