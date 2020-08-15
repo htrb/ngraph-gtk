@@ -9,6 +9,8 @@ dist_htmlimg_DATA = bcross.png barc.png baxispo.png bdataopn.png	\
 	 datapo.png draw.png eval.png fopen.png lapoint.png		\
 	 legend.png math.png pointer.png scundo.png trimming.png
 
+EXTRA_DIST = pixmaps.make
+
 pixmaps: $(dist_htmlimg_DATA)
 	make -f pixmaps.make $^
 
