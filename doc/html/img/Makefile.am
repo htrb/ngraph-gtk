@@ -8,3 +8,8 @@ dist_htmlimg_DATA = bcross.png barc.png baxispo.png bdataopn.png	\
 	 bzoom.png icon.png aclear.png addgraph.png axispo.png		\
 	 datapo.png draw.png eval.png fopen.png lapoint.png		\
 	 legend.png math.png pointer.png scundo.png trimming.png
+
+pixmaps: $(dist_htmlimg_DATA)
+	make -f pixmaps.make $^
+
+CLEANFILES = *.svg
