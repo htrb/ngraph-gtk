@@ -52,6 +52,8 @@ m4/ltsugar.m4
 m4/ltversion.m4
 m4/lt~obsolete.m4
 
+doc/html/img/*.svg
+
 src/gtk/dir_defs.h
 src/gtk/ngraphui.resources.c
 src/gtk/ngraph.resources.c
