@@ -20,6 +20,4 @@ extern char *DOCDIR, *NDATADIR, *ADDINDIR, *LIBDIR, *PLUGINDIR, *CONFDIR;
 #define HOME_DIR  ".Ngraph"
 #endif
 
-#define HELP_FILE "ngraph.html"
-
 #endif
