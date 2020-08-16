@@ -1327,7 +1327,7 @@ check_help_file(void)
 void
 CmHelpHelp(void *w, gpointer client_data)
 {
-  char *cmd, *file;
+  char *cmd;
 
   if (Menulock || Globallock)
     return;
@@ -1335,10 +1335,7 @@ CmHelpHelp(void *w, gpointer client_data)
   if (Menulocal.help_browser == NULL)
     return;
 
-  file = check_help_file();
-
-  cmd = g_strdup_printf("%s \"%s\"", Menulocal.help_browser, file);
-  g_free(file);
+  cmd = g_strdup_printf("%s \"%s/html/index.html\"", Menulocal.help_browser, DOCDIR);
 
   system_bg(cmd);
 
