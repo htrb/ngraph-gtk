@@ -1289,41 +1289,6 @@ CmHelpDemo(void *w, gpointer client_data)
   g_free(demo_file);
 }
 
-static char *
-check_help_file(void)
-{
-  char *file, *ptr, *tmp;
-  const char *locale;
-
-  locale = n_getlocale();
-  if (locale == NULL) {
-    goto End;
-  }
-
-  tmp = g_strdup(locale);
-  if (tmp == NULL){
-    goto End;
-  }
-
-  ptr = strchr(tmp, '_');
-  if (ptr == NULL) {
-    g_free(tmp);
-    goto End;
-  }
-
-  *ptr = '\0';
-  file = g_strdup_printf("%s/html/%s/%s", DOCDIR, tmp, HELP_FILE);
-  g_free(tmp);
-
-  if (naccess(file, R_OK) == 0) {
-    return file;
-  }
-  g_free(file);
-
- End:
-  return g_strdup_printf("%s/html/ja/%s", DOCDIR, HELP_FILE); /* default language of the help file is Japanese. */
-}
-
 void
 CmHelpHelp(void *w, gpointer client_data)
 {
