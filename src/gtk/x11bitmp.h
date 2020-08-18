@@ -33,7 +33,6 @@
 #define NGRAPH_ALIGN_T_ICON	"ngraph_align_t"
 #define NGRAPH_ALIGN_VC_ICON	"ngraph_align_vc"
 #define NGRAPH_MATH_ICON	"ngraph_math"
-#define NGRAPH_UNDO_ICON	"ngraph_undo"
 
 #define NGRAPH_SVG_ICON_FILE		RESOURCE_PATH "/pixmaps/ngraph.svg"
 #define NGRAPH_ICON_FILE		RESOURCE_PATH "/pixmaps/ngraph_icon.png"

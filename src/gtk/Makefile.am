@@ -5,7 +5,6 @@ NGRAPH_ICONS = data/pixmaps/ngraph_align_b.png				\
 	data/pixmaps/ngraph_align_t.png					\
 	data/pixmaps/ngraph_align_vc.png data/pixmaps/ngraph_icon.png	\
 	data/pixmaps/ngraph_icon64.png data/pixmaps/ngraph_math.png	\
-	data/pixmaps/ngraph_undo.png					\
 	data/pixmaps/none_begin-symbolic.svg				\
 	data/pixmaps/none_end-symbolic.svg				\
 	data/pixmaps/arrow_begin-symbolic.svg				\
