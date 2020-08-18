@@ -4,7 +4,7 @@ SYSTEM_ICON_DIR = /usr/share/icons/Adwaita/scalable
 .SUFFIXES: .png .svg
 .svg.png:
 	inkscape -w 32 -h 32 -o __$@ $<
-	convert -fuzz 60% -fill '#000000' -opaque '#bebebe' __$@ $@
+	convert -background '#dedad7' -flatten -fuzz 60% -fill '#000000' -opaque '#bebebe' __$@ $@
 	rm -f __$@
 
 barc.svg:     $(PIXMAP_DIR)/ngraph_arc-symbolic.svg
