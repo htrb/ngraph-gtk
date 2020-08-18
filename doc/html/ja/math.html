@@ -22,6 +22,7 @@
  <li><a href="#STRINGS">文字列</a>
  <li><a href="#USR_FUNC">ユーザ定義関数</a>
  <li><a href="#FORMULA_OP">演算子</a>
+ <li><a href="#OP_PRECEDENCE">演算子の優先順位</a>
  <li><a href="#FORMULA_FUNC">関数</a>
    <ul>
     <li> <a href="#TRANSFORM_FUNC">変換関数</a>
@@ -35,7 +36,6 @@
     <li> <a href="#STRING_FUNC">文字列操作関数</a>
     <li> <a href="#OTHER_FUNC">その他の関数</a>
    </ul>
- <li><a href="#OP_PRECEDENCE">演算子の優先順位</a>
  <li><a href="#OP_EXAMPLE">数式変換の使用例</a>
 </ul>
 </div>
@@ -363,18 +363,31 @@
  <dt> exp1 || exp2 と OR(exp1, exp2) の違い。</dt>
  <dd> <p>exp1 || exp2 は exp1 が真の時 exp2 を評価しません。また exp1 が真の場合は exp1、exp1 が偽の場合は exp2 を評価した値を返します。</p></dd>
  <dt> ;
- <dd> <p>; は式の終端を表します(省略可能)。; の後に別の式を後に続けることができます。</p>
+ <dd> <p>; は式の終端を表します(省略可能)。; の後に別の式を続けることができます。</p>
  <dt> 括弧 ()
  <dd> <p>括弧 () の数に制限はありません。</p>
  <dt> 乗算演算子 *
  <dd> <p>乗算であることが明らかな場合には乗算演算子を省略することができます。 (例：2 * Pi * x → 2 Pi x) </p>
-
-
 </dl>
-
 </div>
 
-
+<h2><a name="OP_PRECEDENCE">演算子の優先順位</a></h2>
+<p>演算子 + - (正負の符号) の優先順位が Version 6.03 以前と異なっています。</p>
+<br>
+<div>
+<table border="1">
+ <tr><td>高</td><td>!(後置)</td></tr>
+ <tr><td>↑</td><td>^</td></tr>
+ <tr><td>  </td><td>!(前置) + - (正負の符号)</td></tr>
+ <tr><td>  </td><td>* / \</td></tr>
+ <tr><td>  </td><td>+ -</td></tr>
+ <tr><td>  </td><td>&lt; &lt;= &gt; &gt;=</td></tr>
+ <tr><td>  </td><td>== !=</td></tr>
+ <tr><td>  </td><td>&amp;&amp;</td></tr>
+ <tr><td>↓</td><td>||</td></tr>
+ <tr><td>低</td><td>=(+=, -= ... )</td></tr>
+</table>
+</div>
 
 <h2><a name="FORMULA_FUNC">数式変換で使用できる関数</a></h2>
 <p>
@@ -1063,24 +1076,6 @@
 </table>
 </div>
 
-
-<h2><a name="OP_PRECEDENCE">演算子の優先順位</a></h2>
-<p>演算子 + - (正負の符号) の優先順位が Version 6.03 以前と異なっています。</p>
-<br>
-<div>
-<table border="1">
- <tr><td>高</td><td>!(後置)</td></tr>
- <tr><td>↑</td><td>^</td></tr>
- <tr><td>  </td><td>!(前置) + - (正負の符号)</td></tr>
- <tr><td>  </td><td>* / \</td></tr>
- <tr><td>  </td><td>+ -</td></tr>
- <tr><td>  </td><td>&lt; &lt;= &gt; &gt;=</td></tr>
- <tr><td>  </td><td>== !=</td></tr>
- <tr><td>  </td><td>&amp;&amp;</td></tr>
- <tr><td>↓</td><td>||</td></tr>
- <tr><td>低</td><td>=(+=, -= ... )</td></tr>
-</table>
-</div>
 
 <h2><a name="OP_EXAMPLE">数式変換の使用例</a></h2>
 <br>
