@@ -81,19 +81,6 @@
 	     </dl>
        </dl>
       </ul>
-      <p>
-      [表示]-[シングルウィンドウモード] ([View]-[single window mode]) の
-      チェックを外すことで、左側のタブを独立したウィンドウに分離すること
-      もできます。この場合、データ一覧を表示する "Data Window"、軸の一覧
-      を表示する "Axis Window"、グラフ上のマウスカーソル位置が表示される
-      "Coordinate Window"、レジェンドを一覧表示する "Legend Window"、合成
-      ファイルを一覧表示する "Merge Window"、フィットの結果等を表示する
-      "Information Window" の各ウィンドウを開く事ができます。また、各ウィ
-      ンドウ上でマウスの右ボタンをクリックすると、それぞれのウィンドウで
-      異なるポップアップメニューを出す事ができ、各種操作が行えるようになっ
-      ています。
-      </p>
-
 </ol>
 
 <h2><a name="GRAPH">グラフ作成の概略</a></h2>
@@ -113,9 +100,9 @@
       </p>
       <table border="1">
        <tr>
-	<td align=CENTER><img src="./tutorial/graphf.jpg" WIDTH="150" HEIGHT="146" ALT=""></td>
-	<td align=CENTER><img src="./tutorial/graphs.jpg" WIDTH="150" HEIGHT="146" ALT=""></td>
-	<td align=CENTER><img src="./tutorial/graphc.jpg" WIDTH="150" HEIGHT="146" ALT=""></td>
+	<td align=CENTER><img src="./tutorial/graphf.png" WIDTH="185" HEIGHT="185" ALT=""></td>
+	<td align=CENTER><img src="./tutorial/graphs.png" WIDTH="185" HEIGHT="185" ALT=""></td>
+	<td align=CENTER><img src="./tutorial/graphc.png" WIDTH="185" HEIGHT="185" ALT=""></td>
        </tr>
        <tr>
 	<td>フレームグラフ(Frame graph)<br>4つの軸で囲まれたグラフ</td>
@@ -157,8 +144,7 @@
 
  <li><h3>描画する</h3>
       <p>
-      Ngraphではファイルを開いても自動的には描画しないようになっています。
-      グラフを描画するには下図のボタンを押してください。
+      グラフを再描画するには下図のボタンを押してください（再描画が必要な場合はアイコンが変化し注意を促します）。
       </p>
       <p>
       <img src="../img/draw.png" ALT="">
@@ -398,13 +384,23 @@
       SHIFT キーを押しながらクリックすると複数のオブジェクトを複数選択できます。
       </p>
       <p>
-      <img src="./tutorial/focus.jpg" WIDTH="127" HEIGHT="68" ALT="">
+      <img src="./tutorial/focus.png" width="122" height="111" alt="">
       </p>
       <p>
       マウスのドラッグで移動、拡大・縮小ができます。
       移動の際に CTL キーを押しながらドラッグすると、水平垂直方向にしか動きませんので、位置合わせをするのに便利です。
       また、移動の際はグリッドが効いています。このグリッドを解除するには SHIFT キーを押しながらドラッグしてください。
       ダブルクリックでダイアログボックスが開き各種設定の変更が行えます。
+      </p>
+      <p>
+      <img src="./tutorial/setting_bar.png" width="1112" height="44" alt="">
+      </p>
+      <p>
+	      また、レジェンドや軸を選択すると コントロールボタン(上部)
+	      が上のような表示になります（表示されるボタンなどは選択し
+	      たオブジェクトによって変わります）。ここで値を編集するこ
+	      とにより、選択したオブジェクトの設定をまとめて変更できま
+	      す。
       </p>
 
  <li><h3>レジェンドの複製</h3>
@@ -426,7 +422,7 @@
       下図は LEGEND アドインによる凡例の作成例です。
       </p>
       <p>
-      <img src="./tutorial/alegend.jpg" WIDTH="169" HEIGHT="38" ALT="">
+      <img src="./tutorial/alegend.png" width="169" height="38" alt="">
       </p>
 
  <li><h3>込み合っているレジェンドの選択方法</h3>
@@ -786,7 +782,7 @@
       下図の様に Reference パラメタを設定すると fX2 軸のスケールを変えるだけで fU2, fX1, fU1 の軸のスケールを揃える事ができます。
       </p>
       <p>
-      <img src="./tutorial/axisref.jpg" WIDTH="250" HEIGHT="244" ALT="">
+      <img src="./tutorial/axisref.png" WIDTH="250" HEIGHT="244" ALT="">
       </p>
 </ol>
 </div>
