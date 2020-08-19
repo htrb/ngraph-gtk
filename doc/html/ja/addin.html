@@ -190,7 +190,7 @@ system:0:unlink_temp_file "$SCRIPT"
 外部プログラムを起動するアドインスクリプトは、
 </p>
 <pre>
-... 外部プログラムに必要な中間ファイルを生成する ...
+… 外部プログラムに必要な中間ファイルを生成する …
 SCRIPT=${system:0:temp_file}
 外部プログラム名  中間ファイル名  "$SCRIPT"
 if [ -f "$SCRIPT" ];
@@ -266,7 +266,7 @@ data::closedata でデータを閉じます。
 data:0:opendatac
 while data:0:getdata
 do
-... テキストの設定 ...
+… テキストの設定 …
 done
 data:0:closedata
 </pre>
@@ -311,7 +311,7 @@ text::text=`get data:0 -field column:"${data:0:line} ${COLUMN}"`
 data::opendatac
 while data::getdata
 do
-... 目的の操作
+… 目的の操作
 data::data_x data::data_y data::coord_x data::coord_y data::line が使える
 done
 data::closedata
