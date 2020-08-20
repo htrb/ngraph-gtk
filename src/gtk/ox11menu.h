@@ -82,7 +82,7 @@ struct menulocal
   int lock;
   struct gra2cairo_local *local;
   int antialias;
-  char *editor, *browser, *help_browser;
+  char *editor, *browser, *help_browser, *help_file;
   struct objlist *obj;
   N_VALUE *inst;
   struct objlist *GRAobj;
