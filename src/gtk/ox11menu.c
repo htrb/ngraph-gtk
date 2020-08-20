@@ -951,6 +951,7 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   Menulocal.exwin_use_external = TRUE;
   Menulocal.expand = 1;
   Menulocal.expanddir = g_strdup("./");
+  Menulocal.help_file = g_strdup("html/index.html");
   Menulocal.source_style_id = NULL;
   Menulocal.loadpath = SAVE_PATH_FULL;
   Menulocal.GRAobj = chkobject("gra");
