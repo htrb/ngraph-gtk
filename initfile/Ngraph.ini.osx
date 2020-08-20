@@ -7,6 +7,7 @@ history_size=1000
 [x11menu]
 script_console=0
 addin_console=0
+help_file=html/index.html
 status_bar=1
 show_tip=1
 scrollbar=1
