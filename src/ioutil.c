@@ -318,6 +318,10 @@ get_utf8_filename(const char *name)
 #endif	/* WINDOWS */
   }
   if (utf8_name == NULL) {
+    /* for compatibility with Ngraph for Windows */
+    utf8_name = g_convert(name, -1, "utf-8", "CP932", NULL, NULL, NULL);
+  }
+  if (utf8_name == NULL) {
     utf8_name = g_strdup(name);
   }
   changefilename(utf8_name);
