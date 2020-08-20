@@ -38,6 +38,7 @@
 #include "object.h"
 #include "nstring.h"
 #include "ioutil.h"
+#include "strconv.h"
 
 #ifndef O_BINARY
 #define O_BINARY 0
@@ -319,7 +320,7 @@ get_utf8_filename(const char *name)
   }
   if (utf8_name == NULL) {
     /* for compatibility with Ngraph for Windows */
-    utf8_name = g_convert(name, -1, "utf-8", "CP932", NULL, NULL, NULL);
+    utf8_name = sjis_to_utf8(name);
   }
   if (utf8_name == NULL) {
     utf8_name = g_strdup(name);
