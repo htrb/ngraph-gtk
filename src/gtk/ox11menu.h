@@ -89,7 +89,7 @@ struct menulocal
   int GRAoid;
   int GC;
   int PaperWidth, PaperHeight, PaperLandscape;
-  char *PaperName, *Palette;
+  char *PaperName;
   enum paper_id PaperId;
   int LeftMargin, TopMargin;
   int PaperZoom;
