@@ -317,7 +317,9 @@ get_utf8_filename(const char *name)
     utf8_name = g_filename_to_utf8(name, -1, NULL, NULL, NULL);
 #endif	/* WINDOWS */
   }
-
+  if (utf8_name == NULL) {
+    utf8_name = g_strdup(name);
+  }
   changefilename(utf8_name);
 
   return utf8_name;
