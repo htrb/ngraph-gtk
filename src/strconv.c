@@ -55,50 +55,26 @@ ascii2greece(const gchar *src)
 }
 
 static char *
-str2utf8(char *str, char *scode, char *dcode)
+str2utf8(const char *str, char *scode, char *dcode)
 {
-  GIConv cd;
-  size_t l, slen, dlen;
-  char *tmp, *ptr;
+  char *tmp;
 
   if (str == NULL)
     return NULL;
 
-  cd = g_iconv_open(dcode, scode);
-  if (cd == (GIConv)(-1)) {
-    g_iconv_close(cd);
-    return NULL;
-  }
-
-  slen = strlen(str);
-  dlen = slen * 6 + 1;
-
-  tmp = g_malloc(dlen);
-  if (tmp == NULL)
-    return NULL;
-
-  ptr = tmp;
-  l = g_iconv(cd, &str, &slen, &ptr, &dlen);
-  if (l == (size_t)(-1)) {
-    g_free(tmp);
-    tmp = NULL;
-  } else {
-    *ptr = '\0';
-  }
-
-  g_iconv_close(cd);
+  tmp = g_convert(str, -1, dcode, scode, NULL, NULL, NULL);
 
   return tmp;
 }
 
 char *
-sjis_to_utf8(char *src)
+sjis_to_utf8(const char *src)
 {
   return str2utf8(src, "CP932", "utf-8//TRANSLIT");
 }
 
 char *
-utf8_to_sjis(char *src)
+utf8_to_sjis(const char *src)
 {
   return str2utf8(src, "utf-8", "CP932//TRANSLIT");
 }
