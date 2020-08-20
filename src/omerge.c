@@ -634,12 +634,11 @@ mergefile(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
   }
 
   file = get_utf8_filename(argv[2]);
-  g_free(argv[2]);
   if (file == NULL) {
-    argv[2] = NULL;
     return 1;
   }
 
+  g_free(argv[2]);
   if (ignorepath) {
     file2 = getbasename(file);
     g_free(file);
