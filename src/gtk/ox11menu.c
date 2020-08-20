@@ -136,6 +136,7 @@ static struct menu_config MenuConfig[] = {
   {"addin_console",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.addinconsole},
   {"show_tip",			MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.showtip},
   {"character_map",		MENU_CONFIG_TYPE_CHARMAP, menu_config_set_char_map, &Menulocal.char_map},
+  {"help_file",			MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.help_file},
   {NULL},
 };
 
