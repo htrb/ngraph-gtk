@@ -1300,7 +1300,7 @@ CmHelpHelp(void *w, gpointer client_data)
   if (Menulocal.help_browser == NULL)
     return;
 
-  cmd = g_strdup_printf("%s \"%s/html/index.html\"", Menulocal.help_browser, DOCDIR);
+  cmd = g_strdup_printf("%s \"%s/%s\"", Menulocal.help_browser, DOCDIR, Menulocal.help_file);
 
   system_bg(cmd);
 
