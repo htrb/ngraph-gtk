@@ -443,30 +443,38 @@ text_set_text(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **ar
 
   str = argv[2];
 
-  if (str == NULL)
+  if (str == NULL) {
     return 0;
+  }
 
-  if (g_utf8_validate(str, -1, NULL))
+  if (g_utf8_validate(str, -1, NULL)) {
     return textgeometry(obj, inst, rval, argc, argv);
+  }
 
   ptr = sjis_to_utf8(str);
   if (ptr) {
-    g_free(str);
-    argv[2] = ptr;
-    return textgeometry(obj, inst, rval, argc, argv);
+    int r;
+    r = textgeometry(obj, inst, rval, argc, argv);
+    if (r) {
+      g_free(ptr);
+    } else {
+      g_free(str);
+      argv[2] = ptr;
+    }
+    return r;
   }
 
   ptr = g_locale_to_utf8(str, -1, NULL, &len, NULL);
   if (ptr) {
-    char *tmp;
-    g_free(str);
-    tmp = g_strdup(ptr);
-    g_free(ptr);
-    if (tmp == NULL)
-      return 1;
-
-    argv[2] = tmp;
-    return textgeometry(obj, inst, rval, argc, argv);
+    int r;
+    r = textgeometry(obj, inst, rval, argc, argv);
+    if (r) {
+      g_free(ptr);
+    } else {
+      g_free(str);
+      argv[2] = ptr;
+    }
+    return r;
   }
 
   error(obj, ERR_INVALID_STR);
