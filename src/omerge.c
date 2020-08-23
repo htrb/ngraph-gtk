@@ -633,6 +633,11 @@ mergefile(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
     return 0;
   }
 
+  if (clear_bbox(obj, inst)) {
+    /* argv[2] cannot be freed when a field returns TRUE. */
+    return 1;
+  }
+
   file = get_utf8_filename(argv[2]);
   if (file == NULL) {
     return 1;
@@ -645,10 +650,6 @@ mergefile(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
     argv[2] = file2;
   } else {
     argv[2] = file;
-  }
-
-  if (clear_bbox(obj, inst)) {
-    return 1;
   }
 
   return 0;
