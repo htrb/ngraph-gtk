@@ -32,10 +32,6 @@
 	  <attribute name="action">app.GraphLoadAction</attribute>
           <attribute name="accel">&lt;Primary&gt;R</attribute>
 	</item>
-	<item>
-	  <attribute name="label" translatable="yes">_Recent graphs</attribute>
-	  <attribute name="action">app.GraphRecentAction</attribute>
-	</item>
       </section>
       <section>
 	<item>
