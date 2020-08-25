@@ -2181,44 +2181,6 @@ create_recent_filter(GtkWidget *w, int type)
   gtk_recent_chooser_set_sort_type(recent, GTK_RECENT_SORT_MRU);
 }
 
-void
-show_recent_dialog(int type)
-{
-  GtkWidget *dialog;
-  int res;
-  char *title;
-
-  if (Menulock || Globallock) {
-    return;
-  }
-
-  title = (type == RECENT_TYPE_GRAPH) ? _("Recent Graphs") : _("Recent Data Files");
-  dialog = gtk_recent_chooser_dialog_new_for_manager(title,
-						     GTK_WINDOW(TopLevel),
-						     NgraphApp.recent_manager,
-						     _("_Cancel"),
-						     GTK_RESPONSE_CANCEL,
-						     _("_Open"),
-						     GTK_RESPONSE_ACCEPT,
-						     NULL);
-
-  create_recent_filter(dialog, type);
-  res = gtk_dialog_run (GTK_DIALOG (dialog));
-  gtk_widget_hide(dialog);
-  if (res == GTK_RESPONSE_ACCEPT) {
-    switch (type) {
-    case RECENT_TYPE_GRAPH:
-      CmGraphHistory(GTK_RECENT_CHOOSER(dialog), NULL);
-      break;
-    case RECENT_TYPE_DATA:
-      CmFileHistory(GTK_RECENT_CHOOSER(dialog), NULL);
-      break;
-    }
-  }
-
-  gtk_widget_destroy(dialog);
-}
-
 GtkWidget *
 create_recent_menu(int type)
 {
