@@ -143,7 +143,7 @@ enum pop_up_menu_item_type {
 struct Viewer
 {
   GtkWidget *Win;
-  GtkWidget *menu, *VScroll, *HScroll, *popup, *VRuler, *HRuler, *side_pane1, *side_pane2, *side_pane3, *main_pane;
+  GtkWidget *VScroll, *HScroll, *popup, *VRuler, *HRuler, *side_pane1, *side_pane2, *side_pane3, *main_pane;
   int ShowFrame, ShowLine, ShowRect;
   int Capture, MoveData, KeyMask;
   enum MouseMode MouseMode;
