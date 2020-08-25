@@ -90,7 +90,7 @@ static GtkWidget *ExtDrvOutMenu = NULL
 struct MenuItem;
 struct ToolItem;
 
-static void create_menu(GtkWidget *w, struct MenuItem *item);
+static void create_menu(struct MenuItem *item);
 static GtkWidget *create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb);
 static void CmViewerButtonArm(GtkToggleToolButton *action, gpointer client_data);
 
@@ -3989,9 +3989,7 @@ setupwindow(GtkApplication *app)
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   hbox2 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 
-  w = gtk_menu_bar_new();
-  create_menu(w, MainMenu);
-  NgraphApp.Viewer.menu = w;
+  create_menu(MenuAction);
 
   ToolBox = gtk_stack_new();
   SettingPanel = presetting_create_panel(app);
@@ -4675,81 +4673,15 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
 }
 
 static void
-create_menu_sub(GtkWidget *parent, struct MenuItem *item, int popup)
+create_menu(struct MenuItem *item)
 {
   int i;
-  GtkWidget *menu, *widget, *submenu;
 
-  for (i = 0; item[i].type != MENU_TYPE_END; i++) {
-    switch (item[i].type) {
-    case MENU_TYPE_SEPARATOR:
-      widget = gtk_separator_menu_item_new();
-      break;
-    case MENU_TYPE_NORMAL:
-      widget = gtk_menu_item_new_with_mnemonic(_(item[i].label));
-      break;
-    case MENU_TYPE_TOGGLE:
-    case MENU_TYPE_TOGGLE2:
-      widget = gtk_check_menu_item_new_with_mnemonic(_(item[i].label));
-      break;
-    case MENU_TYPE_RECENT_GRAPH:
-      widget = gtk_menu_item_new_with_mnemonic(_(item[i].label));
-      submenu = create_recent_menu(RECENT_TYPE_GRAPH);
-      gtk_menu_item_set_submenu(GTK_MENU_ITEM(widget), submenu);
-      break;
-    case MENU_TYPE_RECENT_DATA:
-      widget = gtk_menu_item_new_with_mnemonic(_(item[i].label));
-      submenu = create_recent_menu(RECENT_TYPE_DATA);
-      gtk_menu_item_set_submenu(GTK_MENU_ITEM(widget), submenu);
-      break;
-    default:
-      widget = NULL;
-    }
-
-    if (widget == NULL) {
-      continue;
-    }
-
-    if (item[i].callback) {
-      switch (item[i].type) {
-      case MENU_TYPE_TOGGLE:
-	g_signal_connect(widget, "toggled", G_CALLBACK(item[i].callback), GINT_TO_POINTER(item[i].user_data));
-	break;
-      default:
-	g_signal_connect(widget, "activate", G_CALLBACK(item[i].callback), GINT_TO_POINTER(item[i].user_data));
-      }
-    }
-
-
-    if (item[i].child) {
-      menu = gtk_menu_new();
-      gtk_menu_set_accel_group(GTK_MENU(menu), AccelGroup);
-      gtk_menu_shell_set_take_focus(GTK_MENU_SHELL(menu), TRUE);
-      create_menu_sub(menu, item[i].child, popup);
-      gtk_menu_item_set_submenu(GTK_MENU_ITEM(widget), menu);
-    }
-
+  for (i = 0; item[i].action_name; i++) {
     if (item[i].action) {
-      if (popup) {
-	item[i].action->popup = widget;
-      } else {
-	item[i].action->menu = widget;
-      }
+      item[i].action->action = g_action_map_lookup_action(G_ACTION_MAP(GtkApp), item[i].action_name);
     }
-    if (item[i].action_name) {
-      if (item[i].action) {
-	item[i].action->action = g_action_map_lookup_action(G_ACTION_MAP(GtkApp), item[i].action_name);
-      }
-    }
-
-    gtk_menu_shell_append(GTK_MENU_SHELL(parent), widget);
   }
-}
-
-static void
-create_menu(GtkWidget *parent, struct MenuItem *item)
-{
-  create_menu_sub(parent, item, FALSE);
 }
 
 static int
