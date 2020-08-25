@@ -22,6 +22,8 @@ src/gtk/gtk_liststore.c
 src/gtk/gtk_presettings.c
 src/gtk/completion_info_data.c
 src/gtk/data/gtk/menus-common.ui.in
+src/gtk/data/gtk/menus-tool.ui
+src/gtk/data/gtk/help-overlay.ui
 src/math/math_error.c
 src/odraw.c
 src/oaxis.c
