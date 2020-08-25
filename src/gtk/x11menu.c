@@ -91,7 +91,6 @@ struct MenuItem;
 struct ToolItem;
 
 static void create_menu(GtkWidget *w, struct MenuItem *item);
-static void create_menu_sub(GtkWidget *parent, struct MenuItem *item, int popup);
 static GtkWidget *create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb);
 static void CmViewerButtonArm(GtkToggleToolButton *action, gpointer client_data);
 
