@@ -1199,7 +1199,9 @@ ViewerWinSetup(void)
   g_signal_connect(d->Win, "key-release-event", G_CALLBACK(ViewerEvKeyUp), d);
   g_signal_connect(d->Win, "popup-menu", G_CALLBACK(ev_popup_menu), d);
 
+#if 0
   g_signal_connect(d->menu, "selection-done", G_CALLBACK(menu_activate), d);
+#endif
 }
 
 void
