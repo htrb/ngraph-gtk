@@ -61,4 +61,6 @@ int printfconsole(const char *fmt,...);
 void displaydialog(const char *str);
 void displaystatus(const char *str);
 
+#define DOUBLE_STR_FORMAT "%.16g"
+
 #endif	/* COMMON_HEADER */
