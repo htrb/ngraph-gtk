@@ -1005,11 +1005,9 @@ menu_lock(int lock)
     count = 0;
   }
 
-  if (NgraphApp.Viewer.menu == NULL) {
-    return;
-  }
-
+#if 0
   gtk_widget_set_sensitive(NgraphApp.Viewer.menu, ! Menulock);
+#endif
   w = gtk_paned_get_child1(GTK_PANED(NgraphApp.Viewer.main_pane));
   if (w) {
     gtk_widget_set_sensitive(w, ! Menulock);
