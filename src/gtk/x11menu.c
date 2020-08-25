@@ -92,9 +92,6 @@ struct ToolItem;
 
 static void create_menu(GtkWidget *w, struct MenuItem *item);
 static void create_menu_sub(GtkWidget *parent, struct MenuItem *item, int popup);
-#if ! USE_GTK_BUILDER
-static void create_popup(GtkWidget *parent, struct MenuItem *item);
-#endif
 static GtkWidget *create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb);
 static void CmViewerButtonArm(GtkToggleToolButton *action, gpointer client_data);
 
@@ -156,9 +153,7 @@ enum ACTION_TYPE {
 struct ActionWidget {
   GtkWidget *menu, *popup;
   GtkToolItem *tool;
-#if USE_GTK_BUILDER
   GAction *action;
-#endif
   enum ACTION_TYPE type;
 };
 
@@ -3271,21 +3266,9 @@ menu_lock(int lock)
 static void
 set_action_widget_sensitivity(int id, int state)
 {
-#if USE_GTK_BUILDER
   if (ActionWidget[id].action) {
     g_simple_action_set_enabled(G_SIMPLE_ACTION(ActionWidget[id].action), state);
   }
-#else
-  if (ActionWidget[id].menu) {
-    gtk_widget_set_sensitive(ActionWidget[id].menu, state);
-  }
-  if (ActionWidget[id].tool) {
-    gtk_widget_set_sensitive(GTK_WIDGET(ActionWidget[id].tool), state);
-  }
-  if (ActionWidget[id].popup) {
-    gtk_widget_set_sensitive(ActionWidget[id].popup, state);
-  }
-#endif
 }
 
 void
@@ -3408,7 +3391,6 @@ find_gra2gdk_inst(struct objlist **o, N_VALUE **i, struct objlist **ro, int *rou
 }
 
 
-#if USE_GTK_BUILDER
 #define ADDIN_MENU_SECTION_INDEX 6
 static void
 add_addin_menu(void)
@@ -3461,7 +3443,6 @@ add_addin_menu(void)
 
   g_menu_prepend_submenu(G_MENU(menu), _("_Add-in"), G_MENU_MODEL(addin_menu));
 }
-#endif
 
 void
 create_addin_menu(void)
@@ -3503,9 +3484,7 @@ create_addin_menu(void)
 
   gtk_widget_show_all(menu);
 
-#if USE_GTK_BUILDER
   add_addin_menu();
-#endif
 }
 
 static void
@@ -3625,31 +3604,6 @@ get_home(void)
 
   return home;
 }
-
-#if ! USE_GTK_BUILDER
-static void
-read_keymap_file(void)
-{
-  char *home, *filename;
-
-  home = get_home();
-  if (home == NULL) {
-    filename = g_strdup_printf("%s/%s", home, KEYMAP_FILE);
-    if (naccess(filename, R_OK) == 0) {
-      gtk_accel_map_load(filename);
-      g_free(filename);
-      return;
-    }
-    g_free(filename);
-  }
-
-  filename = g_strdup_printf("%s/%s", CONFDIR, KEYMAP_FILE);
-  if (naccess(filename, R_OK) == 0) {
-    gtk_accel_map_load(filename);
-  }
-  g_free(filename);
-}
-#endif
 
 static void
 create_markpixmap(GtkWidget *win)
@@ -3989,7 +3943,6 @@ edit_menu_shown(GtkWidget *w, gpointer user_data)
   set_focus_sensitivity(d);
 }
 
-#if USE_GTK_BUILDER
 static void
 clipboard_changed(GtkWidget *w, GdkEvent *e, gpointer user_data)
 {
@@ -3999,7 +3952,6 @@ clipboard_changed(GtkWidget *w, GdkEvent *e, gpointer user_data)
 
   set_focus_sensitivity(d);
 }
-#endif
 
 #define USE_APP_HEADER_BAR 0
 static void
@@ -4040,10 +3992,6 @@ setupwindow(GtkApplication *app)
 
   w = gtk_menu_bar_new();
   create_menu(w, MainMenu);
-#if ! USE_GTK_BUILDER
-  gtk_box_pack_start(GTK_BOX(vbox2), w, FALSE, FALSE, 0);
-  read_keymap_file();
-#endif
   NgraphApp.Viewer.menu = w;
 
   ToolBox = gtk_stack_new();
@@ -4053,14 +4001,6 @@ setupwindow(GtkApplication *app)
   gtk_box_pack_start(GTK_BOX(vbox2), ToolBox, FALSE, FALSE, 0);
   gtk_box_pack_start(GTK_BOX(hbox), PToolbar, FALSE, FALSE, 0);
 
-#if ! USE_GTK_BUILDER
-  w = gtk_menu_new();
-  create_popup(w, PopupMenu);
-  gtk_menu_set_accel_group(GTK_MENU(w), AccelGroup);
-  NgraphApp.Viewer.popup = w;
-  gtk_widget_show_all(w);
-  g_signal_connect(ActionWidget[EditMenuAction].menu, "show", G_CALLBACK(edit_menu_shown), &NgraphApp.Viewer);
-#endif
   if (NgraphApp.Viewer.popup) {
     g_signal_connect(NgraphApp.Viewer.popup, "show", G_CALLBACK(edit_menu_shown), &NgraphApp.Viewer);
   }
@@ -4359,24 +4299,12 @@ toggle_view_cb(GtkCheckMenuItem *action, gpointer data)
 void
 set_toggle_action_widget_state(int id, int state)
 {
-#if USE_GTK_BUILDER
   if (ActionWidget[id].action) {
     GVariant *value;
 
     value = g_variant_new_boolean(state);
     g_action_change_state(ActionWidget[id].action, value);
   }
-#else
-  if (ActionWidget[id].menu) {
-    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(ActionWidget[id].menu), state);
-  }
-  if (ActionWidget[id].popup) {
-    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(ActionWidget[id].popup), state);
-  }
-  if (ActionWidget[id].tool) {
-    gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(ActionWidget[id].tool), state);
-  }
-#endif
 }
 
 static void
@@ -4413,9 +4341,6 @@ set_widget_visibility(void)
     default:
       continue;
     }
-#if ! USE_GTK_BUILDER
-    set_toggle_action_widget_state(i, ! state);
-#endif
     set_toggle_action_widget_state(i, state);
   }
 }
@@ -4568,7 +4493,6 @@ create_recent_filter(GtkWidget *w, int type)
 void
 show_recent_dialog(int type)
 {
-#if USE_GTK_BUILDER
   GtkWidget *dialog;
   int res;
   char *title;
@@ -4602,7 +4526,6 @@ show_recent_dialog(int type)
   }
 
   gtk_widget_destroy(dialog);
-#endif
 }
 
 GtkWidget *
@@ -4631,20 +4554,13 @@ static GtkWidget*
 create_save_menu(void)
 {
   GtkWidget *menu;
-#if USE_GTK_BUILDER
   GMenu *gmenu;
-#endif
 
-#if USE_GTK_BUILDER
   gmenu = gtk_application_get_menu_by_id(GtkApp, "save-menu");
   if (gmenu == NULL) {
     return NULL;
   }
   menu = gtk_menu_new_from_model(G_MENU_MODEL(gmenu));
-#else
-  menu = gtk_menu_new();
-  create_menu_sub(menu, SaveMenu, TRUE);
-#endif
   gtk_widget_show_all(menu);
   return menu;
 }
@@ -4727,11 +4643,9 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
       gtk_tool_button_set_icon_name(GTK_TOOL_BUTTON(widget), item[i].icon);
     }
 
-#if USE_GTK_BUILDER
     if (item[i].action_name) {
       gtk_actionable_set_action_name(GTK_ACTIONABLE(widget), item[i].action_name);
     } else
-#endif
     if (item[i].callback) {
       g_signal_connect(widget, "clicked", G_CALLBACK(item[i].callback), GINT_TO_POINTER(item[i].user_data));
     }
@@ -4807,12 +4721,6 @@ create_menu_sub(GtkWidget *parent, struct MenuItem *item, int popup)
       }
     }
 
-#if ! USE_GTK_BUILDER
-    if (item[i].accel_path) {
-      gtk_accel_map_add_entry(item[i].accel_path, item[i].accel_key, item[i].accel_mods);
-      gtk_menu_item_set_accel_path(GTK_MENU_ITEM(widget), item[i].accel_path);
-    }
-#endif
 
     if (item[i].child) {
       menu = gtk_menu_new();
@@ -4829,13 +4737,11 @@ create_menu_sub(GtkWidget *parent, struct MenuItem *item, int popup)
 	item[i].action->menu = widget;
       }
     }
-#if USE_GTK_BUILDER
     if (item[i].action_name) {
       if (item[i].action) {
 	item[i].action->action = g_action_map_lookup_action(G_ACTION_MAP(GtkApp), item[i].action_name);
       }
     }
-#endif
 
     gtk_menu_shell_append(GTK_MENU_SHELL(parent), widget);
   }
@@ -4846,14 +4752,6 @@ create_menu(GtkWidget *parent, struct MenuItem *item)
 {
   create_menu_sub(parent, item, FALSE);
 }
-
-#if ! USE_GTK_BUILDER
-static void
-create_popup(GtkWidget *parent, struct MenuItem *item)
-{
-  create_menu_sub(parent, item, TRUE);
-}
-#endif
 
 static int
 create_toplevel_window(void)
@@ -4867,9 +4765,7 @@ create_toplevel_window(void)
   GdkScreen *screen;
 #endif
   GtkWidget *popup;
-#if USE_GTK_BUILDER
   GtkClipboard *clip;
-#endif	/* USE_GTK_BUILDER */
 
   NgraphApp.recent_manager = gtk_recent_manager_get_default();
 
@@ -4920,16 +4816,12 @@ create_toplevel_window(void)
   GtkApp = create_application_window(&popup);
   CurrentWindow = TopLevel = gtk_application_window_new(GtkApp);
   gtk_window_set_modal(GTK_WINDOW(TopLevel), TRUE); /* for the GtkColorButton (modal GtkColorChooserDialog) */
-#if USE_GTK_BUILDER
   gtk_application_window_set_show_menubar(GTK_APPLICATION_WINDOW(TopLevel), TRUE);
   if (popup) {
     NgraphApp.Viewer.popup = popup;
   }
   clip = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
   g_signal_connect(clip, "owner-change", G_CALLBACK(clipboard_changed), &NgraphApp.Viewer);
-#else	/* USE_GTK_BUILDER */
-  gtk_application_window_set_show_menubar(GTK_APPLICATION_WINDOW(TopLevel),FALSE);
-#endif	/* USE_GTK_BUILDER */
 
   gtk_window_set_title(GTK_WINDOW(TopLevel), AppName);
   gtk_window_set_default_size(GTK_WINDOW(TopLevel), width, height);
@@ -5724,7 +5616,6 @@ static char *UndoTypeStr[UNDO_TYPE_NUM] = {
   N_("edit"),			/* dummy message */
 };
 
-#if USE_GTK_BUILDER
 #define EDIT_MENU_INDEX 1
 #define UNDO_MENU_SECTION_INDEX 0
 static void
@@ -5780,32 +5671,6 @@ set_undo_menu_label(void)
   g_menu_insert_item(G_MENU(menu), 0, item);
   g_object_unref(item);
 }
-#else
-static void
-set_undo_menu_label(void)
-{
-  char buf[512], *label;
-  if (ActionWidget[EditUndoAction].menu) {
-    if (UndoInfo) {
-      snprintf(buf, sizeof(buf), _("_Undo: %s"), _(UndoTypeStr[UndoInfo->type]));
-      label = buf;
-    } else {
-      label = _("_Undo");
-    }
-    gtk_menu_item_set_label(GTK_MENU_ITEM(ActionWidget[EditUndoAction].menu), label);
-  }
-
-  if (ActionWidget[EditRedoAction].menu) {
-    if (RedoInfo) {
-      snprintf(buf, sizeof(buf), _("_Redo: %s"), _(UndoTypeStr[RedoInfo->type]));
-      label = buf;
-    } else {
-      label = _("_Redo");
-    }
-    gtk_menu_item_set_label(GTK_MENU_ITEM(ActionWidget[EditRedoAction].menu), label);
-  }
-}
-#endif
 
 int
 menu_save_undo(enum MENU_UNDO_TYPE type, char **obj)

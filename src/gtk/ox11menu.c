@@ -1656,7 +1656,6 @@ mx_clear_info(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char 
 static int
 mx_get_accel_map(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-#if USE_GTK_BUILDER
   char **actions;
   int i, j;
   GString *str;
@@ -1677,36 +1676,6 @@ mx_get_accel_map(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, ch
     g_strfreev(accels);
   }
   g_strfreev(actions);
-#else
-  FILE *fp;
-  int fd;
-  char buf[1024], *ptr;
-  GString *str;
-
-  if (rval->str) {
-    g_free(rval->str);
-  }
-  rval->str = NULL;
-
-  fp = tmpfile();
-
-  if (fp == NULL) {
-    putstderr(g_strerror(errno));
-    return 1;
-  }
-
-  fd = fileno(fp);
-  gtk_accel_map_save_fd(fd);
-
-  rewind(fp);
-
-  str = g_string_new("");
-  while ((ptr = fgets(buf, sizeof(buf), fp))) {
-    buf[sizeof(buf) - 1] = '\0';
-    g_string_append(str, buf);
-  }
-  fclose(fp);
-#endif
 
   rval->str = g_string_free(str, FALSE);
 

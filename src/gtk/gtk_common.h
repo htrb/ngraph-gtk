@@ -23,12 +23,6 @@
 	 GTK_SOURCE_MICRO_VERSION >= (micro)))
 #endif
 
-#if OSX
-#define USE_GTK_BUILDER 1
-#else
-#define USE_GTK_BUILDER 0
-#endif
-
 #if WINDOWS || OSX
 #define USE_HEADER_BAR 0
 #else
