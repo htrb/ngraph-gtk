@@ -425,12 +425,6 @@ DataAddRangeAction_activated(GSimpleAction *action, GVariant *parameter, gpointe
 }
 
 static void
-DataAddRecentFileAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
-{
-  show_recent_dialog(RECENT_TYPE_DATA);
-}
-
-static void
 DataPropertyAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
   CmFileUpdate(NULL, NULL);
@@ -750,7 +744,6 @@ static GActionEntry AppEntries[] =
   { "ViewGridLineAction", NULL, NULL, "true", ViewGridLineAction_activated },
   { "DataAddFileAction", DataAddFileAction_activated, NULL, NULL, NULL },
   { "DataAddRangeAction", DataAddRangeAction_activated, NULL, NULL, NULL },
-  { "DataAddRecentFileAction", DataAddRecentFileAction_activated, NULL, NULL, NULL },
   { "DataPropertyAction", DataPropertyAction_activated, NULL, NULL, NULL },
   { "DataCloseAction", DataCloseAction_activated, NULL, NULL, NULL },
   { "DataEditAction", DataEditAction_activated, NULL, NULL, NULL },
