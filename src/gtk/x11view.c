@@ -4944,7 +4944,7 @@ ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data)
   d = (struct Viewer *) client_data;
 
   if (Menulock || Globallock)
-    goto EXIT_PRAPAGATE;
+    goto EXIT_PROPAGATE;
 
   switch (e->keyval) {
   case GDK_KEY_Escape:
@@ -4954,7 +4954,7 @@ ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data)
       UnFocus();
     }
     set_pointer_mode(-1);
-    goto EXIT_PRAPAGATE;
+    goto EXIT_PROPAGATE;
   case GDK_KEY_space:
     CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
     return TRUE;
@@ -4999,7 +4999,7 @@ ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data)
     break;
   }
 
- EXIT_PRAPAGATE:
+ EXIT_PROPAGATE:
   set_focus_sensitivity(d);
   return FALSE;
 }
