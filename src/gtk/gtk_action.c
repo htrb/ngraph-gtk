@@ -70,12 +70,6 @@ GraphLoadAction_activated(GSimpleAction *action, GVariant *parameter, gpointer a
 }
 
 static void
-GraphRecentAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
-{
-  show_recent_dialog(RECENT_TYPE_GRAPH);
-}
-
-static void
 GraphSaveAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
   CmGraphOverWrite(NULL, NULL);
@@ -705,7 +699,6 @@ static GActionEntry AppEntries[] =
   { "GraphNewSectionAction", GraphNewSectionAction_activated, NULL, NULL, NULL },
   { "GraphNewCrossAction", GraphNewCrossAction_activated, NULL, NULL, NULL },
   { "GraphNewClearAction", GraphNewClearAction_activated, NULL, NULL, NULL },
-  { "GraphRecentAction", GraphRecentAction_activated, NULL, NULL, NULL },
   { "GraphLoadAction", GraphLoadAction_activated, NULL, NULL, NULL },
   { "GraphSaveAction", GraphSaveAction_activated, NULL, NULL, NULL },
   { "GraphSaveAsAction", GraphSaveAsAction_activated, NULL, NULL, NULL },
