@@ -882,9 +882,7 @@ init_action_widget_list(void)
   int i;
 
   for (i = 0; i < ActionWidgetNum; i++) {
-    ActionWidget[i].menu = NULL;
     ActionWidget[i].tool = NULL;
-    ActionWidget[i].popup = NULL;
     switch (i) {
     case GraphSaveAction:
       ActionWidget[i].type = ACTION_TYPE_MODIFIED;
