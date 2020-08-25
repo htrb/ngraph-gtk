@@ -1100,6 +1100,7 @@ scrollbar_scroll_cb(GtkWidget *w, GdkEventScroll *e, gpointer client_data)
   return TRUE;
 }
 
+#if 0
 static void
 menu_activate(GtkMenuShell *menushell, gpointer user_data)
 {
@@ -1111,6 +1112,7 @@ menu_activate(GtkMenuShell *menushell, gpointer user_data)
     move_data_cancel(d, FALSE);
   }
 }
+#endif
 
 static gboolean
 ev_popup_menu(GtkWidget *w, gpointer client_data)
