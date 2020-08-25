@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.08.06\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2020-08-25 15:18+0900\n"
+"POT-Creation-Date: 2020-08-25 17:15+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -51,6 +51,7 @@ msgid "Save file"
 msgstr ""
 
 #: src/gtk/ogra2cairo.c:45 src/gtk/x11axis.c:1112 src/gtk/x11axis.c:2166
+#: src/gtk/data/gtk/menus-tool.ui:42 src/gtk/data/gtk/menus-tool.ui:71
 #: src/odraw.c:80 src/odraw.c:88 src/oaxis.c:77 src/oaxis.c:92
 msgid "none"
 msgstr ""
@@ -91,30 +92,39 @@ msgstr ""
 msgid "len"
 msgstr ""
 
-#: src/gtk/x11axis.c:96
+#: src/gtk/x11axis.c:96 src/gtk/data/gtk/menus-common.ui.in:11
+#: src/gtk/data/gtk/menus-common.ui.in:339
 msgid "_Frame graph"
 msgstr ""
 
-#: src/gtk/x11axis.c:97
+#: src/gtk/x11axis.c:97 src/gtk/data/gtk/menus-common.ui.in:15
+#: src/gtk/data/gtk/menus-common.ui.in:343
 msgid "_Section graph"
 msgstr ""
 
-#: src/gtk/x11axis.c:98
+#: src/gtk/x11axis.c:98 src/gtk/data/gtk/menus-common.ui.in:19
+#: src/gtk/data/gtk/menus-common.ui.in:347
 msgid "_Cross graph"
 msgstr ""
 
-#: src/gtk/x11axis.c:99
+#: src/gtk/x11axis.c:99 src/gtk/data/gtk/menus-common.ui.in:351
 msgid "Single _Axis"
 msgstr ""
 
 #: src/gtk/x11axis.c:104 src/gtk/x11file.c:132 src/gtk/x11file.c:2004
 #: src/gtk/x11file.c:2223 src/gtk/x11graph.c:698 src/gtk/x11lgnd.c:1155
 #: src/gtk/x11menu.c:487 src/gtk/x11merge.c:69 src/gtk/x11opt.c:700
+#: src/gtk/data/gtk/menus-common.ui.in:295
+#: src/gtk/data/gtk/menus-common.ui.in:336
+#: src/gtk/data/gtk/menus-common.ui.in:381
+#: src/gtk/data/gtk/menus-common.ui.in:465
+#: src/gtk/data/gtk/menus-common.ui.in:482
 msgid "_Add"
 msgstr ""
 
 #: src/gtk/x11axis.c:106 src/gtk/x11file.c:134 src/gtk/x11lgnd.c:213
-#: src/gtk/x11merge.c:70
+#: src/gtk/x11merge.c:70 src/gtk/data/gtk/menus-common.ui.in:154
+#: src/gtk/data/gtk/menus-common.ui.in:584
 msgid "_Duplicate"
 msgstr ""
 
@@ -122,7 +132,16 @@ msgstr ""
 #: src/gtk/x11file.c:836 src/gtk/x11file.c:1671 src/gtk/x11lgnd.c:215
 #: src/gtk/x11lgnd.c:1160 src/gtk/x11lgnd.c:1466 src/gtk/x11lgnd.c:1582
 #: src/gtk/x11lgnd.c:1681 src/gtk/x11lgnd.c:1819 src/gtk/x11lgnd.c:2035
-#: src/gtk/x11merge.c:71
+#: src/gtk/x11merge.c:71 src/gtk/data/gtk/menus-common.ui.in:149
+#: src/gtk/data/gtk/menus-common.ui.in:361
+#: src/gtk/data/gtk/menus-common.ui.in:389
+#: src/gtk/data/gtk/menus-common.ui.in:404
+#: src/gtk/data/gtk/menus-common.ui.in:417
+#: src/gtk/data/gtk/menus-common.ui.in:430
+#: src/gtk/data/gtk/menus-common.ui.in:443
+#: src/gtk/data/gtk/menus-common.ui.in:456
+#: src/gtk/data/gtk/menus-common.ui.in:490
+#: src/gtk/data/gtk/menus-common.ui.in:580
 msgid "_Delete"
 msgstr ""
 
@@ -139,6 +158,17 @@ msgid "_Clear"
 msgstr ""
 
 #: src/gtk/x11axis.c:112 src/gtk/x11file.c:139 src/gtk/x11lgnd.c:219
+#: src/gtk/data/gtk/menus-common.ui.in:309
+#: src/gtk/data/gtk/menus-common.ui.in:357
+#: src/gtk/data/gtk/menus-common.ui.in:385
+#: src/gtk/data/gtk/menus-common.ui.in:400
+#: src/gtk/data/gtk/menus-common.ui.in:413
+#: src/gtk/data/gtk/menus-common.ui.in:426
+#: src/gtk/data/gtk/menus-common.ui.in:439
+#: src/gtk/data/gtk/menus-common.ui.in:452
+#: src/gtk/data/gtk/menus-common.ui.in:469
+#: src/gtk/data/gtk/menus-common.ui.in:486
+#: src/gtk/data/gtk/menus-common.ui.in:590
 msgid "_Properties"
 msgstr ""
 
@@ -149,21 +179,29 @@ msgstr ""
 
 #: src/gtk/x11axis.c:115 src/gtk/x11file.c:143 src/gtk/x11graph.c:712
 #: src/gtk/x11lgnd.c:222 src/gtk/x11merge.c:78
+#: src/gtk/data/gtk/menus-common.ui.in:169
+#: src/gtk/data/gtk/menus-common.ui.in:655
 msgid "_Top"
 msgstr ""
 
 #: src/gtk/x11axis.c:116 src/gtk/x11file.c:144 src/gtk/x11graph.c:718
 #: src/gtk/x11lgnd.c:223 src/gtk/x11merge.c:79 src/gtk/x11opt.c:719
+#: src/gtk/data/gtk/menus-common.ui.in:174
+#: src/gtk/data/gtk/menus-common.ui.in:659
 msgid "_Up"
 msgstr ""
 
 #: src/gtk/x11axis.c:117 src/gtk/x11file.c:145 src/gtk/x11graph.c:724
 #: src/gtk/x11lgnd.c:224 src/gtk/x11merge.c:80 src/gtk/x11opt.c:712
+#: src/gtk/data/gtk/menus-common.ui.in:178
+#: src/gtk/data/gtk/menus-common.ui.in:663
 msgid "_Down"
 msgstr ""
 
 #: src/gtk/x11axis.c:118 src/gtk/x11file.c:146 src/gtk/x11graph.c:730
 #: src/gtk/x11lgnd.c:225 src/gtk/x11merge.c:81
+#: src/gtk/data/gtk/menus-common.ui.in:182
+#: src/gtk/data/gtk/menus-common.ui.in:667
 msgid "_Bottom"
 msgstr ""
 
@@ -283,7 +321,8 @@ msgstr ""
 msgid "_R axis"
 msgstr ""
 
-#: src/gtk/x11axis.c:736
+#: src/gtk/x11axis.c:736 src/gtk/data/gtk/menus-common.ui.in:283
+#: src/gtk/data/gtk/menus-common.ui.in:378
 msgid "_Grid"
 msgstr ""
 
@@ -309,7 +348,7 @@ msgstr ""
 msgid "_Inc:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1309
+#: src/gtk/x11axis.c:1309 src/gtk/data/gtk/menus-common.ui.in:292
 msgid "_Data"
 msgstr ""
 
@@ -842,6 +881,7 @@ msgstr ""
 
 #: src/gtk/x11dialg.c:337 src/gtk/x11file.c:734 src/gtk/x11file.c:2015
 #: src/gtk/x11file.c:2234 src/gtk/x11view.c:1008
+#: src/gtk/data/gtk/menus-common.ui.in:159
 msgid "Select _All"
 msgstr ""
 
@@ -881,11 +921,11 @@ msgstr ""
 msgid "num"
 msgstr ""
 
-#: src/gtk/x11file.c:124
+#: src/gtk/x11file.c:124 src/gtk/data/gtk/menus-common.ui.in:298
 msgid "_File"
 msgstr ""
 
-#: src/gtk/x11file.c:125
+#: src/gtk/x11file.c:125 src/gtk/data/gtk/menus-common.ui.in:303
 msgid "_Range"
 msgstr ""
 
@@ -898,10 +938,13 @@ msgid "duplicate _Behind"
 msgstr ""
 
 #: src/gtk/x11file.c:138 src/gtk/x11file.c:1774 src/gtk/x11menu.c:555
+#: src/gtk/data/gtk/menus-common.ui.in:241
 msgid "_Draw"
 msgstr ""
 
 #: src/gtk/x11file.c:141 src/gtk/x11file.c:740 src/gtk/x11file.c:4023
+#: src/gtk/data/gtk/menus-common.ui.in:119
+#: src/gtk/data/gtk/menus-common.ui.in:317
 msgid "_Edit"
 msgstr ""
 
@@ -942,6 +985,8 @@ msgid "_Y math"
 msgstr ""
 
 #: src/gtk/x11file.c:749 src/gtk/x11view.c:1024
+#: src/gtk/data/gtk/menus-common.ui.in:313
+#: src/gtk/data/gtk/menus-common.ui.in:473
 msgid "_Close"
 msgstr ""
 
@@ -1046,6 +1091,8 @@ msgstr ""
 #: src/gtk/x11file.c:1768 src/gtk/x11gui.c:1214 src/gtk/x11menu.c:521
 #: src/gtk/x11opt.c:453 src/gtk/x11opt.c:940 src/gtk/x11opt.c:1138
 #: src/gtk/x11opt.c:1469 src/gtk/x11opt.c:1577
+#: src/gtk/data/gtk/menus-common.ui.in:38
+#: src/gtk/data/gtk/menus-common.ui.in:681
 msgid "_Save"
 msgstr ""
 
@@ -1356,7 +1403,7 @@ msgstr ""
 msgid "Object"
 msgstr ""
 
-#: src/gtk/x11graph.c:677
+#: src/gtk/x11graph.c:677 src/gtk/data/gtk/menus-common.ui.in:79
 msgid "_Draw order"
 msgstr ""
 
@@ -1553,10 +1600,12 @@ msgid "_Interpolation:"
 msgstr ""
 
 #: src/gtk/x11lgnd.c:1498 src/gtk/x11lgnd.c:1730
+#: src/gtk/data/gtk/menus-tool.ui:14
 msgid "_Close path"
 msgstr ""
 
 #: src/gtk/x11lgnd.c:1515 src/gtk/x11lgnd.c:1618 src/gtk/x11lgnd.c:1746
+#: src/gtk/data/gtk/menus-tool.ui:6
 msgid "_Stroke"
 msgstr ""
 
@@ -1565,6 +1614,7 @@ msgid "fill _Rule:"
 msgstr ""
 
 #: src/gtk/x11lgnd.c:1534 src/gtk/x11lgnd.c:1633 src/gtk/x11lgnd.c:1761
+#: src/gtk/data/gtk/menus-tool.ui:10
 msgid "_Fill"
 msgstr ""
 
@@ -1677,7 +1727,7 @@ msgstr ""
 msgid "axisgrid"
 msgstr ""
 
-#: src/gtk/x11menu.c:61
+#: src/gtk/x11menu.c:61 src/gtk/data/gtk/menus-common.ui.in:551
 msgid "_Keyboard shortcus"
 msgstr ""
 
@@ -1860,7 +1910,7 @@ msgstr ""
 msgid "Add Data"
 msgstr ""
 
-#: src/gtk/x11menu.c:506
+#: src/gtk/x11menu.c:506 src/gtk/data/gtk/menus-common.ui.in:31
 msgid "_Load graph"
 msgstr ""
 
@@ -1872,19 +1922,20 @@ msgstr ""
 msgid "Save NGP"
 msgstr ""
 
-#: src/gtk/x11menu.c:540
+#: src/gtk/x11menu.c:540 src/gtk/data/gtk/menus-common.ui.in:369
 msgid "Scale _Clear"
 msgstr ""
 
 #: src/gtk/x11menu.c:541 src/gtk/x11menu.c:542
+#: src/gtk/data/gtk/help-overlay.ui:53
 msgid "Clear Scale"
 msgstr ""
 
-#: src/gtk/x11menu.c:557
+#: src/gtk/x11menu.c:557 src/gtk/data/gtk/help-overlay.ui:60
 msgid "Draw on Viewer Window"
 msgstr ""
 
-#: src/gtk/x11menu.c:570
+#: src/gtk/x11menu.c:570 src/gtk/data/gtk/menus-common.ui.in:93
 msgid "_Print"
 msgstr ""
 
@@ -1892,7 +1943,7 @@ msgstr ""
 msgid "Print"
 msgstr ""
 
-#: src/gtk/x11menu.c:589
+#: src/gtk/x11menu.c:589 src/gtk/data/gtk/menus-common.ui.in:327
 msgid "_Math Transformation"
 msgstr ""
 
@@ -1904,7 +1955,7 @@ msgstr ""
 msgid "Set Math Transformation"
 msgstr ""
 
-#: src/gtk/x11menu.c:604
+#: src/gtk/x11menu.c:604 src/gtk/data/gtk/menus-common.ui.in:374
 msgid "Scale _Undo"
 msgstr ""
 
@@ -2026,7 +2077,7 @@ msgstr ""
 msgid "_Redo: %s"
 msgstr ""
 
-#: src/gtk/x11menu.c:3236
+#: src/gtk/x11menu.c:3236 src/gtk/data/gtk/menus-common.ui.in:122
 msgid "_Redo"
 msgstr ""
 
@@ -2035,7 +2086,7 @@ msgstr ""
 msgid "_Undo: %s"
 msgstr ""
 
-#: src/gtk/x11menu.c:3246
+#: src/gtk/x11menu.c:3246 src/gtk/data/gtk/menus-common.ui.in:127
 msgid "_Undo"
 msgstr ""
 
@@ -2096,7 +2147,7 @@ msgstr ""
 msgid "merge file property (multi select)"
 msgstr ""
 
-#: src/gtk/x11opt.c:70
+#: src/gtk/x11opt.c:70 src/gtk/data/gtk/menus-common.ui.in:501
 msgid "_Viewer"
 msgstr ""
 
@@ -2104,7 +2155,7 @@ msgstr ""
 msgid "_External Viewer"
 msgstr ""
 
-#: src/gtk/x11opt.c:78
+#: src/gtk/x11opt.c:78 src/gtk/data/gtk/menus-common.ui.in:509
 msgid "_Font aliases"
 msgstr ""
 
@@ -2112,7 +2163,7 @@ msgstr ""
 msgid "_Add-in Script"
 msgstr ""
 
-#: src/gtk/x11opt.c:86
+#: src/gtk/x11opt.c:86 src/gtk/data/gtk/menus-common.ui.in:517
 msgid "_Miscellaneous"
 msgstr ""
 
@@ -2385,7 +2436,8 @@ msgstr ""
 msgid "Drawing."
 msgstr ""
 
-#: src/gtk/x11view.c:1013
+#: src/gtk/x11view.c:1013 src/gtk/data/gtk/menus-common.ui.in:139
+#: src/gtk/data/gtk/menus-common.ui.in:572
 msgid "_Copy"
 msgstr ""
 
@@ -4190,6 +4242,382 @@ msgid ""
 "Missing data without error indication"
 msgstr ""
 
+#: src/gtk/data/gtk/menus-common.ui.in:5
+msgid "_Graph"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:8
+msgid "_New graph"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:25
+msgid "_All clear"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:43
+#: src/gtk/data/gtk/menus-common.ui.in:685
+msgid "Save _As"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:50
+#: src/gtk/data/gtk/menus-common.ui.in:691
+msgid "_Export image"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:52
+#: src/gtk/data/gtk/menus-common.ui.in:693
+msgid "_GRA file"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:56
+#: src/gtk/data/gtk/menus-common.ui.in:697
+msgid "_PS file"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:60
+#: src/gtk/data/gtk/menus-common.ui.in:701
+msgid "_EPS file"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:64
+#: src/gtk/data/gtk/menus-common.ui.in:705
+msgid "P_DF file"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:68
+#: src/gtk/data/gtk/menus-common.ui.in:709
+msgid "_SVG file"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:72
+#: src/gtk/data/gtk/menus-common.ui.in:713
+msgid "P_NG file"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:85
+msgid "Page Set_up"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:89
+msgid "Pre_view"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:100
+msgid "_Current directory"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:106
+msgid "_Ngraph shell"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:112
+msgid "_Quit"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:134
+#: src/gtk/data/gtk/menus-common.ui.in:568
+msgid "Cu_t"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:144
+#: src/gtk/data/gtk/menus-common.ui.in:576
+msgid "_Paste"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:166
+msgid "draw _Order"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:189
+#: src/gtk/data/gtk/menus-common.ui.in:596
+msgid "_Align"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:192
+#: src/gtk/data/gtk/menus-common.ui.in:599
+msgid "Align _Left"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:196
+#: src/gtk/data/gtk/menus-common.ui.in:603
+msgid "Align _Horizontal Center"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:200
+#: src/gtk/data/gtk/menus-common.ui.in:607
+msgid "Align _Right"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:206
+#: src/gtk/data/gtk/menus-common.ui.in:613
+msgid "Align _Top"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:210
+#: src/gtk/data/gtk/menus-common.ui.in:617
+msgid "Align _Vertical Center"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:214
+#: src/gtk/data/gtk/menus-common.ui.in:621
+msgid "Align _Bottom"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:220
+#: src/gtk/data/gtk/menus-common.ui.in:630
+msgid "rotate _90 degree clockwise"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:224
+#: src/gtk/data/gtk/menus-common.ui.in:634
+msgid "rotate 9_0 degree counter-clockwise"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:228
+#: src/gtk/data/gtk/menus-common.ui.in:643
+msgid "flip _Horizontally"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:232
+#: src/gtk/data/gtk/menus-common.ui.in:647
+msgid "flip _Vertically"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:238
+msgid "_View"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:248
+msgid "_Clear information view"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:254
+msgid "_Sidebar"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:258
+msgid "_Statusbar"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:262
+msgid "_Ruler"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:266
+msgid "_Scrollbar"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:270
+msgid "_Command toolbar"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:274
+msgid "_Toolbox"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:278
+#: src/gtk/data/gtk/menus-common.ui.in:673
+msgid "cross _Gauge"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:289
+msgid "_Object"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:323
+#: src/gtk/data/gtk/menus-common.ui.in:720
+msgid "_Save data"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:333
+msgid "_Axis"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:365
+msgid "Scale _Zoom"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:397
+msgid "_Path"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:410
+msgid "_Rectangle"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:423
+msgid "_Arc"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:436
+msgid "_Mark"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:449
+msgid "_Text"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:462
+msgid "_Merge"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:479
+msgid "_Parameter"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:498
+msgid "_Preference"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:505
+msgid "_External viewer"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:513
+msgid "_Add-in script"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:523
+msgid "save as default (_Settings)"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:527
+msgid "save as default (_Graph)"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:533
+msgid "_Data file default"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:537
+msgid "_Legend text default"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:543
+#: src/gtk/data/gtk/menus-common.ui.in:546
+msgid "_Help"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:555
+msgid "_Demonstration"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:559
+msgid "_About"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:627
+msgid "_Rotate"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-common.ui.in:640
+msgid "_Flip"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-tool.ui:23 src/odraw.c:66
+msgid "miter"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-tool.ui:28 src/odraw.c:67
+msgid "round"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-tool.ui:33 src/odraw.c:68
+msgid "bevel"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-tool.ui:47 src/gtk/data/gtk/menus-tool.ui:76
+#: src/odraw.c:89 src/odata.c:252
+msgid "arrow"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-tool.ui:52 src/gtk/data/gtk/menus-tool.ui:81
+#: src/odraw.c:90
+msgid "wave"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-tool.ui:57 src/gtk/data/gtk/menus-tool.ui:86
+#: src/odraw.c:91 src/odata.c:246
+msgid "mark"
+msgstr ""
+
+#: src/gtk/data/gtk/menus-tool.ui:62 src/gtk/data/gtk/menus-tool.ui:91
+#: src/odraw.c:92
+msgid "bar"
+msgstr ""
+
+#: src/gtk/data/gtk/help-overlay.ui:18
+msgid "Load a graph (NGP file)"
+msgstr ""
+
+#: src/gtk/data/gtk/help-overlay.ui:25
+msgid "Save the graph"
+msgstr ""
+
+#: src/gtk/data/gtk/help-overlay.ui:32
+msgid "Save the graph with a new filename"
+msgstr ""
+
+#: src/gtk/data/gtk/help-overlay.ui:39
+msgid "Print the graph"
+msgstr ""
+
+#: src/gtk/data/gtk/help-overlay.ui:46
+msgid "Add data file"
+msgstr ""
+
+#: src/gtk/data/gtk/help-overlay.ui:67
+msgid "Show cross gauge"
+msgstr ""
+
+#: src/gtk/data/gtk/help-overlay.ui:74
+msgid "Quit the application"
+msgstr ""
+
+#: src/gtk/data/gtk/help-overlay.ui:87
+msgid "Undo previous command"
+msgstr ""
+
+#: src/gtk/data/gtk/help-overlay.ui:94
+msgid "Redo previous command"
+msgstr ""
+
+#: src/gtk/data/gtk/help-overlay.ui:101
+msgid "Cut selected object to clipboard"
+msgstr ""
+
+#: src/gtk/data/gtk/help-overlay.ui:108
+msgid "Copy selected object to clipboard"
+msgstr ""
+
+#: src/gtk/data/gtk/help-overlay.ui:115
+msgid "Paste object from clipboard"
+msgstr ""
+
+#: src/gtk/data/gtk/help-overlay.ui:122
+msgid "Delete the selected object"
+msgstr ""
+
+#: src/gtk/data/gtk/help-overlay.ui:129
+msgid "Duplicate the selected object"
+msgstr ""
+
+#: src/gtk/data/gtk/help-overlay.ui:136
+msgid "Rise selection to top"
+msgstr ""
+
+#: src/gtk/data/gtk/help-overlay.ui:143
+msgid "Lower selection to bottom"
+msgstr ""
+
+#: src/gtk/data/gtk/help-overlay.ui:156
+msgid "Show the help document"
+msgstr ""
+
+#: src/gtk/data/gtk/help-overlay.ui:163
+msgid "Show shortcut keys"
+msgstr ""
+
 #: src/math/math_error.c:13
 msgid "syntax error, unexpected end of equation."
 msgstr ""
@@ -4290,18 +4718,6 @@ msgstr ""
 msgid "relative"
 msgstr ""
 
-#: src/odraw.c:66
-msgid "miter"
-msgstr ""
-
-#: src/odraw.c:67
-msgid "round"
-msgstr ""
-
-#: src/odraw.c:68
-msgid "bevel"
-msgstr ""
-
 #: src/odraw.c:81
 msgid "end"
 msgstr ""
@@ -4312,22 +4728,6 @@ msgstr ""
 
 #: src/odraw.c:83 src/oaxis.c:78
 msgid "both"
-msgstr ""
-
-#: src/odraw.c:89 src/odata.c:252
-msgid "arrow"
-msgstr ""
-
-#: src/odraw.c:90
-msgid "wave"
-msgstr ""
-
-#: src/odraw.c:91 src/odata.c:246
-msgid "mark"
-msgstr ""
-
-#: src/odraw.c:92
-msgid "bar"
 msgstr ""
 
 #: src/odraw.c:97
