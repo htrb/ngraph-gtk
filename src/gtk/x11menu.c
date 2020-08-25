@@ -906,7 +906,6 @@ init_action_widget_list(void)
     case EditAlignTopAction:
     case EditAlignBottomAction:
     case EditAlignVCenterAction:
-    case PopupUpdateAction:
       ActionWidget[i].type = ACTION_TYPE_FOCUS_EDIT2;
       break;
     case EditOrderTopAction:
