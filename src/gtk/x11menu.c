@@ -113,7 +113,6 @@ static GdkCursorType Cursor[] = {
 
 #define CURSOR_TYPE_NUM (sizeof(Cursor) / sizeof(*Cursor))
 
-static void clear_information(void *w, gpointer user_data);
 static void toggle_view_cb(GtkCheckMenuItem *action, gpointer data);
 
 enum FOCUS_TYPE {
@@ -1343,13 +1342,6 @@ set_focus_sensitivity(const struct Viewer *d)
 {
   set_focus_sensitivity_sub(d, FALSE);
 }
-
-static void
-clear_information(void *w, gpointer user_data)
-{
-  InfoWinClear();
-}
-
 
 static char *
 get_home(void)
