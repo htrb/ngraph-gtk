@@ -297,12 +297,6 @@
 		  <attribute name="action">app.DataAddRangeAction</attribute>
 		</item>
 	      </section>
-	      <section>
-		<item>
-		  <attribute name="label" translatable="yes">_Recent files</attribute>
-		  <attribute name="action">app.DataAddRecentFileAction</attribute>
-		</item>
-	      </section>
 	    </submenu>
 	    <item>
 	      <attribute name="label" translatable="yes">_Properties</attribute>
