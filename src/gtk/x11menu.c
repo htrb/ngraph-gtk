@@ -113,8 +113,6 @@ static GdkCursorType Cursor[] = {
 
 #define CURSOR_TYPE_NUM (sizeof(Cursor) / sizeof(*Cursor))
 
-static void toggle_view_cb(GtkCheckMenuItem *action, gpointer data);
-
 enum FOCUS_TYPE {
   FOCUS_TYPE_1 = 0,
   FOCUS_TYPE_2,
@@ -2030,20 +2028,6 @@ toggle_view(int type, int state)
   lock = FALSE;
 
   return TRUE;
-}
-
-static void
-toggle_view_cb(GtkCheckMenuItem *action, gpointer data)
-{
-  int type, state;
-
-  if (action == NULL) {
-    return;
-  }
-  type = GPOINTER_TO_INT(data);
-  state = gtk_check_menu_item_get_active(action);
-
-  toggle_view(type, state);
 }
 
 void
