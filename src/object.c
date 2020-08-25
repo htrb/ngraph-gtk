@@ -4197,8 +4197,8 @@ getvaluestr(struct objlist *obj,const char *field,void *val,int cr,int quote)
       if (quote) g_string_append_printf(str,"'");
       n = arraynum(array);
       for (k=0;k<n;k++) {
-        if (k!=0) g_string_append_printf(str," %.15e",arraynget_double(array,k));
-        else g_string_append_printf(str,"%.15e",arraynget_double(array,k));
+        if (k!=0) g_string_append_printf(str," " DOUBLE_STR_FORMAT,arraynget_double(array,k));
+        else g_string_append_printf(str,DOUBLE_STR_FORMAT,arraynget_double(array,k));
       }
       if (quote) g_string_append_printf(str,"'");
     }

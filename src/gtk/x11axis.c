@@ -1070,19 +1070,19 @@ scale_tab_setup_item(struct AxisDialog *d, int id)
     data = arraydata(array);
     for (j = 0; j < num; j++) {
       if (data[0 + j * 3] != pmin) {
-	snprintf(buf, sizeof(buf), "%.15g", data[0 + j * 3]);
+	snprintf(buf, sizeof(buf), DOUBLE_STR_FORMAT, data[0 + j * 3]);
 	combo_box_append_text(d->min, buf);
       }
       pmin = data[0 + j * 3];
 
       if (data[1 + j * 3] != pmax) {
-	snprintf(buf, sizeof(buf), "%.15g", data[1 + j * 3]);
+	snprintf(buf, sizeof(buf), DOUBLE_STR_FORMAT, data[1 + j * 3]);
 	combo_box_append_text(d->max, buf);
       }
       pmax = data[1 + j * 3];
 
       if (data[2 + j * 3] != pinc) {
-	snprintf(buf, sizeof(buf), "%.15g", data[2 + j * 3]);
+	snprintf(buf, sizeof(buf), DOUBLE_STR_FORMAT, data[2 + j * 3]);
 	combo_box_append_text(d->inc, buf);
       }
       pinc = data[2 + j * 3];
@@ -1094,13 +1094,13 @@ scale_tab_setup_item(struct AxisDialog *d, int id)
     combo_box_entry_set_text(d->max, "0");
     combo_box_entry_set_text(d->inc, "0");
   } else {
-    snprintf(buf, sizeof(buf), "%.15g", min);
+    snprintf(buf, sizeof(buf), DOUBLE_STR_FORMAT, min);
     combo_box_entry_set_text(d->min, buf);
 
-    snprintf(buf, sizeof(buf), "%.15g", max);
+    snprintf(buf, sizeof(buf), DOUBLE_STR_FORMAT, max);
     combo_box_entry_set_text(d->max, buf);
 
-    snprintf(buf, sizeof(buf), "%.15g", inc);
+    snprintf(buf, sizeof(buf), DOUBLE_STR_FORMAT, inc);
     combo_box_entry_set_text(d->inc, buf);
   }
 
@@ -1206,13 +1206,13 @@ AxisDialogFile(GtkWidget *w, gpointer client_data)
 	if (arraynum(result) == 3) {
 	  char s[30];
 
-	  snprintf(s, sizeof(s), "%.15g", arraynget_double(result, 0));
+	  snprintf(s, sizeof(s), DOUBLE_STR_FORMAT, arraynget_double(result, 0));
 	  combo_box_entry_set_text(d->min, s);
 
-	  snprintf(s, sizeof(s), "%.15g", arraynget_double(result, 1));
+	  snprintf(s, sizeof(s), DOUBLE_STR_FORMAT, arraynget_double(result, 1));
 	  combo_box_entry_set_text(d->max, s);
 
-	  snprintf(s, sizeof(s), "%.15g", arraynget_double(result, 2));
+	  snprintf(s, sizeof(s), DOUBLE_STR_FORMAT, arraynget_double(result, 2));
 	  combo_box_entry_set_text(d->inc, s);
 	}
 	putobj(d->Obj, "type", d->Id, &type);

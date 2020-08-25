@@ -8047,7 +8047,7 @@ f2dcolumn_array(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **
 
   val = arraynget_double(ary.ary[col - 1], line - 1);
 
-  rval->str = g_strdup_printf("%.15e", val);
+  rval->str = g_strdup_printf(DOUBLE_STR_FORMAT, val);
 
   return 0;
 }
@@ -8078,7 +8078,7 @@ f2dcolumn_range(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **
 
   val = min + (max - min) / div * line;
 
-  rval->str = g_strdup_printf("%.15e", val);
+  rval->str = g_strdup_printf(DOUBLE_STR_FORMAT, val);
 
   return 0;
 }
@@ -9055,29 +9055,29 @@ f2dstat(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
   if (strcmp(field, "dnum") == 0) {
     ptr = g_strdup_printf("%d", dnum);
   } else if (strcmp(field,"dminx")==0) {
-    ptr = g_strdup_printf("%.15e", stat_x.min);
+    ptr = g_strdup_printf(DOUBLE_STR_FORMAT, stat_x.min);
   } else if (strcmp(field,"dmaxx")==0) {
-    ptr = g_strdup_printf("%.15e", stat_x.max);
+    ptr = g_strdup_printf(DOUBLE_STR_FORMAT, stat_x.max);
   } else if (strcmp(field,"dminy")==0) {
-    ptr = g_strdup_printf("%.15e", stat_y.min);
+    ptr = g_strdup_printf(DOUBLE_STR_FORMAT, stat_y.min);
   } else if (strcmp(field,"dmaxy")==0) {
-    ptr = g_strdup_printf("%.15e", stat_y.max);
+    ptr = g_strdup_printf(DOUBLE_STR_FORMAT, stat_y.max);
   } else if (strcmp(field,"davx")==0) {
-    ptr = g_strdup_printf("%.15e", stat_x.ave);
+    ptr = g_strdup_printf(DOUBLE_STR_FORMAT, stat_x.ave);
   } else if (strcmp(field,"davy")==0) {
-    ptr = g_strdup_printf("%.15e", stat_y.ave);
+    ptr = g_strdup_printf(DOUBLE_STR_FORMAT, stat_y.ave);
   } else if (strcmp(field,"dsigx")==0) {
-    ptr = g_strdup_printf("%.15e", stat_x.stdevp);
+    ptr = g_strdup_printf(DOUBLE_STR_FORMAT, stat_x.stdevp);
   } else if (strcmp(field,"dsigy")==0) {
-    ptr = g_strdup_printf("%.15e", stat_y.stdevp);
+    ptr = g_strdup_printf(DOUBLE_STR_FORMAT, stat_y.stdevp);
   } else if (strcmp(field,"dstdevpx")==0) {
-    ptr = g_strdup_printf("%.15e", stat_x.stdevp);
+    ptr = g_strdup_printf(DOUBLE_STR_FORMAT, stat_x.stdevp);
   } else if (strcmp(field,"dstdevpy")==0) {
-    ptr = g_strdup_printf("%.15e", stat_y.stdevp);
+    ptr = g_strdup_printf(DOUBLE_STR_FORMAT, stat_y.stdevp);
   } else if (strcmp(field,"dstdevx")==0) {
-    ptr = g_strdup_printf("%.15e", stat_x.stdev);
+    ptr = g_strdup_printf(DOUBLE_STR_FORMAT, stat_x.stdev);
   } else if (strcmp(field,"dstdevy")==0) {
-    ptr = g_strdup_printf("%.15e", stat_y.stdev);
+    ptr = g_strdup_printf(DOUBLE_STR_FORMAT, stat_y.stdev);
   }
 
   if (ptr == NULL) return -1;
@@ -9151,13 +9151,13 @@ f2dstat2(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
 
   ptr = NULL;
   if (strcmp(field,"dx")==0) {
-    ptr = g_strdup_printf("%.15e", dx);
+    ptr = g_strdup_printf(DOUBLE_STR_FORMAT, dx);
   } else if (strcmp(field,"dy")==0) {
-    ptr = g_strdup_printf("%.15e", dy);
+    ptr = g_strdup_printf(DOUBLE_STR_FORMAT, dy);
   } else if (strcmp(field,"d2")==0) {
-    ptr = g_strdup_printf("%.15e", d2);
+    ptr = g_strdup_printf(DOUBLE_STR_FORMAT, d2);
   } else if (strcmp(field,"d3")==0) {
-    ptr = g_strdup_printf("%.15e", d3);
+    ptr = g_strdup_printf(DOUBLE_STR_FORMAT, d3);
   }
 
   if (ptr == NULL) {
@@ -10562,7 +10562,7 @@ solve_equation(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **a
     error(obj, ERRCONVERGE);
     return 1;
   }
-  rval->str = g_strdup_printf("%.15e", x);
+  rval->str = g_strdup_printf(DOUBLE_STR_FORMAT, x);
 
   return 0;
 }
@@ -10638,7 +10638,7 @@ calc_equation(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **ar
     break;
   }
 
-  rval->str = g_strdup_printf("%.15e", y);
+  rval->str = g_strdup_printf(DOUBLE_STR_FORMAT, y);
 
   return 0;
 }
@@ -10683,7 +10683,7 @@ get_fit_parameter(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char 
     return -1;
   }
 
-  rval->str = g_strdup_printf("%.15e", val);
+  rval->str = g_strdup_printf(DOUBLE_STR_FORMAT, val);
 
   return 0;
 }

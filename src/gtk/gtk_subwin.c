@@ -197,7 +197,7 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
 	double val;
 
 	getobj(d->obj, list->name, sel, 0, NULL, &val);
-	snprintf(buf, sizeof(buf), "%.15g", val);
+	snprintf(buf, sizeof(buf), DOUBLE_STR_FORMAT, val);
 	gtk_entry_set_text(GTK_ENTRY(editable), buf);
       } else {
 	char *valstr;

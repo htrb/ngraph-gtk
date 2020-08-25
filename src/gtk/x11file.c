@@ -1871,10 +1871,10 @@ move_tab_setup_item(struct FileDialog *d, int id)
     list_store_append(d->move.list, &iter);
     list_store_set_int(d->move.list, &iter, 0, line);
 
-    snprintf(buf, sizeof(buf), "%+.15e", x);
+    snprintf(buf, sizeof(buf), DOUBLE_STR_FORMAT, x);
     list_store_set_string(d->move.list, &iter, 1, buf);
 
-    snprintf(buf, sizeof(buf), "%+.15e", y);
+    snprintf(buf, sizeof(buf), DOUBLE_STR_FORMAT, y);
     list_store_set_string(d->move.list, &iter, 2, buf);
   }
 }
@@ -1910,10 +1910,10 @@ FileMoveDialogAdd(GtkWidget *w, gpointer client_data)
   list_store_append(d->move.list, &iter);
   list_store_set_int(d->move.list, &iter, 0, a);
 
-  snprintf(buf2, sizeof(buf2), "%+.15e", x);
+  snprintf(buf2, sizeof(buf2), DOUBLE_STR_FORMAT, x);
   list_store_set_string(d->move.list, &iter, 1, buf2);
 
-  snprintf(buf2, sizeof(buf2), "%+.15e", y);
+  snprintf(buf2, sizeof(buf2), DOUBLE_STR_FORMAT, y);
   list_store_set_string(d->move.list, &iter, 2, buf2);
 
   gtk_entry_set_text(GTK_ENTRY(d->move.x), "");
