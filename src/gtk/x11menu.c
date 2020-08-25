@@ -154,7 +154,6 @@ struct ActionWidget {
 
 enum ActionWidgetIndex {
   GraphSaveAction,
-  EditMenuAction,
   EditRedoAction,
   EditUndoAction,
   EditCutAction,
@@ -176,7 +175,6 @@ enum ActionWidgetIndex {
   EditOrderUpAction,
   EditOrderDownAction,
   EditOrderBottomAction,
-  PopupUpdateAction,
   EditPasteAction,
   ViewSidebarAction,
   ViewStatusbarAction,
@@ -212,7 +210,6 @@ enum ActionWidgetIndex {
   LegendTextDeleteAction,
   MergePropertyAction,
   MergeCloseAction,
-  AddinAction,
   PointerModeBoth,
   PointerModeLegend,
   PointerModeAxis,
