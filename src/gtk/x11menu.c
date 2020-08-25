@@ -1201,49 +1201,6 @@ add_addin_menu(void)
   g_menu_prepend_submenu(G_MENU(menu), _("_Add-in"), G_MENU_MODEL(addin_menu));
 }
 
-void
-create_addin_menu(void)
-{
-  GtkWidget *menu, *item, *parent;
-  struct script *fcur;
-
-  parent = ActionWidget[AddinAction].menu;
-  if (parent == NULL) {
-    return;
-  }
-
-  gtk_widget_set_sensitive(parent, Menulocal.scriptroot != NULL);
-  if (Menulocal.scriptroot == NULL) {
-    return;
-  }
-
-  menu = gtk_menu_item_get_submenu(GTK_MENU_ITEM(parent));
-  if (menu) {
-    gtk_widget_destroy(menu);
-  }
-
-  menu = gtk_menu_new();
-
-  gtk_menu_item_set_submenu(GTK_MENU_ITEM(parent), menu);
-
-  fcur = Menulocal.scriptroot;
-  while (fcur) {
-    if (fcur->name && fcur->script) {
-      item = gtk_menu_item_new_with_mnemonic(fcur->name);
-      g_signal_connect(item, "activate", G_CALLBACK(script_exec), fcur);
-      gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(item));
-      if (Menulocal.showtip && fcur->description) {
-	gtk_widget_set_tooltip_text(item, fcur->description);
-      }
-    }
-    fcur = fcur->next;
-  }
-
-  gtk_widget_show_all(menu);
-
-  add_addin_menu();
-}
-
 static void
 set_focus_sensitivity_sub(const struct Viewer *d, int insensitive)
 {
