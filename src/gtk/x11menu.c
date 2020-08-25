@@ -147,7 +147,6 @@ enum ACTION_TYPE {
 };
 
 struct ActionWidget {
-  GtkWidget *menu, *popup;
   GtkToolItem *tool;
   GAction *action;
   enum ACTION_TYPE type;
