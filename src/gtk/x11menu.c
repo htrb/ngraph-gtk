@@ -1149,8 +1149,8 @@ find_gra2gdk_inst(struct objlist **o, N_VALUE **i, struct objlist **ro, int *rou
 
 
 #define ADDIN_MENU_SECTION_INDEX 6
-static void
-add_addin_menu(void)
+void
+create_addin_menu(void)
 {
   GMenuModel *menu;
   GMenu *addin_menu;
