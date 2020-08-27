@@ -2290,7 +2290,6 @@ create_toplevel_window(void)
 
   GtkApp = create_application_window(&popup);
   CurrentWindow = TopLevel = gtk_application_window_new(GtkApp);
-  gtk_window_set_modal(GTK_WINDOW(TopLevel), TRUE); /* for the GtkColorButton (modal GtkColorChooserDialog) */
   gtk_application_window_set_show_menubar(GTK_APPLICATION_WINDOW(TopLevel), TRUE);
   if (popup) {
     NgraphApp.Viewer.popup = popup;
