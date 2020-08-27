@@ -869,7 +869,7 @@ set_pointer_mode(int id)
   case PointerModeLegend:
   case PointerModeAxis:
   case PointerModeData:
-    gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(ActionWidget[id].tool), TRUE);
+    gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(PointerModeButtons[id]), TRUE);
     break;
   }
 }
