@@ -556,7 +556,7 @@ CopyClick(GtkWidget *parent, struct objlist *obj, int Id,
 {
   int sel;
 
-  CopyDialog(&DlgCopy, obj, Id, "copy property (single select)", callback);
+  CopyDialog(&DlgCopy, obj, Id, _("copy property (single select)"), callback);
 
   if (DialogExecute(parent, &DlgCopy) == IDOK) {
     sel = DlgCopy.sel;
