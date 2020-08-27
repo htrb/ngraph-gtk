@@ -890,6 +890,7 @@ DeleteDrawable(void)
   if (prmobj) {
     delete_instances(prmobj);
   }
+  set_toolbox_mode(TOOLBOX_MODE_TOOLBAR);
 }
 
 static void
