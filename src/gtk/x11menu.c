@@ -875,7 +875,6 @@ init_action_widget_list(void)
   int i;
 
   for (i = 0; i < ActionWidgetNum; i++) {
-    ActionWidget[i].tool = NULL;
     switch (i) {
     case GraphSaveAction:
       ActionWidget[i].type = ACTION_TYPE_MODIFIED;
