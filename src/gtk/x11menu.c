@@ -65,7 +65,6 @@
 #define MATH_Y_HISTORY   "math_y_history"
 #define FUNCTION_HISTORY "function_history"
 #define FIT_HISTORY      "fit_history"
-#define KEYMAP_FILE      "accel_map"
 #define FUNC_MATH_HISTORY   "func_math_history"
 #define FUNC_FUNC_HISTORY   "func_func_history"
 
@@ -75,7 +74,6 @@
 int Menulock = FALSE, DnDLock = FALSE;
 struct NgraphApp NgraphApp = {0};
 GtkWidget *TopLevel = NULL, *DrawButton = NULL;
-GtkAccelGroup *AccelGroup = NULL;
 
 static GtkWidget *CurrentWindow = NULL, *CToolbar = NULL, *PToolbar = NULL, *SettingPanel = NULL, *ToolBox = NULL;
 static enum {APP_CONTINUE, APP_QUIT, APP_QUIT_FORCE} Hide_window = APP_CONTINUE;
@@ -2404,11 +2402,6 @@ create_toplevel_window(void)
   gtk_window_set_title(GTK_WINDOW(TopLevel), AppName);
   gtk_window_set_default_size(GTK_WINDOW(TopLevel), width, height);
   gtk_window_move(GTK_WINDOW(TopLevel), x, y);
-
-  if (AccelGroup == NULL) {
-    AccelGroup = gtk_accel_group_new();
-  }
-  gtk_window_add_accel_group(GTK_WINDOW(TopLevel), AccelGroup);
 
   g_signal_connect(TopLevel, "delete-event", G_CALLBACK(CloseCallback), NULL);
   g_signal_connect(TopLevel, "destroy-event", G_CALLBACK(CloseCallback), NULL);
