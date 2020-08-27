@@ -207,14 +207,19 @@ enum ActionWidgetIndex {
   LegendTextDeleteAction,
   MergePropertyAction,
   MergeCloseAction,
+  ActionWidgetNum,
+};
+
+enum PointerMode {
   PointerModeBoth,
   PointerModeLegend,
   PointerModeAxis,
   PointerModeData,
-  ActionWidgetNum,
+  PointerModeNum,
 };
 
 struct ActionWidget ActionWidget[ActionWidgetNum];
+static GtkToolItem *PointerModeButtons[PointerModeNum];
 static int DefaultMode = PointerModeBoth;
 
 struct ToolItem {
