@@ -2310,8 +2310,10 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
 		       G_CALLBACK(tool_button_enter_leave_cb), NULL);
     }
 
-    if (item[i].action) {
-      item[i].action->tool = widget;
+    if (item[i].button > 0) {
+      int id;
+      id = item[i].button - PointerModeOffset;
+      PointerModeButtons[id]= widget;
     }
 
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(widget), -1);
