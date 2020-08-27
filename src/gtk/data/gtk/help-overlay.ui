@@ -90,7 +90,7 @@
 	    <child>
 	      <object class="GtkShortcutsShortcut">
 		<property name="visible">1</property>
-		<property name="action-name">app.EditUndoAction</property>
+		<property name="action-name">app.EditRedoAction</property>
 		<property name="title" translatable="yes">Redo previous command</property>
 	      </object>
 	    </child>
