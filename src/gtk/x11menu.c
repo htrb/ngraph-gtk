@@ -2188,8 +2188,7 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
 
     if (item[i].action_name) {
       gtk_actionable_set_action_name(GTK_ACTIONABLE(widget), item[i].action_name);
-    } else
-    if (item[i].callback) {
+    } else if (item[i].callback) {
       g_signal_connect(widget, "clicked", G_CALLBACK(item[i].callback), GINT_TO_POINTER(item[i].user_data));
     }
 
