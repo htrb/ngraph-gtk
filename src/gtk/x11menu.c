@@ -2940,6 +2940,7 @@ set_toolbox_mode(enum TOOLBOX_MODE mode)
     break;
   }
   gtk_stack_set_visible_child(GTK_STACK(ToolBox), widget);
+  gtk_window_set_modal(GTK_WINDOW(TopLevel), widget == SettingPanel); /* for the GtkColorButton (modal GtkColorChooserDialog) */
 }
 
 #define MODIFIED_TYPE_UNMODIFIED 0
