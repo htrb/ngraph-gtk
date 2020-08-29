@@ -1053,13 +1053,13 @@ CmGraphNewMenu(void *w, gpointer client_data)
   sel = GPOINTER_TO_INT(client_data);
   switch (sel) {
   case MenuIdGraphNewFrame:
-    CmAxisNewFrame(NULL, client_data);
+    CmAxisNewFrame(FALSE);
     break;
   case MenuIdGraphNewSection:
-    CmAxisNewSection(NULL, client_data);
+    CmAxisNewSection(FALSE);
     break;
   case MenuIdGraphNewCross:
-    CmAxisNewCross(NULL, client_data);
+    CmAxisNewCross(FALSE);
     break;
   case MenuIdGraphAllClear:
   default:
