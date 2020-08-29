@@ -4174,7 +4174,7 @@ ViewerEvLButtonDblClk(unsigned int state, TPoint *point, struct Viewer *d)
   }
 
   if ((d->Mode & POINT_TYPE_DRAW_ALL) && ! KeepMouseMode) {
-    set_pointer_mode(-1);
+    set_pointer_mode(PointerModeDefault);
   }
 
   return TRUE;
