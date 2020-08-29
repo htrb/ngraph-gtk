@@ -23,10 +23,10 @@
 
 char *AxisCB(struct objlist *obj, int id);
 
-void CmAxisNewFrame(void *w, gpointer client_data);
 void CmAxisNewSection(void *w, gpointer client_data);
 void CmAxisNewCross(void *w, gpointer client_data);
 void CmAxisNewSingle(void *w, gpointer client_data);
+void CmAxisNewFrame(int use_presettings);
 
 void CmAxisUpdate(void *w, gpointer client_data);
 void CmAxisDel(void *w, gpointer client_data);

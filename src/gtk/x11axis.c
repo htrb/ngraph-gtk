@@ -2406,6 +2406,14 @@ AxisDialog(struct obj_list_data *data, int id, int user_data)
 }
 
 void
+CmAxisAddFrame(void *w, gpointer client_data)
+{
+  enum TOOLBOX_MODE mode;
+  mode = get_toolbox_mode();
+  CmAxisNewFrame(mode == TOOLBOX_MODE_SETTING_PANEL);
+}
+
+void
 CmAxisNewFrame(int use_presettings)
 {
   struct objlist *obj, *obj2;
