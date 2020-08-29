@@ -1698,6 +1698,21 @@ ViewSelectAll(void)
   }
 }
 
+static void
+set_pointer_mode_by_obj(struct objlist *obj)
+{
+  int pointer_mode;
+  const char *name;
+
+  name = chkobjectname(obj);
+  if (g_strcmp0(name, "axis")) {
+    pointer_mode = PointerModeFocusLegend;
+  } else {
+    pointer_mode = PointerModeFocusAxis;
+  }
+  set_pointer_mode(pointer_mode);
+}
+
 void
 ViewerSelectAllObj(struct objlist *obj)
 {
