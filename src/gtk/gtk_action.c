@@ -487,7 +487,7 @@ AxisAddSectionAction_activated(GSimpleAction *action, GVariant *parameter, gpoin
 static void
 AxisAddCrossAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmAxisNewCross(NULL, NULL);
+  CmAxisAddCross(NULL, NULL);
 }
 
 static void
