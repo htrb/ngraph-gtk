@@ -93,10 +93,10 @@ static void AxisWinAxisDown(GtkWidget *w, gpointer client_data);
 static void AxisWinAxisLast(GtkWidget *w, gpointer client_data);
 
 static struct subwin_popup_list add_menu_list[] = {
-  {N_("_Frame graph"), G_CALLBACK(CmAxisNewFrame), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {N_("_Section graph"), G_CALLBACK(CmAxisNewSection), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {N_("_Cross graph"), G_CALLBACK(CmAxisNewCross), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {N_("Single _Axis"), G_CALLBACK(CmAxisNewSingle), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("_Frame graph"), G_CALLBACK(CmAxisAddFrame), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("_Section graph"), G_CALLBACK(CmAxisAddSection), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("_Cross graph"), G_CALLBACK(CmAxisAddCross), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("Single _Axis"), G_CALLBACK(CmAxisAddSingle), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {NULL, NULL, NULL, POP_UP_MENU_ITEM_TYPE_END},
 };
 
