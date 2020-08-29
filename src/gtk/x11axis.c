@@ -2414,6 +2414,14 @@ CmAxisAddFrame(void *w, gpointer client_data)
 }
 
 void
+CmAxisAddSection(void *w, gpointer client_data)
+{
+  enum TOOLBOX_MODE mode;
+  mode = get_toolbox_mode();
+  CmAxisNewSection(mode == TOOLBOX_MODE_SETTING_PANEL);
+}
+
+void
 CmAxisNewFrame(int use_presettings)
 {
   struct objlist *obj, *obj2;
