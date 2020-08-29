@@ -1669,6 +1669,7 @@ ViewSelectAll(void)
   struct Viewer *d;
   int focus;
 
+  set_pointer_mode(PointerModeFocus);
   d = &NgraphApp.Viewer;
   switch (d->Mode) {
   case PointB:
