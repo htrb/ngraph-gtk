@@ -2581,7 +2581,7 @@ CmAxisNewCross(int use_presettings)
 }
 
 void
-CmAxisNewSingle(void *w, gpointer client_data)
+CmAxisAddSingle(void *w, gpointer client_data)
 {
   struct objlist *obj;
   int id, undo;
