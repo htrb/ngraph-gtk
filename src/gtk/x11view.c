@@ -4974,7 +4974,7 @@ ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data)
     } else {
       UnFocus();
     }
-    set_pointer_mode(-1);
+    set_pointer_mode(PointerModeDefault);
     goto EXIT_PROPAGATE;
   case GDK_KEY_space:
     CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
