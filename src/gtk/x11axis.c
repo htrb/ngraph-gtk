@@ -2406,7 +2406,7 @@ AxisDialog(struct obj_list_data *data, int id, int user_data)
 }
 
 void
-CmAxisNewFrame(void *w, gpointer client_data)
+CmAxisNewFrame(int use_presettings)
 {
   struct objlist *obj, *obj2;
   int idx, idy, idu, idr, idg, ret;
@@ -2445,10 +2445,12 @@ CmAxisNewFrame(void *w, gpointer client_data)
   argv[1] = NULL;
   exeobj(obj, "default_grouping", idr, 1, argv);
   arraydel(&group);
-  presetting_set_obj_field(obj, idx);
-  presetting_set_obj_field(obj, idy);
-  presetting_set_obj_field(obj, idu);
-  presetting_set_obj_field(obj, idr);
+  if (use_presettings) {
+    presetting_set_obj_field(obj, idx);
+    presetting_set_obj_field(obj, idy);
+    presetting_set_obj_field(obj, idu);
+    presetting_set_obj_field(obj, idr);
+  }
   SectionDialog(&DlgSection, x, y, lenx, leny, obj, idx, idy, idu, idr, obj2,
 		&idg, FALSE);
   ret = DialogExecute(TopLevel, &DlgSection);
