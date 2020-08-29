@@ -2534,7 +2534,7 @@ CmAxisNewSection(int use_presettings)
 }
 
 void
-CmAxisNewCross(void *w, gpointer client_data)
+CmAxisNewCross(int use_presettings)
 {
   struct objlist *obj;
   int idx, idy, ret;
@@ -2566,8 +2566,10 @@ CmAxisNewCross(void *w, gpointer client_data)
   argv[1] = NULL;
   exeobj(obj, "default_grouping", idy, 1, argv);
   arraydel(&group);
-  presetting_set_obj_field(obj, idx);
-  presetting_set_obj_field(obj, idy);
+  if (use_presettings) {
+    presetting_set_obj_field(obj, idx);
+    presetting_set_obj_field(obj, idy);
+  }
   CrossDialog(&DlgCross, x, y, lenx, leny, obj, idx, idy);
   ret = DialogExecute(TopLevel, &DlgCross);
   if (ret == IDCANCEL) {
