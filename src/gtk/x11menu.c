@@ -747,17 +747,50 @@ static struct MenuItem MenuAction[] = {
 void
 set_pointer_mode(int id)
 {
-  if (id < 0) {
-    id = DefaultMode;
-  }
+  GtkToolItem *button;
 
+  button = NULL;
   switch (id) {
+  case PointerModeDefault:
+    button = PointerModeButtons[DefaultMode];
+    break;
+  case PointerModeFocus:
+    button = PointerModeButtons[(DefaultMode == PointerModeData) ? PointerModeBoth : DefaultMode];
+    break;
+  case PointerModeFocusAxis:
+    switch (DefaultMode) {
+    case PointerModeLegend:
+    case PointerModeData:
+      id = PointerModeBoth;
+      break;
+    default:
+      id = DefaultMode;
+      break;
+    }
+    button = PointerModeButtons[id];
+    break;
+  case PointerModeFocusLegend:
+    switch (DefaultMode) {
+    case PointerModeAxis:
+    case PointerModeData:
+      id = PointerModeBoth;
+      break;
+    default:
+      id = DefaultMode;
+      break;
+    }
+    button = PointerModeButtons[id];
+    break;
   case PointerModeBoth:
   case PointerModeLegend:
   case PointerModeAxis:
   case PointerModeData:
-    gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(PointerModeButtons[id]), TRUE);
+    button = PointerModeButtons[id];
     break;
+  }
+
+  if (button) {
+    gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(button), TRUE);
   }
 }
 
