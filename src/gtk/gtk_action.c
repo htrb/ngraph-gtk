@@ -481,7 +481,7 @@ AxisAddFrameAction_activated(GSimpleAction *action, GVariant *parameter, gpointe
 static void
 AxisAddSectionAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmAxisNewSection(NULL, NULL);
+  CmAxisAddSection(NULL, NULL);
 }
 
 static void
