@@ -1726,6 +1726,7 @@ ViewerSelectAllObj(struct objlist *obj)
     return;
   }
   UnFocus();
+  set_pointer_mode_by_obj(obj);
   d = &NgraphApp.Viewer;
   n = select_obj(name, d, NULL);
   if (n < 1) {
