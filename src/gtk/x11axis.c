@@ -2463,7 +2463,7 @@ CmAxisNewFrame(int use_presettings)
 }
 
 void
-CmAxisNewSection(void *w, gpointer client_data)
+CmAxisNewSection(int use_presettings)
 {
   struct objlist *obj, *obj2;
   int idx, idy, idu, idr, idg, ret, oidx, oidy, undo;
@@ -2515,11 +2515,13 @@ CmAxisNewSection(void *w, gpointer client_data)
       putobj(obj2, "axis_y", idg, ref);
     }
   }
-  presetting_set_obj_field(obj, idx);
-  presetting_set_obj_field(obj, idy);
-  presetting_set_obj_field(obj, idu);
-  presetting_set_obj_field(obj, idr);
-  presetting_set_obj_field(obj2, idg);
+  if (use_presettings) {
+    presetting_set_obj_field(obj, idx);
+    presetting_set_obj_field(obj, idy);
+    presetting_set_obj_field(obj, idu);
+    presetting_set_obj_field(obj, idr);
+    presetting_set_obj_field(obj2, idg);
+  }
   SectionDialog(&DlgSection, x, y, lenx, leny, obj, idx, idy, idu, idr, obj2,
 		&idg, TRUE);
   ret = DialogExecute(TopLevel, &DlgSection);
