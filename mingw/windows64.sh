@@ -108,6 +108,11 @@ make_zip() {
 	esac
     done
 
+    cat <<'[EOF]' > $PKG_DIR/ngraph.bat
+@echo off
+bin\ngraph "%1" "%2" "%3" "%4" "%5" "%6" "%7" "%8" "%9"
+[EOF]
+
     archive=ngraph-gtk-${VERSION}-win$1.zip
     if [ -f $archive ]
     then
