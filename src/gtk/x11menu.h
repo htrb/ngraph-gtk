@@ -290,6 +290,7 @@ enum TOOLBOX_MODE {
 };
 
 void set_toolbox_mode(enum TOOLBOX_MODE mode);
+enum TOOLBOX_MODE get_toolbox_mode(void);
 
 int application(char *file);
 

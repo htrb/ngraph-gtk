@@ -2935,6 +2935,15 @@ set_toolbox_mode(enum TOOLBOX_MODE mode)
   gtk_window_set_modal(GTK_WINDOW(TopLevel), widget == SettingPanel); /* for the GtkColorButton (modal GtkColorChooserDialog) */
 }
 
+enum TOOLBOX_MODE
+get_toolbox_mode(void)
+{
+  GtkWidget *widget;
+
+  widget = gtk_stack_get_visible_child(GTK_STACK(ToolBox));
+  return (widget == CToolbar) ? TOOLBOX_MODE_TOOLBAR: TOOLBOX_MODE_SETTING_PANEL;
+}
+
 #define MODIFIED_TYPE_UNMODIFIED 0
 #define MODIFIED_TYPE_DRAWOBJ    1
 #define MODIFIED_TYPE_GRAOBJ     2
