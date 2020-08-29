@@ -475,7 +475,7 @@ ParameterDeleteAction_activated(GSimpleAction *action, GVariant *parameter, gpoi
 static void
 AxisAddFrameAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmAxisNewFrame(NULL, NULL);
+  CmAxisAddFrame(NULL, NULL);
 }
 
 static void
