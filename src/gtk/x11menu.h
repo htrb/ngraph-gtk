@@ -129,6 +129,18 @@ enum MouseMode {
   MOUSESCROLLE,
 };
 
+enum PointerMode {
+  PointerModeBoth,
+  PointerModeLegend,
+  PointerModeAxis,
+  PointerModeData,
+  PointerModeNum,
+  PointerModeDefault,
+  PointerModeFocus,
+  PointerModeFocusAxis,
+  PointerModeFocusLegend,
+};
+
 enum pop_up_menu_item_type {
   POP_UP_MENU_ITEM_TYPE_NORMAL,
   POP_UP_MENU_ITEM_TYPE_CHECK,

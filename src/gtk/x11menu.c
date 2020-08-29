@@ -207,14 +207,6 @@ enum ActionWidgetIndex {
   ActionWidgetNum,
 };
 
-enum PointerMode {
-  PointerModeBoth,
-  PointerModeLegend,
-  PointerModeAxis,
-  PointerModeData,
-  PointerModeNum,
-};
-
 struct ActionWidget ActionWidget[ActionWidgetNum];
 static GtkToolItem *PointerModeButtons[PointerModeNum];
 static int DefaultMode = PointerModeBoth;
