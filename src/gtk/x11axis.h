@@ -23,12 +23,14 @@
 
 char *AxisCB(struct objlist *obj, int id);
 
-void CmAxisNewCross(void *w, gpointer client_data);
-void CmAxisNewSingle(void *w, gpointer client_data);
 void CmAxisNewFrame(int use_presettings);
 void CmAxisNewSection(int use_presettings);
+void CmAxisNewCross(int use_presettings);
+
 void CmAxisAddFrame(void *w, gpointer client_data);
 void CmAxisAddSection(void *w, gpointer client_data);
+void CmAxisAddCross(void *w, gpointer client_data);
+void CmAxisAddSingle(void *w, gpointer client_data);
 
 void CmAxisUpdate(void *w, gpointer client_data);
 void CmAxisDel(void *w, gpointer client_data);
