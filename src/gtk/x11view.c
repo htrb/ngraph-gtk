@@ -5360,6 +5360,7 @@ Focus(struct objlist *fobj, int id, enum FOCUS_MODE mode)
     return;
   }
 
+  set_pointer_mode_by_obj(fobj);
   ignorestdio(&save);
   if (axis) {
     getobj(fobj, "group_manager", id, 0, NULL, &man);
