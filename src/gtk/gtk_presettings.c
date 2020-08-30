@@ -254,24 +254,12 @@ static int
 modify_font_style(struct objlist *obj, N_VALUE *inst, const char *field, int new_style, int apply, const char *font_field)
 {
   int style, old_style, id;
-  struct compatible_font_info *compatible;
-  char *font;
 
   if (chkobjfield(obj, field)) {
     return 0;
   }
 
-  _getobj(obj, font_field, inst, &font);
-  compatible = gra2cairo_get_compatible_font_info(font);
-  if (compatible && compatible->name && ! compatible->symbol) {
-    g_free(font);
-    font = g_strdup(compatible->name);
-    _putobj(obj, font_field, inst, font);
-    old_style = style = compatible->style;
-  } else {
-    _getobj(obj, field, inst, &style);
-    old_style = style;
-  }
+  style = old_style = get_font_style(obj, inst, field, font_field);
   style &= (~ new_style);
   if (apply) {
     style |= new_style;
