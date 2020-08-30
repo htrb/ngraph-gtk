@@ -5965,7 +5965,6 @@ static void
 select_type(GtkComboBox *w, gpointer user_data)
 {
   int sel, col_type, type, mark_type, curve_type, enum_id, found, active, join, ret, undo;
-  struct objlist *obj;
   struct obj_list_data *d;
   GtkTreeStore *list;
   GtkTreeIter iter;
@@ -5980,8 +5979,7 @@ select_type(GtkComboBox *w, gpointer user_data)
   if (sel < 0)
     return;
 
-  obj = getobject("data");
-  getobj(obj, "type", sel, 0, NULL, &type);
+  getobj(d->obj, "type", sel, 0, NULL, &type);
 
   list = GTK_TREE_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(w)));
   found = gtk_combo_box_get_active_iter(w, &iter);
@@ -5995,12 +5993,12 @@ select_type(GtkComboBox *w, gpointer user_data)
 
   switch (col_type) {
   case FILE_COMBO_ITEM_COLOR_1:
-    if (select_obj_color(obj, sel, OBJ_FIELD_COLOR_TYPE_1)) {
+    if (select_obj_color(d->obj, sel, OBJ_FIELD_COLOR_TYPE_1)) {
       return;
     }
     break;
   case FILE_COMBO_ITEM_COLOR_2:
-    if (select_obj_color(obj, sel, OBJ_FIELD_COLOR_TYPE_2)) {
+    if (select_obj_color(d->obj, sel, OBJ_FIELD_COLOR_TYPE_2)) {
       return;
     }
     break;
@@ -6008,51 +6006,51 @@ select_type(GtkComboBox *w, gpointer user_data)
     if (enum_id == type) {
       return;
     }
-    undo = menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
-    putobj(obj, "type", sel, &enum_id);
+    undo = menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
+    putobj(d->obj, "type", sel, &enum_id);
     if (enum_id == PLOT_TYPE_FIT) {
       char *fit;
 
-      getobj(obj, "fit", sel, 0, NULL, &fit);
+      getobj(d->obj, "fit", sel, 0, NULL, &fit);
       if (fit == NULL) {
-	ret = show_fit_dialog(obj, sel, TopLevel);
+	ret = show_fit_dialog(d->obj, sel, TopLevel);
 	if (ret != IDOK) {
 	  menu_delete_undo(undo);
-	  putobj(obj, "type", sel, &type);
+	  putobj(d->obj, "type", sel, &type);
 	  return;
 	}
       }
     }
     break;
   case FILE_COMBO_ITEM_MARK:
-    getobj(obj, "mark_type", sel, 0, NULL, &mark_type);
+    getobj(d->obj, "mark_type", sel, 0, NULL, &mark_type);
     if (type == PLOT_TYPE_MARK && enum_id == mark_type)
       return;
 
-    menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
-    putobj(obj, "mark_type", sel, &enum_id);
+    menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
+    putobj(d->obj, "mark_type", sel, &enum_id);
 
     type = PLOT_TYPE_MARK;
-    putobj(obj, "type", sel, &type);
+    putobj(d->obj, "type", sel, &type);
 
     break;
   case FILE_COMBO_ITEM_INTP:
-    getobj(obj, "interpolation", sel, 0, NULL, &curve_type);
+    getobj(d->obj, "interpolation", sel, 0, NULL, &curve_type);
     if (type == PLOT_TYPE_CURVE && enum_id == curve_type)
       return;
 
-    menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
-    putobj(obj, "interpolation", sel, &enum_id);
+    menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
+    putobj(d->obj, "interpolation", sel, &enum_id);
 
     type = PLOT_TYPE_CURVE;
-    putobj(obj, "type", sel, &type);
+    putobj(d->obj, "type", sel, &type);
 
     break;
   case FILE_COMBO_ITEM_LINESTYLE:
     if (enum_id < 0 || enum_id >= FwNumStyleNum) {
       return;
     }
-    menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
+    menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
     if (chk_sputobjfield(d->obj, sel, "line_style", FwLineStyle[enum_id].list) != 0) {
       return;
     }
@@ -6062,7 +6060,7 @@ select_type(GtkComboBox *w, gpointer user_data)
     break;
   case FILE_COMBO_ITEM_FIT:
     undo = data_save_undo(UNDO_TYPE_EDIT);
-    ret = show_fit_dialog(obj, sel, TopLevel);
+    ret = show_fit_dialog(d->obj, sel, TopLevel);
     if (ret != IDOK) {
       menu_delete_undo(undo);
       return;
@@ -6074,13 +6072,13 @@ select_type(GtkComboBox *w, gpointer user_data)
     if (join == enum_id) {
       return;
     }
-    menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
+    menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
     putobj(d->obj, "line_join", sel, &enum_id);
     break;
   case FILE_COMBO_ITEM_CLIP:
     gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);
     active = ! active;
-    menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
+    menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
     putobj(d->obj, "data_clip", sel, &active);
     break;
   default:
