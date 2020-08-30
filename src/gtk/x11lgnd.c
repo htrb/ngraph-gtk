@@ -3109,7 +3109,7 @@ set_fill(struct objlist *obj, int id, int fill)
 static void
 select_type(GtkComboBox *w, gpointer user_data)
 {
-  int sel, col_type, mark_type, enum_id, found, active, style, modified, fill_rule, join, r;
+  int sel, col_type, mark_type, enum_id, found, active, modified, fill_rule, join, r;
   struct obj_list_data *d;
   GtkTreeStore *list;
   GtkTreeIter iter;
@@ -3232,20 +3232,6 @@ select_type(GtkComboBox *w, gpointer user_data)
     active = ! active;
     putobj(d->obj, "close_path", sel, &active);
     set_stroke(d->obj, sel, TRUE);
-    break;
-  case LEGEND_COMBO_ITEM_STYLE_BOLD:
-    gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);
-    getobj(d->obj, "style", sel, 0, NULL, &style);
-    style = (style & GRA_FONT_STYLE_ITALIC) | (active ? 0 : GRA_FONT_STYLE_BOLD);
-    menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
-    putobj(d->obj, "style", sel, &style);
-    break;
-  case LEGEND_COMBO_ITEM_STYLE_ITALIC:
-    gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);
-    getobj(d->obj, "style", sel, 0, NULL, &style);
-    style = (style & GRA_FONT_STYLE_BOLD) | (active ? 0 : GRA_FONT_STYLE_ITALIC);
-    menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
-    putobj(d->obj, "style", sel, &style);
     break;
   default:
     return;
