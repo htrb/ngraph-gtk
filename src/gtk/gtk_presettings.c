@@ -251,14 +251,27 @@ set_font_style(struct objlist *obj, int id, const char *field)
 }
 
 static int
-modify_font_style(struct objlist *obj, N_VALUE *inst, const char *field, int new_style, int apply)
+modify_font_style(struct objlist *obj, N_VALUE *inst, const char *field, int new_style, int apply, const char *font_field)
 {
   int style, old_style, id;
+  struct compatible_font_info *compatible;
+  char *font;
+
   if (chkobjfield(obj, field)) {
     return 0;
   }
-  _getobj(obj, field, inst, &style);
-  old_style = style;
+
+  _getobj(obj, font_field, inst, &font);
+  compatible = gra2cairo_get_compatible_font_info(font);
+  if (compatible && compatible->name && ! compatible->symbol) {
+    g_free(font);
+    font = g_strdup(compatible->name);
+    _putobj(obj, font_field, inst, font);
+    old_style = style = compatible->style;
+  } else {
+    _getobj(obj, field, inst, &style);
+    old_style = style;
+  }
   style &= (~ new_style);
   if (apply) {
     style |= new_style;
@@ -1576,7 +1589,7 @@ update_focused_obj_font_style_axis(struct objlist *obj, N_VALUE *inst, int style
   }
 
   for (i = 0; i < info.num; i++) {
-    if (modify_font_style(obj, info.inst[i], "num_font_style", style, apply)) {
+    if (modify_font_style(obj, info.inst[i], "num_font_style", style, apply, "num_font")) {
       modified = TRUE;
     }
   }
@@ -1605,7 +1618,7 @@ update_focused_obj_font_style(struct Viewer *d, int num, int style, int apply)
     }
     obj = focus->obj;
     if (obj == text_obj) {
-      if (modify_font_style(obj, inst, "style", style, apply)) {
+      if (modify_font_style(obj, inst, "style", style, apply, "font")) {
         modified = TRUE;
       }
     } else if (obj == axis_obj) {
