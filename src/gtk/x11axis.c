@@ -3383,7 +3383,6 @@ static void
 select_type(GtkComboBox *w, gpointer user_data)
 {
   int sel, col_type, type, enum_id, found, active, style, draw;
-  struct objlist *obj;
   struct obj_list_data *d;
   GtkTreeStore *list;
   GtkTreeIter iter;
@@ -3396,8 +3395,6 @@ select_type(GtkComboBox *w, gpointer user_data)
   sel = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(w), "user-data"));
   if (sel < 0)
     return;
-
-  obj = getobject("axis");
 
   list = GTK_TREE_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(w)));
   found = gtk_combo_box_get_active_iter(w, &iter);
@@ -3424,7 +3421,7 @@ select_type(GtkComboBox *w, gpointer user_data)
     putobj(d->obj, "baseline", sel, &active);
     break;
   case AXIS_COMBO_ITEM_BASE_COLOR:
-    if (select_obj_color(obj, sel, OBJ_FIELD_COLOR_TYPE_AXIS_BASE)) {
+    if (select_obj_color(d->obj, sel, OBJ_FIELD_COLOR_TYPE_AXIS_BASE)) {
       return;
     }
     break;
@@ -3456,7 +3453,7 @@ select_type(GtkComboBox *w, gpointer user_data)
     }
     break;
   case AXIS_COMBO_ITEM_GAUGE_COLOR:
-    if (select_obj_color(obj, sel, OBJ_FIELD_COLOR_TYPE_AXIS_GAUGE)) {
+    if (select_obj_color(d->obj, sel, OBJ_FIELD_COLOR_TYPE_AXIS_GAUGE)) {
       return;
     }
     break;
@@ -3499,7 +3496,7 @@ select_type(GtkComboBox *w, gpointer user_data)
     }
     break;
   case AXIS_COMBO_ITEM_NUM_COLOR:
-    if (select_obj_color(obj, sel, OBJ_FIELD_COLOR_TYPE_AXIS_NUM)) {
+    if (select_obj_color(d->obj, sel, OBJ_FIELD_COLOR_TYPE_AXIS_NUM)) {
       return;
     }
     break;
