@@ -64,4 +64,6 @@ struct compatible_font_info *gra2cairo_get_compatible_font_info(const char *name
 void gra2cairo_set_alternative_font(const char *fontalias, const char *fontname);
 char *gra2cairo_get_utf8_str(const char *cstr, int symbol);
 
+int get_font_style(struct objlist *obj, N_VALUE *inst, const char *field, const char *font_field);
+
 #endif

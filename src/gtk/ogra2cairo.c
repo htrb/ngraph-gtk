@@ -778,6 +778,26 @@ gra2cairo_get_compatible_font_info(const char *name)
   return &CompatibleFont[i];
 }
 
+int
+get_font_style(struct objlist *obj, N_VALUE *inst, const char *field, const char *font_field)
+{
+  int style;
+  struct compatible_font_info *compatible;
+  char *font;
+
+  _getobj(obj, font_field, inst, &font);
+  compatible = gra2cairo_get_compatible_font_info(font);
+  if (compatible && compatible->name && ! compatible->symbol) {
+    g_free(font);
+    font = g_strdup(compatible->name);
+    _putobj(obj, font_field, inst, font);
+    style = compatible->style;
+  } else {
+    _getobj(obj, field, inst, &style);
+  }
+  return style;
+}
+
 static struct fontmap *
 loadfont(char *fontalias, int font_style, int *symbol)
 {
