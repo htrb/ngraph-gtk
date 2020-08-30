@@ -2813,6 +2813,9 @@ get_reference_parameter(struct objlist *obj, N_VALUE *inst,  struct axis_config 
     inst1 = getobjinst(aobj,id);
     if (inst1) {
       get_axis_parameter(aobj, inst1, aconf);
+      if (aconf->min == 0 && aconf->max == 0 && aconf->inc == 0) {
+	get_reference_parameter(obj, inst1, aconf);
+      }
     }
   }
 
