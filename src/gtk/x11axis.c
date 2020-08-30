@@ -3387,6 +3387,7 @@ select_type(GtkComboBox *w, gpointer user_data)
   GtkTreeStore *list;
   GtkTreeIter iter;
   char *font, *ptr;
+  N_VALUE *inst;
 
   menu_lock(FALSE);
 
@@ -3512,15 +3513,17 @@ select_type(GtkComboBox *w, gpointer user_data)
     break;
   case AXIS_COMBO_ITEM_NUM_BOLD:
     gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);
-    getobj(d->obj, "num_font_style", sel, 0, NULL, &type);
     axis_save_undo(UNDO_TYPE_EDIT);
+    inst = chkobjinst(d->obj, sel);
+    type = get_font_style(d->obj, inst, "num_font_style", "num_font");
     style = (type & GRA_FONT_STYLE_ITALIC) | (active ? 0 : GRA_FONT_STYLE_BOLD);
     putobj(d->obj, "num_font_style", sel, &style);
     break;
   case AXIS_COMBO_ITEM_NUM_ITALIC:
     gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);
-    getobj(d->obj, "num_font_style", sel, 0, NULL, &type);
     axis_save_undo(UNDO_TYPE_EDIT);
+    inst = chkobjinst(d->obj, sel);
+    type = get_font_style(d->obj, inst, "num_font_style", "num_font");
     style = (type & GRA_FONT_STYLE_BOLD) | (active ? 0 : GRA_FONT_STYLE_ITALIC);
     putobj(d->obj, "num_font_style", sel, &style);
     break;
