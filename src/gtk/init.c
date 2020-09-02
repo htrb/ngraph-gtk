@@ -704,6 +704,9 @@ set_dir_defs(char *app)
   }
 
   changefilename(utf8_name);
+  tmp = g_canonicalize_filename(utf8_name, NULL);
+  g_free(utf8_name);
+  utf8_name = tmp;
 
   tmp = g_path_get_dirname(utf8_name);
   g_free(utf8_name);
