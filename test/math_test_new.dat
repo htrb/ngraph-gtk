@@ -267,7 +267,7 @@ string_float($sa[0])==1.2#1
 array_clear($sa)#0
 size($sa)==0#1
 $str="  abcde f	 "#0
-string_strip($str);
+string_strip($str)#0
 string_compare($str, 'abcde f')#0
 sprintf($str, 'abc %^.3g def %d')==16#1
 string_compare($str, 'abc %^.3g def %d')#0
