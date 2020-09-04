@@ -1,7 +1,7 @@
 # fitrslt.nsc written by S. ISHIZAKA. 1999/04
 #
-# This script generates a legend box. 
-# 
+# This script generates a legend box.
+#
 # Please edit the following X, Y, and WIDTH variables as you like.
 #
 # Description: _Fit result...,insert fitting results as legend-text,
