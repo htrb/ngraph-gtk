@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.07.06\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2020-08-30 20:29+0900\n"
+"POT-Creation-Date: 2020-09-04 20:26+0900\n"
 "PO-Revision-Date: 2020-08-27 18:46+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -2026,97 +2026,97 @@ msgstr "質問"
 msgid "Executing `%.128s'."
 msgstr "実行中 `%.128s'."
 
-#: src/gtk/x11menu.c:3101 src/gtk/x11menu.c:3120
+#: src/gtk/x11menu.c:3103 src/gtk/x11menu.c:3122
 msgid "edit"
 msgstr "編集"
 
-#: src/gtk/x11menu.c:3102
+#: src/gtk/x11menu.c:3104
 msgid "move"
 msgstr "移動"
 
-#: src/gtk/x11menu.c:3103
+#: src/gtk/x11menu.c:3105
 msgid "rotate"
 msgstr "回転"
 
-#: src/gtk/x11menu.c:3104
+#: src/gtk/x11menu.c:3106
 msgid "flip"
 msgstr "反転"
 
-#: src/gtk/x11menu.c:3105
+#: src/gtk/x11menu.c:3107
 msgid "delete object"
 msgstr "オブジェクトの削除"
 
-#: src/gtk/x11menu.c:3106
+#: src/gtk/x11menu.c:3108
 msgid "create object"
 msgstr "オブジェクトの作成"
 
-#: src/gtk/x11menu.c:3107
+#: src/gtk/x11menu.c:3109
 msgid "align"
 msgstr "位置合わせ"
 
-#: src/gtk/x11menu.c:3108
+#: src/gtk/x11menu.c:3110
 msgid "order"
 msgstr "描画順の変更"
 
-#: src/gtk/x11menu.c:3109
+#: src/gtk/x11menu.c:3111
 msgid "duplicate"
 msgstr "複製"
 
-#: src/gtk/x11menu.c:3110
+#: src/gtk/x11menu.c:3112
 msgid "execute shell"
 msgstr "シェルの実行"
 
-#: src/gtk/x11menu.c:3111
+#: src/gtk/x11menu.c:3113
 msgid "execute add-in"
 msgstr "アドインの実行"
 
-#: src/gtk/x11menu.c:3112
+#: src/gtk/x11menu.c:3114
 msgid "scale clear"
 msgstr "スケールクリア"
 
-#: src/gtk/x11menu.c:3113
+#: src/gtk/x11menu.c:3115
 msgid "scale undo"
 msgstr "スケールアンドゥ"
 
-#: src/gtk/x11menu.c:3114
+#: src/gtk/x11menu.c:3116
 msgid "open file"
 msgstr "ファイルを開く"
 
-#: src/gtk/x11menu.c:3115
+#: src/gtk/x11menu.c:3117
 msgid "add range"
 msgstr "「範囲」の追加"
 
-#: src/gtk/x11menu.c:3116
+#: src/gtk/x11menu.c:3118
 msgid "paste"
 msgstr "貼り付け"
 
-#: src/gtk/x11menu.c:3117
+#: src/gtk/x11menu.c:3119
 msgid "scale"
 msgstr "拡大・縮小"
 
-#: src/gtk/x11menu.c:3118
+#: src/gtk/x11menu.c:3120
 msgid "auto scale"
 msgstr "自動スケール"
 
-#: src/gtk/x11menu.c:3119
+#: src/gtk/x11menu.c:3121
 msgid "scale trimming"
 msgstr "軸トリミング"
 
-#: src/gtk/x11menu.c:3159
+#: src/gtk/x11menu.c:3161
 #, c-format
 msgid "_Redo: %s"
 msgstr "やり直し: %s (_R)"
 
-#: src/gtk/x11menu.c:3162 src/gtk/data/gtk/menus-common.ui.in:122
+#: src/gtk/x11menu.c:3164 src/gtk/data/gtk/menus-common.ui.in:122
 msgid "_Redo"
 msgstr "やり直し(_R)"
 
-#: src/gtk/x11menu.c:3169
+#: src/gtk/x11menu.c:3171
 #, c-format
 msgid "_Undo: %s"
 msgstr "元に戻す: %s (_U)"
 
-#: src/gtk/x11menu.c:3172 src/gtk/data/gtk/menus-common.ui.in:127
+#: src/gtk/x11menu.c:3174 src/gtk/data/gtk/menus-common.ui.in:127
 msgid "_Undo"
 msgstr "元に戻す(_U)"
 
