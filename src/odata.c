@@ -751,7 +751,7 @@ file_alpha(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
   fp = math_equation_get_user_data(eq);
   if (fp == NULL) {
     rval->type = MATH_VALUE_ERROR;
-    return 1;
+    return 0;
   }
 
   alpha = exp->buf[0].val.val;
