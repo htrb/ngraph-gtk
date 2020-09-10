@@ -1425,7 +1425,7 @@ file_draw_mark(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   fp = math_equation_get_user_data(eq);
   if (fp == NULL) {
     rval->type = MATH_VALUE_ERROR;
-    return 1;
+    return 0;
   }
 
   if (fp->GC < 0) {
