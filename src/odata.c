@@ -2750,6 +2750,7 @@ closedata(struct f2ddata *fp, struct f2dlocal *f2dlocal)
   arraydel(&(fp->fileopen));
   if (fp->fd) {
     fclose(fp->fd);
+    fp->fd = NULL;
   }
   if ((inst=chkobjinst(fp->obj,fp->id))!=NULL)
     _putobj(fp->obj,"data_num",inst,&(fp->datanum));
