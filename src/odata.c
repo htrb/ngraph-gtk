@@ -1755,7 +1755,7 @@ file_draw_text_sub(MathFunctionCallExpression *exp, MathEquation *eq, MathValue 
   fp = math_equation_get_user_data(eq);
   if (fp == NULL) {
     rval->type = MATH_VALUE_ERROR;
-    return 1;
+    return 0;
   }
   if (! raw) {
     script  = exp->buf[8].val.val * 100;
