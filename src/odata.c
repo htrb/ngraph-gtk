@@ -4157,6 +4157,7 @@ file_calculate(struct f2ddata *fp, MathEquation *eq, const MathValue *x, const M
   if (val->type == MATH_VALUE_INTERRUPT) {
     fp->interrupt = TRUE;
   }
+  math_equation_set_user_data(eq, NULL);
   return r;
 }
 
