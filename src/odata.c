@@ -1971,6 +1971,29 @@ file_string_column(MathFunctionCallExpression *exp, MathEquation *eq, MathValue 
   return 0;
 }
 
+static int
+file_mtime(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  struct f2ddata *fp;
+
+  rval->val = 0;
+  rval->type = MATH_VALUE_NORMAL;
+
+  fp = math_equation_get_user_data(eq);
+  if (fp == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 0;
+  }
+
+  if (fp->fd == NULL) {
+    rval->val = time(NULL);
+    return 0;
+  }
+
+  rval->val = fp->mtime;
+  return 0;
+}
+
 struct funcs {
   char *name;
   struct math_function_parameter prm;
@@ -2030,6 +2053,7 @@ static enum MATH_FUNCTION_ARG_TYPE on_end_arg_type[] = {
 };
 
 static struct funcs FileFunc[] = {
+  {"MTIME",     {0, 1, MATH_FUNCTION_TYPE_NORMAL, file_mtime,    NULL, NULL, NULL, NULL}},
   {"OBJ_ALPHA", {2, 1, MATH_FUNCTION_TYPE_NORMAL, file_objalpha, NULL, NULL, NULL, NULL}},
   {"OBJ_COLOR", {2, 1, MATH_FUNCTION_TYPE_NORMAL, file_objcolor, NULL, NULL, NULL, NULL}},
   {"COLOR",     {2, 1, MATH_FUNCTION_TYPE_NORMAL, file_color,    NULL, NULL, NULL, NULL}},
