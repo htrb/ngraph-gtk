@@ -1704,7 +1704,7 @@ file_text_size(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   fp = math_equation_get_user_data(eq);
   if (fp == NULL) {
     rval->type = MATH_VALUE_ERROR;
-    return 1;
+    return 0;
   }
   fp->text_pt     = exp->buf[0].val.val * 100;
   fp->text_space  = exp->buf[1].val.val * 100;
