@@ -2732,7 +2732,9 @@ closedata(struct f2ddata *fp, struct f2dlocal *f2dlocal)
   if (fp==NULL) return;
 
   if (fp->end_expression) {
+    math_equation_set_user_data(fp->end_expression->equation, fp);
     math_expression_calculate(fp->end_expression, &val);
+    math_equation_set_user_data(fp->end_expression->equation, NULL);
     fp->end_expression = NULL;
   }
   set_data_progress(fp);
