@@ -3,6 +3,6 @@ Ngraph is the program to create scientific 2-dimensional graphs for researchers 
 
 [User's manual](https://htrb.github.io/ngraph-gtk/manual/)
 
-![](https://github.com/htrb/ngraph-gtk//workflows/C%2FC++%20CI/badge.svg)
+[![ngraph-gtk](https://github.com/htrb/ngraph-gtk//workflows/C%2FC++%20CI/badge.svg)](https://github.com/htrb/ngraph-gtk/actions)
 
 [![ngraph-gtk-htrb](https://snapcraft.io/ngraph-gtk-htrb/badge.svg)](https://snapcraft.io/ngraph-gtk-htrb)
