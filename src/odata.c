@@ -3926,11 +3926,12 @@ set_const(MathEquation *eq, int *const_id, int need2pass, struct f2ddata *fp, in
     {"text",      MATH_CONST_TEXT_OBJ},
   };
   MathValue val;
-  int i;
+  int i, r;
 
   if (eq == NULL || eq->exp == NULL)
     return 0;
 
+  math_equation_set_user_data(eq, fp);
   math_equation_clear(eq);
 
   if (need2pass) {
@@ -4088,7 +4089,9 @@ set_const(MathEquation *eq, int *const_id, int need2pass, struct f2ddata *fp, in
     math_equation_set_const(eq, const_id[obj_names[i].const_id], &val);
   }
 
-  return math_equation_optimize(eq);
+  r = math_equation_optimize(eq);
+  math_equation_set_user_data(eq, NULL);
+  return r;
 }
 
 static int
