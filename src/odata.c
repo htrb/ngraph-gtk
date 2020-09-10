@@ -1680,7 +1680,7 @@ file_text_style(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rv
   fp = math_equation_get_user_data(eq);
   if (fp == NULL) {
     rval->type = MATH_VALUE_ERROR;
-    return 1;
+    return 0;
   }
   fp->text_style  = exp->buf[0].val.val;
   if (fp->text_style < 0) {
