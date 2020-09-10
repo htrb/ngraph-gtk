@@ -4,9 +4,8 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Ngraph-gtk 6.07.06\n"
-"Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2020-09-06 15:56+0900\n"
+"Project-Id-Version: 6.08.07\n"
+"PO-Revision-Date: 2020-09-10 21:14+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja\n"
@@ -3659,6 +3658,14 @@ msgstr ""
 
 #: src/gtk/completion_info_data.c:105
 msgid ""
+"<b>mtime</b>(<i></i>)\n"
+"returns last modification time of the file."
+msgstr ""
+"<b>mtime</b>(<i></i>)\n"
+"ファイルの最終修正時刻を返す。"
+
+#: src/gtk/completion_info_data.c:106
+msgid ""
 "<b>neq</b>(<i>x, y, prec</i>)\n"
 "True (= 1) when <i>x</i> != <i>y</i>.\n"
 "The number of digits of comparison can be specified with <i>prec</i>\n"
@@ -3669,7 +3676,7 @@ msgstr ""
 "<i>prec</i> で比較の桁数を指定できる\n"
 "(<i>prec</i> == 0 は完全一致)。"
 
-#: src/gtk/completion_info_data.c:106
+#: src/gtk/completion_info_data.c:107
 msgid ""
 "<b>not</b>(<i>x</i>)\n"
 "True (= 1) when <i>x</i> == 0"
@@ -3677,7 +3684,7 @@ msgstr ""
 "<b>not</b>(<i>x</i>)\n"
 "<i>x</i> == 0 のとき真(=1)"
 
-#: src/gtk/completion_info_data.c:107
+#: src/gtk/completion_info_data.c:108
 msgid ""
 "<b>obj_alpha</b>(<i>id, obj</i>)\n"
 "Set the A and A2 value to the same value as the instance of <i>obj</i> whose "
@@ -3691,7 +3698,7 @@ msgstr ""
 "<i>obj</i> は <b>DATA_OBJ</b>, <b>PATH_OBJ</b>, <b>ARC_OBJ</b>, <b>MARK_OBJ</"
 "b>, <b>TEXT_OBJ</b> のいずれか。"
 
-#: src/gtk/completion_info_data.c:108
+#: src/gtk/completion_info_data.c:109
 msgid ""
 "<b>obj_color</b>(<i>id, obj</i>)\n"
 "Set the R, G, B, R2, G2 and B2 values to the same value as the instance of "
@@ -3705,7 +3712,7 @@ msgstr ""
 "<i>obj</i> は <b>DATA_OBJ</b>, <b>PATH_OBJ</b>, <b>ARC_OBJ</b>, <b>MARK_OBJ</"
 "b>, <b>TEXT_OBJ</b> のいずれか。"
 
-#: src/gtk/completion_info_data.c:109
+#: src/gtk/completion_info_data.c:110
 msgid ""
 "<b>on_end</b>(<i>proc</i>)\n"
 "Evaluate <i>proc</i> at the end of plottong the data object."
@@ -3713,7 +3720,7 @@ msgstr ""
 "<b>end_proc</b>(<i>proc</i>)\n"
 "data オブジェクトの描画終了時に<i>proc</i>を評価する。"
 
-#: src/gtk/completion_info_data.c:110
+#: src/gtk/completion_info_data.c:111
 msgid ""
 "<b>or</b>(<i>x, y</i>)\n"
 "True (= 1) when (<i>x</i> != 0) or (<i>y</i> != 0)"
@@ -3721,7 +3728,7 @@ msgstr ""
 "<b>or</b>(<i>x, y</i>)\n"
 "(<i>x</i>≠0) or (<i>y</i>≠0) のとき真(=1)"
 
-#: src/gtk/completion_info_data.c:111
+#: src/gtk/completion_info_data.c:112
 msgid ""
 "<b>parameter</b>(<i>id</i>)\n"
 "Returns the value of the prameter object which ID is <i>id</i>."
@@ -3729,7 +3736,7 @@ msgstr ""
 "<b>parameter</b>(<i>id</i>)\n"
 "ID が <i>id</i> の parameter オブジェクトの設定値を返す"
 
-#: src/gtk/completion_info_data.c:112
+#: src/gtk/completion_info_data.c:113
 msgid ""
 "<b>pn</b>(<i>l, x</i>)\n"
 "evaluate the Legendre polynomial P<sub>l</sub>(<i>x</i>) for a specific "
@@ -3738,7 +3745,7 @@ msgstr ""
 "<b>pn</b>(<i>l, x</i>)\n"
 "ルジャンドル多項式"
 
-#: src/gtk/completion_info_data.c:113
+#: src/gtk/completion_info_data.c:114
 msgid ""
 "<b>pop</b>(<i>a ,n</i>)\n"
 "remove the last <i>n</n> elements of array <i>a</i> (<i>n</i> = 0 is as same "
@@ -3750,7 +3757,7 @@ msgstr ""
 "と同義)。\n"
 "操作後の配列の要素数を返す。"
 
-#: src/gtk/completion_info_data.c:114
+#: src/gtk/completion_info_data.c:115
 msgid ""
 "<b>printf</b>(<i>$format, v1, v2, ...</i>)\n"
 "Converts <i>v1, v2, ...</i> to a string according to <i>$format</i>\n"
@@ -3762,7 +3769,7 @@ msgstr ""
 "文字列に変換して information window に表示する。\n"
 "変換された文字列の文字数を返す。"
 
-#: src/gtk/completion_info_data.c:115
+#: src/gtk/completion_info_data.c:116
 msgid ""
 "<b>prog1</b>(<i>arg1, arg2, ...</i>)\n"
 "Evaluate the arguments and return the evaluated value of the first argument"
@@ -3770,7 +3777,7 @@ msgstr ""
 "<b>prog1</b>(<i>arg1, arg2, ...</i>)\n"
 "引数を評価し、最初の引数の値を返す"
 
-#: src/gtk/completion_info_data.c:116
+#: src/gtk/completion_info_data.c:117
 msgid ""
 "<b>prog2</b>(<i>arg1, arg2, ...</i>)\n"
 "Evaluate the arguments and return the evaluated value of the second argument"
@@ -3778,7 +3785,7 @@ msgstr ""
 "<b>prog2</b>(<i>arg1, arg2, ...</i>)\n"
 "引数を評価し、2 番目の引数の値を返す"
 
-#: src/gtk/completion_info_data.c:117
+#: src/gtk/completion_info_data.c:118
 msgid ""
 "<b>progn</b>(<i>arg1, arg2, ...</i>)\n"
 "Evaluate the arguments and return the evaluated value of the last argument"
@@ -3786,7 +3793,7 @@ msgstr ""
 "<b>progn</b>(<i>arg1, arg2, ...</i>)\n"
 "引数を評価し、最後の引数の値を返す"
 
-#: src/gtk/completion_info_data.c:118
+#: src/gtk/completion_info_data.c:119
 msgid ""
 "<b>push</b>(<i>a, x</i>)\n"
 "adds new element <i>x</i> to the end of an array <i>a</i>.\n"
@@ -3796,7 +3803,7 @@ msgstr ""
 "配列 <i>a</i> の末尾に <i>x</i> を追加する。\n"
 "操作後の配列の要素数を返す。"
 
-#: src/gtk/completion_info_data.c:119
+#: src/gtk/completion_info_data.c:120
 msgid ""
 "<b>puts</b>(<i>$str</i>)\n"
 "Show <i>$str</i> in the information window.\n"
@@ -3806,7 +3813,7 @@ msgstr ""
 "<i>$str</i> を information window に表示する。\n"
 "<i>$str</i> に含まれる文字数を返す。"
 
-#: src/gtk/completion_info_data.c:120
+#: src/gtk/completion_info_data.c:121
 msgid ""
 "<b>qinv</b>(<i>x</i>)\n"
 "inverse complementary error function"
@@ -3814,7 +3821,7 @@ msgstr ""
 "<b>qinv</b>(<i>x</i>)\n"
 "誤差関数 erfc(<i>x</i>) の逆関数"
 
-#: src/gtk/completion_info_data.c:121
+#: src/gtk/completion_info_data.c:122
 msgid ""
 "<b>rand</b>(<i>x</i>)\n"
 "returns a random value equally distributed over the range [0..<i>x</i>)"
@@ -3822,7 +3829,7 @@ msgstr ""
 "<b>rand</b>(<i>x</i>)\n"
 "0≦<b>rand</b>(<i>x</i>)＜<i>x</i> (<i>x</i>＞0のとき)の乱数"
 
-#: src/gtk/completion_info_data.c:122
+#: src/gtk/completion_info_data.c:123
 msgid ""
 "<b>reduce</b>(<i>a, item, result, ex</i>)\n"
 "Evaluate <i>ex</i> for each element of the array <i>a</i>\n"
@@ -3837,7 +3844,7 @@ msgstr ""
 "前回の繰り返しにおける計算結果は、第三引数に指定した変数 (<i>result</i>) で参"
 "照できる。"
 
-#: src/gtk/completion_info_data.c:123
+#: src/gtk/completion_info_data.c:124
 msgid ""
 "<b>rgb</b>(<i>r, g, b</i>)\n"
 "Set the R, G and B values of the color to <i>r, g, b</i> (0 &lt;= <i>r, g, "
@@ -3846,7 +3853,7 @@ msgstr ""
 "<b>rgb</b>(<i>r, g, b</i>)\n"
 "R, G, B 値をそれぞれ <i>r, g, b</i> (0≦<i>r, g, b</i>≦1)に設定"
 
-#: src/gtk/completion_info_data.c:124
+#: src/gtk/completion_info_data.c:125
 msgid ""
 "<b>rgb2</b>(<i>r, g, b</i>)\n"
 "Set the R2, G2 and B2 values of the color to <i>r, g, b</i> (0 &lt;= <i>r, "
@@ -3855,7 +3862,7 @@ msgstr ""
 "<b>rgb2</b>(<i>r, g, b</i>)\n"
 "R2, G2, B2 値をそれぞれ <i>r, g, b</i> (0≦<i>r, g, b</i>≦1)に設定"
 
-#: src/gtk/completion_info_data.c:125
+#: src/gtk/completion_info_data.c:126
 msgid ""
 "<b>rm</b>(<i>i</i>)\n"
 "the value of the current <i>i</i>-th memory (<i>i</i> = 0 to 65535),\n"
@@ -3865,7 +3872,7 @@ msgstr ""
 "現在の第<i>i</i>メモリーの値(<i>i</i> = 0〜65535)\n"
 "<i>i</i> が負のときは末尾からのインデックス"
 
-#: src/gtk/completion_info_data.c:126
+#: src/gtk/completion_info_data.c:127
 msgid ""
 "<b>round</b>(<i>x, digit</i>)\n"
 "round the number <i>x</i>, away from zero.\n"
@@ -3875,7 +3882,7 @@ msgstr ""
 "<i>x</i>を四捨五入した値を返す。\n"
 "<i>digit</i> で四捨五入した結果の桁数を指定できる。"
 
-#: src/gtk/completion_info_data.c:127
+#: src/gtk/completion_info_data.c:128
 msgid ""
 "<b>rsort</b>(<i>a, ignore_case</i>)\n"
 "reverse sort elements of array <i>a</i>\n"
@@ -3887,7 +3894,7 @@ msgstr ""
 "文字列に含まれる ascii 文字の\n"
 "大文字小文字を区別せずに比較する。"
 
-#: src/gtk/completion_info_data.c:128
+#: src/gtk/completion_info_data.c:129
 msgid ""
 "<b>shift</b>(<i>a, n</i>)\n"
 "remove the first <i>n</i> elements of array <i>a</i> (<i>n</i> = 0 is as "
@@ -3900,7 +3907,7 @@ msgstr ""
 "残りの要素は前に詰められる。\n"
 "操作後の配列の要素数を返す。"
 
-#: src/gtk/completion_info_data.c:129
+#: src/gtk/completion_info_data.c:130
 msgid ""
 "<b>sign</b>(<i>x</i>)\n"
 "positive / negative sign (-1 with <i>x</i> &lt; 0, 1 with <i>x</i> &gt;= 0)"
@@ -3908,7 +3915,7 @@ msgstr ""
 "<b>sign</b>(<i>x</i>)\n"
 "正負の符号 (<i>x</i> ＜ 0 で -1、<i>x</i> ≧ 0 で 1)"
 
-#: src/gtk/completion_info_data.c:130
+#: src/gtk/completion_info_data.c:131
 msgid ""
 "<b>sin</b>(<i>x</i>)\n"
 "sine function"
@@ -3916,7 +3923,7 @@ msgstr ""
 "<b>sin</b>(<i>x</i>)\n"
 "サイン"
 
-#: src/gtk/completion_info_data.c:131
+#: src/gtk/completion_info_data.c:132
 msgid ""
 "<b>sinh</b>(<i>x</i>)\n"
 "hyperbolic sine function"
@@ -3924,7 +3931,7 @@ msgstr ""
 "<b>sinh</b>(<i>x</i>)\n"
 "ハイパボリックサイン"
 
-#: src/gtk/completion_info_data.c:132
+#: src/gtk/completion_info_data.c:133
 msgid ""
 "<b>size</b>(<i>a</i>)\n"
 "number of elements of array <i>a</i>"
@@ -3932,7 +3939,7 @@ msgstr ""
 "<b>size</b>(<i>a</i>)\n"
 "配列 <i>a</i> の要素数"
 
-#: src/gtk/completion_info_data.c:133
+#: src/gtk/completion_info_data.c:134
 msgid ""
 "<b>sort</b>(<i>a, ignore_case</i>)\n"
 "sort elements of array <i>a</i>\n"
@@ -3944,7 +3951,7 @@ msgstr ""
 "文字列に含まれる ascii 文字の\n"
 "大文字小文字を区別せずに比較する。"
 
-#: src/gtk/completion_info_data.c:134
+#: src/gtk/completion_info_data.c:135
 msgid ""
 "<b>sprintf</b>(<i>$str, $format, v1, v2, ...</i>)\n"
 "Converts <i>v1, v2, ...</i> to a string according to <i>$format</i>\n"
@@ -3956,7 +3963,7 @@ msgstr ""
 "文字列に変換して <i>$str</i> に代入する。\n"
 "変換された文字列の文字数を返す。"
 
-#: src/gtk/completion_info_data.c:135
+#: src/gtk/completion_info_data.c:136
 msgid ""
 "<b>sqr</b>(<i>x</i>)\n"
 "squaring"
@@ -3964,7 +3971,7 @@ msgstr ""
 "<b>sqr</b>(<i>x</i>)\n"
 "二乗"
 
-#: src/gtk/completion_info_data.c:136
+#: src/gtk/completion_info_data.c:137
 msgid ""
 "<b>sqrt</b>(<i>x</i>)\n"
 "square root"
@@ -3972,7 +3979,7 @@ msgstr ""
 "<b>sqrt</b>(<i>x</i>)\n"
 "平方根"
 
-#: src/gtk/completion_info_data.c:137
+#: src/gtk/completion_info_data.c:138
 msgid ""
 "<b>srand</b>(<i>x</i>)\n"
 "Sets the seed for the random number generator which is used by the <b>rand</"
@@ -3981,7 +3988,7 @@ msgstr ""
 "<b>srand</b>(<i>x</i>)\n"
 "<b>rand</b>() 関数で作られる疑似乱数系列の新しい種を設定する。"
 
-#: src/gtk/completion_info_data.c:138
+#: src/gtk/completion_info_data.c:139
 msgid ""
 "<b>string</b>(<i>$str, value</i>)\n"
 "Converts <i>value</i> to a string and set to <i>$str</i>.\n"
@@ -3991,7 +3998,7 @@ msgstr ""
 "数値 <i>value</i> を文字列に変換して <i>$str</i> に代入する。\n"
 "<i>value</i> を返す。"
 
-#: src/gtk/completion_info_data.c:139
+#: src/gtk/completion_info_data.c:140
 msgid ""
 "<b>string_append</b>(<i>$dest, $src</i>)\n"
 "Adds the string <i>$src</i> onto the end of the string <i>$dest</i>."
@@ -3999,7 +4006,7 @@ msgstr ""
 "<b>string_append</b>(<i>$dest, $src</i>)\n"
 "文字列 <i>$dest</i> の最後に文字列 <i>$src</i> を連結する。"
 
-#: src/gtk/completion_info_data.c:140
+#: src/gtk/completion_info_data.c:141
 msgid ""
 "<b>string_column</b>(<i>$dest, index</i>)\n"
 "Set <i>index</i>th column in the reading data-line to the string <i>$dest</"
@@ -4010,7 +4017,7 @@ msgstr ""
 "文字列を <i>$dest</i> に代入する。\n"
 "<i>index</i> が 0 のときは行全体の文字列が代入される。"
 
-#: src/gtk/completion_info_data.c:141
+#: src/gtk/completion_info_data.c:142
 msgid ""
 "<b>string_compare</b>(<i>$str1, $str2, ignore_case</i>)\n"
 "Compare two strings, ignoring the case of ASCII characters when "
@@ -4023,7 +4030,7 @@ msgstr ""
 "<i>ignore_case</i> が 0 以外の場合は文字列に含まれる ascii 文字の\n"
 "大文字小文字を区別せずに比較する。"
 
-#: src/gtk/completion_info_data.c:142
+#: src/gtk/completion_info_data.c:143
 msgid ""
 "<b>string_down</b>(<i>$dest, $src</i>)\n"
 "Converts all uppercase ASCII letters to lowercase ASCII letters in the "
@@ -4033,7 +4040,7 @@ msgstr ""
 "文字列 <i>$src</i> に含まれる ascii 文字を小文字にした\n"
 "文字列を <i>$dest</i> に代入する。"
 
-#: src/gtk/completion_info_data.c:143
+#: src/gtk/completion_info_data.c:144
 msgid ""
 "<b>string_erase</b>(<i>$str, pos, len</i>)\n"
 "Removes <i>len</i> characters from the string <i>$str</i>, starting at "
@@ -4044,7 +4051,7 @@ msgstr ""
 "る。\n"
 "UTF-8 以外の文字列では使えない。"
 
-#: src/gtk/completion_info_data.c:144
+#: src/gtk/completion_info_data.c:145
 msgid ""
 "<b>string_float</b>(<i>$str</i>)\n"
 "Converts the string <i>$str</i> to a floating-point value and return the "
@@ -4053,7 +4060,7 @@ msgstr ""
 "<b>string_float</b>(<i>$str</i>)\n"
 "<i>$str</i> を浮動小数点に変換し、その値を返す。"
 
-#: src/gtk/completion_info_data.c:145
+#: src/gtk/completion_info_data.c:146
 msgid ""
 "<b>string_float_array</b>(<i>dest, $ary</i>)\n"
 "Converts the string element of the array <i>$ary</i>\n"
@@ -4064,7 +4071,7 @@ msgstr ""
 "配列 <i>$ary</i> の各要素を浮動小数点に変換し、\n"
 "その値を配列 <i>dest</i> に代入する。"
 
-#: src/gtk/completion_info_data.c:146
+#: src/gtk/completion_info_data.c:147
 msgid ""
 "<b>string_insert</b>(<i>$dest, $src, pos</i>)\n"
 "Inserts the string <i>$src</i> into the string <i>$dest</i> at the position "
@@ -4074,7 +4081,7 @@ msgstr ""
 "文字列 <i>$dest</i> の <i>pos</i> 番目の文字の前に文字列 <i>$src</i> を挿入す"
 "る。"
 
-#: src/gtk/completion_info_data.c:147
+#: src/gtk/completion_info_data.c:148
 msgid ""
 "<b>string_join</b>(<i>$dest, $sep, $array</i>)\n"
 "Joins a number of strings in the array <i>$array</i>\n"
@@ -4085,7 +4092,7 @@ msgstr ""
 "文字列の配列 <i>$array</i> の各要素を連結して <i>$dest</i> に代入する。\n"
 "各要素のあいだには、文字列 <i>$sep</i> が挿入される。"
 
-#: src/gtk/completion_info_data.c:148
+#: src/gtk/completion_info_data.c:149
 msgid ""
 "<b>string_length</b>(<i>$str</i>)\n"
 "Return the length of the string <i>$str</i> in characters."
@@ -4094,7 +4101,7 @@ msgstr ""
 "<i>$str</i> に含まれる文字数を返す。\n"
 "UTF-8 以外の文字列では使えない。"
 
-#: src/gtk/completion_info_data.c:149
+#: src/gtk/completion_info_data.c:150
 msgid ""
 "<b>string_match</b>(<i>$str, $regexp, ignore_case</i>)\n"
 "Scans for a match in the string <i>$str</i> for the regular expression "
@@ -4108,7 +4115,7 @@ msgstr ""
 "<i>ignore_case</i> が 0 以外の場合は文字列に含まれる ascii 文字の大文字小文字"
 "を区別せずに比較する。"
 
-#: src/gtk/completion_info_data.c:150
+#: src/gtk/completion_info_data.c:151
 msgid ""
 "<b>string_prepend</b>(<i>$dest, $src</i>)\n"
 "Adds the string <i>$src</i> onto the start of the string <i>$dest</i>."
@@ -4116,7 +4123,7 @@ msgstr ""
 "<b>string_prepend</b>(<i>$dest, $src</i>)\n"
 "文字列 <i>$dest</i> の最初に文字列 <i>$src</i> を連結する。"
 
-#: src/gtk/completion_info_data.c:151
+#: src/gtk/completion_info_data.c:152
 msgid ""
 "<b>string_replace</b>(<i>$dest, $src, $regexp, $replacement, ignore_case</"
 "i>)\n"
@@ -4138,7 +4145,7 @@ msgstr ""
 "<i>ignore_case</i> が 0 以外の場合は文字列に含まれる ascii 文字の大文字小文字"
 "を区別せずに比較する。"
 
-#: src/gtk/completion_info_data.c:152
+#: src/gtk/completion_info_data.c:153
 msgid ""
 "<b>string_reverse</b>(<i>$dest, $src</i>)\n"
 "Reverses the UTF-8 string <i>$src</i> and set to the string <i>$dest</i>."
@@ -4147,7 +4154,7 @@ msgstr ""
 "文字列 <i>$src</i> の並びを逆にした文字列を <i>$dest</i> に代入する。\n"
 "UTF-8 以外の文字列では使えない。"
 
-#: src/gtk/completion_info_data.c:153
+#: src/gtk/completion_info_data.c:154
 msgid ""
 "<b>string_split</b>(<i>$dest, $src, $separator, use_regexp</i>)\n"
 "Splits the string <i>$src</i> into pieces, using the given <i>$separator</"
@@ -4166,7 +4173,7 @@ msgstr ""
 "<i>use_regexp</i> が 2 の場合、文字列に含まれる\n"
 "ascii 文字の大文字小文字を区別せずに分割する。"
 
-#: src/gtk/completion_info_data.c:154
+#: src/gtk/completion_info_data.c:155
 msgid ""
 "<b>string_split_float</b>(<i>dest, $src, $separator, use_regexp</i>)\n"
 "Splits the string <i>$src</i> into pieces, using the given <i>$separator</"
@@ -4186,7 +4193,7 @@ msgstr ""
 "<i>use_regexp</i> が 2 の場合、文字列に含まれる\n"
 "ascii 文字の大文字小文字を区別せずに分割する。"
 
-#: src/gtk/completion_info_data.c:155
+#: src/gtk/completion_info_data.c:156
 msgid ""
 "<b>string_strip</b>(<i>$str</i>)\n"
 "Removes leading and trailing whitespace from the string <i>$str</i>."
@@ -4194,7 +4201,7 @@ msgstr ""
 "<b>string_strip</b>(<i>$str</i>)\n"
 "文字列 <i>$str</i> の先頭、最後にある空白文字を削除する。"
 
-#: src/gtk/completion_info_data.c:156
+#: src/gtk/completion_info_data.c:157
 msgid ""
 "<b>string_substring</b>(<i>$dest, $src, start, end</i>)\n"
 "Copies a substring out of a UTF-8 encoded string <i>$src</i>.\n"
@@ -4206,7 +4213,7 @@ msgstr ""
 "文字列を <i>$dest</i> に代入する。\n"
 "UTF-8 以外の文字列では使えない。"
 
-#: src/gtk/completion_info_data.c:157
+#: src/gtk/completion_info_data.c:158
 msgid ""
 "<b>string_truncate</b>(<i>$str, len</i>)\n"
 "Cuts off the end of the string <i>$str</i>, leaving the first <i>len</i> "
@@ -4216,7 +4223,7 @@ msgstr ""
 "文字列 <i>$str</i> の先頭 len 文字以降を削除する。\n"
 "UTF-8 以外の文字列では使えない。"
 
-#: src/gtk/completion_info_data.c:158
+#: src/gtk/completion_info_data.c:159
 msgid ""
 "<b>string_up</b>(<i>$dest, $src</i>)\n"
 "Converts all lowercase ASCII letters to uppercase ASCII letters in the "
@@ -4226,7 +4233,7 @@ msgstr ""
 "文字列 <i>$src</i> に含まれる ascii 文字を大文字にした\n"
 "文字列を <i>$dest</i> に代入する。"
 
-#: src/gtk/completion_info_data.c:159
+#: src/gtk/completion_info_data.c:160
 msgid ""
 "<b>sum</b>(<i>x</i>)\n"
 "Integration"
@@ -4234,7 +4241,7 @@ msgstr ""
 "<b>sum</b>(<i>x</i>)\n"
 "積算"
 
-#: src/gtk/completion_info_data.c:160
+#: src/gtk/completion_info_data.c:161
 msgid ""
 "<b>sumsq</b>(<i>a, b, c, ...</i>)\n"
 "square sum of arguments"
@@ -4242,7 +4249,7 @@ msgstr ""
 "<b>sumsq</b>(<i>a, b, c, ...</i>)\n"
 "引数の自乗和"
 
-#: src/gtk/completion_info_data.c:161
+#: src/gtk/completion_info_data.c:162
 msgid ""
 "<b>tan</b>(<i>x</i>)\n"
 "tangent function"
@@ -4250,7 +4257,7 @@ msgstr ""
 "<b>tan</b>(<i>x</i>)\n"
 "タンジェント"
 
-#: src/gtk/completion_info_data.c:162
+#: src/gtk/completion_info_data.c:163
 msgid ""
 "<b>tanh</b>(<i>x</i>)\n"
 "hyperbolic tangent function"
@@ -4258,7 +4265,7 @@ msgstr ""
 "<b>tanh</b>(<i>x</i>)\n"
 "ハイパボリックタンジェント"
 
-#: src/gtk/completion_info_data.c:163
+#: src/gtk/completion_info_data.c:164
 msgid ""
 "<b>text_align</b>(<i>x, y</i>)\n"
 "Set alignment of a text drawing.\n"
@@ -4272,7 +4279,7 @@ msgstr ""
 "す。\n"
 "(0 ≦ <i>x, y</i> ≦ 1)"
 
-#: src/gtk/completion_info_data.c:164
+#: src/gtk/completion_info_data.c:165
 msgid ""
 "<b>text_font</b>(<i>font</i>)\n"
 "Set font setting of drawing texts.\n"
@@ -4284,7 +4291,7 @@ msgstr ""
 "<i>font</i> は 0, 1, 2 がそれぞれ \"Sans-serif\", \"Serif\", \"Monospace\" に"
 "対応する。"
 
-#: src/gtk/completion_info_data.c:165
+#: src/gtk/completion_info_data.c:166
 msgid ""
 "<b>text_obj_get</b>(<i>id, $text</i>)\n"
 "assign text of the the text object which ID is <i>id</i> to the variable <i>"
@@ -4293,7 +4300,7 @@ msgstr ""
 "<b>text_obj_get</b>(<i>id, $text</i>)\n"
 "<i>$text</i> に ID が <i>id</i> の text オブジェクトの文字列を設定する。"
 
-#: src/gtk/completion_info_data.c:166
+#: src/gtk/completion_info_data.c:167
 msgid ""
 "<b>text_obj_set</b>(<i>id, $text</i>)\n"
 "set text of the the text object which ID is <i>id</i> as the variable <i>"
@@ -4302,7 +4309,7 @@ msgstr ""
 "<b>text_obj_set</b>(<i>id, $text</i>)\n"
 "ID が <i>id</i> の text オブジェクトの文字列を <i>$text</i> に設定する。"
 
-#: src/gtk/completion_info_data.c:167
+#: src/gtk/completion_info_data.c:168
 msgid ""
 "<b>text_size</b>(<i>pt, space, script</i>)\n"
 "Set font size and other settings of drawing texts.\n"
@@ -4314,7 +4321,7 @@ msgstr ""
 "<i>pt</i> でフォントサイズを指定できる。\n"
 "続く引数で文字間隔、スクリプトサイズを指定できる。"
 
-#: src/gtk/completion_info_data.c:168
+#: src/gtk/completion_info_data.c:169
 msgid ""
 "<b>text_style</b>(<i>style</i>)\n"
 "Set font style settings of drawing texts.\n"
@@ -4326,7 +4333,7 @@ msgstr ""
 "<i>style</i> は 0, 1, 2, 3 がそれぞれ \"normal\", \"bold\", \"italic\", "
 "\"bold-italic\" に対応する。"
 
-#: src/gtk/completion_info_data.c:169
+#: src/gtk/completion_info_data.c:170
 msgid ""
 "<b>theta</b>(<i>x</i>)\n"
 "staircase function (1 if <i>x</i> &gt;= 0, 0 otherwise)"
@@ -4334,7 +4341,7 @@ msgstr ""
 "<b>theta</b>(<i>x</i>)\n"
 "階段関数(<i>x</i>≧0 のとき 1, それ以外は 0)"
 
-#: src/gtk/completion_info_data.c:170
+#: src/gtk/completion_info_data.c:171
 msgid ""
 "<b>time</b>(<i></i>)\n"
 "returns the time as the number of seconds since the Epoch,\n"
@@ -4343,7 +4350,7 @@ msgstr ""
 "<b>time</b>(<i></i>)\n"
 "紀元 (1970年1月1日00:00:00 UTC) からの経過時間を秒単位で返す。"
 
-#: src/gtk/completion_info_data.c:171
+#: src/gtk/completion_info_data.c:172
 msgid ""
 "<b>times</b>(<i>n, index, ex</i>)\n"
 "Repeat <i>ex</i> <i>n</i> times.\n"
@@ -4353,7 +4360,7 @@ msgstr ""
 "式 <i>ex</i> を <i>n</i> 回評価する。\n"
 "繰り返しのカウンタは、第二引数に指定した変数 (<i>index</i>) で参照できる。"
 
-#: src/gtk/completion_info_data.c:172
+#: src/gtk/completion_info_data.c:173
 msgid ""
 "<b>tn</b>(<i>n, x</i>)\n"
 "Chebyshev polynomials"
@@ -4361,7 +4368,7 @@ msgstr ""
 "<b>tn</b>(<i>n, x</i>)\n"
 "チェビシフ多項式"
 
-#: src/gtk/completion_info_data.c:173
+#: src/gtk/completion_info_data.c:174
 msgid ""
 "<b>unix2mjd</b>(<i>time</i>)\n"
 "Modified Julian Date\n"
@@ -4373,7 +4380,7 @@ msgstr ""
 "(<i>time</i> は 1970年1月1日00:00:00 UTC からの経過秒数、うるう秒は考慮されな"
 "い)"
 
-#: src/gtk/completion_info_data.c:174
+#: src/gtk/completion_info_data.c:175
 msgid ""
 "<b>unless</b>(<i>x, ex1, ex2</i>)\n"
 "evaluate <i>ex2</i> when <i>x</i> != 0, evaluate <i>ex1</i> otherwise"
@@ -4381,7 +4388,7 @@ msgstr ""
 "<b>unless</b>(<i>x, ex1, ex2</i>)\n"
 "<i>x</i> ≠ 0 のとき <i>ex2</i>, <i>x</i> = 0 のとき <i>ex1</i>"
 
-#: src/gtk/completion_info_data.c:175
+#: src/gtk/completion_info_data.c:176
 msgid ""
 "<b>unshift</b>(<i>a, x</i>)\n"
 "adds new element <i>x</i> to the beginning of an array <i>a</i>.\n"
@@ -4391,7 +4398,7 @@ msgstr ""
 "配列 <i>a</i> の先頭に <i>x</i> を挿入する。\n"
 "操作後の配列の要素数を返す。"
 
-#: src/gtk/completion_info_data.c:176
+#: src/gtk/completion_info_data.c:177
 msgid ""
 "<b>xor</b>(<i>x, y</i>)\n"
 "True (= 1) when (<i>x</i> != 0) xor (<i>y</i> != 0)"
@@ -4399,7 +4406,7 @@ msgstr ""
 "<b>xor</b>(<i>x, y</i>)\n"
 "(<i>x</i>≠0) xor (<i>y</i>≠0) のとき真(=1)"
 
-#: src/gtk/completion_info_data.c:177
+#: src/gtk/completion_info_data.c:178
 msgid ""
 "<b>yl</b>(<i>l, x</i>)\n"
 "compute the irregular spherical Bessel function of order |<i>l</i>|, "
@@ -4408,7 +4415,7 @@ msgstr ""
 "<b>yl</b>(<i>l, x</i>)\n"
 "第2種<i>l</i>次球ベッセル関数"
 
-#: src/gtk/completion_info_data.c:178
+#: src/gtk/completion_info_data.c:179
 msgid ""
 "<b>yn</b>(<i>n, x</i>)\n"
 "compute the irregular cylindrical Bessel function of order <i>n</i>, "
@@ -4417,7 +4424,7 @@ msgstr ""
 "<b>yn</b>(<i>n, x</i>)\n"
 "第2種<i>n</i>次ベッセル関数"
 
-#: src/gtk/completion_info_data.c:179
+#: src/gtk/completion_info_data.c:180
 msgid ""
 "<b>ynu</b>(<i>nu, x</i>)\n"
 "compute the irregular cylindrical Bessel function of fractional order |"
@@ -4426,7 +4433,7 @@ msgstr ""
 "<b>ynu</b>(<i>nu, x</i>)\n"
 "第2種<i>nu</i>次ベッセル関数 (<i>nu</i> は正の実数)"
 
-#: src/gtk/completion_info_data.c:180
+#: src/gtk/completion_info_data.c:181
 msgid ""
 "<b>zeta</b>(<i>s</i>)\n"
 "compute the Riemann zeta function zeta(s) for arbitrary <i>s</i>, <i>s</i> !"
@@ -4435,7 +4442,7 @@ msgstr ""
 "<b>zeta</b>(<i>s</i>)\n"
 "リーマンゼータ関数ζ(<i>s</i>)"
 
-#: src/gtk/completion_info_data.c:181
+#: src/gtk/completion_info_data.c:182
 msgid ""
 "<b>zeta_int</b>(<i>n</i>)\n"
 "compute the Riemann zeta function zeta(n) for integer <i>n</i>, <i>n</i> != 1"
@@ -4443,7 +4450,7 @@ msgstr ""
 "<b>zeta_int</b>(<i>n</i>)\n"
 "リーマンゼータ関数ζ(<i>n</i>) (<i>n</i> は整数)"
 
-#: src/gtk/completion_info_data.c:182
+#: src/gtk/completion_info_data.c:183
 msgid ""
 "<b>zetam1</b>(<i>s</i>)\n"
 "compute zeta(<i>s</i>) - 1 for arbitrary <i>s</i>, <i>s</i> != 1"
@@ -4451,7 +4458,7 @@ msgstr ""
 "<b>zetam1</b>(<i>s</i>)\n"
 "リーマンゼータ関数ζ(<i>s</i>) - 1"
 
-#: src/gtk/completion_info_data.c:183
+#: src/gtk/completion_info_data.c:184
 msgid ""
 "<b>zetam1_int</b>(<i>n</i>)\n"
 "compute zeta(<i>n</i>) - 1 for integer <i>n</i>, <i>n</i> != 1"
@@ -4459,7 +4466,7 @@ msgstr ""
 "<b>zetam1_int</b>(<i>n</i>)\n"
 "リーマンゼータ関数ζ(<i>n</i>) - 1 (<i>n</i> は整数)"
 
-#: src/gtk/completion_info_data.c:184
+#: src/gtk/completion_info_data.c:185
 msgid ""
 "<b>zip</b>(<i>a1, a2, item1, item2, ex</i>)\n"
 "Evaluate <i>ex</i> for each element of two arrays <i>a1</i> and <i>a2</i>.\n"
@@ -4471,7 +4478,7 @@ msgstr ""
 "配列の各要素は、第3, 第4引数に指定した変数 (<i>item1, item2</i>) で参照でき"
 "る。"
 
-#: src/gtk/completion_info_data.c:185
+#: src/gtk/completion_info_data.c:186
 msgid ""
 "<b>zip_map</b>(<i>dest, src1, src2, item1, item2, ex</i>)\n"
 "Evaluate <i>ex</i> for each element of two arrays <i>src1</i> and <i>sec2</"
@@ -4486,7 +4493,7 @@ msgstr ""
 "配列の各要素は、第4, 第5引数に指定した変数 (<i>item1, item2</i>) で参照でき"
 "る。"
 
-#: src/gtk/completion_info_data.c:189
+#: src/gtk/completion_info_data.c:190
 msgid ""
 "<b>%D</b>\n"
 "The ID of the instance of the data object"
@@ -4494,7 +4501,7 @@ msgstr ""
 "<b>%D</b>\n"
 "データの番号"
 
-#: src/gtk/completion_info_data.c:190
+#: src/gtk/completion_info_data.c:191
 msgid ""
 "<b>%N</b>\n"
 "The number of instances of data object"
@@ -4502,7 +4509,7 @@ msgstr ""
 "<b>%N</b>\n"
 "データオブジェクトのインスタンス数"
 
-#: src/gtk/completion_info_data.c:191
+#: src/gtk/completion_info_data.c:192
 msgid ""
 "<b>ARC_OBJ</b>\n"
 "The identification number of the arc object"
@@ -4510,7 +4517,7 @@ msgstr ""
 "<b>ARC_OBJ</b>\n"
 "arc オブジェクトのオブジェクト識別番号"
 
-#: src/gtk/completion_info_data.c:192
+#: src/gtk/completion_info_data.c:193
 msgid ""
 "<b>AVX</b>\n"
 "The average of X"
@@ -4518,7 +4525,7 @@ msgstr ""
 "<b>AVX</b>\n"
 "(X) column の生データの平均"
 
-#: src/gtk/completion_info_data.c:193
+#: src/gtk/completion_info_data.c:194
 msgid ""
 "<b>AVY</b>\n"
 "The average of X"
@@ -4526,7 +4533,7 @@ msgstr ""
 "<b>AVY</b>\n"
 "(Y) column の生データの平均"
 
-#: src/gtk/completion_info_data.c:194
+#: src/gtk/completion_info_data.c:195
 msgid ""
 "<b>AXISX</b>\n"
 "The ID of the axis instance specified as X axis"
@@ -4534,7 +4541,7 @@ msgstr ""
 "<b>AXISX</b>\n"
 "「X 軸」に指定された axis オブジェクトの ID"
 
-#: src/gtk/completion_info_data.c:195
+#: src/gtk/completion_info_data.c:196
 msgid ""
 "<b>AXISX_LEN</b>\n"
 "Length of the X axis"
@@ -4542,7 +4549,7 @@ msgstr ""
 "<b>AXISX_LEN</b>\n"
 "「X 軸」の長さ"
 
-#: src/gtk/completion_info_data.c:196
+#: src/gtk/completion_info_data.c:197
 msgid ""
 "<b>AXISX_MAX</b>\n"
 "The maximum value of the X axis"
@@ -4550,7 +4557,7 @@ msgstr ""
 "<b>AXISX_MAX</b>\n"
 "「X 軸」の最大値"
 
-#: src/gtk/completion_info_data.c:197
+#: src/gtk/completion_info_data.c:198
 msgid ""
 "<b>AXISX_MIN</b>\n"
 "The minimum value of the X axis"
@@ -4558,7 +4565,7 @@ msgstr ""
 "<b>AXISX_MIN</b>\n"
 "「X 軸」の最小値"
 
-#: src/gtk/completion_info_data.c:198
+#: src/gtk/completion_info_data.c:199
 msgid ""
 "<b>AXISY</b>\n"
 "The ID of the axis instance specified as Y axis"
@@ -4566,7 +4573,7 @@ msgstr ""
 "<b>AXISY</b>\n"
 "「Y 軸」に指定された axis オブジェクトの ID"
 
-#: src/gtk/completion_info_data.c:199
+#: src/gtk/completion_info_data.c:200
 msgid ""
 "<b>AXISY_LEN</b>\n"
 "Length of the Y axis"
@@ -4574,7 +4581,7 @@ msgstr ""
 "<b>AXISY_LEN</b>\n"
 "「Y 軸」の長さ"
 
-#: src/gtk/completion_info_data.c:200
+#: src/gtk/completion_info_data.c:201
 msgid ""
 "<b>AXISY_MAX</b>\n"
 "The maximum value of the Y axis"
@@ -4582,7 +4589,7 @@ msgstr ""
 "<b>AXISY_MAX</b>\n"
 "「Y 軸」の最大値"
 
-#: src/gtk/completion_info_data.c:201
+#: src/gtk/completion_info_data.c:202
 msgid ""
 "<b>AXISY_MIN</b>\n"
 "The minimum value of the Y axis"
@@ -4590,7 +4597,7 @@ msgstr ""
 "<b>AXISY_MIN</b>\n"
 "「Y 軸」の最小値"
 
-#: src/gtk/completion_info_data.c:202
+#: src/gtk/completion_info_data.c:203
 msgid ""
 "<b>BREAK</b>\n"
 "Missing data (data lines are not combined)"
@@ -4598,7 +4605,7 @@ msgstr ""
 "<b>BREAK</b>\n"
 "欠損データ (データ線は分断)"
 
-#: src/gtk/completion_info_data.c:203
+#: src/gtk/completion_info_data.c:204
 msgid ""
 "<b>COLX</b>\n"
 "The column number specified for X"
@@ -4606,7 +4613,7 @@ msgstr ""
 "<b>COLX</b>\n"
 "「X カラム」に指定された数"
 
-#: src/gtk/completion_info_data.c:204
+#: src/gtk/completion_info_data.c:205
 msgid ""
 "<b>COLY</b>\n"
 "The column number specified for Y"
@@ -4614,7 +4621,7 @@ msgstr ""
 "<b>COLY</b>\n"
 "「Y カラム」に指定された数"
 
-#: src/gtk/completion_info_data.c:205
+#: src/gtk/completion_info_data.c:206
 msgid ""
 "<b>CONT</b>\n"
 "Missing data (data lines are combined)"
@@ -4622,7 +4629,7 @@ msgstr ""
 "<b>CONT</b>\n"
 "欠損データ (データ線は結合)"
 
-#: src/gtk/completion_info_data.c:206
+#: src/gtk/completion_info_data.c:207
 msgid ""
 "<b>DATA_OBJ</b>\n"
 "The identification number of the data object"
@@ -4630,7 +4637,7 @@ msgstr ""
 "<b>DATA_OBJ</b>\n"
 "data オブジェクトのオブジェクト識別番号"
 
-#: src/gtk/completion_info_data.c:207
+#: src/gtk/completion_info_data.c:208
 msgid ""
 "<b>E</b>\n"
 "The base of natural logarithm (Napier's constant)"
@@ -4638,7 +4645,7 @@ msgstr ""
 "<b>E</b>\n"
 "自然対数の底"
 
-#: src/gtk/completion_info_data.c:208
+#: src/gtk/completion_info_data.c:209
 msgid ""
 "<b>EULER</b>\n"
 "Euler's constant"
@@ -4646,7 +4653,7 @@ msgstr ""
 "<b>EULER</b>\n"
 "オイラーの定数"
 
-#: src/gtk/completion_info_data.c:209
+#: src/gtk/completion_info_data.c:210
 msgid ""
 "<b>FALSE</b>\n"
 "the FALSE value (0)"
@@ -4654,7 +4661,7 @@ msgstr ""
 "<b>FALSE</b>\n"
 "偽の値 (0)"
 
-#: src/gtk/completion_info_data.c:210
+#: src/gtk/completion_info_data.c:211
 msgid ""
 "<b>FILE_OBJ</b>\n"
 "The identification number of the file object"
@@ -4662,7 +4669,7 @@ msgstr ""
 "<b>FILE_OBJ</b>\n"
 "file オブジェクトのオブジェクト識別番号"
 
-#: src/gtk/completion_info_data.c:211
+#: src/gtk/completion_info_data.c:212
 msgid ""
 "<b>FILL_RULE_EVEN_ODD</b>\n"
 "Defined for the function <b>draw_polygon</b>().\n"
@@ -4672,7 +4679,7 @@ msgstr ""
 "ポリゴンを偶奇則で塗りつぶす。\n"
 "<b>draw_polygon</b>() 関数で利用する。"
 
-#: src/gtk/completion_info_data.c:212
+#: src/gtk/completion_info_data.c:213
 msgid ""
 "<b>FILL_RULE_NONE</b>\n"
 "Defined for the function <b>draw_polygon</b>().\n"
@@ -4682,7 +4689,7 @@ msgstr ""
 "ポリゴンを塗りつぶさない。\n"
 "<b>draw_polygon</b>() 関数で利用する。"
 
-#: src/gtk/completion_info_data.c:213
+#: src/gtk/completion_info_data.c:214
 msgid ""
 "<b>FILL_RULE_WINDING</b>\n"
 "Defined for the function <b>draw_polygon</b>().\n"
@@ -4692,7 +4699,7 @@ msgstr ""
 "ポリゴンをワインディング則で塗りつぶす。\n"
 "<b>draw_polygon</b>() 関数で利用する。"
 
-#: src/gtk/completion_info_data.c:214
+#: src/gtk/completion_info_data.c:215
 msgid ""
 "<b>FIRST</b>\n"
 "When conversion is performed twice with one line of data such as diagonal or "
@@ -4705,7 +4712,7 @@ msgstr ""
 "1回目の呼出しで真(=1)、\n"
 "2回目の呼出しで偽(=0)。"
 
-#: src/gtk/completion_info_data.c:215
+#: src/gtk/completion_info_data.c:216
 msgid ""
 "<b>FLINE</b>\n"
 "Number of lines specified as \"Final line\""
@@ -4713,7 +4720,7 @@ msgstr ""
 "<b>FLINE</b>\n"
 "「最終行」に指定された行数"
 
-#: src/gtk/completion_info_data.c:216
+#: src/gtk/completion_info_data.c:217
 msgid ""
 "<b>HSKIP</b>\n"
 "Number of lines specified as \"Head skip\""
@@ -4721,7 +4728,7 @@ msgstr ""
 "<b>HSKIP</b>\n"
 "「先頭スキップ行」に指定された行数"
 
-#: src/gtk/completion_info_data.c:217
+#: src/gtk/completion_info_data.c:218
 msgid ""
 "<b>MARK_OBJ</b>\n"
 "The identification number of the mark object"
@@ -4729,7 +4736,7 @@ msgstr ""
 "<b>MARK_OBJ</b>\n"
 "mark オブジェクトのオブジェクト識別番号"
 
-#: src/gtk/completion_info_data.c:218
+#: src/gtk/completion_info_data.c:219
 msgid ""
 "<b>MASK</b>\n"
 "Number of lines set for mask"
@@ -4737,7 +4744,7 @@ msgstr ""
 "<b>MASK</b>\n"
 "「マスク」に設定された行数"
 
-#: src/gtk/completion_info_data.c:219
+#: src/gtk/completion_info_data.c:220
 msgid ""
 "<b>MAXX</b>\n"
 "The maximum value of X"
@@ -4745,7 +4752,7 @@ msgstr ""
 "<b>MAXX</b>\n"
 "(X) column の生データの最大値"
 
-#: src/gtk/completion_info_data.c:220
+#: src/gtk/completion_info_data.c:221
 msgid ""
 "<b>MAXY</b>\n"
 "The maximum value of Y"
@@ -4753,7 +4760,7 @@ msgstr ""
 "<b>MAXY</b>\n"
 "(Y) column の生データの最大値"
 
-#: src/gtk/completion_info_data.c:221
+#: src/gtk/completion_info_data.c:222
 msgid ""
 "<b>MINX</b>\n"
 "The minimum value of X"
@@ -4761,7 +4768,7 @@ msgstr ""
 "<b>MINX</b>\n"
 "(X) column の生データの最小値"
 
-#: src/gtk/completion_info_data.c:222
+#: src/gtk/completion_info_data.c:223
 msgid ""
 "<b>MINY</b>\n"
 "The minimum value of Y"
@@ -4769,7 +4776,7 @@ msgstr ""
 "<b>MINY</b>\n"
 "(Y) column の生データの最小値"
 
-#: src/gtk/completion_info_data.c:223
+#: src/gtk/completion_info_data.c:224
 msgid ""
 "<b>MOVE</b>\n"
 "Number of lines set for move"
@@ -4777,7 +4784,7 @@ msgstr ""
 "<b>MOVE</b>\n"
 "「移動」に設定された行数"
 
-#: src/gtk/completion_info_data.c:224
+#: src/gtk/completion_info_data.c:225
 msgid ""
 "<b>NAN</b>\n"
 "Missing data with error indication"
@@ -4785,7 +4792,7 @@ msgstr ""
 "<b>NAN</b>\n"
 "欠損データエラー表示"
 
-#: src/gtk/completion_info_data.c:225
+#: src/gtk/completion_info_data.c:226
 msgid ""
 "<b>NUM</b>\n"
 "The number of the data"
@@ -4793,7 +4800,7 @@ msgstr ""
 "<b>NUM</b>\n"
 "データの個数"
 
-#: src/gtk/completion_info_data.c:226
+#: src/gtk/completion_info_data.c:227
 msgid ""
 "<b>PATH_OBJ</b>\n"
 "The identification number of the path object"
@@ -4801,7 +4808,7 @@ msgstr ""
 "<b>PATH_OBJ</b>\n"
 "path オブジェクトのオブジェクト識別番号"
 
-#: src/gtk/completion_info_data.c:227
+#: src/gtk/completion_info_data.c:228
 msgid ""
 "<b>PI</b>\n"
 "Pi"
@@ -4809,7 +4816,7 @@ msgstr ""
 "<b>PI</b>\n"
 "円周率"
 
-#: src/gtk/completion_info_data.c:228
+#: src/gtk/completion_info_data.c:229
 msgid ""
 "<b>RECT_OBJ</b>\n"
 "The identification number of the rectangle object"
@@ -4817,7 +4824,7 @@ msgstr ""
 "<b>RECT_OBJ</b>\n"
 "rectangle オブジェクトのオブジェクト識別番号"
 
-#: src/gtk/completion_info_data.c:229
+#: src/gtk/completion_info_data.c:230
 msgid ""
 "<b>RSTEP</b>\n"
 "Number of lines specified as \"Read step\""
@@ -4825,7 +4832,7 @@ msgstr ""
 "<b>RSTEP</b>\n"
 "「読込ステップ行」に指定された行数"
 
-#: src/gtk/completion_info_data.c:230
+#: src/gtk/completion_info_data.c:231
 msgid ""
 "<b>STDEVPX</b>\n"
 "The standard deviation of X"
@@ -4833,7 +4840,7 @@ msgstr ""
 "<b>STDEVPX</b>\n"
 "(X) column の生データの標準偏差"
 
-#: src/gtk/completion_info_data.c:231
+#: src/gtk/completion_info_data.c:232
 msgid ""
 "<b>STDEVPY</b>\n"
 "The standard deviation of Y"
@@ -4841,7 +4848,7 @@ msgstr ""
 "<b>STDEVPY</b>\n"
 "(Y) column の生データの標準偏差"
 
-#: src/gtk/completion_info_data.c:232
+#: src/gtk/completion_info_data.c:233
 msgid ""
 "<b>STDEVX</b>\n"
 "The corrected sample standard deviation of X"
@@ -4849,7 +4856,7 @@ msgstr ""
 "<b>STDEVX</b>\n"
 "(X) column の生データの不偏標準偏差"
 
-#: src/gtk/completion_info_data.c:233
+#: src/gtk/completion_info_data.c:234
 msgid ""
 "<b>STDEVY</b>\n"
 "The corrected sample standard deviation of Y"
@@ -4857,7 +4864,7 @@ msgstr ""
 "<b>STDEVY</b>\n"
 "(Y) column の生データの不偏標準偏差"
 
-#: src/gtk/completion_info_data.c:234
+#: src/gtk/completion_info_data.c:235
 msgid ""
 "<b>SUMX</b>\n"
 "Sum of X"
@@ -4865,7 +4872,7 @@ msgstr ""
 "<b>SUMX</b>\n"
 "(X) column の生データの和"
 
-#: src/gtk/completion_info_data.c:235
+#: src/gtk/completion_info_data.c:236
 msgid ""
 "<b>SUMXX</b>\n"
 "Square sum of X"
@@ -4873,7 +4880,7 @@ msgstr ""
 "<b>SUMXX</b>\n"
 "(X) column の生データの二乗和"
 
-#: src/gtk/completion_info_data.c:236
+#: src/gtk/completion_info_data.c:237
 msgid ""
 "<b>SUMXY</b>\n"
 "Product sum of X and Y"
@@ -4881,7 +4888,7 @@ msgstr ""
 "<b>SUMXY</b>\n"
 "(X) column, (Y) column の生データの積和"
 
-#: src/gtk/completion_info_data.c:237
+#: src/gtk/completion_info_data.c:238
 msgid ""
 "<b>SUMY</b>\n"
 "Sum of Y"
@@ -4889,7 +4896,7 @@ msgstr ""
 "<b>SUMY</b>\n"
 "(Y) column の生データの和"
 
-#: src/gtk/completion_info_data.c:238
+#: src/gtk/completion_info_data.c:239
 msgid ""
 "<b>SUMYY</b>\n"
 "Square sum of Y"
@@ -4897,7 +4904,7 @@ msgstr ""
 "<b>SUMYY</b>\n"
 "(Y) column の生データの二乗和"
 
-#: src/gtk/completion_info_data.c:239
+#: src/gtk/completion_info_data.c:240
 msgid ""
 "<b>TEXT_OBJ</b>\n"
 "The identification number of the text object"
@@ -4905,7 +4912,7 @@ msgstr ""
 "<b>TEXT_OBJ</b>\n"
 "text オブジェクトのオブジェクト識別番号"
 
-#: src/gtk/completion_info_data.c:240
+#: src/gtk/completion_info_data.c:241
 msgid ""
 "<b>TRUE</b>\n"
 "the TRUE value (1)"
@@ -4913,7 +4920,7 @@ msgstr ""
 "<b>TRUE</b>\n"
 "代表的な真の値 (1)"
 
-#: src/gtk/completion_info_data.c:241
+#: src/gtk/completion_info_data.c:242
 msgid ""
 "<b>UNDEF</b>\n"
 "Missing data without error indication"
