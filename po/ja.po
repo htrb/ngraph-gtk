@@ -5,6 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 6.08.07\n"
+"Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
+"POT-Creation-Date: 2020-09-10 21:10+0900\n"
 "PO-Revision-Date: 2020-09-10 21:14+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
