@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.08.07\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2020-09-10 21:10+0900\n"
+"POT-Creation-Date: 2020-09-12 15:09+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3570,53 +3570,63 @@ msgstr ""
 
 #: src/gtk/completion_info_data.c:139
 msgid ""
+"<b>strftime</b>(<i>$str, $fmt, t, utc</i>)\n"
+"convers <i>t</i> (the number of seconds elapsed since the Epoch)\n"
+"according to the format specification <i>$fmt</i>\n"
+"and places the result in the string <i>$str</i>.\n"
+"When <i>utc</i> is true, <i>$str</i> is expressed in Coordinated Universal "
+"Time (UTC)."
+msgstr ""
+
+#: src/gtk/completion_info_data.c:140
+msgid ""
 "<b>string</b>(<i>$str, value</i>)\n"
 "Converts <i>value</i> to a string and set to <i>$str</i>.\n"
 "Return the value."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:140
+#: src/gtk/completion_info_data.c:141
 msgid ""
 "<b>string_append</b>(<i>$dest, $src</i>)\n"
 "Adds the string <i>$src</i> onto the end of the string <i>$dest</i>."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:141
+#: src/gtk/completion_info_data.c:142
 msgid ""
 "<b>string_column</b>(<i>$dest, index</i>)\n"
 "Set <i>index</i>th column in the reading data-line to the string <i>$dest</"
 "i>."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:142
+#: src/gtk/completion_info_data.c:143
 msgid ""
 "<b>string_compare</b>(<i>$str1, $str2, ignore_case</i>)\n"
 "Compare two strings, ignoring the case of ASCII characters when "
 "<i>ignore_case</i> is not zero."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:143
+#: src/gtk/completion_info_data.c:144
 msgid ""
 "<b>string_down</b>(<i>$dest, $src</i>)\n"
 "Converts all uppercase ASCII letters to lowercase ASCII letters in the "
 "string <i>$src</i> and set to the string <i>$dest</i>."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:144
+#: src/gtk/completion_info_data.c:145
 msgid ""
 "<b>string_erase</b>(<i>$str, pos, len</i>)\n"
 "Removes <i>len</i> characters from the string <i>$str</i>, starting at "
 "position <i>pos</i>."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:145
+#: src/gtk/completion_info_data.c:146
 msgid ""
 "<b>string_float</b>(<i>$str</i>)\n"
 "Converts the string <i>$str</i> to a floating-point value and return the "
 "value."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:146
+#: src/gtk/completion_info_data.c:147
 msgid ""
 "<b>string_float_array</b>(<i>dest, $ary</i>)\n"
 "Converts the string element of the array <i>$ary</i>\n"
@@ -3624,14 +3634,14 @@ msgid ""
 "and set them to the array <i>dest</i>."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:147
+#: src/gtk/completion_info_data.c:148
 msgid ""
 "<b>string_insert</b>(<i>$dest, $src, pos</i>)\n"
 "Inserts the string <i>$src</i> into the string <i>$dest</i> at the position "
 "<i>pos</i>."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:148
+#: src/gtk/completion_info_data.c:149
 msgid ""
 "<b>string_join</b>(<i>$dest, $sep, $array</i>)\n"
 "Joins a number of strings in the array <i>$array</i>\n"
@@ -3639,13 +3649,13 @@ msgid ""
 "with the optional separator <i>$sep</i>inserted between each of them."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:149
+#: src/gtk/completion_info_data.c:150
 msgid ""
 "<b>string_length</b>(<i>$str</i>)\n"
 "Return the length of the string <i>$str</i> in characters."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:150
+#: src/gtk/completion_info_data.c:151
 msgid ""
 "<b>string_match</b>(<i>$str, $regexp, ignore_case</i>)\n"
 "Scans for a match in the string <i>$str</i> for the regular expression "
@@ -3653,13 +3663,13 @@ msgid ""
 "Return non-zero value if the string matched, zero otherwise."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:151
+#: src/gtk/completion_info_data.c:152
 msgid ""
 "<b>string_prepend</b>(<i>$dest, $src</i>)\n"
 "Adds the string <i>$src</i> onto the start of the string <i>$dest</i>."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:152
+#: src/gtk/completion_info_data.c:153
 msgid ""
 "<b>string_replace</b>(<i>$dest, $src, $regexp, $replacement, ignore_case</"
 "i>)\n"
@@ -3675,13 +3685,13 @@ msgid ""
 "when <i>ignore_case</i> is not zero."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:153
+#: src/gtk/completion_info_data.c:154
 msgid ""
 "<b>string_reverse</b>(<i>$dest, $src</i>)\n"
 "Reverses the UTF-8 string <i>$src</i> and set to the string <i>$dest</i>."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:154
+#: src/gtk/completion_info_data.c:155
 msgid ""
 "<b>string_split</b>(<i>$dest, $src, $separator, use_regexp</i>)\n"
 "Splits the string <i>$src</i> into pieces, using the given <i>$separator</"
@@ -3693,7 +3703,7 @@ msgid ""
 "when <i>use_regexp</i> is 2."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:155
+#: src/gtk/completion_info_data.c:156
 msgid ""
 "<b>string_split_float</b>(<i>dest, $src, $separator, use_regexp</i>)\n"
 "Splits the string <i>$src</i> into pieces, using the given <i>$separator</"
@@ -3706,58 +3716,58 @@ msgid ""
 "when <i>use_regexp</i> is 2."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:156
+#: src/gtk/completion_info_data.c:157
 msgid ""
 "<b>string_strip</b>(<i>$str</i>)\n"
 "Removes leading and trailing whitespace from the string <i>$str</i>."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:157
+#: src/gtk/completion_info_data.c:158
 msgid ""
 "<b>string_substring</b>(<i>$dest, $src, start, end</i>)\n"
 "Copies a substring out of a UTF-8 encoded string <i>$src</i>.\n"
 "The substring will contain <i>end</i> - <i>start</i> characters."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:158
+#: src/gtk/completion_info_data.c:159
 msgid ""
 "<b>string_truncate</b>(<i>$str, len</i>)\n"
 "Cuts off the end of the string <i>$str</i>, leaving the first <i>len</i> "
 "characters."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:159
+#: src/gtk/completion_info_data.c:160
 msgid ""
 "<b>string_up</b>(<i>$dest, $src</i>)\n"
 "Converts all lowercase ASCII letters to uppercase ASCII letters in the "
 "string <i>$src</i> and set to the string <i>$dest</i>."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:160
+#: src/gtk/completion_info_data.c:161
 msgid ""
 "<b>sum</b>(<i>x</i>)\n"
 "Integration"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:161
+#: src/gtk/completion_info_data.c:162
 msgid ""
 "<b>sumsq</b>(<i>a, b, c, ...</i>)\n"
 "square sum of arguments"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:162
+#: src/gtk/completion_info_data.c:163
 msgid ""
 "<b>tan</b>(<i>x</i>)\n"
 "tangent function"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:163
+#: src/gtk/completion_info_data.c:164
 msgid ""
 "<b>tanh</b>(<i>x</i>)\n"
 "hyperbolic tangent function"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:164
+#: src/gtk/completion_info_data.c:165
 msgid ""
 "<b>text_align</b>(<i>x, y</i>)\n"
 "Set alignment of a text drawing.\n"
@@ -3766,7 +3776,7 @@ msgid ""
 "(0 &lt;= <i>x, y</i> &lt;= 1)"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:165
+#: src/gtk/completion_info_data.c:166
 msgid ""
 "<b>text_font</b>(<i>font</i>)\n"
 "Set font setting of drawing texts.\n"
@@ -3774,21 +3784,21 @@ msgid ""
 "\"Monospace\" respectively."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:166
+#: src/gtk/completion_info_data.c:167
 msgid ""
 "<b>text_obj_get</b>(<i>id, $text</i>)\n"
 "assign text of the the text object which ID is <i>id</i> to the variable <i>"
 "$text</i>."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:167
+#: src/gtk/completion_info_data.c:168
 msgid ""
 "<b>text_obj_set</b>(<i>id, $text</i>)\n"
 "set text of the the text object which ID is <i>id</i> as the variable <i>"
 "$text</i>."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:168
+#: src/gtk/completion_info_data.c:169
 msgid ""
 "<b>text_size</b>(<i>pt, space, script</i>)\n"
 "Set font size and other settings of drawing texts.\n"
@@ -3796,7 +3806,7 @@ msgid ""
 "Font-spacing and script-size are specified by the following arguments."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:169
+#: src/gtk/completion_info_data.c:170
 msgid ""
 "<b>text_style</b>(<i>style</i>)\n"
 "Set font style settings of drawing texts.\n"
@@ -3804,33 +3814,33 @@ msgid ""
 "\" and \"bold-italic\" respectively."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:170
+#: src/gtk/completion_info_data.c:171
 msgid ""
 "<b>theta</b>(<i>x</i>)\n"
 "staircase function (1 if <i>x</i> &gt;= 0, 0 otherwise)"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:171
+#: src/gtk/completion_info_data.c:172
 msgid ""
 "<b>time</b>(<i></i>)\n"
 "returns the time as the number of seconds since the Epoch,\n"
 "1970-01-01 00:00:00 +0000 (UTC)"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:172
+#: src/gtk/completion_info_data.c:173
 msgid ""
 "<b>times</b>(<i>n, index, ex</i>)\n"
 "Repeat <i>ex</i> <i>n</i> times.\n"
 "The loop count can be referred by the variable <i>index</i>."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:173
+#: src/gtk/completion_info_data.c:174
 msgid ""
 "<b>tn</b>(<i>n, x</i>)\n"
 "Chebyshev polynomials"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:174
+#: src/gtk/completion_info_data.c:175
 msgid ""
 "<b>unix2mjd</b>(<i>time</i>)\n"
 "Modified Julian Date\n"
@@ -3838,72 +3848,72 @@ msgid ""
 "1970-01-01 00:00:00 +0000 (UTC))"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:175
+#: src/gtk/completion_info_data.c:176
 msgid ""
 "<b>unless</b>(<i>x, ex1, ex2</i>)\n"
 "evaluate <i>ex2</i> when <i>x</i> != 0, evaluate <i>ex1</i> otherwise"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:176
+#: src/gtk/completion_info_data.c:177
 msgid ""
 "<b>unshift</b>(<i>a, x</i>)\n"
 "adds new element <i>x</i> to the beginning of an array <i>a</i>.\n"
 "Returns the new size of the array."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:177
+#: src/gtk/completion_info_data.c:178
 msgid ""
 "<b>xor</b>(<i>x, y</i>)\n"
 "True (= 1) when (<i>x</i> != 0) xor (<i>y</i> != 0)"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:178
+#: src/gtk/completion_info_data.c:179
 msgid ""
 "<b>yl</b>(<i>l, x</i>)\n"
 "compute the irregular spherical Bessel function of order |<i>l</i>|, "
 "y<sub><i>l</i></sub>(|<i>x</i>|)"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:179
+#: src/gtk/completion_info_data.c:180
 msgid ""
 "<b>yn</b>(<i>n, x</i>)\n"
 "compute the irregular cylindrical Bessel function of order <i>n</i>, "
 "Y<sub><i>n</i></sub>(|<i>x</i>|)"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:180
+#: src/gtk/completion_info_data.c:181
 msgid ""
 "<b>ynu</b>(<i>nu, x</i>)\n"
 "compute the irregular cylindrical Bessel function of fractional order |"
 "<i>nu</i>|, Y<sub><i>nu</i></sub>(|<i>x</i>|)"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:181
+#: src/gtk/completion_info_data.c:182
 msgid ""
 "<b>zeta</b>(<i>s</i>)\n"
 "compute the Riemann zeta function zeta(s) for arbitrary <i>s</i>, <i>s</i> !"
 "= 1"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:182
+#: src/gtk/completion_info_data.c:183
 msgid ""
 "<b>zeta_int</b>(<i>n</i>)\n"
 "compute the Riemann zeta function zeta(n) for integer <i>n</i>, <i>n</i> != 1"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:183
+#: src/gtk/completion_info_data.c:184
 msgid ""
 "<b>zetam1</b>(<i>s</i>)\n"
 "compute zeta(<i>s</i>) - 1 for arbitrary <i>s</i>, <i>s</i> != 1"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:184
+#: src/gtk/completion_info_data.c:185
 msgid ""
 "<b>zetam1_int</b>(<i>n</i>)\n"
 "compute zeta(<i>n</i>) - 1 for integer <i>n</i>, <i>n</i> != 1"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:185
+#: src/gtk/completion_info_data.c:186
 msgid ""
 "<b>zip</b>(<i>a1, a2, item1, item2, ex</i>)\n"
 "Evaluate <i>ex</i> for each element of two arrays <i>a1</i> and <i>a2</i>.\n"
@@ -3911,7 +3921,7 @@ msgid ""
 "<i>item2</i>."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:186
+#: src/gtk/completion_info_data.c:187
 msgid ""
 "<b>zip_map</b>(<i>dest, src1, src2, item1, item2, ex</i>)\n"
 "Evaluate <i>ex</i> for each element of two arrays <i>src1</i> and <i>sec2</"
@@ -3921,160 +3931,160 @@ msgid ""
 "<i>item2</i>."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:190
+#: src/gtk/completion_info_data.c:191
 msgid ""
 "<b>%D</b>\n"
 "The ID of the instance of the data object"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:191
+#: src/gtk/completion_info_data.c:192
 msgid ""
 "<b>%N</b>\n"
 "The number of instances of data object"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:192
+#: src/gtk/completion_info_data.c:193
 msgid ""
 "<b>ARC_OBJ</b>\n"
 "The identification number of the arc object"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:193
+#: src/gtk/completion_info_data.c:194
 msgid ""
 "<b>AVX</b>\n"
 "The average of X"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:194
+#: src/gtk/completion_info_data.c:195
 msgid ""
 "<b>AVY</b>\n"
 "The average of X"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:195
+#: src/gtk/completion_info_data.c:196
 msgid ""
 "<b>AXISX</b>\n"
 "The ID of the axis instance specified as X axis"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:196
+#: src/gtk/completion_info_data.c:197
 msgid ""
 "<b>AXISX_LEN</b>\n"
 "Length of the X axis"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:197
+#: src/gtk/completion_info_data.c:198
 msgid ""
 "<b>AXISX_MAX</b>\n"
 "The maximum value of the X axis"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:198
+#: src/gtk/completion_info_data.c:199
 msgid ""
 "<b>AXISX_MIN</b>\n"
 "The minimum value of the X axis"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:199
+#: src/gtk/completion_info_data.c:200
 msgid ""
 "<b>AXISY</b>\n"
 "The ID of the axis instance specified as Y axis"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:200
+#: src/gtk/completion_info_data.c:201
 msgid ""
 "<b>AXISY_LEN</b>\n"
 "Length of the Y axis"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:201
+#: src/gtk/completion_info_data.c:202
 msgid ""
 "<b>AXISY_MAX</b>\n"
 "The maximum value of the Y axis"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:202
+#: src/gtk/completion_info_data.c:203
 msgid ""
 "<b>AXISY_MIN</b>\n"
 "The minimum value of the Y axis"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:203
+#: src/gtk/completion_info_data.c:204
 msgid ""
 "<b>BREAK</b>\n"
 "Missing data (data lines are not combined)"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:204
+#: src/gtk/completion_info_data.c:205
 msgid ""
 "<b>COLX</b>\n"
 "The column number specified for X"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:205
+#: src/gtk/completion_info_data.c:206
 msgid ""
 "<b>COLY</b>\n"
 "The column number specified for Y"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:206
+#: src/gtk/completion_info_data.c:207
 msgid ""
 "<b>CONT</b>\n"
 "Missing data (data lines are combined)"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:207
+#: src/gtk/completion_info_data.c:208
 msgid ""
 "<b>DATA_OBJ</b>\n"
 "The identification number of the data object"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:208
+#: src/gtk/completion_info_data.c:209
 msgid ""
 "<b>E</b>\n"
 "The base of natural logarithm (Napier's constant)"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:209
+#: src/gtk/completion_info_data.c:210
 msgid ""
 "<b>EULER</b>\n"
 "Euler's constant"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:210
+#: src/gtk/completion_info_data.c:211
 msgid ""
 "<b>FALSE</b>\n"
 "the FALSE value (0)"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:211
+#: src/gtk/completion_info_data.c:212
 msgid ""
 "<b>FILE_OBJ</b>\n"
 "The identification number of the file object"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:212
+#: src/gtk/completion_info_data.c:213
 msgid ""
 "<b>FILL_RULE_EVEN_ODD</b>\n"
 "Defined for the function <b>draw_polygon</b>().\n"
 "fill the polygon with evin-odd rule."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:213
+#: src/gtk/completion_info_data.c:214
 msgid ""
 "<b>FILL_RULE_NONE</b>\n"
 "Defined for the function <b>draw_polygon</b>().\n"
 "don't fill the polygon."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:214
+#: src/gtk/completion_info_data.c:215
 msgid ""
 "<b>FILL_RULE_WINDING</b>\n"
 "Defined for the function <b>draw_polygon</b>().\n"
 "fill the polygon with winding rule."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:215
+#: src/gtk/completion_info_data.c:216
 msgid ""
 "<b>FIRST</b>\n"
 "When conversion is performed twice with one line of data such as diagonal or "
@@ -4082,163 +4092,163 @@ msgid ""
 "true (1) in the first call, false (0) in the second call."
 msgstr ""
 
-#: src/gtk/completion_info_data.c:216
+#: src/gtk/completion_info_data.c:217
 msgid ""
 "<b>FLINE</b>\n"
 "Number of lines specified as \"Final line\""
 msgstr ""
 
-#: src/gtk/completion_info_data.c:217
+#: src/gtk/completion_info_data.c:218
 msgid ""
 "<b>HSKIP</b>\n"
 "Number of lines specified as \"Head skip\""
 msgstr ""
 
-#: src/gtk/completion_info_data.c:218
+#: src/gtk/completion_info_data.c:219
 msgid ""
 "<b>MARK_OBJ</b>\n"
 "The identification number of the mark object"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:219
+#: src/gtk/completion_info_data.c:220
 msgid ""
 "<b>MASK</b>\n"
 "Number of lines set for mask"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:220
+#: src/gtk/completion_info_data.c:221
 msgid ""
 "<b>MAXX</b>\n"
 "The maximum value of X"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:221
+#: src/gtk/completion_info_data.c:222
 msgid ""
 "<b>MAXY</b>\n"
 "The maximum value of Y"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:222
+#: src/gtk/completion_info_data.c:223
 msgid ""
 "<b>MINX</b>\n"
 "The minimum value of X"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:223
+#: src/gtk/completion_info_data.c:224
 msgid ""
 "<b>MINY</b>\n"
 "The minimum value of Y"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:224
+#: src/gtk/completion_info_data.c:225
 msgid ""
 "<b>MOVE</b>\n"
 "Number of lines set for move"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:225
+#: src/gtk/completion_info_data.c:226
 msgid ""
 "<b>NAN</b>\n"
 "Missing data with error indication"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:226
+#: src/gtk/completion_info_data.c:227
 msgid ""
 "<b>NUM</b>\n"
 "The number of the data"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:227
+#: src/gtk/completion_info_data.c:228
 msgid ""
 "<b>PATH_OBJ</b>\n"
 "The identification number of the path object"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:228
+#: src/gtk/completion_info_data.c:229
 msgid ""
 "<b>PI</b>\n"
 "Pi"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:229
+#: src/gtk/completion_info_data.c:230
 msgid ""
 "<b>RECT_OBJ</b>\n"
 "The identification number of the rectangle object"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:230
+#: src/gtk/completion_info_data.c:231
 msgid ""
 "<b>RSTEP</b>\n"
 "Number of lines specified as \"Read step\""
 msgstr ""
 
-#: src/gtk/completion_info_data.c:231
+#: src/gtk/completion_info_data.c:232
 msgid ""
 "<b>STDEVPX</b>\n"
 "The standard deviation of X"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:232
+#: src/gtk/completion_info_data.c:233
 msgid ""
 "<b>STDEVPY</b>\n"
 "The standard deviation of Y"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:233
+#: src/gtk/completion_info_data.c:234
 msgid ""
 "<b>STDEVX</b>\n"
 "The corrected sample standard deviation of X"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:234
+#: src/gtk/completion_info_data.c:235
 msgid ""
 "<b>STDEVY</b>\n"
 "The corrected sample standard deviation of Y"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:235
+#: src/gtk/completion_info_data.c:236
 msgid ""
 "<b>SUMX</b>\n"
 "Sum of X"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:236
+#: src/gtk/completion_info_data.c:237
 msgid ""
 "<b>SUMXX</b>\n"
 "Square sum of X"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:237
+#: src/gtk/completion_info_data.c:238
 msgid ""
 "<b>SUMXY</b>\n"
 "Product sum of X and Y"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:238
+#: src/gtk/completion_info_data.c:239
 msgid ""
 "<b>SUMY</b>\n"
 "Sum of Y"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:239
+#: src/gtk/completion_info_data.c:240
 msgid ""
 "<b>SUMYY</b>\n"
 "Square sum of Y"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:240
+#: src/gtk/completion_info_data.c:241
 msgid ""
 "<b>TEXT_OBJ</b>\n"
 "The identification number of the text object"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:241
+#: src/gtk/completion_info_data.c:242
 msgid ""
 "<b>TRUE</b>\n"
 "the TRUE value (1)"
 msgstr ""
 
-#: src/gtk/completion_info_data.c:242
+#: src/gtk/completion_info_data.c:243
 msgid ""
 "<b>UNDEF</b>\n"
 "Missing data without error indication"
