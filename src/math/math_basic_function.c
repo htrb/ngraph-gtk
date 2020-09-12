@@ -4805,6 +4805,7 @@ math_func_getobj_array(MathFunctionCallExpression *exp, MathEquation *eq, MathVa
   }
   return 0;
 }
+
 int
 math_func_parameter(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
@@ -4827,5 +4828,59 @@ math_func_parameter(MathFunctionCallExpression *exp, MathEquation *eq, MathValue
 
   rval->type = MATH_VALUE_NORMAL;
   rval->val = prm;
+  return 0;
+}
+
+int
+math_func_strftime(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  double date;
+  const char *format;
+  char *str;
+  GString *gstr;
+  int is_utc;
+  time_t t;
+  struct tm *tm;
+
+  rval->val = 0;
+  rval->type = MATH_VALUE_ERROR;
+
+  gstr = math_expression_get_string_variable_from_argument(exp, 0);
+  if (gstr == NULL) {
+    return 0;
+  }
+
+  format = math_expression_get_string_from_argument(exp, 1);
+  if (format == NULL) {
+    return 0;
+  }
+
+  MATH_CHECK_ARG(rval, exp->buf[2]);
+  t = exp->buf[2].val.val;
+
+  MATH_CHECK_ARG(rval, exp->buf[3]);
+  is_utc = exp->buf[3].val.val;
+
+  if (is_utc) {
+    tm = gmtime(&t);
+  } else {
+    tm = localtime(&t);
+  }
+  if (tm == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  date = mjd(tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec);
+  str = nstrftime(format, date);
+  if (str) {
+    g_string_assign(gstr, str);
+    if (g_utf8_validate(str, -1, NULL)) {
+      rval->val = g_utf8_strlen(str, -1);
+    }
+    g_free(str);
+  }
+
+  rval->type = MATH_VALUE_NORMAL;
   return 0;
 }
