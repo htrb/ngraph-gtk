@@ -180,3 +180,4 @@ array_moving_average(dest, src, n, type)	calculate moving average of (<i>n</i> *
 on_end(proc)	Evaluate <i>proc</i> at the end of plottong the data object.
 parameter(id)	Returns the value of the prameter object which ID is <i>id</i>.
 mtime()		returns last modification time of the file.
+strftime($str, $fmt, t, utc)	convers <i>t</i> (the number of seconds elapsed since the Epoch)\naccording to the format specification <i>$fmt</i>\nand places the result in the string <i>$str</i>.\nWhen <i>utc</i> is true, <i>$str</i> is expressed in Coordinated Universal Time (UTC).
