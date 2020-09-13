@@ -2751,14 +2751,16 @@ closedata(struct f2ddata *fp, struct f2dlocal *f2dlocal)
 {
   int j,num2,*data2;
   N_VALUE *inst;
-  MathValue val;
 
   if (fp==NULL) return;
 
   if (fp->end_expression) {
-    math_equation_set_user_data(fp->end_expression->equation, fp);
-    math_expression_calculate(fp->end_expression, &val);
-    math_equation_set_user_data(fp->end_expression->equation, NULL);
+    MathValue val;
+    MathExpression *exp;
+    exp = fp->end_expression;
+    math_equation_set_user_data(exp->equation, fp);
+    math_expression_calculate(exp, &val);
+    math_equation_set_user_data(exp->equation, NULL);
     fp->end_expression = NULL;
   }
   set_data_progress(fp);
