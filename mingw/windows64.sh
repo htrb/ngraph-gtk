@@ -110,7 +110,7 @@ make_zip() {
 
     cat <<'[EOF]' > $PKG_DIR/ngraph.bat
 @echo off
-"%~dp0bin\ngraph.exe" %*
+start "" "%~dp0bin\ngraph.exe" %*
 [EOF]
 
     archive=ngraph-gtk-${VERSION}-win$1.zip
