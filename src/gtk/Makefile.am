@@ -61,11 +61,11 @@ NGRAPH_ICONS = data/pixmaps/ngraph_align_b.png				\
 	data/pixmaps/ngraph_parameter-symbolic.svg
 
 EXTRA_DIST = dir_defs.h.in data/css/ngraph.css				\
-	data/gtk/menus-common.ui.in data/gtk/menus-common.ui.osx	\
-	data/gtk/menus-appmenu.ui data/gtk/help-overlay.ui		\
-	data/gtk/menus-tool.ui create_completion_info.rb		\
-	completion_info_functions.txt completion_info_constants.txt	\
-	data/ngraphui.resources.xml.in					\
+	data/gtk/menus-common.ui.in data/gtk/menus-common.ui.win		\
+	data/gtk/menus-common.ui.osx data/gtk/menus-appmenu.ui		\
+	data/gtk/help-overlay.ui data/gtk/menus-tool.ui			\
+	create_completion_info.rb completion_info_functions.txt		\
+	completion_info_constants.txt data/ngraphui.resources.xml.in	\
 	data/ngraphui.resources.xml.osx $(NGRAPH_ICONS)
 
 AM_CPPFLAGS = -DLOCALEDIR=\""@localedir@"\"
