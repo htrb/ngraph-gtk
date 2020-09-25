@@ -117,6 +117,15 @@ GraphExportPNGAction_activated(GSimpleAction *action, GVariant *parameter, gpoin
   CmOutputMenu(NULL, GINT_TO_POINTER(MenuIdOutputPNGFile));
 }
 
+#if WINDOWS
+static void
+GraphExportEMFAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
+{
+  CmOutputMenu(NULL, GINT_TO_POINTER(MenuIdOutputEMFFile));
+}
+
+#endif
+
 static void
 GraphDrawOrderAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
@@ -702,6 +711,9 @@ static GActionEntry AppEntries[] =
   { "GraphExportPDFAction", GraphExportPDFAction_activated, NULL, NULL, NULL },
   { "GraphExportSVGAction", GraphExportSVGAction_activated, NULL, NULL, NULL },
   { "GraphExportPNGAction", GraphExportPNGAction_activated, NULL, NULL, NULL },
+#if WINDOWS
+  { "GraphExportEMFAction", GraphExportEMFAction_activated, NULL, NULL, NULL },
+#endif
   { "GraphDrawOrderAction", GraphDrawOrderAction_activated, NULL, NULL, NULL },
   { "GraphPageSetupAction", GraphPageSetupAction_activated, NULL, NULL, NULL },
   { "GraphPrintPreviewAction", GraphPrintPreviewAction_activated, NULL, NULL, NULL },
