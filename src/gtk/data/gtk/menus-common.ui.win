@@ -1,0 +1,741 @@
+<?xml version="1.0"?>
+<interface>
+  <menu id="menubar">
+    <submenu>
+      <attribute name="label" translatable="yes">_Graph</attribute>
+      <section>
+	<submenu>
+	  <attribute name="label" translatable="yes">_New graph</attribute>
+	  <section>
+	    <item>
+              <attribute name="label" translatable="yes">_Frame graph</attribute>
+	      <attribute name="action">app.GraphNewFrameAction</attribute>
+	    </item>
+	    <item>
+              <attribute name="label" translatable="yes">_Section graph</attribute>
+	      <attribute name="action">app.GraphNewSectionAction</attribute>
+	    </item>
+	    <item>
+              <attribute name="label" translatable="yes">_Cross graph</attribute>
+	      <attribute name="action">app.GraphNewCrossAction</attribute>
+	    </item>
+	  </section>
+	  <section>
+	    <item>
+              <attribute name="label" translatable="yes">_All clear</attribute>
+	      <attribute name="action">app.GraphNewClearAction</attribute>
+	    </item>
+	  </section>
+	</submenu>
+	<item>
+	  <attribute name="label" translatable="yes">_Load graph</attribute>
+	  <attribute name="action">app.GraphLoadAction</attribute>
+          <attribute name="accel">&lt;Primary&gt;R</attribute>
+	</item>
+      </section>
+      <section>
+	<item>
+	  <attribute name="label" translatable="yes">_Save</attribute>
+	  <attribute name="action">app.GraphSaveAction</attribute>
+          <attribute name="accel">&lt;Primary&gt;S</attribute>
+	</item>
+	<item>
+	  <attribute name="label" translatable="yes">Save _As</attribute>
+	  <attribute name="action">app.GraphSaveAsAction</attribute>
+          <attribute name="accel">&lt;Primary&gt;&lt;Shift&gt;S</attribute>
+	</item>
+      </section>
+      <section>
+	<submenu>
+	  <attribute name="label" translatable="yes">_Export image</attribute>
+	  <item>
+            <attribute name="label" translatable="yes">_GRA file</attribute>
+	    <attribute name="action">app.GraphExportGRAAction</attribute>
+	  </item>
+	  <item>
+	    <attribute name="label" translatable="yes">_PS file</attribute>
+	    <attribute name="action">app.GraphExportPSAction</attribute>
+	  </item>
+	  <item>
+            <attribute name="label" translatable="yes">_EPS file</attribute>
+	    <attribute name="action">app.GraphExportEPSAction</attribute>
+	  </item>
+	  <item>
+            <attribute name="label" translatable="yes">P_DF file</attribute>
+	    <attribute name="action">app.GraphExportPDFAction</attribute>
+	  </item>
+	  <item>
+            <attribute name="label" translatable="yes">_SVG file</attribute>
+	    <attribute name="action">app.GraphExportSVGAction</attribute>
+	  </item>
+	  <item>
+            <attribute name="label" translatable="yes">P_NG file</attribute>
+	    <attribute name="action">app.GraphExportPNGAction</attribute>
+	  </item>
+	  <item>
+            <attribute name="label" translatable="yes">E_MF file</attribute>
+	    <attribute name="action">app.GraphExportEMFAction</attribute>
+	  </item>
+	  <item>
+            <attribute name="label" translatable="yes">_Clipboard (EMF)</attribute>
+	    <attribute name="action">app.GraphExportEMFClipboardAction</attribute>
+	  </item>
+	</submenu>
+      </section>
+      <section>
+	<item>
+	  <attribute name="label" translatable="yes">_Draw order</attribute>
+	  <attribute name="action">app.GraphDrawOrderAction</attribute>
+	</item>
+      </section>
+      <section>
+	<item>
+	  <attribute name="label" translatable="yes">Page Set_up</attribute>
+	  <attribute name="action">app.GraphPageSetupAction</attribute>
+	</item>
+	<item>
+	  <attribute name="label" translatable="yes">Pre_view</attribute>
+	  <attribute name="action">app.GraphPrintPreviewAction</attribute>
+	</item>
+	<item>
+	  <attribute name="label" translatable="yes">_Print</attribute>
+	  <attribute name="action">app.GraphPrintAction</attribute>
+          <attribute name="accel">&lt;Primary&gt;P</attribute>
+	</item>
+      </section>
+      <section>
+	<item>
+	  <attribute name="label" translatable="yes">_Current directory</attribute>
+	  <attribute name="action">app.GraphCurrentDirectoryAction</attribute>
+	</item>
+      </section>
+      <section>
+	<item>
+	  <attribute name="label" translatable="yes">_Ngraph shell</attribute>
+	  <attribute name="action">app.GraphShellAction</attribute>
+	</item>
+      </section>
+      <section>
+	<item>
+	  <attribute name="label" translatable="yes">_Quit</attribute>
+	  <attribute name="action">app.quit</attribute>
+          <attribute name="accel">&lt;Primary&gt;Q</attribute>
+	</item>
+      </section>
+    </submenu>
+    <submenu>
+      <attribute name="label" translatable="yes">_Edit</attribute>
+      <section>
+	<item>
+	  <attribute name="label" translatable="yes">_Redo</attribute>
+	  <attribute name="action">app.EditRedoAction</attribute>
+          <attribute name="accel">&lt;Primary&gt;Y</attribute>
+	</item>
+	<item>
+	  <attribute name="label" translatable="yes">_Undo</attribute>
+	  <attribute name="action">app.EditUndoAction</attribute>
+          <attribute name="accel">&lt;Primary&gt;Z</attribute>
+	</item>
+      </section>
+      <section>
+	<item>
+	  <attribute name="label" translatable="yes">Cu_t</attribute>
+	  <attribute name="action">app.EditCutAction</attribute>
+          <attribute name="accel">&lt;Primary&gt;X</attribute>
+	</item>
+	<item>
+	  <attribute name="label" translatable="yes">_Copy</attribute>
+	  <attribute name="action">app.EditCopyAction</attribute>
+          <attribute name="accel">&lt;Primary&gt;C</attribute>
+	</item>
+	<item>
+	  <attribute name="label" translatable="yes">_Paste</attribute>
+	  <attribute name="action">app.EditPasteAction</attribute>
+          <attribute name="accel">&lt;Primary&gt;V</attribute>
+	</item>
+	<item>
+	  <attribute name="label" translatable="yes">_Delete</attribute>
+	  <attribute name="action">app.EditDeleteAction</attribute>
+          <attribute name="accel">Delete</attribute>
+	</item>
+	<item>
+	  <attribute name="label" translatable="yes">_Duplicate</attribute>
+	  <attribute name="action">app.EditDuplicateAction</attribute>
+          <attribute name="accel">Insert</attribute>
+	</item>
+	<item>
+	  <attribute name="label" translatable="yes">Select _All</attribute>
+	  <attribute name="action">app.EditSelectAllAction</attribute>
+          <attribute name="accel">&lt;Primary&gt;A</attribute>
+	</item>
+      </section>
+      <section>
+	<submenu>
+	  <attribute name="label" translatable="yes">draw _Order</attribute>
+	  <section>
+	    <item>
+              <attribute name="label" translatable="yes">_Top</attribute>
+	      <attribute name="action">app.EditOrderTopAction</attribute>
+              <attribute name="accel">&lt;Shift&gt;Home</attribute>
+	    </item>
+	    <item>
+              <attribute name="label" translatable="yes">_Up</attribute>
+	      <attribute name="action">app.EditOrderUpAction</attribute>
+	    </item>
+	    <item>
+              <attribute name="label" translatable="yes">_Down</attribute>
+	      <attribute name="action">app.EditOrderDownAction</attribute>
+	    </item>
+	    <item>
+              <attribute name="label" translatable="yes">_Bottom</attribute>
+	      <attribute name="action">app.EditOrderBottomAction</attribute>
+              <attribute name="accel">&lt;Shift&gt;End</attribute>
+	    </item>
+	  </section>
+	</submenu>
+	<submenu>
+	  <attribute name="label" translatable="yes">_Align</attribute>
+	  <section>
+	    <item>
+              <attribute name="label" translatable="yes">Align _Left</attribute>
+	      <attribute name="action">app.EditAlignLeftAction</attribute>
+	    </item>
+	    <item>
+              <attribute name="label" translatable="yes">Align _Horizontal Center</attribute>
+	      <attribute name="action">app.EditAlignHCenterAction</attribute>
+	    </item>
+	    <item>
+              <attribute name="label" translatable="yes">Align _Right</attribute>
+	      <attribute name="action">app.EditAlignRightAction</attribute>
+	    </item>
+	  </section>
+	  <section>
+	    <item>
+              <attribute name="label" translatable="yes">Align _Top</attribute>
+	      <attribute name="action">app.EditAlignTopAction</attribute>
+	    </item>
+	    <item>
+              <attribute name="label" translatable="yes">Align _Vertical Center</attribute>
+	      <attribute name="action">app.EditAlignVCenterAction</attribute>
+	    </item>
+	    <item>
+              <attribute name="label" translatable="yes">Align _Bottom</attribute>
+	      <attribute name="action">app.EditAlignBottomAction</attribute>
+	    </item>
+	  </section>
+	</submenu>
+	<item>
+	  <attribute name="label" translatable="yes">rotate _90 degree clockwise</attribute>
+	  <attribute name="action">app.EditRotateCWAction</attribute>
+	</item>
+	<item>
+	  <attribute name="label" translatable="yes">rotate 9_0 degree counter-clockwise</attribute>
+	  <attribute name="action">app.EditRotateCCWAction</attribute>
+	</item>
+	<item>
+	  <attribute name="label" translatable="yes">flip _Horizontally</attribute>
+	  <attribute name="action">app.EditFlipHAction</attribute>
+	</item>
+	<item>
+	  <attribute name="label" translatable="yes">flip _Vertically</attribute>
+	  <attribute name="action">app.EditFlipVAction</attribute>
+	</item>
+      </section>
+    </submenu>
+    <submenu>
+      <attribute name="label" translatable="yes">_View</attribute>
+      <section>
+	<item>
+	  <attribute name="label" translatable="yes">_Draw</attribute>
+	  <attribute name="action">app.ViewDrawAction</attribute>
+          <attribute name="accel">&lt;Primary&gt;D</attribute>
+	</item>
+      </section>
+      <section>
+	<item>
+	  <attribute name="label" translatable="yes">_Clear information view</attribute>
+	  <attribute name="action">app.ViewClearInformationWindowAction</attribute>
+	</item>
+      </section>
+      <section>
+	<item>
+	  <attribute name="label" translatable="yes">_Sidebar</attribute>
+	  <attribute name="action">app.ViewSidebarAction</attribute>
+	</item>
+	<item>
+	  <attribute name="label" translatable="yes">_Statusbar</attribute>
+	  <attribute name="action">app.ViewStatusbarAction</attribute>
+	</item>
+	<item>
+	  <attribute name="label" translatable="yes">_Ruler</attribute>
+	  <attribute name="action">app.ViewRulerAction</attribute>
+	</item>
+	<item>
+	  <attribute name="label" translatable="yes">_Scrollbar</attribute>
+	  <attribute name="action">app.ViewScrollbarAction</attribute>
+	</item>
+	<item>
+	  <attribute name="label" translatable="yes">_Command toolbar</attribute>
+	  <attribute name="action">app.ViewCommandToolbarAction</attribute>
+	</item>
+	<item>
+	  <attribute name="label" translatable="yes">_Toolbox</attribute>
+	  <attribute name="action">app.ViewToolboxAction</attribute>
+	</item>
+	<item>
+	  <attribute name="label" translatable="yes">cross _Gauge</attribute>
+	  <attribute name="action">app.ViewCrossGaugeAction</attribute>
+          <attribute name="accel">&lt;Primary&gt;G</attribute>
+	</item>
+	<item>
+	  <attribute name="label" translatable="yes">_Grid</attribute>
+	  <attribute name="action">app.ViewGridLineAction</attribute>
+	</item>
+      </section>
+    </submenu>
+    <submenu>
+      <attribute name="label" translatable="yes">_Object</attribute>
+      <section>
+	<submenu>
+	  <attribute name="label" translatable="yes">_Data</attribute>
+	  <section>
+	    <submenu>
+	      <attribute name="label" translatable="yes">_Add</attribute>
+	      <section>
+		<item>
+		  <attribute name="label" translatable="yes">_File</attribute>
+		  <attribute name="action">app.DataAddFileAction</attribute>
+		  <attribute name="accel">&lt;Primary&gt;O</attribute>
+		</item>
+		<item>
+		  <attribute name="label" translatable="yes">_Range</attribute>
+		  <attribute name="action">app.DataAddRangeAction</attribute>
+		</item>
+	      </section>
+	    </submenu>
+	    <item>
+	      <attribute name="label" translatable="yes">_Properties</attribute>
+	      <attribute name="action">app.DataPropertyAction</attribute>
+	    </item>
+	    <item>
+	      <attribute name="label" translatable="yes">_Close</attribute>
+	      <attribute name="action">app.DataCloseAction</attribute>
+	    </item>
+	    <item>
+	      <attribute name="label" translatable="yes">_Edit</attribute>
+	      <attribute name="action">app.DataEditAction</attribute>
+	    </item>
+	  </section>
+	  <section>
+	    <item>
+	      <attribute name="label" translatable="yes">_Save data</attribute>
+	      <attribute name="action">app.DataSaveAction</attribute>
+	    </item>
+	    <item>
+	      <attribute name="label" translatable="yes">_Math Transformation</attribute>
+	      <attribute name="action">app.DataMathAction</attribute>
+	    </item>
+	  </section>
+	</submenu>
+	<submenu>
+	  <attribute name="label" translatable="yes">_Axis</attribute>
+	  <section>
+	    <submenu>
+	      <attribute name="label" translatable="yes">_Add</attribute>
+	      <section>
+		<item>
+		  <attribute name="label" translatable="yes">_Frame graph</attribute>
+		  <attribute name="action">app.AxisAddFrameAction</attribute>
+		</item>
+		<item>
+		  <attribute name="label" translatable="yes">_Section graph</attribute>
+		  <attribute name="action">app.AxisAddSectionAction</attribute>
+		</item>
+		<item>
+		  <attribute name="label" translatable="yes">_Cross graph</attribute>
+		  <attribute name="action">app.AxisAddCrossAction</attribute>
+		</item>
+		<item>
+		  <attribute name="label" translatable="yes">Single _Axis</attribute>
+		  <attribute name="action">app.AxisAddSingleAction</attribute>
+		</item>
+	      </section>
+	    </submenu>
+	    <item>
+	      <attribute name="label" translatable="yes">_Properties</attribute>
+	      <attribute name="action">app.AxisPropertyAction</attribute>
+	    </item>
+	    <item>
+	      <attribute name="label" translatable="yes">_Delete</attribute>
+	      <attribute name="action">app.AxisDeleteAction</attribute>
+	    </item>
+	    <item>
+	      <attribute name="label" translatable="yes">Scale _Zoom</attribute>
+	      <attribute name="action">app.AxisScaleZoomAction</attribute>
+	    </item>
+	    <item>
+	      <attribute name="label" translatable="yes">Scale _Clear</attribute>
+	      <attribute name="action">app.AxisScaleClearAction</attribute>
+              <attribute name="accel">&lt;Primary&gt;&lt;Shift&gt;C</attribute>
+	    </item>
+	    <item>
+	      <attribute name="label" translatable="yes">Scale _Undo</attribute>
+	      <attribute name="action">app.AxisScaleUndoAction</attribute>
+	    </item>
+	    <submenu>
+	      <attribute name="label" translatable="yes">_Grid</attribute>
+	      <section>
+		<item>
+		  <attribute name="label" translatable="yes">_Add</attribute>
+		  <attribute name="action">app.AxisGridNewAction</attribute>
+		</item>
+		<item>
+		  <attribute name="label" translatable="yes">_Properties</attribute>
+		  <attribute name="action">app.AxisGridPropertyAction</attribute>
+		</item>
+		<item>
+		  <attribute name="label" translatable="yes">_Delete</attribute>
+		  <attribute name="action">app.AxisGridDeleteAction</attribute>
+		</item>
+	      </section>
+	    </submenu>
+	  </section>
+	</submenu>
+	<submenu>
+	  <attribute name="label" translatable="yes">_Path</attribute>
+	  <section>
+	    <item>
+	      <attribute name="label" translatable="yes">_Properties</attribute>
+	      <attribute name="action">app.LegendPathPropertyAction</attribute>
+            </item>
+	    <item>
+	      <attribute name="label" translatable="yes">_Delete</attribute>
+	      <attribute name="action">app.LegendPathDeleteAction</attribute>
+            </item>
+	  </section>
+	</submenu>
+	<submenu>
+	  <attribute name="label" translatable="yes">_Rectangle</attribute>
+	  <section>
+	    <item>
+	      <attribute name="label" translatable="yes">_Properties</attribute>
+	      <attribute name="action">app.LegendRectanglePropertyAction</attribute>
+            </item>
+	    <item>
+	      <attribute name="label" translatable="yes">_Delete</attribute>
+	      <attribute name="action">app.LegendRectangleDeleteAction</attribute>
+            </item>
+	  </section>
+	</submenu>
+	<submenu>
+	  <attribute name="label" translatable="yes">_Arc</attribute>
+	  <section>
+	    <item>
+	      <attribute name="label" translatable="yes">_Properties</attribute>
+	      <attribute name="action">app.LegendArcPropertyAction</attribute>
+            </item>
+	    <item>
+	      <attribute name="label" translatable="yes">_Delete</attribute>
+	      <attribute name="action">app.LegendArcDeleteAction</attribute>
+	    </item>
+	  </section>
+	</submenu>
+	<submenu>
+	  <attribute name="label" translatable="yes">_Mark</attribute>
+	  <section>
+	    <item>
+	      <attribute name="label" translatable="yes">_Properties</attribute>
+	      <attribute name="action">app.LegendMarkPropertyAction</attribute>
+            </item>
+	    <item>
+	      <attribute name="label" translatable="yes">_Delete</attribute>
+	      <attribute name="action">app.LegendMarkDeleteAction</attribute>
+            </item>
+	  </section>
+	</submenu>
+	<submenu>
+	  <attribute name="label" translatable="yes">_Text</attribute>
+	  <section>
+	    <item>
+	      <attribute name="label" translatable="yes">_Properties</attribute>
+	      <attribute name="action">app.LegendTextPropertyAction</attribute>
+            </item>
+	    <item>
+	      <attribute name="label" translatable="yes">_Delete</attribute>
+	      <attribute name="action">app.LegendTextDeleteAction</attribute>
+            </item>
+	  </section>
+	</submenu>
+	<submenu>
+	  <attribute name="label" translatable="yes">_Merge</attribute>
+	  <section>
+	    <item>
+	      <attribute name="label" translatable="yes">_Add</attribute>
+	      <attribute name="action">app.MergeAddAction</attribute>
+	    </item>
+	    <item>
+	      <attribute name="label" translatable="yes">_Properties</attribute>
+	      <attribute name="action">app.MergePropertyAction</attribute>
+	    </item>
+	    <item>
+	      <attribute name="label" translatable="yes">_Close</attribute>
+	      <attribute name="action">app.MergeCloseAction</attribute>
+	    </item>
+	  </section>
+	</submenu>
+	<submenu>
+	  <attribute name="label" translatable="yes">_Parameter</attribute>
+	  <section>
+	    <item>
+	      <attribute name="label" translatable="yes">_Add</attribute>
+	      <attribute name="action">app.ParameterAddAction</attribute>
+	    </item>
+	    <item>
+	      <attribute name="label" translatable="yes">_Properties</attribute>
+	      <attribute name="action">app.ParameterPropertyAction</attribute>
+	    </item>
+	    <item>
+	      <attribute name="label" translatable="yes">_Delete</attribute>
+	      <attribute name="action">app.ParameterDeleteAction</attribute>
+	    </item>
+	  </section>
+	</submenu>
+      </section>
+    </submenu>
+    <submenu>
+      <attribute name="label" translatable="yes">_Preference</attribute>
+      <section>
+	<item>
+	  <attribute name="label" translatable="yes">_Viewer</attribute>
+	  <attribute name="action">app.PreferenceViewerAction</attribute>
+	</item>
+	<item>
+	  <attribute name="label" translatable="yes">_External viewer</attribute>
+	  <attribute name="action">app.PreferenceExternalViewerAction</attribute>
+	</item>
+	<item>
+	  <attribute name="label" translatable="yes">_Font aliases</attribute>
+	  <attribute name="action">app.PreferenceFontAction</attribute>
+	</item>
+	<item>
+	  <attribute name="label" translatable="yes">_Add-in script</attribute>
+	  <attribute name="action">app.PreferenceAddinAction</attribute>
+	</item>
+	<item>
+	  <attribute name="label" translatable="yes">_Miscellaneous</attribute>
+	  <attribute name="action">app.PreferenceMiscAction</attribute>
+	</item>
+      </section>
+      <section>
+	<item>
+	  <attribute name="label" translatable="yes">save as default (_Settings)</attribute>
+	  <attribute name="action">app.PreferenceSaveSettingAction</attribute>
+	</item>
+	<item>
+	  <attribute name="label" translatable="yes">save as default (_Graph)</attribute>
+	  <attribute name="action">app.PreferenceSaveGraphAction</attribute>
+	</item>
+      </section>
+      <section>
+	<item>
+	  <attribute name="label" translatable="yes">_Data file default</attribute>
+	  <attribute name="action">app.PreferenceDataDefaultAction</attribute>
+	</item>
+	<item>
+	  <attribute name="label" translatable="yes">_Legend text default</attribute>
+	  <attribute name="action">app.PreferenceTextDefaultAction</attribute>
+	</item>
+      </section>
+    </submenu>
+    <submenu>
+      <attribute name="label" translatable="yes">_Help</attribute>
+      <section>
+	<item>
+	  <attribute name="label" translatable="yes">_Help</attribute>
+	  <attribute name="action">app.help</attribute>
+          <attribute name="accel">F1</attribute>
+	</item>
+        <item>
+          <attribute name="label" translatable="yes">_Keyboard shortcus</attribute>
+          <attribute name="action">win.show-help-overlay</attribute>
+        </item>
+	<item>
+	  <attribute name="label" translatable="yes">_Demonstration</attribute>
+	  <attribute name="action">app.demo</attribute>
+	</item>
+	<item>
+	  <attribute name="label" translatable="yes">_About</attribute>
+	  <attribute name="action">app.about</attribute>
+	</item>
+      </section>
+    </submenu>
+  </menu>
+  <menu id="popup-menu">
+    <section>
+      <item>
+	<attribute name="label" translatable="yes">Cu_t</attribute>
+	<attribute name="action">app.EditCutAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Copy</attribute>
+	<attribute name="action">app.EditCopyAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Paste</attribute>
+	<attribute name="action">app.EditPasteAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Delete</attribute>
+	<attribute name="action">app.EditDeleteAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Duplicate</attribute>
+	<attribute name="action">app.EditDuplicateAction</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+	<attribute name="label" translatable="yes">_Properties</attribute>
+	<attribute name="action">app.PopupUpdateAction</attribute>
+      </item>
+    </section>
+    <section>
+      <submenu>
+	<attribute name="label" translatable="yes">_Align</attribute>
+	<section>
+	  <item>
+	    <attribute name="label" translatable="yes">Align _Left</attribute>
+	    <attribute name="action">app.EditAlignLeftAction</attribute>
+	  </item>
+	  <item>
+	    <attribute name="label" translatable="yes">Align _Horizontal Center</attribute>
+	    <attribute name="action">app.EditAlignHCenterAction</attribute>
+	  </item>
+	  <item>
+	    <attribute name="label" translatable="yes">Align _Right</attribute>
+	    <attribute name="action">app.EditAlignRightAction</attribute>
+	  </item>
+	</section>
+	<section>
+	  <item>
+	    <attribute name="label" translatable="yes">Align _Top</attribute>
+	    <attribute name="action">app.EditAlignTopAction</attribute>
+	  </item>
+	  <item>
+	    <attribute name="label" translatable="yes">Align _Vertical Center</attribute>
+	    <attribute name="action">app.EditAlignVCenterAction</attribute>
+	  </item>
+	  <item>
+	    <attribute name="label" translatable="yes">Align _Bottom</attribute>
+	    <attribute name="action">app.EditAlignBottomAction</attribute>
+	  </item>
+	</section>
+      </submenu>
+      <submenu>
+	<attribute name="label" translatable="yes">_Rotate</attribute>
+	<section>
+	  <item>
+	    <attribute name="label" translatable="yes">rotate _90 degree clockwise</attribute>
+	    <attribute name="action">app.EditRotateCWAction</attribute>
+	  </item>
+	  <item>
+	    <attribute name="label" translatable="yes">rotate 9_0 degree counter-clockwise</attribute>
+	    <attribute name="action">app.EditRotateCCWAction</attribute>
+	  </item>
+	</section>
+      </submenu>
+      <submenu>
+	<attribute name="label" translatable="yes">_Flip</attribute>
+	<section>
+	  <item>
+	    <attribute name="label" translatable="yes">flip _Horizontally</attribute>
+	    <attribute name="action">app.EditFlipHAction</attribute>
+	  </item>
+	  <item>
+	    <attribute name="label" translatable="yes">flip _Vertically</attribute>
+	    <attribute name="action">app.EditFlipVAction</attribute>
+	  </item>
+	</section>
+      </submenu>
+    </section>
+    <section>
+      <item>
+	<attribute name="label" translatable="yes">_Top</attribute>
+	<attribute name="action">app.EditOrderTopAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Up</attribute>
+	<attribute name="action">app.EditOrderUpAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Down</attribute>
+	<attribute name="action">app.EditOrderDownAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">_Bottom</attribute>
+	<attribute name="action">app.EditOrderBottomAction</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+	<attribute name="label" translatable="yes">cross _Gauge</attribute>
+	<attribute name="action">app.ViewCrossGaugeAction</attribute>
+      </item>
+    </section>
+  </menu>
+  <menu id="save-menu">
+    <section>
+      <item>
+	<attribute name="label" translatable="yes">_Save</attribute>
+	<attribute name="action">app.GraphSaveAction</attribute>
+      </item>
+      <item>
+	<attribute name="label" translatable="yes">Save _As</attribute>
+	<attribute name="action">app.GraphSaveAsAction</attribute>
+      </item>
+    </section>
+    <section>
+      <submenu>
+	<attribute name="label" translatable="yes">_Export image</attribute>
+	<item>
+          <attribute name="label" translatable="yes">_GRA file</attribute>
+	  <attribute name="action">app.GraphExportGRAAction</attribute>
+	</item>
+	<item>
+	  <attribute name="label" translatable="yes">_PS file</attribute>
+	  <attribute name="action">app.GraphExportPSAction</attribute>
+	</item>
+	<item>
+          <attribute name="label" translatable="yes">_EPS file</attribute>
+	  <attribute name="action">app.GraphExportEPSAction</attribute>
+	</item>
+	<item>
+          <attribute name="label" translatable="yes">P_DF file</attribute>
+	  <attribute name="action">app.GraphExportPDFAction</attribute>
+	</item>
+	<item>
+          <attribute name="label" translatable="yes">_SVG file</attribute>
+	  <attribute name="action">app.GraphExportSVGAction</attribute>
+	</item>
+	<item>
+          <attribute name="label" translatable="yes">P_NG file</attribute>
+	  <attribute name="action">app.GraphExportPNGAction</attribute>
+	</item>
+	<item>
+          <attribute name="label" translatable="yes">E_MF file</attribute>
+	  <attribute name="action">app.GraphExportEMFAction</attribute>
+	</item>
+	<item>
+          <attribute name="label" translatable="yes">_Clipboard (EMF)</attribute>
+	  <attribute name="action">app.GraphExportEMFClipboardAction</attribute>
+	</item>
+      </submenu>
+    </section>
+    <section>
+      <item>
+	<attribute name="label" translatable="yes">_Save data</attribute>
+	<attribute name="action">app.DataSaveAction</attribute>
+      </item>
+    </section>
+  </menu>
+</interface>
