@@ -96,7 +96,7 @@ libngraph_cflags =
 
 if OS_WIN32
 UI_RESOURCES_SOURCE = $(srcdir)/data/ngraphui.resources.xml.in
-MENU_UI_SOURCE = $(srcdir)/data/gtk/menus-common.ui.in
+MENU_UI_SOURCE = $(srcdir)/data/gtk/menus-common.ui.win
 else
 if OS_OSX
 UI_RESOURCES_SOURCE = $(srcdir)/data/ngraphui.resources.xml.osx
