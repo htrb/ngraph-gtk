@@ -61,7 +61,7 @@ NGRAPH_ICONS = data/pixmaps/ngraph_align_b.png				\
 	data/pixmaps/ngraph_parameter-symbolic.svg
 
 EXTRA_DIST = dir_defs.h.in data/css/ngraph.css				\
-	data/gtk/menus-common.ui.in data/gtk/menus-common.ui.win		\
+	data/gtk/menus-common.ui.in data/gtk/menus-common-win.ui.in	\
 	data/gtk/menus-common.ui.osx data/gtk/menus-appmenu.ui		\
 	data/gtk/help-overlay.ui data/gtk/menus-tool.ui			\
 	create_completion_info.rb completion_info_functions.txt		\
@@ -96,7 +96,7 @@ libngraph_cflags =
 
 if OS_WIN32
 UI_RESOURCES_SOURCE = $(srcdir)/data/ngraphui.resources.xml.in
-MENU_UI_SOURCE = $(srcdir)/data/gtk/menus-common.ui.win
+MENU_UI_SOURCE = $(srcdir)/data/gtk/menus-common-win.ui.in
 else
 if OS_OSX
 UI_RESOURCES_SOURCE = $(srcdir)/data/ngraphui.resources.xml.osx
