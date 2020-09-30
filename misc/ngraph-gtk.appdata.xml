@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop">
+  <id>com.github.htrb.ngraph-gtk</id>
+  <launchable type="desktop-id">nhraph.desktop</launchable>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-2.0+</project_license>
+  <translation type="gettext">ngraph-gtk</translation>
+  <name>Ngraph-GTK</name>
+  <summary>create scientific 2-dimensional graphs</summary>
+  <description>
+    <p>Ngraph is the program to create scientific 2-dimensional graphs for researchers and engineers.</p>
+    <p>Graphs can be exported to PostScript, SVG, PNG or PDF format.</p>
+  </description>
+  <url type="homepage">http://hito.music.coocan.jp/ngraph/ngraph-gtk.html</url>
+  <url type="bugtracker">https://github.com/htrb/ngraph-gtk/issues</url>
+  <url type="help">https://htrb.github.io/ngraph-gtk/manual/</url>
+  <screenshots>
+    <screenshot type="default">
+      <image>http://hito.music.coocan.jp/ngraph/ngraph_607_linux.png</image>
+      <caption>Main application window</caption>
+    </screenshot>
+  </screenshots>
+  <kudos>
+    <kudo>AppMenu</kudo>
+    <kudo>ModernToolkit</kudo>
+  </kudos>
+  <content_rating type="oars-1.1">
+    <content_attribute id="violence-cartoon">none</content_attribute>
+    <content_attribute id="violence-fantasy">none</content_attribute>
+    <content_attribute id="violence-realistic">none</content_attribute>
+    <content_attribute id="violence-bloodshed">none</content_attribute>
+    <content_attribute id="violence-sexual">none</content_attribute>
+    <content_attribute id="violence-desecration">none</content_attribute>
+    <content_attribute id="violence-slavery">none</content_attribute>
+    <content_attribute id="violence-worship">none</content_attribute>
+    <content_attribute id="drugs-alcohol">none</content_attribute>
+    <content_attribute id="drugs-narcotics">none</content_attribute>
+    <content_attribute id="drugs-tobacco">none</content_attribute>
+    <content_attribute id="sex-nudity">none</content_attribute>
+    <content_attribute id="sex-themes">none</content_attribute>
+    <content_attribute id="sex-homosexuality">none</content_attribute>
+    <content_attribute id="sex-prostitution">none</content_attribute>
+    <content_attribute id="sex-adultery">none</content_attribute>
+    <content_attribute id="sex-appearance">none</content_attribute>
+    <content_attribute id="language-profanity">none</content_attribute>
+    <content_attribute id="language-humor">none</content_attribute>
+    <content_attribute id="language-discrimination">none</content_attribute>
+    <content_attribute id="social-chat">none</content_attribute>
+    <content_attribute id="social-info">none</content_attribute>
+    <content_attribute id="social-audio">none</content_attribute>
+    <content_attribute id="social-location">none</content_attribute>
+    <content_attribute id="social-contacts">none</content_attribute>
+    <content_attribute id="money-purchasing">none</content_attribute>
+    <content_attribute id="money-gambling">none</content_attribute>
+  </content_rating>
+  <releases>
+    <release version="6.08.07" date="2020-09-16"/>
+    <release version="6.08.06" date="2020-08-09"/>
+    <release version="6.08.05" date="2020-05-30"/>
+    <release version="6.08.04" date="2020-02-29"/>
+    <release version="6.08.03" date="2020-02-08"/>
+    <release version="6.08.02" date="2019-12-07"/>
+    <release version="6.08.01" date="2019-03-16"/>
+    <release version="6.08.00" date="2018-11-23"/>
+    <release version="6.07.07" date="2018-07-16"/>
+    <release version="6.07.06" date="2018-03-11"/>
+    <release version="6.07.05" date="2017-11-11"/>
+    <release version="6.07.04" date="2017-08-15"/>
+    <release version="6.07.03" date="2017-04-01"/>
+    <release version="6.07.02" date="2016-12-27"/>
+    <release version="6.07.01" date="2016-12-04"/>
+    <release version="6.06.14" date="2014-04-12"/>
+    <release version="6.06.13" date="2013-11-16"/>
+    <release version="6.06.12" date="2013-11-08"/>
+    <release version="6.06.11" date="2013-07-15"/>
+    <release version="6.06.10" date="2013-06-10"/>
+    <release version="6.06.09" date="2013-03-09"/>
+    <release version="6.06.08" date="2012-12-07"/>
+    <release version="6.06.07" date="2012-09-07"/>
+    <release version="6.06.06" date="2012-06-18"/>
+    <release version="6.06.05" date="2012-04-26"/>
+    <release version="6.06.04" date="2012-02-24"/>
+    <release version="6.06.03" date="2011-12-12"/>
+    <release version="6.06.02" date="2011-09-22"/>
+    <release version="6.06.01" date="2011-08-01"/>
+    <release version="6.06.00" date="2011-06-17"/>
+    <release version="6.05.04" date="2011-05-02"/>
+    <release version="6.05.03" date="2011-03-28"/>
+    <release version="6.05.02" date="2011-02-09"/>
+    <release version="6.05.01" date="2010-10-23"/>
+    <release version="6.05.00" date="2010-09-20"/>
+    <release version="6.04.00" date="2010-07-16"/>
+  </releases>
+</component>
