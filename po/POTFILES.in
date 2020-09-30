@@ -1,4 +1,5 @@
 # List of source files which contain translatable strings.
+misc/ngraph-gtk.appdata.xml
 src/gtk/ox11menu.c
 src/gtk/ox11dlg.c
 src/gtk/ogra2cairo.c
@@ -25,6 +26,9 @@ src/gtk/data/gtk/menus-common.ui.in
 src/gtk/data/gtk/menus-common-win.ui.in
 src/gtk/data/gtk/menus-tool.ui
 src/gtk/data/gtk/help-overlay.ui
+src/gtk/data/gtk/menus-appmenu.ui
+src/gtk/data/gtk/menus-common.ui
+src/gtk/x11opt_proto.h
 src/math/math_error.c
 src/odraw.c
 src/oaxis.c
