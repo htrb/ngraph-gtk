@@ -68,9 +68,9 @@ static char *io_errorlist[]={
 #define OIO_ERRSYSSECURTY	109
 
 char *seek_whence[]={
-  N_("set"),
-  N_("cur"),
-  N_("end"),
+  "set",
+  "cur",
+  "end",
   NULL
 };
 
