@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.08.07\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2020-09-25 16:04+0900\n"
+"POT-Creation-Date: 2020-09-28 16:15+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,6 +16,28 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+#: misc/ngraph-gtk.appdata.xml:8
+msgid "Ngraph-GTK"
+msgstr ""
+
+#: misc/ngraph-gtk.appdata.xml:9
+msgid "create scientific 2-dimensional graphs"
+msgstr ""
+
+#: misc/ngraph-gtk.appdata.xml:11 src/gtk/x11graph.c:1256
+msgid ""
+"Ngraph is the program to create scientific 2-dimensional graphs for "
+"researchers and engineers."
+msgstr ""
+
+#: misc/ngraph-gtk.appdata.xml:12
+msgid "Graphs can be exported to PostScript, SVG, PNG or PDF format."
+msgstr ""
+
+#: misc/ngraph-gtk.appdata.xml:20
+msgid "Main application window"
+msgstr ""
 
 #: src/gtk/ox11menu.c:1862
 msgid "Unsaved Graph"
@@ -96,6 +118,7 @@ msgstr ""
 #: src/gtk/data/gtk/menus-common.ui.in:339
 #: src/gtk/data/gtk/menus-common-win.ui.in:11
 #: src/gtk/data/gtk/menus-common-win.ui.in:347
+#: src/gtk/data/gtk/menus-common.ui:11 src/gtk/data/gtk/menus-common.ui:339
 msgid "_Frame graph"
 msgstr ""
 
@@ -103,6 +126,7 @@ msgstr ""
 #: src/gtk/data/gtk/menus-common.ui.in:343
 #: src/gtk/data/gtk/menus-common-win.ui.in:15
 #: src/gtk/data/gtk/menus-common-win.ui.in:351
+#: src/gtk/data/gtk/menus-common.ui:15 src/gtk/data/gtk/menus-common.ui:343
 msgid "_Section graph"
 msgstr ""
 
@@ -110,11 +134,13 @@ msgstr ""
 #: src/gtk/data/gtk/menus-common.ui.in:347
 #: src/gtk/data/gtk/menus-common-win.ui.in:19
 #: src/gtk/data/gtk/menus-common-win.ui.in:355
+#: src/gtk/data/gtk/menus-common.ui:19 src/gtk/data/gtk/menus-common.ui:347
 msgid "_Cross graph"
 msgstr ""
 
 #: src/gtk/x11axis.c:99 src/gtk/data/gtk/menus-common.ui.in:351
 #: src/gtk/data/gtk/menus-common-win.ui.in:359
+#: src/gtk/data/gtk/menus-common.ui:351
 msgid "Single _Axis"
 msgstr ""
 
@@ -131,6 +157,9 @@ msgstr ""
 #: src/gtk/data/gtk/menus-common-win.ui.in:389
 #: src/gtk/data/gtk/menus-common-win.ui.in:473
 #: src/gtk/data/gtk/menus-common-win.ui.in:490
+#: src/gtk/data/gtk/menus-common.ui:295 src/gtk/data/gtk/menus-common.ui:336
+#: src/gtk/data/gtk/menus-common.ui:381 src/gtk/data/gtk/menus-common.ui:465
+#: src/gtk/data/gtk/menus-common.ui:482 src/gtk/x11opt_proto.h:269
 msgid "_Add"
 msgstr ""
 
@@ -139,6 +168,7 @@ msgstr ""
 #: src/gtk/data/gtk/menus-common.ui.in:584
 #: src/gtk/data/gtk/menus-common-win.ui.in:162
 #: src/gtk/data/gtk/menus-common-win.ui.in:592
+#: src/gtk/data/gtk/menus-common.ui:154 src/gtk/data/gtk/menus-common.ui:584
 msgid "_Duplicate"
 msgstr ""
 
@@ -166,6 +196,11 @@ msgstr ""
 #: src/gtk/data/gtk/menus-common-win.ui.in:464
 #: src/gtk/data/gtk/menus-common-win.ui.in:498
 #: src/gtk/data/gtk/menus-common-win.ui.in:588
+#: src/gtk/data/gtk/menus-common.ui:149 src/gtk/data/gtk/menus-common.ui:361
+#: src/gtk/data/gtk/menus-common.ui:389 src/gtk/data/gtk/menus-common.ui:404
+#: src/gtk/data/gtk/menus-common.ui:417 src/gtk/data/gtk/menus-common.ui:430
+#: src/gtk/data/gtk/menus-common.ui:443 src/gtk/data/gtk/menus-common.ui:456
+#: src/gtk/data/gtk/menus-common.ui:490 src/gtk/data/gtk/menus-common.ui:580
 msgid "_Delete"
 msgstr ""
 
@@ -204,6 +239,12 @@ msgstr ""
 #: src/gtk/data/gtk/menus-common-win.ui.in:477
 #: src/gtk/data/gtk/menus-common-win.ui.in:494
 #: src/gtk/data/gtk/menus-common-win.ui.in:598
+#: src/gtk/data/gtk/menus-common.ui:309 src/gtk/data/gtk/menus-common.ui:357
+#: src/gtk/data/gtk/menus-common.ui:385 src/gtk/data/gtk/menus-common.ui:400
+#: src/gtk/data/gtk/menus-common.ui:413 src/gtk/data/gtk/menus-common.ui:426
+#: src/gtk/data/gtk/menus-common.ui:439 src/gtk/data/gtk/menus-common.ui:452
+#: src/gtk/data/gtk/menus-common.ui:469 src/gtk/data/gtk/menus-common.ui:486
+#: src/gtk/data/gtk/menus-common.ui:590
 msgid "_Properties"
 msgstr ""
 
@@ -218,6 +259,7 @@ msgstr ""
 #: src/gtk/data/gtk/menus-common.ui.in:655
 #: src/gtk/data/gtk/menus-common-win.ui.in:177
 #: src/gtk/data/gtk/menus-common-win.ui.in:663
+#: src/gtk/data/gtk/menus-common.ui:169 src/gtk/data/gtk/menus-common.ui:655
 msgid "_Top"
 msgstr ""
 
@@ -227,6 +269,8 @@ msgstr ""
 #: src/gtk/data/gtk/menus-common.ui.in:659
 #: src/gtk/data/gtk/menus-common-win.ui.in:182
 #: src/gtk/data/gtk/menus-common-win.ui.in:667
+#: src/gtk/data/gtk/menus-common.ui:174 src/gtk/data/gtk/menus-common.ui:659
+#: src/gtk/x11opt_proto.h:295
 msgid "_Up"
 msgstr ""
 
@@ -236,6 +280,8 @@ msgstr ""
 #: src/gtk/data/gtk/menus-common.ui.in:663
 #: src/gtk/data/gtk/menus-common-win.ui.in:186
 #: src/gtk/data/gtk/menus-common-win.ui.in:671
+#: src/gtk/data/gtk/menus-common.ui:178 src/gtk/data/gtk/menus-common.ui:663
+#: src/gtk/x11opt_proto.h:288
 msgid "_Down"
 msgstr ""
 
@@ -245,6 +291,7 @@ msgstr ""
 #: src/gtk/data/gtk/menus-common.ui.in:667
 #: src/gtk/data/gtk/menus-common-win.ui.in:190
 #: src/gtk/data/gtk/menus-common-win.ui.in:675
+#: src/gtk/data/gtk/menus-common.ui:182 src/gtk/data/gtk/menus-common.ui:667
 msgid "_Bottom"
 msgstr ""
 
@@ -368,6 +415,7 @@ msgstr ""
 #: src/gtk/data/gtk/menus-common.ui.in:378
 #: src/gtk/data/gtk/menus-common-win.ui.in:291
 #: src/gtk/data/gtk/menus-common-win.ui.in:386
+#: src/gtk/data/gtk/menus-common.ui:283 src/gtk/data/gtk/menus-common.ui:378
 msgid "_Grid"
 msgstr ""
 
@@ -395,6 +443,7 @@ msgstr ""
 
 #: src/gtk/x11axis.c:1309 src/gtk/data/gtk/menus-common.ui.in:292
 #: src/gtk/data/gtk/menus-common-win.ui.in:300
+#: src/gtk/data/gtk/menus-common.ui:292
 msgid "_Data"
 msgstr ""
 
@@ -929,6 +978,7 @@ msgstr ""
 #: src/gtk/x11file.c:2234 src/gtk/x11view.c:1008
 #: src/gtk/data/gtk/menus-common.ui.in:159
 #: src/gtk/data/gtk/menus-common-win.ui.in:167
+#: src/gtk/data/gtk/menus-common.ui:159
 msgid "Select _All"
 msgstr ""
 
@@ -974,11 +1024,13 @@ msgstr ""
 
 #: src/gtk/x11file.c:124 src/gtk/data/gtk/menus-common.ui.in:298
 #: src/gtk/data/gtk/menus-common-win.ui.in:306
+#: src/gtk/data/gtk/menus-common.ui:298
 msgid "_File"
 msgstr ""
 
 #: src/gtk/x11file.c:125 src/gtk/data/gtk/menus-common.ui.in:303
 #: src/gtk/data/gtk/menus-common-win.ui.in:311
+#: src/gtk/data/gtk/menus-common.ui:303
 msgid "_Range"
 msgstr ""
 
@@ -993,6 +1045,7 @@ msgstr ""
 #: src/gtk/x11file.c:138 src/gtk/x11file.c:1774 src/gtk/x11menu.c:460
 #: src/gtk/data/gtk/menus-common.ui.in:241
 #: src/gtk/data/gtk/menus-common-win.ui.in:249
+#: src/gtk/data/gtk/menus-common.ui:241
 msgid "_Draw"
 msgstr ""
 
@@ -1001,6 +1054,7 @@ msgstr ""
 #: src/gtk/data/gtk/menus-common.ui.in:317
 #: src/gtk/data/gtk/menus-common-win.ui.in:127
 #: src/gtk/data/gtk/menus-common-win.ui.in:325
+#: src/gtk/data/gtk/menus-common.ui:119 src/gtk/data/gtk/menus-common.ui:317
 msgid "_Edit"
 msgstr ""
 
@@ -1045,6 +1099,8 @@ msgstr ""
 #: src/gtk/data/gtk/menus-common.ui.in:473
 #: src/gtk/data/gtk/menus-common-win.ui.in:321
 #: src/gtk/data/gtk/menus-common-win.ui.in:481
+#: src/gtk/data/gtk/menus-common.ui:313 src/gtk/data/gtk/menus-common.ui:473
+#: src/gtk/x11opt_proto.h:307
 msgid "_Close"
 msgstr ""
 
@@ -1153,6 +1209,7 @@ msgstr ""
 #: src/gtk/data/gtk/menus-common.ui.in:681
 #: src/gtk/data/gtk/menus-common-win.ui.in:38
 #: src/gtk/data/gtk/menus-common-win.ui.in:689
+#: src/gtk/data/gtk/menus-common.ui:38 src/gtk/data/gtk/menus-common.ui:681
 msgid "_Save"
 msgstr ""
 
@@ -1169,6 +1226,7 @@ msgid "_Line:"
 msgstr ""
 
 #: src/gtk/x11file.c:2009 src/gtk/x11file.c:2228 src/gtk/x11opt.c:705
+#: src/gtk/x11opt_proto.h:281
 msgid "_Remove"
 msgstr ""
 
@@ -1465,6 +1523,7 @@ msgstr ""
 
 #: src/gtk/x11graph.c:677 src/gtk/data/gtk/menus-common.ui.in:79
 #: src/gtk/data/gtk/menus-common-win.ui.in:87
+#: src/gtk/data/gtk/menus-common.ui:79
 msgid "_Draw order"
 msgstr ""
 
@@ -1507,12 +1566,6 @@ msgstr ""
 
 #: src/gtk/x11graph.c:1091 src/gtk/x11menu.c:425
 msgid "Load NGP file"
-msgstr ""
-
-#: src/gtk/x11graph.c:1256
-msgid ""
-"Ngraph is the program to create scientific 2-dimensional graphs for "
-"researchers and engineers."
 msgstr ""
 
 #: src/gtk/x11gui.c:137 src/gtk/x11gui.c:368 src/gtk/x11gui.c:436
@@ -1965,6 +2018,7 @@ msgstr ""
 
 #: src/gtk/x11menu.c:423 src/gtk/data/gtk/menus-common.ui.in:31
 #: src/gtk/data/gtk/menus-common-win.ui.in:31
+#: src/gtk/data/gtk/menus-common.ui:31
 msgid "_Load graph"
 msgstr ""
 
@@ -1978,6 +2032,7 @@ msgstr ""
 
 #: src/gtk/x11menu.c:449 src/gtk/data/gtk/menus-common.ui.in:369
 #: src/gtk/data/gtk/menus-common-win.ui.in:377
+#: src/gtk/data/gtk/menus-common.ui:369
 msgid "Scale _Clear"
 msgstr ""
 
@@ -1992,6 +2047,7 @@ msgstr ""
 
 #: src/gtk/x11menu.c:471 src/gtk/data/gtk/menus-common.ui.in:93
 #: src/gtk/data/gtk/menus-common-win.ui.in:101
+#: src/gtk/data/gtk/menus-common.ui:93
 msgid "_Print"
 msgstr ""
 
@@ -2001,6 +2057,7 @@ msgstr ""
 
 #: src/gtk/x11menu.c:486 src/gtk/data/gtk/menus-common.ui.in:327
 #: src/gtk/data/gtk/menus-common-win.ui.in:335
+#: src/gtk/data/gtk/menus-common.ui:327
 msgid "_Math Transformation"
 msgstr ""
 
@@ -2014,6 +2071,7 @@ msgstr ""
 
 #: src/gtk/x11menu.c:497 src/gtk/data/gtk/menus-common.ui.in:374
 #: src/gtk/data/gtk/menus-common-win.ui.in:382
+#: src/gtk/data/gtk/menus-common.ui:374
 msgid "Scale _Undo"
 msgstr ""
 
@@ -2137,6 +2195,7 @@ msgstr ""
 
 #: src/gtk/x11menu.c:3164 src/gtk/data/gtk/menus-common.ui.in:122
 #: src/gtk/data/gtk/menus-common-win.ui.in:130
+#: src/gtk/data/gtk/menus-common.ui:122
 msgid "_Redo"
 msgstr ""
 
@@ -2147,6 +2206,7 @@ msgstr ""
 
 #: src/gtk/x11menu.c:3174 src/gtk/data/gtk/menus-common.ui.in:127
 #: src/gtk/data/gtk/menus-common-win.ui.in:135
+#: src/gtk/data/gtk/menus-common.ui:127
 msgid "_Undo"
 msgstr ""
 
@@ -2166,7 +2226,7 @@ msgstr ""
 msgid "zoom_y"
 msgstr ""
 
-#: src/gtk/x11merge.c:75
+#: src/gtk/x11merge.c:75 src/gtk/x11opt_proto.h:274
 msgid "_Preferences"
 msgstr ""
 
@@ -2209,6 +2269,7 @@ msgstr ""
 
 #: src/gtk/x11opt.c:70 src/gtk/data/gtk/menus-common.ui.in:501
 #: src/gtk/data/gtk/menus-common-win.ui.in:509
+#: src/gtk/data/gtk/menus-common.ui:501
 msgid "_Viewer"
 msgstr ""
 
@@ -2218,6 +2279,7 @@ msgstr ""
 
 #: src/gtk/x11opt.c:78 src/gtk/data/gtk/menus-common.ui.in:509
 #: src/gtk/data/gtk/menus-common-win.ui.in:517
+#: src/gtk/data/gtk/menus-common.ui:509
 msgid "_Font aliases"
 msgstr ""
 
@@ -2227,6 +2289,7 @@ msgstr ""
 
 #: src/gtk/x11opt.c:86 src/gtk/data/gtk/menus-common.ui.in:517
 #: src/gtk/data/gtk/menus-common-win.ui.in:525
+#: src/gtk/data/gtk/menus-common.ui:517
 msgid "_Miscellaneous"
 msgstr ""
 
@@ -2503,6 +2566,7 @@ msgstr ""
 #: src/gtk/data/gtk/menus-common.ui.in:572
 #: src/gtk/data/gtk/menus-common-win.ui.in:147
 #: src/gtk/data/gtk/menus-common-win.ui.in:580
+#: src/gtk/data/gtk/menus-common.ui:139 src/gtk/data/gtk/menus-common.ui:572
 msgid "_Copy"
 msgstr ""
 
@@ -4324,17 +4388,18 @@ msgid ""
 msgstr ""
 
 #: src/gtk/data/gtk/menus-common.ui.in:5
-#: src/gtk/data/gtk/menus-common-win.ui.in:5
+#: src/gtk/data/gtk/menus-common-win.ui.in:5 src/gtk/data/gtk/menus-common.ui:5
 msgid "_Graph"
 msgstr ""
 
 #: src/gtk/data/gtk/menus-common.ui.in:8
-#: src/gtk/data/gtk/menus-common-win.ui.in:8
+#: src/gtk/data/gtk/menus-common-win.ui.in:8 src/gtk/data/gtk/menus-common.ui:8
 msgid "_New graph"
 msgstr ""
 
 #: src/gtk/data/gtk/menus-common.ui.in:25
 #: src/gtk/data/gtk/menus-common-win.ui.in:25
+#: src/gtk/data/gtk/menus-common.ui:25
 msgid "_All clear"
 msgstr ""
 
@@ -4342,6 +4407,7 @@ msgstr ""
 #: src/gtk/data/gtk/menus-common.ui.in:685
 #: src/gtk/data/gtk/menus-common-win.ui.in:43
 #: src/gtk/data/gtk/menus-common-win.ui.in:693
+#: src/gtk/data/gtk/menus-common.ui:43 src/gtk/data/gtk/menus-common.ui:685
 msgid "Save _As"
 msgstr ""
 
@@ -4349,6 +4415,7 @@ msgstr ""
 #: src/gtk/data/gtk/menus-common.ui.in:691
 #: src/gtk/data/gtk/menus-common-win.ui.in:50
 #: src/gtk/data/gtk/menus-common-win.ui.in:699
+#: src/gtk/data/gtk/menus-common.ui:50 src/gtk/data/gtk/menus-common.ui:691
 msgid "_Export image"
 msgstr ""
 
@@ -4356,6 +4423,7 @@ msgstr ""
 #: src/gtk/data/gtk/menus-common.ui.in:693
 #: src/gtk/data/gtk/menus-common-win.ui.in:52
 #: src/gtk/data/gtk/menus-common-win.ui.in:701
+#: src/gtk/data/gtk/menus-common.ui:52 src/gtk/data/gtk/menus-common.ui:693
 msgid "_GRA file"
 msgstr ""
 
@@ -4363,6 +4431,7 @@ msgstr ""
 #: src/gtk/data/gtk/menus-common.ui.in:697
 #: src/gtk/data/gtk/menus-common-win.ui.in:56
 #: src/gtk/data/gtk/menus-common-win.ui.in:705
+#: src/gtk/data/gtk/menus-common.ui:56 src/gtk/data/gtk/menus-common.ui:697
 msgid "_PS file"
 msgstr ""
 
@@ -4370,6 +4439,7 @@ msgstr ""
 #: src/gtk/data/gtk/menus-common.ui.in:701
 #: src/gtk/data/gtk/menus-common-win.ui.in:60
 #: src/gtk/data/gtk/menus-common-win.ui.in:709
+#: src/gtk/data/gtk/menus-common.ui:60 src/gtk/data/gtk/menus-common.ui:701
 msgid "_EPS file"
 msgstr ""
 
@@ -4377,6 +4447,7 @@ msgstr ""
 #: src/gtk/data/gtk/menus-common.ui.in:705
 #: src/gtk/data/gtk/menus-common-win.ui.in:64
 #: src/gtk/data/gtk/menus-common-win.ui.in:713
+#: src/gtk/data/gtk/menus-common.ui:64 src/gtk/data/gtk/menus-common.ui:705
 msgid "P_DF file"
 msgstr ""
 
@@ -4384,6 +4455,7 @@ msgstr ""
 #: src/gtk/data/gtk/menus-common.ui.in:709
 #: src/gtk/data/gtk/menus-common-win.ui.in:68
 #: src/gtk/data/gtk/menus-common-win.ui.in:717
+#: src/gtk/data/gtk/menus-common.ui:68 src/gtk/data/gtk/menus-common.ui:709
 msgid "_SVG file"
 msgstr ""
 
@@ -4391,31 +4463,37 @@ msgstr ""
 #: src/gtk/data/gtk/menus-common.ui.in:713
 #: src/gtk/data/gtk/menus-common-win.ui.in:72
 #: src/gtk/data/gtk/menus-common-win.ui.in:721
+#: src/gtk/data/gtk/menus-common.ui:72 src/gtk/data/gtk/menus-common.ui:713
 msgid "P_NG file"
 msgstr ""
 
 #: src/gtk/data/gtk/menus-common.ui.in:85
 #: src/gtk/data/gtk/menus-common-win.ui.in:93
+#: src/gtk/data/gtk/menus-common.ui:85
 msgid "Page Set_up"
 msgstr ""
 
 #: src/gtk/data/gtk/menus-common.ui.in:89
 #: src/gtk/data/gtk/menus-common-win.ui.in:97
+#: src/gtk/data/gtk/menus-common.ui:89
 msgid "Pre_view"
 msgstr ""
 
 #: src/gtk/data/gtk/menus-common.ui.in:100
 #: src/gtk/data/gtk/menus-common-win.ui.in:108
+#: src/gtk/data/gtk/menus-common.ui:100
 msgid "_Current directory"
 msgstr ""
 
 #: src/gtk/data/gtk/menus-common.ui.in:106
 #: src/gtk/data/gtk/menus-common-win.ui.in:114
+#: src/gtk/data/gtk/menus-common.ui:106
 msgid "_Ngraph shell"
 msgstr ""
 
 #: src/gtk/data/gtk/menus-common.ui.in:112
 #: src/gtk/data/gtk/menus-common-win.ui.in:120
+#: src/gtk/data/gtk/menus-common.ui:112
 msgid "_Quit"
 msgstr ""
 
@@ -4423,6 +4501,7 @@ msgstr ""
 #: src/gtk/data/gtk/menus-common.ui.in:568
 #: src/gtk/data/gtk/menus-common-win.ui.in:142
 #: src/gtk/data/gtk/menus-common-win.ui.in:576
+#: src/gtk/data/gtk/menus-common.ui:134 src/gtk/data/gtk/menus-common.ui:568
 msgid "Cu_t"
 msgstr ""
 
@@ -4430,11 +4509,13 @@ msgstr ""
 #: src/gtk/data/gtk/menus-common.ui.in:576
 #: src/gtk/data/gtk/menus-common-win.ui.in:152
 #: src/gtk/data/gtk/menus-common-win.ui.in:584
+#: src/gtk/data/gtk/menus-common.ui:144 src/gtk/data/gtk/menus-common.ui:576
 msgid "_Paste"
 msgstr ""
 
 #: src/gtk/data/gtk/menus-common.ui.in:166
 #: src/gtk/data/gtk/menus-common-win.ui.in:174
+#: src/gtk/data/gtk/menus-common.ui:166
 msgid "draw _Order"
 msgstr ""
 
@@ -4442,6 +4523,7 @@ msgstr ""
 #: src/gtk/data/gtk/menus-common.ui.in:596
 #: src/gtk/data/gtk/menus-common-win.ui.in:197
 #: src/gtk/data/gtk/menus-common-win.ui.in:604
+#: src/gtk/data/gtk/menus-common.ui:189 src/gtk/data/gtk/menus-common.ui:596
 msgid "_Align"
 msgstr ""
 
@@ -4449,6 +4531,7 @@ msgstr ""
 #: src/gtk/data/gtk/menus-common.ui.in:599
 #: src/gtk/data/gtk/menus-common-win.ui.in:200
 #: src/gtk/data/gtk/menus-common-win.ui.in:607
+#: src/gtk/data/gtk/menus-common.ui:192 src/gtk/data/gtk/menus-common.ui:599
 msgid "Align _Left"
 msgstr ""
 
@@ -4456,6 +4539,7 @@ msgstr ""
 #: src/gtk/data/gtk/menus-common.ui.in:603
 #: src/gtk/data/gtk/menus-common-win.ui.in:204
 #: src/gtk/data/gtk/menus-common-win.ui.in:611
+#: src/gtk/data/gtk/menus-common.ui:196 src/gtk/data/gtk/menus-common.ui:603
 msgid "Align _Horizontal Center"
 msgstr ""
 
@@ -4463,6 +4547,7 @@ msgstr ""
 #: src/gtk/data/gtk/menus-common.ui.in:607
 #: src/gtk/data/gtk/menus-common-win.ui.in:208
 #: src/gtk/data/gtk/menus-common-win.ui.in:615
+#: src/gtk/data/gtk/menus-common.ui:200 src/gtk/data/gtk/menus-common.ui:607
 msgid "Align _Right"
 msgstr ""
 
@@ -4470,6 +4555,7 @@ msgstr ""
 #: src/gtk/data/gtk/menus-common.ui.in:613
 #: src/gtk/data/gtk/menus-common-win.ui.in:214
 #: src/gtk/data/gtk/menus-common-win.ui.in:621
+#: src/gtk/data/gtk/menus-common.ui:206 src/gtk/data/gtk/menus-common.ui:613
 msgid "Align _Top"
 msgstr ""
 
@@ -4477,6 +4563,7 @@ msgstr ""
 #: src/gtk/data/gtk/menus-common.ui.in:617
 #: src/gtk/data/gtk/menus-common-win.ui.in:218
 #: src/gtk/data/gtk/menus-common-win.ui.in:625
+#: src/gtk/data/gtk/menus-common.ui:210 src/gtk/data/gtk/menus-common.ui:617
 msgid "Align _Vertical Center"
 msgstr ""
 
@@ -4484,6 +4571,7 @@ msgstr ""
 #: src/gtk/data/gtk/menus-common.ui.in:621
 #: src/gtk/data/gtk/menus-common-win.ui.in:222
 #: src/gtk/data/gtk/menus-common-win.ui.in:629
+#: src/gtk/data/gtk/menus-common.ui:214 src/gtk/data/gtk/menus-common.ui:621
 msgid "Align _Bottom"
 msgstr ""
 
@@ -4491,6 +4579,7 @@ msgstr ""
 #: src/gtk/data/gtk/menus-common.ui.in:630
 #: src/gtk/data/gtk/menus-common-win.ui.in:228
 #: src/gtk/data/gtk/menus-common-win.ui.in:638
+#: src/gtk/data/gtk/menus-common.ui:220 src/gtk/data/gtk/menus-common.ui:630
 msgid "rotate _90 degree clockwise"
 msgstr ""
 
@@ -4498,6 +4587,7 @@ msgstr ""
 #: src/gtk/data/gtk/menus-common.ui.in:634
 #: src/gtk/data/gtk/menus-common-win.ui.in:232
 #: src/gtk/data/gtk/menus-common-win.ui.in:642
+#: src/gtk/data/gtk/menus-common.ui:224 src/gtk/data/gtk/menus-common.ui:634
 msgid "rotate 9_0 degree counter-clockwise"
 msgstr ""
 
@@ -4505,6 +4595,7 @@ msgstr ""
 #: src/gtk/data/gtk/menus-common.ui.in:643
 #: src/gtk/data/gtk/menus-common-win.ui.in:236
 #: src/gtk/data/gtk/menus-common-win.ui.in:651
+#: src/gtk/data/gtk/menus-common.ui:228 src/gtk/data/gtk/menus-common.ui:643
 msgid "flip _Horizontally"
 msgstr ""
 
@@ -4512,46 +4603,55 @@ msgstr ""
 #: src/gtk/data/gtk/menus-common.ui.in:647
 #: src/gtk/data/gtk/menus-common-win.ui.in:240
 #: src/gtk/data/gtk/menus-common-win.ui.in:655
+#: src/gtk/data/gtk/menus-common.ui:232 src/gtk/data/gtk/menus-common.ui:647
 msgid "flip _Vertically"
 msgstr ""
 
 #: src/gtk/data/gtk/menus-common.ui.in:238
 #: src/gtk/data/gtk/menus-common-win.ui.in:246
+#: src/gtk/data/gtk/menus-common.ui:238
 msgid "_View"
 msgstr ""
 
 #: src/gtk/data/gtk/menus-common.ui.in:248
 #: src/gtk/data/gtk/menus-common-win.ui.in:256
+#: src/gtk/data/gtk/menus-common.ui:248
 msgid "_Clear information view"
 msgstr ""
 
 #: src/gtk/data/gtk/menus-common.ui.in:254
 #: src/gtk/data/gtk/menus-common-win.ui.in:262
+#: src/gtk/data/gtk/menus-common.ui:254
 msgid "_Sidebar"
 msgstr ""
 
 #: src/gtk/data/gtk/menus-common.ui.in:258
 #: src/gtk/data/gtk/menus-common-win.ui.in:266
+#: src/gtk/data/gtk/menus-common.ui:258
 msgid "_Statusbar"
 msgstr ""
 
 #: src/gtk/data/gtk/menus-common.ui.in:262
 #: src/gtk/data/gtk/menus-common-win.ui.in:270
+#: src/gtk/data/gtk/menus-common.ui:262
 msgid "_Ruler"
 msgstr ""
 
 #: src/gtk/data/gtk/menus-common.ui.in:266
 #: src/gtk/data/gtk/menus-common-win.ui.in:274
+#: src/gtk/data/gtk/menus-common.ui:266
 msgid "_Scrollbar"
 msgstr ""
 
 #: src/gtk/data/gtk/menus-common.ui.in:270
 #: src/gtk/data/gtk/menus-common-win.ui.in:278
+#: src/gtk/data/gtk/menus-common.ui:270
 msgid "_Command toolbar"
 msgstr ""
 
 #: src/gtk/data/gtk/menus-common.ui.in:274
 #: src/gtk/data/gtk/menus-common-win.ui.in:282
+#: src/gtk/data/gtk/menus-common.ui:274
 msgid "_Toolbox"
 msgstr ""
 
@@ -4559,11 +4659,13 @@ msgstr ""
 #: src/gtk/data/gtk/menus-common.ui.in:673
 #: src/gtk/data/gtk/menus-common-win.ui.in:286
 #: src/gtk/data/gtk/menus-common-win.ui.in:681
+#: src/gtk/data/gtk/menus-common.ui:278 src/gtk/data/gtk/menus-common.ui:673
 msgid "cross _Gauge"
 msgstr ""
 
 #: src/gtk/data/gtk/menus-common.ui.in:289
 #: src/gtk/data/gtk/menus-common-win.ui.in:297
+#: src/gtk/data/gtk/menus-common.ui:289
 msgid "_Object"
 msgstr ""
 
@@ -4571,86 +4673,103 @@ msgstr ""
 #: src/gtk/data/gtk/menus-common.ui.in:720
 #: src/gtk/data/gtk/menus-common-win.ui.in:331
 #: src/gtk/data/gtk/menus-common-win.ui.in:736
+#: src/gtk/data/gtk/menus-common.ui:323 src/gtk/data/gtk/menus-common.ui:720
 msgid "_Save data"
 msgstr ""
 
 #: src/gtk/data/gtk/menus-common.ui.in:333
 #: src/gtk/data/gtk/menus-common-win.ui.in:341
+#: src/gtk/data/gtk/menus-common.ui:333
 msgid "_Axis"
 msgstr ""
 
 #: src/gtk/data/gtk/menus-common.ui.in:365
 #: src/gtk/data/gtk/menus-common-win.ui.in:373
+#: src/gtk/data/gtk/menus-common.ui:365
 msgid "Scale _Zoom"
 msgstr ""
 
 #: src/gtk/data/gtk/menus-common.ui.in:397
 #: src/gtk/data/gtk/menus-common-win.ui.in:405
+#: src/gtk/data/gtk/menus-common.ui:397
 msgid "_Path"
 msgstr ""
 
 #: src/gtk/data/gtk/menus-common.ui.in:410
 #: src/gtk/data/gtk/menus-common-win.ui.in:418
+#: src/gtk/data/gtk/menus-common.ui:410
 msgid "_Rectangle"
 msgstr ""
 
 #: src/gtk/data/gtk/menus-common.ui.in:423
 #: src/gtk/data/gtk/menus-common-win.ui.in:431
+#: src/gtk/data/gtk/menus-common.ui:423
 msgid "_Arc"
 msgstr ""
 
 #: src/gtk/data/gtk/menus-common.ui.in:436
 #: src/gtk/data/gtk/menus-common-win.ui.in:444
+#: src/gtk/data/gtk/menus-common.ui:436
 msgid "_Mark"
 msgstr ""
 
 #: src/gtk/data/gtk/menus-common.ui.in:449
 #: src/gtk/data/gtk/menus-common-win.ui.in:457
+#: src/gtk/data/gtk/menus-common.ui:449
 msgid "_Text"
 msgstr ""
 
 #: src/gtk/data/gtk/menus-common.ui.in:462
 #: src/gtk/data/gtk/menus-common-win.ui.in:470
+#: src/gtk/data/gtk/menus-common.ui:462
 msgid "_Merge"
 msgstr ""
 
 #: src/gtk/data/gtk/menus-common.ui.in:479
 #: src/gtk/data/gtk/menus-common-win.ui.in:487
+#: src/gtk/data/gtk/menus-common.ui:479
 msgid "_Parameter"
 msgstr ""
 
 #: src/gtk/data/gtk/menus-common.ui.in:498
 #: src/gtk/data/gtk/menus-common-win.ui.in:506
+#: src/gtk/data/gtk/menus-common.ui:498
 msgid "_Preference"
 msgstr ""
 
 #: src/gtk/data/gtk/menus-common.ui.in:505
 #: src/gtk/data/gtk/menus-common-win.ui.in:513
+#: src/gtk/data/gtk/menus-common.ui:505
 msgid "_External viewer"
 msgstr ""
 
 #: src/gtk/data/gtk/menus-common.ui.in:513
 #: src/gtk/data/gtk/menus-common-win.ui.in:521
+#: src/gtk/data/gtk/menus-common.ui:513
 msgid "_Add-in script"
 msgstr ""
 
 #: src/gtk/data/gtk/menus-common.ui.in:523
 #: src/gtk/data/gtk/menus-common-win.ui.in:531
+#: src/gtk/data/gtk/menus-common.ui:523
 msgid "save as default (_Settings)"
 msgstr ""
 
 #: src/gtk/data/gtk/menus-common.ui.in:527
 #: src/gtk/data/gtk/menus-common-win.ui.in:535
+#: src/gtk/data/gtk/menus-common.ui:527
 msgid "save as default (_Graph)"
 msgstr ""
 
 #: src/gtk/data/gtk/menus-common.ui.in:533
 #: src/gtk/data/gtk/menus-common-win.ui.in:541
+#: src/gtk/data/gtk/menus-common.ui:533
 msgid "_Data file default"
 msgstr ""
 
 #: src/gtk/data/gtk/menus-common.ui.in:537
 #: src/gtk/data/gtk/menus-common-win.ui.in:545
+#: src/gtk/data/gtk/menus-common.ui:537
 msgid "_Legend text default"
 msgstr ""
 
@@ -4658,31 +4777,37 @@ msgstr ""
 #: src/gtk/data/gtk/menus-common.ui.in:546
 #: src/gtk/data/gtk/menus-common-win.ui.in:551
 #: src/gtk/data/gtk/menus-common-win.ui.in:554
+#: src/gtk/data/gtk/menus-common.ui:543 src/gtk/data/gtk/menus-common.ui:546
 msgid "_Help"
 msgstr ""
 
 #: src/gtk/data/gtk/menus-common.ui.in:551
 #: src/gtk/data/gtk/menus-common-win.ui.in:559
+#: src/gtk/data/gtk/menus-common.ui:551
 msgid "_Keyboard shortcus"
 msgstr ""
 
 #: src/gtk/data/gtk/menus-common.ui.in:555
 #: src/gtk/data/gtk/menus-common-win.ui.in:563
+#: src/gtk/data/gtk/menus-common.ui:555
 msgid "_Demonstration"
 msgstr ""
 
 #: src/gtk/data/gtk/menus-common.ui.in:559
 #: src/gtk/data/gtk/menus-common-win.ui.in:567
+#: src/gtk/data/gtk/menus-common.ui:559
 msgid "_About"
 msgstr ""
 
 #: src/gtk/data/gtk/menus-common.ui.in:627
 #: src/gtk/data/gtk/menus-common-win.ui.in:635
+#: src/gtk/data/gtk/menus-common.ui:627
 msgid "_Rotate"
 msgstr ""
 
 #: src/gtk/data/gtk/menus-common.ui.in:640
 #: src/gtk/data/gtk/menus-common-win.ui.in:648
+#: src/gtk/data/gtk/menus-common.ui:640
 msgid "_Flip"
 msgstr ""
 
@@ -4798,6 +4923,39 @@ msgstr ""
 
 #: src/gtk/data/gtk/help-overlay.ui:163
 msgid "Show shortcut keys"
+msgstr ""
+
+#. used for the application menu on MacOS.  %s is replaced with the application name.
+#: src/gtk/data/gtk/menus-appmenu.ui:7
+#, c-format
+msgid "About %s"
+msgstr ""
+
+#. used for the application menu on MacOS
+#: src/gtk/data/gtk/menus-appmenu.ui:23
+msgid "Services"
+msgstr ""
+
+#. used for the application menu on MacOS.  %s is replaced with the application name.
+#: src/gtk/data/gtk/menus-appmenu.ui:30
+#, c-format
+msgid "Hide %s"
+msgstr ""
+
+#. used for the application menu on MacOS
+#: src/gtk/data/gtk/menus-appmenu.ui:36
+msgid "Hide Others"
+msgstr ""
+
+#. used for the application menu on MacOS
+#: src/gtk/data/gtk/menus-appmenu.ui:42
+msgid "Show All"
+msgstr ""
+
+#. used for the application menu on MacOS.  %s is replaced with the application name.
+#: src/gtk/data/gtk/menus-appmenu.ui:50
+#, c-format
+msgid "Quit %s"
 msgstr ""
 
 #: src/math/math_error.c:13
