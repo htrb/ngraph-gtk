@@ -2222,7 +2222,7 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
       g_signal_connect(gtk_bin_get_child(GTK_BIN(widget)),
 		       "enter-notify-event",
 		       G_CALLBACK(tool_button_enter_leave_cb),
-		       _(item[i].caption));
+		       (gpointer) _(item[i].caption));
 
       g_signal_connect(gtk_bin_get_child(GTK_BIN(widget)),
 		       "leave-notify-event",
