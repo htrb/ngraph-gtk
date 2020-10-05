@@ -31,7 +31,6 @@
 #include "gtk_subwin.h"
 #include "gtk_widget.h"
 #include "gtk_ruler.h"
-#include "gtk_action.h"
 #include "gtk_presettings.h"
 
 #include "init.h"
@@ -76,7 +75,6 @@ static GtkWidget *CurrentWindow = NULL, *CToolbar = NULL, *PToolbar = NULL, *Set
 static enum {APP_CONTINUE, APP_QUIT, APP_QUIT_FORCE} Hide_window = APP_CONTINUE;
 static int DrawLock = FALSE;
 static unsigned int CursorType;
-GtkApplication *GtkApp;
 
 #if USE_EXT_DRIVER
 static GtkWidget *ExtDrvOutMenu = NULL
@@ -2323,7 +2321,6 @@ create_toplevel_window(void)
 
   load_hist();
 
-  GtkApp = create_application_window(&popup);
   CurrentWindow = TopLevel = gtk_application_window_new(GtkApp);
   gtk_application_window_set_show_menubar(GTK_APPLICATION_WINDOW(TopLevel), TRUE);
   if (popup) {
