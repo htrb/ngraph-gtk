@@ -864,6 +864,18 @@ osx_open_file(GtkosxApplication *app, gchar *path, gpointer user_data)
   LoadNgpFile(path, FALSE, "-f");
   return TRUE;
 }
+
+static void
+create_app_menu(GtkApplication *app)
+{
+  GtkBuilder *builder;
+  GObject *app_menu;
+  /* only for remove "Settings" menu item */
+  builder = gtk_builder_new_from_resource(RESOURCE_PATH "/gtk/menus-appmenu.ui");
+  app_menu = gtk_builder_get_object(builder, "app-menu");
+  gtk_application_set_app_menu(app, G_MENU_MODEL(app_menu));
+  g_object_unref(builder);
+}
 #endif
 
 int

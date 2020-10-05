@@ -816,17 +816,6 @@ create_application_window(GtkWidget **popup)
   g_application_register(G_APPLICATION(app), NULL, NULL);
   g_action_map_add_action_entries(G_ACTION_MAP(app), AppEntries, G_N_ELEMENTS(AppEntries), app);
 
-#if OSX
-  {
-    /* only for remove "Settings" menu item */
-    GtkBuilder *builder;
-    GObject *menu;
-    builder = gtk_builder_new_from_resource(RESOURCE_PATH "/gtk/menus-appmenu.ui");
-    menu = gtk_builder_get_object(builder, "app-menu");
-    gtk_application_set_app_menu(app, G_MENU_MODEL(menu));
-    g_object_unref(builder);
-  }
-#endif
 
   {
     GMenu *menu;
