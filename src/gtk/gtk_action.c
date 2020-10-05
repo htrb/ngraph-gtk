@@ -818,9 +818,6 @@ create_application_window(GtkWidget **popup)
 
 
   {
-    GMenu *menu;
-    menu = gtk_application_get_menu_by_id(app, "popup-menu");
-    *popup = gtk_menu_new_from_model(G_MENU_MODEL(menu));
   }
 
   return app;

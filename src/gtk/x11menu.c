@@ -2253,6 +2253,16 @@ create_menu(struct MenuItem *item)
   }
 }
 
+static GtkWidget *
+create_popup_menu(GtkApplication *app)
+{
+  GtkWidget *popup;
+  GMenu *menu;
+  menu = gtk_application_get_menu_by_id(app, "popup-menu");
+  popup = gtk_menu_new_from_model(G_MENU_MODEL(menu));
+  return popup;
+}
+
 static int
 create_toplevel_window(void)
 {
