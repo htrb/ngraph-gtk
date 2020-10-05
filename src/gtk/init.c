@@ -906,6 +906,8 @@ n_initialize(int *argc, char ***argv)
   set_childhandler();
 #endif	/* WINDOWS */
 
+  set_dir_defs((*argv)[0]);
+
 #ifdef HAVE_GETTEXT
   setlocale(LC_ALL, "");
   bindtextdomain(PACKAGE, NLOCALEDIR);
@@ -927,8 +929,6 @@ n_initialize(int *argc, char ***argv)
     create_app_menu(GtkApp);
   }
 #endif
-
-  set_dir_defs((*argv)[0]);
 
   if (init_cmd_tbl()) {
     exit(1);
