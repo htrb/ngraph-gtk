@@ -68,7 +68,7 @@ char *HistoryFile = NULL;
 #define HIST_FILE "shell_history"
 #endif	/* HAVE_READLINE_READLINE_H */
 
-GtkApplication *GtkApp;
+GtkApplication *GtkApp = NULL;
 
 #define CSS_PATH RESOURCE_PATH "/css/ngraph.css"
 #define SYSCONF "[Ngraph]"
@@ -914,14 +914,18 @@ n_initialize(int *argc, char ***argv)
 #endif	/* HAVE_GETTEXT */
 
   OpenDisplay = gtk_init_check(argc, argv);
-  GtkApp = gtk_application_new(APPLICATION_ID, G_APPLICATION_NON_UNIQUE);
-  g_application_register(G_APPLICATION(GtkApp), NULL, NULL);
+  if (OpenDisplay) {
+    GtkApp = gtk_application_new(APPLICATION_ID, G_APPLICATION_NON_UNIQUE);
+    g_application_register(G_APPLICATION(GtkApp), NULL, NULL);
+    setup_actions(GtkApp);
+  }
   g_set_application_name(AppName);
-  setup_actions(GtkApp);
 #if OSX
   GtkMacIntegration = gtkosx_application_get();
   g_signal_connect(GtkMacIntegration, "NSApplicationOpenFile", G_CALLBACK(osx_open_file), NULL);
-  create_app_menu(GtkApp);
+  if (OpenDisplay) {
+    create_app_menu(GtkApp);
+  }
 #endif
 
   set_dir_defs((*argv)[0]);
