@@ -903,6 +903,13 @@ n_initialize(int *argc, char ***argv)
   set_childhandler();
 #endif	/* WINDOWS */
 
+#ifdef HAVE_GETTEXT
+  setlocale(LC_ALL, "");
+  bindtextdomain(PACKAGE, NLOCALEDIR);
+  bind_textdomain_codeset(PACKAGE, "UTF-8");
+  textdomain(PACKAGE);
+#endif	/* HAVE_GETTEXT */
+
   OpenDisplay = gtk_init_check(argc, argv);
   g_set_application_name(AppName);
 #if OSX
@@ -929,13 +936,6 @@ n_initialize(int *argc, char ***argv)
     load_css();
   }
 #endif	/* GTK_CHECK_VERSION(3, 16, 0) */
-
-#ifdef HAVE_GETTEXT
-  setlocale(LC_ALL, "");
-  bindtextdomain(PACKAGE, NLOCALEDIR);
-  bind_textdomain_codeset(PACKAGE, "UTF-8");
-  textdomain(PACKAGE);
-#endif	/* HAVE_GETTEXT */
 
 #if WINDOWS
   locale = g_win32_getlocale();
