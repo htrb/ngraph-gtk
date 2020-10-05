@@ -1665,6 +1665,10 @@ mx_get_accel_map(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, ch
   }
   rval->str = NULL;
 
+  if (GtkApp == NULL) {
+    return 0;
+  }
+
   str = g_string_new("");
   actions = gtk_application_list_action_descriptions(GtkApp);
   for (i = 0; actions[i]; i++) {
