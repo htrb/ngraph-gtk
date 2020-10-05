@@ -2323,6 +2323,7 @@ create_toplevel_window(void)
 
   CurrentWindow = TopLevel = gtk_application_window_new(GtkApp);
   gtk_application_window_set_show_menubar(GTK_APPLICATION_WINDOW(TopLevel), TRUE);
+  popup = create_popup_menu(GtkApp);
   if (popup) {
     NgraphApp.Viewer.popup = popup;
   }
