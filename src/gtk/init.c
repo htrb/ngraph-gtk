@@ -50,6 +50,7 @@ char *DOCDIR, *NDATADIR, *ADDINDIR, *LIBDIR, *PLUGINDIR, *CONFDIR, *NLOCALEDIR, 
 #include "nstring.h"
 #include "nconfig.h"
 #include "shell.h"
+#include "gtk_action.h"
 #include "init.h"
 
 #ifdef HAVE_READLINE_READLINE_H
@@ -66,6 +67,8 @@ char *HistoryFile = NULL;
 #define HIST_SIZE 100
 #define HIST_FILE "shell_history"
 #endif	/* HAVE_READLINE_READLINE_H */
+
+GtkApplication *GtkApp;
 
 #define CSS_PATH RESOURCE_PATH "/css/ngraph.css"
 #define SYSCONF "[Ngraph]"
@@ -911,10 +914,14 @@ n_initialize(int *argc, char ***argv)
 #endif	/* HAVE_GETTEXT */
 
   OpenDisplay = gtk_init_check(argc, argv);
+  GtkApp = gtk_application_new(APPLICATION_ID, G_APPLICATION_NON_UNIQUE);
+  g_application_register(G_APPLICATION(GtkApp), NULL, NULL);
   g_set_application_name(AppName);
+  setup_actions(GtkApp);
 #if OSX
   GtkMacIntegration = gtkosx_application_get();
   g_signal_connect(GtkMacIntegration, "NSApplicationOpenFile", G_CALLBACK(osx_open_file), NULL);
+  create_app_menu(GtkApp);
 #endif
 
   set_dir_defs((*argv)[0]);

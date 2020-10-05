@@ -1,7 +1,10 @@
 #ifndef _INIT_HEADER
 #define _INIT_HEADER
 
+#include "gtk_common.h"
+
 extern char *AppName, *AppClass, *Auther[], *Translator, *Documenter[];
+extern GtkApplication *GtkApp;
 
 #define NGRAPH_GRAPH_MIME "application/x-ngraph"
 #define NGRAPH_DATA_MIME  "text/plain"
