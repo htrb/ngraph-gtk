@@ -807,18 +807,14 @@ static GActionEntry AppEntries[] =
   { "PopupUpdateAction", PopupUpdateAction_activated, NULL, NULL, NULL },
 };
 
-GtkApplication *
-create_application_window(GtkWidget **popup)
+static int Initialized = FALSE;
+
+void
+setup_actions(GtkApplication *app)
 {
-  GtkApplication *app;
-
-  app = gtk_application_new(APPLICATION_ID, G_APPLICATION_NON_UNIQUE);
-  g_application_register(G_APPLICATION(app), NULL, NULL);
-  g_action_map_add_action_entries(G_ACTION_MAP(app), AppEntries, G_N_ELEMENTS(AppEntries), app);
-
-
-  {
+  if (Initialized) {
+    return;
   }
-
-  return app;
+  g_action_map_add_action_entries(G_ACTION_MAP(app), AppEntries, G_N_ELEMENTS(AppEntries), app);
+  Initialized = TRUE;
 }

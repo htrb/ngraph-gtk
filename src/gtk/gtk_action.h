@@ -1,6 +1,6 @@
 #ifndef GTK_ACTION_HEADER
 #define GTK_ACTION_HEADER
 
-GtkApplication *create_application_window(GtkWidget **popup);
+void setup_actions(GtkApplication *app);
 
 #endif	/* GTK_ACTION_HEADER */
