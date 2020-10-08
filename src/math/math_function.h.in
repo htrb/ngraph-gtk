@@ -158,7 +158,7 @@ puts		1	1	0	1
 string_insert	3	1	0	21,1,0
 string_join	3	1	0	21,1,11
 string_substring 4	1	0	21,1,0,0
-string_split	4	1	0	11,1,1,0
+string_split	4	1	0	12,1,1,0
 string_split_float 4	1	0	10,1,1,0
 string_replace	5	1	0	21,1,1,1,0
 getobj		3	1	0	1,1,0

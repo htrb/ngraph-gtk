@@ -4320,6 +4320,7 @@ math_func_string_split(MathFunctionCallExpression *exp, MathEquation *eq, MathVa
 {
   char **ary;
   int i, id;
+  enum DATA_TYPE type;
 
   rval->val = 0;
   rval->type = MATH_VALUE_NORMAL;
@@ -4329,8 +4330,17 @@ math_func_string_split(MathFunctionCallExpression *exp, MathEquation *eq, MathVa
   if (ary == NULL) {
     return 1;
   }
-  for (i = 0; ary[i]; i++) {
-    math_equation_set_array_str(eq, id, i, ary[i]);
+  type = exp->buf[0].array.array_type;
+  if (type == DATA_TYPE_VALUE) {
+    for (i = 0; ary[i]; i++) {
+      MathValue val;
+      n_strtod(ary[i], &val);
+      math_equation_set_array_val(eq, id, i, &val);
+    }
+  } else {
+    for (i = 0; ary[i]; i++) {
+      math_equation_set_array_str(eq, id, i, ary[i]);
+    }
   }
   g_strfreev(ary);
   rval->val = i;
