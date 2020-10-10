@@ -4288,7 +4288,7 @@ math_func_string(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *r
 }
 
 static char **
-string_split(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+string_split(MathFunctionCallExpression *exp, MathValue *rval)
 {
   const char *delm, *src;
   char **ary;
@@ -4326,7 +4326,7 @@ math_func_string_split(MathFunctionCallExpression *exp, MathEquation *eq, MathVa
   rval->type = MATH_VALUE_NORMAL;
 
   id = (int) exp->buf[0].array.idx;
-  ary = string_split(exp, eq, rval);
+  ary = string_split(exp, rval);
   if (ary == NULL) {
     return 1;
   }
