@@ -1159,6 +1159,16 @@ add_event_button(GtkWidget *widget, struct Viewer *d)
   g_signal_connect(ev, "released", G_CALLBACK(ViewerEvButtonUp), d);
 }
 
+static void
+add_event_motion(GtkWidget *widget, struct Viewer *d)
+{
+  GtkEventController *ev;
+
+  ev = gtk_event_controller_motion_new(widget);
+
+  g_signal_connect(ev, "motion", G_CALLBACK(ViewerEvMouseMotion), d);
+}
+
 #endif
 
 void
