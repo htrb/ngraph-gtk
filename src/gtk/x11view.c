@@ -1185,6 +1185,14 @@ zoom_begin(GtkGesture *gesture, GdkEventSequence *sequence, gpointer user_data)
   d->saved_dpi = dpi;
 }
 
+static void
+add_event_zoom(GtkWidget *widget, struct Viewer *d)
+{
+  GtkGesture *ev;
+  ev = gtk_gesture_zoom_new(widget);
+  g_signal_connect(ev, "begin", G_CALLBACK(zoom_begin), d);
+  g_signal_connect(ev, "scale-changed", G_CALLBACK(gesture_zoom), d);
+}
 #endif
 
 void
