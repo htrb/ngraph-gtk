@@ -1136,6 +1136,19 @@ modifier_changed(GtkEventControllerKey *eventcontrollerkey, GdkModifierType arg1
   return FALSE;
 }
 
+static void
+add_event_key(GtkWidget *widget, struct Viewer *d)
+{
+  GtkEventController *ev;
+
+  ev = gtk_event_controller_key_new(widget);
+  g_signal_connect(ev, "key-pressed", G_CALLBACK(ViewerEvKeyDown), d);
+  g_signal_connect(ev, "key-released", G_CALLBACK(ViewerEvKeyUp), d);
+
+  ev = gtk_event_controller_key_new(TopLevel);
+  g_signal_connect(ev, "modifiers", G_CALLBACK(modifier_changed), d);
+}
+
 #endif
 
 void
