@@ -118,12 +118,16 @@ static gboolean ViewerEvLButtonDown(unsigned int state, TPoint *point, struct Vi
 static gboolean ViewerEvLButtonUp(unsigned int state, TPoint *point, struct Viewer *d);
 static gboolean ViewerEvLButtonDblClk(unsigned int state, TPoint *point, struct Viewer *d);
 static gboolean ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d);
+#if GTK_CHECK_VERSION(3, 24, 0)
+static void gesture_zoom(GtkGestureZoom *controller, gdouble scale, gpointer user_data);
+#else
 static gboolean ViewerEvButtonDown(GtkWidget *w, GdkEventButton *e, gpointer client_data);
 static gboolean ViewerEvButtonUp(GtkWidget *w, GdkEventButton *e, gpointer client_data);
 static gboolean ViewerEvMouseMotion(GtkWidget *w, GdkEventMotion *e, gpointer client_data);
 static gboolean ViewerEvScroll(GtkWidget *w, GdkEventScroll *e, gpointer client_data);
 static gboolean ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data);
 static gboolean ViewerEvKeyUp(GtkWidget *w, GdkEventKey *e, gpointer client_data);
+#endif
 static void ViewUpdate(void);
 static void ViewCopy(void);
 static void do_popup(GdkEventButton *event, struct Viewer *d);
@@ -3109,6 +3113,36 @@ mouse_down_zoom_little(unsigned int state, TPoint *point, struct Viewer *d, int 
 {
   mouse_down_zoom2(state, point, d, zoom_out, ZOOM_SPEED_LITTLE);
 }
+
+#if GTK_CHECK_VERSION(3, 24, 0)
+static void
+gesture_zoom(GtkGestureZoom *controller, gdouble scale, gpointer user_data)
+{
+  struct Viewer *d;
+  int dpi;
+
+  d = (struct Viewer *) user_data;
+
+  if (ZoomLock) {
+    return;
+  }
+
+  ZoomLock = TRUE;
+  dpi = d->saved_dpi * scale;
+  if (dpi < VIEWER_DPI_MIN) {
+    dpi = VIEWER_DPI_MIN;
+    message_beep(TopLevel);
+  } else if (dpi > VIEWER_DPI_MAX) {
+    dpi = VIEWER_DPI_MAX;
+    message_beep(TopLevel);
+  }
+
+  if (putobj(Menulocal.obj, "dpi", 0, &dpi) != -1) {
+    ChangeDPI();
+  }
+  ZoomLock = FALSE;
+}
+#endif
 
 static void
 mouse_down_set_points(unsigned int state, struct Viewer *d, int n)
