@@ -5296,12 +5296,12 @@ ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data)
   case GDK_KEY_Left:
   case GDK_KEY_Right:
     if (arraynum(d->focusobj) == 0) {
-      return viewer_key_scroll(e, d);
+      return viewer_key_scroll(e->keyval, d);
     }
 
     if (((d->MouseMode == MOUSENONE) || (d->MouseMode == MOUSEDRAG)) &&
 	(d->Mode & POINT_TYPE_POINT)) {
-      move_focus_frame(e, d);
+      move_focus_frame(e->keyval, e->state, d);
       return TRUE;
     }
     break;
