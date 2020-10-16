@@ -5092,15 +5092,15 @@ ViewerEvButtonUp(GtkWidget *w, GdkEventButton *e, gpointer client_data)
 #endif
 
 static void
-move_focus_frame(GdkEventKey *e, struct Viewer *d)
+move_focus_frame(guint keyval, GdkModifierType state, struct Viewer *d)
 {
   int dx = 0, dy = 0, mv;
   double zoom;
 
   zoom = Menulocal.PaperZoom / 10000.0;
-  mv = (e->state & GDK_SHIFT_MASK) ? Menulocal.grid / 10 : Menulocal.grid;
+  mv = (state & GDK_SHIFT_MASK) ? Menulocal.grid / 10 : Menulocal.grid;
 
-  switch (e->keyval) {
+  switch (keyval) {
   case GDK_KEY_Down:
     dy = mv;
     break;
