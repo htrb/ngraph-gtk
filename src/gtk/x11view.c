@@ -4796,6 +4796,20 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
   return FALSE;
 }
 
+#if GTK_CHECK_VERSION(3, 24, 0)
+static void
+ViewerEvMouseMotion(GtkEventControllerMotion *controller, gdouble x, gdouble y, gpointer client_data)
+{
+  struct Viewer *d;
+  TPoint point;
+
+  d = (struct Viewer *) client_data;
+  point.x = x;
+  point.y = y;
+  ViewerEvMouseMove(d->KeyMask, &point, d);
+  //  gdk_event_request_motions(e); /* handles is_hint events */
+}
+#else
 static gboolean
 ViewerEvMouseMotion(GtkWidget *w, GdkEventMotion *e, gpointer client_data)
 {
