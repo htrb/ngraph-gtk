@@ -122,6 +122,8 @@ static gboolean ViewerEvMouseMove(unsigned int state, TPoint *point, struct View
 static void ViewerEvButtonDown(GtkGestureMultiPress *gesture, gint n_press, gdouble x, gdouble y, gpointer client_data);
 static void ViewerEvButtonUp(GtkGestureMultiPress *gesture, gint n_press, gdouble x, gdouble y, gpointer client_data);
 static void ViewerEvMouseMotion(GtkEventControllerMotion *controller, gdouble x, gdouble y, gpointer client_data);
+static gboolean ViewerEvKeyDown(GtkEventControllerKey *controller, guint keyval, guint keycode, GdkModifierType state, gpointer user_data);
+static void ViewerEvKeyUp(GtkEventControllerKey *controller, guint keyval, guint keycode, GdkModifierType state, gpointer user_data);
 static void gesture_zoom(GtkGestureZoom *controller, gdouble scale, gpointer user_data);
 #else
 static gboolean ViewerEvButtonDown(GtkWidget *w, GdkEventButton *e, gpointer client_data);
@@ -5187,6 +5189,54 @@ ViewerEvKeyDown(GtkEventControllerKey *controller, guint keyval, guint keycode, 
  EXIT_PROPAGATE:
   set_focus_sensitivity(d);
   return FALSE;
+}
+
+static void
+ViewerEvKeyUp(GtkEventControllerKey *controller, guint keyval, guint keycode, GdkModifierType state, gpointer user_data)
+{
+  struct Viewer *d;
+  char *objs[OBJ_MAX];
+  int dx, dy;
+  int axis;
+
+  if (Menulock || Globallock)
+    return;
+
+  d = (struct Viewer *) user_data;
+
+  switch (keyval) {
+  case GDK_KEY_Shift_L:
+  case GDK_KEY_Shift_R:
+  case GDK_KEY_Control_L:
+  case GDK_KEY_Control_R:
+    if (d->Mode == ZoomB) {
+      NSetCursor(GDK_TARGET);
+      return;
+    }
+    break;
+  case GDK_KEY_Down:
+  case GDK_KEY_Up:
+  case GDK_KEY_Left:
+  case GDK_KEY_Right:
+    if (d->MouseMode != MOUSEDRAG)
+      break;
+
+    dx = d->FrameOfsX;
+    dy = d->FrameOfsY;
+    get_focused_obj_array(d->focusobj, objs);
+    axis = move_objects(dx, dy, d, objs);
+    if (axis) {
+      add_data_grid_to_objs(objs);
+    }
+    UpdateAll(objs);
+    d->MouseMode = MOUSENONE;
+#if CLEAR_DRAG_INFO
+    reset_drag_info(d);
+#endif
+    return;
+  default:
+    break;
+  }
 }
 #else
 static gboolean
