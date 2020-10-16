@@ -121,6 +121,7 @@ static gboolean ViewerEvMouseMove(unsigned int state, TPoint *point, struct View
 #if GTK_CHECK_VERSION(3, 24, 0)
 static void ViewerEvButtonDown(GtkGestureMultiPress *gesture, gint n_press, gdouble x, gdouble y, gpointer client_data);
 static void ViewerEvButtonUp(GtkGestureMultiPress *gesture, gint n_press, gdouble x, gdouble y, gpointer client_data);
+static void ViewerEvMouseMotion(GtkEventControllerMotion *controller, gdouble x, gdouble y, gpointer client_data);
 static void gesture_zoom(GtkGestureZoom *controller, gdouble scale, gpointer user_data);
 #else
 static gboolean ViewerEvButtonDown(GtkWidget *w, GdkEventButton *e, gpointer client_data);
@@ -5119,6 +5120,75 @@ viewer_key_scroll(GdkEventKey *e, struct Viewer *d)
   return FALSE;
 }
 
+#if GTK_CHECK_VERSION(3, 24, 0)
+static gboolean
+ViewerEvKeyDown(GtkEventControllerKey *controller, guint keyval, guint keycode, GdkModifierType state, gpointer user_data)
+{
+  struct Viewer *d;
+
+  d = (struct Viewer *) user_data;
+
+  if (Menulock || Globallock)
+    goto EXIT_PROPAGATE;
+
+  switch (keyval) {
+  case GDK_KEY_Escape:
+    if (d->MoveData) {
+      move_data_cancel(d, TRUE);
+    } else {
+      UnFocus();
+    }
+    set_pointer_mode(PointerModeDefault);
+    goto EXIT_PROPAGATE;
+  case GDK_KEY_space:
+    CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
+    return TRUE;
+  case GDK_KEY_Page_Up:
+    range_increment(d->VScroll, -SCROLL_INC * 4);
+    return TRUE;
+  case GDK_KEY_Page_Down:
+    range_increment(d->VScroll, SCROLL_INC * 4);
+    return TRUE;
+  case GDK_KEY_Down:
+  case GDK_KEY_Up:
+  case GDK_KEY_Left:
+  case GDK_KEY_Right:
+    if (arraynum(d->focusobj) == 0) {
+      return viewer_key_scroll(keyval, d);
+    }
+
+    if (((d->MouseMode == MOUSENONE) || (d->MouseMode == MOUSEDRAG)) &&
+	(d->Mode & POINT_TYPE_POINT)) {
+      move_focus_frame(keyval, state, d);
+      return TRUE;
+    }
+    break;
+  case GDK_KEY_Shift_L:
+  case GDK_KEY_Shift_R:
+    if (d->Mode == ZoomB) {
+      NSetCursor(GDK_PLUS);
+      return TRUE;
+    }
+    break;
+  case GDK_KEY_Control_L:
+  case GDK_KEY_Control_R:
+    if (d->Mode == ZoomB) {
+      NSetCursor(GDK_TARGET);
+      return TRUE;
+    }
+    break;
+  case GDK_KEY_Return:
+    ViewUpdate();
+    break;
+  default:
+    break;
+  }
+
+ EXIT_PROPAGATE:
+  set_focus_sensitivity(d);
+  return FALSE;
+}
+#else
 static gboolean
 ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data)
 {
@@ -5236,6 +5306,7 @@ ViewerEvKeyUp(GtkWidget *w, GdkEventKey *e, gpointer client_data)
 
   return FALSE;
 }
+#endif
 
 static void
 ViewerEvSize(GtkWidget *w, GtkAllocation *allocation, gpointer client_data)
