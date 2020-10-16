@@ -1149,6 +1149,16 @@ add_event_key(GtkWidget *widget, struct Viewer *d)
   g_signal_connect(ev, "modifiers", G_CALLBACK(modifier_changed), d);
 }
 
+static void
+add_event_button(GtkWidget *widget, struct Viewer *d)
+{
+  GtkGesture *ev;
+  ev = gtk_gesture_multi_press_new(widget);
+  gtk_gesture_single_set_button(GTK_GESTURE_SINGLE(ev), 0);
+  g_signal_connect(ev, "pressed", G_CALLBACK(ViewerEvButtonDown), d);
+  g_signal_connect(ev, "released", G_CALLBACK(ViewerEvButtonUp), d);
+}
+
 #endif
 
 void
