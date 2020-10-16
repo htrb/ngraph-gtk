@@ -4724,7 +4724,9 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
     return FALSE;
   }
 
+#if ! GTK_CHECK_VERSION(3, 24, 0)
   d->KeyMask = state;
+#endif
   zoom = Menulocal.PaperZoom / 10000.0;
 
   dx = calc_mouse_x(point->x, zoom, d);
@@ -4837,6 +4839,7 @@ ViewerEvMouseMotion(GtkWidget *w, GdkEventMotion *e, gpointer client_data)
 
   return FALSE;
 }
+#endif
 
 #if ! GTK_CHECK_VERSION(3, 22, 0)
 static void
