@@ -119,6 +119,7 @@ static gboolean ViewerEvLButtonUp(unsigned int state, TPoint *point, struct View
 static gboolean ViewerEvLButtonDblClk(unsigned int state, TPoint *point, struct Viewer *d);
 static gboolean ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d);
 #if GTK_CHECK_VERSION(3, 24, 0)
+static void ViewerEvButtonDown(GtkGestureMultiPress *gesture, gint n_press, gdouble x, gdouble y, gpointer client_data);
 static void gesture_zoom(GtkGestureZoom *controller, gdouble scale, gpointer user_data);
 #else
 static gboolean ViewerEvButtonDown(GtkWidget *w, GdkEventButton *e, gpointer client_data);
@@ -4983,7 +4984,28 @@ ViewerEvButtonDown(GtkWidget *w, GdkEventButton *e, gpointer client_data)
 
   return FALSE;
 }
+#endif
 
+#if GTK_CHECK_VERSION(3, 24, 0)
+static void
+ViewerEvButtonUp(GtkGestureMultiPress *gesture, gint n_press, gdouble x, gdouble y, gpointer client_data)
+{
+  struct Viewer *d;
+  TPoint point;
+  guint button;
+
+  d = (struct Viewer *) client_data;
+  button = gtk_gesture_single_get_current_button(GTK_GESTURE_SINGLE(gesture));
+
+  point.x = x;
+  point.y = y;
+
+  switch (button) {
+  case Button1:
+    ViewerEvLButtonUp(d->KeyMask, &point, d);
+  }
+}
+#else
 static gboolean
 ViewerEvButtonUp(GtkWidget *w, GdkEventButton *e, gpointer client_data)
 {
