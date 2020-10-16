@@ -168,6 +168,7 @@ struct Viewer
   int cx, cy;
   int ignoreredraw;
   double vscroll, hscroll, ZoomX, ZoomY;
+  int saved_dpi;
 };
 
 enum SubWinType {
