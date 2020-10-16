@@ -120,6 +120,7 @@ static gboolean ViewerEvLButtonDblClk(unsigned int state, TPoint *point, struct 
 static gboolean ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d);
 #if GTK_CHECK_VERSION(3, 24, 0)
 static void ViewerEvButtonDown(GtkGestureMultiPress *gesture, gint n_press, gdouble x, gdouble y, gpointer client_data);
+static void ViewerEvButtonUp(GtkGestureMultiPress *gesture, gint n_press, gdouble x, gdouble y, gpointer client_data);
 static void gesture_zoom(GtkGestureZoom *controller, gdouble scale, gpointer user_data);
 #else
 static gboolean ViewerEvButtonDown(GtkWidget *w, GdkEventButton *e, gpointer client_data);
@@ -4953,6 +4954,41 @@ ViewerEvScroll(GtkWidget *w, GdkEventScroll *e, gpointer client_data)
   return FALSE;
 }
 
+#if GTK_CHECK_VERSION(3, 24, 0)
+static void
+ViewerEvButtonDown(GtkGestureMultiPress *gesture, gint n_press, gdouble x, gdouble y, gpointer client_data)
+{
+  struct Viewer *d;
+  GtkWidget *w;
+  TPoint point;
+  guint button;
+
+  d = (struct Viewer *) client_data;
+  button = gtk_gesture_single_get_current_button(GTK_GESTURE_SINGLE(gesture));
+
+  point.x = x;
+  point.y = y;
+
+  w = gtk_event_controller_get_widget(GTK_EVENT_CONTROLLER(gesture));
+  gtk_widget_grab_focus(w);
+
+  switch (button) {
+  case Button1:
+    if (n_press) {
+      ViewerEvLButtonDown(d->KeyMask, &point, d);
+    } else {
+      ViewerEvLButtonDblClk(d->KeyMask, &point, d);
+    }
+    break;
+  case Button2:
+    ViewerEvMButtonDown(d->KeyMask, &point, d);
+    break;
+  case Button3:
+    ViewerEvRButtonDown(d->KeyMask, &point, d, NULL);
+    break;
+  }
+}
+#else
 static gboolean
 ViewerEvButtonDown(GtkWidget *w, GdkEventButton *e, gpointer client_data)
 {
@@ -5026,6 +5062,7 @@ ViewerEvButtonUp(GtkWidget *w, GdkEventButton *e, gpointer client_data)
 
   return FALSE;
 }
+#endif
 
 static void
 move_focus_frame(GdkEventKey *e, struct Viewer *d)
