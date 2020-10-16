@@ -5127,9 +5127,9 @@ move_focus_frame(guint keyval, GdkModifierType state, struct Viewer *d)
 }
 
 static int
-viewer_key_scroll(GdkEventKey *e, struct Viewer *d)
+viewer_key_scroll(guint keyval, struct Viewer *d)
 {
-  switch (e->keyval) {
+  switch (keyval) {
   case GDK_KEY_Up:
     range_increment(d->VScroll, -SCROLL_INC);
     return TRUE;
