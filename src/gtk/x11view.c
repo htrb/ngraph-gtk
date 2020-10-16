@@ -129,10 +129,10 @@ static void gesture_zoom(GtkGestureZoom *controller, gdouble scale, gpointer use
 static gboolean ViewerEvButtonDown(GtkWidget *w, GdkEventButton *e, gpointer client_data);
 static gboolean ViewerEvButtonUp(GtkWidget *w, GdkEventButton *e, gpointer client_data);
 static gboolean ViewerEvMouseMotion(GtkWidget *w, GdkEventMotion *e, gpointer client_data);
-static gboolean ViewerEvScroll(GtkWidget *w, GdkEventScroll *e, gpointer client_data);
 static gboolean ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data);
 static gboolean ViewerEvKeyUp(GtkWidget *w, GdkEventKey *e, gpointer client_data);
 #endif
+static gboolean ViewerEvScroll(GtkWidget *w, GdkEventScroll *e, gpointer client_data);
 static void ViewUpdate(void);
 static void ViewCopy(void);
 static void do_popup(GdkEventButton *event, struct Viewer *d);
@@ -1271,12 +1271,19 @@ ViewerWinSetup(void)
     gtk_menu_attach_to_widget(GTK_MENU(d->popup), GTK_WIDGET(d->Win), NULL);
   }
 
+#if GTK_CHECK_VERSION(3, 24, 0)
+  add_event_key(d->Win, d);
+  add_event_button(d->Win, d);
+  add_event_motion(d->Win, d);
+  add_event_zoom(d->Win, d);
+#else
   g_signal_connect(d->Win, "button-press-event", G_CALLBACK(ViewerEvButtonDown), d);
   g_signal_connect(d->Win, "button-release-event", G_CALLBACK(ViewerEvButtonUp), d);
   g_signal_connect(d->Win, "motion-notify-event", G_CALLBACK(ViewerEvMouseMotion), d);
-  g_signal_connect(d->Win, "scroll-event", G_CALLBACK(ViewerEvScroll), d);
   g_signal_connect(d->Win, "key-press-event", G_CALLBACK(ViewerEvKeyDown), d);
   g_signal_connect(d->Win, "key-release-event", G_CALLBACK(ViewerEvKeyUp), d);
+#endif
+  g_signal_connect(d->Win, "scroll-event", G_CALLBACK(ViewerEvScroll), d);
   g_signal_connect(d->Win, "popup-menu", G_CALLBACK(ev_popup_menu), d);
 
 #if 0
