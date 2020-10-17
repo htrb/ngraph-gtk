@@ -121,16 +121,19 @@ static gboolean ViewerEvMouseMove(unsigned int state, TPoint *point, struct View
 #if GTK_CHECK_VERSION(3, 24, 0)
 static void ViewerEvButtonDown(GtkGestureMultiPress *gesture, gint n_press, gdouble x, gdouble y, gpointer client_data);
 static void ViewerEvButtonUp(GtkGestureMultiPress *gesture, gint n_press, gdouble x, gdouble y, gpointer client_data);
-static void ViewerEvMouseMotion(GtkEventControllerMotion *controller, gdouble x, gdouble y, gpointer client_data);
 static gboolean ViewerEvKeyDown(GtkEventControllerKey *controller, guint keyval, guint keycode, GdkModifierType state, gpointer user_data);
 static void ViewerEvKeyUp(GtkEventControllerKey *controller, guint keyval, guint keycode, GdkModifierType state, gpointer user_data);
 static void gesture_zoom(GtkGestureZoom *controller, gdouble scale, gpointer user_data);
 #else
 static gboolean ViewerEvButtonDown(GtkWidget *w, GdkEventButton *e, gpointer client_data);
 static gboolean ViewerEvButtonUp(GtkWidget *w, GdkEventButton *e, gpointer client_data);
-static gboolean ViewerEvMouseMotion(GtkWidget *w, GdkEventMotion *e, gpointer client_data);
 static gboolean ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data);
 static gboolean ViewerEvKeyUp(GtkWidget *w, GdkEventKey *e, gpointer client_data);
+#endif
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void ViewerEvMouseMotion(GtkEventControllerMotion *controller, gdouble x, gdouble y, gpointer client_data);
+#else
+static gboolean ViewerEvMouseMotion(GtkWidget *w, GdkEventMotion *e, gpointer client_data);
 #endif
 static gboolean ViewerEvScroll(GtkWidget *w, GdkEventScroll *e, gpointer client_data);
 static void ViewUpdate(void);
@@ -1157,16 +1160,6 @@ add_event_button(GtkWidget *widget, struct Viewer *d)
 }
 
 static void
-add_event_motion(GtkWidget *widget, struct Viewer *d)
-{
-  GtkEventController *ev;
-
-  ev = gtk_event_controller_motion_new(widget);
-
-  g_signal_connect(ev, "motion", G_CALLBACK(ViewerEvMouseMotion), d);
-}
-
-static void
 zoom_begin(GtkGesture *gesture, GdkEventSequence *sequence, gpointer user_data)
 {
   struct Viewer *d;
@@ -1189,6 +1182,18 @@ add_event_zoom(GtkWidget *widget, struct Viewer *d)
   ev = gtk_gesture_zoom_new(widget);
   g_signal_connect(ev, "begin", G_CALLBACK(zoom_begin), d);
   g_signal_connect(ev, "scale-changed", G_CALLBACK(gesture_zoom), d);
+}
+#endif
+
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+add_event_motion(GtkWidget *widget, struct Viewer *d)
+{
+  GtkEventController *ev;
+
+  ev = gtk_event_controller_motion_new(widget);
+
+  g_signal_connect(ev, "motion", G_CALLBACK(ViewerEvMouseMotion), d);
 }
 #endif
 
@@ -1262,14 +1267,17 @@ ViewerWinSetup(void)
 #if GTK_CHECK_VERSION(3, 24, 0)
   add_event_key(d->Win, d);
   add_event_button(d->Win, d);
-  add_event_motion(d->Win, d);
   add_event_zoom(d->Win, d);
 #else
   g_signal_connect(d->Win, "button-press-event", G_CALLBACK(ViewerEvButtonDown), d);
   g_signal_connect(d->Win, "button-release-event", G_CALLBACK(ViewerEvButtonUp), d);
-  g_signal_connect(d->Win, "motion-notify-event", G_CALLBACK(ViewerEvMouseMotion), d);
   g_signal_connect(d->Win, "key-press-event", G_CALLBACK(ViewerEvKeyDown), d);
   g_signal_connect(d->Win, "key-release-event", G_CALLBACK(ViewerEvKeyUp), d);
+#endif
+#if GTK_CHECK_VERSION(4, 0, 0)
+  add_event_motion(d->Win, d);
+#else
+  g_signal_connect(d->Win, "motion-notify-event", G_CALLBACK(ViewerEvMouseMotion), d);
 #endif
   g_signal_connect(d->Win, "scroll-event", G_CALLBACK(ViewerEvScroll), d);
   g_signal_connect(d->Win, "popup-menu", G_CALLBACK(ev_popup_menu), d);
@@ -4791,17 +4799,19 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
   return FALSE;
 }
 
-#if GTK_CHECK_VERSION(3, 24, 0)
+#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 ViewerEvMouseMotion(GtkEventControllerMotion *controller, gdouble x, gdouble y, gpointer client_data)
 {
   struct Viewer *d;
   TPoint point;
+  GdkModifierType state;
 
   d = (struct Viewer *) client_data;
   point.x = x;
   point.y = y;
-  ViewerEvMouseMove(d->KeyMask, &point, d);
+  state = gtk_event_controller_get_current_event_state(GTK_EVENT_CONTROLLER(controller));
+  ViewerEvMouseMove(state, &point, d);
   //  gdk_event_request_motions(e); /* handles is_hint events */
 }
 #else
