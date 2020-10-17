@@ -5004,9 +5004,17 @@ ViewerEvButtonDown(GtkGestureMultiPress *gesture, gint n_press, gdouble x, gdoub
   GtkWidget *w;
   TPoint point;
   guint button;
+  GdkModifierType state;
 
   d = (struct Viewer *) client_data;
   button = gtk_gesture_single_get_current_button(GTK_GESTURE_SINGLE(gesture));
+#if GTK_CHECK_VERSION(4, 0, 0)
+  state = gtk_event_controller_get_current_event_state(GTK_EVENT_CONTROLLER(gesture));
+#else
+  state = get_key_modifier(GTK_GESTURE_SINGLE(gesture));
+#endif
+
+  d->KeyMask = state;
 
   point.x = x;
   point.y = y;
@@ -5016,17 +5024,17 @@ ViewerEvButtonDown(GtkGestureMultiPress *gesture, gint n_press, gdouble x, gdoub
 
   switch (button) {
   case Button1:
-    if (n_press) {
-      ViewerEvLButtonDown(d->KeyMask, &point, d);
+    if (n_press == 1) {
+      ViewerEvLButtonDown(state, &point, d);
     } else {
-      ViewerEvLButtonDblClk(d->KeyMask, &point, d);
+      ViewerEvLButtonDblClk(state, &point, d);
     }
     break;
   case Button2:
-    ViewerEvMButtonDown(d->KeyMask, &point, d);
+    ViewerEvMButtonDown(state, &point, d);
     break;
   case Button3:
-    ViewerEvRButtonDown(d->KeyMask, &point, d, NULL);
+    ViewerEvRButtonDown(state, &point, d, NULL);
     break;
   }
 }
