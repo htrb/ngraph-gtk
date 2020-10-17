@@ -1292,9 +1292,13 @@ list_widget_create(struct SubWin *d, int lisu_num, n_list_store *list, int can_f
 
   set_cell_renderer_cb(data, lisu_num, list, lstor);
 
+#if GTK_CHECK_VERSION(3, 99, 0)
+  add_event_controller(lstor, data);
+#else
   g_signal_connect(lstor, "button-press-event", G_CALLBACK(ev_button_down), data);
   g_signal_connect(lstor, "button-release-event", G_CALLBACK(ev_button_up), data);
   g_signal_connect(lstor, "key-press-event", G_CALLBACK(ev_key_down), data);
+#endif
 
   /* to handle key-press-event correctly in single window mode */
   g_signal_connect(lstor, "focus-in-event", G_CALLBACK(list_focused), NULL);
