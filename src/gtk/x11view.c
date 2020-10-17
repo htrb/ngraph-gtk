@@ -1136,15 +1136,6 @@ ev_popup_menu(GtkWidget *w, gpointer client_data)
 }
 
 #if GTK_CHECK_VERSION(3, 24, 0)
-static gboolean
-modifier_changed(GtkEventControllerKey *eventcontrollerkey, GdkModifierType arg1, gpointer user_data)
-{
-  struct Viewer *d;
-  d = user_data;
-  d->KeyMask = arg1;
-  return FALSE;
-}
-
 static void
 add_event_key(GtkWidget *widget, struct Viewer *d)
 {
