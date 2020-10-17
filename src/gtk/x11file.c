@@ -5735,27 +5735,24 @@ CmFileSaveData(void *w, gpointer client_data)
 }
 
 static gboolean
-filewin_ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
+filewin_ev_key_down(GtkWidget *w, guint keyval, GdkModifierType state, gpointer user_data)
 {
   struct obj_list_data *d;
-  GdkEventKey *e;
 
   g_return_val_if_fail(w != NULL, FALSE);
-  g_return_val_if_fail(event != NULL, FALSE);
 
   if (Menulock || Globallock)
     return TRUE;
 
   d = (struct obj_list_data *) user_data;
-  e = (GdkEventKey *)event;
 
-  switch (e->keyval) {
+  switch (keyval) {
   case GDK_KEY_Delete:
     FileWinFileDelete(d);
     UnFocus();
     break;
   case GDK_KEY_Return:
-    if (e->state & GDK_SHIFT_MASK) {
+    if (state & GDK_SHIFT_MASK) {
       return FALSE;
     }
 
@@ -5763,7 +5760,7 @@ filewin_ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
     UnFocus();
     break;
   case GDK_KEY_Insert:
-    if (e->state & GDK_SHIFT_MASK) {
+    if (state & GDK_SHIFT_MASK) {
       FileWinFileCopy2(d);
     } else {
       FileWinFileCopy(d);
@@ -5771,14 +5768,14 @@ filewin_ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
     UnFocus();
     break;
   case GDK_KEY_space:
-    if (e->state & GDK_CONTROL_MASK)
+    if (state & GDK_CONTROL_MASK)
       return FALSE;
 
     FileWinFileDraw(d);
     UnFocus();
     break;
   case GDK_KEY_f:
-    if (e->state & GDK_CONTROL_MASK) {
+    if (state & GDK_CONTROL_MASK) {
       FileWinFit(d);
       UnFocus();
     }
