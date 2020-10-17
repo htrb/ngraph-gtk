@@ -897,6 +897,138 @@ do_popup(GdkEventButton *event, struct obj_list_data *d)
 #endif
 }
 
+#if GTK_CHECK_VERSION(3, 99, 0)
+static void
+ev_button_down(GtkGestureMultiPress *gesture, gint n_press, gdouble x, gdouble y, gpointer user_data)
+{
+  struct obj_list_data *d;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  static guint32 time = 0;
+  guint32 current_time;
+  int tdif;
+#endif
+  guint button;
+
+  if (Menulock || Globallock) return;
+
+#if GTK_CHECK_VERSION(4, 0, 0)
+  current_time = gtk_event_controller_get_current_event_time(GTK_EVENT_CONTROLLER(gesture));
+  tdif = current_time - time;
+  time = current_time;
+
+  /* following check is necessary for editable column. */
+  if (tdif > 0 && tdif < DOUBLE_CLICK_PERIOD)
+    return;
+#endif
+
+  d = user_data;
+
+  button = gtk_gesture_single_get_current_button(GTK_GESTURE_SINGLE(gesture));
+  switch (button) {
+  case 1:
+    if (n_press > 1) {
+      swin_update(d);
+    }
+    break;
+  }
+}
+
+static void
+ev_button_up(GtkGestureMultiPress *gesture, gint n_press, gdouble x, gdouble y, gpointer user_data)
+{
+  struct obj_list_data *d;
+  guint button;
+
+  if (Menulock || Globallock) return;
+
+  d = user_data;
+
+  button = gtk_gesture_single_get_current_button(GTK_GESTURE_SINGLE(gesture));
+  switch (button) {
+  case 3:
+    if (d->popup) {
+      do_popup(NULL, d);
+    }
+    break;
+  }
+}
+
+static gboolean
+ev_key_down(GtkEventControllerKey *controller, guint keyval, guint keycode, GdkModifierType state, gpointer user_data)
+{
+  struct obj_list_data *d;
+  GtkWidget *w;
+
+  if (Menulock || Globallock)
+    return TRUE;
+
+  d = user_data;
+
+  w = gtk_event_controller_get_widget(GTK_EVENT_CONTROLLER(controller));
+  if (d->ev_key && d->ev_key(w, keyval, state, user_data))
+    return TRUE;
+
+  switch (keyval) {
+  case GDK_KEY_Delete:
+    delete(d);
+    break;
+  case GDK_KEY_Insert:
+    copy(d);
+    break;
+  case GDK_KEY_Home:
+    if (state & GDK_SHIFT_MASK)
+      move_top(d);
+    else
+      return FALSE;
+    break;
+  case GDK_KEY_End:
+    if (state & GDK_SHIFT_MASK)
+      move_last(d);
+    else
+      return FALSE;
+    break;
+  case GDK_KEY_Up:
+    if (state & GDK_SHIFT_MASK)
+      move_up(d);
+    else
+      return FALSE;
+    break;
+  case GDK_KEY_Down:
+    if (state & GDK_SHIFT_MASK)
+      move_down(d);
+    else
+      return FALSE;
+    break;
+  case GDK_KEY_Return:
+    if (state & GDK_SHIFT_MASK) {
+      //      e->state &= ~ GDK_SHIFT_MASK;
+      return FALSE;
+    }
+
+    swin_update(d);
+    break;
+  case GDK_KEY_BackSpace:
+    hidden(d);
+    break;
+  case GDK_KEY_space:
+    if (state & GDK_CONTROL_MASK)
+      return FALSE;
+
+    if (! d->can_focus)
+      return FALSE;
+
+    if (state & GDK_SHIFT_MASK) {
+      list_sub_window_add_focus(NULL, d);
+    } else {
+      list_sub_window_focus(NULL, d);
+    }
+    break;
+  default:
+    return FALSE;
+  }
+  return TRUE;
+}
+#else
 static gboolean
 ev_button_down(GtkWidget *w, GdkEventButton *event,  gpointer user_data)
 {
@@ -969,7 +1101,7 @@ ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
   d = user_data;
   e = (GdkEventKey *)event;
 
-  if (d->ev_key && d->ev_key(w, event, user_data))
+  if (d->ev_key && d->ev_key(w, e->keyval, e->state, user_data))
     return TRUE;
 
   switch (e->keyval) {
@@ -1032,6 +1164,7 @@ ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
   }
   return TRUE;
 }
+#endif
 
 static void
 swin_realized(GtkWidget *widget, gpointer user_data)
@@ -1122,6 +1255,23 @@ list_focused(GtkWidget *widget, GdkEvent *ev, gpointer user_data)
   set_focus_insensitive(&NgraphApp.Viewer);
   return FALSE;
 }
+
+#if GTK_CHECK_VERSION(3, 99, 0)
+static void
+add_event_controller(GtkWidget *widget, struct obj_list_data *data)
+{
+  GtkGesture *gesture;
+  GtkEventController *controller;
+
+  gesture = gtk_gesture_multi_press_new(widget);
+  gtk_gesture_single_set_button(GTK_GESTURE_SINGLE(gesture), 0);
+  g_signal_connect(gesture, "pressed", G_CALLBACK(ev_button_down), data);
+  g_signal_connect(gesture, "released", G_CALLBACK(ev_button_up), data);
+
+  controller = gtk_event_controller_key_new(widget);
+  g_signal_connect(controller, "key-pressed", G_CALLBACK(ev_key_down), data);
+}
+#endif
 
 static struct obj_list_data *
 list_widget_create(struct SubWin *d, int lisu_num, n_list_store *list, int can_focus, GtkWidget **w)
