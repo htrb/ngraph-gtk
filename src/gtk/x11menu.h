@@ -197,7 +197,7 @@ struct obj_list_data
   void (* setup_dialog)(struct obj_list_data *data, int id, int user_data);
   int (* undo_save)(int type);
   void *dialog;
-  gboolean (* ev_key) (GtkWidget *, GdkEvent *, gpointer);
+  gboolean (* ev_key) (GtkWidget *, guint, GdkModifierType, gpointer);
   struct objlist *obj;
   struct SubWin *parent;
   n_list_store *list;
