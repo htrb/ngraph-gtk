@@ -101,7 +101,10 @@ enum ViewerAlignType {
 #define FOCUS_FRAME_OFST 5
 #define FOCUS_RECT_SIZE 6
 
-static int PaintLock = FALSE, ZoomLock = FALSE, KeepMouseMode = FALSE;
+#define VIEWER_DPI_MAX 620
+#define VIEWER_DPI_MIN  20
+
+static int PaintLock = FALSE, ZoomLock = FALSE, KeepMouseMode = FALSE, ViewerZoomig = FALSE;
 
 #define EVAL_NUM_MAX 5000
 static struct evaltype EvalList[EVAL_NUM_MAX];
@@ -1201,11 +1204,37 @@ zoom_begin(GtkGesture *gesture, GdkEventSequence *sequence, gpointer user_data)
   ViewerZoomig = TRUE;
 }
 
+static void
+zoom_end_viewer(struct Viewer *d)
+{
+  int dpi;
+
+  ViewerZoomig = FALSE;
+
+  if (ZoomLock) {
+    return;
+  }
+
   if (getobj(Menulocal.obj, "dpi", 0, 0, NULL, &dpi) == -1) {
     return;
   }
-  gtk_gesture_get_bounding_box_center(gesture, &x, &y);
-  d->saved_dpi = dpi;
+
+  ZoomLock = TRUE;
+  dpi *= d->zoom_prm.scale;
+  if (dpi < VIEWER_DPI_MIN) {
+    dpi = VIEWER_DPI_MIN;
+    message_beep(TopLevel);
+  } else if (dpi > VIEWER_DPI_MAX) {
+    dpi = VIEWER_DPI_MAX;
+    message_beep(TopLevel);
+  }
+
+  if (putobj(Menulocal.obj, "dpi", 0, &dpi) != -1) {
+    ChangeDPI();
+  }
+  ZoomLock = FALSE;
+}
+
 static void
 zoom_end(GtkGesture *gesture, GdkEventSequence *sequence, gpointer user_data)
 {
