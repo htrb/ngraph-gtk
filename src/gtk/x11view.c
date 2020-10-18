@@ -1174,6 +1174,26 @@ zoom_begin(GtkGesture *gesture, GdkEventSequence *sequence, gpointer user_data)
   }
   gtk_gesture_get_bounding_box_center(gesture, &x, &y);
   d->saved_dpi = dpi;
+static void
+zoom_end(GtkGesture *gesture, GdkEventSequence *sequence, gpointer user_data)
+{
+  struct Viewer *d;
+  char *objs[OBJ_MAX];
+
+  d = (struct Viewer *) user_data;
+
+  if (d->zoom_prm.focused < 1) {
+    zoom_end_viewer(d);
+    return;
+  }
+  d->ShowRect = FALSE;
+  d->ShowFrame = TRUE;
+  if (zoom_focused_obj(d->zoom_prm.x, d->zoom_prm.y, d->zoom_prm.scale, d->zoom_prm.scale, objs, d)) {
+    return;
+  }
+  UpdateAll(objs);
+}
+
 }
 
 static void
