@@ -151,6 +151,12 @@ enum pop_up_menu_item_type {
   POP_UP_MENU_ITEM_TYPE_END,
 };
 
+struct ZoomPrm {
+  int x, y;
+  int focused;
+  double scale;
+};
+
 #define VIEWER_POPUP_ITEM_NUM 14
 struct Viewer
 {
