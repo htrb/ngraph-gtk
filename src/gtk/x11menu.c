@@ -2471,6 +2471,7 @@ application(char *file)
   }
 
   system_set_draw_notify_func(draw_notify);
+  set_pane_position();
   n_application_ready();
   terminated = AppMainLoop();
   system_set_draw_notify_func(NULL);
