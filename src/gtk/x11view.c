@@ -1202,6 +1202,8 @@ zoom_begin(GtkGesture *gesture, GdkEventSequence *sequence, gpointer user_data)
   if (zoom_begin_obj(x, y, d)) {
     return;
   }
+  d->zoom_prm.x = x;
+  d->zoom_prm.y = y;
   ViewerZoomig = TRUE;
 }
 
