@@ -3052,44 +3052,6 @@ mouse_down_move_data(struct Viewer *d)
   move_data_cancel(d, FALSE);
 }
 
-#if ! GTK_CHECK_VERSION(3, 22, 0)
-#define ANIM_DIV 1
-static void
-show_zoom_animation(struct Viewer *d, TPoint *point, double zoom)
-{
-  cairo_pattern_t *pattern;
-  cairo_matrix_t matrix;
-  cairo_t *cr;
-  int i;
-  double inc, z;
-  GdkWindow *win;
-
-  win = gtk_widget_get_window(d->Win);
-  if (win == NULL) {
-    return;
-  }
-
-  cr = gdk_cairo_create(win);
-  inc = (zoom - 1) / ANIM_DIV;
-
-  pattern = cairo_pattern_create_for_surface(Menulocal.pix);
-  cairo_set_source(cr, pattern);
-  for (i = 1; i <= ANIM_DIV; i++) {
-    z = 1 + inc * i;
-    cairo_matrix_init(&matrix,
-		      z, 0,
-		      0, z,
-		      (point->x + d->hscroll - d->cx) - point->x * z,
-		      (point->y + d->vscroll - d->cy) - point->y * z);
-    cairo_pattern_set_matrix(pattern, &matrix);
-    cairo_paint(cr);
-  }
-
-  cairo_pattern_destroy(pattern);
-  cairo_destroy(cr);
-}
-#endif
-
 #ifdef SHOW_MOVE_ANIMATION
 static void
 show_move_animation(struct Viewer *d, int x, int y)
@@ -3187,11 +3149,6 @@ mouse_down_zoom2(unsigned int state, TPoint *point, struct Viewer *d, int zoom_o
   }
 
   ratio = vdpi / saved_dpi_i;
-#if ! GTK_CHECK_VERSION(3, 22, 0)
-  if (vdpi != nround(saved_dpi_i)) {
-    show_zoom_animation(d, point, ratio);
-  }
-#endif
 
   vdpi = saved_dpi_i;
 
