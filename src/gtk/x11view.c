@@ -3221,6 +3221,40 @@ mouse_down_zoom_little(unsigned int state, TPoint *point, struct Viewer *d, int 
 
 #if GTK_CHECK_VERSION(3, 24, 0)
 static void
+gesture_zoom_obj(GtkGestureZoom *controller, gdouble scale, struct Viewer *d)
+{
+  int x, y, minx, miny, maxx, maxy;
+  double zoom, gx, gy;
+
+  zoom = Menulocal.PaperZoom / 10000.0;
+
+  minx = d->RefX2;
+  maxx = d->RefX1;
+  miny = d->RefY2;
+  maxy = d->RefY1;
+
+  gtk_gesture_get_bounding_box_center(GTK_GESTURE(controller), &gx, &gy);
+  x = d->zoom_prm.x = calc_mouse_x(gx, zoom, d);
+  y = d->zoom_prm.y = calc_mouse_y(gy, zoom, d);
+  if (x < minx) {
+    x = minx;
+  } else if (x > maxx) {
+    x = maxx;
+  }
+  if (y < miny) {
+    y = miny;
+  } else if (y > maxy) {
+    y = maxy;
+  }
+  d->MouseX1 = x - (x - minx) * scale;
+  d->MouseY1 = y - (y - miny) * scale;
+  d->MouseX2 = x + (maxx - x) * scale;
+  d->MouseY2 = y + (maxy - y) * scale;
+
+  gtk_widget_queue_draw(d->Win);
+}
+
+static void
 gesture_zoom(GtkGestureZoom *controller, gdouble scale, gpointer user_data)
 {
   struct Viewer *d;
