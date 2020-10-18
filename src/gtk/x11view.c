@@ -156,6 +156,7 @@ static void RotateFocusedObj(int direction);
 static void set_mouse_cursor_hover(struct Viewer *d, int x, int y);
 static void CheckGrid(int ofs, unsigned int state, int *x, int *y, double *zoom_x, double *zoom_y);
 static int check_drawrable(struct objlist *obj);
+static void GetLargeFrame(int *minx, int *miny, int *maxx, int *maxy, const struct Viewer *d);
 static int zoom_focused_obj(int x, int y, double zoom_x, double zoom_y, char **objs, struct Viewer *d);
 
 #define GRAY 0.5
@@ -3050,9 +3051,6 @@ mouse_down_move_data(struct Viewer *d)
  ErrEnd:
   move_data_cancel(d, FALSE);
 }
-
-#define VIEWER_DPI_MAX 620
-#define VIEWER_DPI_MIN  20
 
 #if ! GTK_CHECK_VERSION(3, 22, 0)
 #define ANIM_DIV 1
