@@ -3124,10 +3124,10 @@ mouse_down_zoom_little(unsigned int state, TPoint *point, struct Viewer *d, int 
 
 #if GTK_CHECK_VERSION(3, 24, 0)
 static void
-gesture_zoom_obj(GtkGestureZoom *controller, gdouble scale, struct Viewer *d)
+gesture_zoom_obj(GtkGestureZoom *controller, gdouble scale, double gx, double gy,  struct Viewer *d)
 {
   int x, y, minx, miny, maxx, maxy;
-  double zoom, gx, gy;
+  double zoom;
 
   zoom = Menulocal.PaperZoom / 10000.0;
 
@@ -3136,7 +3136,6 @@ gesture_zoom_obj(GtkGestureZoom *controller, gdouble scale, struct Viewer *d)
   miny = d->RefY2;
   maxy = d->RefY1;
 
-  gtk_gesture_get_bounding_box_center(GTK_GESTURE(controller), &gx, &gy);
   x = d->zoom_prm.x = calc_mouse_x(gx, zoom, d);
   y = d->zoom_prm.y = calc_mouse_y(gy, zoom, d);
   if (x < minx) {
@@ -3186,12 +3185,14 @@ static void
 gesture_zoom(GtkGestureZoom *controller, gdouble scale, gpointer user_data)
 {
   struct Viewer *d;
+  double x, y;
+
   d = (struct Viewer *) user_data;
 
   d->zoom_prm.scale = scale;
-
+  gtk_gesture_get_bounding_box_center(GTK_GESTURE(controller), &x, &y);
   if (d->zoom_prm.focused > 0) {
-    gesture_zoom_obj(controller, scale, d);
+    gesture_zoom_obj(controller, x, y, scale, d);
     return;
   }
   main_window_redraw();
