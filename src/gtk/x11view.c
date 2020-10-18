@@ -3052,57 +3052,6 @@ mouse_down_move_data(struct Viewer *d)
   move_data_cancel(d, FALSE);
 }
 
-#ifdef SHOW_MOVE_ANIMATION
-static void
-show_move_animation(struct Viewer *d, int x, int y)
-{
-  cairo_pattern_t *pattern;
-  cairo_matrix_t matrix;
-  cairo_t *cr;
-  int i, n;
-  double incx, incy;
-  GdkWindow *win;
-
-  win = gtk_widget_get_window(d->Win);
-  if (win == NULL) {
-    return;
-  }
-
-  if (abs(x) < 1 && abs(y) < 1) {
-    return;
-  }
-
-  cr = gdk_cairo_create(win);
-
-  n = abs(x) / 4;
-  if (abs(y) / 4 > n) {
-    n = abs(y) / 4;
-  }
-
-  if (n > ANIM_DIV) {
-    n = ANIM_DIV;
-  }
-
-  incx = 1.0 * x / n;
-  incy = 1.0 * y / n;
-
-  pattern = cairo_pattern_create_for_surface(Menulocal.pix);
-  cairo_set_source(cr, pattern);
-  for (i = 1; i <= n; i++) {
-    cairo_matrix_init(&matrix,
-		      1, 0,
-		      0, 1,
-		      (d->hscroll - d->cx) + incx * i,
-		      (d->vscroll - d->cy) + incy * i);
-    cairo_pattern_set_matrix(pattern, &matrix);
-    cairo_paint(cr);
-  }
-
-  cairo_pattern_destroy(pattern);
-  cairo_destroy(cr);
-}
-#endif	/* SHOW_MOVE_ANIMATION */
-
 static void
 mouse_down_zoom2(unsigned int state, TPoint *point, struct Viewer *d, int zoom_out, double factor)
 {
@@ -3117,9 +3066,6 @@ mouse_down_zoom2(unsigned int state, TPoint *point, struct Viewer *d, int zoom_o
 
   ZoomLock = TRUE;
   if (state & GDK_SHIFT_MASK) {
-#ifdef SHOW_MOVE_ANIMATION
-    show_move_animation(d, point->x - d->cx , point->y - d->cy);
-#endif	/* SHOW_MOVE_ANIMATION */
     d->hscroll -= (d->cx - point->x);
     d->vscroll -= (d->cy - point->y);
 
@@ -4482,9 +4428,6 @@ ViewerEvMButtonDown(unsigned int state, TPoint *point, struct Viewer *d)
     return FALSE;
 
   if (d->Mode == ZoomB) {
-#ifdef SHOW_MOVE_ANIMATION
-    show_move_animation(d, point->x - d->cx , point->y - d->cy);
-#endif	/* SHOW_MOVE_ANIMATION */
     d->hscroll -= (d->cx - point->x);
     d->vscroll -= (d->cy - point->y);
     ChangeDPI();
