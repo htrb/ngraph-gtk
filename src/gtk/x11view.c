@@ -1160,6 +1160,30 @@ add_event_button(GtkWidget *widget, struct Viewer *d)
   g_signal_connect(ev, "released", G_CALLBACK(ViewerEvButtonUp), d);
 }
 
+static int
+zoom_begin_obj(double x, double y, struct Viewer *d)
+{
+  int mx, my;
+  double zoom;
+
+  zoom = Menulocal.PaperZoom / 10000.0;
+  mx = d->zoom_prm.x = calc_mouse_x(x, zoom, d);
+  my = d->zoom_prm.y = calc_mouse_y(y, zoom, d);
+  d->zoom_prm.focused = arraynum(d->focusobj);
+  if (d->zoom_prm.focused < 1) {
+    return FALSE;
+  }
+  GetLargeFrame(&(d->RefX2), &(d->RefY2), &(d->RefX1), &(d->RefY1), d);
+  if (mx < d->RefX2 || mx > d->RefX1 || my < d->RefY2 || my > d->RefY1) {
+    d->zoom_prm.focused = 0;
+    return FALSE;
+  }
+
+  d->ShowRect = TRUE;
+  d->ShowFrame = FALSE;
+  return TRUE;
+}
+
 static void
 zoom_begin(GtkGesture *gesture, GdkEventSequence *sequence, gpointer user_data)
 {
