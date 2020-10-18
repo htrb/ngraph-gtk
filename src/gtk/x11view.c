@@ -1255,6 +1255,19 @@ zoom_end(GtkGesture *gesture, GdkEventSequence *sequence, gpointer user_data)
   UpdateAll(objs);
 }
 
+static void
+zoom_cancel(GtkGesture *gesture, GdkEventSequence *sequence, gpointer user_data)
+{
+  struct Viewer *d;
+
+  d = (struct Viewer *) user_data;
+
+  ViewerZoomig = FALSE;
+
+  if (d->zoom_prm.focused > 0) {
+    d->ShowRect = FALSE;
+    d->ShowFrame = TRUE;
+  }
 }
 
 static void
