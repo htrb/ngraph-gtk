@@ -3836,7 +3836,10 @@ create_legend1(struct Viewer *d)
     obj = chkobject("text");
   }
 
-  if (obj) {
+  if (obj == NULL) {
+    return;
+  }
+
     int id, x1, y1, undo;
     undo = menu_save_undo_single(UNDO_TYPE_CREATE, obj->name);
     id = newobj(obj);
@@ -3871,7 +3874,6 @@ create_legend1(struct Viewer *d)
       }
       PaintLock = FALSE;
     }
-  }
 
   arraydel2(d->points);
   objects[0] = obj->name;
