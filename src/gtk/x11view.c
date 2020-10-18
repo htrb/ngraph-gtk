@@ -1188,10 +1188,18 @@ static void
 zoom_begin(GtkGesture *gesture, GdkEventSequence *sequence, gpointer user_data)
 {
   struct Viewer *d;
-  int dpi;
   double x, y;
 
   d = (struct Viewer *) user_data;
+
+  gtk_gesture_get_bounding_box_center(gesture, &x, &y);
+
+  d->zoom_prm.scale = 1;
+  if (zoom_begin_obj(x, y, d)) {
+    return;
+  }
+  ViewerZoomig = TRUE;
+}
 
   if (getobj(Menulocal.obj, "dpi", 0, 0, NULL, &dpi) == -1) {
     return;
