@@ -3480,44 +3480,9 @@ mouse_up_zoom(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
     CheckGrid(FALSE, state, NULL, NULL, &zoom_x, &zoom_y);
   }
 
-  zmx = check_zoom(zoom_x);
-  zmy = check_zoom(zoom_y);
-  if (zmx < 0 || zmy < 0) {
+  if (zoom_focused_obj(d->RefX1, d->RefY1, zoom_x, zoom_y, objs, d)) {
     return;
   }
-
-  objs[0] = NULL;
-  if (zmx != 10000 || zmy != 10000) {
-    int i, num;
-    char *argv[6];
-    argv[0] = (char *) &zmx;
-    argv[1] = (char *) &zmy;
-    argv[2] = (char *) &(d->RefX1);
-    argv[3] = (char *) &(d->RefY1);
-    argv[4] = (char *) &Menulocal.preserve_width;
-    argv[5] = NULL;
-
-    num = arraynum(d->focusobj);
-    PaintLock = TRUE;
-
-    if (num > 0) {
-      get_focused_obj_array(d->focusobj, objs);
-      menu_save_undo(UNDO_TYPE_ZOOM, objs);
-    }
-    for (i = num - 1; i >= 0; i--) {
-      N_VALUE *inst;
-      struct objlist *obj;
-      focus = *(struct FocusObj **) arraynget(d->focusobj, i);
-      obj = focus->obj;
-      inst = chkobjinstoid(focus->obj, focus->oid);
-      if (inst) {
-	_exeobj(obj, "zooming", inst, 5, argv);
-	set_graph_modified();
-      }
-    }
-  }
-
-  PaintLock = FALSE;
 
   d->FrameOfsX = d->FrameOfsY = 0;
   d->ShowFrame = TRUE;
