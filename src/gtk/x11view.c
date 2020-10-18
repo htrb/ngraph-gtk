@@ -3417,6 +3417,8 @@ zoom_focused_obj(int x, int y, double zoom_x, double zoom_y, char **objs, struct
   zmx = check_zoom(zoom_x);
   zmy = check_zoom(zoom_y);
 
+  objs[0] = NULL;
+
   if (zmx < 0 || zmy < 0) {
     return 1;
   }
