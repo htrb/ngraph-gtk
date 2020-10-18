@@ -3283,28 +3283,15 @@ static void
 gesture_zoom(GtkGestureZoom *controller, gdouble scale, gpointer user_data)
 {
   struct Viewer *d;
-  int dpi;
-
   d = (struct Viewer *) user_data;
 
-  if (ZoomLock) {
+  d->zoom_prm.scale = scale;
+
+  if (d->zoom_prm.focused > 0) {
+    gesture_zoom_obj(controller, scale, d);
     return;
   }
-
-  ZoomLock = TRUE;
-  dpi = d->saved_dpi * scale;
-  if (dpi < VIEWER_DPI_MIN) {
-    dpi = VIEWER_DPI_MIN;
-    message_beep(TopLevel);
-  } else if (dpi > VIEWER_DPI_MAX) {
-    dpi = VIEWER_DPI_MAX;
-    message_beep(TopLevel);
-  }
-
-  if (putobj(Menulocal.obj, "dpi", 0, &dpi) != -1) {
-    ChangeDPI();
-  }
-  ZoomLock = FALSE;
+  main_window_redraw();
 }
 #endif
 
