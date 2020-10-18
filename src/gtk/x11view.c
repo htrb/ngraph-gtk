@@ -3427,7 +3427,6 @@ zoom_focused_obj(int x, int y, double zoom_x, double zoom_y, char **objs, struct
     return 1;
   }
 
-  objs[0] = NULL;
   argv[0] = (char *) &zmx;
   argv[1] = (char *) &zmy;
   argv[2] = (char *) &x;
