@@ -3195,6 +3195,8 @@ gesture_zoom(GtkGestureZoom *controller, gdouble scale, gpointer user_data)
     gesture_zoom_obj(controller, x, y, scale, d);
     return;
   }
+  d->zoom_prm.x = x;
+  d->zoom_prm.y = y;
   main_window_redraw();
 }
 #endif
