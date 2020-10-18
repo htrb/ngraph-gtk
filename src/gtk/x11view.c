@@ -5586,6 +5586,11 @@ ViewerEvPaint(GtkWidget *w, cairo_t *cr, gpointer client_data)
 
   d = (struct Viewer *) client_data;
 
+  if (ViewerZoomig) {
+    draw_zoom(cr, d);
+    return TRUE;
+  }
+
   if (ZoomLock) {
     return TRUE;
   }
