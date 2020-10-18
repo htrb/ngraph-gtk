@@ -3255,6 +3255,31 @@ gesture_zoom_obj(GtkGestureZoom *controller, gdouble scale, struct Viewer *d)
 }
 
 static void
+draw_zoom(cairo_t *cr, struct Viewer *d)
+{
+  cairo_pattern_t *pattern;
+  cairo_matrix_t matrix;
+  double scale;
+
+  cairo_set_source_surface(cr, Menulocal.bg,
+			   nround(- d->hscroll + d->cx),
+			   nround(- d->vscroll + d->cy));
+  cairo_paint(cr);
+
+  pattern = cairo_pattern_create_for_surface(Menulocal.pix);
+  cairo_set_source(cr, pattern);
+  scale = 1.0 / d->zoom_prm.scale;
+  cairo_matrix_init(&matrix,
+		    scale, 0,
+		    0, scale,
+		    d->hscroll - d->cx * scale,
+		    d->vscroll - d->cy * scale);
+  cairo_pattern_set_matrix(pattern, &matrix);
+  cairo_paint(cr);
+  cairo_pattern_destroy(pattern);
+}
+
+static void
 gesture_zoom(GtkGestureZoom *controller, gdouble scale, gpointer user_data)
 {
   struct Viewer *d;
