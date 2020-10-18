@@ -3173,8 +3173,8 @@ draw_zoom(cairo_t *cr, struct Viewer *d)
   cairo_matrix_init(&matrix,
 		    scale, 0,
 		    0, scale,
-		    d->hscroll - d->cx * scale,
-		    d->vscroll - d->cy * scale);
+		    d->hscroll - d->cx * scale,  /* (x + d->hscroll - d->cx) - x * scale */
+		    d->vscroll - d->cy * scale); /* (y + d->vscroll - d->cy) - y * scale */
   cairo_pattern_set_matrix(pattern, &matrix);
   cairo_paint(cr);
   cairo_pattern_destroy(pattern);
