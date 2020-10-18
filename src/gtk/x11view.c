@@ -1233,6 +1233,8 @@ zoom_end_viewer(struct Viewer *d)
   }
 
   if (putobj(Menulocal.obj, "dpi", 0, &dpi) != -1) {
+    d->hscroll -= (d->cx - d->zoom_prm.x) * (1 - 1.0 / d->zoom_prm.scale);
+    d->vscroll -= (d->cy - d->zoom_prm.y) * (1 - 1.0 / d->zoom_prm.scale);
     ChangeDPI();
   }
   ZoomLock = FALSE;
