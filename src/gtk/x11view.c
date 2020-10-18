@@ -3826,6 +3826,7 @@ create_legend1(struct Viewer *d)
   struct objlist *obj = NULL;
   struct Point *po;
   char *objects[2];
+  int id, x1, y1, undo;
 
   d->Capture = FALSE;
   num = arraynum(d->points);
@@ -3840,40 +3841,39 @@ create_legend1(struct Viewer *d)
     return;
   }
 
-    int id, x1, y1, undo;
-    undo = menu_save_undo_single(UNDO_TYPE_CREATE, obj->name);
-    id = newobj(obj);
-    if (id >= 0) {
-      int ret;
-      N_VALUE *inst;
-      presetting_set_obj_field(obj, id);
-      if (num >= 1) {
-	po = *(struct Point **) arraynget(d->points, 0);
-	x1 = po->x;
-	y1 = po->y;
-      }
-
-      inst = chkobjinst(obj, id);
-      _putobj(obj, "x", inst, &x1);
-      _putobj(obj, "y", inst, &y1);
-      PaintLock = TRUE;
-
-      if (d->Mode == MarkB) {
-	LegendMarkDialog(&DlgLegendMark, obj, id);
-	ret = DialogExecute(TopLevel, &DlgLegendMark);
-      } else {
-	LegendTextDialog(&DlgLegendText, obj, id);
-	ret = DialogExecute(TopLevel, &DlgLegendText);
-      }
-
-      if ((ret == IDDELETE) || (ret == IDCANCEL)) {
-	delobj(obj, id);
-	menu_delete_undo(undo);
-      } else {
-	set_graph_modified();
-      }
-      PaintLock = FALSE;
+  undo = menu_save_undo_single(UNDO_TYPE_CREATE, obj->name);
+  id = newobj(obj);
+  if (id >= 0) {
+    int ret;
+    N_VALUE *inst;
+    presetting_set_obj_field(obj, id);
+    if (num >= 1) {
+      po = *(struct Point **) arraynget(d->points, 0);
+      x1 = po->x;
+      y1 = po->y;
     }
+
+    inst = chkobjinst(obj, id);
+    _putobj(obj, "x", inst, &x1);
+    _putobj(obj, "y", inst, &y1);
+    PaintLock = TRUE;
+
+    if (d->Mode == MarkB) {
+      LegendMarkDialog(&DlgLegendMark, obj, id);
+      ret = DialogExecute(TopLevel, &DlgLegendMark);
+    } else {
+      LegendTextDialog(&DlgLegendText, obj, id);
+      ret = DialogExecute(TopLevel, &DlgLegendText);
+    }
+
+    if ((ret == IDDELETE) || (ret == IDCANCEL)) {
+      delobj(obj, id);
+      menu_delete_undo(undo);
+    } else {
+      set_graph_modified();
+    }
+    PaintLock = FALSE;
+  }
 
   arraydel2(d->points);
   objects[0] = obj->name;
