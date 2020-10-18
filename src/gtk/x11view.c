@@ -3602,10 +3602,9 @@ zoom_focused_obj(int x, int y, double zoom_x, double zoom_y, char **objs, struct
 static void
 mouse_up_zoom(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
 {
-  int vx1, vy1, zmx, zmy, preserve_ratio;
+  int vx1, vy1, preserve_ratio;
   double zoom_x, zoom_y;
   char *objs[OBJ_MAX];
-  struct FocusObj *focus;
 
   d->ShowRect = FALSE;
 
