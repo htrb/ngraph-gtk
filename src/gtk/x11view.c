@@ -153,6 +153,7 @@ static void RotateFocusedObj(int direction);
 static void set_mouse_cursor_hover(struct Viewer *d, int x, int y);
 static void CheckGrid(int ofs, unsigned int state, int *x, int *y, double *zoom_x, double *zoom_y);
 static int check_drawrable(struct objlist *obj);
+static int zoom_focused_obj(int x, int y, double zoom_x, double zoom_y, char **objs, struct Viewer *d);
 
 #define GRAY 0.5
 #define DOT_LENGTH 4.0
@@ -3404,6 +3405,55 @@ check_zoom(double zoom)
     zm = 1000;
   }
   return zm;
+}
+
+static int
+zoom_focused_obj(int x, int y, double zoom_x, double zoom_y, char **objs, struct Viewer *d)
+{
+  struct FocusObj *focus;
+  int i, num, zmx, zmy;
+  char *argv[6];
+
+  zmx = check_zoom(zoom_x);
+  zmy = check_zoom(zoom_y);
+
+  if (zmx < 0 || zmy < 0) {
+    return 1;
+  }
+
+  if (zmx == 10000 && zmy == 10000) {
+    return 1;
+  }
+
+  objs[0] = NULL;
+  argv[0] = (char *) &zmx;
+  argv[1] = (char *) &zmy;
+  argv[2] = (char *) &x;
+  argv[3] = (char *) &y;
+  argv[4] = (char *) &Menulocal.preserve_width;
+  argv[5] = NULL;
+
+  num = arraynum(d->focusobj);
+  PaintLock = TRUE;
+
+  if (num > 0) {
+    get_focused_obj_array(d->focusobj, objs);
+    menu_save_undo(UNDO_TYPE_ZOOM, objs);
+  }
+  for (i = num - 1; i >= 0; i--) {
+    N_VALUE *inst;
+    struct objlist *obj;
+    focus = *(struct FocusObj **) arraynget(d->focusobj, i);
+    obj = focus->obj;
+    inst = chkobjinstoid(focus->obj, focus->oid);
+    if (inst) {
+      _exeobj(obj, "zooming", inst, 5, argv);
+      set_graph_modified();
+    }
+  }
+
+  PaintLock = FALSE;
+  return 0;
 }
 
 static void
