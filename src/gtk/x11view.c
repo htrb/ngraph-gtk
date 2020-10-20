@@ -1184,6 +1184,19 @@ end_drag(GtkGestureDrag *gesture, gdouble start_x, gdouble start_y, gpointer use
 }
 
 static void
+add_event_drag(GtkWidget *widget, struct Viewer *d)
+{
+  GtkGesture *ev;
+
+  ev = gtk_gesture_drag_new(widget);
+  gtk_gesture_single_set_touch_only(GTK_GESTURE_SINGLE(ev), TRUE);
+
+  g_signal_connect(ev, "drag-update", G_CALLBACK(update_drag), d);
+  g_signal_connect(ev, "drag-begin", G_CALLBACK(begin_drag), d);
+  g_signal_connect(ev, "drag-end", G_CALLBACK(end_drag), d);
+}
+
+static void
 add_event_key(GtkWidget *widget, struct Viewer *d)
 {
   GtkEventController *ev;
