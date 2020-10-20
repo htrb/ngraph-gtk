@@ -1209,14 +1209,20 @@ long_press_cancelled_cb(GtkGesture *gesture, gpointer user_data)
 static void
 add_event_drag(GtkWidget *widget, struct Viewer *d)
 {
-  GtkGesture *ev;
+  GtkGesture *ev_drag, *ev_long_press;
 
-  ev = gtk_gesture_drag_new(widget);
-  gtk_gesture_single_set_touch_only(GTK_GESTURE_SINGLE(ev), TRUE);
+  ev_drag = gtk_gesture_drag_new(widget);
+  gtk_gesture_single_set_touch_only(GTK_GESTURE_SINGLE(ev_drag), TRUE);
 
-  g_signal_connect(ev, "drag-update", G_CALLBACK(update_drag), d);
-  g_signal_connect(ev, "drag-begin", G_CALLBACK(begin_drag), d);
-  g_signal_connect(ev, "drag-end", G_CALLBACK(end_drag), d);
+  g_signal_connect(ev_drag, "drag-update", G_CALLBACK(update_drag), d);
+  g_signal_connect(ev_drag, "drag-begin", G_CALLBACK(begin_drag), d);
+  g_signal_connect(ev_drag, "drag-end", G_CALLBACK(end_drag), d);
+
+  ev_long_press = gtk_gesture_long_press_new(widget);
+  gtk_gesture_single_set_touch_only(GTK_GESTURE_SINGLE(ev_long_press), TRUE);
+  gtk_gesture_group(ev_long_press, ev_drag);
+  g_signal_connect(ev_long_press, "pressed", G_CALLBACK(long_press_cb), d);
+  g_signal_connect(ev_long_press, "cancelled", G_CALLBACK(long_press_cancelled_cb), d);
 }
 
 static void
