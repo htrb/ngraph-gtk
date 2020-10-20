@@ -1282,6 +1282,7 @@ static void
 zoom_end_viewer(struct Viewer *d)
 {
   int dpi;
+  double scale;
 
   ViewerZoomig = FALSE;
 
@@ -1289,23 +1290,14 @@ zoom_end_viewer(struct Viewer *d)
     return;
   }
 
-  if (getobj(Menulocal.obj, "dpi", 0, 0, NULL, &dpi) == -1) {
-    return;
-  }
+  scale = check_dpi_zoom_scale(d->zoom_prm.dpi, d->zoom_prm.scale);
+  dpi = d->zoom_prm.dpi * scale;
 
   ZoomLock = TRUE;
-  dpi *= d->zoom_prm.scale;
-  if (dpi < VIEWER_DPI_MIN) {
-    dpi = VIEWER_DPI_MIN;
-    message_beep(TopLevel);
-  } else if (dpi > VIEWER_DPI_MAX) {
-    dpi = VIEWER_DPI_MAX;
-    message_beep(TopLevel);
-  }
 
   if (putobj(Menulocal.obj, "dpi", 0, &dpi) != -1) {
-    d->hscroll -= (d->cx - d->zoom_prm.x) * (1 - 1.0 / d->zoom_prm.scale);
-    d->vscroll -= (d->cy - d->zoom_prm.y) * (1 - 1.0 / d->zoom_prm.scale);
+    d->hscroll -= (d->cx - d->zoom_prm.x) * (1 - 1.0 / scale);
+    d->vscroll -= (d->cy - d->zoom_prm.y) * (1 - 1.0 / scale);
     ChangeDPI();
   }
   ZoomLock = FALSE;
