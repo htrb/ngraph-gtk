@@ -1292,6 +1292,9 @@ zoom_end_viewer(struct Viewer *d)
 
   scale = check_dpi_zoom_scale(d->zoom_prm.dpi, d->zoom_prm.scale);
   dpi = d->zoom_prm.dpi * scale;
+  if (dpi == d->zoom_prm.dpi) {
+    return;
+  }
 
   ZoomLock = TRUE;
 
