@@ -1326,6 +1326,7 @@ ViewerWinSetup(void)
   d->ShowRect = FALSE;
   d->ignoreredraw = FALSE;
   d->KeyMask = 0;
+  d->drag_prm.active = FALSE;
   OpenGC();
   OpenGRA();
   SetScroller();
