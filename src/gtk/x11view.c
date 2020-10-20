@@ -3237,7 +3237,7 @@ draw_zoom(cairo_t *cr, struct Viewer *d)
 
   pattern = cairo_pattern_create_for_surface(Menulocal.pix);
   cairo_set_source(cr, pattern);
-  scale = 1.0 / d->zoom_prm.scale;
+  scale = 1.0 / check_dpi_zoom_scale(d->zoom_prm.dpi, d->zoom_prm.scale);
   cairo_matrix_init(&matrix,
 		    scale, 0,
 		    0, scale,
