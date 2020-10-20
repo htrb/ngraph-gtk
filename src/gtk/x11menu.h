@@ -180,6 +180,7 @@ struct Viewer
   int ignoreredraw;
   double vscroll, hscroll, ZoomX, ZoomY;
   struct ZoomPrm zoom_prm;
+  struct DragPrm drag_prm;
 };
 
 enum SubWinType {
