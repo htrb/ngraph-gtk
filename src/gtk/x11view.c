@@ -1145,6 +1145,22 @@ ev_popup_menu(GtkWidget *w, gpointer client_data)
 
 #if GTK_CHECK_VERSION(3, 24, 0)
 static void
+update_drag(GtkGestureDrag *gesture, gdouble offset_x, gdouble offset_y, gpointer user_data)
+{
+  struct Viewer *d;
+
+  d = (struct Viewer *) user_data;
+
+  if (! d->drag_prm.active) {
+    return;
+  }
+
+  gtk_range_set_value(GTK_RANGE(d->HScroll), d->drag_prm.x - offset_x);
+  gtk_range_set_value(GTK_RANGE(d->VScroll), d->drag_prm.y - offset_y);
+  gtk_widget_queue_draw(d->Win);
+}
+
+static void
 add_event_key(GtkWidget *widget, struct Viewer *d)
 {
   GtkEventController *ev;
