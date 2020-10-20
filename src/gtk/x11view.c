@@ -1161,6 +1161,20 @@ update_drag(GtkGestureDrag *gesture, gdouble offset_x, gdouble offset_y, gpointe
 }
 
 static void
+begin_drag(GtkGestureDrag *gesture, gdouble start_x, gdouble start_y, gpointer user_data)
+{
+  struct Viewer *d;
+  int cursor;
+
+  d = (struct Viewer *) user_data;
+
+  cursor = get_mouse_cursor_type(d, start_x, start_y);
+  d->drag_prm.active = (cursor == GDK_LEFT_PTR);
+  d->drag_prm.x = gtk_range_get_value(GTK_RANGE(d->HScroll));
+  d->drag_prm.y = gtk_range_get_value(GTK_RANGE(d->VScroll));
+}
+
+static void
 add_event_key(GtkWidget *widget, struct Viewer *d)
 {
   GtkEventController *ev;
