@@ -152,7 +152,7 @@ enum pop_up_menu_item_type {
 };
 
 struct ZoomPrm {
-  int x, y;
+  int x, y, dpi;
   int focused;
   double scale;
 };
