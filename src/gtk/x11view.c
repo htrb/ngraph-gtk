@@ -1175,6 +1175,15 @@ begin_drag(GtkGestureDrag *gesture, gdouble start_x, gdouble start_y, gpointer u
 }
 
 static void
+end_drag(GtkGestureDrag *gesture, gdouble start_x, gdouble start_y, gpointer user_data)
+{
+  struct Viewer *d;
+
+  d = (struct Viewer *) user_data;
+  d->drag_prm.active = FALSE;
+}
+
+static void
 add_event_key(GtkWidget *widget, struct Viewer *d)
 {
   GtkEventController *ev;
