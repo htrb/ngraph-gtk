@@ -157,6 +157,11 @@ struct ZoomPrm {
   double scale;
 };
 
+struct DragPrm {
+  int x, y;
+  int active;
+};
+
 #define VIEWER_POPUP_ITEM_NUM 14
 struct Viewer
 {
