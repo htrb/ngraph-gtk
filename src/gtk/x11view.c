@@ -4834,6 +4834,10 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
     return FALSE;
   }
 
+  if (d->drag_prm.active) {
+    return FALSE;
+  }
+
   if (gtk_widget_get_window(d->Win) == NULL) {
     return FALSE;
   }
