@@ -2471,7 +2471,8 @@ application(char *file)
   }
 
   system_set_draw_notify_func(draw_notify);
-  set_pane_position();
+  reset_event();                /* to set pane position correctly */
+  set_pane_position();          /* to set pane position correctly */
   n_application_ready();
   terminated = AppMainLoop();
   system_set_draw_notify_func(NULL);
