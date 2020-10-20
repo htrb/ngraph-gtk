@@ -1193,6 +1193,20 @@ long_press_cb(GtkGesture *gesture, gdouble x, gdouble y, gpointer user_data)
 }
 
 static void
+long_press_cancelled_cb(GtkGesture *gesture, gpointer user_data)
+{
+  GdkEventSequence *sequence;
+  const GdkEvent *event;
+
+  sequence = gtk_gesture_get_last_updated_sequence(gesture);
+  event = gtk_gesture_get_last_event(gesture, sequence);
+
+  if (event->type == GDK_TOUCH_BEGIN || event->type == GDK_BUTTON_PRESS) {
+    gtk_gesture_set_sequence_state(gesture, sequence, GTK_EVENT_SEQUENCE_DENIED);
+  }
+}
+
+static void
 add_event_drag(GtkWidget *widget, struct Viewer *d)
 {
   GtkGesture *ev;
