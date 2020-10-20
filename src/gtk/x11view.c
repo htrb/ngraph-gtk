@@ -3248,7 +3248,7 @@ gesture_zoom(GtkGestureZoom *controller, gdouble scale, gpointer user_data)
   d->zoom_prm.scale = scale;
   gtk_gesture_get_bounding_box_center(GTK_GESTURE(controller), &x, &y);
   if (d->zoom_prm.focused > 0) {
-    gesture_zoom_obj(x, y, scale, d);
+    gesture_zoom_obj(scale, x, y, d);
     return;
   }
   d->zoom_prm.x = x;
