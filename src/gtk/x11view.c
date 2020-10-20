@@ -1420,6 +1420,7 @@ ViewerWinSetup(void)
   }
 
 #if GTK_CHECK_VERSION(3, 24, 0)
+  add_event_drag(d->Win, d);
   add_event_key(d->Win, d);
   add_event_button(d->Win, d);
   add_event_zoom(d->Win, d);
