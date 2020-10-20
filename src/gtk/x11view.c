@@ -1264,6 +1264,20 @@ zoom_begin(GtkGesture *gesture, GdkEventSequence *sequence, gpointer user_data)
   ViewerZoomig = TRUE;
 }
 
+static double
+check_dpi_zoom_scale(int dpi, double scale)
+{
+  double new_dpi;
+
+  new_dpi = dpi * scale;
+  if (new_dpi < VIEWER_DPI_MIN) {
+    new_dpi = VIEWER_DPI_MIN;
+  } else if (new_dpi > VIEWER_DPI_MAX) {
+    new_dpi = VIEWER_DPI_MAX;
+  }
+  return new_dpi / dpi;
+}
+
 static void
 zoom_end_viewer(struct Viewer *d)
 {
