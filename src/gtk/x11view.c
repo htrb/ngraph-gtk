@@ -1168,8 +1168,17 @@ begin_drag(GtkGestureDrag *gesture, gdouble start_x, gdouble start_y, gpointer u
 
   d = (struct Viewer *) user_data;
 
-  cursor = get_mouse_cursor_type(d, start_x, start_y);
-  d->drag_prm.active = (cursor == GDK_LEFT_PTR);
+  switch (d->Mode) {
+  case PointB:
+  case LegendB:
+  case AxisB:
+  case ZoomB:
+    cursor = get_mouse_cursor_type(d, start_x, start_y);
+    d->drag_prm.active = (cursor == GDK_LEFT_PTR);
+    break;
+  default:
+    d->drag_prm.active = FALSE;
+  }
   d->drag_prm.x = gtk_range_get_value(GTK_RANGE(d->HScroll));
   d->drag_prm.y = gtk_range_get_value(GTK_RANGE(d->VScroll));
 }
