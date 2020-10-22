@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6.08.07\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2020-10-22 15:27+0900\n"
+"POT-Creation-Date: 2020-10-22 15:58+0900\n"
 "PO-Revision-Date: 2020-10-22 15:28+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -2594,7 +2594,7 @@ msgstr "合成ファイルの保存"
 msgid "Making GRA file."
 msgstr "合成ファイル作成中"
 
-#: src/gtk/x11print.c:793 src/gtk/x11print.c:866 src/gtk/x11view.c:6304
+#: src/gtk/x11print.c:793 src/gtk/x11print.c:866 src/gtk/x11view.c:6306
 msgid "Drawing."
 msgstr "描画中"
 
@@ -2632,11 +2632,11 @@ msgstr "データは移動されました."
 msgid "Moving data points is canceled."
 msgstr "データの移動はキャンセルされました."
 
-#: src/gtk/x11view.c:6298
+#: src/gtk/x11view.c:6300
 msgid "Scaling"
 msgstr "軸スケール設定中"
 
-#: src/gtk/x11view.c:6305
+#: src/gtk/x11view.c:6307
 msgid "Drawing"
 msgstr "描画中"
 
