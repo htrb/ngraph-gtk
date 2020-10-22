@@ -158,6 +158,7 @@ static void CheckGrid(int ofs, unsigned int state, int *x, int *y, double *zoom_
 static int check_drawrable(struct objlist *obj);
 static void GetLargeFrame(int *minx, int *miny, int *maxx, int *maxy, const struct Viewer *d);
 static int zoom_focused_obj(int x, int y, double zoom_x, double zoom_y, char **objs, struct Viewer *d);
+static void cancel_deceleration(struct Viewer *d);
 
 #define GRAY 0.5
 #define DOT_LENGTH 4.0
@@ -1223,6 +1224,18 @@ get_deceleration_position(double a, double v0, double t)
 #else
   return (1 - exp(- t * a)) * v0 / a;
 #endif
+}
+
+#define SWIPE_RESISTANCE 5.0
+
+static void
+cancel_deceleration(struct Viewer *d)
+{
+  if (d->drag_prm.deceleration_id == 0) {
+    return;
+  }
+  gtk_widget_remove_tick_callback(d->Win, d->drag_prm.deceleration_id);
+  d->drag_prm.deceleration_id = 0;
 }
 
 static void
