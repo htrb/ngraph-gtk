@@ -1238,6 +1238,37 @@ cancel_deceleration(struct Viewer *d)
   d->drag_prm.deceleration_id = 0;
 }
 
+static gboolean
+deceleration_cb(GtkWidget *widget, GdkFrameClock *frame_clock, gpointer user_data)
+{
+  struct Viewer *d;
+  gint64 current_time;
+  gdouble t;
+  int x0, y0, x, y;
+
+  d = (struct Viewer *) user_data;
+
+  current_time = gdk_frame_clock_get_frame_time(frame_clock);
+  t = (current_time - d->drag_prm.deceleration_start) / 1000000.0;
+
+  x0 = gtk_range_get_value(GTK_RANGE(d->HScroll));
+  y0 = gtk_range_get_value(GTK_RANGE(d->VScroll));
+  x = d->drag_prm.x - get_deceleration_position(SWIPE_RESISTANCE, d->drag_prm.vx, t);
+  y = d->drag_prm.y - get_deceleration_position(SWIPE_RESISTANCE, d->drag_prm.vy, t);
+
+  gtk_range_set_value(GTK_RANGE(d->HScroll), x);
+  gtk_range_set_value(GTK_RANGE(d->VScroll), y);
+  x = gtk_range_get_value(GTK_RANGE(d->HScroll));
+  y = gtk_range_get_value(GTK_RANGE(d->VScroll));
+  if (x0 == x && y0 == y) {
+    d->drag_prm.deceleration_id = 0;
+    return G_SOURCE_REMOVE;
+  }
+
+  gtk_widget_queue_draw(d->Win);
+  return G_SOURCE_CONTINUE;
+}
+
 static void
 add_event_drag(GtkWidget *widget, struct Viewer *d)
 {
