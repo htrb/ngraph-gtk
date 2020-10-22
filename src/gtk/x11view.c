@@ -1375,6 +1375,7 @@ zoom_begin(GtkGesture *gesture, GdkEventSequence *sequence, gpointer user_data)
 
   d = (struct Viewer *) user_data;
 
+  cancel_deceleration(d);
   gtk_gesture_get_bounding_box_center(gesture, &x, &y);
 
   d->zoom_prm.scale = 1;
