@@ -1270,6 +1270,29 @@ deceleration_cb(GtkWidget *widget, GdkFrameClock *frame_clock, gpointer user_dat
 }
 
 static void
+swipe_cb(GtkGestureSwipe *gesture, gdouble velocity_x, gdouble velocity_y, gpointer user_data)
+{
+  struct Viewer *d;
+  GdkFrameClock *frame_clock;
+
+  d = (struct Viewer *) user_data;
+  if (! d->drag_prm.active) {
+    return;
+  }
+
+  g_return_if_fail(d->drag_prm.deceleration_id == 0);
+
+  frame_clock = gtk_widget_get_frame_clock(GTK_WIDGET(d->Win));
+  d->drag_prm.deceleration_start = gdk_frame_clock_get_frame_time (frame_clock);
+  d->drag_prm.x = gtk_range_get_value(GTK_RANGE(d->HScroll));
+  d->drag_prm.y = gtk_range_get_value(GTK_RANGE(d->VScroll));
+  d->drag_prm.vx = velocity_x;
+  d->drag_prm.vy = velocity_y;
+
+  d->drag_prm.deceleration_id = gtk_widget_add_tick_callback(GTK_WIDGET(d->Win), deceleration_cb, d, NULL);
+}
+
+static void
 add_event_drag(GtkWidget *widget, struct Viewer *d)
 {
   GtkGesture *ev_drag, *ev_long_press;
