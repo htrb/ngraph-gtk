@@ -270,6 +270,26 @@ math_func_log(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
 }
 
 int
+math_func_log1p(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  double v;
+
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+
+  v = exp->buf[0].val.val;
+  if (v <= -1) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+#if HAVE_LOG1P
+  rval->val = log1p(v) * M_LOG10E;
+#else
+  rval->val = log(1 + v) * M_LOG10E;
+#endif
+  return 0;
+}
+
+int
 math_func_tan(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   MATH_CHECK_ARG(rval, exp->buf[0]);
