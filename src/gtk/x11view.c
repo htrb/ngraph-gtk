@@ -6156,6 +6156,8 @@ SetScroller(void)
   struct Viewer *d;
 
   d = &NgraphApp.Viewer;
+  cancel_deceleration(d);
+
   width = mxd2p(Menulocal.PaperWidth);
   height = mxd2p(Menulocal.PaperHeight);
   x = width / 2;
