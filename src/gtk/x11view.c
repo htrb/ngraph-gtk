@@ -158,7 +158,9 @@ static void CheckGrid(int ofs, unsigned int state, int *x, int *y, double *zoom_
 static int check_drawrable(struct objlist *obj);
 static void GetLargeFrame(int *minx, int *miny, int *maxx, int *maxy, const struct Viewer *d);
 static int zoom_focused_obj(int x, int y, double zoom_x, double zoom_y, char **objs, struct Viewer *d);
+#if GTK_CHECK_VERSION(3, 24, 0)
 static void cancel_deceleration(struct Viewer *d);
+#endif
 
 #define GRAY 0.5
 #define DOT_LENGTH 4.0
@@ -1169,7 +1171,9 @@ begin_drag(GtkGestureDrag *gesture, gdouble start_x, gdouble start_y, gpointer u
 
   d = (struct Viewer *) user_data;
 
+#if GTK_CHECK_VERSION(3, 24, 0)
   cancel_deceleration(d);
+#endif
 
   switch (d->Mode) {
   case PointB:
@@ -6159,7 +6163,9 @@ SetScroller(void)
   struct Viewer *d;
 
   d = &NgraphApp.Viewer;
+#if GTK_CHECK_VERSION(3, 24, 0)
   cancel_deceleration(d);
+#endif
 
   width = mxd2p(Menulocal.PaperWidth);
   height = mxd2p(Menulocal.PaperHeight);
@@ -6243,7 +6249,9 @@ ChangeDPI(void)
   XPos = nround(width * ratex);
   YPos = nround(height * ratey);
 
+#if GTK_CHECK_VERSION(3, 24, 0)
   cancel_deceleration(d);
+#endif
 
   gtk_range_set_range(GTK_RANGE(d->HScroll), 0, width);
   gtk_range_set_value(GTK_RANGE(d->HScroll), XPos);
