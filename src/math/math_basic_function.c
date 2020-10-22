@@ -335,6 +335,19 @@ math_func_exp(MathFunctionCallExpression *expl, MathEquation *eq, MathValue *rva
 }
 
 int
+math_func_expm1(MathFunctionCallExpression *expl, MathEquation *eq, MathValue *rval)
+{
+  MATH_CHECK_ARG(rval, expl->buf[0]);
+
+#if HAVE_EXPM1
+  rval->val = expm1(expl->buf[0].val.val);
+#else
+  rval->val = exp(expl->buf[0].val.val) - 1;
+#endif
+  return 0;
+}
+
+int
 math_func_int(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   MATH_CHECK_ARG(rval, exp->buf[0]);
