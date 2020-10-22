@@ -6240,6 +6240,8 @@ ChangeDPI(void)
   XPos = nround(width * ratex);
   YPos = nround(height * ratey);
 
+  cancel_deceleration(d);
+
   gtk_range_set_range(GTK_RANGE(d->HScroll), 0, width);
   gtk_range_set_value(GTK_RANGE(d->HScroll), XPos);
   d->hscroll = XPos;
