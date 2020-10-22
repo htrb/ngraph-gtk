@@ -1295,7 +1295,7 @@ swipe_cb(GtkGestureSwipe *gesture, gdouble velocity_x, gdouble velocity_y, gpoin
 static void
 add_event_drag(GtkWidget *widget, struct Viewer *d)
 {
-  GtkGesture *ev_drag, *ev_long_press;
+  GtkGesture *ev_drag, *ev_swipe, *ev_long_press;
 
   ev_drag = gtk_gesture_drag_new(widget);
   gtk_gesture_single_set_touch_only(GTK_GESTURE_SINGLE(ev_drag), TRUE);
@@ -1304,11 +1304,20 @@ add_event_drag(GtkWidget *widget, struct Viewer *d)
   g_signal_connect(ev_drag, "drag-begin", G_CALLBACK(begin_drag), d);
   g_signal_connect(ev_drag, "drag-end", G_CALLBACK(end_drag), d);
 
+  ev_swipe = gtk_gesture_swipe_new(d->Win);
+  gtk_gesture_single_set_touch_only(GTK_GESTURE_SINGLE(ev_swipe), TRUE);
+  gtk_gesture_group(ev_swipe, ev_drag);
+  g_signal_connect(ev_swipe, "swipe", G_CALLBACK(swipe_cb), d);
+
   ev_long_press = gtk_gesture_long_press_new(widget);
   gtk_gesture_single_set_touch_only(GTK_GESTURE_SINGLE(ev_long_press), TRUE);
   gtk_gesture_group(ev_long_press, ev_drag);
   g_signal_connect(ev_long_press, "pressed", G_CALLBACK(long_press_cb), d);
   g_signal_connect(ev_long_press, "cancelled", G_CALLBACK(long_press_cancelled_cb), d);
+
+  gtk_event_controller_set_propagation_phase(GTK_EVENT_CONTROLLER(ev_drag), GTK_PHASE_CAPTURE);
+  gtk_event_controller_set_propagation_phase(GTK_EVENT_CONTROLLER(ev_swipe), GTK_PHASE_CAPTURE);
+  gtk_event_controller_set_propagation_phase(GTK_EVENT_CONTROLLER(ev_long_press), GTK_PHASE_CAPTURE);
 }
 
 static void
