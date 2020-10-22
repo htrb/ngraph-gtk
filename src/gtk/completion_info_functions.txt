@@ -10,8 +10,11 @@ sumsq(a, b, c, ...)	square sum of arguments
 sqr(x)		squaring
 sqrt(x)		square root
 exp(x)		base-e exponential function (<i>x</i> &lt;= 690)
+expm1(x)	exp(<i>x</i>)-1. The result is computed in a way that is accurate even if the value of <i>x</i> is near zero.
 ln(x)		natural logarithmic function
+ln1p(x)		ln(1+<i>x</i>). The result is computed in a way that is accurate even if the value of <i>x</i> is near zero.
 log(x)		base-10 logarithmic function
+log1p(x)	log(1+<i>x</i>). The result is computed in a way that is accurate even if the value of <i>x</i> is near zero.
 sin(x)		sine function
 cos(x)		cosine function
 tan(x)		tangent function
