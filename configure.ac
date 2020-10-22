@@ -152,7 +152,7 @@ AC_FUNC_STRTOD
 AC_FUNC_UTIME_NULL
 AC_FUNC_VPRINTF
 AC_FUNC_MMAP
-AC_CHECK_FUNCS([roundl sigaction sigsuspend alarm dup2 getcwd mkdir pow powl log10l fabsl floorl sqrt strchr strdup strerror strncasecmp strstr strtol utime isfinite finite nanosleep sleep])
+AC_CHECK_FUNCS([roundl sigaction sigsuspend alarm dup2 getcwd mkdir expm1 pow powl log1p log10l fabsl floorl sqrt strchr strdup strerror strncasecmp strstr strtol utime isfinite finite nanosleep sleep])
 
 AC_CONFIG_FILES([Makefile \
 		 pathconv.sh \
