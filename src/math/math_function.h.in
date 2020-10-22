@@ -27,6 +27,7 @@ sqrt		1	0	0	NULL
 exp		1	0	0	NULL
 expm1		1	0	0	NULL
 ln		1	0	0	NULL
+ln1p		1	0	0	NULL
 log		1	0	0	NULL
 log1p		1	0	0	NULL
 sin		1	0	0	NULL
