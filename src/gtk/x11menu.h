@@ -160,6 +160,9 @@ struct ZoomPrm {
 struct DragPrm {
   int x, y;
   int active;
+  guint deceleration_id;
+  double vx, vy;
+  guint64 deceleration_start;
 };
 
 #define VIEWER_POPUP_ITEM_NUM 14
