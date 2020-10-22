@@ -1169,6 +1169,8 @@ begin_drag(GtkGestureDrag *gesture, gdouble start_x, gdouble start_y, gpointer u
 
   d = (struct Viewer *) user_data;
 
+  cancel_deceleration(d);
+
   switch (d->Mode) {
   case PointB:
   case LegendB:
