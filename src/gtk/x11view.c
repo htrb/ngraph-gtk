@@ -5693,10 +5693,12 @@ ViewerEvPaint(GtkWidget *w, cairo_t *cr, gpointer client_data)
 
   d = (struct Viewer *) client_data;
 
+#if GTK_CHECK_VERSION(3, 24, 0)
   if (ViewerZoomig) {
     draw_zoom(cr, d);
     return TRUE;
   }
+#endif
 
   if (ZoomLock) {
     return TRUE;
