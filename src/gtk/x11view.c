@@ -1215,6 +1215,16 @@ long_press_cancelled_cb(GtkGesture *gesture, gpointer user_data)
   }
 }
 
+static double
+get_deceleration_position(double a, double v0, double t)
+{
+#if HAVE_EXPM1
+  return - expm1(- t * a) * v0 / a;
+#else
+  return (1 - exp(- t * a)) * v0 / a;
+#endif
+}
+
 static void
 add_event_drag(GtkWidget *widget, struct Viewer *d)
 {
