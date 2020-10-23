@@ -16,7 +16,7 @@ if OS_OSX
 
 ngraph_app = ~/Desktop/$(PACKAGE).app
 ngraph_app_bin = $(ngraph_app)/Contents/MacOS
-ngraph_package = $(PACKAGE)-$(PACKAGE_VERSION)-x86_64.dmg
+ngraph_package = $(PACKAGE)-$(PACKAGE_VERSION)-$(build_cpu).dmg
 
 bundler: $(ngraph_app)
 
