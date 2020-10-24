@@ -244,6 +244,16 @@ cancel_deceleration(struct Viewer *d)
   gtk_widget_remove_tick_callback(d->Win, d->deceleration_prm.id);
   d->deceleration_prm.id = 0;
 }
+
+static void
+start_scroll_deceleration(double x, double y, struct Viewer *d)
+{
+  cancel_deceleration(d);
+  d->scroll_prm.x = x;
+  d->scroll_prm.y = y;
+  d->deceleration_prm.id = gtk_widget_add_tick_callback(GTK_WIDGET(d->Win), scroll_deceleration_cb, d, NULL);
+}
+
 static void
 range_increment(GtkWidget *w, double inc)
 {
