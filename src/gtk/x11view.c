@@ -5492,16 +5492,16 @@ viewer_key_scroll(guint keyval, struct Viewer *d)
 {
   switch (keyval) {
   case GDK_KEY_Up:
-    range_increment(d->VScroll, -SCROLL_INC);
+    range_increment_deceleration(0, -SCROLL_INC, d);
     return TRUE;
   case GDK_KEY_Down:
-    range_increment(d->VScroll, SCROLL_INC);
+    range_increment_deceleration(0, SCROLL_INC, d);
     return TRUE;
   case GDK_KEY_Left:
-    range_increment(d->HScroll, -SCROLL_INC);
+    range_increment_deceleration(-SCROLL_INC, 0, d);
     return TRUE;
   case GDK_KEY_Right:
-    range_increment(d->HScroll, SCROLL_INC);
+    range_increment_deceleration(SCROLL_INC, 0, d);
     return TRUE;
   }
   return FALSE;
