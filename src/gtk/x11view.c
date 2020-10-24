@@ -1519,7 +1519,7 @@ ViewerWinSetup(void)
   d->ignoreredraw = FALSE;
   d->KeyMask = 0;
   d->drag_prm.active = FALSE;
-  d->drag_prm.deceleration_id = 0;
+  d->deceleration_prm.id = 0;
   OpenGC();
   OpenGRA();
   SetScroller();
