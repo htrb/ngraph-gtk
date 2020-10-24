@@ -165,6 +165,12 @@ struct DragPrm {
   guint64 deceleration_start;
 };
 
+struct DecelerationPrm
+{
+  guint id;
+  guint64 start;
+};
+
 #define VIEWER_POPUP_ITEM_NUM 14
 struct Viewer
 {
