@@ -1612,6 +1612,8 @@ ViewerWinSetup(void)
 
   g_signal_connect(d->HScroll, "value-changed", G_CALLBACK(ViewerEvHScroll), d);
   g_signal_connect(d->VScroll, "value-changed", G_CALLBACK(ViewerEvVScroll), d);
+  g_signal_connect(d->HScroll, "change-value", G_CALLBACK(hscroll_change_value_cb), d);
+  g_signal_connect(d->VScroll, "change-value", G_CALLBACK(vscroll_change_value_cb), d);
   g_signal_connect(d->HScroll, "scroll-event", G_CALLBACK(scrollbar_scroll_cb), d);
   g_signal_connect(d->VScroll, "scroll-event", G_CALLBACK(scrollbar_scroll_cb), d);
 
