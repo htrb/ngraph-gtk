@@ -222,8 +222,6 @@ scroll_deceleration_cb(GtkWidget *widget, GdkFrameClock *frame_clock, gpointer u
   x += (d->scroll_prm.x - x) / SCROLL_DIV;
   y += (d->scroll_prm.y - y) / SCROLL_DIV;
 
-  gtk_range_set_value(GTK_RANGE(d->HScroll), x);
-  gtk_range_set_value(GTK_RANGE(d->VScroll), y);
   if (fabs(d->scroll_prm.x - x) < SCROLL_DECELERATION_LIMIT &&
       fabs(d->scroll_prm.y - y) < SCROLL_DECELERATION_LIMIT) {
     d->deceleration_prm.id = 0;
@@ -231,6 +229,9 @@ scroll_deceleration_cb(GtkWidget *widget, GdkFrameClock *frame_clock, gpointer u
     gtk_range_set_value(GTK_RANGE(d->VScroll), d->scroll_prm.y);
     return G_SOURCE_REMOVE;
   }
+
+  gtk_range_set_value(GTK_RANGE(d->HScroll), x);
+  gtk_range_set_value(GTK_RANGE(d->VScroll), y);
 
   return G_SOURCE_CONTINUE;
 }
