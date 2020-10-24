@@ -5815,10 +5815,15 @@ static void
 ViewerEvVScroll(GtkRange *range, gpointer user_data)
 {
   struct Viewer *d;
+  double y;
 
   d = (struct Viewer *) user_data;
 
-  d->vscroll = gtk_range_get_value(range);
+  y = gtk_range_get_value(range);
+  if (d->vscroll == y) {
+    return;
+  }
+  d->vscroll = y;
   SetVRuler(d);
   gtk_widget_queue_draw(d->Win);
 }
