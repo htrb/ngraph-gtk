@@ -1545,6 +1545,15 @@ add_event_motion(GtkWidget *widget, struct Viewer *d)
 }
 #endif
 
+static gboolean
+hscroll_change_value_cb(GtkRange *range, GtkScrollType scroll, gdouble value, gpointer user_data)
+{
+  struct Viewer *d;
+  d = (struct Viewer *) user_data;
+  start_scroll_deceleration(value, d->vscroll, d);
+  return TRUE;
+}
+
 void
 ViewerWinSetup(void)
 {
