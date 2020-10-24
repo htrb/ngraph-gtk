@@ -158,9 +158,6 @@ static void CheckGrid(int ofs, unsigned int state, int *x, int *y, double *zoom_
 static int check_drawrable(struct objlist *obj);
 static void GetLargeFrame(int *minx, int *miny, int *maxx, int *maxy, const struct Viewer *d);
 static int zoom_focused_obj(int x, int y, double zoom_x, double zoom_y, char **objs, struct Viewer *d);
-#if GTK_CHECK_VERSION(3, 24, 0)
-static void cancel_deceleration(struct Viewer *d);
-#endif
 
 #define GRAY 0.5
 #define DOT_LENGTH 4.0
@@ -1146,6 +1143,16 @@ ev_popup_menu(GtkWidget *w, gpointer client_data)
   return TRUE;
 }
 
+static void
+cancel_deceleration(struct Viewer *d)
+{
+  if (d->deceleration_prm.id == 0) {
+    return;
+  }
+  gtk_widget_remove_tick_callback(d->Win, d->deceleration_prm.id);
+  d->deceleration_prm.id = 0;
+}
+
 #if GTK_CHECK_VERSION(3, 24, 0)
 static void
 update_drag(GtkGestureDrag *gesture, gdouble offset_x, gdouble offset_y, gpointer user_data)
@@ -1171,9 +1178,7 @@ begin_drag(GtkGestureDrag *gesture, gdouble start_x, gdouble start_y, gpointer u
 
   d = (struct Viewer *) user_data;
 
-#if GTK_CHECK_VERSION(3, 24, 0)
   cancel_deceleration(d);
-#endif
 
   switch (d->Mode) {
   case PointB:
@@ -1234,28 +1239,18 @@ get_deceleration_position(double a, double v0, double t)
 
 #define SWIPE_RESISTANCE 5.0
 
-static void
-cancel_deceleration(struct Viewer *d)
-{
-  if (d->drag_prm.deceleration_id == 0) {
-    return;
-  }
-  gtk_widget_remove_tick_callback(d->Win, d->drag_prm.deceleration_id);
-  d->drag_prm.deceleration_id = 0;
-}
-
 static gboolean
 deceleration_cb(GtkWidget *widget, GdkFrameClock *frame_clock, gpointer user_data)
 {
   struct Viewer *d;
   gint64 current_time;
   gdouble t;
-  int x0, y0, x, y;
+  double x0, y0, x, y;
 
   d = (struct Viewer *) user_data;
 
   current_time = gdk_frame_clock_get_frame_time(frame_clock);
-  t = (current_time - d->drag_prm.deceleration_start) / 1000000.0;
+  t = (current_time - d->deceleration_prm.start) / 1000000.0;
 
   x0 = gtk_range_get_value(GTK_RANGE(d->HScroll));
   y0 = gtk_range_get_value(GTK_RANGE(d->VScroll));
@@ -6163,9 +6158,7 @@ SetScroller(void)
   struct Viewer *d;
 
   d = &NgraphApp.Viewer;
-#if GTK_CHECK_VERSION(3, 24, 0)
   cancel_deceleration(d);
-#endif
 
   width = mxd2p(Menulocal.PaperWidth);
   height = mxd2p(Menulocal.PaperHeight);
@@ -6249,9 +6242,7 @@ ChangeDPI(void)
   XPos = nround(width * ratex);
   YPos = nround(height * ratey);
 
-#if GTK_CHECK_VERSION(3, 24, 0)
   cancel_deceleration(d);
-#endif
 
   gtk_range_set_range(GTK_RANGE(d->HScroll), 0, width);
   gtk_range_set_value(GTK_RANGE(d->HScroll), XPos);
