@@ -160,9 +160,7 @@ struct ZoomPrm {
 struct DragPrm {
   int x, y;
   int active;
-  guint deceleration_id;
   double vx, vy;
-  guint64 deceleration_start;
 };
 
 struct DecelerationPrm
@@ -190,6 +188,8 @@ struct Viewer
   double vscroll, hscroll, ZoomX, ZoomY;
   struct ZoomPrm zoom_prm;
   struct DragPrm drag_prm;
+  struct DecelerationPrm deceleration_prm;
+  struct ScrollPrm scroll_prm;
 };
 
 enum SubWinType {
