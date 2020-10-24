@@ -206,6 +206,34 @@ calc_mouse_y(int y, double zoom, const struct Viewer *d)
   return nround((mxp2d(y + d->vscroll - d->cy) - Menulocal.TopMargin) / zoom);
 }
 
+#define SCROLL_DIV 6.0
+#define SCROLL_DECELERATION_LIMIT 1.0
+
+static gboolean
+scroll_deceleration_cb(GtkWidget *widget, GdkFrameClock *frame_clock, gpointer user_data)
+{
+  struct Viewer *d;
+  double x, y;
+
+  d = (struct Viewer *) user_data;
+
+  x = gtk_range_get_value(GTK_RANGE(d->HScroll));
+  y = gtk_range_get_value(GTK_RANGE(d->VScroll));
+  x += (d->scroll_prm.x - x) / SCROLL_DIV;
+  y += (d->scroll_prm.y - y) / SCROLL_DIV;
+
+  gtk_range_set_value(GTK_RANGE(d->HScroll), x);
+  gtk_range_set_value(GTK_RANGE(d->VScroll), y);
+  if (fabs(d->scroll_prm.x - x) < SCROLL_DECELERATION_LIMIT &&
+      fabs(d->scroll_prm.y - y) < SCROLL_DECELERATION_LIMIT) {
+    d->deceleration_prm.id = 0;
+    gtk_range_set_value(GTK_RANGE(d->HScroll), d->scroll_prm.x);
+    gtk_range_set_value(GTK_RANGE(d->VScroll), d->scroll_prm.y);
+    return G_SOURCE_REMOVE;
+  }
+
+  return G_SOURCE_CONTINUE;
+}
 
 static void
 cancel_deceleration(struct Viewer *d)
