@@ -206,15 +206,18 @@ calc_mouse_y(int y, double zoom, const struct Viewer *d)
   return nround((mxp2d(y + d->vscroll - d->cy) - Menulocal.TopMargin) / zoom);
 }
 
-static double
+static void
 range_increment(GtkWidget *w, double inc)
 {
   double val;
 
+  if (inc == 0) {
+    return;
+  }
   val = gtk_range_get_value(GTK_RANGE(w));
   gtk_range_set_value(GTK_RANGE(w), val + inc);
+}
 
-  return val;
 }
 
 static char SCRIPT_IDN[] = "#! ngraph\n# clipboard\n\n";
