@@ -5531,10 +5531,10 @@ ViewerEvKeyDown(GtkEventControllerKey *controller, guint keyval, guint keycode, 
     CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
     return TRUE;
   case GDK_KEY_Page_Up:
-    range_increment(d->VScroll, -SCROLL_INC * 4);
+    range_increment_deceleration(0, -SCROLL_INC * 4, d);
     return TRUE;
   case GDK_KEY_Page_Down:
-    range_increment(d->VScroll, SCROLL_INC * 4);
+    range_increment_deceleration(0, SCROLL_INC * 4, d);
     return TRUE;
   case GDK_KEY_Down:
   case GDK_KEY_Up:
