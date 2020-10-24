@@ -206,6 +206,16 @@ calc_mouse_y(int y, double zoom, const struct Viewer *d)
   return nround((mxp2d(y + d->vscroll - d->cy) - Menulocal.TopMargin) / zoom);
 }
 
+
+static void
+cancel_deceleration(struct Viewer *d)
+{
+  if (d->deceleration_prm.id == 0) {
+    return;
+  }
+  gtk_widget_remove_tick_callback(d->Win, d->deceleration_prm.id);
+  d->deceleration_prm.id = 0;
+}
 static void
 range_increment(GtkWidget *w, double inc)
 {
@@ -1144,16 +1154,6 @@ ev_popup_menu(GtkWidget *w, gpointer client_data)
   d = (struct Viewer *) client_data;
   do_popup(NULL, d);
   return TRUE;
-}
-
-static void
-cancel_deceleration(struct Viewer *d)
-{
-  if (d->deceleration_prm.id == 0) {
-    return;
-  }
-  gtk_widget_remove_tick_callback(d->Win, d->deceleration_prm.id);
-  d->deceleration_prm.id = 0;
 }
 
 #if GTK_CHECK_VERSION(3, 24, 0)
