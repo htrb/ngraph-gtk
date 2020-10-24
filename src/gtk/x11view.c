@@ -1554,6 +1554,15 @@ hscroll_change_value_cb(GtkRange *range, GtkScrollType scroll, gdouble value, gp
   return TRUE;
 }
 
+static gboolean
+vscroll_change_value_cb(GtkRange *range, GtkScrollType scroll, gdouble value, gpointer user_data)
+{
+  struct Viewer *d;
+  d = (struct Viewer *) user_data;
+  start_scroll_deceleration(d->hscroll, value, d);
+  return TRUE;
+}
+
 void
 ViewerWinSetup(void)
 {
