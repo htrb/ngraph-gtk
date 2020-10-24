@@ -266,6 +266,19 @@ range_increment(GtkWidget *w, double inc)
   gtk_range_set_value(GTK_RANGE(w), val + inc);
 }
 
+static void
+range_increment_deceleration(double inc_x, double inc_y, struct Viewer *d)
+{
+  double x, y;
+
+  if (inc_x == 0 && inc_y == 0) {
+    return;
+  }
+  x = gtk_range_get_value(GTK_RANGE(d->HScroll));
+  y = gtk_range_get_value(GTK_RANGE(d->VScroll));
+  x += inc_x;
+  y += inc_y;
+  start_scroll_deceleration(x, y, d);
 }
 
 static char SCRIPT_IDN[] = "#! ngraph\n# clipboard\n\n";
