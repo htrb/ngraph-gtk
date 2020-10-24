@@ -151,6 +151,10 @@ enum pop_up_menu_item_type {
   POP_UP_MENU_ITEM_TYPE_END,
 };
 
+struct ScrollPrm {
+  double x, y;
+};
+
 struct ZoomPrm {
   int x, y, dpi;
   int focused;
