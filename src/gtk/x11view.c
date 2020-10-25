@@ -2985,8 +2985,8 @@ ShowCrossGauge(cairo_t *cr, const struct Viewer *d)
 
   zoom = Menulocal.PaperZoom / 10000.0;
 
-  x = coord_conv_x(d->CrossX, zoom, d);
-  y = coord_conv_y(d->CrossY, zoom, d);
+  x = d->CrossX;
+  y = d->CrossY;
 
   cairo_move_to(cr, x, 0);
   cairo_line_to(cr, x, height);
@@ -5075,8 +5075,8 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
     CheckGrid(TRUE, state, &dx, &dy, NULL, NULL);
   }
 
-  d->CrossX = dx;
-  d->CrossY = dy;
+  d->CrossX = coord_conv_x(dx, zoom, d);
+  d->CrossY = coord_conv_y(dy, zoom, d);
 
   mouse_move_scroll(point, d);
 
