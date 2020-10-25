@@ -1316,7 +1316,7 @@ deceleration_cb(GtkWidget *widget, GdkFrameClock *frame_clock, gpointer user_dat
   gtk_range_set_value(GTK_RANGE(d->VScroll), y);
   x = gtk_range_get_value(GTK_RANGE(d->HScroll));
   y = gtk_range_get_value(GTK_RANGE(d->VScroll));
-  if (x0 == x && y0 == y) {
+  if (fabs(x0 - x) < SCROLL_DECELERATION_LIMIT && fabs(y0 - y) < SCROLL_DECELERATION_LIMIT) {
     d->deceleration_prm.id = 0;
     return G_SOURCE_REMOVE;
   }
