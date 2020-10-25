@@ -2306,7 +2306,6 @@ ShowFocusFrame(cairo_t *cr, const struct Viewer *d)
 
     cairo_set_dash(cr, dash, sizeof(dash) / sizeof(*dash), 0);
   }
-  //  cairo_set_operator(cr, CAIRO_OPERATOR_DIFFERENCE);
 
   num = arraynum(d->focusobj);
   focus = arraydata(d->focusobj);
@@ -2810,7 +2809,6 @@ ShowFocusLine(cairo_t *cr, struct Viewer *d)
 
   cairo_set_source_rgb(cr, GRAY, GRAY, GRAY);
   cairo_set_dash(cr, dash, sizeof(dash) / sizeof(*dash), 0);
-  //  cairo_set_operator(cr, CAIRO_OPERATOR_DIFFERENCE);
 
   num = arraynum(d->focusobj);
   focus = arraydata(d->focusobj);
@@ -2852,7 +2850,6 @@ ShowFocusLine(cairo_t *cr, struct Viewer *d)
   }
 
  End:
-  //  cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
   restorestdio(&save);
 }
 
@@ -2865,7 +2862,6 @@ ShowPoints(cairo_t *cr, const struct Viewer *d)
   double dash[] = {DOT_LENGTH};
 
   cairo_set_source_rgb(cr, GRAY, GRAY, GRAY);
-  //  cairo_set_operator(cr, CAIRO_OPERATOR_DIFFERENCE);
 
   num = arraynum(d->points);
   po = arraydata(d->points);
@@ -2925,7 +2921,6 @@ ShowPoints(cairo_t *cr, const struct Viewer *d)
       cairo_stroke(cr);
     }
   }
-  //  cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
 }
 
 static void
@@ -2944,7 +2939,6 @@ ShowFrameRect(cairo_t *cr, const struct Viewer *d)
 
   cairo_set_source_rgb(cr, GRAY, GRAY, GRAY);
   cairo_set_dash(cr, dash, sizeof(dash) / sizeof(*dash), 0);
-  //  cairo_set_operator(cr, CAIRO_OPERATOR_DIFFERENCE);
 
   x1 = coord_conv_x(d->MouseX1, zoom, d);
   y1 = coord_conv_y(d->MouseY1, zoom, d);
@@ -2960,8 +2954,6 @@ ShowFrameRect(cairo_t *cr, const struct Viewer *d)
 
   cairo_rectangle(cr, minx, miny, width, height);
   cairo_stroke(cr);
-
-  //  cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
 }
 
 static void
@@ -2973,7 +2965,6 @@ ShowCrossGauge(cairo_t *cr, const struct Viewer *d)
 
   cairo_set_source_rgb(cr, GRAY, GRAY, GRAY);
   cairo_set_dash(cr, NULL, 0, 0);
-  //  cairo_set_operator(cr, CAIRO_OPERATOR_DIFFERENCE);
 
   win = gtk_widget_get_window(d->Win);
   if (win == NULL) {
@@ -2994,8 +2985,6 @@ ShowCrossGauge(cairo_t *cr, const struct Viewer *d)
   cairo_move_to(cr, 0, y);
   cairo_line_to(cr, width, y);
   cairo_stroke(cr);
-
-  //  cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
 }
 
 static void
