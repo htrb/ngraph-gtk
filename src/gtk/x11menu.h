@@ -186,10 +186,10 @@ struct Viewer
   int FrameOfsX, FrameOfsY;
   int MouseX1, MouseY1, MouseX2, MouseY2, MouseDX, MouseDY;
   int RefX1, RefY1, RefX2, RefY2, ChangePoint;
-  int LineX, LineY, CrossX, CrossY, Angle;
+  int LineX, LineY, Angle;
   int cx, cy;
   int ignoreredraw;
-  double vscroll, hscroll, ZoomX, ZoomY;
+  double vscroll, hscroll, ZoomX, ZoomY, CrossX, CrossY;
   struct ZoomPrm zoom_prm;
   struct DragPrm drag_prm;
   struct DecelerationPrm deceleration_prm;
