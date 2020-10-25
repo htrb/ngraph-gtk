@@ -1321,7 +1321,6 @@ deceleration_cb(GtkWidget *widget, GdkFrameClock *frame_clock, gpointer user_dat
     return G_SOURCE_REMOVE;
   }
 
-  gtk_widget_queue_draw(d->Win);
   return G_SOURCE_CONTINUE;
 }
 
