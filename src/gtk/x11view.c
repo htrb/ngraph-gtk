@@ -1222,7 +1222,6 @@ update_drag(GtkGestureDrag *gesture, gdouble offset_x, gdouble offset_y, gpointe
 
   gtk_range_set_value(GTK_RANGE(d->HScroll), d->drag_prm.x - offset_x);
   gtk_range_set_value(GTK_RANGE(d->VScroll), d->drag_prm.y - offset_y);
-  gtk_widget_queue_draw(d->Win);
 }
 
 static void
