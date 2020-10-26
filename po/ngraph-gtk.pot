@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.08.07\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2020-10-25 10:51+0900\n"
+"POT-Creation-Date: 2020-10-26 12:50+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2558,7 +2558,7 @@ msgstr ""
 msgid "Making GRA file."
 msgstr ""
 
-#: src/gtk/x11print.c:793 src/gtk/x11print.c:866 src/gtk/x11view.c:6375
+#: src/gtk/x11print.c:793 src/gtk/x11print.c:866 src/gtk/x11view.c:6372
 msgid "Drawing."
 msgstr ""
 
@@ -2588,19 +2588,19 @@ msgstr ""
 msgid "trimming (multi select)"
 msgstr ""
 
-#: src/gtk/x11view.c:3307
+#: src/gtk/x11view.c:3304
 msgid "Data points are moved."
 msgstr ""
 
-#: src/gtk/x11view.c:4628
+#: src/gtk/x11view.c:4625
 msgid "Moving data points is canceled."
 msgstr ""
 
-#: src/gtk/x11view.c:6369
+#: src/gtk/x11view.c:6366
 msgid "Scaling"
 msgstr ""
 
-#: src/gtk/x11view.c:6376
+#: src/gtk/x11view.c:6373
 msgid "Drawing"
 msgstr ""
 
