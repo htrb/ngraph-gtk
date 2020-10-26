@@ -2960,11 +2960,7 @@ static void
 ShowCrossGauge(cairo_t *cr, const struct Viewer *d)
 {
   int x, y, width, height;
-  double zoom;
   GdkWindow *win;
-
-  cairo_set_source_rgb(cr, GRAY, GRAY, GRAY);
-  cairo_set_dash(cr, NULL, 0, 0);
 
   win = gtk_widget_get_window(d->Win);
   if (win == NULL) {
@@ -2974,10 +2970,11 @@ ShowCrossGauge(cairo_t *cr, const struct Viewer *d)
   width = gdk_window_get_width(win);
   height = gdk_window_get_height(win);
 
-  zoom = Menulocal.PaperZoom / 10000.0;
-
   x = d->CrossX;
   y = d->CrossY;
+
+  cairo_set_source_rgb(cr, GRAY, GRAY, GRAY);
+  cairo_set_dash(cr, NULL, 0, 0);
 
   cairo_move_to(cr, x, 0);
   cairo_line_to(cr, x, height);
