@@ -3324,10 +3324,7 @@ mouse_down_zoom2(unsigned int state, TPoint *point, struct Viewer *d, int zoom_o
 
   ZoomLock = TRUE;
   if (state & GDK_SHIFT_MASK) {
-    d->hscroll -= (d->cx - point->x);
-    d->vscroll -= (d->cy - point->y);
-
-    ChangeDPI();
+    range_increment_deceleration(- d->cx + point->x, - d->cy + point->y, d);
     goto End;
   }
 
