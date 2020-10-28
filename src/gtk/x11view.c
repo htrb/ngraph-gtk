@@ -4688,7 +4688,7 @@ ViewerEvMButtonDown(unsigned int state, TPoint *point, struct Viewer *d)
     return FALSE;
 
   if (d->Mode == ZoomB) {
-    start_scroll_deceleration(d->hscroll - d->cx + point->x, d->vscroll - d->cy + point->y, d);
+    range_increment_deceleration(point->x - d->cx, point->y - d->cy, d);
   } else {
     ViewerEvLButtonDown(state, point, d);
     ViewerEvLButtonUp(state, point, d);
