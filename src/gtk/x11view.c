@@ -5054,7 +5054,12 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
   dy = calc_mouse_y(point->y, zoom, d);
 
   if (d->MouseMode == MOUSESCROLLE) {
+#if SCROLL_ANIMATION
     range_increment_deceleration(mxd2p(d->MouseX1 - dx), mxd2p(d->MouseY1 - dy), d);
+#else
+    range_increment(d->HScroll, mxd2p(d->MouseX1 - dx));
+    range_increment(d->VScroll, mxd2p(d->MouseY1 - dy));
+#endif
     return FALSE;
   }
 
