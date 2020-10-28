@@ -4968,10 +4968,11 @@ mouse_move_change(unsigned int state, TPoint *point, double zoom, struct Viewer 
 }
 
 static void
-mouse_move_scroll(TPoint *point, const struct Viewer *d)
+mouse_move_scroll(TPoint *point, struct Viewer *d)
 {
   int h, w;
   GdkWindow *win;
+  double dx, dy;
 
   win = gtk_widget_get_window(d->Win);
   if (win == NULL) {
@@ -4980,17 +4981,24 @@ mouse_move_scroll(TPoint *point, const struct Viewer *d)
 
   w = gdk_window_get_width(win);
   h = gdk_window_get_height(win);
+  dx = dy = 0;
   if (point->y > h) {
-    range_increment(d->VScroll, SCROLL_INC);
+    dy = SCROLL_INC;
   } else if (point->y < 0) {
-    range_increment(d->VScroll, -SCROLL_INC);
+    dy = -SCROLL_INC;
   }
 
   if (point->x > w) {
-    range_increment(d->HScroll, SCROLL_INC);
+    dx = SCROLL_INC;
   } else if (point->x < 0) {
-    range_increment(d->HScroll, -SCROLL_INC);
+    dx = -SCROLL_INC;
   }
+#if SCROLL_ANIMATION
+  range_increment_deceleration(dx, dy, d);
+#else
+  range_increment(d->HScroll, dx);
+  range_increment(d->VScroll, dy);
+#endif
 }
 
 static void
