@@ -162,6 +162,8 @@ static int zoom_focused_obj(int x, int y, double zoom_x, double zoom_y, char **o
 #define GRAY 0.5
 #define DOT_LENGTH 4.0
 
+#define SCROLL_ANIMATION 0
+
 int
 check_paint_lock(void)
 {
