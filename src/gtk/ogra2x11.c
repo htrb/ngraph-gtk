@@ -129,7 +129,7 @@ gtkevpaint(GtkWidget *w, cairo_t *cr, gpointer user_data)
   }
 
   if (gtklocal->redraw) {
-    GRAredraw(gtklocal->obj, gtklocal->inst, FALSE, FALSE);
+    GRAredraw(gtklocal->obj, gtklocal->inst, TRUE, 0);
     gtklocal->redraw = FALSE;
   }
 
