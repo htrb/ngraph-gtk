@@ -5029,6 +5029,13 @@ mouse_move_draw(unsigned int state, int *dx, int *dy, const struct Viewer *d)
   }
 }
 
+static void
+set_cross_gauge_position(int dx, int dy, double zoom, struct Viewer *d)
+{
+  d->CrossX = coord_conv_x(dx, zoom, d);
+  d->CrossY = coord_conv_y(dy, zoom, d);
+}
+
 static gboolean
 ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
 {
