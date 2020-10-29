@@ -5061,8 +5061,7 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
   dy = calc_mouse_y(point->y, zoom, d);
 
   if (d->MouseMode == MOUSESCROLLE) {
-    d->CrossX = coord_conv_x(dx, zoom, d);
-    d->CrossY = coord_conv_y(dy, zoom, d);
+    set_cross_gauge_position(dx, dy, zoom, d);
 #if SCROLL_ANIMATION
     range_increment_deceleration(mxd2p(d->MouseX1 - dx), mxd2p(d->MouseY1 - dy), d);
 #else
@@ -5081,9 +5080,7 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
     CheckGrid(TRUE, state, &dx, &dy, NULL, NULL);
   }
 
-  d->CrossX = coord_conv_x(dx, zoom, d);
-  d->CrossY = coord_conv_y(dy, zoom, d);
-
+  set_cross_gauge_position(dx, dy, zoom, d);
   mouse_move_scroll(point, d);
 
   if (! d->Capture) {
