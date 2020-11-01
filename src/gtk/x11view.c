@@ -1495,6 +1495,7 @@ zoom_end(GtkGesture *gesture, GdkEventSequence *sequence, gpointer user_data)
 
   d = (struct Viewer *) user_data;
 
+  gtk_label_set_text(GTK_LABEL(NgraphApp.Message_extra), NULL);
   if (d->zoom_prm.focused < 1) {
     zoom_end_viewer(d);
     return;
