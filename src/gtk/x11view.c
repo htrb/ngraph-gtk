@@ -3450,20 +3450,25 @@ gesture_zoom(GtkGestureZoom *controller, gdouble scale, gpointer user_data)
 {
   struct Viewer *d;
   double x, y;
-  char buf[64];
+  int dpi;
 
   d = (struct Viewer *) user_data;
 
-  snprintf(buf, sizeof(buf), "% .2f%%", scale * 100);
-  gtk_label_set_text(GTK_LABEL(NgraphApp.Message_extra), buf);
-  d->zoom_prm.scale = scale;
   gtk_gesture_get_bounding_box_center(GTK_GESTURE(controller), &x, &y);
   if (d->zoom_prm.focused > 0) {
+    d->zoom_prm.scale = scale;
+    show_gesture_zooming_scale(scale);
     gesture_zoom_obj(scale, x, y, d);
     return;
   }
+
   d->zoom_prm.x = x;
   d->zoom_prm.y = y;
+
+  dpi = d->zoom_prm.dpi * scale;
+  d->zoom_prm.scale = 1.0 * dpi / d->zoom_prm.dpi;
+  show_gesture_zooming_scale(d->zoom_prm.scale);
+
   main_window_redraw();
 }
 #endif
