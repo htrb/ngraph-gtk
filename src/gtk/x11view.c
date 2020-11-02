@@ -3438,6 +3438,14 @@ draw_zoom(cairo_t *cr, struct Viewer *d)
 }
 
 static void
+show_gesture_zooming_scale(double scale)
+{
+  char buf[64];
+  snprintf(buf, sizeof(buf), "% .2f%%", scale * 100);
+  gtk_label_set_text(GTK_LABEL(NgraphApp.Message_extra), buf);
+}
+
+static void
 gesture_zoom(GtkGestureZoom *controller, gdouble scale, gpointer user_data)
 {
   struct Viewer *d;
