@@ -269,6 +269,20 @@ cursor_moved(GtkWidget *widget, GdkEvent  *event, gpointer user_data)
   return FALSE;
 }
 
+#if GTK_CHECK_VERSION(3, 24, 0)
+static void
+button_released(GtkGestureMultiPress *gesture, gint n_press, gdouble x, gdouble y, gpointer user_data)
+{
+  struct gtklocal *gtklocal;
+  guint button;
+
+  gtklocal = (struct gtklocal *) user_data;
+  button = gtk_gesture_single_get_current_button(GTK_GESTURE_SINGLE(gesture));
+
+  gtklocal->action.type = ACTION_TYPE_BUTTON;
+  gtklocal->action.val = button;
+}
+#else
 static gboolean
 button_released(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
 {
@@ -281,6 +295,7 @@ button_released(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
 
   return FALSE;
 }
+#endif
 
 static gboolean
 scrolled(GtkWidget *widget, GdkEventScroll *event, gpointer user_data)
