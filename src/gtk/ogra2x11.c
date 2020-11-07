@@ -329,6 +329,15 @@ add_event_key(GtkWidget *widget, struct gtklocal *gtklocal)
   g_signal_connect(ev, "key-pressed", G_CALLBACK(ev_key_down), gtklocal);
 }
 
+static void
+add_event_button(GtkWidget *widget, struct gtklocal *gtklocal)
+{
+  GtkGesture *ev;
+  ev = gtk_gesture_multi_press_new(widget);
+  gtk_gesture_single_set_button(GTK_GESTURE_SINGLE(ev), 0);
+  g_signal_connect(ev, "released", G_CALLBACK(button_released), gtklocal);
+}
+
 #endif
 
 static int
