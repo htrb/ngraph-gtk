@@ -470,8 +470,12 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   gtklocal->redraw = TRUE;
 
   gtk_widget_add_events(gtklocal->mainwin, GDK_POINTER_MOTION_MASK | GDK_BUTTON_RELEASE_MASK | GDK_BUTTON_PRESS_MASK);
+#if GTK_CHECK_VERSION(3, 24, 0)
+  add_event_button(gtklocal->mainwin, gtklocal);
+#else
   g_signal_connect(gtklocal->mainwin, "motion-notify-event", G_CALLBACK(cursor_moved), gtklocal);
   g_signal_connect(gtklocal->mainwin, "button-release-event", G_CALLBACK(button_released), gtklocal);
+#endif
   g_signal_connect(gtklocal->mainwin, "scroll-event", G_CALLBACK(scrolled), gtklocal);
 
   if (chkobjfield(obj, "_evloop")) {
