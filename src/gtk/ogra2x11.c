@@ -253,8 +253,13 @@ size_allocate(GtkWidget *widget, GdkRectangle *allocation, gpointer user_data)
 
 }
 
+#if GTK_CHECK_VERSION(3, 24, 0)
+static void
+cursor_moved(GtkEventControllerMotion *controller, gdouble x, gdouble y, gpointer user_data)
+#else
 static gboolean
 cursor_moved(GtkWidget *widget, GdkEvent  *event, gpointer user_data)
+#endif
 {
   struct gtklocal *gtklocal;
 
@@ -266,7 +271,9 @@ cursor_moved(GtkWidget *widget, GdkEvent  *event, gpointer user_data)
     gtklocal->blank_cursor = NULL;
   }
 
+#if ! GTK_CHECK_VERSION(3, 24, 0)
   return FALSE;
+#endif
 }
 
 #if GTK_CHECK_VERSION(3, 24, 0)
