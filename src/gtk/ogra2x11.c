@@ -345,6 +345,14 @@ add_event_button(GtkWidget *widget, struct gtklocal *gtklocal)
   g_signal_connect(ev, "released", G_CALLBACK(button_released), gtklocal);
 }
 
+static void
+add_event_motion(GtkWidget *widget, struct gtklocal *gtklocal)
+{
+  GtkEventController *ev;
+
+  ev = gtk_event_controller_motion_new(widget);
+  g_signal_connect(ev, "motion", G_CALLBACK(cursor_moved), gtklocal);
+}
 #endif
 
 static int
