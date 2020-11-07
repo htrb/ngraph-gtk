@@ -304,6 +304,18 @@ scrolled(GtkWidget *widget, GdkEventScroll *event, gpointer user_data)
   return FALSE;
 }
 
+#if GTK_CHECK_VERSION(3, 24, 0)
+static void
+add_event_key(GtkWidget *widget, struct gtklocal *gtklocal)
+{
+  GtkEventController *ev;
+
+  ev = gtk_event_controller_key_new(widget);
+  g_signal_connect(ev, "key-pressed", G_CALLBACK(ev_key_down), gtklocal);
+}
+
+#endif
+
 static int
 gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
