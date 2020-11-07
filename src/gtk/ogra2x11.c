@@ -416,7 +416,11 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
 			   "delete-event",
 			   G_CALLBACK(gtkclose), gtklocal->mainwin);
 
+#if GTK_CHECK_VERSION(3, 24, 0)
+  add_event_key(gtklocal->mainwin, gtklocal);
+#else
   g_signal_connect(gtklocal->mainwin, "key-press-event", G_CALLBACK(ev_key_down), gtklocal);
+#endif
 
   gtk_window_set_title((GtkWindow *) gtklocal->mainwin, gtklocal->title);
 
