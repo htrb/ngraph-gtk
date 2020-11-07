@@ -161,6 +161,28 @@ gtkclose(GtkWidget *widget, GdkEvent *event, gpointer user_data)
   return TRUE;
 }
 
+#if GTK_CHECK_VERSION(3, 24, 0)
+static gboolean
+ev_key_down(GtkEventControllerKey *controller, guint keyval, guint keycode, GdkModifierType state, gpointer user_data)
+{
+  struct gtklocal *gtklocal;
+
+  gtklocal = (struct gtklocal *) user_data;
+
+  gtklocal->action.type = ACTION_TYPE_KEY;
+  gtklocal->action.val = keyval;
+
+  switch (keyval) {
+  case GDK_KEY_w:
+    if (state & GDK_CONTROL_MASK) {
+      gtkclose(gtklocal->mainwin, NULL, NULL);
+      return TRUE;
+    }
+    return FALSE;
+  }
+  return FALSE;
+}
+#else
 static gboolean
 ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
 {
@@ -187,6 +209,7 @@ ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
   }
   return FALSE;
 }
+#endif
 
 void
 size_allocate(GtkWidget *widget, GdkRectangle *allocation, gpointer user_data)
