@@ -1,3 +1,7 @@
+html{
+  scroll-behavior: smooth;
+}
+
 body {
     margin: 1em;
     font: 1em sans-serif;
