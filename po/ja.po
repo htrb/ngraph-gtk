@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6.08.07\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2020-11-11 18:28+0900\n"
+"POT-Creation-Date: 2020-11-17 18:30+0900\n"
 "PO-Revision-Date: 2020-10-22 15:28+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -2087,7 +2087,7 @@ msgstr "ビューアに描画"
 msgid "_Print"
 msgstr "印刷(_P)"
 
-#: src/gtk/x11menu.c:470 src/gtk/x11menu.c:471 src/gtk/x11print.c:514
+#: src/gtk/x11menu.c:470 src/gtk/x11menu.c:471 src/gtk/x11print.c:508
 msgid "Print"
 msgstr "印刷"
 
@@ -2577,24 +2577,24 @@ msgstr "Cairo EMF 出力"
 msgid "Printing."
 msgstr "印刷中"
 
-#: src/gtk/x11print.c:513
+#: src/gtk/x11print.c:507
 #, c-format
 msgid "Printing error: %s"
 msgstr "印刷エラー: %s"
 
-#: src/gtk/x11print.c:586
+#: src/gtk/x11print.c:580
 msgid "Spawning external viewer."
 msgstr "外部ビューアに出力中"
 
-#: src/gtk/x11print.c:628
+#: src/gtk/x11print.c:622
 msgid "GRA file"
 msgstr "合成ファイルの保存"
 
-#: src/gtk/x11print.c:668
+#: src/gtk/x11print.c:662
 msgid "Making GRA file."
 msgstr "合成ファイル作成中"
 
-#: src/gtk/x11print.c:793 src/gtk/x11print.c:866 src/gtk/x11view.c:6406
+#: src/gtk/x11print.c:787 src/gtk/x11print.c:860 src/gtk/x11view.c:6406
 msgid "Drawing."
 msgstr "描画中"
 
