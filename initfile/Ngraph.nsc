@@ -344,19 +344,6 @@ do
 	-dialog)
 	    SHOW_DIALOG=2
 	    ;;
-	-P)
-	    check_file $2
-	    clear_viewer
-	    . $2
-	    new gra2prn name=OUTPUT
-	    gra2prn::driver=gra2ps
-	    gra2prn::prn=" | lpr"
-	    gra::device=gra2prn:OUTPUT
-	    gra::open
-	    gra::draw
-	    gra::close
-	    del system:0
-	    ;;
 	-png)
 	    save_image "$2" png `basename $2 .ngp`.png
 	    del system:0
