@@ -9,11 +9,12 @@ body {
 
 summary {
   border-style: none;
+  outline: none;
 }
 
-summary:hover {
-  cursor : pointer;
-  filter: brightness(200%);
+summary:hover, summary:focus {
+  cursor: pointer;
+  filter: invert(50%);
 }
 
 h1 {
