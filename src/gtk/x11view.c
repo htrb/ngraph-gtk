@@ -121,7 +121,7 @@ static gboolean ViewerEvLButtonDown(unsigned int state, TPoint *point, struct Vi
 static gboolean ViewerEvLButtonUp(unsigned int state, TPoint *point, struct Viewer *d);
 static gboolean ViewerEvLButtonDblClk(unsigned int state, TPoint *point, struct Viewer *d);
 static gboolean ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d);
-#if GTK_CHECK_VERSION(3, 24, 0)
+#if USE_EVENT_CONTROLLER
 static void ViewerEvButtonDown(GtkGestureMultiPress *gesture, gint n_press, gdouble x, gdouble y, gpointer client_data);
 static void ViewerEvButtonUp(GtkGestureMultiPress *gesture, gint n_press, gdouble x, gdouble y, gpointer client_data);
 static gboolean ViewerEvKeyDown(GtkEventControllerKey *controller, guint keyval, guint keycode, GdkModifierType state, gpointer user_data);
@@ -1210,7 +1210,7 @@ ev_popup_menu(GtkWidget *w, gpointer client_data)
   return TRUE;
 }
 
-#if GTK_CHECK_VERSION(3, 24, 0)
+#if USE_EVENT_CONTROLLER
 static void
 update_drag(GtkGestureDrag *gesture, gdouble offset_x, gdouble offset_y, gpointer user_data)
 {
@@ -1636,7 +1636,7 @@ ViewerWinSetup(void)
     gtk_menu_attach_to_widget(GTK_MENU(d->popup), GTK_WIDGET(d->Win), NULL);
   }
 
-#if GTK_CHECK_VERSION(3, 24, 0)
+#if USE_EVENT_CONTROLLER
   add_event_drag(d->Win, d);
   add_event_key(d->Win, d);
   add_event_button(d->Win, d);
@@ -3378,7 +3378,7 @@ mouse_down_zoom_little(unsigned int state, TPoint *point, struct Viewer *d, int 
   mouse_down_zoom2(state, point, d, zoom_out, ZOOM_SPEED_LITTLE);
 }
 
-#if GTK_CHECK_VERSION(3, 24, 0)
+#if USE_EVENT_CONTROLLER
 static void
 gesture_zoom_obj(gdouble scale, double gx, double gy,  struct Viewer *d)
 {
@@ -5331,7 +5331,7 @@ ViewerEvScroll(GtkWidget *w, GdkEventScroll *e, gpointer client_data)
   return FALSE;
 }
 
-#if GTK_CHECK_VERSION(3, 24, 0)
+#if USE_EVENT_CONTROLLER
 static GdkModifierType
 get_key_modifier(GtkGestureSingle *gesture)
 {
@@ -5422,7 +5422,7 @@ ViewerEvButtonDown(GtkWidget *w, GdkEventButton *e, gpointer client_data)
 }
 #endif
 
-#if GTK_CHECK_VERSION(3, 24, 0)
+#if USE_EVENT_CONTROLLER
 static void
 ViewerEvButtonUp(GtkGestureMultiPress *gesture, gint n_press, gdouble x, gdouble y, gpointer client_data)
 {
@@ -5527,7 +5527,7 @@ viewer_key_scroll(guint keyval, struct Viewer *d)
   return FALSE;
 }
 
-#if GTK_CHECK_VERSION(3, 24, 0)
+#if USE_EVENT_CONTROLLER
 static gboolean
 ViewerEvKeyDown(GtkEventControllerKey *controller, guint keyval, guint keycode, GdkModifierType state, gpointer user_data)
 {
@@ -5783,7 +5783,7 @@ ViewerEvPaint(GtkWidget *w, cairo_t *cr, gpointer client_data)
 
   d = (struct Viewer *) client_data;
 
-#if GTK_CHECK_VERSION(3, 24, 0)
+#if USE_EVENT_CONTROLLER
   if (ViewerZoomig) {
     draw_zoom(cr, d);
     return TRUE;
