@@ -37,6 +37,7 @@
 #else
 #define USE_EVENT_CONTROLLER 0
 #endif
+#endif
 
 #define RECENT_CHOOSER_LIMIT 25
 
