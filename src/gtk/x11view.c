@@ -104,7 +104,10 @@ enum ViewerAlignType {
 #define VIEWER_DPI_MAX 620
 #define VIEWER_DPI_MIN  20
 
-static int PaintLock = FALSE, ZoomLock = FALSE, KeepMouseMode = FALSE, ViewerZoomig = FALSE;
+static int PaintLock = FALSE, ZoomLock = FALSE, KeepMouseMode = FALSE;
+#if USE_EVENT_CONTROLLER
+static int ViewerZooming = FALSE;
+#endif
 
 #define EVAL_NUM_MAX 5000
 static struct evaltype EvalList[EVAL_NUM_MAX];
@@ -1442,7 +1445,7 @@ zoom_begin(GtkGesture *gesture, GdkEventSequence *sequence, gpointer user_data)
   d->zoom_prm.x = x;
   d->zoom_prm.y = y;
   d->zoom_prm.dpi = dpi;
-  ViewerZoomig = TRUE;
+  ViewerZooming = TRUE;
 }
 
 static double
@@ -1465,7 +1468,7 @@ zoom_end_viewer(struct Viewer *d)
   int dpi;
   double scale;
 
-  ViewerZoomig = FALSE;
+  ViewerZooming = FALSE;
 
   if (ZoomLock) {
     return;
@@ -1515,7 +1518,7 @@ zoom_cancel(GtkGesture *gesture, GdkEventSequence *sequence, gpointer user_data)
 
   d = (struct Viewer *) user_data;
 
-  ViewerZoomig = FALSE;
+  ViewerZooming = FALSE;
 
   if (d->zoom_prm.focused > 0) {
     d->ShowRect = FALSE;
@@ -5784,7 +5787,7 @@ ViewerEvPaint(GtkWidget *w, cairo_t *cr, gpointer client_data)
   d = (struct Viewer *) client_data;
 
 #if USE_EVENT_CONTROLLER
-  if (ViewerZoomig) {
+  if (ViewerZooming) {
     draw_zoom(cr, d);
     return TRUE;
   }
