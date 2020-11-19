@@ -1,5 +1,5 @@
 html{
-  scroll-behavior: smooth;
+    scroll-behavior: smooth;
 }
 
 body {
@@ -8,8 +8,8 @@ body {
 }
 
 summary:hover {
-  cursor: pointer;
-  filter: invert(50%);
+    cursor: pointer;
+    filter: invert(50%);
 }
 
 h1 {
@@ -21,7 +21,7 @@ h1 {
 }
 
 .toc {
-   position: fixed;
+    position: fixed;
     padding: 1em;
     border-style: solid;
     line-height: 1.5em;
