@@ -7,12 +7,7 @@ body {
     font: 1em sans-serif;
 }
 
-summary {
-  border-style: none;
-  outline: none;
-}
-
-summary:hover, summary:focus {
+summary:hover {
   cursor: pointer;
   filter: invert(50%);
 }
