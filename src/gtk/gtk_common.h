@@ -29,14 +29,10 @@
 #define USE_HEADER_BAR 1
 #endif
 
-#if OSX
-#define USE_EVENT_CONTROLLER 0
-#else
 #if GTK_CHECK_VERSION(3, 24, 0)
 #define USE_EVENT_CONTROLLER 1
 #else
 #define USE_EVENT_CONTROLLER 0
-#endif
 #endif
 
 #define RECENT_CHOOSER_LIMIT 25
