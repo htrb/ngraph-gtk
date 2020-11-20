@@ -156,6 +156,7 @@ create_font_frame(struct font_prm *prm)
 {
   GtkWidget *frame, *w, *table, *hbox, *vbox;
   unsigned int j, i;
+  GdkRGBA color;
 
   frame = gtk_frame_new("font");
 
@@ -198,6 +199,12 @@ create_font_frame(struct font_prm *prm)
   w = gtk_color_button_new();
   gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
   prm->color = w;
+
+  color.red = 0;
+  color.green = 0;
+  color.blue = 0;
+  color.alpha = 1;
+  gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(prm->color), &color);
 
   gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 4);
 
