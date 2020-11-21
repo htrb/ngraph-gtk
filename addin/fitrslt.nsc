@@ -1,7 +1,8 @@
+#! ngraph
 # fitrslt.nsc written by S. ISHIZAKA. 1999/04
 #
-# This script generates a legend box. 
-# 
+# This script generates a legend box.
+#
 # Please edit the following X, Y, and WIDTH variables as you like.
 #
 # Description: _Fit result...,insert fitting results as legend-text,
@@ -29,8 +30,8 @@ then
     do
 	if [ "x`get data:$i -field fit`" != "x" ]
 	then
-            get data: -field id source file array >> "$DATALIST"
-	    get ${data::fit} -field id type poly_dimension user_func %00 %01 %02 %03 %04 %05 %06 %07 %08 %09 >> "$DATALIST"
+            get data: -field -escape id source file array >> "$DATALIST"
+	    get ${data::fit} -field -escape id type poly_dimension user_func %00 %01 %02 %03 %04 %05 %06 %07 %08 %09 >> "$DATALIST"
 	fi
     done
     SCRIPT=${system:0:temp_file}
