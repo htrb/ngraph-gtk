@@ -1,3 +1,4 @@
+#! ngraph
 if exist -q menu
 then
     new regexp name=ADDIN
