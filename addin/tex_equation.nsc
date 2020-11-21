@@ -1,3 +1,4 @@
+#! ngraph
 # Description: Te_X equation,import TeX equation as GRA,
 
 TEX_COMMAND="pdflatex"
