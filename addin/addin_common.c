@@ -7,7 +7,7 @@
 
 #include "addin_common.h"
 
-#define LINE_BUF_SIZE 1024
+#define LINE_BUF_SIZE 8192
 
 #define FONT_PT       20.00
 #define FONT_SCRIPT   70.00
