@@ -1,1 +1,2 @@
+#! ngraph
 system:0:plugin_exec ruby $*
