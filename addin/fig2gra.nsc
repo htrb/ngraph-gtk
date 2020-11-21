@@ -1,3 +1,5 @@
+#! ngraph
+
 set +e
 
 fig2gra_delete_obj() {
