@@ -1,3 +1,4 @@
+#! ngraph
 if system::plugin_check ruby
 then
     true
