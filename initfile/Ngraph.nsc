@@ -1,3 +1,4 @@
+#! ngraph
 # Ngraph initialization script
 
 usage() {
