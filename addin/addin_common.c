@@ -258,7 +258,7 @@ fgets_str(FILE *fp)
 
   g_strchomp(buf);
 
-  str = g_strdup(buf);
+  str = g_strcompress(buf);
 
   return str;
 }
