@@ -1128,6 +1128,25 @@ math_equation_add_const_definition(MathEquation *eq, const char *name, MathExpre
 }
 
 static int
+optimize_const_definition_sub(MathEquation *eq, MathExpression *exp)
+{
+  MathValue val;
+  int r;
+  if (exp == NULL) {
+    return 0;
+  }
+  r = optimize_const_definition_sub(eq, exp->next);
+  if (r) {
+    return r;
+  }
+  r = math_expression_calculate(exp->u.const_def.operand, &val);
+  if (r) {
+    return r;
+  }
+  return math_equation_set_const(eq, exp->u.const_def.id, &val);
+}
+
+static int
 optimize_const_definition(MathEquation *eq)
 {
   MathExpression *exp;
