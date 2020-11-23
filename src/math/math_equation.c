@@ -1149,23 +1149,11 @@ optimize_const_definition_sub(MathEquation *eq, MathExpression *exp)
 static int
 optimize_const_definition(MathEquation *eq)
 {
-  MathExpression *exp;
-  MathValue val;
-
   if (eq->const_def == NULL) {
     return 0;
   }
 
-  exp = eq->const_def;
-
-  while (exp) {
-    if (math_expression_calculate(exp->u.const_def.operand, &val))
-      return 1;
-    math_equation_set_const(eq, exp->u.const_def.id, &val);
-    exp = exp->next;
-  }
-
-  return 0;
+  return optimize_const_definition_sub(eq, eq->const_def);
 }
 
 static void
