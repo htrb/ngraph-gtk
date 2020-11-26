@@ -152,7 +152,11 @@ class NgraphSpellchecker
   end
 
   def check(text)
-    original_string = text.text
+    original_string = if (text.instance_of?(Ngraph::Text))
+			text.text
+		      else
+			text.title
+		      end
     modified_string = ""
     word = ""
 
@@ -192,7 +196,11 @@ class NgraphSpellchecker
     end
 
     if (original_string != modified_string)
-      text.text = modified_string
+      if (text.instance_of?(Ngraph::Text))
+	text.text = modified_string
+      else
+	text.title = modified_string
+      end
       @modified = true
     end
     r
