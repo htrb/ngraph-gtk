@@ -234,7 +234,7 @@ class NgraphSpellchecker
   def finalize
     Ngraph::Dialog.new {|dialog|
       dialog.title = "spell check"
-      str = dialog.message("Spell check completed.")
+      dialog.message("Spell check completed.")
     }
     if (@menu && @modified)
       @menu.modified = true
