@@ -216,6 +216,9 @@ class NgraphSpellchecker
     Ngraph::Text.each {|text|
       break unless (check(text))
     }
+    Ngraph::Parameter.each {|text|
+      break unless (check(text))
+    }
   end
 
   def run
