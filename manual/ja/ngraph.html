@@ -2,21 +2,24 @@
 <html lang="ja">
   <head>
     <meta charset="UTF-8">
-    <title>Ngraph-gtk User's Manual</title>
+    <title>Ngraph-GTK User's Manual</title>
+    <link rel="stylesheet" href="../ngraph.css" media="screen" type="text/css"/>
+    <link rel="icon" href="../ngraph.svg" />
   </head>
   <body>
-    <h1><i>Ngraph-gtk User's Manual</i></h1>
-    <p><a href="http://hito.music.coocan.jp/ngraph/ngraph-gtk.html"><img src="../img/icon.png" width="64" height="64" alt="Ngraph logo" border="0"></a></p>
+    <h1><i>Ngraph-GTK User's Manual</i></h1>
+    <p><a href="http://hito.music.coocan.jp/ngraph/ngraph-gtk.html"><img src="../ngraph.svg" width="64" height="64" alt="Ngraph logo" border="0"></a></p>
     <p>Copyright (C) 2002, Satoshi ISHIZAKA.</p>
-    <br>
-    <ol>
-      <li><a href="./intro.html">Ngraphの概要</a>
-	<ul>
+    <details>
+      <summary><a href="./intro.html">Ngraphの概要</a></summary>
+        <ul>
 	  <li><a href="./intro.html#ABSTRACT">Ngraphとは？</a>
 	  <li><a href="./intro.html#USAGE">使用・配布規定</a>
 	  <li><a href="./intro.html#INSTALL">環境設定</a>
 	</ul>
-      <li><a href="./tutorial.html">チュートリアル</a>
+    </details>
+    <details>
+      <summary><a href="./tutorial.html">チュートリアル</a></summary>
 	<ul>
 	  <li><a href="./tutorial.html#VIEW">外観</a>
 	  <li><a href="./tutorial.html#GRAPH">グラフ作成の概略</a>
@@ -28,13 +31,17 @@
 	  <li><a href="./tutorial.html#MATH">数式変換機能を使う</a>
 	  <li><a href="./tutorial.html#MULTI">複数のグラフ</a>
 	</ul>
-      <li><a href="./operate.html">操作方法</a>
+    </details>
+    <details>
+      <summary><a href="./operate.html">操作方法</a></summary>
 	<ul>
 	  <li><a href="./operate.html#CONTROL_BUTTON">コントロールボタン</a>
 	  <li><a href="./operate.html#MOUSE">マウス</a>
 	  <li><a href="./operate.html#PARAMETER">数値パラメタ</a>
 	</ul>
-      <li><a href="./refer.html">リファレンス</a>
+    </details>
+    <details>
+      <summary><a href="./refer.html">リファレンス</a></summary>
 	<ul>
 	  <li><a href="./refer.html#GRAPH_MENU">[グラフ]メニュー</a>
 	  <li><a href="./refer.html#EDIT_MENU">[編集]メニュー</a>
@@ -64,7 +71,9 @@
 	  <li><a href="./refer.html#SWITCH_DIALOG">描画順・ダイアログボックス</a>
 	  <li><a href="./refer.html#PREFMISC_DIALOG">その他設定・ダイアログボックス</a>
 	</ul>
-      <li><a href="./data.html">データファイル</a>
+    </details>
+    <details>
+      <summary><a href="./data.html">データファイル</a></summary>
 	<ul>
 	  <li><a href="./data.html#DATAFILE">データファイルの形式</a>
 	  <li><a href="./data.html#DATAFILE_EMPTY">欠損データを含むデータファイル</a>
@@ -73,7 +82,9 @@
 	  <li><a href="./data.html#DATAFILE_ERRBARY">データプロット形式 error_bar_y のデータファイル</a>
 	  <li><a href="./data.html#DATAFILEOPTION">データファイル埋め込みオプション</a>
 	</ul>
-      <li><a href="./math.html">データの加工</a>
+    </details>
+    <details>
+      <summary><a href="./math.html">データの加工</a></summary>
 	<ul>
 	  <li><a href="./math.html#TRANSFORM">概要</a>
 	  <li><a href="./math.html#FORMULA_BLOCK">ブロック</a>
@@ -103,40 +114,52 @@
 	    </ul>
 	  <li><a href="./math.html#OP_EXAMPLE">使用例</a>
 	</ul>
-      <li><a href="./text.html">フォント/テキスト</a>
+    </details>
+    <details>
+      <summary><a href="./text.html">フォント/テキスト</a></summary>
 	<ul>
 	  <li><a href="./text.html#FONT">フォントの扱い</a>
 	  <li><a href="./text.html#TEXT">テキスト描画の制御文字</a>
 	</ul>
-      <li><a href="./gra.html">GRAファイル</a>
+    </details>
+    <details>
+      <summary><a href="./gra.html">GRAファイル</a></summary>
 	<ul>
 	  <li><a href="./gra.html#GRAFILE">概要</a>
 	  <li><a href="./gra.html#GRAFILESTRUCTURE">GRAファイルの構造</a>
 	  <li><a href="./gra.html#GRACOMMAND">GRAファイルのグラフィックスコマンド</a>
 	</ul>
-      <li><a href="./script.html">Ngraphスクリプト</a>
+    </details>
+    <details>
+      <summary><a href="./script.html">Ngraphスクリプト</a></summary>
 	<ul>
 	  <li><a href="./script.html#SCRIPT">概要</a>
 	  <li><a href="./script.html#SCRIPT_SYNTAX">スクリプトの文法</a>
 	  <li><a href="./script.html#SCRIPT_STARTUP">スタートアップスクリプト</a>
 	  <li><a href="./script.html#COMMANDLINE">コマンドラインオプション</a>
 	</ul>
-      <li><a href="./object.html">Ngraphオブジェクト</a>
+    </details>
+    <details>
+      <summary><a href="./object.html">Ngraphオブジェクト</a></summary>
 	<ul>
 	  <li><a href="./object.html#OBJECT">概要</a>
 	  <li><a href="./object.html#OBJECTLIST">Ngraphオブジェクト一覧</a>
 	</ul>
-      <li><a href="./addin.html">アドイン</a>
+    </details>
+    <details>
+      <summary><a href="./addin.html">アドイン</a></summary>
 	<ul>
 	  <li><a href="./addin.html#ADDIN">概要</a>
 	  <li><a href="./addin.html#LEGEND_NSC">legend.nscの動作</a>
 	  <li><a href="./addin.html#STRUCTURE">アドインスクリプトの形式</a>
 	  <li><a href="./addin.html#DATA">データを扱うアドインスクリプト</a>
 	</ul>
-      <li><a href="./copyrigh.html">その他</a>
+    </details>
+    <details>
+      <summary><a href="./copyrigh.html">その他</a></summary>
 	<ul>
 	  <li><a href="./copyrigh.html#COPYRIGHT">著作権・連絡先・謝辞</a>
 	</ul>
-    </ol>
+    </details>
   </body>
 </html>

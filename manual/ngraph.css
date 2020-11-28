@@ -1,6 +1,15 @@
+html{
+    scroll-behavior: smooth;
+}
+
 body {
     margin: 1em;
     font: 1em sans-serif;
+}
+
+summary:hover {
+    cursor: pointer;
+    filter: invert(50%);
 }
 
 h1 {
@@ -12,7 +21,7 @@ h1 {
 }
 
 .toc {
-   position: fixed;
+    position: fixed;
     padding: 1em;
     border-style: solid;
     line-height: 1.5em;
@@ -36,11 +45,11 @@ h1 {
     text-indent: -5px;
 }
 
-.toc a {
+details a, .toc a {
     text-decoration: none;
 }
 
-.toc a:hover {
+details a:hover, .toc a:hover {
     text-decoration: underline;
 }
 
