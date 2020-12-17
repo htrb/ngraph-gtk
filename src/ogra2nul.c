@@ -21,11 +21,11 @@
  *
  */
 
+#include "common.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
-#include "common.h"
 
 #include "object.h"
 #include "ioutil.h"

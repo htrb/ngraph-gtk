@@ -21,9 +21,10 @@
  *
  */
 
+#include "common.h"
+
 #include <math.h>
 
-#include "common.h"
 #include "object.h"
 #include "oparameter.h"
 

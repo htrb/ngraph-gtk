@@ -1,5 +1,7 @@
 /* --*-coding:utf-8-*-- */
 
+#include "common.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -7,8 +9,6 @@
 #include <string.h>
 #include <ctype.h>
 #include <glib.h>
-
-#include "common.h"
 
 #include "nhash.h"
 #include "ntime.h"

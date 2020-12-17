@@ -21,6 +21,8 @@
  *
  */
 
+#include "common.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -33,7 +35,6 @@
 #include <glib.h>
 #include <unistd.h>
 
-#include "common.h"
 #include "nhash.h"
 #include "ngraph.h"
 #include "shell.h"
