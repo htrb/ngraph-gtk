@@ -1,10 +1,11 @@
+#include "gtk_common.h"
+
 #include <stdlib.h>
 #include <math.h>
 
 #include "mathfn.h"
 #include "object.h"
 
-#include "gtk_common.h"
 #include "gtk_widget.h"
 #include "ox11menu.h"
 #include "x11menu.h"

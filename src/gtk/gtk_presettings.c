@@ -1,5 +1,5 @@
-#include <math.h>
 #include "gtk_common.h"
+#include <math.h>
 #include "gtk_presettings.h"
 #include "gtk_combo.h"
 #include "gtk_widget.h"

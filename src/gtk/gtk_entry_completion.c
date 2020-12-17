@@ -2,12 +2,13 @@
  * $Id: gtk_entry_completion.c,v 1.8 2010-03-04 08:30:16 hito Exp $
  */
 
+#include "gtk_common.h"
+
 #include <stdio.h>
 #include <strings.h>
 #include <string.h>
 #include <stdlib.h>
 
-#include "gtk_common.h"
 #include "ioutil.h"
 #include "object.h"
 

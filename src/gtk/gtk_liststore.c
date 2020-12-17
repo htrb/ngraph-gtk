@@ -2,11 +2,12 @@
  * $Id: gtk_liststore.c,v 1.27 2010-02-03 01:18:12 hito Exp $
  */
 
+#include "gtk_common.h"
+
 #include <stdlib.h>
 
 #include "gra.h"
 
-#include "gtk_common.h"
 #include "gtk_liststore.h"
 
 #include "x11dialg.h"
