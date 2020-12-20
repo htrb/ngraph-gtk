@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6.08.07\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2020-11-18 16:55+0900\n"
+"POT-Creation-Date: 2020-12-11 11:55+0900\n"
 "PO-Revision-Date: 2020-10-22 15:28+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -15,15 +15,15 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: misc/ngraph-gtk.appdata.xml:8
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:8
 msgid "Ngraph-GTK"
 msgstr "Ngraph-GTK"
 
-#: misc/ngraph-gtk.appdata.xml:9
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:9
 msgid "create scientific 2-dimensional graphs"
 msgstr "科学技術用 2D グラフ作成"
 
-#: misc/ngraph-gtk.appdata.xml:11 src/gtk/x11graph.c:1256
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:11 src/gtk/x11graph.c:1256
 msgid ""
 "Ngraph is the program to create scientific 2-dimensional graphs for "
 "researchers and engineers."
@@ -31,13 +31,13 @@ msgstr ""
 "Ngraph は理工系学生、研究者、技術者のために作られた２次元グラフ作成プログラム"
 "です。"
 
-#: misc/ngraph-gtk.appdata.xml:12
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:12
 msgid "Graphs can be exported to PostScript, SVG, PNG or PDF format."
 msgstr ""
 "作成したグラフは、PostScript、SVG、PNGまたはPDF形式にエクスポートすることがで"
 "きます。"
 
-#: misc/ngraph-gtk.appdata.xml:20
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:20
 msgid "Main application window"
 msgstr "アプリケーションウィンドウ"
 
@@ -410,7 +410,7 @@ msgstr "背景色(_B):"
 
 #: src/gtk/x11axis.c:406 src/gtk/x11axis.c:3290 src/gtk/x11axis.c:3311
 #: src/gtk/x11axis.c:3344 src/gtk/x11lgnd.c:3064 src/gtk/x11lgnd.c:3075
-#: src/gtk/x11lgnd.c:3504 src/gtk/gtk_widget.c:946
+#: src/gtk/x11lgnd.c:3504 src/gtk/gtk_widget.c:947
 msgid "Color"
 msgstr "色"
 
@@ -494,7 +494,7 @@ msgstr "参照軸(_R):"
 msgid "_Auto scale margin:"
 msgstr "自動スケール余白(_A):"
 
-#: src/gtk/x11axis.c:1334 src/gtk/x11axis.c:3361 src/oparameter.c:36
+#: src/gtk/x11axis.c:1334 src/gtk/x11axis.c:3361 src/oparameter.c:37
 msgid "Scale"
 msgstr "スケール"
 
@@ -843,7 +843,7 @@ msgid "auto"
 msgstr "自動"
 
 #: src/gtk/x11dialg.c:119 src/gtk/x11merge.c:52 src/gtk/x11opt.c:447
-#: src/odata.c:232
+#: src/odata.c:233
 msgid "file"
 msgstr "ファイル"
 
@@ -855,7 +855,7 @@ msgstr "マーク選択"
 msgid "function"
 msgstr "関数"
 
-#: src/gtk/x11dialg.c:131 src/odata.c:233
+#: src/gtk/x11dialg.c:131 src/odata.c:234
 msgid "array"
 msgstr "配列"
 
@@ -875,7 +875,7 @@ msgstr "変換数式"
 msgid "math text"
 msgstr "数式入力"
 
-#: src/gtk/x11dialg.c:152 src/odata.c:266
+#: src/gtk/x11dialg.c:152 src/odata.c:267
 msgid "fit"
 msgstr "フィット"
 
@@ -1470,11 +1470,11 @@ msgstr "データファイル作成中"
 msgid "Join"
 msgstr "ジョイン"
 
-#: src/gtk/x11file.c:5912 src/gtk/x11lgnd.c:3040 src/gtk/gtk_widget.c:953
+#: src/gtk/x11file.c:5912 src/gtk/x11lgnd.c:3040 src/gtk/gtk_widget.c:954
 msgid "Color 1"
 msgstr "色 1"
 
-#: src/gtk/x11file.c:5919 src/gtk/x11lgnd.c:3041 src/gtk/gtk_widget.c:960
+#: src/gtk/x11file.c:5919 src/gtk/x11lgnd.c:3041 src/gtk/gtk_widget.c:961
 msgid "Color 2"
 msgstr "色 2"
 
@@ -2733,27 +2733,27 @@ msgstr "削除"
 msgid "Add"
 msgstr "追加"
 
-#: src/gtk/gtk_widget.c:182
+#: src/gtk/gtk_widget.c:183
 msgid "_Copy Settings"
 msgstr "設定のコピー(_C)"
 
-#: src/gtk/gtk_widget.c:932
+#: src/gtk/gtk_widget.c:933
 msgid "Stroke Color"
 msgstr "ストローク色"
 
-#: src/gtk/gtk_widget.c:939
+#: src/gtk/gtk_widget.c:940
 msgid "Fill Color"
 msgstr "塗りつぶし色"
 
-#: src/gtk/gtk_widget.c:967
+#: src/gtk/gtk_widget.c:968
 msgid "Axis baseline color"
 msgstr "軸基線の色"
 
-#: src/gtk/gtk_widget.c:974
+#: src/gtk/gtk_widget.c:975
 msgid "Axis gauge color"
 msgstr "目盛線の色"
 
-#: src/gtk/gtk_widget.c:981
+#: src/gtk/gtk_widget.c:982
 msgid "Axis numbering color"
 msgstr "目盛数字の色"
 
@@ -2765,19 +2765,19 @@ msgstr "開く"
 msgid "Instance name"
 msgstr "インスタンス名"
 
-#: src/gtk/gtk_liststore.c:162 src/gtk/gtk_presettings.c:1823
+#: src/gtk/gtk_liststore.c:163 src/gtk/gtk_presettings.c:1823
 msgid "Bold"
 msgstr "太字"
 
-#: src/gtk/gtk_liststore.c:163 src/gtk/gtk_presettings.c:1826
+#: src/gtk/gtk_liststore.c:164 src/gtk/gtk_presettings.c:1826
 msgid "Italic"
 msgstr "斜体"
 
-#: src/gtk/gtk_liststore.c:269
+#: src/gtk/gtk_liststore.c:270
 msgid "Line style"
 msgstr "線種"
 
-#: src/gtk/gtk_presettings.c:1748 src/odata.c:247 src/opath.c:81
+#: src/gtk/gtk_presettings.c:1748 src/odata.c:248 src/opath.c:81
 msgid "line"
 msgstr "直線"
 
@@ -5561,7 +5561,7 @@ msgid "bevel"
 msgstr "斜結合"
 
 #: src/gtk/data/gtk/menus-tool.ui:47 src/gtk/data/gtk/menus-tool.ui:76
-#: src/odraw.c:89 src/odata.c:252
+#: src/odraw.c:89 src/odata.c:253
 msgid "arrow"
 msgstr "矢印"
 
@@ -5571,7 +5571,7 @@ msgid "wave"
 msgstr "波型"
 
 #: src/gtk/data/gtk/menus-tool.ui:57 src/gtk/data/gtk/menus-tool.ui:86
-#: src/odraw.c:91 src/odata.c:246
+#: src/odraw.c:91 src/odata.c:247
 msgid "mark"
 msgstr "マーク"
 
@@ -5899,87 +5899,87 @@ msgstr "指数関数"
 msgid "user"
 msgstr "ユーザ定義"
 
-#: src/odata.c:234
+#: src/odata.c:235
 msgid "range"
 msgstr "範囲"
 
-#: src/odata.c:239
+#: src/odata.c:240
 msgid "simple"
 msgstr "単純移動平均"
 
-#: src/odata.c:240
+#: src/odata.c:241
 msgid "weighted"
 msgstr "加重移動平均"
 
-#: src/odata.c:241
+#: src/odata.c:242
 msgid "exponential"
 msgstr "指数移動平均"
 
-#: src/odata.c:248
+#: src/odata.c:249
 msgid "polygon"
 msgstr "多角形"
 
-#: src/odata.c:249
+#: src/odata.c:250
 msgid "polygon_solid_fill"
 msgstr "実多角形"
 
-#: src/odata.c:250 src/opath.c:82
+#: src/odata.c:251 src/opath.c:82
 msgid "curve"
 msgstr "曲線"
 
-#: src/odata.c:251
+#: src/odata.c:252
 msgid "diagonal"
 msgstr "対角線"
 
-#: src/odata.c:253
+#: src/odata.c:254
 msgid "rectangle"
 msgstr "矩形"
 
-#: src/odata.c:254
+#: src/odata.c:255
 msgid "rectangle_fill"
 msgstr "塗りつぶし矩形"
 
-#: src/odata.c:255
+#: src/odata.c:256
 msgid "rectangle_solid_fill"
 msgstr "実矩形"
 
-#: src/odata.c:256
+#: src/odata.c:257
 msgid "errorbar_x"
 msgstr "横誤差棒"
 
-#: src/odata.c:257
+#: src/odata.c:258
 msgid "errorbar_y"
 msgstr "縦誤差棒"
 
-#: src/odata.c:258
+#: src/odata.c:259
 msgid "staircase_x"
 msgstr "縦階段"
 
-#: src/odata.c:259
+#: src/odata.c:260
 msgid "staircase_y"
 msgstr "横階段"
 
-#: src/odata.c:260
+#: src/odata.c:261
 msgid "bar_x"
 msgstr "空横棒"
 
-#: src/odata.c:261
+#: src/odata.c:262
 msgid "bar_y"
 msgstr "空縦棒"
 
-#: src/odata.c:262
+#: src/odata.c:263
 msgid "bar_fill_x"
 msgstr "塗りつぶし横棒"
 
-#: src/odata.c:263
+#: src/odata.c:264
 msgid "bar_fill_y"
 msgstr "塗りつぶし縦棒"
 
-#: src/odata.c:264
+#: src/odata.c:265
 msgid "bar_solid_fill_x"
 msgstr "実横棒"
 
-#: src/odata.c:265
+#: src/odata.c:266
 msgid "bar_solid_fill_y"
 msgstr "実縦棒"
 
@@ -5996,31 +5996,31 @@ msgstr "偶奇"
 msgid "winding_rule"
 msgstr "ワインディング"
 
-#: src/oparameter.c:35
+#: src/oparameter.c:36
 msgid "SpinButton"
 msgstr "スピンボタン"
 
-#: src/oparameter.c:37
+#: src/oparameter.c:38
 msgid "CheckButton"
 msgstr "チェックボタン"
 
-#: src/oparameter.c:38
+#: src/oparameter.c:39
 msgid "Switch"
 msgstr "スイッチ"
 
-#: src/oparameter.c:39
+#: src/oparameter.c:40
 msgid "ComboBox"
 msgstr "コンボボックス"
 
-#: src/oparameter.c:40
+#: src/oparameter.c:41
 msgid "Transition"
 msgstr "遷移"
 
-#: src/oparameter.c:45
+#: src/oparameter.c:46
 msgid "start"
 msgstr "開始"
 
-#: src/oparameter.c:46
+#: src/oparameter.c:47
 msgid "stop"
 msgstr "終了"
 
