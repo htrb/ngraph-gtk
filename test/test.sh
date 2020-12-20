@@ -18,5 +18,5 @@ skip_on_ubuntu() {
 
 exec_script() {
 	script=`basename $1 .sh`.nsc
-	LANG=ja_JP.utf8 $NGRAPH -i $script
+	LC_ALL=C.UTF-8 $NGRAPH -i $script
 }
