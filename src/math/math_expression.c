@@ -2149,7 +2149,7 @@ compare_string(MathExpression *left, MathExpression *right, int equal, MathValue
   if (left == NULL || right == NULL) {
     return 1;
   }
-  result = g_strcmp0(lstr, rstr);
+  result = g_strcmp0(lstr, rstr) ? 1 : 0;
   val->val = (equal) ? ! result : result;
   return 0;
 }
