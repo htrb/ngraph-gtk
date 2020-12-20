@@ -3540,7 +3540,7 @@ int
 math_func_string_compare(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   const char *str1, *str2;
-  int ignore_case;
+  int ignore_case, result;
 
   rval->val = 0;
   rval->type = MATH_VALUE_NORMAL;
@@ -3554,9 +3554,16 @@ math_func_string_compare(MathFunctionCallExpression *exp, MathEquation *eq, Math
   ignore_case = exp->buf[2].val.val;
 
   if (ignore_case) {
-    rval->val = g_ascii_strcasecmp(str1, str2);
+    result = g_ascii_strcasecmp(str1, str2);
   } else {
-    rval->val = strcmp(str1, str2);
+    result = strcmp(str1, str2);
+  }
+  if (result < 0) {
+    rval->val = -1;
+  } else if (result > 0) {
+    rval->val = 1;
+  } else {
+    rval->val = 0;
   }
   return 0;
 }
