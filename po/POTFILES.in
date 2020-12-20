@@ -1,5 +1,5 @@
 # List of source files which contain translatable strings.
-misc/ngraph-gtk.appdata.xml
+misc/com.github.htrb.ngraph-gtk.metainfo.xml
 src/gtk/ox11menu.c
 src/gtk/ox11dlg.c
 src/gtk/ogra2cairo.c
