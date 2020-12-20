@@ -2,8 +2,8 @@
 <component type="desktop">
   <id>com.github.htrb.ngraph-gtk</id>
   <launchable type="desktop-id">ngraph.desktop</launchable>
-  <metadata_license>GPL-2.0+</metadata_license>
-  <project_license>GPL-2.0+</project_license>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-2+</project_license>
   <translation type="gettext">ngraph-gtk</translation>
   <name>Ngraph-GTK</name>
   <summary>create scientific 2-dimensional graphs</summary>
