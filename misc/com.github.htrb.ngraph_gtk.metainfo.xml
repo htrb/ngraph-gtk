@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop">
-  <id>com.github.htrb.ngraph-gtk</id>
-  <launchable type="desktop-id">ngraph.desktop</launchable>
+  <id>com.github.htrb.ngraph_gtk</id>
+  <launchable type="desktop-id">com.github.htrb.ngraph_gtk.desktop</launchable>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-2+</project_license>
   <translation type="gettext">ngraph-gtk</translation>
