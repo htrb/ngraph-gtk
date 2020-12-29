@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6.08.07\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2020-12-26 14:46+0900\n"
-"PO-Revision-Date: 2020-10-22 15:28+0900\n"
+"POT-Creation-Date: 2020-12-29 15:16+0900\n"
+"PO-Revision-Date: 2020-12-29 15:17+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja\n"
@@ -15,15 +15,15 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: misc/com.github.htrb.ngraph_gtk.metainfo.xml:8
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:9
 msgid "Ngraph-GTK"
 msgstr "Ngraph-GTK"
 
-#: misc/com.github.htrb.ngraph_gtk.metainfo.xml:9
-msgid "create scientific 2-dimensional graphs"
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:10
+msgid "Create scientific 2-dimensional graphs"
 msgstr "科学技術用 2D グラフ作成"
 
-#: misc/com.github.htrb.ngraph_gtk.metainfo.xml:11 src/gtk/x11graph.c:1256
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:12 src/gtk/x11graph.c:1256
 msgid ""
 "Ngraph is the program to create scientific 2-dimensional graphs for "
 "researchers and engineers."
@@ -31,13 +31,13 @@ msgstr ""
 "Ngraph は理工系学生、研究者、技術者のために作られた２次元グラフ作成プログラム"
 "です。"
 
-#: misc/com.github.htrb.ngraph_gtk.metainfo.xml:12
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:13
 msgid "Graphs can be exported to PostScript, SVG, PNG or PDF format."
 msgstr ""
 "作成したグラフは、PostScript、SVG、PNGまたはPDF形式にエクスポートすることがで"
 "きます。"
 
-#: misc/com.github.htrb.ngraph_gtk.metainfo.xml:20
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:22
 msgid "Main application window"
 msgstr "アプリケーションウィンドウ"
 
