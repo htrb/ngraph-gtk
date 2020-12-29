@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2008 Hiroyuki Ito <zxb01226@gmail.com> -->
 <component type="desktop">
-  <id>com.github.htrb.ngraph_gtk</id>
-  <launchable type="desktop-id">com.github.htrb.ngraph_gtk.desktop</launchable>
+  <id>com.github.htrb.ngraph-gtk</id>
+  <launchable type="desktop-id">com.github.htrb.ngraph-gtk.desktop</launchable>
   <metadata_license>CC0-1.0</metadata_license>
-  <project_license>GPL-2+</project_license>
+  <project_license>GPL-2.0+</project_license>
   <translation type="gettext">ngraph-gtk</translation>
   <name>Ngraph-GTK</name>
-  <summary>create scientific 2-dimensional graphs</summary>
+  <summary>Create scientific 2-dimensional graphs</summary>
   <description>
     <p>Ngraph is the program to create scientific 2-dimensional graphs for researchers and engineers.</p>
     <p>Graphs can be exported to PostScript, SVG, PNG or PDF format.</p>
@@ -14,9 +15,10 @@
   <url type="homepage">http://hito.music.coocan.jp/ngraph/ngraph-gtk.html</url>
   <url type="bugtracker">https://github.com/htrb/ngraph-gtk/issues</url>
   <url type="help">https://htrb.github.io/ngraph-gtk/manual/</url>
+  <update_contact>ZXB01226_at_nifty.com</update_contact>
   <screenshots>
     <screenshot type="default">
-      <image>http://hito.music.coocan.jp/ngraph/ngraph_607_linux.png</image>
+      <image>http://hito.music.coocan.jp/ngraph/ngraph_609_linux.png</image>
       <caption>Main application window</caption>
     </screenshot>
   </screenshots>
