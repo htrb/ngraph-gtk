@@ -869,7 +869,7 @@ DirectoryDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_widget_set_hexpand(w, TRUE);
     gtk_widget_set_halign(w, GTK_ALIGN_START);
     g_object_set(w, "margin", GINT_TO_POINTER(4), NULL);
-    gtk_grid_attach(GTK_GRID(table), w, 1, 2, 1, 1);
+    gtk_grid_attach(GTK_GRID(table), w, 1, 1, 1, 1);
 
     gtk_box_pack_start(GTK_BOX(d->vbox), table, FALSE, FALSE, 4);
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
