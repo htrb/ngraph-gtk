@@ -5,7 +5,7 @@ if (ENV['NGRAPH_APP_CONTENTS'])
 else
   bin_path = File.dirname(File.dirname(File.dirname(rb_path))) + "/bin"
 end
-  
+
 ENV['PATH'] += ":#{bin_path}" unless (ENV['PATH'].index(bin_path))
 if (require "#{rb_path}/ngraph.bundle")
   Ngraph::ngraph_initialize(bin_path + "/Ngaph-GTK")
