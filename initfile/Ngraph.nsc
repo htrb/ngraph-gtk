@@ -72,7 +72,7 @@ clear_viewer() {
 copy_gra_settings() {
     if exist -q gra:viewer
     then
-	cpy gra:viewer,$1 draw_obj left_margin top_margin zoom paper_width paper_height
+	cpy gra:viewer,$1 draw_obj left_margin top_margin zoom paper_width paper_height decimalsign
     fi
 }
 
