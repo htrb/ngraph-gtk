@@ -458,18 +458,11 @@ n_gstr_printf_double(GString *num, const char *format, double val)
 void
 n_gstr_append_printf_double(GString *num, const char *format, double val)
 {
-  int decimalsign;
   char *str;
 
-  decimalsign = get_decimalsign();
-  str = g_strdup_printf(format, val);
+  str = n_strdup_printf_double(format, val);
   if (str == NULL) {
     return;
-  }
-  switch (decimalsign) {
-  case ',':
-    replace_period(str, decimalsign);
-    break;
   }
   g_string_append(num, str);
   g_free(str);
