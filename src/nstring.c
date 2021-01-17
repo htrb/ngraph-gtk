@@ -57,6 +57,32 @@ get_decimalsign(void)
   return Decimalsign;
 }
 
+enum GRA_DECIMALSIGN_TYPE
+get_gra_decimalsign_type(int decimalsign)
+{
+  enum GRA_DECIMALSIGN_TYPE gra_decimalsign = GRA_DECIMALSIGN_TYPE_PERIOD;
+  switch (decimalsign) {
+  case DECIMALSIGN_TYPE_LOCALE:
+    switch (SystemDecimalsign) {
+    case ',':
+      gra_decimalsign = GRA_DECIMALSIGN_TYPE_COMMA;
+      break;
+    default:
+      gra_decimalsign = GRA_DECIMALSIGN_TYPE_PERIOD;
+      break;
+    }
+    break;
+  case DECIMALSIGN_TYPE_COMMA:
+    gra_decimalsign = GRA_DECIMALSIGN_TYPE_COMMA;
+    break;
+  case DECIMALSIGN_TYPE_PERIOD:
+  default:
+    gra_decimalsign = GRA_DECIMALSIGN_TYPE_PERIOD;
+    break;
+  }
+  return gra_decimalsign;
+}
+
 int
 set_decimalsign(enum DECIMALSIGN_TYPE decimalsign)
 {
