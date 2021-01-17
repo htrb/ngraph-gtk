@@ -531,7 +531,7 @@ add_printf_formated_str(GString *str, const char *format, const char *arg, int *
     if (arg) {
       vd = strtod(arg,&endptr);
     }
-    buf = g_strdup_printf(format2, vd);
+    buf = n_strdup_printf_double(format2, vd);
     if (pow) {
       char *new_buf;
       new_buf = str_to_pow(buf);
