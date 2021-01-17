@@ -3486,7 +3486,7 @@ get_value_from_str(char *po, char *po2, int *type)
 
   ch = *po2;
   *po2 = '\0';
-  val = strtod(po, &endptr);
+  val = my_strtod(po, &endptr);
   *po2 = ch;
   if (endptr >= po2) {
     if (check_infinite(val)) {
