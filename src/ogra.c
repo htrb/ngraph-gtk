@@ -435,6 +435,7 @@ oGRAdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
     return 1;
   }
 
+  set_gra_decimalsign(obj, inst);
   layer = GRAlayer_support(GC);
   _getobj(obj,"draw_obj",inst,&array);
   oGRAargv[0]=(char *)&GC;
