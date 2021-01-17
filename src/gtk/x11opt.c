@@ -1021,6 +1021,7 @@ MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
     gtk_source_style_scheme_chooser_set_style_scheme(GTK_SOURCE_STYLE_SCHEME_CHOOSER(d->source_style),
                                                      style);
   }
+  combo_box_set_active(d->decimalsign, Menulocal.default_decimalsign);
 }
 
 static void
