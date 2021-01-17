@@ -37,6 +37,7 @@
 #include "mathfn.h"
 #include "gra.h"
 #include "ogra.h"
+#include "ogra_error.h"
 
 #include "math/math_equation.h"
 
