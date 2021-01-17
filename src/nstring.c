@@ -52,6 +52,12 @@ set_system_decimalsign(int decimalsign)
 }
 
 int
+get_decimalsign(void)
+{
+  return Decimalsign;
+}
+
+int
 set_decimalsign(enum DECIMALSIGN_TYPE decimalsign)
 {
   switch (decimalsign) {
