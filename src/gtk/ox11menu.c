@@ -1004,6 +1004,9 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   if (mgtkloadconfig())
     goto errexit;
 
+  Menulocal.Decimalsign = get_gra_decimalsign_type(Menulocal.default_decimalsign);
+  gra_set_default_decimalsign(Menulocal.Decimalsign);
+
   gra2cairo_set_antialias(Menulocal.local, Menulocal.antialias);
   if (_putobj(obj, "antialias", inst, &(Menulocal.antialias)))
     goto errexit;
