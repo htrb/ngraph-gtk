@@ -21,6 +21,8 @@
  *
  */
 #include "nhash.h"
+#include "ogra.h"
+#include "nstring.h"
 
 #ifndef _O_X11_MENU_HEADER
 #define _O_X11_MENU_HEADER
@@ -89,6 +91,8 @@ struct menulocal
   int GRAoid;
   int GC;
   int PaperWidth, PaperHeight, PaperLandscape;
+  enum GRA_DECIMALSIGN_TYPE Decimalsign;
+  enum DECIMALSIGN_TYPE default_decimalsign;
   char *PaperName;
   enum paper_id PaperId;
   int LeftMargin, TopMargin;
