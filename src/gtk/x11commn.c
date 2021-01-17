@@ -241,6 +241,7 @@ SetPageSettingsToGRA(void)
     putobj(obj, "left_margin", id, &(Menulocal.LeftMargin));
     putobj(obj, "top_margin", id, &(Menulocal.TopMargin));
     putobj(obj, "zoom", id, &(Menulocal.PaperZoom));
+    putobj(obj, "decimalsign", id, &(Menulocal.Decimalsign));
 
     _getobj(obj, "draw_obj", inst, &drawrable);
 
