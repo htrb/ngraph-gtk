@@ -204,6 +204,14 @@ PageDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, _("paper _Zoom:"), FALSE, i++);
     d->paperzoom = w;
 
+    w = combo_box_create();
+    gtk_widget_set_hexpand(w, TRUE);
+    add_widget_to_table(table, w, _("_Decimalsign:"), FALSE, i++);
+    for (j = 0; gra_decimalsign_char[j]; j++) {
+      combo_box_append_text(w, _(gra_decimalsign_char[j]));
+    }
+    d->decimalsign = w;
+
     gtk_box_pack_start(GTK_BOX(d->vbox), table, FALSE, FALSE, 4);
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
