@@ -387,6 +387,7 @@ init_graobj(struct objlist *graobj, int id, char *dev_name, int dev_oid)
   putobj(graobj, "left_margin", id, &(Menulocal.LeftMargin));
   putobj(graobj, "top_margin", id, &(Menulocal.TopMargin));
   putobj(graobj, "zoom", id, &(Menulocal.PaperZoom));
+  putobj(graobj, "decimalsign", id, &(Menulocal.Decimalsign));
   if (arraynum(&(Menulocal.drawrable)) > 0) {
     unsigned int i, n;
     drawrable = arraynew(sizeof(char *));
