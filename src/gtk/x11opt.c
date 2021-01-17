@@ -1276,6 +1276,13 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, _("_Source style:"), FALSE, i++);
     d->source_style = w;
 
+    w = combo_box_create();
+    add_widget_to_table(table, w, _("_Default decimalsign:"), FALSE, i++);
+    for (j = 0; decimalsign_char[j]; j++) {
+      combo_box_append_text(w, _(decimalsign_char[j]));
+    }
+    d->decimalsign = w;
+
     gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(vbox2), frame, TRUE, TRUE, 4);
 
