@@ -47,8 +47,8 @@ void
 set_system_decimalsign(int decimalsign)
 {
   if (isprint(decimalsign)) {
-      SystemDecimalsign = decimalsign;
-    }
+    SystemDecimalsign = decimalsign;
+  }
 }
 
 int
