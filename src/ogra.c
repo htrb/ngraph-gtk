@@ -480,6 +480,7 @@ static struct objtable GRA[] = {
   {"zoom",NINT,NREAD|NWRITE,oGRAputtopm,NULL,0},
   {"paper_width",NINT,NREAD|NWRITE,oGRAputtopm,NULL,0},
   {"paper_height",NINT,NREAD|NWRITE,oGRAputtopm,NULL,0},
+  {"decimalsign",NENUM,NREAD|NWRITE,NULL,gra_decimalsign_char,0},
   {"draw_obj",NSARRAY,NREAD|NWRITE,NULL,NULL,0},
   {"GC",NINT,NREAD,NULL,NULL,0},
   {"redraw",NVFUNC,NREAD|NEXEC,oGRAredraw,"",0},
