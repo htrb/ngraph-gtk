@@ -1,7 +1,13 @@
-#define ERROPEN 100
-#define ERRBUSY 101
-#define ERRALOPEN 102
-#define ERRNODEVICE 103
-#define ERRILGC 104
-#define ERRGRABUSY 105
-#define ERRGRACLOSE 106
+#ifndef OGRA_HEADER
+#define OGRA_HEADER
+
+extern char *gra_decimalsign_char[];
+
+enum GRA_DECIMALSIGN_TYPE {
+  GRA_DECIMALSIGN_TYPE_PERIOD,
+  GRA_DECIMALSIGN_TYPE_COMMA,
+};
+
+void gra_set_default_decimalsign(enum GRA_DECIMALSIGN_TYPE decimalsign);
+
+#endif

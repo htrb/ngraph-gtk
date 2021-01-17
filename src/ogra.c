@@ -35,6 +35,7 @@
 #include "ogra.h"
 #include "ogra_error.h"
 #include "gra.h"
+#include "nstring.h"
 
 #define NAME "gra"
 #define PARENT "object"
@@ -52,8 +53,22 @@ static char *GRAerrorlist[]={
 
 #define ERRNUM (sizeof(GRAerrorlist) / sizeof(*GRAerrorlist))
 
+char *gra_decimalsign_char[]={
+  N_("period"),
+  N_("comma"),
+  NULL
+};
+
+static enum GRA_DECIMALSIGN_TYPE DefaultDecimalsign = GRA_DECIMALSIGN_TYPE_PERIOD;
+
 static void set_progress_val(int i, int n, const char *name);
 static int oGRAclose(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv);
+
+void
+gra_set_default_decimalsign(enum GRA_DECIMALSIGN_TYPE decimalsign)
+{
+  DefaultDecimalsign = decimalsign;
+}
 
 static int
 oGRAinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
