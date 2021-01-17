@@ -308,6 +308,22 @@ oGRAclose(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return close_gc(obj, inst, GC);
 }
 
+static void
+set_gra_decimalsign(struct objlist *obj, N_VALUE *inst)
+{
+  enum GRA_DECIMALSIGN_TYPE decimalsign;
+
+  _getobj(obj, "decimalsign", inst, &decimalsign);
+  switch (decimalsign) {
+  case GRA_DECIMALSIGN_TYPE_PERIOD:
+    set_decimalsign(DECIMALSIGN_TYPE_PERIOD);
+    break;
+  case GRA_DECIMALSIGN_TYPE_COMMA:
+    set_decimalsign(DECIMALSIGN_TYPE_COMMA);
+    break;
+  }
+}
+
 static int
 oGRAredraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
