@@ -134,6 +134,7 @@ PageDialogSetupItem(GtkWidget *w, struct PageDialog *d)
   j = set_paper_type(Menulocal.PaperWidth, Menulocal.PaperHeight);
 
   combo_box_set_active(d->paper, j);
+  combo_box_set_active(d->decimalsign, Menulocal.Decimalsign);
 }
 
 static void
