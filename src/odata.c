@@ -3445,6 +3445,34 @@ f2dput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval, int argc,char **argv)
 }
 
 static double
+my_strtod(char *po, char **endptr)
+{
+  char *decimalsign_ptr;
+  double val;
+  int decimalsign;
+
+  decimalsign = get_decimalsign();
+  decimalsign_ptr = NULL;
+  switch (decimalsign) {
+  case ',':
+    decimalsign_ptr = strchr(po, ',');
+    if (decimalsign_ptr) {
+      *decimalsign_ptr = '.';
+    }
+    break;
+  }
+  val = strtod(po, endptr);
+  switch (decimalsign) {
+  case ',':
+    if (decimalsign_ptr) {
+      *decimalsign_ptr = ',';
+    }
+    break;
+  }
+  return val;
+}
+
+static double
 get_value_from_str(char *po, char *po2, int *type)
 {
   char *endptr;
