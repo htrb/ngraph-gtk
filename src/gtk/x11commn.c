@@ -1278,7 +1278,7 @@ GraphSave(int overwrite)
       char mes[256];
       snprintf(mes, sizeof(mes), _("Saving `%.128s'."), file);
       SetStatusBar(mes);
-      if(SaveDrawrable(file, sdata, smerge)) {
+      if(SaveDrawrable(file, sdata, smerge, TRUE)) {
 	ret = IDCANCEL;
       } else {
 	switch (path) {
