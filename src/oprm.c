@@ -46,6 +46,7 @@
 #include "odraw.h"
 #include "odata.h"
 #include "opath.h"
+#include "ogra.h"
 
 #define NAME "prm"
 #define PARENT "object"
@@ -458,7 +459,7 @@ prmload(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   char *file;
   FILE *fp,*fp2;
-  int i,j,k,filetype,num,ignorepath;
+  int i,j,k,filetype,num,ignorepath,decimalsign;
   struct objlist *fobj,*fitobj,*aobj,*agdobj;
   struct objlist *pobj,*mobj,*tobj,*robj;
   struct objlist *mgobj,*gobj,*cmobj;
@@ -794,6 +795,8 @@ prmload(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   vy*=10;
   szx*=10;
   szy*=10;
+  decimalsign=GRA_DECIMALSIGN_TYPE_PERIOD;
+  putobj(gobj,"decimalsign",gid,&decimalsign);
   putobj(gobj,"top_margin",gid,&d1);
   putobj(gobj,"left_margin",gid,&d2);
   d3=d3*10000/21000;
