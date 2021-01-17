@@ -33,6 +33,7 @@
 #include "object.h"
 #include "ioutil.h"
 #include "ogra.h"
+#include "ogra_error.h"
 #include "gra.h"
 
 #define NAME "gra"
