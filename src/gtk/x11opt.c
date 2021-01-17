@@ -1747,7 +1747,7 @@ CmOptionSaveNgp(void *w, gpointer client_data)
 
   snprintf(mes, sizeof(mes), _("Saving `%.128s'."), ngpfile);
   SetStatusBar(mes);
-  SaveDrawrable(ngpfile, FALSE, FALSE);
+  SaveDrawrable(ngpfile, FALSE, FALSE, FALSE);
   ResetStatusBar();
   g_free(ngpfile);
   return;
