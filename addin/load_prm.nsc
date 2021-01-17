@@ -45,6 +45,7 @@ then
     then
 	gra:viewer:close
 	cpy gra:!,viewer draw_obj left_margin top_margin zoom paper_width paper_height
+	gra:viewer:decimalsign=period
 	gra:viewer:open
     fi
     menu::fullpath_ngp="$DIR/$NAME".ngp
