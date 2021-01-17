@@ -73,18 +73,20 @@ gra_set_default_decimalsign(enum GRA_DECIMALSIGN_TYPE decimalsign)
 static int
 oGRAinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
-  int GC,width,height,zoom;
+  int GC,width,height,zoom, decimalsign;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   GC=-1;
   width=21000;
   height=29700;
   zoom=10000;
+  decimalsign = DefaultDecimalsign;
   if (_putobj(obj,"open",inst,&GC)) return 1;
   if (_putobj(obj,"GC",inst,&GC)) return 1;
   if (_putobj(obj,"zoom",inst,&zoom)) return 1;
   if (_putobj(obj,"paper_width",inst,&width)) return 1;
   if (_putobj(obj,"paper_height",inst,&height)) return 1;
+  if (_putobj(obj, "decimalsign", inst, &decimalsign)) return 1;
   return 0;
 }
 
