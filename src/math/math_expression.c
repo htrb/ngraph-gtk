@@ -2034,7 +2034,7 @@ val2str(MathValue *val)
 
   tmp = math_special_value_to_string(val);
   if (tmp == NULL) {
-    str = g_strdup_printf("%G", val->val);
+    str = n_strdup_printf_double("%G", val->val);
   } else {
     str = g_strdup(tmp);
   }
