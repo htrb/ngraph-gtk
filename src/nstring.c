@@ -51,6 +51,23 @@ set_system_decimalsign(int decimalsign)
     }
 }
 
+int
+set_decimalsign(enum DECIMALSIGN_TYPE decimalsign)
+{
+  switch (decimalsign) {
+  case DECIMALSIGN_TYPE_LOCALE:
+    Decimalsign = SystemDecimalsign;
+    break;
+  case DECIMALSIGN_TYPE_PERIOD:
+    Decimalsign = '.';
+    break;
+  case DECIMALSIGN_TYPE_COMMA:
+    Decimalsign = ',';
+    break;
+  }
+  return Decimalsign;
+}
+
 char *
 nstrnew(void)
 {
