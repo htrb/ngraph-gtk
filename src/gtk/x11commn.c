@@ -891,6 +891,8 @@ DeleteDrawable(void)
     delete_instances(prmobj);
   }
   set_toolbox_mode(TOOLBOX_MODE_TOOLBAR);
+  Menulocal.Decimalsign = get_gra_decimalsign_type(Menulocal.default_decimalsign);
+  gra_set_default_decimalsign(Menulocal.Decimalsign);
 }
 
 static void
