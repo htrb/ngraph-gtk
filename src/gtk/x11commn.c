@@ -149,6 +149,8 @@ CheckPage(void)
 	  &(Menulocal.TopMargin));
   _getobj(Menulocal.GRAobj, "zoom", gra_inst,
 	  &(Menulocal.PaperZoom));
+  _getobj(Menulocal.GRAobj, "decimalsign", gra_inst,
+	  &(Menulocal.Decimalsign));
 
   set_paper_type(Menulocal.PaperWidth, Menulocal.PaperHeight);
 }
