@@ -1115,7 +1115,7 @@ SaveParent(int hFile, struct objlist *parent, int storedata,
 }
 
 int
-SaveDrawrable(char *name, int storedata, int storemerge)
+SaveDrawrable(char *name, int storedata, int storemerge, int save_decimalsign)
 {
   int hFile;
   int error;
@@ -1159,6 +1159,10 @@ SaveDrawrable(char *name, int storedata, int storemerge)
 	  arrayinit(&sarray, sizeof(char *));
 	  opt = "device";
 	  arrayadd(&sarray, &opt);
+	  if (! save_decimalsign) {
+	    opt = "decimalsign";
+	    arrayadd(&sarray, &opt);
+	  }
 	  arg[0] = (char *) &sarray;
 	  arg[1] = NULL;
 	  getobj(graobj, "save", id, 1, arg, &s);

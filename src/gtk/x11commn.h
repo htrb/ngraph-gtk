@@ -37,7 +37,7 @@ void FitDel(struct objlist *obj, int id);
 void ArrayDel(struct objlist *obj, int id);
 void FitClear(void);
 int LoadNgpFile(char *File, int console, char *option);
-int SaveDrawrable(char *name, int storedata, int storemerge);
+int SaveDrawrable(char *name, int storedata, int storemerge, int save_decimalsign);
 int GraphSave(int overwrite);
 void DeleteDrawable(void);
 void FileAutoScale(void);
