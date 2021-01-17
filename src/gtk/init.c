@@ -36,6 +36,7 @@
 #include <stdarg.h>
 #include <locale.h>
 #include <signal.h>
+#include <langinfo.h>
 
 #if OSX
 #include <gtkosxapplication.h>
@@ -895,6 +896,7 @@ n_initialize(int *argc, char ***argv)
 #ifdef HAVE_READLINE_READLINE_H
   int history_size = HIST_SIZE;
 #endif
+  struct lconv *lconv;
 
   if (Initialized) {
     return 0;
@@ -956,6 +958,11 @@ n_initialize(int *argc, char ***argv)
   locale = setlocale(LC_ALL, NULL);
   locale = g_strdup(CHK_STR(locale));
 #endif /* WINDOWS */
+  /* to use a period as a decimal separator */
+  lconv = localeconv();
+  set_system_decimalsign(lconv->mon_decimal_point[0]);
+  setlocale(LC_NUMERIC, "C");
+  setlocale(LC_MEASUREMENT, "C");
 
   libdir = g_strdup(LIBDIR);
   if (libdir == NULL)
