@@ -46,15 +46,15 @@ libngraph_la_SOURCES = axis.c axis.h nconfig.c nconfig.h gra.c gra.h	\
 	ioutil.c ioutil.h mathcode.c mathcode.h mathfn.c mathfn.h	\
 	nstring.c nstring.h ntime.c ntime.h oagrid.c oarc.c oarc.h	\
 	oaxis.h oaxis.c object.c object.h odarray.c odouble.c odraw.c	\
-	odraw.h odata.c odata.h ofit.c ofit.h ogra.c ogra.h ogra2.c	\
-	ogra2fil.c ogra2nul.c ogra2prn.c oiarray.c oiarray.h oint.c	\
-	olegend.c olegend.h omark.c omath.c omerge.c omerge.h oprm.c	\
-	orect.c oroot.c oroot.h osarray.c oshell.c oregexp.c		\
-	ostring.c osystem.c osystem.h otext.c opath.c opath.h shell.c	\
-	shell.h shell_error.h shellcm.c shellcm.h shellux.c shellux.h	\
-	spline.c spline.h common.h nhash.h nhash.c strconv.c		\
-	strconv.h oio.c gettext.h ngraph_api.c oparameter.c		\
-	oparameter.h
+	odraw.h odata.c odata.h ofit.c ofit.h ogra.c ogra.h		\
+	ogra_error.h ogra2.c ogra2fil.c ogra2nul.c ogra2prn.c		\
+	oiarray.c oiarray.h oint.c olegend.c olegend.h omark.c		\
+	omath.c omerge.c omerge.h oprm.c orect.c oroot.c oroot.h	\
+	osarray.c oshell.c oregexp.c ostring.c osystem.c osystem.h	\
+	otext.c opath.c opath.h shell.c shell.h shell_error.h		\
+	shellcm.c shellcm.h shellux.c shellux.h spline.c spline.h	\
+	common.h nhash.h nhash.c strconv.c strconv.h oio.c gettext.h	\
+	ngraph_api.c oparameter.c oparameter.h
 
 libngraph_la_CFLAGS = $(GTK_CFLAGS) $(GSL_CFLAGS) $(libngraph_cflags) -I$(top_builddir) -DCCNAME='"'$(CC)'"' $(GTKSOURCEVIEW_CFLAGS)
 libngraph_la_LIBADD = gtk/libngraphui.la math/libmath.la
