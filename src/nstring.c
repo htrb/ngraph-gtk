@@ -441,6 +441,20 @@ replace_period(char *buf, int decimalsign)
   }
 }
 
+void
+n_gstr_printf_double(GString *num, const char *format, double val)
+{
+  int decimalsign;
+
+  decimalsign = get_decimalsign();
+  g_string_printf(num, format, val);
+  switch (decimalsign) {
+  case ',':
+    replace_period(num->str, decimalsign);
+    break;
+  }
+}
+
 int
 add_printf_formated_str(GString *str, const char *format, const char *arg, int *len)
 {
