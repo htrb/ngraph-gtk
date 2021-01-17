@@ -338,6 +338,7 @@ oGRAredraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   if (device == NULL) {
     return 0;
   }
+  set_gra_decimalsign(obj, inst);
   if (((dobj=getobjlist(device,&did,&dfield,NULL))!=NULL)
       && ((dinst=chkobjinstoid(dobj,did))!=NULL)) {
     if (chkobjfield(dobj,field)==0) _exeobj(dobj,field,dinst,0,NULL);
