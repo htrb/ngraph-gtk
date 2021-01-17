@@ -622,7 +622,7 @@ add_printf_formated_double(GString *str, const char *format, MathValue *mval, in
     if (i > 2 && strncmp(format2 + i - 2, "ll", 2) == 0) {
       break;
     }
-    buf = g_strdup_printf(format2, val);
+    buf = n_strdup_printf_double(format2, val);
     if (pow) {
       char *new_buf;
       new_buf = str_to_pow(buf);
