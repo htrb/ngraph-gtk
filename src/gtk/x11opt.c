@@ -1426,6 +1426,8 @@ MiscDialogClose(GtkWidget *w, void *data)
     }
     Menulocal.source_style_id = g_strdup(source_style_id);
   }
+  Menulocal.default_decimalsign = combo_box_get_active(d->decimalsign);
+  gra_set_default_decimalsign(get_gra_decimalsign_type(Menulocal.default_decimalsign));
   if (d->ret == IDSAVE) {
     save_config(SAVE_CONFIG_TYPE_MISC);
   }
