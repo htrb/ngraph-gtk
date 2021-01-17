@@ -31,7 +31,7 @@ save_image() {
 
     if exist -q gra:viewer
     then
-	cpy gra:viewer,OUTPUT draw_obj left_margin top_margin zoom paper_width paper_height
+	cpy gra:viewer,OUTPUT draw_obj left_margin top_margin zoom paper_width paper_height decimalsign
     fi
 
     if exist -q fit:0
