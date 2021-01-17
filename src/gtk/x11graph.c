@@ -243,6 +243,7 @@ PageDialogClose(GtkWidget *wi, void *data)
   Menulocal.TopMargin = spin_entry_get_val(d->topmargin);
 
   Menulocal.PaperZoom = spin_entry_get_val(d->paperzoom);
+  Menulocal.Decimalsign = combo_box_get_active(d->decimalsign);
 }
 
 void
