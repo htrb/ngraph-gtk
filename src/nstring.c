@@ -637,7 +637,7 @@ add_printf_formated_double(GString *str, const char *format, MathValue *mval, in
     if (i > 1 && format2[i - 1] == 'l') {
       break;
     }
-    tmp = g_strdup_printf("%g", val);
+    tmp = n_strdup_printf_double("%g", val);
     if (tmp) {
       buf = g_strdup_printf(format2, tmp);
       g_free(tmp);
