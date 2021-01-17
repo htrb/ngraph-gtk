@@ -428,6 +428,19 @@ str_to_pow(const char *str)
   return g_string_free(pow_str, FALSE);
 }
 
+static void
+replace_period(char *buf, int decimalsign)
+{
+  char *ptr;
+  if (buf == NULL) {
+    return;
+  }
+  ptr = strchr(buf, '.');
+  if (ptr) {
+    *ptr = decimalsign;
+  }
+}
+
 int
 add_printf_formated_str(GString *str, const char *format, const char *arg, int *len)
 {
