@@ -99,6 +99,7 @@ OpenGRA(void)
     putobj(Menulocal.GRAobj, "left_margin", id, &(Menulocal.LeftMargin));
     putobj(Menulocal.GRAobj, "top_margin", id, &(Menulocal.TopMargin));
     putobj(Menulocal.GRAobj, "zoom", id, &(Menulocal.PaperZoom));
+    putobj(Menulocal.GRAobj, "decimalsign", id, &(Menulocal.Decimalsign));
     CheckPage();
   } else {
     /* find closed gra object */
