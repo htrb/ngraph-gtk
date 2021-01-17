@@ -1991,9 +1991,9 @@ get_axis_gauge_num_str(const char *format, double a, int no_flt_zero)
       }
     }
     format2[j] = '\0';
-    g_string_printf(num, format2, a);
+    n_gstr_printf_double(num, format2, a);
   } else {
-    g_string_printf(num, format, a);
+    n_gstr_printf_double(num, format, a);
   }
 
   len = num->len;
