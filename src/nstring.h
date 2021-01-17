@@ -25,9 +25,18 @@
 #define NSTRING_HEADER
 
 #include "math/math_equation.h"
+#include "ogra.h"
 
 #define STRLEN 256
 #define CHK_STR(s) (((s) == NULL) ? "" : (s))
+
+extern char *decimalsign_char[];
+
+enum DECIMALSIGN_TYPE {
+  DECIMALSIGN_TYPE_LOCALE,
+  DECIMALSIGN_TYPE_PERIOD,
+  DECIMALSIGN_TYPE_COMMA,
+};
 
 char *nstrnew(void);
 char *nstrccat(char *po,char ch);
@@ -44,5 +53,12 @@ char *getitok2(char **s, int *len, const char *ifs);
 int add_printf_formated_str(GString *str, const char *format, const char *arg, int *len);
 int add_printf_formated_double(GString *str, const char *format, MathValue *mval, int *len);
 char *n_locale_to_utf8(const char *s);
+enum GRA_DECIMALSIGN_TYPE get_gra_decimalsign_type(int decimalsign);
+int get_decimalsign(void);
+int set_decimalsign(enum DECIMALSIGN_TYPE decimalsign);
+void set_system_decimalsign(int decimalsign);
+void n_gstr_printf_double(GString *num, const char *format, double val);
+char *n_strdup_printf_double(const char *format, double val);
+void n_gstr_append_printf_double(GString *num, const char *format, double val);
 
 #endif

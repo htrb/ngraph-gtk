@@ -34,6 +34,23 @@
 
 #define NSTRLEN 0x400
 
+static int Decimalsign = '.', SystemDecimalsign = '.';
+
+char *decimalsign_char[] = {
+  N_("locale"),
+  N_("period"),
+  N_("comma"),
+  NULL
+};
+
+void
+set_system_decimalsign(int decimalsign)
+{
+  if (isprint(decimalsign)) {
+      SystemDecimalsign = decimalsign;
+    }
+}
+
 char *
 nstrnew(void)
 {
