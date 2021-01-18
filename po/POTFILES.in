@@ -30,6 +30,7 @@ src/gtk/data/gtk/menus-appmenu.ui
 src/gtk/data/gtk/menus-common.ui
 src/gtk/x11opt_proto.h
 src/math/math_error.c
+src/nstring.c
 src/odraw.c
 src/oaxis.c
 src/ofit.c
