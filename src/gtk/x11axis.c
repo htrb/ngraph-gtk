@@ -1174,7 +1174,7 @@ AxisDialogFile(GtkWidget *w, gpointer client_data)
       if (str) {
         char *buf, *argv2[2];
         int i;
-	g_string_append(str, "file:");
+	g_string_append(str, "data:");
 	for (i = 0; i < num; i++) {
 	  if (i == num - 1) {
 	    g_string_append_printf(str, "%d", array[i]);
