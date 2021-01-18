@@ -92,6 +92,8 @@ static char *fittypechar[]={
 };
 
 #define PRECISION_DISP 7
+#define PRECISION_SAVE 15
+
 struct fitlocal {
   int id, oid;
   MathEquation *codedf[10];
