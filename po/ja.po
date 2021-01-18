@@ -945,7 +945,7 @@ msgstr "ガウス関数等"
 
 #: src/gtk/x11dialg.c:209
 msgid "page"
-msgstr "用紙"
+msgstr "ページ"
 
 #: src/gtk/x11dialg.c:212
 msgid "drawobj"
