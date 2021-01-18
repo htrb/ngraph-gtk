@@ -569,17 +569,18 @@ show_user_result(struct fitlocal *fitlocal, const char *func, int dim, int *tbl,
   return 0;
 }
 
-static int
-show_user_equation(struct fitlocal *fitlocal, const char *func, MathValue *par, int disp)
+static char *
+get_user_equation(struct fitlocal *fitlocal, const char *func, MathValue *par, int disp)
 {
-  int i, prev_char;
+  int i, prev_char, precision;
   GString *equation;
 
   equation = g_string_sized_new(256);
   if (equation == NULL) {
-    return 1;
+    return NULL;
   }
 
+  precision = (disp) ? PRECISION_DISP : PRECISION_SAVE;
   prev_char = '\0';
   for (i = 0; func[i] != '\0'; i++) {
     double val;
@@ -606,13 +607,13 @@ show_user_equation(struct fitlocal *fitlocal, const char *func, MathValue *par, 
 	/* fall-through */
       case '+':
 	g_string_truncate(equation, equation->len - 1);
-	format = "%+.7e";
+	format = "%+.*e";
 	break;
       default:
-	format = "%.7e";
+	format = "%.*e";
       }
       prev_char = '\0';
-      g_string_append_printf(equation, format, val);
+      g_string_append_printf(equation, format, precision, val);
       break;
     case ' ':
       break;
