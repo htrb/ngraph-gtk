@@ -9642,7 +9642,7 @@ f2dstore_file(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **ar
       g_free(base);
       return 1;
     }
-    buf = g_strdup_printf("file::load_data '%s' '%s %s' <<'[EOF]'", base, date, time);
+    buf = g_strdup_printf("data::load_data '%s' '%s %s' <<'[EOF]'", base, date, time);
     g_free(base);
     if (buf == NULL) {
       fclose(f2dlocal->storefd);
