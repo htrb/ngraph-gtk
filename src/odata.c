@@ -9883,7 +9883,7 @@ f2dstoredum(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
     time = "00:00:00";
   }
   if ((base=getbasename(file))==NULL) return 1;
-  buf = g_strdup_printf("file::load_dummy '%s' '%s %s'\n", base, date, time);
+  buf = g_strdup_printf("data::load_dummy '%s' '%s %s'\n", base, date, time);
   g_free(base);
   if (buf == NULL) {
     return 1;
