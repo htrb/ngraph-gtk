@@ -1624,7 +1624,7 @@ FileAutoScale(void)
   if (lastinst < 0 || aobj == NULL || anum == 0)
     return;
 
-  str = g_string_new("file:");
+  str = g_string_new("data:");
   if (str == NULL) {
     error(NULL, ERRHEAP);
     return;
