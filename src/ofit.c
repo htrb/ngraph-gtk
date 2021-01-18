@@ -349,45 +349,44 @@ display_equation(const char *equation)
   ndisplaydialog("\n");
 }
 
-static int
-show_poly_equation(struct fitlocal *fitlocal, enum FIT_OBJ_TYPE type, vector coe)
+static char *
+get_poly_equation(struct fitlocal *fitlocal, enum FIT_OBJ_TYPE type, vector coe, int disp)
 {
   GString *equation;
-  int i;
+  int i, precision;
 
   equation = g_string_new("");
   if (equation == NULL) {
-    return 1;
+    return NULL;
   }
 
+  precision = (disp) ? PRECISION_DISP : PRECISION_SAVE;
   switch (type) {
   case FIT_TYPE_POLY:
     for (i = fitlocal->dim - 1; i > 0; i--) {
       g_string_append_printf(equation,
-			     (i == fitlocal->dim - 1) ? "%.7e*X" : "%+.7e*X",
-			     coe[i]);
+			     (i == fitlocal->dim - 1) ? "%.*e*X" : "%+.*e*X",
+			     precision, coe[i]);
       if (i > 1) {
 	g_string_append_printf(equation, "^%d", i);
       }
     }
-    g_string_append_printf(equation, "%+.7e", coe[0]);
+    g_string_append_printf(equation, "%+.*e", precision, coe[0]);
     break;
   case FIT_TYPE_POW:
-    g_string_printf(equation, "exp(%.7e)*X^%.7e", coe[0], coe[1]);
+    g_string_printf(equation, "exp(%.*e)*X^%.*e", precision, coe[0], precision, coe[1]);
     break;
   case FIT_TYPE_EXP:
-    g_string_printf(equation, "exp(%.7e*X%+.7e)", coe[1], coe[0]);
+    g_string_printf(equation, "exp(%.*e*X%+.*e)", precision, coe[1], precision, coe[0]);
     break;
   case  FIT_TYPE_LOG:
-    g_string_printf(equation, "%.7e*Ln(X)%+.7e", coe[1], coe[0]);
+    g_string_printf(equation, "%.*e*Ln(X)%+.*e", precision, coe[1], precision, coe[0]);
     break;
   case FIT_TYPE_USER:
     /* never reached */
     break;
   }
-  fitlocal->equation = g_string_free(equation, FALSE);
-
-  return 0;
+  return g_string_free(equation, FALSE);
 }
 
 static int
