@@ -9595,7 +9595,7 @@ f2dsave(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
 
   arrayfree(array2);
   g_string_append(s, rval->str);
-  g_string_append(s, "\tfile::fit='fit:^'${fit::oid}\n");
+  g_string_append(s, "\tdata::fit='fit:^'${fit::oid}\n");
   g_free(rval->str);
   rval->str = g_string_free(s, FALSE);
   return 0;
