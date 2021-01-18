@@ -460,6 +460,7 @@ fitpoly(struct fitlocal *fitlocal,
   double yy,derror,sy,correlation,wt,sum;
   vector b,x1,x2,coe;
   matrix m;
+  char *eqn;
 
   if (type == FIT_TYPE_POLY) dim=dimension+1;
   else dim=2;
@@ -524,9 +525,11 @@ fitpoly(struct fitlocal *fitlocal,
   fitlocal->correlation=correlation;
   fitlocal->num=num;
 
-  if (show_poly_equation(fitlocal, type, coe)) {
+  eqn = get_poly_equation(fitlocal, type, coe, FALSE);
+  if (eqn == NULL) {
     return FitError_Fatal;
   }
+  fitlocal->equation = eqn;
 
   if (disp && show_poly_result(fitlocal, type, coe)) {
     return FitError_Fatal;
