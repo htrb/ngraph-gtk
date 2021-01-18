@@ -622,12 +622,26 @@ get_user_equation(struct fitlocal *fitlocal, const char *func, MathValue *par, i
       g_string_append_c(equation, toupper(prev_char));
     }
   }
+  return g_string_free(equation, FALSE);
+}
 
-  fitlocal->equation = g_string_free(equation, FALSE);
+static int
+show_user_equation(struct fitlocal *fitlocal, const char *func, MathValue *par, int disp)
+{
+  char *eqn;
   if (disp) {
-    display_equation(fitlocal->equation);
+    eqn = get_user_equation(fitlocal, func, par, disp);
+    if (eqn == NULL) {
+      return 1;
+    }
+    display_equation(eqn);
+    g_free(eqn);
   }
-
+  eqn = get_user_equation(fitlocal, func, par, FALSE);
+  if (eqn == NULL) {
+    return 1;
+  }
+  fitlocal->equation = eqn;
   return 0;
 }
 
