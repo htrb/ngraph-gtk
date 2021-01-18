@@ -5791,6 +5791,18 @@ msgstr ""
 "%s (%d:%d)\n"
 "  エラーの起きた場所: %s"
 
+#: src/nstring.c:40
+msgid "locale"
+msgstr "ロケール"
+
+#: src/nstring.c:41 src/ogra.c:57
+msgid "period"
+msgstr "ピリオド"
+
+#: src/nstring.c:42 src/ogra.c:58
+msgid "comma"
+msgstr "コンマ"
+
 #: src/odraw.c:60
 msgid "relative"
 msgstr "相対パス"
@@ -5990,14 +6002,6 @@ msgstr "実横棒"
 #: src/odata.c:266
 msgid "bar_solid_fill_y"
 msgstr "実縦棒"
-
-#: src/ogra.c:57
-msgid "period"
-msgstr "ピリオド"
-
-#: src/ogra.c:58
-msgid "comma"
-msgstr "コンマ"
 
 #: src/ogra.c:487
 #, c-format

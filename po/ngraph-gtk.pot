@@ -5086,6 +5086,18 @@ msgid ""
 "  the error is found at: %s"
 msgstr ""
 
+#: src/nstring.c:40
+msgid "locale"
+msgstr ""
+
+#: src/nstring.c:41 src/ogra.c:57
+msgid "period"
+msgstr ""
+
+#: src/nstring.c:42 src/ogra.c:58
+msgid "comma"
+msgstr ""
+
 #: src/odraw.c:60
 msgid "relative"
 msgstr ""
@@ -5284,14 +5296,6 @@ msgstr ""
 
 #: src/odata.c:266
 msgid "bar_solid_fill_y"
-msgstr ""
-
-#: src/ogra.c:57
-msgid "period"
-msgstr ""
-
-#: src/ogra.c:58
-msgid "comma"
 msgstr ""
 
 #: src/ogra.c:487
