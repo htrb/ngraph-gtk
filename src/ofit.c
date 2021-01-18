@@ -394,6 +394,7 @@ show_poly_result(struct fitlocal *fitlocal, enum FIT_OBJ_TYPE type, vector coe)
 {
   int j;
   GString *info;
+  char *eqn;
 
   info = g_string_new("");
   if (info == NULL) {
@@ -432,7 +433,12 @@ show_poly_result(struct fitlocal *fitlocal, enum FIT_OBJ_TYPE type, vector coe)
   ndisplaydialog(info->str);
   g_string_free(info, TRUE);
 
-  display_equation(fitlocal->equation);
+  eqn = get_poly_equation(fitlocal, type, coe, TRUE);
+  if (eqn == NULL) {
+    return 1;
+  }
+  display_equation(eqn);
+  g_free(eqn);
 
   return 0;
 }
