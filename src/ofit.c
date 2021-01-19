@@ -570,7 +570,7 @@ show_user_result(struct fitlocal *fitlocal, const char *func, int dim, int *tbl,
 }
 
 static char *
-get_user_equation(struct fitlocal *fitlocal, const char *func, MathValue *par, int disp)
+get_user_equation(const char *func, MathValue *par, int disp)
 {
   int i, prev_char, precision;
   GString *equation;
@@ -630,14 +630,14 @@ show_user_equation(struct fitlocal *fitlocal, const char *func, MathValue *par, 
 {
   char *eqn;
   if (disp) {
-    eqn = get_user_equation(fitlocal, func, par, disp);
+    eqn = get_user_equation(func, par, disp);
     if (eqn == NULL) {
       return 1;
     }
     display_equation(eqn);
     g_free(eqn);
   }
-  eqn = get_user_equation(fitlocal, func, par, FALSE);
+  eqn = get_user_equation(func, par, FALSE);
   if (eqn == NULL) {
     return 1;
   }
