@@ -959,7 +959,7 @@ n_initialize(int *argc, char ***argv)
 #endif /* WINDOWS */
   /* to use a period as a decimal separator */
   lconv = localeconv();
-  set_system_decimalsign(lconv->mon_decimal_point[0]);
+  set_system_decimalsign(lconv->decimal_point);
   setlocale(LC_NUMERIC, "C");
   setlocale(LC_MEASUREMENT, "C");
 
