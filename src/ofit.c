@@ -607,10 +607,10 @@ get_user_equation(const char *func, MathValue *par, int disp)
 	/* fall-through */
       case '+':
 	g_string_truncate(equation, equation->len - 1);
-	format = "%+.*e";
+	format = "%+.*g";
 	break;
       default:
-	format = "%.*e";
+	format = "%.*g";
       }
       prev_char = '\0';
       g_string_append_printf(equation, format, precision, val);
