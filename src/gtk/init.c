@@ -36,7 +36,6 @@
 #include <stdarg.h>
 #include <locale.h>
 #include <signal.h>
-#include <langinfo.h>
 
 #if OSX
 #include <gtkosxapplication.h>
