@@ -365,22 +365,22 @@ get_poly_equation(struct fitlocal *fitlocal, enum FIT_OBJ_TYPE type, vector coe,
   case FIT_TYPE_POLY:
     for (i = fitlocal->dim - 1; i > 0; i--) {
       g_string_append_printf(equation,
-			     (i == fitlocal->dim - 1) ? "%.*e*X" : "%+.*e*X",
+			     (i == fitlocal->dim - 1) ? "%.*gx" : "%+.*gx",
 			     precision, coe[i]);
       if (i > 1) {
 	g_string_append_printf(equation, "^%d", i);
       }
     }
-    g_string_append_printf(equation, "%+.*e", precision, coe[0]);
+    g_string_append_printf(equation, "%+.*g", precision, coe[0]);
     break;
   case FIT_TYPE_POW:
-    g_string_printf(equation, "exp(%.*e)*X^%.*e", precision, coe[0], precision, coe[1]);
+    g_string_printf(equation, "exp(%.*g)x^%.*g", precision, coe[0], precision, coe[1]);
     break;
   case FIT_TYPE_EXP:
-    g_string_printf(equation, "exp(%.*e*X%+.*e)", precision, coe[1], precision, coe[0]);
+    g_string_printf(equation, "exp(%.*gx%+.*g)", precision, coe[1], precision, coe[0]);
     break;
   case  FIT_TYPE_LOG:
-    g_string_printf(equation, "%.*e*Ln(X)%+.*e", precision, coe[1], precision, coe[0]);
+    g_string_printf(equation, "%.*gLn(x)%+.*g", precision, coe[1], precision, coe[0]);
     break;
   case FIT_TYPE_USER:
     /* never reached */
