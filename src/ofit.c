@@ -404,16 +404,16 @@ show_poly_result(struct fitlocal *fitlocal, enum FIT_OBJ_TYPE type, vector coe)
   g_string_append_printf(info, "--------\nfit:%d (^%d)\n", fitlocal->id, fitlocal->oid);
   switch (type) {
   case FIT_TYPE_POLY:
-    g_string_append_printf(info,"Eq: %%0i*X^i (i=0-%d)\n\n", fitlocal->dim - 1);
+    g_string_append_printf(info,"Eq: %%0i*x^i (i=0-%d)\n\n", fitlocal->dim - 1);
     break;
   case FIT_TYPE_POW:
-    g_string_append(info,"Eq: exp(%00)*X^%01\n\n");
+    g_string_append(info,"Eq: exp(%00)*x^%01\n\n");
     break;
   case FIT_TYPE_EXP:
-    g_string_append(info,"Eq: exp(%01*X+%00)\n\n");
+    g_string_append(info,"Eq: exp(%01*x+%00)\n\n");
     break;
   case FIT_TYPE_LOG:
-    g_string_append(info,"Eq: %01*Ln(X)+%00\n\n");
+    g_string_append(info,"Eq: %01*Ln(x)+%00\n\n");
     break;
   case FIT_TYPE_USER:
     /* never reached */
