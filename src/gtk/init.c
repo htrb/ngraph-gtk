@@ -961,7 +961,9 @@ n_initialize(int *argc, char ***argv)
   lconv = localeconv();
   set_system_decimalsign(lconv->decimal_point);
   setlocale(LC_NUMERIC, "C");
+#ifdef LC_MEASUREMENT
   setlocale(LC_MEASUREMENT, "C");
+#endif
 
   libdir = g_strdup(LIBDIR);
   if (libdir == NULL)
