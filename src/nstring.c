@@ -44,10 +44,10 @@ char *decimalsign_char[] = {
 };
 
 void
-set_system_decimalsign(int decimalsign)
+set_system_decimalsign(const char *decimalsign)
 {
-  if (isprint(decimalsign)) {
-    SystemDecimalsign = decimalsign;
+  if (decimalsign && isprint(decimalsign[0])) {
+    SystemDecimalsign = decimalsign[0];
   }
 }
 

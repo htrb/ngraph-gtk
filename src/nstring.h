@@ -56,7 +56,7 @@ char *n_locale_to_utf8(const char *s);
 enum GRA_DECIMALSIGN_TYPE get_gra_decimalsign_type(int decimalsign);
 int get_decimalsign(void);
 int set_decimalsign(enum DECIMALSIGN_TYPE decimalsign);
-void set_system_decimalsign(int decimalsign);
+void set_system_decimalsign(const char *decimalsign);
 void n_gstr_printf_double(GString *num, const char *format, double val);
 char *n_strdup_printf_double(const char *format, double val);
 void n_gstr_append_printf_double(GString *num, const char *format, double val);
