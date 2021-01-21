@@ -40,7 +40,7 @@
 #include "nconfig.h"
 #include "strconv.h"
 
-#define NAME "text"
+#define NAME N_("text")
 #define PARENT "legend"
 #define OVERSION  "1.00.00"
 #define TEXTCONF "[text]"
