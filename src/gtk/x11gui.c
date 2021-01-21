@@ -1085,16 +1085,7 @@ FileSelectionDialog(GtkWidget *parent, struct nGetOpenFileData *data)
   fname = get_filename_with_ext(data->init_file, data->ext);
   if (fname) {
     if (data->type == GTK_FILE_CHOOSER_ACTION_SAVE) {
-#if WINDOWS
-      char *tmp;
-      tmp = g_locale_from_utf8(fname, -1, NULL, NULL, NULL);
-      if (tmp) {
-	file_dialog_set_current_neme(dlg, tmp);
-	g_free(tmp);
-      }
-#else  /* WINDOWS */
       file_dialog_set_current_neme(dlg, fname);
-#endif	/* WINDOWS */
     } else {
       gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dlg), fname);
     }
