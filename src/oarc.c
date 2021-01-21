@@ -35,7 +35,7 @@
 #include "olegend.h"
 #include "oarc.h"
 
-#define NAME "arc"
+#define NAME N_("arc")
 #define PARENT "legend"
 #define OVERSION  "1.00.00"
 
