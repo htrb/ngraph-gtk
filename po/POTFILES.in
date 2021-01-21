@@ -32,9 +32,13 @@ src/gtk/x11opt_proto.h
 src/math/math_error.c
 src/nstring.c
 src/odraw.c
+src/oagrid.c
+src/oarc.c
 src/oaxis.c
 src/ofit.c
 src/odata.c
 src/ogra.c
-src/opath.c
+src/olegend.c
 src/oparameter.c
+src/opath.c
+src/otext.c
