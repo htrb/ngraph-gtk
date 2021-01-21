@@ -34,7 +34,7 @@
 #include "odraw.h"
 #include "olegend.h"
 
-#define NAME "legend"
+#define NAME N_("legend")
 #define PARENT "draw"
 #define OVERSION  "1.00.00"
 
