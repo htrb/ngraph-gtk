@@ -37,7 +37,7 @@
 #include "olegend.h"
 #include "opath.h"
 
-#define NAME		"path"
+#define NAME		N_("path")
 #define ALIAS		"line:curve:polygon"
 #define PARENT		"legend"
 #define OVERSION	"1.00.01"
