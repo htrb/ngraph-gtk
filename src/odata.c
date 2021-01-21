@@ -158,7 +158,7 @@ static char *FileConstant[MATH_CONST_SIZE] = {
   "%N",
 };
 
-#define NAME		"data"
+#define NAME		N_("data")
 #define ALIAS		"file"
 #define PARENT		"draw"
 #define OVERSION	"1.00.00"
