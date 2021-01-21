@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6.08.07\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2021-01-17 20:01+0900\n"
-"PO-Revision-Date: 2021-01-18 16:06+0900\n"
+"POT-Creation-Date: 2021-01-21 18:08+0900\n"
+"PO-Revision-Date: 2021-01-21 10:08+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja\n"
@@ -1235,7 +1235,7 @@ msgstr "X 描画範囲"
 msgid "_Load"
 msgstr "読込(_L)"
 
-#: src/gtk/x11file.c:1768 src/gtk/x11gui.c:1214 src/gtk/x11menu.c:432
+#: src/gtk/x11file.c:1768 src/gtk/x11gui.c:1205 src/gtk/x11menu.c:432
 #: src/gtk/x11opt.c:453 src/gtk/x11opt.c:940 src/gtk/x11opt.c:1139
 #: src/gtk/x11opt.c:1479 src/gtk/x11opt.c:1587
 #: src/gtk/data/gtk/menus-common.ui.in:38
@@ -1652,7 +1652,7 @@ msgstr "カレントディレクトリを移動(_C)"
 msgid "%s file (*.%s)"
 msgstr "%s ファイル (*.%s)"
 
-#: src/gtk/x11gui.c:1147 src/gtk/x11gui.c:1180
+#: src/gtk/x11gui.c:1138 src/gtk/x11gui.c:1171
 msgid "_Open"
 msgstr "開く(_O)"
 
@@ -5835,13 +5835,13 @@ msgstr "Bスプライン"
 msgid "bspline_close"
 msgstr "閉Bスプライン"
 
-#: src/oarc.c:38
-msgid "arc"
-msgstr "円"
-
 #: src/oagrid.c:36
 msgid "axisgrid"
 msgstr "グリッド"
+
+#: src/oarc.c:38
+msgid "arc"
+msgstr "円"
 
 #: src/oaxis.c:69
 msgid "linear"
@@ -6024,18 +6024,6 @@ msgstr "%s 描画中 (%.1f%%)"
 msgid "legend"
 msgstr "レジェンド"
 
-#: src/opath.c:40
-msgid "path"
-msgstr "パス"
-
-#: src/opath.c:70
-msgid "even_odd_rule"
-msgstr "偶奇"
-
-#: src/opath.c:71
-msgid "winding_rule"
-msgstr "ワインディング"
-
 #: src/oparameter.c:36
 msgid "SpinButton"
 msgstr "スピンボタン"
@@ -6063,6 +6051,18 @@ msgstr "開始"
 #: src/oparameter.c:47
 msgid "stop"
 msgstr "終了"
+
+#: src/opath.c:40
+msgid "path"
+msgstr "パス"
+
+#: src/opath.c:70
+msgid "even_odd_rule"
+msgstr "偶奇"
+
+#: src/opath.c:71
+msgid "winding_rule"
+msgstr "ワインディング"
 
 #: src/otext.c:43
 msgid "text"

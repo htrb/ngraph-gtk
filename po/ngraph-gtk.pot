@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ngraph-gtk 6.08.09\n"
+"Project-Id-Version: ngraph-gtk 6.09.00\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2021-01-17 20:01+0900\n"
+"POT-Creation-Date: 2021-01-21 18:08+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1202,7 +1202,7 @@ msgstr ""
 msgid "_Load"
 msgstr ""
 
-#: src/gtk/x11file.c:1768 src/gtk/x11gui.c:1214 src/gtk/x11menu.c:432
+#: src/gtk/x11file.c:1768 src/gtk/x11gui.c:1205 src/gtk/x11menu.c:432
 #: src/gtk/x11opt.c:453 src/gtk/x11opt.c:940 src/gtk/x11opt.c:1139
 #: src/gtk/x11opt.c:1479 src/gtk/x11opt.c:1587
 #: src/gtk/data/gtk/menus-common.ui.in:38
@@ -1617,7 +1617,7 @@ msgstr ""
 msgid "%s file (*.%s)"
 msgstr ""
 
-#: src/gtk/x11gui.c:1147 src/gtk/x11gui.c:1180
+#: src/gtk/x11gui.c:1138 src/gtk/x11gui.c:1171
 msgid "_Open"
 msgstr ""
 
@@ -5130,12 +5130,12 @@ msgstr ""
 msgid "bspline_close"
 msgstr ""
 
-#: src/oarc.c:38
-msgid "arc"
-msgstr ""
-
 #: src/oagrid.c:36
 msgid "axisgrid"
+msgstr ""
+
+#: src/oarc.c:38
+msgid "arc"
 msgstr ""
 
 #: src/oaxis.c:69
@@ -5319,18 +5319,6 @@ msgstr ""
 msgid "legend"
 msgstr ""
 
-#: src/opath.c:40
-msgid "path"
-msgstr ""
-
-#: src/opath.c:70
-msgid "even_odd_rule"
-msgstr ""
-
-#: src/opath.c:71
-msgid "winding_rule"
-msgstr ""
-
 #: src/oparameter.c:36
 msgid "SpinButton"
 msgstr ""
@@ -5357,6 +5345,18 @@ msgstr ""
 
 #: src/oparameter.c:47
 msgid "stop"
+msgstr ""
+
+#: src/opath.c:40
+msgid "path"
+msgstr ""
+
+#: src/opath.c:70
+msgid "even_odd_rule"
+msgstr ""
+
+#: src/opath.c:71
+msgid "winding_rule"
 msgstr ""
 
 #: src/otext.c:43
