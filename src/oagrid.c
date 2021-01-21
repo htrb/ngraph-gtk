@@ -33,7 +33,7 @@
 #include "oroot.h"
 #include "odraw.h"
 
-#define NAME "axisgrid"
+#define NAME N_("axisgrid")
 #define PARENT "draw"
 #define OVERSION  "1.00.00"
 
