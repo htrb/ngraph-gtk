@@ -310,11 +310,7 @@ gra2cairofile_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
 	if (fname == NULL)
 	  return 1;
 
-#if WINDOWS
-	fname = g_locale_from_utf8(fname, -1, NULL, NULL, NULL);
-#else  /* WINDOWS */
 	fname = g_filename_from_utf8(fname, -1, NULL, NULL, NULL);
-#endif	/* WINDOWS */
 	if (fname == NULL) {
 	  error(obj, CAIRO_STATUS_NO_MEMORY + 100);
 	  return 1;
