@@ -5835,6 +5835,14 @@ msgstr "Bスプライン"
 msgid "bspline_close"
 msgstr "閉Bスプライン"
 
+#: src/oarc.c:38
+msgid "arc"
+msgstr "円"
+
+#: src/oagrid.c:36
+msgid "axisgrid"
+msgstr "グリッド"
+
 #: src/oaxis.c:69
 msgid "linear"
 msgstr "線形"
@@ -5918,6 +5926,10 @@ msgstr "指数関数"
 #: src/ofit.c:90
 msgid "user"
 msgstr "ユーザ定義"
+
+#: src/odata.c:161
+msgid "data"
+msgstr "データ"
 
 #: src/odata.c:235
 msgid "range"
@@ -6008,6 +6020,14 @@ msgstr "実縦棒"
 msgid "drawing %s (%.1f%%)"
 msgstr "%s 描画中 (%.1f%%)"
 
+#: src/olegend.c:37
+msgid "legend"
+msgstr "レジェンド"
+
+#: src/opath.c:40
+msgid "path"
+msgstr "パス"
+
 #: src/opath.c:70
 msgid "even_odd_rule"
 msgstr "偶奇"
@@ -6044,8 +6064,9 @@ msgstr "開始"
 msgid "stop"
 msgstr "終了"
 
-#~ msgid "axisgrid"
-#~ msgstr "グリッド"
+#: src/otext.c:43
+msgid "text"
+msgstr "テキスト"
 
 #~ msgid "Add range plot"
 #~ msgstr "範囲プロットの追加"
@@ -6280,18 +6301,6 @@ msgstr "終了"
 
 #~ msgid "Clear Viewer Window"
 #~ msgstr "ビューアのクリア"
-
-#~ msgid "path"
-#~ msgstr "パス"
-
-#~ msgid "arc"
-#~ msgstr "円"
-
-#~ msgid "text"
-#~ msgstr "テキスト"
-
-#~ msgid "data"
-#~ msgstr "データ"
 
 #~ msgid "Activate Data Window"
 #~ msgstr "Data Windowをアクティブにする"

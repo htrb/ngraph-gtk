@@ -5130,6 +5130,14 @@ msgstr ""
 msgid "bspline_close"
 msgstr ""
 
+#: src/oarc.c:38
+msgid "arc"
+msgstr ""
+
+#: src/oagrid.c:36
+msgid "axisgrid"
+msgstr ""
+
 #: src/oaxis.c:69
 msgid "linear"
 msgstr ""
@@ -5212,6 +5220,10 @@ msgstr ""
 
 #: src/ofit.c:90
 msgid "user"
+msgstr ""
+
+#: src/odata.c:161
+msgid "data"
 msgstr ""
 
 #: src/odata.c:235
@@ -5303,6 +5315,14 @@ msgstr ""
 msgid "drawing %s (%.1f%%)"
 msgstr ""
 
+#: src/olegend.c:37
+msgid "legend"
+msgstr ""
+
+#: src/opath.c:40
+msgid "path"
+msgstr ""
+
 #: src/opath.c:70
 msgid "even_odd_rule"
 msgstr ""
@@ -5337,4 +5357,8 @@ msgstr ""
 
 #: src/oparameter.c:47
 msgid "stop"
+msgstr ""
+
+#: src/otext.c:43
+msgid "text"
 msgstr ""
