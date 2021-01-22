@@ -534,6 +534,10 @@ DialogButton(GtkWidget *parent, const char *title, const char *caption, struct n
   }
 
   gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
+  if (parent) {
+    gtk_window_set_transient_for(GTK_WINDOW(dlg), GTK_WINDOW(parent));
+    gtk_window_set_modal(GTK_WINDOW(parent), TRUE);
+  }
 
   set_dialog_position(dlg, x, y);
   gtk_widget_show_all(dlg);
