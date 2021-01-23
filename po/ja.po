@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6.08.07\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2021-01-21 18:08+0900\n"
+"POT-Creation-Date: 2021-01-23 14:17+0900\n"
 "PO-Revision-Date: 2021-01-21 10:08+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -1235,7 +1235,7 @@ msgstr "X 描画範囲"
 msgid "_Load"
 msgstr "読込(_L)"
 
-#: src/gtk/x11file.c:1768 src/gtk/x11gui.c:1205 src/gtk/x11menu.c:432
+#: src/gtk/x11file.c:1768 src/gtk/x11gui.c:1209 src/gtk/x11menu.c:432
 #: src/gtk/x11opt.c:453 src/gtk/x11opt.c:940 src/gtk/x11opt.c:1139
 #: src/gtk/x11opt.c:1479 src/gtk/x11opt.c:1587
 #: src/gtk/data/gtk/menus-common.ui.in:38
@@ -1258,8 +1258,8 @@ msgstr "行"
 msgid "_Line:"
 msgstr "新規行(_L):"
 
-#: src/gtk/x11file.c:2009 src/gtk/x11file.c:2228 src/gtk/x11opt.c:705
-#: src/gtk/x11opt_proto.h:281
+#: src/gtk/x11file.c:2009 src/gtk/x11file.c:2228 src/gtk/x11graph.c:746
+#: src/gtk/x11opt.c:705 src/gtk/x11opt_proto.h:281
 msgid "_Remove"
 msgstr "削除(_R)"
 
@@ -1606,14 +1606,14 @@ msgid "Load NGP file"
 msgstr "NGPファイルを開く"
 
 #: src/gtk/x11gui.c:137 src/gtk/x11gui.c:368 src/gtk/x11gui.c:436
-#: src/gtk/x11gui.c:572 src/gtk/x11gui.c:647 src/gtk/x11gui.c:718
-#: src/gtk/x11gui.c:797 src/gtk/x11gui.c:1028 src/gtk/x11opt.c:1110
+#: src/gtk/x11gui.c:576 src/gtk/x11gui.c:651 src/gtk/x11gui.c:722
+#: src/gtk/x11gui.c:801 src/gtk/x11gui.c:1032 src/gtk/x11opt.c:1110
 msgid "_Cancel"
 msgstr "キャンセル(_C)"
 
 #: src/gtk/x11gui.c:149 src/gtk/x11gui.c:369 src/gtk/x11gui.c:437
-#: src/gtk/x11gui.c:573 src/gtk/x11gui.c:648 src/gtk/x11gui.c:719
-#: src/gtk/x11gui.c:798 src/gtk/x11opt.c:1108
+#: src/gtk/x11gui.c:577 src/gtk/x11gui.c:652 src/gtk/x11gui.c:723
+#: src/gtk/x11gui.c:802 src/gtk/x11opt.c:1108
 msgid "_OK"
 msgstr "_OK"
 
@@ -1629,11 +1629,11 @@ msgstr "いいえ(_N)"
 msgid "_Yes"
 msgstr "はい(_Y)"
 
-#: src/gtk/x11gui.c:880 src/gtk/x11gui.c:1055 src/gtk/x11gui.c:1060
+#: src/gtk/x11gui.c:884 src/gtk/x11gui.c:1059 src/gtk/x11gui.c:1064
 msgid "All"
 msgstr "全てのファイル"
 
-#: src/gtk/x11gui.c:981 src/gtk/x11opt.c:1741
+#: src/gtk/x11gui.c:985 src/gtk/x11opt.c:1741
 #, c-format
 msgid ""
 "`%s'\n"
@@ -1643,16 +1643,16 @@ msgstr ""
 "'%s' というファイルは既に存在します.\n"
 "上書きしてもよろしいですか?"
 
-#: src/gtk/x11gui.c:1032
+#: src/gtk/x11gui.c:1036
 msgid "_Change current directory"
 msgstr "カレントディレクトリを移動(_C)"
 
-#: src/gtk/x11gui.c:1043
+#: src/gtk/x11gui.c:1047
 #, c-format
 msgid "%s file (*.%s)"
 msgstr "%s ファイル (*.%s)"
 
-#: src/gtk/x11gui.c:1138 src/gtk/x11gui.c:1171
+#: src/gtk/x11gui.c:1142 src/gtk/x11gui.c:1175
 msgid "_Open"
 msgstr "開く(_O)"
 
@@ -2449,19 +2449,19 @@ msgstr "データファイルの展開(_E)"
 msgid "_Expand directory:"
 msgstr "展開ディレクトリ(_E):"
 
-#: src/gtk/x11opt.c:1213
+#: src/gtk/x11opt.c:1211
 msgid "Size"
 msgstr "サイズ"
 
-#: src/gtk/x11opt.c:1218
+#: src/gtk/x11opt.c:1216
 msgid "_Size of completion history:"
 msgstr "補完履歴のサイズ(_S):"
 
-#: src/gtk/x11opt.c:1222
+#: src/gtk/x11opt.c:1220
 msgid "_Length of information view:"
 msgstr "information 表示の行数(_L):"
 
-#: src/gtk/x11opt.c:1226
+#: src/gtk/x11opt.c:1224
 msgid "_Length of data preview:"
 msgstr "データプレビューの行数(_L):"
 
