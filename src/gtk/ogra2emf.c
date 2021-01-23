@@ -1529,7 +1529,7 @@ gra2emf_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char
     r = 0;
     _getobj(obj, "file", inst, &fname);
     if (fname) {
-      fname = g_locale_from_utf8(fname, -1, NULL, NULL, NULL);
+      fname = g_win32_locale_filename_from_utf8(fname);
     }
     r = close_emf(local, fname);
     if (fname) {
