@@ -1208,8 +1208,6 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(hbox2), vbox2, TRUE, TRUE, 4);
 
 
-    vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-
     frame = gtk_frame_new(_("Size"));
     table = gtk_grid_new();
 
@@ -1229,6 +1227,8 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
 
+
+    vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
 
     frame = gtk_frame_new(_("Font"));
     table = gtk_grid_new();
