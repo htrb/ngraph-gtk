@@ -743,7 +743,7 @@ SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
     d->bottom = w;
 
-    w = gtk_button_new_with_mnemonic(("_Remove"));
+    w = gtk_button_new_with_mnemonic(_("_Remove"));
     set_button_icon(w, "list-remove");
     g_signal_connect(w, "clicked", G_CALLBACK(SwitchDialogRemove), d);
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
