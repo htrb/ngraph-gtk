@@ -63,7 +63,7 @@ do
     if [ $ID != $ID2 ]
     then
 	gra:$ID:close
-	for field in top_margin left_margin zoom draw_obj
+	for field in top_margin left_margin zoom draw_obj decimalsign
 	do
 	    cpy gra:$ID2,$ID $field
 	done
