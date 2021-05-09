@@ -1659,7 +1659,11 @@ dup_inst(struct objlist *obj, N_VALUE *inst)
   int i, n;
   struct objlist *robj;
   enum ngraph_object_field_type type;
+#if GLIB_CHECK_VERSION(2, 68, 0)
+  inst_new = g_memdup2(inst, obj->size * sizeof(N_VALUE));
+#else
   inst_new = g_memdup(inst, obj->size * sizeof(N_VALUE));
+#endif
   if (inst_new == NULL) {
     return NULL;
   }
