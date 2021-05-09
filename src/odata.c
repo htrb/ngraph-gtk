@@ -10858,7 +10858,11 @@ data_inst_dup(struct objlist *obj, N_VALUE *src, N_VALUE *dest)
     return 1;
   }
   local_src = src[pos].ptr;
+#if GLIB_CHECK_VERSION(2, 68, 0)
+  local_new = g_memdup2(local_src, sizeof(struct f2dlocal));
+#else
   local_new = g_memdup(local_src, sizeof(struct f2dlocal));
+#endif
   if (local_new == NULL) {
     return 1;
   }
