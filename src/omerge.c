@@ -1144,7 +1144,11 @@ merge_inst_dup(struct objlist *obj, N_VALUE *src, N_VALUE *dest)
   if (i < 0) {
     return 1;
   }
+#if GLIB_CHECK_VERSION(2, 68, 0)
+  dest[i].ptr = g_memdup2(src[i].ptr, sizeof(struct mergelocal));
+#else
   dest[i].ptr = g_memdup(src[i].ptr, sizeof(struct mergelocal));
+#endif
   /*   mergelocal->storefd may be NULL */
   if (dest[i].ptr == NULL) {
     return 1;
