@@ -250,13 +250,17 @@ gra_cache_init(struct gra_cache *cache, struct gra_info *info)
 static int *
 dup_cpar(const int *cpar)
 {
-  int n;
+  gsize n;
 
   n = cpar[0] + 1;
   if (n < 1) {
     n = 1;
   }
+#if GLIB_CHECK_VERSION(2, 68, 0)
+  return g_memdup2(cpar, n * sizeof(*cpar));
+#else
   return g_memdup(cpar, n * sizeof(*cpar));
+#endif
 }
 
 static int
