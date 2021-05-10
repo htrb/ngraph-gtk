@@ -14,7 +14,7 @@ base: core18
 apps:
   ngraph-gtk:
     command: usr/bin/ngraph-snap.sh
-    extensions: [gnome-3-34]
+    extensions: [gnome-3-28]
     plugs:
       - gsettings # For desktop theme detection under Wayland session
       - home
