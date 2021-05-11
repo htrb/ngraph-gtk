@@ -2676,6 +2676,7 @@ opendata(struct objlist *obj,N_VALUE *inst,
   fp->text_font = 0;
   fp->text_space = 0;
   fp->ignore=fp->negative=FALSE;
+  fp->end_expression = NULL;
   arrayinit(&(fp->fileopen),sizeof(int));
   if (!raw) {
     MathEquationParametar *prm;
@@ -2704,7 +2705,6 @@ opendata(struct objlist *obj,N_VALUE *inst,
     fp->column_string_array_id_x = f2dlocal->column_string_array_id_x;
     fp->column_string_array_id_y = f2dlocal->column_string_array_id_y;
     fp->use_column_string_array = (f2dlocal->column_string_array_id_x >=0 || f2dlocal->column_string_array_id_y >= 0);
-    fp->end_expression = NULL;
   }
   return fp;
 }
