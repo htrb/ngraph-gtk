@@ -2267,11 +2267,7 @@ create_toplevel_window(void)
   int i;
   struct objlist *aobj;
   int x, y, width, height, w, h;
-#if GTK_CHECK_VERSION(3, 22, 0)
   GdkDisplay *disp;
-#else
-  GdkScreen *screen;
-#endif
   GtkWidget *popup;
   GtkClipboard *clip;
 
@@ -2280,7 +2276,6 @@ create_toplevel_window(void)
   init_action_widget_list();
   init_ngraph_app_struct();
 
-#if GTK_CHECK_VERSION(3, 22, 0)
   w = 800;
   h = 600;
   disp = gdk_display_get_default();
@@ -2296,11 +2291,6 @@ create_toplevel_window(void)
       h = rect.height;
     }
   }
-#else
-  screen = gdk_screen_get_default();
-  w = gdk_screen_get_width(screen);
-  h = gdk_screen_get_height(screen);
-#endif
 
   if (Menulocal.menux == DEFAULT_GEOMETRY)
     Menulocal.menux = w * 3 / 8;
