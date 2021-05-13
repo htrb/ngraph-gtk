@@ -1,14 +1,14 @@
 #ifndef GTK_COMMON_HEADER
 #define GTK_COMMON_HEADER
 
+#include "common.h"
+
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>
 #include <glib.h>
 #include <cairo/cairo.h>
 #include <gtksourceview/gtksource.h>
-
-#include "common.h"
 
 #ifndef GTK_WIDGET_VISIBLE
 #define GTK_WIDGET_VISIBLE(w) gtk_widget_get_visible(w)
