@@ -38,16 +38,7 @@ void
 InfoWinSetFont(char *font)
 {
   if (NgraphApp.InfoWin.data.text && font) {
-#if GTK_CHECK_VERSION(3, 16, 0)
     set_widget_font(NgraphApp.InfoWin.data.text, font);
-#else  /* GTK_CHECK_VERSION(3, 16, 0) */
-    PangoFontDescription *desc;
-
-    desc = pango_font_description_from_string(font);
-    gtk_widget_override_font(GTK_WIDGET(NgraphApp.InfoWin.data.text), NULL);
-    gtk_widget_override_font(GTK_WIDGET(NgraphApp.InfoWin.data.text), desc);
-    pango_font_description_free(desc);
-#endif
   }
 }
 
