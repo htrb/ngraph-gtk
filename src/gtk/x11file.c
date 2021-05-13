@@ -204,9 +204,7 @@ create_source_view(void)
   source_view = GTK_SOURCE_VIEW(gtk_source_view_new());
   buffer = gtk_source_buffer_new(NULL);
   gtk_text_view_set_buffer(GTK_TEXT_VIEW(source_view), GTK_TEXT_BUFFER(buffer));
-#if GTK_CHECK_VERSION(3, 16, 0)
   gtk_text_view_set_monospace(GTK_TEXT_VIEW(source_view), TRUE);
-#endif
   gtk_source_view_set_tab_width(source_view, 2);
   gtk_source_view_set_insert_spaces_instead_of_tabs(source_view, TRUE);
   gtk_source_view_set_smart_home_end(source_view, GTK_SOURCE_SMART_HOME_END_BEFORE);
