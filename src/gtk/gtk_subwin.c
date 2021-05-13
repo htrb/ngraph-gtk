@@ -137,25 +137,6 @@ start_editing_enum(GtkCellEditable *editable, struct obj_list_data *d, n_list_st
   g_signal_connect(cbox, "changed", G_CALLBACK(select_enum), d);
 }
 
-#if ! GTK_CHECK_VERSION(3, 18, 0)
-static void
-spin_button_size_allocated(GtkWidget *widget, GdkRectangle *allocation, gpointer user_data)
-{
-  GtkRequisition requisition;
-  GdkRectangle new_allocation;
-
-  gtk_widget_get_preferred_size(widget, &requisition, NULL);
-  if (requisition.width <= allocation->width) {
-    return;
-  }
-
-  new_allocation = *allocation;
-  new_allocation.x -= (requisition.width - allocation->width) / 2;
-  new_allocation.width = requisition.width;
-  gtk_widget_size_allocate(widget, &new_allocation);
-}
-#endif
-
 static void
 start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path, gpointer user_data)
 {
@@ -217,9 +198,6 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
   case G_TYPE_DOUBLE:
   case G_TYPE_INT:
     if (GTK_IS_SPIN_BUTTON(editable)) {
-#if ! GTK_CHECK_VERSION(3, 18, 0)
-      g_signal_connect(editable, "size-allocate", G_CALLBACK(spin_button_size_allocated), NULL);
-#endif
       gtk_entry_set_alignment(GTK_ENTRY(editable), 1.0);
       gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(editable), FALSE);
       if (list->max == 36000) {
@@ -841,24 +819,9 @@ hidden(struct obj_list_data *d)
   set_graph_modified();
 }
 
-#if ! GTK_CHECK_VERSION(3, 22, 0)
-static void
-popup_menu_position(GtkMenu *menu, gint *x, gint *y, gboolean *push_in, gpointer user_data)
-{
-  GtkWidget *w;
-  GdkWindow *gdk_win;
-
-  w = user_data;
-
-  gdk_win = gtk_widget_get_window(w);
-  gdk_window_get_origin(gdk_win, x, y);
-}
-#endif
-
 static void
 do_popup(GdkEventButton *event, struct obj_list_data *d)
 {
-#if GTK_CHECK_VERSION(3, 22, 0)
   if (d->parent->type == TypeFileWin ||
       d->parent->type == TypeAxisWin ||
       d->parent->type == TypeMergeWin ||
@@ -870,31 +833,6 @@ do_popup(GdkEventButton *event, struct obj_list_data *d)
     d->select = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
   }
   gtk_menu_popup_at_pointer(GTK_MENU(d->popup), ((GdkEvent *)event));
-#else
-  int button, event_time;
-  GtkMenuPositionFunc func;
-
-  if (event) {
-    event_time = event->time;
-    func = NULL;
-  } else {
-    event_time = gtk_get_current_event_time();
-    func = popup_menu_position;
-  }
-
-  if (d->parent->type == TypeFileWin ||
-      d->parent->type == TypeAxisWin ||
-      d->parent->type == TypeMergeWin ||
-      d->parent->type == TypeLegendWin) {
-    d->select = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
-  }
-
-  /* If the menu popup was initiated by something other than a mouse
-     button press, such as a mouse button release or a keypress,
-     button should be 0. */
-  button = 0;
-  gtk_menu_popup(GTK_MENU(d->popup), NULL, NULL, func, d->text, button, event_time);
-#endif
 }
 
 #if GTK_CHECK_VERSION(3, 99, 0)
