@@ -753,7 +753,6 @@ create_color_button(GtkWidget *win)
   return w;
 }
 
-#if GTK_CHECK_VERSION(3, 16, 0)
 void
 set_widget_font(GtkWidget *w, const char *font)
 {
@@ -869,8 +868,6 @@ set_widget_font(GtkWidget *w, const char *font)
   }
 }
 
-#endif	/* ! GTK_CHECK_VERSION(3, 16, 0) */
-
 GtkWidget *
 create_text_view_with_line_number(GtkWidget **v)
 {
@@ -907,17 +904,7 @@ text_view_with_line_number_set_text(GtkWidget *view, const gchar *str)
 void
 text_view_with_line_number_set_font(GtkWidget *view, const gchar *font)
 {
-#if ! GTK_CHECK_VERSION(3, 16, 0)
-  PangoFontDescription *desc;
-#endif
-
-#if GTK_CHECK_VERSION(3, 16, 0)
   set_widget_font(view, font);
-#else  /* GTK_CHECK_VERSION(3, 16, 0) */
-  desc = pango_font_description_from_string(font);
-  gtk_widget_override_font(view, NULL);
-  gtk_widget_override_font(view, desc);
-#endif	/* GTK_CHECK_VERSION(3, 16, 0) */
 }
 
 enum SELECT_OBJ_COLOR_RESULT
