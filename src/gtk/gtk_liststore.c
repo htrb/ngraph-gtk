@@ -470,9 +470,6 @@ create_tree_view(int n, n_list_store *list, int tree)
 
   tview = gtk_tree_view_new_with_model(lstore);
 
-#if ! GTK_CHECK_VERSION(3, 14, 0)
-  gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(tview), TRUE);
-#endif
   gtk_tree_view_set_rubber_banding(GTK_TREE_VIEW(tview), TRUE);
   gtk_tree_view_set_grid_lines(GTK_TREE_VIEW(tview), GTK_TREE_VIEW_GRID_LINES_VERTICAL);
 
