@@ -79,9 +79,7 @@ void combo_box_create_mark(GtkWidget *cbox, GtkTreeIter *parent, int col_id, int
 enum SELECT_OBJ_COLOR_RESULT select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type);
 void set_widget_margin(GtkWidget *w, int margin_pos);
 void set_scale_mark(GtkWidget *scale, GtkPositionType pos, int start, int inc);
-#if GTK_CHECK_VERSION(3, 16, 0)
 void set_widget_font(GtkWidget *w, const char *font);
-#endif
 void add_default_color(struct narray *palette);
 void add_default_gray(struct narray *palette);
 gchar *get_text_from_buffer(GtkTextBuffer *buffer);
