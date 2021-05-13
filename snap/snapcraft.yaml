@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 name: ngraph-gtk-htrb
-version: '6.09.02'
+version: '6.09.02-RC1'
 summary: the program to create scientific 2-dimensional graphs.
 description: |
   Ngraph is the program to create scientific 2-dimensional graphs
