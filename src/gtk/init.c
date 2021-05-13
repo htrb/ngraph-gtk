@@ -831,7 +831,6 @@ n_getlocale(void)
   return locale;
 }
 
-#if GTK_CHECK_VERSION(3, 16, 0)
 static void
 load_css(void)
 {
@@ -841,7 +840,6 @@ load_css(void)
   gtk_css_provider_load_from_resource(css_provider, CSS_PATH);
   gtk_style_context_add_provider_for_screen(gdk_screen_get_default(), GTK_STYLE_PROVIDER(css_provider), GTK_STYLE_PROVIDER_PRIORITY_USER);
 }
-#endif
 
 void
 n_application_ready(void)
@@ -945,11 +943,9 @@ n_initialize(int *argc, char ***argv)
   consolefdin = 0;
   consolefdout = 2;
 
-#if GTK_CHECK_VERSION(3, 16, 0)
   if (OpenDisplay) {
     load_css();
   }
-#endif	/* GTK_CHECK_VERSION(3, 16, 0) */
 
 #if WINDOWS
   locale = g_win32_getlocale();
