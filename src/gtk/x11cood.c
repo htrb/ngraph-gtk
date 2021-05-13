@@ -41,33 +41,9 @@
 void
 CoordWinSetFont(const char *font)
 {
-#if GTK_CHECK_VERSION(3, 16, 0)
   if (NgraphApp.CoordWin.data.text && font) {
     set_widget_font(NgraphApp.CoordWin.data.text, font);
   }
-#else  /* GTK_CHECK_VERSION(3, 16, 0) */
-  const char *ptr;
-  PangoAttrList *pattr;
-  PangoFontDescription *desc;
-  GtkLabel *label;
-
-  label = GTK_LABEL(NgraphApp.CoordWin.data.text);
-
-  if (label == NULL)
-    return;
-
-  pattr = gtk_label_get_attributes(label);
-  if (pattr == NULL) {
-    pattr = pango_attr_list_new();
-    gtk_label_set_attributes(GTK_LABEL(label), pattr);
-  }
-
-  ptr = (font) ? font : "Monospace";
-
-  desc = pango_font_description_from_string(ptr);
-  pango_attr_list_change(pattr, pango_attr_font_desc_new(desc));
-  pango_font_description_free(desc);
-#endif
 }
 
 void
