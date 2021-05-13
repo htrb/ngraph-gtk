@@ -161,7 +161,6 @@ gtkclose(GtkWidget *widget, GdkEvent *event, gpointer user_data)
   return TRUE;
 }
 
-#if USE_EVENT_CONTROLLER
 static gboolean
 ev_key_down(GtkEventControllerKey *controller, guint keyval, guint keycode, GdkModifierType state, gpointer user_data)
 {
@@ -182,34 +181,6 @@ ev_key_down(GtkEventControllerKey *controller, guint keyval, guint keycode, GdkM
   }
   return FALSE;
 }
-#else
-static gboolean
-ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
-{
-  GdkEventKey *e;
-  struct gtklocal *gtklocal;
-
-  gtklocal = (struct gtklocal *) user_data;
-
-  g_return_val_if_fail(w != NULL, FALSE);
-  g_return_val_if_fail(event != NULL, FALSE);
-
-  e = (GdkEventKey *)event;
-
-  gtklocal->action.type = ACTION_TYPE_KEY;
-  gtklocal->action.val = e->keyval;
-
-  switch (e->keyval) {
-  case GDK_KEY_w:
-    if (e->state & GDK_CONTROL_MASK) {
-      gtkclose(w, NULL, NULL);
-      return TRUE;
-    }
-    return FALSE;
-  }
-  return FALSE;
-}
-#endif
 
 void
 size_allocate(GtkWidget *widget, GdkRectangle *allocation, gpointer user_data)
@@ -253,13 +224,8 @@ size_allocate(GtkWidget *widget, GdkRectangle *allocation, gpointer user_data)
 
 }
 
-#if USE_EVENT_CONTROLLER
 static void
 cursor_moved(GtkEventControllerMotion *controller, gdouble x, gdouble y, gpointer user_data)
-#else
-static gboolean
-cursor_moved(GtkWidget *widget, GdkEvent  *event, gpointer user_data)
-#endif
 {
   struct gtklocal *gtklocal;
 
@@ -270,13 +236,8 @@ cursor_moved(GtkWidget *widget, GdkEvent  *event, gpointer user_data)
     g_object_unref(gtklocal->blank_cursor);
     gtklocal->blank_cursor = NULL;
   }
-
-#if ! USE_EVENT_CONTROLLER
-  return FALSE;
-#endif
 }
 
-#if USE_EVENT_CONTROLLER
 static void
 button_released(GtkGestureMultiPress *gesture, gint n_press, gdouble x, gdouble y, gpointer user_data)
 {
@@ -289,20 +250,6 @@ button_released(GtkGestureMultiPress *gesture, gint n_press, gdouble x, gdouble 
   gtklocal->action.type = ACTION_TYPE_BUTTON;
   gtklocal->action.val = button;
 }
-#else
-static gboolean
-button_released(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
-{
-  struct gtklocal *gtklocal;
-
-  gtklocal = (struct gtklocal *) user_data;
-
-  gtklocal->action.type = ACTION_TYPE_BUTTON;
-  gtklocal->action.val = event->button;
-
-  return FALSE;
-}
-#endif
 
 static gboolean
 scrolled(GtkWidget *widget, GdkEventScroll *event, gpointer user_data)
@@ -326,7 +273,6 @@ scrolled(GtkWidget *widget, GdkEventScroll *event, gpointer user_data)
   return FALSE;
 }
 
-#if USE_EVENT_CONTROLLER
 static void
 add_event_key(GtkWidget *widget, struct gtklocal *gtklocal)
 {
@@ -353,7 +299,6 @@ add_event_motion(GtkWidget *widget, struct gtklocal *gtklocal)
   ev = gtk_event_controller_motion_new(widget);
   g_signal_connect(ev, "motion", G_CALLBACK(cursor_moved), gtklocal);
 }
-#endif
 
 static int
 gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
@@ -455,11 +400,7 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
 			   "delete-event",
 			   G_CALLBACK(gtkclose), gtklocal->mainwin);
 
-#if USE_EVENT_CONTROLLER
   add_event_key(gtklocal->mainwin, gtklocal);
-#else
-  g_signal_connect(gtklocal->mainwin, "key-press-event", G_CALLBACK(ev_key_down), gtklocal);
-#endif
 
   gtk_window_set_title((GtkWindow *) gtklocal->mainwin, gtklocal->title);
 
@@ -485,13 +426,8 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   gtklocal->redraw = TRUE;
 
   gtk_widget_add_events(gtklocal->mainwin, GDK_POINTER_MOTION_MASK | GDK_BUTTON_RELEASE_MASK | GDK_BUTTON_PRESS_MASK);
-#if USE_EVENT_CONTROLLER
   add_event_motion(gtklocal->mainwin, gtklocal);
   add_event_button(gtklocal->mainwin, gtklocal);
-#else
-  g_signal_connect(gtklocal->mainwin, "motion-notify-event", G_CALLBACK(cursor_moved), gtklocal);
-  g_signal_connect(gtklocal->mainwin, "button-release-event", G_CALLBACK(button_released), gtklocal);
-#endif
   g_signal_connect(gtklocal->mainwin, "scroll-event", G_CALLBACK(scrolled), gtklocal);
 
   if (chkobjfield(obj, "_evloop")) {
