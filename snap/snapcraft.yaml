@@ -78,7 +78,7 @@ parts:
       - libgdk-pixbuf2.0-0
       - libgraphite2-3
       - libgtk-3-0
-      - libgtksourceview-3.0-1
+      - libgtksourceview-4-0
       - libharfbuzz0b
       - libicu66
       - libpango-1.0-0
