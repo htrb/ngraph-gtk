@@ -9,12 +9,12 @@ description: |
 
 grade: stable # stable | devel
 confinement: strict
-base: core18
+base: core20
 
 apps:
   ngraph-gtk:
     command: usr/bin/ngraph-snap.sh
-    extensions: [gnome-3-28]
+    extensions: [gnome-3-38]
     plugs:
       - gsettings # For desktop theme detection under Wayland session
       - home
