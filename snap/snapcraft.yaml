@@ -35,7 +35,7 @@ parts:
     source-branch: master
 #    source-tag: v6.09.01
     plugin: autotools
-    configflags:
+    autotools-configure-parameters:
       - --prefix=/usr
       - --sysconfdir=/etc
     override-build: |
