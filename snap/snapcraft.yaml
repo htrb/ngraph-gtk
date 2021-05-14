@@ -80,7 +80,7 @@ parts:
       - libgtk-3-0
       - libgtksourceview-3.0-1
       - libharfbuzz0b
-      - libicu60
+      - libicu66
       - libpango-1.0-0
       - libpangocairo-1.0-0
       - libpangoft2-1.0-0
