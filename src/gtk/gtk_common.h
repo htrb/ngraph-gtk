@@ -14,15 +14,6 @@
 #define GTK_WIDGET_VISIBLE(w) gtk_widget_get_visible(w)
 #endif
 
-#ifdef GTK_SOURCE_CHECK_VERSION
-#undef GTK_SOURCE_CHECK_VERSION
-#define GTK_SOURCE_CHECK_VERSION(major, minor, micro) \
-	(GTK_SOURCE_MAJOR_VERSION > (major) || \
-	(GTK_SOURCE_MAJOR_VERSION == (major) && GTK_SOURCE_MINOR_VERSION > (minor)) || \
-	(GTK_SOURCE_MAJOR_VERSION == (major) && GTK_SOURCE_MINOR_VERSION == (minor) && \
-	 GTK_SOURCE_MICRO_VERSION >= (micro)))
-#endif
-
 #if WINDOWS || OSX
 #define USE_HEADER_BAR 0
 #else
