@@ -208,9 +208,7 @@ create_source_view(void)
   gtk_source_view_set_tab_width(source_view, 2);
   gtk_source_view_set_insert_spaces_instead_of_tabs(source_view, TRUE);
   gtk_source_view_set_smart_home_end(source_view, GTK_SOURCE_SMART_HOME_END_BEFORE);
-#if GTK_SOURCE_CHECK_VERSION(3, 18, 0)
   gtk_source_view_set_smart_backspace(source_view, TRUE);
-#endif
   gtk_source_view_set_indent_width(source_view, -1);
   gtk_source_view_set_indent_on_tab(source_view, TRUE);
   gtk_source_view_set_auto_indent(source_view, TRUE);
