@@ -434,28 +434,22 @@ SelectDialog(struct SelectDialog *data,
   data->title = title;
 }
 
-static gboolean
-single_list_default_cb(GtkWidget *w, GdkEventAny *e, gpointer user_data)
+static void
+single_list_default_cb(GtkTreeView *view, GtkTreePath *path, GtkTreeViewColumn *column, gpointer user_data)
 {
   struct CopyDialog *d;
 
   d = (struct CopyDialog *) user_data;
-
-  if (e->type == GDK_2BUTTON_PRESS ||
-      (e->type == GDK_KEY_PRESS && ((GdkEventKey *)e)->keyval == GDK_KEY_Return)) {
+  {
     int i;
 
     i = list_store_get_selected_index(d->list);
     if (i < 0) {
-      return FALSE;
+      return;
     }
 
     gtk_dialog_response(GTK_DIALOG(d->widget), GTK_RESPONSE_OK);
-
-    return TRUE;
   }
-
-  return FALSE;
 }
 
 static void
@@ -480,8 +474,7 @@ CopyDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
     gtk_container_add(GTK_CONTAINER(swin), d->list);
 
-    g_signal_connect(d->list, "button-press-event", G_CALLBACK(single_list_default_cb), d);
-    g_signal_connect(d->list, "key-press-event", G_CALLBACK(single_list_default_cb), d);
+    g_signal_connect(d->list, "row-activated", G_CALLBACK(single_list_default_cb), d);
 
     w = gtk_frame_new(NULL);
     gtk_container_add(GTK_CONTAINER(w), swin);
