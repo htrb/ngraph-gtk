@@ -2134,20 +2134,6 @@ FileMaskDialogAdd(GtkWidget *w, gpointer client_data)
   d->mask.changed = TRUE;
 }
 
-static gboolean
-mask_dialog_key_pressed(GtkWidget *w, GdkEventKey *e, gpointer user_data)
-{
-  struct FileDialog *d;
-
-  d = (struct FileDialog *) user_data;
-  if (e->keyval != GDK_KEY_Return)
-    return FALSE;
-
-  FileMaskDialogAdd(NULL, d);
-
-  return TRUE;
-}
-
 static void
 mask_tab_copy(GtkButton *btn, gpointer user_data)
 {
