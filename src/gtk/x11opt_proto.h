@@ -217,6 +217,21 @@ CREATE_NAME(Pref, ListDefailtCb)(GtkWidget *w, GdkEventAny *e, gpointer user_dat
   return FALSE;
 }
 
+static void
+CREATE_NAME(Pref, ListActivatedCb)(GtkTreeView *view, GtkTreePath *path, GtkTreeViewColumn *column, gpointer user_data)
+{
+  struct CREATE_NAME(Pref, Dialog) *d;
+  int i;
+
+  d = (struct CREATE_NAME(Pref, Dialog) *) user_data;
+
+  i = list_store_get_selected_index(d->list);
+  if (i < 0)
+    return;
+
+  CREATE_NAME(Pref, DialogUpdate)(NULL, d);
+}
+
 static gboolean
 CREATE_NAME(Pref, ListSelCb)(GtkTreeSelection *sel, gpointer user_data)
 {
@@ -248,8 +263,8 @@ CREATE_NAME(Pref, DialogCreateWidgets)(struct CREATE_NAME(Pref, Dialog) *d, GtkW
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   w = list_store_create(n, list);
   d->list = w;
-  g_signal_connect(d->list, "button-press-event", G_CALLBACK(CREATE_NAME(Pref, ListDefailtCb)), d);
   g_signal_connect(d->list, "key-press-event", G_CALLBACK(CREATE_NAME(Pref, ListDefailtCb)), d);
+  g_signal_connect(d->list, "row-activated", G_CALLBACK(CREATE_NAME(Pref, ListActivatedCb)), d);
   gtk_container_add(GTK_CONTAINER(swin), w);
 
   sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(w));
