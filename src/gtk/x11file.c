@@ -2202,7 +2202,7 @@ mask_tab_create(struct FileDialog *d)
 
   i = 0;
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_NATURAL, TRUE, FALSE);
-  g_signal_connect(w, "key-press-event", G_CALLBACK(mask_dialog_key_pressed), d);
+  g_signal_connect(w, "activate", G_CALLBACK(FileMaskDialogAdd), d);
   add_widget_to_table(table, w, _("_Line:"), FALSE, i++);
   d->mask.line = w;
 
