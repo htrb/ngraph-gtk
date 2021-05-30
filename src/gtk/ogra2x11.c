@@ -42,6 +42,7 @@
 #include "shell.h"
 
 #include "init.h"
+#include "gtk_widget.h"
 #include "x11menu.h"
 #include "x11gui.h"
 #include "ogra2x11.h"
@@ -274,15 +275,6 @@ scrolled(GtkWidget *widget, GdkEventScroll *event, gpointer user_data)
 }
 
 static void
-add_event_key(GtkWidget *widget, struct gtklocal *gtklocal)
-{
-  GtkEventController *ev;
-
-  ev = gtk_event_controller_key_new(widget);
-  g_signal_connect(ev, "key-pressed", G_CALLBACK(ev_key_down), gtklocal);
-}
-
-static void
 add_event_button(GtkWidget *widget, struct gtklocal *gtklocal)
 {
   GtkGesture *ev;
@@ -400,7 +392,7 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
 			   "delete-event",
 			   G_CALLBACK(gtkclose), gtklocal->mainwin);
 
-  add_event_key(gtklocal->mainwin, gtklocal);
+  add_event_key(gtklocal->mainwin, G_CALLBACK(ev_key_down), NULL,  gtklocal);
 
   gtk_window_set_title((GtkWindow *) gtklocal->mainwin, gtklocal->title);
 
