@@ -183,25 +183,23 @@ CREATE_NAME(Pref, ListDefailtCb)(GtkEventControllerKey *controller, guint keyval
   if (i < 0)
     return FALSE;
 
-  {
-    switch (keyval) {
-    case GDK_KEY_Up:
-      if (state & GDK_SHIFT_MASK) {
-	CREATE_NAME(Pref, DialogUp)(NULL, d);
-	return TRUE;
-      }
-      break;
-    case GDK_KEY_Down:
-      if (state & GDK_SHIFT_MASK) {
-	CREATE_NAME(Pref, DialogDown)(NULL, d);
-	return TRUE;
-      }
-      break;
-    case GDK_KEY_Delete:
-      CREATE_NAME(Pref, DialogRemove)(NULL, d);
+  switch (keyval) {
+  case GDK_KEY_Up:
+    if (state & GDK_SHIFT_MASK) {
+      CREATE_NAME(Pref, DialogUp)(NULL, d);
       return TRUE;
-      break;
     }
+    break;
+  case GDK_KEY_Down:
+    if (state & GDK_SHIFT_MASK) {
+      CREATE_NAME(Pref, DialogDown)(NULL, d);
+      return TRUE;
+    }
+    break;
+  case GDK_KEY_Delete:
+    CREATE_NAME(Pref, DialogRemove)(NULL, d);
+    return TRUE;
+    break;
   }
 
   return FALSE;
