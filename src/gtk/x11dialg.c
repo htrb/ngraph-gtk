@@ -255,25 +255,33 @@ initdialog(void)
   DlgImageOut.resource = N_("output image");
 }
 
-static gboolean
-multi_list_default_cb(GtkWidget *w, GdkEventAny *e, gpointer user_data)
+static void
+multi_list_default_cb(GtkTreeView *view, GtkTreePath *path, GtkTreeViewColumn *column, gpointer user_data)
 {
   struct SelectDialog *d;
 
   d = (struct SelectDialog *) user_data;
-
-  if (e->type == GDK_2BUTTON_PRESS ||
-      (e->type == GDK_KEY_PRESS && ((GdkEventKey *)e)->keyval == GDK_KEY_Return)) {
+  {
     GtkTreeSelection *sel;
     int n;
 
     sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(d->list));
     n = gtk_tree_selection_count_selected_rows(sel);
     if (n < 1)
-    return FALSE;
+      return;
 
     gtk_dialog_response(GTK_DIALOG(d->widget), GTK_RESPONSE_OK);
+  }
+}
 
+static gboolean
+key_pressed_cb(GtkEventControllerKey *controller, guint keyval, guint keycode, GdkModifierType state, gpointer user_data)
+{
+  struct SelectDialog *d;
+
+  d = (struct SelectDialog *) user_data;
+  if (keyval == GDK_KEY_Return) {
+    multi_list_default_cb(GTK_TREE_VIEW(d->list), NULL, NULL, user_data);
     return TRUE;
   }
   return FALSE;
@@ -320,8 +328,8 @@ SelectDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->list = list_store_create(sizeof(list) / sizeof(*list), list);
     list_store_set_sort_all(d->list);
     list_store_set_selection_mode(d->list, GTK_SELECTION_MULTIPLE);
-    g_signal_connect(d->list, "button-press-event", G_CALLBACK(multi_list_default_cb), d);
-    g_signal_connect(d->list, "key-press-event", G_CALLBACK(multi_list_default_cb), d);
+    add_event_key(d->list, G_CALLBACK(key_pressed_cb), NULL,  d);
+    g_signal_connect(d->list, "row-activated", G_CALLBACK(multi_list_default_cb), d);
 
     swin = gtk_scrolled_window_new(NULL, NULL);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
