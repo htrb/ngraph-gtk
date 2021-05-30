@@ -1983,17 +1983,17 @@ move_tab_create(struct FileDialog *d)
 
   i = 0;
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_NATURAL, TRUE, FALSE);
-  g_signal_connect(w, "key-press-event", G_CALLBACK(move_dialog_key_pressed), d);
+  g_signal_connect(w, "activate", G_CALLBACK(FileMoveDialogAdd), d);
   add_widget_to_table(table, w, _("_Line:"), FALSE, i++);
   d->move.line = w;
 
   w = create_text_entry(TRUE, FALSE);
-  g_signal_connect(w, "key-press-event", G_CALLBACK(move_dialog_key_pressed), d);
+  g_signal_connect(w, "activate", G_CALLBACK(FileMoveDialogAdd), d);
   add_widget_to_table(table, w, "_X:", FALSE, i++);
   d->move.x = w;
 
   w = create_text_entry(TRUE, FALSE);
-  g_signal_connect(w, "key-press-event", G_CALLBACK(move_dialog_key_pressed), d);
+  g_signal_connect(w, "activate", G_CALLBACK(FileMoveDialogAdd), d);
   add_widget_to_table(table, w, "_Y:", FALSE, i++);
   d->move.y = w;
 
