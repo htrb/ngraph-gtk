@@ -1917,21 +1917,6 @@ FileMoveDialogAdd(GtkWidget *w, gpointer client_data)
   d->move.changed = TRUE;
 }
 
-
-static gboolean
-move_dialog_key_pressed(GtkWidget *w, GdkEventKey *e, gpointer user_data)
-{
-  struct FileDialog *d;
-
-  d = (struct FileDialog *) user_data;
-  if (e->keyval != GDK_KEY_Return)
-    return FALSE;
-
-  FileMoveDialogAdd(NULL, d);
-
-  return TRUE;
-}
-
 static void
 FileMoveDialogRemove(GtkWidget *w, gpointer client_data)
 {
