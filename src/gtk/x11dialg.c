@@ -438,18 +438,16 @@ static void
 single_list_default_cb(GtkTreeView *view, GtkTreePath *path, GtkTreeViewColumn *column, gpointer user_data)
 {
   struct CopyDialog *d;
+  int i;
 
   d = (struct CopyDialog *) user_data;
-  {
-    int i;
 
-    i = list_store_get_selected_index(d->list);
-    if (i < 0) {
-      return;
-    }
-
-    gtk_dialog_response(GTK_DIALOG(d->widget), GTK_RESPONSE_OK);
+  i = list_store_get_selected_index(d->list);
+  if (i < 0) {
+    return;
   }
+
+  gtk_dialog_response(GTK_DIALOG(d->widget), GTK_RESPONSE_OK);
 }
 
 static void
