@@ -587,8 +587,8 @@ MathDialogList(GtkButton *w, gpointer client_data)
   g_list_free(list);
 }
 
-static gboolean
-math_dialog_key_pressed_cb(GtkWidget *w, GdkEventKey *e, gpointer user_data)
+static void
+math_dialog_activated_cb(GtkTreeView *view, GtkTreePath *path, GtkTreeViewColumn *column, gpointer user_data)
 {
   struct MathDialog *d;
   GtkTreeSelection *gsel;
@@ -596,33 +596,25 @@ math_dialog_key_pressed_cb(GtkWidget *w, GdkEventKey *e, gpointer user_data)
 
   d = (struct MathDialog *) user_data;
 
-  if (e->keyval != GDK_KEY_Return)
-    return FALSE;
-
-  gsel = gtk_tree_view_get_selection(GTK_TREE_VIEW(d->list));
-
+  gsel = gtk_tree_view_get_selection(view);
   n = gtk_tree_selection_count_selected_rows(gsel);
   if (n < 1)
-    return FALSE;
+    return;
 
   MathDialogList(NULL, d);
-
-  return TRUE;
 }
 
 static gboolean
-math_dialog_butten_pressed_cb(GtkWidget *w, GdkEventButton *e, gpointer user_data)
+key_pressed_cb(GtkEventControllerKey *controller, guint keyval, guint keycode, GdkModifierType state, gpointer user_data)
 {
   struct MathDialog *d;
 
   d = (struct MathDialog *) user_data;
-
-  if (e->type != GDK_2BUTTON_PRESS)
-    return FALSE;
-
-  MathDialogList(NULL, d);
-
-  return TRUE;
+  if (keyval == GDK_KEY_Return) {
+    math_dialog_activated_cb(GTK_TREE_VIEW(d->list), NULL, NULL, user_data);
+    return TRUE;
+  }
+  return FALSE;
 }
 
 static void
@@ -705,8 +697,8 @@ MathDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = list_store_create(sizeof(list) / sizeof(*list), list);
     list_store_set_sort_all(w);
     list_store_set_selection_mode(w, GTK_SELECTION_MULTIPLE);
-    g_signal_connect(w, "key-press-event", G_CALLBACK(math_dialog_key_pressed_cb), d);
-    g_signal_connect(w, "button-press-event", G_CALLBACK(math_dialog_butten_pressed_cb), d);
+    add_event_key(w, G_CALLBACK(key_pressed_cb), NULL,  d);
+    g_signal_connect(w, "row-activated", G_CALLBACK(math_dialog_activated_cb), d);
     d->list = w;
 
     swin = gtk_scrolled_window_new(NULL, NULL);
