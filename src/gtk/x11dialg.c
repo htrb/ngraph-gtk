@@ -259,19 +259,16 @@ static void
 multi_list_default_cb(GtkTreeView *view, GtkTreePath *path, GtkTreeViewColumn *column, gpointer user_data)
 {
   struct SelectDialog *d;
+  GtkTreeSelection *sel;
+  int n;
 
   d = (struct SelectDialog *) user_data;
-  {
-    GtkTreeSelection *sel;
-    int n;
+  sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(d->list));
+  n = gtk_tree_selection_count_selected_rows(sel);
+  if (n < 1)
+    return;
 
-    sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(d->list));
-    n = gtk_tree_selection_count_selected_rows(sel);
-    if (n < 1)
-      return;
-
-    gtk_dialog_response(GTK_DIALOG(d->widget), GTK_RESPONSE_OK);
-  }
+  gtk_dialog_response(GTK_DIALOG(d->widget), GTK_RESPONSE_OK);
 }
 
 static gboolean
