@@ -172,7 +172,7 @@ CREATE_NAME(Pref, DialogDown)(GtkWidget *w, gpointer client_data)
 }
 
 static gboolean
-CREATE_NAME(Pref, ListDefailtCb)(GtkWidget *w, GdkEventAny *e, gpointer user_data)
+CREATE_NAME(Pref, ListDefailtCb)(GtkEventControllerKey *controller, guint keyval, guint keycode, GdkModifierType state, gpointer user_data)
 {
   struct CREATE_NAME(Pref, Dialog) *d;
   int i;
@@ -183,26 +183,16 @@ CREATE_NAME(Pref, ListDefailtCb)(GtkWidget *w, GdkEventAny *e, gpointer user_dat
   if (i < 0)
     return FALSE;
 
-  if (e->type == GDK_2BUTTON_PRESS) {
-    CREATE_NAME(Pref, DialogUpdate)(NULL, d);
-    return TRUE;
-  } else if (e->type == GDK_KEY_PRESS) {
-    GdkEventKey *ke;
-
-    ke = (GdkEventKey *) e;
-    switch (ke->keyval) {
-    case GDK_KEY_Return:
-      CREATE_NAME(Pref, DialogUpdate)(NULL, d);
-      return TRUE;
-      break;
+  {
+    switch (keyval) {
     case GDK_KEY_Up:
-      if (ke->state & GDK_SHIFT_MASK) {
+      if (state & GDK_SHIFT_MASK) {
 	CREATE_NAME(Pref, DialogUp)(NULL, d);
 	return TRUE;
       }
       break;
     case GDK_KEY_Down:
-      if (ke->state & GDK_SHIFT_MASK) {
+      if (state & GDK_SHIFT_MASK) {
 	CREATE_NAME(Pref, DialogDown)(NULL, d);
 	return TRUE;
       }
@@ -263,8 +253,8 @@ CREATE_NAME(Pref, DialogCreateWidgets)(struct CREATE_NAME(Pref, Dialog) *d, GtkW
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   w = list_store_create(n, list);
   d->list = w;
-  g_signal_connect(d->list, "key-press-event", G_CALLBACK(CREATE_NAME(Pref, ListDefailtCb)), d);
   g_signal_connect(d->list, "row-activated", G_CALLBACK(CREATE_NAME(Pref, ListActivatedCb)), d);
+  add_event_key(d->list, G_CALLBACK(CREATE_NAME(Pref, ListDefailtCb)), NULL, d);
   gtk_container_add(GTK_CONTAINER(swin), w);
 
   sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(w));
