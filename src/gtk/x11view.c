@@ -1370,16 +1370,6 @@ add_event_drag(GtkWidget *widget, struct Viewer *d)
 }
 
 static void
-add_event_key(GtkWidget *widget, struct Viewer *d)
-{
-  GtkEventController *ev;
-
-  ev = gtk_event_controller_key_new(widget);
-  g_signal_connect(ev, "key-pressed", G_CALLBACK(ViewerEvKeyDown), d);
-  g_signal_connect(ev, "key-released", G_CALLBACK(ViewerEvKeyUp), d);
-}
-
-static void
 add_event_button(GtkWidget *widget, struct Viewer *d)
 {
   GtkGesture *ev;
@@ -1629,7 +1619,7 @@ ViewerWinSetup(void)
   }
 
   add_event_drag(d->Win, d);
-  add_event_key(d->Win, d);
+  add_event_key(d->Win, G_CALLBACK(ViewerEvKeyDown), G_CALLBACK(ViewerEvKeyUp),  d);
   add_event_button(d->Win, d);
   add_event_zoom(d->Win, d);
 #if GTK_CHECK_VERSION(4, 0, 0)
