@@ -2786,17 +2786,20 @@ free_axis_math(struct axis_config *aconf)
 }
 
 static int
-get_reference_parameter(struct objlist *obj, N_VALUE *inst,  struct axis_config *aconf)
+get_reference_parameter(struct objlist *obj, N_VALUE *inst,  struct axis_config *aconf, struct narray *ids)
 {
   char *axis;
   struct objlist *aobj;
   int anum;
   struct narray iarray;
-  int type;
+  int type, myid;
 
   _getobj(obj,"reference",inst, &axis);
   if (axis == NULL)
     return 1;
+
+  _getobj(obj, "id", inst, &myid);
+  arrayadd(ids, &myid);
 
   arrayinit(&iarray,sizeof(int));
   if (getobjilist(axis,&aobj,&iarray,FALSE,NULL))
@@ -2810,11 +2813,14 @@ get_reference_parameter(struct objlist *obj, N_VALUE *inst,  struct axis_config 
     int id;
     id=arraylast_int(&iarray);
     arraydel(&iarray);
+    if (array_find_int(ids, id) >= 0) {
+      return 1;
+    }
     inst1 = getobjinst(aobj,id);
     if (inst1) {
       get_axis_parameter(aobj, inst1, aconf);
       if (aconf->min == 0 && aconf->max == 0 && aconf->inc == 0) {
-	get_reference_parameter(obj, inst1, aconf);
+	get_reference_parameter(obj, inst1, aconf, ids);
       }
     }
   }
@@ -3021,7 +3027,12 @@ axisdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 
   get_axis_parameter(obj, inst, &aconf);
   if (aconf.min == 0 && aconf.max == 0 && aconf.inc == 0) {
-    get_reference_parameter(obj, inst, &aconf);
+    struct narray *ids;
+    ids = arraynew(sizeof(int));
+    if (ids) {
+      get_reference_parameter(obj, inst, &aconf, ids);
+      arrayfree(ids);
+    }
   }
 
   if (aconf.min != aconf.max && aconf.inc != 0 &&
