@@ -925,6 +925,23 @@ arraylast_int(struct narray *array)
   return (ptr) ? * (int *) ptr : 0;
 }
 
+int
+array_find_int(struct narray *array, int number)
+{
+  int *data, n, i;
+  if (array == NULL) {
+    return -1;
+  }
+  data = arraydata(array);
+  n = arraynum(array);
+  for (i = 0; i < n; i++) {
+    if (data[i] == number) {
+      return i;
+    }
+  }
+  return -1;
+}
+
 static int
 cmp_func_int(const void *p1, const void *p2)
 {

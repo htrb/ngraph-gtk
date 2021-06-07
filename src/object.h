@@ -213,6 +213,7 @@ double arraynget_double(struct narray *array, unsigned int idx);
 char *arraynget_str(struct narray *array, unsigned int idx);
 void *arraylast(struct narray *array);
 int arraylast_int(struct narray *array);
+int array_find_int(struct narray *array, int number);
 void arraysort_int(struct narray *array);
 void arrayrsort_int(struct narray *array);
 void arrayuniq_int(struct narray *array);
