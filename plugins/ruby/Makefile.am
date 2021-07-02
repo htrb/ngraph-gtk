@@ -6,16 +6,16 @@ if OS_OSX
 $(ruby_ext): ngraph.c $(builddir)/ruby_ngraph.h
 	mv Makefile Makefile.org
 	ARCHFLAGS="-arch x86_64" ruby $(srcdir)/extconf.rb $(prefix) --with-ngraph-include=$(top_srcdir)/src --with-ngraph-lib=$(top_builddir)/src/.libs
-	$(MAKE) $(AM_MAKEFLAGS)
 	mv Makefile Makefile.ruby
 	mv Makefile.org Makefile
+	$(MAKE) -f Makefile.ruby $(AM_MAKEFLAGS)
 else
 $(ruby_ext): ngraph.c $(builddir)/ruby_ngraph.h
 	mv Makefile Makefile.org
 	ruby $(srcdir)/extconf.rb $(prefix) --with-ngraph-include=$(top_srcdir)/src --with-ngraph-lib=$(top_builddir)/src/.libs
-	$(MAKE) $(AM_MAKEFLAGS)
 	mv Makefile Makefile.ruby
 	mv Makefile.org Makefile
+	$(MAKE) -f Makefile.ruby $(AM_MAKEFLAGS)
 endif
 
 
