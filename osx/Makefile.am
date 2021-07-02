@@ -15,7 +15,7 @@ if OS_OSX
 ngraph.icns: $(ICONSET)
 	iconutil -c icns ngraph.iconset
 
-app_data = ngraph.icns Info-ngraph-gtk.plist
+app_data = ngraph.icns
 
 BUILT_SOURCES = $(app_data)
 CLEANFILES = $(app_data)
