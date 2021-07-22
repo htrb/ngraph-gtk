@@ -5063,6 +5063,7 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
 
   if ((d->Mode != DataB) &&
       (d->Mode != EvalB) &&
+      (d->Mode != TrimB) &&
       (d->Mode != ZoomB) &&
       (d->MouseMode != MOUSEPOINT) &&
       (((d->Mode != PointB) && (d->Mode != LegendB) && (d->Mode != AxisB)) ||
