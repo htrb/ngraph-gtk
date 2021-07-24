@@ -2090,10 +2090,7 @@ position_tab_set_value(struct AxisDialog *axis)
 static void
 position_tab_setup_item(struct AxisDialog *axis, int id)
 {
-  char *valstr;
-  int j;
   int lastinst;
-  char *name;
   struct AxisPos *d;
 
   d = &axis->position;
@@ -2107,24 +2104,7 @@ position_tab_setup_item(struct AxisDialog *axis, int id)
   SetWidgetFromObjField(d->direction, axis->Obj, id, "direction");
 
   lastinst = chkobjlastinst(axis->Obj);
-  combo_box_clear(d->adjust);
-  combo_box_append_text(d->adjust, _("none"));
-  for (j = 0; j <= lastinst; j++) {
-    getobj(axis->Obj, "group", j, 0, NULL, &name);
-    name = CHK_STR(name);
-    combo_box_append_text(d->adjust, name);
-  }
-
-  sgetobjfield(axis->Obj, id, "adjust_axis", NULL, &valstr, FALSE, FALSE, FALSE);
-  if (valstr) {
-    int i;
-    for (i = 0; (valstr[i] != '\0') && (valstr[i] != ':'); i++);
-    if (valstr[i] == ':')
-      i++;
-
-    combo_box_entry_set_text(d->adjust, valstr + i);
-    g_free(valstr);
-  }
+  axis_combo_box_setup(d->adjust, axis->Obj, id, "adjust_axis");
 
   SetWidgetFromObjField(d->adjustpos, axis->Obj, id, "adjust_position");
 }
