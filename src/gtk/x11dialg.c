@@ -1293,6 +1293,49 @@ axis_combo_box_set_active(GtkWidget *cbox, struct objlist *obj, int id, const ch
   g_free(valstr);
 }
 
+void
+axis_combo_box_setup(GtkWidget *cbox, struct objlist *obj, int id, const char *field)
+{
+  struct objlist *aobj;
+  char *name;
+  int aid, lastinst, self;
+  GtkListStore  *list;
+
+  combo_box_clear(cbox);
+  list = GTK_LIST_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(cbox)));
+
+  aobj = getobject("axis");
+  lastinst = chkobjlastinst(aobj);
+  if (axis_combo_box_get_flags(cbox) & AXIS_COMBO_BOX_ADD_NONE) {
+    GtkTreeIter iter;
+    gtk_list_store_append(list, &iter);
+    gtk_list_store_set(list, &iter,
+		       0, _("none"),
+		       1, -1,
+		       2, -1,
+		       3, TRUE,
+		       -1);
+  }
+  self = (aobj == obj) ? id : -1;
+  for (aid = 0; aid <= lastinst; aid++) {
+    GtkTreeIter iter;
+    int aoid;
+
+    getobj(aobj, "group", aid, 0, NULL, &name);
+    getobj(aobj, "oid", aid, 0, NULL, &aoid);
+    name = CHK_STR(name);
+
+    gtk_list_store_append(list, &iter);
+    gtk_list_store_set(list, &iter,
+		       0, name,
+		       1, aid,
+		       2, aoid,
+		       3, aid != self,
+		       -1);
+  }
+  axis_combo_box_set_active(cbox, obj, id, field);
+}
+
 int
 SetObjAxisFieldFromWidget(GtkWidget *w, struct objlist *obj, int id, char *field)
 {
