@@ -1010,11 +1010,8 @@ ZoomDialog(struct ZoomDialog *data)
 static void
 scale_tab_setup_item(struct AxisDialog *d, int id)
 {
-  char *valstr;
   int j;
   double min, max, inc;
-  int lastinst;
-  char *name;
   struct narray *array;
   double *data;
   char buf[30];
@@ -1075,25 +1072,7 @@ scale_tab_setup_item(struct AxisDialog *d, int id)
   SetWidgetFromObjField(d->div, d->Obj, id, "div");
   SetWidgetFromObjField(d->scale, d->Obj, id, "type");
 
-  combo_box_clear(d->ref);
-  lastinst = chkobjlastinst(d->Obj);
-  combo_box_append_text(d->ref, _("none"));
-  for (j = 0; j <= lastinst; j++) {
-    getobj(d->Obj, "group", j, 0, NULL, &name);
-    name =CHK_STR(name);
-    combo_box_append_text(d->ref, name);
-  }
-
-  sgetobjfield(d->Obj, id, "reference", NULL, &valstr, FALSE, FALSE, FALSE);
-  if (valstr) {
-    int i;
-    for (i = 0; (valstr[i] != '\0') && (valstr[i] != ':'); i++);
-    if (valstr[i] == ':') {
-      i++;
-    }
-    combo_box_entry_set_text(d->ref, valstr + i);
-    g_free(valstr);
-  }
+  axis_combo_box_setup(d->ref, d->Obj, id, "reference");
   SetWidgetFromObjField(d->margin, d->Obj, id, "auto_scale_margin");
 }
 
