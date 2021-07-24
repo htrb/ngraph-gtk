@@ -236,45 +236,15 @@ bg_button_toggled(GtkToggleButton *button, gpointer user_data)
 static void
 GridDialogSetupItem(struct GridDialog *d, int id)
 {
-  char *valstr;
-  int i, j;
+  int i;
   int lastinst;
   struct objlist *aobj;
-  char *name;
 
   aobj = getobject("axis");
   lastinst = chkobjlastinst(aobj);
 
-  combo_box_clear(d->axisx);
-  combo_box_clear(d->axisy);
-
-  for (j = 0; j <= lastinst; j++) {
-    getobj(aobj, "group", j, 0, NULL, &name);
-    name = CHK_STR(name);
-
-    combo_box_append_text(d->axisx, name);
-    combo_box_append_text(d->axisy, name);
-  }
-
-  sgetobjfield(d->Obj, id, "axis_x", NULL, &valstr, FALSE, FALSE, FALSE);
-  if (valstr) {
-    for (i = 0; (valstr[i] != '\0') && (valstr[i] != ':'); i++);
-    if (valstr[i] == ':') {
-      i++;
-    }
-    combo_box_entry_set_text(d->axisx, valstr + i);
-    g_free(valstr);
-  }
-
-  sgetobjfield(d->Obj, id, "axis_y", NULL, &valstr, FALSE, FALSE, FALSE);
-  if (valstr) {
-    for (i = 0; (valstr[i] != '\0') && (valstr[i] != ':'); i++);
-    if (valstr[i] == ':') {
-      i++;
-    }
-    combo_box_entry_set_text(d->axisy, valstr + i);
-    g_free(valstr);
-  }
+  axis_combo_box_setup(d->axisx, d->Obj, id, "axis_x");
+  axis_combo_box_setup(d->axisy, d->Obj, id, "axis_y");
 
   SetWidgetFromObjField(d->draw_x, d->Obj, id, "grid_x");
   SetWidgetFromObjField(d->draw_y, d->Obj, id, "grid_y");
