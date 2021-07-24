@@ -2151,9 +2151,7 @@ position_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   add_widget_to_table(table, w, _("_Direction:"), FALSE, i++);
   d->direction = w;
 
-  w = combo_box_entry_create();
-  combo_box_entry_set_width(w, NUM_ENTRY_WIDTH);
-  g_signal_connect(w, "changed", G_CALLBACK(AxisDialogRef), dd);
+  w = axis_combo_box_create(AXIS_COMBO_BOX_USE_OID | AXIS_COMBO_BOX_ADD_NONE);
   add_widget_to_table(table, w, _("_Adjust:"), FALSE, i++);
   d->adjust = w;
 
