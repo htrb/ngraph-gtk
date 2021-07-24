@@ -1268,10 +1268,8 @@ scale_tab_create(struct AxisDialog *d)
   add_widget_to_table(table, w, _("_Div:"), FALSE, i++);
   d->div = w;
 
-  w = combo_box_entry_create();
+  w = axis_combo_box_create(AXIS_COMBO_BOX_USE_OID | AXIS_COMBO_BOX_ADD_NONE);
   add_widget_to_table(table, w, _("_Ref:"), FALSE, i++);
-  combo_box_entry_set_width(w, NUM_ENTRY_WIDTH);
-  g_signal_connect(w, "changed", G_CALLBACK(AxisDialogRef), d);
   d->ref = w;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_PERCENT, TRUE, TRUE);
