@@ -1258,6 +1258,12 @@ axis_combo_box_create(int flags)
   return cbox;
 }
 
+static int
+axis_combo_box_get_flags(GtkWidget *cbox)
+{
+  return GPOINTER_TO_INT(g_object_get_data(G_OBJECT(cbox), AXIS_COMBO_BOX_FLAGS_KEY));
+}
+
 int
 SetObjAxisFieldFromWidget(GtkWidget *w, struct objlist *obj, int id, char *field)
 {
