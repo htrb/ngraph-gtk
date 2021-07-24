@@ -44,6 +44,12 @@ extern struct line_style FwLineStyle[];
 extern char *FwNumStyle[];
 extern int FwNumStyleNum;
 
+enum AXIS_COMBO_BOX_FLAGS {
+  AXIS_COMBO_BOX_NONE = 0,
+  AXIS_COMBO_BOX_USE_OID = 1,
+  AXIS_COMBO_BOX_ADD_NONE = 2,
+};
+
 #define N_RESPONSE_ALL 1
 
 void initdialog(void);
