@@ -1339,19 +1339,28 @@ axis_combo_box_setup(GtkWidget *cbox, struct objlist *obj, int id, const char *f
 int
 SetObjAxisFieldFromWidget(GtkWidget *w, struct objlist *obj, int id, char *field)
 {
-  const char *s;
   char *buf;
   int r;
+  GtkTreeIter iter;
+  GtkTreeModel *list;
+  int aoid, aid;
 
-  s = combo_box_entry_get_text(w);
-  if (s == NULL) {
+  r = gtk_combo_box_get_active_iter(GTK_COMBO_BOX(w), &iter);
+  if (! r) {
     return 0;
   }
+  list = gtk_combo_box_get_model(GTK_COMBO_BOX(w));
 
-  if (s[0] == '\0') {
-    buf = NULL;
+  buf = NULL;
+  gtk_tree_model_get(list, &iter, 1, &aid, 2, &aoid, -1);
+  if (axis_combo_box_get_flags(w) & AXIS_COMBO_BOX_USE_OID) {
+    if (aoid >= 0) {
+      buf = g_strdup_printf("axis:^%d", aoid);
+    }
   } else {
-    buf = g_strdup_printf("axis:%s", CHK_STR(s));
+    if (aid >= 0) {
+      buf = g_strdup_printf("axis:%d", aid);
+    }
   }
 
   r = chk_sputobjfield(obj, id, field, buf);
