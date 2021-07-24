@@ -1264,6 +1264,35 @@ axis_combo_box_get_flags(GtkWidget *cbox)
   return GPOINTER_TO_INT(g_object_get_data(G_OBJECT(cbox), AXIS_COMBO_BOX_FLAGS_KEY));
 }
 
+static void
+axis_combo_box_set_active(GtkWidget *cbox, struct objlist *obj, int id, const char *field)
+{
+  char *valstr;
+  struct narray axis_array;
+  struct objlist *aobj;
+  combo_box_set_active(cbox, 0);
+  sgetobjfield(obj, id, field, NULL, &valstr, FALSE, FALSE, FALSE);
+  if (valstr == NULL) {
+    return;
+  }
+  g_strstrip(valstr);
+  if (! g_ascii_isalpha(valstr[0])) {
+    g_free(valstr);
+    return;
+  }
+  arrayinit(&axis_array, sizeof(int));
+  if (getobjilist(valstr, &aobj, &axis_array, FALSE, NULL) == 0) {
+    int aid;
+    aid = arraylast_int(&axis_array);
+    arraydel(&axis_array);
+    if (axis_combo_box_get_flags(cbox) & AXIS_COMBO_BOX_ADD_NONE) {
+      aid += 1;
+    }
+    combo_box_set_active(cbox, aid);
+  }
+  g_free(valstr);
+}
+
 int
 SetObjAxisFieldFromWidget(GtkWidget *w, struct objlist *obj, int id, char *field)
 {
