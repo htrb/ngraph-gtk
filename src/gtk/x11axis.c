@@ -335,18 +335,16 @@ GridDialogSetup(GtkWidget *wi, void *data, int makewidget)
     table = gtk_grid_new();
 
     j = 0;
-    w = combo_box_entry_create();
+    w = axis_combo_box_create(AXIS_COMBO_BOX_USE_OID);
     add_widget_to_table(table, w, _("Axis (_X):"), FALSE, j++);
-    g_signal_connect(w, "changed", G_CALLBACK(GridDialogAxis), NULL);
     d->axisx = w;
 
     w = gtk_check_button_new_with_mnemonic(_("draw _X grid"));
     add_widget_to_table(table, w, NULL, FALSE, j++);
     d->draw_x = w;
 
-    w = combo_box_entry_create();
+    w = axis_combo_box_create(AXIS_COMBO_BOX_USE_OID);
     add_widget_to_table(table, w, _("Axis (_Y):"), FALSE, j++);
-    g_signal_connect(w, "changed", G_CALLBACK(GridDialogAxis), NULL);
     d->axisy = w;
 
     w = gtk_check_button_new_with_mnemonic(_("draw _Y grid"));
