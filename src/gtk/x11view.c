@@ -874,6 +874,9 @@ drag_drop_cb(GtkWidget *w, GdkDragContext *context, gint x, gint y, GtkSelection
     break;
   case DROP_TYPE_FILE:
     filenames = gtk_selection_data_get_uris(data);
+    if (filenames == NULL) {
+      break;
+    }
 
     num = g_strv_length(filenames);
 
