@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6.08.07\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2021-07-25 09:47+0900\n"
+"POT-Creation-Date: 2021-07-25 14:58+0900\n"
 "PO-Revision-Date: 2021-01-21 10:08+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -214,7 +214,7 @@ msgstr "フォーカス(_F)"
 msgid "focus _All"
 msgstr "全てフォーカス(_A)"
 
-#: src/gtk/x11axis.c:111 src/gtk/x11axis.c:1207
+#: src/gtk/x11axis.c:111 src/gtk/x11axis.c:1206
 msgid "_Clear"
 msgstr "クリア(_C)"
 
@@ -364,7 +364,7 @@ msgstr ""
 msgid "_Style %d:"
 msgstr "線種 %d(_S):"
 
-#: src/gtk/x11axis.c:291 src/gtk/x11axis.c:1544
+#: src/gtk/x11axis.c:291 src/gtk/x11axis.c:1543
 #, c-format
 msgid "_Width %d:"
 msgstr "線幅 %d(_W):"
@@ -394,8 +394,8 @@ msgstr "_Y グリッド描画"
 msgid "Axis"
 msgstr "軸"
 
-#: src/gtk/x11axis.c:341 src/gtk/x11axis.c:1356 src/gtk/x11axis.c:1540
-#: src/gtk/x11axis.c:2002 src/gtk/x11lgnd.c:1210 src/gtk/x11lgnd.c:1230
+#: src/gtk/x11axis.c:341 src/gtk/x11axis.c:1355 src/gtk/x11axis.c:1539
+#: src/gtk/x11axis.c:2001 src/gtk/x11lgnd.c:1210 src/gtk/x11lgnd.c:1230
 #: src/gtk/x11lgnd.c:1240 src/gtk/x11lgndx.c:419
 msgid "_Color:"
 msgstr "色(_C):"
@@ -408,13 +408,13 @@ msgstr "背景色(_B)"
 msgid "_Background Color:"
 msgstr "背景色(_B):"
 
-#: src/gtk/x11axis.c:353 src/gtk/x11axis.c:3166 src/gtk/x11axis.c:3187
-#: src/gtk/x11axis.c:3220 src/gtk/x11lgnd.c:3048 src/gtk/x11lgnd.c:3059
+#: src/gtk/x11axis.c:353 src/gtk/x11axis.c:3165 src/gtk/x11axis.c:3186
+#: src/gtk/x11axis.c:3219 src/gtk/x11lgnd.c:3048 src/gtk/x11lgnd.c:3059
 #: src/gtk/x11lgnd.c:3488 src/gtk/gtk_widget.c:934
 msgid "Color"
 msgstr "色"
 
-#: src/gtk/x11axis.c:366 src/gtk/x11axis.c:1555
+#: src/gtk/x11axis.c:366 src/gtk/x11axis.c:1554
 msgid "Style"
 msgstr "スタイル"
 
@@ -454,312 +454,312 @@ msgstr "グリッド(_G)"
 msgid "_Zoom:"
 msgstr "ズーム(_Z):"
 
-#: src/gtk/x11axis.c:1085
+#: src/gtk/x11axis.c:1084
 msgid "autoscale (multi select)"
 msgstr "自動スケール (複数選択)"
 
-#: src/gtk/x11axis.c:1193 src/gtk/x11axis.c:1519 src/gtk/x11file.c:1722
+#: src/gtk/x11axis.c:1192 src/gtk/x11axis.c:1518 src/gtk/x11file.c:1722
 #: src/gtk/x11parameter.c:133
 msgid "_Min:"
 msgstr "最小値(_M):"
 
-#: src/gtk/x11axis.c:1197 src/gtk/x11axis.c:1524 src/gtk/x11file.c:1726
+#: src/gtk/x11axis.c:1196 src/gtk/x11axis.c:1523 src/gtk/x11file.c:1726
 #: src/gtk/x11parameter.c:137
 msgid "_Max:"
 msgstr "最大値(_M):"
 
-#: src/gtk/x11axis.c:1201
+#: src/gtk/x11axis.c:1200
 msgid "_Inc:"
 msgstr "増分(_I):"
 
-#: src/gtk/x11axis.c:1211 src/gtk/data/gtk/menus-common.ui.in:292
+#: src/gtk/x11axis.c:1210 src/gtk/data/gtk/menus-common.ui.in:292
 #: src/gtk/data/gtk/menus-common-win.ui.in:300
 #: src/gtk/data/gtk/menus-common.ui:292
 msgid "_Data"
 msgstr "データ(_D)"
 
-#: src/gtk/x11axis.c:1219
+#: src/gtk/x11axis.c:1218
 msgid "_Scale:"
 msgstr "スケール法(_S):"
 
-#: src/gtk/x11axis.c:1223 src/gtk/x11file.c:1730 src/gtk/x11print.c:89
+#: src/gtk/x11axis.c:1222 src/gtk/x11file.c:1730 src/gtk/x11print.c:89
 msgid "_Div:"
 msgstr "分割数(_D):"
 
-#: src/gtk/x11axis.c:1227
+#: src/gtk/x11axis.c:1226
 msgid "_Ref:"
 msgstr "参照軸(_R):"
 
-#: src/gtk/x11axis.c:1231
+#: src/gtk/x11axis.c:1230
 msgid "_Auto scale margin:"
 msgstr "自動スケール余白(_A):"
 
-#: src/gtk/x11axis.c:1234 src/gtk/x11axis.c:3237 src/oparameter.c:37
+#: src/gtk/x11axis.c:1233 src/gtk/x11axis.c:3236 src/oparameter.c:37
 msgid "Scale"
 msgstr "スケール"
 
-#: src/gtk/x11axis.c:1342
+#: src/gtk/x11axis.c:1341
 msgid "Draw _Baseline"
 msgstr "軸基線描画(_B)"
 
-#: src/gtk/x11axis.c:1348 src/gtk/x11file.c:3348 src/gtk/x11lgnd.c:1180
+#: src/gtk/x11axis.c:1347 src/gtk/x11file.c:3348 src/gtk/x11lgnd.c:1180
 #: src/gtk/x11lgndx.c:403
 msgid "Line _Style:"
 msgstr "線種(_S):"
 
-#: src/gtk/x11axis.c:1352 src/gtk/x11file.c:3352 src/gtk/x11lgndx.c:407
+#: src/gtk/x11axis.c:1351 src/gtk/x11file.c:3352 src/gtk/x11lgndx.c:407
 msgid "_Line Width:"
 msgstr "線幅(_W):"
 
-#: src/gtk/x11axis.c:1359 src/gtk/x11axis.c:3150
+#: src/gtk/x11axis.c:1358 src/gtk/x11axis.c:3149
 msgid "Baseline"
 msgstr "軸基線"
 
-#: src/gtk/x11axis.c:1369 src/gtk/x11axis.c:1391
+#: src/gtk/x11axis.c:1368 src/gtk/x11axis.c:1390
 msgid "_Position:"
 msgstr "位置(_P):"
 
-#: src/gtk/x11axis.c:1374
+#: src/gtk/x11axis.c:1373
 msgid "_Arrow length:"
 msgstr "長さ(_A):"
 
-#: src/gtk/x11axis.c:1379
+#: src/gtk/x11axis.c:1378
 msgid "_Arrow width:"
 msgstr "幅(_A):"
 
-#: src/gtk/x11axis.c:1382 src/gtk/x11axis.c:3160
+#: src/gtk/x11axis.c:1381 src/gtk/x11axis.c:3159
 msgid "Arrow"
 msgstr "矢印"
 
-#: src/gtk/x11axis.c:1395
+#: src/gtk/x11axis.c:1394
 msgid "_Wave length:"
 msgstr "長さ(_W):"
 
-#: src/gtk/x11axis.c:1399
+#: src/gtk/x11axis.c:1398
 msgid "_Wave width:"
 msgstr "線幅(_W):"
 
-#: src/gtk/x11axis.c:1402 src/gtk/x11axis.c:3163
+#: src/gtk/x11axis.c:1401 src/gtk/x11axis.c:3162
 msgid "Wave"
 msgstr "波型"
 
-#: src/gtk/x11axis.c:1514
+#: src/gtk/x11axis.c:1513
 msgid "_Gauge:"
 msgstr "位置(_G):"
 
-#: src/gtk/x11axis.c:1527 src/gtk/x11axis.c:1789
+#: src/gtk/x11axis.c:1526 src/gtk/x11axis.c:1788
 msgid "Range"
 msgstr "範囲"
 
-#: src/gtk/x11axis.c:1536
+#: src/gtk/x11axis.c:1535
 msgid "_Style:"
 msgstr "線種(_S):"
 
-#: src/gtk/x11axis.c:1549
+#: src/gtk/x11axis.c:1548
 #, c-format
 msgid "_Length %d:"
 msgstr "長さ %d(_L):"
 
-#: src/gtk/x11axis.c:1774
+#: src/gtk/x11axis.c:1773
 msgid "_Numbering:"
 msgstr "位置(_N):"
 
-#: src/gtk/x11axis.c:1778
+#: src/gtk/x11axis.c:1777
 msgid "_Begin:"
 msgstr "開始点(_B):"
 
-#: src/gtk/x11axis.c:1782 src/gtk/x11parameter.c:141 src/gtk/x11parameter.c:202
+#: src/gtk/x11axis.c:1781 src/gtk/x11parameter.c:141 src/gtk/x11parameter.c:202
 msgid "_Step:"
 msgstr "間隔(_S):"
 
-#: src/gtk/x11axis.c:1786
+#: src/gtk/x11axis.c:1785
 msgid "_Num:"
 msgstr "個数(_N):"
 
-#: src/gtk/x11axis.c:1798
+#: src/gtk/x11axis.c:1797
 msgid "_Align:"
 msgstr "位置合わせ(_A):"
 
-#: src/gtk/x11axis.c:1802 src/gtk/x11axis.c:2104 src/gtk/x11lgnd.c:1906
+#: src/gtk/x11axis.c:1801 src/gtk/x11axis.c:2103 src/gtk/x11lgnd.c:1906
 msgid "_Direction:"
 msgstr "方向(_D):"
 
-#: src/gtk/x11axis.c:1807
+#: src/gtk/x11axis.c:1806
 msgid "shift (_P):"
 msgstr "並行シフト量(_P):"
 
-#: src/gtk/x11axis.c:1811
+#: src/gtk/x11axis.c:1810
 msgid "shift (_N):"
 msgstr "垂直シフト量(_N):"
 
-#: src/gtk/x11axis.c:1814 src/gtk/x11axis.c:2116 src/gtk/x11axis.c:3183
-#: src/gtk/x11axis.c:3204
+#: src/gtk/x11axis.c:1813 src/gtk/x11axis.c:2115 src/gtk/x11axis.c:3182
+#: src/gtk/x11axis.c:3203
 msgid "Position"
 msgstr "位置"
 
-#: src/gtk/x11axis.c:1825
+#: src/gtk/x11axis.c:1824
 msgid "_Fraction:"
 msgstr "小数部桁数(_F):"
 
-#: src/gtk/x11axis.c:1829
+#: src/gtk/x11axis.c:1828
 msgid "_Head:"
 msgstr "先頭(_H):"
 
-#: src/gtk/x11axis.c:1833
+#: src/gtk/x11axis.c:1832
 msgid "_Tail:"
 msgstr "後続(_T):"
 
-#: src/gtk/x11axis.c:1838
+#: src/gtk/x11axis.c:1837
 msgid "_Date/time format:"
 msgstr "日時書式(_D):"
 
-#: src/gtk/x11axis.c:1842
+#: src/gtk/x11axis.c:1841
 msgid "_Auto normalization:"
 msgstr "自動スケール(_A):"
 
-#: src/gtk/x11axis.c:1845
+#: src/gtk/x11axis.c:1844
 msgid "_Log power"
 msgstr "ベキ形式(ログ)(_L)"
 
-#: src/gtk/x11axis.c:1849
+#: src/gtk/x11axis.c:1848
 msgid "_Add plus"
 msgstr "+追加(_A)"
 
-#: src/gtk/x11axis.c:1854
+#: src/gtk/x11axis.c:1853
 msgid "_Zero:"
 msgstr "ゼロ表示(_Z):"
 
-#: src/gtk/x11axis.c:1858
+#: src/gtk/x11axis.c:1857
 msgid "numbering _Math:"
 msgstr "変換数式(_M):"
 
-#: src/gtk/x11axis.c:1861
+#: src/gtk/x11axis.c:1860
 msgid "Format"
 msgstr "フォーマット"
 
-#: src/gtk/x11axis.c:1972
+#: src/gtk/x11axis.c:1971
 msgid "_Point:"
 msgstr "ポイント(_P):"
 
-#: src/gtk/x11axis.c:1976 src/gtk/x11lgnd.c:1877
+#: src/gtk/x11axis.c:1975 src/gtk/x11lgnd.c:1877
 msgid "_Space:"
 msgstr "文字間(_S):"
 
-#: src/gtk/x11axis.c:1980
+#: src/gtk/x11axis.c:1979
 msgid "_Script size:"
 msgstr "スクリプトサイズ(_S):"
 
-#: src/gtk/x11axis.c:1984 src/gtk/x11lgnd.c:1886 src/gtk/x11opt.c:678
+#: src/gtk/x11axis.c:1983 src/gtk/x11lgnd.c:1886 src/gtk/x11opt.c:678
 msgid "_Font:"
 msgstr "フォント(_F):"
 
-#: src/gtk/x11axis.c:1989 src/gtk/x11lgnd.c:1891
+#: src/gtk/x11axis.c:1988 src/gtk/x11lgnd.c:1891
 msgid "_Bold"
 msgstr "太字(_B)"
 
-#: src/gtk/x11axis.c:1994 src/gtk/x11lgnd.c:1896
+#: src/gtk/x11axis.c:1993 src/gtk/x11lgnd.c:1896
 msgid "_Italic"
 msgstr "斜体(_I)"
 
-#: src/gtk/x11axis.c:2005 src/gtk/x11axis.c:3213 src/gtk/x11dialg.c:237
+#: src/gtk/x11axis.c:2004 src/gtk/x11axis.c:3212 src/gtk/x11dialg.c:237
 #: src/gtk/x11lgnd.c:3486 src/gtk/x11opt.c:1233
 msgid "Font"
 msgstr "フォント"
 
-#: src/gtk/x11axis.c:2100
+#: src/gtk/x11axis.c:2099
 msgid "_Length:"
 msgstr "長さ(_L):"
 
-#: src/gtk/x11axis.c:2108
+#: src/gtk/x11axis.c:2107
 msgid "_Adjust:"
 msgstr "交差軸(_A):"
 
-#: src/gtk/x11axis.c:2112
+#: src/gtk/x11axis.c:2111
 msgid "Adjust _Position:"
 msgstr "交差位置(_P):"
 
-#: src/gtk/x11axis.c:2138
+#: src/gtk/x11axis.c:2137
 #, c-format
 msgid "Axis %d %s"
 msgstr "軸 %d %s"
 
-#: src/gtk/x11axis.c:2147
+#: src/gtk/x11axis.c:2146
 msgid "_Scale"
 msgstr "スケール(_S)"
 
-#: src/gtk/x11axis.c:2151
+#: src/gtk/x11axis.c:2150
 msgid "_Baseline"
 msgstr "軸基線(_B)"
 
-#: src/gtk/x11axis.c:2155
+#: src/gtk/x11axis.c:2154
 msgid "_Gauge"
 msgstr "目盛線(_G)"
 
-#: src/gtk/x11axis.c:2159
+#: src/gtk/x11axis.c:2158
 msgid "_Numbering"
 msgstr "目盛数字(_N)"
 
-#: src/gtk/x11axis.c:2163
+#: src/gtk/x11axis.c:2162
 msgid "_Font"
 msgstr "フォント(_F)"
 
-#: src/gtk/x11axis.c:2167
+#: src/gtk/x11axis.c:2166
 msgid "_Position"
 msgstr "位置(_P)"
 
-#: src/gtk/x11axis.c:2522
+#: src/gtk/x11axis.c:2521
 msgid "delete axis (single select)"
 msgstr "軸削除 (単一選択)"
 
-#: src/gtk/x11axis.c:2545
+#: src/gtk/x11axis.c:2544
 msgid "axis property (single select)"
 msgstr "軸プロパティ (単一選択)"
 
-#: src/gtk/x11axis.c:2580
+#: src/gtk/x11axis.c:2579
 msgid "scale zoom (multi select)"
 msgstr "スケールズーム (複数選択)"
 
-#: src/gtk/x11axis.c:2656
+#: src/gtk/x11axis.c:2655
 msgid "scale clear (multi select)"
 msgstr "スケールクリア (複数選択)"
 
-#: src/gtk/x11axis.c:2721
+#: src/gtk/x11axis.c:2720
 msgid "delete grid (multi select)"
 msgstr "グリッド削除 (複数選択)"
 
-#: src/gtk/x11axis.c:2750
+#: src/gtk/x11axis.c:2749
 msgid "grid property (multi select)"
 msgstr "グリッドプロパティ (複数選択)"
 
-#: src/gtk/x11axis.c:2934
+#: src/gtk/x11axis.c:2933
 msgid "scale undo (multi select)"
 msgstr "スケールアンドゥ (複数選択)"
 
-#: src/gtk/x11axis.c:3157 src/gtk/x11menu.c:459
+#: src/gtk/x11axis.c:3156 src/gtk/x11menu.c:459
 msgid "Draw"
 msgstr "描画"
 
-#: src/gtk/x11axis.c:3176
+#: src/gtk/x11axis.c:3175
 msgid "Gauge"
 msgstr "目盛線"
 
-#: src/gtk/x11axis.c:3197
+#: src/gtk/x11axis.c:3196
 msgid "Numbering"
 msgstr "目盛数字"
 
-#: src/gtk/x11axis.c:3207
+#: src/gtk/x11axis.c:3206
 msgid "Align"
 msgstr "位置合わせ"
 
-#: src/gtk/x11axis.c:3210
+#: src/gtk/x11axis.c:3209
 msgid "Direction"
 msgstr "方向"
 
-#: src/gtk/x11axis.c:3222
+#: src/gtk/x11axis.c:3221
 msgid "Log power"
 msgstr "ベキ形式(ログ)"
 
-#: src/gtk/x11axis.c:3224
+#: src/gtk/x11axis.c:3223
 msgid "Zero"
 msgstr "ゼロ表示"
 
