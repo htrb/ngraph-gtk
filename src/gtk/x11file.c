@@ -6080,9 +6080,9 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
   GtkTreeStore *list;
   struct obj_list_data *d;
   GtkComboBox *cbox;
-  int lastinst, j, sel, id = 0;
+  int lastinst, j, sel;
   struct objlist *aobj;
-  char *name, *ptr;
+  char *axis_name, *name;
 
   menu_lock(TRUE);
 
@@ -6102,31 +6102,23 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
 
   aobj = getobject("axis");
 
-  name = get_axis_obj_str(d->obj, sel, (axis == AXIS_X) ? "axis_x" : "axis_y");
-  if (name) {
-    int is_oid;
-    is_oid = (name[0] == '^');
-    id = strtol(name + is_oid, &ptr, 10);
-    if (*ptr == '\0') {
-      if (is_oid) {
-	id = chkobjoid(aobj, id);
-      }
-    }
-    g_free(name);
-  }
+  axis_name = get_axis_obj_str(d->obj, sel, axis);
 
   lastinst = chkobjlastinst(aobj);
   for (j = 0; j <= lastinst; j++) {
     getobj(aobj, "group", j, 0, NULL, &name);
     name = CHK_STR(name);
     add_text_combo_item_to_cbox(list, &iter, NULL, j, -1, name, TOGGLE_NONE, FALSE);
-    if (j == id) {
+    if (g_strcmp0(axis_name, name) == 0) {
       gtk_combo_box_set_active_iter(cbox, &iter);
     }
   }
 
   d->select = -1;
   g_signal_connect(cbox, "changed", G_CALLBACK((axis == AXIS_X) ? select_axis_x : select_axis_y), d);
+  if (axis_name) {
+    g_free(axis_name);
+  }
 }
 
 static void
