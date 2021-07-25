@@ -2045,7 +2045,6 @@ position_tab_set_value(struct AxisDialog *axis)
 static void
 position_tab_setup_item(struct AxisDialog *axis, int id)
 {
-  int lastinst;
   struct AxisPos *d;
 
   d = &axis->position;
@@ -2058,7 +2057,6 @@ position_tab_setup_item(struct AxisDialog *axis, int id)
 
   SetWidgetFromObjField(d->direction, axis->Obj, id, "direction");
 
-  lastinst = chkobjlastinst(axis->Obj);
   axis_combo_box_setup(d->adjust, axis->Obj, id, "adjust_axis");
 
   SetWidgetFromObjField(d->adjustpos, axis->Obj, id, "adjust_position");
