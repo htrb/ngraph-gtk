@@ -2908,21 +2908,6 @@ FileDialogSetupItem(GtkWidget *w, struct FileDialog *d)
 }
 
 static void
-FileDialogAxis(GtkWidget *w, gpointer client_data)
-{
-  char buf[16];
-  int a;
-
-  a = combo_box_get_active(w);
-
-  if (a < 0)
-    return;
-
-  snprintf(buf, sizeof(buf), "%d", a);
-  combo_box_entry_set_text(w, buf);
-}
-
-static void
 FileDialogMark(GtkWidget *w, gpointer client_data)
 {
   struct FileDialog *d;
