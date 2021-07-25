@@ -5477,6 +5477,8 @@ file_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
       if (axis) {
 	list_store_set_string(GTK_WIDGET(d->text), iter, i, axis);
 	g_free(axis);
+      } else {
+	list_store_set_string(GTK_WIDGET(d->text), iter, i, "");
       }
       break;
     case FILE_WIN_COL_HIDDEN:
