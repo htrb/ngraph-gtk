@@ -5363,20 +5363,28 @@ draw_type_pixbuf(struct objlist *obj, int i)
 }
 
 static char *
-get_axis_obj_str(struct objlist *obj, int id, char *field)
+get_axis_obj_str(struct objlist *obj, int id, int axis)
 {
-  char *tmp, *valstr;
-  int j;
+  int aid;
+  N_VALUE *inst;
+  struct objlist *aobj;
+  char *name, *tmp;
 
-  sgetobjfield(obj, id, field, NULL, &valstr, FALSE, FALSE, FALSE);
-  if (valstr == NULL) {
+  inst = chkobjinst(obj, id);
+  if (inst == NULL) {
     return NULL;
   }
 
-  for (j = 0; (valstr[j] != '\0') && (valstr[j] != ':'); j++);
-  if (valstr[j] == ':') j++;
-  tmp = g_strdup(valstr + j);
-  g_free(valstr);
+  aid = get_axis_id(obj, inst, &aobj, axis);
+  if (aid < 0){
+    return NULL;
+  }
+  getobj(aobj, "group", aid, 0, NULL, &name);
+  if (name) {
+    tmp = g_strdup(name);
+  } else {
+    tmp = g_strdup_printf("%d", aid);
+  }
 
   return tmp;
 }
