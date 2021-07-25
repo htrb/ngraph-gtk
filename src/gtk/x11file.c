@@ -3453,11 +3453,9 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
     d->xcol = w;
   }
 
-  w = combo_box_entry_create();
-  combo_box_entry_set_width(w, NUM_ENTRY_WIDTH);
+  w = axis_combo_box_create(AXIS_COMBO_BOX_NONE);
   item_setup(hbox, w, _("_X axis:"), TRUE);
   d->xaxis = w;
-  g_signal_connect(w, "changed", G_CALLBACK(FileDialogAxis), d);
 
   gtk_box_pack_start(GTK_BOX(vbox2), hbox, FALSE, FALSE, 4);
 
@@ -3470,11 +3468,9 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
     d->ycol = w;
   }
 
-  w = combo_box_entry_create();
-  combo_box_entry_set_width(w, NUM_ENTRY_WIDTH);
+  w = axis_combo_box_create(AXIS_COMBO_BOX_NONE);
   item_setup(hbox, w, _("_Y axis:"), TRUE);
   d->yaxis = w;
-  g_signal_connect(w, "changed", G_CALLBACK(FileDialogAxis), d);
 
   gtk_box_pack_start(GTK_BOX(vbox2), hbox, FALSE, FALSE, 4);
 
