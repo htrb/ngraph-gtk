@@ -5421,7 +5421,6 @@ file_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
 {
   int cx, style;
   unsigned int i;
-  char buf[256];
   struct narray *mask, *move;
   char *bfile, *axis;
   GdkPixbuf *pixbuf = NULL;
@@ -5476,8 +5475,7 @@ file_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
     case FILE_WIN_COL_Y_AXIS:
       axis = get_axis_obj_str(d->obj, row, (Flist[i].title[1] == 'x') ? AXIS_X : AXIS_Y);
       if (axis) {
-	snprintf(buf, sizeof(buf), "%3s", axis);
-	list_store_set_string(GTK_WIDGET(d->text), iter, i, buf);
+	list_store_set_string(GTK_WIDGET(d->text), iter, i, axis);
 	g_free(axis);
       }
       break;
