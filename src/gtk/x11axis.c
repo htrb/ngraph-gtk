@@ -1154,30 +1154,6 @@ AxisDialogFile(GtkWidget *w, gpointer client_data)
 }
 
 static void
-AxisDialogRef(GtkWidget *w, gpointer client_data)
-{
-  struct AxisDialog *d;
-  char buf[10];
-  int a, oid;
-
-  d = (struct AxisDialog *) client_data;
-
-  a = combo_box_get_active(w);
-  if (a < 0) {
-    return;
-  }
-
-  if (a == 0) {
-    combo_box_entry_set_text(w, "");
-    return;
-  }
-
-  getobj(d->Obj, "oid", a - 1, 0, NULL, &oid);
-  snprintf(buf, sizeof(buf), "^%d", oid);
-  combo_box_entry_set_text(w, buf);
-}
-
-static void
 file_button_show(GtkWidget *widget, gpointer user_data)
 {
   static struct objlist *file = NULL;
