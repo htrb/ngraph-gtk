@@ -2857,7 +2857,8 @@ file_setup_item(struct FileDialog *d, int id)
     SetWidgetFromObjField(d->xcol, d->Obj, id, "x");
     SetWidgetFromObjField(d->ycol, d->Obj, id, "y");
   }
-  plot_axis_setup_item(d, id);
+  axis_combo_box_setup(d->xaxis, d->Obj, id, "axis_x");
+  axis_combo_box_setup(d->yaxis, d->Obj, id, "axis_y");
 }
 
 static void
