@@ -237,11 +237,6 @@ static void
 GridDialogSetupItem(struct GridDialog *d, int id)
 {
   int i;
-  int lastinst;
-  struct objlist *aobj;
-
-  aobj = getobject("axis");
-  lastinst = chkobjlastinst(aobj);
 
   axis_combo_box_setup(d->axisx, d->Obj, id, "axis_x");
   axis_combo_box_setup(d->axisy, d->Obj, id, "axis_y");
