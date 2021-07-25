@@ -2827,30 +2827,6 @@ set_axis_combo_box(struct objlist *obj, int id, const char *field, GtkWidget *co
 }
 
 static void
-plot_axis_setup_item(struct FileDialog *d, int id)
-{
-  struct objlist *aobj;
-  char *name;
-  int j, lastinst;
-
-  combo_box_clear(d->xaxis);
-  combo_box_clear(d->yaxis);
-
-  aobj = getobject("axis");
-
-  lastinst = chkobjlastinst(aobj);
-  for (j = 0; j <= lastinst; j++) {
-    getobj(aobj, "group", j, 0, NULL, &name);
-    name = CHK_STR(name);
-    combo_box_append_text(d->xaxis, name);
-    combo_box_append_text(d->yaxis, name);
-  }
-
-  set_axis_combo_box(d->Obj, id, "axis_x", d->xaxis);
-  set_axis_combo_box(d->Obj, id, "axis_y", d->yaxis);
-}
-
-static void
 file_setup_item(struct FileDialog *d, int id)
 {
   if (d->source != DATA_SOURCE_RANGE) {
