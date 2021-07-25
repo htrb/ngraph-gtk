@@ -2811,22 +2811,6 @@ MarkDialog(struct MarkDialog *data, GtkWidget *parent, int type)
 }
 
 static void
-set_axis_combo_box(struct objlist *obj, int id, const char *field, GtkWidget *combo)
-{
-  char *valstr;
-
-  sgetobjfield(obj, id, field, NULL, &valstr, FALSE, FALSE, FALSE);
-  if (valstr) {
-    int i;
-    for (i = 0; (valstr[i] != '\0') && (valstr[i] != ':'); i++);
-    if (valstr[i] == ':')
-      i++;
-    combo_box_entry_set_text(combo, valstr + i);
-    g_free(valstr);
-  }
-}
-
-static void
 file_setup_item(struct FileDialog *d, int id)
 {
   if (d->source != DATA_SOURCE_RANGE) {
