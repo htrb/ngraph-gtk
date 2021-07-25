@@ -280,22 +280,6 @@ grid_copy_clicked(GtkButton *btn, gpointer user_data)
 }
 
 static void
-GridDialogAxis(GtkWidget *w, gpointer client_data)
-{
-  char buf[10];
-  int a, oid;
-  struct objlist *aobj;
-
-  aobj = getobject("axis");
-  a = combo_box_get_active(w);
-  if (a < 0)
-    return;
-  getobj(aobj, "oid", a, 0, NULL, &oid);
-  snprintf(buf, sizeof(buf), "^%d", oid);
-  combo_box_entry_set_text(w, buf);
-}
-
-static void
 gauge_syle_setup(struct GridDialog *d, GtkWidget *table, int n, int j)
 {
   GtkWidget *w;
