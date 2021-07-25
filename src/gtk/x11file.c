@@ -5474,7 +5474,7 @@ file_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
       break;
     case FILE_WIN_COL_X_AXIS:
     case FILE_WIN_COL_Y_AXIS:
-      axis = get_axis_obj_str(d->obj, row, Flist[i].name);
+      axis = get_axis_obj_str(d->obj, row, (Flist[i].title[1] == 'x') ? AXIS_X : AXIS_Y);
       if (axis) {
 	snprintf(buf, sizeof(buf), "%3s", axis);
 	list_store_set_string(GTK_WIDGET(d->text), iter, i, buf);
