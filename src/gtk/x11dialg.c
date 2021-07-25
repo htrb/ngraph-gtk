@@ -1239,6 +1239,13 @@ SetObjFieldFromFontList(GtkWidget *w, struct objlist *obj, int id, char *name)
 }
 
 #define AXIS_COMBO_BOX_FLAGS_KEY "AXIS_COMBO_BOX_FLAGS"
+enum AXIS_COMBO_BOX_COLUMN {
+  AXIS_COMBO_BOX_COLUMN_TITLE       = 0,
+  AXIS_COMBO_BOX_COLUMN_ID          = 1,
+  AXIS_COMBO_BOX_COLUMN_OID         = 2,
+  AXIS_COMBO_BOX_COLUMN_SENSITIVITY = 3,
+  AXIS_COMBO_BOX_COLUMN_NUM         = 4
+};
 
 GtkWidget *
 axis_combo_box_create(int flags)
@@ -1247,12 +1254,12 @@ axis_combo_box_create(int flags)
   GtkListStore  *list;
   GtkCellRenderer *rend_s;
 
-  list = gtk_list_store_new(4, G_TYPE_STRING, G_TYPE_INT, G_TYPE_INT, G_TYPE_BOOLEAN);
+  list = gtk_list_store_new(AXIS_COMBO_BOX_COLUMN_NUM, G_TYPE_STRING, G_TYPE_INT, G_TYPE_INT, G_TYPE_BOOLEAN);
   cbox = gtk_combo_box_new_with_model(GTK_TREE_MODEL(list));
   rend_s = gtk_cell_renderer_text_new();
   gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(cbox), rend_s, FALSE);
-  gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend_s, "text", 0);
-  gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend_s, "sensitive", 3);
+  gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend_s, "text", AXIS_COMBO_BOX_COLUMN_TITLE);
+  gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend_s, "sensitive", AXIS_COMBO_BOX_COLUMN_SENSITIVITY);
   g_object_set_data(G_OBJECT(cbox), AXIS_COMBO_BOX_FLAGS_KEY, GINT_TO_POINTER(flags));
 
   return cbox;
@@ -1310,10 +1317,10 @@ axis_combo_box_setup(GtkWidget *cbox, struct objlist *obj, int id, const char *f
     GtkTreeIter iter;
     gtk_list_store_append(list, &iter);
     gtk_list_store_set(list, &iter,
-		       0, _("none"),
-		       1, -1,
-		       2, -1,
-		       3, TRUE,
+		       AXIS_COMBO_BOX_COLUMN_TITLE, _("none"),
+		       AXIS_COMBO_BOX_COLUMN_ID, -1,
+		       AXIS_COMBO_BOX_COLUMN_OID, -1,
+		       AXIS_COMBO_BOX_COLUMN_SENSITIVITY, TRUE,
 		       -1);
   }
   self = (aobj == obj) ? id : -1;
@@ -1327,10 +1334,10 @@ axis_combo_box_setup(GtkWidget *cbox, struct objlist *obj, int id, const char *f
 
     gtk_list_store_append(list, &iter);
     gtk_list_store_set(list, &iter,
-		       0, name,
-		       1, aid,
-		       2, aoid,
-		       3, aid != self,
+		       AXIS_COMBO_BOX_COLUMN_TITLE, name,
+		       AXIS_COMBO_BOX_COLUMN_ID, aid,
+		       AXIS_COMBO_BOX_COLUMN_OID, aoid,
+		       AXIS_COMBO_BOX_COLUMN_SENSITIVITY, aid != self,
 		       -1);
   }
   axis_combo_box_set_active(cbox, obj, id, field);
@@ -1352,7 +1359,10 @@ SetObjAxisFieldFromWidget(GtkWidget *w, struct objlist *obj, int id, char *field
   list = gtk_combo_box_get_model(GTK_COMBO_BOX(w));
 
   buf = NULL;
-  gtk_tree_model_get(list, &iter, 1, &aid, 2, &aoid, -1);
+  gtk_tree_model_get(list, &iter,
+		     AXIS_COMBO_BOX_COLUMN_ID, &aid,
+		     AXIS_COMBO_BOX_COLUMN_OID, &aoid,
+		     -1);
   if (axis_combo_box_get_flags(w) & AXIS_COMBO_BOX_USE_OID) {
     if (aoid >= 0) {
       buf = g_strdup_printf("axis:^%d", aoid);
