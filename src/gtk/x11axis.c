@@ -989,7 +989,6 @@ ZoomDialog(struct ZoomDialog *data)
 static void
 scale_tab_setup_item(struct AxisDialog *d, int id)
 {
-  int j;
   double min, max, inc;
   struct narray *array;
   double *data;
@@ -1006,7 +1005,7 @@ scale_tab_setup_item(struct AxisDialog *d, int id)
   getobj(d->Obj, "scale_history", d->Id, 0, NULL, &array);
   if (array) {
     double pmin, pmax, pinc;
-    int num;
+    int num, j;
     pmin = min;
     pmax = max;
     pinc = inc;
