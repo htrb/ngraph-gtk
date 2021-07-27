@@ -1422,6 +1422,8 @@ MiscDialogClose(GtkWidget *w, void *data)
   }
   arraydel(&(d->tmp_palette));
 
+  menu_use_dark_theme_set(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->use_dark_theme)));
+
   d->ret = ret;
 
   source_style = gtk_source_style_scheme_chooser_get_style_scheme(GTK_SOURCE_STYLE_SCHEME_CHOOSER(d->source_style));
