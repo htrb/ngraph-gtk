@@ -168,6 +168,7 @@ static struct menu_config MenuConfigMisc[] = {
   {"custom_palette",		MENU_CONFIG_TYPE_COLOR_ARY, menu_config_set_custom_palette, NULL},
   {"sourece_style_id",		MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.source_style_id},
   {"decimalsign",	        MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.default_decimalsign},
+  {"use_dark_theme",	        MENU_CONFIG_TYPE_BOOL,    NULL, &Menulocal.use_dark_theme},
   {NULL},
 };
 
