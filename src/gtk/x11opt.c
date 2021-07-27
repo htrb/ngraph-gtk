@@ -1284,6 +1284,10 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     }
     d->decimalsign = w;
 
+    w = gtk_check_button_new_with_mnemonic(_("use _Dark theme"));
+    add_widget_to_table(table, w, NULL, FALSE, i++);
+    d->use_dark_theme = w;
+
     gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(vbox2), frame, TRUE, TRUE, 4);
 
