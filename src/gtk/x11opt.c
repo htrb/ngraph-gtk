@@ -1013,6 +1013,8 @@ MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->use_custom_palette), Menulocal.use_custom_palette);
   arraycpy(&(d->tmp_palette), &(Menulocal.custom_palette));
 
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->use_dark_theme), Menulocal.use_dark_theme);
+
   if (Menulocal.source_style_id) {
     GtkSourceStyleSchemeManager *sman;
     GtkSourceStyleScheme *style;
