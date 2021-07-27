@@ -119,7 +119,7 @@ struct menulocal
   int use_custom_palette;
   struct narray custom_palette;
   char *source_style_id;
-  int math_input_mode;
+  int math_input_mode, use_dark_theme;
 };
 
 extern struct menulocal Menulocal;
