@@ -1189,6 +1189,7 @@ menumenu(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   file = get_utf8_filename(argv[2]);
 
   hide_console();
+  menu_use_dark_theme_set(Menulocal.use_dark_theme);
   r = application(file);
   resotre_console();
 
