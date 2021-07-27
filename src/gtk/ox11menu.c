@@ -1159,6 +1159,16 @@ mgtkinputyn(const char *mes)
   return r;
 }
 
+void
+menu_use_dark_theme_set(int state)
+{
+  GtkSettings *settings;
+
+  settings = gtk_settings_get_default();
+  g_object_set(G_OBJECT(settings), "gtk-application-prefer-dark-theme", state, NULL);
+  Menulocal.use_dark_theme = state;
+}
+
 static int
 menumenu(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {

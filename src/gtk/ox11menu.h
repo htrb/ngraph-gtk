@@ -155,6 +155,7 @@ void initwindowconfig(void);
 int mgtkwindowconfig(void);
 void menuadddrawrable(struct objlist *parent, struct narray *drawrable);
 int menu_save_config(int type);
+void menu_use_dark_theme_set(int state);
 void main_window_redraw(void);
 void init_layer(const char *obj);
 
