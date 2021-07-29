@@ -19,11 +19,11 @@
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
-    <string>%VERSION%</string>
+    <string>@VERSION@</string>
     <key>CFBundleSignature</key>
     <string>ngrp</string>
     <key>CFBundleVersion</key>
-    <string>%VERSION%</string>
+    <string>@VERSION@</string>
     <key>NSHumanReadableCopyright</key>
     <string>Copyright 2003, Satoshi ISHIZAKA, 2017 Hiroyuki Ito, GNU General Public License.</string>
     <key>LSMinimumSystemVersion</key>
