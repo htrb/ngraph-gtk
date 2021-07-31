@@ -540,7 +540,11 @@ graph_dropped(char *fname)
   }
 
   if (!CheckSave()) {
-    return 0;
+    return 1;
+  }
+
+  if (chdir_to_ngp(fname)) {
+    return 1;
   }
 
   LoadNgpFile(fname, FALSE, "-f");
