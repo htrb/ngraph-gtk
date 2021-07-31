@@ -1218,7 +1218,7 @@ chdir_to_ngp(const char *fname)
 void
 CmGraphHistory(GtkRecentChooser *w, gpointer client_data)
 {
-  char *uri, *fname, *path;
+  char *uri, *fname;
 
   if (Menulock || Globallock)
     return;
@@ -1239,14 +1239,11 @@ CmGraphHistory(GtkRecentChooser *w, gpointer client_data)
     return;
   }
 
-  path = g_path_get_dirname(fname);
-  if (nchdir(path)) {
+  if (chdir_to_ngp(fname)) {
     ErrorMessage();
-    g_free(path);
     g_free(fname);
     return;
   }
-  g_free(path);
 
   LoadNgpFile(fname, Menulocal.scriptconsole, "-f");
   g_free(fname);
