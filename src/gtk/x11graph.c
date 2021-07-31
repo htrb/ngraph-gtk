@@ -1201,6 +1201,20 @@ CmGraphQuit(void *w, gpointer client_data)
   QuitGUI();
 }
 
+int
+chdir_to_ngp(const char *fname)
+{
+  char *path;
+  int r;
+  path = g_path_get_dirname(fname);
+  if (path == NULL) {
+    return 0;
+  }
+  r = nchdir(path);
+  g_free(path);
+  return r;
+}
+
 void
 CmGraphHistory(GtkRecentChooser *w, gpointer client_data)
 {

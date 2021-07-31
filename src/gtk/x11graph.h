@@ -36,6 +36,7 @@ void CmHelpAbout(void *w, gpointer client_data);
 void CmHelpDemo(void *w, gpointer client_data);
 void CmGraphSwitch(void *w, gpointer client_data);
 void CmGraphPage(void *w, gpointer client_data);
+int chdir_to_ngp(const char *fname);
 
 int set_paper_type(int w, int h);
 
