@@ -457,7 +457,7 @@ create_math_func(struct math_string *str, MathEquation *eq, struct math_token *n
     return NULL;
   }
 
-  arg_max = (fprm->argc < 0) ? MATH_ARG_NUM : fprm->argc;
+  arg_max = (fprm->argc < 1) ? MATH_ARG_NUM : fprm->argc;
 
   argv = g_malloc0((arg_max + 1) * sizeof(*argv));
   if (argv == NULL) {
