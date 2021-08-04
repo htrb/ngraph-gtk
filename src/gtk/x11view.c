@@ -910,6 +910,15 @@ drag_drop_cb(GtkWidget *w, GdkDragContext *context, gint x, gint y, GtkSelection
   gtk_drag_finish(context, success, FALSE, time);
 }
 
+#if OSX
+/* ad-hoc implementation: It may be useless on GTK4 */
+gboolean
+drag_motion_cb(GtkWidget *widget, GdkDragContext *context, int x, int y, guint time, gpointer user_data)
+{
+  gdk_drag_status (context, GDK_ACTION_COPY, time);
+  return TRUE;
+}
+#endif
 
 static void
 init_dnd(struct Viewer *d)

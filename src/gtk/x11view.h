@@ -79,3 +79,6 @@ void move_data_cancel(struct Viewer *d, gboolean show_message);
 int check_paint_lock(void);
 void update_bg(void);
 int get_focused_obj_array(struct narray *focusobj, char **objs);
+#if OSX
+gboolean drag_motion_cb(GtkWidget *widget, GdkDragContext *context, int x, int y, guint time, gpointer user_data);
+#endif
