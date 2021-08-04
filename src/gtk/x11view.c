@@ -937,6 +937,10 @@ init_dnd(struct Viewer *d)
   gtk_target_list_add_text_targets(list, DROP_TYPE_TEXT);
 
   g_signal_connect(widget, "drag-data-received", G_CALLBACK(drag_drop_cb), d);
+#if OSX
+  gtk_drag_dest_set_track_motion(widget, TRUE);
+  g_signal_connect(widget, "drag-motion", G_CALLBACK(drag_motion_cb), d);
+#endif
 }
 
 static void
