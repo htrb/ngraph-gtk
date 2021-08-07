@@ -454,12 +454,12 @@ static void
 drag_drop_cb(GtkWidget *w, GdkDragContext *context, gint x, gint y, GtkSelectionData *data, guint info, guint time, gpointer user_data)
 {
   gchar **filenames;
-  int num;
 
   switch (info) {
   case DROP_TYPE_FILE:
     filenames = gtk_selection_data_get_uris(data);
     if (filenames) {
+      int num;
       num = g_strv_length(filenames);
       data_dropped(filenames, num, FILE_TYPE_MERGE);
       g_strfreev(filenames);
