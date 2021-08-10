@@ -339,91 +339,62 @@ ViewClearInformationWindowAction_activated(GSimpleAction *action, GVariant *para
 }
 
 static void
-ViewSidebarAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
+toggle_action(GSimpleAction *action, GVariant *parameter, enum MenuID id)
 {
   int state;
 
   state = g_variant_get_boolean(parameter);
-  if (toggle_view(MenuIdToggleSidebar, state)) {
+  if (toggle_view(id, state)) {
     g_simple_action_set_state(action, parameter);
   }
+}
+
+static void
+ViewSidebarAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
+{
+  toggle_action(action, parameter, MenuIdToggleSidebar);
 }
 
 static void
 ViewStatusbarAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  int state;
-
-  state = g_variant_get_boolean(parameter);
-  if (toggle_view(MenuIdToggleStatusbar, state)){
-    g_simple_action_set_state(action, parameter);
-  }
+  toggle_action(action, parameter, MenuIdToggleStatusbar);
 }
 
 static void
 ViewRulerAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  int state;
-
-  state = g_variant_get_boolean(parameter);
-  if (toggle_view(MenuIdToggleRuler, state)) {
-    g_simple_action_set_state(action, parameter);
-  }
+  toggle_action(action, parameter, MenuIdToggleRuler);
 }
 
 static void
 ViewScrollbarAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  int state;
-
-  state = g_variant_get_boolean(parameter);
-  if (toggle_view(MenuIdToggleScrollbar, state)) {
-    g_simple_action_set_state(action, parameter);
-  }
+  toggle_action(action, parameter, MenuIdToggleScrollbar);
 }
 
 static void
 ViewCommandToolbarAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  int state;
-
-  state = g_variant_get_boolean(parameter);
-  if (toggle_view(MenuIdToggleCToolbar, state)) {
-    g_simple_action_set_state(action, parameter);
-  }
+  toggle_action(action, parameter, MenuIdToggleCToolbar);
 }
 
 static void
 ViewToolboxAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  int state;
-
-  state = g_variant_get_boolean(parameter);
-  if (toggle_view(MenuIdTogglePToolbar, state)) {
-    g_simple_action_set_state(action, parameter);
-  }
+  toggle_action(action, parameter, MenuIdTogglePToolbar);
 }
 
 static void
 ViewCrossGaugeAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  int state;
-
-  state = g_variant_get_boolean(parameter);
-  if (toggle_view(MenuIdToggleCrossGauge, state)) {
-    g_simple_action_set_state(action, parameter);
-  }
+  toggle_action(action, parameter, MenuIdToggleCrossGauge);
 }
 
 static void
 ViewGridLineAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  int state;
-
-  state = g_variant_get_boolean(parameter);
-  if (toggle_view(MenuIdToggleGridLine, state)) {
-    g_simple_action_set_state(action, parameter);
-  }
+  toggle_action(action, parameter, MenuIdToggleGridLine);
 }
 
 static void
