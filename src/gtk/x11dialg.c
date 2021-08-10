@@ -1331,10 +1331,7 @@ axis_combo_box_set_active(GtkWidget *cbox, struct objlist *obj, int id, const ch
     int aid;
     aid = arraylast_int(&axis_array);
     arraydel(&axis_array);
-    if (axis_combo_box_get_flags(cbox) & AXIS_COMBO_BOX_ADD_NONE) {
-      aid += 1;
-    }
-    combo_box_set_active(cbox, aid);
+    axis_combo_box_set_active_sub(cbox, aid);
   }
   g_free(valstr);
 }
