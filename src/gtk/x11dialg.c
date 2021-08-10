@@ -1280,6 +1280,25 @@ axis_combo_box_get_flags(GtkWidget *cbox)
   return GPOINTER_TO_INT(g_object_get_data(G_OBJECT(cbox), AXIS_COMBO_BOX_FLAGS_KEY));
 }
 
+struct axis_combo_box_each_data {
+  GtkWidget *combo;
+  int id;
+};
+
+static gboolean
+axis_combo_box_each(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data)
+{
+  int aid;
+  struct axis_combo_box_each_data *adata;
+  adata = data;
+  gtk_tree_model_get(model, iter, AXIS_COMBO_BOX_COLUMN_ID, &aid, -1);
+  if (aid == adata->id) {
+    gtk_combo_box_set_active_iter(GTK_COMBO_BOX(adata->combo), iter);
+    return TRUE;
+  }
+  return FALSE;
+}
+
 static void
 axis_combo_box_set_active(GtkWidget *cbox, struct objlist *obj, int id, const char *field)
 {
