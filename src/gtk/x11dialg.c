@@ -1265,6 +1265,15 @@ axis_combo_box_create(int flags)
   return cbox;
 }
 
+static void
+axis_combo_box_clear(GtkWidget *cbox)
+{
+  GtkTreeStore *list;
+
+  list = GTK_TREE_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(cbox)));
+  gtk_tree_store_clear(list);
+}
+
 static int
 axis_combo_box_get_flags(GtkWidget *cbox)
 {
