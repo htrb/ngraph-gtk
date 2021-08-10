@@ -6074,6 +6074,12 @@ select_axis_y(GtkComboBox *w, gpointer user_data)
 }
 
 static void
+axis_select_done(GtkComboBox *w, gpointer user_data)
+{
+  menu_lock(FALSE);
+}
+
+static void
 start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path, gpointer user_data, int axis)
 {
   GtkTreeIter iter;
