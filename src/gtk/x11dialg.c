@@ -1339,6 +1339,37 @@ axis_combo_box_set_active(GtkWidget *cbox, struct objlist *obj, int id, const ch
   g_free(valstr);
 }
 
+struct axis_combo_box_iter {
+  char axis;
+  int exist;
+  GtkTreeIter iter;
+};
+
+static GtkTreeIter *
+axis_combo_box_get_parent(struct axis_combo_box_iter *axis_iter, GtkTreeStore *list, char axis)
+{
+  int i;
+  char name[] = "X";
+
+  for (i = 0; axis_iter[i].axis; i++) {
+    if (axis_iter[i].axis == axis) {
+      if (! axis_iter[i].exist) {
+	name[0] = axis;
+	gtk_tree_store_append(list, &axis_iter[i].iter, NULL);
+	gtk_tree_store_set(list, &axis_iter[i].iter,
+			   AXIS_COMBO_BOX_COLUMN_TITLE, name,
+			   AXIS_COMBO_BOX_COLUMN_ID, -1,
+			   AXIS_COMBO_BOX_COLUMN_OID, -1,
+			   AXIS_COMBO_BOX_COLUMN_SENSITIVITY, TRUE,
+			   -1);
+	axis_iter[i].exist = TRUE;
+      }
+      return &axis_iter[i].iter;
+    }
+  }
+  return NULL;
+}
+
 void
 axis_combo_box_setup(GtkWidget *cbox, struct objlist *obj, int id, const char *field)
 {
