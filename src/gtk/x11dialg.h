@@ -34,6 +34,7 @@
 #include "x11menu.h"
 
 #define MATH_FNC_NUM 5
+#define AXIS_SELECTION_LIMIT 6
 
 struct line_style {
   char *name, *list;
