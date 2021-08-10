@@ -1300,6 +1300,17 @@ axis_combo_box_each(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, g
 }
 
 static void
+axis_combo_box_set_active_sub(GtkWidget *cbox, int id)
+{
+  struct axis_combo_box_each_data adata;
+  GtkTreeModel *model;
+  adata.combo = cbox;
+  adata.id = id;
+  model = gtk_combo_box_get_model(GTK_COMBO_BOX(cbox));
+  gtk_tree_model_foreach(model, axis_combo_box_each, &adata);
+}
+
+static void
 axis_combo_box_set_active(GtkWidget *cbox, struct objlist *obj, int id, const char *field)
 {
   char *valstr;
