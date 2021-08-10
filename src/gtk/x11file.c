@@ -6122,6 +6122,7 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
 
   d->select = -1;
   g_signal_connect(cbox, "changed", G_CALLBACK((axis == AXIS_X) ? select_axis_x : select_axis_y), d);
+  g_signal_connect(cbox, "editing-done", G_CALLBACK(axis_select_done), d);
   if (axis_name) {
     g_free(axis_name);
   }
