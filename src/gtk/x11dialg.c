@@ -1251,10 +1251,10 @@ GtkWidget *
 axis_combo_box_create(int flags)
 {
   GtkWidget *cbox;
-  GtkListStore  *list;
+  GtkTreeStore  *list;
   GtkCellRenderer *rend_s;
 
-  list = gtk_list_store_new(AXIS_COMBO_BOX_COLUMN_NUM, G_TYPE_STRING, G_TYPE_INT, G_TYPE_INT, G_TYPE_BOOLEAN);
+  list = gtk_tree_store_new(AXIS_COMBO_BOX_COLUMN_NUM, G_TYPE_STRING, G_TYPE_INT, G_TYPE_INT, G_TYPE_BOOLEAN);
   cbox = gtk_combo_box_new_with_model(GTK_TREE_MODEL(list));
   rend_s = gtk_cell_renderer_text_new();
   gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(cbox), rend_s, FALSE);
@@ -1265,10 +1265,49 @@ axis_combo_box_create(int flags)
   return cbox;
 }
 
+static void
+axis_combo_box_clear(GtkWidget *cbox)
+{
+  GtkTreeStore *list;
+
+  list = GTK_TREE_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(cbox)));
+  gtk_tree_store_clear(list);
+}
+
 static int
 axis_combo_box_get_flags(GtkWidget *cbox)
 {
   return GPOINTER_TO_INT(g_object_get_data(G_OBJECT(cbox), AXIS_COMBO_BOX_FLAGS_KEY));
+}
+
+struct axis_combo_box_each_data {
+  GtkWidget *combo;
+  int id;
+};
+
+static gboolean
+axis_combo_box_each(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data)
+{
+  int aid;
+  struct axis_combo_box_each_data *adata;
+  adata = data;
+  gtk_tree_model_get(model, iter, AXIS_COMBO_BOX_COLUMN_ID, &aid, -1);
+  if (aid == adata->id) {
+    gtk_combo_box_set_active_iter(GTK_COMBO_BOX(adata->combo), iter);
+    return TRUE;
+  }
+  return FALSE;
+}
+
+static void
+axis_combo_box_set_active_sub(GtkWidget *cbox, int id)
+{
+  struct axis_combo_box_each_data adata;
+  GtkTreeModel *model;
+  adata.combo = cbox;
+  adata.id = id;
+  model = gtk_combo_box_get_model(GTK_COMBO_BOX(cbox));
+  gtk_tree_model_foreach(model, axis_combo_box_each, &adata);
 }
 
 static void
@@ -1292,12 +1331,40 @@ axis_combo_box_set_active(GtkWidget *cbox, struct objlist *obj, int id, const ch
     int aid;
     aid = arraylast_int(&axis_array);
     arraydel(&axis_array);
-    if (axis_combo_box_get_flags(cbox) & AXIS_COMBO_BOX_ADD_NONE) {
-      aid += 1;
-    }
-    combo_box_set_active(cbox, aid);
+    axis_combo_box_set_active_sub(cbox, aid);
   }
   g_free(valstr);
+}
+
+struct axis_combo_box_iter {
+  char axis;
+  int exist;
+  GtkTreeIter iter;
+};
+
+static GtkTreeIter *
+axis_combo_box_get_parent(struct axis_combo_box_iter *axis_iter, GtkTreeStore *list, char axis)
+{
+  int i;
+  char name[] = "X";
+
+  for (i = 0; axis_iter[i].axis; i++) {
+    if (axis_iter[i].axis == axis) {
+      if (! axis_iter[i].exist) {
+	name[0] = axis;
+	gtk_tree_store_append(list, &axis_iter[i].iter, NULL);
+	gtk_tree_store_set(list, &axis_iter[i].iter,
+			   AXIS_COMBO_BOX_COLUMN_TITLE, name,
+			   AXIS_COMBO_BOX_COLUMN_ID, -1,
+			   AXIS_COMBO_BOX_COLUMN_OID, -1,
+			   AXIS_COMBO_BOX_COLUMN_SENSITIVITY, TRUE,
+			   -1);
+	axis_iter[i].exist = TRUE;
+      }
+      return &axis_iter[i].iter;
+    }
+  }
+  return NULL;
 }
 
 void
@@ -1306,17 +1373,24 @@ axis_combo_box_setup(GtkWidget *cbox, struct objlist *obj, int id, const char *f
   struct objlist *aobj;
   char *name;
   int aid, lastinst, self;
-  GtkListStore  *list;
+  GtkTreeStore  *list;
+  struct axis_combo_box_iter axis_iter[] = {
+    {'X', FALSE},
+    {'Y', FALSE},
+    {'U', FALSE},
+    {'R', FALSE},
+    {'\0', FALSE},		/* sentinel value */
+  };
 
-  combo_box_clear(cbox);
-  list = GTK_LIST_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(cbox)));
+  axis_combo_box_clear(cbox);
+  list = GTK_TREE_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(cbox)));
 
   aobj = getobject("axis");
   lastinst = chkobjlastinst(aobj);
   if (axis_combo_box_get_flags(cbox) & AXIS_COMBO_BOX_ADD_NONE) {
     GtkTreeIter iter;
-    gtk_list_store_append(list, &iter);
-    gtk_list_store_set(list, &iter,
+    gtk_tree_store_append(list, &iter, NULL);
+    gtk_tree_store_set(list, &iter,
 		       AXIS_COMBO_BOX_COLUMN_TITLE, _("none"),
 		       AXIS_COMBO_BOX_COLUMN_ID, -1,
 		       AXIS_COMBO_BOX_COLUMN_OID, -1,
@@ -1325,15 +1399,19 @@ axis_combo_box_setup(GtkWidget *cbox, struct objlist *obj, int id, const char *f
   }
   self = (aobj == obj) ? id : -1;
   for (aid = 0; aid <= lastinst; aid++) {
-    GtkTreeIter iter;
+    GtkTreeIter iter, *parent;
     int aoid;
 
     getobj(aobj, "group", aid, 0, NULL, &name);
     getobj(aobj, "oid", aid, 0, NULL, &aoid);
     name = CHK_STR(name);
 
-    gtk_list_store_append(list, &iter);
-    gtk_list_store_set(list, &iter,
+    parent = NULL;
+    if (lastinst > AXIS_SELECTION_LIMIT) {
+      parent = axis_combo_box_get_parent(axis_iter, list, name[1]);
+    }
+    gtk_tree_store_append(list, &iter, parent);
+    gtk_tree_store_set(list, &iter,
 		       AXIS_COMBO_BOX_COLUMN_TITLE, name,
 		       AXIS_COMBO_BOX_COLUMN_ID, aid,
 		       AXIS_COMBO_BOX_COLUMN_OID, aoid,

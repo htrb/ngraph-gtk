@@ -5875,8 +5875,6 @@ select_type(GtkComboBox *w, gpointer user_data)
   GtkTreeStore *list;
   GtkTreeIter iter;
 
-  menu_lock(FALSE);
-
   d = (struct obj_list_data *) user_data;
 
   gtk_widget_grab_focus(d->text);
@@ -6073,6 +6071,37 @@ select_axis_y(GtkComboBox *w, gpointer user_data)
   select_axis(w, user_data, "axis_y");
 }
 
+struct axis_combo_box_iter {
+  char axis;
+  int exist;
+  GtkTreeIter iter;
+};
+
+static GtkTreeIter *
+axis_combo_box_get_parent(struct axis_combo_box_iter *axis_iter, GtkTreeStore *list, char axis)
+{
+  int i;
+  char name[] = "X";
+
+  for (i = 0; axis_iter[i].axis; i++) {
+    if (axis_iter[i].axis == axis) {
+      if (! axis_iter[i].exist) {
+	name[0] = axis;
+	add_text_combo_item_to_cbox(list, &axis_iter[i].iter, NULL, -1, -1, name, TOGGLE_NONE, FALSE);
+	axis_iter[i].exist = TRUE;
+      }
+      return &axis_iter[i].iter;
+    }
+  }
+  return NULL;
+}
+
+static void
+axis_select_done(GtkComboBox *w, gpointer user_data)
+{
+  menu_lock(FALSE);
+}
+
 static void
 start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path, gpointer user_data, int axis)
 {
@@ -6083,6 +6112,13 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
   int lastinst, j, sel;
   struct objlist *aobj;
   char *axis_name, *name;
+  struct axis_combo_box_iter axis_iter[] = {
+    {'X', FALSE},
+    {'Y', FALSE},
+    {'U', FALSE},
+    {'R', FALSE},
+    {'\0', FALSE},		/* sentinel value */
+  };
 
   menu_lock(TRUE);
 
@@ -6106,16 +6142,24 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
 
   lastinst = chkobjlastinst(aobj);
   for (j = 0; j <= lastinst; j++) {
+    GtkTreeIter *parent;
+    int active;
     getobj(aobj, "group", j, 0, NULL, &name);
     name = CHK_STR(name);
-    add_text_combo_item_to_cbox(list, &iter, NULL, j, -1, name, TOGGLE_NONE, FALSE);
-    if (g_strcmp0(axis_name, name) == 0) {
+    parent = NULL;
+    if (lastinst > AXIS_SELECTION_LIMIT) {
+      parent = axis_combo_box_get_parent(axis_iter, list, name[1]);
+    }
+    active = (g_strcmp0(axis_name, name) == 0);
+    add_text_combo_item_to_cbox(list, &iter, parent, j, -1, name, TOGGLE_RADIO, active);
+    if (active) {
       gtk_combo_box_set_active_iter(cbox, &iter);
     }
   }
 
   d->select = -1;
   g_signal_connect(cbox, "changed", G_CALLBACK((axis == AXIS_X) ? select_axis_x : select_axis_y), d);
+  g_signal_connect(cbox, "editing-done", G_CALLBACK(axis_select_done), d);
   if (axis_name) {
     g_free(axis_name);
   }
