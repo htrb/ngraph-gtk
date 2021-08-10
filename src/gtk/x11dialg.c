@@ -1251,10 +1251,10 @@ GtkWidget *
 axis_combo_box_create(int flags)
 {
   GtkWidget *cbox;
-  GtkListStore  *list;
+  GtkTreeStore  *list;
   GtkCellRenderer *rend_s;
 
-  list = gtk_list_store_new(AXIS_COMBO_BOX_COLUMN_NUM, G_TYPE_STRING, G_TYPE_INT, G_TYPE_INT, G_TYPE_BOOLEAN);
+  list = gtk_tree_store_new(AXIS_COMBO_BOX_COLUMN_NUM, G_TYPE_STRING, G_TYPE_INT, G_TYPE_INT, G_TYPE_BOOLEAN);
   cbox = gtk_combo_box_new_with_model(GTK_TREE_MODEL(list));
   rend_s = gtk_cell_renderer_text_new();
   gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(cbox), rend_s, FALSE);
