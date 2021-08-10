@@ -6071,6 +6071,31 @@ select_axis_y(GtkComboBox *w, gpointer user_data)
   select_axis(w, user_data, "axis_y");
 }
 
+struct axis_combo_box_iter {
+  char axis;
+  int exist;
+  GtkTreeIter iter;
+};
+
+static GtkTreeIter *
+axis_combo_box_get_parent(struct axis_combo_box_iter *axis_iter, GtkTreeStore *list, char axis)
+{
+  int i;
+  char name[] = "X";
+
+  for (i = 0; axis_iter[i].axis; i++) {
+    if (axis_iter[i].axis == axis) {
+      if (! axis_iter[i].exist) {
+	name[0] = axis;
+	add_text_combo_item_to_cbox(list, &axis_iter[i].iter, NULL, -1, -1, name, TOGGLE_NONE, FALSE);
+	axis_iter[i].exist = TRUE;
+      }
+      return &axis_iter[i].iter;
+    }
+  }
+  return NULL;
+}
+
 static void
 axis_select_done(GtkComboBox *w, gpointer user_data)
 {
