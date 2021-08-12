@@ -5264,8 +5264,13 @@ ViewerEvScroll(GtkWidget *w, GdkEventScroll *e, gpointer client_data)
       if ((e->state & GDK_CONTROL_MASK) && y != 0) {
 	mouse_down_zoom_little(0, &point, d, y > 0);
       } else {
+#ifdef OSX
+	range_increment(d->HScroll, x);
+	range_increment(d->VScroll, y);
+#else
 	range_increment(d->HScroll, x * SCROLL_INC);
 	range_increment(d->VScroll, y * SCROLL_INC);
+#endif
       }
     }
     return TRUE;
