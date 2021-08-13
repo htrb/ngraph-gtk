@@ -5875,6 +5875,8 @@ select_type(GtkComboBox *w, gpointer user_data)
   GtkTreeStore *list;
   GtkTreeIter iter;
 
+  menu_lock(FALSE);
+
   d = (struct obj_list_data *) user_data;
 
   gtk_widget_grab_focus(d->text);
