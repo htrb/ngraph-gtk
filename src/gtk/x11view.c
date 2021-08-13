@@ -910,16 +910,6 @@ drag_drop_cb(GtkWidget *w, GdkDragContext *context, gint x, gint y, GtkSelection
   gtk_drag_finish(context, success, FALSE, time);
 }
 
-#if OSX
-/* ad-hoc implementation: It may be useless on GTK4 */
-gboolean
-drag_motion_cb(GtkWidget *widget, GdkDragContext *context, int x, int y, guint time, gpointer user_data)
-{
-  gdk_drag_status (context, GDK_ACTION_COPY, time);
-  return TRUE;
-}
-#endif
-
 static void
 init_dnd(struct Viewer *d)
 {
@@ -937,10 +927,6 @@ init_dnd(struct Viewer *d)
   gtk_target_list_add_text_targets(list, DROP_TYPE_TEXT);
 
   g_signal_connect(widget, "drag-data-received", G_CALLBACK(drag_drop_cb), d);
-#if OSX
-  gtk_drag_dest_set_track_motion(widget, TRUE);
-  g_signal_connect(widget, "drag-motion", G_CALLBACK(drag_motion_cb), d);
-#endif
 }
 
 static void
@@ -5278,8 +5264,13 @@ ViewerEvScroll(GtkWidget *w, GdkEventScroll *e, gpointer client_data)
       if ((e->state & GDK_CONTROL_MASK) && y != 0) {
 	mouse_down_zoom_little(0, &point, d, y > 0);
       } else {
+#ifdef OSX
+	range_increment(d->HScroll, x);
+	range_increment(d->VScroll, y);
+#else
 	range_increment(d->HScroll, x * SCROLL_INC);
 	range_increment(d->VScroll, y * SCROLL_INC);
+#endif
       }
     }
     return TRUE;

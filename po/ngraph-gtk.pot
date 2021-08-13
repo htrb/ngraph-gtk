@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.09.03\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2021-08-10 18:29+0900\n"
+"POT-Creation-Date: 2021-08-12 18:25+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -975,7 +975,7 @@ msgid "_All"
 msgstr ""
 
 #: src/gtk/x11dialg.c:342 src/gtk/x11file.c:722 src/gtk/x11file.c:1988
-#: src/gtk/x11file.c:2193 src/gtk/x11view.c:1106
+#: src/gtk/x11file.c:2193 src/gtk/x11view.c:1092
 #: src/gtk/data/gtk/menus-common.ui.in:159
 #: src/gtk/data/gtk/menus-common-win.ui.in:167
 #: src/gtk/data/gtk/menus-common.ui:159
@@ -1094,7 +1094,7 @@ msgstr ""
 msgid "_Y math"
 msgstr ""
 
-#: src/gtk/x11file.c:737 src/gtk/x11view.c:1122
+#: src/gtk/x11file.c:737 src/gtk/x11view.c:1108
 #: src/gtk/data/gtk/menus-common.ui.in:313
 #: src/gtk/data/gtk/menus-common.ui.in:473
 #: src/gtk/data/gtk/menus-common-win.ui.in:321
@@ -1217,7 +1217,7 @@ msgstr ""
 msgid "_Result"
 msgstr ""
 
-#: src/gtk/x11file.c:1943 src/gtk/x11file.c:2160 src/gtk/x11view.c:1078
+#: src/gtk/x11file.c:1943 src/gtk/x11file.c:2160 src/gtk/x11view.c:1064
 msgid "Line No."
 msgstr ""
 
@@ -1358,12 +1358,12 @@ msgid "_Load settings"
 msgstr ""
 
 #: src/gtk/x11file.c:3935 src/gtk/x11file.c:4017 src/gtk/x11file.c:4093
-#: src/gtk/x11view.c:1090
+#: src/gtk/x11view.c:1076
 msgid "_Mask"
 msgstr ""
 
 #: src/gtk/x11file.c:3939 src/gtk/x11file.c:4021 src/gtk/x11file.c:4097
-#: src/gtk/x11view.c:1091
+#: src/gtk/x11view.c:1077
 msgid "_Move"
 msgstr ""
 
@@ -2570,11 +2570,11 @@ msgstr ""
 msgid "Making GRA file."
 msgstr ""
 
-#: src/gtk/x11print.c:788 src/gtk/x11print.c:861 src/gtk/x11view.c:6183
+#: src/gtk/x11print.c:788 src/gtk/x11print.c:861 src/gtk/x11view.c:6174
 msgid "Drawing."
 msgstr ""
 
-#: src/gtk/x11view.c:1111 src/gtk/data/gtk/menus-common.ui.in:139
+#: src/gtk/x11view.c:1097 src/gtk/data/gtk/menus-common.ui.in:139
 #: src/gtk/data/gtk/menus-common.ui.in:572
 #: src/gtk/data/gtk/menus-common-win.ui.in:147
 #: src/gtk/data/gtk/menus-common-win.ui.in:580
@@ -2582,37 +2582,37 @@ msgstr ""
 msgid "_Copy"
 msgstr ""
 
-#: src/gtk/x11view.c:1721 src/gtk/x11view.c:1723
+#: src/gtk/x11view.c:1707 src/gtk/x11view.c:1709
 #, c-format
 msgid "Searching for data."
 msgstr ""
 
-#: src/gtk/x11view.c:1833
+#: src/gtk/x11view.c:1819
 #, c-format
 msgid "Evaluating."
 msgstr ""
 
-#: src/gtk/x11view.c:1836
+#: src/gtk/x11view.c:1822
 msgid "Evaluating"
 msgstr ""
 
-#: src/gtk/x11view.c:1914
+#: src/gtk/x11view.c:1900
 msgid "trimming (multi select)"
 msgstr ""
 
-#: src/gtk/x11view.c:3301
+#: src/gtk/x11view.c:3287
 msgid "Data points are moved."
 msgstr ""
 
-#: src/gtk/x11view.c:4633
+#: src/gtk/x11view.c:4619
 msgid "Moving data points is canceled."
 msgstr ""
 
-#: src/gtk/x11view.c:6177
+#: src/gtk/x11view.c:6168
 msgid "Scaling"
 msgstr ""
 
-#: src/gtk/x11view.c:6184
+#: src/gtk/x11view.c:6175
 msgid "Drawing"
 msgstr ""
 

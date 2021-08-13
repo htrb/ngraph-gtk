@@ -6228,10 +6228,6 @@ init_dnd(struct SubWin *d)
 
   gtk_drag_dest_set(widget, GTK_DEST_DEFAULT_ALL, target, sizeof(target) / sizeof(*target), GDK_ACTION_COPY);
   g_signal_connect(widget, "drag-data-received", G_CALLBACK(drag_drop_cb), NULL);
-#if OSX
-  gtk_drag_dest_set_track_motion(widget, TRUE);
-  g_signal_connect(widget, "drag-motion", G_CALLBACK(drag_motion_cb), d);
-#endif
 }
 
 GtkWidget *
