@@ -2138,6 +2138,7 @@ static struct funcs FileFunc[] = {
   {"TEXT_OBJ_SET",   {2, 1, MATH_FUNCTION_TYPE_NORMAL, file_text_obj_set, text_obj_set_arg_type, NULL, NULL, NULL}},
   {"TEXT_OBJ_GET",   {2, 1, MATH_FUNCTION_TYPE_NORMAL, file_text_obj_get, text_obj_get_arg_type, NULL, NULL, NULL}},
   {"STRING_COLUMN",  {2, 1, MATH_FUNCTION_TYPE_NORMAL, file_string_column, string_column_arg_type, NULL, NULL, NULL}},
+  {"FILENAME",       {2, 1, MATH_FUNCTION_TYPE_NORMAL, file_filename, filename_arg_type, NULL, NULL, NULL}},
   {"ON_END",         {1, 1, MATH_FUNCTION_TYPE_CALLBACK, file_on_end, on_end_arg_type, NULL, NULL, NULL}},
 };
 
