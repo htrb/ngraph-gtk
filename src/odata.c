@@ -2100,6 +2100,11 @@ static enum MATH_FUNCTION_ARG_TYPE string_column_arg_type[] = {
   MATH_FUNCTION_ARG_TYPE_DOUBLE,
 };
 
+static enum MATH_FUNCTION_ARG_TYPE filename_arg_type[] = {
+  MATH_FUNCTION_ARG_TYPE_STRING_VARIABLE,
+  MATH_FUNCTION_ARG_TYPE_DOUBLE,
+};
+
 static enum MATH_FUNCTION_ARG_TYPE on_end_arg_type[] = {
   MATH_FUNCTION_ARG_TYPE_PROC,
 };
