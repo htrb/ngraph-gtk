@@ -184,3 +184,4 @@ on_end(proc)	Evaluate <i>proc</i> at the end of plottong the data object.
 parameter(id)	Returns the value of the prameter object which ID is <i>id</i>.
 mtime()		returns last modification time of the file.
 strftime($str, $fmt, t, utc)	convers <i>t</i> (the number of seconds elapsed since the Epoch)\naccording to the format specification <i>$fmt</i>\nand places the result in the string <i>$str</i>.\nWhen <i>utc</i> is true, <i>$str</i> is expressed in Coordinated Universal Time (UTC).
+filename($str, basename)	Assign filename of the the data object to the variable <i>$str</i>.\nAny leading directory components are removed when <i>basename</i> is not zero.\nReturn the length of the string <i>$str</i> in characters.
