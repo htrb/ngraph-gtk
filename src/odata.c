@@ -9662,9 +9662,6 @@ static int
 f2dstore_file(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct f2dlocal *f2dlocal;
-  char *file,*date,*time;
-  int style;
-  char *buf;
 
   g_free(rval->str);
   rval->str=NULL;
@@ -9673,8 +9670,18 @@ f2dstore_file(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **ar
     f2dlocal->endstore=FALSE;
     return 1;
   }
+  return store(obj, inst, rval, argc, argv, &f2dlocal->endstore, &f2dlocal->storefd);
+}
 
-  if (f2dlocal->storefd == NULL) {
+int
+store(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv, int *endstore, FILE **storefd)
+{
+  char *file,*date,*time;
+  int style;
+  char *buf;
+  const char *name;
+
+  if (*storefd == NULL) {
     char *base, *argv2[2];
     _getobj(obj,"file",inst,&file);
     if (file==NULL) return 1;
@@ -9695,27 +9702,28 @@ f2dstore_file(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **ar
       time = "00:00:00";
     }
     if ((base=getbasename(file))==NULL) return 1;
-    if ((f2dlocal->storefd=nfopen(file,"rt"))==NULL) {
+    if ((*storefd=nfopen(file,"rt"))==NULL) {
       g_free(base);
       return 1;
     }
-    buf = g_strdup_printf("data::load_data '%s' '%s %s' <<'[EOF]'", base, date, time);
+    name = chkobjectname(obj);
+    buf = g_strdup_printf("%s::load_data '%s' '%s %s' <<'[EOF]'", name, base, date, time);
     g_free(base);
     if (buf == NULL) {
-      fclose(f2dlocal->storefd);
-      f2dlocal->storefd=NULL;
+      fclose(*storefd);
+      *storefd=NULL;
       return 1;
     }
     rval->str=buf;
   } else {
     int r;
-    r = fgetline(f2dlocal->storefd, &buf);
+    r = fgetline(*storefd, &buf);
     if (r) {
-      fclose(f2dlocal->storefd);
-      f2dlocal->storefd=NULL;
+      fclose(*storefd);
+      *storefd=NULL;
       buf = g_strdup("[EOF]\n");
       if (buf == NULL) return 1;
-      f2dlocal->endstore=TRUE;
+      *endstore=TRUE;
       rval->str=buf;
     } else {
       rval->str=buf;
