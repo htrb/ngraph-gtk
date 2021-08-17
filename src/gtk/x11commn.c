@@ -1419,7 +1419,8 @@ LoadNgpFile(char *file, int console, char *option)
 
   loadpath = DlgLoad.loadpath;
   expand = DlgLoad.expand;
-  expanddir = g_strdup(DlgLoad.exdir);
+  expanddir = DlgLoad.exdir;
+  DlgLoad.exdir = NULL;
   if (expanddir == NULL)
     return 1;
 
