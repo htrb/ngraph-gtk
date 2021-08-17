@@ -1096,7 +1096,7 @@ CmGraphNewMenu(void *w, gpointer client_data)
 void
 CmGraphLoad(void *w, gpointer client_data)
 {
-  char *file;
+  char *file, *cwd;
 
   if (Menulock || Globallock)
     return;
@@ -1104,14 +1104,23 @@ CmGraphLoad(void *w, gpointer client_data)
   if (!CheckSave())
     return;
 
+  cwd = ngetcwd();
   if (nGetOpenFileName(TopLevel,
 		       _("Load NGP file"), "ngp", &(Menulocal.graphloaddir),
 		       NULL, &file, TRUE,
 		       Menulocal.changedirectory) != IDOK) {
+    if (cwd) {
+      g_free(cwd);
+    }
     return;
   }
 
-  LoadNgpFile(file, Menulocal.scriptconsole, "-f");
+  if (LoadNgpFile(file, Menulocal.scriptconsole, "-f") && cwd) {
+    nchdir(cwd);
+  }
+  if (cwd) {
+    g_free(cwd);
+  }
   g_free(file);
 }
 
