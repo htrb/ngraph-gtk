@@ -712,53 +712,7 @@ mergestore(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 static int
 mergeload(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
-  char *s;
-  int len;
-  char *file,*fullname,*oldfile;
-  time_t ftime;
-  int mkdata;
-  struct utimbuf tm;
-
-  s=(char *)argv[2];
-  if ((file=getitok2(&s,&len," \t"))==NULL) return 1;
-  if ((fullname=getfullpath(file))==NULL) {
-    g_free(file);
-    return 1;
-  }
-  _getobj(obj,"file",inst,&oldfile);
-  g_free(oldfile);
-  _putobj(obj,"file",inst,fullname);
-  if (gettimeval(s,&ftime)) {
-    g_free(file);
-    return 1;
-  }
-  if (naccess(file,R_OK)!=0) mkdata=TRUE;
-  else {
-    char *mes;
-    if ((mes=g_malloc(strlen(file)+256))==NULL) {
-      g_free(file);
-      return 1;
-    }
-    sprintf(mes,"`%s' Overwrite existing file?",file);
-    mkdata=inputyn(mes);
-    g_free(mes);
-  }
-  if (mkdata) {
-    char buf[2];
-    FILE *fp;
-    if ((fp=nfopen(file,"wt"))==NULL) {
-      error2(obj,ERROPEN,file);
-      g_free(file);
-      return 1;
-    }
-    while (nread(stdinfd(),buf,1)==1) fputc(buf[0],fp);
-    fclose(fp);
-    tm.actime=ftime;
-    tm.modtime=ftime;
-    utime(file,&tm);
-  }
-  g_free(file);
-  return 0;
+  return load_file(obj, inst, rval, argc, argv);
 }
 
 static int
