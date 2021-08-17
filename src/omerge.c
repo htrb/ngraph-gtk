@@ -739,20 +739,7 @@ mergestoredum(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **ar
 static int
 mergeloaddum(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
-  char *s;
-  int len;
-  char *file,*fullname,*oldfile;
-
-  s=(char *)argv[2];
-  if ((file=getitok2(&s,&len," \t"))==NULL) return 1;
-  if ((fullname=getfullpath(file))==NULL) {
-    g_free(file);
-    return 1;
-  }
-  _getobj(obj,"file",inst,&oldfile);
-  g_free(oldfile);
-  _putobj(obj,"file",inst,fullname);
-  return 0;
+  return load_dummy(obj, inst, rval, argc, argv);
 }
 
 static int
