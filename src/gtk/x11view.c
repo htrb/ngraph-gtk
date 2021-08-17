@@ -525,7 +525,7 @@ PasteObjectsFromClipboard(void)
 static int
 graph_dropped(char *fname)
 {
-  char *ext;
+  char *ext, *cwd;
 
   if (fname == NULL) {
     return 1;
@@ -543,11 +543,20 @@ graph_dropped(char *fname)
     return 1;
   }
 
+  cwd = ngetcwd();
   if (chdir_to_ngp(fname)) {
+    if (cwd) {
+      g_free(cwd);
+    }
     return 1;
   }
 
-  LoadNgpFile(fname, FALSE, "-f");
+  if (LoadNgpFile(fname, FALSE, "-f") && cwd) {
+    nchdir(cwd);
+  }
+  if (cwd) {
+    g_free(cwd);
+  }
   return 0;
 }
 
