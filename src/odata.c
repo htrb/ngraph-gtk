@@ -9828,8 +9828,8 @@ f2dload_sub(struct objlist *obj, N_VALUE *inst, char **s, int *expand, char **fu
   return 0;
 }
 
-static int
-f2dload_file(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
+int
+load_file(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int expand;
   char *s, *fullname;
@@ -9895,7 +9895,7 @@ f2dload(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   r = 1;
   switch (src) {
   case DATA_SOURCE_FILE:
-    r = f2dload_file(obj, inst, rval, argc, argv);
+    r = load_file(obj, inst, rval, argc, argv);
     break;
   case DATA_SOURCE_ARRAY:
   case DATA_SOURCE_RANGE:

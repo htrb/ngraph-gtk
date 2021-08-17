@@ -67,5 +67,6 @@ char *odata_get_functions(void);
 char *odata_get_constants(void);
 const char *parse_data_line(struct narray *array, const char *str, const char *ifs, int csv);
 int n_strtod(const char *str, MathValue *val);
+int load_file(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv);
 
 #endif
