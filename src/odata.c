@@ -9829,7 +9829,9 @@ f2dload_sub(struct objlist *obj, N_VALUE *inst, char **s, int *expand, char **fu
   g_free(file2);
 
   _getobj(obj, "file", inst, &oldfile);
-  g_free(oldfile);
+  if (oldfile) {
+    g_free(oldfile);
+  }
 
   _putobj(obj, "file", inst, fname);
 
