@@ -9913,32 +9913,25 @@ f2dload(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return r;
 }
 
-static int
-f2dstoredum(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
+char *
+store_dummy(struct objlist *obj, N_VALUE *inst, int argc, char **argv)
 {
-  struct f2dlocal *f2dlocal;
   char *file,*base,*date,*time;
   int style;
   char *buf;
+  const char *name;
   char *argv2[2];
 
-  g_free(rval->str);
-  rval->str=NULL;
-  _getobj(obj,"_local",inst,&f2dlocal);
-  if (f2dlocal->endstore) {
-    f2dlocal->endstore=FALSE;
-    return 1;
-  }
   _getobj(obj,"file",inst,&file);
-  if (file==NULL) return 1;
+  if (file==NULL) return NULL;
   style=3;
   argv2[0]=(char *)&style;
   argv2[1]=NULL;
-  if (_exeobj(obj,"date",inst,1,argv2)) return 1;
+  if (_exeobj(obj,"date",inst,1,argv2)) return NULL;
   style=0;
   argv2[0]=(char *)&style;
   argv2[1]=NULL;
-  if (_exeobj(obj,"time",inst,1,argv2)) return 1;
+  if (_exeobj(obj,"time",inst,1,argv2)) return NULL;
   _getobj(obj,"date",inst,&date);
   if(date == NULL) {
     date = "1-1-1970";
@@ -9947,9 +9940,26 @@ f2dstoredum(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
   if(time == NULL) {
     time = "00:00:00";
   }
-  if ((base=getbasename(file))==NULL) return 1;
-  buf = g_strdup_printf("data::load_dummy '%s' '%s %s'\n", base, date, time);
+  if ((base=getbasename(file))==NULL) return NULL;
+  name = chkobjectname(obj);
+  buf = g_strdup_printf("%s::load_dummy '%s' '%s %s'\n", name, base, date, time);
   g_free(base);
+  return buf;
+}
+
+static int
+f2dstoredum(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  struct f2dlocal *f2dlocal;
+  char *buf;
+  g_free(rval->str);
+  rval->str = NULL;
+  _getobj(obj, "_local", inst, &f2dlocal);
+  if (f2dlocal->endstore) {
+    f2dlocal->endstore = FALSE;
+    return 1;
+  }
+  buf = store_dummy(obj, inst, argc, argv);
   if (buf == NULL) {
     return 1;
   }
