@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.09.03\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2021-08-17 15:22+0900\n"
+"POT-Creation-Date: 2021-08-17 15:57+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,7 +25,7 @@ msgstr ""
 msgid "Create scientific 2-dimensional graphs"
 msgstr ""
 
-#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:12 src/gtk/x11graph.c:1302
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:12 src/gtk/x11graph.c:1309
 msgid ""
 "Ngraph is the program to create scientific 2-dimensional graphs for "
 "researchers and engineers."
@@ -1547,32 +1547,32 @@ msgstr ""
 msgid "Current Dir:"
 msgstr ""
 
-#: src/gtk/x11graph.c:937
+#: src/gtk/x11graph.c:947
 msgid "_Expand included file"
 msgstr ""
 
-#: src/gtk/x11graph.c:941
+#: src/gtk/x11graph.c:951
 msgid "Expand directory"
 msgstr ""
 
-#: src/gtk/x11graph.c:943
-msgid "_Dir:"
+#: src/gtk/x11graph.c:954 src/gtk/x11opt.c:1204
+msgid "_Expand directory:"
 msgstr ""
 
-#: src/gtk/x11graph.c:947 src/gtk/x11graph.c:1007 src/gtk/x11opt.c:1169
+#: src/gtk/x11graph.c:958 src/gtk/x11graph.c:1014 src/gtk/x11opt.c:1169
 #: src/gtk/x11opt.c:1193
 msgid "_Path:"
 msgstr ""
 
-#: src/gtk/x11graph.c:1013
+#: src/gtk/x11graph.c:1020
 msgid "_Include data file"
 msgstr ""
 
-#: src/gtk/x11graph.c:1017
+#: src/gtk/x11graph.c:1024
 msgid "_Include merge file"
 msgstr ""
 
-#: src/gtk/x11graph.c:1109 src/gtk/x11menu.c:423
+#: src/gtk/x11graph.c:1116 src/gtk/x11menu.c:423
 msgid "Load NGP file"
 msgstr ""
 
@@ -2411,10 +2411,6 @@ msgstr ""
 
 #: src/gtk/x11opt.c:1199
 msgid "_Expand include file"
-msgstr ""
-
-#: src/gtk/x11opt.c:1204
-msgid "_Expand directory:"
 msgstr ""
 
 #: src/gtk/x11opt.c:1213
