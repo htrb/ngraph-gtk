@@ -923,6 +923,17 @@ DirectoryDialog(struct DirectoryDialog *data)
 }
 
 static void
+set_directory_name(GtkFileChooserButton *widget, gpointer user_data)
+{
+  char *path;
+  path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widget));
+  gtk_widget_set_tooltip_text(GTK_WIDGET(widget), path);
+  if (path) {
+    g_free(path);
+  }
+}
+
+static void
 LoadDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   struct LoadDialog *d;
