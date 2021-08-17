@@ -9968,8 +9968,8 @@ f2dstoredum(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **
   return 0;
 }
 
-static int
-f2dloaddum(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
+int
+load_dummy(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   char *s = argv[2];
   return f2dload_sub(obj, inst, &s, NULL, NULL);
@@ -11110,7 +11110,7 @@ static struct objtable file2d[] = {
   {"store_data",NSFUNC,NREAD|NEXEC,f2dstore,"",0},
   {"load_data",NVFUNC,NREAD|NEXEC,f2dload,"s",0},
   {"store_dummy",NSFUNC,NREAD|NEXEC,f2dstoredum,"",0},
-  {"load_dummy",NVFUNC,NREAD|NEXEC,f2dloaddum,"s",0},
+  {"load_dummy",NVFUNC,NREAD|NEXEC,load_dummy,"s",0},
   {"tight",NVFUNC,NREAD|NEXEC,f2dtight,"",0},
   {"save_config",NVFUNC,NREAD|NEXEC,f2dsaveconfig,"",0},
   {"output_file",NVFUNC,NREAD|NEXEC,f2doutputfile,"sib",0},
