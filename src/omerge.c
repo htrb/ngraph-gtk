@@ -39,6 +39,7 @@
 #include "ioutil.h"
 #include "gra.h"
 #include "oroot.h"
+#include "odata.h"
 #include "odraw.h"
 #include "osystem.h"
 
