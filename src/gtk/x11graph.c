@@ -926,6 +926,7 @@ static void
 LoadDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   struct LoadDialog *d;
+  char *path;
 
   d = (struct LoadDialog *) data;
   if (makewidget) {
@@ -937,7 +938,8 @@ LoadDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->expand_file = w;
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
 
-    w = create_text_entry(FALSE, TRUE);
+    w = gtk_file_chooser_button_new(_("Expand directory"), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
+    gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(w), TRUE);
     item_setup(vbox, w, _("_Dir:"), FALSE);
     d->dir = w;
 
@@ -953,22 +955,27 @@ LoadDialogSetup(GtkWidget *wi, void *data, int makewidget)
   }
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->expand_file), d->expand);
   combo_box_set_active(d->load_path, d->loadpath);
-  gtk_entry_set_text(GTK_ENTRY(d->dir), d->exdir);
+  gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(d->dir), d->exdir);
+  path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(d->dir));
+  gtk_widget_set_tooltip_text(GTK_WIDGET(d->dir), path);
+  if (path) {
+    g_free(path);
+  }
 }
 
 static void
 LoadDialogClose(GtkWidget *w, void *data)
 {
   struct LoadDialog *d;
-  const char *s;
 
   d = (struct LoadDialog *) data;
   if (d->ret == IDCANCEL)
     return;
   d->expand = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->expand_file));
-  s = gtk_entry_get_text(GTK_ENTRY(d->dir));
-  g_free(d->exdir);
-  d->exdir = g_strdup(s);
+  if (d->exdir) {
+    g_free(d->exdir);
+  }
+  d->exdir = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(d->dir));
   d->loadpath = combo_box_get_active(d->load_path);
 }
 
