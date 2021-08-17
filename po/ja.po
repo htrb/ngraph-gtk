@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6.08.07\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2021-08-15 14:40+0900\n"
-"PO-Revision-Date: 2021-08-15 14:41+0900\n"
+"POT-Creation-Date: 2021-08-17 15:22+0900\n"
+"PO-Revision-Date: 2021-08-17 15:23+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja\n"
@@ -23,7 +23,7 @@ msgstr "Ngraph-GTK"
 msgid "Create scientific 2-dimensional graphs"
 msgstr "科学技術用 2D グラフ作成"
 
-#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:12 src/gtk/x11graph.c:1277
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:12 src/gtk/x11graph.c:1302
 msgid ""
 "Ngraph is the program to create scientific 2-dimensional graphs for "
 "researchers and engineers."
@@ -45,7 +45,7 @@ msgstr "アプリケーションウィンドウ"
 msgid "Unsaved Graph"
 msgstr "新規グラフ"
 
-#: src/gtk/ox11dlg.c:114 src/gtk/x11commn.c:1671
+#: src/gtk/ox11dlg.c:114 src/gtk/x11commn.c:1672
 msgid "Confirm"
 msgstr "確認"
 
@@ -772,12 +772,12 @@ msgstr "NGPファイルの保存"
 msgid "Saving `%.128s'."
 msgstr "保存中 `%.128s'."
 
-#: src/gtk/x11commn.c:1477
+#: src/gtk/x11commn.c:1478
 #, c-format
 msgid "Loading `%.128s'."
 msgstr "読込中 `%.128s'."
 
-#: src/gtk/x11commn.c:1670
+#: src/gtk/x11commn.c:1671
 msgid ""
 "This graph is modified.\n"
 "Save this graph?"
@@ -785,28 +785,28 @@ msgstr ""
 "このグラフは変更されています.\n"
 "保存しますか?"
 
-#: src/gtk/x11commn.c:1899
+#: src/gtk/x11commn.c:1900
 msgid "Ngraph.ini is not found."
 msgstr "Ngraph.ini が見つかりません."
 
-#: src/gtk/x11commn.c:1902
+#: src/gtk/x11commn.c:1903
 msgid "Ngraph.ini is write protected."
 msgstr "Ngraph.ini に書き込めませんでした."
 
-#: src/gtk/x11commn.c:1917
+#: src/gtk/x11commn.c:1918
 #, c-format
 msgid "Install `Ngraph.ini' to %s ?"
 msgstr "%s に 'Ngraph.ini' をインストールしますか?"
 
-#: src/gtk/x11commn.c:1921
+#: src/gtk/x11commn.c:1922
 msgid "Ngraph.ini could not be copied."
 msgstr "Ngraph.ini をコピーできませんでした."
 
-#: src/gtk/x11commn.c:2013
+#: src/gtk/x11commn.c:2014
 msgid "_Stop"
 msgstr "停止(_S)"
 
-#: src/gtk/x11commn.c:2056
+#: src/gtk/x11commn.c:2057
 msgid "error"
 msgstr "エラー"
 
@@ -1008,7 +1008,7 @@ msgid "_All"
 msgstr "全て(_A)"
 
 #: src/gtk/x11dialg.c:342 src/gtk/x11file.c:722 src/gtk/x11file.c:1988
-#: src/gtk/x11file.c:2193 src/gtk/x11view.c:1092
+#: src/gtk/x11file.c:2193 src/gtk/x11view.c:1101
 #: src/gtk/data/gtk/menus-common.ui.in:159
 #: src/gtk/data/gtk/menus-common-win.ui.in:167
 #: src/gtk/data/gtk/menus-common.ui:159
@@ -1127,7 +1127,7 @@ msgstr "_X 変換式"
 msgid "_Y math"
 msgstr "_Y 変換式"
 
-#: src/gtk/x11file.c:737 src/gtk/x11view.c:1108
+#: src/gtk/x11file.c:737 src/gtk/x11view.c:1117
 #: src/gtk/data/gtk/menus-common.ui.in:313
 #: src/gtk/data/gtk/menus-common.ui.in:473
 #: src/gtk/data/gtk/menus-common-win.ui.in:321
@@ -1250,7 +1250,7 @@ msgstr "保存(_S)"
 msgid "_Result"
 msgstr "フィット結果(_R)"
 
-#: src/gtk/x11file.c:1943 src/gtk/x11file.c:2160 src/gtk/x11view.c:1064
+#: src/gtk/x11file.c:1943 src/gtk/x11file.c:2160 src/gtk/x11view.c:1073
 msgid "Line No."
 msgstr "行"
 
@@ -1391,12 +1391,12 @@ msgid "_Load settings"
 msgstr "ファイルから設定読込(_L)"
 
 #: src/gtk/x11file.c:3935 src/gtk/x11file.c:4017 src/gtk/x11file.c:4093
-#: src/gtk/x11view.c:1076
+#: src/gtk/x11view.c:1085
 msgid "_Mask"
 msgstr "マスク(_M)"
 
 #: src/gtk/x11file.c:3939 src/gtk/x11file.c:4021 src/gtk/x11file.c:4097
-#: src/gtk/x11view.c:1077
+#: src/gtk/x11view.c:1086
 msgid "_Move"
 msgstr "移動(_M)"
 
@@ -1580,28 +1580,32 @@ msgstr "ディレクトリ選択(_S):"
 msgid "Current Dir:"
 msgstr "現在のディレクトリ:"
 
-#: src/gtk/x11graph.c:936
+#: src/gtk/x11graph.c:937
 msgid "_Expand included file"
 msgstr "データファイルの展開(データ込 NGP ファイル) (_E)"
 
 #: src/gtk/x11graph.c:941
+msgid "Expand directory"
+msgstr "展開ディレクトリ"
+
+#: src/gtk/x11graph.c:943
 msgid "_Dir:"
 msgstr "ディレクトリ(_D):"
 
-#: src/gtk/x11graph.c:945 src/gtk/x11graph.c:1000 src/gtk/x11opt.c:1169
+#: src/gtk/x11graph.c:947 src/gtk/x11graph.c:1007 src/gtk/x11opt.c:1169
 #: src/gtk/x11opt.c:1193
 msgid "_Path:"
 msgstr "パス情報(_P):"
 
-#: src/gtk/x11graph.c:1006
+#: src/gtk/x11graph.c:1013
 msgid "_Include data file"
 msgstr "データファイルを含める(_I)"
 
-#: src/gtk/x11graph.c:1010
+#: src/gtk/x11graph.c:1017
 msgid "_Include merge file"
 msgstr "合成ファイルを含める(_I)"
 
-#: src/gtk/x11graph.c:1101 src/gtk/x11menu.c:423
+#: src/gtk/x11graph.c:1109 src/gtk/x11menu.c:423
 msgid "Load NGP file"
 msgstr "NGPファイルを開く"
 
@@ -2606,11 +2610,11 @@ msgstr "合成ファイルの保存"
 msgid "Making GRA file."
 msgstr "合成ファイル作成中"
 
-#: src/gtk/x11print.c:788 src/gtk/x11print.c:861 src/gtk/x11view.c:6174
+#: src/gtk/x11print.c:788 src/gtk/x11print.c:861 src/gtk/x11view.c:6183
 msgid "Drawing."
 msgstr "描画中"
 
-#: src/gtk/x11view.c:1097 src/gtk/data/gtk/menus-common.ui.in:139
+#: src/gtk/x11view.c:1106 src/gtk/data/gtk/menus-common.ui.in:139
 #: src/gtk/data/gtk/menus-common.ui.in:572
 #: src/gtk/data/gtk/menus-common-win.ui.in:147
 #: src/gtk/data/gtk/menus-common-win.ui.in:580
@@ -2618,37 +2622,37 @@ msgstr "描画中"
 msgid "_Copy"
 msgstr "コピー(_C)"
 
-#: src/gtk/x11view.c:1707 src/gtk/x11view.c:1709
+#: src/gtk/x11view.c:1716 src/gtk/x11view.c:1718
 #, c-format
 msgid "Searching for data."
 msgstr "データ検索中"
 
-#: src/gtk/x11view.c:1819
+#: src/gtk/x11view.c:1828
 #, c-format
 msgid "Evaluating."
 msgstr "データ評価中"
 
-#: src/gtk/x11view.c:1822
+#: src/gtk/x11view.c:1831
 msgid "Evaluating"
 msgstr "データ評価中"
 
-#: src/gtk/x11view.c:1900
+#: src/gtk/x11view.c:1909
 msgid "trimming (multi select)"
 msgstr "トリミング (複数選択)"
 
-#: src/gtk/x11view.c:3287
+#: src/gtk/x11view.c:3296
 msgid "Data points are moved."
 msgstr "データは移動されました."
 
-#: src/gtk/x11view.c:4619
+#: src/gtk/x11view.c:4628
 msgid "Moving data points is canceled."
 msgstr "データの移動はキャンセルされました."
 
-#: src/gtk/x11view.c:6168
+#: src/gtk/x11view.c:6177
 msgid "Scaling"
 msgstr "軸スケール設定中"
 
-#: src/gtk/x11view.c:6175
+#: src/gtk/x11view.c:6184
 msgid "Drawing"
 msgstr "描画中"
 
