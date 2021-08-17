@@ -698,10 +698,6 @@ static int
 mergestore(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct mergelocal *mergelocal;
-  char *file,*base,*date,*time;
-  int style;
-  char *buf;
-  char *argv2[2];
 
   g_free(rval->str);
   rval->str=NULL;
@@ -709,53 +705,8 @@ mergestore(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   if (mergelocal->endstore) {
     mergelocal->endstore=FALSE;
     return 1;
-  } else if (mergelocal->storefd==NULL) {
-    _getobj(obj,"file",inst,&file);
-    if (file==NULL) return 1;
-    style=3;
-    argv2[0]=(char *)&style;
-    argv2[1]=NULL;
-    if (_exeobj(obj,"date",inst,1,argv2)) return 1;
-    style=0;
-    argv2[0]=(char *)&style;
-    argv2[1]=NULL;
-    if (_exeobj(obj,"time",inst,1,argv2)) return 1;
-    _getobj(obj,"date",inst,&date);
-    if(date == NULL) {
-      date = "1-1-1970";
-    }
-    _getobj(obj,"time",inst,&time);
-    if(time == NULL) {
-      time = "00:00:00";
-    }
-    if ((base=getbasename(file))==NULL) return 1;
-    if ((mergelocal->storefd=nfopen(file,"rt"))==NULL) {
-      g_free(base);
-      return 1;
-    }
-    buf = g_strdup_printf("merge::load_data '%s' '%s %s' <<'[EOF]'", base, date, time);
-    g_free(base);
-    if (buf == NULL) {
-      fclose(mergelocal->storefd);
-      mergelocal->storefd=NULL;
-      return 1;
-    }
-    rval->str=buf;
-    return 0;
-  } else {
-    if (fgetline(mergelocal->storefd,&buf)!=0) {
-      fclose(mergelocal->storefd);
-      mergelocal->storefd=NULL;
-      buf = g_strdup("[EOF]\n");
-      if (buf == NULL) return 1;
-      mergelocal->endstore=TRUE;
-      rval->str=buf;
-      return 0;
-    } else {
-      rval->str=buf;
-      return 0;
-    }
   }
+  return store(obj, inst, rval, argc, argv, &mergelocal->endstore, &mergelocal->storefd);
 }
 
 static int
