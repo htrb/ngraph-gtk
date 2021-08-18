@@ -942,20 +942,20 @@ LoadDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     GtkWidget *w, *vbox;
     int j;
-    vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
+    vbox = gtk_grid_new();
 
     w = gtk_check_button_new_with_mnemonic(_("_Expand included file"));
     d->expand_file = w;
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+    gtk_grid_attach(GTK_GRID(vbox), w, 0, 0, 2, 1);
 
     w = gtk_file_chooser_button_new(_("Expand directory"), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
     gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(w), TRUE);
     g_signal_connect(w, "file-set", G_CALLBACK(set_directory_name), NULL);
-    item_setup(vbox, w, _("_Expand directory:"), FALSE);
+    add_widget_to_table(vbox, w, _("expand _Directory:"), FALSE, 1);
     d->dir = w;
 
     w = combo_box_create();
-    item_setup(vbox, w, _("_Path:"), FALSE);
+    add_widget_to_table(vbox, w, _("_Path:"), FALSE, 2);
     for (j = 0; LoadPathStr[j]; j++) {
       combo_box_append_text(w, _(LoadPathStr[j]));
     }
