@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.09.03\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2021-08-17 15:57+0900\n"
+"POT-Creation-Date: 2021-08-18 12:17+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1555,8 +1555,8 @@ msgstr ""
 msgid "Expand directory"
 msgstr ""
 
-#: src/gtk/x11graph.c:954 src/gtk/x11opt.c:1204
-msgid "_Expand directory:"
+#: src/gtk/x11graph.c:954
+msgid "expand _Directory:"
 msgstr ""
 
 #: src/gtk/x11graph.c:958 src/gtk/x11graph.c:1014 src/gtk/x11opt.c:1169
@@ -2411,6 +2411,10 @@ msgstr ""
 
 #: src/gtk/x11opt.c:1199
 msgid "_Expand include file"
+msgstr ""
+
+#: src/gtk/x11opt.c:1204
+msgid "_Expand directory:"
 msgstr ""
 
 #: src/gtk/x11opt.c:1213

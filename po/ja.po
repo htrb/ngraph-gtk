@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6.08.07\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2021-08-17 15:57+0900\n"
-"PO-Revision-Date: 2021-08-17 15:23+0900\n"
+"POT-Creation-Date: 2021-08-18 12:17+0900\n"
+"PO-Revision-Date: 2021-08-18 11:32+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja\n"
@@ -1588,9 +1588,9 @@ msgstr "データファイルの展開(データ込 NGP ファイル) (_E)"
 msgid "Expand directory"
 msgstr "展開ディレクトリ"
 
-#: src/gtk/x11graph.c:954 src/gtk/x11opt.c:1204
-msgid "_Expand directory:"
-msgstr "展開ディレクトリ(_E):"
+#: src/gtk/x11graph.c:954
+msgid "expand _Directory:"
+msgstr "展開ディレクトリ(_D):"
 
 #: src/gtk/x11graph.c:958 src/gtk/x11graph.c:1014 src/gtk/x11opt.c:1169
 #: src/gtk/x11opt.c:1193
@@ -2448,6 +2448,10 @@ msgstr "グラフの読込"
 #: src/gtk/x11opt.c:1199
 msgid "_Expand include file"
 msgstr "データファイルの展開(_E)"
+
+#: src/gtk/x11opt.c:1204
+msgid "_Expand directory:"
+msgstr "展開ディレクトリ(_E):"
 
 #: src/gtk/x11opt.c:1213
 msgid "Size"
