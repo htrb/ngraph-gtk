@@ -873,7 +873,7 @@ math_expression_get_string(MathExpression *expression)
     default:
       if (math_expression_calculate(exp, &val) == 0) {
 	if (val.type == MATH_VALUE_NORMAL) {
-	  add_printf_formated_double(gstr, "%G", &val, NULL);
+	  n_gstr_append_printf_double(gstr, "%G", val.val);
 	} else {
 	  const char *str;
 	  str = math_special_value_to_string(&val);
