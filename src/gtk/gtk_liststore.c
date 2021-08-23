@@ -1110,8 +1110,7 @@ list_store_remove_selected_cb(GtkWidget *w, gpointer client_data)
     gtk_tree_view_set_cursor(GTK_TREE_VIEW(client_data), first_path, NULL, FALSE);
   }
 
-  g_list_foreach(selected, free_tree_path_cb, NULL);
-  g_list_free(selected);
+  g_list_free_full(selected, (GDestroyNotify) gtk_tree_path_free);
 }
 
 void
