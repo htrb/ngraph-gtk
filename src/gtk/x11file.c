@@ -583,8 +583,7 @@ MathDialogList(GtkButton *w, gpointer client_data)
   }
 
  END:
-  g_list_foreach(list, free_tree_path_cb, NULL);
-  g_list_free(list);
+  g_list_free_full(list, (GDestroyNotify) gtk_tree_path_free);
 }
 
 static void
