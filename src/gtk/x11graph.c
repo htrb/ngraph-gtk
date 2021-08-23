@@ -619,8 +619,7 @@ SwitchDialogRemove(GtkWidget *w, gpointer client_data)
   if (list) {
     list = g_list_reverse(list);
     g_list_foreach(list, switch_dialog_remove_cb, d);
-    g_list_foreach(list, free_tree_path_cb, NULL);
-    g_list_free (list);
+    g_list_free_full(list, (GDestroyNotify) gtk_tree_path_free);
   }
   SwitchDialogSetupItem(d->widget, d);
   set_drawlist_btn_state(d, FALSE);
