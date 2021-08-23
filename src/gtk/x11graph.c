@@ -554,8 +554,7 @@ SwitchDialogTop(GtkWidget *w, gpointer client_data)
   if (list) {
     num = g_list_length(list);
     g_list_foreach(list, switch_dialog_top_cb, d);
-    g_list_foreach(list, free_tree_path_cb, NULL);
-    g_list_free(list);
+    g_list_free_full(list, (GDestroyNotify) gtk_tree_path_free);
   }
   SwitchDialogSetupItem(d->widget, d);
   for (i = 0; i < num; i++) {
