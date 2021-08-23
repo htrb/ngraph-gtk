@@ -353,8 +353,7 @@ SwitchDialogInsert(GtkWidget *w, gpointer client_data)
       ptr = gtk_tree_path_get_indices((GtkTreePath *)(last->data));
       pos = ptr[0];
     }
-    g_list_foreach(list, free_tree_path_cb, NULL);
-    g_list_free(list);
+    g_list_free_full(list, (GDestroyNotify) gtk_tree_path_free);
   }
 
   data = arraydata(&(d->idrawrable));
