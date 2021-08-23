@@ -1279,7 +1279,7 @@ free_markpixmap(void)
 static void
 create_icon(void)
 {
-  GList *tmp, *list = NULL;
+  GList *list = NULL;
   GdkPixbuf *pixbuf;
 
   pixbuf = gdk_pixbuf_new_from_resource(NGRAPH_SVG_ICON_FILE, NULL);
@@ -1300,13 +1300,7 @@ create_icon(void)
   if (list) {
     gtk_window_set_default_icon_list(list);
     gtk_window_set_icon_list(GTK_WINDOW(TopLevel), list);
-
-    tmp = list;
-    while (tmp) {
-      g_object_unref(tmp->data);
-      tmp = tmp->next;
-    }
-    g_list_free(list);
+    g_list_free_full(list, g_object_unref);
   }
 }
 
