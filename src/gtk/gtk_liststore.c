@@ -1114,13 +1114,6 @@ list_store_remove_selected_cb(GtkWidget *w, gpointer client_data)
 }
 
 void
-free_tree_path_cb(gpointer data, gpointer user_data)
-{
-  gtk_tree_path_free(data);
-}
-
-
-void
 tree_store_selected_toggle_expand(GtkWidget *w)
 {
   GtkTreeIter iter;

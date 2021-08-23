@@ -104,7 +104,6 @@ void tree_store_set_val(GtkWidget *w, GtkTreeIter *iter, int col, GType type, vo
 
 void list_store_select_all_cb(GtkButton *w, gpointer client_data);
 void list_store_remove_selected_cb(GtkWidget *w, gpointer client_data);
-void free_tree_path_cb(gpointer data, gpointer user_data);
 
 void tree_store_selected_toggle_expand(GtkWidget *w);
 
