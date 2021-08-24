@@ -726,11 +726,11 @@ class Presentation
                        end
             src_pdf_files = Dir.glob("#{PDF_PREFIX}*.pdf").sort
             if (FileTest.exist?("/dev/null"))
-              system("pdfunite #{src_pdf_files.join(" ")} #{pdf_file}")
+              `pdfunite #{src_pdf_files.join(" ")} #{pdf_file}`
             else
               pdf_file_tmp = "__tmp__" + pdf_file
-              system("pdfunite #{src_pdf_files.join(" ")} #{pdf_file_tmp}")
-              system("pdfopt #{pdf_file_tmp} #{pdf_file}")
+              `pdfunite #{src_pdf_files.join(" ")} #{pdf_file_tmp}`
+              `pdfopt #{pdf_file_tmp} #{pdf_file}`
               File.delete(pdf_file_tmp)
             end
             File.delete(*src_pdf_files)
