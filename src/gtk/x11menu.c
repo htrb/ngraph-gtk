@@ -2718,7 +2718,7 @@ int
 PutStderr(const char *s)
 {
   size_t len;
-  char *ustr, *arg[] = {NULL};
+  char *ustr;
 
   if (s == NULL)
     return 0;
@@ -2730,7 +2730,6 @@ PutStderr(const char *s)
   message_box(NULL, ustr, _("Error:"), RESPONS_ERROR);
   len = strlen(ustr);
   g_free(ustr);
-  UpdateAll2(arg, FALSE);
   return len + 1;
 }
 
