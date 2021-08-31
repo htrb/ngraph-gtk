@@ -2775,10 +2775,8 @@ int
 InputYN(const char *mes)
 {
   int ret;
-  char *arg[] = {NULL};
 
   ret = message_box(get_current_window(), mes, _("Question"), RESPONS_YESNO);
-  UpdateAll2(arg, FALSE);
   return (ret == IDYES) ? TRUE : FALSE;
 }
 
