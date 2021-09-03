@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.09.04\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2021-08-30 22:41+0900\n"
+"POT-Creation-Date: 2021-09-03 14:55+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -86,7 +86,7 @@ msgstr ""
 msgid "gray"
 msgstr ""
 
-#: src/gtk/x11axis.c:58 src/gtk/x11opt.c:446 src/gtk/x11opt.c:933
+#: src/gtk/x11axis.c:58 src/gtk/x11opt.c:447 src/gtk/x11opt.c:934
 msgid "name"
 msgstr ""
 
@@ -146,7 +146,7 @@ msgstr ""
 
 #: src/gtk/x11axis.c:104 src/gtk/x11file.c:132 src/gtk/x11file.c:1976
 #: src/gtk/x11file.c:2181 src/gtk/x11graph.c:700 src/gtk/x11lgnd.c:1152
-#: src/gtk/x11menu.c:406 src/gtk/x11merge.c:69 src/gtk/x11opt.c:700
+#: src/gtk/x11menu.c:406 src/gtk/x11merge.c:69 src/gtk/x11opt.c:701
 #: src/gtk/data/gtk/menus-common.ui.in:295
 #: src/gtk/data/gtk/menus-common.ui.in:336
 #: src/gtk/data/gtk/menus-common.ui.in:381
@@ -264,7 +264,7 @@ msgid "_Top"
 msgstr ""
 
 #: src/gtk/x11axis.c:116 src/gtk/x11file.c:144 src/gtk/x11graph.c:720
-#: src/gtk/x11lgnd.c:223 src/gtk/x11merge.c:79 src/gtk/x11opt.c:719
+#: src/gtk/x11lgnd.c:223 src/gtk/x11merge.c:79 src/gtk/x11opt.c:720
 #: src/gtk/data/gtk/menus-common.ui.in:174
 #: src/gtk/data/gtk/menus-common.ui.in:659
 #: src/gtk/data/gtk/menus-common-win.ui.in:182
@@ -275,7 +275,7 @@ msgid "_Up"
 msgstr ""
 
 #: src/gtk/x11axis.c:117 src/gtk/x11file.c:145 src/gtk/x11graph.c:726
-#: src/gtk/x11lgnd.c:224 src/gtk/x11merge.c:80 src/gtk/x11opt.c:712
+#: src/gtk/x11lgnd.c:224 src/gtk/x11merge.c:80 src/gtk/x11opt.c:713
 #: src/gtk/data/gtk/menus-common.ui.in:178
 #: src/gtk/data/gtk/menus-common.ui.in:663
 #: src/gtk/data/gtk/menus-common-win.ui.in:186
@@ -373,7 +373,7 @@ msgstr ""
 msgid "_Background"
 msgstr ""
 
-#: src/gtk/x11axis.c:350 src/gtk/x11opt.c:1610
+#: src/gtk/x11axis.c:350 src/gtk/x11opt.c:1612
 msgid "_Background Color:"
 msgstr ""
 
@@ -618,7 +618,7 @@ msgstr ""
 msgid "_Script size:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1983 src/gtk/x11lgnd.c:1886 src/gtk/x11opt.c:678
+#: src/gtk/x11axis.c:1983 src/gtk/x11lgnd.c:1886 src/gtk/x11opt.c:679
 msgid "_Font:"
 msgstr ""
 
@@ -631,7 +631,7 @@ msgid "_Italic"
 msgstr ""
 
 #: src/gtk/x11axis.c:2004 src/gtk/x11axis.c:3212 src/gtk/x11dialg.c:237
-#: src/gtk/x11lgnd.c:3486 src/gtk/x11opt.c:1235
+#: src/gtk/x11lgnd.c:3486 src/gtk/x11opt.c:1237
 msgid "Font"
 msgstr ""
 
@@ -736,7 +736,7 @@ msgstr ""
 msgid "Save NGP file"
 msgstr ""
 
-#: src/gtk/x11commn.c:1285 src/gtk/x11opt.c:1756
+#: src/gtk/x11commn.c:1285 src/gtk/x11opt.c:1758
 #, c-format
 msgid "Saving `%.128s'."
 msgstr ""
@@ -777,11 +777,11 @@ msgstr ""
 msgid "error"
 msgstr ""
 
-#: src/gtk/x11dialg.c:48 src/gtk/x11opt.c:1614
+#: src/gtk/x11dialg.c:48 src/gtk/x11opt.c:1616
 msgid "solid"
 msgstr ""
 
-#: src/gtk/x11dialg.c:49 src/gtk/x11opt.c:1615
+#: src/gtk/x11dialg.c:49 src/gtk/x11opt.c:1617
 msgid "dot"
 msgstr ""
 
@@ -809,7 +809,7 @@ msgstr ""
 msgid "auto"
 msgstr ""
 
-#: src/gtk/x11dialg.c:119 src/gtk/x11merge.c:52 src/gtk/x11opt.c:447
+#: src/gtk/x11dialg.c:119 src/gtk/x11merge.c:52 src/gtk/x11opt.c:448
 #: src/odata.c:233
 msgid "file"
 msgstr ""
@@ -946,7 +946,7 @@ msgstr ""
 msgid "Add-in script setup"
 msgstr ""
 
-#: src/gtk/x11dialg.c:240 src/gtk/x11opt.c:1254
+#: src/gtk/x11dialg.c:240 src/gtk/x11opt.c:1256
 msgid "Miscellaneous"
 msgstr ""
 
@@ -1203,8 +1203,8 @@ msgid "_Load"
 msgstr ""
 
 #: src/gtk/x11file.c:1755 src/gtk/x11gui.c:1209 src/gtk/x11menu.c:432
-#: src/gtk/x11opt.c:453 src/gtk/x11opt.c:940 src/gtk/x11opt.c:1141
-#: src/gtk/x11opt.c:1487 src/gtk/x11opt.c:1595
+#: src/gtk/x11opt.c:454 src/gtk/x11opt.c:941 src/gtk/x11opt.c:1143
+#: src/gtk/x11opt.c:1489 src/gtk/x11opt.c:1597
 #: src/gtk/data/gtk/menus-common.ui.in:38
 #: src/gtk/data/gtk/menus-common.ui.in:681
 #: src/gtk/data/gtk/menus-common-win.ui.in:38
@@ -1226,7 +1226,7 @@ msgid "_Line:"
 msgstr ""
 
 #: src/gtk/x11file.c:1981 src/gtk/x11file.c:2186 src/gtk/x11graph.c:738
-#: src/gtk/x11opt.c:705 src/gtk/x11opt_proto.h:284
+#: src/gtk/x11opt.c:706 src/gtk/x11opt_proto.h:284
 msgid "_Remove"
 msgstr ""
 
@@ -1433,7 +1433,7 @@ msgstr ""
 msgid "Making data file."
 msgstr ""
 
-#: src/gtk/x11file.c:5815 src/gtk/x11lgnd.c:3045 src/gtk/gtk_presettings.c:1881
+#: src/gtk/x11file.c:5815 src/gtk/x11lgnd.c:3045 src/gtk/gtk_presettings.c:1913
 msgid "Join"
 msgstr ""
 
@@ -1559,8 +1559,8 @@ msgstr ""
 msgid "expand _Directory:"
 msgstr ""
 
-#: src/gtk/x11graph.c:950 src/gtk/x11graph.c:1006 src/gtk/x11opt.c:1169
-#: src/gtk/x11opt.c:1193
+#: src/gtk/x11graph.c:950 src/gtk/x11graph.c:1006 src/gtk/x11opt.c:1171
+#: src/gtk/x11opt.c:1195
 msgid "_Path:"
 msgstr ""
 
@@ -1578,13 +1578,13 @@ msgstr ""
 
 #: src/gtk/x11gui.c:137 src/gtk/x11gui.c:368 src/gtk/x11gui.c:436
 #: src/gtk/x11gui.c:576 src/gtk/x11gui.c:651 src/gtk/x11gui.c:722
-#: src/gtk/x11gui.c:801 src/gtk/x11gui.c:1032 src/gtk/x11opt.c:1112
+#: src/gtk/x11gui.c:801 src/gtk/x11gui.c:1032 src/gtk/x11opt.c:1114
 msgid "_Cancel"
 msgstr ""
 
 #: src/gtk/x11gui.c:149 src/gtk/x11gui.c:369 src/gtk/x11gui.c:437
 #: src/gtk/x11gui.c:577 src/gtk/x11gui.c:652 src/gtk/x11gui.c:723
-#: src/gtk/x11gui.c:802 src/gtk/x11opt.c:1110
+#: src/gtk/x11gui.c:802 src/gtk/x11opt.c:1112
 msgid "_OK"
 msgstr ""
 
@@ -1604,7 +1604,7 @@ msgstr ""
 msgid "All"
 msgstr ""
 
-#: src/gtk/x11gui.c:985 src/gtk/x11opt.c:1749
+#: src/gtk/x11gui.c:985 src/gtk/x11opt.c:1751
 #, c-format
 msgid ""
 "`%s'\n"
@@ -1700,11 +1700,11 @@ msgstr ""
 msgid "_Color2:"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:1381 src/gtk/gtk_presettings.c:1892
+#: src/gtk/x11lgnd.c:1381 src/gtk/gtk_presettings.c:1924
 msgid "Marker begin"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:1385 src/gtk/gtk_presettings.c:1898
+#: src/gtk/x11lgnd.c:1385 src/gtk/gtk_presettings.c:1930
 msgid "Marker end"
 msgstr ""
 
@@ -2275,245 +2275,245 @@ msgstr ""
 msgid "merge file property (multi select)"
 msgstr ""
 
-#: src/gtk/x11opt.c:70 src/gtk/data/gtk/menus-common.ui.in:501
+#: src/gtk/x11opt.c:71 src/gtk/data/gtk/menus-common.ui.in:501
 #: src/gtk/data/gtk/menus-common-win.ui.in:509
 #: src/gtk/data/gtk/menus-common.ui:501
 msgid "_Viewer"
 msgstr ""
 
-#: src/gtk/x11opt.c:74
+#: src/gtk/x11opt.c:75
 msgid "_External Viewer"
 msgstr ""
 
-#: src/gtk/x11opt.c:78 src/gtk/data/gtk/menus-common.ui.in:509
+#: src/gtk/x11opt.c:79 src/gtk/data/gtk/menus-common.ui.in:509
 #: src/gtk/data/gtk/menus-common-win.ui.in:517
 #: src/gtk/data/gtk/menus-common.ui:509
 msgid "_Font aliases"
 msgstr ""
 
-#: src/gtk/x11opt.c:82
+#: src/gtk/x11opt.c:83
 msgid "_Add-in Script"
 msgstr ""
 
-#: src/gtk/x11opt.c:86 src/gtk/data/gtk/menus-common.ui.in:517
+#: src/gtk/x11opt.c:87 src/gtk/data/gtk/menus-common.ui.in:517
 #: src/gtk/data/gtk/menus-common-win.ui.in:525
 #: src/gtk/data/gtk/menus-common.ui:517
 msgid "_Miscellaneous"
 msgstr ""
 
-#: src/gtk/x11opt.c:263
+#: src/gtk/x11opt.c:264
 msgid "Add-in Script"
 msgstr ""
 
-#: src/gtk/x11opt.c:284
+#: src/gtk/x11opt.c:285
 msgid "_Add-in:"
 msgstr ""
 
-#: src/gtk/x11opt.c:289
+#: src/gtk/x11opt.c:290
 msgid "_Name:"
 msgstr ""
 
-#: src/gtk/x11opt.c:293
+#: src/gtk/x11opt.c:294
 msgid "_Script file:"
 msgstr ""
 
-#: src/gtk/x11opt.c:297
+#: src/gtk/x11opt.c:298
 msgid "_Option:"
 msgstr ""
 
-#: src/gtk/x11opt.c:301
+#: src/gtk/x11opt.c:302
 msgid "_Description:"
 msgstr ""
 
-#: src/gtk/x11opt.c:368
+#: src/gtk/x11opt.c:369
 msgid "Please specify script name."
 msgstr ""
 
-#: src/gtk/x11opt.c:372
+#: src/gtk/x11opt.c:373
 msgid "Please specify script file name."
 msgstr ""
 
-#: src/gtk/x11opt.c:380
+#: src/gtk/x11opt.c:381
 msgid "Please specify script description."
 msgstr ""
 
-#: src/gtk/x11opt.c:448
+#: src/gtk/x11opt.c:449
 msgid "description"
 msgstr ""
 
-#: src/gtk/x11opt.c:564
+#: src/gtk/x11opt.c:565
 msgid "Alternative font"
 msgstr ""
 
-#: src/gtk/x11opt.c:663 src/gtk/gtk_presettings.c:1809
+#: src/gtk/x11opt.c:664 src/gtk/gtk_presettings.c:1841
 msgid "Font name"
 msgstr ""
 
-#: src/gtk/x11opt.c:672
+#: src/gtk/x11opt.c:673
 msgid "_Alias:"
 msgstr ""
 
-#: src/gtk/x11opt.c:728
+#: src/gtk/x11opt.c:729
 msgid "Alternative fonts"
 msgstr ""
 
-#: src/gtk/x11opt.c:784
+#: src/gtk/x11opt.c:785
 msgid "Please specify a new alias name."
 msgstr ""
 
-#: src/gtk/x11opt.c:792
+#: src/gtk/x11opt.c:793
 msgid "Alias name already exists."
 msgstr ""
 
-#: src/gtk/x11opt.c:932
+#: src/gtk/x11opt.c:933
 msgid "alias"
 msgstr ""
 
-#: src/gtk/x11opt.c:934
+#: src/gtk/x11opt.c:935
 msgid "alternative fonts"
 msgstr ""
 
-#: src/gtk/x11opt.c:1036
+#: src/gtk/x11opt.c:1038
 msgid "Select program"
 msgstr ""
 
-#: src/gtk/x11opt.c:1107
+#: src/gtk/x11opt.c:1109
 msgid "custom palette"
 msgstr ""
 
-#: src/gtk/x11opt.c:1146
+#: src/gtk/x11opt.c:1148
 msgid "External programs"
 msgstr ""
 
-#: src/gtk/x11opt.c:1152
+#: src/gtk/x11opt.c:1154
 msgid "_Editor:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1156
+#: src/gtk/x11opt.c:1158
 msgid "_Help browser:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1164
+#: src/gtk/x11opt.c:1166
 msgid "Save graph"
 msgstr ""
 
-#: src/gtk/x11opt.c:1175
+#: src/gtk/x11opt.c:1177
 msgid "include _Data file"
 msgstr ""
 
-#: src/gtk/x11opt.c:1179
+#: src/gtk/x11opt.c:1181
 msgid "include _Merge file"
 msgstr ""
 
-#: src/gtk/x11opt.c:1188
+#: src/gtk/x11opt.c:1190
 msgid "Load graph"
 msgstr ""
 
-#: src/gtk/x11opt.c:1199
+#: src/gtk/x11opt.c:1201
 msgid "_Expand include file"
 msgstr ""
 
-#: src/gtk/x11opt.c:1204
+#: src/gtk/x11opt.c:1206
 msgid "_Expand directory:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1213
+#: src/gtk/x11opt.c:1215
 msgid "Size"
 msgstr ""
 
-#: src/gtk/x11opt.c:1218
+#: src/gtk/x11opt.c:1220
 msgid "_Size of completion history:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1222
+#: src/gtk/x11opt.c:1224
 msgid "_Length of information view:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1226
+#: src/gtk/x11opt.c:1228
 msgid "_Length of data preview:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1240
+#: src/gtk/x11opt.c:1242
 msgid "_Coordinate view:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1244
+#: src/gtk/x11opt.c:1246
 msgid "_Information view:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1248
+#: src/gtk/x11opt.c:1250
 msgid "data _Preview:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1258
+#: src/gtk/x11opt.c:1260
 msgid "_Check \"change current directory\""
 msgstr ""
 
-#: src/gtk/x11opt.c:1262 src/gtk/x11print.c:208
+#: src/gtk/x11opt.c:1264 src/gtk/x11print.c:208
 msgid "_Use opacity"
 msgstr ""
 
-#: src/gtk/x11opt.c:1266
+#: src/gtk/x11opt.c:1268
 msgid "_Show select data dialog on exporting"
 msgstr ""
 
-#: src/gtk/x11opt.c:1270
+#: src/gtk/x11opt.c:1272
 msgid "use custom _Palette"
 msgstr ""
 
-#: src/gtk/x11opt.c:1274
+#: src/gtk/x11opt.c:1276
 msgid "_Edit custom palette"
 msgstr ""
 
-#: src/gtk/x11opt.c:1279
+#: src/gtk/x11opt.c:1281
 msgid "_Source style:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1283
+#: src/gtk/x11opt.c:1285
 msgid "_Default decimalsign:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1289
+#: src/gtk/x11opt.c:1291
 msgid "use _Dark theme"
 msgstr ""
 
-#: src/gtk/x11opt.c:1492
+#: src/gtk/x11opt.c:1494
 msgid "use _External previewer"
 msgstr ""
 
-#: src/gtk/x11opt.c:1502
+#: src/gtk/x11opt.c:1504
 msgid "Window _Width:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1506
+#: src/gtk/x11opt.c:1508
 msgid "Window _Height:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1606
+#: src/gtk/x11opt.c:1608
 msgid "_Grid:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1616
+#: src/gtk/x11opt.c:1618
 msgid "_Line attribute of focus frame:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1624
+#: src/gtk/x11opt.c:1626
 msgid "_Antialias:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1626
+#: src/gtk/x11opt.c:1628
 msgid "_Preserve line width and style"
 msgstr ""
 
-#: src/gtk/x11opt.c:1630
+#: src/gtk/x11opt.c:1632
 msgid "_Load files on redraw"
 msgstr ""
 
-#: src/gtk/x11opt.c:1636
+#: src/gtk/x11opt.c:1638
 msgid "_Maximum number of data on redraw:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1750
+#: src/gtk/x11opt.c:1752
 msgid "Save as Ngraph.ngp"
 msgstr ""
 
@@ -2745,11 +2745,11 @@ msgstr ""
 msgid "Instance name"
 msgstr ""
 
-#: src/gtk/gtk_liststore.c:163 src/gtk/gtk_presettings.c:1823
+#: src/gtk/gtk_liststore.c:163 src/gtk/gtk_presettings.c:1855
 msgid "Bold"
 msgstr ""
 
-#: src/gtk/gtk_liststore.c:164 src/gtk/gtk_presettings.c:1826
+#: src/gtk/gtk_liststore.c:164 src/gtk/gtk_presettings.c:1858
 msgid "Italic"
 msgstr ""
 
@@ -2761,23 +2761,23 @@ msgstr ""
 msgid "line"
 msgstr ""
 
-#: src/gtk/gtk_presettings.c:1817
+#: src/gtk/gtk_presettings.c:1849
 msgid "Font size"
 msgstr ""
 
-#: src/gtk/gtk_presettings.c:1843
+#: src/gtk/gtk_presettings.c:1875
 msgid "Mark size"
 msgstr ""
 
-#: src/gtk/gtk_presettings.c:1848
+#: src/gtk/gtk_presettings.c:1880
 msgid "stroke/fill"
 msgstr ""
 
-#: src/gtk/gtk_presettings.c:1855
+#: src/gtk/gtk_presettings.c:1887
 msgid "Line Width"
 msgstr ""
 
-#: src/gtk/gtk_presettings.c:1860
+#: src/gtk/gtk_presettings.c:1892
 msgid "Line Style"
 msgstr ""
 
