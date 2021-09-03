@@ -1787,6 +1787,38 @@ setup_mark_type(GtkWidget *type, struct MarkDialog *mark)
   MarkDialog(mark, TopLevel, 0);
 }
 
+void
+presetting_set_fonts(void)
+{
+  int lock;
+  GtkTreeIter iter;
+  char *font;
+  GtkComboBox *cbox;
+
+  cbox = GTK_COMBO_BOX(Widgets.font.widget);
+  if (cbox == NULL) {
+    return;
+  }
+
+  font = NULL;
+  if (gtk_combo_box_get_active_iter(cbox, &iter)) {
+    GtkTreeModel *model;
+    model = gtk_combo_box_get_model(cbox);
+    gtk_tree_model_get(model, &iter, 0, &font, -1);
+  }
+
+  lock = UpdateFieldsLock;
+  UpdateFieldsLock = TRUE;
+  set_font_family(GTK_WIDGET(cbox));
+  if (font) {
+    int index;
+    index = check_font_index(font);
+    gtk_combo_box_set_active(cbox, index);
+    g_free(font);
+  }
+  UpdateFieldsLock = lock;
+}
+
 GtkWidget *
 presetting_create_panel(GtkApplication *app)
 {
