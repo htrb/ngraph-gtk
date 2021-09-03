@@ -955,6 +955,7 @@ PrefFontDialogClose(GtkWidget *w, void *data)
 
   d = (struct PrefFontDialog *) data;
 
+  presetting_set_fonts();
   if (d->ret == IDSAVE) {
     save_config(SAVE_CONFIG_TYPE_FONTS);
   }
