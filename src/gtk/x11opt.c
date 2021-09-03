@@ -38,6 +38,7 @@
 #include "gtk_subwin.h"
 #include "gtk_combo.h"
 #include "gtk_widget.h"
+#include "gtk_presettings.h"
 
 #include "x11gui.h"
 #include "x11dialg.h"
