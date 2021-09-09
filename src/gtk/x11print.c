@@ -457,13 +457,18 @@ CmOutputPrinter(int select_file, int show_dialog)
   if (PrintSettings == NULL)
     PrintSettings = gtk_print_settings_new();
 
-  if (Menulocal.PaperId == PAPER_ID_CUSTOM) {
+  switch (Menulocal.PaperId) {
+  case PAPER_ID_CUSTOM:
+  case PAPER_ID_NORMAL:
+  case PAPER_ID_WIDE:
+  case PAPER_ID_WIDE2:
     paper_size = gtk_paper_size_new_custom(Menulocal.PaperName,
 					   Menulocal.PaperName,
 					   Menulocal.PaperWidth / 100.0,
 					   Menulocal.PaperHeight / 100.0,
 					   GTK_UNIT_MM);
-  } else {
+    break;
+  default:
     paper_size = gtk_paper_size_new(Menulocal.PaperName);
   }
 
