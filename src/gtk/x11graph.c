@@ -73,18 +73,23 @@ static struct pagelisttype pagelist[] = {
   {N_("Custom"),               "custom",              PAPER_ID_CUSTOM, FALSE, 0,     0},
   {N_("normal display (4:3)"), "normal display",      PAPER_ID_NORMAL, FALSE, 28000, 21000},
   {N_("wide display (16:9)"),  "wide display",        PAPER_ID_WIDE,   FALSE, 38400, 21600},
+  {N_("wide display (16:10)"), "wide display",        PAPER_ID_WIDE2,  FALSE, 33600, 21000},
   {"A3 P (297.00x420.00)",     GTK_PAPER_NAME_A3,     PAPER_ID_A3,     FALSE, 29700, 42000},
+  {"A3 L (420.00x297.00)",     GTK_PAPER_NAME_A3,     PAPER_ID_A3,     TRUE,  42000, 29700},
   {"A4 P (210.00x297.00)",     GTK_PAPER_NAME_A4,     PAPER_ID_A4,     FALSE, 21000, 29700},
   {"A4 L (297.00x210.00)",     GTK_PAPER_NAME_A4,     PAPER_ID_A4,     TRUE,  29700, 21000},
   {"A5 P (148.00x210.00)",     GTK_PAPER_NAME_A5,     PAPER_ID_A5,     FALSE, 14800, 21000},
   {"A5 L (210.00x148.00)",     GTK_PAPER_NAME_A5,     PAPER_ID_A5,     TRUE,  21000, 14800},
   {"B4 P (257.00x364.00)",     "iso_b4",              PAPER_ID_B4,     FALSE, 25700, 36400},
+  {"B4 L (364.00x257.00)",     "iso_b4",              PAPER_ID_B4,     TRUE,  36400, 25700},
   {"B5 P (182.00x257.00)",     GTK_PAPER_NAME_B5,     PAPER_ID_B5,     FALSE, 18200, 25700},
   {"B5 L (257.00x182.00)",     GTK_PAPER_NAME_B5,     PAPER_ID_B5,     TRUE,  25700, 18200},
   {N_("Letter P (215.90x279.40)"), GTK_PAPER_NAME_LETTER, PAPER_ID_LETTER, FALSE, 21590, 27940},
   {N_("Letter L (279.40x215.90)"), GTK_PAPER_NAME_LETTER, PAPER_ID_LETTER, TRUE,  27940, 21590},
   {N_("Legal  P (215.90x355.60)"), GTK_PAPER_NAME_LEGAL,  PAPER_ID_LEGAL,  FALSE, 21590, 35560},
   {N_("Legal  L (355.60x215.90)"), GTK_PAPER_NAME_LEGAL,  PAPER_ID_LEGAL,  TRUE,  35560, 21590},
+  {N_("Executive P (184.2x266.7)"), GTK_PAPER_NAME_EXECUTIVE, PAPER_ID_EXECUTIVE, FALSE, 18420, 26670},
+  {N_("Executive L (266.7x184.2)"), GTK_PAPER_NAME_EXECUTIVE, PAPER_ID_EXECUTIVE, TRUE,  26670, 18420},
 };
 
 #define PAGELISTNUM (sizeof(pagelist) / sizeof(*pagelist))
