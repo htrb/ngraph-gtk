@@ -165,6 +165,20 @@ PageDialogPage(GtkWidget *w, gpointer client_data)
 }
 
 static void
+PageDialogOrientation(GtkWidget *widget, gpointer client_data)
+{
+  struct PageDialog *d;
+  int w, h;
+
+  d = (struct PageDialog *) client_data;
+
+  w = spin_entry_get_val(d->paperwidth);
+  h = spin_entry_get_val(d->paperheight);
+  spin_entry_set_val(d->paperwidth, h);
+  spin_entry_set_val(d->paperheight, w);
+}
+
+static void
 PageDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   struct PageDialog *d;
