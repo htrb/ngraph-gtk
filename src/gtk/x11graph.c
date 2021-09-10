@@ -99,6 +99,7 @@ int
 set_paper_type(int w, int h)
 {
   unsigned int j;
+  int landscape = FALSE;
 
   if (w < 1 || h < 1)
     return 0;
@@ -108,6 +109,10 @@ set_paper_type(int w, int h)
 
   for (j = 0; j < PAGELISTNUM; j++) {
     if (w == pagelist[j].width &&  h == pagelist[j].height) {
+      landscape = FALSE;
+      break;
+    } else if (h == pagelist[j].width &&  w == pagelist[j].height) {
+      landscape = TRUE;
       break;
     }
   }
@@ -118,7 +123,7 @@ set_paper_type(int w, int h)
 
   Menulocal.PaperName = pagelist[j].name;
   Menulocal.PaperId = pagelist[j].id;
-  Menulocal.PaperLandscape = pagelist[j].langscape;
+  Menulocal.PaperLandscape = landscape;
 
   return j;
 }
