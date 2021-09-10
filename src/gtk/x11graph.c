@@ -211,6 +211,16 @@ PageDialogSetup(GtkWidget *wi, void *data, int makewidget)
       combo_box_append_text(d->paper, _(pagelist[j].paper));
     }
 
+    w = gtk_radio_button_new_with_mnemonic(NULL, _("_Portrait"));
+    add_widget_to_table(table, w, _("_Orientation:"), FALSE, i++);
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), TRUE);
+    d->portrait = w;
+
+    w = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(w), _("L_andscape"));
+    add_widget_to_table_sub(table, w, NULL,FALSE, 1, 1, 1, i++);
+    d->landscape = w;
+    g_signal_connect(w, "toggled", G_CALLBACK(PageDialogOrientation), d);
+
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, FALSE, TRUE);
     add_widget_to_table(table, w, _("_Left margin:"), FALSE, i++);
     d->leftmargin = w;
