@@ -131,12 +131,18 @@ PageDialogSetupItem(GtkWidget *w, struct PageDialog *d)
   spin_entry_set_val(d->leftmargin, Menulocal.LeftMargin);
   spin_entry_set_val(d->topmargin, Menulocal.TopMargin);
 
-  spin_entry_set_val(d->paperwidth, Menulocal.PaperWidth);
-  spin_entry_set_val(d->paperheight, Menulocal.PaperHeight);
-
   spin_entry_set_val(d->paperzoom, Menulocal.PaperZoom);
 
   j = set_paper_type(Menulocal.PaperWidth, Menulocal.PaperHeight);
+
+  if (Menulocal.PaperLandscape) {
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->landscape), TRUE);
+  } else {
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->portrait), TRUE);
+  }
+
+  spin_entry_set_val(d->paperwidth, Menulocal.PaperWidth);
+  spin_entry_set_val(d->paperheight, Menulocal.PaperHeight);
 
   combo_box_set_active(d->paper, j);
   combo_box_set_active(d->decimalsign, Menulocal.Decimalsign);
