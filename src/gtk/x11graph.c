@@ -146,21 +146,27 @@ static void
 PageDialogPage(GtkWidget *w, gpointer client_data)
 {
   struct PageDialog *d;
-  int a;
+  int paper, landscape;
 
   d = (struct PageDialog *) client_data;
 
-  a = combo_box_get_active(d->paper);
+  paper = combo_box_get_active(d->paper);
+  landscape = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->landscape));
 
-  if (a < 0)
+  if (paper < 0)
     return;
 
-  set_widget_sensitivity_with_label(d->paperwidth, a == 0);
-  set_widget_sensitivity_with_label(d->paperheight, a == 0);
+  set_widget_sensitivity_with_label(d->paperwidth, paper == 0);
+  set_widget_sensitivity_with_label(d->paperheight, paper == 0);
 
-  if (a > 0) {
-    spin_entry_set_val(d->paperwidth, pagelist[a].width);
-    spin_entry_set_val(d->paperheight, pagelist[a].height);
+  if (paper > 0) {
+    if (landscape) {
+      spin_entry_set_val(d->paperwidth, pagelist[paper].height);
+      spin_entry_set_val(d->paperheight, pagelist[paper].width);
+    } else {
+      spin_entry_set_val(d->paperwidth, pagelist[paper].width);
+      spin_entry_set_val(d->paperheight, pagelist[paper].height);
+    }
   }
 }
 
