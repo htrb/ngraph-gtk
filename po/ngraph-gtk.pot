@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.09.04\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2021-09-09 14:30+0900\n"
+"POT-Creation-Date: 2021-09-10 15:18+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,7 +25,7 @@ msgstr ""
 msgid "Create scientific 2-dimensional graphs"
 msgstr ""
 
-#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:12 src/gtk/x11graph.c:1306
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:12 src/gtk/x11graph.c:1339
 msgid ""
 "Ngraph is the program to create scientific 2-dimensional graphs for "
 "researchers and engineers."
@@ -145,7 +145,7 @@ msgid "Single _Axis"
 msgstr ""
 
 #: src/gtk/x11axis.c:104 src/gtk/x11file.c:132 src/gtk/x11file.c:1976
-#: src/gtk/x11file.c:2181 src/gtk/x11graph.c:705 src/gtk/x11lgnd.c:1152
+#: src/gtk/x11file.c:2181 src/gtk/x11graph.c:738 src/gtk/x11lgnd.c:1152
 #: src/gtk/x11menu.c:406 src/gtk/x11merge.c:69 src/gtk/x11opt.c:701
 #: src/gtk/data/gtk/menus-common.ui.in:295
 #: src/gtk/data/gtk/menus-common.ui.in:336
@@ -253,7 +253,7 @@ msgstr ""
 msgid "_Instance name"
 msgstr ""
 
-#: src/gtk/x11axis.c:115 src/gtk/x11file.c:143 src/gtk/x11graph.c:719
+#: src/gtk/x11axis.c:115 src/gtk/x11file.c:143 src/gtk/x11graph.c:752
 #: src/gtk/x11lgnd.c:222 src/gtk/x11merge.c:78
 #: src/gtk/data/gtk/menus-common.ui.in:169
 #: src/gtk/data/gtk/menus-common.ui.in:655
@@ -263,7 +263,7 @@ msgstr ""
 msgid "_Top"
 msgstr ""
 
-#: src/gtk/x11axis.c:116 src/gtk/x11file.c:144 src/gtk/x11graph.c:725
+#: src/gtk/x11axis.c:116 src/gtk/x11file.c:144 src/gtk/x11graph.c:758
 #: src/gtk/x11lgnd.c:223 src/gtk/x11merge.c:79 src/gtk/x11opt.c:720
 #: src/gtk/data/gtk/menus-common.ui.in:174
 #: src/gtk/data/gtk/menus-common.ui.in:659
@@ -274,7 +274,7 @@ msgstr ""
 msgid "_Up"
 msgstr ""
 
-#: src/gtk/x11axis.c:117 src/gtk/x11file.c:145 src/gtk/x11graph.c:731
+#: src/gtk/x11axis.c:117 src/gtk/x11file.c:145 src/gtk/x11graph.c:764
 #: src/gtk/x11lgnd.c:224 src/gtk/x11merge.c:80 src/gtk/x11opt.c:713
 #: src/gtk/data/gtk/menus-common.ui.in:178
 #: src/gtk/data/gtk/menus-common.ui.in:663
@@ -285,7 +285,7 @@ msgstr ""
 msgid "_Down"
 msgstr ""
 
-#: src/gtk/x11axis.c:118 src/gtk/x11file.c:146 src/gtk/x11graph.c:737
+#: src/gtk/x11axis.c:118 src/gtk/x11file.c:146 src/gtk/x11graph.c:770
 #: src/gtk/x11lgnd.c:225 src/gtk/x11merge.c:81
 #: src/gtk/data/gtk/menus-common.ui.in:182
 #: src/gtk/data/gtk/menus-common.ui.in:667
@@ -918,7 +918,7 @@ msgstr ""
 msgid "drawobj"
 msgstr ""
 
-#: src/gtk/x11dialg.c:215 src/gtk/x11graph.c:863
+#: src/gtk/x11dialg.c:215 src/gtk/x11graph.c:896
 msgid "directory"
 msgstr ""
 
@@ -1225,7 +1225,7 @@ msgstr ""
 msgid "_Line:"
 msgstr ""
 
-#: src/gtk/x11file.c:1981 src/gtk/x11file.c:2186 src/gtk/x11graph.c:743
+#: src/gtk/x11file.c:1981 src/gtk/x11file.c:2186 src/gtk/x11graph.c:776
 #: src/gtk/x11opt.c:706 src/gtk/x11opt_proto.h:284
 msgid "_Remove"
 msgstr ""
@@ -1481,110 +1481,110 @@ msgstr ""
 msgid "wide display (16:10)"
 msgstr ""
 
-#: src/gtk/x11graph.c:87
-msgid "Letter P (215.90x279.40)"
+#: src/gtk/x11graph.c:82
+msgid "Letter (215.90x279.40)"
 msgstr ""
 
-#: src/gtk/x11graph.c:88
-msgid "Letter L (279.40x215.90)"
+#: src/gtk/x11graph.c:83
+msgid "Legal (215.90x355.60)"
 msgstr ""
 
-#: src/gtk/x11graph.c:89
-msgid "Legal  P (215.90x355.60)"
-msgstr ""
-
-#: src/gtk/x11graph.c:90
-msgid "Legal  L (355.60x215.90)"
-msgstr ""
-
-#: src/gtk/x11graph.c:91
-msgid "Executive P (184.2x266.7)"
-msgstr ""
-
-#: src/gtk/x11graph.c:92
-msgid "Executive L (266.7x184.2)"
-msgstr ""
-
-#: src/gtk/x11graph.c:183
-msgid "paper _Width:"
-msgstr ""
-
-#: src/gtk/x11graph.c:188
-msgid "paper _Height:"
-msgstr ""
-
-#: src/gtk/x11graph.c:192
-msgid "_Paper:"
-msgstr ""
-
-#: src/gtk/x11graph.c:201
-msgid "_Left margin:"
+#: src/gtk/x11graph.c:84
+msgid "Executive (184.2x266.7)"
 msgstr ""
 
 #: src/gtk/x11graph.c:206
-msgid "_Top margin:"
+msgid "paper _Width:"
 msgstr ""
 
-#: src/gtk/x11graph.c:210
-msgid "paper _Zoom:"
+#: src/gtk/x11graph.c:211
+msgid "paper _Height:"
 msgstr ""
 
 #: src/gtk/x11graph.c:215
+msgid "_Paper:"
+msgstr ""
+
+#: src/gtk/x11graph.c:223
+msgid "_Portrait"
+msgstr ""
+
+#: src/gtk/x11graph.c:224
+msgid "_Orientation:"
+msgstr ""
+
+#: src/gtk/x11graph.c:228
+msgid "L_andscape"
+msgstr ""
+
+#: src/gtk/x11graph.c:234
+msgid "_Left margin:"
+msgstr ""
+
+#: src/gtk/x11graph.c:239
+msgid "_Top margin:"
+msgstr ""
+
+#: src/gtk/x11graph.c:243
+msgid "paper _Zoom:"
+msgstr ""
+
+#: src/gtk/x11graph.c:248
 msgid "_Decimalsign:"
 msgstr ""
 
-#: src/gtk/x11graph.c:671
+#: src/gtk/x11graph.c:704
 msgid "Object"
 msgstr ""
 
-#: src/gtk/x11graph.c:684 src/gtk/data/gtk/menus-common.ui.in:79
+#: src/gtk/x11graph.c:717 src/gtk/data/gtk/menus-common.ui.in:79
 #: src/gtk/data/gtk/menus-common-win.ui.in:87
 #: src/gtk/data/gtk/menus-common.ui:79
 msgid "_Draw order"
 msgstr ""
 
-#: src/gtk/x11graph.c:711
+#: src/gtk/x11graph.c:744
 msgid "_Insert"
 msgstr ""
 
-#: src/gtk/x11graph.c:756
+#: src/gtk/x11graph.c:789
 msgid "_Objects"
 msgstr ""
 
-#: src/gtk/x11graph.c:866
+#: src/gtk/x11graph.c:899
 msgid "_Select Dir:"
 msgstr ""
 
-#: src/gtk/x11graph.c:868
+#: src/gtk/x11graph.c:901
 msgid "Current Dir:"
 msgstr ""
 
-#: src/gtk/x11graph.c:944
+#: src/gtk/x11graph.c:977
 msgid "_Expand included file"
 msgstr ""
 
-#: src/gtk/x11graph.c:948
+#: src/gtk/x11graph.c:981
 msgid "Expand directory"
 msgstr ""
 
-#: src/gtk/x11graph.c:951
+#: src/gtk/x11graph.c:984
 msgid "expand _Directory:"
 msgstr ""
 
-#: src/gtk/x11graph.c:955 src/gtk/x11graph.c:1011 src/gtk/x11opt.c:1171
+#: src/gtk/x11graph.c:988 src/gtk/x11graph.c:1044 src/gtk/x11opt.c:1171
 #: src/gtk/x11opt.c:1195
 msgid "_Path:"
 msgstr ""
 
-#: src/gtk/x11graph.c:1017
+#: src/gtk/x11graph.c:1050
 msgid "_Include data file"
 msgstr ""
 
-#: src/gtk/x11graph.c:1021
+#: src/gtk/x11graph.c:1054
 msgid "_Include merge file"
 msgstr ""
 
-#: src/gtk/x11graph.c:1113 src/gtk/x11menu.c:423
+#: src/gtk/x11graph.c:1146 src/gtk/x11menu.c:423
 msgid "Load NGP file"
 msgstr ""
 
@@ -2071,7 +2071,7 @@ msgstr ""
 msgid "_Print"
 msgstr ""
 
-#: src/gtk/x11menu.c:470 src/gtk/x11menu.c:471 src/gtk/x11print.c:514
+#: src/gtk/x11menu.c:470 src/gtk/x11menu.c:471 src/gtk/x11print.c:522
 msgid "Print"
 msgstr ""
 
@@ -2569,24 +2569,24 @@ msgstr ""
 msgid "Printing."
 msgstr ""
 
-#: src/gtk/x11print.c:513
+#: src/gtk/x11print.c:521
 #, c-format
 msgid "Printing error: %s"
 msgstr ""
 
-#: src/gtk/x11print.c:586
+#: src/gtk/x11print.c:594
 msgid "Spawning external viewer."
 msgstr ""
 
-#: src/gtk/x11print.c:628
+#: src/gtk/x11print.c:636
 msgid "GRA file"
 msgstr ""
 
-#: src/gtk/x11print.c:668
+#: src/gtk/x11print.c:676
 msgid "Making GRA file."
 msgstr ""
 
-#: src/gtk/x11print.c:793 src/gtk/x11print.c:866 src/gtk/x11view.c:6182
+#: src/gtk/x11print.c:801 src/gtk/x11print.c:874 src/gtk/x11view.c:6182
 msgid "Drawing."
 msgstr ""
 

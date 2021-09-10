@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6.08.07\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2021-09-09 14:30+0900\n"
-"PO-Revision-Date: 2021-09-08 20:31+0900\n"
+"POT-Creation-Date: 2021-09-10 15:18+0900\n"
+"PO-Revision-Date: 2021-09-10 15:19+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja\n"
@@ -23,7 +23,7 @@ msgstr "Ngraph-GTK"
 msgid "Create scientific 2-dimensional graphs"
 msgstr "科学技術用 2D グラフ作成"
 
-#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:12 src/gtk/x11graph.c:1306
+#: misc/com.github.htrb.ngraph-gtk.metainfo.xml:12 src/gtk/x11graph.c:1339
 msgid ""
 "Ngraph is the program to create scientific 2-dimensional graphs for "
 "researchers and engineers."
@@ -147,7 +147,7 @@ msgid "Single _Axis"
 msgstr "単一軸(_A)"
 
 #: src/gtk/x11axis.c:104 src/gtk/x11file.c:132 src/gtk/x11file.c:1976
-#: src/gtk/x11file.c:2181 src/gtk/x11graph.c:705 src/gtk/x11lgnd.c:1152
+#: src/gtk/x11file.c:2181 src/gtk/x11graph.c:738 src/gtk/x11lgnd.c:1152
 #: src/gtk/x11menu.c:406 src/gtk/x11merge.c:69 src/gtk/x11opt.c:701
 #: src/gtk/data/gtk/menus-common.ui.in:295
 #: src/gtk/data/gtk/menus-common.ui.in:336
@@ -255,7 +255,7 @@ msgstr "プロパティ(_P)"
 msgid "_Instance name"
 msgstr "インスタンス名(_I)"
 
-#: src/gtk/x11axis.c:115 src/gtk/x11file.c:143 src/gtk/x11graph.c:719
+#: src/gtk/x11axis.c:115 src/gtk/x11file.c:143 src/gtk/x11graph.c:752
 #: src/gtk/x11lgnd.c:222 src/gtk/x11merge.c:78
 #: src/gtk/data/gtk/menus-common.ui.in:169
 #: src/gtk/data/gtk/menus-common.ui.in:655
@@ -265,7 +265,7 @@ msgstr "インスタンス名(_I)"
 msgid "_Top"
 msgstr "先頭へ(_T)"
 
-#: src/gtk/x11axis.c:116 src/gtk/x11file.c:144 src/gtk/x11graph.c:725
+#: src/gtk/x11axis.c:116 src/gtk/x11file.c:144 src/gtk/x11graph.c:758
 #: src/gtk/x11lgnd.c:223 src/gtk/x11merge.c:79 src/gtk/x11opt.c:720
 #: src/gtk/data/gtk/menus-common.ui.in:174
 #: src/gtk/data/gtk/menus-common.ui.in:659
@@ -276,7 +276,7 @@ msgstr "先頭へ(_T)"
 msgid "_Up"
 msgstr "上へ(_U)"
 
-#: src/gtk/x11axis.c:117 src/gtk/x11file.c:145 src/gtk/x11graph.c:731
+#: src/gtk/x11axis.c:117 src/gtk/x11file.c:145 src/gtk/x11graph.c:764
 #: src/gtk/x11lgnd.c:224 src/gtk/x11merge.c:80 src/gtk/x11opt.c:713
 #: src/gtk/data/gtk/menus-common.ui.in:178
 #: src/gtk/data/gtk/menus-common.ui.in:663
@@ -287,7 +287,7 @@ msgstr "上へ(_U)"
 msgid "_Down"
 msgstr "下へ(_D)"
 
-#: src/gtk/x11axis.c:118 src/gtk/x11file.c:146 src/gtk/x11graph.c:737
+#: src/gtk/x11axis.c:118 src/gtk/x11file.c:146 src/gtk/x11graph.c:770
 #: src/gtk/x11lgnd.c:225 src/gtk/x11merge.c:81
 #: src/gtk/data/gtk/menus-common.ui.in:182
 #: src/gtk/data/gtk/menus-common.ui.in:667
@@ -951,7 +951,7 @@ msgstr "ページ"
 msgid "drawobj"
 msgstr "描画オブジェクト"
 
-#: src/gtk/x11dialg.c:215 src/gtk/x11graph.c:863
+#: src/gtk/x11dialg.c:215 src/gtk/x11graph.c:896
 msgid "directory"
 msgstr "現在のディレクトリ"
 
@@ -1258,7 +1258,7 @@ msgstr "行"
 msgid "_Line:"
 msgstr "新規行(_L):"
 
-#: src/gtk/x11file.c:1981 src/gtk/x11file.c:2186 src/gtk/x11graph.c:743
+#: src/gtk/x11file.c:1981 src/gtk/x11file.c:2186 src/gtk/x11graph.c:776
 #: src/gtk/x11opt.c:706 src/gtk/x11opt_proto.h:284
 msgid "_Remove"
 msgstr "削除(_R)"
@@ -1514,110 +1514,110 @@ msgstr "ワイド画面 (16:9)"
 msgid "wide display (16:10)"
 msgstr "ワイド画面 (16:10)"
 
-#: src/gtk/x11graph.c:87
-msgid "Letter P (215.90x279.40)"
-msgstr "レター P (215.90x279.40)"
+#: src/gtk/x11graph.c:82
+msgid "Letter (215.90x279.40)"
+msgstr "レター (215.90x279.40)"
 
-#: src/gtk/x11graph.c:88
-msgid "Letter L (279.40x215.90)"
-msgstr "レター L (279.40x215.90)"
+#: src/gtk/x11graph.c:83
+msgid "Legal (215.90x355.60)"
+msgstr "リーガル (215.90x355.60)"
 
-#: src/gtk/x11graph.c:89
-msgid "Legal  P (215.90x355.60)"
-msgstr "リーガル P (215.90x355.60)"
+#: src/gtk/x11graph.c:84
+msgid "Executive (184.2x266.7)"
+msgstr "エグゼクティブ (184.2x266.7)"
 
-#: src/gtk/x11graph.c:90
-msgid "Legal  L (355.60x215.90)"
-msgstr "リーガル L (355.60x215.90)"
-
-#: src/gtk/x11graph.c:91
-msgid "Executive P (184.2x266.7)"
-msgstr "エグゼクティブ P (184.2x266.7)"
-
-#: src/gtk/x11graph.c:92
-msgid "Executive L (266.7x184.2)"
-msgstr "エグゼクティブ L (266.7x184.2)"
-
-#: src/gtk/x11graph.c:183
+#: src/gtk/x11graph.c:206
 msgid "paper _Width:"
 msgstr "用紙幅(_W):"
 
-#: src/gtk/x11graph.c:188
+#: src/gtk/x11graph.c:211
 msgid "paper _Height:"
 msgstr "用紙高さ(_H):"
 
-#: src/gtk/x11graph.c:192
+#: src/gtk/x11graph.c:215
 msgid "_Paper:"
 msgstr "用紙(_P):"
 
-#: src/gtk/x11graph.c:201
+#: src/gtk/x11graph.c:223
+msgid "_Portrait"
+msgstr "縦(_P)"
+
+#: src/gtk/x11graph.c:224
+msgid "_Orientation:"
+msgstr "向き(_O):"
+
+#: src/gtk/x11graph.c:228
+msgid "L_andscape"
+msgstr "横(_A)"
+
+#: src/gtk/x11graph.c:234
 msgid "_Left margin:"
 msgstr "左マージン(_L):"
 
-#: src/gtk/x11graph.c:206
+#: src/gtk/x11graph.c:239
 msgid "_Top margin:"
 msgstr "上マージン(_T):"
 
-#: src/gtk/x11graph.c:210
+#: src/gtk/x11graph.c:243
 msgid "paper _Zoom:"
 msgstr "拡大率(_Z):"
 
-#: src/gtk/x11graph.c:215
+#: src/gtk/x11graph.c:248
 msgid "_Decimalsign:"
 msgstr "小数点記号(_D):"
 
-#: src/gtk/x11graph.c:671
+#: src/gtk/x11graph.c:704
 msgid "Object"
 msgstr "オブジェクト"
 
-#: src/gtk/x11graph.c:684 src/gtk/data/gtk/menus-common.ui.in:79
+#: src/gtk/x11graph.c:717 src/gtk/data/gtk/menus-common.ui.in:79
 #: src/gtk/data/gtk/menus-common-win.ui.in:87
 #: src/gtk/data/gtk/menus-common.ui:79
 msgid "_Draw order"
 msgstr "描画順(_D)"
 
-#: src/gtk/x11graph.c:711
+#: src/gtk/x11graph.c:744
 msgid "_Insert"
 msgstr "挿入(_I)"
 
-#: src/gtk/x11graph.c:756
+#: src/gtk/x11graph.c:789
 msgid "_Objects"
 msgstr "オブジェクト(_O)"
 
-#: src/gtk/x11graph.c:866
+#: src/gtk/x11graph.c:899
 msgid "_Select Dir:"
 msgstr "ディレクトリ選択(_S):"
 
-#: src/gtk/x11graph.c:868
+#: src/gtk/x11graph.c:901
 msgid "Current Dir:"
 msgstr "現在のディレクトリ:"
 
-#: src/gtk/x11graph.c:944
+#: src/gtk/x11graph.c:977
 msgid "_Expand included file"
 msgstr "データファイルの展開(データ込 NGP ファイル) (_E)"
 
-#: src/gtk/x11graph.c:948
+#: src/gtk/x11graph.c:981
 msgid "Expand directory"
 msgstr "展開ディレクトリ"
 
-#: src/gtk/x11graph.c:951
+#: src/gtk/x11graph.c:984
 msgid "expand _Directory:"
 msgstr "展開ディレクトリ(_D):"
 
-#: src/gtk/x11graph.c:955 src/gtk/x11graph.c:1011 src/gtk/x11opt.c:1171
+#: src/gtk/x11graph.c:988 src/gtk/x11graph.c:1044 src/gtk/x11opt.c:1171
 #: src/gtk/x11opt.c:1195
 msgid "_Path:"
 msgstr "パス情報(_P):"
 
-#: src/gtk/x11graph.c:1017
+#: src/gtk/x11graph.c:1050
 msgid "_Include data file"
 msgstr "データファイルを含める(_I)"
 
-#: src/gtk/x11graph.c:1021
+#: src/gtk/x11graph.c:1054
 msgid "_Include merge file"
 msgstr "合成ファイルを含める(_I)"
 
-#: src/gtk/x11graph.c:1113 src/gtk/x11menu.c:423
+#: src/gtk/x11graph.c:1146 src/gtk/x11menu.c:423
 msgid "Load NGP file"
 msgstr "NGPファイルを開く"
 
@@ -2107,7 +2107,7 @@ msgstr "ビューアに描画"
 msgid "_Print"
 msgstr "印刷(_P)"
 
-#: src/gtk/x11menu.c:470 src/gtk/x11menu.c:471 src/gtk/x11print.c:514
+#: src/gtk/x11menu.c:470 src/gtk/x11menu.c:471 src/gtk/x11print.c:522
 msgid "Print"
 msgstr "印刷"
 
@@ -2605,24 +2605,24 @@ msgstr "Cairo EMF 出力"
 msgid "Printing."
 msgstr "印刷中"
 
-#: src/gtk/x11print.c:513
+#: src/gtk/x11print.c:521
 #, c-format
 msgid "Printing error: %s"
 msgstr "印刷エラー: %s"
 
-#: src/gtk/x11print.c:586
+#: src/gtk/x11print.c:594
 msgid "Spawning external viewer."
 msgstr "外部ビューアに出力中"
 
-#: src/gtk/x11print.c:628
+#: src/gtk/x11print.c:636
 msgid "GRA file"
 msgstr "合成ファイルの保存"
 
-#: src/gtk/x11print.c:668
+#: src/gtk/x11print.c:676
 msgid "Making GRA file."
 msgstr "合成ファイル作成中"
 
-#: src/gtk/x11print.c:793 src/gtk/x11print.c:866 src/gtk/x11view.c:6182
+#: src/gtk/x11print.c:801 src/gtk/x11print.c:874 src/gtk/x11view.c:6182
 msgid "Drawing."
 msgstr "描画中"
 
@@ -6101,6 +6101,15 @@ msgstr "ワインディング"
 #: src/otext.c:43
 msgid "text"
 msgstr "テキスト"
+
+#~ msgid "Letter L (279.40x215.90)"
+#~ msgstr "レター L (279.40x215.90)"
+
+#~ msgid "Legal  L (355.60x215.90)"
+#~ msgstr "リーガル L (355.60x215.90)"
+
+#~ msgid "Executive L (266.7x184.2)"
+#~ msgstr "エグゼクティブ L (266.7x184.2)"
 
 #~ msgid "_Dir:"
 #~ msgstr "ディレクトリ(_D):"
