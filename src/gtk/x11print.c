@@ -412,7 +412,7 @@ CmOutputPrinter(int select_file, int show_dialog)
   GtkPrintOperation *print;
   GtkPrintOperationResult res;
   struct objlist *graobj, *g2wobj;
-  int id, g2wid, g2woid, opt;
+  int id, g2wid, g2woid, opt, landscape, w, h;
   N_VALUE *g2winst;
   GError *error;
   struct print_obj pobj;
@@ -457,15 +457,23 @@ CmOutputPrinter(int select_file, int show_dialog)
   if (PrintSettings == NULL)
     PrintSettings = gtk_print_settings_new();
 
+  landscape = Menulocal.PaperLandscape;
   switch (Menulocal.PaperId) {
   case PAPER_ID_CUSTOM:
   case PAPER_ID_NORMAL:
   case PAPER_ID_WIDE:
   case PAPER_ID_WIDE2:
+    if (landscape) {
+      h = Menulocal.PaperWidth;
+      w = Menulocal.PaperHeight;
+    } else {
+      w = Menulocal.PaperWidth;
+      h = Menulocal.PaperHeight;
+    }
     paper_size = gtk_paper_size_new_custom(Menulocal.PaperName,
 					   Menulocal.PaperName,
-					   Menulocal.PaperWidth / 100.0,
-					   Menulocal.PaperHeight / 100.0,
+					   w / 100.0,
+					   h / 100.0,
 					   GTK_UNIT_MM);
     break;
   default:
@@ -475,7 +483,7 @@ CmOutputPrinter(int select_file, int show_dialog)
   page_setup = gtk_page_setup_new();
   gtk_page_setup_set_paper_size(page_setup, paper_size);
   gtk_paper_size_free(paper_size);
-  if (Menulocal.PaperLandscape) {
+  if (landscape) {
     gtk_page_setup_set_orientation(page_setup, GTK_PAGE_ORIENTATION_LANDSCAPE);
   } else {
     gtk_page_setup_set_orientation(page_setup, GTK_PAGE_ORIENTATION_PORTRAIT);
