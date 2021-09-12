@@ -5963,6 +5963,15 @@ f2derror(struct objlist *obj,struct f2ddata *fp,int code,char *s)
 }
 
 static void
+error_info_init(struct error_info *einfo)
+{
+  einfo->emerr = FALSE;
+  einfo->emnonum = FALSE;
+  einfo->emig = FALSE;
+  einfo->emng = FALSE;
+}
+
+static void
 errordisp(struct objlist *obj,
 	  struct f2ddata *fp,
 	  int *emerr,int *emnonum,int *emig,int *emng)
