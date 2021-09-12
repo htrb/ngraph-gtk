@@ -4861,7 +4861,7 @@ math_func_getobj_array(MathFunctionCallExpression *exp, MathEquation *eq, MathVa
 int
 math_func_parameter(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  int id;
+  int id, lastinst;
   double prm;
   struct objlist *obj;
 
@@ -4872,6 +4872,13 @@ math_func_parameter(MathFunctionCallExpression *exp, MathEquation *eq, MathValue
   id = exp->buf[0].val.val;
   obj = chkobject("parameter");
   if (obj == NULL) {
+    return 1;
+  }
+  if (id < 0) {
+    return 1;
+  }
+  lastinst = chkobjlastinst(obj);
+  if (id > lastinst) {
     return 1;
   }
   if (getobj(obj, "parameter", id, 0, NULL, &prm) < 0) {
