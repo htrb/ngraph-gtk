@@ -5974,12 +5974,12 @@ error_info_init(struct error_info *einfo)
 static void
 errordisp(struct objlist *obj,
 	  struct f2ddata *fp,
-	  int *emerr,int *emnonum,int *emig,int *emng)
+	  struct error_info *einfo)
 {
   int x,y;
   char *s;
 
-  if (!*emerr) {
+  if (!einfo->emerr) {
     x=FALSE;
     y=FALSE;
     if ((fp->dxstat==MATH_VALUE_ERROR) || (fp->dxstat==MATH_VALUE_NAN)) x=TRUE;
@@ -6006,10 +6006,10 @@ errordisp(struct objlist *obj,
       else if ((!x) && y) s="y";
       else s="xy";
       f2derror(obj,fp,ERRMERR,s);
-      *emerr=TRUE;
+      einfo->emerr=TRUE;
     }
   }
-  if (!*emnonum) {
+  if (!einfo->emnonum) {
     x=FALSE;
     y=FALSE;
     if (fp->dxstat==MATH_VALUE_NONUM) x=TRUE;
@@ -6035,45 +6035,45 @@ errordisp(struct objlist *obj,
       else if ((!x) && y) s="y";
       else s="xy";
       f2derror(obj,fp,ERRMNONUM,s);
-      *emnonum=TRUE;
+      einfo->emnonum=TRUE;
     }
   }
 
-  if (!*emig && fp->ignore) {
+  if (!einfo->emig && fp->ignore) {
     error(obj,ERRIGNORE);
-    *emig=TRUE;
+    einfo->emig=TRUE;
   }
-  if (!*emng && fp->negative) {
+  if (!einfo->emng && fp->negative) {
     error(obj,ERRNEGATIVE);
-    *emng=TRUE;
+    einfo->emng=TRUE;
   }
 }
 
 static void
 errordisp2(struct objlist *obj,
 	   struct f2ddata *fp,
-	   int *emerr,int *emnonum,int *emig,int *emng,
+	   struct error_info *einfo,
 	   char ddstat,char *s)
 {
-  if (!*emerr && (ddstat==MATH_VALUE_ERROR)) {
+  if (!einfo->emerr && (ddstat==MATH_VALUE_ERROR)) {
     f2derror(obj,fp,ERRMERR,s);
-    *emerr=TRUE;
+    einfo->emerr=TRUE;
   }
-  if (!*emerr && (ddstat==MATH_VALUE_NAN)) {
+  if (!einfo->emerr && (ddstat==MATH_VALUE_NAN)) {
     f2derror(obj,fp,ERRMERR,s);
-    *emerr=TRUE;
+    einfo->emerr=TRUE;
   }
-  if (!*emnonum && (ddstat==MATH_VALUE_NONUM)) {
+  if (!einfo->emnonum && (ddstat==MATH_VALUE_NONUM)) {
     f2derror(obj,fp,ERRMNONUM,s);
-    *emnonum=TRUE;
+    einfo->emnonum=TRUE;
   }
-  if (!*emig && fp->ignore) {
+  if (!einfo->emig && fp->ignore) {
     error(obj,ERRIGNORE);
-    *emig=TRUE;
+    einfo->emig=TRUE;
   }
-  if (!*emng && fp->negative) {
+  if (!einfo->emng && fp->negative) {
     error(obj,ERRNEGATIVE);
-    *emng=TRUE;
+    einfo->emng=TRUE;
   }
 }
 
@@ -6152,10 +6152,10 @@ dataadd(double dx,double dy,double dz,
 static int
 markout(struct objlist *obj,struct f2ddata *fp,int GC, int width,int snum,int *style)
 {
-  int emerr,emnonum,emig,emng;
+  struct error_info einfo;
   int gx,gy;
 
-  emerr=emnonum=emig=emng=FALSE;
+  error_info_init(&einfo);
   GRAlinestyle(GC,snum,style,width,GRA_LINE_CAP_BUTT,GRA_LINE_JOIN_MITER,1000);
   while (getdata(fp)==0) {
     if ((fp->dxstat==MATH_VALUE_NORMAL) && (fp->dystat==MATH_VALUE_NORMAL) &&
@@ -6164,9 +6164,9 @@ markout(struct objlist *obj,struct f2ddata *fp,int GC, int width,int snum,int *s
         GRAmark(GC,fp->mtype, gx, gy, fp->msize,
 		fp->col.r, fp->col.g, fp->col.b, fp->col.a,
 		fp->col2.r, fp->col2.g, fp->col2.b, fp->col2.a);
-    } else errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
+    } else errordisp(obj,fp,&einfo);
   }
-  errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
+  errordisp(obj,fp,&einfo);
   return 0;
 }
 
@@ -6175,11 +6175,11 @@ lineout(struct objlist *obj,struct f2ddata *fp,int GC,
 	int width,int snum,int *style,
 	int join,int miter,int close)
 {
-  int emerr,emnonum,emig,emng;
+  struct error_info einfo;
   int first;
   double x0,y0;
 
-  emerr=emnonum=emig=emng=FALSE;
+  error_info_init(&einfo);
 #if EXPAND_DOTTED_LINE
   GRAlinestyle(GC,0,NULL,width,GRA_LINE_CAP_BUTT,join,miter);
 #else
@@ -6206,11 +6206,11 @@ lineout(struct objlist *obj,struct f2ddata *fp,int GC,
 	}
         first=TRUE;
       }
-      errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
+      errordisp(obj,fp,&einfo);
     }
   }
   if (!first && close) GRAdashlinetod(GC,x0,y0);
-  errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
+  errordisp(obj,fp,&einfo);
   return 0;
 }
 
@@ -6497,13 +6497,13 @@ draw_polygon(struct narray *pos, int GC, int fill)
 static int
 polyout(struct objlist *obj, struct f2ddata *fp, int GC)
 {
-  int emerr, emnonum, emig, emng;
+  struct error_info einfo;
   int first;
   struct narray pos;
   double x0, y0, x1, y1, x2, y2;
 
   arrayinit(&pos, sizeof(int));
-  emerr = emnonum = emig = emng = FALSE;
+  error_info_init(&einfo);
 
   first = TRUE;
   while (getdata(fp) == 0) {
@@ -6531,7 +6531,7 @@ polyout(struct objlist *obj, struct f2ddata *fp, int GC)
         arraydel(&pos);
         first = TRUE;
       }
-      errordisp(obj, fp, &emerr, &emnonum, &emig, &emng);
+      errordisp(obj, fp, &einfo);
     }
   }
 
@@ -6541,7 +6541,7 @@ polyout(struct objlist *obj, struct f2ddata *fp, int GC)
   draw_polygon(&pos, GC, GRA_FILL_MODE_WINDING);
   arraydel(&pos);
 
-  errordisp(obj, fp, &emerr, &emnonum, &emig, &emng);
+  errordisp(obj, fp, &einfo);
   return 0;
 }
 
@@ -6556,7 +6556,7 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
 	 int width,int snum,int *style,
 	 int join,int miter,int intp)
 {
-  int emerr,emnonum,emig,emng;
+  struct error_info einfo;
   int j,num;
   int first;
   double *x,*y,*z,*c1,*c2,*c3,*c4,*c5,*c6,count;
@@ -6566,7 +6566,7 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
   int bsr[7],bsg[7],bsb[7],bsa[7],bsr2[4],bsg2[4],bsb2[4],bsa2[4];
   int spcond;
 
-  emerr=emnonum=emig=emng=FALSE;
+  error_info_init(&einfo);
 #if EXPAND_DOTTED_LINE
   GRAlinestyle(GC,0,NULL,width,GRA_LINE_CAP_BUTT,join,miter);
 #else
@@ -6618,7 +6618,7 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
           x=y=z=c1=c2=c3=c4=c5=c6=NULL;
           r=g=b=a=NULL;
         }
-        errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
+        errordisp(obj,fp,&einfo);
       }
     }
     if (num!=0) {
@@ -6709,7 +6709,7 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
           first=TRUE;
           num=0;
         }
-        errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
+        errordisp(obj,fp,&einfo);
       }
     }
     if (!first) {
@@ -6790,7 +6790,7 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
           first=TRUE;
           num=0;
         }
-        errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
+        errordisp(obj,fp,&einfo);
       }
     }
     if (!first) {
@@ -6809,7 +6809,7 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
     }
     break;
   }
-  errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
+  errordisp(obj,fp,&einfo);
   return 0;
 }
 
@@ -6864,12 +6864,12 @@ static int
 rectout(struct objlist *obj,struct f2ddata *fp,int GC,
 	int width,int snum,int *style,int type)
 {
-  int emerr,emnonum,emig,emng;
+  struct error_info einfo;
   double x0,y0,x1,y1;
   int gx0,gy0,gx1,gy1;
   int ap[8];
 
-  emerr=emnonum=emig=emng=FALSE;
+  error_info_init(&einfo);
 
   if (type == PLOT_TYPE_DIAGONAL) GRAlinestyle(GC,snum,style,width,GRA_LINE_CAP_BUTT,GRA_LINE_JOIN_MITER,1000);
   else GRAlinestyle(GC,snum,style,width,GRA_LINE_CAP_PROJECTING,GRA_LINE_JOIN_MITER,1000);
@@ -6952,9 +6952,9 @@ rectout(struct objlist *obj,struct f2ddata *fp,int GC,
           GRAline(GC,gx0,gy0,gx1,gy1);
         }
       }
-    } else errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
+    } else errordisp(obj,fp,&einfo);
   }
-  errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
+  errordisp(obj,fp,&einfo);
   return 0;
 }
 
@@ -7005,9 +7005,9 @@ static int
 errorbarout(struct objlist *obj,struct f2ddata *fp,int GC,
 	    int width,int snum,int *style,int type)
 {
-  int emerr,emnonum,emig,emng;
+  struct error_info einfo;
 
-  emerr=emnonum=emig=emng=FALSE;
+  error_info_init(&einfo);
   GRAlinestyle(GC,snum,style,width,GRA_LINE_CAP_BUTT,GRA_LINE_JOIN_MITER,1000);
   while (getdata(fp)==0) {
     int size;
@@ -7019,17 +7019,17 @@ errorbarout(struct objlist *obj,struct f2ddata *fp,int GC,
        && (getposition2(fp,fp->axtype,fp->aytype,&(fp->dx),&(fp->dy))==0)
        && (getposition2(fp,fp->axtype,fp->axtype,&(fp->d2),&(fp->d3))==0)) {
         draw_errorbar(fp, GC, size, fp->d2, fp->dy, fp->d3, fp->dy);
-      } else errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
+      } else errordisp(obj,fp,&einfo);
     } else if (type == PLOT_TYPE_ERRORBAR_Y) {
       if ((fp->dxstat==MATH_VALUE_NORMAL) && (fp->dystat==MATH_VALUE_NORMAL)
        && (fp->d2stat==MATH_VALUE_NORMAL) && (fp->d3stat==MATH_VALUE_NORMAL)
        && (getposition2(fp,fp->axtype,fp->aytype,&(fp->dx),&(fp->dy))==0)
        && (getposition2(fp,fp->aytype,fp->aytype,&(fp->d2),&(fp->d3))==0)) {
         draw_errorbar(fp, GC, size, fp->dx, fp->d2, fp->dx, fp->d3);
-      } else errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
+      } else errordisp(obj,fp,&einfo);
     }
   }
-  errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
+  errordisp(obj,fp,&einfo);
   return 0;
 }
 
@@ -7038,11 +7038,11 @@ stairout(struct objlist *obj,struct f2ddata *fp,int GC,
 	 int width,int snum,int *style,
 	 int join,int miter,int type)
 {
-  int emerr,emnonum,emig,emng;
+  struct error_info einfo;
   int num;
   double x0,y0,x1,y1,x,y,dx,dy;
 
-  emerr=emnonum=emig=emng=FALSE;
+  error_info_init(&einfo);
 #if EXPAND_DOTTED_LINE
   GRAlinestyle(GC,0,NULL,width,GRA_LINE_CAP_BUTT,join,miter);
 #else
@@ -7118,7 +7118,7 @@ stairout(struct objlist *obj,struct f2ddata *fp,int GC,
         }
         num=0;
       }
-      errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
+      errordisp(obj,fp,&einfo);
     }
   }
   if (num!=0) {
@@ -7132,7 +7132,7 @@ stairout(struct objlist *obj,struct f2ddata *fp,int GC,
       GRAdashlinetod(GC,x,y);
     }
   }
-  errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
+  errordisp(obj,fp,&einfo);
   return 0;
 }
 
@@ -7153,12 +7153,12 @@ static int
 barout(struct objlist *obj,struct f2ddata *fp,int GC,
        int width,int snum,int *style,int type)
 {
-  int emerr,emnonum,emig,emng;
+  struct error_info einfo;
   double x0,y0,x1,y1;
   int gx0,gy0,gx1,gy1;
   int ap[8];
 
-  emerr=emnonum=emig=emng=FALSE;
+  error_info_init(&einfo);
   if (type <= PLOT_TYPE_BAR_FILL_Y) GRAlinestyle(GC,snum,style,width,GRA_LINE_CAP_PROJECTING,GRA_LINE_JOIN_MITER,1000);
   while (getdata(fp)==0) {
     int size;
@@ -7166,7 +7166,7 @@ barout(struct objlist *obj,struct f2ddata *fp,int GC,
     if (fp->dxstat != MATH_VALUE_NORMAL ||
 	fp->dystat != MATH_VALUE_NORMAL ||
 	getposition2(fp,fp->axtype,fp->aytype,&(fp->dx),&(fp->dy))) {
-      errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
+      errordisp(obj,fp,&einfo);
       continue;
     }
     switch (type) {
@@ -7246,7 +7246,7 @@ barout(struct objlist *obj,struct f2ddata *fp,int GC,
       break;
     }
   }
-  errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
+  errordisp(obj,fp,&einfo);
   return 0;
 }
 
@@ -7256,7 +7256,8 @@ calc_weight(struct objlist *obj, struct f2dlocal *f2dlocal, struct f2ddata *fp, 
   MathEquation *code;
   MathEquationParametar *prm;
   double dd;
-  int emerr, emserr, emnonum, emig, emng, two_pass, maxdim, ddstat, rcode, datanum2, i, j;
+  int two_pass, maxdim, ddstat, rcode, datanum2, i, j;
+  struct error_info einfo;
   int const_id[MATH_CONST_SIZE];
 
   code = ofile_create_math_equation(const_id, EOEQ_ASSIGN_TYPE_ASSIGN, 3, FALSE, TRUE, FALSE, FALSE, TRUE);
@@ -7297,7 +7298,7 @@ calc_weight(struct objlist *obj, struct f2dlocal *f2dlocal, struct f2ddata *fp, 
     return 1;
   }
 
-  emerr = emserr = emnonum = emig = emng = FALSE;
+  error_info_init(&einfo);
   for (i = j = 0; getdata2(fp, code, maxdim, &dd, &ddstat) == 0; i++) {
     int *line;
     line = (int *) arraynget(index, j);
@@ -7314,7 +7315,7 @@ calc_weight(struct objlist *obj, struct f2dlocal *f2dlocal, struct f2ddata *fp, 
 	return -1;
       }
     } else {
-      errordisp2(obj, fp, &emerr, &emnonum, &emig, &emng, ddstat, "weight");
+      errordisp2(obj, fp, &einfo, ddstat, "weight");
     }
   }
 
@@ -7330,14 +7331,15 @@ calc_weight(struct objlist *obj, struct f2dlocal *f2dlocal, struct f2ddata *fp, 
 static int
 calc_fit(struct objlist *obj, struct f2dlocal *f2dlocal, struct f2ddata *fp, struct objlist *fitobj, int fit_id)
 {
-  int emerr, emnonum, emig, emng, i;
+  struct error_info einfo;
+  int i;
   struct narray data, index;
   char *weight, *argv[2];
   double dnum;
 
   arrayinit(&data,sizeof(double));
   arrayinit(&index,sizeof(int));
-  emerr = emnonum = emig = emng = FALSE;
+  error_info_init(&einfo);
 
   for (i = 0; getdata(fp)==0; i++) {
     if ((fp->dxstat==MATH_VALUE_NORMAL) && (fp->dystat==MATH_VALUE_NORMAL)) {
@@ -7349,11 +7351,11 @@ calc_fit(struct objlist *obj, struct f2dlocal *f2dlocal, struct f2ddata *fp, str
 	return -1;
       }
     } else {
-      errordisp(obj, fp, &emerr, &emnonum, &emig, &emng);
+      errordisp(obj, fp, &einfo);
     }
   }
 
-  errordisp(obj, fp, &emerr, &emnonum, &emig, &emng);
+  errordisp(obj, fp, &einfo);
   if ((dnum=(double )arraynum(&data))==0) {
     arraydel(&index);
     arraydel(&data);
@@ -10005,7 +10007,7 @@ static int
 curveoutfile(struct objlist *obj,struct f2ddata *fp,FILE *fp2,
                  int intp,int div)
 {
-  int emerr,emnonum,emig,emng;
+  struct error_info einfo;
   int j,k,num;
   int first;
   double *x,*y,*z,*c1,*c2,*c3,*c4,*c5,*c6,count,dd,dx,dy;
@@ -10014,7 +10016,7 @@ curveoutfile(struct objlist *obj,struct f2ddata *fp,FILE *fp2,
   double bs1[7],bs2[7],bs3[4],bs4[4];
   int spcond;
 
-  emerr=emnonum=emig=emng=FALSE;
+  error_info_init(&einfo);
   switch (intp) {
   case INTERPOLATION_TYPE_SPLINE:
   case INTERPOLATION_TYPE_SPLINE_CLOSE:
@@ -10062,7 +10064,7 @@ curveoutfile(struct objlist *obj,struct f2ddata *fp,FILE *fp2,
           x=y=z=c1=c2=c3=c4=c5=c6=NULL;
           r=g=b=a=NULL;
         }
-        errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
+        errordisp(obj,fp,&einfo);
       }
     }
     if (num!=0) {
@@ -10151,7 +10153,7 @@ curveoutfile(struct objlist *obj,struct f2ddata *fp,FILE *fp2,
           first=TRUE;
           num=0;
         }
-        errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
+        errordisp(obj,fp,&einfo);
       }
     }
     if (!first) {
@@ -10223,7 +10225,7 @@ curveoutfile(struct objlist *obj,struct f2ddata *fp,FILE *fp2,
           first=TRUE;
           num=0;
         }
-        errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
+        errordisp(obj,fp,&einfo);
       }
     }
     if (!first) {
