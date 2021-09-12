@@ -455,6 +455,10 @@ struct line_position {
   int x0, y0, x1, y1;
 };
 
+struct error_info {
+  int emerr, emnonum, emig, emng;
+};
+
 static void draw_arrow(struct f2ddata *fp ,int GC, double x0, double y0, double x1, double y1, int msize, struct line_position *lp);
 static int set_data_progress(struct f2ddata *fp);
 static int getminmaxdata(struct f2ddata *fp, struct f2dlocal *local);
