@@ -10,7 +10,7 @@ NULL_DEVICE=/dev/null
 DPI=86
 
 clear_viewer() {
-    for i in `derive -instance draw fit`
+    for i in `derive -instance draw fit parameter`
     do
 	del ${i}:0-!
     done
