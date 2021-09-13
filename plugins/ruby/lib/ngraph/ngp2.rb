@@ -20,8 +20,10 @@ module Ngraph
     end
 
     def clear_viewer
-      Ngraph::Draw.derive(true).each {|obj|
-        obj.del("0-!")
+      [Ngraph::Draw, Ngraph::Fit, Ngraph::Parameter].each {|nobj|
+	nobj.derive(true).each {|obj|
+	  obj.del("0-!")
+	}
       }
 
       Ngraph::Gra.del("viewer")
