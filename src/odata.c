@@ -2065,51 +2065,51 @@ static struct funcs FitFunc[] = {
 };
 
 static enum MATH_FUNCTION_ARG_TYPE draw_polyline_arg_type[] = {
-  MATH_FUNCTION_ARG_TYPE_ARRAY,
-  MATH_FUNCTION_ARG_TYPE_ARRAY,
+  MATH_FUNCTION_ARG_TYPE_ARRAY, /* 0: array of x */
+  MATH_FUNCTION_ARG_TYPE_ARRAY, /* 1: array of y */
 };
 
 static enum MATH_FUNCTION_ARG_TYPE draw_polygon_arg_type[] = {
-  MATH_FUNCTION_ARG_TYPE_ARRAY,
-  MATH_FUNCTION_ARG_TYPE_ARRAY,
-  MATH_FUNCTION_ARG_TYPE_DOUBLE,
-  MATH_FUNCTION_ARG_TYPE_DOUBLE,
+  MATH_FUNCTION_ARG_TYPE_ARRAY,  /* 0: array of x */
+  MATH_FUNCTION_ARG_TYPE_ARRAY,  /* 1: array of y */
+  MATH_FUNCTION_ARG_TYPE_DOUBLE, /* 2: stroke */
+  MATH_FUNCTION_ARG_TYPE_DOUBLE, /* 3: fill */
 };
 
 static enum MATH_FUNCTION_ARG_TYPE draw_text_arg_type[] = {
-  MATH_FUNCTION_ARG_TYPE_STRING,
-  MATH_FUNCTION_ARG_TYPE_DOUBLE,
-  MATH_FUNCTION_ARG_TYPE_DOUBLE,
-  MATH_FUNCTION_ARG_TYPE_DOUBLE,
-  MATH_FUNCTION_ARG_TYPE_DOUBLE,
-  MATH_FUNCTION_ARG_TYPE_DOUBLE,
-  MATH_FUNCTION_ARG_TYPE_DOUBLE,
-  MATH_FUNCTION_ARG_TYPE_DOUBLE,
-  MATH_FUNCTION_ARG_TYPE_DOUBLE,
+  MATH_FUNCTION_ARG_TYPE_STRING, /* 0: text */
+  MATH_FUNCTION_ARG_TYPE_DOUBLE, /* 1: x */
+  MATH_FUNCTION_ARG_TYPE_DOUBLE, /* 2: y */
+  MATH_FUNCTION_ARG_TYPE_DOUBLE, /* 3: direction */
+  MATH_FUNCTION_ARG_TYPE_DOUBLE, /* 4: size (obsolete) */
+  MATH_FUNCTION_ARG_TYPE_DOUBLE, /* 5: font (obsolete) */
+  MATH_FUNCTION_ARG_TYPE_DOUBLE, /* 6: style (obsolete) */
+  MATH_FUNCTION_ARG_TYPE_DOUBLE, /* 7: space (obsolete) */
+  MATH_FUNCTION_ARG_TYPE_DOUBLE, /* 8: script size (obsolete) */
 };
 
 static enum MATH_FUNCTION_ARG_TYPE text_obj_set_arg_type[] = {
-  MATH_FUNCTION_ARG_TYPE_DOUBLE,
-  MATH_FUNCTION_ARG_TYPE_STRING,
+  MATH_FUNCTION_ARG_TYPE_DOUBLE, /* 0: id of the text object */
+  MATH_FUNCTION_ARG_TYPE_STRING, /* 1: text */
 };
 
 static enum MATH_FUNCTION_ARG_TYPE text_obj_get_arg_type[] = {
-  MATH_FUNCTION_ARG_TYPE_DOUBLE,
-  MATH_FUNCTION_ARG_TYPE_STRING_VARIABLE,
+  MATH_FUNCTION_ARG_TYPE_DOUBLE,          /* 0: id of the text object */
+  MATH_FUNCTION_ARG_TYPE_STRING_VARIABLE, /* 1: string variable */
 };
 
 static enum MATH_FUNCTION_ARG_TYPE string_column_arg_type[] = {
-  MATH_FUNCTION_ARG_TYPE_STRING_VARIABLE,
-  MATH_FUNCTION_ARG_TYPE_DOUBLE,
+  MATH_FUNCTION_ARG_TYPE_STRING_VARIABLE, /* 0: string variable */
+  MATH_FUNCTION_ARG_TYPE_DOUBLE,          /* 1: column number */
 };
 
 static enum MATH_FUNCTION_ARG_TYPE filename_arg_type[] = {
-  MATH_FUNCTION_ARG_TYPE_STRING_VARIABLE,
-  MATH_FUNCTION_ARG_TYPE_DOUBLE,
+  MATH_FUNCTION_ARG_TYPE_STRING_VARIABLE, /* 0: string variable */
+  MATH_FUNCTION_ARG_TYPE_DOUBLE,          /* 1: basename or not */
 };
 
 static enum MATH_FUNCTION_ARG_TYPE on_end_arg_type[] = {
-  MATH_FUNCTION_ARG_TYPE_PROC,
+  MATH_FUNCTION_ARG_TYPE_PROC,  /* 0: procedure */
 };
 
 static struct funcs FileFunc[] = {
