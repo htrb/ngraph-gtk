@@ -52,7 +52,7 @@ do
     fi
 
     demo=`get sarray:FILE -field get:$FILE_INDEX`
-    for drawrable in `derive -instance draw`
+    for drawrable in `derive -instance draw parameter`
     do
 	del ${drawrable}:0-!
     done
