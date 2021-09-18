@@ -902,6 +902,47 @@ init_custom_palette(void)
   add_default_gray(palette);
 }
 
+#define DEFAULT_AXIS_LENGTH 14000
+
+void
+menu_default_axis_size(struct menulocal *local)
+{
+  int i, n;
+  struct objlist *aobj;
+
+  local->default_axis_width = DEFAULT_AXIS_LENGTH;
+  local->default_axis_height = DEFAULT_AXIS_LENGTH;
+
+  aobj = chkobject("axis");
+  if (aobj == NULL) {
+    return;
+  }
+
+  n = chkobjlastinst(aobj) + 1;
+  if (n < 1) {
+    return;
+  }
+  for (i = 0; i < n; i++) {
+    char *name;
+    int len;
+    getobj(aobj, "group", i, 0, NULL, &name);
+    if (name == NULL) {
+      continue;
+    }
+    if (getobj(aobj, "length", i, 0, NULL, &len) < 0) {
+      continue;
+    }
+    switch (name[1]) {
+    case 'X':
+      local->default_axis_width = len;
+      break;
+    case 'Y':
+      local->default_axis_height = len;
+      break;
+    }
+  }
+}
+
 static int
 menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {

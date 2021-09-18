@@ -161,5 +161,6 @@ int menu_save_config(int type);
 void menu_use_dark_theme_set(int state);
 void main_window_redraw(void);
 void init_layer(const char *obj);
+void menu_default_axis_size(struct menulocal *local);
 
 #endif
