@@ -918,6 +918,7 @@ CrossDialogClose(GtkWidget *w, void *data)
     argv[1] = NULL;
     exeobj(d->Obj, "group_position", d->IDX, 1, argv);
     arraydel(&group);
+    set_graph_modified();
   }
   if ((d->IDX != -1) && (d->IDY != -1)) {
     exeobj(d->Obj, "adjust", d->IDX, 0, NULL);
