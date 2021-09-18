@@ -401,6 +401,7 @@ struct PageDialog
   DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *leftmargin, *topmargin, *paperwidth, *paperheight, *paperzoom, *paper, *decimalsign, *portrait, *landscape;
+  int new_graph;
 };
 void PageDialog(struct PageDialog *data);
 
