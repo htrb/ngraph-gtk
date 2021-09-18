@@ -1228,6 +1228,8 @@ menumenu(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
 
   savestdio(&GtkIOSave);
 
+  menu_default_axis_size(&Menulocal);
+
   file = get_utf8_filename(argv[2]);
 
   hide_console();
