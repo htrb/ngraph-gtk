@@ -285,10 +285,11 @@ PageDialogClose(GtkWidget *wi, void *data)
 }
 
 void
-PageDialog(struct PageDialog *data)
+PageDialog(struct PageDialog *data, int new_graph)
 {
   data->SetupWindow = PageDialogSetup;
   data->CloseWindow = PageDialogClose;
+  data->new_graph = new_graph;
 }
 
 static void
@@ -1192,14 +1193,18 @@ CmGraphSwitch(void *w, gpointer client_data)
 void
 CmGraphPage(void *w, gpointer client_data)
 {
+  int new_graph;
+  new_graph = GPOINTER_TO_INT(client_data);
   if (Menulock || Globallock)
     return;
-  PageDialog(&DlgPage);
+  PageDialog(&DlgPage, new_graph);
   if (DialogExecute(TopLevel, &DlgPage) == IDOK) {
     SetPageSettingsToGRA();
     ChangePage();
     GetPageSettingsFromGRA();
-    set_graph_modified_gra();
+    if (! new_graph) {
+      set_graph_modified_gra();
+    }
   }
 }
 

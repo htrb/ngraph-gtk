@@ -403,7 +403,7 @@ struct PageDialog
   GtkWidget *leftmargin, *topmargin, *paperwidth, *paperheight, *paperzoom, *paper, *decimalsign, *portrait, *landscape;
   int new_graph;
 };
-void PageDialog(struct PageDialog *data);
+void PageDialog(struct PageDialog *data, int new_graph);
 
 struct SwitchDialog
 {
