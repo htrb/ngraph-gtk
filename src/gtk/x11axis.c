@@ -740,6 +740,7 @@ SectionDialogClose(GtkWidget *w, void *data)
     argv[1] = NULL;
     exeobj(d->Obj, "group_position", d->IDX, 1, argv);
     arraydel(&group);
+    set_graph_modified();
   }
   d->ret = ret;
 }
