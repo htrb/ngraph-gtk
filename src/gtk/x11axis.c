@@ -2399,8 +2399,8 @@ CmAxisNewSection(int use_presettings)
   arrayinit(&group, sizeof(int));
   type = 2;
   get_initial_axis_position(&x, &y);
-  lenx = DEFAULT_AXIS_LENGTH;
-  leny = DEFAULT_AXIS_LENGTH;
+  lenx = Menulocal.default_axis_width;
+  leny = Menulocal.default_axis_height;
   arrayadd(&group, &type);
   arrayadd(&group, &idx);
   arrayadd(&group, &idy);
