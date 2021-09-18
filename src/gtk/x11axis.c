@@ -2304,6 +2304,8 @@ CmAxisAddCross(void *w, gpointer client_data)
   CmAxisNewCross(mode == TOOLBOX_MODE_SETTING_PANEL);
 }
 
+#define DEFAULT_AXIS_LENGTH 14000
+
 void
 CmAxisNewFrame(int use_presettings)
 {
