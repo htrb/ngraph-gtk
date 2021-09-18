@@ -255,6 +255,7 @@ PageDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
   PageDialogSetupItem(wi, d);
+  d->show_cancel = ! d->new_graph;
 }
 
 static void
