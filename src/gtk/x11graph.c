@@ -1105,6 +1105,7 @@ CmGraphNewMenu(void *w, gpointer client_data)
 
   DeleteDrawable();
 
+  CmGraphPage(NULL, GINT_TO_POINTER(TRUE));
   sel = GPOINTER_TO_INT(client_data);
   switch (sel) {
   case MenuIdGraphNewFrame:
