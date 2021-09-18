@@ -2313,8 +2313,8 @@ get_initial_axis_position(int *px, int *py)
   int w, h;
   w = Menulocal.PaperWidth;
   h = Menulocal.PaperHeight;
-  x = (w - DEFAULT_AXIS_LENGTH) / 2;
-  y = h - (h - DEFAULT_AXIS_LENGTH) / 2;
+  x = (w - Menulocal.default_axis_width) / 2;
+  y = h - (h - Menulocal.default_axis_height) / 2;
   * px = nround(x / 100) * 100 - Menulocal.LeftMargin;
   * py = nround(y / 1000) * 1000 - Menulocal.TopMargin;
 }
