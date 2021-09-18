@@ -1759,6 +1759,7 @@ CmOptionSaveNgp(void *w, gpointer client_data)
   SetStatusBar(mes);
   SaveDrawrable(ngpfile, FALSE, FALSE, FALSE);
   ResetStatusBar();
+  menu_default_axis_size(&Menulocal);
   g_free(ngpfile);
   return;
 }
