@@ -2388,8 +2388,8 @@ CmAxisNewSection(int use_presettings)
   type = 2;
   x = 3500;
   y = 22000;
-  lenx = 14000;
-  leny = 14000;
+  lenx = DEFAULT_AXIS_LENGTH;
+  leny = DEFAULT_AXIS_LENGTH;
   arrayadd(&group, &type);
   arrayadd(&group, &idx);
   arrayadd(&group, &idy);
