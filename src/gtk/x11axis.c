@@ -2342,8 +2342,7 @@ CmAxisNewFrame(int use_presettings)
   idg = -1;
   arrayinit(&group, sizeof(int));
   type = 1;
-  x = 3500;
-  y = 22000;
+  get_initial_axis_position(&x, &y);
   lenx = DEFAULT_AXIS_LENGTH;
   leny = DEFAULT_AXIS_LENGTH;
   arrayadd(&group, &type);
