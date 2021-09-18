@@ -2306,6 +2306,19 @@ CmAxisAddCross(void *w, gpointer client_data)
 
 #define DEFAULT_AXIS_LENGTH 14000
 
+static void
+get_initial_axis_position(int *px, int *py)
+{
+  double x, y;
+  int w, h;
+  w = Menulocal.PaperWidth;
+  h = Menulocal.PaperHeight;
+  x = (w - DEFAULT_AXIS_LENGTH) / 2;
+  y = h - (h - DEFAULT_AXIS_LENGTH) / 2;
+  * px = nround(x / 100) * 100 - Menulocal.LeftMargin;
+  * py = nround(y / 1000) * 1000 - Menulocal.TopMargin;
+}
+
 void
 CmAxisNewFrame(int use_presettings)
 {
