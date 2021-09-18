@@ -140,7 +140,7 @@ GraphDrawOrderAction_activated(GSimpleAction *action, GVariant *parameter, gpoin
 static void
 GraphPageSetupAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  CmGraphPage(NULL, NULL);
+  CmGraphPage(NULL, GINT_TO_POINTER(FALSE));
 }
 
 static void
