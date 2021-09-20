@@ -159,7 +159,7 @@ obj_save_config_line_style(struct objlist *obj, N_VALUE *inst, char *field, stru
 }
 
 int
-obj_save_config(struct objlist *obj, N_VALUE *inst, char *title, struct obj_config *config, unsigned int n)
+obj_save_config(struct objlist *obj, N_VALUE *inst, char *title, struct obj_config *config, unsigned int n, int check)
 {
   struct narray conf;
   unsigned int i;

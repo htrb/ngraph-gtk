@@ -3160,7 +3160,7 @@ f2dloadconfig(struct objlist *obj,N_VALUE *inst)
 static int
 f2dsaveconfig(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
-  return obj_save_config(obj, inst, F2DCONF, FileConfig, sizeof(FileConfig) / sizeof(*FileConfig));
+  return obj_save_config(obj, inst, F2DCONF, FileConfig, sizeof(FileConfig) / sizeof(*FileConfig), FALSE);
 }
 
 MathEquation *
