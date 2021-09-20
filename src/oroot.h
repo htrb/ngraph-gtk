@@ -36,6 +36,7 @@ struct obj_config {
   enum obj_config_type type;
   int (* load_proc)(struct objlist *, N_VALUE *, char *, char *);
   void (* save_proc)(struct objlist *, N_VALUE *, char *, struct narray *);
+  int checked;
 };
 
 int obj_load_config(struct objlist *obj, N_VALUE *inst, char *title, NHASH hash);
