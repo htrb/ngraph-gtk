@@ -69,7 +69,7 @@ combo_box_entry_get_text(GtkWidget *cbox)
 void
 combo_box_entry_set_width(GtkWidget *cbox, int width)
 {
-  return gtk_entry_set_width_chars(GTK_ENTRY(gtk_bin_get_child(GTK_BIN(cbox))), width);
+  gtk_entry_set_width_chars(GTK_ENTRY(gtk_bin_get_child(GTK_BIN(cbox))), width);
 }
 
 void
