@@ -46,7 +46,7 @@ static char *rooterrorlist[]={
 #define ERRNUM (sizeof(rooterrorlist) / sizeof(*rooterrorlist))
 
 int
-obj_load_config(struct objlist *obj, N_VALUE *inst, char *title, NHASH hash)
+obj_load_config(struct objlist *obj, N_VALUE *inst, char *title, NHASH hash, int check)
 {
   FILE *fp;
   char *tok,*str,*s2;

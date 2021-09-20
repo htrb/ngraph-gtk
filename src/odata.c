@@ -3154,7 +3154,7 @@ set_math_config(struct objlist *obj, N_VALUE *inst, char *field, char *str)
 static int
 f2dloadconfig(struct objlist *obj,N_VALUE *inst)
 {
-  return obj_load_config(obj, inst, F2DCONF, FileConfigHash);
+  return obj_load_config(obj, inst, F2DCONF, FileConfigHash, FALSE);
 }
 
 static int
