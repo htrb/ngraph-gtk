@@ -1717,6 +1717,25 @@ ViewerDialog(struct ViewerDialog *data, struct objlist *obj, int id)
   data->Clear = FALSE;
 }
 
+static void
+save_default_axis_config(void)
+{
+  int n;
+  struct objlist *obj;
+  N_VALUE *inst;
+
+  obj = chkobject("axis");
+  if (obj == NULL) {
+    return;
+  }
+  n = chkobjlastinst(obj);
+  if (n < 0) {
+    return;
+  }
+  inst = chkobjinst(obj, n);
+  axis_save_config(obj, inst);
+}
+
 void
 CmOptionSaveNgp(void *w, gpointer client_data)
 {
