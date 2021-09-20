@@ -33,6 +33,7 @@
 #include "nstring.h"
 #include "nconfig.h"
 #include "odraw.h"
+#include "oaxis.h"
 
 #include "gtk_liststore.h"
 #include "gtk_subwin.h"
