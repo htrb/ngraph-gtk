@@ -197,6 +197,8 @@ static struct obj_config AxisConfig[] = {
   {"gauge_style", OBJ_CONFIG_TYPE_STYLE},
 };
 
+#define AXIS_CONFIG_TITLE "[axis]"
+
 static NHASH AxisConfigHash = NULL;
 
 static int get_axis_group_type(struct objlist *obj, N_VALUE *inst, N_VALUE **inst_array, int check_all);
@@ -237,9 +239,9 @@ axisuniqgroup(struct objlist *obj,char type)
 }
 
 static int
-axisloadconfig(struct objlist *obj,N_VALUE *inst,char *conf)
+axisloadconfig(struct objlist *obj,N_VALUE *inst,char *conf, int check)
 {
-  return obj_load_config(obj, inst, conf, AxisConfigHash, FALSE);
+  return obj_load_config(obj, inst, conf, AxisConfigHash, check);
 }
 
 static int
@@ -317,7 +319,7 @@ axisinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   if (name == NULL) goto errexit;
   if (_putobj(obj,"name",inst,name)) goto errexit;
 
-  axisloadconfig(obj,inst,"[axis]");
+  axisloadconfig(obj,inst,AXIS_CONFIG_TITLE, TRUE);
   return 0;
 
 errexit:
@@ -3635,7 +3637,7 @@ axis_default(struct objlist *obj, int id, int *oid, int dir,
     _getobj(obj, "oid", inst2, oid);
 
   if (conf)
-    axisloadconfig(obj, inst2, conf);
+    axisloadconfig(obj, inst2, conf, FALSE);
 }
 
 static void
@@ -3656,7 +3658,7 @@ axis_default_set(struct objlist *obj, int id, int oid, char *field, char *conf)
   g_free(ref2);
   _putobj(obj, field, inst2, ref);
 
-  axisloadconfig(obj, inst2, conf);
+  axisloadconfig(obj, inst2, conf, FALSE);
 }
 
 
