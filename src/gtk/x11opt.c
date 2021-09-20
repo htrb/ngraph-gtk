@@ -1733,6 +1733,9 @@ save_default_axis_config(void)
     return;
   }
   inst = chkobjinst(obj, n);
+  if (inst == NULL) {
+    return;
+  }
   axis_save_config(obj, inst);
 }
 
