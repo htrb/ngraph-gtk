@@ -58,6 +58,10 @@
 #include "x11lgnd.h"
 #include "x11commn.h"
 
+#define DUMMY_MACRO_FOR_GETTEXT_CHARMAP1 N_("_Physics")
+#define DUMMY_MACRO_FOR_GETTEXT_CHARMAP2 N_("_Mathematics")
+#define DUMMY_MACRO_FOR_GETTEXT_CHARMAP3 N_("_Greece")
+
 #define ARROW_VIEW_SIZE 160
 
 static n_list_store Plist[] = {
