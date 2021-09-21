@@ -1382,6 +1382,9 @@ axis_combo_box_setup(GtkWidget *cbox, struct objlist *obj, int id, const char *f
     {'\0', FALSE},		/* sentinel value */
   };
 
+  if (cbox == NULL) {
+    return;
+  }
   axis_combo_box_clear(cbox);
   list = GTK_TREE_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(cbox)));
 
