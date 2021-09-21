@@ -436,10 +436,6 @@ GridDialog(struct GridDialog *data, struct objlist *obj, int id)
   data->CloseWindow = GridDialogClose;
   data->Obj = obj;
   data->Id = id;
-  data->axisx = NULL;
-  data->axisy = NULL;
-  data->draw_x = NULL;
-  data->draw_y = NULL;
 }
 
 
