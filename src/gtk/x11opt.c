@@ -1736,7 +1736,6 @@ save_default_axis_config(void)
   if (inst == NULL) {
     return;
   }
-  axis_save_config(obj, inst);
 }
 
 void

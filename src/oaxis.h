@@ -10,6 +10,5 @@ struct AxisGroupInfo
 };
 
 int axis_get_group(struct objlist *obj, N_VALUE *inst,  struct AxisGroupInfo *info);
-int axis_save_config(struct objlist *obj, N_VALUE *inst);
 
 #endif  /* OAXIS_HEADER */
