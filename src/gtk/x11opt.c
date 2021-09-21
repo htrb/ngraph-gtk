@@ -1722,7 +1722,6 @@ save_default_axis_config(void)
 {
   int n;
   struct objlist *obj;
-  N_VALUE *inst;
 
   obj = chkobject("axis");
   if (obj == NULL) {
@@ -1732,9 +1731,8 @@ save_default_axis_config(void)
   if (n < 0) {
     return;
   }
-  inst = chkobjinst(obj, 0);
-  if (inst == NULL) {
-    return;
+  if (CheckIniFile()) {
+    exeobj(obj, "save_config", 0, 0, NULL);
   }
 }
 
