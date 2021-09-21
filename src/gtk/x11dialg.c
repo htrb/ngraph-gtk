@@ -1433,6 +1433,10 @@ SetObjAxisFieldFromWidget(GtkWidget *w, struct objlist *obj, int id, char *field
   GtkTreeModel *list;
   int aoid, aid;
 
+  if (w == NULL) {
+    return 0;
+  }
+
   r = gtk_combo_box_get_active_iter(GTK_COMBO_BOX(w), &iter);
   if (! r) {
     return 0;
