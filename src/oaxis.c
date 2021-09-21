@@ -241,7 +241,7 @@ axisuniqgroup(struct objlist *obj,char type)
 static int
 axisloadconfig(struct objlist *obj,N_VALUE *inst,char *conf, int check)
 {
-  return obj_load_config(obj, inst, conf, AxisConfigHash, check);
+  return obj_load_config(obj, inst, conf, AxisConfigHash);
 }
 
 int

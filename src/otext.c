@@ -72,7 +72,7 @@ static NHASH TextConfigHash = NULL;
 static int
 textloadconfig(struct objlist *obj,N_VALUE *inst)
 {
-  return obj_load_config(obj, inst, TEXTCONF, TextConfigHash, FALSE);
+  return obj_load_config(obj, inst, TEXTCONF, TextConfigHash);
 }
 
 static int

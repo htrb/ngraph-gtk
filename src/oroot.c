@@ -46,7 +46,7 @@ static char *rooterrorlist[]={
 #define ERRNUM (sizeof(rooterrorlist) / sizeof(*rooterrorlist))
 
 int
-obj_load_config(struct objlist *obj, N_VALUE *inst, char *title, NHASH hash, int check)
+obj_load_config(struct objlist *obj, N_VALUE *inst, char *title, NHASH hash)
 {
   FILE *fp;
   char *tok,*str,*s2;
@@ -64,7 +64,6 @@ obj_load_config(struct objlist *obj, N_VALUE *inst, char *title, NHASH hash, int
   while ((tok = getconfig(fp, &str))) {
     s2 = str;
     if (nhash_get_ptr(hash, tok, (void *) &cfg) == 0) {
-      cfg->checked = check;
       switch (cfg->type) {
       case OBJ_CONFIG_TYPE_NUMERIC:
 	f1 = getitok2(&s2, &len, " \t,");
