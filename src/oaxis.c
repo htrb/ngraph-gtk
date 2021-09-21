@@ -239,7 +239,7 @@ axisuniqgroup(struct objlist *obj,char type)
 }
 
 static int
-axisloadconfig(struct objlist *obj,N_VALUE *inst,char *conf, int check)
+axisloadconfig(struct objlist *obj,N_VALUE *inst,char *conf)
 {
   return obj_load_config(obj, inst, conf, AxisConfigHash);
 }
@@ -325,7 +325,7 @@ axisinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   if (name == NULL) goto errexit;
   if (_putobj(obj,"name",inst,name)) goto errexit;
 
-  axisloadconfig(obj,inst,AXIS_CONFIG_TITLE, TRUE);
+  axisloadconfig(obj,inst,AXIS_CONFIG_TITLE);
   return 0;
 
 errexit:
@@ -3643,7 +3643,7 @@ axis_default(struct objlist *obj, int id, int *oid, int dir,
     _getobj(obj, "oid", inst2, oid);
 
   if (conf)
-    axisloadconfig(obj, inst2, conf, FALSE);
+    axisloadconfig(obj, inst2, conf);
 }
 
 static void
@@ -3664,7 +3664,7 @@ axis_default_set(struct objlist *obj, int id, int oid, char *field, char *conf)
   g_free(ref2);
   _putobj(obj, field, inst2, ref);
 
-  axisloadconfig(obj, inst2, conf, FALSE);
+  axisloadconfig(obj, inst2, conf);
 }
 
 
