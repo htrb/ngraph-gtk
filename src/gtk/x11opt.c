@@ -1732,7 +1732,7 @@ save_default_axis_config(void)
   if (n < 0) {
     return;
   }
-  inst = chkobjinst(obj, n);
+  inst = chkobjinst(obj, 0);
   if (inst == NULL) {
     return;
   }
