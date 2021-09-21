@@ -3828,7 +3828,7 @@ axissave(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 }
 
 int
-axis_get_group(struct objlist *obj, N_VALUE *inst,  struct AxisGroupInfo *info)
+axis_get_group(struct objlist *obj, N_VALUE *inst, struct AxisGroupInfo *info)
 {
   int i, lastinst, n;
   char *group, *group2;
