@@ -78,7 +78,7 @@ textloadconfig(struct objlist *obj,N_VALUE *inst)
 static int
 textsaveconfig(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
-  return obj_save_config(obj, inst, TEXTCONF, TextConfig, sizeof(TextConfig) / sizeof(*TextConfig), FALSE);
+  return obj_save_config(obj, inst, TEXTCONF, TextConfig, sizeof(TextConfig) / sizeof(*TextConfig));
 }
 
 static int

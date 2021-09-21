@@ -247,7 +247,7 @@ axisloadconfig(struct objlist *obj,N_VALUE *inst,char *conf, int check)
 int
 axis_save_config(struct objlist *obj, N_VALUE *inst)
 {
-  return obj_save_config(obj, inst, AXIS_CONFIG_TITLE, AxisConfig, G_N_ELEMENTS(AxisConfig), TRUE);
+  return obj_save_config(obj, inst, AXIS_CONFIG_TITLE, AxisConfig, G_N_ELEMENTS(AxisConfig));
 }
 
 static int

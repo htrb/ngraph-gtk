@@ -39,8 +39,8 @@ struct obj_config {
   int checked;
 };
 
-int obj_save_config(struct objlist *obj, N_VALUE *inst, char *title, struct obj_config *config, unsigned int n, int check);
 int obj_load_config(struct objlist *obj, N_VALUE *inst, char *title, NHASH hash);
+int obj_save_config(struct objlist *obj, N_VALUE *inst, char *title, struct obj_config *config, unsigned int n);
 
 void obj_save_config_string(struct objlist *obj, N_VALUE *inst, char *field, struct narray *conf);
 

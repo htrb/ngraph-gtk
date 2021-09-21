@@ -158,7 +158,7 @@ obj_save_config_line_style(struct objlist *obj, N_VALUE *inst, char *field, stru
 }
 
 int
-obj_save_config(struct objlist *obj, N_VALUE *inst, char *title, struct obj_config *config, unsigned int n, int check)
+obj_save_config(struct objlist *obj, N_VALUE *inst, char *title, struct obj_config *config, unsigned int n)
 {
   struct narray conf;
   unsigned int i;
@@ -166,9 +166,6 @@ obj_save_config(struct objlist *obj, N_VALUE *inst, char *title, struct obj_conf
   arrayinit(&conf, sizeof(char *));
 
   for (i = 0; i < n; i++) {
-    if (check && config[i].checked != check) {
-      continue;
-    }
     switch (config[i].type) {
     case OBJ_CONFIG_TYPE_NUMERIC:
       obj_save_config_numeric(obj, inst, config[i].name, &conf);
