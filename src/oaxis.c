@@ -4051,6 +4051,12 @@ put_num_hsb(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **
   return put_hsb_color(obj, inst, argc, argv, "num_%c");
 }
 
+static int
+axissaveconfig(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  return obj_save_config(obj, inst, AXIS_CONFIG_TITLE, AxisConfig, G_N_ELEMENTS(AxisConfig));
+}
+
 static struct objtable axis_obj[] = {
   {"init",NVFUNC,NEXEC,axisinit,NULL,0},
   {"done",NVFUNC,NEXEC,axisdone,NULL,0},
@@ -4145,6 +4151,7 @@ static struct objtable axis_obj[] = {
   {"hsb", NVFUNC, NREAD|NEXEC, put_hsb,"ddd",0},
   {"gauge_hsb", NVFUNC, NREAD|NEXEC, put_gauge_hsb,"ddd",0},
   {"num_hsb", NVFUNC, NREAD|NEXEC, put_num_hsb,"ddd",0},
+  {"save_config",NVFUNC,NREAD|NEXEC,axissaveconfig,"",0},
 
   /* following fields exist for backward compatibility */
   {"num_jfont",NSTR,NWRITE,NULL,NULL,0},
