@@ -275,7 +275,7 @@ grid_copy_clicked(GtkButton *btn, gpointer user_data)
 }
 
 static void
-gauge_syle_setup(struct GridDialog *d, GtkWidget *table, int n, int j)
+gauge_syle_setup(struct GridDialog *d, GtkWidget *table, int n, int j, int instance)
 {
   GtkWidget *w;
   char buf[TITLE_BUF_SIZE];
@@ -288,9 +288,13 @@ gauge_syle_setup(struct GridDialog *d, GtkWidget *table, int n, int j)
   add_widget_to_table_sub(table, w, buf, TRUE, 0, 1, 4, j);
   d->style[n] = w;
 
+  if (instance) {
   snprintf(buf, sizeof(buf), _("_Width %d:"), n + 1);
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_WIDTH, TRUE, TRUE);
   add_widget_to_table_sub(table, w, buf, FALSE, 2, 1, 4, j);
+  } else {
+    w = NULL;
+  }
   d->width[n] = w;
 }
 
@@ -360,7 +364,7 @@ GridDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     j = 0;
     for (i = 0; i < GRID_DIALOG_STYLE_NUM; i++) {
-      gauge_syle_setup(d, table, i, j++);
+      gauge_syle_setup(d, table, i, j++, instance);
     }
 
     frame = gtk_frame_new(_("Style"));
