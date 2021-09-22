@@ -305,18 +305,24 @@ GridDialogSetupCommon(GtkWidget *wi, void *data, int makewidget, int instance)
   char title[TITLE_BUF_SIZE];
 
   d = (struct GridDialog *) data;
+  if (instance) {
   snprintf(title, sizeof(title), _("Grid %d"), d->Id);
   gtk_window_set_title(GTK_WINDOW(wi), title);
+  }
 
   d = (struct GridDialog *) data;
   if (makewidget) {
     GtkWidget *frame, *w, *hbox, *table;
     int i, j;
+
+    if (instance) {
     gtk_dialog_add_button(GTK_DIALOG(wi), _("_Delete"), IDDELETE);
+    }
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
     table = gtk_grid_new();
 
+    if (instance) {
     j = 0;
     w = axis_combo_box_create(AXIS_COMBO_BOX_USE_OID);
     add_widget_to_table(table, w, _("Axis (_X):"), FALSE, j++);
@@ -337,6 +343,12 @@ GridDialogSetupCommon(GtkWidget *wi, void *data, int makewidget, int instance)
     frame = gtk_frame_new(_("Axis"));
     gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 0);
+    } else {
+      d->axisx = NULL;
+      d->axisy = NULL;
+      d->draw_x = NULL;
+      d->draw_y = NULL;
+    }
 
     table = gtk_grid_new();
 
