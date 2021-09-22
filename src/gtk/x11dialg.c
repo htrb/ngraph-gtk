@@ -74,6 +74,7 @@ struct SectionDialog DlgSection;
 struct CrossDialog DlgCross;
 struct AxisDialog DlgAxis;
 struct GridDialog DlgGrid;
+struct GridDialog DlgGridDef;
 struct ZoomDialog DlgZoom;
 struct MergeDialog DlgMerge;
 struct ParameterDialog DlgParameter;

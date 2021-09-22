@@ -597,6 +597,7 @@ extern struct SectionDialog DlgSection;
 extern struct CrossDialog DlgCross;
 extern struct AxisDialog DlgAxis;
 extern struct GridDialog DlgGrid;
+extern struct GridDialog DlgGridDef;
 extern struct ZoomDialog DlgZoom;
 extern struct AxisBaseDialog DlgAxisBase;
 extern struct AxisPosDialog DlgAxisPos;
