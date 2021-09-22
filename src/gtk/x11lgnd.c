@@ -1869,7 +1869,7 @@ LegendMarkDialog(struct LegendDialog *data, struct objlist *obj, int id)
 }
 
 static void
-legend_dialog_setup_sub(struct LegendDialog *d, GtkWidget *table, int i)
+legend_dialog_setup_sub(struct LegendDialog *d, GtkWidget *table, int i, int instance)
 {
   GtkWidget *w, *btn_box;
 
@@ -2046,7 +2046,7 @@ LegendTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, _("_Text:"), TRUE, i++);
     d->text = w;
 
-    legend_dialog_setup_sub(d, table, i++);
+    legend_dialog_setup_sub(d, table, i++, TRUE);
 
     frame = gtk_frame_new(NULL);
     gtk_container_add(GTK_CONTAINER(frame), table);
@@ -2087,7 +2087,7 @@ LegendTextDefDialogSetup(GtkWidget *w, void *data, int makewidget)
     init_legend_dialog_widget_member(d);
 
     table = gtk_grid_new();
-    legend_dialog_setup_sub(d, table, 0);
+    legend_dialog_setup_sub(d, table, 0, FALSE);
 
     frame = gtk_frame_new(NULL);
     gtk_container_add(GTK_CONTAINER(frame), table);
