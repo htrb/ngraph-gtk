@@ -204,7 +204,7 @@ initdialog(void)
   DlgLegendText.resource = N_("legend text");
   DlgLegendTextDef.widget = NULL;
   DlgLegendTextDef.focus = NULL;
-  DlgLegendTextDef.resource = N_("textdefault");
+  DlgLegendTextDef.resource = N_("text default");
   DlgLegendGauss.widget = NULL;
   DlgLegendGauss.focus = NULL;
   DlgLegendGauss.resource = N_("legend gauss");
