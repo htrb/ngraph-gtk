@@ -429,6 +429,12 @@ agridtight(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   return 0;
 }
 
+static int
+agridsaveconfig(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  return obj_save_config(obj, inst, GRID_CONFIG_TITLE, GridConfig, G_N_ELEMENTS(GridConfig));
+}
+
 static struct objtable agrid[] = {
   {"init",NVFUNC,NEXEC,agridinit,NULL,0},
   {"done",NVFUNC,NEXEC,agriddone,NULL,0},
