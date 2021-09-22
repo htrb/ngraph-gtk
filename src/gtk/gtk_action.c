@@ -662,6 +662,12 @@ PreferenceTextDefaultAction_activated(GSimpleAction *action, GVariant *parameter
 }
 
 static void
+PreferenceGridDefaultAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
+{
+  CmOptionGridDef(NULL, NULL);
+}
+
+static void
 PopupUpdateAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
   ViewerUpdateCB(NULL, NULL);
