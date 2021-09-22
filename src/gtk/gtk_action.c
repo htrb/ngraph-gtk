@@ -781,6 +781,7 @@ static GActionEntry AppEntries[] =
   { "PreferenceSaveGraphAction", PreferenceSaveGraphAction_activated, NULL, NULL, NULL },
   { "PreferenceDataDefaultAction", PreferenceDataDefaultAction_activated, NULL, NULL, NULL },
   { "PreferenceTextDefaultAction", PreferenceTextDefaultAction_activated, NULL, NULL, NULL },
+  { "PreferenceGridDefaultAction", PreferenceGridDefaultAction_activated, NULL, NULL, NULL },
   { "PopupUpdateAction", PopupUpdateAction_activated, NULL, NULL, NULL },
 };
 
