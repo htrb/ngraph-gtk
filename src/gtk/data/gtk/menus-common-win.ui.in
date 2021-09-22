@@ -545,6 +545,10 @@
 	  <attribute name="label" translatable="yes">_Legend text default</attribute>
 	  <attribute name="action">app.PreferenceTextDefaultAction</attribute>
 	</item>
+	<item>
+	  <attribute name="label" translatable="yes">_Axis grid default</attribute>
+	  <attribute name="action">app.PreferenceGridDefaultAction</attribute>
+	</item>
       </section>
     </submenu>
     <submenu>
