@@ -149,6 +149,7 @@ direction=0
 gauge=1
 num=2
 num_align=0
+num_no_zero=1
 arrow=0
 wave=0
 
@@ -157,5 +158,6 @@ direction=9000
 gauge=1
 num=1
 num_align=2
+num_no_zero=1
 arrow=0
 wave=0
