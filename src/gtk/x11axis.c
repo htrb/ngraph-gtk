@@ -289,9 +289,9 @@ gauge_syle_setup(struct GridDialog *d, GtkWidget *table, int n, int j, int insta
   d->style[n] = w;
 
   if (instance) {
-  snprintf(buf, sizeof(buf), _("_Width %d:"), n + 1);
-  w = create_spin_entry_type(SPIN_BUTTON_TYPE_WIDTH, TRUE, TRUE);
-  add_widget_to_table_sub(table, w, buf, FALSE, 2, 1, 4, j);
+    snprintf(buf, sizeof(buf), _("_Width %d:"), n + 1);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_WIDTH, TRUE, TRUE);
+    add_widget_to_table_sub(table, w, buf, FALSE, 2, 1, 4, j);
   } else {
     w = NULL;
   }
@@ -306,8 +306,8 @@ GridDialogSetupCommon(GtkWidget *wi, void *data, int makewidget, int instance)
 
   d = (struct GridDialog *) data;
   if (instance) {
-  snprintf(title, sizeof(title), _("Grid %d"), d->Id);
-  gtk_window_set_title(GTK_WINDOW(wi), title);
+    snprintf(title, sizeof(title), _("Grid %d"), d->Id);
+    gtk_window_set_title(GTK_WINDOW(wi), title);
   }
 
   d = (struct GridDialog *) data;
@@ -316,33 +316,33 @@ GridDialogSetupCommon(GtkWidget *wi, void *data, int makewidget, int instance)
     int i, j;
 
     if (instance) {
-    gtk_dialog_add_button(GTK_DIALOG(wi), _("_Delete"), IDDELETE);
+      gtk_dialog_add_button(GTK_DIALOG(wi), _("_Delete"), IDDELETE);
     }
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
     table = gtk_grid_new();
 
     if (instance) {
-    j = 0;
-    w = axis_combo_box_create(AXIS_COMBO_BOX_USE_OID);
-    add_widget_to_table(table, w, _("Axis (_X):"), FALSE, j++);
-    d->axisx = w;
+      j = 0;
+      w = axis_combo_box_create(AXIS_COMBO_BOX_USE_OID);
+      add_widget_to_table(table, w, _("Axis (_X):"), FALSE, j++);
+      d->axisx = w;
 
-    w = gtk_check_button_new_with_mnemonic(_("draw _X grid"));
-    add_widget_to_table(table, w, NULL, FALSE, j++);
-    d->draw_x = w;
+      w = gtk_check_button_new_with_mnemonic(_("draw _X grid"));
+      add_widget_to_table(table, w, NULL, FALSE, j++);
+      d->draw_x = w;
 
-    w = axis_combo_box_create(AXIS_COMBO_BOX_USE_OID);
-    add_widget_to_table(table, w, _("Axis (_Y):"), FALSE, j++);
-    d->axisy = w;
+      w = axis_combo_box_create(AXIS_COMBO_BOX_USE_OID);
+      add_widget_to_table(table, w, _("Axis (_Y):"), FALSE, j++);
+      d->axisy = w;
 
-    w = gtk_check_button_new_with_mnemonic(_("draw _Y grid"));
-    add_widget_to_table(table, w, NULL, FALSE, j++);
-    d->draw_y = w;
+      w = gtk_check_button_new_with_mnemonic(_("draw _Y grid"));
+      add_widget_to_table(table, w, NULL, FALSE, j++);
+      d->draw_y = w;
 
-    frame = gtk_frame_new(_("Axis"));
-    gtk_container_add(GTK_CONTAINER(frame), table);
-    gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 0);
+      frame = gtk_frame_new(_("Axis"));
+      gtk_container_add(GTK_CONTAINER(frame), table);
+      gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 0);
     } else {
       d->axisx = NULL;
       d->axisy = NULL;
