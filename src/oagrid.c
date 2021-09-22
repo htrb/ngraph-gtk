@@ -457,6 +457,7 @@ static struct objtable agrid[] = {
   {"draw",NVFUNC,NREAD|NEXEC,agriddraw,"i",0},
   {"tight",NVFUNC,NREAD|NEXEC,agridtight,"",0},
   {"hsb", NVFUNC, NREAD|NEXEC, put_hsb,"ddd",0},
+  {"save_config", NVFUNC, NREAD|NEXEC, agridsaveconfig, "", 0},
 };
 
 #define TBLNUM (sizeof(agrid) / sizeof(*agrid))
