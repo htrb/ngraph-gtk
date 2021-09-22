@@ -41,6 +41,7 @@ void CmAxisScaleUndo(void *w, gpointer client_data);
 void CmAxisGridNew(void *w, gpointer client_data);
 void CmAxisGridDel(void *w, gpointer client_data);
 void CmAxisGridUpdate(void *w, gpointer client_data);
+void CmOptionGridDef(void *w, gpointer client_data);
 
 GtkWidget *create_axis_list(struct SubWin *d);
 
