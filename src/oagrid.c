@@ -464,5 +464,19 @@ static struct objtable agrid[] = {
 void *
 addagrid(void)
 {
+  if (GridConfigHash == NULL) {
+    unsigned int i;
+    GridConfigHash = nhash_new();
+    if (GridConfigHash == NULL)
+      return NULL;
+
+    for (i = 0; i < sizeof(GridConfig) / sizeof(*GridConfig); i++) {
+      if (nhash_set_ptr(GridConfigHash, GridConfig[i].name, (void *) &GridConfig[i])) {
+	nhash_free(GridConfigHash);
+	return NULL;
+      }
+    }
+  }
+
   return addobject(NAME,NULL,PARENT,OVERSION,TBLNUM,agrid,ERRNUM,agriderrorlist,NULL,NULL);
 }
