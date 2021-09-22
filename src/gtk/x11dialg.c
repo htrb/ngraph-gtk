@@ -170,6 +170,9 @@ initdialog(void)
   DlgGrid.widget = NULL;
   DlgGrid.focus = NULL;
   DlgGrid.resource = N_("grid");
+  DlgGridDef.widget = NULL;
+  DlgGridDef.focus = NULL;
+  DlgGridDef.resource = N_("grid default");
   DlgZoom.widget = NULL;
   DlgZoom.focus = NULL;
   DlgZoom.resource = N_("Scale Zoom");
