@@ -475,6 +475,35 @@ GridDefDialog(struct GridDialog *data, struct objlist *obj, int id)
   data->Id = id;
 }
 
+void
+CmOptionGridDef(void *w, gpointer client_data)
+{
+  struct objlist *obj;
+  int id;
+
+  if (Menulock || Globallock)
+    return;
+
+  if ((obj = chkobject("axisgrid")) == NULL)
+    return;
+
+  id = newobj(obj);
+  if (id >= 0) {
+    int modified;
+
+    modified = get_graph_modified();
+    GridDefDialog(&DlgGridDef, obj, id);
+    if (DialogExecute(TopLevel, &DlgGridDef) == IDOK) {
+      if (CheckIniFile()) {
+	exeobj(obj, "save_config", id, 0, NULL);
+      }
+    }
+    delobj(obj, id);
+    if (! modified) {
+      reset_graph_modified();
+    }
+  }
+}
 
 static void
 set_axis_id(GtkWidget *w, int id)
