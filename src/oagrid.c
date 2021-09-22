@@ -103,6 +103,7 @@ agridinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   if (_putobj(obj,"BA",inst,&ba)) return 1;
   if (_putobj(obj,"grid_x",inst,&grid)) return 1;
   if (_putobj(obj,"grid_y",inst,&grid)) return 1;
+  obj_load_config(obj, inst, GRID_CONFIG_TITLE, GridConfigHash);
   return 0;
 }
 
