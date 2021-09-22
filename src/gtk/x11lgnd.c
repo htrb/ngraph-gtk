@@ -1874,9 +1874,9 @@ legend_dialog_setup_sub(struct LegendDialog *d, GtkWidget *table, int i, int ins
   GtkWidget *w, *btn_box;
 
   if (instance) {
-  w = create_spin_entry_type(SPIN_BUTTON_TYPE_POINT, TRUE, TRUE);
-  add_widget_to_table(table, w, _("_Pt:"), FALSE, i++);
-  d->pt = w;
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_POINT, TRUE, TRUE);
+    add_widget_to_table(table, w, _("_Pt:"), FALSE, i++);
+    d->pt = w;
   } else {
     d->pt = NULL;
   }
@@ -1891,25 +1891,25 @@ legend_dialog_setup_sub(struct LegendDialog *d, GtkWidget *table, int i, int ins
   d->script_size = w;
 
   if (instance) {
-  w = combo_box_create();
-  add_widget_to_table(table, w, _("_Font:"), FALSE, i++);
-  d->font = w;
+    w = combo_box_create();
+    add_widget_to_table(table, w, _("_Font:"), FALSE, i++);
+    d->font = w;
 
-  btn_box = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
-  gtk_box_set_spacing(GTK_BOX(btn_box), 10);
-  w = gtk_check_button_new_with_mnemonic(_("_Bold"));
-  set_button_icon(w, "format-text-bold");
-  d->font_bold = w;
-  gtk_box_pack_start(GTK_BOX(btn_box), w, FALSE, FALSE, 0);
+    btn_box = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
+    gtk_box_set_spacing(GTK_BOX(btn_box), 10);
+    w = gtk_check_button_new_with_mnemonic(_("_Bold"));
+    set_button_icon(w, "format-text-bold");
+    d->font_bold = w;
+    gtk_box_pack_start(GTK_BOX(btn_box), w, FALSE, FALSE, 0);
 
-  w = gtk_check_button_new_with_mnemonic(_("_Italic"));
-  set_button_icon(w, "format-text-italic");
-  d->font_italic = w;
-  gtk_box_pack_start(GTK_BOX(btn_box), w, FALSE, FALSE, 0);
+    w = gtk_check_button_new_with_mnemonic(_("_Italic"));
+    set_button_icon(w, "format-text-italic");
+    d->font_italic = w;
+    gtk_box_pack_start(GTK_BOX(btn_box), w, FALSE, FALSE, 0);
 
-  add_widget_to_table(table, btn_box, "", FALSE, i++);
+    add_widget_to_table(table, btn_box, "", FALSE, i++);
 
-  color_setup(d, table, i++);
+    color_setup(d, table, i++);
   } else {
     d->font = NULL;
     d->font_bold = NULL;
