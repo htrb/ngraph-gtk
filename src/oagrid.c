@@ -65,6 +65,8 @@ static struct obj_config GridConfig[] = {
 
 #define GRID_CONFIG_TITLE "[axisgrid]"
 
+static NHASH GridConfigHash = NULL;
+
 static int
 agridinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
