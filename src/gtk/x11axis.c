@@ -299,7 +299,7 @@ gauge_syle_setup(struct GridDialog *d, GtkWidget *table, int n, int j, int insta
 }
 
 static void
-GridDialogSetup(GtkWidget *wi, void *data, int makewidget)
+GridDialogSetupCommon(GtkWidget *wi, void *data, int makewidget, int instance)
 {
   struct GridDialog *d;
   char title[TITLE_BUF_SIZE];
@@ -376,6 +376,12 @@ GridDialogSetup(GtkWidget *wi, void *data, int makewidget)
   }
 
   GridDialogSetupItem(d, d->Id);
+}
+
+static void
+GridDialogSetup(GtkWidget *wi, void *data, int makewidget)
+{
+  GridDialogSetupCommon(wi, data, makewidget, TRUE);
 }
 
 static void
