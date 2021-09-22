@@ -460,6 +460,12 @@ GridDialog(struct GridDialog *data, struct objlist *obj, int id)
   data->Id = id;
 }
 
+static void
+GridDefDialogSetup(GtkWidget *w, void *data, int makewidget)
+{
+  GridDialogSetupCommon(w, data, makewidget, FALSE);
+}
+
 
 static void
 set_axis_id(GtkWidget *w, int id)
