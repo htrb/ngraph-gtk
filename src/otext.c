@@ -54,17 +54,10 @@ static char *texterrorlist[]={
 #define ERRNUM (sizeof(texterrorlist) / sizeof(*texterrorlist))
 
 static struct obj_config TextConfig[] = {
-  {"R", OBJ_CONFIG_TYPE_NUMERIC},
-  {"G", OBJ_CONFIG_TYPE_NUMERIC},
-  {"B", OBJ_CONFIG_TYPE_NUMERIC},
-  {"A", OBJ_CONFIG_TYPE_NUMERIC},
-  {"pt", OBJ_CONFIG_TYPE_NUMERIC},
   {"space", OBJ_CONFIG_TYPE_NUMERIC},
   {"direction", OBJ_CONFIG_TYPE_NUMERIC},
   {"script_size", OBJ_CONFIG_TYPE_NUMERIC},
   {"raw", OBJ_CONFIG_TYPE_NUMERIC},
-  {"font", OBJ_CONFIG_TYPE_STRING},
-  {"style", OBJ_CONFIG_TYPE_NUMERIC},
 };
 
 static NHASH TextConfigHash = NULL;
