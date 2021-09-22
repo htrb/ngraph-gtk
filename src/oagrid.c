@@ -63,6 +63,8 @@ static struct obj_config GridConfig[] = {
   {"BB",         OBJ_CONFIG_TYPE_NUMERIC},
 };
 
+#define GRID_CONFIG_TITLE "[axisgrid]"
+
 static int
 agridinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
