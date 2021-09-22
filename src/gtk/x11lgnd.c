@@ -1873,9 +1873,13 @@ legend_dialog_setup_sub(struct LegendDialog *d, GtkWidget *table, int i, int ins
 {
   GtkWidget *w, *btn_box;
 
+  if (instance) {
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_POINT, TRUE, TRUE);
   add_widget_to_table(table, w, _("_Pt:"), FALSE, i++);
   d->pt = w;
+  } else {
+    d->pt = NULL;
+  }
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_SPACE_POINT, TRUE, TRUE);
   add_widget_to_table(table, w, _("_Space:"), FALSE, i++);
@@ -1886,6 +1890,7 @@ legend_dialog_setup_sub(struct LegendDialog *d, GtkWidget *table, int i, int ins
   add_widget_to_table(table, w, _("_Script:"), FALSE, i++);
   d->script_size = w;
 
+  if (instance) {
   w = combo_box_create();
   add_widget_to_table(table, w, _("_Font:"), FALSE, i++);
   d->font = w;
@@ -1905,6 +1910,12 @@ legend_dialog_setup_sub(struct LegendDialog *d, GtkWidget *table, int i, int ins
   add_widget_to_table(table, btn_box, "", FALSE, i++);
 
   color_setup(d, table, i++);
+  } else {
+    d->font = NULL;
+    d->font_bold = NULL;
+    d->font_italic = NULL;
+    d->color = NULL;
+  }
 
   w = create_direction_entry();
   add_widget_to_table(table, w, _("_Direction:"), FALSE, i++);
