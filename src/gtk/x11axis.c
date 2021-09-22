@@ -466,6 +466,15 @@ GridDefDialogSetup(GtkWidget *w, void *data, int makewidget)
   GridDialogSetupCommon(w, data, makewidget, FALSE);
 }
 
+static void
+GridDefDialog(struct GridDialog *data, struct objlist *obj, int id)
+{
+  data->SetupWindow = GridDefDialogSetup;
+  data->CloseWindow = GridDialogClose;
+  data->Obj = obj;
+  data->Id = id;
+}
+
 
 static void
 set_axis_id(GtkWidget *w, int id)
