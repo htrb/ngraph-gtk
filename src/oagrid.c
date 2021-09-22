@@ -49,6 +49,20 @@ static char *agriderrorlist[]={
 
 #define ERRNUM (sizeof(agriderrorlist) / sizeof(*agriderrorlist))
 
+static struct obj_config GridConfig[] = {
+  {"R",          OBJ_CONFIG_TYPE_NUMERIC},
+  {"G",          OBJ_CONFIG_TYPE_NUMERIC},
+  {"B",          OBJ_CONFIG_TYPE_NUMERIC},
+  {"A",          OBJ_CONFIG_TYPE_NUMERIC},
+  {"style1",     OBJ_CONFIG_TYPE_STYLE},
+  {"style2",     OBJ_CONFIG_TYPE_STYLE},
+  {"style3",     OBJ_CONFIG_TYPE_STYLE},
+  {"background", OBJ_CONFIG_TYPE_NUMERIC},
+  {"BR",         OBJ_CONFIG_TYPE_NUMERIC},
+  {"BG",         OBJ_CONFIG_TYPE_NUMERIC},
+  {"BB",         OBJ_CONFIG_TYPE_NUMERIC},
+};
+
 static int
 agridinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
