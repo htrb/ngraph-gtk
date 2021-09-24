@@ -2884,6 +2884,50 @@ draw_points(cairo_t *cr, const struct Viewer *d, struct Point **po, int num, dou
   cairo_stroke(cr);
 }
 
+static int
+draw_points_curve(cairo_t *cr, const struct Viewer *d, struct Point **po, int num, int intp, double zoom)
+{
+  struct narray expand_points;
+  int *data, *cdata;
+  int i, r, n;
+  if (num < 3 || intp < 0) {
+    return 1;
+  }
+  if (po[num -1]->x == po[num - 2]->x && po[num -1]->y == po[num - 2]->y) {
+    num--;
+    if (num < 3 || intp < 0) {
+      return 1;
+    }
+  }
+  data = g_malloc(sizeof(*data) * num * 2);
+  if (data == NULL) {
+    return 1;
+  }
+  for (i = 0; i < num; i++) {
+    data[i * 2] = coord_conv_x(po[i]->x, zoom, d);
+    data[i * 2 + 1] = coord_conv_y(po[i]->y, zoom, d);
+  }
+  arrayinit(&expand_points, sizeof(int));
+  r = curve_expand_points(data, num, intp, &expand_points);
+  if (r) {
+    return 1;
+  }
+  n = arraynum(&expand_points) / 2;
+  if (n < 1) {
+    arraydel(&expand_points);
+    g_free(data);
+    return 1;
+  }
+  cdata = arraydata(&expand_points);
+  cairo_move_to(cr, cdata[0], cdata[1]);
+  for (i = 1; i < n; i += 1) {
+    cairo_line_to(cr, cdata[i * 2], cdata[i * 2 + 1]);
+  }
+  arraydel(&expand_points);
+  g_free(data);
+  return 0;
+}
+
 static void
 ShowPoints(cairo_t *cr, const struct Viewer *d)
 {
