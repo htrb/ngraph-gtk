@@ -44,15 +44,19 @@
 #include "gtk_combo.h"
 #include "gtk_widget.h"
 
+#define LINE_ELEMENT_2(e1, e2)			#e1 " " #e2, {e1, e2}, 2
+#define LINE_ELEMENT_4(e1, e2, e3, e4)		#e1 " " #e2 " " #e3 " " #e4, {e1, e2, e3, e4}, 4
+#define LINE_ELEMENT_6(e1, e2, e3, e4, e5, e6)	#e1 " " #e2 " " #e3 " " #e4 " " #e5 " " #e6, {e1, e2, e3, e4, e5, e6}, 6
+
 struct line_style FwLineStyle[] = {
-  {N_("solid"),      "",                        0},
-  {N_("dot"),        "100 100",                 2},
-  {N_("short dash"), "150 150",                 2},
-  {N_("dash"),       "450 150",                 2},
-  {N_("dot dash"),   "450 150 150 150",         4},
-  {N_("2-dot dash"), "450 150 150 150 150 150", 6},
-  {N_("dot 2-dash"), "450 150 450 150 150 150", 6},
-  {NULL, NULL, -1},
+  {N_("solid"),      "", {0}, 0},
+  {N_("dot"),        LINE_ELEMENT_2(100, 100)},
+  {N_("short dash"), LINE_ELEMENT_2(150, 150)},
+  {N_("dash"),       LINE_ELEMENT_2(450, 150)},
+  {N_("dot dash"),   LINE_ELEMENT_4(450, 150, 150, 150)},
+  {N_("2-dot dash"), LINE_ELEMENT_6(450, 150, 150, 150, 150, 150)},
+  {N_("dot 2-dash"), LINE_ELEMENT_6(450, 150, 450, 150, 150, 150)},
+  {NULL, NULL, {0}, -1},
 };
 #define CLINESTYLE ((sizeof(FwLineStyle) / sizeof(*FwLineStyle)) - 1)
 

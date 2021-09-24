@@ -36,8 +36,10 @@
 #define MATH_FNC_NUM 5
 #define AXIS_SELECTION_LIMIT 6
 
+#define LINE_STYLE_ELEMENT_MAX 6
 struct line_style {
   char *name, *list;
+  int nlist[LINE_STYLE_ELEMENT_MAX];
   int num;
 };
 
