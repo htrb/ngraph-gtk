@@ -1110,6 +1110,56 @@ remove_child(GtkWidget *widget, gpointer data)
   gtk_container_remove(container, widget);
 }
 
+static void
+save_as_default(GtkButton *button, gpointer user_data)
+{
+  struct obj_list_data *d;
+  int i, num, type, modified, undo;
+  double parameter, value;
+  d = (struct obj_list_data *) user_data;
+  num = chkobjlastinst(d->obj) + 1;
+  modified = FALSE;
+  undo = menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
+  for (i = 0; i < num; i++) {
+    int ival;
+    getobj(d->obj, "type", i, 0, NULL, &type);
+    if (type == PARAMETER_TYPE_TRANSITION) {
+      continue;
+    }
+    getobj(d->obj, "parameter", i, 0, NULL, &parameter);
+    switch (type) {
+    case PARAMETER_TYPE_SPIN:
+    case PARAMETER_TYPE_SCALE:
+      getobj(d->obj, "value", i, 0, NULL, &value);
+      if (value != parameter) {
+	putobj(d->obj, "value", i, &parameter);
+	modified = TRUE;
+      }
+      break;
+    case PARAMETER_TYPE_SWITCH:
+    case PARAMETER_TYPE_CHECK:
+      getobj(d->obj, "active", i, 0, NULL, &ival);
+      if (ival != parameter) {
+	ival = parameter;
+	putobj(d->obj, "active", i, &ival);
+	modified = TRUE;
+      }
+      break;
+    case PARAMETER_TYPE_COMBO:
+      getobj(d->obj, "selected", i, 0, NULL, &ival);
+      if (ival != parameter) {
+	ival = parameter;
+	putobj(d->obj, "selected", i, &ival);
+	modified = TRUE;
+      }
+      break;
+    }
+  }
+  if (modified) {
+    set_graph_modified();
+  }
+}
+
 void
 ParameterWinUpdate(struct obj_list_data *d, int clear, int draw)
 {
