@@ -2931,23 +2931,40 @@ draw_points_curve(cairo_t *cr, const struct Viewer *d, struct Point **po, int nu
 static void
 ShowPoints(cairo_t *cr, const struct Viewer *d)
 {
-  int num, x1, y1;
+  int num, x1, y1, stroke, fill;
   struct Point **po;
-  double zoom;
-  double dash[] = {DOT_LENGTH};
+  double zoom, lw;
+  double r, g, b;
+  struct presettings setting;
 
-  cairo_set_source_rgb(cr, GRAY, GRAY, GRAY);
-
+  presetting_get(&setting);
   num = arraynum(d->points);
   po = arraydata(d->points);
 
   zoom = Menulocal.PaperZoom / 10000.0;
 
+  r = setting.r1 / 255.0;
+  g = setting.g1 / 255.0;
+  b = setting.b1 / 255.0;
+
+  cairo_save(cr);
+  lw = mxd2p(setting.line_width);
+  fill = setting.fill;
+  stroke = setting.stroke;
+  if ((setting.fill == 0 && setting.stroke == 0) || d->Mode == GaussB) {
+    double dash[] = {DOT_LENGTH};
+    cairo_set_dash(cr, dash, sizeof(dash) / sizeof(*dash), 0);
+    stroke = TRUE;
+    fill = FALSE;
+    r = g = b = GRAY;
+    lw = 1;
+  } else {
+    set_dash(cr, &setting);
+  }
   if (d->Mode & POINT_TYPE_DRAW1) {
     if (num >= 2) {
       int x2, y2;
       int minx, miny, height, width;
-      cairo_set_dash(cr, dash, sizeof(dash) / sizeof(*dash), 0);
 
       x1 = coord_conv_x(po[0]->x, zoom, d);
       y1 = coord_conv_y(po[0]->y, zoom, d);
@@ -2960,30 +2977,49 @@ ShowPoints(cairo_t *cr, const struct Viewer *d)
       width = abs(x2 - x1);
       height = abs(y2 - y1);
 
-      if (d->Mode == ArcB) {
+      switch (d->Mode) {
+      case ArcB:
 	draw_cairo_arc(cr, minx + width / 2, miny + height / 2, width / 2, height / 2, 0, 36000);
-      } else {
+	break;
+      case CrossB:
+	fill = FALSE;
+	cairo_move_to(cr, minx, miny);
+	cairo_line_to(cr, minx, miny + height);
+	cairo_line_to(cr, minx + width, miny + height);
+	cairo_set_line_cap(cr, CAIRO_LINE_CAP_SQUARE);
+	break;
+      case FrameB:
+      case SectionB:
+	fill = FALSE;
+	cairo_set_line_cap(cr, CAIRO_LINE_CAP_SQUARE);
+	/* fall-through */
+      case GaussB:
+      case RectB:
+      default:
+	cairo_set_line_cap(cr, CAIRO_LINE_CAP_BUTT);
 	cairo_rectangle(cr, minx, miny, width, height);
       }
-      cairo_stroke(cr);
+
+      if (fill) {
+	cairo_set_source_rgba(cr, setting.r2 / 255.0, setting.g2 / 255.0, setting.b2 / 255.0, 0.5);
+	if (stroke) {
+	  cairo_fill_preserve(cr);
+	} else {
+	  cairo_fill(cr);
+	}
+      }
+      if (stroke) {
+	cairo_set_line_join(cr, CAIRO_LINE_JOIN_MITER);
+	cairo_set_line_width(cr, lw);
+	cairo_set_source_rgba(cr, r, g, b, 0.5);
+	cairo_stroke(cr);
+      }
     }
   } else {
-    int i;
-    cairo_set_dash(cr, NULL, 0, 0);
-    for (i = 0; i < num; i++) {
-      x1 = coord_conv_x(po[i]->x, zoom, d);
-      y1 = coord_conv_y(po[i]->y, zoom, d);
-
-      cairo_move_to(cr, x1 - (POINT_LENGTH - 1), y1);
-      cairo_line_to(cr, x1 + POINT_LENGTH, y1);
-
-      cairo_move_to(cr, x1, y1 - (POINT_LENGTH - 1));
-      cairo_line_to(cr, x1, y1 + POINT_LENGTH);
-    }
-    cairo_stroke(cr);
-
     if (num >= 1) {
-      cairo_set_dash(cr, dash, sizeof(dash) / sizeof(*dash), 0);
+      int line, i;
+      line = draw_points_curve(cr, d, po, num, setting.interpolation, zoom);
+      if (line) {
       x1 = coord_conv_x(po[0]->x, zoom, d);
       y1 = coord_conv_y(po[0]->y, zoom, d);
       cairo_move_to(cr, x1, y1);
@@ -2993,9 +3029,36 @@ ShowPoints(cairo_t *cr, const struct Viewer *d)
 
 	cairo_line_to(cr, x1, y1);
       }
-      cairo_stroke(cr);
+      }
+      if (d->Mode == SingleB) {
+	fill = FALSE;
+	stroke = TRUE;
+	cairo_set_line_cap(cr, CAIRO_LINE_CAP_SQUARE);
+      } else {
+	if (setting.close_path) {
+	  cairo_close_path(cr);
+	}
+	cairo_set_line_cap(cr, CAIRO_LINE_CAP_BUTT);
+      }
+      if (fill) {
+	cairo_set_fill_rule(cr, CAIRO_FILL_RULE_EVEN_ODD);
+	cairo_set_source_rgba(cr, setting.r2 / 255.0, setting.g2 / 255.0, setting.b2 / 255.0, 0.5);
+	if (stroke) {
+	  cairo_fill_preserve(cr);
+	} else {
+	  cairo_fill(cr);
+	}
+      }
+      if (stroke) {
+	cairo_set_line_join(cr, (cairo_line_join_t) setting.join);
+	cairo_set_line_width(cr, lw);
+	cairo_set_source_rgba(cr, r, g, b, 0.5);
+	cairo_stroke(cr);
+      }
     }
   }
+  draw_points(cr, d, po, num, zoom);
+  cairo_restore(cr);
 }
 
 static void
