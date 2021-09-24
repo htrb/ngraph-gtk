@@ -3020,15 +3020,15 @@ ShowPoints(cairo_t *cr, const struct Viewer *d)
       int line, i;
       line = draw_points_curve(cr, d, po, num, setting.interpolation, zoom);
       if (line) {
-      x1 = coord_conv_x(po[0]->x, zoom, d);
-      y1 = coord_conv_y(po[0]->y, zoom, d);
-      cairo_move_to(cr, x1, y1);
-      for (i = 1; i < num; i++) {
-	x1 = coord_conv_x(po[i]->x, zoom, d);
-	y1 = coord_conv_y(po[i]->y, zoom, d);
+	x1 = coord_conv_x(po[0]->x, zoom, d);
+	y1 = coord_conv_y(po[0]->y, zoom, d);
+	cairo_move_to(cr, x1, y1);
+	for (i = 1; i < num; i++) {
+	  x1 = coord_conv_x(po[i]->x, zoom, d);
+	  y1 = coord_conv_y(po[i]->y, zoom, d);
 
-	cairo_line_to(cr, x1, y1);
-      }
+	  cairo_line_to(cr, x1, y1);
+	}
       }
       if (d->Mode == SingleB) {
 	fill = FALSE;
