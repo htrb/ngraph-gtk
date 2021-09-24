@@ -2865,6 +2865,26 @@ set_dash(cairo_t *cr, struct presettings *setting)
 }
 
 static void
+draw_points(cairo_t *cr, const struct Viewer *d, struct Point **po, int num, double zoom)
+{
+  int i, x1, y1;
+  for (i = 0; i < num; i++) {
+    x1 = coord_conv_x(po[i]->x, zoom, d);
+    y1 = coord_conv_y(po[i]->y, zoom, d);
+
+    cairo_move_to(cr, x1 - (POINT_LENGTH - 1), y1);
+    cairo_line_to(cr, x1 + POINT_LENGTH, y1);
+
+    cairo_move_to(cr, x1, y1 - (POINT_LENGTH - 1));
+    cairo_line_to(cr, x1, y1 + POINT_LENGTH);
+  }
+  cairo_set_dash(cr, NULL, 0, 0);
+  cairo_set_source_rgba(cr, GRAY, GRAY, GRAY, 1);
+  cairo_set_line_width(cr, 1);
+  cairo_stroke(cr);
+}
+
+static void
 ShowPoints(cairo_t *cr, const struct Viewer *d)
 {
   int num, x1, y1;
