@@ -2845,6 +2845,26 @@ ShowFocusLine(cairo_t *cr, struct Viewer *d)
 }
 
 static void
+set_dash(cairo_t *cr, struct presettings *setting)
+{
+  int style, i;
+  double dash[LINE_STYLE_ELEMENT_MAX];
+  struct line_style *line_style;
+
+  style = setting->line_style;
+  if (style == 0) {
+    cairo_set_dash(cr, NULL, 0, 0);
+    return;
+  }
+
+  line_style = FwLineStyle + style;
+  for (i = 0; i < line_style->num; i++) {
+    dash[i] = mxd2p(line_style->nlist[i]);
+  }
+  cairo_set_dash(cr, dash, line_style->num, 0);
+}
+
+static void
 ShowPoints(cairo_t *cr, const struct Viewer *d)
 {
   int num, x1, y1;
