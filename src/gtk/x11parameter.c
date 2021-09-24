@@ -1175,7 +1175,7 @@ add_save_as_default_button(struct obj_list_data *d, int row, int width)
 void
 ParameterWinUpdate(struct obj_list_data *d, int clear, int draw)
 {
-  int num, i, col;
+  int num, i, col, add_save_button;
 
   if (Menulock || Globallock)
     return;
@@ -1184,9 +1184,15 @@ ParameterWinUpdate(struct obj_list_data *d, int clear, int draw)
     return;
   }
 
+  add_save_button = FALSE;
   gtk_container_foreach(GTK_CONTAINER(d->text), remove_child, d->text);
   num = chkobjlastinst(d->obj);
   for (i = 0; i <= num; i++) {
+    int type;
+    getobj(d->obj, "type", i, 0, NULL, &type);
+    if (! add_save_button && (type != PARAMETER_TYPE_TRANSITION)) {
+      add_save_button = TRUE;
+    }
     col = create_widget(d, i, num);
   }
 
@@ -1197,6 +1203,9 @@ ParameterWinUpdate(struct obj_list_data *d, int clear, int draw)
     gtk_grid_attach(GTK_GRID(d->text), separator, 1, num, col - 4, 1);
   }
   add_button(d->text, num + 1, 0, "list-add-symbolic", _("Add"), G_CALLBACK(CmParameterAdd), NULL);
+  if (add_save_button) {
+    add_save_as_default_button(d, num + 1, col - 4);
+  }
 
   gtk_widget_show_all(GTK_WIDGET(d->text));
 }
