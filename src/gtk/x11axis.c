@@ -2376,13 +2376,15 @@ static void
 get_initial_axis_position(int *px, int *py)
 {
   double x, y;
-  int w, h;
+  int w, h, grid;
+  grid = Menulocal.grid;
   w = Menulocal.PaperWidth;
   h = Menulocal.PaperHeight;
   x = (w - Menulocal.default_axis_width) / 2;
   y = (h + Menulocal.default_axis_height) / 2;
-  * px = nround(x / 100) * 100 - Menulocal.LeftMargin;
-  * py = nround(y / 1000) * 1000 - Menulocal.TopMargin;
+  * px = nround(x / grid) * grid - Menulocal.LeftMargin;
+  grid = nround(1000.0 / grid) * grid;
+  * py = nround(y / grid) * grid - Menulocal.TopMargin;
 }
 
 void
