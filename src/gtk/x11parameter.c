@@ -1160,6 +1160,18 @@ save_as_default(GtkButton *button, gpointer user_data)
   }
 }
 
+static void
+add_save_as_default_button(struct obj_list_data *d, int row, int width)
+{
+  GtkWidget *button, *box;
+  button = gtk_button_new_with_mnemonic(_("_Save as default"));
+  g_signal_connect(button, "clicked", G_CALLBACK(save_as_default), d);
+
+  box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+  gtk_box_pack_start(GTK_BOX(box), button, FALSE, FALSE, 0);
+  gtk_grid_attach(GTK_GRID(d->text), box, 1, row, width, 1);
+}
+
 void
 ParameterWinUpdate(struct obj_list_data *d, int clear, int draw)
 {
