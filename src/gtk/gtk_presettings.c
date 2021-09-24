@@ -1945,3 +1945,27 @@ presetting_create_panel(GtkApplication *app)
   g_object_unref(builder);
   return box;
 }
+
+void
+presetting_get(struct presettings *setting)
+{
+  setting->line_width = get_line_width_setting();;
+  setting->line_style = combo_box_get_active(Widgets.line_style.widget);;
+  setting->type = combo_box_get_active(Widgets.path_type.widget);
+  setting->interpolation = setting->type - 1;
+  if (setting->type) {
+    setting->type = 1;
+  }
+  setting->join = Widgets.join;
+  setting->mark_type_begin = Widgets.mark_begin.Type;
+  setting->mark_type_end = Widgets.mark_end.Type;
+  setting->mark_type = Widgets.mark.Type;
+  setting->mark_size = gtk_spin_button_get_value(GTK_SPIN_BUTTON(Widgets.mark_size.widget)) * 100;;
+  setting->marker_begin = Widgets.marker_begin;
+  setting->marker_end = Widgets.marker_end;
+  setting->fill = Widgets.fill;
+  setting->stroke = Widgets.stroke;
+  setting->close_path = Widgets.close_path;
+  set_rgba(Widgets.color1.widget, &setting->r1, &setting->g1, &setting->b1, &setting->a1);
+  set_rgba(Widgets.color2.widget, &setting->r2, &setting->g2, &setting->b2, &setting->a2);
+}

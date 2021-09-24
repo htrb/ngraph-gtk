@@ -23,5 +23,6 @@ void presetting_set_visibility(enum PointerType type);
 void presetting_set_parameters(struct Viewer *d);
 void presetting_show_focused(void);
 void presetting_set_fonts(void);
+void presetting_get(struct presettings *setting);
 
 #endif	/* GTK_PRESETTINGS_HEADER */
