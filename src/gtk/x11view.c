@@ -3101,7 +3101,7 @@ ShowPoints(cairo_t *cr, const struct Viewer *d)
   b = setting.b1 / 255.0;
 
   cairo_save(cr);
-  lw = mxd2p(setting.line_width);
+  lw = mxd2p(setting.line_width * zoom);
   fill = setting.fill;
   stroke = setting.stroke;
   if ((setting.fill == 0 && setting.stroke == 0) || d->Mode == GaussB) {
