@@ -3015,7 +3015,7 @@ ShowFocusLine(cairo_t *cr, struct Viewer *d)
 }
 
 static void
-set_dash(cairo_t *cr, struct presettings *setting)
+set_dash(cairo_t *cr, struct presettings *setting, double zoom)
 {
   int style, i;
   double dash[LINE_STYLE_ELEMENT_MAX];
@@ -3029,7 +3029,7 @@ set_dash(cairo_t *cr, struct presettings *setting)
 
   line_style = FwLineStyle + style;
   for (i = 0; i < line_style->num; i++) {
-    dash[i] = mxd2p(line_style->nlist[i]);
+    dash[i] = mxd2p(line_style->nlist[i] * zoom);
   }
   cairo_set_dash(cr, dash, line_style->num, 0);
 }
@@ -3129,7 +3129,7 @@ ShowPoints(cairo_t *cr, const struct Viewer *d)
     r = g = b = GRAY;
     lw = 1;
   } else {
-    set_dash(cr, &setting);
+    set_dash(cr, &setting, zoom);
   }
   if (d->Mode & POINT_TYPE_DRAW1) {
     if (num >= 2) {
