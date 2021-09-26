@@ -2694,6 +2694,15 @@ show_focus_line_set_dash(cairo_t *cr, struct narray *style, double zoom)
   g_free(tmp);
 }
 
+static void
+set_support_attribute(cairo_t *cr)
+{
+  double dash[] = {DOT_LENGTH};
+  cairo_set_line_width(cr, 1);
+  cairo_set_dash(cr, dash, sizeof(dash) / sizeof(*dash), 0);
+  cairo_set_source_rgb(cr, GRAY, GRAY, GRAY);
+}
+
 {
   int x, y, rx, ry, pie_slice, fill, a1, a2, close_path;
 
