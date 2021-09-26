@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6.08.07\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2021-09-24 19:12+0900\n"
+"POT-Creation-Date: 2021-09-26 20:35+0900\n"
 "PO-Revision-Date: 2021-09-24 17:06+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -1470,7 +1470,7 @@ msgstr "データファイル作成中"
 msgid "Making data file."
 msgstr "データファイル作成中"
 
-#: src/gtk/x11file.c:5815 src/gtk/x11lgnd.c:3060 src/gtk/gtk_presettings.c:1913
+#: src/gtk/x11file.c:5815 src/gtk/x11lgnd.c:3060 src/gtk/gtk_presettings.c:1914
 msgid "Join"
 msgstr "ジョイン"
 
@@ -1763,11 +1763,11 @@ msgstr "座標(_P):"
 msgid "_Color2:"
 msgstr "色2(_C):"
 
-#: src/gtk/x11lgnd.c:1385 src/gtk/gtk_presettings.c:1924
+#: src/gtk/x11lgnd.c:1385 src/gtk/gtk_presettings.c:1925
 msgid "Marker begin"
 msgstr "始点マーカ"
 
-#: src/gtk/x11lgnd.c:1389 src/gtk/gtk_presettings.c:1930
+#: src/gtk/x11lgnd.c:1389 src/gtk/gtk_presettings.c:1931
 msgid "Marker end"
 msgstr "終点マーカ"
 
@@ -2409,7 +2409,7 @@ msgstr "説明"
 msgid "Alternative font"
 msgstr "代替フォント"
 
-#: src/gtk/x11opt.c:665 src/gtk/gtk_presettings.c:1841
+#: src/gtk/x11opt.c:665 src/gtk/gtk_presettings.c:1842
 msgid "Font name"
 msgstr "フォント"
 
@@ -2638,7 +2638,7 @@ msgstr "合成ファイルの保存"
 msgid "Making GRA file."
 msgstr "合成ファイル作成中"
 
-#: src/gtk/x11print.c:801 src/gtk/x11print.c:874 src/gtk/x11view.c:6329
+#: src/gtk/x11print.c:801 src/gtk/x11print.c:874 src/gtk/x11view.c:6482
 msgid "Drawing."
 msgstr "描画中"
 
@@ -2668,19 +2668,19 @@ msgstr "データ評価中"
 msgid "trimming (multi select)"
 msgstr "トリミング (複数選択)"
 
-#: src/gtk/x11view.c:3442
+#: src/gtk/x11view.c:3595
 msgid "Data points are moved."
 msgstr "データは移動されました."
 
-#: src/gtk/x11view.c:4774
+#: src/gtk/x11view.c:4927
 msgid "Moving data points is canceled."
 msgstr "データの移動はキャンセルされました."
 
-#: src/gtk/x11view.c:6323
+#: src/gtk/x11view.c:6476
 msgid "Scaling"
 msgstr "軸スケール設定中"
 
-#: src/gtk/x11view.c:6330
+#: src/gtk/x11view.c:6483
 msgid "Drawing"
 msgstr "描画中"
 
@@ -2813,11 +2813,11 @@ msgstr "開く"
 msgid "Instance name"
 msgstr "インスタンス名"
 
-#: src/gtk/gtk_liststore.c:163 src/gtk/gtk_presettings.c:1855
+#: src/gtk/gtk_liststore.c:163 src/gtk/gtk_presettings.c:1856
 msgid "Bold"
 msgstr "太字"
 
-#: src/gtk/gtk_liststore.c:164 src/gtk/gtk_presettings.c:1858
+#: src/gtk/gtk_liststore.c:164 src/gtk/gtk_presettings.c:1859
 msgid "Italic"
 msgstr "斜体"
 
@@ -2829,23 +2829,23 @@ msgstr "線種"
 msgid "line"
 msgstr "直線"
 
-#: src/gtk/gtk_presettings.c:1849
+#: src/gtk/gtk_presettings.c:1850
 msgid "Font size"
 msgstr "フォントサイズ"
 
-#: src/gtk/gtk_presettings.c:1875
+#: src/gtk/gtk_presettings.c:1876
 msgid "Mark size"
 msgstr "マークサイズ"
 
-#: src/gtk/gtk_presettings.c:1880
+#: src/gtk/gtk_presettings.c:1881
 msgid "stroke/fill"
 msgstr "ストローク・塗りつぶし"
 
-#: src/gtk/gtk_presettings.c:1887
+#: src/gtk/gtk_presettings.c:1888
 msgid "Line Width"
 msgstr "線幅"
 
-#: src/gtk/gtk_presettings.c:1892
+#: src/gtk/gtk_presettings.c:1893
 msgid "Line Style"
 msgstr "線種"
 

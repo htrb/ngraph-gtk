@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.09.04\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2021-09-24 19:12+0900\n"
+"POT-Creation-Date: 2021-09-26 20:35+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1437,7 +1437,7 @@ msgstr ""
 msgid "Making data file."
 msgstr ""
 
-#: src/gtk/x11file.c:5815 src/gtk/x11lgnd.c:3060 src/gtk/gtk_presettings.c:1913
+#: src/gtk/x11file.c:5815 src/gtk/x11lgnd.c:3060 src/gtk/gtk_presettings.c:1914
 msgid "Join"
 msgstr ""
 
@@ -1728,11 +1728,11 @@ msgstr ""
 msgid "_Color2:"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:1385 src/gtk/gtk_presettings.c:1924
+#: src/gtk/x11lgnd.c:1385 src/gtk/gtk_presettings.c:1925
 msgid "Marker begin"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:1389 src/gtk/gtk_presettings.c:1930
+#: src/gtk/x11lgnd.c:1389 src/gtk/gtk_presettings.c:1931
 msgid "Marker end"
 msgstr ""
 
@@ -2373,7 +2373,7 @@ msgstr ""
 msgid "Alternative font"
 msgstr ""
 
-#: src/gtk/x11opt.c:665 src/gtk/gtk_presettings.c:1841
+#: src/gtk/x11opt.c:665 src/gtk/gtk_presettings.c:1842
 msgid "Font name"
 msgstr ""
 
@@ -2602,7 +2602,7 @@ msgstr ""
 msgid "Making GRA file."
 msgstr ""
 
-#: src/gtk/x11print.c:801 src/gtk/x11print.c:874 src/gtk/x11view.c:6329
+#: src/gtk/x11print.c:801 src/gtk/x11print.c:874 src/gtk/x11view.c:6482
 msgid "Drawing."
 msgstr ""
 
@@ -2632,19 +2632,19 @@ msgstr ""
 msgid "trimming (multi select)"
 msgstr ""
 
-#: src/gtk/x11view.c:3442
+#: src/gtk/x11view.c:3595
 msgid "Data points are moved."
 msgstr ""
 
-#: src/gtk/x11view.c:4774
+#: src/gtk/x11view.c:4927
 msgid "Moving data points is canceled."
 msgstr ""
 
-#: src/gtk/x11view.c:6323
+#: src/gtk/x11view.c:6476
 msgid "Scaling"
 msgstr ""
 
-#: src/gtk/x11view.c:6330
+#: src/gtk/x11view.c:6483
 msgid "Drawing"
 msgstr ""
 
@@ -2777,11 +2777,11 @@ msgstr ""
 msgid "Instance name"
 msgstr ""
 
-#: src/gtk/gtk_liststore.c:163 src/gtk/gtk_presettings.c:1855
+#: src/gtk/gtk_liststore.c:163 src/gtk/gtk_presettings.c:1856
 msgid "Bold"
 msgstr ""
 
-#: src/gtk/gtk_liststore.c:164 src/gtk/gtk_presettings.c:1858
+#: src/gtk/gtk_liststore.c:164 src/gtk/gtk_presettings.c:1859
 msgid "Italic"
 msgstr ""
 
@@ -2793,23 +2793,23 @@ msgstr ""
 msgid "line"
 msgstr ""
 
-#: src/gtk/gtk_presettings.c:1849
+#: src/gtk/gtk_presettings.c:1850
 msgid "Font size"
 msgstr ""
 
-#: src/gtk/gtk_presettings.c:1875
+#: src/gtk/gtk_presettings.c:1876
 msgid "Mark size"
 msgstr ""
 
-#: src/gtk/gtk_presettings.c:1880
+#: src/gtk/gtk_presettings.c:1881
 msgid "stroke/fill"
 msgstr ""
 
-#: src/gtk/gtk_presettings.c:1887
+#: src/gtk/gtk_presettings.c:1888
 msgid "Line Width"
 msgstr ""
 
-#: src/gtk/gtk_presettings.c:1892
+#: src/gtk/gtk_presettings.c:1893
 msgid "Line Style"
 msgstr ""
 
