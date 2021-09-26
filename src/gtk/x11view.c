@@ -2670,7 +2670,6 @@ draw_cairo_arc(cairo_t *cr, int x, int y, int rx, int ry, int a1, int a2)
 }
 
 static void
-show_focus_line_arc(cairo_t *cr, int change, double zoom, struct objlist *obj, N_VALUE *inst, struct Viewer *d)
 show_focus_line_set_dash(cairo_t *cr, struct narray *style, double zoom)
 {
   int *data;
@@ -2703,9 +2702,51 @@ set_support_attribute(cairo_t *cr)
   cairo_set_source_rgb(cr, GRAY, GRAY, GRAY);
 }
 
+static void
+show_focus_line_common(cairo_t *cr, double zoom, struct objlist *obj, N_VALUE *inst, const struct Viewer *d, const struct Point *expo, int close_path)
 {
-  int x, y, rx, ry, pie_slice, fill, a1, a2, close_path;
+  int stroke, sr, sg, sb, fill, fr, fg, fb, width, join;
+  struct narray *style;
 
+  _getobj(obj, "fill", inst, &fill);
+  _getobj(obj, "fill_R", inst, &fr);
+  _getobj(obj, "fill_G", inst, &fg);
+  _getobj(obj, "fill_B", inst, &fb);
+  _getobj(obj, "stroke", inst, &stroke);
+  _getobj(obj, "stroke_R", inst, &sr);
+  _getobj(obj, "stroke_G", inst, &sg);
+  _getobj(obj, "stroke_B", inst, &sb);
+  _getobj(obj, "width", inst, &width);
+  _getobj(obj, "style", inst, &style);
+  _getobj(obj, "join", inst, &join);
+
+  show_focus_line_set_dash(cr, style, zoom);
+  if (stroke) {
+    cairo_set_line_join(cr, join);
+    cairo_set_line_width(cr, mxd2p(width * zoom));
+    cairo_set_source_rgba(cr, sr / 255.0, sg / 255.0, sb / 255.0, 0.5);
+    cairo_stroke_preserve(cr);
+  }
+  if (fill) {
+    if (expo) {
+      cairo_line_to(cr, expo->x, expo->y);
+    }
+    cairo_set_source_rgba(cr, fr / 255.0, fg / 255.0, fb / 255.0, 0.5);
+    cairo_fill_preserve(cr);
+  }
+  if (close_path) {
+    cairo_close_path(cr);
+  }
+  set_support_attribute(cr);
+  cairo_stroke(cr);
+}
+
+static void
+show_focus_line_arc(cairo_t *cr, int change, double zoom, struct objlist *obj, N_VALUE *inst, struct Viewer *d)
+{
+  int x, y, rx, ry, fill, pie_slice, a1, a2, close_path;
+  int stroke;
+  struct Point expo, *poptr;
   _getobj(obj, "x", inst, &x);
   _getobj(obj, "y", inst, &y);
   _getobj(obj, "rx", inst, &rx);
@@ -2714,9 +2755,12 @@ set_support_attribute(cairo_t *cr)
   _getobj(obj, "angle2", inst, &a2);
   _getobj(obj, "close_path", inst, &close_path);
   _getobj(obj, "fill", inst, &fill);
+  _getobj(obj, "stroke", inst, &stroke);
   _getobj(obj, "pieslice", inst, &pie_slice);
 
-  close_path = (close_path || fill);
+  if (! stroke) {
+    close_path = TRUE;
+  }
 
   switch (change) {
   case ARC_POINT_TYPE_R:
@@ -2732,19 +2776,28 @@ set_support_attribute(cairo_t *cr)
     break;
   }
 
+  poptr = NULL;
   if (rx > 0 && ry > 0) {
     rx = mxd2p(rx * zoom);
     ry = mxd2p(ry * zoom);
     x = coord_conv_x(x, zoom, d);
     y = coord_conv_y(y, zoom, d);
+    cairo_save(cr);
     draw_cairo_arc(cr, x, y, rx, ry, a1, a2);
     if (close_path) {
       if (pie_slice) {
 	cairo_line_to(cr, x, y);
       }
       cairo_close_path(cr);
+    } else {
+      if (pie_slice) {
+	expo.x = x;
+	expo.y = y;
+	poptr = &expo;
+      }
     }
-    cairo_stroke(cr);
+    show_focus_line_common(cr, zoom, obj, inst, d, poptr, TRUE);
+    cairo_restore(cr);
   }
 }
 
