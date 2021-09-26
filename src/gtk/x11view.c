@@ -2274,6 +2274,24 @@ GetFocusFrame(int *minx, int *miny, int *maxx, int *maxy, int ofsx, int ofsy, co
 }
 
 static void
+show_focus_elements(cairo_t *cr, const struct Viewer *d, double zoom, int *data, int num)
+{
+  int j;
+  for (j = 0; j < num; j += 2) {
+    int x1, y1;
+    x1 = coord_conv_x((data[j] + d->FrameOfsX), zoom, d);
+    y1 = coord_conv_y((data[j + 1] + d->FrameOfsY), zoom, d);
+
+    cairo_rectangle(cr,
+		    x1 - FOCUS_RECT_SIZE / 2 - CAIRO_COORDINATE_OFFSET,
+		    y1 - FOCUS_RECT_SIZE / 2 - CAIRO_COORDINATE_OFFSET,
+		    FOCUS_RECT_SIZE,
+		    FOCUS_RECT_SIZE);
+  }
+  cairo_fill(cr);
+}
+
+static void
 ShowFocusFrame(cairo_t *cr, const struct Viewer *d)
 {
   int i, j, num;
