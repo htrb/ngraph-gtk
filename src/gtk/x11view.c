@@ -2903,33 +2903,58 @@ draw_focus_curve(cairo_t *cr, int *po, int num, int intp, double zoom, const str
 }
 
 static void
-draw_focus_line(cairo_t *gc, int change, double zoom, int bboxnum, int *bbox, int close_path, const struct Viewer *d)
+draw_focus_line(cairo_t *gc, int change, double zoom, int bboxnum, int *bbox, struct objlist *obj, N_VALUE *inst, const struct Viewer *d, int axis)
 {
-  int j, ofsx, ofsy;
+  int j, ofsx, ofsy, intp, type, r;
+  int *data;
 
-  for (j = 4; j < bboxnum; j += 2) {
-    int x1, y1;
-    if (change == (j - 4) / 2) {
+  if (axis) {
+    type = 0;
+  } else {
+    _getobj(obj, "type", inst, &type);
+    _getobj(obj, "interpolation", inst, &intp);
+  }
+  data = g_malloc(sizeof(*data) * (bboxnum - 4));
+  if (data == NULL) {
+    return;
+  }
+
+  for (j = 0; j < bboxnum - 4; j += 2) {
+    if (change == j / 2) {
       ofsx = d->LineX;
       ofsy = d->LineY;
     } else {
       ofsx = 0;
       ofsy = 0;
     }
-
-    x1 = coord_conv_x(bbox[j] + ofsx, zoom, d);
-    y1 = coord_conv_y(bbox[j + 1] + ofsy, zoom, d);
-    if (j == 4) {
-      cairo_move_to(gc, x1, y1);
-    } else {
-      cairo_line_to(gc, x1, y1);
+    data[j] = bbox[j + 4] + ofsx;
+    data[j + 1] = bbox[j + 5] + ofsy;
+  }
+  r = TRUE;
+  if (type) {
+    r = draw_focus_curve(gc, data, bboxnum - 4, intp, zoom, d);
+  }
+  if (r) {
+    for (j = 0; j < bboxnum - 4; j += 2) {
+      int x1, y1;
+      x1 = coord_conv_x(data[j], zoom, d);
+      y1 = coord_conv_y(data[j + 1], zoom, d);
+      if (j == 0) {
+	cairo_move_to(gc, x1, y1);
+      } else {
+	cairo_line_to(gc, x1, y1);
+      }
     }
   }
-
-  if (close_path) {
-    cairo_close_path(gc);
+  if (axis) {
+    set_support_attribute(gc);
+    cairo_stroke(gc);
+  } else {
+    show_focus_line_common(gc, zoom, obj, inst, d, NULL, TRUE);
+    set_support_attribute(gc);
+    show_focus_elements(gc, d, zoom, data, bboxnum - 4);
   }
-  cairo_stroke(gc);
+  g_free(data);
 }
 
 static void
@@ -2975,12 +3000,7 @@ ShowFocusLine(cairo_t *cr, struct Viewer *d)
   } else if (focus[0]->obj == chkobject("arc")) {
     show_focus_line_arc(cr, d->ChangePoint, zoom, focus[0]->obj, inst, d);
   } else if (focus[0]->obj == chkobject("path")) {
-    int close_path, fill;
-
-    _getobj(focus[0]->obj, "close_path", inst, &close_path);
-    _getobj(focus[0]->obj, "fill", inst, &fill);
-    close_path = (close_path || fill);
-    draw_focus_line(cr, d->ChangePoint, zoom, bboxnum, bbox, close_path, d);
+    draw_focus_line(cr, d->ChangePoint, zoom, bboxnum, bbox, focus[0]->obj, inst, d, FALSE);
   } else if (focus[0]->obj == chkobject("axis")) {
     _getobj(focus[0]->obj, "group", inst, &group);
     if (group && group[0] != 'a') {
