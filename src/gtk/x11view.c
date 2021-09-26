@@ -2294,7 +2294,7 @@ show_focus_elements(cairo_t *cr, const struct Viewer *d, double zoom, int *data,
 static void
 ShowFocusFrame(cairo_t *cr, const struct Viewer *d)
 {
-  int i, j, num;
+  int i, num;
   struct FocusObj **focus;
   struct narray *abbox;
   int bboxnum;
@@ -2394,18 +2394,7 @@ ShowFocusFrame(cairo_t *cr, const struct Viewer *d)
 
       bboxnum = arraynum(abbox);
       bbox = arraydata(abbox);
-
-      for (j = 4; j < bboxnum; j += 2) {
-	x1 = coord_conv_x((bbox[j] + d->FrameOfsX), zoom, d);
-	y1 = coord_conv_y((bbox[j + 1] + d->FrameOfsY), zoom, d);
-
-	cairo_rectangle(cr,
-			x1 - FOCUS_RECT_SIZE / 2 - CAIRO_COORDINATE_OFFSET,
-			y1 - FOCUS_RECT_SIZE / 2 - CAIRO_COORDINATE_OFFSET,
-			FOCUS_RECT_SIZE,
-			FOCUS_RECT_SIZE);
-      }
-      cairo_fill(cr);
+      show_focus_elements(cr, d, zoom, bbox + 4, bboxnum - 4);
     }
   }
 
