@@ -2671,6 +2671,29 @@ draw_cairo_arc(cairo_t *cr, int x, int y, int rx, int ry, int a1, int a2)
 
 static void
 show_focus_line_arc(cairo_t *cr, int change, double zoom, struct objlist *obj, N_VALUE *inst, struct Viewer *d)
+show_focus_line_set_dash(cairo_t *cr, struct narray *style, double zoom)
+{
+  int *data;
+  double *tmp;
+  int i, n;
+
+  n = arraynum(style);
+  if (n < 2) {
+    cairo_set_dash(cr, NULL, 0, 0);
+    return;
+  }
+  tmp = g_malloc(sizeof(*tmp) * n);
+  if (tmp == NULL) {
+    return;
+  }
+  data = arraydata(style);
+  for (i = 0; i < n; i++) {
+    tmp[i] = mxd2p(data[i] * zoom);
+  }
+  cairo_set_dash(cr, tmp, n, 0);
+  g_free(tmp);
+}
+
 {
   int x, y, rx, ry, pie_slice, fill, a1, a2, close_path;
 
