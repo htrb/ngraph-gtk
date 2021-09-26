@@ -2875,6 +2875,31 @@ draw_curve_common(cairo_t *cr, int *data, int num, int intp)
   return 0;
 }
 
+static int
+draw_focus_curve(cairo_t *cr, int *po, int num, int intp, double zoom, const struct Viewer *d)
+{
+  int *data;
+  int i, r;
+  if (num < 6) {
+    return 1;
+  }
+  if (po[num - 1] == po[num - 3] && po[num -2] == po[num - 4]) {
+    num -= 2;
+    if (num < 6) {
+      return 1;
+    }
+  }
+  data = g_malloc(sizeof(*data) * num);
+  if (data == NULL) {
+    return 1;
+  }
+  for (i = 0; i < num / 2; i++) {
+    data[i * 2] = coord_conv_x(po[i * 2], zoom, d);
+    data[i * 2 + 1] = coord_conv_y(po[i * 2 + 1], zoom, d);
+  }
+  r = draw_curve_common(cr, data, num / 2, intp);
+  g_free(data);
+  return r;
 }
 
 static void
