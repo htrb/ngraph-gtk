@@ -2849,6 +2849,32 @@ draw_frame_rect(cairo_t *gc, int change, double zoom, int *bbox, struct objlist 
   }
 }
 
+static int
+draw_curve_common(cairo_t *cr, int *data, int num, int intp)
+{
+  struct narray expand_points;
+  int *cdata;
+  int r, n, i;
+  arrayinit(&expand_points, sizeof(int));
+  r = curve_expand_points(data, num, intp, &expand_points);
+  if (r) {
+    return 1;
+  }
+  n = arraynum(&expand_points) / 2;
+  if (n < 1) {
+    arraydel(&expand_points);
+    g_free(data);
+    return 1;
+  }
+  cdata = arraydata(&expand_points);
+  cairo_move_to(cr, cdata[0], cdata[1]);
+  for (i = 1; i < n; i += 1) {
+    cairo_line_to(cr, cdata[i * 2], cdata[i * 2 + 1]);
+  }
+  arraydel(&expand_points);
+  return 0;
+}
+
 }
 
 static void
