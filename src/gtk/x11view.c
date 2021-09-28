@@ -2950,7 +2950,10 @@ draw_focus_line(cairo_t *gc, int change, double zoom, int bboxnum, int *bbox, st
     set_support_attribute(gc);
     cairo_stroke(gc);
   } else {
-    show_focus_line_common(gc, zoom, obj, inst, NULL, TRUE);
+    int fill, close_path;
+    _getobj(obj, "fill", inst, &fill);
+    _getobj(obj, "close_path", inst, &close_path);
+    show_focus_line_common(gc, zoom, obj, inst, NULL, fill || close_path);
     set_support_attribute(gc);
     show_focus_elements(gc, d, zoom, data, bboxnum - 4);
   }
