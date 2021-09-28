@@ -3174,9 +3174,10 @@ ShowPoints(cairo_t *cr, const struct Viewer *d)
     }
   } else {
     if (num >= 1) {
-      int line, i;
+      int line;
       line = draw_points_curve(cr, d, po, num, setting.interpolation, zoom);
       if (line) {
+        int i;
 	x1 = coord_conv_x(po[0]->x, zoom, d);
 	y1 = coord_conv_y(po[0]->y, zoom, d);
 	cairo_move_to(cr, x1, y1);
