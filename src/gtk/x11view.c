@@ -3040,8 +3040,9 @@ set_dash(cairo_t *cr, struct presettings *setting, double zoom)
 static void
 draw_points(cairo_t *cr, const struct Viewer *d, struct Point **po, int num, double zoom)
 {
-  int i, x1, y1;
+  int i;
   for (i = 0; i < num; i++) {
+    int x1, y1;
     x1 = coord_conv_x(po[i]->x, zoom, d);
     y1 = coord_conv_y(po[i]->y, zoom, d);
 
