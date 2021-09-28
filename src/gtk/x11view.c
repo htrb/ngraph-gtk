@@ -2703,7 +2703,7 @@ set_support_attribute(cairo_t *cr)
 }
 
 static void
-show_focus_line_common(cairo_t *cr, double zoom, struct objlist *obj, N_VALUE *inst, const struct Viewer *d, const struct Point *expo, int close_path)
+show_focus_line_common(cairo_t *cr, double zoom, struct objlist *obj, N_VALUE *inst, const struct Point *expo, int close_path)
 {
   int stroke, sr, sg, sb, fill, fr, fg, fb, width, join;
   struct narray *style;
@@ -2796,7 +2796,7 @@ show_focus_line_arc(cairo_t *cr, int change, double zoom, struct objlist *obj, N
 	poptr = &expo;
       }
     }
-    show_focus_line_common(cr, zoom, obj, inst, d, poptr, TRUE);
+    show_focus_line_common(cr, zoom, obj, inst, poptr, TRUE);
     cairo_restore(cr);
   }
 }
@@ -2845,7 +2845,7 @@ draw_frame_rect(cairo_t *gc, int change, double zoom, int *bbox, struct objlist 
     set_support_attribute(gc);
     cairo_stroke(gc);
   } else {
-    show_focus_line_common(gc, zoom, obj, inst, d, NULL, FALSE);
+    show_focus_line_common(gc, zoom, obj, inst, NULL, FALSE);
   }
 }
 
@@ -2950,7 +2950,7 @@ draw_focus_line(cairo_t *gc, int change, double zoom, int bboxnum, int *bbox, st
     set_support_attribute(gc);
     cairo_stroke(gc);
   } else {
-    show_focus_line_common(gc, zoom, obj, inst, d, NULL, TRUE);
+    show_focus_line_common(gc, zoom, obj, inst, NULL, TRUE);
     set_support_attribute(gc);
     show_focus_elements(gc, d, zoom, data, bboxnum - 4);
   }
