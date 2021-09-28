@@ -3068,7 +3068,7 @@ draw_points_curve(cairo_t *cr, const struct Viewer *d, struct Point **po, int nu
   }
   if (po[num -1]->x == po[num - 2]->x && po[num -1]->y == po[num - 2]->y) {
     num--;
-    if (num < 3 || intp < 0) {
+    if (num < 3) {
       return 1;
     }
   }
