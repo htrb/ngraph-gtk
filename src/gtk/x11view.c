@@ -153,8 +153,10 @@ static void CheckGrid(int ofs, unsigned int state, int *x, int *y, double *zoom_
 static int check_drawrable(struct objlist *obj);
 static void GetLargeFrame(int *minx, int *miny, int *maxx, int *maxy, const struct Viewer *d);
 static int zoom_focused_obj(int x, int y, double zoom_x, double zoom_y, char **objs, struct Viewer *d);
+static void draw_focused_obj(struct Viewer *d);
 static int search_axis_group(struct objlist *obj, int id, const char *group, int *findX, int *findY, int *findU, int *findR, int *findG, int *idx, int *idy, int *idu, int *idr, int *idg);
 static void clear_focus_obj_pix(struct Viewer *d);
+static void draw_focused_move(cairo_t *cr, double zoom, struct Viewer *d);
 
 #define GRAY 0.5
 #define DOT_LENGTH 4.0
