@@ -146,7 +146,7 @@ static void clear_focus_obj(const struct Viewer *d);
 static void ViewDelete(void);
 static int text_dropped(const char *str, gint x, gint y, struct Viewer *d);
 static int add_focus_obj(struct narray *focusobj, struct objlist *obj, int oid);
-static void ShowFocusFrame(cairo_t *cr, const struct Viewer *d);
+static void ShowFocusFrame(cairo_t *cr, struct Viewer *d);
 static void RotateFocusedObj(int direction);
 static void set_mouse_cursor_hover(struct Viewer *d, int x, int y);
 static void CheckGrid(int ofs, unsigned int state, int *x, int *y, double *zoom_x, double *zoom_y);
@@ -2295,7 +2295,7 @@ show_focus_elements(cairo_t *cr, const struct Viewer *d, double zoom, int *data,
 }
 
 static void
-ShowFocusFrame(cairo_t *cr, const struct Viewer *d)
+ShowFocusFrame(cairo_t *cr, struct Viewer *d)
 {
   int i, num;
   struct FocusObj **focus;
@@ -2401,6 +2401,9 @@ ShowFocusFrame(cairo_t *cr, const struct Viewer *d)
     }
   }
 
+  if (d->MouseMode ==  MOUSEDRAG && (d->FrameOfsX  || d->FrameOfsY)) {
+    draw_focused_move(cr, zoom, d);
+  }
   restorestdio(&save);
 }
 
