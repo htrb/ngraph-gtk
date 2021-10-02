@@ -3221,6 +3221,42 @@ ShowPoints(cairo_t *cr, const struct Viewer *d)
 }
 
 static void
+draw_focused_axis(struct objlist *obj, int id, int argc, char **argv)
+{
+  int idx, idy, idu, idr, idg;
+  int findX, findY, findU, findR, findG;
+  char type;
+  char *group;
+
+  getobj(obj, "group", id, 0, NULL, &group);
+  if (group == NULL || group[0] == 'a') {
+    exeobj(obj, "draw", id, argc, argv);
+    return;
+  }
+
+  type = search_axis_group(obj, id, group,
+			   &findX, &findY, &findU, &findR, &findG,
+			   &idx, &idy, &idu, &idr, &idg);
+  if (findX) {
+    exeobj(obj, "draw", idx, argc, argv);
+  }
+  if (findY) {
+    exeobj(obj, "draw", idy, argc, argv);
+  }
+  if (findU) {
+    exeobj(obj, "draw", idu, argc, argv);
+  }
+  if (findR) {
+    exeobj(obj, "draw", idr, argc, argv);
+  }
+  if (findG) {
+    struct objlist *dobj;
+    dobj = chkobject("axisgrid");
+    exeobj(dobj, "draw", idg, argc, argv);
+  }
+}
+
+static void
 ShowFrameRect(cairo_t *cr, const struct Viewer *d)
 {
   int x1, y1, x2, y2;
