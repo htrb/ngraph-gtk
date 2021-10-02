@@ -1602,6 +1602,7 @@ ViewerWinSetup(void)
   height = gdk_window_get_height(win);
   d->cx = width / 2;
   d->cy = height / 2;
+  d->focused_pix = NULL;
 
   d->hscroll = gtk_range_get_value(GTK_RANGE(d->HScroll));
   d->vscroll = gtk_range_get_value(GTK_RANGE(d->VScroll));
