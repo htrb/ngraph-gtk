@@ -79,7 +79,7 @@ gra2gdk_create_pixmap(struct gra2cairo_local *local, int w, int h, double r, dou
   cairo_t *cairo;
   cairo_surface_t *pix;
 
-  pix = cairo_image_surface_create(CAIRO_FORMAT_RGB24, w, h);
+  pix = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, w, h);
   cairo = cairo_create(pix);
 
   if (cairo_status(cairo) != CAIRO_STATUS_SUCCESS) {
