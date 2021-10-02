@@ -3402,7 +3402,7 @@ draw_focused_move(cairo_t *cr, double zoom, struct Viewer *d)
 }
 
 static void
-ShowFrameRect(cairo_t *cr, const struct Viewer *d)
+ShowFrameRect(cairo_t *cr, struct Viewer *d)
 {
   int x1, y1, x2, y2;
   double zoom;
@@ -3414,6 +3414,17 @@ ShowFrameRect(cairo_t *cr, const struct Viewer *d)
   }
 
   zoom = Menulocal.PaperZoom / 10000.0;
+
+  if (d->zoom_prm.focused > 0) {
+    d->ZoomX = d->zoom_prm.scale;
+    d->ZoomY = d->zoom_prm.scale;
+    draw_focused_zoom(cr, d->zoom_prm.x, d->zoom_prm.y, zoom, d);
+  } else if (d->MouseMode == MOUSEZOOM1 ||
+	     d->MouseMode == MOUSEZOOM2 ||
+	     d->MouseMode == MOUSEZOOM3 ||
+	     d->MouseMode == MOUSEZOOM4) {
+    draw_focused_zoom(cr, d->MouseX1, d->MouseY1, zoom, d);
+  }
 
   cairo_set_source_rgb(cr, GRAY, GRAY, GRAY);
   cairo_set_dash(cr, dash, sizeof(dash) / sizeof(*dash), 0);
