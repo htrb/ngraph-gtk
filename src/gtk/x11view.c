@@ -49,6 +49,7 @@
 #include "x11gui.h"
 #include "x11dialg.h"
 #include "ogra2cairo.h"
+#include "ogra2gdk.h"
 #include "ox11menu.h"
 #include "x11menu.h"
 #include "x11graph.h"
