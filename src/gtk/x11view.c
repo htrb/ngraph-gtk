@@ -142,7 +142,7 @@ static int get_mouse_cursor_type(struct Viewer *d, int x, int y);
 static void reorder_object(enum object_move_type type);
 static void SetHRuler(const struct Viewer *d);
 static void SetVRuler(const struct Viewer *d);
-static void clear_focus_obj(const struct Viewer *d);
+static void clear_focus_obj(struct Viewer *d);
 static void ViewDelete(void);
 static int text_dropped(const char *str, gint x, gint y, struct Viewer *d);
 static int add_focus_obj(struct narray *focusobj, struct objlist *obj, int oid);
@@ -6280,10 +6280,11 @@ add_focus_obj(struct narray *focusobj, struct objlist *obj, int oid)
 }
 
 static void
-clear_focus_obj(const struct Viewer *d)
+clear_focus_obj(struct Viewer *d)
 {
   arraydel2(d->focusobj);
   set_toolbox_mode(TOOLBOX_MODE_TOOLBAR);
+  clear_focus_obj_pix(d);
 }
 
 static int
