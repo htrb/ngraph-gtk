@@ -39,6 +39,7 @@ struct gra2cairo_local {
   cairo_t *cairo;
   PangoLayout *layout;
   int linetonum, text2path, antialias, use_opacity;
+  double force_opacity;
   struct fontmap *loadfont;
   char *fontalias;
   int font_style, symbol;
