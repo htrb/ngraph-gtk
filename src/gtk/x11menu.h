@@ -194,6 +194,7 @@ struct Viewer
   struct DragPrm drag_prm;
   struct DecelerationPrm deceleration_prm;
   struct ScrollPrm scroll_prm;
+  cairo_surface_t *focused_pix;
 };
 
 enum SubWinType {
