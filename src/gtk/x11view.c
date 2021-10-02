@@ -3268,6 +3268,43 @@ clear_focus_obj_pix(struct Viewer *d)
 }
 
 static void
+draw_focused_each_obj(struct Viewer *d, int GC)
+{
+  char *argv[2];
+  struct objlist *aobj;
+  struct savedstdio save;
+  int i, num;
+  aobj = getobject("axis");
+  argv[0]=(char *)&GC;
+  argv[1]=NULL;
+  ignorestdio(&save);
+  num = arraynum(d->focusobj);
+  for (i = 0; i < num; i++) {
+    struct FocusObj *focus;
+    struct objlist *obj;
+    N_VALUE *inst;
+    int id;
+    focus = *(struct FocusObj **) arraynget(d->focusobj, i);
+    if (focus == NULL) {
+      continue;
+    }
+    inst = chkobjinstoid(focus->obj, focus->oid);
+    if (inst == NULL) {
+      continue;
+    }
+    obj = focus->obj;
+    _getobj(obj, "id", inst, &id);
+    if (obj == aobj) {
+      draw_focused_axis(obj, id, 1, argv);
+    } else {
+      exeobj(obj, "draw", id, 1, argv);
+    }
+  }
+  _GRAclose(GC);
+  restorestdio(&save);
+}
+
+static void
 ShowFrameRect(cairo_t *cr, const struct Viewer *d)
 {
   int x1, y1, x2, y2;
