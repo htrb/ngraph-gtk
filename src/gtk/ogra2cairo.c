@@ -1134,6 +1134,13 @@ gra2cairo_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
     cairo_set_line_join(local->cairo, join);
     break;
   case 'G':
+    if (local->force_opacity && cpar[0] > 3) {
+      cairo_set_source_rgba(local->cairo,
+			    cpar[1] / 255.0,
+			    cpar[2] / 255.0,
+			    cpar[3] / 255.0,
+			    local->force_opacity);
+    } else {
     if (local->use_opacity && cpar[0] > 3 && cpar[4] < 255) {
       cairo_set_source_rgba(local->cairo,
 			    cpar[1] / 255.0,
@@ -1145,6 +1152,7 @@ gra2cairo_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
 			   cpar[1] / 255.0,
 			   cpar[2] / 255.0,
 			   cpar[3] / 255.0);
+    }
     }
     break;
   case 'M':
