@@ -3377,6 +3377,25 @@ draw_focused_zoom(cairo_t *cr, int px, int py, double zoom, struct Viewer *d)
 }
 
 static void
+draw_focused_move(cairo_t *cr, double zoom, struct Viewer *d)
+{
+  int x, y;
+
+  if (d->focused_pix == NULL) {
+    draw_focused_obj(d);
+    if (d->focused_pix == NULL) {
+      return;
+    }
+  }
+  x = mxd2p(d->FrameOfsX) * zoom;
+  y = mxd2p(d->FrameOfsY) * zoom;
+  cairo_set_source_surface(cr, d->focused_pix,
+			   nround(- d->hscroll + d->cx + x),
+			   nround(- d->vscroll + d->cy + y));
+  cairo_paint(cr);
+}
+
+static void
 ShowFrameRect(cairo_t *cr, const struct Viewer *d)
 {
   int x1, y1, x2, y2;
