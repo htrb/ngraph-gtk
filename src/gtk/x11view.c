@@ -3305,6 +3305,51 @@ draw_focused_each_obj(struct Viewer *d, int GC)
 }
 
 static void
+draw_focused_obj(struct Viewer *d)
+{
+  cairo_surface_t *pix;
+  int GC, id, found, output, w, h, num, dpi, a;
+  struct objlist *obj, *robj;
+  N_VALUE *inst;
+  struct gra2cairo_local *local;
+
+  num = arraynum(d->focusobj);
+  if (num < 1) {
+    return;
+  }
+  found = find_gra2gdk_inst(&obj, &inst, &robj, &output, &local);
+  if (! found) {
+    return;
+  }
+
+  if (getobj(Menulocal.obj, "dpi", 0, 0, NULL, &dpi) == -1) {
+    return;
+  }
+  w = cairo_image_surface_get_width(Menulocal.bg);
+  h = cairo_image_surface_get_height(Menulocal.bg);
+  pix = gra2gdk_create_pixmap(local, w, h, -1, -1, -1);
+  if (pix == NULL) {
+    return;
+  }
+  _getobj(obj, "id", inst, &id);
+  a = 128;
+  putobj(obj, "force_opacity", id, &a);
+  putobj(obj, "dpi", id, &dpi);
+  GC = _GRAopen("gra2gdk", "_output", robj, inst, output, -1, -1, -1, NULL, local);
+  if (GC < 0) {
+    cairo_surface_destroy(pix);
+    return;
+  }
+  GRAinit(GC, Menulocal.LeftMargin, Menulocal.TopMargin, Menulocal.PaperWidth, Menulocal.PaperHeight, Menulocal.PaperZoom);
+  GRAview(GC, 0, 0, Menulocal.PaperWidth, Menulocal.PaperHeight, 0);
+  draw_focused_each_obj(d, GC);
+  if (d->focused_pix) {
+    cairo_surface_destroy(d->focused_pix);
+  }
+  d->focused_pix = pix;
+}
+
+static void
 ShowFrameRect(cairo_t *cr, const struct Viewer *d)
 {
   int x1, y1, x2, y2;
