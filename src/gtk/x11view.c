@@ -3350,6 +3350,33 @@ draw_focused_obj(struct Viewer *d)
 }
 
 static void
+draw_focused_zoom(cairo_t *cr, int px, int py, double zoom, struct Viewer *d)
+{
+  cairo_pattern_t *pattern;
+  cairo_matrix_t matrix;
+  int cx, cy;
+
+  if (d->focused_pix == NULL) {
+    draw_focused_obj(d);
+    if (d->focused_pix == NULL) {
+      return;
+    }
+  }
+  cx = coord_conv_x(px, zoom, d);
+  cy = coord_conv_y(py, zoom, d);
+  pattern = cairo_pattern_create_for_surface(d->focused_pix);
+  cairo_matrix_init_identity(&matrix);
+  cairo_matrix_translate(&matrix,
+			 cx + d->hscroll - d->cx - cx / d->ZoomX,
+			 cy + d->vscroll - d->cy - cy / d->ZoomY);
+  cairo_matrix_scale(&matrix, 1.0 / d->ZoomX, 1.0 / d->ZoomY);
+  cairo_set_source(cr, pattern);
+  cairo_pattern_set_matrix(pattern, &matrix);
+  cairo_paint(cr);
+  cairo_pattern_destroy(pattern);
+}
+
+static void
 ShowFrameRect(cairo_t *cr, const struct Viewer *d)
 {
   int x1, y1, x2, y2;
