@@ -2131,6 +2131,18 @@ draw_numbering_normalize(int GC, int side, const struct axis_config *aconf,
     maxlen=abs(fy1-fy0);
 
   gx0=aconf->x0+(aconf->length+maxlen*1.2)*cos(aconf->dir);
+  switch (ndir) {
+  case AXIS_NUM_POS_HORIZONTAL:
+    if (abs(aconf->direction) > 30 && abs(aconf->direction - 18000) > 30) {
+      maxlen = abs(fy1-fy0);
+    }
+    break;
+  case AXIS_NUM_POS_PARALLEL1:
+  case AXIS_NUM_POS_PARALLEL2:
+    break;
+  default:
+    maxlen = abs(fy1-fy0);
+  }
   gy0=aconf->y0-(aconf->length+maxlen*1.2)*sin(aconf->dir);
   gx0=gx0-sy*sin(aconf->dir)+sx*cos(aconf->dir)+dlx2;
   gy0=gy0-sy*cos(aconf->dir)-sx*sin(aconf->dir)+dly2;
