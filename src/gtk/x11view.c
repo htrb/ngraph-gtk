@@ -1506,8 +1506,10 @@ zoom_end(GtkGesture *gesture, GdkEventSequence *sequence, gpointer user_data)
   d->ShowFrame = TRUE;
   clear_focus_obj_pix(d);
   if (zoom_focused_obj(d->zoom_prm.x, d->zoom_prm.y, d->zoom_prm.scale, d->zoom_prm.scale, objs, d)) {
+    d->zoom_prm.focused = 0;
     return;
   }
+  d->zoom_prm.focused = 0;
   UpdateAll(objs);
 }
 
