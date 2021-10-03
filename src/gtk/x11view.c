@@ -4576,6 +4576,7 @@ ViewerEvLButtonUp(unsigned int state, TPoint *point, struct Viewer *d)
     mouse_up_lgend2(state, point, zoom, d);
   }
 
+  clear_focus_obj_pix(d);
   set_focus_sensitivity(d);
 
   return TRUE;
