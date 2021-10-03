@@ -107,6 +107,7 @@ static struct objtable gra2gdk[] = {
   {"init", NVFUNC, NEXEC, g2g_init, NULL, 0},
   {"done", NVFUNC, NEXEC, g2g_done, NULL, 0},
   {"next", NPOINTER, 0, NULL, NULL, 0},
+  {"force_opacity", NINT, NREAD | NWRITE, oputcolor, NULL,0},
 };
 
 #define TBLNUM (sizeof(gra2gdk) / sizeof(*gra2gdk))
