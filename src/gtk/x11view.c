@@ -3621,6 +3621,8 @@ init_zoom(unsigned int state, struct Viewer *d)
   double zoom_x, zoom_y;
 
   d->ShowFrame = FALSE;
+  d->ZoomX = 1;
+  d->ZoomY = 1;
   d->MouseDX = d->RefX2 - d->MouseX1;
   d->MouseDY = d->RefY2 - d->MouseY1;
 
