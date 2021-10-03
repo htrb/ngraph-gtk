@@ -7374,5 +7374,6 @@ CmEditMenuCB(void *w, gpointer client_data)
     reorder_object(OBJECT_MOVE_TYPE_LAST);
     break;
   }
+  clear_focus_obj_pix(&(NgraphApp.Viewer));
   set_focus_sensitivity(&(NgraphApp.Viewer));
 }
