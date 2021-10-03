@@ -167,6 +167,9 @@ calc_zoom_direction(int direction, double zx, double zy, double *zp, double *zn)
     } else {
       new_dir = 27000;
     }
+  } else if (x < 0) {
+    new_dir = atan(y / x) / MPI * 18000 + 18000;
+    new_dir %= 36000;
   } else {
     new_dir = atan(y / x) / MPI * 18000;
   }
