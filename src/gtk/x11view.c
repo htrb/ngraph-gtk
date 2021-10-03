@@ -6039,6 +6039,7 @@ ViewerEvKeyUp(GtkEventControllerKey *controller, guint keyval, guint keycode, Gd
     if (axis) {
       add_data_grid_to_objs(objs);
     }
+    clear_focus_obj_pix(&NgraphApp.Viewer);
     UpdateAll(objs);
     d->MouseMode = MOUSENONE;
 #if CLEAR_DRAG_INFO
