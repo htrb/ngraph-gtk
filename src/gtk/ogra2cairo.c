@@ -1468,26 +1468,6 @@ use_opacity(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
   return 0;
 }
 
-static int
-force_opacity(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
-	      char **argv)
-{
-  struct gra2cairo_local *local;
-  int a;
-
-  if (_getobj(obj, "_local", inst, &local))
-    return 1;
-
-  a = * (int *) argv[2];
-  if (a <= 0) {
-    local->force_opacity = 0;
-  } else if (a < 256) {
-    local->force_opacity = a / 255.0;
-  }
-
-  return 0;
-}
-
 static struct objtable gra2cairo[] = {
   {"init", NVFUNC, 0, gra2cairo_init, NULL, 0},
   {"done", NVFUNC, 0, gra2cairo_done, NULL, 0},
