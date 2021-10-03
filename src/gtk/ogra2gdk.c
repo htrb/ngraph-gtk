@@ -21,6 +21,7 @@
 
 #include "x11gui.h"
 #include "ogra2cairo.h"
+#include "oroot.h"
 
 #define NAME "gra2gdk"
 #define PARENT "gra2cairo"
