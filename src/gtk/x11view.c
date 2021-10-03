@@ -3314,7 +3314,7 @@ static void
 draw_focused_obj(struct Viewer *d)
 {
   cairo_surface_t *pix;
-  int GC, id, found, output, w, h, num, dpi, a;
+  int GC, id, found, output, w, h, num, dpi, dpi_org, a;
   struct objlist *obj, *robj;
   N_VALUE *inst;
   struct gra2cairo_local *local;
@@ -3340,6 +3340,7 @@ draw_focused_obj(struct Viewer *d)
   _getobj(obj, "id", inst, &id);
   a = 128;
   putobj(obj, "force_opacity", id, &a);
+  getobj(obj, "dpi", id, 0, NULL, &dpi_org);
   putobj(obj, "dpi", id, &dpi);
   GC = _GRAopen("gra2gdk", "_output", robj, inst, output, -1, -1, -1, NULL, local);
   if (GC < 0) {
@@ -3349,6 +3350,10 @@ draw_focused_obj(struct Viewer *d)
   GRAinit(GC, Menulocal.LeftMargin, Menulocal.TopMargin, Menulocal.PaperWidth, Menulocal.PaperHeight, Menulocal.PaperZoom);
   GRAview(GC, 0, 0, Menulocal.PaperWidth, Menulocal.PaperHeight, 0);
   draw_focused_each_obj(d, GC);
+  a = 0;
+  putobj(obj, "force_opacity", id, &a);
+  putobj(obj, "dpi", id, &dpi_org);
+  _GRAclose(GC);
   if (d->focused_pix) {
     cairo_surface_destroy(d->focused_pix);
   }
