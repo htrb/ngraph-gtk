@@ -3,8 +3,10 @@ Encoding.default_external = Encoding.default_internal = Encoding::UTF_8
 require 'ngraph'
 
 class Presentation
-  TITLE_BG   = [255, 245, 167, 255]
-  TITLE_LINE = [  0, 204, 129, 255]
+  RGBA = Struct.new(:r, :g, :b, :a)
+  TITLE_FG   = RGBA.new(  0,   0,   0, 255)
+  TITLE_BG   = RGBA.new(255, 245, 167, 255)
+  TITLE_LINE = RGBA.new(  0, 204, 129, 255)
   ENUM_COLOR = [  0,  78, 162].inject("") {|r, v| r + sprintf("%02x", v)}
   ENUM_CHAR  = "✵➢✲✔".chars
   LINE_SPACE = "%N{4}"
@@ -233,10 +235,10 @@ class Presentation
   def create_title_path
     path = Ngraph::Path.new
 
-    path.stroke_r = TITLE_LINE[0]
-    path.stroke_g = TITLE_LINE[1]
-    path.stroke_b = TITLE_LINE[2]
-    path.stroke_a = TITLE_LINE[3]
+    path.stroke_r = TITLE_LINE.r
+    path.stroke_g = TITLE_LINE.g
+    path.stroke_b = TITLE_LINE.b
+    path.stroke_a = TITLE_LINE.a
 
     path.width = 300
     path.join = Ngraph::Path::Join::ROUND
@@ -250,6 +252,10 @@ class Presentation
     text.x = @title_x
     text.y = @title_y
     text.pt = @title_text_size
+    text.r = TITLE_FG.r
+    text.g = TITLE_FG.g
+    text.b = TITLE_FG.b
+    text.a = TITLE_FG.a
 
     margin_x = 600
     margin_y = 200
@@ -282,10 +288,10 @@ class Presentation
 
     rectangle.x2 = x1
     rectangle.y2 = y2
-    rectangle.fill_r = TITLE_BG[0]
-    rectangle.fill_g = TITLE_BG[1]
-    rectangle.fill_b = TITLE_BG[2]
-    rectangle.fill_a = TITLE_BG[3]
+    rectangle.fill_r = TITLE_BG.r
+    rectangle.fill_g = TITLE_BG.g
+    rectangle.fill_b = TITLE_BG.b
+    rectangle.fill_a = TITLE_BG.a
     rectangle.fill = true
     rectangle.stroke = false
 
