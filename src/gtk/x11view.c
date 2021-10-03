@@ -6288,6 +6288,7 @@ add_focus_obj(struct narray *focusobj, struct objlist *obj, int oid)
   arrayadd(focusobj, &focus);
 
   set_toolbox_mode_by_focus_obj(&NgraphApp.Viewer);
+  clear_focus_obj_pix(&NgraphApp.Viewer);
   return TRUE;
 }
 
