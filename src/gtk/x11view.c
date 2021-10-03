@@ -3905,19 +3905,21 @@ draw_zoom(cairo_t *cr, struct Viewer *d)
   cairo_matrix_t matrix;
   double scale;
 
-  cairo_set_source_surface(cr, Menulocal.bg,
-			   nround(- d->hscroll + d->cx),
-			   nround(- d->vscroll + d->cy));
-  cairo_paint(cr);
-
-  pattern = cairo_pattern_create_for_surface(Menulocal.pix);
-  cairo_set_source(cr, pattern);
   scale = 1.0 / check_dpi_zoom_scale(d->zoom_prm.dpi, d->zoom_prm.scale);
   cairo_matrix_init(&matrix,
 		    scale, 0,
 		    0, scale,
 		    d->zoom_prm.x + d->hscroll - d->cx - d->zoom_prm.x * scale,
 		    d->zoom_prm.y + d->vscroll - d->cy - d->zoom_prm.y * scale);
+
+  pattern = cairo_pattern_create_for_surface(Menulocal.bg);
+  cairo_set_source(cr, pattern);
+  cairo_pattern_set_matrix(pattern, &matrix);
+  cairo_paint(cr);
+  cairo_pattern_destroy(pattern);
+
+  pattern = cairo_pattern_create_for_surface(Menulocal.pix);
+  cairo_set_source(cr, pattern);
   cairo_pattern_set_matrix(pattern, &matrix);
   cairo_paint(cr);
   cairo_pattern_destroy(pattern);
