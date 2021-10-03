@@ -1497,7 +1497,6 @@ static struct objtable gra2cairo[] = {
   {"flush",NVFUNC,NREAD|NEXEC,gra2cairo_flush,"",0},
   {"antialias", NENUM, NREAD | NWRITE, set_antialias, gra2cairo_antialias_type, 0},
   {"use_opacity", NBOOL, NREAD | NWRITE, use_opacity, NULL,0},
-  {"force_opacity", NINT, NREAD | NWRITE, force_opacity, NULL,0},
   {"_output", NVFUNC, 0, gra2cairo_output, NULL, 0},
   {"_strwidth", NIFUNC, 0, gra2cairo_strwidth, NULL, 0},
   {"_charascent", NIFUNC, 0, gra2cairo_charheight, NULL, 0},
