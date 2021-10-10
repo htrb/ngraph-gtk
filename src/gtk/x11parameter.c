@@ -1157,6 +1157,8 @@ save_as_default(GtkButton *button, gpointer user_data)
   }
   if (modified) {
     set_graph_modified();
+  } else {
+    menu_delete_undo(undo);
   }
 }
 
