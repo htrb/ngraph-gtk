@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6.08.07\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2021-10-03 20:38+0900\n"
+"POT-Creation-Date: 2021-10-10 11:12+0900\n"
 "PO-Revision-Date: 2021-09-24 17:06+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -2638,7 +2638,7 @@ msgstr "合成ファイルの保存"
 msgid "Making GRA file."
 msgstr "合成ファイル作成中"
 
-#: src/gtk/x11print.c:801 src/gtk/x11print.c:874 src/gtk/x11view.c:6696
+#: src/gtk/x11print.c:801 src/gtk/x11print.c:874 src/gtk/x11view.c:6699
 msgid "Drawing."
 msgstr "描画中"
 
@@ -2668,19 +2668,19 @@ msgstr "データ評価中"
 msgid "trimming (multi select)"
 msgstr "トリミング (複数選択)"
 
-#: src/gtk/x11view.c:3803
+#: src/gtk/x11view.c:3802
 msgid "Data points are moved."
 msgstr "データは移動されました."
 
-#: src/gtk/x11view.c:5138
+#: src/gtk/x11view.c:5141
 msgid "Moving data points is canceled."
 msgstr "データの移動はキャンセルされました."
 
-#: src/gtk/x11view.c:6690
+#: src/gtk/x11view.c:6693
 msgid "Scaling"
 msgstr "軸スケール設定中"
 
-#: src/gtk/x11view.c:6697
+#: src/gtk/x11view.c:6700
 msgid "Drawing"
 msgstr "描画中"
 
@@ -2773,11 +2773,11 @@ msgstr "下へ"
 msgid "Delete"
 msgstr "削除"
 
-#: src/gtk/x11parameter.c:1167
+#: src/gtk/x11parameter.c:1169
 msgid "_Save as default"
 msgstr "初期値に設定(_S)"
 
-#: src/gtk/x11parameter.c:1205
+#: src/gtk/x11parameter.c:1207
 msgid "Add"
 msgstr "追加"
 
