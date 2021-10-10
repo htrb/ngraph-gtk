@@ -3522,7 +3522,7 @@ CheckGrid(int ofs, unsigned int state, int *x, int *y, double *zoom_x, double *z
 }
 
 static void
-mouse_down_point(unsigned int state, TPoint *point, struct Viewer *d)
+mouse_down_point(unsigned int state, struct Viewer *d)
 {
   d->Capture = TRUE;
 
@@ -4028,7 +4028,7 @@ ViewerEvLButtonDown(unsigned int state, TPoint *point, struct Viewer *d)
 	d->MouseMode = MOUSESCROLLE;
 	return TRUE;
       } else {
-	mouse_down_point(state, point, d);
+	mouse_down_point(state, d);
       }
     } else {
       mouse_down_move(state, point, d);
