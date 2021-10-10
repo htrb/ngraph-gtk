@@ -1898,7 +1898,7 @@ Evaluate(int x1, int y1, int x2, int y2, int err, struct Viewer *d)
 }
 
 static void
-Trimming(int x1, int y1, int x2, int y2, struct Viewer *d)
+Trimming(int x1, int y1, int x2, int y2)
 {
   struct narray farray;
   struct objlist *obj;
@@ -4097,7 +4097,7 @@ mouse_up_point(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
     d->ShowFrame = TRUE;
     break;
   case TrimB:
-    Trimming(x1, y1, x2, y2, d);
+    Trimming(x1, y1, x2, y2);
     break;
   case DataB:
     if (ViewerWinFileUpdate(x1, y1, x2, y2, err)) {
