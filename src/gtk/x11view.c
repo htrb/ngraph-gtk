@@ -4201,6 +4201,9 @@ mouse_up_drag(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
   dx = d->MouseX2 - d->MouseX1;
   dy = d->MouseY2 - d->MouseY1;
   CheckGrid(FALSE, state, &dx, &dy, NULL, NULL);
+  if (dx == 0 && dy == 0) {
+    return;
+  }
   get_focused_obj_array(d->focusobj, objs);
   axis = move_objects(dx, dy, d, objs);
   if (axis) {
