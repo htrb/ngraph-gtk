@@ -4298,12 +4298,13 @@ mouse_up_zoom(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
     CheckGrid(FALSE, state, NULL, NULL, &zoom_x, &zoom_y);
   }
 
-  if (zoom_focused_obj(d->RefX1, d->RefY1, zoom_x, zoom_y, objs, d)) {
-    return;
-  }
-
   d->FrameOfsX = d->FrameOfsY = 0;
   d->ShowFrame = TRUE;
+
+  if (zoom_focused_obj(d->RefX1, d->RefY1, zoom_x, zoom_y, objs, d)) {
+    gtk_widget_queue_draw(d->Win);
+    return;
+  }
 
   UpdateAll(objs);
 }
