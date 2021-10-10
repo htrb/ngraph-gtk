@@ -3236,7 +3236,6 @@ draw_focused_axis(struct objlist *obj, int id, int argc, char **argv)
 {
   int idx, idy, idu, idr, idg;
   int findX, findY, findU, findR, findG;
-  char type;
   char *group;
 
   getobj(obj, "group", id, 0, NULL, &group);
@@ -3245,9 +3244,9 @@ draw_focused_axis(struct objlist *obj, int id, int argc, char **argv)
     return;
   }
 
-  type = search_axis_group(obj, id, group,
-			   &findX, &findY, &findU, &findR, &findG,
-			   &idx, &idy, &idu, &idr, &idg);
+  search_axis_group(obj, id, group,
+                    &findX, &findY, &findU, &findR, &findG,
+                    &idx, &idy, &idu, &idr, &idg);
   if (findX) {
     exeobj(obj, "draw", idx, argc, argv);
   }
