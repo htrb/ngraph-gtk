@@ -2853,7 +2853,7 @@ draw_frame_rect(cairo_t *gc, int change, double zoom, int *bbox, struct objlist 
   height = abs(y2 - y1);
 
   cairo_rectangle(gc, minx, miny, width, height);
-    show_focus_line_common(gc, zoom, obj, inst, NULL, FALSE);
+  show_focus_line_common(gc, zoom, obj, inst, NULL, FALSE);
 }
 
 static void
@@ -2978,8 +2978,8 @@ draw_focus_line(cairo_t *gc, int change, double zoom, int bboxnum, int *bbox, st
   int *data;
   int fill, close_path;
 
-    _getobj(obj, "type", inst, &type);
-    _getobj(obj, "interpolation", inst, &intp);
+  _getobj(obj, "type", inst, &type);
+  _getobj(obj, "interpolation", inst, &intp);
   data = g_malloc(sizeof(*data) * (bboxnum - 4));
   if (data == NULL) {
     return;
@@ -3012,11 +3012,11 @@ draw_focus_line(cairo_t *gc, int change, double zoom, int bboxnum, int *bbox, st
       }
     }
   }
-    _getobj(obj, "fill", inst, &fill);
-    _getobj(obj, "close_path", inst, &close_path);
-    show_focus_line_common(gc, zoom, obj, inst, NULL, fill || close_path);
-    set_support_attribute(gc);
-    show_focus_elements(gc, d, zoom, data, bboxnum - 4);
+  _getobj(obj, "fill", inst, &fill);
+  _getobj(obj, "close_path", inst, &close_path);
+  show_focus_line_common(gc, zoom, obj, inst, NULL, fill || close_path);
+  set_support_attribute(gc);
+  show_focus_elements(gc, d, zoom, data, bboxnum - 4);
   g_free(data);
 }
 
