@@ -2814,7 +2814,7 @@ show_focus_line_arc(cairo_t *cr, int change, double zoom, struct objlist *obj, N
 }
 
 static void
-draw_frame_rect(cairo_t *gc, int change, double zoom, int *bbox, struct objlist *obj, N_VALUE *inst, const struct Viewer *d, int axis)
+draw_frame_rect(cairo_t *gc, int change, double zoom, int *bbox, struct objlist *obj, N_VALUE *inst, const struct Viewer *d)
 {
 
   int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
@@ -2853,12 +2853,7 @@ draw_frame_rect(cairo_t *gc, int change, double zoom, int *bbox, struct objlist 
   height = abs(y2 - y1);
 
   cairo_rectangle(gc, minx, miny, width, height);
-  if (axis) {
-    set_support_attribute(gc);
-    cairo_stroke(gc);
-  } else {
     show_focus_line_common(gc, zoom, obj, inst, NULL, FALSE);
-  }
 }
 
 static int
@@ -3011,18 +3006,12 @@ ShowFocusLine(cairo_t *cr, struct Viewer *d)
   bbox = arraydata(abbox);
 
   if (focus[0]->obj == chkobject("rectangle")) {
-    draw_frame_rect(cr, d->ChangePoint, zoom, bbox, focus[0]->obj, inst, d, FALSE);
+    draw_frame_rect(cr, d->ChangePoint, zoom, bbox, focus[0]->obj, inst, d);
   } else if (focus[0]->obj == chkobject("arc")) {
     show_focus_line_arc(cr, d->ChangePoint, zoom, focus[0]->obj, inst, d);
   } else if (focus[0]->obj == chkobject("path")) {
     draw_focus_line(cr, d->ChangePoint, zoom, bboxnum, bbox, focus[0]->obj, inst, d, FALSE);
   } else if (focus[0]->obj == chkobject("axis")) {
-    _getobj(focus[0]->obj, "group", inst, &group);
-    if (group && group[0] != 'a') {
-      draw_frame_rect(cr, d->ChangePoint, zoom, bbox, focus[0]->obj, inst, d, TRUE);
-    } else {
-      draw_focus_line(cr, d->ChangePoint, zoom, bboxnum, bbox, focus[0]->obj, inst, d, TRUE);
-    }
   }
 
  End:
