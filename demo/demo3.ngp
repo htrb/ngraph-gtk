@@ -1,21 +1,21 @@
 #!ngraph
 #%creator: Ngraph 
-#%version: 6.08.05
+#%version: 6.09.04
 new axis name:fX1
-	axis::hidden=false
+	axis::hidden=true
 	axis::R=0
 	axis::G=0
 	axis::B=0
 	axis::A=255
 	axis::clip=true
 	axis::redraw_flag=true
-	axis::min=0.000000000000000e+00
-	axis::max=6.800000000000000e+00
-	axis::inc=1.000000000000000e+00
+	axis::min=0
+	axis::max=0
+	axis::inc=0
 	axis::div=0
 	axis::type=linear
 	axis::x=4500
-	axis::y=20500
+	axis::y=17500
 	axis::direction=0
 	axis::baseline=true
 	axis::length=14000
@@ -30,10 +30,10 @@ new axis name:fX1
 	axis::wave=none
 	axis::wave_length=300
 	axis::wave_width=40
-	axis::reference=
+	axis::reference='axis:4'
 	axis::gauge=left
-	axis::gauge_min=0.000000000000000e+00
-	axis::gauge_max=0.000000000000000e+00
+	axis::gauge_min=0
+	axis::gauge_max=0
 	axis::gauge_style=
 	axis::gauge_length1=100
 	axis::gauge_width1=40
@@ -79,9 +79,9 @@ new axis name:fY1
 	axis::A=255
 	axis::clip=true
 	axis::redraw_flag=true
-	axis::min=7.000000000000000e-01
-	axis::max=1.100000000000000e+00
-	axis::inc=1.000000000000000e-01
+	axis::min=0.7
+	axis::max=1.1
+	axis::inc=0.1
 	axis::div=5
 	axis::type=linear
 	axis::x=4500
@@ -102,8 +102,8 @@ new axis name:fY1
 	axis::wave_width=40
 	axis::reference=
 	axis::gauge=right
-	axis::gauge_min=7.100000000000000e-01
-	axis::gauge_max=2.000000000000000e+00
+	axis::gauge_min=0.71
+	axis::gauge_max=2
 	axis::gauge_style=
 	axis::gauge_length1=100
 	axis::gauge_width1=40
@@ -149,9 +149,9 @@ new axis name:fU1
 	axis::A=255
 	axis::clip=true
 	axis::redraw_flag=true
-	axis::min=0.000000000000000e+00
-	axis::max=0.000000000000000e+00
-	axis::inc=0.000000000000000e+00
+	axis::min=0
+	axis::max=0
+	axis::inc=0
 	axis::div=0
 	axis::type=linear
 	axis::x=4500
@@ -172,8 +172,8 @@ new axis name:fU1
 	axis::wave_width=40
 	axis::reference='axis:0'
 	axis::gauge=right
-	axis::gauge_min=0.000000000000000e+00
-	axis::gauge_max=0.000000000000000e+00
+	axis::gauge_min=0
+	axis::gauge_max=0
 	axis::gauge_style=
 	axis::gauge_length1=100
 	axis::gauge_width1=40
@@ -219,9 +219,9 @@ new axis name:fR1
 	axis::A=255
 	axis::clip=true
 	axis::redraw_flag=true
-	axis::min=0.000000000000000e+00
-	axis::max=0.000000000000000e+00
-	axis::inc=0.000000000000000e+00
+	axis::min=0
+	axis::max=0
+	axis::inc=0
 	axis::div=0
 	axis::type=linear
 	axis::x=18500
@@ -242,8 +242,8 @@ new axis name:fR1
 	axis::wave_width=40
 	axis::reference='axis:1'
 	axis::gauge=left
-	axis::gauge_min=0.000000000000000e+00
-	axis::gauge_max=0.000000000000000e+00
+	axis::gauge_min=0
+	axis::gauge_max=0
 	axis::gauge_style=
 	axis::gauge_length1=100
 	axis::gauge_width1=40
@@ -283,7 +283,7 @@ new axis name:fR1
 
 axis::grouping 1 0 1 2 3
 
-new axis name:single_a
+new axis name:fX2
 	axis::hidden=false
 	axis::R=0
 	axis::G=0
@@ -291,16 +291,86 @@ new axis name:single_a
 	axis::A=255
 	axis::clip=true
 	axis::redraw_flag=true
-	axis::min=0.000000000000000e+00
-	axis::max=1.500000000000000e-01
-	axis::inc=1.000000000000000e-01
+	axis::min=0
+	axis::max=6.8
+	axis::inc=1
+	axis::div=0
+	axis::type=linear
+	axis::x=4500
+	axis::y=20500
+	axis::direction=0
+	axis::baseline=true
+	axis::length=14000
+	axis::width=40
+	axis::style=
+	axis::auto_scale_margin=500
+	axis::adjust_axis=
+	axis::adjust_position=0
+	axis::arrow=none
+	axis::arrow_length=72426
+	axis::arrow_width=60000
+	axis::wave=none
+	axis::wave_length=300
+	axis::wave_width=40
+	axis::reference=
+	axis::gauge=left
+	axis::gauge_min=0
+	axis::gauge_max=0
+	axis::gauge_style=
+	axis::gauge_length1=100
+	axis::gauge_width1=40
+	axis::gauge_length2=200
+	axis::gauge_width2=40
+	axis::gauge_length3=300
+	axis::gauge_width3=40
+	axis::gauge_R=0
+	axis::gauge_G=0
+	axis::gauge_B=0
+	axis::gauge_A=255
+	axis::num=right
+	axis::num_begin=0
+	axis::num_step=0
+	axis::num_num=-1
+	axis::num_auto_norm=5
+	axis::num_head=
+	axis::num_format='%g'
+	axis::num_tail=
+	axis::num_log_pow=true
+	axis::num_pt=2000
+	axis::num_space=0
+	axis::num_font='Sans-serif'
+	axis::num_font_style=0
+	axis::num_script_size=7000
+	axis::num_align=center
+	axis::num_no_zero=no_zero
+	axis::num_direction=horizontal
+	axis::num_shift_p=0
+	axis::num_shift_n=100
+	axis::num_R=0
+	axis::num_G=0
+	axis::num_B=0
+	axis::num_A=255
+	axis::num_date_format=
+	axis::num_math=
+
+new axis name:fY2
+	axis::hidden=false
+	axis::R=0
+	axis::G=0
+	axis::B=0
+	axis::A=255
+	axis::clip=true
+	axis::redraw_flag=true
+	axis::min=0
+	axis::max=0.15
+	axis::inc=0.1
 	axis::div=5
 	axis::type=linear
 	axis::x=4500
 	axis::y=20500
 	axis::direction=9000
 	axis::baseline=true
-	axis::length=2500
+	axis::length=2700
 	axis::width=40
 	axis::style=
 	axis::auto_scale_margin=500
@@ -314,8 +384,78 @@ new axis name:single_a
 	axis::wave_width=40
 	axis::reference=
 	axis::gauge=right
-	axis::gauge_min=-1.000000000000000e+00
-	axis::gauge_max=1.400000000000000e-01
+	axis::gauge_min=0
+	axis::gauge_max=0
+	axis::gauge_style=
+	axis::gauge_length1=100
+	axis::gauge_width1=40
+	axis::gauge_length2=200
+	axis::gauge_width2=40
+	axis::gauge_length3=300
+	axis::gauge_width3=40
+	axis::gauge_R=0
+	axis::gauge_G=0
+	axis::gauge_B=0
+	axis::gauge_A=255
+	axis::num=left
+	axis::num_begin=0
+	axis::num_step=0
+	axis::num_num=-1
+	axis::num_auto_norm=5
+	axis::num_head=
+	axis::num_format='%g'
+	axis::num_tail=
+	axis::num_log_pow=true
+	axis::num_pt=2000
+	axis::num_space=0
+	axis::num_font='Sans-serif'
+	axis::num_font_style=0
+	axis::num_script_size=7000
+	axis::num_align=right
+	axis::num_no_zero=no_zero
+	axis::num_direction=horizontal
+	axis::num_shift_p=0
+	axis::num_shift_n=100
+	axis::num_R=0
+	axis::num_G=0
+	axis::num_B=0
+	axis::num_A=255
+	axis::num_date_format=
+	axis::num_math=
+
+new axis name:fU2
+	axis::hidden=true
+	axis::R=0
+	axis::G=0
+	axis::B=0
+	axis::A=255
+	axis::clip=true
+	axis::redraw_flag=true
+	axis::min=0
+	axis::max=0
+	axis::inc=0
+	axis::div=0
+	axis::type=linear
+	axis::x=4500
+	axis::y=17800
+	axis::direction=0
+	axis::baseline=true
+	axis::length=14000
+	axis::width=40
+	axis::style=
+	axis::auto_scale_margin=500
+	axis::adjust_axis=
+	axis::adjust_position=0
+	axis::arrow=none
+	axis::arrow_length=72426
+	axis::arrow_width=60000
+	axis::wave=none
+	axis::wave_length=300
+	axis::wave_width=40
+	axis::reference='axis:4'
+	axis::gauge=right
+	axis::gauge_min=0
+	axis::gauge_max=0
 	axis::gauge_style=
 	axis::gauge_length1=100
 	axis::gauge_width1=40
@@ -342,7 +482,7 @@ new axis name:single_a
 	axis::num_font_style=0
 	axis::num_script_size=7000
 	axis::num_align=center
-	axis::num_no_zero=no_zero
+	axis::num_no_zero=regular
 	axis::num_direction=horizontal
 	axis::num_shift_p=0
 	axis::num_shift_n=100
@@ -353,7 +493,7 @@ new axis name:single_a
 	axis::num_date_format=
 	axis::num_math=
 
-new axis name:single_b
+new axis name:fR2
 	axis::hidden=false
 	axis::R=0
 	axis::G=0
@@ -361,16 +501,16 @@ new axis name:single_b
 	axis::A=255
 	axis::clip=true
 	axis::redraw_flag=true
-	axis::min=0.000000000000000e+00
-	axis::max=0.000000000000000e+00
-	axis::inc=0.000000000000000e+00
+	axis::min=0
+	axis::max=0
+	axis::inc=0
 	axis::div=0
 	axis::type=linear
 	axis::x=18500
-	axis::y=20700
+	axis::y=20500
 	axis::direction=9000
 	axis::baseline=true
-	axis::length=2500
+	axis::length=2700
 	axis::width=40
 	axis::style=
 	axis::auto_scale_margin=500
@@ -382,10 +522,10 @@ new axis name:single_b
 	axis::wave=end
 	axis::wave_length=300
 	axis::wave_width=40
-	axis::reference='axis:4'
+	axis::reference='axis:5'
 	axis::gauge=left
-	axis::gauge_min=0.000000000000000e+00
-	axis::gauge_max=0.000000000000000e+00
+	axis::gauge_min=0
+	axis::gauge_max=0
 	axis::gauge_style=
 	axis::gauge_length1=100
 	axis::gauge_width1=40
@@ -397,7 +537,7 @@ new axis name:single_b
 	axis::gauge_G=0
 	axis::gauge_B=0
 	axis::gauge_A=255
-	axis::num=none
+	axis::num=right
 	axis::num_begin=0
 	axis::num_step=0
 	axis::num_num=-1
@@ -411,7 +551,7 @@ new axis name:single_b
 	axis::num_font='Sans-serif'
 	axis::num_font_style=0
 	axis::num_script_size=7000
-	axis::num_align=center
+	axis::num_align=left
 	axis::num_no_zero=regular
 	axis::num_direction=horizontal
 	axis::num_shift_p=0
@@ -422,6 +562,8 @@ new axis name:single_b
 	axis::num_A=255
 	axis::num_date_format=
 	axis::num_math=
+
+axis::grouping 1 4 5 6 7
 
 new data
 	data::hidden=false
@@ -469,8 +611,8 @@ new data
 	data::axis_x='axis:0'
 	data::axis_y='axis:1'
 	data::data_clip=true
-	data::range_min=1.000000000000000e+00
-	data::range_max=1.000000000000000e+01
+	data::range_min=1
+	data::range_max=10
 	data::range_div=512
 	data::array=
 	data::file='demo3.dat'
@@ -525,8 +667,8 @@ x;'
 	data::axis_x='axis:0'
 	data::axis_y='axis:1'
 	data::data_clip=true
-	data::range_min=1.000000000000000e+00
-	data::range_max=1.000000000000000e+01
+	data::range_min=1
+	data::range_max=10
 	data::range_div=512
 	data::array=
 	data::file='demo3.dat'
@@ -575,10 +717,10 @@ new data
 	data::move_data_x=
 	data::move_data_y=
 	data::axis_x='axis:0'
-	data::axis_y='axis:4'
+	data::axis_y='axis:5'
 	data::data_clip=true
-	data::range_min=1.000000000000000e+00
-	data::range_max=1.000000000000000e+01
+	data::range_min=1
+	data::range_max=10
 	data::range_div=512
 	data::array=
 	data::file='demo3.dat'
@@ -631,10 +773,10 @@ x;'
 	data::move_data_x=
 	data::move_data_y=
 	data::axis_x='axis:0'
-	data::axis_y='axis:4'
+	data::axis_y='axis:5'
 	data::data_clip=true
-	data::range_min=1.000000000000000e+00
-	data::range_max=1.000000000000000e+01
+	data::range_min=1
+	data::range_max=10
 	data::range_div=512
 	data::array=
 	data::file='demo3.dat'
@@ -691,8 +833,8 @@ if(%0 == 3,
 	data::axis_x='axis:0'
 	data::axis_y='axis:1'
 	data::data_clip=true
-	data::range_min=0.000000000000000e+00
-	data::range_max=1.000000000000000e+00
+	data::range_min=0
+	data::range_max=1
 	data::range_div=2
 	data::array=
 	data::file=
@@ -840,4 +982,5 @@ new gra name:viewer
 	gra::zoom=10000
 	gra::paper_width=21000
 	gra::paper_height=29700
+	gra::decimalsign=period
 	gra::draw_obj='rectangle axisgrid axis data merge legend arc path mark text'
