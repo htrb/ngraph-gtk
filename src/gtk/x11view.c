@@ -2856,6 +2856,68 @@ draw_frame_rect(cairo_t *gc, int change, double zoom, int *bbox, struct objlist 
     show_focus_line_common(gc, zoom, obj, inst, NULL, FALSE);
 }
 
+static void
+draw_focus_axis(cairo_t *gc, int change, double zoom, int *bbox, struct objlist *obj, N_VALUE *inst, const struct Viewer *d)
+{
+  int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+  int minx, miny, height, width, single_axis;
+  char *group;
+
+  _getobj(obj, "group", inst, &group);
+  single_axis = (group == NULL || group[0] == 'a');
+  switch (change) {
+  case 0:
+    x1 = coord_conv_x(bbox[4] + d->LineX, zoom, d);
+    y1 = coord_conv_y(bbox[5] + d->LineY, zoom, d);
+    if (single_axis) {
+      x2 = coord_conv_x(bbox[6], zoom, d);
+      y2 = coord_conv_y(bbox[7], zoom, d);
+    } else {
+      x2 = coord_conv_x(bbox[8], zoom, d);
+      y2 = coord_conv_y(bbox[9], zoom, d);
+    }
+    break;
+  case 1:
+    x1 = coord_conv_x(bbox[4], zoom, d);
+    if (single_axis) {
+      y1 = coord_conv_y(bbox[5], zoom, d);
+      x2 = coord_conv_x(bbox[6] + d->LineX, zoom, d);
+      y2 = coord_conv_y(bbox[7] + d->LineY, zoom, d);
+    } else {
+      y1 = coord_conv_y(bbox[5] + d->LineY, zoom, d);
+      x2 = coord_conv_x(bbox[8] + d->LineX, zoom, d);
+      y2 = coord_conv_y(bbox[9], zoom, d);
+    }
+    break;
+  case 2:
+    x1 = coord_conv_x(bbox[4], zoom, d);
+    y1 = coord_conv_y(bbox[5], zoom, d);
+    x2 = coord_conv_x(bbox[8] + d->LineX, zoom, d);
+    y2 = coord_conv_y(bbox[9] + d->LineY, zoom, d);
+    break;
+  case 3:
+    x1 = coord_conv_x(bbox[4] + d->LineX, zoom, d);
+    y1 = coord_conv_y(bbox[5], zoom, d);
+    x2 = coord_conv_x(bbox[8], zoom, d);
+    y2 = coord_conv_y(bbox[9] + d->LineY, zoom, d);
+    break;
+  }
+  minx = (x1 < x2) ? x1 : x2;
+  miny = (y1 < y2) ? y1 : y2;
+
+  width = abs(x2 - x1);
+  height = abs(y2 - y1);
+
+  set_support_attribute(gc);
+  if (single_axis) {
+    cairo_move_to(gc, x1, y1);
+    cairo_line_to(gc, x2, y2);
+  } else {
+    cairo_rectangle(gc, minx, miny, width, height);
+  }
+  cairo_stroke(gc);
+}
+
 static int
 draw_curve_common(cairo_t *cr, int *data, int num, int intp)
 {
