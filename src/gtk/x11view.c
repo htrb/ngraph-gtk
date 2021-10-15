@@ -2910,17 +2910,14 @@ draw_focus_curve(cairo_t *cr, int *po, int num, int intp, double zoom, const str
 }
 
 static void
-draw_focus_line(cairo_t *gc, int change, double zoom, int bboxnum, int *bbox, struct objlist *obj, N_VALUE *inst, const struct Viewer *d, int axis)
+draw_focus_line(cairo_t *gc, int change, double zoom, int bboxnum, int *bbox, struct objlist *obj, N_VALUE *inst, const struct Viewer *d)
 {
   int j, ofsx, ofsy, intp, type, r;
   int *data;
+  int fill, close_path;
 
-  if (axis) {
-    type = 0;
-  } else {
     _getobj(obj, "type", inst, &type);
     _getobj(obj, "interpolation", inst, &intp);
-  }
   data = g_malloc(sizeof(*data) * (bboxnum - 4));
   if (data == NULL) {
     return;
@@ -2953,17 +2950,11 @@ draw_focus_line(cairo_t *gc, int change, double zoom, int bboxnum, int *bbox, st
       }
     }
   }
-  if (axis) {
-    set_support_attribute(gc);
-    cairo_stroke(gc);
-  } else {
-    int fill, close_path;
     _getobj(obj, "fill", inst, &fill);
     _getobj(obj, "close_path", inst, &close_path);
     show_focus_line_common(gc, zoom, obj, inst, NULL, fill || close_path);
     set_support_attribute(gc);
     show_focus_elements(gc, d, zoom, data, bboxnum - 4);
-  }
   g_free(data);
 }
 
@@ -2978,7 +2969,6 @@ ShowFocusLine(cairo_t *cr, struct Viewer *d)
   N_VALUE *inst;
   struct savedstdio save;
   double zoom;
-  char *group;
   double dash[] = {DOT_LENGTH};
 
   ignorestdio(&save);
@@ -3010,7 +3000,7 @@ ShowFocusLine(cairo_t *cr, struct Viewer *d)
   } else if (focus[0]->obj == chkobject("arc")) {
     show_focus_line_arc(cr, d->ChangePoint, zoom, focus[0]->obj, inst, d);
   } else if (focus[0]->obj == chkobject("path")) {
-    draw_focus_line(cr, d->ChangePoint, zoom, bboxnum, bbox, focus[0]->obj, inst, d, FALSE);
+    draw_focus_line(cr, d->ChangePoint, zoom, bboxnum, bbox, focus[0]->obj, inst, d);
   } else if (focus[0]->obj == chkobject("axis")) {
   }
 
