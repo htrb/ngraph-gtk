@@ -160,6 +160,7 @@ static void draw_focused_move(cairo_t *cr, double zoom, struct Viewer *d);
 
 #define GRAY 0.5
 #define DOT_LENGTH 4.0
+#define EDITING_OPACITY 0.5
 
 #define SCROLL_ANIMATION 0
 
@@ -2736,14 +2737,14 @@ show_focus_line_common(cairo_t *cr, double zoom, struct objlist *obj, N_VALUE *i
   if (stroke) {
     cairo_set_line_join(cr, join);
     cairo_set_line_width(cr, mxd2p(width * zoom));
-    cairo_set_source_rgba(cr, sr / 255.0, sg / 255.0, sb / 255.0, 0.5);
+    cairo_set_source_rgba(cr, sr / 255.0, sg / 255.0, sb / 255.0, EDITING_OPACITY);
     cairo_stroke_preserve(cr);
   }
   if (fill) {
     if (expo) {
       cairo_line_to(cr, expo->x, expo->y);
     }
-    cairo_set_source_rgba(cr, fr / 255.0, fg / 255.0, fb / 255.0, 0.5);
+    cairo_set_source_rgba(cr, fr / 255.0, fg / 255.0, fb / 255.0, EDITING_OPACITY);
     cairo_fill_preserve(cr);
   }
   if (close_path) {
@@ -3212,7 +3213,7 @@ ShowPoints(cairo_t *cr, const struct Viewer *d)
       }
 
       if (fill) {
-	cairo_set_source_rgba(cr, setting.r2 / 255.0, setting.g2 / 255.0, setting.b2 / 255.0, 0.5);
+	cairo_set_source_rgba(cr, setting.r2 / 255.0, setting.g2 / 255.0, setting.b2 / 255.0, EDITING_OPACITY);
 	if (stroke) {
 	  cairo_fill_preserve(cr);
 	} else {
@@ -3222,7 +3223,7 @@ ShowPoints(cairo_t *cr, const struct Viewer *d)
       if (stroke) {
 	cairo_set_line_join(cr, CAIRO_LINE_JOIN_MITER);
 	cairo_set_line_width(cr, lw);
-	cairo_set_source_rgba(cr, r, g, b, 0.5);
+	cairo_set_source_rgba(cr, r, g, b, EDITING_OPACITY);
 	cairo_stroke(cr);
       }
     }
@@ -3254,7 +3255,7 @@ ShowPoints(cairo_t *cr, const struct Viewer *d)
       }
       if (fill) {
 	cairo_set_fill_rule(cr, CAIRO_FILL_RULE_EVEN_ODD);
-	cairo_set_source_rgba(cr, setting.r2 / 255.0, setting.g2 / 255.0, setting.b2 / 255.0, 0.5);
+	cairo_set_source_rgba(cr, setting.r2 / 255.0, setting.g2 / 255.0, setting.b2 / 255.0, EDITING_OPACITY);
 	if (stroke) {
 	  cairo_fill_preserve(cr);
 	} else {
@@ -3264,7 +3265,7 @@ ShowPoints(cairo_t *cr, const struct Viewer *d)
       if (stroke) {
 	cairo_set_line_join(cr, (cairo_line_join_t) setting.join);
 	cairo_set_line_width(cr, lw);
-	cairo_set_source_rgba(cr, r, g, b, 0.5);
+	cairo_set_source_rgba(cr, r, g, b, EDITING_OPACITY);
 	cairo_stroke(cr);
       }
     }
@@ -3382,7 +3383,7 @@ draw_focused_obj(struct Viewer *d)
     return;
   }
   _getobj(obj, "id", inst, &id);
-  a = 128;
+  a = 255 * EDITING_OPACITY;
   putobj(obj, "force_opacity", id, &a);
   getobj(obj, "dpi", id, 0, NULL, &dpi_org);
   putobj(obj, "dpi", id, &dpi);
