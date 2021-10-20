@@ -535,7 +535,7 @@ arrayadd(struct narray *array,const void *val)
   if (array->num==array->size) {
     int size;
     size=array->size+ALLOCSIZE;
-    if ((data=g_realloc(array->data,array->base*size))==NULL) {
+    if ((data=g_realloc(array->data,(gsize) array->base*size))==NULL) {
       return NULL;
     }
     array->size=size;
