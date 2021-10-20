@@ -10,5 +10,5 @@ $configure_args["--vendor"] = true unless (prefix =~ /.*local.*/)
 
 dir_config("ngraph")
 have_header("ngraph.h")
-have_library("ngraph", "ngraph_get_object")
+have_library("ngraph", "ngraph_get_root_object")
 create_makefile("ngraph")
