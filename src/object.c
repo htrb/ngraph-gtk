@@ -740,7 +740,7 @@ array_slice(struct narray *array, int start, int length)
   }
 
   if (length > 0) {
-    memmove(data, data + start * base, length * base);
+    memmove(data, data + start * base, (size_t) length * base);
   }
 
   array->num = length;
