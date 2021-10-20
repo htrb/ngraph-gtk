@@ -448,7 +448,7 @@ arraycpy(struct narray *dest, struct narray *src)
     return 1;
   }
   if (src->num > dest->size) {
-    data = g_realloc(dest->data, src->base * src->size);
+    data = g_realloc(dest->data, (gsize) src->base * src->size);
     if (data == NULL) {
       return 1;
     }
