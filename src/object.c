@@ -434,7 +434,7 @@ arraycmp(struct narray *a, struct narray *b)
   if (a->data == NULL || b->data == NULL) {
     return 1;
   }
-  return memcmp(a->data, b->data, a->base * a->num);
+  return memcmp(a->data, b->data, (size_t) a->base * a->num);
 }
 
 int
