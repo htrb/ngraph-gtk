@@ -1190,7 +1190,7 @@ expand_stack(MathStack *stack, int size)
   if (stack->type == DATA_TYPE_STRING) {
     init_string_array(stack->stack.str + stack->end, size);
   } else {
-    memset(stack->stack.val + stack->end, 0, stack->element_size * size);
+    memset(stack->stack.val + stack->end, 0, (size_t) stack->element_size * size);
   }
   stack->ofst = stack->end;
   stack->end = request_size;
