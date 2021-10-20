@@ -12,7 +12,7 @@
     <p>Ngraph is the program to create scientific 2-dimensional graphs for researchers and engineers.</p>
     <p>Graphs can be exported to PostScript, SVG, PNG or PDF format.</p>
   </description>
-  <url type="homepage">http://hito.music.coocan.jp/ngraph/ngraph-gtk.html</url>
+  <url type="homepage">https://github.com/htrb/ngraph-gtk/</url>
   <url type="bugtracker">https://github.com/htrb/ngraph-gtk/issues</url>
   <url type="help">https://htrb.github.io/ngraph-gtk/manual/</url>
   <update_contact>ZXB01226_at_nifty.com</update_contact>
