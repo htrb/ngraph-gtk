@@ -567,7 +567,7 @@ arrayadd2(struct narray *array,const char *val)
   if (array->num == array->size) {
     int size;
     size = array->size+ALLOCSIZE;
-    data=g_realloc(array->data,array->base*size);
+    data=g_realloc(array->data,(gsize) array->base*size);
     if (data == NULL) {
       return NULL;
     }
