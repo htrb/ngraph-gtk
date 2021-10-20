@@ -699,7 +699,7 @@ arrayndel(struct narray *array,unsigned int idx)
     memcpy(data+(i-1)*base,data+i*base,base);
 #else
   data += (idx * base);
-  memmove(data, data + base, base * (array->num - idx - 1));
+  memmove(data, data + base, (size_t) base * (array->num - idx - 1));
 #endif
   (array->num)--;
   return array;
