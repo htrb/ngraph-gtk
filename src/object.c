@@ -455,7 +455,7 @@ arraycpy(struct narray *dest, struct narray *src)
     dest->data = data;
     dest->size = src->size;
   }
-  memcpy(dest->data, src->data, src->num * src->base);
+  memcpy(dest->data, src->data, (size_t) src->num * src->base);
   dest->num = src->num;
   return 0;
 }
