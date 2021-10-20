@@ -6452,7 +6452,7 @@ UnFocus(void)
 }
 
 #define GRID_MIN 16.0
-#define GRIG_COLOR 0.7
+#define GRID_COLOR 0.7
 static void
 draw_grid(cairo_t *cr, int w, int h)
 {
@@ -6463,7 +6463,7 @@ draw_grid(cairo_t *cr, int w, int h)
   if (dw < GRID_MIN) {
     grid *= ceil(GRID_MIN / dw);
   }
-  cairo_set_source_rgba(cr, GRIG_COLOR, GRIG_COLOR, GRIG_COLOR, 1);
+  cairo_set_source_rgba(cr, GRID_COLOR, GRID_COLOR, GRID_COLOR, 1);
   cairo_set_dash(cr, dashes, 2, 0);
   for (x = grid; x < Menulocal.PaperWidth; x += grid) {
     double dx;
