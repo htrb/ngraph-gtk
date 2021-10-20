@@ -51,6 +51,11 @@ jobs:
         # Prefix the list here with "+" to use these queries and those in the config file.
         # queries: ./path/to/local/query, your-org/your-repo/queries@main
 
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update -q && sudo apt-get install
+        --no-install-recommends -y libgtk-3-dev libgsl-dev libreadline-dev ruby ruby-dev libgtksourceview-4-dev gettext
+
     # Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
     # If this step fails, then you should remove it and run the build manually (see below)
     - name: Autobuild
