@@ -1176,7 +1176,7 @@ expand_stack(MathStack *stack, int size)
   if (stack->size <= request_size) {
     int n;
     n = (request_size / BUF_UNIT + 1) * BUF_UNIT;
-    ptr = g_realloc(stack->stack.ptr, stack->element_size * n);
+    ptr = g_realloc(stack->stack.ptr, (gsize) stack->element_size * n);
     if (ptr == NULL) {
       return 1;
     }
