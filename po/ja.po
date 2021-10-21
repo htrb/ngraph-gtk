@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6.08.07\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2021-10-18 16:02+0900\n"
+"POT-Creation-Date: 2021-10-21 19:52+0900\n"
 "PO-Revision-Date: 2021-09-24 17:06+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -1012,7 +1012,7 @@ msgid "_All"
 msgstr "全て(_A)"
 
 #: src/gtk/x11dialg.c:350 src/gtk/x11file.c:721 src/gtk/x11file.c:1987
-#: src/gtk/x11file.c:2192 src/gtk/x11view.c:1105
+#: src/gtk/x11file.c:2192 src/gtk/x11view.c:1106
 #: src/gtk/data/gtk/menus-common.ui.in:159
 #: src/gtk/data/gtk/menus-common-win.ui.in:167
 #: src/gtk/data/gtk/menus-common.ui:159
@@ -1131,7 +1131,7 @@ msgstr "_X 変換式"
 msgid "_Y math"
 msgstr "_Y 変換式"
 
-#: src/gtk/x11file.c:736 src/gtk/x11view.c:1121
+#: src/gtk/x11file.c:736 src/gtk/x11view.c:1122
 #: src/gtk/data/gtk/menus-common.ui.in:313
 #: src/gtk/data/gtk/menus-common.ui.in:473
 #: src/gtk/data/gtk/menus-common-win.ui.in:321
@@ -1254,7 +1254,7 @@ msgstr "保存(_S)"
 msgid "_Result"
 msgstr "フィット結果(_R)"
 
-#: src/gtk/x11file.c:1942 src/gtk/x11file.c:2159 src/gtk/x11view.c:1077
+#: src/gtk/x11file.c:1942 src/gtk/x11file.c:2159 src/gtk/x11view.c:1078
 msgid "Line No."
 msgstr "行"
 
@@ -1395,12 +1395,12 @@ msgid "_Load settings"
 msgstr "ファイルから設定読込(_L)"
 
 #: src/gtk/x11file.c:3934 src/gtk/x11file.c:4016 src/gtk/x11file.c:4092
-#: src/gtk/x11view.c:1089
+#: src/gtk/x11view.c:1090
 msgid "_Mask"
 msgstr "マスク(_M)"
 
 #: src/gtk/x11file.c:3938 src/gtk/x11file.c:4020 src/gtk/x11file.c:4096
-#: src/gtk/x11view.c:1090
+#: src/gtk/x11view.c:1091
 msgid "_Move"
 msgstr "移動(_M)"
 
@@ -2638,11 +2638,11 @@ msgstr "合成ファイルの保存"
 msgid "Making GRA file."
 msgstr "合成ファイル作成中"
 
-#: src/gtk/x11print.c:801 src/gtk/x11print.c:874 src/gtk/x11view.c:6741
+#: src/gtk/x11print.c:801 src/gtk/x11print.c:874 src/gtk/x11view.c:6744
 msgid "Drawing."
 msgstr "描画中"
 
-#: src/gtk/x11view.c:1110 src/gtk/data/gtk/menus-common.ui.in:139
+#: src/gtk/x11view.c:1111 src/gtk/data/gtk/menus-common.ui.in:139
 #: src/gtk/data/gtk/menus-common.ui.in:576
 #: src/gtk/data/gtk/menus-common-win.ui.in:147
 #: src/gtk/data/gtk/menus-common-win.ui.in:584
@@ -2650,37 +2650,37 @@ msgstr "描画中"
 msgid "_Copy"
 msgstr "コピー(_C)"
 
-#: src/gtk/x11view.c:1724 src/gtk/x11view.c:1726
+#: src/gtk/x11view.c:1725 src/gtk/x11view.c:1727
 #, c-format
 msgid "Searching for data."
 msgstr "データ検索中"
 
-#: src/gtk/x11view.c:1836
+#: src/gtk/x11view.c:1837
 #, c-format
 msgid "Evaluating."
 msgstr "データ評価中"
 
-#: src/gtk/x11view.c:1839
+#: src/gtk/x11view.c:1840
 msgid "Evaluating"
 msgstr "データ評価中"
 
-#: src/gtk/x11view.c:1917
+#: src/gtk/x11view.c:1918
 msgid "trimming (multi select)"
 msgstr "トリミング (複数選択)"
 
-#: src/gtk/x11view.c:3844
+#: src/gtk/x11view.c:3847
 msgid "Data points are moved."
 msgstr "データは移動されました."
 
-#: src/gtk/x11view.c:5183
+#: src/gtk/x11view.c:5186
 msgid "Moving data points is canceled."
 msgstr "データの移動はキャンセルされました."
 
-#: src/gtk/x11view.c:6735
+#: src/gtk/x11view.c:6738
 msgid "Scaling"
 msgstr "軸スケール設定中"
 
-#: src/gtk/x11view.c:6742
+#: src/gtk/x11view.c:6745
 msgid "Drawing"
 msgstr "描画中"
 
