@@ -1226,7 +1226,7 @@ fit_inst_dup(struct objlist *obj, N_VALUE *src, N_VALUE *dest)
     }
   }
   len = sizeof(deriv);
-  for (i = 0; i < 10; i++) {
+  for (i = 0; i < FIT_DIMENSION_MAX; i++) {
     deriv[len - 2] = '0' + i;
     if (local_src->codedf[i]) {
       _getobj(obj, deriv, src, &math);
