@@ -2975,7 +2975,7 @@ draw_focus_curve(cairo_t *cr, int *po, int num, int intp, double zoom, const str
 static void
 draw_focus_line(cairo_t *gc, int change, double zoom, int bboxnum, int *bbox, struct objlist *obj, N_VALUE *inst, const struct Viewer *d)
 {
-  int j, ofsx, ofsy, intp, type, r;
+  int j, ofsx, ofsy, intp, type, r, fill_rule;
   int *data;
   int fill, close_path;
 
@@ -3015,6 +3015,8 @@ draw_focus_line(cairo_t *gc, int change, double zoom, int bboxnum, int *bbox, st
   }
   _getobj(obj, "fill", inst, &fill);
   _getobj(obj, "close_path", inst, &close_path);
+  _getobj(obj, "fill_rule", inst, &fill_rule);
+  cairo_set_fill_rule(gc, (fill_rule) ? CAIRO_FILL_RULE_WINDING : CAIRO_FILL_RULE_EVEN_ODD);
   show_focus_line_common(gc, zoom, obj, inst, NULL, fill || close_path);
   set_support_attribute(gc);
   show_focus_elements(gc, d, zoom, data, bboxnum - 4);
