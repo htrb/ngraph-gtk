@@ -30,6 +30,7 @@
 #include <gdk/gdk.h>
 
 #include "object.h"
+#include "ofit.h"
 #include "ogra2cairo.h"
 #include "x11menu.h"
 
@@ -183,7 +184,7 @@ struct MathTextDialog
 };
 void MathTextDialog(struct MathTextDialog *data, char *text, int mode, struct objlist *obj, GList *list, GtkWidget *tree);
 
-#define FIT_PARM_NUM 10
+#define FIT_PARM_NUM FIT_DIMENSION_MAX
 
 struct FitDialog
 {
