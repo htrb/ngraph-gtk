@@ -519,7 +519,7 @@ fitpoly(struct fitlocal *fitlocal,
   derror=sqrt(derror);
   if (through) dim--;
   for (i=0;i<dim;i++) fitlocal->coe[i]=coe[i];
-  for (;i<10;i++) fitlocal->coe[i]=0;
+  for (;i<FIT_DIMENSION_MAX;i++) fitlocal->coe[i]=0;
   fitlocal->dim=dim;
   fitlocal->derror=derror;
   fitlocal->correlation=correlation;
