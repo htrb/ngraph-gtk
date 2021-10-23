@@ -127,7 +127,7 @@ fitinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   if ((fitlocal=g_malloc(sizeof(struct fitlocal)))==NULL) return 1;
   fitlocal->codef=NULL;
   fitlocal->result_code = NULL;
-  for (i=0;i<10;i++) fitlocal->codedf[i]=NULL;
+  for (i=0;i<FIT_DIMENSION_MAX;i++) fitlocal->codedf[i]=NULL;
   fitlocal->equation=NULL;
   fitlocal->oid = oid;
   if (_putobj(obj,"_local",inst,fitlocal)) {
