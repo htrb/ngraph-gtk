@@ -9,4 +9,6 @@ enum FIT_OBJ_TYPE {
   FIT_TYPE_USER,
 };
 
+#define FIT_DIMENSION_MAX 10
+
 #endif
