@@ -148,7 +148,7 @@ fitdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   g_free(fitlocal->equation);
   math_equation_free(fitlocal->codef);
   math_equation_free(fitlocal->result_code);
-  for (i = 0; i < 10; i++)
+  for (i = 0; i < FIT_DIMENSION_MAX; i++)
     math_equation_free(fitlocal->codedf[i]);
   return 0;
 }
