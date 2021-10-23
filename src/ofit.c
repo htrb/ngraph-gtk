@@ -664,10 +664,10 @@ fituser(struct objlist *obj,struct fitlocal *fitlocal, const char *func,
 {
   int ecode;
   int *needdata;
-  int tbl[10],dim,n,count,err,err2,err3;
+  int tbl[FIT_DIMENSION_MAX],dim,n,count,err,err2,err3;
   double yy,y,y1,y2,y3,sy,spx,spy,dxx,dxxc,xx,derror,correlation;
-  MathValue par[10], par2[10], var;
   vector b, x2, parerr;
+  MathValue par[FIT_DIMENSION_MAX], par2[FIT_DIMENSION_MAX], var;
   MathEquationParametar *prm;
   matrix m;
   int i,j,k;
@@ -691,7 +691,7 @@ fituser(struct objlist *obj,struct fitlocal *fitlocal, const char *func,
     }
   }
   for (i = 0; i < dim; i++) tbl[i] = needdata[i];
-  for (i = 0; i < 10; i++) {
+  for (i = 0; i < FIT_DIMENSION_MAX; i++) {
     par[i].type = MATH_VALUE_NORMAL;
     par[i].val = fitlocal->coe[i];
   }
@@ -771,7 +771,7 @@ fituser(struct objlist *obj,struct fitlocal *fitlocal, const char *func,
         }
       } else {
         for (j=0;j<dim;j++) {
-          for (i=0;i<10;i++) par2[i]=par[i];
+          for (i=0;i<FIT_DIMENSION_MAX;i++) par2[i]=par[i];
           dxx = par2[j].val * converge * 1e-6;
           if (dxx == 0) dxx = 1e-6;
           par2[tbl[j]].val += dxx;
@@ -917,7 +917,7 @@ repeat:
 
 errexit:
   if ((ecode==FitError_Success) || (ecode==FitError_Range)) {
-    for (i = 0; i < 10; i++) {
+    for (i = 0; i < FIT_DIMENSION_MAX; i++) {
       fitlocal->coe[i] = par[i].val;
     }
     fitlocal->dim=dim;
