@@ -1259,7 +1259,7 @@ fit_inst_free(struct objlist *obj, N_VALUE *inst)
   if (local->codef) {
     math_equation_free(local->codef);
   }
-  for (i = 0; i < 10; i++) {
+  for (i = 0; i < FIT_DIMENSION_MAX; i++) {
     if (local->codedf[i]) {
       math_equation_free(local->codedf[i]);
     }
