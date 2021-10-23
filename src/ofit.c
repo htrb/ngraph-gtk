@@ -250,7 +250,7 @@ fitput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
   field=argv[1];
   if (strcmp(field,"poly_dimension")==0) {
     if (*(int *)(argv[2])<1) *(int *)(argv[2])=1;
-    else if (*(int *)(argv[2])>9) *(int *)(argv[2])=9;
+    else if (*(int *)(argv[2])>=FIT_DIMENSION_MAX) *(int *)(argv[2])=FIT_DIMENSION_MAX - 1;
   } else if ((strcmp(field,"user_func")==0)
           || ((strncmp(field,"derivative",10)==0) && (field[10]!='\0'))) {
     math=(char *)(argv[2]);
@@ -267,7 +267,7 @@ fitput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
 	return 1;
       }
 
-      if (prm->id_max > 9) {
+      if (prm->id_max >= FIT_DIMENSION_MAX) {
         error(obj,ERRMANYPARAM);
 	math_equation_free(code);
         return 1;
