@@ -96,7 +96,7 @@ static char *fittypechar[]={
 
 struct fitlocal {
   int id, oid;
-  MathEquation *codedf[10];
+  MathEquation *codedf[FIT_DIMENSION_MAX];
   MathEquation *codef, *result_code;
   int dim;
   double coe[11];
