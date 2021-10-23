@@ -964,7 +964,7 @@ fitfit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   if (_putobj(obj,"error",inst,&derror)) return 1;
   if (_putobj(obj,"correlation",inst,&correlation)) return 1;
 
-  for (i = 0; i < 10; i++) {
+  for (i = 0; i < FIT_DIMENSION_MAX; i++) {
     snprintf(prm, sizeof(prm), "%%%02d", i);
     if (_putobj(obj, prm, inst, &pp)) return 1;
   }
@@ -980,7 +980,7 @@ fitfit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   _getobj(obj,"converge",inst,&converge);
   _getobj(obj, "id", inst, &(fitlocal->id));
 
-  for (i = 0; i < 10; i++) {
+  for (i = 0; i < FIT_DIMENSION_MAX; i++) {
     snprintf(prm, sizeof(prm), "parameter%d", i);
     _getobj(obj, prm, inst, &(fitlocal->coe[i]));
   }
@@ -1133,7 +1133,7 @@ fitfit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   if (_putobj(obj,"error",inst,&(fitlocal->derror))) return 1;
   if (_putobj(obj,"correlation",inst,&(fitlocal->correlation))) return 1;
 
-  for (i = 0; i < 10; i++) {
+  for (i = 0; i < FIT_DIMENSION_MAX; i++) {
     snprintf(prm, sizeof(prm), "%%%02d", i);
     if (_putobj(obj, prm, inst, &(fitlocal->coe[i]))) return 1;
   }
