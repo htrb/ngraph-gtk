@@ -126,7 +126,7 @@ AC_PATH_X
 AC_HEADER_DIRENT
 # Autoupdate added the next two lines to ensure that your configure
 # script's behavior did not change.  They are probably safe to remove.
-AC_CHECK_INCLUDES_DEFAULT
+# AC_CHECK_INCLUDES_DEFAULT
 AC_PROG_EGREP
 
 AC_HEADER_SYS_WAIT
