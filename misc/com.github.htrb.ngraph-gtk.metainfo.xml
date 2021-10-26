@@ -64,6 +64,39 @@
     <content_attribute id="money-gambling">none</content_attribute>
   </content_rating>
   <releases>
+    <release version="6.09.05" date="2021-10-29"/>
+    <description>
+      <ul>
+	<li> Added support for using the actual line width and color in the draft when creating a new legend or editing a part of it (semi-transparent display).</li>
+	<li> Added support for using the actual drawing image when moving, enlarging, or reducing the selected object (semi-transparent display).</li>
+	<li> Enabled to set the value of parameter object to the initial value at once.</li>
+	<li> Added the ability to display the page setup dialog when creating a new graph.</li>
+	<li> Changed the initial position of axes to match the paper size when creating a new graph.</li>
+	<li> When creating a new graph, the size of the graph now follows the settings of the axis saved in "Save as initial state (graph)".</li>
+	<li> When creating a new axis, some settings now follow the settings of the axis saved in "Save as initial state (graph)".</li>
+	<li> The "Legend Text Initial State" dialog was reorganized.</li>
+	<li> Added "Axis Grid Initial State" dialog.</li>
+	<li> Improved the design of the page setup dialog.</li>
+	<li> Added "Widescreen (16:10)" and "Executive" to the paper selection of the page setup dialog.</li>
+	<li> Fixed a bug that the orientation of the paper for printing was wrong when "Standard", "Wide" or "Any" was selected in the paper selection of the Page Setup dialog.</li>
+	<li> Fixed a bug that the update flag of the graph was not set when the position or length of the axis was changed in the setting dialog of frame graph, grid graph, and intersection graph.</li>
+	<li> Fixed a bug that the direction of the axis and text was wrong when performing operations such as zooming in, zooming out, rotating, and flipping when the direction of the axis and text was between 180 degrees and 270 degrees.</li>
+	<li> Fixed a bug that when an error message was displayed during data drawing, drawing could not be performed properly.</li>
+	<li> Fixed a bug in which adding or deleting a font alias was not reflected in the font setting combo box when selecting an object.</li>
+      </ul>
+    </description>
+    <release version="6.09.04" date="2021-08-29"/>
+    <description>
+      <ul>
+	<li> Added the ability to select a dark theme.</li>
+	<li> When dragging and dropping ngp files, the folder of the ngp file is now the current folder.</li>
+	<li> The axis name is always used to specify and display the axis in the GUI.</li>
+	<li> Returned to the original folder when canceled in the read graph dialog.</li>
+	<li> GtkFileChooserButton is now used to specify the expand folder in the graph loading dialog.</li>
+	<li> The destination of merge file now follows the specification of the expansion folder.</li>
+	<li> (macOS) Fixed a bug where drag and drop of files was not accepted anymore (GTK).</li>
+      </ul>
+    </description>
     <release version="6.09.03" date="2021-06-19"/>
     <replace version="6.09.02" date="2021-05-15"/>
     <replace version="6.09.01" date="2021-02-01"/>
