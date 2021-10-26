@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT(ngraph, 6.09.04, ZXB01226@nifty.com, ngraph-gtk)
+AC_INIT([ngraph],[6.09.04],[ZXB01226@nifty.com],[ngraph-gtk])
 
 LIBNGRAPH_VERSION=0:0:0
 AC_SUBST(LIBNGRAPH_VERSION)
@@ -10,7 +10,7 @@ AC_SYS_LARGEFILE
 
 vsymldflags=
 	AC_MSG_CHECKING([version script options])
-	AC_ARG_WITH([versioned-symbol],AC_HELP_STRING([--with-versioned-symbol],[Use versioned symbols]),[dnl
+	AC_ARG_WITH([versioned-symbol],AS_HELP_STRING([--with-versioned-symbol],[Use versioned symbols]),[dnl
 	vsymldflags="-Wl,--version-script,ngraph_export.map -Wl,-O1"
 	])
 	AC_SUBST(vsymldflags)
@@ -48,9 +48,10 @@ AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE
 LT_INIT
 
-AC_LIBTOOL_WIN32_DLL
-#AC_LIBTOOL_DLOPEN
-AC_PROG_LIBTOOL
+_LT_SET_OPTION([LT_INIT],[win32-dll])
+#_LT_SET_OPTION([LT_INIT],[dlopen])
+
+LT_INIT
 
 AC_SUBST(LIBTOOL_DEPS)
 
@@ -105,8 +106,7 @@ dnl   gobject)
 
 AM_PATH_GTK_3_0($GTK3_REQUIRED_VERSION,,AC_MSG_ERROR(Test for GTK failed.),)
 
-AM_PATH_GSL($GSL_REQUIRED_VERSION,
-	AC_DEFINE([HAVE_LIBGSL], 1, [have GNU Scientific Library]),)
+AX_PATH_GSL([$GSL_REQUIRED_VERSION],[AC_DEFINE(HAVE_LIBGSL, 1, have GNU Scientific Library)],[])
 
 AC_PATH_PROG(GLIB_COMPILE_RESOURCES, glib-compile-resources)
 AC_PATH_PROG(GLIB_MKENUMS, glib-mkenums)
@@ -124,7 +124,11 @@ fi
 # Checks for header files.
 AC_PATH_X
 AC_HEADER_DIRENT
-AC_HEADER_STDC
+# Autoupdate added the next two lines to ensure that your configure
+# script's behavior did not change.  They are probably safe to remove.
+AC_CHECK_INCLUDES_DEFAULT
+AC_PROG_EGREP
+
 AC_HEADER_SYS_WAIT
 AC_CHECK_HEADERS([fcntl.h limits.h stdlib.h string.h strings.h sys/ioctl.h sys/time.h unistd.h utime.h readline/readline.h])
 
@@ -142,7 +146,16 @@ AC_FUNC_MALLOC
 AC_FUNC_ALLOCA
 AC_FUNC_MKTIME
 AC_FUNC_REALLOC
-AC_TYPE_SIGNAL
+AC_CACHE_CHECK([return type of signal handlers],[ac_cv_type_signal],[AC_COMPILE_IFELSE(
+[AC_LANG_PROGRAM([#include <sys/types.h>
+#include <signal.h>
+],
+		 [return *(signal (0, 0)) (0) == 1;])],
+		   [ac_cv_type_signal=int],
+		   [ac_cv_type_signal=void])])
+AC_DEFINE_UNQUOTED([RETSIGTYPE],[$ac_cv_type_signal],[Define as the return type of signal handlers
+		    (`int' or `void').])
+
 AC_FUNC_STAT
 AC_FUNC_STRTOD
 AC_FUNC_UTIME_NULL
@@ -181,5 +194,5 @@ AC_CONFIG_FILES([Makefile \
 		 icons/scalable/mimetypes/Makefile \
 		 misc/Makefile])
 
-AM_CONFIG_HEADER([config.h])
+AC_CONFIG_HEADERS([config.h])
 AC_OUTPUT
