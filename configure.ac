@@ -72,6 +72,7 @@ AC_CHECK_PROG(RM, rm, yes, no)
 
 dnl Checks for gettext.
 ALL_LINGUAS="ja"
+AM_GNU_GETTEXT_REQUIRE_VERSION([0.19.6])
 AM_GNU_GETTEXT([external])
 
 dnl Checks for libraries.
