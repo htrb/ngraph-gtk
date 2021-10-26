@@ -104,7 +104,8 @@ dnl AM_PATH_GLIB_2_0($GLIB_REQUIRED_VERSION,,
 dnl   [AC_MSG_ERROR(Test for GLib failed.)],
 dnl   gobject)
 
-AM_PATH_GTK_3_0($GTK3_REQUIRED_VERSION,,AC_MSG_ERROR(Test for GTK failed.),)
+#AM_PATH_GTK_3_0($GTK3_REQUIRED_VERSION,,AC_MSG_ERROR(Test for GTK failed.),)
+PKG_CHECK_MODULES([GTK], [gtk+-3.0])
 
 AX_PATH_GSL([$GSL_REQUIRED_VERSION],[AC_DEFINE(HAVE_LIBGSL, 1, have GNU Scientific Library)],[])
 
