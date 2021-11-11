@@ -2627,61 +2627,74 @@ NGetCursor(void)
 void
 NSetCursor(unsigned int type)
 {
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   GdkWindow *win;
+#endif
+  GdkCursor *cursor;
 
   if (NgraphApp.Viewer.Win == NULL || NgraphApp.cursor == NULL || CursorType == type)
     return;
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   win = gtk_widget_get_window(NgraphApp.Viewer.Win);
   if (win == NULL) {
     return;
   }
+#endif
 
   CursorType = type;
+  cursor = NULL;
 
   switch (type) {
   case GDK_LEFT_PTR:
-    gdk_window_set_cursor(win, NgraphApp.cursor[0]);
+    cursor = NgraphApp.cursor[0];
     break;
   case GDK_XTERM:
-    gdk_window_set_cursor(win, NgraphApp.cursor[1]);
+    cursor = NgraphApp.cursor[1];
     break;
   case GDK_CROSSHAIR:
-    gdk_window_set_cursor(win, NgraphApp.cursor[2]);
+    cursor = NgraphApp.cursor[2];
     break;
   case GDK_TOP_LEFT_CORNER:
-    gdk_window_set_cursor(win, NgraphApp.cursor[3]);
+    cursor = NgraphApp.cursor[3];
     break;
   case GDK_TOP_RIGHT_CORNER:
-    gdk_window_set_cursor(win, NgraphApp.cursor[4]);
+    cursor = NgraphApp.cursor[4];
     break;
   case GDK_BOTTOM_RIGHT_CORNER:
-    gdk_window_set_cursor(win, NgraphApp.cursor[5]);
+    cursor = NgraphApp.cursor[5];
     break;
   case GDK_BOTTOM_LEFT_CORNER:
-    gdk_window_set_cursor(win, NgraphApp.cursor[6]);
+    cursor = NgraphApp.cursor[6];
     break;
   case GDK_TARGET:
-    gdk_window_set_cursor(win, NgraphApp.cursor[7]);
+    cursor = NgraphApp.cursor[7];
     break;
   case GDK_PLUS:
-    gdk_window_set_cursor(win, NgraphApp.cursor[8]);
+    cursor = NgraphApp.cursor[8];
     break;
   case GDK_SIZING:
-    gdk_window_set_cursor(win, NgraphApp.cursor[9]);
+    cursor = NgraphApp.cursor[9];
     break;
   case GDK_WATCH:
-    gdk_window_set_cursor(win, NgraphApp.cursor[10]);
+    cursor = NgraphApp.cursor[10];
     break;
   case GDK_FLEUR:
-    gdk_window_set_cursor(win, NgraphApp.cursor[11]);
+    cursor = NgraphApp.cursor[11];
     break;
   case GDK_PENCIL:
-    gdk_window_set_cursor(win, NgraphApp.cursor[12]);
+    cursor = NgraphApp.cursor[12];
     break;
   case GDK_TCROSS:
-    gdk_window_set_cursor(win, NgraphApp.cursor[13]);
+    cursor = NgraphApp.cursor[13];
     break;
+  }
+  if (cursor) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_widget_set_cursor(NgraphApp.Viewer.Win, cursor);
+#else
+    gdk_window_set_cursor(win, cursor);
+#endif
   }
 }
 
