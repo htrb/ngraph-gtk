@@ -50,26 +50,42 @@ combo_box_entry_create(void)
   cbox = GTK_COMBO_BOX(gtk_combo_box_new_with_entry());
   set_model(cbox, FALSE);
   gtk_combo_box_set_entry_text_column(GTK_COMBO_BOX(cbox), 0);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_entry_set_activates_default(GTK_ENTRY(gtk_combo_box_get_child(GTK_COMBO_BOX(cbox))), TRUE);
+#else
   gtk_entry_set_activates_default(GTK_ENTRY(gtk_bin_get_child(GTK_BIN(cbox))), TRUE);
+#endif
   return GTK_WIDGET(cbox);
 }
 
 void
 combo_box_entry_set_text(GtkWidget *cbox, char *str)
 {
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_editable_set_text(GTK_EDITABLE(gtk_combo_box_get_child(GTK_COMBO_BOX(cbox))), str);
+#else
   gtk_entry_set_text(GTK_ENTRY(gtk_bin_get_child(GTK_BIN(cbox))), str);
+#endif
 }
 
 const char *
 combo_box_entry_get_text(GtkWidget *cbox)
 {
+#if GTK_CHECK_VERSION(4, 0, 0)
+  return gtk_editable_get_text(GTK_EDITABLE(gtk_combo_box_get_child(GTK_COMBO_BOX(cbox))));
+#else
   return gtk_entry_get_text(GTK_ENTRY(gtk_bin_get_child(GTK_BIN(cbox))));
+#endif
 }
 
 void
 combo_box_entry_set_width(GtkWidget *cbox, int width)
 {
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_editable_set_width_chars(GTK_EDITABLE(gtk_combo_box_get_child(GTK_COMBO_BOX(cbox))), width);
+#else
   gtk_entry_set_width_chars(GTK_ENTRY(gtk_bin_get_child(GTK_BIN(cbox))), width);
+#endif
 }
 
 void
