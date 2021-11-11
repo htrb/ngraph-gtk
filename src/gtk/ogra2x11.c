@@ -233,7 +233,11 @@ cursor_moved(GtkEventControllerMotion *controller, gdouble x, gdouble y, gpointe
   gtklocal = (struct gtklocal *) user_data;
 
   if (gtklocal->blank_cursor) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_widget_set_cursor(gtklocal->mainwin, NULL);
+#else
     gdk_window_set_cursor(gtk_widget_get_window(gtklocal->mainwin), NULL);
+#endif
     g_object_unref(gtklocal->blank_cursor);
     gtklocal->blank_cursor = NULL;
   }
@@ -872,7 +876,11 @@ gtkwait_action(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char
 
   if (local->blank_cursor == NULL) {
     local->blank_cursor = gdk_cursor_new_for_display(gdk_display_get_default(), GDK_BLANK_CURSOR);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_widget_set_cursor(gtklocal->mainwin, local->blank_cursor);
+#else
     gdk_window_set_cursor(gtk_widget_get_window(local->mainwin), local->blank_cursor);
+#endif
   }
 
   local->action.type = ACTION_TYPE_NONE;
