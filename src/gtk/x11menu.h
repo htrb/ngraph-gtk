@@ -271,8 +271,6 @@ struct NgraphApp
 extern int Menulock, DnDLock;
 extern struct NgraphApp NgraphApp;
 extern GtkWidget *TopLevel;
-extern GdkColor white, gray;
-extern GtkAccelGroup *AccelGroup;
 extern GtkApplication *GtkApp;
 
 enum MENU_UNDO_TYPE {
@@ -351,8 +349,6 @@ void set_pointer_mode(int id);
 void set_toggle_action_widget_state(int id, int state);
 void script_exec(GtkWidget *w, gpointer client_data);
 int toggle_view(int type, int state);
-void CmToggleSingleWindowMode(GtkCheckMenuItem *action, gpointer client_data);
-void CmReloadWindowConfig(void *w, gpointer user_data);
 void show_recent_dialog(int type);
 int menu_save_undo(enum MENU_UNDO_TYPE type, char **obj);
 int menu_save_undo_single(enum MENU_UNDO_TYPE type, char *obj);
