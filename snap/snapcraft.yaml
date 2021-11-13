@@ -32,7 +32,7 @@ apps:
 parts:
   ngraph-gtk:
     source: https://github.com/htrb/ngraph-gtk.git
-    source-branch: master
+#    source-branch: master
     source-tag: v6.09.05
     plugin: autotools
     autotools-configure-parameters:
