@@ -323,7 +323,9 @@ MathTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect(tab, "switch-page", G_CALLBACK(MathTextDialogChangeInputType), d);
 
     gtk_box_pack_start(GTK_BOX(d->vbox), tab, TRUE, TRUE, 4);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
+#endif
     gtk_window_set_default_size(GTK_WINDOW(wi), 800, 500);
   }
 
@@ -736,7 +738,9 @@ MathDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->ok_button = _("_Close");
 
     gtk_window_set_default_size(GTK_WINDOW(wi), -1, 300);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
+#endif
 
     d->Mode = 0;
   }
@@ -771,7 +775,9 @@ FitLoadDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = combo_box_create();
     d->list = w;
     gtk_box_pack_start(GTK_BOX(d->vbox), w, FALSE, FALSE, 4);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
+#endif
   }
   combo_box_clear(d->list);
   for (i = d->Sid; i <= chkobjlastinst(d->Obj); i++) {
@@ -830,7 +836,9 @@ FitSaveDialogSetup(GtkWidget *wi, void *data, int makewidget)
     item_setup(hbox, w, _("_Profile:"), TRUE);
     d->profile = w;
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
+#endif
   }
   combo_box_clear(d->profile);
   for (i = d->Sid; i <= chkobjlastinst(d->Obj); i++) {
@@ -1772,7 +1780,9 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect(d->through_point, "toggled", G_CALLBACK(FitDialogSetSensitivity), d);
     g_signal_connect(d->derivatives, "toggled", G_CALLBACK(FitDialogSetSensitivity), d);
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
+#endif
   }
 
   FitDialogSetupItem(wi, d, d->Id);
@@ -2780,7 +2790,9 @@ MarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
     }
     gtk_box_pack_start(GTK_BOX(d->vbox), grid, FALSE, FALSE, 4);
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
+#endif
   }
 
   d->cb_respond = FALSE;
@@ -3971,7 +3983,9 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(d->fit_table, w, _("_Fit:"), FALSE, d->fit_row);
     d->fit = w;
     g_signal_connect(w, "clicked", G_CALLBACK(FileDialogFit), d);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
+#endif
   }
 
   line = Menulocal.data_head_lines;
@@ -4040,7 +4054,9 @@ ArrayDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(d->fit_table, w, _("_Fit:"), FALSE, d->fit_row);
     d->fit = w;
     g_signal_connect(w, "clicked", G_CALLBACK(FileDialogFit), d);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
+#endif
   }
 
   FileDialogSetupItem(wi, d);
@@ -4100,7 +4116,9 @@ RangeDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(d->fit_table, w, _("_Fit:"), FALSE, d->fit_row);
     d->fit = w;
     g_signal_connect(w, "clicked", G_CALLBACK(FileDialogFit), d);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
+#endif
   }
 
   FileDialogSetupItem(wi, d);
@@ -4337,7 +4355,9 @@ FileDefDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     FileDialogSetupCommon(wi, d);
     gtk_notebook_set_tab_pos(d->tab, GTK_POS_TOP);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
+#endif
   }
   FileDialogDefSetupItem(wi, d, d->Id);
 }

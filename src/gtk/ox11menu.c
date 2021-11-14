@@ -1630,7 +1630,9 @@ mx_print(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
     g_signal_connect(TopLevel, "delete-event", G_CALLBACK(gtk_true), NULL);
     label = gtk_label_new(" Ngraph ");
     gtk_container_add(GTK_CONTAINER(TopLevel), label);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_show_all(TopLevel);
+#endif
     reset_event();
   }
 

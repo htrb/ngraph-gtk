@@ -252,7 +252,9 @@ PageDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->decimalsign = w;
 
     gtk_box_pack_start(GTK_BOX(d->vbox), table, FALSE, FALSE, 4);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
+#endif
   }
   PageDialogSetupItem(wi, d);
   d->show_cancel = ! d->new_graph;
@@ -806,7 +808,9 @@ SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 4);
     gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 4);
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
+#endif
 
     d->btn_lock = FALSE;
   }
@@ -913,7 +917,10 @@ DirectoryDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_object_set(w, "margin", GINT_TO_POINTER(4), NULL);
     gtk_grid_attach(GTK_GRID(table), w, 1, 1, 1, 1);
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_pack_start(GTK_BOX(d->vbox), table, FALSE, FALSE, 4);
+#endif
+
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
   }
 
@@ -994,7 +1001,9 @@ LoadDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->load_path = w;
 
     gtk_box_pack_start(GTK_BOX(d->vbox), vbox, FALSE, FALSE, 4);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
+#endif
   }
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->expand_file), d->expand);
   combo_box_set_active(d->load_path, d->loadpath);
@@ -1058,7 +1067,9 @@ SaveDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
 
     gtk_box_pack_start(GTK_BOX(d->vbox), vbox, FALSE, FALSE, 4);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
+#endif
   }
   combo_box_set_active(d->path, Menulocal.savepath);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->include_data), Menulocal.savewithdata);

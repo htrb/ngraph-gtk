@@ -88,7 +88,9 @@ DefaultDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = gtk_check_button_new_with_mnemonic(_("_Miscellaneous"));
     d->misc = w;
     gtk_box_pack_start(GTK_BOX(d->vbox), w, FALSE, FALSE, 4);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
+#endif
   }
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->viewer), FALSE);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->external_viewer), FALSE);
@@ -304,7 +306,9 @@ SetScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->description = w;
 
     gtk_box_pack_start(GTK_BOX(d->vbox), table, FALSE, FALSE, 4);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
+#endif
   }
   SetScriptDialogSetupItem(wi, d);
 }
@@ -455,7 +459,9 @@ PrefScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_dialog_add_button(GTK_DIALOG(wi), _("_Save"), IDSAVE);
     PrefScriptDialogCreateWidgets(d, NULL, sizeof(list) / sizeof(*list), list);
     gtk_window_set_default_size(GTK_WINDOW(wi), 400, 300);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
+#endif
   }
   PrefScriptDialogSetupItem(d);
 }
@@ -731,7 +737,9 @@ FontSettingDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_container_add(GTK_CONTAINER(frame), hbox);
 
     gtk_box_pack_start(GTK_BOX(d->vbox), frame, TRUE, TRUE, 4);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
+#endif
   }
 
   FontSettingDialogSetupItem(wi, d);
@@ -944,7 +952,9 @@ PrefFontDialogSetup(GtkWidget *wi, void *data, int makewidget)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
     PrefFontDialogCreateWidgets(d, vbox, sizeof(list) / sizeof(*list), list);
     gtk_window_set_default_size(GTK_WINDOW(wi), 550, 300);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
+#endif
   }
   PrefFontDialogSetupItem(d);
 }
@@ -1121,7 +1131,9 @@ edit_custom_palette(GtkWidget *w, gpointer data)
     gtk_widget_destroy(dialog);
     return;
   }
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   gtk_widget_show_all(dialog);
+#endif
   r = gtk_dialog_run(GTK_DIALOG(dialog));
   if (r == GTK_RESPONSE_ACCEPT) {
     save_custom_palette(d, btns);
@@ -1299,7 +1311,9 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_box_pack_start(GTK_BOX(hbox2), vbox2, FALSE, FALSE, 4);
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox2, TRUE, TRUE, 4);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
+#endif
   }
   MiscDialogSetupItem(wi, d);
 }
@@ -1510,7 +1524,9 @@ ExViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->height = w;
 
     gtk_box_pack_start(GTK_BOX(d->vbox), table, FALSE, FALSE, 4);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
+#endif
   }
   ExViewerDialogSetupItem(wi, d);
 }
@@ -1640,7 +1656,9 @@ ViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->data_num = w;
 
     gtk_box_pack_start(GTK_BOX(d->vbox), table, FALSE, FALSE, 4);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
+#endif
   }
   ViewerDialogSetupItem(wi, d);
 }

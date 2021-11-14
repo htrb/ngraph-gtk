@@ -1504,7 +1504,9 @@ sub_win_create_popup_menu(struct obj_list_data *d, int n, struct subwin_popup_li
   menu = create_popup_menu_sub(d, TRUE, list);
 
   d->popup = menu;
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   gtk_widget_show_all(menu);
+#endif
   gtk_menu_attach_to_widget(GTK_MENU(menu), GTK_WIDGET(d->text), NULL);
   g_signal_connect(d->text, "popup-menu", G_CALLBACK(ev_popup_menu), d);
 

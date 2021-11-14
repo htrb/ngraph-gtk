@@ -354,7 +354,9 @@ SelectDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
 
     gtk_window_set_default_size(GTK_WINDOW(wi), -1, 300);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
+#endif
   }
   gtk_window_set_title(GTK_WINDOW(d->widget), (d->title) ? d->title : d->resource);
   list_store_clear(d->list);
@@ -491,7 +493,9 @@ CopyDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_container_add(GTK_CONTAINER(w), swin);
     gtk_box_pack_start(GTK_BOX(d->vbox), w, TRUE, TRUE, 0);
     gtk_window_set_default_size(GTK_WINDOW(wi), -1, 300);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
+#endif
   }
   gtk_window_set_title(GTK_WINDOW(d->widget), (d->title) ? d->title : d->resource);
   list_store_clear(d->list);

@@ -316,7 +316,9 @@ markup_message_box(GtkWidget * parent, const char *message, const char *title, i
   gtk_window_set_title(GTK_WINDOW(dlg), title);
   gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   gtk_widget_show_all(dlg);
+#endif
   res_id = ndialog_run(dlg);
 
   switch (res_id) {
@@ -386,7 +388,9 @@ DialogInput(GtkWidget * parent, const char *title, const char *mes, const char *
   gtk_box_pack_start(vbox, text, FALSE, FALSE, 5);
 
   set_dialog_position(dlg, x, y);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   gtk_widget_show_all(dlg);
+#endif
   res_id = ndialog_run(dlg);
 
   if (res_id > 0 || res_id == GTK_RESPONSE_OK) {
@@ -458,7 +462,9 @@ DialogRadio(GtkWidget *parent, const char *title, const char *caption, struct na
   }
 
   set_dialog_position(dlg, x, y);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   gtk_widget_show_all(dlg);
+#endif
   res_id = ndialog_run(dlg);
 
   if (res_id > 0 || res_id == GTK_RESPONSE_OK) {
@@ -540,7 +546,9 @@ DialogButton(GtkWidget *parent, const char *title, const char *caption, struct n
   }
 
   set_dialog_position(dlg, x, y);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   gtk_widget_show_all(dlg);
+#endif
   res_id = ndialog_run(dlg);
   get_dialog_position(dlg, x, y);
   gtk_widget_destroy(dlg);
@@ -600,7 +608,9 @@ DialogCombo(GtkWidget *parent, const char *title, const char *caption, struct na
   gtk_box_pack_start(vbox, combo, FALSE, FALSE, 2);
 
   set_dialog_position(dlg, x, y);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   gtk_widget_show_all(dlg);
+#endif
   res_id = ndialog_run(dlg);
 
   if (res_id > 0 || res_id == GTK_RESPONSE_OK) {
@@ -674,7 +684,9 @@ DialogComboEntry(GtkWidget *parent, const char *title, const char *caption, stru
   gtk_box_pack_start(vbox, combo, FALSE, FALSE, 2);
 
   set_dialog_position(dlg, x, y);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   gtk_widget_show_all(dlg);
+#endif
   res_id = ndialog_run(dlg);
 
   if (res_id > 0 || res_id == GTK_RESPONSE_OK) {
@@ -751,7 +763,9 @@ DialogSpinEntry(GtkWidget *parent, const char *title, const char *caption, doubl
   gtk_spin_button_set_digits(GTK_SPIN_BUTTON(spin), n);
 
   set_dialog_position(dlg, x, y);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   gtk_widget_show_all(dlg);
+#endif
   res_id = ndialog_run(dlg);
 
   if (res_id > 0 || res_id == GTK_RESPONSE_OK) {
@@ -825,7 +839,9 @@ DialogCheck(GtkWidget *parent, const char *title, const char *caption, struct na
   }
 
   set_dialog_position(dlg, x, y);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   gtk_widget_show_all(dlg);
+#endif
   res_id = ndialog_run(dlg);
 
   if (res_id > 0 || res_id == GTK_RESPONSE_OK) {
@@ -1078,7 +1094,9 @@ FileSelectionDialog(GtkWidget *parent, struct nGetOpenFileData *data)
   if (data->init_dir && *(data->init_dir)) {
     gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dlg), *(data->init_dir));
   }
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   gtk_widget_show_all(dlg);
+#endif
 
   if (data->changedir && data->init_dir) {
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(data->chdir_cb), data->chdir);

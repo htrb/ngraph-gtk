@@ -330,7 +330,9 @@ ParameterDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     add_copy_button_to_box(GTK_WIDGET(d->vbox), G_CALLBACK(ParameterDialogCopy), d, "parameter");
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
+#endif
   }
   ParameterDialogSetupItem(d, d->Id);
 }
@@ -1209,7 +1211,9 @@ ParameterWinUpdate(struct obj_list_data *d, int clear, int draw)
     add_save_as_default_button(d, num + 1, col - 4);
   }
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   gtk_widget_show_all(GTK_WIDGET(d->text));
+#endif
 }
 
 GtkWidget *

@@ -1986,7 +1986,9 @@ ProgressDialogCreate(char *title)
     show_progress(0, "", 0);
     show_progress(1, "", 0);
     set_progress_func(show_progress);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_show_all(ProgressDialog);
+#endif
     return;
   }
 
@@ -2029,7 +2031,9 @@ ProgressDialogCreate(char *title)
   gtk_container_add(GTK_CONTAINER(ProgressDialog), vbox);
 
   gtk_window_set_default_size(GTK_WINDOW(ProgressDialog), 400, -1);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   gtk_widget_show_all(ProgressDialog);
+#endif
 
   set_progress_func(show_progress);
 }

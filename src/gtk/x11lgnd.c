@@ -1538,7 +1538,9 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     d->prop_cb = LegendLineCB;
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
+#endif
   }
   legend_dialog_setup_item(wi, d, d->Id);
 }
@@ -1637,7 +1639,9 @@ LegendRectDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     d->prop_cb = LegendRectCB;
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
+#endif
   }
   legend_dialog_setup_item(wi, d, d->Id);
 }
@@ -1765,7 +1769,9 @@ LegendArcDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     d->prop_cb = LegendArcCB;
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
+#endif
   }
   legend_dialog_setup_item(wi, d, d->Id);
 }
@@ -1850,7 +1856,9 @@ LegendMarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     d->prop_cb = LegendArcCB;
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
+#endif
   }
 
   legend_dialog_setup_item(wi, d, d->Id);
@@ -2071,7 +2079,9 @@ LegendTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     d->prop_cb = LegendTextCB;
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
+#endif
   }
   legend_dialog_setup_item(wi, d, d->Id);
   entry_completion_set_entry(NgraphApp.legend_text_list, d->text);
@@ -2108,7 +2118,9 @@ LegendTextDefDialogSetup(GtkWidget *w, void *data, int makewidget)
 
     d->prop_cb = LegendTextCB;
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
+#endif
   }
   legend_dialog_setup_item(w, d, d->Id);
 }

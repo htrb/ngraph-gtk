@@ -88,7 +88,9 @@ OutputDataDialogSetup(GtkWidget *wi, void *data, int makewidget)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
     item_setup(hbox, w, _("_Div:"), TRUE);
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
+#endif
   }
   OutputDataDialogSetupItem(wi, d);
 }
@@ -218,7 +220,9 @@ OutputImageDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = combo_box_create();
     d->version = w;
     item_setup(GTK_WIDGET(d->vbox), w, "", FALSE);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
+#endif
   }
 
   switch (d->DlgType) {

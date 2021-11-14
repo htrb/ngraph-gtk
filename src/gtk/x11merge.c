@@ -195,7 +195,9 @@ MergeDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     add_copy_button_to_box(GTK_WIDGET(d->vbox), G_CALLBACK(MergeDialogCopy), d, "merge");
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
+#endif
   }
   MergeDialogSetupItem(d, TRUE, d->Id);
 }

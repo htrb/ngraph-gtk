@@ -2118,7 +2118,9 @@ create_save_menu(void)
     return NULL;
   }
   menu = gtk_menu_new_from_model(G_MENU_MODEL(gmenu));
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   gtk_widget_show_all(menu);
+#endif
   return menu;
 }
 
@@ -2325,7 +2327,9 @@ create_toplevel_window(void)
   initdialog();
 
   setup_toolbar(TopLevel);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   gtk_widget_show_all(GTK_WIDGET(TopLevel));
+#endif
   reset_event();
   create_markpixmap(TopLevel);
   setupwindow(GtkApp);
@@ -2334,7 +2338,9 @@ create_toplevel_window(void)
   NgraphApp.FileName = NULL;
   NgraphApp.Viewer.Mode = PointB;
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   gtk_widget_show_all(GTK_WIDGET(TopLevel));
+#endif
   ViewerWinSetup();
 
   if (create_cursor())
@@ -2365,7 +2371,9 @@ create_toplevel_window(void)
     }
   }
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   gtk_widget_show_all(GTK_WIDGET(TopLevel));
+#endif
   set_widget_visibility();
 
   set_focus_sensitivity(&NgraphApp.Viewer);
