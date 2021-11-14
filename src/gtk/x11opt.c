@@ -71,24 +71,42 @@ DefaultDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     w = gtk_check_button_new_with_mnemonic(_("_Viewer"));
     d->viewer = w;
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(GTK_BOX(d->vbox), w);
+#else
     gtk_box_pack_start(GTK_BOX(d->vbox), w, FALSE, FALSE, 4);
+#endif
 
     w = gtk_check_button_new_with_mnemonic(_("_External Viewer"));
     d->external_viewer = w;
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(GTK_BOX(d->vbox), w);
+#else
     gtk_box_pack_start(GTK_BOX(d->vbox), w, FALSE, FALSE, 4);
+#endif
 
     w = gtk_check_button_new_with_mnemonic(_("_Font aliases"));
     d->fonts = w;
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(GTK_BOX(d->vbox), w);
+#else
     gtk_box_pack_start(GTK_BOX(d->vbox), w, FALSE, FALSE, 4);
+#endif
 
     w = gtk_check_button_new_with_mnemonic(_("_Add-in Script"));
     d->addin_script = w;
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(GTK_BOX(d->vbox), w);
+#else
     gtk_box_pack_start(GTK_BOX(d->vbox), w, FALSE, FALSE, 4);
+#endif
 
     w = gtk_check_button_new_with_mnemonic(_("_Miscellaneous"));
     d->misc = w;
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(GTK_BOX(d->vbox), w);
+#else
     gtk_box_pack_start(GTK_BOX(d->vbox), w, FALSE, FALSE, 4);
-#if ! GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
 #endif
   }
@@ -305,8 +323,10 @@ SetScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, _("_Description:"), TRUE, i++);
     d->description = w;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(GTK_BOX(d->vbox), table);
+#else
     gtk_box_pack_start(GTK_BOX(d->vbox), table, FALSE, FALSE, 4);
-#if ! GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
 #endif
   }
@@ -686,7 +706,11 @@ FontSettingDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, _("_Font:"), TRUE, j++);
     d->font_b = w;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(GTK_BOX(d->vbox), table);
+#else
     gtk_box_pack_start(GTK_BOX(d->vbox), table, FALSE, FALSE, 4);
+#endif
 
 
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
@@ -701,19 +725,31 @@ FontSettingDialogSetup(GtkWidget *wi, void *data, int makewidget)
     sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(w));
     g_signal_connect(sel, "changed", G_CALLBACK(AlternativeFontListSelCb), d);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(GTK_BOX(hbox), swin);
+#else
     gtk_box_pack_start(GTK_BOX(hbox), swin, TRUE, TRUE, 4);
+#endif
 
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
 
     w= gtk_button_new_with_mnemonic(_("_Add"));
     set_button_icon(w, "list-add");
     g_signal_connect(w, "clicked", G_CALLBACK(FontSettingDialogAddAlternative), d);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(GTK_BOX(vbox), w);
+#else
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+#endif
 
     w = gtk_button_new_with_mnemonic(_("_Remove"));
     set_button_icon(w, "list-remove");
     g_signal_connect(w, "clicked", G_CALLBACK(FontSettingDialogRemoveAlternative), d);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(GTK_BOX(vbox), w);
+#else
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+#endif
     gtk_widget_set_sensitive(w, FALSE);
     d->del_b = w;
 
@@ -731,13 +767,19 @@ FontSettingDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_widget_set_sensitive(w, FALSE);
     d->up_b = w;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(GTK_BOX(hbox), vbox);
+#else
     gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 4);
+#endif
 
     frame = gtk_frame_new(_("Alternative fonts"));
     gtk_container_add(GTK_CONTAINER(frame), hbox);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(GTK_BOX(d->vbox), frame);
+#else
     gtk_box_pack_start(GTK_BOX(d->vbox), frame, TRUE, TRUE, 4);
-#if ! GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
 #endif
   }
@@ -1079,19 +1121,31 @@ create_custom_palette_buttons(struct MiscDialog *d, GtkWidget *box)
   for (i = 0; i < n; i++) {
     if (i % PALETTE_COLUMN == 0) {
       if (bbox) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+	gtk_box_append(GTK_BOX(box), bbox);
+#else
 	gtk_box_pack_start(GTK_BOX(box), bbox, FALSE, FALSE, 0);
+#endif
       }
       bbox = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
       gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_START);
     }
     btn = gtk_color_button_new_with_rgba(colors + i);
     g_object_set_property(G_OBJECT(btn), "show-editor", &value);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(GTK_BOX(bbox), btn);
+#else
     gtk_box_pack_start(GTK_BOX(bbox), btn, FALSE, FALSE, 4);
+#endif
     btns[i] = btn;
   }
   btns[i] = NULL;
   if (bbox) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(GTK_BOX(box), bbox);
+#else
     gtk_box_pack_start(GTK_BOX(box), bbox, FALSE, FALSE, 0);
+#endif
   }
   return btns;
 }
@@ -1172,7 +1226,11 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->help_browser = w;
 
     gtk_container_add(GTK_CONTAINER(frame), table);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(GTK_BOX(vbox2), frame);
+#else
     gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
+#endif
 
 
     frame = gtk_frame_new(NULL);
@@ -1196,7 +1254,11 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, NULL, FALSE, i++);
 
     gtk_container_add(GTK_CONTAINER(frame), table);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(GTK_BOX(vbox2), frame);
+#else
     gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
+#endif
 
 
     frame = gtk_frame_new(NULL);
@@ -1220,9 +1282,14 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->expanddir = w;
 
     gtk_container_add(GTK_CONTAINER(frame), table);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(GTK_BOX(vbox2), frame);
+    gtk_box_append(GTK_BOX(hbox2), vbox2);
+#else
     gtk_box_pack_start(GTK_BOX(vbox2), frame, TRUE, TRUE, 4);
 
     gtk_box_pack_start(GTK_BOX(hbox2), vbox2, TRUE, TRUE, 4);
+#endif
 
 
     frame = gtk_frame_new(_("Size"));
@@ -1242,7 +1309,11 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->data_head_lines = w;
 
     gtk_container_add(GTK_CONTAINER(frame), table);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(GTK_BOX(vbox2), frame);
+#else
     gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
+#endif
 
 
     vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
@@ -1264,7 +1335,11 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->file_preview_font = w;
 
     gtk_container_add(GTK_CONTAINER(frame), table);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(GTK_BOX(vbox2), frame);
+#else
     gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
+#endif
 
     frame = gtk_frame_new(_("Miscellaneous"));
     table = gtk_grid_new();
@@ -1306,12 +1381,16 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->use_dark_theme = w;
 
     gtk_container_add(GTK_CONTAINER(frame), table);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(GTK_BOX(vbox2), frame);
+    gtk_box_append(GTK_BOX(hbox2), vbox2);
+    gtk_box_append(GTK_BOX(d->vbox), hbox2);
+#else
     gtk_box_pack_start(GTK_BOX(vbox2), frame, TRUE, TRUE, 4);
 
 
     gtk_box_pack_start(GTK_BOX(hbox2), vbox2, FALSE, FALSE, 4);
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox2, TRUE, TRUE, 4);
-#if ! GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
 #endif
   }
@@ -1523,8 +1602,10 @@ ExViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, _("Window _Height:"), FALSE, i++);
     d->height = w;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(GTK_BOX(d->vbox), table);
+#else
     gtk_box_pack_start(GTK_BOX(d->vbox), table, FALSE, FALSE, 4);
-#if ! GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
 #endif
   }
@@ -1655,8 +1736,10 @@ ViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, _("_Maximum number of data on redraw:"), FALSE, i++);
     d->data_num = w;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(GTK_BOX(d->vbox), table);
+#else
     gtk_box_pack_start(GTK_BOX(d->vbox), table, FALSE, FALSE, 4);
-#if ! GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
 #endif
   }

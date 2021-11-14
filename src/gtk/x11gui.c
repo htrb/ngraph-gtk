@@ -378,14 +378,22 @@ DialogInput(GtkWidget * parent, const char *title, const char *mes, const char *
   if (mes) {
     GtkWidget *label;
     label = gtk_label_new(mes);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(vbox, label);
+#else
     gtk_box_pack_start(vbox, label, FALSE, FALSE, 5);
+#endif
   }
 
   text = create_text_entry(FALSE, TRUE);
   if (init_str) {
     gtk_entry_set_text(GTK_ENTRY(text), init_str);
   }
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_box_append(vbox, text);
+#else
   gtk_box_pack_start(vbox, text, FALSE, FALSE, 5);
+#endif
 
   set_dialog_position(dlg, x, y);
 #if ! GTK_CHECK_VERSION(4, 0, 0)
@@ -449,14 +457,22 @@ DialogRadio(GtkWidget *parent, const char *title, const char *caption, struct na
   if (caption) {
     GtkWidget *label;
     label = gtk_label_new(caption);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(vbox, label);
+#else
     gtk_box_pack_start(vbox, label, FALSE, FALSE, 5);
+#endif
   }
 
 
   btn = NULL;
   for (i = 0; i < anum; i++) {
     btn = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(btn), d[i]);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(vbox, btn);
+#else
     gtk_box_pack_start(vbox, btn, FALSE, FALSE, 2);
+#endif
     btn_ary[i] = btn;
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(btn), i == *r);
   }
@@ -536,7 +552,11 @@ DialogButton(GtkWidget *parent, const char *title, const char *caption, struct n
     GtkWidget *box, *label;
     box = gtk_dialog_get_content_area(GTK_DIALOG(dlg));
     label = gtk_label_new(caption);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(GTK_BOX(box), label);
+#else
     gtk_box_pack_start(GTK_BOX(box), label, TRUE, TRUE, 4);
+#endif
   }
 
   gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
@@ -592,7 +612,11 @@ DialogCombo(GtkWidget *parent, const char *title, const char *caption, struct na
   if (caption) {
     GtkWidget *label;
     label = gtk_label_new(caption);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(vbox, label);
+#else
     gtk_box_pack_start(vbox, label, FALSE, FALSE, 5);
+#endif
   }
 
   combo = combo_box_create();
@@ -605,7 +629,11 @@ DialogCombo(GtkWidget *parent, const char *title, const char *caption, struct na
   }
   combo_box_set_active(combo, sel);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_box_append(vbox, combo);
+#else
   gtk_box_pack_start(vbox, combo, FALSE, FALSE, 2);
+#endif
 
   set_dialog_position(dlg, x, y);
 #if ! GTK_CHECK_VERSION(4, 0, 0)
@@ -669,7 +697,11 @@ DialogComboEntry(GtkWidget *parent, const char *title, const char *caption, stru
   if (caption) {
     GtkWidget *label;
     label = gtk_label_new(caption);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(vbox, label);
+#else
     gtk_box_pack_start(vbox, label, FALSE, FALSE, 5);
+#endif
   }
 
   combo = combo_box_entry_create();
@@ -681,7 +713,11 @@ DialogComboEntry(GtkWidget *parent, const char *title, const char *caption, stru
     combo_box_set_active(combo, sel);
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_box_append(vbox, combo);
+#else
   gtk_box_pack_start(vbox, combo, FALSE, FALSE, 2);
+#endif
 
   set_dialog_position(dlg, x, y);
 #if ! GTK_CHECK_VERSION(4, 0, 0)
@@ -742,7 +778,11 @@ DialogSpinEntry(GtkWidget *parent, const char *title, const char *caption, doubl
   if (caption) {
     GtkWidget *label;
     label = gtk_label_new(caption);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(vbox, label);
+#else
     gtk_box_pack_start(vbox, label, FALSE, FALSE, 5);
+#endif
   }
 
   if (inc == 0)
@@ -751,7 +791,11 @@ DialogSpinEntry(GtkWidget *parent, const char *title, const char *caption, doubl
   spin = gtk_spin_button_new_with_range(min, max, inc);
   gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(spin), TRUE);
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin), *r);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_box_append(vbox, spin);
+#else
   gtk_box_pack_start(vbox, spin, FALSE, FALSE, 2);
+#endif
   gtk_entry_set_activates_default(GTK_ENTRY(spin), TRUE);
 
   prec = log10(fabs(inc));
@@ -823,14 +867,22 @@ DialogCheck(GtkWidget *parent, const char *title, const char *caption, struct na
   if (caption) {
     GtkWidget *label;
     label = gtk_label_new(caption);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(vbox, label);
+#else
     gtk_box_pack_start(vbox, label, FALSE, FALSE, 5);
+#endif
   }
 
 
   btn = NULL;
   for (i = 0; i < anum; i++) {
     btn = gtk_check_button_new_with_mnemonic(d[i]);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(vbox, btn);
+#else
     gtk_box_pack_start(vbox, btn, FALSE, FALSE, 2);
+#endif
     btn_ary[i] = btn;
   }
 

@@ -2006,12 +2006,20 @@ ProgressDialogCreate(char *title)
   ProgressBar = GTK_PROGRESS_BAR(gtk_progress_bar_new());
   gtk_progress_bar_set_ellipsize(ProgressBar, PANGO_ELLIPSIZE_MIDDLE);
   gtk_progress_bar_set_show_text(ProgressBar, TRUE);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_box_append(GTK_BOX(vbox), GTK_WIDGET(ProgressBar));
+#else
   gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(ProgressBar), FALSE, FALSE, 4);
+#endif
 
   ProgressBar2 = GTK_PROGRESS_BAR(gtk_progress_bar_new());
   gtk_progress_bar_set_ellipsize(ProgressBar2, PANGO_ELLIPSIZE_MIDDLE);
   gtk_progress_bar_set_show_text(ProgressBar2, TRUE);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_box_append(GTK_BOX(vbox), GTK_WIDGET(ProgressBar2));
+#else
   gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(ProgressBar2), FALSE, FALSE, 4);
+#endif
 
   btn = gtk_button_new_with_mnemonic(_("_Stop"));
   set_button_icon(btn, "process-stop");
@@ -2026,7 +2034,11 @@ ProgressDialogCreate(char *title)
 
   gtk_box_pack_end(GTK_BOX(hbox), btn, FALSE, FALSE, 4);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_box_append(GTK_BOX(vbox), hbox);
+#else
   gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
+#endif
 #endif
   gtk_container_add(GTK_CONTAINER(ProgressDialog), vbox);
 

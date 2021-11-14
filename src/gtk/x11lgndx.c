@@ -378,7 +378,11 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     button = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(button), _("_Parabola"));
     g_signal_connect(button, "toggled", G_CALLBACK(LegendGaussDialogMode), d);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(GTK_BOX(hbox), button);
+#else
     gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+#endif
 
     button = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(button), _("_Lorentz"));
     g_signal_connect(button, "toggled", G_CALLBACK(LegendGaussDialogMode), d);
@@ -390,7 +394,11 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     func_list = gtk_radio_button_get_group(GTK_RADIO_BUTTON(button));
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(GTK_BOX(d->vbox), hbox);
+#else
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 0);
+#endif
     d->func_list = func_list;
 
 
@@ -431,26 +439,46 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     button = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(button), "_T");
     g_signal_connect(button, "toggled", G_CALLBACK(LegendGaussDialogDir), d);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(GTK_BOX(hbox2), button);
+#else
     gtk_box_pack_start(GTK_BOX(hbox2), button, FALSE, FALSE, 0);
+#endif
 
     button = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(button), "_B");
     g_signal_connect(button, "toggled", G_CALLBACK(LegendGaussDialogDir), d);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(GTK_BOX(hbox2), button);
+#else
     gtk_box_pack_start(GTK_BOX(hbox2), button, FALSE, FALSE, 0);
+#endif
 
     button = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(button), "_L");
     g_signal_connect(button, "toggled", G_CALLBACK(LegendGaussDialogDir), d);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(GTK_BOX(hbox2), button);
+#else
     gtk_box_pack_start(GTK_BOX(hbox2), button, FALSE, FALSE, 0);
+#endif
 
     button = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(button), "_R");
     g_signal_connect(button, "toggled", G_CALLBACK(LegendGaussDialogDir), d);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(GTK_BOX(hbox2), button);
+#else
     gtk_box_pack_start(GTK_BOX(hbox2), button, FALSE, FALSE, 0);
+#endif
 
     dir_list = gtk_radio_button_get_group(GTK_RADIO_BUTTON(button));
     d->dir_list = dir_list;
 
     add_widget_to_table(table, hbox2, _("Direction:"), TRUE, i++);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(GTK_BOX(hbox), table);
+#else
     gtk_box_pack_start(GTK_BOX(hbox), table, TRUE, TRUE, 0);
+#endif
 
 
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
@@ -459,24 +487,36 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
     set_scale_mark(w, GTK_POS_BOTTOM, 100, 200);
     g_signal_connect(w, "value-changed", G_CALLBACK(LegendGaussDialogScaleV), d);
     d->scv = w;
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(GTK_BOX(vbox), w);
+#else
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 0);
+#endif
 
     w = gtk_drawing_area_new();
     d->view = w;
     gtk_widget_set_size_request(w, VIEW_SIZE, VIEW_SIZE);
 
     g_signal_connect(w, "draw", G_CALLBACK(LegendGaussDialogPaint), d);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(GTK_BOX(vbox), w);
+#else
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 0);
+#endif
 
     w = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, - SCALE_H_MAX, SCALE_H_MAX, 1);
     set_scale_mark(w, GTK_POS_TOP, -100, 25);
     g_signal_connect(w, "value-changed", G_CALLBACK(LegendGaussDialogScaleH), d);
     d->sch = w;
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(GTK_BOX(vbox), w);
+    gtk_box_append(GTK_BOX(hbox), vbox);
+    gtk_box_append(GTK_BOX(d->vbox), hbox);
+#else
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 0);
 
     gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 0);
-#if ! GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
 #endif
   }

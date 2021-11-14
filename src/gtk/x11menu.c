@@ -1361,13 +1361,21 @@ create_message_box(GtkWidget **label1, GtkWidget **label2)
 
   w = gtk_label_new(NULL);
   gtk_widget_set_halign(w, GTK_ALIGN_END);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_box_append(GTK_BOX(hbox), w);
+#else
   gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
+#endif
   *label1 = w;
 
   w = gtk_label_new(NULL);
   gtk_widget_set_halign(w, GTK_ALIGN_START);
   gtk_label_set_width_chars(GTK_LABEL(w), 16);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_box_append(GTK_BOX(hbox), w);
+#else
   gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
+#endif
   *label2 = w;
 
   gtk_container_add(GTK_CONTAINER(frame), hbox);
@@ -1607,8 +1615,13 @@ setupwindow(GtkApplication *app)
   SettingPanel = presetting_create_panel(app);
   gtk_stack_add_named(GTK_STACK(ToolBox), CToolbar, "CommandToolbar");
   gtk_stack_add_named(GTK_STACK(ToolBox), SettingPanel, "SettingPanel");
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_box_append(GTK_BOX(vbox2), ToolBox);
+  gtk_box_append(GTK_BOX(hbox), PToolbar);
+#else
   gtk_box_pack_start(GTK_BOX(vbox2), ToolBox, FALSE, FALSE, 0);
   gtk_box_pack_start(GTK_BOX(hbox), PToolbar, FALSE, FALSE, 0);
+#endif
 
   if (NgraphApp.Viewer.popup) {
     g_signal_connect(NgraphApp.Viewer.popup, "show", G_CALLBACK(edit_menu_shown), &NgraphApp.Viewer);
@@ -1672,18 +1685,35 @@ setupwindow(GtkApplication *app)
   gtk_paned_add2(GTK_PANED(hpane1), vpane1);
   NgraphApp.Viewer.main_pane = hpane1;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_box_append(GTK_BOX(hbox), table);
+#else
   gtk_box_pack_start(GTK_BOX(hbox), table, TRUE, TRUE, 0);
+#endif
 #if ! USE_APP_HEADER_BAR
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_box_append(GTK_BOX(vbox), hbox);
+#else
   gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
 #endif
+#endif
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_box_append(GTK_BOX(hbox2), hpane1);
+  gtk_box_append(GTK_BOX(vbox2), hbox2);
+#else
   gtk_box_pack_start(GTK_BOX(hbox2), hpane1, TRUE, TRUE, 0);
   gtk_box_pack_start(GTK_BOX(vbox2), hbox2, TRUE, TRUE, 0);
+#endif
 
   NgraphApp.Message = gtk_statusbar_new();
   gtk_box_pack_end(GTK_BOX(NgraphApp.Message),
 		   create_message_box(&NgraphApp.Message_extra, &NgraphApp.Message_pos),
 		   FALSE, FALSE, 0);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_box_append(GTK_BOX(vbox2), NgraphApp.Message);
+#else
   gtk_box_pack_start(GTK_BOX(vbox2), NgraphApp.Message, FALSE, FALSE, 0);
+#endif
 
   NgraphApp.Message1 = gtk_statusbar_get_context_id(GTK_STATUSBAR(NgraphApp.Message), "Message1");
 

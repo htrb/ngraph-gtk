@@ -444,7 +444,11 @@ create_toggle_button(GtkWidget *box, GtkWidget *img, const char *tooltip, int st
   GtkWidget *w;
   w = gtk_toggle_button_new();
   gtk_container_add(GTK_CONTAINER(w), img);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_box_append(GTK_BOX(box), w);
+#else
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
+#endif
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), state);
   gtk_widget_set_tooltip_text(w, tooltip);
   g_signal_connect(w, "toggled", G_CALLBACK(update_focused_obj), NULL);
@@ -1840,7 +1844,11 @@ presetting_create_panel(GtkApplication *app)
   w = combo_box_create();
   set_font_family(w);
   gtk_widget_set_tooltip_text(w, _("Font name"));
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_box_append(GTK_BOX(box), w);
+#else
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
+#endif
   g_signal_connect(w, "changed", G_CALLBACK(update_focused_obj), NULL);
   Widgets.font.widget = w;
 
@@ -1848,7 +1856,11 @@ presetting_create_panel(GtkApplication *app)
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), DEFAULT_FONT_PT / 100.0);
   gtk_entry_set_width_chars(GTK_ENTRY(w), 5);
   gtk_widget_set_tooltip_text(w, _("Font size"));
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_box_append(GTK_BOX(box), w);
+#else
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
+#endif
   g_signal_connect(w, "value-changed", G_CALLBACK(update_focused_obj), NULL);
   Widgets.pt.widget = w;
 
@@ -1861,44 +1873,72 @@ presetting_create_panel(GtkApplication *app)
 
   w = create_path_type_combo_box();
   gtk_widget_set_margin_end(w, SETTING_PANEL_MARGIN * 4);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_box_append(GTK_BOX(box), w);
+#else
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
+#endif
   Widgets.path_type.widget = w;
 
   w = gtk_button_new();
   g_signal_connect(w, "clicked", G_CALLBACK(select_mark), &(Widgets.mark));
   setup_mark_type(w, &(Widgets.mark));
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_box_append(GTK_BOX(box), w);
+#else
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
+#endif
   Widgets.mark_type.widget = w;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, FALSE, FALSE);
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), DEFAULT_MARK_SIZE / 100.0);
   gtk_entry_set_width_chars(GTK_ENTRY(w), 5);
   gtk_widget_set_tooltip_text(w, _("Mark size"));
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_box_append(GTK_BOX(box), w);
+#else
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
+#endif
   g_signal_connect(w, "value-changed", G_CALLBACK(update_focused_obj), NULL);
   Widgets.mark_size.widget = w;
 
   w = create_menu_button(builder, "stroke-fill-menu", _("stroke/fill"));
   Widgets.stroke_fill.widget = w;
   Widgets.stroke = TRUE;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_box_append(GTK_BOX(box), w);
+#else
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
+#endif
   set_stroke_fill_icon();
 
   w = create_line_width_combo_box();
   gtk_widget_set_tooltip_text(w, _("Line Width"));
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_box_append(GTK_BOX(box), w);
+#else
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
+#endif
   Widgets.line_width.widget = w;
 
   w = create_line_style_combo_box();
   gtk_widget_set_tooltip_text(w, _("Line Style"));
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_box_append(GTK_BOX(box), w);
+#else
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
+#endif
   Widgets.line_style.widget = w;
 
   w = create_color_button(NULL);
   color.red = color.green = color.blue = 0;
   color.alpha = 1;
   gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(w), &color);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_box_append(GTK_BOX(box), w);
+#else
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
+#endif
   Widgets.color1.widget = w;
   gtk_widget_set_name(Widgets.color1.widget, "StrokeColorButton");
   g_signal_connect(w, "color-set", G_CALLBACK(update_focused_obj), NULL);
@@ -1907,29 +1947,49 @@ presetting_create_panel(GtkApplication *app)
   color.red = color.green = color.blue = 1;
   color.alpha = 1;
   gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(w), &color);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_box_append(GTK_BOX(box), w);
+#else
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
+#endif
   g_signal_connect(w, "color-set", G_CALLBACK(update_focused_obj), NULL);
   Widgets.color2.widget = w;
 
   w = create_menu_button(builder, "join-type-menu", _("Join"));
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_box_append(GTK_BOX(box), w);
+#else
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
+#endif
   Widgets.join_type.widget = w;
   gtk_button_set_image(GTK_BUTTON(Widgets.join_type.widget), Widgets.join_icon[DEFAULT_JOIN_TYPE]);
 
   w = gtk_button_new();
   g_signal_connect(w, "clicked", G_CALLBACK(select_mark), &(Widgets.mark_begin));
   setup_mark_type(w, &(Widgets.mark_begin));
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_box_append(GTK_BOX(box), w);
+#else
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
+#endif
   Widgets.mark_type_begin.widget = w;
 
   w = create_menu_button(builder, "marker-type-begin-menu", _("Marker begin"));
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_box_append(GTK_BOX(box), w);
+#else
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
+#endif
   Widgets.marker_type_begin.widget = w;
   Widgets.marker_begin = DEFAULT_MARKER_TYPE;
   gtk_button_set_image(GTK_BUTTON(Widgets.marker_type_begin.widget), Widgets.marker_begin_icon[DEFAULT_MARKER_TYPE]);
 
   w = create_menu_button(builder, "marker-type-end-menu", _("Marker end"));
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_box_append(GTK_BOX(box), w);
+#else
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
+#endif
   Widgets.marker_type_end.widget = w;
   Widgets.marker_end = DEFAULT_MARKER_TYPE;
   gtk_button_set_image(GTK_BUTTON(Widgets.marker_type_end.widget), Widgets.marker_end_icon[DEFAULT_MARKER_TYPE]);
@@ -1937,7 +1997,11 @@ presetting_create_panel(GtkApplication *app)
   w = gtk_button_new();
   g_signal_connect(w, "clicked", G_CALLBACK(select_mark), &(Widgets.mark_end));
   setup_mark_type(w, &(Widgets.mark_end));
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_box_append(GTK_BOX(box), w);
+#else
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
+#endif
   Widgets.mark_type_end.widget = w;
 
   gtk_widget_set_sensitive(Widgets.mark_type_begin.widget, Widgets.marker_begin == MARKER_TYPE_MARK);
