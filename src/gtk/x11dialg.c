@@ -336,7 +336,11 @@ SelectDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_event_key(d->list, G_CALLBACK(key_pressed_cb), NULL,  d);
     g_signal_connect(d->list, "row-activated", G_CALLBACK(multi_list_default_cb), d);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+    swin = gtk_scrolled_window_new();
+#else
     swin = gtk_scrolled_window_new(NULL, NULL);
+#endif
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 #if GTK_CHECK_VERSION(4, 0, 0)
     gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), d->list);
@@ -497,7 +501,11 @@ CopyDialogSetup(GtkWidget *wi, void *data, int makewidget)
     list_store_set_sort_all(d->list);
     list_store_set_selection_mode(d->list, GTK_SELECTION_SINGLE);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+    swin = gtk_scrolled_window_new();
+#else
     swin = gtk_scrolled_window_new(NULL, NULL);
+#endif
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 #if GTK_CHECK_VERSION(4, 0, 0)
     gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), d->list);

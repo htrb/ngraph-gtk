@@ -382,7 +382,11 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
 
   gtklocal->title = mkobjlist(obj, NULL, oid, NULL, TRUE);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtklocal->mainwin = gtk_window_new();
+#else
   gtklocal->mainwin = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+#endif
   if (TopLevel) {
     gtk_window_set_modal(GTK_WINDOW(gtklocal->mainwin), TRUE);
     gtk_window_set_transient_for(GTK_WINDOW(gtklocal->mainwin), GTK_WINDOW(TopLevel));
@@ -400,7 +404,11 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
 
   gtk_window_set_title((GtkWindow *) gtklocal->mainwin, gtklocal->title);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  scrolled_window = gtk_scrolled_window_new();
+#else
   scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+#endif
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_window_set_child(GTK_WINDOW(gtklocal->mainwin), scrolled_window);

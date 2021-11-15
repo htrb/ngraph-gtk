@@ -1127,7 +1127,11 @@ text_sub_window_create(struct SubWin *d)
 
   d->data.text = view;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  swin = gtk_scrolled_window_new();
+#else
   swin = gtk_scrolled_window_new(NULL, NULL);
+#endif
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), view);
@@ -1153,7 +1157,11 @@ label_sub_window_create(struct SubWin *d)
 
   d->data.text = label;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  swin = gtk_scrolled_window_new();
+#else
   swin = gtk_scrolled_window_new(NULL, NULL);
+#endif
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), label);
@@ -1186,7 +1194,11 @@ parameter_sub_window_create(struct SubWin *d)
   data->list_col_num = 0;
   data->text = grid;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  swin = gtk_scrolled_window_new();
+#else
   swin = gtk_scrolled_window_new(NULL, NULL);
+#endif
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), grid);
@@ -1256,7 +1268,11 @@ list_widget_create(struct SubWin *d, int lisu_num, n_list_store *list, int can_f
   gtk_tree_view_set_enable_search(GTK_TREE_VIEW(lstor), TRUE);
   gtk_tree_view_set_search_column(GTK_TREE_VIEW(lstor), COL_ID);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  swin = gtk_scrolled_window_new();
+#else
   swin = gtk_scrolled_window_new(NULL, NULL);
+#endif
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), lstor);

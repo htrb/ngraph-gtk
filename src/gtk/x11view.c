@@ -1091,7 +1091,11 @@ EvalDialogSetup(GtkWidget *wi, void *data, int makewidget)
 			   _("_Move"), IDEVMOVE,
 			   NULL);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+    swin = gtk_scrolled_window_new();
+#else
     swin = gtk_scrolled_window_new(NULL, NULL);
+#endif
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
     w = tree_store_create(sizeof(list) / sizeof(*list), list);
     tree_store_set_selection_mode(w, GTK_SELECTION_MULTIPLE);

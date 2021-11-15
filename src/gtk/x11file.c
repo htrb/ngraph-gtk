@@ -318,7 +318,11 @@ MathTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     title = gtk_label_new(_("multi line"));
     w = create_source_view();
+#if GTK_CHECK_VERSION(4, 0, 0)
+    swin = gtk_scrolled_window_new();
+#else
     swin = gtk_scrolled_window_new(NULL, NULL);
+#endif
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 #if GTK_CHECK_VERSION(4, 0, 0)
     gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), w);
@@ -716,7 +720,11 @@ MathDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect(w, "row-activated", G_CALLBACK(math_dialog_activated_cb), d);
     d->list = w;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+    swin = gtk_scrolled_window_new();
+#else
     swin = gtk_scrolled_window_new(NULL, NULL);
+#endif
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 #if GTK_CHECK_VERSION(4, 0, 0)
     gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), w);
@@ -1680,12 +1688,13 @@ create_user_fit_frame(struct FitDialog *d)
     d->d[i] = w;
   }
 
-  w = gtk_scrolled_window_new(NULL, NULL);
 #if GTK_CHECK_VERSION(4, 0, 0)
+  w = gtk_scrolled_window_new();
   gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(w), table);
 #else
   gtk_container_add(GTK_CONTAINER(w), table);
 #endif
+  w = gtk_scrolled_window_new(NULL, NULL);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(w), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(w), GTK_SHADOW_NONE);
   gtk_widget_set_size_request(GTK_WIDGET(w), -1, 200);
@@ -2058,7 +2067,11 @@ move_tab_create(struct FileDialog *d)
   };
   int i;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  swin = gtk_scrolled_window_new();
+#else
   swin = gtk_scrolled_window_new(NULL, NULL);
+#endif
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(swin), GTK_SHADOW_ETCHED_IN);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   w = list_store_create(sizeof(list) / sizeof(*list), list);
@@ -2298,7 +2311,11 @@ mask_tab_create(struct FileDialog *d)
   add_widget_to_table(table, w, _("_Line:"), FALSE, i++);
   d->mask.line = w;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  swin = gtk_scrolled_window_new();
+#else
   swin = gtk_scrolled_window_new(NULL, NULL);
+#endif
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(swin), GTK_SHADOW_ETCHED_IN);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   w = list_store_create(sizeof(list) / sizeof(*list), list);
@@ -2664,7 +2681,11 @@ create_math_text_tab(GtkWidget *tab, const gchar *label)
   GtkWidget *w, *title, *swin;
 
   w = create_source_view();
+#if GTK_CHECK_VERSION(4, 0, 0)
+  swin = gtk_scrolled_window_new();
+#else
   swin = gtk_scrolled_window_new(NULL, NULL);
+#endif
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), w);
@@ -4163,7 +4184,11 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
     if (view) {
       GtkWidget *swin;
       label = gtk_label_new_with_mnemonic(_("_Table"));
+#if GTK_CHECK_VERSION(4, 0, 0)
+      swin = gtk_scrolled_window_new();
+#else
       swin = gtk_scrolled_window_new(NULL, NULL);
+#endif
       gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 #if GTK_CHECK_VERSION(4, 0, 0)
       gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), view);
@@ -4250,7 +4275,11 @@ ArrayDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->move.tab_id = gtk_notebook_append_page(d->tab, w, label);
 
     view = create_preview_table(d);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    swin = gtk_scrolled_window_new();
+#else
     swin = gtk_scrolled_window_new(NULL, NULL);
+#endif
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 #if GTK_CHECK_VERSION(4, 0, 0)
     gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), view);

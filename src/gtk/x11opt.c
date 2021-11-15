@@ -715,7 +715,11 @@ FontSettingDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+    swin = gtk_scrolled_window_new();
+#else
     swin = gtk_scrolled_window_new(NULL, NULL);
+#endif
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
     w = list_store_create(sizeof(list) / sizeof(*list), list);
     gtk_tree_view_set_reorderable(GTK_TREE_VIEW(w), TRUE);

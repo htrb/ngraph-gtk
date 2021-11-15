@@ -1147,7 +1147,11 @@ points_setup(struct LegendDialog *d)
   gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 #endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  swin = gtk_scrolled_window_new();
+#else
   swin = gtk_scrolled_window_new(NULL, NULL);
+#endif
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(swin), GTK_SHADOW_ETCHED_IN);
   gtk_container_set_border_width(GTK_CONTAINER(swin), 2);
@@ -2159,7 +2163,11 @@ create_character_view(GtkWidget *entry, gchar *data)
     gtk_list_store_set(model, &iter, 0, str, -1);
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  swin = gtk_scrolled_window_new();
+#else
   swin = gtk_scrolled_window_new(NULL, NULL);
+#endif
 
   gtk_icon_view_set_activate_on_single_click(GTK_ICON_VIEW(icon_view),TRUE);
   gtk_widget_set_size_request(GTK_WIDGET(swin), -1, 100);
