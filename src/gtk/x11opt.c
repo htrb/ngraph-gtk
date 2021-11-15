@@ -603,7 +603,11 @@ FontSettingDialogAddAlternative(GtkWidget *w, gpointer client_data)
     }
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_window_destroy(GTK_WINDOW(dialog));
+#else
   gtk_widget_destroy (dialog);
+#endif
 }
 
 static void
@@ -1190,7 +1194,11 @@ edit_custom_palette(GtkWidget *w, gpointer data)
   box = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
   btns = create_custom_palette_buttons(d, box);
   if (btns == NULL) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_window_destroy(GTK_WINDOW(dialog));
+#else
     gtk_widget_destroy(dialog);
+#endif
     return;
   }
 #if ! GTK_CHECK_VERSION(4, 0, 0)
@@ -1202,7 +1210,11 @@ edit_custom_palette(GtkWidget *w, gpointer data)
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->use_custom_palette), TRUE);
   }
   g_free(btns);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_window_destroy(GTK_WINDOW(dialog));
+#else
   gtk_widget_destroy(dialog);
+#endif
 }
 
 static void

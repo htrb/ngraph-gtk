@@ -1648,7 +1648,11 @@ mx_print(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   menu_lock(lock);
 
   if (create_window) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_window_destroy(GTK_WINDOW(TopLevel));
+#else
     gtk_widget_destroy(TopLevel);
+#endif
     TopLevel = NULL;
     reset_event();
   }

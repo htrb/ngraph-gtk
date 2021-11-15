@@ -344,7 +344,11 @@ markup_message_box(GtkWidget * parent, const char *message, const char *title, i
     }
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_window_destroy(GTK_WINDOW(dlg));
+#else
   gtk_widget_destroy(dlg);
+#endif
   reset_event();
 
   return data;
@@ -413,7 +417,11 @@ DialogInput(GtkWidget * parent, const char *title, const char *mes, const char *
   }
 
   get_dialog_position(dlg, x, y);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_window_destroy(GTK_WINDOW(dlg));
+#else
   gtk_widget_destroy(dlg);
+#endif
   reset_event();
 
   return data;
@@ -503,7 +511,11 @@ DialogRadio(GtkWidget *parent, const char *title, const char *caption, struct na
    g_free(btn_ary);
 
   get_dialog_position(dlg, x, y);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_window_destroy(GTK_WINDOW(dlg));
+#else
   gtk_widget_destroy(dlg);
+#endif
   reset_event();
 
   return data;
@@ -571,7 +583,11 @@ DialogButton(GtkWidget *parent, const char *title, const char *caption, struct n
 #endif
   res_id = ndialog_run(dlg);
   get_dialog_position(dlg, x, y);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_window_destroy(GTK_WINDOW(dlg));
+#else
   gtk_widget_destroy(dlg);
+#endif
   reset_event();
 
   return res_id;
@@ -656,7 +672,11 @@ DialogCombo(GtkWidget *parent, const char *title, const char *caption, struct na
   }
 
   get_dialog_position(dlg, x, y);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_window_destroy(GTK_WINDOW(dlg));
+#else
   gtk_widget_destroy(dlg);
+#endif
   reset_event();
 
   return data;
@@ -743,7 +763,11 @@ DialogComboEntry(GtkWidget *parent, const char *title, const char *caption, stru
   }
 
   get_dialog_position(dlg, x, y);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_window_destroy(GTK_WINDOW(dlg));
+#else
   gtk_widget_destroy(dlg);
+#endif
   reset_event();
 
   return data;
@@ -824,7 +848,11 @@ DialogSpinEntry(GtkWidget *parent, const char *title, const char *caption, doubl
   }
 
   get_dialog_position(dlg, x, y);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_window_destroy(GTK_WINDOW(dlg));
+#else
   gtk_widget_destroy(dlg);
+#endif
   reset_event();
 
   return data;
@@ -912,7 +940,11 @@ DialogCheck(GtkWidget *parent, const char *title, const char *caption, struct na
   g_free(btn_ary);
 
   get_dialog_position(dlg, x, y);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_window_destroy(GTK_WINDOW(dlg));
+#else
   gtk_widget_destroy(dlg);
+#endif
   reset_event();
 
   return data;
@@ -1183,7 +1215,11 @@ FileSelectionDialog(GtkWidget *parent, struct nGetOpenFileData *data)
     break;
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_window_destroy(GTK_WINDOW(dlg));
+#else
   gtk_widget_destroy(dlg);
+#endif
   reset_event();
   data->widget = NULL;
 

@@ -1011,7 +1011,11 @@ select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type)
   response = ndialog_run(dlg);
   gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(dlg), &color);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_window_destroy(GTK_WINDOW(dlg));
+#else
   gtk_widget_destroy(dlg);
+#endif
 
   if (response != GTK_RESPONSE_OK) {
     return SELECT_OBJ_COLOR_CANCEL;

@@ -463,7 +463,11 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
 errexit:
   if (gtklocal) {
     if (gtklocal->mainwin) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+      gtk_window_destroy(GTK_WINDOW(gtklocal->mainwin));
+#else
       gtk_widget_destroy(gtklocal->mainwin);
+#endif
     }
 
     if (gtklocal->mainwin) {
@@ -496,7 +500,11 @@ gtkdone(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   }
 
   if (gtklocal->mainwin != NULL) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_window_destroy(GTK_WINDOW(gtklocal->mainwin));
+#else
     gtk_widget_destroy(gtklocal->mainwin);
+#endif
     gtklocal->mainwin = NULL;
     while (gtk_events_pending()) {
       gtk_main_iteration();

@@ -2538,7 +2538,11 @@ application(char *file)
     g_free(NgraphApp.FileName);
     NgraphApp.FileName = NULL;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_window_destroy(GTK_WINDOW(TopLevel));
+#else
     gtk_widget_destroy(TopLevel);
+#endif
     NgraphApp.Viewer.Win = NULL;
     CurrentWindow = TopLevel = PToolbar = CToolbar = ToolBox = NULL;
 
