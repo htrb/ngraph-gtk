@@ -63,7 +63,11 @@ get_toplevel_window(void)
   }
 
   if (DLGTopLevel == NULL) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+    DLGTopLevel = gtk_window_new();
+#else
     DLGTopLevel = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+#endif
   }
 
   return DLGTopLevel;
