@@ -1378,7 +1378,11 @@ create_message_box(GtkWidget **label1, GtkWidget **label2)
 #endif
   *label2 = w;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_frame_set_child(GTK_FRAME(frame), hbox);
+#else
   gtk_container_add(GTK_CONTAINER(frame), hbox);
+#endif
 
   return frame;
 }
@@ -1719,7 +1723,11 @@ setupwindow(GtkApplication *app)
 
   set_axis_undo_button_sensitivity(FALSE);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_window_set_child(GTK_WINDOW(TopLevel), vbox2);
+#else
   gtk_container_add(GTK_CONTAINER(TopLevel), vbox2);
+#endif
 
   create_object_tabs();
 }

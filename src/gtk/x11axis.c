@@ -341,10 +341,11 @@ GridDialogSetupCommon(GtkWidget *wi, void *data, int makewidget, int instance)
       d->draw_y = w;
 
       frame = gtk_frame_new(_("Axis"));
-      gtk_container_add(GTK_CONTAINER(frame), table);
 #if GTK_CHECK_VERSION(4, 0, 0)
+      gtk_frame_set_child(GTK_FRAME(frame), table);
       gtk_box_append(GTK_BOX(hbox), frame);
 #else
+      gtk_container_add(GTK_CONTAINER(frame), table);
       gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 0);
 #endif
     } else {
@@ -371,11 +372,12 @@ GridDialogSetupCommon(GtkWidget *wi, void *data, int makewidget, int instance)
     d->bcolor = w;
 
     frame = gtk_frame_new(_("Color"));
-    gtk_container_add(GTK_CONTAINER(frame), table);
 #if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_frame_set_child(GTK_FRAME(frame), table);
     gtk_box_append(GTK_BOX(hbox), frame);
     gtk_box_append(GTK_BOX(d->vbox), hbox);
 #else
+    gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
 
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
@@ -390,10 +392,11 @@ GridDialogSetupCommon(GtkWidget *wi, void *data, int makewidget, int instance)
     }
 
     frame = gtk_frame_new(_("Style"));
-    gtk_container_add(GTK_CONTAINER(frame), table);
 #if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_frame_set_child(GTK_FRAME(frame), table);
     gtk_box_append(GTK_BOX(d->vbox), frame);
 #else
+    gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(d->vbox), frame, FALSE, FALSE, 4);
 #endif
 
@@ -1411,7 +1414,11 @@ scale_tab_create(struct AxisDialog *d)
   d->margin = w;
 
   frame = gtk_frame_new(_("Scale"));
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_frame_set_child(GTK_FRAME(frame), table);
+#else
   gtk_container_add(GTK_CONTAINER(frame), table);
+#endif
   set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
 
   parent_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
@@ -1540,7 +1547,11 @@ baseline_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   d->color = w;
 
   frame = gtk_frame_new(_("Baseline"));
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_frame_set_child(GTK_FRAME(frame), table);
+#else
   gtk_container_add(GTK_CONTAINER(frame), table);
+#endif
   set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(hbox), frame);
@@ -1567,7 +1578,11 @@ baseline_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   d->arrowwid = w;
 
   frame = gtk_frame_new(_("Arrow"));
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_frame_set_child(GTK_FRAME(frame), table);
+#else
   gtk_container_add(GTK_CONTAINER(frame), table);
+#endif
   set_widget_margin(frame, WIDGET_MARGIN_RIGHT);
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(vbox), frame);
@@ -1591,7 +1606,11 @@ baseline_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   d->wavewid = w;
 
   frame = gtk_frame_new(_("Wave"));
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_frame_set_child(GTK_FRAME(frame), table);
+#else
   gtk_container_add(GTK_CONTAINER(frame), table);
+#endif
   set_widget_margin(frame, WIDGET_MARGIN_RIGHT);
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(vbox), frame);
@@ -1725,7 +1744,11 @@ gauge_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   d->max = w;
 
   frame = gtk_frame_new(_("Range"));
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_frame_set_child(GTK_FRAME(frame), table);
+#else
   gtk_container_add(GTK_CONTAINER(frame), table);
+#endif
   set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(vbox), frame);
@@ -1757,7 +1780,11 @@ gauge_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   }
 
   frame = gtk_frame_new(_("Style"));
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_frame_set_child(GTK_FRAME(frame), table);
+#else
   gtk_container_add(GTK_CONTAINER(frame), table);
+#endif
   set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(vbox), frame);
@@ -1999,7 +2026,11 @@ numbering_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   d->numnum = w;
 
   frame = gtk_frame_new(_("Range"));
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_frame_set_child(GTK_FRAME(frame), table);
+#else
   gtk_container_add(GTK_CONTAINER(frame), table);
+#endif
   set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(vbox), frame);
@@ -2028,7 +2059,11 @@ numbering_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   d->shiftn = w;
 
   frame = gtk_frame_new(_("Position"));
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_frame_set_child(GTK_FRAME(frame), table);
+#else
   gtk_container_add(GTK_CONTAINER(frame), table);
+#endif
   set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(vbox), frame);
@@ -2080,7 +2115,11 @@ numbering_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   d->math = w;
 
   frame = gtk_frame_new(_("Format"));
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_frame_set_child(GTK_FRAME(frame), table);
+#else
   gtk_container_add(GTK_CONTAINER(frame), table);
+#endif
   set_widget_margin(frame, WIDGET_MARGIN_RIGHT);
 
 #if GTK_CHECK_VERSION(4, 0, 0)
@@ -2240,7 +2279,11 @@ font_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   d->color = w;
 
   frame = gtk_frame_new(_("Font"));
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_frame_set_child(GTK_FRAME(frame), table);
+#else
   gtk_container_add(GTK_CONTAINER(frame), table);
+#endif
   set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
 
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
@@ -2355,7 +2398,11 @@ position_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 
 
   frame = gtk_frame_new(_("Position"));
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_frame_set_child(GTK_FRAME(frame), table);
+#else
   gtk_container_add(GTK_CONTAINER(frame), table);
+#endif
   set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
 
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);

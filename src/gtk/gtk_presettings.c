@@ -443,10 +443,11 @@ create_toggle_button(GtkWidget *box, GtkWidget *img, const char *tooltip, int st
 {
   GtkWidget *w;
   w = gtk_toggle_button_new();
-  gtk_container_add(GTK_CONTAINER(w), img);
 #if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_button_set_child(GTK_BUTTON(w), img);
   gtk_box_append(GTK_BOX(box), w);
 #else
+  gtk_container_add(GTK_CONTAINER(w), img);
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
 #endif
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), state);

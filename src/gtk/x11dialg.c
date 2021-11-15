@@ -338,15 +338,20 @@ SelectDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     swin = gtk_scrolled_window_new(NULL, NULL);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), d->list);
+#else
     gtk_container_add(GTK_CONTAINER(swin), d->list);
+#endif
 
     gtk_dialog_add_button(GTK_DIALOG(wi), _("_All"), IDSALL);
 
     w = gtk_frame_new(NULL);
-    gtk_container_add(GTK_CONTAINER(w), swin);
 #if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_frame_set_child(GTK_FRAME(w), swin);
     gtk_box_append(GTK_BOX(d->vbox), w);
 #else
+    gtk_container_add(GTK_CONTAINER(w), swin);
     gtk_box_pack_start(GTK_BOX(d->vbox), w, TRUE, TRUE, 4);
 #endif
 
@@ -494,15 +499,20 @@ CopyDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     swin = gtk_scrolled_window_new(NULL, NULL);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), d->list);
+#else
     gtk_container_add(GTK_CONTAINER(swin), d->list);
+#endif
 
     g_signal_connect(d->list, "row-activated", G_CALLBACK(single_list_default_cb), d);
 
     w = gtk_frame_new(NULL);
-    gtk_container_add(GTK_CONTAINER(w), swin);
 #if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_frame_set_child(GTK_FRAME(w), swin);
     gtk_box_append(GTK_BOX(d->vbox), w);
 #else
+    gtk_container_add(GTK_CONTAINER(w), swin);
     gtk_box_pack_start(GTK_BOX(d->vbox), w, TRUE, TRUE, 0);
 #endif
     gtk_window_set_default_size(GTK_WINDOW(wi), -1, 300);

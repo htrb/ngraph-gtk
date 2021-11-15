@@ -190,10 +190,11 @@ MergeDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->zoom_y = w;
 
     frame = gtk_frame_new(NULL);
-    gtk_container_add(GTK_CONTAINER(frame), table);
 #if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_frame_set_child(GTK_FRAME(frame), table);
     gtk_box_append(GTK_BOX(d->vbox), frame);
 #else
+    gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(d->vbox), frame, TRUE, TRUE, 4);
 #endif
 

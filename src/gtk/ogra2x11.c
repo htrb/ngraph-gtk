@@ -402,7 +402,11 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
 
   scrolled_window = gtk_scrolled_window_new(NULL, NULL);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_window_set_child(GTK_WINDOW(gtklocal->mainwin), scrolled_window);
+#else
   gtk_container_add(GTK_CONTAINER(gtklocal->mainwin), scrolled_window);
+#endif
 
   gtklocal->View = gtk_drawing_area_new();
   gtk_widget_set_halign(gtklocal->View, GTK_ALIGN_CENTER);
@@ -414,7 +418,11 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   g_signal_connect(gtklocal->mainwin, "size-allocate",
 		   G_CALLBACK(size_allocate), gtklocal);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scrolled_window), gtklocal->View);
+#else
   gtk_container_add(GTK_CONTAINER(scrolled_window), gtklocal->View);
+#endif
 
 #if ! GTK_CHECK_VERSION(4, 0, 0)
   gtk_widget_show_all(gtklocal->mainwin);

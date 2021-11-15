@@ -93,7 +93,11 @@ nruler_new(GtkOrientation orientation)
 
   frame = gtk_frame_new(NULL);
   gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_OUT);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_frame_set_child(GTK_FRAME(frame), w);
+#else
   gtk_container_add(GTK_CONTAINER(frame), w);
+#endif
 
   ruler->orientation = orientation;
   ruler->widget = w;

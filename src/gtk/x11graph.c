@@ -737,12 +737,12 @@ SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
 
     frame = gtk_frame_new(NULL);
-    gtk_container_add(GTK_CONTAINER(frame), w);
-
 #if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_frame_set_child(GTK_FRAME(frame), w);
     gtk_box_append(GTK_BOX(vbox), frame);
     gtk_box_append(GTK_BOX(hbox), vbox);
 #else
+    gtk_container_add(GTK_CONTAINER(frame), w);
     gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 4);
 
     gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 4);
@@ -858,13 +858,14 @@ SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
 
     frame = gtk_frame_new(NULL);
-    gtk_container_add(GTK_CONTAINER(frame), w);
 
 #if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_frame_set_child(GTK_FRAME(frame), w);
     gtk_box_append(GTK_BOX(vbox), frame);
     gtk_box_append(GTK_BOX(hbox), vbox);
     gtk_box_append(GTK_BOX(d->vbox), hbox);
 #else
+    gtk_container_add(GTK_CONTAINER(frame), w);
     gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 4);
     gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 4);
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);

@@ -1096,13 +1096,18 @@ EvalDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = tree_store_create(sizeof(list) / sizeof(*list), list);
     tree_store_set_selection_mode(w, GTK_SELECTION_MULTIPLE);
     d->list = w;
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), w);
+#else
     gtk_container_add(GTK_CONTAINER(swin), w);
+#endif
 
     w = gtk_frame_new(NULL);
-    gtk_container_add(GTK_CONTAINER(w), swin);
 #if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_frame_set_child(GTK_FRAME(w), swin);
     gtk_box_append(GTK_BOX(d->vbox), w);
 #else
+    gtk_container_add(GTK_CONTAINER(w), swin);
     gtk_box_pack_start(GTK_BOX(d->vbox), w, TRUE, TRUE, 4);
 #endif
 

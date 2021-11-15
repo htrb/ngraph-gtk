@@ -2040,7 +2040,11 @@ ProgressDialogCreate(char *title)
   gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
 #endif
 #endif
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_window_set_child(GTK_WINDOW(ProgressDialog), vbox);
+#else
   gtk_container_add(GTK_CONTAINER(ProgressDialog), vbox);
+#endif
 
   gtk_window_set_default_size(GTK_WINDOW(ProgressDialog), 400, -1);
 #if ! GTK_CHECK_VERSION(4, 0, 0)

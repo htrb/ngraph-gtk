@@ -720,7 +720,11 @@ FontSettingDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = list_store_create(sizeof(list) / sizeof(*list), list);
     gtk_tree_view_set_reorderable(GTK_TREE_VIEW(w), TRUE);
     d->list = w;
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), w);
+#else
     gtk_container_add(GTK_CONTAINER(swin), w);
+#endif
 
     sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(w));
     g_signal_connect(sel, "changed", G_CALLBACK(AlternativeFontListSelCb), d);
@@ -774,11 +778,11 @@ FontSettingDialogSetup(GtkWidget *wi, void *data, int makewidget)
 #endif
 
     frame = gtk_frame_new(_("Alternative fonts"));
-    gtk_container_add(GTK_CONTAINER(frame), hbox);
-
 #if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_frame_set_child(GTK_FRAME(frame), hbox);
     gtk_box_append(GTK_BOX(d->vbox), frame);
 #else
+    gtk_container_add(GTK_CONTAINER(frame), hbox);
     gtk_box_pack_start(GTK_BOX(d->vbox), frame, TRUE, TRUE, 4);
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
 #endif
@@ -1225,10 +1229,11 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, _("_Help browser:"), TRUE, i++);
     d->help_browser = w;
 
-    gtk_container_add(GTK_CONTAINER(frame), table);
 #if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_frame_set_child(GTK_FRAME(frame), table);
     gtk_box_append(GTK_BOX(vbox2), frame);
 #else
+    gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
 #endif
 
@@ -1253,10 +1258,11 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->mergefile = w;
     add_widget_to_table(table, w, NULL, FALSE, i++);
 
-    gtk_container_add(GTK_CONTAINER(frame), table);
 #if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_frame_set_child(GTK_FRAME(frame), table);
     gtk_box_append(GTK_BOX(vbox2), frame);
 #else
+    gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
 #endif
 
@@ -1281,11 +1287,12 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, _("_Expand directory:"), TRUE, i++);
     d->expanddir = w;
 
-    gtk_container_add(GTK_CONTAINER(frame), table);
 #if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_frame_set_child(GTK_FRAME(frame), table);
     gtk_box_append(GTK_BOX(vbox2), frame);
     gtk_box_append(GTK_BOX(hbox2), vbox2);
 #else
+    gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(vbox2), frame, TRUE, TRUE, 4);
 
     gtk_box_pack_start(GTK_BOX(hbox2), vbox2, TRUE, TRUE, 4);
@@ -1308,10 +1315,11 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, _("_Length of data preview:"), FALSE, i++);
     d->data_head_lines = w;
 
-    gtk_container_add(GTK_CONTAINER(frame), table);
 #if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_frame_set_child(GTK_FRAME(frame), table);
     gtk_box_append(GTK_BOX(vbox2), frame);
 #else
+    gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
 #endif
 
@@ -1334,10 +1342,11 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, _("data _Preview:"), FALSE, i++);
     d->file_preview_font = w;
 
-    gtk_container_add(GTK_CONTAINER(frame), table);
 #if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_frame_set_child(GTK_FRAME(frame), table);
     gtk_box_append(GTK_BOX(vbox2), frame);
 #else
+    gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
 #endif
 
@@ -1380,12 +1389,13 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, NULL, FALSE, i++);
     d->use_dark_theme = w;
 
-    gtk_container_add(GTK_CONTAINER(frame), table);
 #if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_frame_set_child(GTK_FRAME(frame), table);
     gtk_box_append(GTK_BOX(vbox2), frame);
     gtk_box_append(GTK_BOX(hbox2), vbox2);
     gtk_box_append(GTK_BOX(d->vbox), hbox2);
 #else
+    gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(vbox2), frame, TRUE, TRUE, 4);
 
 

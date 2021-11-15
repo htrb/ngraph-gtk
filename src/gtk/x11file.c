@@ -320,7 +320,11 @@ MathTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = create_source_view();
     swin = gtk_scrolled_window_new(NULL, NULL);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), w);
+#else
     gtk_container_add(GTK_CONTAINER(swin), w);
+#endif
     gtk_notebook_append_page(GTK_NOTEBOOK(tab), swin, title);
     d->text = w;
 
@@ -714,13 +718,18 @@ MathDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     swin = gtk_scrolled_window_new(NULL, NULL);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), w);
+#else
     gtk_container_add(GTK_CONTAINER(swin), w);
+#endif
 
     w = gtk_frame_new(NULL);
-    gtk_container_add(GTK_CONTAINER(w), swin);
 #if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_frame_set_child(GTK_FRAME(w), swin);
     gtk_box_append(GTK_BOX(vbox), w);
 #else
+    gtk_container_add(GTK_CONTAINER(w), swin);
     gtk_box_pack_start(GTK_BOX(vbox), w, TRUE, TRUE, 4);
 #endif
 
@@ -1672,7 +1681,11 @@ create_user_fit_frame(struct FitDialog *d)
   }
 
   w = gtk_scrolled_window_new(NULL, NULL);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(w), table);
+#else
   gtk_container_add(GTK_CONTAINER(w), table);
+#endif
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(w), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(w), GTK_SHADOW_NONE);
   gtk_widget_set_size_request(GTK_WIDGET(w), -1, 200);
@@ -1686,7 +1699,11 @@ create_user_fit_frame(struct FitDialog *d)
   d->usr_def_prm_tbl = table;
 
   w = gtk_frame_new(_("User definition"));
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_frame_set_child(GTK_FRAME(w), vbox);
+#else
   gtk_container_add(GTK_CONTAINER(w), vbox);
+#endif
 
   return w;
 }
@@ -1776,10 +1793,11 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
 
     frame = gtk_frame_new(_("Action"));
-    gtk_container_add(GTK_CONTAINER(frame), vbox);
 #if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_frame_set_child(GTK_FRAME(frame), vbox);
     gtk_box_append(GTK_BOX(d->vbox), frame);
 #else
+    gtk_container_add(GTK_CONTAINER(frame), vbox);
     gtk_box_pack_start(GTK_BOX(d->vbox), frame, FALSE, FALSE, 4);
 #endif
 
@@ -1813,10 +1831,11 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
 #endif
 
     frame = gtk_frame_new(_("Draw X range"));
-    gtk_container_add(GTK_CONTAINER(frame), vbox);
 #if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_frame_set_child(GTK_FRAME(frame), vbox);
     gtk_box_append(GTK_BOX(d->vbox), frame);
 #else
+    gtk_container_add(GTK_CONTAINER(frame), vbox);
     gtk_box_pack_start(GTK_BOX(d->vbox), frame, FALSE, FALSE, 4);
 #endif
 
@@ -2046,7 +2065,11 @@ move_tab_create(struct FileDialog *d)
   list_store_set_sort_column(w, 0);
   list_store_set_selection_mode(w, GTK_SELECTION_MULTIPLE);
   d->move.list = w;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), w);
+#else
   gtk_container_add(GTK_CONTAINER(swin), w);
+#endif
   set_widget_margin(swin, WIDGET_MARGIN_TOP | WIDGET_MARGIN_BOTTOM);
 
   table = gtk_grid_new();
@@ -2094,7 +2117,11 @@ move_tab_create(struct FileDialog *d)
 #endif
 
   w = gtk_frame_new(NULL);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_frame_set_child(GTK_FRAME(w), hbox);
+#else
   gtk_container_add(GTK_CONTAINER(w), hbox);
+#endif
   set_widget_margin(w, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
 
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
@@ -2278,7 +2305,11 @@ mask_tab_create(struct FileDialog *d)
   list_store_set_sort_column(w, 0);
   list_store_set_selection_mode(w, GTK_SELECTION_MULTIPLE);
   d->mask.list = w;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), w);
+#else
   gtk_container_add(GTK_CONTAINER(swin), w);
+#endif
   set_widget_margin(swin, WIDGET_MARGIN_TOP | WIDGET_MARGIN_BOTTOM);
 
   w = gtk_button_new_with_mnemonic(_("_Add"));
@@ -2308,7 +2339,11 @@ mask_tab_create(struct FileDialog *d)
 #endif
 
   frame = gtk_frame_new(NULL);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_frame_set_child(GTK_FRAME(frame), hbox);
+#else
   gtk_container_add(GTK_CONTAINER(frame), hbox);
+#endif
   set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
 
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
@@ -2450,7 +2485,11 @@ load_tab_create(struct FileDialog *d)
   }
 
   frame = gtk_frame_new(NULL);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_frame_set_child(GTK_FRAME(frame), table);
+#else
   gtk_container_add(GTK_CONTAINER(frame), table);
+#endif
   set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
 
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
@@ -2627,7 +2666,11 @@ create_math_text_tab(GtkWidget *tab, const gchar *label)
   w = create_source_view();
   swin = gtk_scrolled_window_new(NULL, NULL);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), w);
+#else
   gtk_container_add(GTK_CONTAINER(swin), w);
+#endif
   title = gtk_label_new_with_mnemonic(label);
   gtk_notebook_append_page(GTK_NOTEBOOK(tab), swin, title);
   return w;
@@ -2744,7 +2787,11 @@ math_tab_create(struct FileDialog *d)
   math_common_widgets_create(d, table, i);
 
   frame = gtk_frame_new(NULL);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_frame_set_child(GTK_FRAME(frame), table);
+#else
   gtk_container_add(GTK_CONTAINER(frame), table);
+#endif
   set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
 
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
@@ -3502,7 +3549,11 @@ plot_tab_create(GtkWidget *parent, struct FileDialog *d)
 #endif
 
   w = gtk_frame_new(NULL);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_frame_set_child(GTK_FRAME(w), hbox);
+#else
   gtk_container_add(GTK_CONTAINER(w), hbox);
+#endif
   set_widget_margin(w, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
 
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
@@ -3568,7 +3619,11 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
   gtk_grid_set_column_spacing(GTK_GRID(hbox), 4);
   d->comment_box = hbox;
   frame = gtk_frame_new(NULL);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_frame_set_child(GTK_FRAME(frame), vbox2);
+#else
   gtk_container_add(GTK_CONTAINER(frame), vbox2);
+#endif
 
   gtk_widget_set_hexpand(frame, FALSE);
   gtk_grid_attach(GTK_GRID(hbox), frame, 0, 0, 1, 1);
@@ -4110,7 +4165,11 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
       label = gtk_label_new_with_mnemonic(_("_Table"));
       swin = gtk_scrolled_window_new(NULL, NULL);
       gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+#if GTK_CHECK_VERSION(4, 0, 0)
+      gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), view);
+#else
       gtk_container_add(GTK_CONTAINER(swin), view);
+#endif
       gtk_notebook_append_page(GTK_NOTEBOOK(w), swin, label);
     }
     d->comment_table = view;
@@ -4193,7 +4252,11 @@ ArrayDialogSetup(GtkWidget *wi, void *data, int makewidget)
     view = create_preview_table(d);
     swin = gtk_scrolled_window_new(NULL, NULL);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), view);
+#else
     gtk_container_add(GTK_CONTAINER(swin), view);
+#endif
     d->comment_table = view;
 
     g_signal_connect(d->load.readstep, "changed", G_CALLBACK(update_table_visibility), d);

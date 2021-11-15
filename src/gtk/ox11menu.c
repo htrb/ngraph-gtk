@@ -1629,9 +1629,11 @@ mx_print(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
     gtk_window_set_type_hint(GTK_WINDOW(TopLevel), GDK_WINDOW_TYPE_HINT_DIALOG);
     g_signal_connect(TopLevel, "delete-event", G_CALLBACK(gtk_true), NULL);
     label = gtk_label_new(" Ngraph ");
-    gtk_container_add(GTK_CONTAINER(TopLevel), label);
-#if ! GTK_CHECK_VERSION(4, 0, 0)
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_window_set_child(GTK_WINDOW(TopLevel), label);
+#else
     gtk_widget_show_all(TopLevel);
+    gtk_container_add(GTK_CONTAINER(TopLevel), label);
 #endif
     reset_event();
   }
