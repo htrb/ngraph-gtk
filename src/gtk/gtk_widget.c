@@ -234,7 +234,11 @@ entry_get_filename(GtkWidget *w)
 {
   const char *utf8filename;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  utf8filename = gtk_editable_get_text(GTK_EDITABLE(w));
+#else
   utf8filename = gtk_entry_get_text(GTK_ENTRY(w));
+#endif
   if (utf8filename == NULL) {
     return NULL;
   }
@@ -260,6 +264,7 @@ entry_icon_file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *eve
 {
   struct objlist *obj;
   char *file, *ext;
+  const char *str;
 
   obj = (struct objlist *) user_data;
   if (obj == NULL)
@@ -270,8 +275,13 @@ entry_icon_file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *eve
     getobj(obj, "ext", 0, 0, NULL, &ext);
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  str = gtk_editable_get_text(GTK_EDITABLE(w));
+#else
+  str = gtk_entry_get_text(w);
+#endif
   if (nGetOpenFileName(get_parent_window(GTK_WIDGET(w)), obj->name, ext, NULL,
-		       gtk_entry_get_text(w),
+		       w,
 		       &file, TRUE, Menulocal.changedirectory) == IDOK && file) {
     entry_set_filename(GTK_WIDGET(w), file);
     g_free(file);
@@ -492,7 +502,11 @@ spin_change_value_cb(GtkSpinButton *spinbutton, GtkScrollType arg1, gpointer use
   double oval, val;
   int ecode;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  str = gtk_editable_get_text(GTK_EDITABLE(spinbutton));
+#else
   str = gtk_entry_get_text(GTK_ENTRY(spinbutton));
+#endif
   if (str == NULL)
     return 0;
 

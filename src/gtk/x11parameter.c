@@ -161,13 +161,21 @@ exchange_start_stop(GtkButton *btn, gpointer user_data)
 
   d = user_data;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  str = gtk_editable_get_text(GTK_EDITABLE(d->start));
+#else
   str = gtk_entry_get_text(GTK_ENTRY(d->start));
+#endif
   if (str == NULL) {
     str = "";
   }
   start = g_strdup(str);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  str = gtk_editable_get_text(GTK_EDITABLE(d->stop));
+#else
   str = gtk_entry_get_text(GTK_ENTRY(d->stop));
+#endif
   if (str == NULL) {
     str = "";
   }

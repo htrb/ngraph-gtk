@@ -276,6 +276,7 @@ MathTextDialogChangeInputType(GtkNotebook *notebook, GtkWidget *page, guint page
   struct MathTextDialog *d;
   gchar *text;
   GtkTextBuffer *buffer;
+  const char *str;
 
   d = user_data;
   d->page = page_num;
@@ -287,7 +288,12 @@ MathTextDialogChangeInputType(GtkNotebook *notebook, GtkWidget *page, guint page
     g_free(text);
     break;
   case 1:
-    set_text_to_source_buffer(d->text, gtk_entry_get_text(GTK_ENTRY(d->list)));
+#if GTK_CHECK_VERSION(4, 0, 0)
+    str = gtk_editable_get_text(GTK_EDITABLE(d->list));
+#else
+    str = gtk_entry_get_text(GTK_ENTRY(d->list));
+#endif
+    set_text_to_source_buffer(d->text, str);
     break;
   }
 }
@@ -406,7 +412,11 @@ MathTextDialogClose(GtkWidget *w, void *data)
 
   switch (d->page) {
   case 0:
+#if GTK_CHECK_VERSION(4, 0, 0)
+    p = gtk_editable_get_text(GTK_EDITABLE(d->list));
+#else
     p = gtk_entry_get_text(GTK_ENTRY(d->list));
+#endif
     ptr = g_strdup(p);
     break;
   case 1:
@@ -1311,7 +1321,11 @@ check_fit_func(GtkEditable *w, gpointer client_data)
     return FALSE;
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  math = gtk_editable_get_text(GTK_EDITABLE(d->formula));
+#else
   math = gtk_entry_get_text(GTK_ENTRY(d->formula));
+#endif
   if (math_equation_parse(code, math)) {
     math_equation_free(code);
     return FALSE;
@@ -1527,7 +1541,11 @@ FitDialogApply(GtkWidget *w, struct FitDialog *d)
   if (SetObjFieldFromWidget(d->formula, d->Obj, d->Id, "user_func"))
     return FALSE;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  s = gtk_editable_get_text(GTK_EDITABLE(d->formula));
+#else
  s = gtk_entry_get_text(GTK_ENTRY(d->formula));
+#endif
   entry_completion_append(NgraphApp.fit_list, s);
 
   for (i = 0; i < FIT_PARM_NUM; i++) {
@@ -1542,7 +1560,11 @@ FitDialogApply(GtkWidget *w, struct FitDialog *d)
     if (SetObjFieldFromWidget(d->d[i], d->Obj, d->Id, dd))
       return FALSE;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+    s = gtk_editable_get_text(GTK_EDITABLE(d->d[i]));
+#else
     s = gtk_entry_get_text(GTK_ENTRY(d->d[i]));
+#endif
     entry_completion_append(NgraphApp.fit_list, s);
   }
 
@@ -2002,14 +2024,22 @@ FileMoveDialogAdd(GtkWidget *w, gpointer client_data)
 
   a = spin_entry_get_val(d->move.line);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  buf = gtk_editable_get_text(GTK_EDITABLE(d->move.x));
+#else
   buf = gtk_entry_get_text(GTK_ENTRY(d->move.x));
+#endif
   if (buf[0] == '\0') return;
 
   x = strtod(buf, &endptr);
   if (x != x || x == HUGE_VAL || x == - HUGE_VAL || endptr[0] != '\0')
     return;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  buf = gtk_editable_get_text(GTK_EDITABLE(d->move.y));
+#else
   buf = gtk_entry_get_text(GTK_ENTRY(d->move.y));
+#endif
   if (buf[0] == '\0') return;
 
   y = strtod(buf, &endptr);
@@ -2563,7 +2593,11 @@ load_tab_set_value(struct FileDialog *d)
   if (SetObjFieldFromWidget(d->load.remark, d->Obj, d->Id, "remark"))
     return 1;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  ifs = gtk_editable_get_text(GTK_EDITABLE(d->load.ifs));
+#else
   ifs = gtk_entry_get_text(GTK_ENTRY(d->load.ifs));
+#endif
   s = g_string_new("");
   decode_ifs_text(s, ifs);
 
@@ -2603,7 +2637,11 @@ copy_entry_to_text(GtkWidget *text, GtkWidget *entry)
 {
   const gchar *str;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  str = gtk_editable_get_text(GTK_EDITABLE(entry));
+#else
   str = gtk_entry_get_text(GTK_ENTRY(entry));
+#endif
   set_text_to_source_buffer(text, str);
 }
 
@@ -2862,19 +2900,39 @@ math_set_value_common(struct FileDialog *d)
   if (SetObjFieldFromWidget(d->math.h, d->Obj, d->Id, "func_h"))
     return MATH_ERROR_FIELD_H;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  s = gtk_editable_get_text(GTK_EDITABLE(d->math.y));
+#else
   s = gtk_entry_get_text(GTK_ENTRY(d->math.y));
+#endif
   entry_completion_append(NgraphApp.y_math_list, s);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  s = gtk_editable_get_text(GTK_EDITABLE(d->math.x));
+#else
   s = gtk_entry_get_text(GTK_ENTRY(d->math.x));
+#endif
   entry_completion_append(NgraphApp.x_math_list, s);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  s = gtk_editable_get_text(GTK_EDITABLE(d->math.f));
+#else
   s = gtk_entry_get_text(GTK_ENTRY(d->math.f));
+#endif
   entry_completion_append(NgraphApp.func_list, s);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  s = gtk_editable_get_text(GTK_EDITABLE(d->math.g));
+#else
   s = gtk_entry_get_text(GTK_ENTRY(d->math.g));
+#endif
   entry_completion_append(NgraphApp.func_list, s);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  s = gtk_editable_get_text(GTK_EDITABLE(d->math.h));
+#else
   s = gtk_entry_get_text(GTK_ENTRY(d->math.h));
+#endif
   entry_completion_append(NgraphApp.func_list, s);
 
   return MATH_ERROR_FIELD_NONE;
@@ -3291,7 +3349,11 @@ FileDialogEdit(GtkWidget *w, gpointer client_data)
   if (Menulocal.editor == NULL)
     return;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  file = gtk_editable_get_text(GTK_EDITABLE(d->file));
+#else
   file = gtk_entry_get_text(GTK_ENTRY(d->file));
+#endif
   if (file == NULL)
     return;
 
@@ -3916,12 +3978,20 @@ set_headline_table(struct FileDialog *d, char *s, int max_lines)
 
   csv = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->load.csv));
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  remark = gtk_editable_get_text(GTK_EDITABLE(d->load.remark));
+#else
   remark = gtk_entry_get_text(GTK_ENTRY(d->load.remark));
+#endif
   if (remark == NULL) {
     remark = "";
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  tmp = gtk_editable_get_text(GTK_EDITABLE(d->load.ifs));
+#else
   tmp = gtk_entry_get_text(GTK_ENTRY(d->load.ifs));
+#endif
   if (tmp == NULL) {
     tmp = "";
   }
@@ -4077,7 +4147,11 @@ update_table_visibility(GtkEditable *editable, gpointer user_data)
 
   remark = NULL;
   if (d->source == DATA_SOURCE_FILE) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+    remark = gtk_editable_get_text(GTK_EDITABLE(d->load.remark));
+#else
     remark = gtk_entry_get_text(GTK_ENTRY(d->load.remark));
+#endif
   }
   if (remark == NULL) {
     remark = "";

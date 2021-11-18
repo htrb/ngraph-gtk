@@ -340,7 +340,11 @@ set_scrpt_option(GtkWidget *entry, char **opt, char *msg)
   char *buf2;
 
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  buf = gtk_editable_get_text(GTK_EDITABLE(entry));
+#else
   buf = gtk_entry_get_text(GTK_ENTRY(entry));
+#endif
   if (msg && strlen(buf) == 0) {
     message_box(NULL, msg, NULL, RESPONS_OK);
     return 1;
@@ -805,7 +809,11 @@ get_font_alias(struct FontSettingDialog *d)
   const char *alias;
   char *tmp, *ptr;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  alias = gtk_editable_get_text(GTK_EDITABLE(d->alias));
+#else
   alias = gtk_entry_get_text(GTK_ENTRY(d->alias));
+#endif
   tmp = g_strdup(alias);
 
   if (tmp == NULL)
@@ -1452,7 +1460,11 @@ set_program_name(GtkWidget *entry, char **prm)
   const char *buf;
   char *buf2;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  buf = gtk_editable_get_text(GTK_EDITABLE(entry));
+#else
   buf = gtk_entry_get_text(GTK_ENTRY(entry));
+#endif
   if (buf) {
     buf2 = g_strdup(buf);
     if (buf2) {
@@ -1502,7 +1514,11 @@ MiscDialogClose(GtkWidget *w, void *data)
 
   Menulocal.expand = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->expand));
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  buf = gtk_editable_get_text(GTK_EDITABLE(d->expanddir));
+#else
   buf = gtk_entry_get_text(GTK_ENTRY(d->expanddir));
+#endif
   if (buf) {
     buf2 = g_strdup(buf);
     if (buf2) {

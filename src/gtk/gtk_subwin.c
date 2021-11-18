@@ -62,6 +62,7 @@ file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointe
   struct obj_list_data *d;
   int sel, num;
   char *file, *ext;
+  const char *str;
   GtkWidget *parent;
 
   d = user_data;
@@ -79,7 +80,12 @@ file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointe
 
   parent = TopLevel;
 
-  if (nGetOpenFileName(parent, _("Open"), ext, NULL, gtk_entry_get_text(w),
+#if GTK_CHECK_VERSION(4, 0, 0)
+  str = gtk_editable_get_text(GTK_EDITABLE(w));
+#else
+  str = gtk_entry_get_text(w);
+#endif
+  if (nGetOpenFileName(parent, _("Open"), ext, NULL, str,
 		       &file, TRUE, Menulocal.changedirectory) == IDOK && file) {
     if (file) {
       gtk_entry_set_text(w, file);

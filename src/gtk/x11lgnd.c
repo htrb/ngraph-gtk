@@ -528,7 +528,11 @@ set_font(struct LegendDialog *d, int id)
       char buf[] = "%F{Sym}";
       const char *str;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+      str = gtk_editable_get_text(GTK_EDITABLE(d->text));
+#else
       str = gtk_entry_get_text(GTK_ENTRY(d->text));
+#endif
       if (str && strncmp(str, buf, sizeof(buf) - 1)) {
         char *tmp;
 	tmp = g_strdup_printf("%s%s", buf, str);
@@ -906,7 +910,11 @@ legend_dialog_close(GtkWidget *w, void *data)
     const char *str;
     char *ptr;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+    str = gtk_editable_get_text(GTK_EDITABLE(d->text));
+#else
     str = gtk_entry_get_text(GTK_ENTRY(d->text));
+#endif
     if (str == NULL)
       return;
 
@@ -3726,7 +3734,13 @@ select_text(GtkWidget *w, gpointer user_data)
 
   g_object_get(w, "editing-canceled", &canceled, NULL);
   if (! canceled) {
-    entry_completion_append(NgraphApp.legend_text_list, gtk_entry_get_text(GTK_ENTRY(w)));
+    const char *str;
+#if GTK_CHECK_VERSION(4, 0, 0)
+    str = gtk_editable_get_text(GTK_EDITABLE(w));
+#else
+    str = gtk_entry_get_text(GTK_ENTRY(w));
+#endif
+    entry_completion_append(NgraphApp.legend_text_list, str);
   }
 
   gtk_entry_set_completion(GTK_ENTRY(w), NULL);

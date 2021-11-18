@@ -809,7 +809,11 @@ SetObjFieldFromText(GtkWidget *w, struct objlist *Obj, int Id, char *field)
     return 0;
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  tmp = gtk_editable_get_text(GTK_EDITABLE(w));
+#else
   tmp = gtk_entry_get_text(GTK_ENTRY(w));
+#endif
   if (tmp == NULL) {
     return -1;
   }
@@ -945,7 +949,11 @@ set_obj_points_from_text(GtkWidget *w, struct objlist *Obj, int Id, char *field)
     return 0;
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  ctmp = gtk_editable_get_text(GTK_EDITABLE(w));
+#else
   ctmp = gtk_entry_get_text(GTK_ENTRY(w));
+#endif
   if (ctmp == NULL) {
     return -1;
   }
@@ -1035,7 +1043,11 @@ SetObjFieldFromStyle(GtkWidget *w, struct objlist *Obj, int Id, char *field)
     return 0;
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  ptr = gtk_editable_get_text(GTK_EDITABLE(gtk_combo_box_get_child(GTK_COMBO_BOX(w))));
+#else
   ptr = gtk_entry_get_text(GTK_ENTRY(gtk_bin_get_child(GTK_BIN(w))));
+#endif
   if (ptr == NULL) {
     return -1;
   }

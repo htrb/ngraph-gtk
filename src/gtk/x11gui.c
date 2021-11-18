@@ -406,7 +406,13 @@ DialogInput(GtkWidget * parent, const char *title, const char *mes, const char *
   res_id = ndialog_run(dlg);
 
   if (res_id > 0 || res_id == GTK_RESPONSE_OK) {
-    *s = g_strdup(gtk_entry_get_text(GTK_ENTRY(text)));
+    const char *str;
+#if GTK_CHECK_VERSION(4, 0, 0)
+    str = gtk_editable_get_text(GTK_EDITABLE(text));
+#else
+    str = gtk_entry_get_text(GTK_ENTRY(text));
+#endif
+    *s = g_strdup(str);
     data = IDOK;
   } else {
     data = IDCANCEL;
