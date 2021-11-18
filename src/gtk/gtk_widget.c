@@ -224,7 +224,11 @@ item_setup(GtkWidget *box, GtkWidget *w, char *title, gboolean expand)
 int
 entry_set_filename(GtkWidget *w, char *filename)
 {
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_editable_set_text(GTK_EDITABLE(w), filename);
+#else
   gtk_entry_set_text(GTK_ENTRY(w), filename);
+#endif
 
   return 0;
 }

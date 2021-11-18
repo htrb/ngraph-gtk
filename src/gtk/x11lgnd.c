@@ -536,7 +536,11 @@ set_font(struct LegendDialog *d, int id)
       if (str && strncmp(str, buf, sizeof(buf) - 1)) {
         char *tmp;
 	tmp = g_strdup_printf("%s%s", buf, str);
+#if GTK_CHECK_VERSION(4, 0, 0)
+	gtk_editable_set_text(GTK_EDITABLE(d->text), tmp);
+#else
 	gtk_entry_set_text(GTK_ENTRY(d->text), tmp);
+#endif
 	g_free(tmp);
       }
     }
@@ -746,7 +750,11 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
     char *buf;
     sgetobjfield(d->Obj,id,"text",NULL,&buf,FALSE,FALSE,FALSE);
     if (buf) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+      gtk_editable_set_text(GTK_EDITABLE(d->text), buf);
+#else
       gtk_entry_set_text(GTK_ENTRY(d->text), buf);
+#endif
       g_free(buf);
     }
   }

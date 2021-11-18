@@ -181,8 +181,13 @@ exchange_start_stop(GtkButton *btn, gpointer user_data)
   }
   stop = g_strdup(str);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_editable_set_text(GTK_EDITABLE(d->start), stop);
+  gtk_editable_set_text(GTK_EDITABLE(d->stop), start);
+#else
   gtk_entry_set_text(GTK_ENTRY(d->start), stop);
   gtk_entry_set_text(GTK_ENTRY(d->stop), start);
+#endif
   g_free(start);
   g_free(stop);
 }

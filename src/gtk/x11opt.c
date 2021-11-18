@@ -199,10 +199,17 @@ active_script_changed(GtkComboBox *widget, gpointer user_data)
 
   n = gtk_combo_box_get_active(widget);
   if (n < 1) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_editable_set_text(GTK_EDITABLE(d->name), "");
+    gtk_editable_set_text(GTK_EDITABLE(d->script), "");
+    gtk_editable_set_text(GTK_EDITABLE(d->option), "");
+    gtk_editable_set_text(GTK_EDITABLE(d->description), "");
+#else
     gtk_entry_set_text(GTK_ENTRY(d->name), "");
     gtk_entry_set_text(GTK_ENTRY(d->script), "");
     gtk_entry_set_text(GTK_ENTRY(d->option), "");
     gtk_entry_set_text(GTK_ENTRY(d->description), "");
+#endif
 
     return;
   }
@@ -215,10 +222,17 @@ active_script_changed(GtkComboBox *widget, gpointer user_data)
     addin = addin->next;
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_editable_set_text(GTK_EDITABLE(d->name), CHK_STR(addin->name));
+  gtk_editable_set_text(GTK_EDITABLE(d->script), CHK_STR(addin->script));
+  gtk_editable_set_text(GTK_EDITABLE(d->option), CHK_STR(addin->option));
+  gtk_editable_set_text(GTK_EDITABLE(d->description), CHK_STR(addin->description));
+#else
   gtk_entry_set_text(GTK_ENTRY(d->name), CHK_STR(addin->name));
   gtk_entry_set_text(GTK_ENTRY(d->script), CHK_STR(addin->script));
   gtk_entry_set_text(GTK_ENTRY(d->option), CHK_STR(addin->option));
   gtk_entry_set_text(GTK_ENTRY(d->description), CHK_STR(addin->description));
+#endif
 
   return;
 }
@@ -268,10 +282,17 @@ SetScriptDialogSetupItem(GtkWidget *w, struct SetScriptDialog *d)
 
   if (d->Script->name) {
     combo_box_set_active(d->addins, 0);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_editable_set_text(GTK_EDITABLE(d->name), CHK_STR(d->Script->name));
+    gtk_editable_set_text(GTK_EDITABLE(d->script), CHK_STR(d->Script->script));
+    gtk_editable_set_text(GTK_EDITABLE(d->option), CHK_STR(d->Script->option));
+    gtk_editable_set_text(GTK_EDITABLE(d->description), CHK_STR(d->Script->description));
+#else
     gtk_entry_set_text(GTK_ENTRY(d->name), CHK_STR(d->Script->name));
     gtk_entry_set_text(GTK_ENTRY(d->script), CHK_STR(d->Script->script));
     gtk_entry_set_text(GTK_ENTRY(d->option), CHK_STR(d->Script->option));
     gtk_entry_set_text(GTK_ENTRY(d->description), CHK_STR(d->Script->description));
+#endif
   } else {
     combo_box_set_active(d->addins, 1);
   }
@@ -517,7 +538,11 @@ PrefScriptDialog(struct PrefScriptDialog *data)
 static void
 FontSettingDialogSetupItem(GtkWidget *w, struct FontSettingDialog *d)
 {
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_editable_set_text(GTK_EDITABLE(d->alias), CHK_STR(d->alias_str));
+#else
   gtk_entry_set_text(GTK_ENTRY(d->alias), CHK_STR(d->alias_str));
+#endif
   gtk_editable_set_editable(GTK_EDITABLE(d->alias), ! d->is_update);
 
   if (d->font_str) {
@@ -1045,10 +1070,18 @@ static void
 MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
 {
   if (Menulocal.editor)
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_editable_set_text(GTK_EDITABLE(d->editor), Menulocal.editor);
+#else
     gtk_entry_set_text(GTK_ENTRY(d->editor), Menulocal.editor);
+#endif
 
   if (Menulocal.help_browser)
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_editable_set_text(GTK_EDITABLE(d->help_browser), Menulocal.help_browser);
+#else
     gtk_entry_set_text(GTK_ENTRY(d->help_browser), Menulocal.help_browser);
+#endif
 
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->directory), Menulocal.changedirectory);
 
@@ -1061,7 +1094,11 @@ MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->expand), Menulocal.expand);
 
   if (Menulocal.expanddir)
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_editable_set_text(GTK_EDITABLE(d->expanddir), Menulocal.expanddir);
+#else
     gtk_entry_set_text(GTK_ENTRY(d->expanddir), Menulocal.expanddir);
+#endif
 
   combo_box_set_active(d->loadpath, Menulocal.loadpath);
 

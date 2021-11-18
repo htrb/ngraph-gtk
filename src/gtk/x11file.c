@@ -284,7 +284,11 @@ MathTextDialogChangeInputType(GtkNotebook *notebook, GtkWidget *page, guint page
   switch (page_num) {
   case 0:
     text = get_text_from_buffer(buffer);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_editable_set_text(GTK_EDITABLE(d->list), text);
+#else
     gtk_entry_set_text(GTK_ENTRY(d->list), text);
+#endif
     g_free(text);
     break;
   case 1:
@@ -365,7 +369,11 @@ MathTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   set_source_style(d->text);
   gtk_window_set_title(GTK_WINDOW(wi), _(label[d->Mode]));
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_editable_set_text(GTK_EDITABLE(d->list), d->Text);
+#else
   gtk_entry_set_text(GTK_ENTRY(d->list), d->Text);
+#endif
   set_text_to_source_buffer(d->text, d->Text);
   gtk_notebook_set_current_page(GTK_NOTEBOOK(d->input_tab), Menulocal.math_input_mode);
   if (Menulocal.math_input_mode) {
@@ -2055,8 +2063,13 @@ FileMoveDialogAdd(GtkWidget *w, gpointer client_data)
   snprintf(buf2, sizeof(buf2), DOUBLE_STR_FORMAT, y);
   list_store_set_string(d->move.list, &iter, 2, buf2);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_editable_set_text(GTK_EDITABLE(d->move.x), "");
+  gtk_editable_set_text(GTK_EDITABLE(d->move.y), "");
+#else
   gtk_entry_set_text(GTK_ENTRY(d->move.x), "");
   gtk_entry_set_text(GTK_ENTRY(d->move.y), "");
+#endif
   d->move.changed = TRUE;
 }
 
@@ -2477,7 +2490,11 @@ load_tab_setup_item(struct FileDialog *d, int id)
     }
   }
   s[j] = '\0';
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_editable_set_text(GTK_EDITABLE(d->load.ifs), s);
+#else
   gtk_entry_set_text(GTK_ENTRY(d->load.ifs), s);
+#endif
   g_free(s);
   g_free(ifs);
 }
@@ -2628,7 +2645,11 @@ copy_text_to_entry(GtkWidget *text, GtkWidget *entry)
 
   buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text));
   str = get_text_from_buffer(buffer);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_editable_set_text(GTK_EDITABLE(entry), str);
+#else
   gtk_entry_set_text(GTK_ENTRY(entry), str);
+#endif
   g_free(str);
 }
 

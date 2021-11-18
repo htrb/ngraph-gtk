@@ -847,11 +847,19 @@ SetTextFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
   sgetobjfield(Obj, Id, field, NULL, &buf, FALSE, FALSE, FALSE);
 
   if (buf == NULL) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_editable_set_text(GTK_EDITABLE(entry), "");
+#else
     gtk_entry_set_text(entry, "");
+#endif
     return;
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_editable_set_text(GTK_EDITABLE(entry), CHK_STR(buf));
+#else
   gtk_entry_set_text(entry, CHK_STR(buf));
+#endif
   g_free(buf);
 }
 
@@ -1162,7 +1170,11 @@ SetStyleFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 
   s = get_style_string(Obj, Id, field);
   if (s) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_editable_set_text(GTK_EDITABLE(entry), _(s));
+#else
     gtk_entry_set_text(entry, _(s));
+#endif
   } else {
     set_entry_from_obj_point(entry, Obj, Id, field);
   }

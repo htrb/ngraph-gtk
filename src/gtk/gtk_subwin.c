@@ -88,7 +88,11 @@ file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointe
   if (nGetOpenFileName(parent, _("Open"), ext, NULL, str,
 		       &file, TRUE, Menulocal.changedirectory) == IDOK && file) {
     if (file) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+      gtk_editable_set_text(GTK_EDITABLE(w), file);
+#else
       gtk_entry_set_text(w, file);
+#endif
       modify_string(d, "file", file);
       g_free(file);
     }
@@ -185,7 +189,11 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
 
 	getobj(d->obj, list->name, sel, 0, NULL, &val);
 	snprintf(buf, sizeof(buf), DOUBLE_STR_FORMAT, val);
+#if GTK_CHECK_VERSION(4, 0, 0)
+	gtk_editable_set_text(GTK_EDITABLE(editable), buf);
+#else
 	gtk_entry_set_text(GTK_ENTRY(editable), buf);
+#endif
       } else {
 	char *valstr;
 
@@ -195,7 +203,11 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
 	}
 	sgetobjfield(d->obj, sel, list->name, NULL, &valstr, FALSE, FALSE, FALSE);
 	if (valstr) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+	  gtk_editable_set_text(GTK_EDITABLE(editable), CHK_STR(valstr));
+#else
 	  gtk_entry_set_text(GTK_ENTRY(editable), CHK_STR(valstr));
+#endif
 	  g_free(valstr);
 	}
       }

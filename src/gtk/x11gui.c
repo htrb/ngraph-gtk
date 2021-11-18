@@ -391,7 +391,11 @@ DialogInput(GtkWidget * parent, const char *title, const char *mes, const char *
 
   text = create_text_entry(FALSE, TRUE);
   if (init_str) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_editable_set_text(GTK_EDITABLE(text), init_str);
+#else
     gtk_entry_set_text(GTK_ENTRY(text), init_str);
+#endif
   }
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(vbox, text);
