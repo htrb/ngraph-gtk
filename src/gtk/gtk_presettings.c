@@ -70,7 +70,11 @@ check_selected_item(GSimpleAction *action, GVariant *parameter, char **item, Gtk
   state = g_variant_get_string(parameter, NULL);
   for (i = 0; item[i]; i++) {
     if (g_strcmp0(state, item[i]) == 0) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+      gtk_button_set_child(GTK_BUTTON(button), icon[i]);
+#else
       gtk_button_set_image(GTK_BUTTON(button), icon[i]);
+#endif
       selected = i;
       break;
     }
@@ -120,7 +124,11 @@ set_stroke_fill_icon(void)
   if (Widgets.close_path) {
     i |= PATH_TYPE_CLOSE;
   }
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_button_set_child(GTK_BUTTON(Widgets.stroke_fill.widget), Widgets.stroke_fill_icon[i]);
+#else
   gtk_button_set_image(GTK_BUTTON(Widgets.stroke_fill.widget), Widgets.stroke_fill_icon[i]);
+#endif
   update_focused_obj(Widgets.stroke_fill.widget, GINT_TO_POINTER(i));
 }
 
@@ -1963,7 +1971,11 @@ presetting_create_panel(GtkApplication *app)
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
 #endif
   Widgets.join_type.widget = w;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_button_set_child(GTK_BUTTON(Widgets.join_type.widget), Widgets.join_icon[DEFAULT_JOIN_TYPE]);
+#else
   gtk_button_set_image(GTK_BUTTON(Widgets.join_type.widget), Widgets.join_icon[DEFAULT_JOIN_TYPE]);
+#endif
 
   w = gtk_button_new();
   g_signal_connect(w, "clicked", G_CALLBACK(select_mark), &(Widgets.mark_begin));
@@ -1983,7 +1995,11 @@ presetting_create_panel(GtkApplication *app)
 #endif
   Widgets.marker_type_begin.widget = w;
   Widgets.marker_begin = DEFAULT_MARKER_TYPE;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_button_set_child(GTK_BUTTON(Widgets.marker_type_begin.widget), Widgets.marker_begin_icon[DEFAULT_MARKER_TYPE]);
+#else
   gtk_button_set_image(GTK_BUTTON(Widgets.marker_type_begin.widget), Widgets.marker_begin_icon[DEFAULT_MARKER_TYPE]);
+#endif
 
   w = create_menu_button(builder, "marker-type-end-menu", _("Marker end"));
 #if GTK_CHECK_VERSION(4, 0, 0)
@@ -1993,7 +2009,11 @@ presetting_create_panel(GtkApplication *app)
 #endif
   Widgets.marker_type_end.widget = w;
   Widgets.marker_end = DEFAULT_MARKER_TYPE;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_button_set_child(GTK_BUTTON(Widgets.marker_type_end.widget), Widgets.marker_end_icon[DEFAULT_MARKER_TYPE]);
+#else
   gtk_button_set_image(GTK_BUTTON(Widgets.marker_type_end.widget), Widgets.marker_end_icon[DEFAULT_MARKER_TYPE]);
+#endif
 
   w = gtk_button_new();
   g_signal_connect(w, "clicked", G_CALLBACK(select_mark), &(Widgets.mark_end));

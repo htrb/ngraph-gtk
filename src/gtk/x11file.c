@@ -3015,7 +3015,11 @@ button_set_mark_image(GtkWidget *w, int type)
     img = gtk_image_new_from_pixbuf(pixbuf);
     g_object_unref(pixbuf);
     if (img) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+      gtk_button_set_child(GTK_BUTTON(w), img);
+#else
       gtk_button_set_image(GTK_BUTTON(w), img);
+#endif
     }
     snprintf(buf, sizeof(buf), "%02d", type);
     gtk_widget_set_tooltip_text(w, buf);

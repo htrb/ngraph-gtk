@@ -638,7 +638,11 @@ set_pause_icon(GtkButton *btn)
   GtkWidget *icon;
   icon = gtk_image_new_from_icon_name("media-playback-pause-symbolic", GTK_ICON_SIZE_BUTTON);
   gtk_widget_set_tooltip_text(GTK_WIDGET(btn), _("Pause"));
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_button_set_child(btn, icon);
+#else
   gtk_button_set_image(btn, icon);
+#endif
 }
 
 static void
@@ -647,7 +651,11 @@ set_play_icon(GtkButton *btn)
   GtkWidget *icon;
   icon = gtk_image_new_from_icon_name("media-playback-start-symbolic", GTK_ICON_SIZE_BUTTON);
   gtk_widget_set_tooltip_text(GTK_WIDGET(btn), _("Play"));
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_button_set_child(btn, icon);
+#else
   gtk_button_set_image(btn, icon);
+#endif
 }
 
 static void
