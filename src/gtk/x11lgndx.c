@@ -383,7 +383,11 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
     button = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(button), _("_Sin"));
 #endif
     g_signal_connect(button, "toggled", G_CALLBACK(LegendGaussDialogMode), d);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(GTK_BOX(hbox), button);
+#else
     gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
     button = gtk_check_button_new_with_mnemonic(_("_Parabola"));

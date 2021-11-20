@@ -840,7 +840,11 @@ SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->del = w;
 
     vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(GTK_BOX(vbox2), vbox);
+#else
     gtk_box_pack_end(GTK_BOX(vbox2), vbox, FALSE, FALSE, 4);
+#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(vbox2), vbox);
