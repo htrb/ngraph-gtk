@@ -446,6 +446,9 @@ DialogRadio(GtkWidget *parent, const char *title, const char *caption, struct na
   gint res_id;
   char **d;
   int i, anum;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  GtkWidget *group;
+#endif
 
   d = arraydata(array);
   anum = arraynum(array);
@@ -485,10 +488,16 @@ DialogRadio(GtkWidget *parent, const char *title, const char *caption, struct na
 
   btn = NULL;
   for (i = 0; i < anum; i++) {
-    btn = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(btn), d[i]);
 #if GTK_CHECK_VERSION(4, 0, 0)
+    w = gtk_check_button_new_with_mnemonic(d[i]);
+    if (group) {
+      gtk_check_button_set_group(GTK_CHECK_BUTTON(w) GTK_CHECK_BUTTON(group));
+    } else {
+      group = w;
+    }
     gtk_box_append(vbox, btn);
 #else
+    btn = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(btn), d[i]);
     gtk_box_pack_start(vbox, btn, FALSE, FALSE, 2);
 #endif
     btn_ary[i] = btn;

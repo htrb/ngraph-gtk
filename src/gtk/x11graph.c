@@ -198,6 +198,9 @@ PageDialogSetup(GtkWidget *wi, void *data, int makewidget)
     GtkWidget *w, *table;
     unsigned int j;
     int i;
+#if GTK_CHECK_VERSION(4, 0, 0)
+    GtkWidget *group;
+#endif
     table = gtk_grid_new();
 
     i = 0;
@@ -220,12 +223,22 @@ PageDialogSetup(GtkWidget *wi, void *data, int makewidget)
       combo_box_append_text(d->paper, _(pagelist[j].paper));
     }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+    w = gtk_check_button_new_with_mnemonic(_("_Portrait"));
+    group = w;
+#else
     w = gtk_radio_button_new_with_mnemonic(NULL, _("_Portrait"));
+#endif
     add_widget_to_table(table, w, _("_Orientation:"), FALSE, i++);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), TRUE);
     d->portrait = w;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+    w = gtk_check_button_new_with_mnemonic(_("L_andscape"));
+    gtk_check_button_set_group(GTK_CHECK_BUTTON(w) GTK_CHECK_BUTTON(group));
+#else
     w = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(w), _("L_andscape"));
+#endif
     add_widget_to_table_sub(table, w, NULL,FALSE, 1, 1, 1, i++);
     d->landscape = w;
     g_signal_connect(w, "toggled", G_CALLBACK(PageDialogOrientation), d);

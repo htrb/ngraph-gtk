@@ -722,6 +722,9 @@ MathDialogSetup(GtkWidget *wi, void *data, int makewidget)
       "_G(X, Y, Z)",
       "_H(X, Y, Z)",
     };
+#if GTK_CHECK_VERSION(4, 0, 0)
+    GtkWidget *group = NULL;
+#endif
 
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
@@ -761,10 +764,16 @@ MathDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     w = NULL;
     for (i = 0; i < MATH_FNC_NUM; i++) {
-      w = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(w), _(button_str[i]));
 #if GTK_CHECK_VERSION(4, 0, 0)
+      w = gtk_check_button_new_with_mnemonic(_(button_str[i]));
+      if (group) {
+	gtk_check_button_set_group(GTK_CHECK_BUTTON(w) GTK_CHECK_BUTTON(group));
+      } else {
+	group = w;
+      }
       gtk_box_append(GTK_BOX(hbox), w);
 #else
+      w = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(w), _(button_str[i]));
       gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
 #endif
       d->func[i] = w;
