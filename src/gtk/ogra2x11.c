@@ -244,7 +244,13 @@ cursor_moved(GtkEventControllerMotion *controller, gdouble x, gdouble y, gpointe
 }
 
 static void
-button_released(GtkGestureMultiPress *gesture, gint n_press, gdouble x, gdouble y, gpointer user_data)
+button_released(
+#if GTK_CHECK_VERSION(4, 0, 0)
+		GtkGestureClick *gesture,
+#else
+		GtkGestureMultiPress *gesture,
+#endif
+		gint n_press, gdouble x, gdouble y, gpointer user_data)
 {
   struct gtklocal *gtklocal;
   guint button;
@@ -256,6 +262,17 @@ button_released(GtkGestureMultiPress *gesture, gint n_press, gdouble x, gdouble 
   gtklocal->action.val = button;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static gboolean
+scrolled(GtkEventControllerScroll* self, gdouble dx, gdouble dy, gpointer user_data)
+{
+  struct gtklocal *gtklocal;
+  gtklocal = (struct gtklocal *) user_data;
+  gtklocal->action.type = ACTION_TYPE_SCROLL;
+  gtklocal->action.val = dy;
+  return FALSE;
+}
+#else
 static gboolean
 scrolled(GtkWidget *widget, GdkEventScroll *event, gpointer user_data)
 {
@@ -277,12 +294,18 @@ scrolled(GtkWidget *widget, GdkEventScroll *event, gpointer user_data)
 
   return FALSE;
 }
+#endif
 
 static void
 add_event_button(GtkWidget *widget, struct gtklocal *gtklocal)
 {
   GtkGesture *ev;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  ev = gtk_gesture_click_new();
+  gtk_widget_add_controller(widget, GTK_EVENT_CONTROLLER(ev));
+#else
   ev = gtk_gesture_multi_press_new(widget);
+#endif
   gtk_gesture_single_set_button(GTK_GESTURE_SINGLE(ev), 0);
   g_signal_connect(ev, "released", G_CALLBACK(button_released), gtklocal);
 }
@@ -292,7 +315,12 @@ add_event_motion(GtkWidget *widget, struct gtklocal *gtklocal)
 {
   GtkEventController *ev;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  ev = gtk_event_controller_motion_new();
+  gtk_widget_add_controller(widget, ev);
+#else
   ev = gtk_event_controller_motion_new(widget);
+#endif
   g_signal_connect(ev, "motion", G_CALLBACK(cursor_moved), gtklocal);
 }
 
@@ -304,6 +332,9 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   struct objlist *robj;
   int idn, oid, width, height;
   GtkWidget *scrolled_window = NULL;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  GtkEventController *ev;
+#endif
 
   if (_exeparent(obj, (char *) argv[1], inst, rval, argc, argv))
     return 1;
@@ -442,7 +473,12 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   gtk_widget_add_events(gtklocal->mainwin, GDK_POINTER_MOTION_MASK | GDK_BUTTON_RELEASE_MASK | GDK_BUTTON_PRESS_MASK);
   add_event_motion(gtklocal->mainwin, gtklocal);
   add_event_button(gtklocal->mainwin, gtklocal);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  ev = gtk_event_controller_scroll_new(GTK_EVENT_CONTROLLER_SCROLL_VERTICAL);
+  gtk_widget_add_controller(widget, GTK_EVENT_CONTROLLER(ev));
+#elde
   g_signal_connect(gtklocal->mainwin, "scroll-event", G_CALLBACK(scrolled), gtklocal);
+#endif
 
   if (chkobjfield(obj, "_evloop")) {
     goto errexit;
@@ -889,7 +925,7 @@ static int
 gtkwait_action(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct gtklocal *local;
-  char *name;
+  const char *name;
 
   _getobj(obj, "_gtklocal", inst, &local);
 
