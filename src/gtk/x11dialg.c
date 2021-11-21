@@ -762,7 +762,11 @@ SetObjFieldFromWidget(GtkWidget *w, struct objlist *Obj, int Id, char *field)
     r = SetObjFieldFromText(w, Obj, Id, field);
   } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_COMBO_BOX)) {
     if (gtk_combo_box_get_has_entry(GTK_COMBO_BOX(w))) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+      r = SetObjFieldFromText(gtk_combo_box_get_child(GTK_COMBO_BOX(w)), Obj, Id, field);
+#else
       r = SetObjFieldFromText(gtk_bin_get_child(GTK_BIN(w)), Obj, Id, field);
+#endif
     } else {
       r = SetObjFieldFromList(w, Obj, Id, field);
     }
@@ -790,7 +794,11 @@ SetWidgetFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
     SetTextFromObjField(w, Obj, Id, field);
   } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_COMBO_BOX)) {
     if (gtk_combo_box_get_has_entry(GTK_COMBO_BOX(w))) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+      SetTextFromObjField(gtk_combo_box_get_child(GTK_COMBO_BOX(w)), Obj, Id, field);
+#else
       SetTextFromObjField(gtk_bin_get_child(GTK_BIN(w)), Obj, Id, field);
+#endif
     } else {
       SetListFromObjField(w, Obj, Id, field);
     }
@@ -1072,7 +1080,13 @@ SetObjFieldFromStyle(GtkWidget *w, struct objlist *Obj, int Id, char *field)
   }
 
   if (j == CLINESTYLE) {
-    if (set_obj_points_from_text(gtk_bin_get_child(GTK_BIN(w)), Obj, Id, field)) {
+    GtkWidget *entry;
+#if GTK_CHECK_VERSION(4, 0, 0)
+    entry = gtk_combo_box_get_child(GTK_COMBO_BOX(w));
+#else
+    entry = gtk_bin_get_child(GTK_BIN(w));
+#endif
+    if (set_obj_points_from_text(entry, Obj, Id, field)) {
       gtk_widget_grab_focus(w);
       return -1;
     }
@@ -1158,7 +1172,11 @@ SetStyleFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
     return;
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  entry = GTK_ENTRY(gtk_combo_box_get_child(GTK_COMBO_BOX(w)));
+#else
   entry = GTK_ENTRY(gtk_bin_get_child(GTK_BIN(w)));
+#endif
 
   count = combo_box_get_num(w);
   if (count == 0) {
