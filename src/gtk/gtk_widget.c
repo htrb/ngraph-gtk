@@ -285,7 +285,7 @@ entry_icon_file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *eve
   str = gtk_entry_get_text(w);
 #endif
   if (nGetOpenFileName(get_parent_window(GTK_WIDGET(w)), obj->name, ext, NULL,
-		       w,
+		       str,
 		       &file, TRUE, Menulocal.changedirectory) == IDOK && file) {
     entry_set_filename(GTK_WIDGET(w), file);
     g_free(file);
