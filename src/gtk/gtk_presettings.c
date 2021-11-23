@@ -1863,7 +1863,11 @@ presetting_create_panel(GtkApplication *app)
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_POINT, FALSE, FALSE);
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), DEFAULT_FONT_PT / 100.0);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_editable_set_width_chars(GTK_EDITABLE(w), 5);
+#else
   gtk_entry_set_width_chars(GTK_ENTRY(w), 5);
+#endif
   gtk_widget_set_tooltip_text(w, _("Font size"));
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(box), w);
@@ -1901,7 +1905,11 @@ presetting_create_panel(GtkApplication *app)
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, FALSE, FALSE);
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), DEFAULT_MARK_SIZE / 100.0);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_editable_set_width_chars(GTK_EDITABLE(w), 5);
+#else
   gtk_entry_set_width_chars(GTK_ENTRY(w), 5);
+#endif
   gtk_widget_set_tooltip_text(w, _("Mark size"));
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(box), w);

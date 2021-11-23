@@ -1762,12 +1762,20 @@ gauge_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   d->gauge = w;
 
   w = create_text_entry(FALSE, TRUE);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_editable_set_width_chars(GTK_EDITABLE(w), NUM_ENTRY_WIDTH * 2);
+#else
   gtk_entry_set_width_chars(GTK_ENTRY(w), NUM_ENTRY_WIDTH * 2);
+#endif
   add_widget_to_table(table, w, _("_Min:"), TRUE, j++);
   d->min = w;
 
   w = create_text_entry(FALSE, TRUE);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_editable_set_width_chars(GTK_EDITABLE(w), NUM_ENTRY_WIDTH * 2);
+#else
   gtk_entry_set_width_chars(GTK_ENTRY(w), NUM_ENTRY_WIDTH * 2);
+#endif
   add_widget_to_table(table, w, _("_Max:"), TRUE, j++);
   d->max = w;
 

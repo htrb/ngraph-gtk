@@ -355,7 +355,11 @@ create_direction_entry(void)
   GtkWidget *w;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_ANGLE, FALSE, TRUE);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_editable_set_width_chars(GTK_EDITABLE(w), NUM_ENTRY_WIDTH);
+#else
   gtk_entry_set_width_chars(GTK_ENTRY(w), NUM_ENTRY_WIDTH);
+#endif
   gtk_entry_set_max_width_chars(GTK_ENTRY(w), NUM_ENTRY_WIDTH);
   gtk_entry_set_icon_from_icon_name(GTK_ENTRY(w), GTK_ENTRY_ICON_SECONDARY, "go-up-symbolic");
   gtk_entry_set_icon_from_icon_name(GTK_ENTRY(w), GTK_ENTRY_ICON_PRIMARY, "go-down-symbolic");
@@ -371,7 +375,11 @@ create_text_entry(int set_default_size, int set_default_action)
 
   w = gtk_entry_new();
   if (set_default_size) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_editable_set_width_chars(GTK_EDITABLE(w), NUM_ENTRY_WIDTH);
+#else
     gtk_entry_set_width_chars(GTK_ENTRY(w), NUM_ENTRY_WIDTH);
+#endif
   }
 
   if (set_default_action) {
@@ -542,7 +550,11 @@ _create_spin_entry(enum SPIN_BUTTON_TYPE type, double min, double max,
   gtk_spin_button_set_digits(GTK_SPIN_BUTTON(w), (numeric) ? 0 : 2);
 
   if (set_default_size) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_editable_set_width_chars(GTK_EDITABLE(w), NUM_ENTRY_WIDTH);
+#else
     gtk_entry_set_width_chars(GTK_ENTRY(w), NUM_ENTRY_WIDTH);
+#endif
     gtk_entry_set_max_width_chars(GTK_ENTRY(w), NUM_ENTRY_WIDTH);
   }
 

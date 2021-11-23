@@ -4470,12 +4470,20 @@ RangeDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     i = 0;
     w = create_text_entry(FALSE, TRUE);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_editable_set_width_chars(GTK_EDITABLE(w), RANGE_ENTRY_WIDTH);
+#else
     gtk_entry_set_width_chars(GTK_ENTRY(w), RANGE_ENTRY_WIDTH);
+#endif
     add_widget_to_table(table, w, _("_Minimum:"), FALSE, i++);
     d->min = w;
 
     w = create_text_entry(FALSE, TRUE);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_editable_set_width_chars(GTK_EDITABLE(w), RANGE_ENTRY_WIDTH);
+#else
     gtk_entry_set_width_chars(GTK_ENTRY(w), RANGE_ENTRY_WIDTH);
+#endif
     add_widget_to_table(table, w, _("_Maximum:"), FALSE, i++);
     d->max = w;
 
