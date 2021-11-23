@@ -123,8 +123,13 @@ static gboolean ViewerEvLButtonDown(unsigned int state, TPoint *point, struct Vi
 static gboolean ViewerEvLButtonUp(unsigned int state, TPoint *point, struct Viewer *d);
 static gboolean ViewerEvLButtonDblClk(unsigned int state, TPoint *point, struct Viewer *d);
 static gboolean ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d);
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void ViewerEvButtonDown(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y, gpointer client_data);
+static void ViewerEvButtonUp(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y, gpointer client_data);
+#else
 static void ViewerEvButtonDown(GtkGestureMultiPress *gesture, gint n_press, gdouble x, gdouble y, gpointer client_data);
 static void ViewerEvButtonUp(GtkGestureMultiPress *gesture, gint n_press, gdouble x, gdouble y, gpointer client_data);
+#endif
 static gboolean ViewerEvKeyDown(GtkEventControllerKey *controller, guint keyval, guint keycode, GdkModifierType state, gpointer user_data);
 static void ViewerEvKeyUp(GtkEventControllerKey *controller, guint keyval, guint keycode, GdkModifierType state, gpointer user_data);
 static void gesture_zoom(GtkGestureZoom *controller, gdouble scale, gpointer user_data);
@@ -1420,7 +1425,12 @@ static void
 add_event_button(GtkWidget *widget, struct Viewer *d)
 {
   GtkGesture *ev;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  ev = gtk_gesture_click_new();
+  gtk_widget_add_controller(widget, GTK_EVENT_CONTROLLER(ev));
+#else
   ev = gtk_gesture_multi_press_new(widget);
+#endif
   gtk_gesture_single_set_button(GTK_GESTURE_SINGLE(ev), 0);
   g_signal_connect(ev, "pressed", G_CALLBACK(ViewerEvButtonDown), d);
   g_signal_connect(ev, "released", G_CALLBACK(ViewerEvButtonUp), d);
@@ -5888,7 +5898,11 @@ get_key_modifier(GtkGestureSingle *gesture)
 }
 
 static void
+#if GTK_CHECK_VERSION(4, 0, 0)
+ViewerEvButtonDown(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y, gpointer client_data)
+#else
 ViewerEvButtonDown(GtkGestureMultiPress *gesture, gint n_press, gdouble x, gdouble y, gpointer client_data)
+#endif
 {
   struct Viewer *d;
   GtkWidget *w;
@@ -5930,7 +5944,11 @@ ViewerEvButtonDown(GtkGestureMultiPress *gesture, gint n_press, gdouble x, gdoub
 }
 
 static void
+#if GTK_CHECK_VERSION(4, 0, 0)
+ViewerEvButtonUp(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y, gpointer client_data)
+#else
 ViewerEvButtonUp(GtkGestureMultiPress *gesture, gint n_press, gdouble x, gdouble y, gpointer client_data)
+#endif
 {
   struct Viewer *d;
   TPoint point;

@@ -853,21 +853,18 @@ do_popup(GdkEventButton *event, struct obj_list_data *d)
   gtk_menu_popup_at_pointer(GTK_MENU(d->popup), ((GdkEvent *)event));
 }
 
-#if GTK_CHECK_VERSION(3, 99, 0)
+#if GTK_CHECK_VERSION(4, 0, 0)
 static void
-ev_button_down(GtkGestureMultiPress *gesture, gint n_press, gdouble x, gdouble y, gpointer user_data)
+ev_button_down(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y, gpointer user_data)
 {
   struct obj_list_data *d;
-#if GTK_CHECK_VERSION(4, 0, 0)
   static guint32 time = 0;
   guint32 current_time;
   int tdif;
-#endif
   guint button;
 
   if (Menulock || Globallock) return;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   current_time = gtk_event_controller_get_current_event_time(GTK_EVENT_CONTROLLER(gesture));
   tdif = current_time - time;
   time = current_time;
@@ -875,7 +872,6 @@ ev_button_down(GtkGestureMultiPress *gesture, gint n_press, gdouble x, gdouble y
   /* following check is necessary for editable column. */
   if (tdif > 0 && tdif < DOUBLE_CLICK_PERIOD)
     return;
-#endif
 
   d = user_data;
 
@@ -890,7 +886,7 @@ ev_button_down(GtkGestureMultiPress *gesture, gint n_press, gdouble x, gdouble y
 }
 
 static void
-ev_button_up(GtkGestureMultiPress *gesture, gint n_press, gdouble x, gdouble y, gpointer user_data)
+ev_button_up(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y, gpointer user_data)
 {
   struct obj_list_data *d;
   guint button;
@@ -1236,14 +1232,16 @@ list_focused(GtkWidget *widget, GdkEvent *ev, gpointer user_data)
   return FALSE;
 }
 
-#if GTK_CHECK_VERSION(3, 99, 0)
+#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 add_event_controller(GtkWidget *widget, struct obj_list_data *data)
 {
   GtkGesture *gesture;
   GtkEventController *controller;
 
-  gesture = gtk_gesture_multi_press_new(widget);
+  gesture = gtk_gesture_click_new();
+  gtk_widget_add_controller(widget, GTK_EVENT_CONTROLLER(gesture));
+
   gtk_gesture_single_set_button(GTK_GESTURE_SINGLE(gesture), 0);
   g_signal_connect(gesture, "pressed", G_CALLBACK(ev_button_down), data);
   g_signal_connect(gesture, "released", G_CALLBACK(ev_button_up), data);
