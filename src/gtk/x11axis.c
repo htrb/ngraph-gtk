@@ -85,6 +85,33 @@ enum {
   AXIS_WIN_COL_NUM,
 };
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void axiswin_scale_clear(GSimpleAction *action, GVariant *parameter, gpointer app);
+static void axis_delete_popup_func(GSimpleAction *action, GVariant *parameter, gpointer app);
+static void AxisWinAxisTop(GSimpleAction *action, GVariant *parameter, gpointer app);
+static void AxisWinAxisUp(GSimpleAction *action, GVariant *parameter, gpointer app);
+static void AxisWinAxisDown(GSimpleAction *action, GVariant *parameter, gpointer app);
+static void AxisWinAxisLast(GSimpleAction *action, GVariant *parameter, gpointer app);
+
+static GActionEntry Popup_list[] =
+{
+  {N_("_Frame graph"),   G_CALLBACK(CmAxisAddFrame), NULL, NULL, NULL},
+  {N_("_Section graph"), G_CALLBACK(CmAxisAddSection), NULL, NULL, NULL},
+  {N_("_Cross graph"),   G_CALLBACK(CmAxisAddCross), NULL, NULL, NULL},
+  {N_("Single _Axis"),   G_CALLBACK(CmAxisAddSingle), NULL, NULL, NULL},
+  {N_("_Duplicate"),     G_CALLBACK(list_sub_window_copy), NULL, NULL, NULL},
+  {N_("_Delete"),        G_CALLBACK(axis_delete_popup_func), NULL, NULL, NULL},
+  {N_("_Focus"),         G_CALLBACK(list_sub_window_focus), NULL, NULL, NULL},
+  {N_("focus _All"),     G_CALLBACK(list_sub_window_focus_all), NULL, NULL, NULL},
+  {N_("_Clear"),         G_CALLBACK(axiswin_scale_clear), NULL, NULL, NULL},
+  {N_("_Properties"),    G_CALLBACK(list_sub_window_update), NULL, NULL, NULL},
+  {N_("_Instance name"), G_CALLBACK(list_sub_window_object_name), NULL, NULL, NULL},
+  {N_("_Top"),           G_CALLBACK(AxisWinAxisTop), NULL, NULL, NULL},
+  {N_("_Up"),            G_CALLBACK(AxisWinAxisUp), NULL, NULL, NULL},
+  {N_("_Down"),          G_CALLBACK(AxisWinAxisDown), NULL, NULL, NULL},
+  {N_("_Bottom"),        G_CALLBACK(AxisWinAxisLast), NULL, NULL, NULL},
+};
+#else
 static void axiswin_scale_clear(GtkMenuItem *item, gpointer user_data);
 static void axis_delete_popup_func(GtkMenuItem *w, gpointer client_data);
 static void AxisWinAxisTop(GtkWidget *w, gpointer client_data);
@@ -118,6 +145,7 @@ static struct subwin_popup_list Popup_list[] = {
   {N_("_Bottom"),     G_CALLBACK(AxisWinAxisLast), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {NULL, NULL, NULL, POP_UP_MENU_ITEM_TYPE_END},
 };
+#endif
 
 #define POPUP_ITEM_NUM (sizeof(Popup_list) / sizeof(*Popup_list) - 1)
 
@@ -2920,7 +2948,12 @@ CmAxisZoom(void *w, gpointer client_data)
 }
 
 static void
-axiswin_scale_clear(GtkMenuItem *item, gpointer user_data)
+axiswin_scale_clear
+#if GTK_CHECK_VERSION(4, 0, 0)
+(GSimpleAction *action, GVariant *parameter, gpointer user_data)
+#else
+(GtkMenuItem *item, gpointer user_data)
+#endif
 {
   struct obj_list_data *d;
   struct objlist *obj;
@@ -3778,7 +3811,12 @@ axiswin_delete_axis(struct obj_list_data *d)
 }
 
 static void
-axis_delete_popup_func(GtkMenuItem *w, gpointer client_data)
+axis_delete_popup_func
+#if GTK_CHECK_VERSION(4, 0, 0)
+(GSimpleAction *action, GVariant *parameter, gpointer client_data)
+#else
+(GtkMenuItem *w, gpointer client_data)
+#endif
 {
   struct obj_list_data *d;
 
@@ -3787,7 +3825,12 @@ axis_delete_popup_func(GtkMenuItem *w, gpointer client_data)
 }
 
 static void
-AxisWinAxisTop(GtkWidget *w, gpointer client_data)
+AxisWinAxisTop
+#if GTK_CHECK_VERSION(4, 0, 0)
+(GSimpleAction *action, GVariant *parameter, gpointer client_data)
+#else
+(GtkWidget *w, gpointer client_data)
+#endif
 {
   int sel, num;
   struct obj_list_data *d;
@@ -3811,7 +3854,12 @@ AxisWinAxisTop(GtkWidget *w, gpointer client_data)
 }
 
 static void
-AxisWinAxisLast(GtkWidget *w, gpointer client_data)
+AxisWinAxisLast
+#if GTK_CHECK_VERSION(4, 0, 0)
+(GSimpleAction *action, GVariant *parameter, gpointer client_data)
+#else
+(GtkMenuItem *w, gpointer client_data)
+#endif
 {
   int sel, num;
   struct obj_list_data *d;
@@ -3835,7 +3883,12 @@ AxisWinAxisLast(GtkWidget *w, gpointer client_data)
 }
 
 static void
-AxisWinAxisUp(GtkWidget *w, gpointer client_data)
+AxisWinAxisUp
+#if GTK_CHECK_VERSION(4, 0, 0)
+(GSimpleAction *action, GVariant *parameter, gpointer client_data)
+#else
+(GtkMenuItem *w, gpointer client_data)
+#endif
 {
   int sel, num;
   struct obj_list_data *d;
@@ -3859,7 +3912,12 @@ AxisWinAxisUp(GtkWidget *w, gpointer client_data)
 }
 
 static void
-AxisWinAxisDown(GtkWidget *w, gpointer client_data)
+AxisWinAxisDown
+#if GTK_CHECK_VERSION(4, 0, 0)
+(GSimpleAction *action, GVariant *parameter, gpointer client_data)
+#else
+(GtkMenuItem *w, gpointer client_data)
+#endif
 {
   int sel, num;
   struct obj_list_data *d;
@@ -3900,28 +3958,44 @@ axiswin_ev_key_down(GtkWidget *w, guint keyval, GdkModifierType state, gpointer 
     break;
   case GDK_KEY_Home:
     if (state & GDK_SHIFT_MASK) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+      AxisWinAxisTop(NULL, NULL, d);
+#else
       AxisWinAxisTop(w, d);
+#endif
     } else {
       return FALSE;
     }
     break;
   case GDK_KEY_End:
     if (state & GDK_SHIFT_MASK) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+      AxisWinAxisLast(NULL, NULL, d);
+#else
       AxisWinAxisLast(w, d);
+#endif
     } else {
       return FALSE;
     }
     break;
   case GDK_KEY_Up:
     if (state & GDK_SHIFT_MASK) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+      AxisWinAxisUp(NULL, NULL, d);
+#else
       AxisWinAxisUp(w, d);
+#endif
     } else {
       return FALSE;
     }
     break;
   case GDK_KEY_Down:
     if (state & GDK_SHIFT_MASK) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+      AxisWinAxisDown(NULL, NULL, d);
+#else
       AxisWinAxisDown(w, d);
+#endif
     } else {
       return FALSE;
     }

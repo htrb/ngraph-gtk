@@ -111,15 +111,42 @@ enum {
 };
 
 static void file_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row);
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void file_delete_popup_func(GSimpleAction *action, GVariant *parameter, gpointer client_data);
+static void file_copy2_popup_func(GSimpleAction *action, GVariant *parameter, gpointer client_data);
+static void file_copy_popup_func(GSimpleAction *action, GVariant *parameter, gpointer client_data);
+static void file_edit_popup_func(GSimpleAction *action, GVariant *parameter, gpointer client_data);
+static void file_draw_popup_func(GSimpleAction *action, GVariant *parameter, gpointer client_data);
+#else
 static void file_delete_popup_func(GtkMenuItem *w, gpointer client_data);
 static void file_copy2_popup_func(GtkMenuItem *w, gpointer client_data);
 static void file_copy_popup_func(GtkMenuItem *w, gpointer client_data);
 static void file_edit_popup_func(GtkMenuItem *w, gpointer client_data);
 static void file_draw_popup_func(GtkMenuItem *w, gpointer client_data);
+#endif
 static void FileDialogType(GtkWidget *w, gpointer client_data);
 static void create_type_combo_item(GtkTreeStore *list, struct objlist *obj, int id);
 static gboolean func_entry_focused(GtkWidget *w, GdkEventFocus *event, gpointer user_data);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static GActionEntry Popup_list[] =
+{
+  {N_("_File"),             G_CALLBACK(CmFileOpen), NULL, NULL, NULL},
+  {N_("_Range"),            G_CALLBACK(CmRangeAdd), NULL, NULL, NULL},
+  //  {N_("_Recent file"),      NULL, NULL, NULL, NULL},
+  {N_("_Duplicate"),        G_CALLBACK(file_copy_popup_func), NULL, NULL, NULL},
+  {N_("duplicate _Behind"), G_CALLBACK(file_copy2_popup_func), NULL, NULL, NULL},
+  {N_("_Delete"),           G_CALLBACK(file_delete_popup_func), NULL, NULL, NULL},
+  {N_("_Draw"),             G_CALLBACK(file_draw_popup_func), NULL, NULL, NULL},
+  {N_("_Properties"),       G_CALLBACK(list_sub_window_update), NULL, NULL, NULL},
+  {N_("_Instance name"),    G_CALLBACK(list_sub_window_object_name), NULL, NULL, NULL},
+  {N_("_Edit"),             G_CALLBACK(file_edit_popup_func), NULL, NULL, NULL},
+  {N_("_Top"),              G_CALLBACK(list_sub_window_move_top), NULL, NULL, NULL},
+  {N_("_Up"),               G_CALLBACK(list_sub_window_move_up), NULL, NULL, NULL},
+  {N_("_Down"),             G_CALLBACK(list_sub_window_move_down), NULL, NULL, NULL},
+  {N_("_Bottom"),           G_CALLBACK(list_sub_window_move_last), NULL, NULL, NULL},
+}
+#else
 static struct subwin_popup_list add_menu_list[] = {
   {N_("_File"),  G_CALLBACK(CmFileOpen), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {N_("_Range"), G_CALLBACK(CmRangeAdd), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
@@ -146,6 +173,7 @@ static struct subwin_popup_list Popup_list[] = {
   {N_("_Bottom"),     G_CALLBACK(list_sub_window_move_last), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {NULL, NULL, NULL,  POP_UP_MENU_ITEM_TYPE_END},
 };
+#endif
 
 #define POPUP_ITEM_NUM (sizeof(Popup_list) / sizeof(*Popup_list) - 1)
 #define POPUP_ITEM_EDIT    9
@@ -5161,7 +5189,12 @@ FileWinFileEdit(struct obj_list_data *d)
 }
 
 static void
-file_edit_popup_func(GtkMenuItem *w, gpointer client_data)
+file_edit_popup_func
+#if GTK_CHECK_VERSION(4, 0, 0)
+(GSimpleAction *action, GVariant *parameter, gpointer client_data)
+#else
+(GtkMenuItem *w, gpointer client_data)
+#endif
 {
   struct obj_list_data *d;
 
@@ -5200,7 +5233,12 @@ FileWinFileDelete(struct obj_list_data *d)
 }
 
 static void
-file_delete_popup_func(GtkMenuItem *w, gpointer client_data)
+file_delete_popup_func
+#if GTK_CHECK_VERSION(4, 0, 0)
+(GSimpleAction *action, GVariant *parameter, gpointer client_data)
+#else
+(GtkMenuItem *w, gpointer client_data)
+#endif
 {
   struct obj_list_data *d;
 
@@ -5241,7 +5279,12 @@ FileWinFileCopy(struct obj_list_data *d)
 }
 
 static void
-file_copy_popup_func(GtkMenuItem *w, gpointer client_data)
+file_copy_popup_func
+#if GTK_CHECK_VERSION(4, 0, 0)
+(GSimpleAction *action, GVariant *parameter, gpointer client_data)
+#else
+(GtkMenuItem *w, gpointer client_data)
+#endif
 {
   struct obj_list_data *d;
 
@@ -5277,7 +5320,12 @@ FileWinFileCopy2(struct obj_list_data *d)
 }
 
 static void
-file_copy2_popup_func(GtkMenuItem *w, gpointer client_data)
+file_copy2_popup_func
+#if GTK_CHECK_VERSION(4, 0, 0)
+(GSimpleAction *action, GVariant *parameter, gpointer client_data)
+#else
+(GtkMenuItem *w, gpointer client_data)
+#endif
 {
   struct obj_list_data *d;
 
@@ -5359,7 +5407,12 @@ FileWinFileDraw(struct obj_list_data *d)
 }
 
 static void
-file_draw_popup_func(GtkMenuItem *w, gpointer client_data)
+file_draw_popup_func
+#if GTK_CHECK_VERSION(4, 0, 0)
+(GSimpleAction *action, GVariant *parameter, gpointer client_data)
+#else
+(GtkMenuItem *w, gpointer client_data)
+#endif
 {
   struct obj_list_data *d;
 

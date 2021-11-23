@@ -46,6 +46,19 @@ gboolean list_sub_window_must_rebuild(struct obj_list_data *d);
 void list_sub_window_build(struct obj_list_data *d, list_sub_window_set_val_func func);
 void list_sub_window_set(struct obj_list_data *d, list_sub_window_set_val_func func);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+void list_sub_window_object_name(GSimpleAction *action, GVariant *parameter, gpointer user_data);
+void list_sub_window_delete(GSimpleAction *action, GVariant *parameter, gpointer user_data);
+void list_sub_window_copy(GSimpleAction *action, GVariant *parameter, gpointer user_data);
+void list_sub_window_move_top(GSimpleAction *action, GVariant *parameter, gpointer user_data);
+void list_sub_window_move_last(GSimpleAction *action, GVariant *parameter, gpointer user_data);
+void list_sub_window_move_up(GSimpleAction *action, GVariant *parameter, gpointer user_data);
+void list_sub_window_move_down(GSimpleAction *action, GVariant *parameter, gpointer user_data);
+void list_sub_window_update(GSimpleAction *action, GVariant *parameter, gpointer user_data);
+void list_sub_window_focus(GSimpleAction *action, GVariant *parameter, gpointer user_data);
+void list_sub_window_focus_all(GSimpleAction *action, GVariant *parameter, gpointer user_data);
+void list_sub_window_add_focus(GSimpleAction *action, GVariant *parameter, gpointer user_data);
+#else
 void list_sub_window_object_name(GtkMenuItem *w, gpointer client_data);
 void list_sub_window_delete(GtkMenuItem *item, gpointer user_data);
 void list_sub_window_copy(GtkMenuItem *item, gpointer user_data);
@@ -57,8 +70,12 @@ void list_sub_window_update(GtkMenuItem *item, gpointer user_data);
 void list_sub_window_focus(GtkMenuItem *item, gpointer user_data);
 void list_sub_window_focus_all(GtkMenuItem *item, gpointer user_data);
 void list_sub_window_add_focus(GtkMenuItem *item, gpointer user_data);
+#endif
 void update_viewer(struct obj_list_data *d);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+void sub_win_create_popup_menu(struct obj_list_data *d, int n, GActionEntry *list, GCallback cb);
+#else
 GtkWidget *sub_win_create_popup_menu(struct obj_list_data *d, int n, struct subwin_popup_list *list, GCallback cb);
-
+#endif
 #endif

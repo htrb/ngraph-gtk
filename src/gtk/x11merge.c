@@ -65,6 +65,23 @@ static n_list_store Mlist[] = {
 
 static void merge_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void CmMergeOpenAction(GSimpleAction *action, GVariant *parameter, gpointer app);
+
+static GActionEntry Popup_list[] =
+  {N_("_Add"),           G_CALLBACK(CmMergeOpen), NULL, NULL, NULL},
+  {N_("_Duplicate"),     G_CALLBACK(list_sub_window_copy), NULL, NULL, NULL},
+  {N_("_Delete"),        G_CALLBACK(list_sub_window_delete), NULL, NULL, NULL},
+  {"_Focus",             G_CALLBACK(list_sub_window_focus), NULL, NULL, NULL},
+  {N_("focus _All"),     G_CALLBACK(list_sub_window_focus_all), NULL, NULL, NULL},
+  {N_("_Preferences"),   G_CALLBACK(list_sub_window_update), NULL, NULL, NULL},
+  {N_("_Instance name"), G_CALLBACK(list_sub_window_object_name), NULL, NULL, NULL},
+  {N_("_Top"),           G_CALLBACK(list_sub_window_move_top), NULL, NULL, NULL},
+  {N_("_Up"),            G_CALLBACK(list_sub_window_move_up), NULL, NULL, NULL},
+  {N_("_Down"),          G_CALLBACK(list_sub_window_move_down), NULL, NULL, NULL},
+  {N_("_Bottom"),        G_CALLBACK(list_sub_window_move_last), NULL, NULL, NULL},
+};
+#else
 static struct subwin_popup_list Popup_list[] = {
   {N_("_Add"),         G_CALLBACK(CmMergeOpen), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {N_("_Duplicate"),   G_CALLBACK(list_sub_window_copy), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
@@ -81,6 +98,7 @@ static struct subwin_popup_list Popup_list[] = {
   {N_("_Bottom"), G_CALLBACK(list_sub_window_move_last), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {NULL, NULL, NULL, POP_UP_MENU_ITEM_TYPE_END},
 };
+#endif
 
 #define POPUP_ITEM_NUM (sizeof(Popup_list) / sizeof(*Popup_list) - 1)
 #define POPUP_ITEM_FOCUS_ALL 5
@@ -251,6 +269,14 @@ MergeDialog(struct obj_list_data *data, int id, int user_data)
   d->Obj = data->obj;
   d->Id = id;
 }
+
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+CmMergeOpenAction(GSimpleAction *action, GVariant *parameter, gpointer client_data)
+{
+  CmMergeOpen(NULL, client_data);
+}
+#endif
 
 void
 CmMergeOpen(void *w, gpointer client_data)

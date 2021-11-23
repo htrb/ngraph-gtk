@@ -1376,61 +1376,111 @@ list_sub_window_set(struct obj_list_data *d, list_sub_window_set_val_func func)
 
 
 void
-list_sub_window_delete(GtkMenuItem *item, gpointer user_data)
+list_sub_window_delete
+#if GTK_CHECK_VERSION(4, 0, 0)
+(GSimpleAction *action, GVariant *parameter, gpointer user_data)
+#else
+(GtkMenuItem *item, gpointer user_data)
+#endif
 {
   delete((struct obj_list_data *) user_data);
 }
 
 void
-list_sub_window_copy(GtkMenuItem *item, gpointer user_data)
+list_sub_window_copy
+#if GTK_CHECK_VERSION(4, 0, 0)
+(GSimpleAction *action, GVariant *parameter, gpointer user_data)
+#else
+(GtkMenuItem *item, gpointer user_data)
+#endif
 {
   copy((struct obj_list_data *) user_data);
 }
 
 void
-list_sub_window_move_top(GtkMenuItem *item, gpointer user_data)
+list_sub_window_move_top
+#if GTK_CHECK_VERSION(4, 0, 0)
+(GSimpleAction *action, GVariant *parameter, gpointer user_data)
+#else
+(GtkMenuItem *item, gpointer user_data)
+#endif
 {
   move_top((struct obj_list_data *) user_data);
 }
 
 void
-list_sub_window_move_last(GtkMenuItem *item, gpointer user_data)
+list_sub_window_move_last
+#if GTK_CHECK_VERSION(4, 0, 0)
+(GSimpleAction *action, GVariant *parameter, gpointer user_data)
+#else
+(GtkMenuItem *item, gpointer user_data)
+#endif
 {
   move_last((struct obj_list_data *) user_data);
 }
 
 void
-list_sub_window_move_up(GtkMenuItem *item, gpointer user_data)
+list_sub_window_move_up
+#if GTK_CHECK_VERSION(4, 0, 0)
+(GSimpleAction *action, GVariant *parameter, gpointer user_data)
+#else
+(GtkMenuItem *item, gpointer user_data)
+#endif
 {
   move_up((struct obj_list_data *) user_data);
 }
 
 void
-list_sub_window_move_down(GtkMenuItem *item, gpointer user_data)
+list_sub_window_move_down
+#if GTK_CHECK_VERSION(4, 0, 0)
+(GSimpleAction *action, GVariant *parameter, gpointer user_data)
+#else
+(GtkMenuItem *item, gpointer user_data)
+#endif
 {
   move_down((struct obj_list_data *) user_data);
 }
 
 void
-list_sub_window_update(GtkMenuItem *item, gpointer user_data)
+list_sub_window_update
+#if GTK_CHECK_VERSION(4, 0, 0)
+(GSimpleAction *action, GVariant *parameter, gpointer user_data)
+#else
+(GtkMenuItem *item, gpointer user_data)
+#endif
 {
   swin_update((struct obj_list_data *) user_data);
 }
 
 void
-list_sub_window_focus(GtkMenuItem *item, gpointer user_data)
+list_sub_window_focus
+#if GTK_CHECK_VERSION(4, 0, 0)
+(GSimpleAction *action, GVariant *parameter, gpointer user_data)
+#else
+(GtkMenuItem *item, gpointer user_data)
+#endif
 {
   focus((struct obj_list_data *) user_data, FOCUS_MODE_NORMAL);
 }
 
 void
-list_sub_window_focus_all(GtkMenuItem *item, gpointer user_data)
+list_sub_window_focus_all
+#if GTK_CHECK_VERSION(4, 0, 0)
+(GSimpleAction *action, GVariant *parameter, gpointer user_data)
+#else
+(GtkMenuItem *item, gpointer user_data)
+#endif
 {
   focus_all((struct obj_list_data *) user_data);
 }
 
 void
-list_sub_window_add_focus(GtkMenuItem *item, gpointer user_data)
+list_sub_window_add_focus
+#if GTK_CHECK_VERSION(4, 0, 0)
+(GSimpleAction *action, GVariant *parameter, gpointer user_data)
+#else
+(GtkMenuItem *item, gpointer user_data)
+#endif
 {
   focus((struct obj_list_data *) user_data, FOCUS_MODE_TOGGLE);
 }
@@ -1479,7 +1529,12 @@ set_object_name(struct objlist *obj, int id)
 }
 
 void
-list_sub_window_object_name(GtkMenuItem *w, gpointer client_data)
+list_sub_window_object_name
+#if GTK_CHECK_VERSION(4, 0, 0)
+(GSimpleAction *action, GVariant *parameter, gpointer user_data)
+#else
+(GtkMenuItem *item, gpointer user_data)
+#endif
 {
   struct obj_list_data *d;
 
@@ -1541,6 +1596,19 @@ create_popup_menu_sub(struct obj_list_data *d, int top, struct subwin_popup_list
   return menu;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+void
+sub_win_create_popup_menu(struct obj_list_data *d, int n, GActionEntry *list, GCallback cb)
+{
+  GtkApplication *app;
+
+  app = n_get_gtk_application();
+  if (app == NULL) {
+    return;
+  }
+  g_action_map_add_action_entries(G_ACTION_MAP(app), list, n, d);
+}
+#else
 GtkWidget *
 sub_win_create_popup_menu(struct obj_list_data *d, int n, struct subwin_popup_list *list, GCallback cb)
 {
@@ -1565,3 +1633,4 @@ sub_win_create_popup_menu(struct obj_list_data *d, int n, struct subwin_popup_li
 
   return menu;
 }
+#endif
