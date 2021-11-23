@@ -22,5 +22,6 @@ int n_initialize(int *argc, char ***argv);
 void n_save_shell_history(void);
 void n_finalize(void);
 void n_application_ready(void);
+GtkApplication *n_get_gtk_application(void);
 
 #endif

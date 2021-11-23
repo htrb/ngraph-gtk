@@ -881,6 +881,12 @@ create_app_menu(GtkApplication *app)
 }
 #endif
 
+GtkApplication *
+n_get_gtk_application(void)
+{
+  return GtkApp;
+}
+
 int
 n_initialize(int *argc, char ***argv)
 {
