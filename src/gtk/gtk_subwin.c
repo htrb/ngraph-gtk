@@ -970,9 +970,17 @@ ev_key_down(GtkEventControllerKey *controller, guint keyval, guint keycode, GdkM
       return FALSE;
 
     if (state & GDK_SHIFT_MASK) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+      list_sub_window_add_focus(NULL, NULL, d);
+#else
       list_sub_window_add_focus(NULL, d);
+#endif
     } else {
+#if GTK_CHECK_VERSION(4, 0, 0)
+      list_sub_window_focus(NULL, NULL, d);
+#else
       list_sub_window_focus(NULL, d);
+#endif
     }
     break;
   default:
@@ -1106,9 +1114,17 @@ ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
       return FALSE;
 
     if (e->state & GDK_SHIFT_MASK) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+      list_sub_window_add_focus(NULL, NULL, d);
+#else
       list_sub_window_add_focus(NULL, d);
+#endif
     } else {
+#if GTK_CHECK_VERSION(4, 0, 0)
+      list_sub_window_focus(NULL, NULL, d);
+#else
       list_sub_window_focus(NULL, d);
+#endif
     }
     break;
   default:
