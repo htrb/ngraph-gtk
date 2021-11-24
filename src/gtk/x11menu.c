@@ -2225,7 +2225,18 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
       list = gtk_radio_tool_button_get_group(GTK_RADIO_TOOL_BUTTON(widget));
       gtk_tool_button_set_label(GTK_TOOL_BUTTON(widget), _(item[i].label));
       if (btn_press_cb) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+	GtkGesture *gesture;
+	GtkEventController *controller;
+
+	gesture = gtk_gesture_click_new();
+	gtk_widget_add_controller(widget, GTK_EVENT_CONTROLLER(gesture));
+
+	gtk_gesture_single_set_button(GTK_GESTURE_SINGLE(gesture), 0);
+	g_signal_connect(gesture, "pressed", btn_press_cb, NULL);
+#else
 	g_signal_connect(gtk_bin_get_child(GTK_BIN(widget)), "button-press-event", btn_press_cb, NULL);
+#endif
       }
       break;
     default:

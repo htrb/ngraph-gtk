@@ -68,7 +68,11 @@ void ChangeDPI(void);
 void Draw(int SelectFile);
 void CmViewerClear(void *w, gpointer client_data);
 void CmViewerDraw(void *w, gpointer client_data);
+#if GTK_CHECK_VERSION(4, 0, 0)
+void CmViewerButtonPressed(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y, gpointer user_data);
+#else
 gboolean CmViewerButtonPressed(GtkWidget *widget, GdkEventButton *event, gpointer user_data);
+#endif
 int data_dropped(char **filenames, int num, int file_type);
 void draw_paper_frame(void);
 void CmEditMenuCB(void *w, gpointer client_data);

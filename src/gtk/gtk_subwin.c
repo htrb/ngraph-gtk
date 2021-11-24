@@ -838,8 +838,15 @@ hidden(struct obj_list_data *d)
 }
 
 static void
+#if GTK_CHECK_VERSION(4, 0, 0)
+do_popup(gdouble x, gdouble y, struct obj_list_data *d)
+#else
 do_popup(GdkEventButton *event, struct obj_list_data *d)
+#endif
 {
+#if GTK_CHECK_VERSION(4, 0, 0)
+  GdkRectangle rect;
+#endif
   if (d->parent->type == TypeFileWin ||
       d->parent->type == TypeAxisWin ||
       d->parent->type == TypeMergeWin ||
@@ -850,7 +857,16 @@ do_popup(GdkEventButton *event, struct obj_list_data *d)
       d->parent->type == TypeTextWin) {
     d->select = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
   }
+#if GTK_CHECK_VERSION(4, 0, 0)
+  rect.x = x;
+  rect.y = y;
+  rect.width = 1;
+  rect.height = 1;
+  gtk_popover_set_pointing_to(GTK_POPOVER(d->popup), &rect);
+  gtk_popover_popup(GTK_POPOVER(d->popup));
+#else
   gtk_menu_popup_at_pointer(GTK_MENU(d->popup), ((GdkEvent *)event));
+#endif
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
@@ -899,7 +915,7 @@ ev_button_up(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y, gpoin
   switch (button) {
   case 3:
     if (d->popup) {
-      do_popup(NULL, d);
+      do_popup(x, y, d);
     }
     break;
   }
@@ -1499,6 +1515,7 @@ list_sub_window_add_focus
   focus((struct obj_list_data *) user_data, FOCUS_MODE_TOGGLE);
 }
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
 static gboolean
 ev_popup_menu(GtkWidget *w, gpointer client_data)
 {
@@ -1510,6 +1527,7 @@ ev_popup_menu(GtkWidget *w, gpointer client_data)
   do_popup(NULL, d);
   return TRUE;
 }
+#endif
 
 static int
 set_object_name(struct objlist *obj, int id)
@@ -1640,7 +1658,9 @@ sub_win_create_popup_menu(struct obj_list_data *d, int n, struct subwin_popup_li
   gtk_widget_show_all(menu);
 #endif
   gtk_menu_attach_to_widget(GTK_MENU(menu), GTK_WIDGET(d->text), NULL);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   g_signal_connect(d->text, "popup-menu", G_CALLBACK(ev_popup_menu), d);
+#endif
 
   if (cb)
     g_signal_connect(menu, "show", cb, d);

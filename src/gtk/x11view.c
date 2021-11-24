@@ -141,7 +141,11 @@ static gboolean ViewerEvMouseMotion(GtkWidget *w, GdkEventMotion *e, gpointer cl
 static gboolean ViewerEvScroll(GtkWidget *w, GdkEventScroll *e, gpointer client_data);
 static void ViewUpdate(void);
 static void ViewCopy(void);
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void do_popup(gdouble x, gdouble y, struct Viewer *d)
+#else
 static void do_popup(GdkEventButton *event, struct Viewer *d);
+#endif
 static int check_focused_obj(struct narray *focusobj, struct objlist *fobj, int oid);
 static int get_mouse_cursor_type(struct Viewer *d, int x, int y);
 static void reorder_object(enum object_move_type type);
@@ -5822,12 +5826,28 @@ check_focused_obj_type(const struct Viewer *d, int *type)
 }
 
 static void
+#if GTK_CHECK_VERSION(4, 0, 0)
+do_popup(gdouble x, gdouble y, struct Viewer *d)
+#else
 do_popup(GdkEventButton *event, struct Viewer *d)
+#endif
 {
+#if GTK_CHECK_VERSION(4, 0, 0)
+  GdkRectangle rect;
+#endif
   if (! gtk_widget_get_realized(d->popup)) {
     gtk_widget_realize(d->popup);
   }
+#if GTK_CHECK_VERSION(4, 0, 0)
+  rect.x = x;
+  rect.y = y;
+  rect.width = 1;
+  rect.height = 1;
+  gtk_popover_set_pointing_to(GTK_POPOVER(d->popup), &rect);
+  gtk_popover_popup(GTK_POPOVER(d->popup));
+#else
   gtk_menu_popup_at_pointer(GTK_MENU(d->popup), ((GdkEvent *)event));
+#endif
 }
 
 static gboolean
@@ -7388,12 +7408,22 @@ ViewerUpdateCB(void *w, gpointer client_data)
   ViewUpdate();
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+void
+CmViewerButtonPressed(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y, gpointer user_data)
+{
+  GdkModifierType state;
+  state = gtk_event_controller_get_current_event_state(GTK_EVENT_CONTROLLER(gesture));
+  KeepMouseMode = (state & GDK_SHIFT_MASK);
+}
+#else
 gboolean
 CmViewerButtonPressed(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
 {
   KeepMouseMode = (event->state & GDK_SHIFT_MASK);
   return FALSE;
 }
+#endif
 
 void
 CmEditMenuCB(void *w, gpointer client_data)
