@@ -1198,7 +1198,11 @@ label_sub_window_create(struct SubWin *d)
   gtk_widget_set_halign(label, GTK_ALIGN_START);
   gtk_widget_set_valign(label, GTK_ALIGN_START);
   gtk_label_set_selectable(GTK_LABEL(label), TRUE);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_label_set_wrap(GTK_LABEL(label), FALSE);
+#else
   gtk_label_set_line_wrap(GTK_LABEL(label), FALSE);
+#endif
   gtk_label_set_single_line_mode(GTK_LABEL(label), FALSE);
 
   d->data.text = label;
