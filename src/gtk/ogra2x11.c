@@ -86,7 +86,9 @@ struct gtklocal
   N_VALUE *inst;
   GtkWidget *mainwin, *View;
   cairo_surface_t *surface;
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   GdkWindow *window;
+#endif
   char *title;
   int redraw, fit, frame;
   unsigned int windpi;
