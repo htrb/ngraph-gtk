@@ -216,11 +216,20 @@ DialogExecute(GtkWidget *parent, void *dialog)
 void
 message_beep(GtkWidget * parent)
 {
+#if GTK_CHECK_VERSION(4, 0, 0)
+  if (parent) {
+    GdkSurface *window;
+    window = gtk_native_get_surface(GTK_NATIVE(parent));
+    gdk_surface_beep(window);
+  }
+#else
   if (parent) {
     GdkWindow *window;
     window = gtk_widget_get_window(parent);
     gdk_window_beep(window);
-  } else {
+  }
+#endif
+  else {
     GdkDisplay *disp;
     disp = gdk_display_get_default();
     if (disp) {
