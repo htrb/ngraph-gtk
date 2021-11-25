@@ -467,21 +467,34 @@ paste_cb(GtkClipboard *clipboard, const gchar *text, gpointer data)
 {
   struct narray idarray;
   struct objlist *draw_obj;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  GdkSurface *window;
+#else
   GdkWindow *window;
+#endif
   char *objects[OBJ_MAX] = {NULL};
 
   if (text == NULL)
     return;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  window = gtk_native_get_surface(GTK_NATIVE(NgraphApp.Viewer.Win));
+#else
   window = gtk_widget_get_window(NgraphApp.Viewer.Win);
+#endif
   if (window == NULL)
     return;
 
   if (strncmp(text, SCRIPT_IDN, SCRIPT_IDN_LEN)) {
     gint w, h;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+    w = gdk_surface_get_width(window);
+    h = gdk_surface_get_height(window);
+#else
     w = gdk_window_get_width(window);
     h = gdk_window_get_height(window);
+#endif
     text_dropped(text, w / 2, h / 2, &NgraphApp.Viewer);
     return;
   }
@@ -1615,8 +1628,13 @@ void
 ViewerWinSetup(void)
 {
   struct Viewer *d;
-  int x, y, width, height;
+  int width, height;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  GdkSurface *win;
+#else
+  int x, y;
   GdkWindow *win;
+#endif
 
   d = &NgraphApp.Viewer;
   Menulocal.GRAoid = -1;
@@ -1643,10 +1661,16 @@ ViewerWinSetup(void)
   OpenGC();
   OpenGRA();
   SetScroller();
+#if GTK_CHECK_VERSION(4, 0, 0)
+  win = gtk_native_get_surface(GTK_NATIVE(NgraphApp.Viewer.Win));
+  width = gdk_surface_get_width(win);
+  height = gdk_surface_get_height(win);
+#else
   win = gtk_widget_get_window(NgraphApp.Viewer.Win);
   gdk_window_get_position(win, &x, &y);
   width = gdk_window_get_width(win);
   height = gdk_window_get_height(win);
+#endif
   d->cx = width / 2;
   d->cy = height / 2;
   d->focused_pix = NULL;
@@ -3542,15 +3566,28 @@ static void
 ShowCrossGauge(cairo_t *cr, const struct Viewer *d)
 {
   int x, y, width, height;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  GdkSurface *win;
+#else
   GdkWindow *win;
+#endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  win = gtk_native_get_surface(GTK_NATIVE(d->Win));
+#else
   win = gtk_widget_get_window(d->Win);
+#endif
   if (win == NULL) {
     return;
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  width = gdk_surface_get_width(win);
+  height = gdk_surface_get_height(win);
+#else
   width = gdk_window_get_width(win);
   height = gdk_window_get_height(win);
+#endif
 
   x = d->CrossX;
   y = d->CrossY;
@@ -5575,16 +5612,29 @@ static void
 mouse_move_scroll(TPoint *point, struct Viewer *d)
 {
   int h, w;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  GdkSurface *win;
+#else
   GdkWindow *win;
+#endif
   double dx, dy;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  win = gtk_native_get_surface(GTK_NATIVE(d->Win));
+#else
   win = gtk_widget_get_window(d->Win);
+#endif
   if (win == NULL) {
     return;
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  w = gdk_surface_get_width(win);
+  h = gdk_surface_get_height(win);
+#else
   w = gdk_window_get_width(win);
   h = gdk_window_get_height(win);
+#endif
   dx = dy = 0;
   if (point->y > h) {
     dy = SCROLL_INC;
@@ -6309,14 +6359,26 @@ SetHRuler(const struct Viewer *d)
 {
   gdouble x1, x2, zoom;
   int width;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  GdkSurface *win;
+#else
   GdkWindow *win;
+#endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  win = gtk_native_get_surface(GTK_NATIVE(d->Win));
+#else
   win = gtk_widget_get_window(d->Win);
+#endif
   if (win == NULL) {
     return;
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  width = gdk_surface_get_width(win);
+#else
   width = gdk_window_get_width(win);
+#endif
   zoom = Menulocal.PaperZoom / 10000.0;
   x1 = N2GTK_RULER_METRIC(calc_mouse_x(0, zoom, d));
   x2 = x1 + N2GTK_RULER_METRIC(mxp2d(width)) / zoom;
@@ -6329,14 +6391,26 @@ SetVRuler(const struct Viewer *d)
 {
   gdouble  y1, y2, zoom;
   int height;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  GdkSurface *win;
+#else
   GdkWindow *win;
+#endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  win = gtk_native_get_surface(GTK_NATIVE(d->Win));
+#else
   win = gtk_widget_get_window(d->Win);
+#endif
   if (win == NULL) {
     return;
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  height = gdk_surface_get_height(win);
+#else
   height = gdk_window_get_height(win);
+#endif
   zoom = Menulocal.PaperZoom / 10000.0;
   y1 = N2GTK_RULER_METRIC(calc_mouse_y(0, zoom, d));
   y2 = y1 + N2GTK_RULER_METRIC(mxp2d(height)) / zoom;
