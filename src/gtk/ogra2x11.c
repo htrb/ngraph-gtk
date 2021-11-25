@@ -579,18 +579,24 @@ clear_pixmap(struct gtklocal *local)
 static void
 redraw_window(struct gtklocal *local)
 {
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   GdkWindow *win;
+#endif
 
   if (local->View == NULL) {
     return;
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_widget_queue_draw(local->View)
+#else
   win = gtk_widget_get_window(local->View);
   if (win == NULL) {
     return;
   }
 
   gdk_window_invalidate_rect(win, NULL, TRUE);
+#endif
 }
 
 static int

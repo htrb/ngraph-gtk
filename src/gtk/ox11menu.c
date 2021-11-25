@@ -1311,17 +1311,23 @@ mx_data_head_lines(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 void
 main_window_redraw(void)
 {
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   GdkWindow *win;
+#endif
   if (NgraphApp.Viewer.Win == NULL) {
     return;
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_widget_queue_draw(NgraphApp.Viewer.Win)
+#else
   win = gtk_widget_get_window(NgraphApp.Viewer.Win);
   if(win == NULL) {
     return;
   }
 
   gdk_window_invalidate_rect(win, NULL, FALSE);
+#endif
 }
 
 void

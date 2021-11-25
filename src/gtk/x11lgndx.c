@@ -65,12 +65,16 @@ static void LegendGaussDialogDiv(GtkWidget *w, gpointer client_data);
 static void
 clear_view(struct LegendGaussDialog *d)
 {
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_widget_queue_draw(d->view)
+#else
   GdkWindow *win;
 
   win = gtk_widget_get_window(d->view);
   if (win) {
     gdk_window_invalidate_rect(win, NULL, TRUE);
   }
+#endif
 }
 
 static void
