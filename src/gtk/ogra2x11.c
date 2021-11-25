@@ -472,7 +472,9 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   gtklocal->surface= NULL;
   gtklocal->redraw = TRUE;
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   gtk_widget_add_events(gtklocal->mainwin, GDK_POINTER_MOTION_MASK | GDK_BUTTON_RELEASE_MASK | GDK_BUTTON_PRESS_MASK);
+#endif
   add_event_motion(gtklocal->mainwin, gtklocal);
   add_event_button(gtklocal->mainwin, gtklocal);
 #if GTK_CHECK_VERSION(4, 0, 0)
