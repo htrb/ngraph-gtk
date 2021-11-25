@@ -1592,6 +1592,19 @@ list_sub_window_object_name
   }
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+void
+sub_win_create_popup_menu(struct obj_list_data *d, int n, GActionEntry *list, GCallback cb)
+{
+  GtkApplication *app;
+
+  app = n_get_gtk_application();
+  if (app == NULL) {
+    return;
+  }
+  g_action_map_add_action_entries(G_ACTION_MAP(app), list, n, d);
+}
+#else
 static GtkWidget *
 create_popup_menu_sub(struct obj_list_data *d, int top, struct subwin_popup_list *list)
 {
@@ -1633,19 +1646,6 @@ create_popup_menu_sub(struct obj_list_data *d, int top, struct subwin_popup_list
   return menu;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-void
-sub_win_create_popup_menu(struct obj_list_data *d, int n, GActionEntry *list, GCallback cb)
-{
-  GtkApplication *app;
-
-  app = n_get_gtk_application();
-  if (app == NULL) {
-    return;
-  }
-  g_action_map_add_action_entries(G_ACTION_MAP(app), list, n, d);
-}
-#else
 GtkWidget *
 sub_win_create_popup_menu(struct obj_list_data *d, int n, struct subwin_popup_list *list, GCallback cb)
 {
