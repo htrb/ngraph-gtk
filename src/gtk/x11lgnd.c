@@ -1366,7 +1366,7 @@ LegendArrowDialogScale(GtkWidget *w, struct LegendDialog *d)
 
   draw_arrow_pixmap(w, d);
 #if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_widget_queue_draw(d->view)
+  gtk_widget_queue_draw(d->view);
 #else
   win = gtk_widget_get_window(d->view);
   if (win) {

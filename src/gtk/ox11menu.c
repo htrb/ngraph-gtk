@@ -1319,7 +1319,7 @@ main_window_redraw(void)
   }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_widget_queue_draw(NgraphApp.Viewer.Win)
+  gtk_widget_queue_draw(NgraphApp.Viewer.Win);
 #else
   win = gtk_widget_get_window(NgraphApp.Viewer.Win);
   if(win == NULL) {

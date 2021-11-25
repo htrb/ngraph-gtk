@@ -66,7 +66,7 @@ static void
 clear_view(struct LegendGaussDialog *d)
 {
 #if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_widget_queue_draw(d->view)
+  gtk_widget_queue_draw(d->view);
 #else
   GdkWindow *win;
 

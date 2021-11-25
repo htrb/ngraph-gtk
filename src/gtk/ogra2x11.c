@@ -588,7 +588,7 @@ redraw_window(struct gtklocal *local)
   }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_widget_queue_draw(local->View)
+  gtk_widget_queue_draw(local->View);
 #else
   win = gtk_widget_get_window(local->View);
   if (win == NULL) {
