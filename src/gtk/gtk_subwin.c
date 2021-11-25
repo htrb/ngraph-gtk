@@ -1567,9 +1567,9 @@ set_object_name(struct objlist *obj, int id)
 void
 list_sub_window_object_name
 #if GTK_CHECK_VERSION(4, 0, 0)
-(GSimpleAction *action, GVariant *parameter, gpointer user_data)
+(GSimpleAction *action, GVariant *parameter, gpointer client_data)
 #else
-(GtkMenuItem *item, gpointer user_data)
+(GtkMenuItem *item, gpointer client_data)
 #endif
 {
   struct obj_list_data *d;
