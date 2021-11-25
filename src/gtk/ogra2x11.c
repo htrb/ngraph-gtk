@@ -537,14 +537,20 @@ gtkdone(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
 
   if (gtklocal->mainwin != NULL) {
 #if GTK_CHECK_VERSION(4, 0, 0)
+    GMainContext *context;
     gtk_window_destroy(GTK_WINDOW(gtklocal->mainwin));
+    gtklocal->mainwin = NULL;
+    context = g_main_context_default();
+    while (g_main_context_pending(context)) {
+      g_main_context_iteration(context, TRUE);
+    }
 #else
     gtk_widget_destroy(gtklocal->mainwin);
-#endif
     gtklocal->mainwin = NULL;
     while (gtk_events_pending()) {
       gtk_main_iteration();
     }
+#endif
   }
 
   if (gtklocal->surface) {
@@ -728,9 +734,17 @@ gtkredraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
 static int
 gtk_evloop(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
+#if GTK_CHECK_VERSION(4, 0, 0)
+  GMainContext *context;
+  context = g_main_context_default();
+  while (g_main_context_pending(context)) {
+    g_main_context_iteration(context, TRUE);
+  }
+#else
   while (gtk_events_pending()) {
     gtk_main_iteration();
   }
+#endif
   return 0;
 }
 

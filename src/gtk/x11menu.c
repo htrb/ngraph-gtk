@@ -971,10 +971,24 @@ term_signal_handler(int sig)
 static int
 AppMainLoop(void)
 {
+#if GTK_CHECK_VERSION(4, 0, 0)
+  GMainContext *context;
+  context = g_main_context_default();
+#endif
   Hide_window = APP_CONTINUE;
   while (TRUE) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+    g_main_context_iteration(context, TRUE);
+#else
     gtk_main_iteration();
-    if (Hide_window != APP_CONTINUE && ! gtk_events_pending()) {
+#endif
+    if (Hide_window != APP_CONTINUE &&
+#if GTK_CHECK_VERSION(4, 0, 0)
+	! g_main_context_pending(context)
+#else
+	! gtk_events_pending()
+#endif
+	) {
       int state = Hide_window;
 
       Hide_window = APP_CONTINUE;
@@ -997,9 +1011,17 @@ AppMainLoop(void)
 void
 reset_event(void)
 {
+#if GTK_CHECK_VERSION(4, 0, 0)
+  GMainContext *context;
+  context = g_main_context_default();
+  while (g_main_context_pending(context)) {
+    g_main_context_iteration(context, TRUE);
+  }
+#else
   while (gtk_events_pending()) {
     gtk_main_iteration();
   }
+#endif
 }
 
 static gboolean
@@ -2830,10 +2852,22 @@ ChkInterrupt(void)
     return TRUE;
   }
 #else
+#if GTK_CHECK_VERSION(4, 0, 0)
+  GMainContext *context;
+  context = g_main_context_default();
+#endif
   if (DrawLock != DrawLockDraw) {
     return check_interrupt();
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  while (g_main_context_pending(context)) {
+    g_main_context_iteration(context, TRUE);
+    if (check_interrupt()) {
+      return TRUE;
+    }
+  }
+#else
   while (gtk_events_pending()) {
     gtk_main_iteration_do(FALSE);
     if (check_interrupt()) {
