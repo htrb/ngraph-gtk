@@ -1282,7 +1282,8 @@ add_event_controller(GtkWidget *widget, struct obj_list_data *data)
   g_signal_connect(gesture, "pressed", G_CALLBACK(ev_button_down), data);
   g_signal_connect(gesture, "released", G_CALLBACK(ev_button_up), data);
 
-  controller = gtk_event_controller_key_new(widget);
+  controller = gtk_event_controller_key_new();
+  gtk_widget_add_controller(widget, controller);
   g_signal_connect(controller, "key-pressed", G_CALLBACK(ev_key_down), data);
 }
 #endif
