@@ -933,12 +933,20 @@ gtk_set_size(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char *
   case 'h':
     height = size;
     _getobj(obj, "width", inst, &width);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_window_set_default_size(GTK_WINDOW(local->mainwin), width, height);
+#else
     gtk_window_resize(GTK_WINDOW(local->mainwin), width, height);
+#endif
     break;
   case 'w':
     width = size;
     _getobj(obj, "height", inst, &height);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_window_set_default_size(GTK_WINDOW(local->mainwin), width, height);
+#else
     gtk_window_resize(GTK_WINDOW(local->mainwin), width, height);
+#endif
     break;
   }
 

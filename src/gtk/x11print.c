@@ -192,7 +192,11 @@ OutputImageDialogSetupItem(struct OutputImageDialog *d)
   window = gtk_widget_get_parent(GTK_WIDGET(d->vbox));
   if (GTK_IS_WINDOW(window)) {
     gtk_widget_get_preferred_size(GTK_WIDGET(d->vbox), &minimum_size, NULL);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_window_set_default_size(GTK_WINDOW(window), minimum_size.width, minimum_size.height);
+#else
     gtk_window_resize(GTK_WINDOW(window), minimum_size.width, minimum_size.height);
+#endif
   }
 }
 
