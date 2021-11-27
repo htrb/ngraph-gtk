@@ -970,10 +970,11 @@ gtkwait_action(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char
   }
 
   if (local->blank_cursor == NULL) {
-    local->blank_cursor = gdk_cursor_new_for_display(gdk_display_get_default(), GDK_BLANK_CURSOR);
 #if GTK_CHECK_VERSION(4, 0, 0)
+    local->blank_cursor = gdk_cursor_new_from_name("none", NULL);
     gtk_widget_set_cursor(local->mainwin, local->blank_cursor);
 #else
+    local->blank_cursor = gdk_cursor_new_for_display(gdk_display_get_default(), GDK_BLANK_CURSOR);
     gdk_window_set_cursor(gtk_widget_get_window(local->mainwin), local->blank_cursor);
 #endif
   }

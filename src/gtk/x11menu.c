@@ -87,6 +87,24 @@ static void create_menu(struct MenuItem *item);
 static GtkWidget *create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb);
 static void CmViewerButtonArm(GtkToggleToolButton *action, gpointer client_data);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static char *Cursor[] = {
+  "default",
+  "text",
+  "crosshair",
+  "nw-resize",
+  "ne-resize",
+  "se-resize",
+  "sw-resize",
+  "all-scroll",
+  "zoom-in",
+  "zoom-out",
+  "wait",
+  "move",
+  "crosshair",
+  "cell",
+};
+#else
 static GdkCursorType Cursor[] = {
   GDK_LEFT_PTR,
   GDK_XTERM,
@@ -103,6 +121,7 @@ static GdkCursorType Cursor[] = {
   GDK_PENCIL,
   GDK_TCROSS,
 };
+#endif
 
 #define CURSOR_TYPE_NUM (sizeof(Cursor) / sizeof(*Cursor))
 
@@ -1336,7 +1355,11 @@ create_cursor(void)
     return 1;
 
   for (i = 0; i < CURSOR_TYPE_NUM; i++) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+    NgraphApp.cursor[i] = gdk_cursor_new_from_name(Cursor[i], NULL);
+#else
     NgraphApp.cursor[i] = gdk_cursor_new_for_display(gdk_display_get_default(), Cursor[i]);
+#endif
   }
 
   return 0;
