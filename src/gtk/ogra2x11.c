@@ -480,6 +480,7 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
 #if GTK_CHECK_VERSION(4, 0, 0)
   ev = gtk_event_controller_scroll_new(GTK_EVENT_CONTROLLER_SCROLL_VERTICAL);
   gtk_widget_add_controller(gtklocal->mainwin, GTK_EVENT_CONTROLLER(ev));
+  g_signal_connect(ev, "scroll", G_CALLBACK(scrolled), gtklocal);
 #else
   g_signal_connect(gtklocal->mainwin, "scroll-event", G_CALLBACK(scrolled), gtklocal);
 #endif
