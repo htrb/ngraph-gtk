@@ -2032,7 +2032,9 @@ ProgressDialogCreate(char *title)
   g_signal_connect(btn, "clicked", G_CALLBACK(stop_btn_clicked), NULL);
 #if USE_HEADER_BAR
   hbox = gtk_header_bar_new();
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   gtk_header_bar_set_title(GTK_HEADER_BAR(hbox), title);
+#endif
   gtk_header_bar_pack_end(GTK_HEADER_BAR(hbox), btn);
   gtk_window_set_titlebar(GTK_WINDOW(ProgressDialog), hbox);
 #else

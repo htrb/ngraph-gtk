@@ -1635,7 +1635,9 @@ setup_toolbar(GtkWidget *window)
 
 #if USE_APP_HEADER_BAR
   hbar = gtk_header_bar_new();
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   gtk_header_bar_set_title(GTK_HEADER_BAR(hbar), AppName);
+#endif
   gtk_header_bar_set_show_close_button(GTK_HEADER_BAR(hbar), TRUE);
   gtk_window_set_titlebar(GTK_WINDOW(window), hbar);
 #endif
