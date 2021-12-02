@@ -12,6 +12,14 @@
 #include "x11gui.h"
 #include "dir_defs.h"
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+gboolean
+gtk_true(void)
+{
+  return TRUE;
+}
+#endif
+
 void
 set_button_icon(GtkWidget *w, const char *icon_name)
 {

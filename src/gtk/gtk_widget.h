@@ -46,6 +46,10 @@ enum WIDGET_MARGIN {
   WIDGET_MARGIN_BOTTOM = 8,
 };
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+gboolean gtk_true(void);
+#endif
+
 GtkWidget *create_spin_entry_type(enum SPIN_BUTTON_TYPE type, int set_default_size, int set_default_action);
 GtkWidget *create_spin_entry(int min, int max, int inc, int set_default_size, int set_default_action);
 
