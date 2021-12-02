@@ -1803,9 +1803,9 @@ mx_show_lib_version(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 	       GTK_MINOR_VERSION,
 	       GTK_MICRO_VERSION,
 	       h,
-	       gtk_major_version,
-	       gtk_minor_version,
-	       gtk_micro_version);
+	       gtk_get_major_version(),
+	       gtk_get_minor_version(),
+	       gtk_get_micro_version());
 
   g_string_append_printf(str, "%sGLib\n"
 	       "%s compile: %d.%d.%d\n"
