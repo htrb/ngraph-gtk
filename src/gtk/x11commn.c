@@ -2002,8 +2002,8 @@ ProgressDialogCreate(char *title)
 
   gtk_window_set_transient_for(GTK_WINDOW(ProgressDialog), GTK_WINDOW(TopLevel));
   gtk_window_set_modal(GTK_WINDOW(ProgressDialog), TRUE);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   gtk_window_set_position(GTK_WINDOW(ProgressDialog), GTK_WIN_POS_CENTER);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_window_set_type_hint(GTK_WINDOW(ProgressDialog), GDK_WINDOW_TYPE_HINT_DIALOG);
 #endif
 
