@@ -27,11 +27,18 @@ void CmAxisNewFrame(int use_presettings);
 void CmAxisNewSection(int use_presettings);
 void CmAxisNewCross(int use_presettings);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+void CmAxisAddFrame(GSimpleAction *action, GVariant *parameter, gpointer client_data);
+void CmAxisAddSection(GSimpleAction *action, GVariant *parameter, gpointer client_data);
+void CmAxisAddCross(GSimpleAction *action, GVariant *parameter, gpointer client_data);
+void CmAxisAddSingle(GSimpleAction *action, GVariant *parameter, gpointer client_data);
+#else
 void CmAxisAddFrame(void *w, gpointer client_data);
 void CmAxisAddSection(void *w, gpointer client_data);
 void CmAxisAddCross(void *w, gpointer client_data);
 void CmAxisAddSingle(void *w, gpointer client_data);
 
+#endif
 void CmAxisUpdate(void *w, gpointer client_data);
 void CmAxisDel(void *w, gpointer client_data);
 void CmAxisZoom(void *w, gpointer client_data);

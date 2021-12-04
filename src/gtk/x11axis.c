@@ -95,21 +95,21 @@ static void AxisWinAxisLast(GSimpleAction *action, GVariant *parameter, gpointer
 
 static GActionEntry Popup_list[] =
 {
-  {N_("_Frame graph"),   G_CALLBACK(CmAxisAddFrame), NULL, NULL, NULL},
-  {N_("_Section graph"), G_CALLBACK(CmAxisAddSection), NULL, NULL, NULL},
-  {N_("_Cross graph"),   G_CALLBACK(CmAxisAddCross), NULL, NULL, NULL},
-  {N_("Single _Axis"),   G_CALLBACK(CmAxisAddSingle), NULL, NULL, NULL},
-  {N_("_Duplicate"),     G_CALLBACK(list_sub_window_copy), NULL, NULL, NULL},
-  {N_("_Delete"),        G_CALLBACK(axis_delete_popup_func), NULL, NULL, NULL},
-  {N_("_Focus"),         G_CALLBACK(list_sub_window_focus), NULL, NULL, NULL},
-  {N_("focus _All"),     G_CALLBACK(list_sub_window_focus_all), NULL, NULL, NULL},
-  {N_("_Clear"),         G_CALLBACK(axiswin_scale_clear), NULL, NULL, NULL},
-  {N_("_Properties"),    G_CALLBACK(list_sub_window_update), NULL, NULL, NULL},
-  {N_("_Instance name"), G_CALLBACK(list_sub_window_object_name), NULL, NULL, NULL},
-  {N_("_Top"),           G_CALLBACK(AxisWinAxisTop), NULL, NULL, NULL},
-  {N_("_Up"),            G_CALLBACK(AxisWinAxisUp), NULL, NULL, NULL},
-  {N_("_Down"),          G_CALLBACK(AxisWinAxisDown), NULL, NULL, NULL},
-  {N_("_Bottom"),        G_CALLBACK(AxisWinAxisLast), NULL, NULL, NULL},
+  {N_("_Frame graph"),   CmAxisAddFrame, NULL, NULL, NULL},
+  {N_("_Section graph"), CmAxisAddSection, NULL, NULL, NULL},
+  {N_("_Cross graph"),   CmAxisAddCross, NULL, NULL, NULL},
+  {N_("Single _Axis"),   CmAxisAddSingle, NULL, NULL, NULL},
+  {N_("_Duplicate"),     list_sub_window_copy, NULL, NULL, NULL},
+  {N_("_Delete"),        axis_delete_popup_func, NULL, NULL, NULL},
+  {N_("_Focus"),         list_sub_window_focus, NULL, NULL, NULL},
+  {N_("focus _All"),     list_sub_window_focus_all, NULL, NULL, NULL},
+  {N_("_Clear"),         axiswin_scale_clear, NULL, NULL, NULL},
+  {N_("_Properties"),    list_sub_window_update, NULL, NULL, NULL},
+  {N_("_Instance name"), list_sub_window_object_name, NULL, NULL, NULL},
+  {N_("_Top"),           AxisWinAxisTop, NULL, NULL, NULL},
+  {N_("_Up"),            AxisWinAxisUp, NULL, NULL, NULL},
+  {N_("_Down"),          AxisWinAxisDown, NULL, NULL, NULL},
+  {N_("_Bottom"),        AxisWinAxisLast, NULL, NULL, NULL},
 };
 #else
 static void axiswin_scale_clear(GtkMenuItem *item, gpointer user_data);
@@ -2614,7 +2614,12 @@ AxisDialog(struct obj_list_data *data, int id, int user_data)
 }
 
 void
-CmAxisAddFrame(void *w, gpointer client_data)
+CmAxisAddFrame
+#if GTK_CHECK_VERSION(4, 0, 0)
+(GSimpleAction *action, GVariant *parameter, gpointer client_data)
+#else
+(void *w, gpointer client_data)
+#endif
 {
   enum TOOLBOX_MODE mode;
   mode = get_toolbox_mode();
@@ -2622,7 +2627,12 @@ CmAxisAddFrame(void *w, gpointer client_data)
 }
 
 void
-CmAxisAddSection(void *w, gpointer client_data)
+CmAxisAddSection
+#if GTK_CHECK_VERSION(4, 0, 0)
+(GSimpleAction *action, GVariant *parameter, gpointer client_data)
+#else
+(void *w, gpointer client_data)
+#endif
 {
   enum TOOLBOX_MODE mode;
   mode = get_toolbox_mode();
@@ -2630,7 +2640,12 @@ CmAxisAddSection(void *w, gpointer client_data)
 }
 
 void
-CmAxisAddCross(void *w, gpointer client_data)
+CmAxisAddCross
+#if GTK_CHECK_VERSION(4, 0, 0)
+(GSimpleAction *action, GVariant *parameter, gpointer client_data)
+#else
+(void *w, gpointer client_data)
+#endif
 {
   enum TOOLBOX_MODE mode;
   mode = get_toolbox_mode();
@@ -2825,7 +2840,12 @@ CmAxisNewCross(int use_presettings)
 }
 
 void
-CmAxisAddSingle(void *w, gpointer client_data)
+CmAxisAddSingle
+#if GTK_CHECK_VERSION(4, 0, 0)
+(GSimpleAction *action, GVariant *parameter, gpointer client_data)
+#else
+(void *w, gpointer client_data)
+#endif
 {
   struct objlist *obj;
   int id, undo;

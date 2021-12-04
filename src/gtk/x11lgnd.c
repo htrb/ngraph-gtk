@@ -216,16 +216,16 @@ enum TEXT_LIST_COL {
 #if GTK_CHECK_VERSION(4, 0, 0)
 static GActionEntry Popup_list[] =
 {
-  {N_("_Duplicate"),     G_CALLBACK(list_sub_window_copy), NULL, NULL, NULL},
-  {N_("_Delete"),        G_CALLBACK(list_sub_window_delete), NULL, NULL, NULL},
-  {N_("_Focus"),         G_CALLBACK(list_sub_window_focus), NULL, NULL, NULL},
-  {N_("focus _All"),     G_CALLBACK(list_sub_window_focus_all), NULL, NULL, NULL},
-  {N_("_Properties"),    G_CALLBACK(list_sub_window_update), NULL, NULL, NULL},
-  {N_("_Instance name"), G_CALLBACK(list_sub_window_object_name), NULL, NULL, NULL},
-  {N_("_Top"),           G_CALLBACK(list_sub_window_move_top), NULL, NULL, NULL},
-  {N_("_Up"),            G_CALLBACK(list_sub_window_move_up), NULL, NULL, NULL},
-  {N_("_Down"),          G_CALLBACK(list_sub_window_move_down), NULL, NULL, NULL},
-  {N_("_Bottom"),        G_CALLBACK(list_sub_window_move_last), NULL, NULL, NULL},
+  {N_("_Duplicate"),     list_sub_window_copy, NULL, NULL, NULL},
+  {N_("_Delete"),        list_sub_window_delete, NULL, NULL, NULL},
+  {N_("_Focus"),         list_sub_window_focus, NULL, NULL, NULL},
+  {N_("focus _All"),     list_sub_window_focus_all, NULL, NULL, NULL},
+  {N_("_Properties"),    list_sub_window_update, NULL, NULL, NULL},
+  {N_("_Instance name"), list_sub_window_object_name, NULL, NULL, NULL},
+  {N_("_Top"),           list_sub_window_move_top, NULL, NULL, NULL},
+  {N_("_Up"),            list_sub_window_move_up, NULL, NULL, NULL},
+  {N_("_Down"),          list_sub_window_move_down, NULL, NULL, NULL},
+  {N_("_Bottom"),        list_sub_window_move_last, NULL, NULL, NULL},
 }
 #else
 static struct subwin_popup_list Popup_list[] = {

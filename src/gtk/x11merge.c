@@ -66,20 +66,18 @@ static n_list_store Mlist[] = {
 static void merge_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row);
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-static void CmMergeOpenAction(GSimpleAction *action, GVariant *parameter, gpointer app);
-
 static GActionEntry Popup_list[] =
-  {N_("_Add"),           G_CALLBACK(CmMergeOpen), NULL, NULL, NULL},
-  {N_("_Duplicate"),     G_CALLBACK(list_sub_window_copy), NULL, NULL, NULL},
-  {N_("_Delete"),        G_CALLBACK(list_sub_window_delete), NULL, NULL, NULL},
-  {"_Focus",             G_CALLBACK(list_sub_window_focus), NULL, NULL, NULL},
-  {N_("focus _All"),     G_CALLBACK(list_sub_window_focus_all), NULL, NULL, NULL},
-  {N_("_Preferences"),   G_CALLBACK(list_sub_window_update), NULL, NULL, NULL},
-  {N_("_Instance name"), G_CALLBACK(list_sub_window_object_name), NULL, NULL, NULL},
-  {N_("_Top"),           G_CALLBACK(list_sub_window_move_top), NULL, NULL, NULL},
-  {N_("_Up"),            G_CALLBACK(list_sub_window_move_up), NULL, NULL, NULL},
-  {N_("_Down"),          G_CALLBACK(list_sub_window_move_down), NULL, NULL, NULL},
-  {N_("_Bottom"),        G_CALLBACK(list_sub_window_move_last), NULL, NULL, NULL},
+  {N_("_Add"),           CmMergeOpen, NULL, NULL, NULL},
+  {N_("_Duplicate"),     list_sub_window_copy, NULL, NULL, NULL},
+  {N_("_Delete"),        list_sub_window_delete, NULL, NULL, NULL},
+  {"_Focus",             list_sub_window_focus, NULL, NULL, NULL},
+  {N_("focus _All"),     list_sub_window_focus_all, NULL, NULL, NULL},
+  {N_("_Preferences"),   list_sub_window_update, NULL, NULL, NULL},
+  {N_("_Instance name"), list_sub_window_object_name, NULL, NULL, NULL},
+  {N_("_Top"),           list_sub_window_move_top, NULL, NULL, NULL},
+  {N_("_Up"),            list_sub_window_move_up, NULL, NULL, NULL},
+  {N_("_Down"),          list_sub_window_move_down, NULL, NULL, NULL},
+  {N_("_Bottom"),        list_sub_window_move_last, NULL, NULL, NULL},
 };
 #else
 static struct subwin_popup_list Popup_list[] = {
@@ -270,16 +268,13 @@ MergeDialog(struct obj_list_data *data, int id, int user_data)
   d->Id = id;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-static void
-CmMergeOpenAction(GSimpleAction *action, GVariant *parameter, gpointer client_data)
-{
-  CmMergeOpen(NULL, client_data);
-}
-#endif
-
 void
-CmMergeOpen(void *w, gpointer client_data)
+CmMergeOpen
+#if GTK_CHECK_VERSION(4, 0, 0)
+(GSimpleAction *action, GVariant *parameter, gpointer client_data)
+#else
+(void *w, gpointer client_data)
+#endif
 {
   struct objlist *obj;
   char *name = NULL;

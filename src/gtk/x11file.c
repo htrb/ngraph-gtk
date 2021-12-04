@@ -131,21 +131,21 @@ static gboolean func_entry_focused(GtkWidget *w, GdkEventFocus *event, gpointer 
 #if GTK_CHECK_VERSION(4, 0, 0)
 static GActionEntry Popup_list[] =
 {
-  {N_("_File"),             G_CALLBACK(CmFileOpen), NULL, NULL, NULL},
-  {N_("_Range"),            G_CALLBACK(CmRangeAdd), NULL, NULL, NULL},
+  {N_("_File"),             CmFileOpen, NULL, NULL, NULL},
+  {N_("_Range"),            CmRangeAdd, NULL, NULL, NULL},
   //  {N_("_Recent file"),      NULL, NULL, NULL, NULL},
-  {N_("_Duplicate"),        G_CALLBACK(file_copy_popup_func), NULL, NULL, NULL},
-  {N_("duplicate _Behind"), G_CALLBACK(file_copy2_popup_func), NULL, NULL, NULL},
-  {N_("_Delete"),           G_CALLBACK(file_delete_popup_func), NULL, NULL, NULL},
-  {N_("_Draw"),             G_CALLBACK(file_draw_popup_func), NULL, NULL, NULL},
-  {N_("_Properties"),       G_CALLBACK(list_sub_window_update), NULL, NULL, NULL},
-  {N_("_Instance name"),    G_CALLBACK(list_sub_window_object_name), NULL, NULL, NULL},
-  {N_("_Edit"),             G_CALLBACK(file_edit_popup_func), NULL, NULL, NULL},
-  {N_("_Top"),              G_CALLBACK(list_sub_window_move_top), NULL, NULL, NULL},
-  {N_("_Up"),               G_CALLBACK(list_sub_window_move_up), NULL, NULL, NULL},
-  {N_("_Down"),             G_CALLBACK(list_sub_window_move_down), NULL, NULL, NULL},
-  {N_("_Bottom"),           G_CALLBACK(list_sub_window_move_last), NULL, NULL, NULL},
-}
+  {N_("_Duplicate"),        file_copy_popup_func, NULL, NULL, NULL},
+  {N_("duplicate _Behind"), file_copy2_popup_func, NULL, NULL, NULL},
+  {N_("_Delete"),           file_delete_popup_func, NULL, NULL, NULL},
+  {N_("_Draw"),             file_draw_popup_func, NULL, NULL, NULL},
+  {N_("_Properties"),       list_sub_window_update, NULL, NULL, NULL},
+  {N_("_Instance name"),    list_sub_window_object_name, NULL, NULL, NULL},
+  {N_("_Edit"),             file_edit_popup_func, NULL, NULL, NULL},
+  {N_("_Top"),              list_sub_window_move_top, NULL, NULL, NULL},
+  {N_("_Up"),               list_sub_window_move_up, NULL, NULL, NULL},
+  {N_("_Down"),             list_sub_window_move_down, NULL, NULL, NULL},
+  {N_("_Bottom"),           list_sub_window_move_last, NULL, NULL, NULL},
+};
 #else
 static struct subwin_popup_list add_menu_list[] = {
   {N_("_File"),  G_CALLBACK(CmFileOpen), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
@@ -4864,7 +4864,12 @@ CmFileHistory(GtkRecentChooser *w, gpointer client_data)
 }
 
 void
-CmRangeAdd(void *w, gpointer client_data)
+CmRangeAdd
+#if GTK_CHECK_VERSION(4, 0, 0)
+(GSimpleAction *action, GVariant *parameter, gpointer client_data)
+#else
+(void *w, gpointer client_data)
+#endif
 {
   int id, ret, val, undo;
   struct objlist *obj;
@@ -4902,7 +4907,12 @@ CmRangeAdd(void *w, gpointer client_data)
 }
 
 void
-CmFileOpen(void *w, gpointer client_data)
+CmFileOpen
+#if GTK_CHECK_VERSION(4, 0, 0)
+(GSimpleAction *action, GVariant *parameter, gpointer client_data)
+#else
+(void *w, gpointer client_data)
+#endif
 {
   int id, ret, n, undo = -1;
   char **file = NULL;

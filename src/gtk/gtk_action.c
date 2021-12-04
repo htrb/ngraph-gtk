@@ -400,13 +400,21 @@ ViewGridLineAction_activated(GSimpleAction *action, GVariant *parameter, gpointe
 static void
 DataAddFileAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+#if GTK_CHECK_VERSION(4, 0, 0)
+  CmFileOpen(NULL, NULL, app);
+#else
   CmFileOpen(NULL, NULL);
+#endif
 }
 
 static void
 DataAddRangeAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+#if GTK_CHECK_VERSION(4, 0, 0)
+  CmRangeAdd(NULL, NULL, app);
+#else
   CmRangeAdd(NULL, NULL);
+#endif
 }
 
 static void
@@ -460,25 +468,41 @@ ParameterDeleteAction_activated(GSimpleAction *action, GVariant *parameter, gpoi
 static void
 AxisAddFrameAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+#if GTK_CHECK_VERSION(4, 0, 0)
+  CmAxisAddFrame(NULL, NULL, app);
+#else
   CmAxisAddFrame(NULL, NULL);
+#endif
 }
 
 static void
 AxisAddSectionAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+#if GTK_CHECK_VERSION(4, 0, 0)
+  CmAxisAddSection(NULL, NULL, app);
+#else
   CmAxisAddSection(NULL, NULL);
+#endif
 }
 
 static void
 AxisAddCrossAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+#if GTK_CHECK_VERSION(4, 0, 0)
+  CmAxisAddCross(NULL, NULL, app);
+#else
   CmAxisAddCross(NULL, NULL);
+#endif
 }
 
 static void
 AxisAddSingleAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+#if GTK_CHECK_VERSION(4, 0, 0)
+  CmAxisAddSingle(NULL, NULL, app);
+#else
   CmAxisAddSingle(NULL, NULL);
+#endif
 }
 
 static void
@@ -592,7 +616,11 @@ LegendTextDeleteAction_activated(GSimpleAction *action, GVariant *parameter, gpo
 static void
 MergeAddAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+#if GTK_CHECK_VERSION(4, 0, 0)
+  CmMergeOpen(NULL, NULL, app);
+#else
   CmMergeOpen(NULL, NULL);
+#endif
 }
 
 static void

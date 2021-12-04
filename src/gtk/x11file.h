@@ -32,9 +32,14 @@ const char *get_plot_info_str(struct objlist *obj, int id, int src);
 void FileWinUpdate(struct obj_list_data *data, int clear, int draw);
 void CmFileHistory(GtkRecentChooser *w, gpointer client_data);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+void CmRangeAdd(GSimpleAction *action, GVariant *parameter, gpointer client_data);
+void CmFileOpen(GSimpleAction *action, GVariant *parameter, gpointer client_data);
+#else
 void CmRangeAdd(void *w, gpointer client_data);
 void CmFileNew(void *w, gpointer client_data);
 void CmFileOpen(void *w, gpointer client_data);
+#endif
 void CmFileClose(void *w, gpointer client_data);
 void CmFileUpdate(void *w, gpointer client_data);
 void CmFileEdit(void *w, gpointer client_data);
