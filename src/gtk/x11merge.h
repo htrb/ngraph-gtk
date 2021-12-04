@@ -22,7 +22,11 @@
  */
 
 void MergeWinUpdate(struct obj_list_data *d, int clear, int draw);
+#if GTK_CHECK_VERSION(4, 0, 0)
+void CmMergeOpen(GSimpleAction *action, GVariant *parameter, gpointer client_data);
+#else
 void CmMergeOpen(void *w, gpointer client_data);
+#endif
 void CmMergeClose(void *w, gpointer client_data);
 void CmMergeUpdate(void *w, gpointer client_data);
 GtkWidget *create_merge_list(struct SubWin *d);
