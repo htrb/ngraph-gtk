@@ -21,8 +21,6 @@
  *
  */
 
-typedef void (* legend_cb_func)(GtkMenuItem *w, gpointer client_data);
-
 
 void LegendWinUpdate(char **objects, int clear, int draw);
 
