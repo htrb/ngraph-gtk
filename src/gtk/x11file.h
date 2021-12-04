@@ -37,7 +37,6 @@ void CmRangeAdd(GSimpleAction *action, GVariant *parameter, gpointer client_data
 void CmFileOpen(GSimpleAction *action, GVariant *parameter, gpointer client_data);
 #else
 void CmRangeAdd(void *w, gpointer client_data);
-void CmFileNew(void *w, gpointer client_data);
 void CmFileOpen(void *w, gpointer client_data);
 #endif
 void CmFileClose(void *w, gpointer client_data);
