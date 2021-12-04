@@ -33,7 +33,6 @@ void FileWinUpdate(struct obj_list_data *data, int clear, int draw);
 void CmFileHistory(GtkRecentChooser *w, gpointer client_data);
 
 void CmRangeAdd(void *w, gpointer client_data);
-void CmFileNew(void *w, gpointer client_data);
 void CmFileOpen(void *w, gpointer client_data);
 void CmFileClose(void *w, gpointer client_data);
 void CmFileUpdate(void *w, gpointer client_data);
