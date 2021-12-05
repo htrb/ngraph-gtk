@@ -1,6 +1,10 @@
 name: C/C++ CI
 
-on: [push]
+on:
+  push:
+    branches:
+      - '**'        # matches every branch
+      - '!gtk4'     # excludes gtk4
 
 jobs:
   build:
