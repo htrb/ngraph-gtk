@@ -1758,12 +1758,13 @@ create_user_fit_frame(struct FitDialog *d)
 #if GTK_CHECK_VERSION(4, 0, 0)
   w = gtk_scrolled_window_new();
   gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(w), table);
+  gtk_scrolled_window_set_has_frame(GTK_SCROLLED_WINDOW(w), FALSE);
 #else
   w = gtk_scrolled_window_new(NULL, NULL);
   gtk_container_add(GTK_CONTAINER(w), table);
+  gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(w), GTK_SHADOW_NONE);
 #endif
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(w), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-  gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(w), GTK_SHADOW_NONE);
   gtk_widget_set_size_request(GTK_WIDGET(w), -1, 200);
 #if ! GTK_CHECK_VERSION(4, 0, 0)
   gtk_container_set_border_width(GTK_CONTAINER(w), 2);
@@ -2151,10 +2152,11 @@ move_tab_create(struct FileDialog *d)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
   swin = gtk_scrolled_window_new();
+  gtk_scrolled_window_set_has_frame(GTK_SCROLLED_WINDOW(swin), TRUE);
 #else
   swin = gtk_scrolled_window_new(NULL, NULL);
-#endif
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(swin), GTK_SHADOW_ETCHED_IN);
+#endif
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   w = list_store_create(sizeof(list) / sizeof(*list), list);
   list_store_set_sort_column(w, 0);
@@ -2395,10 +2397,11 @@ mask_tab_create(struct FileDialog *d)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
   swin = gtk_scrolled_window_new();
+  gtk_scrolled_window_set_has_frame(GTK_SCROLLED_WINDOW(swin), TRUE);
 #else
   swin = gtk_scrolled_window_new(NULL, NULL);
-#endif
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(swin), GTK_SHADOW_ETCHED_IN);
+#endif
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   w = list_store_create(sizeof(list) / sizeof(*list), list);
   list_store_set_sort_column(w, 0);
