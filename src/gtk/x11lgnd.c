@@ -1186,12 +1186,12 @@ points_setup(struct LegendDialog *d)
 #endif
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(swin), GTK_SHADOW_ETCHED_IN);
-  gtk_container_set_border_width(GTK_CONTAINER(swin), 2);
   set_widget_margin(swin, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT | WIDGET_MARGIN_BOTTOM);
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), tree_view);
   gtk_box_append(GTK_BOX(vbox), swin);
 #else
+  gtk_container_set_border_width(GTK_CONTAINER(swin), 2);
   gtk_container_add(GTK_CONTAINER(swin), tree_view);
   gtk_box_pack_start(GTK_BOX(vbox), swin, TRUE, TRUE, 0);
 #endif

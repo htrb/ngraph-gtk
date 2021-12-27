@@ -1765,7 +1765,9 @@ create_user_fit_frame(struct FitDialog *d)
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(w), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(w), GTK_SHADOW_NONE);
   gtk_widget_set_size_request(GTK_WIDGET(w), -1, 200);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   gtk_container_set_border_width(GTK_CONTAINER(w), 2);
+#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(vbox), w);
