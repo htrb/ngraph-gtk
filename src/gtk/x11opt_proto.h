@@ -253,13 +253,22 @@ CREATE_NAME(Pref, DialogCreateWidgets)(struct CREATE_NAME(Pref, Dialog) *d, GtkW
   d->list = w;
   g_signal_connect(d->list, "row-activated", G_CALLBACK(CREATE_NAME(Pref, ListActivatedCb)), d);
   add_event_key(d->list, G_CALLBACK(CREATE_NAME(Pref, ListDefailtCb)), NULL, d);
-  gtk_container_add(GTK_CONTAINER(swin), w);
+
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), w);
+#else
+  gtk_container_add(GTK_CONTAINER(w), table);
+#endif
 
   sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(w));
   g_signal_connect(sel, "changed", G_CALLBACK(CREATE_NAME(Pref, ListSelCb)), d);
 
   w = gtk_frame_new(NULL);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_frame_set_child(GTK_FRAME(w), swin);
+#else
   gtk_container_add(GTK_CONTAINER(w), swin);
+#endif
 
   if (win_box) {
     gtk_box_pack_start(GTK_BOX(win_box), w, TRUE, TRUE, 4);
