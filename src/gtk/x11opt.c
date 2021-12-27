@@ -1184,8 +1184,12 @@ create_custom_palette_buttons(struct MiscDialog *d, GtkWidget *box)
 	gtk_box_pack_start(GTK_BOX(box), bbox, FALSE, FALSE, 0);
 #endif
       }
+#if GTK_CHECK_VERSION(4, 0, 0)
+      bbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+#else
       bbox = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
       gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_START);
+#endif
     }
     btn = gtk_color_button_new_with_rgba(colors + i);
     g_object_set_property(G_OBJECT(btn), "show-editor", &value);

@@ -2106,8 +2106,12 @@ legend_dialog_setup_sub(struct LegendDialog *d, GtkWidget *table, int i, int ins
     add_widget_to_table(table, w, _("_Font:"), FALSE, i++);
     d->font = w;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+    btn_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
+#else
     btn_box = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
     gtk_box_set_spacing(GTK_BOX(btn_box), 10);
+#endif
     w = gtk_check_button_new_with_mnemonic(_("_Bold"));
     set_button_icon(w, "format-text-bold");
     d->font_bold = w;
