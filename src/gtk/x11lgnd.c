@@ -226,7 +226,7 @@ static GActionEntry Popup_list[] =
   {N_("_Up"),            list_sub_window_move_up, NULL, NULL, NULL},
   {N_("_Down"),          list_sub_window_move_down, NULL, NULL, NULL},
   {N_("_Bottom"),        list_sub_window_move_last, NULL, NULL, NULL},
-}
+};
 #else
 static struct subwin_popup_list Popup_list[] = {
   {N_("_Duplicate"),   G_CALLBACK(list_sub_window_copy), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
