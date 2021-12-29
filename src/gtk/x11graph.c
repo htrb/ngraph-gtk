@@ -1076,8 +1076,12 @@ DirectoryDialogSetup(GtkWidget *wi, void *data, int makewidget)
     GtkWidget *w, *table;
     table = gtk_grid_new();
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+    w = folder_chooser_button_new(_("directory"), wi);
+#else
     w = gtk_file_chooser_button_new(_("directory"), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
     gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(w), TRUE);
+#endif
     d->dir = w;
     add_widget_to_table(table, w, _("_Select Dir:"), TRUE, 0);
 
@@ -1105,7 +1109,11 @@ DirectoryDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   cwd = ngetcwd();
   if (cwd) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+    folder_chooser_button_set_folder(d->dir, cwd);
+#else
     gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(d->dir), cwd);
+#endif
     gtk_label_set_text(GTK_LABEL(d->dir_label), cwd);
     g_free(cwd);
   }
@@ -1121,7 +1129,13 @@ DirectoryDialogClose(GtkWidget *w, void *data)
   if (d->ret == IDCANCEL)
     return;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  s = folder_chooser_button_get_folder(d->dir);
+  s = g_strdup(s);
+#else
+  gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(d->dir), cwd);
   s = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(d->dir));
+#endif
 
   if (s && strlen(s) > 0) {
     if (nchdir(s)) {
@@ -1140,6 +1154,7 @@ DirectoryDialog(struct DirectoryDialog *data)
   data->CloseWindow = DirectoryDialogClose;
 }
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
 static void
 set_directory_name(GtkFileChooserButton *widget, gpointer user_data)
 {
@@ -1150,6 +1165,7 @@ set_directory_name(GtkFileChooserButton *widget, gpointer user_data)
     g_free(path);
   }
 }
+#endif
 
 static void
 LoadDialogSetup(GtkWidget *wi, void *data, int makewidget)
@@ -1166,9 +1182,13 @@ LoadDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->expand_file = w;
     gtk_grid_attach(GTK_GRID(vbox), w, 0, 0, 2, 1);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+    w = folder_chooser_button_new(_("Expand directory"), wi);
+#else
     w = gtk_file_chooser_button_new(_("Expand directory"), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
     gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(w), TRUE);
     g_signal_connect(w, "file-set", G_CALLBACK(set_directory_name), NULL);
+#endif
     add_widget_to_table(vbox, w, _("expand _Directory:"), FALSE, 1);
     d->dir = w;
 
@@ -1188,8 +1208,12 @@ LoadDialogSetup(GtkWidget *wi, void *data, int makewidget)
   }
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->expand_file), d->expand);
   combo_box_set_active(d->load_path, d->loadpath);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  folder_chooser_button_set_folder(d->dir, d->exdir);
+#else
   gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(d->dir), d->exdir);
   set_directory_name(GTK_FILE_CHOOSER_BUTTON(d->dir), NULL);
+#endif
 }
 
 static void
@@ -1204,7 +1228,11 @@ LoadDialogClose(GtkWidget *w, void *data)
   if (d->exdir) {
     g_free(d->exdir);
   }
+#if GTK_CHECK_VERSION(4, 0, 0)
+  d->exdir = g_strdup(folder_chooser_button_get_folder(d->dir));
+#else
   d->exdir = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(d->dir));
+#endif
   d->loadpath = combo_box_get_active(d->load_path);
 }
 
