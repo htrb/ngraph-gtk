@@ -494,15 +494,14 @@ DialogRadio(GtkWidget *parent, const char *title, const char *caption, struct na
 #endif
   }
 
-
   btn = NULL;
   for (i = 0; i < anum; i++) {
 #if GTK_CHECK_VERSION(4, 0, 0)
-    w = gtk_check_button_new_with_mnemonic(d[i]);
+    btn = gtk_check_button_new_with_mnemonic(d[i]);
     if (group) {
-      gtk_check_button_set_group(GTK_CHECK_BUTTON(w) GTK_CHECK_BUTTON(group));
+      gtk_check_button_set_group(GTK_CHECK_BUTTON(btn) GTK_CHECK_BUTTON(group));
     } else {
-      group = w;
+      group = btn;
     }
     gtk_box_append(vbox, btn);
 #else
