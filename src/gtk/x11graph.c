@@ -235,7 +235,7 @@ PageDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
     w = gtk_check_button_new_with_mnemonic(_("L_andscape"));
-    gtk_check_button_set_group(GTK_CHECK_BUTTON(w) GTK_CHECK_BUTTON(group));
+    gtk_check_button_set_group(GTK_CHECK_BUTTON(w), GTK_CHECK_BUTTON(group));
 #else
     w = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(w), _("L_andscape"));
 #endif
