@@ -965,6 +965,106 @@ SwitchDialog(struct SwitchDialog *data)
   arrayinit(&(data->idrawrable), sizeof(int));
 }
 
+#id GTK_CHECK_VERSION(4, 0, 0)
+struct folder_chooser_data {
+  char *folder, *title;
+  GtkWidget *parent, *button;
+};
+
+#define FOLDER_CHOOSER_DATA_KEY "FOLDER_CHOOSER_DATA"
+
+void
+folder_chooser_button_set_folder(GtkWidget *button, const char *path)
+{
+  char *bassename, *full_path;
+  struct folder_chooser_data *data;
+  if (button == NULL || path == NULL) {
+    return;
+  }
+  data = g_object_get_data(G_OBJECT(button), FOLDER_CHOOSER_DATA_KEY);
+  if (data == NULL) {
+    return;
+  }
+  if (data->folder) {
+    g_free(data->folder);
+    data->folder = NULL;
+  }
+
+  full_path = g_canonicalize_filename(path, NULL);
+  if (full_path == NULL) {
+    return;
+  }
+  data->folder = full_path;
+
+  bassename = getbasename(full_path);
+  gtk_button_set_label(GTK_BUTTON(data->button), bassename);
+  g_free(bassename);
+  gtk_widget_set_tooltip_text(data->button, full_path);
+}
+
+const char *
+folder_chooser_button_get_folder(GtkWidget *button)
+{
+  struct folder_chooser_data *data;
+  data = g_object_get_data(G_OBJECT(button), FOLDER_CHOOSER_DATA_KEY);
+  return data->folder;
+}
+
+static void
+on_open_response(GtkDialog *dialog, int response, gpointer user_data)
+{
+  if (response == GTK_RESPONSE_ACCEPT) {
+    struct folder_chooser_data *data;
+    GFile *file;
+    char *path;
+    data = (struct folder_chooser_data *) user_data;
+    file = gtk_file_chooser_get_file(GTK_FILE_CHOOSER(dialog));
+    path = g_file_get_path(file);
+    folder_chooser_button_set_folder(data->button, path);
+    g_free(path);
+    g_object_unref(file);
+  }
+  gtk_window_destroy(GTK_WINDOW (dialog));
+}
+
+static void
+folder_chooser_button_clicked(GtkButton *self, gpointer user_data)
+{
+  GtkWidget *dialog;
+  struct folder_chooser_data *data;
+
+  data = (struct folder_chooser_data *) user_data;
+  dialog = gtk_file_chooser_dialog_new(data->title,
+				       GTK_WINDOW(data->parent),
+				       GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
+				       _("_Cancel"), GTK_RESPONSE_CANCEL,
+				       _("_Open"), GTK_RESPONSE_ACCEPT,
+				       NULL);
+  gtk_file_chooser_set_create_folders(GTK_FILE_CHOOSER(dialog), TRUE);
+  // gtk_file_chooser_set_file(GTK_FILE_CHOOSER(dialog), file, NULL);
+  gtk_widget_show (dialog);
+  g_signal_connect (dialog, "response", G_CALLBACK(on_open_response), NULL);
+}
+
+GtkWidget *
+folder_chooser_button_new(const char *title, GtkWidget *parent)
+{
+  struct folder_chooser_data *data;
+
+  data = g_malloc(sizeof(*data));
+  if (data == NULL) {
+    return NULL;
+  }
+  data->title = g_strdup(title);
+  data->folder = NULL;
+  data->parent = parent;
+  data->button = gtk_button_new();
+  g_signal_connect(data->button, "clicked", G_CALLBACK(folder_chooser_button_clicked), data);
+  g_object_set_data(G_OBJECT(data->button), FOLDER_CHOOSER_DATA_KEY, data);
+  return data->button;
+}
+#endif
+
 static void
 DirectoryDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
