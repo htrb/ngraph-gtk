@@ -1,5 +1,19 @@
 #include "completion_info.h"
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+GList *
+completion_info_func_populate(const char *word, int len, GtkTextIter *iter)
+{
+  return NULL;
+}
+
+GList *
+completion_info_const_populate(const char *word, int len, GtkTextIter *iter)
+{
+  return NULL;
+}
+#else
 static int
 check_paren(GtkTextIter *iter)
 {
@@ -64,3 +78,4 @@ completion_info_const_populate(const char *word, int len, GtkTextIter *iter)
 {
   return completion_info_populate(completion_info_const, word, len, iter);
 }
+#endif

@@ -1307,12 +1307,16 @@ draw_arrow_pixmap(GtkWidget *win, struct LegendDialog *d)
 {
   int lw, len, x, w;
   cairo_t *cr;
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
   GdkWindow *window;
 
   window = gtk_widget_get_window(win);
   if (window == NULL) {
     return;
   }
+#endif
 
   if (d->arrow_pixmap == NULL) {
     d->arrow_pixmap = cairo_image_surface_create(CAIRO_FORMAT_RGB24, ARROW_VIEW_SIZE, ARROW_VIEW_SIZE);
@@ -1422,12 +1426,21 @@ create_marker_type_combo_box(const char *postfix, const char *tooltip)
   rend = gtk_cell_renderer_pixbuf_new();
   gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(cbox), rend, FALSE);
   gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "icon-name", 0);
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
   gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "stock-size", 1);
+#endif
   for (j = 0; j < MARKER_TYPE_NUM; j++) {
     char img_file[256];
     snprintf(img_file, sizeof(img_file), "%s_%s-symbolic", marker_type_char[j], postfix);
     gtk_list_store_append(list, &iter);
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+    gtk_list_store_set(list, &iter, 0, img_file, -1);
+#else
     gtk_list_store_set(list, &iter, 0, img_file, 1, GTK_ICON_SIZE_LARGE_TOOLBAR, -1);
+#endif
   }
   gtk_combo_box_set_active(GTK_COMBO_BOX(cbox), 1);
   gtk_widget_set_name(cbox, "MarkerType");
@@ -1510,7 +1523,11 @@ create_arrow_setting_widgets(struct LegendDialog *d, GtkWidget *hbox)
 #else
   gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
 #endif
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
   g_signal_connect(w, "draw", G_CALLBACK(LegendArrowDialogPaint), d);
+#endif
   d->view = w;
 
   w = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 100, 2000, 1);

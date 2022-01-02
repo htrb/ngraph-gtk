@@ -71,7 +71,8 @@ check_selected_item(GSimpleAction *action, GVariant *parameter, char **item, Gtk
   for (i = 0; item[i]; i++) {
     if (g_strcmp0(state, item[i]) == 0) {
 #if GTK_CHECK_VERSION(4, 0, 0)
-      gtk_button_set_child(GTK_BUTTON(button), icon[i]);
+/* must be implemented */
+//      gtk_button_set_child(GTK_BUTTON(button), icon[i]);
 #else
       gtk_button_set_image(GTK_BUTTON(button), icon[i]);
 #endif
@@ -125,7 +126,8 @@ set_stroke_fill_icon(void)
     i |= PATH_TYPE_CLOSE;
   }
 #if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_button_set_child(GTK_BUTTON(Widgets.stroke_fill.widget), Widgets.stroke_fill_icon[i]);
+/* must be implemented */
+//  gtk_button_set_child(GTK_BUTTON(Widgets.stroke_fill.widget), Widgets.stroke_fill_icon[i]);
 #else
   gtk_button_set_image(GTK_BUTTON(Widgets.stroke_fill.widget), Widgets.stroke_fill_icon[i]);
 #endif
@@ -180,7 +182,11 @@ create_images_sub(const char *prefix, char **item, GtkWidget **icon)
 
   for (i = 0; item[i]; i++) {
     snprintf(img_file, sizeof(img_file), "%s_%s-symbolic", prefix, item[i]);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    img = gtk_image_new_from_icon_name(img_file);
+#else
     img = gtk_image_new_from_icon_name(img_file, GTK_ICON_SIZE_LARGE_TOOLBAR);
+#endif
     icon[i] = img;
     g_object_ref(img);
   }
@@ -195,7 +201,11 @@ create_marker_images_sub(const char *postfix, char **item, GtkWidget **icon)
 
   for (i = 0; item[i]; i++) {
     snprintf(img_file, sizeof(img_file), "%s_%s-symbolic", item[i], postfix);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    img = gtk_image_new_from_icon_name(img_file);
+#else
     img = gtk_image_new_from_icon_name(img_file, GTK_ICON_SIZE_LARGE_TOOLBAR);
+#endif
     icon[i] = img;
     g_object_ref(img);
   }
@@ -212,7 +222,11 @@ create_images(struct presetting_widgets *widgets)
     GtkWidget *img;
     char img_file[256];
     snprintf(img_file, sizeof(img_file), "stroke_fill_%d-symbolic", i);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    img = gtk_image_new_from_icon_name(img_file);
+#else
     img = gtk_image_new_from_icon_name(img_file, GTK_ICON_SIZE_LARGE_TOOLBAR);
+#endif
     widgets->stroke_fill_icon[i] = img;
     g_object_ref(img);
   }
@@ -1720,7 +1734,11 @@ create_line_width_combo_box(void)
   rend = gtk_cell_renderer_pixbuf_new();
   gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(cbox), rend, FALSE);
   gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "icon-name", 1);
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
   gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "stock-size", 2);
+#endif
   for (j = 0; j < LINE_WIDTH_ICON_NUM; j++) {
     char buf[64], img_file[256];
     snprintf(img_file, sizeof(img_file), "linewidth_%03d-symbolic", 2 << j);
@@ -1729,7 +1747,9 @@ create_line_width_combo_box(void)
     gtk_list_store_set(list, &iter,
 		       0, buf,
 		       1, img_file,
+#if ! GTK_CHECK_VERSION(4, 0, 0)
 		       2, GTK_ICON_SIZE_LARGE_TOOLBAR,
+#endif
 		       -1);
   }
   gtk_combo_box_set_active(GTK_COMBO_BOX(cbox), 1);
@@ -1774,7 +1794,9 @@ create_menu_button(GtkBuilder *builder, const char *menu_name, const char *toolt
   GMenuModel *menu;
   w = gtk_menu_button_new();
   menu = G_MENU_MODEL(gtk_builder_get_object(builder, menu_name));
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   gtk_menu_button_set_use_popover(GTK_MENU_BUTTON(w), FALSE);
+#endif
   gtk_menu_button_set_menu_model(GTK_MENU_BUTTON(w), menu);
   gtk_widget_set_tooltip_text(w, tooltip);
   return w;
@@ -1877,10 +1899,18 @@ presetting_create_panel(GtkApplication *app)
   g_signal_connect(w, "value-changed", G_CALLBACK(update_focused_obj), NULL);
   Widgets.pt.widget = w;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  img = gtk_image_new_from_icon_name("format-text-bold-symbolic");
+#else
   img = gtk_image_new_from_icon_name("format-text-bold-symbolic", GTK_ICON_SIZE_BUTTON);
+#endif
   Widgets.bold.widget = create_toggle_button(box, img, _("Bold"), FALSE);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  img = gtk_image_new_from_icon_name("format-text-italic-symbolic");
+#else
   img = gtk_image_new_from_icon_name("format-text-italic-symbolic", GTK_ICON_SIZE_BUTTON);
+#endif
   Widgets.italic.widget = create_toggle_button(box, img,  _("Italic"), FALSE);
   gtk_widget_set_margin_end(Widgets.italic.widget, SETTING_PANEL_MARGIN * 4);
 
@@ -1980,7 +2010,8 @@ presetting_create_panel(GtkApplication *app)
 #endif
   Widgets.join_type.widget = w;
 #if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_button_set_child(GTK_BUTTON(Widgets.join_type.widget), Widgets.join_icon[DEFAULT_JOIN_TYPE]);
+/* must be implemented */
+//  gtk_button_set_child(GTK_BUTTON(Widgets.join_type.widget), Widgets.join_icon[DEFAULT_JOIN_TYPE]);
 #else
   gtk_button_set_image(GTK_BUTTON(Widgets.join_type.widget), Widgets.join_icon[DEFAULT_JOIN_TYPE]);
 #endif
@@ -2004,7 +2035,8 @@ presetting_create_panel(GtkApplication *app)
   Widgets.marker_type_begin.widget = w;
   Widgets.marker_begin = DEFAULT_MARKER_TYPE;
 #if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_button_set_child(GTK_BUTTON(Widgets.marker_type_begin.widget), Widgets.marker_begin_icon[DEFAULT_MARKER_TYPE]);
+/* must be implemented */
+//  gtk_button_set_child(GTK_BUTTON(Widgets.marker_type_begin.widget), Widgets.marker_begin_icon[DEFAULT_MARKER_TYPE]);
 #else
   gtk_button_set_image(GTK_BUTTON(Widgets.marker_type_begin.widget), Widgets.marker_begin_icon[DEFAULT_MARKER_TYPE]);
 #endif
@@ -2018,7 +2050,8 @@ presetting_create_panel(GtkApplication *app)
   Widgets.marker_type_end.widget = w;
   Widgets.marker_end = DEFAULT_MARKER_TYPE;
 #if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_button_set_child(GTK_BUTTON(Widgets.marker_type_end.widget), Widgets.marker_end_icon[DEFAULT_MARKER_TYPE]);
+/* must be implemented */
+//  gtk_button_set_child(GTK_BUTTON(Widgets.marker_type_end.widget), Widgets.marker_end_icon[DEFAULT_MARKER_TYPE]);
 #else
   gtk_button_set_image(GTK_BUTTON(Widgets.marker_type_end.widget), Widgets.marker_end_icon[DEFAULT_MARKER_TYPE]);
 #endif

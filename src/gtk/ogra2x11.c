@@ -429,9 +429,13 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
 #endif
   }
   gtk_window_set_default_size(GTK_WINDOW(gtklocal->mainwin), width, height);
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
   g_signal_connect_swapped(gtklocal->mainwin,
 			   "delete-event",
 			   G_CALLBACK(gtkclose), gtklocal->mainwin);
+#endif
 
   add_event_key(gtklocal->mainwin, G_CALLBACK(ev_key_down), NULL,  gtklocal);
 
@@ -453,11 +457,15 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   gtk_widget_set_halign(gtklocal->View, GTK_ALIGN_CENTER);
   gtk_widget_set_valign(gtklocal->View, GTK_ALIGN_CENTER);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
   g_signal_connect(gtklocal->View, "draw",
 		   G_CALLBACK(gtkevpaint), gtklocal);
 
   g_signal_connect(gtklocal->mainwin, "size-allocate",
 		   G_CALLBACK(size_allocate), gtklocal);
+#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scrolled_window), gtklocal->View);

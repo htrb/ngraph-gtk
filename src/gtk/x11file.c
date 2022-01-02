@@ -126,7 +126,11 @@ static void file_draw_popup_func(GtkMenuItem *w, gpointer client_data);
 #endif
 static void FileDialogType(GtkWidget *w, gpointer client_data);
 static void create_type_combo_item(GtkTreeStore *list, struct objlist *obj, int id);
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
 static gboolean func_entry_focused(GtkWidget *w, GdkEventFocus *event, gpointer user_data);
+#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 static GActionEntry Popup_list[] =
@@ -196,6 +200,9 @@ enum MATH_FNC_TYPE {
 
 static char *FieldStr[] = {"math_x", "math_y", "func_f", "func_g", "func_h"};
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
 static void
 add_completion_provider(GtkSourceView *source_view, GtkSourceCompletionProvider *provider)
 {
@@ -217,6 +224,7 @@ add_completion_provider_math(GtkSourceView *source_view)
   words = source_completion_words_new(_("constants"), completion_info_const_populate);
   add_completion_provider(source_view, GTK_SOURCE_COMPLETION_PROVIDER(words));
 }
+#endif
 
 static GtkWidget *
 create_source_view(void)
@@ -225,7 +233,11 @@ create_source_view(void)
   GtkSourceLanguageManager *lm;
   GtkSourceBuffer *buffer;
   GtkSourceLanguage *lang;
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
   GtkSourceCompletionWords *words;
+#endif
   GValue value = G_VALUE_INIT;
   GtkSourceCompletion *comp;
 
@@ -254,10 +266,14 @@ create_source_view(void)
   gtk_source_buffer_set_language(GTK_SOURCE_BUFFER(buffer), lang);
   gtk_source_buffer_set_highlight_syntax(GTK_SOURCE_BUFFER(buffer), TRUE);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
   add_completion_provider_math(source_view);
   words = gtk_source_completion_words_new(_("current equations"), NULL);
   gtk_source_completion_words_register(words, GTK_TEXT_BUFFER(buffer));
   add_completion_provider(source_view, GTK_SOURCE_COMPLETION_PROVIDER(words));
+#endif
 
   return GTK_WIDGET(source_view);
 }
@@ -293,9 +309,17 @@ set_text_to_source_buffer(GtkWidget *view, const char *text)
 {
   GtkTextBuffer *buffer;
   buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(view));
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
   gtk_source_buffer_begin_not_undoable_action(GTK_SOURCE_BUFFER(buffer));
+#endif
   gtk_text_buffer_set_text(buffer, text, -1);
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
   gtk_source_buffer_end_not_undoable_action(GTK_SOURCE_BUFFER(buffer));
+#endif
 }
 
 static void
@@ -1719,7 +1743,11 @@ create_user_fit_frame(struct FitDialog *d)
   j = 0;
   w = create_text_entry(FALSE, TRUE);
   add_widget_to_table_sub(table, w, _("_Formula:"), TRUE, 0, 2, 3, j++);
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
   g_signal_connect(w, "focus-in-event", G_CALLBACK(func_entry_focused), NgraphApp.fit_list);
+#endif
   g_signal_connect(w, "changed", G_CALLBACK(check_fit_func), d);
   d->formula = w;
 
@@ -1750,7 +1778,11 @@ create_user_fit_frame(struct FitDialog *d)
     d->p[i] = w;
 
     w = create_text_entry(TRUE, TRUE);
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
     g_signal_connect(w, "focus-in-event", G_CALLBACK(func_entry_focused), NgraphApp.fit_list);
+#endif
     add_widget_to_table_sub(table, w, dd, TRUE, 2, 1, 4, j++);
     d->d[i] = w;
   }
@@ -1949,11 +1981,19 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
 
     w = gtk_button_new_with_mnemonic(_("_Draw"));
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(GTK_BOX(hbox), w);
+#else
     gtk_box_pack_end(GTK_BOX(hbox), w, FALSE, FALSE, 4);
+#endif
     g_signal_connect(w, "clicked", G_CALLBACK(FitDialogDraw), d);
 
     w = gtk_button_new_with_mnemonic(_("_Result"));
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(GTK_BOX(hbox), w);
+#else
     gtk_box_pack_end(GTK_BOX(hbox), w, FALSE, FALSE, 4);
+#endif
     g_signal_connect(w, "clicked", G_CALLBACK(FitDialogResult), d);
 
 
@@ -2765,6 +2805,9 @@ math_tab_copy(GtkButton *btn, gpointer user_data)
   }
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
 static gboolean
 func_entry_focused(GtkWidget *w, GdkEventFocus *event, gpointer user_data)
 {
@@ -2775,6 +2818,7 @@ func_entry_focused(GtkWidget *w, GdkEventFocus *event, gpointer user_data)
 
   return FALSE;
 }
+#endif
 
 static GtkWidget *
 create_math_text_tab(GtkWidget *tab, const gchar *label)
@@ -2856,17 +2900,29 @@ math_common_widgets_create(struct FileDialog *d, GtkWidget *grid, int pos)
   d->math.y = w;
 
   w = create_text_entry(TRUE, TRUE);
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
   g_signal_connect(w, "focus-in-event", G_CALLBACK(func_entry_focused), NgraphApp.func_list);
+#endif
   add_widget_to_table(table, w, "_F(X,Y,Z):", TRUE, i++);
   d->math.f = w;
 
   w = create_text_entry(TRUE, TRUE);
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
   g_signal_connect(w, "focus-in-event", G_CALLBACK(func_entry_focused), NgraphApp.func_list);
+#endif
   add_widget_to_table(table, w, "_G(X,Y,Z):", TRUE, i++);
   d->math.g = w;
 
   w = create_text_entry(TRUE, TRUE);
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
   g_signal_connect(w, "focus-in-event", G_CALLBACK(func_entry_focused), NgraphApp.func_list);
+#endif
   add_widget_to_table(table, w, "_H(X,Y,Z):", TRUE, i++);
   d->math.h = w;
 
@@ -4811,6 +4867,9 @@ data_save_undo(int type)
   return menu_save_undo(type, arg);
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
 void
 CmFileHistory(GtkRecentChooser *w, gpointer client_data)
 {
@@ -4867,6 +4926,7 @@ CmFileHistory(GtkRecentChooser *w, gpointer client_data)
   g_free(fname);
   FileWinUpdate(data, TRUE, DRAW_NOTIFY);
 }
+#endif
 
 void
 CmRangeAdd
@@ -6648,6 +6708,9 @@ edited_axis(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer us
   set_graph_modified();
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
 static void
 drag_drop_cb(GtkWidget *w, GdkDragContext *context, gint x, gint y, GtkSelectionData *data, guint info, guint time, gpointer user_data)
 {
@@ -6666,10 +6729,14 @@ drag_drop_cb(GtkWidget *w, GdkDragContext *context, gint x, gint y, GtkSelection
     break;
   }
 }
+#endif
 
 static void
 init_dnd(struct SubWin *d)
 {
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
   GtkWidget *widget;
   GtkTargetEntry target[] = {
     {"text/uri-list", 0, DROP_TYPE_FILE},
@@ -6679,6 +6746,7 @@ init_dnd(struct SubWin *d)
 
   gtk_drag_dest_set(widget, GTK_DEST_DEFAULT_ALL, target, sizeof(target) / sizeof(*target), GDK_ACTION_COPY);
   g_signal_connect(widget, "drag-data-received", G_CALLBACK(drag_drop_cb), NULL);
+#endif
 }
 
 GtkWidget *

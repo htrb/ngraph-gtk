@@ -95,7 +95,12 @@ ndialog_run(GtkWidget *dlg)
   }
 
   lock_state = DnDLock;
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+  r = GTK_RESPONSE_OK;
+#else
   r = gtk_dialog_run(GTK_DIALOG(dlg));
+#endif
   DnDLock = lock_state;
 
   return r;
@@ -139,7 +144,11 @@ DialogExecute(GtkWidget *parent, void *dialog)
 
     gtk_window_set_resizable(GTK_WINDOW(dlg), TRUE);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
     g_signal_connect(dlg, "delete-event", G_CALLBACK(gtk_true), data);
+#endif
     g_signal_connect(dlg, "destroy", G_CALLBACK(dialog_destroyed_cb), data);
 
     data->parent = parent;
@@ -245,7 +254,11 @@ set_dialog_position(GtkWidget *w, const int *x, const int *y)
   if (x == NULL || y == NULL || *x < 0 || *y < 0)
     return;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  /* a number of GtkWindow APIs that were X11-specific have been removed. */
+#else
   gtk_window_move(GTK_WINDOW(w), *x, *y);
+#endif
 }
 
 static void
@@ -254,6 +267,9 @@ get_dialog_position(GtkWidget *w, int *x, int *y)
   if (x == NULL || y == NULL)
     return;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  /* a number of GtkWindow APIs that were X11-specific have been removed. */
+#else
   gtk_window_get_position(GTK_WINDOW(w), x, y);
 
   if (*x < 0)
@@ -261,6 +277,7 @@ get_dialog_position(GtkWidget *w, int *x, int *y)
 
   if (*y < 0)
     *y = 0;
+#endif
 }
 
 int
@@ -456,7 +473,7 @@ DialogRadio(GtkWidget *parent, const char *title, const char *caption, struct na
   char **d;
   int i, anum;
 #if GTK_CHECK_VERSION(4, 0, 0)
-  GtkWidget *group;
+  GtkWidget *group = NULL;
 #endif
 
   d = arraydata(array);
@@ -499,7 +516,7 @@ DialogRadio(GtkWidget *parent, const char *title, const char *caption, struct na
 #if GTK_CHECK_VERSION(4, 0, 0)
     btn = gtk_check_button_new_with_mnemonic(d[i]);
     if (group) {
-      gtk_check_button_set_group(GTK_CHECK_BUTTON(btn) GTK_CHECK_BUTTON(group));
+      gtk_check_button_set_group(GTK_CHECK_BUTTON(btn), GTK_CHECK_BUTTON(group));
     } else {
       group = btn;
     }
@@ -844,10 +861,11 @@ DialogSpinEntry(GtkWidget *parent, const char *title, const char *caption, doubl
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin), *r);
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(vbox, spin);
+  /* must be implemented */
 #else
   gtk_box_pack_start(vbox, spin, FALSE, FALSE, 2);
-#endif
   gtk_entry_set_activates_default(GTK_ENTRY(spin), TRUE);
+#endif
 
   prec = log10(fabs(inc));
   if (prec < 0) {
@@ -976,6 +994,7 @@ DialogCheck(GtkWidget *parent, const char *title, const char *caption, struct na
 
   return data;
 }
+#if ! GTK_CHECK_VERSION(4, 0, 0)
 static void
 free_str_list(GSList *top)
 {
@@ -988,7 +1007,11 @@ free_str_list(GSList *top)
   }
   g_slist_free(top);
 }
+#endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
 static void
 fsok(GtkWidget *dlg, struct nGetOpenFileData *data)
 {
@@ -1084,7 +1107,9 @@ fsok(GtkWidget *dlg, struct nGetOpenFileData *data)
   free_str_list(top);
   data->ret = IDOK;
 }
+#endif
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
 static void
 file_dialog_set_current_neme(GtkWidget *dlg, const char *full_name)
 {
@@ -1145,13 +1170,19 @@ get_filename_with_ext(const char *basename, const char *ext)
 			     ext);
   return filename;
 }
+#endif
 
 static int
 FileSelectionDialog(GtkWidget *parent, struct nGetOpenFileData *data)
 {
+#if GTK_CHECK_VERSION(4, 0, 0)
+  GtkWidget *dlg;
+  GtkFileFilter *filter;
+#else
   GtkWidget *dlg, *rc;
   GtkFileFilter *filter;
   char *fname;
+#endif
 
   dlg = gtk_file_chooser_dialog_new(data->title,
 				    GTK_WINDOW((parent) ? parent : TopLevel),
@@ -1159,10 +1190,14 @@ FileSelectionDialog(GtkWidget *parent, struct nGetOpenFileData *data)
 				    _("_Cancel"), GTK_RESPONSE_CANCEL,
 				    data->button, GTK_RESPONSE_ACCEPT,
 				    NULL);
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
   gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(dlg), TRUE);
   rc = gtk_check_button_new_with_mnemonic(_("_Change current directory"));
   gtk_file_chooser_set_extra_widget(GTK_FILE_CHOOSER(dlg), rc);
   data->chdir_cb = rc;
+#endif
   gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(dlg), data->multi);
   data->widget = dlg;
 
@@ -1202,13 +1237,18 @@ FileSelectionDialog(GtkWidget *parent, struct nGetOpenFileData *data)
     gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dlg), filter);
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
   if (data->init_dir && *(data->init_dir)) {
     gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dlg), *(data->init_dir));
   }
-#if ! GTK_CHECK_VERSION(4, 0, 0)
   gtk_widget_show_all(dlg);
 #endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
   if (data->changedir && data->init_dir) {
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(data->chdir_cb), data->chdir);
   } else {
@@ -1224,9 +1264,13 @@ FileSelectionDialog(GtkWidget *parent, struct nGetOpenFileData *data)
     }
     g_free(fname);
   }
+#endif
 
   data->ret = IDCANCEL;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
   while (1) {
     if (ndialog_run(dlg) != GTK_RESPONSE_ACCEPT)
       break;
@@ -1241,6 +1285,7 @@ FileSelectionDialog(GtkWidget *parent, struct nGetOpenFileData *data)
     }
     break;
   }
+#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_window_destroy(GTK_WINDOW(dlg));
@@ -1357,6 +1402,10 @@ nGetSaveFileName(GtkWidget * parent,
 void
 get_window_geometry(GtkWidget *win, gint *x, gint *y, gint *w, gint *h)
 {
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
   gtk_window_get_size(GTK_WINDOW(win), w, h);
   gtk_window_get_position(GTK_WINDOW(win), x, y);
+#endif
 }

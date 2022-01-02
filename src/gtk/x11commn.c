@@ -1997,7 +1997,11 @@ ProgressDialogCreate(char *title)
 #else
   ProgressDialog = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 #endif
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
   g_signal_connect(ProgressDialog, "delete-event", G_CALLBACK(gtk_true), NULL);
+#endif
   gtk_window_set_title(GTK_WINDOW(ProgressDialog), title);
 
   gtk_window_set_transient_for(GTK_WINDOW(ProgressDialog), GTK_WINDOW(TopLevel));

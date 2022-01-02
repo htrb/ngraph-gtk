@@ -835,10 +835,20 @@ static void
 load_css(void)
 {
   GtkCssProvider *css_provider;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  GdkDisplay *display;
+#endif
 
   css_provider = gtk_css_provider_new();
   gtk_css_provider_load_from_resource(css_provider, CSS_PATH);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  display = gdk_display_get_default();
+  if (display) {
+    gtk_style_context_add_provider_for_display(display, GTK_STYLE_PROVIDER(css_provider), GTK_STYLE_PROVIDER_PRIORITY_USER);
+  }
+#else
   gtk_style_context_add_provider_for_screen(gdk_screen_get_default(), GTK_STYLE_PROVIDER(css_provider), GTK_STYLE_PROVIDER_PRIORITY_USER);
+#endif
 }
 
 void
@@ -922,7 +932,11 @@ n_initialize(int *argc, char ***argv)
   textdomain(PACKAGE);
 #endif	/* HAVE_GETTEXT */
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  OpenDisplay = gtk_init_check();
+#else
   OpenDisplay = gtk_init_check(argc, argv);
+#endif
   if (OpenDisplay) {
     GtkApp = gtk_application_new(APPLICATION_ID, G_APPLICATION_NON_UNIQUE);
     g_application_register(G_APPLICATION(GtkApp), NULL, NULL);

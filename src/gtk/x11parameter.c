@@ -636,7 +636,11 @@ static void
 set_pause_icon(GtkButton *btn)
 {
   GtkWidget *icon;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  icon = gtk_image_new_from_icon_name("media-playback-pause-symbolic");
+#else
   icon = gtk_image_new_from_icon_name("media-playback-pause-symbolic", GTK_ICON_SIZE_BUTTON);
+#endif
   gtk_widget_set_tooltip_text(GTK_WIDGET(btn), _("Pause"));
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_button_set_child(btn, icon);
@@ -649,7 +653,11 @@ static void
 set_play_icon(GtkButton *btn)
 {
   GtkWidget *icon;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  icon = gtk_image_new_from_icon_name("media-playback-start-symbolic");
+#else
   icon = gtk_image_new_from_icon_name("media-playback-start-symbolic", GTK_ICON_SIZE_BUTTON);
+#endif
   gtk_widget_set_tooltip_text(GTK_WIDGET(btn), _("Play"));
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_button_set_child(btn, icon);
@@ -873,11 +881,19 @@ toggled(GtkToggleButton *toggle_button, gpointer user_data)
 {
   int active;
   if (Menulock || Globallock) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_check_button_set_inconsistent(GTK_CHECK_BUTTON(toggle_button), FALSE);
+#else
     gtk_toggle_button_set_inconsistent(toggle_button, TRUE);
+#endif
     return;
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_check_button_set_inconsistent(GTK_CHECK_BUTTON(toggle_button), FALSE);
+#else
   gtk_toggle_button_set_inconsistent(toggle_button, FALSE);
+#endif
   active = gtk_toggle_button_get_active(toggle_button);
   set_parameter(active, user_data);
 }
@@ -1116,7 +1132,9 @@ create_widget(struct obj_list_data *d, int id, int n)
 
   col++;
   separator = gtk_frame_new(NULL);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   gtk_frame_set_shadow_type(GTK_FRAME(separator), GTK_SHADOW_NONE);
+#endif
   gtk_widget_set_hexpand(GTK_WIDGET(separator), TRUE);
   gtk_grid_attach(GTK_GRID(d->text), separator, col, id, 1, 1);
 
@@ -1142,8 +1160,13 @@ create_widget(struct obj_list_data *d, int id, int n)
 static void
 remove_child(GtkWidget *widget, gpointer data)
 {
+#if GTK_CHECK_VERSION(4, 0, 0)
+  GtkGrid *grid = data;
+  gtk_grid_remove(grid, widget);
+#else
   GtkContainer *container = data;
   gtk_container_remove(container, widget);
+#endif
 }
 
 static void
@@ -1227,7 +1250,15 @@ ParameterWinUpdate(struct obj_list_data *d, int clear, int draw)
   }
 
   add_save_button = FALSE;
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+  num = chkobjlastinst(d->obj);
+  for (i = 0; i <= num; i++) {
+    gtk_grid_remove_row(GTK_GRID(d->text), 0);
+  }
+#else
   gtk_container_foreach(GTK_CONTAINER(d->text), remove_child, d->text);
+#endif
   num = chkobjlastinst(d->obj);
   for (i = 0; i <= num; i++) {
     int type;

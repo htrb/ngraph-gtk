@@ -965,7 +965,7 @@ SwitchDialog(struct SwitchDialog *data)
   arrayinit(&(data->idrawrable), sizeof(int));
 }
 
-#id GTK_CHECK_VERSION(4, 0, 0)
+#if GTK_CHECK_VERSION(4, 0, 0)
 struct folder_chooser_data {
   char *folder, *title;
   GtkWidget *parent, *button;
@@ -1123,6 +1123,9 @@ static void
 DirectoryDialogClose(GtkWidget *w, void *data)
 {
   struct DirectoryDialog *d;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  const char *tmp;
+#endif
   char *s;
 
   d = (struct DirectoryDialog *) data;
@@ -1130,8 +1133,8 @@ DirectoryDialogClose(GtkWidget *w, void *data)
     return;
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-  s = folder_chooser_button_get_folder(d->dir);
-  s = g_strdup(s);
+  tmp = folder_chooser_button_get_folder(d->dir);
+  s = g_strdup(tmp);
 #else
   gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(d->dir), cwd);
   s = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(d->dir));
@@ -1502,6 +1505,9 @@ chdir_to_ngp(const char *fname)
   return r;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
 void
 CmGraphHistory(GtkRecentChooser *w, gpointer client_data)
 {
@@ -1544,6 +1550,7 @@ CmGraphHistory(GtkRecentChooser *w, gpointer client_data)
   }
   g_free(fname);
 }
+#endif
 
 void
 CmHelpAbout(void *w, gpointer client_data)

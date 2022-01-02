@@ -17,5 +17,8 @@ GtkWidget *create_title(const char *name, const char *comment);
 const char *get_selected_font(struct font_prm *prm);
 GtkWidget *create_font_frame(struct font_prm *prm);
 void get_font_parameter(struct font_prm *prm, int *pt, int *spc, int *script, int *style, int *r, int *g, int *b);
+#if GTK_CHECK_VERSION(4, 0, 0)
+void main_loop(void);
+#endif
 
 #endif

@@ -510,6 +510,9 @@ struct MiscDialog
     *file_preview_font, *hist_size, *info_size, *data_head_lines, *help_browser,
     *browser, *use_opacity, *select_data, *use_custom_palette, *use_dark_theme, *source_style,
     *decimalsign;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  GtkWidget **palette;
+#endif
   struct objlist *Obj;
   struct narray tmp_palette;
   int Id;

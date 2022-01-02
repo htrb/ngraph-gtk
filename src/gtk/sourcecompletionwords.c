@@ -29,6 +29,14 @@
 
 #include <string.h>
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+SourceCompletionWords *
+source_completion_words_new (const gchar *name, populate_func populate_func)
+{
+  return NULL;
+}
+#else
 #define MINIMUM_WORD_SIZE 2
 #define INTERACTIVE_DELAY 50
 #define PRIORITY 10
@@ -278,3 +286,4 @@ source_completion_words_new (const gchar *name, populate_func populate_func)
   self->priv->populate_func = populate_func;
   return self;
 }
+#endif

@@ -25,7 +25,10 @@
 
 void CmGraphQuit(void *w, gpointer client_data);
 void CmGraphNewMenu(void *w, gpointer client_data);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
 void CmGraphHistory(GtkRecentChooser *w, gpointer client_data);
+#endif
 void CmGraphLoad(void *w, gpointer client_data);
 void CmGraphSave(void *w, gpointer client_data);
 void CmGraphOverWrite(void *w, gpointer client_data);

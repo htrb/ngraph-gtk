@@ -48,6 +48,11 @@ enum WIDGET_MARGIN {
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 gboolean gtk_true(void);
+double scrollbar_get_value(GtkWidget *w);
+double scrollbar_get_max(GtkWidget *w);
+void scrollbar_set_value(GtkWidget *w, double val);
+void scrollbar_set_range(GtkWidget *w, double min, double max);
+void scrollbar_set_increment(GtkWidget *w, double step, double page);
 #endif
 
 GtkWidget *create_spin_entry_type(enum SPIN_BUTTON_TYPE type, int set_default_size, int set_default_action);

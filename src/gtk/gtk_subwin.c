@@ -1316,7 +1316,11 @@ list_widget_create(struct SubWin *d, int lisu_num, n_list_store *list, int can_f
 #endif
 
   /* to handle key-press-event correctly in single window mode */
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
   g_signal_connect(lstor, "focus-in-event", G_CALLBACK(list_focused), NULL);
+#endif
 
   gtk_tree_view_set_enable_search(GTK_TREE_VIEW(lstor), TRUE);
   gtk_tree_view_set_search_column(GTK_TREE_VIEW(lstor), COL_ID);
@@ -1628,9 +1632,11 @@ create_popup_menu_sub(struct obj_list_data *d, int top, struct subwin_popup_list
       gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), submenu);
       break;
     case POP_UP_MENU_ITEM_TYPE_RECENT_DATA:
+#if ! GTK_CHECK_VERSION(4, 0, 0)
       item = gtk_menu_item_new_with_mnemonic(_(list[i].title));
       submenu = create_recent_menu(RECENT_TYPE_DATA);
       gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), submenu);
+#endif
       break;
     case POP_UP_MENU_ITEM_TYPE_SEPARATOR:
     default:

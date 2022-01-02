@@ -66,7 +66,7 @@ static n_list_store Mlist[] = {
 static void merge_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row);
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-static GActionEntry Popup_list[] =
+static GActionEntry Popup_list[] = {
   {N_("_Add"),           CmMergeOpen, NULL, NULL, NULL},
   {N_("_Duplicate"),     list_sub_window_copy, NULL, NULL, NULL},
   {N_("_Delete"),        list_sub_window_delete, NULL, NULL, NULL},
@@ -478,6 +478,9 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
   }
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
 static void
 drag_drop_cb(GtkWidget *w, GdkDragContext *context, gint x, gint y, GtkSelectionData *data, guint info, guint time, gpointer user_data)
 {
@@ -510,6 +513,7 @@ init_dnd(struct SubWin *d)
   gtk_drag_dest_set(widget, GTK_DEST_DEFAULT_ALL, target, sizeof(target) / sizeof(*target), GDK_ACTION_COPY);
   g_signal_connect(widget, "drag-data-received", G_CALLBACK(drag_drop_cb), NULL);
 }
+#endif
 
 GtkWidget *
 create_merge_list(struct SubWin *d)
@@ -527,7 +531,11 @@ create_merge_list(struct SubWin *d)
 
   sub_win_create_popup_menu(d->data.data, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
   init_dnd(d);
+#endif
 
   gtk_tree_view_set_enable_search(GTK_TREE_VIEW(d->data.data->text), TRUE);
   gtk_tree_view_set_search_column(GTK_TREE_VIEW(d->data.data->text), MERG_WIN_COL_FILE);

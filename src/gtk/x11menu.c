@@ -85,7 +85,13 @@ struct ToolItem;
 
 static void create_menu(struct MenuItem *item);
 static GtkWidget *create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb);
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+static void
+CmViewerButtonArm(GtkWidget *action, gpointer client_data);
+#else
 static void CmViewerButtonArm(GtkToggleToolButton *action, gpointer client_data);
+#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 static char *Cursor[] = {
@@ -225,7 +231,12 @@ enum ActionWidgetIndex {
 };
 
 struct ActionWidget ActionWidget[ActionWidgetNum];
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+static GtkWidget *PointerModeButtons[PointerModeNum];
+#else
 static GtkToolItem *PointerModeButtons[PointerModeNum];
+#endif
 static int DefaultMode = PointerModeBoth;
 
 struct ToolItem {
@@ -764,7 +775,12 @@ static struct MenuItem MenuAction[] = {
 void
 set_pointer_mode(int id)
 {
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+  GtkWidget *button;
+#else
   GtkToolItem *button;
+#endif
 
   button = NULL;
   switch (id) {
@@ -807,7 +823,12 @@ set_pointer_mode(int id)
   }
 
   if (button) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), TRUE);
+#else
     gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(button), TRUE);
+#endif
   }
 }
 
@@ -942,7 +963,12 @@ menu_lock(int lock)
 #if 0
   gtk_widget_set_sensitive(NgraphApp.Viewer.menu, ! Menulock);
 #endif
+#if GTK_CHECK_VERSION(4, 0, 0)
+  w = gtk_paned_get_start_child
+    (GTK_PANED(NgraphApp.Viewer.main_pane));
+#else
   w = gtk_paned_get_child1(GTK_PANED(NgraphApp.Viewer.main_pane));
+#endif
   if (w) {
     gtk_widget_set_sensitive(w, ! Menulock);
   }
@@ -1156,7 +1182,11 @@ static void
 set_focus_sensitivity_sub(const struct Viewer *d, int insensitive)
 {
   int i, num, type, state, up_state, down_state;
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
   GtkClipboard *clip;
+#endif
 
   num = check_focused_obj_type(d, &type);
 
@@ -1198,8 +1228,13 @@ set_focus_sensitivity_sub(const struct Viewer *d, int insensitive)
 	switch (d->Mode) {
 	case PointB:
 	case LegendB:
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+          state = FALSE;
+#else
 	  clip = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
 	  state = gtk_clipboard_wait_is_text_available(clip);
+#endif
 	  break;
 	default:
 	  state = FALSE;
@@ -1271,13 +1306,22 @@ create_markpixmap(GtkWidget *win)
   struct objlist *obj, *robj;
   N_VALUE *inst;
   struct gra2cairo_local *local;
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+  int window = TRUE;
+#else
   GdkWindow *window;
+#endif
 
   R = G = B = 0;
   R2 = 0;
   G2 = B2 = 255;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
   window = gtk_widget_get_window(win);
+#endif
   found = find_gra2gdk_inst(&obj, &inst, &robj, &output, &local);
 
   for (i = 0; i < MARK_TYPE_NUM; i++) {
@@ -1339,8 +1383,12 @@ create_icon(void)
   }
 
   if (list) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
     gtk_window_set_default_icon_list(list);
     gtk_window_set_icon_list(GTK_WINDOW(TopLevel), list);
+#endif
     g_list_free_full(list, g_object_unref);
   }
 }
@@ -1378,6 +1426,9 @@ free_cursor(void)
   NgraphApp.cursor = NULL;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
 static gboolean
 tool_button_enter_leave_cb(GtkWidget *w, GdkEventCrossing *e, gpointer data)
 {
@@ -1393,6 +1444,7 @@ tool_button_enter_leave_cb(GtkWidget *w, GdkEventCrossing *e, gpointer data)
 
   return FALSE;
 }
+#endif
 
 static GtkWidget *
 create_message_box(GtkWidget **label1, GtkWidget **label2)
@@ -1400,7 +1452,11 @@ create_message_box(GtkWidget **label1, GtkWidget **label2)
   GtkWidget *frame, *w, *hbox;
 
   frame = gtk_frame_new(NULL);
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
   gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
+#endif
 
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
@@ -1443,7 +1499,11 @@ setup_object_tab(struct SubWin *win, GtkWidget *tab, const char *icon_name, cons
   obj_id = chkobjectid(win->data.data->obj);
   g_object_set_data(G_OBJECT(win->Win), OBJ_ID_KEY, GINT_TO_POINTER(obj_id));
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  icon = gtk_image_new_from_icon_name(icon_name);
+#else
   icon = gtk_image_new_from_icon_name(icon_name, GTK_ICON_SIZE_LARGE_TOOLBAR);
+#endif
   gtk_widget_set_tooltip_text(icon, tip);
 
   gtk_notebook_append_page(GTK_NOTEBOOK(tab), win->Win, icon);
@@ -1552,11 +1612,19 @@ save_tab_position(void)
 
   for (i = 0; i < n; i++) {
     GtkWidget *tab;
+#if GTK_CHECK_VERSION(4, 0, 0)
+    tab = gtk_paned_get_start_child(GTK_PANED(NgraphApp.Viewer.side_pane2));
+    save_tab_position_sub(tab, tab_info + i, 0);
+
+    tab = gtk_paned_get_end_child(GTK_PANED(NgraphApp.Viewer.side_pane2));
+    save_tab_position_sub(tab, tab_info + i, 100);
+#else
     tab = gtk_paned_get_child1(GTK_PANED(NgraphApp.Viewer.side_pane2));
     save_tab_position_sub(tab, tab_info + i, 0);
 
     tab = gtk_paned_get_child2(GTK_PANED(NgraphApp.Viewer.side_pane2));
     save_tab_position_sub(tab, tab_info + i, 100);
+#endif
   }
 }
 
@@ -1581,19 +1649,33 @@ create_object_tabs(void)
   init_tab_info(tab_info, tab_n);
 
   for (j = 0; j < tab_n; j++) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+    if (tab_info[j].tab > 0) {
+      tab = gtk_paned_get_end_child(GTK_PANED(NgraphApp.Viewer.side_pane2));
+    } else {
+      tab = gtk_paned_get_start_child(GTK_PANED(NgraphApp.Viewer.side_pane2));
+    }
+#else
     if (tab_info[j].tab > 0) {
       tab = gtk_paned_get_child2(GTK_PANED(NgraphApp.Viewer.side_pane2));
     } else {
       tab = gtk_paned_get_child1(GTK_PANED(NgraphApp.Viewer.side_pane2));
     }
+#endif
     tab_info[j].init_func(tab_info[j].d);
     setup_object_tab(tab_info[j].d, tab, tab_info[j].icon, _(tab_info[j].obj_name));
   }
 
   CoordWinCreate(&NgraphApp.CoordWin);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_paned_set_start_child(GTK_PANED(NgraphApp.Viewer.side_pane3), NgraphApp.CoordWin.Win);
+  InfoWinCreate(&NgraphApp.InfoWin);
+  gtk_paned_set_end_child(GTK_PANED(NgraphApp.Viewer.side_pane3), NgraphApp.InfoWin.Win);
+#else
   gtk_paned_pack1(GTK_PANED(NgraphApp.Viewer.side_pane3), NgraphApp.CoordWin.Win, FALSE, TRUE);
   InfoWinCreate(&NgraphApp.InfoWin);
   gtk_paned_pack2(GTK_PANED(NgraphApp.Viewer.side_pane3), NgraphApp.InfoWin.Win, TRUE, TRUE);
+#endif
 
   set_pane_position();
   if (Menulocal.sidebar) {
@@ -1611,6 +1693,9 @@ edit_menu_shown(GtkWidget *w, gpointer user_data)
   set_focus_sensitivity(d);
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
 static void
 clipboard_changed(GtkWidget *w, GdkEvent *e, gpointer user_data)
 {
@@ -1620,6 +1705,7 @@ clipboard_changed(GtkWidget *w, GdkEvent *e, gpointer user_data)
 
   set_focus_sensitivity(d);
 }
+#endif
 
 #define USE_APP_HEADER_BAR 0
 static void
@@ -1631,7 +1717,11 @@ setup_toolbar(GtkWidget *window)
 #endif
   w = create_toolbar(CommandToolbar, sizeof(CommandToolbar) / sizeof(*CommandToolbar), NULL);
   CToolbar = w;
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
   gtk_toolbar_set_style(GTK_TOOLBAR(w), GTK_TOOLBAR_ICONS);
+#endif
 
 #if USE_APP_HEADER_BAR
   hbar = gtk_header_bar_new();
@@ -1644,7 +1734,11 @@ setup_toolbar(GtkWidget *window)
   w = create_toolbar(PointerToolbar, sizeof(PointerToolbar) / sizeof(*PointerToolbar), G_CALLBACK(CmViewerButtonPressed));
   PToolbar = w;
   gtk_orientable_set_orientation(GTK_ORIENTABLE(w), GTK_ORIENTATION_VERTICAL);
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
   gtk_toolbar_set_style(GTK_TOOLBAR(w), GTK_TOOLBAR_ICONS);
+#endif
 }
 
 static void
@@ -1710,30 +1804,52 @@ setupwindow(GtkApplication *app)
   gtk_notebook_set_tab_pos(GTK_NOTEBOOK(w), GTK_POS_LEFT);
   gtk_notebook_set_group_name(GTK_NOTEBOOK(w), SIDE_PANE_TAB_ID);
   gtk_notebook_set_scrollable(GTK_NOTEBOOK(w), TRUE);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_paned_set_start_child(GTK_PANED(vpane2), w);
+#else
   gtk_paned_add1(GTK_PANED(vpane2), w);
+#endif
 
   w = gtk_notebook_new();
   gtk_notebook_popup_enable(GTK_NOTEBOOK(w));
   gtk_notebook_set_tab_pos(GTK_NOTEBOOK(w), GTK_POS_LEFT);
   gtk_notebook_set_group_name(GTK_NOTEBOOK(w), SIDE_PANE_TAB_ID);
   gtk_notebook_set_scrollable(GTK_NOTEBOOK(w), TRUE);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_paned_set_end_child(GTK_PANED(vpane2), w);
+#else
   gtk_paned_add2(GTK_PANED(vpane2), w);
+#endif
 
   hpane2 = gtk_paned_new(GTK_ORIENTATION_HORIZONTAL);
   NgraphApp.Viewer.side_pane3 = hpane2;
 
   vpane1 = gtk_paned_new(GTK_ORIENTATION_VERTICAL);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_paned_set_start_child(GTK_PANED(vpane1), vpane2);
+  gtk_paned_set_end_child(GTK_PANED(vpane1), hpane2);
+#else
   gtk_paned_pack1(GTK_PANED(vpane1), vpane2, TRUE, TRUE);
   gtk_paned_pack2(GTK_PANED(vpane1), hpane2, FALSE, TRUE);
+#endif
   NgraphApp.Viewer.side_pane1 = vpane1;
 
   hpane1 = gtk_paned_new(GTK_ORIENTATION_HORIZONTAL);
+#if GTK_CHECK_VERSION(4, 0, 0)
+#if USE_APP_HEADER_BAR
+  gtk_paned_set_start_child(GTK_PANED(hpane1), hbox);
+#else
+  gtk_paned_set_start_child(GTK_PANED(hpane1), vbox);
+#endif
+  gtk_paned_set_end_child(GTK_PANED(hpane1), vpane1);
+#else
 #if USE_APP_HEADER_BAR
   gtk_paned_add1(GTK_PANED(hpane1), hbox);
 #else
   gtk_paned_add1(GTK_PANED(hpane1), vbox);
 #endif
   gtk_paned_add2(GTK_PANED(hpane1), vpane1);
+#endif
   NgraphApp.Viewer.main_pane = hpane1;
 
 #if GTK_CHECK_VERSION(4, 0, 0)
@@ -1757,9 +1873,14 @@ setupwindow(GtkApplication *app)
 #endif
 
   NgraphApp.Message = gtk_statusbar_new();
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+//  gtk_box_append(GTK_BOX(NgraphApp.Message), create_message_box(&NgraphApp.Message_extra, &NgraphApp.Message_pos));
+#else
   gtk_box_pack_end(GTK_BOX(NgraphApp.Message),
 		   create_message_box(&NgraphApp.Message_extra, &NgraphApp.Message_pos),
 		   FALSE, FALSE, 0);
+#endif
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(vbox2), NgraphApp.Message);
 #else
@@ -2107,6 +2228,9 @@ check_exist_instances(struct objlist *parent)
   }
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
 static gboolean
 recent_filter(const GtkRecentFilterInfo *filter_info, gpointer user_data)
 {
@@ -2169,7 +2293,15 @@ create_recent_filter(GtkWidget *w, int type)
 #endif
   gtk_recent_chooser_set_sort_type(recent, GTK_RECENT_SORT_MRU);
 }
+#endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+GtkWidget *
+create_recent_menu(int type)
+{
+  return NULL;
+}
+#else
 GtkWidget *
 create_recent_menu(int type)
 {
@@ -2191,7 +2323,21 @@ create_recent_menu(int type)
 
   return submenu;
 }
+#endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static GMenuModel *
+create_save_menu(void)
+{
+  GMenu *gmenu;
+
+  gmenu = gtk_application_get_menu_by_id(GtkApp, "save-menu");
+  if (gmenu == NULL) {
+    return NULL;
+  }
+  return G_MENU_MODEL(gmenu);
+}
+#else
 static GtkWidget*
 create_save_menu(void)
 {
@@ -2203,11 +2349,10 @@ create_save_menu(void)
     return NULL;
   }
   menu = gtk_menu_new_from_model(G_MENU_MODEL(gmenu));
-#if ! GTK_CHECK_VERSION(4, 0, 0)
   gtk_widget_show_all(menu);
-#endif
   return menu;
 }
+#endif
 
 void
 draw_notify(int notify)
@@ -2222,7 +2367,11 @@ draw_notify(int notify)
     return;
   }
   icon_name = (state) ? "ngraph_draw-attention-symbolic" : "ngraph_draw-symbolic";
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_button_set_icon_name(GTK_BUTTON(DrawButton), icon_name);
+#else
   gtk_tool_button_set_icon_name(GTK_TOOL_BUTTON(DrawButton), icon_name);
+#endif
   gtk_widget_queue_draw(DrawButton);
 }
 
@@ -2230,51 +2379,102 @@ static GtkWidget *
 create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
 {
   int i;
-  GSList *list;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  GtkWidget *toolbar,  *widget, *group = NULL, *menu;
+#else
+  GSList *list = NULL;
   GtkToolItem *widget;
   GtkWidget *toolbar, *menu;
+#endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  toolbar = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
+#else
   toolbar = gtk_toolbar_new();
-  list = NULL;
+#endif
   for (i = 0; i < n; i++) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+    menu = NULL;
+#endif
     switch (item[i].type) {
     case TOOL_TYPE_SEPARATOR:
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+      widget = NULL;
+#else
       widget = gtk_separator_tool_item_new();
       gtk_separator_tool_item_set_draw(GTK_SEPARATOR_TOOL_ITEM(widget), TRUE);
+#endif
       break;
     case TOOL_TYPE_NORMAL:
+#if GTK_CHECK_VERSION(4, 0, 0)
+      widget = gtk_button_new_from_icon_name(item[i].icon);
+#else
       widget = gtk_tool_button_new(NULL, _(item[i].label));
+#endif
       break;
     case TOOL_TYPE_DRAW:
+#if GTK_CHECK_VERSION(4, 0, 0)
+      widget = gtk_button_new_from_icon_name(item[i].icon);
+#else
       widget = gtk_tool_button_new(NULL, _(item[i].label));
+#endif
       DrawButton = GTK_WIDGET(widget);
       break;
     case TOOL_TYPE_SAVE:
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+      widget = gtk_button_new_from_icon_name(item[i].icon);
+      menu = gtk_menu_button_new();
+      gtk_menu_button_set_menu_model(GTK_MENU_BUTTON(menu), create_save_menu());
+      gtk_widget_set_tooltip_text(menu, _("Save menu"));
+#else
       widget = gtk_menu_tool_button_new(NULL, _(item[i].label));
       menu = create_save_menu();
       gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(widget), menu);
       gtk_menu_tool_button_set_arrow_tooltip_text(GTK_MENU_TOOL_BUTTON(widget), _("Save menu"));
+#endif
       break;
     case TOOL_TYPE_RECENT_GRAPH:
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+      widget = NULL;
+#else
       widget = gtk_menu_tool_button_new(NULL, _(item[i].label));
       menu = create_recent_menu(RECENT_TYPE_GRAPH);
       gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(widget), menu);
       gtk_menu_tool_button_set_arrow_tooltip_text(GTK_MENU_TOOL_BUTTON(widget), _("Recent Graphs"));
+#endif
       break;
     case TOOL_TYPE_RECENT_DATA:
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+      widget = NULL;
+#else
       widget = gtk_menu_tool_button_new(NULL, _(item[i].label));
       menu = create_recent_menu(RECENT_TYPE_DATA);
       gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(widget), menu);
       gtk_menu_tool_button_set_arrow_tooltip_text(GTK_MENU_TOOL_BUTTON(widget), _("Recent Data Files"));
+#endif
       break;
     case TOOL_TYPE_RADIO:
+#if GTK_CHECK_VERSION(4, 0, 0)
+      widget = gtk_toggle_button_new();
+      gtk_button_set_icon_name(GTK_BUTTON(widget), item[i].icon);
+      if (group) {
+        gtk_toggle_button_set_group(GTK_TOGGLE_BUTTON(widget), GTK_TOGGLE_BUTTON(group));
+      } else {
+        group = widget;
+      }
+      gtk_widget_set_tooltip_text(widget, _(item[i].label));
+#else
       widget = gtk_radio_tool_button_new(list);
       list = gtk_radio_tool_button_get_group(GTK_RADIO_TOOL_BUTTON(widget));
       gtk_tool_button_set_label(GTK_TOOL_BUTTON(widget), _(item[i].label));
+#endif
       if (btn_press_cb) {
 #if GTK_CHECK_VERSION(4, 0, 0)
 	GtkGesture *gesture;
-	GtkEventController *controller;
 
 	gesture = gtk_gesture_click_new();
 	gtk_widget_add_controller(widget, GTK_EVENT_CONTROLLER(gesture));
@@ -2294,9 +2494,11 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
       continue;
     }
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
     if (item[i].icon) {
       gtk_tool_button_set_icon_name(GTK_TOOL_BUTTON(widget), item[i].icon);
     }
+#endif
 
     if (item[i].action_name) {
       gtk_actionable_set_action_name(GTK_ACTIONABLE(widget), item[i].action_name);
@@ -2304,10 +2506,15 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
       g_signal_connect(widget, "clicked", G_CALLBACK(item[i].callback), GINT_TO_POINTER(item[i].user_data));
     }
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
     if (item[i].tip) {
       gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(widget), _(item[i].tip));
     }
+#endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
     if (item[i].caption) {
       g_signal_connect(gtk_bin_get_child(GTK_BIN(widget)),
 		       "enter-notify-event",
@@ -2318,6 +2525,7 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
 		       "leave-notify-event",
 		       G_CALLBACK(tool_button_enter_leave_cb), NULL);
     }
+#endif
 
     if (item[i].button >= PointerModeOffset) {
       int id;
@@ -2325,7 +2533,14 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
       PointerModeButtons[id]= widget;
     }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(GTK_BOX(toolbar), widget);
+    if (menu) {
+      gtk_box_append(GTK_BOX(toolbar), menu);
+    }
+#else
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(widget), -1);
+#endif
   }
 
   return toolbar;
@@ -2349,7 +2564,11 @@ create_popup_menu(GtkApplication *app)
   GtkWidget *popup;
   GMenu *menu;
   menu = gtk_application_get_menu_by_id(app, "popup-menu");
+#if GTK_CHECK_VERSION(4, 0, 0)
+  popup = gtk_popover_menu_new_from_model(G_MENU_MODEL(menu));
+#else
   popup = gtk_menu_new_from_model(G_MENU_MODEL(menu));
+#endif
   return popup;
 }
 
@@ -2361,7 +2580,11 @@ create_toplevel_window(void)
   int x, y, width, height, w, h;
   GdkDisplay *disp;
   GtkWidget *popup;
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
   GtkClipboard *clip;
+#endif
 
   NgraphApp.recent_manager = gtk_recent_manager_get_default();
 
@@ -2374,7 +2597,14 @@ create_toplevel_window(void)
   if (disp) {
     GdkMonitor *monitor;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+    GdkSurface *surface;
+    surface = gdk_surface_new_toplevel(disp);
+    monitor = gdk_display_get_monitor_at_surface(disp, surface);
+    /* g_object_unref(surface); */
+#else
     monitor = gdk_display_get_primary_monitor(disp);
+#endif
     if (monitor) {
       GdkRectangle rect;
 
@@ -2409,15 +2639,27 @@ create_toplevel_window(void)
   if (popup) {
     NgraphApp.Viewer.popup = popup;
   }
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
   clip = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
   g_signal_connect(clip, "owner-change", G_CALLBACK(clipboard_changed), &NgraphApp.Viewer);
+#endif
 
   gtk_window_set_title(GTK_WINDOW(TopLevel), AppName);
   gtk_window_set_default_size(GTK_WINDOW(TopLevel), width, height);
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
   gtk_window_move(GTK_WINDOW(TopLevel), x, y);
+#endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
   g_signal_connect(TopLevel, "delete-event", G_CALLBACK(CloseCallback), NULL);
   g_signal_connect(TopLevel, "destroy-event", G_CALLBACK(CloseCallback), NULL);
+#endif
 
   create_icon();
   initdialog();
@@ -2473,7 +2715,11 @@ create_toplevel_window(void)
   set_widget_visibility();
 
   set_focus_sensitivity(&NgraphApp.Viewer);
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
   check_exist_instances(chkobject("draw"));
+#endif
   check_instance(chkobject("parameter"));
 
   set_newobj_cb(check_instance);
@@ -2486,7 +2732,11 @@ static void
 souce_view_set_search_path(void)
 {
   const gchar * const *dirs;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  const char **new_dirs;
+#else
   gchar **new_dirs;
+#endif
   gchar *dir;
   int n;
   GtkSourceLanguageManager *lm;
@@ -2532,7 +2782,14 @@ application(char *file)
     OpenGRA();
   } else {
     GtkIconTheme *theme;
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+    GdkDisplay* display;
+    display = gdk_display_get_default();
+    theme = gtk_icon_theme_get_for_display(display);
+#else
     theme = gtk_icon_theme_get_default();
+#endif
     gtk_icon_theme_add_resource_path(theme, NGRAPH_ICON_PATH);
     if (create_toplevel_window()) {
       return 1;
@@ -2876,7 +3133,7 @@ ChkInterrupt(void)
   if (check_interrupt()) {
     return TRUE;
   }
-#else
+#endif
 #if GTK_CHECK_VERSION(4, 0, 0)
   GMainContext *context;
   context = g_main_context_default();
@@ -2995,6 +3252,13 @@ script_exec(GtkWidget *w, gpointer client_data)
   main_window_redraw();
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+static void
+CmViewerButtonArm(GtkWidget *action, gpointer client_data)
+{
+}
+#else
 static void
 CmViewerButtonArm(GtkToggleToolButton *action, gpointer client_data)
 {
@@ -3060,6 +3324,7 @@ CmViewerButtonArm(GtkToggleToolButton *action, gpointer client_data)
 
   gtk_widget_queue_draw(d->Win);
 }
+#endif
 
 void
 set_toolbox_mode(enum TOOLBOX_MODE mode)

@@ -137,12 +137,12 @@ static void gesture_zoom(GtkGestureZoom *controller, gdouble scale, gpointer use
 static void ViewerEvMouseMotion(GtkEventControllerMotion *controller, gdouble x, gdouble y, gpointer client_data);
 #else
 static gboolean ViewerEvMouseMotion(GtkWidget *w, GdkEventMotion *e, gpointer client_data);
-#endif
 static gboolean ViewerEvScroll(GtkWidget *w, GdkEventScroll *e, gpointer client_data);
+#endif
 static void ViewUpdate(void);
 static void ViewCopy(void);
 #if GTK_CHECK_VERSION(4, 0, 0)
-static void do_popup(gdouble x, gdouble y, struct Viewer *d)
+static void do_popup(gdouble x, gdouble y, struct Viewer *d);
 #else
 static void do_popup(GdkEventButton *event, struct Viewer *d);
 #endif
@@ -228,21 +228,36 @@ scroll_deceleration_cb(GtkWidget *widget, GdkFrameClock *frame_clock, gpointer u
 
   d = (struct Viewer *) user_data;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  x = scrollbar_get_value(d->HScroll);
+  y = scrollbar_get_value(d->VScroll);
+#else
   x = gtk_range_get_value(GTK_RANGE(d->HScroll));
   y = gtk_range_get_value(GTK_RANGE(d->VScroll));
+#endif
   x += (d->scroll_prm.x - x) / SCROLL_DIV;
   y += (d->scroll_prm.y - y) / SCROLL_DIV;
 
   if (fabs(d->scroll_prm.x - x) < SCROLL_DECELERATION_LIMIT &&
       fabs(d->scroll_prm.y - y) < SCROLL_DECELERATION_LIMIT) {
     d->deceleration_prm.id = 0;
+#if GTK_CHECK_VERSION(4, 0, 0)
+    scrollbar_set_value(d->HScroll, d->scroll_prm.x);
+    scrollbar_set_value(d->VScroll, d->scroll_prm.y);
+#else
     gtk_range_set_value(GTK_RANGE(d->HScroll), d->scroll_prm.x);
     gtk_range_set_value(GTK_RANGE(d->VScroll), d->scroll_prm.y);
+#endif
     return G_SOURCE_REMOVE;
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  scrollbar_set_value(d->HScroll, x);
+  scrollbar_set_value(d->VScroll, y);
+#else
   gtk_range_set_value(GTK_RANGE(d->HScroll), x);
   gtk_range_set_value(GTK_RANGE(d->VScroll), y);
+#endif
 
   return G_SOURCE_CONTINUE;
 }
@@ -274,8 +289,13 @@ range_increment(GtkWidget *w, double inc)
   if (inc == 0) {
     return;
   }
+#if GTK_CHECK_VERSION(4, 0, 0)
+  val = scrollbar_get_value(w);
+  scrollbar_set_value(w, val + inc);
+#else
   val = gtk_range_get_value(GTK_RANGE(w));
   gtk_range_set_value(GTK_RANGE(w), val + inc);
+#endif
 }
 
 static void
@@ -286,8 +306,13 @@ range_increment_deceleration(double inc_x, double inc_y, struct Viewer *d)
   if (inc_x == 0 && inc_y == 0) {
     return;
   }
+#if GTK_CHECK_VERSION(4, 0, 0)
+  x = scrollbar_get_value(d->HScroll);
+  y = scrollbar_get_value(d->VScroll);
+#else
   x = gtk_range_get_value(GTK_RANGE(d->HScroll));
   y = gtk_range_get_value(GTK_RANGE(d->VScroll));
+#endif
   x += inc_x;
   y += inc_y;
   start_scroll_deceleration(x, y, d);
@@ -391,11 +416,15 @@ CopyFocusedObjects(void)
     num++;
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
   if (num > 0) {
     GtkClipboard* clipboard;
     clipboard = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
     gtk_clipboard_set_text(clipboard, str->str, -1);
   }
+#endif
 
   g_free(focused_inst);
   g_string_free(str, TRUE);
@@ -462,6 +491,9 @@ focus_new_insts(struct objlist *parent, struct narray *array, char **objects)
   return;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
 static void
 paste_cb(GtkClipboard *clipboard, const gchar *text, gpointer data)
 {
@@ -520,7 +552,11 @@ paste_cb(GtkClipboard *clipboard, const gchar *text, gpointer data)
     UpdateAll(objects);
   }
 }
+#endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
 static void
 PasteObjectsFromClipboard(void)
 {
@@ -549,6 +585,7 @@ PasteObjectsFromClipboard(void)
     }
   }
 }
+#endif
 
 static int
 graph_dropped(char *fname)
@@ -891,6 +928,9 @@ text_dropped(const char *str, gint x, gint y, struct Viewer *d)
   return 0;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
 static void
 drag_drop_cb(GtkWidget *w, GdkDragContext *context, gint x, gint y, GtkSelectionData *data, guint info, guint time, gpointer user_data)
 {
@@ -946,7 +986,11 @@ drag_drop_cb(GtkWidget *w, GdkDragContext *context, gint x, gint y, GtkSelection
  End:
   gtk_drag_finish(context, success, FALSE, time);
 }
+#endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
 static void
 init_dnd(struct Viewer *d)
 {
@@ -965,6 +1009,7 @@ init_dnd(struct Viewer *d)
 
   g_signal_connect(widget, "drag-data-received", G_CALLBACK(drag_drop_cb), d);
 }
+#endif
 
 static void
 eval_dialog_set_parent_cal(GtkWidget *w, GtkTreeIter *iter, int id, int n)
@@ -1065,12 +1110,16 @@ eval_dialog_copy_selected(GtkWidget *w, gpointer *user_data)
     }
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
   if (str->len > 0) {
     GtkClipboard *clip;
 
     clip = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
     gtk_clipboard_set_text(clip, str->str, -1);
   }
+#endif
 
   g_string_free(str, TRUE);
 
@@ -1221,6 +1270,9 @@ EvalDialog(struct EvalDialog *data,
 }
 
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
 static gboolean
 scrollbar_scroll_cb(GtkWidget *w, GdkEventScroll *e, gpointer client_data)
 {
@@ -1246,6 +1298,7 @@ scrollbar_scroll_cb(GtkWidget *w, GdkEventScroll *e, gpointer client_data)
 
   return TRUE;
 }
+#endif
 
 #if 0
 static void
@@ -1264,12 +1317,17 @@ menu_activate(GtkMenuShell *menushell, gpointer user_data)
 static gboolean
 ev_popup_menu(GtkWidget *w, gpointer client_data)
 {
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
   struct Viewer *d;
 
   if (Menulock || Globallock) return TRUE;
 
   d = (struct Viewer *) client_data;
+
   do_popup(NULL, d);
+#endif
   return TRUE;
 }
 
@@ -1284,8 +1342,13 @@ update_drag(GtkGestureDrag *gesture, gdouble offset_x, gdouble offset_y, gpointe
     return;
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  scrollbar_set_value(d->HScroll, d->drag_prm.x - offset_x);
+  scrollbar_set_value(d->VScroll, d->drag_prm.y - offset_y);
+#else
   gtk_range_set_value(GTK_RANGE(d->HScroll), d->drag_prm.x - offset_x);
   gtk_range_set_value(GTK_RANGE(d->VScroll), d->drag_prm.y - offset_y);
+#endif
 }
 
 static void
@@ -1309,8 +1372,13 @@ begin_drag(GtkGestureDrag *gesture, gdouble start_x, gdouble start_y, gpointer u
   default:
     d->drag_prm.active = FALSE;
   }
+#if GTK_CHECK_VERSION(4, 0, 0)
+  d->drag_prm.x = scrollbar_get_value(d->HScroll);
+  d->drag_prm.y = scrollbar_get_value(d->VScroll);
+#else
   d->drag_prm.x = gtk_range_get_value(GTK_RANGE(d->HScroll));
   d->drag_prm.y = gtk_range_get_value(GTK_RANGE(d->VScroll));
+#endif
 }
 
 static void
@@ -1335,14 +1403,24 @@ static void
 long_press_cancelled_cb(GtkGesture *gesture, gpointer user_data)
 {
   GdkEventSequence *sequence;
-  const GdkEvent *event;
+  GdkEvent *event;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  GdkEventType type;
+#endif
 
   sequence = gtk_gesture_get_last_updated_sequence(gesture);
   event = gtk_gesture_get_last_event(gesture, sequence);
 
-  if (event->type == GDK_TOUCH_BEGIN || event->type == GDK_BUTTON_PRESS) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+  type = gdk_event_get_event_type(event);
+  if (type == GDK_TOUCH_BEGIN || type == GDK_BUTTON_PRESS) {
     gtk_gesture_set_sequence_state(gesture, sequence, GTK_EVENT_SEQUENCE_DENIED);
   }
+#else
+if (event->type == GDK_TOUCH_BEGIN || event->type == GDK_BUTTON_PRESS) {
+    gtk_gesture_set_sequence_state(gesture, sequence, GTK_EVENT_SEQUENCE_DENIED);
+  }
+#endif
 }
 
 static double
@@ -1370,15 +1448,27 @@ deceleration_cb(GtkWidget *widget, GdkFrameClock *frame_clock, gpointer user_dat
   current_time = gdk_frame_clock_get_frame_time(frame_clock);
   t = (current_time - d->deceleration_prm.start) / 1000000.0;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  x0 = scrollbar_get_value(d->HScroll);
+  y0 = scrollbar_get_value(d->VScroll);
+#else
   x0 = gtk_range_get_value(GTK_RANGE(d->HScroll));
   y0 = gtk_range_get_value(GTK_RANGE(d->VScroll));
+#endif
   x = d->drag_prm.x - get_deceleration_position(SWIPE_RESISTANCE, d->drag_prm.vx, t);
   y = d->drag_prm.y - get_deceleration_position(SWIPE_RESISTANCE, d->drag_prm.vy, t);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  scrollbar_set_value(d->HScroll, x);
+  scrollbar_set_value(d->VScroll, y);
+  x = scrollbar_get_value(d->HScroll);
+  y = scrollbar_get_value(d->VScroll);
+#else
   gtk_range_set_value(GTK_RANGE(d->HScroll), x);
   gtk_range_set_value(GTK_RANGE(d->VScroll), y);
   x = gtk_range_get_value(GTK_RANGE(d->HScroll));
   y = gtk_range_get_value(GTK_RANGE(d->VScroll));
+#endif
   if (fabs(x0 - x) < SCROLL_DECELERATION_LIMIT && fabs(y0 - y) < SCROLL_DECELERATION_LIMIT) {
     d->deceleration_prm.id = 0;
     return G_SOURCE_REMOVE;
@@ -1402,8 +1492,14 @@ swipe_cb(GtkGestureSwipe *gesture, gdouble velocity_x, gdouble velocity_y, gpoin
 
   frame_clock = gtk_widget_get_frame_clock(GTK_WIDGET(d->Win));
   d->deceleration_prm.start = gdk_frame_clock_get_frame_time (frame_clock);
+
+#if GTK_CHECK_VERSION(4, 0, 0)
+  d->drag_prm.x = scrollbar_get_value(d->HScroll);
+  d->drag_prm.y = scrollbar_get_value(d->VScroll);
+#else
   d->drag_prm.x = gtk_range_get_value(GTK_RANGE(d->HScroll));
   d->drag_prm.y = gtk_range_get_value(GTK_RANGE(d->VScroll));
+#endif
   d->drag_prm.vx = velocity_x;
   d->drag_prm.vy = velocity_y;
 
@@ -1415,19 +1511,34 @@ add_event_drag(GtkWidget *widget, struct Viewer *d)
 {
   GtkGesture *ev_drag, *ev_swipe, *ev_long_press;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  ev_drag = gtk_gesture_drag_new();
+  gtk_widget_add_controller(widget, GTK_EVENT_CONTROLLER(ev_drag));
+#else
   ev_drag = gtk_gesture_drag_new(widget);
+#endif
   gtk_gesture_single_set_touch_only(GTK_GESTURE_SINGLE(ev_drag), TRUE);
 
   g_signal_connect(ev_drag, "drag-update", G_CALLBACK(update_drag), d);
   g_signal_connect(ev_drag, "drag-begin", G_CALLBACK(begin_drag), d);
   g_signal_connect(ev_drag, "drag-end", G_CALLBACK(end_drag), d);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  ev_swipe = gtk_gesture_swipe_new();
+  gtk_widget_add_controller(widget, GTK_EVENT_CONTROLLER(ev_swipe));
+#else
   ev_swipe = gtk_gesture_swipe_new(d->Win);
+#endif
   gtk_gesture_single_set_touch_only(GTK_GESTURE_SINGLE(ev_swipe), TRUE);
   gtk_gesture_group(ev_swipe, ev_drag);
   g_signal_connect(ev_swipe, "swipe", G_CALLBACK(swipe_cb), d);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  ev_long_press = gtk_gesture_long_press_new();
+  gtk_widget_add_controller(widget, GTK_EVENT_CONTROLLER(ev_long_press));
+#else
   ev_long_press = gtk_gesture_long_press_new(widget);
+#endif
   gtk_gesture_single_set_touch_only(GTK_GESTURE_SINGLE(ev_long_press), TRUE);
   gtk_gesture_group(ev_long_press, ev_drag);
   g_signal_connect(ev_long_press, "pressed", G_CALLBACK(long_press_cb), d);
@@ -1587,7 +1698,12 @@ static void
 add_event_zoom(GtkWidget *widget, struct Viewer *d)
 {
   GtkGesture *ev;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  ev = gtk_gesture_zoom_new();
+  gtk_widget_add_controller(widget, GTK_EVENT_CONTROLLER(ev));
+#else
   ev = gtk_gesture_zoom_new(widget);
+#endif
   g_signal_connect(ev, "begin", G_CALLBACK(zoom_begin), d);
   g_signal_connect(ev, "end", G_CALLBACK(zoom_end), d);
   g_signal_connect(ev, "cancel", G_CALLBACK(zoom_cancel), d);
@@ -1600,7 +1716,12 @@ add_event_motion(GtkWidget *widget, struct Viewer *d)
 {
   GtkEventController *ev;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  ev = gtk_event_controller_motion_new();
+  gtk_widget_add_controller(widget, GTK_EVENT_CONTROLLER(ev));
+#else
   ev = gtk_event_controller_motion_new(widget);
+#endif
 
   g_signal_connect(ev, "motion", G_CALLBACK(ViewerEvMouseMotion), d);
 }
@@ -1629,9 +1750,7 @@ ViewerWinSetup(void)
 {
   struct Viewer *d;
   int width, height;
-#if GTK_CHECK_VERSION(4, 0, 0)
-  GdkSurface *win;
-#else
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   int x, y;
   GdkWindow *win;
 #endif
@@ -1662,9 +1781,8 @@ ViewerWinSetup(void)
   OpenGRA();
   SetScroller();
 #if GTK_CHECK_VERSION(4, 0, 0)
-  win = gtk_native_get_surface(GTK_NATIVE(NgraphApp.Viewer.Win));
-  width = gdk_surface_get_width(win);
-  height = gdk_surface_get_height(win);
+  width = gtk_widget_get_size(NgraphApp.Viewer.Win, GTK_ORIENTATION_HORIZONTAL);
+  height = gtk_widget_get_size(NgraphApp.Viewer.Win, GTK_ORIENTATION_VERTICAL);
 #else
   win = gtk_widget_get_window(NgraphApp.Viewer.Win);
   gdk_window_get_position(win, &x, &y);
@@ -1675,14 +1793,26 @@ ViewerWinSetup(void)
   d->cy = height / 2;
   d->focused_pix = NULL;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  d->hscroll = scrollbar_get_value(d->HScroll);
+  d->vscroll = scrollbar_get_value(d->VScroll);
+#else
   d->hscroll = gtk_range_get_value(GTK_RANGE(d->HScroll));
   d->vscroll = gtk_range_get_value(GTK_RANGE(d->VScroll));
+#endif
 
   ChangeDPI();
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
   g_signal_connect(d->Win, "draw", G_CALLBACK(ViewerEvPaint), d);
   g_signal_connect(d->Win, "size-allocate", G_CALLBACK(ViewerEvSize), d);
+#endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
   g_signal_connect(d->HScroll, "value-changed", G_CALLBACK(ViewerEvHScroll), d);
   g_signal_connect(d->VScroll, "value-changed", G_CALLBACK(ViewerEvVScroll), d);
   g_signal_connect(d->HScroll, "change-value", G_CALLBACK(hscroll_change_value_cb), d);
@@ -1701,11 +1831,16 @@ ViewerWinSetup(void)
 			GDK_SCROLL_MASK |
 			GDK_SMOOTH_SCROLL_MASK |
 			GDK_KEY_RELEASE_MASK);
+#endif
   gtk_widget_set_can_focus(d->Win, TRUE);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
   if (d->popup) {
     gtk_menu_attach_to_widget(GTK_MENU(d->popup), GTK_WIDGET(d->Win), NULL);
   }
+#endif
 
   add_event_drag(d->Win, d);
   add_event_key(d->Win, G_CALLBACK(ViewerEvKeyDown), G_CALLBACK(ViewerEvKeyUp),  d);
@@ -1715,9 +1850,9 @@ ViewerWinSetup(void)
   add_event_motion(d->Win, d);
 #else
   g_signal_connect(d->Win, "motion-notify-event", G_CALLBACK(ViewerEvMouseMotion), d);
-#endif
   g_signal_connect(d->Win, "scroll-event", G_CALLBACK(ViewerEvScroll), d);
   g_signal_connect(d->Win, "popup-menu", G_CALLBACK(ev_popup_menu), d);
+#endif
 
 #if 0
   g_signal_connect(d->menu, "selection-done", G_CALLBACK(menu_activate), d);
@@ -3566,24 +3701,20 @@ static void
 ShowCrossGauge(cairo_t *cr, const struct Viewer *d)
 {
   int x, y, width, height;
-#if GTK_CHECK_VERSION(4, 0, 0)
-  GdkSurface *win;
-#else
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   GdkWindow *win;
 #endif
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-  win = gtk_native_get_surface(GTK_NATIVE(d->Win));
-#else
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   win = gtk_widget_get_window(d->Win);
-#endif
   if (win == NULL) {
     return;
   }
+#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-  width = gdk_surface_get_width(win);
-  height = gdk_surface_get_height(win);
+  width = gtk_widget_get_size(d->Win, GTK_ORIENTATION_HORIZONTAL);
+  height = gtk_widget_get_size(d->Win, GTK_ORIENTATION_VERTICAL);
 #else
   width = gdk_window_get_width(win);
   height = gdk_window_get_height(win);
@@ -5265,7 +5396,11 @@ move_data_cancel(struct Viewer *d, gboolean show_message)
 }
 
 static gboolean
+#if GTK_CHECK_VERSION(4, 0, 0)
+ViewerEvRButtonDown(unsigned int state, TPoint *point, struct Viewer *d)
+#else
 ViewerEvRButtonDown(unsigned int state, TPoint *point, struct Viewer *d, GdkEventButton *e)
+#endif
 {
   int num;
   struct Point *po;
@@ -5316,7 +5451,12 @@ ViewerEvRButtonDown(unsigned int state, TPoint *point, struct Viewer *d, GdkEven
   } else if (d->Mode == ZoomB) {
     mouse_down_zoom(state, point, d, ! (state & GDK_CONTROL_MASK));
   } else if (d->MouseMode == MOUSENONE) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+    do_popup(point->x, point->y, d);
+#else
     do_popup(e, d);
+#endif
   }
 
   gtk_widget_queue_draw(d->Win);
@@ -5612,25 +5752,21 @@ static void
 mouse_move_scroll(TPoint *point, struct Viewer *d)
 {
   int h, w;
-#if GTK_CHECK_VERSION(4, 0, 0)
-  GdkSurface *win;
-#else
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   GdkWindow *win;
 #endif
   double dx, dy;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-  win = gtk_native_get_surface(GTK_NATIVE(d->Win));
-#else
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   win = gtk_widget_get_window(d->Win);
-#endif
   if (win == NULL) {
     return;
   }
+#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-  w = gdk_surface_get_width(win);
-  h = gdk_surface_get_height(win);
+  w = gtk_widget_get_size(d->Win, GTK_ORIENTATION_HORIZONTAL);
+  h = gtk_widget_get_size(d->Win, GTK_ORIENTATION_VERTICAL);
 #else
   w = gdk_window_get_width(win);
   h = gdk_window_get_height(win);
@@ -5704,9 +5840,13 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
     return FALSE;
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
   if (gtk_widget_get_window(d->Win) == NULL) {
     return FALSE;
   }
+#endif
 
   d->KeyMask = state;
   zoom = Menulocal.PaperZoom / 10000.0;
@@ -5900,6 +6040,9 @@ do_popup(GdkEventButton *event, struct Viewer *d)
 #endif
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
 static gboolean
 ViewerEvScroll(GtkWidget *w, GdkEventScroll *e, gpointer client_data)
 {
@@ -5951,7 +6094,9 @@ ViewerEvScroll(GtkWidget *w, GdkEventScroll *e, gpointer client_data)
   }
   return FALSE;
 }
+#endif
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
 static GdkModifierType
 get_key_modifier(GtkGestureSingle *gesture)
 {
@@ -5966,6 +6111,7 @@ get_key_modifier(GtkGestureSingle *gesture)
   }
   return 0;
 }
+#endif
 
 static void
 #if GTK_CHECK_VERSION(4, 0, 0)
@@ -6008,7 +6154,11 @@ ViewerEvButtonDown(GtkGestureMultiPress *gesture, gint n_press, gdouble x, gdoub
     ViewerEvMButtonDown(state, &point, d);
     break;
   case Button3:
+#if GTK_CHECK_VERSION(4, 0, 0)
+    ViewerEvRButtonDown(state, &point, d);
+#else
     ViewerEvRButtonDown(state, &point, d, NULL);
+#endif
     break;
   }
 }
@@ -6359,23 +6509,19 @@ SetHRuler(const struct Viewer *d)
 {
   gdouble x1, x2, zoom;
   int width;
-#if GTK_CHECK_VERSION(4, 0, 0)
-  GdkSurface *win;
-#else
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   GdkWindow *win;
 #endif
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-  win = gtk_native_get_surface(GTK_NATIVE(d->Win));
-#else
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   win = gtk_widget_get_window(d->Win);
-#endif
   if (win == NULL) {
     return;
   }
+#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-  width = gdk_surface_get_width(win);
+  width = gtk_widget_get_size(d->Win, GTK_ORIENTATION_HORIZONTAL);
 #else
   width = gdk_window_get_width(win);
 #endif
@@ -6391,23 +6537,19 @@ SetVRuler(const struct Viewer *d)
 {
   gdouble  y1, y2, zoom;
   int height;
-#if GTK_CHECK_VERSION(4, 0, 0)
-  GdkSurface *win;
-#else
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   GdkWindow *win;
 #endif
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-  win = gtk_native_get_surface(GTK_NATIVE(d->Win));
-#else
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   win = gtk_widget_get_window(d->Win);
-#endif
   if (win == NULL) {
     return;
   }
+#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-  height = gdk_surface_get_height(win);
+  height = gtk_widget_get_size(d->Win, GTK_ORIENTATION_VERTICAL);
 #else
   height = gdk_window_get_height(win);
 #endif
@@ -6668,12 +6810,16 @@ create_layers(void)
 static void
 create_pix(int w, int h)
 {
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
   GdkWindow *window;
 
   window = gtk_widget_get_window(NgraphApp.Viewer.Win);
   if (window == NULL) {
     return;
   }
+#endif
 
   if (w == 0) {
     w = 1;
@@ -6743,6 +6889,16 @@ SetScroller(void)
   x = width / 2;
   y = height / 2;
 
+
+#if GTK_CHECK_VERSION(4, 0, 0)
+  scrollbar_set_range(d->HScroll, 0, width);
+  scrollbar_set_value(d->HScroll, x);
+  scrollbar_set_increment(d->HScroll, 10, 40);
+
+  scrollbar_set_range(d->VScroll, 0, height);
+  scrollbar_set_value(d->VScroll, y);
+  scrollbar_set_increment(d->VScroll, 10, 40);
+#else
   gtk_range_set_range(GTK_RANGE(d->HScroll), 0, width);
   gtk_range_set_value(GTK_RANGE(d->HScroll), x);
   gtk_range_set_increments(GTK_RANGE(d->HScroll), 10, 40);
@@ -6750,6 +6906,7 @@ SetScroller(void)
   gtk_range_set_range(GTK_RANGE(d->VScroll), 0, height);
   gtk_range_set_value(GTK_RANGE(d->VScroll), y);
   gtk_range_set_increments(GTK_RANGE(d->VScroll), 10, 40);
+#endif
 
   d->hscroll = x;
   d->vscroll = y;
@@ -6758,6 +6915,9 @@ SetScroller(void)
 static double
 get_range_max(GtkWidget *w)
 {
+#if GTK_CHECK_VERSION(4, 0, 0)
+  return scrollbar_get_max(w);
+#else
   GtkAdjustment *adj;
   double val;
 
@@ -6765,6 +6925,7 @@ get_range_max(GtkWidget *w)
   val = (adj) ? gtk_adjustment_get_upper(adj) : 0;
 
   return val;
+#endif
 }
 
 void
@@ -6822,12 +6983,22 @@ ChangeDPI(void)
 
   cancel_deceleration(d);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  scrollbar_set_range(d->HScroll, 0, width);
+  scrollbar_set_value(d->HScroll, XPos);
+#else
   gtk_range_set_range(GTK_RANGE(d->HScroll), 0, width);
   gtk_range_set_value(GTK_RANGE(d->HScroll), XPos);
+#endif
   d->hscroll = XPos;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  scrollbar_set_range(d->VScroll, 0, height);
+  scrollbar_set_value(d->VScroll, YPos);
+#else
   gtk_range_set_range(GTK_RANGE(d->VScroll), 0, height);
   gtk_range_set_value(GTK_RANGE(d->VScroll), YPos);
+#endif
   d->vscroll = YPos;
 
   if ((obj = chkobject("text")) != NULL) {
@@ -7519,7 +7690,11 @@ CmEditMenuCB(void *w, gpointer client_data)
     CopyFocusedObjects();
     break;
   case MenuIdEditPaste:
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
     PasteObjectsFromClipboard();
+#endif
     break;
   case MenuIdEditDelete:
     ViewDelete();

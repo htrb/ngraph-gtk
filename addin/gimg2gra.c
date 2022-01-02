@@ -11,6 +11,8 @@
 #include <errno.h>
 #include <limits.h>
 
+#include "addin_common.h"
+
 #define PRGNAME "gimg2gra"
 #define VERSION "0.0.0"
 
@@ -46,7 +48,11 @@ static void create_entry(GdkPixbuf *im, GtkWidget *hbox, struct AppData *data);
 static void create_buttons(struct AppData *data, GtkWidget *hbox);
 
 static gboolean delete_event(GtkWidget *widget, GdkEvent *event, gpointer data);
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
 static gboolean button_press_event(GtkWidget *widget, GdkEventButton *event, gpointer data);
+#endif
 static void save_button_clicked(GtkButton *widget, gpointer data);
 static void cancel_button_clicked(GtkButton *widget, gpointer data);
 
@@ -63,7 +69,11 @@ main(int argc, char *argv[])
   static gchar *img_file = NULL, *gra_file = NULL;
   struct AppData app_data;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_init();
+#else
   gtk_init(&argc, &argv);
+#endif
   if (argc != 4) {
     static char *usage = "Usage: %s resolution image_file gra_file\n";
     gchar *error;
@@ -79,7 +89,11 @@ main(int argc, char *argv[])
 
   app_data.gra = gra_file;
   App = create_widgets(&app_data, img_file);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  main_loop();
+#else
   gtk_main();
+#endif
 
   return 0;
 }
@@ -102,14 +116,32 @@ create_widgets(struct AppData *app_data, const gchar *img_file)
     print_error_exit(error->message);
   }
   w = gtk_image_new_from_pixbuf(pixbuf);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  app_data->im = pixbuf;
+  event_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+  gtk_box_append(GTK_BOX(event_box), w);
+#else
   app_data->im = gtk_image_get_pixbuf(GTK_IMAGE(w));
   event_box = gtk_event_box_new();
   gtk_container_add(GTK_CONTAINER(event_box), w);
+#endif
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
   g_signal_connect(event_box, "button-press-event", G_CALLBACK(button_press_event), app_data);
+#endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  scrolled_window = gtk_scrolled_window_new();
+#else
   scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+#endif
   gtk_widget_set_size_request(scrolled_window, 800, 600);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scrolled_window), event_box);
+#else
   gtk_container_add(GTK_CONTAINER(scrolled_window), event_box);
+#endif
 
   gtk_box_pack_start(GTK_BOX(vbox), scrolled_window, TRUE, TRUE, 0);
   gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
@@ -208,6 +240,9 @@ delete_event(GtkWidget *widget, GdkEvent *event, gpointer data)
   return TRUE;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
 static gboolean
 button_press_event(GtkWidget *widget, GdkEventButton *event, gpointer data)
 {
@@ -240,6 +275,7 @@ button_press_event(GtkWidget *widget, GdkEventButton *event, gpointer data)
 
   return TRUE;
 }
+#endif
 
 static void
 save_button_clicked(GtkButton *widget, gpointer data)

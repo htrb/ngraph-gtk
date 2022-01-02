@@ -18,6 +18,48 @@ gtk_true(void)
 {
   return TRUE;
 }
+
+double
+scrollbar_get_value(GtkWidget *w)
+{
+  GtkAdjustment *adj;
+  adj = gtk_scrollbar_get_adjustment(GTK_SCROLLBAR(w));
+  return gtk_adjustment_get_value(adj);
+}
+
+void
+scrollbar_set_value(GtkWidget *w, double val)
+{
+  GtkAdjustment *adj;
+  adj = gtk_scrollbar_get_adjustment(GTK_SCROLLBAR(w));
+  gtk_adjustment_set_value(adj, val);
+}
+
+void
+scrollbar_set_range(GtkWidget *w, double min, double max)
+{
+  GtkAdjustment *adj;
+  adj = gtk_scrollbar_get_adjustment(GTK_SCROLLBAR(w));
+  gtk_adjustment_set_lower(adj, min);
+  gtk_adjustment_set_upper(adj, max);
+}
+
+double
+scrollbar_get_max(GtkWidget *w)
+{
+  GtkAdjustment *adj;
+  adj = gtk_scrollbar_get_adjustment(GTK_SCROLLBAR(w));
+  return gtk_adjustment_get_upper(adj);
+}
+
+void
+scrollbar_set_increment(GtkWidget *w, double step, double page)
+{
+  GtkAdjustment *adj;
+  adj = gtk_scrollbar_get_adjustment(GTK_SCROLLBAR(w));
+  gtk_adjustment_set_step_increment(adj, step);
+  gtk_adjustment_set_page_increment(adj, step);
+}
 #endif
 
 void
@@ -370,8 +412,12 @@ create_direction_entry(void)
   gtk_entry_set_width_chars(GTK_ENTRY(w), NUM_ENTRY_WIDTH);
   gtk_entry_set_max_width_chars(GTK_ENTRY(w), NUM_ENTRY_WIDTH);
 #endif
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
   gtk_entry_set_icon_from_icon_name(GTK_ENTRY(w), GTK_ENTRY_ICON_SECONDARY, "go-up-symbolic");
   gtk_entry_set_icon_from_icon_name(GTK_ENTRY(w), GTK_ENTRY_ICON_PRIMARY, "go-down-symbolic");
+#endif
   g_signal_connect(w, "icon-release", G_CALLBACK(direction_icon_released), NULL);
 
   return w;
@@ -551,7 +597,11 @@ _create_spin_entry(enum SPIN_BUTTON_TYPE type, double min, double max,
   GtkWidget *w;
 
   w = gtk_spin_button_new_with_range(min, max, inc);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  /* must be implemented */
+#else
   gtk_entry_set_alignment(GTK_ENTRY(w), 1.0);
+#endif
 
   gtk_spin_button_set_increments(GTK_SPIN_BUTTON(w), inc, page);
   gtk_spin_button_set_wrap(GTK_SPIN_BUTTON(w), wrap);
@@ -568,9 +618,13 @@ _create_spin_entry(enum SPIN_BUTTON_TYPE type, double min, double max,
 #endif
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  /* must be implemented */
+#else
   if (set_default_action) {
     gtk_entry_set_activates_default(GTK_ENTRY(w), TRUE);
   }
+#endif
 
   g_object_set_data(G_OBJECT(w), "user-data", GINT_TO_POINTER(type));
 
@@ -797,7 +851,11 @@ create_color_button(GtkWidget *win)
   w = gtk_color_button_new();
   g_object_set_data(G_OBJECT(w), CUSTOM_PALETTE_KEY, GINT_TO_POINTER(0));
   g_signal_connect(w, "color-set", G_CALLBACK(show_color_sel), win);
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
   g_signal_connect(w, "button-press-event", G_CALLBACK(show_color_dialog), win);
+#endif
 
   return w;
 }
@@ -1158,7 +1216,11 @@ GtkWidget *
 add_button(GtkWidget *grid, int row, int col, const char *icon, const char *tooltip, GCallback proc, gpointer data)
 {
   GtkWidget *w;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  w = gtk_button_new_from_icon_name(icon);
+#else
   w = gtk_button_new_from_icon_name(icon, GTK_ICON_SIZE_BUTTON);
+#endif
   add_button_common(w, grid, row, col, tooltip, proc, data);
   return w;
 }
@@ -1168,10 +1230,11 @@ add_toggle_button(GtkWidget *grid, int row, int col, const char *icon_name, cons
 {
   GtkWidget *w, *icon;
   w = gtk_toggle_button_new();
-  icon = gtk_image_new_from_icon_name(icon_name, GTK_ICON_SIZE_BUTTON);
 #if GTK_CHECK_VERSION(4, 0, 0)
+  icon = gtk_image_new_from_icon_name(icon_name);
   gtk_button_set_child(GTK_BUTTON(w), icon);
 #else
+  icon = gtk_image_new_from_icon_name(icon_name, GTK_ICON_SIZE_BUTTON);
   gtk_button_set_image(GTK_BUTTON(w), icon);
 #endif
   add_button_common(w, grid, row, col, tooltip, NULL, NULL);

@@ -734,8 +734,12 @@ FontSettingDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->alias = w;
 
     w = gtk_font_button_new();
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_font_button_set_use_size(GTK_FONT_BUTTON(w), FALSE);
+#else
     gtk_font_button_set_show_size(GTK_FONT_BUTTON(w), FALSE);
     gtk_font_button_set_show_style(GTK_FONT_BUTTON(w), FALSE);
+#endif
     add_widget_to_table(table, w, _("_Font:"), TRUE, j++);
     d->font_b = w;
 
@@ -797,14 +801,22 @@ FontSettingDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = gtk_button_new_with_mnemonic(_("_Down"));
     set_button_icon(w, "go-down");
     g_signal_connect(w, "clicked", G_CALLBACK(FontSettingDialogDownAlternative), d);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(GTK_BOX(vbox), w);
+#else
     gtk_box_pack_end(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+#endif
     gtk_widget_set_sensitive(w, FALSE);
     d->down_b = w;
 
     w = gtk_button_new_with_mnemonic(_("_Up"));
     set_button_icon(w, "go-up");
     g_signal_connect(w, "clicked", G_CALLBACK(FontSettingDialogUpAlternative), d);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_box_append(GTK_BOX(vbox), w);
+#else
     gtk_box_pack_end(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+#endif
     gtk_widget_set_sensitive(w, FALSE);
     d->up_b = w;
 
@@ -1225,12 +1237,30 @@ save_custom_palette(struct MiscDialog *d, GtkWidget **btns)
   }
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+edit_custom_palette_dialog_response(GtkDialog* self, gint response_id, gpointer user_data)
+{
+  struct MiscDialog *d;
+  d = user_data;
+  if (response_id == GTK_RESPONSE_ACCEPT) {
+    save_custom_palette(d, d->palette);
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->use_custom_palette), TRUE);
+  }
+  g_free(d->palette);
+  d->palette = NULL;
+  gtk_window_destroy(GTK_WINDOW(self));
+}
+#endif
+
 static void
 edit_custom_palette(GtkWidget *w, gpointer data)
 {
   GtkWidget *dialog, *box, **btns;
   struct MiscDialog *d;
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   gint r;
+#endif
   d = data;
   dialog = gtk_dialog_new_with_buttons(_("custom palette"),
 				       GTK_WINDOW(d->widget),
@@ -1250,18 +1280,19 @@ edit_custom_palette(GtkWidget *w, gpointer data)
 #endif
     return;
   }
-#if ! GTK_CHECK_VERSION(4, 0, 0)
+#if GTK_CHECK_VERSION(4, 0, 0)
+  d->palette = btns;
+  gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);
+  g_signal_connect(dialog, "response", G_CALLBACK(edit_custom_palette_dialog_response), d);
+  gtk_widget_show(dialog);
+#else
   gtk_widget_show_all(dialog);
-#endif
   r = gtk_dialog_run(GTK_DIALOG(dialog));
   if (r == GTK_RESPONSE_ACCEPT) {
     save_custom_palette(d, btns);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->use_custom_palette), TRUE);
   }
   g_free(btns);
-#if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_window_destroy(GTK_WINDOW(dialog));
-#else
   gtk_widget_destroy(dialog);
 #endif
 }

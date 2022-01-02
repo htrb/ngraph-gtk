@@ -92,10 +92,10 @@ nruler_new(GtkOrientation orientation)
   }
 
   frame = gtk_frame_new(NULL);
-  gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_OUT);
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_frame_set_child(GTK_FRAME(frame), w);
 #else
+  gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_OUT);
   gtk_container_add(GTK_CONTAINER(frame), w);
 #endif
 
@@ -106,9 +106,17 @@ nruler_new(GtkOrientation orientation)
 
   g_object_set_data(G_OBJECT(frame), RULER_DATA_KEY, ruler);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
   g_signal_connect(w, "draw", G_CALLBACK(nruler_expose), ruler);
+#endif
   g_signal_connect(w, "realize", G_CALLBACK(nruler_realize), ruler);
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+#else
   g_signal_connect(w, "size-allocate", G_CALLBACK(nruler_size_allocate), ruler);
+#endif
   g_signal_connect(frame, "unrealize", G_CALLBACK(nruler_destroy), ruler);
 
   return frame;
@@ -430,7 +438,11 @@ style_changed(GtkStyleContext *stylecontext, gpointer user_data)
   Nruler *ruler;
 
   ruler = user_data;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_style_context_get_color(stylecontext, &ruler->saved_fg);
+#else
   gtk_style_context_get_color(stylecontext, GTK_STATE_FLAG_NORMAL, &ruler->saved_fg);
+#endif
 }
 
 static GtkStyleContext *
@@ -438,7 +450,11 @@ nruler_get_color(Nruler *ruler, GdkRGBA *fg)
 {
   if (ruler->saved_style == NULL) {
     ruler->saved_style = gtk_widget_get_style_context(TopLevel);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_style_context_get_color(ruler->saved_style, &ruler->saved_fg);
+#else
     gtk_style_context_get_color(ruler->saved_style, GTK_STATE_FLAG_NORMAL, &ruler->saved_fg);
+#endif
     g_signal_connect(ruler->saved_style, "changed", G_CALLBACK(style_changed), ruler);
   }
 

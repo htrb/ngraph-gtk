@@ -274,50 +274,84 @@ CREATE_NAME(Pref, DialogCreateWidgets)(struct CREATE_NAME(Pref, Dialog) *d, GtkW
   gtk_container_add(GTK_CONTAINER(w), swin);
 #endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  if (win_box) {
+    gtk_box_append(GTK_BOX(win_box), w);
+    gtk_box_append(GTK_BOX(hbox), win_box);
+  } else {
+    gtk_box_append(GTK_BOX(hbox), w);
+  }
+#else
   if (win_box) {
     gtk_box_pack_start(GTK_BOX(win_box), w, TRUE, TRUE, 4);
     gtk_box_pack_start(GTK_BOX(hbox), win_box, TRUE, TRUE, 4);
   } else {
     gtk_box_pack_start(GTK_BOX(hbox), w, TRUE, TRUE, 4);
   }
+#endif
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
 
   w= gtk_button_new_with_mnemonic(_("_Add"));
   set_button_icon(w, "list-add");
   g_signal_connect(w, "clicked", G_CALLBACK(CREATE_NAME(Pref, DialogAdd)), d);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_box_append(GTK_BOX(vbox), w);
+#else
   gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+#endif
 
   w = gtk_button_new_with_mnemonic(_("_Preferences"));
   set_button_icon(w, "preferences-system");
   g_signal_connect(w, "clicked", G_CALLBACK(CREATE_NAME(Pref, DialogUpdate)), d);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_box_append(GTK_BOX(vbox), w);
+#else
   gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+#endif
   gtk_widget_set_sensitive(w, FALSE);
   d->update_b = w;
 
   w = gtk_button_new_with_mnemonic(_("_Remove"));
   set_button_icon(w, "list-remove");
   g_signal_connect(w, "clicked", G_CALLBACK(CREATE_NAME(Pref, DialogRemove)), d);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_box_append(GTK_BOX(vbox), w);
+#else
   gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+#endif
   gtk_widget_set_sensitive(w, FALSE);
   d->del_b = w;
 
   w = gtk_button_new_with_mnemonic(_("_Down"));
   set_button_icon(w, "go-down");
   g_signal_connect(w, "clicked", G_CALLBACK(CREATE_NAME(Pref, DialogDown)), d);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_box_append(GTK_BOX(vbox), w);
+#else
   gtk_box_pack_end(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+#endif
   gtk_widget_set_sensitive(w, FALSE);
   d->down_b = w;
 
   w = gtk_button_new_with_mnemonic(_("_Up"));
   set_button_icon(w, "go-up");
   g_signal_connect(w, "clicked", G_CALLBACK(CREATE_NAME(Pref, DialogUp)), d);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_box_append(GTK_BOX(vbox), w);
+#else
   gtk_box_pack_end(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+#endif
   gtk_widget_set_sensitive(w, FALSE);
   d->up_b = w;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_box_append(GTK_BOX(hbox), vbox);
+  gtk_box_append(GTK_BOX(d->vbox), hbox);
+#else
   gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 4);
 
   gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
+#endif
 
   d->show_cancel = FALSE;
   d->ok_button = _("_Close");
