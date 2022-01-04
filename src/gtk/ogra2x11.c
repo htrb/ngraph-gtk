@@ -473,7 +473,9 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   gtk_container_add(GTK_CONTAINER(scrolled_window), gtklocal->View);
 #endif
 
-#if ! GTK_CHECK_VERSION(4, 0, 0)
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_widget_show(gtklocal->mainwin);
+#else
   gtk_widget_show_all(gtklocal->mainwin);
 #endif
 

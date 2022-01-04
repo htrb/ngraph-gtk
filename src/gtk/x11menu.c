@@ -2665,7 +2665,9 @@ create_toplevel_window(void)
   initdialog();
 
   setup_toolbar(TopLevel);
-#if ! GTK_CHECK_VERSION(4, 0, 0)
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_widget_show(GTK_WIDGET(TopLevel));
+#else
   gtk_widget_show_all(GTK_WIDGET(TopLevel));
 #endif
   reset_event();
@@ -2676,7 +2678,9 @@ create_toplevel_window(void)
   NgraphApp.FileName = NULL;
   NgraphApp.Viewer.Mode = PointB;
 
-#if ! GTK_CHECK_VERSION(4, 0, 0)
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_widget_show(GTK_WIDGET(TopLevel));
+#else
   gtk_widget_show_all(GTK_WIDGET(TopLevel));
 #endif
   ViewerWinSetup();
