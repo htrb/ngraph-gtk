@@ -188,6 +188,15 @@ set_widget_visibility_with_label(GtkWidget *w, gboolean state)
   }
 }
 
+void
+widget_set_margin(GtkWidget *w, int margin)
+{
+  gtk_widget_set_margin_bottom(w, margin);
+  gtk_widget_set_margin_end(w, margin);
+  gtk_widget_set_margin_start(w, margin);
+  gtk_widget_set_margin_top(w, margin);
+}
+
 GtkWidget *
 add_widget_to_table_sub(GtkWidget *table, GtkWidget *w, char *title, int expand, int col, int width, int col_max, int n)
 {
