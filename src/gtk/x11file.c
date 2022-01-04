@@ -591,8 +591,13 @@ MathDialogSetupItem(GtkWidget *w, struct MathDialog *d)
     set_escaped_str(d->list, &iter, 1, math);
   }
 
-  if (d->Mode >= 0 && d->Mode < MATH_FNC_NUM)
+  if (d->Mode >= 0 && d->Mode < MATH_FNC_NUM) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_check_button_set_active(GTK_CHECK_BUTTON(d->func[d->Mode]), TRUE);
+#else
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->func[d->Mode]), TRUE);
+#endif
+  }
 }
 
 static void
@@ -601,8 +606,13 @@ MathDialogMode(GtkWidget *w, gpointer client_data)
   struct MathDialog *d;
   int i;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  if (! gtk_check_button_get_active(GTK_CHECK_BUTTON(w)))
+    return;
+#else
   if (! gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
     return;
+#endif
 
   d = (struct MathDialog *) client_data;
 
@@ -1402,7 +1412,11 @@ check_fit_func(GtkEditable *w, gpointer client_data)
 
   prm = math_equation_get_parameter(code, 0, NULL);
   dim = prm->id_num;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  deriv = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->derivatives));
+#else
   deriv = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->derivatives));
+#endif
 
   for (i = 0; i < FIT_PARM_NUM; i++) {
     set_widget_sensitivity_with_label(d->p[i], FALSE);
@@ -1688,7 +1702,11 @@ FitDialogSetSensitivity(GtkWidget *widget, gpointer user_data)
   d = (struct FitDialog *) user_data;
 
   type = combo_box_get_active(d->type);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  through = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->through_point));
+#else
   through = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->through_point));
+#endif
 
   switch (type) {
   case FIT_TYPE_POLY:
@@ -1717,7 +1735,11 @@ FitDialogSetSensitivity(GtkWidget *widget, gpointer user_data)
     break;
   case FIT_TYPE_USER:
     gtk_label_set_text(GTK_LABEL(d->func_label), "");
+#if GTK_CHECK_VERSION(4, 0, 0)
+    deriv = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->derivatives));
+#else
     deriv = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->derivatives));
+#endif
 
     set_widget_sensitivity_with_label(d->dim, FALSE);
     gtk_widget_set_sensitive(d->through_point, FALSE);
@@ -3158,9 +3180,17 @@ MarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d->cb_respond = FALSE;
   for (type = 0; type < MARK_TYPE_NUM; type++) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_check_button_set_active(GTK_CHECK_BUTTON(d->toggle[type]), FALSE);
+#else
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->toggle[type]), FALSE);
+#endif
   }
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_check_button_set_active(GTK_CHECK_BUTTON(d->toggle[d->Type]), TRUE);
+#else
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->toggle[d->Type]), TRUE);
+#endif
   d->focus = d->toggle[d->Type];
   d->cb_respond = TRUE;
 }
@@ -4099,7 +4129,11 @@ set_headline_table(struct FileDialog *d, char *s, int max_lines)
     step = 1;
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  csv = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->load.csv));
+#else
   csv = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->load.csv));
+#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
   remark = gtk_editable_get_text(GTK_EDITABLE(d->load.remark));

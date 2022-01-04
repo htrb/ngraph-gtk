@@ -129,7 +129,11 @@ OutputImageDialogSetupItem(struct OutputImageDialog *d)
   vlabel = get_mnemonic_label(d->version);
 
   gtk_label_set_text(GTK_LABEL(vlabel), "");
+#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->use_opacity), FALSE);
+#else
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->use_opacity), FALSE);
+#endif
 
   combo_box_clear(d->version);
   switch (d->DlgType) {
@@ -153,7 +157,11 @@ OutputImageDialogSetupItem(struct OutputImageDialog *d)
     gtk_widget_set_visible(d->t2p, FALSE);
 
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(d->dpi), Menulocal.png_dpi);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_check_button_set_active(GTK_CHECK_BUTTON(d->use_opacity), Menulocal.use_opacity);
+#else
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->use_opacity), Menulocal.use_opacity);
+#endif
 
     break;
   case MenuIdOutputPDFFile:
@@ -162,7 +170,11 @@ OutputImageDialogSetupItem(struct OutputImageDialog *d)
     gtk_widget_set_visible(d->t2p, TRUE);
 
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(d->dpi), 72);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_check_button_set_active(GTK_CHECK_BUTTON(d->use_opacity), Menulocal.use_opacity);
+#else
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->use_opacity), Menulocal.use_opacity);
+#endif
     break;
   case MenuIdOutputSVGFile:
     for (i = 0; PsVersion[i]; i++) {
@@ -177,7 +189,11 @@ OutputImageDialogSetupItem(struct OutputImageDialog *d)
 
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(d->dpi), 72);
     combo_box_set_active(d->version, Menulocal.svg_version);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_check_button_set_active(GTK_CHECK_BUTTON(d->use_opacity), Menulocal.use_opacity);
+#else
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->use_opacity), Menulocal.use_opacity);
+#endif
     break;
 #ifdef CAIRO_HAS_WIN32_SURFACE
   case MenuIdOutputCairoEMFFile:
@@ -280,11 +296,19 @@ OutputImageDialogClose(GtkWidget *w, void *data)
     return;
 
   d->Dpi = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(d->dpi));
+#if GTK_CHECK_VERSION(4, 0, 0)
+  d->UseOpacity = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->use_opacity));
+#else
   d->UseOpacity = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->use_opacity));
+#endif
 
   switch (d->DlgType) {
   case MenuIdOutputPSFile:
+#if GTK_CHECK_VERSION(4, 0, 0)
+    d->text2path = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->t2p));
+#else
     d->text2path = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->t2p));
+#endif
     a = combo_box_get_active(d->version);
     switch (a) {
     case 0:
@@ -298,7 +322,11 @@ OutputImageDialogClose(GtkWidget *w, void *data)
     Menulocal.ps_version = a;
     break;
   case MenuIdOutputEPSFile:
+#if GTK_CHECK_VERSION(4, 0, 0)
+    d->text2path = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->t2p));
+#else
     d->text2path = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->t2p));
+#endif
     a = combo_box_get_active(d->version);
     switch (a) {
     case 0:
@@ -322,11 +350,19 @@ OutputImageDialogClose(GtkWidget *w, void *data)
     break;
 #endif	/* CAIRO_HAS_WIN32_SURFACE */
   case MenuIdOutputPDFFile:
+#if GTK_CHECK_VERSION(4, 0, 0)
+    d->text2path = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->t2p));
+#else
     d->text2path = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->t2p));
+#endif
     d->Version = TYPE_PDF;
     break;
   case MenuIdOutputSVGFile:
+#if GTK_CHECK_VERSION(4, 0, 0)
+    d->text2path = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->t2p));
+#else
     d->text2path = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->t2p));
+#endif
     a = combo_box_get_active(d->version);
     switch (a) {
     case 0:

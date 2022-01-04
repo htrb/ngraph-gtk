@@ -877,12 +877,16 @@ value_changed(GtkAdjustment *adjustment, gpointer user_data)
 }
 
 static void
+#if GTK_CHECK_VERSION(4, 0, 0)
+toggled(GtkCheckButton *check_button, gpointer user_data)
+#else
 toggled(GtkToggleButton *toggle_button, gpointer user_data)
+#endif
 {
   int active;
   if (Menulock || Globallock) {
 #if GTK_CHECK_VERSION(4, 0, 0)
-    gtk_check_button_set_inconsistent(GTK_CHECK_BUTTON(toggle_button), FALSE);
+    gtk_check_button_set_inconsistent(GTK_CHECK_BUTTON(check_button), FALSE);
 #else
     gtk_toggle_button_set_inconsistent(toggle_button, TRUE);
 #endif
@@ -890,11 +894,12 @@ toggled(GtkToggleButton *toggle_button, gpointer user_data)
   }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_check_button_set_inconsistent(GTK_CHECK_BUTTON(toggle_button), FALSE);
+  gtk_check_button_set_inconsistent(GTK_CHECK_BUTTON(check_button), FALSE);
+  active = gtk_check_button_get_active(check_button);
 #else
   gtk_toggle_button_set_inconsistent(toggle_button, FALSE);
-#endif
   active = gtk_toggle_button_get_active(toggle_button);
+#endif
   set_parameter(active, user_data);
 }
 
@@ -1071,7 +1076,11 @@ create_widget(struct obj_list_data *d, int id, int n)
     }
     width = 2;
     g_signal_connect(w, "toggled", G_CALLBACK(toggled), data);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_check_button_set_active(GTK_CHECK_BUTTON(w), checked);
+#else
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), checked);
+#endif
     break;
   case PARAMETER_TYPE_COMBO:
     w = create_combo_box(items, selected);

@@ -110,10 +110,17 @@ DefaultDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
 #endif
   }
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_check_button_set_active(GTK_CHECK_BUTTON(d->viewer), FALSE);
+  gtk_check_button_set_active(GTK_CHECK_BUTTON(d->external_viewer), FALSE);
+  gtk_check_button_set_active(GTK_CHECK_BUTTON(d->addin_script), FALSE);
+  gtk_check_button_set_active(GTK_CHECK_BUTTON(d->misc), FALSE);
+#else
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->viewer), FALSE);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->external_viewer), FALSE);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->addin_script), FALSE);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->misc), FALSE);
+#endif
 }
 
 static int
@@ -168,9 +175,15 @@ DefaultDialogClose(GtkWidget *win, void *data)
   type = 0;
 
   for (i = 0; i < sizeof(btns) / sizeof(*btns); i++) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+    if (gtk_check_button_get_active(GTK_CHECK_BUTTON(btns[i].btn))) {
+      type |= btns[i].type;
+    }
+#else
     if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(btns[i].btn))) {
       type |= btns[i].type;
     }
+#endif
   }
 
   if (save_config(type)) {
@@ -1081,20 +1094,33 @@ PrefFontDialog(struct PrefFontDialog *data)
 static void
 MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
 {
-  if (Menulocal.editor)
+  if (Menulocal.editor) {
 #if GTK_CHECK_VERSION(4, 0, 0)
     gtk_editable_set_text(GTK_EDITABLE(d->editor), Menulocal.editor);
 #else
     gtk_entry_set_text(GTK_ENTRY(d->editor), Menulocal.editor);
 #endif
+  }
 
-  if (Menulocal.help_browser)
+  if (Menulocal.help_browser) {
 #if GTK_CHECK_VERSION(4, 0, 0)
     gtk_editable_set_text(GTK_EDITABLE(d->help_browser), Menulocal.help_browser);
 #else
     gtk_entry_set_text(GTK_ENTRY(d->help_browser), Menulocal.help_browser);
 #endif
+  }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_check_button_set_active(GTK_CHECK_BUTTON(d->directory), Menulocal.changedirectory);
+
+  combo_box_set_active(d->path, Menulocal.savepath);
+
+  gtk_check_button_set_active(GTK_CHECK_BUTTON(d->datafile), Menulocal.savewithdata);
+
+  gtk_check_button_set_active(GTK_CHECK_BUTTON(d->mergefile), Menulocal.savewithmerge);
+
+  gtk_check_button_set_active(GTK_CHECK_BUTTON(d->expand), Menulocal.expand);
+#else
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->directory), Menulocal.changedirectory);
 
   combo_box_set_active(d->path, Menulocal.savepath);
@@ -1104,13 +1130,15 @@ MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->mergefile), Menulocal.savewithmerge);
 
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->expand), Menulocal.expand);
+#endif
 
-  if (Menulocal.expanddir)
+  if (Menulocal.expanddir) {
 #if GTK_CHECK_VERSION(4, 0, 0)
     gtk_editable_set_text(GTK_EDITABLE(d->expanddir), Menulocal.expanddir);
 #else
     gtk_entry_set_text(GTK_ENTRY(d->expanddir), Menulocal.expanddir);
 #endif
+  }
 
   combo_box_set_active(d->loadpath, Menulocal.loadpath);
 
@@ -1130,6 +1158,16 @@ MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
     gtk_font_chooser_set_font(GTK_FONT_CHOOSER(d->file_preview_font), Menulocal.file_preview_font);
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_check_button_set_active(GTK_CHECK_BUTTON(d->use_opacity), Menulocal.use_opacity);
+
+  gtk_check_button_set_active(GTK_CHECK_BUTTON(d->select_data), Menulocal.select_data);
+
+  gtk_check_button_set_active(GTK_CHECK_BUTTON(d->use_custom_palette), Menulocal.use_custom_palette);
+  arraycpy(&(d->tmp_palette), &(Menulocal.custom_palette));
+
+  gtk_check_button_set_active(GTK_CHECK_BUTTON(d->use_dark_theme), Menulocal.use_dark_theme);
+#else
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->use_opacity), Menulocal.use_opacity);
 
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->select_data), Menulocal.select_data);
@@ -1138,6 +1176,7 @@ MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
   arraycpy(&(d->tmp_palette), &(Menulocal.custom_palette));
 
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->use_dark_theme), Menulocal.use_dark_theme);
+#endif
 
   if (Menulocal.source_style_id) {
     GtkSourceStyleSchemeManager *sman;
@@ -1245,7 +1284,7 @@ edit_custom_palette_dialog_response(GtkDialog* self, gint response_id, gpointer 
   d = user_data;
   if (response_id == GTK_RESPONSE_ACCEPT) {
     save_custom_palette(d, d->palette);
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->use_custom_palette), TRUE);
+    gtk_check_button_set_active(GTK_CHECK_BUTTON(d->use_custom_palette), TRUE);
   }
   g_free(d->palette);
   d->palette = NULL;
@@ -1570,6 +1609,23 @@ MiscDialogClose(GtkWidget *w, void *data)
   set_program_name(d->editor, &Menulocal.editor);
   set_program_name(d->help_browser, &Menulocal.help_browser);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  Menulocal.changedirectory =
+    gtk_check_button_get_active(GTK_CHECK_BUTTON(d->directory));
+
+  a = combo_box_get_active(d->path);
+  if (a >= 0) {
+    Menulocal.savepath = a;
+  }
+
+  Menulocal.savewithdata =
+    gtk_check_button_get_active(GTK_CHECK_BUTTON(d->datafile));
+
+  Menulocal.savewithmerge =
+    gtk_check_button_get_active(GTK_CHECK_BUTTON(d->mergefile));
+
+  Menulocal.expand = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->expand));
+#else
   Menulocal.changedirectory =
     gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->directory));
 
@@ -1585,6 +1641,7 @@ MiscDialogClose(GtkWidget *w, void *data)
     gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->mergefile));
 
   Menulocal.expand = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->expand));
+#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
   buf = gtk_editable_get_text(GTK_EDITABLE(d->expanddir));
@@ -1622,17 +1679,29 @@ MiscDialogClose(GtkWidget *w, void *data)
 
   set_font(&Menulocal.file_preview_font, d->file_preview_font);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  Menulocal.use_opacity = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->use_opacity));
+  putobj(d->Obj, "use_opacity", d->Id, &Menulocal.use_opacity);
+
+  Menulocal.select_data = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->select_data));
+  Menulocal.use_custom_palette = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->use_custom_palette));
+#else
   Menulocal.use_opacity = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->use_opacity));
   putobj(d->Obj, "use_opacity", d->Id, &Menulocal.use_opacity);
 
   Menulocal.select_data = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->select_data));
   Menulocal.use_custom_palette = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->use_custom_palette));
+#endif
   if (arraycmp(&(Menulocal.custom_palette), &(d->tmp_palette))) {
     arraycpy(&(Menulocal.custom_palette), &(d->tmp_palette));
   }
   arraydel(&(d->tmp_palette));
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  menu_use_dark_theme_set(gtk_check_button_get_active(GTK_CHECK_BUTTON(d->use_dark_theme)));
+#else
   menu_use_dark_theme_set(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->use_dark_theme)));
+#endif
 
   d->ret = ret;
 
@@ -1663,7 +1732,11 @@ MiscDialog(struct MiscDialog *data, struct objlist *obj, int id)
 static void
 ExViewerDialogSetupItem(GtkWidget *w, struct ExViewerDialog *d)
 {
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_check_button_set_active(GTK_CHECK_BUTTON(d->use_external), Menulocal.exwin_use_external);
+#else
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->use_external), Menulocal.exwin_use_external);
+#endif
   gtk_range_set_value(GTK_RANGE(d->dpi), Menulocal.exwindpi);
   spin_entry_set_val(d->width, Menulocal.exwinwidth);
   spin_entry_set_val(d->height, Menulocal.exwinheight);
@@ -1671,14 +1744,22 @@ ExViewerDialogSetupItem(GtkWidget *w, struct ExViewerDialog *d)
 
 
 static void
+#if GTK_CHECK_VERSION(4, 0, 0)
+use_external_toggled(GtkCheckButton *checkbutton, gpointer user_data)
+#else
 use_external_toggled(GtkToggleButton *togglebutton, gpointer user_data)
+#endif
 {
   gboolean state;
   struct ExViewerDialog *d;
 
   d = (struct ExViewerDialog *) user_data;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  state = ! gtk_check_button_get_active(checkbutton);
+#else
   state = ! gtk_toggle_button_get_active(togglebutton);
+#endif
 
   set_widget_sensitivity_with_label(d->dpi, state);
   set_widget_sensitivity_with_label(d->width, state);
@@ -1739,7 +1820,11 @@ ExViewerDialogClose(GtkWidget *w, void *data)
   Menulocal.exwindpi = gtk_range_get_value(GTK_RANGE(d->dpi));
   Menulocal.exwinwidth = spin_entry_get_val(d->width);
   Menulocal.exwinheight = spin_entry_get_val(d->height);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  Menulocal.exwin_use_external = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->use_external));
+#else
   Menulocal.exwin_use_external = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->use_external));
+#endif
 
   if (d->ret == IDSAVE) {
     save_config(SAVE_CONFIG_TYPE_EXTERNAL_VIEWER);
@@ -1767,14 +1852,22 @@ ViewerDialogSetupItem(GtkWidget *w, struct ViewerDialog *d)
   combo_box_set_active(d->antialias, a);
 
   getobj(d->Obj, "redraw_flag", d->Id, 0, NULL, &a);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_check_button_set_active(GTK_CHECK_BUTTON(d->loadfile), a);
+#else
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->loadfile), a);
+#endif
 
   spin_entry_set_val(d->data_num, Menulocal.redrawf_num);
   spin_entry_set_val(d->grid, Menulocal.grid);
 
   combo_box_set_active(d->fftype, (Menulocal.focus_frame_type == N_LINE_TYPE_SOLID) ? 0 : 1);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_check_button_set_active(GTK_CHECK_BUTTON(d->preserve_width), Menulocal.preserve_width);
+#else
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->preserve_width), Menulocal.preserve_width);
+#endif
 
   color.red = Menulocal.bg_r;
   color.green = Menulocal.bg_g;
@@ -1785,14 +1878,22 @@ ViewerDialogSetupItem(GtkWidget *w, struct ViewerDialog *d)
 }
 
 static void
+#if GTK_CHECK_VERSION(4, 0, 0)
+load_file_toggled(GtkCheckButton *checkbutton, gpointer user_data)
+#else
 load_file_toggled(GtkToggleButton *togglebutton, gpointer user_data)
+#endif
 {
   gboolean state;
   struct ViewerDialog *d;
 
   d = (struct ViewerDialog *) user_data;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  state = gtk_check_button_get_active(checkbutton);
+#else
   state = gtk_toggle_button_get_active(togglebutton);
+#endif
 
   set_widget_sensitivity_with_label(d->data_num, state);
 }
@@ -1887,7 +1988,11 @@ ViewerDialogClose(GtkWidget *w, void *data)
     return;
   Menulocal.antialias = a;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  a = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->loadfile));
+#else
   a = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->loadfile));
+#endif
   a = a ? TRUE : FALSE;
   if (putobj(d->Obj, "redraw_flag", d->Id, &a) == -1)
     return;
@@ -1896,8 +2001,13 @@ ViewerDialogClose(GtkWidget *w, void *data)
   if (putobj(d->Obj, "redraw_num", d->Id, &a) == -1)
     return;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  Menulocal.preserve_width =
+    gtk_check_button_get_active(GTK_CHECK_BUTTON(d->preserve_width));
+#else
   Menulocal.preserve_width =
     gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->preserve_width));
+#endif
 
   gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(d->bgcol), &color);
   bg = (Menulocal.bg_r != color.red || Menulocal.bg_g != color.green || Menulocal.bg_b != color.blue);

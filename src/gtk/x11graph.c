@@ -132,11 +132,19 @@ PageDialogSetupItem(GtkWidget *w, struct PageDialog *d)
 
   j = set_paper_type(Menulocal.PaperWidth, Menulocal.PaperHeight);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  if (Menulocal.PaperLandscape) {
+    gtk_check_button_set_active(GTK_CHECK_BUTTON(d->landscape), TRUE);
+  } else {
+    gtk_check_button_set_active(GTK_CHECK_BUTTON(d->portrait), TRUE);
+  }
+#else
   if (Menulocal.PaperLandscape) {
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->landscape), TRUE);
   } else {
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->portrait), TRUE);
   }
+#endif
 
   spin_entry_set_val(d->paperwidth, Menulocal.PaperWidth);
   spin_entry_set_val(d->paperheight, Menulocal.PaperHeight);
@@ -154,7 +162,11 @@ PageDialogPage(GtkWidget *w, gpointer client_data)
   d = (struct PageDialog *) client_data;
 
   paper = combo_box_get_active(d->paper);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  landscape = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->landscape));
+#else
   landscape = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->landscape));
+#endif
 
   if (paper < 0)
     return;
@@ -226,11 +238,12 @@ PageDialogSetup(GtkWidget *wi, void *data, int makewidget)
 #if GTK_CHECK_VERSION(4, 0, 0)
     w = gtk_check_button_new_with_mnemonic(_("_Portrait"));
     group = w;
+    gtk_check_button_set_active(GTK_CHECK_BUTTON(w), TRUE);
 #else
     w = gtk_radio_button_new_with_mnemonic(NULL, _("_Portrait"));
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), TRUE);
 #endif
     add_widget_to_table(table, w, _("_Orientation:"), FALSE, i++);
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), TRUE);
     d->portrait = w;
 
 #if GTK_CHECK_VERSION(4, 0, 0)
@@ -1209,7 +1222,11 @@ LoadDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_widget_show_all(GTK_WIDGET(d->vbox));
 #endif
   }
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_check_button_set_active(GTK_CHECK_BUTTON(d->expand_file), d->expand);
+#else
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->expand_file), d->expand);
+#endif
   combo_box_set_active(d->load_path, d->loadpath);
 #if GTK_CHECK_VERSION(4, 0, 0)
   folder_chooser_button_set_folder(d->dir, d->exdir);
@@ -1227,7 +1244,11 @@ LoadDialogClose(GtkWidget *w, void *data)
   d = (struct LoadDialog *) data;
   if (d->ret == IDCANCEL)
     return;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  d->expand = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->expand_file));
+#else
   d->expand = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->expand_file));
+#endif
   if (d->exdir) {
     g_free(d->exdir);
   }
@@ -1291,8 +1312,13 @@ SaveDialogSetup(GtkWidget *wi, void *data, int makewidget)
 #endif
   }
   combo_box_set_active(d->path, Menulocal.savepath);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_check_button_set_active(GTK_CHECK_BUTTON(d->include_data), Menulocal.savewithdata);
+  gtk_check_button_set_active(GTK_CHECK_BUTTON(d->include_merge), Menulocal.savewithmerge);
+#else
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->include_data), Menulocal.savewithdata);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->include_merge), Menulocal.savewithmerge);
+#endif
   d->focus = d->include_data;
 }
 
@@ -1310,8 +1336,13 @@ SaveDialogClose(GtkWidget *w, void *data)
   if (num >= 0) {
     d->Path = num;
   }
+#if GTK_CHECK_VERSION(4, 0, 0)
+  *(d->SaveData) = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->include_data));
+  *(d->SaveMerge) = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->include_merge));
+#else
   *(d->SaveData) = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->include_data));
   *(d->SaveMerge) = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->include_merge));
+#endif
 }
 
 void

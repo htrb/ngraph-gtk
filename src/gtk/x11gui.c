@@ -521,12 +521,14 @@ DialogRadio(GtkWidget *parent, const char *title, const char *caption, struct na
       group = btn;
     }
     gtk_box_append(vbox, btn);
+    btn_ary[i] = btn;
+    gtk_check_button_set_active(GTK_CHECK_BUTTON(btn), i == *r);
 #else
     btn = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(btn), d[i]);
     gtk_box_pack_start(vbox, btn, FALSE, FALSE, 2);
-#endif
     btn_ary[i] = btn;
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(btn), i == *r);
+#endif
   }
 
   set_dialog_position(dlg, x, y);
@@ -538,10 +540,17 @@ DialogRadio(GtkWidget *parent, const char *title, const char *caption, struct na
   if (res_id > 0 || res_id == GTK_RESPONSE_OK) {
     *r = -1;
     for (i = 0; i < anum; i++) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+      if (gtk_check_button_get_active(GTK_CHECK_BUTTON(btn_ary[i]))) {
+	*r = i;
+	break;
+      }
+#else
       if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(btn_ary[i]))) {
 	*r = i;
 	break;
       }
+#endif
     }
     data = IDOK;
   } else {
@@ -960,7 +969,11 @@ DialogCheck(GtkWidget *parent, const char *title, const char *caption, struct na
   }
 
   for (i = 0; i < anum; i++) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_check_button_set_active(GTK_CHECK_BUTTON(btn_ary[i]), r[i]);
+#else
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(btn_ary[i]), r[i]);
+#endif
   }
 
   set_dialog_position(dlg, x, y);
@@ -971,7 +984,11 @@ DialogCheck(GtkWidget *parent, const char *title, const char *caption, struct na
 
   if (res_id > 0 || res_id == GTK_RESPONSE_OK) {
     for (i = 0; i < anum; i++) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+      r[i] = gtk_check_button_get_active(GTK_CHECK_BUTTON(btn_ary[i]));
+#else
       r[i] = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(btn_ary[i]));
+#endif
     }
     data = IDOK;
   } else {

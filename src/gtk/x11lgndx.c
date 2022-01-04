@@ -94,17 +94,29 @@ LegendGaussDialogSetupItem(GtkWidget *w, struct LegendGaussDialog *d, int id)
 
   n = d->Dir;
   if (n >= 0 && n < LEGEND_DIRECTION_NUM) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+    GtkCheckButton *btn;
+    btn = GTK_CHECK_BUTTON(g_slist_nth_data(d->dir_list, n));
+    gtk_check_button_set_active(btn, TRUE);
+#else
     GtkToggleButton *btn;
     btn = GTK_TOGGLE_BUTTON(g_slist_nth_data(d->dir_list, n));
     gtk_toggle_button_set_active(btn, TRUE);
+#endif
   }
 
 
   n = d->Mode;
   if (n >=0 && n < 4) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+    GtkCheckButton *btn;
+    btn = GTK_CHECK_BUTTON(g_slist_nth_data(d->func_list, n));
+    gtk_check_button_set_active(btn, TRUE);
+#else
     GtkToggleButton *btn;
     btn = GTK_TOGGLE_BUTTON(g_slist_nth_data(d->func_list, n));
     gtk_toggle_button_set_active(btn, TRUE);
+#endif
   }
 
   gtk_range_set_value(GTK_RANGE(d->div), d->Div);
@@ -304,11 +316,19 @@ get_radio_index(GSList *top)
 
   n = g_slist_length(top);
   for (i = 0, list = top; i < n; i++, list = list->next) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+    GtkCheckButton *btn;
+    btn = GTK_CHECK_BUTTON(list->data);
+    if (gtk_check_button_get_active(btn)) {
+      return i;
+    }
+#else
     GtkToggleButton *btn;
     btn = GTK_TOGGLE_BUTTON(list->data);
     if (gtk_toggle_button_get_active(btn)) {
       return i;
     }
+#endif
   }
   return -1;
 }
@@ -320,7 +340,11 @@ LegendGaussDialogMode(GtkWidget *w, gpointer client_data)
   int i;
   gboolean active;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  active = gtk_check_button_get_active(GTK_CHECK_BUTTON(w));
+#else
   active = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w));
+#endif
   if (! active)
     return;
 
@@ -341,7 +365,11 @@ LegendGaussDialogDir(GtkWidget *w, gpointer client_data)
   struct LegendGaussDialog *d;
   gboolean active;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  active = gtk_check_button_get_active(GTK_CHECK_BUTTON(w));
+#else
   active = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w));
+#endif
   if (! active)
     return;
 

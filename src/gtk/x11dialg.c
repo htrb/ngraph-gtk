@@ -772,6 +772,10 @@ SetObjFieldFromWidget(GtkWidget *w, struct objlist *Obj, int Id, char *field)
     }
   } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_TOGGLE_BUTTON)) {
     r = SetObjFieldFromToggle(w, Obj, Id, field);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_CHECK_BUTTON)) {
+    r = SetObjFieldFromToggle(w, Obj, Id, field);
+#endif
   }
 
   if (r) {
@@ -804,6 +808,10 @@ SetWidgetFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
     }
   } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_TOGGLE_BUTTON)) {
     SetToggleFromObjField(w, Obj, Id, field);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_CHECK_BUTTON)) {
+    SetToggleFromObjField(w, Obj, Id, field);
+#endif
   }
 }
 
@@ -923,7 +931,15 @@ SetObjFieldFromToggle(GtkWidget *w, struct objlist *Obj, int Id, char *field)
     return 0;
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_CHECK_BUTTON)) {
+    state = gtk_check_button_get_active(GTK_CHECK_BUTTON(w));
+  } else {
+    state = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w));
+  }
+#else
   state = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w));
+#endif
   a = state ? TRUE : FALSE;
 
   getobj(Obj, field, Id, 0, NULL, &oa);
@@ -949,7 +965,15 @@ SetToggleFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
   }
 
   getobj(Obj, field, Id, 0, NULL, &a);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_CHECK_BUTTON)) {
+    gtk_check_button_set_active(GTK_CHECK_BUTTON(w), a);
+  } else {
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), a);
+  }
+#else
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), a);
+#endif
 }
 
 static int
