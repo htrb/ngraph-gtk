@@ -208,7 +208,7 @@ add_widget_to_table_sub(GtkWidget *table, GtkWidget *w, char *title, int expand,
     label = gtk_label_new_with_mnemonic(title);
     gtk_label_set_mnemonic_widget(GTK_LABEL(label), w);
     gtk_widget_set_halign(label, GTK_ALIGN_START);
-    g_object_set(label, "margin", GINT_TO_POINTER(4), NULL);
+    widget_set_margin(label, 4);
     gtk_grid_attach(GTK_GRID(table), label, col, n, 1, 1);
     col++;
   }
@@ -220,7 +220,7 @@ add_widget_to_table_sub(GtkWidget *table, GtkWidget *w, char *title, int expand,
     } else {
       gtk_widget_set_halign(w, GTK_ALIGN_START);
     }
-    g_object_set(w, "margin", GINT_TO_POINTER(4), NULL);
+    widget_set_margin(w, 4);
     gtk_grid_attach(GTK_GRID(table), w, col, n, width, 1);
   }
 
@@ -261,8 +261,8 @@ item_setup(GtkWidget *box, GtkWidget *w, char *title, gboolean expand)
   hbox = gtk_grid_new();
   label = gtk_label_new_with_mnemonic(title);
   gtk_label_set_mnemonic_widget(GTK_LABEL(label), w);
-  g_object_set(label, "margin", GINT_TO_POINTER(2), NULL);
-  g_object_set(w, "margin", GINT_TO_POINTER(2), NULL);
+  widget_set_margin(label, 2);
+  widget_set_margin(w, 2);
   if (expand) {
     gtk_widget_set_hexpand(w, TRUE);
     gtk_widget_set_halign(w, GTK_ALIGN_FILL);

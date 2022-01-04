@@ -1087,7 +1087,7 @@ DirectoryDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     w = gtk_label_new(_("Current Dir:"));
     gtk_widget_set_halign(w, GTK_ALIGN_START);
-    g_object_set(w, "margin", GINT_TO_POINTER(4), NULL);
+    widget_set_margin(w, 4);
     gtk_grid_attach(GTK_GRID(table), w, 0, 1, 1, 1);
 
     w = gtk_label_new("");
@@ -1095,7 +1095,7 @@ DirectoryDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->dir_label = w;
     gtk_widget_set_hexpand(w, TRUE);
     gtk_widget_set_halign(w, GTK_ALIGN_START);
-    g_object_set(w, "margin", GINT_TO_POINTER(4), NULL);
+    widget_set_margin(w, 4);
     gtk_grid_attach(GTK_GRID(table), w, 1, 1, 1, 1);
 
 #if GTK_CHECK_VERSION(4, 0, 0)
