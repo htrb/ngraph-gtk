@@ -103,6 +103,15 @@ dialog_run(GtkWidget *dlg, struct DialogType *data)
 
   return data->ret;
 }
+
+static void
+ndialog_response(GtkWidget *dlg, gint res_id, gpointer user_data)
+{
+  int *data;
+  data = user_data;
+  *data = res_id;
+}
+
 #else
 int
 ndialog_run(GtkWidget *dlg)
