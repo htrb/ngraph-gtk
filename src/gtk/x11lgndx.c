@@ -394,6 +394,14 @@ LegendGaussDialogDiv(GtkWidget *w, gpointer client_data)
   clear_view(d);
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+draw_function(GtkDrawingArea* drawing_area, cairo_t* cr, int width, int height, gpointer user_data)
+{
+  LegendGaussDialogPaint(GTK_WIDGET(drawing_area), cr, user_data);
+}
+#endif
+
 static void
 LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
