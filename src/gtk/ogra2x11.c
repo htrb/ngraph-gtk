@@ -508,6 +508,7 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_drawing_area_set_draw_func(GTK_DRAWING_AREA(gtklocal->View), draw_function, gtklocal, NULL);
   gtk_widget_set_can_focus(gtklocal->View, TRUE);
+  g_signal_connect(gtklocal->View, "resize", G_CALLBACK(resized), gtklocal);
 /* must be implemented */
 #else
   g_signal_connect(gtklocal->View, "draw",
