@@ -1999,6 +1999,7 @@ ProgressDialogCreate(char *title)
 #endif
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
+  g_signal_connect(ProgressDialog, "close_request", G_CALLBACK(gtk_true), NULL);
 #else
   g_signal_connect(ProgressDialog, "delete-event", G_CALLBACK(gtk_true), NULL);
 #endif
