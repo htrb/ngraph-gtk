@@ -124,6 +124,7 @@ nruler_new(GtkOrientation orientation)
   g_signal_connect(w, "realize", G_CALLBACK(nruler_realize), ruler);
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
+  g_signal_connect(w, "resize", G_CALLBACK(nruler_resize), ruler);
 #else
   g_signal_connect(w, "size-allocate", G_CALLBACK(nruler_size_allocate), ruler);
 #endif
