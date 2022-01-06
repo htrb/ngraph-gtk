@@ -3180,17 +3180,9 @@ MarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d->cb_respond = FALSE;
   for (type = 0; type < MARK_TYPE_NUM; type++) {
-#if GTK_CHECK_VERSION(4, 0, 0)
-    gtk_check_button_set_active(GTK_CHECK_BUTTON(d->toggle[type]), FALSE);
-#else
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->toggle[type]), FALSE);
-#endif
   }
-#if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_check_button_set_active(GTK_CHECK_BUTTON(d->toggle[d->Type]), TRUE);
-#else
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->toggle[d->Type]), TRUE);
-#endif
   d->focus = d->toggle[d->Type];
   d->cb_respond = TRUE;
 }
