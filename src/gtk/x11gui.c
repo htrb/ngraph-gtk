@@ -221,6 +221,7 @@ DialogExecute(GtkWidget *parent, void *dialog)
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
     g_signal_connect(dlg, "response", G_CALLBACK(dialog_response), data);
+    g_signal_connect(dlg, "close_request", G_CALLBACK(dialog_close_request), data);
 #else
     g_signal_connect(dlg, "delete-event", G_CALLBACK(gtk_true), data);
 #endif
