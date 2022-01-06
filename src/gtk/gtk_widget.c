@@ -1127,7 +1127,12 @@ select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type)
   }
   gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(dlg), &color);
   gtk_color_chooser_set_use_alpha(GTK_COLOR_CHOOSER(dlg), Menulocal.use_opacity);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  response = IDLOOP;
+  ndialog_run(dlg, &response);
+#else
   response = ndialog_run(dlg);
+#endif
   gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(dlg), &color);
 
 #if GTK_CHECK_VERSION(4, 0, 0)
