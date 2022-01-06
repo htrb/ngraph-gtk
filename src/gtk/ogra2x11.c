@@ -326,6 +326,48 @@ add_event_motion(GtkWidget *widget, struct gtklocal *gtklocal)
   g_signal_connect(ev, "motion", G_CALLBACK(cursor_moved), gtklocal);
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+void
+resized(GtkWidget *widget, int w, int h, gpointer user_data)
+{
+  struct gtklocal *local;
+  double rh, rw, ratio;
+  int pw, ph, dpi;
+
+  local = (struct gtklocal *) user_data;
+  if (local == NULL) {
+    return;
+  }
+
+  if (! local->fit) {
+    return;
+  }
+
+  pw = local->PaperWidth;
+  ph = local->PaperHeight;
+
+  if (pw < 1 || ph < 1) {
+    return;
+  }
+
+  rw = w / pw;
+  rh = h / ph;
+
+  ratio = (rh > rw) ? rw : rh;
+  dpi = ratio * DPI_MAX;
+
+  local->windpi = dpi;
+  local->local->pixel_dot_x =
+    local->local->pixel_dot_y = ratio;
+
+  _putobj(local->obj, "dpi", local->inst, &dpi);
+
+  gtkchangedpi(local);
+
+}
+
+#endif
+
 static int
 gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
