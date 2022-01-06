@@ -1551,6 +1551,7 @@ create_arrow_setting_widgets(struct LegendDialog *d, GtkWidget *hbox)
 
   g_signal_connect(w, "value-changed", G_CALLBACK(LegendArrowDialogScaleL), d);
 #if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_scale_set_draw_value(GTK_SCALE(w), TRUE);
   gtk_scale_set_format_value_func(GTK_SCALE(w), format_value_degree, NULL, NULL);
   gtk_box_append(GTK_BOX(vbox), w);
 #else
@@ -1578,6 +1579,7 @@ create_arrow_setting_widgets(struct LegendDialog *d, GtkWidget *hbox)
   set_scale_mark(w, GTK_POS_TOP, 200, 200);
   g_signal_connect(w, "value-changed", G_CALLBACK(LegendArrowDialogScaleW), d);
 #if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_scale_set_draw_value(GTK_SCALE(w), TRUE);
   gtk_scale_set_format_value_func(GTK_SCALE(w), format_value_percent, NULL, NULL);
   gtk_box_append(GTK_BOX(vbox), w);
 #else
