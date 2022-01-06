@@ -478,6 +478,7 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   gtk_window_set_default_size(GTK_WINDOW(gtklocal->mainwin), width, height);
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
+  g_signal_connect_swapped(gtklocal->mainwin, "close_request", G_CALLBACK(gtkclose), gtklocal->mainwin);
 #else
   g_signal_connect_swapped(gtklocal->mainwin,
 			   "delete-event",
