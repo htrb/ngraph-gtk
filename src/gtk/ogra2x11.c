@@ -366,6 +366,11 @@ resized(GtkWidget *widget, int w, int h, gpointer user_data)
 
 }
 
+static void
+draw_function(GtkDrawingArea* drawing_area, cairo_t* cr, int width, int height, gpointer user_data)
+{
+  gtkevpaint(GTK_WIDGET(drawing_area), cr, user_data);
+}
 #endif
 
 static int
