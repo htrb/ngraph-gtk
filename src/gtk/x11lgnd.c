@@ -1550,10 +1550,11 @@ create_arrow_setting_widgets(struct LegendDialog *d, GtkWidget *hbox)
   set_scale_mark(w, GTK_POS_BOTTOM, 15, 15);
 
   g_signal_connect(w, "value-changed", G_CALLBACK(LegendArrowDialogScaleL), d);
-  g_signal_connect(w, "format-value", G_CALLBACK(format_value_degree), NULL);
 #if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_scale_set_format_value_func(GTK_SCALE(w), format_value_degree, NULL, NULL);
   gtk_box_append(GTK_BOX(vbox), w);
 #else
+  g_signal_connect(w, "format-value", G_CALLBACK(format_value_degree), NULL);
   gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
 #endif
   d->arrow_length = w;
@@ -1576,10 +1577,11 @@ create_arrow_setting_widgets(struct LegendDialog *d, GtkWidget *hbox)
   w = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 100, 2000, 1);
   set_scale_mark(w, GTK_POS_TOP, 200, 200);
   g_signal_connect(w, "value-changed", G_CALLBACK(LegendArrowDialogScaleW), d);
-  g_signal_connect(w, "format-value", G_CALLBACK(format_value_percent), NULL);
 #if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_scale_set_format_value_func(GTK_SCALE(w), format_value_percent, NULL, NULL);
   gtk_box_append(GTK_BOX(vbox), w);
 #else
+  g_signal_connect(w, "format-value", G_CALLBACK(format_value_percent), NULL);
   gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
 #endif
   d->arrow_width = w;
