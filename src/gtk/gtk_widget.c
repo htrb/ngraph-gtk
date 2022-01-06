@@ -426,8 +426,8 @@ create_direction_entry(void)
 #else
   gtk_entry_set_icon_from_icon_name(GTK_ENTRY(w), GTK_ENTRY_ICON_SECONDARY, "go-up-symbolic");
   gtk_entry_set_icon_from_icon_name(GTK_ENTRY(w), GTK_ENTRY_ICON_PRIMARY, "go-down-symbolic");
-#endif
   g_signal_connect(w, "icon-release", G_CALLBACK(direction_icon_released), NULL);
+#endif
 
   return w;
 }
