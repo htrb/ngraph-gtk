@@ -1221,6 +1221,7 @@ points_setup(struct LegendDialog *d)
 #endif
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
   set_widget_margin(swin, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT | WIDGET_MARGIN_BOTTOM);
+  gtk_widget_set_vexpand(swin, TRUE);
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), tree_view);
   gtk_box_append(GTK_BOX(vbox), swin);
