@@ -598,6 +598,7 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     w = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 0, SCALE_V_MAX, 1);
     set_scale_mark(w, GTK_POS_BOTTOM, 100, 200);
+    gtk_scale_set_draw_value(GTK_SCALE(w), TRUE);
     g_signal_connect(w, "value-changed", G_CALLBACK(LegendGaussDialogScaleV), d);
     d->scv = w;
 #if GTK_CHECK_VERSION(4, 0, 0)
@@ -620,6 +621,7 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     w = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, - SCALE_H_MAX, SCALE_H_MAX, 1);
     set_scale_mark(w, GTK_POS_TOP, -100, 25);
+    gtk_scale_set_draw_value(GTK_SCALE(w), TRUE);
     g_signal_connect(w, "value-changed", G_CALLBACK(LegendGaussDialogScaleH), d);
     d->sch = w;
 #if GTK_CHECK_VERSION(4, 0, 0)
