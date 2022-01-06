@@ -343,6 +343,7 @@ SelectDialogSetup(GtkWidget *wi, void *data, int makewidget)
 #endif
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 #if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_widget_set_vexpand(swin, TRUE);
     gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), d->list);
 #else
     gtk_container_add(GTK_CONTAINER(swin), d->list);
