@@ -250,14 +250,22 @@ GridCB(struct objlist *obj, int id)
 }
 
 static void
+#if GTK_CHECK_VERSION(4, 0, 0)
+bg_button_toggled(GtkCheckButton *button, gpointer user_data)
+#else
 bg_button_toggled(GtkToggleButton *button, gpointer user_data)
+#endif
 {
   struct GridDialog *d;
   gboolean state;
 
   d = (struct GridDialog *) user_data;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  state = gtk_check_button_get_active(button);
+#else
   state = gtk_toggle_button_get_active(button);
+#endif
   set_widget_sensitivity_with_label(d->bcolor, state);
 }
 
@@ -282,7 +290,11 @@ GridDialogSetupItem(struct GridDialog *d, int id)
     SetWidgetFromObjField(d->width[i], d->Obj, id, width);
   }
   SetWidgetFromObjField(d->background, d->Obj, id, "background");
+#if GTK_CHECK_VERSION(4, 0, 0)
+  bg_button_toggled(GTK_CHECK_BUTTON(d->background), d);
+#else
   bg_button_toggled(GTK_TOGGLE_BUTTON(d->background), d);
+#endif
 
   set_color(d->color, d->Obj, id, NULL);
   set_color(d->bcolor, d->Obj, id, "B");
