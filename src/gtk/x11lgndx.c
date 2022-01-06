@@ -610,10 +610,11 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->view = w;
     gtk_widget_set_size_request(w, VIEW_SIZE, VIEW_SIZE);
 
-    g_signal_connect(w, "draw", G_CALLBACK(LegendGaussDialogPaint), d);
 #if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_drawing_area_set_draw_func(GTK_DRAWING_AREA(w), draw_function, d, NULL);
     gtk_box_append(GTK_BOX(vbox), w);
 #else
+    g_signal_connect(w, "draw", G_CALLBACK(LegendGaussDialogPaint), d);
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 0);
 #endif
 
