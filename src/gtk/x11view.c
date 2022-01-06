@@ -1856,6 +1856,8 @@ ViewerWinSetup(void)
   add_event_zoom(d->Win, d);
 #if GTK_CHECK_VERSION(4, 0, 0)
   add_event_motion(d->Win, d);
+  gtk_drawing_area_set_draw_func(GTK_DRAWING_AREA(d->Win), draw_function, d, NULL);
+  gtk_widget_set_can_focus(d->Win, TRUE);
 #else
   g_signal_connect(d->Win, "motion-notify-event", G_CALLBACK(ViewerEvMouseMotion), d);
   g_signal_connect(d->Win, "scroll-event", G_CALLBACK(ViewerEvScroll), d);
