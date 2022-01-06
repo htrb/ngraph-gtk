@@ -2662,6 +2662,7 @@ create_toplevel_window(void)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
+  g_signal_connect(TopLevel, "close_request", G_CALLBACK(CloseCallback), NULL);
 #else
   g_signal_connect(TopLevel, "delete-event", G_CALLBACK(CloseCallback), NULL);
   g_signal_connect(TopLevel, "destroy-event", G_CALLBACK(CloseCallback), NULL);
