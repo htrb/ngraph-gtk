@@ -961,6 +961,9 @@ n_initialize(int *argc, char ***argv)
     create_app_menu(GtkApp);
   }
 #endif
+  if (OpenDisplay) {
+    create_menubar(GtkApp);
+  }
 
   if (init_cmd_tbl()) {
     exit(1);
