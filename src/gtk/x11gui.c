@@ -85,6 +85,25 @@ dialog_destroyed_cb(GtkWidget *w, gpointer user_data)
   ((struct DialogType *) user_data)->widget = NULL;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static int
+dialog_run(GtkWidget *dlg, struct DialogType *data)
+{
+  int lock_state;
+
+  if (dlg == NULL || data == NULL) {
+    return GTK_RESPONSE_CANCEL;
+  }
+
+  lock_state = DnDLock;
+  while (data->ret == IDLOOP) {
+    g_main_context_iteration(NULL, TRUE);
+  }
+  DnDLock = lock_state;
+
+  return data->ret;
+}
+#else
 int
 ndialog_run(GtkWidget *dlg)
 {
@@ -95,16 +114,12 @@ ndialog_run(GtkWidget *dlg)
   }
 
   lock_state = DnDLock;
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
-  r = GTK_RESPONSE_OK;
-#else
   r = gtk_dialog_run(GTK_DIALOG(dlg));
-#endif
   DnDLock = lock_state;
 
   return r;
 }
+#endif
 
 int
 DialogExecute(GtkWidget *parent, void *dialog)
