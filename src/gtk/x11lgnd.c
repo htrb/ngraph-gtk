@@ -1532,6 +1532,14 @@ create_maker_setting_widgets(struct LegendDialog *d, GtkWidget *table, int i)
   gtk_grid_attach(GTK_GRID(table), hbox3, 1, i, 1, 1);
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+draw_function(GtkDrawingArea* drawing_area, cairo_t* cr, int width, int height, gpointer user_data)
+{
+  LegendArrowDialogPaint(GTK_WIDGET(drawing_area), cr, user_data);
+}
+#endif
+
 static void
 create_arrow_setting_widgets(struct LegendDialog *d, GtkWidget *hbox)
 {
