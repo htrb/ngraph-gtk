@@ -1566,6 +1566,7 @@ create_arrow_setting_widgets(struct LegendDialog *d, GtkWidget *hbox)
   gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
 #endif
 #if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_drawing_area_set_draw_func(GTK_DRAWING_AREA(w), draw_function, d, NULL);
 /* must be implemented */
 #else
   g_signal_connect(w, "draw", G_CALLBACK(LegendArrowDialogPaint), d);
