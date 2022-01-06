@@ -518,6 +518,7 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     w = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 10, DIV_MAX, 1);
     set_scale_mark(w, GTK_POS_BOTTOM, 20, 20);
+    gtk_scale_set_draw_value(GTK_SCALE(w), TRUE);
     add_widget_to_table(table, w, _("_Division:"), TRUE, i++);
     g_signal_connect(w, "value-changed", G_CALLBACK(LegendGaussDialogDiv), d);
     d->div = w;
