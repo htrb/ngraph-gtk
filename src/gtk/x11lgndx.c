@@ -426,13 +426,13 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
 #if GTK_CHECK_VERSION(4, 0, 0)
     button = gtk_check_button_new_with_mnemonic(_("_Sin"));
     group = button;
-    func_list = g_slist_append(NULL, button);
+    func_list = g_slist_prepend(NULL, button);
 #else
     button = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(button), _("_Sin"));
 #endif
     g_signal_connect(button, "toggled", G_CALLBACK(LegendGaussDialogMode), d);
 #if GTK_CHECK_VERSION(4, 0, 0)
-    gtk_box_append(GTK_BOX(hbox), button);
+    gtk_box_prepend(GTK_BOX(hbox), button);
 #else
     gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 #endif
@@ -440,13 +440,13 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
 #if GTK_CHECK_VERSION(4, 0, 0)
     button = gtk_check_button_new_with_mnemonic(_("_Parabola"));
     gtk_check_button_set_group(GTK_CHECK_BUTTON(button), GTK_CHECK_BUTTON(group));
-    func_list = g_slist_append(func_list, button);
+    func_list = g_slist_prepend(func_list, button);
 #else
     button = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(button), _("_Parabola"));
 #endif
     g_signal_connect(button, "toggled", G_CALLBACK(LegendGaussDialogMode), d);
 #if GTK_CHECK_VERSION(4, 0, 0)
-    gtk_box_append(GTK_BOX(hbox), button);
+    gtk_box_prepend(GTK_BOX(hbox), button);
 #else
     gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 #endif
@@ -454,13 +454,13 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
 #if GTK_CHECK_VERSION(4, 0, 0)
     button = gtk_check_button_new_with_mnemonic(_("_Lorentz"));
     gtk_check_button_set_group(GTK_CHECK_BUTTON(button), GTK_CHECK_BUTTON(group));
-    func_list = g_slist_append(func_list, button);
+    func_list = g_slist_prepend(func_list, button);
 #else
     button = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(button), _("_Lorentz"));
 #endif
     g_signal_connect(button, "toggled", G_CALLBACK(LegendGaussDialogMode), d);
 #if GTK_CHECK_VERSION(4, 0, 0)
-    gtk_box_append(GTK_BOX(hbox), button);
+    gtk_box_prepend(GTK_BOX(hbox), button);
 #else
     gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 #endif
@@ -468,13 +468,13 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
 #if GTK_CHECK_VERSION(4, 0, 0)
     button = gtk_check_button_new_with_mnemonic(_("_Gauss"));
     gtk_check_button_set_group(GTK_CHECK_BUTTON(button), GTK_CHECK_BUTTON(group));
-    func_list = g_slist_append(func_list, button);
+    func_list = g_slist_prepend(func_list, button);
 #else
     button = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(button), _("_Gauss"));
 #endif
     g_signal_connect(button, "toggled", G_CALLBACK(LegendGaussDialogMode), d);
 #if GTK_CHECK_VERSION(4, 0, 0)
-    gtk_box_append(GTK_BOX(hbox), button);
+    gtk_box_prepend(GTK_BOX(hbox), button);
 #else
     gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 #endif
@@ -527,9 +527,9 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
     button = NULL;
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-    group = NULL;
     button = gtk_check_button_new_with_mnemonic(_("_T"));
-    dir_list = g_slist_append(NULL, button);
+    group = button;
+    dir_list = g_slist_prepend(NULL, button);
 #else
     button = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(button), "_T");
 #endif
@@ -543,7 +543,7 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
 #if GTK_CHECK_VERSION(4, 0, 0)
     button = gtk_check_button_new_with_mnemonic(_("_B"));
     gtk_check_button_set_group(GTK_CHECK_BUTTON(button), GTK_CHECK_BUTTON(group));
-    dir_list = g_slist_append(dir_list, button);
+    dir_list = g_slist_prepend(dir_list, button);
 #else
     button = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(button), "_B");
 #endif
@@ -557,7 +557,7 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
 #if GTK_CHECK_VERSION(4, 0, 0)
     button = gtk_check_button_new_with_mnemonic(_("_L"));
     gtk_check_button_set_group(GTK_CHECK_BUTTON(button), GTK_CHECK_BUTTON(group));
-    dir_list = g_slist_append(dir_list, button);
+    dir_list = g_slist_prepend(dir_list, button);
 #else
     button = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(button), "_L");
 #endif
@@ -571,7 +571,7 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
 #if GTK_CHECK_VERSION(4, 0, 0)
     button = gtk_check_button_new_with_mnemonic(_("_R"));
     gtk_check_button_set_group(GTK_CHECK_BUTTON(button), GTK_CHECK_BUTTON(group));
-    dir_list = g_slist_append(dir_list, button);
+    dir_list = g_slist_prepend(dir_list, button);
 #else
     button = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(button), "_R");
 #endif
