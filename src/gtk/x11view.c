@@ -1745,6 +1745,14 @@ vscroll_change_value_cb(GtkRange *range, GtkScrollType scroll, gdouble value, gp
   return TRUE;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+draw_function(GtkDrawingArea* drawing_area, cairo_t* cr, int width, int height, gpointer user_data)
+{
+  ViewerEvPaint(GTK_WIDGET(drawing_area), cr, user_data);
+}
+#endif
+
 void
 ViewerWinSetup(void)
 {
