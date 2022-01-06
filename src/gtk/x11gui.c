@@ -230,6 +230,7 @@ DialogExecute(GtkWidget *parent, void *dialog)
     data->parent = parent;
     data->widget = dlg;
     data->vbox = GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dlg)));
+    gtk_orientable_set_orientation(GTK_ORIENTABLE(data->vbox), GTK_ORIENTATION_VERTICAL);
     data->show_cancel = TRUE;
     data->ok_button = _("_OK");
 
