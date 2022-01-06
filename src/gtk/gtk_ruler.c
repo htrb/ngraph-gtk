@@ -73,6 +73,11 @@ static void nruler_draw_pos(Nruler *ruler, GtkWidget *widget, cairo_t *cr);
 static gboolean nruler_expose(GtkWidget *widget, cairo_t *cr, gpointer user_data);
 static GtkStyleContext *nruler_get_color(Nruler *ruler, GdkRGBA *fg);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void nruler_resize(GtkWidget *widget, int width, int hegiht, gpointer user_data);
+
+#endif
+
 GtkWidget *
 nruler_new(GtkOrientation orientation)
 {
@@ -183,6 +188,13 @@ nruler_destroy(GtkWidget *widget, gpointer user_data)
   return FALSE;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+nruler_resize(GtkWidget *widget, int width, int hegiht, gpointer user_data)
+{
+  nruler_realize(widget, user_data);
+}
+#else
 static void
 nruler_size_allocate(GtkWidget *widget, GtkAllocation *allocation, gpointer user_data)
 {
@@ -192,6 +204,7 @@ nruler_size_allocate(GtkWidget *widget, GtkAllocation *allocation, gpointer user
 
   nruler_make_pixmap(ruler, widget, ruler->parent);
 }
+#endif
 
 static void
 nruler_realize(GtkWidget *widget, gpointer user_data)
