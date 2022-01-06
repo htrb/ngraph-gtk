@@ -112,6 +112,15 @@ ndialog_response(GtkWidget *dlg, gint res_id, gpointer user_data)
   *data = res_id;
 }
 
+static gboolean
+ndialog_close_request(GtkWindow* window, gpointer user_data)
+{
+  int *data;
+  data = user_data;
+  *data = GTK_RESPONSE_CANCEL;
+  return TRUE;
+}
+
 #else
 int
 ndialog_run(GtkWidget *dlg)
