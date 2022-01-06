@@ -161,6 +161,17 @@ ndialog_run(GtkWidget *dlg)
 }
 #endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+dialog_response(GtkWidget *dlg, gint res_id, gpointer user_data)
+{
+  struct DialogType *data;
+  data = user_data;
+  data->ret = res_id;
+}
+
+#endif
+
 int
 DialogExecute(GtkWidget *parent, void *dialog)
 {
