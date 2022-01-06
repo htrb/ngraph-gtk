@@ -3262,24 +3262,27 @@ script_exec(GtkWidget *w, gpointer client_data)
   main_window_redraw();
 }
 
+static void
 #if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
-static void
 CmViewerButtonArm(GtkWidget *action, gpointer client_data)
-{
-}
 #else
-static void
 CmViewerButtonArm(GtkToggleToolButton *action, gpointer client_data)
+#endif
 {
   int mode = PointB;
   struct Viewer *d;
 
   d = &NgraphApp.Viewer;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  if (! gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(action))) {
+    return;
+  }
+#else
   if (! gtk_toggle_tool_button_get_active(action)) {
     return;
   }
+#endif
 
   mode = GPOINTER_TO_INT(client_data);
 
@@ -3334,7 +3337,6 @@ CmViewerButtonArm(GtkToggleToolButton *action, gpointer client_data)
 
   gtk_widget_queue_draw(d->Win);
 }
-#endif
 
 void
 set_toolbox_mode(enum TOOLBOX_MODE mode)
