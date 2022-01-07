@@ -117,6 +117,7 @@ static struct narray SelList;
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 static void ViewerEvSize(GtkWidget *w, int width, int height, gpointer client_data);
+static void ViewerEvRealize(GtkWidget *w, gpointer client_data);
 static void ViewerEvHScroll(GtkAdjustment *adj, gpointer user_data);
 static void ViewerEvVScroll(GtkAdjustment *adj, gpointer user_data);
 #else
@@ -6388,6 +6389,17 @@ ViewerEvKeyUp(GtkEventControllerKey *controller, guint keyval, guint keycode, Gd
     break;
   }
 }
+
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+ViewerEvRealize(GtkWidget *w, gpointer client_data)
+{
+  int width, height;
+  width = gtk_drawing_area_get_content_width(GTK_DRAWING_AREA(w));
+  height = gtk_drawing_area_get_content_height(GTK_DRAWING_AREA(w));
+  ViewerEvSize(w, width, height, client_data);
+}
+#endif
 
 static void
 #if GTK_CHECK_VERSION(4, 0, 0)
