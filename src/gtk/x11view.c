@@ -1821,10 +1821,10 @@ ViewerWinSetup(void)
   ChangeDPI();
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
   gtk_drawing_area_set_draw_func(GTK_DRAWING_AREA(d->Win), draw_function, d, NULL);
   gtk_widget_set_can_focus(d->Win, TRUE);
   g_signal_connect(d->Win, "resize", G_CALLBACK(ViewerEvSize), d);
+  g_signal_connect(d->Win, "realize", G_CALLBACK(ViewerEvRealize), d);
 #else
   g_signal_connect(d->Win, "draw", G_CALLBACK(ViewerEvPaint), d);
   g_signal_connect(d->Win, "size-allocate", G_CALLBACK(ViewerEvSize), d);
