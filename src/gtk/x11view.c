@@ -115,9 +115,13 @@ static struct narray SelList;
 #define IDEVMASK        101
 #define IDEVMOVE        102
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void ViewerEvHScroll(GtkAdjustment *adj, gpointer user_data);
+#else
 static void ViewerEvSize(GtkWidget *w, GtkAllocation *allocation, gpointer client_data);
 static void ViewerEvHScroll(GtkRange *range, gpointer user_data);
 static void ViewerEvVScroll(GtkRange *range, gpointer user_data);
+#endif
 static gboolean ViewerEvPaint(GtkWidget *w, cairo_t *cr, gpointer client_data);
 static gboolean ViewerEvLButtonDown(unsigned int state, TPoint *point, struct Viewer *d);
 static gboolean ViewerEvLButtonUp(unsigned int state, TPoint *point, struct Viewer *d);
@@ -6460,14 +6464,22 @@ ViewerEvVScroll(GtkRange *range, gpointer user_data)
 }
 
 static void
+#if GTK_CHECK_VERSION(4, 0, 0)
+ViewerEvHScroll(GtkAdjustment *adj, gpointer user_data)
+#else
 ViewerEvHScroll(GtkRange *range, gpointer user_data)
+#endif
 {
   struct Viewer *d;
   double x;
 
   d = (struct Viewer *) user_data;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  x = gtk_adjustment_get_value(adj);
+#else
   x = gtk_range_get_value(range);
+#endif
   if (d->hscroll == x) {
     return;
   }
