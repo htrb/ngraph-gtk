@@ -1763,7 +1763,9 @@ ViewerWinSetup(void)
 {
   struct Viewer *d;
   int width, height;
-#if ! GTK_CHECK_VERSION(4, 0, 0)
+#if GTK_CHECK_VERSION(4, 0, 0)
+  GtkAdjustment *adj;
+#else
   int x, y;
   GdkWindow *win;
 #endif
@@ -1825,6 +1827,11 @@ ViewerWinSetup(void)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
+  adj = gtk_scrollbar_get_adjustment(GTK_SCROLLBAR(d->HScroll));
+  g_signal_connect(adj, "value-changed", G_CALLBACK(ViewerEvHScroll), d);
+
+  adj = gtk_scrollbar_get_adjustment(GTK_SCROLLBAR(d->VScroll));
+  g_signal_connect(adj, "value-changed", G_CALLBACK(ViewerEvVScroll), d);
 #else
   g_signal_connect(d->HScroll, "value-changed", G_CALLBACK(ViewerEvHScroll), d);
   g_signal_connect(d->VScroll, "value-changed", G_CALLBACK(ViewerEvVScroll), d);
