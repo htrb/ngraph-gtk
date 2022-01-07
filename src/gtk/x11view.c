@@ -116,6 +116,7 @@ static struct narray SelList;
 #define IDEVMOVE        102
 
 #if GTK_CHECK_VERSION(4, 0, 0)
+static void ViewerEvSize(GtkWidget *w, int width, int height, gpointer client_data);
 static void ViewerEvHScroll(GtkAdjustment *adj, gpointer user_data);
 static void ViewerEvVScroll(GtkAdjustment *adj, gpointer user_data);
 #else
@@ -6389,14 +6390,23 @@ ViewerEvKeyUp(GtkEventControllerKey *controller, guint keyval, guint keycode, Gd
 }
 
 static void
+#if GTK_CHECK_VERSION(4, 0, 0)
+ViewerEvSize(GtkWidget *w, int width, int height, gpointer client_data)
+#else
 ViewerEvSize(GtkWidget *w, GtkAllocation *allocation, gpointer client_data)
+#endif
 {
   struct Viewer *d;
 
   d = (struct Viewer *) client_data;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  d->cx = width / 2;
+  d->cy = height / 2;
+#else
   d->cx = allocation->width / 2;
   d->cy = allocation->height / 2;
+#endif
 
   ChangeDPI();
 }
