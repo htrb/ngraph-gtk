@@ -113,11 +113,11 @@ data/ngraphui.resources.xml: $(UI_RESOURCES_SOURCE)
 	$(MKDIR_P) $(uidir)
 	cp $< $@
 
-$(uidir)/menus-common.ui: $(MENU_UI_SOURCE)
+$(uidir)/menus.ui: $(MENU_UI_SOURCE)
 	$(MKDIR_P) $(uidir)
 	cp $< $@
 
-ngraphui.resources.c: data/ngraphui.resources.xml $(uidir)/menus-common.ui $(srcdir)/data/gtk/menus-tool.ui $(srcdir)/data/css/ngraph.css $(srcdir)/data/gtk/help-overlay.ui $(uidir)/menus-appmenu.ui $(NGRAPH_ICONS)
+ngraphui.resources.c: data/ngraphui.resources.xml $(uidir)/menus.ui $(srcdir)/data/gtk/menus-tool.ui $(srcdir)/data/css/ngraph.css $(srcdir)/data/gtk/help-overlay.ui $(uidir)/menus-appmenu.ui $(NGRAPH_ICONS)
 	$(GLIB_COMPILE_RESOURCES) --target=$@ --generate-source --sourcedir $(srcdir)/data --sourcedir $(builddir)/data $<
 
 BUILT_SOURCES = ${nodist_libngraphui_la_SOURCES}
@@ -134,4 +134,4 @@ completion_info_data.c: $(srcdir)/completion_info_functions.txt $(srcdir)/comple
 libngraphui_la_CFLAGS = $(GTK_CFLAGS) $(libngraph_cflags) -I$(top_builddir) -I$(builddir) -I$(srcdir)/.. -I$(srcdir)/../math $(GTKSOURCEVIEW_CFLAGS)
 libngraphui_la_LDFLAGS = $(GTKSOURCEVIEW_LIBS)
 
-CLEANFILES = dir_defs.h $(builddir)/data/gtk/menus-common.ui $(builddir)/data/ngraphui.resources.xml $(BUILT_SOURCES)
+CLEANFILES = dir_defs.h $(builddir)/data/gtk/menus.ui $(builddir)/data/ngraphui.resources.xml $(BUILT_SOURCES)
