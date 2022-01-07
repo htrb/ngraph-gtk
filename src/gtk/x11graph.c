@@ -48,6 +48,7 @@
 #include "x11print.h"
 #include "x11commn.h"
 #include "x11info.h"
+#include "x11bitmp.h"
 
 #include "gtk_liststore.h"
 #include "gtk_combo.h"
@@ -1588,6 +1589,11 @@ CmHelpAbout(void *w, gpointer client_data)
 {
   struct objlist *obj;
   char *web, *copyright;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  struct objlist *system;
+  GdkTexture *logo;
+  char *lib_version, *compiler, *str;
+#endif
 
   if (Menulock || Globallock)
     return;
@@ -1598,6 +1604,20 @@ CmHelpAbout(void *w, gpointer client_data)
   getobj(obj, "copyright", 0, 0, NULL, &copyright);
   getobj(obj, "web", 0, 0, NULL, &web);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  logo = gdk_texture_new_from_resource(NGRAPH_ICON64_FILE);
+
+  system = getobject("system");
+  getobj(system, "compiler", 0, 0, NULL, &compiler);
+  getobj(Menulocal.obj, "lib_version", 0, 0, NULL, &lib_version);
+  str = g_strdup_printf("compiler:\n"
+			"%s\n"
+			"\n"
+			"library:\n"
+			"%s\n",
+			compiler,
+			lib_version);
+#endif
   gtk_show_about_dialog(GTK_WINDOW(TopLevel),
 			"program-name", PACKAGE,
 			"copyright", copyright,
@@ -1608,8 +1628,16 @@ CmHelpAbout(void *w, gpointer client_data)
 			"authors", Auther,
 			"translator-credits", Translator,
 			"documenters", Documenter,
+#if GTK_CHECK_VERSION(4, 0, 0)
+			"logo", logo,
+			"system-information", str,
+#endif
 			"comments", _("Ngraph is the program to create scientific 2-dimensional graphs for researchers and engineers."),
 			NULL);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  g_free(str);
+  g_object_unref(logo);
+#endif
 }
 
 void
