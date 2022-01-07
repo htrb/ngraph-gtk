@@ -891,17 +891,6 @@ create_app_menu(GtkApplication *app)
 }
 #endif
 
-static void
-create_menubar(GtkApplication *app)
-{
-  GtkBuilder *builder;
-  GMenuModel *menubar;
-  builder = gtk_builder_new_from_resource(RESOURCE_PATH "/gtk/menus-common.ui");
-  menubar = G_MENU_MODEL(gtk_builder_get_object (builder, "menubar"));
-  gtk_application_set_menubar(GtkApp, menubar);
-  g_object_unref (builder);
-}
-
 GtkApplication *
 n_get_gtk_application(void)
 {
@@ -961,9 +950,6 @@ n_initialize(int *argc, char ***argv)
     create_app_menu(GtkApp);
   }
 #endif
-  if (OpenDisplay) {
-    create_menubar(GtkApp);
-  }
 
   if (init_cmd_tbl()) {
     exit(1);
