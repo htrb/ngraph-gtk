@@ -40,14 +40,30 @@ struct presetting_widgets
   struct widget_info color1, color2;
   struct widget_info path_type;
   struct widget_info join_type;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  char *join_icon[JOIN_TYPE_NUM];
+#else
   GtkWidget *join_icon[JOIN_TYPE_NUM];
+#endif
   struct widget_info marker_type_begin;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  char *marker_begin_icon[MARKER_TYPE_NUM];
+#else
   GtkWidget *marker_begin_icon[MARKER_TYPE_NUM];
+#endif
   struct widget_info marker_type_end;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  char *marker_end_icon[MARKER_TYPE_NUM];
+#else
   GtkWidget *marker_end_icon[MARKER_TYPE_NUM];
+#endif
   struct widget_info mark_type_begin, mark_type_end;
   struct widget_info stroke_fill;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  char *stroke_fill_icon[STROKE_FILL_ICON_NUM];
+#else
   GtkWidget *stroke_fill_icon[STROKE_FILL_ICON_NUM];
+#endif
   struct widget_info font, bold, italic, pt;
   struct widget_info mark_type, mark_size;
   enum JOIN_TYPE join;
@@ -62,7 +78,11 @@ static int UpdateFieldsLock = TRUE;
 static void update_focused_obj(GtkWidget *widget, gpointer user_data);
 
 static int
+#if GTK_CHECK_VERSION(4, 0, 0)
+check_selected_item(GSimpleAction *action, GVariant *parameter, char **item, GtkWidget *button, char **icon)
+#else
 check_selected_item(GSimpleAction *action, GVariant *parameter, char **item, GtkWidget *button, GtkWidget **icon)
+#endif
 {
   const char *state;
   int i, selected;
@@ -72,7 +92,7 @@ check_selected_item(GSimpleAction *action, GVariant *parameter, char **item, Gtk
     if (g_strcmp0(state, item[i]) == 0) {
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
-//      gtk_button_set_child(GTK_BUTTON(button), icon[i]);
+      gtk_menu_button_set_icon_name(GTK_MENU_BUTTON(button), icon[i]);
 #else
       gtk_button_set_image(GTK_BUTTON(button), icon[i]);
 #endif
@@ -127,7 +147,7 @@ set_stroke_fill_icon(void)
   }
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
-//  gtk_button_set_child(GTK_BUTTON(Widgets.stroke_fill.widget), Widgets.stroke_fill_icon[i]);
+  gtk_menu_button_set_icon_name(GTK_MENU_BUTTON(Widgets.stroke_fill.widget), Widgets.stroke_fill_icon[i]);
 #else
   gtk_button_set_image(GTK_BUTTON(Widgets.stroke_fill.widget), Widgets.stroke_fill_icon[i]);
 #endif
@@ -174,26 +194,38 @@ static GActionEntry ToolMenuEntries[] = {
 };
 
 static void
+#if GTK_CHECK_VERSION(4, 0, 0)
+create_images_sub(const char *prefix, char **item, char **icon)
+#else
 create_images_sub(const char *prefix, char **item, GtkWidget **icon)
+#endif
 {
   int i;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  char *img;
+#else
   GtkWidget *img;
+#endif
   char img_file[256];
 
   for (i = 0; item[i]; i++) {
     snprintf(img_file, sizeof(img_file), "%s_%s-symbolic", prefix, item[i]);
 #if GTK_CHECK_VERSION(4, 0, 0)
-    img = gtk_image_new_from_icon_name(img_file);
+    img = g_strdup(img_file);
 #else
     img = gtk_image_new_from_icon_name(img_file, GTK_ICON_SIZE_LARGE_TOOLBAR);
+    g_object_ref(img);
 #endif
     icon[i] = img;
-    g_object_ref(img);
   }
 }
 
 static void
+#if GTK_CHECK_VERSION(4, 0, 0)
+create_marker_images_sub(const char *postfix, char **item, char **icon)
+#else
 create_marker_images_sub(const char *postfix, char **item, GtkWidget **icon)
+#endif
 {
   int i;
   GtkWidget *img;
@@ -202,12 +234,12 @@ create_marker_images_sub(const char *postfix, char **item, GtkWidget **icon)
   for (i = 0; item[i]; i++) {
     snprintf(img_file, sizeof(img_file), "%s_%s-symbolic", item[i], postfix);
 #if GTK_CHECK_VERSION(4, 0, 0)
-    img = gtk_image_new_from_icon_name(img_file);
+    img = g_strdup(img_file);
 #else
     img = gtk_image_new_from_icon_name(img_file, GTK_ICON_SIZE_LARGE_TOOLBAR);
+    g_object_ref(img);
 #endif
     icon[i] = img;
-    g_object_ref(img);
   }
 }
 
@@ -219,16 +251,20 @@ create_images(struct presetting_widgets *widgets)
   create_marker_images_sub("end", marker_type_char, widgets->marker_end_icon);
   create_images_sub("join", joinchar, widgets->join_icon);
   for (i = 0; i < STROKE_FILL_ICON_NUM; i++) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+    char *img;
+#else
     GtkWidget *img;
+#endif
     char img_file[256];
     snprintf(img_file, sizeof(img_file), "stroke_fill_%d-symbolic", i);
 #if GTK_CHECK_VERSION(4, 0, 0)
-    img = gtk_image_new_from_icon_name(img_file);
+    img = g_strdup(img_file);
 #else
     img = gtk_image_new_from_icon_name(img_file, GTK_ICON_SIZE_LARGE_TOOLBAR);
+    g_object_ref(img);
 #endif
     widgets->stroke_fill_icon[i] = img;
-    g_object_ref(img);
   }
 }
 
@@ -2011,7 +2047,7 @@ presetting_create_panel(GtkApplication *app)
   Widgets.join_type.widget = w;
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
-//  gtk_button_set_child(GTK_BUTTON(Widgets.join_type.widget), Widgets.join_icon[DEFAULT_JOIN_TYPE]);
+  gtk_menu_button_set_icon_name(GTK_MENU_BUTTON(Widgets.join_type.widget), Widgets.join_icon[DEFAULT_JOIN_TYPE]);
 #else
   gtk_button_set_image(GTK_BUTTON(Widgets.join_type.widget), Widgets.join_icon[DEFAULT_JOIN_TYPE]);
 #endif
@@ -2036,7 +2072,7 @@ presetting_create_panel(GtkApplication *app)
   Widgets.marker_begin = DEFAULT_MARKER_TYPE;
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
-//  gtk_button_set_child(GTK_BUTTON(Widgets.marker_type_begin.widget), Widgets.marker_begin_icon[DEFAULT_MARKER_TYPE]);
+  gtk_menu_button_set_icon_name(GTK_MENU_BUTTON(Widgets.marker_type_begin.widget), Widgets.marker_begin_icon[DEFAULT_MARKER_TYPE]);
 #else
   gtk_button_set_image(GTK_BUTTON(Widgets.marker_type_begin.widget), Widgets.marker_begin_icon[DEFAULT_MARKER_TYPE]);
 #endif
@@ -2051,7 +2087,7 @@ presetting_create_panel(GtkApplication *app)
   Widgets.marker_end = DEFAULT_MARKER_TYPE;
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
-//  gtk_button_set_child(GTK_BUTTON(Widgets.marker_type_end.widget), Widgets.marker_end_icon[DEFAULT_MARKER_TYPE]);
+  gtk_menu_button_set_icon_name(GTK_MENU_BUTTON(Widgets.marker_type_end.widget), Widgets.marker_end_icon[DEFAULT_MARKER_TYPE]);
 #else
   gtk_button_set_image(GTK_BUTTON(Widgets.marker_type_end.widget), Widgets.marker_end_icon[DEFAULT_MARKER_TYPE]);
 #endif
