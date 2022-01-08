@@ -87,8 +87,7 @@ static void create_menu(struct MenuItem *item);
 static GtkWidget *create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb);
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
-static void
-CmViewerButtonArm(GtkWidget *action, gpointer client_data);
+static void CmViewerButtonArm(GtkWidget *action, gpointer client_data);
 #else
 static void CmViewerButtonArm(GtkToggleToolButton *action, gpointer client_data);
 #endif
