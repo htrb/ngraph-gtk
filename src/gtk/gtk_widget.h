@@ -97,4 +97,4 @@ GtkWidget *add_toggle_button(GtkWidget *grid, int row, int col, const char *icon
 
 void add_event_key(GtkWidget *widget, GCallback press_proc, GCallback release_proc, gpointer user_data);
 #endif
-void widget_set_margin(GtkWidget *w, int margin);
+void set_widget_margin_all(GtkWidget *w, int margin);

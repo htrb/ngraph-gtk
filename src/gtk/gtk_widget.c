@@ -88,6 +88,15 @@ set_widget_margin(GtkWidget *w, int margin_pos)
 }
 
 void
+set_widget_margin_all(GtkWidget *w, int margin)
+{
+  gtk_widget_set_margin_bottom(w, margin);
+  gtk_widget_set_margin_end(w, margin);
+  gtk_widget_set_margin_start(w, margin);
+  gtk_widget_set_margin_top(w, margin);
+}
+
+void
 set_scale_mark(GtkWidget *scale, GtkPositionType pos, int start, int inc)
 {
   int max, val;
@@ -188,15 +197,6 @@ set_widget_visibility_with_label(GtkWidget *w, gboolean state)
   }
 }
 
-void
-widget_set_margin(GtkWidget *w, int margin)
-{
-  gtk_widget_set_margin_bottom(w, margin);
-  gtk_widget_set_margin_end(w, margin);
-  gtk_widget_set_margin_start(w, margin);
-  gtk_widget_set_margin_top(w, margin);
-}
-
 GtkWidget *
 add_widget_to_table_sub(GtkWidget *table, GtkWidget *w, char *title, int expand, int col, int width, int col_max, int n)
 {
@@ -208,7 +208,7 @@ add_widget_to_table_sub(GtkWidget *table, GtkWidget *w, char *title, int expand,
     label = gtk_label_new_with_mnemonic(title);
     gtk_label_set_mnemonic_widget(GTK_LABEL(label), w);
     gtk_widget_set_halign(label, GTK_ALIGN_START);
-    widget_set_margin(label, 4);
+    set_widget_margin_all(label, 4);
     gtk_grid_attach(GTK_GRID(table), label, col, n, 1, 1);
     col++;
   }
@@ -220,7 +220,7 @@ add_widget_to_table_sub(GtkWidget *table, GtkWidget *w, char *title, int expand,
     } else {
       gtk_widget_set_halign(w, GTK_ALIGN_START);
     }
-    widget_set_margin(w, 4);
+    set_widget_margin_all(w, 4);
     gtk_grid_attach(GTK_GRID(table), w, col, n, width, 1);
   }
 
@@ -261,8 +261,8 @@ item_setup(GtkWidget *box, GtkWidget *w, char *title, gboolean expand)
   hbox = gtk_grid_new();
   label = gtk_label_new_with_mnemonic(title);
   gtk_label_set_mnemonic_widget(GTK_LABEL(label), w);
-  widget_set_margin(label, 2);
-  widget_set_margin(w, 2);
+  set_widget_margin_all(label, 2);
+  set_widget_margin_all(w, 2);
   if (expand) {
     gtk_widget_set_hexpand(w, TRUE);
     gtk_widget_set_halign(w, GTK_ALIGN_FILL);
