@@ -2388,6 +2388,7 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
   toolbar = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
+  set_widget_margin_all(toolbar, 4);
 #else
   toolbar = gtk_toolbar_new();
 #endif
