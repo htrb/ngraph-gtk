@@ -1728,6 +1728,16 @@ add_event_motion(GtkWidget *widget, struct Viewer *d)
   gtk_widget_add_controller(widget, ev);
   g_signal_connect(ev, "motion", G_CALLBACK(ViewerEvMouseMotion), d);
 }
+
+static void
+add_event_scroll(GtkWidget *widget, struct Viewer *d)
+{
+  GtkEventController *ev;
+
+  ev = gtk_event_controller_scroll_new(GTK_EVENT_CONTROLLER_SCROLL_BOTH_AXES);
+  gtk_widget_add_controller(widget, ev);
+  g_signal_connect(ev, "scroll", G_CALLBACK(ViewerEvScroll), d);
+}
 #endif
 
 static gboolean
