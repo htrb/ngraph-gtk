@@ -1723,13 +1723,8 @@ add_event_motion(GtkWidget *widget, struct Viewer *d)
 {
   GtkEventController *ev;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   ev = gtk_event_controller_motion_new();
-  gtk_widget_add_controller(widget, GTK_EVENT_CONTROLLER(ev));
-#else
-  ev = gtk_event_controller_motion_new(widget);
-#endif
-
+  gtk_widget_add_controller(widget, ev);
   g_signal_connect(ev, "motion", G_CALLBACK(ViewerEvMouseMotion), d);
 }
 #endif
