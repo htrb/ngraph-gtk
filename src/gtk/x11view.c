@@ -1828,7 +1828,6 @@ ViewerWinSetup(void)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_drawing_area_set_draw_func(GTK_DRAWING_AREA(d->Win), draw_function, d, NULL);
-  gtk_widget_set_can_focus(d->Win, TRUE);
   g_signal_connect(d->Win, "resize", G_CALLBACK(ViewerEvSize), d);
   g_signal_connect(d->Win, "realize", G_CALLBACK(ViewerEvRealize), d);
 #else
