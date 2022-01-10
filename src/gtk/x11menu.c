@@ -2409,7 +2409,6 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
     case TOOL_TYPE_NORMAL:
 #if GTK_CHECK_VERSION(4, 0, 0)
       widget = gtk_button_new_from_icon_name(item[i].icon);
-      gtk_button_set_has_frame(GTK_BUTTON(widget), FALSE);
 #else
       widget = gtk_tool_button_new(NULL, _(item[i].label));
 #endif
@@ -2417,7 +2416,6 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
     case TOOL_TYPE_DRAW:
 #if GTK_CHECK_VERSION(4, 0, 0)
       widget = gtk_button_new_from_icon_name(item[i].icon);
-      gtk_button_set_has_frame(GTK_BUTTON(widget), FALSE);
 #else
       widget = gtk_tool_button_new(NULL, _(item[i].label));
 #endif
@@ -2427,14 +2425,11 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
       widget = gtk_button_new_from_icon_name(item[i].icon);
-      gtk_button_set_has_frame(GTK_BUTTON(widget), FALSE);
       menu = gtk_menu_button_new();
-      gtk_menu_button_set_has_frame(GTK_MENU_BUTTON(menu), FALSE);
       gtk_menu_button_set_menu_model(GTK_MENU_BUTTON(menu), create_save_menu());
       gtk_widget_set_tooltip_text(menu, _("Save menu"));
 #else
       widget = gtk_menu_tool_button_new(NULL, _(item[i].label));
-      gtk_button_set_has_frame(GTK_BUTTON(widget), FALSE);
       menu = create_save_menu();
       gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(widget), menu);
       gtk_menu_tool_button_set_arrow_tooltip_text(GTK_MENU_TOOL_BUTTON(widget), _("Save menu"));
@@ -2444,9 +2439,7 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
       widget = gtk_button_new_from_icon_name(item[i].icon);
-      gtk_button_set_has_frame(GTK_BUTTON(widget), TRUE);
       menu = gtk_menu_button_new();
-      gtk_menu_button_set_has_frame(GTK_MENU_BUTTON(menu), FALSE);
       gtk_widget_set_tooltip_text(menu, _("Recent Graphs"));
 #else
       widget = gtk_menu_tool_button_new(NULL, _(item[i].label));
@@ -2459,9 +2452,7 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
       widget = gtk_button_new_from_icon_name(item[i].icon);
-      gtk_button_set_has_frame(GTK_BUTTON(widget), TRUE);
       menu = gtk_menu_button_new();
-      gtk_menu_button_set_has_frame(GTK_MENU_BUTTON(menu), FALSE);
       gtk_widget_set_tooltip_text(menu, _("Recent Data Files"));
 #else
       widget = gtk_menu_tool_button_new(NULL, _(item[i].label));
@@ -2474,7 +2465,6 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
 #if GTK_CHECK_VERSION(4, 0, 0)
       widget = gtk_toggle_button_new();
       gtk_button_set_icon_name(GTK_BUTTON(widget), item[i].icon);
-      gtk_button_set_has_frame(GTK_BUTTON(widget), FALSE);
       if (group) {
         gtk_toggle_button_set_group(GTK_TOGGLE_BUTTON(widget), GTK_TOGGLE_BUTTON(group));
       } else {
