@@ -1267,7 +1267,7 @@ add_event_key(GtkWidget *widget, GCallback press_proc, GCallback release_proc, g
   ev = gtk_event_controller_key_new();
   gtk_widget_add_controller(widget, ev);
 #else
-  ev = gtk_event_controller_key_new();
+  ev = gtk_event_controller_key_new(widget);
 #endif
   if (press_proc) {
     g_signal_connect(ev, "key-pressed", press_proc, user_data);
