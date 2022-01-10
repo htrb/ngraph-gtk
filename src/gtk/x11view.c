@@ -1843,6 +1843,8 @@ ViewerWinSetup(void)
 
   adj = gtk_scrollbar_get_adjustment(GTK_SCROLLBAR(d->VScroll));
   g_signal_connect(adj, "value-changed", G_CALLBACK(ViewerEvVScroll), d);
+
+  gtk_widget_set_focusable(d->Win, TRUE);
 #else
   g_signal_connect(d->HScroll, "value-changed", G_CALLBACK(ViewerEvHScroll), d);
   g_signal_connect(d->VScroll, "value-changed", G_CALLBACK(ViewerEvVScroll), d);
