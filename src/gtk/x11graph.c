@@ -1605,7 +1605,7 @@ CmHelpAbout(void *w, gpointer client_data)
   getobj(obj, "web", 0, 0, NULL, &web);
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-  logo = gdk_texture_new_from_resource(NGRAPH_ICON64_FILE);
+  logo = gdk_texture_new_from_resource(NGRAPH_ICON128_FILE);
 
   system = getobject("system");
   getobj(system, "compiler", 0, 0, NULL, &compiler);
