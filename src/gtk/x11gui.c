@@ -969,6 +969,9 @@ DialogSpinEntry(GtkWidget *parent, const char *title, const char *caption, doubl
   gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
   gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
   vbox = GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dlg)));
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_orientable_set_orientation(GTK_ORIENTABLE(vbox), GTK_ORIENTATION_VERTICAL);
+#endif
 
   if (caption) {
     GtkWidget *label;
