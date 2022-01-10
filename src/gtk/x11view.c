@@ -6057,11 +6057,6 @@ do_popup(GdkEventButton *event, struct Viewer *d)
 {
 #if GTK_CHECK_VERSION(4, 0, 0)
   GdkRectangle rect;
-#endif
-  if (! gtk_widget_get_realized(d->popup)) {
-    gtk_widget_realize(d->popup);
-  }
-#if GTK_CHECK_VERSION(4, 0, 0)
   rect.x = x;
   rect.y = y;
   rect.width = 1;
