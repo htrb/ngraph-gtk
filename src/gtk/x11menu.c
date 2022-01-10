@@ -2543,10 +2543,18 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
     }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-    gtk_box_append(GTK_BOX(toolbar), widget);
     gtk_widget_set_can_focus(widget, FALSE);
     if (menu) {
-      gtk_box_append(GTK_BOX(toolbar), menu);
+      GtkWidget *box;
+      box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+      gtk_box_append(GTK_BOX(box), widget);
+      gtk_widget_add_css_class(widget, MENUBUTTON_CLASS);
+      gtk_box_append(GTK_BOX(box), menu);
+      gtk_widget_add_css_class(menu, MENUBUTTON_CLASS);
+      gtk_box_append(GTK_BOX(toolbar), box);
+    } else {
+      gtk_widget_add_css_class(widget, TOOLBUTTON_CLASS);
+      gtk_box_append(GTK_BOX(toolbar), widget);
     }
 #else
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(widget), -1);
