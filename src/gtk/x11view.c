@@ -1879,6 +1879,7 @@ ViewerWinSetup(void)
   add_event_zoom(d->Win, d);
 #if GTK_CHECK_VERSION(4, 0, 0)
   add_event_motion(d->Win, d);
+  add_event_scroll(d->Win, d);
 #else
   g_signal_connect(d->Win, "motion-notify-event", G_CALLBACK(ViewerEvMouseMotion), d);
   g_signal_connect(d->Win, "scroll-event", G_CALLBACK(ViewerEvScroll), d);
