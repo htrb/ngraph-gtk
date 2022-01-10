@@ -717,6 +717,7 @@ DialogButton(GtkWidget *parent, const char *title, const char *caption, struct n
     box = gtk_dialog_get_content_area(GTK_DIALOG(dlg));
     label = gtk_label_new(caption);
 #if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_orientable_set_orientation(GTK_ORIENTABLE(box), GTK_ORIENTATION_VERTICAL);
     gtk_box_append(GTK_BOX(box), label);
 #else
     gtk_box_pack_start(GTK_BOX(box), label, TRUE, TRUE, 4);
