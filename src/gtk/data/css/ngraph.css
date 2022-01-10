@@ -12,6 +12,10 @@ button.toolbutton {
     -gtk-icon-size: 1.6em;
 }
 
+menubutton.toolbutton {
+    -gtk-icon-size: 1.6em;
+}
+
 button#StrokeColorButton > colorswatch > overlay {
     background-color: @theme_bg_color;
     margin: 3px;
