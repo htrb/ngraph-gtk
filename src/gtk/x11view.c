@@ -142,6 +142,7 @@ static void ViewerEvKeyUp(GtkEventControllerKey *controller, guint keyval, guint
 static void gesture_zoom(GtkGestureZoom *controller, gdouble scale, gpointer user_data);
 #if GTK_CHECK_VERSION(4, 0, 0)
 static void ViewerEvMouseMotion(GtkEventControllerMotion *controller, gdouble x, gdouble y, gpointer client_data);
+static gboolean ViewerEvScroll(GtkWidget *w, double x, double y, gpointer client_data);
 #else
 static gboolean ViewerEvMouseMotion(GtkWidget *w, GdkEventMotion *e, gpointer client_data);
 static gboolean ViewerEvScroll(GtkWidget *w, GdkEventScroll *e, gpointer client_data);
@@ -6056,12 +6057,30 @@ do_popup(GdkEventButton *event, struct Viewer *d)
   gtk_popover_set_pointing_to(GTK_POPOVER(d->popup), &rect);
   gtk_popover_popup(GTK_POPOVER(d->popup));
 #else
+  if (! gtk_widget_get_realized(d->popup)) {
+    gtk_widget_realize(d->popup);
+  }
   gtk_menu_popup_at_pointer(GTK_MENU(d->popup), ((GdkEvent *)event));
 #endif
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
+static gboolean
+ViewerEvScroll(GtkWidget *w, double x, double y, gpointer client_data)
+{
+  struct Viewer *d;
+
+  d = (struct Viewer *) client_data;
+
+#if OSX
+  range_increment(d->HScroll, x);
+  range_increment(d->VScroll, y);
+#else
+  range_increment(d->HScroll, x * SCROLL_INC);
+  range_increment(d->VScroll, y * SCROLL_INC);
+#endif
+  return TRUE;
+}
 #else
 static gboolean
 ViewerEvScroll(GtkWidget *w, GdkEventScroll *e, gpointer client_data)
