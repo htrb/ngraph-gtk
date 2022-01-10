@@ -119,7 +119,6 @@ nruler_new(GtkOrientation orientation)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_drawing_area_set_draw_func(GTK_DRAWING_AREA(w), draw_function, ruler, NULL);
-  gtk_widget_set_can_focus(w, TRUE);
 #else
   g_signal_connect(w, "draw", G_CALLBACK(nruler_expose), ruler);
 #endif
