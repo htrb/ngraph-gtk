@@ -1535,7 +1535,7 @@ add_event_drag(GtkWidget *widget, struct Viewer *d)
   ev_swipe = gtk_gesture_swipe_new();
   gtk_widget_add_controller(widget, GTK_EVENT_CONTROLLER(ev_swipe));
 #else
-  ev_swipe = gtk_gesture_swipe_new(d->Win);
+  ev_swipe = gtk_gesture_swipe_new(widget);
 #endif
   gtk_gesture_single_set_touch_only(GTK_GESTURE_SINGLE(ev_swipe), TRUE);
   gtk_gesture_group(ev_swipe, ev_drag);
