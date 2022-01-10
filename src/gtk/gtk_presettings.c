@@ -1963,6 +1963,7 @@ presetting_create_panel(GtkApplication *app)
   g_signal_connect(w, "clicked", G_CALLBACK(select_mark), &(Widgets.mark));
   setup_mark_type(w, &(Widgets.mark));
 #if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_widget_add_css_class(w, TOOLBUTTON_CLASS);
   gtk_box_append(GTK_BOX(box), w);
 #else
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
@@ -2056,6 +2057,7 @@ presetting_create_panel(GtkApplication *app)
   g_signal_connect(w, "clicked", G_CALLBACK(select_mark), &(Widgets.mark_begin));
   setup_mark_type(w, &(Widgets.mark_begin));
 #if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_widget_add_css_class(w, TOOLBUTTON_CLASS);
   gtk_box_append(GTK_BOX(box), w);
 #else
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
@@ -2096,6 +2098,7 @@ presetting_create_panel(GtkApplication *app)
   g_signal_connect(w, "clicked", G_CALLBACK(select_mark), &(Widgets.mark_end));
   setup_mark_type(w, &(Widgets.mark_end));
 #if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_widget_add_css_class(w, TOOLBUTTON_CLASS);
   gtk_box_append(GTK_BOX(box), w);
 #else
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
