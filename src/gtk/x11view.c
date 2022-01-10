@@ -1866,13 +1866,13 @@ ViewerWinSetup(void)
 #endif
   gtk_widget_set_can_focus(d->Win, TRUE);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
-#else
   if (d->popup) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_widget_set_parent(d->popup, d->Win);
+#else
     gtk_menu_attach_to_widget(GTK_MENU(d->popup), GTK_WIDGET(d->Win), NULL);
-  }
 #endif
+  }
 
   add_event_drag(d->Win, d);
   add_event_key(d->Win, G_CALLBACK(ViewerEvKeyDown), G_CALLBACK(ViewerEvKeyUp),  d);
