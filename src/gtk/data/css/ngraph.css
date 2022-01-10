@@ -8,6 +8,10 @@ dialog
     -gtk-key-bindings: CloseWindow1;
 }
 
+button.toolbutton {
+    -gtk-icon-size: 1.6em;
+}
+
 button#StrokeColorButton > colorswatch > overlay {
     background-color: @theme_bg_color;
     margin: 3px;
