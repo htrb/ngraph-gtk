@@ -16,6 +16,13 @@ menubutton.toolbutton {
     -gtk-icon-size: 1.6em;
 }
 
+button.menutoolbutton {
+    -gtk-icon-size: 1.6em;
+    border-right-width: 0;
+    border-top-right-radius:    0;
+    border-bottom-right-radius: 0;
+}
+
 button#StrokeColorButton > colorswatch > overlay {
     background-color: @theme_bg_color;
     margin: 3px;
