@@ -25,7 +25,7 @@
 #include "ioutil.h"
 #include "dir_defs.h"
 
-#define NGRAPH_ICON_PATH                RESOURCE_PATH "/pixmaps"
+#define NGRAPH_ICON_PATH                RESOURCE_PATH "/icons/scalable/actions"
 #define NGRAPH_ALIGN_B_ICON	"ngraph_align_b"
 #define NGRAPH_ALIGN_HC_ICON	"ngraph_align_hc"
 #define NGRAPH_ALIGN_L_ICON	"ngraph_align_l"
@@ -34,9 +34,10 @@
 #define NGRAPH_ALIGN_VC_ICON	"ngraph_align_vc"
 #define NGRAPH_MATH_ICON	"ngraph_math"
 
-#define NGRAPH_SVG_ICON_FILE		RESOURCE_PATH "/pixmaps/ngraph.svg"
-#define NGRAPH_ICON_FILE		RESOURCE_PATH "/pixmaps/ngraph_icon.png"
-#define NGRAPH_ICON64_FILE		RESOURCE_PATH "/pixmaps/ngraph_icon64.png"
+#define NGRAPH_SVG_ICON_FILE		RESOURCE_PATH "/icons/scalable/apps/ngraph.svg"
+#define NGRAPH_ICON_FILE		RESOURCE_PATH "/icons/48x48/apps/ngraph_icon.png"
+#define NGRAPH_ICON64_FILE		RESOURCE_PATH "/icons/64x64/apps/ngraph_icon.png"
+#define NGRAPH_ICON128_FILE		RESOURCE_PATH "/icons/128x128/apps/ngraph_icon.png"
 
 #define NGRAPH_DRAW_ICON	"ngraph_draw-symbolic"
 #define NGRAPH_POINT_ICON	"ngraph_point-symbolic"
