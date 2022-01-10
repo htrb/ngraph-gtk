@@ -1829,6 +1829,7 @@ create_menu_button(GtkBuilder *builder, const char *menu_name, const char *toolt
   GtkWidget *w;
   GMenuModel *menu;
   w = gtk_menu_button_new();
+  gtk_widget_add_css_class(w, TOOLBUTTON_CLASS);
   menu = G_MENU_MODEL(gtk_builder_get_object(builder, menu_name));
 #if ! GTK_CHECK_VERSION(4, 0, 0)
   gtk_menu_button_set_use_popover(GTK_MENU_BUTTON(w), FALSE);
