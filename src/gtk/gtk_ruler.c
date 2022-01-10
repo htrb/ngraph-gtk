@@ -103,6 +103,7 @@ nruler_new(GtkOrientation orientation)
 
   frame = gtk_frame_new(NULL);
 #if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_widget_add_css_class(frame, "ruler");
   gtk_frame_set_child(GTK_FRAME(frame), w);
 #else
   gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_OUT);
