@@ -23,6 +23,11 @@ button.menutoolbutton {
     border-bottom-right-radius: 0;
 }
 
+menubutton.menutoolbutton {
+    border-top-left-radius:     0;
+    border-bottom-left-radius:  0;
+}
+
 button#StrokeColorButton > colorswatch > overlay {
     background-color: @theme_bg_color;
     margin: 3px;
