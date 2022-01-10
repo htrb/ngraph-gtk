@@ -2544,6 +2544,7 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(toolbar), widget);
+    gtk_widget_set_can_focus(widget, FALSE);
     if (menu) {
       gtk_box_append(GTK_BOX(toolbar), menu);
     }
