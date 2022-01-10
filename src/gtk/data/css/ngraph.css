@@ -28,6 +28,10 @@ menubutton.menutoolbutton {
     border-bottom-left-radius:  0;
 }
 
+frame.ruler {
+    border-radius: 0;
+}
+
 button#StrokeColorButton > colorswatch > overlay {
     background-color: @theme_bg_color;
     margin: 3px;
