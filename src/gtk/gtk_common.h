@@ -28,6 +28,8 @@
 #define CAIRO_COORDINATE_OFFSET 1
 
 #define TOOLBUTTON_CLASS "toolbutton"
+#define MENUBUTTON_CLASS "menutoolbutton"
+
 #if GTK_CHECK_VERSION(4, 0, 0)
 enum CURSOR_TYPE {
   GDK_LEFT_PTR,
