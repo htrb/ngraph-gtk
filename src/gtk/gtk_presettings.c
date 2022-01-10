@@ -228,7 +228,11 @@ create_marker_images_sub(const char *postfix, char **item, GtkWidget **icon)
 #endif
 {
   int i;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  char *img;
+#else
   GtkWidget *img;
+#endif
   char img_file[256];
 
   for (i = 0; item[i]; i++) {
