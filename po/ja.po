@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6.08.07\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2021-10-26 14:49+0900\n"
+"POT-Creation-Date: 2022-01-12 16:44+0900\n"
 "PO-Revision-Date: 2021-09-24 17:06+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -404,7 +404,7 @@ msgstr "色(_C):"
 msgid "_Background"
 msgstr "背景色(_B)"
 
-#: src/gtk/x11axis.c:366 src/gtk/x11opt.c:1613
+#: src/gtk/x11axis.c:366 src/gtk/x11opt.c:1616
 msgid "_Background Color:"
 msgstr "背景色(_B):"
 
@@ -662,7 +662,7 @@ msgid "_Italic"
 msgstr "斜体(_I)"
 
 #: src/gtk/x11axis.c:2072 src/gtk/x11axis.c:3292 src/gtk/x11dialg.c:245
-#: src/gtk/x11lgnd.c:3501 src/gtk/x11opt.c:1238
+#: src/gtk/x11lgnd.c:3501 src/gtk/x11opt.c:1241
 msgid "Font"
 msgstr "フォント"
 
@@ -767,7 +767,7 @@ msgstr "ゼロ表示"
 msgid "Save NGP file"
 msgstr "NGPファイルの保存"
 
-#: src/gtk/x11commn.c:1285 src/gtk/x11opt.c:1778
+#: src/gtk/x11commn.c:1285 src/gtk/x11opt.c:1781
 #, c-format
 msgid "Saving `%.128s'."
 msgstr "保存中 `%.128s'."
@@ -810,11 +810,11 @@ msgstr "停止(_S)"
 msgid "error"
 msgstr "エラー"
 
-#: src/gtk/x11dialg.c:52 src/gtk/x11opt.c:1617
+#: src/gtk/x11dialg.c:52 src/gtk/x11opt.c:1620
 msgid "solid"
 msgstr "実線"
 
-#: src/gtk/x11dialg.c:53 src/gtk/x11opt.c:1618
+#: src/gtk/x11dialg.c:53 src/gtk/x11opt.c:1621
 msgid "dot"
 msgstr "点線"
 
@@ -983,7 +983,7 @@ msgstr "スクリプト設定"
 msgid "Add-in script setup"
 msgstr "スクリプト"
 
-#: src/gtk/x11dialg.c:248 src/gtk/x11opt.c:1257
+#: src/gtk/x11dialg.c:248 src/gtk/x11opt.c:1260
 msgid "Miscellaneous"
 msgstr "その他"
 
@@ -1240,8 +1240,8 @@ msgid "_Load"
 msgstr "読込(_L)"
 
 #: src/gtk/x11file.c:1755 src/gtk/x11gui.c:1209 src/gtk/x11menu.c:432
-#: src/gtk/x11opt.c:455 src/gtk/x11opt.c:942 src/gtk/x11opt.c:1144
-#: src/gtk/x11opt.c:1490 src/gtk/x11opt.c:1598
+#: src/gtk/x11opt.c:455 src/gtk/x11opt.c:942 src/gtk/x11opt.c:1147
+#: src/gtk/x11opt.c:1493 src/gtk/x11opt.c:1601
 #: src/gtk/data/gtk/menus-common.ui.in:38
 #: src/gtk/data/gtk/menus-common.ui.in:685
 #: src/gtk/data/gtk/menus-common-win.ui.in:38
@@ -1608,8 +1608,8 @@ msgstr "展開ディレクトリ"
 msgid "expand _Directory:"
 msgstr "展開ディレクトリ(_D):"
 
-#: src/gtk/x11graph.c:990 src/gtk/x11graph.c:1046 src/gtk/x11opt.c:1172
-#: src/gtk/x11opt.c:1196
+#: src/gtk/x11graph.c:990 src/gtk/x11graph.c:1046 src/gtk/x11opt.c:1175
+#: src/gtk/x11opt.c:1199
 msgid "_Path:"
 msgstr "パス情報(_P):"
 
@@ -1627,13 +1627,13 @@ msgstr "NGPファイルを開く"
 
 #: src/gtk/x11gui.c:137 src/gtk/x11gui.c:368 src/gtk/x11gui.c:436
 #: src/gtk/x11gui.c:576 src/gtk/x11gui.c:651 src/gtk/x11gui.c:722
-#: src/gtk/x11gui.c:801 src/gtk/x11gui.c:1032 src/gtk/x11opt.c:1115
+#: src/gtk/x11gui.c:801 src/gtk/x11gui.c:1032 src/gtk/x11opt.c:1118
 msgid "_Cancel"
 msgstr "キャンセル(_C)"
 
 #: src/gtk/x11gui.c:149 src/gtk/x11gui.c:369 src/gtk/x11gui.c:437
 #: src/gtk/x11gui.c:577 src/gtk/x11gui.c:652 src/gtk/x11gui.c:723
-#: src/gtk/x11gui.c:802 src/gtk/x11opt.c:1113
+#: src/gtk/x11gui.c:802 src/gtk/x11opt.c:1116
 msgid "_OK"
 msgstr "_OK"
 
@@ -1653,7 +1653,7 @@ msgstr "はい(_Y)"
 msgid "All"
 msgstr "全てのファイル"
 
-#: src/gtk/x11gui.c:985 src/gtk/x11opt.c:1771
+#: src/gtk/x11gui.c:985 src/gtk/x11opt.c:1774
 #, c-format
 msgid ""
 "`%s'\n"
@@ -2445,139 +2445,139 @@ msgstr "プログラム選択"
 msgid "custom palette"
 msgstr "カスタムパレット"
 
-#: src/gtk/x11opt.c:1149
+#: src/gtk/x11opt.c:1152
 msgid "External programs"
 msgstr "外部プログラム"
 
-#: src/gtk/x11opt.c:1155
+#: src/gtk/x11opt.c:1158
 msgid "_Editor:"
 msgstr "エディター(_E):"
 
-#: src/gtk/x11opt.c:1159
+#: src/gtk/x11opt.c:1162
 msgid "_Help browser:"
 msgstr "ヘルプ・ブラウザ(_H):"
 
-#: src/gtk/x11opt.c:1167
+#: src/gtk/x11opt.c:1170
 msgid "Save graph"
 msgstr "グラフの保存"
 
-#: src/gtk/x11opt.c:1178
+#: src/gtk/x11opt.c:1181
 msgid "include _Data file"
 msgstr "データファイルを含める(_D)"
 
-#: src/gtk/x11opt.c:1182
+#: src/gtk/x11opt.c:1185
 msgid "include _Merge file"
 msgstr "合成ファイルを含める(_M)"
 
-#: src/gtk/x11opt.c:1191
+#: src/gtk/x11opt.c:1194
 msgid "Load graph"
 msgstr "グラフの読込"
 
-#: src/gtk/x11opt.c:1202
+#: src/gtk/x11opt.c:1205
 msgid "_Expand include file"
 msgstr "データファイルの展開(_E)"
 
-#: src/gtk/x11opt.c:1207
+#: src/gtk/x11opt.c:1210
 msgid "_Expand directory:"
 msgstr "展開ディレクトリ(_E):"
 
-#: src/gtk/x11opt.c:1216
+#: src/gtk/x11opt.c:1219
 msgid "Size"
 msgstr "サイズ"
 
-#: src/gtk/x11opt.c:1221
+#: src/gtk/x11opt.c:1224
 msgid "_Size of completion history:"
 msgstr "補完履歴のサイズ(_S):"
 
-#: src/gtk/x11opt.c:1225
+#: src/gtk/x11opt.c:1228
 msgid "_Length of information view:"
 msgstr "information 表示の行数(_L):"
 
-#: src/gtk/x11opt.c:1229
+#: src/gtk/x11opt.c:1232
 msgid "_Length of data preview:"
 msgstr "データプレビューの行数(_L):"
 
-#: src/gtk/x11opt.c:1243
+#: src/gtk/x11opt.c:1246
 msgid "_Coordinate view:"
 msgstr "_Coordinate 表示(_C):"
 
-#: src/gtk/x11opt.c:1247
+#: src/gtk/x11opt.c:1250
 msgid "_Information view:"
 msgstr "_Information 表示:"
 
-#: src/gtk/x11opt.c:1251
+#: src/gtk/x11opt.c:1254
 msgid "data _Preview:"
 msgstr "データプレビュー(_P):"
 
-#: src/gtk/x11opt.c:1261
+#: src/gtk/x11opt.c:1264
 msgid "_Check \"change current directory\""
 msgstr "\"カレントディレクトリを移動\"をチェック(_C)"
 
-#: src/gtk/x11opt.c:1265 src/gtk/x11print.c:208
+#: src/gtk/x11opt.c:1268 src/gtk/x11print.c:208
 msgid "_Use opacity"
 msgstr "不透明度を使う(_U)"
 
-#: src/gtk/x11opt.c:1269
+#: src/gtk/x11opt.c:1272
 msgid "_Show select data dialog on exporting"
 msgstr "エクスポート時にデータ選択ダイアログを表示(_S)"
 
-#: src/gtk/x11opt.c:1273
+#: src/gtk/x11opt.c:1276
 msgid "use custom _Palette"
 msgstr "カスタムパレットを使う(_P)"
 
-#: src/gtk/x11opt.c:1277
+#: src/gtk/x11opt.c:1280
 msgid "_Edit custom palette"
 msgstr "カスタムパレットの編集(_E)"
 
-#: src/gtk/x11opt.c:1282
+#: src/gtk/x11opt.c:1285
 msgid "_Source style:"
 msgstr "数式変換入力の表示スタイル(_S):"
 
-#: src/gtk/x11opt.c:1286
+#: src/gtk/x11opt.c:1289
 msgid "_Default decimalsign:"
 msgstr "小数点記号の既定値(_D):"
 
-#: src/gtk/x11opt.c:1292
+#: src/gtk/x11opt.c:1295
 msgid "use _Dark theme"
 msgstr "ダークテーマを使う (_D)"
 
-#: src/gtk/x11opt.c:1495
+#: src/gtk/x11opt.c:1498
 msgid "use _External previewer"
 msgstr "外部プログラムを使用する(_E)"
 
-#: src/gtk/x11opt.c:1505
+#: src/gtk/x11opt.c:1508
 msgid "Window _Width:"
 msgstr "幅(_W):"
 
-#: src/gtk/x11opt.c:1509
+#: src/gtk/x11opt.c:1512
 msgid "Window _Height:"
 msgstr "高さ(_H):"
 
-#: src/gtk/x11opt.c:1609
+#: src/gtk/x11opt.c:1612
 msgid "_Grid:"
 msgstr "グリッド(_G):"
 
-#: src/gtk/x11opt.c:1619
+#: src/gtk/x11opt.c:1622
 msgid "_Line attribute of focus frame:"
 msgstr "フォーカスフレームの線種(_L):"
 
-#: src/gtk/x11opt.c:1627
+#: src/gtk/x11opt.c:1630
 msgid "_Antialias:"
 msgstr "アンチエイリアス(_A):"
 
-#: src/gtk/x11opt.c:1629
+#: src/gtk/x11opt.c:1632
 msgid "_Preserve line width and style"
 msgstr "線幅と線種を保持する(_S)"
 
-#: src/gtk/x11opt.c:1633
+#: src/gtk/x11opt.c:1636
 msgid "_Load files on redraw"
 msgstr "再描画時にデータファイル読み込み(_L)"
 
-#: src/gtk/x11opt.c:1639
+#: src/gtk/x11opt.c:1642
 msgid "_Maximum number of data on redraw:"
 msgstr "再描画時の最大データ数(_M):"
 
-#: src/gtk/x11opt.c:1772
+#: src/gtk/x11opt.c:1775
 msgid "Save as Ngraph.ngp"
 msgstr "Ngraph.ngp として保存"
 
