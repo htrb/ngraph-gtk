@@ -30,6 +30,11 @@ button.markerbutton {
     border-bottom-left-radius: 0;
 }
 
+menubutton.markerbutton > button {
+    border-top-right-radius:     0;
+    border-bottom-right-radius:  0;
+}
+
 frame.ruler {
     border-radius: 0;
 }
