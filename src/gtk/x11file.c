@@ -3788,6 +3788,7 @@ plot_tab_create(GtkWidget *parent, struct FileDialog *d)
   w = gtk_frame_new(NULL);
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_frame_set_child(GTK_FRAME(w), hbox);
+  gtk_widget_set_vexpand(w, TRUE);
 #else
   gtk_container_add(GTK_CONTAINER(w), hbox);
 #endif
