@@ -2573,7 +2573,8 @@ create_popup_menu(GtkApplication *app)
   GMenu *menu;
   menu = gtk_application_get_menu_by_id(app, "popup-menu");
 #if GTK_CHECK_VERSION(4, 0, 0)
-  popup = gtk_popover_menu_new_from_model(G_MENU_MODEL(menu));
+  popup = gtk_popover_menu_new_from_model_full(G_MENU_MODEL(menu), GTK_POPOVER_MENU_NESTED);
+  gtk_popover_set_has_arrow(GTK_POPOVER(popup), FALSE);
 #else
   popup = gtk_menu_new_from_model(G_MENU_MODEL(menu));
 #endif
