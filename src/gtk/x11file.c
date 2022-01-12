@@ -2662,6 +2662,7 @@ load_tab_create(struct FileDialog *d)
   frame = gtk_frame_new(NULL);
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_frame_set_child(GTK_FRAME(frame), table);
+  gtk_widget_set_vexpand(frame, TRUE);
 #else
   gtk_container_add(GTK_CONTAINER(frame), table);
 #endif
