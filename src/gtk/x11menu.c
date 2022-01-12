@@ -1878,16 +1878,15 @@ setupwindow(GtkApplication *app)
 
   NgraphApp.Message = gtk_statusbar_new();
 #if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
-//  gtk_box_append(GTK_BOX(NgraphApp.Message), create_message_box(&NgraphApp.Message_extra, &NgraphApp.Message_pos));
+  gtk_widget_set_hexpand(NgraphApp.Message, TRUE);
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+  gtk_box_append(GTK_BOX(hbox), NgraphApp.Message);
+  gtk_box_append(GTK_BOX(hbox), create_message_box(&NgraphApp.Message_extra, &NgraphApp.Message_pos));
+  gtk_box_append(GTK_BOX(vbox2), hbox);
 #else
   gtk_box_pack_end(GTK_BOX(NgraphApp.Message),
 		   create_message_box(&NgraphApp.Message_extra, &NgraphApp.Message_pos),
 		   FALSE, FALSE, 0);
-#endif
-#if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_box_append(GTK_BOX(vbox2), NgraphApp.Message);
-#else
   gtk_box_pack_start(GTK_BOX(vbox2), NgraphApp.Message, FALSE, FALSE, 0);
 #endif
 
