@@ -127,6 +127,7 @@ int
 ndialog_run(GtkWidget *dlg, int *response)
 {
   int lock_state;
+  GMainContext *context;
 
   if (dlg == NULL || response == NULL) {
     return GTK_RESPONSE_CANCEL;
@@ -136,9 +137,10 @@ ndialog_run(GtkWidget *dlg, int *response)
   g_signal_connect(dlg, "close_request", G_CALLBACK(ndialog_close_request), response);
 
   gtk_widget_show(dlg);
+  context = g_main_context_default();
   lock_state = DnDLock;
   while (*response == IDLOOP) {
-    g_main_context_iteration(NULL, TRUE);
+    g_main_context_iteration(context, TRUE);
   }
   DnDLock = lock_state;
   gtk_widget_hide(dlg);
