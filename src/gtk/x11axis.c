@@ -433,6 +433,7 @@ GridDialogSetupCommon(GtkWidget *wi, void *data, int makewidget, int instance)
 
     frame = gtk_frame_new(_("Style"));
 #if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_widget_set_vexpand(frame, TRUE);
     gtk_frame_set_child(GTK_FRAME(frame), table);
     gtk_box_append(GTK_BOX(d->vbox), frame);
 #else
