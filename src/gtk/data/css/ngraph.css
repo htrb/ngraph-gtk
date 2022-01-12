@@ -8,11 +8,7 @@ dialog
     -gtk-key-bindings: CloseWindow1;
 }
 
-button.toolbutton {
-    -gtk-icon-size: 1.6em;
-}
-
-menubutton.toolbutton {
+.toolbutton {
     -gtk-icon-size: 1.6em;
 }
 
