@@ -29,6 +29,7 @@
 
 #define TOOLBUTTON_CLASS "toolbutton"
 #define MENUBUTTON_CLASS "menutoolbutton"
+#define MARKERBUTTON_CLASS "markerbutton"
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 enum CURSOR_TYPE {
