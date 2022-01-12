@@ -1813,6 +1813,7 @@ create_user_fit_frame(struct FitDialog *d)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
   w = gtk_scrolled_window_new();
+  gtk_widget_set_vexpand(w, TRUE);
   gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(w), table);
   gtk_scrolled_window_set_has_frame(GTK_SCROLLED_WINDOW(w), FALSE);
 #else
