@@ -90,14 +90,16 @@ static int
 dialog_run(GtkWidget *dlg, struct DialogType *data)
 {
   int lock_state;
+  GMainContext *context;
 
   if (dlg == NULL || data == NULL) {
     return GTK_RESPONSE_CANCEL;
   }
 
+  context = g_main_context_default();
   lock_state = DnDLock;
   while (data->ret == IDLOOP) {
-    g_main_context_iteration(NULL, TRUE);
+    g_main_context_iteration(context, TRUE);
   }
   DnDLock = lock_state;
 
