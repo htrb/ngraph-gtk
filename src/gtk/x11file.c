@@ -2240,7 +2240,9 @@ move_tab_create(struct FileDialog *d)
 
   i = 0;
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_NATURAL, TRUE, FALSE);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   g_signal_connect(w, "activate", G_CALLBACK(FileMoveDialogAdd), d);
+#endif
   add_widget_to_table(table, w, _("_Line:"), FALSE, i++);
   d->move.line = w;
 
