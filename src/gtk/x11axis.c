@@ -2481,6 +2481,7 @@ position_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 
   frame = gtk_frame_new(_("Position"));
 #if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_widget_set_vexpand(frame, TRUE);
   gtk_frame_set_child(GTK_FRAME(frame), table);
 #else
   gtk_container_add(GTK_CONTAINER(frame), table);
