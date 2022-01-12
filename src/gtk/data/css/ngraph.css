@@ -19,7 +19,7 @@ button.menutoolbutton {
     border-bottom-right-radius: 0;
 }
 
-menubutton.menutoolbutton {
+menubutton.menutoolbutton > button {
     border-top-left-radius:     0;
     border-bottom-left-radius:  0;
 }
