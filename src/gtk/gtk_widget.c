@@ -895,13 +895,20 @@ show_color_dialog(GtkButton *btn, GdkEvent *event, gpointer user_data)
 GtkWidget *
 create_color_button(GtkWidget *win)
 {
+#if GTK_CHECK_VERSION(4, 0, 0)
+  GtkGesture *gesture;
+#endif
   GtkWidget *w;
 
   w = gtk_color_button_new();
   g_object_set_data(G_OBJECT(w), CUSTOM_PALETTE_KEY, GINT_TO_POINTER(0));
   g_signal_connect(w, "color-set", G_CALLBACK(show_color_sel), win);
 #if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
+  gesture = gtk_gesture_click_new();
+  gtk_widget_add_controller(w, GTK_EVENT_CONTROLLER(gesture));
+
+  gtk_gesture_single_set_button(GTK_GESTURE_SINGLE(gesture), 0);
+  g_signal_connect(gesture, "pressed", G_CALLBACK(show_color_dialog), w);
 #else
   g_signal_connect(w, "button-press-event", G_CALLBACK(show_color_dialog), win);
 #endif
