@@ -2536,6 +2536,7 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
     gtk_widget_set_can_focus(widget, FALSE);
     if (menu) {
       GtkWidget *box;
+      gtk_widget_set_can_focus(menu, FALSE);
       box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
       gtk_box_append(GTK_BOX(box), widget);
       gtk_widget_add_css_class(widget, MENUBUTTON_CLASS);
