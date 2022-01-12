@@ -1319,6 +1319,9 @@ edit_custom_palette(GtkWidget *w, gpointer data)
 				       GTK_RESPONSE_REJECT,
 				       NULL);
   box = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_orientable_set_orientation(GTK_ORIENTABLE(box), GTK_ORIENTATION_VERTICAL);
+#endif
   btns = create_custom_palette_buttons(d, box);
   if (btns == NULL) {
 #if GTK_CHECK_VERSION(4, 0, 0)
