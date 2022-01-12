@@ -1621,6 +1621,7 @@ baseline_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 
   frame = gtk_frame_new(_("Arrow"));
 #if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_widget_set_vexpand(frame, TRUE);
   gtk_frame_set_child(GTK_FRAME(frame), table);
 #else
   gtk_container_add(GTK_CONTAINER(frame), table);
@@ -1656,6 +1657,7 @@ baseline_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   set_widget_margin(frame, WIDGET_MARGIN_RIGHT);
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(vbox), frame);
+  gtk_widget_set_vexpand(frame, TRUE);
   gtk_box_append(GTK_BOX(hbox), vbox);
 #else
   gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
