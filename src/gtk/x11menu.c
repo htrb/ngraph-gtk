@@ -2586,7 +2586,10 @@ create_toplevel_window(void)
 {
   int i;
   struct objlist *aobj;
-  int x, y, width, height, w, h;
+#if ! GTK_CHECK_VERSION(4, 0, 0)
+  int x, y;
+#endif
+  int width, height, w, h;
   GdkDisplay *disp;
   GtkWidget *popup;
 #if GTK_CHECK_VERSION(4, 0, 0)
@@ -2635,8 +2638,10 @@ create_toplevel_window(void)
   if (Menulocal.menuheight == DEFAULT_GEOMETRY)
     Menulocal.menuheight = h / 1.2;
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   x = Menulocal.menux;
   y = Menulocal.menuy;
+#endif
   width = Menulocal.menuwidth;
   height = Menulocal.menuheight;
 
