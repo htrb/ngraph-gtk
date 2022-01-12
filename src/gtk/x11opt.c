@@ -1116,7 +1116,7 @@ edit_custom_palette(GtkWidget *w, gpointer data)
 				       _("_OK"),
 				       GTK_RESPONSE_ACCEPT,
 				       _("_Cancel"),
-				       GTK_RESPONSE_REJECT,
+				       GTK_RESPONSE_CANCEL,
 				       NULL);
   box = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
   btns = create_custom_palette_buttons(d, box);
