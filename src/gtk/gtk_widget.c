@@ -850,12 +850,16 @@ set_default_palette(GtkWidget *cc)
   arrayinit(&palette, sizeof(GdkRGBA));
   add_default_color(&palette);
   n = arraynum(&palette);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_color_chooser_add_palette(GTK_COLOR_CHOOSER(cc), GTK_ORIENTATION_VERTICAL, 5, n, arraydata(&palette));
+#else
   gtk_color_chooser_add_palette(GTK_COLOR_CHOOSER(cc), GTK_ORIENTATION_HORIZONTAL, 9, n, arraydata(&palette));
 
   arrayclear(&palette);
   add_default_gray(&palette);
   n = arraynum(&palette);
   gtk_color_chooser_add_palette(GTK_COLOR_CHOOSER(cc), GTK_ORIENTATION_HORIZONTAL, n, n, arraydata(&palette));
+#endif
   arraydel(&palette);
 }
 
