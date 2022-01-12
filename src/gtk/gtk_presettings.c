@@ -1900,6 +1900,9 @@ GtkWidget *
 presetting_create_panel(GtkApplication *app)
 {
   GtkWidget *w, *box, *img;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  GtkWidget *button_box;
+#endif
   GtkBuilder *builder;
   GdkRGBA color;
 
@@ -2063,7 +2066,9 @@ presetting_create_panel(GtkApplication *app)
   setup_mark_type(w, &(Widgets.mark_begin));
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_widget_add_css_class(w, TOOLBUTTON_CLASS);
-  gtk_box_append(GTK_BOX(box), w);
+  gtk_widget_add_css_class(w, MENUBUTTON_CLASS);
+  button_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+  gtk_box_append(GTK_BOX(button_box), w);
 #else
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
 #endif
@@ -2071,7 +2076,9 @@ presetting_create_panel(GtkApplication *app)
 
   w = create_menu_button(builder, "marker-type-begin-menu", _("Marker begin"));
 #if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_box_append(GTK_BOX(box), w);
+  gtk_widget_add_css_class(w, MENUBUTTON_CLASS);
+  gtk_box_append(GTK_BOX(button_box), w);
+  gtk_box_append(GTK_BOX(box), button_box);
 #else
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
 #endif
@@ -2086,7 +2093,9 @@ presetting_create_panel(GtkApplication *app)
 
   w = create_menu_button(builder, "marker-type-end-menu", _("Marker end"));
 #if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_box_append(GTK_BOX(box), w);
+  gtk_widget_add_css_class(w, MARKERBUTTON_CLASS);
+  button_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+  gtk_box_append(GTK_BOX(button_box), w);
 #else
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
 #endif
@@ -2103,8 +2112,10 @@ presetting_create_panel(GtkApplication *app)
   g_signal_connect(w, "clicked", G_CALLBACK(select_mark), &(Widgets.mark_end));
   setup_mark_type(w, &(Widgets.mark_end));
 #if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_widget_add_css_class(w, MARKERBUTTON_CLASS);
   gtk_widget_add_css_class(w, TOOLBUTTON_CLASS);
-  gtk_box_append(GTK_BOX(box), w);
+  gtk_box_append(GTK_BOX(button_box), w);
+  gtk_box_append(GTK_BOX(box), button_box);
 #else
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
 #endif
