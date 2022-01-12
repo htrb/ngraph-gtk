@@ -777,6 +777,26 @@ show_color_sel(GtkWidget *w, gpointer user_data)
 void
 add_default_color(struct narray *palette)
 {
+#if GTK_CHECK_VERSION(4, 0, 0)
+  const char *default_colors[9*5] = {
+    "#99c1f1", "#62a0ea", "#3584e4", "#1c71d8", "#1a5fb4", /* Blue */
+    "#8ff0a4", "#57e389", "#33d17a", "#2ec27e", "#26a269", /* Green */
+    "#f9f06b", "#f8e45c", "#f6d32d", "#f5c211", "#e5a50a", /* Yellow */
+    "#ffbe6f", "#ffa348", "#ff7800", "#e66100", "#c64600", /* Orange */
+    "#f66151", "#ed333b", "#e01b24", "#c01c28", "#a51d2d", /* Red */
+    "#dc8add", "#c061cb", "#9141ac", "#813d9c", "#613583", /* Purple */
+    "#cdab8f", "#b5835a", "#986a44", "#865e3c", "#63452c", /* Brown */
+    "#ffffff", "#f6f5f4", "#deddda", "#c0bfbc", "#9a9996", /* Light */
+    "#77767b", "#5e5c64", "#3d3846", "#241f31", "#000000"  /* Dark */
+  };
+  GdkRGBA color;
+  int i, n;
+  n = sizeof(default_colors) / sizeof(*default_colors);
+  for (i = 0; i < n; i++) {
+    gdk_rgba_parse(&color, default_colors[i]);
+    arrayadd(palette, &color);
+  }
+#else
   const gchar *default_colors[9][3] = {
     { "#ef2929", "#cc0000", "#a40000" }, /* Scarlet Red */
     { "#fcaf3e", "#f57900", "#ce5c00" }, /* Orange */
@@ -796,6 +816,7 @@ add_default_color(struct narray *palette)
       arrayadd(palette, &color);
     }
   }
+#endif
 }
 
 void
