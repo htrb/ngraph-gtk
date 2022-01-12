@@ -24,6 +24,12 @@ menubutton.menutoolbutton > button {
     border-bottom-left-radius:  0;
 }
 
+button.markerbutton {
+    border-left-width: 0;
+    border-top-left-radius:    0;
+    border-bottom-left-radius: 0;
+}
+
 frame.ruler {
     border-radius: 0;
 }
