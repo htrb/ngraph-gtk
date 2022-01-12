@@ -865,6 +865,20 @@ set_default_palette(GtkWidget *cc)
 
 #define CUSTOM_PALETTE_KEY "custom_palette"
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+show_color_dialog(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y, gpointer user_data)
+{
+  GtkColorChooser *btn;
+  btn = GTK_COLOR_CHOOSER(user_data);
+  gtk_color_chooser_add_palette(GTK_COLOR_CHOOSER(btn), GTK_ORIENTATION_HORIZONTAL, 0, 0, NULL);
+  if (Menulocal.use_custom_palette) {
+    set_custom_palette(GTK_WIDGET(btn));
+  } else {
+    set_default_palette(GTK_WIDGET(btn));
+  }
+}
+#else
 static gboolean
 show_color_dialog(GtkButton *btn, GdkEvent *event, gpointer user_data)
 {
@@ -876,6 +890,7 @@ show_color_dialog(GtkButton *btn, GdkEvent *event, gpointer user_data)
   }
   return FALSE;
 }
+#endif
 
 GtkWidget *
 create_color_button(GtkWidget *win)
