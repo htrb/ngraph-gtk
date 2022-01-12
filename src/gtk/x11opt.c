@@ -1312,11 +1312,14 @@ edit_custom_palette(GtkWidget *w, gpointer data)
   d = data;
   dialog = gtk_dialog_new_with_buttons(_("custom palette"),
 				       GTK_WINDOW(d->widget),
+#if USE_HEADER_BAR
+				       GTK_DIALOG_USE_HEADER_BAR |
+#endif
 				       GTK_DIALOG_MODAL,
 				       _("_OK"),
 				       GTK_RESPONSE_ACCEPT,
 				       _("_Cancel"),
-				       GTK_RESPONSE_REJECT,
+				       GTK_RESPONSE_CANCEL,
 				       NULL);
   box = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
 #if GTK_CHECK_VERSION(4, 0, 0)
