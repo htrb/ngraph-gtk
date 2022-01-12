@@ -2329,19 +2329,6 @@ create_recent_menu(int type)
 }
 #endif
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-static GMenuModel *
-create_save_menu(void)
-{
-  GMenu *gmenu;
-
-  gmenu = gtk_application_get_menu_by_id(GtkApp, "save-menu");
-  if (gmenu == NULL) {
-    return NULL;
-  }
-  return G_MENU_MODEL(gmenu);
-}
-#else
 static GtkWidget*
 create_save_menu(void)
 {
@@ -2352,11 +2339,14 @@ create_save_menu(void)
   if (gmenu == NULL) {
     return NULL;
   }
+#if GTK_CHECK_VERSION(4, 0, 0)
+  menu = gtk_popover_menu_new_from_model_full(G_MENU_MODEL(gmenu), GTK_POPOVER_MENU_NESTED);
+#else
   menu = gtk_menu_new_from_model(G_MENU_MODEL(gmenu));
   gtk_widget_show_all(menu);
+#endif
   return menu;
 }
-#endif
 
 void
 draw_notify(int notify)
@@ -2431,7 +2421,7 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
 /* must be implemented */
       widget = gtk_button_new_from_icon_name(item[i].icon);
       menu = gtk_menu_button_new();
-      gtk_menu_button_set_menu_model(GTK_MENU_BUTTON(menu), create_save_menu());
+      gtk_menu_button_set_popover(GTK_MENU_BUTTON(menu), create_save_menu());
       gtk_widget_set_tooltip_text(menu, _("Save menu"));
 #else
       widget = gtk_menu_tool_button_new(NULL, _(item[i].label));
