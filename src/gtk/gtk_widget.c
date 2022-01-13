@@ -820,6 +820,7 @@ add_default_color(struct narray *palette)
 #endif
 }
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
 void
 add_default_gray(struct narray *palette)
 {
@@ -841,6 +842,7 @@ add_default_gray(struct narray *palette)
     arrayadd(palette, &color);
   }
 }
+#endif
 
 static void
 set_default_palette(GtkWidget *cc)

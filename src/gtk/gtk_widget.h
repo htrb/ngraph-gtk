@@ -90,7 +90,9 @@ void set_widget_margin(GtkWidget *w, int margin_pos);
 void set_scale_mark(GtkWidget *scale, GtkPositionType pos, int start, int inc);
 void set_widget_font(GtkWidget *w, const char *font);
 void add_default_color(struct narray *palette);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
 void add_default_gray(struct narray *palette);
+#endif
 gchar *get_text_from_buffer(GtkTextBuffer *buffer);
 GtkWidget *add_button(GtkWidget *grid, int row, int col, const char *icon, const char *tooltip, GCallback proc, gpointer data);
 GtkWidget *add_toggle_button(GtkWidget *grid, int row, int col, const char *icon_name, const char *tooltip, GCallback proc, gpointer data);
