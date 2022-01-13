@@ -899,7 +899,9 @@ init_custom_palette(void)
       }
     }
   }
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   add_default_gray(palette);
+#endif
 }
 
 #define DEFAULT_AXIS_LENGTH 14000
