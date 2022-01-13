@@ -39,7 +39,7 @@ frame.ruler {
     border-radius: 0;
 }
 
-button#StrokeColorButton > colorswatch > overlay {
+colorbutton#StrokeColorButton > button > colorswatch > overlay {
     background-color: @theme_bg_color;
     margin: 3px;
     border-color: rgba(0,0,0,0);
