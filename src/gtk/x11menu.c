@@ -2791,6 +2791,9 @@ create_toplevel_window(void)
   reset_event();
   create_markpixmap(TopLevel);
   setupwindow(GtkApp);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  add_accelerator(GtkApp, accelerator, G_N_ELEMENTS(accelerator));
+#endif
   create_addin_menu();
 
   NgraphApp.FileName = NULL;
