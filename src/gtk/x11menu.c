@@ -859,7 +859,6 @@ static struct Accelerator accelerator[] = {
     "F1"
   }
 };
-#endif
 
 static void
 add_accelerator(GtkApplication *application, struct Accelerator *accel, int n)
@@ -872,7 +871,7 @@ add_accelerator(GtkApplication *application, struct Accelerator *accel, int n)
     gtk_application_set_accels_for_action(application, accel[i].action, vaccels);
   }
 }
-
+#endif
 
 void
 set_pointer_mode(int id)
