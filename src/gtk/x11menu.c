@@ -771,6 +771,109 @@ static struct MenuItem MenuAction[] = {
   },
 };
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+struct Accelerator {
+  const char *action;
+  const char *accel;
+};
+
+static struct Accelerator accelerator[] = {
+  {
+    "app.GraphLoadAction",
+    "<Primary>R"
+  },
+  {
+    "app.GraphSaveAction",
+    "<Primary>S"
+  },
+  {
+    "app.GraphSaveAsAction",
+    "<Primary><Shift>S"
+  },
+  {
+    "app.GraphPrintAction",
+    "<Primary>P"
+  },
+  {
+    "app.quit",
+    "<Primary>Q"
+  },
+  {
+    "app.EditRedoAction",
+    "<Primary>Y"
+  },
+  {
+    "app.EditUndoAction",
+    "<Primary>Z"
+  },
+  {
+    "app.EditCutAction",
+    "<Primary>X"
+  },
+  {
+    "app.EditCopyAction",
+    "<Primary>C"
+  },
+  {
+    "app.EditPasteAction",
+    "<Primary>V"
+  },
+  {
+    "app.EditDeleteAction",
+    "Delete"
+  },
+  {
+    "app.EditDuplicateAction",
+    "Insert"
+  },
+  {
+    "app.EditSelectAllAction",
+    "<Primary>A"
+  },
+  {
+    "app.EditOrderTopAction",
+    "<Shift>Home"
+  },
+  {
+    "app.EditOrderBottomAction",
+    "<Shift>End"
+  },
+  {
+    "app.ViewDrawAction",
+    "<Primary>D"
+  },
+  {
+    "app.ViewCrossGaugeAction",
+    "<Primary>G"
+  },
+  {
+    "app.DataAddFileAction",
+    "<Primary>O"
+  },
+  {
+    "app.AxisScaleClearAction",
+    "<Primary><Shift>C"
+  },
+  {
+    "app.help",
+    "F1"
+  }
+};
+#endif
+
+static void
+add_accelerator(GtkApplication *application, struct Accelerator *accel, int n)
+{
+  int i;
+  const char *vaccels[] = {NULL, NULL};
+
+  for (i = 0; i < n; i++) {
+    vaccels[0] = accel[i].accel;
+    gtk_application_set_accels_for_action(application, accel[i].action, vaccels);
+  }
+}
+
+
 void
 set_pointer_mode(int id)
 {
