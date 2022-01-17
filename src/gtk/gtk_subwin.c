@@ -1265,12 +1265,20 @@ parameter_sub_window_create(struct SubWin *d)
   return swin;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+list_focused(GtkEventControllerFocus *ev, gpointer user_data)
+{
+  set_focus_insensitive(&NgraphApp.Viewer);
+}
+#else
 static gboolean
 list_focused(GtkWidget *widget, GdkEvent *ev, gpointer user_data)
 {
   set_focus_insensitive(&NgraphApp.Viewer);
   return FALSE;
 }
+#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 static void
@@ -1298,6 +1306,9 @@ list_widget_create(struct SubWin *d, int lisu_num, n_list_store *list, int can_f
   struct obj_list_data *data;
   GtkWidget *lstor, *swin;
   GList *col_list, *col;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  GtkEventController *ev;
+#endif
 
   data = g_malloc0(sizeof(*data));
   data->select = -1;
@@ -1321,7 +1332,9 @@ list_widget_create(struct SubWin *d, int lisu_num, n_list_store *list, int can_f
 
   /* to handle key-press-event correctly in single window mode */
 #if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
+  ev = gtk_event_controller_focus_new();
+  g_signal_connect(ev, "enter", G_CALLBACK(list_focused), NULL);
+  gtk_widget_add_controller(lstor, ev);
 #else
   g_signal_connect(lstor, "focus-in-event", G_CALLBACK(list_focused), NULL);
 #endif
