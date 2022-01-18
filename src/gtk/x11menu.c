@@ -2441,7 +2441,7 @@ create_save_menu(void)
     return NULL;
   }
 #if GTK_CHECK_VERSION(4, 0, 0)
-  menu = gtk_popover_menu_new_from_model_full(G_MENU_MODEL(gmenu), GTK_POPOVER_MENU_NESTED);
+  menu = gtk_popover_menu_new_from_model_full(G_MENU_MODEL(gmenu), POPOVERMEU_FLAG);
 #else
   menu = gtk_menu_new_from_model(G_MENU_MODEL(gmenu));
   gtk_widget_show_all(menu);
