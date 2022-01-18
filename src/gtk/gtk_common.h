@@ -31,6 +31,8 @@
 #define MENUBUTTON_CLASS "menutoolbutton"
 #define MARKERBUTTON_CLASS "markerbutton"
 
+#define POPOVERMEU_FLAG GTK_POPOVER_MENU_NESTED
+
 #if GTK_CHECK_VERSION(4, 0, 0)
 enum CURSOR_TYPE {
   GDK_LEFT_PTR,
