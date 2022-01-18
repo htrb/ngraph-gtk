@@ -2627,12 +2627,12 @@ LegendWinUpdate(char **objects, int clear, int draw)
 {
   struct objlist *obj;
   char **ptr;
-  struct SubWin win[] = {
-    NgraphApp.PathWin,
-    NgraphApp.RectWin,
-    NgraphApp.ArcWin,
-    NgraphApp.MarkWin,
-    NgraphApp.TextWin,
+  struct SubWin *win[] = {
+    &NgraphApp.PathWin,
+    &NgraphApp.RectWin,
+    &NgraphApp.ArcWin,
+    &NgraphApp.MarkWin,
+    &NgraphApp.TextWin,
   };
   int i, n;
   if (Menulock || Globallock)
@@ -2641,7 +2641,7 @@ LegendWinUpdate(char **objects, int clear, int draw)
   n = G_N_ELEMENTS(win);
   for (i = 0; i < n; i++) {
     struct obj_list_data *d;
-    d = win[i].data.data;
+    d = win[i]->data.data;
     if (d == NULL) {
       return;
     }
