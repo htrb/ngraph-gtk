@@ -6425,7 +6425,11 @@ create_type_color_combo_box(GtkWidget *cbox, struct objlist *obj, int type, int 
   case PLOT_TYPE_STAIRCASE_Y:
   case PLOT_TYPE_FIT:
     add_text_combo_item_to_cbox(list, &parent, NULL, -1, -1, _("Join"), TOGGLE_NONE, FALSE);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    add_enum_combo_item_to_cbox(list, NULL, &parent, FILE_COMBO_ITEM_JOIN, obj, "line_join", id, NULL);
+#else
     add_enum_combo_item_to_cbox(list, NULL, &parent, FILE_COMBO_ITEM_JOIN, obj, "line_join", id);
+#endif
     break;
   }
 
@@ -6482,7 +6486,11 @@ create_type_combo_item(GtkTreeStore *list, struct objlist *obj, int id)
     if (strcmp(enumlist[i], "mark") == 0) {
       add_mark_combo_item_to_cbox(list, NULL, &iter, FILE_COMBO_ITEM_MARK, obj, "mark_type", id);
     } else if (strcmp(enumlist[i], "curve") == 0) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+      add_enum_combo_item_to_cbox(list, NULL, &iter, FILE_COMBO_ITEM_INTP, obj, "interpolation", id, NULL);
+#else
       add_enum_combo_item_to_cbox(list, NULL, &iter, FILE_COMBO_ITEM_INTP, obj, "interpolation", id);
+#endif
     }
   }
 }

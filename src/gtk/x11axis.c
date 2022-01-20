@@ -3628,10 +3628,18 @@ create_base_combo_item(GtkTreeStore *list, GtkTreeIter *parent, struct objlist *
   add_line_style_item_to_cbox(list, &iter, AXIS_COMBO_ITEM_BASE_STYLE, obj, "style", id);
 
   add_text_combo_item_to_cbox(list, &child, &iter, -1, -1, _("Arrow"), TOGGLE_NONE, FALSE);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  add_enum_combo_item_to_cbox(list, NULL, &child, AXIS_COMBO_ITEM_BASE_ARROW, obj, "arrow", id, NULL);
+#else
   add_enum_combo_item_to_cbox(list, NULL, &child, AXIS_COMBO_ITEM_BASE_ARROW, obj, "arrow", id);
+#endif
 
   add_text_combo_item_to_cbox(list, &child, &iter, -1, -1, _("Wave"), TOGGLE_NONE, FALSE);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  add_enum_combo_item_to_cbox(list, NULL, &child, AXIS_COMBO_ITEM_BASE_WAVE, obj, "wave", id, NULL);
+#else
   add_enum_combo_item_to_cbox(list, NULL, &child, AXIS_COMBO_ITEM_BASE_WAVE, obj, "wave", id);
+#endif
 
   add_text_combo_item_to_cbox(list, NULL, &iter, AXIS_COMBO_ITEM_BASE_COLOR, -1, _("Color"), TOGGLE_NONE, FALSE);
 }
@@ -3651,7 +3659,11 @@ create_gauge_combo_item(GtkTreeStore *list, GtkTreeIter *parent, struct objlist 
 		     -1);
 
   add_text_combo_item_to_cbox(list, &child, &iter, -1, -1, _("Position"), TOGGLE_NONE, FALSE);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  add_enum_combo_item_to_cbox(list, NULL, &child, AXIS_COMBO_ITEM_GAUGE_POS, obj, "gauge", id, NULL);
+#else
   add_enum_combo_item_to_cbox(list, NULL, &child, AXIS_COMBO_ITEM_GAUGE_POS, obj, "gauge", id);
+#endif
 
   add_line_style_item_to_cbox(list, &iter, AXIS_COMBO_ITEM_GAUGE_STYLE, obj, "gauge_style", id);
   add_text_combo_item_to_cbox(list, NULL, &iter, AXIS_COMBO_ITEM_GAUGE_COLOR, -1, _("Color"), TOGGLE_NONE, FALSE);
@@ -3672,13 +3684,25 @@ create_num_combo_item(GtkTreeStore *list, GtkTreeIter *parent, struct objlist *o
 		     -1);
 
   add_text_combo_item_to_cbox(list, &child, &iter, -1, -1, _("Position"), TOGGLE_NONE, FALSE);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  add_enum_combo_item_to_cbox(list, NULL, &child, AXIS_COMBO_ITEM_NUM_POS, obj, "num", id, NULL);
+#else
   add_enum_combo_item_to_cbox(list, NULL, &child, AXIS_COMBO_ITEM_NUM_POS, obj, "num", id);
+#endif
 
   add_text_combo_item_to_cbox(list, &child, &iter, -1, -1, _("Align"), TOGGLE_NONE, FALSE);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  add_enum_combo_item_to_cbox(list, NULL, &child, AXIS_COMBO_ITEM_NUM_ALIGN, obj, "num_align", id, NULL);
+#else
   add_enum_combo_item_to_cbox(list, NULL, &child, AXIS_COMBO_ITEM_NUM_ALIGN, obj, "num_align", id);
+#endif
 
   add_text_combo_item_to_cbox(list, &child, &iter, -1, -1, _("Direction"), TOGGLE_NONE, FALSE);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  add_enum_combo_item_to_cbox(list, NULL, &child, AXIS_COMBO_ITEM_NUM_DIR, obj, "num_direction", id, NULL);
+#else
   add_enum_combo_item_to_cbox(list, NULL, &child, AXIS_COMBO_ITEM_NUM_DIR, obj, "num_direction", id);
+#endif
 
   add_text_combo_item_to_cbox(list, &child, &iter, -1, -1, _("Font"), TOGGLE_NONE, FALSE);
   add_font_combo_item_to_cbox(list, NULL, &child, AXIS_COMBO_ITEM_NUM_FONT, obj, "num_font", id);
@@ -3692,7 +3716,11 @@ create_num_combo_item(GtkTreeStore *list, GtkTreeIter *parent, struct objlist *o
   add_bool_combo_item_to_cbox(list, NULL, &iter, AXIS_COMBO_ITEM_NUM_LOG, obj, "num_log_pow", id, _("Log power"));
 
   add_text_combo_item_to_cbox(list, &child, &iter, -1, -1, _("Zero"), TOGGLE_NONE, FALSE);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  add_enum_combo_item_to_cbox(list, NULL, &child, AXIS_COMBO_ITEM_NUM_NO_ZERO, obj, "num_no_zero", id, NULL);
+#else
   add_enum_combo_item_to_cbox(list, NULL, &child, AXIS_COMBO_ITEM_NUM_NO_ZERO, obj, "num_no_zero", id);
+#endif
 }
 
 static void
@@ -3705,7 +3733,11 @@ create_type_combo_box(GtkWidget *cbox, struct objlist *obj, int id)
   gtk_tree_store_clear(list);
 
   add_text_combo_item_to_cbox(list, &iter, NULL, -1, -1, _("Scale"), TOGGLE_NONE, FALSE);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  add_enum_combo_item_to_cbox(list, NULL, &iter, AXIS_COMBO_ITEM_SCALE, obj, "type", id, NULL);
+#else
   add_enum_combo_item_to_cbox(list, NULL, &iter, AXIS_COMBO_ITEM_SCALE, obj, "type", id);
+#endif
 
   create_base_combo_item(list, NULL, obj, id);
   create_gauge_combo_item(list, NULL, obj, id);
