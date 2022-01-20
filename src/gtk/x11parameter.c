@@ -1139,13 +1139,13 @@ create_widget(struct obj_list_data *d, int id, int n)
     col += 3;
   }
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   col++;
   separator = gtk_frame_new(NULL);
-#if ! GTK_CHECK_VERSION(4, 0, 0)
   gtk_frame_set_shadow_type(GTK_FRAME(separator), GTK_SHADOW_NONE);
-#endif
   gtk_widget_set_hexpand(GTK_WIDGET(separator), TRUE);
   gtk_grid_attach(GTK_GRID(d->text), separator, col, id, 1, 1);
+#endif
 
   col++;
   separator = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
