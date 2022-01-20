@@ -452,18 +452,27 @@ nruler_draw_ticks(Nruler *ruler, GtkWidget *widget)
   g_object_unref(layout);
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+style_changed(GtkWidget *w, GtkCssStyleChange *change)
+{
+  Nruler *ruler;
+
+  ruler = g_object_get_data(G_OBJECT(w), RULER_DATA_KEY);
+  if (ruler) {
+    gtk_style_context_get_color(ruler->saved_style, &ruler->saved_fg);
+  }
+}
+#else
 static void
 style_changed(GtkStyleContext *stylecontext, gpointer user_data)
 {
   Nruler *ruler;
 
   ruler = user_data;
-#if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_style_context_get_color(stylecontext, &ruler->saved_fg);
-#else
   gtk_style_context_get_color(stylecontext, GTK_STATE_FLAG_NORMAL, &ruler->saved_fg);
-#endif
 }
+#endif
 
 static GtkStyleContext *
 nruler_get_color(Nruler *ruler, GdkRGBA *fg)
