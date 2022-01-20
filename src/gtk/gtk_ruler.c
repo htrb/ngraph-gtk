@@ -461,6 +461,7 @@ style_changed(GtkWidget *w, GtkCssStyleChange *change)
   ruler = g_object_get_data(G_OBJECT(w), RULER_DATA_KEY);
   if (ruler) {
     gtk_style_context_get_color(ruler->saved_style, &ruler->saved_fg);
+    ruler->save_l = ruler->lower + 1; /* to draw ticks automatically */
   }
 }
 #else
