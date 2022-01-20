@@ -84,7 +84,11 @@ struct MenuItem;
 struct ToolItem;
 
 static void create_menu(struct MenuItem *item);
+#if GTK_CHECK_VERSION(4, 0, 0)
+static GtkWidget *create_toolbar(struct ToolItem *item, int n, GtkOrientation orientation, GCallback btn_press_cb);
+#else
 static GtkWidget *create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb);
+#endif
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
 static void CmViewerButtonArm(GtkWidget *action, gpointer client_data);
@@ -1821,7 +1825,11 @@ setup_toolbar(GtkWidget *window)
 #if USE_APP_HEADER_BAR
   GtkWidget *hbar;
 #endif
+#if GTK_CHECK_VERSION(4, 0, 0)
+  w = create_toolbar(CommandToolbar, sizeof(CommandToolbar) / sizeof(*CommandToolbar), GTK_ORIENTATION_HORIZONTAL, NULL);
+#else
   w = create_toolbar(CommandToolbar, sizeof(CommandToolbar) / sizeof(*CommandToolbar), NULL);
+#endif
   CToolbar = w;
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
@@ -1837,9 +1845,12 @@ setup_toolbar(GtkWidget *window)
   gtk_header_bar_set_show_close_button(GTK_HEADER_BAR(hbar), TRUE);
   gtk_window_set_titlebar(GTK_WINDOW(window), hbar);
 #endif
+#if GTK_CHECK_VERSION(4, 0, 0)
+  w = create_toolbar(PointerToolbar, sizeof(PointerToolbar) / sizeof(*PointerToolbar), GTK_ORIENTATION_VERTICAL, G_CALLBACK(CmViewerButtonPressed));
+#else
   w = create_toolbar(PointerToolbar, sizeof(PointerToolbar) / sizeof(*PointerToolbar), G_CALLBACK(CmViewerButtonPressed));
+#endif
   PToolbar = w;
-  gtk_orientable_set_orientation(GTK_ORIENTABLE(w), GTK_ORIENTATION_VERTICAL);
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
 #else
@@ -2471,7 +2482,11 @@ draw_notify(int notify)
 }
 
 static GtkWidget *
+#if GTK_CHECK_VERSION(4, 0, 0)
+create_toolbar(struct ToolItem *item, int n, GtkOrientation orientation, GCallback btn_press_cb)
+#else
 create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
+#endif
 {
   int i;
 #if GTK_CHECK_VERSION(4, 0, 0)
@@ -2483,7 +2498,7 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
 #endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-  toolbar = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
+  toolbar = gtk_box_new(orientation, 3);
   set_widget_margin_all(toolbar, 4);
 #else
   toolbar = gtk_toolbar_new();
