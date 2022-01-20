@@ -158,7 +158,6 @@ static struct subwin_popup_list Popup_list[] = {
   {N_("_Bottom"),     G_CALLBACK(AxisWinAxisLast), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {NULL, NULL, NULL, POP_UP_MENU_ITEM_TYPE_END},
 };
-#endif
 
 #define POPUP_ITEM_NUM (sizeof(Popup_list) / sizeof(*Popup_list) - 1)
 
@@ -167,6 +166,7 @@ static struct subwin_popup_list Popup_list[] = {
 #define POPUP_ITEM_UP       12
 #define POPUP_ITEM_DOWN     13
 #define POPUP_ITEM_BOTTOM   14
+#endif
 
 #define TITLE_BUF_SIZE 128
 
