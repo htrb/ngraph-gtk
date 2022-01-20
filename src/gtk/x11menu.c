@@ -2511,7 +2511,7 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
     case TOOL_TYPE_SEPARATOR:
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
-      widget = gtk_frame_new(NULL);
+      widget = gtk_separator_new(orientation);
 #else
       widget = gtk_separator_tool_item_new();
       gtk_separator_tool_item_set_draw(GTK_SEPARATOR_TOOL_ITEM(widget), TRUE);
