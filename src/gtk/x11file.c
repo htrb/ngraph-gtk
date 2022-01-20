@@ -135,21 +135,31 @@ static gboolean func_entry_focused(GtkWidget *w, GdkEventFocus *event, gpointer 
 #if GTK_CHECK_VERSION(4, 0, 0)
 static GActionEntry Popup_list[] =
 {
-  {N_("_File"),             CmFileOpen, NULL, NULL, NULL},
-  {N_("_Range"),            CmRangeAdd, NULL, NULL, NULL},
-  //  {N_("_Recent file"),      NULL, NULL, NULL, NULL},
-  {N_("_Duplicate"),        file_copy_popup_func, NULL, NULL, NULL},
-  {N_("duplicate _Behind"), file_copy2_popup_func, NULL, NULL, NULL},
-  {N_("_Delete"),           file_delete_popup_func, NULL, NULL, NULL},
-  {N_("_Draw"),             file_draw_popup_func, NULL, NULL, NULL},
-  {N_("_Properties"),       list_sub_window_update, NULL, NULL, NULL},
-  {N_("_Instance name"),    list_sub_window_object_name, NULL, NULL, NULL},
-  {N_("_Edit"),             file_edit_popup_func, NULL, NULL, NULL},
-  {N_("_Top"),              list_sub_window_move_top, NULL, NULL, NULL},
-  {N_("_Up"),               list_sub_window_move_up, NULL, NULL, NULL},
-  {N_("_Down"),             list_sub_window_move_down, NULL, NULL, NULL},
-  {N_("_Bottom"),           list_sub_window_move_last, NULL, NULL, NULL},
+  {"dataEditAction",            file_edit_popup_func, NULL, NULL, NULL},
+  {"dataOrderTopAction",        list_sub_window_move_top, NULL, NULL, NULL},
+  {"dataOrderUpAction",         list_sub_window_move_up, NULL, NULL, NULL},
+  {"dataOrderDownAction",       list_sub_window_move_down, NULL, NULL, NULL},
+  {"dataOrderBottomAction",     list_sub_window_move_last, NULL, NULL, NULL},
+  {"dataAddFileAction",         CmFileOpen, NULL, NULL, NULL},
+  {"dataAddRangeAction",        CmRangeAdd, NULL, NULL, NULL},
+
+  //  {"_Recent file",      NULL, NULL, NULL, NULL},
+  {"dataDuplicateAction",       file_copy_popup_func, NULL, NULL, NULL},
+  {"dataDuplicateBefindAction", file_copy2_popup_func, NULL, NULL, NULL},
+  {"dataDeleteAction",          file_delete_popup_func, NULL, NULL, NULL},
+  {"dataDrawAction",            file_draw_popup_func, NULL, NULL, NULL},
+  {"dataUpdateAction",          list_sub_window_update, NULL, NULL, NULL},
+  {"dataInstanceNameAction",    list_sub_window_object_name, NULL, NULL, NULL},
 };
+
+#define POPUP_ITEM_NUM ((int) (sizeof(Popup_list) / sizeof(*Popup_list)))
+#define POPUP_ITEM_EDIT   0
+#define POPUP_ITEM_TOP    1
+#define POPUP_ITEM_UP     2
+#define POPUP_ITEM_DOWN   3
+#define POPUP_ITEM_BOTTOM 4
+#define POPUP_ITEM_ADD_F  5
+#define POPUP_ITEM_ADD_R  6
 #else
 static struct subwin_popup_list add_menu_list[] = {
   {N_("_File"),  G_CALLBACK(CmFileOpen), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
@@ -177,7 +187,6 @@ static struct subwin_popup_list Popup_list[] = {
   {N_("_Bottom"),     G_CALLBACK(list_sub_window_move_last), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {NULL, NULL, NULL,  POP_UP_MENU_ITEM_TYPE_END},
 };
-#endif
 
 #define POPUP_ITEM_NUM (sizeof(Popup_list) / sizeof(*Popup_list) - 1)
 #define POPUP_ITEM_EDIT    9
@@ -185,6 +194,7 @@ static struct subwin_popup_list Popup_list[] = {
 #define POPUP_ITEM_UP     12
 #define POPUP_ITEM_DOWN   13
 #define POPUP_ITEM_BOTTOM 14
+#endif
 
 #define RANGE_ENTRY_WIDTH 26
 
