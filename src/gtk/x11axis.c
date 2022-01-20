@@ -95,22 +95,35 @@ static void AxisWinAxisLast(GSimpleAction *action, GVariant *parameter, gpointer
 
 static GActionEntry Popup_list[] =
 {
-  {N_("_Frame graph"),   CmAxisAddFrame, NULL, NULL, NULL},
-  {N_("_Section graph"), CmAxisAddSection, NULL, NULL, NULL},
-  {N_("_Cross graph"),   CmAxisAddCross, NULL, NULL, NULL},
-  {N_("Single _Axis"),   CmAxisAddSingle, NULL, NULL, NULL},
-  {N_("_Duplicate"),     list_sub_window_copy, NULL, NULL, NULL},
-  {N_("_Delete"),        axis_delete_popup_func, NULL, NULL, NULL},
-  {N_("_Focus"),         list_sub_window_focus, NULL, NULL, NULL},
-  {N_("focus _All"),     list_sub_window_focus_all, NULL, NULL, NULL},
-  {N_("_Clear"),         axiswin_scale_clear, NULL, NULL, NULL},
-  {N_("_Properties"),    list_sub_window_update, NULL, NULL, NULL},
-  {N_("_Instance name"), list_sub_window_object_name, NULL, NULL, NULL},
-  {N_("_Top"),           AxisWinAxisTop, NULL, NULL, NULL},
-  {N_("_Up"),            AxisWinAxisUp, NULL, NULL, NULL},
-  {N_("_Down"),          AxisWinAxisDown, NULL, NULL, NULL},
-  {N_("_Bottom"),        AxisWinAxisLast, NULL, NULL, NULL},
+  {"axisFocusAllAction",        list_sub_window_focus_all, NULL, NULL, NULL},
+  {"axisOrderTopAction",        AxisWinAxisTop, NULL, NULL, NULL},
+  {"axisOrderUpAction",         AxisWinAxisUp, NULL, NULL, NULL},
+  {"axisOrderDownAction",       AxisWinAxisDown, NULL, NULL, NULL},
+  {"axisOrderBottomAction",     AxisWinAxisLast, NULL, NULL, NULL},
+  {"axisAddFrameGraphAction",   CmAxisAddFrame, NULL, NULL, NULL},
+  {"axisAddSectionGraphAction", CmAxisAddSection, NULL, NULL, NULL},
+  {"axisAddCrossGraphAction",   CmAxisAddCross, NULL, NULL, NULL},
+  {"axisAddSingleGraphAction",  CmAxisAddSingle, NULL, NULL, NULL},
+
+  {"axisDuplicateAction",       list_sub_window_copy, NULL, NULL, NULL},
+  {"axisDeleteAction",          axis_delete_popup_func, NULL, NULL, NULL},
+  {"axisFocusAction",           list_sub_window_focus, NULL, NULL, NULL},
+  {"axisClearAction",           axiswin_scale_clear, NULL, NULL, NULL},
+  {"axisUpdateAction",          list_sub_window_update, NULL, NULL, NULL},
+  {"axisInstanceNameAction",    list_sub_window_object_name, NULL, NULL, NULL},
 };
+
+#define POPUP_ITEM_NUM ((int) (sizeof(Popup_list) / sizeof(*Popup_list)))
+
+#define POPUP_ITEM_FOCUS_ALL 0
+#define POPUP_ITEM_TOP       1
+#define POPUP_ITEM_UP        2
+#define POPUP_ITEM_DOWN      3
+#define POPUP_ITEM_BOTTOM    4
+#define POPUP_ITEM_ADD_F     5
+#define POPUP_ITEM_ADD_S     6
+#define POPUP_ITEM_ADD_C     7
+#define POPUP_ITEM_ADD_A     8
 #else
 static void axiswin_scale_clear(GtkMenuItem *item, gpointer user_data);
 static void axis_delete_popup_func(GtkMenuItem *w, gpointer client_data);
