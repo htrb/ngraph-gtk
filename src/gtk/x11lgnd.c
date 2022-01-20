@@ -4055,7 +4055,11 @@ create_text_list(struct SubWin *d)
   data->ev_key = NULL;
   data->obj = chkobject("text");
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  create_legend_popup_menu(data);
+#else
   sub_win_create_popup_menu(data, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
+#endif
 
   set_combo_cell_renderer_cb(data, TEXT_LIST_COL_FONT, Tlist, G_CALLBACK(start_editing_font), NULL);
   col = gtk_tree_view_get_column(GTK_TREE_VIEW(data->text), TEXT_LIST_COL_TEXT);
