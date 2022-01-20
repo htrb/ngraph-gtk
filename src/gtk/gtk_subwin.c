@@ -882,6 +882,7 @@ ev_button_down(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y, gpo
   guint32 current_time;
   int tdif;
   guint button;
+  GtkEventSequenceState state = GTK_EVENT_SEQUENCE_NONE;
 
   if (Menulock || Globallock) return;
 
@@ -890,8 +891,10 @@ ev_button_down(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y, gpo
   time = current_time;
 
   /* following check is necessary for editable column. */
-  if (tdif > 0 && tdif < DOUBLE_CLICK_PERIOD)
+  if (tdif > 0 && tdif < DOUBLE_CLICK_PERIOD) {
+    gtk_gesture_set_state(GTK_GESTURE(gesture), state);
     return;
+  }
 
   d = user_data;
 
@@ -900,9 +903,14 @@ ev_button_down(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y, gpo
   case 1:
     if (n_press > 1) {
       swin_update(d);
+      state = GTK_EVENT_SEQUENCE_CLAIMED;
     }
     break;
+  case 3:
+    state = GTK_EVENT_SEQUENCE_CLAIMED;
+    break;
   }
+  gtk_gesture_set_state(GTK_GESTURE(gesture), state);
 }
 
 static void
