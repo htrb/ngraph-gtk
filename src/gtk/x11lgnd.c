@@ -3173,6 +3173,33 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
   }
 }
 
+static void
+create_legend_popup_menu(struct obj_list_data *d)
+{
+  GActionEntry *entry;
+  int i;
+  const char *name;
+
+  entry = g_malloc(POPUP_ITEM_NUM * sizeof(*PopupAction));
+  if (entry == NULL) {
+    return;
+  }
+
+  name = chkobjectname(d->obj);
+  for (i = 0; i < POPUP_ITEM_NUM; i++) {
+    char *action;
+    entry[i] = PopupAction[i];
+    action = g_strdup_printf(PopupAction[i].name, name);
+    entry[i].name = action;
+  }
+
+  sub_win_create_popup_menu(d, POPUP_ITEM_NUM, entry, G_CALLBACK(popup_show_cb));
+
+  for (i = 0; i < POPUP_ITEM_NUM; i++) {
+    g_free((char *) entry[i].name);
+  }
+  g_free(entry);
+}
 #else
 static void
 popup_show_cb(GtkWidget *widget, gpointer user_data)
