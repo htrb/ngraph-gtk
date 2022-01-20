@@ -1257,9 +1257,8 @@ ParameterWinUpdate(struct obj_list_data *d, int clear, int draw)
 
   add_save_button = FALSE;
 #if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
-  num = chkobjlastinst(d->obj);
-  for (i = 0; i <= num; i++) {
+  while (gtk_grid_get_child_at(GTK_GRID(d->text), 0, 0) ||
+         gtk_grid_get_child_at(GTK_GRID(d->text), 1, 0)) {
     gtk_grid_remove_row(GTK_GRID(d->text), 0);
   }
 #else
