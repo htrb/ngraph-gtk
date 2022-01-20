@@ -1166,17 +1166,14 @@ create_widget(struct obj_list_data *d, int id, int n)
   return col + 1;
 }
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
 static void
 remove_child(GtkWidget *widget, gpointer data)
 {
-#if GTK_CHECK_VERSION(4, 0, 0)
-  GtkGrid *grid = data;
-  gtk_grid_remove(grid, widget);
-#else
   GtkContainer *container = data;
   gtk_container_remove(container, widget);
-#endif
 }
+#endif
 
 static void
 save_as_default(GtkButton *button, gpointer user_data)
