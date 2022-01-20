@@ -214,19 +214,27 @@ enum TEXT_LIST_COL {
 };
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-static GActionEntry Popup_list[] =
+static GActionEntry PopupAction[] =
 {
-  {N_("_Duplicate"),     list_sub_window_copy, NULL, NULL, NULL},
-  {N_("_Delete"),        list_sub_window_delete, NULL, NULL, NULL},
-  {N_("_Focus"),         list_sub_window_focus, NULL, NULL, NULL},
-  {N_("focus _All"),     list_sub_window_focus_all, NULL, NULL, NULL},
-  {N_("_Properties"),    list_sub_window_update, NULL, NULL, NULL},
-  {N_("_Instance name"), list_sub_window_object_name, NULL, NULL, NULL},
-  {N_("_Top"),           list_sub_window_move_top, NULL, NULL, NULL},
-  {N_("_Up"),            list_sub_window_move_up, NULL, NULL, NULL},
-  {N_("_Down"),          list_sub_window_move_down, NULL, NULL, NULL},
-  {N_("_Bottom"),        list_sub_window_move_last, NULL, NULL, NULL},
+  {"%sFocusAllAction",     list_sub_window_focus_all, NULL, NULL, NULL},
+  {"%sOrderTopAction",     list_sub_window_move_top, NULL, NULL, NULL},
+  {"%sOrderUpAction",      list_sub_window_move_up, NULL, NULL, NULL},
+  {"%sOrderDownAction",    list_sub_window_move_down, NULL, NULL, NULL},
+  {"%sOrderBottomAction",  list_sub_window_move_last, NULL, NULL, NULL},
+
+  {"%sDuplicateAction",    list_sub_window_copy, NULL, NULL, NULL},
+  {"%sDeleteAction",       list_sub_window_delete, NULL, NULL, NULL},
+  {"%sFocusAction",        list_sub_window_focus, NULL, NULL, NULL},
+  {"%sUpdateAction",       list_sub_window_update, NULL, NULL, NULL},
+  {"%sInstanceNameAction", list_sub_window_object_name, NULL, NULL, NULL},
 };
+
+#define POPUP_ITEM_NUM ((int) (sizeof(PopupAction) / sizeof(*PopupAction)))
+#define POPUP_ITEM_FOCUS_ALL 0
+#define POPUP_ITEM_TOP       1
+#define POPUP_ITEM_UP        2
+#define POPUP_ITEM_DOWN      3
+#define POPUP_ITEM_BOTTOM    4
 #else
 static struct subwin_popup_list Popup_list[] = {
   {N_("_Duplicate"),   G_CALLBACK(list_sub_window_copy), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
@@ -244,7 +252,6 @@ static struct subwin_popup_list Popup_list[] = {
   {N_("_Bottom"), G_CALLBACK(list_sub_window_move_last), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {NULL, NULL, NULL, POP_UP_MENU_ITEM_TYPE_END},
 };
-#endif
 
 #define POPUP_ITEM_NUM (sizeof(Popup_list) / sizeof(*Popup_list) - 1)
 #define POPUP_ITEM_FOCUS_ALL 4
@@ -252,6 +259,7 @@ static struct subwin_popup_list Popup_list[] = {
 #define POPUP_ITEM_UP        9
 #define POPUP_ITEM_DOWN     10
 #define POPUP_ITEM_BOTTOM   11
+#endif
 
 typedef void (* LEGEND_DIALOG_SETUP)(struct LegendDialog *data, struct objlist *obj, int id);
 
