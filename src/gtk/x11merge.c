@@ -67,18 +67,27 @@ static void merge_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int r
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 static GActionEntry Popup_list[] = {
-  {N_("_Add"),           CmMergeOpen, NULL, NULL, NULL},
-  {N_("_Duplicate"),     list_sub_window_copy, NULL, NULL, NULL},
-  {N_("_Delete"),        list_sub_window_delete, NULL, NULL, NULL},
-  {"_Focus",             list_sub_window_focus, NULL, NULL, NULL},
-  {N_("focus _All"),     list_sub_window_focus_all, NULL, NULL, NULL},
-  {N_("_Preferences"),   list_sub_window_update, NULL, NULL, NULL},
-  {N_("_Instance name"), list_sub_window_object_name, NULL, NULL, NULL},
-  {N_("_Top"),           list_sub_window_move_top, NULL, NULL, NULL},
-  {N_("_Up"),            list_sub_window_move_up, NULL, NULL, NULL},
-  {N_("_Down"),          list_sub_window_move_down, NULL, NULL, NULL},
-  {N_("_Bottom"),        list_sub_window_move_last, NULL, NULL, NULL},
+  {"mergeFocusAllAction",     list_sub_window_focus_all, NULL, NULL, NULL},
+  {"mergeOrderTopAction",     list_sub_window_move_top, NULL, NULL, NULL},
+  {"mergeOrderUpAction",      list_sub_window_move_up, NULL, NULL, NULL},
+  {"mergeOrderDownAction",    list_sub_window_move_down, NULL, NULL, NULL},
+  {"mergeOrderBottomAction",  list_sub_window_move_last, NULL, NULL, NULL},
+  {"mergeAddAction",          CmMergeOpen, NULL, NULL, NULL},
+
+  {"mergeDuplicateAction",    list_sub_window_copy, NULL, NULL, NULL},
+  {"mergeDeleteAction",       list_sub_window_delete, NULL, NULL, NULL},
+  {"mergeFocusAction",        list_sub_window_focus, NULL, NULL, NULL},
+  {"mergeUpdateAction",       list_sub_window_update, NULL, NULL, NULL},
+  {"mergeInstanceNameAction", list_sub_window_object_name, NULL, NULL, NULL},
 };
+
+#define POPUP_ITEM_NUM ((int) (sizeof(Popup_list) / sizeof(*Popup_list)))
+#define POPUP_ITEM_FOCUS_ALL 0
+#define POPUP_ITEM_TOP       1
+#define POPUP_ITEM_UP        2
+#define POPUP_ITEM_DOWN      3
+#define POPUP_ITEM_BOTTOM    4
+#define POPUP_ITEM_ADD       5
 #else
 static struct subwin_popup_list Popup_list[] = {
   {N_("_Add"),         G_CALLBACK(CmMergeOpen), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
@@ -96,7 +105,6 @@ static struct subwin_popup_list Popup_list[] = {
   {N_("_Bottom"), G_CALLBACK(list_sub_window_move_last), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {NULL, NULL, NULL, POP_UP_MENU_ITEM_TYPE_END},
 };
-#endif
 
 #define POPUP_ITEM_NUM (sizeof(Popup_list) / sizeof(*Popup_list) - 1)
 #define POPUP_ITEM_FOCUS_ALL 5
@@ -104,6 +112,7 @@ static struct subwin_popup_list Popup_list[] = {
 #define POPUP_ITEM_UP       10
 #define POPUP_ITEM_DOWN     11
 #define POPUP_ITEM_BOTTOM   12
+#endif
 
 
 static void
