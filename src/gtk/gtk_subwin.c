@@ -918,6 +918,7 @@ ev_button_up(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y, gpoin
 {
   struct obj_list_data *d;
   guint button;
+  GtkEventSequenceState state = GTK_EVENT_SEQUENCE_NONE;
 
   if (Menulock || Globallock) return;
 
@@ -928,9 +929,11 @@ ev_button_up(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y, gpoin
   case 3:
     if (d->popup) {
       do_popup(x, y, d);
+      state = GTK_EVENT_SEQUENCE_CLAIMED;
     }
     break;
   }
+  gtk_gesture_set_state(GTK_GESTURE(gesture), state);
 }
 
 static gboolean
