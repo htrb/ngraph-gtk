@@ -6256,6 +6256,47 @@ filewin_ev_key_down(GtkWidget *w, guint keyval, GdkModifierType state, gpointer 
   return TRUE;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+popup_show_cb(GtkWidget *widget, gpointer user_data)
+{
+  int sel, num, source, i;
+  struct obj_list_data *d;
+
+  d = (struct obj_list_data *) user_data;
+
+  sel = d->select;
+  num = chkobjlastinst(d->obj);
+  for (i = 0; i < POPUP_ITEM_NUM; i++) {
+    GAction *action;
+    action = g_action_map_lookup_action(G_ACTION_MAP(GtkApp), Popup_list[i].name);
+    switch (i) {
+    case POPUP_ITEM_TOP:
+    case POPUP_ITEM_UP:
+      g_simple_action_set_enabled(G_SIMPLE_ACTION(action), sel > 0 && sel <= num);
+      break;
+    case POPUP_ITEM_DOWN:
+    case POPUP_ITEM_BOTTOM:
+      g_simple_action_set_enabled(G_SIMPLE_ACTION(action), sel >= 0 && sel < num);
+      break;
+    case POPUP_ITEM_ADD_F:
+    case POPUP_ITEM_ADD_R:
+      g_simple_action_set_enabled(G_SIMPLE_ACTION(action), TRUE);
+      break;
+    case POPUP_ITEM_EDIT:
+      if (sel >= 0 && sel <= num) {
+	getobj(d->obj, "source", sel, 0, NULL, &source);
+	g_simple_action_set_enabled(G_SIMPLE_ACTION(action), source == DATA_SOURCE_FILE);
+      } else {
+	g_simple_action_set_enabled(G_SIMPLE_ACTION(action), FALSE);
+      }
+      break;
+    default:
+      g_simple_action_set_enabled(G_SIMPLE_ACTION(action), sel >= 0 && sel <= num);
+    }
+  }
+}
+#else
 static void
 popup_show_cb(GtkWidget *widget, gpointer user_data)
 {
