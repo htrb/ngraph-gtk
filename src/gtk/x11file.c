@@ -125,7 +125,11 @@ static void file_edit_popup_func(GtkMenuItem *w, gpointer client_data);
 static void file_draw_popup_func(GtkMenuItem *w, gpointer client_data);
 #endif
 static void FileDialogType(GtkWidget *w, gpointer client_data);
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void create_type_combo_item(GtkWidget *cbox, GtkTreeStore *list, struct objlist *obj, int id);
+#else
 static void create_type_combo_item(GtkTreeStore *list, struct objlist *obj, int id);
+#endif
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
 #else
@@ -6331,6 +6335,7 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
     }
   }
 }
+#endif
 
 enum FILE_COMBO_ITEM {
   FILE_COMBO_ITEM_COLOR_1,
@@ -6384,7 +6389,11 @@ create_type_color_combo_box(GtkWidget *cbox, struct objlist *obj, int type, int 
 
   list = GTK_TREE_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(cbox)));
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  create_type_combo_item(cbox, list, obj, id);
+#else
   create_type_combo_item(list, obj, id);
+#endif
 
   switch (type) {
   case PLOT_TYPE_MARK:
@@ -6439,7 +6448,11 @@ create_type_color_combo_box(GtkWidget *cbox, struct objlist *obj, int type, int 
 }
 
 static void
+#if GTK_CHECK_VERSION(4, 0, 0)
+create_type_combo_item(GtkWidget *cbox, GtkTreeStore *list, struct objlist *obj, int id)
+#else
 create_type_combo_item(GtkTreeStore *list, struct objlist *obj, int id)
+#endif
 {
   char **enumlist;
   int i, type;
@@ -6461,6 +6474,11 @@ create_type_combo_item(GtkTreeStore *list, struct objlist *obj, int id)
 
   for (i = 0; enumlist[i] && enumlist[i][0]; i++) {
     add_text_combo_item_to_cbox(list, &iter, &parent, FILE_COMBO_ITEM_TYPE, i, _(enumlist[i]), TOGGLE_RADIO,  type == i);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    if (type == i) {
+      gtk_combo_box_set_active_iter(GTK_COMBO_BOX(cbox), &iter);
+    }
+#endif
     if (strcmp(enumlist[i], "mark") == 0) {
       add_mark_combo_item_to_cbox(list, NULL, &iter, FILE_COMBO_ITEM_MARK, obj, "mark_type", id);
     } else if (strcmp(enumlist[i], "curve") == 0) {
