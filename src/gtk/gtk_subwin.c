@@ -1630,12 +1630,28 @@ void
 sub_win_create_popup_menu(struct obj_list_data *d, int n, GActionEntry *list, GCallback cb)
 {
   GtkApplication *app;
+  GtkWidget *popup;
+  GMenu *menu;
+  char menu_id[256];
+  const char *name;
 
   app = n_get_gtk_application();
   if (app == NULL) {
     return;
   }
   g_action_map_add_action_entries(G_ACTION_MAP(app), list, n, d);
+
+  name = chkobjectname(d->obj);
+  snprintf(menu_id, sizeof(menu_id), "%s-popup-menu", name);
+  menu = gtk_application_get_menu_by_id(GtkApp, menu_id);
+
+  popup = gtk_popover_menu_new_from_model_full(G_MENU_MODEL(menu), POPOVERMEU_FLAG);
+  gtk_popover_set_has_arrow(GTK_POPOVER(popup), FALSE);
+  gtk_widget_set_parent(popup, d->text);
+  if (cb) {
+    g_signal_connect(popup, "show", cb, d);
+  }
+  d->popup = popup;
 }
 #else
 static GtkWidget *
