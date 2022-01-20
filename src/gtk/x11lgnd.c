@@ -3128,6 +3128,52 @@ text_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
   }
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+popup_show_cb(GtkWidget *widget, gpointer user_data)
+{
+  unsigned int i;
+  int m, last_id;
+  struct obj_list_data *d;
+  const char *name;
+
+  d = (struct obj_list_data *) user_data;
+
+  if (d->text == NULL) {
+    return;
+  }
+
+  name = chkobjectname(d->obj);
+  m = list_store_get_selected_int(d->text, COL_ID);
+  for (i = 0; i < POPUP_ITEM_NUM; i++) {
+    char action_name[256];
+    GAction *action;
+    snprintf(action_name, sizeof(action_name), PopupAction[i].name, name);
+    action = g_action_map_lookup_action(G_ACTION_MAP(GtkApp), action_name);
+    switch (i) {
+    case POPUP_ITEM_FOCUS_ALL:
+      last_id = chkobjlastinst(d->obj);
+      g_simple_action_set_enabled(G_SIMPLE_ACTION(action), last_id >= 0);
+      break;
+    case POPUP_ITEM_TOP:
+    case POPUP_ITEM_UP:
+      g_simple_action_set_enabled(G_SIMPLE_ACTION(action), m > 0);
+      break;
+    case POPUP_ITEM_DOWN:
+    case POPUP_ITEM_BOTTOM:
+      last_id = -1;
+      if (m >= 0) {
+	last_id = chkobjlastinst(d->obj);
+      }
+      g_simple_action_set_enabled(G_SIMPLE_ACTION(action), m >= 0 && m < last_id);
+      break;
+    default:
+      g_simple_action_set_enabled(G_SIMPLE_ACTION(action), m >= 0);
+    }
+  }
+}
+
+#else
 static void
 popup_show_cb(GtkWidget *widget, gpointer user_data)
 {
@@ -3165,6 +3211,7 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
     }
   }
 }
+#endif
 
 enum CHANGE_DIR {
   CHANGE_DIR_X,
