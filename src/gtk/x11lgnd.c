@@ -4028,7 +4028,11 @@ create_mark_list(struct SubWin *d)
   data->ev_key = NULL;
   data->obj = chkobject("mark");
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  create_legend_popup_menu(data);
+#else
   sub_win_create_popup_menu(data, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
+#endif
 
   set_obj_cell_renderer_cb(data, MARK_LIST_COL_MARK, Mlist, G_CALLBACK(start_editing_mark));
   return d->Win;
