@@ -456,6 +456,42 @@ merge_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
   }
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+popup_show_cb(GtkWidget *widget, gpointer user_data)
+{
+  int sel, num, last_id, i;
+  struct obj_list_data *d;
+
+  d = (struct obj_list_data *) user_data;
+
+  sel = d->select;
+  num = chkobjlastinst(d->obj);
+  for (i = 0; i < POPUP_ITEM_NUM; i++) {
+    GAction *action;
+    action = g_action_map_lookup_action(G_ACTION_MAP(GtkApp), Popup_list[i].name);
+    switch (i) {
+    case POPUP_ITEM_FOCUS_ALL:
+      last_id = chkobjlastinst(d->obj);
+      g_simple_action_set_enabled(G_SIMPLE_ACTION(action), last_id >= 0);
+      break;
+    case POPUP_ITEM_TOP:
+    case POPUP_ITEM_UP:
+      g_simple_action_set_enabled(G_SIMPLE_ACTION(action), sel > 0 && sel <= num);
+      break;
+    case POPUP_ITEM_DOWN:
+    case POPUP_ITEM_BOTTOM:
+      g_simple_action_set_enabled(G_SIMPLE_ACTION(action), sel >= 0 && sel < num);
+      break;
+    case POPUP_ITEM_ADD:
+      g_simple_action_set_enabled(G_SIMPLE_ACTION(action), TRUE);
+      break;
+    default:
+      g_simple_action_set_enabled(G_SIMPLE_ACTION(action), sel >= 0 && sel <= num);
+    }
+  }
+}
+#else
 static void
 popup_show_cb(GtkWidget *widget, gpointer user_data)
 {
@@ -486,6 +522,7 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
     }
   }
 }
+#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
