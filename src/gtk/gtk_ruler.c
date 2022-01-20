@@ -67,15 +67,17 @@ static const struct _NrulerMetric Metric = {
 static void nruler_make_pixmap(Nruler *ruler, GtkWidget *widget, GtkWidget *parent);
 static void nruler_draw_ticks(Nruler *ruler, GtkWidget *widget);
 static void nruler_realize(GtkWidget *widget, gpointer user_data);
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void nruler_resize(GtkWidget *widget, int width, int hegiht, gpointer user_data);
+#else
 static void nruler_size_allocate(GtkWidget *widget, GtkAllocation *allocation, gpointer user_data);
+#endif
 static gboolean nruler_destroy(GtkWidget *widget, gpointer user_data);
 static void nruler_draw_pos(Nruler *ruler, GtkWidget *widget, cairo_t *cr);
 static gboolean nruler_expose(GtkWidget *widget, cairo_t *cr, gpointer user_data);
 static GtkStyleContext *nruler_get_color(Nruler *ruler, GdkRGBA *fg);
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-static void nruler_resize(GtkWidget *widget, int width, int hegiht, gpointer user_data);
-
 static void
 draw_function(GtkDrawingArea* drawing_area, cairo_t* cr, int width, int height, gpointer user_data)
 {
