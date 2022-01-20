@@ -1304,6 +1304,7 @@ add_event_controller(GtkWidget *widget, struct obj_list_data *data)
   gtk_gesture_single_set_button(GTK_GESTURE_SINGLE(gesture), 0);
   g_signal_connect(gesture, "pressed", G_CALLBACK(ev_button_down), data);
   g_signal_connect(gesture, "released", G_CALLBACK(ev_button_up), data);
+  gtk_event_controller_set_propagation_phase(GTK_EVENT_CONTROLLER(gesture), GTK_PHASE_TARGET);
 
   controller = gtk_event_controller_key_new();
   gtk_widget_add_controller(widget, controller);
