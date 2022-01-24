@@ -2969,7 +2969,7 @@ math_common_widgets_create(struct FileDialog *d, GtkWidget *grid, int pos)
 
   w = create_text_entry(TRUE, TRUE);
 #if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
+  add_focus_in_event(w, NgraphApp.func_list);
 #else
   g_signal_connect(w, "focus-in-event", G_CALLBACK(func_entry_focused), NgraphApp.func_list);
 #endif
@@ -2978,7 +2978,7 @@ math_common_widgets_create(struct FileDialog *d, GtkWidget *grid, int pos)
 
   w = create_text_entry(TRUE, TRUE);
 #if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
+  add_focus_in_event(w, NgraphApp.func_list);
 #else
   g_signal_connect(w, "focus-in-event", G_CALLBACK(func_entry_focused), NgraphApp.func_list);
 #endif
@@ -2987,7 +2987,7 @@ math_common_widgets_create(struct FileDialog *d, GtkWidget *grid, int pos)
 
   w = create_text_entry(TRUE, TRUE);
 #if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
+  add_focus_in_event(w, NgraphApp.func_list);
 #else
   g_signal_connect(w, "focus-in-event", G_CALLBACK(func_entry_focused), NgraphApp.func_list);
 #endif
