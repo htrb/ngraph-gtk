@@ -131,7 +131,7 @@ static void create_type_combo_item(GtkWidget *cbox, GtkTreeStore *list, struct o
 static void create_type_combo_item(GtkTreeStore *list, struct objlist *obj, int id);
 #endif
 #if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
+static void func_entry_focused(GtkEventControllerFocus *ev, gpointer user_data);
 #else
 static gboolean func_entry_focused(GtkWidget *w, GdkEventFocus *event, gpointer user_data);
 #endif
@@ -2854,7 +2854,16 @@ math_tab_copy(GtkButton *btn, gpointer user_data)
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
+static void
+func_entry_focused(GtkEventControllerFocus *ev, gpointer user_data)
+{
+  GtkEntryCompletion *compl;
+  GtkWidget *w;
+
+  compl = GTK_ENTRY_COMPLETION(user_data);
+  w = gtk_event_controller_get_widget(GTK_EVENT_CONTROLLER(ev));
+  entry_completion_set_entry(compl, w);
+}
 #else
 static gboolean
 func_entry_focused(GtkWidget *w, GdkEventFocus *event, gpointer user_data)
