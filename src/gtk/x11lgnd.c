@@ -3892,6 +3892,9 @@ static void
 start_editing_font(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path, gpointer user_data)
 {
   GtkTreeIter iter;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  GtkTreeIter active;
+#endif
   GtkTreeStore *list;
   struct obj_list_data *d;
   int sel;
