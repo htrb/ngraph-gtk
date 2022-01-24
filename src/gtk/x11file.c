@@ -1768,6 +1768,17 @@ FitDialogSetSensitivity(GtkWidget *widget, gpointer user_data)
   }
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+add_focus_in_event(GtkWidget *w, gpointer user_data)
+{
+  GtkEventController *ev;
+  ev = gtk_event_controller_focus_new();
+  g_signal_connect(ev, "enter", G_CALLBACK(func_entry_focused), user_data);
+  gtk_widget_add_controller(w, ev);
+}
+#endif
+
 static GtkWidget *
 create_user_fit_frame(struct FitDialog *d)
 {
