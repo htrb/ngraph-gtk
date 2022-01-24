@@ -1545,6 +1545,11 @@ tool_button_enter_cb(GtkEventControllerMotion *self, gdouble x, gdouble y, gpoin
   str = (char *) user_data;
   SetStatusBar(str);
 }
+static void
+tool_button_leave_cb(GtkEventControllerMotion *self, gpointer data)
+{
+  ResetStatusBar();
+}
 #else
 static gboolean
 tool_button_enter_leave_cb(GtkWidget *w, GdkEventCrossing *e, gpointer data)
