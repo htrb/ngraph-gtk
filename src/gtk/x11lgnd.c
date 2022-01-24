@@ -3913,7 +3913,12 @@ start_editing_font(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *
   gtk_tree_store_clear(list);
 
   add_text_combo_item_to_cbox(list, &iter, NULL, -1, -1, _("Font"), TOGGLE_NONE, FALSE);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  add_font_combo_item_to_cbox(list, NULL, &iter, LEGEND_COMBO_ITEM_FONT, d->obj, "font", sel, &active);
+  gtk_combo_box_set_active_iter(GTK_COMBO_BOX(editable), &active);
+#else
   add_font_combo_item_to_cbox(list, NULL, &iter, LEGEND_COMBO_ITEM_FONT, d->obj, "font", sel);
+#endif
   add_text_combo_item_to_cbox(list, NULL, NULL, LEGEND_COMBO_ITEM_COLOR_0, -1, _("Color"), TOGGLE_NONE, FALSE);
   add_font_style_combo_item_to_cbox(list, NULL, NULL, LEGEND_COMBO_ITEM_STYLE_BOLD, LEGEND_COMBO_ITEM_STYLE_ITALIC, d->obj, "style", sel);
 

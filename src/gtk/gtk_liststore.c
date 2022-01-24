@@ -141,19 +141,40 @@ add_separator_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeI
 }
 
 void
+#if GTK_CHECK_VERSION(4, 0, 0)
+add_font_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iterp, GtkTreeIter *parent, int column_id, struct objlist *obj, const char *field, int id, GtkTreeIter *active)
+#else
 add_font_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *parent, int column_id, struct objlist *obj, const char *field, int id)
+#endif
 {
   struct fontmap *fcur;
   char *font;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  GtkTreeIter iter;
+#endif
 
   getobj(obj, field, id, 0, NULL, &font);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  if (iterp == NULL) {
+    iterp = &iter;
+  }
+#endif
   fcur = Gra2cairoConf->fontmap_list_root;
   while (fcur) {
     int match;
     match = ! g_strcmp0(font, fcur->fontalias);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    add_text_combo_item_to_cbox(list, iterp, parent, column_id, -1, fcur->fontalias, TOGGLE_RADIO, match);
+#else
     add_text_combo_item_to_cbox(list, iter, parent, column_id, -1, fcur->fontalias, TOGGLE_RADIO, match);
+#endif
     fcur = fcur->next;
+#if GTK_CHECK_VERSION(4, 0, 0)
+    if (active && match) {
+      *active = *iterp;
+    }
+#endif
   }
 }
 

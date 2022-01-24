@@ -51,7 +51,11 @@ void add_enum_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeI
 #else
 void add_enum_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *parent, int column_id, struct objlist *obj, const char *field, int id);
 #endif
+#if GTK_CHECK_VERSION(4, 0, 0)
+void add_font_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iterp, GtkTreeIter *parent, int column_id, struct objlist *obj, const char *field, int id, GtkTreeIter *active);
+#else
 void add_font_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *parent, int column_id, struct objlist *obj, const char *field, int id);
+#endif
 void add_text_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *parent, int column_id, int enum_id, const char *title, enum TOGGLE_TYPE type, int active);
 void add_font_style_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *parent, int column_id_bold, int column_id_italic, struct objlist *obj, const char *field, int id);
 

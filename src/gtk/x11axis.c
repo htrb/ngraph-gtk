@@ -3705,7 +3705,11 @@ create_num_combo_item(GtkTreeStore *list, GtkTreeIter *parent, struct objlist *o
 #endif
 
   add_text_combo_item_to_cbox(list, &child, &iter, -1, -1, _("Font"), TOGGLE_NONE, FALSE);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  add_font_combo_item_to_cbox(list, NULL, &child, AXIS_COMBO_ITEM_NUM_FONT, obj, "num_font", id, NULL);
+#else
   add_font_combo_item_to_cbox(list, NULL, &child, AXIS_COMBO_ITEM_NUM_FONT, obj, "num_font", id);
+#endif
 
   add_separator_combo_item_to_cbox(list, NULL, &child);
 
