@@ -2640,7 +2640,19 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
 #endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
+    if (item[i].caption) {
+      GtkEventController *ev;
+      ev = gtk_event_controller_motion_new();
+      g_signal_connect(ev,
+		       "enter",
+		       G_CALLBACK(tool_button_enter_cb),
+		       (gpointer) _(item[i].caption));
+
+      g_signal_connect(ev,
+		       "leave",
+		       G_CALLBACK(tool_button_leave_cb), NULL);
+      gtk_widget_add_controller(widget, ev);
+    }
 #else
     if (item[i].caption) {
       g_signal_connect(gtk_bin_get_child(GTK_BIN(widget)),
