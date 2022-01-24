@@ -1793,7 +1793,7 @@ create_user_fit_frame(struct FitDialog *d)
   w = create_text_entry(FALSE, TRUE);
   add_widget_to_table_sub(table, w, _("_Formula:"), TRUE, 0, 2, 3, j++);
 #if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
+  add_focus_in_event(w, NgraphApp.fit_list);
 #else
   g_signal_connect(w, "focus-in-event", G_CALLBACK(func_entry_focused), NgraphApp.fit_list);
 #endif
@@ -1828,7 +1828,7 @@ create_user_fit_frame(struct FitDialog *d)
 
     w = create_text_entry(TRUE, TRUE);
 #if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
+    add_focus_in_event(w, NgraphApp.fit_list);
 #else
     g_signal_connect(w, "focus-in-event", G_CALLBACK(func_entry_focused), NgraphApp.fit_list);
 #endif
