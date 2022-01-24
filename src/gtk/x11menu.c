@@ -1537,7 +1537,14 @@ free_cursor(void)
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
+static void
+tool_button_enter_cb(GtkEventControllerMotion *self, gdouble x, gdouble y, gpointer user_data)
+{
+  char *str;
+
+  str = (char *) user_data;
+  SetStatusBar(str);
+}
 #else
 static gboolean
 tool_button_enter_leave_cb(GtkWidget *w, GdkEventCrossing *e, gpointer data)
