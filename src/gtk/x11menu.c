@@ -90,7 +90,6 @@ static GtkWidget *create_toolbar(struct ToolItem *item, int n, GtkOrientation or
 static GtkWidget *create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb);
 #endif
 #if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
 static void CmViewerButtonArm(GtkWidget *action, gpointer client_data);
 #else
 static void CmViewerButtonArm(GtkToggleToolButton *action, gpointer client_data);
@@ -235,7 +234,6 @@ enum ActionWidgetIndex {
 
 struct ActionWidget ActionWidget[ActionWidgetNum];
 #if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
 static GtkWidget *PointerModeButtons[PointerModeNum];
 #else
 static GtkToolItem *PointerModeButtons[PointerModeNum];
@@ -881,7 +879,6 @@ void
 set_pointer_mode(int id)
 {
 #if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
   GtkWidget *button;
 #else
   GtkToolItem *button;
@@ -929,7 +926,6 @@ set_pointer_mode(int id)
 
   if (button) {
 #if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), TRUE);
 #else
     gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(button), TRUE);
@@ -2522,7 +2518,6 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
     switch (item[i].type) {
     case TOOL_TYPE_SEPARATOR:
 #if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
       widget = gtk_separator_new(orientation);
 #else
       widget = gtk_separator_tool_item_new();
@@ -2546,7 +2541,6 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
       break;
     case TOOL_TYPE_SAVE:
 #if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
       widget = gtk_button_new_from_icon_name(item[i].icon);
       menu = gtk_menu_button_new();
       gtk_menu_button_set_popover(GTK_MENU_BUTTON(menu), create_save_menu());
@@ -2560,7 +2554,6 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
       break;
     case TOOL_TYPE_RECENT_GRAPH:
 #if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
       widget = gtk_button_new_from_icon_name(item[i].icon);
       menu = gtk_menu_button_new();
       gtk_widget_set_tooltip_text(menu, _("Recent Graphs"));
@@ -2573,7 +2566,6 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
       break;
     case TOOL_TYPE_RECENT_DATA:
 #if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
       widget = gtk_button_new_from_icon_name(item[i].icon);
       menu = gtk_menu_button_new();
       gtk_widget_set_tooltip_text(menu, _("Recent Data Files"));
