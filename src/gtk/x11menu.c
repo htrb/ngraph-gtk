@@ -2593,7 +2593,6 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
       } else {
         group = widget;
       }
-      gtk_widget_set_tooltip_text(widget, _(item[i].label));
 #else
       widget = gtk_radio_tool_button_new(list);
       list = gtk_radio_tool_button_get_group(GTK_RADIO_TOOL_BUTTON(widget));
@@ -2633,7 +2632,11 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
       g_signal_connect(widget, "clicked", G_CALLBACK(item[i].callback), GINT_TO_POINTER(item[i].user_data));
     }
 
-#if ! GTK_CHECK_VERSION(4, 0, 0)
+#if GTK_CHECK_VERSION(4, 0, 0)
+    if (item[i].tip) {
+      gtk_widget_set_tooltip_text(widget, _(item[i].tip));
+    }
+#else
     if (item[i].tip) {
       gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(widget), _(item[i].tip));
     }
