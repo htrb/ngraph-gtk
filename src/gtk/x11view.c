@@ -1172,6 +1172,7 @@ EvalDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
     swin = gtk_scrolled_window_new();
+    gtk_widget_set_vexpand(swin, TRUE);
 #else
     swin = gtk_scrolled_window_new(NULL, NULL);
 #endif
