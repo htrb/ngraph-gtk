@@ -88,7 +88,7 @@ dnl Checks for ruby
 AC_CHECK_PROG(RUBY, ruby, yes, no)
 if test $RUBY = yes; then
     [ruby_incrudedir=`ruby -e 'puts(RbConfig::CONFIG["rubyhdrdir"])'`]
-    AC_CHECK_FILE($ruby_incrudedir/ruby.h, [have_ruby_dev=yes])
+    AS_IF([test -e "$ruby_incrudedir/ruby.h"], [have_ruby_dev=yes])
     [RUBY_DLEXT=`ruby -e 'puts(RbConfig::CONFIG["DLEXT"])'`]
     AC_SUBST(RUBY_DLEXT)
 fi
