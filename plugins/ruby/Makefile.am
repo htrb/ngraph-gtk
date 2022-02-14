@@ -1,4 +1,4 @@
-EXTRA_DIST = create_objs.rb extconf.rb getobj.nsc ngraph.c lib/ngraph.rb lib/ngraph.rb.win lib/ngraph.rb.osx lib/ngraph/ngp2.rb
+EXTRA_DIST = create_objs.rb extconf.rb getobj.nsc ngraph.c lib/ngraph.rb lib/ngraph.rb.win lib/ngraph.rb.osx lib/ngraph/ngp2.rb obj.txt
 
 if HAVE_RUBY_DEV
   ruby_ext = $(builddir)/ngraph.$(RUBY_DLEXT)
@@ -38,12 +38,12 @@ install-data-local: $(ruby_ext)
 endif
 endif
 
-$(builddir)/obj.txt: getobj.nsc $(top_builddir)/src/libngraph.la
-	$(top_builddir)/src/ngraph -i $(srcdir)/getobj.nsc > $(builddir)/obj.txt
+obj.txt: getobj.nsc $(OBJECT_DEFINITION)
+	$(top_builddir)/src/ngraph -i $(srcdir)/getobj.nsc > obj.txt
 
-$(builddir)/ruby_ngraph.h: $(builddir)/obj.txt
-	ruby $(srcdir)/create_objs.rb $(builddir)/obj.txt $(builddir)/ruby_ngraph.h
+$(builddir)/ruby_ngraph.h: obj.txt
+	ruby $(srcdir)/create_objs.rb obj.txt $(builddir)/ruby_ngraph.h
 
   BUILT_SOURCES = $(ruby_ext)
-  CLEANFILES = mkmf.log $(builddir)/obj.txt $(builddir)/ruby_ngraph.h $(ruby_ext) Makefile.ruby ngraph.o .*.time
+  CLEANFILES = mkmf.log $(builddir)/ruby_ngraph.h $(ruby_ext) Makefile.ruby ngraph.o .*.time
 endif
