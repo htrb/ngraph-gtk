@@ -15,8 +15,9 @@ endif
 if OS_OSX
 
 ngraph_app = ~/Desktop/$(PACKAGE).app
+ngraph_arch = $(shell uname -m)
 ngraph_app_bin = $(ngraph_app)/Contents/MacOS
-ngraph_package = $(PACKAGE)-$(PACKAGE_VERSION)-$(build_cpu).dmg
+ngraph_package = $(PACKAGE)-$(PACKAGE_VERSION)-$(ngraph_arch).dmg
 
 bundler: $(ngraph_app)
 
