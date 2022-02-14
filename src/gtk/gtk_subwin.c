@@ -1301,7 +1301,6 @@ static void
 add_event_controller(GtkWidget *widget, struct obj_list_data *data)
 {
   GtkGesture *gesture;
-  GtkEventController *controller;
 
   gesture = gtk_gesture_click_new();
   gtk_widget_add_controller(widget, GTK_EVENT_CONTROLLER(gesture));
@@ -1311,9 +1310,7 @@ add_event_controller(GtkWidget *widget, struct obj_list_data *data)
   g_signal_connect(gesture, "released", G_CALLBACK(ev_button_up), data);
   gtk_event_controller_set_propagation_phase(GTK_EVENT_CONTROLLER(gesture), GTK_PHASE_TARGET);
 
-  controller = gtk_event_controller_key_new();
-  gtk_widget_add_controller(widget, controller);
-  g_signal_connect(controller, "key-pressed", G_CALLBACK(ev_key_down), data);
+  add_event_key(widget, G_CALLBACK(ev_key_down), NULL, data);
 }
 #endif
 
