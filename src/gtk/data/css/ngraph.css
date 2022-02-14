@@ -1,8 +1,3 @@
-@binding-set CloseWindow1
-{
-    bind "<Control>w" { "close" () };
-}
-
 dialog
 {
     -gtk-key-bindings: CloseWindow1;
