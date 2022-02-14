@@ -1014,6 +1014,11 @@ ev_key_down(GtkEventControllerKey *controller, guint keyval, guint keycode, GdkM
 #endif
     }
     break;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  case GDK_KEY_Menu:
+    do_popup(0, 0, d);
+    break;
+#endif
   default:
     return FALSE;
   }
