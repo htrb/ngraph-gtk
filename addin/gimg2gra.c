@@ -153,7 +153,11 @@ create_widgets(struct AppData *app_data, const gchar *img_file)
 
   create_buttons(app_data, hbox);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  app = gtk_window_new();
+#else
   app = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+#endif
 
   g_signal_connect(app, "delete-event", G_CALLBACK(delete_event), NULL);
   gtk_container_add(GTK_CONTAINER(app), vbox);
