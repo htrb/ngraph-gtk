@@ -170,7 +170,11 @@ create_widgets(struct AppData *app_data, const gchar *img_file)
   gtk_container_add(GTK_CONTAINER(app), vbox);
 #endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_widget_show(app);
+#else
   gtk_widget_show_all(app);
+#endif
   return app;
 }
 
