@@ -19,9 +19,15 @@ static char *FontList[] = {"Serif",  "Sans-serif", "Monospace"};
 void
 main_loop(void)
 {
+  static int in_loop = FALSE;
+  if (in_loop) {
+    return;
+  }
+  in_loop = TRUE;
   while (g_list_model_get_n_items (gtk_window_get_toplevels ()) > 0) {
     g_main_context_iteration (NULL, TRUE);
   }
+  in_loop = FALSE;
 }
 #endif
 
