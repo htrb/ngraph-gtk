@@ -26,7 +26,7 @@ legend_SOURCES = legend.c addin_common.c addin_common.h
 legend_CFLAGS = $(GTK_CFLAGS) $(APP_CFLAGS)
 legend_LDADD = $(GTK_LIBS) $(GLIB_LIBS)
 
-gimg2gra_SOURCES = gimg2gra.c
+gimg2gra_SOURCES = gimg2gra.c addin_common.c
 gimg2gra_CFLAGS = $(GTK_CFLAGS) $(APP_CFLAGS)
 gimg2gra_LDADD = $(GTK_LIBS) $(GLIB_LIBS)
 
