@@ -47,7 +47,9 @@ static void set_bgcolor(int r, int g, int b, int a, struct AppData *data);
 static void create_entry(GdkPixbuf *im, GtkWidget *hbox, struct AppData *data);
 static void create_buttons(struct AppData *data, GtkWidget *hbox);
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
 static gboolean delete_event(GtkWidget *widget, GdkEvent *event, gpointer data);
+#endif
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
 #else
@@ -159,7 +161,9 @@ create_widgets(struct AppData *app_data, const gchar *img_file)
   app = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 #endif
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   g_signal_connect(app, "delete-event", G_CALLBACK(delete_event), NULL);
+#endif
   gtk_container_add(GTK_CONTAINER(app), vbox);
 
   gtk_widget_show_all(app);
@@ -272,12 +276,14 @@ set_bgcolor(int r, int g, int b, int a, struct AppData *data)
 }
 
 /************* Event Handler **************/
+#if ! GTK_CHECK_VERSION(4, 0, 0)
 static gboolean
 delete_event(GtkWidget *widget, GdkEvent *event, gpointer data)
 {
   gtk_main_quit();
   return TRUE;
 }
+#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
