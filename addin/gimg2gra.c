@@ -143,8 +143,13 @@ create_widgets(struct AppData *app_data, const gchar *img_file)
   gtk_container_add(GTK_CONTAINER(scrolled_window), event_box);
 #endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_box_append(GTK_BOX(vbox), scrolled_window);
+  gtk_box_append(GTK_BOX(vbox), hbox);
+#else
   gtk_box_pack_start(GTK_BOX(vbox), scrolled_window, TRUE, TRUE, 0);
   gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
+#endif
 
   create_buttons(app_data, hbox);
 
@@ -185,18 +190,32 @@ create_buttons(struct AppData *data, GtkWidget *box)
   im = data->im;
 
   create_entry(im, vbox, data);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_box_append(GTK_BOX(box), vbox);
+#else
   gtk_box_pack_start(GTK_BOX(box), vbox, FALSE, FALSE, 10);
+#endif
 
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   w = gtk_button_new_with_label(" OK ");
   g_signal_connect(w, "clicked", G_CALLBACK(save_button_clicked), data);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_box_append(GTK_BOX(hbox), w);
+#else
   gtk_box_pack_start(GTK_BOX(hbox), w, TRUE, TRUE, 5);
+#endif
 
   w = gtk_button_new_with_label(" Cancel ");
   g_signal_connect(w, "clicked", G_CALLBACK(cancel_button_clicked), NULL);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_box_append(GTK_BOX(hbox), w);
+
+  gtk_box_append(GTK_BOX(box), hbox);
+#else
   gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 5);
 
   gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 5);
+#endif
 }
 
 static void
@@ -207,17 +226,29 @@ create_entry(GdkPixbuf *im, GtkWidget *box, struct AppData *data)
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 
   w = gtk_label_new("BGCOLOR:");
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_box_append(GTK_BOX(hbox), w);
+#else
   gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 0);
+#endif
 
   entry = gtk_entry_new();
   gtk_entry_set_max_length(GTK_ENTRY(entry), 10);
   gtk_editable_set_editable(GTK_EDITABLE(entry), FALSE);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_box_append(GTK_BOX(hbox), entry);
+#else
   gtk_box_pack_start(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
+#endif
 
   data->entry = entry;
   set_bgcolor(255, 255, 255, 255, data);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_box_append(GTK_BOX(box), hbox);
+#else
   gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
+#endif
 }
 
 static void
