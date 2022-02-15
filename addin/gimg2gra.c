@@ -178,6 +178,14 @@ create_widgets(struct AppData *app_data, const gchar *img_file)
   return app;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+dialog_response(GtkDialog* self, gint response_id, gpointer user_data)
+{
+  exit(1);
+}
+#endif
+
 static void
 print_error_exit(const gchar *error)
 {
