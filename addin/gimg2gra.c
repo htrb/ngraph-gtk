@@ -263,7 +263,11 @@ set_bgcolor(int r, int g, int b, int a, struct AppData *data)
   gra_set_bgcolor(r, g, b, a);
   sprintf(bgcolor, "#%02x%02x%02x%02x", r, g, b, a);
   if(data->entry != NULL) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+    gtk_editable_set_text(GTK_EDITABLE(data->entry), bgcolor);
+#else
     gtk_entry_set_text(GTK_ENTRY(data->entry), bgcolor);
+#endif
   }
 }
 
