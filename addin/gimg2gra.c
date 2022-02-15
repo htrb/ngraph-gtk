@@ -197,8 +197,15 @@ print_error_exit(const gchar *error)
 				  GTK_BUTTONS_CLOSE,
 				  "Error loading file %s",
 				  error);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);
+  g_signal_connect(dialog, "response", G_CALLBACK(dialog_response), NULL);
+  gtk_widget_show(dialog);
+  main_loop();
+#else
   gtk_dialog_run(GTK_DIALOG(dialog));
   gtk_widget_destroy(dialog);
+#endif
 
   exit(1);
 }
