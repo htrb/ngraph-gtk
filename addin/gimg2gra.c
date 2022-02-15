@@ -332,7 +332,11 @@ save_button_clicked(GtkButton *widget, gpointer data)
   dotsize = gra_set_dpi(app_data->dpi);
   gra_save(im, grafile);
   printf("%d %d\n", w * dotsize, h * dotsize);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  exit(0);
+#else
   gtk_main_quit();
+#endif
 }
 
 static void
