@@ -164,7 +164,11 @@ create_widgets(struct AppData *app_data, const gchar *img_file)
 #if ! GTK_CHECK_VERSION(4, 0, 0)
   g_signal_connect(app, "delete-event", G_CALLBACK(delete_event), NULL);
 #endif
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_window_set_child(GTK_WINDOW(app), vbox);
+#else
   gtk_container_add(GTK_CONTAINER(app), vbox);
+#endif
 
   gtk_widget_show_all(app);
   return app;
