@@ -342,7 +342,11 @@ save_button_clicked(GtkButton *widget, gpointer data)
 static void
 cancel_button_clicked(GtkButton *widget, gpointer data)
 {
+#if GTK_CHECK_VERSION(4, 0, 0)
+  exit(0);
+#else
   gtk_main_quit();
+#endif
 }
 
 static void
