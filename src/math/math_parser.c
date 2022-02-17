@@ -719,6 +719,19 @@ parse_unary_expression(struct math_string *str, MathEquation *eq, int *err)
 	return NULL;
       }
       break;
+    case MATH_OPERATOR_TYPE_BIT_NOT:
+      operand = parse_unary_expression(str, eq, err);
+      if (operand == NULL) {
+	math_scanner_free_token(token);
+	return NULL;
+      }
+      exp = math_unary_expression_new(MATH_EXPRESSION_TYPE_BIT_NOT, eq, operand, err);
+      if (exp == NULL) {
+	math_scanner_free_token(token);
+	math_expression_free(operand);
+	return NULL;
+      }
+      break;
     default:
       *err = MATH_ERROR_UNEXP_OPE;
       math_equation_set_parse_error(eq, token->ptr, str);
@@ -822,7 +835,12 @@ CREATE_PARSER2_FUNC(additive, multiplicative,
 		    MATH_OPERATOR_TYPE_MINUS, MATH_EXPRESSION_TYPE_SUB);
 
 static MathExpression *
-CREATE_PARSER4_FUNC(relation, additive,
+CREATE_PARSER2_FUNC(bit_shift, additive,
+		    MATH_OPERATOR_TYPE_BIT_SHIFT_L, MATH_EXPRESSION_TYPE_BIT_SHFT_L,
+		    MATH_OPERATOR_TYPE_BIT_SHIFT_R, MATH_EXPRESSION_TYPE_BIT_SHFT_R);
+
+static MathExpression *
+CREATE_PARSER4_FUNC(relation, bit_shift,
 		    MATH_OPERATOR_TYPE_GT, MATH_EXPRESSION_TYPE_GT,
 		    MATH_OPERATOR_TYPE_GE, MATH_EXPRESSION_TYPE_GE,
 		    MATH_OPERATOR_TYPE_LE, MATH_EXPRESSION_TYPE_LE,
@@ -834,7 +852,13 @@ CREATE_PARSER2_FUNC(equality, relation,
 		    MATH_OPERATOR_TYPE_NE, MATH_EXPRESSION_TYPE_NE);
 
 static MathExpression *
-CREATE_PARSER_FUNC(and, equality, MATH_OPERATOR_TYPE_AND, MATH_EXPRESSION_TYPE_AND);
+CREATE_PARSER_FUNC(bit_and, equality, MATH_OPERATOR_TYPE_BIT_AND, MATH_EXPRESSION_TYPE_BIT_AND);
+
+static MathExpression *
+CREATE_PARSER_FUNC(bit_or, bit_and, MATH_OPERATOR_TYPE_BIT_OR, MATH_EXPRESSION_TYPE_BIT_OR);
+
+static MathExpression *
+CREATE_PARSER_FUNC(and, bit_or, MATH_OPERATOR_TYPE_AND, MATH_EXPRESSION_TYPE_AND);
 
 static MathExpression *
 CREATE_PARSER_FUNC(or, and, MATH_OPERATOR_TYPE_OR, MATH_EXPRESSION_TYPE_OR);
@@ -886,6 +910,34 @@ create_variable_assign_expression(MathEquation *eq, enum MATH_OPERATOR_TYPE op,
     break;
   case MATH_OPERATOR_TYPE_MINUS_ASSIGN:
     bin = math_binary_expression_new(MATH_EXPRESSION_TYPE_SUB, eq, lexp, rexp, err);
+    if (bin == NULL)
+      goto ErrEnd;
+
+    rexp = bin;
+    break;
+  case MATH_OPERATOR_TYPE_BIT_AND_ASSIGN:
+    bin = math_binary_expression_new(MATH_EXPRESSION_TYPE_BIT_AND, eq, lexp, rexp, err);
+    if (bin == NULL)
+      goto ErrEnd;
+
+    rexp = bin;
+    break;
+  case MATH_OPERATOR_TYPE_BIT_OR_ASSIGN:
+    bin = math_binary_expression_new(MATH_EXPRESSION_TYPE_BIT_OR, eq, lexp, rexp, err);
+    if (bin == NULL)
+      goto ErrEnd;
+
+    rexp = bin;
+    break;
+  case MATH_OPERATOR_TYPE_BIT_SHIFT_L_ASSIGN:
+    bin = math_binary_expression_new(MATH_EXPRESSION_TYPE_BIT_SHFT_L, eq, lexp, rexp, err);
+    if (bin == NULL)
+      goto ErrEnd;
+
+    rexp = bin;
+    break;
+  case MATH_OPERATOR_TYPE_BIT_SHIFT_R_ASSIGN:
+    bin = math_binary_expression_new(MATH_EXPRESSION_TYPE_BIT_SHFT_R, eq, lexp, rexp, err);
     if (bin == NULL)
       goto ErrEnd;
 
