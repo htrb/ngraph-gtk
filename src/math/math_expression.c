@@ -2456,6 +2456,20 @@ calc(MathExpression *exp, MathValue *val)
 
     val->val = factorial(operand.val);
     break;
+  case MATH_EXPRESSION_TYPE_BIT_NOT:
+    if (CALC_EXPRESSION(exp->u.unary.operand, operand)) {
+      return 1;
+    }
+
+    MATH_CHECK_VAL(val, operand);
+
+    {
+      int ival;
+      ival = operand.val;
+      val->val = ~ ival;
+    }
+
+    break;
   case MATH_EXPRESSION_TYPE_FUNC_CALL:
     if (call_func(&exp->u.func_call, exp->equation, val))
       return 1;
