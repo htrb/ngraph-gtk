@@ -2244,6 +2244,78 @@ calc(MathExpression *exp, MathValue *val)
     MATH_CHECK_VAL(val, right);
     val->val = left.val + right.val;
     break;
+  case MATH_EXPRESSION_TYPE_BIT_AND:
+    if (CALC_EXPRESSION(exp->u.bin.left, left)) {
+      return 1;
+    }
+    if (CALC_EXPRESSION(exp->u.bin.right, right)) {
+      return 1;
+    }
+    MATH_CHECK_VAL(val, left);
+    MATH_CHECK_VAL(val, right);
+    {
+      int l, r;
+      l = left.val;
+      r = right.val;
+      val->val = (l & r);
+    }
+    break;
+  case MATH_EXPRESSION_TYPE_BIT_OR:
+    if (CALC_EXPRESSION(exp->u.bin.left, left)) {
+      return 1;
+    }
+    if (CALC_EXPRESSION(exp->u.bin.right, right)) {
+      return 1;
+    }
+    MATH_CHECK_VAL(val, left);
+    MATH_CHECK_VAL(val, right);
+    {
+      int l, r;
+      l = left.val;
+      r = right.val;
+      val->val = (l | r);
+    }
+    break;
+  case MATH_EXPRESSION_TYPE_BIT_SHFT_L:
+    if (CALC_EXPRESSION(exp->u.bin.left, left)) {
+      return 1;
+    }
+    if (CALC_EXPRESSION(exp->u.bin.right, right)) {
+      return 1;
+    }
+    MATH_CHECK_VAL(val, left);
+    MATH_CHECK_VAL(val, right);
+    {
+      int l, r;
+      l = left.val;
+      r = right.val;
+      if (r >= 0) {
+	val->val = (l << r);
+      } else {
+	val->val = (l >> -r);
+      }
+    }
+    break;
+  case MATH_EXPRESSION_TYPE_BIT_SHFT_R:
+    if (CALC_EXPRESSION(exp->u.bin.left, left)) {
+      return 1;
+    }
+    if (CALC_EXPRESSION(exp->u.bin.right, right)) {
+      return 1;
+    }
+    MATH_CHECK_VAL(val, left);
+    MATH_CHECK_VAL(val, right);
+    {
+      int l, r;
+      l = left.val;
+      r = right.val;
+      if (r >= 0) {
+	val->val = (l >> r);
+      } else {
+	val->val = (l << -r);
+      }
+    }
+    break;
   case MATH_EXPRESSION_TYPE_SUB:
     if (CALC_EXPRESSION(exp->u.bin.left, left)) {
       return 1;
