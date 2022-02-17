@@ -348,6 +348,12 @@
  <tr><td>/=</td><td>自己代入</td></tr>
  <tr><td>\=</td><td>自己代入</td></tr>
  <tr><td>^=</td><td>自己代入</td></tr>
+ <tr><td>^=</td><td>自己代入</td></tr>
+ <tr><td>^=</td><td>自己代入</td></tr>
+ <tr><td>&amp;=</td><td>自己代入</td></tr>
+ <tr><td>|=</td><td>自己代入</td></tr>
+ <tr><td>&lt;&lt;=</td><td>自己代入</td></tr>
+ <tr><td>&gt;&gt;=</td><td>自己代入</td></tr>
  <tr><td>==</td><td>比較</td></tr>
  <tr><td>!=</td><td>比較</td></tr>
  <tr><td>&lt;=</td><td>比較</td></tr>
@@ -356,6 +362,12 @@
  <tr><td>&gt;</td><td>比較</td></tr>
  <tr><td>&amp;&amp;</td><td>論理積</td></tr>
  <tr><td>||</td><td>論理和</td></tr>
+ <tr><td>&amp;</td><td>ビットAND</td></tr>
+ <tr><td>|</td><td>ビットOR</td></tr>
+ <tr><td>~</td><td>ビットNOT</td></tr>
+ <tr><td>&lt;&lt;</td><td>左シフト</td></tr>
+ <tr><td>&gt;&gt;</td><td>右シフト</td></tr>
+
 </table>
 
 <dl>
@@ -369,6 +381,14 @@
  <dd> <p>括弧 () の数に制限はありません。</p>
  <dt> 乗算演算子 *
  <dd> <p>乗算であることが明らかな場合には乗算演算子を省略することができます。 (例：2 * PI * x → 2 PI x) </p>
+ <dt> ビット演算子</dt>
+ <dd>
+      <ul>
+       <li> ビット演算は被演算子を符号付き整数に変換して行われます。
+       <li> 負数に対するビットシフト演算は処理系依存です。環境により結果が異なる場合があります。
+       <li> ビットシフト演算でシフト量に負の値を指定した場合、逆向きのシフトとして扱われます。 (例：2&lt;&lt;-1 は 2&gt;&gt;1 と同等)
+      </ul>
+</dd>
 </dl>
 </div>
 
@@ -379,11 +399,14 @@
 <table border="1">
  <tr><td>高</td><td>!(後置)</td></tr>
  <tr><td>↑</td><td>^</td></tr>
- <tr><td>  </td><td>!(前置) + - (正負の符号)</td></tr>
+ <tr><td>  </td><td>!(前置) ~ + - (正負の符号)</td></tr>
  <tr><td>  </td><td>* / \</td></tr>
  <tr><td>  </td><td>+ -</td></tr>
+ <tr><td>  </td><td>&lt;&lt; &gt;&gt;</td></tr>
  <tr><td>  </td><td>&lt; &lt;= &gt; &gt;=</td></tr>
  <tr><td>  </td><td>== !=</td></tr>
+ <tr><td>  </td><td>&amp;</td></tr>
+ <tr><td>  </td><td>|</td></tr>
  <tr><td>  </td><td>&amp;&amp;</td></tr>
  <tr><td>↓</td><td>||</td></tr>
  <tr><td>低</td><td>=(+=, -= ... )</td></tr>
