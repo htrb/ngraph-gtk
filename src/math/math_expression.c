@@ -1862,6 +1862,10 @@ optimize(MathExpression *exp, int *err)
   case MATH_EXPRESSION_TYPE_GE:
   case MATH_EXPRESSION_TYPE_LT:
   case MATH_EXPRESSION_TYPE_LE:
+  case MATH_EXPRESSION_TYPE_BIT_AND:
+  case MATH_EXPRESSION_TYPE_BIT_OR:
+  case MATH_EXPRESSION_TYPE_BIT_SHFT_L:
+  case MATH_EXPRESSION_TYPE_BIT_SHFT_R:
     new_exp = optimize_bin_expression(exp, err);
     break;
   case MATH_EXPRESSION_TYPE_ASSIGN:
@@ -1877,6 +1881,7 @@ optimize(MathExpression *exp, int *err)
   case MATH_EXPRESSION_TYPE_MINUS:
   case MATH_EXPRESSION_TYPE_NOT:
   case MATH_EXPRESSION_TYPE_FACT:
+  case MATH_EXPRESSION_TYPE_BIT_NOT:
     new_exp = optimize_una_expression(exp, err);
     break;
   case MATH_EXPRESSION_TYPE_FUNC_CALL:
