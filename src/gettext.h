@@ -1,26 +1,26 @@
 /* Convenience header for conditional use of GNU <libintl.h>.
-   Copyright (C) 1995-1998, 2000-2002, 2004-2006, 2009 Free Software Foundation, Inc.
+   Copyright (C) 1995-1998, 2000-2002, 2004-2006, 2009-2020 Free Software
+   Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify it
-   under the terms of the GNU General Public License as published
-   by the Free Software Foundation; either version 3, or (at your option)
-   any later version.
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU Lesser General Public License as published by
+   the Free Software Foundation; either version 2.1 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Library General Public License for more details.
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU Lesser General Public License for more details.
 
-   You should have received a copy of the GNU General Public
-   License along with this program; if not, write to the Free Software
-   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
-   USA.  */
+   You should have received a copy of the GNU Lesser General Public License
+   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 #ifndef _LIBGETTEXT_H
 #define _LIBGETTEXT_H 1
 
-/* NLS can be disabled through the configure --disable-nls option.  */
-#if ENABLE_NLS
+/* NLS can be disabled through the configure --disable-nls option
+   or through "#define ENABLE NLS 0" before including this file.  */
+#if defined ENABLE_NLS && ENABLE_NLS
 
 /* Get declarations of GNU message catalog functions.  */
 # include <libintl.h>
@@ -54,7 +54,7 @@
    it now, to make later inclusions of <libintl.h> a NOP.  */
 #if defined(__cplusplus) && defined(__GNUG__) && (__GNUC__ >= 3)
 # include <cstdlib>
-# if (__GLIBC__ >= 2) || _GLIBCXX_HAVE_LIBINTL_H
+# if (__GLIBC__ >= 2 && !defined __UCLIBC__) || _GLIBCXX_HAVE_LIBINTL_H
 #  include <libintl.h>
 # endif
 #endif
@@ -81,7 +81,7 @@
     ((void) (Domainname), ngettext (Msgid1, Msgid2, N))
 # undef dcngettext
 # define dcngettext(Domainname, Msgid1, Msgid2, N, Category) \
-    ((void) (Category), dngettext(Domainname, Msgid1, Msgid2, N))
+    ((void) (Category), dngettext (Domainname, Msgid1, Msgid2, N))
 # undef textdomain
 # define textdomain(Domainname) ((const char *) (Domainname))
 # undef bindtextdomain
@@ -91,6 +91,12 @@
 # define bind_textdomain_codeset(Domainname, Codeset) \
     ((void) (Domainname), (const char *) (Codeset))
 
+#endif
+
+/* Prefer gnulib's setlocale override over libintl's setlocale override.  */
+#ifdef GNULIB_defined_setlocale
+# undef setlocale
+# define setlocale rpl_setlocale
 #endif
 
 /* A pseudo function call that serves as a marker for the automated
@@ -178,9 +184,20 @@ npgettext_aux (const char *domain,
 
 #include <string.h>
 
-#define _LIBGETTEXT_HAVE_VARIABLE_SIZE_ARRAYS \
-  (((__GNUC__ >= 3 || __GNUG__ >= 2) && !__STRICT_ANSI__) \
-   /* || __STDC_VERSION__ >= 199901L */ )
+/* GNULIB_NO_VLA can be defined to disable use of VLAs even if supported.
+   This relates to the -Wvla and -Wvla-larger-than warnings, enabled in
+   the default GCC many warnings set.  This allows programs to disable use
+   of VLAs, which may be unintended, or may be awkward to support portably,
+   or may have security implications due to non-deterministic stack usage.  */
+
+#if (!defined GNULIB_NO_VLA \
+     && (((__GNUC__ >= 3 || __GNUG__ >= 2) && !defined __STRICT_ANSI__) \
+         /* || (__STDC_VERSION__ == 199901L && !defined __HP_cc)
+            || (__STDC_VERSION__ >= 201112L && !defined __STDC_NO_VLA__) */ ))
+# define _LIBGETTEXT_HAVE_VARIABLE_SIZE_ARRAYS 1
+#else
+# define _LIBGETTEXT_HAVE_VARIABLE_SIZE_ARRAYS 0
+#endif
 
 #if !_LIBGETTEXT_HAVE_VARIABLE_SIZE_ARRAYS
 #include <stdlib.h>
@@ -217,15 +234,17 @@ dcpgettext_expr (const char *domain,
   if (msg_ctxt_id != NULL)
 #endif
     {
+      int found_translation;
       memcpy (msg_ctxt_id, msgctxt, msgctxt_len - 1);
       msg_ctxt_id[msgctxt_len - 1] = '\004';
       memcpy (msg_ctxt_id + msgctxt_len, msgid, msgid_len);
       translation = dcgettext (domain, msg_ctxt_id, category);
+      found_translation = (translation != msg_ctxt_id);
 #if !_LIBGETTEXT_HAVE_VARIABLE_SIZE_ARRAYS
       if (msg_ctxt_id != buf)
         free (msg_ctxt_id);
 #endif
-      if (translation != msg_ctxt_id)
+      if (found_translation)
         return translation;
     }
   return msgid;
@@ -263,15 +282,17 @@ dcnpgettext_expr (const char *domain,
   if (msg_ctxt_id != NULL)
 #endif
     {
+      int found_translation;
       memcpy (msg_ctxt_id, msgctxt, msgctxt_len - 1);
       msg_ctxt_id[msgctxt_len - 1] = '\004';
       memcpy (msg_ctxt_id + msgctxt_len, msgid, msgid_len);
       translation = dcngettext (domain, msg_ctxt_id, msgid_plural, n, category);
+      found_translation = !(translation == msg_ctxt_id || translation == msgid_plural);
 #if !_LIBGETTEXT_HAVE_VARIABLE_SIZE_ARRAYS
       if (msg_ctxt_id != buf)
         free (msg_ctxt_id);
 #endif
-      if (!(translation == msg_ctxt_id || translation == msgid_plural))
+      if (found_translation)
         return translation;
     }
   return (n == 1 ? msgid : msgid_plural);
