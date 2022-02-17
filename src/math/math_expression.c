@@ -955,6 +955,10 @@ math_expression_free_sub(MathExpression *exp)
   case MATH_EXPRESSION_TYPE_GE:
   case MATH_EXPRESSION_TYPE_LT:
   case MATH_EXPRESSION_TYPE_LE:
+  case MATH_EXPRESSION_TYPE_BIT_AND:
+  case MATH_EXPRESSION_TYPE_BIT_OR:
+  case MATH_EXPRESSION_TYPE_BIT_SHFT_L:
+  case MATH_EXPRESSION_TYPE_BIT_SHFT_R:
     math_expression_free(exp->u.bin.left);
     math_expression_free(exp->u.bin.right);
     break;
@@ -980,6 +984,7 @@ math_expression_free_sub(MathExpression *exp)
   case MATH_EXPRESSION_TYPE_MINUS:
   case MATH_EXPRESSION_TYPE_NOT:
   case MATH_EXPRESSION_TYPE_FACT:
+  case MATH_EXPRESSION_TYPE_BIT_NOT:
     math_expression_free(exp->u.unary.operand);
     break;
   case MATH_EXPRESSION_TYPE_ARRAY:
