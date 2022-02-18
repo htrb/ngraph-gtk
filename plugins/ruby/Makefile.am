@@ -39,10 +39,10 @@ endif
 endif
 
 obj.txt: getobj.nsc $(OBJECT_DEFINITION)
-	$(top_builddir)/src/ngraph -i $(srcdir)/getobj.nsc > obj.txt
+	$(top_builddir)/src/ngraph -i $(srcdir)/getobj.nsc > $(srcdir)/obj.txt
 
 $(builddir)/ruby_ngraph.h: obj.txt
-	ruby $(srcdir)/create_objs.rb obj.txt $(builddir)/ruby_ngraph.h
+	ruby $(srcdir)/create_objs.rb $(srcdir)/obj.txt $(builddir)/ruby_ngraph.h
 
   BUILT_SOURCES = $(ruby_ext)
   CLEANFILES = mkmf.log $(builddir)/ruby_ngraph.h $(ruby_ext) Makefile.ruby ngraph.o .*.time

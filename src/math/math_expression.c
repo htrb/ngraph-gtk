@@ -955,6 +955,10 @@ math_expression_free_sub(MathExpression *exp)
   case MATH_EXPRESSION_TYPE_GE:
   case MATH_EXPRESSION_TYPE_LT:
   case MATH_EXPRESSION_TYPE_LE:
+  case MATH_EXPRESSION_TYPE_BIT_AND:
+  case MATH_EXPRESSION_TYPE_BIT_OR:
+  case MATH_EXPRESSION_TYPE_BIT_SHFT_L:
+  case MATH_EXPRESSION_TYPE_BIT_SHFT_R:
     math_expression_free(exp->u.bin.left);
     math_expression_free(exp->u.bin.right);
     break;
@@ -980,6 +984,7 @@ math_expression_free_sub(MathExpression *exp)
   case MATH_EXPRESSION_TYPE_MINUS:
   case MATH_EXPRESSION_TYPE_NOT:
   case MATH_EXPRESSION_TYPE_FACT:
+  case MATH_EXPRESSION_TYPE_BIT_NOT:
     math_expression_free(exp->u.unary.operand);
     break;
   case MATH_EXPRESSION_TYPE_ARRAY:
@@ -1862,6 +1867,10 @@ optimize(MathExpression *exp, int *err)
   case MATH_EXPRESSION_TYPE_GE:
   case MATH_EXPRESSION_TYPE_LT:
   case MATH_EXPRESSION_TYPE_LE:
+  case MATH_EXPRESSION_TYPE_BIT_AND:
+  case MATH_EXPRESSION_TYPE_BIT_OR:
+  case MATH_EXPRESSION_TYPE_BIT_SHFT_L:
+  case MATH_EXPRESSION_TYPE_BIT_SHFT_R:
     new_exp = optimize_bin_expression(exp, err);
     break;
   case MATH_EXPRESSION_TYPE_ASSIGN:
@@ -1877,6 +1886,7 @@ optimize(MathExpression *exp, int *err)
   case MATH_EXPRESSION_TYPE_MINUS:
   case MATH_EXPRESSION_TYPE_NOT:
   case MATH_EXPRESSION_TYPE_FACT:
+  case MATH_EXPRESSION_TYPE_BIT_NOT:
     new_exp = optimize_una_expression(exp, err);
     break;
   case MATH_EXPRESSION_TYPE_FUNC_CALL:
@@ -2244,6 +2254,78 @@ calc(MathExpression *exp, MathValue *val)
     MATH_CHECK_VAL(val, right);
     val->val = left.val + right.val;
     break;
+  case MATH_EXPRESSION_TYPE_BIT_AND:
+    if (CALC_EXPRESSION(exp->u.bin.left, left)) {
+      return 1;
+    }
+    if (CALC_EXPRESSION(exp->u.bin.right, right)) {
+      return 1;
+    }
+    MATH_CHECK_VAL(val, left);
+    MATH_CHECK_VAL(val, right);
+    {
+      int l, r;
+      l = left.val;
+      r = right.val;
+      val->val = (l & r);
+    }
+    break;
+  case MATH_EXPRESSION_TYPE_BIT_OR:
+    if (CALC_EXPRESSION(exp->u.bin.left, left)) {
+      return 1;
+    }
+    if (CALC_EXPRESSION(exp->u.bin.right, right)) {
+      return 1;
+    }
+    MATH_CHECK_VAL(val, left);
+    MATH_CHECK_VAL(val, right);
+    {
+      int l, r;
+      l = left.val;
+      r = right.val;
+      val->val = (l | r);
+    }
+    break;
+  case MATH_EXPRESSION_TYPE_BIT_SHFT_L:
+    if (CALC_EXPRESSION(exp->u.bin.left, left)) {
+      return 1;
+    }
+    if (CALC_EXPRESSION(exp->u.bin.right, right)) {
+      return 1;
+    }
+    MATH_CHECK_VAL(val, left);
+    MATH_CHECK_VAL(val, right);
+    {
+      int l, r;
+      l = left.val;
+      r = right.val;
+      if (r >= 0) {
+	val->val = (l << r);
+      } else {
+	val->val = (l >> -r);
+      }
+    }
+    break;
+  case MATH_EXPRESSION_TYPE_BIT_SHFT_R:
+    if (CALC_EXPRESSION(exp->u.bin.left, left)) {
+      return 1;
+    }
+    if (CALC_EXPRESSION(exp->u.bin.right, right)) {
+      return 1;
+    }
+    MATH_CHECK_VAL(val, left);
+    MATH_CHECK_VAL(val, right);
+    {
+      int l, r;
+      l = left.val;
+      r = right.val;
+      if (r >= 0) {
+	val->val = (l >> r);
+      } else {
+	val->val = (l << -r);
+      }
+    }
+    break;
   case MATH_EXPRESSION_TYPE_SUB:
     if (CALC_EXPRESSION(exp->u.bin.left, left)) {
       return 1;
@@ -2383,6 +2465,20 @@ calc(MathExpression *exp, MathValue *val)
     }
 
     val->val = factorial(operand.val);
+    break;
+  case MATH_EXPRESSION_TYPE_BIT_NOT:
+    if (CALC_EXPRESSION(exp->u.unary.operand, operand)) {
+      return 1;
+    }
+
+    MATH_CHECK_VAL(val, operand);
+
+    {
+      int ival;
+      ival = operand.val;
+      val->val = ~ ival;
+    }
+
     break;
   case MATH_EXPRESSION_TYPE_FUNC_CALL:
     if (call_func(&exp->u.func_call, exp->equation, val))

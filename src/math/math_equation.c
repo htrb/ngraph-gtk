@@ -2251,6 +2251,10 @@ check_const_sub(MathExpression *exp, int *constant, int n)
   case MATH_EXPRESSION_TYPE_GE:
   case MATH_EXPRESSION_TYPE_LT:
   case MATH_EXPRESSION_TYPE_LE:
+  case MATH_EXPRESSION_TYPE_BIT_AND:
+  case MATH_EXPRESSION_TYPE_BIT_OR:
+  case MATH_EXPRESSION_TYPE_BIT_SHFT_L:
+  case MATH_EXPRESSION_TYPE_BIT_SHFT_R:
     r = check_const_sub(exp->u.bin.left, constant, n);
     if (r) {
       return r;
@@ -2275,6 +2279,7 @@ check_const_sub(MathExpression *exp, int *constant, int n)
   case MATH_EXPRESSION_TYPE_MINUS:
   case MATH_EXPRESSION_TYPE_NOT:
   case MATH_EXPRESSION_TYPE_FACT:
+  case MATH_EXPRESSION_TYPE_BIT_NOT:
     r = check_const_sub(exp->u.unary.operand, constant, n);
     break;
   case MATH_EXPRESSION_TYPE_CONST:

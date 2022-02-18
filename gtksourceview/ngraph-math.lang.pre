@@ -118,5 +118,5 @@ This file is created based on "ruby.lang" which is part of GtkSourceView.
     </context>
 
     <context id="operators" style-ref="operator" extend-parent="false">
-      <match>([-^/\+\*\!\=:\\&lt;&gt;]\=)|([-^/\+\*\!\=\\&lt;&gt;])|(&amp;&amp;)|(\|\|)</match>
+      <match>(([-^/\+\*\!\=:\\&lt;&gt;|&amp;]|(&gt;&gt;)|(&lt;&lt;))\=)|([-^/\+\*\!\=\\&lt;&gt;|&amp;~])|(&lt;&lt;)|(&gt;&gt;)|(&amp;&amp;)|(\|\|)</match>
     </context>
