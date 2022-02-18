@@ -108,8 +108,9 @@ draw_polyline(ax, ay)	connect coordinates (<i>ax</i>[0], <i>ay</i>[0]), (<i>ax</
 draw_polygon(ax, ay, stroke, fill)	draw polygon defined by coordinates (<i>ax</i>[0], <i>ay</i>[0]), (<i>ax</i>[1], <i>ay</i>[1]), ....\nwhen <i>stroke</i> is 0, do not draw contours.\n<i>fill</i> can be specified with one of\n<b>FILL_RULE_NONE</b>, <b>FILL_RULE_EVEN_ODD</b> or <b>FILL_RULE_WINDING</b>.
 draw_errorbar(x, y, erx, ery, size)	draw errorbars from (<i>x - erx, y</i>) to (<i>x + erx, y</i>) and\nfrom (<i>x, y - ery</i>) to (<i>x, y + ery</i>).\nThe length of ticks can be specified with <i>size</i>.\nWhen <i>size</i> is 0, specification of the file object is used.
 draw_errorbar2(x1, y1, x2, y2, size)	draw an errorbar from (<i>x1, y1</i>) to (<i>x2, y2</i>).\nThe length of ticks can be specified with <i>size</i>.\nWhen <i>size</i> is 0, specification of the file object is used.
-fit_prm(id, x)	When the plot type of the data object whose ID is <i>id</i> is fit,\nthe value of the field "%0<i>x</i>" of the corresponding fit object.
-fit_calc(id, x)	When the plot type of the data object whose ID is <i>id</i> is fit,\nthe corresponding fit result f(<i>x</i>) is calculated.
+fit_prm(id, x)	When the plot type of the data object with <i>id</i> is fit,\nthe value of the field "%0<i>x</i>" of the corresponding fit object.
+fit_calc(id, x)	When the plot type of the data object with <i>id</i> is fit,\nthe corresponding fit result f(<i>x</i>) is calculated.
+fit_solve(id, y, x0, x1)	When the plot type of the data object with <i>id</i> is fit,\ncalculate x such that f(x) = <i>y</i> for the corresponding fit result f(x).\nThe initial value of x is specified by <i>x0</i> and <i>x1</i>.\nIf <i>x1</i> is 0, the Newton method is used;\notherwise, the dichotomy method is used.\nIf the calculation is not successful, it returns UNDEF.
 line_number()	File line number being processed (1st line is 1)
 isnormal(x)	True if <i>x</i> is a normal number
 isbreak(x)	True if <i>x</i> is <b>BREAK</b>

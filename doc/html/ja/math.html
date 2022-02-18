@@ -1004,6 +1004,15 @@
    fit 結果 f(x) を計算する。
   </td>
  </tr>
+ <tr>
+  <td>fit_solve(id,y,x0,x1)</td>
+  <td>
+   ID が id の data オブジェクトのプロットタイプが fit のとき、対応する
+   fit 結果 f(x) に対して f(x) = y となる x を計算する。x の初期値は x0, x1 で指定する。
+   x1 が 0 の場合はニュートン法それ以外の場合は二分法で計算する。
+   正常に計算できなかった場合は UNDEF を返す。
+  </td>
+ </tr>
  <tr><td>line_number()</td><td>処理中のファイル行番号 (1行目が1) </td></tr>
  <tr><td>isnormal(x)</td><td>x が通常の数値の場合真</td></tr>
  <tr><td>isbreak(x)</td><td>x が BREAK の場合真</td></tr>
