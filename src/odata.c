@@ -1045,6 +1045,67 @@ file_fit_calc(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
 }
 
 static int
+file_fit_solve(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int file_id, r;
+  double x0, x1, y;
+  static struct objlist *file_obj = NULL;
+  char *argv[5], *ptr, *field;
+  struct narray args;
+  struct savedstdio save;
+
+  rval->type = MATH_VALUE_ERROR;
+  rval->val = 0;
+
+  if (exp->buf[0].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[1].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[2].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[3].val.type != MATH_VALUE_NORMAL) {
+    return 0;
+  }
+
+  if (file_obj == NULL) {
+    file_obj = getobject("data");
+  }
+
+  if (file_obj == NULL) {
+    return 1;
+  }
+
+  file_id = exp->buf[0].val.val;
+  y = exp->buf[1].val.val;
+  x0 = exp->buf[2].val.val;
+  x1 = exp->buf[3].val.val;
+
+  arrayinit(&args, sizeof(double));
+  if (x1 == 0) {
+    arrayadd(&args, &x0);
+    arrayadd(&args, &y);
+    field = "fit_newton";
+  } else {
+    arrayadd(&args, &x0);
+    arrayadd(&args, &x1);
+    arrayadd(&args, &y);
+    field = "fit_bisection";
+  }
+  argv[0] = (char *) &args;
+  argv[1] = NULL;
+  ignorestdio(&save);
+  r = getobj(file_obj, field, file_id, 1, argv, &ptr);
+  restorestdio(&save);
+  arraydel(&args);
+  if (r < 0 || ptr == NULL) {
+    rval->type = MATH_VALUE_UNDEF;
+    return 0;
+  }
+
+  rval->val = atof(ptr);
+  rval->type = MATH_VALUE_NORMAL;
+
+  return 0;
+}
+
+static int
 file_fit_prm(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   int file_id, prm, r;
@@ -2061,6 +2122,7 @@ static struct funcs BasicFunc[] = {
 
 static struct funcs FitFunc[] = {
   {"FIT_CALC", {2, 0, 0, file_fit_calc,  NULL, NULL, NULL, NULL}},
+  {"FIT_SOLVE",{4, 0, 0, file_fit_solve, NULL, NULL, NULL, NULL}},
   {"FIT_PRM",  {2, 0, 0, file_fit_prm,   NULL, NULL, NULL, NULL}},
 };
 
