@@ -1631,9 +1631,6 @@ MiscDialogClose(GtkWidget *w, void *data)
   set_program_name(d->help_browser, &Menulocal.help_browser);
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-  Menulocal.changedirectory =
-    gtk_check_button_get_active(GTK_CHECK_BUTTON(d->directory));
-
   a = combo_box_get_active(d->path);
   if (a >= 0) {
     Menulocal.savepath = a;
