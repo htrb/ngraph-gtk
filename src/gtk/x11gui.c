@@ -1163,7 +1163,105 @@ free_str_list(GSList *top)
 #endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
+static void
+fsok(GtkWidget *dlg, struct nGetOpenFileData *data)
+{
+  char *file, *file2, **farray, *dir;
+  const char *filter_name;
+  int i, j, k, len, n;
+  GStatBuf buf;
+  GListModel *top;
+  GtkFileFilter *filter;
+
+  top = gtk_file_chooser_get_files(GTK_FILE_CHOOSER(dlg));
+  filter = gtk_file_chooser_get_filter(GTK_FILE_CHOOSER(dlg));
+
+  if (filter) {
+    filter_name = gtk_file_filter_get_name(filter);
+  } else {
+    filter_name = NULL;
+  }
+
+  if (filter_name == NULL || strcmp(filter_name, _("All")) == 0) {
+    data->ext = NULL;
+  }
+
+  n = g_list_model_get_n_items(top);
+  farray = g_malloc(sizeof(*farray) * (n + 1));
+  if (farray == NULL) {
+    g_object_unref(top);
+    return;
+  }
+  data->file = farray;
+
+  k = 0;
+  for (j = 0; j < n; j++) {
+    GFile *path;
+    char *tmp;
+
+    path = g_list_model_get_item(top, j);
+    if (path == NULL) {
+      message_beep(TopLevel);
+      continue;
+    }
+
+    tmp = g_file_get_path(path);
+    if (tmp == NULL || strlen(tmp) < 1) {
+      g_free(tmp);
+      message_beep(TopLevel);
+      continue;
+    }
+
+    file = get_utf8_filename(tmp);
+
+    for (i = strlen(file) - 1; (i > 0) && (file[i] != '/') && (file[i] != '.'); i--);
+    if ((file[i] != '.') && data->ext) {
+      len = strlen(data->ext) + 1;
+    } else {
+      len = 0;
+    }
+
+    if (len) {
+      file2 = g_strdup_printf("%s.%s", file, data->ext);
+      g_free(file);
+    } else {
+      file2 = file;
+    }
+    if (file2) {
+      if (data->mustexist) {
+	if ((nstat(file2, &buf) != 0) || ((buf.st_mode & S_IFMT) != S_IFREG)
+	    || (naccess(file2, R_OK) != 0)) {
+	  message_beep(TopLevel);
+	  error22(NULL, 0, "I/O error", file2);
+	  g_free(file2);
+	  continue;
+	}
+      } else {
+	if ((nstat(file2, &buf) == 0) && ((buf.st_mode & S_IFMT) != S_IFREG)) {
+	  message_beep(TopLevel);
+	  error22(NULL, 0, "I/O error", file2);
+	  g_free(file2);
+	  continue;
+	}
+      }
+      farray[k] = file2;
+      k++;
+    }
+  }
+
+  if (k == 0)
+    return;
+
+  if (data->init_dir) {
+    g_free(*(data->init_dir));
+    dir = g_path_get_dirname(farray[0]);
+    *(data->init_dir) = dir;
+  }
+
+  farray[k] = NULL;
+  g_object_unref(top);
+  data->ret = IDOK;
+}
 #else
 static void
 fsok(GtkWidget *dlg, struct nGetOpenFileData *data)
