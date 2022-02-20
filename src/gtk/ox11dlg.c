@@ -682,7 +682,7 @@ dlggetopenfiles(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
     initfile = d[1];
   }
   ret = nGetOpenFileNameMulti(get_toplevel_window(), _("Open files"),
-			      filter, NULL, initfile, &file, TRUE);
+			      filter, NULL, initfile, &file, FALSE);
   if (ret == IDOK) {
     int i;
     farray = arraynew(sizeof(char *));
