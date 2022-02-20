@@ -323,7 +323,11 @@ get_parent_window(GtkWidget *w)
 
 
 static void
+#if GTK_CHECK_VERSION(4, 0, 0)
+entry_icon_file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, gpointer user_data)
+#else
 entry_icon_file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointer user_data)
+#endif
 {
   struct objlist *obj;
   char *file, *ext;
