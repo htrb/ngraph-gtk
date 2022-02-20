@@ -1661,21 +1661,31 @@ nGetSaveFileName(GtkWidget * parent,
   data.init_dir = init_dir;
   data.init_file = init_file;
   data.file = NULL;
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   data.chdir = chd;
+#endif
   data.ext = defext;
   data.mustexist = FALSE;
   data.overwrite = overwrite;
   data.multi = FALSE;
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   data.changedir = TRUE;
+#endif
   data.type = GTK_FILE_CHOOSER_ACTION_SAVE,
   data.button = _("_Save");
   ret = FileSelectionDialog(parent, &data);
   if (ret == IDOK) {
     *file = data.file[0];
     g_free(data.file);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    if (chd && init_dir && nchdir(*init_dir)) {
+      ErrorMessage();
+    }
+#else
     if (data.chdir && init_dir && nchdir(*init_dir)) {
       ErrorMessage();
     }
+#endif
   } else {
     *file = NULL;
   }
