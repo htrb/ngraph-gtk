@@ -46,12 +46,16 @@
 
 struct nGetOpenFileData
 {
-  GtkWidget *widget, *chdir_cb;
+  GtkWidget *widget;
+#if ! GTK_CHECK_VERSION(4, 0, 0)
+  GtkWidget *chdir_cb;
+  int chdir;
+  int changedir;
+#endif
   int ret;
   char *title;
   char **init_dir;
   const char *init_file;
-  int chdir;
   char *ext;
   char **file;
   const char *button;
@@ -59,7 +63,6 @@ struct nGetOpenFileData
   int mustexist;
   int overwrite;
   int multi;
-  int changedir;
 };
 
 static int add_buttons(GtkWidget *dlg, struct narray *array);
