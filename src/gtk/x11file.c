@@ -6160,6 +6160,7 @@ CmFileSaveData(void *w, gpointer client_data)
   int i, num, onum, type, div, curve = FALSE, *array, append;
   char *file, buf[1024];
   char *argv[4];
+  int chd;
 
   if (Menulock || Globallock)
     return;
@@ -6201,8 +6202,13 @@ CmFileSaveData(void *w, gpointer client_data)
     div = DlgOutputData.div;
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  chd = FALSE;
+#else
+  chd = Menulocal.changedirectory;
+#endif
   if (nGetSaveFileName(TopLevel, _("Data file"), NULL, NULL, NULL,
-		       &file, FALSE, Menulocal.changedirectory) != IDOK) {
+		       &file, FALSE, chd) != IDOK) {
     arraydel(&farray);
     return;
   }
