@@ -1124,8 +1124,6 @@ MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
   }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_check_button_set_active(GTK_CHECK_BUTTON(d->directory), Menulocal.changedirectory);
-
   combo_box_set_active(d->path, Menulocal.savepath);
 
   gtk_check_button_set_active(GTK_CHECK_BUTTON(d->datafile), Menulocal.savewithdata);
