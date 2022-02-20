@@ -5065,9 +5065,14 @@ CmFileOpen
   if (obj == NULL)
     return;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  chd = FALSE;
+#else
+  chd = Menulocal.changedirectory;
+#endif
   ret = nGetOpenFileNameMulti(TopLevel, _("Add Data file"), NULL,
 			      &(Menulocal.fileopendir), NULL,
-			      &file, Menulocal.changedirectory);
+			      &file, chd);
 
   n = chkobjlastinst(obj);
 
