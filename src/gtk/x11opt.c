@@ -1510,9 +1510,11 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     table = gtk_grid_new();
 
     i = 0;
+#if ! GTK_CHECK_VERSION(4, 0, 0)
     w = gtk_check_button_new_with_mnemonic(_("_Check \"change current directory\""));
     add_widget_to_table(table, w, NULL, FALSE, i++);
     d->directory = w;
+#endif
 
     w = gtk_check_button_new_with_mnemonic(_("_Use opacity"));
     add_widget_to_table(table, w, NULL, FALSE, i++);
