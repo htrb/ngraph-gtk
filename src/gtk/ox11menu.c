@@ -987,7 +987,9 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   Menulocal.show_cross = FALSE;
   Menulocal.scriptconsole = FALSE;
   Menulocal.addinconsole = TRUE;
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   Menulocal.changedirectory = 1;
+#endif
   set_paper_type(21000, 29700);
   Menulocal.PaperZoom = 10000;
   Menulocal.exwindpi = DEFAULT_DPI / 2;
