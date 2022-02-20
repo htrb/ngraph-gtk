@@ -57,7 +57,11 @@ set_cell_attribute_source(struct SubWin *d, const char *attr, int target_column,
 }
 
 static void
+#if GTK_CHECK_VERSION(4, 0, 0)
+file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, gpointer user_data)
+#else
 file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointer user_data)
+#endif
 {
   struct obj_list_data *d;
   int sel, num;
