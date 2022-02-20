@@ -636,7 +636,7 @@ dlggetopenfile(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
   }
   ret = nGetOpenFileName(get_toplevel_window(), _("Open file"),
 			 filter, NULL, initfile,
-			 &file, TRUE, TRUE);
+			 &file, TRUE, FALSE);
   if (ret == IDOK) {
     if (file) {
       changefilename(file);
