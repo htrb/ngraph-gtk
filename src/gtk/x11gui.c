@@ -1426,12 +1426,11 @@ FileSelectionDialog(GtkWidget *parent, struct nGetOpenFileData *data)
 {
 #if GTK_CHECK_VERSION(4, 0, 0)
   GtkWidget *dlg;
-  GtkFileFilter *filter;
 #else
   GtkWidget *dlg, *rc;
+#endif
   GtkFileFilter *filter;
   char *fname;
-#endif
 
   dlg = gtk_file_chooser_dialog_new(data->title,
 				    GTK_WINDOW((parent) ? parent : TopLevel),
@@ -1487,7 +1486,15 @@ FileSelectionDialog(GtkWidget *parent, struct nGetOpenFileData *data)
   }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
+  if (data->init_dir && *(data->init_dir)) {
+    GFile *path;
+    path = g_file_new_for_path(*(data->init_dir));
+    if (path) {
+      gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dlg), path, NULL);
+      g_object_unref(path);
+    }
+  }
+  gtk_widget_show(dlg);
 #else
   if (data->init_dir && *(data->init_dir)) {
     gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dlg), *(data->init_dir));
@@ -1495,31 +1502,33 @@ FileSelectionDialog(GtkWidget *parent, struct nGetOpenFileData *data)
   gtk_widget_show_all(dlg);
 #endif
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
-#else
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   if (data->changedir && data->init_dir) {
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(data->chdir_cb), data->chdir);
   } else {
     gtk_widget_hide(data->chdir_cb);
   }
+#endif
 
   fname = get_filename_with_ext(data->init_file, data->ext);
   if (fname) {
     if (data->type == GTK_FILE_CHOOSER_ACTION_SAVE) {
       file_dialog_set_current_neme(dlg, fname);
     } else {
+#if GTK_CHECK_VERSION(4, 0, 0)
+      GFile *file;
+      file = g_file_new_for_path(fname);
+      gtk_file_chooser_set_file(GTK_FILE_CHOOSER(dlg), file, NULL);
+      g_object_unref(file);
+#else
       gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dlg), fname);
+#endif
     }
     g_free(fname);
   }
-#endif
 
   data->ret = IDCANCEL;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
-#else
   while (1) {
 #if GTK_CHECK_VERSION(4, 0, 0)
     int res_id;
