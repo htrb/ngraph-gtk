@@ -1360,7 +1360,6 @@ fsok(GtkWidget *dlg, struct nGetOpenFileData *data)
 }
 #endif
 
-#if ! GTK_CHECK_VERSION(4, 0, 0)
 static void
 file_dialog_set_current_neme(GtkWidget *dlg, const char *full_name)
 {
@@ -1421,7 +1420,6 @@ get_filename_with_ext(const char *basename, const char *ext)
 			     ext);
   return filename;
 }
-#endif
 
 static int
 FileSelectionDialog(GtkWidget *parent, struct nGetOpenFileData *data)
