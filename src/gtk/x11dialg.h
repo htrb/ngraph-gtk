@@ -505,13 +505,15 @@ struct MiscDialog
 {
   DIALOG_PROTOTYPE;
   /****** local member *******/
-  GtkWidget *editor, *directory, *path, *datafile,
+  GtkWidget *editor, *path, *datafile,
     *expand, *expanddir, *loadpath, *mergefile, *coordwin_font, *infowin_font,
     *file_preview_font, *hist_size, *info_size, *data_head_lines, *help_browser,
     *browser, *use_opacity, *select_data, *use_custom_palette, *use_dark_theme, *source_style,
     *decimalsign;
 #if GTK_CHECK_VERSION(4, 0, 0)
   GtkWidget **palette;
+#else
+  GtkWidget *directory;
 #endif
   struct objlist *Obj;
   struct narray tmp_palette;
