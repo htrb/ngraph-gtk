@@ -312,7 +312,11 @@ SetScriptDialogSetupItem(GtkWidget *w, struct SetScriptDialog *d)
 }
 
 static void
+#if GTK_CHECK_VERSION(4, 0, 0)
+SetScriptDialogBrowse(GtkEntry *w, GtkEntryIconPosition icon_pos, gpointer user_data)
+#else
 SetScriptDialogBrowse(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointer user_data)
+#endif
 {
   char *file;
 
