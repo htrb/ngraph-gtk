@@ -1247,6 +1247,7 @@ GraphSave(int overwrite)
   int ret;
   char *initfil;
   char *file, *prev_wd, *current_wd;
+  int chd;
 
   if (NgraphApp.FileName != NULL) {
     initfil = NgraphApp.FileName;
@@ -1257,9 +1258,14 @@ GraphSave(int overwrite)
   prev_wd = current_wd = NULL;
   if ((initfil == NULL) || (! overwrite || (naccess(initfil, 04) == -1))) {
     prev_wd = ngetcwd();
+#if GTK_CHECK_VERSION(4, 0, 0)
+    chd = TRUE;
+#else
+    chd = Menulocal.changedirectory;
+#endif
     ret = nGetSaveFileName(TopLevel, _("Save NGP file"), "ngp",
 			   &(Menulocal.graphloaddir), initfil,
-			   &file, overwrite, Menulocal.changedirectory);
+			   &file, overwrite, chd);
     current_wd = ngetcwd();
     if (prev_wd && current_wd && strcmp(prev_wd, current_wd) == 0) {
       g_free(prev_wd);
