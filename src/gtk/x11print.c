@@ -681,14 +681,20 @@ CmPrintGRAFile(void)
   int id, g2wid, g2woid, ret;
   N_VALUE *g2winst;
   char *tmp, *file;
+  int chd;
 
   if (Menulock || Globallock)
     return;
 
   tmp = get_base_ngp_name();
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  chd = FALSE;
+#else
+  chd = Menulocal.changedirectory;
+#endif
   ret = nGetSaveFileName(TopLevel, _("GRA file"), "gra", NULL, tmp,
-			 &file, FALSE, Menulocal.changedirectory);
+			 &file, FALSE, chd);
 
   if (tmp)
     g_free(tmp);
