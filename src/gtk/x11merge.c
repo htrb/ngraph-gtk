@@ -287,7 +287,7 @@ CmMergeOpen
 {
   struct objlist *obj;
   char *name = NULL;
-  int id, undo;
+  int id, undo, chd;
 
   if (Menulock || Globallock)
     return;
@@ -295,8 +295,13 @@ CmMergeOpen
   if ((obj = chkobject("merge")) == NULL)
     return;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  chd = FALSE;
+#else
+  chd = Menulocal.changedirectory;
+#endif
   if (nGetOpenFileName(TopLevel, _("Add Merge file"), "gra", NULL, NULL, &name,
-		       TRUE, Menulocal.changedirectory) != IDOK || ! name)
+		       TRUE, chd) != IDOK || ! name)
     return;
 
   undo = menu_save_undo_single(UNDO_TYPE_CREATE, obj->name);
