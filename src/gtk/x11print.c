@@ -751,6 +751,7 @@ CmOutputImage(int type)
   int ret;
   char *title, *ext_str;
   char *file, *tmp;
+  int chd;
 
   if (Menulock || Globallock)
     return;
@@ -789,8 +790,13 @@ CmOutputImage(int type)
   }
 
   tmp = get_base_ngp_name();
+#if GTK_CHECK_VERSION(4, 0, 0)
+  chd = FALSE;
+#else
+  chd = Menulocal.changedirectory;
+#endif
   ret = nGetSaveFileName(TopLevel, title, ext_str, NULL, tmp,
-			 &file, FALSE, Menulocal.changedirectory);
+			 &file, FALSE, chd);
   if (tmp) {
     g_free(tmp);
   }
