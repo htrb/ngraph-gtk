@@ -332,6 +332,7 @@ entry_icon_file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *eve
   struct objlist *obj;
   char *file, *ext;
   const char *str;
+  int chd;
 
   obj = (struct objlist *) user_data;
   if (obj == NULL)
@@ -344,12 +345,14 @@ entry_icon_file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *eve
 
 #if GTK_CHECK_VERSION(4, 0, 0)
   str = gtk_editable_get_text(GTK_EDITABLE(w));
+  chd = FALSE;
 #else
   str = gtk_entry_get_text(w);
+  chd = Menulocal.changedirectory;
 #endif
   if (nGetOpenFileName(get_parent_window(GTK_WIDGET(w)), obj->name, ext, NULL,
 		       str,
-		       &file, TRUE, Menulocal.changedirectory) == IDOK && file) {
+		       &file, TRUE, chd) == IDOK && file) {
     entry_set_filename(GTK_WIDGET(w), file);
     g_free(file);
   }
