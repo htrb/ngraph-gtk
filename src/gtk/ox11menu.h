@@ -104,7 +104,10 @@ struct menulocal
   int menuheight, menuwidth, menux, menuy;
   int exwindpi, exwinwidth, exwinheight, exwin_use_external;
   char *fileopendir, *graphloaddir, *expanddir, *coordwin_font, *infowin_font, *file_preview_font;
-  int expand, loadpath, expandtofullpath, changedirectory, savehistory;
+  int expand, loadpath, expandtofullpath, savehistory;
+#if ! GTK_CHECK_VERSION(4, 0, 0)
+  int changedirectory;
+#endif
   int savepath, savewithdata, savewithmerge;
   int scriptconsole, addinconsole;
   int statusbar, sidebar, ruler, scrollbar, ctoolbar, ptoolbar, show_cross, showtip, preserve_width;
