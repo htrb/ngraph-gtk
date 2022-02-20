@@ -1057,7 +1057,7 @@ folder_chooser_button_clicked(GtkButton *self, gpointer user_data)
   gtk_file_chooser_set_create_folders(GTK_FILE_CHOOSER(dialog), TRUE);
   // gtk_file_chooser_set_file(GTK_FILE_CHOOSER(dialog), file, NULL);
   gtk_widget_show (dialog);
-  g_signal_connect (dialog, "response", G_CALLBACK(on_open_response), NULL);
+  g_signal_connect (dialog, "response", G_CALLBACK(on_open_response), user_data);
 }
 
 GtkWidget *
