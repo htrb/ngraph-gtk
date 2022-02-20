@@ -5053,7 +5053,7 @@ CmFileOpen
 (void *w, gpointer client_data)
 #endif
 {
-  int id, ret, n, undo = -1;
+  int id, ret, n, undo = -1, chd;
   char **file = NULL;
   struct objlist *obj;
   struct narray farray;
