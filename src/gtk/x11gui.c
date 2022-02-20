@@ -1550,7 +1550,6 @@ FileSelectionDialog(GtkWidget *parent, struct nGetOpenFileData *data)
     }
     break;
   }
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_window_destroy(GTK_WINDOW(dlg));
