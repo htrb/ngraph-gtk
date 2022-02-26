@@ -3088,7 +3088,9 @@ application(char *file)
   reset_event();                /* to set pane position correctly */
   set_pane_position();          /* to set pane position correctly */
   n_application_ready();
+  setup_recent_manager();
   terminated = AppMainLoop();
+  finalize_recent_manager();
   system_set_draw_notify_func(NULL);
 
   if (CheckIniFile()) {
