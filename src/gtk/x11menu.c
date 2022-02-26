@@ -2495,6 +2495,13 @@ create_recent_menu(GtkWidget *menu_button, int type)
   }
 }
 
+static void
+recent_manger_changed(GtkRecentManager* self, gpointer user_data)
+{
+  create_recent_menu(RecentGraphMenu, RECENT_TYPE_GRAPH);
+  create_recent_menu(RecentDateMenu, RECENT_TYPE_DATA);
+}
+
 {
   return NULL;
 }
