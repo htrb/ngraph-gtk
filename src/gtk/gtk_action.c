@@ -189,6 +189,19 @@ GraphAddinAction_activated(GSimpleAction *action, GVariant *parameter, gpointer 
   script_exec(NULL, fcur);
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+RecentGraphAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
+{
+  char *fname;
+  fname = g_strdup(g_variant_get_string(parameter, NULL));
+  if (fname) {
+    graph_dropped(fname);
+    g_free(fname);
+  }
+}
+#endif
+
 static void
 EditRedoAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
@@ -811,6 +824,9 @@ static GActionEntry AppEntries[] =
   { "PreferenceTextDefaultAction", PreferenceTextDefaultAction_activated, NULL, NULL, NULL },
   { "PreferenceGridDefaultAction", PreferenceGridDefaultAction_activated, NULL, NULL, NULL },
   { "PopupUpdateAction", PopupUpdateAction_activated, NULL, NULL, NULL },
+#if GTK_CHECK_VERSION(4, 0, 0)
+  { "RecentGraphAction", RecentGraphAction_activated, "s", NULL, NULL },
+#endif
 };
 
 static int Initialized = FALSE;
