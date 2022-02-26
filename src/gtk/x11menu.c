@@ -71,7 +71,7 @@ int Menulock = FALSE, DnDLock = FALSE;
 struct NgraphApp NgraphApp = {0};
 GtkWidget *TopLevel = NULL, *DrawButton = NULL;
 
-static GtkWidget *CurrentWindow = NULL, *CToolbar = NULL, *PToolbar = NULL, *SettingPanel = NULL, *ToolBox = NULL;
+static GtkWidget *CurrentWindow = NULL, *CToolbar = NULL, *PToolbar = NULL, *SettingPanel = NULL, *ToolBox = NULL, *RecentGraphMenu = NULL, *RecentDateMenu = NULL;
 static enum {APP_CONTINUE, APP_QUIT, APP_QUIT_FORCE} Hide_window = APP_CONTINUE;
 static int DrawLock = FALSE;
 static unsigned int CursorType;
