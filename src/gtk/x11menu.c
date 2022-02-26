@@ -2513,9 +2513,17 @@ remove_menu_model(GtkWidget *button)
   }
 }
 
+static void
+finalize_recent_manager(void)
 {
-  return NULL;
+  GtkRecentManager *manager;
+  manager = gtk_recent_manager_get_default();
+  g_signal_handlers_disconnect_by_func(manager, G_CALLBACK(recent_manger_changed), NULL);
+
+  remove_menu_model(RecentGraphMenu);
+  remove_menu_model(RecentDateMenu);
 }
+
 #else
 GtkWidget *
 create_recent_menu(int type)
