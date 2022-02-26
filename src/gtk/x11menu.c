@@ -2464,6 +2464,37 @@ add_recent_menu_item(GtkRecentInfo *info, GMenu *menu, int type)
   g_free(action);
 }
 
+static void
+create_recent_menu(GtkWidget *menu_button, int type)
+{
+  GtkRecentManager *manager;
+  GList *list, *ptr;
+  GMenu *menu;
+  GMenuModel *old_menu;
+  int n;
+
+  manager = gtk_recent_manager_get_default();
+  list = gtk_recent_manager_get_items(manager);
+  menu = g_menu_new();
+  for (ptr = list; ptr; ptr = ptr->next) {
+    GtkRecentInfo *info;
+    info = ptr->data;
+    add_recent_menu_item(info, menu, type);
+    gtk_recent_info_unref(info);
+  }
+  g_list_free(list);
+  n = g_menu_model_get_n_items(G_MENU_MODEL(menu));
+  if (n < 1) {
+    g_object_unref(menu);
+    menu = NULL;
+  }
+  old_menu = gtk_menu_button_get_menu_model(GTK_MENU_BUTTON(menu_button));
+  gtk_menu_button_set_menu_model(GTK_MENU_BUTTON(menu_button), G_MENU_MODEL(menu));
+  if (old_menu) {
+    g_object_unref(old_menu);
+  }
+}
+
 {
   return NULL;
 }
