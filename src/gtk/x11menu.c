@@ -2664,6 +2664,8 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
       widget = gtk_button_new_from_icon_name(item[i].icon);
       menu = gtk_menu_button_new();
       gtk_widget_set_tooltip_text(menu, _("Recent Graphs"));
+      create_recent_menu(menu, RECENT_TYPE_GRAPH);
+      RecentGraphMenu = menu;
 #else
       widget = gtk_menu_tool_button_new(NULL, _(item[i].label));
       menu = create_recent_menu(RECENT_TYPE_GRAPH);
@@ -2676,6 +2678,8 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
       widget = gtk_button_new_from_icon_name(item[i].icon);
       menu = gtk_menu_button_new();
       gtk_widget_set_tooltip_text(menu, _("Recent Data Files"));
+      create_recent_menu(menu, RECENT_TYPE_DATA);
+      RecentDateMenu = menu;
 #else
       widget = gtk_menu_tool_button_new(NULL, _(item[i].label));
       menu = create_recent_menu(RECENT_TYPE_DATA);
