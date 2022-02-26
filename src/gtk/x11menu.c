@@ -2423,13 +2423,18 @@ create_recent_filter(GtkWidget *w, int type)
 static void
 add_recent_menu_item(GtkRecentInfo *info, GMenu *menu, int type)
 {
-  int local;
+  int local, n;
   const char *uri, *name, *mime, *target_mime;
   char *filename, *action;
   GString *label;
 
   local = gtk_recent_info_is_local(info);
   if (! local) {
+    return;
+  }
+
+  n = g_menu_model_get_n_items(G_MENU_MODEL(menu));
+  if (n >= RECENT_CHOOSER_LIMIT) {
     return;
   }
 
