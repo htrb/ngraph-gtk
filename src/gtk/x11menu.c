@@ -2420,8 +2420,50 @@ create_recent_filter(GtkWidget *w, int type)
 #endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-GtkWidget *
-create_recent_menu(int type)
+static void
+add_recent_menu_item(GtkRecentInfo *info, GMenu *menu, int type)
+{
+  int local;
+  const char *uri, *name, *mime, *target_mime;
+  char *filename, *action;
+  GString *label;
+
+  local = gtk_recent_info_is_local(info);
+  if (! local) {
+    return;
+  }
+
+  uri = gtk_recent_info_get_uri(info);
+  name = gtk_recent_info_get_display_name(info);
+  mime = gtk_recent_info_get_mime_type(info);
+  target_mime = (type == RECENT_TYPE_GRAPH) ? NGRAPH_GRAPH_MIME : NGRAPH_DATA_MIME;
+  if (g_ascii_strcasecmp(mime, target_mime)) {
+    return;
+  }
+  filename = g_filename_from_uri(uri, NULL, NULL);
+  if (filename == NULL) {
+    return;
+  }
+  action = g_strdup_printf("app.Recent%sAction(\"%s\")",
+			   (type == RECENT_TYPE_GRAPH) ? "Graph" : "Data",
+			   filename);
+  g_free(filename);
+  if (action == NULL) {
+    return;
+  }
+
+  label = g_string_new(name);
+  if (label) {
+    GMenuItem *item;
+    g_string_replace(label, "_", "__", 0);
+    item = g_menu_item_new(label->str, action);
+    g_menu_append_item(menu, item);
+    g_object_unref(item);
+    g_string_free(label, TRUE);
+  }
+  g_free(action);
+}
+
 {
   return NULL;
 }
