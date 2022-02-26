@@ -321,7 +321,9 @@ int application(char *file);
 
 void set_current_window(GtkWidget *w);
 GtkWidget *get_current_window(void);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
 GtkWidget *create_recent_menu(int type);
+#endif
 void UpdateAll(char **objects);
 void UpdateAll2(char **objects, int redraw);
 void ChangePage(void);
