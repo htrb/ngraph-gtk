@@ -31,7 +31,7 @@ struct evaltype
 const char *get_plot_info_str(struct objlist *obj, int id, int src);
 void FileWinUpdate(struct obj_list_data *data, int clear, int draw);
 #if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
+void load_data(const char *name);
 #else
 void CmFileHistory(GtkRecentChooser *w, gpointer client_data);
 #endif
