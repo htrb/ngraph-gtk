@@ -200,6 +200,16 @@ RecentGraphAction_activated(GSimpleAction *action, GVariant *parameter, gpointer
     g_free(fname);
   }
 }
+static void
+RecentDataAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
+{
+  char *fname;
+  fname = g_strdup(g_variant_get_string(parameter, NULL));
+  if (fname) {
+    load_data(fname);
+    g_free(fname);
+  }
+}
 #endif
 
 static void
@@ -826,6 +836,7 @@ static GActionEntry AppEntries[] =
   { "PopupUpdateAction", PopupUpdateAction_activated, NULL, NULL, NULL },
 #if GTK_CHECK_VERSION(4, 0, 0)
   { "RecentGraphAction", RecentGraphAction_activated, "s", NULL, NULL },
+  { "RecentDataAction", RecentDataAction_activated, "s", NULL, NULL },
 #endif
 };
 
