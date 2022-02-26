@@ -2524,6 +2524,14 @@ finalize_recent_manager(void)
   remove_menu_model(RecentDateMenu);
 }
 
+static void
+setup_recent_manager(void)
+{
+  GtkRecentManager *manager;
+  manager = gtk_recent_manager_get_default();
+  g_signal_connect(manager, "changed", G_CALLBACK(recent_manger_changed), NULL);
+}
+
 #else
 GtkWidget *
 create_recent_menu(int type)
