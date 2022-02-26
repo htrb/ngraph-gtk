@@ -83,3 +83,6 @@ void move_data_cancel(struct Viewer *d, gboolean show_message);
 int check_paint_lock(void);
 void update_bg(void);
 int get_focused_obj_array(struct narray *focusobj, char **objs);
+#if GTK_CHECK_VERSION(4, 0, 0)
+int graph_dropped(char *fname);
+#endif

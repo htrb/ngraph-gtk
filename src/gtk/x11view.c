@@ -595,7 +595,7 @@ PasteObjectsFromClipboard(void)
 }
 #endif
 
-static int
+int
 graph_dropped(char *fname)
 {
   char *ext, *cwd;
