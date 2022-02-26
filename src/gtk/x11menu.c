@@ -2502,6 +2502,17 @@ recent_manger_changed(GtkRecentManager* self, gpointer user_data)
   create_recent_menu(RecentDateMenu, RECENT_TYPE_DATA);
 }
 
+static void
+remove_menu_model(GtkWidget *button)
+{
+  GMenuModel *menu;
+  menu = gtk_menu_button_get_menu_model(GTK_MENU_BUTTON(button));
+  if (menu) {
+    gtk_menu_button_set_menu_model(GTK_MENU_BUTTON(button), NULL);
+    g_object_unref(menu);
+  }
+}
+
 {
   return NULL;
 }
