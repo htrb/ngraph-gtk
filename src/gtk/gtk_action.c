@@ -203,11 +203,10 @@ RecentGraphAction_activated(GSimpleAction *action, GVariant *parameter, gpointer
 static void
 RecentDataAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-  char *fname;
-  fname = g_strdup(g_variant_get_string(parameter, NULL));
+  const char *fname;
+  fname = g_variant_get_string(parameter, NULL);
   if (fname) {
     load_data(fname);
-    g_free(fname);
   }
 }
 #endif
