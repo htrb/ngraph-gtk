@@ -142,7 +142,7 @@ static void ViewerEvKeyUp(GtkEventControllerKey *controller, guint keyval, guint
 static void gesture_zoom(GtkGestureZoom *controller, gdouble scale, gpointer user_data);
 #if GTK_CHECK_VERSION(4, 0, 0)
 static void ViewerEvMouseMotion(GtkEventControllerMotion *controller, gdouble x, gdouble y, gpointer client_data);
-static gboolean ViewerEvScroll(GtkWidget *w, double x, double y, gpointer client_data);
+static gboolean ViewerEvScroll(GtkEventControllerScroll *w, double x, double y, gpointer client_data);
 #else
 static gboolean ViewerEvMouseMotion(GtkWidget *w, GdkEventMotion *e, gpointer client_data);
 static gboolean ViewerEvScroll(GtkWidget *w, GdkEventScroll *e, gpointer client_data);
@@ -6074,7 +6074,7 @@ do_popup(GdkEventButton *event, struct Viewer *d)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 static gboolean
-ViewerEvScroll(GtkWidget *w, double x, double y, gpointer client_data)
+ViewerEvScroll(GtkEventControllerScroll *self, double x, double y, gpointer client_data)
 {
   struct Viewer *d;
 
