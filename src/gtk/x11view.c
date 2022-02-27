@@ -6077,9 +6077,28 @@ static gboolean
 ViewerEvScroll(GtkEventControllerScroll *self, double x, double y, gpointer client_data)
 {
   struct Viewer *d;
+  GdkModifierType state;
 
   d = (struct Viewer *) client_data;
+  state = gtk_event_controller_get_current_event_state(GTK_EVENT_CONTROLLER(self));
 
+  if (state & GDK_CONTROL_MASK) {
+    GdkDevice *device;
+    double wx, wy;
+    TPoint point;
+    device = gtk_event_controller_get_current_event_device(GTK_EVENT_CONTROLLER(self));
+    if (device == NULL) {
+      return FALSE;
+    }
+    gdk_device_get_surface_at_position(device, &wx, &wy);
+    point.x = wx;
+    point.y = wy;
+    if (y > 0) {
+      mouse_down_zoom_little(0, &point, d, FALSE);
+    } else {
+      mouse_down_zoom_little(0, &point, d, TRUE);
+    }
+  } else {
 #if OSX
   range_increment(d->HScroll, x);
   range_increment(d->VScroll, y);
@@ -6087,6 +6106,7 @@ ViewerEvScroll(GtkEventControllerScroll *self, double x, double y, gpointer clie
   range_increment(d->HScroll, x * SCROLL_INC);
   range_increment(d->VScroll, y * SCROLL_INC);
 #endif
+  }
   return TRUE;
 }
 #else
