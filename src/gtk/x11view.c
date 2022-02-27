@@ -6100,11 +6100,11 @@ ViewerEvScroll(GtkEventControllerScroll *self, double x, double y, gpointer clie
     }
   } else {
 #if OSX
-  range_increment(d->HScroll, x);
-  range_increment(d->VScroll, y);
+    range_increment(d->HScroll, x);
+    range_increment(d->VScroll, y);
 #else
-  range_increment(d->HScroll, x * SCROLL_INC);
-  range_increment(d->VScroll, y * SCROLL_INC);
+    range_increment(d->HScroll, x * SCROLL_INC);
+    range_increment(d->VScroll, y * SCROLL_INC);
 #endif
   }
   return TRUE;
