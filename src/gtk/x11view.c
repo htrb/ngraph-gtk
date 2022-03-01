@@ -1748,7 +1748,6 @@ hscroll_change_value_cb(GtkRange *range, GtkScrollType scroll, gdouble value, gp
   start_scroll_deceleration(value, d->vscroll, d);
   return TRUE;
 }
-#endif
 
 static gboolean
 vscroll_change_value_cb(GtkRange *range, GtkScrollType scroll, gdouble value, gpointer user_data)
@@ -1758,6 +1757,7 @@ vscroll_change_value_cb(GtkRange *range, GtkScrollType scroll, gdouble value, gp
   start_scroll_deceleration(d->hscroll, value, d);
   return TRUE;
 }
+#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 static void
