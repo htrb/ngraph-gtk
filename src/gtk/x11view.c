@@ -1739,6 +1739,7 @@ add_event_scroll(GtkWidget *widget, struct Viewer *d)
 }
 #endif
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
 static gboolean
 hscroll_change_value_cb(GtkRange *range, GtkScrollType scroll, gdouble value, gpointer user_data)
 {
@@ -1747,6 +1748,7 @@ hscroll_change_value_cb(GtkRange *range, GtkScrollType scroll, gdouble value, gp
   start_scroll_deceleration(value, d->vscroll, d);
   return TRUE;
 }
+#endif
 
 static gboolean
 vscroll_change_value_cb(GtkRange *range, GtkScrollType scroll, gdouble value, gpointer user_data)
