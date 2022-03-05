@@ -515,7 +515,48 @@ focus_new_insts(struct objlist *parent, struct narray *array, char **objects)
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
+static void
+paste_text(const gchar *text, struct Viewer *d)
+{
+  struct narray idarray;
+  struct objlist *draw_obj;
+  char *objects[OBJ_MAX] = {NULL};
+
+  if (text == NULL) {
+    return;
+  }
+
+  if (strncmp(text, SCRIPT_IDN, SCRIPT_IDN_LEN)) {
+    gint w, h;
+
+    w = gtk_widget_get_width(d->Win);
+    h = gtk_widget_get_height(d->Win);
+    text_dropped(text, w / 2, h / 2, &NgraphApp.Viewer);
+    return;
+  }
+
+  draw_obj = chkobject("draw");
+  if (draw_obj == NULL) {
+    return;
+  }
+
+  arrayinit(&idarray, sizeof(int));
+  check_last_insts(draw_obj, &idarray);
+
+  UnFocus();
+  menu_save_undo(UNDO_TYPE_PASTE, NULL);
+  eval_script(text, TRUE);
+
+  focus_new_insts(draw_obj, &idarray, objects);
+  arraydel(&idarray);
+
+  if (arraynum(d->focusobj) > 0) {
+    set_graph_modified();
+    d->ShowFrame = TRUE;
+    gtk_widget_grab_focus(d->Win);
+    UpdateAll(objects);
+  }
+}
 #else
 static void
 paste_cb(GtkClipboard *clipboard, const gchar *text, gpointer data)
