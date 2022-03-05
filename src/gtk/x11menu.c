@@ -1331,7 +1331,7 @@ set_focus_sensitivity_sub(const struct Viewer *d, int insensitive)
 	case LegendB:
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
-          state = FALSE;
+          state = TRUE;
 #else
 	  clip = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
 	  state = gtk_clipboard_wait_is_text_available(clip);
