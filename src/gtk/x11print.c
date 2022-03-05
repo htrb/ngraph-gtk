@@ -243,7 +243,11 @@ OutputImageDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     w = gtk_spin_button_new_with_range(1, DPI_MAX, 1);
     gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(w), TRUE);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    /* must be implemented */
+#else
     gtk_entry_set_activates_default(GTK_ENTRY(w), TRUE);
+#endif
     d->dpi = w;
     item_setup(GTK_WIDGET(d->vbox), w, "_DPI:", FALSE);
 
