@@ -130,7 +130,7 @@ OutputImageDialogSetupItem(struct OutputImageDialog *d)
 
   gtk_label_set_text(GTK_LABEL(vlabel), "");
 #if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->use_opacity), FALSE);
+  gtk_check_button_set_active(GTK_CHECK_BUTTON(d->use_opacity), FALSE);
 #else
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->use_opacity), FALSE);
 #endif
