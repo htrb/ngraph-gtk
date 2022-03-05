@@ -663,6 +663,20 @@ text_async_completed(GObject *source, GAsyncResult *res, gpointer data)
   */
 }
 
+static void
+PasteObjectsFromClipboard(void)
+{
+  struct Viewer *d;
+  GdkClipboard *clipboard;
+
+  d = &NgraphApp.Viewer;
+  if (d->Win == NULL || (d->Mode != PointB && d->Mode != LegendB)) {
+    return;
+  }
+
+  clipboard = gtk_widget_get_clipboard(TopLevel);
+  gdk_clipboard_read_text_async(clipboard, NULL, text_async_completed, d);
+}
 #else
 static void
 PasteObjectsFromClipboard(void)
@@ -7897,11 +7911,7 @@ CmEditMenuCB(void *w, gpointer client_data)
     CopyFocusedObjects();
     break;
   case MenuIdEditPaste:
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
-#else
     PasteObjectsFromClipboard();
-#endif
     break;
   case MenuIdEditDelete:
     ViewDelete();
