@@ -439,15 +439,15 @@ CopyFocusedObjects(void)
     num++;
   }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
-#else
   if (num > 0) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+    copy_text(str->str);
+#else
     GtkClipboard* clipboard;
     clipboard = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
     gtk_clipboard_set_text(clipboard, str->str, -1);
-  }
 #endif
+  }
 
   g_free(focused_inst);
   g_string_free(str, TRUE);
