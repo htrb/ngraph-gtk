@@ -377,6 +377,7 @@ create_file_entry(struct objlist *obj)
   return create_file_entry_with_cb(G_CALLBACK(entry_icon_file_select), obj);
 }
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
 static void
 direction_icon_released(GtkEntry *entry, GtkEntryIconPosition pos, GdkEvent *event, gpointer user_data)
 {
@@ -414,6 +415,7 @@ direction_icon_released(GtkEntry *entry, GtkEntryIconPosition pos, GdkEvent *eve
 
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(entry), val);
 }
+#endif
 
 GtkWidget *
 create_direction_entry(void)
