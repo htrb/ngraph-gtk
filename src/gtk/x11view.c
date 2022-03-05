@@ -367,6 +367,21 @@ create_focused_inst_array_by_id_order(struct FocusObj **focus, int n)
   return focused_inst;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+copy_text(const char *str)
+{
+  GValue value = G_VALUE_INIT;
+  GdkClipboard *clipboard;
+
+  g_value_init(&value, G_TYPE_STRING);
+  g_value_set_string(&value, str);
+  clipboard = gtk_widget_get_clipboard(TopLevel);
+  gdk_clipboard_set_value(clipboard, &value);
+  g_value_unset(&value);
+}
+#endif
+
 static int
 CopyFocusedObjects(void)
 {
