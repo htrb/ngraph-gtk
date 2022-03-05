@@ -631,6 +631,38 @@ remove_cr_in_place(char *text)
   text[j] = '\0';
 }
 
+static void
+text_async_completed(GObject *source, GAsyncResult *res, gpointer data)
+{
+  GdkClipboard* clipboard;
+  struct Viewer *d;
+  char *text;
+
+  d = (struct Viewer *) data;
+  clear_focus_obj_pix(d);
+  set_focus_sensitivity(d);
+
+  clipboard = GDK_CLIPBOARD(source);
+  text = gdk_clipboard_read_text_finish(clipboard, res, NULL);
+  if (text) {
+    remove_cr_in_place(text);
+    paste_text(text, d);
+    g_free(text);
+  }
+  /*
+  device = gtk_get_current_event_device();
+  if (device && gdk_device_get_source(device) != GDK_SOURCE_KEYBOARD) {
+      GdkWindow *win;
+      win = gtk_widget_get_window(d->Win);
+      if (win) {
+	gdk_window_get_device_position(win, device, &x, &y, NULL);
+	set_mouse_cursor_hover(d, x, y);
+      }
+    }
+  }
+  */
+}
+
 #else
 static void
 PasteObjectsFromClipboard(void)
