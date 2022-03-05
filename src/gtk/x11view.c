@@ -619,7 +619,18 @@ paste_cb(GtkClipboard *clipboard, const gchar *text, gpointer data)
 #endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
+static void
+remove_cr_in_place(char *text)
+{
+  int i, j;
+  for (i = j = 0; text[i]; i++) {
+    if (text[i] != '\r') {
+      text[j++] = text[i];
+    }
+  }
+  text[j] = '\0';
+}
+
 #else
 static void
 PasteObjectsFromClipboard(void)
