@@ -931,7 +931,11 @@ data_dropped(char **filenames, int num, int file_type)
   menu_save_undo(UNDO_TYPE_PASTE, arg);
   for (i = 0; i < num; i++) {
     char *name;
+#if GTK_CHECK_VERSION(4, 0, 0)
+    name = g_strdup(filenames[i]);
+#else
     name = g_filename_from_uri(filenames[i], NULL, NULL);
+#endif
     if (name == NULL) {
       continue;
     }
