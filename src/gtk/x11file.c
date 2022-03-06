@@ -6900,7 +6900,7 @@ edited_axis(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer us
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
-int
+static int
 drop_file(const GValue *value, int type)
 {
   GFile *file;
