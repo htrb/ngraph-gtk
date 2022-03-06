@@ -1054,7 +1054,38 @@ text_dropped(const char *str, gint x, gint y, struct Viewer *d)
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
+/* must be implemented (multiple files) */
+static int
+file_dropped(const GValue* value)
+{
+  GFile *file;
+  char *fname;
+  int r;
+
+  file = g_value_get_object(value);
+  if (file == NULL) {
+    return TRUE;
+  }
+
+  fname = g_file_get_path(file);
+  if (fname == NULL) {
+    return TRUE;
+  }
+  if (strlen(fname) < 1) {
+    g_free(fname);
+    return TRUE;
+  }
+
+  r = graph_dropped(fname);
+  if (r) {
+    char *filenames[1];
+    filenames[0] = fname;
+    r = data_dropped(filenames, G_N_ELEMENTS(filenames), FILE_TYPE_AUTO);
+  }
+  g_free(fname);
+  return r;
+}
+
 #else
 static void
 drag_drop_cb(GtkWidget *w, GdkDragContext *context, gint x, gint y, GtkSelectionData *data, guint info, guint time, gpointer user_data)
