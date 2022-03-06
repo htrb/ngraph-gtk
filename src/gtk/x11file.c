@@ -6962,12 +6962,21 @@ drag_drop_cb(GtkWidget *w, GdkDragContext *context, gint x, gint y, GtkSelection
 }
 #endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+void
+init_dnd_file(struct SubWin *d, int type)
+{
+  GtkDropTarget *target;
+
+  target = gtk_drop_target_new(G_TYPE_FILE, GDK_ACTION_COPY);
+  g_signal_connect(target, "drop", G_CALLBACK(drag_drop_cb), GINT_TO_POINTER(type));
+  gtk_widget_add_controller(d->data.data->text, GTK_EVENT_CONTROLLER(target));
+}
+#else
 static void
 init_dnd(struct SubWin *d)
 {
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
-#else
   GtkWidget *widget;
   GtkTargetEntry target[] = {
     {"text/uri-list", 0, DROP_TYPE_FILE},
@@ -6977,8 +6986,8 @@ init_dnd(struct SubWin *d)
 
   gtk_drag_dest_set(widget, GTK_DEST_DEFAULT_ALL, target, sizeof(target) / sizeof(*target), GDK_ACTION_COPY);
   g_signal_connect(widget, "drag-data-received", G_CALLBACK(drag_drop_cb), NULL);
-#endif
 }
+#endif
 
 GtkWidget *
 create_data_list(struct SubWin *d)
