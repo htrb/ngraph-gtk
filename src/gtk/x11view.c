@@ -1169,6 +1169,18 @@ drag_drop_cb(GtkWidget *w, GdkDragContext *context, gint x, gint y, GtkSelection
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
+static void
+init_dnd(struct Viewer *d)
+{
+  GtkDropTarget *target;
+  GType types[] = {G_TYPE_FILE, G_TYPE_STRING};
+
+  target = gtk_drop_target_new(G_TYPE_INVALID, GDK_ACTION_COPY);
+  gtk_drop_target_set_gtypes(target, types, G_N_ELEMENTS(types));
+
+  g_signal_connect(target, "drop", G_CALLBACK(drag_drop_cb), d);
+  gtk_widget_add_controller(GTK_WIDGET(d->Win), GTK_EVENT_CONTROLLER(target));
+}
 #else
 static void
 init_dnd(struct Viewer *d)
