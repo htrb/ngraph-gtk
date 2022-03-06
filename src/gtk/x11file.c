@@ -7024,7 +7024,11 @@ create_data_list(struct SubWin *d)
   set_combo_cell_renderer_cb(d->data.data, FILE_WIN_COL_Y_AXIS, Flist, G_CALLBACK(start_editing_y), G_CALLBACK(edited_axis));
   set_obj_cell_renderer_cb(d->data.data, FILE_WIN_COL_TYPE, Flist, G_CALLBACK(start_editing_type));
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  init_dnd_file(d, FILE_TYPE_DATA);
+#else
   init_dnd(d);
+#endif
 
   gtk_tree_view_set_enable_search(GTK_TREE_VIEW(d->data.data->text), TRUE);
   gtk_tree_view_set_search_column(GTK_TREE_VIEW(d->data.data->text), FILE_WIN_COL_FILE);
