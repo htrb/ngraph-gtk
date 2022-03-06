@@ -1086,6 +1086,29 @@ file_dropped(const GValue* value)
   return r;
 }
 
+static gboolean
+drag_drop_cb(GtkDropTarget* self, const GValue* value, gdouble x, gdouble y, gpointer user_data)
+{
+  struct Viewer *d;
+  int r;
+
+  if (Globallock || Menulock || DnDLock)
+    return FALSE;;
+
+  d = (struct Viewer *) user_data;
+
+  r = TRUE;
+  if (G_VALUE_HOLDS(value, G_TYPE_FILE)) {
+    r = file_dropped(value);
+  } else if (G_VALUE_HOLDS(value, G_TYPE_STRING)) {
+    const char *str;
+    str = g_value_get_string(value);
+    if (str) {
+      r = text_dropped(str, x, y, d);
+    }
+  }
+  return ! r;
+}
 #else
 static void
 drag_drop_cb(GtkWidget *w, GdkDragContext *context, gint x, gint y, GtkSelectionData *data, guint info, guint time, gpointer user_data)
