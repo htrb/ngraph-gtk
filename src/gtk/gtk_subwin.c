@@ -1007,11 +1007,7 @@ ev_key_down(GtkEventControllerKey *controller, guint keyval, guint keycode, GdkM
       return FALSE;
 
     if (state & GDK_SHIFT_MASK) {
-#if GTK_CHECK_VERSION(4, 0, 0)
-      list_sub_window_add_focus(NULL, NULL, d);
-#else
-      list_sub_window_add_focus(NULL, d);
-#endif
+      focus(d, FOCUS_MODE_TOGGLE);
     } else {
 #if GTK_CHECK_VERSION(4, 0, 0)
       list_sub_window_focus(NULL, NULL, d);
@@ -1156,17 +1152,9 @@ ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
       return FALSE;
 
     if (e->state & GDK_SHIFT_MASK) {
-#if GTK_CHECK_VERSION(4, 0, 0)
-      list_sub_window_add_focus(NULL, NULL, d);
-#else
-      list_sub_window_add_focus(NULL, d);
-#endif
+      focus(d, FOCUS_MODE_TOGGLE);
     } else {
-#if GTK_CHECK_VERSION(4, 0, 0)
-      list_sub_window_focus(NULL, NULL, d);
-#else
       list_sub_window_focus(NULL, d);
-#endif
     }
     break;
   default:
@@ -1548,17 +1536,6 @@ list_sub_window_focus_all
 #endif
 {
   focus_all((struct obj_list_data *) user_data);
-}
-
-void
-list_sub_window_add_focus
-#if GTK_CHECK_VERSION(4, 0, 0)
-(GSimpleAction *action, GVariant *parameter, gpointer user_data)
-#else
-(GtkMenuItem *item, gpointer user_data)
-#endif
-{
-  focus((struct obj_list_data *) user_data, FOCUS_MODE_TOGGLE);
 }
 
 #if ! GTK_CHECK_VERSION(4, 0, 0)

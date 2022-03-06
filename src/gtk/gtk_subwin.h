@@ -57,7 +57,6 @@ void list_sub_window_move_down(GSimpleAction *action, GVariant *parameter, gpoin
 void list_sub_window_update(GSimpleAction *action, GVariant *parameter, gpointer user_data);
 void list_sub_window_focus(GSimpleAction *action, GVariant *parameter, gpointer user_data);
 void list_sub_window_focus_all(GSimpleAction *action, GVariant *parameter, gpointer user_data);
-void list_sub_window_add_focus(GSimpleAction *action, GVariant *parameter, gpointer user_data);
 #else
 void list_sub_window_object_name(GtkMenuItem *w, gpointer client_data);
 void list_sub_window_delete(GtkMenuItem *item, gpointer user_data);
@@ -69,7 +68,6 @@ void list_sub_window_move_down(GtkMenuItem *item, gpointer user_data);
 void list_sub_window_update(GtkMenuItem *item, gpointer user_data);
 void list_sub_window_focus(GtkMenuItem *item, gpointer user_data);
 void list_sub_window_focus_all(GtkMenuItem *item, gpointer user_data);
-void list_sub_window_add_focus(GtkMenuItem *item, gpointer user_data);
 #endif
 void update_viewer(struct obj_list_data *d);
 
