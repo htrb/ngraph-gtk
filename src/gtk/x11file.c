@@ -6900,6 +6900,42 @@ edited_axis(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer us
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
+int
+drop_file(const GValue *value, int type)
+{
+  GFile *file;
+  char *filenames[1];
+  char *fname;
+  int r;
+
+  if (Globallock || Menulock || DnDLock)
+    return FALSE;;
+
+  if (! G_VALUE_HOLDS(value, G_TYPE_FILE)) {
+    return FALSE;
+  }
+
+  file = g_value_get_object(value);
+  if (file == NULL) {
+    return FALSE;
+  }
+
+  fname = g_file_get_path(file);
+  if (fname == NULL) {
+    return FALSE;
+  }
+  if (strlen(fname) < 1) {
+    g_free(fname);
+    return FALSE;
+  }
+
+  filenames[0] = fname;
+  r = data_dropped(filenames, G_N_ELEMENTS(filenames), type);
+  g_free(fname);
+
+  return ! r;
+}
+
 #else
 static void
 drag_drop_cb(GtkWidget *w, GdkDragContext *context, gint x, gint y, GtkSelectionData *data, guint info, guint time, gpointer user_data)
