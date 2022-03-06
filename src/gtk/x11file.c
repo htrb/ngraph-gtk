@@ -6936,6 +6936,11 @@ drop_file(const GValue *value, int type)
   return ! r;
 }
 
+static gboolean
+drag_drop_cb(GtkDropTarget *self, const GValue *value, gdouble x, gdouble y, gpointer user_data)
+{
+  return drop_file(value, GPOINTER_TO_INT(user_data));
+}
 #else
 static void
 drag_drop_cb(GtkWidget *w, GdkDragContext *context, gint x, gint y, GtkSelectionData *data, guint info, guint time, gpointer user_data)
