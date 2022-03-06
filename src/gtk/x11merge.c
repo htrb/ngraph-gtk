@@ -583,7 +583,7 @@ create_merge_list(struct SubWin *d)
   sub_win_create_popup_menu(d->data.data, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
+  init_dnd_file(d, FILE_TYPE_MERGE);
 #else
   init_dnd(d);
 #endif
