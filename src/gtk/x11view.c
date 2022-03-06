@@ -2028,6 +2028,8 @@ ViewerWinSetup(void)
   g_signal_connect(adj, "value-changed", G_CALLBACK(ViewerEvVScroll), d);
 
   gtk_widget_set_focusable(d->Win, TRUE);
+
+  init_dnd(d);
 #else
   g_signal_connect(d->HScroll, "value-changed", G_CALLBACK(ViewerEvHScroll), d);
   g_signal_connect(d->VScroll, "value-changed", G_CALLBACK(ViewerEvVScroll), d);
