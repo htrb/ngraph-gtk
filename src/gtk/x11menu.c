@@ -2427,6 +2427,7 @@ add_recent_menu_item(GtkRecentInfo *info, GMenu *menu, int type)
   const char *uri, *name, *mime, *target_mime;
   char *filename, *action;
   GString *label;
+  struct stat sb;
 
   local = gtk_recent_info_is_local(info);
   if (! local) {
@@ -2447,6 +2448,14 @@ add_recent_menu_item(GtkRecentInfo *info, GMenu *menu, int type)
   }
   filename = g_filename_from_uri(uri, NULL, NULL);
   if (filename == NULL) {
+    return;
+  }
+  if (g_stat(filename, &sb)) {
+    g_free(filename);
+    return;
+  }
+  if (! S_ISREG(sb.st_mode)) {
+    g_free(filename);
     return;
   }
   action = g_strdup_printf("app.Recent%sAction(\"%s\")",
