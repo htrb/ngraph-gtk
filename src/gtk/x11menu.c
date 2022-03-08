@@ -2710,6 +2710,9 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
       } else {
         group = widget;
       }
+      if (i == 0) {
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), TRUE);
+      }
 #else
       widget = gtk_radio_tool_button_new(list);
       list = gtk_radio_tool_button_get_group(GTK_RADIO_TOOL_BUTTON(widget));
