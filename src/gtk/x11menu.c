@@ -3102,8 +3102,12 @@ application(char *file)
   }
 
   system_set_draw_notify_func(draw_notify);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  set_toolbox_mode(TOOLBOX_MODE_TOOLBAR);
+#else
   reset_event();                /* to set pane position correctly */
   set_pane_position();          /* to set pane position correctly */
+#endif
   n_application_ready();
   setup_recent_manager();
   terminated = AppMainLoop();
