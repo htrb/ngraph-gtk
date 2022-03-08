@@ -138,6 +138,7 @@ ndialog_run(GtkWidget *dlg, int *response)
 
   g_signal_connect(dlg, "response", G_CALLBACK(ndialog_response), response);
   g_signal_connect(dlg, "close_request", G_CALLBACK(ndialog_close_request), response);
+  gtk_window_set_modal(GTK_WINDOW(dlg), TRUE);
 
   gtk_widget_show(dlg);
   context = g_main_context_default();
