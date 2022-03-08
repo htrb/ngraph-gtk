@@ -3658,6 +3658,10 @@ calc_zoom(struct Viewer *d, int vx1, int vy1, int *x2, int *y2, double *zoom_x, 
       *zoom_x = zmx;
       *zoom_y = zmy;
     }
+    if (check_zoom_obj(d)) {
+      *zoom_x = zoom2;
+      *zoom_y = zoom2;
+    }
   }
 }
 
