@@ -4010,6 +4010,24 @@ mouse_down_point(unsigned int state, struct Viewer *d)
 
 #define ZOOM_RATIO_LIMIT 0.5
 
+static int
+check_zoom_obj(struct Viewer *d)
+{
+  char *objs[OBJ_MAX];
+  int i, n;
+  n = get_focused_obj_array(d->focusobj, objs);
+  if (n > 2) {
+    return FALSE;
+  }
+
+  for (i = 0; i < n; i++) {
+    if (g_strcmp0(objs[i], "text") && g_strcmp0(objs[i], "mark")) {
+      return FALSE;
+    }
+  }
+  return TRUE;
+}
+
 static void
 calc_zoom(struct Viewer *d, int vx1, int vy1, int *x2, int *y2, double *zoom_x, double *zoom_y, int preserve_ratio)
 {
@@ -4067,6 +4085,10 @@ calc_zoom(struct Viewer *d, int vx1, int vy1, int *x2, int *y2, double *zoom_x, 
     } else {
       *zoom_x = zmx;
       *zoom_y = zmy;
+    }
+    if (check_zoom_obj(d)) {
+      *zoom_x = zoom2;
+      *zoom_y = zoom2;
     }
   }
 }
