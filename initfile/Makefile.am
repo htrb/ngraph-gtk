@@ -14,7 +14,7 @@ nodist_ngraphconf_DATA = Ngraph.ini
 EXTRA_DIST = Ngraph.ini.in Ngraph.ini.win save_ui_file.nsc
 
 if OS_WIN32
-Ngraph.ini: Ngraph.ini.win
+Ngraph.ini: $(srcdir)/Ngraph.ini.win
 	cp $< $@
 else
 if OS_OSX
