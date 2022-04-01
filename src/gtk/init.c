@@ -739,7 +739,7 @@ set_dir_defs(char *app)
   return 0;
 }
 #elif OSX
-static char
+static char *
 get_libexec_dir(const char *app_path)
 {
   char *libdir;
