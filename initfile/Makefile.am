@@ -18,7 +18,7 @@ Ngraph.ini: $(srcdir)/Ngraph.ini.win
 	cp $< $@
 else
 if OS_OSX
-Ngraph.ini: Ngraph.ini.osx
+Ngraph.ini: $(srcdir)/Ngraph.ini.osx
 	cp $< $@
 else
 Ngraph.ini: $(srcdir)/Ngraph.ini.in $(top_srcdir)/pathconv.sh
