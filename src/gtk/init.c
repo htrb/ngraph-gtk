@@ -739,6 +739,21 @@ set_dir_defs(char *app)
   return 0;
 }
 #elif OSX
+static char *
+get_libexec_dir(const char *app_path)
+{
+  char *libdir;
+  GStatBuf buf;
+  libdir = g_strdup_printf("%s%c%s", app_path, DIRSEP, "libexec/ngraph-gtk");
+  g_stat(libdir, &buf);
+  if (S_ISDIR(buf.st_mode)) {
+    return libdir;
+  }
+  g_free(libdir);
+  libdir = g_strdup_printf("%s%c%s", app_path, DIRSEP, "opt/ngraph-gtk/libexec/ngraph-gtk");
+  return libdir;
+}
+
 static int
 set_dir_defs(char *app)
 {
@@ -755,7 +770,7 @@ set_dir_defs(char *app)
     bin_path = g_path_get_dirname(app_path);
     g_free(app_path);
     app_path = bin_path;
-    LIBDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "libexec/ngraph-gtk");
+    LIBDIR = get_libexec_dir(app_path);
   }
 
   if (app_path == NULL) {
