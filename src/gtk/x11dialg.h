@@ -88,6 +88,8 @@ const char *get_style_string(struct objlist *obj, int id, char *field);
   char *resource, *ok_button;\
   void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);\
   void (*CloseWindow) (GtkWidget *w, void *data);\
+  int lockstate, menulock, modified;		 \
+  GtkWidget *win_ptr;				 \
 
 
 struct DialogType
@@ -168,7 +170,7 @@ struct MathDialog
   /****** local member *******/
   GtkWidget *list, *func[MATH_FNC_NUM];
   struct objlist *Obj;
-  int Mode, modified;
+  int Mode;
 };
 void MathDialog(struct MathDialog *data, struct objlist *obj);
 
@@ -180,7 +182,7 @@ struct MathTextDialog
   GList *id_list;
   struct objlist *Obj;
   char *Text;
-  int Mode, modified, page;
+  int Mode, page;
 };
 void MathTextDialog(struct MathTextDialog *data, char *text, int mode, struct objlist *obj, GList *list, GtkWidget *tree);
 

@@ -59,7 +59,11 @@ typedef struct _tpoint {
   int x, y;
 } TPoint;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+void DialogExecute(GtkWidget *parent, void *dialog);
+#else
 int DialogExecute(GtkWidget *parent, void *dialog);
+#endif
 void message_beep(GtkWidget *parent);
 int markup_message_box(GtkWidget * parent, const char *message, const char *title, int mode, int markup);
 int message_box(GtkWidget *parent, const char *message, const char *title, int yesno);

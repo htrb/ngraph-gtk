@@ -29,6 +29,38 @@ CREATE_NAME(Pref, DialogUpdate)(GtkWidget *w, gpointer client_data)
 #endif
 
 #ifdef LIST_INIT
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* to be implemented */
+static void
+CREATE_NAME(Pref, DialogAdd)(GtkWidget *w, gpointer client_data)
+{
+  struct LIST_TYPE *fcur, *fprev, *fnew;
+  struct CREATE_NAME(Pref, Dialog) *d;
+
+  d = (struct CREATE_NAME(Pref, Dialog) *) client_data;
+  fprev = NULL;
+  fcur = LIST_ROOT;
+  while (fcur) {
+    fprev = fcur;
+    fcur = fcur->next;
+  }
+
+  fnew = (struct LIST_TYPE *) g_malloc(sizeof(struct LIST_TYPE));
+  if (fnew == NULL) {
+    return;
+  }
+
+  LIST_INIT(fnew);
+  if (fprev == NULL) {
+    LIST_ROOT = fnew;
+  } else {
+    fprev->next = fnew;
+  }
+
+  CREATE_NAME(Set, Dialog)(&SET_DIALOG, fnew);
+  DialogExecute(d->widget, &SET_DIALOG);
+}
+#else
 static void
 CREATE_NAME(Pref, DialogAdd)(GtkWidget *w, gpointer client_data)
 {
@@ -66,6 +98,7 @@ CREATE_NAME(Pref, DialogAdd)(GtkWidget *w, gpointer client_data)
   }
   CREATE_NAME(Pref, DialogSetupItem)(d);
 }
+#endif
 #endif
 
 #ifdef LIST_FREE

@@ -1223,6 +1223,10 @@ get_save_opt(int *sdata, int *smerge, int *path)
   }
 
   SaveDialog(&DlgSave, sdata, smerge);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  /* must be implemented */
+  DialogExecute(TopLevel, &DlgSave);
+#else
   ret = DialogExecute(TopLevel, &DlgSave);
   if (ret != IDOK)
     return IDCANCEL;
@@ -1235,7 +1239,7 @@ get_save_opt(int *sdata, int *smerge, int *path)
   for (i = 0; i < mnum; i++) {
     putobj(mobj, "save_path", i, path);
   }
-
+#endif
   return IDOK;
 }
 
@@ -1388,6 +1392,15 @@ ToBasename(void)
 }
 
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* to be implemented */
+int
+LoadNgpFile(char *file, int console, char *option)
+{
+  LoadDialog(&DlgLoad);
+  DialogExecute(TopLevel, &DlgLoad);
+}
+#else
 int
 LoadNgpFile(char *file, int console, char *option)
 {
@@ -1543,6 +1556,7 @@ LoadNgpFile(char *file, int console, char *option)
 
   return 0;
 }
+#endif
 
 static int
 check_ref_axis(char *ref, const char *group)
@@ -1836,6 +1850,39 @@ PlotFileCB(struct objlist *obj, int id)
   return get_plot_cb_str(obj, id, source);
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* to be implemented */
+int
+SetFileHidden(void)
+{
+  struct objlist *fobj;
+  int lastinst;
+  struct narray farray, ifarray;
+  int i, a, r;
+
+  fobj = chkobject("data");
+  if (fobj == NULL) {
+    return 1;
+  }
+
+  lastinst = chkobjlastinst(fobj);
+  if (lastinst < 0) {
+    return 1;
+  }
+
+  arrayinit(&ifarray, sizeof(int));
+  for (i = 0; i <= lastinst; i++) {
+    getobj(fobj, "hidden", i, 0, NULL, &a);
+    if (!a) {
+      arrayadd(&ifarray, &i);
+    }
+  }
+
+  r = 0;
+  SelectDialog(&DlgSelect, fobj, NULL, FileCB, &farray, &ifarray);
+  DialogExecute(TopLevel, &DlgSelect);
+}
+#else
 int
 SetFileHidden(void)
 {
@@ -1895,6 +1942,7 @@ SetFileHidden(void)
   arraydel(&farray);
   return r;
 }
+#endif
 
 int
 CheckIniFile(void)

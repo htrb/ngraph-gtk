@@ -698,6 +698,10 @@ swin_update(struct obj_list_data *d)
   } else {
     undo = menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
   }
+#if GTK_CHECK_VERSION(4, 0, 0)
+  /* must be implemented */
+  DialogExecute(parent, d->dialog);
+#else
   ret = DialogExecute(parent, d->dialog);
   switch (ret) {
   case IDCANCEL:
@@ -715,6 +719,7 @@ swin_update(struct obj_list_data *d)
   default:
     d->update(d, FALSE, DRAW_NOTIFY);
   }
+#endif
 }
 
 static void

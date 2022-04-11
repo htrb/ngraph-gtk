@@ -299,6 +299,27 @@ struct lwidget {
   char *f;
 };
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* to be implemented */
+static void
+legend_menu_update_object(const char *name, char *(*callback) (struct objlist * obj, int id), void *dialog, LEGEND_DIALOG_SETUP setup)
+{
+  struct narray array;
+  struct objlist *obj;
+  char title[256];
+
+  if (Menulock || Globallock)
+    return;
+  if ((obj = chkobject(name)) == NULL)
+    return;
+  if (chkobjlastinst(obj) == -1)
+    return;
+
+  snprintf(title, sizeof(title), _("%s property (multi select)"), _(obj->name));
+  SelectDialog(&DlgSelect, obj, title, callback, &array, NULL);
+  DialogExecute(TopLevel, &DlgSelect);
+}
+#else
 static void
 legend_menu_update_object(const char *name, char *(*callback) (struct objlist * obj, int id), void *dialog, LEGEND_DIALOG_SETUP setup)
 {
@@ -341,7 +362,28 @@ legend_menu_update_object(const char *name, char *(*callback) (struct objlist * 
   }
   arraydel(&array);
 }
+#endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* to be implemented */
+static void
+legend_menu_delete_object(const char *name, char *(*callback) (struct objlist * obj, int id))
+{
+  struct narray array;
+  struct objlist *obj;
+  char title[256];
+
+  if (Menulock || Globallock)
+    return;
+  if ((obj = chkobject(name)) == NULL)
+    return;
+  if (chkobjlastinst(obj) == -1)
+    return;
+  snprintf(title, sizeof(title), _("delete %s (multi select)"), _(obj->name));
+  SelectDialog(&DlgSelect, obj, title, callback, &array, NULL);
+  DialogExecute(TopLevel, &DlgSelect);
+}
+#else
 static void
 legend_menu_delete_object(const char *name, char *(*callback) (struct objlist * obj, int id))
 {
@@ -376,6 +418,7 @@ legend_menu_delete_object(const char *name, char *(*callback) (struct objlist * 
   }
   arraydel(&array);
 }
+#endif
 
 static char *
 LegendLineCB(struct objlist *obj, int id)
@@ -2511,6 +2554,31 @@ CmTextUpdate(void *w, gpointer client_data)
   legend_menu_update_object("text", LegendTextCB, &DlgLegendText, LegendTextDialog);
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* to be implemented */
+void
+CmOptionTextDef(void *w, gpointer client_data)
+{
+  struct objlist *obj;
+  int id;
+
+  if (Menulock || Globallock)
+    return;
+
+  if ((obj = chkobject("text")) == NULL)
+    return;
+
+  id = newobj(obj);
+  if (id >= 0) {
+    char *objs[2];
+    int modified;
+
+    modified = get_graph_modified();
+    LegendTextDefDialog(&DlgLegendTextDef, obj, id);
+    DialogExecute(TopLevel, &DlgLegendTextDef);
+  }
+}
+#else
 void
 CmOptionTextDef(void *w, gpointer client_data)
 {
@@ -2544,6 +2612,7 @@ CmOptionTextDef(void *w, gpointer client_data)
     }
   }
 }
+#endif
 
 static void
 LegendWinPathUpdate(struct obj_list_data *data, int id, int user_data)

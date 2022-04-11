@@ -1448,6 +1448,17 @@ CmGraphOverWrite(void *w, gpointer client_data)
   GraphSave(TRUE);
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* to be implemented */
+void
+CmGraphSwitch(void *w, gpointer client_data)
+{
+  if (Menulock || Globallock)
+    return;
+  SwitchDialog(&DlgSwitch);
+  DialogExecute(TopLevel, &DlgSwitch);
+}
+#else
 void
 CmGraphSwitch(void *w, gpointer client_data)
 {
@@ -1459,7 +1470,21 @@ CmGraphSwitch(void *w, gpointer client_data)
     ChangePage();
   }
 }
+#endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* to be implemented */
+void
+CmGraphPage(void *w, gpointer client_data)
+{
+  int new_graph;
+  new_graph = GPOINTER_TO_INT(client_data);
+  if (Menulock || Globallock)
+    return;
+  PageDialog(&DlgPage, new_graph);
+  DialogExecute(TopLevel, &DlgPage);
+}
+#else
 void
 CmGraphPage(void *w, gpointer client_data)
 {
@@ -1477,6 +1502,7 @@ CmGraphPage(void *w, gpointer client_data)
     }
   }
 }
+#endif
 
 void
 CmGraphDirectory(void *w, gpointer client_data)

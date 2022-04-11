@@ -746,6 +746,24 @@ graph_dropped(char *fname)
   return 0;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+static int
+new_merge_obj(char *name, struct objlist *obj)
+{
+  int id, ret;
+
+  id = newobj(obj);
+
+  if (id < 0)
+    return 1;
+
+  changefilename(name);
+  putobj(obj, "file", id, name);
+  MergeDialog(NgraphApp.MergeWin.data.data, id, -1);
+  DialogExecute(TopLevel, &DlgMerge);
+}
+#else
 static int
 new_merge_obj(char *name, struct objlist *obj)
 {
@@ -768,7 +786,7 @@ new_merge_obj(char *name, struct objlist *obj)
 
   return 0;
 }
-
+#endif
 
 static int
 arc_get_angle(struct objlist *obj, N_VALUE *inst, unsigned int round, int point, int px, int py, int *angle1, int *angle2)
@@ -873,6 +891,29 @@ arc_get_angle(struct objlist *obj, N_VALUE *inst, unsigned int round, int point,
   return 0;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+static int
+new_file_obj(char *name, struct objlist *obj, int *id0, int multi)
+{
+  int id, ret;
+
+  id = newobj(obj);
+  if (id < 0) {
+    return 1;
+  }
+
+  putobj(obj, "file", id, name);
+  if (*id0 != -1) {
+    copy_file_obj_field(obj, id, *id0, FALSE);
+    AddDataFileList(name);
+    return 0;
+  }
+
+  FileDialog(NgraphApp.FileWin.data.data, id, multi);
+  DialogExecute(TopLevel, &DlgFile);
+}
+#else
 static int
 new_file_obj(char *name, struct objlist *obj, int *id0, int multi)
 {
@@ -905,6 +946,7 @@ new_file_obj(char *name, struct objlist *obj, int *id0, int multi)
 
   return 0;
 }
+#endif
 
 int
 data_dropped(char **filenames, int num, int file_type)
@@ -967,6 +1009,76 @@ data_dropped(char **filenames, int num, int file_type)
   return 0;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+static int
+text_dropped(const char *str, gint x, gint y, struct Viewer *d)
+{
+  N_VALUE *inst;
+  char *ptr;
+  double zoom = Menulocal.PaperZoom / 10000.0;
+  struct objlist *obj;
+  int id, x1, y1, r, i, j, l, undo;
+
+  obj = chkobject("text");
+
+  if (obj == NULL)
+    return 1;
+
+  l = strlen(str);
+  ptr = g_malloc(l * 2 + 1);
+
+  if (ptr == NULL)
+    return 1;
+
+  for (i = j = 0; i < l; i++, j++) {
+    switch (str[i]) {
+    case '\n':
+      ptr[j] = '\\';
+      j++;
+      ptr[j] = 'n';
+      break;
+    case '%':
+    case '^':
+    case '_':
+    case '\\':
+      ptr[j] = '\\';
+      j++;
+      ptr[j] = str[i];
+      break;
+    default:
+      ptr[j] = str[i];
+      break;
+    }
+  }
+  ptr[j] = '\0';
+
+  undo = menu_save_undo_single(UNDO_TYPE_PASTE, obj->name);
+  id = newobj(obj);
+  if (id < 0) {
+    g_free(ptr);
+    return 1;
+  }
+
+  inst = chkobjinst(obj, id);
+  x1 = calc_mouse_x(x, zoom, d);
+  y1 = calc_mouse_y(y, zoom, d);
+
+  CheckGrid(FALSE, 0, &x1, &y1, NULL, NULL);
+
+  _putobj(obj, "x", inst, &x1);
+  _putobj(obj, "y", inst, &y1);
+  _putobj(obj, "text", inst, ptr);
+
+  PaintLock= TRUE;
+
+  LegendTextDialog(&DlgLegendText, obj, id);
+  DialogExecute(TopLevel, &DlgLegendText);
+
+  PaintLock = FALSE;
+  return 0;
+}
+#else
 static int
 text_dropped(const char *str, gint x, gint y, struct Viewer *d)
 {
@@ -1052,6 +1164,7 @@ text_dropped(const char *str, gint x, gint y, struct Viewer *d)
 
   return 0;
 }
+#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented (multiple files) */
@@ -2210,6 +2323,96 @@ mask_selected_data(struct objlist *fileobj, int selnum, struct narray *sel_list)
   }
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+static void
+Evaluate(int x1, int y1, int x2, int y2, int err, struct Viewer *d)
+{
+  struct objlist *fileobj;
+  char *argv[7];
+  int snum, hidden;
+  int limit;
+  int i, j;
+  struct narray *eval;
+  int evalnum, tot;
+  int minx, miny, maxx, maxy;
+  struct savedstdio save;
+  double line, dx, dy;
+  char mes[256];
+
+  minx = (x1 < x2) ? x1 : x2;
+  miny = (y1 < y2) ? y1 : y2;
+  maxx = (x1 > x2) ? x1 : x2;
+  maxy = (y1 > y2) ? y1 : y2;
+
+  limit = EVAL_NUM_MAX;
+
+  argv[0] = (char *) &minx;
+  argv[1] = (char *) &miny;
+  argv[2] = (char *) &maxx;
+  argv[3] = (char *) &maxy;
+  argv[4] = (char *) &err;
+  argv[5] = (char *) &limit;
+  argv[6] = NULL;
+
+  if ((fileobj = chkobject("data")) == NULL)
+    return;
+
+  if (check_drawrable(fileobj)) {
+    return;
+  }
+
+  snum = chkobjlastinst(fileobj) + 1;
+  if (snum == 0) {
+    return;
+  }
+  ignorestdio(&save);
+
+  snprintf(mes, sizeof(mes), _("Evaluating."));
+  SetStatusBar(mes);
+
+  ProgressDialogCreate(_("Evaluating"));
+
+  tot = 0;
+
+  for (i = 0; i < snum; i++) {
+    N_VALUE *dinst;
+    dinst = chkobjinst(fileobj, i);
+    if (dinst == NULL) {
+      continue;
+    }
+    _getobj(fileobj, "hidden", dinst, &hidden);
+    if (hidden) {
+      continue;
+    }
+    _exeobj(fileobj, "evaluate", dinst, 6, argv);
+    _getobj(fileobj, "evaluate", dinst, &eval);
+    evalnum = arraynum(eval) / 3;
+    for (j = 0; j < evalnum; j++) {
+      if (tot >= limit) break;
+      tot++;
+      line = arraynget_double(eval, j * 3 + 0);
+      dx = arraynget_double(eval, j * 3 + 1);
+      dy = arraynget_double(eval, j * 3 + 2);
+      EvalList[tot - 1].id = i;
+      EvalList[tot - 1].line = nround(line);
+      EvalList[tot - 1].x = dx;
+      EvalList[tot - 1].y = dy;
+    }
+    if (tot >= limit) break;
+  }
+
+  ProgressDialogFinalize();
+  ResetStatusBar();
+
+  if (tot > 0) {
+    int ret, selnum;
+    EvalDialog(&DlgEval, fileobj, tot, &SelList);
+    DialogExecute(TopLevel, &DlgEval);
+  }
+  restorestdio(&save);
+}
+#else
 static void
 Evaluate(int x1, int y1, int x2, int y2, int err, struct Viewer *d)
 {
@@ -2316,7 +2519,32 @@ Evaluate(int x1, int y1, int x2, int y2, int err, struct Viewer *d)
   }
   restorestdio(&save);
 }
+#endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+static void
+Trimming(int x1, int y1, int x2, int y2)
+{
+  struct narray farray;
+  struct objlist *obj;
+  int maxx, maxy, minx, miny;
+  int dir, room;
+
+  if ((x1 == x2) && (y1 == y2))
+    return;
+
+  if ((obj = chkobject("axis")) == NULL)
+    return;
+
+  if (chkobjlastinst(obj) == -1)
+    return;
+
+  SelectDialog(&DlgSelect, obj, _("trimming (multi select)"), AxisCB, (struct narray *) &farray, NULL);
+
+  DialogExecute(TopLevel, &DlgSelect);
+}
+#else
 static void
 Trimming(int x1, int y1, int x2, int y2)
 {
@@ -2429,6 +2657,7 @@ Trimming(int x1, int y1, int x2, int y2)
   }
   arraydel(&farray);
 }
+#endif
 
 struct view_region {
   int x1, y1, x2, y2, err;
@@ -5092,6 +5321,57 @@ swapint(int *a, int *b)
   *b = tmp;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+static void
+create_legend1(struct Viewer *d)
+{
+  int num;
+  struct objlist *obj = NULL;
+  struct Point *po;
+  char *objects[2];
+  int id, x1, y1, undo;
+
+  d->Capture = FALSE;
+  num = arraynum(d->points);
+
+  if (d->Mode == MarkB) {
+    obj = chkobject("mark");
+  } else {
+    obj = chkobject("text");
+  }
+
+  if (obj == NULL) {
+    return;
+  }
+
+  undo = menu_save_undo_single(UNDO_TYPE_CREATE, obj->name);
+  id = newobj(obj);
+  if (id >= 0) {
+    int ret;
+    N_VALUE *inst;
+    presetting_set_obj_field(obj, id);
+    if (num >= 1) {
+      po = *(struct Point **) arraynget(d->points, 0);
+      x1 = po->x;
+      y1 = po->y;
+    }
+
+    inst = chkobjinst(obj, id);
+    _putobj(obj, "x", inst, &x1);
+    _putobj(obj, "y", inst, &y1);
+    PaintLock = TRUE;
+
+    if (d->Mode == MarkB) {
+      LegendMarkDialog(&DlgLegendMark, obj, id);
+      DialogExecute(TopLevel, &DlgLegendMark);
+    } else {
+      LegendTextDialog(&DlgLegendText, obj, id);
+      DialogExecute(TopLevel, &DlgLegendText);
+    }
+  }
+}
+#else
 static void
 create_legend1(struct Viewer *d)
 {
@@ -5153,7 +5433,56 @@ create_legend1(struct Viewer *d)
   objects[1] = NULL;
   UpdateAll(objects);
 }
+#endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+static void
+create_path(struct Viewer *d)
+{
+  struct objlist *obj = NULL;
+  struct narray *parray;
+  struct Point *po;
+  N_VALUE *inst;
+  int i, num, id, ret = IDCANCEL, undo;
+  char *objects[2];
+
+  d->Capture = FALSE;
+  num = arraynum(d->points);
+  obj = chkobject("path");
+
+  if (num < 3 || obj == NULL) {
+    goto ExitCreatePath;
+  }
+
+  undo = menu_save_undo_single(UNDO_TYPE_CREATE, obj->name);
+  id = newobj(obj);
+  if (id < 0) {
+    menu_delete_undo(undo);
+    goto ExitCreatePath;
+  }
+
+  presetting_set_obj_field(obj, id);
+  inst = chkobjinst(obj, id);
+  parray = arraynew(sizeof(int));
+
+  for (i = 0; i < num - 1; i++) {
+    po = *(struct Point **) arraynget(d->points, i);
+    arrayadd(parray, &po->x);
+    arrayadd(parray, &po->y);
+  }
+
+  _putobj(obj, "points", inst, parray);
+  PaintLock = TRUE;
+
+  LegendArrowDialog(&DlgLegendArrow, obj, id);
+  DialogExecute(TopLevel, &DlgLegendArrow);
+
+  PaintLock = FALSE;
+ ExitCreatePath:
+  return;
+}
+#else
 static void
 create_path(struct Viewer *d)
 {
@@ -5211,7 +5540,77 @@ create_path(struct Viewer *d)
   objects[1] = NULL;
   UpdateAll(objects);
 }
+#endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+static void
+create_legend3(struct Viewer *d)
+{
+  int num, x1, y1, x2, y2;
+  struct objlist *obj = NULL;
+  struct Point **pdata;
+
+  d->Capture = FALSE;
+  num = arraynum(d->points);
+  pdata = arraydata(d->points);
+
+  if (num >= 3) {
+    if (d->Mode == RectB) {
+      obj = chkobject("rectangle");
+    } else if (d->Mode == ArcB) {
+      obj = chkobject("arc");
+    }
+
+    if (obj) {
+      int id, undo;
+      undo = menu_save_undo_single(UNDO_TYPE_CREATE, obj->name);
+      id = newobj(obj);
+      if (id >= 0) {
+        N_VALUE *inst;
+        int ret = IDCANCEL;
+        presetting_set_obj_field(obj, id);
+	inst = chkobjinst(obj, id);
+	x1 = pdata[0]->x;
+	y1 = pdata[0]->y;
+	x2 = pdata[1]->x;
+	y2 = pdata[1]->y;
+
+	if (x1 > x2)
+	  swapint(&x1, &x2);
+
+	if (y1 > y2)
+	  swapint(&y1, &y2);
+
+	PaintLock = TRUE;
+
+	if (d->Mode == RectB) {
+	  _putobj(obj, "x1", inst, &x1);
+	  _putobj(obj, "y1", inst, &y1);
+	  _putobj(obj, "x2", inst, &x2);
+	  _putobj(obj, "y2", inst, &y2);
+	  LegendRectDialog(&DlgLegendRect, obj, id);
+	  DialogExecute(TopLevel, &DlgLegendRect);
+	} else if (d->Mode == ArcB) {
+	  int x, y, rx, ry;
+
+	  x = (x1 + x2) / 2;
+	  y = (y1 + y2) / 2;
+	  rx = abs(x1 - x);
+	  ry = abs(y1 - y);
+	  _putobj(obj, "x", inst, &x);
+	  _putobj(obj, "y", inst, &y);
+	  _putobj(obj, "rx", inst, &rx);
+	  _putobj(obj, "ry", inst, &ry);
+	  LegendArcDialog(&DlgLegendArc, obj, id);
+	  DialogExecute(TopLevel, &DlgLegendArc);
+	}
+	PaintLock = FALSE;
+      }
+    }
+  }
+}
+#else
 static void
 create_legend3(struct Viewer *d)
 {
@@ -5293,7 +5692,60 @@ create_legend3(struct Viewer *d)
     UpdateAll(objects);
   }
 }
+#endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+static void
+create_legendx(struct Viewer *d)
+{
+  int num, x1, y1, x2, y2, type, fill;
+  struct objlist *obj = NULL;
+  struct Point **pdata;
+
+  d->Capture = FALSE;
+  num = arraynum(d->points);
+  pdata = arraydata(d->points);
+
+  if (num >= 3) {
+    obj = chkobject("path");
+
+    if (obj) {
+      int id, undo;
+      undo = menu_save_undo_single(UNDO_TYPE_CREATE, obj->name);
+      id = newobj(obj);
+
+      if (id >= 0) {
+        presetting_set_obj_field(obj, id);
+	type = PATH_TYPE_CURVE;
+	putobj(obj, "type", id, &type);
+	fill = FALSE;
+	putobj(obj, "fill", id, &fill);
+	x1 = pdata[0]->x;
+	y1 = pdata[0]->y;
+	x2 = pdata[1]->x;
+	y2 = pdata[1]->y;
+
+	if (x1 > x2)
+	  swapint(&x1, &x2);
+
+	if (y1 > y2)
+	  swapint(&y1, &y2);
+
+	PaintLock = TRUE;
+
+	if ((x1 != x2) && (y1 != y2)) {
+          int ret;
+	  LegendGaussDialog(&DlgLegendGauss, obj, id, x1, y1,
+			    x2 - x1, y2 - y1);
+	  DialogExecute(TopLevel, &DlgLegendGauss);
+	}
+	PaintLock = FALSE;
+      }
+    }
+  }
+}
+#else
 static void
 create_legendx(struct Viewer *d)
 {
@@ -5357,7 +5809,73 @@ create_legendx(struct Viewer *d)
     UpdateAll(objects);
   }
 }
+#endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+static void
+create_single_axis(struct Viewer *d)
+{
+  int num;
+  struct objlist *obj = NULL;
+  struct Point **pdata;
+
+  d->Capture = FALSE;
+  num = arraynum(d->points);
+  pdata = arraydata(d->points);
+
+  if (num >= 3) {
+    obj = chkobject("axis");
+    if (obj != NULL) {
+      int id, x1, y1, lenx, dir, undo;
+      undo = menu_save_undo_single(UNDO_TYPE_CREATE, obj->name);
+      if ((id = newobj(obj)) >= 0) {
+        int x2, y2, ret;
+        double fx1, fy1;
+        N_VALUE *inst;
+
+	x1 = pdata[0]->x;
+	y1 = pdata[0]->y;
+	x2 = pdata[1]->x;
+	y2 = pdata[1]->y;
+	fx1 = x2 - x1;
+	fy1 = y2 - y1;
+	lenx = nround(sqrt(fx1 * fx1 + fy1 * fy1));
+
+	if (fx1 == 0) {
+	  if (fy1 >= 0) {
+	    dir = 27000;
+	  } else {
+	    dir = 9000;
+	  }
+	} else {
+	  dir = nround(atan(-fy1 / fx1) / MPI * 18000);
+
+	  if (fx1 < 0)
+	    dir += 18000;
+
+	  if (dir < 0)
+	    dir += 36000;
+
+	  if (dir >= 36000)
+	    dir -= 36000;
+	}
+
+	inst = chkobjinst(obj, id);
+
+	_putobj(obj, "x", inst, &x1);
+	_putobj(obj, "y", inst, &y1);
+	_putobj(obj, "length", inst, &lenx);
+	_putobj(obj, "direction", inst, &dir);
+
+	presetting_set_obj_field(obj, id);
+	AxisDialog(NgraphApp.AxisWin.data.data, id, TRUE);
+	DialogExecute(TopLevel, &DlgAxis);
+      }
+    }
+  }
+}
+#else
 static void
 create_single_axis(struct Viewer *d)
 {
@@ -5434,7 +5952,138 @@ create_single_axis(struct Viewer *d)
     UpdateAll(objects);
   }
 }
+#endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+static void
+create_axis(struct Viewer *d)
+{
+  int idx, idy, idu, idr, idg, oidx, oidy, type,
+    num, x1, y1, lenx, leny;
+  struct objlist *obj = NULL, *obj2;
+  struct Point **pdata;
+  struct narray group;
+
+  d->Capture = FALSE;
+  num = arraynum(d->points);
+  pdata = arraydata(d->points);
+
+  if (num >= 3) {
+    obj = chkobject("axis");
+    obj2 = chkobject("axisgrid");
+
+    if (obj && obj2) {
+      int undo, x2, y2, ret = IDCANCEL;
+      char *argv[3];
+      argv[0] = obj->name;
+      argv[1] = obj2->name;
+      argv[2] = NULL;
+      undo = menu_save_undo(UNDO_TYPE_CREATE, argv);
+      x1 = pdata[0]->x;
+      y1 = pdata[0]->y;
+      x2 = pdata[1]->x;
+      y2 = pdata[1]->y;
+      lenx = abs(x1 - x2);
+      leny = abs(y1 - y2);
+      x1 = (x1 < x2) ? x1 : x2;
+      y1 = (y1 > y2) ? y1 : y2;
+      idx = newobj(obj);
+      idy = newobj(obj);
+
+      if (d->Mode != CrossB) {
+	idu = newobj(obj);
+	idr = newobj(obj);
+	arrayinit(&group, sizeof(int));
+	if (d->Mode == FrameB) {
+	  type = 1;
+	} else {
+	  type = 2;
+	}
+
+	arrayadd(&group, &type);
+	arrayadd(&group, &idx);
+	arrayadd(&group, &idy);
+	arrayadd(&group, &idu);
+	arrayadd(&group, &idr);
+	arrayadd(&group, &x1);
+	arrayadd(&group, &y1);
+	arrayadd(&group, &lenx);
+	arrayadd(&group, &leny);
+
+	argv[0] = (char *) &group;
+	argv[1] = NULL;
+	exeobj(obj, "default_grouping", idr, 1, argv);
+	arraydel(&group);
+
+      } else {
+	arrayinit(&group, sizeof(int));
+	type = 3;
+
+	arrayadd(&group, &type);
+	arrayadd(&group, &idx);
+	arrayadd(&group, &idy);
+	arrayadd(&group, &x1);
+	arrayadd(&group, &y1);
+	arrayadd(&group, &lenx);
+	arrayadd(&group, &leny);
+
+	argv[0] = (char *) &group;
+	argv[1] = NULL;
+
+	exeobj(obj, "default_grouping", idx, 1, argv);
+	arraydel(&group);
+      }
+      if ((d->Mode == SectionB) && (obj2 != NULL)) {
+	idg = newobj(obj2);
+	if (idg >= 0) {
+          char *ref;
+	  getobj(obj, "oid", idx, 0, NULL, &oidx);
+	  ref = g_strdup_printf("axis:^%d", oidx);
+	  if (ref) {
+	    putobj(obj2, "axis_x", idg, ref);
+	  }
+
+	  getobj(obj, "oid", idy, 0, NULL, &oidy);
+	  ref = g_strdup_printf("axis:^%d", oidy);
+	  if (ref) {
+	    putobj(obj2, "axis_y", idg, ref);
+	  }
+	}
+      } else {
+	idg = -1;
+      }
+
+      if (d->Mode == FrameB) {
+	presetting_set_obj_field(obj, idx);
+	presetting_set_obj_field(obj, idy);
+	presetting_set_obj_field(obj, idu);
+	presetting_set_obj_field(obj, idr);
+	SectionDialog(&DlgSection, x1, y1, lenx, leny, obj,
+		      idx, idy, idu, idr, obj2, &idg, FALSE);
+
+	DialogExecute(TopLevel, &DlgSection);
+      } else if (d->Mode == SectionB) {
+	presetting_set_obj_field(obj, idx);
+	presetting_set_obj_field(obj, idy);
+	presetting_set_obj_field(obj, idu);
+	presetting_set_obj_field(obj, idr);
+	presetting_set_obj_field(obj2, idg);
+	SectionDialog(&DlgSection, x1, y1, lenx, leny, obj,
+		      idx, idy, idu, idr, obj2, &idg, TRUE);
+
+	DialogExecute(TopLevel, &DlgSection);
+      } else if (d->Mode == CrossB) {
+	presetting_set_obj_field(obj, idx);
+	presetting_set_obj_field(obj, idy);
+	CrossDialog(&DlgCross, x1, y1, lenx, leny, obj, idx, idy);
+
+	DialogExecute(TopLevel, &DlgCross);
+      }
+    }
+  }
+}
+#else
 static void
 create_axis(struct Viewer *d)
 {
@@ -5573,6 +6222,7 @@ create_axis(struct Viewer *d)
   }
   arraydel2(d->points);
 }
+#endif
 
 static gboolean
 ViewerEvLButtonDblClk(unsigned int state, TPoint *point, struct Viewer *d)
@@ -7474,6 +8124,120 @@ search_axis_group(struct objlist *obj, int id, const char *group,
   return type;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+static void
+ViewUpdate(void)
+{
+  int i, id, num, modified, undo;
+  struct FocusObj *focus;
+  struct objlist *obj, *dobj = NULL;
+  N_VALUE *inst;
+  int ret;
+  int x1, y1;
+  int idx = 0, idy = 0, idu = 0, idr = 0, idg, lenx, leny;
+  int findX, findY, findU, findR, findG;
+  char type;
+  char *group, *objs[OBJ_MAX];
+  struct Viewer *d;
+
+  if (Menulock || Globallock)
+    return;
+
+  d = &NgraphApp.Viewer;
+  num = arraynum(d->focusobj);
+  if (num < 1) {
+    return;
+  }
+
+  d->ShowFrame = FALSE;
+  d->ShowRect = FALSE;
+
+  get_focused_obj_array(d->focusobj, objs);
+  undo = menu_save_undo(UNDO_TYPE_EDIT, objs);
+  PaintLock = TRUE;
+  modified = FALSE;
+
+  for (i = num - 1; i >= 0; i--) {
+    focus = *(struct FocusObj **) arraynget(d->focusobj, i);
+    if (focus == NULL)
+      continue;
+
+    inst = chkobjinstoid(focus->obj, focus->oid);
+    if (inst == NULL)
+      continue;
+
+    obj = focus->obj;
+    _getobj(obj, "id", inst, &id);
+    ret = IDCANCEL;
+
+    if (obj == chkobject("axis")) {
+      _getobj(obj, "group", inst, &group);
+
+      if (group && group[0] != 'a') {
+	type = search_axis_group(obj, id, group,
+				 &findX, &findY, &findU, &findR, &findG,
+				 &idx, &idy, &idu, &idr, &idg);
+
+	if (((type == 's') || (type == 'f'))
+	    && findX && findY && findU && findR) {
+
+	  dobj = chkobject("axisgrid");
+	  if (! findG) {
+	    idg = -1;
+	  }
+
+	  getobj(obj, "y", idx, 0, NULL, &y1);
+	  getobj(obj, "x", idy, 0, NULL, &x1);
+	  getobj(obj, "y", idu, 0, NULL, &leny);
+	  getobj(obj, "x", idr, 0, NULL, &lenx);
+
+	  leny = y1 - leny;
+	  lenx = lenx - x1;
+
+	  SectionDialog(&DlgSection, x1, y1, lenx, leny, obj,
+			idx, idy, idu, idr, dobj, &idg, type == 's');
+
+	  DialogExecute(TopLevel, &DlgSection);
+	} else if ((type == 'c') && findX && findY) {
+	  getobj(obj, "x", idx, 0, NULL, &x1);
+	  getobj(obj, "y", idy, 0, NULL, &y1);
+	  getobj(obj, "length", idx, 0, NULL, &lenx);
+	  getobj(obj, "length", idy, 0, NULL, &leny);
+
+	  CrossDialog(&DlgCross, x1, y1, lenx, leny, obj, idx, idy);
+
+	  DialogExecute(TopLevel, &DlgCross);
+	}
+      } else {
+	AxisDialog(NgraphApp.AxisWin.data.data, id, TRUE);
+	DialogExecute(TopLevel, &DlgAxis);
+      }
+    } else {
+      if (obj == chkobject("path")) {
+	LegendArrowDialog(&DlgLegendArrow, obj, id);
+	DialogExecute(TopLevel, &DlgLegendArrow);
+      } else if (obj == chkobject("rectangle")) {
+	LegendRectDialog(&DlgLegendRect, obj, id);
+	DialogExecute(TopLevel, &DlgLegendRect);
+      } else if (obj == chkobject("arc")) {
+	LegendArcDialog(&DlgLegendArc, obj, id);
+	DialogExecute(TopLevel, &DlgLegendArc);
+      } else if (obj == chkobject("mark")) {
+	LegendMarkDialog(&DlgLegendMark, obj, id);
+	DialogExecute(TopLevel, &DlgLegendMark);
+      } else if (obj == chkobject("text")) {
+	LegendTextDialog(&DlgLegendText, obj, id);
+	DialogExecute(TopLevel, &DlgLegendText);
+      } else if (obj == chkobject("merge")) {
+	MergeDialog(NgraphApp.MergeWin.data.data, id, 0);
+	DialogExecute(TopLevel, &DlgMerge);
+      }
+    }
+  }
+  PaintLock = FALSE;
+}
+#else
 static void
 ViewUpdate(void)
 {
@@ -7603,6 +8367,7 @@ ViewUpdate(void)
   }
   d->ShowFrame = TRUE;
 }
+#endif
 
 static void
 ViewDelete(void)

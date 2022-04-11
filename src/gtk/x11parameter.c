@@ -461,6 +461,28 @@ ParameterDialog(struct obj_list_data *data, int id, int user_data)
   d->Id = id;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+void
+CmParameterAdd(void *w, gpointer client_data)
+{
+  int id, undo, ret;
+  struct obj_list_data *d;
+
+  if (Menulock || Globallock)
+    return;
+
+  d = NgraphApp.ParameterWin.data.data;
+
+  undo = menu_save_undo_single(UNDO_TYPE_CREATE, d->obj->name);
+  id = newobj(d->obj);
+  if (id < 0) {
+    return;
+  }
+  ParameterDialog(d, id, -1);
+  DialogExecute(TopLevel, &DlgParameter);
+}
+#else
 void
 CmParameterAdd(void *w, gpointer client_data)
 {
@@ -486,7 +508,26 @@ CmParameterAdd(void *w, gpointer client_data)
   }
   ParameterWinUpdate(d, FALSE, FALSE);
 }
+#endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+void
+CmParameterDelete(void *w, gpointer client_data)
+{
+  struct narray farray;
+  struct obj_list_data *d;
+
+  if (Menulock || Globallock)
+    return;
+
+  d = NgraphApp.ParameterWin.data.data;
+  if (chkobjlastinst(d->obj) == -1)
+    return;
+  SelectDialog(&DlgSelect, d->obj, _("delete parameter (multi select)"), ParameterCB, (struct narray *) &farray, NULL);
+  DialogExecute(TopLevel, &DlgSelect);
+}
+#else
 void
 CmParameterDelete(void *w, gpointer client_data)
 {
@@ -515,6 +556,7 @@ CmParameterDelete(void *w, gpointer client_data)
   }
   arraydel(&farray);
 }
+#endif
 
 static void
 update_parameter(struct obj_list_data *d)
@@ -524,6 +566,28 @@ update_parameter(struct obj_list_data *d)
   ViewerWinUpdate(objects);
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+void
+CmParameterUpdate(void *w, gpointer client_data)
+{
+  struct narray farray;
+  int modified;
+  struct obj_list_data *d;
+  int i, *array, num, undo;
+
+  if (Menulock || Globallock)
+    return;
+
+  d = NgraphApp.ParameterWin.data.data;
+  if (chkobjlastinst(d->obj) == -1) {
+    return;
+  }
+  SelectDialog(&DlgSelect, d->obj, _("parameter property (multi select)"), ParameterCB, (struct narray *) &farray, NULL);
+  modified = FALSE;
+  DialogExecute(TopLevel, &DlgSelect);
+}
+#else
 void
 CmParameterUpdate(void *w, gpointer client_data)
 {
@@ -566,7 +630,25 @@ CmParameterUpdate(void *w, gpointer client_data)
  EndUpdate:
   arraydel(&farray);
 }
+#endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* must be implemented */
+static void
+parameter_update(GtkButton *btn, gpointer data)
+{
+  int undo, ret;
+  struct parameter_data *d;
+
+  if (Menulock || Globallock)
+    return;
+
+  d = data;
+  undo = menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
+  ParameterDialog(d->obj_list_data, d->id, -1);
+  DialogExecute(TopLevel, &DlgParameter);
+}
+#else
 static void
 parameter_update(GtkButton *btn, gpointer data)
 {
@@ -586,6 +668,7 @@ parameter_update(GtkButton *btn, gpointer data)
     update_parameter(d->obj_list_data);
   }
 }
+#endif
 
 static void
 parameter_up(GtkButton *btn, gpointer data)

@@ -997,6 +997,32 @@ PrefFontDialogSetupItem(struct PrefFontDialog *d)
   }
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* to be implemented */
+static void
+PrefFontDialogUpdate(GtkWidget *w, gpointer client_data)
+{
+  struct PrefFontDialog *d;
+  struct fontmap *fcur;
+  char *fontalias;
+  int ret;
+
+  d = (struct PrefFontDialog *) client_data;
+
+  fontalias = list_store_get_selected_string(d->list, 0);
+
+  if (fontalias == NULL)
+    return;
+
+  fcur = gra2cairo_get_fontmap(fontalias);
+  g_free(fontalias);
+  if (fcur == NULL)
+    return;
+
+  FontSettingDialog(&DlgFontSetting, fcur->fontalias, fcur->fontname, fcur->alternative);
+  DialogExecute(d->widget, &DlgFontSetting);
+}
+#else
 static void
 PrefFontDialogUpdate(GtkWidget *w, gpointer client_data)
 {
@@ -1023,6 +1049,7 @@ PrefFontDialogUpdate(GtkWidget *w, gpointer client_data)
     PrefFontDialogSetupItem(d);
   }
 }
+#endif
 
 static void
 PrefFontDialogRemove(GtkWidget *w, gpointer client_data)
@@ -1038,6 +1065,20 @@ PrefFontDialogRemove(GtkWidget *w, gpointer client_data)
   PrefFontDialogSetupItem(d);
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* to be implemented */
+static void
+PrefFontDialogAdd(GtkWidget *w, gpointer client_data)
+{
+  struct PrefFontDialog *d;
+  int ret;
+
+  d = (struct PrefFontDialog *) client_data;
+
+  FontSettingDialog(&DlgFontSetting, NULL, NULL, NULL);
+  DialogExecute(d->widget, &DlgFontSetting);
+}
+#else
 static void
 PrefFontDialogAdd(GtkWidget *w, gpointer client_data)
 {
@@ -1052,6 +1093,7 @@ PrefFontDialogAdd(GtkWidget *w, gpointer client_data)
     PrefFontDialogSetupItem(d);
   }
 }
+#endif
 
 #define HAVE_UPDATE_FUNC
 #define LIST_TYPE   fontmap
@@ -2130,6 +2172,20 @@ CmOptionSaveNgp(void *w, gpointer client_data)
   return;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* to be implemented */
+void
+CmOptionViewer(void *w, gpointer client_data)
+{
+  int r;
+
+  if (Menulock || Globallock)
+    return;
+
+  ViewerDialog(&DlgViewer, Menulocal.obj, 0);
+  DialogExecute(TopLevel, &DlgViewer);
+}
+#else
 void
 CmOptionViewer(void *w, gpointer client_data)
 {
@@ -2144,6 +2200,7 @@ CmOptionViewer(void *w, gpointer client_data)
     ChangeDPI();
   }
 }
+#endif
 
 void
 CmOptionExtViewer(void *w, gpointer client_data)

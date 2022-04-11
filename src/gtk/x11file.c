@@ -1161,6 +1161,29 @@ FitDialogLoadConfig(struct FitDialog *d, int errmes)
   return TRUE;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* to be implemented */
+static void
+FitDialogLoad(GtkButton *btn, gpointer user_data)
+{
+  struct FitDialog *d;
+  int lastid;
+
+  d = (struct FitDialog *) user_data;
+
+  if (!FitDialogLoadConfig(d, TRUE))
+    return;
+
+  lastid = chkobjlastinst(d->Obj);
+  if ((d->Lastid < 0) || (lastid == d->Lastid)) {
+    message_box(d->widget, _("No settings."), FITSAVE, RESPONS_OK);
+    return;
+  }
+
+  FitLoadDialog(&DlgFitLoad, d->Obj, d->Lastid + 1);
+  DialogExecute(d->widget, &DlgFitLoad);
+}
+#else
 static void
 FitDialogLoad(GtkButton *btn, gpointer user_data)
 {
@@ -1186,6 +1209,7 @@ FitDialogLoad(GtkButton *btn, gpointer user_data)
     FitDialogSetupItem(d->widget, d, id);
   }
 }
+#endif
 
 static int
 copy_settings_to_fitobj(struct FitDialog *d, char *profile)
@@ -1305,6 +1329,27 @@ delete_fitobj(struct FitDialog *d, char *profile)
   return 0;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* to be implemented */
+static void
+FitDialogSave(GtkWidget *w, gpointer client_data)
+{
+  int r;
+  char *s, *ngpfile;
+  int error;
+  int hFile;
+  struct FitDialog *d;
+
+  d = (struct FitDialog *) client_data;
+
+  if (!FitDialogLoadConfig(d, FALSE))
+    return;
+
+  FitSaveDialog(&DlgFitSave, d->Obj, d->Lastid + 1);
+
+  DialogExecute(d->widget, &DlgFitSave);
+}
+#else
 static void
 FitDialogSave(GtkWidget *w, gpointer client_data)
 {
@@ -1395,6 +1440,7 @@ FitDialogSave(GtkWidget *w, gpointer client_data)
 
   g_free(ngpfile);
 }
+#endif
 
 static int
 check_fit_func(GtkEditable *w, gpointer client_data)
@@ -3358,6 +3404,21 @@ FileDialogMark(GtkWidget *w, gpointer client_data)
   button_set_mark_image(w, d->mark.Type);
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* to be implemented */
+static int
+execute_fit_dialog(GtkWidget *w, struct objlist *fileobj, int fileid, struct objlist *fitobj, int fitid)
+{
+  int save_type, type, ret;
+
+  type = PLOT_TYPE_FIT;
+  getobj(fileobj, "type", fileid, 0, NULL, &save_type);
+  putobj(fileobj, "type", fileid, &type);
+
+  FitDialog(&DlgFit, fitobj, fitid);
+  DialogExecute(w, &DlgFit);
+}
+#else
 static int
 execute_fit_dialog(GtkWidget *w, struct objlist *fileobj, int fileid, struct objlist *fitobj, int fitid)
 {
@@ -3374,6 +3435,7 @@ execute_fit_dialog(GtkWidget *w, struct objlist *fileobj, int fileid, struct obj
 
   return ret;
 }
+#endif
 
 static int
 show_fit_dialog(struct objlist *obj, int id, GtkWidget *parent)
@@ -4942,6 +5004,7 @@ data_save_undo(int type)
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
+/* to be implemented */
 void
 load_data(const char *name)
 {
@@ -4976,6 +5039,9 @@ load_data(const char *name)
   putobj(obj, "file", id, fname);
   data = NgraphApp.FileWin.data.data;
   FileDialog(data, id, FALSE);
+#if 1
+  DialogExecute(TopLevel, data->dialog);
+#else
   ret = DialogExecute(TopLevel, data->dialog);
   if (ret == IDCANCEL) {
     menu_undo_internal(undo);
@@ -4984,6 +5050,7 @@ load_data(const char *name)
     AddDataFileList(fname);
   }
   FileWinUpdate(data, TRUE, DRAW_NOTIFY);
+#endif
 }
 #else
 void
@@ -5044,13 +5111,43 @@ CmFileHistory(GtkRecentChooser *w, gpointer client_data)
 }
 #endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* to be implemented */
 void
 CmRangeAdd
-#if GTK_CHECK_VERSION(4, 0, 0)
 (GSimpleAction *action, GVariant *parameter, gpointer client_data)
+{
+  int id, ret, val, undo;
+  struct objlist *obj;
+  struct obj_list_data *data;
+
+  if (Menulock || Globallock)
+    return;
+
+  obj = chkobject("data");
+  if (obj == NULL) {
+    return;
+  }
+
+  undo = data_save_undo(UNDO_TYPE_ADD_RANGE);
+  id = newobj(obj);
+  if (id < 0) {
+    menu_delete_undo(undo);
+    return;
+  }
+
+  data = NgraphApp.FileWin.data.data;
+  val = DATA_SOURCE_RANGE;
+  putobj(obj, "source", id, &val);
+  val = PLOT_TYPE_LINE;
+  putobj(obj, "type", id, &val);
+  FileDialog(data, id, FALSE);
+  DialogExecute(TopLevel, data->dialog);
+}
 #else
+void
+CmRangeAdd
 (void *w, gpointer client_data)
-#endif
 {
   int id, ret, val, undo;
   struct objlist *obj;
@@ -5086,6 +5183,7 @@ CmRangeAdd
     FileWinUpdate(data, TRUE, DRAW_REDRAW);
   }
 }
+#endif
 
 void
 CmFileOpen
@@ -5149,6 +5247,24 @@ CmFileOpen
   arraydel(&farray);
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* to be implemented */
+void
+CmFileClose(void *w, gpointer client_data)
+{
+  struct narray farray;
+  struct objlist *obj;
+
+  if (Menulock || Globallock)
+    return;
+  if ((obj = chkobject("data")) == NULL)
+    return;
+  if (chkobjlastinst(obj) == -1)
+    return;
+  SelectDialog(&DlgSelect, obj, _("close data (multi select)"), FileCB, (struct narray *) &farray, NULL);
+  DialogExecute(TopLevel, &DlgSelect);
+}
+#else
 void
 CmFileClose(void *w, gpointer client_data)
 {
@@ -5179,7 +5295,45 @@ CmFileClose(void *w, gpointer client_data)
   }
   arraydel(&farray);
 }
+#endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* to be implemented */
+int
+update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file)
+{
+  int i, j, num, *array, id0, modified, ret, undo;
+  char *name;
+  struct obj_list_data *data;
+
+  num = arraynum(farray);
+  if (num < 1) {
+    return 0;
+  }
+
+  array = arraydata(farray);
+  id0 = -1;
+
+  ret = IDCANCEL;
+  modified = FALSE;
+  data_save_undo(UNDO_TYPE_EDIT);
+  for (i = 0; i < num; i++) {
+    name = NULL;
+    if (id0 != -1) {
+      copy_file_obj_field(obj, array[i], array[id0], FALSE);
+      if (new_file) {
+	getobj(obj, "file", array[i], 0, NULL, &name);
+	AddDataFileList(name);
+      }
+    } else {
+      undo = data_save_undo(UNDO_TYPE_DUMMY);
+      data = NgraphApp.FileWin.data.data;
+      FileDialog(data, array[i], i < num - 1);
+      DialogExecute(TopLevel, data->dialog);
+    }
+  }
+}
+#else
 int
 update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file)
 {
@@ -5248,7 +5402,37 @@ update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file)
   }
   return modified;
 }
+#endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* to be implemented */
+void
+CmFileUpdate(void *w, gpointer client_data)
+{
+  struct objlist *obj;
+  int ret;
+  struct narray farray;
+  int last;
+
+  if (Menulock || Globallock)
+    return;
+
+  if ((obj = chkobject("data")) == NULL)
+    return;
+
+  last = chkobjlastinst(obj);
+  if (last == -1) {
+    return;
+  } else if (last == 0) {
+    arrayinit(&farray, sizeof(int));
+    arrayadd(&farray, &last);
+    ret = IDOK;
+  } else {
+    SelectDialog(&DlgSelect, obj, _("data property (multi select)"), FileCB, (struct narray *) &farray, NULL);
+    DialogExecute(TopLevel, &DlgSelect);
+  }
+}
+#else
 void
 CmFileUpdate(void *w, gpointer client_data)
 {
@@ -5280,6 +5464,7 @@ CmFileUpdate(void *w, gpointer client_data)
   }
   arraydel(&farray);
 }
+#endif
 
 static int
 check_plot_obj_file(struct objlist *obj)
@@ -5296,6 +5481,34 @@ check_plot_obj_file(struct objlist *obj)
   return -1;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* to be implemented */
+void
+CmFileEdit(void *w, gpointer client_data)
+{
+  struct objlist *obj;
+  int i;
+  char *name;
+  int last;
+
+  if (Menulock || Globallock)
+    return;
+
+  if (Menulocal.editor == NULL)
+    return;
+
+  if ((obj = chkobject("data")) == NULL)
+    return;
+
+  last = check_plot_obj_file(obj);
+  if (last == -1) {
+    return;
+  } else {
+    CopyDialog(&DlgCopy, obj, -1, _("edit data file (single select)"), PlotFileCB);
+    DialogExecute(TopLevel, &DlgCopy);
+  }
+}
+#else
 void
 CmFileEdit(void *w, gpointer client_data)
 {
@@ -5333,7 +5546,33 @@ CmFileEdit(void *w, gpointer client_data)
 
   edit_file(name);
 }
+#endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* to be implemented */
+void
+CmOptionFileDef(void *w, gpointer client_data)
+{
+  struct objlist *obj;
+  int id;
+
+  if (Menulock || Globallock)
+    return;
+
+  if ((obj = chkobject("data")) == NULL)
+    return;
+
+  id = newobj(obj);
+  if (id >= 0) {
+    int modified;
+    char *objs[2];
+
+    modified = get_graph_modified();
+    FileDefDialog(&DlgFileDef, obj, id);
+    DialogExecute(TopLevel, &DlgFileDef);
+  }
+}
+#else
 void
 CmOptionFileDef(void *w, gpointer client_data)
 {
@@ -5367,6 +5606,7 @@ CmOptionFileDef(void *w, gpointer client_data)
     }
   }
 }
+#endif
 
 static void
 FileWinFileEdit(struct obj_list_data *d)
@@ -5537,6 +5777,30 @@ file_copy2_popup_func
   FileWinFileCopy2(d);
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* to be implemented */
+static void
+FileWinFileUpdate(struct obj_list_data *d)
+{
+  int sel, num;
+
+  if (Menulock || Globallock)
+    return;
+  sel = list_store_get_selected_int(GTK_WIDGET(d->text), FILE_WIN_COL_ID);
+  num = chkobjlastinst(d->obj);
+
+  if ((sel >= 0) && (sel <= num)) {
+    int ret, undo;
+    GtkWidget *parent;
+    undo = data_save_undo(UNDO_TYPE_EDIT);
+    d->setup_dialog(d, sel, FALSE);
+    d->select = sel;
+
+    parent = TopLevel;
+    DialogExecute(parent, d->dialog);
+  }
+}
+#else
 static void
 FileWinFileUpdate(struct obj_list_data *d)
 {
@@ -5566,6 +5830,7 @@ FileWinFileUpdate(struct obj_list_data *d)
     }
   }
 }
+#endif
 
 static void
 FileWinFileDraw(struct obj_list_data *d)
@@ -6158,6 +6423,37 @@ CmFileMath(void *w, gpointer client_data)
   }
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* to be implemented */
+static int
+GetDrawFiles(struct narray *farray)
+{
+  struct objlist *fobj;
+  int lastinst;
+  struct narray ifarray;
+  int i, a;
+
+  if (farray == NULL)
+    return 1;
+
+  fobj = chkobject("data");
+  if (fobj == NULL)
+    return 1;
+
+  lastinst = chkobjlastinst(fobj);
+  if (lastinst < 0)
+    return 1;
+
+  arrayinit(&ifarray, sizeof(int));
+  for (i = 0; i <= lastinst; i++) {
+    getobj(fobj, "hidden", i, 0, NULL, &a);
+    if (!a)
+      arrayadd(&ifarray, &i);
+  }
+  SelectDialog(&DlgSelect, fobj, NULL, FileCB, farray, &ifarray);
+  DialogExecute(TopLevel, &DlgSelect);
+}
+#else
 static int
 GetDrawFiles(struct narray *farray)
 {
@@ -6193,7 +6489,57 @@ GetDrawFiles(struct narray *farray)
 
   return 0;
 }
+#endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* to be implemented */
+void
+CmFileSaveData(void *w, gpointer client_data)
+{
+  struct narray farray;
+  struct objlist *obj;
+  int i, num, onum, type, div, curve = FALSE, *array, append;
+  char *file, buf[1024];
+  char *argv[4];
+  int chd;
+
+  if (Menulock || Globallock)
+    return;
+
+  if (GetDrawFiles(&farray))
+    return;
+
+  obj = chkobject("data");
+  if (obj == NULL)
+    return;
+
+  onum = chkobjlastinst(obj);
+  num = arraynum(&farray);
+
+  if (num == 0) {
+    arraydel(&farray);
+    return;
+  }
+
+  array = arraydata(&farray);
+  for (i = 0; i < num; i++) {
+    if (array[i] < 0 || array[i] > onum)
+      continue;
+
+    getobj(obj, "type", array[i], 0, NULL, &type);
+    if (type == 3) {
+      curve = TRUE;
+    }
+  }
+
+  div = 10;
+
+  if (curve) {
+    OutputDataDialog(&DlgOutputData, div);
+    DialogExecute(TopLevel, &DlgOutputData);
+  }
+}
+#else
 void
 CmFileSaveData(void *w, gpointer client_data)
 {
@@ -6280,6 +6626,7 @@ CmFileSaveData(void *w, gpointer client_data)
   arraydel(&farray);
   g_free(file);
 }
+#endif
 
 static gboolean
 filewin_ev_key_down(GtkWidget *w, guint keyval, GdkModifierType state, gpointer user_data)

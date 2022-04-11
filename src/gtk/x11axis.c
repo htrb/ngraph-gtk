@@ -540,11 +540,35 @@ GridDefDialogSetup(GtkWidget *w, void *data, int makewidget)
   GridDialogSetupCommon(w, data, makewidget, FALSE);
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+GridDefDialogClose(GtkWidget *w, void *data)
+{
+  struct GridDialog *d;
+  GridDialogClose(w, data);
+
+  d = (struct GridDialog *) data;
+  if (d->ret == IDOK) {
+    if (CheckIniFile()) {
+      exeobj(d->Obj, "save_config", d->Id, 0, NULL);
+    }
+  }
+  delobj(d->Obj, d->Id);
+  if (! d->modified) {
+    reset_graph_modified();
+  }
+}
+#endif
+
 static void
 GridDefDialog(struct GridDialog *data, struct objlist *obj, int id)
 {
   data->SetupWindow = GridDefDialogSetup;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  data->CloseWindow = GridDefDialogClose;
+#else
   data->CloseWindow = GridDialogClose;
+#endif
   data->Obj = obj;
   data->Id = id;
 }
@@ -567,6 +591,10 @@ CmOptionGridDef(void *w, gpointer client_data)
 
     modified = get_graph_modified();
     GridDefDialog(&DlgGridDef, obj, id);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    DlgGridDef.modified = modified;
+    DialogExecute(TopLevel, &DlgGridDef);
+#else
     if (DialogExecute(TopLevel, &DlgGridDef) == IDOK) {
       if (CheckIniFile()) {
 	exeobj(obj, "save_config", id, 0, NULL);
@@ -576,6 +604,7 @@ CmOptionGridDef(void *w, gpointer client_data)
     if (! modified) {
       reset_graph_modified();
     }
+#endif
   }
 }
 
@@ -695,6 +724,10 @@ SectionDialogGrid(GtkWidget *w, gpointer client_data)
   if (*(d->IDG) >= 0) {
     int ret;
     GridDialog(&DlgGrid, d->Obj2, *(d->IDG));
+#if GTK_CHECK_VERSION(4, 0, 0)
+  /* must be implemented */
+    DialogExecute(d->widget, &DlgGrid);
+#else
     ret = DialogExecute(d->widget, &DlgGrid);
     switch (ret) {
     case IDCANCEL:
@@ -716,8 +749,11 @@ SectionDialogGrid(GtkWidget *w, gpointer client_data)
       menu_delete_undo(undo);
       set_graph_modified();
     }
+#endif
   }
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   SectionDialogSetupItem(d->widget, d);
+#endif
 }
 
 static void
@@ -1313,6 +1349,10 @@ AxisDialogFile(GtkWidget *w, gpointer client_data)
 
   SelectDialog(&DlgSelect, fobj, _("autoscale (multi select)"), FileCB, (struct narray *) &farray, NULL);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  /* must be implemented */
+  DialogExecute(d->widget, &DlgSelect);
+#else
   if (DialogExecute(d->widget, &DlgSelect) == IDOK) {
     int a, anum, num, *array;
 
@@ -1375,6 +1415,7 @@ AxisDialogFile(GtkWidget *w, gpointer client_data)
     }
   }
   arraydel(&farray);
+#endif
 }
 
 static void
@@ -2775,6 +2816,10 @@ CmAxisNewFrame(int use_presettings)
   }
   SectionDialog(&DlgSection, x, y, lenx, leny, obj, idx, idy, idu, idr, obj2,
 		&idg, FALSE);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  /* must be implemented */
+  DialogExecute(TopLevel, &DlgSection);
+#else
   ret = DialogExecute(TopLevel, &DlgSection);
   if (ret == IDCANCEL) {
     menu_undo_internal(undo);
@@ -2782,6 +2827,7 @@ CmAxisNewFrame(int use_presettings)
     set_graph_modified();
   }
   AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
+#endif
 }
 
 void
@@ -2845,6 +2891,10 @@ CmAxisNewSection(int use_presettings)
   }
   SectionDialog(&DlgSection, x, y, lenx, leny, obj, idx, idy, idu, idr, obj2,
 		&idg, TRUE);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  /* must be implemented */
+  DialogExecute(TopLevel, &DlgSection);
+#else
   ret = DialogExecute(TopLevel, &DlgSection);
   if (ret == IDCANCEL) {
     menu_undo_internal(undo);
@@ -2852,6 +2902,7 @@ CmAxisNewSection(int use_presettings)
     set_graph_modified();
   }
   AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
+#endif
 }
 
 void
@@ -2891,6 +2942,10 @@ CmAxisNewCross(int use_presettings)
     presetting_set_obj_field(obj, idy);
   }
   CrossDialog(&DlgCross, x, y, lenx, leny, obj, idx, idy);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  /* must be implemented */
+  DialogExecute(TopLevel, &DlgCross);
+#else
   ret = DialogExecute(TopLevel, &DlgCross);
   if (ret == IDCANCEL) {
     menu_undo_internal(undo);
@@ -2898,6 +2953,7 @@ CmAxisNewCross(int use_presettings)
     set_graph_modified();
   }
   AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
+#endif
 }
 
 void
@@ -2920,6 +2976,10 @@ CmAxisAddSingle
     int ret;
     presetting_set_obj_field(obj, id);
     AxisDialog(NgraphApp.AxisWin.data.data, id, -1);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  /* must be implemented */
+    DialogExecute(TopLevel, &DlgAxis);
+#else
     ret = DialogExecute(TopLevel, &DlgAxis);
     if (ret == IDCANCEL) {
       menu_undo_internal(undo);
@@ -2927,6 +2987,7 @@ CmAxisAddSingle
       set_graph_modified();
     }
     AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
+#endif
   }
 }
 
@@ -2946,6 +3007,10 @@ CmAxisDel(void *w, gpointer client_data)
 
   CopyDialog(&DlgCopy, obj, -1, _("delete axis (single select)"), AxisCB);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  /* must be implemented */
+    DialogExecute(TopLevel, &DlgCopy);
+#else
   if (DialogExecute(TopLevel, &DlgCopy) == IDOK && DlgCopy.sel >= 0) {
     axis_save_undo(UNDO_TYPE_DELETE);
     AxisDel(DlgCopy.sel);
@@ -2953,6 +3018,7 @@ CmAxisDel(void *w, gpointer client_data)
     AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
     FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
   }
+#endif
 }
 
 void
@@ -2968,6 +3034,10 @@ CmAxisUpdate(void *w, gpointer client_data)
   if (chkobjlastinst(obj) == -1)
     return;
   CopyDialog(&DlgCopy, obj, -1, _("axis property (single select)"), AxisCB);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  /* must be implemented */
+    DialogExecute(TopLevel, &DlgCopy);
+#else
   if (DialogExecute(TopLevel, &DlgCopy) == IDOK) {
     i = DlgCopy.sel;
     if (i < 0)
@@ -2984,6 +3054,7 @@ CmAxisUpdate(void *w, gpointer client_data)
     AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
     FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
   }
+#endif
 }
 
 void
@@ -2999,6 +3070,10 @@ CmAxisZoom(void *w, gpointer client_data)
   if (chkobjlastinst(obj) == -1)
     return;
   ZoomDialog(&DlgZoom);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  /* must be implemented */
+    DialogExecute(TopLevel, &DlgZoom);
+#else
   if ((DialogExecute(TopLevel, &DlgZoom) == IDOK) && (DlgZoom.zoom > 0)) {
     double zoom, min, max, room;
     zoom = DlgZoom.zoom / 10000.0;
@@ -3034,6 +3109,7 @@ CmAxisZoom(void *w, gpointer client_data)
     }
     arraydel(&farray);
   }
+#endif
 }
 
 static void
@@ -3084,6 +3160,10 @@ CmAxisClear(void *w, gpointer client_data)
   if (chkobjlastinst(obj) == -1)
     return;
   SelectDialog(&DlgSelect, obj, _("scale clear (multi select)"), AxisCB, (struct narray *) &farray, NULL);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  /* must be implemented */
+    DialogExecute(TopLevel, &DlgSelect);
+#else
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     int *array, num, i;
     num = arraynum(&farray);
@@ -3099,6 +3179,7 @@ CmAxisClear(void *w, gpointer client_data)
     AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
   }
   arraydel(&farray);
+#endif
 }
 
 void
@@ -3127,6 +3208,10 @@ CmAxisGridNew(void *w, gpointer client_data)
     return;
   }
   GridDialog(&DlgGrid, obj, id);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  /* must be implemented */
+    DialogExecute(TopLevel, &DlgGrid);
+#else
   ret = DialogExecute(TopLevel, &DlgGrid);
   if (ret == IDCANCEL) {
     menu_undo_internal(undo);
@@ -3134,6 +3219,7 @@ CmAxisGridNew(void *w, gpointer client_data)
     set_graph_modified();
     update_viewer_axisgrid();
   }
+#endif
 }
 
 void
@@ -3149,6 +3235,10 @@ CmAxisGridDel(void *w, gpointer client_data)
   if (chkobjlastinst(obj) == -1)
     return;
   SelectDialog(&DlgSelect, obj, _("delete grid (multi select)"), GridCB, (struct narray *) &farray, NULL);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  /* must be implemented */
+    DialogExecute(TopLevel, &DlgSelect);
+#else
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     int i, num, *array;
     num = arraynum(&farray);
@@ -3163,6 +3253,7 @@ CmAxisGridDel(void *w, gpointer client_data)
     update_viewer_axisgrid();
   }
   arraydel(&farray);
+#endif
 }
 
 void
@@ -3178,6 +3269,10 @@ CmAxisGridUpdate(void *w, gpointer client_data)
   if (chkobjlastinst(obj) == -1)
     return;
   SelectDialog(&DlgSelect, obj, _("grid property (multi select)"), GridCB, (struct narray *) &farray, NULL);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  /* must be implemented */
+    DialogExecute(TopLevel, &DlgSelect);
+#else
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     int *array, num;
     int i;
@@ -3202,6 +3297,7 @@ CmAxisGridUpdate(void *w, gpointer client_data)
     update_viewer_axisgrid();
   }
   arraydel(&farray);
+#endif
 }
 
 void
@@ -3362,6 +3458,10 @@ CmAxisScaleUndo(void *w, gpointer client_data)
     return;
 
   SelectDialog(&DlgSelect, obj, _("scale undo (multi select)"), AxisHistoryCB, (struct narray *) &farray, NULL);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  /* must be implemented */
+  DialogExecute(TopLevel, &DlgSelect);
+#else
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     int i, n, num, *array;
     char *argv[1];
@@ -3380,6 +3480,7 @@ CmAxisScaleUndo(void *w, gpointer client_data)
     AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
   }
   arraydel(&farray);
+#endif
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)

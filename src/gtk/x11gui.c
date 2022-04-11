@@ -89,26 +89,6 @@ dialog_destroyed_cb(GtkWidget *w, gpointer user_data)
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-static int
-dialog_run(GtkWidget *dlg, struct DialogType *data)
-{
-  int lock_state;
-  GMainContext *context;
-
-  if (dlg == NULL || data == NULL) {
-    return GTK_RESPONSE_CANCEL;
-  }
-
-  context = g_main_context_default();
-  lock_state = DnDLock;
-  while (data->ret == IDLOOP) {
-    g_main_context_iteration(context, TRUE);
-  }
-  DnDLock = lock_state;
-
-  return data->ret;
-}
-
 static void
 ndialog_response(GtkWidget *dlg, gint res_id, gpointer user_data)
 {
@@ -174,8 +154,42 @@ static void
 dialog_response(GtkWidget *dlg, gint res_id, gpointer user_data)
 {
   struct DialogType *data;
-  data = user_data;
-  data->ret = res_id;
+
+  data = (struct DialogType *) user_data;
+
+  if (data->focus)
+    gtk_widget_grab_focus(data->focus);
+
+  if (data->ret == IDLOOP) {
+    return;
+  }
+
+  if (res_id < 0) {
+    switch (res_id) {
+    case GTK_RESPONSE_OK:
+      data->ret = IDOK;
+      break;
+    default:
+      data->ret = IDCANCEL;
+      break;
+    }
+  } else {
+    data->ret = res_id;
+  }
+
+  if (data->CloseWindow) {
+    data->CloseWindow(dlg, data);
+  }
+#if OSX
+  Menulock = data->menulock;
+#endif
+
+  //  gtk_widget_destroy(dlg);
+  //  data->widget = NULL;
+  set_current_window(data->win_ptr);
+  gtk_widget_hide(dlg);
+
+  DnDLock = data->lockstate;
 }
 
 static gboolean
@@ -186,8 +200,82 @@ dialog_close_request(GtkWindow* window, gpointer user_data)
   data->ret = GTK_RESPONSE_CANCEL;
   return TRUE;
 }
-#endif
 
+void
+DialogExecute(GtkWidget *parent, void *dialog)
+{
+  GtkWidget *dlg;
+  struct DialogType *data;
+
+  data = (struct DialogType *) dialog;
+
+  data->lockstate = DnDLock;
+  DnDLock = TRUE;
+
+  if (data->widget && (data->parent != parent)) {
+#if 1
+    gtk_window_set_transient_for(GTK_WINDOW(data->widget), GTK_WINDOW(parent));
+    data->parent = parent;
+#else
+    gtk_widget_destroy(data->widget);
+    reset_event();
+    data->widget = NULL;
+#endif
+  }
+
+  if (data->widget == NULL) {
+    dlg = gtk_dialog_new_with_buttons(_(data->resource),
+				      GTK_WINDOW(parent),
+#if USE_HEADER_BAR
+				      GTK_DIALOG_USE_HEADER_BAR |
+#endif
+				      GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+				      _("_Cancel"), GTK_RESPONSE_CANCEL,
+				      NULL);
+
+    gtk_window_set_resizable(GTK_WINDOW(dlg), TRUE);
+
+    /* must be implemented */
+    g_signal_connect(dlg, "response", G_CALLBACK(dialog_response), data);
+    g_signal_connect(dlg, "close_request", G_CALLBACK(dialog_close_request), data);
+    g_signal_connect(dlg, "destroy", G_CALLBACK(dialog_destroyed_cb), data);
+
+    data->parent = parent;
+    data->widget = dlg;
+    data->vbox = GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dlg)));
+    gtk_orientable_set_orientation(GTK_ORIENTABLE(data->vbox), GTK_ORIENTATION_VERTICAL);
+    data->show_cancel = TRUE;
+    data->ok_button = _("_OK");
+
+    data->SetupWindow(dlg, data, TRUE);
+    gtk_dialog_add_button(GTK_DIALOG(dlg), data->ok_button, GTK_RESPONSE_OK);
+
+    if (! data->show_cancel) {
+      GtkWidget *btn;
+      btn = gtk_dialog_get_widget_for_response(GTK_DIALOG(dlg), GTK_RESPONSE_CANCEL);
+      gtk_widget_hide(btn);
+    }
+
+    gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
+  } else {
+    dlg = data->widget;
+    data->SetupWindow(dlg, data, FALSE);
+  }
+
+  gtk_widget_hide(dlg);
+  gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
+  data->widget = dlg;
+  data->ret = IDLOOP;
+
+#if OSX
+  data->menulock = Menulock;
+  Menulock = TRUE;
+#endif
+  gtk_widget_show(dlg);
+  data->win_ptr = get_current_window();
+  set_current_window(dlg);
+}
+#else
 int
 DialogExecute(GtkWidget *parent, void *dialog)
 {
@@ -226,13 +314,7 @@ DialogExecute(GtkWidget *parent, void *dialog)
 
     gtk_window_set_resizable(GTK_WINDOW(dlg), TRUE);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
-    g_signal_connect(dlg, "response", G_CALLBACK(dialog_response), data);
-    g_signal_connect(dlg, "close_request", G_CALLBACK(dialog_close_request), data);
-#else
     g_signal_connect(dlg, "delete-event", G_CALLBACK(gtk_true), data);
-#endif
     g_signal_connect(dlg, "destroy", G_CALLBACK(dialog_destroyed_cb), data);
 
     data->parent = parent;
@@ -273,11 +355,7 @@ DialogExecute(GtkWidget *parent, void *dialog)
     gtk_widget_grab_focus(data->focus);
 
   while (data->ret == IDLOOP) {
-#if GTK_CHECK_VERSION(4, 0, 0)
-    res_id = dialog_run(dlg, data);
-#else
     res_id = ndialog_run(dlg);
-#endif
 
     if (res_id < 0) {
       switch (res_id) {
@@ -310,6 +388,7 @@ DialogExecute(GtkWidget *parent, void *dialog)
 
   return data->ret;
 }
+#endif
 
 void
 message_beep(GtkWidget * parent)

@@ -746,6 +746,79 @@ CmPrintGRAFile(void)
   }
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* to be implemented */
+static void
+CmOutputImage(int type)
+{
+  struct objlist *graobj, *g2wobj;
+  int id, g2wid, g2woid;
+  N_VALUE *g2winst;
+  int ret;
+  char *title, *ext_str;
+  char *file, *tmp;
+  int chd;
+
+  if (Menulock || Globallock)
+    return;
+
+  switch (type) {
+  case MenuIdOutputPSFile:
+    title = "Save as PostScript";
+    ext_str = "ps";
+    break;
+  case MenuIdOutputEPSFile:
+    title = "Save as Encapsulated PostScript";
+    ext_str = "eps";
+    break;
+  case MenuIdOutputPDFFile:
+    title = "Save as Portable Document Format (PDF)";
+    ext_str = "pdf";
+    break;
+  case MenuIdOutputPNGFile:
+    title = "Save as Portable Network Graphics (PNG)";
+    ext_str = "png";
+    break;
+  case MenuIdOutputSVGFile:
+    title = "Save as Scalable Vector Graphics (SVG)";
+    ext_str = "svg";
+    break;
+#ifdef CAIRO_HAS_WIN32_SURFACE
+  case MenuIdOutputCairoEMFFile:
+    title = "Save as Windows Enhanced Metafile (EMF)";
+    ext_str = "emf";
+    break;
+#endif	/* CAIRO_HAS_WIN32_SURFACE */
+  default:
+    /* not reachable */
+    title = NULL;
+    ext_str = NULL;
+  }
+
+  tmp = get_base_ngp_name();
+#if GTK_CHECK_VERSION(4, 0, 0)
+  chd = FALSE;
+#else
+  chd = Menulocal.changedirectory;
+#endif
+  ret = nGetSaveFileName(TopLevel, title, ext_str, NULL, tmp,
+			 &file, FALSE, chd);
+  if (tmp) {
+    g_free(tmp);
+  }
+
+  if (ret != IDOK) {
+    return;
+  }
+
+  if (file == NULL) {
+    return;
+  }
+
+  OutputImageDialog(&DlgImageOut, type);
+  DialogExecute(TopLevel, &DlgImageOut);
+}
+#else
 static void
 CmOutputImage(int type)
 {
@@ -876,6 +949,7 @@ CmOutputImage(int type)
     FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, TRUE);
   }
 }
+#endif
 
 #if WINDOWS
 static void

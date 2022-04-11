@@ -277,13 +277,43 @@ MergeDialog(struct obj_list_data *data, int id, int user_data)
   d->Id = id;
 }
 
-void
-CmMergeOpen
 #if GTK_CHECK_VERSION(4, 0, 0)
-(GSimpleAction *action, GVariant *parameter, gpointer client_data)
+/* to be implemented */
+void
+CmMergeOpen(GSimpleAction *action, GVariant *parameter, gpointer client_data)
+{
+  struct objlist *obj;
+  char *name = NULL;
+  int id, undo, chd;
+
+  if (Menulock || Globallock)
+    return;
+
+  if ((obj = chkobject("merge")) == NULL)
+    return;
+
+#if GTK_CHECK_VERSION(4, 0, 0)
+  chd = FALSE;
 #else
-(void *w, gpointer client_data)
+  chd = Menulocal.changedirectory;
 #endif
+  if (nGetOpenFileName(TopLevel, _("Add Merge file"), "gra", NULL, NULL, &name,
+		       TRUE, chd) != IDOK || ! name)
+    return;
+
+  undo = menu_save_undo_single(UNDO_TYPE_CREATE, obj->name);
+  id = newobj(obj);
+  if (id >= 0) {
+    int ret;
+    changefilename(name);
+    putobj(obj, "file", id, name);
+    MergeDialog(NgraphApp.MergeWin.data.data, id, -1);
+    DialogExecute(TopLevel, &DlgMerge);
+  }
+}
+#else
+void
+CmMergeOpen(void *w, gpointer client_data)
 {
   struct objlist *obj;
   char *name = NULL;
@@ -322,7 +352,26 @@ CmMergeOpen
   }
   MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE, DRAW_NOTIFY);
 }
+#endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* to be implemented */
+void
+CmMergeClose(void *w, gpointer client_data)
+{
+  struct narray farray;
+  struct objlist *obj;
+
+  if (Menulock || Globallock)
+    return;
+  if ((obj = chkobject("merge")) == NULL)
+    return;
+  if (chkobjlastinst(obj) == -1)
+    return;
+  SelectDialog(&DlgSelect, obj, _("close merge file (multi select)"), MergeFileCB, (struct narray *) &farray, NULL);
+  DialogExecute(TopLevel, &DlgSelect);
+}
+#else
 void
 CmMergeClose(void *w, gpointer client_data)
 {
@@ -351,7 +400,28 @@ CmMergeClose(void *w, gpointer client_data)
   }
   arraydel(&farray);
 }
+#endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+/* to be implemented */
+void
+CmMergeUpdate(void *w, gpointer client_data)
+{
+  struct narray farray;
+  struct objlist *obj;
+  int modified;
+
+  if (Menulock || Globallock)
+    return;
+  if ((obj = chkobject("merge")) == NULL)
+    return;
+  if (chkobjlastinst(obj) == -1)
+    return;
+  SelectDialog(&DlgSelect, obj, _("merge file property (multi select)"), MergeFileCB, (struct narray *) &farray, NULL);
+  modified = FALSE;
+  DialogExecute(TopLevel, &DlgSelect);
+}
+#else
 void
 CmMergeUpdate(void *w, gpointer client_data)
 {
@@ -388,6 +458,7 @@ CmMergeUpdate(void *w, gpointer client_data)
   }
   arraydel(&farray);
 }
+#endif
 
 void
 MergeWinUpdate(struct obj_list_data *d, int clear, int draw)
