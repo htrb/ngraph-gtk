@@ -1,5 +1,6 @@
 #include <ruby.h>
 #include <ruby/encoding.h>
+#include <ruby/version.h>
 
 #include "config.h"
 #include "../src/ngraph.h"
@@ -85,7 +86,9 @@ require_files(VALUE data)
 
   rb_require("enc/encdb");
   rb_require("enc/trans/transdb");
+#if RUBY_API_VERSION_MAJOR < 3
   rb_require("rubygems");
+#endif
 
   result = rb_require((char *) data);
 

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6.08.07\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2022-02-18 18:14+0900\n"
+"POT-Creation-Date: 2022-04-11 14:40+0900\n"
 "PO-Revision-Date: 2022-02-18 18:14+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -75,7 +75,7 @@ msgid "Save file"
 msgstr "別名で保存"
 
 #: src/gtk/ogra2cairo.c:45 src/gtk/x11dialg.c:1405
-#: src/gtk/data/gtk/menus-tool.ui:43 src/gtk/data/gtk/menus-tool.ui:72
+#: src/gtk/data/gtk/menus-tool.ui:42 src/gtk/data/gtk/menus-tool.ui:71
 #: src/odraw.c:80 src/odraw.c:88 src/oaxis.c:77 src/oaxis.c:92
 msgid "none"
 msgstr "なし"
@@ -1785,12 +1785,12 @@ msgid "_Interpolation:"
 msgstr "補完法(_I):"
 
 #: src/gtk/x11lgnd.c:1486 src/gtk/x11lgnd.c:1718
-#: src/gtk/data/gtk/menus-tool.ui:15
+#: src/gtk/data/gtk/menus-tool.ui:14
 msgid "_Close path"
 msgstr "パスを閉じる(_C)"
 
 #: src/gtk/x11lgnd.c:1503 src/gtk/x11lgnd.c:1606 src/gtk/x11lgnd.c:1734
-#: src/gtk/data/gtk/menus-tool.ui:7
+#: src/gtk/data/gtk/menus-tool.ui:6
 msgid "_Stroke"
 msgstr "ストローク(_S)"
 
@@ -1799,7 +1799,7 @@ msgid "fill _Rule:"
 msgstr "ルール(_R):"
 
 #: src/gtk/x11lgnd.c:1522 src/gtk/x11lgnd.c:1621 src/gtk/x11lgnd.c:1749
-#: src/gtk/data/gtk/menus-tool.ui:11
+#: src/gtk/data/gtk/menus-tool.ui:10
 msgid "_Fill"
 msgstr "塗りつぶし(_F)"
 
@@ -2109,11 +2109,11 @@ msgid "Scale _Clear"
 msgstr "スケールクリア(_C)"
 
 #: src/gtk/x11menu.c:448 src/gtk/x11menu.c:449
-#: src/gtk/data/gtk/help-overlay.ui:46
+#: src/gtk/data/gtk/help-overlay.ui:53
 msgid "Clear Scale"
 msgstr "スケールのクリア"
 
-#: src/gtk/x11menu.c:460 src/gtk/data/gtk/help-overlay.ui:52
+#: src/gtk/x11menu.c:460 src/gtk/data/gtk/help-overlay.ui:60
 msgid "Draw on Viewer Window"
 msgstr "ビューアに描画"
 
@@ -2638,7 +2638,7 @@ msgstr "合成ファイルの保存"
 msgid "Making GRA file."
 msgstr "合成ファイル作成中"
 
-#: src/gtk/x11print.c:801 src/gtk/x11print.c:874 src/gtk/x11view.c:6744
+#: src/gtk/x11print.c:801 src/gtk/x11print.c:874 src/gtk/x11view.c:6766
 msgid "Drawing."
 msgstr "描画中"
 
@@ -2668,19 +2668,19 @@ msgstr "データ評価中"
 msgid "trimming (multi select)"
 msgstr "トリミング (複数選択)"
 
-#: src/gtk/x11view.c:3847
+#: src/gtk/x11view.c:3869
 msgid "Data points are moved."
 msgstr "データは移動されました."
 
-#: src/gtk/x11view.c:5186
+#: src/gtk/x11view.c:5208
 msgid "Moving data points is canceled."
 msgstr "データの移動はキャンセルされました."
 
-#: src/gtk/x11view.c:6738
+#: src/gtk/x11view.c:6760
 msgid "Scaling"
 msgstr "軸スケール設定中"
 
-#: src/gtk/x11view.c:6745
+#: src/gtk/x11view.c:6767
 msgid "Drawing"
 msgstr "描画中"
 
@@ -5633,139 +5633,139 @@ msgstr "E_MF ファイル"
 msgid "_Clipboard (EMF)"
 msgstr "クリップボード (EMF) (_C) "
 
-#: src/gtk/data/gtk/menus-tool.ui:24 src/odraw.c:66
+#: src/gtk/data/gtk/menus-tool.ui:23 src/odraw.c:66
 msgid "miter"
 msgstr "角結合"
 
-#: src/gtk/data/gtk/menus-tool.ui:29 src/odraw.c:67
+#: src/gtk/data/gtk/menus-tool.ui:28 src/odraw.c:67
 msgid "round"
 msgstr "丸結合"
 
-#: src/gtk/data/gtk/menus-tool.ui:34 src/odraw.c:68
+#: src/gtk/data/gtk/menus-tool.ui:33 src/odraw.c:68
 msgid "bevel"
 msgstr "斜結合"
 
-#: src/gtk/data/gtk/menus-tool.ui:48 src/gtk/data/gtk/menus-tool.ui:77
+#: src/gtk/data/gtk/menus-tool.ui:47 src/gtk/data/gtk/menus-tool.ui:76
 #: src/odraw.c:89 src/odata.c:253
 msgid "arrow"
 msgstr "矢印"
 
-#: src/gtk/data/gtk/menus-tool.ui:53 src/gtk/data/gtk/menus-tool.ui:82
+#: src/gtk/data/gtk/menus-tool.ui:52 src/gtk/data/gtk/menus-tool.ui:81
 #: src/odraw.c:90
 msgid "wave"
 msgstr "波型"
 
-#: src/gtk/data/gtk/menus-tool.ui:58 src/gtk/data/gtk/menus-tool.ui:87
+#: src/gtk/data/gtk/menus-tool.ui:57 src/gtk/data/gtk/menus-tool.ui:86
 #: src/odraw.c:91 src/odata.c:247
 msgid "mark"
 msgstr "マーク"
 
-#: src/gtk/data/gtk/menus-tool.ui:63 src/gtk/data/gtk/menus-tool.ui:92
+#: src/gtk/data/gtk/menus-tool.ui:62 src/gtk/data/gtk/menus-tool.ui:91
 #: src/odraw.c:92
 msgid "bar"
 msgstr "棒"
 
-#: src/gtk/data/gtk/help-overlay.ui:16
+#: src/gtk/data/gtk/help-overlay.ui:18
 msgid "Load a graph (NGP file)"
 msgstr "グラフ(NGPファイル)を開く"
 
-#: src/gtk/data/gtk/help-overlay.ui:22
+#: src/gtk/data/gtk/help-overlay.ui:25
 msgid "Save the graph"
 msgstr "グラフの保存"
 
-#: src/gtk/data/gtk/help-overlay.ui:28
+#: src/gtk/data/gtk/help-overlay.ui:32
 msgid "Save the graph with a new filename"
 msgstr "グラフに名前をつけて保存"
 
-#: src/gtk/data/gtk/help-overlay.ui:34
+#: src/gtk/data/gtk/help-overlay.ui:39
 msgid "Print the graph"
 msgstr "グラフを印刷"
 
-#: src/gtk/data/gtk/help-overlay.ui:40
+#: src/gtk/data/gtk/help-overlay.ui:46
 msgid "Add data file"
 msgstr "データファイルの追加"
 
-#: src/gtk/data/gtk/help-overlay.ui:58
+#: src/gtk/data/gtk/help-overlay.ui:67
 msgid "Show cross gauge"
 msgstr "クロスゲージを表示"
 
-#: src/gtk/data/gtk/help-overlay.ui:64
+#: src/gtk/data/gtk/help-overlay.ui:74
 msgid "Quit the application"
 msgstr "アプリケーションの終了"
 
-#: src/gtk/data/gtk/help-overlay.ui:75
+#: src/gtk/data/gtk/help-overlay.ui:87
 msgid "Undo previous command"
 msgstr "直前の操作を取り消す"
 
-#: src/gtk/data/gtk/help-overlay.ui:81
+#: src/gtk/data/gtk/help-overlay.ui:94
 msgid "Redo previous command"
 msgstr "直前に取り消した操作をやり直す"
 
-#: src/gtk/data/gtk/help-overlay.ui:87
+#: src/gtk/data/gtk/help-overlay.ui:101
 msgid "Cut selected object to clipboard"
 msgstr "選択したオブジェクトをクリップボードにカット"
 
-#: src/gtk/data/gtk/help-overlay.ui:93
+#: src/gtk/data/gtk/help-overlay.ui:108
 msgid "Copy selected object to clipboard"
 msgstr "選択したオブジェクトをクリップボードにコピー"
 
-#: src/gtk/data/gtk/help-overlay.ui:99
+#: src/gtk/data/gtk/help-overlay.ui:115
 msgid "Paste object from clipboard"
 msgstr "クリップボードのオブジェクトを貼り付け"
 
-#: src/gtk/data/gtk/help-overlay.ui:105
+#: src/gtk/data/gtk/help-overlay.ui:122
 msgid "Delete the selected object"
 msgstr "選択したオブジェクトの削除"
 
-#: src/gtk/data/gtk/help-overlay.ui:111
+#: src/gtk/data/gtk/help-overlay.ui:129
 msgid "Duplicate the selected object"
 msgstr "選択したオブジェクトを複製"
 
-#: src/gtk/data/gtk/help-overlay.ui:117
+#: src/gtk/data/gtk/help-overlay.ui:136
 msgid "Rise selection to top"
 msgstr "最前面に移動"
 
-#: src/gtk/data/gtk/help-overlay.ui:123
+#: src/gtk/data/gtk/help-overlay.ui:143
 msgid "Lower selection to bottom"
 msgstr "最背面に移動"
 
-#: src/gtk/data/gtk/help-overlay.ui:134
+#: src/gtk/data/gtk/help-overlay.ui:156
 msgid "Show the help document"
 msgstr "ヘルプの表示"
 
-#: src/gtk/data/gtk/help-overlay.ui:140
+#: src/gtk/data/gtk/help-overlay.ui:163
 msgid "Show shortcut keys"
 msgstr "キーボードショートカットの表示"
 
 #. used for the application menu on MacOS.  %s is replaced with the application name.
-#: src/gtk/data/gtk/menus-appmenu.ui:8
+#: src/gtk/data/gtk/menus-appmenu.ui:7
 #, c-format
 msgid "About %s"
 msgstr "%sについて"
 
 #. used for the application menu on MacOS
-#: src/gtk/data/gtk/menus-appmenu.ui:24
+#: src/gtk/data/gtk/menus-appmenu.ui:23
 msgid "Services"
 msgstr "サービス"
 
 #. used for the application menu on MacOS.  %s is replaced with the application name.
-#: src/gtk/data/gtk/menus-appmenu.ui:31
+#: src/gtk/data/gtk/menus-appmenu.ui:30
 #, c-format
 msgid "Hide %s"
 msgstr "%s を非表示"
 
 #. used for the application menu on MacOS
-#: src/gtk/data/gtk/menus-appmenu.ui:37
+#: src/gtk/data/gtk/menus-appmenu.ui:36
 msgid "Hide Others"
 msgstr "他のウィンドウを隠す"
 
 #. used for the application menu on MacOS
-#: src/gtk/data/gtk/menus-appmenu.ui:43
+#: src/gtk/data/gtk/menus-appmenu.ui:42
 msgid "Show All"
 msgstr "全て表示"
 
 #. used for the application menu on MacOS.  %s is replaced with the application name.
-#: src/gtk/data/gtk/menus-appmenu.ui:51
+#: src/gtk/data/gtk/menus-appmenu.ui:50
 #, c-format
 msgid "Quit %s"
 msgstr "%s を終了"

@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 # Description: _Spell check,check spelling of legend text,
 
-require 'rubygems'
-
 begin
   require 'raspell'
 rescue LoadError
