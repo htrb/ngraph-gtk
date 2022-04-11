@@ -1,5 +1,6 @@
 #include <ruby.h>
 #include <ruby/encoding.h>
+#include <ruby/version.h>
 
 #include "config.h"
 #include "../src/ngraph.h"
