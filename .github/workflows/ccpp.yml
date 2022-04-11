@@ -5,6 +5,7 @@ on:
     branches:
       - '**'        # matches every branch
       - '!gtk4'     # excludes gtk4
+      - '!async-dialog'     # excludes async-dialog
 
 jobs:
   build:
