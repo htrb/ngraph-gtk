@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.09.05\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2022-04-11 14:40+0900\n"
+"POT-Creation-Date: 2022-04-23 18:28+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -73,7 +73,7 @@ msgid "Save file"
 msgstr ""
 
 #: src/gtk/ogra2cairo.c:45 src/gtk/x11dialg.c:1405
-#: src/gtk/data/gtk/menus-tool.ui:42 src/gtk/data/gtk/menus-tool.ui:71
+#: src/gtk/data/gtk/menus-tool.ui:43 src/gtk/data/gtk/menus-tool.ui:72
 #: src/odraw.c:80 src/odraw.c:88 src/oaxis.c:77 src/oaxis.c:92
 msgid "none"
 msgstr ""
@@ -1750,12 +1750,12 @@ msgid "_Interpolation:"
 msgstr ""
 
 #: src/gtk/x11lgnd.c:1486 src/gtk/x11lgnd.c:1718
-#: src/gtk/data/gtk/menus-tool.ui:14
+#: src/gtk/data/gtk/menus-tool.ui:15
 msgid "_Close path"
 msgstr ""
 
 #: src/gtk/x11lgnd.c:1503 src/gtk/x11lgnd.c:1606 src/gtk/x11lgnd.c:1734
-#: src/gtk/data/gtk/menus-tool.ui:6
+#: src/gtk/data/gtk/menus-tool.ui:7
 msgid "_Stroke"
 msgstr ""
 
@@ -1764,7 +1764,7 @@ msgid "fill _Rule:"
 msgstr ""
 
 #: src/gtk/x11lgnd.c:1522 src/gtk/x11lgnd.c:1621 src/gtk/x11lgnd.c:1749
-#: src/gtk/data/gtk/menus-tool.ui:10
+#: src/gtk/data/gtk/menus-tool.ui:11
 msgid "_Fill"
 msgstr ""
 
@@ -2073,11 +2073,11 @@ msgid "Scale _Clear"
 msgstr ""
 
 #: src/gtk/x11menu.c:448 src/gtk/x11menu.c:449
-#: src/gtk/data/gtk/help-overlay.ui:53
+#: src/gtk/data/gtk/help-overlay.ui:46
 msgid "Clear Scale"
 msgstr ""
 
-#: src/gtk/x11menu.c:460 src/gtk/data/gtk/help-overlay.ui:60
+#: src/gtk/x11menu.c:460 src/gtk/data/gtk/help-overlay.ui:52
 msgid "Draw on Viewer Window"
 msgstr ""
 
@@ -4920,139 +4920,139 @@ msgstr ""
 msgid "_Clipboard (EMF)"
 msgstr ""
 
-#: src/gtk/data/gtk/menus-tool.ui:23 src/odraw.c:66
+#: src/gtk/data/gtk/menus-tool.ui:24 src/odraw.c:66
 msgid "miter"
 msgstr ""
 
-#: src/gtk/data/gtk/menus-tool.ui:28 src/odraw.c:67
+#: src/gtk/data/gtk/menus-tool.ui:29 src/odraw.c:67
 msgid "round"
 msgstr ""
 
-#: src/gtk/data/gtk/menus-tool.ui:33 src/odraw.c:68
+#: src/gtk/data/gtk/menus-tool.ui:34 src/odraw.c:68
 msgid "bevel"
 msgstr ""
 
-#: src/gtk/data/gtk/menus-tool.ui:47 src/gtk/data/gtk/menus-tool.ui:76
+#: src/gtk/data/gtk/menus-tool.ui:48 src/gtk/data/gtk/menus-tool.ui:77
 #: src/odraw.c:89 src/odata.c:253
 msgid "arrow"
 msgstr ""
 
-#: src/gtk/data/gtk/menus-tool.ui:52 src/gtk/data/gtk/menus-tool.ui:81
+#: src/gtk/data/gtk/menus-tool.ui:53 src/gtk/data/gtk/menus-tool.ui:82
 #: src/odraw.c:90
 msgid "wave"
 msgstr ""
 
-#: src/gtk/data/gtk/menus-tool.ui:57 src/gtk/data/gtk/menus-tool.ui:86
+#: src/gtk/data/gtk/menus-tool.ui:58 src/gtk/data/gtk/menus-tool.ui:87
 #: src/odraw.c:91 src/odata.c:247
 msgid "mark"
 msgstr ""
 
-#: src/gtk/data/gtk/menus-tool.ui:62 src/gtk/data/gtk/menus-tool.ui:91
+#: src/gtk/data/gtk/menus-tool.ui:63 src/gtk/data/gtk/menus-tool.ui:92
 #: src/odraw.c:92
 msgid "bar"
 msgstr ""
 
-#: src/gtk/data/gtk/help-overlay.ui:18
+#: src/gtk/data/gtk/help-overlay.ui:16
 msgid "Load a graph (NGP file)"
 msgstr ""
 
-#: src/gtk/data/gtk/help-overlay.ui:25
+#: src/gtk/data/gtk/help-overlay.ui:22
 msgid "Save the graph"
 msgstr ""
 
-#: src/gtk/data/gtk/help-overlay.ui:32
+#: src/gtk/data/gtk/help-overlay.ui:28
 msgid "Save the graph with a new filename"
 msgstr ""
 
-#: src/gtk/data/gtk/help-overlay.ui:39
+#: src/gtk/data/gtk/help-overlay.ui:34
 msgid "Print the graph"
 msgstr ""
 
-#: src/gtk/data/gtk/help-overlay.ui:46
+#: src/gtk/data/gtk/help-overlay.ui:40
 msgid "Add data file"
 msgstr ""
 
-#: src/gtk/data/gtk/help-overlay.ui:67
+#: src/gtk/data/gtk/help-overlay.ui:58
 msgid "Show cross gauge"
 msgstr ""
 
-#: src/gtk/data/gtk/help-overlay.ui:74
+#: src/gtk/data/gtk/help-overlay.ui:64
 msgid "Quit the application"
 msgstr ""
 
-#: src/gtk/data/gtk/help-overlay.ui:87
+#: src/gtk/data/gtk/help-overlay.ui:75
 msgid "Undo previous command"
 msgstr ""
 
-#: src/gtk/data/gtk/help-overlay.ui:94
+#: src/gtk/data/gtk/help-overlay.ui:81
 msgid "Redo previous command"
 msgstr ""
 
-#: src/gtk/data/gtk/help-overlay.ui:101
+#: src/gtk/data/gtk/help-overlay.ui:87
 msgid "Cut selected object to clipboard"
 msgstr ""
 
-#: src/gtk/data/gtk/help-overlay.ui:108
+#: src/gtk/data/gtk/help-overlay.ui:93
 msgid "Copy selected object to clipboard"
 msgstr ""
 
-#: src/gtk/data/gtk/help-overlay.ui:115
+#: src/gtk/data/gtk/help-overlay.ui:99
 msgid "Paste object from clipboard"
 msgstr ""
 
-#: src/gtk/data/gtk/help-overlay.ui:122
+#: src/gtk/data/gtk/help-overlay.ui:105
 msgid "Delete the selected object"
 msgstr ""
 
-#: src/gtk/data/gtk/help-overlay.ui:129
+#: src/gtk/data/gtk/help-overlay.ui:111
 msgid "Duplicate the selected object"
 msgstr ""
 
-#: src/gtk/data/gtk/help-overlay.ui:136
+#: src/gtk/data/gtk/help-overlay.ui:117
 msgid "Rise selection to top"
 msgstr ""
 
-#: src/gtk/data/gtk/help-overlay.ui:143
+#: src/gtk/data/gtk/help-overlay.ui:123
 msgid "Lower selection to bottom"
 msgstr ""
 
-#: src/gtk/data/gtk/help-overlay.ui:156
+#: src/gtk/data/gtk/help-overlay.ui:134
 msgid "Show the help document"
 msgstr ""
 
-#: src/gtk/data/gtk/help-overlay.ui:163
+#: src/gtk/data/gtk/help-overlay.ui:140
 msgid "Show shortcut keys"
 msgstr ""
 
 #. used for the application menu on MacOS.  %s is replaced with the application name.
-#: src/gtk/data/gtk/menus-appmenu.ui:7
+#: src/gtk/data/gtk/menus-appmenu.ui:8
 #, c-format
 msgid "About %s"
 msgstr ""
 
 #. used for the application menu on MacOS
-#: src/gtk/data/gtk/menus-appmenu.ui:23
+#: src/gtk/data/gtk/menus-appmenu.ui:24
 msgid "Services"
 msgstr ""
 
 #. used for the application menu on MacOS.  %s is replaced with the application name.
-#: src/gtk/data/gtk/menus-appmenu.ui:30
+#: src/gtk/data/gtk/menus-appmenu.ui:31
 #, c-format
 msgid "Hide %s"
 msgstr ""
 
 #. used for the application menu on MacOS
-#: src/gtk/data/gtk/menus-appmenu.ui:36
+#: src/gtk/data/gtk/menus-appmenu.ui:37
 msgid "Hide Others"
 msgstr ""
 
 #. used for the application menu on MacOS
-#: src/gtk/data/gtk/menus-appmenu.ui:42
+#: src/gtk/data/gtk/menus-appmenu.ui:43
 msgid "Show All"
 msgstr ""
 
 #. used for the application menu on MacOS.  %s is replaced with the application name.
-#: src/gtk/data/gtk/menus-appmenu.ui:50
+#: src/gtk/data/gtk/menus-appmenu.ui:51
 #, c-format
 msgid "Quit %s"
 msgstr ""
