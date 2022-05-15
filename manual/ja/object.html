@@ -114,7 +114,7 @@ size of instance: 32
 <h3><a name="system">system</a></h3>
 <pre>
 object: system
-version: 6.09.04
+version: 6.09.05
 parent: object
 object id: 2
 number of fields: 39
@@ -507,8 +507,8 @@ object: gra2gdk
 version: 1.00.00
 parent: gra2cairo
 object id: 13
-number of fields: 24
-size of instance: 144
+number of fields: 25
+size of instance: 152
 </pre>
 <table border="1" cellspacing="0">
 <tr><th>permission</th><th>field name</th><th>field type</th></tr>
@@ -528,7 +528,6 @@ size of instance: 144
 <tr><td>r-x</td><td align="right">flush</td><td>void( void )</td></tr>
 <tr><td>rw-</td><td align="right">antialias</td><td>enum( none default gray )</td></tr>
 <tr><td>rw-</td><td align="right">use_opacity</td><td>bool</td></tr>
-<tr><td>---</td><td align="right">_output</td><td>void( )</td></tr>
 <tr><td>---</td><td align="right">_strwidth</td><td>int( )</td></tr>
 <tr><td>---</td><td align="right">_charascent</td><td>int( )</td></tr>
 <tr><td>---</td><td align="right">_chardescent</td><td>int( )</td></tr>
@@ -536,6 +535,8 @@ size of instance: 144
 <tr><td>--x</td><td align="right">init</td><td>void( )</td></tr>
 <tr><td>--x</td><td align="right">done</td><td>void( )</td></tr>
 <tr><td>---</td><td align="right">next</td><td>void*</td></tr>
+<tr><td>---</td><td align="right">_output</td><td>void( )</td></tr>
+<tr><td>rw-</td><td align="right">force_opacity</td><td>int</td></tr>
 </table>
 
 <h3><a name="menu">menu</a></h3>
@@ -1038,7 +1039,7 @@ object: axisgrid
 version: 1.00.00
 parent: draw
 object id: 26
-number of fields: 35
+number of fields: 36
 size of instance: 232
 </pre>
 <table border="1" cellspacing="0">
@@ -1078,6 +1079,7 @@ size of instance: 232
 <tr><td>r-x</td><td align="right">draw</td><td>void( int )</td></tr>
 <tr><td>r-x</td><td align="right">tight</td><td>void( void )</td></tr>
 <tr><td>r-x</td><td align="right">hsb</td><td>void( double double double )</td></tr>
+<tr><td>r-x</td><td align="right">save_config</td><td>void( void )</td></tr>
 </table>
 
 <h3><a name="axis">axis</a></h3>
@@ -1086,7 +1088,7 @@ object: axis
 version: 1.00.00
 parent: draw
 object id: 27
-number of fields: 106
+number of fields: 107
 size of instance: 680
 </pre>
 <table border="1" cellspacing="0">
@@ -1196,6 +1198,7 @@ size of instance: 680
 <tr><td>r-x</td><td align="right">hsb</td><td>void( double double double )</td></tr>
 <tr><td>r-x</td><td align="right">gauge_hsb</td><td>void( double double double )</td></tr>
 <tr><td>r-x</td><td align="right">num_hsb</td><td>void( double double double )</td></tr>
+<tr><td>r-x</td><td align="right">save_config</td><td>void( void )</td></tr>
 <tr><td>-w-</td><td align="right">num_jfont</td><td>char*</td></tr>
 </table>
 
