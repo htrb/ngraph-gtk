@@ -224,12 +224,13 @@ errexit:
 static int
 cmdload(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
-  int security;
+  int security, err;
 
   security = get_security();
   set_security(TRUE);
-  cmdload(obj, inst, rval, argc, argv);
+  err = cmdshell(obj, inst, rval, argc, argv);
   set_security(security);
+  return err;
 }
 
 static int
