@@ -5,6 +5,7 @@ IGN_PATH=0
 AUTO_SCALE=0
 OPTION="-gra"
 CHDIR=0
+TRIM=0
 PWD=`pwd`
 NULL_DEVICE=/dev/null
 DPI=86
@@ -67,6 +68,11 @@ save_image() {
     gra:OUTPUT:close
     del gra:OUTPUT
     del gra2cairofile:OUTPUT
+
+    if [ $TRIM -ne 0 ]
+    then
+	trim_image "$1" "$2"
+    fi
 }
 
 save_gra() {
@@ -112,6 +118,7 @@ show_usage() {
     echo "    -A            clear scale and auto scale"
     echo "    -c            change directory"
     echo "    -d dpi        set dot per inch"
+    echo "    -t            trimming the image (PDF, PNG or SVG)"
     echo
     echo "    -ps, -ps3     output PostScript level 3"
     echo "    -ps2          output PostScript level 2"
@@ -155,6 +162,10 @@ do
 	    DPI=$1
 	    shift
 	    ;;
+        -t)
+            TRIM=1
+            shift
+            ;;
 	-h|--help)
 	    show_usage
 	    ;;
