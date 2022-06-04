@@ -6,6 +6,7 @@ AUTO_SCALE=0
 OPTION="-gra"
 CHDIR=0
 TRIM=0
+COMMAND=""
 PWD=`pwd`
 NULL_DEVICE=/dev/null
 DPI=86
@@ -117,6 +118,7 @@ show_usage() {
     echo "    -a            auto scale"
     echo "    -A            clear scale and auto scale"
     echo "    -c            change directory"
+    echo "    -C command    execute command before drawing"
     echo "    -d dpi        set dot per inch"
     echo "    -t            trimming the image (PDF, PNG or SVG)"
     echo
@@ -157,6 +159,11 @@ do
 	    CHDIR=1
 	    shift
 	    ;;
+        -C)
+            shift
+            COMMAND="$1"
+            shift
+            ;;
 	-d)
 	    shift
 	    DPI=$1
@@ -210,6 +217,11 @@ do
 	new shell
 	shell::load "$NGP_FILE"
 	del shell
+
+        if [ x"$COMMAND" != "x" ]
+        then
+            eval $COMMAND
+        fi
 
 	if [ $IGN_PATH -ne 0 ]
 	then
