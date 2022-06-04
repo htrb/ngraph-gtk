@@ -9,6 +9,29 @@ PWD=`pwd`
 NULL_DEVICE=/dev/null
 DPI=86
 
+trim_image() {
+    if [ -f "$2" ]
+    then
+	echo trimming $2...
+	trimmed="$2_trim.$1"
+	case $1 in
+            png)
+		convert -trim "$2" "$trimmed"
+		;;
+            pdf)
+		pdfcrop "$2" "$trimmed"
+		;;
+            svg*)
+		inkscape -D --export-overwrite "$2"
+		;;
+	esac
+	if [ -f "$trimmed" ]
+	then
+	    mv "$trimmed" "$2"
+	fi
+    fi
+}
+
 clear_viewer() {
     for i in `derive -instance draw fit parameter`
     do
