@@ -222,6 +222,17 @@ errexit:
 }
 
 static int
+cmdload(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
+{
+  int security;
+
+  security = get_security();
+  set_security(TRUE);
+  cmdload(obj, inst, rval, argc, argv);
+  set_security(security);
+}
+
+static int
 cmdsecurity(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   set_security(*(int *)argv[2]);
