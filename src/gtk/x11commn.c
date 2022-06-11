@@ -1443,6 +1443,7 @@ LoadNgpFile(char *file, int console, char *option)
     if (arrayadd(&sarray, &s) == NULL) {
       g_free(s);
       arraydel2(&sarray);
+      delobj(obj, newid);
       return 1;
     }
   }
@@ -1451,12 +1452,14 @@ LoadNgpFile(char *file, int console, char *option)
 
   if (name == NULL) {
     arraydel2(&sarray);
+    delobj(obj, newid);
     return 1;
   }
 
   if (arrayadd(&sarray, &name) == NULL) {
     g_free(name);
     arraydel2(&sarray);
+    delobj(obj, newid);
     return 1;
   }
 
