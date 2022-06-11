@@ -52,6 +52,7 @@ static char *sherrorlist[]={
 
 struct shlocal {
   int lock;
+  int security;
   struct nshell *nshell;
 };
 
