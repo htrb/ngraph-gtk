@@ -1957,6 +1957,9 @@ file_text_obj_set(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *
   if (text_obj == NULL) {
     return 0;
   }
+  if (check_id(text_obj, id)) {
+    return 0;
+  }
   tmp = g_strdup(str);
   if (tmp == NULL) {
     return 0;
