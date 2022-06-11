@@ -71,6 +71,7 @@ cmdinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   if ((nshell=newshell())==NULL) return 1;
   ngraphenvironment(nshell);
   shlocal->lock=0;
+  shlocal->security=FALSE;
   shlocal->nshell=nshell;
   return 0;
 }
