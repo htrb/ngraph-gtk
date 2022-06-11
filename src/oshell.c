@@ -108,7 +108,7 @@ cmdshell(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   struct narray *sarray;
   struct objlist *sys;
   char **sdata;
-  int i,snum;
+  int i,snum,security;
   int err;
   char *filename,*filename2;
   int fd;
@@ -137,6 +137,9 @@ cmdshell(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 
   err=1;
   filename=NULL;
+
+  security = get_security();
+  set_security(shlocal->security || security);
 
   sarray=(struct narray *)argv[2];
   snum=arraynum(sarray);
@@ -212,6 +215,7 @@ errexit:
   ninterrupt = save_interrupt;
   sigaction(SIGINT, &oldact, NULL);
 #endif
+  set_security(security);
   shellrestorestdio(nshell);
 
   if (nshell->deleted) {
