@@ -1922,6 +1922,17 @@ file_on_end(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 }
 
 static int
+check_id(struct objlist *obj, int id)
+{
+  int n;
+  n = chkobjlastinst(obj);
+  if (id < 0 || id > n) {
+    return 1;
+  }
+  return 0;
+}
+
+static int
 file_text_obj_set(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   int id;
