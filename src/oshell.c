@@ -224,18 +224,6 @@ errexit:
 }
 
 static int
-cmdload(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
-{
-  int security, err;
-
-  security = get_security();
-  set_security(TRUE);
-  err = cmdshell(obj, inst, rval, argc, argv);
-  set_security(security);
-  return err;
-}
-
-static int
 cmdsecurity(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   set_security(*(int *)argv[2]);
@@ -254,7 +242,6 @@ static struct objtable shell[] = {
   {"done",NVFUNC,NEXEC,cmddone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},
   {"shell",NVFUNC,NREAD|NEXEC,cmdshell,"sa",0},
-  {"load",NVFUNC,NREAD|NEXEC,cmdload,"sa",0},
   {"security",NVFUNC,0,cmdsecurity,"b",0},
   {"set_security",NVFUNC,NREAD|NEXEC,cmd_set_security,"",0},
   {"_local",NPOINTER,0,NULL,NULL,0}};
