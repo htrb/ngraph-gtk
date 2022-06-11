@@ -233,7 +233,10 @@ cmdsecurity(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
 static int
 cmd_set_security(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
-  set_security(TRUE);
+  struct shlocal *shlocal;
+
+  _getobj(obj, "_local", inst, &shlocal);
+  shlocal->security = TRUE;
   return 0;
 }
 
