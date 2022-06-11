@@ -215,7 +215,8 @@ do
 	esac
 
 	new shell
-	shell::load "$NGP_FILE"
+	shell::set_security
+	shell::shell "$NGP_FILE"
 	del shell
 
         if [ x"$COMMAND" != "x" ]
