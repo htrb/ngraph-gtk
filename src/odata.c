@@ -1993,6 +1993,9 @@ file_text_obj_get(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *
   if (text_obj == NULL) {
     return 0;
   }
+  if (check_id(text_obj, id)) {
+    return 0;
+  }
   getobj(text_obj, "text", id, 0, NULL, &str);
   if (str == NULL) {
     return 0;
