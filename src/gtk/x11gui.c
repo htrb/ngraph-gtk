@@ -160,10 +160,6 @@ dialog_response(GtkWidget *dlg, gint res_id, gpointer user_data)
   if (data->focus)
     gtk_widget_grab_focus(data->focus);
 
-  if (data->ret == IDLOOP) {
-    return;
-  }
-
   if (res_id < 0) {
     switch (res_id) {
     case GTK_RESPONSE_OK:
@@ -180,6 +176,11 @@ dialog_response(GtkWidget *dlg, gint res_id, gpointer user_data)
   if (data->CloseWindow) {
     data->CloseWindow(dlg, data);
   }
+
+  if (data->ret == IDLOOP) {
+    return;
+  }
+
 #if OSX
   Menulock = data->menulock;
 #endif
