@@ -4114,6 +4114,7 @@ start_editing_font(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *
   g_signal_connect(editable, "editing-done", G_CALLBACK(select_font), user_data);
 }
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
 static void
 select_text(GtkWidget *w, gpointer user_data)
 {
@@ -4144,6 +4145,7 @@ start_editing_text(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *
 
   return;
 }
+#endif
 
 GtkWidget *
 create_path_list(struct SubWin *d)
@@ -4283,7 +4285,9 @@ create_text_list(struct SubWin *d)
 #endif
     gtk_tree_view_column_add_attribute(col, renderer, "foreground", TEXT_LIST_COL_COLOR);
     gtk_tree_view_column_add_attribute(col, renderer, "background", TEXT_LIST_COL_BGCOLOR);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
     g_signal_connect_after(renderer, "editing-started", G_CALLBACK(start_editing_text), data);
+#endif
   }
   g_list_free(list);
   n = sizeof(noexpand_text_colmns) / sizeof(*noexpand_text_colmns);

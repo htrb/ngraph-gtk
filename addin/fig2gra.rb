@@ -207,7 +207,7 @@ class Fig2Gra
              [len, 100, 50, 100, 50, 100, 50, 100],
             ]
 
-    
+
     n = style[type].size
     f.print("A,#{n + 5},#{n},#{coord_conv(width) + 1},#{cap},#{join},1000")
     if (n > 0)
@@ -296,7 +296,7 @@ class Fig2Gra
     state = b[n, n / 2]
 
     state.each_with_index {|v, i|
-      if (v == 0) 
+      if (v == 0)
         m = subpath.size / 2
         if (m > 2)
           s = Spline.new(subpath)
@@ -390,7 +390,7 @@ class Fig2Gra
 
   def convert(fig, gra)
     f = IO.readlines(fig)
-    l = f.select {|s| s[0] != ?# } 
+    l = f.select {|s| s[0] != ?# }
 
     return false if (l.size < 9)
 
@@ -442,7 +442,7 @@ class Fig2Gra
       f.puts('E,0')
     }
   end
-end 
+end
 
 if (__FILE__ == $0)
   exit(1) if (ARGV.size != 2)
