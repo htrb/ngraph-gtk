@@ -36,7 +36,11 @@ void FitCopy(struct objlist *obj, int did, int sid);
 void FitDel(struct objlist *obj, int id);
 void ArrayDel(struct objlist *obj, int id);
 void FitClear(void);
+#if GTK_CHECK_VERSION(4, 0, 0)
+void LoadNgpFile(const char *File, int console, const char *option, const char *cwd);
+#else
 int LoadNgpFile(char *File, int console, char *option);
+#endif
 int SaveDrawrable(char *name, int storedata, int storemerge, int save_decimalsign);
 int GraphSave(int overwrite);
 void DeleteDrawable(void);

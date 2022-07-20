@@ -1423,9 +1423,13 @@ CmGraphLoad(void *w, gpointer client_data)
     return;
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  LoadNgpFile(file, Menulocal.scriptconsole, "-f", cwd);
+#else
   if (LoadNgpFile(file, Menulocal.scriptconsole, "-f") && cwd) {
     nchdir(cwd);
   }
+#endif
   if (cwd) {
     g_free(cwd);
   }
@@ -1449,13 +1453,23 @@ CmGraphOverWrite(void *w, gpointer client_data)
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-/* to be implemented */
+static int
+CmGraphSwitch_response(struct response_callback *cb)
+{
+  if (cb->return_value == IDOK) {
+    set_graph_modified_gra();
+    ChangePage();
+  }
+  return cb->return_value;
+}
+
 void
 CmGraphSwitch(void *w, gpointer client_data)
 {
   if (Menulock || Globallock)
     return;
   SwitchDialog(&DlgSwitch);
+  DlgSwitch.response_cb = response_callback_new(CmGraphSwitch_response, NULL, NULL);
   DialogExecute(TopLevel, &DlgSwitch);
 }
 #else
@@ -1474,6 +1488,22 @@ CmGraphSwitch(void *w, gpointer client_data)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
+static int
+CmGraphPage_response(struct response_callback *cb)
+{
+  if (cb->return_value == IDOK) {
+    int new_graph;
+    SetPageSettingsToGRA();
+    ChangePage();
+    GetPageSettingsFromGRA();
+    new_graph = GPOINTER_TO_INT(cb->data);
+    if (! new_graph) {
+      set_graph_modified_gra();
+    }
+  }
+  return cb->return_value;
+}
+
 void
 CmGraphPage(void *w, gpointer client_data)
 {
@@ -1482,6 +1512,7 @@ CmGraphPage(void *w, gpointer client_data)
   if (Menulock || Globallock)
     return;
   PageDialog(&DlgPage, new_graph);
+  DlgPage.response_cb = response_callback_new(CmGraphPage_response, NULL, client_data);
   DialogExecute(TopLevel, &DlgPage);
 }
 #else
@@ -1606,9 +1637,13 @@ CmGraphHistory(GtkRecentChooser *w, gpointer client_data)
     return;
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  LoadNgpFile(fname, Menulocal.scriptconsole, "-f", cwd);
+#else
   if (LoadNgpFile(fname, Menulocal.scriptconsole, "-f") && cwd) {
     nchdir(cwd);
   }
+#endif
   if (cwd) {
     g_free(cwd);
   }
@@ -1700,7 +1735,11 @@ CmHelpDemo(void *w, gpointer client_data)
     return;
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  LoadNgpFile(demo_file, Menulocal.scriptconsole, "-f", NULL);
+#else
   LoadNgpFile(demo_file, Menulocal.scriptconsole, "-f");
+#endif
   g_free(demo_file);
 }
 

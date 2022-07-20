@@ -889,7 +889,11 @@ osx_open_file(GtkosxApplication *app, gchar *path, gpointer user_data)
     nchdir(dir);
     g_free(dir);
   }
+#if GTK_CHECK_VERSION(4, 0, 0)
+  LoadNgpFile(path, FALSE, "-f", NULL);
+#else
   LoadNgpFile(path, FALSE, "-f");
+#endif
   return TRUE;
 }
 

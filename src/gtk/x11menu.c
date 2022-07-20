@@ -3093,7 +3093,11 @@ application(char *file)
     char *ext;
     ext = getextention(file);
     if (ext && ((strcmp0(ext, "NGP") == 0) || (strcmp0(ext, "ngp") == 0))) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+      LoadNgpFile(file, FALSE, NULL, NULL);
+#else
       LoadNgpFile(file, FALSE, NULL);
+#endif
     } else {
       CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
     }

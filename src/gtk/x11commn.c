@@ -1191,7 +1191,39 @@ SaveDrawrable(char *name, int storedata, int storemerge, int save_decimalsign)
 }
 
 static int
+get_save_opt_response(struct response_callback *cb)
+{
+  struct objlist *fobj, *mobj;
+  int fnum, mnum, path;
+  int i;
+
+  if (DlgSave.ret != IDOK) {
+    return IDCANCEL;
+  }
+
+  fobj = chkobject("data");
+  mobj = chkobject("merge");
+
+  fnum = chkobjlastinst(fobj) + 1;
+  mnum = chkobjlastinst(mobj) + 1;
+
+  path = DlgSave.Path;
+  for (i = 0; i < fnum; i++) {
+    putobj(fobj, "save_path", i, &path);
+  }
+
+  for (i = 0; i < mnum; i++) {
+    putobj(mobj, "save_path", i, &path);
+  }
+  return 0;
+}
+
+static int
+#if GTK_CHECK_VERSION(4, 0, 0)
+get_save_opt(int *sdata, int *smerge, int *path, struct response_callback *cb)
+#else
 get_save_opt(int *sdata, int *smerge, int *path)
+#endif
 {
   int ret, fnum, mnum, i, src;
   struct objlist *fobj, *mobj;
@@ -1225,6 +1257,10 @@ get_save_opt(int *sdata, int *smerge, int *path)
   SaveDialog(&DlgSave, sdata, smerge);
 #if GTK_CHECK_VERSION(4, 0, 0)
   /* must be implemented */
+  DlgSave.response_cb = response_callback_new(get_save_opt_response, NULL, NULL);
+  if (DlgSave.response_cb) {
+    DlgSave.response_cb->next = cb;
+  }
   DialogExecute(TopLevel, &DlgSave);
 #else
   ret = DialogExecute(TopLevel, &DlgSave);
@@ -1241,6 +1277,62 @@ get_save_opt(int *sdata, int *smerge, int *path)
   }
 #endif
   return IDOK;
+}
+
+struct graph_save_data
+{
+  int storedata, storemerge, path;
+  char *file, *current_wd;
+};
+
+static void
+GraphSave_free(struct response_callback *cb)
+{
+  struct graph_save_data *data;
+  data = cb->data;
+  g_free(data->file);
+  g_free(data->current_wd);
+  g_free(cb);
+}
+
+static int
+GraphSave_response(struct response_callback *cb)
+{
+  int ret;
+  struct graph_save_data *d;
+  d = (struct graph_save_data *) cb->data;
+
+  ret = cb->return_value;
+  if (ret == IDOK) {
+    char mes[256];
+    snprintf(mes, sizeof(mes), _("Saving `%.128s'."), d->file);
+    SetStatusBar(mes);
+    if(SaveDrawrable(d->file, d->storedata, d->storemerge, TRUE)) {
+      ret = IDCANCEL;
+    } else {
+      switch (d->path) {
+      case SAVE_PATH_BASE:
+	  ToBasename();
+	  break;
+      case SAVE_PATH_RELATIVE:
+        ToRalativePath();
+        break;
+      case SAVE_PATH_FULL:
+        ToFullPath();
+        break;
+      }
+      changefilename(d->file);
+      AddNgpFileList(d->file);
+      SetFileName(d->file);
+      reset_graph_modified();
+    }
+    ResetStatusBar();
+  }
+
+  if (d->current_wd && nchdir(d->current_wd)) {
+    ErrorMessage();
+  }
+  return ret;
 }
 
 int
@@ -1285,10 +1377,28 @@ GraphSave(int overwrite)
   }
 
   if (ret == IDOK) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+    struct response_callback *cb;
+    struct graph_save_data *save_data;
+#endif
     if (prev_wd && nchdir(prev_wd)) {
       ErrorMessage();
     }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+    save_data = g_malloc0(sizeof(*save_data));
+    if (save_data == NULL) {
+      return IDOK;
+    }
+    save_data->file = g_strdup(file);
+    save_data->current_wd = g_strdup(current_wd);
+    save_data->path = path;
+    save_data->storemerge = smerge;
+    save_data->storedata = sdata;
+    cb = response_callback_new(GraphSave_response, GraphSave_free, save_data);
+    get_save_opt(&sdata, &smerge, &path, cb);
+    g_free(file);
+#else
     ret = get_save_opt(&sdata, &smerge, &path);
     if (ret == IDOK) {
       char mes[256];
@@ -1320,6 +1430,7 @@ GraphSave(int overwrite)
     if (current_wd && nchdir(current_wd)) {
       ErrorMessage();
     }
+#endif
   }
 
   g_free(prev_wd);
@@ -1394,9 +1505,226 @@ ToBasename(void)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
-int
-LoadNgpFile(char *file, int console, char *option)
+
+struct load_dialog_data
 {
+  char *file, *cwd;
+  int console;
+  char *option;
+};
+
+static int
+LoadNgpFile_response(struct response_callback *cb)
+{
+  char *file;
+  char *option;
+  int console;
+  struct load_dialog_data *d;
+  struct objlist *sys;
+  char *expanddir;
+  struct objlist *obj;
+  char *name;
+  int r, newid, allocnow = FALSE, tmp;
+  char *s;
+  int len;
+  char *argv[2];
+  struct narray sarray;
+  char mes[256];
+  int sec;
+  N_VALUE *inst;
+  struct objlist *robj;
+  int idn;
+  int loadpath, expand;
+
+  d = (struct load_dialog_data *) cb->data;
+
+  file = d->file;
+  console = d->console;
+  option = d->option;
+
+  if (DlgLoad.ret != IDOK) {
+    goto ErrorExit;
+  }
+  changefilename(file);
+
+  if (naccess(file, R_OK)) {
+    ErrorMessage();
+    goto ErrorExit;
+  }
+
+  sys = chkobject("system");
+  if (sys == NULL) {
+    goto ErrorExit;
+  }
+
+  loadpath = DlgLoad.loadpath;
+  expand = DlgLoad.expand;
+  expanddir = DlgLoad.exdir;
+  DlgLoad.exdir = NULL;
+  if (expanddir == NULL) {
+    goto ErrorExit;
+  }
+
+  putobj(sys, "expand_dir", 0, expanddir);
+  putobj(sys, "expand_file", 0, &expand);
+
+  tmp = FALSE;
+  putobj(sys, "ignore_path", 0, &tmp);
+
+  obj = chkobject("shell");
+  if (obj == NULL) {
+    goto ErrorExit;
+  }
+
+  newid = newobj(obj);
+  if (newid < 0) {
+    goto ErrorExit;
+  }
+
+  inst = chkobjinst(obj, newid);
+  arrayinit(&sarray, sizeof(char *));
+  while ((s = getitok2(&option, &len, " \t")) != NULL) {
+    if (arrayadd(&sarray, &s) == NULL) {
+      g_free(s);
+      arraydel2(&sarray);
+      goto ErrorExit;
+    }
+  }
+
+  name = g_strdup(file);
+
+  if (name == NULL) {
+    arraydel2(&sarray);
+    goto ErrorExit;
+  }
+
+  if (arrayadd(&sarray, &name) == NULL) {
+    g_free(name);
+    arraydel2(&sarray);
+    goto ErrorExit;
+  }
+
+  DeleteDrawable();
+
+  if (console) {
+    allocnow = allocate_console();
+  }
+
+  sec = TRUE;
+  argv[0] = (char *) &sec;
+  argv[1] = NULL;
+  _exeobj(obj, "security", inst, 1, argv);
+
+  argv[0] = (char *) &sarray;
+  argv[1] = NULL;
+
+  snprintf(mes, sizeof(mes), _("Loading `%.128s'."), name);
+  SetStatusBar(mes);
+
+  menu_lock(TRUE);
+  idn = getobjtblpos(Menulocal.obj, "_evloop", &robj);
+  registerevloop(chkobjectname(Menulocal.obj), "_evloop", robj, idn, Menulocal.inst, NULL);
+
+  r = _exeobj(obj, "shell", inst, 1, argv);
+
+  unregisterevloop(robj, idn, Menulocal.inst);
+  menu_lock(FALSE);
+
+  sec = FALSE;
+  argv[0] = (char *) &sec;
+  argv[1] = NULL;
+  _exeobj(obj, "security", inst, 1, argv);
+
+  if (r == 0) {
+    struct objlist *aobj;
+    int i;
+    if ((aobj = getobject("axis")) != NULL) {
+      for (i = 0; i <= chkobjlastinst(aobj); i++)
+	exeobj(aobj, "tight", i, 0, NULL);
+    }
+
+    if ((aobj = getobject("axisgrid")) != NULL) {
+      for (i = 0; i <= chkobjlastinst(aobj); i++)
+	exeobj(aobj, "tight", i, 0, NULL);
+    }
+
+    SetFileName(file);
+    AddNgpFileList(name);
+    reset_graph_modified();
+
+    switch (loadpath) {
+    case LOAD_PATH_BASE:
+      ToBasename();
+      break;
+    case LOAD_PATH_FULL:
+      ToFullPath();
+      break;
+    }
+    InfoWinClear();
+  }
+
+  AxisNameToGroup();
+  ResetStatusBar();
+  arraydel2(&sarray);
+
+  if (console) {
+    free_console(allocnow);
+  }
+
+  set_axis_undo_button_sensitivity(FALSE);
+  GetPageSettingsFromGRA();
+  CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
+  UpdateAll2(NULL, FALSE);
+  delobj(obj, newid);
+  menu_clear_undo();
+
+  return 0;
+
+ErrorExit:
+  if (d->cwd) {
+    nchdir(d->cwd);
+  }
+  return 1;
+}
+
+static void
+load_dialog_cb_free(struct response_callback *cb)
+{
+  struct load_dialog_data *data;
+  if (cb == NULL) {
+    return;
+  }
+  data = (struct load_dialog_data *) cb->data;
+  g_free(data->file);
+  g_free(data->option);
+  g_free(data->cwd);
+  g_free(data);
+  g_free(cb);
+}
+
+void
+LoadNgpFile(const char *file, int console, const char *option, const char *cwd)
+{
+  struct load_dialog_data *data;
+  struct response_callback *cb;
+
+  data = g_malloc0(sizeof(* data));
+  if (data == NULL) {
+    return;
+  }
+  data->file = g_strdup(file);
+  data->console = console;
+  data->option = g_strdup(option);
+  data->cwd = g_strdup(cwd);
+
+  cb = response_callback_new(LoadNgpFile_response, NULL, data);
+  if (cb == NULL) {
+    g_free(data);
+    return;
+  }
+
+  DlgLoad.response_cb = cb;
+
   LoadDialog(&DlgLoad);
   DialogExecute(TopLevel, &DlgLoad);
 }

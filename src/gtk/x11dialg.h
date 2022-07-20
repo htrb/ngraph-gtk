@@ -82,14 +82,33 @@ int chk_sputobjfield(struct objlist *obj, int id, char *field, char *str);
 int get_style_index(struct objlist *obj, int id, char *field);
 const char *get_style_string(struct objlist *obj, int id, char *field);
 
-#define DIALOG_PROTOTYPE GtkWidget *parent, *widget, *focus;	\
-  GtkBox *vbox;\
-  int ret, show_cancel;\
-  char *resource, *ok_button;\
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);\
-  void (*CloseWindow) (GtkWidget *w, void *data);\
-  int lockstate, menulock, modified;		 \
-  GtkWidget *win_ptr;				 \
+struct DialogType;
+struct response_callback;
+
+typedef int (* response_callback_func) (struct response_callback *);
+typedef void (* response_callback_free_func) (struct response_callback *);
+
+struct response_callback
+{
+  response_callback_func cb;
+  response_callback_free_func free;
+  gpointer data;
+  int return_value;
+  struct DialogType *dialog;
+  struct response_callback *next;
+};
+
+struct response_callback *response_callback_new(response_callback_func cb, response_callback_free_func free, gpointer data);
+
+#define DIALOG_PROTOTYPE GtkWidget *parent, *widget, *focus;            \
+  GtkBox *vbox;                                                         \
+  struct response_callback *response_cb;                                \
+  int ret, show_cancel;                                                 \
+  char *resource, *ok_button;                                           \
+  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);       \
+  void (*CloseWindow) (GtkWidget *w, void *data);                       \
+  int lockstate, menulock, modified;                                    \
+  GtkWidget *win_ptr;                                                   \
 
 
 struct DialogType

@@ -737,9 +737,13 @@ graph_dropped(char *fname)
     return 1;
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  LoadNgpFile(fname, FALSE, "-f", cwd);
+#else
   if (LoadNgpFile(fname, FALSE, "-f") && cwd) {
     nchdir(cwd);
   }
+#endif
   if (cwd) {
     g_free(cwd);
   }

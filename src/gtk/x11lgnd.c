@@ -301,13 +301,123 @@ struct lwidget {
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
-static void
-legend_menu_update_object(const char *name, char *(*callback) (struct objlist * obj, int id), void *dialog, LEGEND_DIALOG_SETUP setup)
+struct legend_menu_update_data
 {
-  struct narray array;
+  LEGEND_DIALOG_SETUP setup;
+  struct narray *array;
+  struct objlist *obj;
+  struct LegendDialog *dialog;
+  int i;
+};
+
+static  void
+legend_menu_update_object_free(struct response_callback * cb)
+{
+  struct legend_menu_update_data *data;
+  data = (struct legend_menu_update_data *) cb->data;
+  if (data->array) {
+    arrayfree(data->array);
+  }
+  g_free(data);
+}
+
+static int
+legend_menu_update_object_response2(struct response_callback *cb)
+{
+  struct legend_menu_update_data *ldata,*ldata2;
+  struct narray *array;
+  struct objlist *obj;
+  LEGEND_DIALOG_SETUP setup;
+  struct LegendDialog *dialog;
+  int i, num, j, *data;
+
+  ldata = (struct legend_menu_update_data *) cb->data;
+  obj = ldata->obj;
+  array = ldata->array;
+  setup = ldata->setup;
+  dialog = ldata->dialog;
+  i = ldata->i;
+
+  num = arraynum(array);
+  if (i >= num -1) {
+    char *objs[2];
+    objs[0] = obj->name;
+    objs[1] = NULL;
+    LegendWinUpdate(objs, TRUE, TRUE);
+    return IDOK;
+  }
+
+  data = arraydata(array);
+  setup(dialog, obj, data[i]);
+  if (cb->return_value == IDDELETE) {
+    delobj(obj, data[i]);
+    set_graph_modified();
+    for (j = i + 1; j < num; j++) {
+      data[j]--;
+    }
+  }
+  ldata2 = g_memdup2(ldata, sizeof(*ldata));
+  if (ldata2 == NULL) {
+    return IDOK;
+  }
+  ldata->array = NULL;
+  ldata2->i += 1;
+  dialog->response_cb = response_callback_new(legend_menu_update_object_response2, legend_menu_update_object_free, ldata2);
+  DialogExecute(TopLevel, dialog);
+  return cb->return_value;
+}
+
+static int
+legend_menu_update_object_response(struct response_callback *cb)
+{
+  struct legend_menu_update_data *ldata;
+  struct narray *array;
+  struct objlist *obj;
+  LEGEND_DIALOG_SETUP setup;
+  struct LegendDialog *dialog;
+  int i;
+
+  ldata = (struct legend_menu_update_data *) cb->data;
+  obj = ldata->obj;
+  array = ldata->array;
+  setup = ldata->setup;
+  dialog = ldata->dialog;
+  i = ldata->i;
+  if (cb->return_value == IDOK) {
+    int num;
+
+    num = arraynum(array);
+    if (num > 0) {
+      struct legend_menu_update_data *ldata2;
+      char *objs[2];
+      int j, *data;
+      menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
+      data = arraydata(array);
+      ldata2 = g_memdup2(ldata, sizeof(*ldata));
+      if (ldata2 == NULL) {
+        return;
+      }
+      ldata->array = NULL;
+      ldata2->i = i + 1;
+      setup(dialog, obj, data[i]);
+      dialog->response_cb = response_callback_new(legend_menu_update_object_response2, legend_menu_update_object_free, ldata2);
+      DialogExecute(TopLevel, dialog);
+    }
+  }
+}
+
+static void
+legend_menu_update_object(const char *name, char *(*callback) (struct objlist * obj, int id), struct LegendDialog *dialog, LEGEND_DIALOG_SETUP setup)
+{
+  struct narray *array;
   struct objlist *obj;
   char title[256];
+  struct legend_menu_update_data *data;
 
+  data = g_malloc0(sizeof(*data));
+  if (data == NULL) {
+    return;
+  }
   if (Menulock || Globallock)
     return;
   if ((obj = chkobject(name)) == NULL)
@@ -315,8 +425,15 @@ legend_menu_update_object(const char *name, char *(*callback) (struct objlist * 
   if (chkobjlastinst(obj) == -1)
     return;
 
+  array = arraynew(sizeof(int));
   snprintf(title, sizeof(title), _("%s property (multi select)"), _(obj->name));
-  SelectDialog(&DlgSelect, obj, title, callback, &array, NULL);
+  data->dialog = dialog;
+  data->array = array;
+  data->obj = obj;
+  data->setup = setup;
+  data->i = 0;
+  DlgSelect.response_cb = response_callback_new(legend_menu_update_object_response, legend_menu_update_object_free, data);
+  SelectDialog(&DlgSelect, obj, title, callback, array, NULL);
   DialogExecute(TopLevel, &DlgSelect);
 }
 #else

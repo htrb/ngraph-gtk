@@ -106,30 +106,14 @@ ndialog_close_request(GtkWindow* window, gpointer user_data)
   return TRUE;
 }
 
-int
-ndialog_run(GtkWidget *dlg, int *response)
+void
+ndialog_run(GtkWidget *dlg, GCallback cb, gpointer user_data)
 {
-  int lock_state;
-  GMainContext *context;
-
-  if (dlg == NULL || response == NULL) {
-    return GTK_RESPONSE_CANCEL;
+  if (cb) {
+    g_signal_connect(dlg, "response", cb, user_data);
   }
-
-  g_signal_connect(dlg, "response", G_CALLBACK(ndialog_response), response);
-  g_signal_connect(dlg, "close_request", G_CALLBACK(ndialog_close_request), response);
   gtk_window_set_modal(GTK_WINDOW(dlg), TRUE);
-
   gtk_widget_show(dlg);
-  context = g_main_context_default();
-  lock_state = DnDLock;
-  while (*response == IDLOOP) {
-    g_main_context_iteration(context, TRUE);
-  }
-  DnDLock = lock_state;
-  gtk_widget_hide(dlg);
-
-  return *response;
 }
 #else
 int
@@ -150,6 +134,22 @@ ndialog_run(GtkWidget *dlg)
 #endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
+static void
+call_response_cb(struct response_callback *cb)
+{
+  int r;
+  r = cb->cb(cb);
+  if (cb->next) {
+    cb->next->dialog = cb->dialog;
+    cb->next->return_value = r;
+    call_response_cb(cb->next);
+  }
+  if (cb->free) {
+    cb->free(cb);
+  }
+}
+
+
 static void
 dialog_response(GtkWidget *dlg, gint res_id, gpointer user_data)
 {
@@ -191,6 +191,12 @@ dialog_response(GtkWidget *dlg, gint res_id, gpointer user_data)
   gtk_widget_hide(dlg);
 
   DnDLock = data->lockstate;
+
+  if (data->response_cb) {
+    data->response_cb->dialog = data;
+    data->response_cb->return_value = data->ret;
+    call_response_cb(data->response_cb);
+  }
 }
 
 static gboolean
@@ -512,13 +518,12 @@ markup_message_box(GtkWidget * parent, const char *message, const char *title, i
   gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_widget_show(dlg);
   res_id = IDLOOP;
-  ndialog_run(dlg, &res_id);
+  data = res_id;
+  ndialog_run(dlg, NULL, GINT_TO_POINTER(mode));
 #else
   gtk_widget_show_all(dlg);
   res_id = ndialog_run(dlg);
-#endif
 
   switch (res_id) {
   case GTK_RESPONSE_OK:
@@ -549,6 +554,7 @@ markup_message_box(GtkWidget * parent, const char *message, const char *title, i
   gtk_widget_destroy(dlg);
 #endif
   reset_event();
+#endif
 
   return data;
 }
@@ -609,7 +615,7 @@ DialogInput(GtkWidget * parent, const char *title, const char *mes, const char *
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_widget_show(dlg);
   res_id = IDLOOP;
-  ndialog_run(dlg, &res_id);
+  ndialog_run(dlg, NULL, &res_id);
 #else
   gtk_widget_show_all(dlg);
   res_id = ndialog_run(dlg);
@@ -718,7 +724,7 @@ DialogRadio(GtkWidget *parent, const char *title, const char *caption, struct na
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_widget_show(dlg);
   res_id = IDLOOP;
-  ndialog_run(dlg, &res_id);
+  ndialog_run(dlg, NULL, &res_id);
 #else
   gtk_widget_show_all(dlg);
   res_id = ndialog_run(dlg);
@@ -822,7 +828,7 @@ DialogButton(GtkWidget *parent, const char *title, const char *caption, struct n
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_widget_show(dlg);
   res_id = IDLOOP;
-  ndialog_run(dlg, &res_id);
+  ndialog_run(dlg, NULL, &res_id);
 #else
   gtk_widget_show_all(dlg);
   res_id = ndialog_run(dlg);
@@ -903,7 +909,7 @@ DialogCombo(GtkWidget *parent, const char *title, const char *caption, struct na
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_widget_show(dlg);
   res_id = IDLOOP;
-  ndialog_run(dlg, &res_id);
+  ndialog_run(dlg, NULL, &res_id);
 #else
   gtk_widget_show_all(dlg);
   res_id = ndialog_run(dlg);
@@ -998,7 +1004,7 @@ DialogComboEntry(GtkWidget *parent, const char *title, const char *caption, stru
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_widget_show(dlg);
   res_id = IDLOOP;
-  ndialog_run(dlg, &res_id);
+  ndialog_run(dlg, NULL, &res_id);
 #else
   gtk_widget_show_all(dlg);
   res_id = ndialog_run(dlg);
@@ -1097,7 +1103,7 @@ DialogSpinEntry(GtkWidget *parent, const char *title, const char *caption, doubl
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_widget_show(dlg);
   res_id = IDLOOP;
-  ndialog_run(dlg, &res_id);
+  ndialog_run(dlg, NULL, &res_id);
 #else
   gtk_widget_show_all(dlg);
   res_id = ndialog_run(dlg);
@@ -1196,7 +1202,7 @@ DialogCheck(GtkWidget *parent, const char *title, const char *caption, struct na
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_widget_show(dlg);
   res_id = IDLOOP;
-  ndialog_run(dlg, &res_id);
+  ndialog_run(dlg, NULL, &res_id);
 #else
   gtk_widget_show_all(dlg);
   res_id = ndialog_run(dlg);
@@ -1617,8 +1623,7 @@ FileSelectionDialog(GtkWidget *parent, struct nGetOpenFileData *data)
 #if GTK_CHECK_VERSION(4, 0, 0)
     int res_id;
     res_id = IDLOOP;
-    if (ndialog_run(dlg, &res_id) != GTK_RESPONSE_ACCEPT)
-      break;
+    ndialog_run(dlg, NULL, &res_id);
 #else
     if (ndialog_run(dlg) != GTK_RESPONSE_ACCEPT)
       break;

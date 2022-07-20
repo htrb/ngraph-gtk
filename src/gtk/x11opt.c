@@ -627,6 +627,30 @@ get_font_family(const gchar *font_name)
   return ptr;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+FontSettingDialogAddAlternative_response(GtkWidget *dialog, gint response, gpointer client_data)
+{
+  struct FontSettingDialog *d;
+  PangoFontFamily *family;
+  GtkTreeIter iter;
+
+ if (response == GTK_RESPONSE_CANCEL) {
+   return;
+ }
+
+ d = (struct FontSettingDialog *) client_data;
+ family = gtk_font_chooser_get_font_family(GTK_FONT_CHOOSER(dialog));
+ if (family) {
+   const gchar *font_name;
+   font_name = pango_font_family_get_name(family);
+   list_store_append(d->list, &iter);
+   list_store_set_string(d->list, &iter, 0, font_name);
+ }
+ gtk_window_destroy(GTK_WINDOW(dialog));
+}
+#endif
+
 static void
 FontSettingDialogAddAlternative(GtkWidget *w, gpointer client_data)
 {
@@ -639,10 +663,9 @@ FontSettingDialogAddAlternative(GtkWidget *w, gpointer client_data)
   dialog = gtk_font_chooser_dialog_new(_("Alternative font"), NULL);
 #if GTK_CHECK_VERSION(4, 0, 0)
   response = IDLOOP;
-  ndialog_run(dialog, &response);
+  ndialog_run(dialog, NULL, d);
 #else
   response = ndialog_run(dialog);
-#endif
   if (response != GTK_RESPONSE_CANCEL) {
     PangoFontFamily *family;
     GtkTreeIter iter;
@@ -656,9 +679,6 @@ FontSettingDialogAddAlternative(GtkWidget *w, gpointer client_data)
     }
   }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_window_destroy(GTK_WINDOW(dialog));
-#else
   gtk_widget_destroy (dialog);
 #endif
 }

@@ -1185,7 +1185,7 @@ select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type)
   gtk_color_chooser_set_use_alpha(GTK_COLOR_CHOOSER(dlg), Menulocal.use_opacity);
 #if GTK_CHECK_VERSION(4, 0, 0)
   response = IDLOOP;
-  ndialog_run(dlg, &response);
+  ndialog_run(dlg, NULL, &response);
 #else
   response = ndialog_run(dlg);
 #endif
