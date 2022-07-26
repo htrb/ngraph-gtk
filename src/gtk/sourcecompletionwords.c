@@ -218,12 +218,12 @@ source_completion_words_display (GtkSourceCompletionProvider *provider,
     gtk_source_completion_cell_set_text (cell, p->text);
     break;
   case GTK_SOURCE_COMPLETION_COLUMN_COMMENT:
+  case GTK_SOURCE_COMPLETION_COLUMN_DETAILS:
     gtk_source_completion_cell_set_markup (cell, p->info);
     break;
   case GTK_SOURCE_COMPLETION_COLUMN_ICON:
     gtk_source_completion_cell_set_icon_name (cell, NULL);
     break;
-  case GTK_SOURCE_COMPLETION_COLUMN_DETAILS:
   case GTK_SOURCE_COMPLETION_COLUMN_BEFORE:
   case GTK_SOURCE_COMPLETION_COLUMN_AFTER:
     gtk_source_completion_cell_set_text (cell, NULL);
