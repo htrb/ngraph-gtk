@@ -247,13 +247,11 @@ create_source_view(void)
   GtkSourceLanguageManager *lm;
   GtkSourceBuffer *buffer;
   GtkSourceLanguage *lang;
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
-#else
   GtkSourceCompletionWords *words;
-#endif
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   GValue value = G_VALUE_INIT;
   GtkSourceCompletion *comp;
+#endif
 
   source_view = GTK_SOURCE_VIEW(gtk_source_view_new());
   buffer = gtk_source_buffer_new(NULL);
@@ -268,26 +266,28 @@ create_source_view(void)
   gtk_source_view_set_auto_indent(source_view, TRUE);
   gtk_source_view_set_show_line_numbers(source_view, TRUE);
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   comp = gtk_source_view_get_completion(source_view);
   g_value_init(&value, G_TYPE_BOOLEAN);
   g_value_set_boolean(&value, FALSE); /* fix-me: proposals are not
                                        * shown 2nd time in linux if
                                        * TRUE */
   g_object_set_property(G_OBJECT(comp), "remember-info-visibility", &value);
+#endif
 
   lm = gtk_source_language_manager_get_default();
   lang = gtk_source_language_manager_get_language(lm, "ngraph-math");
   gtk_source_buffer_set_language(GTK_SOURCE_BUFFER(buffer), lang);
   gtk_source_buffer_set_highlight_syntax(GTK_SOURCE_BUFFER(buffer), TRUE);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
-#else
   add_completion_provider_math(source_view);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  words = gtk_source_completion_words_new(_("current equations"));
+#else
   words = gtk_source_completion_words_new(_("current equations"), NULL);
+#endif
   gtk_source_completion_words_register(words, GTK_TEXT_BUFFER(buffer));
   add_completion_provider(source_view, GTK_SOURCE_COMPLETION_PROVIDER(words));
-#endif
 
   return GTK_WIDGET(source_view);
 }
