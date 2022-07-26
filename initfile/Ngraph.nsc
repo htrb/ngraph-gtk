@@ -4,7 +4,7 @@
 usage() {
     echo ${system::name} version ${system::version}
     echo ${system::copyright}
-    echo 'Usage: ngraph [ options ] [ data | NGP | PRM ]'
+    echo 'Usage: ngraph [ options ] [ data | NGP ]'
     echo 'valid options:'
     echo ' -L ngp_file             load ngp file'
     echo ' -x column -y column     data column'
@@ -145,7 +145,7 @@ NULL_DEVICE=/dev/null
 while [ "$1" ]
 do
     case $1 in
-	*.prm|*.PRM|*.ngp|*.NGP)
+	*.ngp|*.NGP)
 	    load_graph "$1"
 	    break
 	    ;;

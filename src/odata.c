@@ -1922,6 +1922,17 @@ file_on_end(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 }
 
 static int
+check_id(struct objlist *obj, int id)
+{
+  int n;
+  n = chkobjlastinst(obj);
+  if (id < 0 || id > n) {
+    return 1;
+  }
+  return 0;
+}
+
+static int
 file_text_obj_set(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   int id;
@@ -1944,6 +1955,9 @@ file_text_obj_set(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *
 
   text_obj = getobject("text");
   if (text_obj == NULL) {
+    return 0;
+  }
+  if (check_id(text_obj, id)) {
     return 0;
   }
   tmp = g_strdup(str);
@@ -1977,6 +1991,9 @@ file_text_obj_get(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *
 
   text_obj = getobject("text");
   if (text_obj == NULL) {
+    return 0;
+  }
+  if (check_id(text_obj, id)) {
     return 0;
   }
   getobj(text_obj, "text", id, 0, NULL, &str);

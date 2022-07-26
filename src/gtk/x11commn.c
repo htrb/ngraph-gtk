@@ -1742,7 +1742,6 @@ LoadNgpFile(char *file, int console, char *option)
   char *argv[2];
   struct narray sarray;
   char mes[256];
-  int sec;
   N_VALUE *inst;
   struct objlist *robj;
   int idn;
@@ -1791,6 +1790,7 @@ LoadNgpFile(char *file, int console, char *option)
     if (arrayadd(&sarray, &s) == NULL) {
       g_free(s);
       arraydel2(&sarray);
+      delobj(obj, newid);
       return 1;
     }
   }
@@ -1799,12 +1799,14 @@ LoadNgpFile(char *file, int console, char *option)
 
   if (name == NULL) {
     arraydel2(&sarray);
+    delobj(obj, newid);
     return 1;
   }
 
   if (arrayadd(&sarray, &name) == NULL) {
     g_free(name);
     arraydel2(&sarray);
+    delobj(obj, newid);
     return 1;
   }
 
@@ -1814,10 +1816,7 @@ LoadNgpFile(char *file, int console, char *option)
     allocnow = allocate_console();
   }
 
-  sec = TRUE;
-  argv[0] = (char *) &sec;
-  argv[1] = NULL;
-  _exeobj(obj, "security", inst, 1, argv);
+  exeobj(obj, "set_security", newid, 0, NULL);
 
   argv[0] = (char *) &sarray;
   argv[1] = NULL;
@@ -1833,11 +1832,6 @@ LoadNgpFile(char *file, int console, char *option)
 
   unregisterevloop(robj, idn, Menulocal.inst);
   menu_lock(FALSE);
-
-  sec = FALSE;
-  argv[0] = (char *) &sec;
-  argv[1] = NULL;
-  _exeobj(obj, "security", inst, 1, argv);
 
   if (r == 0) {
     struct objlist *aobj;

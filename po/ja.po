@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6.08.07\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2022-05-15 13:35+0900\n"
-"PO-Revision-Date: 2022-02-18 18:14+0900\n"
+"POT-Creation-Date: 2022-06-11 19:28+0900\n"
+"PO-Revision-Date: 2022-07-26 16:50+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja\n"
@@ -45,7 +45,7 @@ msgstr "アプリケーションウィンドウ"
 msgid "Unsaved Graph"
 msgstr "新規グラフ"
 
-#: src/gtk/ox11dlg.c:114 src/gtk/x11commn.c:1672
+#: src/gtk/ox11dlg.c:114 src/gtk/x11commn.c:1666
 msgid "Confirm"
 msgstr "確認"
 
@@ -772,12 +772,12 @@ msgstr "NGPファイルの保存"
 msgid "Saving `%.128s'."
 msgstr "保存中 `%.128s'."
 
-#: src/gtk/x11commn.c:1478
+#: src/gtk/x11commn.c:1477
 #, c-format
 msgid "Loading `%.128s'."
 msgstr "読込中 `%.128s'."
 
-#: src/gtk/x11commn.c:1671
+#: src/gtk/x11commn.c:1665
 msgid ""
 "This graph is modified.\n"
 "Save this graph?"
@@ -785,28 +785,28 @@ msgstr ""
 "このグラフは変更されています.\n"
 "保存しますか?"
 
-#: src/gtk/x11commn.c:1900
+#: src/gtk/x11commn.c:1894
 msgid "Ngraph.ini is not found."
 msgstr "Ngraph.ini が見つかりません."
 
-#: src/gtk/x11commn.c:1903
+#: src/gtk/x11commn.c:1897
 msgid "Ngraph.ini is write protected."
 msgstr "Ngraph.ini に書き込めませんでした."
 
-#: src/gtk/x11commn.c:1918
+#: src/gtk/x11commn.c:1912
 #, c-format
 msgid "Install `Ngraph.ini' to %s ?"
 msgstr "%s に 'Ngraph.ini' をインストールしますか?"
 
-#: src/gtk/x11commn.c:1922
+#: src/gtk/x11commn.c:1916
 msgid "Ngraph.ini could not be copied."
 msgstr "Ngraph.ini をコピーできませんでした."
 
-#: src/gtk/x11commn.c:2014
+#: src/gtk/x11commn.c:2008
 msgid "_Stop"
 msgstr "停止(_S)"
 
-#: src/gtk/x11commn.c:2057
+#: src/gtk/x11commn.c:2051
 msgid "error"
 msgstr "エラー"
 
@@ -3966,7 +3966,7 @@ msgid ""
 "<b>on_end</b>(<i>proc</i>)\n"
 "Evaluate <i>proc</i> at the end of plottong the data object."
 msgstr ""
-"<b>end_proc</b>(<i>proc</i>)\n"
+"<b>on_end</b>(<i>proc</i>)\n"
 "data オブジェクトの描画終了時に<i>proc</i>を評価する。"
 
 #: src/gtk/completion_info_data.c:116
