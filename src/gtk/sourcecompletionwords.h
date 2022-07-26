@@ -51,9 +51,17 @@ struct _SourceCompletionWordsClass {
 
 GType source_completion_words_get_type (void) G_GNUC_CONST;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+typedef GListStore * (* populate_func)(const char *, int, GtkTextIter *);
+#else
 typedef GList * (* populate_func)(const char *, int, GtkTextIter *);
+#endif
 SourceCompletionWords *source_completion_words_new(const gchar *name, populate_func func);
 
+struct _WordsProposal;
+typedef struct _WordsProposal WordsProposal;
+WordsProposal *words_proposal_new (void);
+void words_proposal_set (WordsProposal *item, const char *text, const char *info);
 G_END_DECLS
 
 #endif /* SOURCE_COMPLETION_WORDS_H */
