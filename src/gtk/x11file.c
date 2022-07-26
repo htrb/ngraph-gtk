@@ -214,16 +214,17 @@ enum MATH_FNC_TYPE {
 
 static char *FieldStr[] = {"math_x", "math_y", "func_f", "func_g", "func_h"};
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
-#else
 static void
 add_completion_provider(GtkSourceView *source_view, GtkSourceCompletionProvider *provider)
 {
   GtkSourceCompletion *comp;
 
   comp = gtk_source_view_get_completion(source_view);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_source_completion_add_provider(comp, provider);
+#else
   gtk_source_completion_add_provider(comp, provider, NULL);
+#endif
   g_object_unref(G_OBJECT(provider));
 }
 
@@ -238,7 +239,6 @@ add_completion_provider_math(GtkSourceView *source_view)
   words = source_completion_words_new(_("constants"), completion_info_const_populate);
   add_completion_provider(source_view, GTK_SOURCE_COMPLETION_PROVIDER(words));
 }
-#endif
 
 static GtkWidget *
 create_source_view(void)
