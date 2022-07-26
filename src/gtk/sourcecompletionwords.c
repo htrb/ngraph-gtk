@@ -271,7 +271,9 @@ source_completion_words_refilter (GtkSourceCompletionProvider *provider,
   g_assert (G_IS_LIST_MODEL (model));
 
   word = gtk_source_completion_context_get_word (context);
-  model = gtk_filter_list_model_get_model (GTK_FILTER_LIST_MODEL (model));
+  if (GTK_IS_FILTER_LIST_MODEL (model)) {
+    model = gtk_filter_list_model_get_model (GTK_FILTER_LIST_MODEL (model));
+  }
   expression = gtk_property_expression_new (WORDS_TYPE_PROPOSAL, NULL, "word");
   filter = gtk_string_filter_new (g_steal_pointer (&expression));
   gtk_string_filter_set_search (GTK_STRING_FILTER (filter), word);
