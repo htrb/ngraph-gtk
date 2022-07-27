@@ -148,6 +148,16 @@ source_completion_words_get_name (GtkSourceCompletionProvider *self)
   return g_strdup (SOURCE_COMPLETION_WORDS (self)->priv->name);
 }
 
+static char *
+completion_context_get_word (GtkSourceCompletionContext *context)
+{
+  char *word, *tmp;
+  tmp = gtk_source_completion_context_get_word (context);
+  word = g_ascii_strdown (tmp, -1);
+  g_free (tmp);
+  return word;
+}
+
 static void
 source_completion_words_populate_async (GtkSourceCompletionProvider *provider,
                                         GtkSourceCompletionContext  *context,
@@ -161,14 +171,15 @@ source_completion_words_populate_async (GtkSourceCompletionProvider *provider,
   GListStore *ret = NULL;
   GTask *task;
 
-  word = gtk_source_completion_context_get_word (context);
+  word = completion_context_get_word (context);
   gtk_source_completion_context_get_bounds (context, NULL, &iter);
   task = g_task_new (provider, cancellable, callback, user_data);
   g_task_set_source_tag (task, source_completion_words_populate_async);
   g_task_set_priority (task, PRIORITY);
   ret = words->priv->populate_func(word, strlen(word), &iter);
-  g_free(word);
   g_task_return_pointer (task, ret, g_object_unref);
+  g_clear_object (&task);
+  g_clear_pointer (&word, g_free);
 }
 
 static GListModel *
@@ -270,7 +281,7 @@ source_completion_words_refilter (GtkSourceCompletionProvider *provider,
   g_assert (GTK_SOURCE_IS_COMPLETION_CONTEXT (context));
   g_assert (G_IS_LIST_MODEL (model));
 
-  word = gtk_source_completion_context_get_word (context);
+  word = completion_context_get_word (context);
   if (GTK_IS_FILTER_LIST_MODEL (model)) {
     model = gtk_filter_list_model_get_model (GTK_FILTER_LIST_MODEL (model));
   }
