@@ -280,7 +280,7 @@ source_completion_words_refilter (GtkSourceCompletionProvider *provider,
   g_assert (GTK_SOURCE_IS_COMPLETION_CONTEXT (context));
   g_assert (G_IS_LIST_MODEL (model));
 
-  word = gtk_source_completion_context_get_word (context);
+  word = completion_context_get_word (context);
   if (GTK_IS_FILTER_LIST_MODEL (model)) {
     model = gtk_filter_list_model_get_model (GTK_FILTER_LIST_MODEL (model));
   }
