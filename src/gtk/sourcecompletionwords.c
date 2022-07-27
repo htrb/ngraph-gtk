@@ -247,8 +247,7 @@ source_completion_words_dispose (GObject *object)
 {
   SourceCompletionWords *provider = SOURCE_COMPLETION_WORDS (object);
 
-  g_free (provider->priv->name);
-  provider->priv->name = NULL;
+  g_clear_pointer (&provider->priv->name, g_free);
 
   G_OBJECT_CLASS (source_completion_words_parent_class)->dispose (object);
 }
