@@ -291,6 +291,13 @@ source_completion_words_refilter (GtkSourceCompletionProvider *provider,
   if (GTK_IS_FILTER_LIST_MODEL (model)) {
     model = gtk_filter_list_model_get_model (GTK_FILTER_LIST_MODEL (model));
   }
+
+  if (! word || ! word[0]) {
+    gtk_source_completion_context_set_proposals_for_provider (context, provider, model);
+    g_free (word);
+    return;
+  }
+
   expression = gtk_property_expression_new (WORDS_TYPE_PROPOSAL, NULL, "word");
   filter = gtk_string_filter_new (g_steal_pointer (&expression));
   gtk_string_filter_set_search (GTK_STRING_FILTER (filter), word);
