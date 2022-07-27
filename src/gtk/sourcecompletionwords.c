@@ -148,6 +148,16 @@ source_completion_words_get_name (GtkSourceCompletionProvider *self)
   return g_strdup (SOURCE_COMPLETION_WORDS (self)->priv->name);
 }
 
+static char *
+completion_context_get_word (GtkSourceCompletionContext *context)
+{
+  char *word, *tmp;
+  tmp = gtk_source_completion_context_get_word (context);
+  word = g_ascii_strdown (tmp, -1);
+  g_free (tmp);
+  return word;
+}
+
 static void
 source_completion_words_populate_async (GtkSourceCompletionProvider *provider,
                                         GtkSourceCompletionContext  *context,
