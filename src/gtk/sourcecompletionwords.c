@@ -171,14 +171,14 @@ source_completion_words_populate_async (GtkSourceCompletionProvider *provider,
   GListStore *ret = NULL;
   GTask *task;
 
-  word = gtk_source_completion_context_get_word (context);
+  word = completion_context_get_word (context);
   gtk_source_completion_context_get_bounds (context, NULL, &iter);
   task = g_task_new (provider, cancellable, callback, user_data);
   g_task_set_source_tag (task, source_completion_words_populate_async);
   g_task_set_priority (task, PRIORITY);
   ret = words->priv->populate_func(word, strlen(word), &iter);
-  g_free(word);
   g_task_return_pointer (task, ret, g_object_unref);
+  g_clear_pointer (&word, g_free);
 }
 
 static GListModel *
