@@ -178,6 +178,7 @@ source_completion_words_populate_async (GtkSourceCompletionProvider *provider,
   g_task_set_priority (task, PRIORITY);
   ret = words->priv->populate_func(word, strlen(word), &iter);
   g_task_return_pointer (task, ret, g_object_unref);
+  g_clear_object (&task);
   g_clear_pointer (&word, g_free);
 }
 
