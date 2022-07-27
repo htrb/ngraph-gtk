@@ -118,9 +118,16 @@ words_proposal_new (void)
 }
 
 void
-words_proposal_set (WordsProposal *item, const char *text, const char *info)
+words_proposal_set_text (WordsProposal *item, const char *text)
 {
+  g_clear_pointer(&item->text, g_free);
   item->text = g_strdup (text);
+}
+
+void
+words_proposal_set_info (WordsProposal *item, const char *info)
+{
+  g_clear_pointer(&item->info, g_free);
   item->info = g_strdup (info);
 }
 

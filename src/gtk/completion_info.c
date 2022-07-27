@@ -85,6 +85,7 @@ completion_info_populate(struct completion_info *info, const char *word, int len
 #if GTK_CHECK_VERSION(4, 0, 0)
       WordsProposal *proposal;
       proposal = words_proposal_new();
+      words_proposal_set_info(proposal, _(info[i].info));
 #else
       GtkSourceCompletionItem *proposal;
       proposal = gtk_source_completion_item_new2();
@@ -100,7 +101,7 @@ completion_info_populate(struct completion_info *info, const char *word, int len
       text = info[i].text;
     }
 #if GTK_CHECK_VERSION(4, 0, 0)
-    words_proposal_set(info[i].proposal, text, _(info[i].info));
+    words_proposal_set_text(info[i].proposal, text);
     g_list_store_append (ret, info[i].proposal);
 #else
     gtk_source_completion_item_set_text(info[i].proposal, text);
