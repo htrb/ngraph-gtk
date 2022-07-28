@@ -118,9 +118,16 @@ words_proposal_new (void)
 }
 
 void
-words_proposal_set (WordsProposal *item, const char *text, const char *info)
+words_proposal_set_text (WordsProposal *item, const char *text)
 {
+  g_clear_pointer(&item->text, g_free);
   item->text = g_strdup (text);
+}
+
+void
+words_proposal_set_info (WordsProposal *item, const char *info)
+{
+  g_clear_pointer(&item->info, g_free);
   item->info = g_strdup (info);
 }
 
@@ -247,8 +254,7 @@ source_completion_words_dispose (GObject *object)
 {
   SourceCompletionWords *provider = SOURCE_COMPLETION_WORDS (object);
 
-  g_free (provider->priv->name);
-  provider->priv->name = NULL;
+  g_clear_pointer (&provider->priv->name, g_free);
 
   G_OBJECT_CLASS (source_completion_words_parent_class)->dispose (object);
 }
@@ -285,8 +291,16 @@ source_completion_words_refilter (GtkSourceCompletionProvider *provider,
   if (GTK_IS_FILTER_LIST_MODEL (model)) {
     model = gtk_filter_list_model_get_model (GTK_FILTER_LIST_MODEL (model));
   }
+
+  if (! word || ! word[0]) {
+    gtk_source_completion_context_set_proposals_for_provider (context, provider, model);
+    g_free (word);
+    return;
+  }
+
   expression = gtk_property_expression_new (WORDS_TYPE_PROPOSAL, NULL, "word");
   filter = gtk_string_filter_new (g_steal_pointer (&expression));
+  gtk_string_filter_set_match_mode(filter, GTK_STRING_FILTER_MATCH_MODE_PREFIX);
   gtk_string_filter_set_search (GTK_STRING_FILTER (filter), word);
   filter_model = gtk_filter_list_model_new (g_object_ref (model), GTK_FILTER (g_steal_pointer (&filter)));
   gtk_filter_list_model_set_incremental (filter_model, TRUE);
