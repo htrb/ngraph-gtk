@@ -300,6 +300,7 @@ source_completion_words_refilter (GtkSourceCompletionProvider *provider,
 
   expression = gtk_property_expression_new (WORDS_TYPE_PROPOSAL, NULL, "word");
   filter = gtk_string_filter_new (g_steal_pointer (&expression));
+  gtk_string_filter_set_match_mode(filter, GTK_STRING_FILTER_MATCH_MODE_PREFIX);
   gtk_string_filter_set_search (GTK_STRING_FILTER (filter), word);
   filter_model = gtk_filter_list_model_new (g_object_ref (model), GTK_FILTER (g_steal_pointer (&filter)));
   gtk_filter_list_model_set_incremental (filter_model, TRUE);
