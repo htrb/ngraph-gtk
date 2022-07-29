@@ -248,10 +248,8 @@ create_source_view(void)
   GtkSourceBuffer *buffer;
   GtkSourceLanguage *lang;
   GtkSourceCompletionWords *words;
-#if ! GTK_CHECK_VERSION(4, 0, 0)
   GValue value = G_VALUE_INIT;
   GtkSourceCompletion *comp;
-#endif
 
   source_view = GTK_SOURCE_VIEW(gtk_source_view_new());
   buffer = gtk_source_buffer_new(NULL);
@@ -266,13 +264,16 @@ create_source_view(void)
   gtk_source_view_set_auto_indent(source_view, TRUE);
   gtk_source_view_set_show_line_numbers(source_view, TRUE);
 
-#if ! GTK_CHECK_VERSION(4, 0, 0)
   comp = gtk_source_view_get_completion(source_view);
   g_value_init(&value, G_TYPE_BOOLEAN);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   g_value_set_boolean(&value, FALSE); /* fix-me: proposals are not
                                        * shown 2nd time in linux if
                                        * TRUE */
   g_object_set_property(G_OBJECT(comp), "remember-info-visibility", &value);
+#else
+  g_value_set_boolean(&value, TRUE);
+  g_object_set_property(G_OBJECT(comp), "select-on-show", &value);
 #endif
 
   lm = gtk_source_language_manager_get_default();
