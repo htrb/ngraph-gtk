@@ -1253,6 +1253,8 @@ free_str_list(GSList *top)
 #endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
+#defien FILE_CHOOSER_OPTION_CHDIR "chdir"
+
 static void
 fsok(GtkWidget *dlg, struct nGetOpenFileData *data)
 {
@@ -1344,9 +1346,8 @@ fsok(GtkWidget *dlg, struct nGetOpenFileData *data)
 
   if (data->changedir && k > 0) {
     const char *chdir;
-    chdir = gtk_file_chooser_get_choice(GTK_FILE_CHOOSER(dlg), "chdir");
+    chdir = gtk_file_chooser_get_choice(GTK_FILE_CHOOSER(dlg), FILE_CHOOSER_OPTION_CHDIR);
     data->chdir = (chdir && (g_strcmp0(chdir, "true") == 0));
-    printf("chdir = %s (%d:%s)\n", chdir, data->chdir, farray[0]);
     if (data->chdir && data->init_dir) {
       char *dir;
 
@@ -1540,8 +1541,8 @@ FileSelectionDialog(GtkWidget *parent, struct nGetOpenFileData *data)
 				    NULL);
 #if GTK_CHECK_VERSION(4, 0, 0)
   if (data->changedir && data->init_dir) {
-    gtk_file_chooser_add_choice(GTK_FILE_CHOOSER(dlg), "chdir", _("_Change current directory"), NULL, NULL);
-    gtk_file_chooser_set_choice(GTK_FILE_CHOOSER(dlg), "chdir", (data->chdir) ? "true" : "false");
+    gtk_file_chooser_add_choice(GTK_FILE_CHOOSER(dlg), FILE_CHOOSER_OPTION_CHDIR, _("Change current directory"), NULL, NULL);
+    gtk_file_chooser_set_choice(GTK_FILE_CHOOSER(dlg), FILE_CHOOSER_OPTION_CHDIR, (data->chdir) ? "true" : "false");
   }
 #else
   gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(dlg), TRUE);
