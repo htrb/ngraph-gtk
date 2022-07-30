@@ -1258,11 +1258,7 @@ GraphSave(int overwrite)
   prev_wd = current_wd = NULL;
   if ((initfil == NULL) || (! overwrite || (naccess(initfil, 04) == -1))) {
     prev_wd = ngetcwd();
-#if GTK_CHECK_VERSION(4, 0, 0)
-    chd = TRUE;
-#else
     chd = Menulocal.changedirectory;
-#endif
     ret = nGetSaveFileName(TopLevel, _("Save NGP file"), "ngp",
 			   &(Menulocal.graphloaddir), initfil,
 			   &file, overwrite, chd);

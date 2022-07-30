@@ -5108,11 +5108,7 @@ CmFileOpen
   if (obj == NULL)
     return;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-  chd = FALSE;
-#else
   chd = Menulocal.changedirectory;
-#endif
   ret = nGetOpenFileNameMulti(TopLevel, _("Add Data file"), NULL,
 			      &(Menulocal.fileopendir), NULL,
 			      &file, chd);
@@ -6245,11 +6241,7 @@ CmFileSaveData(void *w, gpointer client_data)
     div = DlgOutputData.div;
   }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-  chd = FALSE;
-#else
   chd = Menulocal.changedirectory;
-#endif
   if (nGetSaveFileName(TopLevel, _("Data file"), NULL, NULL, NULL,
 		       &file, FALSE, chd) != IDOK) {
     arraydel(&farray);

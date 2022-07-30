@@ -86,11 +86,10 @@ file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointe
 
 #if GTK_CHECK_VERSION(4, 0, 0)
   str = gtk_editable_get_text(GTK_EDITABLE(w));
-  chd = FALSE;
 #else
   str = gtk_entry_get_text(w);
-  chd = Menulocal.changedirectory;
 #endif
+  chd = Menulocal.changedirectory;
   if (nGetOpenFileName(parent, _("Open"), ext, NULL, str,
 		       &file, TRUE, chd) == IDOK && file) {
     if (file) {
