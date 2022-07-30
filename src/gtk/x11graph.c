@@ -1408,11 +1408,7 @@ CmGraphLoad(void *w, gpointer client_data)
     return;
 
   cwd = ngetcwd();
-#if GTK_CHECK_VERSION(4, 0, 0)
-  chd = TRUE;
-#else
   chd = Menulocal.changedirectory;
-#endif
   if (nGetOpenFileName(TopLevel,
 		       _("Load NGP file"), "ngp", &(Menulocal.graphloaddir),
 		       NULL, &file, TRUE,

@@ -533,9 +533,8 @@ struct MiscDialog
     *decimalsign;
 #if GTK_CHECK_VERSION(4, 0, 0)
   GtkWidget **palette;
-#else
-  GtkWidget *directory;
 #endif
+  GtkWidget *directory;
   struct objlist *Obj;
   struct narray tmp_palette;
   int Id;

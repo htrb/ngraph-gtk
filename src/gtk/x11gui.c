@@ -49,9 +49,9 @@ struct nGetOpenFileData
   GtkWidget *widget;
 #if ! GTK_CHECK_VERSION(4, 0, 0)
   GtkWidget *chdir_cb;
+#endif
   int chdir;
   int changedir;
-#endif
   int ret;
   char *title;
   char **init_dir;
@@ -1256,7 +1256,7 @@ free_str_list(GSList *top)
 static void
 fsok(GtkWidget *dlg, struct nGetOpenFileData *data)
 {
-  char *file, *file2, **farray, *dir;
+  char *file, *file2, **farray;
   const char *filter_name;
   int i, j, k, len, n;
   GStatBuf buf;
@@ -1342,10 +1342,18 @@ fsok(GtkWidget *dlg, struct nGetOpenFileData *data)
   if (k == 0)
     return;
 
-  if (data->init_dir) {
-    g_free(*(data->init_dir));
-    dir = g_path_get_dirname(farray[0]);
-    *(data->init_dir) = dir;
+  if (data->changedir && k > 0) {
+    const char *chdir;
+    chdir = gtk_file_chooser_get_choice(GTK_FILE_CHOOSER(dlg), "chdir");
+    data->chdir = (chdir && (g_strcmp0(chdir, "true") == 0));
+    printf("chdir = %s (%d:%s)\n", chdir, data->chdir, farray[0]);
+    if (data->chdir && data->init_dir) {
+      char *dir;
+
+      g_free(*(data->init_dir));
+      dir = g_path_get_dirname(farray[0]);
+      *(data->init_dir) = dir;
+    }
   }
 
   farray[k] = NULL;
@@ -1465,6 +1473,7 @@ file_dialog_set_current_neme(GtkWidget *dlg, const char *full_name)
   }
 }
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
 static int
 check_overwrite(GtkWidget *parent, const char *filename)
 {
@@ -1481,6 +1490,7 @@ check_overwrite(GtkWidget *parent, const char *filename)
 
   return r != IDYES;
 }
+#endif
 
 static char *
 get_filename_with_ext(const char *basename, const char *ext)
@@ -1529,7 +1539,10 @@ FileSelectionDialog(GtkWidget *parent, struct nGetOpenFileData *data)
 				    data->button, GTK_RESPONSE_ACCEPT,
 				    NULL);
 #if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
+  if (data->changedir && data->init_dir) {
+    gtk_file_chooser_add_choice(GTK_FILE_CHOOSER(dlg), "chdir", _("_Change current directory"), NULL, NULL);
+    gtk_file_chooser_set_choice(GTK_FILE_CHOOSER(dlg), "chdir", (data->chdir) ? "true" : "false");
+  }
 #else
   gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(dlg), TRUE);
   rc = gtk_check_button_new_with_mnemonic(_("_Change current directory"));
@@ -1632,10 +1645,12 @@ FileSelectionDialog(GtkWidget *parent, struct nGetOpenFileData *data)
     fsok(dlg, data);
     if (data->ret == IDOK && data->type == GTK_FILE_CHOOSER_ACTION_SAVE) {
       file_dialog_set_current_neme(dlg, data->file[0]);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
       if (! data->overwrite && check_overwrite(dlg, data->file[0])) {
 	data->ret = IDCANCEL;
 	continue;
       }
+#endif
     }
     break;
   }
@@ -1663,16 +1678,12 @@ nGetOpenFileNameMulti(GtkWidget * parent,
   data.init_dir = init_dir;
   data.init_file = init_file;
   data.file = NULL;
-#if ! GTK_CHECK_VERSION(4, 0, 0)
   data.chdir = chd;
-#endif
   data.ext = defext;
   data.mustexist = TRUE;
   data.overwrite = FALSE;
   data.multi = TRUE;
-#if ! GTK_CHECK_VERSION(4, 0, 0)
   data.changedir = TRUE;
-#endif
   data.type = GTK_FILE_CHOOSER_ACTION_OPEN;
   data.button = _("_Open");
   ret = FileSelectionDialog(parent, &data);
@@ -1706,16 +1717,12 @@ nGetOpenFileName(GtkWidget *parent,
   data.init_dir = init_dir;
   data.init_file = init_file;
   data.file = NULL;
-#if ! GTK_CHECK_VERSION(4, 0, 0)
   data.chdir = chd;
-#endif
   data.ext = defext;
   data.mustexist = exist;
   data.overwrite = FALSE;
   data.multi = FALSE;
-#if ! GTK_CHECK_VERSION(4, 0, 0)
   data.changedir = TRUE;
-#endif
   data.type = (exist) ? GTK_FILE_CHOOSER_ACTION_OPEN : GTK_FILE_CHOOSER_ACTION_SAVE;
   data.button = _("_Open");
   ret = FileSelectionDialog(parent, &data);
@@ -1750,16 +1757,12 @@ nGetSaveFileName(GtkWidget * parent,
   data.init_dir = init_dir;
   data.init_file = init_file;
   data.file = NULL;
-#if ! GTK_CHECK_VERSION(4, 0, 0)
   data.chdir = chd;
-#endif
   data.ext = defext;
   data.mustexist = FALSE;
   data.overwrite = overwrite;
   data.multi = FALSE;
-#if ! GTK_CHECK_VERSION(4, 0, 0)
   data.changedir = TRUE;
-#endif
   data.type = GTK_FILE_CHOOSER_ACTION_SAVE,
   data.button = _("_Save");
   ret = FileSelectionDialog(parent, &data);

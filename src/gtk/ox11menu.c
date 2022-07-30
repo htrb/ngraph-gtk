@@ -152,9 +152,7 @@ static struct menu_config MenuConfigMisc[] = {
   {"coordwin_font",		MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.coordwin_font},
   {"infowin_font",		MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.infowin_font},
   {"file_preview_font",		MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.file_preview_font},
-#if ! GTK_CHECK_VERSION(4, 0, 0)
   {"change_directory",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.changedirectory},
-#endif
   {"save_path",			MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.savepath},
   {"save_with_data",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.savewithdata},
   {"save_with_merge",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.savewithmerge},
@@ -987,9 +985,7 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   Menulocal.show_cross = FALSE;
   Menulocal.scriptconsole = FALSE;
   Menulocal.addinconsole = TRUE;
-#if ! GTK_CHECK_VERSION(4, 0, 0)
   Menulocal.changedirectory = 1;
-#endif
   set_paper_type(21000, 29700);
   Menulocal.PaperZoom = 10000;
   Menulocal.exwindpi = DEFAULT_DPI / 2;

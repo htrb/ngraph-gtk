@@ -325,11 +325,7 @@ CmMergeOpen(void *w, gpointer client_data)
   if ((obj = chkobject("merge")) == NULL)
     return;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-  chd = FALSE;
-#else
   chd = Menulocal.changedirectory;
-#endif
   if (nGetOpenFileName(TopLevel, _("Add Merge file"), "gra", NULL, NULL, &name,
 		       TRUE, chd) != IDOK || ! name)
     return;

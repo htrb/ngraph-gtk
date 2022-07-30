@@ -71,7 +71,7 @@ int Menulock = FALSE, DnDLock = FALSE;
 struct NgraphApp NgraphApp = {0};
 GtkWidget *TopLevel = NULL, *DrawButton = NULL;
 
-static GtkWidget *CurrentWindow = NULL, *CToolbar = NULL, *PToolbar = NULL, *SettingPanel = NULL, *ToolBox = NULL, *RecentGraphMenu = NULL, *RecentDateMenu = NULL;
+static GtkWidget *CurrentWindow = NULL, *CToolbar = NULL, *PToolbar = NULL, *SettingPanel = NULL, *ToolBox = NULL, *RecentGraphMenu = NULL, *RecentDataMenu = NULL;
 static enum {APP_CONTINUE, APP_QUIT, APP_QUIT_FORCE} Hide_window = APP_CONTINUE;
 static int DrawLock = FALSE;
 static unsigned int CursorType;
@@ -2513,7 +2513,7 @@ static void
 recent_manger_changed(GtkRecentManager* self, gpointer user_data)
 {
   create_recent_menu(RecentGraphMenu, RECENT_TYPE_GRAPH);
-  create_recent_menu(RecentDateMenu, RECENT_TYPE_DATA);
+  create_recent_menu(RecentDataMenu, RECENT_TYPE_DATA);
 }
 
 static void
@@ -2535,7 +2535,7 @@ finalize_recent_manager(void)
   g_signal_handlers_disconnect_by_func(manager, G_CALLBACK(recent_manger_changed), NULL);
 
   remove_menu_model(RecentGraphMenu);
-  remove_menu_model(RecentDateMenu);
+  remove_menu_model(RecentDataMenu);
 }
 
 static void
@@ -2693,7 +2693,7 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
       menu = gtk_menu_button_new();
       gtk_widget_set_tooltip_text(menu, _("Recent Data Files"));
       create_recent_menu(menu, RECENT_TYPE_DATA);
-      RecentDateMenu = menu;
+      RecentDataMenu = menu;
 #else
       widget = gtk_menu_tool_button_new(NULL, _(item[i].label));
       menu = create_recent_menu(RECENT_TYPE_DATA);
