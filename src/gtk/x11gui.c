@@ -1260,9 +1260,8 @@ fsok(GtkWidget *dlg, struct nGetOpenFileData *data)
 
   if (data->changedir && k > 0) {
     const char *chdir;
-    chdir = gtk_file_chooser_get_choice(GTK_FILE_CHOOSER(dlg), "chdir");
+    chdir = gtk_file_chooser_get_choice(GTK_FILE_CHOOSER(dlg), FILE_CHOOSER_OPTION_CHDIR);
     data->chdir = (chdir && (g_strcmp0(chdir, "true") == 0));
-    printf("chdir = %s (%d:%s)\n", chdir, data->chdir, farray[0]);
     if (data->chdir && data->init_dir) {
       char *dir;
 
