@@ -1455,8 +1455,8 @@ FileSelectionDialog(GtkWidget *parent, struct nGetOpenFileData *data)
 				    NULL);
 #if GTK_CHECK_VERSION(4, 0, 0)
   if (data->changedir && data->init_dir) {
-    gtk_file_chooser_add_choice(GTK_FILE_CHOOSER(dlg), "chdir", _("_Change current directory"), NULL, NULL);
-    gtk_file_chooser_set_choice(GTK_FILE_CHOOSER(dlg), "chdir", (data->chdir) ? "true" : "false");
+    gtk_file_chooser_add_choice(GTK_FILE_CHOOSER(dlg), FILE_CHOOSER_OPTION_CHDIR, _("Change current directory"), NULL, NULL);
+    gtk_file_chooser_set_choice(GTK_FILE_CHOOSER(dlg), FILE_CHOOSER_OPTION_CHDIR, (data->chdir) ? "true" : "false");
   }
 #else
   gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(dlg), TRUE);
