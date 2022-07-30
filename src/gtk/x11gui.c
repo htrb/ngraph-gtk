@@ -1387,6 +1387,7 @@ file_dialog_set_current_neme(GtkWidget *dlg, const char *full_name)
   }
 }
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
 static int
 check_overwrite(GtkWidget *parent, const char *filename)
 {
@@ -1403,6 +1404,7 @@ check_overwrite(GtkWidget *parent, const char *filename)
 
   return r != IDYES;
 }
+#endif
 
 static char *
 get_filename_with_ext(const char *basename, const char *ext)
@@ -1558,10 +1560,12 @@ FileSelectionDialog(GtkWidget *parent, struct nGetOpenFileData *data)
     fsok(dlg, data);
     if (data->ret == IDOK && data->type == GTK_FILE_CHOOSER_ACTION_SAVE) {
       file_dialog_set_current_neme(dlg, data->file[0]);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
       if (! data->overwrite && check_overwrite(dlg, data->file[0])) {
 	data->ret = IDCANCEL;
 	continue;
       }
+#endif
     }
     break;
   }
