@@ -86,6 +86,10 @@ main(int argc, char *argv[])
     gchar *error;
     error = g_strdup_printf(usage, g_path_get_basename(argv[0]));
     print_error_exit(error);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    g_main_loop_run(MainLoop);
+    exit(1);
+#endif
   }
   gra_file = argv[3];
   img_file = argv[2];
