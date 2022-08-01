@@ -40,6 +40,10 @@ struct rectangle{
 };
 static GtkWidget *App = NULL;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static GMainLoop *MainLoop;
+#endif
+
 static GtkWidget *create_widgets(struct AppData *app_data, const gchar *img_file);
 static void print_error_exit(const gchar *error);
 static void set_bgcolor(int r, int g, int b, int a, struct AppData *data);
@@ -72,6 +76,7 @@ main(int argc, char *argv[])
   struct AppData app_data;
 
 #if GTK_CHECK_VERSION(4, 0, 0)
+  MainLoop = g_main_loop_new (NULL, FALSE);
   gtk_init();
 #else
   gtk_init(&argc, &argv);
@@ -92,7 +97,7 @@ main(int argc, char *argv[])
   app_data.gra = gra_file;
   App = create_widgets(&app_data, img_file);
 #if GTK_CHECK_VERSION(4, 0, 0)
-  main_loop();
+  g_main_loop_run(MainLoop);
 #else
   gtk_main();
 #endif
@@ -161,7 +166,9 @@ create_widgets(struct AppData *app_data, const gchar *img_file)
   app = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 #endif
 
-#if ! GTK_CHECK_VERSION(4, 0, 0)
+#if GTK_CHECK_VERSION(4, 0, 0)
+  g_signal_connect_swapped(app, "close-request", G_CALLBACK(g_main_loop_quit), MainLoop);
+#else
   g_signal_connect(app, "delete-event", G_CALLBACK(delete_event), NULL);
 #endif
 #if GTK_CHECK_VERSION(4, 0, 0)
