@@ -398,7 +398,7 @@ save_button_clicked(GtkButton *widget, gpointer data)
   struct AppData *app_data = (struct AppData *) data;
   GdkPixbuf *im;
   gchar *grafile;
-  int dotsize, w, h;
+  int dotsize, w, h, r;
 
   im = app_data->im;
   grafile = app_data->gra;
@@ -406,10 +406,12 @@ save_button_clicked(GtkButton *widget, gpointer data)
   h = gdk_pixbuf_get_height(im);
 
   dotsize = gra_set_dpi(app_data->dpi);
-  gra_save(im, grafile);
+  r = gra_save(im, grafile);
   printf("%d %d\n", w * dotsize, h * dotsize);
 #if GTK_CHECK_VERSION(4, 0, 0)
-  g_main_loop_quit(MainLoop);
+  if (! r) {
+    g_main_loop_quit(MainLoop);
+  }
 #else
   gtk_main_quit();
 #endif
