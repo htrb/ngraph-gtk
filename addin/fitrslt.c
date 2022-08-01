@@ -587,6 +587,8 @@ create_caption_frame(struct fit_prm *prm)
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
 #if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_widget_set_hexpand(frame, TRUE);
+  gtk_widget_set_vexpand(frame, TRUE);
   gtk_box_append(GTK_BOX(hbox), frame);
 #else
   gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 4);
