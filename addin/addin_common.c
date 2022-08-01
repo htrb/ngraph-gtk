@@ -162,8 +162,16 @@ get_font_parameter(struct font_prm *prm, int *pt, int *spc, int *script, int *st
   *script = gtk_spin_button_get_value(GTK_SPIN_BUTTON(prm->script)) * 100;
   *spc = gtk_spin_button_get_value(GTK_SPIN_BUTTON(prm->space)) * 100;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  bold = gtk_check_button_get_active(GTK_CHECK_BUTTON(prm->bold));
+#else
   bold = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(prm->bold));
+#endif
+#if GTK_CHECK_VERSION(4, 0, 0)
+  italic = gtk_check_button_get_active(GTK_CHECK_BUTTON(prm->italic));
+#else
   italic = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(prm->italic));
+#endif
   *style = (bold ? 1 : 0) + (italic ? 2 : 0);
 
   gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(prm->color), &color);
