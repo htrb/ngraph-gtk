@@ -206,7 +206,7 @@ create_widgets(struct AppData *app_data, const gchar *img_file)
 static void
 dialog_response(GtkDialog* self, gint response_id, gpointer user_data)
 {
-  exit(1);
+  g_main_loop_quit(MainLoop);
 }
 #endif
 
