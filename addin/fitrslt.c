@@ -289,7 +289,11 @@ create_format_frame(struct fit_prm *prm)
 #else
   gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 2);
 #endif
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_check_button_set_active(GTK_CHECK_BUTTON(w), ADD_PLUS);
+#else
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), ADD_PLUS);
+#endif
   prm->add_plus = w;
 
   w = gtk_check_button_new_with_mnemonic("_Expand");
@@ -298,7 +302,11 @@ create_format_frame(struct fit_prm *prm)
 #else
   gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 2);
 #endif
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_check_button_set_active(GTK_CHECK_BUTTON(w), EXPAND);
+#else
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), EXPAND);
+#endif
   prm->expand = w;
 
   w = gtk_check_button_new_with_mnemonic("_Frame");
@@ -307,7 +315,11 @@ create_format_frame(struct fit_prm *prm)
 #else
   gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 2);
 #endif
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_check_button_set_active(GTK_CHECK_BUTTON(w), FRAME);
+#else
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), FRAME);
+#endif
   prm->frame = w;
 
   w = gtk_check_button_new_with_mnemonic("_Shadow");
@@ -316,7 +328,11 @@ create_format_frame(struct fit_prm *prm)
 #else
   gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 2);
 #endif
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_check_button_set_active(GTK_CHECK_BUTTON(w), FRAME);
+#else
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), FRAME);
+#endif
   prm->shadow = w;
 
   g_signal_connect(prm->frame, "toggled", G_CALLBACK(frame_toggled), prm);
