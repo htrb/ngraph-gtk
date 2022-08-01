@@ -443,7 +443,11 @@ create_option_frame(struct file_prm *prm)
 #else
   gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 2);
 #endif
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_check_button_set_active(GTK_CHECK_BUTTON(w), MIX);
+#else
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), MIX);
+#endif
   prm->mix = w;
 
   w = gtk_check_button_new_with_mnemonic("_Type");
@@ -452,7 +456,11 @@ create_option_frame(struct file_prm *prm)
 #else
   gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 2);
 #endif
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_check_button_set_active(GTK_CHECK_BUTTON(w), TYPE);
+#else
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), TYPE);
+#endif
   prm->type = w;
 
   w = gtk_check_button_new_with_mnemonic("_Caption");
@@ -461,7 +469,11 @@ create_option_frame(struct file_prm *prm)
 #else
   gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 2);
 #endif
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_check_button_set_active(GTK_CHECK_BUTTON(w), CAPTION);
+#else
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), CAPTION);
+#endif
   prm->caption = w;
 
 
@@ -471,7 +483,11 @@ create_option_frame(struct file_prm *prm)
 #else
   gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 2);
 #endif
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_check_button_set_active(GTK_CHECK_BUTTON(w), FRAME);
+#else
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), FRAME);
+#endif
   prm->frame = w;
 
   w = gtk_check_button_new_with_mnemonic("_Shadow");
@@ -480,7 +496,11 @@ create_option_frame(struct file_prm *prm)
 #else
   gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 2);
 #endif
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_check_button_set_active(GTK_CHECK_BUTTON(w), FRAME);
+#else
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), FRAME);
+#endif
   prm->shadow = w;
 
   g_signal_connect(prm->frame, "toggled", G_CALLBACK(frame_toggled), prm);
