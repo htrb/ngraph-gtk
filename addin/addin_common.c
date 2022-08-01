@@ -44,7 +44,11 @@ create_spin_button(double min, double max, double inc, double init, int digit)
   GtkWidget *w;
 
   w = gtk_spin_button_new_with_range(min, max, inc);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_editable_set_alignment(GTK_EDITABLE(w), 1.0);
+#else
   gtk_entry_set_alignment(GTK_ENTRY(w), 1.0);
+#endif
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), init);
   if (digit > 0) {
     gtk_spin_button_set_digits(GTK_SPIN_BUTTON(w), digit);
