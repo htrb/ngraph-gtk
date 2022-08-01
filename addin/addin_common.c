@@ -15,16 +15,6 @@
 
 static char *FontList[] = {"Serif",  "Sans-serif", "Monospace"};
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-void
-main_loop(void)
-{
-  while (g_list_model_get_n_items (gtk_window_get_toplevels ()) > 0) {
-    g_main_context_iteration (NULL, TRUE);
-  }
-}
-#endif
-
 GtkWidget *
 create_text_entry(int set_default_action)
 {
