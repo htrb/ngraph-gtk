@@ -393,7 +393,7 @@ save_button_clicked(GtkButton *widget, gpointer data)
   gra_save(im, grafile);
   printf("%d %d\n", w * dotsize, h * dotsize);
 #if GTK_CHECK_VERSION(4, 0, 0)
-  exit(0);
+  g_main_loop_quit(MainLoop);
 #else
   gtk_main_quit();
 #endif
