@@ -318,11 +318,31 @@ savescript(struct file_prm *prm)
     return 1;
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  type = gtk_check_button_get_active(GTK_CHECK_BUTTON(prm->type));
+#else
   type = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(prm->type));
+#endif
+#if GTK_CHECK_VERSION(4, 0, 0)
+  mix = gtk_check_button_get_active(GTK_CHECK_BUTTON(prm->mix));
+#else
   mix = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(prm->mix));
+#endif
+#if GTK_CHECK_VERSION(4, 0, 0)
+  frame = gtk_check_button_get_active(GTK_CHECK_BUTTON(prm->frame));
+#else
   frame = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(prm->frame));
+#endif
+#if GTK_CHECK_VERSION(4, 0, 0)
+  shadow = gtk_check_button_get_active(GTK_CHECK_BUTTON(prm->shadow));
+#else
   shadow = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(prm->shadow));
+#endif
+#if GTK_CHECK_VERSION(4, 0, 0)
+  caption = gtk_check_button_get_active(GTK_CHECK_BUTTON(prm->caption));
+#else
   caption = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(prm->caption));
+#endif
   font = get_selected_font(&prm->font);
 
   get_font_parameter(&prm->font, &pt, &spc, &script, &style, &r, &g, &b);
@@ -558,7 +578,11 @@ set_parameter(struct file_prm *prm)
   list = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(prm->files)));
   gtk_list_store_clear(list);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  mix = gtk_check_button_get_active(GTK_CHECK_BUTTON(prm->mix));
+#else
   mix = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(prm->mix));
+#endif
 
   for (i = 0; i < prm->file_num; i++) {
     if (mix && prm->data[i].mix >= 0) {
