@@ -140,7 +140,13 @@ create_widgets(struct AppData *app_data, const gchar *img_file)
   gtk_container_add(GTK_CONTAINER(event_box), w);
 #endif
 #if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
+  GtkGesture *gesture;
+
+  gesture = gtk_gesture_click_new();
+  gtk_widget_add_controller(w, GTK_EVENT_CONTROLLER(gesture));
+
+  gtk_gesture_single_set_button(GTK_GESTURE_SINGLE(gesture), 1);
+  g_signal_connect(gesture, "pressed", G_CALLBACK(button_press_event), app_data);
 #else
   g_signal_connect(event_box, "button-press-event", G_CALLBACK(button_press_event), app_data);
 #endif
