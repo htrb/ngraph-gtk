@@ -345,7 +345,7 @@ create_format_frame(struct fit_prm *prm)
 
   w = my_create_spin_button("_Accuracy:", 1, 15, 1, ACCURACY, &hbox);
 #if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_box_append(GTK_BOX(vbox), w);
+  gtk_box_append(GTK_BOX(vbox), hbox);
 #else
   gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 2);
 #endif
