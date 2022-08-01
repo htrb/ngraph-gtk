@@ -48,6 +48,10 @@ struct file_prm {
   int posx, posy, w, file_num;
 };
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static GMainLoop *MainLoop;
+#endif
+
 static char *
 escape_char(const char *src, const char *escape, const char *str)
 {
@@ -834,6 +838,7 @@ dialog_response(GtkDialog* self, gint response_id, gpointer user_data)
     savescript(prm);
   }
   gtk_window_destroy(GTK_WINDOW(self));
+  g_main_loop_quit(MainLoop);
 }
 #endif
 
@@ -849,6 +854,7 @@ main(int argc, char **argv)
 
   setlocale(LC_ALL, "");
 #if GTK_CHECK_VERSION(4, 0, 0)
+  MainLoop = g_main_loop_new (NULL, FALSE);
   gtk_init();
 #else
   gtk_init(&argc, &argv);
@@ -881,7 +887,8 @@ main(int argc, char **argv)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
   g_signal_connect(mainwin, "response", G_CALLBACK(dialog_response), &prm);
-  main_loop();
+  gtk_widget_show(mainwin);
+  g_main_loop_run(MainLoop);
 #else
   gtk_widget_show_all(mainwin);
 
