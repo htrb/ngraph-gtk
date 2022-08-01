@@ -55,7 +55,7 @@ static void create_buttons(struct AppData *data, GtkWidget *hbox);
 static gboolean delete_event(GtkWidget *widget, GdkEvent *event, gpointer data);
 #endif
 #if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
+static void button_press_event(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y, gpointer user_data);
 #else
 static gboolean button_press_event(GtkWidget *widget, GdkEventButton *event, gpointer data);
 #endif
@@ -316,7 +316,31 @@ delete_event(GtkWidget *widget, GdkEvent *event, gpointer data)
 #endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
+static void
+button_press_event(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y, gpointer data)
+{
+  struct AppData *app_data = (struct AppData *) data;
+  GdkPixbuf *im;
+  int i, w, h, r, g, b, a, rowstride, alpha, bpp;
+  guchar *pixels;
+
+  im = app_data->im;
+  w = gdk_pixbuf_get_width(im);
+  h = gdk_pixbuf_get_height(im);
+  rowstride = gdk_pixbuf_get_rowstride(im);
+  pixels = gdk_pixbuf_get_pixels(im);
+  alpha = gdk_pixbuf_get_has_alpha(im);
+  bpp = rowstride / w;
+  if(x >= w || y >= h)
+    return;
+
+  i = (int) y * rowstride + (int) x * bpp;
+  r = pixels[i];
+  g = pixels[i + 1];
+  b = pixels[i + 2];
+  a = (alpha) ? pixels[i + 3] : 255;
+  set_bgcolor(r, g, b, a, app_data);
+}
 #else
 static gboolean
 button_press_event(GtkWidget *widget, GdkEventButton *event, gpointer data)
