@@ -122,12 +122,19 @@ create_widgets(struct AppData *app_data, const gchar *img_file)
   if (pixbuf == NULL) {
     print_error_exit(error->message);
   }
-  w = gtk_image_new_from_pixbuf(pixbuf);
 #if GTK_CHECK_VERSION(4, 0, 0)
+  w = gtk_picture_new_for_pixbuf(pixbuf);
+  gtk_picture_set_can_shrink(GTK_PICTURE(w), FALSE);
+  gtk_picture_set_keep_aspect_ratio(GTK_PICTURE(w), TRUE);
+  gtk_widget_set_halign(GTK_WIDGET(w), GTK_ALIGN_START);
+  gtk_widget_set_valign(GTK_WIDGET(w), GTK_ALIGN_START);
   app_data->im = pixbuf;
+  gtk_widget_set_hexpand(w, TRUE);
+  gtk_widget_set_vexpand(w, TRUE);
   event_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_box_append(GTK_BOX(event_box), w);
 #else
+  w = gtk_image_new_from_pixbuf(pixbuf);
   app_data->im = gtk_image_get_pixbuf(GTK_IMAGE(w));
   event_box = gtk_event_box_new();
   gtk_container_add(GTK_CONTAINER(event_box), w);
