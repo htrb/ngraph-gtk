@@ -1167,7 +1167,7 @@ free_str_list(GSList *top)
 #endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-#defien FILE_CHOOSER_OPTION_CHDIR "chdir"
+#define FILE_CHOOSER_OPTION_CHDIR "chdir"
 
 static void
 fsok(GtkWidget *dlg, struct nGetOpenFileData *data)
