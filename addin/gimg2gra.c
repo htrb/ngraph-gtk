@@ -465,6 +465,7 @@ gra_save(GdkPixbuf *im, char *gra_file)
     gchar *error;
     error = g_strdup_printf("Too large image.\n");
     print_error_exit(error);
+    return 1;
   }
   rect = g_malloc(sizeof(*rect) * w * h);
 
@@ -472,6 +473,7 @@ gra_save(GdkPixbuf *im, char *gra_file)
     fp = stdout;
   }else if((fp = fopen(gra_file, "wt")) == NULL){
     print_error_exit(g_strerror(errno));
+    return 1;
   }
 
   fprintf(fp, "%%Ngraph GRAF\n"
@@ -554,6 +556,7 @@ gra_save(GdkPixbuf *im, char *gra_file)
 
   if(ferror(fp)){
     print_error_exit(g_strerror(errno));
+    return 1;
   }
 
   if(fp != stdout) {
