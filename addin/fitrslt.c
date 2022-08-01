@@ -115,7 +115,11 @@ makescript(FILE *f, struct fit_prm *prm, int gx, int gy, int height, const char 
   get_font_parameter(&prm->font, &textpt, &textspc, &textsc, &style, &textred, &textblue, &textgreen);
   font = get_selected_font(&prm->font);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  frame = gtk_check_button_get_active(GTK_CHECK_BUTTON(prm->frame));
+#else
   frame = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(prm->frame));
+#endif
 
   fprintf(f, "new text\n");
   fprintf(f, "text::text='%s %s'\n", cap, val);
@@ -154,13 +158,21 @@ savescript(struct fit_prm *prm)
   posx = gtk_spin_button_get_value(GTK_SPIN_BUTTON(prm->x)) * 100;
   posy = gtk_spin_button_get_value(GTK_SPIN_BUTTON(prm->y)) * 100;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  frame = gtk_check_button_get_active(GTK_CHECK_BUTTON(prm->frame));
+#else
   frame = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(prm->frame));
+#endif
   if (frame) {
     fprintf(f, "new iarray name:textlen\n");
     fprintf(f, "new iarray name:textbbox\n");
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  shadow = gtk_check_button_get_active(GTK_CHECK_BUTTON(prm->shadow));
+#else
   shadow = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(prm->shadow));
+#endif
   textpt = gtk_spin_button_get_value(GTK_SPIN_BUTTON(prm->font.pt)) * 100;
   height = ceil(textpt * 25.4 / 72.0 / 100) * 100;
   gy = posy;
@@ -248,13 +260,17 @@ my_create_spin_button(const char *title, double min, double max, double inc, dou
 }
 
 static void
-frame_toggled(GtkToggleButton *togglebutton, gpointer user_data)
+frame_toggled(GtkWidget *togglebutton, gpointer user_data)
 {
   int state;
   struct fit_prm *prm;
 
   prm = (struct fit_prm *) user_data;
-  state = gtk_toggle_button_get_active(togglebutton);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  state = gtk_check_button_get_active(GTK_CHECK_BUTTON(togglebutton));
+#else
+  state = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(togglebutton));
+#endif
   gtk_widget_set_sensitive(GTK_WIDGET(prm->shadow), state);
 }
 
@@ -365,8 +381,16 @@ set_parameter(struct fit_prm *prm)
   }
 
   accuracy = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(prm->accuracy));
+#if GTK_CHECK_VERSION(4, 0, 0)
+  expand = gtk_check_button_get_active(GTK_CHECK_BUTTON(prm->expand));
+#else
   expand = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(prm->expand));
+#endif
+#if GTK_CHECK_VERSION(4, 0, 0)
+  add_plus = gtk_check_button_get_active(GTK_CHECK_BUTTON(prm->add_plus));
+#else
   add_plus = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(prm->add_plus));
+#endif
 
   if (strcmp(prm->data[i].type, "poly") == 0) {
     for (j = 0; j < PRM_NUM; j++) {
