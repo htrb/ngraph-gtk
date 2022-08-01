@@ -245,7 +245,9 @@ my_create_spin_button(const char *title, double min, double max, double inc, dou
   gtk_widget_set_hexpand(*hbox, FALSE);
 
   label = gtk_label_new_with_mnemonic(title);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   g_object_set(label, "margin", GINT_TO_POINTER(4), NULL);
+#endif
 
   w = create_spin_button(min, max, inc, init, 0);
 #if GTK_CHECK_VERSION(3, 12, 0)
