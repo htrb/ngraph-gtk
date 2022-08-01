@@ -158,6 +158,9 @@ savescript(struct fit_prm *prm)
   }
 
   f = g_fopen(prm->script, "w");
+  if (f == NULL) {
+    return 1;
+  }
 
   posx = gtk_spin_button_get_value(GTK_SPIN_BUTTON(prm->x)) * 100;
   posy = gtk_spin_button_get_value(GTK_SPIN_BUTTON(prm->y)) * 100;
