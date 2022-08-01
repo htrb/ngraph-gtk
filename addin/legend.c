@@ -48,6 +48,10 @@ struct file_prm {
   int posx, posy, w, file_num;
 };
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static GMainLoop *MainLoop;
+#endif
+
 static char *
 escape_char(const char *src, const char *escape, const char *str)
 {
@@ -318,11 +322,31 @@ savescript(struct file_prm *prm)
     return 1;
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  type = gtk_check_button_get_active(GTK_CHECK_BUTTON(prm->type));
+#else
   type = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(prm->type));
+#endif
+#if GTK_CHECK_VERSION(4, 0, 0)
+  mix = gtk_check_button_get_active(GTK_CHECK_BUTTON(prm->mix));
+#else
   mix = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(prm->mix));
+#endif
+#if GTK_CHECK_VERSION(4, 0, 0)
+  frame = gtk_check_button_get_active(GTK_CHECK_BUTTON(prm->frame));
+#else
   frame = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(prm->frame));
+#endif
+#if GTK_CHECK_VERSION(4, 0, 0)
+  shadow = gtk_check_button_get_active(GTK_CHECK_BUTTON(prm->shadow));
+#else
   shadow = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(prm->shadow));
+#endif
+#if GTK_CHECK_VERSION(4, 0, 0)
+  caption = gtk_check_button_get_active(GTK_CHECK_BUTTON(prm->caption));
+#else
   caption = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(prm->caption));
+#endif
   font = get_selected_font(&prm->font);
 
   get_font_parameter(&prm->font, &pt, &spc, &script, &style, &r, &g, &b);
@@ -443,7 +467,11 @@ create_option_frame(struct file_prm *prm)
 #else
   gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 2);
 #endif
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_check_button_set_active(GTK_CHECK_BUTTON(w), MIX);
+#else
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), MIX);
+#endif
   prm->mix = w;
 
   w = gtk_check_button_new_with_mnemonic("_Type");
@@ -452,7 +480,11 @@ create_option_frame(struct file_prm *prm)
 #else
   gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 2);
 #endif
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_check_button_set_active(GTK_CHECK_BUTTON(w), TYPE);
+#else
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), TYPE);
+#endif
   prm->type = w;
 
   w = gtk_check_button_new_with_mnemonic("_Caption");
@@ -461,7 +493,11 @@ create_option_frame(struct file_prm *prm)
 #else
   gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 2);
 #endif
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_check_button_set_active(GTK_CHECK_BUTTON(w), CAPTION);
+#else
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), CAPTION);
+#endif
   prm->caption = w;
 
 
@@ -471,7 +507,11 @@ create_option_frame(struct file_prm *prm)
 #else
   gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 2);
 #endif
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_check_button_set_active(GTK_CHECK_BUTTON(w), FRAME);
+#else
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), FRAME);
+#endif
   prm->frame = w;
 
   w = gtk_check_button_new_with_mnemonic("_Shadow");
@@ -480,7 +520,11 @@ create_option_frame(struct file_prm *prm)
 #else
   gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 2);
 #endif
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_check_button_set_active(GTK_CHECK_BUTTON(w), FRAME);
+#else
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), FRAME);
+#endif
   prm->shadow = w;
 
   g_signal_connect(prm->frame, "toggled", G_CALLBACK(frame_toggled), prm);
@@ -538,7 +582,11 @@ set_parameter(struct file_prm *prm)
   list = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(prm->files)));
   gtk_list_store_clear(list);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  mix = gtk_check_button_get_active(GTK_CHECK_BUTTON(prm->mix));
+#else
   mix = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(prm->mix));
+#endif
 
   for (i = 0; i < prm->file_num; i++) {
     if (mix && prm->data[i].mix >= 0) {
@@ -682,6 +730,8 @@ create_file_frame(struct file_prm *prm)
 
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 #if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_widget_set_hexpand(frame, TRUE);
+  gtk_widget_set_vexpand(frame, TRUE);
   gtk_box_append(GTK_BOX(hbox), frame);
 #else
   gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 4);
@@ -790,6 +840,7 @@ dialog_response(GtkDialog* self, gint response_id, gpointer user_data)
     savescript(prm);
   }
   gtk_window_destroy(GTK_WINDOW(self));
+  g_main_loop_quit(MainLoop);
 }
 #endif
 
@@ -805,6 +856,7 @@ main(int argc, char **argv)
 
   setlocale(LC_ALL, "");
 #if GTK_CHECK_VERSION(4, 0, 0)
+  MainLoop = g_main_loop_new (NULL, FALSE);
   gtk_init();
 #else
   gtk_init(&argc, &argv);
@@ -837,7 +889,8 @@ main(int argc, char **argv)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
   g_signal_connect(mainwin, "response", G_CALLBACK(dialog_response), &prm);
-  main_loop();
+  gtk_widget_show(mainwin);
+  g_main_loop_run(MainLoop);
 #else
   gtk_widget_show_all(mainwin);
 

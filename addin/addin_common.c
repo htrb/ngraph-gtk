@@ -44,7 +44,11 @@ create_spin_button(double min, double max, double inc, double init, int digit)
   GtkWidget *w;
 
   w = gtk_spin_button_new_with_range(min, max, inc);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_editable_set_alignment(GTK_EDITABLE(w), 1.0);
+#else
   gtk_entry_set_alignment(GTK_ENTRY(w), 1.0);
+#endif
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), init);
   if (digit > 0) {
     gtk_spin_button_set_digits(GTK_SPIN_BUTTON(w), digit);
@@ -64,7 +68,9 @@ add_widget_to_table_sub(GtkWidget *table, GtkWidget *w, char *title, int expand,
     label = gtk_label_new_with_mnemonic(title);
     gtk_label_set_mnemonic_widget(GTK_LABEL(label), w);
     gtk_widget_set_halign(label, GTK_ALIGN_START);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
     g_object_set(label, "margin", GINT_TO_POINTER(4), NULL);
+#endif
     gtk_grid_attach(GTK_GRID(table), label, col, n, 1, 1);
     col++;
   }
@@ -76,7 +82,9 @@ add_widget_to_table_sub(GtkWidget *table, GtkWidget *w, char *title, int expand,
     } else {
       gtk_widget_set_halign(w, GTK_ALIGN_START);
     }
+#if ! GTK_CHECK_VERSION(4, 0, 0)
     g_object_set(w, "margin", GINT_TO_POINTER(4), NULL);
+#endif
     gtk_grid_attach(GTK_GRID(table), w, col, n, width, 1);
   }
 
@@ -108,9 +116,9 @@ create_title(const char *name, const char *comment)
   frame = gtk_frame_new(name);
 #if ! GTK_CHECK_VERSION(4, 0, 0)
   gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
-#endif
   g_object_set(frame, "margin", GINT_TO_POINTER(4), NULL);
   g_object_set(frame, "border-width", GINT_TO_POINTER(4), NULL);
+#endif
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_frame_set_label_align(GTK_FRAME(frame), 0.5);
 #else
@@ -118,7 +126,9 @@ create_title(const char *name, const char *comment)
 #endif
 
   label = gtk_label_new(comment);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   g_object_set(label, "margin", GINT_TO_POINTER(4), NULL);
+#endif
   gtk_widget_set_halign(label, GTK_ALIGN_CENTER);
   gtk_widget_set_valign(label, GTK_ALIGN_CENTER);
 
@@ -152,8 +162,16 @@ get_font_parameter(struct font_prm *prm, int *pt, int *spc, int *script, int *st
   *script = gtk_spin_button_get_value(GTK_SPIN_BUTTON(prm->script)) * 100;
   *spc = gtk_spin_button_get_value(GTK_SPIN_BUTTON(prm->space)) * 100;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  bold = gtk_check_button_get_active(GTK_CHECK_BUTTON(prm->bold));
+#else
   bold = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(prm->bold));
+#endif
+#if GTK_CHECK_VERSION(4, 0, 0)
+  italic = gtk_check_button_get_active(GTK_CHECK_BUTTON(prm->italic));
+#else
   italic = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(prm->italic));
+#endif
   *style = (bold ? 1 : 0) + (italic ? 2 : 0);
 
   gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(prm->color), &color);
