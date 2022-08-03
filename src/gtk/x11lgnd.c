@@ -429,15 +429,10 @@ legend_menu_update_data_new(struct objlist *obj, struct LegendDialog *dialog, LE
 static void
 legend_menu_update_object(const char *name, char *(*callback) (struct objlist * obj, int id), struct LegendDialog *dialog, LEGEND_DIALOG_SETUP setup)
 {
-  struct narray *array;
   struct objlist *obj;
   char title[256];
   struct legend_menu_update_data *data;
 
-  data = g_malloc0(sizeof(*data));
-  if (data == NULL) {
-    return;
-  }
   if (Menulock || Globallock)
     return;
   if ((obj = chkobject(name)) == NULL)
@@ -445,15 +440,13 @@ legend_menu_update_object(const char *name, char *(*callback) (struct objlist * 
   if (chkobjlastinst(obj) == -1)
     return;
 
-  array = arraynew(sizeof(int));
+  data = legend_menu_update_data_new(obj, dialog, setup);
+  if (data == NULL) {
+    return;
+  }
   snprintf(title, sizeof(title), _("%s property (multi select)"), _(obj->name));
-  data->dialog = dialog;
-  data->array = array;
-  data->obj = obj;
-  data->setup = setup;
-  data->i = 0;
   DlgSelect.response_cb = response_callback_new(legend_menu_update_object_response, legend_menu_update_object_free, data);
-  SelectDialog(&DlgSelect, obj, title, callback, array, NULL);
+  SelectDialog(&DlgSelect, obj, title, callback, data->array, NULL);
   DialogExecute(TopLevel, &DlgSelect);
 }
 #else
