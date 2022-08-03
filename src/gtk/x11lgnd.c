@@ -395,7 +395,7 @@ legend_menu_update_object_response(struct response_callback *cb)
       data = arraydata(array);
       ldata2 = g_memdup2(ldata, sizeof(*ldata));
       if (ldata2 == NULL) {
-        return;
+        return IDOK;
       }
       ldata->array = NULL;
       ldata2->i = i + 1;
@@ -404,6 +404,8 @@ legend_menu_update_object_response(struct response_callback *cb)
       DialogExecute(TopLevel, dialog);
     }
   }
+  return cb->return_value;
+}
 }
 
 static void
