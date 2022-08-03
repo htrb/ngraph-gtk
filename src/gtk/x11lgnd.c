@@ -406,6 +406,24 @@ legend_menu_update_object_response(struct response_callback *cb)
   }
   return cb->return_value;
 }
+
+static struct legend_menu_update_data *
+legend_menu_update_data_new(struct objlist *obj, struct LegendDialog *dialog, LEGEND_DIALOG_SETUP setup)
+{
+  struct legend_menu_update_data *data;
+  struct narray *array;
+
+  data = g_malloc0(sizeof(*data));
+  if (data == NULL) {
+    return NULL;
+  }
+  array = arraynew(sizeof(int));
+  data->dialog = dialog;
+  data->array = array;
+  data->obj = obj;
+  data->setup = setup;
+  data->i = 0;
+  return data;
 }
 
 static void
