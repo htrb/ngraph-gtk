@@ -531,9 +531,9 @@ legend_menu_delete_object_response(struct response_callback *cb)
 static void
 legend_menu_delete_object(const char *name, char *(*callback) (struct objlist * obj, int id))
 {
-  struct narray array;
   struct objlist *obj;
   char title[256];
+  struct legend_menu_update_data *data;
 
   if (Menulock || Globallock)
     return;
@@ -542,7 +542,13 @@ legend_menu_delete_object(const char *name, char *(*callback) (struct objlist * 
   if (chkobjlastinst(obj) == -1)
     return;
   snprintf(title, sizeof(title), _("delete %s (multi select)"), _(obj->name));
-  SelectDialog(&DlgSelect, obj, title, callback, &array, NULL);
+
+  data = legend_menu_update_data_new(obj, NULL, NULL);
+  if (data == NULL) {
+    return;
+  }
+  DlgSelect.response_cb = response_callback_new(legend_menu_delete_object_response, legend_menu_update_object_free, data);
+  SelectDialog(&DlgSelect, obj, title, callback, data->array, NULL);
   DialogExecute(TopLevel, &DlgSelect);
 }
 #else
