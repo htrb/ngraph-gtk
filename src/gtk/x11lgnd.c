@@ -496,6 +496,38 @@ legend_menu_update_object(const char *name, char *(*callback) (struct objlist * 
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
+static int
+legend_menu_delete_object_response(struct response_callback *cb)
+{
+  struct legend_menu_update_data *ldata;
+  struct narray *array;
+  struct objlist *obj;
+  int i;
+
+  ldata = (struct legend_menu_update_data *) cb->data;
+  obj = ldata->obj;
+  array = ldata->array;
+  i = ldata->i;
+  if (cb->return_value == IDOK) {
+    int num;
+    num = arraynum(array);
+    if (num > 0) {
+      int i, *data;
+      char *objs[2];
+      menu_save_undo_single(UNDO_TYPE_DELETE, obj->name);
+      data = arraydata(array);
+      for (i = num - 1; i >= 0; i--) {
+	delobj(obj, data[i]);
+	set_graph_modified();
+      }
+      objs[0] = obj->name;
+      objs[1] = NULL;
+      LegendWinUpdate(objs, TRUE, TRUE);
+    }
+  }
+  return cb->return_value;
+}
+
 static void
 legend_menu_delete_object(const char *name, char *(*callback) (struct objlist * obj, int id))
 {
