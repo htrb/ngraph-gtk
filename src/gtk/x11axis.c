@@ -2822,6 +2822,7 @@ axis_new_response(struct response_callback *cb)
     set_graph_modified();
   }
   AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
+  return IDOK;
 }
 #endif
 
