@@ -3223,6 +3223,38 @@ axis_zoom_response_response(struct response_callback *cb)
   arrayfree(data->farray);
   return IDOK;
 }
+
+static int
+axis_zoom_response(struct response_callback *cb)
+{
+  struct axis_zoom_data *data;
+  struct narray *farray;
+  struct objlist *obj;
+
+  obj = (struct objlist *) cb->data;
+  if (cb->return_value != IDOK) {
+    return IDOK;
+  }
+
+  data = g_malloc0(sizeof(*data));
+  if (data == NULL) {
+    return IDOK;
+  }
+
+  farray = arraynew(sizeof(int));
+  if (farray == NULL) {
+    g_free(data);
+    return IDOK;
+  }
+
+  data->zoom = DlgZoom.zoom / 10000.0;;
+  data->farray = farray;
+  data->obj = obj;
+  SelectDialog(&DlgSelect, obj, _("scale zoom (multi select)"), AxisCB, (struct narray *) farray, NULL);
+  DlgSelect.response_cb = response_callback_new(axis_zoom_response_response, NULL, data);
+  DialogExecute(TopLevel, &DlgSelect);
+  return IDOK;
+}
 #endif
 
 void
