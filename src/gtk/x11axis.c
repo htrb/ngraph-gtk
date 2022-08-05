@@ -3051,6 +3051,21 @@ CmAxisAddSingle
   }
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static int
+axis_del_response(struct response_callback *cb)
+{
+    printf("axis_del_response: %d\n", DlgCopy.sel);
+  if (cb->return_value == IDOK && DlgCopy.sel >= 0) {
+    axis_save_undo(UNDO_TYPE_DELETE);
+    AxisDel(DlgCopy.sel);
+    set_graph_modified();
+    AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
+  }
+}
+#endif
+
 void
 CmAxisDel(void *w, gpointer client_data)
 {
