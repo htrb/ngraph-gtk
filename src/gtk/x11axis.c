@@ -3111,6 +3111,25 @@ axis_update_response_response(struct response_callback *cb)
   }
   return IDOK;
 }
+
+static int
+axis_update_response(struct response_callback *cb)
+{
+  int i, undo;
+  if (cb->return_value == IDOK) {
+    i = DlgCopy.sel;
+    if (i < 0) {
+      return IDOK;
+    }
+  } else {
+    return IDOK;
+  }
+  undo = axis_save_undo(UNDO_TYPE_EDIT);
+  AxisDialog(NgraphApp.AxisWin.data.data, i, -1);
+  DlgAxis.response_cb = response_callback_new(axis_update_response_response, NULL, GINT_TO_POINTER(undo));
+  DialogExecute(TopLevel, &DlgAxis);
+  return IDOK;
+}
 #endif
 
 void
