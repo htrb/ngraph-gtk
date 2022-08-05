@@ -3170,6 +3170,39 @@ CmAxisUpdate(void *w, gpointer client_data)
 #endif
 }
 
+static void
+axis_zoom(struct objlist *obj, struct narray *farray, double zoom)
+{
+  double min, max;
+  int *array, num, i;
+  num = arraynum(farray);
+  array = arraydata(farray);
+  if (num > 0) {
+    axis_save_undo(UNDO_TYPE_EDIT);
+  }
+  for (i = 0; i < num; i++) {
+    double wd;
+    getobj(obj, "min", array[i], 0, NULL, &min);
+    getobj(obj, "max", array[i], 0, NULL, &max);
+    wd = (max - min) / 2;
+    if (wd != 0) {
+      char *argv[4];
+      double mid, room;
+      mid = (min + max) / 2;
+      min = mid - wd * zoom;
+      max = mid + wd * zoom;
+      room = 0;
+      argv[0] = (char *) &min;
+      argv[1] = (char *) &max;
+      argv[2] = (char *) &room;
+      argv[3] = NULL;
+      exeobj(obj, "scale", array[i], 3, argv);
+      set_graph_modified();
+    }
+  }
+  AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
+}
+
 void
 CmAxisZoom(void *w, gpointer client_data)
 {
