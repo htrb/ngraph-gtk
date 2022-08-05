@@ -3515,7 +3515,7 @@ CmAxisGridDel(void *w, gpointer client_data)
 void
 CmAxisGridUpdate(void *w, gpointer client_data)
 {
-  struct narray farray;
+  struct narray *farray;
   struct objlist *obj;
 
   if (Menulock || Globallock)
@@ -3524,7 +3524,10 @@ CmAxisGridUpdate(void *w, gpointer client_data)
     return;
   if (chkobjlastinst(obj) == -1)
     return;
-  SelectDialog(&DlgSelect, obj, _("grid property (multi select)"), GridCB, (struct narray *) &farray, NULL);
+  farray = arraynew(sizeof(int));
+  if (farray == NULL)
+    return;
+  SelectDialog(&DlgSelect, obj, _("grid property (multi select)"), GridCB, (struct narray *) farray, NULL);
 #if GTK_CHECK_VERSION(4, 0, 0)
   /* must be implemented */
     DialogExecute(TopLevel, &DlgSelect);
@@ -3532,11 +3535,11 @@ CmAxisGridUpdate(void *w, gpointer client_data)
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     int *array, num;
     int i;
-    num = arraynum(&farray);
+    num = arraynum(farray);
     if (num > 0) {
       menu_save_undo_single(UNDO_TYPE_EDIT, "axisgrid");
     }
-    array = arraydata(&farray);
+    array = arraydata(farray);
     for (i = 0; i < num; i++) {
       int ret;
       GridDialog(&DlgGrid, obj, array[i]);
@@ -3552,7 +3555,7 @@ CmAxisGridUpdate(void *w, gpointer client_data)
     }
     update_viewer_axisgrid();
   }
-  arraydel(&farray);
+  arrayfree(farray);
 #endif
 }
 
