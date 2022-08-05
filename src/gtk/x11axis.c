@@ -3002,7 +3002,7 @@ CmAxisNewCross(int use_presettings)
   CrossDialog(&DlgCross, x, y, lenx, leny, obj, idx, idy);
 #if GTK_CHECK_VERSION(4, 0, 0)
   /* must be implemented */
-  DlgSection.response_cb = response_callback_new(axis_new_response, NULL, GINT_TO_POINTER(undo));
+  DlgCross.response_cb = response_callback_new(axis_new_response, NULL, GINT_TO_POINTER(undo));
   DialogExecute(TopLevel, &DlgCross);
 #else
   ret = DialogExecute(TopLevel, &DlgCross);
@@ -3037,7 +3037,7 @@ CmAxisAddSingle
     AxisDialog(NgraphApp.AxisWin.data.data, id, -1);
 #if GTK_CHECK_VERSION(4, 0, 0)
   /* must be implemented */
-    DlgSection.response_cb = response_callback_new(axis_new_response, NULL, GINT_TO_POINTER(undo));
+    DlgAxis.response_cb = response_callback_new(axis_new_response, NULL, GINT_TO_POINTER(undo));
     DialogExecute(TopLevel, &DlgAxis);
 #else
     ret = DialogExecute(TopLevel, &DlgAxis);
