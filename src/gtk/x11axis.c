@@ -3435,7 +3435,8 @@ CmAxisGridNew(void *w, gpointer client_data)
   GridDialog(&DlgGrid, obj, id);
 #if GTK_CHECK_VERSION(4, 0, 0)
   /* must be implemented */
-    DialogExecute(TopLevel, &DlgGrid);
+  DlgGrid.response_cb = response_callback_new(axis_grid_new_response, NULL, GINT_TO_POINTER(undo));
+  DialogExecute(TopLevel, &DlgGrid);
 #else
   ret = DialogExecute(TopLevel, &DlgGrid);
   if (ret == IDCANCEL) {
