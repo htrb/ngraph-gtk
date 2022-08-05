@@ -3448,6 +3448,32 @@ CmAxisGridNew(void *w, gpointer client_data)
 #endif
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static int
+axis_grid_del_response(struct response_callback *cb)
+{
+  struct narray *farray;
+  struct SelectDialog *d;
+  d = (struct SelectDialog *) cb->dialog;
+  farray = d->sel;
+  if (cb->return_value == IDOK) {
+    int i, num, *array;
+    num = arraynum(farray);
+    if (num > 0) {
+      menu_save_undo_single(UNDO_TYPE_DELETE, "axisgrid");
+    }
+    array = arraydata(farray);
+    for (i = num - 1; i >= 0; i--) {
+      delobj(d->Obj, array[i]);
+      set_graph_modified();
+    }
+    update_viewer_axisgrid();
+  }
+  arrayfree(farray);
+  return IDOK;
+}
+#endif
+
 void
 CmAxisGridDel(void *w, gpointer client_data)
 {
