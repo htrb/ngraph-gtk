@@ -3055,7 +3055,6 @@ CmAxisAddSingle
 static int
 axis_del_response(struct response_callback *cb)
 {
-    printf("axis_del_response: %d\n", DlgCopy.sel);
   if (cb->return_value == IDOK && DlgCopy.sel >= 0) {
     axis_save_undo(UNDO_TYPE_DELETE);
     AxisDel(DlgCopy.sel);
@@ -3063,6 +3062,7 @@ axis_del_response(struct response_callback *cb)
     AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
     FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
   }
+  return IDOK;
 }
 #endif
 
