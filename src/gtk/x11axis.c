@@ -1395,6 +1395,26 @@ scale_by_files(struct AxisDialog *d, struct narray *farray)
   }
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+struct axis_dialog_file_data {
+  struct narray *farray;
+  struct AxisDialog *d;
+};
+
+static int
+axis_dialog_file_response(struct response_callback *cb)
+{
+  struct axis_dialog_file_data *data;
+
+  data = (struct axis_dialog_file_data *) cb->data;
+  if (cb->return_value == IDOK) {
+    scale_by_files(data->d, data->farray);
+  }
+  arrayfree(data->farray);
+  return IDOK;
+}
+#endif
+
 static void
 AxisDialogFile(GtkWidget *w, gpointer client_data)
 {
