@@ -2769,11 +2769,11 @@ CmOptionTextDef(void *w, gpointer client_data)
 
   id = newobj(obj);
   if (id >= 0) {
-    char *objs[2];
     int modified;
 
     modified = get_graph_modified();
     LegendTextDefDialog(&DlgLegendTextDef, obj, id);
+    DlgLegendTextDef.response_cb = response_callback_new(option_text_def_dialog_response, NULL, GINT_TO_POINTER(modified));
     DialogExecute(TopLevel, &DlgLegendTextDef);
   }
 }
