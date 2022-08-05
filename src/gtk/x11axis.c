@@ -3324,6 +3324,34 @@ axiswin_scale_clear
   }
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static int
+axis_clear_response(struct response_callback *cb)
+{
+  struct narray *farray;
+  struct SelectDialog *d;
+  d = (struct SelectDialog *) cb->dialog;
+  farray = d->sel;
+  if (cb->return_value == IDOK) {
+    int *array, num, i;
+    num = arraynum(farray);
+    array = arraydata(farray);
+    if (num > 0) {
+      axis_save_undo(UNDO_TYPE_CLEAR_SCALE);
+    }
+    for (i = 0; i < num; i++) {
+      axis_scale_push(d->Obj, array[i]);
+      exeobj(d->Obj, "clear", array[i], 0, NULL);
+      set_graph_modified();
+    }
+    AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
+  }
+  arrayfree(farray);
+
+  return IDOK;
+}
+#endif
+
 void
 CmAxisClear(void *w, gpointer client_data)
 {
