@@ -3400,6 +3400,22 @@ update_viewer_axisgrid(void)
   ViewerWinUpdate(objects);
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static int
+axis_grid_new_response(struct response_callback *cb)
+{
+  int undo;
+  undo = GPOINTER_TO_INT(cb->data);
+  if (cb->return_value == IDCANCEL) {
+    menu_undo_internal(undo);
+  } else {
+    set_graph_modified();
+    update_viewer_axisgrid();
+  }
+  return IDOK;
+}
+#endif
+
 void
 CmAxisGridNew(void *w, gpointer client_data)
 {
