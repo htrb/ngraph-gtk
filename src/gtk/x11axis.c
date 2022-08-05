@@ -3225,33 +3225,7 @@ CmAxisZoom(void *w, gpointer client_data)
     zoom = DlgZoom.zoom / 10000.0;
     SelectDialog(&DlgSelect, obj, _("scale zoom (multi select)"), AxisCB, (struct narray *) &farray, NULL);
     if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
-      int *array, num, i;
-      num = arraynum(&farray);
-      array = arraydata(&farray);
-      if (num > 0) {
-	axis_save_undo(UNDO_TYPE_EDIT);
-      }
-      for (i = 0; i < num; i++) {
-        double wd;
-	getobj(obj, "min", array[i], 0, NULL, &min);
-	getobj(obj, "max", array[i], 0, NULL, &max);
-	wd = (max - min) / 2;
-	if (wd != 0) {
-          char *argv[4];
-          double mid;
-	  mid = (min + max) / 2;
-	  min = mid - wd * zoom;
-	  max = mid + wd * zoom;
-	  room = 0;
-	  argv[0] = (char *) &min;
-	  argv[1] = (char *) &max;
-	  argv[2] = (char *) &room;
-	  argv[3] = NULL;
-	  exeobj(obj, "scale", array[i], 3, argv);
-	  set_graph_modified();
-	}
-      }
-      AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
+      axis_zoom(obj, &farray, zoom);
     }
     arraydel(&farray);
   }
