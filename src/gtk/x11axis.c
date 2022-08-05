@@ -3370,7 +3370,8 @@ CmAxisClear(void *w, gpointer client_data)
   SelectDialog(&DlgSelect, obj, _("scale clear (multi select)"), AxisCB, (struct narray *) farray, NULL);
 #if GTK_CHECK_VERSION(4, 0, 0)
   /* must be implemented */
-    DialogExecute(TopLevel, &DlgSelect);
+  DlgSelect.response_cb = response_callback_new(axis_clear_response, NULL, NULL);
+  DialogExecute(TopLevel, &DlgSelect);
 #else
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     int *array, num, i;
