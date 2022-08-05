@@ -2810,6 +2810,21 @@ get_initial_axis_position(int *px, int *py)
   * py = nround(y / grid) * grid - Menulocal.TopMargin;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static int
+axis_new_frame_response(struct response_callback *cb)
+{
+  int undo;
+  undo = GPOINTER_TO_INT(cb->data);
+  if (cb->return_value == IDCANCEL) {
+    menu_undo_internal(undo);
+  } else {
+    set_graph_modified();
+  }
+  AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
+}
+#endif
+
 void
 CmAxisNewFrame(int use_presettings)
 {
