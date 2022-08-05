@@ -3097,6 +3097,22 @@ CmAxisDel(void *w, gpointer client_data)
 #endif
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static int
+axis_update_response_response(struct response_callback *cb)
+{
+  int undo;
+  undo = GPOINTER_TO_INT(cb->data);
+  if (cb->return_value == IDCANCEL) {
+    menu_delete_undo(undo);
+  } else {
+    AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
+  }
+  return IDOK;
+}
+#endif
+
 void
 CmAxisUpdate(void *w, gpointer client_data)
 {
