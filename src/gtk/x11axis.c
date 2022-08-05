@@ -3271,10 +3271,11 @@ CmAxisZoom(void *w, gpointer client_data)
   ZoomDialog(&DlgZoom);
 #if GTK_CHECK_VERSION(4, 0, 0)
   /* must be implemented */
-    DialogExecute(TopLevel, &DlgZoom);
+  DlgZoom.response_cb = response_callback_new(axis_zoom_response, NULL, obj);
+  DialogExecute(TopLevel, &DlgZoom);
 #else
   if ((DialogExecute(TopLevel, &DlgZoom) == IDOK) && (DlgZoom.zoom > 0)) {
-    double zoom, min, max, room;
+    double zoom, min, max;
     struct narray *farray;
     farray = arraynew(sizeof(int));
     if (farray == NULL)
