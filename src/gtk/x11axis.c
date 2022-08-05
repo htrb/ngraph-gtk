@@ -3206,7 +3206,6 @@ axis_zoom(struct objlist *obj, struct narray *farray, double zoom)
 void
 CmAxisZoom(void *w, gpointer client_data)
 {
-  struct narray farray;
   struct objlist *obj;
 
   if (Menulock || Globallock)
@@ -3222,12 +3221,16 @@ CmAxisZoom(void *w, gpointer client_data)
 #else
   if ((DialogExecute(TopLevel, &DlgZoom) == IDOK) && (DlgZoom.zoom > 0)) {
     double zoom, min, max, room;
+    struct narray *farray;
+    farray = arraynew(sizeof(int));
+    if (farray == NULL)
+      return;
     zoom = DlgZoom.zoom / 10000.0;
-    SelectDialog(&DlgSelect, obj, _("scale zoom (multi select)"), AxisCB, (struct narray *) &farray, NULL);
+    SelectDialog(&DlgSelect, obj, _("scale zoom (multi select)"), AxisCB, (struct narray *) farray, NULL);
     if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
-      axis_zoom(obj, &farray, zoom);
+      axis_zoom(obj, farray, zoom);
     }
-    arraydel(&farray);
+    arrayfree(farray);
   }
 #endif
 }
