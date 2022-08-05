@@ -3274,7 +3274,7 @@ CmAxisZoom(void *w, gpointer client_data)
   DialogExecute(TopLevel, &DlgZoom);
 #else
   if ((DialogExecute(TopLevel, &DlgZoom) == IDOK) && (DlgZoom.zoom > 0)) {
-    double zoom, min, max;
+    double zoom;
     struct narray *farray;
     farray = arraynew(sizeof(int));
     if (farray == NULL)
