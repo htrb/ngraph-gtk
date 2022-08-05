@@ -2874,6 +2874,7 @@ CmAxisNewFrame(int use_presettings)
 		&idg, FALSE);
 #if GTK_CHECK_VERSION(4, 0, 0)
   /* must be implemented */
+  DlgSection.response_cb = response_callback_new(axis_new_frame_response, NULL, GINT_TO_POINTER(undo));
   DialogExecute(TopLevel, &DlgSection);
 #else
   ret = DialogExecute(TopLevel, &DlgSection);
