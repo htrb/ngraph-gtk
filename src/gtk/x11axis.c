@@ -2812,7 +2812,7 @@ get_initial_axis_position(int *px, int *py)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 static int
-axis_new_frame_response(struct response_callback *cb)
+axis_new_response(struct response_callback *cb)
 {
   int undo;
   undo = GPOINTER_TO_INT(cb->data);
@@ -2874,7 +2874,7 @@ CmAxisNewFrame(int use_presettings)
 		&idg, FALSE);
 #if GTK_CHECK_VERSION(4, 0, 0)
   /* must be implemented */
-  DlgSection.response_cb = response_callback_new(axis_new_frame_response, NULL, GINT_TO_POINTER(undo));
+  DlgSection.response_cb = response_callback_new(axis_new_response, NULL, GINT_TO_POINTER(undo));
   DialogExecute(TopLevel, &DlgSection);
 #else
   ret = DialogExecute(TopLevel, &DlgSection);
