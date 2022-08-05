@@ -1421,6 +1421,9 @@ AxisDialogFile(GtkWidget *w, gpointer client_data)
   struct AxisDialog *d;
   struct objlist *fobj;
   struct narray *farray;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  struct axis_dialog_file_data *data;
+#endif
 
   d = (struct AxisDialog *) client_data;
 
@@ -1439,6 +1442,14 @@ AxisDialogFile(GtkWidget *w, gpointer client_data)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
   /* must be implemented */
+  data = g_malloc0(sizeof(*data));
+  if (data == NULL) {
+    arrayfree(farray);
+    return;
+  }
+  data->farray = farray;
+  data->d = d;
+  DlgSelect.response_cb = response_callback_new(axis_dialog_file_response, NULL, data);
   DialogExecute(d->widget, &DlgSelect);
 #else
   if (DialogExecute(d->widget, &DlgSelect) == IDOK) {
