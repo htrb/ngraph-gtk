@@ -1400,7 +1400,7 @@ AxisDialogFile(GtkWidget *w, gpointer client_data)
 {
   struct AxisDialog *d;
   struct objlist *fobj;
-  struct narray farray;
+  struct narray *farray;
 
   d = (struct AxisDialog *) client_data;
 
@@ -1411,16 +1411,20 @@ AxisDialogFile(GtkWidget *w, gpointer client_data)
   if (chkobjlastinst(fobj) == -1)
     return;
 
-  SelectDialog(&DlgSelect, fobj, _("autoscale (multi select)"), FileCB, (struct narray *) &farray, NULL);
+  farray = arraynew(sizeof(int));
+  if (farray == NULL)
+    return;
+
+  SelectDialog(&DlgSelect, fobj, _("autoscale (multi select)"), FileCB, (struct narray *) farray, NULL);
 
 #if GTK_CHECK_VERSION(4, 0, 0)
   /* must be implemented */
   DialogExecute(d->widget, &DlgSelect);
 #else
   if (DialogExecute(d->widget, &DlgSelect) == IDOK) {
-    scale_by_files(d, &farray);
+    scale_by_files(d, farray);
   }
-  arraydel(&farray);
+  arrayfree(farray);
 #endif
 }
 
