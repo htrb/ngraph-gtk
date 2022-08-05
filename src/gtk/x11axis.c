@@ -3147,7 +3147,8 @@ CmAxisUpdate(void *w, gpointer client_data)
   CopyDialog(&DlgCopy, obj, -1, _("axis property (single select)"), AxisCB);
 #if GTK_CHECK_VERSION(4, 0, 0)
   /* must be implemented */
-    DialogExecute(TopLevel, &DlgCopy);
+  DlgCopy.response_cb = response_callback_new(axis_update_response, NULL, NULL);
+  DialogExecute(TopLevel, &DlgCopy);
 #else
   if (DialogExecute(TopLevel, &DlgCopy) == IDOK) {
     i = DlgCopy.sel;
