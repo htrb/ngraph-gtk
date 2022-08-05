@@ -1418,65 +1418,7 @@ AxisDialogFile(GtkWidget *w, gpointer client_data)
   DialogExecute(d->widget, &DlgSelect);
 #else
   if (DialogExecute(d->widget, &DlgSelect) == IDOK) {
-    int a, anum, num, *array;
-
-    num = arraynum(&farray);
-    array = arraydata(&farray);
-    anum = chkobjlastinst(d->Obj);
-
-    if (num > 0 && anum != 0) {
-      GString *str;
-      int type;
-      struct narray *result;
-
-      str = g_string_sized_new(32);
-      if (str) {
-        char *buf, *argv2[2];
-        int i;
-	g_string_append(str, "data:");
-	for (i = 0; i < num; i++) {
-	  if (i == num - 1) {
-	    g_string_append_printf(str, "%d", array[i]);
-	  } else {
-	    g_string_append_printf(str, "%d,", array[i]);
-	  }
-	}
-
-	buf = g_string_free(str, FALSE);
-	argv2[0] = (char *) buf;
-	argv2[1] = NULL;
-
-	if (getobj(d->Obj, "type", d->Id, 0, NULL, &type) == -1) {
-	  arraydel(&farray);
-	  g_free(buf);
-	  return;
-	}
-
-	a = combo_box_get_active(d->scale);
-	if (a >= 0 && (putobj(d->Obj, "type", d->Id, &a) == -1)) {
-	  arraydel(&farray);
-	  g_free(buf);
-	  return;
-	}
-
-	getobj(d->Obj, "get_auto_scale", d->Id, 1, argv2, &result);
-	g_free(buf);
-
-	if (arraynum(result) == 3) {
-	  char s[30];
-
-	  snprintf(s, sizeof(s), DOUBLE_STR_FORMAT, arraynget_double(result, 0));
-	  combo_box_entry_set_text(d->min, s);
-
-	  snprintf(s, sizeof(s), DOUBLE_STR_FORMAT, arraynget_double(result, 1));
-	  combo_box_entry_set_text(d->max, s);
-
-	  snprintf(s, sizeof(s), DOUBLE_STR_FORMAT, arraynget_double(result, 2));
-	  combo_box_entry_set_text(d->inc, s);
-	}
-	putobj(d->Obj, "type", d->Id, &type);
-      }
-    }
+    scale_by_files(d, &farray);
   }
   arraydel(&farray);
 #endif
