@@ -2735,6 +2735,25 @@ CmTextUpdate(void *w, gpointer client_data)
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
+static int
+option_text_def_dialog_response(struct response_callback *cb)
+{
+  char *objs[2];
+  int modified;
+  if (cb->return_value == IDOK) {
+    if (CheckIniFile()) {
+      exeobj(DlgLegendTextDef.Obj, "save_config", DlgLegendTextDef.Id, 0, NULL);
+    }
+  }
+  modified = GPOINTER_TO_INT(cb->data);
+  delobj(DlgLegendTextDef.Obj, DlgLegendTextDef.Id);
+  objs[0] = DlgLegendTextDef.Obj->name;
+  objs[1] = NULL;
+  UpdateAll2(objs, TRUE);
+  if (! modified) {
+    reset_graph_modified();
+  }
+}
 /* to be implemented */
 void
 CmOptionTextDef(void *w, gpointer client_data)
