@@ -3002,6 +3002,7 @@ CmAxisNewCross(int use_presettings)
   CrossDialog(&DlgCross, x, y, lenx, leny, obj, idx, idy);
 #if GTK_CHECK_VERSION(4, 0, 0)
   /* must be implemented */
+  DlgSection.response_cb = response_callback_new(axis_new_response, NULL, GINT_TO_POINTER(undo));
   DialogExecute(TopLevel, &DlgCross);
 #else
   ret = DialogExecute(TopLevel, &DlgCross);
