@@ -3084,7 +3084,8 @@ CmAxisDel(void *w, gpointer client_data)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
   /* must be implemented */
-    DialogExecute(TopLevel, &DlgCopy);
+  DlgCopy.response_cb = response_callback_new(axis_del_response, NULL, NULL);
+  DialogExecute(TopLevel, &DlgCopy);
 #else
   if (DialogExecute(TopLevel, &DlgCopy) == IDOK && DlgCopy.sel >= 0) {
     axis_save_undo(UNDO_TYPE_DELETE);
