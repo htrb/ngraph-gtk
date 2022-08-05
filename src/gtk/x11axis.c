@@ -3173,7 +3173,6 @@ CmAxisUpdate(void *w, gpointer client_data)
 static void
 axis_zoom(struct objlist *obj, struct narray *farray, double zoom)
 {
-  double min, max;
   int *array, num, i;
   num = arraynum(farray);
   array = arraydata(farray);
@@ -3181,7 +3180,7 @@ axis_zoom(struct objlist *obj, struct narray *farray, double zoom)
     axis_save_undo(UNDO_TYPE_EDIT);
   }
   for (i = 0; i < num; i++) {
-    double wd;
+    double min, max, wd;
     getobj(obj, "min", array[i], 0, NULL, &min);
     getobj(obj, "max", array[i], 0, NULL, &max);
     wd = (max - min) / 2;
