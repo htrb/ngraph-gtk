@@ -883,23 +883,10 @@ static void
 ev_button_down(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y, gpointer user_data)
 {
   struct obj_list_data *d;
-  static guint32 time = 0;
-  guint32 current_time;
-  int tdif;
   guint button;
   GtkEventSequenceState state = GTK_EVENT_SEQUENCE_NONE;
 
   if (Menulock || Globallock) return;
-
-  current_time = gtk_event_controller_get_current_event_time(GTK_EVENT_CONTROLLER(gesture));
-  tdif = current_time - time;
-  time = current_time;
-
-  /* following check is necessary for editable column. */
-  if (tdif > 0 && tdif < DOUBLE_CLICK_PERIOD) {
-    gtk_gesture_set_state(GTK_GESTURE(gesture), state);
-    return;
-  }
 
   d = user_data;
 
