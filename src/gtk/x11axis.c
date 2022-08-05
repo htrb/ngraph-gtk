@@ -3203,6 +3203,28 @@ axis_zoom(struct objlist *obj, struct narray *farray, double zoom)
   AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+struct axis_zoom_data
+{
+  double zoom;
+  struct narray *farray;
+  struct objlist *obj;
+};
+
+static int
+axis_zoom_response_response(struct response_callback *cb)
+{
+  struct axis_zoom_data *data;
+
+  data = (struct axis_zoom_data *) cb->data;
+  if (cb->return_value == IDOK) {
+    axis_zoom(data->obj, data->farray, data->zoom);
+  }
+  arrayfree(data->farray);
+  return IDOK;
+}
+#endif
+
 void
 CmAxisZoom(void *w, gpointer client_data)
 {
