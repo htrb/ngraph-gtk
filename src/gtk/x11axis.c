@@ -3701,6 +3701,26 @@ axis_check_history(void)
   return check_axis_history(obj);
 }
 
+static void
+axis_scale_undo(struct objlist *obj, struct narray *farray)
+{
+  int i, n, num, *array;
+  char *argv[1];
+  num = arraynum(farray);
+  if (num > 0) {
+    axis_save_undo(UNDO_TYPE_UNDO_SCALE);
+  }
+  array = arraydata(farray);
+  for (i = num - 1; i >= 0; i--) {
+    argv[0] = NULL;
+    exeobj(obj, "scale_pop", array[i], 0, argv);
+    set_graph_modified();
+  }
+  n = check_axis_history(obj);
+  set_axis_undo_button_sensitivity(n > 0);
+  AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
+}
+
 void
 CmAxisScaleUndo(void *w, gpointer client_data)
 {
