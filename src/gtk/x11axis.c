@@ -3746,21 +3746,7 @@ CmAxisScaleUndo(void *w, gpointer client_data)
   DialogExecute(TopLevel, &DlgSelect);
 #else
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
-    int i, n, num, *array;
-    char *argv[1];
-    num = arraynum(farray);
-    if (num > 0) {
-      axis_save_undo(UNDO_TYPE_UNDO_SCALE);
-    }
-    array = arraydata(farray);
-    for (i = num - 1; i >= 0; i--) {
-      argv[0] = NULL;
-      exeobj(obj, "scale_pop", array[i], 0, argv);
-      set_graph_modified();
-    }
-    n = check_axis_history(obj);
-    set_axis_undo_button_sensitivity(n > 0);
-    AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
+    axis_scale_undo(obj, farray);
   }
   arrayfree(farray);
 #endif
