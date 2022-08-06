@@ -3705,7 +3705,7 @@ void
 CmAxisScaleUndo(void *w, gpointer client_data)
 {
   struct objlist *obj;
-  struct narray farray;
+  struct narray *farray;
 
   if (Menulock || Globallock)
     return;
@@ -3716,7 +3716,11 @@ CmAxisScaleUndo(void *w, gpointer client_data)
   if (check_axis_history(obj) == 0)
     return;
 
-  SelectDialog(&DlgSelect, obj, _("scale undo (multi select)"), AxisHistoryCB, (struct narray *) &farray, NULL);
+  farray = arraynew(sizeof(int));
+  if (farray == NULL)
+    return;
+
+  SelectDialog(&DlgSelect, obj, _("scale undo (multi select)"), AxisHistoryCB, (struct narray *) farray, NULL);
 #if GTK_CHECK_VERSION(4, 0, 0)
   /* must be implemented */
   DialogExecute(TopLevel, &DlgSelect);
@@ -3724,11 +3728,11 @@ CmAxisScaleUndo(void *w, gpointer client_data)
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     int i, n, num, *array;
     char *argv[1];
-    num = arraynum(&farray);
+    num = arraynum(farray);
     if (num > 0) {
       axis_save_undo(UNDO_TYPE_UNDO_SCALE);
     }
-    array = arraydata(&farray);
+    array = arraydata(farray);
     for (i = num - 1; i >= 0; i--) {
       argv[0] = NULL;
       exeobj(obj, "scale_pop", array[i], 0, argv);
@@ -3738,7 +3742,7 @@ CmAxisScaleUndo(void *w, gpointer client_data)
     set_axis_undo_button_sensitivity(n > 0);
     AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
   }
-  arraydel(&farray);
+  arrayfree(farray);
 #endif
 }
 
