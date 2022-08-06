@@ -3721,6 +3721,21 @@ axis_scale_undo(struct objlist *obj, struct narray *farray)
   AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static int
+axis_scale_undo_response(struct response_callback *cb)
+{
+  struct SelectDialog *d;
+  struct narray *farray;
+  d = (struct SelectDialog *) cb->dialog;
+  if (cb->return_value == IDOK) {
+    axis_scale_undo(d->Obj, d->sel);
+  }
+  arrayfree(d->sel);
+  return IDOK;
+}
+#endif
+
 void
 CmAxisScaleUndo(void *w, gpointer client_data)
 {
