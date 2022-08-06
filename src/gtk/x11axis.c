@@ -3758,6 +3758,7 @@ CmAxisScaleUndo(void *w, gpointer client_data)
   SelectDialog(&DlgSelect, obj, _("scale undo (multi select)"), AxisHistoryCB, (struct narray *) farray, NULL);
 #if GTK_CHECK_VERSION(4, 0, 0)
   /* must be implemented */
+  DlgSelect.response_cb = response_callback_new(axis_scale_undo_response, NULL, NULL);
   DialogExecute(TopLevel, &DlgSelect);
 #else
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
