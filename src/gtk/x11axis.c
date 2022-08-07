@@ -3567,6 +3567,45 @@ CmAxisGridDel(void *w, gpointer client_data)
 #endif
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+struct axis_grid_update_data {
+  int i, num;
+  struct narray *farray;
+};
+
+static int
+axis_grid_update_update_response(struct response_callback *cb)
+{
+  struct axis_grid_update_data *data;
+  struct GridDialog *d;
+  struct objlist *obj;
+  int *array;
+  data = cb->data;
+  array = arraydata(data->farray);
+  d = (struct GridDialog *) cb->dialog;
+  obj = d->Obj;
+  if (cb->return_value == IDDELETE) {
+    int j;
+    delobj(obj, array[data->i]);
+    set_graph_modified();
+    for (j = data->i + 1; j < data->num; j++) {
+      array[j]--;
+    }
+  }
+  data->i++;
+  if (data->i >= data->num) {
+    update_viewer_axisgrid();
+    arrayfree(data->farray);
+    g_clear_pointer(&cb->data, g_free);
+  } else {
+    GridDialog(&DlgGrid, obj, array[data->i]);
+    DlgGrid.response_cb = response_callback_new(axis_grid_update_update_response, NULL, data);
+    DialogExecute(TopLevel, &DlgGrid);
+  }
+  return IDOK;
+}
+#endif
+
 void
 CmAxisGridUpdate(void *w, gpointer client_data)
 {
