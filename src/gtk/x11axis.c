@@ -3604,6 +3604,35 @@ axis_grid_update_update_response(struct response_callback *cb)
   }
   return IDOK;
 }
+
+static int
+axis_grid_update_response(struct response_callback *cb)
+{
+  struct SelectDialog *d;
+  struct objlist *obj;
+  struct narray *farray;
+
+  d = (struct SelectDialog *) cb->dialog;
+  obj = d->Obj;
+  farray = d->sel;
+  if (cb->return_value == IDOK) {
+    int *array, num;
+    struct axis_grid_update_data *data;
+    num = arraynum(farray);
+    if (num > 0) {
+      menu_save_undo_single(UNDO_TYPE_EDIT, "axisgrid");
+    }
+    array = arraydata(farray);
+    data = g_malloc0(sizeof(*data));
+    data->num = num;
+    data->i = 0;
+    data->farray = farray;
+    GridDialog(&DlgGrid, obj, array[0]);
+    DlgGrid.response_cb = response_callback_new(axis_grid_update_update_response, NULL, data);
+    DialogExecute(TopLevel, &DlgGrid);
+  }
+  return IDOK;
+}
 #endif
 
 void
