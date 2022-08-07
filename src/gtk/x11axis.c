@@ -696,6 +696,51 @@ axis_save_undo(int type)
   return menu_save_undo(type, arg);
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+struct section_dialog_grid_data
+{
+  int create, undo;
+  struct SectionDialog *d;
+};
+
+static int
+section_dialog_grid_response(struct response_callback *cb)
+{
+  struct section_dialog_grid_data *data;
+  struct SectionDialog *d;
+  int create, undo;
+
+  data = (struct section_dialog_grid_data *) cb->data;
+  create = data->create;
+  undo = data->undo;
+  d = data->d;
+
+  switch (cb->return_value) {
+  case IDCANCEL:
+    menu_undo_internal(undo);
+    if (create) {
+      *(d->IDG) = -1;
+    }
+    break;
+  case IDDELETE:
+    if (create) {
+      menu_undo_internal(undo);
+    } else {
+      delobj(d->Obj2, *(d->IDG));
+      set_graph_modified();
+    }
+    *(d->IDG) = -1;
+    break;
+  default:
+    menu_delete_undo(undo);
+    set_graph_modified();
+  }
+  SectionDialogSetupItem(d->widget, d);
+  g_clear_pointer(&cb->data, g_free);
+  return IDOK;
+}
+#endif
+
 static void
 SectionDialogGrid(GtkWidget *w, gpointer client_data)
 {
