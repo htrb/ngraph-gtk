@@ -3653,7 +3653,8 @@ CmAxisGridUpdate(void *w, gpointer client_data)
   SelectDialog(&DlgSelect, obj, _("grid property (multi select)"), GridCB, (struct narray *) farray, NULL);
 #if GTK_CHECK_VERSION(4, 0, 0)
   /* must be implemented */
-    DialogExecute(TopLevel, &DlgSelect);
+  DlgSelect.response_cb = response_callback_new(axis_grid_update_response, NULL, NULL);
+  DialogExecute(TopLevel, &DlgSelect);
 #else
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     int *array, num;
