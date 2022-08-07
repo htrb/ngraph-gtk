@@ -767,10 +767,10 @@ SectionDialogGrid(GtkWidget *w, gpointer client_data)
     }
   }
   if (*(d->IDG) >= 0) {
-    int ret;
 #if GTK_CHECK_VERSION(4, 0, 0)
     struct section_dialog_grid_data *data;
 #endif
+    int ret;
     GridDialog(&DlgGrid, d->Obj2, *(d->IDG));
 #if GTK_CHECK_VERSION(4, 0, 0)
   /* must be implemented */
