@@ -1464,6 +1464,7 @@ axis_dialog_file_response(struct response_callback *cb)
     scale_by_files(data->d, data->farray);
   }
   arrayfree(data->farray);
+  g_clear_pointer(&cb->data, g_free);
   return IDOK;
 }
 #endif
