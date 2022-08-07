@@ -3850,7 +3850,6 @@ static int
 axis_scale_undo_response(struct response_callback *cb)
 {
   struct SelectDialog *d;
-  struct narray *farray;
   d = (struct SelectDialog *) cb->dialog;
   if (cb->return_value == IDOK) {
     axis_scale_undo(d->Obj, d->sel);
