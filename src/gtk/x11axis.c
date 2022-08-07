@@ -3274,6 +3274,7 @@ axis_zoom_response_response(struct response_callback *cb)
     axis_zoom(data->obj, data->farray, data->zoom);
   }
   arrayfree(data->farray);
+  g_clear_pointer(&cb->data, g_free);
   return IDOK;
 }
 
