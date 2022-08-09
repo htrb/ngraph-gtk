@@ -2170,6 +2170,51 @@ PlotFileCB(struct objlist *obj, int id)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
+static int
+set_file_hidden_response(struct response_callback *cb)
+{
+  struct SelectDialog *d;
+  struct narray *farray, *ifarray;
+  int i, a, r;
+  d = (struct SelectDialog *) cb->dialog;
+  farray = d->sel;
+  ifarray = d->isel;
+  r = 0;
+  if (cb->return_value == IDOK) {
+    int num, inum, *array, lastinst;
+    struct objlist *fobj;
+    fobj = chkobject("data");
+    lastinst = chkobjlastinst(fobj);
+    a = TRUE;
+    for (i = 0; i <= lastinst; i++) {
+      putobj(fobj, "hidden", i, &a);
+    }
+    num = arraynum(farray);
+    array = arraydata(farray);
+    a = FALSE;
+    for (i = 0; i < num; i++) {
+      putobj(fobj, "hidden", array[i], &a);
+    }
+
+    inum = arraynum(ifarray);
+    if (inum != num) {
+      set_graph_modified();
+    } else {
+      for (i = 0; i < num; i++) {
+	if (arraynget_int(ifarray, i) != array[i]) {
+	  set_graph_modified();
+	  break;
+	}
+      }
+    }
+    r = 1;
+  }
+
+  arrayfree(ifarray);
+  arrayfree(farray);
+  return r;
+}
+
 int
 SetFileHidden(void)
 {
