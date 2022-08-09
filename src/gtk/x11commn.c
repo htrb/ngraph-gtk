@@ -2220,8 +2220,8 @@ SetFileHidden(void)
 {
   struct objlist *fobj;
   int lastinst;
-  struct narray farray, ifarray;
-  int i, a, r;
+  struct narray *farray, *ifarray;
+  int i, a;
 
   fobj = chkobject("data");
   if (fobj == NULL) {
@@ -2233,17 +2233,26 @@ SetFileHidden(void)
     return 1;
   }
 
-  arrayinit(&ifarray, sizeof(int));
+  ifarray = arraynew(sizeof(int));
+  if (ifarray == NULL) {
+    return 1;
+  }
+  farray = arraynew(sizeof(int));
+  if (farray == NULL) {
+    arrayfree(ifarray);
+    return 1;
+  }
   for (i = 0; i <= lastinst; i++) {
     getobj(fobj, "hidden", i, 0, NULL, &a);
     if (!a) {
-      arrayadd(&ifarray, &i);
+      arrayadd(ifarray, &i);
     }
   }
 
-  r = 0;
-  SelectDialog(&DlgSelect, fobj, NULL, FileCB, &farray, &ifarray);
+  DlgSelect.response_cb = response_callback_new(set_file_hidden_response, NULL, NULL);
+  SelectDialog(&DlgSelect, fobj, NULL, FileCB, farray, ifarray);
   DialogExecute(TopLevel, &DlgSelect);
+  return 0;
 }
 #else
 int
