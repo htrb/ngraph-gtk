@@ -879,6 +879,23 @@ do_popup(GdkEventButton *event, struct obj_list_data *d)
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
+static int
+tree_view_select_pos(GtkGestureClick *gesture, gdouble x, gdouble y)
+{
+  GtkWidget *tree_view;
+  GtkTreePath *path;
+  GtkTreeSelection *selection;
+  int bx, by;
+  tree_view = gtk_event_controller_get_widget(GTK_EVENT_CONTROLLER(gesture));
+  gtk_tree_view_convert_widget_to_bin_window_coords(GTK_TREE_VIEW(tree_view), x, y, &bx, &by);
+  if (! gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(tree_view), bx, by, &path, NULL, NULL, NULL)) {
+    return FALSE;
+  }
+  selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tree_view));
+  gtk_tree_selection_select_path(selection, path);
+  return TRUE;
+}
+
 static void
 ev_button_down(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y, gpointer user_data)
 {
