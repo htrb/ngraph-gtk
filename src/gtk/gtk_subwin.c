@@ -884,6 +884,23 @@ do_popup(GdkEventButton *event, struct obj_list_data *d)
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
+static int
+tree_view_select_pos(GtkGestureClick *gesture, gdouble x, gdouble y)
+{
+  GtkWidget *tree_view;
+  GtkTreePath *path;
+  GtkTreeSelection *selection;
+  int bx, by;
+  tree_view = gtk_event_controller_get_widget(GTK_EVENT_CONTROLLER(gesture));
+  gtk_tree_view_convert_widget_to_bin_window_coords(GTK_TREE_VIEW(tree_view), x, y, &bx, &by);
+  if (! gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(tree_view), bx, by, &path, NULL, NULL, NULL)) {
+    return FALSE;
+  }
+  selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tree_view));
+  gtk_tree_selection_select_path(selection, path);
+  return TRUE;
+}
+
 static void
 ev_button_down(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y, gpointer user_data)
 {
@@ -904,26 +921,9 @@ ev_button_down(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y, gpo
     }
     break;
   case 3:
-    state = GTK_EVENT_SEQUENCE_CLAIMED;
-    break;
-  }
-  gtk_gesture_set_state(GTK_GESTURE(gesture), state);
-}
-
-static void
-ev_button_up(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y, gpointer user_data)
-{
-  struct obj_list_data *d;
-  guint button;
-  GtkEventSequenceState state = GTK_EVENT_SEQUENCE_NONE;
-
-  if (Menulock || Globallock) return;
-
-  d = user_data;
-
-  button = gtk_gesture_single_get_current_button(GTK_GESTURE_SINGLE(gesture));
-  switch (button) {
-  case 3:
+    if (tree_view_select_pos(gesture, x, y)) {
+      state = GTK_EVENT_SEQUENCE_CLAIMED;
+    }
     if (d->popup) {
       do_popup(x, y, d);
       state = GTK_EVENT_SEQUENCE_CLAIMED;
@@ -1292,8 +1292,6 @@ add_event_controller(GtkWidget *widget, struct obj_list_data *data)
 
   gtk_gesture_single_set_button(GTK_GESTURE_SINGLE(gesture), 0);
   g_signal_connect(gesture, "pressed", G_CALLBACK(ev_button_down), data);
-  g_signal_connect(gesture, "released", G_CALLBACK(ev_button_up), data);
-  gtk_event_controller_set_propagation_phase(GTK_EVENT_CONTROLLER(gesture), GTK_PHASE_TARGET);
 
   add_event_key(widget, G_CALLBACK(ev_key_down), NULL, data);
 }
