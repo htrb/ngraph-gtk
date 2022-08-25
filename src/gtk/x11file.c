@@ -6868,6 +6868,26 @@ file_math_response(struct response_callback *cb)
   }
   return IDOK;
 }
+
+void
+CmFileMath(void *w, gpointer client_data)
+{
+  struct objlist *obj;
+  int undo;
+
+  if (Menulock || Globallock)
+    return;
+
+  obj = chkobject("data");
+
+  if (chkobjlastinst(obj) < 0)
+    return;
+
+  undo = menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
+  MathDialog(&DlgMath, obj);
+  DlgMath.response_cb = response_callback_new(file_math_response, NULL, GINT_TO_POINTER(undo));
+  DialogExecute(TopLevel, &DlgMath);
+}
 #else
 void
 CmFileMath(void *w, gpointer client_data)
