@@ -5435,9 +5435,10 @@ void
 CmRangeAdd
 (GSimpleAction *action, GVariant *parameter, gpointer client_data)
 {
-  int id, ret, val, undo;
+  int id, val, undo;
   struct objlist *obj;
   struct obj_list_data *data;
+  struct range_add_data *res_data;
 
   if (Menulock || Globallock)
     return;
@@ -5454,12 +5455,21 @@ CmRangeAdd
     return;
   }
 
+  res_data = g_malloc0(sizeof(*data));
+  if (res_data == NULL) {
+    menu_delete_undo(undo);
+    return;
+  }
+
   data = NgraphApp.FileWin.data.data;
   val = DATA_SOURCE_RANGE;
   putobj(obj, "source", id, &val);
   val = PLOT_TYPE_LINE;
   putobj(obj, "type", id, &val);
+  res_data->data = data;
+  res_data->undo = undo;
   FileDialog(data, id, FALSE);
+  ((struct DialogType *) data->dialog)->response_cb = response_callback_new(range_add_response, NULL, res_data);
   DialogExecute(TopLevel, data->dialog);
 }
 #else
