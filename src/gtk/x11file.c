@@ -5852,6 +5852,33 @@ check_plot_obj_file(struct objlist *obj)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
+static int
+file_edit_response(struct response_callback *cb)
+{
+  int i;
+  struct objlist *obj;
+  struct CopyDialog *d;
+  char *name;
+  d = (struct CopyDialog *) cb->dialog;
+  obj = d->Obj;
+  if (cb->return_value == IDOK) {
+    i = d->sel;
+  } else {
+    return IDOK;
+  }
+
+  if (i < 0) {
+    return IDOK;
+  }
+
+  if (getobj(obj, "file", i, 0, NULL, &name) == -1) {
+    return IDOK;
+  }
+
+  edit_file(name);
+  return IDOK;
+}
+
 void
 CmFileEdit(void *w, gpointer client_data)
 {
