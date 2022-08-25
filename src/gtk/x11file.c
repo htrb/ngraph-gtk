@@ -639,6 +639,46 @@ MathDialogMode(GtkWidget *w, gpointer client_data)
   MathDialogSetupItem(d->widget, d);
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+struct math_dialog_list_data {
+  GList *list;
+  char *buf;
+  struct MathDialog *d;
+  GtkTreeSelection *gsel;
+};
+
+static int
+math_dialog_list_respone(struct response_callback *cb)
+{
+  struct MathDialog *d;
+  GList *list, *data;
+  struct math_dialog_list_data *res_data;
+  GtkTreeSelection *gsel;
+  int *ary;
+
+  res_data = (struct math_dialog_list_data *) cb->data;
+  d = res_data->d;
+  list = res_data->list;
+  gsel = res_data->gsel;
+  d->modified = DlgMathText.modified;
+  g_free(res_data->buf);
+
+  MathDialogSetupItem(d->widget, d);
+
+  for (data = list; data; data = data->next) {
+    ary = gtk_tree_path_get_indices(data->data);
+    if (ary == NULL) {
+      continue;
+    }
+
+    gtk_tree_selection_select_path(gsel, data->data);
+  }
+
+  g_list_free_full(list, (GDestroyNotify) gtk_tree_path_free);
+  g_free(res_data);
+  return IDOK;
+}
+#else
 static void
 MathDialogList(GtkButton *w, gpointer client_data)
 {
@@ -697,6 +737,7 @@ MathDialogList(GtkButton *w, gpointer client_data)
  END:
   g_list_free_full(list, (GDestroyNotify) gtk_tree_path_free);
 }
+#endif
 
 static void
 math_dialog_activated_cb(GtkTreeView *view, GtkTreePath *path, GtkTreeViewColumn *column, gpointer user_data)
