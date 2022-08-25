@@ -7050,6 +7050,22 @@ save_data(struct narray *farray, int div)
   g_free(file);
 }
 
+static int
+file_save_curve_data_response(struct response_callback *cb)
+{
+  int div;
+  struct narray *farray;
+
+  farray = (struct narray *) cb->data;
+  if (cb->return_value != IDOK) {
+    arrayfree(farray);
+    return IDCANCEL;
+  }
+  div = DlgOutputData.div;
+  save_data(farray, div);
+  return IDOK;
+}
+
 void
 CmFileSaveData(void *w, gpointer client_data)
 {
