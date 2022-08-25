@@ -5775,8 +5775,7 @@ void
 CmFileUpdate(void *w, gpointer client_data)
 {
   struct objlist *obj;
-  int ret;
-  struct narray farray;
+  struct narray *farray;
   int last;
 
   if (Menulock || Globallock)
@@ -5789,11 +5788,16 @@ CmFileUpdate(void *w, gpointer client_data)
   if (last == -1) {
     return;
   } else if (last == 0) {
-    arrayinit(&farray, sizeof(int));
-    arrayadd(&farray, &last);
-    ret = IDOK;
+    farray = arraynew(sizeof(int));
+    arrayadd(farray, &last);
+    if (update_file_obj_multi(obj, farray, FALSE)) {
+      FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, DRAW_REDRAW);
+    }
+    arrayfree(farray);
   } else {
-    SelectDialog(&DlgSelect, obj, _("data property (multi select)"), FileCB, (struct narray *) &farray, NULL);
+    farray = arraynew(sizeof(int));
+    SelectDialog(&DlgSelect, obj, _("data property (multi select)"), FileCB, (struct narray *) farray, NULL);
+    DlgSelect.response_cb = response_callback_new(file_update_response, NULL, farray);
     DialogExecute(TopLevel, &DlgSelect);
   }
 }
