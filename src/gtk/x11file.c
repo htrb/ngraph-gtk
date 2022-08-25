@@ -3664,14 +3664,24 @@ execute_fit_dialog_response(struct response_callback *cb)
 static int
 execute_fit_dialog(GtkWidget *w, struct objlist *fileobj, int fileid, struct objlist *fitobj, int fitid)
 {
-  int save_type, type, ret;
+  int save_type, type;
+  struct execute_fit_dialog_data *data;
 
   type = PLOT_TYPE_FIT;
   getobj(fileobj, "type", fileid, 0, NULL, &save_type);
   putobj(fileobj, "type", fileid, &type);
 
+  data = g_malloc0(sizeof(*data));
+  if (data == NULL) {
+    return IDOK;
+  }
+  data->fileobj = fileobj;
+  data->fileid = fileid;
+  data->save_type = save_type;
   FitDialog(&DlgFit, fitobj, fitid);
+  DlgFit.response_cb = response_callback_new(execute_fit_dialog_response, NULL, data);
   DialogExecute(w, &DlgFit);
+  return IDOK;
 }
 #else
 static int
