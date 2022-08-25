@@ -6238,13 +6238,21 @@ FileWinFileUpdate(struct obj_list_data *d)
   num = chkobjlastinst(d->obj);
 
   if ((sel >= 0) && (sel <= num)) {
-    int ret, undo;
+    int undo;
     GtkWidget *parent;
+    struct file_update_data *data;
     undo = data_save_undo(UNDO_TYPE_EDIT);
     d->setup_dialog(d, sel, FALSE);
     d->select = sel;
 
     parent = TopLevel;
+    data = g_malloc0(sizeof(*data));
+    if (data == NULL) {
+      return;
+    }
+    data->d = d;
+    data->undo = undo;
+    ((struct DialogType *) d->dialog)->response_cb = response_callback_new(file_win_file_update_response, NULL, data);
     DialogExecute(parent, d->dialog);
   }
 }
