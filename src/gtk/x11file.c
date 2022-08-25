@@ -3640,6 +3640,27 @@ FileDialogMark(GtkWidget *w, gpointer client_data)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
+struct execute_fit_dialog_data {
+  struct objlist *fileobj;
+  int fileid;
+  int save_type;
+};
+
+static int
+execute_fit_dialog_response(struct response_callback *cb)
+{
+  struct execute_fit_dialog_data *data;
+  struct objlist *fileobj;
+  int fileid, save_type;
+  data = (struct execute_fit_dialog_data *) cb->data;
+  fileobj = data->fileobj;
+  fileid = data->fileid;
+  save_type = data->save_type;
+  putobj(fileobj, "type", fileid, &save_type);
+  g_free(data);
+  return cb->return_value;
+}
+
 static int
 execute_fit_dialog(GtkWidget *w, struct objlist *fileobj, int fileid, struct objlist *fitobj, int fitid)
 {
