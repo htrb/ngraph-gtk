@@ -6855,6 +6855,20 @@ file_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
   }
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static int
+file_math_response(struct response_callback *cb)
+{
+  if (DlgMath.modified) {
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, DRAW_REDRAW);
+  } else {
+    int undo;
+    undo = GPOINTER_TO_INT(cb->data);
+    menu_delete_undo(undo);
+  }
+  return IDOK;
+}
+#else
 void
 CmFileMath(void *w, gpointer client_data)
 {
@@ -6878,6 +6892,7 @@ CmFileMath(void *w, gpointer client_data)
     menu_delete_undo(undo);
   }
 }
+#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
