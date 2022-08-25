@@ -5987,10 +5987,10 @@ CmOptionFileDef(void *w, gpointer client_data)
   id = newobj(obj);
   if (id >= 0) {
     int modified;
-    char *objs[2];
 
     modified = get_graph_modified();
     FileDefDialog(&DlgFileDef, obj, id);
+    DlgFileDef.response_cb = response_callback_new(option_file_def_response, NULL, GINT_TO_POINTER(modified));
     DialogExecute(TopLevel, &DlgFileDef);
   }
 }
