@@ -5573,6 +5573,30 @@ CmFileOpen
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
+static int
+file_close_response(struct response_callback *cb)
+{
+  struct narray *farray;
+  farray = (struct narray *) cb->data;
+  if (cb->return_value == IDOK) {
+    int i, *array, num;
+    struct obj_list_data *data;
+    data = NgraphApp.FileWin.data.data;
+    num = arraynum(farray);
+    if (num > 0) {
+      data_save_undo(UNDO_TYPE_DELETE);
+    }
+    array = arraydata(farray);
+    for (i = num - 1; i >= 0; i--) {
+      delete_file_obj(data, array[i]);
+      set_graph_modified();
+    }
+    FileWinUpdate(data, TRUE, DRAW_REDRAW);
+  }
+  arrayfree(farray);
+  return IDOK;
+}
+
 void
 CmFileClose(void *w, gpointer client_data)
 {
