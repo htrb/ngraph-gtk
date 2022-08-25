@@ -5757,6 +5757,20 @@ update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
+static int
+file_update_response(struct response_callback *cb)
+{
+  struct narray *farray;
+  struct SelectDialog *d;
+  farray = (struct narray *) cb->data;
+  d = (struct SelectDialog *) cb->dialog;
+  if (cb->return_value == IDOK && update_file_obj_multi(d->Obj, farray, FALSE)) {
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, DRAW_REDRAW);
+  }
+  arrayfree(farray);
+  return IDOK;
+}
+
 void
 CmFileUpdate(void *w, gpointer client_data)
 {
