@@ -5406,6 +5406,31 @@ CmFileHistory(GtkRecentChooser *w, gpointer client_data)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
+struct range_add_data
+{
+  int undo;
+  struct obj_list_data *data;
+};
+
+static int
+range_add_response(struct response_callback *cb)
+{
+  int undo;
+  struct obj_list_data *data;
+  struct range_add_data *res_data;
+  res_data = (struct range_add_data *) cb->data;
+  undo = res_data->undo;
+  data = res_data->data;
+  if (cb->return_value == IDCANCEL) {
+    menu_undo_internal(undo);
+  } else {
+    set_graph_modified();
+    FileWinUpdate(data, TRUE, DRAW_REDRAW);
+  }
+  g_free(res_data);
+  return IDOK;
+}
+
 void
 CmRangeAdd
 (GSimpleAction *action, GVariant *parameter, gpointer client_data)
