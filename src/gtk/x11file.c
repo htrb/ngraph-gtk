@@ -5270,6 +5270,35 @@ data_save_undo(int type)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
+struct load_data_data
+{
+  int undo;
+  char *fname;
+  struct obj_list_data *data;
+};
+
+static int
+load_data_response(struct response_callback *cb)
+{
+  char *fname;
+  int undo;
+  struct load_data_data *res_data;
+  struct obj_list_data *data;
+  res_data = (struct load_data_data *) cb->data;
+  undo = res_data->undo;
+  data = res_data->data;
+  fname = res_data->fname;
+  if (cb->return_value == IDCANCEL) {
+    menu_undo_internal(undo);
+  } else {
+    set_graph_modified();
+    AddDataFileList(fname);
+  }
+  FileWinUpdate(data, TRUE, DRAW_NOTIFY);
+  g_free(res_data);
+  return IDOK;
+}
+
 void
 load_data(const char *name)
 {
