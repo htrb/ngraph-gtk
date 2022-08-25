@@ -5652,7 +5652,7 @@ CmFileClose(void *w, gpointer client_data)
 int
 update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file)
 {
-  int i, j, num, *array, id0, modified, ret, undo;
+  int i, num, *array, id0, modified, ret, undo;
   char *name;
   struct obj_list_data *data;
 
@@ -5682,6 +5682,7 @@ update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file)
       DialogExecute(TopLevel, data->dialog);
     }
   }
+  return 0;
 }
 #else
 int
