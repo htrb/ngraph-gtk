@@ -5945,6 +5945,33 @@ CmFileEdit(void *w, gpointer client_data)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
+static int
+option_file_def_response(struct response_callback *cb)
+{
+  int id;
+  struct objlist *obj;
+  struct FileDialog *d;
+  int modified;
+  char *objs[2];
+  d = (struct FileDialog *) cb->dialog;
+  modified = GPOINTER_TO_INT(cb->data);
+  obj = d->Obj;
+  id = d->Id;
+  if (cb->return_value == IDOK) {
+    if (CheckIniFile()) {
+      exeobj(obj, "save_config", id, 0, NULL);
+    }
+  }
+  delobj(obj, id);
+  objs[0] = obj->name;
+  objs[1] = NULL;
+  UpdateAll2(objs, TRUE);
+  if (! modified) {
+    reset_graph_modified();
+  }
+  return IDOK;
+}
+
 void
 CmOptionFileDef(void *w, gpointer client_data)
 {
