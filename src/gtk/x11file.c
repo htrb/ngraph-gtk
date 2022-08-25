@@ -5600,7 +5600,7 @@ file_close_response(struct response_callback *cb)
 void
 CmFileClose(void *w, gpointer client_data)
 {
-  struct narray farray;
+  struct narray *farray;
   struct objlist *obj;
 
   if (Menulock || Globallock)
@@ -5609,7 +5609,9 @@ CmFileClose(void *w, gpointer client_data)
     return;
   if (chkobjlastinst(obj) == -1)
     return;
-  SelectDialog(&DlgSelect, obj, _("close data (multi select)"), FileCB, (struct narray *) &farray, NULL);
+  farray = arraynew(sizeof(int));
+  SelectDialog(&DlgSelect, obj, _("close data (multi select)"), FileCB, (struct narray *) farray, NULL);
+  DlgSelect.response_cb = response_callback_new(file_close_response, NULL, farray);
   DialogExecute(TopLevel, &DlgSelect);
 }
 #else
