@@ -7076,25 +7076,31 @@ CmFileSaveData(void *w, gpointer client_data)
   if (Menulock || Globallock)
     return;
 
-  if (GetDrawFiles(&farray))
-    return;
-
-  obj = chkobject("data");
-  if (obj == NULL)
-    return;
-
-  onum = chkobjlastinst(obj);
-  num = arraynum(&farray);
-
-  if (num == 0) {
-    arraydel(&farray);
+  farray = arraynew(sizeof(int));
+  if (GetDrawFiles(farray)) {
+    arrayfree(farray);
     return;
   }
 
-  array = arraydata(&farray);
+  obj = chkobject("data");
+  if (obj == NULL) {
+    arrayfree(farray);
+    return;
+  }
+
+  onum = chkobjlastinst(obj);
+  num = arraynum(farray);
+
+  if (num == 0) {
+    arrayfree(farray);
+    return;
+  }
+
+  array = arraydata(farray);
   for (i = 0; i < num; i++) {
-    if (array[i] < 0 || array[i] > onum)
+    if (array[i] < 0 || array[i] > onum) {
       continue;
+    }
 
     getobj(obj, "type", array[i], 0, NULL, &type);
     if (type == 3) {
@@ -7106,7 +7112,10 @@ CmFileSaveData(void *w, gpointer client_data)
 
   if (curve) {
     OutputDataDialog(&DlgOutputData, div);
+    DlgOutputData.response_cb = response_callback_new(file_save_curve_data_response, NULL, farray);
     DialogExecute(TopLevel, &DlgOutputData);
+  } else {
+    save_data(farray, div);
   }
 }
 #else
