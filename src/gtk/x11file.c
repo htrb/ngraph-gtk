@@ -7003,15 +7003,59 @@ GetDrawFiles(struct narray *farray)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
+static void
+save_data(struct narray *farray, int div)
+{
+  struct objlist *obj;
+  char *file, buf[1024];
+  int chd, i, *array, num, onum;
+  char *argv[4];
+
+  chd = Menulocal.changedirectory;
+  if (nGetSaveFileName(TopLevel, _("Data file"), NULL, NULL, NULL,
+		       &file, FALSE, chd) != IDOK) {
+    arrayfree(farray);
+    return;
+  }
+
+  ProgressDialogCreate(_("Making data file"));
+  SetStatusBar(_("Making data file."));
+
+  obj = chkobject("data");
+  array = arraydata(farray);
+  num = arraynum(farray);
+  onum = chkobjlastinst(obj);
+
+  argv[0] = (char *) file;
+  argv[1] = (char *) &div;
+  argv[3] = NULL;
+  for (i = 0; i < num; i++) {
+    int append;
+    if (array[i] < 0 || array[i] > onum)
+      continue;
+
+    snprintf(buf, sizeof(buf), "%d/%d", i, num);
+    set_progress(1, buf, 1.0 * (i + 1) / num);
+
+    append = (i == 0) ? FALSE : TRUE;
+    argv[2] = (char *) &append;
+    if (exeobj(obj, "output_file", array[i], 3, argv))
+      break;
+  }
+  ProgressDialogFinalize();
+  ResetStatusBar();
+  main_window_redraw();
+
+  arrayfree(farray);
+  g_free(file);
+}
+
 void
 CmFileSaveData(void *w, gpointer client_data)
 {
-  struct narray farray;
+  struct narray *farray;
   struct objlist *obj;
-  int i, num, onum, type, div, curve = FALSE, *array, append;
-  char *file, buf[1024];
-  char *argv[4];
-  int chd;
+  int i, num, onum, type, div, curve = FALSE, *array;
 
   if (Menulock || Globallock)
     return;
