@@ -6938,7 +6938,7 @@ GetDrawFiles(struct narray *farray)
 {
   struct objlist *fobj;
   int lastinst;
-  struct narray ifarray;
+  struct narray *ifarray;
   int i, a;
 
   if (farray == NULL)
@@ -6952,14 +6952,16 @@ GetDrawFiles(struct narray *farray)
   if (lastinst < 0)
     return 1;
 
-  arrayinit(&ifarray, sizeof(int));
+  ifarray = arraynew(sizeof(int));
   for (i = 0; i <= lastinst; i++) {
     getobj(fobj, "hidden", i, 0, NULL, &a);
     if (!a)
-      arrayadd(&ifarray, &i);
+      arrayadd(ifarray, &i);
   }
-  SelectDialog(&DlgSelect, fobj, NULL, FileCB, farray, &ifarray);
+  SelectDialog(&DlgSelect, fobj, NULL, FileCB, farray, ifarray);
+  DlgSelect.response_cb = response_callback_new(get_draw_files_response, NULL, NULL);
   DialogExecute(TopLevel, &DlgSelect);
+  return 0;
 }
 #else
 static int
