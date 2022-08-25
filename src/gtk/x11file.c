@@ -678,6 +678,65 @@ math_dialog_list_respone(struct response_callback *cb)
   g_free(res_data);
   return IDOK;
 }
+
+static void
+MathDialogList(GtkButton *w, gpointer client_data)
+{
+  struct MathDialog *d;
+  int a, r;
+  char *field = NULL, *buf;
+  GtkTreeSelection *gsel;
+  GtkTreePath *path;
+  GList *list, *data;
+  struct math_dialog_list_data *res_data;
+
+  d = (struct MathDialog *) client_data;
+
+  gsel = gtk_tree_view_get_selection(GTK_TREE_VIEW(d->list));
+  list = gtk_tree_selection_get_selected_rows(gsel, NULL);
+
+  if (list == NULL)
+    return;
+
+  gtk_tree_view_get_cursor(GTK_TREE_VIEW(d->list), &path, NULL);
+
+  if (path) {
+    r = list_store_path_get_int(d->list, path, 0, &a);
+    gtk_tree_path_free(path);
+  } else {
+    data = g_list_last(list);
+    r = list_store_path_get_int(d->list, data->data, 0, &a);
+  }
+
+  if (r) {
+    g_list_free_full(list, (GDestroyNotify) gtk_tree_path_free);
+    return;
+  }
+
+  if (d->Mode < 0 || d->Mode >= MATH_FNC_NUM)
+    d->Mode = 0;
+
+  field = FieldStr[d->Mode];
+
+  sgetobjfield(d->Obj, a, field, NULL, &buf, FALSE, FALSE, FALSE);
+  if (buf == NULL) {
+    g_list_free_full(list, (GDestroyNotify) gtk_tree_path_free);
+    return;
+  }
+
+  res_data = g_malloc0(sizeof(*res_data));
+  if (res_data == NULL) {
+    g_list_free_full(list, (GDestroyNotify) gtk_tree_path_free);
+    return;
+  }
+  res_data->d = d;
+  res_data->list = list;
+  res_data->buf = buf;
+
+  MathTextDialog(&DlgMathText, buf, d->Mode, d->Obj, list, d->list);
+  DlgMathText.response_cb = response_callback_new(math_dialog_list_respone, NULL, res_data);
+  DialogExecute(d->widget, &DlgMathText);
+}
 #else
 static void
 MathDialogList(GtkButton *w, gpointer client_data)
