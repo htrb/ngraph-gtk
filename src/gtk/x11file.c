@@ -6201,6 +6201,32 @@ file_copy2_popup_func
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
+struct file_update_data {
+  int undo;
+  struct obj_list_data *d;
+};
+
+static int
+file_win_file_update_response(struct response_callback *cb)
+{
+  struct file_update_data *data;
+  struct obj_list_data *d;
+  int undo;
+  data = (struct file_update_data *) cb->data;
+  d = data->d;
+  undo = data->undo;
+  set_graph_modified();
+  switch (cb->return_value) {
+  case IDCANCEL:
+    menu_undo_internal(undo);
+    break;
+  default:
+    d->update(d, FALSE, DRAW_NOTIFY);
+  }
+  g_free(data);
+  return IDOK;
+}
+
 static void
 FileWinFileUpdate(struct obj_list_data *d)
 {
