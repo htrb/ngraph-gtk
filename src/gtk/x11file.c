@@ -5883,8 +5883,6 @@ void
 CmFileEdit(void *w, gpointer client_data)
 {
   struct objlist *obj;
-  int i;
-  char *name;
   int last;
 
   if (Menulock || Globallock)
@@ -5901,6 +5899,7 @@ CmFileEdit(void *w, gpointer client_data)
     return;
   } else {
     CopyDialog(&DlgCopy, obj, -1, _("edit data file (single select)"), PlotFileCB);
+    DlgCopy.response_cb = response_callback_new(file_edit_response, NULL, NULL);
     DialogExecute(TopLevel, &DlgCopy);
   }
 }
