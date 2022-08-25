@@ -5302,11 +5302,11 @@ load_data_response(struct response_callback *cb)
 void
 load_data(const char *name)
 {
-  int ret;
   char *fname;
   int id, undo;
   struct objlist *obj;
   struct obj_list_data *data;
+  struct load_data_data *res_data;
 
   if (Menulock || Globallock) {
     return;
@@ -5330,21 +5330,20 @@ load_data(const char *name)
     return;
   }
 
+  res_data = g_malloc0(sizeof(*data));
+  if (res_data == NULL) {
+    menu_delete_undo(undo);
+    return;
+  }
+
   putobj(obj, "file", id, fname);
   data = NgraphApp.FileWin.data.data;
+  res_data->data = data;
+  res_data->undo = undo;
+  res_data->fname = fname;
   FileDialog(data, id, FALSE);
-#if 1
+  ((struct DialogType *) data->dialog)->response_cb = response_callback_new(load_data_response, NULL, res_data);
   DialogExecute(TopLevel, data->dialog);
-#else
-  ret = DialogExecute(TopLevel, data->dialog);
-  if (ret == IDCANCEL) {
-    menu_undo_internal(undo);
-  } else {
-    set_graph_modified();
-    AddDataFileList(fname);
-  }
-  FileWinUpdate(data, TRUE, DRAW_NOTIFY);
-#endif
 }
 #else
 void
