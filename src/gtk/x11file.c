@@ -3609,6 +3609,23 @@ file_dialog_mark_response(struct response_callback *cb)
   g_free(data);
   return IDOK;
 }
+
+static void
+FileDialogMark(GtkWidget *w, gpointer client_data)
+{
+  struct FileDialog *d;
+  struct file_dialog_mark_data *data;
+
+  d = (struct FileDialog *) client_data;
+  data = g_malloc0(sizeof(*data));
+  if (data == NULL) {
+    return;
+  }
+  data->d = d;
+  data->w = w;
+  d->mark.response_cb = response_callback_new(file_dialog_mark_response, NULL, data);
+  DialogExecute(d->widget, &(d->mark));
+}
 #else
 static void
 FileDialogMark(GtkWidget *w, gpointer client_data)
