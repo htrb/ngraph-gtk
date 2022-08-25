@@ -1264,6 +1264,19 @@ FitDialogLoadConfig(struct FitDialog *d, int errmes)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
+static int
+file_dialog_load_response(struct response_callback *cb)
+{
+  struct FitDialog *d;
+  d = (struct FitDialog *) cb->data;
+  if ((cb->return_value == IDOK) && (DlgFitLoad.sel >= 0)) {
+    int id;
+    id = DlgFitLoad.sel + d->Lastid + 1;
+    FitDialogSetupItem(d->widget, d, id);
+  }
+  return IDOK;
+}
+
 static void
 FitDialogLoad(GtkButton *btn, gpointer user_data)
 {
