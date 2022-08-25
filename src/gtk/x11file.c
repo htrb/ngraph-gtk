@@ -1446,13 +1446,93 @@ delete_fitobj(struct FitDialog *d, char *profile)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
-static void
-FitDialogSave(GtkWidget *w, gpointer client_data)
+static int
+fit_dialog_save_response(struct response_callback *cb)
 {
-  int r;
   char *s, *ngpfile;
   int error;
   int hFile;
+  struct FitDialog *d;
+
+  d = (struct FitDialog *) cb->data;
+  if (cb->return_value != IDOK && cb->return_value != IDDELETE)
+    return IDOK;
+
+  if (DlgFitSave.Profile == NULL)
+    return IDOK;
+
+  if (DlgFitSave.Profile[0] == '\0') {
+    g_free(DlgFitSave.Profile);
+    return IDOK;
+  }
+
+  switch (cb->return_value) {
+  case IDOK:
+    if (copy_settings_to_fitobj(d, DlgFitSave.Profile)) {
+      g_free(DlgFitSave.Profile);
+      return IDOK;
+    }
+    break;
+  case IDDELETE:
+    if (delete_fitobj(d, DlgFitSave.Profile)) {
+      g_free(DlgFitSave.Profile);
+      return IDOK;
+    }
+    break;
+  }
+
+  ngpfile = getscriptname(FITSAVE);
+  if (ngpfile == NULL) {
+    return IDOK;
+  }
+
+  error = FALSE;
+
+  hFile = nopen(ngpfile, O_CREAT | O_TRUNC | O_RDWR, NFMODE_NORMAL_FILE);
+  if (hFile < 0) {
+    error = TRUE;
+  } else {
+    int i;
+    for (i = d->Lastid + 1; i <= chkobjlastinst(d->Obj); i++) {
+      int len;
+      getobj(d->Obj, "save", i, 0, NULL, &s);
+      len = strlen(s);
+
+      if (len != nwrite(hFile, s, len))
+	error = TRUE;
+
+      if (nwrite(hFile, "\n", 1) != 1)
+	error = TRUE;
+    }
+    nclose(hFile);
+  }
+
+  if (error) {
+    ErrorMessage();
+  } else {
+    char *ptr;
+    switch (cb->return_value) {
+    case IDOK:
+      ptr = g_strdup_printf(_("The profile '%s' is saved."), DlgFitSave.Profile);
+      message_box(d->widget, ptr, "Confirm", RESPONS_OK);
+      g_free(ptr);
+      break;
+    case IDDELETE:
+      ptr = g_strdup_printf(_("The profile '%s' is deleted."), DlgFitSave.Profile);
+      message_box(d->widget, ptr, "Confirm", RESPONS_OK);
+      g_free(ptr);
+      g_free(DlgFitSave.Profile);
+      break;
+    }
+  }
+
+  g_free(ngpfile);
+  return IDOK;
+}
+
+static void
+FitDialogSave(GtkWidget *w, gpointer client_data)
+{
   struct FitDialog *d;
 
   d = (struct FitDialog *) client_data;
