@@ -6917,6 +6917,23 @@ CmFileMath(void *w, gpointer client_data)
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
 static int
+get_draw_files_response(struct response_callback *cb)
+{
+  struct SelectDialog *d;
+  struct narray *ifarray, *farray;
+  d = (struct SelectDialog *) cb->dialog;
+  farray = d->sel;
+  ifarray = d->isel;
+  if (cb->return_value != IDOK) {
+    arrayfree(ifarray);
+    arraydel(farray);
+    return IDCANCEL;
+  }
+  arrayfree(ifarray);
+  return IDOK;
+}
+
+static int
 GetDrawFiles(struct narray *farray)
 {
   struct objlist *fobj;
