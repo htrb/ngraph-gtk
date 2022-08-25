@@ -1542,6 +1542,7 @@ FitDialogSave(GtkWidget *w, gpointer client_data)
 
   FitSaveDialog(&DlgFitSave, d->Obj, d->Lastid + 1);
 
+  DlgFitSave.response_cb = response_callback_new(fit_dialog_save_response, NULL, d);
   DialogExecute(d->widget, &DlgFitSave);
 }
 #else
