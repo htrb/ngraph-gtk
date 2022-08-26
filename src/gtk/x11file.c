@@ -6465,6 +6465,34 @@ FileWinUpdate(struct obj_list_data *d, int clear, int draw)
   }
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+file_win_fit_response(int ret, gpointer user_data)
+{
+  struct show_fit_dialog_data *data;
+  struct objlist *obj, *fitobj;
+  int id, fitid, undo;
+
+  data = (struct show_fit_dialog_data *) user_data;
+  obj = data->obj;
+  id = data->id;
+  fitobj = data->fitobj;
+  fitid = data->fitid;
+  undo = data->undo;
+  switch (ret) {
+  case IDCANCEL:
+    menu_delete_undo(undo);
+    break;
+  case IDDELETE:
+    delobj(fitobj, fitid);
+    putobj(obj, "fit", id, NULL);
+    break;
+  }
+  UnFocus();
+  g_free(data);
+}
+#endif
+
 static void
 FileWinFit(struct obj_list_data *d)
 {
