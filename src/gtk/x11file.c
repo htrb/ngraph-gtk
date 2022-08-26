@@ -3711,6 +3711,51 @@ execute_fit_dialog(GtkWidget *w, struct objlist *fileobj, int fileid, struct obj
 }
 #endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+struct show_fit_dialog_data
+{
+  struct objlist *obj, *fitobj;
+  int id, fitid, create, undo;
+  response_cb cb;
+  gpointer data;
+};
+
+static void
+show_fit_dialog_response(int ret, gpointer user_data)
+{
+  struct show_fit_dialog_data *data;
+  struct objlist *obj, *fitobj;
+  int id, fitid, create;
+
+  data = (struct show_fit_dialog_data *) user_data;
+  obj = data->obj;
+  id = data->id;
+  fitobj = data->fitobj;
+  fitid = data->fitid;
+  create = data->create;
+  switch (ret) {
+  case IDCANCEL:
+    if (! create)
+      break;
+    /* fall through */
+  case IDDELETE:
+    delobj(fitobj, fitid);
+    putobj(obj, "fit", id, NULL);
+    if (! create)
+      set_graph_modified();
+    break;
+  case IDOK:
+    if (create)
+      set_graph_modified();
+    break;
+  }
+  if (data->cb) {
+    data->cb(ret, data->data);
+  }
+  g_free(data);
+}
+#endif
+
 static int
 show_fit_dialog(struct objlist *obj, int id, GtkWidget *parent)
 {
