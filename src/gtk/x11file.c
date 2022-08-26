@@ -7611,6 +7611,39 @@ create_type_combo_item(GtkTreeStore *list, struct objlist *obj, int id)
   }
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+struct select_type_fit_data
+{
+  int sel, undo, type;
+  struct obj_list_data *d;
+};
+
+static void
+select_type_fit_response(int ret, gpointer user_data)
+{
+  struct obj_list_data *d;
+  int sel, undo, type;
+  struct select_type_fit_data *data;
+
+  data = (struct select_type_fit_data *) user_data;
+  sel = data->sel;
+  undo = data->undo;
+  type = data->type;
+  d = data->d;
+  g_free(data);
+  if (ret != IDOK) {
+    menu_delete_undo(undo);
+    if (type > 0) {
+      putobj(d->obj, "type", sel, &type);
+    }
+    return;
+  }
+  d->select = sel;
+  d->update(d, FALSE, DRAW_REDRAW);
+  set_graph_modified();
+}
+#endif
+
 static void
 select_type(GtkComboBox *w, gpointer user_data)
 {
