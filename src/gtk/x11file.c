@@ -3757,12 +3757,19 @@ show_fit_dialog_response(int ret, gpointer user_data)
 #endif
 
 static int
+#if GTK_CHECK_VERSION(4, 0, 0)
+show_fit_dialog(struct objlist *obj, int id, GtkWidget *parent, response_cb cb, gpointer user_data)
+#else
 show_fit_dialog(struct objlist *obj, int id, GtkWidget *parent)
+#endif
 {
   struct objlist *fitobj, *robj;
   char *fit;
   int fitid = 0, fitoid, ret, create = FALSE;
   struct narray iarray;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  struct show_fit_dialog_data *data;
+#endif
 
   if ((fitobj = chkobject("fit")) == NULL)
     return -1;
@@ -3834,6 +3841,7 @@ show_fit_dialog(struct objlist *obj, int id, GtkWidget *parent)
       set_graph_modified();
     break;
   }
+#endif
 
   return ret;
 }
@@ -3854,6 +3862,14 @@ fit_dialog_fit_response(int ret, gpointer user_data)
     set_fit_button_label(d->fit, valstr + i);
     g_free(valstr);
   }
+}
+
+static void
+FileDialogFit(GtkWidget *w, gpointer client_data)
+{
+  struct FileDialog *d;
+  d = (struct FileDialog *) client_data;
+  show_fit_dialog(d->Obj, d->Id, d->widget, fit_dialog_fit_response, client_data);
 }
 #else
 static void
@@ -6501,6 +6517,9 @@ FileWinFit(struct obj_list_data *d)
   int sel, fitid = 0, ret, num, undo;
   struct narray iarray;
   GtkWidget *parent;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  struct show_fit_dialog_data *data;
+#endif
 
   if (Menulock || Globallock)
     return;
@@ -6562,6 +6581,7 @@ FileWinFit(struct obj_list_data *d)
     putobj(d->obj, "fit", sel, NULL);
     break;
   }
+#endif
 }
 
 #define MARK_PIX_LINE_WIDTH 1
@@ -7367,7 +7387,9 @@ filewin_ev_key_down(GtkWidget *w, guint keyval, GdkModifierType state, gpointer 
   case GDK_KEY_f:
     if (state & GDK_CONTROL_MASK) {
       FileWinFit(d);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
       UnFocus();
+#endif
     }
     break;
   default:
@@ -7651,6 +7673,9 @@ select_type(GtkComboBox *w, gpointer user_data)
   struct obj_list_data *d;
   GtkTreeStore *list;
   GtkTreeIter iter;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  struct select_type_fit_data *data;
+#endif
 
   menu_lock(FALSE);
 
@@ -7696,12 +7721,25 @@ select_type(GtkComboBox *w, gpointer user_data)
 
       getobj(d->obj, "fit", sel, 0, NULL, &fit);
       if (fit == NULL) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+        data = g_malloc0(sizeof(*data));
+        if (data == NULL) {
+          return;
+        }
+        data->sel = sel;
+        data->undo = undo;
+        data->type = type;
+        data->d = d;
+        show_fit_dialog(d->obj, sel, TopLevel, select_type_fit_response, data);
+        return;
+#else
 	ret = show_fit_dialog(d->obj, sel, TopLevel);
 	if (ret != IDOK) {
 	  menu_delete_undo(undo);
 	  putobj(d->obj, "type", sel, &type);
 	  return;
 	}
+#endif
       }
     }
     break;
@@ -7743,11 +7781,24 @@ select_type(GtkComboBox *w, gpointer user_data)
     break;
   case FILE_COMBO_ITEM_FIT:
     undo = data_save_undo(UNDO_TYPE_EDIT);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    data = g_malloc0(sizeof(*data));
+    if (data == NULL) {
+      return;
+    }
+    data->sel = sel;
+    data->undo = undo;
+    data->type = -1;
+    data->d = d;
+    show_fit_dialog(d->obj, sel, TopLevel, select_type_fit_response, data);
+    return;
+#else
     ret = show_fit_dialog(d->obj, sel, TopLevel);
     if (ret != IDOK) {
       menu_delete_undo(undo);
       return;
     }
+#endif
     break;
   case FILE_COMBO_ITEM_JOIN:
     gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_ENUM, &enum_id, -1);
