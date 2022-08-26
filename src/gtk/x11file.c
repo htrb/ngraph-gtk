@@ -3640,10 +3640,14 @@ FileDialogMark(GtkWidget *w, gpointer client_data)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
+typedef void (* response_cb) (int response, gpointer user_data);
+
 struct execute_fit_dialog_data {
   struct objlist *fileobj;
   int fileid;
   int save_type;
+  response_cb cb;
+  gpointer user_data;
 };
 
 static int
@@ -3657,12 +3661,15 @@ execute_fit_dialog_response(struct response_callback *cb)
   fileid = data->fileid;
   save_type = data->save_type;
   putobj(fileobj, "type", fileid, &save_type);
+  if (data->cb) {
+    data->cb(cb->return_value, data->user_data);
+  }
   g_free(data);
   return cb->return_value;
 }
 
 static int
-execute_fit_dialog(GtkWidget *w, struct objlist *fileobj, int fileid, struct objlist *fitobj, int fitid)
+execute_fit_dialog(GtkWidget *w, struct objlist *fileobj, int fileid, struct objlist *fitobj, int fitid, response_cb cb, gpointer user_data)
 {
   int save_type, type;
   struct execute_fit_dialog_data *data;
@@ -3678,6 +3685,8 @@ execute_fit_dialog(GtkWidget *w, struct objlist *fileobj, int fileid, struct obj
   data->fileobj = fileobj;
   data->fileid = fileid;
   data->save_type = save_type;
+  data->cb = cb;
+  data->user_data = user_data;
   FitDialog(&DlgFit, fitobj, fitid);
   DlgFit.response_cb = response_callback_new(execute_fit_dialog_response, NULL, data);
   DialogExecute(w, &DlgFit);
@@ -3751,6 +3760,17 @@ show_fit_dialog(struct objlist *obj, int id, GtkWidget *parent)
     create = TRUE;
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  data = g_malloc0(sizeof(*data));
+  data->fitobj = fitobj;
+  data->obj = obj;
+  data->fitid = fitid;
+  data->id = id;
+  data->create = create;
+  data->cb = cb;
+  data->data = user_data;
+  ret = execute_fit_dialog(parent, obj, id, fitobj, fitid, show_fit_dialog_response, data);
+#else
   ret = execute_fit_dialog(parent, obj, id, fitobj, fitid);
 
   switch (ret) {
@@ -6430,6 +6450,15 @@ FileWinFit(struct obj_list_data *d)
 
   undo = data_save_undo(UNDO_TYPE_EDIT);
   parent = TopLevel;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  data = g_malloc0(sizeof(*data));
+  data->fitobj = fitobj;
+  data->obj = d->obj;
+  data->fitid = fitid;
+  data->id = sel;
+  data->undo = undo;
+  ret = execute_fit_dialog(parent, d->obj, sel, fitobj, fitid, file_win_fit_response, data);
+#else
   ret = execute_fit_dialog(parent, d->obj, sel, fitobj, fitid);
 
   switch (ret) {
