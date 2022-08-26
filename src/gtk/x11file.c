@@ -3838,6 +3838,24 @@ show_fit_dialog(struct objlist *obj, int id, GtkWidget *parent)
   return ret;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+fit_dialog_fit_response(int ret, gpointer user_data)
+{
+  struct FileDialog *d;
+  char *valstr;
+  d = (struct FileDialog *) user_data;
+  sgetobjfield(d->Obj, d->Id, "fit", NULL, &valstr, FALSE, FALSE, FALSE);
+  if (valstr) {
+    int i;
+    for (i = 0; (valstr[i] != '\0') && (valstr[i] != ':'); i++);
+    if (valstr[i] == ':')
+      i++;
+    set_fit_button_label(d->fit, valstr + i);
+    g_free(valstr);
+  }
+}
+#else
 static void
 FileDialogFit(GtkWidget *w, gpointer client_data)
 {
@@ -3858,6 +3876,7 @@ FileDialogFit(GtkWidget *w, gpointer client_data)
     g_free(valstr);
   }
 }
+#endif
 
 static void
 plot_tab_copy(GtkButton *btn, gpointer user_data)
