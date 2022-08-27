@@ -5784,8 +5784,20 @@ CmFileClose(void *w, gpointer client_data)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
-int
-update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file)
+static void
+update_file_obj_multi_response_all(struct objlist *obj, int *array, int top, int num, int id0, int new_file)
+{
+  int i;
+  for (i = top; i < num; i++) {
+    copy_file_obj_field(obj, array[i], array[id0], FALSE);
+    if (new_file) {
+      char *name = NULL;
+      getobj(obj, "file", array[i], 0, NULL, &name);
+      AddDataFileList(name);
+    }
+  }
+}
+
 {
   int i, num, *array, id0, modified, ret, undo;
   char *name;
