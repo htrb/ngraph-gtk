@@ -2208,6 +2208,16 @@ ViewerWinClose(void)
   d->points = NULL;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+viewer_win_file_update_response(int ret, gpointer user_data)
+{
+  struct narray *dfile;
+  dfile = (struct narray *) user_data;
+  arrayfree(dfile);
+}
+#endif
+
 static int
 ViewerWinFileUpdate(int x1, int y1, int x2, int y2, int err)
 {
