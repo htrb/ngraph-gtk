@@ -5613,6 +5613,43 @@ CmRangeAdd
 }
 #endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+struct file_open_data {
+  int n, undo;
+  struct narray *farray;
+  struct objlist *obj;
+};
+
+static void
+file_open_response(int ret, gpointer user_data)
+{
+  struct file_open_data *data;
+  int n, undo;
+  struct narray *farray;
+  struct objlist *obj;
+
+  data = (struct file_open_data *) user_data;
+  undo = data->undo;
+  n = data->n;
+  farray = data->farray;
+  obj = data->obj;
+
+  if (ret) {
+    menu_delete_undo(undo);
+  }
+
+  if (n == chkobjlastinst(obj)) {
+    menu_delete_undo(undo);
+  } else {
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, DRAW_NOTIFY);
+    set_graph_modified();
+  }
+
+  arrayfree(farray);
+  g_free(data);
+}
+#endif
+
 void
 CmFileOpen
 #if GTK_CHECK_VERSION(4, 0, 0)
