@@ -5990,6 +5990,17 @@ update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
+static void
+file_update_response_response(int ret, gpointer user_data)
+{
+  struct narray *farray;
+  farray = (struct narray *) user_data;
+  if (ret) {
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, DRAW_REDRAW);
+  }
+  arrayfree(farray);
+}
+
 static int
 file_update_response(struct response_callback *cb)
 {
