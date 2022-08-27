@@ -5624,7 +5624,7 @@ CmFileOpen
   int id, ret, n, undo = -1, chd;
   char **file = NULL;
   struct objlist *obj;
-  struct narray farray;
+  struct narray *farray;
 
   if (Menulock || Globallock)
     return;
@@ -5640,7 +5640,7 @@ CmFileOpen
 
   n = chkobjlastinst(obj);
 
-  arrayinit(&farray, sizeof(int));
+  farray = arraynew(sizeof(int));
   if (ret == IDOK && file) {
     char **ptr;
     undo = data_save_undo(UNDO_TYPE_OPEN_FILE);
@@ -5649,7 +5649,7 @@ CmFileOpen
       name = *ptr;
       id = newobj(obj);
       if (id >= 0) {
-	arrayadd(&farray, &id);
+	arrayadd(farray, &id);
 	changefilename(name);
 	putobj(obj, "file", id, name);
       }
@@ -5657,7 +5657,7 @@ CmFileOpen
     g_free(file);
   }
 
-  if (update_file_obj_multi(obj, &farray, TRUE)) {
+  if (update_file_obj_multi(obj, farray, TRUE)) {
     menu_delete_undo(undo);
   }
 
@@ -5668,7 +5668,7 @@ CmFileOpen
     set_graph_modified();
   }
 
-  arraydel(&farray);
+  arrayfree(farray);
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
