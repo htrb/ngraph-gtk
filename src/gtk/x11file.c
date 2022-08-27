@@ -5660,6 +5660,9 @@ CmFileOpen
   char **file = NULL;
   struct objlist *obj;
   struct narray *farray;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  struct file_open_data *data;
+#endif
 
   if (Menulock || Globallock)
     return;
@@ -5673,6 +5676,12 @@ CmFileOpen
 			      &(Menulocal.fileopendir), NULL,
 			      &file, chd);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  data = g_malloc0(sizeof(*data));
+  if (data == NULL) {
+    return;
+  }
+#endif
   n = chkobjlastinst(obj);
 
   farray = arraynew(sizeof(int));
@@ -5692,6 +5701,13 @@ CmFileOpen
     g_free(file);
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  data->undo = undo;
+  data->n = n;
+  data->farray = farray;
+  data->obj = obj;
+  update_file_obj_multi(obj, farray, TRUE, file_open_response, data);
+#else
   if (update_file_obj_multi(obj, farray, TRUE)) {
     menu_delete_undo(undo);
   }
@@ -5704,6 +5720,7 @@ CmFileOpen
   }
 
   arrayfree(farray);
+#endif
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
@@ -6008,10 +6025,11 @@ file_update_response(struct response_callback *cb)
   struct SelectDialog *d;
   farray = (struct narray *) cb->data;
   d = (struct SelectDialog *) cb->dialog;
-  if (cb->return_value == IDOK && update_file_obj_multi(d->Obj, farray, FALSE)) {
-    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, DRAW_REDRAW);
+  if (cb->return_value == IDOK) {
+    update_file_obj_multi(d->Obj, farray, FALSE, file_update_response_response, farray);
+  } else {
+    arrayfree(farray);
   }
-  arrayfree(farray);
   return IDOK;
 }
 
@@ -6034,10 +6052,7 @@ CmFileUpdate(void *w, gpointer client_data)
   } else if (last == 0) {
     farray = arraynew(sizeof(int));
     arrayadd(farray, &last);
-    if (update_file_obj_multi(obj, farray, FALSE)) {
-      FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, DRAW_REDRAW);
-    }
-    arrayfree(farray);
+    update_file_obj_multi(obj, farray, FALSE, file_update_response_response, farray);
   } else {
     farray = arraynew(sizeof(int));
     SelectDialog(&DlgSelect, obj, _("data property (multi select)"), FileCB, (struct narray *) farray, NULL);

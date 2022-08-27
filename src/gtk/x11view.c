@@ -2296,8 +2296,12 @@ ViewerWinFileUpdate(int x1, int y1, int x2, int y2, int err)
   ProgressDialogFinalize();
   ResetStatusBar();
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  update_file_obj_multi(fileobj, dfile, FALSE, viewer_win_file_update_response, dfile);
+#else
   ret = update_file_obj_multi(fileobj, dfile, FALSE);
   arrayfree(dfile);
+#endif
 
  End:
   restorestdio(&save);
