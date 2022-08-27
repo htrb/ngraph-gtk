@@ -901,7 +901,7 @@ arc_get_angle(struct objlist *obj, N_VALUE *inst, unsigned int round, int point,
 static int
 new_file_obj(char *name, struct objlist *obj, int *id0, int multi)
 {
-  int id, ret;
+  int id;
 
   id = newobj(obj);
   if (id < 0) {
@@ -917,6 +917,7 @@ new_file_obj(char *name, struct objlist *obj, int *id0, int multi)
 
   FileDialog(NgraphApp.FileWin.data.data, id, multi);
   DialogExecute(TopLevel, &DlgFile);
+  return 0;
 }
 #else
 static int
