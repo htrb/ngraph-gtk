@@ -2232,7 +2232,7 @@ ViewerWinFileUpdate(int x1, int y1, int x2, int y2, int err)
   int minx, miny, maxx, maxy;
   struct savedstdio save;
   char mes[256];
-  struct narray dfile;
+  struct narray *dfile;
   int ret;
 
   ret = FALSE;
@@ -2257,14 +2257,17 @@ ViewerWinFileUpdate(int x1, int y1, int x2, int y2, int err)
   if (! fileobj)
     goto End;
 
-  arrayinit(&dfile, sizeof(int));
-
   if (check_drawrable(fileobj)) {
     goto End;
   }
 
   snum = chkobjlastinst(fileobj) + 1;
   if (snum == 0) {
+    goto End;
+  }
+
+  dfile = arraynew(sizeof(int));
+  if (dfile == NULL) {
     goto End;
   }
 
@@ -2286,15 +2289,15 @@ ViewerWinFileUpdate(int x1, int y1, int x2, int y2, int err)
     _getobj(fileobj, "evaluate", dinst, &eval);
     evalnum = arraynum(eval) / 3;
     if (evalnum != 0) {
-      arrayadd(&dfile, &i);
+      arrayadd(dfile, &i);
     }
   }
 
   ProgressDialogFinalize();
   ResetStatusBar();
 
-  ret = update_file_obj_multi(fileobj, &dfile, FALSE);
-  arraydel(&dfile);
+  ret = update_file_obj_multi(fileobj, dfile, FALSE);
+  arrayfree(dfile);
 
  End:
   restorestdio(&save);
