@@ -3640,8 +3640,6 @@ FileDialogMark(GtkWidget *w, gpointer client_data)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
-typedef void (* response_cb) (int response, gpointer user_data);
-
 struct execute_fit_dialog_data {
   struct objlist *fileobj;
   int fileid;
@@ -5792,6 +5790,12 @@ update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file)
   int i, num, *array, id0, modified, ret, undo;
   char *name;
   struct obj_list_data *data;
+int
+update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file, response_cb cb, gpointer user_data)
+{
+  int num, *array, undo;
+  struct obj_list_data *data;
+  struct update_file_obj_multi_data *rdata;
 
   num = arraynum(farray);
   if (num < 1) {

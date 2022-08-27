@@ -53,6 +53,11 @@ void CmFileSaveData(void *w, gpointer client_data);
 GtkWidget *create_data_list(struct SubWin *d);
 
 void CmOptionFileDef(void *w, gpointer client_data);
+#if GTK_CHECK_VERSION(4, 0, 0)
+typedef void (* response_cb) (int response, gpointer user_data);
+int update_file_obj_multi(struct objlist *obj, struct narray *farray, int newfile, response_cb cb, gpointer user_data);
+#else
 int update_file_obj_multi(struct objlist *obj, struct narray *farray, int newfile);
+#endif
 void copy_file_obj_field(struct objlist *obj, int id, int sel, int copy_filename);
 void button_set_mark_image(GtkWidget *w, int type);
