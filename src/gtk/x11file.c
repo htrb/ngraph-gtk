@@ -5798,10 +5798,84 @@ update_file_obj_multi_response_all(struct objlist *obj, int *array, int top, int
   }
 }
 
+struct update_file_obj_multi_data {
+  int i, num, *array, modified, undo, new_file;
+  struct obj_list_data *data;
+  struct objlist *obj;
+  response_cb cb;
+  gpointer user_data;
+};
+
+static int
+update_file_obj_multi_response(struct response_callback *cb)
 {
-  int i, num, *array, id0, modified, ret, undo;
+  int i, j, num, *array, id0, ret, undo, new_file;
   char *name;
   struct obj_list_data *data;
+  struct objlist *obj;
+  struct update_file_obj_multi_data *rdata;
+
+  rdata = (struct update_file_obj_multi_data *) cb->data;
+  i = rdata->i;
+  num = rdata->num;
+  array = rdata->array;
+  new_file = rdata->new_file;
+  undo = rdata->undo;
+  data = rdata->data;
+  obj = rdata->obj;
+
+  ret = cb->return_value;
+  if (ret == IDCANCEL && new_file) {
+    ret = IDDELETE;
+  }
+  switch (ret) {
+  case IDDELETE:
+    delete_file_obj(data, array[i]);
+    rdata->modified = TRUE;
+    if (! new_file) {
+      set_graph_modified();
+    }
+    for (j = i + 1; j < num; j++) {
+      array[j]--;
+    }
+    menu_delete_undo(undo);
+    break;
+  case IDFAPPLY:
+    id0 = i;
+    /* fall-through */
+  case IDOK:
+    if (new_file) {
+      getobj(obj, "file", array[i], 0, NULL, &name);
+      AddDataFileList(name);
+    }
+    menu_delete_undo(undo);
+    rdata->modified = TRUE;
+    break;
+  case IDCANCEL:
+    menu_undo_internal(undo);
+    break;
+  }
+  if (ret == IDFAPPLY) {
+    update_file_obj_multi_response_all(obj, array, i + 1, num, id0, new_file);
+    return IDOK;
+  }
+  i++;
+  if (i < num) {
+    FileDialog(data, array[i], i < num - 1);
+    rdata->i = i;
+    cb->data = NULL;
+    ((struct DialogType *) data->dialog)->response_cb = response_callback_new(update_file_obj_multi_response, NULL, rdata);
+    DialogExecute(TopLevel, data->dialog);
+  } else {
+    if (! rdata->modified) {
+      menu_undo_internal(undo);
+    }
+    rdata->cb(rdata->modified, rdata->user_data);
+    g_free(rdata);
+  }
+  return IDOK;
+}
+
 int
 update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file, response_cb cb, gpointer user_data)
 {
