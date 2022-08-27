@@ -5889,26 +5889,32 @@ update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file, 
   }
 
   array = arraydata(farray);
-  id0 = -1;
 
-  ret = IDCANCEL;
-  modified = FALSE;
   data_save_undo(UNDO_TYPE_EDIT);
-  for (i = 0; i < num; i++) {
-    name = NULL;
-    if (id0 != -1) {
-      copy_file_obj_field(obj, array[i], array[id0], FALSE);
-      if (new_file) {
-	getobj(obj, "file", array[i], 0, NULL, &name);
-	AddDataFileList(name);
-      }
-    } else {
-      undo = data_save_undo(UNDO_TYPE_DUMMY);
-      data = NgraphApp.FileWin.data.data;
-      FileDialog(data, array[i], i < num - 1);
-      DialogExecute(TopLevel, data->dialog);
-    }
+  data = NgraphApp.FileWin.data.data;
+
+  rdata = g_malloc0(sizeof(*rdata));
+  if (rdata == NULL) {
+    return IDOK;
   }
+
+  undo = data_save_undo(UNDO_TYPE_DUMMY);
+
+  rdata->i = 0;
+  rdata->num = num;
+  rdata->array = array;
+  rdata->modified = FALSE;
+  rdata->undo = undo;
+  rdata->new_file = new_file;
+  rdata->data = data;
+  rdata->obj = obj;
+  rdata->cb = cb;
+  rdata->user_data = user_data;
+
+  FileDialog(data, array[0], 0 < num - 1);
+  ((struct DialogType *) data->dialog)->response_cb = response_callback_new(update_file_obj_multi_response, NULL, rdata);
+  DialogExecute(TopLevel, data->dialog);
+
   return 0;
 }
 #else
