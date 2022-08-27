@@ -755,7 +755,7 @@ graph_dropped(char *fname)
 static int
 new_merge_obj(char *name, struct objlist *obj)
 {
-  int id, ret;
+  int id;
 
   id = newobj(obj);
 
@@ -766,6 +766,7 @@ new_merge_obj(char *name, struct objlist *obj)
   putobj(obj, "file", id, name);
   MergeDialog(NgraphApp.MergeWin.data.data, id, -1);
   DialogExecute(TopLevel, &DlgMerge);
+  return 0;
 }
 #else
 static int
