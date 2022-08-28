@@ -7219,9 +7219,11 @@ CmFileMath(void *w, gpointer client_data)
 static int
 get_draw_files_response(struct response_callback *cb)
 {
+  response_cb save_cb;
   struct SelectDialog *d;
   struct narray *ifarray, *farray;
   d = (struct SelectDialog *) cb->dialog;
+  save_cb = (response_cb) cb->data;
   farray = d->sel;
   ifarray = d->isel;
   if (cb->return_value != IDOK) {
@@ -7230,6 +7232,7 @@ get_draw_files_response(struct response_callback *cb)
     return IDCANCEL;
   }
   arrayfree(ifarray);
+  save_cb(IDOK, farray);
   return IDOK;
 }
 
