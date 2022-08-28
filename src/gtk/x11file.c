@@ -7234,7 +7234,7 @@ get_draw_files_response(struct response_callback *cb)
 }
 
 static int
-GetDrawFiles(struct narray *farray)
+GetDrawFiles(struct narray *farray, response_cb cb)
 {
   struct objlist *fobj;
   int lastinst;
@@ -7259,7 +7259,7 @@ GetDrawFiles(struct narray *farray)
       arrayadd(ifarray, &i);
   }
   SelectDialog(&DlgSelect, fobj, NULL, FileCB, farray, ifarray);
-  DlgSelect.response_cb = response_callback_new(get_draw_files_response, NULL, NULL);
+  DlgSelect.response_cb = response_callback_new(get_draw_files_response, NULL, cb);
   DialogExecute(TopLevel, &DlgSelect);
   return 0;
 }
@@ -7366,21 +7366,14 @@ file_save_curve_data_response(struct response_callback *cb)
   return IDOK;
 }
 
-void
-CmFileSaveData(void *w, gpointer client_data)
+static void
+file_save_data_response(int ret, gpointer user_data)
 {
   struct narray *farray;
   struct objlist *obj;
   int i, num, onum, type, div, curve = FALSE, *array;
 
-  if (Menulock || Globallock)
-    return;
-
-  farray = arraynew(sizeof(int));
-  if (GetDrawFiles(farray)) {
-    arrayfree(farray);
-    return;
-  }
+  farray = (struct narray *) user_data;
 
   obj = chkobject("data");
   if (obj == NULL) {
@@ -7416,6 +7409,27 @@ CmFileSaveData(void *w, gpointer client_data)
     DialogExecute(TopLevel, &DlgOutputData);
   } else {
     save_data(farray, div);
+  }
+}
+
+void
+CmFileSaveData(void *w, gpointer client_data)
+{
+  struct narray *farray;
+  struct objlist *obj;
+  int i, num, onum, type, div, curve = FALSE, *array;
+
+  if (Menulock || Globallock)
+    return;
+
+  farray = arraynew(sizeof(int));
+  if (farray == NULL) {
+    return;
+  }
+
+  if (GetDrawFiles(farray, file_save_data_response)) {
+    arrayfree(farray);
+    return;
   }
 }
 #else
