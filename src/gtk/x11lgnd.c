@@ -265,7 +265,9 @@ typedef void (* LEGEND_DIALOG_SETUP)(struct LegendDialog *data, struct objlist *
 
 
 static void LegendMarkDialogMark(GtkWidget *w, gpointer client_data);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
 static void LegendDialogCopy(struct LegendDialog *d);
+#endif
 static void path_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row);
 static void rect_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row);
 static void arc_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row);
@@ -1097,10 +1099,12 @@ legend_dialog_close(GtkWidget *w, void *data)
   switch(d->ret) {
   case IDOK:
     break;
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   case IDCOPY:
     LegendDialogCopy(d);
     d->ret = IDLOOP;
     return;
+#endif
   default:
     return;
   }
