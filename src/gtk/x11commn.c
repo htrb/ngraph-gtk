@@ -1190,6 +1190,7 @@ SaveDrawrable(char *name, int storedata, int storemerge, int save_decimalsign)
   return error;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
 static int
 get_save_opt_response(struct response_callback *cb)
 {
@@ -1217,6 +1218,7 @@ get_save_opt_response(struct response_callback *cb)
   }
   return 0;
 }
+#endif
 
 static int
 #if GTK_CHECK_VERSION(4, 0, 0)
