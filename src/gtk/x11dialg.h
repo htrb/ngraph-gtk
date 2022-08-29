@@ -57,8 +57,14 @@ enum AXIS_COMBO_BOX_FLAGS {
 #define N_RESPONSE_ALL 1
 
 void initdialog(void);
+#if GTK_CHECK_VERSION(4, 0, 0)
+void CopyClick(GtkWidget *parent, struct objlist *obj, int Id,
+	      char *(*callback) (struct objlist *, int),
+               response_cb response_cb, gpointer user_data);
+#else
 int CopyClick(GtkWidget *parent, struct objlist *obj, int Id,
 	      char *(*callback) (struct objlist *, int));
+#endif
 int SetObjFieldFromWidget(GtkWidget *w, struct objlist *Obj, int Id, char *field);
 void SetWidgetFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field);
 int SetObjPointsFromText(GtkWidget *w, struct objlist *Obj, int Id, char *field);
@@ -591,6 +597,7 @@ struct CopyDialog
   GtkWidget *list;
   const char *title;
   char *(*cb) (struct objlist * obj, int id);
+  response_cb rcb;
 };
 
 void CopyDialog(struct CopyDialog *data,

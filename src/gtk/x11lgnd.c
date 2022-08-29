@@ -1233,6 +1233,25 @@ legend_dialog_close(GtkWidget *w, void *data)
   d->ret = ret;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+legend_copy_clicked_response(int sel, gpointer user_data)
+{
+  struct LegendDialog *d;
+  d = (struct LegendDialog *) user_data;
+  if (sel != -1) {
+    legend_dialog_setup_item(d->widget, d, sel);
+  }
+}
+
+static void
+legend_copy_clicked(GtkButton *btn, gpointer user_data)
+{
+  struct LegendDialog *d;
+  d = (struct LegendDialog *) user_data;
+  CopyClick(d->widget, d->Obj, d->Id, d->prop_cb, legend_copy_clicked_response, d);
+}
+#else
 static void
 legend_copy_clicked(GtkButton *btn, gpointer user_data)
 {
@@ -1256,6 +1275,7 @@ LegendDialogCopy(struct LegendDialog *d)
   if ((sel = CopyClick(d->widget, d->Obj, d->Id, d->prop_cb)) != -1)
     legend_dialog_setup_item(d->widget, d, sel);
 }
+#endif
 
 static void
 width_setup(struct LegendDialog *d, GtkWidget *table, int i)

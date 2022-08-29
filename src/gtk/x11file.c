@@ -1210,6 +1210,25 @@ FitCB(struct objlist *obj, int id)
   return valstr;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+fit_dialog_copy_response(int sel, gpointer user_data)
+{
+  struct FitDialog *d;
+  d = (struct FitDialog *) user_data;
+  if (sel != -1) {
+    FitDialogSetupItem(d->widget, d, sel);
+  }
+}
+
+static void
+FitDialogCopy(GtkButton *btn, gpointer user_data)
+{
+  struct FitDialog *d;
+  d = (struct FitDialog *) user_data;
+  CopyClick(d->widget, d->Obj, d->Id, FitCB, fit_dialog_copy_response, d);
+}
+#else
 static void
 FitDialogCopy(GtkButton *btn, gpointer user_data)
 {
@@ -1221,6 +1240,7 @@ FitDialogCopy(GtkButton *btn, gpointer user_data)
   if (sel != -1)
     FitDialogSetupItem(d->widget, d, sel);
 }
+#endif
 
 static int
 FitDialogLoadConfig(struct FitDialog *d, int errmes)
@@ -2455,6 +2475,26 @@ FileMoveDialogRemove(GtkWidget *w, gpointer client_data)
   d->move.changed = TRUE;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+move_tab_copy_response(int sel, gpointer user_data)
+{
+  struct FileDialog *d;
+  d = (struct FileDialog *) user_data;
+  if (sel != -1) {
+    move_tab_setup_item(d, sel);
+    d->move.changed = TRUE;
+  }
+}
+
+static void
+move_tab_copy(GtkButton *btn, gpointer user_data)
+{
+  struct FileDialog *d;
+  d = (struct FileDialog *) user_data;
+  CopyClick(d->widget, d->Obj, d->Id, FileCB, move_tab_copy_response, d);
+}
+#else
 static void
 move_tab_copy(GtkButton *btn, gpointer user_data)
 {
@@ -2470,6 +2510,7 @@ move_tab_copy(GtkButton *btn, gpointer user_data)
     d->move.changed = TRUE;
   }
 }
+#endif
 
 static GtkWidget *
 move_tab_create(struct FileDialog *d)
@@ -2688,6 +2729,26 @@ FileMaskDialogAdd(GtkWidget *w, gpointer client_data)
   d->mask.changed = TRUE;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+mask_tab_copy_response(int sel, gpointer user_data)
+{
+  struct FileDialog *d;
+  d = (struct FileDialog *) user_data;
+  if (sel != -1) {
+    mask_tab_setup_item(d, sel);
+    d->mask.changed = TRUE;
+  }
+}
+
+static void
+mask_tab_copy(GtkButton *btn, gpointer user_data)
+{
+  struct FileDialog *d;
+  d = (struct FileDialog *) user_data;
+  CopyClick(d->widget, d->Obj, d->Id, FileCB, mask_tab_copy_response, d);
+}
+#else
 static void
 mask_tab_copy(GtkButton *btn, gpointer user_data)
 {
@@ -2703,6 +2764,7 @@ mask_tab_copy(GtkButton *btn, gpointer user_data)
     d->mask.changed = TRUE;
   }
 }
+#endif
 
 static void
 FileMaskDialogRemove(GtkWidget *w, gpointer client_data)
@@ -2881,6 +2943,25 @@ load_tab_setup_item(struct FileDialog *d, int id)
   g_free(ifs);
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+load_tab_copy_response(int sel, gpointer user_data)
+{
+  struct FileDialog *d;
+  d = (struct FileDialog *) user_data;
+  if (sel != -1) {
+    load_tab_setup_item(d, sel);
+  }
+}
+
+static void
+load_tab_copy(GtkButton *btn, gpointer user_data)
+{
+  struct FileDialog *d;
+  d = (struct FileDialog *) user_data;
+  CopyClick(d->widget, d->Obj, d->Id, FileCB, load_tab_copy_response, d);
+}
+#else
 static void
 load_tab_copy(GtkButton *btn, gpointer user_data)
 {
@@ -2894,6 +2975,7 @@ load_tab_copy(GtkButton *btn, gpointer user_data)
     load_tab_setup_item(d, sel);
   }
 }
+#endif
 
 static GtkWidget *
 load_tab_create(struct FileDialog *d)
@@ -3091,6 +3173,25 @@ math_tab_setup_item(struct FileDialog *d, int id)
   set_source_style(d->math.text_h);
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+math_tab_copy_response(int sel, gpointer user_data)
+{
+  struct FileDialog *d;
+  d = (struct FileDialog *) user_data;
+  if (sel != -1) {
+    math_tab_setup_item(d, sel);
+  }
+}
+
+static void
+math_tab_copy(GtkButton *btn, gpointer user_data)
+{
+  struct FileDialog *d;
+  d = (struct FileDialog *) user_data;
+  CopyClick(d->widget, d->Obj, d->Id, FileCB, math_tab_copy_response, d);
+}
+#else
 static void
 math_tab_copy(GtkButton *btn, gpointer user_data)
 {
@@ -3105,6 +3206,7 @@ math_tab_copy(GtkButton *btn, gpointer user_data)
     math_tab_setup_item(d, sel);
   }
 }
+#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 static void
@@ -3892,6 +3994,25 @@ FileDialogFit(GtkWidget *w, gpointer client_data)
 }
 #endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+plot_tab_copy_response(int sel, gpointer user_data)
+{
+  struct FileDialog *d;
+  d = (struct FileDialog *) user_data;
+  if (sel != -1) {
+    plot_tab_setup_item(d, sel);
+  }
+}
+
+static void
+plot_tab_copy(GtkButton *btn, gpointer user_data)
+{
+  struct FileDialog *d;
+  d = (struct FileDialog *) user_data;
+  CopyClick(d->widget, d->Obj, d->Id, FileCB, plot_tab_copy_response, d);
+}
+#else
 static void
 plot_tab_copy(GtkButton *btn, gpointer user_data)
 {
@@ -3905,6 +4026,7 @@ plot_tab_copy(GtkButton *btn, gpointer user_data)
     plot_tab_setup_item(d, sel);
   }
 }
+#endif
 
 void
 copy_file_obj_field(struct objlist *obj, int id, int sel, int copy_filename)
@@ -4157,6 +4279,25 @@ FileDialogType(GtkWidget *w, gpointer client_data)
 }
 #endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+file_settings_copy_response(int sel, gpointer user_data)
+{
+  struct FileDialog *d;
+  d = (struct FileDialog *) user_data;
+  if (sel != -1) {
+    file_setup_item(d, sel);
+  }
+}
+
+static void
+file_settings_copy(GtkButton *btn, gpointer user_data)
+{
+  struct FileDialog *d;
+  d = (struct FileDialog *) user_data;
+  CopyClick(d->widget, d->Obj, d->Id, FileCB, file_settings_copy_response, d);
+}
+#else
 static void
 file_settings_copy(GtkButton *btn, gpointer user_data)
 {
@@ -4170,6 +4311,7 @@ file_settings_copy(GtkButton *btn, gpointer user_data)
     file_setup_item(d, sel);
   }
 }
+#endif
 
 static GtkWidget *
 plot_tab_create(GtkWidget *parent, struct FileDialog *d)

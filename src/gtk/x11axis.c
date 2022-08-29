@@ -313,6 +313,25 @@ GridDialogSetupItem(struct GridDialog *d, int id)
   set_color(d->bcolor, d->Obj, id, "B");
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+grid_copy_click_response(int sel, gpointer user_data)
+{
+  struct GridDialog *d;
+  d = (struct GridDialog *) user_data;
+  if (sel != -1) {
+    GridDialogSetupItem(d, sel);
+  }
+}
+
+static void
+grid_copy_clicked(GtkButton *btn, gpointer user_data)
+{
+  struct GridDialog *d;
+  d = (struct GridDialog *) user_data;
+  CopyClick(d->widget, d->Obj, d->Id, GridCB, grid_copy_click_response, d);
+}
+#else
 static void
 grid_copy_clicked(GtkButton *btn, gpointer user_data)
 {
@@ -326,6 +345,7 @@ grid_copy_clicked(GtkButton *btn, gpointer user_data)
     GridDialogSetupItem(d, sel);
   }
 }
+#endif
 
 static void
 gauge_syle_setup(struct GridDialog *d, GtkWidget *table, int n, int j, int instance)
@@ -573,6 +593,27 @@ GridDefDialog(struct GridDialog *data, struct objlist *obj, int id)
   data->Id = id;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static int
+option_grid_def_response(struct response_callback *cb)
+{
+  struct GridDialog *d;
+  int modified;
+  d = (struct GridDialog *) cb->dialog;
+  modified = GPOINTER_TO_INT(cb->data);
+  if (cb->return_value == IDOK) {
+    if (CheckIniFile()) {
+      exeobj(d->Obj, "save_config", d->Id, 0, NULL);
+    }
+  }
+  delobj(d->Obj, d->Id);
+  if (! modified) {
+    reset_graph_modified();
+  }
+  return IDOK;
+}
+#endif
+
 void
 CmOptionGridDef(void *w, gpointer client_data)
 {
@@ -593,6 +634,7 @@ CmOptionGridDef(void *w, gpointer client_data)
     GridDefDialog(&DlgGridDef, obj, id);
 #if GTK_CHECK_VERSION(4, 0, 0)
     DlgGridDef.modified = modified;
+    DlgGridDef.response_cb = response_callback_new(option_grid_def_response, NULL, GINT_TO_POINTER(modified));
     DialogExecute(TopLevel, &DlgGridDef);
 #else
     if (DialogExecute(TopLevel, &DlgGridDef) == IDOK) {
@@ -1531,6 +1573,25 @@ file_button_show(GtkWidget *widget, gpointer user_data)
   gtk_widget_set_sensitive(widget, n >= 0);
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+scale_tab_copy_click_response(int sel, gpointer user_data)
+{
+  struct AxisDialog *d;
+  d = (struct AxisDialog *) user_data;
+  if (sel != -1) {
+    scale_tab_setup_item(d, sel);
+  }
+}
+
+static void
+scale_tab_copy_clicked(GtkButton *btn, gpointer user_data)
+{
+  struct AxisDialog *d;
+  d = (struct AxisDialog *) user_data;
+  CopyClick(d->widget, d->Obj, d->Id, AxisCB, scale_tab_copy_click_response, d);
+}
+#else
 static void
 scale_tab_copy_clicked(GtkButton *btn, gpointer user_data)
 {
@@ -1544,6 +1605,7 @@ scale_tab_copy_clicked(GtkButton *btn, gpointer user_data)
     scale_tab_setup_item(d, sel);
   }
 }
+#endif
 
 static GtkWidget *
 scale_tab_create(struct AxisDialog *d)
@@ -1693,6 +1755,25 @@ baseline_tab_setup_item(struct AxisDialog *axis, int id)
   set_color(d->color, axis->Obj, id, NULL);
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+baseline_tab_copy_click_response(int sel, gpointer user_data)
+{
+  struct AxisDialog *d;
+  d = (struct AxisDialog *) user_data;
+  if (sel != -1) {
+    baseline_tab_setup_item(d, sel);
+  }
+}
+
+static void
+baseline_tab_copy_clicked(GtkButton *btn, gpointer user_data)
+{
+  struct AxisDialog *d;
+  d = (struct AxisDialog *) user_data;
+  CopyClick(d->widget, d->Obj, d->Id, AxisCB, baseline_tab_copy_click_response, d);
+}
+#else
 static void
 baseline_tab_copy_clicked(GtkButton *btn, gpointer user_data)
 {
@@ -1706,6 +1787,7 @@ baseline_tab_copy_clicked(GtkButton *btn, gpointer user_data)
     baseline_tab_setup_item(d, sel);
   }
 }
+#endif
 
 static GtkWidget *
 baseline_tab_create(GtkWidget *wi, struct AxisDialog *dd)
@@ -1894,6 +1976,25 @@ gauge_tab_setup_item(struct AxisDialog *axis, int id)
   set_color(d->color, axis->Obj, id, "gauge_");
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+gauge_tab_copy_click_response(int sel, gpointer user_data)
+{
+  struct AxisDialog *d;
+  d = (struct AxisDialog *) user_data;
+  if (sel != -1) {
+    gauge_tab_setup_item(d, sel);
+  }
+}
+
+static void
+gauge_tab_copy_clicked(GtkButton *btn, gpointer user_data)
+{
+  struct AxisDialog *d;
+  d = (struct AxisDialog *) user_data;
+  CopyClick(d->widget, d->Obj, d->Id, AxisCB, gauge_tab_copy_click_response, d);
+}
+#else
 static void
 gauge_tab_copy_clicked(GtkButton *btn, gpointer user_data)
 {
@@ -1907,6 +2008,7 @@ gauge_tab_copy_clicked(GtkButton *btn, gpointer user_data)
     gauge_tab_setup_item(d, sel);
   }
 }
+#endif
 
 static GtkWidget *
 gauge_tab_create(GtkWidget *wi, struct AxisDialog *dd)
@@ -2179,6 +2281,25 @@ numbering_tab_setup_item(struct AxisDialog *axis, int id)
   SetWidgetFromObjField(d->math, axis->Obj, id, "num_math");
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+numbering_tab_copy_click_response(int sel, gpointer user_data)
+{
+  struct AxisDialog *d;
+  d = (struct AxisDialog *) user_data;
+  if (sel != -1) {
+    numbering_tab_setup_item(d, sel);
+  }
+}
+
+static void
+numbering_tab_copy_clicked(GtkButton *btn, gpointer user_data)
+{
+  struct AxisDialog *d;
+  d = (struct AxisDialog *) user_data;
+  CopyClick(d->widget, d->Obj, d->Id, AxisCB, numbering_tab_copy_click_response, d);
+}
+#else
 static void
 numbering_tab_copy_clicked(GtkButton *btn, gpointer user_data)
 {
@@ -2192,6 +2313,7 @@ numbering_tab_copy_clicked(GtkButton *btn, gpointer user_data)
     numbering_tab_setup_item(d, sel);
   }
 }
+#endif
 
 static void
 num_direction_changed(GtkWidget *w, gpointer client_data)
@@ -2437,6 +2559,25 @@ font_tab_setup_item(struct AxisDialog *axis, int id)
 #endif
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+font_tab_copy_click_response(int sel, gpointer user_data)
+{
+  struct AxisDialog *d;
+  d = (struct AxisDialog *) user_data;
+  if (sel != -1) {
+    font_tab_setup_item(d, sel);
+  }
+}
+
+static void
+font_tab_copy_clicked(GtkButton *btn, gpointer user_data)
+{
+  struct AxisDialog *d;
+  d = (struct AxisDialog *) user_data;
+  CopyClick(d->widget, d->Obj, d->Id, AxisCB, font_tab_copy_click_response, d);
+}
+#else
 static void
 font_tab_copy_clicked(GtkButton *btn, gpointer user_data)
 {
@@ -2450,6 +2591,7 @@ font_tab_copy_clicked(GtkButton *btn, gpointer user_data)
     font_tab_setup_item(d, sel);
   }
 }
+#endif
 
 static GtkWidget *
 font_tab_create(GtkWidget *wi, struct AxisDialog *dd)
@@ -2578,6 +2720,25 @@ position_tab_setup_item(struct AxisDialog *axis, int id)
   SetWidgetFromObjField(d->adjustpos, axis->Obj, id, "adjust_position");
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+position_tab_copy_click_response(int sel, gpointer user_data)
+{
+  struct AxisDialog *d;
+  d = (struct AxisDialog *) user_data;
+  if (sel != -1) {
+    position_tab_setup_item(d, sel);
+  }
+}
+
+static void
+position_tab_copy_clicked(GtkButton *btn, gpointer user_data)
+{
+  struct AxisDialog *d;
+  d = (struct AxisDialog *) user_data;
+  CopyClick(d->widget, d->Obj, d->Id, AxisCB, position_tab_copy_click_response, d);
+}
+#else
 static void
 position_tab_copy_clicked(GtkButton *btn, gpointer user_data)
 {
@@ -2591,6 +2752,7 @@ position_tab_copy_clicked(GtkButton *btn, gpointer user_data)
     position_tab_setup_item(d, sel);
   }
 }
+#endif
 
 static GtkWidget *
 position_tab_create(GtkWidget *wi, struct AxisDialog *dd)

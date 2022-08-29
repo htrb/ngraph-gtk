@@ -132,6 +132,25 @@ MergeDialogSetupItem(struct MergeDialog *d, int file, int id)
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->link), zm_x == zm_y);
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+merge_dialog_copy_response(int sel, gpointer user_data)
+{
+  struct MergeDialog *d;
+  d = (struct MergeDialog *) user_data;
+  if (sel != -1) {
+    MergeDialogSetupItem(d, FALSE, sel);
+  }
+}
+
+static void
+MergeDialogCopy(GtkButton *btn, gpointer user_data)
+{
+  struct MergeDialog *d;
+  d = (struct MergeDialog *) user_data;
+  CopyClick(d->widget, d->Obj, d->Id, MergeFileCB, merge_dialog_copy_response, d);
+}
+#else
 static void
 MergeDialogCopy(GtkWidget *w, gpointer data)
 {
@@ -145,6 +164,7 @@ MergeDialogCopy(GtkWidget *w, gpointer data)
     MergeDialogSetupItem(d, FALSE, sel);
   }
 }
+#endif
 
 static void
 zoom_changed(GtkSpinButton *spin_button, gpointer user_data)
