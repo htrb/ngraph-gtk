@@ -34,6 +34,7 @@
 #define POPOVERMEU_FLAG GTK_POPOVER_MENU_NESTED
 
 #if GTK_CHECK_VERSION(4, 0, 0)
+typedef void (* response_cb) (int response, gpointer user_data);
 enum CURSOR_TYPE {
   GDK_LEFT_PTR,
   GDK_XTERM,
