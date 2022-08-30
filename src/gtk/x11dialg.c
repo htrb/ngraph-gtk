@@ -323,6 +323,15 @@ response_callback_new(response_callback_func func, response_callback_free_func f
   return cb;
 }
 
+void
+response_callback_add(void *dialog, response_callback_func cb, response_callback_free_func free_cb, gpointer data)
+{
+  struct DialogType *d;
+
+  d = (struct DialogType *) dialog;
+  d->response_cb = response_callback_new(cb, free_cb, data);
+}
+
 static void
 multi_list_default_cb(GtkTreeView *view, GtkTreePath *path, GtkTreeViewColumn *column, gpointer user_data)
 {
