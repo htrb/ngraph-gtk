@@ -507,12 +507,11 @@ merge_update_response(struct response_callback *cb)
   struct SelectDialog *d;
   struct narray *farray;
   struct objlist *obj;
-  int modified, i, *array, num;
+  int *array, num;
   struct merge_update_data *data;
   d = (struct SelectDialog *) cb->dialog;
   farray = d->sel;
   obj = d->Obj;
-  modified = FALSE;
   if (cb->return_value != IDOK) {
     arrayfree(farray);
     return IDOK;
