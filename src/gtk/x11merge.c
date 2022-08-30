@@ -299,6 +299,19 @@ MergeDialog(struct obj_list_data *data, int id, int user_data)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
+static int
+merge_open_response(struct response_callback *cb)
+{
+  if (cb->return_value == IDCANCEL) {
+    int undo = GPOINTER_TO_INT(cb->data);
+    menu_undo_internal(undo);
+  } else {
+    set_graph_modified();
+  }
+  MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE, DRAW_NOTIFY);
+  return IDOK;
+}
+
 void
 CmMergeOpen(GSimpleAction *action, GVariant *parameter, gpointer client_data)
 {
