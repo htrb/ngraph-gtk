@@ -468,6 +468,43 @@ CmMergeClose(void *w, gpointer client_data)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
+struct merge_update_data
+{
+  int i, num, modified;
+  struct narray *farray;
+};
+
+static int
+merge_update_response_response(struct response_callback *cb)
+{
+  int num, modified, *array;
+  struct merge_update_data *data;
+  struct narray *farray;
+
+  data = (struct merge_update_data *) cb->data;
+  data->i++;
+  num = data->num;
+  farray = data->farray;
+
+  if (cb->return_value != IDCANCEL) {
+    data->modified = TRUE;
+  }
+
+  if (data->i >= num) {
+    if (data->modified) {
+      MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE, TRUE);
+    }
+    arrayfree(farray);
+    g_free(data);
+    return IDOK;
+  }
+
+  array = arraydata(farray);
+  MergeDialog(NgraphApp.MergeWin.data.data, array[data->i], -1);
+  DlgMerge.response_cb = response_callback_new(merge_update_response_response, NULL, data);
+  DialogExecute(TopLevel, &DlgMerge);
+}
+
 void
 CmMergeUpdate(void *w, gpointer client_data)
 {
