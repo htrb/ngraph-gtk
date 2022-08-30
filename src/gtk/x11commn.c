@@ -1259,7 +1259,7 @@ get_save_opt(int *sdata, int *smerge, int *path)
   SaveDialog(&DlgSave, sdata, smerge);
 #if GTK_CHECK_VERSION(4, 0, 0)
   /* must be implemented */
-  DlgSave.response_cb = response_callback_new(get_save_opt_response, NULL, NULL);
+  response_callback_add(&DlgSave, get_save_opt_response, NULL, NULL);
   if (DlgSave.response_cb) {
     DlgSave.response_cb->next = cb;
   }
@@ -1704,7 +1704,6 @@ void
 LoadNgpFile(const char *file, int console, const char *option, const char *cwd)
 {
   struct load_dialog_data *data;
-  struct response_callback *cb;
 
   data = g_malloc0(sizeof(* data));
   if (data == NULL) {
@@ -1715,14 +1714,7 @@ LoadNgpFile(const char *file, int console, const char *option, const char *cwd)
   data->option = g_strdup(option);
   data->cwd = g_strdup(cwd);
 
-  cb = response_callback_new(LoadNgpFile_response, NULL, data);
-  if (cb == NULL) {
-    g_free(data);
-    return;
-  }
-
-  DlgLoad.response_cb = cb;
-
+  response_callback_add(&DlgLoad, LoadNgpFile_response, NULL, data);
   LoadDialog(&DlgLoad);
   DialogExecute(TopLevel, &DlgLoad);
 }
@@ -2251,7 +2243,7 @@ SetFileHidden(void)
     }
   }
 
-  DlgSelect.response_cb = response_callback_new(set_file_hidden_response, NULL, NULL);
+  response_callback_add(&DlgSelect, set_file_hidden_response, NULL, NULL);
   SelectDialog(&DlgSelect, fobj, NULL, FileCB, farray, ifarray);
   DialogExecute(TopLevel, &DlgSelect);
   return 0;

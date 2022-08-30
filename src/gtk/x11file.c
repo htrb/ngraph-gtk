@@ -734,7 +734,7 @@ MathDialogList(GtkButton *w, gpointer client_data)
   res_data->buf = buf;
 
   MathTextDialog(&DlgMathText, buf, d->Mode, d->Obj, list, d->list);
-  DlgMathText.response_cb = response_callback_new(math_dialog_list_respone, NULL, res_data);
+  response_callback_add(&DlgMathText, math_dialog_list_respone, NULL, res_data);
   DialogExecute(d->widget, &DlgMathText);
 }
 #else
@@ -1315,7 +1315,7 @@ FitDialogLoad(GtkButton *btn, gpointer user_data)
   }
 
   FitLoadDialog(&DlgFitLoad, d->Obj, d->Lastid + 1);
-  DlgMathText.response_cb = response_callback_new(file_dialog_load_response, NULL, d);
+  response_callback_add(&DlgMathText, file_dialog_load_response, NULL, d);
   DialogExecute(d->widget, &DlgFitLoad);
 }
 #else
@@ -1562,7 +1562,7 @@ FitDialogSave(GtkWidget *w, gpointer client_data)
 
   FitSaveDialog(&DlgFitSave, d->Obj, d->Lastid + 1);
 
-  DlgFitSave.response_cb = response_callback_new(fit_dialog_save_response, NULL, d);
+  response_callback_add(&DlgFitSave, fit_dialog_save_response, NULL, d);
   DialogExecute(d->widget, &DlgFitSave);
 }
 #else
@@ -3725,7 +3725,7 @@ FileDialogMark(GtkWidget *w, gpointer client_data)
   }
   data->d = d;
   data->w = w;
-  d->mark.response_cb = response_callback_new(file_dialog_mark_response, NULL, data);
+  response_callback_add(&d->mark, file_dialog_mark_response, NULL, data);
   DialogExecute(d->widget, &(d->mark));
 }
 #else
@@ -3788,7 +3788,7 @@ execute_fit_dialog(GtkWidget *w, struct objlist *fileobj, int fileid, struct obj
   data->cb = cb;
   data->user_data = user_data;
   FitDialog(&DlgFit, fitobj, fitid);
-  DlgFit.response_cb = response_callback_new(execute_fit_dialog_response, NULL, data);
+  response_callback_add(&DlgFit, execute_fit_dialog_response, NULL, data);
   DialogExecute(w, &DlgFit);
   return IDOK;
 }
@@ -5582,7 +5582,7 @@ load_data(const char *name)
   res_data->undo = undo;
   res_data->fname = fname;
   FileDialog(data, id, FALSE);
-  ((struct DialogType *) data->dialog)->response_cb = response_callback_new(load_data_response, NULL, res_data);
+  response_callback_add(data->dialog, load_data_response, NULL, res_data);
   DialogExecute(TopLevel, data->dialog);
 }
 #else
@@ -5709,7 +5709,7 @@ CmRangeAdd
   res_data->data = data;
   res_data->undo = undo;
   FileDialog(data, id, FALSE);
-  ((struct DialogType *) data->dialog)->response_cb = response_callback_new(range_add_response, NULL, res_data);
+  response_callback_add(data->dialog, range_add_response, NULL, res_data);
   DialogExecute(TopLevel, data->dialog);
 }
 #else
@@ -5905,7 +5905,7 @@ CmFileClose(void *w, gpointer client_data)
     return;
   farray = arraynew(sizeof(int));
   SelectDialog(&DlgSelect, obj, _("close data (multi select)"), FileCB, (struct narray *) farray, NULL);
-  DlgSelect.response_cb = response_callback_new(file_close_response, NULL, farray);
+  response_callback_add(&DlgSelect, file_close_response, NULL, farray);
   DialogExecute(TopLevel, &DlgSelect);
 }
 #else
@@ -6023,7 +6023,7 @@ update_file_obj_multi_response(struct response_callback *cb)
     FileDialog(data, array[i], i < num - 1);
     rdata->i = i;
     cb->data = NULL;
-    ((struct DialogType *) data->dialog)->response_cb = response_callback_new(update_file_obj_multi_response, NULL, rdata);
+    response_callback_add(data->dialog, update_file_obj_multi_response, NULL, rdata);
     DialogExecute(TopLevel, data->dialog);
   } else {
     if (! rdata->modified) {
@@ -6071,7 +6071,7 @@ update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file, 
   rdata->user_data = user_data;
 
   FileDialog(data, array[0], 0 < num - 1);
-  ((struct DialogType *) data->dialog)->response_cb = response_callback_new(update_file_obj_multi_response, NULL, rdata);
+  response_callback_add(data->dialog, update_file_obj_multi_response, NULL, rdata);
   DialogExecute(TopLevel, data->dialog);
 
   return 0;
@@ -6198,7 +6198,7 @@ CmFileUpdate(void *w, gpointer client_data)
   } else {
     farray = arraynew(sizeof(int));
     SelectDialog(&DlgSelect, obj, _("data property (multi select)"), FileCB, (struct narray *) farray, NULL);
-    DlgSelect.response_cb = response_callback_new(file_update_response, NULL, farray);
+    response_callback_add(&DlgSelect, file_update_response, NULL, farray);
     DialogExecute(TopLevel, &DlgSelect);
   }
 }
@@ -6300,7 +6300,7 @@ CmFileEdit(void *w, gpointer client_data)
     return;
   } else {
     CopyDialog(&DlgCopy, obj, -1, _("edit data file (single select)"), PlotFileCB);
-    DlgCopy.response_cb = response_callback_new(file_edit_response, NULL, NULL);
+    response_callback_add(&DlgCopy, file_edit_response, NULL, NULL);
     DialogExecute(TopLevel, &DlgCopy);
   }
 }
@@ -6391,7 +6391,7 @@ CmOptionFileDef(void *w, gpointer client_data)
 
     modified = get_graph_modified();
     FileDefDialog(&DlgFileDef, obj, id);
-    DlgFileDef.response_cb = response_callback_new(option_file_def_response, NULL, GINT_TO_POINTER(modified));
+    response_callback_add(&DlgFileDef, option_file_def_response, NULL, GINT_TO_POINTER(modified));
     DialogExecute(TopLevel, &DlgFileDef);
   }
 }
@@ -6653,7 +6653,7 @@ FileWinFileUpdate(struct obj_list_data *d)
     }
     data->d = d;
     data->undo = undo;
-    ((struct DialogType *) d->dialog)->response_cb = response_callback_new(file_win_file_update_response, NULL, data);
+    response_callback_add(d->dialog, file_win_file_update_response, NULL, data);
     DialogExecute(parent, d->dialog);
   }
 }
@@ -7327,7 +7327,7 @@ CmFileMath(void *w, gpointer client_data)
 
   undo = menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
   MathDialog(&DlgMath, obj);
-  DlgMath.response_cb = response_callback_new(file_math_response, NULL, GINT_TO_POINTER(undo));
+  response_callback_add(&DlgMath, file_math_response, NULL, GINT_TO_POINTER(undo));
   DialogExecute(TopLevel, &DlgMath);
 }
 #else
@@ -7404,7 +7404,7 @@ GetDrawFiles(struct narray *farray, response_cb cb)
       arrayadd(ifarray, &i);
   }
   SelectDialog(&DlgSelect, fobj, NULL, FileCB, farray, ifarray);
-  DlgSelect.response_cb = response_callback_new(get_draw_files_response, NULL, cb);
+  response_callback_add(&DlgSelect, get_draw_files_response, NULL, cb);
   DialogExecute(TopLevel, &DlgSelect);
   return 0;
 }
@@ -7550,7 +7550,7 @@ file_save_data_response(int ret, gpointer user_data)
 
   if (curve) {
     OutputDataDialog(&DlgOutputData, div);
-    DlgOutputData.response_cb = response_callback_new(file_save_curve_data_response, NULL, farray);
+    response_callback_add(&DlgOutputData, file_save_curve_data_response, NULL, farray);
     DialogExecute(TopLevel, &DlgOutputData);
   } else {
     save_data(farray, div);

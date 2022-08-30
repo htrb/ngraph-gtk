@@ -364,7 +364,7 @@ legend_menu_update_object_response2(struct response_callback *cb)
   }
   ldata->array = NULL;
   ldata2->i += 1;
-  dialog->response_cb = response_callback_new(legend_menu_update_object_response2, legend_menu_update_object_free, ldata2);
+  response_callback_add(dialog, legend_menu_update_object_response2, legend_menu_update_object_free, ldata2);
   DialogExecute(TopLevel, dialog);
   return cb->return_value;
 }
@@ -402,7 +402,7 @@ legend_menu_update_object_response(struct response_callback *cb)
       ldata->array = NULL;
       ldata2->i = i + 1;
       setup(dialog, obj, data[i]);
-      dialog->response_cb = response_callback_new(legend_menu_update_object_response2, legend_menu_update_object_free, ldata2);
+response_callback_add(dialog, legend_menu_update_object_response2, legend_menu_update_object_free, ldata2);
       DialogExecute(TopLevel, dialog);
     }
   }
@@ -447,7 +447,7 @@ legend_menu_update_object(const char *name, char *(*callback) (struct objlist * 
     return;
   }
   snprintf(title, sizeof(title), _("%s property (multi select)"), _(obj->name));
-  DlgSelect.response_cb = response_callback_new(legend_menu_update_object_response, legend_menu_update_object_free, data);
+  response_callback_add(&DlgSelect, legend_menu_update_object_response, legend_menu_update_object_free, data);
   SelectDialog(&DlgSelect, obj, title, callback, data->array, NULL);
   DialogExecute(TopLevel, &DlgSelect);
 }
@@ -549,7 +549,7 @@ legend_menu_delete_object(const char *name, char *(*callback) (struct objlist * 
   if (data == NULL) {
     return;
   }
-  DlgSelect.response_cb = response_callback_new(legend_menu_delete_object_response, legend_menu_update_object_free, data);
+  response_callback_add(&DlgSelect, legend_menu_delete_object_response, legend_menu_update_object_free, data);
   SelectDialog(&DlgSelect, obj, title, callback, data->array, NULL);
   DialogExecute(TopLevel, &DlgSelect);
 }
@@ -2299,7 +2299,7 @@ LegendMarkDialogMark(GtkWidget *w, gpointer client_data)
 
   d = (struct MarkDialog *) client_data;
 #if GTK_CHECK_VERSION(4, 0, 0)
-  d->response_cb = response_callback_new(mark_dialog_response, NULL, w);
+  response_callback_add(d, mark_dialog_response, NULL, w);
 #endif
   DialogExecute(d->parent, d);
 #if ! GTK_CHECK_VERSION(4, 0, 0)
@@ -2777,6 +2777,7 @@ option_text_def_dialog_response(struct response_callback *cb)
   if (! modified) {
     reset_graph_modified();
   }
+  return IDOK;
 }
 /* to be implemented */
 void
@@ -2797,7 +2798,7 @@ CmOptionTextDef(void *w, gpointer client_data)
 
     modified = get_graph_modified();
     LegendTextDefDialog(&DlgLegendTextDef, obj, id);
-    DlgLegendTextDef.response_cb = response_callback_new(option_text_def_dialog_response, NULL, GINT_TO_POINTER(modified));
+    response_callback_add(&DlgLegendTextDef, option_text_def_dialog_response, NULL, GINT_TO_POINTER(modified));
     DialogExecute(TopLevel, &DlgLegendTextDef);
   }
 }

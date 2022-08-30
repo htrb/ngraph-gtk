@@ -634,7 +634,7 @@ CmOptionGridDef(void *w, gpointer client_data)
     GridDefDialog(&DlgGridDef, obj, id);
 #if GTK_CHECK_VERSION(4, 0, 0)
     DlgGridDef.modified = modified;
-    DlgGridDef.response_cb = response_callback_new(option_grid_def_response, NULL, GINT_TO_POINTER(modified));
+    response_callback_add(&DlgGridDef, option_grid_def_response, NULL, GINT_TO_POINTER(modified));
     DialogExecute(TopLevel, &DlgGridDef);
 #else
     if (DialogExecute(TopLevel, &DlgGridDef) == IDOK) {
@@ -820,7 +820,7 @@ SectionDialogGrid(GtkWidget *w, gpointer client_data)
     data->create = create;
     data->undo = undo;
     data->d = d;
-    DlgGrid.response_cb = response_callback_new(section_dialog_grid_response, NULL, data);
+    response_callback_add(&DlgGrid, section_dialog_grid_response, NULL, data);
     DialogExecute(d->widget, &DlgGrid);
 #else
     ret = DialogExecute(d->widget, &DlgGrid);
@@ -1545,7 +1545,7 @@ AxisDialogFile(GtkWidget *w, gpointer client_data)
   }
   data->farray = farray;
   data->d = d;
-  DlgSelect.response_cb = response_callback_new(axis_dialog_file_response, NULL, data);
+  response_callback_add(&DlgSelect, axis_dialog_file_response, NULL, data);
   DialogExecute(d->widget, &DlgSelect);
 #else
   if (DialogExecute(d->widget, &DlgSelect) == IDOK) {
@@ -3091,7 +3091,7 @@ CmAxisNewFrame(int use_presettings)
 		&idg, FALSE);
 #if GTK_CHECK_VERSION(4, 0, 0)
   /* must be implemented */
-  DlgSection.response_cb = response_callback_new(axis_new_response, NULL, GINT_TO_POINTER(undo));
+  response_callback_add(&DlgSection, axis_new_response, NULL, GINT_TO_POINTER(undo));
   DialogExecute(TopLevel, &DlgSection);
 #else
   ret = DialogExecute(TopLevel, &DlgSection);
@@ -3167,7 +3167,7 @@ CmAxisNewSection(int use_presettings)
 		&idg, TRUE);
 #if GTK_CHECK_VERSION(4, 0, 0)
   /* must be implemented */
-  DlgSection.response_cb = response_callback_new(axis_new_response, NULL, GINT_TO_POINTER(undo));
+  response_callback_add(&DlgSection, axis_new_response, NULL, GINT_TO_POINTER(undo));
   DialogExecute(TopLevel, &DlgSection);
 #else
   ret = DialogExecute(TopLevel, &DlgSection);
@@ -3219,7 +3219,7 @@ CmAxisNewCross(int use_presettings)
   CrossDialog(&DlgCross, x, y, lenx, leny, obj, idx, idy);
 #if GTK_CHECK_VERSION(4, 0, 0)
   /* must be implemented */
-  DlgCross.response_cb = response_callback_new(axis_new_response, NULL, GINT_TO_POINTER(undo));
+  response_callback_add(&DlgCross, axis_new_response, NULL, GINT_TO_POINTER(undo));
   DialogExecute(TopLevel, &DlgCross);
 #else
   ret = DialogExecute(TopLevel, &DlgCross);
@@ -3254,7 +3254,7 @@ CmAxisAddSingle
     AxisDialog(NgraphApp.AxisWin.data.data, id, -1);
 #if GTK_CHECK_VERSION(4, 0, 0)
   /* must be implemented */
-    DlgAxis.response_cb = response_callback_new(axis_new_response, NULL, GINT_TO_POINTER(undo));
+    response_callback_add(&DlgAxis, axis_new_response, NULL, GINT_TO_POINTER(undo));
     DialogExecute(TopLevel, &DlgAxis);
 #else
     ret = DialogExecute(TopLevel, &DlgAxis);
@@ -3301,7 +3301,7 @@ CmAxisDel(void *w, gpointer client_data)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
   /* must be implemented */
-  DlgCopy.response_cb = response_callback_new(axis_del_response, NULL, NULL);
+  response_callback_add(&DlgCopy, axis_del_response, NULL, NULL);
   DialogExecute(TopLevel, &DlgCopy);
 #else
   if (DialogExecute(TopLevel, &DlgCopy) == IDOK && DlgCopy.sel >= 0) {
@@ -3343,7 +3343,7 @@ axis_update_response(struct response_callback *cb)
   }
   undo = axis_save_undo(UNDO_TYPE_EDIT);
   AxisDialog(NgraphApp.AxisWin.data.data, i, -1);
-  DlgAxis.response_cb = response_callback_new(axis_update_response_response, NULL, GINT_TO_POINTER(undo));
+  response_callback_add(&DlgAxis, axis_update_response_response, NULL, GINT_TO_POINTER(undo));
   DialogExecute(TopLevel, &DlgAxis);
   return IDOK;
 }
@@ -3364,7 +3364,7 @@ CmAxisUpdate(void *w, gpointer client_data)
   CopyDialog(&DlgCopy, obj, -1, _("axis property (single select)"), AxisCB);
 #if GTK_CHECK_VERSION(4, 0, 0)
   /* must be implemented */
-  DlgCopy.response_cb = response_callback_new(axis_update_response, NULL, NULL);
+  response_callback_add(&DlgCopy, axis_update_response, NULL, NULL);
   DialogExecute(TopLevel, &DlgCopy);
 #else
   if (DialogExecute(TopLevel, &DlgCopy) == IDOK) {
@@ -3467,7 +3467,7 @@ axis_zoom_response(struct response_callback *cb)
   data->farray = farray;
   data->obj = obj;
   SelectDialog(&DlgSelect, obj, _("scale zoom (multi select)"), AxisCB, (struct narray *) farray, NULL);
-  DlgSelect.response_cb = response_callback_new(axis_zoom_response_response, NULL, data);
+  response_callback_add(&DlgSelect, axis_zoom_response_response, NULL, data);
   DialogExecute(TopLevel, &DlgSelect);
   return IDOK;
 }
@@ -3487,7 +3487,7 @@ CmAxisZoom(void *w, gpointer client_data)
   ZoomDialog(&DlgZoom);
 #if GTK_CHECK_VERSION(4, 0, 0)
   /* must be implemented */
-  DlgZoom.response_cb = response_callback_new(axis_zoom_response, NULL, obj);
+  response_callback_add(&DlgZoom, axis_zoom_response, NULL, obj);
   DialogExecute(TopLevel, &DlgZoom);
 #else
   if ((DialogExecute(TopLevel, &DlgZoom) == IDOK) && (DlgZoom.zoom > 0)) {
@@ -3587,7 +3587,7 @@ CmAxisClear(void *w, gpointer client_data)
   SelectDialog(&DlgSelect, obj, _("scale clear (multi select)"), AxisCB, (struct narray *) farray, NULL);
 #if GTK_CHECK_VERSION(4, 0, 0)
   /* must be implemented */
-  DlgSelect.response_cb = response_callback_new(axis_clear_response, NULL, NULL);
+  response_callback_add(&DlgSelect, axis_clear_response, NULL, NULL);
   DialogExecute(TopLevel, &DlgSelect);
 #else
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
@@ -3652,7 +3652,7 @@ CmAxisGridNew(void *w, gpointer client_data)
   GridDialog(&DlgGrid, obj, id);
 #if GTK_CHECK_VERSION(4, 0, 0)
   /* must be implemented */
-  DlgGrid.response_cb = response_callback_new(axis_grid_new_response, NULL, GINT_TO_POINTER(undo));
+  response_callback_add(&DlgGrid, axis_grid_new_response, NULL, GINT_TO_POINTER(undo));
   DialogExecute(TopLevel, &DlgGrid);
 #else
   ret = DialogExecute(TopLevel, &DlgGrid);
@@ -3709,7 +3709,7 @@ CmAxisGridDel(void *w, gpointer client_data)
   SelectDialog(&DlgSelect, obj, _("delete grid (multi select)"), GridCB, (struct narray *) farray, NULL);
 #if GTK_CHECK_VERSION(4, 0, 0)
   /* must be implemented */
-  DlgSelect.response_cb = response_callback_new(axis_grid_del_response, NULL, NULL);
+  response_callback_add((struct DialogType *)&DlgSelect, axis_grid_del_response, NULL, NULL);
   DialogExecute(TopLevel, &DlgSelect);
 #else
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
@@ -3761,7 +3761,7 @@ axis_grid_update_update_response(struct response_callback *cb)
     g_clear_pointer(&cb->data, g_free);
   } else {
     GridDialog(&DlgGrid, obj, array[data->i]);
-    DlgGrid.response_cb = response_callback_new(axis_grid_update_update_response, NULL, data);
+    response_callback_add(&DlgGrid, axis_grid_update_update_response, NULL, data);
     DialogExecute(TopLevel, &DlgGrid);
   }
   return IDOK;
@@ -3790,7 +3790,7 @@ axis_grid_update_response(struct response_callback *cb)
     data->i = 0;
     data->farray = farray;
     GridDialog(&DlgGrid, obj, array[0]);
-    DlgGrid.response_cb = response_callback_new(axis_grid_update_update_response, NULL, data);
+    response_callback_add(&DlgGrid, axis_grid_update_update_response, NULL, data);
     DialogExecute(TopLevel, &DlgGrid);
   }
   return IDOK;
@@ -3815,7 +3815,7 @@ CmAxisGridUpdate(void *w, gpointer client_data)
   SelectDialog(&DlgSelect, obj, _("grid property (multi select)"), GridCB, (struct narray *) farray, NULL);
 #if GTK_CHECK_VERSION(4, 0, 0)
   /* must be implemented */
-  DlgSelect.response_cb = response_callback_new(axis_grid_update_response, NULL, NULL);
+  response_callback_add(&DlgSelect, axis_grid_update_response, NULL, NULL);
   DialogExecute(TopLevel, &DlgSelect);
 #else
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
@@ -4043,7 +4043,7 @@ CmAxisScaleUndo(void *w, gpointer client_data)
   SelectDialog(&DlgSelect, obj, _("scale undo (multi select)"), AxisHistoryCB, (struct narray *) farray, NULL);
 #if GTK_CHECK_VERSION(4, 0, 0)
   /* must be implemented */
-  DlgSelect.response_cb = response_callback_new(axis_scale_undo_response, NULL, NULL);
+  response_callback_add(&DlgSelect, axis_scale_undo_response, NULL, NULL);
   DialogExecute(TopLevel, &DlgSelect);
 #else
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {

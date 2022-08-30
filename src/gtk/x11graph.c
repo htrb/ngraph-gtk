@@ -1465,7 +1465,7 @@ CmGraphSwitch(void *w, gpointer client_data)
   if (Menulock || Globallock)
     return;
   SwitchDialog(&DlgSwitch);
-  DlgSwitch.response_cb = response_callback_new(CmGraphSwitch_response, NULL, NULL);
+  response_callback_add(&DlgSwitch, CmGraphSwitch_response, NULL, NULL);
   DialogExecute(TopLevel, &DlgSwitch);
 }
 #else
@@ -1508,7 +1508,7 @@ CmGraphPage(void *w, gpointer client_data)
   if (Menulock || Globallock)
     return;
   PageDialog(&DlgPage, new_graph);
-  DlgPage.response_cb = response_callback_new(CmGraphPage_response, NULL, client_data);
+response_callback_add(&DlgPage, CmGraphPage_response, NULL, client_data);
   DialogExecute(TopLevel, &DlgPage);
 }
 #else

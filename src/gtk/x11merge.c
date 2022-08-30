@@ -337,7 +337,7 @@ CmMergeOpen(GSimpleAction *action, GVariant *parameter, gpointer client_data)
     changefilename(name);
     putobj(obj, "file", id, name);
     MergeDialog(NgraphApp.MergeWin.data.data, id, -1);
-    DlgMerge.response_cb = response_callback_new(merge_open_response, NULL, GINT_TO_POINTER(undo));
+    response_callback_add(&DlgMerge, merge_open_response, NULL, GINT_TO_POINTER(undo));
     DialogExecute(TopLevel, &DlgMerge);
   } else {
     g_free(name);
@@ -428,7 +428,7 @@ CmMergeClose(void *w, gpointer client_data)
     return;
   }
   SelectDialog(&DlgSelect, obj, _("close merge file (multi select)"), MergeFileCB, farray, NULL);
-  DlgSelect.response_cb = response_callback_new(merge_close_response, NULL, NULL);
+  response_callback_add(&DlgSelect, merge_close_response, NULL, NULL);
   DialogExecute(TopLevel, &DlgSelect);
 }
 #else
@@ -497,8 +497,9 @@ merge_update_response_response(struct response_callback *cb)
 
   array = arraydata(farray);
   MergeDialog(NgraphApp.MergeWin.data.data, array[data->i], -1);
-  DlgMerge.response_cb = response_callback_new(merge_update_response_response, NULL, data);
+  response_callback_add(&DlgMerge, merge_update_response_response, NULL, data);
   DialogExecute(TopLevel, &DlgMerge);
+  return IDOK;
 }
 
 static int
@@ -537,7 +538,7 @@ merge_update_response(struct response_callback *cb)
 
   array = arraydata(farray);
   MergeDialog(NgraphApp.MergeWin.data.data, array[0], -1);
-  DlgMerge.response_cb = response_callback_new(merge_update_response_response, NULL, data);
+  response_callback_add(&DlgMerge, merge_update_response_response, NULL, data);
   DialogExecute(TopLevel, &DlgMerge);
   return IDOK;
 }
@@ -559,7 +560,7 @@ CmMergeUpdate(void *w, gpointer client_data)
     return;
   }
   SelectDialog(&DlgSelect, obj, _("merge file property (multi select)"), MergeFileCB, farray, NULL);
-  DlgSelect.response_cb = response_callback_new(merge_update_response, NULL, NULL);
+  response_callback_add(&DlgSelect, merge_update_response, NULL, NULL);
   DialogExecute(TopLevel, &DlgSelect);
 }
 #else

@@ -683,7 +683,7 @@ CopyClick(GtkWidget *parent, struct objlist *obj, int Id,
 {
   CopyDialog(&DlgCopy, obj, Id, _("copy property (single select)"), callback);
   DlgCopy.rcb = response_cb;
-  DlgCopy.response_cb = response_callback_new(copy_click_response, NULL, user_data);
+  response_callback_add(&DlgCopy, copy_click_response, NULL, user_data);
   DialogExecute(parent, &DlgCopy);
 }
 #else
