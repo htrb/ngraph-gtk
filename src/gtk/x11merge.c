@@ -341,7 +341,11 @@ CmMergeOpen(GSimpleAction *action, GVariant *parameter, gpointer client_data)
     changefilename(name);
     putobj(obj, "file", id, name);
     MergeDialog(NgraphApp.MergeWin.data.data, id, -1);
+    DlgMerge.response_cb = response_callback_new(merge_open_response, NULL, GINT_TO_POINTER(undo));
     DialogExecute(TopLevel, &DlgMerge);
+  } else {
+    g_free(name);
+    MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE, DRAW_NOTIFY);
   }
 }
 #else
