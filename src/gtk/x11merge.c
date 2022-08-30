@@ -389,6 +389,32 @@ CmMergeOpen(void *w, gpointer client_data)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
+static int
+merge_close_response(struct response_callback *cb)
+{
+  struct SelectDialog *d;
+  struct narray *farray;
+  struct objlist *obj;
+  d = (struct SelectDialog *) cb->dialog;
+  farray = d->sel;
+  obj = d->Obj;
+  if (cb->return_value == IDOK) {
+    int i, num, *array;
+    num = arraynum(farray);
+    if (num > 0) {
+      menu_save_undo_single(UNDO_TYPE_DELETE, obj->name);
+    }
+    array = arraydata(farray);
+    for (i = num - 1; i >= 0; i--) {
+      delobj(obj, array[i]);
+      set_graph_modified();
+    }
+    MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE, TRUE);
+  }
+  arrayfree(farray);
+  return IDOK;
+}
+
 void
 CmMergeClose(void *w, gpointer client_data)
 {
