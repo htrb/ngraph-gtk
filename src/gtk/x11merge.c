@@ -472,7 +472,7 @@ struct merge_update_data
 static int
 merge_update_response_response(struct response_callback *cb)
 {
-  int num, modified, *array;
+  int num, *array;
   struct merge_update_data *data;
   struct narray *farray;
 
