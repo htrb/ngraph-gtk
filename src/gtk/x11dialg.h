@@ -105,6 +105,7 @@ struct response_callback
 };
 
 struct response_callback *response_callback_new(response_callback_func cb, response_callback_free_func free, gpointer data);
+#define response_callback_add(dialog, cb, free, data) ((struct DialogType *)dialog)->response_cb=response_callback_new(cb, free, data)
 
 #define DIALOG_PROTOTYPE GtkWidget *parent, *widget, *focus;            \
   GtkBox *vbox;                                                         \
