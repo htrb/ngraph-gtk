@@ -505,6 +505,47 @@ merge_update_response_response(struct response_callback *cb)
   DialogExecute(TopLevel, &DlgMerge);
 }
 
+static int
+merge_update_response(struct response_callback *cb)
+{
+  struct SelectDialog *d;
+  struct narray *farray;
+  struct objlist *obj;
+  int modified, i, *array, num;
+  struct merge_update_data *data;
+  d = (struct SelectDialog *) cb->dialog;
+  farray = d->sel;
+  obj = d->Obj;
+  modified = FALSE;
+  if (cb->return_value != IDOK) {
+    arrayfree(farray);
+    return IDOK;
+  }
+
+  num = arraynum(farray);
+  if (num > 0) {
+    menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
+  }
+  array = arraydata(farray);
+
+  data = g_malloc0(sizeof(*data));
+  if (data == NULL) {
+    arrayfree(farray);
+    return IDOK;
+  }
+
+  data->i = 0;
+  data->num = num;
+  data->farray = farray;
+  data->modified = FALSE;
+
+  array = arraydata(farray);
+  MergeDialog(NgraphApp.MergeWin.data.data, array[0], -1);
+  DlgMerge.response_cb = response_callback_new(merge_update_response_response, NULL, data);
+  DialogExecute(TopLevel, &DlgMerge);
+  return IDOK;
+}
+
 void
 CmMergeUpdate(void *w, gpointer client_data)
 {
