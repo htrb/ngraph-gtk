@@ -418,7 +418,7 @@ merge_close_response(struct response_callback *cb)
 void
 CmMergeClose(void *w, gpointer client_data)
 {
-  struct narray farray;
+  struct narray *farray;
   struct objlist *obj;
 
   if (Menulock || Globallock)
@@ -427,7 +427,12 @@ CmMergeClose(void *w, gpointer client_data)
     return;
   if (chkobjlastinst(obj) == -1)
     return;
-  SelectDialog(&DlgSelect, obj, _("close merge file (multi select)"), MergeFileCB, (struct narray *) &farray, NULL);
+  farray = arraynew(sizeof(int));
+  if (farray == NULL) {
+    return;
+  }
+  SelectDialog(&DlgSelect, obj, _("close merge file (multi select)"), MergeFileCB, farray, NULL);
+  DlgSelect.response_cb = response_callback_new(merge_close_response, NULL, NULL);
   DialogExecute(TopLevel, &DlgSelect);
 }
 #else
