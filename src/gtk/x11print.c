@@ -792,11 +792,7 @@ CmOutputImage(int type)
   }
 
   tmp = get_base_ngp_name();
-#if GTK_CHECK_VERSION(4, 0, 0)
-  chd = FALSE;
-#else
   chd = Menulocal.changedirectory;
-#endif
   ret = nGetSaveFileName(TopLevel, title, ext_str, NULL, tmp,
 			 &file, FALSE, chd);
   if (tmp) {
