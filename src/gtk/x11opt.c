@@ -2213,35 +2213,14 @@ CmOptionSaveNgp(void *w, gpointer client_data)
   return;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* to be implemented */
 void
 CmOptionViewer(void *w, gpointer client_data)
 {
-  int r;
-
   if (Menulock || Globallock)
     return;
-
   ViewerDialog(&DlgViewer, Menulocal.obj, 0);
   DialogExecute(TopLevel, &DlgViewer);
 }
-#else
-void
-CmOptionViewer(void *w, gpointer client_data)
-{
-  int r;
-
-  if (Menulock || Globallock)
-    return;
-
-  ViewerDialog(&DlgViewer, Menulocal.obj, 0);
-  r = DialogExecute(TopLevel, &DlgViewer);
-  if (r == IDOK && DlgViewer.Clear) {
-    ChangeDPI();
-  }
-}
-#endif
 
 void
 CmOptionExtViewer(void *w, gpointer client_data)
