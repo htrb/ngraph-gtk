@@ -1106,11 +1106,11 @@ static void
 PrefFontDialogAdd(GtkWidget *w, gpointer client_data)
 {
   struct PrefFontDialog *d;
-  int ret;
 
   d = (struct PrefFontDialog *) client_data;
 
   FontSettingDialog(&DlgFontSetting, NULL, NULL, NULL);
+  response_callback_add(&DlgFontSetting, pref_font_dialog_response, NULL, d);
   DialogExecute(d->widget, &DlgFontSetting);
 }
 #else
