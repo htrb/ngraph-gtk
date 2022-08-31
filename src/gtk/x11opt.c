@@ -657,14 +657,17 @@ FontSettingDialogAddAlternative(GtkWidget *w, gpointer client_data)
 {
   struct FontSettingDialog *d;
   GtkWidget *dialog;
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   int response;
+#endif
 
   d = (struct FontSettingDialog *) client_data;
 
-  dialog = gtk_font_chooser_dialog_new(_("Alternative font"), NULL);
+  dialog = gtk_font_chooser_dialog_new(_("Alternative font"), GTK_WINDOW(d->widget));
 #if GTK_CHECK_VERSION(4, 0, 0)
-  response = IDLOOP;
-  ndialog_run(dialog, NULL, d);
+  g_signal_connect(dialog, "response", G_CALLBACK(FontSettingDialogAddAlternative_response), d);
+  gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);
+  gtk_widget_show(dialog);
 #else
   response = ndialog_run(dialog);
   if (response != GTK_RESPONSE_CANCEL) {
