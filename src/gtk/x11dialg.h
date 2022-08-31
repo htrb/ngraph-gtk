@@ -99,7 +99,7 @@ struct MarkDialog
 {
   DIALOG_PROTOTYPE;
   /****** local member *******/
-  GtkWidget *parnet, *toggle[MARK_TYPE_NUM];
+  GtkWidget *toggle[MARK_TYPE_NUM];
   int Type, cb_respond;
 };
 void MarkDialog(struct MarkDialog *data, GtkWidget *parent, int type);
