@@ -1040,7 +1040,6 @@ PrefFontDialogUpdate(GtkWidget *w, gpointer client_data)
   struct PrefFontDialog *d;
   struct fontmap *fcur;
   char *fontalias;
-  int ret;
 
   d = (struct PrefFontDialog *) client_data;
 
@@ -1055,6 +1054,7 @@ PrefFontDialogUpdate(GtkWidget *w, gpointer client_data)
     return;
 
   FontSettingDialog(&DlgFontSetting, fcur->fontalias, fcur->fontname, fcur->alternative);
+  response_callback_add(&DlgFontSetting, pref_font_dialog_response, NULL, d);
   DialogExecute(d->widget, &DlgFontSetting);
 }
 #else
