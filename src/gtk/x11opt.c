@@ -2125,6 +2125,9 @@ ViewerDialogClose(GtkWidget *w, void *data)
   if (d->ret == IDSAVE) {
     save_config(SAVE_CONFIG_TYPE_VIEWER);
   }
+  if (d->ret == IDOK && d->Clear) {
+    ChangeDPI();
+  }
   if (bg) {
     update_bg();
     UpdateAll2(NULL, TRUE);
