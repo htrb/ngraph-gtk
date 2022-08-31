@@ -635,7 +635,8 @@ FontSettingDialogAddAlternative_response(GtkWidget *dialog, gint response, gpoin
   PangoFontFamily *family;
   GtkTreeIter iter;
 
- if (response == GTK_RESPONSE_CANCEL) {
+ if (response != GTK_RESPONSE_OK) {
+   gtk_window_destroy(GTK_WINDOW(dialog));
    return;
  }
 
