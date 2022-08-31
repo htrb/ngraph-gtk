@@ -635,20 +635,20 @@ FontSettingDialogAddAlternative_response(GtkWidget *dialog, gint response, gpoin
   PangoFontFamily *family;
   GtkTreeIter iter;
 
- if (response != GTK_RESPONSE_OK) {
-   gtk_window_destroy(GTK_WINDOW(dialog));
-   return;
- }
+  if (response != GTK_RESPONSE_OK) {
+    gtk_window_destroy(GTK_WINDOW(dialog));
+    return;
+  }
 
- d = (struct FontSettingDialog *) client_data;
- family = gtk_font_chooser_get_font_family(GTK_FONT_CHOOSER(dialog));
- if (family) {
-   const gchar *font_name;
-   font_name = pango_font_family_get_name(family);
-   list_store_append(d->list, &iter);
-   list_store_set_string(d->list, &iter, 0, font_name);
- }
- gtk_window_destroy(GTK_WINDOW(dialog));
+  d = (struct FontSettingDialog *) client_data;
+  family = gtk_font_chooser_get_font_family(GTK_FONT_CHOOSER(dialog));
+  if (family) {
+    const gchar *font_name;
+    font_name = pango_font_family_get_name(family);
+    list_store_append(d->list, &iter);
+    list_store_set_string(d->list, &iter, 0, font_name);
+  }
+  gtk_window_destroy(GTK_WINDOW(dialog));
 }
 #endif
 
