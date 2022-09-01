@@ -549,6 +549,31 @@ CmParameterAdd(void *w, gpointer client_data)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
+static int
+parameter_delete_response(struct response_callback *cb)
+{
+  struct narray *farray;
+  struct obj_list_data *d;
+
+  d = NgraphApp.ParameterWin.data.data;
+  farray = (struct narray *) cb->data;
+  if (cb->return_value == IDOK) {
+    int i, num, *array;
+    num = arraynum(farray);
+    if (num > 0) {
+      menu_save_undo_single(UNDO_TYPE_DELETE, d->obj->name);
+    }
+    array = arraydata(farray);
+    for (i = num - 1; i >= 0; i--) {
+      delobj(d->obj, array[i]);
+    }
+    set_graph_modified();
+    ParameterWinUpdate(d, FALSE, FALSE);
+  }
+  arraydel(farray);
+  return IDOK;
+}
+
 void
 CmParameterDelete(void *w, gpointer client_data)
 {
