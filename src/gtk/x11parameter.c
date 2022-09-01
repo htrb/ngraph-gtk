@@ -804,15 +804,15 @@ parameter_update_response(struct response_callback *cb)
 static void
 parameter_update(GtkButton *btn, gpointer data)
 {
-  int undo, ret;
   struct parameter_data *d;
 
   if (Menulock || Globallock)
     return;
 
   d = data;
-  undo = menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
+  d->undo = menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
   ParameterDialog(d->obj_list_data, d->id, -1);
+  response_callback_add(&DlgParameter, parameter_update_response, NULL, d);
   DialogExecute(TopLevel, &DlgParameter);
 }
 #else
