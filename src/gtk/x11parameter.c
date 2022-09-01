@@ -577,16 +577,25 @@ parameter_delete_response(struct response_callback *cb)
 void
 CmParameterDelete(void *w, gpointer client_data)
 {
-  struct narray farray;
+  struct narray *farray;
   struct obj_list_data *d;
 
   if (Menulock || Globallock)
     return;
 
   d = NgraphApp.ParameterWin.data.data;
-  if (chkobjlastinst(d->obj) == -1)
+  if (chkobjlastinst(d->obj) == -1) {
     return;
-  SelectDialog(&DlgSelect, d->obj, _("delete parameter (multi select)"), ParameterCB, (struct narray *) &farray, NULL);
+  }
+
+  farray = arraynew(sizeof(int));
+  if (farray == NULL) {
+    return;
+
+  }
+
+  SelectDialog(&DlgSelect, d->obj, _("delete parameter (multi select)"), ParameterCB, (struct narray *) farray, NULL);
+  response_callback_add(&DlgSelect, parameter_delete_response, NULL, farray);
   DialogExecute(TopLevel, &DlgSelect);
 }
 #else
