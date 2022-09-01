@@ -788,6 +788,19 @@ CmParameterUpdate(void *w, gpointer client_data)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
+static int
+parameter_update_response(struct response_callback *cb)
+{
+  struct parameter_data *d;
+  d = (struct parameter_data *) cb->data;
+  if (cb->return_value == IDCANCEL) {
+    menu_undo_internal(d->undo);
+  } else {
+    update_parameter(d->obj_list_data);
+  }
+  return IDOK;
+}
+
 static void
 parameter_update(GtkButton *btn, gpointer data)
 {
