@@ -639,6 +639,45 @@ update_parameter(struct obj_list_data *d)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
+struct parameter_update_data
+{
+  struct obj_list_data *d;
+  struct narray *farray;
+  int i, num, undo, modified;
+};
+
+static int
+cm_parameter_update_response_response(struct response_callback *cb)
+{
+  struct narray *farray;
+  int *array;
+  struct parameter_update_data *data;
+
+  data = (struct parameter_update_data *) cb->data;
+  farray = data->farray;
+
+  data->i++;
+  if (data->i >= data->num) {
+    if (data->modified) {
+      update_parameter(data->d);
+    } else if (data->undo >= 0) {
+      menu_undo_internal(data->undo);
+    }
+    arrayfree(farray);
+    g_free(data);
+    return IDOK;
+  }
+
+  if (cb->return_value == IDOK) {
+    data->modified = TRUE;
+  }
+  array = arraydata(farray);
+  ParameterDialog(data->d, array[data->i], -1);
+  response_callback_add(&DlgParameter, cm_parameter_update_response_response, NULL, data);
+  DialogExecute(TopLevel, &DlgParameter);
+  return IDOK;
+}
+
 void
 CmParameterUpdate(void *w, gpointer client_data)
 {
