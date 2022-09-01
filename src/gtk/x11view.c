@@ -6979,13 +6979,12 @@ ViewerEvScroll(GtkEventControllerScroll *self, double x, double y, gpointer clie
       mouse_down_zoom_little(0, &point, d, TRUE);
     }
   } else {
-#if OSX
-    range_increment(d->HScroll, x);
-    range_increment(d->VScroll, y);
-#else
-    range_increment(d->HScroll, x * SCROLL_INC);
-    range_increment(d->VScroll, y * SCROLL_INC);
-#endif
+    GdkScrollUnit unit;
+    double factor;
+    unit = gtk_event_controller_scroll_get_unit(self);
+    factor = (unit == GDK_SCROLL_UNIT_WHEEL) ? SCROLL_INC : 1.0;
+    range_increment(d->HScroll, x * factor);
+    range_increment(d->VScroll, y * factor);
   }
   return TRUE;
 }
