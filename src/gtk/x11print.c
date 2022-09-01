@@ -744,16 +744,100 @@ CmPrintGRAFile(void)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
-static void
-CmOutputImage(int type)
+struct output_image_data
+{
+  int type;
+  char *file;
+};
+
+static int
+output_image_response(struct response_callback *cb)
 {
   struct objlist *graobj, *g2wobj;
   int id, g2wid, g2woid;
   N_VALUE *g2winst;
+  int type;
+  char *file;
+  struct output_image_data *data;
+
+  data = (struct output_image_data *) cb->data;
+  type = data->type;
+  file = data->file;
+  g_free(data);
+
+  if (cb->return_value != IDOK) {
+    g_free(file);
+    return IDOK;
+  }
+
+  if (Menulocal.select_data && ! SetFileHidden()) {
+    g_free(file);
+    return IDOK;
+  }
+
+  FileAutoScale();
+  AdjustAxis();
+
+  graobj = chkobject("gra");
+  if (graobj == NULL) {
+    g_free(file);
+    return IDOK;
+  }
+
+  g2wobj = chkobject("gra2cairofile");
+  if (g2wobj == NULL) {
+    g_free(file);
+    return IDOK;
+  }
+
+  g2wid = newobj(g2wobj);
+  if (g2wid < 0) {
+    g_free(file);
+    return IDOK;
+  }
+
+  g2winst = chkobjinst(g2wobj, g2wid);
+  _getobj(g2wobj, "oid", g2winst, &g2woid);
+  id = newobj(graobj);
+  putobj(g2wobj, "file", g2wid, file);
+
+  switch (type) {
+  case MenuIdOutputPSFile:
+  case MenuIdOutputEPSFile:
+  case MenuIdOutputSVGFile:
+  case MenuIdOutputPDFFile:
+#ifdef CAIRO_HAS_WIN32_SURFACE
+  case MenuIdOutputCairoEMFFile:
+#endif	/* CAIRO_HAS_WIN32_SURFACE */
+    putobj(g2wobj, "text2path", g2wid, &DlgImageOut.text2path);
+    break;
+  case MenuIdOutputPNGFile:
+    break;
+  }
+
+  putobj(g2wobj, "use_opacity", g2wid, &DlgImageOut.UseOpacity);
+  putobj(g2wobj, "dpi", g2wid, &DlgImageOut.Dpi);
+  putobj(g2wobj, "format", g2wid, &DlgImageOut.Version);
+
+  init_graobj(graobj, id, "gra2cairofile", g2woid);
+  draw_gra(graobj, id, _("Drawing."), TRUE);
+  delobj(graobj, id);
+  delobj(g2wobj, g2wid);
+
+  if (Menulocal.select_data) {
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, TRUE);
+  }
+  return IDOK;
+}
+
+static void
+CmOutputImage(int type)
+{
   int ret;
   char *title, *ext_str;
   char *file, *tmp;
   int chd;
+  struct output_image_data *data;
 
   if (Menulock || Globallock)
     return;
@@ -807,7 +891,15 @@ CmOutputImage(int type)
     return;
   }
 
+  data = g_malloc0(sizeof(*data));
+  if (data == NULL) {
+    g_free(file);
+    return;
+  }
+  data->type= type;
+  data->file = file;
   OutputImageDialog(&DlgImageOut, type);
+  response_callback_add(&DlgImageOut, output_image_response, NULL, data);
   DialogExecute(TopLevel, &DlgImageOut);
 }
 #else
