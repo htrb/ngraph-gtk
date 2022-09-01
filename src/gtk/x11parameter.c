@@ -483,6 +483,22 @@ ParameterDialog(struct obj_list_data *data, int id, int user_data)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
+static int
+parameter_add_response(struct response_callback *cb)
+{
+  struct obj_list_data *d;
+
+  d = NgraphApp.ParameterWin.data.data;
+  if (cb->return_value == IDCANCEL) {
+    int undo = GPOINTER_TO_INT(cb->data);
+    menu_undo_internal(undo);
+  } else {
+    set_graph_modified();
+  }
+  ParameterWinUpdate(d, FALSE, FALSE);
+  return IDOK;
+}
+
 void
 CmParameterAdd(void *w, gpointer client_data)
 {
