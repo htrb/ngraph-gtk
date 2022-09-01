@@ -502,7 +502,7 @@ parameter_add_response(struct response_callback *cb)
 void
 CmParameterAdd(void *w, gpointer client_data)
 {
-  int id, undo, ret;
+  int id, undo;
   struct obj_list_data *d;
 
   if (Menulock || Globallock)
@@ -516,6 +516,7 @@ CmParameterAdd(void *w, gpointer client_data)
     return;
   }
   ParameterDialog(d, id, -1);
+  response_callback_add(&DlgParameter, parameter_add_response, NULL, GINT_TO_POINTER(undo));
   DialogExecute(TopLevel, &DlgParameter);
 }
 #else
