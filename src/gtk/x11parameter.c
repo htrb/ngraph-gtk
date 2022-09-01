@@ -54,7 +54,7 @@ struct parameter_data
   int playing;
   GtkWidget *scale, *repeat;
   struct objlist *obj;
-  int id;
+  int id, undo;
   struct obj_list_data *obj_list_data;
 };
 
