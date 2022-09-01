@@ -678,6 +678,45 @@ cm_parameter_update_response_response(struct response_callback *cb)
   return IDOK;
 }
 
+static int
+cm_parameter_update_response(struct response_callback *cb)
+{
+  struct obj_list_data *d;
+  struct narray *farray;
+  int num, *array;
+  struct parameter_update_data *data;
+
+  farray = (struct narray *) cb->data;
+  d = NgraphApp.ParameterWin.data.data;
+  if (cb->return_value != IDOK) {
+    arraydel(farray);
+    return IDOK;
+  }
+  num = arraynum(farray);
+  if (num <= 0) {
+    arraydel(farray);
+    return IDOK;
+  }
+  data = g_malloc0(sizeof(*data));
+  if (data == NULL) {
+    arraydel(farray);
+    return IDOK;
+  }
+
+  data->modified = FALSE;
+  data->num = num;
+  data->farray = farray;
+  data->d = d;
+  data->i = 0;
+  data->undo = menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
+
+  array = arraydata(farray);
+  ParameterDialog(d, array[0], -1);
+  response_callback_add(&DlgParameter, cm_parameter_update_response_response, NULL, data);
+  DialogExecute(TopLevel, &DlgParameter);
+  return IDOK;
+}
+
 void
 CmParameterUpdate(void *w, gpointer client_data)
 {
