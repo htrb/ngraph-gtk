@@ -720,10 +720,8 @@ cm_parameter_update_response(struct response_callback *cb)
 void
 CmParameterUpdate(void *w, gpointer client_data)
 {
-  struct narray farray;
-  int modified;
+  struct narray *farray;
   struct obj_list_data *d;
-  int i, *array, num, undo;
 
   if (Menulock || Globallock)
     return;
@@ -732,8 +730,15 @@ CmParameterUpdate(void *w, gpointer client_data)
   if (chkobjlastinst(d->obj) == -1) {
     return;
   }
-  SelectDialog(&DlgSelect, d->obj, _("parameter property (multi select)"), ParameterCB, (struct narray *) &farray, NULL);
-  modified = FALSE;
+
+  farray = arraynew(sizeof(int));
+  if (farray == NULL) {
+    return;
+
+  }
+
+  SelectDialog(&DlgSelect, d->obj, _("parameter property (multi select)"), ParameterCB, (struct narray *) farray, NULL);
+  response_callback_add(&DlgSelect, cm_parameter_update_response, NULL, farray);
   DialogExecute(TopLevel, &DlgSelect);
 }
 #else
