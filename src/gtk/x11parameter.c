@@ -977,6 +977,9 @@ create_scale(double min, double max, double inc, double value)
 
   inverted = check_min_max(&min, &max, &inc);
   scale = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, min, max, inc);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_scale_set_draw_value(GTK_SCALE(scale), TRUE);
+#endif
   gtk_widget_set_size_request(GTK_WIDGET(scale), 200, -1);
   gtk_widget_set_hexpand(GTK_WIDGET(scale), TRUE);
   gtk_range_set_value(GTK_RANGE(scale), value);
