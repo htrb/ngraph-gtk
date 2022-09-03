@@ -953,6 +953,7 @@ new_file_obj(char *name, struct objlist *obj, int *id0, int multi)
   }
 
   FileDialog(NgraphApp.FileWin.data.data, id, multi);
+  response_callback_add(&DlgMerge, new_file_obj_response, NULL, name);
   DialogExecute(TopLevel, &DlgFile);
   return 0;
 }
