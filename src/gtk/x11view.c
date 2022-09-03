@@ -2527,12 +2527,12 @@ Evaluate(int x1, int y1, int x2, int y2, int err, struct Viewer *d)
   ProgressDialogFinalize();
   ResetStatusBar();
 
+  restorestdio(&save);
   if (tot > 0) {
-    int ret, selnum;
     EvalDialog(&DlgEval, fileobj, tot, &SelList);
+    response_callback_add(&DlgEval, evaluate_response, NULL, d);
     DialogExecute(TopLevel, &DlgEval);
   }
-  restorestdio(&save);
 }
 #else
 static void
