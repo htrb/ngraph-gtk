@@ -913,6 +913,29 @@ arc_get_angle(struct objlist *obj, N_VALUE *inst, unsigned int round, int point,
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
 static int
+new_file_obj_response(struct response_callback *cb)
+{
+  struct FileDialog *d;
+  char *name;
+  d = (struct FileDialog *) cb->dialog;
+  name = (char *) cb->data;
+  if (cb->return_value == IDCANCEL) {
+    FitDel(d->Obj, d->Id);
+    delobj(d->Obj, d->Id);
+  } else {
+    /*
+    if (ret == IDFAPPLY) {
+      *id0 = id;
+    }
+    */
+    set_graph_modified();
+    AddDataFileList(name);
+  }
+
+  return IDOK;
+}
+
+static int
 new_file_obj(char *name, struct objlist *obj, int *id0, int multi)
 {
   int id;
