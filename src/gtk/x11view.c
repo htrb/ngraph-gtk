@@ -2414,6 +2414,39 @@ mask_selected_data(struct objlist *fileobj, int selnum, struct narray *sel_list)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
+static int
+evaluate_response(struct response_callback *cb)
+{
+  int selnum;
+  struct objlist *fileobj;
+  struct Viewer *vd;
+  struct EvalDialog *d;
+
+  vd = (struct Viewer *) cb->data;
+  d = (struct EvalDialog *) cb->dialog;
+  fileobj = d->Obj;
+  selnum = arraynum(&SelList);
+  if (selnum > 0) {
+    char *argv[2];
+    switch (cb->return_value) {
+    case IDEVMASK:
+      menu_save_undo_single(UNDO_TYPE_EDIT, fileobj->name);
+      mask_selected_data(fileobj, selnum, &SelList);
+      arraydel(&SelList);
+      argv[0] = "data";
+      argv[1] = NULL;
+      UpdateAll(argv);
+      break;
+    case IDEVMOVE:
+      NSetCursor(GDK_TCROSS);
+      vd->Capture = TRUE;
+      vd->MoveData = TRUE;
+      break;
+    }
+  }
+  return IDOK;
+}
+
 static void
 Evaluate(int x1, int y1, int x2, int y2, int err, struct Viewer *d)
 {
