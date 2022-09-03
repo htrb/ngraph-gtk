@@ -6053,15 +6053,16 @@ create_legendx(struct Viewer *d)
 	PaintLock = TRUE;
 
 	if ((x1 != x2) && (y1 != y2)) {
-          int ret;
 	  LegendGaussDialog(&DlgLegendGauss, obj, id, x1, y1,
 			    x2 - x1, y2 - y1);
+	  add_drawble_response(&DlgLegendGauss, obj, NULL, id, undo);
 	  DialogExecute(TopLevel, &DlgLegendGauss);
 	}
 	PaintLock = FALSE;
       }
     }
   }
+  arraydel2(d->points);
 }
 #else
 static void
