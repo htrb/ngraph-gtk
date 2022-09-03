@@ -1056,6 +1056,35 @@ data_dropped(char **filenames, int num, int file_type)
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
 static int
+text_dropped_response(struct response_callback *cb)
+{
+  struct Viewer *vd;
+  struct LegendDialog *d;
+  d = (struct LegendDialog *) cb->dialog;
+  vd = (struct Viewer *) cb->data;
+
+  if ((cb->return_value == IDDELETE) || (cb->return_value == IDCANCEL)) {
+    menu_delete_undo(vd->undo);
+    delobj(d->Obj, d->Id);
+  } else {
+    int oid;
+    char *objects[] = {"text", NULL};
+
+    UnFocus();
+
+    getobj(d->Obj, "oid", d->Id, 0, NULL, &oid);
+    add_focus_obj(NgraphApp.Viewer.focusobj, d->Obj, oid);
+
+    set_graph_modified();
+    vd->ShowFrame = TRUE;
+    gtk_widget_grab_focus(vd->Win);
+    UpdateAll(objects);
+  }
+  PaintLock = FALSE;
+  return IDOK;
+}
+
+static int
 text_dropped(const char *str, gint x, gint y, struct Viewer *d)
 {
   N_VALUE *inst;
