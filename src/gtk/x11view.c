@@ -1091,7 +1091,7 @@ text_dropped(const char *str, gint x, gint y, struct Viewer *d)
   char *ptr;
   double zoom = Menulocal.PaperZoom / 10000.0;
   struct objlist *obj;
-  int id, x1, y1, r, i, j, l, undo;
+  int id, x1, y1, i, j, l;
 
   obj = chkobject("text");
 
@@ -1126,7 +1126,7 @@ text_dropped(const char *str, gint x, gint y, struct Viewer *d)
   }
   ptr[j] = '\0';
 
-  undo = menu_save_undo_single(UNDO_TYPE_PASTE, obj->name);
+  d->undo = menu_save_undo_single(UNDO_TYPE_PASTE, obj->name);
   id = newobj(obj);
   if (id < 0) {
     g_free(ptr);
@@ -1146,9 +1146,8 @@ text_dropped(const char *str, gint x, gint y, struct Viewer *d)
   PaintLock= TRUE;
 
   LegendTextDialog(&DlgLegendText, obj, id);
+  response_callback_add(&DlgMerge, text_dropped_response, NULL, d);
   DialogExecute(TopLevel, &DlgLegendText);
-
-  PaintLock = FALSE;
   return 0;
 }
 #else
