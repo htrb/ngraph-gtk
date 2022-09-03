@@ -5577,6 +5577,26 @@ swapint(int *a, int *b)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
+struct create_drawble_data {
+  struct objlist *obj, *obj2;
+  int id, undo;
+};
+
+static struct create_drawble_data *
+create_drawble_data_new(struct objlist *obj, struct objlist *obj2, int id, int undo)
+{
+  struct create_drawble_data *data;
+  data = g_malloc0(sizeof(*data));
+  if (data == NULL) {
+    return NULL;
+  }
+  data->obj = obj;
+  data->obj2 = obj2;
+  data->id = id;
+  data->undo = undo;
+  return data;
+}
+
 static void
 create_legend1(struct Viewer *d)
 {
