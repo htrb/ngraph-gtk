@@ -6149,7 +6149,7 @@ create_single_axis(struct Viewer *d)
       int id, x1, y1, lenx, dir, undo;
       undo = menu_save_undo_single(UNDO_TYPE_CREATE, obj->name);
       if ((id = newobj(obj)) >= 0) {
-        int x2, y2, ret;
+        int x2, y2;
         double fx1, fy1;
         N_VALUE *inst;
 
@@ -6189,10 +6189,12 @@ create_single_axis(struct Viewer *d)
 
 	presetting_set_obj_field(obj, id);
 	AxisDialog(NgraphApp.AxisWin.data.data, id, TRUE);
+	add_drawble_response(&DlgAxis, obj, NULL, id, undo);
 	DialogExecute(TopLevel, &DlgAxis);
       }
     }
   }
+  arraydel2(d->points);
 }
 #else
 static void
