@@ -5597,6 +5597,38 @@ create_drawble_data_new(struct objlist *obj, struct objlist *obj2, int id, int u
   return data;
 }
 
+static int
+create_drawble_response(struct response_callback *cb)
+{
+  struct create_drawble_data *data;
+  char *objects[3];
+  data = (struct create_drawble_data *) cb->data;
+  if (data == NULL) {
+    PaintLock = FALSE;
+    return IDOK;
+  }
+
+  if (cb->return_value != IDOK) {
+    if (data->id < 0) {
+      menu_undo_internal(data->undo);
+    } else {
+      delobj(data->obj, data->id);
+      menu_delete_undo(data->undo);
+    }
+  } else {
+    set_graph_modified();
+  }
+  PaintLock = FALSE;
+
+  objects[0] = data->obj->name;
+  objects[1] = (data->obj2) ? data->obj2->name : NULL;
+  objects[2] = NULL;
+  UpdateAll(objects);
+  g_free(data);
+
+  return IDOK;
+}
+
 static void
 create_legend1(struct Viewer *d)
 {
