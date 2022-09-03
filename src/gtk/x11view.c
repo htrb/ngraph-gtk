@@ -753,6 +753,19 @@ graph_dropped(char *fname)
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
 static int
+new_merge_obj_response(struct response_callback *cb)
+{
+  struct MergeDialog *d;
+  d = (struct MergeDialog *) cb->dialog;
+  if (cb->return_value == IDCANCEL) {
+    delobj(d->Obj, d->Id);
+  } else {
+    set_graph_modified();
+  }
+  return IDOK;
+}
+
+static int
 new_merge_obj(char *name, struct objlist *obj)
 {
   int id;
