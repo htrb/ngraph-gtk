@@ -6295,7 +6295,7 @@ create_axis(struct Viewer *d)
     obj2 = chkobject("axisgrid");
 
     if (obj && obj2) {
-      int undo, x2, y2, ret = IDCANCEL;
+      int undo, x2, y2;
       char *argv[3];
       argv[0] = obj->name;
       argv[1] = obj2->name;
@@ -6383,6 +6383,7 @@ create_axis(struct Viewer *d)
 	SectionDialog(&DlgSection, x1, y1, lenx, leny, obj,
 		      idx, idy, idu, idr, obj2, &idg, FALSE);
 
+	add_drawble_response(&DlgSection, obj, obj2, -1, undo);
 	DialogExecute(TopLevel, &DlgSection);
       } else if (d->Mode == SectionB) {
 	presetting_set_obj_field(obj, idx);
@@ -6393,16 +6394,19 @@ create_axis(struct Viewer *d)
 	SectionDialog(&DlgSection, x1, y1, lenx, leny, obj,
 		      idx, idy, idu, idr, obj2, &idg, TRUE);
 
+	add_drawble_response(&DlgSection, obj, obj2, -1, undo);
 	DialogExecute(TopLevel, &DlgSection);
       } else if (d->Mode == CrossB) {
 	presetting_set_obj_field(obj, idx);
 	presetting_set_obj_field(obj, idy);
 	CrossDialog(&DlgCross, x1, y1, lenx, leny, obj, idx, idy);
 
+	add_drawble_response(&DlgCross, obj, obj2, -1, undo);
 	DialogExecute(TopLevel, &DlgCross);
       }
     }
   }
+  arraydel2(d->points);
 }
 #else
 static void
