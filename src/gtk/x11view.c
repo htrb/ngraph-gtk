@@ -778,6 +778,7 @@ new_merge_obj(char *name, struct objlist *obj)
   changefilename(name);
   putobj(obj, "file", id, name);
   MergeDialog(NgraphApp.MergeWin.data.data, id, -1);
+  response_callback_add(&DlgMerge, new_merge_obj_response, NULL, NULL);
   DialogExecute(TopLevel, &DlgMerge);
   return 0;
 }
