@@ -195,6 +195,10 @@ struct Viewer
   struct DecelerationPrm deceleration_prm;
   struct ScrollPrm scroll_prm;
   cairo_surface_t *focused_pix;
+  /* for dialog response */
+  int undo, id, modified;
+  struct objlist *obj;
+  char *objs[OBJ_MAX];
 };
 
 enum SubWinType {
