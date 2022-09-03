@@ -2768,10 +2768,9 @@ trimming_response(struct response_callback *cb)
 static void
 Trimming(int x1, int y1, int x2, int y2)
 {
-  struct narray farray;
+  struct narray *farray;
   struct objlist *obj;
-  int maxx, maxy, minx, miny;
-  int dir, room;
+  struct trimming_data *data;
 
   if ((x1 == x2) && (y1 == y2))
     return;
@@ -2782,8 +2781,21 @@ Trimming(int x1, int y1, int x2, int y2)
   if (chkobjlastinst(obj) == -1)
     return;
 
-  SelectDialog(&DlgSelect, obj, _("trimming (multi select)"), AxisCB, (struct narray *) &farray, NULL);
-
+  data = g_malloc0(sizeof(*data));
+  if (data == NULL) {
+    return;
+  }
+  farray = arraynew(sizeof(int));
+  if (farray == NULL) {
+    g_free(data);
+    return;
+  }
+  data->x1 = x1;
+  data->x2 = x2;
+  data->y1 = y1;
+  data->y2 = y2;
+  SelectDialog(&DlgSelect, obj, _("trimming (multi select)"), AxisCB, (struct narray *) farray, NULL);
+  response_callback_add(&DlgSelect, trimming_response, NULL, data);
   DialogExecute(TopLevel, &DlgSelect);
 }
 #else
