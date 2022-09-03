@@ -5630,6 +5630,14 @@ create_drawble_response(struct response_callback *cb)
 }
 
 static void
+add_drawble_response(void *dialog, struct objlist *obj, struct objlist *obj2, int id, int undo)
+{
+  struct create_drawble_data *data;
+  data = create_drawble_data_new(obj, obj2, id, undo);
+  response_callback_add(dialog, create_drawble_response, NULL, data);
+}
+
+static void
 create_legend1(struct Viewer *d)
 {
   int num;
