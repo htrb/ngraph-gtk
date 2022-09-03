@@ -5884,7 +5884,6 @@ create_legend3(struct Viewer *d)
       id = newobj(obj);
       if (id >= 0) {
         N_VALUE *inst;
-        int ret = IDCANCEL;
         presetting_set_obj_field(obj, id);
 	inst = chkobjinst(obj, id);
 	x1 = pdata[0]->x;
@@ -5906,6 +5905,7 @@ create_legend3(struct Viewer *d)
 	  _putobj(obj, "x2", inst, &x2);
 	  _putobj(obj, "y2", inst, &y2);
 	  LegendRectDialog(&DlgLegendRect, obj, id);
+	  add_drawble_response(&DlgLegendRect, obj, NULL, id, undo);
 	  DialogExecute(TopLevel, &DlgLegendRect);
 	} else if (d->Mode == ArcB) {
 	  int x, y, rx, ry;
@@ -5919,12 +5919,14 @@ create_legend3(struct Viewer *d)
 	  _putobj(obj, "rx", inst, &rx);
 	  _putobj(obj, "ry", inst, &ry);
 	  LegendArcDialog(&DlgLegendArc, obj, id);
+	  add_drawble_response(&DlgLegendArc, obj, NULL, id, undo);
 	  DialogExecute(TopLevel, &DlgLegendArc);
 	}
 	PaintLock = FALSE;
       }
     }
   }
+  arraydel2(d->points);
 }
 #else
 static void
