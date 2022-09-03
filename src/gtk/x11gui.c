@@ -202,9 +202,7 @@ dialog_response(GtkWidget *dlg, gint res_id, gpointer user_data)
 static gboolean
 dialog_close_request(GtkWindow* window, gpointer user_data)
 {
-  struct DialogType *data;
-  data = user_data;
-  data->ret = GTK_RESPONSE_CANCEL;
+  gtk_dialog_response(GTK_DIALOG(window), GTK_RESPONSE_CANCEL);
   return TRUE;
 }
 
