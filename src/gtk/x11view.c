@@ -5643,7 +5643,6 @@ create_legend1(struct Viewer *d)
   int num;
   struct objlist *obj = NULL;
   struct Point *po;
-  char *objects[2];
   int id, x1, y1, undo;
 
   d->Capture = FALSE;
@@ -5656,13 +5655,13 @@ create_legend1(struct Viewer *d)
   }
 
   if (obj == NULL) {
+    arraydel2(d->points);
     return;
   }
 
   undo = menu_save_undo_single(UNDO_TYPE_CREATE, obj->name);
   id = newobj(obj);
   if (id >= 0) {
-    int ret;
     N_VALUE *inst;
     presetting_set_obj_field(obj, id);
     if (num >= 1) {
@@ -5678,12 +5677,15 @@ create_legend1(struct Viewer *d)
 
     if (d->Mode == MarkB) {
       LegendMarkDialog(&DlgLegendMark, obj, id);
+      add_drawble_response(&DlgLegendMark, obj, NULL, id, undo);
       DialogExecute(TopLevel, &DlgLegendMark);
     } else {
       LegendTextDialog(&DlgLegendText, obj, id);
+      add_drawble_response(&DlgLegendText, obj, NULL, id, undo);
       DialogExecute(TopLevel, &DlgLegendText);
     }
   }
+  arraydel2(d->points);
 }
 #else
 static void
