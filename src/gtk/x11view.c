@@ -8451,18 +8451,166 @@ search_axis_group(struct objlist *obj, int id, const char *group,
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
 static void
-ViewUpdate(void)
+update_focused_obj_finalize(struct Viewer *d)
 {
-  int i, id, num, modified, undo;
+  PaintLock = FALSE;
+
+  if (arraynum(d->focusobj) == 0) {
+    clear_focus_obj(d);
+  }
+
+  if (d->modified) {
+    UpdateAll(d->objs);
+  } else {
+    menu_undo_internal(d->undo);
+  }
+  d->ShowFrame = TRUE;
+
+  /* Called in the function ViewerEvLButtonUp */
+  clear_focus_obj_pix(d);
+  set_focus_sensitivity(d);
+}
+
+static int view_update_response(struct response_callback *cb);
+
+static void
+update_focused_obj(struct Viewer *d, int i)
+{
+  int id;
   struct FocusObj *focus;
   struct objlist *obj, *dobj = NULL;
   N_VALUE *inst;
-  int ret;
   int x1, y1;
   int idx = 0, idy = 0, idu = 0, idr = 0, idg, lenx, leny;
   int findX, findY, findU, findR, findG;
   char type;
-  char *group, *objs[OBJ_MAX];
+  char *group;
+
+  if (i < 0) {
+    update_focused_obj_finalize(d);
+    return;
+  }
+
+  focus = *(struct FocusObj **) arraynget(d->focusobj, i);
+  if (focus == NULL) {
+    update_focused_obj(d, i - 1);
+    return;
+  }
+
+  inst = chkobjinstoid(focus->obj, focus->oid);
+  if (inst == NULL) {
+    update_focused_obj(d, i - 1);
+    return;
+  }
+
+  obj = focus->obj;
+  _getobj(obj, "id", inst, &id);
+
+  if (obj == chkobject("axis")) {
+    d->obj = NULL;
+    d->id = -1;
+
+    _getobj(obj, "group", inst, &group);
+
+    if (group && group[0] != 'a') {
+      type = search_axis_group(obj, id, group,
+			       &findX, &findY, &findU, &findR, &findG,
+			       &idx, &idy, &idu, &idr, &idg);
+
+      if (((type == 's') || (type == 'f'))
+	  && findX && findY && findU && findR) {
+
+	dobj = chkobject("axisgrid");
+	if (! findG) {
+	  idg = -1;
+	}
+
+	getobj(obj, "y", idx, 0, NULL, &y1);
+	getobj(obj, "x", idy, 0, NULL, &x1);
+	getobj(obj, "y", idu, 0, NULL, &leny);
+	getobj(obj, "x", idr, 0, NULL, &lenx);
+
+	leny = y1 - leny;
+	lenx = lenx - x1;
+
+	SectionDialog(&DlgSection, x1, y1, lenx, leny, obj,
+		      idx, idy, idu, idr, dobj, &idg, type == 's');
+
+	response_callback_add(&DlgSection, view_update_response, NULL, GINT_TO_POINTER(i));
+	DialogExecute(TopLevel, &DlgSection);
+      } else if ((type == 'c') && findX && findY) {
+	getobj(obj, "x", idx, 0, NULL, &x1);
+	getobj(obj, "y", idy, 0, NULL, &y1);
+	getobj(obj, "length", idx, 0, NULL, &lenx);
+	getobj(obj, "length", idy, 0, NULL, &leny);
+
+	CrossDialog(&DlgCross, x1, y1, lenx, leny, obj, idx, idy);
+
+	response_callback_add(&DlgCross, view_update_response, NULL, GINT_TO_POINTER(i));
+	DialogExecute(TopLevel, &DlgCross);
+      }
+    } else {
+      AxisDialog(NgraphApp.AxisWin.data.data, id, TRUE);
+      response_callback_add(&DlgAxis, view_update_response, NULL, GINT_TO_POINTER(i));
+      DialogExecute(TopLevel, &DlgAxis);
+    }
+  } else {
+    d->obj = obj;
+    d->id = id;
+    if (obj == chkobject("path")) {
+      LegendArrowDialog(&DlgLegendArrow, obj, id);
+      response_callback_add(&DlgLegendArrow, view_update_response, NULL, GINT_TO_POINTER(i));
+      DialogExecute(TopLevel, &DlgLegendArrow);
+    } else if (obj == chkobject("rectangle")) {
+      LegendRectDialog(&DlgLegendRect, obj, id);
+      response_callback_add(&DlgLegendRect, view_update_response, NULL, GINT_TO_POINTER(i));
+      DialogExecute(TopLevel, &DlgLegendRect);
+    } else if (obj == chkobject("arc")) {
+      LegendArcDialog(&DlgLegendArc, obj, id);
+      response_callback_add(&DlgLegendArc, view_update_response, NULL, GINT_TO_POINTER(i));
+      DialogExecute(TopLevel, &DlgLegendArc);
+    } else if (obj == chkobject("mark")) {
+      LegendMarkDialog(&DlgLegendMark, obj, id);
+      response_callback_add(&DlgLegendMark, view_update_response, NULL, GINT_TO_POINTER(i));
+      DialogExecute(TopLevel, &DlgLegendMark);
+    } else if (obj == chkobject("text")) {
+      LegendTextDialog(&DlgLegendText, obj, id);
+      response_callback_add(&DlgLegendText, view_update_response, NULL, GINT_TO_POINTER(i));
+      DialogExecute(TopLevel, &DlgLegendText);
+    } else if (obj == chkobject("merge")) {
+      MergeDialog(NgraphApp.MergeWin.data.data, id, 0);
+      response_callback_add(&DlgMerge, view_update_response, NULL, GINT_TO_POINTER(i));
+      DialogExecute(TopLevel, &DlgMerge);
+    }
+  }
+}
+
+static int
+view_update_response(struct response_callback *cb)
+{
+  struct Viewer *d;
+  struct objlist *obj;
+  int id, i;
+
+  i = GPOINTER_TO_INT(cb->data);
+  d = &NgraphApp.Viewer;
+  obj = d->obj;
+  id = d->id;
+  if (cb->return_value == IDDELETE) {
+    set_graph_modified();
+    delobj(obj, id);
+  }
+  if (cb->return_value != IDCANCEL) {
+    d->modified = TRUE;
+  }
+  update_focused_obj(d, i - 1);
+  return IDOK;
+}
+
+static void
+ViewUpdate(void)
+{
+  int num;
   struct Viewer *d;
 
   if (Menulock || Globallock)
@@ -8477,95 +8625,18 @@ ViewUpdate(void)
   d->ShowFrame = FALSE;
   d->ShowRect = FALSE;
 
-  get_focused_obj_array(d->focusobj, objs);
-  undo = menu_save_undo(UNDO_TYPE_EDIT, objs);
+  get_focused_obj_array(d->focusobj, d->objs);
+  d->undo = menu_save_undo(UNDO_TYPE_EDIT, d->objs);
   PaintLock = TRUE;
-  modified = FALSE;
 
-  for (i = num - 1; i >= 0; i--) {
-    focus = *(struct FocusObj **) arraynget(d->focusobj, i);
-    if (focus == NULL)
-      continue;
-
-    inst = chkobjinstoid(focus->obj, focus->oid);
-    if (inst == NULL)
-      continue;
-
-    obj = focus->obj;
-    _getobj(obj, "id", inst, &id);
-    ret = IDCANCEL;
-
-    if (obj == chkobject("axis")) {
-      _getobj(obj, "group", inst, &group);
-
-      if (group && group[0] != 'a') {
-	type = search_axis_group(obj, id, group,
-				 &findX, &findY, &findU, &findR, &findG,
-				 &idx, &idy, &idu, &idr, &idg);
-
-	if (((type == 's') || (type == 'f'))
-	    && findX && findY && findU && findR) {
-
-	  dobj = chkobject("axisgrid");
-	  if (! findG) {
-	    idg = -1;
-	  }
-
-	  getobj(obj, "y", idx, 0, NULL, &y1);
-	  getobj(obj, "x", idy, 0, NULL, &x1);
-	  getobj(obj, "y", idu, 0, NULL, &leny);
-	  getobj(obj, "x", idr, 0, NULL, &lenx);
-
-	  leny = y1 - leny;
-	  lenx = lenx - x1;
-
-	  SectionDialog(&DlgSection, x1, y1, lenx, leny, obj,
-			idx, idy, idu, idr, dobj, &idg, type == 's');
-
-	  DialogExecute(TopLevel, &DlgSection);
-	} else if ((type == 'c') && findX && findY) {
-	  getobj(obj, "x", idx, 0, NULL, &x1);
-	  getobj(obj, "y", idy, 0, NULL, &y1);
-	  getobj(obj, "length", idx, 0, NULL, &lenx);
-	  getobj(obj, "length", idy, 0, NULL, &leny);
-
-	  CrossDialog(&DlgCross, x1, y1, lenx, leny, obj, idx, idy);
-
-	  DialogExecute(TopLevel, &DlgCross);
-	}
-      } else {
-	AxisDialog(NgraphApp.AxisWin.data.data, id, TRUE);
-	DialogExecute(TopLevel, &DlgAxis);
-      }
-    } else {
-      if (obj == chkobject("path")) {
-	LegendArrowDialog(&DlgLegendArrow, obj, id);
-	DialogExecute(TopLevel, &DlgLegendArrow);
-      } else if (obj == chkobject("rectangle")) {
-	LegendRectDialog(&DlgLegendRect, obj, id);
-	DialogExecute(TopLevel, &DlgLegendRect);
-      } else if (obj == chkobject("arc")) {
-	LegendArcDialog(&DlgLegendArc, obj, id);
-	DialogExecute(TopLevel, &DlgLegendArc);
-      } else if (obj == chkobject("mark")) {
-	LegendMarkDialog(&DlgLegendMark, obj, id);
-	DialogExecute(TopLevel, &DlgLegendMark);
-      } else if (obj == chkobject("text")) {
-	LegendTextDialog(&DlgLegendText, obj, id);
-	DialogExecute(TopLevel, &DlgLegendText);
-      } else if (obj == chkobject("merge")) {
-	MergeDialog(NgraphApp.MergeWin.data.data, id, 0);
-	DialogExecute(TopLevel, &DlgMerge);
-      }
-    }
-  }
-  PaintLock = FALSE;
+  d->modified = FALSE;
+  update_focused_obj(d, num - 1);
 }
 #else
 static void
 ViewUpdate(void)
 {
-  int i, id, num, modified, undo;
+  int i, id, num, undo;
   struct FocusObj *focus;
   struct objlist *obj, *dobj = NULL;
   N_VALUE *inst;
