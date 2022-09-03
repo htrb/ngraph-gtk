@@ -5760,8 +5760,7 @@ create_path(struct Viewer *d)
   struct narray *parray;
   struct Point *po;
   N_VALUE *inst;
-  int i, num, id, ret = IDCANCEL, undo;
-  char *objects[2];
+  int i, num, id, undo;
 
   d->Capture = FALSE;
   num = arraynum(d->points);
@@ -5792,10 +5791,11 @@ create_path(struct Viewer *d)
   PaintLock = TRUE;
 
   LegendArrowDialog(&DlgLegendArrow, obj, id);
+  add_drawble_response(&DlgLegendArrow, obj, NULL, id, undo);
   DialogExecute(TopLevel, &DlgLegendArrow);
 
-  PaintLock = FALSE;
  ExitCreatePath:
+  arraydel2(d->points);
   return;
 }
 #else
