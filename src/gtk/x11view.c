@@ -5734,6 +5734,9 @@ create_drawble_response(struct response_callback *cb)
 {
   struct create_drawble_data *data;
   char *objects[3];
+  struct Viewer *d;
+
+  d = &NgraphApp.Viewer;
   data = (struct create_drawble_data *) cb->data;
   if (data == NULL) {
     PaintLock = FALSE;
@@ -5758,6 +5761,9 @@ create_drawble_response(struct response_callback *cb)
   UpdateAll(objects);
   g_free(data);
 
+  if ((d->Mode & POINT_TYPE_DRAW_ALL) && ! KeepMouseMode) {
+    set_pointer_mode(PointerModeDefault);
+  }
   return IDOK;
 }
 
