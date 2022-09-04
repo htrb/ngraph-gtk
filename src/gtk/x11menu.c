@@ -2726,6 +2726,7 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
 	gtk_widget_add_controller(widget, GTK_EVENT_CONTROLLER(gesture));
 
 	gtk_gesture_single_set_button(GTK_GESTURE_SINGLE(gesture), 0);
+	gtk_event_controller_set_propagation_phase(GTK_EVENT_CONTROLLER(gesture), GTK_PHASE_CAPTURE);
 	g_signal_connect(gesture, "pressed", btn_press_cb, NULL);
 #else
 	g_signal_connect(gtk_bin_get_child(GTK_BIN(widget)), "button-press-event", btn_press_cb, NULL);
