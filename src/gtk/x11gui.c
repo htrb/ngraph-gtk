@@ -193,9 +193,13 @@ dialog_response(GtkWidget *dlg, gint res_id, gpointer user_data)
   DnDLock = data->lockstate;
 
   if (data->response_cb) {
-    data->response_cb->dialog = data;
-    data->response_cb->return_value = data->ret;
-    call_response_cb(data->response_cb);
+    struct response_callback *cb;
+    cb = data->response_cb;
+    data->response_cb = NULL;
+    cb->dialog = data;
+    cb->return_value = data->ret;
+    call_response_cb(cb);
+    g_free(cb);
   }
 }
 
