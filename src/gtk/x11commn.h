@@ -54,7 +54,11 @@ void free_console(int allocnow);
 char *FileCB(struct objlist *obj, int id);
 char *PlotFileCB(struct objlist *obj, int id);
 char *MergeFileCB(struct objlist *obj, int id);
+#if GTK_CHECK_VERSION(4, 0, 0)
+int SetFileHidden(response_cb cb, gpointer user_data);
+#else
 int SetFileHidden(void);
+#endif
 void ProgressDialogCreate(char *title);
 void ProgressDialogSetTitle(char *title);
 void ProgressDialogFinalize(void);

@@ -2164,12 +2164,18 @@ PlotFileCB(struct objlist *obj, int id)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
+struct set_file_hidden_data {
+  response_cb cb;
+  gpointer user_data;
+};
+
 static int
 set_file_hidden_response(struct response_callback *cb)
 {
   struct SelectDialog *d;
   struct narray *farray, *ifarray;
   int i, a, r;
+
   d = (struct SelectDialog *) cb->dialog;
   farray = d->sel;
   ifarray = d->isel;
@@ -2206,16 +2212,27 @@ set_file_hidden_response(struct response_callback *cb)
 
   arrayfree(ifarray);
   arrayfree(farray);
+
+  if (cb->data) {
+    struct set_file_hidden_data *data;
+    data = (struct set_file_hidden_data *) cb->data;
+    if (data->cb) {
+      data->cb(r, data->user_data);
+    }
+    g_free(data);
+  }
+
   return r;
 }
 
 int
-SetFileHidden(void)
+SetFileHidden(response_cb cb, gpointer user_data)
 {
   struct objlist *fobj;
   int lastinst;
   struct narray *farray, *ifarray;
   int i, a;
+  struct set_file_hidden_data *data;
 
   fobj = chkobject("data");
   if (fobj == NULL) {
@@ -2227,12 +2244,21 @@ SetFileHidden(void)
     return 1;
   }
 
+  data = g_malloc0(sizeof(*data));
+  if (data == NULL) {
+    return 1;
+  }
+  data->cb = cb;
+  data->user_data = data;
+
   ifarray = arraynew(sizeof(int));
   if (ifarray == NULL) {
+    g_free(data);
     return 1;
   }
   farray = arraynew(sizeof(int));
   if (farray == NULL) {
+    g_free(data);
     arrayfree(ifarray);
     return 1;
   }
@@ -2243,8 +2269,8 @@ SetFileHidden(void)
     }
   }
 
-  response_callback_add(&DlgSelect, set_file_hidden_response, NULL, NULL);
   SelectDialog(&DlgSelect, fobj, NULL, FileCB, farray, ifarray);
+  response_callback_add(&DlgSelect, set_file_hidden_response, NULL, data);
   DialogExecute(TopLevel, &DlgSelect);
   return 0;
 }

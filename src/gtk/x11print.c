@@ -464,6 +464,167 @@ init_graobj(struct objlist *graobj, int id, char *dev_name, int dev_oid)
   putobj(graobj, "device", id, device);
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+output_printer(int select_file, int show_dialog)
+{
+  GtkPrintOperation *print;
+  GtkPrintOperationResult res;
+  struct objlist *graobj, *g2wobj;
+  int id, g2wid, g2woid, opt, landscape, w, h;
+  N_VALUE *g2winst;
+  GError *error;
+  struct print_obj pobj;
+  GtkPaperSize *paper_size;
+  GtkPageSetup *page_setup;
+
+  FileAutoScale();
+  AdjustAxis();
+
+  graobj = chkobject("gra");
+  if (graobj == NULL)
+    return;
+
+  g2wobj = chkobject("gra2gtkprint");
+  if (g2wobj == NULL)
+    return;
+
+  g2wid = newobj(g2wobj);
+  if (g2wid < 0)
+    return;
+
+  putobj(g2wobj, "use_opacity", g2wid, &Menulocal.use_opacity);
+
+  g2winst = chkobjinst(g2wobj, g2wid);
+  _getobj(g2wobj, "oid", g2winst, &g2woid);
+  id = newobj(graobj);
+  init_graobj(graobj, id, "gra2gtkprint", g2woid);
+
+  print = gtk_print_operation_new();
+  gtk_print_operation_set_n_pages(print, 1);
+  gtk_print_operation_set_has_selection(print, FALSE);
+  gtk_print_operation_set_support_selection(print, FALSE);
+  gtk_print_operation_set_embed_page_setup(print, FALSE);
+  gtk_print_operation_set_use_full_page(print, TRUE);
+
+  if (PrintSettings == NULL)
+    PrintSettings = gtk_print_settings_new();
+
+  landscape = Menulocal.PaperLandscape;
+  switch (Menulocal.PaperId) {
+  case PAPER_ID_CUSTOM:
+  case PAPER_ID_NORMAL:
+  case PAPER_ID_WIDE:
+  case PAPER_ID_WIDE2:
+    if (landscape) {
+      h = Menulocal.PaperWidth;
+      w = Menulocal.PaperHeight;
+    } else {
+      w = Menulocal.PaperWidth;
+      h = Menulocal.PaperHeight;
+    }
+    paper_size = gtk_paper_size_new_custom(Menulocal.PaperName,
+					   Menulocal.PaperName,
+					   w / 100.0,
+					   h / 100.0,
+					   GTK_UNIT_MM);
+    break;
+  default:
+    paper_size = gtk_paper_size_new(Menulocal.PaperName);
+  }
+
+  page_setup = gtk_page_setup_new();
+  gtk_page_setup_set_paper_size(page_setup, paper_size);
+  gtk_paper_size_free(paper_size);
+  if (landscape) {
+    gtk_page_setup_set_orientation(page_setup, GTK_PAGE_ORIENTATION_LANDSCAPE);
+  } else {
+    gtk_page_setup_set_orientation(page_setup, GTK_PAGE_ORIENTATION_PORTRAIT);
+  }
+
+  gtk_print_operation_set_default_page_setup(print, page_setup);
+  g_object_unref(page_setup);
+
+  gtk_print_operation_set_print_settings(print, PrintSettings);
+
+  pobj.graobj = graobj;
+  pobj.id = id;
+  pobj.g2wobj = g2wobj;
+  pobj.g2winst = g2winst;
+  g_signal_connect(print, "draw_page", G_CALLBACK(draw_page), &pobj);
+
+  switch (show_dialog) {
+  case PRINT_SHOW_DIALOG_NONE:
+    opt = GTK_PRINT_OPERATION_ACTION_PRINT;
+    break;
+  case PRINT_SHOW_DIALOG_PREVIEW:
+    opt = GTK_PRINT_OPERATION_ACTION_PREVIEW;
+    break;
+  case PRINT_SHOW_DIALOG_DIALOG:
+    opt = GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG;
+    break;
+  default:
+    opt = GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG;
+  }
+
+  res = gtk_print_operation_run(print, opt, GTK_WINDOW(TopLevel), &error);
+
+  if (res == GTK_PRINT_OPERATION_RESULT_ERROR) {
+    char buf[MESSAGE_BUF_SIZE];
+    snprintf(buf, sizeof(buf), _("Printing error: %s"), error->message);
+    message_box(NULL, buf, _("Print"), RESPONS_ERROR);
+    g_error_free(error);
+  } else if (res == GTK_PRINT_OPERATION_RESULT_APPLY) {
+    if (PrintSettings)
+      g_object_unref(PrintSettings);
+    PrintSettings = g_object_ref(gtk_print_operation_get_print_settings(print));
+  }
+  g_object_unref(print);
+
+  delobj(graobj, id);
+  delobj(g2wobj, g2wid);
+
+  if (select_file && NgraphApp.FileWin.data.data) {
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, TRUE);
+  }
+}
+
+struct output_printer_data {
+  int select_file, show_dialog;
+  response_cb cb;
+  gpointer user_data;
+};
+
+static void
+output_printer_response(int res, gpointer user_data)
+{
+  struct output_printer_data *data;
+  data = (struct output_printer_data *) user_data;
+  if (res) {
+    output_printer(data->select_file, data->show_dialog);
+  }
+  g_free(data);
+}
+
+void
+CmOutputPrinter(int select_file, int show_dialog)
+{
+  if (Menulock || Globallock)
+    return;
+
+  if (select_file) {
+    struct output_printer_data *data;
+    data = g_malloc0(sizeof(*data));
+    if (data) {
+      data->select_file = select_file;
+      data->show_dialog = show_dialog;
+      SetFileHidden(output_printer_response, data);
+      return;
+    }
+  }
+  output_printer(select_file, show_dialog);
+}
+#else
 void
 CmOutputPrinter(int select_file, int show_dialog)
 {
@@ -593,6 +754,7 @@ CmOutputPrinter(int select_file, int show_dialog)
     FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, TRUE);
   }
 }
+#endif
 
 void
 CmOutputViewerB(void *wi, gpointer client_data)
@@ -678,6 +840,89 @@ get_base_ngp_name(void)
   return tmp;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+print_gra_file(char *file)
+{
+  struct objlist *graobj, *g2wobj;
+  int id, g2wid, g2woid;
+  N_VALUE *g2winst;
+
+  FileAutoScale();
+  AdjustAxis();
+
+  if ((graobj = chkobject("gra")) == NULL) {
+    g_free(file);
+    return;
+  }
+
+  if ((g2wobj = chkobject("gra2file")) == NULL) {
+    g_free(file);
+    return;
+  }
+
+  g2wid = newobj(g2wobj);
+  if (g2wid < 0) {
+    g_free(file);
+    return;
+  }
+
+  g2winst = chkobjinst(g2wobj, g2wid);
+  _getobj(g2wobj, "oid", g2winst, &g2woid);
+  putobj(g2wobj, "file", g2wid, file);
+  id = newobj(graobj);
+  init_graobj(graobj, id, "gra2file", g2woid);
+  draw_gra(graobj, id, _("Making GRA file."), TRUE);
+  delobj(graobj, id);
+  delobj(g2wobj, g2wid);
+
+  if (Menulocal.select_data) {
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, TRUE);
+  }
+}
+
+static void
+print_gra_file_response(int res, gpointer user_data)
+{
+  char *file;
+  file = (char *) user_data;
+  if (res) {
+    print_gra_file(file);
+  }
+}
+
+static void
+CmPrintGRAFile(void)
+{
+  char *tmp, *file;
+  int chd, ret;
+
+  if (Menulock || Globallock)
+    return;
+
+  tmp = get_base_ngp_name();
+
+  chd = Menulocal.changedirectory;
+  ret = nGetSaveFileName(TopLevel, _("GRA file"), "gra", NULL, tmp,
+			 &file, FALSE, chd);
+
+  if (tmp)
+    g_free(tmp);
+
+  if (ret != IDOK)
+    return;
+
+  if (file == NULL) {
+    return;
+  }
+
+  if (Menulocal.select_data) {
+    SetFileHidden(print_gra_file_response, file);
+    return;
+  }
+  print_gra_file(file);
+}
+#else
 static void
 CmPrintGRAFile(void)
 {
@@ -741,6 +986,7 @@ CmPrintGRAFile(void)
     FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, TRUE);
   }
 }
+#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
@@ -750,30 +996,12 @@ struct output_image_data
   char *file;
 };
 
-static int
-output_image_response(struct response_callback *cb)
+static void
+output_image(int type, char *file)
 {
   struct objlist *graobj, *g2wobj;
   int id, g2wid, g2woid;
   N_VALUE *g2winst;
-  int type;
-  char *file;
-  struct output_image_data *data;
-
-  data = (struct output_image_data *) cb->data;
-  type = data->type;
-  file = data->file;
-  g_free(data);
-
-  if (cb->return_value != IDOK) {
-    g_free(file);
-    return IDOK;
-  }
-
-  if (Menulocal.select_data && ! SetFileHidden()) {
-    g_free(file);
-    return IDOK;
-  }
 
   FileAutoScale();
   AdjustAxis();
@@ -781,19 +1009,19 @@ output_image_response(struct response_callback *cb)
   graobj = chkobject("gra");
   if (graobj == NULL) {
     g_free(file);
-    return IDOK;
+    return;
   }
 
   g2wobj = chkobject("gra2cairofile");
   if (g2wobj == NULL) {
     g_free(file);
-    return IDOK;
+    return;
   }
 
   g2wid = newobj(g2wobj);
   if (g2wid < 0) {
     g_free(file);
-    return IDOK;
+    return;
   }
 
   g2winst = chkobjinst(g2wobj, g2wid);
@@ -827,6 +1055,47 @@ output_image_response(struct response_callback *cb)
   if (Menulocal.select_data) {
     FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, TRUE);
   }
+}
+
+static void
+output_image_response_response(int res, gpointer user_data)
+{
+  if (res) {
+    struct output_image_data *data;
+    int type;
+    char *file;
+    data = (struct output_image_data *) user_data;
+    type = data->type;
+    file = data->file;
+    output_image(type, file);
+  }
+  g_free(user_data);
+}
+
+static int
+output_image_response(struct response_callback *cb)
+{
+  int type;
+  char *file;
+  struct output_image_data *data;
+
+  data = (struct output_image_data *) cb->data;
+  type = data->type;
+  file = data->file;
+
+  if (cb->return_value != IDOK) {
+    g_free(file);
+    g_free(data);
+    return IDOK;
+  }
+
+  if (Menulocal.select_data) {
+    SetFileHidden(output_image_response_response, data);
+    g_free(file);
+    return IDOK;
+  }
+  output_image(type, file);
+  g_free(data);
   return IDOK;
 }
 
