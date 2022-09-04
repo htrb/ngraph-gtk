@@ -752,21 +752,33 @@ graph_dropped(char *fname)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
+struct data_dropped_data {
+  int i, id0, file_type;
+  char *name;
+  struct narray *filenames;
+};
+
+static void data_dropped_sub(struct data_dropped_data *data);
+
 static int
 new_merge_obj_response(struct response_callback *cb)
 {
   struct MergeDialog *d;
+  struct data_dropped_data *data;
+
+  data = (struct data_dropped_data *) cb->data;
   d = (struct MergeDialog *) cb->dialog;
   if (cb->return_value == IDCANCEL) {
     delobj(d->Obj, d->Id);
   } else {
     set_graph_modified();
   }
+  data_dropped_sub(data);
   return IDOK;
 }
 
 static int
-new_merge_obj(char *name, struct objlist *obj)
+new_merge_obj(char *name, struct objlist *obj, struct data_dropped_data *data)
 {
   int id;
 
@@ -778,7 +790,7 @@ new_merge_obj(char *name, struct objlist *obj)
   changefilename(name);
   putobj(obj, "file", id, name);
   MergeDialog(NgraphApp.MergeWin.data.data, id, -1);
-  response_callback_add(&DlgMerge, new_merge_obj_response, NULL, NULL);
+  response_callback_add(&DlgMerge, new_merge_obj_response, NULL, data);
   DialogExecute(TopLevel, &DlgMerge);
   return 0;
 }
@@ -916,27 +928,27 @@ static int
 new_file_obj_response(struct response_callback *cb)
 {
   struct FileDialog *d;
-  char *name;
+  struct data_dropped_data *data;
+
+  data = (struct data_dropped_data *) cb->data;
   d = (struct FileDialog *) cb->dialog;
-  name = (char *) cb->data;
   if (cb->return_value == IDCANCEL) {
     FitDel(d->Obj, d->Id);
     delobj(d->Obj, d->Id);
   } else {
-    /*
-    if (ret == IDFAPPLY) {
-      *id0 = id;
+    if (cb->return_value == IDFAPPLY) {
+      data->id0 = d->Id;
     }
-    */
     set_graph_modified();
-    AddDataFileList(name);
+    AddDataFileList(data->name);
   }
 
+  data_dropped_sub(data);
   return IDOK;
 }
 
 static int
-new_file_obj(char *name, struct objlist *obj, int *id0, int multi)
+new_file_obj(char *name, struct objlist *obj, int multi, struct data_dropped_data *data)
 {
   int id;
 
@@ -946,14 +958,16 @@ new_file_obj(char *name, struct objlist *obj, int *id0, int multi)
   }
 
   putobj(obj, "file", id, name);
-  if (*id0 != -1) {
-    copy_file_obj_field(obj, id, *id0, FALSE);
+  if (data->id0 != -1) {
+    copy_file_obj_field(obj, id, data->id0, FALSE);
     AddDataFileList(name);
+    data_dropped_sub(data);
     return 0;
   }
 
+  data->name = name;
   FileDialog(NgraphApp.FileWin.data.data, id, multi);
-  response_callback_add(&DlgMerge, new_file_obj_response, NULL, name);
+  response_callback_add(&DlgFile, new_file_obj_response, NULL, data);
   DialogExecute(TopLevel, &DlgFile);
   return 0;
 }
@@ -1041,6 +1055,46 @@ data_dropped_sub(struct data_dropped_data *data)
     data_dropped_sub(data);
   }
 }
+
+int
+data_dropped(struct narray *filenames, int file_type)
+{
+  char  *arg[4];
+  struct objlist *obj, *mobj;
+  struct data_dropped_data *data;
+  int num;
+
+  num = arraynum(filenames);
+
+  obj = chkobject("data");
+  if (obj == NULL) {
+    return 1;
+  }
+
+  mobj = chkobject("merge");
+  if (mobj == NULL) {
+    return 1;
+  }
+
+  data = (struct data_dropped_data *) g_malloc0(sizeof(*data));
+  if (data == NULL) {
+    return 1;
+  }
+  data->i = num - 1;
+  data->id0 = -1;
+  data->file_type = file_type;
+  data->filenames = filenames;
+
+  arg[0] = obj->name;
+  arg[1] = mobj->name;
+  arg[2] = "fit";
+  arg[3] = NULL;
+  menu_save_undo(UNDO_TYPE_PASTE, arg);
+
+  data_dropped_sub(data);
+
+  return 0;
+}
 #else
 int
 data_dropped(char **filenames, int num, int file_type)
@@ -1067,11 +1121,7 @@ data_dropped(char **filenames, int num, int file_type)
   menu_save_undo(UNDO_TYPE_PASTE, arg);
   for (i = 0; i < num; i++) {
     char *name;
-#if GTK_CHECK_VERSION(4, 0, 0)
-    name = g_strdup(filenames[i]);
-#else
     name = g_filename_from_uri(filenames[i], NULL, NULL);
-#endif
     if (name == NULL) {
       continue;
     }
@@ -1363,7 +1413,7 @@ drag_drop_cb(GtkDropTarget* self, const GValue* value, gdouble x, gdouble y, gpo
   d = (struct Viewer *) user_data;
 
   r = TRUE;
-  if (G_VALUE_HOLDS(value, G_TYPE_FILE)) {
+  if (G_VALUE_HOLDS(value, GDK_TYPE_FILE_LIST)) {
     r = file_dropped(value);
   } else if (G_VALUE_HOLDS(value, G_TYPE_STRING)) {
     const char *str;

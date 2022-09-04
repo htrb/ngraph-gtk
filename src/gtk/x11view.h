@@ -70,11 +70,12 @@ void CmViewerClear(void *w, gpointer client_data);
 void CmViewerDraw(void *w, gpointer client_data);
 #if GTK_CHECK_VERSION(4, 0, 0)
 void CmViewerButtonPressed(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y, gpointer user_data);
+int data_dropped(struct narray *filenames, int file_type);
 struct narray *get_dropped_files(const GValue* value);
 #else
 gboolean CmViewerButtonPressed(GtkWidget *widget, GdkEventButton *event, gpointer user_data);
-#endif
 int data_dropped(char **filenames, int num, int file_type);
+#endif
 void draw_paper_frame(void);
 void CmEditMenuCB(void *w, gpointer client_data);
 void ViewCross(int state);
