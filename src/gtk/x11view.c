@@ -1488,7 +1488,7 @@ static void
 init_dnd(struct Viewer *d)
 {
   GtkDropTarget *target;
-  GType types[] = {G_TYPE_FILE, G_TYPE_STRING};
+  GType types[] = {GDK_TYPE_FILE_LIST, G_TYPE_STRING};
 
   target = gtk_drop_target_new(G_TYPE_INVALID, GDK_ACTION_COPY);
   gtk_drop_target_set_gtypes(target, types, G_N_ELEMENTS(types));
