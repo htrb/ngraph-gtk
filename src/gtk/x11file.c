@@ -8348,37 +8348,16 @@ edited_axis(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer us
 static int
 drop_file(const GValue *value, int type)
 {
-  GFile *file;
-  char *filenames[1];
-  char *fname;
-  int r;
+  struct narray *files;
 
   if (Globallock || Menulock || DnDLock)
     return FALSE;;
 
-  if (! G_VALUE_HOLDS(value, G_TYPE_FILE)) {
-    return FALSE;
+  files = get_dropped_files(value);
+  if (files == NULL){
+    return TRUE;
   }
-
-  file = g_value_get_object(value);
-  if (file == NULL) {
-    return FALSE;
-  }
-
-  fname = g_file_get_path(file);
-  if (fname == NULL) {
-    return FALSE;
-  }
-  if (strlen(fname) < 1) {
-    g_free(fname);
-    return FALSE;
-  }
-
-  filenames[0] = fname;
-  r = data_dropped(filenames, G_N_ELEMENTS(filenames), type);
-  g_free(fname);
-
-  return ! r;
+  return ! data_dropped(files, type);
 }
 
 static gboolean
@@ -8414,7 +8393,7 @@ init_dnd_file(struct SubWin *d, int type)
 {
   GtkDropTarget *target;
 
-  target = gtk_drop_target_new(G_TYPE_FILE, GDK_ACTION_COPY);
+  target = gtk_drop_target_new(GDK_TYPE_FILE_LIST, GDK_ACTION_COPY);
   g_signal_connect(target, "drop", G_CALLBACK(drag_drop_cb), GINT_TO_POINTER(type));
   gtk_widget_add_controller(d->data.data->text, GTK_EVENT_CONTROLLER(target));
 }
