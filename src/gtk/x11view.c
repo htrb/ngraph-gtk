@@ -1240,34 +1240,63 @@ text_dropped(const char *str, gint x, gint y, struct Viewer *d)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented (multiple files) */
+struct narray *
+get_dropped_files(const GValue* value)
+{
+  char *fname;
+  int n;
+  struct narray *files;
+  GdkFileList *file_list;
+  GSList *list, *l;
+
+  if (! G_VALUE_HOLDS(value, GDK_TYPE_FILE_LIST)) {
+    return NULL;
+  }
+
+  files = arraynew(sizeof(char *));
+  if (files == NULL){
+    return NULL;
+  }
+
+  file_list = g_value_get_boxed(value);
+  list = gdk_file_list_get_files(file_list);
+  for (l = list; l != NULL; l = l->next) {
+    GFile *file = l->data;
+    fname = g_file_get_path(file);
+    arrayadd(files, &fname);
+  }
+  g_slist_free(list);
+
+  n = arraynum(files);
+  if (n < 1) {
+    arrayfree2(files);
+    return NULL;
+  }
+  return files;
+}
+
 static int
 file_dropped(const GValue* value)
 {
-  GFile *file;
   char *fname;
-  int r;
+  int r, n;
+  struct narray *files;
 
-  file = g_value_get_object(value);
-  if (file == NULL) {
+  files = get_dropped_files(value);
+  if (files == NULL){
     return TRUE;
   }
 
-  fname = g_file_get_path(file);
-  if (fname == NULL) {
-    return TRUE;
+  n = arraynum(files);
+  r = TRUE;
+  if (n == 1) {
+    fname = arraynget_str(files, 0);
+    r = graph_dropped(fname);
   }
-  if (strlen(fname) < 1) {
-    g_free(fname);
-    return TRUE;
-  }
-
-  r = graph_dropped(fname);
   if (r) {
-    char *filenames[1];
-    filenames[0] = fname;
-    r = data_dropped(filenames, G_N_ELEMENTS(filenames), FILE_TYPE_AUTO);
+    return data_dropped(files, FILE_TYPE_AUTO);
   }
-  g_free(fname);
+  arrayfree2(files);
   return r;
 }
 

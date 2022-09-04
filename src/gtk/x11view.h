@@ -70,6 +70,7 @@ void CmViewerClear(void *w, gpointer client_data);
 void CmViewerDraw(void *w, gpointer client_data);
 #if GTK_CHECK_VERSION(4, 0, 0)
 void CmViewerButtonPressed(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y, gpointer user_data);
+struct narray *get_dropped_files(const GValue* value);
 #else
 gboolean CmViewerButtonPressed(GtkWidget *widget, GdkEventButton *event, gpointer user_data);
 #endif
