@@ -992,6 +992,56 @@ new_file_obj(char *name, struct objlist *obj, int *id0, int multi)
 }
 #endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+data_dropped_sub(struct data_dropped_data *data)
+{
+  char *name, *ext;
+  int type, ret, i;
+
+  i = data->i;
+  data->i--;
+
+  if (i < 0) {
+    MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE, FALSE);
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
+    arrayfree2(data->filenames);
+    g_free(data);
+    return;
+  }
+
+  name = g_strdup(arraynget_str(data->filenames, i));
+  if (name == NULL) {
+    data_dropped_sub(data);
+    return;
+  }
+
+  type = data->file_type;
+  if (type == FILE_TYPE_AUTO) {
+    ext = getextention(name);
+    if (ext && strcmp0(ext, "gra") == 0) {
+      type = FILE_TYPE_MERGE;
+    } else {
+      type = FILE_TYPE_DATA;
+    }
+  }
+
+  if (type == FILE_TYPE_MERGE) {
+    struct objlist *obj;
+    obj = chkobject("merge");
+    ret = new_merge_obj(name, obj, data);
+  } else {
+    struct objlist *obj;
+    obj = chkobject("data");
+    ret = new_file_obj(name, obj, i > 0, data);
+  }
+
+  if (ret) {
+    g_free(name);
+    data_dropped_sub(data);
+  }
+}
+#else
 int
 data_dropped(char **filenames, int num, int file_type)
 {
@@ -1052,6 +1102,7 @@ data_dropped(char **filenames, int num, int file_type)
   FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
   return 0;
 }
+#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
