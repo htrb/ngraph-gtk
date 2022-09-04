@@ -9275,6 +9275,7 @@ CmViewerButtonPressed(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble
   GdkModifierType state;
   state = gtk_event_controller_get_current_event_state(GTK_EVENT_CONTROLLER(gesture));
   KeepMouseMode = (state & GDK_SHIFT_MASK);
+  gtk_gesture_set_state(GTK_GESTURE(gesture), GTK_EVENT_SEQUENCE_CLAIMED);
 }
 #else
 gboolean
