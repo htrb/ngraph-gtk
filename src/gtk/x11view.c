@@ -2182,6 +2182,7 @@ mask_selected_data(struct objlist *fileobj, int selnum, struct narray *sel_list)
 
   for (i = 0; i < selnum; i++) {
     int masknum, sel;
+    N_VALUE *inst;
     sel = arraynget_int(sel_list, i);
     getobj(fileobj, "mask", EvalList[sel].id, 0, NULL, &mask);
 
@@ -2192,18 +2193,19 @@ mask_selected_data(struct objlist *fileobj, int selnum, struct narray *sel_list)
 
     masknum = arraynum(mask);
 
+    inst = chkobjinst(fileobj, EvalList[sel].id);
     if (masknum == 0 || (arraynget_int(mask, masknum - 1)) < EvalList[sel].line) {
       arrayadd(mask, &(EvalList[sel].line));
-      exeobj(fileobj, "modified", EvalList[sel].id, 0, NULL);
+      _exeobj(fileobj, "modified", inst, 0, NULL);
       set_graph_modified();
     } else if ((arraynget_int(mask, 0)) > EvalList[sel].line) {
       arrayins(mask, &(EvalList[sel].line), 0);
-      exeobj(fileobj, "modified", EvalList[sel].id, 0, NULL);
+      _exeobj(fileobj, "modified", inst, 0, NULL);
       set_graph_modified();
     } else {
       if (bsearch_int(arraydata(mask), masknum, EvalList[sel].line, &j) == 0) {
 	arrayins(mask, &(EvalList[sel].line), j);
-	exeobj(fileobj, "modified", EvalList[sel].id, 0, NULL);
+	_exeobj(fileobj, "modified", inst, 0, NULL);
 	set_graph_modified();
       }
     }
