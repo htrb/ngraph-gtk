@@ -34,16 +34,10 @@ entry_completion_create(void)
 void
 entry_completion_set_entry(GtkEntryCompletion *comp, GtkWidget *entry)
 {
-  GtkWidget *old_entry;
-
   if (comp == NULL || entry == NULL) {
     return;
   }
 
-  old_entry = gtk_entry_completion_get_entry(comp);
-  if (old_entry) {
-    gtk_entry_set_completion(GTK_ENTRY(old_entry), NULL);
-  }
   gtk_entry_set_completion(GTK_ENTRY(entry), comp);
 }
 
