@@ -1338,8 +1338,8 @@ SaveDialogClose(GtkWidget *w, void *data)
     d->Path = num;
   }
 #if GTK_CHECK_VERSION(4, 0, 0)
-  *(d->SaveData) = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->include_data));
-  *(d->SaveMerge) = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->include_merge));
+  d->SaveData = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->include_data));
+  d->SaveMerge = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->include_merge));
 #else
   *(d->SaveData) = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->include_data));
   *(d->SaveMerge) = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->include_merge));
@@ -1351,8 +1351,13 @@ SaveDialog(struct SaveDialog *data, int *sdata, int *smerge)
 {
   data->SetupWindow = SaveDialogSetup;
   data->CloseWindow = SaveDialogClose;
-  data->SaveData = sdata;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  data->SaveData = FALSE;
+  data->SaveMerge = FALSE;
+#else
+  data->SaveData = fsdata;
   data->SaveMerge = smerge;
+#endif
 }
 
 void
@@ -1395,6 +1400,46 @@ CmGraphNewMenu(void *w, gpointer client_data)
   menu_clear_undo();
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+CmGraphLoad_response(char *file, gpointer user_data)
+{
+  char *cwd;
+  cwd = (char *) user_data;
+  if (file == NULL) {
+    if (cwd) {
+      g_free(cwd);
+    }
+    return;
+  }
+
+  LoadNgpFile(file, Menulocal.scriptconsole, "-f", cwd);
+  if (cwd) {
+    g_free(cwd);
+  }
+  g_free(file);
+}
+
+void
+CmGraphLoad(void *w, gpointer client_data)
+{
+  char *cwd;
+  int chd;
+
+  if (Menulock || Globallock)
+    return;
+
+  if (!CheckSave())
+    return;
+
+  cwd = ngetcwd();
+  chd = Menulocal.changedirectory;
+  nGetOpenFileName(TopLevel,
+                   _("Load NGP file"), "ngp", &(Menulocal.graphloaddir),
+                   NULL, chd,
+                   CmGraphLoad_response, cwd);
+}
+#else
 void
 CmGraphLoad(void *w, gpointer client_data)
 {
@@ -1409,28 +1454,25 @@ CmGraphLoad(void *w, gpointer client_data)
 
   cwd = ngetcwd();
   chd = Menulocal.changedirectory;
-  if (nGetOpenFileName(TopLevel,
+  file = nGetOpenFileName(TopLevel,
 		       _("Load NGP file"), "ngp", &(Menulocal.graphloaddir),
-		       NULL, &file, TRUE,
-		       chd) != IDOK) {
+                          NULL, TRUE, chd);
+  if (file == NULL) {
     if (cwd) {
       g_free(cwd);
     }
     return;
   }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-  LoadNgpFile(file, Menulocal.scriptconsole, "-f", cwd);
-#else
   if (LoadNgpFile(file, Menulocal.scriptconsole, "-f") && cwd) {
     nchdir(cwd);
   }
-#endif
   if (cwd) {
     g_free(cwd);
   }
   g_free(file);
 }
+#endif
 
 void
 CmGraphSave(void *w, gpointer client_data)

@@ -634,18 +634,20 @@ dlggetopenfile(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
     filter = d[0];
     initfile = d[1];
   }
-  ret = nGetOpenFileName(get_toplevel_window(), _("Open file"),
-			 filter, NULL, initfile,
-			 &file, TRUE, FALSE);
-  if (ret == IDOK) {
-    if (file) {
-      changefilename(file);
-      rval->str = file;
-    }
+#if GTK_CHECK_VERSION(4, 0, 0)
+  /* must be implemented */
+  return 0;
+#else
+  file = nGetOpenFileName(get_toplevel_window(), _("Open file"),
+			 filter, NULL, initfile, TRUE, FALSE);
+  if (file) {
+    changefilename(file);
+    rval->str = file;
   }
 
   Globallock = locksave;
   return (ret == IDOK)? 0 : 1;
+#endif
 }
 
 static int
@@ -681,9 +683,13 @@ dlggetopenfiles(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
     filter = d[0];
     initfile = d[1];
   }
-  ret = nGetOpenFileNameMulti(get_toplevel_window(), _("Open files"),
-			      filter, NULL, initfile, &file, FALSE);
-  if (ret == IDOK) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+  /* must be implemented */
+  return 0;
+#else
+  file = nGetOpenFileNameMulti(get_toplevel_window(), _("Open files"),
+			      filter, NULL, initfile, FALSE);
+  if (file) {
     int i;
     farray = arraynew(sizeof(char *));
     for (i = 0; file[i]; i++) {
@@ -691,12 +697,13 @@ dlggetopenfiles(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
       arrayadd(farray, file + i);
     }
     rval->array = farray;
+    g_free(file);
   }
-  g_free(file);
 
   Globallock = locksave;
 
   return (ret == IDOK)? 0 : 1;
+#endif
 }
 
 static int
@@ -731,18 +738,20 @@ dlggetsavefile(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
     filter = d[0];
     initfile = d[1];
   }
-  ret = nGetSaveFileName(get_toplevel_window(), _("Save file"),
-			 filter, NULL, initfile,
-			 &file, FALSE, TRUE);
-  if (ret == IDOK) {
-    if (file) {
-      changefilename(file);
-      rval->str = file;
-    }
+#if GTK_CHECK_VERSION(4, 0, 0)
+  /* must be implemented */
+  return 0;
+#else
+  file = nGetSaveFileName(get_toplevel_window(), _("Save file"),
+			 filter, NULL, initfile, FALSE, TRUE);
+  if (file) {
+    changefilename(file);
+    rval->str = file;
   }
 
   Globallock = locksave;
   return (ret == IDOK) ? 0 : 1;
+#endif
 }
 
 static struct objtable dialog[] = {

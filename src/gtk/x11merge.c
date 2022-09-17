@@ -312,23 +312,19 @@ merge_open_response(struct response_callback *cb)
   return IDOK;
 }
 
-void
-CmMergeOpen(GSimpleAction *action, GVariant *parameter, gpointer client_data)
+static void
+CmMergeOpen_response(char *name, gpointer user_data)
 {
+  int id, undo;
   struct objlist *obj;
-  char *name = NULL;
-  int id, undo, chd;
 
-  if (Menulock || Globallock)
+  if (name == NULL) {
     return;
+  }
 
-  if ((obj = chkobject("merge")) == NULL)
+  if ((obj = chkobject("merge")) == NULL) {
     return;
-
-  chd = Menulocal.changedirectory;
-  if (nGetOpenFileName(TopLevel, _("Add Merge file"), "gra", NULL, NULL, &name,
-		       TRUE, chd) != IDOK || ! name)
-    return;
+  }
 
   undo = menu_save_undo_single(UNDO_TYPE_CREATE, obj->name);
   id = newobj(obj);
@@ -342,6 +338,19 @@ CmMergeOpen(GSimpleAction *action, GVariant *parameter, gpointer client_data)
     g_free(name);
     MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE, DRAW_NOTIFY);
   }
+}
+
+void
+CmMergeOpen(GSimpleAction *action, GVariant *parameter, gpointer client_data)
+{
+  int chd;
+
+  if (Menulock || Globallock)
+    return;
+
+  chd = Menulocal.changedirectory;
+  nGetOpenFileName(TopLevel, _("Add Merge file"), "gra", NULL, NULL, chd,
+                   CmMergeOpen_response, NULL);
 }
 #else
 void
@@ -358,8 +367,8 @@ CmMergeOpen(void *w, gpointer client_data)
     return;
 
   chd = Menulocal.changedirectory;
-  if (nGetOpenFileName(TopLevel, _("Add Merge file"), "gra", NULL, NULL, &name,
-		       TRUE, chd) != IDOK || ! name)
+  name = nGetOpenFileName(TopLevel, _("Add Merge file"), "gra", NULL, NULL, TRUE, chd);
+  if (name == NULL)
     return;
 
   undo = menu_save_undo_single(UNDO_TYPE_CREATE, obj->name);

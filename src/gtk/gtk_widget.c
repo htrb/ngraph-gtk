@@ -321,6 +321,18 @@ get_parent_window(GtkWidget *w)
   return (ptr) ? ptr : TopLevel;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+entry_icon_file_select_response(char *file, gpointer user_data)
+{
+  GtkWidget *w;
+  w = GTK_WIDGET(user_data);
+  if (file) {
+    entry_set_filename(w, file);
+    g_free(file);
+  }
+}
+#endif
 
 static void
 #if GTK_CHECK_VERSION(4, 0, 0)
@@ -343,18 +355,18 @@ entry_icon_file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *eve
     getobj(obj, "ext", 0, 0, NULL, &ext);
   }
 
+  chd = Menulocal.changedirectory;
 #if GTK_CHECK_VERSION(4, 0, 0)
   str = gtk_editable_get_text(GTK_EDITABLE(w));
+  nGetOpenFileName(get_parent_window(GTK_WIDGET(w)), obj->name, ext, NULL, str, chd, entry_icon_file_select_response, w);
 #else
   str = gtk_entry_get_text(w);
-#endif
-  chd = Menulocal.changedirectory;
-  if (nGetOpenFileName(get_parent_window(GTK_WIDGET(w)), obj->name, ext, NULL,
-		       str,
-		       &file, TRUE, chd) == IDOK && file) {
+  file = nGetOpenFileName(get_parent_window(GTK_WIDGET(w)), obj->name, ext, NULL, str, TRUE, chd);
+  if (file) {
     entry_set_filename(GTK_WIDGET(w), file);
     g_free(file);
   }
+#endif
 }
 
 GtkWidget *

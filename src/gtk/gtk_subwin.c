@@ -56,6 +56,19 @@ set_cell_attribute_source(struct SubWin *d, const char *attr, int target_column,
   g_list_free(list);
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+file_select_response(char *file, gpointer user_data)
+{
+  struct obj_list_data *d;
+  d = (struct obj_list_data *) user_data;
+  if (file) {
+    modify_string(d, "file", file);
+    g_free(file);
+  }
+}
+#endif
+
 static void
 #if GTK_CHECK_VERSION(4, 0, 0)
 file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, gpointer user_data)
@@ -86,22 +99,18 @@ file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointe
 
 #if GTK_CHECK_VERSION(4, 0, 0)
   str = gtk_editable_get_text(GTK_EDITABLE(w));
+  chd = Menulocal.changedirectory;
+  nGetOpenFileName(parent, _("Open"), ext, NULL, str, chd, file_select_response, d);
 #else
   str = gtk_entry_get_text(w);
-#endif
   chd = Menulocal.changedirectory;
-  if (nGetOpenFileName(parent, _("Open"), ext, NULL, str,
-		       &file, TRUE, chd) == IDOK && file) {
-    if (file) {
-#if GTK_CHECK_VERSION(4, 0, 0)
-      gtk_editable_set_text(GTK_EDITABLE(w), file);
-#else
-      gtk_entry_set_text(w, file);
-#endif
-      modify_string(d, "file", file);
-      g_free(file);
-    }
+  file = nGetOpenFileName(parent, _("Open"), ext, NULL, str, TRUE, chd);
+  if (file) {
+    gtk_entry_set_text(w, file);
+    modify_string(d, "file", file);
+    g_free(file);
   }
+#endif
 }
 
 static void

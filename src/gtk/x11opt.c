@@ -311,21 +311,37 @@ SetScriptDialogSetupItem(GtkWidget *w, struct SetScriptDialog *d)
   }
 }
 
-static void
 #if GTK_CHECK_VERSION(4, 0, 0)
+static void
+SetScriptDialogBrowse_response(char *file, gpointer user_data)
+{
+  GtkWidget *w;
+  w = GTK_WIDGET(user_data);
+  if (file) {
+    entry_set_filename(w, file);
+    g_free(file);
+  }
+}
+
+static void
 SetScriptDialogBrowse(GtkEntry *w, GtkEntryIconPosition icon_pos, gpointer user_data)
+{
+  nGetOpenFileName(TopLevel, _("Add-in Script"), "nsc", NULL, NULL, FALSE,
+                   SetScriptDialogBrowse_response, w);
+}
 #else
+static void
 SetScriptDialogBrowse(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointer user_data)
-#endif
 {
   char *file;
 
-  if (nGetOpenFileName(TopLevel, _("Add-in Script"), "nsc", NULL,
-		       NULL, &file, TRUE, FALSE) == IDOK) {
+  file = nGetOpenFileName(TopLevel, _("Add-in Script"), "nsc", NULL, NULL, TRUE, FALSE);
+  if (file) {
     entry_set_filename(GTK_WIDGET(w), file);
+    g_free(file);
   }
-  g_free(file);
 }
+#endif
 
 static void
 SetScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
@@ -1279,23 +1295,40 @@ MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
   combo_box_set_active(d->decimalsign, Menulocal.default_decimalsign);
 }
 
-static void
 #if GTK_CHECK_VERSION(4, 0, 0)
+static void
+set_file_in_entry_response(char *file, gpointer user_data)
+{
+  if (file) {
+    entry_set_filename(GTK_WIDGET(user_data), file);
+    g_free(file);
+  }
+}
+
+static void
 set_file_in_entry(GtkEntry *w, GtkEntryIconPosition icon_pos, gpointer user_data)
+{
+  struct MiscDialog *d;
+
+  d = (struct MiscDialog *) user_data;
+  nGetOpenFileName(d->widget, _("Select program"), NULL, NULL, NULL, FALSE,
+                   set_file_in_entry_response, w);
+}
 #else
+static void
 set_file_in_entry(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointer user_data)
-#endif
 {
   char *file;
   struct MiscDialog *d;
 
   d = (struct MiscDialog *) user_data;
-  if (nGetOpenFileName(d->widget, _("Select program"), NULL, NULL,
-		       NULL, &file, TRUE, FALSE) == IDOK) {
+  file = nGetOpenFileName(d->widget, _("Select program"), NULL, NULL, NULL, TRUE, FALSE);
+  if (file) {
     entry_set_filename(GTK_WIDGET(w), file);
+    g_free(file);
   }
-  g_free(file);
 }
+#endif
 
 #define PALETTE_COLUMN 9
 static GtkWidget **

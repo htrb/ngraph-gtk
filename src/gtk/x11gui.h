@@ -74,15 +74,26 @@ int DialogCheck(GtkWidget *parent, const char *title, const char *caption, struc
 int DialogCombo(GtkWidget *parent, const char *title, const char *caption, struct narray *array, struct narray *buttons, int *res_btn, int sel, char **r, int *x, int *y);
 int DialogComboEntry(GtkWidget *parent, const char *title, const char *caption, struct narray *array, struct narray *buttons, int *res_btn, int sel, char **r, int *x, int *y);
 int DialogSpinEntry(GtkWidget *parent, const char *title, const char *caption, double min, double max, double inc, struct narray *buttons, int *res_btn, double *r, int *x, int *y);
-int nGetOpenFileNameMulti(GtkWidget * parent,
+#if GTK_CHECK_VERSION(4, 0, 0)
+void nGetOpenFileNameMulti(GtkWidget * parent,
+                           char *title, char *defext, char **initdir,
+                           const char *initfil, int chd,
+                           files_response_cb cb, gpointer user_data);
+void nGetOpenFileName(GtkWidget * parent, char *title, char *defext,
+                      char **initdir, const char *initfil, int chd,
+                      file_response_cb cb, gpointer user_data);
+void nGetSaveFileName(GtkWidget * parent, char *title, char *defext,
+                      char **initdir, const char *initfil, int chdir,
+                      file_response_cb cb, gpointer user_data);
+#else
+char **nGetOpenFileNameMulti(GtkWidget * parent,
 			  char *title, char *defext, char **initdir,
-			  const char *initfil, char ***file, int chd);
-int nGetOpenFileName(GtkWidget * parent, char *title, char *defext,
-		     char **initdir, const char *initfil, char **file,
-		     int exist, int chd);
-int nGetSaveFileName(GtkWidget * parent, char *title, char *defext,
-		     char **initdir, const char *initfil, char **file,
-		     int overwrite, int chdir);
+			  const char *initfil, int chd);
+char *nGetOpenFileName(GtkWidget * parent, char *title, char *defext,
+		     char **initdir, const char *initfil, int exist, int chd);
+char *nGetSaveFileName(GtkWidget * parent, char *title, char *defext,
+		     char **initdir, const char *initfil, int overwrite, int chdir);
+#endif
 void get_window_geometry(GtkWidget *win, gint *x, gint *y, gint *w, gint *h);
 void set_sensitivity_by_check_instance(GtkWidget *widget, gpointer user_data);
 #if GTK_CHECK_VERSION(4, 0, 0)

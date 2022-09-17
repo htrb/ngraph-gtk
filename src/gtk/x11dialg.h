@@ -473,7 +473,11 @@ struct SaveDialog
   /****** local member *******/
   GtkWidget *path, *include_data, *include_merge;
   int Path;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  int SaveData, SaveMerge;
+#else
   int *SaveData, *SaveMerge;
+#endif
 };
 void SaveDialog(struct SaveDialog *data, int *sdata, int *smerge);
 

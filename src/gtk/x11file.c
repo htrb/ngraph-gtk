@@ -5790,44 +5790,28 @@ file_open_response(int ret, gpointer user_data)
 }
 #endif
 
-void
-CmFileOpen
 #if GTK_CHECK_VERSION(4, 0, 0)
-(GSimpleAction *action, GVariant *parameter, gpointer client_data)
-#else
-(void *w, gpointer client_data)
-#endif
+static void
+CmFileOpen_response(char **file, gpointer user_data)
 {
-  int id, ret, n, undo = -1, chd;
-  char **file = NULL;
+  int id, n, undo = -1;
   struct objlist *obj;
   struct narray *farray;
-#if GTK_CHECK_VERSION(4, 0, 0)
   struct file_open_data *data;
-#endif
-
-  if (Menulock || Globallock)
-    return;
 
   obj = chkobject("data");
-  if (obj == NULL)
+  if (obj == NULL) {
     return;
+  }
 
-  chd = Menulocal.changedirectory;
-  ret = nGetOpenFileNameMulti(TopLevel, _("Add Data file"), NULL,
-			      &(Menulocal.fileopendir), NULL,
-			      &file, chd);
-
-#if GTK_CHECK_VERSION(4, 0, 0)
   data = g_malloc0(sizeof(*data));
   if (data == NULL) {
     return;
   }
-#endif
   n = chkobjlastinst(obj);
 
   farray = arraynew(sizeof(int));
-  if (ret == IDOK && file) {
+  if (file) {
     char **ptr;
     undo = data_save_undo(UNDO_TYPE_OPEN_FILE);
     for (ptr = file; *ptr; ptr++) {
@@ -5843,13 +5827,64 @@ CmFileOpen
     g_free(file);
   }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   data->undo = undo;
   data->n = n;
   data->farray = farray;
   data->obj = obj;
   update_file_obj_multi(obj, farray, TRUE, file_open_response, data);
+}
+
+void
+CmFileOpen(GSimpleAction *action, GVariant *parameter, gpointer client_data)
+{
+  int chd;
+
+  if (Menulock || Globallock)
+    return;
+
+  chd = Menulocal.changedirectory;
+  nGetOpenFileNameMulti(TopLevel, _("Add Data file"), NULL,
+                        &(Menulocal.fileopendir), NULL, chd, CmFileOpen_response, NULL);
+}
 #else
+void
+CmFileOpen(void *w, gpointer client_data)
+{
+  int id, ret, n, undo = -1, chd;
+  char **file = NULL;
+  struct objlist *obj;
+  struct narray *farray;
+
+  if (Menulock || Globallock)
+    return;
+
+  obj = chkobject("data");
+  if (obj == NULL)
+    return;
+
+  chd = Menulocal.changedirectory;
+  file = nGetOpenFileNameMulti(TopLevel, _("Add Data file"), NULL,
+			      &(Menulocal.fileopendir), NULL, chd);
+
+  n = chkobjlastinst(obj);
+
+  farray = arraynew(sizeof(int));
+  if (file) {
+    char **ptr;
+    undo = data_save_undo(UNDO_TYPE_OPEN_FILE);
+    for (ptr = file; *ptr; ptr++) {
+      char *name;
+      name = *ptr;
+      id = newobj(obj);
+      if (id >= 0) {
+	arrayadd(farray, &id);
+	changefilename(name);
+	putobj(obj, "file", id, name);
+      }
+    }
+    g_free(file);
+  }
+
   if (update_file_obj_multi(obj, farray, TRUE)) {
     menu_delete_undo(undo);
   }
@@ -5862,8 +5897,8 @@ CmFileOpen
   }
 
   arrayfree(farray);
-#endif
 }
+#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
@@ -7449,16 +7484,16 @@ GetDrawFiles(struct narray *farray)
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
 static void
-save_data(struct narray *farray, int div)
+save_data_response(char *file, gpointer user_data)
 {
+  struct narray *farray;
   struct objlist *obj;
-  char *file, buf[1024];
-  int chd, i, *array, num, onum;
+  char buf[1024];
+  int i, *array, num, onum;
   char *argv[4];
 
-  chd = Menulocal.changedirectory;
-  if (nGetSaveFileName(TopLevel, _("Data file"), NULL, NULL, NULL,
-		       &file, FALSE, chd) != IDOK) {
+  farray = (struct narray *) user_data;
+  if (file == NULL) {
     arrayfree(farray);
     return;
   }
@@ -7493,6 +7528,14 @@ save_data(struct narray *farray, int div)
 
   arrayfree(farray);
   g_free(file);
+}
+
+static void
+save_data(struct narray *farray, int div)
+{
+  int chd;
+  chd = Menulocal.changedirectory;
+  nGetSaveFileName(TopLevel, _("Data file"), NULL, NULL, NULL, chd, save_data_response, farray);
 }
 
 static int
@@ -7561,8 +7604,6 @@ void
 CmFileSaveData(void *w, gpointer client_data)
 {
   struct narray *farray;
-  struct objlist *obj;
-  int i, num, onum, type, div, curve = FALSE, *array;
 
   if (Menulock || Globallock)
     return;
@@ -7629,8 +7670,8 @@ CmFileSaveData(void *w, gpointer client_data)
   }
 
   chd = Menulocal.changedirectory;
-  if (nGetSaveFileName(TopLevel, _("Data file"), NULL, NULL, NULL,
-		       &file, FALSE, chd) != IDOK) {
+  file = nGetSaveFileName(TopLevel, _("Data file"), NULL, NULL, NULL, FALSE, chd);
+  if (file) {
     arraydel(&farray);
     return;
   }

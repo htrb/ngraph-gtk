@@ -1532,14 +1532,30 @@ get_filename_with_ext(const char *basename, const char *ext)
   return filename;
 }
 
-static int
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+FileSelectionDialog_response(GtkWidget* dlg, gint response_id, gpointer user_data)
+{
+  struct nGetOpenFileData *data;
+
+  data = (struct nGetOpenFileData *) user_data;
+
+  data->ret = IDCANCEL;
+  if (response_id == GTK_RESPONSE_ACCEPT) {
+    fsok(dlg, data);
+  }
+
+  if (data->response) {
+    data->response(data);
+  }
+  gtk_window_destroy(GTK_WINDOW(dlg));
+  g_free(data);
+}
+
+static void
 FileSelectionDialog(GtkWidget *parent, struct nGetOpenFileData *data)
 {
-#if GTK_CHECK_VERSION(4, 0, 0)
   GtkWidget *dlg;
-#else
-  GtkWidget *dlg, *rc;
-#endif
   GtkFileFilter *filter;
   char *fname;
 
@@ -1549,17 +1565,10 @@ FileSelectionDialog(GtkWidget *parent, struct nGetOpenFileData *data)
 				    _("_Cancel"), GTK_RESPONSE_CANCEL,
 				    data->button, GTK_RESPONSE_ACCEPT,
 				    NULL);
-#if GTK_CHECK_VERSION(4, 0, 0)
   if (data->changedir && data->init_dir) {
     gtk_file_chooser_add_choice(GTK_FILE_CHOOSER(dlg), FILE_CHOOSER_OPTION_CHDIR, _("Change current directory"), NULL, NULL);
     gtk_file_chooser_set_choice(GTK_FILE_CHOOSER(dlg), FILE_CHOOSER_OPTION_CHDIR, (data->chdir) ? "true" : "false");
   }
-#else
-  gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(dlg), TRUE);
-  rc = gtk_check_button_new_with_mnemonic(_("_Change current directory"));
-  gtk_file_chooser_set_extra_widget(GTK_FILE_CHOOSER(dlg), rc);
-  data->chdir_cb = rc;
-#endif
   gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(dlg), data->multi);
   data->widget = dlg;
 
@@ -1599,7 +1608,6 @@ FileSelectionDialog(GtkWidget *parent, struct nGetOpenFileData *data)
     gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dlg), filter);
   }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   if (data->init_dir && *(data->init_dir)) {
     GFile *path;
     path = g_file_new_for_path(*(data->init_dir));
@@ -1608,35 +1616,97 @@ FileSelectionDialog(GtkWidget *parent, struct nGetOpenFileData *data)
       g_object_unref(path);
     }
   }
-  gtk_widget_show(dlg);
-#else
-  if (data->init_dir && *(data->init_dir)) {
-    gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dlg), *(data->init_dir));
-  }
-  gtk_widget_show_all(dlg);
-#endif
-
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  if (data->changedir && data->init_dir) {
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(data->chdir_cb), data->chdir);
-  } else {
-    gtk_widget_hide(data->chdir_cb);
-  }
-#endif
+  g_signal_connect(dlg, "response", G_CALLBACK(FileSelectionDialog_response), data);
 
   fname = get_filename_with_ext(data->init_file, data->ext);
   if (fname) {
     if (data->type == GTK_FILE_CHOOSER_ACTION_SAVE) {
       file_dialog_set_current_neme(dlg, fname);
     } else {
-#if GTK_CHECK_VERSION(4, 0, 0)
       GFile *file;
       file = g_file_new_for_path(fname);
       gtk_file_chooser_set_file(GTK_FILE_CHOOSER(dlg), file, NULL);
       g_object_unref(file);
+    }
+    g_free(fname);
+  }
+
+  gtk_widget_show(dlg);
+}
 #else
+static int
+FileSelectionDialog(GtkWidget *parent, struct nGetOpenFileData *data)
+{
+  GtkWidget *dlg, *rc;
+  GtkFileFilter *filter;
+  char *fname;
+
+  dlg = gtk_file_chooser_dialog_new(data->title,
+				    GTK_WINDOW((parent) ? parent : TopLevel),
+				    data->type,
+				    _("_Cancel"), GTK_RESPONSE_CANCEL,
+				    data->button, GTK_RESPONSE_ACCEPT,
+				    NULL);
+  gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(dlg), TRUE);
+  rc = gtk_check_button_new_with_mnemonic(_("_Change current directory"));
+  gtk_file_chooser_set_extra_widget(GTK_FILE_CHOOSER(dlg), rc);
+  data->chdir_cb = rc;
+  gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(dlg), data->multi);
+  data->widget = dlg;
+
+  if (data->ext) {
+    char *filter_str, *filter_name, *ext_name;
+
+    filter_str = g_strdup_printf("*.%s", data->ext);
+    ext_name = g_ascii_strup(data->ext, -1);
+    filter_name = g_strdup_printf(_("%s file (*.%s)"), ext_name, data->ext);
+    g_free(ext_name);
+
+    filter = gtk_file_filter_new();
+    gtk_file_filter_add_pattern(filter, filter_str);
+    gtk_file_filter_set_name(filter, filter_name);
+    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dlg), filter);
+    g_free(filter_str);
+    g_free(filter_name);
+
+    filter = gtk_file_filter_new();
+    gtk_file_filter_add_pattern(filter, "*");
+    gtk_file_filter_set_name(filter, _("All"));
+    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dlg), filter);
+  } else {
+    filter = gtk_file_filter_new();
+    gtk_file_filter_add_pattern(filter, "*");
+    gtk_file_filter_set_name(filter, _("All"));
+    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dlg), filter);
+
+    filter = gtk_file_filter_new();
+    gtk_file_filter_add_pattern(filter, "*.txt");
+    gtk_file_filter_set_name(filter, "Text file (*.txt)");
+    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dlg), filter);
+
+    filter = gtk_file_filter_new();
+    gtk_file_filter_add_pattern(filter, "*.dat");
+    gtk_file_filter_set_name(filter, "Data file (*.dat)");
+    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dlg), filter);
+  }
+
+  if (data->init_dir && *(data->init_dir)) {
+    gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dlg), *(data->init_dir));
+  }
+  gtk_widget_show_all(dlg);
+
+  if (data->changedir && data->init_dir) {
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(data->chdir_cb), data->chdir);
+  } else {
+    gtk_widget_hide(data->chdir_cb);
+  }
+
+  fname = get_filename_with_ext(data->init_file, data->ext);
+  if (fname) {
+    if (data->type == GTK_FILE_CHOOSER_ACTION_SAVE) {
+      file_dialog_set_current_neme(dlg, fname);
+    } else {
       gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dlg), fname);
-#endif
     }
     g_free(fname);
   }
@@ -1644,157 +1714,303 @@ FileSelectionDialog(GtkWidget *parent, struct nGetOpenFileData *data)
   data->ret = IDCANCEL;
 
   while (1) {
-#if GTK_CHECK_VERSION(4, 0, 0)
-    int res_id;
-    res_id = IDLOOP;
-    ndialog_run(dlg, NULL, &res_id);
-#else
     if (ndialog_run(dlg) != GTK_RESPONSE_ACCEPT)
       break;
-#endif
 
     fsok(dlg, data);
     if (data->ret == IDOK && data->type == GTK_FILE_CHOOSER_ACTION_SAVE) {
       file_dialog_set_current_neme(dlg, data->file[0]);
-#if ! GTK_CHECK_VERSION(4, 0, 0)
       if (! data->overwrite && check_overwrite(dlg, data->file[0])) {
 	data->ret = IDCANCEL;
 	continue;
       }
-#endif
     }
     break;
   }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_window_destroy(GTK_WINDOW(dlg));
-#else
   gtk_widget_destroy(dlg);
-#endif
   reset_event();
   data->widget = NULL;
 
   return data->ret;
 }
+#endif
 
-int
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+nGetOpenFileNameMulti_response(struct nGetOpenFileData *data)
+{
+  char **files;
+
+  files = NULL;
+  if (data->file) {
+    files = data->file;
+    if (data->chdir && data->init_dir && nchdir(*data->init_dir)) {
+      ErrorMessage();
+    }
+  }
+  if (data->callback.files) {
+    data->callback.files(files, data->data);
+  } else {
+    g_free(files);
+  }
+}
+
+void
 nGetOpenFileNameMulti(GtkWidget * parent,
 		      char *title, char *defext, char **init_dir,
-		      const char *init_file, char ***file, int chd)
+		      const char *init_file, int chd,
+                      files_response_cb cb, gpointer user_data)
+{
+  struct nGetOpenFileData *data;
+
+  data = g_malloc0(sizeof(*data));
+  if (data == NULL) {
+    return;
+  }
+
+  data->title = title;
+  data->init_dir = init_dir;
+  data->init_file = init_file;
+  data->file = NULL;
+  data->chdir = chd;
+  data->ext = defext;
+  data->mustexist = TRUE;
+  data->overwrite = FALSE;
+  data->multi = TRUE;
+  data->changedir = TRUE;
+  data->type = GTK_FILE_CHOOSER_ACTION_OPEN;
+  data->button = _("_Open");
+  data->callback.files = cb;
+  data->response = nGetOpenFileNameMulti_response;
+  data->data = user_data;
+  FileSelectionDialog(parent, data);
+}
+#else
+char **
+nGetOpenFileNameMulti(GtkWidget * parent,
+		      char *title, char *defext, char **init_dir,
+		      const char *init_file, int chd, gpointer user_data)
 {
   int ret;
-  struct nGetOpenFileData data;
+  struct nGetOpenFileData *data;
+  char **file;
 
-  data.title = title;
-  data.init_dir = init_dir;
-  data.init_file = init_file;
-  data.file = NULL;
-  data.chdir = chd;
-  data.ext = defext;
-  data.mustexist = TRUE;
-  data.overwrite = FALSE;
-  data.multi = TRUE;
-  data.changedir = TRUE;
-  data.type = GTK_FILE_CHOOSER_ACTION_OPEN;
-  data.button = _("_Open");
-  ret = FileSelectionDialog(parent, &data);
+  data = g_malloc0(sizeof(*data));
+  if (data == NULL) {
+    return NULL;
+  }
+
+  data->title = title;
+  data->init_dir = init_dir;
+  data->init_file = init_file;
+  data->file = NULL;
+  data->chdir = chd;
+  data->ext = defext;
+  data->mustexist = TRUE;
+  data->overwrite = FALSE;
+  data->multi = TRUE;
+  data->changedir = TRUE;
+  data->type = GTK_FILE_CHOOSER_ACTION_OPEN;
+  data->button = _("_Open");
+#if GTK_CHECK_VERSION(4, 0, 0)
+  data->response = NULL;
+#endif
+  ret = FileSelectionDialog(parent, data);
   if (ret == IDOK) {
-    *file = data.file;
+    file = data->file;
 #if GTK_CHECK_VERSION(4, 0, 0)
     if (chd && init_dir && nchdir(*init_dir)) {
       ErrorMessage();
     }
 #else
-    if (data.chdir && init_dir && nchdir(*init_dir)) {
+    if (data->chdir && init_dir && nchdir(*init_dir)) {
       ErrorMessage();
     }
 #endif
   } else {
-    *file = NULL;
+    file = NULL;
   }
 
-  return ret;
+#if ! GTK_CHECK_VERSION(4, 0, 0)
+  g_free(data);
+#endif
+  return file;
+}
+#endif
+
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+nGetOpenFileName_response(struct nGetOpenFileData *data)
+{
+  char *file;
+  if (data->file) {
+    file = data->file[0];
+    g_free(data->file);
+    if (data->chdir && data->init_dir && nchdir(*data->init_dir)) {
+      ErrorMessage();
+    }
+  } else {
+    file = NULL;
+  }
+  if (data->callback.file) {
+    data->callback.file(file, data->data);
+  } else {
+    g_free(file);
+  }
 }
 
-int
+void
 nGetOpenFileName(GtkWidget *parent,
 		 char *title, char *defext, char **init_dir, const char *init_file,
-		 char **file, int exist, int chd)
+                 int chd, file_response_cb cb, gpointer user_data)
 {
-  struct nGetOpenFileData data;
-  int ret;
+  struct nGetOpenFileData *data;
 
-  data.title = title;
-  data.init_dir = init_dir;
-  data.init_file = init_file;
-  data.file = NULL;
-  data.chdir = chd;
-  data.ext = defext;
-  data.mustexist = exist;
-  data.overwrite = FALSE;
-  data.multi = FALSE;
-  data.changedir = TRUE;
-  data.type = (exist) ? GTK_FILE_CHOOSER_ACTION_OPEN : GTK_FILE_CHOOSER_ACTION_SAVE;
-  data.button = _("_Open");
-  ret = FileSelectionDialog(parent, &data);
-  if (ret == IDOK) {
-    *file = data.file[0];
-    g_free(data.file);
-#if GTK_CHECK_VERSION(4, 0, 0)
-    if (chd && init_dir && nchdir(*init_dir)) {
-      ErrorMessage();
-    }
+  data = g_malloc0(sizeof(*data));
+  if (data == NULL) {
+    return;
+  }
+  data->title = title;
+  data->init_dir = init_dir;
+  data->init_file = init_file;
+  data->file = NULL;
+  data->chdir = chd;
+  data->ext = defext;
+  data->mustexist = TRUE;
+  data->overwrite = FALSE;
+  data->multi = FALSE;
+  data->changedir = TRUE;
+  data->type = GTK_FILE_CHOOSER_ACTION_OPEN;
+  data->button = _("_Open");
+  data->response = nGetOpenFileName_response;
+  data->callback.file = cb;
+  data->data = user_data;
+  FileSelectionDialog(parent, data);
+}
 #else
-    if (data.chdir && init_dir && nchdir(*init_dir)) {
+char *
+nGetOpenFileName(GtkWidget *parent,
+		 char *title, char *defext, char **init_dir, const char *init_file,
+                 int exist, int chd)
+{
+  struct nGetOpenFileData *data;
+  int ret;
+  char *file;
+
+  data->title = title;
+  data->init_dir = init_dir;
+  data->init_file = init_file;
+  data->file = NULL;
+  data->chdir = chd;
+  data->ext = defext;
+  data->mustexist = TRUE;
+  data->overwrite = FALSE;
+  data->multi = FALSE;
+  data->changedir = TRUE;
+  data->type = (exist) ? GTK_FILE_CHOOSER_ACTION_OPEN : GTK_FILE_CHOOSER_ACTION_SAVE;
+  data->button = _("_Open");
+  ret = FileSelectionDialog(parent, data);
+  if (ret == IDOK) {
+    file = data->file[0];
+    g_free(data->file);
+    if (data->chdir && init_dir && nchdir(*init_dir)) {
       ErrorMessage();
     }
-#endif
   } else {
-    *file = NULL;
+    file = NULL;
   }
 
-  return ret;
+  g_free(data);
+  return file;
+}
+#endif
+
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+nGetSaveFileName_response(struct nGetOpenFileData *data)
+{
+  char *file;
+  if (data->file) {
+    file = data->file[0];
+    g_free(data->file);
+    if (data->chdir && data->init_dir && nchdir(*data->init_dir)) {
+      ErrorMessage();
+    }
+  } else {
+    file = NULL;
+  }
+  if (data->callback.file) {
+    data->callback.file(file, data->data);
+  } else {
+    g_free(file);
+  }
 }
 
-int
+void
 nGetSaveFileName(GtkWidget * parent,
 		 char *title, char *defext, char **init_dir, const char *init_file,
-		 char **file, int overwrite, int chd)
+                 int chd, file_response_cb cb, gpointer user_data)
 {
-  struct nGetOpenFileData data;
-  int ret;
+  struct nGetOpenFileData *data;
 
-  data.title = title;
-  data.init_dir = init_dir;
-  data.init_file = init_file;
-  data.file = NULL;
-  data.chdir = chd;
-  data.ext = defext;
-  data.mustexist = FALSE;
-  data.overwrite = overwrite;
-  data.multi = FALSE;
-  data.changedir = TRUE;
-  data.type = GTK_FILE_CHOOSER_ACTION_SAVE,
-  data.button = _("_Save");
-  ret = FileSelectionDialog(parent, &data);
-  if (ret == IDOK) {
-    *file = data.file[0];
-    g_free(data.file);
-#if GTK_CHECK_VERSION(4, 0, 0)
-    if (chd && init_dir && nchdir(*init_dir)) {
-      ErrorMessage();
-    }
+  data = g_malloc0(sizeof(*data));
+  if (data == NULL) {
+    return;
+  }
+  data->title = title;
+  data->init_dir = init_dir;
+  data->init_file = init_file;
+  data->file = NULL;
+  data->chdir = chd;
+  data->ext = defext;
+  data->mustexist = FALSE;
+  data->overwrite = FALSE;
+  data->multi = FALSE;
+  data->changedir = TRUE;
+  data->type = GTK_FILE_CHOOSER_ACTION_SAVE,
+  data->button = _("_Save");
+  data->response = nGetSaveFileName_response;
+  data->callback.file = cb;
+  data->data = user_data;
+  FileSelectionDialog(parent, data);
+}
 #else
-    if (data.chdir && init_dir && nchdir(*init_dir)) {
+char *
+nGetSaveFileName(GtkWidget * parent,
+		 char *title, char *defext, char **init_dir, const char *init_file, int overwrite, int chd)
+{
+  struct nGetOpenFileData *data;
+  int ret;
+  char *file;
+
+  data->title = title;
+  data->init_dir = init_dir;
+  data->init_file = init_file;
+  data->file = NULL;
+  data->chdir = chd;
+  data->ext = defext;
+  data->mustexist = FALSE;
+  data->overwrite = overwrite;
+  data->multi = FALSE;
+  data->changedir = TRUE;
+  data->type = GTK_FILE_CHOOSER_ACTION_SAVE,
+  data->button = _("_Save");
+  ret = FileSelectionDialog(parent, data);
+  if (ret == IDOK) {
+    file = data->file[0];
+    g_free(data->file);
+    if (data->chdir && init_dir && nchdir(*init_dir)) {
       ErrorMessage();
     }
-#endif
   } else {
     *file = NULL;
   }
 
+  g_free(data);
   return ret;
 }
+#endif
 
 void
 get_window_geometry(GtkWidget *win, gint *x, gint *y, gint *w, gint *h)

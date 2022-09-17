@@ -1191,12 +1191,22 @@ SaveDrawrable(char *name, int storedata, int storemerge, int save_decimalsign)
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
+struct graph_save_data
+{
+  int storedata, storemerge, path;
+  char *file, *current_wd;
+  response_cb cb;
+};
+
 static int
 get_save_opt_response(struct response_callback *cb)
 {
   struct objlist *fobj, *mobj;
   int fnum, mnum, path;
   int i;
+  struct graph_save_data *save_data;;
+
+  save_data = (struct graph_save_data *) cb->data;
 
   if (DlgSave.ret != IDOK) {
     return IDCANCEL;
@@ -1216,16 +1226,52 @@ get_save_opt_response(struct response_callback *cb)
   for (i = 0; i < mnum; i++) {
     putobj(mobj, "save_path", i, &path);
   }
+  save_data->path = path;
+  save_data->storedata = DlgSave.SaveData;
+  save_data->storemerge = DlgSave.SaveMerge;
+  save_data->cb(cb->return_value, save_data);
   return 0;
 }
 #endif
 
-static int
 #if GTK_CHECK_VERSION(4, 0, 0)
-get_save_opt(int *sdata, int *smerge, int *path, struct response_callback *cb)
+static int
+get_save_opt(struct graph_save_data *save_data)
+{
+  int fnum, mnum, i, src;
+  struct objlist *fobj, *mobj;
+
+  fobj = chkobject("data");
+  mobj = chkobject("merge");
+
+  fnum = chkobjlastinst(fobj) + 1;
+  mnum = chkobjlastinst(mobj) + 1;
+
+  /* there are no instances of data and merge objects */
+  if (fnum < 1 && mnum < 1) {
+    return IDOK;
+  }
+
+  /* check source field of data objects */
+  for (i = 0; i < fnum; i++) {
+    getobj(fobj, "source", i, 0, NULL, &src);
+    if (src ==  DATA_SOURCE_FILE) {
+      break;
+    }
+  }
+  if (fnum > 0 && mnum < 1 && i == fnum) {
+    return IDOK;
+  }
+
+  SaveDialog(&DlgSave, 0, 0);
+  /* must be implemented */
+  response_callback_add(&DlgSave, get_save_opt_response, NULL, save_data);
+  DialogExecute(TopLevel, &DlgSave);
+  return IDOK;
+}
 #else
+static int
 get_save_opt(int *sdata, int *smerge, int *path)
-#endif
 {
   int ret, fnum, mnum, i, src;
   struct objlist *fobj, *mobj;
@@ -1257,14 +1303,6 @@ get_save_opt(int *sdata, int *smerge, int *path)
   }
 
   SaveDialog(&DlgSave, sdata, smerge);
-#if GTK_CHECK_VERSION(4, 0, 0)
-  /* must be implemented */
-  response_callback_add(&DlgSave, get_save_opt_response, NULL, NULL);
-  if (DlgSave.response_cb) {
-    DlgSave.response_cb->next = cb;
-  }
-  DialogExecute(TopLevel, &DlgSave);
-#else
   ret = DialogExecute(TopLevel, &DlgSave);
   if (ret != IDOK)
     return IDCANCEL;
@@ -1277,34 +1315,25 @@ get_save_opt(int *sdata, int *smerge, int *path)
   for (i = 0; i < mnum; i++) {
     putobj(mobj, "save_path", i, path);
   }
-#endif
   return IDOK;
 }
-
-struct graph_save_data
-{
-  int storedata, storemerge, path;
-  char *file, *current_wd;
-};
+#endif
 
 static void
-GraphSave_free(struct response_callback *cb)
+GraphSave_free(gpointer user_data)
 {
   struct graph_save_data *data;
-  data = cb->data;
+  data = (struct graph_save_data *) user_data;
   g_free(data->file);
   g_free(data->current_wd);
-  g_free(cb);
 }
 
-static int
-GraphSave_response(struct response_callback *cb)
+static void
+GraphSave_response(int ret, gpointer user_data)
 {
-  int ret;
   struct graph_save_data *d;
-  d = (struct graph_save_data *) cb->data;
+  d = (struct graph_save_data *) user_data;
 
-  ret = cb->return_value;
   if (ret == IDOK) {
     char mes[256];
     snprintf(mes, sizeof(mes), _("Saving `%.128s'."), d->file);
@@ -1334,9 +1363,79 @@ GraphSave_response(struct response_callback *cb)
   if (d->current_wd && nchdir(d->current_wd)) {
     ErrorMessage();
   }
-  return ret;
+  GraphSave_free(d);
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+GraphSaveSub(char *file, char *prev_wd, char *current_wd)
+{
+  if (file) {
+    struct graph_save_data *save_data;
+    if (prev_wd && nchdir(prev_wd)) {
+      ErrorMessage();
+    }
+
+    save_data = g_malloc0(sizeof(*save_data));
+    if (save_data == NULL) {
+      return;
+    }
+    save_data->file = g_strdup(file);
+    save_data->current_wd = g_strdup(current_wd);
+    save_data->cb = GraphSave_response;
+    get_save_opt(save_data);
+    g_free(file);
+  }
+
+  g_free(current_wd);
+  g_free(prev_wd);
+}
+
+static void
+graph_save_response(char *file, gpointer user_data)
+{
+  char *prev_wd, *current_wd;
+  prev_wd = (char *) user_data;
+  current_wd = ngetcwd();
+  if (prev_wd && current_wd && strcmp(prev_wd, current_wd) == 0) {
+    g_free(prev_wd);
+    g_free(current_wd);
+    prev_wd = NULL;
+    current_wd = NULL;
+  }
+  GraphSaveSub(file, prev_wd, current_wd);
+}
+
+int
+GraphSave(int overwrite)
+{
+  char *initfil;
+  int chd;
+
+  if (NgraphApp.FileName != NULL) {
+    initfil = NgraphApp.FileName;
+  } else {
+    initfil = NULL;
+    overwrite = FALSE;
+  }
+  if ((initfil == NULL) || (! overwrite || (naccess(initfil, 04) == -1))) {
+    char *prev_wd;
+    initfil = (initfil) ? initfil : "untitled.ngp";
+    prev_wd = ngetcwd();
+    chd = Menulocal.changedirectory;
+    nGetSaveFileName(TopLevel, _("Save NGP file"), "ngp",
+                     &(Menulocal.graphloaddir), initfil, chd,
+                     graph_save_response, prev_wd);
+  } else {
+    char *file;
+    file = g_strdup(initfil);
+    if (file) {
+      GraphSaveSub(file, NULL, NULL);
+    }
+  }
+  return IDOK;
+}
+#else
 int
 GraphSave(int overwrite)
 {
@@ -1357,9 +1456,8 @@ GraphSave(int overwrite)
   if ((initfil == NULL) || (! overwrite || (naccess(initfil, 04) == -1))) {
     prev_wd = ngetcwd();
     chd = Menulocal.changedirectory;
-    ret = nGetSaveFileName(TopLevel, _("Save NGP file"), "ngp",
-			   &(Menulocal.graphloaddir), initfil,
-			   &file, overwrite, chd);
+    file = nGetSaveFileName(TopLevel, _("Save NGP file"), "ngp",
+			   &(Menulocal.graphloaddir), initfil, overwrite, chd);
     current_wd = ngetcwd();
     if (prev_wd && current_wd && strcmp(prev_wd, current_wd) == 0) {
       g_free(prev_wd);
@@ -1374,29 +1472,11 @@ GraphSave(int overwrite)
     ret = IDOK;
   }
 
-  if (ret == IDOK) {
-#if GTK_CHECK_VERSION(4, 0, 0)
-    struct response_callback *cb;
-    struct graph_save_data *save_data;
-#endif
+  if (file) {
     if (prev_wd && nchdir(prev_wd)) {
       ErrorMessage();
     }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-    save_data = g_malloc0(sizeof(*save_data));
-    if (save_data == NULL) {
-      return IDOK;
-    }
-    save_data->file = g_strdup(file);
-    save_data->current_wd = g_strdup(current_wd);
-    save_data->path = path;
-    save_data->storemerge = smerge;
-    save_data->storedata = sdata;
-    cb = response_callback_new(GraphSave_response, GraphSave_free, save_data);
-    get_save_opt(&sdata, &smerge, &path, cb);
-    g_free(file);
-#else
     ret = get_save_opt(&sdata, &smerge, &path);
     if (ret == IDOK) {
       char mes[256];
@@ -1428,7 +1508,6 @@ GraphSave(int overwrite)
     if (current_wd && nchdir(current_wd)) {
       ErrorMessage();
     }
-#endif
   }
 
   g_free(prev_wd);
@@ -1436,6 +1515,7 @@ GraphSave(int overwrite)
 
   return ret;
 }
+#endif
 
 static void
 change_filename(char * (*func)(const char *))
@@ -1510,6 +1590,15 @@ struct load_dialog_data
   int console;
   char *option;
 };
+
+static void
+load_dialog_cb_free(struct load_dialog_data *data)
+{
+  g_free(data->file);
+  g_free(data->option);
+  g_free(data->cwd);
+  g_free(data);
+}
 
 static int
 LoadNgpFile_response(struct response_callback *cb)
@@ -1675,29 +1764,16 @@ LoadNgpFile_response(struct response_callback *cb)
   UpdateAll2(NULL, FALSE);
   delobj(obj, newid);
   menu_clear_undo();
+  load_dialog_cb_free(d);
 
   return 0;
 
 ErrorExit:
+  load_dialog_cb_free(d);
   if (d->cwd) {
     nchdir(d->cwd);
   }
   return 1;
-}
-
-static void
-load_dialog_cb_free(struct response_callback *cb)
-{
-  struct load_dialog_data *data;
-  if (cb == NULL) {
-    return;
-  }
-  data = (struct load_dialog_data *) cb->data;
-  g_free(data->file);
-  g_free(data->option);
-  g_free(data->cwd);
-  g_free(data);
-  g_free(cb);
 }
 
 void

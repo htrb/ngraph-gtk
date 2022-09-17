@@ -826,7 +826,7 @@ get_base_ngp_name(void)
   char *ptr, *tmp;
 
   if (NgraphApp.FileName == NULL)
-    return NULL;
+    return g_strdup(_("untitled"));
 
   tmp = g_strdup(NgraphApp.FileName);
   if (tmp == NULL)
@@ -892,25 +892,8 @@ print_gra_file_response(int res, gpointer user_data)
 }
 
 static void
-CmPrintGRAFile(void)
+CmPrintGRAFile_response(char *file, gpointer user_data)
 {
-  char *tmp, *file;
-  int chd, ret;
-
-  if (Menulock || Globallock)
-    return;
-
-  tmp = get_base_ngp_name();
-
-  chd = Menulocal.changedirectory;
-  ret = nGetSaveFileName(TopLevel, _("GRA file"), "gra", NULL, tmp,
-			 &file, FALSE, chd);
-
-  if (tmp)
-    g_free(tmp);
-
-  if (ret != IDOK)
-    return;
 
   if (file == NULL) {
     return;
@@ -921,6 +904,24 @@ CmPrintGRAFile(void)
     return;
   }
   print_gra_file(file);
+}
+
+static void
+CmPrintGRAFile(void)
+{
+  char *tmp;
+  int chd;
+
+  if (Menulock || Globallock)
+    return;
+
+  tmp = get_base_ngp_name();
+
+  chd = Menulocal.changedirectory;
+  nGetSaveFileName(TopLevel, _("GRA file"), "gra", NULL, tmp, chd, CmPrintGRAFile_response, NULL);
+
+  if (tmp)
+    g_free(tmp);
 }
 #else
 static void
@@ -938,14 +939,10 @@ CmPrintGRAFile(void)
   tmp = get_base_ngp_name();
 
   chd = Menulocal.changedirectory;
-  ret = nGetSaveFileName(TopLevel, _("GRA file"), "gra", NULL, tmp,
-			 &file, FALSE, chd);
+  file = nGetSaveFileName(TopLevel, _("GRA file"), "gra", NULL, tmp, FALSE, chd);
 
   if (tmp)
     g_free(tmp);
-
-  if (ret != IDOK)
-    return;
 
   if (file == NULL) {
     return;
@@ -1100,13 +1097,34 @@ output_image_response(struct response_callback *cb)
 }
 
 static void
+CmOutputImage_response(char *file, gpointer user_data)
+{
+  int type;
+  struct output_image_data *data;
+
+  if (file == NULL) {
+    return;
+  }
+
+  type = GPOINTER_TO_INT(user_data);
+  data = g_malloc0(sizeof(*data));
+  if (data == NULL) {
+    g_free(file);
+    return;
+  }
+  data->type= type;
+  data->file = file;
+  OutputImageDialog(&DlgImageOut, type);
+  response_callback_add(&DlgImageOut, output_image_response, NULL, data);
+  DialogExecute(TopLevel, &DlgImageOut);
+}
+
+static void
 CmOutputImage(int type)
 {
-  int ret;
   char *title, *ext_str;
-  char *file, *tmp;
+  char *tmp;
   int chd;
-  struct output_image_data *data;
 
   if (Menulock || Globallock)
     return;
@@ -1146,30 +1164,10 @@ CmOutputImage(int type)
 
   tmp = get_base_ngp_name();
   chd = Menulocal.changedirectory;
-  ret = nGetSaveFileName(TopLevel, title, ext_str, NULL, tmp,
-			 &file, FALSE, chd);
+  nGetSaveFileName(TopLevel, title, ext_str, NULL, tmp, chd, CmOutputImage_response, GINT_TO_POINTER(type));
   if (tmp) {
     g_free(tmp);
   }
-
-  if (ret != IDOK) {
-    return;
-  }
-
-  if (file == NULL) {
-    return;
-  }
-
-  data = g_malloc0(sizeof(*data));
-  if (data == NULL) {
-    g_free(file);
-    return;
-  }
-  data->type= type;
-  data->file = file;
-  OutputImageDialog(&DlgImageOut, type);
-  response_callback_add(&DlgImageOut, output_image_response, NULL, data);
-  DialogExecute(TopLevel, &DlgImageOut);
 }
 #else
 static void
@@ -1221,15 +1219,11 @@ CmOutputImage(int type)
 
   tmp = get_base_ngp_name();
   chd = Menulocal.changedirectory;
-  ret = nGetSaveFileName(TopLevel, title, ext_str, NULL, tmp,
-			 &file, FALSE, chd);
+  file = nGetSaveFileName(TopLevel, title, ext_str, NULL, tmp, FALSE, chd);
   if (tmp) {
     g_free(tmp);
   }
 
-  if (ret != IDOK) {
-    return;
-  }
 
   if (file == NULL) {
     return;
@@ -1320,14 +1314,9 @@ CmOutputEMF(int type)
     char *ext_str, *tmp;
     ext_str = "emf";
     tmp = get_base_ngp_name();
-    ret = nGetSaveFileName(TopLevel, title, ext_str, NULL, tmp,
-			   &file, FALSE, Menulocal.changedirectory);
+    file = nGetSaveFileName(TopLevel, title, ext_str, NULL, tmp, FALSE, Menulocal.changedirectory);
     if (tmp) {
       g_free(tmp);
-    }
-
-    if (ret != IDOK) {
-      return;
     }
 
     if (file == NULL) {
