@@ -391,8 +391,7 @@ legend_menu_update_object_response(struct response_callback *cb)
     num = arraynum(array);
     if (num > 0) {
       struct legend_menu_update_data *ldata2;
-      char *objs[2];
-      int j, *data;
+      int *data;
       menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
       data = arraydata(array);
       ldata2 = g_memdup2(ldata, sizeof(*ldata));
