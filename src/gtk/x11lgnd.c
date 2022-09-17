@@ -2287,6 +2287,7 @@ static int
 mark_dialog_response(struct response_callback *cb)
 {
   button_set_mark_image(GTK_WIDGET(cb->data), ((struct MarkDialog *)cb->dialog)->Type);
+  return IDOK;
 }
 #endif
 static void
