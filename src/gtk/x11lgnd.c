@@ -503,12 +503,10 @@ legend_menu_delete_object_response(struct response_callback *cb)
   struct legend_menu_update_data *ldata;
   struct narray *array;
   struct objlist *obj;
-  int i;
 
   ldata = (struct legend_menu_update_data *) cb->data;
   obj = ldata->obj;
   array = ldata->array;
-  i = ldata->i;
   if (cb->return_value == IDOK) {
     int num;
     num = arraynum(array);
