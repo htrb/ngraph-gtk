@@ -47,7 +47,15 @@
 struct nGetOpenFileData
 {
   GtkWidget *widget;
-#if ! GTK_CHECK_VERSION(4, 0, 0)
+#if GTK_CHECK_VERSION(4, 0, 0)
+  void (* response) (struct nGetOpenFileData *);
+  union
+  {
+    files_response_cb files;
+    file_response_cb file;
+  } callback;
+  gpointer data;
+#else
   GtkWidget *chdir_cb;
 #endif
   int chdir;
