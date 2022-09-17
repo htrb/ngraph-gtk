@@ -1314,6 +1314,9 @@ fsok(GtkWidget *dlg, struct nGetOpenFileData *data)
       continue;
     }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+    file2 = get_utf8_filename(tmp);
+#else
     file = get_utf8_filename(tmp);
 
     for (i = strlen(file) - 1; (i > 0) && (file[i] != '/') && (file[i] != '.'); i--);
@@ -1329,6 +1332,7 @@ fsok(GtkWidget *dlg, struct nGetOpenFileData *data)
     } else {
       file2 = file;
     }
+#endif
     if (file2) {
       if (data->mustexist) {
 	if ((nstat(file2, &buf) != 0) || ((buf.st_mode & S_IFMT) != S_IFREG)
