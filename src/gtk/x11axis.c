@@ -3710,7 +3710,7 @@ CmAxisGridDel(void *w, gpointer client_data)
   SelectDialog(&DlgSelect, obj, _("delete grid (multi select)"), GridCB, (struct narray *) farray, NULL);
 #if GTK_CHECK_VERSION(4, 0, 0)
   /* must be implemented */
-  response_callback_add((struct DialogType *)&DlgSelect, axis_grid_del_response, NULL, NULL);
+  response_callback_add(&DlgSelect, axis_grid_del_response, NULL, NULL);
   DialogExecute(TopLevel, &DlgSelect);
 #else
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
