@@ -1315,7 +1315,7 @@ FitDialogLoad(GtkButton *btn, gpointer user_data)
   }
 
   FitLoadDialog(&DlgFitLoad, d->Obj, d->Lastid + 1);
-  response_callback_add(&DlgMathText, file_dialog_load_response, NULL, d);
+  response_callback_add(&DlgFitLoad, file_dialog_load_response, NULL, d);
   DialogExecute(d->widget, &DlgFitLoad);
 }
 #else
