@@ -530,7 +530,11 @@ markup_message_box(GtkWidget * parent, const char *message, const char *title, i
 #if GTK_CHECK_VERSION(4, 0, 0)
   res_id = IDLOOP;
   data = res_id;
-  ndialog_run(dlg, NULL, GINT_TO_POINTER(mode));
+  if (dlg_type == GTK_MESSAGE_ERROR || dlg_type == GTK_MESSAGE_INFO) {
+    ndialog_run(dlg, G_CALLBACK(gtk_window_destroy), NULL);
+  } else {
+    ndialog_run(dlg, NULL, GINT_TO_POINTER(mode));
+  }
 #else
   gtk_widget_show_all(dlg);
   res_id = ndialog_run(dlg);
