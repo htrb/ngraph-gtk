@@ -558,11 +558,7 @@ markup_message_box(GtkWidget * parent, const char *message, const char *title, i
     }
   }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_window_destroy(GTK_WINDOW(dlg));
-#else
   gtk_widget_destroy(dlg);
-#endif
   reset_event();
 #endif
 
