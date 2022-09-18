@@ -1247,7 +1247,7 @@ text_dropped(const char *str, gint x, gint y, struct Viewer *d)
   PaintLock= TRUE;
 
   LegendTextDialog(&DlgLegendText, obj, id);
-  response_callback_add(&DlgMerge, text_dropped_response, NULL, d);
+  response_callback_add(&DlgLegendText, text_dropped_response, NULL, d);
   DialogExecute(TopLevel, &DlgLegendText);
   return 0;
 }
