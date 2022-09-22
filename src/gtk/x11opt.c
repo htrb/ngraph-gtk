@@ -637,6 +637,7 @@ FontSettingDialogAddAlternative(GtkWidget *w, gpointer client_data)
   d = (struct FontSettingDialog *) client_data;
 
   dialog = gtk_font_chooser_dialog_new(_("Alternative font"), NULL);
+  gtk_font_chooser_set_level(GTK_FONT_CHOOSER(dialog), GTK_FONT_CHOOSER_LEVEL_FAMILY);
 #if GTK_CHECK_VERSION(4, 0, 0)
   response = IDLOOP;
   ndialog_run(dialog, &response);
@@ -760,9 +761,11 @@ FontSettingDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = gtk_font_button_new();
 #if GTK_CHECK_VERSION(4, 0, 0)
     gtk_font_button_set_use_size(GTK_FONT_BUTTON(w), FALSE);
+    gtk_font_chooser_set_level(GTK_FONT_CHOOSER(w), GTK_FONT_CHOOSER_LEVEL_FAMILY);
 #else
     gtk_font_button_set_show_size(GTK_FONT_BUTTON(w), FALSE);
     gtk_font_button_set_show_style(GTK_FONT_BUTTON(w), FALSE);
+    gtk_font_chooser_set_level(GTK_FONT_CHOOSER(w), GTK_FONT_CHOOSER_LEVEL_FAMILY);
 #endif
     add_widget_to_table(table, w, _("_Font:"), TRUE, j++);
     d->font_b = w;
