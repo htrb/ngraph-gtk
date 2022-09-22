@@ -564,6 +564,7 @@ FontSettingDialogAddAlternative(GtkWidget *w, gpointer client_data)
   d = (struct FontSettingDialog *) client_data;
 
   dialog = gtk_font_chooser_dialog_new(_("Alternative font"), NULL);
+  gtk_font_chooser_set_level(GTK_FONT_CHOOSER(dialog), GTK_FONT_CHOOSER_LEVEL_FAMILY);
   if (ndialog_run(dialog) != GTK_RESPONSE_CANCEL) {
     PangoFontFamily *family;
     GtkTreeIter iter;
