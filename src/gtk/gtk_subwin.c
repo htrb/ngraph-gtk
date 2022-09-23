@@ -1628,7 +1628,11 @@ sub_win_create_popup_menu(struct obj_list_data *d, int n, GActionEntry *list, GC
   snprintf(menu_id, sizeof(menu_id), "%s-popup-menu", name);
   menu = gtk_application_get_menu_by_id(GtkApp, menu_id);
 
+#if USE_NESTED_SUBMENUS
   popup = gtk_popover_menu_new_from_model_full(G_MENU_MODEL(menu), POPOVERMEU_FLAG);
+#else  /* USE_NESTED_SUBMENUS */
+  popup = gtk_popover_menu_new_from_model(G_MENU_MODEL(menu));
+#endif	/* USE_NESTED_SUBMENUS */
   gtk_popover_set_has_arrow(GTK_POPOVER(popup), FALSE);
   gtk_widget_set_parent(popup, d->text);
   if (cb) {
