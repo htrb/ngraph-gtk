@@ -38,14 +38,15 @@ void ArrayDel(struct objlist *obj, int id);
 void FitClear(void);
 #if GTK_CHECK_VERSION(4, 0, 0)
 void LoadNgpFile(const char *File, int console, const char *option, const char *cwd);
+void CheckSave(response_cb cb, gpointer user_data);
 #else
 int LoadNgpFile(char *File, int console, char *option);
+int CheckSave(void);
 #endif
 int SaveDrawrable(char *name, int storedata, int storemerge, int save_decimalsign);
 int GraphSave(int overwrite);
 void DeleteDrawable(void);
 void FileAutoScale(void);
-int CheckSave(void);
 void AddDataFileList(const char *file);
 void SetFileName(char *name);
 int CheckIniFile(void);

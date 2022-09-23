@@ -1346,6 +1346,122 @@ FitDialogLoad(GtkButton *btn, gpointer user_data)
 }
 #endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+struct copy_settings_to_fitobj_data {
+  struct FitDialog *d;
+  char *profile;
+  int i;
+};
+
+static void
+copy_settings_to_fitobj_response(int ret, gpointer user_data)
+{
+  struct copy_settings_to_fitobj_data *data;
+  struct FitDialog *d;
+  char *profile;
+  int i, id, num;
+
+  data = (struct copy_settings_to_fitobj_data *) user_data;
+  d = data->d;
+  profile = data->profile;
+  i = data->i;
+  g_free(data);
+  if (ret != IDYES) {
+    return;
+  }
+
+  if (i > chkobjlastinst(d->Obj)) {
+    id = newobj(d->Obj);
+  } else {
+    id = i;
+  }
+
+  if (putobj(d->Obj, "profile", id, profile) == -1)
+    return;
+
+  if (SetObjFieldFromWidget(d->type, d->Obj, id, "type"))
+    return;
+
+  num = combo_box_get_active(d->dim);
+  num++;
+  if (num > 0 && putobj(d->Obj, "poly_dimension", id, &num) == -1)
+    return;
+
+  if (SetObjFieldFromWidget(d->weight, d->Obj, id, "weight_func"))
+    return;
+
+  if (SetObjFieldFromWidget
+      (d->through_point, d->Obj, id, "through_point"))
+    return;
+
+  if (SetObjFieldFromWidget(d->x, d->Obj, id, "point_x"))
+    return;
+
+  if (SetObjFieldFromWidget(d->y, d->Obj, id, "point_y"))
+    return;
+
+  if (SetObjFieldFromWidget(d->min, d->Obj, id, "min"))
+    return;
+
+  if (SetObjFieldFromWidget(d->max, d->Obj, id, "max"))
+    return;
+
+  if (SetObjFieldFromWidget(d->div, d->Obj, id, "div"))
+    return;
+
+  if (SetObjFieldFromWidget(d->interpolation, d->Obj, id,
+			    "interpolation"))
+    return;
+  if (SetObjFieldFromWidget(d->formula, d->Obj, id, "user_func"))
+    return;
+
+  if (SetObjFieldFromWidget(d->derivatives, d->Obj, id, "derivative"))
+    return;
+
+  if (SetObjFieldFromWidget(d->converge, d->Obj, id, "converge"))
+    return;
+
+  for (i = 0; i < FIT_PARM_NUM; i++) {
+    char p[] = "parameter0", dd[] = "derivative0";
+
+    p[sizeof(p) - 2] += i;
+    dd[sizeof(dd) - 2] += i;
+
+    if (SetObjFieldFromWidget(d->p[i], d->Obj, id, p))
+      return;
+
+    if (SetObjFieldFromWidget(d->d[i], d->Obj, id, dd))
+      return;
+  }
+
+  return;
+}
+
+static int
+copy_settings_to_fitobj(struct FitDialog *d, char *profile)
+{
+  int i;
+  char *s;
+  struct copy_settings_to_fitobj_data *data;
+
+  data = g_malloc0(sizeof(*data));
+  data->d = d;
+  data->profile = profile;
+
+  for (i = d->Lastid + 1; i <= chkobjlastinst(d->Obj); i++) {
+    getobj(d->Obj, "profile", i, 0, NULL, &s);
+    if (s && strcmp(s, profile) == 0) {
+      data->i = i;
+      response_message_box(d->widget, _("Overwrite existing profile?"), "Confirm",
+			   RESPONS_YESNO, copy_settings_to_fitobj_response, data);
+      return 1;
+    }
+  }
+  data->i = i;
+  copy_settings_to_fitobj_response(IDYES, data);
+  return 0;
+}
+#else
 static int
 copy_settings_to_fitobj(struct FitDialog *d, char *profile)
 {
@@ -1429,7 +1545,70 @@ copy_settings_to_fitobj(struct FitDialog *d, char *profile)
 
   return 0;
 }
+#endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+delete_fitobj_response(int ret, gpointer user_data)
+{
+  struct copy_settings_to_fitobj_data *data;
+  struct FitDialog *d;
+  char *profile;
+  int i;
+
+  data = (struct copy_settings_to_fitobj_data *) user_data;
+  d = data->d;
+  profile = data->profile;
+  i = data->i;
+  g_free(data);
+
+  if (ret != IDYES) {
+    return;
+  }
+
+  if (i > chkobjlastinst(d->Obj)) {
+    char *ptr;
+    ptr = g_strdup_printf(_("The profile '%s' is not exist."), profile);
+    message_box(d->widget, ptr, "Confirm", RESPONS_OK);
+    g_free(ptr);
+    return;
+  }
+  delobj(d->Obj, i);
+}
+
+static int
+delete_fitobj(struct FitDialog *d, char *profile)
+{
+  int i;
+  char *s, *ptr;
+  struct copy_settings_to_fitobj_data *data;
+
+  if (profile == NULL)
+    return 1;
+
+  data = g_malloc0(sizeof(*data));
+  if (data == NULL) {
+    return 1;
+  }
+  data->d = d;
+  data->profile = profile;
+
+  for (i = d->Lastid + 1; i <= chkobjlastinst(d->Obj); i++) {
+    getobj(d->Obj, "profile", i, 0, NULL, &s);
+    if (s && strcmp(s, profile) == 0) {
+      data->i = i;
+      ptr = g_strdup_printf(_("Delete the profile '%s'?"), profile);
+      response_message_box(d->widget, ptr, "Confirm", RESPONS_YESNO,
+			   delete_fitobj_response, data);
+      g_free(ptr);
+      return 0;
+    }
+  }
+  data->i = i;
+  delete_fitobj_response(IDYES, data);
+  return 0;
+}
+#else
 static int
 delete_fitobj(struct FitDialog *d, char *profile)
 {
@@ -1463,6 +1642,7 @@ delete_fitobj(struct FitDialog *d, char *profile)
 
   return 0;
 }
+#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */

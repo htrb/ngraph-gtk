@@ -1360,6 +1360,54 @@ SaveDialog(struct SaveDialog *data, int *sdata, int *smerge)
 #endif
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+CmGraphNewMenu_response(int ret, gpointer user_data)
+{
+  int sel;
+
+  if (! ret) {
+    return;
+  }
+
+  DeleteDrawable();
+
+  CmGraphPage(NULL, GINT_TO_POINTER(TRUE));
+  sel = GPOINTER_TO_INT(user_data);
+  switch (sel) {
+  case MenuIdGraphNewFrame:
+    CmAxisNewFrame(FALSE);
+    break;
+  case MenuIdGraphNewSection:
+    CmAxisNewSection(FALSE);
+    break;
+  case MenuIdGraphNewCross:
+    CmAxisNewCross(FALSE);
+    break;
+  case MenuIdGraphAllClear:
+  default:
+    break;
+  }
+
+  SetFileName(NULL);
+  set_axis_undo_button_sensitivity(FALSE);
+  reset_graph_modified();
+
+  CmViewerDraw(NULL, GINT_TO_POINTER(TRUE));
+  UpdateAll2(NULL, FALSE);
+  InfoWinClear();
+  menu_clear_undo();
+}
+
+void
+CmGraphNewMenu(void *w, gpointer client_data)
+{
+  if (Menulock || Globallock)
+    return;
+
+  CheckSave(CmGraphNewMenu_response, client_data);
+}
+#else
 void
 CmGraphNewMenu(void *w, gpointer client_data)
 {
@@ -1399,10 +1447,11 @@ CmGraphNewMenu(void *w, gpointer client_data)
   InfoWinClear();
   menu_clear_undo();
 }
+#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 static void
-CmGraphLoad_response(char *file, gpointer user_data)
+CmGraphLoad_response_response(char *file, gpointer user_data)
 {
   char *cwd;
   cwd = (char *) user_data;
@@ -1420,24 +1469,30 @@ CmGraphLoad_response(char *file, gpointer user_data)
   g_free(file);
 }
 
-void
-CmGraphLoad(void *w, gpointer client_data)
+static void
+CmGraphLoad_response(int ret, gpointer user_data)
 {
   char *cwd;
   int chd;
 
-  if (Menulock || Globallock)
+  if (! ret) {
     return;
-
-  if (!CheckSave())
-    return;
-
+  }
   cwd = ngetcwd();
   chd = Menulocal.changedirectory;
   nGetOpenFileName(TopLevel,
                    _("Load NGP file"), "ngp", &(Menulocal.graphloaddir),
                    NULL, chd,
-                   CmGraphLoad_response, cwd);
+                   CmGraphLoad_response_response, cwd);
+}
+
+void
+CmGraphLoad(void *w, gpointer client_data)
+{
+  if (Menulock || Globallock)
+    return;
+
+  CheckSave(CmGraphLoad_response, NULL);
 }
 #else
 void
@@ -1745,6 +1800,27 @@ CmHelpAbout(void *w, gpointer client_data)
 #endif
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+CmHelpDemo_response(int ret, gpointer client_data)
+{
+  char *demo_file, *data_dir;
+
+  if (! ret) {
+    return;
+  }
+
+  data_dir = (char *) client_data;
+  demo_file = g_strdup_printf("%s/demo/demo.ngp", data_dir);
+  if (demo_file == NULL) {
+    return;
+  }
+
+  LoadNgpFile(demo_file, Menulocal.scriptconsole, "-f", NULL);
+  g_free(demo_file);
+}
+#endif
+
 void
 CmHelpDemo(void *w, gpointer client_data)
 {
@@ -1764,6 +1840,9 @@ CmHelpDemo(void *w, gpointer client_data)
     return;
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  CheckSave(CmHelpDemo_response, data_dir);
+#else
   if (!CheckSave()) {
     return;
   }
@@ -1773,12 +1852,9 @@ CmHelpDemo(void *w, gpointer client_data)
     return;
   }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-  LoadNgpFile(demo_file, Menulocal.scriptconsole, "-f", NULL);
-#else
   LoadNgpFile(demo_file, Menulocal.scriptconsole, "-f");
-#endif
   g_free(demo_file);
+#endif
 }
 
 void

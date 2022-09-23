@@ -20,6 +20,8 @@
 #define USE_HEADER_BAR 1
 #endif
 
+#define USE_NESTED_SUBMENUS 0
+
 #define RECENT_CHOOSER_LIMIT 25
 
 #define APPLICATION_ID "com.github.htrb.ngraph-gtk"

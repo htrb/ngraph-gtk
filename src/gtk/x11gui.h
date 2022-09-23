@@ -61,12 +61,15 @@ typedef struct _tpoint {
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 void DialogExecute(GtkWidget *parent, void *dialog);
+void markup_message_box(GtkWidget * parent, const char *message, const char *title, int mode, int markup);
+void message_box(GtkWidget *parent, const char *message, const char *title, int yesno);
+void response_message_box(GtkWidget *parent, const char *message, const char *title, int mode, response_cb cb, gpointer user_data);
 #else
 int DialogExecute(GtkWidget *parent, void *dialog);
-#endif
-void message_beep(GtkWidget *parent);
 int markup_message_box(GtkWidget * parent, const char *message, const char *title, int mode, int markup);
 int message_box(GtkWidget *parent, const char *message, const char *title, int yesno);
+#endif
+void message_beep(GtkWidget *parent);
 int DialogInput(GtkWidget *parent, const char *title, const char *mes, const char *init_str, struct narray *buttons, int *res_btn, char **s, int *x, int *y);
 int DialogRadio(GtkWidget *parent, const char *title, const char *caption, struct narray *ary, struct narray *buttons, int *res_btn, int *r, int *x, int *y);
 int DialogButton(GtkWidget *parent, const char *title, const char *caption, struct narray *array, int *x, int *y);

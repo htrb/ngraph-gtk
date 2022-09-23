@@ -115,7 +115,12 @@ dlgconfirm(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   locksave = Globallock;
   Globallock = TRUE;
   mes = CHK_STR(mes);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  /* must be implemented */
+  rcode = IDYES;
+#else
   rcode = message_box(get_toplevel_window(), mes, (title) ? title : _("Confirm"), RESPONS_YESNO);
+#endif
   Globallock = locksave;
   if (rcode == IDYES) {
     rval->i = 1;
@@ -138,7 +143,12 @@ dlgmessage(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   mes = (char *)argv[2];
   locksave = Globallock;
   Globallock = TRUE;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  /* must be implemented */
+  return 0;
+#else
   message_box(get_toplevel_window(), CHK_STR(mes), (title) ? title : _("Message"), RESPONS_OK);
+#endif
   Globallock = locksave;
 
   return 0;

@@ -197,7 +197,6 @@ RecentGraphAction_activated(GSimpleAction *action, GVariant *parameter, gpointer
   fname = g_strdup(g_variant_get_string(parameter, NULL));
   if (fname) {
     graph_dropped(fname);
-    g_free(fname);
   }
 }
 static void

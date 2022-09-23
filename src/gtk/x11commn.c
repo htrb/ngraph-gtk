@@ -2071,6 +2071,52 @@ AdjustAxis(void)
     exeobj(aobj, "adjust", i, 0, NULL);
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+struct CheckSave_data {
+  response_cb cb;
+  gpointer data;
+};
+
+static void
+CheckSave_response(int ret, gpointer user_data)
+{
+  struct CheckSave_data *data;
+  response_cb cb;
+  int r = TRUE;
+
+  data = (struct CheckSave_data *) user_data;
+  cb = data->cb;
+  if (ret == IDYES) {
+    if (GraphSave(TRUE) == IDCANCEL) {
+      r = FALSE;
+    }
+  } else if (ret != IDNO) {
+    r = FALSE;
+  }
+  cb(r, data->data);
+  g_free(data);
+}
+
+void
+CheckSave(response_cb cb, gpointer user_data)
+{
+  struct CheckSave_data *data;
+  data = g_malloc0(sizeof(*data));
+  if (data == NULL) {
+    return;
+  }
+  data->cb = cb;
+  data->data = user_data;
+  if (get_graph_modified()) {
+    response_message_box(TopLevel,
+			 _("This graph is modified.\nSave this graph?"),
+			 _("Confirm"), RESPONS_YESNOCANCEL,
+			 CheckSave_response, data);
+  } else {
+    CheckSave_response(IDNO, data);
+  }
+}
+#else
 int
 CheckSave(void)
 {
@@ -2086,6 +2132,7 @@ CheckSave(void)
   }
   return TRUE;
 }
+#endif
 
 static void
 add_hist(const char *file, char *mime)
@@ -2412,6 +2459,19 @@ SetFileHidden(void)
 }
 #endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+CheckIniFile_response(int ret, gpointer user_data)
+{
+  if (ret != IDYES) {
+    return;
+  }
+  if (!copyconfig()) {
+    message_box(TopLevel, _("Ngraph.ini could not be copied."), "Ngraph.ini", RESPONS_ERROR);
+  }
+}
+#endif
+
 int
 CheckIniFile(void)
 {
@@ -2438,6 +2498,11 @@ CheckIniFile(void)
     }
 
     buf = g_strdup_printf(_("Install `Ngraph.ini' to %s ?"), homedir);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    response_message_box(TopLevel, buf, "Ngraph.ini", RESPONS_YESNO, CheckIniFile_response, NULL);
+    g_free(buf);
+  }
+#else
     if (message_box(TopLevel, buf, "Ngraph.ini", RESPONS_YESNO) == IDYES) {
       g_free(buf);
       if (!copyconfig()) {
@@ -2449,6 +2514,7 @@ CheckIniFile(void)
       return FALSE;
     }
   }
+#endif
   return TRUE;
 }
 

@@ -465,6 +465,126 @@ get_dialog_position(GtkWidget *w, int *x, int *y)
 #endif
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+struct response_message_box_data {
+  gpointer data;
+  response_cb cb;
+};
+
+static void
+response_message_box_response (GtkWindow *dlg, gint res_id, gpointer user_data)
+{
+  struct response_message_box_data *data;
+  int r;
+
+  data = (struct response_message_box_data *) user_data;
+  switch (res_id) {
+  case GTK_RESPONSE_OK:
+  case GTK_RESPONSE_YES:
+    r = IDYES;
+    break;
+  case GTK_RESPONSE_NO:
+    r = IDNO;
+    break;
+  default:
+    r = IDCANCEL;
+    break;
+  }
+
+  if (data->cb) {
+    data->cb(r, data->data);
+  }
+  g_free(data);
+  gtk_window_destroy(dlg);
+}
+
+void
+response_message_box(GtkWidget *parent, const char *message, const char *title, int mode, response_cb cb, gpointer user_data)
+{
+  GtkWidget *dlg;
+  struct response_message_box_data *data;
+  GtkMessageType dlg_type;
+  GtkButtonsType dlg_button;
+  gint res_id;
+
+  data = g_malloc0(sizeof(*data));
+  if (data == NULL) {
+    return;
+  }
+  data->cb = cb;
+  data->data = user_data;
+
+  if (title == NULL) {
+    title = _("Error");
+  }
+
+  if (parent == NULL)
+    parent = get_current_window();
+
+  dlg = gtk_message_dialog_new(GTK_WINDOW(parent),
+			       GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+			       GTK_MESSAGE_QUESTION,
+			       GTK_BUTTONS_NONE,
+			       "%.512s", message);
+
+  if (mode == RESPONS_YESNOCANCEL) {
+    gtk_dialog_add_button(GTK_DIALOG(dlg), _("_Cancel"), GTK_RESPONSE_CANCEL);
+  }
+  gtk_dialog_add_button(GTK_DIALOG(dlg), _("_No"), GTK_RESPONSE_NO);
+  gtk_dialog_add_button(GTK_DIALOG(dlg), _("_Yes"), GTK_RESPONSE_YES);
+  gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_YES);
+  gtk_window_set_title(GTK_WINDOW(dlg), title);
+  gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
+
+  ndialog_run(dlg, G_CALLBACK(response_message_box_response), data);
+}
+
+void
+message_box(GtkWidget *parent, const char *message, const char *title, int mode)
+{
+  markup_message_box(parent, message, title, mode, FALSE);
+}
+
+void
+markup_message_box(GtkWidget *parent, const char *message, const char *title, int mode, int markup)
+{
+  GtkWidget *dlg;
+  int data;
+  GtkMessageType dlg_type;
+  GtkButtonsType dlg_button;
+  gint res_id;
+
+  if (title == NULL) {
+    title = _("Error");
+  }
+
+  switch (mode) {
+  case RESPONS_ERROR:
+    dlg_type = GTK_MESSAGE_ERROR;
+    break;
+  default:
+    dlg_type = GTK_MESSAGE_INFO;
+    break;
+  }
+
+  if (parent == NULL)
+    parent = get_current_window();
+
+  dlg = gtk_message_dialog_new(GTK_WINDOW(parent),
+			       GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+			       dlg_type,
+			       GTK_BUTTONS_OK,
+			       "%.512s", message);
+  if (markup) {
+    gtk_message_dialog_set_markup(GTK_MESSAGE_DIALOG(dlg), message);
+  }
+
+  gtk_window_set_title(GTK_WINDOW(dlg), title);
+  gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
+
+  ndialog_run(dlg, G_CALLBACK(gtk_window_destroy), NULL);
+}
+#else
 int
 message_box(GtkWidget * parent, const char *message, const char *title, int mode)
 {
@@ -527,15 +647,6 @@ markup_message_box(GtkWidget * parent, const char *message, const char *title, i
   gtk_window_set_title(GTK_WINDOW(dlg), title);
   gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-  res_id = IDLOOP;
-  data = res_id;
-  if (dlg_type == GTK_MESSAGE_ERROR || dlg_type == GTK_MESSAGE_INFO) {
-    ndialog_run(dlg, G_CALLBACK(gtk_window_destroy), NULL);
-  } else {
-    ndialog_run(dlg, NULL, GINT_TO_POINTER(mode));
-  }
-#else
   gtk_widget_show_all(dlg);
   res_id = ndialog_run(dlg);
 
@@ -564,10 +675,10 @@ markup_message_box(GtkWidget * parent, const char *message, const char *title, i
 
   gtk_widget_destroy(dlg);
   reset_event();
-#endif
 
   return data;
 }
+#endif
 
 int
 DialogInput(GtkWidget * parent, const char *title, const char *mes, const char *init_str, struct narray *buttons, int *res_btn, char **s, int *x, int *y)

@@ -708,24 +708,60 @@ PasteObjectsFromClipboard(void)
 }
 #endif
 
-int
-graph_dropped(char *fname)
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+graph_dropped_response(int ret, gpointer user_data)
 {
-  char *ext, *cwd;
+  char *fname, *cwd;
 
+  if (! ret) {
+    return;
+  }
+
+  fname = (char *) user_data;
+  cwd = ngetcwd();
+  if (chdir_to_ngp(fname)) {
+    if (cwd) {
+      g_free(cwd);
+    }
+    g_free(fname);
+    return;
+  }
+
+  LoadNgpFile(fname, FALSE, "-f", cwd);
+  if (cwd) {
+    g_free(cwd);
+  }
+  g_free(fname);
+}
+#endif
+
+int
+graph_dropped(const char *str)
+{
+  char *ext, *cwd, *fname;
+
+  fname = g_strdup(str);
   if (fname == NULL) {
     return 1;
   }
 
   ext = getextention(fname);
-  if (ext == NULL)
-    return 1;
-
-  if (strcmp0(ext, "ngp")) {
+  if (ext == NULL) {
+    g_free(fname);
     return 1;
   }
 
+  if (strcmp0(ext, "ngp")) {
+    g_free(fname);
+    return 1;
+  }
+
+#if GTK_CHECK_VERSION(4, 0, 0)
+  CheckSave(graph_dropped_response, fname);
+#else
   if (!CheckSave()) {
+    g_free(fname);
     return 1;
   }
 
@@ -734,19 +770,18 @@ graph_dropped(char *fname)
     if (cwd) {
       g_free(cwd);
     }
+    g_free(fname);
     return 1;
   }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-  LoadNgpFile(fname, FALSE, "-f", cwd);
-#else
   if (LoadNgpFile(fname, FALSE, "-f") && cwd) {
     nchdir(cwd);
   }
-#endif
   if (cwd) {
     g_free(cwd);
   }
+  g_free(fname);
+#endif
   return 0;
 }
 

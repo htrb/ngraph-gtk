@@ -1114,6 +1114,17 @@ term_signal_handler(int sig)
 }
 #endif	/* WINDOWS */
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+AppMainLoop_response(int ret, gpointer client_data)
+{
+  if (ret) {
+    menu_clear_undo();
+    Hide_window = APP_QUIT_FORCE;
+  }
+}
+#endif
+
 static int
 AppMainLoop(void)
 {
@@ -1140,10 +1151,14 @@ AppMainLoop(void)
       Hide_window = APP_CONTINUE;
       switch (state) {
       case APP_QUIT:
+#if GTK_CHECK_VERSION(4, 0, 0)
+	CheckSave(AppMainLoop_response, NULL);
+#else
 	if (CheckSave()) {
 	  menu_clear_undo();
 	  return 0;
 	}
+#endif
 	break;
       case APP_QUIT_FORCE:
 	menu_clear_undo();
@@ -2841,7 +2856,11 @@ create_popup_menu(GtkApplication *app)
   GMenu *menu;
   menu = gtk_application_get_menu_by_id(app, "popup-menu");
 #if GTK_CHECK_VERSION(4, 0, 0)
+#if USE_NESTED_SUBMENUS
   popup = gtk_popover_menu_new_from_model_full(G_MENU_MODEL(menu), POPOVERMEU_FLAG);
+#else  /* USE_NESTED_SUBMENUS */
+  popup = gtk_popover_menu_new_from_model(G_MENU_MODEL(menu));
+#endif	/* USE_NESTED_SUBMENUS */
   gtk_popover_set_has_arrow(GTK_POPOVER(popup), FALSE);
 #else
   popup = gtk_menu_new_from_model(G_MENU_MODEL(menu));
@@ -3464,10 +3483,15 @@ ChkInterrupt(void)
 int
 InputYN(const char *mes)
 {
+#if GTK_CHECK_VERSION(4, 0, 0)
+  response_message_box(get_current_window(), mes, _("Question"), RESPONS_YESNO, NULL, NULL);
+  return TRUE;
+#else
   int ret;
 
   ret = message_box(get_current_window(), mes, _("Question"), RESPONS_YESNO);
   return (ret == IDYES) ? TRUE : FALSE;
+#endif
 }
 
 void
