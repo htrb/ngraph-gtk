@@ -2351,7 +2351,6 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = gtk_label_new("");
     add_widget_to_table_sub(table, w, NULL, TRUE, 4, 1, 5, 0);
     gtk_widget_set_halign(w, GTK_ALIGN_START);
-    gtk_widget_set_valign(w, GTK_ALIGN_END);
     d->func_label = w;
 
     w = create_text_entry(TRUE, TRUE);
