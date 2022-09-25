@@ -1352,6 +1352,8 @@ struct copy_settings_to_fitobj_data {
   struct FitDialog *d;
   char *profile;
   int i;
+  response_cb cb;
+  gpointer data;
 };
 
 static void
