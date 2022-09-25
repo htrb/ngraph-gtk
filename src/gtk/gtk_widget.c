@@ -13,6 +13,12 @@
 #include "dir_defs.h"
 
 #if GTK_CHECK_VERSION(4, 0, 0)
+void
+widget_set_parent(GtkWidget *widget, GtkWidget *parent) {
+  gtk_widget_set_parent(widget, parent);
+  g_signal_connect_swapped(parent, "destroy", G_CALLBACK(gtk_widget_unparent), widget);
+}
+
 gboolean
 gtk_true(void)
 {

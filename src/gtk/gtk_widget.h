@@ -47,6 +47,7 @@ enum WIDGET_MARGIN {
 };
 
 #if GTK_CHECK_VERSION(4, 0, 0)
+void widget_set_parent(GtkWidget *widget, GtkWidget *parent);
 gboolean gtk_true(void);
 double scrollbar_get_value(GtkWidget *w);
 double scrollbar_get_max(GtkWidget *w);
