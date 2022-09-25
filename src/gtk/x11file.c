@@ -1481,16 +1481,23 @@ copy_settings_to_fitobj_response(int ret, gpointer user_data)
   return;
 }
 
-static int
-copy_settings_to_fitobj(struct FitDialog *d, char *profile)
+static void
+copy_settings_to_fitobj(struct FitDialog *d, const char *str, response_cb cb, gpointer user_data)
 {
   int i;
-  char *s;
+  char *s, *profile;;
   struct copy_settings_to_fitobj_data *data;
+
+  profile = g_strdup(str);
+  if (profile == NULL) {
+    return;
+  }
 
   data = g_malloc0(sizeof(*data));
   data->d = d;
   data->profile = profile;
+  data->cb = cb;
+  data->data = user_data;
 
   for (i = d->Lastid + 1; i <= chkobjlastinst(d->Obj); i++) {
     getobj(d->Obj, "profile", i, 0, NULL, &s);
@@ -1498,12 +1505,12 @@ copy_settings_to_fitobj(struct FitDialog *d, char *profile)
       data->i = i;
       response_message_box(d->widget, _("Overwrite existing profile?"), "Confirm",
 			   RESPONS_YESNO, copy_settings_to_fitobj_response, data);
-      return 1;
+      return;
     }
   }
   data->i = i;
   copy_settings_to_fitobj_response(IDYES, data);
-  return 0;
+  return;
 }
 #else
 static int
@@ -1621,27 +1628,35 @@ delete_fitobj_response(int ret, gpointer user_data)
     ptr = g_strdup_printf(_("The profile '%s' is not exist."), profile);
     message_box(d->widget, ptr, "Confirm", RESPONS_OK);
     g_free(ptr);
+    g_free(profile);
+    cb(TRUE, ud);
     return;
   }
   delobj(d->Obj, i);
+  cb(FALSE, ud);
+  g_free(profile);
 }
 
-static int
-delete_fitobj(struct FitDialog *d, char *profile)
+static void
+delete_fitobj(struct FitDialog *d, const char *str, response_cb cb, gpointer user_data)
 {
   int i;
-  char *s, *ptr;
+  char *s, *ptr, *profile;
   struct copy_settings_to_fitobj_data *data;
 
+  profile = g_strdup(str);
   if (profile == NULL)
-    return 1;
+    return;
 
   data = g_malloc0(sizeof(*data));
   if (data == NULL) {
-    return 1;
+    g_free(profile);
+    return;
   }
   data->d = d;
   data->profile = profile;
+  data->cb = cb;
+  data->data = user_data;
 
   for (i = d->Lastid + 1; i <= chkobjlastinst(d->Obj); i++) {
     getobj(d->Obj, "profile", i, 0, NULL, &s);
@@ -1651,12 +1666,12 @@ delete_fitobj(struct FitDialog *d, char *profile)
       response_message_box(d->widget, ptr, "Confirm", RESPONS_YESNO,
 			   delete_fitobj_response, data);
       g_free(ptr);
-      return 0;
+      return;
     }
   }
   data->i = i;
   delete_fitobj_response(IDYES, data);
-  return 0;
+  return;
 }
 #else
 static int
@@ -1696,44 +1711,34 @@ delete_fitobj(struct FitDialog *d, char *profile)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
-static int
-fit_dialog_save_response(struct response_callback *cb)
-{
-  char *s, *ngpfile;
-  int error;
-  int hFile;
+struct fit_dialog_save_response_data {
   struct FitDialog *d;
+  int return_value;
+  char *profile;
+};
 
-  d = (struct FitDialog *) cb->data;
-  if (cb->return_value != IDOK && cb->return_value != IDDELETE)
-    return IDOK;
+static void
+fit_dialog_save_response_response(int ret, gpointer user_data)
+{
+  char *s, *ngpfile, *profile;
+  struct FitDialog *d;
+  int return_value, error, hFile;
+  struct fit_dialog_save_response_data *data;
 
-  if (DlgFitSave.Profile == NULL)
-    return IDOK;
+  data = (struct fit_dialog_save_response_data *) user_data;
+  d = data->d;
+  profile = data->profile;
+  return_value = data->return_value;
+  g_free(data);
 
-  if (DlgFitSave.Profile[0] == '\0') {
+  if (ret) {
     g_free(DlgFitSave.Profile);
-    return IDOK;
-  }
-
-  switch (cb->return_value) {
-  case IDOK:
-    if (copy_settings_to_fitobj(d, DlgFitSave.Profile)) {
-      g_free(DlgFitSave.Profile);
-      return IDOK;
-    }
-    break;
-  case IDDELETE:
-    if (delete_fitobj(d, DlgFitSave.Profile)) {
-      g_free(DlgFitSave.Profile);
-      return IDOK;
-    }
-    break;
+    return;
   }
 
   ngpfile = getscriptname(FITSAVE);
   if (ngpfile == NULL) {
-    return IDOK;
+    return;
   }
 
   error = FALSE;
@@ -1761,22 +1766,60 @@ fit_dialog_save_response(struct response_callback *cb)
     ErrorMessage();
   } else {
     char *ptr;
-    switch (cb->return_value) {
+    switch (return_value) {
     case IDOK:
-      ptr = g_strdup_printf(_("The profile '%s' is saved."), DlgFitSave.Profile);
+      ptr = g_strdup_printf(_("The profile '%s' is saved."), profile);
       message_box(d->widget, ptr, "Confirm", RESPONS_OK);
       g_free(ptr);
       break;
     case IDDELETE:
-      ptr = g_strdup_printf(_("The profile '%s' is deleted."), DlgFitSave.Profile);
+      ptr = g_strdup_printf(_("The profile '%s' is deleted."), profile);
       message_box(d->widget, ptr, "Confirm", RESPONS_OK);
       g_free(ptr);
-      g_free(DlgFitSave.Profile);
       break;
     }
   }
 
+  g_free(profile);
   g_free(ngpfile);
+}
+
+static int
+fit_dialog_save_response(struct response_callback *cb)
+{
+  struct FitDialog *d;
+  struct fit_dialog_save_response_data *data;
+
+  d = (struct FitDialog *) cb->data;
+  if (cb->return_value != IDOK && cb->return_value != IDDELETE)
+    return IDOK;
+
+  if (DlgFitSave.Profile == NULL)
+    return IDOK;
+
+  if (DlgFitSave.Profile[0] == '\0') {
+    g_free(DlgFitSave.Profile);
+    return IDOK;
+  }
+
+  data = g_malloc0(sizeof(*data));
+  if (data == NULL) {
+    return IDOK;
+  }
+  data->d = d;
+  data->return_value = cb->return_value;
+  data->profile = g_strdup(DlgFitSave.Profile);
+  g_free(DlgFitSave.Profile);
+  switch (cb->return_value) {
+  case IDOK:
+    copy_settings_to_fitobj(d, data->profile, fit_dialog_save_response_response, data);
+    return IDOK;
+  case IDDELETE:
+    delete_fitobj(d, data->profile, fit_dialog_save_response_response, data);
+    return IDOK;
+  }
+  fit_dialog_save_response_response(FALSE, data);
+
   return IDOK;
 }
 
