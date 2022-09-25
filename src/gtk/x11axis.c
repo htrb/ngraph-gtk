@@ -562,6 +562,18 @@ GridDefDialogSetup(GtkWidget *w, void *data, int makewidget)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 static void
+GridDefDialogClose_response(int ret, struct objlist *obj, int id, int modified)
+{
+  if (ret) {
+    exeobj(obj, "save_config", id, 0, NULL);
+  }
+  delobj(obj, id);
+  if (! modified) {
+    reset_graph_modified();
+  }
+}
+
+static void
 GridDefDialogClose(GtkWidget *w, void *data)
 {
   struct GridDialog *d;
@@ -569,13 +581,9 @@ GridDefDialogClose(GtkWidget *w, void *data)
 
   d = (struct GridDialog *) data;
   if (d->ret == IDOK) {
-    if (CheckIniFile()) {
-      exeobj(d->Obj, "save_config", d->Id, 0, NULL);
-    }
-  }
-  delobj(d->Obj, d->Id);
-  if (! d->modified) {
-    reset_graph_modified();
+    CheckIniFile(GridDefDialogClose_response, d->Obj, d->Id, d->modified);
+  } else {
+    GridDefDialogClose_response(FALSE, d->Obj, d->Id, d->modified);
   }
 }
 #endif
@@ -602,13 +610,9 @@ option_grid_def_response(struct response_callback *cb)
   d = (struct GridDialog *) cb->dialog;
   modified = GPOINTER_TO_INT(cb->data);
   if (cb->return_value == IDOK) {
-    if (CheckIniFile()) {
-      exeobj(d->Obj, "save_config", d->Id, 0, NULL);
-    }
-  }
-  delobj(d->Obj, d->Id);
-  if (! modified) {
-    reset_graph_modified();
+    CheckIniFile(GridDefDialogClose_response, d->Obj, d->Id, modified);
+  } else {
+    GridDefDialogClose_response(FALSE, d->Obj, d->Id, modified);
   }
   return IDOK;
 }

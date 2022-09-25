@@ -6653,22 +6653,12 @@ CmFileEdit(void *w, gpointer client_data)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
-static int
-option_file_def_response(struct response_callback *cb)
+static void
+option_file_def_response_response(int ret, struct objlist *obj, int id, int modified)
 {
-  int id;
-  struct objlist *obj;
-  struct FileDialog *d;
-  int modified;
   char *objs[2];
-  d = (struct FileDialog *) cb->dialog;
-  modified = GPOINTER_TO_INT(cb->data);
-  obj = d->Obj;
-  id = d->Id;
-  if (cb->return_value == IDOK) {
-    if (CheckIniFile()) {
-      exeobj(obj, "save_config", id, 0, NULL);
-    }
+  if (ret) {
+    exeobj(obj, "save_config", id, 0, NULL);
   }
   delobj(obj, id);
   objs[0] = obj->name;
@@ -6676,6 +6666,24 @@ option_file_def_response(struct response_callback *cb)
   UpdateAll2(objs, TRUE);
   if (! modified) {
     reset_graph_modified();
+  }
+}
+
+static int
+option_file_def_response(struct response_callback *cb)
+{
+  int id;
+  struct objlist *obj;
+  struct FileDialog *d;
+  int modified;
+  d = (struct FileDialog *) cb->dialog;
+  modified = GPOINTER_TO_INT(cb->data);
+  obj = d->Obj;
+  id = d->Id;
+  if (cb->return_value == IDOK) {
+    CheckIniFile(option_file_def_response_response, obj, id, modified);
+  } else {
+    option_file_def_response_response(FALSE, obj, id, modified);
   }
   return IDOK;
 }

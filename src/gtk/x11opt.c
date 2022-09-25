@@ -123,6 +123,29 @@ DefaultDialogSetup(GtkWidget *wi, void *data, int makewidget)
 #endif
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+save_config_response(int ret, struct objlist *obj, int id, int type)
+{
+  if (! ret) {
+    return;
+  }
+
+  if (type & SAVE_CONFIG_TYPE_X11MENU) {
+    menu_save_config(type);
+  }
+
+  if (type & SAVE_CONFIG_TYPE_FONTS) {
+    gra2cairo_save_config();
+  }
+}
+
+static void
+save_config(int type)
+{
+  CheckIniFile(save_config_response, NULL, 0, type);
+}
+#else
 static int
 save_config(int type)
 {
@@ -140,6 +163,7 @@ save_config(int type)
 
   return 0;
 }
+#endif
 
 static void
 DefaultDialogClose(GtkWidget *win, void *data)
@@ -186,11 +210,15 @@ DefaultDialogClose(GtkWidget *win, void *data)
 #endif
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  save_config(type);
+#else
   if (save_config(type)) {
     d->ret = ret;
     return;
   }
 
+#endif
   d->ret = ret;
 }
 
@@ -2188,6 +2216,16 @@ ViewerDialog(struct ViewerDialog *data, struct objlist *obj, int id)
   data->Clear = FALSE;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+save_default_axis_config_response(int ret, struct objlist *obj, int id, int modified)
+{
+  if (ret) {
+    exeobj(obj, "save_config", id, 0, NULL);
+  }
+}
+#endif
+
 static void
 save_default_axis_config(void)
 {
@@ -2202,9 +2240,13 @@ save_default_axis_config(void)
   if (n < 0) {
     return;
   }
+#if GTK_CHECK_VERSION(4, 0, 0)
+  CheckIniFile(save_default_axis_config_response, obj, 0, 0);
+#else
   if (CheckIniFile()) {
     exeobj(obj, "save_config", 0, 0, NULL);
   }
+#endif
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
