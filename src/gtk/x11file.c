@@ -1599,14 +1599,20 @@ delete_fitobj_response(int ret, gpointer user_data)
   struct FitDialog *d;
   char *profile;
   int i;
+  response_cb cb;
+  gpointer ud;
 
   data = (struct copy_settings_to_fitobj_data *) user_data;
   d = data->d;
   profile = data->profile;
   i = data->i;
+  ud = data->data;
+  cb = data->cb;
   g_free(data);
 
   if (ret != IDYES) {
+    g_free(profile);
+    cb(TRUE, ud);
     return;
   }
 
