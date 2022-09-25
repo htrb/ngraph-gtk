@@ -732,6 +732,7 @@ MathDialogList(GtkButton *w, gpointer client_data)
   res_data->d = d;
   res_data->list = list;
   res_data->buf = buf;
+  res_data->gsel = gsel;
 
   MathTextDialog(&DlgMathText, buf, d->Mode, d->Obj, list, d->list);
   response_callback_add(&DlgMathText, math_dialog_list_respone, NULL, res_data);
