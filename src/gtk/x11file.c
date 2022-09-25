@@ -1363,13 +1363,19 @@ copy_settings_to_fitobj_response(int ret, gpointer user_data)
   struct FitDialog *d;
   char *profile;
   int i, id, num;
+  response_cb cb;
+  gpointer ud;
 
   data = (struct copy_settings_to_fitobj_data *) user_data;
   d = data->d;
   profile = data->profile;
   i = data->i;
+  cb = data->cb;
+  ud = data->data;
   g_free(data);
   if (ret != IDYES) {
+    g_free(profile);
+    cb(TRUE, ud);
     return;
   }
 
@@ -1379,50 +1385,79 @@ copy_settings_to_fitobj_response(int ret, gpointer user_data)
     id = i;
   }
 
-  if (putobj(d->Obj, "profile", id, profile) == -1)
+  if (putobj(d->Obj, "profile", id, profile) == -1) {
+    g_free(profile);
+    cb(TRUE, ud);
     return;
+  }
 
-  if (SetObjFieldFromWidget(d->type, d->Obj, id, "type"))
+  if (SetObjFieldFromWidget(d->type, d->Obj, id, "type")) {
+    cb(TRUE, ud);
     return;
+  }
 
   num = combo_box_get_active(d->dim);
   num++;
-  if (num > 0 && putobj(d->Obj, "poly_dimension", id, &num) == -1)
+  if (num > 0 && putobj(d->Obj, "poly_dimension", id, &num) == -1) {
+    cb(TRUE, ud);
     return;
+  }
 
-  if (SetObjFieldFromWidget(d->weight, d->Obj, id, "weight_func"))
+  if (SetObjFieldFromWidget(d->weight, d->Obj, id, "weight_func")) {
+    cb(TRUE, ud);
     return;
+  }
 
   if (SetObjFieldFromWidget
-      (d->through_point, d->Obj, id, "through_point"))
+      (d->through_point, d->Obj, id, "through_point")) {
+    cb(TRUE, ud);
     return;
+  }
 
-  if (SetObjFieldFromWidget(d->x, d->Obj, id, "point_x"))
+  if (SetObjFieldFromWidget(d->x, d->Obj, id, "point_x")) {
+    cb(TRUE, ud);
     return;
+  }
 
-  if (SetObjFieldFromWidget(d->y, d->Obj, id, "point_y"))
+  if (SetObjFieldFromWidget(d->y, d->Obj, id, "point_y")) {
+    cb(TRUE, ud);
     return;
+  }
 
-  if (SetObjFieldFromWidget(d->min, d->Obj, id, "min"))
+  if (SetObjFieldFromWidget(d->min, d->Obj, id, "min")) {
+    cb(TRUE, ud);
     return;
+  }
 
-  if (SetObjFieldFromWidget(d->max, d->Obj, id, "max"))
+  if (SetObjFieldFromWidget(d->max, d->Obj, id, "max")) {
+    cb(TRUE, ud);
     return;
+  }
 
-  if (SetObjFieldFromWidget(d->div, d->Obj, id, "div"))
+  if (SetObjFieldFromWidget(d->div, d->Obj, id, "div")) {
+    cb(TRUE, ud);
     return;
+  }
 
   if (SetObjFieldFromWidget(d->interpolation, d->Obj, id,
-			    "interpolation"))
+			    "interpolation")) {
+    cb(TRUE, ud);
     return;
-  if (SetObjFieldFromWidget(d->formula, d->Obj, id, "user_func"))
+  }
+  if (SetObjFieldFromWidget(d->formula, d->Obj, id, "user_func")) {
+    cb(TRUE, ud);
     return;
+  }
 
-  if (SetObjFieldFromWidget(d->derivatives, d->Obj, id, "derivative"))
+  if (SetObjFieldFromWidget(d->derivatives, d->Obj, id, "derivative")) {
+    cb(TRUE, ud);
     return;
+  }
 
-  if (SetObjFieldFromWidget(d->converge, d->Obj, id, "converge"))
+  if (SetObjFieldFromWidget(d->converge, d->Obj, id, "converge")) {
+    cb(TRUE, ud);
     return;
+  }
 
   for (i = 0; i < FIT_PARM_NUM; i++) {
     char p[] = "parameter0", dd[] = "derivative0";
@@ -1430,12 +1465,18 @@ copy_settings_to_fitobj_response(int ret, gpointer user_data)
     p[sizeof(p) - 2] += i;
     dd[sizeof(dd) - 2] += i;
 
-    if (SetObjFieldFromWidget(d->p[i], d->Obj, id, p))
+    if (SetObjFieldFromWidget(d->p[i], d->Obj, id, p)) {
+      cb(TRUE, ud);
       return;
+    }
 
-    if (SetObjFieldFromWidget(d->d[i], d->Obj, id, dd))
+    if (SetObjFieldFromWidget(d->d[i], d->Obj, id, dd)) {
+      cb(TRUE, ud);
       return;
+    }
   }
+
+  cb(FALSE, ud);
 
   return;
 }
