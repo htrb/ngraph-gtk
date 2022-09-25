@@ -2404,7 +2404,7 @@ ViewerWinSetup(void)
 
   if (d->popup) {
 #if GTK_CHECK_VERSION(4, 0, 0)
-    gtk_widget_set_parent(d->popup, d->Win);
+    widget_set_parent(d->popup, d->Win);
 #else
     gtk_menu_attach_to_widget(GTK_MENU(d->popup), GTK_WIDGET(d->Win), NULL);
 #endif
