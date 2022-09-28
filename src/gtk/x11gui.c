@@ -707,6 +707,51 @@ input_dialog_response(GtkWindow *dlg, int response_id, gpointer user_data)
   g_free(data);
   gtk_window_destroy(GTK_WINDOW(dlg));
 }
+
+void
+input_dialog(GtkWidget *parent, const char *title, const char *mes, const char *init_str, const char *button, string_response_cb cb, gpointer user_data)
+{
+  GtkWidget *dlg, *text;
+  GtkBox *vbox;
+  gint res_id;
+  struct input_dialog_data *data;
+
+  data = g_malloc0(sizeof(*data));
+  if (data == NULL) {
+    return;
+  }
+  dlg = gtk_dialog_new_with_buttons(title,
+				    GTK_WINDOW(parent),
+#if USE_HEADER_BAR
+				    GTK_DIALOG_USE_HEADER_BAR |
+#endif
+				    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+				    _("_Cancel"), GTK_RESPONSE_CANCEL,
+				    button, GTK_RESPONSE_OK,
+				    NULL);
+  gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
+  gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
+  vbox = GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dlg)));
+  gtk_orientable_set_orientation(GTK_ORIENTABLE(vbox), GTK_ORIENTATION_VERTICAL);
+
+  if (mes) {
+    GtkWidget *label;
+    label = gtk_label_new(mes);
+    gtk_box_append(vbox, label);
+  }
+
+  text = create_text_entry(FALSE, TRUE);
+  if (init_str) {
+    gtk_editable_set_text(GTK_EDITABLE(text), init_str);
+  }
+  gtk_box_append(vbox, text);
+
+  data->cb = cb;
+  data->data = user_data;
+  data->text = text;
+  g_signal_connect(dlg, "response", G_CALLBACK(input_dialog_response), data);
+  gtk_widget_show(dlg);
+}
 #endif
 
 int

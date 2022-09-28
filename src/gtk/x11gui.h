@@ -64,6 +64,7 @@ void DialogExecute(GtkWidget *parent, void *dialog);
 void markup_message_box(GtkWidget * parent, const char *message, const char *title, int mode, int markup);
 void message_box(GtkWidget *parent, const char *message, const char *title, int yesno);
 void response_message_box(GtkWidget *parent, const char *message, const char *title, int mode, response_cb cb, gpointer user_data);
+void input_dialog(GtkWidget *parent, const char *title, const char *mes, const char *init_str, const char *button, string_response_cb cb, gpointer user_data);
 #else
 int DialogExecute(GtkWidget *parent, void *dialog);
 int markup_message_box(GtkWidget * parent, const char *message, const char *title, int mode, int markup);
