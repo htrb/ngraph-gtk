@@ -680,6 +680,35 @@ markup_message_box(GtkWidget * parent, const char *message, const char *title, i
 }
 #endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+struct input_dialog_data {
+  GtkWidget *text;
+  string_response_cb cb;
+  gpointer data;
+};
+
+static void
+input_dialog_response(GtkWindow *dlg, int response_id, gpointer user_data)
+{
+  const char *str = NULL;
+  int res = IDCANCEL;
+  struct input_dialog_data *data;
+  GtkWidget *text;
+
+  data = (struct input_dialog_data *) user_data;
+  if (data == NULL) {
+    return;
+  }
+  if (response_id == GTK_RESPONSE_OK) {
+    str = gtk_editable_get_text(GTK_EDITABLE(data->text));
+    res = IDOK;
+  }
+  data->cb(res, str, data->data);
+  g_free(data);
+  gtk_window_destroy(GTK_WINDOW(dlg));
+}
+#endif
+
 int
 DialogInput(GtkWidget * parent, const char *title, const char *mes, const char *init_str, struct narray *buttons, int *res_btn, char **s, int *x, int *y)
 {
