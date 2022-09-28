@@ -39,6 +39,7 @@
 typedef void (* response_cb) (int response, gpointer user_data);
 typedef void (* file_response_cb) (char *file, gpointer user_data);
 typedef void (* files_response_cb) (char **files, gpointer user_data);
+typedef void (* string_response_cb) (int response, const char *str, gpointer user_data);
 enum CURSOR_TYPE {
   GDK_LEFT_PTR,
   GDK_XTERM,
