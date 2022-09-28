@@ -1612,6 +1612,24 @@ set_object_name_response(int res, const char *str, gpointer user_data)
   set_graph_modified();
   return;
 }
+
+static void
+set_object_name(struct objlist *obj, int id)
+{
+  char *name, buf[256];
+  int r;
+  struct set_object_name_data *data;
+  data = g_malloc0(sizeof(*data));
+  if (data == NULL) {
+    return;
+  }
+  getobj(obj, "name", id, 0, NULL, &name);
+  data->obj = obj;
+  data->id = id;
+  data->name = name;
+  snprintf(buf, sizeof(buf), "%s:%d:name", chkobjectname(obj), id);
+  input_dialog(TopLevel, _("Instance name"), buf, name, _("_Apply"), set_object_name_response, data);
+}
 #else
 static int
 set_object_name(struct objlist *obj, int id)
@@ -1666,10 +1684,14 @@ list_sub_window_object_name
   if (sel < 0 || sel > num) {
     return;
   }
+#if GTK_CHECK_VERSION(4, 0, 0)
+  set_object_name(d->obj, sel);
+#else
   update = set_object_name(d->obj, sel);
   if (update) {
     set_graph_modified();
   }
+#endif
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
