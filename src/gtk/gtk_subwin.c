@@ -1550,6 +1550,69 @@ ev_popup_menu(GtkWidget *w, gpointer client_data)
 }
 #endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+struct set_object_name_data {
+  struct objlist *obj;
+  int id;
+  char *name;
+};
+
+static void
+set_object_name_response(int res, const char *str, gpointer user_data)
+{
+  struct set_object_name_data *data;
+  struct objlist *obj;
+  int id, undo;
+  char *name, *new_name;
+
+  data = (struct set_object_name_data *) user_data;
+  obj = data->obj;
+  id = data->id;
+  name = data->name;
+  g_free(data);
+
+  if (res != IDOK) {
+    return;
+  }
+
+  undo = menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
+  if (str == NULL) {
+    putobj(obj, "name", id, NULL);
+    if (name) {
+      set_graph_modified();
+    } else {
+      menu_delete_undo(undo);
+    }
+    return;
+  }
+
+  new_name = g_strdup(str);
+  if (new_name == NULL) {
+    menu_delete_undo(undo);
+    return;
+  }
+
+  g_strstrip(new_name);
+  if (new_name[0] == '\0') {
+    g_free(new_name);
+    new_name = NULL;
+  }
+
+  if (g_strcmp0(name, new_name) == 0) {
+    g_free(new_name);
+    menu_delete_undo(undo);
+    return;
+  }
+
+  if (putobj(obj, "name", id, new_name) < 0) {
+    g_free(new_name);
+    menu_delete_undo(undo);
+    return;
+  }
+  set_graph_modified();
+  return;
+}
+#else
 static int
 set_object_name(struct objlist *obj, int id)
 {
@@ -1580,6 +1643,7 @@ set_object_name(struct objlist *obj, int id)
   }
   return 1;
 }
+#endif
 
 void
 list_sub_window_object_name
