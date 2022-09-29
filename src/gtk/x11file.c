@@ -8303,6 +8303,18 @@ select_type_fit_response(int ret, gpointer user_data)
   d->update(d, FALSE, DRAW_REDRAW);
   set_graph_modified();
 }
+
+static void
+select_obj_color_response(int response, gpointer user_data)
+{
+  struct obj_list_data *d;
+  d = (struct obj_list_data *) user_data;
+  if (response) {
+    return;
+  }
+  d->update(d, FALSE, DRAW_REDRAW);
+  set_graph_modified();
+}
 #endif
 
 static void
