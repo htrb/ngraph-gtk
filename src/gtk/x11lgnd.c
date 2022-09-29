@@ -3815,6 +3815,20 @@ set_fill(struct objlist *obj, int id, int fill)
   return set_bool_field(obj, "fill", id, fill);
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+select_obj_color_response(int response, gpointer user_data)
+{
+  struct obj_list_data *d;
+  d = (struct obj_list_data *) user_data;
+  if (response) {
+    return;
+  }
+  d->update(d, FALSE, TRUE);
+  set_graph_modified();
+}
+#endif
+
 static void
 select_type(GtkComboBox *w, gpointer user_data)
 {
