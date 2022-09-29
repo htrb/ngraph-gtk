@@ -4442,6 +4442,20 @@ set_enum_field(const char *field, int sel, int enum_id, struct obj_list_data *d)
   return 0;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+select_obj_color_response(int response, gpointer user_data)
+{
+  struct obj_list_data *d;
+  d = (struct obj_list_data *) user_data;
+  if (response) {
+    return;
+  }
+  d->update(d, FALSE, DRAW_AXIS_ONLY);
+  set_graph_modified();
+}
+#endif
+
 static void
 select_type(GtkComboBox *w, gpointer user_data)
 {
