@@ -1116,6 +1116,110 @@ text_view_with_line_number_set_font(GtkWidget *view, const gchar *font)
   set_widget_font(view, font);
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+struct select_obj_color_data {
+  struct objlist *obj;
+  int id, type, r, g, b, a;
+  response_cb cb;
+  gpointer data;
+};
+
+static void
+select_obj_color_response(GtkWindow *dlg, int response, gpointer user_data)
+{
+  int r, g, b, a, rr ,gg, bb, aa, modified, undo;
+  GdkRGBA color;
+  struct select_obj_color_data *data;
+  struct objlist *obj;
+  int id, type;
+  response_cb cb;
+  gpointer ud;
+
+  data = (struct select_obj_color_data *) user_data;
+  obj = data->obj;
+  id = data->id;
+  type = data->type;
+  cb = data->cb;
+  ud = data->data;
+  r = data->r;
+  g = data->g;
+  b = data->b;
+  a = data->a;
+
+  gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(dlg), &color);
+  gtk_window_destroy(dlg);
+
+  if (response != GTK_RESPONSE_OK) {
+    if (cb) {
+      cb(SELECT_OBJ_COLOR_CANCEL, ud);
+    }
+    return;
+  }
+
+  rr = nround(color.red * 255);
+  gg = nround(color.green * 255);
+  bb = nround(color.blue * 255);
+  aa = nround(color.alpha * 255);
+
+  undo = menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
+  switch (type) {
+  case OBJ_FIELD_COLOR_TYPE_STROKE:
+    putobj(obj, "stroke_R", id, &rr);
+    putobj(obj, "stroke_G", id, &gg);
+    putobj(obj, "stroke_B", id, &bb);
+    putobj(obj, "stroke_A", id, &aa);
+    break;
+  case OBJ_FIELD_COLOR_TYPE_FILL:
+    putobj(obj, "fill_R", id, &rr);
+    putobj(obj, "fill_G", id, &gg);
+    putobj(obj, "fill_B", id, &bb);
+    putobj(obj, "fill_A", id, &aa);
+    break;
+  case OBJ_FIELD_COLOR_TYPE_0:
+  case OBJ_FIELD_COLOR_TYPE_1:
+  case OBJ_FIELD_COLOR_TYPE_AXIS_BASE:
+    putobj(obj, "R", id, &rr);
+    putobj(obj, "G", id, &gg);
+    putobj(obj, "B", id, &bb);
+    putobj(obj, "A", id, &aa);
+    break;
+  case OBJ_FIELD_COLOR_TYPE_2:
+    putobj(obj, "R2", id, &rr);
+    putobj(obj, "G2", id, &gg);
+    putobj(obj, "B2", id, &bb);
+    putobj(obj, "A2", id, &aa);
+    break;
+  case OBJ_FIELD_COLOR_TYPE_AXIS_GAUGE:
+    putobj(obj, "gauge_R", id, &rr);
+    putobj(obj, "gauge_G", id, &gg);
+    putobj(obj, "gauge_B", id, &bb);
+    putobj(obj, "gauge_A", id, &aa);
+    break;
+  case OBJ_FIELD_COLOR_TYPE_AXIS_NUM:
+    putobj(obj, "num_R", id, &rr);
+    putobj(obj, "num_G", id, &gg);
+    putobj(obj, "num_B", id, &bb);
+    putobj(obj, "num_A", id, &aa);
+    break;
+  default:
+    menu_delete_undo(undo);
+    if (cb) {
+      cb(SELECT_OBJ_COLOR_ERROR, ud);
+    }
+    return;
+  }
+
+  if (rr == r && gg == g && bb == b && aa == a) {
+    menu_delete_undo(undo);
+    modified = SELECT_OBJ_COLOR_SAME;
+  } else {
+    modified = SELECT_OBJ_COLOR_DIFFERENT;
+  }
+  if (cb) {
+    cb(modified, ud);
+  }
+}
+#endif
 enum SELECT_OBJ_COLOR_RESULT
 select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type)
 {
