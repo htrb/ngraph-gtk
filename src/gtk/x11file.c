@@ -8352,14 +8352,26 @@ select_type(GtkComboBox *w, gpointer user_data)
 
   switch (col_type) {
   case FILE_COMBO_ITEM_COLOR_1:
+#if GTK_CHECK_VERSION(4, 0, 0)
+    d->select = sel;
+    select_obj_color(d->obj, sel, OBJ_FIELD_COLOR_TYPE_1, select_obj_color_response, d);
+    return;
+#else
     if (select_obj_color(d->obj, sel, OBJ_FIELD_COLOR_TYPE_1)) {
       return;
     }
+#endif
     break;
   case FILE_COMBO_ITEM_COLOR_2:
+#if GTK_CHECK_VERSION(4, 0, 0)
+    d->select = sel;
+    select_obj_color(d->obj, sel, OBJ_FIELD_COLOR_TYPE_2, select_obj_color_response, d);
+    return;
+#else
     if (select_obj_color(d->obj, sel, OBJ_FIELD_COLOR_TYPE_2)) {
       return;
     }
+#endif
     break;
   case FILE_COMBO_ITEM_TYPE:
     if (enum_id == type) {

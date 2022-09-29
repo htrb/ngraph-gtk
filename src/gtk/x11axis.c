@@ -4499,9 +4499,15 @@ select_type(GtkComboBox *w, gpointer user_data)
     putobj(d->obj, "baseline", sel, &active);
     break;
   case AXIS_COMBO_ITEM_BASE_COLOR:
+#if GTK_CHECK_VERSION(4, 0, 0)
+    d->select = sel;
+    select_obj_color(d->obj, sel, OBJ_FIELD_COLOR_TYPE_AXIS_BASE, select_obj_color_response, d);
+    return;
+#else
     if (select_obj_color(d->obj, sel, OBJ_FIELD_COLOR_TYPE_AXIS_BASE)) {
       return;
     }
+#endif
     break;
   case AXIS_COMBO_ITEM_BASE_STYLE:
     if (enum_id < 0 || enum_id >= FwNumStyleNum) {
@@ -4531,9 +4537,15 @@ select_type(GtkComboBox *w, gpointer user_data)
     }
     break;
   case AXIS_COMBO_ITEM_GAUGE_COLOR:
+#if GTK_CHECK_VERSION(4, 0, 0)
+    d->select = sel;
+    select_obj_color(d->obj, sel, OBJ_FIELD_COLOR_TYPE_AXIS_GAUGE, select_obj_color_response, d);
+    return;
+#else
     if (select_obj_color(d->obj, sel, OBJ_FIELD_COLOR_TYPE_AXIS_GAUGE)) {
       return;
     }
+#endif
     break;
   case AXIS_COMBO_ITEM_GAUGE_STYLE:
     if (enum_id < 0 || enum_id >= FwNumStyleNum) {
@@ -4574,9 +4586,15 @@ select_type(GtkComboBox *w, gpointer user_data)
     }
     break;
   case AXIS_COMBO_ITEM_NUM_COLOR:
+#if GTK_CHECK_VERSION(4, 0, 0)
+    d->select = sel;
+    select_obj_color(d->obj, sel, OBJ_FIELD_COLOR_TYPE_AXIS_NUM, select_obj_color_response, d);
+    return;
+#else
     if (select_obj_color(d->obj, sel, OBJ_FIELD_COLOR_TYPE_AXIS_NUM)) {
       return;
     }
+#endif
     break;
   case AXIS_COMBO_ITEM_NUM_FONT:
     gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_STRING, &font, -1);

@@ -1221,13 +1221,32 @@ select_obj_color_response(GtkWindow *dlg, int response, gpointer user_data)
   }
 }
 #endif
+
+#if GTK_CHECK_VERSION(4, 0, 0)
+void
+select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type, response_cb cb, gpointer user_data)
+#else
 enum SELECT_OBJ_COLOR_RESULT
 select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type)
+#endif
 {
   GtkWidget *dlg;
   int r, g, b, a, rr ,gg, bb, aa, response, modified, undo;
   GdkRGBA color;
   char *title;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  struct select_obj_color_data *data;
+
+  data = g_malloc0(sizeof(*data));
+  if (data == NULL) {
+    return;
+  }
+  data->obj = obj;
+  data->id = id;
+  data->type = type;
+  data->cb = cb;
+  data->data = user_data;
+#endif
 
   switch (type) {
   case OBJ_FIELD_COLOR_TYPE_STROKE:
@@ -1287,7 +1306,12 @@ select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type)
     getobj(obj, "num_A", id, 0, NULL, &a);
     break;
   default:
+#if GTK_CHECK_VERSION(4, 0, 0)
+    g_free(data);
+    return;
+#else
     return SELECT_OBJ_COLOR_ERROR;
+#endif
   }
 
   if (! Menulocal.use_opacity) {
@@ -1306,18 +1330,19 @@ select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type)
   gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(dlg), &color);
   gtk_color_chooser_set_use_alpha(GTK_COLOR_CHOOSER(dlg), Menulocal.use_opacity);
 #if GTK_CHECK_VERSION(4, 0, 0)
-  response = IDLOOP;
-  ndialog_run(dlg, NULL, &response);
+  data->r = r;
+  data->g = g;
+  data->b = b;
+  data->a = a;
+  g_signal_connect(dlg, "response", G_CALLBACK(select_obj_color_response), data);
+  gtk_window_set_modal(GTK_WINDOW(dlg), TRUE);
+  gtk_widget_show(GTK_WIDGET(dlg));
+  return;
 #else
   response = ndialog_run(dlg);
-#endif
   gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(dlg), &color);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_window_destroy(GTK_WINDOW(dlg));
-#else
   gtk_widget_destroy(dlg);
-#endif
 
   if (response != GTK_RESPONSE_OK) {
     return SELECT_OBJ_COLOR_CANCEL;
@@ -1379,6 +1404,7 @@ select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type)
     modified = SELECT_OBJ_COLOR_DIFFERENT;
   }
   return modified;
+#endif
 }
 
 gchar *

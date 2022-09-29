@@ -54,6 +54,9 @@ double scrollbar_get_max(GtkWidget *w);
 void scrollbar_set_value(GtkWidget *w, double val);
 void scrollbar_set_range(GtkWidget *w, double min, double max);
 void scrollbar_set_increment(GtkWidget *w, double step, double page);
+void select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type, response_cb cb, gpointer user_data);
+#else
+enum SELECT_OBJ_COLOR_RESULT select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type);
 #endif
 
 GtkWidget *create_spin_entry_type(enum SPIN_BUTTON_TYPE type, int set_default_size, int set_default_action);
@@ -86,7 +89,6 @@ void text_view_with_line_number_set_font(GtkWidget *view, const gchar *font);
 void set_widget_sensitivity_with_label(GtkWidget *w, gboolean state);
 void set_widget_visibility_with_label(GtkWidget *w, gboolean state);
 void combo_box_create_mark(GtkWidget *cbox, GtkTreeIter *parent, int col_id, int type);
-enum SELECT_OBJ_COLOR_RESULT select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type);
 void set_widget_margin(GtkWidget *w, int margin_pos);
 void set_scale_mark(GtkWidget *scale, GtkPositionType pos, int start, int inc);
 void set_widget_font(GtkWidget *w, const char *font);

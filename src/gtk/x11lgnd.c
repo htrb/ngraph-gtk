@@ -3903,14 +3903,26 @@ select_type(GtkComboBox *w, gpointer user_data)
 
   switch (col_type) {
   case LEGEND_COMBO_ITEM_COLOR_1:
+#if GTK_CHECK_VERSION(4, 0, 0)
+    d->select = sel;
+    select_obj_color(d->obj, sel, OBJ_FIELD_COLOR_TYPE_1, select_obj_color_response, d);
+    return;
+#else
     if (select_obj_color(d->obj, sel, OBJ_FIELD_COLOR_TYPE_1)) {
       return;
     }
+#endif
     break;
   case LEGEND_COMBO_ITEM_COLOR_2:
+#if GTK_CHECK_VERSION(4, 0, 0)
+    d->select = sel;
+    select_obj_color(d->obj, sel, OBJ_FIELD_COLOR_TYPE_2, select_obj_color_response, d);
+    return;
+#else
     if (select_obj_color(d->obj, sel, OBJ_FIELD_COLOR_TYPE_2)) {
       return;
     }
+#endif
     break;
   case LEGEND_COMBO_ITEM_MARK:
     getobj(d->obj, "type", sel, 0, NULL, &mark_type);
@@ -3934,6 +3946,11 @@ select_type(GtkComboBox *w, gpointer user_data)
     }
     break;
   case LEGEND_COMBO_ITEM_COLOR_STROKE:
+#if GTK_CHECK_VERSION(4, 0, 0)
+    d->select = sel;
+    select_obj_color(d->obj, sel, OBJ_FIELD_COLOR_TYPE_STROKE, select_obj_stroke_color_response, d);
+    return;
+#else
     r = select_obj_color(d->obj, sel, OBJ_FIELD_COLOR_TYPE_STROKE);
     switch (r) {
     case SELECT_OBJ_COLOR_DIFFERENT:
@@ -3948,8 +3965,14 @@ select_type(GtkComboBox *w, gpointer user_data)
     case SELECT_OBJ_COLOR_CANCEL:
       return;
     }
+#endif
     break;
   case LEGEND_COMBO_ITEM_COLOR_FILL:
+#if GTK_CHECK_VERSION(4, 0, 0)
+    d->select = sel;
+    select_obj_color(d->obj, sel, OBJ_FIELD_COLOR_TYPE_STROKE, select_obj_fill_color_response, d);
+    return;
+#else
     r = select_obj_color(d->obj, sel, OBJ_FIELD_COLOR_TYPE_FILL);
     switch (r) {
     case SELECT_OBJ_COLOR_DIFFERENT:
@@ -3964,6 +3987,7 @@ select_type(GtkComboBox *w, gpointer user_data)
     case SELECT_OBJ_COLOR_CANCEL:
       return;
     }
+#endif
     break;
   case LEGEND_COMBO_ITEM_TOGGLE_STROKE:
     gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);
@@ -4215,9 +4239,15 @@ select_font(GtkComboBox *w, gpointer user_data)
     putobj(d->obj, "font", sel, font);
     break;
   case LEGEND_COMBO_ITEM_COLOR_0:
+#if GTK_CHECK_VERSION(4, 0, 0)
+    d->select = sel;
+    select_obj_color(d->obj, sel, OBJ_FIELD_COLOR_TYPE_0, select_obj_color_response, d);
+    return;
+#else
     if (select_obj_color(d->obj, sel, OBJ_FIELD_COLOR_TYPE_0)) {
       return;
     }
+#endif
     break;
   case LEGEND_COMBO_ITEM_STYLE_BOLD:
     menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
