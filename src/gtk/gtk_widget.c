@@ -1145,6 +1145,7 @@ select_obj_color_response(GtkWindow *dlg, int response, gpointer user_data)
   g = data->g;
   b = data->b;
   a = data->a;
+  g_free(data);
 
   gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(dlg), &color);
   gtk_window_destroy(dlg);
