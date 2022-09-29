@@ -3827,6 +3827,28 @@ select_obj_color_response(int response, gpointer user_data)
   d->update(d, FALSE, TRUE);
   set_graph_modified();
 }
+
+static void
+select_obj_stroke_color_response(int response, gpointer user_data)
+{
+  struct obj_list_data *d;
+  d = (struct obj_list_data *) user_data;
+  switch (response) {
+  case SELECT_OBJ_COLOR_DIFFERENT:
+    set_stroke(d->obj, d->select, TRUE);
+    break;
+  case SELECT_OBJ_COLOR_SAME:
+    if (! set_stroke(d->obj, d->select, TRUE)) {
+      return;
+    }
+    break;
+  case SELECT_OBJ_COLOR_ERROR:
+  case SELECT_OBJ_COLOR_CANCEL:
+    return;
+  }
+  select_obj_color_response(response, user_data);
+}
+
 #endif
 
 static void
