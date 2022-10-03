@@ -1605,7 +1605,7 @@ CmGraphPage(void *w, gpointer client_data)
   if (Menulock || Globallock)
     return;
   PageDialog(&DlgPage, new_graph);
-response_callback_add(&DlgPage, CmGraphPage_response, NULL, client_data);
+  response_callback_add(&DlgPage, CmGraphPage_response, NULL, client_data);
   DialogExecute(TopLevel, &DlgPage);
 }
 #else
