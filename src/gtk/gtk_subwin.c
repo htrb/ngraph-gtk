@@ -723,6 +723,9 @@ swin_update(struct obj_list_data *d)
 {
   int sel, ret, num, undo;
   GtkWidget *parent;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  struct swin_update_data *data;
+#endif
 
   if (Menulock || Globallock)
     return;
@@ -737,6 +740,13 @@ swin_update(struct obj_list_data *d)
 
   parent = TopLevel;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  data = g_malloc0(sizeof(*data));
+  if (data == NULL) {
+    return;
+  }
+#endif
+
   d->setup_dialog(d, sel, -1);
   d->select = sel;
   if (d->undo_save) {
@@ -746,6 +756,9 @@ swin_update(struct obj_list_data *d)
   }
 #if GTK_CHECK_VERSION(4, 0, 0)
   /* must be implemented */
+  data->d = d;
+  data->undo = undo;
+  response_callback_add(d->dialog, swin_update_response, NULL, data);
   DialogExecute(parent, d->dialog);
 #else
   ret = DialogExecute(parent, d->dialog);
