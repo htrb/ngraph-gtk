@@ -3081,6 +3081,25 @@ souce_view_set_search_path(void)
   g_free(new_dirs);
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+initial_draw(gpointer user_data)
+{
+  char *file = (char *) user_data;
+  if (file != NULL) {
+    char *ext;
+    ext = getextention(file);
+    if (ext && ((strcmp0(ext, "NGP") == 0) || (strcmp0(ext, "ngp") == 0))) {
+      LoadNgpFile(file, FALSE, NULL, NULL);
+    } else {
+      CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
+    }
+  } else {
+    CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
+  }
+}
+#endif
+
 int
 application(char *file)
 {
