@@ -1605,6 +1605,13 @@ load_dialog_cb_free(struct load_dialog_data *data)
   g_free(data);
 }
 
+static void
+draw_callback(gpointer user_data)
+{
+  UpdateAll2(NULL, FALSE);
+  menu_clear_undo();
+}
+
 static int
 LoadNgpFile_response(struct response_callback *cb)
 {
@@ -1765,19 +1772,17 @@ LoadNgpFile_response(struct response_callback *cb)
 
   set_axis_undo_button_sensitivity(FALSE);
   GetPageSettingsFromGRA();
-  CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
-  UpdateAll2(NULL, FALSE);
+  Draw(FALSE, draw_callback, NULL);
   delobj(obj, newid);
-  menu_clear_undo();
   load_dialog_cb_free(d);
 
   return 0;
 
 ErrorExit:
-  load_dialog_cb_free(d);
   if (d->cwd) {
     nchdir(d->cwd);
   }
+  load_dialog_cb_free(d);
   return 1;
 }
 
