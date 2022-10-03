@@ -1362,6 +1362,14 @@ SaveDialog(struct SaveDialog *data, int *sdata, int *smerge)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 static void
+draw_callback(gpointer user_data)
+{
+  UpdateAll2(NULL, FALSE);
+  InfoWinClear();
+  menu_clear_undo();
+}
+
+static void
 CmGraphNewMenu_response(int ret, gpointer user_data)
 {
   int sel;
@@ -1393,10 +1401,7 @@ CmGraphNewMenu_response(int ret, gpointer user_data)
   set_axis_undo_button_sensitivity(FALSE);
   reset_graph_modified();
 
-  CmViewerDraw(NULL, GINT_TO_POINTER(TRUE));
-  UpdateAll2(NULL, FALSE);
-  InfoWinClear();
-  menu_clear_undo();
+  Draw(TRUE, draw_callback, NULL);
 }
 
 void
