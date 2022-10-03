@@ -2451,6 +2451,132 @@ viewer_win_file_update_response(int ret, gpointer user_data)
 }
 #endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+struct fileupdate_data
+{
+  char *argv[7];
+  struct savedstdio save;
+  struct objlist *fileobj;
+  int err, limit;
+  int minx, miny, maxx, maxy;
+};
+
+static void
+fileupdate_finalize(gpointer user_data)
+{
+  struct fileupdate_data *data;
+  char *objects[] = {"data", NULL};
+  struct narray *dfile;
+  struct objlist *fileobj;
+
+  data = (struct fileupdate_data *) user_data;
+  dfile = arraynew(sizeof(int));
+  fileobj = data->fileobj;
+  update_file_obj_multi(fileobj, dfile, FALSE, viewer_win_file_update_response, dfile);
+  UpdateAll(objects);
+  arrayfree(dfile);
+  g_free(data);
+}
+
+static void
+fileupdate_func(gpointer user_data)
+{
+  struct objlist *fileobj;
+  int snum, hidden;
+  int i, did, limit;
+  N_VALUE *dinst;
+  struct narray *dfile;
+  struct fileupdate_data *data;
+  struct narray *eval;
+  int evalnum;
+
+  data = (struct fileupdate_data *) user_data;
+
+  fileobj = data->fileobj;
+  snum = chkobjlastinst(fileobj) + 1;
+  dfile = arraynew(sizeof(int));
+  if (dfile == NULL) {
+    restorestdio(&data->save);
+    g_free(data);
+    return;
+  }
+  for (i = 0; i < snum; i++) {
+    dinst = chkobjinst(fileobj, i);
+    if (dinst == NULL) {
+      continue;
+    }
+    _getobj(fileobj, "hidden", dinst, &hidden);
+    if (hidden) {
+      continue;
+    }
+    _getobj(fileobj, "oid", dinst, &did);
+    _exeobj(fileobj, "evaluate", dinst, 6, data->argv);
+    _getobj(fileobj, "evaluate", dinst, &eval);
+    evalnum = arraynum(eval) / 3;
+    if (evalnum != 0) {
+      arrayadd(dfile, &i);
+    }
+  }
+
+  restorestdio(&data->save);
+  ProgressDialogFinish();
+  return;
+}
+
+static void
+ViewerWinFileUpdate(int x1, int y1, int x2, int y2, int err)
+{
+  struct objlist *fileobj;
+  int snum, hidden;
+  int did, limit;
+  N_VALUE *dinst;
+  int i;
+  char mes[256];
+  int ret;
+  struct fileupdate_data *data;
+
+  data = g_malloc0(sizeof(*data));
+  if (data == NULL) {
+    return;
+  }
+  ret = FALSE;
+  ignorestdio(&data->save);
+
+  data->minx = (x1 < x2) ? x1 : x2;
+  data->miny = (y1 < y2) ? y1 : y2;
+  data->maxx = (x1 > x2) ? x1 : x2;
+  data->maxy = (y1 > y2) ? y1 : y2;
+  data->limit = 1;
+  data->err = err;
+
+  fileobj = chkobject("data");
+  if (! fileobj)
+    return;
+
+  if (check_drawrable(fileobj)) {
+    return;
+  }
+
+  snum = chkobjlastinst(fileobj) + 1;
+  if (snum == 0) {
+    return;
+  }
+
+  snprintf(mes, sizeof(mes), _("Searching for data."));
+  SetStatusBar(mes);
+
+  data->argv[0] = (char *) &data->minx;
+  data->argv[1] = (char *) &data->miny;
+  data->argv[2] = (char *) &data->maxx;
+  data->argv[3] = (char *) &data->maxy;
+  data->argv[4] = (char *) &data->err;
+  data->argv[5] = (char *) &data->limit;
+  data->argv[6] = NULL;
+  data->fileobj = fileobj;
+
+  ProgressDialogCreate(_("Searching for data."), fileupdate_func, fileupdate_finalize, data);
+}
+#else
 static int
 ViewerWinFileUpdate(int x1, int y1, int x2, int y2, int err)
 {
@@ -2465,7 +2591,6 @@ ViewerWinFileUpdate(int x1, int y1, int x2, int y2, int err)
   int minx, miny, maxx, maxy;
   struct savedstdio save;
   char mes[256];
-  struct narray *dfile;
   int ret;
 
   ret = FALSE;
@@ -2499,13 +2624,18 @@ ViewerWinFileUpdate(int x1, int y1, int x2, int y2, int err)
     goto End;
   }
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   dfile = arraynew(sizeof(int));
   if (dfile == NULL) {
     goto End;
   }
+#endif
 
   snprintf(mes, sizeof(mes), _("Searching for data."));
   SetStatusBar(mes);
+#if GTK_CHECK_VERSION(4, 0, 0)
+ End:
+#else
   ProgressDialogCreate(_("Searching for data."));
 
   for (i = 0; i < snum; i++) {
@@ -2526,20 +2656,19 @@ ViewerWinFileUpdate(int x1, int y1, int x2, int y2, int err)
     }
   }
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   ProgressDialogFinalize();
+#endif
   ResetStatusBar();
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-  update_file_obj_multi(fileobj, dfile, FALSE, viewer_win_file_update_response, dfile);
-#else
   ret = update_file_obj_multi(fileobj, dfile, FALSE);
   arrayfree(dfile);
-#endif
-
  End:
   restorestdio(&save);
+#endif
   return ret;
 }
+#endif
 
 static void
 mask_selected_data(struct objlist *fileobj, int selnum, struct narray *sel_list)
@@ -2614,6 +2743,63 @@ evaluate_response(struct response_callback *cb)
   return IDOK;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+evaluate_func(gpointer user_data)
+{
+  struct Viewer *d;
+  struct objlist *fileobj;
+  char *argv[7];
+  int evalnum, tot;
+  int snum, hidden;
+  int limit;
+  int i, j;
+  struct narray *eval;
+  int minx, miny, maxx, maxy;
+  struct savedstdio save;
+  double line, dx, dy;
+  char mes[256];
+  tot = 0;
+
+  for (i = 0; i < snum; i++) {
+    N_VALUE *dinst;
+    dinst = chkobjinst(fileobj, i);
+    if (dinst == NULL) {
+      continue;
+    }
+    _getobj(fileobj, "hidden", dinst, &hidden);
+    if (hidden) {
+      continue;
+    }
+    _exeobj(fileobj, "evaluate", dinst, 6, argv);
+    _getobj(fileobj, "evaluate", dinst, &eval);
+    evalnum = arraynum(eval) / 3;
+    for (j = 0; j < evalnum; j++) {
+      if (tot >= limit) break;
+      tot++;
+      line = arraynget_double(eval, j * 3 + 0);
+      dx = arraynget_double(eval, j * 3 + 1);
+      dy = arraynget_double(eval, j * 3 + 2);
+      EvalList[tot - 1].id = i;
+      EvalList[tot - 1].line = nround(line);
+      EvalList[tot - 1].x = dx;
+      EvalList[tot - 1].y = dy;
+    }
+    if (tot >= limit) break;
+  }
+  set_interrupt();
+
+  ResetStatusBar();
+
+  restorestdio(&save);
+  if (tot > 0) {
+    EvalDialog(&DlgEval, fileobj, tot, &SelList);
+    response_callback_add(&DlgEval, evaluate_response, NULL, d);
+    DialogExecute(TopLevel, &DlgEval);
+  }
+}
+#endif
+
 static void
 Evaluate(int x1, int y1, int x2, int y2, int err, struct Viewer *d)
 {
@@ -2660,6 +2846,9 @@ Evaluate(int x1, int y1, int x2, int y2, int err, struct Viewer *d)
   snprintf(mes, sizeof(mes), _("Evaluating."));
   SetStatusBar(mes);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  ProgressDialogCreate(_("Evaluating"), evaluate_func, NULL, NULL);
+#else
   ProgressDialogCreate(_("Evaluating"));
 
   tot = 0;
@@ -2691,7 +2880,9 @@ Evaluate(int x1, int y1, int x2, int y2, int err, struct Viewer *d)
     if (tot >= limit) break;
   }
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   ProgressDialogFinalize();
+#endif
   ResetStatusBar();
 
   restorestdio(&save);
@@ -2700,6 +2891,7 @@ Evaluate(int x1, int y1, int x2, int y2, int err, struct Viewer *d)
     response_callback_add(&DlgEval, evaluate_response, NULL, d);
     DialogExecute(TopLevel, &DlgEval);
   }
+#endif
 }
 #else
 static void
@@ -2779,7 +2971,9 @@ Evaluate(int x1, int y1, int x2, int y2, int err, struct Viewer *d)
     if (tot >= limit) break;
   }
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   ProgressDialogFinalize();
+#endif
   ResetStatusBar();
 
   if (tot > 0) {
@@ -5245,10 +5439,14 @@ mouse_up_point(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
     Trimming(x1, y1, x2, y2);
     break;
   case DataB:
+#if GTK_CHECK_VERSION(4, 0, 0)
+    ViewerWinFileUpdate(x1, y1, x2, y2, err);
+#else
     if (ViewerWinFileUpdate(x1, y1, x2, y2, err)) {
       char *objects[] = {"data", NULL};
       UpdateAll(objects);
     }
+#endif
     break;
   case EvalB:
     Evaluate(x1, y1, x2, y2, err, d);
@@ -8498,45 +8696,60 @@ ReopenGC(void)
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-static void
-draw(int SelectFile)
-{
+struct draw_data {
   struct Viewer *d;
+  progress_func cb;
+  gpointer data;
+};
+
+static gpointer
+draw_finalize(gpointer user_data)
+{
+  int SelectFile;
+  struct Viewer *d;
+
+  d = (struct Viewer *) user_data;
+  ResetStatusBar();
+  gtk_widget_queue_draw(d->Win);
+  if (SelectFile) {
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
+  }
+}
+
+static void
+draw_func(gpointer user_data)
+{
   N_VALUE *gra_inst;
+  struct Viewer *d;
 
-  d = &NgraphApp.Viewer;
-
-  ProgressDialogCreate(_("Scaling"));
+  d = (struct Viewer *) user_data;
 
   FileAutoScale();
   AdjustAxis();
   FitClear();
 
-  SetStatusBar(_("Drawing."));
   ProgressDialogSetTitle(_("Drawing"));
-
   ReopenGC();
 
   gra_inst = chkobjinstoid(Menulocal.GRAobj, Menulocal.GRAoid);
-  if (gra_inst != NULL) {
+  if (gra_inst) {
     d->ignoreredraw = TRUE;
     _exeobj(Menulocal.GRAobj, "clear", gra_inst, 0, NULL);
-    //    reset_event();
-    /* XmUpdateDisplay(d->Win); */
     _exeobj(Menulocal.GRAobj, "draw", gra_inst, 0, NULL);
     _exeobj(Menulocal.GRAobj, "flush", gra_inst, 0, NULL);
     d->ignoreredraw = FALSE;
   }
+  ProgressDialogFinish();
+}
 
-  ResetStatusBar();
+static void
+draw(progress_func cb)
+{
+  struct Viewer *d;
 
-  ProgressDialogFinalize();
-
-  gtk_widget_queue_draw(d->Win);
-
-  if (SelectFile) {
-    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
-  }
+  d = &NgraphApp.Viewer;
+  SetStatusBar(_("Drawing."));
+  ProgressDialogCreate(_("Scaling"), draw_func, draw_finalize, d);
 }
 
 static void
@@ -8544,7 +8757,6 @@ draw_response(int res, gpointer user_data)
 {
   int SelectFile;
   if (res) {
-    SelectFile = GPOINTER_TO_INT(user_data);
     draw(SelectFile);
   }
 }
@@ -8554,7 +8766,7 @@ Draw(int SelectFile)
 {
   draw_notify(FALSE);
   if (SelectFile) {
-    SetFileHidden(draw_response, GINT_TO_POINTER(SelectFile));
+    SetFileHidden(draw_response, NULL);
     return;
   }
   draw(SelectFile);
@@ -8596,7 +8808,9 @@ Draw(int SelectFile)
 
   ResetStatusBar();
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   ProgressDialogFinalize();
+#endif
 
   gtk_widget_queue_draw(d->Win);
 

@@ -42,6 +42,7 @@ typedef void (* obj_response_cb) (int response, struct objlist *obj, int id, int
 void LoadNgpFile(const char *File, int console, const char *option, const char *cwd);
 void CheckSave(response_cb cb, gpointer user_data);
 void CheckIniFile(obj_response_cb cb, struct objlist *obj, int id, int modified);
+void ProgressDialogFinish(void);
 #else
 int LoadNgpFile(char *File, int console, char *option);
 int CheckSave(void);
@@ -59,11 +60,15 @@ char *FileCB(struct objlist *obj, int id);
 char *PlotFileCB(struct objlist *obj, int id);
 char *MergeFileCB(struct objlist *obj, int id);
 #if GTK_CHECK_VERSION(4, 0, 0)
+typedef void (* progress_func) (gpointer user_data);
+
 int SetFileHidden(response_cb cb, gpointer user_data);
+void ProgressDialogSetTitle(const char *title);
+void ProgressDialogCreate(char *title, progress_func update, progress_func finalize, gpointer data);
 #else
 int SetFileHidden(void);
-#endif
-void ProgressDialogCreate(char *title);
 void ProgressDialogSetTitle(char *title);
+void ProgressDialogCreate(char *title);
+#endif
 void ProgressDialogFinalize(void);
 void ErrorMessage(void);

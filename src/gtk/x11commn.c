@@ -57,7 +57,12 @@
 #define COMMENT_BUF_SIZE 1024
 
 static GtkWidget *ProgressDialog = NULL;
+#if GTK_CHECK_VERSION(4, 0, 0)
+#define PROGRESSBAR_N 2
+static GtkProgressBar *ProgressBar[PROGRESSBAR_N];
+#else
 static GtkProgressBar *ProgressBar, *ProgressBar2;
+#endif
 static unsigned int SaveCursor;
 
 static void AddNgpFileList(const char *file);
@@ -2473,7 +2478,6 @@ CheckIniFile_response(int ret, gpointer user_data)
   int id, modified;
   obj_response_cb cb;
   struct CheckIniFile_data *data;
-  gpointer d;
 
   data = (struct CheckIniFile_data *) user_data;
   id = data->id;
@@ -2581,6 +2585,204 @@ CheckIniFile(void)
 }
 #endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+struct progress_dialog_data {
+  GString *msg[2], *title;
+  double fraction[2];
+  guint tag;
+  GThread *thread;
+  progress_func update, finalize;
+  int finish;
+};
+static struct progress_dialog_data * ProgressDialogData = NULL;
+
+void
+ProgressDialogSetTitle(const char *title)
+{
+  if (ProgressDialogData) {
+    g_string_assign(ProgressDialogData->title, title);
+  }
+}
+
+static void
+show_progress(int pos, const char *msg, double fraction)
+{
+  int i;
+
+  if (! ProgressDialog)
+    return;
+
+  if (! ProgressDialogData)
+    return;
+
+  i = (pos) ? 1 : 0;
+
+  g_string_assign(ProgressDialogData->msg[i], msg);
+  ProgressDialogData->fraction[i] = fraction;
+}
+
+static void
+stop_btn_clicked(GtkButton *button, gpointer user_data)
+{
+  set_interrupt();
+}
+
+static gboolean
+progress_dialog_update(gpointer user_data)
+{
+  int i;
+  if (! ProgressDialogData  || ProgressDialogData->finish) {
+    g_thread_join(ProgressDialogData->thread);
+    if (ProgressDialogData->finalize) {
+      ProgressDialogData->finalize(user_data);
+    }
+    ProgressDialogFinalize();
+    return FALSE;
+  }
+  for (i = 0; i < PROGRESSBAR_N; i++) {
+    GtkProgressBar *bar;
+    double fraction;
+    const char *msg, *title;
+    bar = ProgressBar[i];
+    fraction = ProgressDialogData->fraction[i];
+    msg = ProgressDialogData->msg[i]->str;
+    title = ProgressDialogData->title->str;
+    if (fraction < 0) {
+      gtk_progress_bar_pulse(bar);
+    } else {
+      gtk_progress_bar_set_fraction(bar, fraction);
+    }
+    gtk_progress_bar_set_text(bar, msg);
+    gtk_window_set_title(GTK_WINDOW(ProgressDialog), title);
+  }
+  return TRUE;
+}
+
+static void
+create_progress_dialog(const char *title)
+{
+  GtkWidget *btn, *vbox, *hbox;
+
+  if (TopLevel == NULL)
+    return;
+
+  reset_interrupt();
+
+  SaveCursor = NGetCursor();
+  NSetCursor(GDK_WATCH);
+
+  set_draw_lock(DrawLockDraw);
+
+  if (ProgressDialog) {
+    ProgressDialogSetTitle(title);
+    show_progress(0, "", 0);
+    show_progress(1, "", 0);
+    set_progress_func(show_progress);
+    return;
+  }
+
+  ProgressDialog = gtk_window_new();
+  g_signal_connect(ProgressDialog, "close_request", G_CALLBACK(gtk_true), NULL);
+  gtk_window_set_title(GTK_WINDOW(ProgressDialog), title);
+
+  gtk_window_set_transient_for(GTK_WINDOW(ProgressDialog), GTK_WINDOW(TopLevel));
+  gtk_window_set_modal(GTK_WINDOW(ProgressDialog), TRUE);
+
+  vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
+
+  ProgressBar[0] = GTK_PROGRESS_BAR(gtk_progress_bar_new());
+  gtk_progress_bar_set_ellipsize(ProgressBar[0], PANGO_ELLIPSIZE_MIDDLE);
+  gtk_progress_bar_set_show_text(ProgressBar[0], TRUE);
+  gtk_box_append(GTK_BOX(vbox), GTK_WIDGET(ProgressBar[0]));
+
+  ProgressBar[1] = GTK_PROGRESS_BAR(gtk_progress_bar_new());
+  gtk_progress_bar_set_ellipsize(ProgressBar[1], PANGO_ELLIPSIZE_MIDDLE);
+  gtk_progress_bar_set_show_text(ProgressBar[1], TRUE);
+  gtk_box_append(GTK_BOX(vbox), GTK_WIDGET(ProgressBar[1]));
+
+  btn = gtk_button_new_with_mnemonic(_("_Stop"));
+  set_button_icon(btn, "process-stop");
+  g_signal_connect(btn, "clicked", G_CALLBACK(stop_btn_clicked), NULL);
+#if USE_HEADER_BAR
+  hbox = gtk_header_bar_new();
+#if ! GTK_CHECK_VERSION(4, 0, 0)
+  gtk_header_bar_set_title(GTK_HEADER_BAR(hbox), title);
+#endif
+  gtk_header_bar_pack_end(GTK_HEADER_BAR(hbox), btn);
+  gtk_window_set_titlebar(GTK_WINDOW(ProgressDialog), hbox);
+#else
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
+
+  gtk_box_pack_end(GTK_BOX(hbox), btn, FALSE, FALSE, 4);
+#endif
+  gtk_box_append(GTK_BOX(vbox), hbox);
+  gtk_window_set_child(GTK_WINDOW(ProgressDialog), vbox);
+
+  gtk_window_set_default_size(GTK_WINDOW(ProgressDialog), 400, -1);
+
+  set_progress_func(show_progress);
+}
+
+static gpointer
+ProgressDialog_thread(gpointer user_data)
+{
+  if (ProgressDialogData->update) {
+    ProgressDialogData->update(user_data);
+  }
+  return NULL;
+}
+
+void
+ProgressDialogFinish(void)
+{
+  if (ProgressDialogData) {
+    ProgressDialogData->finish = TRUE;
+  }
+}
+
+void
+ProgressDialogCreate(char *title, progress_func update, progress_func finalize, gpointer data)
+{
+  int i;
+  ProgressDialogData = g_malloc0(sizeof(*ProgressDialogData));
+  if (ProgressDialogData == NULL) {
+    return;
+  }
+  for (i = 0; i < PROGRESSBAR_N; i++) {
+    ProgressDialogData->msg[i] = g_string_new("");
+    ProgressDialogData->fraction[i] = 0;
+  }
+    ProgressDialogData->title = g_string_new("");
+  ProgressDialogData->update = update;
+  ProgressDialogData->finalize = finalize;
+  create_progress_dialog(title);
+  gtk_widget_show(ProgressDialog);
+  ProgressDialogData->thread = g_thread_new(NULL, ProgressDialog_thread, data);
+
+  ProgressDialogData->tag = g_timeout_add(100, progress_dialog_update, data);
+}
+
+void
+ProgressDialogFinalize(void)
+{
+  int i;
+  if (TopLevel == NULL)
+    return;
+
+  gtk_widget_hide(ProgressDialog);
+  NSetCursor(SaveCursor);
+  set_progress_func(NULL);
+
+  for (i = 0; i < PROGRESSBAR_N; i++) {
+    g_string_free(ProgressDialogData->msg[i], TRUE);
+  }
+  g_string_free(ProgressDialogData->title, TRUE);
+  g_free(ProgressDialogData);
+  ProgressDialogData = NULL;
+
+  set_draw_lock(DrawLockNone);
+}
+#else
 void
 ProgressDialogSetTitle(char *title)
 {
@@ -2729,6 +2931,7 @@ ProgressDialogFinalize(void)
   set_progress_func(NULL);
   set_draw_lock(DrawLockNone);
 }
+#endif
 
 void
 ErrorMessage(void)

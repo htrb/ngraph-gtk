@@ -7778,7 +7778,7 @@ save_data_response(char *file, gpointer user_data)
     return;
   }
 
-  ProgressDialogCreate(_("Making data file"));
+  ProgressDialogCreate(_("Making data file"), NULL, NULL, NULL);
   SetStatusBar(_("Making data file."));
 
   obj = chkobject("data");
@@ -7802,7 +7802,6 @@ save_data_response(char *file, gpointer user_data)
     if (exeobj(obj, "output_file", array[i], 3, argv))
       break;
   }
-  ProgressDialogFinalize();
   ResetStatusBar();
   main_window_redraw();
 

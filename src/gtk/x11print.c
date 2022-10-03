@@ -394,7 +394,11 @@ OutputImageDialog(struct OutputImageDialog *data, int type)
 static void
 draw_gra(struct objlist *graobj, int id, char *msg, int close)
 {
+#if GTK_CHECK_VERSION(4, 0, 0)
+  ProgressDialogCreate(msg, NULL, NULL, NULL);
+#else
   ProgressDialogCreate(msg);
+#endif
   SetStatusBar(msg);
 
   if (exeobj(graobj, "open", id, 0, NULL) == 0) {
@@ -405,7 +409,9 @@ draw_gra(struct objlist *graobj, int id, char *msg, int close)
     }
   }
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   ProgressDialogFinalize();
+#endif
   ResetStatusBar();
   main_window_redraw();
 }
