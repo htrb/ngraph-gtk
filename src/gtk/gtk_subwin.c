@@ -680,6 +680,44 @@ move_down(struct obj_list_data *d)
   }
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+struct swin_update_data {
+  int undo;
+  struct obj_list_data *d;
+};
+
+static int
+swin_update_response(struct response_callback *cb)
+{
+  struct swin_update_data *data;
+  struct obj_list_data *d;
+  int undo, sel;
+
+  data = (struct swin_update_data *) cb->data;
+  d = data->d;
+  undo = data->undo;
+  sel = d->select;
+  g_free(data);
+
+  switch (cb->return_value) {
+  case IDCANCEL:
+    menu_undo_internal(undo);
+    break;
+  case IDDELETE:
+    if (d->delete) {
+      d->delete(d, sel);
+    } else {
+      delobj(d->obj, sel);
+    }
+    d->select = -1;
+    d->update(d, FALSE, DRAW_REDRAW);
+    break;
+  default:
+    d->update(d, FALSE, DRAW_NOTIFY);
+  }
+}
+#endif
+
 static void
 swin_update(struct obj_list_data *d)
 {
