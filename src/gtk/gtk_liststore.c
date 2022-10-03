@@ -88,6 +88,17 @@ init_object_combo_box(GtkWidget *cbox)
 {
   GtkCellRenderer *rend;
   GtkTreeViewRowSeparatorFunc func;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  int count;
+
+  count = combo_box_get_num(cbox);
+  if (count > 0) {
+    GtkTreeStore *list;
+    list = GTK_TREE_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(cbox)));
+    gtk_tree_store_clear(list);
+    gtk_cell_layout_clear(GTK_CELL_LAYOUT(cbox));
+  }
+#endif
 
   func = gtk_combo_box_get_row_separator_func(GTK_COMBO_BOX(cbox));
   if (func == NULL) {
