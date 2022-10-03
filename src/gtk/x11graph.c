@@ -88,6 +88,17 @@ static struct pagelisttype pagelist[] = {
 #define PAGELISTNUM (sizeof(pagelist) / sizeof(*pagelist))
 #define DEFAULT_PAPER_SIZE 0
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+struct graph_page_data
+{
+  response_cb cb;
+  int sel;
+};
+
+static void GraphPage(int new_graph, struct graph_page_data *data);
+
+#endif
+
 int
 set_paper_type(int w, int h)
 {
@@ -1591,29 +1602,40 @@ CmGraphSwitch(void *w, gpointer client_data)
 static int
 CmGraphPage_response(struct response_callback *cb)
 {
+  struct graph_page_data *data;
+
+  data = (struct graph_page_data *) cb->data;
   if (cb->return_value == IDOK) {
     int new_graph;
     SetPageSettingsToGRA();
     ChangePage();
     GetPageSettingsFromGRA();
-    new_graph = GPOINTER_TO_INT(cb->data);
+    new_graph = ((struct PageDialog *) cb->dialog)->new_graph;
     if (! new_graph) {
       set_graph_modified_gra();
     }
   }
+  if (data) {
+    data->cb(cb->return_value, GINT_TO_POINTER(data->sel));
+    g_free(data);
+  }
   return cb->return_value;
+}
+
+static void
+GraphPage(int new_graph, struct graph_page_data *data)
+{
+  if (Menulock || Globallock)
+    return;
+  PageDialog(&DlgPage, new_graph);
+  response_callback_add(&DlgPage, CmGraphPage_response, NULL, data);
+  DialogExecute(TopLevel, &DlgPage);
 }
 
 void
 CmGraphPage(void *w, gpointer client_data)
 {
-  int new_graph;
-  new_graph = GPOINTER_TO_INT(client_data);
-  if (Menulock || Globallock)
-    return;
-  PageDialog(&DlgPage, new_graph);
-  response_callback_add(&DlgPage, CmGraphPage_response, NULL, client_data);
-  DialogExecute(TopLevel, &DlgPage);
+  GraphPage(GPOINTER_TO_INT(client_data), NULL);
 }
 #else
 void
