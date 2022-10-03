@@ -2987,7 +2987,7 @@ CmAxisAddFrame
 {
   enum TOOLBOX_MODE mode;
   mode = get_toolbox_mode();
-  CmAxisNewFrame(mode == TOOLBOX_MODE_SETTING_PANEL);
+  CmAxisNewFrame(mode == TOOLBOX_MODE_SETTING_PANEL, NULL);
 }
 
 void
@@ -3000,7 +3000,7 @@ CmAxisAddSection
 {
   enum TOOLBOX_MODE mode;
   mode = get_toolbox_mode();
-  CmAxisNewSection(mode == TOOLBOX_MODE_SETTING_PANEL);
+  CmAxisNewSection(mode == TOOLBOX_MODE_SETTING_PANEL, NULL);
 }
 
 void
@@ -3013,7 +3013,7 @@ CmAxisAddCross
 {
   enum TOOLBOX_MODE mode;
   mode = get_toolbox_mode();
-  CmAxisNewCross(mode == TOOLBOX_MODE_SETTING_PANEL);
+  CmAxisNewCross(mode == TOOLBOX_MODE_SETTING_PANEL, NULL);
 }
 
 static void
@@ -3032,29 +3032,50 @@ get_initial_axis_position(int *px, int *py)
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
+struct axis_new_data
+{
+  int undo;
+  response_cb cb;
+};
+
 static int
 axis_new_response(struct response_callback *cb)
 {
+  struct axis_new_data *data;
   int undo;
-  undo = GPOINTER_TO_INT(cb->data);
+  response_cb new_cb;
+  data = (struct axis_new_data *) cb->data;
+  undo = data->undo;
+  new_cb = data->cb;
+  g_free(data);
   if (cb->return_value == IDCANCEL) {
     menu_undo_internal(undo);
   } else {
     set_graph_modified();
   }
   AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
+  if (new_cb) {
+    new_cb(cb->return_value, NULL);
+  }
   return IDOK;
 }
 #endif
 
 void
-CmAxisNewFrame(int use_presettings)
+CmAxisNewFrame(int use_presettings
+#if GTK_CHECK_VERSION(4, 0, 0)
+               , response_cb cb
+#endif
+  )
 {
   struct objlist *obj, *obj2;
   int idx, idy, idu, idr, idg, ret;
   int type, x, y, lenx, leny, undo;
   struct narray group;
   char *argv[2];
+#if GTK_CHECK_VERSION(4, 0, 0)
+  struct axis_new_data *data;
+#endif
 
   if (Menulock || Globallock)
     return;
@@ -3062,6 +3083,12 @@ CmAxisNewFrame(int use_presettings)
     return;
   if ((obj2 = getobject("axisgrid")) == NULL)
     return;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  data = g_malloc0(sizeof(*data));
+  if (data == NULL) {
+    return;
+  }
+#endif
   undo = axis_save_undo(UNDO_TYPE_CREATE);
   idx = newobj(obj);
   idy = newobj(obj);
@@ -3095,9 +3122,12 @@ CmAxisNewFrame(int use_presettings)
   SectionDialog(&DlgSection, x, y, lenx, leny, obj, idx, idy, idu, idr, obj2,
 		&idg, FALSE);
 #if GTK_CHECK_VERSION(4, 0, 0)
-  /* must be implemented */
-  response_callback_add(&DlgSection, axis_new_response, NULL, GINT_TO_POINTER(undo));
+  data->undo = undo;
+  data->cb = cb;
+  response_callback_add(&DlgSection, axis_new_response, NULL, data);
   DialogExecute(TopLevel, &DlgSection);
+  SectionDialog(&DlgSection, x, y, lenx, leny, obj, idx, idy, idu, idr, obj2,
+		&idg, FALSE);
 #else
   ret = DialogExecute(TopLevel, &DlgSection);
   if (ret == IDCANCEL) {
@@ -3110,13 +3140,20 @@ CmAxisNewFrame(int use_presettings)
 }
 
 void
-CmAxisNewSection(int use_presettings)
+CmAxisNewSection(int use_presettings
+#if GTK_CHECK_VERSION(4, 0, 0)
+               , response_cb cb
+#endif
+  )
 {
   struct objlist *obj, *obj2;
   int idx, idy, idu, idr, idg, ret, oidx, oidy, undo;
   int type, x, y, lenx, leny;
   struct narray group;
   char *argv[2];
+#if GTK_CHECK_VERSION(4, 0, 0)
+  struct axis_new_data *data;
+#endif
 
   if (Menulock || Globallock)
     return;
@@ -3124,6 +3161,12 @@ CmAxisNewSection(int use_presettings)
     return;
   if ((obj2 = getobject("axisgrid")) == NULL)
     return;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  data = g_malloc0(sizeof(*data));
+  if (data == NULL) {
+    return;
+  }
+#endif
   undo = axis_save_undo(UNDO_TYPE_CREATE);
   idx = newobj(obj);
   idy = newobj(obj);
@@ -3172,7 +3215,9 @@ CmAxisNewSection(int use_presettings)
 		&idg, TRUE);
 #if GTK_CHECK_VERSION(4, 0, 0)
   /* must be implemented */
-  response_callback_add(&DlgSection, axis_new_response, NULL, GINT_TO_POINTER(undo));
+  data->undo = undo;
+  data->cb = cb;
+  response_callback_add(&DlgSection, axis_new_response, NULL, data);
   DialogExecute(TopLevel, &DlgSection);
 #else
   ret = DialogExecute(TopLevel, &DlgSection);
@@ -3186,18 +3231,31 @@ CmAxisNewSection(int use_presettings)
 }
 
 void
-CmAxisNewCross(int use_presettings)
+CmAxisNewCross(int use_presettings
+#if GTK_CHECK_VERSION(4, 0, 0)
+               , response_cb cb
+#endif
+)
 {
   struct objlist *obj;
   int idx, idy, ret;
   int type, x, y, lenx, leny, undo;
   struct narray group;
   char *argv[2];
+#if GTK_CHECK_VERSION(4, 0, 0)
+  struct axis_new_data *data;
+#endif
 
   if (Menulock || Globallock)
     return;
   if ((obj = chkobject("axis")) == NULL)
     return;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  data = g_malloc0(sizeof(*data));
+  if (data == NULL) {
+    return;
+  }
+#endif
   undo = axis_save_undo(UNDO_TYPE_CREATE);
   idx = newobj(obj);
   idy = newobj(obj);
@@ -3224,7 +3282,9 @@ CmAxisNewCross(int use_presettings)
   CrossDialog(&DlgCross, x, y, lenx, leny, obj, idx, idy);
 #if GTK_CHECK_VERSION(4, 0, 0)
   /* must be implemented */
-  response_callback_add(&DlgCross, axis_new_response, NULL, GINT_TO_POINTER(undo));
+  data->undo = undo;
+  data->cb = cb;
+  response_callback_add(&DlgCross, axis_new_response, NULL, data);
   DialogExecute(TopLevel, &DlgCross);
 #else
   ret = DialogExecute(TopLevel, &DlgCross);

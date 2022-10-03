@@ -23,9 +23,15 @@
 
 char *AxisCB(struct objlist *obj, int id);
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+void CmAxisNewFrame(int use_presettings, response_cb cb);
+void CmAxisNewSection(int use_presettings, response_cb cb);
+void CmAxisNewCross(int use_presettings, response_cb cb);
+#else
 void CmAxisNewFrame(int use_presettings);
 void CmAxisNewSection(int use_presettings);
 void CmAxisNewCross(int use_presettings);
+#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 void CmAxisAddFrame(GSimpleAction *action, GVariant *parameter, gpointer client_data);

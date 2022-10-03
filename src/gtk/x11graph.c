@@ -1383,6 +1383,17 @@ draw_callback(gpointer user_data)
 }
 
 static void
+graph_new_cb_response(int res, gpointer user_data)
+{
+
+  SetFileName(NULL);
+  set_axis_undo_button_sensitivity(FALSE);
+  reset_graph_modified();
+
+  Draw(FALSE, draw_callback, NULL);
+}
+
+static void
 graph_new_cb(int response, gpointer user_data)
 {
   int sel;
@@ -1395,24 +1406,19 @@ graph_new_cb(int response, gpointer user_data)
   sel = GPOINTER_TO_INT(user_data);
   switch (sel) {
   case MenuIdGraphNewFrame:
-    CmAxisNewFrame(FALSE);
+    CmAxisNewFrame(FALSE, graph_new_cb_response);
     break;
   case MenuIdGraphNewSection:
-    CmAxisNewSection(FALSE);
+    CmAxisNewSection(FALSE, graph_new_cb_response);
     break;
   case MenuIdGraphNewCross:
-    CmAxisNewCross(FALSE);
+    CmAxisNewCross(FALSE, graph_new_cb_response);
     break;
   case MenuIdGraphAllClear:
+    graph_new_cb_response(IDOK, NULL);
   default:
     break;
   }
-
-  SetFileName(NULL);
-  set_axis_undo_button_sensitivity(FALSE);
-  reset_graph_modified();
-
-  Draw(TRUE, draw_callback, NULL);
 }
 
 static void
