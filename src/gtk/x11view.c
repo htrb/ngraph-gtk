@@ -8697,23 +8697,29 @@ ReopenGC(void)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 struct draw_data {
-  struct Viewer *d;
-  progress_func cb;
+  int select_file;
+  draw_cb cb;
   gpointer data;
 };
 
-static gpointer
+static void
 draw_finalize(gpointer user_data)
 {
-  int SelectFile;
   struct Viewer *d;
+  struct draw_data *data;
 
-  d = (struct Viewer *) user_data;
+  data = (struct draw_data *) user_data;
+
+  d = &NgraphApp.Viewer;
   ResetStatusBar();
   gtk_widget_queue_draw(d->Win);
-  if (SelectFile) {
+  if (data->select_file) {
     FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
   }
+  if (data->cb) {
+    data->cb(data->data);
+  }
+  g_free(data);
 }
 
 static void
@@ -8722,7 +8728,7 @@ draw_func(gpointer user_data)
   N_VALUE *gra_inst;
   struct Viewer *d;
 
-  d = (struct Viewer *) user_data;
+  d = &NgraphApp.Viewer;
 
   FileAutoScale();
   AdjustAxis();
@@ -8743,33 +8749,39 @@ draw_func(gpointer user_data)
 }
 
 static void
-draw(progress_func cb)
+draw(struct draw_data *data)
 {
-  struct Viewer *d;
-
-  d = &NgraphApp.Viewer;
   SetStatusBar(_("Drawing."));
-  ProgressDialogCreate(_("Scaling"), draw_func, draw_finalize, d);
+  ProgressDialogCreate(_("Scaling"), draw_func, draw_finalize, data);
 }
 
 static void
 draw_response(int res, gpointer user_data)
 {
-  int SelectFile;
   if (res) {
-    draw(SelectFile);
+    struct draw_data *data;
+    data = (struct draw_data *) user_data;
+    draw(data);
   }
 }
 
 void
-Draw(int SelectFile)
+Draw(int SelectFile, draw_cb cb, gpointer user_data)
 {
-  draw_notify(FALSE);
-  if (SelectFile) {
-    SetFileHidden(draw_response, NULL);
+  struct draw_data *data;
+  data = g_malloc0(sizeof(*data));
+  if (data == NULL) {
     return;
   }
-  draw(SelectFile);
+  data->cb = cb;
+  data->select_file = SelectFile;
+  data->data = user_data;
+  draw_notify(FALSE);
+  if (SelectFile) {
+    SetFileHidden(draw_response, data);
+    return;
+  }
+  draw(data);
 }
 #else
 void
@@ -8820,6 +8832,27 @@ Draw(int SelectFile)
 }
 #endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+viewer_draw_finalize(gpointer user_data)
+{
+  FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
+  AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, DRAW_NONE);
+}
+
+void
+CmViewerDraw(void *w, gpointer client_data)
+{
+  int select_file;
+
+  if (Menulock || Globallock)
+    return;
+
+  select_file = GPOINTER_TO_INT(client_data);
+
+  Draw(select_file, viewer_draw_finalize, NULL);
+}
+#else
 void
 CmViewerDraw(void *w, gpointer client_data)
 {
@@ -8835,6 +8868,7 @@ CmViewerDraw(void *w, gpointer client_data)
   FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
   AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, DRAW_NONE);
 }
+#endif
 
 static int
 search_axis_group(struct objlist *obj, int id, const char *group,

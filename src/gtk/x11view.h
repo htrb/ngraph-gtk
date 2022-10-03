@@ -65,14 +65,16 @@ void SetScroller(void);
 void Focus(struct objlist *fobj, int id, enum FOCUS_MODE mode);
 void UnFocus(void);
 void ChangeDPI(void);
-void Draw(int SelectFile);
 void CmViewerClear(void *w, gpointer client_data);
 void CmViewerDraw(void *w, gpointer client_data);
 #if GTK_CHECK_VERSION(4, 0, 0)
+typedef void (* draw_cb) (gpointer);
+void Draw(int SelectFile, draw_cb cb, gpointer user_data);
 void CmViewerButtonPressed(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y, gpointer user_data);
 int data_dropped(struct narray *filenames, int file_type);
 struct narray *get_dropped_files(const GValue* value);
 #else
+void Draw(int SelectFile);
 gboolean CmViewerButtonPressed(GtkWidget *widget, GdkEventButton *event, gpointer user_data);
 int data_dropped(char **filenames, int num, int file_type);
 #endif

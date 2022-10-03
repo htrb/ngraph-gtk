@@ -2214,7 +2214,7 @@ FitDialogDraw(GtkWidget *w, gpointer client_data)
   if (!FitDialogApply(d->widget, d))
     return;
   FitDialogSetupItem(d->widget, d, d->Id);
-  Draw(FALSE);
+  Draw(FALSE, NULL, NULL);
 }
 
 static void

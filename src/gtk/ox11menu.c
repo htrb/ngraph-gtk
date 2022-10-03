@@ -1932,7 +1932,7 @@ mxdraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
     return 1;
   }
 
-  Draw(FALSE);
+  Draw(FALSE, NULL, NULL);
   return 0;
 }
 
