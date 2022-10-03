@@ -3135,21 +3135,21 @@ application(char *file)
   set_signal(SIGTERM, 0, term_signal_handler, NULL);
 #endif	/* WINDOWS */
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  g_idle_add_once(initial_draw, file);
+#else
   if (file != NULL) {
     char *ext;
     ext = getextention(file);
     if (ext && ((strcmp0(ext, "NGP") == 0) || (strcmp0(ext, "ngp") == 0))) {
-#if GTK_CHECK_VERSION(4, 0, 0)
-      LoadNgpFile(file, FALSE, NULL, NULL);
-#else
       LoadNgpFile(file, FALSE, NULL);
-#endif
     } else {
       CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
     }
   } else {
     CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
   }
+#endif
 
   system_set_draw_notify_func(draw_notify);
 #if GTK_CHECK_VERSION(4, 0, 0)
