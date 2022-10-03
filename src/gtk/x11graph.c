@@ -1383,17 +1383,15 @@ draw_callback(gpointer user_data)
 }
 
 static void
-CmGraphNewMenu_response(int ret, gpointer user_data)
+graph_new_cb(int response, gpointer user_data)
 {
   int sel;
 
-  if (! ret) {
+  if (response != IDOK) {
     return;
   }
 
   DeleteDrawable();
-
-  CmGraphPage(NULL, GINT_TO_POINTER(TRUE));
   sel = GPOINTER_TO_INT(user_data);
   switch (sel) {
   case MenuIdGraphNewFrame:
@@ -1415,6 +1413,24 @@ CmGraphNewMenu_response(int ret, gpointer user_data)
   reset_graph_modified();
 
   Draw(TRUE, draw_callback, NULL);
+}
+
+static void
+CmGraphNewMenu_response(int ret, gpointer user_data)
+{
+  struct graph_page_data *data;
+
+  if (! ret) {
+    return;
+  }
+
+  data = g_malloc0(sizeof(*data));
+  if (data == NULL) {
+    return;
+  }
+  data->cb = graph_new_cb;
+  data->sel = GPOINTER_TO_INT(user_data);
+  GraphPage(TRUE, data);
 }
 
 void
