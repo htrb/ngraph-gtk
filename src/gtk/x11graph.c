@@ -286,7 +286,9 @@ PageDialogSetup(GtkWidget *wi, void *data, int makewidget)
 #endif
   }
   PageDialogSetupItem(wi, d);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   d->show_cancel = ! d->new_graph;
+#endif
 }
 
 static void
