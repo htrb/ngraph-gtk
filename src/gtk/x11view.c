@@ -2743,39 +2743,60 @@ evaluate_response(struct response_callback *cb)
   return IDOK;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-static void
-evaluate_func(gpointer user_data)
+struct evaluate_data
 {
   struct Viewer *d;
   struct objlist *fileobj;
-  char *argv[7];
-  int evalnum, tot;
-  int snum, hidden;
-  int limit;
-  int i, j;
-  struct narray *eval;
   int minx, miny, maxx, maxy;
+  int err, limit, snum, tot;
+  char *argv[7];
+};
+
+static void
+evaluate_finalize(gpointer user_data)
+{
+  struct evaluate_data *data;
+  data = (struct evaluate_data *) user_data;
+  ResetStatusBar();
+
+  if (data->tot > 0) {
+    EvalDialog(&DlgEval, data->fileobj, data->tot, &SelList);
+    response_callback_add(&DlgEval, evaluate_response, NULL, data->d);
+    DialogExecute(TopLevel, &DlgEval);
+  }
+  g_free(data);
+}
+
+static void
+evaluate_main(gpointer user_data)
+{
+  int evalnum;
+  int tot;
+  int i, j, hidden;
+  struct narray *eval;
   struct savedstdio save;
   double line, dx, dy;
-  char mes[256];
+  struct evaluate_data *data;
+
+  data = (struct evaluate_data *) user_data;
   tot = 0;
 
-  for (i = 0; i < snum; i++) {
+  ignorestdio(&save);
+  for (i = 0; i < data->snum; i++) {
     N_VALUE *dinst;
-    dinst = chkobjinst(fileobj, i);
+    dinst = chkobjinst(data->fileobj, i);
     if (dinst == NULL) {
       continue;
     }
-    _getobj(fileobj, "hidden", dinst, &hidden);
+    _getobj(data->fileobj, "hidden", dinst, &hidden);
     if (hidden) {
       continue;
     }
-    _exeobj(fileobj, "evaluate", dinst, 6, argv);
-    _getobj(fileobj, "evaluate", dinst, &eval);
+    _exeobj(data->fileobj, "evaluate", dinst, 6, data->argv);
+    _getobj(data->fileobj, "evaluate", dinst, &eval);
     evalnum = arraynum(eval) / 3;
     for (j = 0; j < evalnum; j++) {
-      if (tot >= limit) break;
+      if (tot >= data->limit) break;
       tot++;
       line = arraynget_double(eval, j * 3 + 0);
       dx = arraynget_double(eval, j * 3 + 1);
@@ -2785,53 +2806,24 @@ evaluate_func(gpointer user_data)
       EvalList[tot - 1].x = dx;
       EvalList[tot - 1].y = dy;
     }
-    if (tot >= limit) break;
+    if (tot >= data->limit) break;
   }
-  set_interrupt();
-
-  ResetStatusBar();
-
+  data->tot = tot;
   restorestdio(&save);
-  if (tot > 0) {
-    EvalDialog(&DlgEval, fileobj, tot, &SelList);
-    response_callback_add(&DlgEval, evaluate_response, NULL, d);
-    DialogExecute(TopLevel, &DlgEval);
-  }
+  ProgressDialogFinish();
 }
-#endif
 
 static void
 Evaluate(int x1, int y1, int x2, int y2, int err, struct Viewer *d)
 {
   struct objlist *fileobj;
-  char *argv[7];
-  int snum, hidden;
-  int limit;
-  int i, j;
-  struct narray *eval;
-  int evalnum, tot;
-  int minx, miny, maxx, maxy;
-  struct savedstdio save;
-  double line, dx, dy;
+  int snum;
   char mes[256];
+  struct evaluate_data *data;
 
-  minx = (x1 < x2) ? x1 : x2;
-  miny = (y1 < y2) ? y1 : y2;
-  maxx = (x1 > x2) ? x1 : x2;
-  maxy = (y1 > y2) ? y1 : y2;
-
-  limit = EVAL_NUM_MAX;
-
-  argv[0] = (char *) &minx;
-  argv[1] = (char *) &miny;
-  argv[2] = (char *) &maxx;
-  argv[3] = (char *) &maxy;
-  argv[4] = (char *) &err;
-  argv[5] = (char *) &limit;
-  argv[6] = NULL;
-
-  if ((fileobj = chkobject("data")) == NULL)
+  if ((fileobj = chkobject("data")) == NULL) {
     return;
+  }
 
   if (check_drawrable(fileobj)) {
     return;
@@ -2841,57 +2833,34 @@ Evaluate(int x1, int y1, int x2, int y2, int err, struct Viewer *d)
   if (snum == 0) {
     return;
   }
-  ignorestdio(&save);
+
+  data = g_malloc0(sizeof(*data));
+  if (data == NULL) {
+    return;
+  }
+  data->minx = (x1 < x2) ? x1 : x2;
+  data->miny = (y1 < y2) ? y1 : y2;
+  data->maxx = (x1 > x2) ? x1 : x2;
+  data->maxy = (y1 > y2) ? y1 : y2;
+
+  data->limit = EVAL_NUM_MAX;
+
+  data->argv[0] = (char *) &data->minx;
+  data->argv[1] = (char *) &data->miny;
+  data->argv[2] = (char *) &data->maxx;
+  data->argv[3] = (char *) &data->maxy;
+  data->argv[4] = (char *) &data->err;
+  data->argv[5] = (char *) &data->limit;
+  data->argv[6] = NULL;
+
+  data->fileobj = fileobj;
+  data->snum = snum;
+  data->d = d;
 
   snprintf(mes, sizeof(mes), _("Evaluating."));
   SetStatusBar(mes);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-  ProgressDialogCreate(_("Evaluating"), evaluate_func, NULL, NULL);
-#else
-  ProgressDialogCreate(_("Evaluating"));
-
-  tot = 0;
-
-  for (i = 0; i < snum; i++) {
-    N_VALUE *dinst;
-    dinst = chkobjinst(fileobj, i);
-    if (dinst == NULL) {
-      continue;
-    }
-    _getobj(fileobj, "hidden", dinst, &hidden);
-    if (hidden) {
-      continue;
-    }
-    _exeobj(fileobj, "evaluate", dinst, 6, argv);
-    _getobj(fileobj, "evaluate", dinst, &eval);
-    evalnum = arraynum(eval) / 3;
-    for (j = 0; j < evalnum; j++) {
-      if (tot >= limit) break;
-      tot++;
-      line = arraynget_double(eval, j * 3 + 0);
-      dx = arraynget_double(eval, j * 3 + 1);
-      dy = arraynget_double(eval, j * 3 + 2);
-      EvalList[tot - 1].id = i;
-      EvalList[tot - 1].line = nround(line);
-      EvalList[tot - 1].x = dx;
-      EvalList[tot - 1].y = dy;
-    }
-    if (tot >= limit) break;
-  }
-
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  ProgressDialogFinalize();
-#endif
-  ResetStatusBar();
-
-  restorestdio(&save);
-  if (tot > 0) {
-    EvalDialog(&DlgEval, fileobj, tot, &SelList);
-    response_callback_add(&DlgEval, evaluate_response, NULL, d);
-    DialogExecute(TopLevel, &DlgEval);
-  }
-#endif
+  ProgressDialogCreate(_("Evaluating"), evaluate_main, evaluate_finalize, data);
 }
 #else
 static void
