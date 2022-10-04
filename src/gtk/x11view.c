@@ -2483,7 +2483,7 @@ fileupdate_func(gpointer user_data)
 {
   struct objlist *fileobj;
   int snum, hidden;
-  int i, did, limit;
+  int i, did;
   N_VALUE *dinst;
   struct narray *dfile;
   struct fileupdate_data *data;
