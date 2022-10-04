@@ -391,12 +391,11 @@ OutputImageDialog(struct OutputImageDialog *data, int type)
   data->DlgType = type;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 draw_gra(struct objlist *graobj, int id, char *msg, int close)
 {
-#if GTK_CHECK_VERSION(4, 0, 0)
-  ProgressDialogCreate(msg, NULL, NULL, NULL);
-#else
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   ProgressDialogCreate(msg);
 #endif
   SetStatusBar(msg);
