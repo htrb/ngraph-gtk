@@ -2624,18 +2624,13 @@ ViewerWinFileUpdate(int x1, int y1, int x2, int y2, int err)
     goto End;
   }
 
-#if ! GTK_CHECK_VERSION(4, 0, 0)
   dfile = arraynew(sizeof(int));
   if (dfile == NULL) {
     goto End;
   }
-#endif
 
   snprintf(mes, sizeof(mes), _("Searching for data."));
   SetStatusBar(mes);
-#if GTK_CHECK_VERSION(4, 0, 0)
- End:
-#else
   ProgressDialogCreate(_("Searching for data."));
 
   for (i = 0; i < snum; i++) {
@@ -2656,16 +2651,13 @@ ViewerWinFileUpdate(int x1, int y1, int x2, int y2, int err)
     }
   }
 
-#if ! GTK_CHECK_VERSION(4, 0, 0)
   ProgressDialogFinalize();
-#endif
   ResetStatusBar();
 
   ret = update_file_obj_multi(fileobj, dfile, FALSE);
   arrayfree(dfile);
  End:
   restorestdio(&save);
-#endif
   return ret;
 }
 #endif
