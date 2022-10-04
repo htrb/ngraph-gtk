@@ -3439,8 +3439,12 @@ DisplayDialog(const char *str)
   if (ustr == NULL) {
     return;
   }
+#if GTK_CHECK_VERSION(4, 0, 0)
+  g_idle_add_once(display_dialog_main, ustr);
+#else
   InfoWinDrawInfoText(ustr);
   g_free(ustr);
+#endif
 }
 
 int
