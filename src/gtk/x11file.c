@@ -7777,23 +7777,42 @@ GetDrawFiles(struct narray *farray)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
-static void
-save_data_response(char *file, gpointer user_data)
+struct save_data_data
 {
+  char *file;
+  struct narray *farray;
+};
+
+static void
+save_data_finalize(gpointer user_data)
+{
+  struct save_data_data *data;
+  char *msg;
+
+  data = (struct save_data_data *) user_data;
+  arrayfree(data->farray);
+  g_free(data->file);
+  g_free(data);
+
+  ResetStatusBar();
+  main_window_redraw();
+}
+
+static void
+save_data_main(gpointer user_data)
+{
+  char *file;
   struct narray *farray;
   struct objlist *obj;
   char buf[1024];
   int i, *array, num, onum;
   char *argv[4];
+  struct savedstdio save;
+  struct save_data_data *data;
 
-  farray = (struct narray *) user_data;
-  if (file == NULL) {
-    arrayfree(farray);
-    return;
-  }
-
-  ProgressDialogCreate(_("Making data file"), NULL, NULL, NULL);
-  SetStatusBar(_("Making data file."));
+  data = (struct save_data_data *) user_data;
+  file = data->file;
+  farray = data->farray;
 
   obj = chkobject("data");
   array = arraydata(farray);
@@ -7813,14 +7832,28 @@ save_data_response(char *file, gpointer user_data)
 
     append = (i == 0) ? FALSE : TRUE;
     argv[2] = (char *) &append;
-    if (exeobj(obj, "output_file", array[i], 3, argv))
+    if (exeobj(obj, "output_file", array[i], 3, argv)) {
       break;
+    }
   }
-  ResetStatusBar();
-  main_window_redraw();
 
-  arrayfree(farray);
-  g_free(file);
+  ProgressDialogFinish();
+}
+
+static void
+save_data_response(char *file, gpointer user_data)
+{
+  struct save_data_data *data;
+  data = g_malloc0(sizeof(*data));
+  if (data == NULL) {
+    arrayfree((struct narray *) user_data);
+    g_free(file);
+    return;
+  }
+  data->file = file;
+  data->farray = (struct narray *) user_data;
+  SetStatusBar(_("Making data file."));
+  ProgressDialogCreate(_("Making data file"), save_data_main, save_data_finalize, data);
 }
 
 static void
