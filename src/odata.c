@@ -10334,14 +10334,12 @@ save_data_file(struct objlist *obj, N_VALUE *inst, struct f2dlocal *f2dlocal,
 
   if (fp->need2pass || fp->final < -1) {
     if (getminmaxdata(fp, f2dlocal)==-1) {
-      closedata(fp, f2dlocal);
       error2(obj, ERRREAD, data_file);
       return 1;
     }
     reopendata(fp);
   }
   if (hskipdata(fp)!=0) {
-    closedata(fp, f2dlocal);
     error2(obj, ERRREAD, data_file);
     return 1;
   }
@@ -10350,7 +10348,6 @@ save_data_file(struct objlist *obj, N_VALUE *inst, struct f2dlocal *f2dlocal,
   if (fp2 == NULL) {
     //    error2(obj, ERROPEN, file);
     error22(obj, ERRUNKNOWN, g_strerror(errno), file);
-    closedata(fp, f2dlocal);
     return 1;
   }
 
@@ -10361,7 +10358,6 @@ save_data_file(struct objlist *obj, N_VALUE *inst, struct f2dlocal *f2dlocal,
   if (type==3) {
     _getobj(obj,"interpolation",inst,&intp);
     if (curveoutfile(obj,fp,fp2,intp,div)!=0) {
-      closedata(fp, f2dlocal);
       fclose(fp2);
       error2(obj, ERRWRITE, file);
       return 1;
