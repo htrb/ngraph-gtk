@@ -69,6 +69,7 @@ static void AddNgpFileList(const char *file);
 static void ToFullPath(void);
 static void ToBasename(void);
 static void ToRalativePath(void);
+static void ProgressDialogFinalize(void);
 
 void
 OpenGRA(void)
@@ -2767,7 +2768,7 @@ ProgressDialogCreate(char *title, progress_func update, progress_func finalize, 
   ProgressDialogData->tag = g_timeout_add(100, progress_dialog_update, data);
 }
 
-void
+static void
 ProgressDialogFinalize(void)
 {
   int i;

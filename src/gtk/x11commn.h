@@ -69,6 +69,6 @@ void ProgressDialogCreate(char *title, progress_func update, progress_func final
 int SetFileHidden(void);
 void ProgressDialogSetTitle(char *title);
 void ProgressDialogCreate(char *title);
-#endif
 void ProgressDialogFinalize(void);
+#endif
 void ErrorMessage(void);
