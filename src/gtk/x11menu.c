@@ -3416,6 +3416,17 @@ NSetCursor(unsigned int type)
   }
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+display_dialog_main(gpointer user_data)
+{
+  char *ustr;
+  ustr = (char *) user_data;
+  InfoWinDrawInfoText(ustr);
+  g_free(ustr);
+}
+#endif
+
 void
 DisplayDialog(const char *str)
 {
