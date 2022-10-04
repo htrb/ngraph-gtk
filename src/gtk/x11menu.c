@@ -3484,9 +3484,13 @@ PutStderr(const char *s)
   if (ustr == NULL) {
     return 0;
   }
-  message_box(NULL, ustr, _("Error:"), RESPONS_ERROR);
   len = strlen(ustr);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  g_idle_add_once(put_stderr_main, ustr);
+#else
+  message_box(NULL, ustr, _("Error:"), RESPONS_ERROR);
   g_free(ustr);
+#endif
   return len + 1;
 }
 
