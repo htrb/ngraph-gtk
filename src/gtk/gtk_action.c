@@ -377,6 +377,9 @@ toggle_action(GSimpleAction *action, GVariant *parameter, enum MenuID id)
 {
   int state;
 
+  if (Menulock || Globallock) {
+    return;
+  }
   state = g_variant_get_boolean(parameter);
   if (toggle_view(id, state)) {
     g_simple_action_set_state(action, parameter);
