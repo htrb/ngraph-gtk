@@ -1688,6 +1688,21 @@ CmGraphDirectory(void *w, gpointer client_data)
   DialogExecute(TopLevel, &DlgDirectory);
 }
 
+#if ! USE_EVENT_LOOP
+static void
+graph_shell_finalize(gpointer user_data)
+{
+  GThread *thread;
+
+  thread = (GThread *) user_data;
+
+  menu_lock(FALSE);
+  set_graph_modified();
+  UpdateAll(NULL);
+
+  g_thread_join(thread);
+}
+#endif
 void
 CmGraphShell(void *w, gpointer client_data)
 {
