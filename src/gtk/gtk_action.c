@@ -366,6 +366,9 @@ ViewDrawAction_activated(GSimpleAction *action, GVariant *parameter, gpointer ap
 static void
 ViewClearInformationWindowAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
+  if (Menulock || Globallock) {
+    return;
+  }
   InfoWinClear();
 }
 
