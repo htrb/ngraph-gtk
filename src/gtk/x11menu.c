@@ -3197,7 +3197,9 @@ application(char *file)
 #endif	/* WINDOWS */
 
   gtk_widget_hide(TopLevel);
+#if !  GTK_CHECK_VERSION(4, 0, 0)
   reset_event();
+#endif
 
   CloseGC();
   CloseGRA();
@@ -3221,7 +3223,9 @@ application(char *file)
     free_markpixmap();
     free_cursor();
 
+#if !  GTK_CHECK_VERSION(4, 0, 0)
     reset_event();
+#endif
     delobj(getobject("system"), 0);
   }
 
