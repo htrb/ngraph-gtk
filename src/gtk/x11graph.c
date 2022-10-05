@@ -1726,6 +1726,8 @@ graph_shell_main(gpointer user_data)
   return NULL;
 }
 #endif
+
+#if USE_EVENT_LOOP
 void
 CmGraphShell(void *w, gpointer client_data)
 {
@@ -1758,6 +1760,18 @@ CmGraphShell(void *w, gpointer client_data)
   set_graph_modified();
   UpdateAll(NULL);
 }
+#else
+void
+CmGraphShell(void *w, gpointer client_data)
+{
+  if (Menulock || Globallock) {
+    return;
+  }
+  menu_lock(TRUE);
+  menu_save_undo(UNDO_TYPE_SHLL, NULL);
+  g_thread_new(NULL, graph_shell_main, NULL);
+}
+#endif
 
 void
 CmGraphQuit(void *w, gpointer client_data)
