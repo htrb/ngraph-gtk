@@ -932,7 +932,7 @@ static void
 CmPrintGRAFile(void)
 {
   struct objlist *graobj, *g2wobj;
-  int id, g2wid, g2woid, ret;
+  int id, g2wid, g2woid;
   N_VALUE *g2winst;
   char *tmp, *file;
   int chd;
