@@ -7836,8 +7836,6 @@ save_data_main(gpointer user_data)
       break;
     }
   }
-
-  ProgressDialogFinish();
 }
 
 static void

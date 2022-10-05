@@ -42,7 +42,6 @@ typedef void (* obj_response_cb) (int response, struct objlist *obj, int id, int
 void LoadNgpFile(const char *File, int console, const char *option, const char *cwd);
 void CheckSave(response_cb cb, gpointer user_data);
 void CheckIniFile(obj_response_cb cb, struct objlist *obj, int id, int modified);
-void ProgressDialogFinish(void);
 #else
 int LoadNgpFile(char *File, int console, char *option);
 int CheckSave(void);

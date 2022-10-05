@@ -2735,15 +2735,8 @@ ProgressDialog_thread(gpointer user_data)
   if (ProgressDialogData->update) {
     ProgressDialogData->update(user_data);
   }
+  ProgressDialogData->finish = TRUE;
   return NULL;
-}
-
-void
-ProgressDialogFinish(void)
-{
-  if (ProgressDialogData) {
-    ProgressDialogData->finish = TRUE;
-  }
 }
 
 void
@@ -2758,9 +2751,10 @@ ProgressDialogCreate(char *title, progress_func update, progress_func finalize, 
     ProgressDialogData->msg[i] = g_string_new("");
     ProgressDialogData->fraction[i] = 0;
   }
-    ProgressDialogData->title = g_string_new("");
+  ProgressDialogData->title = g_string_new("");
   ProgressDialogData->update = update;
   ProgressDialogData->finalize = finalize;
+  ProgressDialogData->finish = FALSE;
   create_progress_dialog(title);
   gtk_widget_show(ProgressDialog);
   ProgressDialogData->thread = g_thread_new(NULL, ProgressDialog_thread, data);

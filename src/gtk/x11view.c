@@ -2519,8 +2519,6 @@ fileupdate_func(gpointer user_data)
   }
 
   restorestdio(&data->save);
-  ProgressDialogFinish();
-  return;
 }
 
 static void
@@ -2802,7 +2800,6 @@ evaluate_main(gpointer user_data)
   }
   data->tot = tot;
   restorestdio(&save);
-  ProgressDialogFinish();
 }
 
 static void
@@ -8706,7 +8703,6 @@ draw_func(gpointer user_data)
     _exeobj(Menulocal.GRAobj, "flush", gra_inst, 0, NULL);
     d->ignoreredraw = FALSE;
   }
-  ProgressDialogFinish();
 }
 
 static void
