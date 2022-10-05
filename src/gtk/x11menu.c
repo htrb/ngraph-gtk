@@ -73,7 +73,9 @@ GtkWidget *TopLevel = NULL, *DrawButton = NULL;
 
 static GtkWidget *CurrentWindow = NULL, *CToolbar = NULL, *PToolbar = NULL, *SettingPanel = NULL, *ToolBox = NULL, *RecentGraphMenu = NULL, *RecentDataMenu = NULL;
 static enum {APP_CONTINUE, APP_QUIT, APP_QUIT_FORCE} Hide_window = APP_CONTINUE;
+#if ! GTK_CHECK_VERSION(4, 0, 0)
 static int DrawLock = FALSE;
+#endif
 static unsigned int CursorType;
 
 #if USE_EXT_DRIVER
@@ -1090,11 +1092,13 @@ set_axis_undo_button_sensitivity(int state)
   set_action_widget_sensitivity(AxisScaleUndoAction, state);
 }
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
 void
 set_draw_lock(int lock)
 {
   DrawLock = lock;
 }
+#endif
 
 #if ! WINDOWS
 static void
@@ -3518,30 +3522,19 @@ ChkInterrupt(void)
   }
 #endif
 #if GTK_CHECK_VERSION(4, 0, 0)
-  GMainContext *context;
-  context = g_main_context_default();
-#endif
+  return check_interrupt();
+#else
   if (DrawLock != DrawLockDraw) {
     return check_interrupt();
   }
-
-#if GTK_CHECK_VERSION(4, 0, 0)
-  while (g_main_context_pending(context)) {
-    g_main_context_iteration(context, TRUE);
-    if (check_interrupt()) {
-      return TRUE;
-    }
-  }
-#else
   while (gtk_events_pending()) {
     gtk_main_iteration_do(FALSE);
     if (check_interrupt()) {
       return TRUE;
     }
   }
-#endif
-
   return FALSE;
+#endif
 }
 
 int

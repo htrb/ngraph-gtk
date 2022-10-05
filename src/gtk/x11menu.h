@@ -83,7 +83,9 @@ enum {
   RECENT_TYPE_DATA,
 };
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
 enum DrawLockVal {DrawLockNone, DrawLockDraw, DrawLockExpose};
+#endif
 
 enum PointerType {
   PointB   = 0x000001,
@@ -343,7 +345,9 @@ int ChkInterrupt(void);
 int InputYN(const char *mes);
 void QuitGUI(void);
 void menu_lock(int lock);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
 void set_draw_lock(int lock);
+#endif
 int find_gra2gdk_inst(struct objlist **o, N_VALUE **i, struct objlist **ro, int *routput, struct gra2cairo_local **rlocal);
 void set_axis_undo_button_sensitivity(int state);
 void set_modified_state(int state);

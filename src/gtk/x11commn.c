@@ -2677,8 +2677,6 @@ create_progress_dialog(const char *title)
   SaveCursor = NGetCursor();
   NSetCursor(GDK_WATCH);
 
-  set_draw_lock(DrawLockDraw);
-
   if (ProgressDialog) {
     ProgressDialogSetTitle(title);
     show_progress(0, "", 0);
@@ -2779,8 +2777,6 @@ ProgressDialogFinalize(void)
   g_string_free(ProgressDialogData->title, TRUE);
   g_free(ProgressDialogData);
   ProgressDialogData = NULL;
-
-  set_draw_lock(DrawLockNone);
 }
 #else
 void
