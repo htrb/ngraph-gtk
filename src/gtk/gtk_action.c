@@ -198,6 +198,9 @@ static void
 RecentGraphAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
   char *fname;
+  if (Menulock || Globallock) {
+    return;
+  }
   fname = g_strdup(g_variant_get_string(parameter, NULL));
   if (fname) {
     graph_dropped(fname);
