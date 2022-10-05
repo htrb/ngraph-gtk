@@ -360,6 +360,9 @@ string_cb(GtkCellRenderer *renderer, gchar *path, gchar *str, gpointer user_data
   n_list_store *list;
 
   menu_lock(FALSE);
+  if (Menulock || Globallock) {
+    return;
+  }
 
   d = user_data;
 
