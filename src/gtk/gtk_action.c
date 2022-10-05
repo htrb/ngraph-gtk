@@ -173,6 +173,10 @@ GraphAddinAction_activated(GSimpleAction *action, GVariant *parameter, gpointer 
   int i, n;
   struct script *fcur;
 
+  if (Menulock || Globallock) {
+    return;
+  }
+
   n = g_variant_get_int32(parameter);
   if (n < 0) {
     return;
