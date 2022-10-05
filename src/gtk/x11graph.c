@@ -1364,10 +1364,11 @@ SaveDialog(struct SaveDialog *data, int *sdata, int *smerge)
   data->SetupWindow = SaveDialogSetup;
   data->CloseWindow = SaveDialogClose;
 #if GTK_CHECK_VERSION(4, 0, 0)
+  /* must be implemented */
   data->SaveData = FALSE;
   data->SaveMerge = FALSE;
 #else
-  data->SaveData = fsdata;
+  data->SaveData = sdata;
   data->SaveMerge = smerge;
 #endif
 }
