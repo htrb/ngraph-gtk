@@ -8373,6 +8373,9 @@ select_type(GtkComboBox *w, gpointer user_data)
 #endif
 
   menu_lock(FALSE);
+  if (Menulock || Globallock) {
+    return;
+  }
 
   d = (struct obj_list_data *) user_data;
 
