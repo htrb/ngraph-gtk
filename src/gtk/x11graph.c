@@ -1163,7 +1163,6 @@ DirectoryDialogClose(GtkWidget *w, void *data)
   tmp = folder_chooser_button_get_folder(d->dir);
   s = g_strdup(tmp);
 #else
-  gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(d->dir), cwd);
   s = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(d->dir));
 #endif
 
