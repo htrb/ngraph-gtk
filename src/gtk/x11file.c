@@ -8723,6 +8723,9 @@ edited_axis(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer us
   struct obj_list_data *d;
 
   menu_lock(FALSE);
+  if (Menulock || Globallock) {
+    return;
+  }
 
   d = (struct obj_list_data *) user_data;
 
