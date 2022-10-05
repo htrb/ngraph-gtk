@@ -248,6 +248,9 @@ static void
 cancel_editing(GtkCellRenderer *renderer, gpointer user_data)
 {
   menu_lock(FALSE);
+  if (Menulock || Globallock) {
+    return;
+  }
 
   if (user_data) {
     struct obj_list_data *d;
