@@ -3943,10 +3943,12 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 		  thread= g_thread_new("process", proc_in_thread, win_cmd);
 		  if (thread) {
 		    WaitProc = 1;
+#if USE_EVENT_LOOP
 		    while (WaitProc) {
 		      msleep(1);
 		      eventloop();
 		    }
+#endif
 		    errlevel = GPOINTER_TO_INT(g_thread_join(thread));
 		  }
 		  g_free(win_cmd);
@@ -3964,6 +3966,7 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 			       argv[0],g_strerror(errno));
 		  exit(errlevel);
 		} else {
+#if USE_EVENT_LOOP
 		  if (has_eventloop()) {
 		    while (waitpid(pid,&errlevel,WNOHANG)==0) {
 		      eventloop();
@@ -3972,6 +3975,9 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 		  } else {
 		    waitpid(pid, &errlevel, 0);
 		  }
+#else
+                  waitpid(pid, &errlevel, 0);
+#endif
 		  errlevel = WIFEXITED(errlevel) ? WEXITSTATUS(errlevel) : 1;
 		}
 		set_childhandler();
