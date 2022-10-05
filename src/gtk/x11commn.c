@@ -1325,6 +1325,7 @@ get_save_opt(int *sdata, int *smerge, int *path)
 }
 #endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 GraphSave_free(gpointer user_data)
 {
@@ -1372,7 +1373,6 @@ GraphSave_response(int ret, gpointer user_data)
   GraphSave_free(d);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 GraphSaveSub(char *file, char *prev_wd, char *current_wd)
 {
