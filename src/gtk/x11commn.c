@@ -69,7 +69,9 @@ static void AddNgpFileList(const char *file);
 static void ToFullPath(void);
 static void ToBasename(void);
 static void ToRalativePath(void);
+#if GTK_CHECK_VERSION(4, 0, 0)
 static void ProgressDialogFinalize(void);
+#endif
 
 void
 OpenGRA(void)
