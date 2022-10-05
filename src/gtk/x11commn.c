@@ -2845,60 +2845,37 @@ ProgressDialogCreate(char *title)
     show_progress(0, "", 0);
     show_progress(1, "", 0);
     set_progress_func(show_progress);
-#if ! GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_show_all(ProgressDialog);
-#endif
     return;
   }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-  ProgressDialog = gtk_window_new();
-#else
   ProgressDialog = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-#endif
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
-  g_signal_connect(ProgressDialog, "close_request", G_CALLBACK(gtk_true), NULL);
-#else
   g_signal_connect(ProgressDialog, "delete-event", G_CALLBACK(gtk_true), NULL);
-#endif
   gtk_window_set_title(GTK_WINDOW(ProgressDialog), title);
 
   gtk_window_set_transient_for(GTK_WINDOW(ProgressDialog), GTK_WINDOW(TopLevel));
   gtk_window_set_modal(GTK_WINDOW(ProgressDialog), TRUE);
-#if ! GTK_CHECK_VERSION(4, 0, 0)
   gtk_window_set_position(GTK_WINDOW(ProgressDialog), GTK_WIN_POS_CENTER);
   gtk_window_set_type_hint(GTK_WINDOW(ProgressDialog), GDK_WINDOW_TYPE_HINT_DIALOG);
-#endif
 
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
 
   ProgressBar = GTK_PROGRESS_BAR(gtk_progress_bar_new());
   gtk_progress_bar_set_ellipsize(ProgressBar, PANGO_ELLIPSIZE_MIDDLE);
   gtk_progress_bar_set_show_text(ProgressBar, TRUE);
-#if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_box_append(GTK_BOX(vbox), GTK_WIDGET(ProgressBar));
-#else
   gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(ProgressBar), FALSE, FALSE, 4);
-#endif
 
   ProgressBar2 = GTK_PROGRESS_BAR(gtk_progress_bar_new());
   gtk_progress_bar_set_ellipsize(ProgressBar2, PANGO_ELLIPSIZE_MIDDLE);
   gtk_progress_bar_set_show_text(ProgressBar2, TRUE);
-#if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_box_append(GTK_BOX(vbox), GTK_WIDGET(ProgressBar2));
-#else
   gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(ProgressBar2), FALSE, FALSE, 4);
-#endif
 
   btn = gtk_button_new_with_mnemonic(_("_Stop"));
   set_button_icon(btn, "process-stop");
   g_signal_connect(btn, "clicked", G_CALLBACK(stop_btn_clicked), NULL);
 #if USE_HEADER_BAR
   hbox = gtk_header_bar_new();
-#if ! GTK_CHECK_VERSION(4, 0, 0)
   gtk_header_bar_set_title(GTK_HEADER_BAR(hbox), title);
-#endif
   gtk_header_bar_pack_end(GTK_HEADER_BAR(hbox), btn);
   gtk_window_set_titlebar(GTK_WINDOW(ProgressDialog), hbox);
 #else
@@ -2906,22 +2883,12 @@ ProgressDialogCreate(char *title)
 
   gtk_box_pack_end(GTK_BOX(hbox), btn, FALSE, FALSE, 4);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_box_append(GTK_BOX(vbox), hbox);
-#else
   gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
 #endif
-#endif
-#if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_window_set_child(GTK_WINDOW(ProgressDialog), vbox);
-#else
   gtk_container_add(GTK_CONTAINER(ProgressDialog), vbox);
-#endif
 
   gtk_window_set_default_size(GTK_WINDOW(ProgressDialog), 400, -1);
-#if ! GTK_CHECK_VERSION(4, 0, 0)
   gtk_widget_show_all(ProgressDialog);
-#endif
 
   set_progress_func(show_progress);
 }
