@@ -1702,6 +1702,29 @@ graph_shell_finalize(gpointer user_data)
 
   g_thread_join(thread);
 }
+
+static gpointer
+graph_shell_main(gpointer user_data)
+{
+  struct objlist *shell;
+  GThread *thread;
+
+  shell = chkobject("shell");
+  if (shell) {
+    int allocnow, n;
+    n = chkobjlastinst(shell);
+    if (n < 0) {
+      newobj(shell);
+    }
+    allocnow = allocate_console();
+    exeobj(shell, "shell", 0, 0, NULL);
+    free_console(allocnow);
+  }
+
+  thread = g_thread_self();
+  g_idle_add_once(graph_shell_finalize, thread);
+  return NULL;
+}
 #endif
 void
 CmGraphShell(void *w, gpointer client_data)
