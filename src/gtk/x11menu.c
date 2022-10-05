@@ -3163,9 +3163,13 @@ application(char *file)
   set_pane_position();          /* to set pane position correctly */
 #endif
   n_application_ready();
+#if GTK_CHECK_VERSION(4, 0, 0)
   setup_recent_manager();
+#endif
   terminated = AppMainLoop();
+#if GTK_CHECK_VERSION(4, 0, 0)
   finalize_recent_manager();
+#endif
   system_set_draw_notify_func(NULL);
 
 #if GTK_CHECK_VERSION(4, 0, 0)
@@ -3555,6 +3559,107 @@ InputYN(const char *mes)
 #endif
 }
 
+#if ! USE_EVENT_LOOP
+static void
+script_exec_finalize(gpointer user_data)
+{
+  GThread *thread;
+
+  thread = (GThread *) user_data;
+
+  menu_lock(FALSE);
+  ResetStatusBar();
+
+  GetPageSettingsFromGRA();
+  UpdateAll(NULL);
+
+  main_window_redraw();
+  g_thread_join(thread);
+}
+
+static gpointer
+script_exec_main(gpointer user_data)
+{
+  struct objlist *shell;
+  struct narray *sarray;
+  GThread *thread;
+
+  sarray = (struct narray *) user_data;
+  shell = chkobject("shell");
+  if (shell) {
+    int id;
+    id = newobj(shell);
+    if (id >= 0) {
+      int allocnow;
+      char *argv[2];
+      if (Menulocal.addinconsole) {
+        allocnow = allocate_console();
+      }
+      argv[0] = (char *) sarray;
+      argv[1] = NULL;
+      exeobj(shell, "shell", id, 1, argv);
+
+      delobj(shell, id);
+      if (Menulocal.addinconsole) {
+        free_console(allocnow);
+      }
+    }
+  }
+  arrayfree2(sarray);
+  thread = g_thread_self();
+  g_idle_add_once(script_exec_finalize, thread);
+  return NULL;
+}
+
+void
+script_exec(GtkWidget *w, gpointer client_data)
+{
+  char *name, *option, *s, mes[256];
+  int len;
+  struct narray *sarray;
+  struct script *fcur;
+
+  if (Menulock || Globallock || client_data == NULL) {
+    return;
+  }
+
+  fcur = (struct script *) client_data;
+  if (fcur->script == NULL)
+    return;
+
+  name = g_strdup(fcur->script);
+  if (name == NULL)
+    return;
+
+  sarray = arraynew(sizeof(char *));
+  if (sarray == NULL) {
+    g_free(name);
+    return;
+  }
+  if (arrayadd(sarray, &name) == NULL) {
+    g_free(name);
+    arrayfree2(sarray);
+    return;
+  }
+
+  option = fcur->option;
+  while ((s = getitok2(&option, &len, " \t")) != NULL) {
+    if (arrayadd(sarray, &s) == NULL) {
+      g_free(s);
+      arrayfree2(sarray);
+      return;
+    }
+  }
+
+  snprintf(mes, sizeof(mes), _("Executing `%.128s'."), name);
+  SetStatusBar(mes);
+
+  menu_lock(TRUE);
+
+  menu_save_undo(UNDO_TYPE_ADDIN, NULL);
+  g_thread_new(NULL, script_exec_main, sarray);
+}
+#else
 void
 script_exec(GtkWidget *w, gpointer client_data)
 {
@@ -3636,6 +3741,7 @@ script_exec(GtkWidget *w, gpointer client_data)
   delobj(shell, newid);
   main_window_redraw();
 }
+#endif
 
 static void
 #if GTK_CHECK_VERSION(4, 0, 0)
