@@ -4201,8 +4201,12 @@ pos_edited_common(struct obj_list_data *d, int id, char *str, enum CHANGE_DIR di
   double val;
   char *argv[3];
 
+  menu_lock(FALSE);
+  if (Menulock || Globallock) {
+    return;
+  }
+
   if (str == NULL || id < 0) {
-    menu_lock(FALSE);
     return;
   }
 
@@ -4216,7 +4220,6 @@ pos_edited_common(struct obj_list_data *d, int id, char *str, enum CHANGE_DIR di
   }
 
   ecode = str_calc(str, &val, NULL, NULL);
-  menu_lock(FALSE);
   if (ecode || val != val || val == HUGE_VAL || val == - HUGE_VAL) {
     return;
   }
