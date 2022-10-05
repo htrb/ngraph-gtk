@@ -2979,8 +2979,8 @@ create_toplevel_window(void)
   gtk_widget_show(GTK_WIDGET(TopLevel));
 #else
   gtk_widget_show_all(GTK_WIDGET(TopLevel));
-#endif
   reset_event();
+#endif
   create_markpixmap(TopLevel);
   setupwindow(GtkApp);
 #if GTK_CHECK_VERSION(4, 0, 0)
