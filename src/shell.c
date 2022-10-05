@@ -434,7 +434,9 @@ nreadline(char *prompt)
   }
 
   while (ReadlineLock) {
+#if USE_EVENT_LOOP
     eventloop();
+#endif
     msleep(10);
   }
 
