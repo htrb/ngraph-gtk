@@ -210,6 +210,9 @@ static void
 RecentDataAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
   const char *fname;
+  if (Menulock || Globallock) {
+    return;
+  }
   fname = g_variant_get_string(parameter, NULL);
   if (fname) {
     load_data(fname);
