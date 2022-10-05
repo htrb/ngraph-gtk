@@ -2583,6 +2583,7 @@ ViewerWinFileUpdate(int x1, int y1, int x2, int y2, int err)
   int snum, hidden;
   int did, limit;
   N_VALUE *dinst;
+  struct narray *dfile;
   int i;
   struct narray *eval;
   int evalnum;
