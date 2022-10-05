@@ -225,10 +225,12 @@ nsleep(double a)
     return;
   }
   thread= g_thread_new("sleep", sleep_thread, &th);
+#if USE_EVENT_LOOP
   while (th.sleep) {
     eventloop();
     msleep(1);
   }
+#endif
   g_thread_join(thread);
 
   return;
