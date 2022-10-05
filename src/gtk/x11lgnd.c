@@ -3557,6 +3557,9 @@ pos_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer use
   char *argv[3], *tmp, *ptr;
 
   menu_lock(FALSE);
+  if (Menulock || Globallock) {
+    return;
+  }
 
   if (str == NULL || path == NULL)
     return;
