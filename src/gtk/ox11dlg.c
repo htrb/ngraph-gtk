@@ -145,6 +145,7 @@ dlgmessage(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   Globallock = TRUE;
 #if GTK_CHECK_VERSION(4, 0, 0)
   /* must be implemented */
+  Globallock = locksave;
   return 0;
 #else
   message_box(get_toplevel_window(), CHK_STR(mes), (title) ? title : _("Message"), RESPONS_OK);
