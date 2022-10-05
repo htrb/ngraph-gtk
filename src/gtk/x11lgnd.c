@@ -4220,6 +4220,9 @@ select_font(GtkComboBox *w, gpointer user_data)
   N_VALUE *inst;
 
   menu_lock(FALSE);
+  if (Menulock || Globallock) {
+    return;
+  }
 
   d = (struct obj_list_data *) user_data;
 
