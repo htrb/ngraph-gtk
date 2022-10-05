@@ -4286,22 +4286,23 @@ axis_prm_edited_common(struct obj_list_data *d, char *field, gchar *str)
 {
   int sel, num;
 
+  menu_lock(FALSE);
+  if (Menulock || Globallock) {
+    return;
+  }
+
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
   num = chkobjlastinst(d->obj);
 
   if (sel < 0 || sel > num) {
-    menu_lock(FALSE);
     return;
   }
 
   axis_save_undo(UNDO_TYPE_EDIT);
   axis_scale_push(d->obj, sel);
   if (chk_sputobjfield(d->obj, sel, field, str)) {
-    menu_lock(FALSE);
     return;
   }
-
-  menu_lock(FALSE);
 
   d->select = sel;
   d->update(d, FALSE, TRUE);
