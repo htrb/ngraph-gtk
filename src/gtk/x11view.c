@@ -9085,7 +9085,7 @@ ViewUpdate(void)
   struct FocusObj *focus;
   struct objlist *obj, *dobj = NULL;
   N_VALUE *inst;
-  int ret;
+  int ret, modified;
   int x1, y1;
   int idx = 0, idy = 0, idu = 0, idr = 0, idg, lenx, leny;
   int findX, findY, findU, findR, findG;
