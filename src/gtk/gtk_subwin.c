@@ -295,6 +295,9 @@ enum_cb(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_d
   struct obj_list_data *d;
 
   menu_lock(FALSE);
+  if (Menulock || Globallock) {
+    return;
+  }
 
   d = (struct obj_list_data *) user_data;
 
