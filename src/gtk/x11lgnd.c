@@ -3641,6 +3641,9 @@ rect_size_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpoint
   int x1, x2, v, num;
 
   menu_lock(FALSE);
+  if (Menulock || Globallock) {
+    return;
+  }
 
   if (str == NULL || path == NULL)
     return;
