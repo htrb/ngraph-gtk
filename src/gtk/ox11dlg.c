@@ -51,6 +51,13 @@ static char *dlgerrorlist[] = {
   "no instance for dialog",
 };
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+struct dialog_data {
+  char *title;
+  char *msg;
+};
+#endif
+
 #define ERRNUM (sizeof(dlgerrorlist) / sizeof(*dlgerrorlist))
 
 static GtkWidget *DLGTopLevel = NULL;
@@ -129,6 +136,19 @@ dlgconfirm(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   }
   return (rcode == IDYES)? 0 : 1;
 }
+
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+dlgmessage_main(gpointer user_data)
+{
+  struct dialog_data *data;
+  data = (struct dialog_data *) user_data;
+  message_box(get_toplevel_window(), CHK_STR(data->msg), (data->title) ? data->title : _("Message"), RESPONS_OK);
+  g_free(data->msg);
+  g_free(data->title);
+  g_free(data);
+}
+#endif
 
 static int
 dlgmessage(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
