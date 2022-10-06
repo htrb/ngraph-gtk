@@ -1689,6 +1689,7 @@ LoadNgpFile_response(struct response_callback *cb)
     if (arrayadd(&sarray, &s) == NULL) {
       g_free(s);
       arraydel2(&sarray);
+      delobj(obj, newid);
       goto ErrorExit;
     }
   }
@@ -1697,12 +1698,14 @@ LoadNgpFile_response(struct response_callback *cb)
 
   if (name == NULL) {
     arraydel2(&sarray);
+    delobj(obj, newid);
     goto ErrorExit;
   }
 
   if (arrayadd(&sarray, &name) == NULL) {
     g_free(name);
     arraydel2(&sarray);
+    delobj(obj, newid);
     goto ErrorExit;
   }
 
