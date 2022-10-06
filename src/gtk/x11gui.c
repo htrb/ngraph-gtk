@@ -711,7 +711,7 @@ input_dialog_response(GtkWindow *dlg, int response_id, gpointer user_data)
 }
 
 void
-input_dialog(GtkWidget *parent, const char *title, const char *mes, const char *init_str, const char *button, string_response_cb cb, gpointer user_data)
+input_dialog(GtkWidget *parent, const char *title, const char *mes, const char *init_str, const char *button, struct narray *buttons, string_response_cb cb, gpointer user_data)
 {
   GtkWidget *dlg, *text;
   GtkBox *vbox;
@@ -728,10 +728,15 @@ input_dialog(GtkWidget *parent, const char *title, const char *mes, const char *
 				    GTK_DIALOG_USE_HEADER_BAR |
 #endif
 				    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-				    _("_Cancel"), GTK_RESPONSE_CANCEL,
-				    button, GTK_RESPONSE_OK,
+                                    NULL,
 				    NULL);
-  gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
+  if (add_buttons(dlg, buttons)) {
+    gtk_dialog_add_buttons(GTK_DIALOG(dlg),
+			   _("_Cancel"), GTK_RESPONSE_CANCEL,
+			   button, GTK_RESPONSE_OK,
+			   NULL);
+    gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
+  }
   gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
   vbox = GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dlg)));
   gtk_orientable_set_orientation(GTK_ORIENTABLE(vbox), GTK_ORIENTATION_VERTICAL);
