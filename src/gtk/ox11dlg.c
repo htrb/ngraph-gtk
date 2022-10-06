@@ -155,6 +155,9 @@ dlgmessage(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
 {
   char *mes, *title;
   int locksave;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  struct dialog_data *data;
+#endif
 
   if (_getobj(obj, "title", inst, &title)) {
     title = NULL;
@@ -165,6 +168,13 @@ dlgmessage(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   Globallock = TRUE;
 #if GTK_CHECK_VERSION(4, 0, 0)
   /* must be implemented */
+  data = g_malloc0(sizeof(*data));
+  if (data == NULL) {
+    return 0;
+  }
+  data->title = g_strdup(title);
+  data->msg = g_strdup(mes);
+  g_idle_add_once(dlgmessage_main, data);
   Globallock = locksave;
   return 0;
 #else
