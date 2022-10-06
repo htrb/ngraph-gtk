@@ -690,7 +690,7 @@ struct input_dialog_data {
 static void
 input_dialog_response(GtkWindow *dlg, int response_id, gpointer user_data)
 {
-  const char *str = NULL;
+  const char *str;
   int res = IDCANCEL;
   struct input_dialog_data *data;
   GtkWidget *text;
@@ -700,9 +700,11 @@ input_dialog_response(GtkWindow *dlg, int response_id, gpointer user_data)
     return;
   }
   if (response_id == GTK_RESPONSE_OK) {
-    str = gtk_editable_get_text(GTK_EDITABLE(data->text));
     res = IDOK;
+  } else {
+    res = response_id;
   }
+  str = gtk_editable_get_text(GTK_EDITABLE(data->text));
   data->cb(res, str, data->data);
   g_free(data);
   gtk_window_destroy(GTK_WINDOW(dlg));
