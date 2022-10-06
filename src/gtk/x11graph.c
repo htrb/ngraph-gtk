@@ -1699,6 +1699,7 @@ graph_shell_finalize(gpointer user_data)
   menu_lock(FALSE);
   set_graph_modified();
   UpdateAll(NULL);
+  gtk_widget_set_sensitive(TopLevel, TRUE);
 
   g_thread_join(thread);
 }
