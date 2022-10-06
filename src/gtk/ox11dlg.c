@@ -323,7 +323,6 @@ dlginput(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   _putobj(obj, "y", inst, &y);
 #endif
   _putobj(obj, "response_button", inst, &btn);
-  printf("response = %d\n", r);
   if (r == IDOK && inputbuf != NULL) {
     rval->str = inputbuf;
   } else {
