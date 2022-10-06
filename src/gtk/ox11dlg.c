@@ -29,6 +29,7 @@
 #include <string.h>
 #include <ctype.h>
 
+#include "shell.h"
 #include "object.h"
 #include "mathfn.h"
 #include "nstring.h"
@@ -62,6 +63,16 @@ struct dialog_data {
 #define ERRNUM (sizeof(dlgerrorlist) / sizeof(*dlgerrorlist))
 
 static GtkWidget *DLGTopLevel = NULL;
+
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+dialog_wait(struct dialog_data *data)
+{
+  while (data->wait) {
+    msleep(100);
+  }
+}
+#endif
 
 static GtkWidget *
 get_toplevel_window(void)
