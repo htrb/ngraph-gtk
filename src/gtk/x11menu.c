@@ -3656,6 +3656,7 @@ script_exec(GtkWidget *w, gpointer client_data)
   SetStatusBar(mes);
 
   menu_lock(TRUE);
+  gtk_widget_set_sensitive(TopLevel, FALSE);
 
   menu_save_undo(UNDO_TYPE_ADDIN, NULL);
   g_thread_new(NULL, script_exec_main, sarray);
