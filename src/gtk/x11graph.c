@@ -1758,6 +1758,7 @@ CmGraphShell(void *w, gpointer client_data)
   }
   unregisterevloop(robj, idn, inst);
   menu_lock(FALSE);
+  gtk_widget_set_sensitive(TopLevel, FALSE);
   set_graph_modified();
   UpdateAll(NULL);
 }
