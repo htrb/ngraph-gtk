@@ -3574,6 +3574,7 @@ script_exec_finalize(gpointer user_data)
   UpdateAll(NULL);
 
   main_window_redraw();
+  gtk_widget_set_sensitive(TopLevel, TRUE);
   g_thread_join(thread);
 }
 
