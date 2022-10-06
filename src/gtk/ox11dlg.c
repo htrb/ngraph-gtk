@@ -72,6 +72,18 @@ dialog_wait(struct dialog_data *data)
     msleep(100);
   }
 }
+
+static int
+dialog_run(char *title, char *mes, GSourceOnceFunc func, struct dialog_data *data)
+{
+  data->wait = TRUE;
+  data->msg = mes;
+  data->title = title;
+  data->response_text = NULL;
+  g_idle_add_once(func, data);
+  dialog_wait(data);
+  return data->response;
+}
 #endif
 
 static GtkWidget *
