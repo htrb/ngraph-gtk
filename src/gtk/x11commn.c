@@ -1712,10 +1712,7 @@ LoadNgpFile_response(struct response_callback *cb)
     allocnow = allocate_console();
   }
 
-  sec = TRUE;
-  argv[0] = (char *) &sec;
-  argv[1] = NULL;
-  _exeobj(obj, "security", inst, 1, argv);
+  exeobj(obj, "set_security", newid, 0, NULL);
 
   argv[0] = (char *) &sarray;
   argv[1] = NULL;
@@ -1731,11 +1728,6 @@ LoadNgpFile_response(struct response_callback *cb)
 
   unregisterevloop(robj, idn, Menulocal.inst);
   menu_lock(FALSE);
-
-  sec = FALSE;
-  argv[0] = (char *) &sec;
-  argv[1] = NULL;
-  _exeobj(obj, "security", inst, 1, argv);
 
   if (r == 0) {
     struct objlist *aobj;
