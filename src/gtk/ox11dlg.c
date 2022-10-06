@@ -132,11 +132,33 @@ dlgdone(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   return 0;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+dlgconfirm_response(int response, gpointer user_data)
+{
+  struct dialog_data *data;
+  data = (struct dialog_data *) user_data;
+  data->response = response;
+  data->wait = FALSE;
+}
+
+static void
+dlgconfirm_main(gpointer user_data)
+{
+  struct dialog_data *data;
+  data = (struct dialog_data *) user_data;
+  response_message_box(get_toplevel_window(), data->msg, data->title, RESPONS_YESNO, dlgconfirm_response, data);
+}
+#endif
+
 static int
 dlgconfirm(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   char *mes, *title;
   int rcode, locksave;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  struct dialog_data data;
+#endif
 
   if (_getobj(obj, "title", inst, &title)) {
     title = NULL;
@@ -148,7 +170,7 @@ dlgconfirm(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   mes = CHK_STR(mes);
 #if GTK_CHECK_VERSION(4, 0, 0)
   /* must be implemented */
-  rcode = IDYES;
+  rcode = dialog_run(title ? title : _("Confirm"), mes, dlgconfirm_main, &data);
 #else
   rcode = message_box(get_toplevel_window(), mes, (title) ? title : _("Confirm"), RESPONS_YESNO);
 #endif
