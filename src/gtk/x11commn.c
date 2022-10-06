@@ -1632,7 +1632,6 @@ LoadNgpFile_response(struct response_callback *cb)
   char *argv[2];
   struct narray sarray;
   char mes[256];
-  int sec;
   N_VALUE *inst;
   struct objlist *robj;
   int idn;
