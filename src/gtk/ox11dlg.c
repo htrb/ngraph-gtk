@@ -158,6 +158,8 @@ dlgconfirm(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   int rcode, locksave;
 #if GTK_CHECK_VERSION(4, 0, 0)
   struct dialog_data data;
+
+  memset(&data, 0, sizeof(data));
 #endif
 
   if (_getobj(obj, "title", inst, &title)) {
