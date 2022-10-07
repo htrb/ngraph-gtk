@@ -734,6 +734,7 @@ swin_update_response(struct response_callback *cb)
   default:
     d->update(d, FALSE, DRAW_NOTIFY);
   }
+  return IDOK;
 }
 #endif
 
