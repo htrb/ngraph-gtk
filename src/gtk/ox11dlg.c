@@ -285,6 +285,8 @@ dlginput(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   int btn = -1;
 #if GTK_CHECK_VERSION(4, 0, 0)
   struct dialog_data data;
+
+  memset(&data, 0, sizeof(data));
 #endif
 
   locksave = Globallock;
