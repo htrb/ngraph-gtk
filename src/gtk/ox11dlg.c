@@ -269,7 +269,7 @@ dlginput_main(gpointer user_data)
 {
   struct dialog_data *data;
   data = (struct dialog_data *) user_data;
-  input_dialog(get_toplevel_window(), data->title, data->msg, data->initial_text, _("OK"), data->buttons, dlginput_response, data);
+  input_dialog(get_toplevel_window(), data->title, data->msg, data->initial_text, _("OK"), data->buttons, data->button, dlginput_response, data);
 }
 #endif
 
@@ -314,6 +314,7 @@ dlginput(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
 
 #if GTK_CHECK_VERSION(4, 0, 0)
   data.buttons = buttons;
+  data.button = &btn;
   data.initial_text = init_str;
   r = dialog_run(title ? title : _("Confirm"), mes, dlginput_main, &data);
   inputbuf = data.response_text;

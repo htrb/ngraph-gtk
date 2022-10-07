@@ -1699,7 +1699,7 @@ set_object_name(struct objlist *obj, int id)
   data->id = id;
   data->name = name;
   snprintf(buf, sizeof(buf), "%s:%d:name", chkobjectname(obj), id);
-  input_dialog(TopLevel, _("Instance name"), buf, name, _("_Apply"), NULL, set_object_name_response, data);
+  input_dialog(TopLevel, _("Instance name"), buf, name, _("_Apply"), NULL, NULL, set_object_name_response, data);
 }
 #else
 static int

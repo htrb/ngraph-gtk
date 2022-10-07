@@ -684,6 +684,8 @@ markup_message_box(GtkWidget * parent, const char *message, const char *title, i
 struct input_dialog_data {
   GtkWidget *text;
   string_response_cb cb;
+  int *res_btn;
+  struct narray *buttons;
   gpointer data;
 };
 
@@ -699,23 +701,26 @@ input_dialog_response(GtkWindow *dlg, int response_id, gpointer user_data)
   if (data == NULL) {
     return;
   }
-  if (response_id == GTK_RESPONSE_OK) {
+  if (response_id > 0 || response_id == GTK_RESPONSE_OK) {
     res = IDOK;
+    str = gtk_editable_get_text(GTK_EDITABLE(data->text));
   } else {
-    res = response_id;
+    res = IDCANCEL;
+    str = NULL;
   }
-  str = gtk_editable_get_text(GTK_EDITABLE(data->text));
+  if (data->buttons && data->res_btn) {
+    *data->res_btn = response_id;
+  }
   data->cb(res, str, data->data);
   g_free(data);
   gtk_window_destroy(GTK_WINDOW(dlg));
 }
 
 void
-input_dialog(GtkWidget *parent, const char *title, const char *mes, const char *init_str, const char *button, struct narray *buttons, string_response_cb cb, gpointer user_data)
+input_dialog(GtkWidget *parent, const char *title, const char *mes, const char *init_str, const char *button, struct narray *buttons, int *res_btn, string_response_cb cb, gpointer user_data)
 {
   GtkWidget *dlg, *text;
   GtkBox *vbox;
-  gint res_id;
   struct input_dialog_data *data;
 
   data = g_malloc0(sizeof(*data));
@@ -756,6 +761,8 @@ input_dialog(GtkWidget *parent, const char *title, const char *mes, const char *
   data->cb = cb;
   data->data = user_data;
   data->text = text;
+  data->buttons = buttons;
+  data->res_btn = res_btn;
   g_signal_connect(dlg, "response", G_CALLBACK(input_dialog_response), data);
   gtk_widget_show(dlg);
 }
