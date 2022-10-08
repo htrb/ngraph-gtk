@@ -1126,42 +1126,51 @@ AppMainLoop_response(int ret, gpointer client_data)
     Hide_window = APP_QUIT_QUIT;
   }
 }
-#endif
 
 static int
 AppMainLoop(void)
 {
-#if GTK_CHECK_VERSION(4, 0, 0)
   GMainContext *context;
   context = g_main_context_default();
-#endif
   Hide_window = APP_CONTINUE;
   while (TRUE) {
-#if GTK_CHECK_VERSION(4, 0, 0)
     g_main_context_iteration(context, TRUE);
-#else
-    gtk_main_iteration();
-#endif
-    if (Hide_window != APP_CONTINUE &&
-#if GTK_CHECK_VERSION(4, 0, 0)
-	! g_main_context_pending(context)
-#else
-	! gtk_events_pending()
-#endif
-	) {
+    if (Hide_window != APP_CONTINUE && ! g_main_context_pending(context)) {
       int state = Hide_window;
 
       Hide_window = APP_CONTINUE;
       switch (state) {
       case APP_QUIT:
-#if GTK_CHECK_VERSION(4, 0, 0)
 	CheckSave(AppMainLoop_response, NULL);
+	break;
+      case APP_QUIT_QUIT:
+	menu_clear_undo();
+	return 0;
+      case APP_QUIT_FORCE:
+	menu_clear_undo();
+	return 1;
+      }
+    }
+  }
+  return 0;
+}
 #else
+static int
+AppMainLoop(void)
+{
+  Hide_window = APP_CONTINUE;
+  while (TRUE) {
+    gtk_main_iteration();
+    if (Hide_window != APP_CONTINUE && ! gtk_events_pending()) {
+      int state = Hide_window;
+
+      Hide_window = APP_CONTINUE;
+      switch (state) {
+      case APP_QUIT:
 	if (CheckSave()) {
 	  menu_clear_undo();
 	  return 0;
 	}
-#endif
 	break;
       case APP_QUIT_FORCE:
 	menu_clear_undo();
@@ -1171,6 +1180,7 @@ AppMainLoop(void)
   }
   return 0;
 }
+#endif
 
 void
 reset_event(void)
