@@ -1474,14 +1474,9 @@ clear_region(cairo_t *cr, cairo_region_t *region)
   cairo_restore(cr);
 }
 
-static int
-mxflush(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+static void
+flush_window(gpointer user_data)
 {
-  if (TopLevel == NULL) {
-    error(obj, ERR_MENU_GUI);
-    return 1;
-  }
-
   if (Menulocal.local->cairo) {
     cairo_surface_t *surface;
     gra2cairo_draw_path(Menulocal.local);
@@ -1499,6 +1494,21 @@ mxflush(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
     flush_layers(cr);
     cairo_destroy(cr);
   }
+}
+
+static int
+mxflush(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  if (TopLevel == NULL) {
+    error(obj, ERR_MENU_GUI);
+    return 1;
+  }
+
+#if GTK_CHECK_VERSION(4, 0, 0)
+  g_idle_add_once(flush_window, NULL);
+#else
+  flush_window(NULL);
+#endif
 
   return 0;
 }
