@@ -763,6 +763,26 @@ dlgbeep(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   return 0;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+dlggetopenfile_response(char *file, gpointer user_data)
+{
+  struct dialog_data *data;
+  data = (struct dialog_data *) user_data;
+  data->response_text = file;
+  data->response = (file) ? IDOK : IDCANCEL;
+  data->wait = FALSE;
+}
+
+static void
+dlggetopenfile_main(gpointer user_data)
+{
+  struct dialog_data *data;
+  data = (struct dialog_data *) user_data;
+  nGetOpenFileName(get_toplevel_window(), data->title, data->defext, NULL, data->initial_text, FALSE, dlggetopenfile_response, data);
+}
+#endif
+
 static int
 dlggetopenfile(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
 	       int argc, char **argv)
