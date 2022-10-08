@@ -1247,6 +1247,103 @@ DialogComboEntry(GtkWidget *parent, const char *title, const char *caption, stru
   return data;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+struct spin_dialog_data {
+  GtkWidget *spin;
+  response_cb cb;
+  int *res_btn;
+  double *val;
+  struct narray *buttons;
+  gpointer data;
+};
+
+static void
+spin_dialog_response(GtkWidget *dialog, int response, gpointer user_data)
+{
+  double val;
+  int res;
+  struct spin_dialog_data *data;
+  data = (struct spin_dialog_data *) user_data;
+
+  if (response > 0 || response == GTK_RESPONSE_OK) {
+    *data->val = gtk_spin_button_get_value(GTK_SPIN_BUTTON(data->spin));
+    res = IDOK;
+  } else {
+    res = IDCANCEL;
+  }
+
+  if (data->buttons && data->res_btn) {
+    *data->res_btn = response;
+  }
+  data->cb(res, data->data);
+  g_free(data);
+  gtk_window_destroy(GTK_WINDOW(dialog));
+}
+
+void
+spin_dialog(GtkWidget *parent, const char *title, const char *caption, double min, double max, double inc, struct narray *buttons, int *res_btn, double *r, response_cb cb, gpointer user_data)
+{
+  GtkWidget *dlg, *spin;
+  GtkBox *vbox;
+  int n;
+  double prec;
+  struct spin_dialog_data *data;
+
+  data = g_malloc0(sizeof(*data));
+  if (data == NULL) {
+    return;
+  }
+
+  dlg = gtk_dialog_new_with_buttons(title,
+				    GTK_WINDOW(parent),
+#if USE_HEADER_BAR
+				    GTK_DIALOG_USE_HEADER_BAR |
+#endif
+				    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+				    NULL, NULL);
+  if (add_buttons(dlg, buttons)) {
+    gtk_dialog_add_buttons(GTK_DIALOG(dlg),
+			   _("_Cancel"), GTK_RESPONSE_CANCEL,
+			   _("_OK"), GTK_RESPONSE_OK,
+			   NULL);
+  }
+  gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
+  gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
+  vbox = GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dlg)));
+  gtk_orientable_set_orientation(GTK_ORIENTABLE(vbox), GTK_ORIENTATION_VERTICAL);
+
+  if (caption) {
+    GtkWidget *label;
+    label = gtk_label_new(caption);
+    gtk_box_append(vbox, label);
+  }
+
+  if (inc == 0)
+    inc = 1;
+
+  spin = gtk_spin_button_new_with_range(min, max, inc);
+  gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(spin), TRUE);
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin), *r);
+  gtk_box_append(vbox, spin);
+
+  prec = log10(fabs(inc));
+  if (prec < 0) {
+    n = ceil(- prec);
+  } else {
+    n = 0;
+  }
+  gtk_spin_button_set_digits(GTK_SPIN_BUTTON(spin), n);
+
+  data->spin = spin;
+  data->cb = cb;
+  data->data = user_data;
+  data->val = r;
+  data->buttons = buttons;
+  data->res_btn = res_btn;
+  g_signal_connect(dlg, "response", G_CALLBACK(spin_dialog_response), data);
+  gtk_widget_show(dlg);
+}
+#else
 int
 DialogSpinEntry(GtkWidget *parent, const char *title, const char *caption, double min, double max, double inc, struct narray *buttons, int *res_btn, double *r, int *x, int *y)
 {
@@ -1272,18 +1369,11 @@ DialogSpinEntry(GtkWidget *parent, const char *title, const char *caption, doubl
   gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
   gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
   vbox = GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dlg)));
-#if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_orientable_set_orientation(GTK_ORIENTABLE(vbox), GTK_ORIENTATION_VERTICAL);
-#endif
 
   if (caption) {
     GtkWidget *label;
     label = gtk_label_new(caption);
-#if GTK_CHECK_VERSION(4, 0, 0)
-    gtk_box_append(vbox, label);
-#else
     gtk_box_pack_start(vbox, label, FALSE, FALSE, 5);
-#endif
   }
 
   if (inc == 0)
@@ -1292,13 +1382,8 @@ DialogSpinEntry(GtkWidget *parent, const char *title, const char *caption, doubl
   spin = gtk_spin_button_new_with_range(min, max, inc);
   gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(spin), TRUE);
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin), *r);
-#if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_box_append(vbox, spin);
-  /* must be implemented */
-#else
   gtk_box_pack_start(vbox, spin, FALSE, FALSE, 2);
   gtk_entry_set_activates_default(GTK_ENTRY(spin), TRUE);
-#endif
 
   prec = log10(fabs(inc));
   if (prec < 0) {
@@ -1309,14 +1394,8 @@ DialogSpinEntry(GtkWidget *parent, const char *title, const char *caption, doubl
   gtk_spin_button_set_digits(GTK_SPIN_BUTTON(spin), n);
 
   set_dialog_position(dlg, x, y);
-#if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_widget_show(dlg);
-  res_id = IDLOOP;
-  ndialog_run(dlg, NULL, &res_id);
-#else
   gtk_widget_show_all(dlg);
   res_id = ndialog_run(dlg);
-#endif
 
   if (res_id > 0 || res_id == GTK_RESPONSE_OK) {
     *r = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spin));
@@ -1330,15 +1409,12 @@ DialogSpinEntry(GtkWidget *parent, const char *title, const char *caption, doubl
   }
 
   get_dialog_position(dlg, x, y);
-#if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_window_destroy(GTK_WINDOW(dlg));
-#else
   gtk_widget_destroy(dlg);
-#endif
   reset_event();
 
   return data;
 }
+#endif
 
 int
 DialogCheck(GtkWidget *parent, const char *title, const char *caption, struct narray *array, struct narray *buttons, int *res_btn, int *r, int *x, int *y)

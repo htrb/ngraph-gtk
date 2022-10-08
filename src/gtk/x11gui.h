@@ -65,10 +65,12 @@ void markup_message_box(GtkWidget * parent, const char *message, const char *tit
 void message_box(GtkWidget *parent, const char *message, const char *title, int yesno);
 void response_message_box(GtkWidget *parent, const char *message, const char *title, int mode, response_cb cb, gpointer user_data);
 void input_dialog(GtkWidget *parent, const char *title, const char *mes, const char *init_str, const char *button, struct narray *buttons, int *res_btn, string_response_cb cb, gpointer user_data);
+void spin_dialog(GtkWidget *parent, const char *title, const char *caption, double min, double max, double inc, struct narray *buttons, int *res_btn, double *r, response_cb cb, gpointer user_data);
 #else
 int DialogExecute(GtkWidget *parent, void *dialog);
 int markup_message_box(GtkWidget * parent, const char *message, const char *title, int mode, int markup);
 int message_box(GtkWidget *parent, const char *message, const char *title, int yesno);
+int DialogSpinEntry(GtkWidget *parent, const char *title, const char *caption, double min, double max, double inc, struct narray *buttons, int *res_btn, double *r, int *x, int *y);
 #endif
 void message_beep(GtkWidget *parent);
 int DialogInput(GtkWidget *parent, const char *title, const char *mes, const char *init_str, struct narray *buttons, int *res_btn, char **s, int *x, int *y);
@@ -77,7 +79,6 @@ int DialogButton(GtkWidget *parent, const char *title, const char *caption, stru
 int DialogCheck(GtkWidget *parent, const char *title, const char *caption, struct narray *array, struct narray *buttons, int *res_btn, int *r, int *x, int *y);
 int DialogCombo(GtkWidget *parent, const char *title, const char *caption, struct narray *array, struct narray *buttons, int *res_btn, int sel, char **r, int *x, int *y);
 int DialogComboEntry(GtkWidget *parent, const char *title, const char *caption, struct narray *array, struct narray *buttons, int *res_btn, int sel, char **r, int *x, int *y);
-int DialogSpinEntry(GtkWidget *parent, const char *title, const char *caption, double min, double max, double inc, struct narray *buttons, int *res_btn, double *r, int *x, int *y);
 #if GTK_CHECK_VERSION(4, 0, 0)
 void nGetOpenFileNameMulti(GtkWidget * parent,
                            char *title, char *defext, char **initdir,
