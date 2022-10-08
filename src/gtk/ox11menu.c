@@ -1386,12 +1386,23 @@ mxredraw_main(gpointer user_data)
 static int
 mxredraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
+#if GTK_CHECK_VERSION(4, 0, 0)
+  struct mxredraw_data *data;
+#endif
+
   if (TopLevel == NULL) {
     error(obj, ERR_MENU_GUI);
     return 1;
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  data = g_malloc0(sizeof(*data));
+  data->obj = obj;
+  data->inst = inst;
+  g_idle_add_once(mxredraw_main, data);
+#else
   mx_redraw(obj, inst, NULL);
+#endif
   return 0;
 }
 
