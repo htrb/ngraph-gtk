@@ -72,7 +72,7 @@ struct NgraphApp NgraphApp = {0};
 GtkWidget *TopLevel = NULL, *DrawButton = NULL;
 
 static GtkWidget *CurrentWindow = NULL, *CToolbar = NULL, *PToolbar = NULL, *SettingPanel = NULL, *ToolBox = NULL, *RecentGraphMenu = NULL, *RecentDataMenu = NULL;
-static enum {APP_CONTINUE, APP_QUIT, APP_QUIT_FORCE} Hide_window = APP_CONTINUE;
+static enum {APP_CONTINUE, APP_QUIT, APP_QUIT_QUIT, APP_QUIT_FORCE} Hide_window = APP_CONTINUE;
 #if ! GTK_CHECK_VERSION(4, 0, 0)
 static int DrawLock = FALSE;
 #endif
