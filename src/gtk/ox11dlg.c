@@ -54,9 +54,10 @@ static char *dlgerrorlist[] = {
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 struct dialog_data {
-  char *title, *msg, *initial_text, *response_text;
+  char *title, *msg, *initial_text, *response_text, *defext;
   struct narray *buttons;
-  int response, wait;
+  int response, wait, *button;
+  double min, max, inc, *val;
 };
 #endif
 
