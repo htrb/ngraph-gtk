@@ -1123,8 +1123,7 @@ static void
 AppMainLoop_response(int ret, gpointer client_data)
 {
   if (ret) {
-    menu_clear_undo();
-    Hide_window = APP_QUIT_FORCE;
+    Hide_window = APP_QUIT_QUIT;
   }
 }
 #endif
