@@ -52,6 +52,10 @@ static char *dlgerrorlist[] = {
   "no instance for dialog",
 };
 
+#define ERRNUM (sizeof(dlgerrorlist) / sizeof(*dlgerrorlist))
+
+static GtkWidget *DLGTopLevel = NULL;
+
 #if GTK_CHECK_VERSION(4, 0, 0)
 struct dialog_data {
   char *title, *msg, *initial_text, *response_text, *defext;
@@ -59,13 +63,7 @@ struct dialog_data {
   int response, wait, *button;
   double min, max, inc, *val;
 };
-#endif
 
-#define ERRNUM (sizeof(dlgerrorlist) / sizeof(*dlgerrorlist))
-
-static GtkWidget *DLGTopLevel = NULL;
-
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 dialog_wait(struct dialog_data *data)
 {
