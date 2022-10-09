@@ -503,9 +503,6 @@ response_message_box(GtkWidget *parent, const char *message, const char *title, 
 {
   GtkWidget *dlg;
   struct response_message_box_data *data;
-  GtkMessageType dlg_type;
-  GtkButtonsType dlg_button;
-  gint res_id;
 
   data = g_malloc0(sizeof(*data));
   if (data == NULL) {
