@@ -1538,9 +1538,9 @@ free_str_list(GSList *top)
 static void
 fsok(GtkWidget *dlg, struct nGetOpenFileData *data)
 {
-  char *file, *file2, **farray;
+  char *file2, **farray;
   const char *filter_name;
-  int i, j, k, len, n;
+  int j, k, n;
   GStatBuf buf;
   GListModel *top;
   GtkFileFilter *filter;
