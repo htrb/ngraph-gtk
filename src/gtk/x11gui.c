@@ -692,7 +692,6 @@ input_dialog_response(GtkWindow *dlg, int response_id, gpointer user_data)
   const char *str;
   int res = IDCANCEL;
   struct input_dialog_data *data;
-  GtkWidget *text;
 
   data = (struct input_dialog_data *) user_data;
   if (data == NULL) {
