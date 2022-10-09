@@ -1256,7 +1256,6 @@ struct spin_dialog_data {
 static void
 spin_dialog_response(GtkWidget *dialog, int response, gpointer user_data)
 {
-  double val;
   int res;
   struct spin_dialog_data *data;
   data = (struct spin_dialog_data *) user_data;
