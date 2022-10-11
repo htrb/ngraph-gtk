@@ -148,6 +148,7 @@ char *Documenter[] = {
 
 
 static int OpenDisplay = FALSE;
+static GMainLoop *MainLoop;
 
 static void * ( * obj_add_func_ary[]) (void) = {
   addshell,
@@ -952,6 +953,7 @@ n_initialize(int *argc, char ***argv)
 #endif	/* HAVE_GETTEXT */
 
 #if GTK_CHECK_VERSION(4, 0, 0)
+  MainLoop = g_main_loop_new (NULL, FALSE);
   OpenDisplay = gtk_init_check();
 #else
   OpenDisplay = gtk_init_check(argc, argv);
