@@ -345,7 +345,6 @@ mathconv(char *math)
 */
 {
   int i;
-  char *m;
   GString *new_math;
 
   new_math = g_string_new("");
@@ -368,13 +367,7 @@ mathconv(char *math)
       g_string_append_c(new_math, math[i]);
     }
   }
-  if (new_math->len == 0) {
-    g_string_free(new_math, TRUE);
-    m = NULL;
-  } else {
-    m = g_string_free(new_math, FALSE);
-  }
-  return m;
+  return g_string_free(new_math, new_math->len == 0);;
 }
 
 #define BUFSIZE 512
