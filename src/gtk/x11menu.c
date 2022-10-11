@@ -72,8 +72,8 @@ struct NgraphApp NgraphApp = {0};
 GtkWidget *TopLevel = NULL, *DrawButton = NULL;
 
 static GtkWidget *CurrentWindow = NULL, *CToolbar = NULL, *PToolbar = NULL, *SettingPanel = NULL, *ToolBox = NULL, *RecentGraphMenu = NULL, *RecentDataMenu = NULL;
-static enum {APP_CONTINUE, APP_QUIT, APP_QUIT_QUIT, APP_QUIT_FORCE} Hide_window = APP_CONTINUE;
 #if ! GTK_CHECK_VERSION(4, 0, 0)
+static enum {APP_CONTINUE, APP_QUIT, APP_QUIT_QUIT, APP_QUIT_FORCE} Hide_window = APP_CONTINUE;
 static int DrawLock = FALSE;
 #endif
 static unsigned int CursorType;
@@ -1107,54 +1107,26 @@ kill_signal_handler(int sig)
   if (Menulock || check_paint_lock()) {
     set_interrupt();		/* accept SIGINT */
   } else {
+#if GTK_CHECK_VERSION(4, 0, 0)
+    QuitGUI();
+#else
     Hide_window = APP_QUIT;
+#endif
   }
 }
 
 static void
 term_signal_handler(int sig)
 {
+#if GTK_CHECK_VERSION(4, 0, 0)
+  g_main_loop_quit(main_loop());
+#else
   Hide_window = APP_QUIT_FORCE;
+#endif
 }
 #endif	/* WINDOWS */
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-static void
-AppMainLoop_response(int ret, gpointer client_data)
-{
-  if (ret) {
-    Hide_window = APP_QUIT_QUIT;
-  }
-}
-
-static int
-AppMainLoop(void)
-{
-  GMainContext *context;
-  context = g_main_context_default();
-  Hide_window = APP_CONTINUE;
-  while (TRUE) {
-    g_main_context_iteration(context, TRUE);
-    if (Hide_window != APP_CONTINUE && ! g_main_context_pending(context)) {
-      int state = Hide_window;
-
-      Hide_window = APP_CONTINUE;
-      switch (state) {
-      case APP_QUIT:
-	CheckSave(AppMainLoop_response, NULL);
-	break;
-      case APP_QUIT_QUIT:
-	menu_clear_undo();
-	return 0;
-      case APP_QUIT_FORCE:
-	menu_clear_undo();
-	return 1;
-      }
-    }
-  }
-  return 0;
-}
-#else
+#if ! GTK_CHECK_VERSION(4, 0, 0)
 static int
 AppMainLoop(void)
 {
@@ -1200,6 +1172,21 @@ CloseCallback(GtkWidget *w, GdkEvent *event, gpointer user_data)
   return TRUE;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+QuitGUI_response(int ret, gpointer client_data)
+{
+  if (ret) {
+    g_main_loop_quit(main_loop());
+  }
+}
+
+void
+QuitGUI(void)
+{
+  CheckSave(QuitGUI_response, NULL);
+}
+#else
 void
 QuitGUI(void)
 {
@@ -1207,6 +1194,7 @@ QuitGUI(void)
     Hide_window = TRUE;
   }
 }
+#endif
 
 int
 find_gra2gdk_inst(struct objlist **o, N_VALUE **i, struct objlist **ro, int *routput, struct gra2cairo_local **rlocal)
@@ -3168,8 +3156,11 @@ application(char *file)
   n_application_ready();
 #if GTK_CHECK_VERSION(4, 0, 0)
   setup_recent_manager();
-#endif
+  g_main_loop_run(main_loop());
+  terminated = FALSE;
+#else
   terminated = AppMainLoop();
+#endif
 #if GTK_CHECK_VERSION(4, 0, 0)
   finalize_recent_manager();
 #endif
