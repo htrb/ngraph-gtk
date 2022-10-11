@@ -66,6 +66,7 @@ void message_box(GtkWidget *parent, const char *message, const char *title, int 
 void response_message_box(GtkWidget *parent, const char *message, const char *title, int mode, response_cb cb, gpointer user_data);
 void input_dialog(GtkWidget *parent, const char *title, const char *mes, const char *init_str, const char *button, struct narray *buttons, int *res_btn, string_response_cb cb, gpointer user_data);
 void spin_dialog(GtkWidget *parent, const char *title, const char *caption, double min, double max, double inc, struct narray *buttons, int *res_btn, double *r, response_cb cb, gpointer user_data);
+void markup_message_box_full(GtkWidget *parent, const char *message, const char *title, int mode, int markup, response_cb cb, gpointer user_data);
 #else
 int DialogExecute(GtkWidget *parent, void *dialog);
 int markup_message_box(GtkWidget * parent, const char *message, const char *title, int mode, int markup);

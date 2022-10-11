@@ -542,14 +542,97 @@ message_box(GtkWidget *parent, const char *message, const char *title, int mode)
   markup_message_box(parent, message, title, mode, FALSE);
 }
 
+#define USE_MESSAGE_QUEUE 1
+#if USE_MESSAGE_QUEUE
+struct message_data{
+  GtkWidget *dialog;
+  struct message_data *next;
+} MessageDataTop = {NULL, NULL};
+
+static int
+message_data_append(GtkWidget *dialog)
+{
+  struct message_data *data, *cur;
+  data = g_malloc0(sizeof(*data));
+  if (data == NULL) {
+    return FALSE;
+  }
+  data->dialog = dialog;
+  cur = &MessageDataTop;
+  while (cur->next) {
+    cur = cur->next;
+  }
+  cur->next = data;
+  return cur == &MessageDataTop;
+}
+
+static void
+message_data_pop(void)
+{
+  struct message_data *cur;
+  cur = MessageDataTop.next;
+  if (cur) {
+    MessageDataTop.next = cur->next;
+    g_free(cur);
+  }
+}
+
+static void markup_message_show(struct message_data *data);
+
+static void
+markup_message_next(GtkWidget *dlg, int res, gpointer data)
+{
+  message_data_pop();
+  gtk_window_destroy(GTK_WINDOW(dlg));
+  markup_message_show(MessageDataTop.next);
+}
+
+static void
+markup_message_show(struct message_data *data)
+{
+  if (data) {
+    ndialog_run(data->dialog, G_CALLBACK(markup_message_next), NULL);
+  }
+}
+
+static void
+markup_message_box_queue(GtkWidget *dialog)
+{
+  if (message_data_append(dialog)) {
+    markup_message_show(MessageDataTop.next);
+  }
+}
+#else
+struct markup_message_box_data {
+  response_cb cb;
+  gpointer data;
+};
+
+static void
+markup_message_box_cb(GtkWidget *dlg, int res, gpointer user_data)
+{
+  struct markup_message_box_data *data;
+  data = (struct markup_message_box_data *) user_data;
+  if (data->cb) {
+    data->cb(res, data->data);
+  }
+  g_free(data);
+  gtk_window_destroy(GTK_WINDOW(dlg));
+}
+#endif	/* USE_MESSAGE_QUEUE */
+
 void
-markup_message_box(GtkWidget *parent, const char *message, const char *title, int mode, int markup)
+markup_message_box_full(GtkWidget *parent, const char *message, const char *title, int mode, int markup, response_cb cb, gpointer user_data)
 {
   GtkWidget *dlg;
-  int data;
   GtkMessageType dlg_type;
-  GtkButtonsType dlg_button;
-  gint res_id;
+#if ! USE_MESSAGE_QUEUE
+  struct markup_message_box_data *data;
+
+  data = g_malloc0(sizeof(*data));
+  data->cb = cb;
+  data->data = user_data;
+#endif
 
   if (title == NULL) {
     title = _("Error");
@@ -578,9 +661,21 @@ markup_message_box(GtkWidget *parent, const char *message, const char *title, in
 
   gtk_window_set_title(GTK_WINDOW(dlg), title);
   gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
+  gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
 
-  ndialog_run(dlg, G_CALLBACK(gtk_window_destroy), NULL);
+#if USE_MESSAGE_QUEUE
+  markup_message_box_queue(dlg);
+#else
+  ndialog_run(dlg, G_CALLBACK(markup_message_box_cb), data);
+#endif
 }
+
+void
+markup_message_box(GtkWidget *parent, const char *message, const char *title, int mode, int markup)
+{
+  markup_message_box_full(parent, message, title, mode, markup, NULL, NULL);
+}
+
 #else
 int
 message_box(GtkWidget * parent, const char *message, const char *title, int mode)
