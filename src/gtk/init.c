@@ -198,6 +198,14 @@ OpenApplication(void)
   return OpenDisplay;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+GMainLoop *
+main_loop(void)
+{
+  return MainLoop;
+}
+#endif
+
 int
 putconsole(const char *s)
 {
