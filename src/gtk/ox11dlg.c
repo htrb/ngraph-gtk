@@ -186,14 +186,19 @@ dlgconfirm(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 static void
+dlgmessage_response(int response, gpointer user_data)
+{
+  struct dialog_data *data;
+  data = (struct dialog_data *) user_data;
+  data->wait = FALSE;
+}
+
+static void
 dlgmessage_main(gpointer user_data)
 {
   struct dialog_data *data;
   data = (struct dialog_data *) user_data;
-  message_box(get_toplevel_window(), CHK_STR(data->msg), (data->title) ? data->title : _("Message"), RESPONS_OK);
-  g_free(data->msg);
-  g_free(data->title);
-  g_free(data);
+  markup_message_box_full(get_toplevel_window(), CHK_STR(data->msg), (data->title) ? data->title : _("Message"), RESPONS_OK, FALSE, dlgmessage_response, data);
 }
 #endif
 
@@ -203,7 +208,9 @@ dlgmessage(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   char *mes, *title;
   int locksave;
 #if GTK_CHECK_VERSION(4, 0, 0)
-  struct dialog_data *data;
+  struct dialog_data data;
+
+  memset(&data, 0, sizeof(data));
 #endif
 
   if (_getobj(obj, "title", inst, &title)) {
@@ -215,15 +222,7 @@ dlgmessage(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   Globallock = TRUE;
 #if GTK_CHECK_VERSION(4, 0, 0)
   /* must be implemented */
-  data = g_malloc0(sizeof(*data));
-  if (data == NULL) {
-    return 0;
-  }
-  data->title = g_strdup(title);
-  data->msg = g_strdup(mes);
-  g_idle_add_once(dlgmessage_main, data);
-  Globallock = locksave;
-  return 0;
+  dialog_run(title ? title : _("Message"), mes, dlgmessage_main, &data);
 #else
   message_box(get_toplevel_window(), CHK_STR(mes), (title) ? title : _("Message"), RESPONS_OK);
 #endif
