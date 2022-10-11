@@ -1138,11 +1138,61 @@ mgtkdisplaystatus(const char *str)
   DisplayDialog(str);
 }
 
+#define USE_BLOCK_PUTSTDERR 0
+#if USE_BLOCK_PUTSTDERR
+struct dialog_data {
+  const char *msg;
+  int wait;
+};
+
+static void
+dialog_wait(struct dialog_data *data)
+{
+  while (data->wait) {
+    msleep(100);
+  }
+}
+
+static void
+dialog_run(const char *mes, GSourceOnceFunc func, struct dialog_data *data)
+{
+  data->wait = TRUE;
+  data->msg = mes;
+  g_idle_add_once(func, data);
+  dialog_wait(data);
+}
+
+static void
+putstderr_response(int response, gpointer user_data)
+{
+  struct dialog_data *data;
+  data = (struct dialog_data *) user_data;
+  data->wait = FALSE;
+}
+
+static void
+putstderr_main(gpointer user_data)
+{
+  struct dialog_data *data;
+  data = (struct dialog_data *) user_data;
+  markup_message_box_full(get_current_window(), CHK_STR(data->msg), _("Error:"), RESPONS_ERROR, FALSE, putstderr_response, data);
+}
+
+int
+mgtkputstderr(const char *s)
+{
+  struct dialog_data data;
+
+  dialog_run(s, putstderr_main, &data);
+  return strlen(s) + 1;
+}
+#else
 int
 mgtkputstderr(const char *s)
 {
   return PutStderr(s);
 }
+#endif
 
 int
 mgtkputstdout(const char *s)
@@ -1163,7 +1213,11 @@ mgtkprintfstderr(const char *fmt, ...)
   va_start(ap, fmt);
   len = vsnprintf(buf, sizeof(buf), fmt, ap);
   va_end(ap);
+#if USE_BLOCK_PUTSTDERR
+  mgtkputstderr(buf);
+#else
   PutStderr(buf);
+#endif
   return len;
 }
 
