@@ -1182,21 +1182,15 @@ AppMainLoop(void)
 }
 #endif
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
 void
 reset_event(void)
 {
-#if GTK_CHECK_VERSION(4, 0, 0)
-  GMainContext *context;
-  context = g_main_context_default();
-  while (g_main_context_pending(context)) {
-    g_main_context_iteration(context, TRUE);
-  }
-#else
   while (gtk_events_pending()) {
     gtk_main_iteration();
   }
-#endif
 }
+#endif
 
 static gboolean
 CloseCallback(GtkWidget *w, GdkEvent *event, gpointer user_data)

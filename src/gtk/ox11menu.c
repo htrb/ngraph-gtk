@@ -1305,7 +1305,9 @@ menumenu(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
 static int
 mx_evloop(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   reset_event();
+#endif
   return 0;
 }
 
@@ -1738,8 +1740,8 @@ mx_print(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
 #else
     gtk_widget_show_all(TopLevel);
     gtk_container_add(GTK_CONTAINER(TopLevel), label);
-#endif
     reset_event();
+#endif
   }
 
   lock = Menulock;
@@ -1752,9 +1754,9 @@ mx_print(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
     gtk_window_destroy(GTK_WINDOW(TopLevel));
 #else
     gtk_widget_destroy(TopLevel);
+    reset_event();
 #endif
     TopLevel = NULL;
-    reset_event();
   }
   return 0;
 }

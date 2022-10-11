@@ -943,8 +943,8 @@ DialogInput(GtkWidget * parent, const char *title, const char *mes, const char *
   gtk_window_destroy(GTK_WINDOW(dlg));
 #else
   gtk_widget_destroy(dlg);
-#endif
   reset_event();
+#endif
 
   return data;
 }
@@ -1061,8 +1061,8 @@ DialogRadio(GtkWidget *parent, const char *title, const char *caption, struct na
   gtk_window_destroy(GTK_WINDOW(dlg));
 #else
   gtk_widget_destroy(dlg);
-#endif
   reset_event();
+#endif
 
   return data;
 }
@@ -1138,8 +1138,8 @@ DialogButton(GtkWidget *parent, const char *title, const char *caption, struct n
   gtk_window_destroy(GTK_WINDOW(dlg));
 #else
   gtk_widget_destroy(dlg);
-#endif
   reset_event();
+#endif
 
   return res_id;
 }
@@ -1234,8 +1234,8 @@ DialogCombo(GtkWidget *parent, const char *title, const char *caption, struct na
   gtk_window_destroy(GTK_WINDOW(dlg));
 #else
   gtk_widget_destroy(dlg);
-#endif
   reset_event();
+#endif
 
   return data;
 }
@@ -1332,8 +1332,8 @@ DialogComboEntry(GtkWidget *parent, const char *title, const char *caption, stru
   gtk_window_destroy(GTK_WINDOW(dlg));
 #else
   gtk_widget_destroy(dlg);
-#endif
   reset_event();
+#endif
 
   return data;
 }
@@ -1607,8 +1607,8 @@ DialogCheck(GtkWidget *parent, const char *title, const char *caption, struct na
   gtk_window_destroy(GTK_WINDOW(dlg));
 #else
   gtk_widget_destroy(dlg);
-#endif
   reset_event();
+#endif
 
   return data;
 }

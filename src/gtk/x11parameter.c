@@ -966,7 +966,9 @@ parameter_play(GtkButton *btn, gpointer user_data)
       set_parameter(prm, data);
       for (i = 1; i < wait; i++) {
 	msleep(10);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
 	reset_event();
+#endif
 	if (! data->playing) {
 	  goto EndPlaying;
 	}
