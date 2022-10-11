@@ -97,23 +97,6 @@ dialog_destroyed_cb(GtkWidget *w, gpointer user_data)
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-static void
-ndialog_response(GtkWidget *dlg, gint res_id, gpointer user_data)
-{
-  int *data;
-  data = user_data;
-  *data = res_id;
-}
-
-static gboolean
-ndialog_close_request(GtkWindow* window, gpointer user_data)
-{
-  int *data;
-  data = user_data;
-  *data = GTK_RESPONSE_CANCEL;
-  return TRUE;
-}
-
 void
 ndialog_run(GtkWidget *dlg, GCallback cb, gpointer user_data)
 {
