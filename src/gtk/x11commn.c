@@ -1615,6 +1615,7 @@ draw_callback(gpointer user_data)
   menu_clear_undo();
 }
 
+#if USE_EVENT_LOOP
 static int
 LoadNgpFile_response(struct response_callback *cb)
 {
@@ -1782,6 +1783,217 @@ ErrorExit:
   load_dialog_cb_free(d);
   return 1;
 }
+#else
+struct LoadNgpFile_data {
+  struct objlist *obj;
+  N_VALUE *inst;
+  char *argv[2];
+  int r;
+  GThread *thread;
+  char *file, *name;
+  int loadpath, allocnow, newid, console;
+  struct narray sarray;
+  struct load_dialog_data *d;
+};
+
+static void
+LoadNgpFile_response_finalize(gpointer user_data)
+{
+  struct LoadNgpFile_data *data;
+
+  data = (struct LoadNgpFile_data *) user_data;
+
+  g_thread_join(data->thread);
+  menu_lock(FALSE);
+
+  if (data->r == 0) {
+    struct objlist *aobj;
+    int i;
+    if ((aobj = getobject("axis")) != NULL) {
+      for (i = 0; i <= chkobjlastinst(aobj); i++)
+	exeobj(aobj, "tight", i, 0, NULL);
+    }
+
+    if ((aobj = getobject("axisgrid")) != NULL) {
+      for (i = 0; i <= chkobjlastinst(aobj); i++)
+	exeobj(aobj, "tight", i, 0, NULL);
+    }
+
+    SetFileName(data->file);
+    AddNgpFileList(data->name);
+    reset_graph_modified();
+
+    switch (data->loadpath) {
+    case LOAD_PATH_BASE:
+      ToBasename();
+      break;
+    case LOAD_PATH_FULL:
+      ToFullPath();
+      break;
+    }
+    InfoWinClear();
+  }
+
+  AxisNameToGroup();
+  ResetStatusBar();
+  arraydel2(&data->sarray);
+
+  if (data->console) {
+    free_console(data->allocnow);
+  }
+
+  set_axis_undo_button_sensitivity(FALSE);
+  GetPageSettingsFromGRA();
+  Draw(FALSE, draw_callback, NULL);
+  delobj(data->obj, data->newid);
+  load_dialog_cb_free(data->d);
+  g_free(data);
+}
+
+static gpointer
+LoadNgpFile_response_main(gpointer user_data)
+{
+  struct LoadNgpFile_data *data;
+  data = (struct LoadNgpFile_data *) user_data;
+  data->r = _exeobj(data->obj, "shell", data->inst, 1, data->argv);
+  data->thread = g_thread_self();
+  g_idle_add_once(LoadNgpFile_response_finalize, data);
+  return NULL;
+}
+
+static int
+LoadNgpFile_response(struct response_callback *cb)
+{
+  char *file;
+  char *option;
+  int console;
+  struct load_dialog_data *d;
+  struct objlist *sys;
+  char *expanddir;
+  struct objlist *obj;
+  char *name;
+  int newid, allocnow = FALSE, tmp;
+  char *s;
+  int len;
+  char mes[256];
+  N_VALUE *inst;
+  int loadpath, expand;
+  struct LoadNgpFile_data *data;
+
+  d = (struct load_dialog_data *) cb->data;
+
+  file = d->file;
+  console = d->console;
+  option = d->option;
+
+  data = g_malloc0(sizeof(*data));
+  if (data == NULL) {
+    goto ErrorExit;
+  }
+
+  if (DlgLoad.ret != IDOK) {
+    goto ErrorExit;
+  }
+  changefilename(file);
+
+  if (naccess(file, R_OK)) {
+    ErrorMessage();
+    goto ErrorExit;
+  }
+
+  sys = chkobject("system");
+  if (sys == NULL) {
+    goto ErrorExit;
+  }
+
+  loadpath = DlgLoad.loadpath;
+  expand = DlgLoad.expand;
+  expanddir = DlgLoad.exdir;
+  DlgLoad.exdir = NULL;
+  if (expanddir == NULL) {
+    goto ErrorExit;
+  }
+
+  putobj(sys, "expand_dir", 0, expanddir);
+  putobj(sys, "expand_file", 0, &expand);
+
+  tmp = FALSE;
+  putobj(sys, "ignore_path", 0, &tmp);
+
+  obj = chkobject("shell");
+  if (obj == NULL) {
+    goto ErrorExit;
+  }
+
+  newid = newobj(obj);
+  if (newid < 0) {
+    goto ErrorExit;
+  }
+
+  inst = chkobjinst(obj, newid);
+  arrayinit(&data->sarray, sizeof(char *));
+  while ((s = getitok2(&option, &len, " \t")) != NULL) {
+    if (arrayadd(&data->sarray, &s) == NULL) {
+      g_free(s);
+      arraydel2(&data->sarray);
+      delobj(obj, newid);
+      goto ErrorExit;
+    }
+  }
+
+  name = g_strdup(file);
+
+  if (name == NULL) {
+    arraydel2(&data->sarray);
+    delobj(obj, newid);
+    goto ErrorExit;
+  }
+
+  if (arrayadd(&data->sarray, &name) == NULL) {
+    g_free(name);
+    arraydel2(&data->sarray);
+    delobj(obj, newid);
+    goto ErrorExit;
+  }
+
+
+  DeleteDrawable();
+
+  if (console) {
+    allocnow = allocate_console();
+  }
+
+  exeobj(obj, "set_security", newid, 0, NULL);
+
+  data->argv[0] = (char *) &data->sarray;
+  data->argv[1] = NULL;
+
+  snprintf(mes, sizeof(mes), _("Loading `%.128s'."), name);
+  SetStatusBar(mes);
+
+  menu_lock(TRUE);
+
+  data->obj = obj;
+  data->inst = inst;
+  data->file = file;
+  data->name = name;
+  data->loadpath = loadpath;
+  data->allocnow = allocnow;
+  data->console = console;
+  data->newid = newid;
+  data->d = d;
+  g_thread_new(NULL, LoadNgpFile_response_main, data);
+  return 0;
+
+ ErrorExit:
+  g_free(data);
+  if (d->cwd) {
+    nchdir(d->cwd);
+  }
+  load_dialog_cb_free(d);
+  return 1;
+}
+#endif
 
 void
 LoadNgpFile(const char *file, int console, const char *option, const char *cwd)
