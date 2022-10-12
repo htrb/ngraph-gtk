@@ -677,7 +677,7 @@ SectionDialogSetupItem(GtkWidget *w, struct SectionDialog *d)
   set_axis_id(d->yid, d->IDY);
   set_axis_id(d->uid, d->IDU);
   set_axis_id(d->rid, d->IDR);
-  set_axis_id(d->gid, *(d->IDG));
+  set_axis_id(d->gid, d->IDG);
 
   spin_entry_set_val(d->width, d->LenX);
   spin_entry_set_val(d->height, d->LenY);
@@ -765,17 +765,17 @@ section_dialog_grid_response(struct response_callback *cb)
   case IDCANCEL:
     menu_undo_internal(undo);
     if (create) {
-      *(d->IDG) = -1;
+      d->IDG = -1;
     }
     break;
   case IDDELETE:
     if (create) {
       menu_undo_internal(undo);
     } else {
-      delobj(d->Obj2, *(d->IDG));
+      delobj(d->Obj2, d->IDG);
       set_graph_modified();
     }
-    *(d->IDG) = -1;
+    d->IDG = -1;
     break;
   default:
     menu_delete_undo(undo);
@@ -794,31 +794,31 @@ SectionDialogGrid(GtkWidget *w, gpointer client_data)
   int oidx, oidy, create = FALSE, undo = -1;
 
   d = (struct SectionDialog *) client_data;
-  if (*(d->IDG) == -1) {
+  if (d->IDG == -1) {
     undo = axis_save_undo(UNDO_TYPE_DUMMY);
-    if ((*(d->IDG) = newobj(d->Obj2)) >= 0) {
+    if ((d->IDG = newobj(d->Obj2)) >= 0) {
       char *ref;
       getobj(d->Obj, "oid", d->IDX, 0, NULL, &oidx);
       ref = g_strdup_printf("axis:^%d", oidx);
       if (ref) {
-	putobj(d->Obj2, "axis_x", *(d->IDG), ref);
+	putobj(d->Obj2, "axis_x", d->IDG, ref);
       }
       getobj(d->Obj, "oid", d->IDY, 0, NULL, &oidy);
       ref = g_strdup_printf("axis:^%d", oidy);
       if (ref) {
-	putobj(d->Obj2, "axis_y", *(d->IDG), ref);
+	putobj(d->Obj2, "axis_y", d->IDG, ref);
       }
       create = TRUE;
-      presetting_set_obj_field(d->Obj2, *(d->IDG));
+      presetting_set_obj_field(d->Obj2, d->IDG);
     }
   }
-  if (*(d->IDG) >= 0) {
+  if (d->IDG >= 0) {
 #if GTK_CHECK_VERSION(4, 0, 0)
     struct section_dialog_grid_data *data;
 #else
     int ret;
 #endif
-    GridDialog(&DlgGrid, d->Obj2, *(d->IDG));
+    GridDialog(&DlgGrid, d->Obj2, d->IDG);
 #if GTK_CHECK_VERSION(4, 0, 0)
   /* must be implemented */
     data = g_malloc0(sizeof(*data));
@@ -833,17 +833,17 @@ SectionDialogGrid(GtkWidget *w, gpointer client_data)
     case IDCANCEL:
       menu_undo_internal(undo);
       if (create) {
-        *(d->IDG) = -1;
+        d->IDG = -1;
       }
       break;
     case IDDELETE:
       if (create) {
         menu_undo_internal(undo);
       } else {
-        delobj(d->Obj2, *(d->IDG));
+        delobj(d->Obj2, d->IDG);
         set_graph_modified();
       }
-      *(d->IDG) = -1;
+      d->IDG = -1;
       break;
     default:
       menu_delete_undo(undo);
@@ -1081,7 +1081,7 @@ void
 SectionDialog(struct SectionDialog *data,
 	      int x, int y, int lenx, int leny,
 	      struct objlist *obj, int idx, int idy, int idu, int idr,
-	      struct objlist *obj2, int *idg, int section)
+	      struct objlist *obj2, int idg, int section)
 {
   data->SetupWindow = SectionDialogSetup;
   data->CloseWindow = SectionDialogClose;
@@ -3120,14 +3120,14 @@ CmAxisNewFrame(int use_presettings
     presetting_set_obj_field(obj, idr);
   }
   SectionDialog(&DlgSection, x, y, lenx, leny, obj, idx, idy, idu, idr, obj2,
-		&idg, FALSE);
+		idg, FALSE);
 #if GTK_CHECK_VERSION(4, 0, 0)
   data->undo = undo;
   data->cb = cb;
   response_callback_add(&DlgSection, axis_new_response, NULL, data);
   DialogExecute(TopLevel, &DlgSection);
   SectionDialog(&DlgSection, x, y, lenx, leny, obj, idx, idy, idu, idr, obj2,
-		&idg, FALSE);
+		idg, FALSE);
 #else
   ret = DialogExecute(TopLevel, &DlgSection);
   if (ret == IDCANCEL) {
@@ -3212,7 +3212,7 @@ CmAxisNewSection(int use_presettings
     presetting_set_obj_field(obj2, idg);
   }
   SectionDialog(&DlgSection, x, y, lenx, leny, obj, idx, idy, idu, idr, obj2,
-		&idg, TRUE);
+		idg, TRUE);
 #if GTK_CHECK_VERSION(4, 0, 0)
   /* must be implemented */
   data->undo = undo;

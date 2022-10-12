@@ -258,14 +258,14 @@ struct SectionDialog
     *width, *height, *xaxis, *yaxis, *uaxis, *raxis, *grid;
   int Section;
   int X, Y, LenX, LenY, X0, Y0, LenX0, LenY0;
-  int IDX, IDY, IDU, IDR, *IDG;
+  int IDX, IDY, IDU, IDR, IDG;
   struct objlist *Obj, *Obj2;
   int MaxX, MaxY;
 };
 void SectionDialog(struct SectionDialog *data,
 		   int x, int y, int lenx, int leny,
 		   struct objlist *obj, int idx, int idy, int idu, int idr,
-		   struct objlist *obj2, int *idg, int section);
+		   struct objlist *obj2, int idg, int section);
 
 struct CrossDialog
 {

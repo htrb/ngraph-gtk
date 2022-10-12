@@ -6711,7 +6711,7 @@ create_axis(struct Viewer *d)
 	presetting_set_obj_field(obj, idu);
 	presetting_set_obj_field(obj, idr);
 	SectionDialog(&DlgSection, x1, y1, lenx, leny, obj,
-		      idx, idy, idu, idr, obj2, &idg, FALSE);
+		      idx, idy, idu, idr, obj2, idg, FALSE);
 
 	add_drawble_response(&DlgSection, obj, obj2, -1, undo);
 	DialogExecute(TopLevel, &DlgSection);
@@ -6722,7 +6722,7 @@ create_axis(struct Viewer *d)
 	presetting_set_obj_field(obj, idr);
 	presetting_set_obj_field(obj2, idg);
 	SectionDialog(&DlgSection, x1, y1, lenx, leny, obj,
-		      idx, idy, idu, idr, obj2, &idg, TRUE);
+		      idx, idy, idu, idr, obj2, idg, TRUE);
 
 	add_drawble_response(&DlgSection, obj, obj2, -1, undo);
 	DialogExecute(TopLevel, &DlgSection);
@@ -6843,7 +6843,7 @@ create_axis(struct Viewer *d)
 	presetting_set_obj_field(obj, idu);
 	presetting_set_obj_field(obj, idr);
 	SectionDialog(&DlgSection, x1, y1, lenx, leny, obj,
-		      idx, idy, idu, idr, obj2, &idg, FALSE);
+		      idx, idy, idu, idr, obj2, idg, FALSE);
 
 	ret = DialogExecute(TopLevel, &DlgSection);
       } else if (d->Mode == SectionB) {
@@ -6853,7 +6853,7 @@ create_axis(struct Viewer *d)
 	presetting_set_obj_field(obj, idr);
 	presetting_set_obj_field(obj2, idg);
 	SectionDialog(&DlgSection, x1, y1, lenx, leny, obj,
-		      idx, idy, idu, idr, obj2, &idg, TRUE);
+		      idx, idy, idu, idr, obj2, idg, TRUE);
 
 	ret = DialogExecute(TopLevel, &DlgSection);
       } else if (d->Mode == CrossB) {
@@ -8979,7 +8979,7 @@ update_focused_obj(struct Viewer *d, int i)
 	lenx = lenx - x1;
 
 	SectionDialog(&DlgSection, x1, y1, lenx, leny, obj,
-		      idx, idy, idu, idr, dobj, &idg, type == 's');
+		      idx, idy, idu, idr, dobj, idg, type == 's');
 
 	response_callback_add(&DlgSection, view_update_response, NULL, GINT_TO_POINTER(i));
 	DialogExecute(TopLevel, &DlgSection);
@@ -9148,7 +9148,7 @@ ViewUpdate(void)
 	  lenx = lenx - x1;
 
 	  SectionDialog(&DlgSection, x1, y1, lenx, leny, obj,
-			idx, idy, idu, idr, dobj, &idg, type == 's');
+			idx, idy, idu, idr, dobj, idg, type == 's');
 
 	  ret = DialogExecute(TopLevel, &DlgSection);
 	} else if ((type == 'c') && findX && findY) {
