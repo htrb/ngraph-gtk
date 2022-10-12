@@ -6323,6 +6323,7 @@ update_file_obj_multi_response(struct response_callback *cb)
   }
   if (ret == IDFAPPLY) {
     update_file_obj_multi_response_all(obj, array, i + 1, num, id0, new_file);
+    rdata->cb(rdata->modified, rdata->user_data);
     return IDOK;
   }
   i++;
