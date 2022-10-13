@@ -533,7 +533,7 @@ struct markup_message_box_data {
   gpointer data;
 };
 
-#define USE_MESSAGE_QUEUE 1
+#define USE_MESSAGE_QUEUE 0
 #if USE_MESSAGE_QUEUE
 struct message_data{
   GtkWidget *dialog;
