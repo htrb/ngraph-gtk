@@ -1452,6 +1452,9 @@ spin_dialog(GtkWidget *parent, const char *title, const char *caption, double mi
 
   data = g_malloc0(sizeof(*data));
   if (data == NULL) {
+    if (cb) {
+      cb(IDCANCEL, user_data);
+    }
     return;
   }
 
