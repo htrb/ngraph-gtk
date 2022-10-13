@@ -2285,6 +2285,9 @@ check_instance(struct objlist *obj)
 {
   int i;
 
+  if (Menulock) {
+    return;
+  }
   for (i = 0; i < ActionWidgetNum; i++) {
     struct objlist *dobj;
     dobj = NULL;
