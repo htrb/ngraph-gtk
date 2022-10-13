@@ -489,6 +489,9 @@ response_message_box(GtkWidget *parent, const char *message, const char *title, 
 
   data = g_malloc0(sizeof(*data));
   if (data == NULL) {
+    if (cb) {
+      cb(IDCANCEL, user_data);
+    }
     return;
   }
   data->cb = cb;
