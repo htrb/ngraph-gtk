@@ -808,6 +808,9 @@ input_dialog(GtkWidget *parent, const char *title, const char *mes, const char *
 
   data = g_malloc0(sizeof(*data));
   if (data == NULL) {
+    if (cb) {
+      cb(IDCANCEL, NULL, user_data);
+    }
     return;
   }
   dlg = gtk_dialog_new_with_buttons(title,
