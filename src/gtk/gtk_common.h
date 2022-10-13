@@ -35,6 +35,8 @@
 
 #define POPOVERMEU_FLAG GTK_POPOVER_MENU_NESTED
 
+#define BLOCKING_DIALOG_WAIT 10
+
 #if GTK_CHECK_VERSION(4, 0, 0)
 typedef void (* response_cb) (int response, gpointer user_data);
 typedef void (* file_response_cb) (char *file, gpointer user_data);
