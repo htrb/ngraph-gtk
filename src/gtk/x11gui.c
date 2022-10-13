@@ -2315,6 +2315,9 @@ nGetOpenFileName(GtkWidget *parent,
 
   data = g_malloc0(sizeof(*data));
   if (data == NULL) {
+    if (cb) {
+      cb(NULL, user_data);
+    }
     return;
   }
   data->title = title;
