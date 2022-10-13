@@ -1149,7 +1149,7 @@ static void
 dialog_wait(struct dialog_data *data)
 {
   while (data->wait) {
-    msleep(100);
+    msleep(BLOCKING_DIALOG_WAIT);
   }
 }
 
