@@ -96,6 +96,8 @@ static void CmViewerButtonArm(GtkWidget *action, gpointer client_data);
 #else
 static void CmViewerButtonArm(GtkToggleToolButton *action, gpointer client_data);
 #endif
+static void check_exist_instances(struct objlist *parent);
+static void check_instance(struct objlist *obj);
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 static char *Cursor[] = {
@@ -1074,6 +1076,10 @@ menu_lock(int lock)
 #endif
   if (w) {
     gtk_widget_set_sensitive(w, ! Menulock);
+  }
+  if (! Menulock) {
+    check_exist_instances(chkobject("draw"));
+    check_instance(chkobject("parameter"));
   }
   gtk_widget_set_sensitive(ToolBox, ! Menulock);
 }
