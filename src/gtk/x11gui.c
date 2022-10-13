@@ -976,9 +976,7 @@ radio_dialog_response(GtkWidget *dlg, int res_id, gpointer user_data)
 
   g_free(data->btn_ary);
 
-  if (dlg) {
-    gtk_window_destroy(GTK_WINDOW(dlg));
-  }
+  gtk_window_destroy(GTK_WINDOW(dlg));
   data->cb(selected, data->data);
 }
 
@@ -994,7 +992,9 @@ radio_dialog(GtkWidget *parent, const char *title, const char *caption, struct n
 
   data = g_malloc0(sizeof(*data));
   if (data == NULL) {
-    radio_dialog_response(NULL, IDCANCEL, user_data);
+    if (cb) {
+      cb(IDCANCEL, user_data);
+    }
     return;
   }
 
@@ -1003,7 +1003,10 @@ radio_dialog(GtkWidget *parent, const char *title, const char *caption, struct n
 
   btn_ary = g_malloc(anum * sizeof(*btn_ary));
   if (btn_ary == NULL) {
-    radio_dialog_response(NULL, IDCANCEL, user_data);
+    if (cb) {
+      cb(IDCANCEL, user_data);
+    }
+    g_free(data);
     return;
   }
 
