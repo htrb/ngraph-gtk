@@ -616,6 +616,12 @@ markup_message_box_full(GtkWidget *parent, const char *message, const char *titl
   struct markup_message_box_data *data;
 
   data = g_malloc0(sizeof(*data));
+  if (data == NULL) {
+    if (cb) {
+      cb(IDCANCEL, user_data);
+    }
+    return;
+  }
   data->cb = cb;
   data->data = user_data;
 #endif
