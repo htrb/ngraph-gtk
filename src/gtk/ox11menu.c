@@ -1138,7 +1138,7 @@ mgtkdisplaystatus(const char *str)
   DisplayDialog(str);
 }
 
-#define USE_BLOCK_PUTSTDERR 0
+#define USE_BLOCK_PUTSTDERR 1
 #if USE_BLOCK_PUTSTDERR
 struct dialog_data {
   const char *msg;
