@@ -971,6 +971,7 @@ n_initialize(int *argc, char ***argv)
     g_application_register(G_APPLICATION(GtkApp), NULL, NULL);
     setup_actions(GtkApp);
   }
+  g_set_prgname(PACKAGE_NAME);  /* this is necessary to use GtkRecentManager */
   g_set_application_name(AppName);
 #if OSX
   GtkMacIntegration = gtkosx_application_get();
