@@ -925,6 +925,19 @@ n_get_gtk_application(void)
   return GtkApp;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+set_prgname(int argc, char **argv)
+{
+  if (g_get_prgname() == NULL && argc > 0) {
+    gchar *prgname;
+    prgname = g_path_get_basename(argv[0]);
+    g_set_prgname(prgname);
+    g_free (prgname);
+  }
+}
+#endif
+
 int
 n_initialize(int *argc, char ***argv)
 {
