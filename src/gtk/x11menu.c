@@ -2448,6 +2448,10 @@ add_recent_menu_item(GtkRecentInfo *info, GMenu *menu, int type)
   GString *label;
   struct stat sb;
 
+  if (! gtk_recent_info_has_application (info, AppName)) {
+    return;
+  }
+
   local = gtk_recent_info_is_local(info);
   if (! local) {
     return;
