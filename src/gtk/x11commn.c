@@ -60,6 +60,7 @@ static GtkWidget *ProgressDialog = NULL;
 #if GTK_CHECK_VERSION(4, 0, 0)
 #define PROGRESSBAR_N 2
 static GtkProgressBar *ProgressBar[PROGRESSBAR_N];
+static GtkWidget *ProgressText, *ProgressButton;
 #else
 static GtkProgressBar *ProgressBar, *ProgressBar2;
 #endif
@@ -2871,6 +2872,22 @@ progress_dialog_update(gpointer user_data)
   }
   return TRUE;
 }
+
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+progress_dialog_add_text_view(GtkWidget *vbox)
+{
+  GtkWidget *swin;
+  swin = gtk_scrolled_window_new();
+  gtk_widget_set_vexpand(swin, TRUE);
+  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+
+  ProgressText = gtk_text_view_new();
+  gtk_text_view_set_editable(GTK_TEXT_VIEW(ProgressText), FALSE);
+  gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), ProgressText);
+  gtk_box_append(GTK_BOX(vbox), swin);
+}
+#endif
 
 static void
 create_progress_dialog(const char *title)
