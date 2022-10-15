@@ -2974,6 +2974,35 @@ ProgressDialog_thread(gpointer user_data)
   return NULL;
 }
 
+static void
+progress_dialog_set_text(gpointer user_data)
+{
+  GtkTextBuffer *buf;
+  GtkTextIter iter;
+  char *text;
+
+  text = (char *) user_data;
+
+  if (text == NULL) {
+    return;
+  }
+
+  if (ProgressText == NULL) {
+    g_free(text);
+    return;
+  }
+
+  gtk_widget_show(gtk_widget_get_parent(ProgressText));
+
+  buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(ProgressText));
+  gtk_text_buffer_get_end_iter(buf, &iter);
+  gtk_text_buffer_insert(buf, &iter, text, -1);
+  gtk_text_buffer_get_end_iter(buf, &iter);
+  gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW(ProgressText), &iter, 0, TRUE, 0, 1);
+
+  g_free(text);
+}
+
 void
 ProgressDialogCreate(char *title, progress_func update, progress_func finalize, gpointer data)
 {
