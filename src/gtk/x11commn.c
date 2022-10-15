@@ -2903,6 +2903,11 @@ create_progress_dialog(const char *title)
   NSetCursor(GDK_WATCH);
 
   if (ProgressDialog) {
+    GtkTextBuffer *buf;
+    buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(ProgressText));
+    gtk_text_buffer_set_text(buf, "", -1);
+    gtk_widget_hide(ProgressDialog);
+
     ProgressDialogSetTitle(title);
     show_progress(0, "", 0);
     show_progress(1, "", 0);
@@ -2929,9 +2934,16 @@ create_progress_dialog(const char *title)
   gtk_progress_bar_set_show_text(ProgressBar[1], TRUE);
   gtk_box_append(GTK_BOX(vbox), GTK_WIDGET(ProgressBar[1]));
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  progress_dialog_add_text_view(vbox);
+#endif
+
   btn = gtk_button_new_with_mnemonic(_("_Stop"));
   set_button_icon(btn, "process-stop");
   g_signal_connect(btn, "clicked", G_CALLBACK(stop_btn_clicked), NULL);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  ProgressButton = btn;
+#endif
 #if USE_HEADER_BAR
   hbox = gtk_header_bar_new();
 #if ! GTK_CHECK_VERSION(4, 0, 0)
