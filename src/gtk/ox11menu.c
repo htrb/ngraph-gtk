@@ -1183,7 +1183,11 @@ mgtkputstderr(const char *s)
 {
   struct dialog_data data;
 
-  dialog_run(s, putstderr_main, &data);
+  if (ProgressDialogIsActive()) {
+    ProgressDialog_append_text(s);
+  } else {
+    dialog_run(s, putstderr_main, &data);
+  }
   return strlen(s) + 1;
 }
 #else
