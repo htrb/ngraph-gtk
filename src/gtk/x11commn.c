@@ -2867,12 +2867,8 @@ static gboolean
 progress_dialog_update(gpointer user_data)
 {
   int i;
-  if (! ProgressDialogData  || ProgressDialogData->finish) {
-    g_thread_join(ProgressDialogData->thread);
-    if (ProgressDialogData->finalize) {
-      ProgressDialogData->finalize(user_data);
-    }
-    ProgressDialogFinalize();
+  if (! ProgressDialogData || ProgressDialogData->finish) {
+    progress_dialog_finalize(user_data);
     return FALSE;
   }
   for (i = 0; i < PROGRESSBAR_N; i++) {
