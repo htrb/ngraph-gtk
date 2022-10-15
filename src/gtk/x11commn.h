@@ -64,6 +64,7 @@ typedef void (* progress_func) (gpointer user_data);
 int SetFileHidden(response_cb cb, gpointer user_data);
 void ProgressDialogSetTitle(const char *title);
 void ProgressDialogCreate(char *title, progress_func update, progress_func finalize, gpointer data);
+int ProgressDialogIsActive(void);
 #else
 int SetFileHidden(void);
 void ProgressDialogSetTitle(char *title);

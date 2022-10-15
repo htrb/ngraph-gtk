@@ -3003,6 +3003,15 @@ progress_dialog_set_text(gpointer user_data)
   g_free(text);
 }
 
+int
+ProgressDialogIsActive(void)
+{
+  if (ProgressDialogData == NULL) {
+    return FALSE;
+  }
+  return ! ProgressDialogData->finish;
+}
+
 void
 ProgressDialogCreate(char *title, progress_func update, progress_func finalize, gpointer data)
 {
