@@ -2037,12 +2037,23 @@ draw_main(gpointer user_data)
 static int
 mxdraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
+#if GTK_CHECK_VERSION(4, 0, 0)
+  int drawing;
+#endif
   if (TopLevel == NULL) {
     error(obj, ERR_MENU_GUI);
     return 1;
   }
 
-  Draw(FALSE, NULL, NULL);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  drawing = TRUE;
+  g_idle_add_once(draw_main, &drawing);
+  while (drawing) {
+    msleep(BLOCKING_DIALOG_WAIT);
+  }
+#else
+  Draw(FALSE);
+#endif
   return 0;
 }
 
