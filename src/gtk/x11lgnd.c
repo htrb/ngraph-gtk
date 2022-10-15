@@ -401,7 +401,7 @@ legend_menu_update_object_response(struct response_callback *cb)
       ldata->array = NULL;
       ldata2->i = i + 1;
       setup(dialog, obj, data[i]);
-response_callback_add(dialog, legend_menu_update_object_response2, legend_menu_update_object_free, ldata2);
+      response_callback_add(dialog, legend_menu_update_object_response2, legend_menu_update_object_free, ldata2);
       DialogExecute(TopLevel, dialog);
     }
   }
