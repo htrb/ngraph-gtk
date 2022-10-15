@@ -3013,6 +3013,14 @@ ProgressDialogIsActive(void)
 }
 
 void
+ProgressDialog_append_text(const char *text)
+{
+  char *str;
+  str = g_strdup(text);
+  g_idle_add_once(progress_dialog_set_text, str);
+}
+
+void
 ProgressDialogCreate(char *title, progress_func update, progress_func finalize, gpointer data)
 {
   int i;
