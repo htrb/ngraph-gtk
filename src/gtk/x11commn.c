@@ -2890,7 +2890,6 @@ progress_dialog_update(gpointer user_data)
   return TRUE;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 progress_dialog_add_text_view(GtkWidget *vbox)
 {
@@ -2904,7 +2903,6 @@ progress_dialog_add_text_view(GtkWidget *vbox)
   gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), ProgressText);
   gtk_box_append(GTK_BOX(vbox), swin);
 }
-#endif
 
 static void
 create_progress_dialog(const char *title)
@@ -2951,21 +2949,14 @@ create_progress_dialog(const char *title)
   gtk_progress_bar_set_show_text(ProgressBar[1], TRUE);
   gtk_box_append(GTK_BOX(vbox), GTK_WIDGET(ProgressBar[1]));
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   progress_dialog_add_text_view(vbox);
-#endif
 
   btn = gtk_button_new_with_mnemonic(_("_Stop"));
   set_button_icon(btn, "process-stop");
   g_signal_connect(btn, "clicked", G_CALLBACK(stop_btn_clicked), NULL);
-#if GTK_CHECK_VERSION(4, 0, 0)
   ProgressButton = btn;
-#endif
 #if USE_HEADER_BAR
   hbox = gtk_header_bar_new();
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  gtk_header_bar_set_title(GTK_HEADER_BAR(hbox), title);
-#endif
   gtk_header_bar_pack_end(GTK_HEADER_BAR(hbox), btn);
   gtk_window_set_titlebar(GTK_WINDOW(ProgressDialog), hbox);
 #else
