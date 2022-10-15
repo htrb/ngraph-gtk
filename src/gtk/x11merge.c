@@ -299,7 +299,7 @@ MergeDialog(struct obj_list_data *data, int id, int user_data)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
-static int
+static void
 merge_open_response(struct response_callback *cb)
 {
   if (cb->return_value == IDCANCEL) {
@@ -309,7 +309,6 @@ merge_open_response(struct response_callback *cb)
     set_graph_modified();
   }
   MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE, DRAW_NOTIFY);
-  return IDOK;
 }
 
 static void
@@ -393,7 +392,7 @@ CmMergeOpen(void *w, gpointer client_data)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
-static int
+static void
 merge_close_response(struct response_callback *cb)
 {
   struct SelectDialog *d;
@@ -416,7 +415,6 @@ merge_close_response(struct response_callback *cb)
     MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE, TRUE);
   }
   arrayfree(farray);
-  return IDOK;
 }
 
 void
@@ -478,7 +476,7 @@ struct merge_update_data
   struct narray *farray;
 };
 
-static int
+static void
 merge_update_response_response(struct response_callback *cb)
 {
   int num, *array;
@@ -500,17 +498,16 @@ merge_update_response_response(struct response_callback *cb)
     }
     arrayfree(farray);
     g_free(data);
-    return IDOK;
+    return;
   }
 
   array = arraydata(farray);
   MergeDialog(NgraphApp.MergeWin.data.data, array[data->i], -1);
   response_callback_add(&DlgMerge, merge_update_response_response, NULL, data);
   DialogExecute(TopLevel, &DlgMerge);
-  return IDOK;
 }
 
-static int
+static void
 merge_update_response(struct response_callback *cb)
 {
   struct SelectDialog *d;
@@ -523,7 +520,7 @@ merge_update_response(struct response_callback *cb)
   obj = d->Obj;
   if (cb->return_value != IDOK) {
     arrayfree(farray);
-    return IDOK;
+    return;
   }
 
   num = arraynum(farray);
@@ -535,7 +532,7 @@ merge_update_response(struct response_callback *cb)
   data = g_malloc0(sizeof(*data));
   if (data == NULL) {
     arrayfree(farray);
-    return IDOK;
+    return;
   }
 
   data->i = 0;
@@ -547,7 +544,6 @@ merge_update_response(struct response_callback *cb)
   MergeDialog(NgraphApp.MergeWin.data.data, array[0], -1);
   response_callback_add(&DlgMerge, merge_update_response_response, NULL, data);
   DialogExecute(TopLevel, &DlgMerge);
-  return IDOK;
 }
 
 void

@@ -795,7 +795,7 @@ struct data_dropped_data {
 
 static void data_dropped_sub(struct data_dropped_data *data);
 
-static int
+static void
 new_merge_obj_response(struct response_callback *cb)
 {
   struct MergeDialog *d;
@@ -809,7 +809,6 @@ new_merge_obj_response(struct response_callback *cb)
     set_graph_modified();
   }
   data_dropped_sub(data);
-  return IDOK;
 }
 
 static int
@@ -959,7 +958,7 @@ arc_get_angle(struct objlist *obj, N_VALUE *inst, unsigned int round, int point,
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
-static int
+static void
 new_file_obj_response(struct response_callback *cb)
 {
   struct FileDialog *d;
@@ -979,7 +978,6 @@ new_file_obj_response(struct response_callback *cb)
   }
 
   data_dropped_sub(data);
-  return IDOK;
 }
 
 static int
@@ -1191,7 +1189,7 @@ data_dropped(char **filenames, int num, int file_type)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
-static int
+static void
 text_dropped_response(struct response_callback *cb)
 {
   struct Viewer *vd;
@@ -1217,7 +1215,6 @@ text_dropped_response(struct response_callback *cb)
     UpdateAll(objects);
   }
   PaintLock = FALSE;
-  return IDOK;
 }
 
 static int
@@ -2701,7 +2698,7 @@ mask_selected_data(struct objlist *fileobj, int selnum, struct narray *sel_list)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
-static int
+static void
 evaluate_response(struct response_callback *cb)
 {
   int selnum;
@@ -2731,7 +2728,6 @@ evaluate_response(struct response_callback *cb)
       break;
     }
   }
-  return IDOK;
 }
 
 struct evaluate_data
@@ -2969,7 +2965,7 @@ struct trimming_data {
   int x1, y1, x2, y2;
 };
 
-static int
+static void
 trimming_response(struct response_callback *cb)
 {
   struct SelectDialog *sel;
@@ -3082,7 +3078,6 @@ trimming_response(struct response_callback *cb)
   }
   arrayfree(farray);
   g_free(data);
-  return IDOK;
 }
 
 static void
@@ -5921,7 +5916,7 @@ create_drawble_data_new(struct objlist *obj, struct objlist *obj2, int id, int u
   return data;
 }
 
-static int
+static void
 create_drawble_response(struct response_callback *cb)
 {
   struct create_drawble_data *data;
@@ -5932,7 +5927,7 @@ create_drawble_response(struct response_callback *cb)
   data = (struct create_drawble_data *) cb->data;
   if (data == NULL) {
     PaintLock = FALSE;
-    return IDOK;
+    return;
   }
 
   if (cb->return_value != IDOK) {
@@ -5956,7 +5951,6 @@ create_drawble_response(struct response_callback *cb)
   if ((d->Mode & POINT_TYPE_DRAW_ALL) && ! KeepMouseMode) {
     set_pointer_mode(PointerModeDefault);
   }
-  return IDOK;
 }
 
 static void
@@ -8916,7 +8910,7 @@ update_focused_obj_finalize(struct Viewer *d)
   set_focus_sensitivity(d);
 }
 
-static int view_update_response(struct response_callback *cb);
+static void view_update_response(struct response_callback *cb);
 
 static void
 update_focused_obj(struct Viewer *d, int i)
@@ -9030,7 +9024,7 @@ update_focused_obj(struct Viewer *d, int i)
   }
 }
 
-static int
+static void
 view_update_response(struct response_callback *cb)
 {
   struct Viewer *d;
@@ -9049,7 +9043,6 @@ view_update_response(struct response_callback *cb)
     d->modified = TRUE;
   }
   update_focused_obj(d, i - 1);
-  return IDOK;
 }
 
 static void

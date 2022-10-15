@@ -663,7 +663,7 @@ CopyDialog(struct CopyDialog *data,
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
-static int
+static void
 copy_click_response(struct response_callback *cb)
 {
   int sel;
@@ -674,7 +674,6 @@ copy_click_response(struct response_callback *cb)
     sel = -1;
   }
   DlgCopy.rcb(sel, cb->data);
-  return IDOK;
 }
 void
 CopyClick(GtkWidget *parent, struct objlist *obj, int Id,

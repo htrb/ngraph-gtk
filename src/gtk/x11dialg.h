@@ -91,7 +91,7 @@ const char *get_style_string(struct objlist *obj, int id, char *field);
 struct DialogType;
 struct response_callback;
 
-typedef int (* response_callback_func) (struct response_callback *);
+typedef void (* response_callback_func) (struct response_callback *);
 typedef void (* response_callback_free_func) (struct response_callback *);
 
 struct response_callback

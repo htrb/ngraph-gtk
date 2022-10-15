@@ -705,7 +705,7 @@ struct swin_update_data {
   struct obj_list_data *d;
 };
 
-static int
+static void
 swin_update_response(struct response_callback *cb)
 {
   struct swin_update_data *data;
@@ -734,7 +734,6 @@ swin_update_response(struct response_callback *cb)
   default:
     d->update(d, FALSE, DRAW_NOTIFY);
   }
-  return IDOK;
 }
 #endif
 

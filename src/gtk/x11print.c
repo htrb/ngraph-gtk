@@ -1073,7 +1073,7 @@ output_image_response_response(int res, gpointer user_data)
   g_free(user_data);
 }
 
-static int
+static void
 output_image_response(struct response_callback *cb)
 {
   int type;
@@ -1087,17 +1087,16 @@ output_image_response(struct response_callback *cb)
   if (cb->return_value != IDOK) {
     g_free(file);
     g_free(data);
-    return IDOK;
+    return;
   }
 
   if (Menulocal.select_data) {
     SetFileHidden(output_image_response_response, data);
     g_free(file);
-    return IDOK;
+    return;
   }
   output_image(type, file);
   g_free(data);
-  return IDOK;
 }
 
 static void

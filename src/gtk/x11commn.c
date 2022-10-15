@@ -1207,7 +1207,7 @@ struct graph_save_data
   response_cb cb;
 };
 
-static int
+static void
 get_save_opt_response(struct response_callback *cb)
 {
   struct objlist *fobj, *mobj;
@@ -1218,7 +1218,7 @@ get_save_opt_response(struct response_callback *cb)
   save_data = (struct graph_save_data *) cb->data;
 
   if (DlgSave.ret != IDOK) {
-    return IDCANCEL;
+    return;
   }
 
   fobj = chkobject("data");
@@ -1239,7 +1239,6 @@ get_save_opt_response(struct response_callback *cb)
   save_data->storedata = DlgSave.SaveData;
   save_data->storemerge = DlgSave.SaveMerge;
   save_data->cb(cb->return_value, save_data);
-  return 0;
 }
 #endif
 
@@ -1862,7 +1861,7 @@ LoadNgpFile_response_main(gpointer user_data)
   return NULL;
 }
 
-static int
+static void
 LoadNgpFile_response(struct response_callback *cb)
 {
   char *file;
@@ -1984,7 +1983,7 @@ LoadNgpFile_response(struct response_callback *cb)
   data->newid = newid;
   data->d = d;
   g_thread_new(NULL, LoadNgpFile_response_main, data);
-  return 0;
+  return;
 
  ErrorExit:
   g_free(data);
@@ -1992,7 +1991,6 @@ LoadNgpFile_response(struct response_callback *cb)
     nchdir(d->cwd);
   }
   load_dialog_cb_free(d);
-  return 1;
 }
 #endif
 
@@ -2512,7 +2510,7 @@ struct set_file_hidden_data {
   gpointer user_data;
 };
 
-static int
+static void
 set_file_hidden_response(struct response_callback *cb)
 {
   struct SelectDialog *d;
@@ -2564,8 +2562,6 @@ set_file_hidden_response(struct response_callback *cb)
     }
     g_free(data);
   }
-
-  return r;
 }
 
 int

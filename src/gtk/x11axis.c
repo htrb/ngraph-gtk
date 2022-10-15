@@ -602,7 +602,7 @@ GridDefDialog(struct GridDialog *data, struct objlist *obj, int id)
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-static int
+static void
 option_grid_def_response(struct response_callback *cb)
 {
   struct GridDialog *d;
@@ -614,7 +614,6 @@ option_grid_def_response(struct response_callback *cb)
   } else {
     GridDefDialogClose_response(FALSE, d->Obj, d->Id, modified);
   }
-  return IDOK;
 }
 #endif
 
@@ -749,7 +748,7 @@ struct section_dialog_grid_data
   struct SectionDialog *d;
 };
 
-static int
+static void
 section_dialog_grid_response(struct response_callback *cb)
 {
   struct section_dialog_grid_data *data;
@@ -783,7 +782,6 @@ section_dialog_grid_response(struct response_callback *cb)
   }
   SectionDialogSetupItem(d->widget, d);
   g_clear_pointer(&cb->data, g_free);
-  return IDOK;
 }
 #endif
 
@@ -1501,7 +1499,7 @@ struct axis_dialog_file_data {
   struct AxisDialog *d;
 };
 
-static int
+static void
 axis_dialog_file_response(struct response_callback *cb)
 {
   struct axis_dialog_file_data *data;
@@ -1512,7 +1510,6 @@ axis_dialog_file_response(struct response_callback *cb)
   }
   arrayfree(data->farray);
   g_clear_pointer(&cb->data, g_free);
-  return IDOK;
 }
 #endif
 
@@ -3038,7 +3035,7 @@ struct axis_new_data
   response_cb cb;
 };
 
-static int
+static void
 axis_new_response(struct response_callback *cb)
 {
   struct axis_new_data *data;
@@ -3057,7 +3054,6 @@ axis_new_response(struct response_callback *cb)
   if (new_cb) {
     new_cb(cb->return_value, NULL);
   }
-  return IDOK;
 }
 #endif
 
@@ -3334,7 +3330,7 @@ CmAxisAddSingle
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-static int
+static void
 axis_del_response(struct response_callback *cb)
 {
   if (cb->return_value == IDOK && DlgCopy.sel >= 0) {
@@ -3344,7 +3340,6 @@ axis_del_response(struct response_callback *cb)
     AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
     FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
   }
-  return IDOK;
 }
 #endif
 
@@ -3380,7 +3375,7 @@ CmAxisDel(void *w, gpointer client_data)
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-static int
+static void
 axis_update_response_response(struct response_callback *cb)
 {
   int undo;
@@ -3391,26 +3386,24 @@ axis_update_response_response(struct response_callback *cb)
     AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
     FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
   }
-  return IDOK;
 }
 
-static int
+static void
 axis_update_response(struct response_callback *cb)
 {
   int i, undo;
   if (cb->return_value == IDOK) {
     i = DlgCopy.sel;
     if (i < 0) {
-      return IDOK;
+      return;
     }
   } else {
-    return IDOK;
+    return;
   }
   undo = axis_save_undo(UNDO_TYPE_EDIT);
   AxisDialog(NgraphApp.AxisWin.data.data, i, -1);
   response_callback_add(&DlgAxis, axis_update_response_response, NULL, GINT_TO_POINTER(undo));
   DialogExecute(TopLevel, &DlgAxis);
-  return IDOK;
 }
 #endif
 
@@ -3491,7 +3484,7 @@ struct axis_zoom_data
   struct objlist *obj;
 };
 
-static int
+static void
 axis_zoom_response_response(struct response_callback *cb)
 {
   struct axis_zoom_data *data;
@@ -3502,10 +3495,9 @@ axis_zoom_response_response(struct response_callback *cb)
   }
   arrayfree(data->farray);
   g_clear_pointer(&cb->data, g_free);
-  return IDOK;
 }
 
-static int
+static void
 axis_zoom_response(struct response_callback *cb)
 {
   struct axis_zoom_data *data;
@@ -3514,18 +3506,18 @@ axis_zoom_response(struct response_callback *cb)
 
   obj = (struct objlist *) cb->data;
   if (cb->return_value != IDOK) {
-    return IDOK;
+    return;
   }
 
   data = g_malloc0(sizeof(*data));
   if (data == NULL) {
-    return IDOK;
+    return;
   }
 
   farray = arraynew(sizeof(int));
   if (farray == NULL) {
     g_free(data);
-    return IDOK;
+    return;
   }
 
   data->zoom = DlgZoom.zoom / 10000.0;;
@@ -3534,7 +3526,6 @@ axis_zoom_response(struct response_callback *cb)
   SelectDialog(&DlgSelect, obj, _("scale zoom (multi select)"), AxisCB, (struct narray *) farray, NULL);
   response_callback_add(&DlgSelect, axis_zoom_response_response, NULL, data);
   DialogExecute(TopLevel, &DlgSelect);
-  return IDOK;
 }
 #endif
 
@@ -3607,7 +3598,7 @@ axiswin_scale_clear
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-static int
+static void
 axis_clear_response(struct response_callback *cb)
 {
   struct narray *farray;
@@ -3629,8 +3620,6 @@ axis_clear_response(struct response_callback *cb)
     AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
   }
   arrayfree(farray);
-
-  return IDOK;
 }
 #endif
 
@@ -3683,7 +3672,7 @@ update_viewer_axisgrid(void)
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-static int
+static void
 axis_grid_new_response(struct response_callback *cb)
 {
   int undo;
@@ -3694,7 +3683,6 @@ axis_grid_new_response(struct response_callback *cb)
     set_graph_modified();
     update_viewer_axisgrid();
   }
-  return IDOK;
 }
 #endif
 
@@ -3731,7 +3719,7 @@ CmAxisGridNew(void *w, gpointer client_data)
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-static int
+static void
 axis_grid_del_response(struct response_callback *cb)
 {
   struct narray *farray;
@@ -3752,7 +3740,6 @@ axis_grid_del_response(struct response_callback *cb)
     update_viewer_axisgrid();
   }
   arrayfree(farray);
-  return IDOK;
 }
 #endif
 
@@ -3800,7 +3787,7 @@ struct axis_grid_update_data {
   struct narray *farray;
 };
 
-static int
+static void
 axis_grid_update_update_response(struct response_callback *cb)
 {
   struct axis_grid_update_data *data;
@@ -3829,10 +3816,9 @@ axis_grid_update_update_response(struct response_callback *cb)
     response_callback_add(&DlgGrid, axis_grid_update_update_response, NULL, data);
     DialogExecute(TopLevel, &DlgGrid);
   }
-  return IDOK;
 }
 
-static int
+static void
 axis_grid_update_response(struct response_callback *cb)
 {
   struct SelectDialog *d;
@@ -3858,7 +3844,6 @@ axis_grid_update_response(struct response_callback *cb)
     response_callback_add(&DlgGrid, axis_grid_update_update_response, NULL, data);
     DialogExecute(TopLevel, &DlgGrid);
   }
-  return IDOK;
 }
 #endif
 
@@ -4073,7 +4058,7 @@ axis_scale_undo(struct objlist *obj, struct narray *farray)
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-static int
+static void
 axis_scale_undo_response(struct response_callback *cb)
 {
   struct SelectDialog *d;
@@ -4082,7 +4067,6 @@ axis_scale_undo_response(struct response_callback *cb)
     axis_scale_undo(d->Obj, d->sel);
   }
   arrayfree(d->sel);
-  return IDOK;
 }
 #endif
 

@@ -1071,7 +1071,7 @@ PrefFontDialogSetupItem(struct PrefFontDialog *d)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
-static int
+static void
 pref_font_dialog_response(struct response_callback *cb)
 {
   if (cb->return_value == IDOK) {
@@ -1079,7 +1079,6 @@ pref_font_dialog_response(struct response_callback *cb)
     d = (struct PrefFontDialog *) cb->data;
     PrefFontDialogSetupItem(d);
   }
-  return IDOK;
 }
 
 static void

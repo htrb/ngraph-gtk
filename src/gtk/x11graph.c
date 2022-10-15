@@ -1586,14 +1586,13 @@ CmGraphOverWrite(void *w, gpointer client_data)
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-static int
+static void
 CmGraphSwitch_response(struct response_callback *cb)
 {
   if (cb->return_value == IDOK) {
     set_graph_modified_gra();
     ChangePage();
   }
-  return cb->return_value;
 }
 
 void
@@ -1621,7 +1620,7 @@ CmGraphSwitch(void *w, gpointer client_data)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
-static int
+static void
 CmGraphPage_response(struct response_callback *cb)
 {
   struct graph_page_data *data;
@@ -1641,7 +1640,6 @@ CmGraphPage_response(struct response_callback *cb)
     data->cb(cb->return_value, GINT_TO_POINTER(data->sel));
     g_free(data);
   }
-  return cb->return_value;
 }
 
 static void

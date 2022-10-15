@@ -483,7 +483,7 @@ ParameterDialog(struct obj_list_data *data, int id, int user_data)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
-static int
+static void
 parameter_add_response(struct response_callback *cb)
 {
   struct obj_list_data *d;
@@ -496,7 +496,6 @@ parameter_add_response(struct response_callback *cb)
     set_graph_modified();
   }
   ParameterWinUpdate(d, FALSE, FALSE);
-  return IDOK;
 }
 
 void
@@ -549,7 +548,7 @@ CmParameterAdd(void *w, gpointer client_data)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
-static int
+static void
 parameter_delete_response(struct response_callback *cb)
 {
   struct narray *farray;
@@ -571,7 +570,6 @@ parameter_delete_response(struct response_callback *cb)
     ParameterWinUpdate(d, FALSE, FALSE);
   }
   arraydel(farray);
-  return IDOK;
 }
 
 void
@@ -646,7 +644,7 @@ struct parameter_update_data
   int i, num, undo, modified;
 };
 
-static int
+static void
 cm_parameter_update_response_response(struct response_callback *cb)
 {
   struct narray *farray;
@@ -665,7 +663,7 @@ cm_parameter_update_response_response(struct response_callback *cb)
     }
     arrayfree(farray);
     g_free(data);
-    return IDOK;
+    return;
   }
 
   if (cb->return_value == IDOK) {
@@ -675,10 +673,9 @@ cm_parameter_update_response_response(struct response_callback *cb)
   ParameterDialog(data->d, array[data->i], -1);
   response_callback_add(&DlgParameter, cm_parameter_update_response_response, NULL, data);
   DialogExecute(TopLevel, &DlgParameter);
-  return IDOK;
 }
 
-static int
+static void
 cm_parameter_update_response(struct response_callback *cb)
 {
   struct obj_list_data *d;
@@ -690,17 +687,17 @@ cm_parameter_update_response(struct response_callback *cb)
   d = NgraphApp.ParameterWin.data.data;
   if (cb->return_value != IDOK) {
     arraydel(farray);
-    return IDOK;
+    return;
   }
   num = arraynum(farray);
   if (num <= 0) {
     arraydel(farray);
-    return IDOK;
+    return;
   }
   data = g_malloc0(sizeof(*data));
   if (data == NULL) {
     arraydel(farray);
-    return IDOK;
+    return;
   }
 
   data->modified = FALSE;
@@ -714,7 +711,6 @@ cm_parameter_update_response(struct response_callback *cb)
   ParameterDialog(d, array[0], -1);
   response_callback_add(&DlgParameter, cm_parameter_update_response_response, NULL, data);
   DialogExecute(TopLevel, &DlgParameter);
-  return IDOK;
 }
 
 void
@@ -788,7 +784,7 @@ CmParameterUpdate(void *w, gpointer client_data)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
-static int
+static void
 parameter_update_response(struct response_callback *cb)
 {
   struct parameter_data *d;
@@ -798,7 +794,6 @@ parameter_update_response(struct response_callback *cb)
   } else {
     update_parameter(d->obj_list_data);
   }
-  return IDOK;
 }
 
 static void

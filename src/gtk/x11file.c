@@ -647,7 +647,7 @@ struct math_dialog_list_data {
   GtkTreeSelection *gsel;
 };
 
-static int
+static void
 math_dialog_list_respone(struct response_callback *cb)
 {
   struct MathDialog *d;
@@ -676,7 +676,6 @@ math_dialog_list_respone(struct response_callback *cb)
 
   g_list_free_full(list, (GDestroyNotify) gtk_tree_path_free);
   g_free(res_data);
-  return IDOK;
 }
 
 static void
@@ -1285,7 +1284,7 @@ FitDialogLoadConfig(struct FitDialog *d, int errmes)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
-static int
+static void
 file_dialog_load_response(struct response_callback *cb)
 {
   struct FitDialog *d;
@@ -1295,7 +1294,6 @@ file_dialog_load_response(struct response_callback *cb)
     id = DlgFitLoad.sel + d->Lastid + 1;
     FitDialogSetupItem(d->widget, d, id);
   }
-  return IDOK;
 }
 
 static void
@@ -1784,7 +1782,7 @@ fit_dialog_save_response_response(int ret, gpointer user_data)
   g_free(ngpfile);
 }
 
-static int
+static void
 fit_dialog_save_response(struct response_callback *cb)
 {
   struct FitDialog *d;
@@ -1792,19 +1790,19 @@ fit_dialog_save_response(struct response_callback *cb)
 
   d = (struct FitDialog *) cb->data;
   if (cb->return_value != IDOK && cb->return_value != IDDELETE)
-    return IDOK;
+    return;
 
   if (DlgFitSave.Profile == NULL)
-    return IDOK;
+    return;
 
   if (DlgFitSave.Profile[0] == '\0') {
     g_free(DlgFitSave.Profile);
-    return IDOK;
+    return;
   }
 
   data = g_malloc0(sizeof(*data));
   if (data == NULL) {
-    return IDOK;
+    return;
   }
   data->d = d;
   data->return_value = cb->return_value;
@@ -1813,14 +1811,12 @@ fit_dialog_save_response(struct response_callback *cb)
   switch (cb->return_value) {
   case IDOK:
     copy_settings_to_fitobj(d, data->profile, fit_dialog_save_response_response, data);
-    return IDOK;
+    return;
   case IDDELETE:
     delete_fitobj(d, data->profile, fit_dialog_save_response_response, data);
-    return IDOK;
+    return;
   }
   fit_dialog_save_response_response(FALSE, data);
-
-  return IDOK;
 }
 
 static void
@@ -3970,7 +3966,7 @@ struct file_dialog_mark_data {
   GtkWidget *w;
 };
 
-static int
+static void
 file_dialog_mark_response(struct response_callback *cb)
 {
   struct file_dialog_mark_data *data;
@@ -3981,7 +3977,6 @@ file_dialog_mark_response(struct response_callback *cb)
   w = data->w;
   button_set_mark_image(w, d->mark.Type);
   g_free(data);
-  return IDOK;
 }
 
 static void
@@ -4022,7 +4017,7 @@ struct execute_fit_dialog_data {
   gpointer user_data;
 };
 
-static int
+static void
 execute_fit_dialog_response(struct response_callback *cb)
 {
   struct execute_fit_dialog_data *data;
@@ -4037,7 +4032,6 @@ execute_fit_dialog_response(struct response_callback *cb)
     data->cb(cb->return_value, data->user_data);
   }
   g_free(data);
-  return cb->return_value;
 }
 
 static int
@@ -5789,7 +5783,7 @@ struct load_data_data
   struct obj_list_data *data;
 };
 
-static int
+static void
 load_data_response(struct response_callback *cb)
 {
   char *fname;
@@ -5808,7 +5802,6 @@ load_data_response(struct response_callback *cb)
   }
   FileWinUpdate(data, TRUE, DRAW_NOTIFY);
   g_free(res_data);
-  return IDOK;
 }
 
 void
@@ -5924,7 +5917,7 @@ struct range_add_data
   struct obj_list_data *data;
 };
 
-static int
+static void
 range_add_response(struct response_callback *cb)
 {
   int undo;
@@ -5940,7 +5933,6 @@ range_add_response(struct response_callback *cb)
     FileWinUpdate(data, TRUE, DRAW_REDRAW);
   }
   g_free(res_data);
-  return IDOK;
 }
 
 void
@@ -6174,7 +6166,7 @@ CmFileOpen(void *w, gpointer client_data)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
-static int
+static void
 file_close_response(struct response_callback *cb)
 {
   struct narray *farray;
@@ -6195,7 +6187,6 @@ file_close_response(struct response_callback *cb)
     FileWinUpdate(data, TRUE, DRAW_REDRAW);
   }
   arrayfree(farray);
-  return IDOK;
 }
 
 void
@@ -6272,7 +6263,7 @@ struct update_file_obj_multi_data {
   gpointer user_data;
 };
 
-static int
+static void
 update_file_obj_multi_response(struct response_callback *cb)
 {
   int i, j, num, *array, id0, ret, undo, new_file;
@@ -6324,7 +6315,7 @@ update_file_obj_multi_response(struct response_callback *cb)
   if (ret == IDFAPPLY) {
     update_file_obj_multi_response_all(obj, array, i + 1, num, id0, new_file);
     rdata->cb(rdata->modified, rdata->user_data);
-    return IDOK;
+    return;
   }
   i++;
   if (i < num) {
@@ -6340,7 +6331,6 @@ update_file_obj_multi_response(struct response_callback *cb)
     rdata->cb(rdata->modified, rdata->user_data);
     g_free(rdata);
   }
-  return IDOK;
 }
 
 int
@@ -6468,7 +6458,7 @@ file_update_response_response(int ret, gpointer user_data)
   arrayfree(farray);
 }
 
-static int
+static void
 file_update_response(struct response_callback *cb)
 {
   struct narray *farray;
@@ -6480,7 +6470,6 @@ file_update_response(struct response_callback *cb)
   } else {
     arrayfree(farray);
   }
-  return IDOK;
 }
 
 void
@@ -6561,7 +6550,7 @@ check_plot_obj_file(struct objlist *obj)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
-static int
+static void
 file_edit_response(struct response_callback *cb)
 {
   int i;
@@ -6573,19 +6562,18 @@ file_edit_response(struct response_callback *cb)
   if (cb->return_value == IDOK) {
     i = d->sel;
   } else {
-    return IDOK;
+    return;
   }
 
   if (i < 0) {
-    return IDOK;
+    return;
   }
 
   if (getobj(obj, "file", i, 0, NULL, &name) == -1) {
-    return IDOK;
+    return;
   }
 
   edit_file(name);
-  return IDOK;
 }
 
 void
@@ -6670,7 +6658,7 @@ option_file_def_response_response(int ret, struct objlist *obj, int id, int modi
   }
 }
 
-static int
+static void
 option_file_def_response(struct response_callback *cb)
 {
   int id;
@@ -6686,7 +6674,6 @@ option_file_def_response(struct response_callback *cb)
   } else {
     option_file_def_response_response(FALSE, obj, id, modified);
   }
-  return IDOK;
 }
 
 void
@@ -6923,7 +6910,7 @@ struct file_update_data {
   struct obj_list_data *d;
 };
 
-static int
+static void
 file_win_file_update_response(struct response_callback *cb)
 {
   struct file_update_data *data;
@@ -6941,7 +6928,6 @@ file_win_file_update_response(struct response_callback *cb)
     d->update(d, FALSE, DRAW_NOTIFY);
   }
   g_free(data);
-  return IDOK;
 }
 
 static void
@@ -7628,7 +7614,7 @@ file_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-static int
+static void
 file_math_response(struct response_callback *cb)
 {
   if (DlgMath.modified) {
@@ -7638,7 +7624,6 @@ file_math_response(struct response_callback *cb)
     undo = GPOINTER_TO_INT(cb->data);
     menu_delete_undo(undo);
   }
-  return IDOK;
 }
 
 void
@@ -7688,7 +7673,7 @@ CmFileMath(void *w, gpointer client_data)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
-static int
+static void
 get_draw_files_response(struct response_callback *cb)
 {
   response_cb save_cb;
@@ -7701,11 +7686,10 @@ get_draw_files_response(struct response_callback *cb)
   if (cb->return_value != IDOK) {
     arrayfree(ifarray);
     arraydel(farray);
-    return IDCANCEL;
+    return;
   }
   arrayfree(ifarray);
   save_cb(IDOK, farray);
-  return IDOK;
 }
 
 static int
@@ -7863,7 +7847,7 @@ save_data(struct narray *farray, int div)
   nGetSaveFileName(TopLevel, _("Data file"), NULL, NULL, NULL, chd, save_data_response, farray);
 }
 
-static int
+static void
 file_save_curve_data_response(struct response_callback *cb)
 {
   int div;
@@ -7872,11 +7856,10 @@ file_save_curve_data_response(struct response_callback *cb)
   farray = (struct narray *) cb->data;
   if (cb->return_value != IDOK) {
     arrayfree(farray);
-    return IDCANCEL;
+    return;
   }
   div = DlgOutputData.div;
   save_data(farray, div);
-  return IDOK;
 }
 
 static void

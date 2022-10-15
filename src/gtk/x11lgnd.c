@@ -323,7 +323,7 @@ legend_menu_update_object_free(struct response_callback * cb)
   g_free(data);
 }
 
-static int
+static void
 legend_menu_update_object_response2(struct response_callback *cb)
 {
   struct legend_menu_update_data *ldata,*ldata2;
@@ -346,7 +346,7 @@ legend_menu_update_object_response2(struct response_callback *cb)
     objs[0] = obj->name;
     objs[1] = NULL;
     LegendWinUpdate(objs, TRUE, TRUE);
-    return IDOK;
+    return;
   }
 
   data = arraydata(array);
@@ -360,16 +360,15 @@ legend_menu_update_object_response2(struct response_callback *cb)
   }
   ldata2 = g_memdup2(ldata, sizeof(*ldata));
   if (ldata2 == NULL) {
-    return IDOK;
+    return;
   }
   ldata->array = NULL;
   ldata2->i += 1;
   response_callback_add(dialog, legend_menu_update_object_response2, legend_menu_update_object_free, ldata2);
   DialogExecute(TopLevel, dialog);
-  return cb->return_value;
 }
 
-static int
+static void
 legend_menu_update_object_response(struct response_callback *cb)
 {
   struct legend_menu_update_data *ldata;
@@ -396,7 +395,7 @@ legend_menu_update_object_response(struct response_callback *cb)
       data = arraydata(array);
       ldata2 = g_memdup2(ldata, sizeof(*ldata));
       if (ldata2 == NULL) {
-        return IDOK;
+        return;
       }
       ldata->array = NULL;
       ldata2->i = i + 1;
@@ -405,7 +404,6 @@ legend_menu_update_object_response(struct response_callback *cb)
       DialogExecute(TopLevel, dialog);
     }
   }
-  return cb->return_value;
 }
 
 static struct legend_menu_update_data *
@@ -497,7 +495,7 @@ legend_menu_update_object(const char *name, char *(*callback) (struct objlist * 
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
-static int
+static void
 legend_menu_delete_object_response(struct response_callback *cb)
 {
   struct legend_menu_update_data *ldata;
@@ -524,7 +522,6 @@ legend_menu_delete_object_response(struct response_callback *cb)
       LegendWinUpdate(objs, TRUE, TRUE);
     }
   }
-  return cb->return_value;
 }
 
 static void
@@ -2283,11 +2280,10 @@ LegendArcDialog(struct LegendDialog *data, struct objlist *obj, int id)
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-static int
+static void
 mark_dialog_response(struct response_callback *cb)
 {
   button_set_mark_image(GTK_WIDGET(cb->data), ((struct MarkDialog *)cb->dialog)->Type);
-  return IDOK;
 }
 #endif
 static void
@@ -2774,7 +2770,7 @@ option_text_def_dialog_response_response(int ret, struct objlist *obj, int id, i
   }
 }
 
-static int
+static void
 option_text_def_dialog_response(struct response_callback *cb)
 {
   int modified;
@@ -2784,7 +2780,6 @@ option_text_def_dialog_response(struct response_callback *cb)
   } else {
     option_text_def_dialog_response_response(FALSE, DlgLegendTextDef.Obj, DlgLegendTextDef.Id, modified);
   }
-  return IDOK;
 }
 /* to be implemented */
 void
