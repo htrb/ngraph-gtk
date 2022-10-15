@@ -59,7 +59,7 @@ enum AXIS_COMBO_BOX_FLAGS {
 void initdialog(void);
 #if GTK_CHECK_VERSION(4, 0, 0)
 void CopyClick(GtkWidget *parent, struct objlist *obj, int Id,
-	      char *(*callback) (struct objlist *, int),
+	       char *(*callback) (struct objlist *, int),
                response_cb response_cb, gpointer user_data);
 #else
 int CopyClick(GtkWidget *parent, struct objlist *obj, int Id,
