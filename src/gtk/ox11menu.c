@@ -2018,6 +2018,16 @@ mx_show_source_view_search_path(struct objlist *obj, N_VALUE *inst, N_VALUE *rva
   return 0;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+draw_finalise(gpointer user_data)
+{
+  int *drawing;
+  drawing = (int *) user_data;
+  *drawing = FALSE;
+}
+#endif
+
 static int
 mxdraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
