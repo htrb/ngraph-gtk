@@ -2846,6 +2846,21 @@ stop_btn_clicked(GtkButton *button, gpointer user_data)
   }
 }
 
+static void
+progress_dialog_finalize(gpointer user_data)
+{
+  g_thread_join(ProgressDialogData->thread);
+  if (ProgressDialogData->finalize) {
+    ProgressDialogData->finalize(user_data);
+  }
+  if (gtk_widget_get_visible(gtk_widget_get_parent(GTK_WIDGET(ProgressText)))) {
+    gtk_progress_bar_set_fraction(ProgressBar[0], 1);
+    gtk_progress_bar_set_fraction(ProgressBar[1], 1);
+    gtk_window_set_title(GTK_WINDOW(ProgressDialog), _("Drawing end"));
+    gtk_button_set_label(GTK_BUTTON(ProgressButton), _("_Ok"));
+  } else {
+    ProgressDialogFinalize();
+  }
 }
 
 static gboolean
