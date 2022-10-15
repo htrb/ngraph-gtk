@@ -2026,6 +2026,12 @@ draw_finalise(gpointer user_data)
   drawing = (int *) user_data;
   *drawing = FALSE;
 }
+
+static void
+draw_main(gpointer user_data)
+{
+  Draw(FALSE, draw_finalise, user_data);
+}
 #endif
 
 static int
