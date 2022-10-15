@@ -68,6 +68,7 @@
 #include "x11file.h"
 #include "x11cood.h"
 #include "x11info.h"
+#include "x11commn.h"
 
 #define NAME "menu"
 #define ALIAS "winmenu:gtkmenu"
