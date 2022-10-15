@@ -101,10 +101,8 @@ struct response_callback
   gpointer data;
   int return_value;
   struct DialogType *dialog;
-  struct response_callback *next;
 };
 
-struct response_callback *response_callback_new(response_callback_func cb, response_callback_free_func free, gpointer data);
 void response_callback_add(void *dialog, response_callback_func cb, response_callback_free_func free, gpointer data);
 
 #define DIALOG_PROTOTYPE GtkWidget *parent, *widget, *focus;            \

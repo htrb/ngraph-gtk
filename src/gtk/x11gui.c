@@ -128,12 +128,8 @@ ndialog_run(GtkWidget *dlg)
 static void
 call_response_cb(struct response_callback *cb)
 {
-  int r;
-  r = cb->cb(cb);
-  if (cb->next) {
-    cb->next->dialog = cb->dialog;
-    cb->next->return_value = r;
-    call_response_cb(cb->next);
+  if (cb->cb) {
+    cb->cb(cb);
   }
   if (cb->free) {
     cb->free(cb);
