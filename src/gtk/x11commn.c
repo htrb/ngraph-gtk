@@ -3038,6 +3038,7 @@ ProgressDialogCreate(char *title, progress_func update, progress_func finalize, 
   ProgressDialogData->finish = FALSE;
   create_progress_dialog(title);
   gtk_widget_show(ProgressDialog);
+  gtk_widget_hide(gtk_widget_get_parent(ProgressText));
   ProgressDialogData->thread = g_thread_new(NULL, ProgressDialog_thread, data);
 
   ProgressDialogData->tag = g_timeout_add(100, progress_dialog_update, data);
