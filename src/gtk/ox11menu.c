@@ -2095,6 +2095,27 @@ mxmodified(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   return 0;
 }
 
+struct focus_obj_data {
+  struct narray *iarray;
+  struct objlist *lobj;
+  int n, wait;
+};
+
+static void
+focus_obj_main(gpointer user_data)
+{
+  struct focus_obj_data *data;
+  int i, *id_array;
+
+  data = (struct focus_obj_data *) user_data;
+  id_array = arraydata(data->iarray);
+
+  for (i = 0; i < data->n; i++) {
+    Focus(data->lobj, id_array[i], TRUE);
+  }
+  data->wait = FALSE;
+}
+
 static int
 mx_focus_obj(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
