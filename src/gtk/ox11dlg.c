@@ -58,7 +58,7 @@ static GtkWidget *DLGTopLevel = NULL;
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 struct dialog_data {
-  char *title, *msg, *initial_text, *response_text, *defext;
+  char *title, *msg, *initial_text, *response_text, *defext, **files;
   struct narray *buttons, *sarray;
   int response, wait, *button, selected;
   double min, max, inc, *val;
