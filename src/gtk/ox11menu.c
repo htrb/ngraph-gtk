@@ -1147,20 +1147,12 @@ struct dialog_data {
 };
 
 static void
-dialog_wait(struct dialog_data *data)
-{
-  while (data->wait) {
-    msleep(BLOCKING_DIALOG_WAIT);
-  }
-}
-
-static void
 dialog_run(const char *mes, GSourceOnceFunc func, struct dialog_data *data)
 {
   data->wait = TRUE;
   data->msg = mes;
   g_idle_add_once(func, data);
-  dialog_wait(data);
+  dialog_wait(&data->wait);
 }
 
 static void
