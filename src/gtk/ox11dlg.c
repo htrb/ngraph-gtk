@@ -894,6 +894,11 @@ dlggetopenfiles(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
   int ret;
   char **file = NULL;
   struct narray *farray;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  struct dialog_data data;
+
+  memset(&data, 0, sizeof(data));
+#endif
 
   locksave = Globallock;
   Globallock = TRUE;
@@ -917,10 +922,15 @@ dlggetopenfiles(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
   }
 #if GTK_CHECK_VERSION(4, 0, 0)
   /* must be implemented */
-  return 0;
+  data.initial_text = initfile;
+  data.defext = filter;
+  ret = dialog_run(_("Open file"), NULL, dlggetopenfiles_main, &data);
+  file = data.files;
 #else
   file = nGetOpenFileNameMulti(get_toplevel_window(), _("Open files"),
 			      filter, NULL, initfile, FALSE);
+  ret = (file) ? IDOK : IDCANCEL;
+#endif
   if (file) {
     int i;
     farray = arraynew(sizeof(char *));
@@ -935,7 +945,6 @@ dlggetopenfiles(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
   Globallock = locksave;
 
   return (ret == IDOK)? 0 : 1;
-#endif
 }
 
 static int
