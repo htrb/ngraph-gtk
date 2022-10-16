@@ -1827,7 +1827,8 @@ mx_clear_info(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char 
     return 1;
   }
 
-  InfoWinClear();
+  g_idle_add_once(idle_call_func, InfoWinClear);
+
   return 0;
 }
 
