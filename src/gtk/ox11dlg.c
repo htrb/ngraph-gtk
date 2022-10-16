@@ -64,14 +64,6 @@ struct dialog_data {
   double min, max, inc, *val;
 };
 
-static void
-dialog_wait(struct dialog_data *data)
-{
-  while (data->wait) {
-    msleep(BLOCKING_DIALOG_WAIT);
-  }
-}
-
 static int
 dialog_run(char *title, char *mes, GSourceOnceFunc func, struct dialog_data *data)
 {
@@ -80,7 +72,7 @@ dialog_run(char *title, char *mes, GSourceOnceFunc func, struct dialog_data *dat
   data->title = title;
   data->response_text = NULL;
   g_idle_add_once(func, data);
-  dialog_wait(data);
+  dialog_wait(&data->wait);
   return data->response;
 }
 #endif
