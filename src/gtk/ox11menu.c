@@ -2119,10 +2119,11 @@ focus_obj_main(gpointer user_data)
 static int
 mx_focus_obj(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  int n, i, *id_array;
+  int n;
   char *legend;
   struct objlist *lobj;
   struct narray iarray;
+  struct focus_obj_data data;
 
   legend = (char *) argv[2];
   if (legend == NULL) {
@@ -2140,12 +2141,12 @@ mx_focus_obj(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char *
     return 0;
   }
 
-  id_array = arraydata(&iarray);
-
-  for (i = 0; i < n; i++) {
-    Focus(lobj, id_array[i], TRUE);
-  }
-
+  data.iarray = &iarray;
+  data.lobj = lobj;
+  data.n = n;
+  data.wait = TRUE;
+  g_idle_add_once(focus_obj_main, &data);
+  dialog_wait(&data.wait);
   arraydel(&iarray);
 
   return 0;
