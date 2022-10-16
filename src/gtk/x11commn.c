@@ -2588,7 +2588,7 @@ SetFileHidden(response_cb cb, gpointer user_data)
     return 1;
   }
   data->cb = cb;
-  data->user_data = data;
+  data->user_data = user_data;
 
   ifarray = arraynew(sizeof(int));
   if (ifarray == NULL) {
