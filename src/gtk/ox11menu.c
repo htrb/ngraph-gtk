@@ -1566,7 +1566,7 @@ mxflush(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
     error(obj, ERR_MENU_GUI);
     return 1;
   }
-  flush_window(NULL);
+  g_idle_add_once(flush_window, NULL);
 
   return 0;
 }
