@@ -947,6 +947,16 @@ dlggetopenfiles(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
   return (ret == IDOK)? 0 : 1;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+dlggetsavefile_main(gpointer user_data)
+{
+  struct dialog_data *data;
+  data = (struct dialog_data *) user_data;
+  nGetSaveFileName(get_toplevel_window(), data->title, data->defext, NULL, data->initial_text, FALSE, dlggetopenfile_response, data);
+}
+#endif
+
 static int
 dlggetsavefile(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
 	       int argc, char **argv)
