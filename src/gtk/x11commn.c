@@ -1853,8 +1853,9 @@ SetFileHidden(void)
   r = 0;
   SelectDialog(&DlgSelect, fobj, NULL, FileCB, &farray, &ifarray);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
-    int num, inum, *array;
+    int num, inum, *array, undo, modified = FALSE;
     a = TRUE;
+    menu_save_undo_single(UNDO_TYPE_EDIT, "data");
     for (i = 0; i <= lastinst; i++) {
       putobj(fobj, "hidden", i, &a);
     }
@@ -1867,16 +1868,21 @@ SetFileHidden(void)
 
     inum = arraynum(&ifarray);
     if (inum != num) {
-      set_graph_modified();
+      modified = TRUE;
     } else {
       for (i = 0; i < num; i++) {
 	if (arraynget_int(&ifarray, i) != array[i]) {
-	  set_graph_modified();
+	  modified = TRUE;
 	  break;
 	}
       }
     }
     r = 1;
+    if (modified) {
+      set_graph_modified();
+    } else {
+      menu_undo_internal(undo);
+    }
   }
 
   arraydel(&ifarray);
