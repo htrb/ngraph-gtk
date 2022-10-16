@@ -34,6 +34,7 @@
 #include "object.h"
 #include "nstring.h"
 #include "ioutil.h"
+#include "shell.h"
 
 #include "gtk_widget.h"
 #include "gtk_combo.h"
@@ -74,6 +75,16 @@ struct nGetOpenFileData
 };
 
 static int add_buttons(GtkWidget *dlg, struct narray *array);
+
+#if GTK_CHECK_VERSION(4, 0, 0)
+void
+dialog_wait(int *wait)
+{
+  while (*wait) {
+    msleep(BLOCKING_DIALOG_WAIT);
+  }
+}
+#endif
 
 void
 set_sensitivity_by_check_instance(GtkWidget *widget, gpointer user_data)
