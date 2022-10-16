@@ -1620,7 +1620,7 @@ mxclear(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
 
   mx_clear(NULL, NULL);
 
-  main_window_redraw();
+  g_idle_add_once(idle_call_func, main_window_redraw);
 
   return 0;
 }
