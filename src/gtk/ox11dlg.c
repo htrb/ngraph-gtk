@@ -968,6 +968,11 @@ dlggetsavefile(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
   int locksave;
   int ret;
   char *file;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  struct dialog_data data;
+
+  memset(&data, 0, sizeof(data));
+#endif
 
   locksave = Globallock;
   Globallock = TRUE;
@@ -990,11 +995,15 @@ dlggetsavefile(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
     initfile = d[1];
   }
 #if GTK_CHECK_VERSION(4, 0, 0)
-  /* must be implemented */
-  return 0;
+  data.initial_text = initfile;
+  data.defext = filter;
+  ret = dialog_run(_("Save file"), NULL, dlggetsavefile_main, &data);
+  file = data.response_text;
 #else
   file = nGetSaveFileName(get_toplevel_window(), _("Save file"),
 			 filter, NULL, initfile, FALSE, TRUE);
+  ret = (file) ? IDOK : IDCANCEL;
+#endif
   if (file) {
     changefilename(file);
     rval->str = file;
@@ -1002,7 +1011,6 @@ dlggetsavefile(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
 
   Globallock = locksave;
   return (ret == IDOK) ? 0 : 1;
-#endif
 }
 
 static struct objtable dialog[] = {
