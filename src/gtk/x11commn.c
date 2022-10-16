@@ -1857,7 +1857,7 @@ SetFileHidden(void)
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     int num, inum, *array, undo, modified = FALSE;
     a = TRUE;
-    menu_save_undo_single(UNDO_TYPE_EDIT, "data");
+    undo = menu_save_undo_single(UNDO_TYPE_EDIT, "data");
     for (i = 0; i <= lastinst; i++) {
       putobj(fobj, "hidden", i, &a);
     }
