@@ -862,6 +862,26 @@ dlggetopenfile(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
   return (ret == IDOK)? 0 : 1;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+dlggetopenfiles_response(char **files, gpointer user_data)
+{
+  struct dialog_data *data;
+  data = (struct dialog_data *) user_data;
+  data->files = files;
+  data->response = (files) ? IDOK : IDCANCEL;
+  data->wait = FALSE;
+}
+
+static void
+dlggetopenfiles_main(gpointer user_data)
+{
+  struct dialog_data *data;
+  data = (struct dialog_data *) user_data;
+  nGetOpenFileNameMulti(get_toplevel_window(), data->title, data->defext, NULL, data->initial_text, FALSE, dlggetopenfiles_response, data);
+}
+#endif
+
 static int
 dlggetopenfiles(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
 		int argc, char **argv)
