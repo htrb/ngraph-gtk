@@ -2040,9 +2040,7 @@ mxdraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 #if GTK_CHECK_VERSION(4, 0, 0)
   drawing = TRUE;
   g_idle_add_once(draw_main, &drawing);
-  while (drawing) {
-    msleep(BLOCKING_DIALOG_WAIT);
-  }
+  dialog_wait(&drawing);
 #else
   Draw(FALSE);
 #endif
