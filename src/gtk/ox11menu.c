@@ -2119,6 +2119,12 @@ mx_focus_obj(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char *
   return 0;
 }
 
+static void
+unfocus_main(gpointer user_data)
+{
+  UnFocus();
+}
+
 static int
 mx_unfocus_obj(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
