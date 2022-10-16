@@ -2129,7 +2129,7 @@ static int
 mx_unfocus_obj(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
 
-  UnFocus();
+  g_idle_add_once(unfocus_main, NULL);
 
   return 0;
 }
