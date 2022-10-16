@@ -249,6 +249,16 @@ static struct menu_config *MenuConfigArrray[] = {
 
 static NHASH MenuConfigHash = NULL;
 
+typedef void (* void_func) (void);
+
+static void
+idle_call_func(gpointer user_data)
+{
+  void_func func;
+  func = (void_func) user_data;
+  func();
+}
+
 static void
 add_str_with_int_to_array(struct menu_config *cfg, struct narray *conf)
 {
