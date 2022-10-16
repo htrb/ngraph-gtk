@@ -2522,8 +2522,9 @@ set_file_hidden_response(struct response_callback *cb)
   ifarray = d->isel;
   r = 0;
   if (cb->return_value == IDOK) {
-    int num, inum, *array, lastinst;
+    int num, inum, *array, lastinst, undo, modified = FALSE;
     struct objlist *fobj;
+    undo = menu_save_undo_single(UNDO_TYPE_EDIT, "data");
     fobj = chkobject("data");
     lastinst = chkobjlastinst(fobj);
     a = TRUE;
@@ -2539,14 +2540,19 @@ set_file_hidden_response(struct response_callback *cb)
 
     inum = arraynum(ifarray);
     if (inum != num) {
-      set_graph_modified();
+      modified = TRUE;
     } else {
       for (i = 0; i < num; i++) {
 	if (arraynget_int(ifarray, i) != array[i]) {
-	  set_graph_modified();
+	  modified = TRUE;
 	  break;
 	}
       }
+    }
+    if (modified) {
+      set_graph_modified();
+    } else {
+      menu_undo_internal(undo);
     }
     r = 1;
   }
