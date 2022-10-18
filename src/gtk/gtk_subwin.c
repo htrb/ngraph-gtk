@@ -1013,17 +1013,26 @@ ev_button_down(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y, gpo
 }
 
 static gboolean
-ev_key_down(GtkEventControllerKey *controller, guint keyval, guint keycode, GdkModifierType state, gpointer user_data)
+ev_key_down(GtkEventController *controller, guint keyval, guint keycode, GdkModifierType state, gpointer user_data)
 {
   struct obj_list_data *d;
   GtkWidget *w;
+  static guint32 ev_time = 0;
+  guint32 t;
+
+  t = gtk_event_controller_get_current_event_time(controller);
+  if (t <= ev_time) {
+    return TRUE;
+  } else {
+    ev_time = t;
+  }
 
   if (Menulock || Globallock)
     return TRUE;
 
   d = user_data;
 
-  w = gtk_event_controller_get_widget(GTK_EVENT_CONTROLLER(controller));
+  w = gtk_event_controller_get_widget(controller);
   if (d->ev_key && d->ev_key(w, keyval, state, user_data))
     return TRUE;
 
