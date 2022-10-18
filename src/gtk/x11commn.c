@@ -2847,11 +2847,14 @@ show_progress(int pos, const char *msg, double fraction)
 static void
 stop_btn_clicked(GtkButton *button, gpointer user_data)
 {
+  if (ProgressDialogData == NULL) {
+    return;
+  }
   if (ProgressDialogData->finish) {
     ProgressDialogFinalize();
-  } else {
-    set_interrupt();
+    return;
   }
+  set_interrupt();
 }
 
 static void
