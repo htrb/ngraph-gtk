@@ -3045,6 +3045,10 @@ void
 ProgressDialogCreate(char *title, progress_func update, progress_func finalize, gpointer data)
 {
   int i;
+  if (ProgressDialogData) {
+    finalize(data);
+    return;
+  }
   ProgressDialogData = g_malloc0(sizeof(*ProgressDialogData));
   if (ProgressDialogData == NULL) {
     return;
