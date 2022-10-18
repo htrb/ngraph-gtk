@@ -2878,7 +2878,9 @@ static gboolean
 progress_dialog_update(gpointer user_data)
 {
   int i;
-  if (! ProgressDialogData || ProgressDialogData->finish) {
+  if (ProgressDialogData == NULL) {
+    return FALSE;
+  } else if (ProgressDialogData->finish) {
     progress_dialog_finalize(user_data);
     return FALSE;
   }
