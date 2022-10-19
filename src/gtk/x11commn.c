@@ -2946,6 +2946,7 @@ create_progress_dialog(const char *title)
   ProgressDialog = gtk_window_new();
   g_signal_connect(ProgressDialog, "close_request", G_CALLBACK(gtk_true), NULL);
   gtk_window_set_title(GTK_WINDOW(ProgressDialog), title);
+  gtk_window_set_deletable(GTK_WINDOW(ProgressDialog), FALSE);
 
   gtk_window_set_transient_for(GTK_WINDOW(ProgressDialog), GTK_WINDOW(TopLevel));
   gtk_window_set_modal(GTK_WINDOW(ProgressDialog), TRUE);
