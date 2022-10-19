@@ -2024,6 +2024,7 @@ FileSelectionDialog(GtkWidget *parent, struct nGetOpenFileData *data)
 				    _("_Cancel"), GTK_RESPONSE_CANCEL,
 				    data->button, GTK_RESPONSE_ACCEPT,
 				    NULL);
+  gtk_window_set_modal(GTK_WINDOW(dlg), TRUE);
   if (data->changedir && data->init_dir) {
     gtk_file_chooser_add_choice(GTK_FILE_CHOOSER(dlg), FILE_CHOOSER_OPTION_CHDIR, _("Change current directory"), NULL, NULL);
     gtk_file_chooser_set_choice(GTK_FILE_CHOOSER(dlg), FILE_CHOOSER_OPTION_CHDIR, (data->chdir) ? "true" : "false");
