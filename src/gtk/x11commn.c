@@ -60,7 +60,7 @@ static GtkWidget *ProgressDialog = NULL;
 #if GTK_CHECK_VERSION(4, 0, 0)
 #define PROGRESSBAR_N 2
 static GtkProgressBar *ProgressBar[PROGRESSBAR_N];
-static GtkWidget *ProgressText, *ProgressButton;
+static GtkWidget *ProgressFrame, *ProgressText, *ProgressButton;
 #else
 static GtkProgressBar *ProgressBar, *ProgressBar2;
 #endif
@@ -2864,7 +2864,7 @@ progress_dialog_finalize(gpointer user_data)
   if (ProgressDialogData->finalize) {
     ProgressDialogData->finalize(user_data);
   }
-  if (gtk_widget_get_visible(gtk_widget_get_parent(GTK_WIDGET(ProgressText)))) {
+  if (gtk_widget_get_visible(GTK_WIDGET(ProgressFrame))) {
     gtk_progress_bar_set_fraction(ProgressBar[0], 1);
     gtk_progress_bar_set_fraction(ProgressBar[1], 1);
     gtk_window_set_title(GTK_WINDOW(ProgressDialog), _("Drawing end"));
@@ -2914,7 +2914,11 @@ progress_dialog_add_text_view(GtkWidget *vbox)
   ProgressText = gtk_text_view_new();
   gtk_text_view_set_editable(GTK_TEXT_VIEW(ProgressText), FALSE);
   gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), ProgressText);
-  gtk_box_append(GTK_BOX(vbox), swin);
+
+  ProgressFrame = gtk_frame_new(_("Error messages"));
+  gtk_frame_set_child(GTK_FRAME(ProgressFrame), swin);
+
+  gtk_box_append(GTK_BOX(vbox), ProgressFrame);
 }
 
 static void
@@ -3014,7 +3018,7 @@ progress_dialog_set_text(gpointer user_data)
     return;
   }
 
-  gtk_widget_show(gtk_widget_get_parent(ProgressText));
+  gtk_widget_show(ProgressFrame);
 
   buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(ProgressText));
   gtk_text_buffer_get_end_iter(buf, &iter);
@@ -3064,7 +3068,7 @@ ProgressDialogCreate(char *title, progress_func update, progress_func finalize, 
   ProgressDialogData->finish = FALSE;
   create_progress_dialog(title);
   gtk_widget_show(ProgressDialog);
-  gtk_widget_hide(gtk_widget_get_parent(ProgressText));
+  gtk_widget_hide(ProgressFrame);
   gtk_button_set_label(GTK_BUTTON(ProgressButton), _("_Stop"));
   ProgressDialogData->thread = g_thread_new(NULL, ProgressDialog_thread, data);
 
