@@ -56,6 +56,9 @@ struct parameter_data
   struct objlist *obj;
   int id, undo;
   struct obj_list_data *obj_list_data;
+  /* for animation */
+  double start, stop, step, prm;
+  GtkButton *btn;
 };
 
 static void
