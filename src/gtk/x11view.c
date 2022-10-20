@@ -2456,6 +2456,7 @@ struct fileupdate_data
   struct objlist *fileobj;
   int err, limit;
   int minx, miny, maxx, maxy;
+  struct narray *dfile;
 };
 
 static void
@@ -2467,11 +2468,11 @@ fileupdate_finalize(gpointer user_data)
   struct objlist *fileobj;
 
   data = (struct fileupdate_data *) user_data;
-  dfile = arraynew(sizeof(int));
+  restorestdio(&data->save);
+  dfile = data->dfile;
   fileobj = data->fileobj;
   update_file_obj_multi(fileobj, dfile, FALSE, viewer_win_file_update_response, dfile);
   UpdateAll(objects);
-  arrayfree(dfile);
   g_free(data);
 }
 
@@ -2482,21 +2483,15 @@ fileupdate_func(gpointer user_data)
   int snum, hidden;
   int i, did;
   N_VALUE *dinst;
-  struct narray *dfile;
   struct fileupdate_data *data;
-  struct narray *eval;
+  struct narray *eval, *dfile;
   int evalnum;
 
   data = (struct fileupdate_data *) user_data;
 
+  dfile = data->dfile;
   fileobj = data->fileobj;
   snum = chkobjlastinst(fileobj) + 1;
-  dfile = arraynew(sizeof(int));
-  if (dfile == NULL) {
-    restorestdio(&data->save);
-    g_free(data);
-    return;
-  }
   for (i = 0; i < snum; i++) {
     dinst = chkobjinst(fileobj, i);
     if (dinst == NULL) {
@@ -2514,8 +2509,6 @@ fileupdate_func(gpointer user_data)
       arrayadd(dfile, &i);
     }
   }
-
-  restorestdio(&data->save);
 }
 
 static void
@@ -2528,6 +2521,7 @@ ViewerWinFileUpdate(int x1, int y1, int x2, int y2, int err)
   int i;
   char mes[256];
   int ret;
+  struct narray *dfile;
   struct fileupdate_data *data;
 
   data = g_malloc0(sizeof(*data));
@@ -2535,7 +2529,6 @@ ViewerWinFileUpdate(int x1, int y1, int x2, int y2, int err)
     return;
   }
   ret = FALSE;
-  ignorestdio(&data->save);
 
   data->minx = (x1 < x2) ? x1 : x2;
   data->miny = (y1 < y2) ? y1 : y2;
@@ -2545,17 +2538,29 @@ ViewerWinFileUpdate(int x1, int y1, int x2, int y2, int err)
   data->err = err;
 
   fileobj = chkobject("data");
-  if (! fileobj)
+  if (! fileobj) {
+    g_free(data);
     return;
+  }
 
   if (check_drawrable(fileobj)) {
+    g_free(data);
     return;
   }
 
   snum = chkobjlastinst(fileobj) + 1;
   if (snum == 0) {
+    g_free(data);
     return;
   }
+
+  dfile = arraynew(sizeof(int));
+  if (dfile == NULL) {
+    g_free(data);
+    return;
+  }
+
+  ignorestdio(&data->save);
 
   snprintf(mes, sizeof(mes), _("Searching for data."));
   SetStatusBar(mes);
@@ -2568,6 +2573,7 @@ ViewerWinFileUpdate(int x1, int y1, int x2, int y2, int err)
   data->argv[5] = (char *) &data->limit;
   data->argv[6] = NULL;
   data->fileobj = fileobj;
+  data->dfile = dfile;
 
   ProgressDialogCreate(_("Searching for data."), fileupdate_func, fileupdate_finalize, data);
 }
