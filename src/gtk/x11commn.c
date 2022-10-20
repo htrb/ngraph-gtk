@@ -3023,8 +3023,6 @@ progress_dialog_set_text(gpointer user_data)
   buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(ProgressText));
   gtk_text_buffer_get_end_iter(buf, &iter);
   gtk_text_buffer_insert(buf, &iter, text, -1);
-  gtk_text_buffer_get_end_iter(buf, &iter);
-  gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW(ProgressText), &iter, 0, TRUE, 0, 1);
 
   g_free(text);
 }
