@@ -915,6 +915,20 @@ set_play_icon(GtkButton *btn)
 }
 
 static void
+parameter_play_finalize(struct parameter_data *data)
+{
+  double prm;
+  GtkWidget *scale;
+
+  scale = data->scale;
+  prm = gtk_range_get_value(GTK_RANGE(scale));
+  set_parameter(prm, data);
+  data->playing = FALSE;
+  set_play_icon(data->btn);
+  menu_lock(FALSE);
+}
+
+static void
 parameter_play(GtkButton *btn, gpointer user_data)
 {
   int wait;
