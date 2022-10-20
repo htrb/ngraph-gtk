@@ -928,6 +928,40 @@ parameter_play_finalize(struct parameter_data *data)
   menu_lock(FALSE);
 }
 
+static int
+parameter_play_main(gpointer user_data)
+{
+  double start, stop, step, prm;
+  struct parameter_data *data;
+  GtkWidget *scale;
+
+  data = user_data;
+  start = data->start;
+  stop = data->stop;
+  step = data->step;
+  prm = data->prm;
+  scale = data->scale;
+
+  if (! data->playing) {
+    parameter_play_finalize(data);
+    return FALSE;
+  }
+  if (fabs(prm - start) > fabs(stop - start)) {
+    if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(data->repeat))) {
+      data->prm = start;
+      return TRUE;
+    }
+    parameter_play_finalize(data);
+    return FALSE;
+  }
+  gtk_range_set_value(GTK_RANGE(scale), prm);
+  set_parameter(prm, data);
+  prm = gtk_range_get_value(GTK_RANGE(scale));
+  data->prm += step;
+
+  return TRUE;
+}
+
 static void
 parameter_play(GtkButton *btn, gpointer user_data)
 {
