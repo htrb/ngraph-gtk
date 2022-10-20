@@ -1005,34 +1005,12 @@ parameter_play(GtkButton *btn, gpointer user_data)
     }
   }
   data->playing = TRUE;
-  while (1) {
-    while (fabs(prm - start) <= fabs(stop - start)) {
-      int i;
-      gtk_range_set_value(GTK_RANGE(scale), prm);
-      set_parameter(prm, data);
-      for (i = 1; i < wait; i++) {
-	msleep(10);
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-	reset_event();
-#endif
-	if (! data->playing) {
-	  goto EndPlaying;
-	}
-      }
-      prm = gtk_range_get_value(GTK_RANGE(scale));
-      prm += step;
-    }
-    if (! gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(data->repeat))) {
-      break;
-    }
-    prm = start;
-  }
- EndPlaying:
-  prm = gtk_range_get_value(GTK_RANGE(scale));
-  set_parameter(prm, data);
-  data->playing = FALSE;
-  set_play_icon(btn);
-  menu_lock(FALSE);
+  data->start = start;
+  data->stop = stop;
+  data->step = step;
+  data->prm = prm;
+  data->btn = btn;
+  g_timeout_add(wait * 10, parameter_play_main, data);
 }
 
 static void
