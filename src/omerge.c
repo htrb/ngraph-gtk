@@ -299,6 +299,7 @@ read_new_gra_file(struct gra_cache *cache, struct gra_info *info, FILE *fd)
   int r;
   char *buf;
   int rcode;
+  int line = 0;
   struct GRAdata *prev, *data;
 
   gra_cache_init(cache, info);
@@ -306,6 +307,7 @@ read_new_gra_file(struct gra_cache *cache, struct gra_info *info, FILE *fd)
   r = 0;
   prev = NULL;
   while ((rcode = fgetline(fd, &buf)) != 1) {
+    line++;
     if (rcode == -1) {
       return 1;
     }
@@ -318,6 +320,9 @@ read_new_gra_file(struct gra_cache *cache, struct gra_info *info, FILE *fd)
       GRAdata_free(data);
       error2(info->obj, ERRGRAFM, buf);
       goto errexit;
+    }
+    if ((line & UPDATE_PROGRESS_LINE_NUM) == 0) {
+      set_merge_progress(line, -1);
     }
     rcode = draw_gra_data(info, data);
     if (! rcode) {
@@ -333,6 +338,7 @@ read_new_gra_file(struct gra_cache *cache, struct gra_info *info, FILE *fd)
     }
     prev = data;
   }
+  cache->lines = line;
   return r;
 
 errexit:
