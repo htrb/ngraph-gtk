@@ -281,6 +281,18 @@ draw_gra_data(struct gra_info *info, struct GRAdata *data)
   return rcode;
 }
 
+static void
+set_merge_progress(int cur, int n)
+{
+  char msgbuf[32];
+
+  snprintf(msgbuf, sizeof(msgbuf), "%d", cur);
+  if (n >= 0) {
+    n++;
+  }
+  set_progress(0, msgbuf, (cur * 1.0) / n);
+}
+
 static int
 read_new_gra_file(struct gra_cache *cache, struct gra_info *info, FILE *fd)
 {
