@@ -353,6 +353,7 @@ read_old_gra_file(struct gra_cache *cache, struct gra_info *info, FILE *fd, cons
   int r;
   char *buf;
   int rcode;
+  int line = 0;
 
   gra_cache_init(cache, NULL);
   rcode = fgetline(fd, &buf);
@@ -366,8 +367,12 @@ read_old_gra_file(struct gra_cache *cache, struct gra_info *info, FILE *fd, cons
 
   r = 0;
   while ((rcode = fgetline(fd, &buf)) != 1) {
+    line++;
     if (rcode == -1) {
       return 1;
+    }
+    if ((line & UPDATE_PROGRESS_LINE_NUM) == 0) {
+      set_merge_progress(line, -1);
     }
     rcode = GRAinputold(info->GC, buf, info->lm, info->tm, info->zmx, info->zmy);
     if (!rcode) {
@@ -377,6 +382,7 @@ read_old_gra_file(struct gra_cache *cache, struct gra_info *info, FILE *fd, cons
     }
     g_free(buf);
   }
+  cache->lines = line;
   return r;
 }
 
