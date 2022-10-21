@@ -83,11 +83,14 @@ struct gra_info
 struct gra_cache
 {
   struct GRAdata *data;
+  int lines;
   GStatBuf gstat;
 };
 
 static NHASH GraCache = NULL;
 #endif
+
+#define UPDATE_PROGRESS_LINE_NUM 0xfff
 
 static void
 set_bbox(struct objlist *obj,N_VALUE *inst, struct narray *array, int l, int t, int zx, int zy)
