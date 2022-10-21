@@ -129,7 +129,11 @@ create_widgets(struct AppData *app_data, const gchar *img_file)
 #if GTK_CHECK_VERSION(4, 0, 0)
   w = gtk_picture_new_for_pixbuf(pixbuf);
   gtk_picture_set_can_shrink(GTK_PICTURE(w), FALSE);
+#if GTK_CHECK_VERSION(4, 8, 0)
+  gtk_picture_set_content_fit(GTK_PICTURE(w), GTK_CONTENT_FIT_SCALE_DOWN);
+#else
   gtk_picture_set_keep_aspect_ratio(GTK_PICTURE(w), TRUE);
+#endif
   gtk_widget_set_halign(GTK_WIDGET(w), GTK_ALIGN_START);
   gtk_widget_set_valign(GTK_WIDGET(w), GTK_ALIGN_START);
   app_data->im = pixbuf;
