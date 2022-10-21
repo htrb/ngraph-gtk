@@ -77,6 +77,7 @@ static char *systemname, *locale;
 static int consolefdout, consolefdin, ConsoleAc = FALSE;
 static int consolecol = 80, consolerow = 25;
 static int Initialized = FALSE;
+static GThread *MainThread;
 
 void *addobjectroot(void);
 void *addint(void);
@@ -939,6 +940,13 @@ set_prgname(int argc, char **argv)
 #endif
 
 int
+is_main_thread(void)
+{
+  printf("thread: %p, %p\n", MainThread, g_thread_self());
+  return MainThread == g_thread_self();
+}
+
+int
 n_initialize(int *argc, char ***argv)
 {
   char *homedir, *datadir, *docdir, *libdir, *plugindir, *confdir;
@@ -955,6 +963,8 @@ n_initialize(int *argc, char ***argv)
   if (Initialized) {
     return 0;
   }
+
+  MainThread = g_thread_self();
 
 #if EOF == -1
   char_type_buf_init();
