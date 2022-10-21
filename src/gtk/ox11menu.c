@@ -1169,6 +1169,10 @@ static void
 putstderr_response(int response, gpointer user_data)
 {
   struct dialog_data *data;
+  if (is_main_thread()) {
+    g_free(user_data);
+    return;
+  }
   data = (struct dialog_data *) user_data;
   data->wait = FALSE;
 }
