@@ -443,11 +443,16 @@ draw_gra(struct gra_cache *cache, struct gra_info *info)
   if (data == NULL) {
     return 0;
   }
+  line = 0;
   while (data) {
     int rcode;
+    line++;
     rcode = draw_gra_data(info, data);
     if (! rcode) {
       return 1;
+    }
+    if ((line & UPDATE_PROGRESS_LINE_NUM) == 0) {
+      set_merge_progress(line, cache->lines);
     }
     data = data->next;
   }
