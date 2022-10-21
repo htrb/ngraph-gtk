@@ -433,6 +433,7 @@ static int
 draw_gra(struct gra_cache *cache, struct gra_info *info)
 {
   struct GRAdata *data;
+  int line;
 
   if (cache == NULL) {
     return 0;
