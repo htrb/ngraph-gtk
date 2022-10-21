@@ -249,6 +249,7 @@ gra_cache_init(struct gra_cache *cache, struct gra_info *info)
     cache->gstat.st_mtime = 0;
     cache->gstat.st_size = 0;
   }
+  cache->lines = 0;
 }
 
 static int *
