@@ -942,7 +942,6 @@ set_prgname(int argc, char **argv)
 int
 is_main_thread(void)
 {
-  printf("thread: %p, %p\n", MainThread, g_thread_self());
   return MainThread == g_thread_self();
 }
 
