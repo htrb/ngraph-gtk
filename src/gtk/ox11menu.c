@@ -1174,6 +1174,12 @@ putstderr_response(int response, gpointer user_data)
 }
 
 static void
+error_message(char *msg, gpointer data)
+{
+  markup_message_box_full(get_current_window(), CHK_STR(msg), _("Error:"), RESPONS_ERROR, FALSE, putstderr_response, data);
+}
+
+static void
 putstderr_main(gpointer user_data)
 {
   struct dialog_data *data;
