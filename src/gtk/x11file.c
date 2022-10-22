@@ -660,7 +660,9 @@ math_dialog_list_respone(struct response_callback *cb)
   d = res_data->d;
   list = res_data->list;
   gsel = res_data->gsel;
-  d->modified = DlgMathText.modified;
+  if (DlgMathText.modified) {
+    d->modified = DlgMathText.modified;
+  }
   g_free(res_data->buf);
 
   MathDialogSetupItem(d->widget, d);
