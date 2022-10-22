@@ -569,7 +569,9 @@ MathDialogList(GtkButton *w, gpointer client_data)
 
   MathTextDialog(&DlgMathText, buf, d->Mode, d->Obj, list, d->list);
   DialogExecute(d->widget, &DlgMathText);
-  d->modified = DlgMathText.modified;
+  if (DlgMathText.modified) {
+    d->modified = DlgMathText.modified;
+  }
   g_free(buf);
 
   MathDialogSetupItem(d->widget, d);
