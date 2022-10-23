@@ -325,13 +325,13 @@ set_text_to_source_buffer(GtkWidget *view, const char *text)
   GtkTextBuffer *buffer;
   buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(view));
 #if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
+  gtk_text_buffer_begin_irreversible_action(buffer);
 #else
   gtk_source_buffer_begin_not_undoable_action(GTK_SOURCE_BUFFER(buffer));
 #endif
   gtk_text_buffer_set_text(buffer, text, -1);
 #if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
+  gtk_text_buffer_end_irreversible_action(buffer);
 #else
   gtk_source_buffer_end_not_undoable_action(GTK_SOURCE_BUFFER(buffer));
 #endif
