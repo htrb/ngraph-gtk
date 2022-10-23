@@ -1197,9 +1197,7 @@ mgtkputstderr(const char *s)
   if (ProgressDialogIsActive()) {
     ProgressDialog_append_text(s);
   } else if (is_main_thread()) {
-    char *str;
-    str = g_strdup(s);
-    error_message(str, str);
+    error_message(s, NULL);
   } else {
     dialog_run(s, putstderr_main, &data);
   }
