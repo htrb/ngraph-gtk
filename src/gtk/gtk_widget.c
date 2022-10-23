@@ -14,6 +14,14 @@
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 void
+spin_button_set_activates_default(GtkWidget *w)
+{
+  GtkEditable *editable;
+  editable = gtk_editable_get_delegate(GTK_EDITABLE(w));
+  gtk_text_set_activates_default(GTK_TEXT(editable), TRUE);
+}
+
+void
 widget_set_parent(GtkWidget *widget, GtkWidget *parent) {
   gtk_widget_set_parent(widget, parent);
   g_signal_connect_swapped(parent, "destroy", G_CALLBACK(gtk_widget_unparent), widget);

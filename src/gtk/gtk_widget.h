@@ -47,6 +47,7 @@ enum WIDGET_MARGIN {
 };
 
 #if GTK_CHECK_VERSION(4, 0, 0)
+void spin_button_set_activates_default(GtkWidget *w);
 void widget_set_parent(GtkWidget *widget, GtkWidget *parent);
 gboolean gtk_true(void);
 double scrollbar_get_value(GtkWidget *w);
