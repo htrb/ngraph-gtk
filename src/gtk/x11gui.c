@@ -1498,6 +1498,7 @@ spin_dialog(GtkWidget *parent, const char *title, const char *caption, double mi
   spin = gtk_spin_button_new_with_range(min, max, inc);
   gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(spin), TRUE);
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin), *r);
+  spin_button_set_activates_default(spin);
   gtk_box_append(vbox, spin);
 
   prec = log10(fabs(inc));
