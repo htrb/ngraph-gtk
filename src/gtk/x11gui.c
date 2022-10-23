@@ -423,17 +423,14 @@ message_beep(GtkWidget * parent)
   //  reset_event();
 }
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
 static void
 set_dialog_position(GtkWidget *w, const int *x, const int *y)
 {
   if (x == NULL || y == NULL || *x < 0 || *y < 0)
     return;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-  /* a number of GtkWindow APIs that were X11-specific have been removed. */
-#else
   gtk_window_move(GTK_WINDOW(w), *x, *y);
-#endif
 }
 
 static void
@@ -442,9 +439,6 @@ get_dialog_position(GtkWidget *w, int *x, int *y)
   if (x == NULL || y == NULL)
     return;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-  /* a number of GtkWindow APIs that were X11-specific have been removed. */
-#else
   gtk_window_get_position(GTK_WINDOW(w), x, y);
 
   if (*x < 0)
@@ -452,8 +446,8 @@ get_dialog_position(GtkWidget *w, int *x, int *y)
 
   if (*y < 0)
     *y = 0;
-#endif
 }
+#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 struct response_message_box_data {
@@ -922,12 +916,12 @@ DialogInput(GtkWidget * parent, const char *title, const char *mes, const char *
   gtk_box_pack_start(vbox, text, FALSE, FALSE, 5);
 #endif
 
-  set_dialog_position(dlg, x, y);
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_widget_show(dlg);
   res_id = IDLOOP;
   ndialog_run(dlg, NULL, &res_id);
 #else
+  set_dialog_position(dlg, x, y);
   gtk_widget_show_all(dlg);
   res_id = ndialog_run(dlg);
 #endif
@@ -949,10 +943,10 @@ DialogInput(GtkWidget * parent, const char *title, const char *mes, const char *
     *res_btn = res_id;
   }
 
-  get_dialog_position(dlg, x, y);
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_window_destroy(GTK_WINDOW(dlg));
 #else
+  get_dialog_position(dlg, x, y);
   gtk_widget_destroy(dlg);
   reset_event();
 #endif
@@ -1211,19 +1205,19 @@ DialogButton(GtkWidget *parent, const char *title, const char *caption, struct n
     gtk_window_set_modal(GTK_WINDOW(parent), TRUE);
   }
 
-  set_dialog_position(dlg, x, y);
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_widget_show(dlg);
   res_id = IDLOOP;
   ndialog_run(dlg, NULL, &res_id);
 #else
+  set_dialog_position(dlg, x, y);
   gtk_widget_show_all(dlg);
   res_id = ndialog_run(dlg);
 #endif
-  get_dialog_position(dlg, x, y);
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_window_destroy(GTK_WINDOW(dlg));
 #else
+  get_dialog_position(dlg, x, y);
   gtk_widget_destroy(dlg);
   reset_event();
 #endif
@@ -1292,12 +1286,12 @@ DialogCombo(GtkWidget *parent, const char *title, const char *caption, struct na
   gtk_box_pack_start(vbox, combo, FALSE, FALSE, 2);
 #endif
 
-  set_dialog_position(dlg, x, y);
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_widget_show(dlg);
   res_id = IDLOOP;
   ndialog_run(dlg, NULL, &res_id);
 #else
+  set_dialog_position(dlg, x, y);
   gtk_widget_show_all(dlg);
   res_id = ndialog_run(dlg);
 #endif
@@ -1316,10 +1310,10 @@ DialogCombo(GtkWidget *parent, const char *title, const char *caption, struct na
     *res_btn = res_id;
   }
 
-  get_dialog_position(dlg, x, y);
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_window_destroy(GTK_WINDOW(dlg));
 #else
+  get_dialog_position(dlg, x, y);
   gtk_widget_destroy(dlg);
   reset_event();
 #endif
@@ -1387,12 +1381,12 @@ DialogComboEntry(GtkWidget *parent, const char *title, const char *caption, stru
   gtk_box_pack_start(vbox, combo, FALSE, FALSE, 2);
 #endif
 
-  set_dialog_position(dlg, x, y);
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_widget_show(dlg);
   res_id = IDLOOP;
   ndialog_run(dlg, NULL, &res_id);
 #else
+  set_dialog_position(dlg, x, y);
   gtk_widget_show_all(dlg);
   res_id = ndialog_run(dlg);
 #endif
@@ -1414,10 +1408,10 @@ DialogComboEntry(GtkWidget *parent, const char *title, const char *caption, stru
     *res_btn = res_id;
   }
 
-  get_dialog_position(dlg, x, y);
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_window_destroy(GTK_WINDOW(dlg));
 #else
+  get_dialog_position(dlg, x, y);
   gtk_widget_destroy(dlg);
   reset_event();
 #endif
@@ -1663,12 +1657,12 @@ DialogCheck(GtkWidget *parent, const char *title, const char *caption, struct na
 #endif
   }
 
-  set_dialog_position(dlg, x, y);
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_widget_show(dlg);
   res_id = IDLOOP;
   ndialog_run(dlg, NULL, &res_id);
 #else
+  set_dialog_position(dlg, x, y);
   gtk_widget_show_all(dlg);
   res_id = ndialog_run(dlg);
 #endif
@@ -1692,10 +1686,10 @@ DialogCheck(GtkWidget *parent, const char *title, const char *caption, struct na
 
   g_free(btn_ary);
 
-  get_dialog_position(dlg, x, y);
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_window_destroy(GTK_WINDOW(dlg));
 #else
+  get_dialog_position(dlg, x, y);
   gtk_widget_destroy(dlg);
   reset_event();
 #endif
