@@ -661,13 +661,13 @@ _create_spin_entry(enum SPIN_BUTTON_TYPE type, double min, double max,
 #endif
   }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-  /* must be implemented */
-#else
   if (set_default_action) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+    spin_button_set_activates_default(w);
+#else
     gtk_entry_set_activates_default(GTK_ENTRY(w), TRUE);
-  }
 #endif
+  }
 
   g_object_set_data(G_OBJECT(w), "user-data", GINT_TO_POINTER(type));
 
