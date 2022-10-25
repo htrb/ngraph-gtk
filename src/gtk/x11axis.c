@@ -2780,8 +2780,12 @@ position_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   add_widget_to_table(table, w, _("_Length:"), FALSE, i++);
   d->len = w;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  w = create_direction_entry(table, _("_Direction:"), i++);
+#else
   w = create_direction_entry();
   add_widget_to_table(table, w, _("_Direction:"), FALSE, i++);
+#endif
   d->direction = w;
 
   w = axis_combo_box_create(AXIS_COMBO_BOX_USE_OID | AXIS_COMBO_BOX_ADD_NONE);

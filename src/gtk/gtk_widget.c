@@ -402,7 +402,6 @@ create_file_entry(struct objlist *obj)
   return create_file_entry_with_cb(G_CALLBACK(entry_icon_file_select), obj);
 }
 
-#if ! GTK_CHECK_VERSION(4, 0, 0)
 static void
 direction_icon_released(GtkEntry *entry, GtkEntryIconPosition pos, GdkEvent *event, gpointer user_data)
 {
@@ -440,8 +439,45 @@ direction_icon_released(GtkEntry *entry, GtkEntryIconPosition pos, GdkEvent *eve
 
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(entry), val);
 }
-#endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+direction_down(GtkWidget *button, gpointer user_data)
+{
+  direction_icon_released(GTK_ENTRY(user_data), GTK_ENTRY_ICON_PRIMARY, NULL, NULL);
+}
+
+static void
+direction_up(GtkWidget *button, gpointer user_data)
+{
+  direction_icon_released(GTK_ENTRY(user_data), GTK_ENTRY_ICON_SECONDARY, NULL, NULL);
+}
+
+GtkWidget *
+create_direction_entry(GtkWidget *table, const char *title, int row)
+{
+  GtkWidget *w, *ubtn, *dbtn, *box;
+
+  w = create_spin_entry_type(SPIN_BUTTON_TYPE_ANGLE, FALSE, TRUE);
+  gtk_editable_set_width_chars(GTK_EDITABLE(w), NUM_ENTRY_WIDTH);
+  gtk_editable_set_max_width_chars(GTK_EDITABLE(w), NUM_ENTRY_WIDTH);
+
+  ubtn = gtk_button_new_from_icon_name("go-up-symbolic");
+  g_signal_connect(ubtn, "clicked", G_CALLBACK(direction_up), w);
+
+  dbtn = gtk_button_new_from_icon_name("go-down-symbolic");
+  g_signal_connect(dbtn, "clicked", G_CALLBACK(direction_down), w);
+
+  box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+  gtk_box_append(GTK_BOX(box), w);
+  gtk_box_append(GTK_BOX(box), dbtn);
+  gtk_box_append(GTK_BOX(box), ubtn);
+
+  add_widget_to_table(table, box, title, FALSE, row);
+
+  return w;
+}
+#else
 GtkWidget *
 create_direction_entry(void)
 {
@@ -465,6 +501,7 @@ create_direction_entry(void)
 
   return w;
 }
+#endif
 
 GtkWidget *
 create_text_entry(int set_default_size, int set_default_action)

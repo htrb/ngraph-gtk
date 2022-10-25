@@ -2164,12 +2164,20 @@ LegendArcDialogSetup(GtkWidget *wi, void *data, int makewidget)
     table = gtk_grid_new();
 
     i = 0;
+#if GTK_CHECK_VERSION(4, 0, 0)
+    w = create_direction_entry(table, _("_Angle1:"), i++);
+#else
     w = create_direction_entry();
     add_widget_to_table(table, w, _("_Angle1:"), FALSE, i++);
+#endif
     d->angle1 = w;
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+    w = create_direction_entry(table, _("_Angle2:"), i++);
+#else
     w = create_direction_entry();
     add_widget_to_table(table, w, _("_Angle2:"), FALSE, i++);
+#endif
     d->angle2 = w;
 
     w = gtk_check_button_new_with_mnemonic(_("_Pieslice"));
@@ -2454,8 +2462,12 @@ legend_dialog_setup_sub(struct LegendDialog *d, GtkWidget *table, int i, int ins
     d->color = NULL;
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  w = create_direction_entry(table, _("_Direction:"), i++);
+#else
   w = create_direction_entry();
   add_widget_to_table(table, w, _("_Direction:"), FALSE, i++);
+#endif
   d->direction = w;
 
   w = gtk_check_button_new_with_mnemonic(_("_Raw"));
