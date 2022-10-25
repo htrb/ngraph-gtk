@@ -212,7 +212,7 @@ set_widget_visibility_with_label(GtkWidget *w, gboolean state)
 }
 
 GtkWidget *
-add_widget_to_table_sub(GtkWidget *table, GtkWidget *w, char *title, int expand, int col, int width, int col_max, int n)
+add_widget_to_table_sub(GtkWidget *table, GtkWidget *w, const char *title, int expand, int col, int width, int col_max, int n)
 {
   GtkWidget *label;
 
