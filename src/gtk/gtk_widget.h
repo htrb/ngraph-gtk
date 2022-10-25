@@ -56,8 +56,10 @@ void scrollbar_set_value(GtkWidget *w, double val);
 void scrollbar_set_range(GtkWidget *w, double min, double max);
 void scrollbar_set_increment(GtkWidget *w, double step, double page);
 void select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type, response_cb cb, gpointer user_data);
+GtkWidget *create_direction_entry(GtkWidget *table, const char *title, int row);
 #else
 enum SELECT_OBJ_COLOR_RESULT select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type);
+GtkWidget *create_direction_entry(void);
 #endif
 
 GtkWidget *create_spin_entry_type(enum SPIN_BUTTON_TYPE type, int set_default_size, int set_default_action);

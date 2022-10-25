@@ -242,7 +242,7 @@ add_widget_to_table_sub(GtkWidget *table, GtkWidget *w, const char *title, int e
 }
 
 GtkWidget *
-add_widget_to_table(GtkWidget *table, GtkWidget *w, char *title, int expand, int n)
+add_widget_to_table(GtkWidget *table, GtkWidget *w, const char *title, int expand, int n)
 {
   return add_widget_to_table_sub(table, w, title, expand, 0, (title) ? 1 : 2, 2, n);
 }
