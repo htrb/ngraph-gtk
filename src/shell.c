@@ -336,10 +336,10 @@ unset_childhandler(void)
 #endif	/* WINDOWS */
 
 
+#if USE_EVENT_LOOP
 static int EvLoopActive = FALSE;
 static GThread *EvLoopThread = NULL;
 
-#if USE_EVENT_LOOP
 static void *
 shellevloop(void *ptr)
 {
@@ -408,6 +408,7 @@ shgetstdin(void)
 }
 
 #if HAVE_READLINE_READLINE_H
+#if USE_EVENT_LOOP
 static int ReadlineLock = FALSE;
 
 static void *
@@ -440,14 +441,19 @@ nreadline(char *prompt)
   }
 
   while (ReadlineLock) {
-#if USE_EVENT_LOOP
     eventloop();
-#endif
     msleep(10);
   }
 
   return (char *) g_thread_join(thread);
 }
+#else
+static char *
+nreadline(char *prompt)
+{
+  return readline(prompt);
+}
+#endif
 
 static void
 remove_duplicate_history(char *str)
