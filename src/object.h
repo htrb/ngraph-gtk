@@ -231,10 +231,12 @@ int getargc(char **arg);
 char **arg_add(char ***arg,void *ptr);
 void arg_del(char **arg);
 
+#if USE_EVENT_LOOP
 void registerevloop(const char *objname, const char *evname,
                     struct objlist *obj,int idn,N_VALUE *inst,void *local);
 void unregisterevloop(struct objlist *obj,int idn,N_VALUE *inst);
 void eventloop(void);
+#endif
 
 struct objlist *chkobjroot(void);
 void *addobject(char *name,char *alias,char *parentname,

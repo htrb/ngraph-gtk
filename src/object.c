@@ -47,7 +47,9 @@
 #define INST_MAX 32767
 
 static struct objlist *objroot=NULL;
+#if USE_EVENT_LOOP
 static struct loopproc *looproot=NULL, *loopnext=NULL;
+#endif
 
 static struct objlist *errobj=NULL;
 
@@ -1277,6 +1279,7 @@ arg_del(char **arg)
   g_free(arg);
 }
 
+#if USE_EVENT_LOOP
 void
 registerevloop(const char *objname, const char *evname,
                     struct objlist *obj,int idn,N_VALUE *inst,
@@ -1322,6 +1325,7 @@ unregisterevloop(struct objlist *obj,int idn,N_VALUE *inst)
     }
   }
 }
+#endif
 
 #ifdef COMPILE_UNUSED_FUNCTIONS
 static void
@@ -1341,6 +1345,7 @@ unregisterallevloop(void)
 }
 #endif /* COMPILE_UNUSED_FUNCTIONS */
 
+#if USE_EVENT_LOOP
 int
 has_eventloop(void) {
   return looproot != NULL;
@@ -1370,6 +1375,7 @@ eventloop(void)
   restorestdio(NULL);
   ineventloop=FALSE;
 }
+#endif
 
 struct objlist *
 chkobjroot()
