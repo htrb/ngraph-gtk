@@ -102,8 +102,10 @@ struct gtklocal
 };
 
 static void gtkMakeRuler(cairo_t *cr, struct gtklocal *gtklocal);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
 static int gtk_evloop(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 		      char **argv);
+#endif
 static int gtkclose(GtkWidget *widget, GdkEvent  *event, gpointer user_data);
 static void gtkchangedpi(struct gtklocal *gtklocal);
 static gboolean gtkevpaint(GtkWidget * w, cairo_t * e,
@@ -623,9 +625,11 @@ gtkdone(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
     cairo_surface_destroy(gtklocal->surface);
   }
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   idn = getobjtblpos(obj, "_evloop", &robj);
   if (idn != -1)
     unregisterevloop(robj, idn, inst);
+#endif
 
   g_free(gtklocal->title);
 
@@ -801,22 +805,16 @@ gtkredraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
   return 0;
 }
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
 static int
 gtk_evloop(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-#if GTK_CHECK_VERSION(4, 0, 0)
-  GMainContext *context;
-  context = g_main_context_default();
-  while (g_main_context_pending(context)) {
-    g_main_context_iteration(context, TRUE);
-  }
-#else
   while (gtk_events_pending()) {
     gtk_main_iteration();
   }
-#endif
   return 0;
 }
+#endif
 
 static int
 dot2pixel(struct gtklocal *gtklocal, int r)
@@ -1047,7 +1045,9 @@ gtkwait_action(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char
   local->action.type = ACTION_TYPE_NONE;
   local->action.val = 0;
   while (local->action.type == ACTION_TYPE_NONE) {
+#if ! GTK_CHECK_VERSION(4, 0, 0)
     gtk_evloop(NULL, NULL, NULL, 0, NULL);
+#endif
     msleep(100);
   }
 
@@ -1109,7 +1109,9 @@ static struct objtable gra2gtk[] = {
   {"_strwidth", NIFUNC, 0, gra2cairo_strwidth, NULL, 0},
   {"_charascent", NIFUNC, 0, gra2cairo_charheight, NULL, 0},
   {"_chardescent", NIFUNC, 0, gra2cairo_charheight, NULL, 0},
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   {"_evloop", NVFUNC, 0, gtk_evloop, NULL, 0},
+#endif
 };
 
 #define TBLNUM (sizeof(gra2gtk) / sizeof(*gra2gtk))
