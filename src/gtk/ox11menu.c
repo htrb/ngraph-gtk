@@ -1319,14 +1319,14 @@ menumenu(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   return r;
 }
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
 static int
 mx_evloop(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-#if ! GTK_CHECK_VERSION(4, 0, 0)
   reset_event();
-#endif
   return 0;
 }
+#endif
 
 static int
 mxredrawflag(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
@@ -2375,7 +2375,9 @@ static struct objtable gtkmenu[] = {
   {"locale", NSFUNC, NREAD | NEXEC, mx_get_locale, "", 0},
   {"active", NBFUNC, NREAD | NEXEC, mx_get_active, "", 0},
   {"addin_list_append", NVFUNC, NREAD | NEXEC, mx_addin_list_append, "o", 0},
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   {"_evloop", NVFUNC, 0, mx_evloop, NULL, 0},
+#endif
   {"_output", NVFUNC, 0, mx_output, NULL, 0},
   {"_strwidth", NIFUNC, 0, mx_exeparent, NULL, 0},
   {"_charascent", NIFUNC, 0, mx_exeparent, NULL, 0},
