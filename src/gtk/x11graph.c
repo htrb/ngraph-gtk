@@ -1769,6 +1769,7 @@ CmGraphShell(void *w, gpointer client_data)
   }
   menu_lock(TRUE);
   menu_save_undo(UNDO_TYPE_SHLL, NULL);
+  gtk_widget_set_sensitive(TopLevel, FALSE);
   g_thread_new(NULL, graph_shell_main, NULL);
 }
 #endif
