@@ -524,9 +524,7 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   gtk_container_add(GTK_CONTAINER(scrolled_window), gtklocal->View);
 #endif
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_widget_show(gtklocal->mainwin);
-#else
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   gtk_widget_show_all(gtklocal->mainwin);
 #endif
 
@@ -544,7 +542,6 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   g_signal_connect(ev, "scroll", G_CALLBACK(scrolled), gtklocal);
 #else
   g_signal_connect(gtklocal->mainwin, "scroll-event", G_CALLBACK(scrolled), gtklocal);
-#endif
 
   if (chkobjfield(obj, "_evloop")) {
     goto errexit;
@@ -556,10 +553,13 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   }
 
   registerevloop(chkobjectname(obj), "_evloop", robj, idn, inst, gtklocal);
+#endif
 
   gtkchangedpi(gtklocal);
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   gtk_evloop(obj, inst, NULL, argc, argv);
+#endif
   return 0;
 
 errexit:
