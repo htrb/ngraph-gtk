@@ -699,10 +699,12 @@ gtkpresent(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   if (_getobj(obj, "_gtklocal", inst, &local))
     return 1;
 
-#if ! GTK_CHECK_VERSION(4, 0, 0)
+#if GTK_CHECK_VERSION(4, 0, 0)
+  gtk_widget_show(local->mainwin);
+#else
   reset_event();
-#endif
   msleep(100);
+#endif
   gtk_window_present(GTK_WINDOW(local->mainwin));
 
   return 0;
