@@ -339,6 +339,7 @@ unset_childhandler(void)
 static int EvLoopActive = FALSE;
 static GThread *EvLoopThread = NULL;
 
+#if USE_EVENT_LOOP
 static void *
 shellevloop(void *ptr)
 {
@@ -378,6 +379,7 @@ reset_shellevloop(void)
     g_thread_join(EvLoopThread);
   }
 }
+#endif
 
 static int
 shgetstdin(void)
@@ -386,11 +388,15 @@ shgetstdin(void)
   int byte;
 
   if (nisatty(stdinfd())) {
+#if USE_EVENT_LOOP
     set_shellevloop(0);
+#endif
     do {
       byte=read(stdinfd(),buf,1);
     } while (byte<0);
+#if USE_EVENT_LOOP
     reset_shellevloop();
+#endif
   } else {
     do {
       byte=read(stdinfd(),buf,1);
