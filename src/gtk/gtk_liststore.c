@@ -9,6 +9,7 @@
 #include "gra.h"
 
 #include "gtk_liststore.h"
+#include "gtk_combo.h"
 
 #include "x11dialg.h"
 
