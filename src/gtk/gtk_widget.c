@@ -442,9 +442,9 @@ direction_icon_released(GtkSpinButton *entry, GtkEntryIconPosition pos, GdkEvent
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 static void
-direction_down(GtkWidget *button, gpointer user_data)
+direction_down(GtkWidget *button, GtkSpinButton *user_data)
 {
-  direction_icon_released(GTK_ENTRY(user_data), GTK_ENTRY_ICON_PRIMARY, NULL, NULL);
+  direction_icon_released(user_data, GTK_ENTRY_ICON_PRIMARY, NULL, NULL);
 }
 
 static void
