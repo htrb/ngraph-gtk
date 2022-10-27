@@ -391,12 +391,70 @@ OutputImageDialog(struct OutputImageDialog *data, int type)
   data->DlgType = type;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+typedef void (* draw_gra_cb) (gpointer user_data);
+
+struct draw_gra_data {
+  struct objlist *graobj;
+  int id, close;
+  gpointer data;
+  draw_gra_cb cb;
+};
+
 static void
-draw_gra(struct objlist *graobj, int id, char *msg, int close)
+draw_gra_finalize(gpointer user_data)
 {
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  ProgressDialogCreate(msg);
+  struct draw_gra_data *data;
+  data = (struct draw_gra_data *) user_data;
+
+  ResetStatusBar();
+  main_window_redraw();
+  if (data->cb) {
+    data->cb(data->data);
+  }
+  g_free(user_data);
+}
+
+static void
+draw_gra_main(gpointer user_data)
+{
+  struct objlist *graobj;
+  int id;
+  struct draw_gra_data *data;
+  data = (struct draw_gra_data *) user_data;
+
+  graobj = data->graobj;
+  id = data->id;
+  if (exeobj(graobj, "open", id, 0, NULL) == 0) {
+    exeobj(graobj, "draw", id, 0, NULL);
+    exeobj(graobj, "flush", id, 0, NULL);
+    if (data->close) {
+      exeobj(graobj, "close", id, 0, NULL);
+    }
+  }
+}
 #endif
+
+static void
+draw_gra(struct objlist *graobj, int id, char *msg, int close, draw_gra_cb cb, gpointer user_data )
+{
+#if GTK_CHECK_VERSION(4, 0, 0)
+  struct draw_gra_data *data;
+  data = g_malloc0(sizeof(*data));
+  data->graobj = graobj;
+  data->id = id;
+  data->close = close;
+  data->data = user_data;
+  data->cb = cb;
+  SetStatusBar(msg);
+  if (cb) {
+    ProgressDialogCreate(msg, draw_gra_main, draw_gra_finalize, data);
+  } else {
+    draw_gra_main(data);
+    draw_gra_finalize(data);
+  }
+#else
+  ProgressDialogCreate(msg);
   SetStatusBar(msg);
 
   if (exeobj(graobj, "open", id, 0, NULL) == 0) {
@@ -407,11 +465,10 @@ draw_gra(struct objlist *graobj, int id, char *msg, int close)
     }
   }
 
-#if ! GTK_CHECK_VERSION(4, 0, 0)
   ProgressDialogFinalize();
-#endif
   ResetStatusBar();
   main_window_redraw();
+#endif
 }
 
 static void
@@ -434,7 +491,7 @@ draw_page(GtkPrintOperation *operation, GtkPrintContext *context, int page_nr, g
   r = _exeobj(g2wobj, "_context", g2winst, 1, argv);
 
   if (r == 0) {
-    draw_gra(graobj, id, _("Printing."), TRUE);
+    draw_gra(graobj, id, _("Printing."), TRUE, NULL, NULL);
   }
 }
 
@@ -760,6 +817,27 @@ CmOutputPrinter(int select_file, int show_dialog)
 }
 #endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+struct previewer_data {
+  struct objlist *g2wobj;
+  N_VALUE *g2winst;
+  int g2wid;
+};
+
+static void
+previewer_cb(gpointer user_data)
+{
+  struct previewer_data *data;
+  int delgra;
+
+  data = (struct previewer_data *) user_data;
+  delgra = TRUE;
+  _putobj(data->g2wobj, "delete_gra", data->g2winst, &delgra);
+  exeobj(data->g2wobj, "present", data->g2wid, 0, NULL);
+  g_free(data);
+}
+#endif
+
 void
 CmOutputViewerB(void *wi, gpointer client_data)
 {
@@ -790,6 +868,7 @@ CmOutputViewerB(void *wi, gpointer client_data)
     int id, g2wid, g2woid, c;
     N_VALUE *g2winst;
     int delgra;
+    struct previewer_data *data;
 
     if ((graobj = chkobject("gra")) == NULL)
       return;
@@ -815,12 +894,20 @@ CmOutputViewerB(void *wi, gpointer client_data)
     putobj(g2wobj, "use_opacity", g2wid, &Menulocal.use_opacity);
     id = newobj(graobj);
     init_graobj(graobj, id, "gra2gtk", g2woid);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    data = g_malloc0(sizeof(*data));
+    data->g2wobj = g2wobj;
+    data->g2wid = g2wid;
+    data->g2winst = g2winst;
+    draw_gra(graobj, id, _("Spawning external viewer."), FALSE, previewer_cb, data);
+#else
     draw_gra(graobj, id, _("Spawning external viewer."), FALSE);
 
     delgra = TRUE;
     _putobj(g2wobj, "delete_gra", g2winst, &delgra);
 
     exeobj(g2wobj, "present", g2wid, 0, NULL);
+#endif
   }
 }
 
@@ -845,12 +932,46 @@ get_base_ngp_name(void)
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
+struct gra_out_data
+{
+  struct objlist *graobj, *g2wobj;
+  int id, g2wid;
+};
+
+static void
+gra_out_cb(gpointer user_data)
+{
+  struct gra_out_data *data;
+  data = (struct gra_out_data *) user_data;
+
+  delobj(data->graobj, data->id);
+  delobj(data->g2wobj, data->g2wid);
+
+  if (Menulocal.select_data) {
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, TRUE);
+  }
+  g_free(data);
+}
+
+struct gra_out_data *
+create_gra_out_data(struct objlist *graobj, int id, struct objlist *g2wobj, int g2wid)
+{
+  struct gra_out_data *data;
+  data = g_malloc0(sizeof(*data));
+  data->graobj = graobj;
+  data->id = id;
+  data->g2wobj = g2wobj;
+  data->g2wid = g2wid;
+  return data;
+}
+
 static void
 print_gra_file(char *file)
 {
   struct objlist *graobj, *g2wobj;
   int id, g2wid, g2woid;
   N_VALUE *g2winst;
+  struct gra_out_data *data;
 
   FileAutoScale();
   AdjustAxis();
@@ -876,13 +997,9 @@ print_gra_file(char *file)
   putobj(g2wobj, "file", g2wid, file);
   id = newobj(graobj);
   init_graobj(graobj, id, "gra2file", g2woid);
-  draw_gra(graobj, id, _("Making GRA file."), TRUE);
-  delobj(graobj, id);
-  delobj(g2wobj, g2wid);
 
-  if (Menulocal.select_data) {
-    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, TRUE);
-  }
+  data = create_gra_out_data(graobj, id, g2wobj, g2wid);
+  draw_gra(graobj, id, _("Making GRA file."), TRUE, gra_out_cb, data);
 }
 
 static void
@@ -1003,6 +1120,7 @@ output_image(int type, char *file)
   struct objlist *graobj, *g2wobj;
   int id, g2wid, g2woid;
   N_VALUE *g2winst;
+  struct gra_out_data *data;
 
   FileAutoScale();
   AdjustAxis();
@@ -1049,13 +1167,9 @@ output_image(int type, char *file)
   putobj(g2wobj, "format", g2wid, &DlgImageOut.Version);
 
   init_graobj(graobj, id, "gra2cairofile", g2woid);
-  draw_gra(graobj, id, _("Drawing."), TRUE);
-  delobj(graobj, id);
-  delobj(g2wobj, g2wid);
 
-  if (Menulocal.select_data) {
-    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, TRUE);
-  }
+  data = create_gra_out_data(graobj, id, g2wobj, g2wid);
+  draw_gra(graobj, id, _("Making GRA file."), TRUE, gra_out_cb, data);
 }
 
 static void
@@ -1305,6 +1419,7 @@ CmOutputEMF(int type)
   int id, g2wid, g2woid;
   N_VALUE *g2winst;
   char *title, *file;
+  struct gra_out_data *data;
 
   if (Menulock || Globallock)
     return;
@@ -1356,13 +1471,8 @@ CmOutputEMF(int type)
   id = newobj(graobj);
   putobj(g2wobj, "file", g2wid, file);
   init_graobj(graobj, id, "gra2emf", g2woid);
-  draw_gra(graobj, id, _("Drawing."), TRUE);
-  delobj(graobj, id);
-  delobj(g2wobj, g2wid);
-
-  if (Menulocal.select_data) {
-    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, TRUE);
-  }
+  data = create_gra_out_data(graobj, id, g2wobj, g2wid);
+  draw_gra(graobj, id, _("Making GRA file."), TRUE, gra_out_cb, data);
 }
 #endif
 
