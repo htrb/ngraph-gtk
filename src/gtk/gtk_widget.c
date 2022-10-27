@@ -448,9 +448,9 @@ direction_down(GtkWidget *button, GtkSpinButton *user_data)
 }
 
 static void
-direction_up(GtkWidget *button, gpointer user_data)
+direction_up(GtkWidget *button, GtkSpinButton *user_data)
 {
-  direction_icon_released(GTK_ENTRY(user_data), GTK_ENTRY_ICON_SECONDARY, NULL, NULL);
+  direction_icon_released(user_data, GTK_ENTRY_ICON_SECONDARY, NULL, NULL);
 }
 
 GtkWidget *
