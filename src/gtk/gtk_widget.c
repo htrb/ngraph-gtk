@@ -403,11 +403,11 @@ create_file_entry(struct objlist *obj)
 }
 
 static void
-direction_icon_released(GtkEntry *entry, GtkEntryIconPosition pos, GdkEvent *event, gpointer user_data)
+direction_icon_released(GtkSpinButton *entry, GtkEntryIconPosition pos, GdkEvent *event, gpointer user_data)
 {
   int angle, val;
 
-  angle = gtk_spin_button_get_value(GTK_SPIN_BUTTON(entry));
+  angle = gtk_spin_button_get_value(entry);
   val = angle % 360;
   val += (val < 0) ? 360 : 0;
 
@@ -437,7 +437,7 @@ direction_icon_released(GtkEntry *entry, GtkEntryIconPosition pos, GdkEvent *eve
 
   val += (val < 0) ? 360 : 0;
 
-  gtk_spin_button_set_value(GTK_SPIN_BUTTON(entry), val);
+  gtk_spin_button_set_value(entry, val);
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
