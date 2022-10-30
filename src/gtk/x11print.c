@@ -661,14 +661,17 @@ output_printer_response(int res, gpointer user_data)
 {
   struct output_printer_data *data;
   data = (struct output_printer_data *) user_data;
-  if (res) {
+  if (res == IDOK) {
     output_printer(data->select_file, data->show_dialog);
+  }
+  if (data->cb) {
+    data->cb(res, data->data);
   }
   g_free(data);
 }
 
 void
-CmOutputPrinter(int select_file, int show_dialog)
+CmOutputPrinter(int select_file, int show_dialog, response_cb cb, gpointer user_data)
 {
   if (Menulock || Globallock)
     return;
@@ -679,11 +682,16 @@ CmOutputPrinter(int select_file, int show_dialog)
     if (data) {
       data->select_file = select_file;
       data->show_dialog = show_dialog;
+      data->cb = cb;
+      data->data = user_data;
       SetFileHidden(output_printer_response, data);
       return;
     }
   }
   output_printer(select_file, show_dialog);
+  if (cb) {
+    cb(IDOK, user_data);
+  }
 }
 #else
 void
@@ -1479,7 +1487,7 @@ CmOutputEMF(int type)
 void
 CmOutputPrinterB(void *wi, gpointer client_data)
 {
-  CmOutputPrinter(FALSE, PRINT_SHOW_DIALOG_DIALOG);
+  CmOutputPrinter(FALSE, PRINT_SHOW_DIALOG_DIALOG, NULL, NULL);
 }
 
 void
