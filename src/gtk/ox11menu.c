@@ -1734,6 +1734,14 @@ print_dialog_main_quit(gpointer user_data)
 {
   g_main_loop_quit(main_loop());
 }
+
+static void
+print_dialog_quit(int res, gpointer user_data)
+{
+  gtk_window_destroy(GTK_WINDOW(TopLevel));
+  TopLevel = NULL;
+  g_idle_add_once(print_dialog_main_quit, NULL);
+}
 #endif
 
 static int
