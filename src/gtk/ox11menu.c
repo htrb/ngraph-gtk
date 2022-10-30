@@ -1790,50 +1790,44 @@ print_dialog_run(gpointer user_data)
 static int
 mx_print(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  int show_dialog, select_file, create_window = FALSE, lock;
+  int show_dialog, select_file, create_window = FALSE, lock, flag;
 
   select_file = * (int *) argv[2];
   show_dialog = * (int *) argv[3];
 
+  flag = (show_dialog << 1 | (select_file));
+
   if (TopLevel == NULL) {
+#if GTK_CHECK_VERSION(4, 0, 0)
+    create_toplevel_window(flag);
+    return 0;
+#else
     GtkWidget *label;
     create_window = TRUE;
-#if GTK_CHECK_VERSION(4, 0, 0)
-    TopLevel = gtk_window_new();
-#else
     TopLevel = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_type_hint(GTK_WINDOW(TopLevel), GDK_WINDOW_TYPE_HINT_DIALOG);
-#endif
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
-    g_signal_connect(TopLevel, "close_request", G_CALLBACK(gtk_true), NULL);
-#else
     g_signal_connect(TopLevel, "delete-event", G_CALLBACK(gtk_true), NULL);
-#endif
     label = gtk_label_new(" Ngraph ");
-#if GTK_CHECK_VERSION(4, 0, 0)
-    gtk_window_set_child(GTK_WINDOW(TopLevel), label);
-#else
     gtk_widget_show_all(TopLevel);
     gtk_container_add(GTK_CONTAINER(TopLevel), label);
     reset_event();
 #endif
   }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+  g_idle_add_once(print_dialog_run, GINT_TO_POINTER(flag));
+#else
   lock = Menulock;
   menu_lock(FALSE);
   CmOutputPrinter(select_file, show_dialog);
   menu_lock(lock);
 
   if (create_window) {
-#if GTK_CHECK_VERSION(4, 0, 0)
-    gtk_window_destroy(GTK_WINDOW(TopLevel));
-#else
     gtk_widget_destroy(TopLevel);
     reset_event();
-#endif
     TopLevel = NULL;
   }
+#endif
   return 0;
 }
 
