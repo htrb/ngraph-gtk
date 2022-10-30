@@ -1140,7 +1140,7 @@ static void
 term_signal_handler(int sig)
 {
 #if GTK_CHECK_VERSION(4, 0, 0)
-  g_main_loop_quit(main_loop());
+  main_loop_quit();
 #else
   Hide_window = APP_QUIT_FORCE;
 #endif
