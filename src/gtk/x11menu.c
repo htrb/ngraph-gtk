@@ -1130,6 +1130,13 @@ main_loop_quit_cb(gpointer client_data)
 #endif
 
 static void
+main_loop_quit(void)
+{
+  gtk_widget_hide(TopLevel);
+  g_idle_add_once(main_loop_quit_cb, NULL);
+}
+
+static void
 term_signal_handler(int sig)
 {
 #if GTK_CHECK_VERSION(4, 0, 0)
