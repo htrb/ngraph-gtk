@@ -1779,6 +1779,12 @@ create_toplevel_window(int flag)
   g_idle_add_once(print_dialog_cb, GINT_TO_POINTER(flag));
   g_main_loop_run(main_loop());
 }
+
+static void
+print_dialog_run(gpointer user_data)
+{
+  print_dialog(GPOINTER_TO_INT(user_data), NULL);
+}
 #endif
 
 static int
