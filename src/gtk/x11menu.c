@@ -3226,8 +3226,8 @@ application(char *file)
   set_signal(SIGINT, 0, SIG_DFL, NULL);
 #endif	/* WINDOWS */
 
-  gtk_widget_hide(TopLevel);
 #if !  GTK_CHECK_VERSION(4, 0, 0)
+  gtk_widget_hide(TopLevel);
   reset_event();
 #endif
 
