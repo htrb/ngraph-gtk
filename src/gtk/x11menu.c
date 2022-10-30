@@ -1121,6 +1121,14 @@ kill_signal_handler(int sig)
   }
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+main_loop_quit_cb(gpointer client_data)
+{
+  g_main_loop_quit(main_loop());
+}
+#endif
+
 static void
 term_signal_handler(int sig)
 {
