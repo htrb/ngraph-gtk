@@ -661,7 +661,7 @@ output_printer_response(int res, gpointer user_data)
 {
   struct output_printer_data *data;
   data = (struct output_printer_data *) user_data;
-  if (res == IDOK) {
+  if (res) {
     output_printer(data->select_file, data->show_dialog);
   }
   if (data->cb) {
