@@ -1756,6 +1756,12 @@ print_dialog(int flag, response_cb cb)
   CmOutputPrinter(select_file, show_dialog, cb, NULL);
   menu_lock(lock);
 }
+
+static void
+print_dialog_cb(gpointer user_data)
+{
+  print_dialog(GPOINTER_TO_INT(user_data), print_dialog_quit);
+}
 #endif
 
 static int
