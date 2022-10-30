@@ -1198,7 +1198,7 @@ static void
 QuitGUI_response(int ret, gpointer client_data)
 {
   if (ret) {
-    g_main_loop_quit(main_loop());
+    main_loop_quit();
   }
 }
 
