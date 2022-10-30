@@ -1728,6 +1728,14 @@ mx_get_focused(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char
 
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+print_dialog_main_quit(gpointer user_data)
+{
+  g_main_loop_quit(main_loop());
+}
+#endif
+
 static int
 mx_print(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
