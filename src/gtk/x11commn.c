@@ -2582,7 +2582,7 @@ SetFileHidden(response_cb cb, gpointer user_data)
   fobj = chkobject("data");
   if (fobj == NULL) {
     if (cb) {
-      cb(IDCANCEL, user_data);
+      cb(0, user_data);
     }
     return 1;
   }
@@ -2590,7 +2590,7 @@ SetFileHidden(response_cb cb, gpointer user_data)
   lastinst = chkobjlastinst(fobj);
   if (lastinst < 0) {
     if (cb) {
-      cb(IDCANCEL, user_data);
+      cb(1, user_data);
     }
     return 1;
   }
@@ -2598,7 +2598,7 @@ SetFileHidden(response_cb cb, gpointer user_data)
   data = g_malloc0(sizeof(*data));
   if (data == NULL) {
     if (cb) {
-      cb(IDCANCEL, user_data);
+      cb(0, user_data);
     }
     return 1;
   }
@@ -2608,7 +2608,7 @@ SetFileHidden(response_cb cb, gpointer user_data)
   ifarray = arraynew(sizeof(int));
   if (ifarray == NULL) {
     if (cb) {
-      cb(IDCANCEL, user_data);
+      cb(0, user_data);
     }
     g_free(data);
     return 1;
@@ -2616,7 +2616,7 @@ SetFileHidden(response_cb cb, gpointer user_data)
   farray = arraynew(sizeof(int));
   if (farray == NULL) {
     if (cb) {
-      cb(IDCANCEL, user_data);
+      cb(0, user_data);
     }
     g_free(data);
     arrayfree(ifarray);
