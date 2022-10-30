@@ -653,7 +653,7 @@ output_printer(int select_file, int show_dialog)
 struct output_printer_data {
   int select_file, show_dialog;
   response_cb cb;
-  gpointer user_data;
+  gpointer data;
 };
 
 static void
