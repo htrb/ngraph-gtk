@@ -1052,6 +1052,10 @@ menu_lock(int lock)
   GtkWidget *w;
   static int count = 0;
 
+  if (! Menulocal.lock) {
+    return;
+  }
+
   if (lock) {
     count++;
   } else {
