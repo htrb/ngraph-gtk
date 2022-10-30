@@ -1742,6 +1742,20 @@ print_dialog_quit(int res, gpointer user_data)
   TopLevel = NULL;
   g_idle_add_once(print_dialog_main_quit, NULL);
 }
+
+static void
+print_dialog(int flag, response_cb cb)
+{
+  int lock;
+  int show_dialog, select_file;
+
+  select_file = (flag & 1);
+  show_dialog = (flag >> 1);
+  lock = Menulock;
+  menu_lock(FALSE);
+  CmOutputPrinter(select_file, show_dialog, cb, NULL);
+  menu_lock(lock);
+}
 #endif
 
 static int
