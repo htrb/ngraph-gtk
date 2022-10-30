@@ -1762,6 +1762,23 @@ print_dialog_cb(gpointer user_data)
 {
   print_dialog(GPOINTER_TO_INT(user_data), print_dialog_quit);
 }
+
+static void
+create_toplevel_window(int flag)
+{
+  GtkWidget *label;
+
+  TopLevel = gtk_window_new();
+  gtk_window_set_deletable(GTK_WINDOW(TopLevel), FALSE);
+  gtk_window_set_resizable(GTK_WINDOW(TopLevel), FALSE);
+
+  g_signal_connect(TopLevel, "close_request", G_CALLBACK(gtk_true), NULL);
+  label = gtk_label_new(" Ngraph ");
+  gtk_window_set_child(GTK_WINDOW(TopLevel), label);
+  gtk_widget_show(TopLevel);
+  g_idle_add_once(print_dialog_cb, GINT_TO_POINTER(flag));
+  g_main_loop_run(main_loop());
+}
 #endif
 
 static int
