@@ -204,7 +204,7 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
 	getobj(d->obj, list->name, sel, 0, NULL, &val);
 	snprintf(buf, sizeof(buf), DOUBLE_STR_FORMAT, val);
 #if GTK_CHECK_VERSION(4, 0, 0)
-	gtk_editable_set_text(GTK_EDITABLE(editable), buf);
+	editable_set_init_text(GTK_WIDGET(editable), buf);
 #else
 	gtk_entry_set_text(GTK_ENTRY(editable), buf);
 #endif
@@ -218,7 +218,7 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
 	sgetobjfield(d->obj, sel, list->name, NULL, &valstr, FALSE, FALSE, FALSE);
 	if (valstr) {
 #if GTK_CHECK_VERSION(4, 0, 0)
-	  gtk_editable_set_text(GTK_EDITABLE(editable), CHK_STR(valstr));
+	  editable_set_init_text(GTK_WIDGET(editable), CHK_STR(valstr));
 #else
 	  gtk_entry_set_text(GTK_ENTRY(editable), CHK_STR(valstr));
 #endif
