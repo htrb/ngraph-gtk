@@ -1941,6 +1941,7 @@ presetting_create_panel(GtkApplication *app)
   Widgets.font.widget = w;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_POINT, FALSE, FALSE);
+  gtk_editable_set_enable_undo(GTK_EDITABLE(w), FALSE);
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), DEFAULT_FONT_PT / 100.0);
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_editable_set_width_chars(GTK_EDITABLE(w), 5);
