@@ -3203,7 +3203,7 @@ load_tab_setup_item(struct FileDialog *d, int id)
   }
   s[j] = '\0';
 #if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_editable_set_text(GTK_EDITABLE(d->load.ifs), s);
+  editable_set_init_text(d->load.ifs, s);
 #else
   gtk_entry_set_text(GTK_ENTRY(d->load.ifs), s);
 #endif
