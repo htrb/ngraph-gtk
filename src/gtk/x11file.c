@@ -434,7 +434,7 @@ MathTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
   set_source_style(d->text);
   gtk_window_set_title(GTK_WINDOW(wi), _(label[d->Mode]));
 #if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_editable_set_text(GTK_EDITABLE(d->list), d->Text);
+  editable_set_init_text(d->list, d->Text);
 #else
   gtk_entry_set_text(GTK_ENTRY(d->list), d->Text);
 #endif
