@@ -776,7 +776,7 @@ set_font(struct LegendDialog *d, int id)
         char *tmp;
 	tmp = g_strdup_printf("%s%s", buf, str);
 #if GTK_CHECK_VERSION(4, 0, 0)
-	gtk_editable_set_text(GTK_EDITABLE(d->text), tmp);
+	editable_set_init_text(d->text, tmp);
 #else
 	gtk_entry_set_text(GTK_ENTRY(d->text), tmp);
 #endif
