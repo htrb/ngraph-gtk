@@ -241,10 +241,10 @@ active_script_changed(GtkComboBox *widget, gpointer user_data)
   n = gtk_combo_box_get_active(widget);
   if (n < 1) {
 #if GTK_CHECK_VERSION(4, 0, 0)
-    gtk_editable_set_text(GTK_EDITABLE(d->name), "");
-    gtk_editable_set_text(GTK_EDITABLE(d->script), "");
-    gtk_editable_set_text(GTK_EDITABLE(d->option), "");
-    gtk_editable_set_text(GTK_EDITABLE(d->description), "");
+    editable_set_init_text(d->name, "");
+    editable_set_init_text(d->script, "");
+    editable_set_init_text(d->option, "");
+    editable_set_init_text(d->description, "");
 #else
     gtk_entry_set_text(GTK_ENTRY(d->name), "");
     gtk_entry_set_text(GTK_ENTRY(d->script), "");
@@ -264,10 +264,10 @@ active_script_changed(GtkComboBox *widget, gpointer user_data)
   }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_editable_set_text(GTK_EDITABLE(d->name), CHK_STR(addin->name));
-  gtk_editable_set_text(GTK_EDITABLE(d->script), CHK_STR(addin->script));
-  gtk_editable_set_text(GTK_EDITABLE(d->option), CHK_STR(addin->option));
-  gtk_editable_set_text(GTK_EDITABLE(d->description), CHK_STR(addin->description));
+  editable_set_init_text(d->name, CHK_STR(addin->name));
+  editable_set_init_text(d->script, CHK_STR(addin->script));
+  editable_set_init_text(d->option, CHK_STR(addin->option));
+  editable_set_init_text(d->description, CHK_STR(addin->description));
 #else
   gtk_entry_set_text(GTK_ENTRY(d->name), CHK_STR(addin->name));
   gtk_entry_set_text(GTK_ENTRY(d->script), CHK_STR(addin->script));
@@ -324,10 +324,10 @@ SetScriptDialogSetupItem(GtkWidget *w, struct SetScriptDialog *d)
   if (d->Script->name) {
     combo_box_set_active(d->addins, 0);
 #if GTK_CHECK_VERSION(4, 0, 0)
-    gtk_editable_set_text(GTK_EDITABLE(d->name), CHK_STR(d->Script->name));
-    gtk_editable_set_text(GTK_EDITABLE(d->script), CHK_STR(d->Script->script));
-    gtk_editable_set_text(GTK_EDITABLE(d->option), CHK_STR(d->Script->option));
-    gtk_editable_set_text(GTK_EDITABLE(d->description), CHK_STR(d->Script->description));
+    editable_set_init_text(d->name, CHK_STR(d->Script->name));
+    editable_set_init_text(d->script, CHK_STR(d->Script->script));
+    editable_set_init_text(d->option, CHK_STR(d->Script->option));
+    editable_set_init_text(d->description, CHK_STR(d->Script->description));
 #else
     gtk_entry_set_text(GTK_ENTRY(d->name), CHK_STR(d->Script->name));
     gtk_entry_set_text(GTK_ENTRY(d->script), CHK_STR(d->Script->script));
@@ -600,7 +600,7 @@ static void
 FontSettingDialogSetupItem(GtkWidget *w, struct FontSettingDialog *d)
 {
 #if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_editable_set_text(GTK_EDITABLE(d->alias), CHK_STR(d->alias_str));
+  editable_set_init_text(d->alias, CHK_STR(d->alias_str));
 #else
   gtk_entry_set_text(GTK_ENTRY(d->alias), CHK_STR(d->alias_str));
 #endif
@@ -1233,7 +1233,7 @@ MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
 {
   if (Menulocal.editor) {
 #if GTK_CHECK_VERSION(4, 0, 0)
-    gtk_editable_set_text(GTK_EDITABLE(d->editor), Menulocal.editor);
+    editable_set_init_text(d->editor, Menulocal.editor);
 #else
     gtk_entry_set_text(GTK_ENTRY(d->editor), Menulocal.editor);
 #endif
@@ -1241,7 +1241,7 @@ MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
 
   if (Menulocal.help_browser) {
 #if GTK_CHECK_VERSION(4, 0, 0)
-    gtk_editable_set_text(GTK_EDITABLE(d->help_browser), Menulocal.help_browser);
+    editable_set_init_text(d->help_browser, Menulocal.help_browser);
 #else
     gtk_entry_set_text(GTK_ENTRY(d->help_browser), Menulocal.help_browser);
 #endif
@@ -1271,7 +1271,7 @@ MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
 
   if (Menulocal.expanddir) {
 #if GTK_CHECK_VERSION(4, 0, 0)
-    gtk_editable_set_text(GTK_EDITABLE(d->expanddir), Menulocal.expanddir);
+    editable_set_init_text(d->expanddir, Menulocal.expanddir);
 #else
     gtk_entry_set_text(GTK_ENTRY(d->expanddir), Menulocal.expanddir);
 #endif
