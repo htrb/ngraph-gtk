@@ -14,6 +14,14 @@
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 void
+editable_set_init_text(GtkWidget *w, const char *text)
+{
+  gtk_editable_set_enable_undo(GTK_EDITABLE(w), FALSE);
+  gtk_editable_set_text(GTK_EDITABLE(w), text);
+  gtk_editable_set_enable_undo(GTK_EDITABLE(w), TRUE);
+}
+
+void
 spin_button_set_activates_default(GtkWidget *w)
 {
   GtkEditable *editable;
