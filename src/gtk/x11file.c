@@ -348,7 +348,7 @@ MathTextDialogChangeInputType(GtkNotebook *notebook, GtkWidget *page, guint page
   case 0:
     text = get_text_from_buffer(buffer);
 #if GTK_CHECK_VERSION(4, 0, 0)
-    gtk_editable_set_text(GTK_EDITABLE(d->list), text);
+    editable_set_init_text(d->list, text);
 #else
     gtk_entry_set_text(GTK_ENTRY(d->list), text);
 #endif
