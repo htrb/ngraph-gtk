@@ -2724,8 +2724,8 @@ FileMoveDialogAdd(GtkWidget *w, gpointer client_data)
   list_store_set_string(d->move.list, &iter, 2, buf2);
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_editable_set_text(GTK_EDITABLE(d->move.x), "");
-  gtk_editable_set_text(GTK_EDITABLE(d->move.y), "");
+  editable_set_init_text(d->move.x, "");
+  editable_set_init_text(d->move.y, "");
 #else
   gtk_entry_set_text(GTK_ENTRY(d->move.x), "");
   gtk_entry_set_text(GTK_ENTRY(d->move.y), "");
