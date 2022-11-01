@@ -635,7 +635,9 @@ spin_entry_set_val(GtkWidget *entry, int ival)
     val = max;
   }
 
+  gtk_editable_set_enable_undo(GTK_EDITABLE(entry), FALSE);
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(entry), val);
+  gtk_editable_set_enable_undo(GTK_EDITABLE(entry), TRUE);
 }
 
 int
