@@ -970,7 +970,7 @@ SetTextFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
   }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_editable_set_text(GTK_EDITABLE(entry), CHK_STR(buf));
+  editable_set_init_text(entry, CHK_STR(buf));
 #else
   gtk_entry_set_text(entry, CHK_STR(buf));
 #endif
