@@ -62,7 +62,7 @@ void
 combo_box_entry_set_text(GtkWidget *cbox, char *str)
 {
 #if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_editable_set_text(GTK_EDITABLE(gtk_combo_box_get_child(GTK_COMBO_BOX(cbox))), str);
+  editable_set_init_text(gtk_combo_box_get_child(GTK_COMBO_BOX(cbox)), str);
 #else
   gtk_entry_set_text(GTK_ENTRY(gtk_bin_get_child(GTK_BIN(cbox))), str);
 #endif
