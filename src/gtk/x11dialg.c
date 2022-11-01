@@ -1311,7 +1311,7 @@ SetStyleFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
   s = get_style_string(Obj, Id, field);
   if (s) {
 #if GTK_CHECK_VERSION(4, 0, 0)
-    gtk_editable_set_text(GTK_EDITABLE(entry), _(s));
+    editable_set_init_text(entry, _(s));
 #else
     gtk_entry_set_text(entry, _(s));
 #endif
