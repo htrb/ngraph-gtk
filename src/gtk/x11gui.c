@@ -1591,6 +1591,104 @@ DialogSpinEntry(GtkWidget *parent, const char *title, const char *caption, doubl
 }
 #endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+struct check_dialog_data {
+  GtkWidget **btn_ary;
+  response_cb cb;
+  int *res_btn, anum, *r;
+  double *val;
+  struct narray *buttons;
+  gpointer data;
+};
+
+static void
+check_dialog_response(GtkWidget *dialog, int response, gpointer user_data)
+{
+  int i, res;
+  struct check_dialog_data *data;
+  data = (struct check_dialog_data *) user_data;
+
+  res = IDCANCEL;
+  if (response > 0 || response == GTK_RESPONSE_OK) {
+    for (i = 0; i < data->anum; i++) {
+      data->r[i] = gtk_check_button_get_active(GTK_CHECK_BUTTON(data->btn_ary[i]));
+    }
+    res = IDOK;
+  }
+
+  if (data->buttons && data->res_btn) {
+    *data->res_btn = response;
+  }
+  data->cb(res, data->data);
+  g_free(data->btn_ary);
+  gtk_window_destroy(GTK_WINDOW(dialog));
+  g_free(data);
+}
+
+void
+check_dialog(GtkWidget *parent, const char *title, const char *caption, struct narray *array, struct narray *buttons, int *res_btn, int *r, response_cb cb, gpointer user_data)
+{
+  GtkWidget *dlg, *btn, **btn_ary;
+  GtkBox *vbox;
+  char **d;
+  int i, anum;
+  struct check_dialog_data *data;
+
+  data = g_malloc0(sizeof(*data));
+  d = arraydata(array);
+  anum = arraynum(array);
+
+  btn_ary = g_malloc(anum * sizeof(*btn_ary));
+  if (btn_ary == NULL)
+    return;
+
+  dlg = gtk_dialog_new_with_buttons(title,
+				    GTK_WINDOW(parent),
+#if USE_HEADER_BAR
+				    GTK_DIALOG_USE_HEADER_BAR |
+#endif
+				    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+				    NULL, NULL);
+  if (add_buttons(dlg, buttons)) {
+    gtk_dialog_add_buttons(GTK_DIALOG(dlg),
+			   _("_Cancel"), GTK_RESPONSE_CANCEL,
+			   _("_OK"), GTK_RESPONSE_OK,
+			   NULL);
+  }
+  gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
+  gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
+  vbox = GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dlg)));
+  gtk_orientable_set_orientation(GTK_ORIENTABLE(vbox), GTK_ORIENTATION_VERTICAL);
+
+  if (caption) {
+    GtkWidget *label;
+    label = gtk_label_new(caption);
+    gtk_box_append(vbox, label);
+  }
+
+
+  btn = NULL;
+  for (i = 0; i < anum; i++) {
+    btn = gtk_check_button_new_with_mnemonic(d[i]);
+    gtk_box_append(vbox, btn);
+    btn_ary[i] = btn;
+  }
+
+  for (i = 0; i < anum; i++) {
+    gtk_check_button_set_active(GTK_CHECK_BUTTON(btn_ary[i]), r[i]);
+  }
+
+  data->anum = anum;
+  data->btn_ary = btn_ary;
+  data->cb = cb;
+  data->data = user_data;
+  data->r = r;
+  data->buttons = buttons;
+  data->res_btn = res_btn;
+  g_signal_connect(dlg, "response", G_CALLBACK(check_dialog_response), data);
+  gtk_widget_show(dlg);
+}
+#else
 int
 DialogCheck(GtkWidget *parent, const char *title, const char *caption, struct narray *array, struct narray *buttons, int *res_btn, int *r, int *x, int *y)
 {
@@ -1624,57 +1722,32 @@ DialogCheck(GtkWidget *parent, const char *title, const char *caption, struct na
   gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
   gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
   vbox = GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dlg)));
-#if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_orientable_set_orientation(GTK_ORIENTABLE(vbox), GTK_ORIENTATION_VERTICAL);
-#endif
 
   if (caption) {
     GtkWidget *label;
     label = gtk_label_new(caption);
-#if GTK_CHECK_VERSION(4, 0, 0)
-    gtk_box_append(vbox, label);
-#else
     gtk_box_pack_start(vbox, label, FALSE, FALSE, 5);
-#endif
   }
 
 
   btn = NULL;
   for (i = 0; i < anum; i++) {
     btn = gtk_check_button_new_with_mnemonic(d[i]);
-#if GTK_CHECK_VERSION(4, 0, 0)
-    gtk_box_append(vbox, btn);
-#else
     gtk_box_pack_start(vbox, btn, FALSE, FALSE, 2);
-#endif
     btn_ary[i] = btn;
   }
 
   for (i = 0; i < anum; i++) {
-#if GTK_CHECK_VERSION(4, 0, 0)
-    gtk_check_button_set_active(GTK_CHECK_BUTTON(btn_ary[i]), r[i]);
-#else
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(btn_ary[i]), r[i]);
-#endif
   }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_widget_show(dlg);
-  res_id = IDLOOP;
-  ndialog_run(dlg, NULL, &res_id);
-#else
   set_dialog_position(dlg, x, y);
   gtk_widget_show_all(dlg);
   res_id = ndialog_run(dlg);
-#endif
 
   if (res_id > 0 || res_id == GTK_RESPONSE_OK) {
     for (i = 0; i < anum; i++) {
-#if GTK_CHECK_VERSION(4, 0, 0)
-      r[i] = gtk_check_button_get_active(GTK_CHECK_BUTTON(btn_ary[i]));
-#else
       r[i] = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(btn_ary[i]));
-#endif
     }
     data = IDOK;
   } else {
@@ -1687,17 +1760,12 @@ DialogCheck(GtkWidget *parent, const char *title, const char *caption, struct na
 
   g_free(btn_ary);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_window_destroy(GTK_WINDOW(dlg));
-#else
   get_dialog_position(dlg, x, y);
   gtk_widget_destroy(dlg);
   reset_event();
-#endif
 
   return data;
 }
-#if ! GTK_CHECK_VERSION(4, 0, 0)
 static void
 free_str_list(GSList *top)
 {
