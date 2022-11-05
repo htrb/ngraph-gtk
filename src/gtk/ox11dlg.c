@@ -680,6 +680,11 @@ dlgcheck(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   char *title, *caption;
   struct narray *buttons;
   int btn = -1;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  struct dialog_data data;
+
+  memset(&data, 0, sizeof(data));
+#endif
 
   sarray = get_sarray_argument((struct narray *) argv[2]);
   n = arraynum(sarray);
@@ -733,9 +738,17 @@ dlgcheck(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   }
 
   buttons = dlg_get_buttons(obj, inst);
+#if GTK_CHECK_VERSION(4, 0, 0)
+  data.buttons = buttons;
+  data.button = &btn;
+  data.sarray = sarray;
+  data.ival = r;
+  ret = dialog_run(title ? title : _("Inst"), caption, dlgcheck_main, &data);
+#else
   ret = DialogCheck(get_toplevel_window(), (title) ? title : _("Select"), caption, sarray, buttons, &btn, r, &x, &y);
   _putobj(obj, "x", inst, &x);
   _putobj(obj, "y", inst, &y);
+#endif
   _putobj(obj, "response_button", inst, &btn);
   if (ret != IDOK) {
     arrayfree(array);
