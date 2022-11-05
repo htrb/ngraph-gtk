@@ -662,6 +662,16 @@ dlgspin(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   return 0;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+dlgcheck_main(gpointer user_data)
+{
+  struct dialog_data *data;
+  data = (struct dialog_data *) user_data;
+  check_dialog(get_toplevel_window(), data->title, data->msg, data->sarray, data->buttons, data->button, data->ival, dlg_response, data);
+}
+#endif
+
 static int
 dlgcheck(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
