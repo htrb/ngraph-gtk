@@ -300,9 +300,9 @@ dlgbutton(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
   _putobj(obj, "x", inst, &x);
   _putobj(obj, "y", inst, &y);
 
-  if (rcode >= 0) {
+  if (rcode > 0) {
     const char *str;
-    str = arraynget_str(sarray, rcode);
+    str = arraynget_str(sarray, rcode - 1);
     if (str) {
       rval->str = g_strdup(str);
     }
