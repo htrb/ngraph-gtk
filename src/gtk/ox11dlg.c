@@ -125,7 +125,7 @@ dlgdone(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 static void
-dlgconfirm_response(int response, gpointer user_data)
+dlg_response(int response, gpointer user_data)
 {
   struct dialog_data *data;
   data = (struct dialog_data *) user_data;
@@ -138,7 +138,7 @@ dlgconfirm_main(gpointer user_data)
 {
   struct dialog_data *data;
   data = (struct dialog_data *) user_data;
-  response_message_box(get_toplevel_window(), data->msg, data->title, RESPONS_YESNO, dlgconfirm_response, data);
+  response_message_box(get_toplevel_window(), data->msg, data->title, RESPONS_YESNO, dlg_response, data);
 }
 #endif
 
