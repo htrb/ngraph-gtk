@@ -563,20 +563,11 @@ dlgcombo(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 static void
-dlgspin_response(int response, gpointer user_data)
-{
-  struct dialog_data *data;
-  data = (struct dialog_data *) user_data;
-  data->response = response;
-  data->wait = FALSE;
-}
-
-static void
 dlgspin_main(gpointer user_data)
 {
   struct dialog_data *data;
   data = (struct dialog_data *) user_data;
-  spin_dialog(get_toplevel_window(), data->title, data->msg, data->min, data->max, data->inc, data->buttons, data->button, data->val, dlgspin_response, data);
+  spin_dialog(get_toplevel_window(), data->title, data->msg, data->min, data->max, data->inc, data->buttons, data->button, data->val, dlg_response, data);
 }
 #endif
 
