@@ -423,20 +423,11 @@ dlgbutton(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 static void
-dlgradio_response(int response, gpointer user_data)
-{
-  struct dialog_data *data;
-  data = (struct dialog_data *) user_data;
-  data->response = response;
-  data->wait = FALSE;
-}
-
-static void
 dlgradio_main(gpointer user_data)
 {
   struct dialog_data *data;
   data = (struct dialog_data *) user_data;
-  radio_dialog(get_toplevel_window(), data->title, data->msg, data->sarray, _("OK"), data->buttons, data->button, data->selected, dlgradio_response, data);
+  radio_dialog(get_toplevel_window(), data->title, data->msg, data->sarray, _("OK"), data->buttons, data->button, data->selected, dlg_response, data);
 }
 #endif
 
