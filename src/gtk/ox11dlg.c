@@ -109,8 +109,10 @@ dlginit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
     return 1;
   }
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   _putobj(obj, "x", inst, &pos);
   _putobj(obj, "y", inst, &pos);
+#endif
 
   return 0;
 }
@@ -496,6 +498,7 @@ dlgradio(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
     iarray = NULL;
   }
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   if (_getobj(obj, "x", inst, &x)) {
     x = -1;
   }
@@ -503,6 +506,7 @@ dlgradio(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   if (_getobj(obj, "y", inst, &y)) {
     y = -1;
   }
+#endif
 
   r = arraylast_int(iarray);
 
@@ -562,6 +566,7 @@ dlgcombo(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
     iarray = NULL;
   }
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   if (_getobj(obj, "x", inst, &x)) {
     x = -1;
   }
@@ -569,9 +574,12 @@ dlgcombo(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   if (_getobj(obj, "y", inst, &y)) {
     y = -1;
   }
+#endif
 
   sel = arraylast_int(iarray);
   buttons = dlg_get_buttons(obj, inst);
+#if GTK_CHECK_VERSION(4, 0, 0)
+#else
   if (strcmp(argv[1], "combo") == 0) {
     ret = DialogCombo(get_toplevel_window(), (title) ? title : _("Select"), caption, sarray, buttons, &btn, sel, &r, &x, &y);
   } else {
@@ -580,6 +588,7 @@ dlgcombo(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
 
   _putobj(obj, "x", inst, &x);
   _putobj(obj, "y", inst, &y);
+#endif
   _putobj(obj, "response_button", inst, &btn);
   if (ret != IDOK) {
     Globallock = locksave;
@@ -742,6 +751,7 @@ dlgcheck(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
     iarray = NULL;
   }
 
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   if (_getobj(obj, "x", inst, &x)) {
     x = -1;
   }
@@ -749,6 +759,7 @@ dlgcheck(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   if (_getobj(obj, "y", inst, &y)) {
     y = -1;
   }
+#endif
 
   r = g_malloc(n * sizeof(int));
   if (r == NULL) {
@@ -1045,8 +1056,10 @@ static struct objtable dialog[] = {
   {"init", NVFUNC, NEXEC, dlginit, NULL, 0},
   {"done", NVFUNC, NEXEC, dlgdone, NULL, 0},
   {"next", NPOINTER, 0, NULL, NULL, 0},
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   {"x", NINT, NREAD | NWRITE, NULL, NULL, 0},
   {"y", NINT, NREAD | NWRITE, NULL, NULL, 0},
+#endif
   {"title", NSTR, NREAD | NWRITE, NULL, NULL, 0},
   {"caption", NSTR, NREAD | NWRITE, NULL, NULL, 0},
   {"select", NIARRAY, NREAD | NWRITE, NULL, NULL, 0},
