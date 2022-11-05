@@ -862,8 +862,7 @@ input_dialog(GtkWidget *parent, const char *title, const char *mes, const char *
   g_signal_connect(dlg, "response", G_CALLBACK(input_dialog_response), data);
   gtk_widget_show(dlg);
 }
-#endif
-
+#else
 int
 DialogInput(GtkWidget * parent, const char *title, const char *mes, const char *init_str, struct narray *buttons, int *res_btn, char **s, int *x, int *y)
 {
@@ -953,6 +952,7 @@ DialogInput(GtkWidget * parent, const char *title, const char *mes, const char *
 
   return data;
 }
+#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 struct radio_dialog_data {
@@ -1172,6 +1172,58 @@ add_buttons(GtkWidget *dlg, struct narray *array)
   return 0;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+struct button_dialog_data {
+  response_cb cb;
+  gpointer data;
+};
+
+static void
+button_dialog_response(GtkWidget *dlg, int res_id, gpointer user_data)
+{
+  struct button_dialog_data *data;
+  data = (struct button_dialog_data *) user_data;
+  gtk_window_destroy(GTK_WINDOW(dlg));
+  data->cb(res_id, data->data);
+  g_free(data);
+}
+
+void
+button_dialog(GtkWidget *parent, const char *title, const char *caption, struct narray *buttons, response_cb cb, gpointer user_data)
+{
+  GtkWidget *dlg;
+  struct button_dialog_data *data;
+
+  dlg = gtk_dialog_new();
+  if (add_buttons(dlg, buttons)) {
+    return;
+  }
+
+  if (title && g_utf8_validate(title, -1, NULL)) {
+    gtk_window_set_title(GTK_WINDOW(dlg), title);
+  }
+
+  if (caption && g_utf8_validate(caption, -1, NULL)) {
+    GtkWidget *box, *label;
+    box = gtk_dialog_get_content_area(GTK_DIALOG(dlg));
+    label = gtk_label_new(caption);
+    gtk_orientable_set_orientation(GTK_ORIENTABLE(box), GTK_ORIENTATION_VERTICAL);
+    gtk_box_append(GTK_BOX(box), label);
+  }
+
+  gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
+  if (parent) {
+    gtk_window_set_transient_for(GTK_WINDOW(dlg), GTK_WINDOW(parent));
+    gtk_window_set_modal(GTK_WINDOW(parent), TRUE);
+  }
+
+  data = g_malloc0(sizeof(*data));
+  data->cb = cb;
+  data->data = user_data;
+  g_signal_connect(dlg, "response", G_CALLBACK(button_dialog_response), data);
+  gtk_widget_show(dlg);
+}
+#else
 int
 DialogButton(GtkWidget *parent, const char *title, const char *caption, struct narray *buttons, int *x, int *y)
 {
@@ -1191,12 +1243,7 @@ DialogButton(GtkWidget *parent, const char *title, const char *caption, struct n
     GtkWidget *box, *label;
     box = gtk_dialog_get_content_area(GTK_DIALOG(dlg));
     label = gtk_label_new(caption);
-#if GTK_CHECK_VERSION(4, 0, 0)
-    gtk_orientable_set_orientation(GTK_ORIENTABLE(box), GTK_ORIENTATION_VERTICAL);
-    gtk_box_append(GTK_BOX(box), label);
-#else
     gtk_box_pack_start(GTK_BOX(box), label, TRUE, TRUE, 4);
-#endif
   }
 
   gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
@@ -1205,25 +1252,16 @@ DialogButton(GtkWidget *parent, const char *title, const char *caption, struct n
     gtk_window_set_modal(GTK_WINDOW(parent), TRUE);
   }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_widget_show(dlg);
-  res_id = IDLOOP;
-  ndialog_run(dlg, NULL, &res_id);
-#else
   set_dialog_position(dlg, x, y);
   gtk_widget_show_all(dlg);
   res_id = ndialog_run(dlg);
-#endif
-#if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_window_destroy(GTK_WINDOW(dlg));
-#else
   get_dialog_position(dlg, x, y);
   gtk_widget_destroy(dlg);
   reset_event();
-#endif
 
   return res_id;
 }
+#endif
 
 int
 DialogCombo(GtkWidget *parent, const char *title, const char *caption, struct narray *array, struct narray *buttons, int *res_btn, int sel, char **r, int *x, int *y)
