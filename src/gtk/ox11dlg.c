@@ -60,7 +60,7 @@ static GtkWidget *DLGTopLevel = NULL;
 struct dialog_data {
   char *title, *msg, *initial_text, *response_text, *defext, **files;
   struct narray *buttons, *sarray;
-  int response, wait, *button, selected;
+  int response, wait, *button, selected, *ival;
   double min, max, inc, *val;
 };
 
