@@ -535,6 +535,34 @@ dlgradio(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   return 0;
 }
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+static void
+dlgcombo_response(int response, const char *str, gpointer user_data)
+{
+  struct dialog_data *data;
+  data = (struct dialog_data *) user_data;
+  data->response = response;
+  data->response_text = g_strdup(str);
+  data->wait = FALSE;
+}
+
+static void
+dlgcombo_main(gpointer user_data)
+{
+  struct dialog_data *data;
+  data = (struct dialog_data *) user_data;
+  combo_dialog(get_toplevel_window(), data->title, data->msg, data->sarray, data->buttons, data->button, data->selected, dlgcombo_response, data);
+}
+
+static void
+dlgcombo_entry_main(gpointer user_data)
+{
+  struct dialog_data *data;
+  data = (struct dialog_data *) user_data;
+  combo_entry_dialog(get_toplevel_window(), data->title, data->msg, data->sarray, data->buttons, data->button, data->selected, dlgcombo_response, data);
+}
+#endif
+
 static int
 dlgcombo(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
@@ -543,6 +571,11 @@ dlgcombo(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   struct narray *iarray, *sarray;
   struct narray *buttons;
   int btn = -1;
+#if GTK_CHECK_VERSION(4, 0, 0)
+  struct dialog_data data;
+
+  memset(&data, 0, sizeof(data));
+#endif
 
   sarray = get_sarray_argument((struct narray *) argv[2]);
   if (arraynum(sarray) == 0)
@@ -579,6 +612,16 @@ dlgcombo(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   sel = arraylast_int(iarray);
   buttons = dlg_get_buttons(obj, inst);
 #if GTK_CHECK_VERSION(4, 0, 0)
+  data.buttons = buttons;
+  data.button = &btn;
+  data.selected = sel;
+  data.sarray = sarray;
+  if (strcmp(argv[1], "combo") == 0) {
+    ret = dialog_run(title ? title : _("Select"), caption, dlgcombo_main, &data);
+  } else {
+    ret = dialog_run(title ? title : _("Select"), caption, dlgcombo_entry_main, &data);
+  }
+  r = data.response_text;
 #else
   if (strcmp(argv[1], "combo") == 0) {
     ret = DialogCombo(get_toplevel_window(), (title) ? title : _("Select"), caption, sarray, buttons, &btn, sel, &r, &x, &y);
