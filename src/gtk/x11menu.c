@@ -1220,7 +1220,7 @@ static void
 QuitGUI_response(int ret, gpointer client_data)
 {
   if (ret) {
-    main_loop_quit();
+    CheckIniFile(check_inifile_response, NULL, 0, 0);
   }
 }
 
@@ -3219,12 +3219,6 @@ application(char *file)
 #if GTK_CHECK_VERSION(4, 0, 0)
   /* must be implemented */
   // CheckIniFile();
-  save_tab_position();
-  get_pane_position();
-  menu_save_config(SAVE_CONFIG_TYPE_GEOMETRY);
-  save_entry_history();
-  menu_save_config(SAVE_CONFIG_TYPE_TOGGLE_VIEW |
-		   SAVE_CONFIG_TYPE_OTHERS);
 #else
   if (CheckIniFile()) {
     save_tab_position();
