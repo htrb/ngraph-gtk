@@ -1263,6 +1263,101 @@ DialogButton(GtkWidget *parent, const char *title, const char *caption, struct n
 }
 #endif
 
+#if GTK_CHECK_VERSION(4, 0, 0)
+struct combo_dialog_data {
+  GtkWidget *combo;
+  string_response_cb cb;
+  int *res_btn;
+  char **label;
+  struct narray *buttons;
+  gpointer data;
+};
+
+static void
+combo_dialog_response(GtkWidget *dlg, int response, gpointer user_data)
+{
+  struct combo_dialog_data *data;
+  int i, r;
+  const char *selected;
+
+  data = (struct combo_dialog_data *) user_data;
+  selected = NULL;
+  r = IDCANCEL;
+  if (response > 0 || response == GTK_RESPONSE_OK) {
+    i = combo_box_get_active(data->combo);
+    if (i >= 0) {
+      selected = data->label[i];
+    }
+    r = IDOK;
+  }
+
+  if (data->buttons && data->res_btn) {
+    *data->res_btn = response;
+  }
+  if (data->cb) {
+    data->cb(r, selected, data->data);
+  }
+  g_free(data);
+  gtk_window_destroy(GTK_WINDOW(dlg));
+}
+
+void
+combo_dialog(GtkWidget *parent, const char *title, const char *caption, struct narray *array, struct narray *buttons, int *res_btn, int sel, string_response_cb cb, gpointer user_data)
+{
+  GtkWidget *dlg, *combo;
+  GtkBox *vbox;
+  char **d;
+  int i, anum;
+  struct combo_dialog_data *data;
+
+  dlg = gtk_dialog_new_with_buttons(title,
+				    GTK_WINDOW(parent),
+#if USE_HEADER_BAR
+				    GTK_DIALOG_USE_HEADER_BAR |
+#endif
+				    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+				    NULL, NULL);
+  if (add_buttons(dlg, buttons)) {
+    gtk_dialog_add_buttons(GTK_DIALOG(dlg),
+			   _("_Cancel"), GTK_RESPONSE_CANCEL,
+			   _("_OK"), GTK_RESPONSE_OK,
+			   NULL);
+  }
+  gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
+  gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
+  vbox = GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dlg)));
+  gtk_orientable_set_orientation(GTK_ORIENTABLE(vbox), GTK_ORIENTATION_VERTICAL);
+
+  if (caption) {
+    GtkWidget *label;
+    label = gtk_label_new(caption);
+    gtk_box_append(vbox, label);
+  }
+
+  combo = combo_box_create();
+  d = arraydata(array);
+  anum = arraynum(array);
+  for (i = 0; i < anum; i++) {
+    combo_box_append_text(combo, d[i]);
+  }
+
+  if (sel < 0 || sel >= anum) {
+    sel = 0;
+  }
+  combo_box_set_active(combo, sel);
+  gtk_box_append(vbox, combo);
+
+  data = g_malloc0(sizeof(*data));
+  data->combo = combo;
+  data->cb = cb;
+  data->res_btn = res_btn;
+  data->label = d;
+  data->buttons = buttons;
+  data->data = user_data;
+  g_signal_connect(dlg, "response", G_CALLBACK(combo_dialog_response), data);
+  gtk_widget_show(dlg);
+}
+#else
 int
 DialogCombo(GtkWidget *parent, const char *title, const char *caption, struct narray *array, struct narray *buttons, int *res_btn, int sel, char **r, int *x, int *y)
 {
@@ -1358,6 +1453,8 @@ DialogCombo(GtkWidget *parent, const char *title, const char *caption, struct na
 
   return data;
 }
+#endif
+
 
 int
 DialogComboEntry(GtkWidget *parent, const char *title, const char *caption, struct narray *array, struct narray *buttons, int *res_btn, int sel, char **r, int *x, int *y)

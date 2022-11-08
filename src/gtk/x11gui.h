@@ -71,6 +71,8 @@ void markup_message_box_full(GtkWidget *parent, const char *message, const char 
 void radio_dialog(GtkWidget *parent, const char *title, const char *caption, struct narray *array, const char *button, struct narray *buttons, int *res_btn, int selected, response_cb cb, gpointer user_data);
 void check_dialog(GtkWidget *parent, const char *title, const char *caption, struct narray *array, struct narray *buttons, int *res_btn, int *r, response_cb cb, gpointer user_data);
 void button_dialog(GtkWidget *parent, const char *title, const char *caption, struct narray *buttons, response_cb cb, gpointer user_data);
+void combo_dialog(GtkWidget *parent, const char *title, const char *caption, struct narray *array, struct narray *buttons, int *res_btn, int sel, string_response_cb cb, gpointer user_data);
+void combo_entry_dialog(GtkWidget *parent, const char *title, const char *caption, struct narray *array, struct narray *buttons, int *res_btn, int sel, string_response_cb cb, gpointer user_data);
 #else
 int DialogExecute(GtkWidget *parent, void *dialog);
 int markup_message_box(GtkWidget * parent, const char *message, const char *title, int mode, int markup);
@@ -80,10 +82,10 @@ int DialogRadio(GtkWidget *parent, const char *title, const char *caption, struc
 int DialogCheck(GtkWidget *parent, const char *title, const char *caption, struct narray *array, struct narray *buttons, int *res_btn, int *r, int *x, int *y);
 int DialogInput(GtkWidget *parent, const char *title, const char *mes, const char *init_str, struct narray *buttons, int *res_btn, char **s, int *x, int *y);
 int DialogButton(GtkWidget *parent, const char *title, const char *caption, struct narray *array, int *x, int *y);
-#endif
-void message_beep(GtkWidget *parent);
 int DialogCombo(GtkWidget *parent, const char *title, const char *caption, struct narray *array, struct narray *buttons, int *res_btn, int sel, char **r, int *x, int *y);
 int DialogComboEntry(GtkWidget *parent, const char *title, const char *caption, struct narray *array, struct narray *buttons, int *res_btn, int sel, char **r, int *x, int *y);
+#endif
+void message_beep(GtkWidget *parent);
 #if GTK_CHECK_VERSION(4, 0, 0)
 void nGetOpenFileNameMulti(GtkWidget * parent,
                            char *title, char *defext, char **initdir,
