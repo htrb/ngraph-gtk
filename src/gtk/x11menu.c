@@ -1198,6 +1198,24 @@ CloseCallback(GtkWidget *w, GdkEvent *event, gpointer user_data)
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
+static void save_tab_position(void);
+static void get_pane_position(void);
+static void save_entry_history(void);
+
+static void
+check_inifile_response(int response, struct objlist *obj, int id, int modified)
+{
+  if (response) {
+    save_tab_position();
+    get_pane_position();
+    menu_save_config(SAVE_CONFIG_TYPE_GEOMETRY);
+    save_entry_history();
+    menu_save_config(SAVE_CONFIG_TYPE_TOGGLE_VIEW |
+		     SAVE_CONFIG_TYPE_OTHERS);
+  }
+  main_loop_quit();
+}
+
 static void
 QuitGUI_response(int ret, gpointer client_data)
 {
