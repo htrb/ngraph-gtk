@@ -2779,6 +2779,8 @@ CheckIniFile(obj_response_cb cb, struct objlist *obj, int id, int modified)
     buf = g_strdup_printf(_("Install `Ngraph.ini' to %s ?"), homedir);
     response_message_box(TopLevel, buf, "Ngraph.ini", RESPONS_YESNO, CheckIniFile_response, data);
     g_free(buf);
+  } else {
+    cb(TRUE, obj, id, modified);
   }
 }
 #else
