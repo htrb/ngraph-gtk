@@ -3089,11 +3089,7 @@ create_toplevel_window(void)
   set_widget_visibility();
 
   set_focus_sensitivity(&NgraphApp.Viewer);
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
-#else
   check_exist_instances(chkobject("draw"));
-#endif
   check_instance(chkobject("parameter"));
 
   set_newobj_cb(check_instance);
