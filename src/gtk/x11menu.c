@@ -2939,6 +2939,7 @@ create_toplevel_window(void)
   GtkWidget *popup;
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
+  GdkClipboard *clip;
 #else
   GtkClipboard *clip;
 #endif
@@ -3000,6 +3001,8 @@ create_toplevel_window(void)
   }
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
+  clip = gtk_widget_get_clipboard(TopLevel);
+  g_signal_connect(clip, "changed", G_CALLBACK(clipboard_changed), &NgraphApp.Viewer);
 #else
   clip = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
   g_signal_connect(clip, "owner-change", G_CALLBACK(clipboard_changed), &NgraphApp.Viewer);
