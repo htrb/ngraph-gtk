@@ -1866,6 +1866,15 @@ edit_menu_shown(GtkWidget *w, gpointer user_data)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
+static void
+clipboard_changed(GdkClipboard* self,  gpointer user_data)
+{
+  struct Viewer *d;
+
+  d = (struct Viewer *) user_data;
+
+  set_focus_sensitivity(d);
+}
 #else
 static void
 clipboard_changed(GtkWidget *w, GdkEvent *e, gpointer user_data)
