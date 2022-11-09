@@ -1862,9 +1862,8 @@ static void
 select_mark(GtkWidget *w, gpointer client_data)
 {
   struct MarkDialog *d;
-  int ret;
-
   d = (struct MarkDialog *) client_data;
+  response_callback_add(d, mark_dialog_response, NULL, w);
   DialogExecute(d->parent, d);
 }
 #else
