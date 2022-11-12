@@ -657,7 +657,7 @@ graph_dropped_response(int ret, gpointer user_data)
 int
 graph_dropped(const char *str)
 {
-  char *ext, *cwd, *fname;
+  char *ext, *fname;
 
   fname = g_strdup(str);
   if (fname == NULL) {
