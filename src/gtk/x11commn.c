@@ -1199,7 +1199,6 @@ SaveDrawrable(char *name, int storedata, int storemerge, int save_decimalsign)
   return error;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 struct graph_save_data
 {
   int storedata, storemerge, path;
@@ -1241,9 +1240,7 @@ get_save_opt_response(struct response_callback *cb)
   save_data->storemerge = DlgSave.SaveMerge;
   save_data->cb(cb->return_value, save_data);
 }
-#endif
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static int
 get_save_opt(struct graph_save_data *save_data)
 {
@@ -1278,55 +1275,6 @@ get_save_opt(struct graph_save_data *save_data)
   DialogExecute(TopLevel, &DlgSave);
   return IDOK;
 }
-#else
-static int
-get_save_opt(int *sdata, int *smerge, int *path)
-{
-  int ret, fnum, mnum, i, src;
-  struct objlist *fobj, *mobj;
-
-  *path = SAVE_PATH_UNCHANGE;
-  *sdata = FALSE;
-  *smerge = FALSE;
-
-  fobj = chkobject("data");
-  mobj = chkobject("merge");
-
-  fnum = chkobjlastinst(fobj) + 1;
-  mnum = chkobjlastinst(mobj) + 1;
-
-  /* there are no instances of data and merge objects */
-  if (fnum < 1 && mnum < 1) {
-    return IDOK;
-  }
-
-  /* check source field of data objects */
-  for (i = 0; i < fnum; i++) {
-    getobj(fobj, "source", i, 0, NULL, &src);
-    if (src ==  DATA_SOURCE_FILE) {
-      break;
-    }
-  }
-  if (fnum > 0 && mnum < 1 && i == fnum) {
-    return IDOK;
-  }
-
-  SaveDialog(&DlgSave, sdata, smerge);
-  ret = DialogExecute(TopLevel, &DlgSave);
-  if (ret != IDOK)
-    return IDCANCEL;
-
-  *path = DlgSave.Path;
-  for (i = 0; i < fnum; i++) {
-    putobj(fobj, "save_path", i, path);
-  }
-
-  for (i = 0; i < mnum; i++) {
-    putobj(mobj, "save_path", i, path);
-  }
-  return IDOK;
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 static void
