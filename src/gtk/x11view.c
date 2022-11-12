@@ -1251,16 +1251,7 @@ eval_dialog_copy_selected(GtkWidget *w, gpointer *user_data)
     }
   }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   copy_text(str->str);
-#else
-  if (str->len > 0) {
-    GtkClipboard *clip;
-
-    clip = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
-    gtk_clipboard_set_text(clip, str->str, -1);
-  }
-#endif
 
   g_string_free(str, TRUE);
 
