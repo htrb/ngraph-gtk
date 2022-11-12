@@ -1477,175 +1477,6 @@ draw_callback(gpointer user_data)
   menu_clear_undo();
 }
 
-#if USE_EVENT_LOOP
-static int
-LoadNgpFile_response(struct response_callback *cb)
-{
-  char *file;
-  char *option;
-  int console;
-  struct load_dialog_data *d;
-  struct objlist *sys;
-  char *expanddir;
-  struct objlist *obj;
-  char *name;
-  int r, newid, allocnow = FALSE, tmp;
-  char *s;
-  int len;
-  char *argv[2];
-  struct narray sarray;
-  char mes[256];
-  N_VALUE *inst;
-  struct objlist *robj;
-  int idn;
-  int loadpath, expand;
-
-  d = (struct load_dialog_data *) cb->data;
-
-  file = d->file;
-  console = d->console;
-  option = d->option;
-
-  if (DlgLoad.ret != IDOK) {
-    goto ErrorExit;
-  }
-  changefilename(file);
-
-  if (naccess(file, R_OK)) {
-    ErrorMessage();
-    goto ErrorExit;
-  }
-
-  sys = chkobject("system");
-  if (sys == NULL) {
-    goto ErrorExit;
-  }
-
-  loadpath = DlgLoad.loadpath;
-  expand = DlgLoad.expand;
-  expanddir = DlgLoad.exdir;
-  DlgLoad.exdir = NULL;
-  if (expanddir == NULL) {
-    goto ErrorExit;
-  }
-
-  putobj(sys, "expand_dir", 0, expanddir);
-  putobj(sys, "expand_file", 0, &expand);
-
-  tmp = FALSE;
-  putobj(sys, "ignore_path", 0, &tmp);
-
-  obj = chkobject("shell");
-  if (obj == NULL) {
-    goto ErrorExit;
-  }
-
-  newid = newobj(obj);
-  if (newid < 0) {
-    goto ErrorExit;
-  }
-
-  inst = chkobjinst(obj, newid);
-  arrayinit(&sarray, sizeof(char *));
-  while ((s = getitok2(&option, &len, " \t")) != NULL) {
-    if (arrayadd(&sarray, &s) == NULL) {
-      g_free(s);
-      arraydel2(&sarray);
-      delobj(obj, newid);
-      goto ErrorExit;
-    }
-  }
-
-  name = g_strdup(file);
-
-  if (name == NULL) {
-    arraydel2(&sarray);
-    delobj(obj, newid);
-    goto ErrorExit;
-  }
-
-  if (arrayadd(&sarray, &name) == NULL) {
-    g_free(name);
-    arraydel2(&sarray);
-    delobj(obj, newid);
-    goto ErrorExit;
-  }
-
-  DeleteDrawable();
-
-  if (console) {
-    allocnow = allocate_console();
-  }
-
-  exeobj(obj, "set_security", newid, 0, NULL);
-
-  argv[0] = (char *) &sarray;
-  argv[1] = NULL;
-
-  snprintf(mes, sizeof(mes), _("Loading `%.128s'."), name);
-  SetStatusBar(mes);
-
-  menu_lock(TRUE);
-  idn = getobjtblpos(Menulocal.obj, "_evloop", &robj);
-  registerevloop(chkobjectname(Menulocal.obj), "_evloop", robj, idn, Menulocal.inst, NULL);
-
-  r = _exeobj(obj, "shell", inst, 1, argv);
-
-  unregisterevloop(robj, idn, Menulocal.inst);
-  menu_lock(FALSE);
-
-  if (r == 0) {
-    struct objlist *aobj;
-    int i;
-    if ((aobj = getobject("axis")) != NULL) {
-      for (i = 0; i <= chkobjlastinst(aobj); i++)
-	exeobj(aobj, "tight", i, 0, NULL);
-    }
-
-    if ((aobj = getobject("axisgrid")) != NULL) {
-      for (i = 0; i <= chkobjlastinst(aobj); i++)
-	exeobj(aobj, "tight", i, 0, NULL);
-    }
-
-    SetFileName(file);
-    AddNgpFileList(name);
-    reset_graph_modified();
-
-    switch (loadpath) {
-    case LOAD_PATH_BASE:
-      ToBasename();
-      break;
-    case LOAD_PATH_FULL:
-      ToFullPath();
-      break;
-    }
-    InfoWinClear();
-  }
-
-  AxisNameToGroup();
-  ResetStatusBar();
-  arraydel2(&sarray);
-
-  if (console) {
-    free_console(allocnow);
-  }
-
-  set_axis_undo_button_sensitivity(FALSE);
-  GetPageSettingsFromGRA();
-  Draw(FALSE, draw_callback, NULL);
-  delobj(obj, newid);
-  load_dialog_cb_free(d);
-
-  return 0;
-
-ErrorExit:
-  if (d->cwd) {
-    nchdir(d->cwd);
-  }
-  load_dialog_cb_free(d);
-  return 1;
-}
-#else
 struct LoadNgpFile_data {
   struct objlist *obj;
   N_VALUE *inst;
@@ -1818,7 +1649,6 @@ LoadNgpFile_response(struct response_callback *cb)
     goto ErrorExit;
   }
 
-
   DeleteDrawable();
 
   if (console) {
@@ -1854,7 +1684,6 @@ LoadNgpFile_response(struct response_callback *cb)
   }
   load_dialog_cb_free(d);
 }
-#endif
 
 void
 LoadNgpFile(const char *file, int console, const char *option, const char *cwd)
