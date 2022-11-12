@@ -1929,12 +1929,8 @@ static void
 ViewerWinFileUpdate(int x1, int y1, int x2, int y2, int err)
 {
   struct objlist *fileobj;
-  int snum, hidden;
-  int did, limit;
-  N_VALUE *dinst;
-  int i;
+  int snum;
   char mes[256];
-  int ret;
   struct narray *dfile;
   struct fileupdate_data *data;
 
@@ -1942,7 +1938,6 @@ ViewerWinFileUpdate(int x1, int y1, int x2, int y2, int err)
   if (data == NULL) {
     return;
   }
-  ret = FALSE;
 
   data->minx = (x1 < x2) ? x1 : x2;
   data->miny = (y1 < y2) ? y1 : y2;
