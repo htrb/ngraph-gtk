@@ -1429,13 +1429,8 @@ update_drag(GtkGestureDrag *gesture, gdouble offset_x, gdouble offset_y, gpointe
     return;
   }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   scrollbar_set_value(d->HScroll, d->drag_prm.x - offset_x);
   scrollbar_set_value(d->VScroll, d->drag_prm.y - offset_y);
-#else
-  gtk_range_set_value(GTK_RANGE(d->HScroll), d->drag_prm.x - offset_x);
-  gtk_range_set_value(GTK_RANGE(d->VScroll), d->drag_prm.y - offset_y);
-#endif
 }
 
 static void
