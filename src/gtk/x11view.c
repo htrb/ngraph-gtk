@@ -1517,27 +1517,15 @@ deceleration_cb(GtkWidget *widget, GdkFrameClock *frame_clock, gpointer user_dat
   current_time = gdk_frame_clock_get_frame_time(frame_clock);
   t = (current_time - d->deceleration_prm.start) / 1000000.0;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   x0 = scrollbar_get_value(d->HScroll);
   y0 = scrollbar_get_value(d->VScroll);
-#else
-  x0 = gtk_range_get_value(GTK_RANGE(d->HScroll));
-  y0 = gtk_range_get_value(GTK_RANGE(d->VScroll));
-#endif
   x = d->drag_prm.x - get_deceleration_position(SWIPE_RESISTANCE, d->drag_prm.vx, t);
   y = d->drag_prm.y - get_deceleration_position(SWIPE_RESISTANCE, d->drag_prm.vy, t);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   scrollbar_set_value(d->HScroll, x);
   scrollbar_set_value(d->VScroll, y);
   x = scrollbar_get_value(d->HScroll);
   y = scrollbar_get_value(d->VScroll);
-#else
-  gtk_range_set_value(GTK_RANGE(d->HScroll), x);
-  gtk_range_set_value(GTK_RANGE(d->VScroll), y);
-  x = gtk_range_get_value(GTK_RANGE(d->HScroll));
-  y = gtk_range_get_value(GTK_RANGE(d->VScroll));
-#endif
   if (fabs(x0 - x) < SCROLL_DECELERATION_LIMIT && fabs(y0 - y) < SCROLL_DECELERATION_LIMIT) {
     d->deceleration_prm.id = 0;
     return G_SOURCE_REMOVE;
