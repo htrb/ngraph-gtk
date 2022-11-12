@@ -1734,12 +1734,8 @@ static void
 add_event_zoom(GtkWidget *widget, struct Viewer *d)
 {
   GtkGesture *ev;
-#if GTK_CHECK_VERSION(4, 0, 0)
   ev = gtk_gesture_zoom_new();
   gtk_widget_add_controller(widget, GTK_EVENT_CONTROLLER(ev));
-#else
-  ev = gtk_gesture_zoom_new(widget);
-#endif
   g_signal_connect(ev, "begin", G_CALLBACK(zoom_begin), d);
   g_signal_connect(ev, "end", G_CALLBACK(zoom_end), d);
   g_signal_connect(ev, "cancel", G_CALLBACK(zoom_cancel), d);
