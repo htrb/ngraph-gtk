@@ -1742,7 +1742,6 @@ add_event_zoom(GtkWidget *widget, struct Viewer *d)
   g_signal_connect(ev, "scale-changed", G_CALLBACK(gesture_zoom), d);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 add_event_motion(GtkWidget *widget, struct Viewer *d)
 {
@@ -1762,35 +1761,12 @@ add_event_scroll(GtkWidget *widget, struct Viewer *d)
   gtk_widget_add_controller(widget, ev);
   g_signal_connect(ev, "scroll", G_CALLBACK(ViewerEvScroll), d);
 }
-#endif
 
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-static gboolean
-hscroll_change_value_cb(GtkRange *range, GtkScrollType scroll, gdouble value, gpointer user_data)
-{
-  struct Viewer *d;
-  d = (struct Viewer *) user_data;
-  start_scroll_deceleration(value, d->vscroll, d);
-  return TRUE;
-}
-
-static gboolean
-vscroll_change_value_cb(GtkRange *range, GtkScrollType scroll, gdouble value, gpointer user_data)
-{
-  struct Viewer *d;
-  d = (struct Viewer *) user_data;
-  start_scroll_deceleration(d->hscroll, value, d);
-  return TRUE;
-}
-#endif
-
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 draw_function(GtkDrawingArea* drawing_area, cairo_t* cr, int width, int height, gpointer user_data)
 {
   ViewerEvPaint(GTK_WIDGET(drawing_area), cr, user_data);
 }
-#endif
 
 void
 ViewerWinSetup(void)
