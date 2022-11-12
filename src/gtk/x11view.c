@@ -1593,12 +1593,8 @@ static void
 add_event_button(GtkWidget *widget, struct Viewer *d)
 {
   GtkGesture *ev;
-#if GTK_CHECK_VERSION(4, 0, 0)
   ev = gtk_gesture_click_new();
   gtk_widget_add_controller(widget, GTK_EVENT_CONTROLLER(ev));
-#else
-  ev = gtk_gesture_multi_press_new(widget);
-#endif
   gtk_gesture_single_set_button(GTK_GESTURE_SINGLE(ev), 0);
   g_signal_connect(ev, "pressed", G_CALLBACK(ViewerEvButtonDown), d);
   g_signal_connect(ev, "released", G_CALLBACK(ViewerEvButtonUp), d);
