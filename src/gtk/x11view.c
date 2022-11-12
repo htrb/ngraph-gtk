@@ -511,6 +511,18 @@ paste_text_finalise(gpointer user_data)
   g_free(data);
 }
 
+static gpointer
+paste_script_evaluate(gpointer user_data)
+{
+  struct paste_text_data *data;
+
+  data = (struct paste_text_data *) user_data;
+  eval_script(data->text, TRUE);
+  data->thread = g_thread_self();
+  g_idle_add_once(paste_text_finalise, data);
+  return NULL;
+}
+
 static void
 paste_text(const gchar *text, struct Viewer *d)
 {
