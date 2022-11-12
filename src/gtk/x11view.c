@@ -1855,7 +1855,6 @@ ViewerWinClose(void)
   d->points = NULL;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 viewer_win_file_update_response(int ret, gpointer user_data)
 {
@@ -1863,9 +1862,7 @@ viewer_win_file_update_response(int ret, gpointer user_data)
   dfile = (struct narray *) user_data;
   arrayfree(dfile);
 }
-#endif
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 struct fileupdate_data
 {
   char *argv[7];
@@ -1994,92 +1991,6 @@ ViewerWinFileUpdate(int x1, int y1, int x2, int y2, int err)
 
   ProgressDialogCreate(_("Searching for data."), fileupdate_func, fileupdate_finalize, data);
 }
-#else
-static int
-ViewerWinFileUpdate(int x1, int y1, int x2, int y2, int err)
-{
-  struct objlist *fileobj;
-  char *argv[7];
-  int snum, hidden;
-  int did, limit;
-  N_VALUE *dinst;
-  struct narray *dfile;
-  int i;
-  struct narray *eval;
-  int evalnum;
-  int minx, miny, maxx, maxy;
-  struct savedstdio save;
-  char mes[256];
-  int ret;
-
-  ret = FALSE;
-  ignorestdio(&save);
-
-  minx = (x1 < x2) ? x1 : x2;
-  miny = (y1 < y2) ? y1 : y2;
-  maxx = (x1 > x2) ? x1 : x2;
-  maxy = (y1 > y2) ? y1 : y2;
-
-  limit = 1;
-
-  argv[0] = (char *) &minx;
-  argv[1] = (char *) &miny;
-  argv[2] = (char *) &maxx;
-  argv[3] = (char *) &maxy;
-  argv[4] = (char *) &err;
-  argv[5] = (char *) &limit;
-  argv[6] = NULL;
-
-  fileobj = chkobject("data");
-  if (! fileobj)
-    goto End;
-
-  if (check_drawrable(fileobj)) {
-    goto End;
-  }
-
-  snum = chkobjlastinst(fileobj) + 1;
-  if (snum == 0) {
-    goto End;
-  }
-
-  dfile = arraynew(sizeof(int));
-  if (dfile == NULL) {
-    goto End;
-  }
-
-  snprintf(mes, sizeof(mes), _("Searching for data."));
-  SetStatusBar(mes);
-  ProgressDialogCreate(_("Searching for data."));
-
-  for (i = 0; i < snum; i++) {
-    dinst = chkobjinst(fileobj, i);
-    if (dinst == NULL) {
-      continue;
-    }
-    _getobj(fileobj, "hidden", dinst, &hidden);
-    if (hidden) {
-      continue;
-    }
-    _getobj(fileobj, "oid", dinst, &did);
-    _exeobj(fileobj, "evaluate", dinst, 6, argv);
-    _getobj(fileobj, "evaluate", dinst, &eval);
-    evalnum = arraynum(eval) / 3;
-    if (evalnum != 0) {
-      arrayadd(dfile, &i);
-    }
-  }
-
-  ProgressDialogFinalize();
-  ResetStatusBar();
-
-  ret = update_file_obj_multi(fileobj, dfile, FALSE);
-  arrayfree(dfile);
- End:
-  restorestdio(&save);
-  return ret;
-}
-#endif
 
 static void
 mask_selected_data(struct objlist *fileobj, int selnum, struct narray *sel_list)
