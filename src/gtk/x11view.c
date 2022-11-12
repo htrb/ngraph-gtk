@@ -481,7 +481,6 @@ focus_new_insts(struct objlist *parent, struct narray *array, char **objects)
   return;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 paste_text(const gchar *text, struct Viewer *d)
 {
@@ -524,66 +523,6 @@ paste_text(const gchar *text, struct Viewer *d)
     UpdateAll(objects);
   }
 }
-#else
-static void
-paste_cb(GtkClipboard *clipboard, const gchar *text, gpointer data)
-{
-  struct narray idarray;
-  struct objlist *draw_obj;
-#if GTK_CHECK_VERSION(4, 0, 0)
-  GdkSurface *window;
-#else
-  GdkWindow *window;
-#endif
-  char *objects[OBJ_MAX] = {NULL};
-
-  if (text == NULL)
-    return;
-
-#if GTK_CHECK_VERSION(4, 0, 0)
-  window = gtk_native_get_surface(GTK_NATIVE(NgraphApp.Viewer.Win));
-#else
-  window = gtk_widget_get_window(NgraphApp.Viewer.Win);
-#endif
-  if (window == NULL)
-    return;
-
-  if (strncmp(text, SCRIPT_IDN, SCRIPT_IDN_LEN)) {
-    gint w, h;
-
-#if GTK_CHECK_VERSION(4, 0, 0)
-    w = gdk_surface_get_width(window);
-    h = gdk_surface_get_height(window);
-#else
-    w = gdk_window_get_width(window);
-    h = gdk_window_get_height(window);
-#endif
-    text_dropped(text, w / 2, h / 2, &NgraphApp.Viewer);
-    return;
-  }
-
-  draw_obj = chkobject("draw");
-  if (draw_obj == NULL)
-    return;
-
-  arrayinit(&idarray, sizeof(int));
-  check_last_insts(draw_obj, &idarray);
-
-  UnFocus();
-  menu_save_undo(UNDO_TYPE_PASTE, NULL);
-  eval_script(text, TRUE);
-
-  focus_new_insts(draw_obj, &idarray, objects);
-  arraydel(&idarray);
-
-  if (arraynum(NgraphApp.Viewer.focusobj) > 0) {
-    set_graph_modified();
-    NgraphApp.Viewer.ShowFrame = TRUE;
-    gtk_widget_grab_focus(NgraphApp.Viewer.Win);
-    UpdateAll(objects);
-  }
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 static void
