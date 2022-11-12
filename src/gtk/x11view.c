@@ -1563,34 +1563,22 @@ add_event_drag(GtkWidget *widget, struct Viewer *d)
 {
   GtkGesture *ev_drag, *ev_swipe, *ev_long_press;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   ev_drag = gtk_gesture_drag_new();
   gtk_widget_add_controller(widget, GTK_EVENT_CONTROLLER(ev_drag));
-#else
-  ev_drag = gtk_gesture_drag_new(widget);
-#endif
   gtk_gesture_single_set_touch_only(GTK_GESTURE_SINGLE(ev_drag), TRUE);
 
   g_signal_connect(ev_drag, "drag-update", G_CALLBACK(update_drag), d);
   g_signal_connect(ev_drag, "drag-begin", G_CALLBACK(begin_drag), d);
   g_signal_connect(ev_drag, "drag-end", G_CALLBACK(end_drag), d);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   ev_swipe = gtk_gesture_swipe_new();
   gtk_widget_add_controller(widget, GTK_EVENT_CONTROLLER(ev_swipe));
-#else
-  ev_swipe = gtk_gesture_swipe_new(widget);
-#endif
   gtk_gesture_single_set_touch_only(GTK_GESTURE_SINGLE(ev_swipe), TRUE);
   gtk_gesture_group(ev_swipe, ev_drag);
   g_signal_connect(ev_swipe, "swipe", G_CALLBACK(swipe_cb), d);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   ev_long_press = gtk_gesture_long_press_new();
   gtk_widget_add_controller(widget, GTK_EVENT_CONTROLLER(ev_long_press));
-#else
-  ev_long_press = gtk_gesture_long_press_new(widget);
-#endif
   gtk_gesture_single_set_touch_only(GTK_GESTURE_SINGLE(ev_long_press), TRUE);
   gtk_gesture_group(ev_long_press, ev_drag);
   g_signal_connect(ev_long_press, "pressed", G_CALLBACK(long_press_cb), d);
