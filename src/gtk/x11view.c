@@ -294,13 +294,8 @@ range_increment_deceleration(double inc_x, double inc_y, struct Viewer *d)
   if (inc_x == 0 && inc_y == 0) {
     return;
   }
-#if GTK_CHECK_VERSION(4, 0, 0)
   x = scrollbar_get_value(d->HScroll);
   y = scrollbar_get_value(d->VScroll);
-#else
-  x = gtk_range_get_value(GTK_RANGE(d->HScroll));
-  y = gtk_range_get_value(GTK_RANGE(d->VScroll));
-#endif
   x += inc_x;
   y += inc_y;
   start_scroll_deceleration(x, y, d);
