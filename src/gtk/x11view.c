@@ -1773,12 +1773,7 @@ ViewerWinSetup(void)
 {
   struct Viewer *d;
   int width, height;
-#if GTK_CHECK_VERSION(4, 0, 0)
   GtkAdjustment *adj;
-#else
-  int x, y;
-  GdkWindow *win;
-#endif
 
   d = &NgraphApp.Viewer;
   Menulocal.GRAoid = -1;
@@ -1805,40 +1800,21 @@ ViewerWinSetup(void)
   OpenGC();
   OpenGRA();
   SetScroller();
-#if GTK_CHECK_VERSION(4, 0, 0)
   width = gtk_widget_get_size(NgraphApp.Viewer.Win, GTK_ORIENTATION_HORIZONTAL);
   height = gtk_widget_get_size(NgraphApp.Viewer.Win, GTK_ORIENTATION_VERTICAL);
-#else
-  win = gtk_widget_get_window(NgraphApp.Viewer.Win);
-  gdk_window_get_position(win, &x, &y);
-  width = gdk_window_get_width(win);
-  height = gdk_window_get_height(win);
-#endif
   d->cx = width / 2;
   d->cy = height / 2;
   d->focused_pix = NULL;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   d->hscroll = scrollbar_get_value(d->HScroll);
   d->vscroll = scrollbar_get_value(d->VScroll);
-#else
-  d->hscroll = gtk_range_get_value(GTK_RANGE(d->HScroll));
-  d->vscroll = gtk_range_get_value(GTK_RANGE(d->VScroll));
-#endif
 
   ChangeDPI();
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_drawing_area_set_draw_func(GTK_DRAWING_AREA(d->Win), draw_function, d, NULL);
   g_signal_connect(d->Win, "resize", G_CALLBACK(ViewerEvSize), d);
   g_signal_connect(d->Win, "realize", G_CALLBACK(ViewerEvRealize), d);
-#else
-  g_signal_connect(d->Win, "draw", G_CALLBACK(ViewerEvPaint), d);
-  g_signal_connect(d->Win, "size-allocate", G_CALLBACK(ViewerEvSize), d);
-#endif
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
   adj = gtk_scrollbar_get_adjustment(GTK_SCROLLBAR(d->HScroll));
   g_signal_connect(adj, "value-changed", G_CALLBACK(ViewerEvHScroll), d);
 
@@ -1848,48 +1824,18 @@ ViewerWinSetup(void)
   gtk_widget_set_focusable(d->Win, TRUE);
 
   init_dnd(d);
-#else
-  g_signal_connect(d->HScroll, "value-changed", G_CALLBACK(ViewerEvHScroll), d);
-  g_signal_connect(d->VScroll, "value-changed", G_CALLBACK(ViewerEvVScroll), d);
-  g_signal_connect(d->HScroll, "change-value", G_CALLBACK(hscroll_change_value_cb), d);
-  g_signal_connect(d->VScroll, "change-value", G_CALLBACK(vscroll_change_value_cb), d);
-  g_signal_connect(d->HScroll, "scroll-event", G_CALLBACK(scrollbar_scroll_cb), d);
-  g_signal_connect(d->VScroll, "scroll-event", G_CALLBACK(scrollbar_scroll_cb), d);
-
-  init_dnd(d);
-
-  gtk_widget_add_events(d->Win,
-			GDK_POINTER_MOTION_MASK |
-			GDK_POINTER_MOTION_HINT_MASK |
-			GDK_BUTTON_RELEASE_MASK |
-			GDK_BUTTON_PRESS_MASK |
-			GDK_KEY_PRESS_MASK |
-			GDK_SCROLL_MASK |
-			GDK_SMOOTH_SCROLL_MASK |
-			GDK_KEY_RELEASE_MASK);
-#endif
   gtk_widget_set_can_focus(d->Win, TRUE);
 
   if (d->popup) {
-#if GTK_CHECK_VERSION(4, 0, 0)
     widget_set_parent(d->popup, d->Win);
-#else
-    gtk_menu_attach_to_widget(GTK_MENU(d->popup), GTK_WIDGET(d->Win), NULL);
-#endif
   }
 
   add_event_drag(d->Win, d);
   add_event_key(d->Win, G_CALLBACK(ViewerEvKeyDown), G_CALLBACK(ViewerEvKeyUp),  d);
   add_event_button(d->Win, d);
   add_event_zoom(d->Win, d);
-#if GTK_CHECK_VERSION(4, 0, 0)
   add_event_motion(d->Win, d);
   add_event_scroll(d->Win, d);
-#else
-  g_signal_connect(d->Win, "motion-notify-event", G_CALLBACK(ViewerEvMouseMotion), d);
-  g_signal_connect(d->Win, "scroll-event", G_CALLBACK(ViewerEvScroll), d);
-  g_signal_connect(d->Win, "popup-menu", G_CALLBACK(ev_popup_menu), d);
-#endif
 
 #if 0
   g_signal_connect(d->menu, "selection-done", G_CALLBACK(menu_activate), d);
