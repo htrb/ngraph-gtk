@@ -1454,13 +1454,8 @@ begin_drag(GtkGestureDrag *gesture, gdouble start_x, gdouble start_y, gpointer u
   default:
     d->drag_prm.active = FALSE;
   }
-#if GTK_CHECK_VERSION(4, 0, 0)
   d->drag_prm.x = scrollbar_get_value(d->HScroll);
   d->drag_prm.y = scrollbar_get_value(d->VScroll);
-#else
-  d->drag_prm.x = gtk_range_get_value(GTK_RANGE(d->HScroll));
-  d->drag_prm.y = gtk_range_get_value(GTK_RANGE(d->VScroll));
-#endif
 }
 
 static void
