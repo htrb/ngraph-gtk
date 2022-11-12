@@ -824,8 +824,6 @@ arc_get_angle(struct objlist *obj, N_VALUE *inst, unsigned int round, int point,
   return 0;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
 static void
 new_file_obj_response(struct response_callback *cb)
 {
@@ -872,40 +870,6 @@ new_file_obj(char *name, struct objlist *obj, int multi, struct data_dropped_dat
   DialogExecute(TopLevel, &DlgFile);
   return 0;
 }
-#else
-static int
-new_file_obj(char *name, struct objlist *obj, int *id0, int multi)
-{
-  int id, ret;
-
-  id = newobj(obj);
-  if (id < 0) {
-    return 1;
-  }
-
-  putobj(obj, "file", id, name);
-  if (*id0 != -1) {
-    copy_file_obj_field(obj, id, *id0, FALSE);
-    AddDataFileList(name);
-    return 0;
-  }
-
-  FileDialog(NgraphApp.FileWin.data.data, id, multi);
-  ret = DialogExecute(TopLevel, &DlgFile);
-  if (ret == IDCANCEL) {
-    FitDel(obj, id);
-    delobj(obj, id);
-  } else {
-    if (ret == IDFAPPLY) {
-      *id0 = id;
-    }
-    set_graph_modified();
-    AddDataFileList(name);
-  }
-
-  return 0;
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 static void
