@@ -960,8 +960,6 @@ data_dropped(struct narray *filenames, int file_type)
   return 0;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
 static void
 text_dropped_response(struct response_callback *cb)
 {
@@ -1056,93 +1054,6 @@ text_dropped(const char *str, gint x, gint y, struct Viewer *d)
   DialogExecute(TopLevel, &DlgLegendText);
   return 0;
 }
-#else
-static int
-text_dropped(const char *str, gint x, gint y, struct Viewer *d)
-{
-  N_VALUE *inst;
-  char *ptr;
-  double zoom = Menulocal.PaperZoom / 10000.0;
-  struct objlist *obj;
-  int id, x1, y1, r, i, j, l, undo;
-
-  obj = chkobject("text");
-
-  if (obj == NULL)
-    return 1;
-
-  l = strlen(str);
-  ptr = g_malloc(l * 2 + 1);
-
-  if (ptr == NULL)
-    return 1;
-
-  for (i = j = 0; i < l; i++, j++) {
-    switch (str[i]) {
-    case '\n':
-      ptr[j] = '\\';
-      j++;
-      ptr[j] = 'n';
-      break;
-    case '%':
-    case '^':
-    case '_':
-    case '\\':
-      ptr[j] = '\\';
-      j++;
-      ptr[j] = str[i];
-      break;
-    default:
-      ptr[j] = str[i];
-      break;
-    }
-  }
-  ptr[j] = '\0';
-
-  undo = menu_save_undo_single(UNDO_TYPE_PASTE, obj->name);
-  id = newobj(obj);
-  if (id < 0) {
-    g_free(ptr);
-    return 1;
-  }
-
-  inst = chkobjinst(obj, id);
-  x1 = calc_mouse_x(x, zoom, d);
-  y1 = calc_mouse_y(y, zoom, d);
-
-  CheckGrid(FALSE, 0, &x1, &y1, NULL, NULL);
-
-  _putobj(obj, "x", inst, &x1);
-  _putobj(obj, "y", inst, &y1);
-  _putobj(obj, "text", inst, ptr);
-
-  PaintLock= TRUE;
-
-  LegendTextDialog(&DlgLegendText, obj, id);
-  r = DialogExecute(TopLevel, &DlgLegendText);
-
-  if ((r == IDDELETE) || (r == IDCANCEL)) {
-    menu_delete_undo(undo);
-    delobj(obj, id);
-  } else {
-    int oid;
-    char *objects[] = {"text", NULL};
-
-    UnFocus();
-
-    getobj(obj, "oid", id, 0, NULL, &oid);
-    add_focus_obj(NgraphApp.Viewer.focusobj, obj, oid);
-
-    set_graph_modified();
-    d->ShowFrame = TRUE;
-    gtk_widget_grab_focus(d->Win);
-    UpdateAll(objects);
-  }
-  PaintLock = FALSE;
-
-  return 0;
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented (multiple files) */
