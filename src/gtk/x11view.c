@@ -1139,8 +1139,6 @@ drag_drop_cb(GtkDropTarget* self, const GValue* value, gdouble x, gdouble y, gpo
   return ! r;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
 static void
 init_dnd(struct Viewer *d)
 {
@@ -1153,26 +1151,6 @@ init_dnd(struct Viewer *d)
   g_signal_connect(target, "drop", G_CALLBACK(drag_drop_cb), d);
   gtk_widget_add_controller(GTK_WIDGET(d->Win), GTK_EVENT_CONTROLLER(target));
 }
-#else
-static void
-init_dnd(struct Viewer *d)
-{
-  GtkWidget *widget;
-  GtkTargetEntry target[] = {
-    {"text/uri-list", 0, DROP_TYPE_FILE},
-  };
-  GtkTargetList *list;
-
-  widget = d->Win;
-
-  gtk_drag_dest_set(widget, GTK_DEST_DEFAULT_ALL, target, sizeof(target) / sizeof(*target), GDK_ACTION_COPY);
-
-  list = gtk_drag_dest_get_target_list(widget);
-  gtk_target_list_add_text_targets(list, DROP_TYPE_TEXT);
-
-  g_signal_connect(widget, "drag-data-received", G_CALLBACK(drag_drop_cb), d);
-}
-#endif
 
 static void
 eval_dialog_set_parent_cal(GtkWidget *w, GtkTreeIter *iter, int id, int n)
