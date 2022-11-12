@@ -1276,7 +1276,6 @@ get_save_opt(struct graph_save_data *save_data)
   return IDOK;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 GraphSave_free(gpointer user_data)
 {
@@ -1387,87 +1386,6 @@ GraphSave(int overwrite)
   }
   return IDOK;
 }
-#else
-int
-GraphSave(int overwrite)
-{
-  int path;
-  int sdata, smerge;
-  int ret;
-  char *initfil;
-  char *file, *prev_wd, *current_wd;
-  int chd;
-
-  if (NgraphApp.FileName != NULL) {
-    initfil = NgraphApp.FileName;
-  } else {
-    initfil = NULL;
-    overwrite = FALSE;
-  }
-  prev_wd = current_wd = NULL;
-  if ((initfil == NULL) || (! overwrite || (naccess(initfil, 04) == -1))) {
-    prev_wd = ngetcwd();
-    chd = Menulocal.changedirectory;
-    file = nGetSaveFileName(TopLevel, _("Save NGP file"), "ngp",
-			   &(Menulocal.graphloaddir), initfil, overwrite, chd);
-    current_wd = ngetcwd();
-    if (prev_wd && current_wd && strcmp(prev_wd, current_wd) == 0) {
-      g_free(prev_wd);
-      g_free(current_wd);
-      prev_wd = NULL;
-      current_wd = NULL;
-    }
-  } else {
-    file = g_strdup(initfil);
-    if (file == NULL)
-      return IDCANCEL;
-    ret = IDOK;
-  }
-
-  if (file) {
-    if (prev_wd && nchdir(prev_wd)) {
-      ErrorMessage();
-    }
-
-    ret = get_save_opt(&sdata, &smerge, &path);
-    if (ret == IDOK) {
-      char mes[256];
-      snprintf(mes, sizeof(mes), _("Saving `%.128s'."), file);
-      SetStatusBar(mes);
-      if(SaveDrawrable(file, sdata, smerge, TRUE)) {
-	ret = IDCANCEL;
-      } else {
-	switch (path) {
-	case SAVE_PATH_BASE:
-	  ToBasename();
-	  break;
-	case SAVE_PATH_RELATIVE:
-	  ToRalativePath();
-	  break;
-	case SAVE_PATH_FULL:
-	  ToFullPath();
-	  break;
-	}
-	changefilename(file);
-	AddNgpFileList(file);
-	SetFileName(file);
-	reset_graph_modified();
-      }
-      ResetStatusBar();
-    }
-    g_free(file);
-
-    if (current_wd && nchdir(current_wd)) {
-      ErrorMessage();
-    }
-  }
-
-  g_free(prev_wd);
-  g_free(current_wd);
-
-  return ret;
-}
-#endif
 
 static void
 change_filename(char * (*func)(const char *))
