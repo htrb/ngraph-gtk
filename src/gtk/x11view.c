@@ -481,6 +481,36 @@ focus_new_insts(struct objlist *parent, struct narray *array, char **objects)
   return;
 }
 
+struct paste_text_data
+{
+  struct narray *idarray;
+  struct objlist *draw_obj;
+  GThread *thread;
+  char *text;
+  struct Viewer *d;
+};
+
+static void
+paste_text_finalise(gpointer user_data)
+{
+  char *objects[OBJ_MAX] = {NULL};
+  struct paste_text_data *data;
+
+  data = (struct paste_text_data *) user_data;
+  g_thread_join(data->thread);
+  focus_new_insts(data->draw_obj, data->idarray, objects);
+  arrayfree(data->idarray);
+
+  if (arraynum(data->d->focusobj) > 0) {
+    set_graph_modified();
+    data->d->ShowFrame = TRUE;
+    gtk_widget_grab_focus(data->d->Win);
+    UpdateAll(objects);
+  }
+  g_free(data->text);
+  g_free(data);
+}
+
 static void
 paste_text(const gchar *text, struct Viewer *d)
 {
