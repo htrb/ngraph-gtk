@@ -1055,8 +1055,6 @@ text_dropped(const char *str, gint x, gint y, struct Viewer *d)
   return 0;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented (multiple files) */
 struct narray *
 get_dropped_files(const GValue* value)
 {
@@ -1140,63 +1138,6 @@ drag_drop_cb(GtkDropTarget* self, const GValue* value, gdouble x, gdouble y, gpo
   }
   return ! r;
 }
-#else
-static void
-drag_drop_cb(GtkWidget *w, GdkDragContext *context, gint x, gint y, GtkSelectionData *data, guint info, guint time, gpointer user_data)
-{
-  gchar **filenames, *str;
-  int num, r, success;
-  struct Viewer *d;
-
-  success = FALSE;
-  if (Globallock || Menulock || DnDLock)
-    goto End;
-
-  d = (struct Viewer *) user_data;
-
-  switch (info) {
-  case DROP_TYPE_TEXT:
-    str = (gchar *) gtk_selection_data_get_text(data);
-    if (str) {
-      r = text_dropped(str, x, y, d);
-      g_free(str);
-      success = (! r);
-    }
-    break;
-  case DROP_TYPE_FILE:
-    filenames = gtk_selection_data_get_uris(data);
-    if (filenames == NULL) {
-      break;
-    }
-
-    num = g_strv_length(filenames);
-
-    r = 1;
-    if (num == 1) {
-      char *fname;
-      fname = g_filename_from_uri(filenames[0], NULL, NULL);
-      if (fname == NULL) {
-	g_strfreev(filenames);
-	break;
-      }
-      r = graph_dropped(fname);
-      g_free(fname);
-    }
-
-    if (r && data_dropped(filenames, num, FILE_TYPE_AUTO) == 0) {
-      success = TRUE;
-    } else {
-      success = TRUE;
-    }
-
-    g_strfreev(filenames);
-    break;
-  }
-
- End:
-  gtk_drag_finish(context, success, FALSE, time);
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
