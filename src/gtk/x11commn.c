@@ -1217,7 +1217,8 @@ get_save_opt_response(struct response_callback *cb)
 
   save_data = (struct graph_save_data *) cb->data;
 
-  if (DlgSave.ret != IDOK) {
+  if (cb->return_value != IDOK) {
+    save_data->cb(cb->return_value, save_data);
     return;
   }
 
