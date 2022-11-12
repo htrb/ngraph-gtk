@@ -871,7 +871,6 @@ new_file_obj(char *name, struct objlist *obj, int multi, struct data_dropped_dat
   return 0;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 data_dropped_sub(struct data_dropped_data *data)
 {
@@ -960,64 +959,6 @@ data_dropped(struct narray *filenames, int file_type)
 
   return 0;
 }
-#else
-int
-data_dropped(char **filenames, int num, int file_type)
-{
-  char *ext, *arg[4];
-  int i, id0, type, ret;
-  struct objlist *obj, *mobj;
-
-  obj = chkobject("data");
-  if (obj == NULL) {
-    return 1;
-  }
-
-  mobj = chkobject("merge");
-  if (mobj == NULL) {
-    return 1;
-  }
-
-  id0 = -1;
-  arg[0] = obj->name;
-  arg[1] = mobj->name;
-  arg[2] = "fit";
-  arg[3] = NULL;
-  menu_save_undo(UNDO_TYPE_PASTE, arg);
-  for (i = 0; i < num; i++) {
-    char *name;
-    name = g_filename_from_uri(filenames[i], NULL, NULL);
-    if (name == NULL) {
-      continue;
-    }
-
-    type = file_type;
-    if (type == FILE_TYPE_AUTO) {
-      ext = getextention(name);
-      if (ext && strcmp0(ext, "gra") == 0) {
-	type = FILE_TYPE_MERGE;
-      } else {
-	type = FILE_TYPE_DATA;
-      }
-    }
-
-    if (type == FILE_TYPE_MERGE) {
-      ret = new_merge_obj(name, mobj);
-    } else {
-      ret = new_file_obj(name, obj, &id0, i < num - 1);
-    }
-
-    if (ret) {
-      g_free(name);
-      continue;
-    }
-  }
-
-  MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE, FALSE);
-  FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
-  return 0;
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
