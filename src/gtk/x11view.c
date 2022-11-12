@@ -2025,8 +2025,6 @@ mask_selected_data(struct objlist *fileobj, int selnum, struct narray *sel_list)
   }
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
 static void
 evaluate_response(struct response_callback *cb)
 {
@@ -2177,116 +2175,6 @@ Evaluate(int x1, int y1, int x2, int y2, int err, struct Viewer *d)
 
   ProgressDialogCreate(_("Evaluating"), evaluate_main, evaluate_finalize, data);
 }
-#else
-static void
-Evaluate(int x1, int y1, int x2, int y2, int err, struct Viewer *d)
-{
-  struct objlist *fileobj;
-  char *argv[7];
-  int snum, hidden;
-  int limit;
-  int i, j;
-  struct narray *eval;
-  int evalnum, tot;
-  int minx, miny, maxx, maxy;
-  struct savedstdio save;
-  double line, dx, dy;
-  char mes[256];
-
-  minx = (x1 < x2) ? x1 : x2;
-  miny = (y1 < y2) ? y1 : y2;
-  maxx = (x1 > x2) ? x1 : x2;
-  maxy = (y1 > y2) ? y1 : y2;
-
-  limit = EVAL_NUM_MAX;
-
-  argv[0] = (char *) &minx;
-  argv[1] = (char *) &miny;
-  argv[2] = (char *) &maxx;
-  argv[3] = (char *) &maxy;
-  argv[4] = (char *) &err;
-  argv[5] = (char *) &limit;
-  argv[6] = NULL;
-
-  if ((fileobj = chkobject("data")) == NULL)
-    return;
-
-  if (check_drawrable(fileobj)) {
-    return;
-  }
-
-  snum = chkobjlastinst(fileobj) + 1;
-  if (snum == 0) {
-    return;
-  }
-  ignorestdio(&save);
-
-  snprintf(mes, sizeof(mes), _("Evaluating."));
-  SetStatusBar(mes);
-
-  ProgressDialogCreate(_("Evaluating"));
-
-  tot = 0;
-
-  for (i = 0; i < snum; i++) {
-    N_VALUE *dinst;
-    dinst = chkobjinst(fileobj, i);
-    if (dinst == NULL) {
-      continue;
-    }
-    _getobj(fileobj, "hidden", dinst, &hidden);
-    if (hidden) {
-      continue;
-    }
-    _exeobj(fileobj, "evaluate", dinst, 6, argv);
-    _getobj(fileobj, "evaluate", dinst, &eval);
-    evalnum = arraynum(eval) / 3;
-    for (j = 0; j < evalnum; j++) {
-      if (tot >= limit) break;
-      tot++;
-      line = arraynget_double(eval, j * 3 + 0);
-      dx = arraynget_double(eval, j * 3 + 1);
-      dy = arraynget_double(eval, j * 3 + 2);
-      EvalList[tot - 1].id = i;
-      EvalList[tot - 1].line = nround(line);
-      EvalList[tot - 1].x = dx;
-      EvalList[tot - 1].y = dy;
-    }
-    if (tot >= limit) break;
-  }
-
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  ProgressDialogFinalize();
-#endif
-  ResetStatusBar();
-
-  if (tot > 0) {
-    int ret, selnum;
-    EvalDialog(&DlgEval, fileobj, tot, &SelList);
-    ret = DialogExecute(TopLevel, &DlgEval);
-    selnum = arraynum(&SelList);
-
-    if (selnum > 0) {
-      switch (ret) {
-      case IDEVMASK:
-	menu_save_undo_single(UNDO_TYPE_EDIT, fileobj->name);
-	mask_selected_data(fileobj, selnum, &SelList);
-	arraydel(&SelList);
-	argv[0] = "data";
-	argv[1] = NULL;
-	UpdateAll(argv);
-	break;
-      case IDEVMOVE:
-	NSetCursor(GDK_TCROSS);
-	d->Capture = TRUE;
-	d->MoveData = TRUE;
-	break;
-      }
-    }
-  }
-  restorestdio(&save);
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
