@@ -679,8 +679,6 @@ graph_dropped(const char *str)
   return 0;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
 struct data_dropped_data {
   int i, id0, file_type;
   char *name;
@@ -722,30 +720,6 @@ new_merge_obj(char *name, struct objlist *obj, struct data_dropped_data *data)
   DialogExecute(TopLevel, &DlgMerge);
   return 0;
 }
-#else
-static int
-new_merge_obj(char *name, struct objlist *obj)
-{
-  int id, ret;
-
-  id = newobj(obj);
-
-  if (id < 0)
-    return 1;
-
-  changefilename(name);
-  putobj(obj, "file", id, name);
-  MergeDialog(NgraphApp.MergeWin.data.data, id, -1);
-  ret = DialogExecute(TopLevel, &DlgMerge);
-  if (ret == IDCANCEL) {
-    delobj(obj, id);
-  } else {
-    set_graph_modified();
-  }
-
-  return 0;
-}
-#endif
 
 static int
 arc_get_angle(struct objlist *obj, N_VALUE *inst, unsigned int round, int point, int px, int py, int *angle1, int *angle2)
