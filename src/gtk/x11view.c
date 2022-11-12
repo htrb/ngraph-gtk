@@ -1294,67 +1294,38 @@ EvalDialogSetup(GtkWidget *wi, void *data, int makewidget)
 			   _("_Move"), IDEVMOVE,
 			   NULL);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     swin = gtk_scrolled_window_new();
     gtk_widget_set_vexpand(swin, TRUE);
-#else
-    swin = gtk_scrolled_window_new(NULL, NULL);
-#endif
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
     w = tree_store_create(sizeof(list) / sizeof(*list), list);
     tree_store_set_selection_mode(w, GTK_SELECTION_MULTIPLE);
     d->list = w;
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), w);
-#else
-    gtk_container_add(GTK_CONTAINER(swin), w);
-#endif
 
     w = gtk_frame_new(NULL);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_frame_set_child(GTK_FRAME(w), swin);
     gtk_box_append(GTK_BOX(d->vbox), w);
-#else
-    gtk_container_add(GTK_CONTAINER(w), swin);
-    gtk_box_pack_start(GTK_BOX(d->vbox), w, TRUE, TRUE, 4);
-#endif
 
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
     w = gtk_button_new_with_mnemonic(_("Select _All"));
     set_button_icon(w, "edit-select-all");
     g_signal_connect(w, "clicked", G_CALLBACK(tree_store_select_all_cb), d->list);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(hbox), w);
-#else
-    gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
-#endif
 
     w = gtk_button_new_with_mnemonic(_("_Copy"));
     g_signal_connect(w, "clicked", G_CALLBACK(eval_dialog_copy_selected), d->list);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(hbox), w);
-#else
-    gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
-#endif
     gtk_widget_set_sensitive(w, FALSE);
 
     sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(d->list));
     g_signal_connect(sel, "changed", G_CALLBACK(eval_data_sel_cb), w);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(d->vbox), hbox);
-#else
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
-#endif
 
     d->show_cancel = FALSE;
     d->ok_button = _("_Close");
 
     gtk_window_set_default_size(GTK_WINDOW(wi), 540, 400);
-
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-    gtk_widget_show_all(GTK_WIDGET(d->vbox));
-#endif
   }
   EvalDialogSetupItem(wi, d);
 }
