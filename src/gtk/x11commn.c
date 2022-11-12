@@ -1825,7 +1825,6 @@ AdjustAxis(void)
     exeobj(aobj, "adjust", i, 0, NULL);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 struct CheckSave_data {
   response_cb cb;
   gpointer data;
@@ -1870,23 +1869,6 @@ CheckSave(response_cb cb, gpointer user_data)
     CheckSave_response(IDNO, data);
   }
 }
-#else
-int
-CheckSave(void)
-{
-  if (get_graph_modified()) {
-    int ret;
-    ret = message_box(TopLevel, _("This graph is modified.\nSave this graph?"),
-		      _("Confirm"), RESPONS_YESNOCANCEL);
-    if (ret == IDYES) {
-      if (GraphSave(TRUE) == IDCANCEL)
-	return FALSE;
-    } else if (ret != IDNO)
-      return FALSE;
-  }
-  return TRUE;
-}
-#endif
 
 static void
 add_hist(const char *file, char *mime)
