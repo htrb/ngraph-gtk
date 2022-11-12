@@ -2150,7 +2150,6 @@ SetFileHidden(response_cb cb, gpointer user_data)
   DialogExecute(TopLevel, &DlgSelect);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 struct CheckIniFile_data {
   struct objlist *obj;
   int id, modified;
@@ -2231,47 +2230,6 @@ CheckIniFile(obj_response_cb cb, struct objlist *obj, int id, int modified)
     cb(TRUE, obj, id, modified);
   }
 }
-#else
-int
-CheckIniFile(void)
-{
-  int ret;
-
-  ret = writecheckconfig();
-  if (ret == 0) {
-    message_box(TopLevel, _("Ngraph.ini is not found."), "Ngraph.ini", RESPONS_ERROR);
-    return FALSE;
-  } else if ((ret == -1) || (ret == -3)) {
-    message_box(TopLevel, _("Ngraph.ini is write protected."), "Ngraph.ini", RESPONS_ERROR);
-    return FALSE;
-  } else if ((ret == -2) || (ret == 2)) {
-    struct objlist *sys;
-    char *homedir, *buf;
-
-    sys = getobject("system");
-    if (sys == NULL) {
-      return FALSE;
-    }
-
-    if (getobj(sys, "home_dir", 0, 0, NULL, &homedir) == -1) {
-      return FALSE;
-    }
-
-    buf = g_strdup_printf(_("Install `Ngraph.ini' to %s ?"), homedir);
-    if (message_box(TopLevel, buf, "Ngraph.ini", RESPONS_YESNO) == IDYES) {
-      g_free(buf);
-      if (!copyconfig()) {
-	message_box(TopLevel, _("Ngraph.ini could not be copied."), "Ngraph.ini", RESPONS_ERROR);
-	return FALSE;
-      }
-    } else {
-      g_free(buf);
-      return FALSE;
-    }
-  }
-  return TRUE;
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 struct progress_dialog_data {
