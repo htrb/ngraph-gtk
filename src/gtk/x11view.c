@@ -526,9 +526,9 @@ paste_script_evaluate(gpointer user_data)
 static void
 paste_text(const gchar *text, struct Viewer *d)
 {
-  struct narray idarray;
+  struct narray *idarray;
   struct objlist *draw_obj;
-  char *objects[OBJ_MAX] = {NULL};
+  struct paste_text_data *data;
 
   if (text == NULL) {
     return;
@@ -548,22 +548,21 @@ paste_text(const gchar *text, struct Viewer *d)
     return;
   }
 
-  arrayinit(&idarray, sizeof(int));
-  check_last_insts(draw_obj, &idarray);
+  idarray = arraynew(sizeof(int));
+  if (idarray == NULL) {
+    return;
+  }
+  check_last_insts(draw_obj, idarray);
+
+  data = g_malloc0(sizeof(*data));
+  data->text = g_strdup(text);
+  data->idarray = idarray;
+  data->draw_obj = draw_obj;
+  data->d = d;
 
   UnFocus();
   menu_save_undo(UNDO_TYPE_PASTE, NULL);
-  eval_script(text, TRUE);
-
-  focus_new_insts(draw_obj, &idarray, objects);
-  arraydel(&idarray);
-
-  if (arraynum(d->focusobj) > 0) {
-    set_graph_modified();
-    d->ShowFrame = TRUE;
-    gtk_widget_grab_focus(d->Win);
-    UpdateAll(objects);
-  }
+  g_thread_new(NULL, paste_script_evaluate, data);
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
