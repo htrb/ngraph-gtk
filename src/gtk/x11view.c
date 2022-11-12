@@ -1481,23 +1481,15 @@ long_press_cancelled_cb(GtkGesture *gesture, gpointer user_data)
 {
   GdkEventSequence *sequence;
   GdkEvent *event;
-#if GTK_CHECK_VERSION(4, 0, 0)
   GdkEventType type;
-#endif
 
   sequence = gtk_gesture_get_last_updated_sequence(gesture);
   event = gtk_gesture_get_last_event(gesture, sequence);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   type = gdk_event_get_event_type(event);
   if (type == GDK_TOUCH_BEGIN || type == GDK_BUTTON_PRESS) {
     gtk_gesture_set_sequence_state(gesture, sequence, GTK_EVENT_SEQUENCE_DENIED);
   }
-#else
-if (event->type == GDK_TOUCH_BEGIN || event->type == GDK_BUTTON_PRESS) {
-    gtk_gesture_set_sequence_state(gesture, sequence, GTK_EVENT_SEQUENCE_DENIED);
-  }
-#endif
 }
 
 static double
