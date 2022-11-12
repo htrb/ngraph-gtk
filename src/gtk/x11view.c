@@ -627,17 +627,17 @@ PasteObjectsFromClipboard(void)
   gdk_clipboard_read_text_async(clipboard, NULL, text_async_completed, d);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 graph_dropped_response(int ret, gpointer user_data)
 {
   char *fname, *cwd;
+  fname = (char *) user_data;
 
   if (! ret) {
+    g_free(fname);
     return;
   }
 
-  fname = (char *) user_data;
   cwd = ngetcwd();
   if (chdir_to_ngp(fname)) {
     if (cwd) {
@@ -653,7 +653,6 @@ graph_dropped_response(int ret, gpointer user_data)
   }
   g_free(fname);
 }
-#endif
 
 int
 graph_dropped(const char *str)
@@ -676,31 +675,7 @@ graph_dropped(const char *str)
     return 1;
   }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   CheckSave(graph_dropped_response, fname);
-#else
-  if (!CheckSave()) {
-    g_free(fname);
-    return 1;
-  }
-
-  cwd = ngetcwd();
-  if (chdir_to_ngp(fname)) {
-    if (cwd) {
-      g_free(cwd);
-    }
-    g_free(fname);
-    return 1;
-  }
-
-  if (LoadNgpFile(fname, FALSE, "-f") && cwd) {
-    nchdir(cwd);
-  }
-  if (cwd) {
-    g_free(cwd);
-  }
-  g_free(fname);
-#endif
   return 0;
 }
 
