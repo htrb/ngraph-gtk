@@ -57,22 +57,16 @@
 #define COMMENT_BUF_SIZE 1024
 
 static GtkWidget *ProgressDialog = NULL;
-#if GTK_CHECK_VERSION(4, 0, 0)
 #define PROGRESSBAR_N 2
 static GtkProgressBar *ProgressBar[PROGRESSBAR_N];
 static GtkWidget *ProgressFrame, *ProgressText, *ProgressButton;
-#else
-static GtkProgressBar *ProgressBar, *ProgressBar2;
-#endif
 static unsigned int SaveCursor;
 
 static void AddNgpFileList(const char *file);
 static void ToFullPath(void);
 static void ToBasename(void);
 static void ToRalativePath(void);
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void ProgressDialogFinalize(void);
-#endif
 
 void
 OpenGRA(void)
@@ -2231,7 +2225,6 @@ CheckIniFile(obj_response_cb cb, struct objlist *obj, int id, int modified)
   }
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 struct progress_dialog_data {
   GString *msg[2], *title;
   double fraction[2];
@@ -2514,123 +2507,6 @@ ProgressDialogFinalize(void)
   g_free(ProgressDialogData);
   ProgressDialogData = NULL;
 }
-#else
-void
-ProgressDialogSetTitle(char *title)
-{
-  if (ProgressDialog)
-    gtk_window_set_title(GTK_WINDOW(ProgressDialog), title);
-}
-
-static void
-show_progress(int pos, const char *msg, double fraction)
-{
-  GtkProgressBar *bar;
-
-  if (! ProgressDialog)
-    return;
-
-  if (pos) {
-    bar = ProgressBar2;
-  } else {
-    bar = ProgressBar;
-  }
-
-  if (fraction < 0) {
-    gtk_progress_bar_pulse(bar);
-  } else {
-    gtk_progress_bar_set_fraction(bar, fraction);
-  }
-
-  gtk_progress_bar_set_text(bar, msg);
-}
-
-static void
-stop_btn_clicked(GtkButton *button, gpointer user_data)
-{
-  set_interrupt();
-}
-
-void
-ProgressDialogCreate(char *title)
-{
-  GtkWidget *btn, *vbox, *hbox;
-
-  if (TopLevel == NULL)
-    return;
-
-  reset_interrupt();
-
-  SaveCursor = NGetCursor();
-  NSetCursor(GDK_WATCH);
-
-  set_draw_lock(DrawLockDraw);
-
-  if (ProgressDialog) {
-    ProgressDialogSetTitle(title);
-    show_progress(0, "", 0);
-    show_progress(1, "", 0);
-    set_progress_func(show_progress);
-    gtk_widget_show_all(ProgressDialog);
-    return;
-  }
-
-  ProgressDialog = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-  g_signal_connect(ProgressDialog, "delete-event", G_CALLBACK(gtk_true), NULL);
-  gtk_window_set_title(GTK_WINDOW(ProgressDialog), title);
-
-  gtk_window_set_transient_for(GTK_WINDOW(ProgressDialog), GTK_WINDOW(TopLevel));
-  gtk_window_set_modal(GTK_WINDOW(ProgressDialog), TRUE);
-  gtk_window_set_position(GTK_WINDOW(ProgressDialog), GTK_WIN_POS_CENTER);
-  gtk_window_set_type_hint(GTK_WINDOW(ProgressDialog), GDK_WINDOW_TYPE_HINT_DIALOG);
-
-  vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-
-  ProgressBar = GTK_PROGRESS_BAR(gtk_progress_bar_new());
-  gtk_progress_bar_set_ellipsize(ProgressBar, PANGO_ELLIPSIZE_MIDDLE);
-  gtk_progress_bar_set_show_text(ProgressBar, TRUE);
-  gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(ProgressBar), FALSE, FALSE, 4);
-
-  ProgressBar2 = GTK_PROGRESS_BAR(gtk_progress_bar_new());
-  gtk_progress_bar_set_ellipsize(ProgressBar2, PANGO_ELLIPSIZE_MIDDLE);
-  gtk_progress_bar_set_show_text(ProgressBar2, TRUE);
-  gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(ProgressBar2), FALSE, FALSE, 4);
-
-  btn = gtk_button_new_with_mnemonic(_("_Stop"));
-  set_button_icon(btn, "process-stop");
-  g_signal_connect(btn, "clicked", G_CALLBACK(stop_btn_clicked), NULL);
-#if USE_HEADER_BAR
-  hbox = gtk_header_bar_new();
-  gtk_header_bar_set_title(GTK_HEADER_BAR(hbox), title);
-  gtk_header_bar_pack_end(GTK_HEADER_BAR(hbox), btn);
-  gtk_window_set_titlebar(GTK_WINDOW(ProgressDialog), hbox);
-#else
-  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-
-  gtk_box_pack_end(GTK_BOX(hbox), btn, FALSE, FALSE, 4);
-
-  gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
-#endif
-  gtk_container_add(GTK_CONTAINER(ProgressDialog), vbox);
-
-  gtk_window_set_default_size(GTK_WINDOW(ProgressDialog), 400, -1);
-  gtk_widget_show_all(ProgressDialog);
-
-  set_progress_func(show_progress);
-}
-
-void
-ProgressDialogFinalize(void)
-{
-  if (TopLevel == NULL)
-    return;
-
-  gtk_widget_hide(ProgressDialog);
-  NSetCursor(SaveCursor);
-  set_progress_func(NULL);
-  set_draw_lock(DrawLockNone);
-}
-#endif
 
 void
 ErrorMessage(void)
