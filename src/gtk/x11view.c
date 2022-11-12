@@ -236,36 +236,21 @@ scroll_deceleration_cb(GtkWidget *widget, GdkFrameClock *frame_clock, gpointer u
 
   d = (struct Viewer *) user_data;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   x = scrollbar_get_value(d->HScroll);
   y = scrollbar_get_value(d->VScroll);
-#else
-  x = gtk_range_get_value(GTK_RANGE(d->HScroll));
-  y = gtk_range_get_value(GTK_RANGE(d->VScroll));
-#endif
   x += (d->scroll_prm.x - x) / SCROLL_DIV;
   y += (d->scroll_prm.y - y) / SCROLL_DIV;
 
   if (fabs(d->scroll_prm.x - x) < SCROLL_DECELERATION_LIMIT &&
       fabs(d->scroll_prm.y - y) < SCROLL_DECELERATION_LIMIT) {
     d->deceleration_prm.id = 0;
-#if GTK_CHECK_VERSION(4, 0, 0)
     scrollbar_set_value(d->HScroll, d->scroll_prm.x);
     scrollbar_set_value(d->VScroll, d->scroll_prm.y);
-#else
-    gtk_range_set_value(GTK_RANGE(d->HScroll), d->scroll_prm.x);
-    gtk_range_set_value(GTK_RANGE(d->VScroll), d->scroll_prm.y);
-#endif
     return G_SOURCE_REMOVE;
   }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   scrollbar_set_value(d->HScroll, x);
   scrollbar_set_value(d->VScroll, y);
-#else
-  gtk_range_set_value(GTK_RANGE(d->HScroll), x);
-  gtk_range_set_value(GTK_RANGE(d->VScroll), y);
-#endif
 
   return G_SOURCE_CONTINUE;
 }
