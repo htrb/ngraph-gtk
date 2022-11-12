@@ -282,13 +282,8 @@ range_increment(GtkWidget *w, double inc)
   if (inc == 0) {
     return;
   }
-#if GTK_CHECK_VERSION(4, 0, 0)
   val = scrollbar_get_value(w);
   scrollbar_set_value(w, val + inc);
-#else
-  val = gtk_range_get_value(GTK_RANGE(w));
-  gtk_range_set_value(GTK_RANGE(w), val + inc);
-#endif
 }
 
 static void
