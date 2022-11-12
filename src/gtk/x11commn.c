@@ -2021,8 +2021,6 @@ PlotFileCB(struct objlist *obj, int id)
   return get_plot_cb_str(obj, id, source);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* to be implemented */
 struct set_file_hidden_data {
   response_cb cb;
   gpointer user_data;
@@ -2152,73 +2150,6 @@ SetFileHidden(response_cb cb, gpointer user_data)
   DialogExecute(TopLevel, &DlgSelect);
   return 0;
 }
-#else
-int
-SetFileHidden(void)
-{
-  struct objlist *fobj;
-  int lastinst;
-  struct narray farray, ifarray;
-  int i, a, r;
-
-  fobj = chkobject("data");
-  if (fobj == NULL) {
-    return 1;
-  }
-
-  lastinst = chkobjlastinst(fobj);
-  if (lastinst < 0) {
-    return 1;
-  }
-
-  arrayinit(&ifarray, sizeof(int));
-  for (i = 0; i <= lastinst; i++) {
-    getobj(fobj, "hidden", i, 0, NULL, &a);
-    if (!a) {
-      arrayadd(&ifarray, &i);
-    }
-  }
-
-  r = 0;
-  SelectDialog(&DlgSelect, fobj, NULL, FileCB, &farray, &ifarray);
-  if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
-    int num, inum, *array, undo, modified = FALSE;
-    a = TRUE;
-    undo = menu_save_undo_single(UNDO_TYPE_EDIT, "data");
-    for (i = 0; i <= lastinst; i++) {
-      putobj(fobj, "hidden", i, &a);
-    }
-    num = arraynum(&farray);
-    array = arraydata(&farray);
-    a = FALSE;
-    for (i = 0; i < num; i++) {
-      putobj(fobj, "hidden", array[i], &a);
-    }
-
-    inum = arraynum(&ifarray);
-    if (inum != num) {
-      modified = TRUE;
-    } else {
-      for (i = 0; i < num; i++) {
-	if (arraynget_int(&ifarray, i) != array[i]) {
-	  modified = TRUE;
-	  break;
-	}
-      }
-    }
-    r = 1;
-    if (modified) {
-      set_graph_modified();
-    } else {
-      menu_undo_internal(undo);
-    }
-  }
-
-  arraydel(&ifarray);
-  arraydel(&farray);
-  return r;
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 struct CheckIniFile_data {
