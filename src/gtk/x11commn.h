@@ -36,17 +36,12 @@ void FitCopy(struct objlist *obj, int did, int sid);
 void FitDel(struct objlist *obj, int id);
 void ArrayDel(struct objlist *obj, int id);
 void FitClear(void);
-#if GTK_CHECK_VERSION(4, 0, 0)
+
 typedef void (* obj_response_cb) (int response, struct objlist *obj, int id, int modified);
 
 void LoadNgpFile(const char *File, int console, const char *option, const char *cwd);
 void CheckSave(response_cb cb, gpointer user_data);
 void CheckIniFile(obj_response_cb cb, struct objlist *obj, int id, int modified);
-#else
-int LoadNgpFile(char *File, int console, char *option);
-int CheckSave(void);
-int CheckIniFile(void);
-#endif
 int SaveDrawrable(char *name, int storedata, int storemerge, int save_decimalsign);
 int GraphSave(int overwrite);
 void DeleteDrawable(void);
@@ -58,7 +53,7 @@ void free_console(int allocnow);
 char *FileCB(struct objlist *obj, int id);
 char *PlotFileCB(struct objlist *obj, int id);
 char *MergeFileCB(struct objlist *obj, int id);
-#if GTK_CHECK_VERSION(4, 0, 0)
+
 typedef void (* progress_func) (gpointer user_data);
 
 void SetFileHidden(response_cb cb, gpointer user_data);
@@ -66,10 +61,4 @@ void ProgressDialogSetTitle(const char *title);
 void ProgressDialogCreate(char *title, progress_func update, progress_func finalize, gpointer data);
 void ProgressDialog_append_text(const char *text);
 int ProgressDialogIsActive(void);
-#else
-int SetFileHidden(void);
-void ProgressDialogSetTitle(char *title);
-void ProgressDialogCreate(char *title);
-void ProgressDialogFinalize(void);
-#endif
 void ErrorMessage(void);
