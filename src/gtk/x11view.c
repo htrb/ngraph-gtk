@@ -568,7 +568,6 @@ paste_text(const gchar *text, struct Viewer *d)
   g_thread_new(NULL, paste_script_evaluate, data);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 remove_cr_in_place(char *text)
 {
@@ -627,36 +626,6 @@ PasteObjectsFromClipboard(void)
   clipboard = gtk_widget_get_clipboard(TopLevel);
   gdk_clipboard_read_text_async(clipboard, NULL, text_async_completed, d);
 }
-#else
-static void
-PasteObjectsFromClipboard(void)
-{
-  GtkClipboard *clip;
-  struct Viewer *d;
-
-  d = &NgraphApp.Viewer;
-
-  if (d->Win == NULL || (d->Mode != PointB && d->Mode != LegendB)) {
-    return;
-  }
-
-  clip = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
-  if (gtk_clipboard_wait_is_text_available(clip)) {
-    GdkDevice *device;
-    gint x, y;
-    gtk_clipboard_request_text(clip, paste_cb, NULL);
-    device = gtk_get_current_event_device(); /* fix-me: is there any other appropriate way to get the device? */
-    if (device && gdk_device_get_source(device) != GDK_SOURCE_KEYBOARD) {
-      GdkWindow *win;
-      win = gtk_widget_get_window(d->Win);
-      if (win) {
-	gdk_window_get_device_position(win, device, &x, &y, NULL);
-	set_mouse_cursor_hover(d, x, y);
-      }
-    }
-  }
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 static void
