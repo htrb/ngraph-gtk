@@ -1550,13 +1550,8 @@ swipe_cb(GtkGestureSwipe *gesture, gdouble velocity_x, gdouble velocity_y, gpoin
   frame_clock = gtk_widget_get_frame_clock(GTK_WIDGET(d->Win));
   d->deceleration_prm.start = gdk_frame_clock_get_frame_time (frame_clock);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   d->drag_prm.x = scrollbar_get_value(d->HScroll);
   d->drag_prm.y = scrollbar_get_value(d->VScroll);
-#else
-  d->drag_prm.x = gtk_range_get_value(GTK_RANGE(d->HScroll));
-  d->drag_prm.y = gtk_range_get_value(GTK_RANGE(d->VScroll));
-#endif
   d->drag_prm.vx = velocity_x;
   d->drag_prm.vy = velocity_y;
 
