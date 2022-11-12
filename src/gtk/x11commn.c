@@ -2086,7 +2086,7 @@ set_file_hidden_response(struct response_callback *cb)
   }
 }
 
-int
+void
 SetFileHidden(response_cb cb, gpointer user_data)
 {
   struct objlist *fobj;
@@ -2098,9 +2098,9 @@ SetFileHidden(response_cb cb, gpointer user_data)
   fobj = chkobject("data");
   if (fobj == NULL) {
     if (cb) {
-      cb(0, user_data);
+      cb(1, user_data);
     }
-    return 1;
+    return;
   }
 
   lastinst = chkobjlastinst(fobj);
@@ -2108,15 +2108,15 @@ SetFileHidden(response_cb cb, gpointer user_data)
     if (cb) {
       cb(1, user_data);
     }
-    return 1;
+    return;
   }
 
   data = g_malloc0(sizeof(*data));
   if (data == NULL) {
     if (cb) {
-      cb(0, user_data);
+      cb(1, user_data);
     }
-    return 1;
+    return;
   }
   data->cb = cb;
   data->user_data = user_data;
@@ -2124,19 +2124,19 @@ SetFileHidden(response_cb cb, gpointer user_data)
   ifarray = arraynew(sizeof(int));
   if (ifarray == NULL) {
     if (cb) {
-      cb(0, user_data);
+      cb(1, user_data);
     }
     g_free(data);
-    return 1;
+    return;
   }
   farray = arraynew(sizeof(int));
   if (farray == NULL) {
     if (cb) {
-      cb(0, user_data);
+      cb(1, user_data);
     }
     g_free(data);
     arrayfree(ifarray);
-    return 1;
+    return;
   }
   for (i = 0; i <= lastinst; i++) {
     getobj(fobj, "hidden", i, 0, NULL, &a);
@@ -2148,7 +2148,6 @@ SetFileHidden(response_cb cb, gpointer user_data)
   SelectDialog(&DlgSelect, fobj, NULL, FileCB, farray, ifarray);
   response_callback_add(&DlgSelect, set_file_hidden_response, NULL, data);
   DialogExecute(TopLevel, &DlgSelect);
-  return 0;
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)

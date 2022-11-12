@@ -61,7 +61,7 @@ char *MergeFileCB(struct objlist *obj, int id);
 #if GTK_CHECK_VERSION(4, 0, 0)
 typedef void (* progress_func) (gpointer user_data);
 
-int SetFileHidden(response_cb cb, gpointer user_data);
+void SetFileHidden(response_cb cb, gpointer user_data);
 void ProgressDialogSetTitle(const char *title);
 void ProgressDialogCreate(char *title, progress_func update, progress_func finalize, gpointer data);
 void ProgressDialog_append_text(const char *text);
