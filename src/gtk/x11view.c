@@ -498,6 +498,8 @@ paste_text_finalise(gpointer user_data)
 
   data = (struct paste_text_data *) user_data;
   g_thread_join(data->thread);
+  menu_lock(FALSE);
+
   focus_new_insts(data->draw_obj, data->idarray, objects);
   arrayfree(data->idarray);
 
@@ -560,6 +562,7 @@ paste_text(const gchar *text, struct Viewer *d)
   data->draw_obj = draw_obj;
   data->d = d;
 
+  menu_lock(TRUE);
   UnFocus();
   menu_save_undo(UNDO_TYPE_PASTE, NULL);
   g_thread_new(NULL, paste_script_evaluate, data);
