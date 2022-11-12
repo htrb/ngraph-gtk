@@ -1325,7 +1325,7 @@ GraphSave_response(int ret, gpointer user_data)
 }
 
 static void
-GraphSaveSub(char *file, char *prev_wd, char *current_wd)
+GraphSaveSub(const char *file, const char *prev_wd, const char *current_wd)
 {
   if (file) {
     struct graph_save_data *save_data;
@@ -1341,11 +1341,7 @@ GraphSaveSub(char *file, char *prev_wd, char *current_wd)
     save_data->current_wd = g_strdup(current_wd);
     save_data->cb = GraphSave_response;
     get_save_opt(save_data);
-    g_free(file);
   }
-
-  g_free(current_wd);
-  g_free(prev_wd);
 }
 
 static void
@@ -1361,6 +1357,9 @@ graph_save_response(char *file, gpointer user_data)
     current_wd = NULL;
   }
   GraphSaveSub(file, prev_wd, current_wd);
+  g_free(file);
+  g_free(current_wd);
+  g_free(prev_wd);
 }
 
 int
@@ -1384,11 +1383,7 @@ GraphSave(int overwrite)
                      &(Menulocal.graphloaddir), initfil, chd,
                      graph_save_response, prev_wd);
   } else {
-    char *file;
-    file = g_strdup(initfil);
-    if (file) {
-      GraphSaveSub(file, NULL, NULL);
-    }
+    GraphSaveSub(initfil, NULL, NULL);
   }
   return IDOK;
 }
