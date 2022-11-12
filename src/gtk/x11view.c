@@ -1418,21 +1418,6 @@ menu_activate(GtkMenuShell *menushell, gpointer user_data)
 }
 #endif
 
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-static gboolean
-ev_popup_menu(GtkWidget *w, gpointer client_data)
-{
-  struct Viewer *d;
-
-  if (Menulock || Globallock) return TRUE;
-
-  d = (struct Viewer *) client_data;
-
-  do_popup(NULL, d);
-  return TRUE;
-}
-#endif
-
 static void
 update_drag(GtkGestureDrag *gesture, gdouble offset_x, gdouble offset_y, gpointer user_data)
 {
