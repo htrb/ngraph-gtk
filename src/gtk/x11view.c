@@ -6868,7 +6868,6 @@ SetScroller(void)
   y = height / 2;
 
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   scrollbar_set_range(d->HScroll, 0, width);
   scrollbar_set_value(d->HScroll, x);
   scrollbar_set_increment(d->HScroll, 10, 40);
@@ -6876,15 +6875,6 @@ SetScroller(void)
   scrollbar_set_range(d->VScroll, 0, height);
   scrollbar_set_value(d->VScroll, y);
   scrollbar_set_increment(d->VScroll, 10, 40);
-#else
-  gtk_range_set_range(GTK_RANGE(d->HScroll), 0, width);
-  gtk_range_set_value(GTK_RANGE(d->HScroll), x);
-  gtk_range_set_increments(GTK_RANGE(d->HScroll), 10, 40);
-
-  gtk_range_set_range(GTK_RANGE(d->VScroll), 0, height);
-  gtk_range_set_value(GTK_RANGE(d->VScroll), y);
-  gtk_range_set_increments(GTK_RANGE(d->VScroll), 10, 40);
-#endif
 
   d->hscroll = x;
   d->vscroll = y;
