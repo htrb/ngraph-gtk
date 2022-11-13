@@ -6087,7 +6087,6 @@ do_popup(gdouble x, gdouble y, struct Viewer *d)
   gtk_popover_popup(GTK_POPOVER(d->popup));
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static gboolean
 ViewerEvScroll(GtkEventControllerScroll *self, double x, double y, gpointer client_data)
 {
@@ -6123,59 +6122,6 @@ ViewerEvScroll(GtkEventControllerScroll *self, double x, double y, gpointer clie
   }
   return TRUE;
 }
-#else
-static gboolean
-ViewerEvScroll(GtkWidget *w, GdkEventScroll *e, gpointer client_data)
-{
-  struct Viewer *d;
-  TPoint point;
-  gdouble x, y;
-
-  point.x = e->x;
-  point.y = e->y;
-
-  d = (struct Viewer *) client_data;
-
-  switch (e->direction) {
-  case GDK_SCROLL_UP:
-    if (e->state & GDK_CONTROL_MASK) {
-      mouse_down_zoom_little(0, &point, d, FALSE);
-    } else {
-      range_increment(d->VScroll, -SCROLL_INC);
-    }
-    return TRUE;
-  case GDK_SCROLL_DOWN:
-    if (e->state & GDK_CONTROL_MASK) {
-      mouse_down_zoom_little(0, &point, d, TRUE);
-    } else {
-      range_increment(d->VScroll, SCROLL_INC);
-    }
-    return TRUE;
-  case GDK_SCROLL_LEFT:
-    range_increment(d->HScroll, -SCROLL_INC);
-    return TRUE;
-  case GDK_SCROLL_RIGHT:
-    range_increment(d->HScroll, SCROLL_INC);
-    return TRUE;
-  case GDK_SCROLL_SMOOTH:
-    if (gdk_event_get_scroll_deltas((GdkEvent *) e, &x, &y)) {
-      if ((e->state & GDK_CONTROL_MASK) && y != 0) {
-	mouse_down_zoom_little(0, &point, d, y > 0);
-      } else {
-#if OSX
-	range_increment(d->HScroll, x);
-	range_increment(d->VScroll, y);
-#else
-	range_increment(d->HScroll, x * SCROLL_INC);
-	range_increment(d->VScroll, y * SCROLL_INC);
-#endif
-      }
-    }
-    return TRUE;
-  }
-  return FALSE;
-}
-#endif
 
 #if ! GTK_CHECK_VERSION(4, 0, 0)
 static GdkModifierType
