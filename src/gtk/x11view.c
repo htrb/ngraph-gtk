@@ -6526,22 +6526,8 @@ SetHRuler(const struct Viewer *d)
 {
   gdouble x1, x2, zoom;
   int width;
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  GdkWindow *win;
-#endif
 
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  win = gtk_widget_get_window(d->Win);
-  if (win == NULL) {
-    return;
-  }
-#endif
-
-#if GTK_CHECK_VERSION(4, 0, 0)
   width = gtk_widget_get_size(d->Win, GTK_ORIENTATION_HORIZONTAL);
-#else
-  width = gdk_window_get_width(win);
-#endif
   zoom = Menulocal.PaperZoom / 10000.0;
   x1 = N2GTK_RULER_METRIC(calc_mouse_x(0, zoom, d));
   x2 = x1 + N2GTK_RULER_METRIC(mxp2d(width)) / zoom;
