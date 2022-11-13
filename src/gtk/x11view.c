@@ -5511,11 +5511,7 @@ move_data_cancel(struct Viewer *d, gboolean show_message)
 }
 
 static gboolean
-#if GTK_CHECK_VERSION(4, 0, 0)
 ViewerEvRButtonDown(unsigned int state, TPoint *point, struct Viewer *d)
-#else
-ViewerEvRButtonDown(unsigned int state, TPoint *point, struct Viewer *d, GdkEventButton *e)
-#endif
 {
   int num;
   struct Point *po;
@@ -5566,12 +5562,7 @@ ViewerEvRButtonDown(unsigned int state, TPoint *point, struct Viewer *d, GdkEven
   } else if (d->Mode == ZoomB) {
     mouse_down_zoom(state, point, d, ! (state & GDK_CONTROL_MASK));
   } else if (d->MouseMode == MOUSENONE) {
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
     do_popup(point->x, point->y, d);
-#else
-    do_popup(e, d);
-#endif
   }
 
   gtk_widget_queue_draw(d->Win);
