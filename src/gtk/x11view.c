@@ -6880,22 +6880,6 @@ SetScroller(void)
   d->vscroll = y;
 }
 
-static double
-get_range_max(GtkWidget *w)
-{
-#if GTK_CHECK_VERSION(4, 0, 0)
-  return scrollbar_get_max(w);
-#else
-  GtkAdjustment *adj;
-  double val;
-
-  adj = gtk_range_get_adjustment(GTK_RANGE(w));
-  val = (adj) ? gtk_adjustment_get_upper(adj) : 0;
-
-  return val;
-#endif
-}
-
 void
 ChangeDPI(void)
 {
@@ -6908,8 +6892,8 @@ ChangeDPI(void)
 
   d = &NgraphApp.Viewer;
 
-  XRange = get_range_max(d->HScroll);
-  YRange = get_range_max(d->VScroll);
+  XRange = scrollbar_get_max(d->HScroll);
+  YRange = scrollbar_get_max(d->VScroll);
 
   XPos = nround(d->hscroll);
   YPos = nround(d->vscroll);
