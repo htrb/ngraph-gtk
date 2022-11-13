@@ -6799,17 +6799,6 @@ create_layers(void)
 static void
 create_pix(int w, int h)
 {
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
-#else
-  GdkWindow *window;
-
-  window = gtk_widget_get_window(NgraphApp.Viewer.Win);
-  if (window == NULL) {
-    return;
-  }
-#endif
-
   if (w == 0) {
     w = 1;
   }
