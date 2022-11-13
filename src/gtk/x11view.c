@@ -7022,10 +7022,15 @@ draw(struct draw_data *data)
 static void
 draw_response(int res, gpointer user_data)
 {
+  struct draw_data *data;
+  data = (struct draw_data *) user_data;
   if (res) {
-    struct draw_data *data;
-    data = (struct draw_data *) user_data;
     draw(data);
+  } else {
+    if (data->cb) {
+      data->cb(data->data);
+    }
+    g_free(data);
   }
 }
 
