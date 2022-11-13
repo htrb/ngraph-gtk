@@ -5931,14 +5931,6 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
     return FALSE;
   }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
-#else
-  if (gtk_widget_get_window(d->Win) == NULL) {
-    return FALSE;
-  }
-#endif
-
   d->KeyMask = state;
   zoom = Menulocal.PaperZoom / 10000.0;
 
