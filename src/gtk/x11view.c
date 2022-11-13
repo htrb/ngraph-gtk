@@ -6177,11 +6177,7 @@ ViewerEvButtonDown(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y,
 }
 
 static void
-#if GTK_CHECK_VERSION(4, 0, 0)
 ViewerEvButtonUp(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y, gpointer client_data)
-#else
-ViewerEvButtonUp(GtkGestureMultiPress *gesture, gint n_press, gdouble x, gdouble y, gpointer client_data)
-#endif
 {
   struct Viewer *d;
   TPoint point;
@@ -6190,11 +6186,7 @@ ViewerEvButtonUp(GtkGestureMultiPress *gesture, gint n_press, gdouble x, gdouble
 
   d = (struct Viewer *) client_data;
   button = gtk_gesture_single_get_current_button(GTK_GESTURE_SINGLE(gesture));
-#if GTK_CHECK_VERSION(4, 0, 0)
   state = gtk_event_controller_get_current_event_state(GTK_EVENT_CONTROLLER(gesture));
-#else
-  state = get_key_modifier(GTK_GESTURE_SINGLE(gesture));
-#endif
 
   d->KeyMask = state;
 
