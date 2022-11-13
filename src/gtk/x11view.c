@@ -4973,8 +4973,6 @@ swapint(int *a, int *b)
   *b = tmp;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
 struct create_drawble_data {
   struct objlist *obj, *obj2;
   int id, undo;
@@ -5090,69 +5088,6 @@ create_legend1(struct Viewer *d)
   }
   arraydel2(d->points);
 }
-#else
-static void
-create_legend1(struct Viewer *d)
-{
-  int num;
-  struct objlist *obj = NULL;
-  struct Point *po;
-  char *objects[2];
-  int id, x1, y1, undo;
-
-  d->Capture = FALSE;
-  num = arraynum(d->points);
-
-  if (d->Mode == MarkB) {
-    obj = chkobject("mark");
-  } else {
-    obj = chkobject("text");
-  }
-
-  if (obj == NULL) {
-    return;
-  }
-
-  undo = menu_save_undo_single(UNDO_TYPE_CREATE, obj->name);
-  id = newobj(obj);
-  if (id >= 0) {
-    int ret;
-    N_VALUE *inst;
-    presetting_set_obj_field(obj, id);
-    if (num >= 1) {
-      po = *(struct Point **) arraynget(d->points, 0);
-      x1 = po->x;
-      y1 = po->y;
-    }
-
-    inst = chkobjinst(obj, id);
-    _putobj(obj, "x", inst, &x1);
-    _putobj(obj, "y", inst, &y1);
-    PaintLock = TRUE;
-
-    if (d->Mode == MarkB) {
-      LegendMarkDialog(&DlgLegendMark, obj, id);
-      ret = DialogExecute(TopLevel, &DlgLegendMark);
-    } else {
-      LegendTextDialog(&DlgLegendText, obj, id);
-      ret = DialogExecute(TopLevel, &DlgLegendText);
-    }
-
-    if ((ret == IDDELETE) || (ret == IDCANCEL)) {
-      delobj(obj, id);
-      menu_delete_undo(undo);
-    } else {
-      set_graph_modified();
-    }
-    PaintLock = FALSE;
-  }
-
-  arraydel2(d->points);
-  objects[0] = obj->name;
-  objects[1] = NULL;
-  UpdateAll(objects);
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
