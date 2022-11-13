@@ -1858,9 +1858,11 @@ ViewerWinClose(void)
 static void
 viewer_win_file_update_response(int ret, gpointer user_data)
 {
+  char *objects[] = {"data", NULL};
   struct narray *dfile;
   dfile = (struct narray *) user_data;
   arrayfree(dfile);
+  UpdateAll(objects);
 }
 
 struct fileupdate_data
@@ -1877,7 +1879,6 @@ static void
 fileupdate_finalize(gpointer user_data)
 {
   struct fileupdate_data *data;
-  char *objects[] = {"data", NULL};
   struct narray *dfile;
   struct objlist *fileobj;
 
@@ -1886,7 +1887,6 @@ fileupdate_finalize(gpointer user_data)
   dfile = data->dfile;
   fileobj = data->fileobj;
   update_file_obj_multi(fileobj, dfile, FALSE, viewer_win_file_update_response, dfile);
-  UpdateAll(objects);
   g_free(data);
 }
 
