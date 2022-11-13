@@ -6935,22 +6935,12 @@ ChangeDPI(void)
 
   cancel_deceleration(d);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   scrollbar_set_range(d->HScroll, 0, width);
   scrollbar_set_value(d->HScroll, XPos);
-#else
-  gtk_range_set_range(GTK_RANGE(d->HScroll), 0, width);
-  gtk_range_set_value(GTK_RANGE(d->HScroll), XPos);
-#endif
   d->hscroll = XPos;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   scrollbar_set_range(d->VScroll, 0, height);
   scrollbar_set_value(d->VScroll, YPos);
-#else
-  gtk_range_set_range(GTK_RANGE(d->VScroll), 0, height);
-  gtk_range_set_value(GTK_RANGE(d->VScroll), YPos);
-#endif
   d->vscroll = YPos;
 
   if ((obj = chkobject("text")) != NULL) {
