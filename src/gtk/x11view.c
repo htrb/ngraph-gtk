@@ -5089,8 +5089,6 @@ create_legend1(struct Viewer *d)
   arraydel2(d->points);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
 static void
 create_path(struct Viewer *d)
 {
@@ -5136,65 +5134,6 @@ create_path(struct Viewer *d)
   arraydel2(d->points);
   return;
 }
-#else
-static void
-create_path(struct Viewer *d)
-{
-  struct objlist *obj = NULL;
-  struct narray *parray;
-  struct Point *po;
-  N_VALUE *inst;
-  int i, num, id, ret = IDCANCEL, undo;
-  char *objects[2];
-
-  d->Capture = FALSE;
-  num = arraynum(d->points);
-  obj = chkobject("path");
-
-  if (num < 3 || obj == NULL) {
-    goto ExitCreatePath;
-  }
-
-  undo = menu_save_undo_single(UNDO_TYPE_CREATE, obj->name);
-  id = newobj(obj);
-  if (id < 0) {
-    menu_delete_undo(undo);
-    goto ExitCreatePath;
-  }
-
-  presetting_set_obj_field(obj, id);
-  inst = chkobjinst(obj, id);
-  parray = arraynew(sizeof(int));
-
-  for (i = 0; i < num - 1; i++) {
-    po = *(struct Point **) arraynget(d->points, i);
-    arrayadd(parray, &po->x);
-    arrayadd(parray, &po->y);
-  }
-
-  _putobj(obj, "points", inst, parray);
-  PaintLock = TRUE;
-
-  LegendArrowDialog(&DlgLegendArrow, obj, id);
-  ret = DialogExecute(TopLevel, &DlgLegendArrow);
-
-  if (ret == IDDELETE || ret == IDCANCEL) {
-    menu_delete_undo(undo);
-    delobj(obj, id);
-  } else {
-    set_graph_modified();
-  }
-
-  PaintLock = FALSE;
-
- ExitCreatePath:
-  arraydel2(d->points);
-
-  objects[0] = obj->name;
-  objects[1] = NULL;
-  UpdateAll(objects);
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
