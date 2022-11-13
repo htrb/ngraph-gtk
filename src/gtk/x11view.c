@@ -6076,13 +6076,8 @@ check_focused_obj_type(const struct Viewer *d, int *type)
 }
 
 static void
-#if GTK_CHECK_VERSION(4, 0, 0)
 do_popup(gdouble x, gdouble y, struct Viewer *d)
-#else
-do_popup(GdkEventButton *event, struct Viewer *d)
-#endif
 {
-#if GTK_CHECK_VERSION(4, 0, 0)
   GdkRectangle rect;
   rect.x = x;
   rect.y = y;
@@ -6090,12 +6085,6 @@ do_popup(GdkEventButton *event, struct Viewer *d)
   rect.height = 1;
   gtk_popover_set_pointing_to(GTK_POPOVER(d->popup), &rect);
   gtk_popover_popup(GTK_POPOVER(d->popup));
-#else
-  if (! gtk_widget_get_realized(d->popup)) {
-    gtk_widget_realize(d->popup);
-  }
-  gtk_menu_popup_at_pointer(GTK_MENU(d->popup), ((GdkEvent *)event));
-#endif
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
