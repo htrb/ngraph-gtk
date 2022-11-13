@@ -3819,24 +3819,9 @@ static void
 ShowCrossGauge(cairo_t *cr, const struct Viewer *d)
 {
   int x, y, width, height;
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  GdkWindow *win;
-#endif
 
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  win = gtk_widget_get_window(d->Win);
-  if (win == NULL) {
-    return;
-  }
-#endif
-
-#if GTK_CHECK_VERSION(4, 0, 0)
   width = gtk_widget_get_size(d->Win, GTK_ORIENTATION_HORIZONTAL);
   height = gtk_widget_get_size(d->Win, GTK_ORIENTATION_VERTICAL);
-#else
-  width = gdk_window_get_width(win);
-  height = gdk_window_get_height(win);
-#endif
 
   x = d->CrossX;
   y = d->CrossY;
