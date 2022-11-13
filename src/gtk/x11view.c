@@ -4479,14 +4479,7 @@ mouse_up_point(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
     Trimming(x1, y1, x2, y2);
     break;
   case DataB:
-#if GTK_CHECK_VERSION(4, 0, 0)
     ViewerWinFileUpdate(x1, y1, x2, y2, err);
-#else
-    if (ViewerWinFileUpdate(x1, y1, x2, y2, err)) {
-      char *objects[] = {"data", NULL};
-      UpdateAll(objects);
-    }
-#endif
     break;
   case EvalB:
     Evaluate(x1, y1, x2, y2, err, d);
