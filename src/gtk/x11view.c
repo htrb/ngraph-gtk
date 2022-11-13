@@ -2176,8 +2176,6 @@ Evaluate(int x1, int y1, int x2, int y2, int err, struct Viewer *d)
   ProgressDialogCreate(_("Evaluating"), evaluate_main, evaluate_finalize, data);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
 struct trimming_data {
   int x1, y1, x2, y2;
 };
@@ -2330,120 +2328,6 @@ Trimming(int x1, int y1, int x2, int y2)
   response_callback_add(&DlgSelect, trimming_response, NULL, data);
   DialogExecute(TopLevel, &DlgSelect);
 }
-#else
-static void
-Trimming(int x1, int y1, int x2, int y2)
-{
-  struct narray farray;
-  struct objlist *obj;
-  int maxx, maxy, minx, miny;
-  int dir, room;
-
-  if ((x1 == x2) && (y1 == y2))
-    return;
-
-  if ((obj = chkobject("axis")) == NULL)
-    return;
-
-  if (chkobjlastinst(obj) == -1)
-    return;
-
-  SelectDialog(&DlgSelect, obj, _("trimming (multi select)"), AxisCB, (struct narray *) &farray, NULL);
-
-  if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
-    int i;
-    int *array, num;
-    int vx1, vy1, vx2, vy2;
-    char *argv[4];
-    vx1 = x1 - x2;
-    vy1 = y1 - y2;
-    vx2 = x2 - x1;
-    vy2 = y1 - y2;
-
-    num = arraynum(&farray);
-    array = arraydata(&farray);
-
-    if (num > 0) {
-      menu_save_undo_single(UNDO_TYPE_TRIMMING, obj->name);
-    }
-    for (i = 0; i < num; i++) {
-      double ax, ay, ip1, ip2, min, max;
-      int id;
-      id = array[i];
-      getobj(obj, "direction", id, 0, NULL, &dir);
-
-      ax = cos(dir / 18000.0 * MPI);
-      ay = -sin(dir / 18000.0 * MPI);
-
-      ip1 = ax * vx1 + ay * vy1;
-      ip2 = ax * vx2 + ay * vy2;
-
-      if (fabs(ip1) > fabs(ip2)) {
-	if (ip1 > 0) {
-	  maxx = x1;
-	  maxy = y1;
-	  minx = x2;
-	  miny = y2;
-	} else if (ip1 < 0) {
-	  maxx = x2;
-	  maxy = y2;
-	  minx = x1;
-	  miny = y1;
-	} else {
-	  maxx = minx = 0;
-	  maxy = miny = 0;
-	}
-      } else {
-	if (ip2 > 0) {
-	  maxx = x2;
-	  maxy = y1;
-	  minx = x1;
-	  miny = y2;
-	} else if (ip2 < 0) {
-	  maxx = x1;
-	  maxy = y2;
-	  minx = x2;
-	  miny = y1;
-	} else {
-	  maxx = minx = 0;
-	  maxy = miny = 0;
-	}
-      }
-
-      if ((minx != maxx) && (miny != maxy)) {
-        int rcode1, rcode2;
-	argv[0] = (char *) &minx;
-	argv[1] = (char *) &miny;
-	argv[2] = NULL;
-	rcode1 = getobj(obj, "coordinate", id, 2, argv, &min);
-
-	argv[0] = (char *) &maxx;
-	argv[1] = (char *) &maxy;
-	argv[2] = NULL;
-	rcode2 = getobj(obj, "coordinate", id, 2, argv, &max);
-
-	if ((rcode1 != -1) && (rcode2 != -1)) {
-	  axis_scale_push(obj, id);
-	  room = 0;
-	  argv[0] = (char *) &min;
-	  argv[1] = (char *) &max;
-	  argv[2] = (char *) &room;
-	  argv[3] = NULL;
-	  exeobj(obj, "scale", id, 3, argv);
-	  set_graph_modified();
-	}
-      }
-    }
-    AdjustAxis();
-    argv[0] = "data";
-    argv[1] = "axis";
-    argv[2] = "axisgrid";
-    argv[3] = NULL;
-    UpdateAll(argv);
-  }
-  arraydel(&farray);
-}
-#endif
 
 struct view_region {
   int x1, y1, x2, y2, err;
