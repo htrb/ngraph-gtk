@@ -6374,7 +6374,6 @@ ViewerEvKeyUp(GtkEventControllerKey *controller, guint keyval, guint keycode, Gd
   }
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 ViewerEvRealize(GtkWidget *w, gpointer client_data)
 {
@@ -6383,26 +6382,16 @@ ViewerEvRealize(GtkWidget *w, gpointer client_data)
   height = gtk_drawing_area_get_content_height(GTK_DRAWING_AREA(w));
   ViewerEvSize(w, width, height, client_data);
 }
-#endif
 
 static void
-#if GTK_CHECK_VERSION(4, 0, 0)
 ViewerEvSize(GtkWidget *w, int width, int height, gpointer client_data)
-#else
-ViewerEvSize(GtkWidget *w, GtkAllocation *allocation, gpointer client_data)
-#endif
 {
   struct Viewer *d;
 
   d = (struct Viewer *) client_data;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   d->cx = width / 2;
   d->cy = height / 2;
-#else
-  d->cx = allocation->width / 2;
-  d->cy = allocation->height / 2;
-#endif
 
   ChangeDPI();
 }
