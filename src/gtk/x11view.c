@@ -6014,7 +6014,6 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
   return FALSE;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 ViewerEvMouseMotion(GtkEventControllerMotion *controller, gdouble x, gdouble y, gpointer client_data)
 {
@@ -6029,28 +6028,6 @@ ViewerEvMouseMotion(GtkEventControllerMotion *controller, gdouble x, gdouble y, 
   ViewerEvMouseMove(state, &point, d);
   //  gdk_event_request_motions(e); /* handles is_hint events */
 }
-#else
-static gboolean
-ViewerEvMouseMotion(GtkWidget *w, GdkEventMotion *e, gpointer client_data)
-{
-  TPoint point;
-#if 0
-  static guint32 etime = 0;
-
-  if (e->time - etime < 100)
-    return FALSE;
-
-  etime = e->time;
-#endif
-
-  point.x = e->x;
-  point.y = e->y;
-  ViewerEvMouseMove(e->state, &point, (struct Viewer *) client_data);
-  gdk_event_request_motions(e); /* handles is_hint events */
-
-  return FALSE;
-}
-#endif
 
 int
 check_focused_obj_type(const struct Viewer *d, int *type)
