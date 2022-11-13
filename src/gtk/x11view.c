@@ -6123,21 +6123,6 @@ ViewerEvScroll(GtkEventControllerScroll *self, double x, double y, gpointer clie
   return TRUE;
 }
 
-static GdkModifierType
-get_key_modifier(GtkGestureSingle *gesture)
-{
-  GdkModifierType state;
-  const GdkEvent *event;
-  GdkEventSequence *sequence;
-
-  sequence = gtk_gesture_single_get_current_sequence(gesture);
-  event = gtk_gesture_get_last_event(GTK_GESTURE(gesture), sequence);
-  if (gdk_event_get_state(event, &state)) {
-    return state;
-  }
-  return 0;
-}
-
 static void
 ViewerEvButtonDown(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y, gpointer client_data)
 {
