@@ -5495,12 +5495,6 @@ ViewerEvLButtonDblClk(unsigned int state, TPoint *point, struct Viewer *d)
     break;
   }
 
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  if ((d->Mode & POINT_TYPE_DRAW_ALL) && ! KeepMouseMode) {
-    set_pointer_mode(PointerModeDefault);
-  }
-#endif
-
   return TRUE;
 }
 
