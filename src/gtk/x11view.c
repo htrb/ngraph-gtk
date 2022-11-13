@@ -7052,7 +7052,6 @@ Draw(int SelectFile, draw_cb cb, gpointer user_data)
   draw(data);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 viewer_draw_finalize(gpointer user_data)
 {
@@ -7072,23 +7071,6 @@ CmViewerDraw(void *w, gpointer client_data)
 
   Draw(select_file, viewer_draw_finalize, NULL);
 }
-#else
-void
-CmViewerDraw(void *w, gpointer client_data)
-{
-  int select_file;
-
-  if (Menulock || Globallock)
-    return;
-
-  select_file = GPOINTER_TO_INT(client_data);
-
-  Draw(select_file);
-
-  FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
-  AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, DRAW_NONE);
-}
-#endif
 
 static int
 search_axis_group(struct objlist *obj, int id, const char *group,
