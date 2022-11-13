@@ -5858,25 +5858,10 @@ static void
 mouse_move_scroll(TPoint *point, struct Viewer *d)
 {
   int h, w;
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  GdkWindow *win;
-#endif
   double dx, dy;
 
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  win = gtk_widget_get_window(d->Win);
-  if (win == NULL) {
-    return;
-  }
-#endif
-
-#if GTK_CHECK_VERSION(4, 0, 0)
   w = gtk_widget_get_size(d->Win, GTK_ORIENTATION_HORIZONTAL);
   h = gtk_widget_get_size(d->Win, GTK_ORIENTATION_VERTICAL);
-#else
-  w = gdk_window_get_width(win);
-  h = gdk_window_get_height(win);
-#endif
   dx = dy = 0;
   if (point->y > h) {
     dy = SCROLL_INC;
