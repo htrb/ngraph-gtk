@@ -7683,7 +7683,6 @@ ViewerUpdateCB(void *w, gpointer client_data)
   ViewUpdate();
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 void
 CmViewerButtonPressed(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y, gpointer user_data)
 {
@@ -7692,14 +7691,6 @@ CmViewerButtonPressed(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble
   KeepMouseMode = (state & GDK_SHIFT_MASK);
   gtk_gesture_set_state(GTK_GESTURE(gesture), GTK_EVENT_SEQUENCE_CLAIMED);
 }
-#else
-gboolean
-CmViewerButtonPressed(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
-{
-  KeepMouseMode = (event->state & GDK_SHIFT_MASK);
-  return FALSE;
-}
-#endif
 
 void
 CmEditMenuCB(void *w, gpointer client_data)
