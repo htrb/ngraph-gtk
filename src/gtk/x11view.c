@@ -6450,22 +6450,14 @@ ViewerEvPaint(GtkWidget *w, cairo_t *cr, gpointer client_data)
 }
 
 static void
-#if GTK_CHECK_VERSION(4, 0, 0)
 ViewerEvVScroll(GtkAdjustment *adj, gpointer user_data)
-#else
-ViewerEvVScroll(GtkRange *range, gpointer user_data)
-#endif
 {
   struct Viewer *d;
   double y;
 
   d = (struct Viewer *) user_data;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   y = gtk_adjustment_get_value(adj);
-#else
-  y = gtk_range_get_value(range);
-#endif
   if (d->vscroll == y) {
     return;
   }
