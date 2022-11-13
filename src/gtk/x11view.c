@@ -115,45 +115,25 @@ static struct narray SelList;
 #define IDEVMASK        101
 #define IDEVMOVE        102
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void ViewerEvSize(GtkWidget *w, int width, int height, gpointer client_data);
 static void ViewerEvRealize(GtkWidget *w, gpointer client_data);
 static void ViewerEvHScroll(GtkAdjustment *adj, gpointer user_data);
 static void ViewerEvVScroll(GtkAdjustment *adj, gpointer user_data);
-#else
-static void ViewerEvSize(GtkWidget *w, GtkAllocation *allocation, gpointer client_data);
-static void ViewerEvHScroll(GtkRange *range, gpointer user_data);
-static void ViewerEvVScroll(GtkRange *range, gpointer user_data);
-#endif
 static gboolean ViewerEvPaint(GtkWidget *w, cairo_t *cr, gpointer client_data);
 static gboolean ViewerEvLButtonDown(unsigned int state, TPoint *point, struct Viewer *d);
 static gboolean ViewerEvLButtonUp(unsigned int state, TPoint *point, struct Viewer *d);
 static gboolean ViewerEvLButtonDblClk(unsigned int state, TPoint *point, struct Viewer *d);
 static gboolean ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d);
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void ViewerEvButtonDown(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y, gpointer client_data);
 static void ViewerEvButtonUp(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y, gpointer client_data);
-#else
-static void ViewerEvButtonDown(GtkGestureMultiPress *gesture, gint n_press, gdouble x, gdouble y, gpointer client_data);
-static void ViewerEvButtonUp(GtkGestureMultiPress *gesture, gint n_press, gdouble x, gdouble y, gpointer client_data);
-#endif
 static gboolean ViewerEvKeyDown(GtkEventControllerKey *controller, guint keyval, guint keycode, GdkModifierType state, gpointer user_data);
 static void ViewerEvKeyUp(GtkEventControllerKey *controller, guint keyval, guint keycode, GdkModifierType state, gpointer user_data);
 static void gesture_zoom(GtkGestureZoom *controller, gdouble scale, gpointer user_data);
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void ViewerEvMouseMotion(GtkEventControllerMotion *controller, gdouble x, gdouble y, gpointer client_data);
 static gboolean ViewerEvScroll(GtkEventControllerScroll *w, double x, double y, gpointer client_data);
-#else
-static gboolean ViewerEvMouseMotion(GtkWidget *w, GdkEventMotion *e, gpointer client_data);
-static gboolean ViewerEvScroll(GtkWidget *w, GdkEventScroll *e, gpointer client_data);
-#endif
 static void ViewUpdate(void);
 static void ViewCopy(void);
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void do_popup(gdouble x, gdouble y, struct Viewer *d);
-#else
-static void do_popup(GdkEventButton *event, struct Viewer *d);
-#endif
 static int check_focused_obj(struct narray *focusobj, struct objlist *fobj, int oid);
 static int get_mouse_cursor_type(struct Viewer *d, int x, int y);
 static void reorder_object(enum object_move_type type);
