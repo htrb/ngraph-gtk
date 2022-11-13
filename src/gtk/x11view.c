@@ -6960,7 +6960,6 @@ ReopenGC(void)
     Menulocal.windpi / 25.4 / 100;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 struct draw_data {
   int select_file;
   draw_cb cb;
@@ -7052,54 +7051,6 @@ Draw(int SelectFile, draw_cb cb, gpointer user_data)
   }
   draw(data);
 }
-#else
-void
-Draw(int SelectFile)
-{
-  struct Viewer *d;
-  N_VALUE *gra_inst;
-
-  draw_notify(FALSE);
-  d = &NgraphApp.Viewer;
-
-  if (SelectFile && !SetFileHidden())
-    return;
-
-  ProgressDialogCreate(_("Scaling"));
-
-  FileAutoScale();
-  AdjustAxis();
-  FitClear();
-
-  SetStatusBar(_("Drawing."));
-  ProgressDialogSetTitle(_("Drawing"));
-
-  ReopenGC();
-
-  gra_inst = chkobjinstoid(Menulocal.GRAobj, Menulocal.GRAoid);
-  if (gra_inst != NULL) {
-    d->ignoreredraw = TRUE;
-    _exeobj(Menulocal.GRAobj, "clear", gra_inst, 0, NULL);
-    //    reset_event();
-    /* XmUpdateDisplay(d->Win); */
-    _exeobj(Menulocal.GRAobj, "draw", gra_inst, 0, NULL);
-    _exeobj(Menulocal.GRAobj, "flush", gra_inst, 0, NULL);
-    d->ignoreredraw = FALSE;
-  }
-
-  ResetStatusBar();
-
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  ProgressDialogFinalize();
-#endif
-
-  gtk_widget_queue_draw(d->Win);
-
-  if (SelectFile) {
-    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
-  }
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 static void
