@@ -6366,11 +6366,9 @@ ViewerEvKeyUp(GtkEventControllerKey *controller, guint keyval, guint keycode, Gd
     reset_drag_info(d);
 #endif
     return;
-#if GTK_CHECK_VERSION(4, 0, 0)
   case GDK_KEY_Menu:
     do_popup(0, 0, d);
     break;
-#endif
   default:
     break;
   }
