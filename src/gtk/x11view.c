@@ -5135,8 +5135,6 @@ create_path(struct Viewer *d)
   return;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
 static void
 create_legend3(struct Viewer *d)
 {
@@ -5205,89 +5203,6 @@ create_legend3(struct Viewer *d)
   }
   arraydel2(d->points);
 }
-#else
-static void
-create_legend3(struct Viewer *d)
-{
-  int num, x1, y1, x2, y2;
-  struct objlist *obj = NULL;
-  struct Point **pdata;
-
-  d->Capture = FALSE;
-  num = arraynum(d->points);
-  pdata = arraydata(d->points);
-
-  if (num >= 3) {
-    if (d->Mode == RectB) {
-      obj = chkobject("rectangle");
-    } else if (d->Mode == ArcB) {
-      obj = chkobject("arc");
-    }
-
-    if (obj) {
-      int id, undo;
-      undo = menu_save_undo_single(UNDO_TYPE_CREATE, obj->name);
-      id = newobj(obj);
-      if (id >= 0) {
-        N_VALUE *inst;
-        int ret = IDCANCEL;
-        presetting_set_obj_field(obj, id);
-	inst = chkobjinst(obj, id);
-	x1 = pdata[0]->x;
-	y1 = pdata[0]->y;
-	x2 = pdata[1]->x;
-	y2 = pdata[1]->y;
-
-	if (x1 > x2)
-	  swapint(&x1, &x2);
-
-	if (y1 > y2)
-	  swapint(&y1, &y2);
-
-	PaintLock = TRUE;
-
-	if (d->Mode == RectB) {
-	  _putobj(obj, "x1", inst, &x1);
-	  _putobj(obj, "y1", inst, &y1);
-	  _putobj(obj, "x2", inst, &x2);
-	  _putobj(obj, "y2", inst, &y2);
-	  LegendRectDialog(&DlgLegendRect, obj, id);
-	  ret = DialogExecute(TopLevel, &DlgLegendRect);
-	} else if (d->Mode == ArcB) {
-	  int x, y, rx, ry;
-
-	  x = (x1 + x2) / 2;
-	  y = (y1 + y2) / 2;
-	  rx = abs(x1 - x);
-	  ry = abs(y1 - y);
-	  _putobj(obj, "x", inst, &x);
-	  _putobj(obj, "y", inst, &y);
-	  _putobj(obj, "rx", inst, &rx);
-	  _putobj(obj, "ry", inst, &ry);
-	  LegendArcDialog(&DlgLegendArc, obj, id);
-	  ret = DialogExecute(TopLevel, &DlgLegendArc);
-	}
-
-	if ((ret == IDDELETE) || (ret == IDCANCEL)) {
-	  delobj(obj, id);
-	  menu_delete_undo(undo);
-	} else {
-	  set_graph_modified();
-	}
-	PaintLock = FALSE;
-      }
-    }
-  }
-
-  arraydel2(d->points);
-  if (obj) {
-    char *objects[2];
-    objects[0] = obj->name;
-    objects[1] = NULL;
-    UpdateAll(objects);
-  }
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
