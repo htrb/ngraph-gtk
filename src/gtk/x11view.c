@@ -5204,8 +5204,6 @@ create_legend3(struct Viewer *d)
   arraydel2(d->points);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
 static void
 create_legendx(struct Viewer *d)
 {
@@ -5256,71 +5254,6 @@ create_legendx(struct Viewer *d)
   }
   arraydel2(d->points);
 }
-#else
-static void
-create_legendx(struct Viewer *d)
-{
-  int num, x1, y1, x2, y2, type, fill;
-  struct objlist *obj = NULL;
-  struct Point **pdata;
-
-  d->Capture = FALSE;
-  num = arraynum(d->points);
-  pdata = arraydata(d->points);
-
-  if (num >= 3) {
-    obj = chkobject("path");
-
-    if (obj) {
-      int id, undo;
-      undo = menu_save_undo_single(UNDO_TYPE_CREATE, obj->name);
-      id = newobj(obj);
-
-      if (id >= 0) {
-        presetting_set_obj_field(obj, id);
-	type = PATH_TYPE_CURVE;
-	putobj(obj, "type", id, &type);
-	fill = FALSE;
-	putobj(obj, "fill", id, &fill);
-	x1 = pdata[0]->x;
-	y1 = pdata[0]->y;
-	x2 = pdata[1]->x;
-	y2 = pdata[1]->y;
-
-	if (x1 > x2)
-	  swapint(&x1, &x2);
-
-	if (y1 > y2)
-	  swapint(&y1, &y2);
-
-	PaintLock = TRUE;
-
-	if ((x1 != x2) && (y1 != y2)) {
-          int ret;
-	  LegendGaussDialog(&DlgLegendGauss, obj, id, x1, y1,
-			    x2 - x1, y2 - y1);
-	  ret = DialogExecute(TopLevel, &DlgLegendGauss);
-
-	  if (ret != IDOK) {
-	    delobj(obj, id);
-	    menu_delete_undo(undo);
-	  } else {
-	    set_graph_modified();
-	  }
-	}
-	PaintLock = FALSE;
-      }
-    }
-  }
-  arraydel2(d->points);
-  if (obj) {
-    char *objects[2];
-    objects[0] = obj->name;
-    objects[1] = NULL;
-    UpdateAll(objects);
-  }
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
