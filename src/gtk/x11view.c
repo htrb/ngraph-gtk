@@ -5255,8 +5255,6 @@ create_legendx(struct Viewer *d)
   arraydel2(d->points);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
 static void
 create_single_axis(struct Viewer *d)
 {
@@ -5321,84 +5319,6 @@ create_single_axis(struct Viewer *d)
   }
   arraydel2(d->points);
 }
-#else
-static void
-create_single_axis(struct Viewer *d)
-{
-  int num;
-  struct objlist *obj = NULL;
-  struct Point **pdata;
-
-  d->Capture = FALSE;
-  num = arraynum(d->points);
-  pdata = arraydata(d->points);
-
-  if (num >= 3) {
-    obj = chkobject("axis");
-    if (obj != NULL) {
-      int id, x1, y1, lenx, dir, undo;
-      undo = menu_save_undo_single(UNDO_TYPE_CREATE, obj->name);
-      if ((id = newobj(obj)) >= 0) {
-        int x2, y2, ret;
-        double fx1, fy1;
-        N_VALUE *inst;
-
-	x1 = pdata[0]->x;
-	y1 = pdata[0]->y;
-	x2 = pdata[1]->x;
-	y2 = pdata[1]->y;
-	fx1 = x2 - x1;
-	fy1 = y2 - y1;
-	lenx = nround(sqrt(fx1 * fx1 + fy1 * fy1));
-
-	if (fx1 == 0) {
-	  if (fy1 >= 0) {
-	    dir = 27000;
-	  } else {
-	    dir = 9000;
-	  }
-	} else {
-	  dir = nround(atan(-fy1 / fx1) / MPI * 18000);
-
-	  if (fx1 < 0)
-	    dir += 18000;
-
-	  if (dir < 0)
-	    dir += 36000;
-
-	  if (dir >= 36000)
-	    dir -= 36000;
-	}
-
-	inst = chkobjinst(obj, id);
-
-	_putobj(obj, "x", inst, &x1);
-	_putobj(obj, "y", inst, &y1);
-	_putobj(obj, "length", inst, &lenx);
-	_putobj(obj, "direction", inst, &dir);
-
-	presetting_set_obj_field(obj, id);
-	AxisDialog(NgraphApp.AxisWin.data.data, id, TRUE);
-	ret = DialogExecute(TopLevel, &DlgAxis);
-
-	if (ret == IDCANCEL) {
-	  menu_delete_undo(undo);
-	  delobj(obj, id);
-	} else {
-	  set_graph_modified();
-	}
-      }
-    }
-  }
-  arraydel2(d->points);
-  if (obj) {
-    char *objects[2];
-    objects[0] = obj->name;
-    objects[1] = NULL;
-    UpdateAll(objects);
-  }
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
