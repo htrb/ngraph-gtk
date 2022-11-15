@@ -1175,13 +1175,8 @@ SaveDialogClose(GtkWidget *w, void *data)
   if (num >= 0) {
     d->Path = num;
   }
-#if GTK_CHECK_VERSION(4, 0, 0)
   d->SaveData = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->include_data));
   d->SaveMerge = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->include_merge));
-#else
-  *(d->SaveData) = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->include_data));
-  *(d->SaveMerge) = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->include_merge));
-#endif
 }
 
 void
