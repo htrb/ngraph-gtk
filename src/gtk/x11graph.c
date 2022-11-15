@@ -1180,7 +1180,7 @@ SaveDialogClose(GtkWidget *w, void *data)
 }
 
 void
-SaveDialog(struct SaveDialog *data, int *sdata, int *smerge)
+SaveDialog(struct SaveDialog *data)
 {
   data->SetupWindow = SaveDialogSetup;
   data->CloseWindow = SaveDialogClose;

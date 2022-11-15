@@ -1263,7 +1263,7 @@ get_save_opt(struct graph_save_data *save_data)
     return IDOK;
   }
 
-  SaveDialog(&DlgSave, 0, 0);
+  SaveDialog(&DlgSave);
   /* must be implemented */
   response_callback_add(&DlgSave, get_save_opt_response, NULL, save_data);
   DialogExecute(TopLevel, &DlgSave);

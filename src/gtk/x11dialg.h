@@ -477,7 +477,7 @@ struct SaveDialog
   int *SaveData, *SaveMerge;
 #endif
 };
-void SaveDialog(struct SaveDialog *data, int *sdata, int *smerge);
+void SaveDialog(struct SaveDialog *data);
 
 struct OutputDataDialog
 {
