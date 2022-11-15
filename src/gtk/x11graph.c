@@ -1009,12 +1009,7 @@ DirectoryDialogSetup(GtkWidget *wi, void *data, int makewidget)
     GtkWidget *w, *table;
     table = gtk_grid_new();
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     w = folder_chooser_button_new(_("directory"), wi);
-#else
-    w = gtk_file_chooser_button_new(_("directory"), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
-    gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(w), TRUE);
-#endif
     d->dir = w;
     add_widget_to_table(table, w, _("_Select Dir:"), TRUE, 0);
 
@@ -1031,22 +1026,12 @@ DirectoryDialogSetup(GtkWidget *wi, void *data, int makewidget)
     set_widget_margin_all(w, 4);
     gtk_grid_attach(GTK_GRID(table), w, 1, 1, 1, 1);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(d->vbox), table);
-#else
-    gtk_box_pack_start(GTK_BOX(d->vbox), table, FALSE, FALSE, 4);
-
-    gtk_widget_show_all(GTK_WIDGET(d->vbox));
-#endif
   }
 
   cwd = ngetcwd();
   if (cwd) {
-#if GTK_CHECK_VERSION(4, 0, 0)
     folder_chooser_button_set_folder(d->dir, cwd);
-#else
-    gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(d->dir), cwd);
-#endif
     gtk_label_set_text(GTK_LABEL(d->dir_label), cwd);
     g_free(cwd);
   }
