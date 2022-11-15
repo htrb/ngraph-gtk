@@ -734,11 +734,7 @@ SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
 
     label = gtk_label_new_with_mnemonic(_("_Draw order"));
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(vbox), label);
-#else
-    gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 4);
-#endif
 
     w = list_store_create(sizeof(list) / sizeof(*list), list);
     list_store_set_selection_mode(w, GTK_SELECTION_MULTIPLE);
@@ -750,120 +746,67 @@ SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
 
     frame = gtk_frame_new(NULL);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_frame_set_child(GTK_FRAME(frame), w);
     gtk_box_append(GTK_BOX(vbox), frame);
     gtk_box_append(GTK_BOX(hbox), vbox);
-#else
-    gtk_container_add(GTK_CONTAINER(frame), w);
-    gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 4);
-
-    gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 4);
-#endif
 
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
 
     w = gtk_button_new_with_mnemonic(_("_Add"));
     set_button_icon(w, "list-add");
     g_signal_connect(w, "clicked", G_CALLBACK(SwitchDialogAdd), d);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(vbox), w);
-#else
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-#endif
     d->add = w;
 
     w = gtk_button_new_with_mnemonic(_("_Insert"));
     g_signal_connect(w, "clicked", G_CALLBACK(SwitchDialogInsert), d);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(vbox), w);
-#else
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-#endif
     d->ins = w;
 
     w = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(vbox), w);
-#else
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-#endif
 
     w = gtk_button_new_with_mnemonic(_("_Top"));
     set_button_icon(w, "go-top");
     g_signal_connect(w, "clicked", G_CALLBACK(SwitchDialogTop), d);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(vbox), w);
-#else
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-#endif
     d->top =w;
 
     w = gtk_button_new_with_mnemonic(_("_Up"));
     set_button_icon(w, "go-up");
     g_signal_connect(w, "clicked", G_CALLBACK(SwitchDialogUp), d);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(vbox), w);
-#else
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-#endif
     d->up = w;
 
     w = gtk_button_new_with_mnemonic(_("_Down"));
     set_button_icon(w, "go-down");
     g_signal_connect(w, "clicked", G_CALLBACK(SwitchDialogDown), d);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(vbox), w);
-#else
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-#endif
     d->down = w;
 
     w = gtk_button_new_with_mnemonic(_("_Bottom"));
     set_button_icon(w, "go-bottom");
     g_signal_connect(w, "clicked", G_CALLBACK(SwitchDialogLast), d);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(vbox), w);
-#else
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-#endif
     d->bottom = w;
 
     w = gtk_button_new_with_mnemonic(_("_Remove"));
     set_button_icon(w, "list-remove");
     g_signal_connect(w, "clicked", G_CALLBACK(SwitchDialogRemove), d);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(vbox), w);
-#else
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-#endif
     d->del = w;
 
     vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(vbox2), vbox);
-#else
-    gtk_box_pack_end(GTK_BOX(vbox2), vbox, FALSE, FALSE, 4);
-#endif
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(vbox2), vbox);
 
     gtk_box_append(GTK_BOX(hbox), vbox2);
-#else
-    gtk_box_pack_end(GTK_BOX(vbox2), vbox, FALSE, FALSE, 4);
-
-    gtk_box_pack_start(GTK_BOX(hbox), vbox2, FALSE, FALSE, 4);
-#endif
 
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
 
     label = gtk_label_new_with_mnemonic(_("_Objects"));
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(vbox), label);
-#else
-    gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 4);
-#endif
 
     w = list_store_create(sizeof(list) / sizeof(*list), list);
     list_store_set_selection_mode(w, GTK_SELECTION_MULTIPLE);
@@ -876,18 +819,10 @@ SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     frame = gtk_frame_new(NULL);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_frame_set_child(GTK_FRAME(frame), w);
     gtk_box_append(GTK_BOX(vbox), frame);
     gtk_box_append(GTK_BOX(hbox), vbox);
     gtk_box_append(GTK_BOX(d->vbox), hbox);
-#else
-    gtk_container_add(GTK_CONTAINER(frame), w);
-    gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 4);
-    gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 4);
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
-    gtk_widget_show_all(GTK_WIDGET(d->vbox));
-#endif
 
     d->btn_lock = FALSE;
   }
