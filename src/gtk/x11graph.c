@@ -1339,8 +1339,6 @@ CmGraphSwitch(void *w, gpointer client_data)
   DialogExecute(TopLevel, &DlgSwitch);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* to be implemented */
 static void
 CmGraphPage_response(struct response_callback *cb)
 {
@@ -1378,25 +1376,6 @@ CmGraphPage(void *w, gpointer client_data)
 {
   GraphPage(GPOINTER_TO_INT(client_data), NULL);
 }
-#else
-void
-CmGraphPage(void *w, gpointer client_data)
-{
-  int new_graph;
-  new_graph = GPOINTER_TO_INT(client_data);
-  if (Menulock || Globallock)
-    return;
-  PageDialog(&DlgPage, new_graph);
-  if (DialogExecute(TopLevel, &DlgPage) == IDOK) {
-    SetPageSettingsToGRA();
-    ChangePage();
-    GetPageSettingsFromGRA();
-    if (! new_graph) {
-      set_graph_modified_gra();
-    }
-  }
-}
-#endif
 
 void
 CmGraphDirectory(void *w, gpointer client_data)
