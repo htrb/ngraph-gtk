@@ -900,7 +900,6 @@ SwitchDialog(struct SwitchDialog *data)
   arrayinit(&(data->idrawrable), sizeof(int));
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 struct folder_chooser_data {
   char *folder, *title;
   GtkWidget *parent, *button;
@@ -908,7 +907,7 @@ struct folder_chooser_data {
 
 #define FOLDER_CHOOSER_DATA_KEY "FOLDER_CHOOSER_DATA"
 
-void
+static void
 folder_chooser_button_set_folder(GtkWidget *button, const char *path)
 {
   char *bassename, *full_path;
@@ -981,7 +980,7 @@ folder_chooser_button_clicked(GtkButton *self, gpointer user_data)
   g_signal_connect (dialog, "response", G_CALLBACK(on_open_response), user_data);
 }
 
-GtkWidget *
+static GtkWidget *
 folder_chooser_button_new(const char *title, GtkWidget *parent)
 {
   struct folder_chooser_data *data;
@@ -998,7 +997,6 @@ folder_chooser_button_new(const char *title, GtkWidget *parent)
   g_object_set_data(G_OBJECT(data->button), FOLDER_CHOOSER_DATA_KEY, data);
   return data->button;
 }
-#endif
 
 static void
 DirectoryDialogSetup(GtkWidget *wi, void *data, int makewidget)
