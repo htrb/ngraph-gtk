@@ -1148,32 +1148,16 @@ SaveDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     w = gtk_check_button_new_with_mnemonic(_("_Include data file"));
     d->include_data = w;
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(vbox), w);
-#else
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-#endif
 
     w = gtk_check_button_new_with_mnemonic(_("_Include merge file"));
     d->include_merge = w;
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(vbox), w);
     gtk_box_append(GTK_BOX(d->vbox), vbox);
-#else
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-
-    gtk_box_pack_start(GTK_BOX(d->vbox), vbox, FALSE, FALSE, 4);
-    gtk_widget_show_all(GTK_WIDGET(d->vbox));
-#endif
   }
   combo_box_set_active(d->path, Menulocal.savepath);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_check_button_set_active(GTK_CHECK_BUTTON(d->include_data), Menulocal.savewithdata);
   gtk_check_button_set_active(GTK_CHECK_BUTTON(d->include_merge), Menulocal.savewithmerge);
-#else
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->include_data), Menulocal.savewithdata);
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->include_merge), Menulocal.savewithmerge);
-#endif
   d->focus = d->include_data;
 }
 
