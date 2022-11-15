@@ -1532,7 +1532,7 @@ void
 CmHelpDemo(void *w, gpointer client_data)
 {
   struct objlist *obj;
-  char *demo_file, *data_dir;
+  char *data_dir;
 
   if (Menulock || Globallock)
     return;
