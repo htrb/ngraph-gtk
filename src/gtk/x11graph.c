@@ -1320,7 +1320,6 @@ CmGraphOverWrite(void *w, gpointer client_data)
   GraphSave(TRUE);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 CmGraphSwitch_response(struct response_callback *cb)
 {
@@ -1339,19 +1338,6 @@ CmGraphSwitch(void *w, gpointer client_data)
   response_callback_add(&DlgSwitch, CmGraphSwitch_response, NULL, NULL);
   DialogExecute(TopLevel, &DlgSwitch);
 }
-#else
-void
-CmGraphSwitch(void *w, gpointer client_data)
-{
-  if (Menulock || Globallock)
-    return;
-  SwitchDialog(&DlgSwitch);
-  if (DialogExecute(TopLevel, &DlgSwitch) == IDOK) {
-    set_graph_modified_gra();
-    ChangePage();
-  }
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
