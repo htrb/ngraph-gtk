@@ -1041,21 +1041,13 @@ static void
 DirectoryDialogClose(GtkWidget *w, void *data)
 {
   struct DirectoryDialog *d;
-#if GTK_CHECK_VERSION(4, 0, 0)
-  const char *tmp;
-#endif
   char *s;
 
   d = (struct DirectoryDialog *) data;
   if (d->ret == IDCANCEL)
     return;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-  tmp = folder_chooser_button_get_folder(d->dir);
-  s = g_strdup(tmp);
-#else
-  s = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(d->dir));
-#endif
+  s = g_strdup(folder_chooser_button_get_folder(d->dir));
 
   if (s && strlen(s) > 0) {
     if (nchdir(s)) {
