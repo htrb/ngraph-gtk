@@ -1479,7 +1479,6 @@ CmHelpAbout(void *w, gpointer client_data)
   getobj(obj, "copyright", 0, 0, NULL, &copyright);
   getobj(obj, "web", 0, 0, NULL, &web);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   logo = gdk_texture_new_from_resource(NGRAPH_ICON128_FILE);
 
   system = getobject("system");
@@ -1492,7 +1491,6 @@ CmHelpAbout(void *w, gpointer client_data)
 			"%s\n",
 			compiler,
 			lib_version);
-#endif
   gtk_show_about_dialog(GTK_WINDOW(TopLevel),
 			"program-name", PACKAGE,
 			"copyright", copyright,
@@ -1503,16 +1501,12 @@ CmHelpAbout(void *w, gpointer client_data)
 			"authors", Auther,
 			"translator-credits", Translator,
 			"documenters", Documenter,
-#if GTK_CHECK_VERSION(4, 0, 0)
 			"logo", logo,
 			"system-information", str,
-#endif
 			"comments", _("Ngraph is the program to create scientific 2-dimensional graphs for researchers and engineers."),
 			NULL);
-#if GTK_CHECK_VERSION(4, 0, 0)
   g_free(str);
   g_object_unref(logo);
-#endif
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
