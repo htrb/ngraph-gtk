@@ -144,19 +144,11 @@ PageDialogSetupItem(GtkWidget *w, struct PageDialog *d)
 
   j = set_paper_type(Menulocal.PaperWidth, Menulocal.PaperHeight);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   if (Menulocal.PaperLandscape) {
     gtk_check_button_set_active(GTK_CHECK_BUTTON(d->landscape), TRUE);
   } else {
     gtk_check_button_set_active(GTK_CHECK_BUTTON(d->portrait), TRUE);
   }
-#else
-  if (Menulocal.PaperLandscape) {
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->landscape), TRUE);
-  } else {
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->portrait), TRUE);
-  }
-#endif
 
   spin_entry_set_val(d->paperwidth, Menulocal.PaperWidth);
   spin_entry_set_val(d->paperheight, Menulocal.PaperHeight);
