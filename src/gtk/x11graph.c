@@ -1184,14 +1184,8 @@ SaveDialog(struct SaveDialog *data)
 {
   data->SetupWindow = SaveDialogSetup;
   data->CloseWindow = SaveDialogClose;
-#if GTK_CHECK_VERSION(4, 0, 0)
-  /* must be implemented */
   data->SaveData = FALSE;
   data->SaveMerge = FALSE;
-#else
-  data->SaveData = sdata;
-  data->SaveMerge = smerge;
-#endif
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
