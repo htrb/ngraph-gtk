@@ -1107,19 +1107,11 @@ LoadDialogClose(GtkWidget *w, void *data)
   d = (struct LoadDialog *) data;
   if (d->ret == IDCANCEL)
     return;
-#if GTK_CHECK_VERSION(4, 0, 0)
   d->expand = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->expand_file));
-#else
-  d->expand = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->expand_file));
-#endif
   if (d->exdir) {
     g_free(d->exdir);
   }
-#if GTK_CHECK_VERSION(4, 0, 0)
   d->exdir = g_strdup(folder_chooser_button_get_folder(d->dir));
-#else
-  d->exdir = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(d->dir));
-#endif
   d->loadpath = combo_box_get_active(d->load_path);
 }
 
