@@ -1386,7 +1386,6 @@ CmGraphDirectory(void *w, gpointer client_data)
   DialogExecute(TopLevel, &DlgDirectory);
 }
 
-#if ! USE_EVENT_LOOP
 static void
 graph_shell_finalize(gpointer user_data)
 {
@@ -1424,43 +1423,7 @@ graph_shell_main(gpointer user_data)
   g_idle_add_once(graph_shell_finalize, thread);
   return NULL;
 }
-#endif
 
-#if USE_EVENT_LOOP
-void
-CmGraphShell(void *w, gpointer client_data)
-{
-  struct objlist *obj, *robj, *shell;
-  N_VALUE *inst;
-  int idn;
-
-  if (Menulock || Globallock)
-    return;
-
-  menu_lock(TRUE);
-
-  menu_save_undo(UNDO_TYPE_SHLL, NULL);
-  obj = Menulocal.obj;
-  inst = Menulocal.inst;
-  idn = getobjtblpos(obj, "_evloop", &robj);
-  registerevloop(chkobjectname(obj), "_evloop", robj, idn, inst, NULL);
-  if ((shell = chkobject("shell")) != NULL) {
-    int allocnow, n;
-    n = chkobjlastinst(shell);
-    if (n < 0) {
-      newobj(shell);
-    }
-    allocnow = allocate_console();
-    exeobj(shell, "shell", 0, 0, NULL);
-    free_console(allocnow);
-  }
-  unregisterevloop(robj, idn, inst);
-  menu_lock(FALSE);
-  gtk_widget_set_sensitive(TopLevel, FALSE);
-  set_graph_modified();
-  UpdateAll(NULL);
-}
-#else
 void
 CmGraphShell(void *w, gpointer client_data)
 {
@@ -1472,7 +1435,6 @@ CmGraphShell(void *w, gpointer client_data)
   gtk_widget_set_sensitive(TopLevel, FALSE);
   g_thread_new(NULL, graph_shell_main, NULL);
 }
-#endif
 
 void
 CmGraphQuit(void *w, gpointer client_data)
