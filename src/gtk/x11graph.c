@@ -88,7 +88,6 @@ static struct pagelisttype pagelist[] = {
 #define PAGELISTNUM (sizeof(pagelist) / sizeof(*pagelist))
 #define DEFAULT_PAPER_SIZE 0
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 struct graph_page_data
 {
   response_cb cb;
@@ -96,8 +95,6 @@ struct graph_page_data
 };
 
 static void GraphPage(int new_graph, struct graph_page_data *data);
-
-#endif
 
 int
 set_paper_type(int w, int h)
@@ -1188,7 +1185,6 @@ SaveDialog(struct SaveDialog *data)
   data->SaveMerge = FALSE;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 draw_callback(gpointer user_data)
 {
@@ -1262,47 +1258,6 @@ CmGraphNewMenu(void *w, gpointer client_data)
 
   CheckSave(CmGraphNewMenu_response, client_data);
 }
-#else
-void
-CmGraphNewMenu(void *w, gpointer client_data)
-{
-  int sel;
-
-  if (Menulock || Globallock)
-    return;
-
-  if (!CheckSave())
-    return;
-
-  DeleteDrawable();
-
-  CmGraphPage(NULL, GINT_TO_POINTER(TRUE));
-  sel = GPOINTER_TO_INT(client_data);
-  switch (sel) {
-  case MenuIdGraphNewFrame:
-    CmAxisNewFrame(FALSE);
-    break;
-  case MenuIdGraphNewSection:
-    CmAxisNewSection(FALSE);
-    break;
-  case MenuIdGraphNewCross:
-    CmAxisNewCross(FALSE);
-    break;
-  case MenuIdGraphAllClear:
-  default:
-    break;
-  }
-
-  SetFileName(NULL);
-  set_axis_undo_button_sensitivity(FALSE);
-  reset_graph_modified();
-
-  CmViewerDraw(NULL, GINT_TO_POINTER(TRUE));
-  UpdateAll2(NULL, FALSE);
-  InfoWinClear();
-  menu_clear_undo();
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 static void
