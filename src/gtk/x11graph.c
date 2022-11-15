@@ -166,11 +166,7 @@ PageDialogPage(GtkWidget *w, gpointer client_data)
   d = (struct PageDialog *) client_data;
 
   paper = combo_box_get_active(d->paper);
-#if GTK_CHECK_VERSION(4, 0, 0)
   landscape = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->landscape));
-#else
-  landscape = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->landscape));
-#endif
 
   if (paper < 0)
     return;
