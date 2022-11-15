@@ -1459,57 +1459,6 @@ chdir_to_ngp(const char *fname)
   return r;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
-#else
-void
-CmGraphHistory(GtkRecentChooser *w, gpointer client_data)
-{
-  char *uri, *fname, *cwd;
-
-  if (Menulock || Globallock)
-    return;
-
-  uri = gtk_recent_chooser_get_current_uri(w);
-  if (uri == NULL) {
-    return;
-  }
-
-  fname = g_filename_from_uri(uri, NULL, NULL);
-  g_free(uri);
-  if (fname == NULL) {
-    return;
-  }
-
-  if (!CheckSave()) {
-    g_free(fname);
-    return;
-  }
-
-  cwd = ngetcwd();
-  if (chdir_to_ngp(fname)) {
-    ErrorMessage();
-    g_free(fname);
-    if (cwd) {
-      g_free(cwd);
-    }
-    return;
-  }
-
-#if GTK_CHECK_VERSION(4, 0, 0)
-  LoadNgpFile(fname, Menulocal.scriptconsole, "-f", cwd);
-#else
-  if (LoadNgpFile(fname, Menulocal.scriptconsole, "-f") && cwd) {
-    nchdir(cwd);
-  }
-#endif
-  if (cwd) {
-    g_free(cwd);
-  }
-  g_free(fname);
-}
-#endif
-
 void
 CmHelpAbout(void *w, gpointer client_data)
 {
