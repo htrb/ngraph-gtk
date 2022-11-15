@@ -1081,13 +1081,7 @@ LoadDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->expand_file = w;
     gtk_grid_attach(GTK_GRID(vbox), w, 0, 0, 2, 1);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     w = folder_chooser_button_new(_("Expand directory"), wi);
-#else
-    w = gtk_file_chooser_button_new(_("Expand directory"), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
-    gtk_file_chooser_set_local_only(GTK_FILE_CHOOSER(w), TRUE);
-    g_signal_connect(w, "file-set", G_CALLBACK(set_directory_name), NULL);
-#endif
     add_widget_to_table(vbox, w, _("expand _Directory:"), FALSE, 1);
     d->dir = w;
 
@@ -1098,25 +1092,11 @@ LoadDialogSetup(GtkWidget *wi, void *data, int makewidget)
     }
     d->load_path = w;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(d->vbox), vbox);
-#else
-    gtk_box_pack_start(GTK_BOX(d->vbox), vbox, FALSE, FALSE, 4);
-    gtk_widget_show_all(GTK_WIDGET(d->vbox));
-#endif
   }
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_check_button_set_active(GTK_CHECK_BUTTON(d->expand_file), d->expand);
-#else
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->expand_file), d->expand);
-#endif
   combo_box_set_active(d->load_path, d->loadpath);
-#if GTK_CHECK_VERSION(4, 0, 0)
   folder_chooser_button_set_folder(d->dir, d->exdir);
-#else
-  gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(d->dir), d->exdir);
-  set_directory_name(GTK_FILE_CHOOSER_BUTTON(d->dir), NULL);
-#endif
 }
 
 static void
