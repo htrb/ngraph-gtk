@@ -210,9 +210,8 @@ PageDialogSetup(GtkWidget *wi, void *data, int makewidget)
     GtkWidget *w, *table;
     unsigned int j;
     int i;
-#if GTK_CHECK_VERSION(4, 0, 0)
     GtkWidget *group;
-#endif
+
     table = gtk_grid_new();
 
     i = 0;
@@ -235,23 +234,14 @@ PageDialogSetup(GtkWidget *wi, void *data, int makewidget)
       combo_box_append_text(d->paper, _(pagelist[j].paper));
     }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     w = gtk_check_button_new_with_mnemonic(_("_Portrait"));
     group = w;
     gtk_check_button_set_active(GTK_CHECK_BUTTON(w), TRUE);
-#else
-    w = gtk_radio_button_new_with_mnemonic(NULL, _("_Portrait"));
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), TRUE);
-#endif
     add_widget_to_table(table, w, _("_Orientation:"), FALSE, i++);
     d->portrait = w;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     w = gtk_check_button_new_with_mnemonic(_("L_andscape"));
     gtk_check_button_set_group(GTK_CHECK_BUTTON(w), GTK_CHECK_BUTTON(group));
-#else
-    w = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(w), _("L_andscape"));
-#endif
     add_widget_to_table_sub(table, w, NULL,FALSE, 1, 1, 1, i++);
     d->landscape = w;
     g_signal_connect(w, "toggled", G_CALLBACK(PageDialogOrientation), d);
@@ -277,15 +267,10 @@ PageDialogSetup(GtkWidget *wi, void *data, int makewidget)
     }
     d->decimalsign = w;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(d->vbox), table);
-#else
-    gtk_box_pack_start(GTK_BOX(d->vbox), table, FALSE, FALSE, 4);
-    gtk_widget_show_all(GTK_WIDGET(d->vbox));
-#endif
   }
   PageDialogSetupItem(wi, d);
-#if ! GTK_CHECK_VERSION(4, 0, 0)
+#if 0
   d->show_cancel = ! d->new_graph;
 #endif
 }
