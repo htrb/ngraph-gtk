@@ -1509,7 +1509,6 @@ CmHelpAbout(void *w, gpointer client_data)
   g_object_unref(logo);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 CmHelpDemo_response(int ret, gpointer client_data)
 {
@@ -1528,7 +1527,6 @@ CmHelpDemo_response(int ret, gpointer client_data)
   LoadNgpFile(demo_file, Menulocal.scriptconsole, "-f", NULL);
   g_free(demo_file);
 }
-#endif
 
 void
 CmHelpDemo(void *w, gpointer client_data)
@@ -1549,21 +1547,7 @@ CmHelpDemo(void *w, gpointer client_data)
     return;
   }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   CheckSave(CmHelpDemo_response, data_dir);
-#else
-  if (!CheckSave()) {
-    return;
-  }
-
-  demo_file = g_strdup_printf("%s/demo/demo.ngp", data_dir);
-  if (demo_file == NULL) {
-    return;
-  }
-
-  LoadNgpFile(demo_file, Menulocal.scriptconsole, "-f");
-  g_free(demo_file);
-#endif
 }
 
 void
