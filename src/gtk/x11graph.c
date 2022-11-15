@@ -1259,7 +1259,6 @@ CmGraphNewMenu(void *w, gpointer client_data)
   CheckSave(CmGraphNewMenu_response, client_data);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 CmGraphLoad_response_response(char *file, gpointer user_data)
 {
@@ -1304,40 +1303,6 @@ CmGraphLoad(void *w, gpointer client_data)
 
   CheckSave(CmGraphLoad_response, NULL);
 }
-#else
-void
-CmGraphLoad(void *w, gpointer client_data)
-{
-  char *file, *cwd;
-  int chd;
-
-  if (Menulock || Globallock)
-    return;
-
-  if (!CheckSave())
-    return;
-
-  cwd = ngetcwd();
-  chd = Menulocal.changedirectory;
-  file = nGetOpenFileName(TopLevel,
-		       _("Load NGP file"), "ngp", &(Menulocal.graphloaddir),
-                          NULL, TRUE, chd);
-  if (file == NULL) {
-    if (cwd) {
-      g_free(cwd);
-    }
-    return;
-  }
-
-  if (LoadNgpFile(file, Menulocal.scriptconsole, "-f") && cwd) {
-    nchdir(cwd);
-  }
-  if (cwd) {
-    g_free(cwd);
-  }
-  g_free(file);
-}
-#endif
 
 void
 CmGraphSave(void *w, gpointer client_data)
