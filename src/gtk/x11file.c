@@ -1951,21 +1951,13 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table_sub(table, w, _("_Weight:"), TRUE, 0, 4, 5, 1);
     d->weight = w;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(vbox), table);
-#else
-    gtk_box_pack_start(GTK_BOX(vbox), table, FALSE, FALSE, 4);
-#endif
 
 
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
     w = gtk_check_button_new_with_mnemonic(_("_Through"));
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(hbox), w);
-#else
-    gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
-#endif
     d->through_point = w;
 
     hbox2 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
@@ -1979,23 +1971,13 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     d->through_box = hbox2;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(hbox), hbox2);
     gtk_box_append(GTK_BOX(vbox), hbox);
-#else
-    gtk_box_pack_start(GTK_BOX(hbox), hbox2, TRUE, TRUE, 0);
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
-#endif
 
 
     frame = gtk_frame_new(_("Action"));
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_frame_set_child(GTK_FRAME(frame), vbox);
     gtk_box_append(GTK_BOX(d->vbox), frame);
-#else
-    gtk_container_add(GTK_CONTAINER(frame), vbox);
-    gtk_box_pack_start(GTK_BOX(d->vbox), frame, FALSE, FALSE, 4);
-#endif
 
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
@@ -2012,73 +1994,40 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->div = w;
 
     w = gtk_check_button_new_with_mnemonic(_("_Interpolation"));
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(hbox), w);
-#else
-    gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
-#endif
     d->interpolation = w;
 
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(vbox), hbox);
-#else
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
-#endif
 
     frame = gtk_frame_new(_("Draw X range"));
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_frame_set_child(GTK_FRAME(frame), vbox);
     gtk_box_append(GTK_BOX(d->vbox), frame);
-#else
-    gtk_container_add(GTK_CONTAINER(frame), vbox);
-    gtk_box_pack_start(GTK_BOX(d->vbox), frame, FALSE, FALSE, 4);
-#endif
 
 
     frame = create_user_fit_frame(d);
     d->usr_def_frame = frame;
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(d->vbox), frame);
-#else
-    gtk_box_pack_start(GTK_BOX(d->vbox), frame, TRUE, TRUE, 4);
-#endif
 
 
     hbox = add_copy_button_to_box(GTK_WIDGET(d->vbox), G_CALLBACK(FitDialogCopy), d, "fit");
 
     w = gtk_button_new_with_mnemonic(_("_Load"));
     g_signal_connect(w, "clicked", G_CALLBACK(FitDialogLoad), d);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(hbox), w);
-#else
-    gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
-#endif
 
     w = gtk_button_new_with_mnemonic(_("_Save"));
     set_button_icon(w, "document-save");
     g_signal_connect(w, "clicked", G_CALLBACK(FitDialogSave), d);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(hbox), w);
-#else
-    gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
-#endif
 
 
     w = gtk_button_new_with_mnemonic(_("_Draw"));
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(hbox), w);
-#else
-    gtk_box_pack_end(GTK_BOX(hbox), w, FALSE, FALSE, 4);
-#endif
     g_signal_connect(w, "clicked", G_CALLBACK(FitDialogDraw), d);
 
     w = gtk_button_new_with_mnemonic(_("_Result"));
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(hbox), w);
-#else
-    gtk_box_pack_end(GTK_BOX(hbox), w, FALSE, FALSE, 4);
-#endif
     g_signal_connect(w, "clicked", G_CALLBACK(FitDialogResult), d);
 
 
@@ -2086,10 +2035,6 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect(d->type, "changed", G_CALLBACK(FitDialogSetSensitivity), d);
     g_signal_connect(d->through_point, "toggled", G_CALLBACK(FitDialogSetSensitivity), d);
     g_signal_connect(d->derivatives, "toggled", G_CALLBACK(FitDialogSetSensitivity), d);
-
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-    gtk_widget_show_all(GTK_WIDGET(d->vbox));
-#endif
   }
 
   FitDialogSetupItem(wi, d, d->Id);
