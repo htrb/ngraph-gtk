@@ -561,13 +561,8 @@ MathDialogMode(GtkWidget *w, gpointer client_data)
   struct MathDialog *d;
   int i;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   if (! gtk_check_button_get_active(GTK_CHECK_BUTTON(w)))
     return;
-#else
-  if (! gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
-    return;
-#endif
 
   d = (struct MathDialog *) client_data;
 
