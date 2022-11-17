@@ -1793,11 +1793,7 @@ FitDialogSetSensitivity(GtkWidget *widget, gpointer user_data)
   d = (struct FitDialog *) user_data;
 
   type = combo_box_get_active(d->type);
-#if GTK_CHECK_VERSION(4, 0, 0)
   through = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->through_point));
-#else
-  through = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->through_point));
-#endif
 
   switch (type) {
   case FIT_TYPE_POLY:
@@ -1826,11 +1822,7 @@ FitDialogSetSensitivity(GtkWidget *widget, gpointer user_data)
     break;
   case FIT_TYPE_USER:
     gtk_label_set_text(GTK_LABEL(d->func_label), "");
-#if GTK_CHECK_VERSION(4, 0, 0)
     deriv = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->derivatives));
-#else
-    deriv = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->derivatives));
-#endif
 
     set_widget_sensitivity_with_label(d->dim, FALSE);
     gtk_widget_set_sensitive(d->through_point, FALSE);
