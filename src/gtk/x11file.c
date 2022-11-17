@@ -1835,7 +1835,6 @@ FitDialogSetSensitivity(GtkWidget *widget, gpointer user_data)
   }
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 add_focus_in_event(GtkWidget *w, gpointer user_data)
 {
@@ -1844,7 +1843,6 @@ add_focus_in_event(GtkWidget *w, gpointer user_data)
   g_signal_connect(ev, "enter", G_CALLBACK(func_entry_focused), user_data);
   gtk_widget_add_controller(w, ev);
 }
-#endif
 
 static GtkWidget *
 create_user_fit_frame(struct FitDialog *d)
@@ -1859,11 +1857,7 @@ create_user_fit_frame(struct FitDialog *d)
   j = 0;
   w = create_text_entry(FALSE, TRUE);
   add_widget_to_table_sub(table, w, _("_Formula:"), TRUE, 0, 2, 3, j++);
-#if GTK_CHECK_VERSION(4, 0, 0)
   add_focus_in_event(w, NgraphApp.fit_list);
-#else
-  g_signal_connect(w, "focus-in-event", G_CALLBACK(func_entry_focused), NgraphApp.fit_list);
-#endif
   g_signal_connect(w, "changed", G_CALLBACK(check_fit_func), d);
   d->formula = w;
 
@@ -1875,11 +1869,7 @@ create_user_fit_frame(struct FitDialog *d)
   add_widget_to_table_sub(table, w, NULL, FALSE, 2, 1, 3, j++);
   d->derivatives = w;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(vbox), table);
-#else
-  gtk_box_pack_start(GTK_BOX(vbox), table, FALSE, FALSE, 0);
-#endif
 
   table = gtk_grid_new();
 
@@ -1894,44 +1884,23 @@ create_user_fit_frame(struct FitDialog *d)
     d->p[i] = w;
 
     w = create_text_entry(TRUE, TRUE);
-#if GTK_CHECK_VERSION(4, 0, 0)
     add_focus_in_event(w, NgraphApp.fit_list);
-#else
-    g_signal_connect(w, "focus-in-event", G_CALLBACK(func_entry_focused), NgraphApp.fit_list);
-#endif
     add_widget_to_table_sub(table, w, dd, TRUE, 2, 1, 4, j++);
     d->d[i] = w;
   }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   w = gtk_scrolled_window_new();
   gtk_widget_set_vexpand(w, TRUE);
   gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(w), table);
   gtk_scrolled_window_set_has_frame(GTK_SCROLLED_WINDOW(w), FALSE);
-#else
-  w = gtk_scrolled_window_new(NULL, NULL);
-  gtk_container_add(GTK_CONTAINER(w), table);
-  gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(w), GTK_SHADOW_NONE);
-#endif
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(w), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   gtk_widget_set_size_request(GTK_WIDGET(w), -1, 200);
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  gtk_container_set_border_width(GTK_CONTAINER(w), 2);
-#endif
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(vbox), w);
-#else
-  gtk_box_pack_start(GTK_BOX(vbox), w, TRUE, TRUE, 0);
-#endif
   d->usr_def_prm_tbl = table;
 
   w = gtk_frame_new(_("User definition"));
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_frame_set_child(GTK_FRAME(w), vbox);
-#else
-  gtk_container_add(GTK_CONTAINER(w), vbox);
-#endif
 
   return w;
 }
