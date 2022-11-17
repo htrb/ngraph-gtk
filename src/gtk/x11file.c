@@ -1723,11 +1723,7 @@ FitDialogApply(GtkWidget *w, struct FitDialog *d)
   if (SetObjFieldFromWidget(d->formula, d->Obj, d->Id, "user_func"))
     return FALSE;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   s = gtk_editable_get_text(GTK_EDITABLE(d->formula));
-#else
- s = gtk_entry_get_text(GTK_ENTRY(d->formula));
-#endif
   entry_completion_append(NgraphApp.fit_list, s);
 
   for (i = 0; i < FIT_PARM_NUM; i++) {
@@ -1742,11 +1738,7 @@ FitDialogApply(GtkWidget *w, struct FitDialog *d)
     if (SetObjFieldFromWidget(d->d[i], d->Obj, d->Id, dd))
       return FALSE;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     s = gtk_editable_get_text(GTK_EDITABLE(d->d[i]));
-#else
-    s = gtk_entry_get_text(GTK_ENTRY(d->d[i]));
-#endif
     entry_completion_append(NgraphApp.fit_list, s);
   }
 
