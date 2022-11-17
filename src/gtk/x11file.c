@@ -775,17 +775,11 @@ MathDialogSetup(GtkWidget *wi, void *data, int makewidget)
       "_G(X, Y, Z)",
       "_H(X, Y, Z)",
     };
-#if GTK_CHECK_VERSION(4, 0, 0)
     GtkWidget *group = NULL;
-#endif
 
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(vbox), hbox);
-#else
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
-#endif
 
     w = list_store_create(sizeof(list) / sizeof(*list), list);
     list_store_set_sort_all(w);
@@ -794,31 +788,17 @@ MathDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect(w, "row-activated", G_CALLBACK(math_dialog_activated_cb), d);
     d->list = w;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     swin = gtk_scrolled_window_new();
     gtk_widget_set_vexpand(swin, TRUE);
-#else
-    swin = gtk_scrolled_window_new(NULL, NULL);
-#endif
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), w);
-#else
-    gtk_container_add(GTK_CONTAINER(swin), w);
-#endif
 
     w = gtk_frame_new(NULL);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_frame_set_child(GTK_FRAME(w), swin);
     gtk_box_append(GTK_BOX(vbox), w);
-#else
-    gtk_container_add(GTK_CONTAINER(w), swin);
-    gtk_box_pack_start(GTK_BOX(vbox), w, TRUE, TRUE, 4);
-#endif
 
     w = NULL;
     for (i = 0; i < MATH_FNC_NUM; i++) {
-#if GTK_CHECK_VERSION(4, 0, 0)
       w = gtk_check_button_new_with_mnemonic(_(button_str[i]));
       if (group) {
 	gtk_check_button_set_group(GTK_CHECK_BUTTON(w), GTK_CHECK_BUTTON(group));
@@ -826,10 +806,6 @@ MathDialogSetup(GtkWidget *wi, void *data, int makewidget)
 	group = w;
       }
       gtk_box_append(GTK_BOX(hbox), w);
-#else
-      w = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(w), _(button_str[i]));
-      gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
-#endif
       d->func[i] = w;
       g_signal_connect(w, "toggled", G_CALLBACK(MathDialogMode), d);
     }
@@ -839,37 +815,21 @@ MathDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = gtk_button_new_with_mnemonic(_("Select _All"));
     set_button_icon(w, "edit-select-all");
     g_signal_connect(w, "clicked", G_CALLBACK(list_store_select_all_cb), d->list);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(hbox), w);
-#else
-    gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
-#endif
     set_sensitivity_by_row_num(d->list, w);
 
     w = gtk_button_new_with_mnemonic(_("_Edit"));
     g_signal_connect(w, "clicked", G_CALLBACK(MathDialogList), d);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(hbox), w);
     gtk_box_append(GTK_BOX(vbox), hbox);
-#else
-    gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
-#endif
     set_sensitivity_by_selection(d->list, w);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(d->vbox), vbox);
-#else
-    gtk_box_pack_start(GTK_BOX(d->vbox), vbox, TRUE, TRUE, 4);
-#endif
 
     d->show_cancel = FALSE;
     d->ok_button = _("_Close");
 
     gtk_window_set_default_size(GTK_WINDOW(wi), -1, 300);
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-    gtk_widget_show_all(GTK_WIDGET(d->vbox));
-#endif
 
     d->Mode = 0;
   }
