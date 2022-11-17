@@ -863,12 +863,7 @@ FitLoadDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     w = combo_box_create();
     d->list = w;
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(d->vbox), w);
-#else
-    gtk_box_pack_start(GTK_BOX(d->vbox), w, FALSE, FALSE, 4);
-    gtk_widget_show_all(GTK_WIDGET(d->vbox));
-#endif
   }
   combo_box_clear(d->list);
   for (i = d->Sid; i <= chkobjlastinst(d->Obj); i++) {
@@ -876,13 +871,6 @@ FitLoadDialogSetup(GtkWidget *wi, void *data, int makewidget)
     combo_box_append_text(d->list, CHK_STR(s));
   }
   combo_box_set_active(d->list, 0);
-  /*
-  if (makewidget) {
-    XtManageChild(d->widget);
-    d->widget = NULL;
-    XtVaSetValues(d->list, XmNwidth, 200, NULL);
-  }
-  */
 }
 
 static void
