@@ -1285,7 +1285,6 @@ copy_settings_to_fitobj(struct FitDialog *d, const char *str, response_cb cb, gp
   return;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 delete_fitobj_response(int ret, gpointer user_data)
 {
@@ -1360,41 +1359,6 @@ delete_fitobj(struct FitDialog *d, const char *str, response_cb cb, gpointer use
   delete_fitobj_response(IDYES, data);
   return;
 }
-#else
-static int
-delete_fitobj(struct FitDialog *d, char *profile)
-{
-  int i, r;
-  char *s, *ptr;
-
-  if (profile == NULL)
-    return 1;
-
-  for (i = d->Lastid + 1; i <= chkobjlastinst(d->Obj); i++) {
-    getobj(d->Obj, "profile", i, 0, NULL, &s);
-    if (s && strcmp(s, profile) == 0) {
-      ptr = g_strdup_printf(_("Delete the profile '%s'?"), profile);
-      r = message_box(d->widget, ptr, "Confirm", RESPONS_YESNO);
-      g_free(ptr);
-      if (r != IDYES) {
-	return 1;
-      }
-      break;
-    }
-  }
-
-  if (i > chkobjlastinst(d->Obj)) {
-    ptr = g_strdup_printf(_("The profile '%s' is not exist."), profile);
-    message_box(d->widget, ptr, "Confirm", RESPONS_OK);
-    g_free(ptr);
-    return 1;
-  }
-
-  delobj(d->Obj, i);
-
-  return 0;
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
