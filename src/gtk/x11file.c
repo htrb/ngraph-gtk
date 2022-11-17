@@ -1086,8 +1086,6 @@ FitDialogLoadConfig(struct FitDialog *d, int errmes)
   return TRUE;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* to be implemented */
 static void
 file_dialog_load_response(struct response_callback *cb)
 {
@@ -1121,33 +1119,6 @@ FitDialogLoad(GtkButton *btn, gpointer user_data)
   response_callback_add(&DlgFitLoad, file_dialog_load_response, NULL, d);
   DialogExecute(d->widget, &DlgFitLoad);
 }
-#else
-static void
-FitDialogLoad(GtkButton *btn, gpointer user_data)
-{
-  struct FitDialog *d;
-  int lastid;
-
-  d = (struct FitDialog *) user_data;
-
-  if (!FitDialogLoadConfig(d, TRUE))
-    return;
-
-  lastid = chkobjlastinst(d->Obj);
-  if ((d->Lastid < 0) || (lastid == d->Lastid)) {
-    message_box(d->widget, _("No settings."), FITSAVE, RESPONS_OK);
-    return;
-  }
-
-  FitLoadDialog(&DlgFitLoad, d->Obj, d->Lastid + 1);
-  if ((DialogExecute(d->widget, &DlgFitLoad) == IDOK)
-      && (DlgFitLoad.sel >= 0)) {
-    int id;
-    id = DlgFitLoad.sel + d->Lastid + 1;
-    FitDialogSetupItem(d->widget, d, id);
-  }
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 struct copy_settings_to_fitobj_data {
