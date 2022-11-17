@@ -1120,7 +1120,6 @@ FitDialogLoad(GtkButton *btn, gpointer user_data)
   DialogExecute(d->widget, &DlgFitLoad);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 struct copy_settings_to_fitobj_data {
   struct FitDialog *d;
   char *profile;
@@ -1285,91 +1284,6 @@ copy_settings_to_fitobj(struct FitDialog *d, const char *str, response_cb cb, gp
   copy_settings_to_fitobj_response(IDYES, data);
   return;
 }
-#else
-static int
-copy_settings_to_fitobj(struct FitDialog *d, char *profile)
-{
-  int i, id, num;
-  char *s;
-
-  for (i = d->Lastid + 1; i <= chkobjlastinst(d->Obj); i++) {
-    getobj(d->Obj, "profile", i, 0, NULL, &s);
-    if (s && strcmp(s, profile) == 0) {
-      if (message_box(d->widget, _("Overwrite existing profile?"), "Confirm",
-		     RESPONS_YESNO) != IDYES) {
-	return 1;
-      }
-      break;
-    }
-  }
-
-  if (i > chkobjlastinst(d->Obj)) {
-    id = newobj(d->Obj);
-  } else {
-    id = i;
-  }
-
-  if (putobj(d->Obj, "profile", id, profile) == -1)
-    return 1;
-
-  if (SetObjFieldFromWidget(d->type, d->Obj, id, "type"))
-    return 1;
-
-  num = combo_box_get_active(d->dim);
-  num++;
-  if (num > 0 && putobj(d->Obj, "poly_dimension", id, &num) == -1)
-    return 1;
-
-  if (SetObjFieldFromWidget(d->weight, d->Obj, id, "weight_func"))
-    return 1;
-
-  if (SetObjFieldFromWidget
-      (d->through_point, d->Obj, id, "through_point"))
-    return 1;
-
-  if (SetObjFieldFromWidget(d->x, d->Obj, id, "point_x"))
-    return 1;
-
-  if (SetObjFieldFromWidget(d->y, d->Obj, id, "point_y"))
-    return 1;
-
-  if (SetObjFieldFromWidget(d->min, d->Obj, id, "min"))
-    return 1;
-
-  if (SetObjFieldFromWidget(d->max, d->Obj, id, "max"))
-    return 1;
-
-  if (SetObjFieldFromWidget(d->div, d->Obj, id, "div"))
-    return 1;
-
-  if (SetObjFieldFromWidget(d->interpolation, d->Obj, id,
-			    "interpolation"))
-    return 1;
-  if (SetObjFieldFromWidget(d->formula, d->Obj, id, "user_func"))
-    return 1;
-
-  if (SetObjFieldFromWidget(d->derivatives, d->Obj, id, "derivative"))
-    return 1;
-
-  if (SetObjFieldFromWidget(d->converge, d->Obj, id, "converge"))
-    return 1;
-
-  for (i = 0; i < FIT_PARM_NUM; i++) {
-    char p[] = "parameter0", dd[] = "derivative0";
-
-    p[sizeof(p) - 2] += i;
-    dd[sizeof(dd) - 2] += i;
-
-    if (SetObjFieldFromWidget(d->p[i], d->Obj, id, p))
-      return 1;
-
-    if (SetObjFieldFromWidget(d->d[i], d->Obj, id, dd))
-      return 1;
-  }
-
-  return 0;
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 static void
