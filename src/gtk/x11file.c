@@ -1507,11 +1507,7 @@ check_fit_func(GtkEditable *w, gpointer client_data)
     return FALSE;
   }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   math = gtk_editable_get_text(GTK_EDITABLE(d->formula));
-#else
-  math = gtk_entry_get_text(GTK_ENTRY(d->formula));
-#endif
   if (math_equation_parse(code, math)) {
     math_equation_free(code);
     return FALSE;
@@ -1519,11 +1515,7 @@ check_fit_func(GtkEditable *w, gpointer client_data)
 
   prm = math_equation_get_parameter(code, 0, NULL);
   dim = prm->id_num;
-#if GTK_CHECK_VERSION(4, 0, 0)
   deriv = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->derivatives));
-#else
-  deriv = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->derivatives));
-#endif
 
   for (i = 0; i < FIT_PARM_NUM; i++) {
     set_widget_sensitivity_with_label(d->p[i], FALSE);
