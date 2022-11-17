@@ -2142,22 +2142,14 @@ FileMoveDialogAdd(GtkWidget *w, gpointer client_data)
 
   a = spin_entry_get_val(d->move.line);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   buf = gtk_editable_get_text(GTK_EDITABLE(d->move.x));
-#else
-  buf = gtk_entry_get_text(GTK_ENTRY(d->move.x));
-#endif
   if (buf[0] == '\0') return;
 
   x = strtod(buf, &endptr);
   if (x != x || x == HUGE_VAL || x == - HUGE_VAL || endptr[0] != '\0')
     return;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   buf = gtk_editable_get_text(GTK_EDITABLE(d->move.y));
-#else
-  buf = gtk_entry_get_text(GTK_ENTRY(d->move.y));
-#endif
   if (buf[0] == '\0') return;
 
   y = strtod(buf, &endptr);
@@ -2173,13 +2165,8 @@ FileMoveDialogAdd(GtkWidget *w, gpointer client_data)
   snprintf(buf2, sizeof(buf2), DOUBLE_STR_FORMAT, y);
   list_store_set_string(d->move.list, &iter, 2, buf2);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   editable_set_init_text(d->move.x, "");
   editable_set_init_text(d->move.y, "");
-#else
-  gtk_entry_set_text(GTK_ENTRY(d->move.x), "");
-  gtk_entry_set_text(GTK_ENTRY(d->move.y), "");
-#endif
   d->move.changed = TRUE;
 }
 
