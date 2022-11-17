@@ -435,11 +435,7 @@ MathTextDialogClose(GtkWidget *w, void *data)
 
   switch (d->page) {
   case 0:
-#if GTK_CHECK_VERSION(4, 0, 0)
     p = gtk_editable_get_text(GTK_EDITABLE(d->list));
-#else
-    p = gtk_entry_get_text(GTK_ENTRY(d->list));
-#endif
     ptr = g_strdup(p);
     break;
   case 1:
