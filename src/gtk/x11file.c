@@ -573,7 +573,6 @@ MathDialogMode(GtkWidget *w, gpointer client_data)
   MathDialogSetupItem(d->widget, d);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 struct math_dialog_list_data {
   GList *list;
   char *buf;
@@ -673,68 +672,6 @@ MathDialogList(GtkButton *w, gpointer client_data)
   response_callback_add(&DlgMathText, math_dialog_list_respone, NULL, res_data);
   DialogExecute(d->widget, &DlgMathText);
 }
-#else
-static void
-MathDialogList(GtkButton *w, gpointer client_data)
-{
-  struct MathDialog *d;
-  int a, *ary, r;
-  char *field = NULL, *buf;
-  GtkTreeSelection *gsel;
-  GtkTreePath *path;
-  GList *list, *data;
-
-  d = (struct MathDialog *) client_data;
-
-  gsel = gtk_tree_view_get_selection(GTK_TREE_VIEW(d->list));
-  list = gtk_tree_selection_get_selected_rows(gsel, NULL);
-
-  if (list == NULL)
-    return;
-
-  gtk_tree_view_get_cursor(GTK_TREE_VIEW(d->list), &path, NULL);
-
-  if (path) {
-    r = list_store_path_get_int(d->list, path, 0, &a);
-    gtk_tree_path_free(path);
-  } else {
-    data = g_list_last(list);
-    r = list_store_path_get_int(d->list, data->data, 0, &a);
-  }
-
-  if (r)
-    goto END;
-
-  if (d->Mode < 0 || d->Mode >= MATH_FNC_NUM)
-    d->Mode = 0;
-
-  field = FieldStr[d->Mode];
-
-  sgetobjfield(d->Obj, a, field, NULL, &buf, FALSE, FALSE, FALSE);
-  if (buf == NULL)
-    goto END;
-
-  MathTextDialog(&DlgMathText, buf, d->Mode, d->Obj, list, d->list);
-  DialogExecute(d->widget, &DlgMathText);
-  if (DlgMathText.modified) {
-    d->modified = DlgMathText.modified;
-  }
-  g_free(buf);
-
-  MathDialogSetupItem(d->widget, d);
-
-  for (data = list; data; data = data->next) {
-    ary = gtk_tree_path_get_indices(data->data);
-    if (ary == NULL)
-      continue;
-
-    gtk_tree_selection_select_path(gsel, data->data);
-  }
-
- END:
-  g_list_free_full(list, (GDestroyNotify) gtk_tree_path_free);
-}
-#endif
 
 static void
 math_dialog_activated_cb(GtkTreeView *view, GtkTreePath *path, GtkTreeViewColumn *column, gpointer user_data)
