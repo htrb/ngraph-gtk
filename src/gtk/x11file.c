@@ -353,39 +353,22 @@ MathTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
     title = gtk_label_new(_("single line"));
     w = create_text_entry(TRUE, TRUE);
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(vbox), w);
-#else
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 0);
-#endif
     gtk_notebook_append_page(GTK_NOTEBOOK(tab), vbox, title);
     d->list = w;
 
     title = gtk_label_new(_("multi line"));
     w = create_source_view();
-#if GTK_CHECK_VERSION(4, 0, 0)
     swin = gtk_scrolled_window_new();
     gtk_widget_set_vexpand(swin, TRUE);
-#else
-    swin = gtk_scrolled_window_new(NULL, NULL);
-#endif
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), w);
-#else
-    gtk_container_add(GTK_CONTAINER(swin), w);
-#endif
     gtk_notebook_append_page(GTK_NOTEBOOK(tab), swin, title);
     d->text = w;
 
     g_signal_connect(tab, "switch-page", G_CALLBACK(MathTextDialogChangeInputType), d);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(d->vbox), tab);
-#else
-    gtk_box_pack_start(GTK_BOX(d->vbox), tab, TRUE, TRUE, 4);
-    gtk_widget_show_all(GTK_WIDGET(d->vbox));
-#endif
     gtk_window_set_default_size(GTK_WINDOW(wi), 800, 500);
   }
 
@@ -405,11 +388,7 @@ MathTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   set_source_style(d->text);
   gtk_window_set_title(GTK_WINDOW(wi), _(label[d->Mode]));
-#if GTK_CHECK_VERSION(4, 0, 0)
   editable_set_init_text(d->list, d->Text);
-#else
-  gtk_entry_set_text(GTK_ENTRY(d->list), d->Text);
-#endif
   set_text_to_source_buffer(d->text, d->Text);
   gtk_notebook_set_current_page(GTK_NOTEBOOK(d->input_tab), Menulocal.math_input_mode);
   if (Menulocal.math_input_mode) {
