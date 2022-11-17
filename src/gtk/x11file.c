@@ -551,11 +551,7 @@ MathDialogSetupItem(GtkWidget *w, struct MathDialog *d)
   }
 
   if (d->Mode >= 0 && d->Mode < MATH_FNC_NUM) {
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_check_button_set_active(GTK_CHECK_BUTTON(d->func[d->Mode]), TRUE);
-#else
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->func[d->Mode]), TRUE);
-#endif
   }
 }
 
