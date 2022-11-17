@@ -1028,7 +1028,6 @@ FitCB(struct objlist *obj, int id)
   return valstr;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 fit_dialog_copy_response(int sel, gpointer user_data)
 {
@@ -1046,19 +1045,6 @@ FitDialogCopy(GtkButton *btn, gpointer user_data)
   d = (struct FitDialog *) user_data;
   CopyClick(d->widget, d->Obj, d->Id, FitCB, fit_dialog_copy_response, d);
 }
-#else
-static void
-FitDialogCopy(GtkButton *btn, gpointer user_data)
-{
-  struct FitDialog *d;
-  int sel;
-
-  d = (struct FitDialog *) user_data;
-  sel = CopyClick(d->widget, d->Obj, d->Id, FitCB);
-  if (sel != -1)
-    FitDialogSetupItem(d->widget, d, sel);
-}
-#endif
 
 static int
 FitDialogLoadConfig(struct FitDialog *d, int errmes)
