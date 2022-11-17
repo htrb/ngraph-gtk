@@ -220,11 +220,7 @@ add_completion_provider(GtkSourceView *source_view, GtkSourceCompletionProvider 
   GtkSourceCompletion *comp;
 
   comp = gtk_source_view_get_completion(source_view);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_source_completion_add_provider(comp, provider);
-#else
-  gtk_source_completion_add_provider(comp, provider, NULL);
-#endif
   g_object_unref(G_OBJECT(provider));
 }
 
