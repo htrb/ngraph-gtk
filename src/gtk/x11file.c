@@ -1360,8 +1360,6 @@ delete_fitobj(struct FitDialog *d, const char *str, response_cb cb, gpointer use
   return;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* to be implemented */
 struct fit_dialog_save_response_data {
   struct FitDialog *d;
   int return_value;
@@ -1383,12 +1381,13 @@ fit_dialog_save_response_response(int ret, gpointer user_data)
   g_free(data);
 
   if (ret) {
-    g_free(DlgFitSave.Profile);
+    g_free(profile);
     return;
   }
 
   ngpfile = getscriptname(FITSAVE);
   if (ngpfile == NULL) {
+    g_free(profile);
     return;
   }
 
@@ -1459,8 +1458,8 @@ fit_dialog_save_response(struct response_callback *cb)
   }
   data->d = d;
   data->return_value = cb->return_value;
-  data->profile = g_strdup(DlgFitSave.Profile);
-  g_free(DlgFitSave.Profile);
+  data->profile = DlgFitSave.Profile;
+  DlgFitSave.Profile = NULL;
   switch (cb->return_value) {
   case IDOK:
     copy_settings_to_fitobj(d, data->profile, fit_dialog_save_response_response, data);
@@ -1487,98 +1486,6 @@ FitDialogSave(GtkWidget *w, gpointer client_data)
   response_callback_add(&DlgFitSave, fit_dialog_save_response, NULL, d);
   DialogExecute(d->widget, &DlgFitSave);
 }
-#else
-static void
-FitDialogSave(GtkWidget *w, gpointer client_data)
-{
-  int r;
-  char *s, *ngpfile;
-  int error;
-  int hFile;
-  struct FitDialog *d;
-
-  d = (struct FitDialog *) client_data;
-
-  if (!FitDialogLoadConfig(d, FALSE))
-    return;
-
-  FitSaveDialog(&DlgFitSave, d->Obj, d->Lastid + 1);
-
-  r = DialogExecute(d->widget, &DlgFitSave);
-  if (r != IDOK && r != IDDELETE)
-    return;
-
-  if (DlgFitSave.Profile == NULL)
-    return;
-
-  if (DlgFitSave.Profile[0] == '\0') {
-    g_free(DlgFitSave.Profile);
-    return;
-  }
-
-  switch (r) {
-  case IDOK:
-    if (copy_settings_to_fitobj(d, DlgFitSave.Profile)) {
-      g_free(DlgFitSave.Profile);
-      return;
-    }
-    break;
-  case IDDELETE:
-    if (delete_fitobj(d, DlgFitSave.Profile)) {
-      g_free(DlgFitSave.Profile);
-      return;
-    }
-    break;
-  }
-
-  ngpfile = getscriptname(FITSAVE);
-  if (ngpfile == NULL) {
-    return;
-  }
-
-  error = FALSE;
-
-  hFile = nopen(ngpfile, O_CREAT | O_TRUNC | O_RDWR, NFMODE_NORMAL_FILE);
-  if (hFile < 0) {
-    error = TRUE;
-  } else {
-    int i;
-    for (i = d->Lastid + 1; i <= chkobjlastinst(d->Obj); i++) {
-      int len;
-      getobj(d->Obj, "save", i, 0, NULL, &s);
-      len = strlen(s);
-
-      if (len != nwrite(hFile, s, len))
-	error = TRUE;
-
-      if (nwrite(hFile, "\n", 1) != 1)
-	error = TRUE;
-    }
-    nclose(hFile);
-  }
-
-  if (error) {
-    ErrorMessage();
-  } else {
-    char *ptr;
-    switch (r) {
-    case IDOK:
-      ptr = g_strdup_printf(_("The profile '%s' is saved."), DlgFitSave.Profile);
-      message_box(d->widget, ptr, "Confirm", RESPONS_OK);
-      g_free(ptr);
-      break;
-    case IDDELETE:
-      ptr = g_strdup_printf(_("The profile '%s' is deleted."), DlgFitSave.Profile);
-      message_box(d->widget, ptr, "Confirm", RESPONS_OK);
-      g_free(ptr);
-      g_free(DlgFitSave.Profile);
-      break;
-    }
-  }
-
-  g_free(ngpfile);
-}
-#endif
 
 static int
 check_fit_func(GtkEditable *w, gpointer client_data)
