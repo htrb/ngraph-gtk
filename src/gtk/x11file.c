@@ -914,12 +914,7 @@ FitSaveDialogSetup(GtkWidget *wi, void *data, int makewidget)
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
     item_setup(hbox, w, _("_Profile:"), TRUE);
     d->profile = w;
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(d->vbox), hbox);
-#else
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
-    gtk_widget_show_all(GTK_WIDGET(d->vbox));
-#endif
   }
   combo_box_clear(d->profile);
   for (i = d->Sid; i <= chkobjlastinst(d->Obj); i++) {
