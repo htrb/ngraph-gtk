@@ -6246,7 +6246,6 @@ save_data_main(gpointer user_data)
   char buf[1024];
   int i, *array, num, onum;
   char *argv[4];
-  struct savedstdio save;
   struct save_data_data *data;
 
   data = (struct save_data_data *) user_data;
