@@ -2863,29 +2863,17 @@ math_common_widgets_create(struct FileDialog *d, GtkWidget *grid, int pos)
   d->math.y = w;
 
   w = create_text_entry(TRUE, TRUE);
-#if GTK_CHECK_VERSION(4, 0, 0)
   add_focus_in_event(w, NgraphApp.func_list);
-#else
-  g_signal_connect(w, "focus-in-event", G_CALLBACK(func_entry_focused), NgraphApp.func_list);
-#endif
   add_widget_to_table(table, w, "_F(X,Y,Z):", TRUE, i++);
   d->math.f = w;
 
   w = create_text_entry(TRUE, TRUE);
-#if GTK_CHECK_VERSION(4, 0, 0)
   add_focus_in_event(w, NgraphApp.func_list);
-#else
-  g_signal_connect(w, "focus-in-event", G_CALLBACK(func_entry_focused), NgraphApp.func_list);
-#endif
   add_widget_to_table(table, w, "_G(X,Y,Z):", TRUE, i++);
   d->math.g = w;
 
   w = create_text_entry(TRUE, TRUE);
-#if GTK_CHECK_VERSION(4, 0, 0)
   add_focus_in_event(w, NgraphApp.func_list);
-#else
-  g_signal_connect(w, "focus-in-event", G_CALLBACK(func_entry_focused), NgraphApp.func_list);
-#endif
   add_widget_to_table(table, w, "_H(X,Y,Z):", TRUE, i++);
   d->math.h = w;
 
