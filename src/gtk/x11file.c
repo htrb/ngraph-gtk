@@ -4094,26 +4094,14 @@ set_headline_table(struct FileDialog *d, char *s, int max_lines)
     step = 1;
   }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   csv = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->load.csv));
-#else
-  csv = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->load.csv));
-#endif
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   remark = gtk_editable_get_text(GTK_EDITABLE(d->load.remark));
-#else
-  remark = gtk_entry_get_text(GTK_ENTRY(d->load.remark));
-#endif
   if (remark == NULL) {
     remark = "";
   }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   tmp = gtk_editable_get_text(GTK_EDITABLE(d->load.ifs));
-#else
-  tmp = gtk_entry_get_text(GTK_ENTRY(d->load.ifs));
-#endif
   if (tmp == NULL) {
     tmp = "";
   }
