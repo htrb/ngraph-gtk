@@ -6129,7 +6129,6 @@ file_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
   }
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 file_math_response(struct response_callback *cb)
 {
@@ -6161,31 +6160,6 @@ CmFileMath(void *w, gpointer client_data)
   response_callback_add(&DlgMath, file_math_response, NULL, GINT_TO_POINTER(undo));
   DialogExecute(TopLevel, &DlgMath);
 }
-#else
-void
-CmFileMath(void *w, gpointer client_data)
-{
-  struct objlist *obj;
-  int undo;
-
-  if (Menulock || Globallock)
-    return;
-
-  obj = chkobject("data");
-
-  if (chkobjlastinst(obj) < 0)
-    return;
-
-  undo = menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
-  MathDialog(&DlgMath, obj);
-  DialogExecute(TopLevel, &DlgMath);
-  if (DlgMath.modified) {
-    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, DRAW_REDRAW);
-  } else {
-    menu_delete_undo(undo);
-  }
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
