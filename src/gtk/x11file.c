@@ -2442,33 +2442,20 @@ mask_tab_create(struct FileDialog *d)
 
   i = 0;
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_NATURAL, TRUE, FALSE);
-#if GTK_CHECK_VERSION(4, 0, 0)
   spin_button_set_activates_signal(w, G_CALLBACK(FileMaskDialogAdd), d);
-#else
-  g_signal_connect(w, "activate", G_CALLBACK(FileMaskDialogAdd), d);
-#endif
   add_widget_to_table(table, w, _("_Line:"), FALSE, i++);
   d->mask.line = w;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   swin = gtk_scrolled_window_new();
   gtk_widget_set_vexpand(swin, TRUE);
   gtk_widget_set_hexpand(swin, TRUE);
   gtk_scrolled_window_set_has_frame(GTK_SCROLLED_WINDOW(swin), TRUE);
-#else
-  swin = gtk_scrolled_window_new(NULL, NULL);
-  gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(swin), GTK_SHADOW_ETCHED_IN);
-#endif
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   w = list_store_create(sizeof(list) / sizeof(*list), list);
   list_store_set_sort_column(w, 0);
   list_store_set_selection_mode(w, GTK_SELECTION_MULTIPLE);
   d->mask.list = w;
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), w);
-#else
-  gtk_container_add(GTK_CONTAINER(swin), w);
-#endif
   set_widget_margin(swin, WIDGET_MARGIN_TOP | WIDGET_MARGIN_BOTTOM);
 
   w = gtk_button_new_with_mnemonic(_("_Add"));
@@ -2489,28 +2476,15 @@ mask_tab_create(struct FileDialog *d)
   set_sensitivity_by_row_num(d->mask.list, w);
 
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(hbox), table);
   gtk_box_append(GTK_BOX(hbox), swin);
-#else
-  gtk_box_pack_start(GTK_BOX(hbox), table, FALSE, FALSE, 4);
-  gtk_box_pack_start(GTK_BOX(hbox), swin, TRUE, TRUE, 4);
-#endif
 
   frame = gtk_frame_new(NULL);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_frame_set_child(GTK_FRAME(frame), hbox);
-#else
-  gtk_container_add(GTK_CONTAINER(frame), hbox);
-#endif
   set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
 
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(vbox), frame);
-#else
-  gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 4);
-#endif
 
   add_copy_button_to_box(vbox, G_CALLBACK(mask_tab_copy), d, "data");
 
