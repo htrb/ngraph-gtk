@@ -2780,7 +2780,6 @@ math_tab_copy(GtkButton *btn, gpointer user_data)
   CopyClick(d->widget, d->Obj, d->Id, FileCB, math_tab_copy_response, d);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 func_entry_focused(GtkEventControllerFocus *ev, gpointer user_data)
 {
@@ -2791,18 +2790,6 @@ func_entry_focused(GtkEventControllerFocus *ev, gpointer user_data)
   w = gtk_event_controller_get_widget(GTK_EVENT_CONTROLLER(ev));
   entry_completion_set_entry(compl, w);
 }
-#else
-static gboolean
-func_entry_focused(GtkWidget *w, GdkEventFocus *event, gpointer user_data)
-{
-  GtkEntryCompletion *compl;
-
-  compl = GTK_ENTRY_COMPLETION(user_data);
-  entry_completion_set_entry(compl, w);
-
-  return FALSE;
-}
-#endif
 
 static GtkWidget *
 create_math_text_tab(GtkWidget *tab, const gchar *label)
