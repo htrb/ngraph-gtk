@@ -3744,11 +3744,7 @@ plot_tab_create(GtkWidget *parent, struct FileDialog *d)
   add_widget_to_table(table, w, _("_Color 2:"), FALSE, i++);
   d->col2 = w;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(hbox), table);
-#else
-  gtk_box_pack_start(GTK_BOX(hbox), table, FALSE, FALSE, 4);
-#endif
 
   table = gtk_grid_new();
 
@@ -3778,27 +3774,15 @@ plot_tab_create(GtkWidget *parent, struct FileDialog *d)
   add_widget_to_table(table, w, NULL, FALSE, i++);
   d->clip = w;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(hbox), table);
-#else
-  gtk_box_pack_start(GTK_BOX(hbox), table, TRUE, TRUE, 4);
-#endif
 
   w = gtk_frame_new(NULL);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_frame_set_child(GTK_FRAME(w), hbox);
   gtk_widget_set_vexpand(w, TRUE);
-#else
-  gtk_container_add(GTK_CONTAINER(w), hbox);
-#endif
   set_widget_margin(w, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
 
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(vbox), w);
-#else
-  gtk_box_pack_start(GTK_BOX(vbox), w, TRUE, TRUE, 4);
-#endif
 
   add_copy_button_to_box(vbox, G_CALLBACK(plot_tab_copy), d, "data");
 
