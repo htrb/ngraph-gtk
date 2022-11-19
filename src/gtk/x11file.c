@@ -3502,11 +3502,7 @@ FileDialogEdit(GtkWidget *w, gpointer client_data)
   if (Menulocal.editor == NULL)
     return;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   file = gtk_editable_get_text(GTK_EDITABLE(d->file));
-#else
-  file = gtk_entry_get_text(GTK_ENTRY(d->file));
-#endif
   if (file == NULL)
     return;
 
