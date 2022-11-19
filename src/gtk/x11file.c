@@ -2962,39 +2962,19 @@ math_set_value_common(struct FileDialog *d)
   if (SetObjFieldFromWidget(d->math.h, d->Obj, d->Id, "func_h"))
     return MATH_ERROR_FIELD_H;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   s = gtk_editable_get_text(GTK_EDITABLE(d->math.y));
-#else
-  s = gtk_entry_get_text(GTK_ENTRY(d->math.y));
-#endif
   entry_completion_append(NgraphApp.y_math_list, s);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   s = gtk_editable_get_text(GTK_EDITABLE(d->math.x));
-#else
-  s = gtk_entry_get_text(GTK_ENTRY(d->math.x));
-#endif
   entry_completion_append(NgraphApp.x_math_list, s);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   s = gtk_editable_get_text(GTK_EDITABLE(d->math.f));
-#else
-  s = gtk_entry_get_text(GTK_ENTRY(d->math.f));
-#endif
   entry_completion_append(NgraphApp.func_list, s);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   s = gtk_editable_get_text(GTK_EDITABLE(d->math.g));
-#else
-  s = gtk_entry_get_text(GTK_ENTRY(d->math.g));
-#endif
   entry_completion_append(NgraphApp.func_list, s);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   s = gtk_editable_get_text(GTK_EDITABLE(d->math.h));
-#else
-  s = gtk_entry_get_text(GTK_ENTRY(d->math.h));
-#endif
   entry_completion_append(NgraphApp.func_list, s);
 
   return MATH_ERROR_FIELD_NONE;
