@@ -4939,7 +4939,6 @@ CmRangeAdd
   DialogExecute(TopLevel, data->dialog);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 struct file_open_data {
   int n, undo;
   struct narray *farray;
@@ -4974,9 +4973,7 @@ file_open_response(int ret, gpointer user_data)
   arrayfree(farray);
   g_free(data);
 }
-#endif
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 CmFileOpen_response(char **file, gpointer user_data)
 {
@@ -5032,59 +5029,6 @@ CmFileOpen(GSimpleAction *action, GVariant *parameter, gpointer client_data)
   nGetOpenFileNameMulti(TopLevel, _("Add Data file"), NULL,
                         &(Menulocal.fileopendir), NULL, chd, CmFileOpen_response, NULL);
 }
-#else
-void
-CmFileOpen(void *w, gpointer client_data)
-{
-  int id, ret, n, undo = -1, chd;
-  char **file = NULL;
-  struct objlist *obj;
-  struct narray *farray;
-
-  if (Menulock || Globallock)
-    return;
-
-  obj = chkobject("data");
-  if (obj == NULL)
-    return;
-
-  chd = Menulocal.changedirectory;
-  file = nGetOpenFileNameMulti(TopLevel, _("Add Data file"), NULL,
-			      &(Menulocal.fileopendir), NULL, chd);
-
-  n = chkobjlastinst(obj);
-
-  farray = arraynew(sizeof(int));
-  if (file) {
-    char **ptr;
-    undo = data_save_undo(UNDO_TYPE_OPEN_FILE);
-    for (ptr = file; *ptr; ptr++) {
-      char *name;
-      name = *ptr;
-      id = newobj(obj);
-      if (id >= 0) {
-	arrayadd(farray, &id);
-	changefilename(name);
-	putobj(obj, "file", id, name);
-      }
-    }
-    g_free(file);
-  }
-
-  if (update_file_obj_multi(obj, farray, TRUE)) {
-    menu_delete_undo(undo);
-  }
-
-  if (n == chkobjlastinst(obj)) {
-    menu_delete_undo(undo);
-  } else {
-    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, DRAW_NOTIFY);
-    set_graph_modified();
-  }
-
-  arrayfree(farray);
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
