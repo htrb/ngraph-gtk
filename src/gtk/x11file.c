@@ -3228,8 +3228,6 @@ FileDialogMark(GtkWidget *w, gpointer client_data)
   DialogExecute(d->widget, &(d->mark));
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* to be implemented */
 struct execute_fit_dialog_data {
   struct objlist *fileobj;
   int fileid;
@@ -3278,24 +3276,6 @@ execute_fit_dialog(GtkWidget *w, struct objlist *fileobj, int fileid, struct obj
   response_callback_add(&DlgFit, execute_fit_dialog_response, NULL, data);
   DialogExecute(w, &DlgFit);
 }
-#else
-static int
-execute_fit_dialog(GtkWidget *w, struct objlist *fileobj, int fileid, struct objlist *fitobj, int fitid)
-{
-  int save_type, type, ret;
-
-  type = PLOT_TYPE_FIT;
-  getobj(fileobj, "type", fileid, 0, NULL, &save_type);
-  putobj(fileobj, "type", fileid, &type);
-
-  FitDialog(&DlgFit, fitobj, fitid);
-  ret = DialogExecute(w, &DlgFit);
-
-  putobj(fileobj, "type", fileid, &save_type);
-
-  return ret;
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 struct show_fit_dialog_data
