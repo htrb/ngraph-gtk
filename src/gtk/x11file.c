@@ -4324,28 +4324,16 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->file = w;
 
     w = gtk_button_new_with_mnemonic(_("_Load settings"));
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(hbox), w);
-#else
-    gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
-#endif
     d->load_settings = w;
     g_signal_connect(w, "clicked", G_CALLBACK(FileDialogOption), d);
 
     w = gtk_button_new_with_mnemonic(_("_Edit"));
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(hbox), w);
-#else
-    gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
-#endif
     g_signal_connect(w, "clicked", G_CALLBACK(FileDialogEdit), d);
 
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(d->vbox), hbox);
-#else
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
-#endif
 
 
     FileDialogSetupCommon(wi, d);
@@ -4364,17 +4352,9 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
     if (view) {
       GtkWidget *swin;
       label = gtk_label_new_with_mnemonic(_("_Table"));
-#if GTK_CHECK_VERSION(4, 0, 0)
       swin = gtk_scrolled_window_new();
-#else
-      swin = gtk_scrolled_window_new(NULL, NULL);
-#endif
       gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-#if GTK_CHECK_VERSION(4, 0, 0)
       gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), view);
-#else
-      gtk_container_add(GTK_CONTAINER(swin), view);
-#endif
       gtk_notebook_append_page(GTK_NOTEBOOK(w), swin, label);
     }
     d->comment_table = view;
@@ -4399,9 +4379,6 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(d->fit_table, w, _("_Fit:"), FALSE, d->fit_row);
     d->fit = w;
     g_signal_connect(w, "clicked", G_CALLBACK(FileDialogFit), d);
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-    gtk_widget_show_all(GTK_WIDGET(d->vbox));
-#endif
   }
 
   line = Menulocal.data_head_lines;
