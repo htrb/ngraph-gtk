@@ -6161,8 +6161,6 @@ CmFileMath(void *w, gpointer client_data)
   DialogExecute(TopLevel, &DlgMath);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* to be implemented */
 static void
 get_draw_files_response(struct response_callback *cb)
 {
@@ -6176,13 +6174,14 @@ get_draw_files_response(struct response_callback *cb)
   if (cb->return_value != IDOK) {
     arrayfree(ifarray);
     arraydel(farray);
+    save_cb(1, farray);
     return;
   }
   arrayfree(ifarray);
-  save_cb(IDOK, farray);
+  save_cb(0, farray);
 }
 
-static int
+static void
 GetDrawFiles(struct narray *farray, response_cb cb)
 {
   struct objlist *fobj;
@@ -6194,12 +6193,16 @@ GetDrawFiles(struct narray *farray, response_cb cb)
     return 1;
 
   fobj = chkobject("data");
-  if (fobj == NULL)
-    return 1;
+  if (fobj == NULL) {
+    call_cb(1, cb, farray);
+    return;
+  }
 
   lastinst = chkobjlastinst(fobj);
-  if (lastinst < 0)
-    return 1;
+  if (lastinst < 0) {
+    call_cb(1, cb, farray);
+    return;
+  }
 
   ifarray = arraynew(sizeof(int));
   for (i = 0; i <= lastinst; i++) {
@@ -6210,45 +6213,7 @@ GetDrawFiles(struct narray *farray, response_cb cb)
   SelectDialog(&DlgSelect, fobj, NULL, FileCB, farray, ifarray);
   response_callback_add(&DlgSelect, get_draw_files_response, NULL, cb);
   DialogExecute(TopLevel, &DlgSelect);
-  return 0;
 }
-#else
-static int
-GetDrawFiles(struct narray *farray)
-{
-  struct objlist *fobj;
-  int lastinst;
-  struct narray ifarray;
-  int i, a;
-
-  if (farray == NULL)
-    return 1;
-
-  fobj = chkobject("data");
-  if (fobj == NULL)
-    return 1;
-
-  lastinst = chkobjlastinst(fobj);
-  if (lastinst < 0)
-    return 1;
-
-  arrayinit(&ifarray, sizeof(int));
-  for (i = 0; i <= lastinst; i++) {
-    getobj(fobj, "hidden", i, 0, NULL, &a);
-    if (!a)
-      arrayadd(&ifarray, &i);
-  }
-  SelectDialog(&DlgSelect, fobj, NULL, FileCB, farray, &ifarray);
-  if (DialogExecute(TopLevel, &DlgSelect) != IDOK) {
-    arraydel(&ifarray);
-    arraydel(farray);
-    return 1;
-  }
-  arraydel(&ifarray);
-
-  return 0;
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
