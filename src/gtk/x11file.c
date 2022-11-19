@@ -4415,11 +4415,7 @@ ArrayDialogSetup(GtkWidget *wi, void *data, int makewidget)
     item_setup(GTK_WIDGET(hbox), w, _("_Array:"), TRUE);
     d->file = w;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(d->vbox), hbox);
-#else
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
-#endif
 
     FileDialogSetupCommon(wi, d);
 
@@ -4432,17 +4428,9 @@ ArrayDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->move.tab_id = gtk_notebook_append_page(d->tab, w, label);
 
     view = create_preview_table(d);
-#if GTK_CHECK_VERSION(4, 0, 0)
     swin = gtk_scrolled_window_new();
-#else
-    swin = gtk_scrolled_window_new(NULL, NULL);
-#endif
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), view);
-#else
-    gtk_container_add(GTK_CONTAINER(swin), view);
-#endif
     d->comment_table = view;
 
     g_signal_connect(d->load.readstep, "changed", G_CALLBACK(update_table_visibility), d);
@@ -4459,9 +4447,6 @@ ArrayDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(d->fit_table, w, _("_Fit:"), FALSE, d->fit_row);
     d->fit = w;
     g_signal_connect(w, "clicked", G_CALLBACK(FileDialogFit), d);
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-    gtk_widget_show_all(GTK_WIDGET(d->vbox));
-#endif
   }
 
   FileDialogSetupItem(wi, d);
