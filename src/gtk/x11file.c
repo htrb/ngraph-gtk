@@ -3193,7 +3193,6 @@ FileDialogSetupItem(GtkWidget *w, struct FileDialog *d)
   gtk_notebook_set_current_page(GTK_NOTEBOOK(d->math_input_tab), Menulocal.math_input_mode);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 struct file_dialog_mark_data {
   struct FileDialog *d;
   GtkWidget *w;
@@ -3228,17 +3227,6 @@ FileDialogMark(GtkWidget *w, gpointer client_data)
   response_callback_add(&d->mark, file_dialog_mark_response, NULL, data);
   DialogExecute(d->widget, &(d->mark));
 }
-#else
-static void
-FileDialogMark(GtkWidget *w, gpointer client_data)
-{
-  struct FileDialog *d;
-
-  d = (struct FileDialog *) client_data;
-  DialogExecute(d->widget, &(d->mark));
-  button_set_mark_image(w, d->mark.Type);
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
