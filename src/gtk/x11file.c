@@ -5030,8 +5030,6 @@ CmFileOpen(GSimpleAction *action, GVariant *parameter, gpointer client_data)
                         &(Menulocal.fileopendir), NULL, chd, CmFileOpen_response, NULL);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* to be implemented */
 static void
 file_close_response(struct response_callback *cb)
 {
@@ -5072,38 +5070,6 @@ CmFileClose(void *w, gpointer client_data)
   response_callback_add(&DlgSelect, file_close_response, NULL, farray);
   DialogExecute(TopLevel, &DlgSelect);
 }
-#else
-void
-CmFileClose(void *w, gpointer client_data)
-{
-  struct narray farray;
-  struct objlist *obj;
-
-  if (Menulock || Globallock)
-    return;
-  if ((obj = chkobject("data")) == NULL)
-    return;
-  if (chkobjlastinst(obj) == -1)
-    return;
-  SelectDialog(&DlgSelect, obj, _("close data (multi select)"), FileCB, (struct narray *) &farray, NULL);
-  if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
-    int i, *array, num;
-    struct obj_list_data *data;
-    data = NgraphApp.FileWin.data.data;
-    num = arraynum(&farray);
-    if (num > 0) {
-      data_save_undo(UNDO_TYPE_DELETE);
-    }
-    array = arraydata(&farray);
-    for (i = num - 1; i >= 0; i--) {
-      delete_file_obj(data, array[i]);
-      set_graph_modified();
-    }
-    FileWinUpdate(data, TRUE, DRAW_REDRAW);
-  }
-  arraydel(&farray);
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
