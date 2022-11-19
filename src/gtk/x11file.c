@@ -4798,8 +4798,6 @@ data_save_undo(int type)
   return menu_save_undo(type, arg);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* to be implemented */
 struct load_data_data
 {
   int undo;
@@ -4874,64 +4872,6 @@ load_data(const char *name)
   response_callback_add(data->dialog, load_data_response, NULL, res_data);
   DialogExecute(TopLevel, data->dialog);
 }
-#else
-void
-CmFileHistory(GtkRecentChooser *w, gpointer client_data)
-{
-  int ret;
-  char *name, *fname;
-  int id, undo;
-  struct objlist *obj;
-  char *uri;
-  struct obj_list_data *data;
-
-  if (Menulock || Globallock) {
-    return;
-  }
-
-  uri = gtk_recent_chooser_get_current_uri(w);
-  if (uri == NULL) {
-    return;
-  }
-
-  name = g_filename_from_uri(uri, NULL, NULL);
-  g_free(uri);
-  if (name == NULL) {
-    return;
-  }
-
-  obj = chkobject("data");
-  if (obj == NULL) {
-    return;
-  }
-
-  undo = data_save_undo(UNDO_TYPE_OPEN_FILE);
-  id = newobj(obj);
-  if (id < 0) {
-    menu_delete_undo(undo);
-    return;
-  }
-
-  fname = g_strdup(name);
-  if (fname == NULL) {
-    menu_delete_undo(undo);
-    return;
-  }
-
-  putobj(obj, "file", id, name);
-  data = NgraphApp.FileWin.data.data;
-  FileDialog(data, id, FALSE);
-  ret = DialogExecute(TopLevel, data->dialog);
-  if (ret == IDCANCEL) {
-    menu_undo_internal(undo);
-  } else {
-    set_graph_modified();
-    AddDataFileList(fname);
-  }
-  g_free(fname);
-  FileWinUpdate(data, TRUE, DRAW_NOTIFY);
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
