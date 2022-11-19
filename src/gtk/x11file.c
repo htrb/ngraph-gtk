@@ -6431,9 +6431,6 @@ filewin_ev_key_down(GtkWidget *w, guint keyval, GdkModifierType state, gpointer 
   case GDK_KEY_f:
     if (state & GDK_CONTROL_MASK) {
       FileWinFit(d);
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-      UnFocus();
-#endif
     }
     break;
   default:
