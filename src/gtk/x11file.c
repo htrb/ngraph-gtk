@@ -6227,7 +6227,6 @@ static void
 save_data_finalize(gpointer user_data)
 {
   struct save_data_data *data;
-  char *msg;
 
   data = (struct save_data_data *) user_data;
   arrayfree(data->farray);
