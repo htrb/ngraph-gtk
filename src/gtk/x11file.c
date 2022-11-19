@@ -3324,6 +3324,14 @@ show_fit_dialog_response(int ret, gpointer user_data)
 
 static int
 #if GTK_CHECK_VERSION(4, 0, 0)
+static void
+call_cb(int response, response_cb cb, gpointer user_data)
+{
+  if (cb) {
+    cb(response, user_data);
+  }
+}
+
 show_fit_dialog(struct objlist *obj, int id, GtkWidget *parent, response_cb cb, gpointer user_data)
 #else
 show_fit_dialog(struct objlist *obj, int id, GtkWidget *parent)
