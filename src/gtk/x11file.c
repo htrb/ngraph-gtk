@@ -4873,8 +4873,6 @@ load_data(const char *name)
   DialogExecute(TopLevel, data->dialog);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* to be implemented */
 struct range_add_data
 {
   int undo;
@@ -4940,46 +4938,6 @@ CmRangeAdd
   response_callback_add(data->dialog, range_add_response, NULL, res_data);
   DialogExecute(TopLevel, data->dialog);
 }
-#else
-void
-CmRangeAdd
-(void *w, gpointer client_data)
-{
-  int id, ret, val, undo;
-  struct objlist *obj;
-  struct obj_list_data *data;
-
-  if (Menulock || Globallock)
-    return;
-
-  obj = chkobject("data");
-  if (obj == NULL) {
-    return;
-  }
-
-  undo = data_save_undo(UNDO_TYPE_ADD_RANGE);
-  id = newobj(obj);
-  if (id < 0) {
-    menu_delete_undo(undo);
-    return;
-  }
-
-  data = NgraphApp.FileWin.data.data;
-  val = DATA_SOURCE_RANGE;
-  putobj(obj, "source", id, &val);
-  val = PLOT_TYPE_LINE;
-  putobj(obj, "type", id, &val);
-  FileDialog(data, id, FALSE);
-  ret = DialogExecute(TopLevel, data->dialog);
-
-  if (ret == IDCANCEL) {
-    menu_undo_internal(undo);
-  } else {
-    set_graph_modified();
-    FileWinUpdate(data, TRUE, DRAW_REDRAW);
-  }
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 struct file_open_data {
