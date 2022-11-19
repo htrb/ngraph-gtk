@@ -6215,8 +6215,6 @@ GetDrawFiles(struct narray *farray, response_cb cb)
   DialogExecute(TopLevel, &DlgSelect);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* to be implemented */
 struct save_data_data
 {
   char *file;
@@ -6282,6 +6280,10 @@ static void
 save_data_response(char *file, gpointer user_data)
 {
   struct save_data_data *data;
+  if (file == NULL) {
+    arrayfree((struct narray *) user_data);
+    return;
+  }
   data = g_malloc0(sizeof(*data));
   if (data == NULL) {
     arrayfree((struct narray *) user_data);
@@ -6325,6 +6327,11 @@ file_save_data_response(int ret, gpointer user_data)
   int i, num, onum, type, div, curve = FALSE, *array;
 
   farray = (struct narray *) user_data;
+
+  if (ret) {
+    arrayfree(farray);
+    return;
+  }
 
   obj = chkobject("data");
   if (obj == NULL) {
@@ -6376,95 +6383,8 @@ CmFileSaveData(void *w, gpointer client_data)
     return;
   }
 
-  if (GetDrawFiles(farray, file_save_data_response)) {
-    arrayfree(farray);
-    return;
-  }
+  GetDrawFiles(farray, file_save_data_response);
 }
-#else
-void
-CmFileSaveData(void *w, gpointer client_data)
-{
-  struct narray farray;
-  struct objlist *obj;
-  int i, num, onum, type, div, curve = FALSE, *array, append;
-  char *file, buf[1024];
-  char *argv[4];
-  int chd;
-
-  if (Menulock || Globallock)
-    return;
-
-  if (GetDrawFiles(&farray))
-    return;
-
-  obj = chkobject("data");
-  if (obj == NULL)
-    return;
-
-  onum = chkobjlastinst(obj);
-  num = arraynum(&farray);
-
-  if (num == 0) {
-    arraydel(&farray);
-    return;
-  }
-
-  array = arraydata(&farray);
-  for (i = 0; i < num; i++) {
-    if (array[i] < 0 || array[i] > onum)
-      continue;
-
-    getobj(obj, "type", array[i], 0, NULL, &type);
-    if (type == 3) {
-      curve = TRUE;
-    }
-  }
-
-  div = 10;
-
-  if (curve) {
-    OutputDataDialog(&DlgOutputData, div);
-    if (DialogExecute(TopLevel, &DlgOutputData) != IDOK) {
-      arraydel(&farray);
-      return;
-    }
-    div = DlgOutputData.div;
-  }
-
-  chd = Menulocal.changedirectory;
-  file = nGetSaveFileName(TopLevel, _("Data file"), NULL, NULL, NULL, FALSE, chd);
-  if (file) {
-    arraydel(&farray);
-    return;
-  }
-
-  ProgressDialogCreate(_("Making data file"));
-  SetStatusBar(_("Making data file."));
-
-  argv[0] = (char *) file;
-  argv[1] = (char *) &div;
-  argv[3] = NULL;
-  for (i = 0; i < num; i++) {
-    if (array[i] < 0 || array[i] > onum)
-      continue;
-
-    snprintf(buf, sizeof(buf), "%d/%d", i, num);
-    set_progress(1, buf, 1.0 * (i + 1) / num);
-
-    append = (i == 0) ? FALSE : TRUE;
-    argv[2] = (char *) &append;
-    if (exeobj(obj, "output_file", array[i], 3, argv))
-      break;
-  }
-  ProgressDialogFinalize();
-  ResetStatusBar();
-  main_window_redraw();
-
-  arraydel(&farray);
-  g_free(file);
-}
-#endif
 
 static gboolean
 filewin_ev_key_down(GtkWidget *w, guint keyval, GdkModifierType state, gpointer user_data)
