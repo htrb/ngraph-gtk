@@ -5320,8 +5320,6 @@ CmFileEdit(void *w, gpointer client_data)
   DialogExecute(TopLevel, &DlgCopy);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* to be implemented */
 static void
 option_file_def_response_response(int ret, struct objlist *obj, int id, int modified)
 {
@@ -5378,41 +5376,6 @@ CmOptionFileDef(void *w, gpointer client_data)
     DialogExecute(TopLevel, &DlgFileDef);
   }
 }
-#else
-void
-CmOptionFileDef(void *w, gpointer client_data)
-{
-  struct objlist *obj;
-  int id;
-
-  if (Menulock || Globallock)
-    return;
-
-  if ((obj = chkobject("data")) == NULL)
-    return;
-
-  id = newobj(obj);
-  if (id >= 0) {
-    int modified;
-    char *objs[2];
-
-    modified = get_graph_modified();
-    FileDefDialog(&DlgFileDef, obj, id);
-    if (DialogExecute(TopLevel, &DlgFileDef) == IDOK) {
-      if (CheckIniFile()) {
-	exeobj(obj, "save_config", id, 0, NULL);
-      }
-    }
-    delobj(obj, id);
-    objs[0] = obj->name;
-    objs[1] = NULL;
-    UpdateAll2(objs, TRUE);
-    if (! modified) {
-      reset_graph_modified();
-    }
-  }
-}
-#endif
 
 static void
 FileWinFileEdit(struct obj_list_data *d)
