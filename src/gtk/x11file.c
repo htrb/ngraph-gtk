@@ -3255,7 +3255,7 @@ execute_fit_dialog_response(struct response_callback *cb)
   g_free(data);
 }
 
-static int
+static void
 execute_fit_dialog(GtkWidget *w, struct objlist *fileobj, int fileid, struct objlist *fitobj, int fitid, response_cb cb, gpointer user_data)
 {
   int save_type, type;
@@ -3267,7 +3267,7 @@ execute_fit_dialog(GtkWidget *w, struct objlist *fileobj, int fileid, struct obj
 
   data = g_malloc0(sizeof(*data));
   if (data == NULL) {
-    return IDOK;
+    return;
   }
   data->fileobj = fileobj;
   data->fileid = fileid;
@@ -3277,7 +3277,6 @@ execute_fit_dialog(GtkWidget *w, struct objlist *fileobj, int fileid, struct obj
   FitDialog(&DlgFit, fitobj, fitid);
   response_callback_add(&DlgFit, execute_fit_dialog_response, NULL, data);
   DialogExecute(w, &DlgFit);
-  return IDOK;
 }
 #else
 static int
@@ -3408,7 +3407,8 @@ show_fit_dialog(struct objlist *obj, int id, GtkWidget *parent)
   data->create = create;
   data->cb = cb;
   data->data = user_data;
-  ret = execute_fit_dialog(parent, obj, id, fitobj, fitid, show_fit_dialog_response, data);
+  execute_fit_dialog(parent, obj, id, fitobj, fitid, show_fit_dialog_response, data);
+  ret = TRUE;
 #else
   ret = execute_fit_dialog(parent, obj, id, fitobj, fitid);
 
@@ -6406,7 +6406,7 @@ FileWinFit(struct obj_list_data *d)
   data->fitid = fitid;
   data->id = sel;
   data->undo = undo;
-  ret = execute_fit_dialog(parent, d->obj, sel, fitobj, fitid, file_win_fit_response, data);
+  execute_fit_dialog(parent, d->obj, sel, fitobj, fitid, file_win_fit_response, data);
 #else
   ret = execute_fit_dialog(parent, d->obj, sel, fitobj, fitid);
 
