@@ -2676,11 +2676,7 @@ load_tab_set_value(struct FileDialog *d)
   if (SetObjFieldFromWidget(d->load.remark, d->Obj, d->Id, "remark"))
     return 1;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   ifs = gtk_editable_get_text(GTK_EDITABLE(d->load.ifs));
-#else
-  ifs = gtk_entry_get_text(GTK_ENTRY(d->load.ifs));
-#endif
   s = g_string_new("");
   decode_ifs_text(s, ifs);
 
