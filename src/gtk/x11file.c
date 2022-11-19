@@ -2716,11 +2716,7 @@ copy_entry_to_text(GtkWidget *text, GtkWidget *entry)
 {
   const gchar *str;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   str = gtk_editable_get_text(GTK_EDITABLE(entry));
-#else
-  str = gtk_entry_get_text(GTK_ENTRY(entry));
-#endif
   set_text_to_source_buffer(text, str);
 }
 
