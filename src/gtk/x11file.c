@@ -2762,7 +2762,6 @@ math_tab_setup_item(struct FileDialog *d, int id)
   set_source_style(d->math.text_h);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 math_tab_copy_response(int sel, gpointer user_data)
 {
@@ -2780,22 +2779,6 @@ math_tab_copy(GtkButton *btn, gpointer user_data)
   d = (struct FileDialog *) user_data;
   CopyClick(d->widget, d->Obj, d->Id, FileCB, math_tab_copy_response, d);
 }
-#else
-static void
-math_tab_copy(GtkButton *btn, gpointer user_data)
-{
-  struct FileDialog *d;
-  int sel;
-
-  d = (struct FileDialog *) user_data;
-
-  sel = CopyClick(d->widget, d->Obj, d->Id, FileCB);
-
-  if (sel != -1) {
-    math_tab_setup_item(d, sel);
-  }
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 static void
