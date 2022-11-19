@@ -5482,8 +5482,6 @@ file_copy2_popup_func(GSimpleAction *action, GVariant *parameter, gpointer clien
   FileWinFileCopy2(d);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* to be implemented */
 struct file_update_data {
   int undo;
   struct obj_list_data *d;
@@ -5538,37 +5536,6 @@ FileWinFileUpdate(struct obj_list_data *d)
     DialogExecute(parent, d->dialog);
   }
 }
-#else
-static void
-FileWinFileUpdate(struct obj_list_data *d)
-{
-  int sel, num;
-
-  if (Menulock || Globallock)
-    return;
-  sel = list_store_get_selected_int(GTK_WIDGET(d->text), FILE_WIN_COL_ID);
-  num = chkobjlastinst(d->obj);
-
-  if ((sel >= 0) && (sel <= num)) {
-    int ret, undo;
-    GtkWidget *parent;
-    undo = data_save_undo(UNDO_TYPE_EDIT);
-    d->setup_dialog(d, sel, FALSE);
-    d->select = sel;
-
-    parent = TopLevel;
-    ret = DialogExecute(parent, d->dialog);
-    set_graph_modified();
-    switch (ret) {
-    case IDCANCEL:
-      menu_undo_internal(undo);
-      break;
-    default:
-      d->update(d, FALSE, DRAW_NOTIFY);
-    }
-  }
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 static void
