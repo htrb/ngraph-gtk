@@ -54,7 +54,7 @@ GtkWidget *create_data_list(struct SubWin *d);
 
 void CmOptionFileDef(void *w, gpointer client_data);
 #if GTK_CHECK_VERSION(4, 0, 0)
-int update_file_obj_multi(struct objlist *obj, struct narray *farray, int newfile, response_cb cb, gpointer user_data);
+void update_file_obj_multi(struct objlist *obj, struct narray *farray, int newfile, response_cb cb, gpointer user_data);
 #else
 int update_file_obj_multi(struct objlist *obj, struct narray *farray, int newfile);
 #endif

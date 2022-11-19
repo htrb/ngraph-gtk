@@ -5165,7 +5165,7 @@ update_file_obj_multi_response(struct response_callback *cb)
   }
 }
 
-int
+void
 update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file, response_cb cb, gpointer user_data)
 {
   int num, *array, undo;
@@ -5174,7 +5174,8 @@ update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file, 
 
   num = arraynum(farray);
   if (num < 1) {
-    return 0;
+    call_cb(0, cb, user_data);
+    return;
   }
 
   array = arraydata(farray);
@@ -5184,7 +5185,8 @@ update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file, 
 
   rdata = g_malloc0(sizeof(*rdata));
   if (rdata == NULL) {
-    return IDOK;
+    call_cb(0, cb, user_data);
+    return;
   }
 
   undo = data_save_undo(UNDO_TYPE_DUMMY);
@@ -5203,8 +5205,6 @@ update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file, 
   FileDialog(data, array[0], 0 < num - 1);
   response_callback_add(data->dialog, update_file_obj_multi_response, NULL, rdata);
   DialogExecute(TopLevel, data->dialog);
-
-  return 0;
 }
 #else
 int
