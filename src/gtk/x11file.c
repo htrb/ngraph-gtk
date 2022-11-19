@@ -2568,7 +2568,6 @@ load_tab_setup_item(struct FileDialog *d, int id)
   g_free(ifs);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 load_tab_copy_response(int sel, gpointer user_data)
 {
@@ -2586,21 +2585,6 @@ load_tab_copy(GtkButton *btn, gpointer user_data)
   d = (struct FileDialog *) user_data;
   CopyClick(d->widget, d->Obj, d->Id, FileCB, load_tab_copy_response, d);
 }
-#else
-static void
-load_tab_copy(GtkButton *btn, gpointer user_data)
-{
-  struct FileDialog *d;
-  int sel;
-
-  d = (struct FileDialog *) user_data;
-
-  sel = CopyClick(d->widget, d->Obj, d->Id, FileCB);
-  if (sel != -1) {
-    load_tab_setup_item(d, sel);
-  }
-}
-#endif
 
 static GtkWidget *
 load_tab_create(struct FileDialog *d)
