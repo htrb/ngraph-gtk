@@ -3809,11 +3809,7 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
   item_setup(hbox, w, _("_X axis:"), TRUE);
   d->xaxis = w;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(vbox2), hbox);
-#else
-  gtk_box_pack_start(GTK_BOX(vbox2), hbox, FALSE, FALSE, 4);
-#endif
 
 
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
@@ -3828,11 +3824,7 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
   item_setup(hbox, w, _("_Y axis:"), TRUE);
   d->yaxis = w;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(vbox2), hbox);
-#else
-  gtk_box_pack_start(GTK_BOX(vbox2), hbox, FALSE, FALSE, 4);
-#endif
 
   add_copy_button_to_box(vbox2, G_CALLBACK(file_settings_copy), d, "data");
 
@@ -3840,19 +3832,11 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
   gtk_grid_set_column_spacing(GTK_GRID(hbox), 4);
   d->comment_box = hbox;
   frame = gtk_frame_new(NULL);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_frame_set_child(GTK_FRAME(frame), vbox2);
-#else
-  gtk_container_add(GTK_CONTAINER(frame), vbox2);
-#endif
 
   gtk_widget_set_hexpand(frame, FALSE);
   gtk_grid_attach(GTK_GRID(hbox), frame, 0, 0, 1, 1);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(d->vbox), hbox);
-#else
-  gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
-#endif
 
   notebook = gtk_notebook_new();
 
@@ -3873,11 +3857,7 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
   label = gtk_label_new_with_mnemonic(_("_Load"));
   d->load.tab_id = gtk_notebook_append_page(GTK_NOTEBOOK(notebook), w, label);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(d->vbox), notebook);
-#else
-  gtk_box_pack_start(GTK_BOX(d->vbox), notebook, TRUE, TRUE, 4);
-#endif
 }
 
 static void
