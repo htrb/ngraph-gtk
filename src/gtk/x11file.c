@@ -4476,20 +4476,12 @@ RangeDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     i = 0;
     w = create_text_entry(FALSE, TRUE);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_editable_set_width_chars(GTK_EDITABLE(w), RANGE_ENTRY_WIDTH);
-#else
-    gtk_entry_set_width_chars(GTK_ENTRY(w), RANGE_ENTRY_WIDTH);
-#endif
     add_widget_to_table(table, w, _("_Minimum:"), FALSE, i++);
     d->min = w;
 
     w = create_text_entry(FALSE, TRUE);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_editable_set_width_chars(GTK_EDITABLE(w), RANGE_ENTRY_WIDTH);
-#else
-    gtk_entry_set_width_chars(GTK_ENTRY(w), RANGE_ENTRY_WIDTH);
-#endif
     add_widget_to_table(table, w, _("_Maximum:"), FALSE, i++);
     d->max = w;
 
@@ -4514,9 +4506,6 @@ RangeDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(d->fit_table, w, _("_Fit:"), FALSE, d->fit_row);
     d->fit = w;
     g_signal_connect(w, "clicked", G_CALLBACK(FileDialogFit), d);
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-    gtk_widget_show_all(GTK_WIDGET(d->vbox));
-#endif
   }
 
   FileDialogSetupItem(wi, d);
