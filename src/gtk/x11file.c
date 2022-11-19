@@ -5632,7 +5632,6 @@ FileWinUpdate(struct obj_list_data *d, int clear, int draw)
   }
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 file_win_fit_response(int ret, gpointer user_data)
 {
@@ -5658,19 +5657,16 @@ file_win_fit_response(int ret, gpointer user_data)
   UnFocus();
   g_free(data);
 }
-#endif
 
 static void
 FileWinFit(struct obj_list_data *d)
 {
   struct objlist *fitobj, *obj2;
   char *fit;
-  int sel, fitid = 0, ret, num, undo;
+  int sel, fitid = 0, num, undo;
   struct narray iarray;
   GtkWidget *parent;
-#if GTK_CHECK_VERSION(4, 0, 0)
   struct show_fit_dialog_data *data;
-#endif
 
   if (Menulock || Globallock)
     return;
@@ -5712,7 +5708,6 @@ FileWinFit(struct obj_list_data *d)
 
   undo = data_save_undo(UNDO_TYPE_EDIT);
   parent = TopLevel;
-#if GTK_CHECK_VERSION(4, 0, 0)
   data = g_malloc0(sizeof(*data));
   data->fitobj = fitobj;
   data->obj = d->obj;
@@ -5720,19 +5715,6 @@ FileWinFit(struct obj_list_data *d)
   data->id = sel;
   data->undo = undo;
   execute_fit_dialog(parent, d->obj, sel, fitobj, fitid, file_win_fit_response, data);
-#else
-  ret = execute_fit_dialog(parent, d->obj, sel, fitobj, fitid);
-
-  switch (ret) {
-  case IDCANCEL:
-    menu_delete_undo(undo);
-    break;
-  case IDDELETE:
-    delobj(fitobj, fitid);
-    putobj(d->obj, "fit", sel, NULL);
-    break;
-  }
-#endif
 }
 
 #define MARK_PIX_LINE_WIDTH 1
