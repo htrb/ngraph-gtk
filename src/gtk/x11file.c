@@ -4742,9 +4742,6 @@ FileDefDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     FileDialogSetupCommon(wi, d);
     gtk_notebook_set_tab_pos(d->tab, GTK_POS_TOP);
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-    gtk_widget_show_all(GTK_WIDGET(d->vbox));
-#endif
   }
   FileDialogDefSetupItem(wi, d, d->Id);
 }
