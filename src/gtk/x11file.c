@@ -2400,7 +2400,6 @@ FileMaskDialogAdd(GtkWidget *w, gpointer client_data)
   d->mask.changed = TRUE;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 mask_tab_copy_response(int sel, gpointer user_data)
 {
@@ -2419,23 +2418,6 @@ mask_tab_copy(GtkButton *btn, gpointer user_data)
   d = (struct FileDialog *) user_data;
   CopyClick(d->widget, d->Obj, d->Id, FileCB, mask_tab_copy_response, d);
 }
-#else
-static void
-mask_tab_copy(GtkButton *btn, gpointer user_data)
-{
-  struct FileDialog *d;
-  int sel;
-
-  d = (struct FileDialog *) user_data;
-
-  sel = CopyClick(d->widget, d->Obj, d->Id, FileCB);
-
-  if (sel != -1) {
-    mask_tab_setup_item(d, sel);
-    d->mask.changed = TRUE;
-  }
-}
-#endif
 
 static void
 FileMaskDialogRemove(GtkWidget *w, gpointer client_data)
