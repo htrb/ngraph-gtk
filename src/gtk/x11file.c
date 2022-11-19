@@ -3424,7 +3424,6 @@ FileDialogFit(GtkWidget *w, gpointer client_data)
   show_fit_dialog(d->Obj, d->Id, d->widget, fit_dialog_fit_response, client_data);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 plot_tab_copy_response(int sel, gpointer user_data)
 {
@@ -3442,21 +3441,6 @@ plot_tab_copy(GtkButton *btn, gpointer user_data)
   d = (struct FileDialog *) user_data;
   CopyClick(d->widget, d->Obj, d->Id, FileCB, plot_tab_copy_response, d);
 }
-#else
-static void
-plot_tab_copy(GtkButton *btn, gpointer user_data)
-{
-  struct FileDialog *d;
-  int sel;
-
-  d = (struct FileDialog *) user_data;
-
-  sel = CopyClick(d->widget, d->Obj, d->Id, FileCB);
-  if (sel != -1) {
-    plot_tab_setup_item(d, sel);
-  }
-}
-#endif
 
 void
 copy_file_obj_field(struct objlist *obj, int id, int sel, int copy_filename)
