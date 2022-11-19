@@ -5271,8 +5271,6 @@ check_plot_obj_file(struct objlist *obj)
   return -1;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* to be implemented */
 static void
 file_edit_response(struct response_callback *cb)
 {
@@ -5280,13 +5278,12 @@ file_edit_response(struct response_callback *cb)
   struct objlist *obj;
   struct CopyDialog *d;
   char *name;
-  d = (struct CopyDialog *) cb->dialog;
-  obj = d->Obj;
-  if (cb->return_value == IDOK) {
-    i = d->sel;
-  } else {
+  if (cb->return_value != IDOK) {
     return;
   }
+  d = (struct CopyDialog *) cb->dialog;
+  obj = d->Obj;
+  i = d->sel;
 
   if (i < 0) {
     return;
@@ -5317,51 +5314,11 @@ CmFileEdit(void *w, gpointer client_data)
   last = check_plot_obj_file(obj);
   if (last == -1) {
     return;
-  } else {
-    CopyDialog(&DlgCopy, obj, -1, _("edit data file (single select)"), PlotFileCB);
-    response_callback_add(&DlgCopy, file_edit_response, NULL, NULL);
-    DialogExecute(TopLevel, &DlgCopy);
   }
+  CopyDialog(&DlgCopy, obj, -1, _("edit data file (single select)"), PlotFileCB);
+  response_callback_add(&DlgCopy, file_edit_response, NULL, NULL);
+  DialogExecute(TopLevel, &DlgCopy);
 }
-#else
-void
-CmFileEdit(void *w, gpointer client_data)
-{
-  struct objlist *obj;
-  int i;
-  char *name;
-  int last;
-
-  if (Menulock || Globallock)
-    return;
-
-  if (Menulocal.editor == NULL)
-    return;
-
-  if ((obj = chkobject("data")) == NULL)
-    return;
-
-  last = check_plot_obj_file(obj);
-  if (last == -1) {
-    return;
-  } else {
-    CopyDialog(&DlgCopy, obj, -1, _("edit data file (single select)"), PlotFileCB);
-    if (DialogExecute(TopLevel, &DlgCopy) == IDOK) {
-      i = DlgCopy.sel;
-    } else {
-      return;
-    }
-  }
-
-  if (i < 0)
-    return;
-
-  if (getobj(obj, "file", i, 0, NULL, &name) == -1)
-    return;
-
-  edit_file(name);
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
