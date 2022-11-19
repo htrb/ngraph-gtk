@@ -6189,8 +6189,10 @@ GetDrawFiles(struct narray *farray, response_cb cb)
   struct narray *ifarray;
   int i, a;
 
-  if (farray == NULL)
-    return 1;
+  if (farray == NULL) {
+    call_cb(1, cb, farray);
+    return;
+  }
 
   fobj = chkobject("data");
   if (fobj == NULL) {
