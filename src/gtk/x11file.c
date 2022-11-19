@@ -2707,11 +2707,7 @@ copy_text_to_entry(GtkWidget *text, GtkWidget *entry)
 
   buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text));
   str = get_text_from_buffer(buffer);
-#if GTK_CHECK_VERSION(4, 0, 0)
   editable_set_init_text(entry, str);
-#else
-  gtk_entry_set_text(GTK_ENTRY(entry), str);
-#endif
   g_free(str);
 }
 
