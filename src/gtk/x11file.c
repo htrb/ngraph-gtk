@@ -3689,7 +3689,6 @@ FileDialogType(GtkWidget *w, gpointer client_data)
 }
 #endif
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 file_settings_copy_response(int sel, gpointer user_data)
 {
@@ -3707,21 +3706,6 @@ file_settings_copy(GtkButton *btn, gpointer user_data)
   d = (struct FileDialog *) user_data;
   CopyClick(d->widget, d->Obj, d->Id, FileCB, file_settings_copy_response, d);
 }
-#else
-static void
-file_settings_copy(GtkButton *btn, gpointer user_data)
-{
-  struct FileDialog *d;
-  int sel;
-
-  d = (struct FileDialog *) user_data;
-
-  sel = CopyClick(d->widget, d->Obj, d->Id, FileCB);
-  if (sel != -1) {
-    file_setup_item(d, sel);
-  }
-}
-#endif
 
 static GtkWidget *
 plot_tab_create(GtkWidget *parent, struct FileDialog *d)
