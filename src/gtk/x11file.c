@@ -5537,7 +5537,6 @@ FileWinFileUpdate(struct obj_list_data *d)
   }
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 draw_callback(gpointer user_data)
 {
@@ -5545,7 +5544,6 @@ draw_callback(gpointer user_data)
   d = (struct obj_list_data *) user_data;
   FileWinUpdate(d, FALSE, DRAW_NONE);
 }
-#endif
 
 static void
 FileWinFileDraw(struct obj_list_data *d)
@@ -5586,12 +5584,7 @@ FileWinFileDraw(struct obj_list_data *d)
   } else {
     menu_delete_undo(undo);
   }
-#if GTK_CHECK_VERSION(4, 0, 0)
   Draw(FALSE, draw_callback, d);
-#else
-  CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
-  FileWinUpdate(d, FALSE, DRAW_NONE);
-#endif
 }
 
 static void
