@@ -2797,17 +2797,9 @@ create_math_text_tab(GtkWidget *tab, const gchar *label)
   GtkWidget *w, *title, *swin;
 
   w = create_source_view();
-#if GTK_CHECK_VERSION(4, 0, 0)
   swin = gtk_scrolled_window_new();
-#else
-  swin = gtk_scrolled_window_new(NULL, NULL);
-#endif
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), w);
-#else
-  gtk_container_add(GTK_CONTAINER(swin), w);
-#endif
   title = gtk_label_new_with_mnemonic(label);
   gtk_notebook_append_page(GTK_NOTEBOOK(tab), swin, title);
   return w;
