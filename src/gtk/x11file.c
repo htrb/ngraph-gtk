@@ -3067,13 +3067,7 @@ MarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
       d->toggle[type] = w;
       gtk_grid_attach(GTK_GRID(grid), w, type % COL, type / COL, 1, 1);
     }
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(d->vbox), grid);
-#else
-    gtk_box_pack_start(GTK_BOX(d->vbox), grid, FALSE, FALSE, 4);
-
-    gtk_widget_show_all(GTK_WIDGET(d->vbox));
-#endif
   }
 
   d->cb_respond = FALSE;
