@@ -5203,8 +5203,6 @@ update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file, 
   DialogExecute(TopLevel, data->dialog);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* to be implemented */
 static void
 file_update_response_response(int ret, gpointer user_data)
 {
@@ -5257,39 +5255,6 @@ CmFileUpdate(void *w, gpointer client_data)
     DialogExecute(TopLevel, &DlgSelect);
   }
 }
-#else
-void
-CmFileUpdate(void *w, gpointer client_data)
-{
-  struct objlist *obj;
-  int ret;
-  struct narray farray;
-  int last;
-
-  if (Menulock || Globallock)
-    return;
-
-  if ((obj = chkobject("data")) == NULL)
-    return;
-
-  last = chkobjlastinst(obj);
-  if (last == -1) {
-    return;
-  } else if (last == 0) {
-    arrayinit(&farray, sizeof(int));
-    arrayadd(&farray, &last);
-    ret = IDOK;
-  } else {
-    SelectDialog(&DlgSelect, obj, _("data property (multi select)"), FileCB, (struct narray *) &farray, NULL);
-    ret = DialogExecute(TopLevel, &DlgSelect);
-  }
-
-  if (ret == IDOK && update_file_obj_multi(obj, &farray, FALSE)) {
-    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, DRAW_REDRAW);
-  }
-  arraydel(&farray);
-}
-#endif
 
 static int
 check_plot_obj_file(struct objlist *obj)
