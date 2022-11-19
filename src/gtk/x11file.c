@@ -2199,6 +2199,14 @@ move_tab_copy(GtkButton *btn, gpointer user_data)
   CopyClick(d->widget, d->Obj, d->Id, FileCB, move_tab_copy_response, d);
 }
 
+void
+spin_button_set_activates_signal(GtkWidget *w, GCallback cb, gpointer user_data)
+{
+  GtkEditable *editable;
+  editable = gtk_editable_get_delegate(GTK_EDITABLE(w));
+  g_signal_connect(editable, "activate", cb, user_data);
+}
+
 static GtkWidget *
 move_tab_create(struct FileDialog *d)
 {
