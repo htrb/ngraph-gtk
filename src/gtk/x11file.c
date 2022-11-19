@@ -4257,11 +4257,7 @@ update_table_visibility(GtkEditable *editable, gpointer user_data)
 
   remark = NULL;
   if (d->source == DATA_SOURCE_FILE) {
-#if GTK_CHECK_VERSION(4, 0, 0)
     remark = gtk_editable_get_text(GTK_EDITABLE(d->load.remark));
-#else
-    remark = gtk_entry_get_text(GTK_ENTRY(d->load.remark));
-#endif
   }
   if (remark == NULL) {
     remark = "";
