@@ -5071,8 +5071,6 @@ CmFileClose(void *w, gpointer client_data)
   DialogExecute(TopLevel, &DlgSelect);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* to be implemented */
 static void
 update_file_obj_multi_response_all(struct objlist *obj, int *array, int top, int num, int id0, int new_file)
 {
@@ -5154,12 +5152,10 @@ update_file_obj_multi_response(struct response_callback *cb)
     FileDialog(data, array[i], i < num - 1);
     rdata->i = i;
     cb->data = NULL;
+    rdata->undo = data_save_undo(UNDO_TYPE_DUMMY);
     response_callback_add(data->dialog, update_file_obj_multi_response, NULL, rdata);
     DialogExecute(TopLevel, data->dialog);
   } else {
-    if (! rdata->modified) {
-      menu_undo_internal(undo);
-    }
     rdata->cb(rdata->modified, rdata->user_data);
     g_free(rdata);
   }
@@ -5206,76 +5202,6 @@ update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file, 
   response_callback_add(data->dialog, update_file_obj_multi_response, NULL, rdata);
   DialogExecute(TopLevel, data->dialog);
 }
-#else
-int
-update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file)
-{
-  int i, j, num, *array, id0, modified, ret, undo;
-  char *name;
-  struct obj_list_data *data;
-
-  num = arraynum(farray);
-  if (num < 1) {
-    return 0;
-  }
-
-  array = arraydata(farray);
-  id0 = -1;
-
-  ret = IDCANCEL;
-  modified = FALSE;
-  data_save_undo(UNDO_TYPE_EDIT);
-  for (i = 0; i < num; i++) {
-    name = NULL;
-    if (id0 != -1) {
-      copy_file_obj_field(obj, array[i], array[id0], FALSE);
-      if (new_file) {
-	getobj(obj, "file", array[i], 0, NULL, &name);
-	AddDataFileList(name);
-      }
-    } else {
-      undo = data_save_undo(UNDO_TYPE_DUMMY);
-      data = NgraphApp.FileWin.data.data;
-      FileDialog(data, array[i], i < num - 1);
-      ret = DialogExecute(TopLevel, data->dialog);
-      if (ret == IDCANCEL && new_file) {
-	ret = IDDELETE;
-      }
-      switch (ret) {
-      case IDDELETE:
-	delete_file_obj(data, array[i]);
-	modified = TRUE;
-	if (! new_file) {
-	  set_graph_modified();
-	}
-	for (j = i + 1; j < num; j++) {
-	  array[j]--;
-	}
-	menu_delete_undo(undo);
-	break;
-      case IDFAPPLY:
-	  id0 = i;
-	  /* fall-through */
-      case IDOK:
-	if (new_file) {
-	  getobj(obj, "file", array[i], 0, NULL, &name);
-	  AddDataFileList(name);
-	}
-	menu_delete_undo(undo);
-	modified = TRUE;
-	break;
-      case IDCANCEL:
-	menu_undo_internal(undo);
-	break;
-      }
-    }
-  }
-  if (! modified) {
-    menu_undo_internal(undo);
-  }
-  return modified;
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
