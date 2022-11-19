@@ -3277,7 +3277,6 @@ execute_fit_dialog(GtkWidget *w, struct objlist *fileobj, int fileid, struct obj
   DialogExecute(w, &DlgFit);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 struct show_fit_dialog_data
 {
   struct objlist *obj, *fitobj;
@@ -3320,10 +3319,7 @@ show_fit_dialog_response(int ret, gpointer user_data)
   }
   g_free(data);
 }
-#endif
 
-static int
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 call_cb(int response, response_cb cb, gpointer user_data)
 {
@@ -3332,36 +3328,39 @@ call_cb(int response, response_cb cb, gpointer user_data)
   }
 }
 
+static void
 show_fit_dialog(struct objlist *obj, int id, GtkWidget *parent, response_cb cb, gpointer user_data)
-#else
-show_fit_dialog(struct objlist *obj, int id, GtkWidget *parent)
-#endif
 {
   struct objlist *fitobj, *robj;
   char *fit;
-  int fitid = 0, fitoid, ret, create = FALSE;
+  int fitid = 0, fitoid, create = FALSE;
   struct narray iarray;
-#if GTK_CHECK_VERSION(4, 0, 0)
   struct show_fit_dialog_data *data;
-#endif
 
-  if ((fitobj = chkobject("fit")) == NULL)
-    return -1;
+  if ((fitobj = chkobject("fit")) == NULL) {
+    call_cb(-1, cb, user_data);
+    return;
+  }
 
-  if (getobj(obj, "fit", id, 0, NULL, &fit) == -1)
-    return -1;
+  if (getobj(obj, "fit", id, 0, NULL, &fit) == -1) {
+    call_cb(-1, cb, user_data);
+    return;
+  }
 
   if (fit) {
     int idnum;
     arrayinit(&iarray, sizeof(int));
-    if (getobjilist(fit, &robj, &iarray, FALSE, NULL))
-      return -1;
+    if (getobjilist(fit, &robj, &iarray, FALSE, NULL)) {
+      call_cb(-1, cb, user_data);
+      return;
+    }
 
     idnum = arraynum(&iarray);
     if ((robj != fitobj) || (idnum < 1)) {
       if (putobj(obj, "fit", id, NULL) == -1) {
 	arraydel(&iarray);
-	return -1;
+	call_cb(-1, cb, user_data);
+	return;
       }
     } else {
       fitid = arraylast_int(&iarray);
@@ -3376,17 +3375,19 @@ show_fit_dialog(struct objlist *obj, int id, GtkWidget *parent)
 
     _getobj(fitobj, "oid", inst, &fitoid);
 
-    if ((fit = mkobjlist(fitobj, NULL, fitoid, NULL, TRUE)) == NULL)
-      return -1;
+    if ((fit = mkobjlist(fitobj, NULL, fitoid, NULL, TRUE)) == NULL) {
+      call_cb(-1, cb, user_data);
+      return;
+    }
 
     if (putobj(obj, "fit", id, fit) == -1) {
       g_free(fit);
-      return -1;
+      call_cb(-1, cb, user_data);
+      return;
     }
     create = TRUE;
   }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   data = g_malloc0(sizeof(*data));
   data->fitobj = fitobj;
   data->obj = obj;
@@ -3396,29 +3397,6 @@ show_fit_dialog(struct objlist *obj, int id, GtkWidget *parent)
   data->cb = cb;
   data->data = user_data;
   execute_fit_dialog(parent, obj, id, fitobj, fitid, show_fit_dialog_response, data);
-  ret = TRUE;
-#else
-  ret = execute_fit_dialog(parent, obj, id, fitobj, fitid);
-
-  switch (ret) {
-  case IDCANCEL:
-    if (! create)
-      break;
-    /* fall through */
-  case IDDELETE:
-    delobj(fitobj, fitid);
-    putobj(obj, "fit", id, NULL);
-    if (! create)
-      set_graph_modified();
-    break;
-  case IDOK:
-    if (create)
-      set_graph_modified();
-    break;
-  }
-#endif
-
-  return ret;
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
