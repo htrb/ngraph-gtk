@@ -2622,20 +2622,12 @@ load_tab_create(struct FileDialog *d)
   }
 
   frame = gtk_frame_new(NULL);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_frame_set_child(GTK_FRAME(frame), table);
   gtk_widget_set_vexpand(frame, TRUE);
-#else
-  gtk_container_add(GTK_CONTAINER(frame), table);
-#endif
   set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
 
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(vbox), frame);
-#else
-  gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 4);
-#endif
 
   add_copy_button_to_box(vbox, G_CALLBACK(load_tab_copy), d, "data");
 
