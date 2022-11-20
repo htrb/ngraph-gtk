@@ -1281,20 +1281,6 @@ list_sub_window_focus_all(GSimpleAction *action, GVariant *parameter, gpointer u
   focus_all((struct obj_list_data *) user_data);
 }
 
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-static gboolean
-ev_popup_menu(GtkWidget *w, gpointer client_data)
-{
-  struct obj_list_data *d;
-
-  if (Menulock || Globallock) return TRUE;
-
-  d = (struct obj_list_data *) client_data;
-  do_popup(NULL, d);
-  return TRUE;
-}
-#endif
-
 #if GTK_CHECK_VERSION(4, 0, 0)
 struct set_object_name_data {
   struct objlist *obj;
@@ -1532,9 +1518,6 @@ sub_win_create_popup_menu(struct obj_list_data *d, int n, struct subwin_popup_li
   gtk_widget_show_all(menu);
 #endif
   gtk_menu_attach_to_widget(GTK_MENU(menu), GTK_WIDGET(d->text), NULL);
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  g_signal_connect(d->text, "popup-menu", G_CALLBACK(ev_popup_menu), d);
-#endif
 
   if (cb)
     g_signal_connect(menu, "show", cb, d);
