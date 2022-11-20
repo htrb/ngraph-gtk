@@ -650,7 +650,6 @@ move_down(struct obj_list_data *d)
   }
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 struct swin_update_data {
   int undo;
   struct obj_list_data *d;
@@ -686,16 +685,13 @@ swin_update_response(struct response_callback *cb)
     d->update(d, FALSE, DRAW_NOTIFY);
   }
 }
-#endif
 
 static void
 swin_update(struct obj_list_data *d)
 {
-  int sel, ret, num, undo;
+  int sel, num, undo;
   GtkWidget *parent;
-#if GTK_CHECK_VERSION(4, 0, 0)
   struct swin_update_data *data;
-#endif
 
   if (Menulock || Globallock)
     return;
@@ -710,12 +706,10 @@ swin_update(struct obj_list_data *d)
 
   parent = TopLevel;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   data = g_malloc0(sizeof(*data));
   if (data == NULL) {
     return;
   }
-#endif
 
   d->setup_dialog(d, sel, -1);
   d->select = sel;
@@ -724,31 +718,10 @@ swin_update(struct obj_list_data *d)
   } else {
     undo = menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
   }
-#if GTK_CHECK_VERSION(4, 0, 0)
-  /* must be implemented */
   data->d = d;
   data->undo = undo;
   response_callback_add(d->dialog, swin_update_response, NULL, data);
   DialogExecute(parent, d->dialog);
-#else
-  ret = DialogExecute(parent, d->dialog);
-  switch (ret) {
-  case IDCANCEL:
-    menu_undo_internal(undo);
-    break;
-  case IDDELETE:
-    if (d->delete) {
-      d->delete(d, sel);
-    } else {
-      delobj(d->obj, sel);
-    }
-    d->select = -1;
-    d->update(d, FALSE, DRAW_REDRAW);
-    break;
-  default:
-    d->update(d, FALSE, DRAW_NOTIFY);
-  }
-#endif
 }
 
 static void
