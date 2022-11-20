@@ -1347,7 +1347,6 @@ static void
 set_object_name(struct objlist *obj, int id)
 {
   char *name, buf[256];
-  int r;
   struct set_object_name_data *data;
   data = g_malloc0(sizeof(*data));
   if (data == NULL) {
