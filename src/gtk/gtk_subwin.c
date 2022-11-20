@@ -1362,12 +1362,7 @@ set_object_name(struct objlist *obj, int id)
 }
 
 void
-list_sub_window_object_name
-#if GTK_CHECK_VERSION(4, 0, 0)
-(GSimpleAction *action, GVariant *parameter, gpointer client_data)
-#else
-(GtkMenuItem *item, gpointer client_data)
-#endif
+list_sub_window_object_name(GSimpleAction *action, GVariant *parameter, gpointer client_data)
 {
   struct obj_list_data *d;
 
@@ -1382,14 +1377,7 @@ list_sub_window_object_name
   if (sel < 0 || sel > num) {
     return;
   }
-#if GTK_CHECK_VERSION(4, 0, 0)
   set_object_name(d->obj, sel);
-#else
-  update = set_object_name(d->obj, sel);
-  if (update) {
-    set_graph_modified();
-  }
-#endif
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
