@@ -1102,7 +1102,6 @@ list_focused(GtkEventControllerFocus *ev, gpointer user_data)
   set_focus_insensitive(&NgraphApp.Viewer);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 add_event_controller(GtkWidget *widget, struct obj_list_data *data)
 {
@@ -1116,7 +1115,6 @@ add_event_controller(GtkWidget *widget, struct obj_list_data *data)
 
   add_event_key(widget, G_CALLBACK(ev_key_down), NULL, data);
 }
-#endif
 
 static struct obj_list_data *
 list_widget_create(struct SubWin *d, int lisu_num, n_list_store *list, int can_focus, GtkWidget **w)
@@ -1124,9 +1122,7 @@ list_widget_create(struct SubWin *d, int lisu_num, n_list_store *list, int can_f
   struct obj_list_data *data;
   GtkWidget *lstor, *swin;
   GList *col_list, *col;
-#if GTK_CHECK_VERSION(4, 0, 0)
   GtkEventController *ev;
-#endif
 
   data = g_malloc0(sizeof(*data));
   data->select = -1;
@@ -1140,37 +1136,19 @@ list_widget_create(struct SubWin *d, int lisu_num, n_list_store *list, int can_f
 
   set_cell_renderer_cb(data, lisu_num, list, lstor);
 
-#if GTK_CHECK_VERSION(3, 99, 0)
   add_event_controller(lstor, data);
-#else
-  g_signal_connect(lstor, "button-press-event", G_CALLBACK(ev_button_down), data);
-  g_signal_connect(lstor, "button-release-event", G_CALLBACK(ev_button_up), data);
-  g_signal_connect(lstor, "key-press-event", G_CALLBACK(ev_key_down), data);
-#endif
 
   /* to handle key-press-event correctly in single window mode */
-#if GTK_CHECK_VERSION(4, 0, 0)
   ev = gtk_event_controller_focus_new();
   g_signal_connect(ev, "enter", G_CALLBACK(list_focused), NULL);
   gtk_widget_add_controller(lstor, ev);
-#else
-  g_signal_connect(lstor, "focus-in-event", G_CALLBACK(list_focused), NULL);
-#endif
 
   gtk_tree_view_set_enable_search(GTK_TREE_VIEW(lstor), TRUE);
   gtk_tree_view_set_search_column(GTK_TREE_VIEW(lstor), COL_ID);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   swin = gtk_scrolled_window_new();
-#else
-  swin = gtk_scrolled_window_new(NULL, NULL);
-#endif
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), lstor);
-#else
-  gtk_container_add(GTK_CONTAINER(swin), lstor);
-#endif
 
   col_list = gtk_tree_view_get_columns(GTK_TREE_VIEW(lstor));
   for (col = g_list_next(col_list); col; col = g_list_next(col)) {
