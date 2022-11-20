@@ -1366,7 +1366,7 @@ list_sub_window_object_name(GSimpleAction *action, GVariant *parameter, gpointer
   struct obj_list_data *d;
 
   d = (struct obj_list_data*) client_data;
-  int sel, update, num;
+  int sel, num;
 
   if (Menulock || Globallock)
     return;
