@@ -6477,42 +6477,6 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
     }
   }
 }
-#else
-static void
-popup_show_cb(GtkWidget *widget, gpointer user_data)
-{
-  int sel, num, source;
-  unsigned int i;
-  struct obj_list_data *d;
-
-  d = (struct obj_list_data *) user_data;
-
-  sel = d->select;
-  num = chkobjlastinst(d->obj);
-  for (i = 1; i < POPUP_ITEM_NUM; i++) {
-    switch (i) {
-    case POPUP_ITEM_TOP:
-    case POPUP_ITEM_UP:
-      gtk_widget_set_sensitive(d->popup_item[i], sel > 0 && sel <= num);
-      break;
-    case POPUP_ITEM_DOWN:
-    case POPUP_ITEM_BOTTOM:
-      gtk_widget_set_sensitive(d->popup_item[i], sel >= 0 && sel < num);
-      break;
-    case POPUP_ITEM_EDIT:
-      if (sel >= 0 && sel <= num) {
-	getobj(d->obj, "source", sel, 0, NULL, &source);
-	gtk_widget_set_sensitive(d->popup_item[i], source == DATA_SOURCE_FILE);
-      } else {
-	gtk_widget_set_sensitive(d->popup_item[i], FALSE);
-      }
-      break;
-    default:
-      gtk_widget_set_sensitive(d->popup_item[i], sel >= 0 && sel <= num);
-    }
-  }
-}
-#endif
 
 enum FILE_COMBO_ITEM {
   FILE_COMBO_ITEM_COLOR_1,
