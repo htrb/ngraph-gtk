@@ -6437,7 +6437,6 @@ filewin_ev_key_down(GtkWidget *w, guint keyval, GdkModifierType state, gpointer 
   return TRUE;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 popup_show_cb(GtkWidget *widget, gpointer user_data)
 {
@@ -6618,7 +6617,6 @@ create_type_combo_item(GtkWidget *cbox, GtkTreeStore *list, struct objlist *obj,
   }
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 struct select_type_fit_data
 {
   int sel, undo, type;
@@ -6661,7 +6659,6 @@ select_obj_color_response(int response, gpointer user_data)
   d->update(d, FALSE, DRAW_REDRAW);
   set_graph_modified();
 }
-#endif
 
 static void
 select_type(GtkComboBox *w, gpointer user_data)
@@ -6670,9 +6667,7 @@ select_type(GtkComboBox *w, gpointer user_data)
   struct obj_list_data *d;
   GtkTreeStore *list;
   GtkTreeIter iter;
-#if GTK_CHECK_VERSION(4, 0, 0)
   struct select_type_fit_data *data;
-#endif
 
   menu_lock(FALSE);
   if (Menulock || Globallock) {
@@ -6701,27 +6696,13 @@ select_type(GtkComboBox *w, gpointer user_data)
 
   switch (col_type) {
   case FILE_COMBO_ITEM_COLOR_1:
-#if GTK_CHECK_VERSION(4, 0, 0)
     d->select = sel;
     select_obj_color(d->obj, sel, OBJ_FIELD_COLOR_TYPE_1, select_obj_color_response, d);
     return;
-#else
-    if (select_obj_color(d->obj, sel, OBJ_FIELD_COLOR_TYPE_1)) {
-      return;
-    }
-#endif
-    break;
   case FILE_COMBO_ITEM_COLOR_2:
-#if GTK_CHECK_VERSION(4, 0, 0)
     d->select = sel;
     select_obj_color(d->obj, sel, OBJ_FIELD_COLOR_TYPE_2, select_obj_color_response, d);
     return;
-#else
-    if (select_obj_color(d->obj, sel, OBJ_FIELD_COLOR_TYPE_2)) {
-      return;
-    }
-#endif
-    break;
   case FILE_COMBO_ITEM_TYPE:
     if (enum_id == type) {
       return;
@@ -6733,7 +6714,6 @@ select_type(GtkComboBox *w, gpointer user_data)
 
       getobj(d->obj, "fit", sel, 0, NULL, &fit);
       if (fit == NULL) {
-#if GTK_CHECK_VERSION(4, 0, 0)
         data = g_malloc0(sizeof(*data));
         if (data == NULL) {
           return;
@@ -6744,14 +6724,6 @@ select_type(GtkComboBox *w, gpointer user_data)
         data->d = d;
         show_fit_dialog(d->obj, sel, TopLevel, select_type_fit_response, data);
         return;
-#else
-	ret = show_fit_dialog(d->obj, sel, TopLevel);
-	if (ret != IDOK) {
-	  menu_delete_undo(undo);
-	  putobj(d->obj, "type", sel, &type);
-	  return;
-	}
-#endif
       }
     }
     break;
@@ -6793,7 +6765,6 @@ select_type(GtkComboBox *w, gpointer user_data)
     break;
   case FILE_COMBO_ITEM_FIT:
     undo = data_save_undo(UNDO_TYPE_EDIT);
-#if GTK_CHECK_VERSION(4, 0, 0)
     data = g_malloc0(sizeof(*data));
     if (data == NULL) {
       return;
@@ -6804,14 +6775,6 @@ select_type(GtkComboBox *w, gpointer user_data)
     data->d = d;
     show_fit_dialog(d->obj, sel, TopLevel, select_type_fit_response, data);
     return;
-#else
-    ret = show_fit_dialog(d->obj, sel, TopLevel);
-    if (ret != IDOK) {
-      menu_delete_undo(undo);
-      return;
-    }
-#endif
-    break;
   case FILE_COMBO_ITEM_JOIN:
     gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_ENUM, &enum_id, -1);
     getobj(d->obj, "line_join", sel, 0, NULL, &join);
