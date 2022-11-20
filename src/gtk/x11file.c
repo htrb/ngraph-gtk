@@ -6530,11 +6530,7 @@ create_type_color_combo_box(GtkWidget *cbox, struct objlist *obj, int type, int 
 
   list = GTK_TREE_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(cbox)));
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   create_type_combo_item(cbox, list, obj, id);
-#else
-  create_type_combo_item(list, obj, id);
-#endif
 
   switch (type) {
   case PLOT_TYPE_MARK:
@@ -6566,11 +6562,7 @@ create_type_color_combo_box(GtkWidget *cbox, struct objlist *obj, int type, int 
   case PLOT_TYPE_STAIRCASE_Y:
   case PLOT_TYPE_FIT:
     add_text_combo_item_to_cbox(list, &parent, NULL, -1, -1, _("Join"), TOGGLE_NONE, FALSE);
-#if GTK_CHECK_VERSION(4, 0, 0)
     add_enum_combo_item_to_cbox(list, NULL, &parent, FILE_COMBO_ITEM_JOIN, obj, "line_join", id, NULL);
-#else
-    add_enum_combo_item_to_cbox(list, NULL, &parent, FILE_COMBO_ITEM_JOIN, obj, "line_join", id);
-#endif
     break;
   }
 
