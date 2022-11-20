@@ -432,22 +432,6 @@ set_editable_cell_renderer_cb(struct obj_list_data *d, int i, n_list_store *list
   list[i].edited_id = g_signal_connect(rend, "edited", G_CALLBACK(end), d);
 }
 
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-static void
-combo_edited_cb(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_data)
-{
-  struct obj_list_data *d;
-
-  menu_lock(FALSE);
-  if (Menulock || Globallock) {
-    return;
-  }
-
-  d = (struct obj_list_data *) user_data;
-  gtk_widget_grab_focus(d->text);
-}
-#endif
-
 void
 set_combo_cell_renderer_cb(struct obj_list_data *d, int i, n_list_store *list, GCallback start, GCallback end)
 {
@@ -467,10 +451,6 @@ set_combo_cell_renderer_cb(struct obj_list_data *d, int i, n_list_store *list, G
 
   if (end) {
     list[i].edited_id = g_signal_connect(rend, "edited", G_CALLBACK(end), d);
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  } else {
-    list[i].edited_id = g_signal_connect(rend, "edited", G_CALLBACK(combo_edited_cb), d);
-#endif
   }
 
   if (start)
