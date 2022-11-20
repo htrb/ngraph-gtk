@@ -7003,8 +7003,6 @@ edited_axis(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer us
   set_graph_modified();
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
 static int
 drop_file(const GValue *value, int type)
 {
@@ -7025,26 +7023,6 @@ drag_drop_cb(GtkDropTarget *self, const GValue *value, gdouble x, gdouble y, gpo
 {
   return drop_file(value, GPOINTER_TO_INT(user_data));
 }
-#else
-static void
-drag_drop_cb(GtkWidget *w, GdkDragContext *context, gint x, gint y, GtkSelectionData *data, guint info, guint time, gpointer user_data)
-{
-  gchar **filenames;
-
-  switch (info) {
-  case DROP_TYPE_FILE:
-    filenames = gtk_selection_data_get_uris(data);
-    if (filenames) {
-      int num;
-      num = g_strv_length(filenames);
-      data_dropped(filenames, num, FILE_TYPE_DATA);
-      g_strfreev(filenames);
-    }
-    gtk_drag_finish(context, TRUE, FALSE, time);
-    break;
-  }
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
