@@ -117,16 +117,8 @@ static void file_copy_popup_func(GSimpleAction *action, GVariant *parameter, gpo
 static void file_edit_popup_func(GSimpleAction *action, GVariant *parameter, gpointer client_data);
 static void file_draw_popup_func(GSimpleAction *action, GVariant *parameter, gpointer client_data);
 static void FileDialogType(GtkWidget *w, gpointer client_data);
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void create_type_combo_item(GtkWidget *cbox, GtkTreeStore *list, struct objlist *obj, int id);
-#else
-static void create_type_combo_item(GtkTreeStore *list, struct objlist *obj, int id);
-#endif
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void func_entry_focused(GtkEventControllerFocus *ev, gpointer user_data);
-#else
-static gboolean func_entry_focused(GtkWidget *w, GdkEventFocus *event, gpointer user_data);
-#endif
 
 static GActionEntry Popup_list[] =
 {

@@ -30,20 +30,11 @@ struct evaltype
 
 const char *get_plot_info_str(struct objlist *obj, int id, int src);
 void FileWinUpdate(struct obj_list_data *data, int clear, int draw);
-#if GTK_CHECK_VERSION(4, 0, 0)
 void load_data(const char *name);
 void init_dnd_file(struct SubWin *d, int type);
-#else
-void CmFileHistory(GtkRecentChooser *w, gpointer client_data);
-#endif
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 void CmRangeAdd(GSimpleAction *action, GVariant *parameter, gpointer client_data);
 void CmFileOpen(GSimpleAction *action, GVariant *parameter, gpointer client_data);
-#else
-void CmRangeAdd(void *w, gpointer client_data);
-void CmFileOpen(void *w, gpointer client_data);
-#endif
 void CmFileClose(void *w, gpointer client_data);
 void CmFileUpdate(void *w, gpointer client_data);
 void CmFileEdit(void *w, gpointer client_data);
@@ -53,10 +44,6 @@ void CmFileSaveData(void *w, gpointer client_data);
 GtkWidget *create_data_list(struct SubWin *d);
 
 void CmOptionFileDef(void *w, gpointer client_data);
-#if GTK_CHECK_VERSION(4, 0, 0)
 void update_file_obj_multi(struct objlist *obj, struct narray *farray, int newfile, response_cb cb, gpointer user_data);
-#else
-int update_file_obj_multi(struct objlist *obj, struct narray *farray, int newfile);
-#endif
 void copy_file_obj_field(struct objlist *obj, int id, int sel, int copy_filename);
 void button_set_mark_image(GtkWidget *w, int type);
