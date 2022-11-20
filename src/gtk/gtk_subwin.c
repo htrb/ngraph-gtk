@@ -1096,20 +1096,11 @@ parameter_sub_window_create(struct SubWin *d)
   return swin;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 list_focused(GtkEventControllerFocus *ev, gpointer user_data)
 {
   set_focus_insensitive(&NgraphApp.Viewer);
 }
-#else
-static gboolean
-list_focused(GtkWidget *widget, GdkEvent *ev, gpointer user_data)
-{
-  set_focus_insensitive(&NgraphApp.Viewer);
-  return FALSE;
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 static void
