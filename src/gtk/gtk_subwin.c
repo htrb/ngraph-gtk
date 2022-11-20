@@ -1053,26 +1053,14 @@ label_sub_window_create(struct SubWin *d)
   gtk_widget_set_halign(label, GTK_ALIGN_START);
   gtk_widget_set_valign(label, GTK_ALIGN_START);
   gtk_label_set_selectable(GTK_LABEL(label), TRUE);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_label_set_wrap(GTK_LABEL(label), FALSE);
-#else
-  gtk_label_set_line_wrap(GTK_LABEL(label), FALSE);
-#endif
   gtk_label_set_single_line_mode(GTK_LABEL(label), FALSE);
 
   d->data.text = label;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   swin = gtk_scrolled_window_new();
-#else
-  swin = gtk_scrolled_window_new(NULL, NULL);
-#endif
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), label);
-#else
-  gtk_container_add(GTK_CONTAINER(swin), label);
-#endif
   d->Win = swin;
 
   return swin;
