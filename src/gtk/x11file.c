@@ -6663,7 +6663,7 @@ select_obj_color_response(int response, gpointer user_data)
 static void
 select_type(GtkComboBox *w, gpointer user_data)
 {
-  int sel, col_type, type, mark_type, curve_type, enum_id, found, active, join, ret, undo;
+  int sel, col_type, type, mark_type, curve_type, enum_id, found, active, join, undo;
   struct obj_list_data *d;
   GtkTreeStore *list;
   GtkTreeIter iter;
