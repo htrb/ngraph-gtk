@@ -72,7 +72,7 @@ file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, gpointer user_data)
 {
   struct obj_list_data *d;
   int sel, num, chd;
-  char *file, *ext;
+  char *ext;
   const char *str;
   GtkWidget *parent;
 
