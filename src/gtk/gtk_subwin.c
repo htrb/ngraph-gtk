@@ -1228,100 +1228,55 @@ list_sub_window_set(struct obj_list_data *d, list_sub_window_set_val_func func)
 
 
 void
-list_sub_window_delete
-#if GTK_CHECK_VERSION(4, 0, 0)
-(GSimpleAction *action, GVariant *parameter, gpointer user_data)
-#else
-(GtkMenuItem *item, gpointer user_data)
-#endif
+list_sub_window_delete(GSimpleAction *action, GVariant *parameter, gpointer user_data)
 {
   delete((struct obj_list_data *) user_data);
 }
 
 void
-list_sub_window_copy
-#if GTK_CHECK_VERSION(4, 0, 0)
-(GSimpleAction *action, GVariant *parameter, gpointer user_data)
-#else
-(GtkMenuItem *item, gpointer user_data)
-#endif
+list_sub_window_copy(GSimpleAction *action, GVariant *parameter, gpointer user_data)
 {
   copy((struct obj_list_data *) user_data);
 }
 
 void
-list_sub_window_move_top
-#if GTK_CHECK_VERSION(4, 0, 0)
-(GSimpleAction *action, GVariant *parameter, gpointer user_data)
-#else
-(GtkMenuItem *item, gpointer user_data)
-#endif
+list_sub_window_move_top(GSimpleAction *action, GVariant *parameter, gpointer user_data)
 {
   move_top((struct obj_list_data *) user_data);
 }
 
 void
-list_sub_window_move_last
-#if GTK_CHECK_VERSION(4, 0, 0)
-(GSimpleAction *action, GVariant *parameter, gpointer user_data)
-#else
-(GtkMenuItem *item, gpointer user_data)
-#endif
+list_sub_window_move_last(GSimpleAction *action, GVariant *parameter, gpointer user_data)
 {
   move_last((struct obj_list_data *) user_data);
 }
 
 void
-list_sub_window_move_up
-#if GTK_CHECK_VERSION(4, 0, 0)
-(GSimpleAction *action, GVariant *parameter, gpointer user_data)
-#else
-(GtkMenuItem *item, gpointer user_data)
-#endif
+list_sub_window_move_up(GSimpleAction *action, GVariant *parameter, gpointer user_data)
 {
   move_up((struct obj_list_data *) user_data);
 }
 
 void
-list_sub_window_move_down
-#if GTK_CHECK_VERSION(4, 0, 0)
-(GSimpleAction *action, GVariant *parameter, gpointer user_data)
-#else
-(GtkMenuItem *item, gpointer user_data)
-#endif
+list_sub_window_move_down(GSimpleAction *action, GVariant *parameter, gpointer user_data)
 {
   move_down((struct obj_list_data *) user_data);
 }
 
 void
-list_sub_window_update
-#if GTK_CHECK_VERSION(4, 0, 0)
-(GSimpleAction *action, GVariant *parameter, gpointer user_data)
-#else
-(GtkMenuItem *item, gpointer user_data)
-#endif
+list_sub_window_update(GSimpleAction *action, GVariant *parameter, gpointer user_data)
 {
   swin_update((struct obj_list_data *) user_data);
 }
 
 void
-list_sub_window_focus
-#if GTK_CHECK_VERSION(4, 0, 0)
-(GSimpleAction *action, GVariant *parameter, gpointer user_data)
-#else
-(GtkMenuItem *item, gpointer user_data)
-#endif
+list_sub_window_focus(GSimpleAction *action, GVariant *parameter, gpointer user_data)
 {
   focus((struct obj_list_data *) user_data, FOCUS_MODE_NORMAL);
 }
 
 void
-list_sub_window_focus_all
-#if GTK_CHECK_VERSION(4, 0, 0)
-(GSimpleAction *action, GVariant *parameter, gpointer user_data)
-#else
-(GtkMenuItem *item, gpointer user_data)
-#endif
+list_sub_window_focus_all(GSimpleAction *action, GVariant *parameter, gpointer user_data)
 {
   focus_all((struct obj_list_data *) user_data);
 }
