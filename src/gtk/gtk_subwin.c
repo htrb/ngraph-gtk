@@ -1281,7 +1281,6 @@ list_sub_window_focus_all(GSimpleAction *action, GVariant *parameter, gpointer u
   focus_all((struct obj_list_data *) user_data);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 struct set_object_name_data {
   struct objlist *obj;
   int id;
@@ -1361,38 +1360,6 @@ set_object_name(struct objlist *obj, int id)
   snprintf(buf, sizeof(buf), "%s:%d:name", chkobjectname(obj), id);
   input_dialog(TopLevel, _("Instance name"), buf, name, _("_Apply"), NULL, NULL, set_object_name_response, data);
 }
-#else
-static int
-set_object_name(struct objlist *obj, int id)
-{
-  char *name, *new_name, buf[256];
-  int r;
-  getobj(obj, "name", id, 0, NULL, &name);
-  new_name = NULL;
-  snprintf(buf, sizeof(buf), "%s:%d:name", chkobjectname(obj), id);
-  r = DialogInput(TopLevel, _("Instance name"), buf, name, NULL, NULL, &new_name, NULL, NULL);
-  if (r != IDOK) {
-    return 0;
-  }
-  if (g_strcmp0(name, new_name) == 0) {
-    return 0;
-  }
-  if (new_name == NULL) {
-    putobj(obj, "name", id, new_name);
-    return 1;
-  }
-  g_strstrip(new_name);
-  if (new_name[0] == '\0') {
-    g_free(new_name);
-    new_name = NULL;
-  }
-  if (putobj(obj, "name", id, new_name) < 0) {
-    g_free(new_name);
-    return 0;
-  }
-  return 1;
-}
-#endif
 
 void
 list_sub_window_object_name
