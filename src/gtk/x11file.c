@@ -7024,8 +7024,6 @@ drag_drop_cb(GtkDropTarget *self, const GValue *value, gdouble x, gdouble y, gpo
   return drop_file(value, GPOINTER_TO_INT(user_data));
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
 void
 init_dnd_file(struct SubWin *d, int type)
 {
@@ -7035,21 +7033,6 @@ init_dnd_file(struct SubWin *d, int type)
   g_signal_connect(target, "drop", G_CALLBACK(drag_drop_cb), GINT_TO_POINTER(type));
   gtk_widget_add_controller(d->data.data->text, GTK_EVENT_CONTROLLER(target));
 }
-#else
-static void
-init_dnd(struct SubWin *d)
-{
-  GtkWidget *widget;
-  GtkTargetEntry target[] = {
-    {"text/uri-list", 0, DROP_TYPE_FILE},
-  };
-
-  widget = d->data.data->text;
-
-  gtk_drag_dest_set(widget, GTK_DEST_DEFAULT_ALL, target, sizeof(target) / sizeof(*target), GDK_ACTION_COPY);
-  g_signal_connect(widget, "drag-data-received", G_CALLBACK(drag_drop_cb), NULL);
-}
-#endif
 
 GtkWidget *
 create_data_list(struct SubWin *d)
@@ -7086,11 +7069,7 @@ create_data_list(struct SubWin *d)
   set_combo_cell_renderer_cb(d->data.data, FILE_WIN_COL_Y_AXIS, Flist, G_CALLBACK(start_editing_y), G_CALLBACK(edited_axis));
   set_obj_cell_renderer_cb(d->data.data, FILE_WIN_COL_TYPE, Flist, G_CALLBACK(start_editing_type));
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   init_dnd_file(d, FILE_TYPE_DATA);
-#else
-  init_dnd(d);
-#endif
 
   gtk_tree_view_set_enable_search(GTK_TREE_VIEW(d->data.data->text), TRUE);
   gtk_tree_view_set_search_column(GTK_TREE_VIEW(d->data.data->text), FILE_WIN_COL_FILE);
