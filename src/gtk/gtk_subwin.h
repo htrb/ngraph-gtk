@@ -58,9 +58,5 @@ void list_sub_window_focus(GSimpleAction *action, GVariant *parameter, gpointer 
 void list_sub_window_focus_all(GSimpleAction *action, GVariant *parameter, gpointer user_data);
 void update_viewer(struct obj_list_data *d);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 void sub_win_create_popup_menu(struct obj_list_data *d, int n, GActionEntry *list, GCallback cb);
-#else
-GtkWidget *sub_win_create_popup_menu(struct obj_list_data *d, int n, struct subwin_popup_list *list, GCallback cb);
-#endif
 #endif
