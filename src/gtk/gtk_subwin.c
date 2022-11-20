@@ -186,11 +186,7 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
 
 	getobj(d->obj, list->name, sel, 0, NULL, &val);
 	snprintf(buf, sizeof(buf), DOUBLE_STR_FORMAT, val);
-#if GTK_CHECK_VERSION(4, 0, 0)
 	editable_set_init_text(GTK_WIDGET(editable), buf);
-#else
-	gtk_entry_set_text(GTK_ENTRY(editable), buf);
-#endif
       } else {
 	char *valstr;
 
@@ -200,11 +196,7 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
 	}
 	sgetobjfield(d->obj, sel, list->name, NULL, &valstr, FALSE, FALSE, FALSE);
 	if (valstr) {
-#if GTK_CHECK_VERSION(4, 0, 0)
 	  editable_set_init_text(GTK_WIDGET(editable), CHK_STR(valstr));
-#else
-	  gtk_entry_set_text(GTK_ENTRY(editable), CHK_STR(valstr));
-#endif
 	  g_free(valstr);
 	}
       }
@@ -213,11 +205,7 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
   case G_TYPE_DOUBLE:
   case G_TYPE_INT:
     if (GTK_IS_SPIN_BUTTON(editable)) {
-#if GTK_CHECK_VERSION(4, 0, 0)
       gtk_editable_set_alignment(GTK_EDITABLE(editable), 1.0);
-#else
-      gtk_entry_set_alignment(GTK_ENTRY(editable), 1.0);
-#endif
       gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(editable), FALSE);
       if (list->max == 36000) {
 	gtk_spin_button_set_wrap(GTK_SPIN_BUTTON(editable), TRUE);
