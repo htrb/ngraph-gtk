@@ -876,7 +876,6 @@ do_popup(gdouble x, gdouble y, struct obj_list_data *d)
   gtk_popover_popup(GTK_POPOVER(d->popup));
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static int
 tree_view_select_pos(GtkGestureClick *gesture, gdouble x, gdouble y)
 {
@@ -1002,160 +1001,17 @@ ev_key_down(GtkEventController *controller, guint keyval, guint keycode, GdkModi
     if (state & GDK_SHIFT_MASK) {
       focus(d, FOCUS_MODE_TOGGLE);
     } else {
-#if GTK_CHECK_VERSION(4, 0, 0)
       list_sub_window_focus(NULL, NULL, d);
-#else
-      list_sub_window_focus(NULL, d);
-#endif
     }
     break;
-#if GTK_CHECK_VERSION(4, 0, 0)
   case GDK_KEY_Menu:
     do_popup(0, 0, d);
     break;
-#endif
   default:
     return FALSE;
   }
   return TRUE;
 }
-#else
-static gboolean
-ev_button_down(GtkWidget *w, GdkEventButton *event,  gpointer user_data)
-{
-  struct obj_list_data *d;
-  static guint32 time = 0;
-  int tdif;
-
-  if (Menulock || Globallock) return FALSE;
-
-  g_return_val_if_fail(w != NULL, FALSE);
-  g_return_val_if_fail(event != NULL, FALSE);
-
-  tdif = event->time - time;
-  time = event->time;
-
-  /* following check is necessary for editable column. */
-  if (tdif > 0 && tdif < DOUBLE_CLICK_PERIOD)
-    return TRUE;
-
-  d = user_data;
-
-  switch (event->button) {
-  case 1:
-    if (event->type == GDK_2BUTTON_PRESS) {
-      swin_update(d);
-      return TRUE;
-    }
-    break;
-  }
-
-  return FALSE;
-}
-
-static gboolean
-ev_button_up(GtkWidget *w, GdkEventButton *event,  gpointer user_data)
-{
-  struct obj_list_data *d;
-
-  if (Menulock || Globallock) return FALSE;
-
-  g_return_val_if_fail(w != NULL, FALSE);
-  g_return_val_if_fail(event != NULL, FALSE);
-
-  d = user_data;
-
-  switch (event->button) {
-  case 3:
-    if (d->popup) {
-      do_popup(event, d);
-      return TRUE;
-    }
-    break;
-  }
-
-  return FALSE;
-}
-
-static gboolean
-ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
-{
-  struct obj_list_data *d;
-  GdkEventKey *e;
-
-  g_return_val_if_fail(w != NULL, FALSE);
-  g_return_val_if_fail(event != NULL, FALSE);
-
-  if (Menulock || Globallock)
-    return TRUE;
-
-  d = user_data;
-  e = (GdkEventKey *)event;
-
-  if (d->ev_key && d->ev_key(w, e->keyval, e->state, user_data))
-    return TRUE;
-
-  switch (e->keyval) {
-  case GDK_KEY_Delete:
-    delete(d);
-    break;
-  case GDK_KEY_Insert:
-    copy(d);
-    break;
-  case GDK_KEY_Home:
-    if (e->state & GDK_SHIFT_MASK)
-      move_top(d);
-    else
-      return FALSE;
-    break;
-  case GDK_KEY_End:
-    if (e->state & GDK_SHIFT_MASK)
-      move_last(d);
-    else
-      return FALSE;
-    break;
-  case GDK_KEY_Up:
-    if (e->state & GDK_SHIFT_MASK)
-      move_up(d);
-    else
-      return FALSE;
-    break;
-  case GDK_KEY_Down:
-    if (e->state & GDK_SHIFT_MASK)
-      move_down(d);
-    else
-      return FALSE;
-    break;
-  case GDK_KEY_Return:
-    if (e->state & GDK_SHIFT_MASK) {
-      e->state &= ~ GDK_SHIFT_MASK;
-      return FALSE;
-    }
-
-    swin_update(d);
-    break;
-  case GDK_KEY_BackSpace:
-    hidden(d);
-    break;
-  case GDK_KEY_space:
-    if (e->state & GDK_CONTROL_MASK)
-      return FALSE;
-
-    if (! d->can_focus)
-      return FALSE;
-
-    if (e->state & GDK_SHIFT_MASK) {
-      focus(d, FOCUS_MODE_TOGGLE);
-    } else {
-      list_sub_window_focus(NULL, d);
-    }
-    break;
-  default:
-    return FALSE;
-  }
-  return TRUE;
-}
-#endif
 
 static void
 swin_realized(GtkWidget *widget, gpointer user_data)
