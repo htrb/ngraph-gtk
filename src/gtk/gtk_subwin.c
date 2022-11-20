@@ -1380,7 +1380,6 @@ list_sub_window_object_name(GSimpleAction *action, GVariant *parameter, gpointer
   set_object_name(d->obj, sel);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 void
 sub_win_create_popup_menu(struct obj_list_data *d, int n, GActionEntry *list, GCallback cb)
 {
@@ -1412,71 +1411,3 @@ sub_win_create_popup_menu(struct obj_list_data *d, int n, GActionEntry *list, GC
   }
   d->popup = popup;
 }
-#else
-static GtkWidget *
-create_popup_menu_sub(struct obj_list_data *d, int top, struct subwin_popup_list *list)
-{
-  GtkWidget *menu, *item, *submenu;
-  int i;
-  menu = gtk_menu_new();
-
-  for (i = 0; list[i].type != POP_UP_MENU_ITEM_TYPE_END; i++) {
-    switch (list[i].type) {
-    case POP_UP_MENU_ITEM_TYPE_NORMAL:
-      item = gtk_menu_item_new_with_mnemonic(_(list[i].title));
-      g_signal_connect(item, "activate", list[i].func, d);
-      break;
-    case POP_UP_MENU_ITEM_TYPE_CHECK:
-      item = gtk_check_menu_item_new_with_mnemonic(_(list[i].title));
-      g_signal_connect(item, "toggled", list[i].func, d);
-      break;
-    case POP_UP_MENU_ITEM_TYPE_MENU:
-      item = gtk_menu_item_new_with_mnemonic(_(list[i].title));
-      submenu = create_popup_menu_sub(d, FALSE, list[i].submenu);
-      gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), submenu);
-      break;
-    case POP_UP_MENU_ITEM_TYPE_RECENT_DATA:
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-      item = gtk_menu_item_new_with_mnemonic(_(list[i].title));
-      submenu = create_recent_menu(RECENT_TYPE_DATA);
-      gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), submenu);
-#endif
-      break;
-    case POP_UP_MENU_ITEM_TYPE_SEPARATOR:
-    default:
-      item = gtk_separator_menu_item_new();
-      break;
-    }
-    if (top) {
-      d->popup_item[i] = item;
-    }
-    gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-  }
-
-  return menu;
-}
-
-GtkWidget *
-sub_win_create_popup_menu(struct obj_list_data *d, int n, struct subwin_popup_list *list, GCallback cb)
-{
-  GtkWidget *menu;
-
-  if (d->popup_item)
-    g_free(d->popup_item);
-
-  d->popup_item = g_malloc(sizeof(GtkWidget *) * n);
-
-  menu = create_popup_menu_sub(d, TRUE, list);
-
-  d->popup = menu;
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  gtk_widget_show_all(menu);
-#endif
-  gtk_menu_attach_to_widget(GTK_MENU(menu), GTK_WIDGET(d->text), NULL);
-
-  if (cb)
-    g_signal_connect(menu, "show", cb, d);
-
-  return menu;
-}
-#endif
