@@ -293,12 +293,10 @@ item_setup(GtkWidget *box, GtkWidget *w, char *title, gboolean expand)
   return label;
 }
 
-int
-entry_set_filename(GtkWidget *w, char *filename)
+void
+entry_set_filename(GtkWidget *w, const char *filename)
 {
   editable_set_init_text(w, filename);
-
-  return 0;
 }
 
 char *

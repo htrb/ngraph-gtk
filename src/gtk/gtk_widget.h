@@ -73,7 +73,7 @@ int spin_entry_get_val(GtkWidget *entry);
 void spin_entry_set_range(GtkWidget *w, int min, int max);
 void spin_entry_set_inc(GtkWidget *w, int inc, int page);
 char *entry_get_filename(GtkWidget *w);
-int entry_set_filename(GtkWidget *w, char *filename);
+void entry_set_filename(GtkWidget *w, const char *filename);
 
 GtkWidget *create_color_button(GtkWidget *win);
 GtkWidget *create_text_entry(int set_default_size, int set_default_action);
