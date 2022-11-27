@@ -595,11 +595,7 @@ spin_change_value_cb(GtkSpinButton *spinbutton, GtkScrollType arg1, gpointer use
   double oval, val;
   int ecode;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   str = gtk_editable_get_text(GTK_EDITABLE(spinbutton));
-#else
-  str = gtk_entry_get_text(GTK_ENTRY(spinbutton));
-#endif
   if (str == NULL)
     return 0;
 
