@@ -306,11 +306,7 @@ entry_get_filename(GtkWidget *w)
 {
   const char *utf8filename;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   utf8filename = gtk_editable_get_text(GTK_EDITABLE(w));
-#else
-  utf8filename = gtk_entry_get_text(GTK_ENTRY(w));
-#endif
   if (utf8filename == NULL) {
     return NULL;
   }
