@@ -619,11 +619,6 @@ _create_spin_entry(enum SPIN_BUTTON_TYPE type, double min, double max,
   GtkWidget *w;
 
   w = gtk_spin_button_new_with_range(min, max, inc);
-#if GTK_CHECK_VERSION(4, 0, 0)
-  /* must be implemented */
-#else
-  gtk_entry_set_alignment(GTK_ENTRY(w), 1.0);
-#endif
 
   gtk_spin_button_set_increments(GTK_SPIN_BUTTON(w), inc, page);
   gtk_spin_button_set_wrap(GTK_SPIN_BUTTON(w), wrap);
@@ -631,21 +626,12 @@ _create_spin_entry(enum SPIN_BUTTON_TYPE type, double min, double max,
   gtk_spin_button_set_digits(GTK_SPIN_BUTTON(w), (numeric) ? 0 : 2);
 
   if (set_default_size) {
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_editable_set_width_chars(GTK_EDITABLE(w), NUM_ENTRY_WIDTH);
     gtk_editable_set_max_width_chars(GTK_EDITABLE(w), NUM_ENTRY_WIDTH);
-#else
-    gtk_entry_set_width_chars(GTK_ENTRY(w), NUM_ENTRY_WIDTH);
-    gtk_entry_set_max_width_chars(GTK_ENTRY(w), NUM_ENTRY_WIDTH);
-#endif
   }
 
   if (set_default_action) {
-#if GTK_CHECK_VERSION(4, 0, 0)
     spin_button_set_activates_default(w);
-#else
-    gtk_entry_set_activates_default(GTK_ENTRY(w), TRUE);
-#endif
   }
 
   g_object_set_data(G_OBJECT(w), "user-data", GINT_TO_POINTER(type));
