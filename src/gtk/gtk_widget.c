@@ -324,7 +324,6 @@ get_parent_window(GtkWidget *w)
   return (ptr) ? ptr : TopLevel;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 entry_icon_file_select_response(char *file, gpointer user_data)
 {
@@ -335,14 +334,9 @@ entry_icon_file_select_response(char *file, gpointer user_data)
     g_free(file);
   }
 }
-#endif
 
 static void
-#if GTK_CHECK_VERSION(4, 0, 0)
 entry_icon_file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, gpointer user_data)
-#else
-entry_icon_file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointer user_data)
-#endif
 {
   struct objlist *obj;
   char *file, *ext;
@@ -359,17 +353,8 @@ entry_icon_file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *eve
   }
 
   chd = Menulocal.changedirectory;
-#if GTK_CHECK_VERSION(4, 0, 0)
   str = gtk_editable_get_text(GTK_EDITABLE(w));
   nGetOpenFileName(get_parent_window(GTK_WIDGET(w)), obj->name, ext, NULL, str, chd, entry_icon_file_select_response, w);
-#else
-  str = gtk_entry_get_text(w);
-  file = nGetOpenFileName(get_parent_window(GTK_WIDGET(w)), obj->name, ext, NULL, str, TRUE, chd);
-  if (file) {
-    entry_set_filename(GTK_WIDGET(w), file);
-    g_free(file);
-  }
-#endif
 }
 
 GtkWidget *
