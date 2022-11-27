@@ -772,8 +772,7 @@ show_color_sel(GtkWidget *w, gpointer user_data)
 void
 add_default_color(struct narray *palette)
 {
-#if GTK_CHECK_VERSION(4, 0, 0)
-  const char *default_colors[9*5] = {
+  const char * const default_colors[9*5] = {
     "#99c1f1", "#8ff0a4", "#f9f06b", "#ffbe6f", "#f66151", "#dc8add", "#cdab8f", "#ffffff", "#77767b",
     "#62a0ea", "#57e389", "#f8e45c", "#ffa348", "#ed333b", "#c061cb", "#b5835a", "#f6f5f4", "#5e5c64",
     "#3584e4", "#33d17a", "#f6d32d", "#ff7800", "#e01b24", "#9141ac", "#986a44", "#deddda", "#3d3846",
@@ -788,27 +787,6 @@ add_default_color(struct narray *palette)
     gdk_rgba_parse(&color, default_colors[i]);
     arrayadd(palette, &color);
   }
-#else
-  const gchar *default_colors[9][3] = {
-    { "#ef2929", "#cc0000", "#a40000" }, /* Scarlet Red */
-    { "#fcaf3e", "#f57900", "#ce5c00" }, /* Orange */
-    { "#fce94f", "#edd400", "#c4a000" }, /* Butter */
-    { "#8ae234", "#73d216", "#4e9a06" }, /* Chameleon */
-    { "#729fcf", "#3465a4", "#204a87" }, /* Sky Blue */
-    { "#ad7fa8", "#75507b", "#5c3566" }, /* Plum */
-    { "#e9b96e", "#c17d11", "#8f5902" }, /* Chocolate */
-    { "#888a85", "#555753", "#2e3436" }, /* Aluminum 1 */
-    { "#eeeeec", "#d3d7cf", "#babdb6" }  /* Aluminum 2 */
-  };
-  GdkRGBA color;
-  int i, j;
-  for (j = 0; j < 3; j++) {
-    for (i = 0; i < 9; i++) {
-      gdk_rgba_parse(&color, default_colors[i][j]);
-      arrayadd(palette, &color);
-    }
-  }
-#endif
 }
 
 #if ! GTK_CHECK_VERSION(4, 0, 0)
