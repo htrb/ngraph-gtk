@@ -337,7 +337,7 @@ static void
 entry_icon_file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, gpointer user_data)
 {
   struct objlist *obj;
-  char *file, *ext;
+  char *ext;
   const char *str;
   int chd;
 
