@@ -458,11 +458,7 @@ create_text_entry(int set_default_size, int set_default_action)
 
   w = gtk_entry_new();
   if (set_default_size) {
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_editable_set_width_chars(GTK_EDITABLE(w), NUM_ENTRY_WIDTH);
-#else
-    gtk_entry_set_width_chars(GTK_ENTRY(w), NUM_ENTRY_WIDTH);
-#endif
   }
 
   if (set_default_action) {
