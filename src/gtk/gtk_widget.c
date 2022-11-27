@@ -288,11 +288,7 @@ item_setup(GtkWidget *box, GtkWidget *w, char *title, gboolean expand)
   }
   gtk_grid_attach(GTK_GRID(hbox), label, 0, 0, 1, 1);
   gtk_grid_attach(GTK_GRID(hbox), w, 1, 0, 1, 1);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(box), hbox);
-#else
-  gtk_box_pack_start(GTK_BOX(box), hbox, expand, expand, 4);
-#endif
 
   return label;
 }
