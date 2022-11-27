@@ -985,7 +985,6 @@ text_view_with_line_number_set_font(GtkWidget *view, const gchar *font)
   set_widget_font(view, font);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 struct select_obj_color_data {
   struct objlist *obj;
   int id, type, r, g, b, a;
@@ -1089,25 +1088,21 @@ select_obj_color_response(GtkWindow *dlg, int response, gpointer user_data)
     cb(modified, ud);
   }
 }
-#endif
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 void
 select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type, response_cb cb, gpointer user_data)
-#else
-enum SELECT_OBJ_COLOR_RESULT
-select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type)
-#endif
 {
   GtkWidget *dlg;
   int r, g, b, a, rr ,gg, bb, aa, response, modified, undo;
   GdkRGBA color;
   char *title;
-#if GTK_CHECK_VERSION(4, 0, 0)
   struct select_obj_color_data *data;
 
   data = g_malloc0(sizeof(*data));
   if (data == NULL) {
+    if (cb) {
+      cb(SELECT_OBJ_COLOR_ERROR, user_data);
+    }
     return;
   }
   data->obj = obj;
@@ -1115,7 +1110,6 @@ select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type)
   data->type = type;
   data->cb = cb;
   data->data = user_data;
-#endif
 
   switch (type) {
   case OBJ_FIELD_COLOR_TYPE_STROKE:
@@ -1175,12 +1169,11 @@ select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type)
     getobj(obj, "num_A", id, 0, NULL, &a);
     break;
   default:
-#if GTK_CHECK_VERSION(4, 0, 0)
     g_free(data);
+    if (cb) {
+      cb(SELECT_OBJ_COLOR_ERROR, user_data);
+    }
     return;
-#else
-    return SELECT_OBJ_COLOR_ERROR;
-#endif
   }
 
   if (! Menulocal.use_opacity) {
@@ -1198,7 +1191,6 @@ select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type)
   }
   gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(dlg), &color);
   gtk_color_chooser_set_use_alpha(GTK_COLOR_CHOOSER(dlg), Menulocal.use_opacity);
-#if GTK_CHECK_VERSION(4, 0, 0)
   data->r = r;
   data->g = g;
   data->b = b;
@@ -1207,73 +1199,6 @@ select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type)
   gtk_window_set_modal(GTK_WINDOW(dlg), TRUE);
   gtk_widget_show(GTK_WIDGET(dlg));
   return;
-#else
-  response = ndialog_run(dlg);
-  gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(dlg), &color);
-
-  gtk_widget_destroy(dlg);
-
-  if (response != GTK_RESPONSE_OK) {
-    return SELECT_OBJ_COLOR_CANCEL;
-  }
-
-  rr = nround(color.red * 255);
-  gg = nround(color.green * 255);
-  bb = nround(color.blue * 255);
-  aa = nround(color.alpha * 255);
-
-  undo = menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
-  switch (type) {
-  case OBJ_FIELD_COLOR_TYPE_STROKE:
-    putobj(obj, "stroke_R", id, &rr);
-    putobj(obj, "stroke_G", id, &gg);
-    putobj(obj, "stroke_B", id, &bb);
-    putobj(obj, "stroke_A", id, &aa);
-    break;
-  case OBJ_FIELD_COLOR_TYPE_FILL:
-    putobj(obj, "fill_R", id, &rr);
-    putobj(obj, "fill_G", id, &gg);
-    putobj(obj, "fill_B", id, &bb);
-    putobj(obj, "fill_A", id, &aa);
-    break;
-  case OBJ_FIELD_COLOR_TYPE_0:
-  case OBJ_FIELD_COLOR_TYPE_1:
-  case OBJ_FIELD_COLOR_TYPE_AXIS_BASE:
-    putobj(obj, "R", id, &rr);
-    putobj(obj, "G", id, &gg);
-    putobj(obj, "B", id, &bb);
-    putobj(obj, "A", id, &aa);
-    break;
-  case OBJ_FIELD_COLOR_TYPE_2:
-    putobj(obj, "R2", id, &rr);
-    putobj(obj, "G2", id, &gg);
-    putobj(obj, "B2", id, &bb);
-    putobj(obj, "A2", id, &aa);
-    break;
-  case OBJ_FIELD_COLOR_TYPE_AXIS_GAUGE:
-    putobj(obj, "gauge_R", id, &rr);
-    putobj(obj, "gauge_G", id, &gg);
-    putobj(obj, "gauge_B", id, &bb);
-    putobj(obj, "gauge_A", id, &aa);
-    break;
-  case OBJ_FIELD_COLOR_TYPE_AXIS_NUM:
-    putobj(obj, "num_R", id, &rr);
-    putobj(obj, "num_G", id, &gg);
-    putobj(obj, "num_B", id, &bb);
-    putobj(obj, "num_A", id, &aa);
-    break;
-  default:
-    return SELECT_OBJ_COLOR_ERROR;
-  }
-
-  if (rr == r && gg == g && bb == b && aa == a) {
-    modified = SELECT_OBJ_COLOR_SAME;
-    menu_delete_undo(undo);
-  } else {
-    modified = SELECT_OBJ_COLOR_DIFFERENT;
-  }
-  return modified;
-#endif
 }
 
 gchar *
