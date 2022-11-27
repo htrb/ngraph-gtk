@@ -1091,7 +1091,7 @@ void
 select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type, response_cb cb, gpointer user_data)
 {
   GtkWidget *dlg;
-  int r, g, b, a, rr ,gg, bb, aa, response, modified, undo;
+  int r, g, b, a;
   GdkRGBA color;
   char *title;
   struct select_obj_color_data *data;
