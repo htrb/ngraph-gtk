@@ -750,16 +750,7 @@ set_custom_palette(GtkWidget *dlg)
     return;
   }
   colors = arraydata(palette);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_color_chooser_add_palette(GTK_COLOR_CHOOSER(dlg), GTK_ORIENTATION_HORIZONTAL, 9, n, colors);
-#else
-  if (n >= 18) {
-    gtk_color_chooser_add_palette(GTK_COLOR_CHOOSER(dlg), GTK_ORIENTATION_HORIZONTAL, 9, n - 9, colors);
-    gtk_color_chooser_add_palette(GTK_COLOR_CHOOSER(dlg), GTK_ORIENTATION_HORIZONTAL, 9, 9, colors + (n - 9));
-  } else {
-    gtk_color_chooser_add_palette(GTK_COLOR_CHOOSER(dlg), GTK_ORIENTATION_HORIZONTAL, 9, n - 9, colors);
-  }
-#endif
 }
 
 static void
