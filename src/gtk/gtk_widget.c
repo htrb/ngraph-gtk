@@ -619,6 +619,7 @@ _create_spin_entry(enum SPIN_BUTTON_TYPE type, double min, double max,
   GtkWidget *w;
 
   w = gtk_spin_button_new_with_range(min, max, inc);
+  gtk_editable_set_alignment(GTK_EDITABLE(w), 1.0);
 
   gtk_spin_button_set_increments(GTK_SPIN_BUTTON(w), inc, page);
   gtk_spin_button_set_wrap(GTK_SPIN_BUTTON(w), wrap);
