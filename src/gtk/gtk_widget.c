@@ -839,9 +839,6 @@ void
 set_widget_font(GtkWidget *w, const char *font)
 {
   GtkCssProvider *css_provider;
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  GError *error;
-#endif
   char *css_str;
   PangoFontDescription *desc;
   const char *family, *style_str, *unit;
@@ -942,24 +939,11 @@ set_widget_font(GtkWidget *w, const char *font)
     return;
   }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_css_provider_load_from_data(css_provider, css_str, -1);
-#else
-  error = NULL;
-  gtk_css_provider_load_from_data(css_provider, css_str, -1, &error);
-#endif
   g_free(css_str);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_style_context_add_provider(gtk_widget_get_style_context(w),
 				 GTK_STYLE_PROVIDER(css_provider),
 				 GTK_STYLE_PROVIDER_PRIORITY_USER);
-#else
-  if (error == NULL) {
-    gtk_style_context_add_provider(gtk_widget_get_style_context(w),
-				   GTK_STYLE_PROVIDER(css_provider),
-				   GTK_STYLE_PROVIDER_PRIORITY_USER);
-  }
-#endif
 }
 
 GtkWidget *
