@@ -789,30 +789,6 @@ add_default_color(struct narray *palette)
   }
 }
 
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-void
-add_default_gray(struct narray *palette)
-{
-  const gchar *default_grays[9] = {
-    "#000000", /* black */
-    "#2e3436", /* very dark gray */
-    "#555753", /* darker gray */
-    "#888a85", /* dark gray */
-    "#babdb6", /* medium gray */
-    "#d3d7cf", /* light gray */
-    "#eeeeec", /* lighter gray */
-    "#f3f3f3", /* very light gray */
-    "#ffffff"  /* white */
-  };
-  GdkRGBA color;
-  int i;
-  for (i = 0; i < 9; i++) {
-    gdk_rgba_parse(&color, default_grays[i]);
-    arrayadd(palette, &color);
-  }
-}
-#endif
-
 static void
 set_default_palette(GtkWidget *cc)
 {
@@ -823,12 +799,6 @@ set_default_palette(GtkWidget *cc)
   add_default_color(&palette);
   n = arraynum(&palette);
   gtk_color_chooser_add_palette(GTK_COLOR_CHOOSER(cc), GTK_ORIENTATION_HORIZONTAL, 9, n, arraydata(&palette));
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  arrayclear(&palette);
-  add_default_gray(&palette);
-  n = arraynum(&palette);
-  gtk_color_chooser_add_palette(GTK_COLOR_CHOOSER(cc), GTK_ORIENTATION_HORIZONTAL, n, n, arraydata(&palette));
-#endif
   arraydel(&palette);
 }
 
