@@ -46,7 +46,6 @@ enum WIDGET_MARGIN {
   WIDGET_MARGIN_BOTTOM = 8,
 };
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 void editable_set_init_text(GtkWidget *w, const char *text);
 void spin_button_set_activates_default(GtkWidget *w);
 void widget_set_parent(GtkWidget *widget, GtkWidget *parent);
@@ -58,10 +57,6 @@ void scrollbar_set_range(GtkWidget *w, double min, double max);
 void scrollbar_set_increment(GtkWidget *w, double step, double page);
 void select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type, response_cb cb, gpointer user_data);
 GtkWidget *create_direction_entry(GtkWidget *table, const char *title, int row);
-#else
-enum SELECT_OBJ_COLOR_RESULT select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type);
-GtkWidget *create_direction_entry(void);
-#endif
 
 GtkWidget *create_spin_entry_type(enum SPIN_BUTTON_TYPE type, int set_default_size, int set_default_action);
 GtkWidget *create_spin_entry(int min, int max, int inc, int set_default_size, int set_default_action);
@@ -96,13 +91,10 @@ void set_widget_margin(GtkWidget *w, int margin_pos);
 void set_scale_mark(GtkWidget *scale, GtkPositionType pos, int start, int inc);
 void set_widget_font(GtkWidget *w, const char *font);
 void add_default_color(struct narray *palette);
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-void add_default_gray(struct narray *palette);
-#endif
 gchar *get_text_from_buffer(GtkTextBuffer *buffer);
 GtkWidget *add_button(GtkWidget *grid, int row, int col, const char *icon, const char *tooltip, GCallback proc, gpointer data);
 GtkWidget *add_toggle_button(GtkWidget *grid, int row, int col, const char *icon_name, const char *tooltip, GCallback proc, gpointer data);
 
 void add_event_key(GtkWidget *widget, GCallback press_proc, GCallback release_proc, gpointer user_data);
-#endif
 void set_widget_margin_all(GtkWidget *w, int margin);
+#endif

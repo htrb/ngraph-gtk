@@ -12,7 +12,6 @@
 #include "x11gui.h"
 #include "dir_defs.h"
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 void
 editable_set_init_text(GtkWidget *w, const char *text)
 {
@@ -82,7 +81,6 @@ scrollbar_set_increment(GtkWidget *w, double step, double page)
   gtk_adjustment_set_step_increment(adj, step);
   gtk_adjustment_set_page_increment(adj, step);
 }
-#endif
 
 void
 set_button_icon(GtkWidget *w, const char *icon_name)
