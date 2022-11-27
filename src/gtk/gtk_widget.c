@@ -1390,11 +1390,7 @@ GtkWidget *
 add_button(GtkWidget *grid, int row, int col, const char *icon, const char *tooltip, GCallback proc, gpointer data)
 {
   GtkWidget *w;
-#if GTK_CHECK_VERSION(4, 0, 0)
   w = gtk_button_new_from_icon_name(icon);
-#else
-  w = gtk_button_new_from_icon_name(icon, GTK_ICON_SIZE_BUTTON);
-#endif
   add_button_common(w, grid, row, col, tooltip, proc, data);
   return w;
 }
