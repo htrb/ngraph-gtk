@@ -414,7 +414,6 @@ direction_icon_released(GtkSpinButton *entry, GtkEntryIconPosition pos, GdkEvent
   gtk_spin_button_set_value(entry, val);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 direction_down(GtkWidget *button, GtkSpinButton *user_data)
 {
@@ -451,31 +450,6 @@ create_direction_entry(GtkWidget *table, const char *title, int row)
 
   return w;
 }
-#else
-GtkWidget *
-create_direction_entry(void)
-{
-  GtkWidget *w;
-
-  w = create_spin_entry_type(SPIN_BUTTON_TYPE_ANGLE, FALSE, TRUE);
-#if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_editable_set_width_chars(GTK_EDITABLE(w), NUM_ENTRY_WIDTH);
-  gtk_editable_set_max_width_chars(GTK_EDITABLE(w), NUM_ENTRY_WIDTH);
-#else
-  gtk_entry_set_width_chars(GTK_ENTRY(w), NUM_ENTRY_WIDTH);
-  gtk_entry_set_max_width_chars(GTK_ENTRY(w), NUM_ENTRY_WIDTH);
-#endif
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
-#else
-  gtk_entry_set_icon_from_icon_name(GTK_ENTRY(w), GTK_ENTRY_ICON_SECONDARY, "go-up-symbolic");
-  gtk_entry_set_icon_from_icon_name(GTK_ENTRY(w), GTK_ENTRY_ICON_PRIMARY, "go-down-symbolic");
-  g_signal_connect(w, "icon-release", G_CALLBACK(direction_icon_released), NULL);
-#endif
-
-  return w;
-}
-#endif
 
 GtkWidget *
 create_text_entry(int set_default_size, int set_default_action)
