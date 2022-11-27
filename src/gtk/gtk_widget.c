@@ -804,7 +804,6 @@ set_default_palette(GtkWidget *cc)
 
 #define CUSTOM_PALETTE_KEY "custom_palette"
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 show_color_dialog(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y, gpointer user_data)
 {
@@ -817,40 +816,21 @@ show_color_dialog(GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y, 
     set_default_palette(GTK_WIDGET(btn));
   }
 }
-#else
-static gboolean
-show_color_dialog(GtkButton *btn, GdkEvent *event, gpointer user_data)
-{
-  gtk_color_chooser_add_palette(GTK_COLOR_CHOOSER(btn), GTK_ORIENTATION_HORIZONTAL, 0, 0, NULL);
-  if (Menulocal.use_custom_palette) {
-    set_custom_palette(GTK_WIDGET(btn));
-  } else {
-    set_default_palette(GTK_WIDGET(btn));
-  }
-  return FALSE;
-}
-#endif
 
 GtkWidget *
 create_color_button(GtkWidget *win)
 {
-#if GTK_CHECK_VERSION(4, 0, 0)
   GtkGesture *gesture;
-#endif
   GtkWidget *w;
 
   w = gtk_color_button_new();
   g_object_set_data(G_OBJECT(w), CUSTOM_PALETTE_KEY, GINT_TO_POINTER(0));
   g_signal_connect(w, "color-set", G_CALLBACK(show_color_sel), win);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gesture = gtk_gesture_click_new();
   gtk_widget_add_controller(w, GTK_EVENT_CONTROLLER(gesture));
 
   gtk_gesture_single_set_button(GTK_GESTURE_SINGLE(gesture), 0);
   g_signal_connect(gesture, "pressed", G_CALLBACK(show_color_dialog), w);
-#else
-  g_signal_connect(w, "button-press-event", G_CALLBACK(show_color_dialog), win);
-#endif
 
   return w;
 }
