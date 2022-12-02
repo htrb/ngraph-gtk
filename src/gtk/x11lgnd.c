@@ -4304,8 +4304,6 @@ start_editing_font(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *
   struct obj_list_data *d;
   int sel;
 
-  menu_lock(TRUE);
-
   d = (struct obj_list_data *) user_data;
 
   sel = start_editing_common(renderer, editable, path, user_data);
