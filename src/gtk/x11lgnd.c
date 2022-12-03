@@ -708,11 +708,7 @@ legend_dialog_set_sensitive(GtkWidget *w, gpointer client_data)
   if (d->stroke && d->stroke_color && d->style && d->width) {
     int stroke;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     stroke = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->stroke));
-#else
-    stroke = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->stroke));
-#endif
     set_widget_sensitivity_with_label(d->stroke_color, stroke);
     set_widget_sensitivity_with_label(d->style, stroke);
     set_widget_sensitivity_with_label(d->width, stroke);
@@ -724,11 +720,7 @@ legend_dialog_set_sensitive(GtkWidget *w, gpointer client_data)
       d->close_path) {
     int stroke;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     stroke = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->stroke));
-#else
-    stroke = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->stroke));
-#endif
     set_widget_sensitivity_with_label(d->miter, stroke);
     set_widget_sensitivity_with_label(d->join, stroke);
     set_widget_sensitivity_with_label(d->close_path, stroke);
@@ -742,11 +734,7 @@ legend_dialog_set_sensitive(GtkWidget *w, gpointer client_data)
       d->arrow_width) {
     int stroke, marker_type;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     stroke = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->stroke));
-#else
-    stroke = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->stroke));
-#endif
     set_widget_sensitivity_with_label(d->miter, stroke);
     set_widget_sensitivity_with_label(d->join, stroke);
     set_widget_sensitivity_with_label(d->marker_begin, stroke);
@@ -777,18 +765,10 @@ legend_dialog_set_sensitive(GtkWidget *w, gpointer client_data)
   if (d->fill && d->fill_color) {
     int fill;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     fill = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->fill));
-#else
-    fill = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->fill));
-#endif
     if (d->marker_begin && d->marker_end) {
       int marker_begin, marker_end, stroke;
-#if GTK_CHECK_VERSION(4, 0, 0)
       stroke = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->stroke));
-#else
-      stroke = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->stroke));
-#endif
       marker_begin = combo_box_get_active(d->marker_begin);
       marker_end = combo_box_get_active(d->marker_end);
       set_widget_sensitivity_with_label(d->fill_color,
