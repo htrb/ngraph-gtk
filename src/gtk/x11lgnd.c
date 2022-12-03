@@ -1275,59 +1275,31 @@ points_setup(struct LegendDialog *d)
   set_widget_margin(label, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT | WIDGET_MARGIN_TOP | WIDGET_MARGIN_BOTTOM);
   gtk_widget_set_halign(label, GTK_ALIGN_START);
   gtk_label_set_mnemonic_widget(GTK_LABEL(label), tree_view);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(vbox), label);
-#else
-  gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
-#endif
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   swin = gtk_scrolled_window_new();
   gtk_scrolled_window_set_has_frame(GTK_SCROLLED_WINDOW(swin), TRUE);
-#else
-  swin = gtk_scrolled_window_new(NULL, NULL);
-  gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(swin), GTK_SHADOW_ETCHED_IN);
-#endif
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
   set_widget_margin(swin, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT | WIDGET_MARGIN_BOTTOM);
   gtk_widget_set_vexpand(swin, TRUE);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), tree_view);
   gtk_box_append(GTK_BOX(vbox), swin);
-#else
-  gtk_container_set_border_width(GTK_CONTAINER(swin), 2);
-  gtk_container_add(GTK_CONTAINER(swin), tree_view);
-  gtk_box_pack_start(GTK_BOX(vbox), swin, TRUE, TRUE, 0);
-#endif
 
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 
   btn = gtk_button_new_with_mnemonic(_("_Add"));
   set_button_icon(btn, "list-add");
   g_signal_connect(btn, "clicked", G_CALLBACK(insert_column), tree_view);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(hbox), btn);
-#else
-  gtk_box_pack_start(GTK_BOX(hbox), btn, FALSE, FALSE, 4);
-#endif
 
   btn = gtk_button_new_with_mnemonic(_("_Delete"));
   g_signal_connect(btn, "clicked", G_CALLBACK(list_store_remove_selected_cb), tree_view);
   g_signal_connect(sel, "changed", G_CALLBACK(set_delete_button_sensitivity), btn);
   gtk_widget_set_sensitive(btn, FALSE);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(hbox), btn);
-#else
-  gtk_box_pack_start(GTK_BOX(hbox), btn, FALSE, FALSE, 4);
-#endif
   set_widget_margin(hbox, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT | WIDGET_MARGIN_BOTTOM);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(vbox), hbox);
-#else
-  gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
-#endif
-
 
   d->points = tree_view;
 
