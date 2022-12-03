@@ -889,11 +889,7 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
     char *buf;
     sgetobjfield(d->Obj,id,"text",NULL,&buf,FALSE,FALSE,FALSE);
     if (buf) {
-#if GTK_CHECK_VERSION(4, 0, 0)
       editable_set_init_text(d->text, buf);
-#else
-      gtk_entry_set_text(GTK_ENTRY(d->text), buf);
-#endif
       g_free(buf);
     }
   }
