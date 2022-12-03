@@ -447,8 +447,6 @@ legend_menu_update_object(const char *name, char *(*callback) (struct objlist * 
   DialogExecute(TopLevel, &DlgSelect);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* to be implemented */
 static void
 legend_menu_delete_object_response(struct response_callback *cb)
 {
@@ -501,42 +499,6 @@ legend_menu_delete_object(const char *name, char *(*callback) (struct objlist * 
   SelectDialog(&DlgSelect, obj, title, callback, data->array, NULL);
   DialogExecute(TopLevel, &DlgSelect);
 }
-#else
-static void
-legend_menu_delete_object(const char *name, char *(*callback) (struct objlist * obj, int id))
-{
-  struct narray array;
-  struct objlist *obj;
-  char title[256];
-
-  if (Menulock || Globallock)
-    return;
-  if ((obj = chkobject(name)) == NULL)
-    return;
-  if (chkobjlastinst(obj) == -1)
-    return;
-  snprintf(title, sizeof(title), _("delete %s (multi select)"), _(obj->name));
-  SelectDialog(&DlgSelect, obj, title, callback, &array, NULL);
-  if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
-    int num;
-    num = arraynum(&array);
-    if (num > 0) {
-      int i, *data;
-      char *objs[2];
-      menu_save_undo_single(UNDO_TYPE_DELETE, obj->name);
-      data = arraydata(&array);
-      for (i = num - 1; i >= 0; i--) {
-	delobj(obj, data[i]);
-	set_graph_modified();
-      }
-      objs[0] = obj->name;
-      objs[1] = NULL;
-      LegendWinUpdate(objs, TRUE, TRUE);
-    }
-  }
-  arraydel(&array);
-}
-#endif
 
 static char *
 LegendLineCB(struct objlist *obj, int id)
