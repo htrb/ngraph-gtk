@@ -675,32 +675,19 @@ set_font(struct LegendDialog *d, int id)
       char buf[] = "%F{Sym}";
       const char *str;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
       str = gtk_editable_get_text(GTK_EDITABLE(d->text));
-#else
-      str = gtk_entry_get_text(GTK_ENTRY(d->text));
-#endif
       if (str && strncmp(str, buf, sizeof(buf) - 1)) {
         char *tmp;
 	tmp = g_strdup_printf("%s%s", buf, str);
-#if GTK_CHECK_VERSION(4, 0, 0)
 	editable_set_init_text(d->text, tmp);
-#else
-	gtk_entry_set_text(GTK_ENTRY(d->text), tmp);
-#endif
 	g_free(tmp);
       }
     }
   } else {
     getobj(d->Obj, "style", d->Id, 0, NULL, &style);
   }
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_check_button_set_active(GTK_CHECK_BUTTON(d->font_bold), style & GRA_FONT_STYLE_BOLD);
   gtk_check_button_set_active(GTK_CHECK_BUTTON(d->font_italic), style & GRA_FONT_STYLE_ITALIC);
-#else
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->font_bold), style & GRA_FONT_STYLE_BOLD);
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->font_italic), style & GRA_FONT_STYLE_ITALIC);
-#endif
 }
 
 static void
