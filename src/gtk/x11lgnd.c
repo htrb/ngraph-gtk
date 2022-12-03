@@ -301,8 +301,6 @@ struct lwidget {
   char *f;
 };
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* to be implemented */
 struct legend_menu_update_data
 {
   LEGEND_DIALOG_SETUP setup;
@@ -448,50 +446,6 @@ legend_menu_update_object(const char *name, char *(*callback) (struct objlist * 
   SelectDialog(&DlgSelect, obj, title, callback, data->array, NULL);
   DialogExecute(TopLevel, &DlgSelect);
 }
-#else
-static void
-legend_menu_update_object(const char *name, char *(*callback) (struct objlist * obj, int id), void *dialog, LEGEND_DIALOG_SETUP setup)
-{
-  struct narray array;
-  struct objlist *obj;
-  char title[256];
-
-  if (Menulock || Globallock)
-    return;
-  if ((obj = chkobject(name)) == NULL)
-    return;
-  if (chkobjlastinst(obj) == -1)
-    return;
-
-  snprintf(title, sizeof(title), _("%s property (multi select)"), _(obj->name));
-  SelectDialog(&DlgSelect, obj, title, callback, &array, NULL);
-  if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
-    int num;
-
-    num = arraynum(&array);
-    if (num > 0) {
-      char *objs[2];
-      int i, j, *data;
-      menu_save_undo_single(UNDO_TYPE_EDIT, obj->name);
-      data = arraydata(&array);
-      for (i = 0; i < num; i++) {
-	setup(dialog, obj, data[i]);
-	if (DialogExecute(TopLevel, dialog) == IDDELETE) {
-	  delobj(obj, data[i]);
-	  set_graph_modified();
-	  for (j = i + 1; j < num; j++) {
-	    data[j]--;
-	  }
-	}
-      }
-      objs[0] = obj->name;
-      objs[1] = NULL;
-      LegendWinUpdate(objs, TRUE, TRUE);
-    }
-  }
-  arraydel(&array);
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
