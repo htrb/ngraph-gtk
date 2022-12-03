@@ -1430,19 +1430,8 @@ LegendArrowDialogPaint(GtkWidget *w, cairo_t *cr, gpointer client_data)
 static void
 LegendArrowDialogScale(GtkWidget *w, struct LegendDialog *d)
 {
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  GdkWindow *win;
-#endif
-
   draw_arrow_pixmap(w, d);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_widget_queue_draw(d->view);
-#else
-  win = gtk_widget_get_window(d->view);
-  if (win) {
-    gdk_window_invalidate_rect(win, NULL, FALSE);
-  }
-#endif
 }
 
 static void
