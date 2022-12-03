@@ -964,12 +964,6 @@ legend_dialog_close(GtkWidget *w, void *data)
   switch(d->ret) {
   case IDOK:
     break;
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  case IDCOPY:
-    LegendDialogCopy(d);
-    d->ret = IDLOOP;
-    return;
-#endif
   default:
     return;
   }
@@ -1055,11 +1049,7 @@ legend_dialog_close(GtkWidget *w, void *data)
     const char *str;
     char *ptr;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     str = gtk_editable_get_text(GTK_EDITABLE(d->text));
-#else
-    str = gtk_entry_get_text(GTK_ENTRY(d->text));
-#endif
     if (str == NULL)
       return;
 
