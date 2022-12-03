@@ -1382,16 +1382,6 @@ draw_arrow_pixmap(GtkWidget *win, struct LegendDialog *d)
 {
   int lw, len, x, w;
   cairo_t *cr;
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
-#else
-  GdkWindow *window;
-
-  window = gtk_widget_get_window(win);
-  if (window == NULL) {
-    return;
-  }
-#endif
 
   if (d->arrow_pixmap == NULL) {
     d->arrow_pixmap = cairo_image_surface_create(CAIRO_FORMAT_RGB24, ARROW_VIEW_SIZE, ARROW_VIEW_SIZE);
