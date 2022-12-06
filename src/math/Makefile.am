@@ -28,4 +28,4 @@ math_function.c: math_function.h math_operator.h
 math_function.h: math_function.h.in math_function.rb
 	ruby math_function.rb math_function.h.in math_function
 
-libmath_la_CFLAGS = $(GTK_CFLAGS) -I$(srcdir)/..
+libmath_la_CFLAGS = $(GTK_CFLAGS) $(GSL_CFLAGS) -I$(srcdir)/..
