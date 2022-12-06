@@ -3212,7 +3212,6 @@ application(char *file)
     NgraphApp.Viewer.Win = NULL;
     CurrentWindow = TopLevel = PToolbar = CToolbar = ToolBox = NULL;
 
-    free_markpixmap();
     free_cursor();
 
 #if !  GTK_CHECK_VERSION(4, 0, 0)
