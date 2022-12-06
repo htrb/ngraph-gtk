@@ -12,6 +12,21 @@
 #include "x11gui.h"
 #include "dir_defs.h"
 
+GtkWidget *
+button_new_with_icon(const char *icon_name, int toggle)
+{
+  GtkWidget *img, *button;
+  img = gtk_image_new_from_icon_name(icon_name);
+  gtk_image_set_icon_size(GTK_IMAGE(img), Menulocal.icon_size);
+  if (toggle) {
+    button = gtk_toggle_button_new();
+  } else {
+    button = gtk_button_new();
+  }
+  gtk_button_set_child(GTK_BUTTON(button), img);
+  return button;
+}
+
 void
 editable_set_init_text(GtkWidget *w, const char *text)
 {
