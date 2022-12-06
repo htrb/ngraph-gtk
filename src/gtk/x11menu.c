@@ -1457,56 +1457,6 @@ get_home(void)
 }
 
 static void
-create_markpixmap(GtkWidget *win)
-{
-  cairo_surface_t *pix;
-  int gra, i, R, G, B, R2, G2, B2, found, output;
-  struct objlist *obj, *robj;
-  N_VALUE *inst;
-  struct gra2cairo_local *local;
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
-  int window = TRUE;
-#else
-  GdkWindow *window;
-#endif
-
-  R = G = B = 0;
-  R2 = 0;
-  G2 = B2 = 255;
-
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
-#else
-  window = gtk_widget_get_window(win);
-#endif
-  found = find_gra2gdk_inst(&obj, &inst, &robj, &output, &local);
-
-  for (i = 0; i < MARK_TYPE_NUM; i++) {
-    pix = NULL;
-    if (window && found) {
-      pix = gra2gdk_create_pixmap(local, MARK_PIX_SIZE, MARK_PIX_SIZE,
-				  1.0, 1.0, 1.0);
-      if (pix) {
-	gra = _GRAopen("gra2gdk", "_output",
-		       robj, inst, output, -1, -1, -1, NULL, local);
-	if (gra >= 0) {
-	  GRAview(gra, 0, 0, MARK_PIX_SIZE, MARK_PIX_SIZE, 0);
-	  GRAlinestyle(gra, 0, NULL, 1, GRA_LINE_CAP_BUTT, GRA_LINE_JOIN_MITER, 1000);
-	  GRAmark(gra, i,
-		  MARK_PIX_SIZE / 2, MARK_PIX_SIZE / 2,
-		  MARK_PIX_SIZE - 4,
-		  R, G, B, 255,
-		  R2, G2, B2, 255);
-	}
-	_GRAclose(gra);
-      }
-    }
-    NgraphApp.markpix[i] = pix;
-  }
-}
-
-static void
 create_icon(void)
 {
   GList *list = NULL;
