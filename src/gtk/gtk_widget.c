@@ -448,10 +448,10 @@ create_direction_entry(GtkWidget *table, const char *title, int row)
   gtk_editable_set_width_chars(GTK_EDITABLE(w), NUM_ENTRY_WIDTH);
   gtk_editable_set_max_width_chars(GTK_EDITABLE(w), NUM_ENTRY_WIDTH);
 
-  ubtn = gtk_button_new_from_icon_name("go-up-symbolic");
+  ubtn = button_new_with_icon("go-up-symbolic", FALSE);
   g_signal_connect(ubtn, "clicked", G_CALLBACK(direction_up), w);
 
-  dbtn = gtk_button_new_from_icon_name("go-down-symbolic");
+  dbtn = button_new_with_icon("go-down-symbolic", FALSE);
   g_signal_connect(dbtn, "clicked", G_CALLBACK(direction_down), w);
 
   box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
