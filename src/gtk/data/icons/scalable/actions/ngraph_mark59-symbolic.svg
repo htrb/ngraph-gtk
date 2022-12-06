@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="24"
+   height="24"
+   viewBox="0 0 17.999999 17.999999"
+   version="1.1"
+   id="svg5"
+   sodipodi:docname="ngraph_mark59-symbolic.svg"
+   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <metadata
+     id="metadata11">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs9">
+    <inkscape:path-effect
+       effect="fill_between_many"
+       method="originald"
+       linkedpaths="#path4,0,1"
+       id="path-effect1421"
+       join="true"
+       close="true"
+       autoreverse="true" />
+    <inkscape:path-effect
+       effect="fill_between_many"
+       method="originald"
+       linkedpaths="#path837,0,1"
+       id="path-effect1858"
+       join="true"
+       close="true"
+       autoreverse="true" />
+    <clipPath
+       id="clip1">
+      <path
+         d="M 40,0 H 81.261719 V 81.261719 H 40 Z m 0,0"
+         id="path1275" />
+    </clipPath>
+    <clipPath
+       id="clip1-3">
+      <path
+         d="M 40,0 H 81.261719 V 81.261719 H 40 Z m 0,0"
+         id="path5164" />
+    </clipPath>
+    <inkscape:path-effect
+       effect="fill_between_many"
+       method="originald"
+       linkedpaths="#path4575,0,1"
+       id="path-effect8678"
+       join="true"
+       close="true"
+       autoreverse="true" />
+    <clipPath
+       id="clip1-36">
+      <path
+         d="M 0,0 H 81.261719 V 41 H 0 Z m 0,0"
+         id="path11074" />
+    </clipPath>
+    <clipPath
+       id="clip2">
+      <path
+         d="M 0,40 H 81.261719 V 81.261719 H 0 Z m 0,0"
+         id="path11077" />
+    </clipPath>
+    <clipPath
+       id="clip2-7">
+      <path
+         d="M 0,40 H 81.261719 V 81.261719 H 0 Z m 0,0"
+         id="path11365" />
+    </clipPath>
+    <clipPath
+       id="clip1-5">
+      <path
+         d="M 0,0 H 81.261719 V 41 H 0 Z m 0,0"
+         id="path11362" />
+    </clipPath>
+  </defs>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1845"
+     inkscape:window-height="1011"
+     id="namedview7"
+     showgrid="true"
+     inkscape:zoom="29.62"
+     inkscape:cx="11.985145"
+     inkscape:cy="12.002026"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg5"
+     units="px"
+     inkscape:pagecheckerboard="1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid1431" />
+  </sodipodi:namedview>
+  <g
+     id="g6087"
+     transform="rotate(90,9,9)">
+    <g
+       clip-path="url(#clip1-5)"
+       clip-rule="nonzero"
+       id="g11372"
+       style="opacity:0.33;fill:#bebebe;fill-opacity:1"
+       transform="matrix(0.20146341,0,0,0.21287784,0.81433389,0.35058941)">
+      <path
+         style="fill:#bebebe;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         d="M 40.628906,40.628906 0,0 h 81.261719 z m 0,0"
+         id="path11370" />
+    </g>
+    <g
+       clip-path="url(#clip2-7)"
+       clip-rule="nonzero"
+       id="g11376"
+       style="opacity:0.33"
+       transform="matrix(0.20146341,0,0,0.21287784,0.81433389,0.35058941)">
+      <path
+         style="fill:#bdbdbd;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         d="M 40.628906,40.628906 0,81.261719 h 81.261719 z m 0,0"
+         id="path11374" />
+    </g>
+    <path
+       style="color:#000000;fill:#bebebe;fill-opacity:1;stroke-miterlimit:10;-inkscape-stroke:none"
+       d="M 0,0 9,9.5097656 9.2539063,9.2402344 18,0 Z M 1.6289062,0.70117187 H 16.371094 L 9,8.4882813 Z"
+       id="path11378" />
+    <path
+       style="color:#000000;fill:#bdbdbd;stroke-miterlimit:10;-inkscape-stroke:none"
+       d="M 9,8.4902344 8.7441406,8.7578125 0,18 h 18 z m 0,1.0195312 7.371094,7.7890624 H 1.6289062 Z"
+       id="path11380" />
+  </g>
+</svg>

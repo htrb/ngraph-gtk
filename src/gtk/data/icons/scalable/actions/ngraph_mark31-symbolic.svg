@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="24"
+   height="24"
+   viewBox="0 0 17.999999 17.999999"
+   version="1.1"
+   id="svg5"
+   sodipodi:docname="ngraph_mark31-symbolic.svg"
+   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <metadata
+     id="metadata11">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs9">
+    <inkscape:path-effect
+       effect="fill_between_many"
+       method="originald"
+       linkedpaths="#path4,0,1"
+       id="path-effect1421"
+       join="true"
+       close="true"
+       autoreverse="true" />
+    <inkscape:path-effect
+       effect="fill_between_many"
+       method="originald"
+       linkedpaths="#path837,0,1"
+       id="path-effect1858"
+       join="true"
+       close="true"
+       autoreverse="true" />
+    <clipPath
+       id="clip1">
+      <path
+         d="M 40,0 H 81.261719 V 81.261719 H 40 Z m 0,0"
+         id="path1275" />
+    </clipPath>
+    <clipPath
+       id="clip1-3">
+      <path
+         d="M 40,0 H 81.261719 V 81.261719 H 40 Z m 0,0"
+         id="path5164" />
+    </clipPath>
+  </defs>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1845"
+     inkscape:window-height="1011"
+     id="namedview7"
+     showgrid="true"
+     inkscape:zoom="29.62"
+     inkscape:cx="11.985145"
+     inkscape:cy="12.002026"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg5"
+     units="px"
+     inkscape:pagecheckerboard="1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid1431" />
+  </sodipodi:namedview>
+  <path
+     style="opacity:0.33;fill:#bebebe;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.210596"
+     d="M 8.999592,0.70192192 16.483433,13.407885 H 1.5091041 Z m 0,0"
+     id="path4053" />
+  <path
+     style="color:#000000;fill:#bebebe;stroke-miterlimit:10;-inkscape-stroke:none;fill-opacity:1"
+     d="M 9,0 8.6933594,0.52148437 0.88476563,13.763672 H 17.107422 Z M 9,1.4023437 15.859375,13.050781 H 2.1347656 Z"
+     id="path4055" />
+</svg>
