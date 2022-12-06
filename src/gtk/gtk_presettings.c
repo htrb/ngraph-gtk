@@ -102,7 +102,7 @@ check_selected_item(GSimpleAction *action, GVariant *parameter, char **item, Gtk
     if (g_strcmp0(state, item[i]) == 0) {
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
-      gtk_menu_button_set_icon_name(GTK_MENU_BUTTON(button), icon[i]);
+      button_set_child(button, icon[i]);
 #else
       gtk_button_set_image(GTK_BUTTON(button), icon[i]);
 #endif
