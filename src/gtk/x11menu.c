@@ -2728,14 +2728,14 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
       break;
     case TOOL_TYPE_NORMAL:
 #if GTK_CHECK_VERSION(4, 0, 0)
-      widget = gtk_button_new_from_icon_name(item[i].icon);
+      widget = button_new_with_icon(item[i].icon, FALSE);
 #else
       widget = gtk_tool_button_new(NULL, _(item[i].label));
 #endif
       break;
     case TOOL_TYPE_DRAW:
 #if GTK_CHECK_VERSION(4, 0, 0)
-      widget = gtk_button_new_from_icon_name(item[i].icon);
+      widget = button_new_with_icon(item[i].icon, FALSE);
 #else
       widget = gtk_tool_button_new(NULL, _(item[i].label));
 #endif
@@ -2743,7 +2743,7 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
       break;
     case TOOL_TYPE_SAVE:
 #if GTK_CHECK_VERSION(4, 0, 0)
-      widget = gtk_button_new_from_icon_name(item[i].icon);
+      widget = button_new_with_icon(item[i].icon, FALSE);
       menu = gtk_menu_button_new();
       gtk_menu_button_set_popover(GTK_MENU_BUTTON(menu), create_save_menu());
       gtk_widget_set_tooltip_text(menu, _("Save menu"));
@@ -2756,7 +2756,7 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
       break;
     case TOOL_TYPE_RECENT_GRAPH:
 #if GTK_CHECK_VERSION(4, 0, 0)
-      widget = gtk_button_new_from_icon_name(item[i].icon);
+      widget = button_new_with_icon(item[i].icon, FALSE);
       menu = gtk_menu_button_new();
       gtk_widget_set_tooltip_text(menu, _("Recent Graphs"));
       create_recent_menu(menu, RECENT_TYPE_GRAPH);
@@ -2770,7 +2770,7 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
       break;
     case TOOL_TYPE_RECENT_DATA:
 #if GTK_CHECK_VERSION(4, 0, 0)
-      widget = gtk_button_new_from_icon_name(item[i].icon);
+      widget = button_new_with_icon(item[i].icon, FALSE);
       menu = gtk_menu_button_new();
       gtk_widget_set_tooltip_text(menu, _("Recent Data Files"));
       create_recent_menu(menu, RECENT_TYPE_DATA);
@@ -2784,8 +2784,7 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
       break;
     case TOOL_TYPE_RADIO:
 #if GTK_CHECK_VERSION(4, 0, 0)
-      widget = gtk_toggle_button_new();
-      gtk_button_set_icon_name(GTK_BUTTON(widget), item[i].icon);
+      widget = button_new_with_icon(item[i].icon, TRUE);
       if (group) {
         gtk_toggle_button_set_group(GTK_TOGGLE_BUTTON(widget), GTK_TOGGLE_BUTTON(group));
       } else {
