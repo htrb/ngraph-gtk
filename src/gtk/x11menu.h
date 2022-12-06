@@ -257,7 +257,6 @@ struct NgraphApp
   gint Message1;
   GtkRecentManager *recent_manager;
   GtkEntryCompletion *legend_text_list, *x_math_list, *y_math_list, *func_list, *fit_list;
-  cairo_surface_t *markpix[MARK_TYPE_NUM];
   GdkCursor **cursor;
   struct Viewer Viewer;
   struct SubWin FileWin;
