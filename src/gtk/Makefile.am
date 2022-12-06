@@ -224,7 +224,7 @@ dir_defs.h: dir_defs.h.in $(top_srcdir)/pathconv.sh
 completion_info_data.c: $(srcdir)/completion_info_functions.txt $(srcdir)/completion_info_constants.txt $(srcdir)/create_completion_info.rb
 	ruby $(srcdir)/create_completion_info.rb $(srcdir)/completion_info_functions.txt $(srcdir)/completion_info_constants.txt completion_info_data.c
 
-libngraphui_la_CFLAGS = $(GTK_CFLAGS) $(libngraph_cflags) -I$(top_builddir) -I$(builddir) -I$(srcdir)/.. -I$(srcdir)/../math $(GTKSOURCEVIEW_CFLAGS)
+libngraphui_la_CFLAGS = $(GTK_CFLAGS) $(GSL_CFLAGS) $(libngraph_cflags) -I$(top_builddir) -I$(builddir) -I$(srcdir)/.. -I$(srcdir)/../math $(GTKSOURCEVIEW_CFLAGS)
 libngraphui_la_LDFLAGS = $(GTKSOURCEVIEW_LIBS)
 
 CLEANFILES = dir_defs.h $(builddir)/data/gtk/menus.ui $(builddir)/data/ngraphui.resources.xml $(BUILT_SOURCES)
