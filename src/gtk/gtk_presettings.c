@@ -1786,6 +1786,7 @@ create_line_width_combo_box(void)
   gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "icon-name", 1);
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
+  gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "icon-size", 2);
 #else
   gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "stock-size", 2);
 #endif
