@@ -1482,6 +1482,7 @@ create_marker_type_combo_box(const char *postfix, const char *tooltip)
   gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "icon-name", 0);
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
+  gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "icon-size", 1);
 #else
   gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "stock-size", 1);
 #endif
@@ -1491,7 +1492,7 @@ create_marker_type_combo_box(const char *postfix, const char *tooltip)
     gtk_list_store_append(list, &iter);
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
-    gtk_list_store_set(list, &iter, 0, img_file, -1);
+    gtk_list_store_set(list, &iter, 0, img_file, 1, Menulocal.icon_size, -1);
 #else
     gtk_list_store_set(list, &iter, 0, img_file, 1, GTK_ICON_SIZE_LARGE_TOOLBAR, -1);
 #endif
