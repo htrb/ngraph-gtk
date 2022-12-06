@@ -2971,13 +2971,12 @@ MarkDialogCB(GtkWidget *w, gpointer client_data)
 void
 button_set_mark_image(GtkWidget *w, int type)
 {
+  GtkWidget *img;
+  char buf[128];
   if (type < 0 || type >= MARK_TYPE_NUM) {
     type = 0;
   }
 
-  if (NgraphApp.markpix[type]) {
-    GtkWidget *img;
-    char buf[128];
     snprintf(buf, sizeof(buf), "ngraph_mark%02d-symbolic", type);
     img = gtk_image_new_from_icon_name(buf);
     gtk_image_set_icon_size(GTK_IMAGE(img), Menulocal.icon_size);
@@ -2987,7 +2986,6 @@ button_set_mark_image(GtkWidget *w, int type)
     }
     snprintf(buf, sizeof(buf), "%02d", type);
     gtk_widget_set_tooltip_text(w, buf);
-  }
  }
 
 static void
