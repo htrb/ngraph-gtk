@@ -2092,7 +2092,7 @@ presetting_create_panel(GtkApplication *app)
   Widgets.join_type.widget = w;
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
-  gtk_menu_button_set_icon_name(GTK_MENU_BUTTON(Widgets.join_type.widget), Widgets.join_icon[DEFAULT_JOIN_TYPE]);
+  button_set_child(Widgets.join_type.widget, Widgets.join_icon[DEFAULT_JOIN_TYPE]);
 #else
   gtk_button_set_image(GTK_BUTTON(Widgets.join_type.widget), Widgets.join_icon[DEFAULT_JOIN_TYPE]);
 #endif
@@ -2122,7 +2122,7 @@ presetting_create_panel(GtkApplication *app)
   Widgets.marker_begin = DEFAULT_MARKER_TYPE;
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
-  gtk_menu_button_set_icon_name(GTK_MENU_BUTTON(Widgets.marker_type_begin.widget), Widgets.marker_begin_icon[DEFAULT_MARKER_TYPE]);
+  button_set_child(Widgets.marker_type_begin.widget,  Widgets.marker_begin_icon[DEFAULT_MARKER_TYPE]);
 #else
   gtk_button_set_image(GTK_BUTTON(Widgets.marker_type_begin.widget), Widgets.marker_begin_icon[DEFAULT_MARKER_TYPE]);
 #endif
@@ -2139,7 +2139,7 @@ presetting_create_panel(GtkApplication *app)
   Widgets.marker_end = DEFAULT_MARKER_TYPE;
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
-  gtk_menu_button_set_icon_name(GTK_MENU_BUTTON(Widgets.marker_type_end.widget), Widgets.marker_end_icon[DEFAULT_MARKER_TYPE]);
+  button_set_child(Widgets.marker_type_end.widget, Widgets.marker_end_icon[DEFAULT_MARKER_TYPE]);
 #else
   gtk_button_set_image(GTK_BUTTON(Widgets.marker_type_end.widget), Widgets.marker_end_icon[DEFAULT_MARKER_TYPE]);
 #endif
