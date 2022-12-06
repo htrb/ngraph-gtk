@@ -886,6 +886,7 @@ set_pause_icon(GtkButton *btn)
   GtkWidget *icon;
 #if GTK_CHECK_VERSION(4, 0, 0)
   icon = gtk_image_new_from_icon_name("media-playback-pause-symbolic");
+  gtk_image_set_icon_size(GTK_IMAGE(icon), Menulocal.icon_size);
 #else
   icon = gtk_image_new_from_icon_name("media-playback-pause-symbolic", GTK_ICON_SIZE_BUTTON);
 #endif
