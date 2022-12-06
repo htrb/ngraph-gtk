@@ -1241,7 +1241,7 @@ GtkWidget *
 add_button(GtkWidget *grid, int row, int col, const char *icon, const char *tooltip, GCallback proc, gpointer data)
 {
   GtkWidget *w;
-  w = gtk_button_new_from_icon_name(icon);
+  w = button_new_with_icon(icon, FALSE);
   add_button_common(w, grid, row, col, tooltip, proc, data);
   return w;
 }
