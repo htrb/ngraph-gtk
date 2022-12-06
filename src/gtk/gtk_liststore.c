@@ -122,13 +122,13 @@ init_object_combo_box(GtkWidget *cbox)
 
   rend = gtk_cell_renderer_pixbuf_new();
   gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(cbox), rend, FALSE);
-  gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "pixbuf", OBJECT_COLUMN_TYPE_PIXBUF);
+  gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "icon-name", OBJECT_COLUMN_TYPE_PIXBUF);
 }
 
 static GtkTreeModel *
 create_object_tree_model(void)
 {
-  return GTK_TREE_MODEL(gtk_tree_store_new(OBJECT_COLUMN_TYPE_NUM, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_OBJECT, G_TYPE_INT, G_TYPE_INT, G_TYPE_BOOLEAN, G_TYPE_BOOLEAN, G_TYPE_BOOLEAN));
+  return GTK_TREE_MODEL(gtk_tree_store_new(OBJECT_COLUMN_TYPE_NUM, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT, G_TYPE_INT, G_TYPE_BOOLEAN, G_TYPE_BOOLEAN, G_TYPE_BOOLEAN));
 }
 
 static GtkWidget *
@@ -238,25 +238,20 @@ add_mark_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *
 
 
   for (j = 0; j < MARK_TYPE_NUM; j++) {
-    GdkPixbuf *pixbuf;
-    pixbuf = gdk_pixbuf_get_from_surface(NgraphApp.markpix[j],
-					 0, 0, MARK_PIX_SIZE, MARK_PIX_SIZE);
-    if (pixbuf) {
-      char buf[64];
+    char buf[64], icon[128];
 
-      gtk_tree_store_append(list, iter, parent);
-      snprintf(buf, sizeof(buf), "%02d ", j);
-      gtk_tree_store_set(list, iter,
-			 OBJECT_COLUMN_TYPE_STRING, buf,
-			 OBJECT_COLUMN_TYPE_PIXBUF, pixbuf,
-			 OBJECT_COLUMN_TYPE_INT, column_id,
-			 OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, TRUE,
-			 OBJECT_COLUMN_TYPE_TOGGLE_IS_RADIO, TRUE,
-			 OBJECT_COLUMN_TYPE_TOGGLE, j == type,
-			 OBJECT_COLUMN_TYPE_ENUM, j,
-			 -1);
-      g_object_unref(pixbuf);
-    }
+    gtk_tree_store_append(list, iter, parent);
+    snprintf(buf, sizeof(buf), "%02d ", j);
+    snprintf(icon, sizeof(icon), "ngraph_mark%02d-symbolic ", j);
+    gtk_tree_store_set(list, iter,
+		       OBJECT_COLUMN_TYPE_STRING, buf,
+		       OBJECT_COLUMN_TYPE_PIXBUF, icon,
+		       OBJECT_COLUMN_TYPE_INT, column_id,
+		       OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, TRUE,
+		       OBJECT_COLUMN_TYPE_TOGGLE_IS_RADIO, TRUE,
+		       OBJECT_COLUMN_TYPE_TOGGLE, j == type,
+		       OBJECT_COLUMN_TYPE_ENUM, j,
+		       -1);
   }
 }
 
