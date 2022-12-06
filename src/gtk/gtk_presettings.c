@@ -10,6 +10,7 @@
 #include "odraw.h"
 #include "oaxis.h"
 #include "odata.h"
+#include "ox11menu.h"
 #include "x11view.h"
 #include "x11menu.h"
 #include "x11dialg.h"
@@ -76,6 +77,15 @@ static struct presetting_widgets Widgets = {{NULL}};
 static int UpdateFieldsLock = TRUE;
 
 static void update_focused_obj(GtkWidget *widget, gpointer user_data);
+
+static void
+button_set_child(GtkWidget *button, const char *icon)
+{
+  GtkWidget *img;
+  img = gtk_image_new_from_icon_name(icon);
+  gtk_image_set_icon_size(GTK_IMAGE(img), Menulocal.icon_size);
+  gtk_menu_button_set_child(GTK_MENU_BUTTON(button), img);
+}
 
 static int
 #if GTK_CHECK_VERSION(4, 0, 0)
