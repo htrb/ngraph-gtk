@@ -2977,12 +2977,11 @@ button_set_mark_image(GtkWidget *w, int type)
 
   if (NgraphApp.markpix[type]) {
     GtkWidget *img;
-    char buf[64];
-    GdkPixbuf *pixbuf;
-    pixbuf = gdk_pixbuf_get_from_surface(NgraphApp.markpix[type],
-					 0, 0, MARK_PIX_SIZE, MARK_PIX_SIZE);
-    img = gtk_image_new_from_pixbuf(pixbuf);
-    g_object_unref(pixbuf);
+    char buf[128];
+    snprintf(buf, sizeof(buf), "ngraph_mark%02d-symbolic", type);
+    img = gtk_image_new_from_icon_name(buf);
+    gtk_image_set_icon_size(GTK_IMAGE(img), Menulocal.icon_size);
+    gtk_image_set_icon_size(GTK_IMAGE(img), Menulocal.icon_size);
     if (img) {
       gtk_button_set_child(GTK_BUTTON(w), img);
     }
