@@ -2977,16 +2977,13 @@ button_set_mark_image(GtkWidget *w, int type)
     type = 0;
   }
 
-    snprintf(buf, sizeof(buf), "ngraph_mark%02d-symbolic", type);
-    img = gtk_image_new_from_icon_name(buf);
-    gtk_image_set_icon_size(GTK_IMAGE(img), Menulocal.icon_size);
-    gtk_image_set_icon_size(GTK_IMAGE(img), Menulocal.icon_size);
-    if (img) {
-      gtk_button_set_child(GTK_BUTTON(w), img);
-    }
-    snprintf(buf, sizeof(buf), "%02d", type);
-    gtk_widget_set_tooltip_text(w, buf);
- }
+  snprintf(buf, sizeof(buf), "ngraph_mark%02d-symbolic", type);
+  img = gtk_image_new_from_icon_name(buf);
+  gtk_image_set_icon_size(GTK_IMAGE(img), Menulocal.icon_size);
+  gtk_button_set_child(GTK_BUTTON(w), img);
+  snprintf(buf, sizeof(buf), "%02d", type);
+  gtk_widget_set_tooltip_text(w, buf);
+}
 
 static void
 MarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
