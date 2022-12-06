@@ -1982,6 +1982,7 @@ presetting_create_panel(GtkApplication *app)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
   img = gtk_image_new_from_icon_name("format-text-bold-symbolic");
+  gtk_image_set_icon_size(GTK_IMAGE(img), Menulocal.icon_size);
 #else
   img = gtk_image_new_from_icon_name("format-text-bold-symbolic", GTK_ICON_SIZE_BUTTON);
 #endif
@@ -1989,6 +1990,7 @@ presetting_create_panel(GtkApplication *app)
 
 #if GTK_CHECK_VERSION(4, 0, 0)
   img = gtk_image_new_from_icon_name("format-text-italic-symbolic");
+  gtk_image_set_icon_size(GTK_IMAGE(img), Menulocal.icon_size);
 #else
   img = gtk_image_new_from_icon_name("format-text-italic-symbolic", GTK_ICON_SIZE_BUTTON);
 #endif
