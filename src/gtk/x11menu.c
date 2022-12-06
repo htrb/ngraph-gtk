@@ -1507,19 +1507,6 @@ create_markpixmap(GtkWidget *win)
 }
 
 static void
-free_markpixmap(void)
-{
-  int i;
-
-  for (i = 0; i < MARK_TYPE_NUM; i++) {
-    if (NgraphApp.markpix[i]) {
-      cairo_surface_destroy(NgraphApp.markpix[i]);
-    }
-    NgraphApp.markpix[i] = NULL;
-  }
-}
-
-static void
 create_icon(void)
 {
   GList *list = NULL;
