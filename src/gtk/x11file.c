@@ -3008,7 +3008,6 @@ MarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_widget_set_margin_start(grid, 4);
     for (type = 0; type < MARK_TYPE_NUM; type++) {
       w = gtk_toggle_button_new();
-      gtk_widget_add_css_class(w, TOOLBUTTON_CLASS);
       button_set_mark_image(w, type);
       g_signal_connect(w, "clicked", G_CALLBACK(MarkDialogCB), d);
       d->toggle[type] = w;

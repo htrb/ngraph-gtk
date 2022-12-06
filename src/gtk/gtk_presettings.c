@@ -1844,7 +1844,6 @@ create_menu_button(GtkBuilder *builder, const char *menu_name, const char *toolt
   GtkWidget *w;
   GMenuModel *menu;
   w = gtk_menu_button_new();
-  gtk_widget_add_css_class(w, TOOLBUTTON_CLASS);
   menu = G_MENU_MODEL(gtk_builder_get_object(builder, menu_name));
 #if ! GTK_CHECK_VERSION(4, 0, 0)
   gtk_menu_button_set_use_popover(GTK_MENU_BUTTON(w), FALSE);
@@ -2010,7 +2009,6 @@ presetting_create_panel(GtkApplication *app)
   g_signal_connect(w, "clicked", G_CALLBACK(select_mark), &(Widgets.mark));
   setup_mark_type(w, &(Widgets.mark));
 #if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_widget_add_css_class(w, TOOLBUTTON_CLASS);
   gtk_box_append(GTK_BOX(box), w);
 #else
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
@@ -2104,7 +2102,6 @@ presetting_create_panel(GtkApplication *app)
   g_signal_connect(w, "clicked", G_CALLBACK(select_mark), &(Widgets.mark_begin));
   setup_mark_type(w, &(Widgets.mark_begin));
 #if GTK_CHECK_VERSION(4, 0, 0)
-  gtk_widget_add_css_class(w, TOOLBUTTON_CLASS);
   gtk_widget_add_css_class(w, MENUBUTTON_CLASS);
   button_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_box_append(GTK_BOX(button_box), w);
@@ -2152,7 +2149,6 @@ presetting_create_panel(GtkApplication *app)
   setup_mark_type(w, &(Widgets.mark_end));
 #if GTK_CHECK_VERSION(4, 0, 0)
   gtk_widget_add_css_class(w, MARKERBUTTON_CLASS);
-  gtk_widget_add_css_class(w, TOOLBUTTON_CLASS);
   gtk_box_append(GTK_BOX(button_box), w);
   gtk_box_append(GTK_BOX(box), button_box);
 #else

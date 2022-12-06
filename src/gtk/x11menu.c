@@ -2891,7 +2891,6 @@ create_toolbar(struct ToolItem *item, int n, GCallback btn_press_cb)
       gtk_widget_add_css_class(menu, MENUBUTTON_CLASS);
       gtk_box_append(GTK_BOX(toolbar), box);
     } else {
-      gtk_widget_add_css_class(widget, TOOLBUTTON_CLASS);
       gtk_box_append(GTK_BOX(toolbar), widget);
     }
 #else
