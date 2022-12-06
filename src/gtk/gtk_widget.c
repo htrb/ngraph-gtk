@@ -1249,10 +1249,8 @@ add_button(GtkWidget *grid, int row, int col, const char *icon, const char *tool
 GtkWidget *
 add_toggle_button(GtkWidget *grid, int row, int col, const char *icon_name, const char *tooltip, GCallback proc, gpointer data)
 {
-  GtkWidget *w, *icon;
-  w = gtk_toggle_button_new();
-  icon = gtk_image_new_from_icon_name(icon_name);
-  gtk_button_set_child(GTK_BUTTON(w), icon);
+  GtkWidget *w;
+  w = button_new_with_icon(icon_name, TRUE);
   add_button_common(w, grid, row, col, tooltip, NULL, NULL);
   if (proc) {
     g_signal_connect(w, "toggled", proc, data);
