@@ -1676,6 +1676,7 @@ setup_object_tab(struct SubWin *win, GtkWidget *tab, const char *icon_name, cons
 
 #if GTK_CHECK_VERSION(4, 0, 0)
   icon = gtk_image_new_from_icon_name(icon_name);
+  gtk_image_set_icon_size(GTK_IMAGE(icon), Menulocal.icon_size);
 #else
   icon = gtk_image_new_from_icon_name(icon_name, GTK_ICON_SIZE_LARGE_TOOLBAR);
 #endif
