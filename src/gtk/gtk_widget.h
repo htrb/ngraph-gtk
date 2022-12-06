@@ -46,6 +46,7 @@ enum WIDGET_MARGIN {
   WIDGET_MARGIN_BOTTOM = 8,
 };
 
+GtkWidget *button_new_with_icon(const char *icon_name, int toggle);
 void editable_set_init_text(GtkWidget *w, const char *text);
 void spin_button_set_activates_default(GtkWidget *w);
 void widget_set_parent(GtkWidget *widget, GtkWidget *parent);
