@@ -157,7 +157,7 @@ set_stroke_fill_icon(void)
   }
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
-  gtk_menu_button_set_icon_name(GTK_MENU_BUTTON(Widgets.stroke_fill.widget), Widgets.stroke_fill_icon[i]);
+  button_set_child(Widgets.stroke_fill.widget, Widgets.stroke_fill_icon[i]);
 #else
   gtk_button_set_image(GTK_BUTTON(Widgets.stroke_fill.widget), Widgets.stroke_fill_icon[i]);
 #endif
