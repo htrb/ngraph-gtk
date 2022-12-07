@@ -1684,6 +1684,10 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     }
     d->decimalsign = w;
 
+    w = gtk_check_button_new_with_mnemonic(_("use _Large Icons (requires restart)"));
+    add_widget_to_table(table, w, NULL, FALSE, i++);
+    d->icon_size = w;
+
     w = gtk_check_button_new_with_mnemonic(_("use _Dark theme"));
     add_widget_to_table(table, w, NULL, FALSE, i++);
     d->use_dark_theme = w;
