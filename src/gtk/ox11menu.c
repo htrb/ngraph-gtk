@@ -1029,7 +1029,7 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   Menulocal.mark_tab = 4;
   Menulocal.text_tab = 5;
   Menulocal.math_input_mode = 1;
-  Menulocal.icon_size = GTK_ICON_SIZE_LARGE;
+  Menulocal.icon_size_local = GTK_ICON_SIZE_LARGE;
   menu_default_axis_size(&Menulocal);
 
   arrayinit(&(Menulocal.drawrable), sizeof(char *));
@@ -1060,6 +1060,7 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   if (mgtkloadconfig())
     goto errexit;
 
+  Menulocal.icon_size = Menulocal.icon_size_local;
   Menulocal.Decimalsign = get_gra_decimalsign_type(Menulocal.default_decimalsign);
   gra_set_default_decimalsign(Menulocal.Decimalsign);
 
