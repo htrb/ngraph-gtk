@@ -170,6 +170,7 @@ static struct menu_config MenuConfigMisc[] = {
   {"sourece_style_id",		MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.source_style_id},
   {"decimalsign",	        MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.default_decimalsign},
   {"use_dark_theme",	        MENU_CONFIG_TYPE_BOOL,    NULL, &Menulocal.use_dark_theme},
+  {"icon_size",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.icon_size_local},
   {NULL},
 };
 
