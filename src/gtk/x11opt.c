@@ -1867,6 +1867,7 @@ MiscDialogClose(GtkWidget *w, void *data)
   arraydel(&(d->tmp_palette));
 
 #if GTK_CHECK_VERSION(4, 0, 0)
+  Menulocal.icon_size_local = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->icon_size)) ? GTK_ICON_SIZE_LARGE : GTK_ICON_SIZE_NORMAL;
   menu_use_dark_theme_set(gtk_check_button_get_active(GTK_CHECK_BUTTON(d->use_dark_theme)));
 #else
   menu_use_dark_theme_set(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->use_dark_theme)));
