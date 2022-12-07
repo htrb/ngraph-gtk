@@ -1303,6 +1303,7 @@ MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
   gtk_check_button_set_active(GTK_CHECK_BUTTON(d->use_custom_palette), Menulocal.use_custom_palette);
   arraycpy(&(d->tmp_palette), &(Menulocal.custom_palette));
 
+  gtk_check_button_set_active(GTK_CHECK_BUTTON(d->icon_size), Menulocal.icon_size_local == GTK_ICON_SIZE_LARGE);
   gtk_check_button_set_active(GTK_CHECK_BUTTON(d->use_dark_theme), Menulocal.use_dark_theme);
 #else
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->use_opacity), Menulocal.use_opacity);
