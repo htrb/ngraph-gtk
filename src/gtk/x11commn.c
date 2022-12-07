@@ -2396,7 +2396,7 @@ create_progress_dialog(const char *title)
 #else
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
-  gtk_box_pack_end(GTK_BOX(hbox), btn, FALSE, FALSE, 4);
+  gtk_box_append(GTK_BOX(hbox), btn);
   gtk_box_append(GTK_BOX(vbox), hbox);
 #endif
   gtk_window_set_child(GTK_WINDOW(ProgressDialog), vbox);
