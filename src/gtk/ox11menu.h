@@ -124,7 +124,7 @@ struct menulocal
   char *source_style_id;
   int math_input_mode, use_dark_theme;
   int default_axis_width, default_axis_height;
-  int icon_size;
+  int icon_size, icon_size_local;
 };
 
 extern struct menulocal Menulocal;
