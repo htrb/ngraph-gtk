@@ -38,8 +38,10 @@
 #include <signal.h>
 
 #if OSX
+#if ! GTK_CHECK_VERSION(4, 0, 0)
 #include <gtkosxapplication.h>
 static GtkosxApplication *GtkMacIntegration = NULL;
+#endif
 #endif
 
 char *DOCDIR, *NDATADIR, *ADDINDIR, *LIBDIR, *PLUGINDIR, *CONFDIR, *NLOCALEDIR, *BINDIR;
@@ -880,13 +882,16 @@ void
 n_application_ready(void)
 {
 #if OSX
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   if (GtkMacIntegration) {
     gtkosx_application_ready(GtkMacIntegration);
   }
 #endif
+#endif
 }
 
 #if OSX
+#if ! GTK_CHECK_VERSION(4, 0, 0)
 static gboolean
 osx_open_file(GtkosxApplication *app, gchar *path, gpointer user_data)
 {
@@ -918,6 +923,7 @@ create_app_menu(GtkApplication *app)
   gtk_application_set_app_menu(app, G_MENU_MODEL(app_menu));
   g_object_unref(builder);
 }
+#endif
 #endif
 
 GtkApplication *
@@ -998,11 +1004,13 @@ n_initialize(int *argc, char ***argv)
 #endif
   g_set_application_name(AppName);
 #if OSX
+#if ! GTK_CHECK_VERSION(4, 0, 0)
   GtkMacIntegration = gtkosx_application_get();
   g_signal_connect(GtkMacIntegration, "NSApplicationOpenFile", G_CALLBACK(osx_open_file), NULL);
   if (OpenDisplay) {
     create_app_menu(GtkApp);
   }
+#endif
 #endif
 
   if (init_cmd_tbl()) {
