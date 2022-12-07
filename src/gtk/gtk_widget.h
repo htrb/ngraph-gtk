@@ -1,6 +1,7 @@
 #ifndef GTK_WIDGET_HEADER
 #define GTK_WIDGET_HEADER
 
+#include "gtk_common.h"
 #include "object.h"
 
 #define SPIN_ENTRY_MAX 1000000
