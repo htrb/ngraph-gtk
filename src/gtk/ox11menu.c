@@ -1030,7 +1030,7 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   Menulocal.mark_tab = 4;
   Menulocal.text_tab = 5;
   Menulocal.math_input_mode = 1;
-  Menulocal.icon_size_local = GTK_ICON_SIZE_LARGE;
+  Menulocal.icon_size_local = GTK_ICON_SIZE_NORMAL;
   menu_default_axis_size(&Menulocal);
 
   arrayinit(&(Menulocal.drawrable), sizeof(char *));
