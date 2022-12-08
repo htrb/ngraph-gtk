@@ -1816,31 +1816,16 @@ LegendArcDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->ry = w;
 
     frame = gtk_frame_new(NULL);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_frame_set_child(GTK_FRAME(frame), table);
     gtk_box_append(GTK_BOX(hbox), frame);
-#else
-    gtk_container_add(GTK_CONTAINER(frame), table);
-    gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 0);
-#endif
 
     table = gtk_grid_new();
 
     i = 0;
-#if GTK_CHECK_VERSION(4, 0, 0)
     w = create_direction_entry(table, _("_Angle1:"), i++);
-#else
-    w = create_direction_entry();
-    add_widget_to_table(table, w, _("_Angle1:"), FALSE, i++);
-#endif
     d->angle1 = w;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     w = create_direction_entry(table, _("_Angle2:"), i++);
-#else
-    w = create_direction_entry();
-    add_widget_to_table(table, w, _("_Angle2:"), FALSE, i++);
-#endif
     d->angle2 = w;
 
     w = gtk_check_button_new_with_mnemonic(_("_Pieslice"));
@@ -1848,11 +1833,7 @@ LegendArcDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->pieslice = w;
 
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(vbox), table);
-#else
-    gtk_box_pack_start(GTK_BOX(vbox), table, FALSE, FALSE, 0);
-#endif
 
     hbox2 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
     table = gtk_grid_new();
@@ -1870,11 +1851,7 @@ LegendArcDialogSetup(GtkWidget *wi, void *data, int makewidget)
     join_setup(d, table, i++);
     stroke_color_setup(d, table, i++);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(hbox2), table);
-#else
-    gtk_box_pack_start(GTK_BOX(hbox2), table, TRUE, TRUE, 0);
-#endif
 
     create_arrow_setting_widgets(d, hbox2);
 
@@ -1884,17 +1861,9 @@ LegendArcDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     frame = gtk_frame_new(NULL);
     gtk_frame_set_label_widget(GTK_FRAME(frame), w);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_frame_set_child(GTK_FRAME(frame), hbox2);
-#else
-    gtk_container_add(GTK_CONTAINER(frame), hbox2);
-#endif
     set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT | WIDGET_MARGIN_BOTTOM);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(vbox), frame);
-#else
-    gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
-#endif
 
     table = gtk_grid_new();
 
@@ -1907,36 +1876,17 @@ LegendArcDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     frame = gtk_frame_new(NULL);
     gtk_frame_set_label_widget(GTK_FRAME(frame), w);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_frame_set_child(GTK_FRAME(frame), table);
-#else
-    gtk_container_add(GTK_CONTAINER(frame), table);
-#endif
     set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT | WIDGET_MARGIN_BOTTOM);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(vbox), frame);
-#else
-    gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
-#endif
 
     frame = gtk_frame_new(NULL);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_frame_set_child(GTK_FRAME(frame), vbox);
     gtk_box_append(GTK_BOX(hbox), frame);
-
     gtk_box_append(GTK_BOX(d->vbox), hbox);
-#else
-    gtk_container_add(GTK_CONTAINER(frame), vbox);
-    gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
-#endif
     add_copy_button_to_box(GTK_WIDGET(d->vbox), G_CALLBACK(legend_copy_clicked), d, "arc");
 
     d->prop_cb = LegendArcCB;
-
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-    gtk_widget_show_all(GTK_WIDGET(d->vbox));
-#endif
   }
   legend_dialog_setup_item(wi, d, d->Id);
 }
