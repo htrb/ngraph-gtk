@@ -1588,13 +1588,8 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = points_setup(d);
 
     frame = gtk_frame_new(NULL);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_frame_set_child(GTK_FRAME(frame), w);
     gtk_box_append(GTK_BOX(hbox), frame);
-#else
-    gtk_container_add(GTK_CONTAINER(frame), w);
-    gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
-#endif
 
     vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 
@@ -1613,11 +1608,7 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, _("_Interpolation:"), FALSE, i++);
     g_signal_connect(w, "changed", G_CALLBACK(legend_dialog_set_sensitive), d);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(vbox2), table);
-#else
-    gtk_box_pack_start(GTK_BOX(vbox2), table, FALSE, FALSE, 0);
-#endif
 
     table = gtk_grid_new();
 
@@ -1635,11 +1626,7 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     stroke_color_setup(d, table, i++);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(hbox2), table);
-#else
-    gtk_box_pack_start(GTK_BOX(hbox2), table, TRUE, TRUE, 0);
-#endif
 
     create_arrow_setting_widgets(d, hbox2);
 
@@ -1649,17 +1636,9 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     frame = gtk_frame_new(NULL);
     gtk_frame_set_label_widget(GTK_FRAME(frame), w);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_frame_set_child(GTK_FRAME(frame), hbox2);
-#else
-    gtk_container_add(GTK_CONTAINER(frame), hbox2);
-#endif
     set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT | WIDGET_MARGIN_BOTTOM);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(vbox2), frame);
-#else
-    gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 0);
-#endif
 
     table = gtk_grid_new();
 
@@ -1676,36 +1655,18 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     frame = gtk_frame_new(NULL);
     gtk_frame_set_label_widget(GTK_FRAME(frame), w);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_frame_set_child(GTK_FRAME(frame), table);
-#else
-    gtk_container_add(GTK_CONTAINER(frame), table);
-#endif
     set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT | WIDGET_MARGIN_BOTTOM);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(vbox2), frame);
-#else
-    gtk_box_pack_start(GTK_BOX(vbox2), frame, TRUE, TRUE, 0);
-#endif
 
     frame = gtk_frame_new(NULL);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_frame_set_child(GTK_FRAME(frame), vbox2);
     gtk_box_append(GTK_BOX(hbox), frame);
     gtk_box_append(GTK_BOX(d->vbox), hbox);
-#else
-    gtk_container_add(GTK_CONTAINER(frame), vbox2);
-    gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
-#endif
 
     add_copy_button_to_box(GTK_WIDGET(d->vbox), G_CALLBACK(legend_copy_clicked), d, "path");
 
     d->prop_cb = LegendLineCB;
-
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-    gtk_widget_show_all(GTK_WIDGET(d->vbox));
-#endif
   }
   legend_dialog_setup_item(wi, d, d->Id);
 }
