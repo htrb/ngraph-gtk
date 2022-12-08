@@ -1719,13 +1719,8 @@ LegendRectDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->y2 = w;
 
     frame = gtk_frame_new(NULL);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_frame_set_child(GTK_FRAME(frame), table);
     gtk_box_append(GTK_BOX(hbox), frame);
-#else
-    gtk_container_add(GTK_CONTAINER(frame), table);
-    gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 0);
-#endif
 
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     table = gtk_grid_new();
@@ -1742,17 +1737,9 @@ LegendRectDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     frame = gtk_frame_new(NULL);
     gtk_frame_set_label_widget(GTK_FRAME(frame), w);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_frame_set_child(GTK_FRAME(frame), table);
-#else
-    gtk_container_add(GTK_CONTAINER(frame), table);
-#endif
     set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT | WIDGET_MARGIN_BOTTOM);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(vbox), frame);
-#else
-    gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
-#endif
 
     table = gtk_grid_new();
 
@@ -1765,36 +1752,18 @@ LegendRectDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     frame = gtk_frame_new(NULL);
     gtk_frame_set_label_widget(GTK_FRAME(frame), w);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_frame_set_child(GTK_FRAME(frame), table);
-#else
-    gtk_container_add(GTK_CONTAINER(frame), table);
-#endif
     set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT | WIDGET_MARGIN_BOTTOM);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(vbox), frame);
-#else
-    gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
-#endif
 
     frame = gtk_frame_new(NULL);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_frame_set_child(GTK_FRAME(frame), vbox);
     gtk_box_append(GTK_BOX(hbox), frame);
     gtk_box_append(GTK_BOX(d->vbox), hbox);
-#else
-    gtk_container_add(GTK_CONTAINER(frame), vbox);
-    gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
-#endif
 
     add_copy_button_to_box(GTK_WIDGET(d->vbox), G_CALLBACK(legend_copy_clicked), d, "rectangle");
 
     d->prop_cb = LegendRectCB;
-
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-    gtk_widget_show_all(GTK_WIDGET(d->vbox));
-#endif
   }
   legend_dialog_setup_item(wi, d, d->Id);
 }
