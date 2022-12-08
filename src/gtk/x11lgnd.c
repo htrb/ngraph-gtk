@@ -1501,35 +1501,19 @@ create_maker_setting_widgets(struct LegendDialog *d, GtkWidget *table, int i)
 
   w = gtk_button_new();
   g_signal_connect(w, "clicked", G_CALLBACK(LegendMarkDialogMark), &(d->mark_begin));
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(hbox3), w);
-#else
-  gtk_box_pack_start(GTK_BOX(hbox3), w, FALSE, FALSE, 0);
-#endif
   d->mark_type_begin = w;
 
   w = create_marker_type_combo_box("begin", _("Marker begin"));
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(hbox3), w);
-#else
-  gtk_box_pack_start(GTK_BOX(hbox3), w, FALSE, FALSE, 0);
-#endif
   d->marker_begin = w;
 
   w = create_marker_type_combo_box("end", _("Marker end"));
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(hbox3), w);
-#else
-  gtk_box_pack_start(GTK_BOX(hbox3), w, FALSE, FALSE, 0);
-#endif
   d->marker_end = w;
 
   w = gtk_button_new();
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(hbox3), w);
-#else
-  gtk_box_pack_start(GTK_BOX(hbox3), w, FALSE, FALSE, 0);
-#endif
   g_signal_connect(w, "clicked", G_CALLBACK(LegendMarkDialogMark), &(d->mark_end));
   d->mark_type_end = w;
 
