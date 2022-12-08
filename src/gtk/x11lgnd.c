@@ -1527,13 +1527,11 @@ create_maker_setting_widgets(struct LegendDialog *d, GtkWidget *table, int i)
   gtk_grid_attach(GTK_GRID(table), hbox3, 1, i, 1, 1);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 draw_function(GtkDrawingArea* drawing_area, cairo_t* cr, int width, int height, gpointer user_data)
 {
   LegendArrowDialogPaint(GTK_WIDGET(drawing_area), cr, user_data);
 }
-#endif
 
 static void
 create_arrow_setting_widgets(struct LegendDialog *d, GtkWidget *hbox)
@@ -1545,50 +1543,27 @@ create_arrow_setting_widgets(struct LegendDialog *d, GtkWidget *hbox)
   set_scale_mark(w, GTK_POS_BOTTOM, 15, 15);
 
   g_signal_connect(w, "value-changed", G_CALLBACK(LegendArrowDialogScaleL), d);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_scale_set_draw_value(GTK_SCALE(w), TRUE);
   gtk_scale_set_format_value_func(GTK_SCALE(w), format_value_degree, NULL, NULL);
   gtk_box_append(GTK_BOX(vbox), w);
-#else
-  g_signal_connect(w, "format-value", G_CALLBACK(format_value_degree), NULL);
-  gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-#endif
   d->arrow_length = w;
 
   w = gtk_drawing_area_new();
   gtk_widget_set_size_request(w, ARROW_VIEW_SIZE, ARROW_VIEW_SIZE);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(vbox), w);
-#else
-  gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-#endif
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_drawing_area_set_draw_func(GTK_DRAWING_AREA(w), draw_function, d, NULL);
-/* must be implemented */
-#else
-  g_signal_connect(w, "draw", G_CALLBACK(LegendArrowDialogPaint), d);
-#endif
   d->view = w;
 
   w = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 100, 2000, 1);
   set_scale_mark(w, GTK_POS_TOP, 200, 200);
   g_signal_connect(w, "value-changed", G_CALLBACK(LegendArrowDialogScaleW), d);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_scale_set_draw_value(GTK_SCALE(w), TRUE);
   gtk_scale_set_format_value_func(GTK_SCALE(w), format_value_percent, NULL, NULL);
   gtk_box_append(GTK_BOX(vbox), w);
-#else
-  g_signal_connect(w, "format-value", G_CALLBACK(format_value_percent), NULL);
-  gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-#endif
   d->arrow_width = w;
 
   set_widget_margin(vbox, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(hbox), vbox);
-#else
-  gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
-#endif
 }
 
 static void
