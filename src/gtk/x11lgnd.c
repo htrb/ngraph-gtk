@@ -1900,26 +1900,20 @@ LegendArcDialog(struct LegendDialog *data, struct objlist *obj, int id)
   data->Id = id;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 mark_dialog_response(struct response_callback *cb)
 {
   button_set_mark_image(GTK_WIDGET(cb->data), ((struct MarkDialog *)cb->dialog)->Type);
 }
-#endif
+
 static void
 LegendMarkDialogMark(GtkWidget *w, gpointer client_data)
 {
   struct MarkDialog *d;
 
   d = (struct MarkDialog *) client_data;
-#if GTK_CHECK_VERSION(4, 0, 0)
   response_callback_add(d, mark_dialog_response, NULL, w);
-#endif
   DialogExecute(d->parent, d);
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  button_set_mark_image(w, d->Type);
-#endif
 }
 
 static void
