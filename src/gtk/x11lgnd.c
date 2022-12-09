@@ -2302,7 +2302,6 @@ CmTextUpdate(void *w, gpointer client_data)
   legend_menu_update_object("text", LegendTextCB, &DlgLegendText, LegendTextDialog);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 option_text_def_dialog_response_response(int ret, struct objlist *obj, int id, int modified)
 {
@@ -2310,7 +2309,6 @@ option_text_def_dialog_response_response(int ret, struct objlist *obj, int id, i
   if (ret) {
     exeobj(obj, "save_config", id, 0, NULL);
   }
-  delobj(obj, id);
   delobj(obj, id);
   objs[0] = obj->name;
   objs[1] = NULL;
@@ -2331,7 +2329,7 @@ option_text_def_dialog_response(struct response_callback *cb)
     option_text_def_dialog_response_response(FALSE, DlgLegendTextDef.Obj, DlgLegendTextDef.Id, modified);
   }
 }
-/* to be implemented */
+
 void
 CmOptionTextDef(void *w, gpointer client_data)
 {
@@ -2354,41 +2352,6 @@ CmOptionTextDef(void *w, gpointer client_data)
     DialogExecute(TopLevel, &DlgLegendTextDef);
   }
 }
-#else
-void
-CmOptionTextDef(void *w, gpointer client_data)
-{
-  struct objlist *obj;
-  int id;
-
-  if (Menulock || Globallock)
-    return;
-
-  if ((obj = chkobject("text")) == NULL)
-    return;
-
-  id = newobj(obj);
-  if (id >= 0) {
-    char *objs[2];
-    int modified;
-
-    modified = get_graph_modified();
-    LegendTextDefDialog(&DlgLegendTextDef, obj, id);
-    if (DialogExecute(TopLevel, &DlgLegendTextDef) == IDOK) {
-      if (CheckIniFile()) {
-	exeobj(obj, "save_config", id, 0, NULL);
-      }
-    }
-    delobj(obj, id);
-    objs[0] = obj->name;
-    objs[1] = NULL;
-    UpdateAll2(objs, TRUE);
-    if (! modified) {
-      reset_graph_modified();
-    }
-  }
-}
-#endif
 
 static void
 LegendWinPathUpdate(struct obj_list_data *data, int id, int user_data)
