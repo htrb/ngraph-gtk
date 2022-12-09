@@ -2222,21 +2222,12 @@ LegendTextDefDialogSetup(GtkWidget *w, void *data, int makewidget)
     legend_dialog_setup_sub(d, table, 0, FALSE);
 
     frame = gtk_frame_new(NULL);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_frame_set_child(GTK_FRAME(frame), table);
     gtk_box_append(GTK_BOX(d->vbox), frame);
-#else
-    gtk_container_add(GTK_CONTAINER(frame), table);
-    gtk_box_pack_start(GTK_BOX(d->vbox), frame, TRUE, TRUE, 0);
-#endif
 
     add_copy_button_to_box(GTK_WIDGET(d->vbox), G_CALLBACK(legend_copy_clicked), d, "text");
 
     d->prop_cb = LegendTextCB;
-
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-    gtk_widget_show_all(GTK_WIDGET(d->vbox));
-#endif
   }
   legend_dialog_setup_item(w, d, d->Id);
 }
