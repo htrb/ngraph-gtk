@@ -3788,11 +3788,7 @@ create_rect_list(struct SubWin *d)
   data->ev_key = NULL;
   data->obj = chkobject("rectangle");
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   create_legend_popup_menu(data);
-#else
-  sub_win_create_popup_menu(data, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
-#endif
 
   set_editable_cell_renderer_cb(data, RECT_LIST_COL_X, Rlist, G_CALLBACK(pos_x_edited));
   set_editable_cell_renderer_cb(data, RECT_LIST_COL_Y, Rlist, G_CALLBACK(pos_y_edited));
