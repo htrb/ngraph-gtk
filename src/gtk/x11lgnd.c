@@ -3609,11 +3609,7 @@ start_editing_line_type(GtkCellRenderer *renderer, GtkCellEditable *editable, gc
   if (type == PATH_TYPE_CURVE) {
     gtk_combo_box_set_active_iter(GTK_COMBO_BOX(editable), &iter);
   }
-#if GTK_CHECK_VERSION(4, 0, 0)
   add_enum_combo_item_to_cbox(list, NULL, &iter, LEGEND_PATH_LINE_TYPE_CURVE, d->obj, "interpolation", sel, NULL);
-#else
-  add_enum_combo_item_to_cbox(list, NULL, &iter, LEGEND_PATH_LINE_TYPE_CURVE, d->obj, "interpolation", sel);
-#endif
   gtk_widget_show(GTK_WIDGET(editable));
 
   g_signal_connect(editable, "editing-done", G_CALLBACK(select_line_type), user_data);
