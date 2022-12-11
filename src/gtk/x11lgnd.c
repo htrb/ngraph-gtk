@@ -3659,15 +3659,9 @@ select_font(GtkComboBox *w, gpointer user_data)
     putobj(d->obj, "font", sel, font);
     break;
   case LEGEND_COMBO_ITEM_COLOR_0:
-#if GTK_CHECK_VERSION(4, 0, 0)
     d->select = sel;
     select_obj_color(d->obj, sel, OBJ_FIELD_COLOR_TYPE_0, select_obj_color_response, d);
     return;
-#else
-    if (select_obj_color(d->obj, sel, OBJ_FIELD_COLOR_TYPE_0)) {
-      return;
-    }
-#endif
     break;
   case LEGEND_COMBO_ITEM_STYLE_BOLD:
     menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
