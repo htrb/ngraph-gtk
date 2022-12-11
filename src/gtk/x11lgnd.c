@@ -3811,11 +3811,7 @@ create_arc_list(struct SubWin *d)
   data->ev_key = NULL;
   data->obj = chkobject("arc");
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   create_legend_popup_menu(data);
-#else
-  sub_win_create_popup_menu(data, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
-#endif
 
   set_obj_cell_renderer_cb(data, ARC_LIST_COL_COLOR, Alist, G_CALLBACK(start_editing_color));
   return d->Win;
