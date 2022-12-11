@@ -3766,11 +3766,7 @@ create_path_list(struct SubWin *d)
   data->ev_key = NULL;
   data->obj = chkobject("path");
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   create_legend_popup_menu(data);
-#else
-  sub_win_create_popup_menu(data, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
-#endif
 
   set_combo_cell_renderer_cb(data, PATH_LIST_COL_TYPE, Plist, G_CALLBACK(start_editing_line_type), NULL);
   set_editable_cell_renderer_cb(data, PATH_LIST_COL_X, Plist, G_CALLBACK(pos_x_edited));
