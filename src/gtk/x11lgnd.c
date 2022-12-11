@@ -3281,7 +3281,6 @@ set_fill(struct objlist *obj, int id, int fill)
   return set_bool_field(obj, "fill", id, fill);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 select_obj_color_response(int response, gpointer user_data)
 {
@@ -3322,10 +3321,10 @@ select_obj_fill_color_response(int response, gpointer user_data)
   d = (struct obj_list_data *) user_data;
   switch (response) {
   case SELECT_OBJ_COLOR_DIFFERENT:
-    set_stroke(d->obj, d->select, TRUE);
+    set_fill(d->obj, d->select, TRUE);
     break;
   case SELECT_OBJ_COLOR_SAME:
-    if (! set_stroke(d->obj, d->select, TRUE)) {
+    if (! set_fill(d->obj, d->select, TRUE)) {
       return;
     }
     break;
@@ -3335,7 +3334,6 @@ select_obj_fill_color_response(int response, gpointer user_data)
   }
   select_obj_color_response(response, user_data);
 }
-#endif
 
 static void
 select_type(GtkComboBox *w, gpointer user_data)
@@ -3372,26 +3370,14 @@ select_type(GtkComboBox *w, gpointer user_data)
 
   switch (col_type) {
   case LEGEND_COMBO_ITEM_COLOR_1:
-#if GTK_CHECK_VERSION(4, 0, 0)
     d->select = sel;
     select_obj_color(d->obj, sel, OBJ_FIELD_COLOR_TYPE_1, select_obj_color_response, d);
     return;
-#else
-    if (select_obj_color(d->obj, sel, OBJ_FIELD_COLOR_TYPE_1)) {
-      return;
-    }
-#endif
     break;
   case LEGEND_COMBO_ITEM_COLOR_2:
-#if GTK_CHECK_VERSION(4, 0, 0)
     d->select = sel;
     select_obj_color(d->obj, sel, OBJ_FIELD_COLOR_TYPE_2, select_obj_color_response, d);
     return;
-#else
-    if (select_obj_color(d->obj, sel, OBJ_FIELD_COLOR_TYPE_2)) {
-      return;
-    }
-#endif
     break;
   case LEGEND_COMBO_ITEM_MARK:
     getobj(d->obj, "type", sel, 0, NULL, &mark_type);
@@ -3415,48 +3401,14 @@ select_type(GtkComboBox *w, gpointer user_data)
     }
     break;
   case LEGEND_COMBO_ITEM_COLOR_STROKE:
-#if GTK_CHECK_VERSION(4, 0, 0)
     d->select = sel;
     select_obj_color(d->obj, sel, OBJ_FIELD_COLOR_TYPE_STROKE, select_obj_stroke_color_response, d);
     return;
-#else
-    r = select_obj_color(d->obj, sel, OBJ_FIELD_COLOR_TYPE_STROKE);
-    switch (r) {
-    case SELECT_OBJ_COLOR_DIFFERENT:
-      set_stroke(d->obj, sel, TRUE);
-      break;
-    case SELECT_OBJ_COLOR_SAME:
-      if (! set_stroke(d->obj, sel, TRUE)) {
-	return;
-      }
-      break;
-    case SELECT_OBJ_COLOR_ERROR:
-    case SELECT_OBJ_COLOR_CANCEL:
-      return;
-    }
-#endif
     break;
   case LEGEND_COMBO_ITEM_COLOR_FILL:
-#if GTK_CHECK_VERSION(4, 0, 0)
     d->select = sel;
     select_obj_color(d->obj, sel, OBJ_FIELD_COLOR_TYPE_STROKE, select_obj_fill_color_response, d);
     return;
-#else
-    r = select_obj_color(d->obj, sel, OBJ_FIELD_COLOR_TYPE_FILL);
-    switch (r) {
-    case SELECT_OBJ_COLOR_DIFFERENT:
-      set_fill(d->obj, sel, TRUE);
-      break;
-    case SELECT_OBJ_COLOR_SAME:
-      if (! set_fill(d->obj, sel, TRUE)) {
-	return;
-      }
-      break;
-    case SELECT_OBJ_COLOR_ERROR:
-    case SELECT_OBJ_COLOR_CANCEL:
-      return;
-    }
-#endif
     break;
   case LEGEND_COMBO_ITEM_TOGGLE_STROKE:
     gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_TOGGLE, &active, -1);
