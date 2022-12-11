@@ -2936,7 +2936,6 @@ text_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
   }
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 popup_show_cb(GtkWidget *widget, gpointer user_data)
 {
@@ -3008,45 +3007,6 @@ create_legend_popup_menu(struct obj_list_data *d)
   }
   g_free(entry);
 }
-#else
-static void
-popup_show_cb(GtkWidget *widget, gpointer user_data)
-{
-  unsigned int i;
-  int m, last_id;
-  struct obj_list_data *d;
-
-  d = (struct obj_list_data *) user_data;
-
-  if (d->text == NULL) {
-    return;
-  }
-
-  m = list_store_get_selected_int(d->text, COL_ID);
-  for (i = 0; i < POPUP_ITEM_NUM; i++) {
-    switch (i) {
-    case POPUP_ITEM_FOCUS_ALL:
-      last_id = chkobjlastinst(d->obj);
-      gtk_widget_set_sensitive(d->popup_item[i], last_id >= 0);
-      break;
-    case POPUP_ITEM_TOP:
-    case POPUP_ITEM_UP:
-      gtk_widget_set_sensitive(d->popup_item[i], m > 0);
-      break;
-    case POPUP_ITEM_DOWN:
-    case POPUP_ITEM_BOTTOM:
-      last_id = -1;
-      if (m >= 0) {
-	last_id = chkobjlastinst(d->obj);
-      }
-      gtk_widget_set_sensitive(d->popup_item[i], m >= 0 && m < last_id);
-      break;
-    default:
-      gtk_widget_set_sensitive(d->popup_item[i], m >= 0);
-    }
-  }
-}
-#endif
 
 enum CHANGE_DIR {
   CHANGE_DIR_X,
