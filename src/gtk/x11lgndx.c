@@ -297,11 +297,7 @@ LegendGaussDialogMode(GtkWidget *w, gpointer client_data)
   int i;
   gboolean active;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   active = gtk_check_button_get_active(GTK_CHECK_BUTTON(w));
-#else
-  active = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w));
-#endif
   if (! active)
     return;
 
