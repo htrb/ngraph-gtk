@@ -343,13 +343,11 @@ LegendGaussDialogDiv(GtkWidget *w, gpointer client_data)
   clear_view(d);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 draw_function(GtkDrawingArea* drawing_area, cairo_t* cr, int width, int height, gpointer user_data)
 {
   LegendGaussDialogPaint(GTK_WIDGET(drawing_area), cr, user_data);
 }
-#endif
 
 static void
 LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
@@ -365,78 +363,36 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     GtkWidget *w, *button, *hbox, *hbox2, *vbox, *table;
     int i;
-#if GTK_CHECK_VERSION(4, 0, 0)
     GtkWidget *group = NULL;
-#endif
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
     button = NULL;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     button = gtk_check_button_new_with_mnemonic(_("_Sin"));
     group = button;
     func_list = g_slist_prepend(NULL, button);
-#else
-    button = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(button), _("_Sin"));
-#endif
     g_signal_connect(button, "toggled", G_CALLBACK(LegendGaussDialogMode), d);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_prepend(GTK_BOX(hbox), button);
-#else
-    gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-#endif
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     button = gtk_check_button_new_with_mnemonic(_("_Parabola"));
     gtk_check_button_set_group(GTK_CHECK_BUTTON(button), GTK_CHECK_BUTTON(group));
     func_list = g_slist_prepend(func_list, button);
-#else
-    button = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(button), _("_Parabola"));
-#endif
     g_signal_connect(button, "toggled", G_CALLBACK(LegendGaussDialogMode), d);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_prepend(GTK_BOX(hbox), button);
-#else
-    gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-#endif
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     button = gtk_check_button_new_with_mnemonic(_("_Lorentz"));
     gtk_check_button_set_group(GTK_CHECK_BUTTON(button), GTK_CHECK_BUTTON(group));
     func_list = g_slist_prepend(func_list, button);
-#else
-    button = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(button), _("_Lorentz"));
-#endif
     g_signal_connect(button, "toggled", G_CALLBACK(LegendGaussDialogMode), d);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_prepend(GTK_BOX(hbox), button);
-#else
-    gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-#endif
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     button = gtk_check_button_new_with_mnemonic(_("_Gauss"));
     gtk_check_button_set_group(GTK_CHECK_BUTTON(button), GTK_CHECK_BUTTON(group));
     func_list = g_slist_prepend(func_list, button);
-#else
-    button = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(button), _("_Gauss"));
-#endif
     g_signal_connect(button, "toggled", G_CALLBACK(LegendGaussDialogMode), d);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_prepend(GTK_BOX(hbox), button);
-#else
-    gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-#endif
 
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-    func_list = gtk_radio_button_get_group(GTK_RADIO_BUTTON(button));
-#endif
-
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(d->vbox), hbox);
-#else
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 0);
-#endif
     d->func_list = func_list;
 
 
@@ -476,72 +432,34 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
     hbox2 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
     button = NULL;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     button = gtk_check_button_new_with_mnemonic(_("_T"));
     group = button;
     dir_list = g_slist_prepend(NULL, button);
-#else
-    button = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(button), "_T");
-#endif
     g_signal_connect(button, "toggled", G_CALLBACK(LegendGaussDialogDir), d);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(hbox2), button);
-#else
-    gtk_box_pack_start(GTK_BOX(hbox2), button, FALSE, FALSE, 0);
-#endif
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     button = gtk_check_button_new_with_mnemonic(_("_B"));
     gtk_check_button_set_group(GTK_CHECK_BUTTON(button), GTK_CHECK_BUTTON(group));
     dir_list = g_slist_prepend(dir_list, button);
-#else
-    button = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(button), "_B");
-#endif
     g_signal_connect(button, "toggled", G_CALLBACK(LegendGaussDialogDir), d);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(hbox2), button);
-#else
-    gtk_box_pack_start(GTK_BOX(hbox2), button, FALSE, FALSE, 0);
-#endif
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     button = gtk_check_button_new_with_mnemonic(_("_L"));
     gtk_check_button_set_group(GTK_CHECK_BUTTON(button), GTK_CHECK_BUTTON(group));
     dir_list = g_slist_prepend(dir_list, button);
-#else
-    button = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(button), "_L");
-#endif
     g_signal_connect(button, "toggled", G_CALLBACK(LegendGaussDialogDir), d);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(hbox2), button);
-#else
-    gtk_box_pack_start(GTK_BOX(hbox2), button, FALSE, FALSE, 0);
-#endif
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     button = gtk_check_button_new_with_mnemonic(_("_R"));
     gtk_check_button_set_group(GTK_CHECK_BUTTON(button), GTK_CHECK_BUTTON(group));
     dir_list = g_slist_prepend(dir_list, button);
-#else
-    button = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(button), "_R");
-#endif
     g_signal_connect(button, "toggled", G_CALLBACK(LegendGaussDialogDir), d);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(hbox2), button);
-#else
-    gtk_box_pack_start(GTK_BOX(hbox2), button, FALSE, FALSE, 0);
-
-    dir_list = gtk_radio_button_get_group(GTK_RADIO_BUTTON(button));
-#endif
     d->dir_list = dir_list;
 
     add_widget_to_table(table, hbox2, _("Direction:"), TRUE, i++);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(hbox), table);
-#else
-    gtk_box_pack_start(GTK_BOX(hbox), table, TRUE, TRUE, 0);
-#endif
 
 
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
@@ -551,40 +469,23 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_scale_set_draw_value(GTK_SCALE(w), TRUE);
     g_signal_connect(w, "value-changed", G_CALLBACK(LegendGaussDialogScaleV), d);
     d->scv = w;
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(vbox), w);
-#else
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 0);
-#endif
 
     w = gtk_drawing_area_new();
     d->view = w;
     gtk_widget_set_size_request(w, VIEW_SIZE, VIEW_SIZE);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_drawing_area_set_draw_func(GTK_DRAWING_AREA(w), draw_function, d, NULL);
     gtk_box_append(GTK_BOX(vbox), w);
-#else
-    g_signal_connect(w, "draw", G_CALLBACK(LegendGaussDialogPaint), d);
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 0);
-#endif
 
     w = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, - SCALE_H_MAX, SCALE_H_MAX, 1);
     set_scale_mark(w, GTK_POS_TOP, -100, 25);
     gtk_scale_set_draw_value(GTK_SCALE(w), TRUE);
     g_signal_connect(w, "value-changed", G_CALLBACK(LegendGaussDialogScaleH), d);
     d->sch = w;
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(vbox), w);
     gtk_box_append(GTK_BOX(hbox), vbox);
     gtk_box_append(GTK_BOX(d->vbox), hbox);
-#else
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 0);
-
-    gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 0);
-    gtk_widget_show_all(GTK_WIDGET(d->vbox));
-#endif
   }
   LegendGaussDialogSetupItem(wi, d, d->Id);
 }
