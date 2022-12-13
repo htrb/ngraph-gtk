@@ -281,19 +281,11 @@ get_radio_index(GSList *top)
 
   n = g_slist_length(top);
   for (i = 0, list = top; i < n; i++, list = list->next) {
-#if GTK_CHECK_VERSION(4, 0, 0)
     GtkCheckButton *btn;
     btn = GTK_CHECK_BUTTON(list->data);
     if (gtk_check_button_get_active(btn)) {
       return i;
     }
-#else
-    GtkToggleButton *btn;
-    btn = GTK_TOGGLE_BUTTON(list->data);
-    if (gtk_toggle_button_get_active(btn)) {
-      return i;
-    }
-#endif
   }
   return -1;
 }
