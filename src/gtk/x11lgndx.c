@@ -110,26 +110,12 @@ LegendGaussDialogPaint(GtkWidget *w, cairo_t *cr, gpointer client_data)
   int pw, dw, minx, miny, maxx, maxy,
     amp, wd, output, found;
   double ppd, dashes[] = {4.0};
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
-#else
-  GdkWindow *win;
-#endif
   struct objlist *gobj, *robj;
   N_VALUE *inst;
   struct gra2cairo_local *local;
   cairo_surface_t *pix;
 
   d = (struct LegendGaussDialog *) client_data;
-
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
-#else
-  win = gtk_widget_get_window(w);
-  if (win == NULL) {
-    return FALSE;
-  }
-#endif
 
   found = find_gra2gdk_inst(&gobj, &inst, &robj, &output, &local);
   if (! found) {
