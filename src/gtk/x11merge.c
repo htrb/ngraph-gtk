@@ -270,8 +270,6 @@ MergeDialog(struct obj_list_data *data, int id, int user_data)
   d->Id = id;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* to be implemented */
 static void
 merge_open_response(struct response_callback *cb)
 {
@@ -324,44 +322,6 @@ CmMergeOpen(GSimpleAction *action, GVariant *parameter, gpointer client_data)
   nGetOpenFileName(TopLevel, _("Add Merge file"), "gra", NULL, NULL, chd,
                    CmMergeOpen_response, NULL);
 }
-#else
-void
-CmMergeOpen(void *w, gpointer client_data)
-{
-  struct objlist *obj;
-  char *name = NULL;
-  int id, undo, chd;
-
-  if (Menulock || Globallock)
-    return;
-
-  if ((obj = chkobject("merge")) == NULL)
-    return;
-
-  chd = Menulocal.changedirectory;
-  name = nGetOpenFileName(TopLevel, _("Add Merge file"), "gra", NULL, NULL, TRUE, chd);
-  if (name == NULL)
-    return;
-
-  undo = menu_save_undo_single(UNDO_TYPE_CREATE, obj->name);
-  id = newobj(obj);
-  if (id >= 0) {
-    int ret;
-    changefilename(name);
-    putobj(obj, "file", id, name);
-    MergeDialog(NgraphApp.MergeWin.data.data, id, -1);
-    ret = DialogExecute(TopLevel, &DlgMerge);
-    if (ret == IDCANCEL) {
-      menu_undo_internal(undo);
-    } else {
-      set_graph_modified();
-    }
-  } else {
-    g_free(name);
-  }
-  MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE, DRAW_NOTIFY);
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
