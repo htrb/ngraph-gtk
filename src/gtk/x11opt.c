@@ -308,12 +308,7 @@ SetScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, _("_Description:"), TRUE, i++);
     d->description = w;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(d->vbox), table);
-#else
-    gtk_box_pack_start(GTK_BOX(d->vbox), table, FALSE, FALSE, 4);
-    gtk_widget_show_all(GTK_WIDGET(d->vbox));
-#endif
   }
   SetScriptDialogSetupItem(wi, d);
 }
