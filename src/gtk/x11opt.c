@@ -1489,11 +1489,7 @@ MiscDialog(struct MiscDialog *data, struct objlist *obj, int id)
 static void
 ExViewerDialogSetupItem(GtkWidget *w, struct ExViewerDialog *d)
 {
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_check_button_set_active(GTK_CHECK_BUTTON(d->use_external), Menulocal.exwin_use_external);
-#else
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->use_external), Menulocal.exwin_use_external);
-#endif
   gtk_range_set_value(GTK_RANGE(d->dpi), Menulocal.exwindpi);
   spin_entry_set_val(d->width, Menulocal.exwinwidth);
   spin_entry_set_val(d->height, Menulocal.exwinheight);
