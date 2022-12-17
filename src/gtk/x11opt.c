@@ -929,8 +929,6 @@ PrefFontDialogRemove(GtkWidget *w, gpointer client_data)
   PrefFontDialogSetupItem(d);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* to be implemented */
 static void
 PrefFontDialogAdd(GtkWidget *w, gpointer client_data)
 {
@@ -942,22 +940,6 @@ PrefFontDialogAdd(GtkWidget *w, gpointer client_data)
   response_callback_add(&DlgFontSetting, pref_font_dialog_response, NULL, d);
   DialogExecute(d->widget, &DlgFontSetting);
 }
-#else
-static void
-PrefFontDialogAdd(GtkWidget *w, gpointer client_data)
-{
-  struct PrefFontDialog *d;
-  int ret;
-
-  d = (struct PrefFontDialog *) client_data;
-
-  FontSettingDialog(&DlgFontSetting, NULL, NULL, NULL);
-  ret = DialogExecute(d->widget, &DlgFontSetting);
-  if (ret == IDOK) {
-    PrefFontDialogSetupItem(d);
-  }
-}
-#endif
 
 #define HAVE_UPDATE_FUNC
 #define LIST_TYPE   fontmap
