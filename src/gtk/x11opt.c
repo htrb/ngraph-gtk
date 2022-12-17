@@ -1497,22 +1497,14 @@ ExViewerDialogSetupItem(GtkWidget *w, struct ExViewerDialog *d)
 
 
 static void
-#if GTK_CHECK_VERSION(4, 0, 0)
 use_external_toggled(GtkCheckButton *checkbutton, gpointer user_data)
-#else
-use_external_toggled(GtkToggleButton *togglebutton, gpointer user_data)
-#endif
 {
   gboolean state;
   struct ExViewerDialog *d;
 
   d = (struct ExViewerDialog *) user_data;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   state = ! gtk_check_button_get_active(checkbutton);
-#else
-  state = ! gtk_toggle_button_get_active(togglebutton);
-#endif
 
   set_widget_sensitivity_with_label(d->dpi, state);
   set_widget_sensitivity_with_label(d->width, state);
