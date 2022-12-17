@@ -1704,11 +1704,7 @@ ViewerDialogClose(GtkWidget *w, void *data)
     return;
   Menulocal.antialias = a;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   a = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->loadfile));
-#else
-  a = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->loadfile));
-#endif
   a = a ? TRUE : FALSE;
   if (putobj(d->Obj, "redraw_flag", d->Id, &a) == -1)
     return;
@@ -1717,13 +1713,8 @@ ViewerDialogClose(GtkWidget *w, void *data)
   if (putobj(d->Obj, "redraw_num", d->Id, &a) == -1)
     return;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   Menulocal.preserve_width =
     gtk_check_button_get_active(GTK_CHECK_BUTTON(d->preserve_width));
-#else
-  Menulocal.preserve_width =
-    gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->preserve_width));
-#endif
 
   gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(d->bgcol), &color);
   bg = (Menulocal.bg_r != color.red || Menulocal.bg_g != color.green || Menulocal.bg_b != color.blue);
