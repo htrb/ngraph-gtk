@@ -1399,7 +1399,6 @@ MiscDialogClose(GtkWidget *w, void *data)
   set_program_name(d->editor, &Menulocal.editor);
   set_program_name(d->help_browser, &Menulocal.help_browser);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   Menulocal.changedirectory =
     gtk_check_button_get_active(GTK_CHECK_BUTTON(d->directory));
 
@@ -1415,29 +1414,8 @@ MiscDialogClose(GtkWidget *w, void *data)
     gtk_check_button_get_active(GTK_CHECK_BUTTON(d->mergefile));
 
   Menulocal.expand = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->expand));
-#else
-  Menulocal.changedirectory =
-    gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->directory));
 
-  a = combo_box_get_active(d->path);
-  if (a >= 0) {
-    Menulocal.savepath = a;
-  }
-
-  Menulocal.savewithdata =
-    gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->datafile));
-
-  Menulocal.savewithmerge =
-    gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->mergefile));
-
-  Menulocal.expand = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->expand));
-#endif
-
-#if GTK_CHECK_VERSION(4, 0, 0)
   buf = gtk_editable_get_text(GTK_EDITABLE(d->expanddir));
-#else
-  buf = gtk_entry_get_text(GTK_ENTRY(d->expanddir));
-#endif
   if (buf) {
     buf2 = g_strdup(buf);
     if (buf2) {
@@ -1469,30 +1447,18 @@ MiscDialogClose(GtkWidget *w, void *data)
 
   set_font(&Menulocal.file_preview_font, d->file_preview_font);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   Menulocal.use_opacity = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->use_opacity));
   putobj(d->Obj, "use_opacity", d->Id, &Menulocal.use_opacity);
 
   Menulocal.select_data = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->select_data));
   Menulocal.use_custom_palette = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->use_custom_palette));
-#else
-  Menulocal.use_opacity = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->use_opacity));
-  putobj(d->Obj, "use_opacity", d->Id, &Menulocal.use_opacity);
-
-  Menulocal.select_data = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->select_data));
-  Menulocal.use_custom_palette = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->use_custom_palette));
-#endif
   if (arraycmp(&(Menulocal.custom_palette), &(d->tmp_palette))) {
     arraycpy(&(Menulocal.custom_palette), &(d->tmp_palette));
   }
   arraydel(&(d->tmp_palette));
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   Menulocal.icon_size_local = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->icon_size)) ? GTK_ICON_SIZE_LARGE : GTK_ICON_SIZE_NORMAL;
   menu_use_dark_theme_set(gtk_check_button_get_active(GTK_CHECK_BUTTON(d->use_dark_theme)));
-#else
-  menu_use_dark_theme_set(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->use_dark_theme)));
-#endif
 
   d->ret = ret;
 
