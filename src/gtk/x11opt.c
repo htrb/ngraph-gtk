@@ -247,17 +247,10 @@ SetScriptDialogSetupItem(GtkWidget *w, struct SetScriptDialog *d)
 
   if (d->Script->name) {
     combo_box_set_active(d->addins, 0);
-#if GTK_CHECK_VERSION(4, 0, 0)
     editable_set_init_text(d->name, CHK_STR(d->Script->name));
     editable_set_init_text(d->script, CHK_STR(d->Script->script));
     editable_set_init_text(d->option, CHK_STR(d->Script->option));
     editable_set_init_text(d->description, CHK_STR(d->Script->description));
-#else
-    gtk_entry_set_text(GTK_ENTRY(d->name), CHK_STR(d->Script->name));
-    gtk_entry_set_text(GTK_ENTRY(d->script), CHK_STR(d->Script->script));
-    gtk_entry_set_text(GTK_ENTRY(d->option), CHK_STR(d->Script->option));
-    gtk_entry_set_text(GTK_ENTRY(d->description), CHK_STR(d->Script->description));
-#endif
   } else {
     combo_box_set_active(d->addins, 1);
   }
