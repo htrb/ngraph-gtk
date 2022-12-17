@@ -760,11 +760,7 @@ get_font_alias(struct FontSettingDialog *d)
   const char *alias;
   char *tmp, *ptr;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   alias = gtk_editable_get_text(GTK_EDITABLE(d->alias));
-#else
-  alias = gtk_entry_get_text(GTK_ENTRY(d->alias));
-#endif
   tmp = g_strdup(alias);
 
   if (tmp == NULL)
