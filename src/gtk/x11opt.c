@@ -965,9 +965,6 @@ PrefFontDialogSetup(GtkWidget *wi, void *data, int makewidget)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
     PrefFontDialogCreateWidgets(d, vbox, sizeof(list) / sizeof(*list), list);
     gtk_window_set_default_size(GTK_WINDOW(wi), 550, 300);
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-    gtk_widget_show_all(GTK_WIDGET(d->vbox));
-#endif
   }
   PrefFontDialogSetupItem(d);
 }
