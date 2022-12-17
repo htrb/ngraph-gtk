@@ -1121,7 +1121,6 @@ save_custom_palette(struct MiscDialog *d, GtkWidget **btns)
   }
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 edit_custom_palette_dialog_response(GtkDialog* self, gint response_id, gpointer user_data)
 {
@@ -1135,16 +1134,12 @@ edit_custom_palette_dialog_response(GtkDialog* self, gint response_id, gpointer 
   d->palette = NULL;
   gtk_window_destroy(GTK_WINDOW(self));
 }
-#endif
 
 static void
 edit_custom_palette(GtkWidget *w, gpointer data)
 {
   GtkWidget *dialog, *box, **btns;
   struct MiscDialog *d;
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  gint r;
-#endif
   d = data;
   dialog = gtk_dialog_new_with_buttons(_("custom palette"),
 				       GTK_WINDOW(d->widget),
@@ -1158,33 +1153,16 @@ edit_custom_palette(GtkWidget *w, gpointer data)
 				       GTK_RESPONSE_CANCEL,
 				       NULL);
   box = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_orientable_set_orientation(GTK_ORIENTABLE(box), GTK_ORIENTATION_VERTICAL);
-#endif
   btns = create_custom_palette_buttons(d, box);
   if (btns == NULL) {
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_window_destroy(GTK_WINDOW(dialog));
-#else
-    gtk_widget_destroy(dialog);
-#endif
     return;
   }
-#if GTK_CHECK_VERSION(4, 0, 0)
   d->palette = btns;
   gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);
   g_signal_connect(dialog, "response", G_CALLBACK(edit_custom_palette_dialog_response), d);
   gtk_widget_show(dialog);
-#else
-  gtk_widget_show_all(dialog);
-  r = gtk_dialog_run(GTK_DIALOG(dialog));
-  if (r == GTK_RESPONSE_ACCEPT) {
-    save_custom_palette(d, btns);
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->use_custom_palette), TRUE);
-  }
-  g_free(btns);
-  gtk_widget_destroy(dialog);
-#endif
 }
 
 static void
