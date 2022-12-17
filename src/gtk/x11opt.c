@@ -1046,7 +1046,6 @@ MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
   combo_box_set_active(d->decimalsign, Menulocal.default_decimalsign);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 set_file_in_entry_response(char *file, gpointer user_data)
 {
@@ -1065,21 +1064,6 @@ set_file_in_entry(GtkEntry *w, GtkEntryIconPosition icon_pos, gpointer user_data
   nGetOpenFileName(d->widget, _("Select program"), NULL, NULL, NULL, FALSE,
                    set_file_in_entry_response, w);
 }
-#else
-static void
-set_file_in_entry(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointer user_data)
-{
-  char *file;
-  struct MiscDialog *d;
-
-  d = (struct MiscDialog *) user_data;
-  file = nGetOpenFileName(d->widget, _("Select program"), NULL, NULL, NULL, TRUE, FALSE);
-  if (file) {
-    entry_set_filename(GTK_WIDGET(w), file);
-    g_free(file);
-  }
-}
-#endif
 
 #define PALETTE_COLUMN 9
 static GtkWidget **
