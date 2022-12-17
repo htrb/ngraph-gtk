@@ -1607,23 +1607,14 @@ ViewerDialogSetupItem(GtkWidget *w, struct ViewerDialog *d)
 }
 
 static void
-#if GTK_CHECK_VERSION(4, 0, 0)
 load_file_toggled(GtkCheckButton *checkbutton, gpointer user_data)
-#else
-load_file_toggled(GtkToggleButton *togglebutton, gpointer user_data)
-#endif
 {
   gboolean state;
   struct ViewerDialog *d;
 
   d = (struct ViewerDialog *) user_data;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   state = gtk_check_button_get_active(checkbutton);
-#else
-  state = gtk_toggle_button_get_active(togglebutton);
-#endif
-
   set_widget_sensitivity_with_label(d->data_num, state);
 }
 
