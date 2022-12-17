@@ -178,17 +178,10 @@ active_script_changed(GtkComboBox *widget, gpointer user_data)
 
   n = gtk_combo_box_get_active(widget);
   if (n < 1) {
-#if GTK_CHECK_VERSION(4, 0, 0)
     editable_set_init_text(d->name, "");
     editable_set_init_text(d->script, "");
     editable_set_init_text(d->option, "");
     editable_set_init_text(d->description, "");
-#else
-    gtk_entry_set_text(GTK_ENTRY(d->name), "");
-    gtk_entry_set_text(GTK_ENTRY(d->script), "");
-    gtk_entry_set_text(GTK_ENTRY(d->option), "");
-    gtk_entry_set_text(GTK_ENTRY(d->description), "");
-#endif
 
     return;
   }
@@ -201,17 +194,10 @@ active_script_changed(GtkComboBox *widget, gpointer user_data)
     addin = addin->next;
   }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   editable_set_init_text(d->name, CHK_STR(addin->name));
   editable_set_init_text(d->script, CHK_STR(addin->script));
   editable_set_init_text(d->option, CHK_STR(addin->option));
   editable_set_init_text(d->description, CHK_STR(addin->description));
-#else
-  gtk_entry_set_text(GTK_ENTRY(d->name), CHK_STR(addin->name));
-  gtk_entry_set_text(GTK_ENTRY(d->script), CHK_STR(addin->script));
-  gtk_entry_set_text(GTK_ENTRY(d->option), CHK_STR(addin->option));
-  gtk_entry_set_text(GTK_ENTRY(d->description), CHK_STR(addin->description));
-#endif
 
   return;
 }
