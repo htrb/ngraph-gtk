@@ -1752,7 +1752,6 @@ ViewerDialog(struct ViewerDialog *data, struct objlist *obj, int id)
   data->Clear = FALSE;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 save_default_axis_config_response(int ret, struct objlist *obj, int id, int modified)
 {
@@ -1760,7 +1759,6 @@ save_default_axis_config_response(int ret, struct objlist *obj, int id, int modi
     exeobj(obj, "save_config", id, 0, NULL);
   }
 }
-#endif
 
 static void
 save_default_axis_config(void)
@@ -1776,13 +1774,7 @@ save_default_axis_config(void)
   if (n < 0) {
     return;
   }
-#if GTK_CHECK_VERSION(4, 0, 0)
   CheckIniFile(save_default_axis_config_response, obj, 0, 0);
-#else
-  if (CheckIniFile()) {
-    exeobj(obj, "save_config", 0, 0, NULL);
-  }
-#endif
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
