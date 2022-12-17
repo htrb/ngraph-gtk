@@ -1531,9 +1531,7 @@ ExViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->use_external = w;
 
     w = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 20, 620, 1);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_scale_set_draw_value(GTK_SCALE(w), TRUE);
-#endif
     d->dpi = w;
     add_widget_to_table(table, w, "_DPI:", TRUE, i++);
 
@@ -1545,12 +1543,7 @@ ExViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, _("Window _Height:"), FALSE, i++);
     d->height = w;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(d->vbox), table);
-#else
-    gtk_box_pack_start(GTK_BOX(d->vbox), table, FALSE, FALSE, 4);
-    gtk_widget_show_all(GTK_WIDGET(d->vbox));
-#endif
   }
   ExViewerDialogSetupItem(wi, d);
 }
