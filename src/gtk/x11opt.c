@@ -1365,11 +1365,7 @@ set_program_name(GtkWidget *entry, char **prm)
   const char *buf;
   char *buf2;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   buf = gtk_editable_get_text(GTK_EDITABLE(entry));
-#else
-  buf = gtk_entry_get_text(GTK_ENTRY(entry));
-#endif
   if (buf) {
     buf2 = g_strdup(buf);
     if (buf2) {
