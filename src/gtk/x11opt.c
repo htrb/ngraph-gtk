@@ -256,7 +256,6 @@ SetScriptDialogSetupItem(GtkWidget *w, struct SetScriptDialog *d)
   }
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 SetScriptDialogBrowse_response(char *file, gpointer user_data)
 {
@@ -274,19 +273,6 @@ SetScriptDialogBrowse(GtkEntry *w, GtkEntryIconPosition icon_pos, gpointer user_
   nGetOpenFileName(TopLevel, _("Add-in Script"), "nsc", NULL, NULL, FALSE,
                    SetScriptDialogBrowse_response, w);
 }
-#else
-static void
-SetScriptDialogBrowse(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointer user_data)
-{
-  char *file;
-
-  file = nGetOpenFileName(TopLevel, _("Add-in Script"), "nsc", NULL, NULL, TRUE, FALSE);
-  if (file) {
-    entry_set_filename(GTK_WIDGET(w), file);
-    g_free(file);
-  }
-}
-#endif
 
 static void
 SetScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
