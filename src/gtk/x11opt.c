@@ -1561,11 +1561,7 @@ ExViewerDialogClose(GtkWidget *w, void *data)
   Menulocal.exwindpi = gtk_range_get_value(GTK_RANGE(d->dpi));
   Menulocal.exwinwidth = spin_entry_get_val(d->width);
   Menulocal.exwinheight = spin_entry_get_val(d->height);
-#if GTK_CHECK_VERSION(4, 0, 0)
   Menulocal.exwin_use_external = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->use_external));
-#else
-  Menulocal.exwin_use_external = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->use_external));
-#endif
 
   if (d->ret == IDSAVE) {
     save_config(SAVE_CONFIG_TYPE_EXTERNAL_VIEWER);
