@@ -1778,21 +1778,26 @@ save_default_axis_config(void)
 }
 
 static void
-CmOptionSaveNgp_response(int ret, gpointer user_data)
+save_ngp(const char *ngpfile)
 {
-  char *ngpfile, mes[MESSAGE_BUF_SIZE];
-  ngpfile = (char *) user_data;
-
-  if (ret != IDYES) {
-    g_free(ngpfile);
-    return;
-  }
+  char mes[MESSAGE_BUF_SIZE];
   snprintf(mes, sizeof(mes), _("Saving `%.128s'."), ngpfile);
   SetStatusBar(mes);
   SaveDrawrable(ngpfile, FALSE, FALSE, FALSE);
   ResetStatusBar();
   menu_default_axis_size(&Menulocal);
   save_default_axis_config();
+}
+
+static void
+CmOptionSaveNgp_response(int ret, gpointer user_data)
+{
+  char *ngpfile;
+  ngpfile = (char *) user_data;
+
+  if (ret == IDYES) {
+    save_ngp(ngpfile);
+  }
   g_free(ngpfile);
 }
 
