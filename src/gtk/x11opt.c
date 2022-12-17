@@ -95,7 +95,6 @@ DefaultDialogSetup(GtkWidget *wi, void *data, int makewidget)
   gtk_check_button_set_active(GTK_CHECK_BUTTON(d->misc), FALSE);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 save_config_response(int ret, struct objlist *obj, int id, int type)
 {
@@ -117,25 +116,6 @@ save_config(int type)
 {
   CheckIniFile(save_config_response, NULL, 0, type);
 }
-#else
-static int
-save_config(int type)
-{
-  if (!CheckIniFile()) {
-    return 1;
-  }
-
-  if (type & SAVE_CONFIG_TYPE_X11MENU) {
-    menu_save_config(type);
-  }
-
-  if (type & SAVE_CONFIG_TYPE_FONTS) {
-    gra2cairo_save_config();
-  }
-
-  return 0;
-}
-#endif
 
 static void
 DefaultDialogClose(GtkWidget *win, void *data)
