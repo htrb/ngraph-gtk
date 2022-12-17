@@ -132,6 +132,8 @@ MergeDialogSetupItem(struct MergeDialog *d, int file, int id)
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->link), zm_x == zm_y);
 }
 
+static void
+merge_dialog_copy_response(int sel, gpointer user_data)
 {
   struct MergeDialog *d;
   d = (struct MergeDialog *) user_data;
