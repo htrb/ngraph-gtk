@@ -71,56 +71,28 @@ DefaultDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     w = gtk_check_button_new_with_mnemonic(_("_Viewer"));
     d->viewer = w;
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(d->vbox), w);
-#else
-    gtk_box_pack_start(GTK_BOX(d->vbox), w, FALSE, FALSE, 4);
-#endif
 
     w = gtk_check_button_new_with_mnemonic(_("_External Viewer"));
     d->external_viewer = w;
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(d->vbox), w);
-#else
-    gtk_box_pack_start(GTK_BOX(d->vbox), w, FALSE, FALSE, 4);
-#endif
 
     w = gtk_check_button_new_with_mnemonic(_("_Font aliases"));
     d->fonts = w;
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(d->vbox), w);
-#else
-    gtk_box_pack_start(GTK_BOX(d->vbox), w, FALSE, FALSE, 4);
-#endif
 
     w = gtk_check_button_new_with_mnemonic(_("_Add-in Script"));
     d->addin_script = w;
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(d->vbox), w);
-#else
-    gtk_box_pack_start(GTK_BOX(d->vbox), w, FALSE, FALSE, 4);
-#endif
 
     w = gtk_check_button_new_with_mnemonic(_("_Miscellaneous"));
     d->misc = w;
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(d->vbox), w);
-#else
-    gtk_box_pack_start(GTK_BOX(d->vbox), w, FALSE, FALSE, 4);
-    gtk_widget_show_all(GTK_WIDGET(d->vbox));
-#endif
   }
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_check_button_set_active(GTK_CHECK_BUTTON(d->viewer), FALSE);
   gtk_check_button_set_active(GTK_CHECK_BUTTON(d->external_viewer), FALSE);
   gtk_check_button_set_active(GTK_CHECK_BUTTON(d->addin_script), FALSE);
   gtk_check_button_set_active(GTK_CHECK_BUTTON(d->misc), FALSE);
-#else
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->viewer), FALSE);
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->external_viewer), FALSE);
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->addin_script), FALSE);
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->misc), FALSE);
-#endif
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
