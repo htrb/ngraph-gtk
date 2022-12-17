@@ -320,11 +320,7 @@ set_scrpt_option(GtkWidget *entry, char **opt, char *msg)
   char *buf2;
 
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   buf = gtk_editable_get_text(GTK_EDITABLE(entry));
-#else
-  buf = gtk_entry_get_text(GTK_ENTRY(entry));
-#endif
   if (msg && strlen(buf) == 0) {
     message_box(NULL, msg, NULL, RESPONS_OK);
     return 1;
