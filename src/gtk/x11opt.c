@@ -1589,22 +1589,14 @@ ViewerDialogSetupItem(GtkWidget *w, struct ViewerDialog *d)
   combo_box_set_active(d->antialias, a);
 
   getobj(d->Obj, "redraw_flag", d->Id, 0, NULL, &a);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_check_button_set_active(GTK_CHECK_BUTTON(d->loadfile), a);
-#else
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->loadfile), a);
-#endif
 
   spin_entry_set_val(d->data_num, Menulocal.redrawf_num);
   spin_entry_set_val(d->grid, Menulocal.grid);
 
   combo_box_set_active(d->fftype, (Menulocal.focus_frame_type == N_LINE_TYPE_SOLID) ? 0 : 1);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_check_button_set_active(GTK_CHECK_BUTTON(d->preserve_width), Menulocal.preserve_width);
-#else
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->preserve_width), Menulocal.preserve_width);
-#endif
 
   color.red = Menulocal.bg_r;
   color.green = Menulocal.bg_g;
