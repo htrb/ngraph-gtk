@@ -490,11 +490,7 @@ PrefScriptDialog(struct PrefScriptDialog *data)
 static void
 FontSettingDialogSetupItem(GtkWidget *w, struct FontSettingDialog *d)
 {
-#if GTK_CHECK_VERSION(4, 0, 0)
   editable_set_init_text(d->alias, CHK_STR(d->alias_str));
-#else
-  gtk_entry_set_text(GTK_ENTRY(d->alias), CHK_STR(d->alias_str));
-#endif
   gtk_editable_set_editable(GTK_EDITABLE(d->alias), ! d->is_update);
 
   if (d->font_str) {
