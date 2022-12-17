@@ -692,111 +692,63 @@ FontSettingDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->alias = w;
 
     w = gtk_font_button_new();
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_font_button_set_use_size(GTK_FONT_BUTTON(w), FALSE);
     gtk_font_chooser_set_level(GTK_FONT_CHOOSER(w), GTK_FONT_CHOOSER_LEVEL_FAMILY);
-#else
-    gtk_font_button_set_show_size(GTK_FONT_BUTTON(w), FALSE);
-    gtk_font_button_set_show_style(GTK_FONT_BUTTON(w), FALSE);
-    gtk_font_chooser_set_level(GTK_FONT_CHOOSER(w), GTK_FONT_CHOOSER_LEVEL_FAMILY);
-#endif
     add_widget_to_table(table, w, _("_Font:"), TRUE, j++);
     d->font_b = w;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(d->vbox), table);
-#else
-    gtk_box_pack_start(GTK_BOX(d->vbox), table, FALSE, FALSE, 4);
-#endif
 
 
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     swin = gtk_scrolled_window_new();
     gtk_widget_set_vexpand(swin, TRUE);
     gtk_widget_set_hexpand(swin, TRUE);
-#else
-    swin = gtk_scrolled_window_new(NULL, NULL);
-#endif
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
     w = list_store_create(sizeof(list) / sizeof(*list), list);
     gtk_tree_view_set_reorderable(GTK_TREE_VIEW(w), TRUE);
     d->list = w;
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), w);
-#else
-    gtk_container_add(GTK_CONTAINER(swin), w);
-#endif
 
     sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(w));
     g_signal_connect(sel, "changed", G_CALLBACK(AlternativeFontListSelCb), d);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(hbox), swin);
-#else
-    gtk_box_pack_start(GTK_BOX(hbox), swin, TRUE, TRUE, 4);
-#endif
 
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
 
     w= gtk_button_new_with_mnemonic(_("_Add"));
     set_button_icon(w, "list-add");
     g_signal_connect(w, "clicked", G_CALLBACK(FontSettingDialogAddAlternative), d);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(vbox), w);
-#else
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-#endif
 
     w = gtk_button_new_with_mnemonic(_("_Remove"));
     set_button_icon(w, "list-remove");
     g_signal_connect(w, "clicked", G_CALLBACK(FontSettingDialogRemoveAlternative), d);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(vbox), w);
-#else
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-#endif
     gtk_widget_set_sensitive(w, FALSE);
     d->del_b = w;
 
     w = gtk_button_new_with_mnemonic(_("_Down"));
     set_button_icon(w, "go-down");
     g_signal_connect(w, "clicked", G_CALLBACK(FontSettingDialogDownAlternative), d);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(vbox), w);
-#else
-    gtk_box_pack_end(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-#endif
     gtk_widget_set_sensitive(w, FALSE);
     d->down_b = w;
 
     w = gtk_button_new_with_mnemonic(_("_Up"));
     set_button_icon(w, "go-up");
     g_signal_connect(w, "clicked", G_CALLBACK(FontSettingDialogUpAlternative), d);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(vbox), w);
-#else
-    gtk_box_pack_end(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-#endif
     gtk_widget_set_sensitive(w, FALSE);
     d->up_b = w;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(hbox), vbox);
-#else
-    gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 4);
-#endif
 
     frame = gtk_frame_new(_("Alternative fonts"));
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_frame_set_child(GTK_FRAME(frame), hbox);
     gtk_box_append(GTK_BOX(d->vbox), frame);
-#else
-    gtk_container_add(GTK_CONTAINER(frame), hbox);
-    gtk_box_pack_start(GTK_BOX(d->vbox), frame, TRUE, TRUE, 4);
-    gtk_widget_show_all(GTK_WIDGET(d->vbox));
-#endif
   }
 
   FontSettingDialogSetupItem(wi, d);
