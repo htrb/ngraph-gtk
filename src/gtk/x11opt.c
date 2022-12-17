@@ -1838,13 +1838,7 @@ CmOptionSaveNgp(void *w, gpointer client_data)
     return;
   }
 
-  snprintf(mes, sizeof(mes), _("Saving `%.128s'."), ngpfile);
-  SetStatusBar(mes);
-  SaveDrawrable(ngpfile, FALSE, FALSE, FALSE);
-  ResetStatusBar();
-  menu_default_axis_size(&Menulocal);
-  save_default_axis_config();
-  g_free(ngpfile);
+  CmOptionSaveNgp_response(IDYES, ngpfile);
   return;
 }
 
