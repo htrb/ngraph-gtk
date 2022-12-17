@@ -151,26 +151,12 @@ DefaultDialogClose(GtkWidget *win, void *data)
   type = 0;
 
   for (i = 0; i < sizeof(btns) / sizeof(*btns); i++) {
-#if GTK_CHECK_VERSION(4, 0, 0)
     if (gtk_check_button_get_active(GTK_CHECK_BUTTON(btns[i].btn))) {
       type |= btns[i].type;
     }
-#else
-    if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(btns[i].btn))) {
-      type |= btns[i].type;
-    }
-#endif
   }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   save_config(type);
-#else
-  if (save_config(type)) {
-    d->ret = ret;
-    return;
-  }
-
-#endif
   d->ret = ret;
 }
 
