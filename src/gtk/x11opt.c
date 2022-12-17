@@ -993,49 +993,21 @@ static void
 MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
 {
   if (Menulocal.editor) {
-#if GTK_CHECK_VERSION(4, 0, 0)
     editable_set_init_text(d->editor, Menulocal.editor);
-#else
-    gtk_entry_set_text(GTK_ENTRY(d->editor), Menulocal.editor);
-#endif
   }
 
   if (Menulocal.help_browser) {
-#if GTK_CHECK_VERSION(4, 0, 0)
     editable_set_init_text(d->help_browser, Menulocal.help_browser);
-#else
-    gtk_entry_set_text(GTK_ENTRY(d->help_browser), Menulocal.help_browser);
-#endif
   }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_check_button_set_active(GTK_CHECK_BUTTON(d->directory), Menulocal.changedirectory);
-
   combo_box_set_active(d->path, Menulocal.savepath);
-
   gtk_check_button_set_active(GTK_CHECK_BUTTON(d->datafile), Menulocal.savewithdata);
-
   gtk_check_button_set_active(GTK_CHECK_BUTTON(d->mergefile), Menulocal.savewithmerge);
-
   gtk_check_button_set_active(GTK_CHECK_BUTTON(d->expand), Menulocal.expand);
-#else
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->directory), Menulocal.changedirectory);
-
-  combo_box_set_active(d->path, Menulocal.savepath);
-
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->datafile), Menulocal.savewithdata);
-
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->mergefile), Menulocal.savewithmerge);
-
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->expand), Menulocal.expand);
-#endif
 
   if (Menulocal.expanddir) {
-#if GTK_CHECK_VERSION(4, 0, 0)
     editable_set_init_text(d->expanddir, Menulocal.expanddir);
-#else
-    gtk_entry_set_text(GTK_ENTRY(d->expanddir), Menulocal.expanddir);
-#endif
   }
 
   combo_box_set_active(d->loadpath, Menulocal.loadpath);
@@ -1056,26 +1028,12 @@ MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
     gtk_font_chooser_set_font(GTK_FONT_CHOOSER(d->file_preview_font), Menulocal.file_preview_font);
   }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_check_button_set_active(GTK_CHECK_BUTTON(d->use_opacity), Menulocal.use_opacity);
-
   gtk_check_button_set_active(GTK_CHECK_BUTTON(d->select_data), Menulocal.select_data);
-
   gtk_check_button_set_active(GTK_CHECK_BUTTON(d->use_custom_palette), Menulocal.use_custom_palette);
   arraycpy(&(d->tmp_palette), &(Menulocal.custom_palette));
-
   gtk_check_button_set_active(GTK_CHECK_BUTTON(d->icon_size), Menulocal.icon_size_local == GTK_ICON_SIZE_LARGE);
   gtk_check_button_set_active(GTK_CHECK_BUTTON(d->use_dark_theme), Menulocal.use_dark_theme);
-#else
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->use_opacity), Menulocal.use_opacity);
-
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->select_data), Menulocal.select_data);
-
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->use_custom_palette), Menulocal.use_custom_palette);
-  arraycpy(&(d->tmp_palette), &(Menulocal.custom_palette));
-
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->use_dark_theme), Menulocal.use_dark_theme);
-#endif
 
   if (Menulocal.source_style_id) {
     GtkSourceStyleSchemeManager *sman;
