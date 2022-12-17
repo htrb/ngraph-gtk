@@ -1193,14 +1193,8 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, _("_Help browser:"), TRUE, i++);
     d->help_browser = w;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_frame_set_child(GTK_FRAME(frame), table);
     gtk_box_append(GTK_BOX(vbox2), frame);
-#else
-    gtk_container_add(GTK_CONTAINER(frame), table);
-    gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
-#endif
-
 
     frame = gtk_frame_new(NULL);
     gtk_frame_set_label(GTK_FRAME(frame), _("Save graph"));
@@ -1222,14 +1216,8 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->mergefile = w;
     add_widget_to_table(table, w, NULL, FALSE, i++);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_frame_set_child(GTK_FRAME(frame), table);
     gtk_box_append(GTK_BOX(vbox2), frame);
-#else
-    gtk_container_add(GTK_CONTAINER(frame), table);
-    gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
-#endif
-
 
     frame = gtk_frame_new(NULL);
     gtk_frame_set_label(GTK_FRAME(frame), _("Load graph"));
@@ -1251,16 +1239,9 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, _("_Expand directory:"), TRUE, i++);
     d->expanddir = w;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_frame_set_child(GTK_FRAME(frame), table);
     gtk_box_append(GTK_BOX(vbox2), frame);
     gtk_box_append(GTK_BOX(hbox2), vbox2);
-#else
-    gtk_container_add(GTK_CONTAINER(frame), table);
-    gtk_box_pack_start(GTK_BOX(vbox2), frame, TRUE, TRUE, 4);
-
-    gtk_box_pack_start(GTK_BOX(hbox2), vbox2, TRUE, TRUE, 4);
-#endif
 
 
     frame = gtk_frame_new(_("Size"));
@@ -1279,13 +1260,8 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, _("_Length of data preview:"), FALSE, i++);
     d->data_head_lines = w;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_frame_set_child(GTK_FRAME(frame), table);
     gtk_box_append(GTK_BOX(vbox2), frame);
-#else
-    gtk_container_add(GTK_CONTAINER(frame), table);
-    gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
-#endif
 
 
     vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
@@ -1306,13 +1282,8 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, _("data _Preview:"), FALSE, i++);
     d->file_preview_font = w;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_frame_set_child(GTK_FRAME(frame), table);
     gtk_box_append(GTK_BOX(vbox2), frame);
-#else
-    gtk_container_add(GTK_CONTAINER(frame), table);
-    gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
-#endif
 
     frame = gtk_frame_new(_("Miscellaneous"));
     table = gtk_grid_new();
@@ -1357,20 +1328,10 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, NULL, FALSE, i++);
     d->use_dark_theme = w;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_frame_set_child(GTK_FRAME(frame), table);
     gtk_box_append(GTK_BOX(vbox2), frame);
     gtk_box_append(GTK_BOX(hbox2), vbox2);
     gtk_box_append(GTK_BOX(d->vbox), hbox2);
-#else
-    gtk_container_add(GTK_CONTAINER(frame), table);
-    gtk_box_pack_start(GTK_BOX(vbox2), frame, TRUE, TRUE, 4);
-
-
-    gtk_box_pack_start(GTK_BOX(hbox2), vbox2, FALSE, FALSE, 4);
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox2, TRUE, TRUE, 4);
-    gtk_widget_show_all(GTK_WIDGET(d->vbox));
-#endif
   }
   MiscDialogSetupItem(wi, d);
 }
