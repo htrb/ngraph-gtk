@@ -459,9 +459,6 @@ PrefScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_dialog_add_button(GTK_DIALOG(wi), _("_Save"), IDSAVE);
     PrefScriptDialogCreateWidgets(d, NULL, sizeof(list) / sizeof(*list), list);
     gtk_window_set_default_size(GTK_WINDOW(wi), 400, 300);
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-    gtk_widget_show_all(GTK_WIDGET(d->vbox));
-#endif
   }
   PrefScriptDialogSetupItem(d);
 }
