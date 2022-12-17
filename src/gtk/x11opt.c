@@ -881,8 +881,6 @@ PrefFontDialogSetupItem(struct PrefFontDialog *d)
   }
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* to be implemented */
 static void
 pref_font_dialog_response(struct response_callback *cb)
 {
@@ -916,34 +914,6 @@ PrefFontDialogUpdate(GtkWidget *w, gpointer client_data)
   response_callback_add(&DlgFontSetting, pref_font_dialog_response, NULL, d);
   DialogExecute(d->widget, &DlgFontSetting);
 }
-#else
-static void
-PrefFontDialogUpdate(GtkWidget *w, gpointer client_data)
-{
-  struct PrefFontDialog *d;
-  struct fontmap *fcur;
-  char *fontalias;
-  int ret;
-
-  d = (struct PrefFontDialog *) client_data;
-
-  fontalias = list_store_get_selected_string(d->list, 0);
-
-  if (fontalias == NULL)
-    return;
-
-  fcur = gra2cairo_get_fontmap(fontalias);
-  g_free(fontalias);
-  if (fcur == NULL)
-    return;
-
-  FontSettingDialog(&DlgFontSetting, fcur->fontalias, fcur->fontname, fcur->alternative);
-  ret = DialogExecute(d->widget, &DlgFontSetting);
-  if (ret == IDOK) {
-    PrefFontDialogSetupItem(d);
-  }
-}
-#endif
 
 static void
 PrefFontDialogRemove(GtkWidget *w, gpointer client_data)
