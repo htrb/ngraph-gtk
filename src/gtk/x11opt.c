@@ -1777,7 +1777,6 @@ save_default_axis_config(void)
   CheckIniFile(save_default_axis_config_response, obj, 0, 0);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 CmOptionSaveNgp_response(int ret, gpointer user_data)
 {
@@ -1785,6 +1784,7 @@ CmOptionSaveNgp_response(int ret, gpointer user_data)
   ngpfile = (char *) user_data;
 
   if (ret != IDYES) {
+    g_free(ngpfile);
     return;
   }
   snprintf(mes, sizeof(mes), _("Saving `%.128s'."), ngpfile);
@@ -1795,7 +1795,6 @@ CmOptionSaveNgp_response(int ret, gpointer user_data)
   save_default_axis_config();
   g_free(ngpfile);
 }
-#endif
 
 void
 CmOptionSaveNgp(void *w, gpointer client_data)
@@ -1830,15 +1829,8 @@ CmOptionSaveNgp(void *w, gpointer client_data)
 
   if (naccess(ngpfile, 04) == 0) {
     snprintf(mes, sizeof(mes), _("`%s'\n\nOverwrite existing file?"), ngpfile);
-#if GTK_CHECK_VERSION(4, 0, 0)
     response_message_box(NULL, mes, _("Save as Ngraph.ngp"), RESPONS_YESNO, CmOptionSaveNgp_response, ngpfile);
     return;
-#else
-    if (message_box(NULL, mes, _("Save as Ngraph.ngp"), RESPONS_YESNO) != IDYES) {
-      g_free(ngpfile);
-      return;
-    }
-#endif
   }
 
   snprintf(mes, sizeof(mes), _("Saving `%.128s'."), ngpfile);
