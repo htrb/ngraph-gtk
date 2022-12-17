@@ -42,7 +42,7 @@ typedef void (* obj_response_cb) (int response, struct objlist *obj, int id, int
 void LoadNgpFile(const char *File, int console, const char *option, const char *cwd);
 void CheckSave(response_cb cb, gpointer user_data);
 void CheckIniFile(obj_response_cb cb, struct objlist *obj, int id, int modified);
-int SaveDrawrable(char *name, int storedata, int storemerge, int save_decimalsign);
+int SaveDrawrable(const char *name, int storedata, int storemerge, int save_decimalsign);
 int GraphSave(int overwrite);
 void DeleteDrawable(void);
 void FileAutoScale(void);

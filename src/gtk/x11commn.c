@@ -1124,7 +1124,7 @@ SaveParent(int hFile, struct objlist *parent, int storedata,
 }
 
 int
-SaveDrawrable(char *name, int storedata, int storemerge, int save_decimalsign)
+SaveDrawrable(const char *name, int storedata, int storemerge, int save_decimalsign)
 {
   int hFile;
   int error;
