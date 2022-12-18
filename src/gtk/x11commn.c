@@ -2284,7 +2284,7 @@ progress_dialog_finalize(gpointer user_data)
     gtk_progress_bar_set_fraction(ProgressBar[0], 1);
     gtk_progress_bar_set_fraction(ProgressBar[1], 1);
     gtk_window_set_title(GTK_WINDOW(ProgressDialog), _("Drawing end"));
-    gtk_button_set_label(GTK_BUTTON(ProgressButton), _("_Ok"));
+    gtk_button_set_label(GTK_BUTTON(ProgressButton), _("_OK"));
   } else {
     ProgressDialogFinalize();
   }

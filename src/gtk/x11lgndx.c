@@ -432,25 +432,25 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
     hbox2 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
     button = NULL;
 
-    button = gtk_check_button_new_with_mnemonic(_("_T"));
+    button = gtk_check_button_new_with_mnemonic("_T");
     group = button;
     dir_list = g_slist_prepend(NULL, button);
     g_signal_connect(button, "toggled", G_CALLBACK(LegendGaussDialogDir), d);
     gtk_box_append(GTK_BOX(hbox2), button);
 
-    button = gtk_check_button_new_with_mnemonic(_("_B"));
+    button = gtk_check_button_new_with_mnemonic("_B");
     gtk_check_button_set_group(GTK_CHECK_BUTTON(button), GTK_CHECK_BUTTON(group));
     dir_list = g_slist_prepend(dir_list, button);
     g_signal_connect(button, "toggled", G_CALLBACK(LegendGaussDialogDir), d);
     gtk_box_append(GTK_BOX(hbox2), button);
 
-    button = gtk_check_button_new_with_mnemonic(_("_L"));
+    button = gtk_check_button_new_with_mnemonic("_L");
     gtk_check_button_set_group(GTK_CHECK_BUTTON(button), GTK_CHECK_BUTTON(group));
     dir_list = g_slist_prepend(dir_list, button);
     g_signal_connect(button, "toggled", G_CALLBACK(LegendGaussDialogDir), d);
     gtk_box_append(GTK_BOX(hbox2), button);
 
-    button = gtk_check_button_new_with_mnemonic(_("_R"));
+    button = gtk_check_button_new_with_mnemonic("_R");
     gtk_check_button_set_group(GTK_CHECK_BUTTON(button), GTK_CHECK_BUTTON(group));
     dir_list = g_slist_prepend(dir_list, button);
     g_signal_connect(button, "toggled", G_CALLBACK(LegendGaussDialogDir), d);

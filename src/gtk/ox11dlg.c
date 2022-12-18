@@ -255,7 +255,7 @@ dlginput_main(gpointer user_data)
 {
   struct dialog_data *data;
   data = (struct dialog_data *) user_data;
-  input_dialog(get_toplevel_window(), data->title, data->msg, data->initial_text, _("OK"), data->buttons, data->button, dlginput_response, data);
+  input_dialog(get_toplevel_window(), data->title, data->msg, data->initial_text, _("_OK"), data->buttons, data->button, dlginput_response, data);
 }
 #endif
 
@@ -460,7 +460,7 @@ dlgradio_main(gpointer user_data)
 {
   struct dialog_data *data;
   data = (struct dialog_data *) user_data;
-  radio_dialog(get_toplevel_window(), data->title, data->msg, data->sarray, _("OK"), data->buttons, data->button, data->selected, dlg_response, data);
+  radio_dialog(get_toplevel_window(), data->title, data->msg, data->sarray, _("_OK"), data->buttons, data->button, data->selected, dlg_response, data);
 }
 #endif
 
