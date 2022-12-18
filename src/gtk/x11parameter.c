@@ -531,8 +531,6 @@ update_parameter(struct obj_list_data *d)
   ViewerWinUpdate(objects);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
 struct parameter_update_data
 {
   struct obj_list_data *d;
@@ -582,17 +580,17 @@ cm_parameter_update_response(struct response_callback *cb)
   farray = (struct narray *) cb->data;
   d = NgraphApp.ParameterWin.data.data;
   if (cb->return_value != IDOK) {
-    arraydel(farray);
+    arrayfree(farray);
     return;
   }
   num = arraynum(farray);
   if (num <= 0) {
-    arraydel(farray);
+    arrayfree(farray);
     return;
   }
   data = g_malloc0(sizeof(*data));
   if (data == NULL) {
-    arraydel(farray);
+    arrayfree(farray);
     return;
   }
 
@@ -633,50 +631,6 @@ CmParameterUpdate(void *w, gpointer client_data)
   response_callback_add(&DlgSelect, cm_parameter_update_response, NULL, farray);
   DialogExecute(TopLevel, &DlgSelect);
 }
-#else
-void
-CmParameterUpdate(void *w, gpointer client_data)
-{
-  struct narray farray;
-  int modified;
-  struct obj_list_data *d;
-  int i, *array, num, undo;
-
-  if (Menulock || Globallock)
-    return;
-
-  d = NgraphApp.ParameterWin.data.data;
-  if (chkobjlastinst(d->obj) == -1) {
-    return;
-  }
-  SelectDialog(&DlgSelect, d->obj, _("parameter property (multi select)"), ParameterCB, (struct narray *) &farray, NULL);
-  modified = FALSE;
-  if (DialogExecute(TopLevel, &DlgSelect) != IDOK) {
-    goto EndUpdate;
-  }
-  num = arraynum(&farray);
-  if (num <= 0) {
-    goto EndUpdate;
-  }
-  undo = menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
-  array = arraydata(&farray);
-  for (i = 0; i < num; i++) {
-    int ret;
-    ParameterDialog(d, array[i], -1);
-    ret = DialogExecute(TopLevel, &DlgParameter);
-    if (ret != IDCANCEL) {
-      modified = TRUE;
-    }
-  }
-  if (modified) {
-    update_parameter(d);
-  } else if (undo >= 0) {
-    menu_undo_internal(undo);
-  }
- EndUpdate:
-  arraydel(&farray);
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
