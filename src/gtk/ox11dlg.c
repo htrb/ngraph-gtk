@@ -716,7 +716,7 @@ dlgspin(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   data.min = min;
   data.max = max;
   data.inc = inc;
-  ret = dialog_run(title ? title : _("Inst"), caption, dlgspin_main, &data);
+  ret = dialog_run(title ? title : _("Input"), caption, dlgspin_main, &data);
 #else
   ret = DialogSpinEntry(get_toplevel_window(), (title) ? title : _("Input"), caption, min, max, inc, buttons, &btn, &r, &x, &y);
 
@@ -828,7 +828,7 @@ dlgcheck(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   data.button = &btn;
   data.sarray = sarray;
   data.ival = r;
-  ret = dialog_run(title ? title : _("Inst"), caption, dlgcheck_main, &data);
+  ret = dialog_run(title ? title : _("Select"), caption, dlgcheck_main, &data);
 #else
   ret = DialogCheck(get_toplevel_window(), (title) ? title : _("Select"), caption, sarray, buttons, &btn, r, &x, &y);
   _putobj(obj, "x", inst, &x);
