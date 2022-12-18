@@ -632,8 +632,6 @@ CmParameterUpdate(void *w, gpointer client_data)
   DialogExecute(TopLevel, &DlgSelect);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
 static void
 parameter_update_response(struct response_callback *cb)
 {
@@ -660,27 +658,6 @@ parameter_update(GtkButton *btn, gpointer data)
   response_callback_add(&DlgParameter, parameter_update_response, NULL, d);
   DialogExecute(TopLevel, &DlgParameter);
 }
-#else
-static void
-parameter_update(GtkButton *btn, gpointer data)
-{
-  int undo, ret;
-  struct parameter_data *d;
-
-  if (Menulock || Globallock)
-    return;
-
-  d = data;
-  undo = menu_save_undo_single(UNDO_TYPE_EDIT, d->obj->name);
-  ParameterDialog(d->obj_list_data, d->id, -1);
-  ret = DialogExecute(TopLevel, &DlgParameter);
-  if (ret == IDCANCEL) {
-    menu_undo_internal(undo);
-  } else {
-    update_parameter(d->obj_list_data);
-  }
-}
-#endif
 
 static void
 parameter_up(GtkButton *btn, gpointer data)
