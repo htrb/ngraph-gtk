@@ -963,29 +963,16 @@ value_changed(GtkAdjustment *adjustment, gpointer user_data)
 }
 
 static void
-#if GTK_CHECK_VERSION(4, 0, 0)
 toggled(GtkCheckButton *check_button, gpointer user_data)
-#else
-toggled(GtkToggleButton *toggle_button, gpointer user_data)
-#endif
 {
   int active;
   if (Menulock || Globallock) {
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_check_button_set_inconsistent(GTK_CHECK_BUTTON(check_button), FALSE);
-#else
-    gtk_toggle_button_set_inconsistent(toggle_button, TRUE);
-#endif
     return;
   }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_check_button_set_inconsistent(GTK_CHECK_BUTTON(check_button), FALSE);
   active = gtk_check_button_get_active(check_button);
-#else
-  gtk_toggle_button_set_inconsistent(toggle_button, FALSE);
-  active = gtk_toggle_button_get_active(toggle_button);
-#endif
   set_parameter(active, user_data);
 }
 
