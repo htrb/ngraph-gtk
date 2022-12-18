@@ -1297,11 +1297,7 @@ add_save_as_default_button(struct obj_list_data *d, int row, int width)
   g_signal_connect(button, "clicked", G_CALLBACK(save_as_default), d);
 
   box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(box), button);
-#else
-  gtk_box_pack_start(GTK_BOX(box), button, FALSE, FALSE, 0);
-#endif
   gtk_grid_attach(GTK_GRID(d->text), box, 1, row, width, 1);
 }
 
