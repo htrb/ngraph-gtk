@@ -6,6 +6,7 @@ NGRAPH_ICONS = data/icons/32x32/actions/ngraph_align_b.png		\
 	data/icons/32x32/actions/ngraph_align_vc.png			\
 	data/icons/48x48/apps/ngraph_icon.png				\
 	data/icons/64x64/apps/ngraph_icon.png				\
+	data/icons/128x128/apps/ngraph_icon.png				\
 	data/icons/20x20/actions/ngraph_math.png			\
 	data/icons/scalable/actions/none_begin-symbolic.svg		\
 	data/icons/scalable/actions/none_end-symbolic.svg		\
