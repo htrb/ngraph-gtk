@@ -438,8 +438,6 @@ ParameterDialog(struct obj_list_data *data, int id, int user_data)
   d->Id = id;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
 static void
 parameter_add_response(struct response_callback *cb)
 {
@@ -475,33 +473,6 @@ CmParameterAdd(void *w, gpointer client_data)
   response_callback_add(&DlgParameter, parameter_add_response, NULL, GINT_TO_POINTER(undo));
   DialogExecute(TopLevel, &DlgParameter);
 }
-#else
-void
-CmParameterAdd(void *w, gpointer client_data)
-{
-  int id, undo, ret;
-  struct obj_list_data *d;
-
-  if (Menulock || Globallock)
-    return;
-
-  d = NgraphApp.ParameterWin.data.data;
-
-  undo = menu_save_undo_single(UNDO_TYPE_CREATE, d->obj->name);
-  id = newobj(d->obj);
-  if (id < 0) {
-    return;
-  }
-  ParameterDialog(d, id, -1);
-  ret = DialogExecute(TopLevel, &DlgParameter);
-  if (ret == IDCANCEL) {
-    menu_undo_internal(undo);
-  } else {
-    set_graph_modified();
-  }
-  ParameterWinUpdate(d, FALSE, FALSE);
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* must be implemented */
