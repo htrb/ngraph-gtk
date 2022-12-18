@@ -1150,11 +1150,7 @@ create_widget(struct obj_list_data *d, int id, int n)
     }
     width = 2;
     g_signal_connect(w, "toggled", G_CALLBACK(toggled), data);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_check_button_set_active(GTK_CHECK_BUTTON(w), checked);
-#else
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), checked);
-#endif
     break;
   case PARAMETER_TYPE_COMBO:
     w = create_combo_box(items, selected);
@@ -1212,14 +1208,6 @@ create_widget(struct obj_list_data *d, int id, int n)
   } else {
     col += 3;
   }
-
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  col++;
-  separator = gtk_frame_new(NULL);
-  gtk_frame_set_shadow_type(GTK_FRAME(separator), GTK_SHADOW_NONE);
-  gtk_widget_set_hexpand(GTK_WIDGET(separator), TRUE);
-  gtk_grid_attach(GTK_GRID(d->text), separator, col, id, 1, 1);
-#endif
 
   col++;
   separator = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
