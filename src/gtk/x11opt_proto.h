@@ -1,5 +1,13 @@
 #ifndef HAVE_UPDATE_FUNC
 static void
+CREATE_NAME(Pref, DialogUpdate_response)(struct response_callback *cb)
+{
+  struct CREATE_NAME(Pref, Dialog) *d;
+  d = (struct CREATE_NAME(Pref, Dialog) *) cb->dialog;
+  CREATE_NAME(Pref, DialogSetupItem)(d);
+}
+
+static void
 CREATE_NAME(Pref, DialogUpdate)(GtkWidget *w, gpointer client_data)
 {
   struct CREATE_NAME(Pref, Dialog) *d;
@@ -21,8 +29,13 @@ CREATE_NAME(Pref, DialogUpdate)(GtkWidget *w, gpointer client_data)
 #ifdef SET_DIALOG
   if (fcur) {
     CREATE_NAME(Set, Dialog)(&SET_DIALOG, fcur);
+#if GTK_CHECK_VERSION(4, 0, 0)
+    response_callback_add(&SET_DIALOG, CREATE_NAME(Pref, DialogUpdate_response), NULL, NULL);
+#endif
     DialogExecute(d->widget, &SET_DIALOG);
+#if ! GTK_CHECK_VERSION(4, 0, 0)
     CREATE_NAME(Pref, DialogSetupItem)(d);
+#endif
   }
 #endif
 }
@@ -31,11 +44,40 @@ CREATE_NAME(Pref, DialogUpdate)(GtkWidget *w, gpointer client_data)
 #ifdef LIST_INIT
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
+struct CREATE_NAME(Pref, DialogAdd_data) {
+  struct LIST_TYPE *fprev, *fnew;
+};
+
+static void
+CREATE_NAME(Pref, DialogAdd_response)(struct response_callback *cb)
+{
+  struct CREATE_NAME(Pref, DialogAdd_data) *data;
+  struct LIST_TYPE *fprev, *fnew;
+  struct CREATE_NAME(Pref, Dialog) *d;
+
+  data = (struct CREATE_NAME(Pref, DialogAdd_data) *) cb->data;
+  fnew = data->fnew;
+  fprev = data->fprev;
+  g_free(data);
+
+  if (cb->return_value != IDOK) {
+    if (fprev == NULL) {
+      LIST_ROOT = NULL;
+    } else {
+      fprev->next = NULL;
+    }
+    g_free(fnew);
+  }
+  d = (struct CREATE_NAME(Pref, Dialog) *) cb->dialog;
+  CREATE_NAME(Pref, DialogSetupItem)(d);
+}
+
 static void
 CREATE_NAME(Pref, DialogAdd)(GtkWidget *w, gpointer client_data)
 {
   struct LIST_TYPE *fcur, *fprev, *fnew;
   struct CREATE_NAME(Pref, Dialog) *d;
+  struct CREATE_NAME(Pref, DialogAdd_data) *data;
 
   d = (struct CREATE_NAME(Pref, Dialog) *) client_data;
   fprev = NULL;
@@ -58,6 +100,10 @@ CREATE_NAME(Pref, DialogAdd)(GtkWidget *w, gpointer client_data)
   }
 
   CREATE_NAME(Set, Dialog)(&SET_DIALOG, fnew);
+  data = g_malloc0(sizeof(*data));
+  data->fnew = fnew;
+  data->fprev = fprev;
+  response_callback_add(&SET_DIALOG, CREATE_NAME(Pref, DialogAdd_response), NULL, data);
   DialogExecute(d->widget, &SET_DIALOG);
 }
 #else
