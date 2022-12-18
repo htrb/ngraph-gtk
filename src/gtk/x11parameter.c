@@ -246,17 +246,9 @@ add_page_combo(struct ParameterDialog *d)
   buf = gtk_text_buffer_new(NULL);
   w = gtk_text_view_new_with_buffer(buf);
   gtk_widget_set_vexpand(w, TRUE);
-#if GTK_CHECK_VERSION(4, 0, 0)
   swin = gtk_scrolled_window_new();
-#else
-  swin = gtk_scrolled_window_new(NULL, NULL);
-#endif
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), w);
-#else
-  gtk_container_add(GTK_CONTAINER(swin), w);
-#endif
   add_widget_to_table(table, swin, _("_Items:"), TRUE, i++);
   d->items = w;
 
