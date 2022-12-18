@@ -1228,15 +1228,6 @@ create_widget(struct obj_list_data *d, int id, int n)
   return col + 1;
 }
 
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-static void
-remove_child(GtkWidget *widget, gpointer data)
-{
-  GtkContainer *container = data;
-  gtk_container_remove(container, widget);
-}
-#endif
-
 static void
 save_as_default(GtkButton *button, gpointer user_data)
 {
@@ -1314,14 +1305,10 @@ ParameterWinUpdate(struct obj_list_data *d, int clear, int draw)
   }
 
   add_save_button = FALSE;
-#if GTK_CHECK_VERSION(4, 0, 0)
   while (gtk_grid_get_child_at(GTK_GRID(d->text), 0, 0) ||
          gtk_grid_get_child_at(GTK_GRID(d->text), 1, 0)) {
     gtk_grid_remove_row(GTK_GRID(d->text), 0);
   }
-#else
-  gtk_container_foreach(GTK_CONTAINER(d->text), remove_child, d->text);
-#endif
   num = chkobjlastinst(d->obj);
   for (i = 0; i <= num; i++) {
     int type;
@@ -1342,10 +1329,6 @@ ParameterWinUpdate(struct obj_list_data *d, int clear, int draw)
   if (add_save_button) {
     add_save_as_default_button(d, num + 1, col - 4);
   }
-
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  gtk_widget_show_all(GTK_WIDGET(d->text));
-#endif
 }
 
 GtkWidget *
