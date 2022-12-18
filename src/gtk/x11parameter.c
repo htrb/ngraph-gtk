@@ -104,7 +104,6 @@ ParameterCB(struct objlist *obj, int id)
   return s;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 parameter_dialog_copy_response(int sel, gpointer user_data)
 {
@@ -122,21 +121,6 @@ ParameterDialogCopy(GtkButton *btn, gpointer user_data)
   d = (struct ParameterDialog *) user_data;
   CopyClick(d->widget, d->Obj, d->Id, ParameterCB, parameter_dialog_copy_response, d);
 }
-#else
-static void
-ParameterDialogCopy(GtkWidget *w, gpointer data)
-{
-  struct ParameterDialog *d;
-  int sel;
-
-  d = (struct ParameterDialog *) data;
-
-  sel = CopyClick(d->widget, d->Obj, d->Id, ParameterCB);
-  if (sel != -1) {
-    ParameterDialogSetupItem(d, sel);
-  }
-}
-#endif
 
 #define TYPE_SPIN_NAME  "spin"
 #define TYPE_CHECK_NAME "check"
