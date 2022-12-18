@@ -474,8 +474,6 @@ CmParameterAdd(void *w, gpointer client_data)
   DialogExecute(TopLevel, &DlgParameter);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
 static void
 parameter_delete_response(struct response_callback *cb)
 {
@@ -493,11 +491,11 @@ parameter_delete_response(struct response_callback *cb)
     array = arraydata(farray);
     for (i = num - 1; i >= 0; i--) {
       delobj(d->obj, array[i]);
+      set_graph_modified();
     }
-    set_graph_modified();
     ParameterWinUpdate(d, FALSE, FALSE);
   }
-  arraydel(farray);
+  arrayfree(farray);
 }
 
 void
@@ -524,36 +522,6 @@ CmParameterDelete(void *w, gpointer client_data)
   response_callback_add(&DlgSelect, parameter_delete_response, NULL, farray);
   DialogExecute(TopLevel, &DlgSelect);
 }
-#else
-void
-CmParameterDelete(void *w, gpointer client_data)
-{
-  struct narray farray;
-  struct obj_list_data *d;
-
-  if (Menulock || Globallock)
-    return;
-
-  d = NgraphApp.ParameterWin.data.data;
-  if (chkobjlastinst(d->obj) == -1)
-    return;
-  SelectDialog(&DlgSelect, d->obj, _("delete parameter (multi select)"), ParameterCB, (struct narray *) &farray, NULL);
-  if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
-    int i, num, *array;
-    num = arraynum(&farray);
-    if (num > 0) {
-      menu_save_undo_single(UNDO_TYPE_DELETE, d->obj->name);
-    }
-    array = arraydata(&farray);
-    for (i = num - 1; i >= 0; i--) {
-      delobj(d->obj, array[i]);
-      set_graph_modified();
-    }
-    ParameterWinUpdate(d, FALSE, FALSE);
-  }
-  arraydel(&farray);
-}
-#endif
 
 static void
 update_parameter(struct obj_list_data *d)
