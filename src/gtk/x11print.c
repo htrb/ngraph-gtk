@@ -717,7 +717,6 @@ get_base_ngp_name(void)
   return tmp;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 struct gra_out_data
 {
   struct objlist *graobj, *g2wobj;
@@ -830,67 +829,6 @@ CmPrintGRAFile(void)
   if (tmp)
     g_free(tmp);
 }
-#else
-static void
-CmPrintGRAFile(void)
-{
-  struct objlist *graobj, *g2wobj;
-  int id, g2wid, g2woid;
-  N_VALUE *g2winst;
-  char *tmp, *file;
-  int chd;
-
-  if (Menulock || Globallock)
-    return;
-
-  tmp = get_base_ngp_name();
-
-  chd = Menulocal.changedirectory;
-  file = nGetSaveFileName(TopLevel, _("GRA file"), "gra", NULL, tmp, FALSE, chd);
-
-  if (tmp)
-    g_free(tmp);
-
-  if (file == NULL) {
-    return;
-  }
-
-  if (Menulocal.select_data && ! SetFileHidden())
-    return;
-
-  FileAutoScale();
-  AdjustAxis();
-
-  if ((graobj = chkobject("gra")) == NULL) {
-    g_free(file);
-    return;
-  }
-
-  if ((g2wobj = chkobject("gra2file")) == NULL) {
-    g_free(file);
-    return;
-  }
-
-  g2wid = newobj(g2wobj);
-  if (g2wid < 0) {
-    g_free(file);
-    return;
-  }
-
-  g2winst = chkobjinst(g2wobj, g2wid);
-  _getobj(g2wobj, "oid", g2winst, &g2woid);
-  putobj(g2wobj, "file", g2wid, file);
-  id = newobj(graobj);
-  init_graobj(graobj, id, "gra2file", g2woid);
-  draw_gra(graobj, id, _("Making GRA file."), TRUE);
-  delobj(graobj, id);
-  delobj(g2wobj, g2wid);
-
-  if (Menulocal.select_data) {
-    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, TRUE);
-  }
-}
-#endif
 
 #if GTK_CHECK_VERSION(4, 0, 0)
 /* to be implemented */
