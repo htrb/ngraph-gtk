@@ -593,8 +593,12 @@ output_printer_response(int res, gpointer user_data)
 void
 CmOutputPrinter(int select_file, int show_dialog, response_cb cb, gpointer user_data)
 {
-  if (Menulock || Globallock)
+  if (Menulock || Globallock) {
+    if (cb) {
+      cb(IDCANCEL, user_data);
+    }
     return;
+  }
 
   if (select_file) {
     struct output_printer_data *data;
