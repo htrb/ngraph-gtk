@@ -614,7 +614,6 @@ CmOutputPrinter(int select_file, int show_dialog, response_cb cb, gpointer user_
   }
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 struct previewer_data {
   struct objlist *g2wobj;
   N_VALUE *g2winst;
@@ -633,7 +632,6 @@ previewer_cb(gpointer user_data)
   exeobj(data->g2wobj, "present", data->g2wid, 0, NULL);
   g_free(data);
 }
-#endif
 
 void
 CmOutputViewerB(void *wi, gpointer client_data)
@@ -691,20 +689,11 @@ CmOutputViewerB(void *wi, gpointer client_data)
     putobj(g2wobj, "use_opacity", g2wid, &Menulocal.use_opacity);
     id = newobj(graobj);
     init_graobj(graobj, id, "gra2gtk", g2woid);
-#if GTK_CHECK_VERSION(4, 0, 0)
     data = g_malloc0(sizeof(*data));
     data->g2wobj = g2wobj;
     data->g2wid = g2wid;
     data->g2winst = g2winst;
     draw_gra(graobj, id, _("Spawning external viewer."), FALSE, previewer_cb, data);
-#else
-    draw_gra(graobj, id, _("Spawning external viewer."), FALSE);
-
-    delgra = TRUE;
-    _putobj(g2wobj, "delete_gra", g2winst, &delgra);
-
-    exeobj(g2wobj, "present", g2wid, 0, NULL);
-#endif
   }
 }
 
