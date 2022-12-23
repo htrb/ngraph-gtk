@@ -202,36 +202,21 @@ OutputImageDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     w = gtk_check_button_new_with_mnemonic(_("_Convert texts to paths"));
     d->t2p = w;
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(d->vbox), w);
-#else
-    gtk_box_pack_start(GTK_BOX(d->vbox), w, FALSE, FALSE, 4);
-#endif
 
     w = gtk_check_button_new_with_mnemonic(_("_Use opacity"));
     d->use_opacity = w;
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(d->vbox), w);
-#else
-    gtk_box_pack_start(GTK_BOX(d->vbox), w, FALSE, FALSE, 4);
-#endif
 
     w = gtk_spin_button_new_with_range(1, DPI_MAX, 1);
     gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(w), TRUE);
-#if GTK_CHECK_VERSION(4, 0, 0)
     spin_button_set_activates_default(w);
-#else
-    gtk_entry_set_activates_default(GTK_ENTRY(w), TRUE);
-#endif
     d->dpi = w;
     item_setup(GTK_WIDGET(d->vbox), w, "_DPI:", FALSE);
 
     w = combo_box_create();
     d->version = w;
     item_setup(GTK_WIDGET(d->vbox), w, "", FALSE);
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-    gtk_widget_show_all(GTK_WIDGET(d->vbox));
-#endif
   }
 
   switch (d->DlgType) {
