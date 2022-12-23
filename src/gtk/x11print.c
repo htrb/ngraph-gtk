@@ -830,8 +830,6 @@ CmPrintGRAFile(void)
     g_free(tmp);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* to be implemented */
 struct output_image_data
 {
   int type;
@@ -907,6 +905,8 @@ output_image_response_response(int res, gpointer user_data)
     type = data->type;
     file = data->file;
     output_image(type, file);
+  } else {
+    g_free(file);
   }
   g_free(user_data);
 }
@@ -930,7 +930,6 @@ output_image_response(struct response_callback *cb)
 
   if (Menulocal.select_data) {
     SetFileHidden(output_image_response_response, data);
-    g_free(file);
     return;
   }
   output_image(type, file);
@@ -1010,130 +1009,6 @@ CmOutputImage(int type)
     g_free(tmp);
   }
 }
-#else
-static void
-CmOutputImage(int type)
-{
-  struct objlist *graobj, *g2wobj;
-  int id, g2wid, g2woid;
-  N_VALUE *g2winst;
-  int ret;
-  char *title, *ext_str;
-  char *file, *tmp;
-  int chd;
-
-  if (Menulock || Globallock)
-    return;
-
-  switch (type) {
-  case MenuIdOutputPSFile:
-    title = "Save as PostScript";
-    ext_str = "ps";
-    break;
-  case MenuIdOutputEPSFile:
-    title = "Save as Encapsulated PostScript";
-    ext_str = "eps";
-    break;
-  case MenuIdOutputPDFFile:
-    title = "Save as Portable Document Format (PDF)";
-    ext_str = "pdf";
-    break;
-  case MenuIdOutputPNGFile:
-    title = "Save as Portable Network Graphics (PNG)";
-    ext_str = "png";
-    break;
-  case MenuIdOutputSVGFile:
-    title = "Save as Scalable Vector Graphics (SVG)";
-    ext_str = "svg";
-    break;
-#ifdef CAIRO_HAS_WIN32_SURFACE
-  case MenuIdOutputCairoEMFFile:
-    title = "Save as Windows Enhanced Metafile (EMF)";
-    ext_str = "emf";
-    break;
-#endif	/* CAIRO_HAS_WIN32_SURFACE */
-  default:
-    /* not reachable */
-    title = NULL;
-    ext_str = NULL;
-  }
-
-  tmp = get_base_ngp_name();
-  chd = Menulocal.changedirectory;
-  file = nGetSaveFileName(TopLevel, title, ext_str, NULL, tmp, FALSE, chd);
-  if (tmp) {
-    g_free(tmp);
-  }
-
-
-  if (file == NULL) {
-    return;
-  }
-
-  OutputImageDialog(&DlgImageOut, type);
-  ret = DialogExecute(TopLevel, &DlgImageOut);
-  if (ret != IDOK) {
-    g_free(file);
-    return;
-  }
-
-  if (Menulocal.select_data && ! SetFileHidden())
-    return;
-
-  FileAutoScale();
-  AdjustAxis();
-
-  graobj = chkobject("gra");
-  if (graobj == NULL) {
-    g_free(file);
-    return;
-  }
-
-  g2wobj = chkobject("gra2cairofile");
-  if (g2wobj == NULL) {
-    g_free(file);
-    return;
-  }
-
-  g2wid = newobj(g2wobj);
-  if (g2wid < 0) {
-    g_free(file);
-    return;
-  }
-
-  g2winst = chkobjinst(g2wobj, g2wid);
-  _getobj(g2wobj, "oid", g2winst, &g2woid);
-  id = newobj(graobj);
-  putobj(g2wobj, "file", g2wid, file);
-
-  switch (type) {
-  case MenuIdOutputPSFile:
-  case MenuIdOutputEPSFile:
-  case MenuIdOutputSVGFile:
-  case MenuIdOutputPDFFile:
-#ifdef CAIRO_HAS_WIN32_SURFACE
-  case MenuIdOutputCairoEMFFile:
-#endif	/* CAIRO_HAS_WIN32_SURFACE */
-    putobj(g2wobj, "text2path", g2wid, &DlgImageOut.text2path);
-    break;
-  case MenuIdOutputPNGFile:
-    break;
-  }
-
-  putobj(g2wobj, "use_opacity", g2wid, &DlgImageOut.UseOpacity);
-  putobj(g2wobj, "dpi", g2wid, &DlgImageOut.Dpi);
-  putobj(g2wobj, "format", g2wid, &DlgImageOut.Version);
-
-  init_graobj(graobj, id, "gra2cairofile", g2woid);
-  draw_gra(graobj, id, _("Drawing."), TRUE);
-  delobj(graobj, id);
-  delobj(g2wobj, g2wid);
-
-  if (Menulocal.select_data) {
-    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, TRUE);
-  }
-}
-#endif
 
 #if WINDOWS
 static void
