@@ -124,11 +124,7 @@ OutputImageDialogSetupItem(struct OutputImageDialog *d)
   vlabel = get_mnemonic_label(d->version);
 
   gtk_label_set_text(GTK_LABEL(vlabel), "");
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_check_button_set_active(GTK_CHECK_BUTTON(d->use_opacity), FALSE);
-#else
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->use_opacity), FALSE);
-#endif
 
   combo_box_clear(d->version);
   switch (d->DlgType) {
@@ -152,11 +148,7 @@ OutputImageDialogSetupItem(struct OutputImageDialog *d)
     gtk_widget_set_visible(d->t2p, FALSE);
 
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(d->dpi), Menulocal.png_dpi);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_check_button_set_active(GTK_CHECK_BUTTON(d->use_opacity), Menulocal.use_opacity);
-#else
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->use_opacity), Menulocal.use_opacity);
-#endif
 
     break;
   case MenuIdOutputPDFFile:
@@ -165,11 +157,7 @@ OutputImageDialogSetupItem(struct OutputImageDialog *d)
     gtk_widget_set_visible(d->t2p, TRUE);
 
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(d->dpi), 72);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_check_button_set_active(GTK_CHECK_BUTTON(d->use_opacity), Menulocal.use_opacity);
-#else
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->use_opacity), Menulocal.use_opacity);
-#endif
     break;
   case MenuIdOutputSVGFile:
     for (i = 0; PsVersion[i]; i++) {
@@ -184,11 +172,7 @@ OutputImageDialogSetupItem(struct OutputImageDialog *d)
 
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(d->dpi), 72);
     combo_box_set_active(d->version, Menulocal.svg_version);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_check_button_set_active(GTK_CHECK_BUTTON(d->use_opacity), Menulocal.use_opacity);
-#else
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->use_opacity), Menulocal.use_opacity);
-#endif
     break;
 #ifdef CAIRO_HAS_WIN32_SURFACE
   case MenuIdOutputCairoEMFFile:
@@ -203,11 +187,7 @@ OutputImageDialogSetupItem(struct OutputImageDialog *d)
   window = gtk_widget_get_parent(GTK_WIDGET(d->vbox));
   if (GTK_IS_WINDOW(window)) {
     gtk_widget_get_preferred_size(GTK_WIDGET(d->vbox), &minimum_size, NULL);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_window_set_default_size(GTK_WINDOW(window), minimum_size.width, minimum_size.height);
-#else
-    gtk_window_resize(GTK_WINDOW(window), minimum_size.width, minimum_size.height);
-#endif
   }
 }
 
