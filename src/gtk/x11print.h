@@ -25,11 +25,7 @@
 #define PRINT_SHOW_DIALOG_PREVIEW 1
 #define PRINT_SHOW_DIALOG_DIALOG  2
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 void CmOutputPrinter(int select_file, int show_dialog, response_cb cb, gpointer user_data);
-#else
-void CmOutputPrinter(int select_file, int show_dialog);
-#endif
 void CmOutputMenu(void *w, gpointer client_data);
 void CmOutputViewerB(void *w, gpointer client_data);
 void CmOutputPrinterB(void *wi, gpointer client_data);
