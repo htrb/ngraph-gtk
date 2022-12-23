@@ -662,7 +662,6 @@ CmOutputViewerB(void *wi, gpointer client_data)
     struct objlist *graobj, *g2wobj;
     int id, g2wid, g2woid, c;
     N_VALUE *g2winst;
-    int delgra;
     struct previewer_data *data;
 
     if ((graobj = chkobject("gra")) == NULL)
