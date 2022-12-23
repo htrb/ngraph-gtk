@@ -331,7 +331,6 @@ OutputImageDialog(struct OutputImageDialog *data, int type)
   data->DlgType = type;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 typedef void (* draw_gra_cb) (gpointer user_data);
 
 struct draw_gra_data {
@@ -373,12 +372,10 @@ draw_gra_main(gpointer user_data)
     }
   }
 }
-#endif
 
 static void
 draw_gra(struct objlist *graobj, int id, char *msg, int close, draw_gra_cb cb, gpointer user_data )
 {
-#if GTK_CHECK_VERSION(4, 0, 0)
   struct draw_gra_data *data;
   data = g_malloc0(sizeof(*data));
   data->graobj = graobj;
@@ -393,22 +390,6 @@ draw_gra(struct objlist *graobj, int id, char *msg, int close, draw_gra_cb cb, g
     draw_gra_main(data);
     draw_gra_finalize(data);
   }
-#else
-  ProgressDialogCreate(msg);
-  SetStatusBar(msg);
-
-  if (exeobj(graobj, "open", id, 0, NULL) == 0) {
-    exeobj(graobj, "draw", id, 0, NULL);
-    exeobj(graobj, "flush", id, 0, NULL);
-    if (close) {
-      exeobj(graobj, "close", id, 0, NULL);
-    }
-  }
-
-  ProgressDialogFinalize();
-  ResetStatusBar();
-  main_window_redraw();
-#endif
 }
 
 static void
