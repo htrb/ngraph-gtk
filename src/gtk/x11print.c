@@ -896,16 +896,16 @@ output_image(int type, char *file)
 static void
 output_image_response_response(int res, gpointer user_data)
 {
+  struct output_image_data *data;
+  data = (struct output_image_data *) user_data;
   if (res) {
-    struct output_image_data *data;
     int type;
     char *file;
-    data = (struct output_image_data *) user_data;
     type = data->type;
     file = data->file;
     output_image(type, file);
   } else {
-    g_free(file);
+    g_free(data->file);
   }
   g_free(user_data);
 }
