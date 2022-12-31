@@ -30,11 +30,7 @@ tree_view_set_tooltip_query_cb(GtkWidget  *widget,
   int column;
 
   if (!gtk_tree_view_get_tooltip_context(GTK_TREE_VIEW(widget),
-#if GTK_CHECK_VERSION(4, 0, 0)
 					 x, y,
-#else
-					 &x, &y,
-#endif
 					 keyboard_tip,
 					 &model, &path, &iter)) {
     return FALSE;
