@@ -193,7 +193,6 @@ GraphAddinAction_activated(GSimpleAction *action, GVariant *parameter, gpointer 
   script_exec(NULL, fcur);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 RecentGraphAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
@@ -218,7 +217,6 @@ RecentDataAction_activated(GSimpleAction *action, GVariant *parameter, gpointer 
     load_data(fname);
   }
 }
-#endif
 
 static void
 EditRedoAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
@@ -437,11 +435,7 @@ ViewGridLineAction_activated(GSimpleAction *action, GVariant *parameter, gpointe
 static void
 DataAddFileAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-#if GTK_CHECK_VERSION(4, 0, 0)
   CmFileOpen(NULL, NULL, app);
-#else
-  CmFileOpen(NULL, NULL);
-#endif
 }
 
 static void
