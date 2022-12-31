@@ -50,11 +50,7 @@ combo_box_entry_create(void)
   cbox = GTK_COMBO_BOX(gtk_combo_box_new_with_entry());
   set_model(cbox, FALSE);
   gtk_combo_box_set_entry_text_column(GTK_COMBO_BOX(cbox), 0);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_entry_set_activates_default(GTK_ENTRY(gtk_combo_box_get_child(GTK_COMBO_BOX(cbox))), TRUE);
-#else
-  gtk_entry_set_activates_default(GTK_ENTRY(gtk_bin_get_child(GTK_BIN(cbox))), TRUE);
-#endif
   return GTK_WIDGET(cbox);
 }
 
