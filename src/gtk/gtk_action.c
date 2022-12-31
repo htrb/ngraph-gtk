@@ -495,11 +495,7 @@ ParameterDeleteAction_activated(GSimpleAction *action, GVariant *parameter, gpoi
 static void
 AxisAddFrameAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-#if GTK_CHECK_VERSION(4, 0, 0)
   CmAxisAddFrame(NULL, NULL, app);
-#else
-  CmAxisAddFrame(NULL, NULL);
-#endif
 }
 
 static void
