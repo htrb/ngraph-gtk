@@ -507,11 +507,7 @@ AxisAddSectionAction_activated(GSimpleAction *action, GVariant *parameter, gpoin
 static void
 AxisAddCrossAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-#if GTK_CHECK_VERSION(4, 0, 0)
   CmAxisAddCross(NULL, NULL, app);
-#else
-  CmAxisAddCross(NULL, NULL);
-#endif
 }
 
 static void
