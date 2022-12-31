@@ -441,11 +441,7 @@ DataAddFileAction_activated(GSimpleAction *action, GVariant *parameter, gpointer
 static void
 DataAddRangeAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-#if GTK_CHECK_VERSION(4, 0, 0)
   CmRangeAdd(NULL, NULL, app);
-#else
-  CmRangeAdd(NULL, NULL);
-#endif
 }
 
 static void
