@@ -627,11 +627,7 @@ LegendTextDeleteAction_activated(GSimpleAction *action, GVariant *parameter, gpo
 static void
 MergeAddAction_activated(GSimpleAction *action, GVariant *parameter, gpointer app)
 {
-#if GTK_CHECK_VERSION(4, 0, 0)
   CmMergeOpen(NULL, NULL, app);
-#else
-  CmMergeOpen(NULL, NULL);
-#endif
 }
 
 static void
