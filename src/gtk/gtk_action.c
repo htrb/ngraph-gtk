@@ -818,10 +818,8 @@ static GActionEntry AppEntries[] =
   { "PreferenceTextDefaultAction", PreferenceTextDefaultAction_activated, NULL, NULL, NULL },
   { "PreferenceGridDefaultAction", PreferenceGridDefaultAction_activated, NULL, NULL, NULL },
   { "PopupUpdateAction", PopupUpdateAction_activated, NULL, NULL, NULL },
-#if GTK_CHECK_VERSION(4, 0, 0)
   { "RecentGraphAction", RecentGraphAction_activated, "s", NULL, NULL },
   { "RecentDataAction", RecentDataAction_activated, "s", NULL, NULL },
-#endif
 };
 
 static int Initialized = FALSE;
