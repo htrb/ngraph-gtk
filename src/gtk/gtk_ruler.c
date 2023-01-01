@@ -177,23 +177,11 @@ nruler_destroy(GtkWidget *widget, gpointer user_data)
   return FALSE;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 nruler_resize(GtkWidget *widget, int width, int hegiht, gpointer user_data)
 {
   nruler_realize(widget, user_data);
 }
-#else
-static void
-nruler_size_allocate(GtkWidget *widget, GtkAllocation *allocation, gpointer user_data)
-{
-  Nruler *ruler;
-
-  ruler = (Nruler *) user_data;
-
-  nruler_make_pixmap(ruler, widget, ruler->parent);
-}
-#endif
 
 static void
 nruler_realize(GtkWidget *widget, gpointer user_data)
