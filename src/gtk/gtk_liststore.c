@@ -236,17 +236,11 @@ add_mark_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *
 }
 
 void
-#if GTK_CHECK_VERSION(4, 0, 0)
 add_enum_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iterp, GtkTreeIter *parent, int column_id, struct objlist *obj, const char *field, int id, GtkTreeIter *selected)
-#else
-add_enum_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *parent, int column_id, struct objlist *obj, const char *field, int id)
-#endif
 {
   char **enum_array;
   int state, i;
-#if GTK_CHECK_VERSION(4, 0, 0)
   GtkTreeIter iter;
-#endif
 
   getobj(obj, field, id, 0, NULL, &state);
   enum_array = (char **) chkobjarglist(obj, field);
@@ -254,20 +248,14 @@ add_enum_combo_item_to_cbox(GtkTreeStore *list, GtkTreeIter *iter, GtkTreeIter *
     return;
   }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   if (iterp == NULL) {
     iterp = &iter;
   }
-#endif
   for (i = 0; enum_array[i] && enum_array[i][0]; i++) {
-#if GTK_CHECK_VERSION(4, 0, 0)
     add_text_combo_item_to_cbox(list, iterp, parent, column_id, i, _(enum_array[i]), TOGGLE_RADIO, i == state);
     if (selected && (i == state)) {
       *selected = *iterp;
     }
-#else
-    add_text_combo_item_to_cbox(list, iter, parent, column_id, i, _(enum_array[i]), TOGGLE_RADIO, i == state);
-#endif
   }
 }
 
