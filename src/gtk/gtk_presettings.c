@@ -1788,8 +1788,6 @@ create_menu_button(GtkBuilder *builder, const char *menu_name, const char *toolt
   return w;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
 static void
 mark_dialog_response(struct response_callback *cb)
 {
@@ -1811,21 +1809,6 @@ select_mark(GtkWidget *w, gpointer client_data)
   response_callback_add(d, mark_dialog_response, NULL, w);
   DialogExecute(d->parent, d);
 }
-#else
-static void
-select_mark(GtkWidget *w, gpointer client_data)
-{
-  struct MarkDialog *d;
-  int ret;
-
-  d = (struct MarkDialog *) client_data;
-  ret = DialogExecute(d->parent, d);
-  if (ret == IDOK) {
-    button_set_mark_image(w, d->Type);
-    update_focused_obj(w, GINT_TO_POINTER(d->Type));
-  }
-}
-#endif
 
 static void
 setup_mark_type(GtkWidget *type, struct MarkDialog *mark)
