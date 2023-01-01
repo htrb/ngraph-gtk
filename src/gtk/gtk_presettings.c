@@ -88,11 +88,7 @@ button_set_child(GtkWidget *button, const char *icon)
 }
 
 static int
-#if GTK_CHECK_VERSION(4, 0, 0)
 check_selected_item(GSimpleAction *action, GVariant *parameter, char **item, GtkWidget *button, char **icon)
-#else
-check_selected_item(GSimpleAction *action, GVariant *parameter, char **item, GtkWidget *button, GtkWidget **icon)
-#endif
 {
   const char *state;
   int i, selected;
@@ -100,12 +96,7 @@ check_selected_item(GSimpleAction *action, GVariant *parameter, char **item, Gtk
   state = g_variant_get_string(parameter, NULL);
   for (i = 0; item[i]; i++) {
     if (g_strcmp0(state, item[i]) == 0) {
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
       button_set_child(button, icon[i]);
-#else
-      gtk_button_set_image(GTK_BUTTON(button), icon[i]);
-#endif
       selected = i;
       break;
     }
