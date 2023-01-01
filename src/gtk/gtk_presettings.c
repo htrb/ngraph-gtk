@@ -225,19 +225,10 @@ create_images(struct presetting_widgets *widgets)
   create_marker_images_sub("end", marker_type_char, widgets->marker_end_icon);
   create_images_sub("join", joinchar, widgets->join_icon);
   for (i = 0; i < STROKE_FILL_ICON_NUM; i++) {
-#if GTK_CHECK_VERSION(4, 0, 0)
     char *img;
-#else
-    GtkWidget *img;
-#endif
     char img_file[256];
     snprintf(img_file, sizeof(img_file), "stroke_fill_%d-symbolic", i);
-#if GTK_CHECK_VERSION(4, 0, 0)
     img = g_strdup(img_file);
-#else
-    img = gtk_image_new_from_icon_name(img_file, GTK_ICON_SIZE_LARGE_TOOLBAR);
-    g_object_ref(img);
-#endif
     widgets->stroke_fill_icon[i] = img;
   }
 }
