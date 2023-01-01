@@ -1730,12 +1730,7 @@ create_line_width_combo_box(void)
   rend = gtk_cell_renderer_pixbuf_new();
   gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(cbox), rend, FALSE);
   gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "icon-name", 1);
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
   gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "icon-size", 2);
-#else
-  gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "stock-size", 2);
-#endif
   for (j = 0; j < LINE_WIDTH_ICON_NUM; j++) {
     char buf[64], img_file[256];
     snprintf(img_file, sizeof(img_file), "linewidth_%03d-symbolic", 2 << j);
@@ -1744,9 +1739,6 @@ create_line_width_combo_box(void)
     gtk_list_store_set(list, &iter,
 		       0, buf,
 		       1, img_file,
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-		       2, GTK_ICON_SIZE_LARGE_TOOLBAR,
-#endif
 		       -1);
   }
   gtk_combo_box_set_active(GTK_COMBO_BOX(cbox), 1);
