@@ -204,28 +204,15 @@ create_images_sub(const char *prefix, char **item, char **icon)
 }
 
 static void
-#if GTK_CHECK_VERSION(4, 0, 0)
 create_marker_images_sub(const char *postfix, char **item, char **icon)
-#else
-create_marker_images_sub(const char *postfix, char **item, GtkWidget **icon)
-#endif
 {
   int i;
-#if GTK_CHECK_VERSION(4, 0, 0)
   char *img;
-#else
-  GtkWidget *img;
-#endif
   char img_file[256];
 
   for (i = 0; item[i]; i++) {
     snprintf(img_file, sizeof(img_file), "%s_%s-symbolic", item[i], postfix);
-#if GTK_CHECK_VERSION(4, 0, 0)
     img = g_strdup(img_file);
-#else
-    img = gtk_image_new_from_icon_name(img_file, GTK_ICON_SIZE_LARGE_TOOLBAR);
-    g_object_ref(img);
-#endif
     icon[i] = img;
   }
 }
