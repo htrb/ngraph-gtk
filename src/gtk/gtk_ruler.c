@@ -67,23 +67,17 @@ static const struct _NrulerMetric Metric = {
 static void nruler_make_pixmap(Nruler *ruler, GtkWidget *widget, GtkWidget *parent);
 static void nruler_draw_ticks(Nruler *ruler, GtkWidget *widget);
 static void nruler_realize(GtkWidget *widget, gpointer user_data);
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void nruler_resize(GtkWidget *widget, int width, int hegiht, gpointer user_data);
-#else
-static void nruler_size_allocate(GtkWidget *widget, GtkAllocation *allocation, gpointer user_data);
-#endif
 static gboolean nruler_destroy(GtkWidget *widget, gpointer user_data);
 static void nruler_draw_pos(Nruler *ruler, GtkWidget *widget, cairo_t *cr);
 static gboolean nruler_expose(GtkWidget *widget, cairo_t *cr, gpointer user_data);
 static GtkStyleContext *nruler_get_color(Nruler *ruler, GdkRGBA *fg);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 draw_function(GtkDrawingArea* drawing_area, cairo_t* cr, int width, int height, gpointer user_data)
 {
   nruler_expose(GTK_WIDGET(drawing_area), cr, user_data);
 }
-#endif
 
 GtkWidget *
 nruler_new(GtkOrientation orientation)
@@ -104,13 +98,8 @@ nruler_new(GtkOrientation orientation)
   }
 
   frame = gtk_frame_new(NULL);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_widget_add_css_class(frame, "ruler");
   gtk_frame_set_child(GTK_FRAME(frame), w);
-#else
-  gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_OUT);
-  gtk_container_add(GTK_CONTAINER(frame), w);
-#endif
 
   ruler->orientation = orientation;
   ruler->widget = w;
@@ -119,18 +108,9 @@ nruler_new(GtkOrientation orientation)
 
   g_object_set_data(G_OBJECT(frame), RULER_DATA_KEY, ruler);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_drawing_area_set_draw_func(GTK_DRAWING_AREA(w), draw_function, ruler, NULL);
-#else
-  g_signal_connect(w, "draw", G_CALLBACK(nruler_expose), ruler);
-#endif
   g_signal_connect(w, "realize", G_CALLBACK(nruler_realize), ruler);
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* must be implemented */
   g_signal_connect(w, "resize", G_CALLBACK(nruler_resize), ruler);
-#else
-  g_signal_connect(w, "size-allocate", G_CALLBACK(nruler_size_allocate), ruler);
-#endif
   g_signal_connect(frame, "unrealize", G_CALLBACK(nruler_destroy), ruler);
 
   return frame;
