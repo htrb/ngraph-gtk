@@ -466,13 +466,8 @@ create_toggle_button(GtkWidget *box, GtkWidget *img, const char *tooltip, int st
 {
   GtkWidget *w;
   w = gtk_toggle_button_new();
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_button_set_child(GTK_BUTTON(w), img);
   gtk_box_append(GTK_BOX(box), w);
-#else
-  gtk_container_add(GTK_CONTAINER(w), img);
-  gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
-#endif
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), state);
   gtk_widget_set_tooltip_text(w, tooltip);
   g_signal_connect(w, "toggled", G_CALLBACK(update_focused_obj), NULL);
