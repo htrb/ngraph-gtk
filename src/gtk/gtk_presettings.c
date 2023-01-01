@@ -1783,9 +1783,6 @@ create_menu_button(GtkBuilder *builder, const char *menu_name, const char *toolt
   GMenuModel *menu;
   w = gtk_menu_button_new();
   menu = G_MENU_MODEL(gtk_builder_get_object(builder, menu_name));
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  gtk_menu_button_set_use_popover(GTK_MENU_BUTTON(w), FALSE);
-#endif
   gtk_menu_button_set_menu_model(GTK_MENU_BUTTON(w), menu);
   gtk_widget_set_tooltip_text(w, tooltip);
   return w;
