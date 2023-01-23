@@ -256,6 +256,8 @@ static char *f2dtypechar[]={
   N_("rectangle_solid_fill"),
   N_("errorbar_x"),
   N_("errorbar_y"),
+  N_("errorband_x"),
+  N_("errorband_y"),
   N_("staircase_x"),
   N_("staircase_y"),
   N_("bar_x"),
