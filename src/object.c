@@ -476,7 +476,7 @@ arraydup(struct narray *array)
   *new_ary = *array;
   if (array->data) {
 #if GLIB_CHECK_VERSION(2, 68, 0)
-    new_ary->data = g_memdup2(array->data, array->base * array->size);
+    new_ary->data = g_memdup2(array->data, (gsize) array->base * array->size);
 #else
     new_ary->data = g_memdup(array->data, array->base * array->size);
 #endif
