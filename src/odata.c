@@ -7221,6 +7221,25 @@ draw_trapezoid_x(int GC, double x00, double x01, double y0, double x10, double x
   draw_error_band(GC, xy, fp);
 }
 
+static void
+draw_trapezoid_y(int GC, double x0, double y00, double y01, double x1, double y10, double y11, struct f2ddata *fp)
+{
+  double xy[8];
+  xy[0] = x0;
+  xy[1] = y00;
+
+  xy[2] = x0;
+  xy[3] = y01;
+
+  xy[4] = x1;
+  xy[5] = y11;
+
+  xy[6] = x1;
+  xy[7] = y10;
+
+  draw_error_band(GC, xy, fp);
+}
+
 static int
 stairout(struct objlist *obj,struct f2ddata *fp,int GC,
 	 int width,int snum,int *style,
