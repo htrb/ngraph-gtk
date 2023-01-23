@@ -48,6 +48,8 @@ enum axis_instance_field_type{
   AXIS_REFERENCE,
 };
 
+#include "config.h"
+#include <stdio.h>
 #include "math/math_equation.h"
 
 struct array_prm
