@@ -466,7 +466,7 @@ static int set_data_progress(struct f2ddata *fp);
 static int getminmaxdata(struct f2ddata *fp, struct f2dlocal *local);
 static int calc_fit_equation(struct objlist *obj, N_VALUE *inst, double x, double *y);
 static void f2dtransf(double x,double y,int *gx,int *gy,void *local);
-static int _f2dtransf(double x,double y,int *gx,int *gy,void *local);
+static int _f2dtransf(double x,double y,int *gx,int *gy, const struct f2ddata *fp);
 static int f2drectclipf(double *x0,double *y0,double *x1,double *y1,void *local);
 static int f2dlineclipf(double *x0,double *y0,double *x1,double *y1,void *local);
 static int getposition(struct f2ddata *fp,double x,double y,int *gx,int *gy);
@@ -5855,14 +5855,12 @@ getposition2(struct f2ddata *fp,int axtype,int aytype,double *x,double *y)
 }
 
 static int
-_f2dtransf(double x,double y,int *gx,int *gy,void *local)
+_f2dtransf(double x,double y,int *gx,int *gy,const struct f2ddata *fp)
 {
-  struct f2ddata *fp;
   double minx,miny;
   double v1x,v1y,v2x,v2y,vx,vy;
   double a,b,c,d;
 
-  fp=local;
   minx=fp->axmin;
   miny=fp->aymin;
   v1x=fp->ratex*(x-minx)*fp->axvx;
@@ -5892,7 +5890,9 @@ _f2dtransf(double x,double y,int *gx,int *gy,void *local)
 static void
 f2dtransf(double x,double y,int *gx,int *gy,void *local)
 {
-  _f2dtransf(x, y, gx, gy, local);
+  const struct f2ddata *fp;
+  fp = local;
+  _f2dtransf(x, y, gx, gy, fp);
 }
 
 static int
