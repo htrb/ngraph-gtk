@@ -7241,6 +7241,37 @@ draw_trapezoid_y(int GC, double x0, double y00, double y01, double x1, double y1
 }
 
 static int
+errorbandout(struct objlist *obj, struct f2ddata *fp, int GC, int type)
+{
+  struct error_info einfo;
+  struct f2ddata_buf cur, prev;
+
+  error_info_init(&einfo);
+  prev.dxstat = MATH_VALUE_UNDEF;
+  while (getdata(fp) == 0) {
+    double x0, y0, d20, d30, x1, y1, d21, d31;
+    GRAcolor(GC,fp->col.r, fp->col.g, fp->col.b, fp->col.a);
+    set_f2ddata_buf(&cur, fp);
+
+    if (check_data(&prev, fp, &x0, &y0, &d20, &d30) &&
+        check_data(&cur, fp, &x1, &y1, &d21, &d31)) {
+      if (type == PLOT_TYPE_ERRORBAND_X) {
+        draw_trapezoid_x(GC, d20, d30, y0, d21, d31, y1, fp);
+      } else {
+        draw_trapezoid_y(GC, x0, d20, d30, x1, d21, d31, fp);
+      }
+    } else {
+      errordisp(obj, fp, &einfo);
+    }
+    if (! check_continue(&cur)) {
+      prev = cur;
+    }
+  }
+  errordisp(obj, fp, &einfo);
+  return 0;
+}
+
+static int
 stairout(struct objlist *obj,struct f2ddata *fp,int GC,
 	 int width,int snum,int *style,
 	 int join,int miter,int type)
