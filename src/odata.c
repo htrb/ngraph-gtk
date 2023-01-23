@@ -2710,9 +2710,11 @@ opendata(struct objlist *obj,N_VALUE *inst,
     fp->type=TYPE_DIAGONAL;
     break;
   case PLOT_TYPE_ERRORBAR_X:
+  case PLOT_TYPE_ERRORBAND_X:
     fp->type=TYPE_ERR_X;
     break;
   case PLOT_TYPE_ERRORBAR_Y:
+  case PLOT_TYPE_ERRORBAND_Y:
     fp->type=TYPE_ERR_Y;
     break;
   default:
