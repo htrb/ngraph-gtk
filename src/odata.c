@@ -7113,6 +7113,20 @@ errorbarout(struct objlist *obj,struct f2ddata *fp,int GC,
   return 0;
 }
 
+static void
+set_f2ddata_buf(struct f2ddata_buf *dest, const struct f2ddata *fp)
+{
+  dest->dxstat = fp->dxstat;
+  dest->dystat = fp->dystat;
+  dest->d2stat = fp->d2stat;
+  dest->d3stat = fp->d3stat;
+
+  dest->dx = fp->dx;
+  dest->dy = fp->dy;
+  dest->d2 = fp->d2;
+  dest->d3 = fp->d3;
+}
+
 static int
 stairout(struct objlist *obj,struct f2ddata *fp,int GC,
 	 int width,int snum,int *style,
