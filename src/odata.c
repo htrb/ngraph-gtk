@@ -7128,6 +7128,34 @@ set_f2ddata_buf(struct f2ddata_buf *dest, const struct f2ddata *fp)
 }
 
 static int
+check_data(const struct f2ddata_buf *data, struct f2ddata *fp, double *x, double *y, double *d2, double *d3)
+{
+  if (data->dxstat != MATH_VALUE_NORMAL) {
+    return FALSE;
+  }
+  if (data->dystat != MATH_VALUE_NORMAL) {
+    return FALSE;
+  }
+  if (data->d2stat != MATH_VALUE_NORMAL) {
+    return FALSE;
+  }
+  if (data->d3stat != MATH_VALUE_NORMAL) {
+    return FALSE;
+  }
+  *x = data->dx;
+  *y = data->dy;
+  if (getposition2(fp, fp->axtype, fp->aytype, x, y)) {
+    return FALSE;
+  }
+  *d2 = data->d2;
+  *d3 = data->d3;
+  if (getposition2(fp, fp->axtype, fp->axtype, d2, d3)) {
+    return FALSE;
+  }
+  return TRUE;
+}
+
+static int
 stairout(struct objlist *obj,struct f2ddata *fp,int GC,
 	 int width,int snum,int *style,
 	 int join,int miter,int type)
