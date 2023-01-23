@@ -7973,6 +7973,10 @@ f2ddraw(struct objlist *obj, N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   case PLOT_TYPE_ERRORBAR_Y:
     rcode = errorbarout(obj, fp, GC, lwidth, snum, style, type);
     break;
+  case PLOT_TYPE_ERRORBAND_X:
+  case PLOT_TYPE_ERRORBAND_Y:
+    rcode = errorbandout(obj, fp, GC, type);
+    break;
   case PLOT_TYPE_STAIRCASE_X:
   case PLOT_TYPE_STAIRCASE_Y:
     rcode = stairout(obj, fp, GC, lwidth, snum, style, ljoin, lmiter, type);
