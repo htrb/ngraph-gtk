@@ -3476,6 +3476,8 @@ FileDialogType(GtkWidget *w, gpointer client_data)
   case PLOT_TYPE_RECTANGLE_FILL:
   case PLOT_TYPE_ERRORBAR_X:
   case PLOT_TYPE_ERRORBAR_Y:
+  case PLOT_TYPE_ERRORBAND_X:
+  case PLOT_TYPE_ERRORBAND_Y:
   case PLOT_TYPE_STAIRCASE_X:
   case PLOT_TYPE_STAIRCASE_Y:
   case PLOT_TYPE_BAR_X:
@@ -3577,6 +3579,8 @@ FileDialogType(GtkWidget *w, gpointer client_data)
     break;
   case PLOT_TYPE_ERRORBAR_X:
   case PLOT_TYPE_ERRORBAR_Y:
+  case PLOT_TYPE_ERRORBAND_X:
+  case PLOT_TYPE_ERRORBAND_Y:
     set_widget_sensitivity_with_label(d->mark_btn, FALSE);
     set_widget_sensitivity_with_label(d->curve, FALSE);
     set_widget_sensitivity_with_label(d->col2, FALSE);
@@ -3886,12 +3890,14 @@ set_headline_table_header(struct FileDialog *d)
 	g_string_append(str, "Y1");
 	break;
       case PLOT_TYPE_ERRORBAR_X:
+      case PLOT_TYPE_ERRORBAND_X:
 	g_string_append(str, "Ex1");
 	break;
       }
     } else if (i == x + 2) {
       switch (type) {
       case PLOT_TYPE_ERRORBAR_X:
+      case PLOT_TYPE_ERRORBAND_X:
 	g_string_append(str, "Ex2");
 	break;
       }
@@ -3923,12 +3929,14 @@ set_headline_table_header(struct FileDialog *d)
 	g_string_append(str, "Y2");
 	break;
       case PLOT_TYPE_ERRORBAR_Y:
+      case PLOT_TYPE_ERRORBAND_Y:
 	g_string_append(str, "Ey1");
 	break;
       }
     } else if (i == y + 2) {
       switch (type) {
       case PLOT_TYPE_ERRORBAR_Y:
+      case PLOT_TYPE_ERRORBAND_Y:
 	g_string_append(str, "Ey2");
 	break;
       }
@@ -5896,11 +5904,13 @@ draw_type_pixbuf(struct objlist *obj, int i)
     GRArectangle(ggc, 1, height - 1, width - 1, 1, 1);
     break;
   case PLOT_TYPE_ERRORBAR_X:
+  case PLOT_TYPE_ERRORBAND_X:
     GRAline(ggc, 1, height / 2, width - 1, height / 2);
     GRAline(ggc, 1, height / 4, 1, height * 3 / 4);
     GRAline(ggc, width - 1, height / 4, width - 1, height * 3 / 4);
     break;
   case PLOT_TYPE_ERRORBAR_Y:
+  case PLOT_TYPE_ERRORBAND_Y:
     GRAline(ggc, width / 2, 1, width / 2, height - 1);
     GRAline(ggc, width * 3 / 8, 1, width * 5 / 8, 1);
     GRAline(ggc, width * 3 / 8, height -1, width * 5 / 8, height - 1);

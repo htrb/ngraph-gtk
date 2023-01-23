@@ -29,6 +29,8 @@ enum FILE_OBJ_PLOT_TYPE {
   PLOT_TYPE_RECTANGLE_SOLID_FILL,
   PLOT_TYPE_ERRORBAR_X,
   PLOT_TYPE_ERRORBAR_Y,
+  PLOT_TYPE_ERRORBAND_X,
+  PLOT_TYPE_ERRORBAND_Y,
   PLOT_TYPE_STAIRCASE_X,
   PLOT_TYPE_STAIRCASE_Y,
   PLOT_TYPE_BAR_X,
@@ -46,6 +48,8 @@ enum axis_instance_field_type{
   AXIS_REFERENCE,
 };
 
+#include "config.h"
+#include <stdio.h>
 #include "math/math_equation.h"
 
 struct array_prm

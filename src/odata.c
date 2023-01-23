@@ -256,6 +256,8 @@ static char *f2dtypechar[]={
   N_("rectangle_solid_fill"),
   N_("errorbar_x"),
   N_("errorbar_y"),
+  N_("errorband_x"),
+  N_("errorband_y"),
   N_("staircase_x"),
   N_("staircase_y"),
   N_("bar_x"),
@@ -464,7 +466,7 @@ static int set_data_progress(struct f2ddata *fp);
 static int getminmaxdata(struct f2ddata *fp, struct f2dlocal *local);
 static int calc_fit_equation(struct objlist *obj, N_VALUE *inst, double x, double *y);
 static void f2dtransf(double x,double y,int *gx,int *gy,void *local);
-static int _f2dtransf(double x,double y,int *gx,int *gy,void *local);
+static int _f2dtransf(double x,double y,int *gx,int *gy, const struct f2ddata *fp);
 static int f2drectclipf(double *x0,double *y0,double *x1,double *y1,void *local);
 static int f2dlineclipf(double *x0,double *y0,double *x1,double *y1,void *local);
 static int getposition(struct f2ddata *fp,double x,double y,int *gx,int *gy);
@@ -2708,9 +2710,11 @@ opendata(struct objlist *obj,N_VALUE *inst,
     fp->type=TYPE_DIAGONAL;
     break;
   case PLOT_TYPE_ERRORBAR_X:
+  case PLOT_TYPE_ERRORBAND_X:
     fp->type=TYPE_ERR_X;
     break;
   case PLOT_TYPE_ERRORBAR_Y:
+  case PLOT_TYPE_ERRORBAND_Y:
     fp->type=TYPE_ERR_Y;
     break;
   default:
@@ -5853,14 +5857,12 @@ getposition2(struct f2ddata *fp,int axtype,int aytype,double *x,double *y)
 }
 
 static int
-_f2dtransf(double x,double y,int *gx,int *gy,void *local)
+_f2dtransf(double x,double y,int *gx,int *gy,const struct f2ddata *fp)
 {
-  struct f2ddata *fp;
   double minx,miny;
   double v1x,v1y,v2x,v2y,vx,vy;
   double a,b,c,d;
 
-  fp=local;
   minx=fp->axmin;
   miny=fp->aymin;
   v1x=fp->ratex*(x-minx)*fp->axvx;
@@ -5890,7 +5892,9 @@ _f2dtransf(double x,double y,int *gx,int *gy,void *local)
 static void
 f2dtransf(double x,double y,int *gx,int *gy,void *local)
 {
-  _f2dtransf(x, y, gx, gy, local);
+  const struct f2ddata *fp;
+  fp = local;
+  _f2dtransf(x, y, gx, gy, fp);
 }
 
 static int
@@ -7111,6 +7115,164 @@ errorbarout(struct objlist *obj,struct f2ddata *fp,int GC,
   return 0;
 }
 
+static void
+set_f2ddata_buf(struct f2ddata_buf *dest, const struct f2ddata *fp)
+{
+  dest->dxstat = fp->dxstat;
+  dest->dystat = fp->dystat;
+  dest->d2stat = fp->d2stat;
+  dest->d3stat = fp->d3stat;
+
+  dest->dx = fp->dx;
+  dest->dy = fp->dy;
+  dest->d2 = fp->d2;
+  dest->d3 = fp->d3;
+}
+
+static int
+check_data(const struct f2ddata_buf *data, struct f2ddata *fp, double *x, double *y, double *d2, double *d3)
+{
+  if (data->dxstat != MATH_VALUE_NORMAL) {
+    return FALSE;
+  }
+  if (data->dystat != MATH_VALUE_NORMAL) {
+    return FALSE;
+  }
+  if (data->d2stat != MATH_VALUE_NORMAL) {
+    return FALSE;
+  }
+  if (data->d3stat != MATH_VALUE_NORMAL) {
+    return FALSE;
+  }
+  *x = data->dx;
+  *y = data->dy;
+  if (getposition2(fp, fp->axtype, fp->aytype, x, y)) {
+    return FALSE;
+  }
+  *d2 = data->d2;
+  *d3 = data->d3;
+  if (getposition2(fp, fp->axtype, fp->axtype, d2, d3)) {
+    return FALSE;
+  }
+  return TRUE;
+}
+
+static int
+check_continue(const struct f2ddata_buf *data)
+{
+  int is_cont = FALSE;
+  if (data->dxstat != MATH_VALUE_NORMAL) {
+    if (data->dxstat == MATH_VALUE_CONT) {
+      is_cont = TRUE;
+    } else {
+      return FALSE;
+    }
+  }
+  if (data->dystat != MATH_VALUE_NORMAL) {
+    if (data->dystat == MATH_VALUE_CONT) {
+      is_cont = TRUE;
+    } else {
+      return FALSE;
+    }
+  }
+  if (data->d2stat != MATH_VALUE_NORMAL) {
+    if (data->d2stat == MATH_VALUE_CONT) {
+      is_cont = TRUE;
+    } else {
+      return FALSE;
+    }
+  }
+  if (data->d3stat != MATH_VALUE_NORMAL) {
+    if (data->d3stat == MATH_VALUE_CONT) {
+      is_cont = TRUE;
+    } else {
+      return FALSE;
+    }
+  }
+  return is_cont;
+}
+
+static void
+draw_error_band(int GC, double *xy, struct f2ddata *fp)
+{
+  struct narray pos;
+  arrayinit(&pos, sizeof(int));
+  add_polygon_point(&pos, xy[0], xy[1], xy[2], xy[3], fp);
+  add_polygon_point(&pos, xy[2], xy[3], xy[4], xy[5], fp);
+  add_polygon_point(&pos, xy[4], xy[5], xy[6], xy[7], fp);
+  draw_polygon(&pos, GC, GRA_FILL_MODE_WINDING);
+  arraydel(&pos);
+}
+
+static void
+draw_trapezoid_x(int GC, double x00, double x01, double y0, double x10, double x11, double y1, struct f2ddata *fp)
+{
+  double xy[8];
+  xy[0] = x00;
+  xy[1] = y0;
+
+  xy[2] = x01;
+  xy[3] = y0;
+
+  xy[4] = x11;
+  xy[5] = y1;
+
+  xy[6] = x10;
+  xy[7] = y1;
+
+  draw_error_band(GC, xy, fp);
+}
+
+static void
+draw_trapezoid_y(int GC, double x0, double y00, double y01, double x1, double y10, double y11, struct f2ddata *fp)
+{
+  double xy[8];
+  xy[0] = x0;
+  xy[1] = y00;
+
+  xy[2] = x0;
+  xy[3] = y01;
+
+  xy[4] = x1;
+  xy[5] = y11;
+
+  xy[6] = x1;
+  xy[7] = y10;
+
+  draw_error_band(GC, xy, fp);
+}
+
+static int
+errorbandout(struct objlist *obj, struct f2ddata *fp, int GC, int type)
+{
+  struct error_info einfo;
+  struct f2ddata_buf cur, prev;
+
+  error_info_init(&einfo);
+  prev.dxstat = MATH_VALUE_UNDEF;
+  while (getdata(fp) == 0) {
+    double x0, y0, d20, d30, x1, y1, d21, d31;
+    GRAcolor(GC,fp->col.r, fp->col.g, fp->col.b, fp->col.a);
+    set_f2ddata_buf(&cur, fp);
+
+    if (check_data(&prev, fp, &x0, &y0, &d20, &d30) &&
+        check_data(&cur, fp, &x1, &y1, &d21, &d31)) {
+      if (type == PLOT_TYPE_ERRORBAND_X) {
+        draw_trapezoid_x(GC, d20, d30, y0, d21, d31, y1, fp);
+      } else {
+        draw_trapezoid_y(GC, x0, d20, d30, x1, d21, d31, fp);
+      }
+    } else {
+      errordisp(obj, fp, &einfo);
+    }
+    if (! check_continue(&cur)) {
+      prev = cur;
+    }
+  }
+  errordisp(obj, fp, &einfo);
+  return 0;
+}
+
 static int
 stairout(struct objlist *obj,struct f2ddata *fp,int GC,
 	 int width,int snum,int *style,
@@ -7810,6 +7972,10 @@ f2ddraw(struct objlist *obj, N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
     break;
   case PLOT_TYPE_ERRORBAR_Y:
     rcode = errorbarout(obj, fp, GC, lwidth, snum, style, type);
+    break;
+  case PLOT_TYPE_ERRORBAND_X:
+  case PLOT_TYPE_ERRORBAND_Y:
+    rcode = errorbandout(obj, fp, GC, type);
     break;
   case PLOT_TYPE_STAIRCASE_X:
   case PLOT_TYPE_STAIRCASE_Y:
