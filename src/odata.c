@@ -7190,6 +7190,18 @@ check_continue(const struct f2ddata_buf *data)
   return is_cont;
 }
 
+static void
+draw_error_band(int GC, double *xy, struct f2ddata *fp)
+{
+  struct narray pos;
+  arrayinit(&pos, sizeof(int));
+  add_polygon_point(&pos, xy[0], xy[1], xy[2], xy[3], fp);
+  add_polygon_point(&pos, xy[2], xy[3], xy[4], xy[5], fp);
+  add_polygon_point(&pos, xy[4], xy[5], xy[6], xy[7], fp);
+  draw_polygon(&pos, GC, GRA_FILL_MODE_WINDING);
+  arraydel(&pos);
+}
+
 static int
 stairout(struct objlist *obj,struct f2ddata *fp,int GC,
 	 int width,int snum,int *style,
