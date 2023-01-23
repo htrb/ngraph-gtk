@@ -7156,6 +7156,41 @@ check_data(const struct f2ddata_buf *data, struct f2ddata *fp, double *x, double
 }
 
 static int
+check_continue(const struct f2ddata_buf *data)
+{
+  int is_cont = FALSE;
+  if (data->dxstat != MATH_VALUE_NORMAL) {
+    if (data->dxstat == MATH_VALUE_CONT) {
+      is_cont = TRUE;
+    } else {
+      return FALSE;
+    }
+  }
+  if (data->dystat != MATH_VALUE_NORMAL) {
+    if (data->dystat == MATH_VALUE_CONT) {
+      is_cont = TRUE;
+    } else {
+      return FALSE;
+    }
+  }
+  if (data->d2stat != MATH_VALUE_NORMAL) {
+    if (data->d2stat == MATH_VALUE_CONT) {
+      is_cont = TRUE;
+    } else {
+      return FALSE;
+    }
+  }
+  if (data->d3stat != MATH_VALUE_NORMAL) {
+    if (data->d3stat == MATH_VALUE_CONT) {
+      is_cont = TRUE;
+    } else {
+      return FALSE;
+    }
+  }
+  return is_cont;
+}
+
+static int
 stairout(struct objlist *obj,struct f2ddata *fp,int GC,
 	 int width,int snum,int *style,
 	 int join,int miter,int type)
