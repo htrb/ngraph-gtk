@@ -1,14 +1,11 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Ito Hiroyuki
-# This file is distributed under the same license as the ngraph-gtk package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.09.06\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2022-12-18 21:02+0900\n"
+"POT-Creation-Date: 2023-01-24 15:33+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -5464,34 +5461,42 @@ msgid "errorbar_y"
 msgstr ""
 
 #: src/odata.c:259
-msgid "staircase_x"
+msgid "errorband_x"
 msgstr ""
 
 #: src/odata.c:260
-msgid "staircase_y"
+msgid "errorband_y"
 msgstr ""
 
 #: src/odata.c:261
-msgid "bar_x"
+msgid "staircase_x"
 msgstr ""
 
 #: src/odata.c:262
-msgid "bar_y"
+msgid "staircase_y"
 msgstr ""
 
 #: src/odata.c:263
-msgid "bar_fill_x"
+msgid "bar_x"
 msgstr ""
 
 #: src/odata.c:264
-msgid "bar_fill_y"
+msgid "bar_y"
 msgstr ""
 
 #: src/odata.c:265
-msgid "bar_solid_fill_x"
+msgid "bar_fill_x"
 msgstr ""
 
 #: src/odata.c:266
+msgid "bar_fill_y"
+msgstr ""
+
+#: src/odata.c:267
+msgid "bar_solid_fill_x"
+msgstr ""
+
+#: src/odata.c:268
 msgid "bar_solid_fill_y"
 msgstr ""
 

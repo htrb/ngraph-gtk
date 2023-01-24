@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6.08.07\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2022-12-18 21:02+0900\n"
-"PO-Revision-Date: 2022-12-18 21:06+0900\n"
+"POT-Creation-Date: 2023-01-24 15:33+0900\n"
+"PO-Revision-Date: 2023-01-24 15:34+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja\n"
@@ -6179,34 +6179,42 @@ msgid "errorbar_y"
 msgstr "縦誤差棒"
 
 #: src/odata.c:259
+msgid "errorband_x"
+msgstr "横エラーバンド"
+
+#: src/odata.c:260
+msgid "errorband_y"
+msgstr "縦エラーバンド"
+
+#: src/odata.c:261
 msgid "staircase_x"
 msgstr "縦階段"
 
-#: src/odata.c:260
+#: src/odata.c:262
 msgid "staircase_y"
 msgstr "横階段"
 
-#: src/odata.c:261
+#: src/odata.c:263
 msgid "bar_x"
 msgstr "空横棒"
 
-#: src/odata.c:262
+#: src/odata.c:264
 msgid "bar_y"
 msgstr "空縦棒"
 
-#: src/odata.c:263
+#: src/odata.c:265
 msgid "bar_fill_x"
 msgstr "塗りつぶし横棒"
 
-#: src/odata.c:264
+#: src/odata.c:266
 msgid "bar_fill_y"
 msgstr "塗りつぶし縦棒"
 
-#: src/odata.c:265
+#: src/odata.c:267
 msgid "bar_solid_fill_x"
 msgstr "実横棒"
 
-#: src/odata.c:266
+#: src/odata.c:268
 msgid "bar_solid_fill_y"
 msgstr "実縦棒"
 
