@@ -7193,82 +7193,74 @@ check_continue(const struct f2ddata_buf *data)
 }
 
 static void
-draw_error_band(int GC, double *xy, struct f2ddata *fp)
+draw_errorband(int GC, struct narray *upper, struct narray *lower, struct f2ddata *fp)
 {
   struct narray pos;
+  int i, n;
+  double *ud, *ld;
+
+  n = arraynum(upper) / 2;
+  if (n < 2) {
+    arrayclear(upper);
+    arrayclear(lower);
+    return;
+  }
+
   arrayinit(&pos, sizeof(int));
-  add_polygon_point(&pos, xy[0], xy[1], xy[2], xy[3], fp);
-  add_polygon_point(&pos, xy[2], xy[3], xy[4], xy[5], fp);
-  add_polygon_point(&pos, xy[4], xy[5], xy[6], xy[7], fp);
+  ud = arraydata(upper);
+  ld = arraydata(lower);
+  for (i = 0; i < n - 2; i++) {
+    add_polygon_point(&pos, ud[i * 2], ud[i * 2 + 1], ud[i * 2 + 2], ud[i * 2 + 3], fp);
+  }
+  add_polygon_point(&pos, ud[2 * n - 2], ud[2 * n - 1], ld[2 * n - 2], ld[2 * n - 1], fp);
+  for (i = n - 2; i >= 0; i--) {
+    add_polygon_point(&pos, ld[i * 2 + 2], ld[i * 2 + 3], ld[i * 2], ld[i * 2 + 1], fp);
+  }
   draw_polygon(&pos, GC, GRA_FILL_MODE_WINDING);
   arraydel(&pos);
-}
 
-static void
-draw_trapezoid_x(int GC, double x00, double x01, double y0, double x10, double x11, double y1, struct f2ddata *fp)
-{
-  double xy[8];
-  xy[0] = x00;
-  xy[1] = y0;
-
-  xy[2] = x01;
-  xy[3] = y0;
-
-  xy[4] = x11;
-  xy[5] = y1;
-
-  xy[6] = x10;
-  xy[7] = y1;
-
-  draw_error_band(GC, xy, fp);
-}
-
-static void
-draw_trapezoid_y(int GC, double x0, double y00, double y01, double x1, double y10, double y11, struct f2ddata *fp)
-{
-  double xy[8];
-  xy[0] = x0;
-  xy[1] = y00;
-
-  xy[2] = x0;
-  xy[3] = y01;
-
-  xy[4] = x1;
-  xy[5] = y11;
-
-  xy[6] = x1;
-  xy[7] = y10;
-
-  draw_error_band(GC, xy, fp);
+  arrayclear(upper);
+  arrayclear(lower);
 }
 
 static int
 errorbandout(struct objlist *obj, struct f2ddata *fp, int GC, int type)
 {
   struct error_info einfo;
-  struct f2ddata_buf cur, prev;
+  struct f2ddata_buf cur;
+  struct narray upper, lower;
+
+  arrayinit(&upper, sizeof(double));
+  arrayinit(&lower, sizeof(double));
 
   error_info_init(&einfo);
-  prev.dxstat = MATH_VALUE_UNDEF;
   while (getdata(fp) == 0) {
-    double x0, y0, d20, d30, x1, y1, d21, d31;
-    GRAcolor(GC,fp->col.r, fp->col.g, fp->col.b, fp->col.a);
+    double x, y, d2, d3;
+    GRAcolor(GC, fp->col.r, fp->col.g, fp->col.b, fp->col.a);
     set_f2ddata_buf(&cur, fp);
 
-    if (check_data(&prev, fp, &x0, &y0, &d20, &d30) &&
-        check_data(&cur, fp, &x1, &y1, &d21, &d31)) {
+    if (check_data(&cur, fp, &x, &y, &d2, &d3)) {
       if (type == PLOT_TYPE_ERRORBAND_X) {
-        draw_trapezoid_x(GC, d20, d30, y0, d21, d31, y1, fp);
+	arrayadd(&upper, &d2);
+	arrayadd(&upper, &y);
+	arrayadd(&lower, &d3);
+	arrayadd(&lower, &y);
       } else {
-        draw_trapezoid_y(GC, x0, d20, d30, x1, d21, d31, fp);
+	arrayadd(&upper, &x);
+	arrayadd(&upper, &d2);
+	arrayadd(&lower, &x);
+	arrayadd(&lower, &d3);
       }
     } else {
       errordisp(obj, fp, &einfo);
-    }
-    if (! check_continue(&cur)) {
-      prev = cur;
+      if (! check_continue(&cur)) {
+	draw_errorband(GC, &upper, &lower, fp);
+      }
     }
   }
+  draw_errorband(GC, &upper, &lower, fp);
+  arraydel(&upper);
+  arraydel(&lower);
   errordisp(obj, fp, &einfo);
   return 0;
 }
