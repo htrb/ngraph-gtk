@@ -15,7 +15,7 @@ MO_FILES="gtk30.mo ngraph-gtk.mo"
 VERSION=`basename $ARCHIVE '.tar.gz' | sed -e 's/ngraph-gtk-//'`
 
 BINFILES="libatk-1.0-0.dll libbz2-1.dll libcairo-2.dll
-libcairo-gobject-2.dll libepoxy-0.dll libexpat-1.dll libffi-7.dll
+libcairo-gobject-2.dll libepoxy-0.dll libexpat-1.dll libffi-8.dll
 libfontconfig-1.dll libfreetype-6.dll libgdk_pixbuf-2.0-0.dll
 libgdk-3-0.dll libgio-2.0-0.dll libglib-2.0-0.dll libgmodule-2.0-0.dll
 libgobject-2.0-0.dll libgraphite2.dll libgsl-27.dll libgslcblas-0.dll
@@ -23,7 +23,7 @@ libgtk-3-0.dll libharfbuzz-0.dll libiconv-2.dll libintl-8.dll
 libp11-kit-0.dll libpango-1.0-0.dll libfribidi-0.dll
 libgtksourceview-4-0.dll libpangocairo-1.0-0.dll libbrotlidec.dll
 libbrotlicommon.dll libpangoft2-1.0-0.dll libpangowin32-1.0-0.dll
-libpcre-1.dll libpixman-1-0.dll libpng16-16.dll libstdc++-6.dll
+libpcre2-8-0.dll libpixman-1-0.dll libpng16-16.dll libstdc++-6.dll
 libtermcap-0.dll libwinpthread-1.dll zlib1.dll liblzma-5.dll
 libthai-0.dll libdatrie-1.dll libreadline8.dll libpdcurses.dll
 libssp-0.dll librsvg-2-2.dll libxml2-2.dll libngraph-0.dll gdbus.exe
