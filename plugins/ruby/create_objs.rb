@@ -630,7 +630,7 @@ class NgraphObj
   end
 
   def create_str_func_with_args(func, field, args)
-    create_val_func_with_args(func, field, args, 'tainted_utf8_str_new(rval.str ? rval.str : "")')
+    create_val_func_with_args(func, field, args, 'utf8_str_new(rval.str ? rval.str : "")')
   end
 
   def create_bool_func_with_argv(func, field, args)
@@ -646,7 +646,7 @@ class NgraphObj
   end
 
   def create_str_func_with_argv(func, field, args)
-    create_val_func_with_argv(func, field, args, 'tainted_utf8_str_new(rval.str ? rval.str : "")')
+    create_val_func_with_argv(func, field, args, 'utf8_str_new(rval.str ? rval.str : "")')
   end
 
   def add_bool_func(func, field, argc, args)
@@ -720,9 +720,9 @@ class NgraphObj
     when 0
       create_get_str_array_func(func, field)
     when -2
-      create_array_func_with_argv(func, field, args, 'tainted_utf8_str_new(rval.ary.data.sa[i] ? rval.ary.data.sa[i] : "")')
+      create_array_func_with_argv(func, field, args, 'utf8_str_new(rval.ary.data.sa[i] ? rval.ary.data.sa[i] : "")')
     else
-      create_array_func_with_args(func, field, args, 'tainted_utf8_str_new(rval.ary.data.sa[i] ? rval.ary.data.sa[i] : "")')
+      create_array_func_with_args(func, field, args, 'utf8_str_new(rval.ary.data.sa[i] ? rval.ary.data.sa[i] : "")')
     end
   end
 
