@@ -1347,6 +1347,11 @@ file_draw_line(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
 
   for (i = 0; i < 4; i++) {
     pos[i] = exp->buf[i].val.val;
+    if (i % 2 == 1) {
+      if (getposition2(fp, fp->axtype, fp->aytype, pos + i - 1, pos + i)) {
+	return 0;
+      }
+    }
   }
   arrow = exp->buf[4].val.val;
   msize = exp->buf[5].val.val * 100;
@@ -1386,7 +1391,7 @@ file_draw_errorbar(MathFunctionCallExpression *exp, MathEquation *eq, MathValue 
 {
   struct f2ddata *fp;
   int px, py;
-  double x, y, erx, ery, size;
+  double x, y, erx, ery, size, x1, x2, y1, y2;
 
   rval->val = 0;
 
@@ -1417,13 +1422,26 @@ file_draw_errorbar(MathFunctionCallExpression *exp, MathEquation *eq, MathValue 
     size = fp->marksize;
   }
 
+  x1 = x - erx;
+  x2 = x + erx;
+  y1 = y - ery;
+  y2 = y + ery;
+  if (getposition2(fp, fp->axtype, fp->aytype, &x, &y)) {
+    return 0;
+  }
   GRAcurrent_point(fp->GC, &px, &py);
   GRAcolor(fp->GC, fp->color.r, fp->color.g, fp->color.b, fp->color.a);
   if (erx != 0) {
-    draw_errorbar(fp, fp->GC, size / 2, x - erx, y, x + erx, y);
+    if (getposition2(fp, fp->axtype, fp->axtype, &x1, &x2)) {
+      return 0;
+    }
+    draw_errorbar(fp, fp->GC, size / 2, x1, y, x2, y);
   }
   if (ery != 0) {
-    draw_errorbar(fp, fp->GC, fp->marksize / 2, x, y - ery, x, y + ery);
+    if (getposition2(fp, fp->aytype, fp->aytype, &y1, &y2)) {
+      return 0;
+    }
+    draw_errorbar(fp, fp->GC, fp->marksize / 2, x, y1, x, y2);
   }
   GRAmoveto(fp->GC, px, py);
   fp->local->use_drawing_func = TRUE;
@@ -1465,6 +1483,12 @@ file_draw_errorbar2(MathFunctionCallExpression *exp, MathEquation *eq, MathValue
   size = exp->buf[4].val.val * 100;
   if (size < 1) {
     size = fp->marksize;
+  }
+  if (getposition2(fp, fp->axtype, fp->aytype, &x0, &y0)) {
+    return 0;
+  }
+  if (getposition2(fp, fp->axtype, fp->aytype, &x1, &y1)) {
+    return 0;
   }
 
   GRAcurrent_point(fp->GC, &px, &py);
@@ -1625,12 +1649,18 @@ file_draw_path(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
 	y0 = ay->data.val[i].val;
 	x2 = ax->data.val[i].val;
 	y2 = ay->data.val[i].val;
+	if (getposition2(fp, fp->axtype, fp->aytype, &x0, &y0)) {
+	  goto End;
+	}
+	getposition2(fp, fp->axtype, fp->aytype, &x2, &y2);
       } else {
 	x1 = x2;
 	y1 = y2;
 	x2 = ax->data.val[i].val;
 	y2 = ay->data.val[i].val;
-	add_polygon_point(&pos, x1, y1, x2, y2, fp);
+	if (! getposition2(fp, fp->axtype, fp->aytype, &x2, &y2)) {
+	  add_polygon_point(&pos, x1, y1, x2, y2, fp);
+	}
       }
     }
   }
@@ -1661,10 +1691,10 @@ file_draw_path(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
     }
   }
   GRAmoveto(fp->GC, px, py);
-  arraydel(&pos);
   fp->local->use_drawing_func = TRUE;
 
  End:
+  arraydel(&pos);
   restore_line_style(fp->GC, &info);
   return 0;
 }
@@ -6586,11 +6616,13 @@ polyout(struct objlist *obj, struct f2ddata *fp, int GC)
 
   arrayinit(&pos, sizeof(int));
   error_info_init(&einfo);
+  set_line_style(fp);
 
   first = TRUE;
   while (getdata(fp) == 0) {
     GRAcolor(GC, fp->col.r, fp->col.g, fp->col.b, fp->col.a);
-    if (fp->dxstat == MATH_VALUE_NORMAL && fp->dystat == MATH_VALUE_NORMAL) {
+    if (fp->dxstat == MATH_VALUE_NORMAL && fp->dystat == MATH_VALUE_NORMAL
+	&& (getposition2(fp, fp->axtype, fp->aytype, &(fp->dx), &(fp->dy)) == 0)) {
       if (first) {
         first = FALSE;
 	x0 = fp->dx;
@@ -7130,8 +7162,9 @@ set_f2ddata_buf(struct f2ddata_buf *dest, const struct f2ddata *fp)
 }
 
 static int
-check_data(const struct f2ddata_buf *data, struct f2ddata *fp, double *x, double *y, double *d2, double *d3)
+check_data(const struct f2ddata_buf *data, struct f2ddata *fp, int type, double *x, double *y, double *d2, double *d3)
 {
+  int atype;
   if (data->dxstat != MATH_VALUE_NORMAL) {
     return FALSE;
   }
@@ -7151,7 +7184,12 @@ check_data(const struct f2ddata_buf *data, struct f2ddata *fp, double *x, double
   }
   *d2 = data->d2;
   *d3 = data->d3;
-  if (getposition2(fp, fp->axtype, fp->axtype, d2, d3)) {
+  if (type == PLOT_TYPE_ERRORBAND_X) {
+    atype = fp->axtype;
+  } else {
+    atype = fp->aytype;
+  }
+  if (getposition2(fp, atype, atype, d2, d3)) {
     return FALSE;
   }
   return TRUE;
@@ -7239,7 +7277,7 @@ errorbandout(struct objlist *obj, struct f2ddata *fp, int GC, int type)
     GRAcolor(GC, fp->col.r, fp->col.g, fp->col.b, fp->col.a);
     set_f2ddata_buf(&cur, fp);
 
-    if (check_data(&cur, fp, &x, &y, &d2, &d3)) {
+    if (check_data(&cur, fp, type, &x, &y, &d2, &d3)) {
       if (type == PLOT_TYPE_ERRORBAND_X) {
 	arrayadd(&upper, &d2);
 	arrayadd(&upper, &y);
@@ -7391,7 +7429,11 @@ barout(struct objlist *obj,struct f2ddata *fp,int GC,
   int ap[8];
 
   error_info_init(&einfo);
-  if (type <= PLOT_TYPE_BAR_FILL_Y) GRAlinestyle(GC,snum,style,width,GRA_LINE_CAP_PROJECTING,GRA_LINE_JOIN_MITER,1000);
+  if (type <= PLOT_TYPE_BAR_FILL_Y) {
+    GRAlinestyle(GC,snum,style,width,GRA_LINE_CAP_PROJECTING,GRA_LINE_JOIN_MITER,1000);
+  } else {
+    set_line_style(fp);
+  }
   while (getdata(fp)==0) {
     int size;
     size=fp->marksize0/2;
