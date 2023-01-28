@@ -6621,7 +6621,8 @@ polyout(struct objlist *obj, struct f2ddata *fp, int GC)
   first = TRUE;
   while (getdata(fp) == 0) {
     GRAcolor(GC, fp->col.r, fp->col.g, fp->col.b, fp->col.a);
-    if (fp->dxstat == MATH_VALUE_NORMAL && fp->dystat == MATH_VALUE_NORMAL) {
+    if (fp->dxstat == MATH_VALUE_NORMAL && fp->dystat == MATH_VALUE_NORMAL
+	&& (getposition2(fp, fp->axtype, fp->aytype, &(fp->dx), &(fp->dy)) == 0)) {
       if (first) {
         first = FALSE;
 	x0 = fp->dx;
