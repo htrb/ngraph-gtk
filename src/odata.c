@@ -1484,6 +1484,12 @@ file_draw_errorbar2(MathFunctionCallExpression *exp, MathEquation *eq, MathValue
   if (size < 1) {
     size = fp->marksize;
   }
+  if (getposition2(fp, fp->axtype, fp->aytype, &x0, &y0)) {
+    return 0;
+  }
+  if (getposition2(fp, fp->axtype, fp->aytype, &x1, &y1)) {
+    return 0;
+  }
 
   GRAcurrent_point(fp->GC, &px, &py);
   GRAcolor(fp->GC, fp->color.r, fp->color.g, fp->color.b, fp->color.a);
