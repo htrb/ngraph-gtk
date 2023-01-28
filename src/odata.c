@@ -1347,6 +1347,11 @@ file_draw_line(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
 
   for (i = 0; i < 4; i++) {
     pos[i] = exp->buf[i].val.val;
+    if (i % 2 == 1) {
+      if (getposition2(fp, fp->axtype, fp->aytype, pos + i - 1, pos + i)) {
+	return 0;
+      }
+    }
   }
   arrow = exp->buf[4].val.val;
   msize = exp->buf[5].val.val * 100;
