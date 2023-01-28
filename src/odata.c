@@ -7162,8 +7162,9 @@ set_f2ddata_buf(struct f2ddata_buf *dest, const struct f2ddata *fp)
 }
 
 static int
-check_data(const struct f2ddata_buf *data, struct f2ddata *fp, double *x, double *y, double *d2, double *d3)
+check_data(const struct f2ddata_buf *data, struct f2ddata *fp, int type, double *x, double *y, double *d2, double *d3)
 {
+  int atype;
   if (data->dxstat != MATH_VALUE_NORMAL) {
     return FALSE;
   }
@@ -7183,7 +7184,12 @@ check_data(const struct f2ddata_buf *data, struct f2ddata *fp, double *x, double
   }
   *d2 = data->d2;
   *d3 = data->d3;
-  if (getposition2(fp, fp->axtype, fp->axtype, d2, d3)) {
+  if (type == PLOT_TYPE_ERRORBAND_X) {
+    atype = fp->axtype;
+  } else {
+    atype = fp->aytype;
+  }
+  if (getposition2(fp, atype, atype, d2, d3)) {
     return FALSE;
   }
   return TRUE;
@@ -7271,7 +7277,7 @@ errorbandout(struct objlist *obj, struct f2ddata *fp, int GC, int type)
     GRAcolor(GC, fp->col.r, fp->col.g, fp->col.b, fp->col.a);
     set_f2ddata_buf(&cur, fp);
 
-    if (check_data(&cur, fp, &x, &y, &d2, &d3)) {
+    if (check_data(&cur, fp, type, &x, &y, &d2, &d3)) {
       if (type == PLOT_TYPE_ERRORBAND_X) {
 	arrayadd(&upper, &d2);
 	arrayadd(&upper, &y);
