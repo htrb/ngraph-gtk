@@ -51,7 +51,6 @@ tainted_utf8_str_new(const char *str)
 
   l = strlen(str);
   s = rb_enc_str_new(str, l, rb_utf8_encoding());
-  rb_obj_taint(s);
 
   return s;
 }
