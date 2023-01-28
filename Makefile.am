@@ -42,27 +42,31 @@ libtool: $(LIBTOOL_DEPS)
 test_all:
 	(cd test; $(MAKE) test)
 
-OBJECT_DEFINITION = $(top_builddir)/src/oagrid.c			\
-	$(top_builddir)/src/oarc.c $(top_builddir)/src/odarray.c	\
-	$(top_builddir)/src/odata.c $(top_builddir)/src/odouble.c	\
-	$(top_builddir)/src/odraw.c $(top_builddir)/src/ofit.c		\
-	$(top_builddir)/src/ogra.c $(top_builddir)/src/ogra2.c		\
-	$(top_builddir)/src/ogra2fil.c $(top_builddir)/src/ogra2nul.c	\
-	$(top_builddir)/src/ogra2prn.c $(top_builddir)/src/oiarray.c	\
-	$(top_builddir)/src/oint.c $(top_builddir)/src/oio.c		\
-	$(top_builddir)/src/olegend.c $(top_builddir)/src/omark.c	\
-	$(top_builddir)/src/omath.c $(top_builddir)/src/omerge.c	\
-	$(top_builddir)/src/oparameter.c $(top_builddir)/src/opath.c	\
-	$(top_builddir)/src/oprm.c $(top_builddir)/src/orect.c		\
-	$(top_builddir)/src/oregexp.c $(top_builddir)/src/oroot.c	\
-	$(top_builddir)/src/osarray.c $(top_builddir)/src/oshell.c	\
-	$(top_builddir)/src/ostring.c $(top_builddir)/src/osystem.c	\
-	$(top_builddir)/src/otext.c					\
-	$(top_builddir)/src/gtk/ogra2cairo.c				\
-	$(top_builddir)/src/gtk/ogra2cairofile.c			\
-	$(top_builddir)/src/gtk/ogra2emf.c				\
-	$(top_builddir)/src/gtk/ogra2gdk.c				\
-	$(top_builddir)/src/gtk/ogra2gtkprint.c				\
-	$(top_builddir)/src/gtk/ogra2x11.c				\
-	$(top_builddir)/src/gtk/ox11dlg.c				\
-	$(top_builddir)/src/gtk/ox11menu.c
+OBJECT_DEFINITION = $(abs_top_srcdir)/src/oagrid.c			\
+	$(abs_top_srcdir)/src/oarc.c $(abs_top_srcdir)/src/odarray.c	\
+	$(abs_top_srcdir)/src/odata.c $(abs_top_srcdir)/src/odouble.c	\
+	$(abs_top_srcdir)/src/odraw.c $(abs_top_srcdir)/src/ofit.c	\
+	$(abs_top_srcdir)/src/ogra.c $(abs_top_srcdir)/src/ogra2.c	\
+	$(abs_top_srcdir)/src/ogra2fil.c				\
+	$(abs_top_srcdir)/src/ogra2nul.c				\
+	$(abs_top_srcdir)/src/ogra2prn.c				\
+	$(abs_top_srcdir)/src/oiarray.c $(abs_top_srcdir)/src/oint.c	\
+	$(abs_top_srcdir)/src/oio.c $(abs_top_srcdir)/src/olegend.c	\
+	$(abs_top_srcdir)/src/omark.c $(abs_top_srcdir)/src/omath.c	\
+	$(abs_top_srcdir)/src/omerge.c					\
+	$(abs_top_srcdir)/src/oparameter.c				\
+	$(abs_top_srcdir)/src/opath.c $(abs_top_srcdir)/src/oprm.c	\
+	$(abs_top_srcdir)/src/orect.c $(abs_top_srcdir)/src/oregexp.c	\
+	$(abs_top_srcdir)/src/oroot.c $(abs_top_srcdir)/src/osarray.c	\
+	$(abs_top_srcdir)/src/oshell.c					\
+	$(abs_top_srcdir)/src/ostring.c					\
+	$(abs_top_srcdir)/src/osystem.c $(abs_top_srcdir)/src/otext.c	\
+	$(abs_top_srcdir)/src/gtk/ogra2cairo.c				\
+	$(abs_top_srcdir)/src/gtk/ogra2cairofile.c			\
+	$(abs_top_srcdir)/src/gtk/ogra2emf.c				\
+	$(abs_top_srcdir)/src/gtk/ogra2gdk.c				\
+	$(abs_top_srcdir)/src/gtk/ogra2gtkprint.c			\
+	$(abs_top_srcdir)/src/gtk/ogra2x11.c				\
+	$(abs_top_srcdir)/src/gtk/ox11dlg.c				\
+	$(abs_top_srcdir)/src/gtk/ox11menu.c
+export OBJECT_DEFINITION
