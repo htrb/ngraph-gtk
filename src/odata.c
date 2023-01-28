@@ -6616,6 +6616,7 @@ polyout(struct objlist *obj, struct f2ddata *fp, int GC)
 
   arrayinit(&pos, sizeof(int));
   error_info_init(&einfo);
+  set_line_style(fp);
 
   first = TRUE;
   while (getdata(fp) == 0) {
