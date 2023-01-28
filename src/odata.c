@@ -1649,12 +1649,18 @@ file_draw_path(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
 	y0 = ay->data.val[i].val;
 	x2 = ax->data.val[i].val;
 	y2 = ay->data.val[i].val;
+	if (getposition2(fp, fp->axtype, fp->aytype, &x0, &y0)) {
+	  goto End;
+	}
+	getposition2(fp, fp->axtype, fp->aytype, &x2, &y2);
       } else {
 	x1 = x2;
 	y1 = y2;
 	x2 = ax->data.val[i].val;
 	y2 = ay->data.val[i].val;
-	add_polygon_point(&pos, x1, y1, x2, y2, fp);
+	if (! getposition2(fp, fp->axtype, fp->aytype, &x2, &y2)) {
+	  add_polygon_point(&pos, x1, y1, x2, y2, fp);
+	}
       }
     }
   }
@@ -1685,10 +1691,10 @@ file_draw_path(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
     }
   }
   GRAmoveto(fp->GC, px, py);
-  arraydel(&pos);
   fp->local->use_drawing_func = TRUE;
 
  End:
+  arraydel(&pos);
   restore_line_style(fp->GC, &info);
   return 0;
 }
