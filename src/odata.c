@@ -7429,7 +7429,11 @@ barout(struct objlist *obj,struct f2ddata *fp,int GC,
   int ap[8];
 
   error_info_init(&einfo);
-  if (type <= PLOT_TYPE_BAR_FILL_Y) GRAlinestyle(GC,snum,style,width,GRA_LINE_CAP_PROJECTING,GRA_LINE_JOIN_MITER,1000);
+  if (type <= PLOT_TYPE_BAR_FILL_Y) {
+    GRAlinestyle(GC,snum,style,width,GRA_LINE_CAP_PROJECTING,GRA_LINE_JOIN_MITER,1000);
+  } else {
+    set_line_style(fp);
+  }
   while (getdata(fp)==0) {
     int size;
     size=fp->marksize0/2;
