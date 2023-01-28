@@ -41,7 +41,7 @@ endif
 obj.txt: getobj.nsc $(OBJECT_DEFINITION)
 	$(top_builddir)/src/ngraph -i $(srcdir)/getobj.nsc > $(srcdir)/obj.txt
 
-$(builddir)/ruby_ngraph.h: obj.txt
+$(builddir)/ruby_ngraph.h: obj.txt create_objs.rb
 	ruby $(srcdir)/create_objs.rb $(srcdir)/obj.txt $(builddir)/ruby_ngraph.h
 
   BUILT_SOURCES = $(ruby_ext)
