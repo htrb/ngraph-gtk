@@ -1832,7 +1832,7 @@ load_script(int argc, char **argv)
   r_argv = rb_const_get(rb_mKernel, rb_intern("ARGV"));
   rb_ary_clear(r_argv);
   for (i = 1; i < argc; i++) {
-    rb_ary_push(r_argv, rb_tainted_str_new2(argv[i]));
+    rb_ary_push(r_argv, rb_str_new2(argv[i]));
   }
 
   fname = rb_funcall(rb_cFile, ExpandPath, 1, rb_str_new2(argv[0]));
