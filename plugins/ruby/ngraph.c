@@ -37,10 +37,10 @@ static VALUE get_ngraph_obj(const char *name);
 static VALUE str2inst_get_ary(VALUE data1);
 static VALUE str2inst_ensure(VALUE data2);
 static VALUE obj_get(VALUE klass, VALUE id_value, const char *name);
-static VALUE tainted_utf8_str_new(const char *str);
+static VALUE utf8_str_new(const char *str);
 
 static VALUE
-tainted_utf8_str_new(const char *str)
+utf8_str_new(const char *str)
 {
   size_t l;
   VALUE s;
@@ -51,7 +51,6 @@ tainted_utf8_str_new(const char *str)
 
   l = strlen(str);
   s = rb_enc_str_new(str, l, rb_utf8_encoding());
-  rb_obj_taint(s);
 
   return s;
 }
@@ -871,7 +870,7 @@ inst_get_str(VALUE self, const char *field)
     return Qnil;
   }
 
-  return tainted_utf8_str_new(str.str);
+  return utf8_str_new(str.str);
 }
 
 static VALUE
@@ -1304,7 +1303,7 @@ inst_get_sarray(VALUE self, const char *field)
 
   ary = rb_ary_new2(cary.ary.num);
   for (i = 0; i < cary.ary.num; i++) {
-    rb_ary_store(ary, i, tainted_utf8_str_new(cary.ary.data.sa[i]));
+    rb_ary_store(ary, i, utf8_str_new(cary.ary.data.sa[i]));
   }
 
   return ary;
@@ -1536,7 +1535,7 @@ obj_func_obj(VALUE self, VALUE argv, const char *field, int type)
     val = rb_float_new(rval.d);
     break;
   case NSFUNC:
-    val = tainted_utf8_str_new(rval.str);
+    val = utf8_str_new(rval.str);
     break;
   case NIAFUNC:
     val = rb_ary_new2(rval.ary.num);
@@ -1553,7 +1552,7 @@ obj_func_obj(VALUE self, VALUE argv, const char *field, int type)
   case NSAFUNC:
     val = rb_ary_new2(rval.ary.num);
     for (i = 0; i < rval.ary.num; i++) {
-      rb_ary_store(val, i, tainted_utf8_str_new(rval.ary.data.sa[i]));
+      rb_ary_store(val, i, utf8_str_new(rval.ary.data.sa[i]));
     }
     break;
   default:
@@ -1583,7 +1582,7 @@ get_str_func_argv(VALUE self, VALUE argv, const char *field)
     return Qnil;
   }
 
-  return tainted_utf8_str_new(rval.str ? rval.str : "");
+  return utf8_str_new(rval.str ? rval.str : "");
 }
 #endif
 
@@ -1833,7 +1832,7 @@ load_script(int argc, char **argv)
   r_argv = rb_const_get(rb_mKernel, rb_intern("ARGV"));
   rb_ary_clear(r_argv);
   for (i = 1; i < argc; i++) {
-    rb_ary_push(r_argv, rb_tainted_str_new2(argv[i]));
+    rb_ary_push(r_argv, rb_str_new2(argv[i]));
   }
 
   fname = rb_funcall(rb_cFile, ExpandPath, 1, rb_str_new2(argv[0]));
