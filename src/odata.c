@@ -1391,7 +1391,7 @@ file_draw_errorbar(MathFunctionCallExpression *exp, MathEquation *eq, MathValue 
 {
   struct f2ddata *fp;
   int px, py;
-  double x, y, erx, ery, size;
+  double x, y, erx, ery, size, x1, x2, y1, y2;
 
   rval->val = 0;
 
@@ -1422,13 +1422,26 @@ file_draw_errorbar(MathFunctionCallExpression *exp, MathEquation *eq, MathValue 
     size = fp->marksize;
   }
 
+  x1 = x - erx;
+  x2 = x + erx;
+  y1 = y - ery;
+  y2 = y + ery;
+  if (getposition2(fp, fp->axtype, fp->aytype, &x, &y)) {
+    return 0;
+  }
   GRAcurrent_point(fp->GC, &px, &py);
   GRAcolor(fp->GC, fp->color.r, fp->color.g, fp->color.b, fp->color.a);
   if (erx != 0) {
-    draw_errorbar(fp, fp->GC, size / 2, x - erx, y, x + erx, y);
+    if (getposition2(fp, fp->axtype, fp->axtype, &x1, &x2)) {
+      return 0;
+    }
+    draw_errorbar(fp, fp->GC, size / 2, x1, y, x2, y);
   }
   if (ery != 0) {
-    draw_errorbar(fp, fp->GC, fp->marksize / 2, x, y - ery, x, y + ery);
+    if (getposition2(fp, fp->aytype, fp->aytype, &y1, &y2)) {
+      return 0;
+    }
+    draw_errorbar(fp, fp->GC, fp->marksize / 2, x, y1, x, y2);
   }
   GRAmoveto(fp->GC, px, py);
   fp->local->use_drawing_func = TRUE;
