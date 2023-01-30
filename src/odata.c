@@ -461,7 +461,7 @@ struct error_info {
   int emerr, emnonum, emig, emng;
 };
 
-static void draw_arrow(struct f2ddata *fp ,int GC, double x0, double y0, double x1, double y1, int msize, struct line_position *lp);
+static int draw_arrow(struct f2ddata *fp ,int GC, double x0, double y0, double x1, double y1, int msize, struct line_position *lp);
 static int set_data_progress(struct f2ddata *fp);
 static int getminmaxdata(struct f2ddata *fp, struct f2dlocal *local);
 static int calc_fit_equation(struct objlist *obj, N_VALUE *inst, double x, double *y);
@@ -1363,21 +1363,25 @@ file_draw_line(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   GRAcolor(fp->GC, fp->color.r, fp->color.g, fp->color.b, fp->color.a);
   switch (arrow) {
   case ARROW_POSITION_END:
-    draw_arrow(fp, fp->GC, pos[0], pos[1], pos[2], pos[3], msize, &lp1);
-    GRAline(fp->GC, lp1.x0, lp1.y0, lp1.x1, lp1.y1);
+    if (draw_arrow(fp, fp->GC, pos[0], pos[1], pos[2], pos[3], msize, &lp1)) {
+      GRAline(fp->GC, lp1.x0, lp1.y0, lp1.x1, lp1.y1);
+    }
     break;
   case ARROW_POSITION_BEGIN:
-    draw_arrow(fp, fp->GC, pos[2], pos[3], pos[0], pos[1], msize, &lp1);
-    GRAline(fp->GC, lp1.x1, lp1.y1, lp1.x0, lp1.y0);
+    if (draw_arrow(fp, fp->GC, pos[2], pos[3], pos[0], pos[1], msize, &lp1)) {
+      GRAline(fp->GC, lp1.x1, lp1.y1, lp1.x0, lp1.y0);
+    }
     break;
   case ARROW_POSITION_BOTH:
-    draw_arrow(fp, fp->GC, pos[0], pos[1], pos[2], pos[3], msize, &lp1);
-    draw_arrow(fp, fp->GC, pos[2], pos[3], pos[0], pos[1], msize, &lp2);
-    GRAline(fp->GC, lp2.x1, lp2.y1, lp1.x1, lp1.y1);
+    if (draw_arrow(fp, fp->GC, pos[0], pos[1], pos[2], pos[3], msize, &lp1) &&
+        draw_arrow(fp, fp->GC, pos[2], pos[3], pos[0], pos[1], msize, &lp2)) {
+      GRAline(fp->GC, lp2.x1, lp2.y1, lp1.x1, lp1.y1);
+    }
     break;
   default:
-    draw_arrow(fp, fp->GC, pos[0], pos[1], pos[2], pos[3], 0, &lp1);
-    GRAline(fp->GC, lp1.x0, lp1.y0, lp1.x1, lp1.y1);
+    if (draw_arrow(fp, fp->GC, pos[0], pos[1], pos[2], pos[3], 0, &lp1)) {
+      GRAline(fp->GC, lp1.x0, lp1.y0, lp1.x1, lp1.y1);
+    }
     break;
   }
   GRAmoveto(fp->GC, px, py);
@@ -6927,7 +6931,7 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
   return 0;
 }
 
-static void
+static int
 draw_arrow(struct f2ddata *fp ,int GC, double x0, double y0, double x1, double y1, int msize, struct line_position *lp)
 {
   int gx0, gy0, gx1, gy1;
@@ -6939,7 +6943,7 @@ draw_arrow(struct f2ddata *fp ,int GC, double x0, double y0, double x1, double y
   d2 = x1;
   d3 = y1;
   if (f2dlineclipf(&x0, &y0, &x1, &y1, fp)) {
-    return;
+    return 0;
   }
   f2dtransf(x0, y0, &gx0, &gy0, fp);
   f2dtransf(x1, y1, &gx1, &gy1, fp);
@@ -6972,6 +6976,7 @@ draw_arrow(struct f2ddata *fp ,int GC, double x0, double y0, double x1, double y
     lp->x1 = gx1;
     lp->y1 = gy1;
   }
+  return 1;
 }
 
 static int
@@ -7006,8 +7011,9 @@ rectout(struct objlist *obj,struct f2ddata *fp,int GC,
       }
       if (type == PLOT_TYPE_ARROW) {
 	struct line_position lp;
-	draw_arrow(fp, GC, fp->dx, fp->dy, fp->d2, fp->d3, fp->msize, &lp);
-	GRAline(GC, lp.x0, lp.y0, lp.x1, lp.y1);
+	if (draw_arrow(fp, GC, fp->dx, fp->dy, fp->d2, fp->d3, fp->msize, &lp)) {
+          GRAline(GC, lp.x0, lp.y0, lp.x1, lp.y1);
+        }
       }
       if (type == PLOT_TYPE_RECTANGLE_FILL || type == PLOT_TYPE_RECTANGLE_SOLID_FILL) {
         if (type == PLOT_TYPE_RECTANGLE_FILL) {
@@ -7272,6 +7278,7 @@ errorbandout(struct objlist *obj, struct f2ddata *fp, int GC, int type)
   arrayinit(&lower, sizeof(double));
 
   error_info_init(&einfo);
+  set_line_style(fp);
   while (getdata(fp) == 0) {
     double x, y, d2, d3;
     GRAcolor(GC, fp->col.r, fp->col.g, fp->col.b, fp->col.a);
