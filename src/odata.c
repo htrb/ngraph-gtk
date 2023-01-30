@@ -461,7 +461,7 @@ struct error_info {
   int emerr, emnonum, emig, emng;
 };
 
-static void draw_arrow(struct f2ddata *fp ,int GC, double x0, double y0, double x1, double y1, int msize, struct line_position *lp);
+static int draw_arrow(struct f2ddata *fp ,int GC, double x0, double y0, double x1, double y1, int msize, struct line_position *lp);
 static int set_data_progress(struct f2ddata *fp);
 static int getminmaxdata(struct f2ddata *fp, struct f2dlocal *local);
 static int calc_fit_equation(struct objlist *obj, N_VALUE *inst, double x, double *y);
@@ -6927,7 +6927,7 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
   return 0;
 }
 
-static void
+static int
 draw_arrow(struct f2ddata *fp ,int GC, double x0, double y0, double x1, double y1, int msize, struct line_position *lp)
 {
   int gx0, gy0, gx1, gy1;
@@ -6939,7 +6939,7 @@ draw_arrow(struct f2ddata *fp ,int GC, double x0, double y0, double x1, double y
   d2 = x1;
   d3 = y1;
   if (f2dlineclipf(&x0, &y0, &x1, &y1, fp)) {
-    return;
+    return 0;
   }
   f2dtransf(x0, y0, &gx0, &gy0, fp);
   f2dtransf(x1, y1, &gx1, &gy1, fp);
@@ -6972,6 +6972,7 @@ draw_arrow(struct f2ddata *fp ,int GC, double x0, double y0, double x1, double y
     lp->x1 = gx1;
     lp->y1 = gy1;
   }
+  return 1;
 }
 
 static int
