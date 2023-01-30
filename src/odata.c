@@ -7011,8 +7011,9 @@ rectout(struct objlist *obj,struct f2ddata *fp,int GC,
       }
       if (type == PLOT_TYPE_ARROW) {
 	struct line_position lp;
-	draw_arrow(fp, GC, fp->dx, fp->dy, fp->d2, fp->d3, fp->msize, &lp);
-	GRAline(GC, lp.x0, lp.y0, lp.x1, lp.y1);
+	if (draw_arrow(fp, GC, fp->dx, fp->dy, fp->d2, fp->d3, fp->msize, &lp)) {
+          GRAline(GC, lp.x0, lp.y0, lp.x1, lp.y1);
+        }
       }
       if (type == PLOT_TYPE_RECTANGLE_FILL || type == PLOT_TYPE_RECTANGLE_SOLID_FILL) {
         if (type == PLOT_TYPE_RECTANGLE_FILL) {
