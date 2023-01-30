@@ -1363,21 +1363,25 @@ file_draw_line(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   GRAcolor(fp->GC, fp->color.r, fp->color.g, fp->color.b, fp->color.a);
   switch (arrow) {
   case ARROW_POSITION_END:
-    draw_arrow(fp, fp->GC, pos[0], pos[1], pos[2], pos[3], msize, &lp1);
-    GRAline(fp->GC, lp1.x0, lp1.y0, lp1.x1, lp1.y1);
+    if (draw_arrow(fp, fp->GC, pos[0], pos[1], pos[2], pos[3], msize, &lp1)) {
+      GRAline(fp->GC, lp1.x0, lp1.y0, lp1.x1, lp1.y1);
+    }
     break;
   case ARROW_POSITION_BEGIN:
-    draw_arrow(fp, fp->GC, pos[2], pos[3], pos[0], pos[1], msize, &lp1);
-    GRAline(fp->GC, lp1.x1, lp1.y1, lp1.x0, lp1.y0);
+    if (draw_arrow(fp, fp->GC, pos[2], pos[3], pos[0], pos[1], msize, &lp1)) {
+      GRAline(fp->GC, lp1.x1, lp1.y1, lp1.x0, lp1.y0);
+    }
     break;
   case ARROW_POSITION_BOTH:
-    draw_arrow(fp, fp->GC, pos[0], pos[1], pos[2], pos[3], msize, &lp1);
-    draw_arrow(fp, fp->GC, pos[2], pos[3], pos[0], pos[1], msize, &lp2);
-    GRAline(fp->GC, lp2.x1, lp2.y1, lp1.x1, lp1.y1);
+    if (draw_arrow(fp, fp->GC, pos[0], pos[1], pos[2], pos[3], msize, &lp1) &&
+        draw_arrow(fp, fp->GC, pos[2], pos[3], pos[0], pos[1], msize, &lp2)) {
+      GRAline(fp->GC, lp2.x1, lp2.y1, lp1.x1, lp1.y1);
+    }
     break;
   default:
-    draw_arrow(fp, fp->GC, pos[0], pos[1], pos[2], pos[3], 0, &lp1);
-    GRAline(fp->GC, lp1.x0, lp1.y0, lp1.x1, lp1.y1);
+    if (draw_arrow(fp, fp->GC, pos[0], pos[1], pos[2], pos[3], 0, &lp1)) {
+      GRAline(fp->GC, lp1.x0, lp1.y0, lp1.x1, lp1.y1);
+    }
     break;
   }
   GRAmoveto(fp->GC, px, py);
