@@ -7272,6 +7272,7 @@ errorbandout(struct objlist *obj, struct f2ddata *fp, int GC, int type)
   arrayinit(&lower, sizeof(double));
 
   error_info_init(&einfo);
+  set_line_style(fp);
   while (getdata(fp) == 0) {
     double x, y, d2, d3;
     GRAcolor(GC, fp->col.r, fp->col.g, fp->col.b, fp->col.a);
