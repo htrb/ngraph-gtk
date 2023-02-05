@@ -93,8 +93,8 @@ if test $os_osx != yes; then
        [RUBY_DLEXT=`ruby -e 'puts(RbConfig::CONFIG["DLEXT"])'`]
        AC_SUBST(RUBY_DLEXT)
    fi
-   AM_CONDITIONAL(HAVE_RUBY_DEV, test x$have_ruby_dev = xyes)
 fi
+AM_CONDITIONAL(HAVE_RUBY_DEV, test x$have_ruby_dev = xyes)
 
 AM_PATH_GLIB_2_0($GLIB_REQUIRED_VERSION,,
   [AC_MSG_ERROR(Test for GLib failed.)],
