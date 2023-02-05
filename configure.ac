@@ -85,14 +85,16 @@ AC_CHECK_LIB([readline], [rl_completion_matches],
 			  ])
 
 dnl Checks for ruby
-AC_CHECK_PROG(RUBY, ruby, yes, no)
-if test $RUBY = yes; then
-    [ruby_incrudedir=`ruby -e 'puts(RbConfig::CONFIG["rubyhdrdir"])'`]
-    AS_IF([test -e "$ruby_incrudedir/ruby.h"], [have_ruby_dev=yes])
-    [RUBY_DLEXT=`ruby -e 'puts(RbConfig::CONFIG["DLEXT"])'`]
-    AC_SUBST(RUBY_DLEXT)
+if test $os_osx != yes; then
+   AC_CHECK_PROG(RUBY, ruby, yes, no)
+   if test $RUBY = yes; then
+       [ruby_incrudedir=`ruby -e 'puts(RbConfig::CONFIG["rubyhdrdir"])'`]
+       AS_IF([test -e "$ruby_incrudedir/ruby.h"], [have_ruby_dev=yes])
+       [RUBY_DLEXT=`ruby -e 'puts(RbConfig::CONFIG["DLEXT"])'`]
+       AC_SUBST(RUBY_DLEXT)
+   fi
+   AM_CONDITIONAL(HAVE_RUBY_DEV, test x$have_ruby_dev = xyes)
 fi
-AM_CONDITIONAL(HAVE_RUBY_DEV, test x$have_ruby_dev = xyes)
 
 AM_PATH_GLIB_2_0($GLIB_REQUIRED_VERSION,,
   [AC_MSG_ERROR(Test for GLib failed.)],
