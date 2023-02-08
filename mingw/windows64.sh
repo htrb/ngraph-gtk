@@ -1,7 +1,6 @@
 #! /bin/sh
 
 PKG_DIR=ngraph-gtk
-WIN_PATH=/mingw
 
 ARCHIVE=`ls ngraph-gtk-*.tar.gz | tail -1`
 if [ -z "$ARCHIVE" ]
@@ -20,27 +19,26 @@ libfontconfig-1.dll libfreetype-6.dll libgdk_pixbuf-2.0-0.dll
 libgdk-3-0.dll libgio-2.0-0.dll libglib-2.0-0.dll libgmodule-2.0-0.dll
 libgobject-2.0-0.dll libgraphite2.dll libgsl-27.dll libgslcblas-0.dll
 libgtk-3-0.dll libharfbuzz-0.dll libiconv-2.dll libintl-8.dll
-libp11-kit-0.dll libpango-1.0-0.dll libfribidi-0.dll
-libgtksourceview-4-0.dll libpangocairo-1.0-0.dll libbrotlidec.dll
-libbrotlicommon.dll libpangoft2-1.0-0.dll libpangowin32-1.0-0.dll
-libpcre2-8-0.dll libpixman-1-0.dll libpng16-16.dll libstdc++-6.dll
-libtermcap-0.dll libwinpthread-1.dll zlib1.dll liblzma-5.dll
-libthai-0.dll libdatrie-1.dll libreadline8.dll libpdcurses.dll
-libssp-0.dll librsvg-2-2.dll libxml2-2.dll libngraph-0.dll gdbus.exe
-ngraph.exe ngp2"
+libpango-1.0-0.dll libfribidi-0.dll libgtksourceview-4-0.dll
+libpangocairo-1.0-0.dll libbrotlidec.dll libbrotlicommon.dll
+libpangoft2-1.0-0.dll libpangowin32-1.0-0.dll libpcre2-8-0.dll
+libpixman-1-0.dll libpng16-16.dll libstdc++-6.dll libtermcap-0.dll
+libwinpthread-1.dll zlib1.dll liblzma-5.dll libthai-0.dll
+libdatrie-1.dll libreadline8.dll libpdcurses.dll librsvg-2-2.dll
+libxml2-2.dll libngraph-0.dll gdbus.exe ngraph.exe ngp2"
 
-BINFILES64="libgcc_s_seh-1.dll gspawn-win64-helper-console.exe"
+oBINFILES64="libgcc_s_seh-1.dll gspawn-win64-helper-console.exe"
 BINFILES32="libgcc_s_dw2-1.dll gspawn-win32-helper-console.exe"
 
 make_zip() {
-    echo create win$1 archive.
+    echo create $1 archive.
     if [ -d $PKG_DIR ]
     then
 	rm -rf $PKG_DIR
     fi
 
     mkdir $PKG_DIR
-    win_path=$WIN_PATH$1
+    win_path=/$1
     for subdir in bin etc lib share
     do
 	echo "  copy $subdir."
@@ -51,7 +49,7 @@ make_zip() {
 		do
 		    cp $win_path/$subdir/$i $PKG_DIR/$subdir/
 		done
-		if [ $1 = "64" ]
+		if [ $1 = "ucrt64" ]
 		then
 		    for i in $BINFILES64
 		    do
@@ -113,7 +111,8 @@ make_zip() {
 start "" "%~dp0bin\ngraph.exe" %*
 [EOF]
 
-    archive=ngraph-gtk-${VERSION}-win$1.zip
+    arc=`echo $1|sed 's/[a-z]//g'`
+    archive=ngraph-gtk-${VERSION}-win$arc.zip
     if [ -f $archive ]
     then
 	rm $archive
@@ -122,7 +121,7 @@ start "" "%~dp0bin\ngraph.exe" %*
     zip -qr9 $archive $PKG_DIR
 }
 
-for arch in 32 64
+for arch in mingw32 ucrt64
 do
     make_zip $arch
 done
