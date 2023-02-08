@@ -27,7 +27,7 @@ libwinpthread-1.dll zlib1.dll liblzma-5.dll libthai-0.dll
 libdatrie-1.dll libreadline8.dll libpdcurses.dll librsvg-2-2.dll
 libxml2-2.dll libngraph-0.dll gdbus.exe ngraph.exe ngp2"
 
-oBINFILES64="libgcc_s_seh-1.dll gspawn-win64-helper-console.exe"
+BINFILES64="libgcc_s_seh-1.dll gspawn-win64-helper-console.exe"
 BINFILES32="libgcc_s_dw2-1.dll gspawn-win32-helper-console.exe"
 
 make_zip() {
