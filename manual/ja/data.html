@@ -13,8 +13,8 @@
  <li><a href="#DATAFILE">データファイルの形式</a>
  <li><a href="#DATAFILE_EMPTY">欠損データを含むデータファイル</a>
  <li><a href="#DATAFILE_DIAGONAL">データプロット形式 diagonal, arrow, rectangle のデータファイル</a>
- <li><a href="#DATAFILE_ERRBARX">データプロット形式 error_bar_x のデータファイル</a>
- <li><a href="#DATAFILE_ERRBARY">データプロット形式 error_bar_y のデータファイル</a>
+ <li><a href="#DATAFILE_ERRBARX">データプロット形式 errorbar_x, errorband_x のデータファイル</a>
+ <li><a href="#DATAFILE_ERRBARY">データプロット形式 errorbar_y, errorband_y のデータファイル</a>
  <li><a href="#DATAFILEOPTION">データファイル埋め込みオプション</a>
 </ul>
 </div>
@@ -229,10 +229,10 @@ Ngraph で欠損データを指定する方法を示します。例として，2
 
 
 
-<h2><a name="DATAFILE_ERRBARX">データプロット形式error_bar_xのデータファイル</a></h2>
+<h2><a name="DATAFILE_ERRBARX">データプロット形式errorbar_x, errorband_xのデータファイル</a></h2>
 <br>
 <div>
-データプロット形式error_bar_xを用いて誤差棒をプロットすることができます。
+データプロット形式errorbar_xを用いて誤差棒をプロットすることができます。
 <br>
 <br>
 例えば次のようなデータを考えます。
@@ -253,15 +253,16 @@ Ngraph で欠損データを指定する方法を示します。例として，2
 </table><br>
 <br>
 X, Xの誤差下限, Xの誤差上限 の3つのカラムは連続していなければなりません。<br>
+<p>データプロット形式 errorband_x の場合は誤差棒の代わりに帯状の領域を描画します。</p>
 </div>
 
 
 
 
-<h2><a name="DATAFILE_ERRBARY">データプロット形式error_bar_yのデータファイル</a></h2>
+<h2><a name="DATAFILE_ERRBARY">データプロット形式errorbar_y,  errorband_yのデータファイル</a></h2>
 <br>
 <div>
-データプロット形式error_bar_yを用いて誤差棒をプロットすることができます。<br>
+データプロット形式errorbar_yを用いて誤差棒をプロットすることができます。<br>
 <br>
 例えば次のようなデータを考えます。
 <br>
@@ -281,6 +282,7 @@ X, Xの誤差下限, Xの誤差上限 の3つのカラムは連続していな�
 </table><br>
 <br>
 Y, Yの誤差下限, Yの誤差上限 の3つのカラムは連続していなければなりません。<br>
+<p>データプロット形式 errorband_y の場合は誤差棒の代わりに帯状の領域を描画します。</p>
 </div>
 
 
