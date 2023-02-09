@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT([ngraph],[6.09.06],[ZXB01226@nifty.com],[ngraph-gtk])
+AC_INIT([ngraph],[6.09.07],[ZXB01226@nifty.com],[ngraph-gtk])
 
 LIBNGRAPH_VERSION=0:0:0
 AC_SUBST(LIBNGRAPH_VERSION)
@@ -85,12 +85,14 @@ AC_CHECK_LIB([readline], [rl_completion_matches],
 			  ])
 
 dnl Checks for ruby
-AC_CHECK_PROG(RUBY, ruby, yes, no)
-if test $RUBY = yes; then
-    [ruby_incrudedir=`ruby -e 'puts(RbConfig::CONFIG["rubyhdrdir"])'`]
-    AS_IF([test -e "$ruby_incrudedir/ruby.h"], [have_ruby_dev=yes])
-    [RUBY_DLEXT=`ruby -e 'puts(RbConfig::CONFIG["DLEXT"])'`]
-    AC_SUBST(RUBY_DLEXT)
+if test $os_osx != yes; then
+   AC_CHECK_PROG(RUBY, ruby, yes, no)
+   if test $RUBY = yes; then
+       [ruby_incrudedir=`ruby -e 'puts(RbConfig::CONFIG["rubyhdrdir"])'`]
+       AS_IF([test -e "$ruby_incrudedir/ruby.h"], [have_ruby_dev=yes])
+       [RUBY_DLEXT=`ruby -e 'puts(RbConfig::CONFIG["DLEXT"])'`]
+       AC_SUBST(RUBY_DLEXT)
+   fi
 fi
 AM_CONDITIONAL(HAVE_RUBY_DEV, test x$have_ruby_dev = xyes)
 

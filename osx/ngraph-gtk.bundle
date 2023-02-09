@@ -70,9 +70,11 @@
   </binary>
 
 <!-- ngraph-gtk specified files -->
+<!--
   <binary>
     ${prefix}/lib/ngraph-gtk/plugins
   </binary>
+-->
 
   <binary dest="${bundle}/Contents/MacOS/fft">
     ${prefix}/libexec/ngraph-gtk/fft
@@ -106,9 +108,11 @@
     ${project}/ngraph-launcher.sh
   </data>
 
+<!--
   <data>
     ${prefix}/lib/ngraph-gtk/ruby
   </data>
+-->
 
   <data>
     ${prefix}/share/ngraph-gtk
