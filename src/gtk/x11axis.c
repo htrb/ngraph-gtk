@@ -2543,7 +2543,6 @@ get_initial_axis_position(int *px, int *py)
   * py = nround(y / grid) * grid - Menulocal.TopMargin;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 struct axis_new_data
 {
   int undo;
@@ -2570,23 +2569,16 @@ axis_new_response(struct response_callback *cb)
     new_cb(cb->return_value, NULL);
   }
 }
-#endif
 
 void
-CmAxisNewFrame(int use_presettings
-#if GTK_CHECK_VERSION(4, 0, 0)
-               , response_cb cb
-#endif
-  )
+CmAxisNewFrame(int use_presettings, response_cb cb)
 {
   struct objlist *obj, *obj2;
   int idx, idy, idu, idr, idg, ret;
   int type, x, y, lenx, leny, undo;
   struct narray group;
   char *argv[2];
-#if GTK_CHECK_VERSION(4, 0, 0)
   struct axis_new_data *data;
-#endif
 
   if (Menulock || Globallock)
     return;
@@ -2594,12 +2586,10 @@ CmAxisNewFrame(int use_presettings
     return;
   if ((obj2 = getobject("axisgrid")) == NULL)
     return;
-#if GTK_CHECK_VERSION(4, 0, 0)
   data = g_malloc0(sizeof(*data));
   if (data == NULL) {
     return;
   }
-#endif
   undo = axis_save_undo(UNDO_TYPE_CREATE);
   idx = newobj(obj);
   idy = newobj(obj);
@@ -2632,22 +2622,12 @@ CmAxisNewFrame(int use_presettings
   }
   SectionDialog(&DlgSection, x, y, lenx, leny, obj, idx, idy, idu, idr, obj2,
 		idg, FALSE);
-#if GTK_CHECK_VERSION(4, 0, 0)
   data->undo = undo;
   data->cb = cb;
   response_callback_add(&DlgSection, axis_new_response, NULL, data);
   DialogExecute(TopLevel, &DlgSection);
   SectionDialog(&DlgSection, x, y, lenx, leny, obj, idx, idy, idu, idr, obj2,
 		idg, FALSE);
-#else
-  ret = DialogExecute(TopLevel, &DlgSection);
-  if (ret == IDCANCEL) {
-    menu_undo_internal(undo);
-  } else {
-    set_graph_modified();
-  }
-  AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
-#endif
 }
 
 void
