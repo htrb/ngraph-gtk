@@ -2321,12 +2321,7 @@ position_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   add_widget_to_table(table, w, _("_Length:"), FALSE, i++);
   d->len = w;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   w = create_direction_entry(table, _("_Direction:"), i++);
-#else
-  w = create_direction_entry();
-  add_widget_to_table(table, w, _("_Direction:"), FALSE, i++);
-#endif
   d->direction = w;
 
   w = axis_combo_box_create(AXIS_COMBO_BOX_USE_OID | AXIS_COMBO_BOX_ADD_NONE);
@@ -2339,20 +2334,12 @@ position_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 
 
   frame = gtk_frame_new(_("Position"));
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_widget_set_vexpand(frame, TRUE);
   gtk_frame_set_child(GTK_FRAME(frame), table);
-#else
-  gtk_container_add(GTK_CONTAINER(frame), table);
-#endif
   set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
 
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(vbox), frame);
-#else
-  gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 4);
-#endif
 
   add_copy_button_to_box(vbox, G_CALLBACK(position_tab_copy_clicked), dd, "axis");
 
