@@ -386,13 +386,8 @@ GridDialogSetupCommon(GtkWidget *wi, void *data, int makewidget, int instance)
       d->draw_y = w;
 
       frame = gtk_frame_new(_("Axis"));
-#if GTK_CHECK_VERSION(4, 0, 0)
       gtk_frame_set_child(GTK_FRAME(frame), table);
       gtk_box_append(GTK_BOX(hbox), frame);
-#else
-      gtk_container_add(GTK_CONTAINER(frame), table);
-      gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 0);
-#endif
     } else {
       d->axisx = NULL;
       d->axisy = NULL;
@@ -417,18 +412,10 @@ GridDialogSetupCommon(GtkWidget *wi, void *data, int makewidget, int instance)
     d->bcolor = w;
 
     frame = gtk_frame_new(_("Color"));
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_set_hexpand(frame, TRUE);
     gtk_frame_set_child(GTK_FRAME(frame), table);
     gtk_box_append(GTK_BOX(hbox), frame);
     gtk_box_append(GTK_BOX(d->vbox), hbox);
-#else
-    gtk_container_add(GTK_CONTAINER(frame), table);
-    gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
-
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
-#endif
-
 
     table = gtk_grid_new();
 
@@ -438,19 +425,11 @@ GridDialogSetupCommon(GtkWidget *wi, void *data, int makewidget, int instance)
     }
 
     frame = gtk_frame_new(_("Style"));
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_set_vexpand(frame, TRUE);
     gtk_frame_set_child(GTK_FRAME(frame), table);
     gtk_box_append(GTK_BOX(d->vbox), frame);
-#else
-    gtk_container_add(GTK_CONTAINER(frame), table);
-    gtk_box_pack_start(GTK_BOX(d->vbox), frame, FALSE, FALSE, 4);
-#endif
 
     add_copy_button_to_box(GTK_WIDGET(d->vbox), G_CALLBACK(grid_copy_clicked), d, "axisgrid");
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-    gtk_widget_show_all(GTK_WIDGET(d->vbox));
-#endif
   }
 
   GridDialogSetupItem(d, d->Id);
