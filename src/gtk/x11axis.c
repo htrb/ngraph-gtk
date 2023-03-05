@@ -301,7 +301,6 @@ GridDialogSetupItem(struct GridDialog *d, int id)
   set_color(d->bcolor, d->Obj, id, "B");
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 grid_copy_click_response(int sel, gpointer user_data)
 {
@@ -319,21 +318,6 @@ grid_copy_clicked(GtkButton *btn, gpointer user_data)
   d = (struct GridDialog *) user_data;
   CopyClick(d->widget, d->Obj, d->Id, GridCB, grid_copy_click_response, d);
 }
-#else
-static void
-grid_copy_clicked(GtkButton *btn, gpointer user_data)
-{
-  int sel;
-  struct GridDialog *d;
-
-  d = (struct GridDialog *) user_data;
-
-  sel = CopyClick(d->widget, d->Obj, d->Id, GridCB);
-  if (sel != -1) {
-    GridDialogSetupItem(d, sel);
-  }
-}
-#endif
 
 static void
 gauge_syle_setup(struct GridDialog *d, GtkWidget *table, int n, int j, int instance)
