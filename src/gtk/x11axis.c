@@ -1688,7 +1688,6 @@ gauge_tab_setup_item(struct AxisDialog *axis, int id)
   set_color(d->color, axis->Obj, id, "gauge_");
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 gauge_tab_copy_click_response(int sel, gpointer user_data)
 {
@@ -1706,21 +1705,6 @@ gauge_tab_copy_clicked(GtkButton *btn, gpointer user_data)
   d = (struct AxisDialog *) user_data;
   CopyClick(d->widget, d->Obj, d->Id, AxisCB, gauge_tab_copy_click_response, d);
 }
-#else
-static void
-gauge_tab_copy_clicked(GtkButton *btn, gpointer user_data)
-{
-  struct AxisDialog *d;
-  int sel;
-
-  d = (struct AxisDialog *) user_data;
-
-  sel = CopyClick(d->widget, d->Obj, d->Id, AxisCB);
-  if (sel != -1) {
-    gauge_tab_setup_item(d, sel);
-  }
-}
-#endif
 
 static GtkWidget *
 gauge_tab_create(GtkWidget *wi, struct AxisDialog *dd)
