@@ -2151,13 +2151,8 @@ font_tab_setup_item(struct AxisDialog *axis, int id)
   } else {
     getobj(axis->Obj, "num_font_style", axis->Id, 0, NULL, &style);
   }
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_check_button_set_active(GTK_CHECK_BUTTON(d->font_bold), style & GRA_FONT_STYLE_BOLD);
   gtk_check_button_set_active(GTK_CHECK_BUTTON(d->font_italic), style & GRA_FONT_STYLE_ITALIC);
-#else
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->font_bold), style & GRA_FONT_STYLE_BOLD);
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->font_italic), style & GRA_FONT_STYLE_ITALIC);
-#endif
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
