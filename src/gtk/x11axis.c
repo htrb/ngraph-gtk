@@ -1726,35 +1726,19 @@ gauge_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   d->gauge = w;
 
   w = create_text_entry(FALSE, TRUE);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_editable_set_width_chars(GTK_EDITABLE(w), NUM_ENTRY_WIDTH * 2);
-#else
-  gtk_entry_set_width_chars(GTK_ENTRY(w), NUM_ENTRY_WIDTH * 2);
-#endif
   add_widget_to_table(table, w, _("_Min:"), TRUE, j++);
   d->min = w;
 
   w = create_text_entry(FALSE, TRUE);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_editable_set_width_chars(GTK_EDITABLE(w), NUM_ENTRY_WIDTH * 2);
-#else
-  gtk_entry_set_width_chars(GTK_ENTRY(w), NUM_ENTRY_WIDTH * 2);
-#endif
   add_widget_to_table(table, w, _("_Max:"), TRUE, j++);
   d->max = w;
 
   frame = gtk_frame_new(_("Range"));
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_frame_set_child(GTK_FRAME(frame), table);
-#else
-  gtk_container_add(GTK_CONTAINER(frame), table);
-#endif
   set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(vbox), frame);
-#else
-  gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
-#endif
 
   table = gtk_grid_new();
 
@@ -1780,25 +1764,13 @@ gauge_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   }
 
   frame = gtk_frame_new(_("Style"));
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_widget_set_vexpand(frame, TRUE);
   gtk_frame_set_child(GTK_FRAME(frame), table);
-#else
-  gtk_container_add(GTK_CONTAINER(frame), table);
-#endif
   set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(vbox), frame);
-#else
-  gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
-#endif
 
   parent_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(parent_box), vbox);
-#else
-  gtk_box_pack_start(GTK_BOX(parent_box), vbox, TRUE, TRUE, 4);
-#endif
   add_copy_button_to_box(parent_box, G_CALLBACK(gauge_tab_copy_clicked), dd, "axis");
 
   return parent_box;
