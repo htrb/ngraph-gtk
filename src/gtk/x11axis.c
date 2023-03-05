@@ -740,11 +740,7 @@ SectionDialogGrid(GtkWidget *w, gpointer client_data)
     }
   }
   if (d->IDG >= 0) {
-#if GTK_CHECK_VERSION(4, 0, 0)
     struct section_dialog_grid_data *data;
-#else
-    int ret;
-#endif
     GridDialog(&DlgGrid, d->Obj2, d->IDG);
     data = g_malloc0(sizeof(*data));
     data->create = create;
@@ -752,6 +748,7 @@ SectionDialogGrid(GtkWidget *w, gpointer client_data)
     data->d = d;
     response_callback_add(&DlgGrid, section_dialog_grid_response, NULL, data);
     DialogExecute(d->widget, &DlgGrid);
+  }
 }
 
 static void
