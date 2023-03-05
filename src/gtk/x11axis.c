@@ -295,11 +295,7 @@ GridDialogSetupItem(struct GridDialog *d, int id)
     SetWidgetFromObjField(d->width[i], d->Obj, id, width);
   }
   SetWidgetFromObjField(d->background, d->Obj, id, "background");
-#if GTK_CHECK_VERSION(4, 0, 0)
   bg_button_toggled(GTK_CHECK_BUTTON(d->background), d);
-#else
-  bg_button_toggled(GTK_TOGGLE_BUTTON(d->background), d);
-#endif
 
   set_color(d->color, d->Obj, id, NULL);
   set_color(d->bcolor, d->Obj, id, "B");
