@@ -2631,20 +2631,14 @@ CmAxisNewFrame(int use_presettings, response_cb cb)
 }
 
 void
-CmAxisNewSection(int use_presettings
-#if GTK_CHECK_VERSION(4, 0, 0)
-               , response_cb cb
-#endif
-  )
+CmAxisNewSection(int use_presettings, response_cb cb)
 {
   struct objlist *obj, *obj2;
-  int idx, idy, idu, idr, idg, ret, oidx, oidy, undo;
+  int idx, idy, idu, idr, idg, oidx, oidy, undo;
   int type, x, y, lenx, leny;
   struct narray group;
   char *argv[2];
-#if GTK_CHECK_VERSION(4, 0, 0)
   struct axis_new_data *data;
-#endif
 
   if (Menulock || Globallock)
     return;
@@ -2652,12 +2646,10 @@ CmAxisNewSection(int use_presettings
     return;
   if ((obj2 = getobject("axisgrid")) == NULL)
     return;
-#if GTK_CHECK_VERSION(4, 0, 0)
   data = g_malloc0(sizeof(*data));
   if (data == NULL) {
     return;
   }
-#endif
   undo = axis_save_undo(UNDO_TYPE_CREATE);
   idx = newobj(obj);
   idy = newobj(obj);
@@ -2704,21 +2696,10 @@ CmAxisNewSection(int use_presettings
   }
   SectionDialog(&DlgSection, x, y, lenx, leny, obj, idx, idy, idu, idr, obj2,
 		idg, TRUE);
-#if GTK_CHECK_VERSION(4, 0, 0)
-  /* must be implemented */
   data->undo = undo;
   data->cb = cb;
   response_callback_add(&DlgSection, axis_new_response, NULL, data);
   DialogExecute(TopLevel, &DlgSection);
-#else
-  ret = DialogExecute(TopLevel, &DlgSection);
-  if (ret == IDCANCEL) {
-    menu_undo_internal(undo);
-  } else {
-    set_graph_modified();
-  }
-  AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
-#endif
 }
 
 void
