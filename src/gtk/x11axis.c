@@ -1513,7 +1513,6 @@ baseline_tab_setup_item(struct AxisDialog *axis, int id)
   set_color(d->color, axis->Obj, id, NULL);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 baseline_tab_copy_click_response(int sel, gpointer user_data)
 {
@@ -1531,21 +1530,6 @@ baseline_tab_copy_clicked(GtkButton *btn, gpointer user_data)
   d = (struct AxisDialog *) user_data;
   CopyClick(d->widget, d->Obj, d->Id, AxisCB, baseline_tab_copy_click_response, d);
 }
-#else
-static void
-baseline_tab_copy_clicked(GtkButton *btn, gpointer user_data)
-{
-  struct AxisDialog *d;
-  int sel;
-
-  d = (struct AxisDialog *) user_data;
-
-  sel = CopyClick(d->widget, d->Obj, d->Id, AxisCB);
-  if (sel != -1) {
-    baseline_tab_setup_item(d, sel);
-  }
-}
-#endif
 
 static GtkWidget *
 baseline_tab_create(GtkWidget *wi, struct AxisDialog *dd)
