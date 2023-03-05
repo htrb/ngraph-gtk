@@ -1936,7 +1936,6 @@ numbering_tab_setup_item(struct AxisDialog *axis, int id)
   SetWidgetFromObjField(d->math, axis->Obj, id, "num_math");
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 numbering_tab_copy_click_response(int sel, gpointer user_data)
 {
@@ -1954,21 +1953,6 @@ numbering_tab_copy_clicked(GtkButton *btn, gpointer user_data)
   d = (struct AxisDialog *) user_data;
   CopyClick(d->widget, d->Obj, d->Id, AxisCB, numbering_tab_copy_click_response, d);
 }
-#else
-static void
-numbering_tab_copy_clicked(GtkButton *btn, gpointer user_data)
-{
-  struct AxisDialog *d;
-  int sel;
-
-  d = (struct AxisDialog *) user_data;
-
-  sel = CopyClick(d->widget, d->Obj, d->Id, AxisCB);
-  if (sel != -1) {
-    numbering_tab_setup_item(d, sel);
-  }
-}
-#endif
 
 static void
 num_direction_changed(GtkWidget *w, gpointer client_data)
