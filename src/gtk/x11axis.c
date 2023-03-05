@@ -672,7 +672,6 @@ axis_save_undo(int type)
   return menu_save_undo(type, arg);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 struct section_dialog_grid_data
 {
   int create, undo;
@@ -714,7 +713,6 @@ section_dialog_grid_response(struct response_callback *cb)
   SectionDialogSetupItem(d->widget, d);
   g_clear_pointer(&cb->data, g_free);
 }
-#endif
 
 static void
 SectionDialogGrid(GtkWidget *w, gpointer client_data)
@@ -748,41 +746,12 @@ SectionDialogGrid(GtkWidget *w, gpointer client_data)
     int ret;
 #endif
     GridDialog(&DlgGrid, d->Obj2, d->IDG);
-#if GTK_CHECK_VERSION(4, 0, 0)
-  /* must be implemented */
     data = g_malloc0(sizeof(*data));
     data->create = create;
     data->undo = undo;
     data->d = d;
     response_callback_add(&DlgGrid, section_dialog_grid_response, NULL, data);
     DialogExecute(d->widget, &DlgGrid);
-#else
-    ret = DialogExecute(d->widget, &DlgGrid);
-    switch (ret) {
-    case IDCANCEL:
-      menu_undo_internal(undo);
-      if (create) {
-        d->IDG = -1;
-      }
-      break;
-    case IDDELETE:
-      if (create) {
-        menu_undo_internal(undo);
-      } else {
-        delobj(d->Obj2, d->IDG);
-        set_graph_modified();
-      }
-      d->IDG = -1;
-      break;
-    default:
-      menu_delete_undo(undo);
-      set_graph_modified();
-    }
-#endif
-  }
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-  SectionDialogSetupItem(d->widget, d);
-#endif
 }
 
 static void
