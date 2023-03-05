@@ -2809,7 +2809,6 @@ CmAxisDel(void *w, gpointer client_data)
   DialogExecute(TopLevel, &DlgCopy);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 axis_update_response_response(struct response_callback *cb)
 {
@@ -2840,7 +2839,6 @@ axis_update_response(struct response_callback *cb)
   response_callback_add(&DlgAxis, axis_update_response_response, NULL, GINT_TO_POINTER(undo));
   DialogExecute(TopLevel, &DlgAxis);
 }
-#endif
 
 void
 CmAxisUpdate(void *w, gpointer client_data)
@@ -2855,28 +2853,8 @@ CmAxisUpdate(void *w, gpointer client_data)
   if (chkobjlastinst(obj) == -1)
     return;
   CopyDialog(&DlgCopy, obj, -1, _("axis property (single select)"), AxisCB);
-#if GTK_CHECK_VERSION(4, 0, 0)
-  /* must be implemented */
   response_callback_add(&DlgCopy, axis_update_response, NULL, NULL);
   DialogExecute(TopLevel, &DlgCopy);
-#else
-  if (DialogExecute(TopLevel, &DlgCopy) == IDOK) {
-    i = DlgCopy.sel;
-    if (i < 0)
-      return;
-  } else {
-    return;
-  }
-  undo = axis_save_undo(UNDO_TYPE_EDIT);
-  AxisDialog(NgraphApp.AxisWin.data.data, i, -1);
-  ret = DialogExecute(TopLevel, &DlgAxis);
-  if (ret == IDCANCEL) {
-    menu_delete_undo(undo);
-  } else {
-    AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
-    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
-  }
-#endif
 }
 
 static void
