@@ -2503,11 +2503,7 @@ AxisDialog(struct obj_list_data *data, int id, int user_data)
 
 void
 CmAxisAddFrame
-#if GTK_CHECK_VERSION(4, 0, 0)
 (GSimpleAction *action, GVariant *parameter, gpointer client_data)
-#else
-(void *w, gpointer client_data)
-#endif
 {
   enum TOOLBOX_MODE mode;
   mode = get_toolbox_mode();
@@ -2516,11 +2512,7 @@ CmAxisAddFrame
 
 void
 CmAxisAddSection
-#if GTK_CHECK_VERSION(4, 0, 0)
 (GSimpleAction *action, GVariant *parameter, gpointer client_data)
-#else
-(void *w, gpointer client_data)
-#endif
 {
   enum TOOLBOX_MODE mode;
   mode = get_toolbox_mode();
@@ -2529,11 +2521,7 @@ CmAxisAddSection
 
 void
 CmAxisAddCross
-#if GTK_CHECK_VERSION(4, 0, 0)
 (GSimpleAction *action, GVariant *parameter, gpointer client_data)
-#else
-(void *w, gpointer client_data)
-#endif
 {
   enum TOOLBOX_MODE mode;
   mode = get_toolbox_mode();
