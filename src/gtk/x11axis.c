@@ -2703,31 +2703,23 @@ CmAxisNewSection(int use_presettings, response_cb cb)
 }
 
 void
-CmAxisNewCross(int use_presettings
-#if GTK_CHECK_VERSION(4, 0, 0)
-               , response_cb cb
-#endif
-)
+CmAxisNewCross(int use_presettings, response_cb cb)
 {
   struct objlist *obj;
   int idx, idy, ret;
   int type, x, y, lenx, leny, undo;
   struct narray group;
   char *argv[2];
-#if GTK_CHECK_VERSION(4, 0, 0)
   struct axis_new_data *data;
-#endif
 
   if (Menulock || Globallock)
     return;
   if ((obj = chkobject("axis")) == NULL)
     return;
-#if GTK_CHECK_VERSION(4, 0, 0)
   data = g_malloc0(sizeof(*data));
   if (data == NULL) {
     return;
   }
-#endif
   undo = axis_save_undo(UNDO_TYPE_CREATE);
   idx = newobj(obj);
   idy = newobj(obj);
@@ -2752,21 +2744,10 @@ CmAxisNewCross(int use_presettings
     presetting_set_obj_field(obj, idy);
   }
   CrossDialog(&DlgCross, x, y, lenx, leny, obj, idx, idy);
-#if GTK_CHECK_VERSION(4, 0, 0)
-  /* must be implemented */
   data->undo = undo;
   data->cb = cb;
   response_callback_add(&DlgCross, axis_new_response, NULL, data);
   DialogExecute(TopLevel, &DlgCross);
-#else
-  ret = DialogExecute(TopLevel, &DlgCross);
-  if (ret == IDCANCEL) {
-    menu_undo_internal(undo);
-  } else {
-    set_graph_modified();
-  }
-  AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
-#endif
 }
 
 void
