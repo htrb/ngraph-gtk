@@ -2201,29 +2201,16 @@ font_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   add_widget_to_table(table, w, _("_Font:"), FALSE, i++);
   d->font = w;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   btn_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
-#else
-  btn_box = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
-  gtk_box_set_spacing(GTK_BOX(btn_box), 10);
-#endif
   w = gtk_check_button_new_with_mnemonic(_("_Bold"));
   set_button_icon(w, "format-text-bold");
   d->font_bold = w;
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(btn_box), w);
-#else
-  gtk_box_pack_start(GTK_BOX(btn_box), w, FALSE, FALSE, 0);
-#endif
 
   w = gtk_check_button_new_with_mnemonic(_("_Italic"));
   set_button_icon(w, "format-text-italic");
   d->font_italic = w;
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(btn_box), w);
-#else
-  gtk_box_pack_start(GTK_BOX(btn_box), w, FALSE, FALSE, 0);
-#endif
 
   add_widget_to_table(table, btn_box, "", FALSE, i++);
 
@@ -2232,20 +2219,12 @@ font_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   d->color = w;
 
   frame = gtk_frame_new(_("Font"));
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_widget_set_vexpand(frame, TRUE);
   gtk_frame_set_child(GTK_FRAME(frame), table);
-#else
-  gtk_container_add(GTK_CONTAINER(frame), table);
-#endif
   set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
 
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(vbox), frame);
-#else
-  gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 4);
-#endif
 
   add_copy_button_to_box(vbox, G_CALLBACK(font_tab_copy_clicked), dd, "axis");
 
