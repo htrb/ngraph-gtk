@@ -1293,7 +1293,6 @@ scale_by_files(struct AxisDialog *d, struct narray *farray)
   }
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 struct axis_dialog_file_data {
   struct narray *farray;
   struct AxisDialog *d;
@@ -1311,7 +1310,6 @@ axis_dialog_file_response(struct response_callback *cb)
   arrayfree(data->farray);
   g_clear_pointer(&cb->data, g_free);
 }
-#endif
 
 static void
 AxisDialogFile(GtkWidget *w, gpointer client_data)
@@ -1319,9 +1317,7 @@ AxisDialogFile(GtkWidget *w, gpointer client_data)
   struct AxisDialog *d;
   struct objlist *fobj;
   struct narray *farray;
-#if GTK_CHECK_VERSION(4, 0, 0)
   struct axis_dialog_file_data *data;
-#endif
 
   d = (struct AxisDialog *) client_data;
 
@@ -1338,8 +1334,6 @@ AxisDialogFile(GtkWidget *w, gpointer client_data)
 
   SelectDialog(&DlgSelect, fobj, _("autoscale (multi select)"), FileCB, (struct narray *) farray, NULL);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-  /* must be implemented */
   data = g_malloc0(sizeof(*data));
   if (data == NULL) {
     arrayfree(farray);
@@ -1349,12 +1343,6 @@ AxisDialogFile(GtkWidget *w, gpointer client_data)
   data->d = d;
   response_callback_add(&DlgSelect, axis_dialog_file_response, NULL, data);
   DialogExecute(d->widget, &DlgSelect);
-#else
-  if (DialogExecute(d->widget, &DlgSelect) == IDOK) {
-    scale_by_files(d, farray);
-  }
-  arrayfree(farray);
-#endif
 }
 
 static void
