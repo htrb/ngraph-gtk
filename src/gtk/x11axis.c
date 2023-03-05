@@ -2388,12 +2388,7 @@ AxisDialogSetup(GtkWidget *wi, void *data, int makewidget)
     label = gtk_label_new_with_mnemonic(_("_Position"));
     d->position.tab_id = gtk_notebook_append_page(GTK_NOTEBOOK(notebook), w, label);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(d->vbox), notebook);
-#else
-    gtk_box_pack_start(GTK_BOX(d->vbox), notebook, TRUE, TRUE, 4);
-    gtk_widget_show_all(GTK_WIDGET(d->vbox));
-#endif
 
     d->tab = GTK_NOTEBOOK(notebook);
   }
