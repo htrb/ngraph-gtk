@@ -2777,7 +2777,6 @@ CmAxisAddSingle
   }
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 axis_del_response(struct response_callback *cb)
 {
@@ -2789,7 +2788,6 @@ axis_del_response(struct response_callback *cb)
     FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
   }
 }
-#endif
 
 void
 CmAxisDel(void *w, gpointer client_data)
@@ -2807,19 +2805,8 @@ CmAxisDel(void *w, gpointer client_data)
 
   CopyDialog(&DlgCopy, obj, -1, _("delete axis (single select)"), AxisCB);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-  /* must be implemented */
   response_callback_add(&DlgCopy, axis_del_response, NULL, NULL);
   DialogExecute(TopLevel, &DlgCopy);
-#else
-  if (DialogExecute(TopLevel, &DlgCopy) == IDOK && DlgCopy.sel >= 0) {
-    axis_save_undo(UNDO_TYPE_DELETE);
-    AxisDel(DlgCopy.sel);
-    set_graph_modified();
-    AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
-    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE, FALSE);
-  }
-#endif
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
