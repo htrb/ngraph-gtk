@@ -1788,15 +1788,9 @@ set_num_format(struct AxisDialog *axis, struct AxisNumbering *d)
     return 1;
   }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   if (gtk_check_button_get_active(GTK_CHECK_BUTTON(d->add_plus))) {
     g_string_append_c(format, '+');
   }
-#else
-  if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->add_plus))) {
-    g_string_append_c(format, '+');
-  }
-#endif
 
   a = combo_box_get_active(d->fraction);
   if (a == 0) {
