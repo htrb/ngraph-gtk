@@ -2108,20 +2108,12 @@ font_tab_set_value(struct AxisDialog *axis)
     return 1;
 
   style = 0;
-#if GTK_CHECK_VERSION(4, 0, 0)
   bold = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->font_bold));
-#else
-  bold = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->font_bold));
-#endif
   if (bold) {
     style |= GRA_FONT_STYLE_BOLD;
   }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   italic = gtk_check_button_get_active(GTK_CHECK_BUTTON(d->font_italic));
-#else
-  italic = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->font_italic));
-#endif
   if (italic) {
     style |= GRA_FONT_STYLE_ITALIC;
   }
