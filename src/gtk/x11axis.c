@@ -2844,7 +2844,6 @@ void
 CmAxisUpdate(void *w, gpointer client_data)
 {
   struct objlist *obj;
-  int i, ret, undo;
 
   if (Menulock || Globallock)
     return;
