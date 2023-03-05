@@ -2155,7 +2155,6 @@ font_tab_setup_item(struct AxisDialog *axis, int id)
   gtk_check_button_set_active(GTK_CHECK_BUTTON(d->font_italic), style & GRA_FONT_STYLE_ITALIC);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 font_tab_copy_click_response(int sel, gpointer user_data)
 {
@@ -2173,21 +2172,6 @@ font_tab_copy_clicked(GtkButton *btn, gpointer user_data)
   d = (struct AxisDialog *) user_data;
   CopyClick(d->widget, d->Obj, d->Id, AxisCB, font_tab_copy_click_response, d);
 }
-#else
-static void
-font_tab_copy_clicked(GtkButton *btn, gpointer user_data)
-{
-  struct AxisDialog *d;
-  int sel;
-
-  d = (struct AxisDialog *) user_data;
-
-  sel = CopyClick(d->widget, d->Obj, d->Id, AxisCB);
-  if (sel != -1) {
-    font_tab_setup_item(d, sel);
-  }
-}
-#endif
 
 static GtkWidget *
 font_tab_create(GtkWidget *wi, struct AxisDialog *dd)
