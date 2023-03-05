@@ -2574,7 +2574,7 @@ void
 CmAxisNewFrame(int use_presettings, response_cb cb)
 {
   struct objlist *obj, *obj2;
-  int idx, idy, idu, idr, idg, ret;
+  int idx, idy, idu, idr, idg;
   int type, x, y, lenx, leny, undo;
   struct narray group;
   char *argv[2];
