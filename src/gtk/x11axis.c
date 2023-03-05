@@ -1363,7 +1363,6 @@ file_button_show(GtkWidget *widget, gpointer user_data)
   gtk_widget_set_sensitive(widget, n >= 0);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 scale_tab_copy_click_response(int sel, gpointer user_data)
 {
@@ -1381,21 +1380,6 @@ scale_tab_copy_clicked(GtkButton *btn, gpointer user_data)
   d = (struct AxisDialog *) user_data;
   CopyClick(d->widget, d->Obj, d->Id, AxisCB, scale_tab_copy_click_response, d);
 }
-#else
-static void
-scale_tab_copy_clicked(GtkButton *btn, gpointer user_data)
-{
-  struct AxisDialog *d;
-  int sel;
-
-  d = (struct AxisDialog *) user_data;
-
-  sel = CopyClick(d->widget, d->Obj, d->Id, AxisCB);
-  if (sel != -1) {
-    scale_tab_setup_item(d, sel);
-  }
-}
-#endif
 
 static GtkWidget *
 scale_tab_create(struct AxisDialog *d)
