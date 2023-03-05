@@ -1899,11 +1899,7 @@ numbering_tab_setup_item(struct AxisDialog *axis, int id)
   }
 
   getobj(axis->Obj, "num_format", id, 0, NULL, &format);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_check_button_set_active(GTK_CHECK_BUTTON(d->add_plus), strchr(format, '+') != NULL);
-#else
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->add_plus), strchr(format, '+') != NULL);
-#endif
 
   if ((strchr(format, 'f') == NULL) || (strchr(format, '.') == NULL)) {
     a = 0;
