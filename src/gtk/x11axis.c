@@ -2706,7 +2706,7 @@ void
 CmAxisNewCross(int use_presettings, response_cb cb)
 {
   struct objlist *obj;
-  int idx, idy, ret;
+  int idx, idy;
   int type, x, y, lenx, leny, undo;
   struct narray group;
   char *argv[2];
@@ -2763,7 +2763,6 @@ CmAxisAddSingle
     return;
   undo = axis_save_undo(UNDO_TYPE_CREATE);
   if ((id = newobj(obj)) >= 0) {
-    int ret;
     struct axis_new_data *data;
     data = g_malloc0(sizeof(*data));
     if (data == NULL) {
