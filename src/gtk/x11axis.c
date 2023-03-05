@@ -2752,11 +2752,7 @@ CmAxisNewCross(int use_presettings, response_cb cb)
 
 void
 CmAxisAddSingle
-#if GTK_CHECK_VERSION(4, 0, 0)
 (GSimpleAction *action, GVariant *parameter, gpointer client_data)
-#else
-(void *w, gpointer client_data)
-#endif
 {
   struct objlist *obj;
   int id, undo;
@@ -2768,21 +2764,17 @@ CmAxisAddSingle
   undo = axis_save_undo(UNDO_TYPE_CREATE);
   if ((id = newobj(obj)) >= 0) {
     int ret;
+    struct axis_new_data *data;
+    data = g_malloc0(sizeof(*data));
+    if (data == NULL) {
+      return;
+    }
     presetting_set_obj_field(obj, id);
     AxisDialog(NgraphApp.AxisWin.data.data, id, -1);
-#if GTK_CHECK_VERSION(4, 0, 0)
-  /* must be implemented */
-    response_callback_add(&DlgAxis, axis_new_response, NULL, GINT_TO_POINTER(undo));
+    data->undo = undo;
+    data->cb = NULL;
+    response_callback_add(&DlgAxis, axis_new_response, NULL, data);
     DialogExecute(TopLevel, &DlgAxis);
-#else
-    ret = DialogExecute(TopLevel, &DlgAxis);
-    if (ret == IDCANCEL) {
-      menu_undo_internal(undo);
-    } else {
-      set_graph_modified();
-    }
-    AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
-#endif
   }
 }
 
