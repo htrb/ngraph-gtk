@@ -1407,20 +1407,12 @@ scale_tab_create(struct AxisDialog *d)
 
   w = gtk_button_new_with_mnemonic(_("_Clear"));
   g_signal_connect(w, "clicked", G_CALLBACK(AxisDialogClear), d);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(hbox), w);
-#else
-  gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 0);
-#endif
 
   w = gtk_button_new_with_mnemonic(_("_Data"));
   g_signal_connect(w, "clicked", G_CALLBACK(AxisDialogFile), d);
   g_signal_connect(w, "map", G_CALLBACK(file_button_show), NULL);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(hbox), w);
-#else
-  gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
-#endif
 
   add_widget_to_table(table, hbox, "", FALSE, i++);
 
@@ -1441,20 +1433,12 @@ scale_tab_create(struct AxisDialog *d)
   d->margin = w;
 
   frame = gtk_frame_new(_("Scale"));
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_frame_set_child(GTK_FRAME(frame), table);
   gtk_widget_set_vexpand(frame, TRUE);
-#else
-  gtk_container_add(GTK_CONTAINER(frame), table);
-#endif
   set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
 
   parent_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(parent_box), frame);
-#else
-  gtk_box_pack_start(GTK_BOX(parent_box), frame, TRUE, TRUE, 4);
-#endif
 
   add_copy_button_to_box(parent_box, G_CALLBACK(scale_tab_copy_clicked), d, "axis");
 
