@@ -1563,17 +1563,9 @@ baseline_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   d->color = w;
 
   frame = gtk_frame_new(_("Baseline"));
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_frame_set_child(GTK_FRAME(frame), table);
-#else
-  gtk_container_add(GTK_CONTAINER(frame), table);
-#endif
   set_widget_margin(frame, WIDGET_MARGIN_LEFT | WIDGET_MARGIN_RIGHT);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(hbox), frame);
-#else
-  gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
-#endif
 
   table = gtk_grid_new();
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
@@ -1594,18 +1586,10 @@ baseline_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   d->arrowwid = w;
 
   frame = gtk_frame_new(_("Arrow"));
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_widget_set_vexpand(frame, TRUE);
   gtk_frame_set_child(GTK_FRAME(frame), table);
-#else
-  gtk_container_add(GTK_CONTAINER(frame), table);
-#endif
   set_widget_margin(frame, WIDGET_MARGIN_RIGHT);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(vbox), frame);
-#else
-  gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
-#endif
 
   table = gtk_grid_new();
 
@@ -1623,28 +1607,14 @@ baseline_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   d->wavewid = w;
 
   frame = gtk_frame_new(_("Wave"));
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_frame_set_child(GTK_FRAME(frame), table);
-#else
-  gtk_container_add(GTK_CONTAINER(frame), table);
-#endif
   set_widget_margin(frame, WIDGET_MARGIN_RIGHT);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(vbox), frame);
   gtk_widget_set_vexpand(frame, TRUE);
   gtk_box_append(GTK_BOX(hbox), vbox);
-#else
-  gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
-
-  gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
-#endif
 
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#if GTK_CHECK_VERSION(4, 0, 0)
   gtk_box_append(GTK_BOX(vbox), hbox);
-#else
-  gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 4);
-#endif
 
   add_copy_button_to_box(vbox, G_CALLBACK(baseline_tab_copy_clicked), dd, "axis");
 
