@@ -543,11 +543,7 @@ static void
 GridDefDialog(struct GridDialog *data, struct objlist *obj, int id)
 {
   data->SetupWindow = GridDefDialogSetup;
-#if GTK_CHECK_VERSION(4, 0, 0)
   data->CloseWindow = GridDefDialogClose;
-#else
-  data->CloseWindow = GridDialogClose;
-#endif
   data->Obj = obj;
   data->Id = id;
 }
