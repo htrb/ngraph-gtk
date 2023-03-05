@@ -777,11 +777,7 @@ SectionDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, "_Y:", FALSE, i++);
     d->y = w;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(hbox), table);
-#else
-    gtk_box_pack_start(GTK_BOX(hbox), table, TRUE, TRUE, 4);
-#endif
 
     table = gtk_grid_new();
 
@@ -794,13 +790,8 @@ SectionDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, _("Graph _Height:"), FALSE, i++);
     d->height = w;
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(hbox), table);
     gtk_box_append(GTK_BOX(d->vbox), hbox);
-#else
-    gtk_box_pack_start(GTK_BOX(hbox), table, TRUE, TRUE, 4);
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
-#endif
 
 
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
@@ -810,22 +801,12 @@ SectionDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = gtk_button_new_with_mnemonic(_("_X axis"));
     g_signal_connect(w, "clicked", G_CALLBACK(SectionDialogAxisX), d);
     d->xaxis = w;
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(vbox), w);
-#else
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-#endif
 
     w = gtk_label_new(NULL);
     d->xid = w;
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(vbox), w);
     gtk_box_append(GTK_BOX(hbox), vbox);
-#else
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-
-    gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 4);
-#endif
 
 
 
@@ -834,22 +815,12 @@ SectionDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = gtk_button_new_with_mnemonic(_("_Y axis"));
     g_signal_connect(w, "clicked", G_CALLBACK(SectionDialogAxisY), d);
     d->yaxis = w;
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(vbox), w);
-#else
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-#endif
 
     w = gtk_label_new(NULL);
     d->yid = w;
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(vbox), w);
     gtk_box_append(GTK_BOX(hbox), vbox);
-#else
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-
-    gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 4);
-#endif
 
 
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
@@ -857,22 +828,12 @@ SectionDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = gtk_button_new_with_mnemonic(_("_U axis"));
     g_signal_connect(w, "clicked", G_CALLBACK(SectionDialogAxisU), d);
     d->uaxis = w;
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(vbox), w);
-#else
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-#endif
 
     w = gtk_label_new(NULL);
     d->uid = w;
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(vbox), w);
     gtk_box_append(GTK_BOX(hbox), vbox);
-#else
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-
-    gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 4);
-#endif
 
 
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
@@ -880,22 +841,12 @@ SectionDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = gtk_button_new_with_mnemonic(_("_R axis"));
     g_signal_connect(w, "clicked", G_CALLBACK(SectionDialogAxisR), d);
     d->raxis = w;
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(vbox), w);
-#else
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-#endif
 
     w = gtk_label_new(NULL);
     d->rid = w;
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(vbox), w);
     gtk_box_append(GTK_BOX(hbox), vbox);
-#else
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-
-    gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 4);
-#endif
 
 
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
@@ -903,26 +854,13 @@ SectionDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = gtk_button_new_with_mnemonic(_("_Grid"));
     g_signal_connect(w, "clicked", G_CALLBACK(SectionDialogGrid), d);
     d->grid = w;
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(vbox), w);
-#else
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-#endif
 
     w = gtk_label_new(NULL);
     d->gid = w;
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(vbox), w);
     gtk_box_append(GTK_BOX(hbox), vbox);
     gtk_box_append(GTK_BOX(d->vbox), hbox);
-#else
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-
-    gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 4);
-
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
-    gtk_widget_show_all(GTK_WIDGET(d->vbox));
-#endif
   }
 
   SectionDialogSetupItem(wi, d);
