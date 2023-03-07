@@ -2985,7 +2985,6 @@ axiswin_scale_clear(GSimpleAction *action, GVariant *parameter, gpointer user_da
   }
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 axis_clear_response(struct response_callback *cb)
 {
@@ -3009,7 +3008,6 @@ axis_clear_response(struct response_callback *cb)
   }
   arrayfree(farray);
 }
-#endif
 
 void
 CmAxisClear(void *w, gpointer client_data)
@@ -3027,27 +3025,8 @@ CmAxisClear(void *w, gpointer client_data)
   if (farray == NULL)
     return;
   SelectDialog(&DlgSelect, obj, _("scale clear (multi select)"), AxisCB, (struct narray *) farray, NULL);
-#if GTK_CHECK_VERSION(4, 0, 0)
-  /* must be implemented */
   response_callback_add(&DlgSelect, axis_clear_response, NULL, NULL);
   DialogExecute(TopLevel, &DlgSelect);
-#else
-  if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
-    int *array, num, i;
-    num = arraynum(farray);
-    array = arraydata(farray);
-    if (num > 0) {
-      axis_save_undo(UNDO_TYPE_CLEAR_SCALE);
-    }
-    for (i = 0; i < num; i++) {
-      axis_scale_push(obj, array[i]);
-      exeobj(obj, "clear", array[i], 0, NULL);
-      set_graph_modified();
-    }
-    AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
-  }
-  arrayfree(farray);
-#endif
 }
 
 void
