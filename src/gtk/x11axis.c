@@ -3055,7 +3055,7 @@ void
 CmAxisGridNew(void *w, gpointer client_data)
 {
   struct objlist *obj;
-  int id, ret, undo;
+  int id, undo;
 
   if (Menulock || Globallock)
     return;
