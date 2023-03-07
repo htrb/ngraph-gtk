@@ -2888,7 +2888,6 @@ axis_zoom(struct objlist *obj, struct narray *farray, double zoom)
   AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 struct axis_zoom_data
 {
   double zoom;
@@ -2917,7 +2916,7 @@ axis_zoom_response(struct response_callback *cb)
   struct objlist *obj;
 
   obj = (struct objlist *) cb->data;
-  if (cb->return_value != IDOK) {
+  if (cb->return_value != IDOK || DlgZoom.zoom <= 0) {
     return;
   }
 
@@ -2939,7 +2938,6 @@ axis_zoom_response(struct response_callback *cb)
   response_callback_add(&DlgSelect, axis_zoom_response_response, NULL, data);
   DialogExecute(TopLevel, &DlgSelect);
 }
-#endif
 
 void
 CmAxisZoom(void *w, gpointer client_data)
@@ -2953,25 +2951,8 @@ CmAxisZoom(void *w, gpointer client_data)
   if (chkobjlastinst(obj) == -1)
     return;
   ZoomDialog(&DlgZoom);
-#if GTK_CHECK_VERSION(4, 0, 0)
-  /* must be implemented */
   response_callback_add(&DlgZoom, axis_zoom_response, NULL, obj);
   DialogExecute(TopLevel, &DlgZoom);
-#else
-  if ((DialogExecute(TopLevel, &DlgZoom) == IDOK) && (DlgZoom.zoom > 0)) {
-    double zoom;
-    struct narray *farray;
-    farray = arraynew(sizeof(int));
-    if (farray == NULL)
-      return;
-    zoom = DlgZoom.zoom / 10000.0;
-    SelectDialog(&DlgSelect, obj, _("scale zoom (multi select)"), AxisCB, (struct narray *) farray, NULL);
-    if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
-      axis_zoom(obj, farray, zoom);
-    }
-    arrayfree(farray);
-  }
-#endif
 }
 
 static void
