@@ -2956,12 +2956,7 @@ CmAxisZoom(void *w, gpointer client_data)
 }
 
 static void
-axiswin_scale_clear
-#if GTK_CHECK_VERSION(4, 0, 0)
-(GSimpleAction *action, GVariant *parameter, gpointer user_data)
-#else
-(GtkMenuItem *item, gpointer user_data)
-#endif
+axiswin_scale_clear(GSimpleAction *action, GVariant *parameter, gpointer user_data)
 {
   struct obj_list_data *d;
   struct objlist *obj;
