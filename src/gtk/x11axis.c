@@ -3038,7 +3038,6 @@ update_viewer_axisgrid(void)
   ViewerWinUpdate(objects);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 axis_grid_new_response(struct response_callback *cb)
 {
@@ -3051,7 +3050,6 @@ axis_grid_new_response(struct response_callback *cb)
     update_viewer_axisgrid();
   }
 }
-#endif
 
 void
 CmAxisGridNew(void *w, gpointer client_data)
@@ -3070,19 +3068,8 @@ CmAxisGridNew(void *w, gpointer client_data)
     return;
   }
   GridDialog(&DlgGrid, obj, id);
-#if GTK_CHECK_VERSION(4, 0, 0)
-  /* must be implemented */
   response_callback_add(&DlgGrid, axis_grid_new_response, NULL, GINT_TO_POINTER(undo));
   DialogExecute(TopLevel, &DlgGrid);
-#else
-  ret = DialogExecute(TopLevel, &DlgGrid);
-  if (ret == IDCANCEL) {
-    menu_undo_internal(undo);
-  } else {
-    set_graph_modified();
-    update_viewer_axisgrid();
-  }
-#endif
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
