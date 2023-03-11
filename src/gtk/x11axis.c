@@ -4063,44 +4063,28 @@ axiswin_ev_key_down(GtkWidget *w, guint keyval, GdkModifierType state, gpointer 
     break;
   case GDK_KEY_Home:
     if (state & GDK_SHIFT_MASK) {
-#if GTK_CHECK_VERSION(4, 0, 0)
       AxisWinAxisTop(NULL, NULL, d);
-#else
-      AxisWinAxisTop(w, d);
-#endif
     } else {
       return FALSE;
     }
     break;
   case GDK_KEY_End:
     if (state & GDK_SHIFT_MASK) {
-#if GTK_CHECK_VERSION(4, 0, 0)
       AxisWinAxisLast(NULL, NULL, d);
-#else
-      AxisWinAxisLast(w, d);
-#endif
     } else {
       return FALSE;
     }
     break;
   case GDK_KEY_Up:
     if (state & GDK_SHIFT_MASK) {
-#if GTK_CHECK_VERSION(4, 0, 0)
       AxisWinAxisUp(NULL, NULL, d);
-#else
-      AxisWinAxisUp(w, d);
-#endif
     } else {
       return FALSE;
     }
     break;
   case GDK_KEY_Down:
     if (state & GDK_SHIFT_MASK) {
-#if GTK_CHECK_VERSION(4, 0, 0)
       AxisWinAxisDown(NULL, NULL, d);
-#else
-      AxisWinAxisDown(w, d);
-#endif
     } else {
       return FALSE;
     }
