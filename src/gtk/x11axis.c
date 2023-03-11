@@ -85,7 +85,6 @@ enum {
   AXIS_WIN_COL_NUM,
 };
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void axiswin_scale_clear(GSimpleAction *action, GVariant *parameter, gpointer app);
 static void axis_delete_popup_func(GSimpleAction *action, GVariant *parameter, gpointer app);
 static void AxisWinAxisTop(GSimpleAction *action, GVariant *parameter, gpointer app);
@@ -124,49 +123,6 @@ static GActionEntry Popup_list[] =
 #define POPUP_ITEM_ADD_S     6
 #define POPUP_ITEM_ADD_C     7
 #define POPUP_ITEM_ADD_A     8
-#else
-static void axiswin_scale_clear(GtkMenuItem *item, gpointer user_data);
-static void axis_delete_popup_func(GtkMenuItem *w, gpointer client_data);
-static void AxisWinAxisTop(GtkWidget *w, gpointer client_data);
-static void AxisWinAxisUp(GtkWidget *w, gpointer client_data);
-static void AxisWinAxisDown(GtkWidget *w, gpointer client_data);
-static void AxisWinAxisLast(GtkWidget *w, gpointer client_data);
-
-static struct subwin_popup_list add_menu_list[] = {
-  {N_("_Frame graph"), G_CALLBACK(CmAxisAddFrame), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {N_("_Section graph"), G_CALLBACK(CmAxisAddSection), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {N_("_Cross graph"), G_CALLBACK(CmAxisAddCross), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {N_("Single _Axis"), G_CALLBACK(CmAxisAddSingle), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {NULL, NULL, NULL, POP_UP_MENU_ITEM_TYPE_END},
-};
-
-static struct subwin_popup_list Popup_list[] = {
-  {N_("_Add"),        NULL, add_menu_list, POP_UP_MENU_ITEM_TYPE_MENU},
-  {NULL, NULL, NULL,  POP_UP_MENU_ITEM_TYPE_SEPARATOR},
-  {N_("_Duplicate"),  G_CALLBACK(list_sub_window_copy), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {N_("_Delete"),     G_CALLBACK(axis_delete_popup_func), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {NULL, NULL, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
-  {N_("_Focus"),      G_CALLBACK(list_sub_window_focus), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {N_("focus _All"),  G_CALLBACK(list_sub_window_focus_all), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {N_("_Clear"),      G_CALLBACK(axiswin_scale_clear), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {N_("_Properties"), G_CALLBACK(list_sub_window_update), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {N_("_Instance name"), G_CALLBACK(list_sub_window_object_name), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {NULL, NULL, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
-  {N_("_Top"),        G_CALLBACK(AxisWinAxisTop), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {N_("_Up"),         G_CALLBACK(AxisWinAxisUp), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {N_("_Down"),       G_CALLBACK(AxisWinAxisDown), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {N_("_Bottom"),     G_CALLBACK(AxisWinAxisLast), NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {NULL, NULL, NULL, POP_UP_MENU_ITEM_TYPE_END},
-};
-
-#define POPUP_ITEM_NUM (sizeof(Popup_list) / sizeof(*Popup_list) - 1)
-
-#define POPUP_ITEM_FOCUS_ALL 6
-#define POPUP_ITEM_TOP      11
-#define POPUP_ITEM_UP       12
-#define POPUP_ITEM_DOWN     13
-#define POPUP_ITEM_BOTTOM   14
-#endif
 
 #define TITLE_BUF_SIZE 128
 
