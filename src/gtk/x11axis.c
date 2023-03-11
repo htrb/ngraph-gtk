@@ -3941,12 +3941,7 @@ axiswin_delete_axis(struct obj_list_data *d)
 }
 
 static void
-axis_delete_popup_func
-#if GTK_CHECK_VERSION(4, 0, 0)
-(GSimpleAction *action, GVariant *parameter, gpointer client_data)
-#else
-(GtkMenuItem *w, gpointer client_data)
-#endif
+axis_delete_popup_func(GSimpleAction *action, GVariant *parameter, gpointer client_data)
 {
   struct obj_list_data *d;
 
