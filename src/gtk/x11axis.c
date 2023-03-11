@@ -3950,12 +3950,7 @@ axis_delete_popup_func(GSimpleAction *action, GVariant *parameter, gpointer clie
 }
 
 static void
-AxisWinAxisTop
-#if GTK_CHECK_VERSION(4, 0, 0)
-(GSimpleAction *action, GVariant *parameter, gpointer client_data)
-#else
-(GtkWidget *w, gpointer client_data)
-#endif
+AxisWinAxisTop(GSimpleAction *action, GVariant *parameter, gpointer client_data)
 {
   int sel, num;
   struct obj_list_data *d;
@@ -3979,12 +3974,7 @@ AxisWinAxisTop
 }
 
 static void
-AxisWinAxisLast
-#if GTK_CHECK_VERSION(4, 0, 0)
-(GSimpleAction *action, GVariant *parameter, gpointer client_data)
-#else
-(GtkMenuItem *w, gpointer client_data)
-#endif
+AxisWinAxisLast(GSimpleAction *action, GVariant *parameter, gpointer client_data)
 {
   int sel, num;
   struct obj_list_data *d;
@@ -4008,12 +3998,7 @@ AxisWinAxisLast
 }
 
 static void
-AxisWinAxisUp
-#if GTK_CHECK_VERSION(4, 0, 0)
-(GSimpleAction *action, GVariant *parameter, gpointer client_data)
-#else
-(GtkMenuItem *w, gpointer client_data)
-#endif
+AxisWinAxisUp(GSimpleAction *action, GVariant *parameter, gpointer client_data)
 {
   int sel, num;
   struct obj_list_data *d;
@@ -4037,12 +4022,7 @@ AxisWinAxisUp
 }
 
 static void
-AxisWinAxisDown
-#if GTK_CHECK_VERSION(4, 0, 0)
-(GSimpleAction *action, GVariant *parameter, gpointer client_data)
-#else
-(GtkMenuItem *w, gpointer client_data)
-#endif
+AxisWinAxisDown(GSimpleAction *action, GVariant *parameter, gpointer client_data)
 {
   int sel, num;
   struct obj_list_data *d;
