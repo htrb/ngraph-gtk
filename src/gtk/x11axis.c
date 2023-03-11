@@ -3361,7 +3361,6 @@ axis_scale_undo(struct objlist *obj, struct narray *farray)
   AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE, TRUE);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 static void
 axis_scale_undo_response(struct response_callback *cb)
 {
@@ -3372,7 +3371,6 @@ axis_scale_undo_response(struct response_callback *cb)
   }
   arrayfree(d->sel);
 }
-#endif
 
 void
 CmAxisScaleUndo(void *w, gpointer client_data)
@@ -3394,16 +3392,8 @@ CmAxisScaleUndo(void *w, gpointer client_data)
     return;
 
   SelectDialog(&DlgSelect, obj, _("scale undo (multi select)"), AxisHistoryCB, (struct narray *) farray, NULL);
-#if GTK_CHECK_VERSION(4, 0, 0)
-  /* must be implemented */
   response_callback_add(&DlgSelect, axis_scale_undo_response, NULL, NULL);
   DialogExecute(TopLevel, &DlgSelect);
-#else
-  if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
-    axis_scale_undo(obj, farray);
-  }
-  arrayfree(farray);
-#endif
 }
 
 #if GTK_CHECK_VERSION(4, 0, 0)
