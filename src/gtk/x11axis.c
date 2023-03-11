@@ -3636,11 +3636,7 @@ create_gauge_combo_item(GtkTreeStore *list, GtkTreeIter *parent, struct objlist 
 		     -1);
 
   add_text_combo_item_to_cbox(list, &child, &iter, -1, -1, _("Position"), TOGGLE_NONE, FALSE);
-#if GTK_CHECK_VERSION(4, 0, 0)
   add_enum_combo_item_to_cbox(list, NULL, &child, AXIS_COMBO_ITEM_GAUGE_POS, obj, "gauge", id, NULL);
-#else
-  add_enum_combo_item_to_cbox(list, NULL, &child, AXIS_COMBO_ITEM_GAUGE_POS, obj, "gauge", id);
-#endif
 
   add_line_style_item_to_cbox(list, &iter, AXIS_COMBO_ITEM_GAUGE_STYLE, obj, "gauge_style", id);
   add_text_combo_item_to_cbox(list, NULL, &iter, AXIS_COMBO_ITEM_GAUGE_COLOR, -1, _("Color"), TOGGLE_NONE, FALSE);
