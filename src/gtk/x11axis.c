@@ -3684,22 +3684,14 @@ static void
 create_type_combo_box(GtkWidget *cbox, struct objlist *obj, int id)
 {
   GtkTreeStore *list;
-#if GTK_CHECK_VERSION(4, 0, 0)
   GtkTreeIter iter, active_item;
-#else
-  GtkTreeIter iter;
-#endif
 
   list = GTK_TREE_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(cbox)));
   gtk_tree_store_clear(list);
 
   add_text_combo_item_to_cbox(list, &iter, NULL, -1, -1, _("Scale"), TOGGLE_NONE, FALSE);
-#if GTK_CHECK_VERSION(4, 0, 0)
   add_enum_combo_item_to_cbox(list, NULL, &iter, AXIS_COMBO_ITEM_SCALE, obj, "type", id, &active_item);
   gtk_combo_box_set_active_iter(GTK_COMBO_BOX(cbox), &active_item);
-#else
-  add_enum_combo_item_to_cbox(list, NULL, &iter, AXIS_COMBO_ITEM_SCALE, obj, "type", id);
-#endif
 
   create_base_combo_item(list, NULL, obj, id);
   create_gauge_combo_item(list, NULL, obj, id);
