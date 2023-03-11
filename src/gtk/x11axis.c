@@ -3115,7 +3115,6 @@ CmAxisGridDel(void *w, gpointer client_data)
   DialogExecute(TopLevel, &DlgSelect);
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
 struct axis_grid_update_data {
   int i, num;
   struct narray *farray;
@@ -3179,7 +3178,6 @@ axis_grid_update_response(struct response_callback *cb)
     DialogExecute(TopLevel, &DlgGrid);
   }
 }
-#endif
 
 void
 CmAxisGridUpdate(void *w, gpointer client_data)
@@ -3197,36 +3195,8 @@ CmAxisGridUpdate(void *w, gpointer client_data)
   if (farray == NULL)
     return;
   SelectDialog(&DlgSelect, obj, _("grid property (multi select)"), GridCB, (struct narray *) farray, NULL);
-#if GTK_CHECK_VERSION(4, 0, 0)
-  /* must be implemented */
   response_callback_add(&DlgSelect, axis_grid_update_response, NULL, NULL);
   DialogExecute(TopLevel, &DlgSelect);
-#else
-  if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
-    int *array, num;
-    int i;
-    num = arraynum(farray);
-    if (num > 0) {
-      menu_save_undo_single(UNDO_TYPE_EDIT, "axisgrid");
-    }
-    array = arraydata(farray);
-    for (i = 0; i < num; i++) {
-      int ret;
-      GridDialog(&DlgGrid, obj, array[i]);
-      ret = DialogExecute(TopLevel, &DlgGrid);
-      if (ret == IDDELETE) {
-        int j;
-	delobj(obj, array[i]);
-	set_graph_modified();
-	for (j = i + 1; j < num; j++) {
-	  array[j]--;
-        }
-      }
-    }
-    update_viewer_axisgrid();
-  }
-  arrayfree(farray);
-#endif
 }
 
 void
