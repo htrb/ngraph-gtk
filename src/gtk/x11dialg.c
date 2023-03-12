@@ -405,46 +405,25 @@ SelectDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_event_key(d->list, G_CALLBACK(key_pressed_cb), NULL,  d);
     g_signal_connect(d->list, "row-activated", G_CALLBACK(multi_list_default_cb), d);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     swin = gtk_scrolled_window_new();
-#else
-    swin = gtk_scrolled_window_new(NULL, NULL);
-#endif
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_set_vexpand(swin, TRUE);
     gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), d->list);
-#else
-    gtk_container_add(GTK_CONTAINER(swin), d->list);
-#endif
 
     gtk_dialog_add_button(GTK_DIALOG(wi), _("_All"), IDSALL);
 
     w = gtk_frame_new(NULL);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_frame_set_child(GTK_FRAME(w), swin);
     gtk_box_append(GTK_BOX(d->vbox), w);
-#else
-    gtk_container_add(GTK_CONTAINER(w), swin);
-    gtk_box_pack_start(GTK_BOX(d->vbox), w, TRUE, TRUE, 4);
-#endif
 
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
     w = gtk_button_new_with_mnemonic(_("Select _All"));
     set_button_icon(w, "edit-select-all");
     g_signal_connect(w, "clicked", G_CALLBACK(list_store_select_all_cb), d->list);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_box_append(GTK_BOX(hbox), w);
     gtk_box_append(GTK_BOX(d->vbox), hbox);
-#else
-    gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
-#endif
 
     gtk_window_set_default_size(GTK_WINDOW(wi), -1, 300);
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-    gtk_widget_show_all(GTK_WIDGET(d->vbox));
-#endif
   }
   gtk_window_set_title(GTK_WINDOW(d->widget), (d->title) ? d->title : d->resource);
   list_store_clear(d->list);
