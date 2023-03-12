@@ -1193,11 +1193,7 @@ SetStyleFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
     return;
   }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   entry = GTK_ENTRY(gtk_combo_box_get_child(GTK_COMBO_BOX(w)));
-#else
-  entry = GTK_ENTRY(gtk_bin_get_child(GTK_BIN(w)));
-#endif
 
   count = combo_box_get_num(w);
   if (count == 0) {
@@ -1209,11 +1205,7 @@ SetStyleFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 
   s = get_style_string(Obj, Id, field);
   if (s) {
-#if GTK_CHECK_VERSION(4, 0, 0)
     editable_set_init_text(GTK_WIDGET(entry), _(s));
-#else
-    gtk_entry_set_text(entry, _(s));
-#endif
   } else {
     set_entry_from_obj_point(entry, Obj, Id, field);
   }
