@@ -550,33 +550,17 @@ CopyDialogSetup(GtkWidget *wi, void *data, int makewidget)
     list_store_set_sort_all(d->list);
     list_store_set_selection_mode(d->list, GTK_SELECTION_SINGLE);
 
-#if GTK_CHECK_VERSION(4, 0, 0)
     swin = gtk_scrolled_window_new();
-#else
-    swin = gtk_scrolled_window_new(NULL, NULL);
-#endif
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_widget_set_vexpand(swin, TRUE);
     gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(swin), d->list);
-#else
-    gtk_container_add(GTK_CONTAINER(swin), d->list);
-#endif
 
     g_signal_connect(d->list, "row-activated", G_CALLBACK(single_list_default_cb), d);
 
     w = gtk_frame_new(NULL);
-#if GTK_CHECK_VERSION(4, 0, 0)
     gtk_frame_set_child(GTK_FRAME(w), swin);
     gtk_box_append(GTK_BOX(d->vbox), w);
-#else
-    gtk_container_add(GTK_CONTAINER(w), swin);
-    gtk_box_pack_start(GTK_BOX(d->vbox), w, TRUE, TRUE, 0);
-#endif
     gtk_window_set_default_size(GTK_WINDOW(wi), -1, 300);
-#if ! GTK_CHECK_VERSION(4, 0, 0)
-    gtk_widget_show_all(GTK_WIDGET(d->vbox));
-#endif
   }
   gtk_window_set_title(GTK_WINDOW(d->widget), (d->title) ? d->title : d->resource);
   list_store_clear(d->list);
