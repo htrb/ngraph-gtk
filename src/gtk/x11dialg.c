@@ -888,19 +888,11 @@ SetTextFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
   sgetobjfield(Obj, Id, field, NULL, &buf, FALSE, FALSE, FALSE);
 
   if (buf == NULL) {
-#if GTK_CHECK_VERSION(4, 0, 0)
     editable_set_init_text(GTK_WIDGET(entry), "");
-#else
-    gtk_entry_set_text(entry, "");
-#endif
     return;
   }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   editable_set_init_text(GTK_WIDGET(entry), CHK_STR(buf));
-#else
-  gtk_entry_set_text(entry, CHK_STR(buf));
-#endif
   g_free(buf);
 }
 
