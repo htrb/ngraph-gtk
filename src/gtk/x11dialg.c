@@ -624,8 +624,6 @@ CopyDialog(struct CopyDialog *data,
   data->rcb = NULL;
 }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
-/* to be implemented */
 static void
 copy_click_response(struct response_callback *cb)
 {
@@ -648,24 +646,6 @@ CopyClick(GtkWidget *parent, struct objlist *obj, int Id,
   response_callback_add(&DlgCopy, copy_click_response, NULL, user_data);
   DialogExecute(parent, &DlgCopy);
 }
-#else
-int
-CopyClick(GtkWidget *parent, struct objlist *obj, int Id,
-	  char *(*callback) (struct objlist * obj, int id))
-{
-  int sel;
-
-  CopyDialog(&DlgCopy, obj, Id, _("copy property (single select)"), callback);
-
-  if (DialogExecute(parent, &DlgCopy) == IDOK) {
-    sel = DlgCopy.sel;
-  } else {
-    sel = -1;
-  }
-
-  return sel;
-}
-#endif
 
 int
 SetObjPointsFromText(GtkWidget *w, struct objlist *Obj, int Id, char *field)
