@@ -1088,11 +1088,7 @@ SetObjFieldFromStyle(GtkWidget *w, struct objlist *Obj, int Id, char *field)
     return 0;
   }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   ptr = gtk_editable_get_text(GTK_EDITABLE(gtk_combo_box_get_child(GTK_COMBO_BOX(w))));
-#else
-  ptr = gtk_entry_get_text(GTK_ENTRY(gtk_bin_get_child(GTK_BIN(w))));
-#endif
   if (ptr == NULL) {
     return -1;
   }
@@ -1110,11 +1106,7 @@ SetObjFieldFromStyle(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 
   if (j == CLINESTYLE) {
     GtkWidget *entry;
-#if GTK_CHECK_VERSION(4, 0, 0)
     entry = gtk_combo_box_get_child(GTK_COMBO_BOX(w));
-#else
-    entry = gtk_bin_get_child(GTK_BIN(w));
-#endif
     if (set_obj_points_from_text(entry, Obj, Id, field)) {
       gtk_widget_grab_focus(w);
       return -1;
