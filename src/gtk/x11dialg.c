@@ -998,11 +998,7 @@ set_obj_points_from_text(GtkWidget *w, struct objlist *Obj, int Id, char *field)
     return 0;
   }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   ctmp = gtk_editable_get_text(GTK_EDITABLE(w));
-#else
-  ctmp = gtk_entry_get_text(GTK_ENTRY(w));
-#endif
   if (ctmp == NULL) {
     return -1;
   }
