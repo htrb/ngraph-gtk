@@ -833,20 +833,14 @@ SetWidgetFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
     SetTextFromObjField(w, Obj, Id, field);
   } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_COMBO_BOX)) {
     if (gtk_combo_box_get_has_entry(GTK_COMBO_BOX(w))) {
-#if GTK_CHECK_VERSION(4, 0, 0)
       SetTextFromObjField(gtk_combo_box_get_child(GTK_COMBO_BOX(w)), Obj, Id, field);
-#else
-      SetTextFromObjField(gtk_bin_get_child(GTK_BIN(w)), Obj, Id, field);
-#endif
     } else {
       SetListFromObjField(w, Obj, Id, field);
     }
   } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_TOGGLE_BUTTON)) {
     SetToggleFromObjField(w, Obj, Id, field);
-#if GTK_CHECK_VERSION(4, 0, 0)
   } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_CHECK_BUTTON)) {
     SetToggleFromObjField(w, Obj, Id, field);
-#endif
   }
 }
 
