@@ -948,15 +948,11 @@ SetObjFieldFromToggle(GtkWidget *w, struct objlist *Obj, int Id, char *field)
     return 0;
   }
 
-#if GTK_CHECK_VERSION(4, 0, 0)
   if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_CHECK_BUTTON)) {
     state = gtk_check_button_get_active(GTK_CHECK_BUTTON(w));
   } else {
     state = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w));
   }
-#else
-  state = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w));
-#endif
   a = state ? TRUE : FALSE;
 
   getobj(Obj, field, Id, 0, NULL, &oa);
